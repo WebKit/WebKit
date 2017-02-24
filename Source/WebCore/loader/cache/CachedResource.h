@@ -260,9 +260,6 @@ public:
 
     virtual void didRetrieveDerivedDataFromCache(const String& /* type */, SharedBuffer&) { }
 
-    void setLoadFinishTime(double finishTime) { m_loadFinishTime = finishTime; }
-    double loadFinishTime() const { return m_loadFinishTime; }
-
 #if USE(FOUNDATION) || USE(SOUP)
     WEBCORE_EXPORT void tryReplaceEncodedData(SharedBuffer&);
 #endif
@@ -323,7 +320,6 @@ private:
     AtomicString m_initiatorName;
 
     double m_lastDecodedAccessTime { 0 }; // Used as a "thrash guard" in the cache
-    double m_loadFinishTime { 0 };
 
     unsigned m_encodedSize { 0 };
     unsigned m_decodedSize { 0 };

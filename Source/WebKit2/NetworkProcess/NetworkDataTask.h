@@ -31,6 +31,7 @@
 #include "SandboxExtension.h"
 #include <WebCore/Credential.h>
 #include <WebCore/FrameLoaderTypes.h>
+#include <WebCore/NetworkLoadMetrics.h>
 #include <WebCore/ResourceHandleTypes.h>
 #include <WebCore/ResourceLoaderOptions.h>
 #include <WebCore/ResourceRequest.h>
@@ -63,11 +64,17 @@ public:
     virtual void didReceiveChallenge(const WebCore::AuthenticationChallenge&, ChallengeCompletionHandler&&) = 0;
     virtual void didReceiveResponseNetworkSession(WebCore::ResourceResponse&&, ResponseCompletionHandler&&) = 0;
     virtual void didReceiveData(Ref<WebCore::SharedBuffer>&&) = 0;
-    virtual void didCompleteWithError(const WebCore::ResourceError&) = 0;
+    virtual void didCompleteWithError(const WebCore::ResourceError&, const WebCore::NetworkLoadMetrics&) = 0;
     virtual void didSendData(uint64_t totalBytesSent, uint64_t totalBytesExpectedToSend) = 0;
     virtual void wasBlocked() = 0;
     virtual void cannotShowURL() = 0;
-    
+
+    void didCompleteWithError(const WebCore::ResourceError& error)
+    {
+        WebCore::NetworkLoadMetrics emptyMetrics;
+        didCompleteWithError(error, emptyMetrics);
+    }
+
     virtual ~NetworkDataTaskClient() { }
 };
 

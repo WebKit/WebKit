@@ -1,4 +1,5 @@
 /*
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  * Copyright (C) 2012 Google Inc. All rights reserved.
  * Copyright (C) 2012 Intel Inc. All rights reserved.
  *
@@ -53,23 +54,43 @@ static double monotonicTimeToDOMHighResTimeStamp(MonotonicTime timeOrigin, Monot
     return Performance::reduceTimeResolution(seconds).milliseconds();
 }
 
+static double entryStartTime(MonotonicTime timeOrigin, const ResourceTiming& resourceTiming)
+{
+    return monotonicTimeToDOMHighResTimeStamp(timeOrigin, resourceTiming.loadTiming().startTime());
+}
+
+static double entryEndTime(MonotonicTime timeOrigin, const ResourceTiming& resourceTiming)
+{
+    if (resourceTiming.networkLoadMetrics().isComplete()) {
+        Seconds endTime = (resourceTiming.loadTiming().fetchStart() + resourceTiming.networkLoadMetrics().responseEnd) - timeOrigin;
+        return Performance::reduceTimeResolution(endTime).milliseconds();
+    }
+
+    return monotonicTimeToDOMHighResTimeStamp(timeOrigin, resourceTiming.loadTiming().responseEnd());
+}
+
 Ref<PerformanceResourceTiming> PerformanceResourceTiming::create(MonotonicTime timeOrigin, ResourceTiming&& resourceTiming)
 {
     return adoptRef(*new PerformanceResourceTiming(timeOrigin, WTFMove(resourceTiming)));
 }
 
 PerformanceResourceTiming::PerformanceResourceTiming(MonotonicTime timeOrigin, ResourceTiming&& resourceTiming)
-    : PerformanceEntry(PerformanceEntry::Type::Resource, resourceTiming.url().string(), ASCIILiteral("resource"), monotonicTimeToDOMHighResTimeStamp(timeOrigin, resourceTiming.loadTiming().startTime()), monotonicTimeToDOMHighResTimeStamp(timeOrigin, resourceTiming.loadTiming().responseEnd()))
+    : PerformanceEntry(PerformanceEntry::Type::Resource, resourceTiming.url().string(), ASCIILiteral("resource"), entryStartTime(timeOrigin, resourceTiming), entryEndTime(timeOrigin, resourceTiming))
     , m_initiatorType(resourceTiming.initiator())
     , m_timeOrigin(timeOrigin)
     , m_loadTiming(resourceTiming.loadTiming())
-    , m_networkLoadTiming(resourceTiming.networkLoadTiming())
+    , m_networkLoadMetrics(resourceTiming.networkLoadMetrics())
     , m_shouldReportDetails(resourceTiming.allowTimingDetails())
 {
 }
 
 PerformanceResourceTiming::~PerformanceResourceTiming()
 {
+}
+
+String PerformanceResourceTiming::nextHopProtocol() const
+{
+    return m_networkLoadMetrics.protocol;
 }
 
 double PerformanceResourceTiming::workerStart() const
@@ -106,10 +127,10 @@ double PerformanceResourceTiming::domainLookupStart() const
     if (!m_shouldReportDetails)
         return 0.0;
 
-    if (m_networkLoadTiming.domainLookupStart <= 0)
+    if (m_networkLoadMetrics.domainLookupStart <= 0_ms)
         return fetchStart();
 
-    return networkLoadTimeToDOMHighResTimeStamp(m_networkLoadTiming.domainLookupStart);
+    return networkLoadTimeToDOMHighResTimeStamp(m_networkLoadMetrics.domainLookupStart);
 }
 
 double PerformanceResourceTiming::domainLookupEnd() const
@@ -117,10 +138,10 @@ double PerformanceResourceTiming::domainLookupEnd() const
     if (!m_shouldReportDetails)
         return 0.0;
 
-    if (m_networkLoadTiming.domainLookupEnd <= 0)
+    if (m_networkLoadMetrics.domainLookupEnd <= 0_ms)
         return domainLookupStart();
 
-    return networkLoadTimeToDOMHighResTimeStamp(m_networkLoadTiming.domainLookupEnd);
+    return networkLoadTimeToDOMHighResTimeStamp(m_networkLoadMetrics.domainLookupEnd);
 }
 
 double PerformanceResourceTiming::connectStart() const
@@ -128,16 +149,10 @@ double PerformanceResourceTiming::connectStart() const
     if (!m_shouldReportDetails)
         return 0.0;
 
-    // connectStart will be -1 when a network request is not made.
-    if (m_networkLoadTiming.connectStart <= 0)
+    if (m_networkLoadMetrics.connectStart <= 0_ms)
         return domainLookupEnd();
 
-    // connectStart includes any DNS time, so we may need to trim that off.
-    double connectStart = m_networkLoadTiming.connectStart;
-    if (m_networkLoadTiming.domainLookupEnd >= 0)
-        connectStart = m_networkLoadTiming.domainLookupEnd;
-
-    return networkLoadTimeToDOMHighResTimeStamp(connectStart);
+    return networkLoadTimeToDOMHighResTimeStamp(m_networkLoadMetrics.connectStart);
 }
 
 double PerformanceResourceTiming::connectEnd() const
@@ -145,11 +160,10 @@ double PerformanceResourceTiming::connectEnd() const
     if (!m_shouldReportDetails)
         return 0.0;
 
-    // connectStart will be -1 when a network request is not made.
-    if (m_networkLoadTiming.connectEnd <= 0)
+    if (m_networkLoadMetrics.connectEnd <= 0_ms)
         return connectStart();
 
-    return networkLoadTimeToDOMHighResTimeStamp(m_networkLoadTiming.connectEnd);
+    return networkLoadTimeToDOMHighResTimeStamp(m_networkLoadMetrics.connectEnd);
 }
 
 double PerformanceResourceTiming::secureConnectionStart() const
@@ -157,10 +171,10 @@ double PerformanceResourceTiming::secureConnectionStart() const
     if (!m_shouldReportDetails)
         return 0.0;
 
-    if (m_networkLoadTiming.secureConnectionStart < 0) // Secure connection not negotiated.
+    if (m_networkLoadMetrics.secureConnectionStart <= 0_ms)
         return 0.0;
 
-    return networkLoadTimeToDOMHighResTimeStamp(m_networkLoadTiming.secureConnectionStart);
+    return networkLoadTimeToDOMHighResTimeStamp(m_networkLoadMetrics.secureConnectionStart);
 }
 
 double PerformanceResourceTiming::requestStart() const
@@ -169,10 +183,10 @@ double PerformanceResourceTiming::requestStart() const
         return 0.0;
 
     // requestStart is 0 when a network request is not made.
-    if (m_networkLoadTiming.requestStart <= 0)
+    if (m_networkLoadMetrics.requestStart <= 0_ms)
         return connectEnd();
 
-    return networkLoadTimeToDOMHighResTimeStamp(m_networkLoadTiming.requestStart);
+    return networkLoadTimeToDOMHighResTimeStamp(m_networkLoadMetrics.requestStart);
 }
 
 double PerformanceResourceTiming::responseStart() const
@@ -181,26 +195,43 @@ double PerformanceResourceTiming::responseStart() const
         return 0.0;
 
     // responseStart is 0 when a network request is not made.
-    if (m_networkLoadTiming.responseStart <= 0)
+    if (m_networkLoadMetrics.responseStart <= 0_ms)
         return requestStart();
 
-    return networkLoadTimeToDOMHighResTimeStamp(m_networkLoadTiming.responseStart);
+    return networkLoadTimeToDOMHighResTimeStamp(m_networkLoadMetrics.responseStart);
 }
 
 double PerformanceResourceTiming::responseEnd() const
 {
     // responseEnd is a required property.
-    ASSERT(m_loadTiming.responseEnd());
+    ASSERT(m_networkLoadMetrics.isComplete() || m_loadTiming.responseEnd());
+
+    if (m_networkLoadMetrics.isComplete()) {
+        // responseEnd is 0 when a network request is not made.
+        // This should mean all other properties are empty.
+        if (m_networkLoadMetrics.responseEnd <= 0_ms) {
+            ASSERT(m_networkLoadMetrics.responseStart <= 0_ms);
+            ASSERT(m_networkLoadMetrics.requestStart <= 0_ms);
+            ASSERT(m_networkLoadMetrics.requestStart <= 0_ms);
+            ASSERT(m_networkLoadMetrics.secureConnectionStart <= 0_ms);
+            ASSERT(m_networkLoadMetrics.connectEnd <= 0_ms);
+            ASSERT(m_networkLoadMetrics.connectStart <= 0_ms);
+            ASSERT(m_networkLoadMetrics.domainLookupEnd <= 0_ms);
+            ASSERT(m_networkLoadMetrics.domainLookupStart <= 0_ms);
+            return fetchStart();
+        }
+
+        return networkLoadTimeToDOMHighResTimeStamp(m_networkLoadMetrics.responseEnd);
+    }
 
     return monotonicTimeToDOMHighResTimeStamp(m_timeOrigin, m_loadTiming.responseEnd());
 }
 
-double PerformanceResourceTiming::networkLoadTimeToDOMHighResTimeStamp(double deltaMilliseconds) const
+double PerformanceResourceTiming::networkLoadTimeToDOMHighResTimeStamp(Seconds delta) const
 {
-    ASSERT(deltaMilliseconds);
-    MonotonicTime combined = m_loadTiming.fetchStart() + Seconds::fromMilliseconds(deltaMilliseconds);
-    Seconds delta = combined - m_timeOrigin;
-    return Performance::reduceTimeResolution(delta).milliseconds();
+    ASSERT(delta);
+    Seconds final = (m_loadTiming.fetchStart() + delta) - m_timeOrigin;
+    return Performance::reduceTimeResolution(final).milliseconds();
 }
 
 } // namespace WebCore

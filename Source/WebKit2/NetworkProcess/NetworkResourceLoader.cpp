@@ -42,6 +42,7 @@
 #include <WebCore/CertificateInfo.h>
 #include <WebCore/DiagnosticLoggingKeys.h>
 #include <WebCore/HTTPHeaderNames.h>
+#include <WebCore/NetworkLoadMetrics.h>
 #include <WebCore/ProtectionSpace.h>
 #include <WebCore/SharedBuffer.h>
 #include <WebCore/SynchronousLoaderClient.h>
@@ -390,7 +391,7 @@ void NetworkResourceLoader::didReceiveBuffer(Ref<SharedBuffer>&& buffer, int rep
     sendBuffer(buffer, encodedDataLength);
 }
 
-void NetworkResourceLoader::didFinishLoading(double finishTime)
+void NetworkResourceLoader::didFinishLoading(const NetworkLoadMetrics& networkLoadMetrics)
 {
     RELEASE_LOG_IF_ALLOWED("didFinishLoading: (pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ")", m_parameters.webPageID, m_parameters.webFrameID, m_parameters.identifier);
 
@@ -411,7 +412,7 @@ void NetworkResourceLoader::didFinishLoading(double finishTime)
             // FIXME: Pass a real value or remove the encoded data size feature.
             sendBuffer(*m_bufferedData, -1);
         }
-        send(Messages::WebResourceLoader::DidFinishResourceLoad(finishTime));
+        send(Messages::WebResourceLoader::DidFinishResourceLoad(networkLoadMetrics));
     }
 
 #if ENABLE(NETWORK_CACHE)
@@ -606,13 +607,16 @@ void NetworkResourceLoader::sendResultForCacheEntry(std::unique_ptr<NetworkCache
 {
 #if ENABLE(SHAREABLE_RESOURCE)
     if (!entry->shareableResourceHandle().isNull()) {
-        send(Messages::WebResourceLoader::DidReceiveResource(entry->shareableResourceHandle(), currentTime()));
+        send(Messages::WebResourceLoader::DidReceiveResource(entry->shareableResourceHandle()));
         return;
     }
 #endif
 
+    WebCore::NetworkLoadMetrics networkLoadMetrics;
+    networkLoadMetrics.markComplete();
+
     sendBuffer(*entry->buffer(), entry->buffer()->size());
-    send(Messages::WebResourceLoader::DidFinishResourceLoad(currentTime()));
+    send(Messages::WebResourceLoader::DidFinishResourceLoad(networkLoadMetrics));
 }
 
 void NetworkResourceLoader::validateCacheEntry(std::unique_ptr<NetworkCache::Entry> entry)

@@ -319,7 +319,7 @@ private:
 #endif
 
     void willSendRequest(ResourceRequest&, const ResourceResponse&);
-    void finishedLoading(double finishTime);
+    void finishedLoading();
     void mainReceivedError(const ResourceError&);
     WEBCORE_EXPORT void redirectReceived(CachedResource&, ResourceRequest&, const ResourceResponse&) override;
     WEBCORE_EXPORT void responseReceived(CachedResource&, const ResourceResponse&) override;

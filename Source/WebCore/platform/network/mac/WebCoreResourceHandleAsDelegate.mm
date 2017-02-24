@@ -145,7 +145,7 @@ using namespace WebCore;
     ResourceResponse resourceResponse(response);
     resourceResponse.setSource(ResourceResponse::Source::Network);
 #if ENABLE(WEB_TIMING)
-    ResourceHandle::getConnectionTimingData(connection, resourceResponse.networkLoadTiming());
+    ResourceHandle::getConnectionTimingData(connection, resourceResponse.deprecatedNetworkLoadMetrics());
 #else
     UNUSED_PARAM(connection);
 #endif
@@ -215,7 +215,7 @@ using namespace WebCore;
     if (!m_handle || !m_handle->client())
         return;
 
-    m_handle->client()->didFinishLoading(m_handle, 0);
+    m_handle->client()->didFinishLoading(m_handle);
 }
 
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error

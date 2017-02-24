@@ -29,7 +29,7 @@
 #include "CacheValidation.h"
 #include "CertificateInfo.h"
 #include "HTTPHeaderMap.h"
-#include "NetworkLoadTiming.h"
+#include "NetworkLoadMetrics.h"
 #include "ParsedContentRange.h"
 #include "URL.h"
 #include <wtf/SHA1.h>
@@ -58,7 +58,7 @@ public:
         String httpStatusText;
         String httpVersion;
         HTTPHeaderMap httpHeaderFields;
-        NetworkLoadTiming networkLoadTiming;
+        NetworkLoadMetrics networkLoadMetrics;
         Type type;
         bool isRedirected;
     };
@@ -139,7 +139,10 @@ public:
     const std::optional<SHA1::Digest>& cacheBodyKey() const { return m_cacheBodyKey; }
     void setCacheBodyKey(const SHA1::Digest& key) { m_cacheBodyKey = key; }
 
-    NetworkLoadTiming& networkLoadTiming() const { return m_networkLoadTiming; }
+    // FIXME: This should be eliminated from ResourceResponse.
+    // Network loading metrics should be delivered via didFinishLoad
+    // and should not be part of the ResourceResponse.
+    NetworkLoadMetrics& deprecatedNetworkLoadMetrics() const { return m_networkLoadMetrics; }
 
     // The ResourceResponse subclass may "shadow" this method to provide platform-specific memory usage information
     unsigned memoryUsage() const
@@ -191,7 +194,7 @@ protected:
     AtomicString m_httpStatusText;
     AtomicString m_httpVersion;
     HTTPHeaderMap m_httpHeaderFields;
-    mutable NetworkLoadTiming m_networkLoadTiming;
+    mutable NetworkLoadMetrics m_networkLoadMetrics;
 
     mutable std::optional<CertificateInfo> m_certificateInfo;
 
@@ -239,10 +242,10 @@ void ResourceResponseBase::encode(Encoder& encoder) const
     encoder << m_httpVersion;
     encoder << m_httpHeaderFields;
 
-    // We don't want to put the networkLoadTiming info
+    // We don't want to put the networkLoadMetrics info
     // into the disk cache, because we will never use the old info.
     if (Encoder::isIPCEncoder)
-        encoder << m_networkLoadTiming;
+        encoder << m_networkLoadMetrics;
 
     encoder << m_httpStatusCode;
     encoder << m_certificateInfo;
@@ -278,8 +281,8 @@ bool ResourceResponseBase::decode(Decoder& decoder, ResourceResponseBase& respon
         return false;
     if (!decoder.decode(response.m_httpHeaderFields))
         return false;
-    // The networkLoadTiming info is only send over IPC and not stored in disk cache.
-    if (Decoder::isIPCDecoder && !decoder.decode(response.m_networkLoadTiming))
+    // The networkLoadMetrics info is only send over IPC and not stored in disk cache.
+    if (Decoder::isIPCDecoder && !decoder.decode(response.m_networkLoadMetrics))
         return false;
     if (!decoder.decode(response.m_httpStatusCode))
         return false;

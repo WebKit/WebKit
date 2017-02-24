@@ -570,9 +570,9 @@ void ApplicationCacheGroup::didReceiveData(ResourceHandle* handle, const char* d
     m_currentResource->data().append(data, length);
 }
 
-void ApplicationCacheGroup::didFinishLoading(ResourceHandle* handle, double finishTime)
+void ApplicationCacheGroup::didFinishLoading(ResourceHandle* handle)
 {
-    InspectorInstrumentation::didFinishLoading(m_frame, m_frame->loader().documentLoader(), m_currentResourceIdentifier, finishTime);
+    InspectorInstrumentation::didFinishLoading(m_frame, m_frame->loader().documentLoader(), m_currentResourceIdentifier);
 
     if (handle == m_manifestHandle) {
         didFinishLoadingManifest();

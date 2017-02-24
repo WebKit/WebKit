@@ -156,7 +156,7 @@ void ResourceHandleCFURLConnectionDelegateWithOperationQueue::didReceiveResponse
         
         ResourceResponse resourceResponse(cfResponse);
 #if ENABLE(WEB_TIMING)
-        ResourceHandle::getConnectionTimingData(connection, resourceResponse.networkLoadTiming());
+        ResourceHandle::getConnectionTimingData(connection, resourceResponse.deprecatedNetworkLoadMetrics());
 #else
         UNUSED_PARAM(connection);
 #endif
@@ -195,7 +195,7 @@ void ResourceHandleCFURLConnectionDelegateWithOperationQueue::didFinishLoading()
 
         LOG(Network, "CFNet - ResourceHandleCFURLConnectionDelegateWithOperationQueue::didFinishLoading(handle=%p) (%s)", m_handle, m_handle->firstRequest().url().string().utf8().data());
 
-        m_handle->client()->didFinishLoading(m_handle, 0);
+        m_handle->client()->didFinishLoading(m_handle);
     });
 }
 

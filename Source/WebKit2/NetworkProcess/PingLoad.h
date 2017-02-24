@@ -65,7 +65,7 @@ private:
         delete this;
     }
     void didReceiveData(Ref<WebCore::SharedBuffer>&&) final { ASSERT_NOT_REACHED(); }
-    void didCompleteWithError(const WebCore::ResourceError&) final { delete this; }
+    void didCompleteWithError(const WebCore::ResourceError&, const WebCore::NetworkLoadMetrics&) final { delete this; }
     void didSendData(uint64_t totalBytesSent, uint64_t totalBytesExpectedToSend) final { }
     void wasBlocked() final { delete this; }
     void cannotShowURL() final { delete this; }

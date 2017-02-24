@@ -64,7 +64,7 @@ namespace WebCore {
 
         void didReceiveResponse(unsigned long identifier, const ResourceResponse&) override;
         void didReceiveData(const char* data, int dataLength) override;
-        void didFinishLoading(unsigned long identifier, double) override;
+        void didFinishLoading(unsigned long identifier) override;
         void didFail(const ResourceError&) override;
 
     private:

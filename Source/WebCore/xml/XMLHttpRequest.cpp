@@ -1029,7 +1029,7 @@ void XMLHttpRequest::didFail(const ResourceError& error)
     networkError();
 }
 
-void XMLHttpRequest::didFinishLoading(unsigned long identifier, double)
+void XMLHttpRequest::didFinishLoading(unsigned long identifier)
 {
     if (m_error)
         return;

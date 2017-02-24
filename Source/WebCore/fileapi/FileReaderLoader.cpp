@@ -215,7 +215,7 @@ void FileReaderLoader::didReceiveData(const char* data, int dataLength)
         m_client->didReceiveData();
 }
 
-void FileReaderLoader::didFinishLoading(unsigned long, double)
+void FileReaderLoader::didFinishLoading(unsigned long)
 {
     if (m_variableLength && m_totalBytes > m_bytesLoaded) {
         RefPtr<ArrayBuffer> newData = m_rawData->slice(0, m_bytesLoaded);
