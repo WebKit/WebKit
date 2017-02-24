@@ -348,6 +348,11 @@ String DiagnosticLoggingKeys::domainCausingEnergyDrainKey()
     return ASCIILiteral("DomainCausingEnergyDrain");
 }
 
+String DiagnosticLoggingKeys::domainCausingJetsamKey()
+{
+    return ASCIILiteral("DomainCausingJetsam");
+}
+
 String DiagnosticLoggingKeys::domainVisitedKey()
 {
     return ASCIILiteral("DomainVisited");
