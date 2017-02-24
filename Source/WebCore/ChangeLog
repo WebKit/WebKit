@@ -1,3 +1,19 @@
+2017-02-24  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r212822. rdar://problem/30682429
+
+    2017-02-22  Per Arne Vollan  <pvollan@apple.com>
+
+            [Win] Crash under CACFLayerTreeHost::acceleratedCompositingAvailable().
+            https://bugs.webkit.org/show_bug.cgi?id=168711
+
+            Reviewed by Alex Christensen.
+
+            Add null pointer check.
+
+            * platform/graphics/ca/win/CACFLayerTreeHost.cpp:
+            (WebCore::CACFLayerTreeHost::acceleratedCompositingAvailable):
+
 2017-02-22  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r212831. rdar://problem/30628889
