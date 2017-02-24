@@ -1,3 +1,18 @@
+2017-02-23  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] Enforce a minimum layout height of 50pt for <audio>
+        https://bugs.webkit.org/show_bug.cgi?id=168801
+        <rdar://problem/30683453>
+
+        Reviewed by Eric Carlson.
+
+        We enforce a 50pt minimum layout height for <audio> elements. There is no way
+        for the page author to override this value since the min-height property is set
+        as !important in a <style> element contained in a ShadowRoot.
+
+        * Modules/modern-media-controls/controls/media-controls.css:
+        (:host(audio)):
+
 2017-02-23  Youenn Fablet  <youenn@apple.com>
 
         [WebRTC] Outgoing video quality is poor

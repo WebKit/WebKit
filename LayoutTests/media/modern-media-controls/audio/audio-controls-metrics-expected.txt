@@ -3,8 +3,12 @@ Testing the <audio> controls metrics.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS bounds.width is 200
-PASS bounds.height is 50
+PASS defaultAudio.getBoundingClientRect().width is 200
+PASS defaultAudio.getBoundingClientRect().height is 50
+PASS shortAudio.getBoundingClientRect().width is 200
+PASS shortAudio.getBoundingClientRect().height is 50
+PASS tallAudio.getBoundingClientRect().width is 200
+PASS tallAudio.getBoundingClientRect().height is 100
 
 PASS successfullyParsed is true
 

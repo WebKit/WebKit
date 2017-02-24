@@ -5,15 +5,30 @@
 
 description("Testing the <code>&lt;audio></code> controls metrics.");
 
-const audio = document.body.appendChild(document.createElement("audio"));
-audio.controls = true;
+const defaultAudio = document.body.appendChild(document.createElement("audio"));
+defaultAudio.controls = true;
 
-const bounds = audio.getBoundingClientRect();
-shouldBe("bounds.width", "200");
-shouldBe("bounds.height", "50");
+const shortAudio = document.body.appendChild(document.createElement("audio"));
+shortAudio.style.height = "20px !important";
+shortAudio.controls = true;
+
+const tallAudio = document.body.appendChild(document.createElement("audio"));
+tallAudio.style.height = "100px";
+tallAudio.controls = true;
+
+shouldBe("defaultAudio.getBoundingClientRect().width", "200");
+shouldBe("defaultAudio.getBoundingClientRect().height", "50");
+
+shouldBe("shortAudio.getBoundingClientRect().width", "200");
+shouldBe("shortAudio.getBoundingClientRect().height", "50");
+
+shouldBe("tallAudio.getBoundingClientRect().width", "200");
+shouldBe("tallAudio.getBoundingClientRect().height", "100");
 
 debug("");
-audio.remove();
+defaultAudio.remove();
+shortAudio.remove();
+tallAudio.remove();
 
 </script>
 <script src="../../../resources/js-test-post.js"></script>
