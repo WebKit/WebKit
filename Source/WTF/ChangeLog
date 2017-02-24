@@ -1,3 +1,12 @@
+2017-02-24  Alex Christensen  <achristensen@webkit.org>
+
+        Prepare to enable WebRTC on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=168811
+
+        Reviewed by Youenn Fablet.
+
+        * wtf/Platform.h:
+
 2017-02-23  Joseph Pecoraro  <pecoraro@apple.com>
 
         [Resource Timing] Gather timing information with reliable responseEnd time
