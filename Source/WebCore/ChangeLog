@@ -1,5 +1,22 @@
 2017-02-23  Antoine Quint  <graouts@apple.com>
 
+        [Modern Media Controls] Show "Loading" until playback starts
+        https://bugs.webkit.org/show_bug.cgi?id=168809
+        <rdar://problem/30687468>
+
+        Reviewed by Jon Lee.
+
+        We now display the "Loading" status as soon as we've started loading and
+        until we've obtained enough data to play. No test provided since we don't
+        have a way to specifically set networkState and readyState to the satisfactory
+        values.
+
+        * Modules/modern-media-controls/media/status-support.js:
+        (StatusSupport.prototype.syncControl):
+        (StatusSupport):
+
+2017-02-23  Antoine Quint  <graouts@apple.com>
+
         [Modern Media Controls] Enforce a minimum layout height of 50pt for <audio>
         https://bugs.webkit.org/show_bug.cgi?id=168801
         <rdar://problem/30683453>

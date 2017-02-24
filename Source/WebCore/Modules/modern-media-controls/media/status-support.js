@@ -42,18 +42,18 @@ class StatusSupport extends MediaControllerSupport
     {
         const media = this.mediaController.media;
         const isLiveBroadcast = media.duration === Number.POSITIVE_INFINITY;
-        const isPlayable = media.readyState > HTMLMediaElement.HAVE_METADATA && !media.error;
+        const canPlayThrough = media.readyState === HTMLMediaElement.HAVE_ENOUGH_DATA && !media.error;
 
         if (!!media.error)
             this.control.text = UIString("Error");
         else if (isLiveBroadcast && media.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA)
             this.control.text = UIString("Live Broadcast");
-        else if (!isPlayable && media.networkState === HTMLMediaElement.NETWORK_LOADING)
+        else if (!canPlayThrough && media.networkState === HTMLMediaElement.NETWORK_LOADING)
             this.control.text = UIString("Loading");
         else
             this.control.text = "";
 
-        this.control.enabled = isLiveBroadcast || !isPlayable;
+        this.control.enabled = isLiveBroadcast || !canPlayThrough;
     }
 
 }
