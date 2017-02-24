@@ -275,8 +275,21 @@ GLContextGLX::~GLContextGLX()
         cairo_device_destroy(m_cairoDevice);
 
     if (m_context) {
+        // Due to a bug in some nvidia drivers, we need bind the default framebuffer in a context before
+        // destroying it to avoid a crash. In order to do that, we need to make the context current and,
+        // after the bind change, we need to set the previous context again.
+        GLContext* previousActiveContext = GLContext::current();
+        makeContextCurrent();
         glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
-        glXMakeCurrent(m_x11Display, None, None);
+        if (previousActiveContext && previousActiveContext != this) {
+            // If there was a previous context different from this one, just make it current again.
+            previousActiveContext->makeContextCurrent();
+        } else {
+            // If there was no previous context or this was the previous, set a void context as current.
+            // We use the GLX function here, and the destructor of GLContext will clean the pointer
+            // returned by GLContext::current().
+            glXMakeCurrent(m_x11Display, None, None);
+        }
     }
 }
 

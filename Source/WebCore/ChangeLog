@@ -1,3 +1,19 @@
+2017-02-24  Miguel Gomez  <magomez@igalia.com>
+
+        [GTK] WebkitWebProcess crashes on exit on nvidia if threaded compositing is enabled
+        https://bugs.webkit.org/show_bug.cgi?id=165522
+
+        Reviewed by Carlos Garcia Campos.
+
+        Before destrying a GLContextGLX we need to set the default framebufer to avoid a bug
+        in some nvidia drivers. Ensure that we set the context as current before performing
+        that operation, and set the appropriate current context after doing so.
+
+        No new tests.
+
+        * platform/graphics/glx/GLContextGLX.cpp:
+        (WebCore::GLContextGLX::~GLContextGLX):
+
 2017-02-24  Chris Dumez  <cdumez@apple.com>
 
         [iOS][WK2] Disable network cache speculative revalidation / loading in low power mode
