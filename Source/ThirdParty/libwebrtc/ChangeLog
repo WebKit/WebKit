@@ -1,3 +1,14 @@
+2017-02-24  Alex Christensen  <achristensen@webkit.org>
+
+        Remove unneeded protobuf tests directory.
+        
+        Rubber-stamped by Joe Pecoraro.
+        
+        This directory contained a swift file that was causing problems in an internal verification step.
+
+        * Source/third_party/protobuf/objectivec/Tests: Removed.
+        (And everything in this subdirectory)
+
 2017-02-22  Youenn Fablet  <youenn@apple.com>
 
         [WebRTC] Disable libwebrtc stderr logging in release mode
