@@ -1,3 +1,15 @@
+2017-02-23  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, try to reduce flakiness to timer throttling tests
+
+        Try to reduce flakiness to timer throttling tests by increasing
+        tolerance.
+
+        * fast/dom/timer-throttling-hidden-page-expected.txt:
+        * fast/dom/timer-throttling-hidden-page-non-nested-expected.txt:
+        * fast/dom/timer-throttling-hidden-page-non-nested.html:
+        * fast/dom/timer-throttling-hidden-page.html:
+
 2017-02-23  Javier Fernandez  <jfernandez@igalia.com>
 
         [GTK] Layout test imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-api-texttracks.html is flaky

@@ -3,13 +3,13 @@ Bug 98474: Throttle DOM timers on hidden pages.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS timerIntervalWhilePageVisible is within 20 of 10
-PASS timerIntervalWhilePageVisible is within 20 of 10
-PASS timerIntervalWhilePageVisible is within 20 of 10
-PASS timerIntervalWhilePageVisible is within 20 of 10
-PASS timerIntervalWhilePageVisible is within 20 of 10
+PASS timerIntervalWhilePageVisible is within 30 of 10
+PASS timerIntervalWhilePageVisible is within 30 of 10
+PASS timerIntervalWhilePageVisible is within 30 of 10
+PASS timerIntervalWhilePageVisible is within 30 of 10
+PASS timerIntervalWhilePageVisible is within 30 of 10
 PASS timerIntervalWhilePageHidden > (timeoutInterval + tolerance) is true
-PASS timerIntervalWhilePageVisible is within 20 of 10
+PASS timerIntervalWhilePageVisible is within 30 of 10
 PASS successfullyParsed is true
 
 TEST COMPLETE
