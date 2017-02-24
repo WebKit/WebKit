@@ -1,3 +1,12 @@
+2017-02-23  Javier Fernandez  <jfernandez@igalia.com>
+
+        [GTK] Layout test imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-api-texttracks.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=168799
+
+        Unreviewed test gardening.
+
+        * platform/gtk/TestExpectations:
+
 2017-02-23  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] Enforce a minimum layout height of 50pt for <audio>
