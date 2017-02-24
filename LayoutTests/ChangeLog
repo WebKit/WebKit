@@ -1,3 +1,10 @@
+2017-02-24  Antti Koivisto  <antti@apple.com>
+
+        Remove leftover html files.
+
+        * http/tests/cache/disk-cache/shattered-deduplication-expected.html: Removed.
+        * http/tests/cache/disk-cache/shattered-deduplication.html: Removed.
+
 2017-02-24  Alex Christensen  <achristensen@webkit.org>
 
         .. should not remove windows drive letters in paths of file URLs
