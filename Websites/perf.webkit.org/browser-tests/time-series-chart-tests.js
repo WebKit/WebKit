@@ -77,9 +77,11 @@ function createChartWithSampleCluster(context, chartOptions = {}, options = {})
     const chart = new TimeSeriesChart([
         {
             type: 'current',
+            lineStyle: options.lineStyle || '#666',
             measurementSet: MeasurementSet.findSet(1, 1, 0),
             interactive: options.interactive || false,
-            includeOutliers: options.includeOutliers || false
+            includeOutliers: options.includeOutliers || false,
+            sampleData: options.sampleData || false,
         }], chartOptions);
     const element = chart.element();
     element.style.width = options.width || '300px';
@@ -541,7 +543,6 @@ describe('TimeSeriesChart', () => {
 
                 expect(chart.content().querySelector('canvas')).to.be(null);
                 return waitForComponentsToRender(context).then(() => {
-                    console.log('done')
                     expect(chart.content().querySelector('canvas')).to.not.be(null);
                 });
             });
@@ -828,19 +829,50 @@ describe('TimeSeriesChart', () => {
                     CanvasTest.expectCanvasesMismatch(canvasWithoutYAxis, canvasWithYAxis1);
                     CanvasTest.expectCanvasesMismatch(canvasWithYAxis1, canvasWithYAxis2);
 
-                    let content1 = CanvasTest.canvasImageData(canvasWithYAxis1);
-                    let foundGridLine = false;
-                    for (let y = 0; y < content1.height; y++) {
-                        let endOfY = content1.width * 4 * y;
-                        let r = content1.data[endOfY - 4];
-                        let g = content1.data[endOfY - 3];
-                        let b = content1.data[endOfY - 2];
-                        if (r == 204 && g == 204 && b == 204) {
-                            foundGridLine = true;
-                            break;
-                        }
-                    }
-                    expect(foundGridLine).to.be(true);
+                    expect(CanvasTest.canvasContainsColor(canvasWithYAxis1, {r: 204, g: 204, b: 204},
+                        {x: canvasWithYAxis1.width - 1, width: 1, y: 0, height: canvasWithYAxis1.height})).to.be(true);
+                });
+            });
+        });
+
+        it('should render the sampled time series', () => {
+            const context = new BrowsingContext();
+            return context.importScripts(scripts, 'ComponentBase', 'TimeSeriesChart', 'InteractiveTimeSeriesChart', 'MeasurementSet', 'MockRemoteAPI').then(() => {
+                const chartWithoutSampling = createChartWithSampleCluster(context, {}, {lineStyle: 'rgb(0, 128, 255)', width: '100px', height: '100px', sampleData: false});
+                const chartWithSampling = createChartWithSampleCluster(context, {}, {lineStyle: 'rgb(0, 128, 255)', width: '100px', height: '100px', sampleData: true});
+
+                chartWithoutSampling.setDomain(sampleCluster.startTime, sampleCluster.endTime);
+                chartWithoutSampling.fetchMeasurementSets();
+                respondWithSampleCluster(context.symbols.MockRemoteAPI.requests[0]);
+
+                chartWithSampling.setDomain(sampleCluster.startTime, sampleCluster.endTime);
+                chartWithSampling.fetchMeasurementSets();
+
+                let canvasWithSampling;
+                let canvasWithoutSampling;
+                return waitForComponentsToRender(context).then(() => {
+                    canvasWithoutSampling = chartWithoutSampling.content().querySelector('canvas');
+                    canvasWithSampling = chartWithSampling.content().querySelector('canvas');
+
+                    CanvasTest.expectCanvasesMatch(canvasWithSampling, canvasWithoutSampling);
+                    expect(CanvasTest.canvasContainsColor(canvasWithoutSampling, {r: 0, g: 128, b: 255})).to.be(true);
+                    expect(CanvasTest.canvasContainsColor(canvasWithSampling, {r: 0, g: 128, b: 255})).to.be(true);
+
+                    const diff = sampleCluster.endTime - sampleCluster.startTime;
+                    chartWithoutSampling.setDomain(sampleCluster.startTime - 2 * diff, sampleCluster.endTime);
+                    chartWithSampling.setDomain(sampleCluster.startTime - 2 * diff, sampleCluster.endTime);
+
+                    CanvasTest.fillCanvasBeforeRedrawCheck(canvasWithoutSampling);
+                    CanvasTest.fillCanvasBeforeRedrawCheck(canvasWithSampling);
+                    return waitForComponentsToRender(context);
+                }).then(() => {
+                    expect(CanvasTest.hasCanvasBeenRedrawn(canvasWithoutSampling)).to.be(true);
+                    expect(CanvasTest.hasCanvasBeenRedrawn(canvasWithSampling)).to.be(true);
+
+                    expect(CanvasTest.canvasContainsColor(canvasWithoutSampling, {r: 0, g: 128, b: 255})).to.be(true);
+                    expect(CanvasTest.canvasContainsColor(canvasWithSampling, {r: 0, g: 128, b: 255})).to.be(true);
+
+                    CanvasTest.expectCanvasesMismatch(canvasWithSampling, canvasWithoutSampling);
                 });
             });
         });

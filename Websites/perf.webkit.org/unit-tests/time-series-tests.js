@@ -276,6 +276,20 @@ describe('TimeSeries', () => {
 describe('TimeSeriesView', () => {
 
     describe('filter', () => {
+        it('should call callback with an element in the view and its index', () => {
+            const timeSeries = new TimeSeries();
+            addPointsToSeries(timeSeries, fivePoints);
+            const originalView = timeSeries.viewBetweenPoints(fivePoints[1], fivePoints[3]);
+            const points = [];
+            const indices = [];
+            const view = originalView.filter((point, index) => {
+                points.push(point);
+                indices.push(index);
+            });
+            assert.deepEqual(points, [fivePoints[1], fivePoints[2], fivePoints[3]]);
+            assert.deepEqual(indices, [0, 1, 2]);
+        });
+
         it('should create a filtered view', () => {
             const timeSeries = new TimeSeries();
             addPointsToSeries(timeSeries, fivePoints);

@@ -1,5 +1,48 @@
 2017-02-23  Ryosuke Niwa  <rniwa@webkit.org>
 
+        New sampling algorithm shows very few points when zoomed out
+        https://bugs.webkit.org/show_bug.cgi?id=168813
+
+        Reviewed by Saam Barati.
+
+        When a chart is zoomed out to a large time interval, the new sampling algorithm introduced in r212853 can
+        hide most of the data points because the difference between the preceding point's time and the succeeding
+        point's time of most points will be below the threshold we computed.
+
+        Instead, rank each data point based on the aforementioned time interval difference, and pick the first M data
+        points when M data points are to be shown.
+
+        This makes the new algorithm behave like our old algorithm while keeping it stable still. Note that this
+        algorithm still biases data points without a close neighboring point but this seems to work out in practice
+        because such a point tends to be an important sample anyway, and we don't have a lot of space between
+        data points since we aim to show about one point per pixel.
+
+        * browser-tests/index.html:
+        (CanvasTest.canvasContainsColor): Extracted from one of the test cases and generalized. Returns true when
+        the specified region of the canvas contains a specified color (alpha is optional).
+        * browser-tests/time-series-chart-tests.js: Added a test case for sampling. It checks that sampling happens
+        and that we always show some data point even when zoomed out to a large time interval.
+        (createChartWithSampleCluster):
+
+        * public/v3/components/interactive-time-series-chart.js:
+        (InteractiveTimeSeriesChart.prototype._sampleTimeSeries):
+        * public/v3/components/time-series-chart.js:
+        (TimeSeriesChart.prototype._ensureSampledTimeSeries): M, the number of data points we pick must be computed
+        based on the width of data points we're about to draw constrained by the canvas size. e.g. when the canvas
+        is only half filled, we shouldn't be showing two points per pixel in the filled region.
+        (TimeSeriesChart.prototype._sampleTimeSeries): Refined the algorithm. First, compute the time difference or
+        the rank for each N data points. Sort those ranks in descending order (in the order we prefer), and include
+        all data points above the M-th rank in the sample.
+        (TimeSeriesChart.prototype.computeTimeGrid): Revert the inadvertent change in r212935.
+
+        * public/v3/models/time-series.js:
+        (TimeSeriesView.prototype.filter): Fixed a bug that the indices passed onto the callback were shifted by the
+        starting index.
+        * unit-tests/time-series-tests.js: Added a test case to ensure callbacks are called with correct data points
+        and indices.
+
+2017-02-23  Ryosuke Niwa  <rniwa@webkit.org>
+
         REGRESSION(r212542): Make TimeSeriesChart.computeTimeGrid stops x-axis grid prematurely
         https://bugs.webkit.org/show_bug.cgi?id=168812
 

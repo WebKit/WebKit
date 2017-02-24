@@ -167,11 +167,12 @@ class TimeSeriesView {
 
     filter(callback)
     {
-        const data = this._data;
         const filteredData = [];
-        for (let i = this._startingIndex; i < this._afterEndingIndex; i++) {
-            if (callback(data[i], i))
-                filteredData.push(data[i]);
+        let i = 0;
+        for (let point of this) {
+            if (callback(point, i))
+                filteredData.push(point);
+            i++;
         }
         return new TimeSeriesView(this._timeSeries, 0, filteredData.length, filteredData);
     }

@@ -163,6 +163,23 @@ const CanvasTest = {
     },
 
     canvasImageData(canvas) { return canvasImageData(canvas); },
+
+    canvasContainsColor(canvas, color, rect = {})
+    {
+        const content = canvas.getContext('2d').getImageData(rect.x || 0, rect.y || 0, rect.width || canvas.width, rect.height || canvas.height);
+        let found = false;
+        const data = content.data;
+        for (let startOfPixel = 0; startOfPixel < data.length; startOfPixel += 4) {
+            let r = data[startOfPixel];
+            let g = data[startOfPixel + 1];
+            let b = data[startOfPixel + 2];
+            let a = data[startOfPixel + 3];
+            if (r == color.r && g == color.g && b == color.b && (color.a == undefined || a == color.a))
+                return true;
+        }
+        return false;
+    },
+
     expectCanvasesMatch(canvas1, canvas2) { return canvasRefTest(canvas1, canvas2, true); },
     expectCanvasesMismatch(canvas1, canvas2) { return canvasRefTest(canvas1, canvas2, false); },
 }

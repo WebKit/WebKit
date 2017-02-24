@@ -382,11 +382,11 @@ class InteractiveTimeSeriesChart extends TimeSeriesChart {
         return metrics;
     }
 
-    _sampleTimeSeries(data, minimumTimeDiff, excludedPoints)
+    _sampleTimeSeries(data, maximumNumberOfPoints, excludedPoints)
     {
         if (this._indicatorID)
             excludedPoints.add(this._indicatorID);
-        return super._sampleTimeSeries(data, minimumTimeDiff, excludedPoints);
+        return super._sampleTimeSeries(data, maximumNumberOfPoints, excludedPoints);
     }
 
     _renderChartContent(context, metrics)

@@ -490,9 +490,6 @@ class TimeSeriesChart extends ComponentBase {
             if (!timeSeries)
                 return null;
 
-            // A chart with X px width shouldn't have more than 2X / <radius-of-points> data points.
-            const maximumNumberOfPoints = 2 * metrics.chartWidth / (source.pointRadius || 2);
-
             const pointAfterStart = timeSeries.findPointAfterTime(startTime);
             const pointBeforeStart = (pointAfterStart ? timeSeries.previousPoint(pointAfterStart) : null) || timeSeries.firstPoint();
             const pointAfterEnd = timeSeries.findPointAfterTime(endTime) || timeSeries.lastPoint();
@@ -504,7 +501,11 @@ class TimeSeriesChart extends ComponentBase {
             if (!source.sampleData)
                 return view;
 
-            return this._sampleTimeSeries(view, (endTime - startTime) / maximumNumberOfPoints, new Set);
+            // A chart with X px width shouldn't have more than 2X / <radius-of-points> data points.
+            const viewWidth = Math.min(metrics.chartWidth, metrics.timeToX(pointAfterEnd.time) - metrics.timeToX(pointBeforeStart.time));
+            const maximumNumberOfPoints = 2 * viewWidth / (source.pointRadius || 2);
+
+            return this._sampleTimeSeries(view, maximumNumberOfPoints, new Set);
         });
 
         Instrumentation.endMeasuringTime('TimeSeriesChart', 'ensureSampledTimeSeries');
@@ -514,19 +515,27 @@ class TimeSeriesChart extends ComponentBase {
         return true;
     }
 
-    _sampleTimeSeries(view, minimumTimeDiff, excludedPoints)
+    _sampleTimeSeries(view, maximumNumberOfPoints, excludedPoints)
     {
-        if (view.length() < 2)
+
+        if (view.length() < 2 || maximumNumberOfPoints >= view.length() || maximumNumberOfPoints < 1)
             return view;
 
         Instrumentation.startMeasuringTime('TimeSeriesChart', 'sampleTimeSeries');
 
-        const sampledData = view.filter((point, i) => {
-            if (excludedPoints.has(point.id))
-                return true;
+        let ranks = new Array(view.length());
+        let i = 0;
+        for (let point of view) {
             let previousPoint = view.previousPoint(point) || point;
             let nextPoint = view.nextPoint(point) || point;
-            return nextPoint.time - previousPoint.time >= minimumTimeDiff;
+            ranks[i] = nextPoint.time - previousPoint.time;
+            i++;
+        }
+
+        const sortedRanks = ranks.slice(0).sort((a, b) => b - a);
+        const minimumRank = sortedRanks[Math.floor(maximumNumberOfPoints)];
+        const sampledData = view.filter((point, i) => {
+            return excludedPoints.has(point.id) || ranks[i] >= minimumRank;
         });
 
         Instrumentation.endMeasuringTime('TimeSeriesChart', 'sampleTimeSeries');
@@ -619,7 +628,7 @@ class TimeSeriesChart extends ComponentBase {
 
         let previousDate = null;
         let previousMonth = null;
-        while (currentTime <= max) {
+        while (currentTime <= max && result.length < maxLabels) {
             const time = new Date(currentTime);
             const month = time.getUTCMonth() + 1;
             const date = time.getUTCDate();
