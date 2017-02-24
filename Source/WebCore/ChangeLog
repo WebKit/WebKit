@@ -1,5 +1,25 @@
 2017-02-23  Antoine Quint  <graouts@apple.com>
 
+        [Modern Media Controls] Controls overflow when media element has border or padding
+        https://bugs.webkit.org/show_bug.cgi?id=168818
+        <rdar://problem/30689780>
+
+        Reviewed by Jon Lee.
+
+        We used to query the media element's layout size to compute the size of the media controls,
+        which would account for border and padding. Instead, we should use the size of the container,
+        at the root of the ShadowRoot, which will always match the size of the media.
+
+        Test: media/modern-media-controls/media-controller/media-controller-controls-sizing-with-border-and-padding.html
+
+        * Modules/modern-media-controls/controls/media-controls.css:
+        (.media-controls-container,):
+        * Modules/modern-media-controls/media/media-controller.js:
+        (MediaController.prototype._updateControlsSize):
+        (MediaController.prototype._controlsWidth):
+
+2017-02-23  Antoine Quint  <graouts@apple.com>
+
         [Modern Media Controls] Dragging controls in fullscreen on macOS prevents scrubbing or interacting with controls
         https://bugs.webkit.org/show_bug.cgi?id=168820
         <rdar://problem/30690281>

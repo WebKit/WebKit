@@ -177,12 +177,12 @@ class MediaController
     _updateControlsSize()
     {
         this.controls.width = this._controlsWidth();
-        this.controls.height = Math.round(this.media.offsetHeight * this.controls.scaleFactor);
+        this.controls.height = Math.round(this.container.getBoundingClientRect().height * this.controls.scaleFactor);
     }
 
     _controlsWidth()
     {
-        return Math.round(this.media.offsetWidth * (this.controls ? this.controls.scaleFactor : 1));
+        return Math.round(this.container.getBoundingClientRect().width * (this.controls ? this.controls.scaleFactor : 1));
     }
 
     _returnMediaLayerToInlineIfNeeded()

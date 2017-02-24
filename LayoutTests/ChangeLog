@@ -1,5 +1,32 @@
 2017-02-23  Antoine Quint  <graouts@apple.com>
 
+        [Modern Media Controls] Controls overflow when media element has border or padding
+        https://bugs.webkit.org/show_bug.cgi?id=168818
+        <rdar://problem/30689780>
+
+        Reviewed by Jon Lee.
+
+        Updating a host of tests to ensure they have an explicitly host and add a new test
+        to check that we have the correct size with borders and padding.
+
+        * media/modern-media-controls/fullscreen-support/fullscreen-support-click.html:
+        * media/modern-media-controls/media-controller/media-controller-compact-expected.txt:
+        * media/modern-media-controls/media-controller/media-controller-compact.html:
+        * media/modern-media-controls/media-controller/media-controller-controls-sizing-with-border-and-padding-expected.txt: Added.
+        * media/modern-media-controls/media-controller/media-controller-controls-sizing-with-border-and-padding.html: Added.
+        * media/modern-media-controls/media-controller/media-controller-reduced-padding-expected.txt:
+        * media/modern-media-controls/media-controller/media-controller-reduced-padding.html:
+        * media/modern-media-controls/media-controller/media-controller-tight-padding-expected.txt:
+        * media/modern-media-controls/media-controller/media-controller-tight-padding.html:
+        * media/modern-media-controls/pip-support/pip-support-click.html:
+        * media/modern-media-controls/scrubber-support/scrubber-support-click.html:
+        * media/modern-media-controls/scrubber-support/scrubber-support-drag.html:
+        * media/modern-media-controls/volume-support/volume-support-click.html:
+        * media/modern-media-controls/volume-support/volume-support-drag.html:
+        * media/track/track-cue-rendering-snap-to-lines-not-set.html: Turn modern media controls off for this test to pass.
+
+2017-02-23  Antoine Quint  <graouts@apple.com>
+
         [Modern Media Controls] Dragging controls in fullscreen on macOS prevents scrubbing or interacting with controls
         https://bugs.webkit.org/show_bug.cgi?id=168820
         <rdar://problem/30690281>
