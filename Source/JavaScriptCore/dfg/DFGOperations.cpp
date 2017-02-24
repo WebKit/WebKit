@@ -891,7 +891,6 @@ EncodedJSValue JIT_OPERATION operationParseIntString(ExecState* exec, JSString* 
     auto viewWithString = string->viewWithUnderlyingString(*exec);
     RETURN_IF_EXCEPTION(scope, { });
 
-    // This version is as if radix was undefined. Hence, undefined.toNumber() === 0.
     return parseIntResult(parseInt(viewWithString.view, radix));
 }
 
