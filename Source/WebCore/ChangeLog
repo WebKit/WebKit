@@ -1,3 +1,22 @@
+2017-02-23  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] Dragging controls in fullscreen on macOS prevents scrubbing or interacting with controls
+        https://bugs.webkit.org/show_bug.cgi?id=168820
+        <rdar://problem/30690281>
+
+        Reviewed by Jon Lee.
+
+        We broke this in https://bugs.webkit.org/show_bug.cgi?id=168755. We restore the check that the
+        event target when initiating a drag is the controls bar itself and not some of its content.
+
+        Since this wasn't caught by our existing tests, we add a test that attemps to initiate a drag
+        starting over one of the controls and notice that no dragging occurs.
+
+        Test: media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-drag-is-prevented-over-button.html
+
+        * Modules/modern-media-controls/controls/macos-fullscreen-media-controls.js:
+        (MacOSFullscreenMediaControls.prototype._handleMousedown):
+
 2017-02-23  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (r211305): Masks on composited elements with preserve-3d broken
