@@ -175,6 +175,45 @@ namespace WTF {
         static const bool safeToCompareToEmptyOrDeleted = PairHash<T, U>::safeToCompareToEmptyOrDeleted;
     };
 
+    template<typename... Types>
+    struct TupleHash {
+        template<size_t I = 0>
+        static typename std::enable_if<I < sizeof...(Types) - 1, unsigned>::type hash(const std::tuple<Types...>& t)
+        {
+            using IthTupleElementType = typename std::tuple_element<I, typename std::tuple<Types...>>::type;
+            return pairIntHash(DefaultHash<IthTupleElementType>::Hash::hash(std::get<I>(t)), hash<I + 1>(t));
+        }
+
+        template<size_t I = 0>
+        static typename std::enable_if<I == sizeof...(Types) - 1, unsigned>::type hash(const std::tuple<Types...>& t)
+        {
+            using IthTupleElementType = typename std::tuple_element<I, typename std::tuple<Types...>>::type;
+            return DefaultHash<IthTupleElementType>::Hash::hash(std::get<I>(t));
+        }
+
+        template<size_t I = 0>
+        static typename std::enable_if<I < sizeof...(Types) - 1, bool>::type equal(const std::tuple<Types...>& a, const std::tuple<Types...>& b)
+        {
+            using IthTupleElementType = typename std::tuple_element<I, typename std::tuple<Types...>>::type;
+            return DefaultHash<IthTupleElementType>::Hash::equal(std::get<I>(a), std::get<I>(b)) && equal<I + 1>(a, b);
+        }
+
+        template<size_t I = 0>
+        static typename std::enable_if<I == sizeof...(Types) - 1, bool>::type equal(const std::tuple<Types...>& a, const std::tuple<Types...>& b)
+        {
+            using IthTupleElementType = typename std::tuple_element<I, typename std::tuple<Types...>>::type;
+            return DefaultHash<IthTupleElementType>::Hash::equal(std::get<I>(a), std::get<I>(b));
+        }
+
+        // We should use safeToCompareToEmptyOrDeleted = DefaultHash<Types>::Hash::safeToCompareToEmptyOrDeleted &&... whenever
+        // we switch to C++17. We can't do anything better here right now because GCC can't do C++.
+        template<typename Bool>
+        static constexpr bool allTrue(Bool value) { return value; }
+        template<typename Bool, typename... Bools>
+        static constexpr bool allTrue(Bool value, Bools... values) { return value && allTrue(values...); }
+        static const bool safeToCompareToEmptyOrDeleted = allTrue(DefaultHash<Types>::Hash::safeToCompareToEmptyOrDeleted...);
+    };
+
     // make IntHash the default hash function for many integer types
 
     template<> struct DefaultHash<bool> { typedef IntHash<uint8_t> Hash; };
@@ -224,6 +263,7 @@ namespace WTF {
     // make PairHash the default hash function for pairs of arbitrary values.
 
     template<typename T, typename U> struct DefaultHash<std::pair<T, U>> { typedef PairHash<T, U> Hash; };
+    template<typename... Types> struct DefaultHash<std::tuple<Types...>> { typedef TupleHash<Types...> Hash; };
 
 } // namespace WTF
 

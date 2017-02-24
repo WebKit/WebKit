@@ -56,7 +56,7 @@ void PrototypeMap::addPrototype(JSObject* object)
 
 inline Structure* PrototypeMap::createEmptyStructure(JSGlobalObject* globalObject, JSObject* prototype, const TypeInfo& typeInfo, const ClassInfo* classInfo, IndexingType indexingType, unsigned inlineCapacity)
 {
-    auto key = std::make_pair(prototype, std::make_pair(inlineCapacity, std::make_pair(classInfo, globalObject)));
+    auto key = std::make_tuple(prototype, inlineCapacity, classInfo, globalObject);
     if (Structure* structure = m_structures.get(key)) {
         ASSERT(isPrototype(prototype));
         return structure;
@@ -86,7 +86,7 @@ Structure* PrototypeMap::emptyObjectStructureForPrototype(JSGlobalObject* global
 
 void PrototypeMap::clearEmptyObjectStructureForPrototype(JSGlobalObject* globalObject, JSObject* object, unsigned inlineCapacity)
 {
-    m_structures.remove(std::make_pair(object, std::make_pair(inlineCapacity, std::make_pair(JSFinalObject::info(), globalObject))));
+    m_structures.remove(std::make_tuple(object, inlineCapacity, JSFinalObject::info(), globalObject));
 }
 
 } // namespace JSC

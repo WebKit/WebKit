@@ -1,3 +1,24 @@
+2017-02-24  Keith Miller  <keith_miller@apple.com>
+
+        We should be able to use std::tuples as keys in HashMap
+        https://bugs.webkit.org/show_bug.cgi?id=168805
+
+        Reviewed by Filip Pizlo.
+
+        This patch adds support for using std::tupeles as the key
+        type in HashMap. It is equivalent to doing a sequence of
+        std::pairs but has a nicer syntax.
+
+        * wtf/HashFunctions.h:
+        (WTF::TupleHash::hash):
+        (WTF::TupleHash::equal):
+        (WTF::TupleHash::allTrue):
+        * wtf/HashTraits.h:
+        (WTF::TupleHashTraits::allTrue):
+        (WTF::TupleHashTraits::emptyValue):
+        (WTF::TupleHashTraits::constructDeletedValue):
+        (WTF::TupleHashTraits::isDeletedValue):
+
 2017-02-24  Alex Christensen  <achristensen@webkit.org>
 
         Prepare to enable WebRTC on iOS

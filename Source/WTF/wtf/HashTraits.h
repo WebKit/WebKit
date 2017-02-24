@@ -256,6 +256,29 @@ struct PairHashTraits : GenericHashTraits<std::pair<typename FirstTraitsArg::Tra
 template<typename First, typename Second>
 struct HashTraits<std::pair<First, Second>> : public PairHashTraits<HashTraits<First>, HashTraits<Second>> { };
 
+template<typename FirstTrait, typename... Traits>
+struct TupleHashTraits : GenericHashTraits<std::tuple<typename FirstTrait::TraitType, typename Traits::TraitType...>> {
+    typedef std::tuple<typename FirstTrait::TraitType, typename Traits::TraitType...> TraitType;
+    typedef std::tuple<typename FirstTrait::EmptyValueType, typename Traits::EmptyValueType...> EmptyValueType;
+
+    // We should use emptyValueIsZero = Traits::emptyValueIsZero &&... whenever we switch to C++17. We can't do anything
+    // better here right now because GCC can't do C++.
+    template<typename Bool>
+    static constexpr bool allTrue(Bool value) { return value; }
+    template<typename Bool, typename... Bools>
+    static constexpr bool allTrue(Bool value, Bools... values) { return value && allTrue(values...); }
+    static const bool emptyValueIsZero = allTrue(FirstTrait::emptyValueIsZero, Traits::emptyValueIsZero...);
+    static EmptyValueType emptyValue() { return std::make_tuple(FirstTrait::emptyValue(), Traits::emptyValue()...); }
+
+    static const unsigned minimumTableSize = FirstTrait::minimumTableSize;
+
+    static void constructDeletedValue(TraitType& slot) { FirstTrait::constructDeletedValue(std::get<0>(slot)); }
+    static bool isDeletedValue(const TraitType& value) { return FirstTrait::isDeletedValue(std::get<0>(value)); }
+};
+
+template<typename... Traits>
+struct HashTraits<std::tuple<Traits...>> : public TupleHashTraits<HashTraits<Traits>...> { };
+
 template<typename KeyTypeArg, typename ValueTypeArg>
 struct KeyValuePair {
     typedef KeyTypeArg KeyType;

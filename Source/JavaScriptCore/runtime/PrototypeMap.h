@@ -57,7 +57,7 @@ private:
 
     WeakGCMap<JSObject*, JSObject> m_prototypes;
     // FIXME: make the key a struct.
-    typedef WeakGCMap<std::pair<JSObject*, std::pair<unsigned, std::pair<const ClassInfo*, JSGlobalObject*>>>, Structure> StructureMap;
+    typedef WeakGCMap<std::tuple<JSObject*, unsigned, const ClassInfo*, JSGlobalObject*>, Structure> StructureMap;
     StructureMap m_structures;
 };
 

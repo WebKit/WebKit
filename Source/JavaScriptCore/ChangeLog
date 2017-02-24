@@ -1,3 +1,19 @@
+2017-02-24  Keith Miller  <keith_miller@apple.com>
+
+        We should be able to use std::tuples as keys in HashMap
+        https://bugs.webkit.org/show_bug.cgi?id=168805
+
+        Reviewed by Filip Pizlo.
+
+        Convert the mess of std::pairs we used as the keys in PrototypeMap
+        to a std::tuple. I also plan on using this for a HashMap in wasm.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * runtime/PrototypeMap.cpp:
+        (JSC::PrototypeMap::createEmptyStructure):
+        (JSC::PrototypeMap::clearEmptyObjectStructureForPrototype):
+        * runtime/PrototypeMap.h:
+
 2017-02-24  Saam Barati  <sbarati@apple.com>
 
         Unreviewed. Remove inaccurate copy-paste comment from r212939.
