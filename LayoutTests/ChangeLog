@@ -1,3 +1,45 @@
+2017-02-24  John Wilander  <wilander@apple.com>
+
+        Resource Load Statistics: Add alternate classification method
+        https://bugs.webkit.org/show_bug.cgi?id=168347
+        <rdar://problem/30352793>
+        <rdar://problem/30646710>
+        <rdar://problem/30660708>
+
+        Reviewed by Alex Christensen.
+
+        * http/tests/loading/resourceLoadStatistics/classify-as-non-prevalent-based-on-mixed-statistics-expected.txt: Added.
+        * http/tests/loading/resourceLoadStatistics/classify-as-non-prevalent-based-on-mixed-statistics.html: Added.
+        * http/tests/loading/resourceLoadStatistics/classify-as-non-prevalent-based-on-sub-frame-under-top-frame-origins-expected.txt: Added.
+        * http/tests/loading/resourceLoadStatistics/classify-as-non-prevalent-based-on-sub-frame-under-top-frame-origins.html: Added.
+        * http/tests/loading/resourceLoadStatistics/classify-as-non-prevalent-based-on-subresource-under-top-frame-origins-expected.txt: Added.
+        * http/tests/loading/resourceLoadStatistics/classify-as-non-prevalent-based-on-subresource-under-top-frame-origins.html: Added.
+        * http/tests/loading/resourceLoadStatistics/classify-as-non-prevalent-based-on-subresource-unique-redirects-to-expected.txt: Added.
+        * http/tests/loading/resourceLoadStatistics/classify-as-non-prevalent-based-on-subresource-unique-redirects-to.html: Added.
+        * http/tests/loading/resourceLoadStatistics/classify-as-prevalent-based-on-mixed-statistics-expected.txt: Added.
+        * http/tests/loading/resourceLoadStatistics/classify-as-prevalent-based-on-mixed-statistics.html: Added.
+        * http/tests/loading/resourceLoadStatistics/classify-as-prevalent-based-on-sub-frame-under-top-frame-origins-expected.txt: Added.
+        * http/tests/loading/resourceLoadStatistics/classify-as-prevalent-based-on-sub-frame-under-top-frame-origins.html: Added.
+        * http/tests/loading/resourceLoadStatistics/classify-as-prevalent-based-on-subresource-under-top-frame-origins-expected.txt: Added.
+        * http/tests/loading/resourceLoadStatistics/classify-as-prevalent-based-on-subresource-under-top-frame-origins.html: Added.
+        * http/tests/loading/resourceLoadStatistics/classify-as-prevalent-based-on-subresource-unique-redirects-to-expected.txt: Added.
+        * http/tests/loading/resourceLoadStatistics/classify-as-prevalent-based-on-subresource-unique-redirects-to.html: Added.
+        * http/tests/loading/resourceLoadStatistics/non-prevalent-resource-with-user-interaction.html:
+            Added a call to internals.setResourceLoadStatisticsEnabled(false) before testRunner.notifyDone().
+        * http/tests/loading/resourceLoadStatistics/non-prevalent-resource-without-user-interaction.html:
+            Added a call to internals.setResourceLoadStatisticsEnabled(false) before testRunner.notifyDone().
+        * http/tests/loading/resourceLoadStatistics/prevalent-resource-with-user-interaction-timeout.html:
+            Added a call to internals.setResourceLoadStatisticsEnabled(false) before testRunner.notifyDone().
+        * http/tests/loading/resourceLoadStatistics/prevalent-resource-with-user-interaction.html:
+            Added a call to internals.setResourceLoadStatisticsEnabled(false) before testRunner.notifyDone().
+        * http/tests/loading/resourceLoadStatistics/prevalent-resource-without-user-interaction.html:
+            Added a call to internals.setResourceLoadStatisticsEnabled(false) before testRunner.notifyDone().
+        * platform/gtk/TestExpectations:
+            The whole http/tests/loading/resourceLoadStatistics marked as crashing based on
+            Carlos Garcia Campos's assessment in https://bugs.webkit.org/show_bug.cgi?id=168171.
+        * platform/wk2/TestExpectations:
+            The above tests are only valid for WebKit2. Marked as [ Pass ].
+
 2017-02-23  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] No controls are shown for <audio preload="none">

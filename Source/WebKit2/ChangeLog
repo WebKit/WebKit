@@ -1,3 +1,75 @@
+2017-02-24  John Wilander  <wilander@apple.com>
+
+        Resource Load Statistics: Add alternate classification method
+        https://bugs.webkit.org/show_bug.cgi?id=168347
+        <rdar://problem/30352793>
+        <rdar://problem/30646710>
+        <rdar://problem/30660708>
+
+        Reviewed by Alex Christensen.
+
+        This patch adds a CorePrediction-based classifier to the WebResourceLoadStatisticsStore.
+        The CorePrediction framework is introduced as a dependency for macOS and iOS. The patch
+        also adds functions to support layout tests of the feature.
+
+        * Platform/Logging.h:
+            Added channel ResourceLoadStatistics.
+        * Platform/classifier/ResourceLoadStatisticsClassifier.h: Added.
+            Pulls in the Cocoa-specific classifier for Cocoa-based platforms.
+        (WebKit::ResourceLoadStatisticsClassifier::ResourceLoadStatisticsClassifier):
+        * Platform/classifier/ResourceLoadStatisticsClassifierBase.cpp: Added.
+        (WebKit::ResourceLoadStatisticsClassifierBase::hasPrevalentResourceCharacteristics):
+            Shared classifier logic.
+        (WebKit::ResourceLoadStatisticsClassifierBase::classifyWithVectorThreshold):
+            Fallback classifier for when we don't have CorePrediction.
+        * Platform/classifier/ResourceLoadStatisticsClassifierBase.h: Added.
+        (WebKit::ResourceLoadStatisticsClassifierBase::ResourceLoadStatisticsClassifierBase):
+        (WebKit::ResourceLoadStatisticsClassifierBase::~ResourceLoadStatisticsClassifierBase):
+        * Platform/classifier/cocoa/CorePredictionSoftLink.h: Added.
+            Soft links to CorePrediction and the two functions we use from it.
+        * Platform/classifier/cocoa/ResourceLoadStatisticsClassifierCocoa.cpp: Added.
+        (WebKit::ResourceLoadStatisticsClassifier::classify):
+        (WebKit::ResourceLoadStatisticsClassifier::storagePath):
+        (WebKit::ResourceLoadStatisticsClassifier::shouldUseCorePredictionAndHaveModelLoaded):
+        (WebKit::ResourceLoadStatisticsClassifier::singletonPredictionModel):
+            The new classifier for Cocoa platforms.
+        * Platform/classifier/cocoa/ResourceLoadStatisticsClassifierCocoa.h: Added.
+        * PlatformGTK.cmake:
+            Added Platform/classifier directory and ResourceLoadStatisticsClassifierBase.cpp.
+        * PlatformMac.cmake:
+            Added Platform/classifier and Platform/classifier/cocoa directories, and
+            source files ResourceLoadStatisticsClassifierBase.cpp and
+            ResourceLoadStatisticsClassifierCocoa.cpp
+        * Resources/ResourceLoadStatistics/corePrediction_model: Added.
+            Model file to load into CorePrediction.
+        * UIProcess/API/C/WKResourceLoadStatisticsManager.cpp:
+        (WKResourceLoadStatisticsManagerSetSubframeUnderTopFrameOrigin):
+        (WKResourceLoadStatisticsManagerSetSubresourceUnderTopFrameOrigin):
+        (WKResourceLoadStatisticsManagerSetSubresourceUniqueRedirectTo):
+            Test infrastructure.
+        * UIProcess/API/C/WKResourceLoadStatisticsManager.h:
+        * UIProcess/WebResourceLoadStatisticsManager.cpp:
+        (WebKit::WebResourceLoadStatisticsManager::setSubframeUnderTopFrameOrigin):
+        (WebKit::WebResourceLoadStatisticsManager::setSubresourceUnderTopFrameOrigin):
+        (WebKit::WebResourceLoadStatisticsManager::setSubresourceUniqueRedirectTo):
+            Test infrastructure.
+        * UIProcess/WebResourceLoadStatisticsManager.h:
+        * UIProcess/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::WebResourceLoadStatisticsStore):
+            Renamed m_storagePath to m_statisticsStoragePath for clarity.
+        (WebKit::WebResourceLoadStatisticsStore::classifyResource):
+            Now calls the classifier through its ResourceLoadStatisticsClassifier
+            member variable.
+        (WebKit::WebResourceLoadStatisticsStore::persistentStoragePath):
+            Renamed m_storagePath to m_statisticsStoragePath for clarity.
+        (WebKit::WebResourceLoadStatisticsStore::writeEncoderToDisk):
+            Renamed m_storagePath to m_statisticsStoragePath for clarity.
+        (WebKit::WebResourceLoadStatisticsStore::hasPrevalentResourceCharacteristics): Deleted.
+        * UIProcess/WebResourceLoadStatisticsStore.h:
+        * WebKit2.xcodeproj/project.pbxproj:
+            Added the new classifier source files under Platform/classifier and the
+            corePrediction_model file under Resources/ResourceLoadStatistics.
+
 2017-02-23  Joseph Pecoraro  <pecoraro@apple.com>
 
         [Resource Timing] Add Experimental Feature Flag

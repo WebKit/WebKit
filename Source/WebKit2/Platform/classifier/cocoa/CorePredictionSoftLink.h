@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,64 +23,16 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebKitLogging_h
-#define WebKitLogging_h
+#pragma once
 
-#include <WebCore/LogMacros.h>
-#include <functional>
-#include <wtf/Assertions.h>
-#include <wtf/text/WTFString.h>
+#include <WebCore/SoftLinking.h>
 
-#if !LOG_DISABLED || !RELEASE_LOG_DISABLED
+struct svm_model;
+struct svm_node {
+    int index;
+    double value;
+};
 
-#ifndef LOG_CHANNEL_PREFIX
-#define LOG_CHANNEL_PREFIX WebKit2Log
-#endif
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-#define WEBKIT2_LOG_CHANNELS(M) \
-    M(ContextMenu) \
-    M(Gamepad) \
-    M(IconDatabase) \
-    M(IDB) \
-    M(IndexedDB) \
-    M(InspectorServer) \
-    M(IPC) \
-    M(KeyHandling) \
-    M(Layers) \
-    M(Network) \
-    M(NetworkCache) \
-    M(NetworkCacheSpeculativePreloading) \
-    M(NetworkCacheStorage) \
-    M(NetworkScheduling) \
-    M(NetworkSession) \
-    M(PerformanceLogging) \
-    M(Plugins) \
-    M(Printing) \
-    M(ProcessSuspension) \
-    M(RemoteLayerTree) \
-    M(Resize) \
-    M(ResourceLoadStatistics) \
-    M(Selection) \
-    M(SessionState) \
-    M(StorageAPI) \
-    M(TextInput) \
-    M(ViewGestures) \
-    M(ViewState) \
-    M(VirtualMemory) \
-    M(VisibleRects) \
-
-WEBKIT2_LOG_CHANNELS(DECLARE_LOG_CHANNEL)
-
-#undef DECLARE_LOG_CHANNEL
-
-#ifdef __cplusplus
-}
-#endif
-
-#endif // !LOG_DISABLED || !RELEASE_LOG_DISABLED
-
-#endif // Logging_h
+SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL(CorePrediction)
+SOFT_LINK(CorePrediction, svm_predict_values, double, (const struct svm_model *model, const struct svm_node *x, double* dec_values), (model, x, dec_values))
+SOFT_LINK(CorePrediction, svm_load_model, svm_model*, (const char *model_file_name), (model_file_name))

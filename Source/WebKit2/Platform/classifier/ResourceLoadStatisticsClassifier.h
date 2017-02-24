@@ -25,35 +25,23 @@
 
 #pragma once
 
-#include "APIObject.h"
-
-#include <wtf/RefPtr.h>
-#include <wtf/text/WTFString.h>
+namespace WebCore {
+struct ResourceLoadStatistics;
+}
 
 namespace WebKit {
 
-class WebResourceLoadStatisticsManager : public API::ObjectImpl<API::Object::Type::WebResourceLoadStatisticsManager> {
+class ResourceLoadStatisticsClassifier {
 public:
-    static Ref<WebResourceLoadStatisticsManager> create()
+    ResourceLoadStatisticsClassifier() = default;
+    virtual ~ResourceLoadStatisticsClassifier() = default;
+    bool hasPrevalentResourceCharacteristics(const WebCore::ResourceLoadStatistics& resourceStatistic);
+protected:
+    virtual bool classify(unsigned subresourceUnderTopFrameOriginsCount, unsigned subresourceUniqueRedirectsToCount, unsigned subframeUnderTopFrameOriginsCount)
     {
-        return adoptRef(*new WebResourceLoadStatisticsManager());
+        return classifyWithVectorThreshold(subresourceUnderTopFrameOriginsCount, subresourceUniqueRedirectsToCount, subframeUnderTopFrameOriginsCount);
     }
-    static void setPrevalentResource(const String& hostName, bool value);
-    static bool isPrevalentResource(const String& hostName);
-    static void setHasHadUserInteraction(const String& hostName, bool value);
-    static bool hasHadUserInteraction(const String& hostName);
-    static void setSubframeUnderTopFrameOrigin(const String& hostName, const String& topFrameHostName);
-    static void setSubresourceUnderTopFrameOrigin(const String& hostName, const String& topFrameHostName);
-    static void setSubresourceUniqueRedirectTo(const String& hostName, const String& hostNameRedirectedTo);
-    static void setTimeToLiveUserInteraction(double seconds);
-    static void setReducedTimestampResolution(double seconds);
-    static void fireDataModificationHandler();
-    static void setNotifyPagesWhenDataRecordsWereScanned(bool);
-    static void setShouldClassifyResourcesBeforeDataRecordsRemoval(bool value);
-    static void setMinimumTimeBetweeenDataRecordsRemoval(double seconds);
-    static void resetToConsistentState();
-
-private:
+    bool classifyWithVectorThreshold(unsigned, unsigned, unsigned);
 };
 
-} // namespace WebKit
+}

@@ -25,35 +25,22 @@
 
 #pragma once
 
-#include "APIObject.h"
-
-#include <wtf/RefPtr.h>
+#include "ResourceLoadStatisticsClassifier.h"
+#include <wtf/Platform.h>
 #include <wtf/text/WTFString.h>
+
+struct svm_model;
 
 namespace WebKit {
 
-class WebResourceLoadStatisticsManager : public API::ObjectImpl<API::Object::Type::WebResourceLoadStatisticsManager> {
-public:
-    static Ref<WebResourceLoadStatisticsManager> create()
-    {
-        return adoptRef(*new WebResourceLoadStatisticsManager());
-    }
-    static void setPrevalentResource(const String& hostName, bool value);
-    static bool isPrevalentResource(const String& hostName);
-    static void setHasHadUserInteraction(const String& hostName, bool value);
-    static bool hasHadUserInteraction(const String& hostName);
-    static void setSubframeUnderTopFrameOrigin(const String& hostName, const String& topFrameHostName);
-    static void setSubresourceUnderTopFrameOrigin(const String& hostName, const String& topFrameHostName);
-    static void setSubresourceUniqueRedirectTo(const String& hostName, const String& hostNameRedirectedTo);
-    static void setTimeToLiveUserInteraction(double seconds);
-    static void setReducedTimestampResolution(double seconds);
-    static void fireDataModificationHandler();
-    static void setNotifyPagesWhenDataRecordsWereScanned(bool);
-    static void setShouldClassifyResourcesBeforeDataRecordsRemoval(bool value);
-    static void setMinimumTimeBetweeenDataRecordsRemoval(double seconds);
-    static void resetToConsistentState();
-
+class ResourceLoadStatisticsClassifierCocoa : public ResourceLoadStatisticsClassifier {
 private:
+    bool classify(unsigned, unsigned, unsigned) override;
+    String storagePath();
+    bool canUseCorePrediction();
+    const struct svm_model* singletonPredictionModel();
+    bool m_useCorePrediction { true };
+    bool m_haveLoadedModel { false };
 };
-
-} // namespace WebKit
+    
+}

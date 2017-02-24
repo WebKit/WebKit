@@ -1,3 +1,30 @@
+2017-02-24  John Wilander  <wilander@apple.com>
+
+        Resource Load Statistics: Add alternate classification method
+        https://bugs.webkit.org/show_bug.cgi?id=168347
+        <rdar://problem/30352793>
+        <rdar://problem/30646710>
+        <rdar://problem/30660708>
+
+        Reviewed by Alex Christensen.
+
+        This patch only adds test infrastructure in WebCore.
+
+        Tests: http/tests/loading/resourceLoadStatistics/classify-as-non-prevalent-based-on-mixed-statistics.html
+               http/tests/loading/resourceLoadStatistics/classify-as-non-prevalent-based-on-sub-frame-under-top-frame-origins.html
+               http/tests/loading/resourceLoadStatistics/classify-as-non-prevalent-based-on-subresource-under-top-frame-origins.html
+               http/tests/loading/resourceLoadStatistics/classify-as-non-prevalent-based-on-subresource-unique-redirects-to.html
+               http/tests/loading/resourceLoadStatistics/classify-as-prevalent-based-on-mixed-statistics.html
+               http/tests/loading/resourceLoadStatistics/classify-as-prevalent-based-on-sub-frame-under-top-frame-origins.html
+               http/tests/loading/resourceLoadStatistics/classify-as-prevalent-based-on-subresource-under-top-frame-origins.html
+               http/tests/loading/resourceLoadStatistics/classify-as-prevalent-based-on-subresource-unique-redirects-to.html
+
+        * loader/ResourceLoadObserver.cpp:
+        (WebCore::ResourceLoadObserver::setSubframeUnderTopFrameOrigin):
+        (WebCore::ResourceLoadObserver::setSubresourceUnderTopFrameOrigin):
+        (WebCore::ResourceLoadObserver::setSubresourceUniqueRedirectTo):
+        * loader/ResourceLoadObserver.h:
+
 2017-02-23  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] No controls are shown for <audio preload="none">

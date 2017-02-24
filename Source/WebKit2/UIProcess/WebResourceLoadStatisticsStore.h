@@ -23,15 +23,19 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebResourceLoadStatisticsStore_h
-#define WebResourceLoadStatisticsStore_h
+#pragma once
 
 #include "APIObject.h"
 #include "Connection.h"
+#include "ResourceLoadStatisticsClassifier.h"
 #include "WebsiteDataRecord.h"
 #include <WebCore/ResourceLoadStatisticsStore.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
+
+#if PLATFORM(COCOA)
+#include "ResourceLoadStatisticsClassifierCocoa.h"
+#endif
 
 namespace WTF {
 class WorkQueue;
@@ -76,7 +80,6 @@ private:
 
     void processStatisticsAndDataRecords();
 
-    bool hasPrevalentResourceCharacteristics(const WebCore::ResourceLoadStatistics&);
     void classifyResource(WebCore::ResourceLoadStatistics&);
     void removeDataRecords();
 
@@ -89,8 +92,13 @@ private:
     std::unique_ptr<WebCore::KeyedDecoder> createDecoderFromDisk(const String& label) const;
 
     Ref<WebCore::ResourceLoadStatisticsStore> m_resourceLoadStatisticsStore;
+#if PLATFORM(COCOA)
+    ResourceLoadStatisticsClassifierCocoa m_resourceLoadStatisticsClassifier;
+#else
+    ResourceLoadStatisticsClassifier m_resourceLoadStatisticsClassifier;
+#endif
     Ref<WTF::WorkQueue> m_statisticsQueue;
-    String m_storagePath;
+    String m_statisticsStoragePath;
     bool m_resourceLoadStatisticsEnabled { false };
 
     double m_lastTimeDataRecordsWereRemoved { 0 };
@@ -98,5 +106,3 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // WebResourceLoadStatisticsStore_h

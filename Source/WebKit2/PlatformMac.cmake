@@ -49,6 +49,10 @@ list(APPEND WebKit2_SOURCES
 
     Platform/cg/CGUtilities.cpp
 
+    Platform/classifier/ResourceLoadStatisticsClassifier.cpp
+
+    Platform/classifier/cocoa/ResourceLoadStatisticsClassifierCocoa.cpp
+
     Platform/foundation/LoggingFoundation.mm
 
     Platform/cocoa/SharedMemoryCocoa.cpp
@@ -391,6 +395,8 @@ list(APPEND WebKit2_INCLUDE_DIRECTORIES
     "${WEBKIT2_DIR}/UIProcess/Scrolling"
     "${WEBKIT2_DIR}/UIProcess/ios"
     "${WEBKIT2_DIR}/Platform/cg"
+    "${WEBKIT2_DIR}/Platform/classifier"
+    "${WEBKIT2_DIR}/Platform/classifier/cocoa"
     "${WEBKIT2_DIR}/Platform/mac"
     "${WEBKIT2_DIR}/Platform/unix"
     "${WEBKIT2_DIR}/Platform/spi/Cocoa"
