@@ -36,6 +36,7 @@
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
+class LowPowerModeNotifier;
 class ResourceRequest;
 class SharedBuffer;
 class URL;
@@ -147,6 +148,7 @@ private:
 
     std::unique_ptr<Storage> m_storage;
 #if ENABLE(NETWORK_CACHE_SPECULATIVE_REVALIDATION)
+    std::unique_ptr<WebCore::LowPowerModeNotifier> m_lowPowerModeNotifier;
     std::unique_ptr<SpeculativeLoadManager> m_speculativeLoadManager;
 #endif
     std::unique_ptr<Statistics> m_statistics;

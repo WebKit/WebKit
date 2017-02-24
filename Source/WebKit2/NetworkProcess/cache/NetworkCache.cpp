@@ -35,6 +35,7 @@
 #include <WebCore/CacheValidation.h>
 #include <WebCore/FileSystem.h>
 #include <WebCore/HTTPHeaderNames.h>
+#include <WebCore/LowPowerModeNotifier.h>
 #include <WebCore/NetworkStorageSession.h>
 #include <WebCore/PlatformCookieJar.h>
 #include <WebCore/ResourceRequest.h>
@@ -77,8 +78,19 @@ bool Cache::initialize(const String& cachePath, const Parameters& parameters)
     m_storage = Storage::open(cachePath);
 
 #if ENABLE(NETWORK_CACHE_SPECULATIVE_REVALIDATION)
-    if (parameters.enableNetworkCacheSpeculativeRevalidation)
-        m_speculativeLoadManager = std::make_unique<SpeculativeLoadManager>(*m_storage);
+    if (parameters.enableNetworkCacheSpeculativeRevalidation) {
+        m_lowPowerModeNotifier = std::make_unique<WebCore::LowPowerModeNotifier>([this](bool isLowPowerModeEnabled) {
+            ASSERT(WTF::isMainThread());
+            if (isLowPowerModeEnabled)
+                m_speculativeLoadManager = nullptr;
+            else {
+                ASSERT(!m_speculativeLoadManager);
+                m_speculativeLoadManager = std::make_unique<SpeculativeLoadManager>(*m_storage);
+            }
+        });
+        if (!m_lowPowerModeNotifier->isLowPowerModeEnabled())
+            m_speculativeLoadManager = std::make_unique<SpeculativeLoadManager>(*m_storage);
+    }
 #endif
 
     if (parameters.enableEfficacyLogging)

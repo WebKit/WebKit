@@ -1779,6 +1779,9 @@
 		46DFF49B1DC2620B00B80B48 /* JSShadowRootMode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46DFF4991DC261F900B80B48 /* JSShadowRootMode.cpp */; };
 		46DFF49C1DC2620B00B80B48 /* JSShadowRootMode.h in Headers */ = {isa = PBXBuildFile; fileRef = 46DFF49A1DC261F900B80B48 /* JSShadowRootMode.h */; };
 		46EBEA021B7D4D6500BE4941 /* CollectionTraversal.h in Headers */ = {isa = PBXBuildFile; fileRef = 46EBEA011B7D4D5D00BE4941 /* CollectionTraversal.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		46EFAF0E1E5FB9CA00E7F34B /* LowPowerModeNotifierIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 46EFAF0D1E5FB9C200E7F34B /* LowPowerModeNotifierIOS.mm */; };
+		46EFAF111E5FB9F100E7F34B /* LowPowerModeNotifier.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46EFAF0F1E5FB9E100E7F34B /* LowPowerModeNotifier.cpp */; };
+		46EFAF121E5FB9F100E7F34B /* LowPowerModeNotifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 46EFAF101E5FB9E100E7F34B /* LowPowerModeNotifier.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		46FCB6181A70820E00C5A21E /* DiagnosticLoggingKeys.h in Headers */ = {isa = PBXBuildFile; fileRef = CD37B37515C1A7E1006DC898 /* DiagnosticLoggingKeys.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		490707E61219C04300D90E51 /* ANGLEWebKitBridge.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 490707E41219C04300D90E51 /* ANGLEWebKitBridge.cpp */; };
 		490707E71219C04300D90E51 /* ANGLEWebKitBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = 490707E51219C04300D90E51 /* ANGLEWebKitBridge.h */; };
@@ -9096,6 +9099,9 @@
 		46DFF4991DC261F900B80B48 /* JSShadowRootMode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSShadowRootMode.cpp; sourceTree = "<group>"; };
 		46DFF49A1DC261F900B80B48 /* JSShadowRootMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSShadowRootMode.h; sourceTree = "<group>"; };
 		46EBEA011B7D4D5D00BE4941 /* CollectionTraversal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CollectionTraversal.h; sourceTree = "<group>"; };
+		46EFAF0D1E5FB9C200E7F34B /* LowPowerModeNotifierIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LowPowerModeNotifierIOS.mm; sourceTree = "<group>"; };
+		46EFAF0F1E5FB9E100E7F34B /* LowPowerModeNotifier.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LowPowerModeNotifier.cpp; sourceTree = "<group>"; };
+		46EFAF101E5FB9E100E7F34B /* LowPowerModeNotifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LowPowerModeNotifier.h; sourceTree = "<group>"; };
 		490707E41219C04300D90E51 /* ANGLEWebKitBridge.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ANGLEWebKitBridge.cpp; sourceTree = "<group>"; };
 		490707E51219C04300D90E51 /* ANGLEWebKitBridge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ANGLEWebKitBridge.h; sourceTree = "<group>"; };
 		49291E4A134172C800E753DE /* ImageRenderingMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageRenderingMode.h; sourceTree = "<group>"; };
@@ -20109,6 +20115,7 @@
 				E4B65A5D132FADB60070E7BE /* LegacyTileLayer.mm */,
 				E4E39AFA1330EFA8003AB274 /* LegacyTileLayerPool.h */,
 				E4E39AFC1330EFC5003AB274 /* LegacyTileLayerPool.mm */,
+				46EFAF0D1E5FB9C200E7F34B /* LowPowerModeNotifierIOS.mm */,
 				E45390190EAFCACA003695C8 /* PasteboardIOS.mm */,
 				26601EBD14B3B9AD0012C0FE /* PlatformEventFactoryIOS.h */,
 				26601EBE14B3B9AD0012C0FE /* PlatformEventFactoryIOS.mm */,
@@ -22986,6 +22993,8 @@
 				A8239DFF09B3CF8A00B60641 /* Logging.h */,
 				0FDCD7F21D47E655009F08BC /* LogInitialization.h */,
 				0FDCD7F41D47E725009F08BC /* LogMacros.h */,
+				46EFAF0F1E5FB9E100E7F34B /* LowPowerModeNotifier.cpp */,
+				46EFAF101E5FB9E100E7F34B /* LowPowerModeNotifier.h */,
 				7AE6C9391BE0C60100E19E03 /* MainThreadSharedTimer.cpp */,
 				7AE6C93A1BE0C60100E19E03 /* MainThreadSharedTimer.h */,
 				CDF2B003181F059C00F2B424 /* MediaDescription.h */,
@@ -28087,6 +28096,7 @@
 				E4E9B11D1814569C003ACCDF /* SimpleLineLayoutFunctions.h in Headers */,
 				E4E9B1191810916F003ACCDF /* SimpleLineLayoutResolver.h in Headers */,
 				582CB0531A78A14B00AFFCC4 /* SimpleLineLayoutTextFragmentIterator.h in Headers */,
+				46EFAF121E5FB9F100E7F34B /* LowPowerModeNotifier.h in Headers */,
 				C5A1EA7D152BCF08004D00B6 /* SimplifyMarkupCommand.h in Headers */,
 				572A7F211C6E5719009C6149 /* SimulatedClick.h in Headers */,
 				31741AAD16636609008A5B7E /* SimulatedClickOptions.h in Headers */,
@@ -31297,6 +31307,7 @@
 				A8C4A80009D563270003AC8D /* Node.cpp in Sources */,
 				854FE7320A2297BE0058D7AD /* NodeFilterCondition.cpp in Sources */,
 				854FE7340A2297BE0058D7AD /* NodeIterator.cpp in Sources */,
+				46EFAF0E1E5FB9CA00E7F34B /* LowPowerModeNotifierIOS.mm in Sources */,
 				4FFC022B1643B710004E1638 /* NodeRareData.cpp in Sources */,
 				E43105B816750F0C00DB2FB8 /* NodeTraversal.cpp in Sources */,
 				33503CC71017A1B1003B47E1 /* Notification.cpp in Sources */,
@@ -32399,6 +32410,7 @@
 				00B9318913BA8DBC0035A948 /* XMLDocumentParserLibxml2.cpp in Sources */,
 				00B9318B13BA8DC90035A948 /* XMLDocumentParserScope.cpp in Sources */,
 				59C28045138DC2410079B7E2 /* XMLErrors.cpp in Sources */,
+				46EFAF111E5FB9F100E7F34B /* LowPowerModeNotifier.cpp in Sources */,
 				BC772C460C4EB2C60083285F /* XMLHttpRequest.cpp in Sources */,
 				A136A00C1134DBD200CC8D50 /* XMLHttpRequestProgressEventThrottle.cpp in Sources */,
 				BCDFD48F0E305290009D10AD /* XMLHttpRequestUpload.cpp in Sources */,
