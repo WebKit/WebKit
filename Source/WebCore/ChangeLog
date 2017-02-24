@@ -1,3 +1,15 @@
+2017-02-23  Youenn Fablet  <youenn@apple.com>
+
+        [WebRTC] Outgoing video quality is poor
+        https://bugs.webkit.org/show_bug.cgi?id=168778
+        <rdar://problem/30674673>
+
+        Reviewed by Eric Carlson.
+
+        Covered by manually ensuring the voice process thread is not spinning.
+
+        * platform/mediastream/libwebrtc/LibWebRTCAudioModule.h: Setting the next call to max was not a good idea since the thread process is adding some value to it, making it a negative value.
+
 2017-02-23  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Data interaction with a URL should navigate the page if the operation is not handled

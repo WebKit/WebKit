@@ -56,7 +56,8 @@ private:
     int32_t RegisterAudioCallback(webrtc::AudioTransport*) final;
     bool Playing() const final { return m_isPlaying; }
 
-    int64_t TimeUntilNextProcess() final { return std::numeric_limits<int64_t>::max(); }
+    // Set it to a big value so that we are not called often but not close to int64_t max so that it does not create integer overflows.
+    int64_t TimeUntilNextProcess() final { return 100000000; }
     void Process() final { }
     int32_t ActiveAudioLayer(AudioLayer*) const final { return shouldNotBeCalled(-1); }
     ErrorCode LastError() const final { return kAdmErrNone; }
