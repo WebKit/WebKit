@@ -1,0 +1,32 @@
+<body>
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+async function addImage(src, timeout)
+{
+    if (window.internals)
+        internals.clearMemoryCache();
+
+    const img = document.createElement("iframe");
+    img.width = 100;
+    img.height = 100;
+    img.src = src;
+    document.body.appendChild(img);
+    document.body.appendChild(document.createTextNode("\n"));
+
+    return new Promise(resolve => setTimeout(resolve, timeout));
+}
+
+async function test() {
+    // Need to wait long enough for disk cache writes to happen.
+    await addImage("resources/shattered-1.pdf", 1000);
+    await addImage("resources/shattered-2.pdf", 1000);
+    await addImage("resources/shattered-1.pdf", 1000);
+    await addImage("resources/shattered-2.pdf", 1000);
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+test();
+</script>

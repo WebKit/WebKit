@@ -1,3 +1,31 @@
+2017-02-24  Antti Koivisto  <antti@apple.com>
+
+        Add a test verifying cache deduplication is not sensitive to SHA1 collision attack
+        https://bugs.webkit.org/show_bug.cgi?id=168774
+
+        Reviewed by Sam Weinig.
+
+        We use SHA1 for deduplicating disk cache resources. Since a real world SHA1 collision was demonstrated
+        recently (http://shattered.io/) we can add a test that shows it can't be used for cache poisoning.
+
+        There are two protections in the cache code that both individually stop this type of attack:
+
+        - When deduplicating the data is verified to be equal by a bytewise comparison.
+        - SHA1 computations include random salt unique to cache instance.
+
+        Commenting out both protections is needed to make this test fail.
+
+        * http/tests/cache/disk-cache/resources/shattered-1-nocollision.pdf: Added.
+        * http/tests/cache/disk-cache/resources/shattered-1.pdf: Added.
+        * http/tests/cache/disk-cache/resources/shattered-2-nocollision.pdf: Added.
+        * http/tests/cache/disk-cache/resources/shattered-2.pdf: Added.
+
+        Files shattered-1.pdf and shattered-2.pdf differ visually but have the same SHA1.
+        The nocollision versions for the ref have the same pixels but don't collide.
+
+        * http/tests/cache/disk-cache/shattered-deduplication-expected.html: Added.
+        * http/tests/cache/disk-cache/shattered-deduplication.html: Added.
+
 2017-02-24  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics: Add alternate classification method
