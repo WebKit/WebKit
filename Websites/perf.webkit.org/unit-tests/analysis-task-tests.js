@@ -43,7 +43,7 @@ function sampleAnalysisTask()
                 'id': '105975',
                 'message': 'Commit message',
                 'order': null,
-                'parent': null,
+                'previousCommit': null,
                 'repository': '11',
                 'revision': '196051',
                 'time': 1454481246108

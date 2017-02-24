@@ -1,3 +1,29 @@
+2017-02-23  Dewei Zhu  <dewei_zhu@apple.com>
+
+        Rename 'commit_parent' in 'commits' table to 'commit_previous_commit'.
+        https://bugs.webkit.org/show_bug.cgi?id=168816
+
+        Reviewed by Ryosuke Niwa.
+
+        Rename 'commit_parent' to avoid ambiguity in the coming feature.
+        For exisiting database, run
+            "ALTER TABLE commits RENAME commit_parent TO commit_previous_commit;"
+        to update the database.
+
+        * init-database.sql:
+        * public/api/report-commits.php:
+        * public/include/commit-log-fetcher.php:
+        * server-tests/api-commits.js:
+        (then):
+        * server-tests/api-report-commits-tests.js:
+        (then):
+        * tools/sync-commits.py:
+        (main):
+        (Repository.fetch_commits_and_submit):
+        (GitRepository._revision_from_tokens):
+        * unit-tests/analysis-task-tests.js:
+        (sampleAnalysisTask):
+
 2017-02-23  Ryosuke Niwa  <rniwa@webkit.org>
 
         New sampling algorithm shows very few points when zoomed out

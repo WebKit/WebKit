@@ -30,7 +30,7 @@ describe("/api/commits/", () => {
             },
             {
                 "repository": "WebKit",
-                "parent": "210949",
+                "previousCommit": "210949",
                 "revision": "210950",
                 "time": "2017-01-20T03:49:37.887Z",
                 "author": {"name": "Commit Queue", "account": "commit-queue@webkit.org"},
@@ -51,6 +51,11 @@ describe("/api/commits/", () => {
         assert.equal(commit['message'], submitted['message']);
         assert.equal(commit['authorName'], submitted['author']['name']);
         assert.equal(commit['authorEmail'], submitted['author']['account']);
+        if(submitted['previousCommit']) {
+            assert.ok(commit['previousCommit']);
+        } else {
+            assert.equal(commit['previousCommit'], null);
+        }
     }
 
     describe('/api/commits/<repository>/', () => {
@@ -88,8 +93,9 @@ describe("/api/commits/", () => {
                 assertCommitIsSameAsOneSubmitted(commits[0], submittedCommits[0]);
                 assertCommitIsSameAsOneSubmitted(commits[1], submittedCommits[1]);
                 assertCommitIsSameAsOneSubmitted(commits[2], submittedCommits[2]);
+                assert.equal(commits[2]['previousCommit'], commits[1]['id']);
             });
-        });        
+        });
     });
 
     describe('/api/commits/<repository>/oldest', () => {
@@ -230,7 +236,7 @@ describe("/api/commits/", () => {
                 assert.equal(result['status'], 'OK');
                 assert.equal(result['commits'].length, 1);
                 assertCommitIsSameAsOneSubmitted(result['commits'][0], {
-                    parent: null,
+                    previousCommit: null,
                     revision: '210950',
                     time: '2017-01-20T03:49:37.887Z',
                     author: {name: null, account: null},
@@ -299,14 +305,14 @@ describe("/api/commits/", () => {
                 assert.equal(result['status'], 'OK');
                 assert.deepEqual(result['commits'].length, 2);
                 assertCommitIsSameAsOneSubmitted(result['commits'][0], {
-                    parent: null,
+                    previousCommit: null,
                     revision: '210949',
                     time: '2017-01-20T03:23:50.645Z',
                     author: {name: null, account: null},
                     message: null,
                 });
                 assertCommitIsSameAsOneSubmitted(result['commits'][1], {
-                    parent: null,
+                    previousCommit: null,
                     revision: '210950',
                     time: '2017-01-20T03:49:37.887Z',
                     author: {name: null, account: null},

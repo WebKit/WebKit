@@ -23,7 +23,7 @@ def main(argv):
     parser.add_argument('--server-config-json', required=True, help='The path to a JSON file that specifies the perf dashboard')
     parser.add_argument('--seconds-to-sleep', type=float, default=900, help='The seconds to sleep between iterations')
     parser.add_argument('--max-fetch-count', type=int, default=10, help='The number of commits to fetch at once')
-    parser.add_argument('--max-ancestor-fetch-count', type=int, default=100, help='The number of commits to fetch at once if some commits are missing parents')
+    parser.add_argument('--max-ancestor-fetch-count', type=int, default=100, help='The number of commits to fetch at once if some commits are missing previous commits')
     args = parser.parse_args()
 
     with open(args.repository_config_json) as repository_config_json:
@@ -79,16 +79,16 @@ class Repository(object):
             print "Submitting revisions %s for %s to %s" % (revision_list, self._name, server_config['server']['url'])
 
             result = submit_commits(pending_commits, server_config['server']['url'],
-                server_config['slave']['name'], server_config['slave']['password'], ['OK', 'FailedToFindParentCommit'])
+                server_config['slave']['name'], server_config['slave']['password'], ['OK', 'FailedToFindPreviousCommit'])
 
             if result.get('status') == 'OK':
                 break
 
-            if result.get('status') == 'FailedToFindParentCommit':
-                parent_commit = self.fetch_commit(server_config, result['commit']['parent'])
-                if not parent_commit:
-                    raise Exception('Could not find the parent %s of %s' % (result['commit']['parent'], result['commit']['revision']))
-                pending_commits = [parent_commit] + pending_commits
+            if result.get('status') == 'FailedToFindPreviousCommit':
+                previous_commit = self.fetch_commit(server_config, result['commit']['previousCommit'])
+                if not previous_commit:
+                    raise Exception('Could not find the previous commit %s of %s' % (result['commit']['previousCommit'], result['commit']['revision']))
+                pending_commits = [previous_commit] + pending_commits
 
         if result.get('status') != 'OK':
             raise Exception(result)
@@ -223,7 +223,7 @@ class GitRepository(Repository):
         current_hash = tokens[0]
         commit_time = int(tokens[1])
         author_email = tokens[2]
-        parent_hash = tokens[3] if len(tokens) >= 4 else None
+        previous_hash = tokens[3] if len(tokens) >= 4 else None
 
         author_name = self._run_git_command(['log', current_hash, '-1', '--pretty=%cn'])
         message = self._run_git_command(['log', current_hash, '-1', '--pretty=%B'])
@@ -231,7 +231,7 @@ class GitRepository(Repository):
         return {
             'repository': self._name,
             'revision': current_hash,
-            'parent': parent_hash,
+            'previousCommit': previous_hash,
             'time': datetime.fromtimestamp(commit_time).strftime(r'%Y-%m-%dT%H:%M:%S.%f'),
             'author': {'account': author_email, 'name': author_name},
             'message': message,

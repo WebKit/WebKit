@@ -54,11 +54,26 @@ describe("/api/report-commits/", function () {
             },
             {
                 "repository": "WebKit",
-                "parent": "141977",
+                "previousCommit": "141977",
                 "revision": "141978",
                 "time": "2013-02-06T09:54:56.0Z",
                 "author": {"name": "Mikhail Pozdnyakov", "account": "mikhail.pozdnyakov@intel.com"},
                 "message": "another message",
+            }
+        ]
+    };
+
+    const subversionInvalidPreviousCommit = {
+        "slaveName": "someSlave",
+        "slavePassword": "somePassword",
+        "commits": [
+            {
+                "repository": "WebKit",
+                "previousCommit": "99999",
+                "revision": "12345",
+                "time": "2013-02-06T08:55:20.9Z",
+                "author": {"name": "Commit Queue", "account": "commit-queue@webkit.org"},
+                "message": "some message",
             }
         ]
     }
@@ -158,6 +173,7 @@ describe("/api/report-commits/", function () {
             assert.equal(commits[0]['time'].toString(), new Date('2013-02-06 08:55:20.9').toString());
             assert.equal(commits[0]['message'], reportedData['message']);
             assert.equal(commits[0]['committer'], committers[0]['id']);
+            assert.equal(commits[0]['previous_commit'], null);
             assert.equal(committers[0]['name'], reportedData['author']['name']);
             assert.equal(committers[0]['account'], reportedData['author']['account']);
 
@@ -166,9 +182,23 @@ describe("/api/report-commits/", function () {
             assert.equal(commits[1]['time'].toString(), new Date('2013-02-06 09:54:56.0').toString());
             assert.equal(commits[1]['message'], reportedData['message']);
             assert.equal(commits[1]['committer'], committers[1]['id']);
+            assert.equal(commits[1]['previous_commit'], commits[0]['id']);
             assert.equal(committers[1]['name'], reportedData['author']['name']);
             assert.equal(committers[1]['account'], reportedData['author']['account']);
 
+            done();
+        }).catch(done);
+    });
+
+    it("should fail if previous commit is invalid", function (done) {
+        const db = TestServer.database();
+        addSlaveForReport(subversionInvalidPreviousCommit).then(function () {
+            return TestServer.remoteAPI().postJSON('/api/report-commits/', subversionInvalidPreviousCommit);
+        }).then(function (response) {
+            assert.equal(response['status'], 'FailedToFindPreviousCommit');
+            return db.selectAll('commits');
+        }).then(function (result) {
+            assert.equal(result.length, 0);
             done();
         }).catch(done);
     });
@@ -227,7 +257,7 @@ describe("/api/report-commits/", function () {
             assert.equal(commits[0]['committer'], committers[0]['id']);
             assert.equal(committers[0]['name'], firstData['author']['name']);
             assert.equal(committers[0]['account'], firstData['author']['account']);
-            
+
             assert.equal(commits[1]['id'], 3);
             assert.equal(commits[1]['message'], null);
             assert.equal(commits[1]['committer'], null);

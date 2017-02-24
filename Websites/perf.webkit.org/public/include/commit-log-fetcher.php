@@ -36,7 +36,7 @@ class CommitLogFetcher {
     function fetch_between($repository_id, $first, $second, $keyword = NULL) {
         $statements = 'SELECT commit_id as "id",
             commit_revision as "revision",
-            commit_parent as "parent",
+            commit_previous_commit as "previousCommit",
             commit_time as "time",
             committer_name as "authorName",
             committer_account as "authorEmail",
@@ -121,7 +121,7 @@ class CommitLogFetcher {
         return array(
             'id' => $commit_row['commit_id'],
             'revision' => $commit_row['commit_revision'],
-            'parent' => $commit_row['commit_parent'],
+            'previousCommit' => $commit_row['commit_previous_commit'],
             'time' => Database::to_js_time($commit_row['commit_time']),
             'order' => $commit_row['commit_order'],
             'authorName' => $committer_row ? $committer_row['committer_name'] : null,

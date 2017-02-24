@@ -88,7 +88,7 @@ CREATE TABLE commits (
     commit_id serial PRIMARY KEY,
     commit_repository integer NOT NULL REFERENCES repositories ON DELETE CASCADE,
     commit_revision varchar(64) NOT NULL,
-    commit_parent integer REFERENCES commits ON DELETE CASCADE,
+    commit_previous_commit integer REFERENCES commits ON DELETE CASCADE,
     commit_time timestamp,
     commit_order integer,
     commit_committer integer REFERENCES committers ON DELETE CASCADE,
@@ -261,5 +261,5 @@ CREATE TABLE build_requests (
     request_build integer REFERENCES builds,
     request_created_at timestamp NOT NULL DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC'),
     CONSTRAINT build_request_order_must_be_unique_in_group UNIQUE(request_group, request_order));
-CREATE INDEX build_request_triggerable ON build_requests(request_triggerable);    
+CREATE INDEX build_request_triggerable ON build_requests(request_triggerable);
 CREATE INDEX build_request_build ON build_requests(request_build);

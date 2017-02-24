@@ -47,21 +47,21 @@ function main($post_data) {
             }
         }
 
-        $parent_revision = array_get($commit_info, 'parent');
-        $parent_id = NULL;
-        if ($parent_revision) {
-            $parent_commit = $db->select_first_row('commits', 'commit', array('repository' => $repository_id, 'revision' => $parent_revision));
-            if (!$parent_commit) {
+        $previous_commit_revision = array_get($commit_info, 'previousCommit');
+        $previous_commit_id = NULL;
+        if ($previous_commit_revision) {
+            $previous_commit = $db->select_first_row('commits', 'commit', array('repository' => $repository_id, 'revision' => $previous_commit_revision));
+            if (!$previous_commit) {
                 $db->rollback_transaction();
-                exit_with_error('FailedToFindParentCommit', array('commit' => $commit_info));
+                exit_with_error('FailedToFindPreviousCommit', array('commit' => $commit_info));
             }
-            $parent_id = $parent_commit['commit_id'];
+            $previous_commit_id = $previous_commit['commit_id'];
         }
 
         $data = array(
             'repository' => $repository_id,
             'revision' => $commit_info['revision'],
-            'parent' => $parent_id,
+            'previous_commit' => $previous_commit_id,
             'order' => array_get($commit_info, 'order'),
             'time' => array_get($commit_info, 'time'),
             'committer' => $committer_id,
