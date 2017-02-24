@@ -2928,6 +2928,29 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case CheckTypeInfoFlags:
         break;
 
+    case ParseInt: {
+        AbstractValue value = forNode(node->child1());
+        if (value.m_type && !(value.m_type & ~SpecInt32Only)) {
+            JSValue radix;
+            if (!node->child2())
+                radix = jsNumber(0);
+            else
+                radix = forNode(node->child2()).m_value;
+
+            if (radix.isNumber()
+                && (radix.asNumber() == 0 || radix.asNumber() == 10)) {
+                m_state.setFoundConstants(true);
+                forNode(node).setType(SpecInt32Only);
+                break;
+            }
+        }
+
+        if (node->child1().useKind() == UntypedUse)
+            clobberWorld(node->origin.semantic, clobberLimit);
+        forNode(node).setType(m_graph, SpecBytecodeNumber);
+        break;
+    }
+
     case CreateRest:
         if (!m_graph.isWatchingHavingABadTimeWatchpoint(node)) {
             // This means we're already having a bad time.

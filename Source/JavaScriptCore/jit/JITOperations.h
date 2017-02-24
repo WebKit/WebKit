@@ -153,6 +153,7 @@ typedef EncodedJSValue (JIT_OPERATION *J_JITOperation_EJJArp)(ExecState*, Encode
 typedef EncodedJSValue (JIT_OPERATION *J_JITOperation_EJJMic)(ExecState*, EncodedJSValue, EncodedJSValue, void*);
 typedef EncodedJSValue (JIT_OPERATION *J_JITOperation_EJMic)(ExecState*, EncodedJSValue, void*);
 typedef EncodedJSValue (JIT_OPERATION *J_JITOperation_EJssZ)(ExecState*, JSString*, int32_t);
+typedef EncodedJSValue (JIT_OPERATION *J_JITOperation_EJss)(ExecState*, JSString*);
 typedef EncodedJSValue (JIT_OPERATION *J_JITOperation_EJssReo)(ExecState*, JSString*, RegExpObject*);
 typedef EncodedJSValue (JIT_OPERATION *J_JITOperation_EJssReoJss)(ExecState*, JSString*, RegExpObject*, JSString*);
 typedef EncodedJSValue (JIT_OPERATION *J_JITOperation_EJP)(ExecState*, EncodedJSValue, void*);

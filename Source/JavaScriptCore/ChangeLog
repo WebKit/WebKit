@@ -1,3 +1,85 @@
+2017-02-23  Saam Barati  <sbarati@apple.com>
+
+        Intrinsicify parseInt
+        https://bugs.webkit.org/show_bug.cgi?id=168627
+
+        Reviewed by Filip Pizlo.
+
+        This patch makes parseInt an intrinsic in the DFG and FTL.
+        We do our best to eliminate this node. If we speculate that
+        the first operand to the operation is an int32, and that there
+        isn't a second operand, we convert to the identity of the first
+        operand. That's because parseInt(someInt) === someInt.
+        
+        If the first operand is proven to be an integer, and the second
+        operand is the integer 0 or the integer 10, we can eliminate the
+        node by making it an identity over its first operand. That's
+        because parseInt(someInt, 0) === someInt and parseInt(someInt, 10) === someInt.
+        
+        If we are not able to constant fold the node away, we try to remove
+        checks. The most common use case of parseInt is that its first operand
+        is a proven string. The DFG might be able to remove type checks in this
+        case. We also set up CSE rules for parseInt(someString, someIntRadix)
+        because it's a "pure" operation (modulo resolving a rope).
+
+        This looks to be a 4% Octane/Box2D progression.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleIntrinsicCall):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasHeapPrediction):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOperations.cpp:
+        (JSC::DFG::parseIntResult):
+        * dfg/DFGOperations.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileParseInt):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        (JSC::DFG::SpeculativeJIT::appendCallSetResult):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileParseInt):
+        * jit/JITOperations.h:
+        * parser/Lexer.cpp:
+        * runtime/ErrorInstance.cpp:
+        * runtime/Intrinsic.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::toStringView): Deleted.
+        (JSC::isStrWhiteSpace): Deleted.
+        (JSC::parseDigit): Deleted.
+        (JSC::parseIntOverflow): Deleted.
+        (JSC::parseInt): Deleted.
+        * runtime/JSGlobalObjectFunctions.h:
+        * runtime/ParseInt.h: Added.
+        (JSC::parseDigit):
+        (JSC::parseIntOverflow):
+        (JSC::isStrWhiteSpace):
+        (JSC::parseInt):
+        (JSC::toStringView):
+        * runtime/StringPrototype.cpp:
+
 2017-02-23  JF Bastien  <jfbastien@apple.com>
 
         WebAssembly: support 0x1 version

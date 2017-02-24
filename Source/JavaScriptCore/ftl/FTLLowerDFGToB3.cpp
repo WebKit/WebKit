@@ -960,6 +960,9 @@ private:
         case IsTypedArrayView:
             compileIsTypedArrayView();
             break;
+        case ParseInt:
+            compileParseInt();
+            break;
         case TypeOf:
             compileTypeOf();
             break;
@@ -8219,6 +8222,25 @@ private:
 
         m_out.appendTo(continuation, lastNext);
         setBoolean(m_out.phi(Int32, fastResult, slowResult));
+    }
+
+    void compileParseInt()
+    {
+        RELEASE_ASSERT(m_node->child1().useKind() == UntypedUse || m_node->child1().useKind() == StringUse);
+        LValue result;
+        if (m_node->child2()) {
+            LValue radix = lowInt32(m_node->child2());
+            if (m_node->child1().useKind() == UntypedUse)
+                result = vmCall(Int64, m_out.operation(operationParseIntGeneric), m_callFrame, lowJSValue(m_node->child1()), radix);
+            else
+                result = vmCall(Int64, m_out.operation(operationParseIntString), m_callFrame, lowString(m_node->child1()), radix);
+        } else {
+            if (m_node->child1().useKind() == UntypedUse)
+                result = vmCall(Int64, m_out.operation(operationParseIntNoRadixGeneric), m_callFrame, lowJSValue(m_node->child1()));
+            else
+                result = vmCall(Int64, m_out.operation(operationParseIntStringNoRadix), m_callFrame, lowString(m_node->child1()));
+        }
+        setJSValue(result);
     }
 
     void compileOverridesHasInstance()

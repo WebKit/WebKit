@@ -2360,6 +2360,27 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, int resultOperand, Intrin
         }
     }
 
+    case ParseIntIntrinsic: {
+        if (argumentCountIncludingThis < 2)
+            return false;
+
+        if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCell) || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType))
+            return false;
+
+        insertChecks();
+        VirtualRegister valueOperand = virtualRegisterForArgument(1, registerOffset);
+        Node* parseInt;
+        if (argumentCountIncludingThis == 2)
+            parseInt = addToGraph(ParseInt, OpInfo(), OpInfo(prediction), get(valueOperand));
+        else {
+            ASSERT(argumentCountIncludingThis > 2);
+            VirtualRegister radixOperand = virtualRegisterForArgument(2, registerOffset);
+            parseInt = addToGraph(ParseInt, OpInfo(), OpInfo(prediction), get(valueOperand), get(radixOperand));
+        }
+        set(VirtualRegister(resultOperand), parseInt);
+        return true;
+    }
+
     case CharCodeAtIntrinsic: {
         if (argumentCountIncludingThis != 2)
             return false;

@@ -283,6 +283,7 @@ inline CapabilityLevel canCompile(Node* node)
     case CallDOM:
     case CallDOMGetter:
     case ArraySlice:
+    case ParseInt:
         // These are OK.
         break;
 

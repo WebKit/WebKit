@@ -4634,6 +4634,11 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
+    case ParseInt: {
+        compileParseInt(node);
+        break;
+    }
+
     case OverridesHasInstance: {
 
         Node* hasInstanceValueNode = node->child2().node();

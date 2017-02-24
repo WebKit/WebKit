@@ -4666,6 +4666,11 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
+    case ParseInt: {
+        compileParseInt(node);
+        break;
+    }
+
     case CheckTypeInfoFlags: {
         compileCheckTypeInfoFlags(node);
         break;

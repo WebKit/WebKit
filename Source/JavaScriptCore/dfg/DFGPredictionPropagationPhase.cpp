@@ -966,6 +966,14 @@ private:
             setPrediction(SpecString);
             break;
         }
+        case ParseInt: {
+            // We expect this node to almost always produce an int32. However,
+            // it's possible it produces NaN or integers out of int32 range. We
+            // rely on the heap prediction since the parseInt() call profiled
+            // its result.
+            setPrediction(m_currentNode->getHeapPrediction());
+            break;
+        }
 
         case GetLocal:
         case SetLocal:

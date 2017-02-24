@@ -1793,6 +1793,24 @@ private:
             break;
         }
 
+        case ParseInt: {
+            if (node->child1()->shouldSpeculateInt32() && !node->child2()) {
+                fixEdge<Int32Use>(node->child1());
+                node->convertToIdentity();
+                break;
+            }
+
+            if (node->child1()->shouldSpeculateString()) {
+                fixEdge<StringUse>(node->child1());
+                node->clearFlags(NodeMustGenerate);
+            }
+
+            if (node->child2())
+                fixEdge<Int32Use>(node->child2());
+
+            break;
+        }
+
 #if !ASSERT_DISABLED
         // Have these no-op cases here to ensure that nobody forgets to add handlers for new opcodes.
         case SetArgument:

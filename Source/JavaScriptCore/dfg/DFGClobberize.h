@@ -888,6 +888,17 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         def(HeapLocation(CheckTypeInfoFlagsLoc, JSCell_typeInfoFlags, node->child1()), LazyNode(node));
         return;
 
+    case ParseInt:
+        // Note: We would have eliminated a ParseInt that has just a single child as an Int32Use inside fixup.
+        if (node->child1().useKind() == StringUse && (!node->child2() || node->child2().useKind() == Int32Use)) {
+            def(PureValue(node));
+            return;
+        }
+
+        read(World);
+        write(Heap);
+        return;
+
     case OverridesHasInstance:
         read(JSCell_typeInfoFlags);
         def(HeapLocation(OverridesHasInstanceLoc, JSCell_typeInfoFlags, node->child1()), LazyNode(node));

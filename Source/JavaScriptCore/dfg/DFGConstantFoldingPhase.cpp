@@ -602,6 +602,29 @@ private:
                 break;
             }
 
+            case ParseInt: {
+                AbstractValue& value = m_state.forNode(node->child1());
+                if (!value.m_type || (value.m_type & ~SpecInt32Only))
+                    break;
+
+                JSValue radix;
+                if (!node->child2())
+                    radix = jsNumber(0);
+                else
+                    radix = m_state.forNode(node->child2()).m_value;
+
+                if (!radix.isNumber())
+                    break;
+
+                if (radix.asNumber() == 0 || radix.asNumber() == 10) {
+                    node->child2() = Edge();
+                    node->convertToIdentity();
+                    changed = true;
+                }
+
+                break;
+            }
+
             case Check: {
                 alreadyHandled = true;
                 m_interpreter.execute(indexInBlock);

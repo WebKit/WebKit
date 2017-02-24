@@ -56,6 +56,7 @@
 #include "JSSet.h"
 #include "ObjectConstructor.h"
 #include "Operations.h"
+#include "ParseInt.h"
 #include "RegExpObject.h"
 #include "Repatch.h"
 #include "ScopedArguments.h"
@@ -172,6 +173,14 @@ static ALWAYS_INLINE void putWithThis(ExecState* exec, EncodedJSValue encodedBas
     JSValue putValue = JSValue::decode(encodedValue);
     PutPropertySlot slot(thisVal, strict);
     baseValue.putInline(exec, ident, putValue, slot);
+}
+
+static ALWAYS_INLINE EncodedJSValue parseIntResult(double input)
+{
+    int asInt = static_cast<int>(input);
+    if (static_cast<double>(asInt) == input)
+        return JSValue::encode(jsNumber(asInt));
+    return JSValue::encode(jsNumber(input));
 }
 
 extern "C" {
@@ -847,6 +856,53 @@ EncodedJSValue JIT_OPERATION operationRegExpExecGeneric(ExecState* exec, JSGloba
         return JSValue::encode(jsUndefined());
     scope.release();
     return JSValue::encode(asRegExpObject(base)->exec(exec, globalObject, input));
+}
+
+EncodedJSValue JIT_OPERATION operationParseIntNoRadixGeneric(ExecState* exec, EncodedJSValue value)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+
+    return toStringView(exec, JSValue::decode(value), [&] (StringView view) {
+        // This version is as if radix was undefined. Hence, undefined.toNumber() === 0.
+        return parseIntResult(parseInt(view, 0));
+    });
+}
+
+EncodedJSValue JIT_OPERATION operationParseIntStringNoRadix(ExecState* exec, JSString* string)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    auto viewWithString = string->viewWithUnderlyingString(*exec);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    // This version is as if radix was undefined. Hence, undefined.toNumber() === 0.
+    return parseIntResult(parseInt(viewWithString.view, 0));
+}
+
+EncodedJSValue JIT_OPERATION operationParseIntString(ExecState* exec, JSString* string, int32_t radix)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    auto viewWithString = string->viewWithUnderlyingString(*exec);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    // This version is as if radix was undefined. Hence, undefined.toNumber() === 0.
+    return parseIntResult(parseInt(viewWithString.view, radix));
+}
+
+EncodedJSValue JIT_OPERATION operationParseIntGeneric(ExecState* exec, EncodedJSValue value, int32_t radix)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+
+    return toStringView(exec, JSValue::decode(value), [&] (StringView view) {
+        return parseIntResult(parseInt(view, radix));
+    });
 }
         
 size_t JIT_OPERATION operationRegExpTestString(ExecState* exec, JSGlobalObject* globalObject, RegExpObject* regExpObject, JSString* input)
