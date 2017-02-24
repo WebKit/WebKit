@@ -2554,7 +2554,7 @@ void GraphicsLayerCA::updateMaskLayer()
     PlatformCALayer* maskCALayer = m_maskLayer ? downcast<GraphicsLayerCA>(*m_maskLayer).primaryLayer() : nullptr;
     
     LayerMap* layerCloneMap;
-    if (m_structuralLayer) {
+    if (m_structuralLayer && structuralLayerPurpose() == StructuralLayerForBackdrop) {
         m_structuralLayer->setMask(maskCALayer);
         layerCloneMap = m_structuralLayerClones.get();
     } else {

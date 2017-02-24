@@ -1,3 +1,20 @@
+2017-02-23  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r211305): Masks on composited elements with preserve-3d broken
+        https://bugs.webkit.org/show_bug.cgi?id=168815
+        rdar://problem/30676846
+
+        Reviewed by Jon Lee.
+
+        r211305 moved the mask layer to be on the structural layer if there is one, to fix
+        masking backdrops. However, with preserve-3d the structural layer can be a CATransformLayer,
+        which doesn't take a mask, so limit the previous change to backdrops only.
+
+        Test: compositing/masks/mask-with-preserve-3d.html
+
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::updateMaskLayer):
+
 2017-02-23  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] Show "Loading" until playback starts
