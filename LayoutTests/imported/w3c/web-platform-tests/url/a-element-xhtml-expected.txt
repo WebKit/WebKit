@@ -383,11 +383,11 @@ PASS Parsing: <http://256.256.256.256.256> against <http://other.com/>
 PASS Parsing: <file:///C%3A/> against <about:blank> 
 PASS Parsing: <file:///C%7C/> against <about:blank> 
 PASS Parsing: <pix/submit.gif> against <file:///C:/Users/Domenic/Dropbox/GitHub/tmpvar/jsdom/test/level2/html/files/anchor.html> 
-FAIL Parsing: <..> against <file:///C:/> assert_equals: href expected "file:///C:/" but got "file:///"
+PASS Parsing: <..> against <file:///C:/> 
 PASS Parsing: <..> against <file:///> 
 FAIL Parsing: </> against <file:///C:/a/b> assert_equals: href expected "file:///C:/" but got "file:///"
 FAIL Parsing: <//d:> against <file:///C:/a/b> assert_equals: href expected "file:///d:" but got "file://d/"
-FAIL Parsing: <//d:/..> against <file:///C:/a/b> assert_equals: href expected "file:///d:/" but got "file:///"
+PASS Parsing: <//d:/..> against <file:///C:/a/b> 
 PASS Parsing: <..> against <file:///ab:/> 
 PASS Parsing: <..> against <file:///1:/> 
 PASS Parsing: <file:> against <about:blank> 
