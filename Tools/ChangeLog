@@ -1,3 +1,13 @@
+2017-02-23  Matt Rajca  <mrajca@apple.com>
+
+        API test WebKit2.WebsitePoliciesPlayAfterPreventedAutoplay is timing out
+        https://bugs.webkit.org/show_bug.cgi?id=167466
+
+        Reviewed by Alex Christensen.
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/WebsitePolicies.mm:
+        (TEST): Use the correct API version.
+
 2017-02-20  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Refactor data interaction to use new WKDataInteraction SPI
