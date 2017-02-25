@@ -25,12 +25,14 @@
 
 .scope-radio-button-navigation-item {
     position: relative;
+
+    --scope-radio-button-navigation-item-select-offset-start: 0;
+    --scope-radio-button-navigation-item-arrows-margin-start: 4px;
 }
 
 .scope-radio-button-navigation-item > .scope-radio-button-item-select {
     position: absolute;
     top: 0;
-    left: 0;
     width: 100%;
     height: 100%;
     border: 1px solid transparent;
@@ -40,18 +42,32 @@
     outline: none;
 }
 
+body[dir=ltr] .scope-radio-button-navigation-item > .scope-radio-button-item-select {
+    left: var(--scope-radio-button-navigation-item-select-offset-start);
+}
+
+body[dir=rtl] .scope-radio-button-navigation-item > .scope-radio-button-item-select {
+    right: var(--scope-radio-button-navigation-item-select-offset-start);
+}
+
 /* Positions the "Style" text almost exactly over the radio-button-item */
 .scope-radio-button-navigation-item > .scope-radio-button-item-select:focus {
     top: -2px;
-    left: 0px;
     border: none;
 }
 
 .scope-radio-button-navigation-item > .arrows {
     width: 5px;
     height: 11px;
-    margin-left: 4px;
     transform: translateY(1px);
+}
+
+body[dir=ltr] .scope-radio-button-navigation-item > .arrows {
+    margin-left: var(--scope-radio-button-navigation-item-arrows-margin-start);
+}
+
+body[dir=rtl] .scope-radio-button-navigation-item > .arrows {
+    margin-right: var(--scope-radio-button-navigation-item-arrows-margin-start);
 }
 
 .scope-radio-button-navigation-item.selected > .arrows {

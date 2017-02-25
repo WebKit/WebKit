@@ -1,5 +1,22 @@
 2017-02-25  Devin Rousso  <dcrousso+webkit@gmail.com>
 
+        Web Inspector: RTL: Elements tab Styles sidebar label/arrows need adjustment
+        https://bugs.webkit.org/show_bug.cgi?id=168746
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/ScopeRadioButtonNavigationItem.css:
+        (.scope-radio-button-navigation-item):
+        (.scope-radio-button-navigation-item > .scope-radio-button-item-select):
+        (body[dir=ltr] .scope-radio-button-navigation-item > .scope-radio-button-item-select):
+        (body[dir=rtl] .scope-radio-button-navigation-item > .scope-radio-button-item-select):
+        (.scope-radio-button-navigation-item > .scope-radio-button-item-select:focus):
+        (.scope-radio-button-navigation-item > .arrows):
+        (body[dir=ltr] .scope-radio-button-navigation-item > .arrows):
+        (body[dir=rtl] .scope-radio-button-navigation-item > .arrows):
+
+2017-02-25  Devin Rousso  <dcrousso+webkit@gmail.com>
+
         Web Inspector: copying a search result out of Search Tab navigation sidebar does nothing
         https://bugs.webkit.org/show_bug.cgi?id=167074
 
