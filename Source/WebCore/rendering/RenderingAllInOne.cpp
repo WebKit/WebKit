@@ -144,6 +144,7 @@
 #include "SimpleLineLayout.cpp"
 #include "SimpleLineLayoutFlowContents.cpp"
 #include "SimpleLineLayoutFunctions.cpp"
+#include "SimpleLineLayoutPagination.cpp"
 #include "SimpleLineLayoutResolver.cpp"
 #include "SimpleLineLayoutTextFragmentIterator.cpp"
 #include "TextDecorationPainter.cpp"

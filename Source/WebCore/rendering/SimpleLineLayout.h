@@ -76,22 +76,24 @@ class Layout {
 public:
     using RunVector = Vector<Run, 10>;
     using SimpleLineStruts = Vector<SimpleLineStrut, 4>;
-    static std::unique_ptr<Layout> create(const RunVector&, SimpleLineStruts&, unsigned lineCount, bool isPaginated);
+    static std::unique_ptr<Layout> create(const RunVector&, unsigned lineCount);
 
     unsigned lineCount() const { return m_lineCount; }
 
     unsigned runCount() const { return m_runCount; }
     const Run& runAt(unsigned i) const { return m_runs[i]; }
 
+    void setIsPaginated() { m_isPaginated = true; }
     bool isPaginated() const { return m_isPaginated; }
     bool hasLineStruts() const { return !m_lineStruts.isEmpty(); }
+    void setLineStruts(SimpleLineStruts&& lineStruts) { m_lineStruts = lineStruts; }
     const SimpleLineStruts& struts() const { return m_lineStruts; }
 private:
-    Layout(const RunVector&, SimpleLineStruts&, unsigned lineCount, bool isPaginated);
+    Layout(const RunVector&, unsigned lineCount);
 
     unsigned m_lineCount;
     unsigned m_runCount;
-    bool m_isPaginated;
+    bool m_isPaginated { false };
     SimpleLineStruts m_lineStruts;
     Run m_runs[0];
 };
