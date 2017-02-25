@@ -1,3 +1,14 @@
+2017-02-24  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, follow-up fix after r212972.
+
+        Fixes a few assertions on the debug build bots.
+        URL needs to be exactly the same as the parsed one given
+        that we are calling the ParsedURLString constructor.
+
+        * platform/network/ResourceResponseBase.cpp:
+        (WebCore::ResourceResponseBase::sanitizeSuggestedFilename):
+
 2017-02-24  Zalan Bujtas  <zalan@apple.com>
 
         Simple line layout: Re-adjust paginated lines when block height changes.
