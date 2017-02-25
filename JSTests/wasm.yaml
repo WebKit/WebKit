@@ -52,10 +52,10 @@
   cmd: runWebAssemblySpecTest :normal
 
 - path: wasm/spec-tests/call.wast.js
-  cmd: runWebAssemblySpecTest :skip
+  cmd: runWebAssemblySpecTest :normal
 
 - path: wasm/spec-tests/call_indirect.wast.js
-  cmd: runWebAssemblySpecTest :skip
+  cmd: runWebAssemblySpecTest :normal
 
 - path: wasm/spec-tests/comments.wast.js
   cmd: runWebAssemblySpecTest :normal
@@ -64,7 +64,7 @@
   cmd: runWebAssemblySpecTest :normal
 
 - path: wasm/spec-tests/custom_section.wast.js
-  cmd: runWebAssemblySpecTest :skip
+  cmd: runWebAssemblySpecTest :normal
 
 - path: wasm/spec-tests/endianness.wast.js
   cmd: runWebAssemblySpecTest :normal
@@ -85,10 +85,10 @@
   cmd: runWebAssemblySpecTest :normal
 
 - path: wasm/spec-tests/fac.wast.js
-  cmd: runWebAssemblySpecTest :skip
+  cmd: runWebAssemblySpecTest :normal
 
 - path: wasm/spec-tests/float_exprs.wast.js
-  cmd: runWebAssemblySpecTest :skip
+  cmd: runWebAssemblySpecTest :normal
 
 - path: wasm/spec-tests/float_literals.wast.js
   cmd: runWebAssemblySpecTest :normal
@@ -121,7 +121,7 @@
   cmd: runWebAssemblySpecTest :normal
 
 - path: wasm/spec-tests/imports.wast.js
-  cmd: runWebAssemblySpecTest :skip
+  cmd: runWebAssemblySpecTest :normal
 
 - path: wasm/spec-tests/int_exprs.wast.js
   cmd: runWebAssemblySpecTest :normal

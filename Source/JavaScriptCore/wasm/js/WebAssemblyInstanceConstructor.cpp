@@ -203,7 +203,9 @@ static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyInstance(ExecState* ex
             // 5. If i is a global import:
             // i. If i is not an immutable global, throw a TypeError.
             ASSERT(moduleInformation.globals[import.kindIndex].mutability == Wasm::Global::Immutable);
-            // ii. If Type(v) is not Number, throw a TypeError.
+            // ii. If the global_type of i is i64 or Type(v) is not Number, throw a WebAssembly.LinkError.
+            if (moduleInformation.globals[import.kindIndex].type == Wasm::I64)
+                return JSValue::encode(throwException(exec, throwScope, createJSWebAssemblyLinkError(exec, vm, ASCIILiteral("imported global cannot be an i64"))));
             if (!value.isNumber())
                 return JSValue::encode(throwException(exec, throwScope, createJSWebAssemblyLinkError(exec, vm, ASCIILiteral("imported global must be a number"))));
             // iii. Append ToWebAssemblyValue(v) to imports.

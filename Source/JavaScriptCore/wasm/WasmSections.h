@@ -46,7 +46,7 @@ enum class Section : uint8_t {
 #define DEFINE_WASM_SECTION_ENUM(NAME, ID, DESCRIPTION) NAME = ID,
     FOR_EACH_WASM_SECTION(DEFINE_WASM_SECTION_ENUM)
 #undef DEFINE_WASM_SECTION_ENUM
-    Unknown
+    Custom
 };
 
 template<typename Int>
@@ -63,7 +63,7 @@ static inline bool isValidSection(Int section)
 
 static inline bool validateOrder(Section previous, Section next)
 {
-    if (previous == Section::Unknown)
+    if (previous == Section::Custom)
         return true;
     return static_cast<uint8_t>(previous) < static_cast<uint8_t>(next);
 }
@@ -71,12 +71,11 @@ static inline bool validateOrder(Section previous, Section next)
 static inline const char* makeString(Section section)
 {
     switch (section) {
+    case Section::Custom:
+        return "Custom";
 #define STRINGIFY_SECTION_NAME(NAME, ID, DESCRIPTION) case Section::NAME: return #NAME;
         FOR_EACH_WASM_SECTION(STRINGIFY_SECTION_NAME)
 #undef STRINGIFY_SECTION_NAME
-    default:
-        RELEASE_ASSERT_NOT_REACHED();
-        return "?";
     }
 }
 

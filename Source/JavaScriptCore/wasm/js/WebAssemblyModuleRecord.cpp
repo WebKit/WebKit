@@ -148,6 +148,10 @@ void WebAssemblyModuleRecord::link(ExecState* state, JSWebAssemblyInstance* inst
                 exportedValue = JSValue(instance->loadI32Global(exp.kindIndex));
                 break;
 
+            case Wasm::I64:
+                throwException(state, scope, createJSWebAssemblyLinkError(state, vm, ASCIILiteral("exported global cannot be an i64")));
+                return;
+
             case Wasm::F32:
                 exportedValue = JSValue(instance->loadF32Global(exp.kindIndex));
                 break;
@@ -238,7 +242,7 @@ JSValue WebAssemblyModuleRecord::evaluate(ExecState* state)
                 JSWebAssemblyCallee* wasmEntrypointCallee = module->wasmEntrypointCalleeFromFunctionIndexSpace(functionIndex);
                 Wasm::SignatureIndex signatureIndex = module->signatureIndexFromFunctionIndexSpace(functionIndex);
                 const Wasm::Signature* signature = Wasm::SignatureInformation::get(&vm, signatureIndex);
-                // FIXME: Say we export local function "foo" at funciton index 0.
+                // FIXME: Say we export local function "foo" at function index 0.
                 // What if we also set it to the table an Element w/ index 0.
                 // Does (new Instance(...)).exports.foo === table.get(0)?
                 // https://bugs.webkit.org/show_bug.cgi?id=165825

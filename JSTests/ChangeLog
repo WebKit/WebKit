@@ -1,3 +1,21 @@
+2017-02-24  JF Bastien  <jfbastien@apple.com>
+
+        WebAssembly: miscellaneous spec fixes
+        https://bugs.webkit.org/show_bug.cgi?id=168822
+
+        Reviewed by Saam Barati.
+
+        * wasm.yaml: mark some skip tests as normal, now that they pass
+        * wasm/Builder.js: error message was wrong, causing extra error if hit
+        * wasm/js-api/global-error.js: new tests
+        (assert.throws):
+        * wasm/spec-tests/call.wast.js: comment out stack check tests
+        * wasm/spec-tests/call_indirect.wast.js: comment out stack check tests
+        * wasm/spec-tests/fac.wast.js: comment out stack check tests
+        * wasm/spec-tests/float_exprs.wast.js: wabt is wrong, bug reported, we should update
+        * wasm/spec-tests/imports.wast.js: bug in old wabt, fixed in recent wabt
+        (assert_unlinkable):
+
 2017-02-23  Saam Barati  <sbarati@apple.com>
 
         Intrinsicify parseInt

@@ -59,13 +59,13 @@ auto ModuleParser::parse() -> Result
     if (versionNumber != 0xD) // FIXME Stop supporting version 0xD temporarily. https://bugs.webkit.org/show_bug.cgi?id=168788
         WASM_PARSER_FAIL_IF(versionNumber != expectedVersionNumber, "unexpected version number ", versionNumber, " expected ", expectedVersionNumber);
 
-    Section previousSection = Section::Unknown;
+    Section previousSection = Section::Custom;
     while (m_offset < length()) {
         uint8_t sectionByte;
 
         WASM_PARSER_FAIL_IF(!parseUInt7(sectionByte), "can't get section byte");
 
-        Section section = Section::Unknown;
+        Section section = Section::Custom;
         if (sectionByte) {
             if (isValidSection(sectionByte))
                 section = static_cast<Section>(sectionByte);
@@ -87,7 +87,7 @@ auto ModuleParser::parse() -> Result
         FOR_EACH_WASM_SECTION(WASM_SECTION_PARSE)
 #undef WASM_SECTION_PARSE
 
-        case Section::Unknown: {
+        case Section::Custom: {
             WASM_FAIL_IF_HELPER_FAILS(parseCustom(sectionLength));
             break;
         }

@@ -192,7 +192,7 @@ const _normalizeMutability = (mutability) => {
     else if (mutability === "immutable")
         return 0;
     else
-        throw new Error(`mutability should be either "mutable" or "immutable", but got ${global.mutablity}`);
+        throw new Error(`mutability should be either "mutable" or "immutable", but got ${mutability}`);
 };
 
 const _exportGlobalContinuation = (builder, section, nextBuilder) => {
