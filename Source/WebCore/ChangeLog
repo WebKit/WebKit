@@ -1,3 +1,26 @@
+2017-02-24  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] <audio> controls should center in their container when the page is scaled
+        https://bugs.webkit.org/show_bug.cgi?id=168841
+        <rdar://problem/28612794>
+
+        Reviewed by Eric Carlson.
+
+        When dealing with <audio> elements, we vertically center the controls relative to their containing
+        media element such that if the controls visually overflow, they overflow equally above and below
+        to minimize the likelihood of overlap with surrounding elements.
+
+        Test: media/modern-media-controls/media-controller/media-controller-scale-factor-audio.html
+
+        * Modules/modern-media-controls/controls/media-controls.js:
+        (MediaControls.prototype.get shouldCenterControlsVertically):
+        (MediaControls.prototype.set shouldCenterControlsVertically):
+        (MediaControls.prototype.commitProperty):
+        * Modules/modern-media-controls/media/media-controller.js:
+        (MediaController.prototype.get isAudio):
+        (MediaController.prototype.get layoutTraits):
+        (MediaController.prototype._updateControlsSize):
+
 2017-02-24  Alex Christensen  <achristensen@webkit.org>
 
         Non-special relative URLs should not ignore extra slashes

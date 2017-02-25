@@ -2,21 +2,21 @@
 <script src="../../../resources/js-test-pre.js"></script>
 <meta name="viewport" content="width=400">
 <body>
-<video src="../../content/test.mp4" style="position: absolute; top: 0; left: 0; width: 400px; height: 300px;" controls></video>
+<audio src="../../content/test.mp3" style="position: absolute; top: 100px; left: 0; width: 400px;" controls></audio>
 <script type="text/javascript">
 
 window.jsTestIsAsync = true;
 
-description("Testing that we apply a CSS zoom to ensure controls are always 50 device points tall on iOS.");
+description("Testing that we apply a CSS zoom to ensure controls are always 50 device points tall on iOS for audio and also center the controls vertically.");
 
-const media = document.querySelector("video");
+const media = document.querySelector("audio");
 const shadowRoot = window.internals.shadowRoot(media);
 
 window.requestAnimationFrame(() => {
     shouldBeEqualToString("shadowRoot.querySelector('.media-controls').style.width", "800px");
-    shouldBeEqualToString("shadowRoot.querySelector('.media-controls').style.height", "600px");
+    shouldBeEqualToString("shadowRoot.querySelector('.media-controls').style.height", "100px");
     shouldBeEqualToString("shadowRoot.querySelector('.media-controls').style.zoom", "0.5");
-    shouldBeEqualToString("shadowRoot.querySelector('.media-controls').style.top", "auto");
+    shouldBeEqualToString("shadowRoot.querySelector('.media-controls').style.top", "-25px");
 
     debug("");
     media.remove();

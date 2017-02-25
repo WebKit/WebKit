@@ -60,6 +60,11 @@ class MediaController
 
     // Public
 
+    get isAudio()
+    {
+        return this.media instanceof HTMLAudioElement || (this.media.readyState >= HTMLMediaElement.HAVE_METADATA && this.media.videoWidth === 0);
+    }
+
     get layoutTraits()
     {
         let traits = window.navigator.platform === "MacIntel" ? LayoutTraits.macOS : LayoutTraits.iOS;
@@ -73,7 +78,7 @@ class MediaController
         if (controlsWidth <= CompactModeMaxWidth)
             return traits | LayoutTraits.Compact;
 
-        const isAudio = this.media instanceof HTMLAudioElement || this.media.videoTracks.length === 0;
+        const isAudio = this.isAudio;
         if (isAudio && controlsWidth <= AudioTightPaddingMaxWidth)
             return traits | LayoutTraits.TightPadding;
 
@@ -178,6 +183,7 @@ class MediaController
     {
         this.controls.width = this._controlsWidth();
         this.controls.height = Math.round(this.container.getBoundingClientRect().height * this.controls.scaleFactor);
+        this.controls.shouldCenterControlsVertically = this.isAudio;
     }
 
     _controlsWidth()

@@ -1034,6 +1034,7 @@ webkit.org/b/165460 compositing/repaint/scroll-fixed-layer-out-of-view.html [ Fa
 
 # iOS-specific test
 media/modern-media-controls/media-controller/media-controller-scale-factor.html [ Skip ]
+media/modern-media-controls/media-controller/media-controller-scale-factor-audio.html [ Skip ]
 
 webkit.org/b/166911 fast/dom/Window/window-properties-performance.html [ Pass Failure ]
 webkit.org/b/166911 fast/dom/Window/window-properties-performance-resource-timing.html [ Pass Failure ]

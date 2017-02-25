@@ -2779,6 +2779,7 @@ fast/css/deferred-parsing/hover-test.html [ Skip ]
 
 # iOS-specific test
 media/modern-media-controls/media-controller/media-controller-scale-factor.html [ Pass ]
+media/modern-media-controls/media-controller/media-controller-scale-factor-audio.html [ Pass ]
 
 # The tracks menu is never used in media controls on iOS
 media/modern-media-controls/tracks-panel [ Skip ]
