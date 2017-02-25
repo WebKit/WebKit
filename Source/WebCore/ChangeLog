@@ -1,3 +1,245 @@
+2017-02-24  Joseph Pecoraro  <pecoraro@apple.com>
+
+        [Resource Timing] Gather timing information with reliable responseEnd time
+        https://bugs.webkit.org/show_bug.cgi?id=168351
+
+        Reviewed by Alex Christensen.
+
+        This patch replaces the unused `double finishTime` in ResourceLoader's
+        didFinishLoad with a complete WebCore::NetworkLoadMetrics object. This
+        allows the NetworkProcess to give complete timing information, and more
+        final metrics about the load, to WebCore. Currently this is only used
+        by ResourceTiming, but it will soon be used by Web Inspector as well.
+        We may also end up extending this to the didFail path as well, since it
+        is possible that we have some metrics for load failures.
+
+        At the same time we want to start moving away from the legacy path that
+        populated a subset of this information in ResourceResponse's NetworkLoadMetrics.
+        It doesn't make sense to store this information on the ResourceResponse
+        for a few reasons: We don't want to store the metrics in our Network Cache and
+        not all of the load timing metrics have been populated yet (responseEnd).
+        In an effort to move off of this data we've renamed the accessor to
+        "deprecatedNetworkLoadMetrics". There are a few remaining clients
+        (ResourceHandle, PerformanceTiming, InspectorNetworkAgent) which can be
+        migrated separately from this patch.
+
+        Having both the legacy and new code paths adds a little bit of complexity.
+        One advantage of the new path is that the complete load timing data
+        (fetchStart -> dns -> connect -> request -> response -> responseEnd) can
+        be packaged together. The legacy path could not include a responseEnd, so
+        WebCore faked that value with its own timestamp. Having the fake responseEnd
+        caused issues as timestamps / clocks are different between processes. In order
+        for PerformanceResponseTiming to know whether or not the NetworkLoadMetrics
+        has the complete network timing metrics it checks isComplete(). If true
+        it knows it can use the responseEnd time from NetworkLoadMetrics, otherwise
+        it must fallback to the legacy value from LoadTiming. Once all of the
+        deprecatedNetworkLoadMetrics clients go away, we should always have the
+        complete data and this can be eliminated.
+
+        Tests: imported/w3c/web-platform-tests/resource-timing/rt-nextHopProtocol.html
+               imported/w3c/web-platform-tests/resource-timing/rt-nextHopProtocol.worker.html
+
+        * PlatformMac.cmake:
+        * WebCore.xcodeproj/project.pbxproj:
+        Rename NetworkLoadTiming -> NetworkLoadMetrics.
+
+        * page/PerformanceResourceTiming.cpp:
+        (WebCore::entryStartTime):
+        (WebCore::entryEndTime):
+        (WebCore::PerformanceResourceTiming::PerformanceResourceTiming):
+        (WebCore::PerformanceResourceTiming::nextHopProtocol):
+        (WebCore::PerformanceResourceTiming::domainLookupStart):
+        (WebCore::PerformanceResourceTiming::domainLookupEnd):
+        (WebCore::PerformanceResourceTiming::connectStart):
+        (WebCore::PerformanceResourceTiming::connectEnd):
+        (WebCore::PerformanceResourceTiming::secureConnectionStart):
+        (WebCore::PerformanceResourceTiming::requestStart):
+        (WebCore::PerformanceResourceTiming::responseStart):
+        (WebCore::PerformanceResourceTiming::responseEnd):
+        (WebCore::PerformanceResourceTiming::networkLoadTimeToDOMHighResTimeStamp):
+        * page/PerformanceResourceTiming.h:
+        Mostly just updating names and types. This does however need to get the
+        correct endTime based on whether the NetworkLoadMetrics are complete
+        (meaning includes responseEnd) or not (legacy, use LoadTiming value).
+
+        * page/PerformanceResourceTiming.idl:
+        Add nextHopProtocol.
+
+        * page/PerformanceTiming.cpp:
+        (WebCore::PerformanceTiming::domainLookupStart):
+        (WebCore::PerformanceTiming::domainLookupEnd):
+        (WebCore::PerformanceTiming::connectStart):
+        (WebCore::PerformanceTiming::connectEnd):
+        (WebCore::PerformanceTiming::secureConnectionStart):
+        (WebCore::PerformanceTiming::requestStart):
+        (WebCore::PerformanceTiming::responseStart):
+        (WebCore::PerformanceTiming::resourceLoadTimeRelativeToFetchStart):
+        * page/PerformanceTiming.h:
+        Navigation Timing values still uses the NetworkLoadTiming values stored on
+        the DocumentLoader. This should be moved off of the deprecated path separately.
+
+        * platform/network/NetworkLoadMetrics.h: Renamed from Source/WebCore/platform/network/NetworkLoadTiming.h.
+        (WebCore::NetworkLoadMetrics::NetworkLoadMetrics):
+        (WebCore::NetworkLoadMetrics::isolatedCopy):
+        (WebCore::NetworkLoadMetrics::reset):
+        (WebCore::NetworkLoadMetrics::operator==):
+        (WebCore::NetworkLoadMetrics::operator!=):
+        (WebCore::NetworkLoadMetrics::isComplete):
+        (WebCore::NetworkLoadMetrics::markComplete):
+        (WebCore::NetworkLoadMetrics::encode):
+        (WebCore::NetworkLoadMetrics::decode):
+        Re-introduce a reset() method (for NetworkLoadSoup to reset between redirects).
+        Add protocolName and "complete" boolean.
+
+        * platform/network/cocoa/NetworkLoadMetrics.mm: Renamed from Source/WebCore/platform/network/cocoa/NetworkLoadTiming.mm.
+        (WebCore::timingValue):
+        (WebCore::copyTimingData):
+        (WebCore::setCollectsTimingData):
+        Use this opportunity to convert NetworkLoadTiming timestamps to WTF::Seconds.
+        Since we already have to modify all the clients this moves us to use the more
+        strongly typed units that are less ambiguous then "double". The rest of the
+        Performance API has already moved to these units.
+
+        * inspector/InspectorNetworkAgent.cpp:
+        (WebCore::InspectorNetworkAgent::buildObjectForTiming):
+        (WebCore::InspectorNetworkAgent::buildObjectForResourceResponse):
+        (WebCore::InspectorNetworkAgent::didFinishLoading):
+        * inspector/InspectorNetworkAgent.h:
+        Inspector was the only client of the finishTime, and since the value was
+        erratically coming from clients in different ways it was almost certainly
+        inaccurate. Simplify this in preparation for using NetworkLoadMetrics.
+
+        * Modules/fetch/FetchLoader.cpp:
+        (WebCore::FetchLoader::didFinishLoading):
+        * Modules/fetch/FetchLoader.h:
+        * fileapi/FileReaderLoader.cpp:
+        (WebCore::FileReaderLoader::didFinishLoading):
+        * fileapi/FileReaderLoader.h:
+        * html/MediaFragmentURIParser.cpp:
+        (WebCore::MediaFragmentURIParser::parseNPTTime):
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::didFinishLoadingImpl):
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::didFinishLoading):
+        * loader/CrossOriginPreflightChecker.cpp:
+        (WebCore::CrossOriginPreflightChecker::validatePreflightResponse):
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::notifyFinished):
+        (WebCore::DocumentLoader::finishedLoading):
+        (WebCore::DocumentLoader::continueAfterContentPolicy):
+        (WebCore::DocumentLoader::maybeLoadEmpty):
+        * loader/DocumentLoader.h:
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::didReceiveResponse):
+        (WebCore::DocumentThreadableLoader::notifyFinished):
+        (WebCore::DocumentThreadableLoader::didFinishLoading):
+        (WebCore::DocumentThreadableLoader::loadRequest):
+        * loader/DocumentThreadableLoader.h:
+        * loader/NetscapePlugInStreamLoader.cpp:
+        (WebCore::NetscapePlugInStreamLoader::didFinishLoading):
+        * loader/NetscapePlugInStreamLoader.h:
+        * loader/ResourceLoadNotifier.cpp:
+        (WebCore::ResourceLoadNotifier::didFinishLoad):
+        (WebCore::ResourceLoadNotifier::dispatchDidFinishLoading):
+        (WebCore::ResourceLoadNotifier::sendRemainingDelegateMessages):
+        * loader/ResourceLoadNotifier.h:
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::deliverResponseAndData):
+        (WebCore::ResourceLoader::loadDataURL):
+        (WebCore::ResourceLoader::didFinishLoading):
+        (WebCore::ResourceLoader::didFinishLoadingOnePart):
+        * loader/ResourceLoader.h:
+        * loader/ResourceTiming.cpp:
+        (WebCore::ResourceTiming::fromLoad):
+        (WebCore::ResourceTiming::fromSynchronousLoad):
+        (WebCore::ResourceTiming::ResourceTiming):
+        (WebCore::ResourceTiming::isolatedCopy):
+        * loader/ResourceTiming.h:
+        (WebCore::ResourceTiming::networkLoadMetrics):
+        (WebCore::ResourceTiming::ResourceTiming):
+        (WebCore::ResourceTiming::networkLoadTiming): Deleted.
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::SubresourceLoader):
+        (WebCore::SubresourceLoader::willSendRequestInternal):
+        (WebCore::SubresourceLoader::didReceiveResponse):
+        (WebCore::SubresourceLoader::didFinishLoading):
+        (WebCore::SubresourceLoader::reportResourceTiming):
+        * loader/SubresourceLoader.h:
+        * loader/ThreadableLoaderClient.h:
+        (WebCore::ThreadableLoaderClient::didFinishLoading):
+        * loader/ThreadableLoaderClientWrapper.h:
+        (WebCore::ThreadableLoaderClientWrapper::didFinishLoading):
+        * loader/WorkerThreadableLoader.cpp:
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::didFinishLoading):
+        * loader/WorkerThreadableLoader.h:
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::ApplicationCacheGroup::didFinishLoading):
+        * loader/appcache/ApplicationCacheGroup.h:
+        * loader/cache/CachedResource.h:
+        (WebCore::CachedResource::setLoadFinishTime):
+        * loader/ios/QuickLook.mm:
+        (-[WebPreviewLoader connectionDidFinishLoading:]):
+        * page/EventSource.cpp:
+        (WebCore::EventSource::didFinishLoading):
+        * page/EventSource.h:
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp:
+        (ResourceHandleStreamingClient::didFinishLoading):
+        * platform/network/BlobResourceHandle.cpp:
+        (WebCore::doNotifyFinish):
+        * platform/network/PingHandle.h:
+        * platform/network/ResourceHandle.h:
+        * platform/network/ResourceHandleClient.h:
+        (WebCore::ResourceHandleClient::didFinishLoading):
+        * platform/network/ResourceResponseBase.cpp:
+        (WebCore::ResourceResponseBase::crossThreadData):
+        (WebCore::ResourceResponseBase::fromCrossThreadData):
+        (WebCore::ResourceResponseBase::compare):
+        * platform/network/ResourceResponseBase.h:
+        (WebCore::ResourceResponseBase::deprecatedNetworkLoadMetrics):
+        (WebCore::ResourceResponseBase::encode):
+        (WebCore::ResourceResponseBase::decode):
+        (WebCore::ResourceResponseBase::networkLoadTiming): Deleted.
+        * platform/network/SynchronousLoaderClient.cpp:
+        (WebCore::SynchronousLoaderClient::didFinishLoading):
+        * platform/network/SynchronousLoaderClient.h:
+        * platform/network/cf/ResourceHandleCFURLConnectionDelegateWithOperationQueue.cpp:
+        (WebCore::ResourceHandleCFURLConnectionDelegateWithOperationQueue::didReceiveResponse):
+        (WebCore::ResourceHandleCFURLConnectionDelegateWithOperationQueue::didFinishLoading):
+        * platform/network/cf/SynchronousResourceHandleCFURLConnectionDelegate.cpp:
+        (WebCore::SynchronousResourceHandleCFURLConnectionDelegate::didReceiveResponse):
+        (WebCore::SynchronousResourceHandleCFURLConnectionDelegate::didFinishLoading):
+        * platform/network/curl/ResourceHandleCurl.cpp:
+        (WebCore::WebCoreSynchronousLoader::didFinishLoading):
+        * platform/network/curl/ResourceHandleManager.cpp:
+        (WebCore::calculateWebTimingInformations):
+        (WebCore::ResourceHandleManager::downloadTimerCallback):
+        (WebCore::handleDataURL):
+        (WebCore::milisecondsSinceRequest): Deleted.
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::ResourceHandle::getConnectionTimingData):
+        * platform/network/mac/WebCoreResourceHandleAsDelegate.mm:
+        (-[WebCoreResourceHandleAsDelegate connection:didReceiveResponse:]):
+        (-[WebCoreResourceHandleAsDelegate connectionDidFinishLoading:]):
+        * platform/network/mac/WebCoreResourceHandleAsOperationQueueDelegate.mm:
+        (-[WebCoreResourceHandleAsOperationQueueDelegate connection:didReceiveResponse:]):
+        (-[WebCoreResourceHandleAsOperationQueueDelegate connectionDidFinishLoading:]):
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::restartedCallback):
+        (WebCore::nextMultipartResponsePartCallback):
+        (WebCore::sendRequestCallback):
+        (WebCore::ResourceHandle::didStartRequest):
+        (WebCore::networkEventCallback):
+        (WebCore::ResourceHandle::sendPendingRequest):
+        (WebCore::readCallback):
+        (WebCore::milisecondsSinceRequest): Deleted.
+        * workers/WorkerScriptLoader.cpp:
+        (WebCore::WorkerScriptLoader::didFinishLoading):
+        * workers/WorkerScriptLoader.h:
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::didFinishLoading):
+        * xml/XMLHttpRequest.h:
+        Eliminate the unused finishTime double.
+
 2017-02-24  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed GTK build fix after r212965

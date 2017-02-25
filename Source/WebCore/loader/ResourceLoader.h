@@ -50,6 +50,7 @@ class AuthenticationChallenge;
 class DocumentLoader;
 class Frame;
 class FrameLoader;
+class NetworkLoadMetrics;
 class QuickLookHandle;
 class URL;
 
@@ -102,7 +103,7 @@ public:
     virtual void didReceiveResponse(const ResourceResponse&);
     virtual void didReceiveData(const char*, unsigned, long long encodedDataLength, DataPayloadType);
     virtual void didReceiveBuffer(Ref<SharedBuffer>&&, long long encodedDataLength, DataPayloadType);
-    virtual void didFinishLoading(double finishTime);
+    virtual void didFinishLoading(const NetworkLoadMetrics&);
     virtual void didFail(const ResourceError&);
 #if USE(NETWORK_CFDATA_ARRAY_CALLBACK)
     virtual void didReceiveDataArray(CFArrayRef dataArray);
@@ -152,7 +153,7 @@ public:
 protected:
     ResourceLoader(Frame&, ResourceLoaderOptions);
 
-    void didFinishLoadingOnePart(double finishTime);
+    void didFinishLoadingOnePart(const NetworkLoadMetrics&);
     void cleanupForError(const ResourceError&);
 
     bool wasCancelled() const { return m_cancellationStatus >= Cancelled; }
@@ -191,7 +192,7 @@ private:
     void didReceiveResponse(ResourceHandle*, ResourceResponse&&) override;
     void didReceiveData(ResourceHandle*, const char*, unsigned, int encodedDataLength) override;
     void didReceiveBuffer(ResourceHandle*, Ref<SharedBuffer>&&, int encodedDataLength) override;
-    void didFinishLoading(ResourceHandle*, double finishTime) override;
+    void didFinishLoading(ResourceHandle*) override;
     void didFail(ResourceHandle*, const ResourceError&) override;
     void wasBlocked(ResourceHandle*) override;
     void cannotShowURL(ResourceHandle*) override;

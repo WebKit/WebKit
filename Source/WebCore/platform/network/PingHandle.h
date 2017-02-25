@@ -71,7 +71,7 @@ private:
     }
     void didReceiveResponse(ResourceHandle*, ResourceResponse&&) final { delete this; }
     void didReceiveBuffer(ResourceHandle*, Ref<SharedBuffer>&&, int) final { delete this; };
-    void didFinishLoading(ResourceHandle*, double) final { delete this; }
+    void didFinishLoading(ResourceHandle*) final { delete this; }
     void didFail(ResourceHandle*, const ResourceError&) final { delete this; }
     bool shouldUseCredentialStorage(ResourceHandle*) final { return m_shouldUseCredentialStorage; }
     bool usesAsyncCallbacks() final { return m_usesAsyncCallbacks == UsesAsyncCallbacks::Yes; }

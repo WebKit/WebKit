@@ -525,7 +525,7 @@ list(APPEND WebCore_SOURCES
     platform/network/cf/SynchronousResourceHandleCFURLConnectionDelegate.cpp
 
     platform/network/cocoa/CredentialCocoa.mm
-    platform/network/cocoa/NetworkLoadTiming.mm
+    platform/network/cocoa/NetworkLoadMetrics.mm
     platform/network/cocoa/ProtectionSpaceCocoa.mm
     platform/network/cocoa/ResourceRequestCocoa.mm
     platform/network/cocoa/ResourceResponseCocoa.mm

@@ -244,7 +244,7 @@ bool MediaFragmentURIParser::parseNPTTime(const LChar* timeString, unsigned leng
 
     // http://www.w3.org/2008/WebVideo/Fragments/WD-media-fragments-spec/#npttimedef
     // Normal Play Time can either be specified as seconds, with an optional
-    // fractional part to indicate miliseconds, or as colon-separated hours,
+    // fractional part to indicate milliseconds, or as colon-separated hours,
     // minutes and seconds (again with an optional fraction). Minutes and
     // seconds must be specified as exactly two digits, hours and fractional
     // seconds can be any number of digits. The hours, minutes and seconds

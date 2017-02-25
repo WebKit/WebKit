@@ -306,7 +306,7 @@ void DocumentThreadableLoader::didReceiveResponse(unsigned long identifier, cons
         if (tainting == ResourceResponse::Tainting::Opaque) {
             clearResource();
             if (m_client)
-                m_client->didFinishLoading(identifier, 0.0);
+                m_client->didFinishLoading(identifier);
         }
     } else {
         ASSERT(response.type() == ResourceResponse::Type::Opaqueredirect);
@@ -355,13 +355,13 @@ void DocumentThreadableLoader::notifyFinished(CachedResource& resource)
     if (m_resource->errorOccurred())
         didFail(m_resource->identifier(), m_resource->resourceError());
     else
-        didFinishLoading(m_resource->identifier(), m_resource->loadFinishTime());
+        didFinishLoading(m_resource->identifier());
 }
 
-void DocumentThreadableLoader::didFinishLoading(unsigned long identifier, double finishTime)
+void DocumentThreadableLoader::didFinishLoading(unsigned long identifier)
 {
     ASSERT(m_client);
-    m_client->didFinishLoading(identifier, finishTime);
+    m_client->didFinishLoading(identifier);
 }
 
 void DocumentThreadableLoader::didFail(unsigned long, const ResourceError& error)
@@ -461,7 +461,7 @@ void DocumentThreadableLoader::loadRequest(ResourceRequest&& request, SecurityCh
             // We don't want XMLHttpRequest to raise an exception for file:// resources, see <rdar://problem/4962298>.
             // FIXME: XMLHttpRequest quirks should be in XMLHttpRequest code, not in DocumentThreadableLoader.cpp.
             didReceiveResponse(identifier, response, ResourceResponse::Tainting::Basic);
-            didFinishLoading(identifier, 0.0);
+            didFinishLoading(identifier);
             return;
         }
         logErrorAndFail(error);
@@ -504,7 +504,7 @@ void DocumentThreadableLoader::loadRequest(ResourceRequest&& request, SecurityCh
 
 #if ENABLE(WEB_TIMING)
     if (RuntimeEnabledFeatures::sharedFeatures().resourceTimingEnabled()) {
-        ResourceTiming resourceTiming = ResourceTiming::fromSynchronousLoad(requestURL, m_options.initiator, loadTiming, response.networkLoadTiming(), response, securityOrigin());
+        ResourceTiming resourceTiming = ResourceTiming::fromSynchronousLoad(requestURL, m_options.initiator, loadTiming, response.deprecatedNetworkLoadMetrics(), response, securityOrigin());
         if (options().initiatorContext == InitiatorContext::Worker)
             finishedTimingForWorkerLoad(resourceTiming);
         else {
@@ -514,7 +514,7 @@ void DocumentThreadableLoader::loadRequest(ResourceRequest&& request, SecurityCh
     }
 #endif
 
-    didFinishLoading(identifier, 0.0);
+    didFinishLoading(identifier);
 }
 
 bool DocumentThreadableLoader::isAllowedByContentSecurityPolicy(const URL& url, ContentSecurityPolicy::RedirectResponseReceived redirectResponseReceived)

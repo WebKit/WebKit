@@ -1,3 +1,14 @@
+2017-02-24  Joseph Pecoraro  <pecoraro@apple.com>
+
+        [Resource Timing] Gather timing information with reliable responseEnd time
+        https://bugs.webkit.org/show_bug.cgi?id=168351
+
+        Reviewed by Alex Christensen.
+
+        * wtf/persistence/Coders.h:
+        (WTF::Persistence::Coder<Seconds>::encode):
+        (WTF::Persistence::Coder<Seconds>::decode):
+
 2017-02-24  Keith Miller  <keith_miller@apple.com>
 
         Rubber-stamped by Chris Dumez.

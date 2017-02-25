@@ -1,3 +1,31 @@
+2017-02-24  Joseph Pecoraro  <pecoraro@apple.com>
+
+        [Resource Timing] Gather timing information with reliable responseEnd time
+        https://bugs.webkit.org/show_bug.cgi?id=168351
+
+        Reviewed by Alex Christensen.
+
+        * TestExpectations:
+        Now that nextHopProtocol is available on Mac mark the test as flakey
+        because the value can be set or not depending on whether or not the
+        resource was loaded from a cache.
+
+        * platform/ios-simulator/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/win/TestExpectations:
+        Mark nextHopProtocol tests as expected to fail on ports that do not
+        yet support those values. Mark redirect tests as failing on ports
+        that encounter the CFNetwork issue causing unexpected callbacks.
+
+        * performance-api/resource-timing-apis-expected.txt:
+        * performance-api/resources/resource-timing-api.js:
+        Progressions.
+
+        * platform/mac-elcapitan/imported/w3c/web-platform-tests/resource-timing/test_resource_timing-expected.txt: Added.
+        * platform/mac/imported/w3c/web-platform-tests/resource-timing/test_resource_timing-expected.txt: Added.
+        Expected passing values on mac, except el capitan where this new resource timing data is unavailable.
+
 2017-02-24  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rolling out r212944.

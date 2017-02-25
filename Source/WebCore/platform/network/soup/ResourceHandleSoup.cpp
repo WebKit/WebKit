@@ -68,9 +68,6 @@ static bool createSoupRequestAndMessageForHandle(ResourceHandle*, const Resource
 static void cleanupSoupRequestOperation(ResourceHandle*, bool isDestroying = false);
 static void sendRequestCallback(GObject*, GAsyncResult*, gpointer);
 static void readCallback(GObject*, GAsyncResult*, gpointer);
-#if ENABLE(WEB_TIMING)
-static double milisecondsSinceRequest(double requestTime);
-#endif
 static void continueAfterDidReceiveResponse(ResourceHandle*);
 
 ResourceHandleInternal::~ResourceHandleInternal()
@@ -247,7 +244,7 @@ static void restartedCallback(SoupMessage*, gpointer data)
     if (!handle || handle->cancelledOrClientless())
         return;
 
-    handle->m_requestTime = monotonicallyIncreasingTime();
+    handle->m_requestTime = MonotonicTime::now();
 }
 #endif
 
@@ -468,7 +465,7 @@ static void nextMultipartResponsePartCallback(GObject* /*source*/, GAsyncResult*
     }
 
     if (!d->m_inputStream) {
-        handle->client()->didFinishLoading(handle.get(), 0);
+        handle->client()->didFinishLoading(handle.get());
         cleanupSoupRequestOperation(handle.get());
         return;
     }
@@ -530,7 +527,7 @@ static void sendRequestCallback(GObject*, GAsyncResult* result, gpointer data)
     }
 
 #if ENABLE(WEB_TIMING)
-    d->m_response.networkLoadTiming().responseStart = milisecondsSinceRequest(handle->m_requestTime);
+    d->m_response.deprecatedNetworkLoadMetrics().responseStart = MonotonicTime::now() - handle->m_requestTime;
 #endif
 
     if (soupMessage && d->m_response.isMultipart())
@@ -567,14 +564,9 @@ static void continueAfterDidReceiveResponse(ResourceHandle* handle)
 }
 
 #if ENABLE(WEB_TIMING)
-static double milisecondsSinceRequest(double requestTime)
-{
-    return (monotonicallyIncreasingTime() - requestTime) * 1000.0;
-}
-
 void ResourceHandle::didStartRequest()
 {
-    getInternal()->m_response.networkLoadTiming().requestStart = milisecondsSinceRequest(m_requestTime);
+    getInternal()->m_response.deprecatedNetworkLoadMetrics().requestStart = MonotonicTime::now() - m_requestTime;
 }
 
 #if SOUP_CHECK_VERSION(2, 49, 91)
@@ -594,24 +586,24 @@ static void networkEventCallback(SoupMessage*, GSocketClientEvent event, GIOStre
         return;
 
     ResourceHandleInternal* d = handle->getInternal();
-    double deltaTime = milisecondsSinceRequest(handle->m_requestTime);
+    Seconds deltaTime = MonotonicTime::now() - handle->m_requestTime;
     switch (event) {
     case G_SOCKET_CLIENT_RESOLVING:
-        d->m_response.networkLoadTiming().domainLookupStart = deltaTime;
+        d->m_response.deprecatedNetworkLoadMetrics().domainLookupStart = deltaTime;
         break;
     case G_SOCKET_CLIENT_RESOLVED:
-        d->m_response.networkLoadTiming().domainLookupEnd = deltaTime;
+        d->m_response.deprecatedNetworkLoadMetrics().domainLookupEnd = deltaTime;
         break;
     case G_SOCKET_CLIENT_CONNECTING:
-        d->m_response.networkLoadTiming().connectStart = deltaTime;
-        if (d->m_response.networkLoadTiming().domainLookupStart != -1) {
+        d->m_response.deprecatedNetworkLoadMetrics().connectStart = deltaTime;
+        if (d->m_response.deprecatedNetworkLoadMetrics().domainLookupStart != Seconds(-1)) {
             // WebCore/inspector/front-end/RequestTimingView.js assumes
             // that DNS time is included in connection time so must
             // substract here the DNS delta that will be added later (see
             // WebInspector.RequestTimingView.createTimingTable in the
             // file above for more details).
-            d->m_response.networkLoadTiming().connectStart -=
-                d->m_response.networkLoadTiming().domainLookupEnd - d->m_response.networkLoadTiming().domainLookupStart;
+            d->m_response.deprecatedNetworkLoadMetrics().connectStart -=
+                d->m_response.deprecatedNetworkLoadMetrics().domainLookupEnd - d->m_response.deprecatedNetworkLoadMetrics().domainLookupStart;
         }
         break;
     case G_SOCKET_CLIENT_CONNECTED:
@@ -623,12 +615,12 @@ static void networkEventCallback(SoupMessage*, GSocketClientEvent event, GIOStre
     case G_SOCKET_CLIENT_PROXY_NEGOTIATED:
         break;
     case G_SOCKET_CLIENT_TLS_HANDSHAKING:
-        d->m_response.networkLoadTiming().secureConnectionStart = deltaTime;
+        d->m_response.deprecatedNetworkLoadMetrics().secureConnectionStart = deltaTime;
         break;
     case G_SOCKET_CLIENT_TLS_HANDSHAKED:
         break;
     case G_SOCKET_CLIENT_COMPLETE:
-        d->m_response.networkLoadTiming().connectEnd = deltaTime;
+        d->m_response.deprecatedNetworkLoadMetrics().connectEnd = deltaTime;
         break;
     default:
         ASSERT_NOT_REACHED();
@@ -776,7 +768,7 @@ void ResourceHandle::timeoutFired()
 void ResourceHandle::sendPendingRequest()
 {
 #if ENABLE(WEB_TIMING)
-    m_requestTime = monotonicallyIncreasingTime();
+    m_requestTime = MonotonicTime::now();
 #endif
 
     if (d->m_firstRequest.timeoutInterval() > 0)
@@ -1020,7 +1012,7 @@ static void readCallback(GObject*, GAsyncResult* asyncResult, gpointer data)
 
         g_input_stream_close(d->m_inputStream.get(), 0, 0);
 
-        handle->client()->didFinishLoading(handle.get(), 0);
+        handle->client()->didFinishLoading(handle.get());
         cleanupSoupRequestOperation(handle.get());
         return;
     }

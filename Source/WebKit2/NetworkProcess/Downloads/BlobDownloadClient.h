@@ -47,7 +47,7 @@ private:
     // ResourceHandleClient
     void didReceiveResponseAsync(WebCore::ResourceHandle*, WebCore::ResourceResponse&&) final;
     void didReceiveBuffer(WebCore::ResourceHandle*, Ref<WebCore::SharedBuffer>&&, int reportedEncodedDataLength) final;
-    void didFinishLoading(WebCore::ResourceHandle*, double finishTime) final;
+    void didFinishLoading(WebCore::ResourceHandle*) final;
     void didFail(WebCore::ResourceHandle*, const WebCore::ResourceError&) final;
     bool usesAsyncCallbacks() final { return true; }
 

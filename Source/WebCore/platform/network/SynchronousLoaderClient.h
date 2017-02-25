@@ -50,7 +50,7 @@ private:
     void didReceiveAuthenticationChallenge(ResourceHandle*, const AuthenticationChallenge&) override;
     void didReceiveResponse(ResourceHandle*, ResourceResponse&&) override;
     void didReceiveData(ResourceHandle*, const char*, unsigned, int /*encodedDataLength*/) override;
-    void didFinishLoading(ResourceHandle*, double /*finishTime*/) override;
+    void didFinishLoading(ResourceHandle*) override;
     void didFail(ResourceHandle*, const ResourceError&) override;
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
     bool canAuthenticateAgainstProtectionSpace(ResourceHandle*, const ProtectionSpace&) override;

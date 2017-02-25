@@ -25,12 +25,12 @@ messages -> WebResourceLoader LegacyReceiver {
     DidSendData(uint64_t bytesSent, uint64_t totalBytesToBeSent)
     DidReceiveResponse(WebCore::ResourceResponse response, bool needsContinueDidReceiveResponseMessage)
     DidReceiveData(IPC::DataReference data, int64_t encodedDataLength)
-    DidFinishResourceLoad(double finishTime)
+    DidFinishResourceLoad(WebCore::NetworkLoadMetrics networkLoadMetrics)
     DidRetrieveDerivedData(String type, IPC::DataReference data)
     DidFailResourceLoad(WebCore::ResourceError error)
 
 #if ENABLE(SHAREABLE_RESOURCE)
     // DidReceiveResource is for when we have the entire resource data available at once, such as when the resource is cached in memory
-    DidReceiveResource(WebKit::ShareableResource::Handle resource, double finishTime)
+    DidReceiveResource(WebKit::ShareableResource::Handle resource)
 #endif
 }

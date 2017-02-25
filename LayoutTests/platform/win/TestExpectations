@@ -3785,6 +3785,10 @@ fast/layers/prevent-hit-test-during-layout.html [ Skip ]
 # webrtc not supported
 imported/w3c/web-platform-tests/webrtc [ Skip ]
 
+# Resource Timing networking data not yet available.
+imported/w3c/web-platform-tests/resource-timing/rt-nextHopProtocol.html [ Failure ]
+imported/w3c/web-platform-tests/resource-timing/rt-nextHopProtocol.worker.html [ Failure ]
+
 # WebCrypto tests are failing.
 webkit.org/b/165090 imported/w3c/WebCryptoAPI [ Skip ]
 webkit.org/b/165090 imported/w3c/web-platform-tests/WebCryptoAPI [ Skip ]

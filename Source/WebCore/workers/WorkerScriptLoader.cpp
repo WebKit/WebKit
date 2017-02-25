@@ -144,7 +144,7 @@ void WorkerScriptLoader::didReceiveData(const char* data, int len)
     m_script.append(m_decoder->decode(data, len));
 }
 
-void WorkerScriptLoader::didFinishLoading(unsigned long identifier, double)
+void WorkerScriptLoader::didFinishLoading(unsigned long identifier)
 {
     if (m_failed) {
         notifyError();

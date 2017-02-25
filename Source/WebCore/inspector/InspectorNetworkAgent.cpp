@@ -114,7 +114,7 @@ public:
         m_responseText.append(m_decoder->decode(data, dataLength));
     }
 
-    void didFinishLoading(unsigned long, double) override
+    void didFinishLoading(unsigned long) override
     {
         if (m_decoder)
             m_responseText.append(m_decoder->flush());
@@ -179,20 +179,20 @@ static Ref<InspectorObject> buildObjectForHeaders(const HTTPHeaderMap& headers)
     return headersObject;
 }
 
-Ref<Inspector::Protocol::Network::ResourceTiming> InspectorNetworkAgent::buildObjectForTiming(const NetworkLoadTiming& timing, ResourceLoader& resourceLoader)
+Ref<Inspector::Protocol::Network::ResourceTiming> InspectorNetworkAgent::buildObjectForTiming(const NetworkLoadMetrics& timing, ResourceLoader& resourceLoader)
 {
     MonotonicTime startTime = resourceLoader.loadTiming().startTime();
     double startTimeInInspector = m_environment.executionStopwatch()->elapsedTimeSince(startTime);
 
     return Inspector::Protocol::Network::ResourceTiming::create()
         .setStartTime(startTimeInInspector)
-        .setDomainLookupStart(timing.domainLookupStart)
-        .setDomainLookupEnd(timing.domainLookupEnd)
-        .setConnectStart(timing.connectStart)
-        .setConnectEnd(timing.connectEnd)
-        .setSecureConnectionStart(timing.secureConnectionStart)
-        .setRequestStart(timing.requestStart)
-        .setResponseStart(timing.responseStart)
+        .setDomainLookupStart(timing.domainLookupStart.milliseconds())
+        .setDomainLookupEnd(timing.domainLookupEnd.milliseconds())
+        .setConnectStart(timing.connectStart.milliseconds())
+        .setConnectEnd(timing.connectEnd.milliseconds())
+        .setSecureConnectionStart(timing.secureConnectionStart.milliseconds())
+        .setRequestStart(timing.requestStart.milliseconds())
+        .setResponseStart(timing.responseStart.milliseconds())
         .release();
 }
 
@@ -229,7 +229,7 @@ RefPtr<Inspector::Protocol::Network::Response> InspectorNetworkAgent::buildObjec
 
     responseObject->setFromDiskCache(response.source() == ResourceResponse::Source::DiskCache || response.source() == ResourceResponse::Source::DiskCacheAfterValidation);
     if (resourceLoader)
-        responseObject->setTiming(buildObjectForTiming(response.networkLoadTiming(), *resourceLoader));
+        responseObject->setTiming(buildObjectForTiming(response.deprecatedNetworkLoadMetrics(), *resourceLoader));
 
     return WTFMove(responseObject);
 }
@@ -380,18 +380,19 @@ void InspectorNetworkAgent::didReceiveData(unsigned long identifier, const char*
     m_frontendDispatcher->dataReceived(requestId, timestamp(), dataLength, encodedDataLength);
 }
 
-void InspectorNetworkAgent::didFinishLoading(unsigned long identifier, DocumentLoader& loader, double finishTime)
+void InspectorNetworkAgent::didFinishLoading(unsigned long identifier, DocumentLoader& loader)
 {
     if (m_hiddenRequestIdentifiers.remove(identifier))
         return;
+
+    // FIXME: Inspector should make use of NetworkLoadMetrics.
+    double elapsedFinishTime = timestamp();
 
     String requestId = IdentifiersFactory::requestId(identifier);
     if (m_resourcesData->resourceType(requestId) == InspectorPageAgent::DocumentResource)
         m_resourcesData->addResourceSharedBuffer(requestId, loader.frameLoader()->documentLoader()->mainResourceData(), loader.frame()->document()->encoding());
 
     m_resourcesData->maybeDecodeDataToContent(requestId);
-
-    double elapsedFinishTime = finishTime ? m_environment.executionStopwatch()->elapsedTimeSince(MonotonicTime::fromRawSeconds(finishTime)) : timestamp();
 
     String sourceMappingURL;
     NetworkResourcesData::ResourceData const* resourceData = m_resourcesData->data(requestId);

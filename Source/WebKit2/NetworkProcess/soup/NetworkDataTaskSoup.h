@@ -26,6 +26,7 @@
 #pragma once
 
 #include "NetworkDataTask.h"
+#include <WebCore/NetworkLoadMetrics.h>
 #include <WebCore/ProtectionSpace.h>
 #include <WebCore/ResourceResponse.h>
 #include <wtf/RunLoop.h>
@@ -63,6 +64,7 @@ private:
     static void sendRequestCallback(SoupRequest*, GAsyncResult*, NetworkDataTaskSoup*);
     void didSendRequest(GRefPtr<GInputStream>&&);
     void dispatchDidReceiveResponse();
+    void dispatchDidCompleteWithError(const WebCore::ResourceError&);
 
     static void tlsErrorsChangedCallback(SoupMessage*, GParamSpec*, NetworkDataTaskSoup*);
     void tlsErrorsChanged();
@@ -136,7 +138,8 @@ private:
     GRefPtr<GOutputStream> m_downloadOutputStream;
     bool m_allowOverwriteDownload { false };
 #if ENABLE(WEB_TIMING)
-    double m_startTime { 0 };
+    WebCore::NetworkLoadMetrics m_networkLoadMetrics;
+    MonotonicTime m_startTime;
 #endif
     RunLoop::Timer<NetworkDataTaskSoup> m_timeoutSource;
 };

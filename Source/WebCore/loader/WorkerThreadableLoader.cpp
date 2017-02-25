@@ -201,12 +201,12 @@ void WorkerThreadableLoader::MainThreadBridge::didReceiveData(const char* data, 
     }, m_taskMode);
 }
 
-void WorkerThreadableLoader::MainThreadBridge::didFinishLoading(unsigned long identifier, double finishTime)
+void WorkerThreadableLoader::MainThreadBridge::didFinishLoading(unsigned long identifier)
 {
     m_loadingFinished = true;
-    m_loaderProxy.postTaskForModeToWorkerGlobalScope([protectedWorkerClientWrapper = makeRef(*m_workerClientWrapper), identifier, finishTime] (ScriptExecutionContext& context) mutable {
+    m_loaderProxy.postTaskForModeToWorkerGlobalScope([protectedWorkerClientWrapper = makeRef(*m_workerClientWrapper), identifier] (ScriptExecutionContext& context) mutable {
         ASSERT_UNUSED(context, context.isWorkerGlobalScope());
-        protectedWorkerClientWrapper->didFinishLoading(identifier, finishTime);
+        protectedWorkerClientWrapper->didFinishLoading(identifier);
     }, m_taskMode);
 }
 

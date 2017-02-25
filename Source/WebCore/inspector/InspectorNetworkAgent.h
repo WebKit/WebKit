@@ -49,7 +49,7 @@ class Document;
 class DocumentLoader;
 class DocumentThreadableLoader;
 class InspectorPageAgent;
-class NetworkLoadTiming;
+class NetworkLoadMetrics;
 class NetworkResourcesData;
 class ResourceError;
 class ResourceLoader;
@@ -79,7 +79,7 @@ public:
     void markResourceAsCached(unsigned long identifier);
     void didReceiveResponse(unsigned long identifier, DocumentLoader&, const ResourceResponse&, ResourceLoader*);
     void didReceiveData(unsigned long identifier, const char* data, int dataLength, int encodedDataLength);
-    void didFinishLoading(unsigned long identifier, DocumentLoader&, double finishTime);
+    void didFinishLoading(unsigned long identifier, DocumentLoader&);
     void didFailLoading(unsigned long identifier, DocumentLoader&, const ResourceError&);
     void didLoadResourceFromMemoryCache(DocumentLoader&, CachedResource&);
     void didReceiveThreadableLoaderResponse(unsigned long identifier, DocumentThreadableLoader&);
@@ -117,7 +117,7 @@ public:
 private:
     void enable();
 
-    Ref<Inspector::Protocol::Network::ResourceTiming> buildObjectForTiming(const NetworkLoadTiming&, ResourceLoader&);
+    Ref<Inspector::Protocol::Network::ResourceTiming> buildObjectForTiming(const NetworkLoadMetrics&, ResourceLoader&);
     RefPtr<Inspector::Protocol::Network::Response> buildObjectForResourceResponse(const ResourceResponse&, ResourceLoader*);
     Ref<Inspector::Protocol::Network::CachedResource> buildObjectForCachedResource(CachedResource*);
 

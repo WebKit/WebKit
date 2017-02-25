@@ -70,7 +70,7 @@ public:
     // ThreadableLoaderClient
     void didReceiveResponse(unsigned long, const ResourceResponse&) override;
     void didReceiveData(const char*, int) override;
-    void didFinishLoading(unsigned long, double) override;
+    void didFinishLoading(unsigned long) override;
     void didFail(const ResourceError&) override;
 
     String stringResult();

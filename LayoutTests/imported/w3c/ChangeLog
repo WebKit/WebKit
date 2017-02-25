@@ -1,3 +1,27 @@
+2017-02-24  Joseph Pecoraro  <pecoraro@apple.com>
+
+        [Resource Timing] Gather timing information with reliable responseEnd time
+        https://bugs.webkit.org/show_bug.cgi?id=168351
+
+        Reviewed by Alex Christensen.
+
+        * web-platform-tests/fetch/api/redirect/redirect-count-cross-origin-expected.txt:
+        * web-platform-tests/fetch/api/redirect/redirect-count-cross-origin-worker-expected.txt:
+        * web-platform-tests/fetch/api/redirect/redirect-count-expected.txt:
+        * web-platform-tests/fetch/api/redirect/redirect-count-worker-expected.txt:
+        * web-platform-tests/fetch/api/redirect/redirect-location-expected.txt:
+        * web-platform-tests/fetch/api/redirect/redirect-location-worker-expected.txt:
+        New behavior for too many redirects caused by <rdar://problem/30610988>.
+
+        * web-platform-tests/resource-timing/rt-nextHopProtocol-expected.txt: Added.
+        * web-platform-tests/resource-timing/rt-nextHopProtocol.html: Added.
+        * web-platform-tests/resource-timing/rt-nextHopProtocol.js: Added.
+        * web-platform-tests/resource-timing/rt-nextHopProtocol.worker-expected.txt: Added.
+        * web-platform-tests/resource-timing/rt-nextHopProtocol.worker.html: Added.
+        * web-platform-tests/resource-timing/rt-nextHopProtocol.worker.js: Added.
+        New tests specific to just checking the nextHopProtocol property with
+        a non-cached resource to avoid flakeyness.
+
 2017-02-24  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rolling out r212944.

@@ -146,14 +146,14 @@ void NetscapePlugInStreamLoader::didReceiveDataOrBuffer(const char* data, int le
     ResourceLoader::didReceiveDataOrBuffer(data, length, WTFMove(buffer), encodedDataLength, dataPayloadType);
 }
 
-void NetscapePlugInStreamLoader::didFinishLoading(double finishTime)
+void NetscapePlugInStreamLoader::didFinishLoading(const NetworkLoadMetrics& networkLoadMetrics)
 {
     Ref<NetscapePlugInStreamLoader> protectedThis(*this);
 
     notifyDone();
 
     m_client->didFinishLoading(this);
-    ResourceLoader::didFinishLoading(finishTime);
+    ResourceLoader::didFinishLoading(networkLoadMetrics);
 }
 
 void NetscapePlugInStreamLoader::didFail(const ResourceError& error)

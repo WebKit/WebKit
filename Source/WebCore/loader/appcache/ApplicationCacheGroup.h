@@ -108,9 +108,10 @@ private:
     // the existing client callback cannot be used, so assume that any client that enables application cache also wants it to use credential storage.
     bool shouldUseCredentialStorage(ResourceHandle*) override { return true; }
 
+    // ResourceHandleClient
     void didReceiveResponse(ResourceHandle*, ResourceResponse&&) override;
     void didReceiveData(ResourceHandle*, const char*, unsigned length, int encodedDataLength) override;
-    void didFinishLoading(ResourceHandle*, double finishTime) override;
+    void didFinishLoading(ResourceHandle*) override;
     void didFail(ResourceHandle*, const ResourceError&) override;
 
     void didReceiveManifestResponse(const ResourceResponse&);

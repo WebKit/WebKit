@@ -1,3 +1,81 @@
+2017-02-24  Joseph Pecoraro  <pecoraro@apple.com>
+
+        [Resource Timing] Gather timing information with reliable responseEnd time
+        https://bugs.webkit.org/show_bug.cgi?id=168351
+
+        Reviewed by Alex Christensen.
+
+        Change from an unused `double finishTime` to a complete WebCore::NetworkLoadMetrics
+        object in the didFinishLoad ResourceLoader path. We may also extend this in the
+        didFail path later on. This allows the NetworkProcess to give complete timing
+        information, and more final metrics about the load, to WebCore.
+
+        * NetworkProcess/NetworkDataTask.h:
+        (WebKit::NetworkDataTaskClient::didCompleteWithError):
+        Give the NetworkDataTaskClient a basic didCompleteWithError for a completion
+        without metrics. For loads that complete with an error, or haven't populated
+        any metrics, this will pass empty metrics onward.
+
+        * NetworkProcess/Downloads/BlobDownloadClient.cpp:
+        (WebKit::BlobDownloadClient::didFinishLoading):
+        * NetworkProcess/Downloads/BlobDownloadClient.h:
+        * NetworkProcess/Downloads/PendingDownload.h:
+        * NetworkProcess/PingLoad.h:
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoad.cpp:
+        (WebKit::NetworkCache::SpeculativeLoad::didFinishLoading):
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoad.h:
+        * NetworkProcess/NetworkDataTaskBlob.cpp:
+        (WebKit::NetworkDataTaskBlob::didFail):
+        * NetworkProcess/NetworkLoad.cpp:
+        (WebKit::NetworkLoad::continueWillSendRequest):
+        (WebKit::NetworkLoad::didCompleteWithError):
+        (WebKit::NetworkLoad::didFinishLoading):
+        * NetworkProcess/NetworkLoad.h:
+        * NetworkProcess/NetworkLoadClient.h:
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::didFinishLoading):
+        (WebKit::NetworkResourceLoader::sendResultForCacheEntry):
+        * NetworkProcess/NetworkResourceLoader.h:
+        * WebProcess/Network/WebResourceLoader.cpp:
+        (WebKit::WebResourceLoader::didFinishResourceLoad):
+        (WebKit::WebResourceLoader::didReceiveResource):
+        * WebProcess/Network/WebResourceLoader.h:
+        * WebProcess/Network/WebResourceLoader.messages.in:
+        Change didFinishLoad paths to take a NetworkLoadMetrics object instead of finishTime.
+        Change didCompleteWithError pathes to include a NetworkLoadMetrics object instead of finishTime.
+
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.h:
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        (WebKit::NetworkDataTaskCocoa::didCompleteWithError):
+        Own a NetworkLoadTiming that will be populated with the load.
+
+        * NetworkProcess/cocoa/NetworkSessionCocoa.h:
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (-[WKNetworkSessionDelegate URLSession:task:didCompleteWithError:]):
+        (-[WKNetworkSessionDelegate URLSession:task:didFinishCollectingMetrics:]):
+        (-[WKNetworkSessionDelegate URLSession:dataTask:didReceiveResponse:completionHandler:]):
+        Populate NetworkLoadMetrics in the didFinishCollectingMetrics NSURLSessionTaskDelegate method.
+
+        * NetworkProcess/soup/NetworkDataTaskSoup.cpp:
+        (WebKit::NetworkDataTaskSoup::NetworkDataTaskSoup):
+        (WebKit::NetworkDataTaskSoup::timeoutFired):
+        (WebKit::NetworkDataTaskSoup::didSendRequest):
+        (WebKit::NetworkDataTaskSoup::dispatchDidReceiveResponse):
+        (WebKit::NetworkDataTaskSoup::dispatchDidCompleteWithError):
+        (WebKit::NetworkDataTaskSoup::tlsErrorsChanged):
+        (WebKit::NetworkDataTaskSoup::continueHTTPRedirection):
+        (WebKit::NetworkDataTaskSoup::didFinishRead):
+        (WebKit::NetworkDataTaskSoup::didFinishRequestNextPart):
+        (WebKit::NetworkDataTaskSoup::didFailDownload):
+        (WebKit::NetworkDataTaskSoup::didFail):
+        (WebKit::NetworkDataTaskSoup::networkEvent):
+        (WebKit::NetworkDataTaskSoup::didStartRequest):
+        (WebKit::NetworkDataTaskSoup::didRestart):
+        * NetworkProcess/soup/NetworkDataTaskSoup.h:
+        Instead of populating the NetworkLoadMetrics on the ResourceResponse, populate
+        a member variable during the entire load and dispatch didFinishCollectingMetrics
+        right before didCompleteLoadWithError.
+
 2017-02-24  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rolling out r212944.
