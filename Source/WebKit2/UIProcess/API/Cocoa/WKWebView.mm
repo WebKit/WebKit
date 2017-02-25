@@ -5235,35 +5235,60 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
 
 - (void)_simulateDataInteractionEntered:(id)info
 {
+#if ENABLE(DATA_INTERACTION)
+    [_contentView _simulateDataInteractionEntered:info];
+#endif
 }
 
 - (void)_simulateDataInteractionUpdated:(id)info
 {
+#if ENABLE(DATA_INTERACTION)
+    [_contentView _simulateDataInteractionUpdated:info];
+#endif
 }
 
 - (void)_simulateDataInteractionPerformOperation:(id)info
 {
+#if ENABLE(DATA_INTERACTION)
+    [_contentView _simulateDataInteractionPerformOperation:info];
+#endif
 }
 
 - (void)_simulateDataInteractionEnded:(id)info
 {
+#if ENABLE(DATA_INTERACTION)
+    [_contentView _simulateDataInteractionEnded:info];
+#endif
 }
 
-- (void)_simulateDataInteractionSessionDidEnd:(id)session withOperation:(NSUInteger)operation
+- (void)_simulateDataInteractionSessionDidEnd:(id)session
 {
+#if ENABLE(DATA_INTERACTION)
+    [_contentView _simulateDataInteractionSessionDidEnd:session];
+#endif
 }
 
-- (void)_simulateFailedDataInteractionWithIndex:(NSInteger)sourceIndex
+- (void)_simulateWillBeginDataInteractionWithSession:(id)session
 {
+#if ENABLE(DATA_INTERACTION)
+    [_contentView _simulateWillBeginDataInteractionWithSession:session];
+#endif
 }
 
-- (void)_simulateWillBeginDataInteractionWithIndex:(NSInteger)sourceIndex withSession:(id)session
+- (NSArray *)_simulatedItemsForSession:(id)session
 {
-}
-
-- (NSArray *)_simulatedItemsForDataInteractionWithIndex:(NSInteger)sourceIndex
-{
+#if ENABLE(DATA_INTERACTION)
+    return [_contentView _simulatedItemsForSession:session];
+#else
     return @[ ];
+#endif
+}
+
+- (void)_simulatePrepareForDataInteractionSession:(id)session completion:(dispatch_block_t)completion
+{
+#if ENABLE(DATA_INTERACTION)
+    [_contentView _simulatePrepareForDataInteractionSession:session completion:completion];
+#endif
 }
 
 @end

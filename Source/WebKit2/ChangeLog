@@ -1,5 +1,36 @@
 2017-02-20  Wenson Hsieh  <wenson_hsieh@apple.com>
 
+        Refactor data interaction to use new WKDataInteraction SPI
+        https://bugs.webkit.org/show_bug.cgi?id=168602
+        Work towards <rdar://problem/30313681>
+
+        Reviewed by Tim Horton.
+
+        Adjust testing SPI to match new data interaction interfaces.
+
+        * Platform/spi/ios/UIKitSPI.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _simulateDataInteractionEntered:]):
+        (-[WKWebView _simulateDataInteractionUpdated:]):
+        (-[WKWebView _simulateDataInteractionPerformOperation:]):
+        (-[WKWebView _simulateDataInteractionEnded:]):
+        (-[WKWebView _simulateDataInteractionSessionDidEnd:]):
+        (-[WKWebView _simulateWillBeginDataInteractionWithSession:]):
+        (-[WKWebView _simulatedItemsForSession:]):
+        (-[WKWebView _simulatePrepareForDataInteractionSession:completion:]):
+        (-[WKWebView _simulateDataInteractionSessionDidEnd:withOperation:]): Deleted.
+        (-[WKWebView _simulateFailedDataInteractionWithIndex:]): Deleted.
+        (-[WKWebView _simulateWillBeginDataInteractionWithIndex:withSession:]): Deleted.
+        (-[WKWebView _simulatedItemsForDataInteractionWithIndex:]): Deleted.
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _positionInformationDidChange:]):
+        * UIProcess/ios/WKScrollView.h:
+        * UIProcess/ios/WKScrollView.mm:
+
+2017-02-20  Wenson Hsieh  <wenson_hsieh@apple.com>
+
         Remove the data interaction gesture recognizer
         https://bugs.webkit.org/show_bug.cgi?id=168600
         <rdar://problem/30313681>

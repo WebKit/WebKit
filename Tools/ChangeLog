@@ -1,5 +1,27 @@
 2017-02-20  Wenson Hsieh  <wenson_hsieh@apple.com>
 
+        Refactor data interaction to use new WKDataInteraction SPI
+        https://bugs.webkit.org/show_bug.cgi?id=168602
+        Work towards <rdar://problem/30313681>
+
+        Reviewed by Tim Horton.
+
+        Update DataInteractionSimulator to simulate data interaction using updated SPI. See changes in WebKit2 for more details.
+
+        * TestWebKitAPI/Tests/ios/DataInteractionTests.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/ios/DataInteractionSimulator.h:
+        * TestWebKitAPI/ios/DataInteractionSimulator.mm:
+        (-[DataInteractionSimulator _resetSimulatedState]):
+        (-[DataInteractionSimulator runFrom:to:]):
+        (-[DataInteractionSimulator _advanceProgress]):
+        (-[DataInteractionSimulator _currentLocation]):
+        (-[DataInteractionSimulator _finishDataInteraction]): Deleted.
+        (-[DataInteractionSimulator webViewDidSendDataInteractionStartRequest:]): Deleted.
+        (-[DataInteractionSimulator webView:didReceiveDataInteractionStartResponse:]): Deleted.
+
+2017-02-20  Wenson Hsieh  <wenson_hsieh@apple.com>
+
         Remove the data interaction gesture recognizer
         https://bugs.webkit.org/show_bug.cgi?id=168600
         <rdar://problem/30313681>

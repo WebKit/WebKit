@@ -1720,10 +1720,6 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
     _hasValidPositionInformation = YES;
     if (_actionSheetAssistant)
         [_actionSheetAssistant updateSheetPosition];
-
-#if ENABLE(DATA_INTERACTION)
-    [self _updateDataInteractionPreviewSnapshotIfPossible];
-#endif
 }
 
 - (void)_willStartScrollingOrZooming

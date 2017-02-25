@@ -32,6 +32,7 @@
 #import <wtf/BlockPtr.h>
 
 @class MockDataInteractionInfo;
+@class MockDataInteractionSession;
 
 extern NSString * const DataInteractionEnterEventName;
 extern NSString * const DataInteractionOverEventName;
@@ -40,7 +41,8 @@ extern NSString * const DataInteractionLeaveEventName;
 extern NSString * const DataInteractionStartEventName;
 
 typedef NS_ENUM(NSInteger, DataInteractionPhase) {
-    DataInteractionUnrecognized = 1,
+    DataInteractionCancelled = 0,
+    DataInteractionBeginning = 1,
     DataInteractionBegan = 2,
     DataInteractionEntered = 3,
     DataInteractionPerforming = 4
@@ -48,6 +50,7 @@ typedef NS_ENUM(NSInteger, DataInteractionPhase) {
 
 @interface DataInteractionSimulator : NSObject<_WKTestingDelegate> {
     RetainPtr<TestWKWebView> _webView;
+    RetainPtr<MockDataInteractionSession> _dataInteractionSession;
     RetainPtr<MockDataInteractionInfo> _dataInteractionInfo;
     RetainPtr<NSMutableArray> _observedEventNames;
     RetainPtr<UIItemProvider> _externalItemProvider;
@@ -55,7 +58,7 @@ typedef NS_ENUM(NSInteger, DataInteractionPhase) {
     CGPoint _startLocation;
     CGPoint _endLocation;
 
-    double _gestureProgress;
+    double _currentProgress;
     bool _isDoneWithCurrentRun;
     DataInteractionPhase _phase;
 }
@@ -63,9 +66,7 @@ typedef NS_ENUM(NSInteger, DataInteractionPhase) {
 - (instancetype)initWithWebView:(TestWKWebView *)webView;
 - (void)runFrom:(CGPoint)startLocation to:(CGPoint)endLocation;
 
-@property (nonatomic) BOOL forceRequestToFail;
 @property (nonatomic, strong) UIItemProvider *externalItemProvider;
-@property (nonatomic, readonly) BOOL didTryToBeginDataInteraction;
 @property (nonatomic, readonly) NSArray *observedEventNames;
 @property (nonatomic, readonly) NSArray *finalSelectionRects;
 
