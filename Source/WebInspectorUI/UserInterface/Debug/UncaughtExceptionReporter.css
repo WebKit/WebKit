@@ -35,11 +35,24 @@
 }
 
 .uncaught-exception-sheet {
-    padding: 50px 55px 50px 65px;
+    min-width: 400px;
+    padding: 50px 0;
     font-family: '-webkit-system-font';
     font-size: 11pt;
-    min-width: 400px;
     color: hsl(0, 0%, 40%);
+
+    --uncaught-exception-sheet-margin-start: 65px;
+    --uncaught-exception-sheet-margin-end: 55px;
+}
+
+body[dir=ltr] .uncaught-exception-sheet {
+    margin-left: var(--uncaught-exception-sheet-margin-start);
+    margin-right: var(--uncaught-exception-sheet-margin-end);
+}
+
+body[dir=rtl] .uncaught-exception-sheet {
+    margin-left: var(--uncaught-exception-sheet-margin-end);
+    margin-right: var(--uncaught-exception-sheet-margin-start);
 }
 
 .uncaught-exception-sheet a {
@@ -68,19 +81,39 @@
 }
 
 .uncaught-exception-sheet h1 > img {
-    height: 35px;
     position: relative;
-    margin-left: -50px;
+    height: 35px;
     margin-top: -5px;
+
+    --uncaught-exception-sheet-h1-img-margin-start: -50px;
+}
+
+body[dir=ltr] .uncaught-exception-sheet h1 > img {
     float: left;
+    margin-left: var(--uncaught-exception-sheet-h1-img-margin-start);
+}
+
+body[dir=rtl] .uncaught-exception-sheet h1 > img {
+    float: right;
+    margin-right: var(--uncaught-exception-sheet-h1-img-margin-start);
 }
 
 .uncaught-exception-sheet h2 > img {
-    height: 25px;
     position: relative;
-    margin-left: -45px;
-    margin-top: 0px;
+    height: 25px;
+    margin-top: 0;
+
+    --uncaught-exception-sheet-h2-img-margin-start: -45px;
+}
+
+body[dir=ltr] .uncaught-exception-sheet h2 > img {
     float: left;
+    margin-left: var(--uncaught-exception-sheet-h2-img-margin-start);
+}
+
+body[dir=rtl] .uncaught-exception-sheet h2 > img {
+    float: right;
+    margin-right: var(--uncaught-exception-sheet-h2-img-margin-start);
 }
 
 .uncaught-exception-sheet dl {
@@ -93,17 +126,37 @@
 }
 
 .uncaught-exception-sheet dd {
-    margin: 10px 0 20px 10px;
+    margin: 10px 0 20px;
     font-size: 13px;
     line-height: 18px;
+
+    --uncaught-exception-sheet-dd-margin-start: 10px;
+}
+
+body[dir=ltr] .uncaught-exception-sheet dd {
+    margin-left: var(--uncaught-exception-sheet-dd-margin-start);
+}
+
+body[dir=rtl] .uncaught-exception-sheet dd {
+    margin-right: var(--uncaught-exception-sheet-dd-margin-start);
 }
 
 .uncaught-exception-sheet ul {
+    margin: 0;
+    padding: 0;
     font-family: Menlo, monospace;
     font-size: 12px;
     line-height: 18px;
-    margin: 0 0 0 2px;
-    padding: 0;
+
+    --uncaught-exception-sheet-ul-margin-start: 2px;
+}
+
+body[dir=ltr] .uncaught-exception-sheet ul {
+    margin-left: var(--uncaught-exception-sheet-ul-margin-start);
+}
+
+body[dir=rtl] .uncaught-exception-sheet ul {
+    margin-right: var(--uncaught-exception-sheet-ul-margin-start);
 }
 
 .uncaught-exception-sheet li {
