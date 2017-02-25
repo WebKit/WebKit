@@ -26,7 +26,7 @@
 #pragma once
 
 #include "LoadTiming.h"
-#include "NetworkLoadMetrics.h"
+#include "NetworkLoadTiming.h"
 #include "URL.h"
 
 namespace WebCore {
@@ -39,13 +39,13 @@ class ResourceTiming {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static ResourceTiming fromCache(const URL&, const String& initiator, const LoadTiming&);
-    static ResourceTiming fromLoad(CachedResource&, const String& initiator, const LoadTiming&, const NetworkLoadMetrics&, const SecurityOrigin&);
-    static ResourceTiming fromSynchronousLoad(const URL&, const String& initiator, const LoadTiming&, const NetworkLoadMetrics&, const ResourceResponse&, const SecurityOrigin&);
+    static ResourceTiming fromLoad(CachedResource&, const String& initiator, const LoadTiming&, const SecurityOrigin&);
+    static ResourceTiming fromSynchronousLoad(const URL&, const String& initiator, const LoadTiming&, const NetworkLoadTiming&, const ResourceResponse&, const SecurityOrigin&);
 
     URL url() const { return m_url; }
     String initiator() const { return m_initiator; }
     LoadTiming loadTiming() const { return m_loadTiming; }
-    NetworkLoadMetrics networkLoadMetrics() const { return m_networkLoadMetrics; }
+    NetworkLoadTiming networkLoadTiming() const { return m_networkLoadTiming; }
     bool allowTimingDetails() const { return m_allowTimingDetails; }
 
     ResourceTiming isolatedCopy() const;
@@ -53,14 +53,14 @@ public:
     void overrideInitiatorName(const String& name) { m_initiator = name; }
 
 private:
-    ResourceTiming(CachedResource&, const String& initiator, const LoadTiming&, const NetworkLoadMetrics&, const SecurityOrigin&);
-    ResourceTiming(const URL&, const String& initiator, const LoadTiming&, const NetworkLoadMetrics&, const ResourceResponse&, const SecurityOrigin&);
+    ResourceTiming(CachedResource&, const String& initiator, const LoadTiming&, const SecurityOrigin&);
+    ResourceTiming(const URL&, const String& initiator, const LoadTiming&, const NetworkLoadTiming&, const ResourceResponse&, const SecurityOrigin&);
     ResourceTiming(const URL&, const String& initiator, const LoadTiming&);
-    ResourceTiming(const URL& url, const String& initiator, const LoadTiming& loadTiming, const NetworkLoadMetrics& networkLoadMetrics, bool allowTimingDetails)
+    ResourceTiming(const URL& url, const String& initiator, const LoadTiming& loadTiming, const NetworkLoadTiming& networkLoadTiming, bool allowTimingDetails)
         : m_url(url)
         , m_initiator(initiator)
         , m_loadTiming(loadTiming)
-        , m_networkLoadMetrics(networkLoadMetrics)
+        , m_networkLoadTiming(networkLoadTiming)
         , m_allowTimingDetails(allowTimingDetails)
     {
     }
@@ -68,7 +68,7 @@ private:
     URL m_url;
     String m_initiator;
     LoadTiming m_loadTiming;
-    NetworkLoadMetrics m_networkLoadMetrics;
+    NetworkLoadTiming m_networkLoadTiming;
     bool m_allowTimingDetails { false };
 };
 

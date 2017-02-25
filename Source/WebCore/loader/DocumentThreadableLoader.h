@@ -89,7 +89,7 @@ namespace WebCore {
 
         void didReceiveResponse(unsigned long identifier, const ResourceResponse&, ResourceResponse::Tainting);
         void didReceiveData(unsigned long identifier, const char* data, int dataLength);
-        void didFinishLoading(unsigned long identifier);
+        void didFinishLoading(unsigned long identifier, double finishTime);
         void didFail(unsigned long identifier, const ResourceError&);
         void makeCrossOriginAccessRequest(ResourceRequest&&);
         void makeSimpleCrossOriginAccessRequest(ResourceRequest&&);

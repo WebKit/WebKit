@@ -40,7 +40,6 @@
 #import "ResourceLoader.h"
 #import "ResourceRequest.h"
 #import "SharedBuffer.h"
-#import <WebCore/NetworkLoadMetrics.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/Vector.h>
 #import <wtf/text/WTFString.h>
@@ -231,9 +230,7 @@ static QuickLookHandleClient& emptyClient()
 {
     ASSERT_UNUSED(connection, !connection);
     ASSERT(_hasSentDidReceiveResponse);
-
-    NetworkLoadMetrics emptyMetrics;
-    _resourceLoader->didFinishLoading(emptyMetrics);
+    _resourceLoader->didFinishLoading(0);
 }
 
 static inline bool isQuickLookPasswordError(NSError *error)

@@ -312,7 +312,6 @@ webkit.org/b/161088 imported/w3c/web-platform-tests/resource-timing/resource-tim
 webkit.org/b/168357 imported/w3c/web-platform-tests/resource-timing/rt-initiatorType-media.html [ Failure ]
 webkit.org/b/168448 imported/w3c/web-platform-tests/resource-timing/rt-shared-resource-in-frames.html [ Pass Failure ]
 webkit.org/b/168448 imported/w3c/web-platform-tests/resource-timing/rt-shared-resource-in-workers.html [ Pass Failure ]
-imported/w3c/web-platform-tests/resource-timing/test_resource_timing.html [ Pass Failure ]
 
 webkit.org/b/161176 [ Debug ] imported/w3c/web-platform-tests/url/url-setters.html [ Skip ]
 

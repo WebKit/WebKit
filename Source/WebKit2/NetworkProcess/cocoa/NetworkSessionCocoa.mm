@@ -41,6 +41,7 @@
 #import <WebCore/CFNetworkSPI.h>
 #import <WebCore/Credential.h>
 #import <WebCore/FrameLoaderTypes.h>
+#import <WebCore/NetworkLoadTiming.h>
 #import <WebCore/NetworkStorageSession.h>
 #import <WebCore/NotImplemented.h>
 #import <WebCore/ResourceError.h>
@@ -241,7 +242,7 @@ static NSURLSessionAuthChallengeDisposition toNSURLSessionAuthChallengeDispositi
     LOG(NetworkSession, "%llu didCompleteWithError %@", task.taskIdentifier, error);
     auto storedCredentials = _withCredentials ? WebCore::StoredCredentials::AllowStoredCredentials : WebCore::StoredCredentials::DoNotAllowStoredCredentials;
     if (auto* networkDataTask = _session->dataTaskForIdentifier(task.taskIdentifier, storedCredentials))
-        networkDataTask->didCompleteWithError(error, networkDataTask->networkLoadMetrics());
+        networkDataTask->didCompleteWithError(error);
     else if (error) {
         auto downloadID = _session->takeDownloadID(task.taskIdentifier);
         if (downloadID.downloadID()) {
@@ -258,39 +259,6 @@ static NSURLSessionAuthChallengeDisposition toNSURLSessionAuthChallengeDispositi
                     download->didFail(error, { });
             }
         }
-    }
-}
-
-- (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task didFinishCollectingMetrics:(NSURLSessionTaskMetrics *)metrics
-{
-    if (!_session)
-        return;
-
-    LOG(NetworkSession, "%llu didFinishCollectingMetrics", task.taskIdentifier);
-    auto storedCredentials = _withCredentials ? WebCore::StoredCredentials::AllowStoredCredentials : WebCore::StoredCredentials::DoNotAllowStoredCredentials;
-    if (auto* networkDataTask = _session->dataTaskForIdentifier(task.taskIdentifier, storedCredentials)) {
-        NSURLSessionTaskTransactionMetrics *m = metrics.transactionMetrics.lastObject;
-        NSDate *fetchStartDate = m.fetchStartDate;
-        NSTimeInterval domainLookupStartInterval = m.domainLookupStartDate ? [m.domainLookupStartDate timeIntervalSinceDate:fetchStartDate] : -1;
-        NSTimeInterval domainLookupEndInterval = m.domainLookupEndDate ? [m.domainLookupEndDate timeIntervalSinceDate:fetchStartDate] : -1;
-        NSTimeInterval connectStartInterval = m.connectStartDate ? [m.connectStartDate timeIntervalSinceDate:fetchStartDate] : -1;
-        NSTimeInterval secureConnectionStartInterval = m.secureConnectionStartDate ? [m.secureConnectionStartDate timeIntervalSinceDate:fetchStartDate] : -1;
-        NSTimeInterval connectEndInterval = m.connectEndDate ? [m.connectEndDate timeIntervalSinceDate:fetchStartDate] : -1;
-        NSTimeInterval requestStartInterval = [m.requestStartDate timeIntervalSinceDate:fetchStartDate];
-        NSTimeInterval responseStartInterval = [m.responseStartDate timeIntervalSinceDate:fetchStartDate];
-        NSTimeInterval responseEndInterval = [m.responseEndDate timeIntervalSinceDate:fetchStartDate];
-
-        auto& networkLoadMetrics = networkDataTask->networkLoadMetrics();
-        networkLoadMetrics.domainLookupStart = Seconds(domainLookupStartInterval);
-        networkLoadMetrics.domainLookupEnd = Seconds(domainLookupEndInterval);
-        networkLoadMetrics.connectStart = Seconds(connectStartInterval);
-        networkLoadMetrics.secureConnectionStart = Seconds(secureConnectionStartInterval);
-        networkLoadMetrics.connectEnd = Seconds(connectEndInterval);
-        networkLoadMetrics.requestStart = Seconds(requestStartInterval);
-        networkLoadMetrics.responseStart = Seconds(responseStartInterval);
-        networkLoadMetrics.responseEnd = Seconds(responseEndInterval);
-        networkLoadMetrics.markComplete();
-        networkLoadMetrics.protocol = String(m.networkProtocolName);
     }
 }
 
@@ -319,10 +287,7 @@ static NSURLSessionAuthChallengeDisposition toNSURLSessionAuthChallengeDispositi
         // all the fields when sending the response to the WebContent process over IPC.
         resourceResponse.disableLazyInitialization();
 
-        // FIXME: This cannot be eliminated until other code no longer relies on ResourceResponse's
-        // NetworkLoadMetrics. For example, PerformanceTiming.
-        copyTimingData([dataTask _timingData], resourceResponse.deprecatedNetworkLoadMetrics());
-
+        copyTimingData([dataTask _timingData], resourceResponse.networkLoadTiming());
         auto completionHandlerCopy = Block_copy(completionHandler);
         networkDataTask->didReceiveResponse(WTFMove(resourceResponse), [completionHandlerCopy, taskIdentifier](WebCore::PolicyAction policyAction) {
             LOG(NetworkSession, "%llu didReceiveResponse completionHandler (%d)", taskIdentifier, policyAction);

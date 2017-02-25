@@ -1,5 +1,0 @@
-Resource Timing: nextHopProtocol
-
-
-PASS nextHopProtocol is expected to be 'http1/1' 
-

@@ -36,11 +36,11 @@ namespace WebCore {
 class AuthenticationChallenge;
 class DocumentLoader;
 class Frame;
-class NetworkLoadMetrics;
+class Page;
 class ResourceError;
 class ResourceLoader;
-class ResourceRequest;
 class ResourceResponse;
+class ResourceRequest;
 
 class ResourceLoadNotifier {
     WTF_MAKE_NONCOPYABLE(ResourceLoadNotifier);
@@ -53,14 +53,14 @@ public:
     void willSendRequest(ResourceLoader*, ResourceRequest&, const ResourceResponse& redirectResponse);
     void didReceiveResponse(ResourceLoader*, const ResourceResponse&);
     void didReceiveData(ResourceLoader*, const char*, int dataLength, int encodedDataLength);
-    void didFinishLoad(ResourceLoader*, const NetworkLoadMetrics&);
+    void didFinishLoad(ResourceLoader*, double finishTime);
     void didFailToLoad(ResourceLoader*, const ResourceError&);
 
     void assignIdentifierToInitialRequest(unsigned long identifier, DocumentLoader*, const ResourceRequest&);
     void dispatchWillSendRequest(DocumentLoader*, unsigned long identifier, ResourceRequest&, const ResourceResponse& redirectResponse);
     void dispatchDidReceiveResponse(DocumentLoader*, unsigned long identifier, const ResourceResponse&, ResourceLoader* = nullptr);
     void dispatchDidReceiveData(DocumentLoader*, unsigned long identifier, const char* data, int dataLength, int encodedDataLength);
-    void dispatchDidFinishLoading(DocumentLoader*, unsigned long identifier);
+    void dispatchDidFinishLoading(DocumentLoader*, unsigned long identifier, double finishTime);
     void dispatchDidFailLoading(DocumentLoader*, unsigned long identifier, const ResourceError&);
 
     void sendRemainingDelegateMessages(DocumentLoader*, unsigned long identifier, const ResourceRequest&, const ResourceResponse&, const char* data, int dataLength, int encodedDataLength, const ResourceError&);

@@ -213,7 +213,7 @@ void EventSource::didReceiveData(const char* data, int length)
     parseEventStream();
 }
 
-void EventSource::didFinishLoading(unsigned long)
+void EventSource::didFinishLoading(unsigned long, double)
 {
     ASSERT(m_state == OPEN);
     ASSERT(m_requestInFlight);

@@ -149,7 +149,7 @@ private:
     void didSendData(unsigned long long bytesSent, unsigned long long totalBytesToBeSent) override;
     void didReceiveResponse(unsigned long identifier, const ResourceResponse&) override;
     void didReceiveData(const char* data, int dataLength) override;
-    void didFinishLoading(unsigned long identifier) override;
+    void didFinishLoading(unsigned long identifier, double finishTime) override;
     void didFail(const ResourceError&) override;
 
     bool responseIsXML() const;

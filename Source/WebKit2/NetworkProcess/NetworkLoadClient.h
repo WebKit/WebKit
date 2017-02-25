@@ -35,7 +35,6 @@ typedef const struct _CFCachedURLResponse* CFCachedURLResponseRef;
 #endif
 
 namespace WebCore {
-class NetworkLoadMetrics;
 class ProtectionSpace;
 class SharedBuffer;
 }
@@ -56,7 +55,7 @@ public:
     enum class ShouldContinueDidReceiveResponse { No, Yes };
     virtual ShouldContinueDidReceiveResponse didReceiveResponse(WebCore::ResourceResponse&&) = 0;
     virtual void didReceiveBuffer(Ref<WebCore::SharedBuffer>&&, int reportedEncodedDataLength) = 0;
-    virtual void didFinishLoading(const WebCore::NetworkLoadMetrics&) = 0;
+    virtual void didFinishLoading(double finishTime) = 0;
     virtual void didFailLoading(const WebCore::ResourceError&) = 0;
 };
 

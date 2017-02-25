@@ -199,8 +199,7 @@ void NetworkLoad::continueWillSendRequest(WebCore::ResourceRequest&& newRequest)
     auto redirectCompletionHandler = std::exchange(m_redirectCompletionHandler, nullptr);
     ASSERT(redirectCompletionHandler);
     if (m_currentRequest.isNull()) {
-        NetworkLoadMetrics emptyMetrics;
-        didCompleteWithError(cancelledError(m_currentRequest), emptyMetrics);
+        didCompleteWithError(cancelledError(m_currentRequest));
         if (redirectCompletionHandler)
             redirectCompletionHandler({ });
         return;
@@ -409,7 +408,7 @@ void NetworkLoad::didReceiveData(Ref<SharedBuffer>&& buffer)
     m_client.get().didReceiveBuffer(WTFMove(buffer), size);
 }
 
-void NetworkLoad::didCompleteWithError(const ResourceError& error, const WebCore::NetworkLoadMetrics& networkLoadMetrics)
+void NetworkLoad::didCompleteWithError(const ResourceError& error)
 {
     ASSERT(!m_throttle);
 
@@ -419,7 +418,7 @@ void NetworkLoad::didCompleteWithError(const ResourceError& error, const WebCore
 #endif
 
     if (error.isNull())
-        m_client.get().didFinishLoading(networkLoadMetrics);
+        m_client.get().didFinishLoading(WTF::monotonicallyIncreasingTime());
     else
         m_client.get().didFailLoading(error);
 }
@@ -470,11 +469,10 @@ void NetworkLoad::didReceiveBuffer(ResourceHandle* handle, Ref<SharedBuffer>&& b
     m_client.get().didReceiveBuffer(WTFMove(buffer), reportedEncodedDataLength);
 }
 
-void NetworkLoad::didFinishLoading(ResourceHandle* handle)
+void NetworkLoad::didFinishLoading(ResourceHandle* handle, double finishTime)
 {
     ASSERT_UNUSED(handle, handle == m_handle);
-    NetworkLoadMetrics emptyMetrics;
-    m_client.get().didFinishLoading(emptyMetrics);
+    m_client.get().didFinishLoading(finishTime);
 }
 
 void NetworkLoad::didFail(ResourceHandle* handle, const ResourceError& error)

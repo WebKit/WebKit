@@ -81,6 +81,7 @@ SubresourceLoader::RequestCountTracker::~RequestCountTracker()
 SubresourceLoader::SubresourceLoader(Frame& frame, CachedResource& resource, const ResourceLoaderOptions& options)
     : ResourceLoader(frame, options)
     , m_resource(&resource)
+    , m_loadingMultipartContent(false)
     , m_state(Uninitialized)
     , m_requestCountTracker(std::in_place, frame.document()->cachedResourceLoader(), resource)
 {
@@ -191,8 +192,7 @@ void SubresourceLoader::willSendRequestInternal(ResourceRequest& newRequest, con
             opaqueRedirectedResponse.setURL(redirectResponse.url());
             opaqueRedirectedResponse.setType(ResourceResponse::Type::Opaqueredirect);
             m_resource->responseReceived(opaqueRedirectedResponse);
-            NetworkLoadMetrics emptyMetrics;
-            didFinishLoading(emptyMetrics);
+            didFinishLoading(currentTime());
             return;
         } else if (m_redirectCount++ >= options().maxRedirectCount) {
             cancel(ResourceError(String(), 0, request().url(), ASCIILiteral("Too many redirections"), ResourceError::Type::General));
@@ -283,12 +283,8 @@ void SubresourceLoader::didReceiveResponse(const ResourceResponse& response)
     }
 #endif
 
-    // We want redirect responses to be processed through willSendRequestInternal.
-    // The only exception is redirection with no Location headers. Or in rare circumstances,
-    // cases of too many redirects from CFNetwork (<rdar://problem/30610988>).
-#if !PLATFORM(COCOA)
+    // We want redirect responses to be processed through willSendRequestInternal. The only exception is redirection with no Location headers.
     ASSERT(response.httpStatusCode() < 300 || response.httpStatusCode() >= 400 || response.httpStatusCode() == 304 || !response.httpHeaderField(HTTPHeaderName::Location));
-#endif
 
     // Reference the object in this method since the additional processing can do
     // anything including removing the last reference to this object; one example of this is 3266216.
@@ -351,9 +347,8 @@ void SubresourceLoader::didReceiveResponse(const ResourceResponse& response)
         clearResourceData();
         // Since a subresource loader does not load multipart sections progressively, data was delivered to the loader all at once.
         // After the first multipart section is complete, signal to delegates that this load is "finished"
-        NetworkLoadMetrics emptyMetrics;
         m_documentLoader->subresourceLoaderFinishedLoadingOnePart(this);
-        didFinishLoadingOnePart(emptyMetrics);
+        didFinishLoadingOnePart(0);
     }
 
     checkForHTTPStatusCodeError();
@@ -515,7 +510,7 @@ bool SubresourceLoader::checkRedirectionCrossOriginAccessControl(const ResourceR
     return true;
 }
 
-void SubresourceLoader::didFinishLoading(const NetworkLoadMetrics& networkLoadMetrics)
+void SubresourceLoader::didFinishLoading(double finishTime)
 {
 #if USE(QUICK_LOOK)
     if (auto quickLookHandle = m_quickLookHandle.get()) {
@@ -536,28 +531,30 @@ void SubresourceLoader::didFinishLoading(const NetworkLoadMetrics& networkLoadMe
     Ref<SubresourceLoader> protectedThis(*this);
     CachedResourceHandle<CachedResource> protectResource(m_resource);
 
-    // FIXME: Remove this with deprecatedNetworkLoadMetrics.
-    m_loadTiming.setResponseEnd(MonotonicTime::now());
+    // FIXME: <https://webkit.org/b/168351> [Resource Timing] Gather timing information with reliable responseEnd time
+    // The finishTime that is passed in is from the NetworkProcess and is more accurate.
+    // However, all other load times are generated from the web process or offsets.
+    // Mixing times from different processes can cause the finish time to be earlier than
+    // the response received time due to inter-process communication lag. This could be solved
+    // by gathering NetworkLoadTiming information at completion time instead of at
+    // didReceiveResponse time.
+    UNUSED_PARAM(finishTime);
+    MonotonicTime responseEndTime = MonotonicTime::now();
+    m_loadTiming.setResponseEnd(responseEndTime);
 
 #if ENABLE(WEB_TIMING)
-    if (networkLoadMetrics.isComplete())
-        reportResourceTiming(networkLoadMetrics);
-    else {
-        // This is the legacy path for platforms (and ResourceHandle paths) that do not provide
-        // complete load metrics in didFinishLoad. In those cases, fall back to the possibility
-        // that they populated partial load timing information on the ResourceResponse.
-        reportResourceTiming(m_resource->response().deprecatedNetworkLoadMetrics());
-    }
+    reportResourceTiming();
 #endif
 
     m_state = Finishing;
+    m_resource->setLoadFinishTime(responseEndTime.secondsSinceEpoch().seconds()); // FIXME: Users of the loadFinishTime should use the LoadTiming struct instead.
     m_resource->finishLoading(resourceData());
 
     if (wasCancelled())
         return;
     m_resource->finish();
     ASSERT(!reachedTerminalState());
-    didFinishLoadingOnePart(m_resource->response().deprecatedNetworkLoadMetrics());
+    didFinishLoadingOnePart(responseEndTime.secondsSinceEpoch().seconds());
     notifyDone();
     if (reachedTerminalState())
         return;
@@ -665,7 +662,7 @@ void SubresourceLoader::releaseResources()
 }
 
 #if ENABLE(WEB_TIMING)
-void SubresourceLoader::reportResourceTiming(const NetworkLoadMetrics& networkLoadMetrics)
+void SubresourceLoader::reportResourceTiming()
 {
     if (!RuntimeEnabledFeatures::sharedFeatures().resourceTimingEnabled())
         return;
@@ -676,9 +673,9 @@ void SubresourceLoader::reportResourceTiming(const NetworkLoadMetrics& networkLo
     Document* document = m_documentLoader->cachedResourceLoader().document();
     if (!document)
         return;
-
+    
     SecurityOrigin& origin = m_origin ? *m_origin : document->securityOrigin();
-    ResourceTiming resourceTiming = ResourceTiming::fromLoad(*m_resource, m_resource->initiatorName(), m_loadTiming, networkLoadMetrics, origin);
+    ResourceTiming resourceTiming = ResourceTiming::fromLoad(*m_resource, m_resource->initiatorName(), m_loadTiming, origin);
 
     // Worker resources loaded here are all CachedRawResources loaded through WorkerThreadableLoader.
     // Pass the ResourceTiming information on so that WorkerThreadableLoader may add them to the

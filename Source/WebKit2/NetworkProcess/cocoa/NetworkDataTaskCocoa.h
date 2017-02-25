@@ -28,7 +28,6 @@
 #if USE(NETWORK_SESSION)
 
 #include "NetworkDataTask.h"
-#include <WebCore/NetworkLoadMetrics.h>
 #include <wtf/RetainPtr.h>
 
 OBJC_CLASS NSURLSessionDataTask;
@@ -51,7 +50,7 @@ public:
 
     void didSendData(uint64_t totalBytesSent, uint64_t totalBytesExpectedToSend);
     void didReceiveChallenge(const WebCore::AuthenticationChallenge&, ChallengeCompletionHandler&&);
-    void didCompleteWithError(const WebCore::ResourceError&, const WebCore::NetworkLoadMetrics&);
+    void didCompleteWithError(const WebCore::ResourceError&);
     void didReceiveData(Ref<WebCore::SharedBuffer>&&);
 
     void willPerformHTTPRedirection(WebCore::ResourceResponse&&, WebCore::ResourceRequest&&, RedirectCompletionHandler&&);
@@ -68,8 +67,6 @@ public:
 
     bool allowsSpecificHTTPSCertificateForHost(const WebCore::AuthenticationChallenge&) override;
 
-    WebCore::NetworkLoadMetrics& networkLoadMetrics() { return m_networkLoadMetrics; }
-
 private:
     NetworkDataTaskCocoa(NetworkSession&, NetworkDataTaskClient&, const WebCore::ResourceRequest&, WebCore::StoredCredentials, WebCore::ContentSniffingPolicy, bool shouldClearReferrerOnHTTPSToHTTPRedirect);
 
@@ -77,7 +74,6 @@ private:
 
     RefPtr<SandboxExtension> m_sandboxExtension;
     RetainPtr<NSURLSessionDataTask> m_task;
-    WebCore::NetworkLoadMetrics m_networkLoadMetrics;
 };
 
 WebCore::Credential serverTrustCredential(const WebCore::AuthenticationChallenge&);

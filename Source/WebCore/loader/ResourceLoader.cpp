@@ -181,8 +181,7 @@ void ResourceLoader::deliverResponseAndData(const ResourceResponse& response, Re
             return;
     }
 
-    NetworkLoadMetrics emptyMetrics;
-    didFinishLoading(emptyMetrics);
+    didFinishLoading(0);
 }
 
 void ResourceLoader::start()
@@ -272,10 +271,8 @@ void ResourceLoader::loadDataURL()
         if (!protectedThis->reachedTerminalState() && dataSize)
             protectedThis->didReceiveBuffer(result.data.releaseNonNull(), dataSize, DataPayloadWholeResource);
 
-        if (!protectedThis->reachedTerminalState()) {
-            NetworkLoadMetrics emptyMetrics;
-            protectedThis->didFinishLoading(emptyMetrics);
-        }
+        if (!protectedThis->reachedTerminalState())
+            protectedThis->didFinishLoading(currentTime());
     });
 }
 
@@ -491,9 +488,9 @@ void ResourceLoader::didReceiveDataOrBuffer(const char* data, unsigned length, R
         frameLoader()->notifier().didReceiveData(this, buffer ? buffer->data() : data, buffer ? buffer->size() : length, static_cast<int>(encodedDataLength));
 }
 
-void ResourceLoader::didFinishLoading(const NetworkLoadMetrics& networkLoadMetrics)
+void ResourceLoader::didFinishLoading(double finishTime)
 {
-    didFinishLoadingOnePart(networkLoadMetrics);
+    didFinishLoadingOnePart(finishTime);
 
     // If the load has been cancelled by a delegate in response to didFinishLoad(), do not release
     // the resources a second time, they have been released by cancel.
@@ -502,7 +499,7 @@ void ResourceLoader::didFinishLoading(const NetworkLoadMetrics& networkLoadMetri
     releaseResources();
 }
 
-void ResourceLoader::didFinishLoadingOnePart(const NetworkLoadMetrics& networkLoadMetrics)
+void ResourceLoader::didFinishLoadingOnePart(double finishTime)
 {
     // If load has been cancelled after finishing (which could happen with a
     // JavaScript that changes the window location), do nothing.
@@ -514,7 +511,7 @@ void ResourceLoader::didFinishLoadingOnePart(const NetworkLoadMetrics& networkLo
         return;
     m_notifiedLoadComplete = true;
     if (m_options.sendLoadCallbacks == SendCallbacks)
-        frameLoader()->notifier().didFinishLoad(this, networkLoadMetrics);
+        frameLoader()->notifier().didFinishLoad(this, finishTime);
 }
 
 void ResourceLoader::didFail(const ResourceError& error)
@@ -648,10 +645,9 @@ void ResourceLoader::didReceiveBuffer(ResourceHandle*, Ref<SharedBuffer>&& buffe
     didReceiveBuffer(WTFMove(buffer), encodedDataLength, DataPayloadBytes);
 }
 
-void ResourceLoader::didFinishLoading(ResourceHandle*)
+void ResourceLoader::didFinishLoading(ResourceHandle*, double finishTime)
 {
-    NetworkLoadMetrics emptyMetrics;
-    didFinishLoading(emptyMetrics);
+    didFinishLoading(finishTime);
 }
 
 void ResourceLoader::didFail(ResourceHandle*, const ResourceError& error)

@@ -83,7 +83,7 @@ void CrossOriginPreflightChecker::validatePreflightResponse(DocumentThreadableLo
     // This is only showing success preflight requests and responses but we should show network events
     // for preflight failures and distinguish them better from non-preflight requests.
     InspectorInstrumentation::didReceiveResourceResponse(*frame, identifier, frame->loader().documentLoader(), response, nullptr);
-    InspectorInstrumentation::didFinishLoading(frame, frame->loader().documentLoader(), identifier);
+    InspectorInstrumentation::didFinishLoading(frame, frame->loader().documentLoader(), identifier, 0);
 
     CrossOriginPreflightResultCache::singleton().appendEntry(loader.securityOrigin().toString(), request.url(), WTFMove(result));
     loader.preflightSuccess(WTFMove(request));

@@ -141,7 +141,7 @@ void FetchLoader::didReceiveData(const char* value, int size)
     m_consumer->append(value, size);
 }
 
-void FetchLoader::didFinishLoading(unsigned long)
+void FetchLoader::didFinishLoading(unsigned long, double)
 {
     m_client.didSucceed();
 }

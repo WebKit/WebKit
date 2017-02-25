@@ -77,7 +77,7 @@ void BlobDownloadClient::didReceiveBuffer(ResourceHandle*, Ref<SharedBuffer>&& b
     m_download.didReceiveData(buffer->size());
 }
 
-void BlobDownloadClient::didFinishLoading(ResourceHandle*)
+void BlobDownloadClient::didFinishLoading(ResourceHandle*, double)
 {
     closeFile(m_destinationFile);
     m_download.didFinish();

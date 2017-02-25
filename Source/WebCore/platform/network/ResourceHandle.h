@@ -83,7 +83,7 @@ class QuickLookHandle;
 class ResourceError;
 class ResourceHandleClient;
 class ResourceHandleInternal;
-class NetworkLoadMetrics;
+class NetworkLoadTiming;
 class ResourceRequest;
 class ResourceResponse;
 class SoupNetworkSession;
@@ -132,9 +132,9 @@ public:
         
 #if PLATFORM(COCOA) && ENABLE(WEB_TIMING)
 #if USE(CFURLCONNECTION)
-    static void getConnectionTimingData(CFURLConnectionRef, NetworkLoadMetrics&);
+    static void getConnectionTimingData(CFURLConnectionRef, NetworkLoadTiming&);
 #else
-    static void getConnectionTimingData(NSURLConnection *, NetworkLoadMetrics&);
+    static void getConnectionTimingData(NSURLConnection *, NetworkLoadTiming&);
 #endif
 #endif
         
@@ -178,7 +178,7 @@ public:
     void ensureReadBuffer();
     size_t currentStreamPosition() const;
     void didStartRequest();
-    MonotonicTime m_requestTime;
+    double m_requestTime;
 #endif
 
     bool hasAuthenticationChallenge() const;

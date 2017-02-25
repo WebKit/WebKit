@@ -34,7 +34,6 @@ OBJC_CLASS WKNetworkSessionDelegate;
 #include "DownloadID.h"
 #include "NetworkDataTaskCocoa.h"
 #include "NetworkSession.h"
-#include <WebCore/NetworkLoadMetrics.h>
 #include <wtf/HashMap.h>
 
 namespace WebKit {

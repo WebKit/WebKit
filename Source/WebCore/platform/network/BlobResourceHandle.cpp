@@ -621,7 +621,7 @@ static void doNotifyFinish(BlobResourceHandle& handle)
     if (!handle.client())
         return;
 
-    handle.client()->didFinishLoading(&handle);
+    handle.client()->didFinishLoading(&handle, 0);
 }
 
 void BlobResourceHandle::notifyFinish()

@@ -363,7 +363,7 @@ void DocumentLoader::notifyFinished(CachedResource& resource)
     ASSERT_UNUSED(resource, m_mainResource == &resource);
     ASSERT(m_mainResource);
     if (!m_mainResource->errorOccurred() && !m_mainResource->wasCanceled()) {
-        finishedLoading();
+        finishedLoading(m_mainResource->loadFinishTime());
         return;
     }
 
@@ -375,7 +375,7 @@ void DocumentLoader::notifyFinished(CachedResource& resource)
     mainReceivedError(m_mainResource->resourceError());
 }
 
-void DocumentLoader::finishedLoading()
+void DocumentLoader::finishedLoading(double finishTime)
 {
     // There is a bug in CFNetwork where callbacks can be dispatched even when loads are deferred.
     // See <rdar://problem/6304600> for more details.
@@ -392,12 +392,16 @@ void DocumentLoader::finishedLoading()
         // cancel the already-finished substitute load.
         unsigned long identifier = m_identifierForLoadWithoutResourceLoader;
         m_identifierForLoadWithoutResourceLoader = 0;
-        frameLoader()->notifier().dispatchDidFinishLoading(this, identifier);
+        frameLoader()->notifier().dispatchDidFinishLoading(this, identifier, finishTime);
     }
 
     maybeFinishLoadingMultipartContent();
 
-    MonotonicTime responseEndTime = m_timeOfLastDataReceived ? m_timeOfLastDataReceived : MonotonicTime::now();
+    MonotonicTime responseEndTime = MonotonicTime::fromRawSeconds(finishTime);
+    if (!responseEndTime)
+        responseEndTime = m_timeOfLastDataReceived;
+    if (!responseEndTime)
+        responseEndTime = MonotonicTime::now();
     timing().setResponseEnd(responseEndTime);
 
     commitIfReady();
@@ -808,7 +812,7 @@ void DocumentLoader::continueAfterContentPolicy(PolicyAction policy)
         if (content && content->size())
             dataReceived(content->data(), content->size());
         if (isLoadingMainResource())
-            finishedLoading();
+            finishedLoading(0);
     }
 }
 
@@ -1421,7 +1425,7 @@ bool DocumentLoader::maybeLoadEmpty()
 
     String mimeType = shouldLoadEmpty ? "text/html" : frameLoader()->client().generatedMIMETypeForURLScheme(m_request.url().protocol().toStringWithoutCopying());
     m_response = ResourceResponse(m_request.url(), mimeType, 0, String());
-    finishedLoading();
+    finishedLoading(monotonicallyIncreasingTime());
     return true;
 }
 

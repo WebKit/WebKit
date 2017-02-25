@@ -143,16 +143,12 @@ void WebResourceLoader::didRetrieveDerivedData(const String& type, const IPC::Da
     m_coreLoader->didRetrieveDerivedDataFromCache(type, buffer.get());
 }
 
-void WebResourceLoader::didFinishResourceLoad(const NetworkLoadMetrics& networkLoadMetrics)
+void WebResourceLoader::didFinishResourceLoad(double finishTime)
 {
     LOG(Network, "(WebProcess) WebResourceLoader::didFinishResourceLoad for '%s'", m_coreLoader->url().string().latin1().data());
     RELEASE_LOG_IF_ALLOWED("didFinishResourceLoad: (pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ")", m_trackingParameters.pageID, m_trackingParameters.frameID, m_trackingParameters.resourceID);
 
-#if USE(NETWORK_SESSION)
-    ASSERT(networkLoadMetrics.isComplete());
-#endif
-
-    m_coreLoader->didFinishLoading(networkLoadMetrics);
+    m_coreLoader->didFinishLoading(finishTime);
 }
 
 void WebResourceLoader::didFailResourceLoad(const ResourceError& error)
@@ -166,7 +162,7 @@ void WebResourceLoader::didFailResourceLoad(const ResourceError& error)
 }
 
 #if ENABLE(SHAREABLE_RESOURCE)
-void WebResourceLoader::didReceiveResource(const ShareableResource::Handle& handle)
+void WebResourceLoader::didReceiveResource(const ShareableResource::Handle& handle, double finishTime)
 {
     LOG(Network, "(WebProcess) WebResourceLoader::didReceiveResource for '%s'", m_coreLoader->url().string().latin1().data());
     RELEASE_LOG_IF_ALLOWED("didReceiveResource: (pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ")", m_trackingParameters.pageID, m_trackingParameters.frameID, m_trackingParameters.resourceID);
@@ -193,8 +189,7 @@ void WebResourceLoader::didReceiveResource(const ShareableResource::Handle& hand
     if (!m_coreLoader)
         return;
 
-    NetworkLoadMetrics emptyMetrics;
-    m_coreLoader->didFinishLoading(emptyMetrics);
+    m_coreLoader->didFinishLoading(finishTime);
 }
 #endif
 

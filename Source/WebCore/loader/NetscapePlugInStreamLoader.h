@@ -62,7 +62,7 @@ private:
     void didReceiveResponse(const ResourceResponse&) override;
     void didReceiveData(const char*, unsigned, long long encodedDataLength, DataPayloadType) override;
     void didReceiveBuffer(Ref<SharedBuffer>&&, long long encodedDataLength, DataPayloadType) override;
-    void didFinishLoading(const NetworkLoadMetrics&) override;
+    void didFinishLoading(double finishTime) override;
     void didFail(const ResourceError&) override;
 
     void releaseResources() override;

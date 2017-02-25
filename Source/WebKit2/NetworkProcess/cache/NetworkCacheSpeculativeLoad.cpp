@@ -116,7 +116,7 @@ void SpeculativeLoad::didReceiveBuffer(Ref<SharedBuffer>&& buffer, int reportedE
     }
 }
 
-void SpeculativeLoad::didFinishLoading(const WebCore::NetworkLoadMetrics&)
+void SpeculativeLoad::didFinishLoading(double finishTime)
 {
     if (m_didComplete)
         return;

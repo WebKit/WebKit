@@ -1,3 +1,16 @@
+2017-02-24  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, rolling out r212944.
+
+        Caused a lot of failures on the debug bots
+
+        Reverted changeset:
+
+        "[Resource Timing] Gather timing information with reliable
+        responseEnd time"
+        https://bugs.webkit.org/show_bug.cgi?id=168351
+        http://trac.webkit.org/changeset/212944
+
 2017-02-24  Keith Miller  <keith_miller@apple.com>
 
         We should be able to use std::tuples as keys in HashMap

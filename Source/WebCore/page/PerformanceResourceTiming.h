@@ -34,7 +34,7 @@
 #if ENABLE(WEB_TIMING)
 
 #include "LoadTiming.h"
-#include "NetworkLoadMetrics.h"
+#include "NetworkLoadTiming.h"
 #include "PerformanceEntry.h"
 #include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>
@@ -48,7 +48,6 @@ public:
     static Ref<PerformanceResourceTiming> create(MonotonicTime timeOrigin, ResourceTiming&&);
 
     AtomicString initiatorType() const { return m_initiatorType; }
-    String nextHopProtocol() const;
 
     double workerStart() const;
     double redirectStart() const;
@@ -67,12 +66,12 @@ private:
     PerformanceResourceTiming(MonotonicTime timeOrigin, ResourceTiming&&);
     ~PerformanceResourceTiming();
 
-    double networkLoadTimeToDOMHighResTimeStamp(Seconds) const;
+    double networkLoadTimeToDOMHighResTimeStamp(double deltaMilliseconds) const;
 
     AtomicString m_initiatorType;
     MonotonicTime m_timeOrigin;
     LoadTiming m_loadTiming;
-    NetworkLoadMetrics m_networkLoadMetrics;
+    NetworkLoadTiming m_networkLoadTiming;
     bool m_shouldReportDetails;
 };
 

@@ -73,11 +73,11 @@ public:
             m_client->didReceiveData(data, dataLength);
     }
 
-    void didFinishLoading(unsigned long identifier)
+    void didFinishLoading(unsigned long identifier, double finishTime)
     {
         m_done = true;
         if (m_client)
-            m_client->didFinishLoading(identifier);
+            m_client->didFinishLoading(identifier, finishTime);
     }
 
     void didFail(const ResourceError& error)

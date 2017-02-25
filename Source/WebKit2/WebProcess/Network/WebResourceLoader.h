@@ -23,7 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef WebResourceLoader_h
+#define WebResourceLoader_h
 
 #include "Connection.h"
 #include "MessageSender.h"
@@ -36,7 +37,6 @@ class DataReference;
 }
 
 namespace WebCore {
-class NetworkLoadMetrics;
 class ResourceError;
 class ResourceLoader;
 class ResourceRequest;
@@ -79,10 +79,10 @@ private:
     void didReceiveResponse(const WebCore::ResourceResponse&, bool needsContinueDidReceiveResponseMessage);
     void didReceiveData(const IPC::DataReference&, int64_t encodedDataLength);
     void didRetrieveDerivedData(const String& type, const IPC::DataReference&);
-    void didFinishResourceLoad(const WebCore::NetworkLoadMetrics&);
+    void didFinishResourceLoad(double finishTime);
     void didFailResourceLoad(const WebCore::ResourceError&);
 #if ENABLE(SHAREABLE_RESOURCE)
-    void didReceiveResource(const ShareableResource::Handle&);
+    void didReceiveResource(const ShareableResource::Handle&, double finishTime);
 #endif
 
     RefPtr<WebCore::ResourceLoader> m_coreLoader;
@@ -91,3 +91,5 @@ private:
 };
 
 } // namespace WebKit
+
+#endif // WebResourceLoader_h

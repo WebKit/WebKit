@@ -60,14 +60,14 @@ ResourceTiming ResourceTiming::fromCache(const URL& url, const String& initiator
     return ResourceTiming(url, initiator, loadTiming);
 }
 
-ResourceTiming ResourceTiming::fromLoad(CachedResource& resource, const String& initiator, const LoadTiming& loadTiming, const NetworkLoadMetrics& networkLoadMetrics, const SecurityOrigin& securityOrigin)
+ResourceTiming ResourceTiming::fromLoad(CachedResource& resource, const String& initiator, const LoadTiming& loadTiming, const SecurityOrigin& securityOrigin)
 {
-    return ResourceTiming(resource, initiator, loadTiming, networkLoadMetrics, securityOrigin);
+    return ResourceTiming(resource, initiator, loadTiming, securityOrigin);
 }
 
-ResourceTiming ResourceTiming::fromSynchronousLoad(const URL& url, const String& initiator, const LoadTiming& loadTiming, const NetworkLoadMetrics& networkLoadMetrics, const ResourceResponse& response, const SecurityOrigin& securityOrigin)
+ResourceTiming ResourceTiming::fromSynchronousLoad(const URL& url, const String& initiator, const LoadTiming& loadTiming, const NetworkLoadTiming& networkLoadTiming, const ResourceResponse& response, const SecurityOrigin& securityOrigin)
 {
-    return ResourceTiming(url, initiator, loadTiming, networkLoadMetrics, response, securityOrigin);
+    return ResourceTiming(url, initiator, loadTiming, networkLoadTiming, response, securityOrigin);
 }
 
 ResourceTiming::ResourceTiming(const URL& url, const String& initiator, const LoadTiming& loadTiming)
@@ -78,27 +78,27 @@ ResourceTiming::ResourceTiming(const URL& url, const String& initiator, const Lo
 {
 }
 
-ResourceTiming::ResourceTiming(CachedResource& resource, const String& initiator, const LoadTiming& loadTiming, const NetworkLoadMetrics& networkLoadMetrics, const SecurityOrigin& securityOrigin)
+ResourceTiming::ResourceTiming(CachedResource& resource, const String& initiator, const LoadTiming& loadTiming, const SecurityOrigin& securityOrigin)
     : m_url(resource.resourceRequest().url())
     , m_initiator(initiator)
     , m_loadTiming(loadTiming)
-    , m_networkLoadMetrics(networkLoadMetrics)
+    , m_networkLoadTiming(resource.response().networkLoadTiming())
     , m_allowTimingDetails(passesTimingAllowCheck(resource.response(), securityOrigin))
 {
 }
 
-ResourceTiming::ResourceTiming(const URL& url, const String& initiator, const LoadTiming& loadTiming, const NetworkLoadMetrics& networkLoadMetrics, const ResourceResponse& response, const SecurityOrigin& securityOrigin)
+ResourceTiming::ResourceTiming(const URL& url, const String& initiator, const LoadTiming& loadTiming, const NetworkLoadTiming& networkLoadTiming, const ResourceResponse& response, const SecurityOrigin& securityOrigin)
     : m_url(url)
     , m_initiator(initiator)
     , m_loadTiming(loadTiming)
-    , m_networkLoadMetrics(networkLoadMetrics)
+    , m_networkLoadTiming(networkLoadTiming)
     , m_allowTimingDetails(passesTimingAllowCheck(response, securityOrigin))
 {
 }
 
 ResourceTiming ResourceTiming::isolatedCopy() const
 {
-    return ResourceTiming(m_url.isolatedCopy(), m_initiator.isolatedCopy(), m_loadTiming.isolatedCopy(), m_networkLoadMetrics.isolatedCopy(), m_allowTimingDetails);
+    return ResourceTiming(m_url.isolatedCopy(), m_initiator.isolatedCopy(), m_loadTiming.isolatedCopy(), m_networkLoadTiming.isolatedCopy(), m_allowTimingDetails);
 }
 
 } // namespace WebCore

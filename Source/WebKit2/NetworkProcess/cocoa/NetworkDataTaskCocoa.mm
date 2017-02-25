@@ -150,10 +150,10 @@ void NetworkDataTaskCocoa::didReceiveChallenge(const WebCore::AuthenticationChal
     }
 }
 
-void NetworkDataTaskCocoa::didCompleteWithError(const WebCore::ResourceError& error, const WebCore::NetworkLoadMetrics& networkLoadMetrics)
+void NetworkDataTaskCocoa::didCompleteWithError(const WebCore::ResourceError& error)
 {
     if (m_client)
-        m_client->didCompleteWithError(error, networkLoadMetrics);
+        m_client->didCompleteWithError(error);
 }
 
 void NetworkDataTaskCocoa::didReceiveData(Ref<WebCore::SharedBuffer>&& data)

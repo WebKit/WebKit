@@ -7,7 +7,7 @@ if (self.window)
 debug("PerformanceResourceTiming");
 shouldBeDefined("PerformanceResourceTiming");
 shouldBeTrue(`"initiatorType" in PerformanceResourceTiming.prototype`);
-shouldBeTrue(`"nextHopProtocol" in PerformanceResourceTiming.prototype`);
+shouldBeTrue(`"nextHopProtocol" in PerformanceResourceTiming.prototype`); // Not yet implemented.
 shouldBeTrue(`"workerStart" in PerformanceResourceTiming.prototype`);
 shouldBeTrue(`"redirectStart" in PerformanceResourceTiming.prototype`);
 shouldBeTrue(`"redirectEnd" in PerformanceResourceTiming.prototype`);

@@ -103,7 +103,7 @@ class ResourceHandleStreamingClient : public ResourceHandleClient, public Stream
         void didReceiveResponse(ResourceHandle*, ResourceResponse&&) override;
         void didReceiveData(ResourceHandle*, const char*, unsigned, int) override;
         void didReceiveBuffer(ResourceHandle*, Ref<SharedBuffer>&&, int encodedLength) override;
-        void didFinishLoading(ResourceHandle*) override;
+        void didFinishLoading(ResourceHandle*, double /*finishTime*/) override;
         void didFail(ResourceHandle*, const ResourceError&) override;
         void wasBlocked(ResourceHandle*) override;
         void cannotShowURL(ResourceHandle*) override;
@@ -1172,7 +1172,7 @@ void ResourceHandleStreamingClient::didReceiveBuffer(ResourceHandle*, Ref<Shared
     }
 }
 
-void ResourceHandleStreamingClient::didFinishLoading(ResourceHandle*)
+void ResourceHandleStreamingClient::didFinishLoading(ResourceHandle*, double)
 {
     handleNotifyFinished();
 }

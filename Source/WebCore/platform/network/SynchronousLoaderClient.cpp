@@ -72,7 +72,7 @@ void SynchronousLoaderClient::didReceiveData(ResourceHandle*, const char* data, 
     m_data.append(data, length);
 }
 
-void SynchronousLoaderClient::didFinishLoading(ResourceHandle*)
+void SynchronousLoaderClient::didFinishLoading(ResourceHandle*, double)
 {
     m_isDone = true;
 }

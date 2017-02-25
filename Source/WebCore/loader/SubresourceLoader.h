@@ -30,13 +30,14 @@
 
 #include "FrameLoaderTypes.h"
 #include "ResourceLoader.h"
+
 #include <wtf/text/WTFString.h>
  
 namespace WebCore {
 
 class CachedResource;
 class CachedResourceLoader;
-class NetworkLoadMetrics;
+class Document;
 class ResourceRequest;
 class SecurityOrigin;
 
@@ -70,7 +71,7 @@ private:
     void didReceiveResponse(const ResourceResponse&) override;
     void didReceiveData(const char*, unsigned, long long encodedDataLength, DataPayloadType) override;
     void didReceiveBuffer(Ref<SharedBuffer>&&, long long encodedDataLength, DataPayloadType) override;
-    void didFinishLoading(const NetworkLoadMetrics&) override;
+    void didFinishLoading(double finishTime) override;
     void didFail(const ResourceError&) override;
     void willCancel(const ResourceError&) override;
     void didCancel(const ResourceError&) override;
@@ -102,7 +103,7 @@ private:
     void notifyDone();
 
 #if ENABLE(WEB_TIMING)
-    void reportResourceTiming(const NetworkLoadMetrics&);
+    void reportResourceTiming();
 #endif
 
 #if USE(QUICK_LOOK)
@@ -134,11 +135,11 @@ private:
     ResourceRequest m_iOSOriginalRequest;
 #endif
     CachedResource* m_resource;
+    bool m_loadingMultipartContent;
     SubresourceLoaderState m_state;
     std::optional<RequestCountTracker> m_requestCountTracker;
     RefPtr<SecurityOrigin> m_origin;
     unsigned m_redirectCount { 0 };
-    bool m_loadingMultipartContent { false };
 };
 
 }
