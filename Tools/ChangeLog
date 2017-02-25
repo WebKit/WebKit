@@ -1,3 +1,10 @@
+2017-02-24  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Unreviewed, fix the internal build.
+
+        * TestWebKitAPI/ios/DataInteractionSimulator.mm:
+        (-[DataInteractionSimulator _advanceProgress]):
+
 2017-02-24  Matt Rajca  <mrajca@apple.com>
 
         Media: notify clients when autoplay is denied
