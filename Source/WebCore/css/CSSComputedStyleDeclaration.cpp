@@ -1677,6 +1677,8 @@ static CSSValueID identifierForFamily(const AtomicString& family)
         return CSSValueSansSerif;
     if (family == serifFamily)
         return CSSValueSerif;
+    if (family == systemUiFamily)
+        return CSSValueSystemUi;
     return CSSValueInvalid;
 }
 

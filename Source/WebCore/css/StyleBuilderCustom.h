@@ -902,6 +902,10 @@ inline void StyleBuilderCustom::applyValueFontFamily(StyleResolver& styleResolve
                 family = pictographFamily;
                 isGenericFamily = true;
                 break;
+            case CSSValueSystemUi:
+                family = systemUiFamily;
+                isGenericFamily = true;
+                break;
             default:
                 break;
             }

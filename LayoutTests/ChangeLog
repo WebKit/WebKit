@@ -1,3 +1,48 @@
+2017-02-24  Jon Lee  <jonlee@apple.com>
+
+        Alias "system-ui" for the System font name
+        https://bugs.webkit.org/show_bug.cgi?id=151493
+
+        Reviewed by Tim Horton and Joseph Pecoraro.
+
+        Add "system-ui" to the test.
+        * fast/css/font-family-builtins.html:
+        * fast/css/font-family-builtins-expected.txt:
+        * fast/text/system-font-features.html:
+        * fast/text/system-font-features-expected.html:
+        * fast/text/system-font-legacy-name.html:
+        * fast/text/system-font-legacy-name-expected.txt:
+        * platform/ios-simulator/ios/fast/text/opticalFont.html:
+        * platform/ios-simulator/ios/fast/text/opticalFont-expected.txt:
+        * platform/ios-simulator/ios/fast/text/opticalFontWithTextStyle-expected.txt:
+
+        Unskip opticalFont* tests.
+        * platform/ios-simulator/TestExpectations:
+
+        Update tests to use "system-ui" instead of "-apple-system" or the even
+        older "-apple-system-font".
+        * fast/css/multiple-tabs-expected.html:
+        * fast/css/multiple-tabs.html:
+        * fast/text/international/system-language/han-quotes-expected-mismatch.html:
+        * fast/text/international/system-language/han-quotes.html:
+        * fast/text/international/system-language/hindi-system-font-punctuation-expected.html:
+        * fast/text/international/system-language/hindi-system-font-punctuation.html:
+        * fast/text/letterpress-different-expected-mismatch.html:
+        * fast/text/letterpress-different.html:
+        * fast/text/letterpress-paint.html:
+        * fast/text/system-font-weight-italic.html:
+        * fast/text/system-font-weight.html:
+        * fast/text/text-node-remains-dirty-after-calling-surroundContents-expected.html:
+        * fast/text/text-node-remains-dirty-after-calling-surroundContents.html:
+        * fast/text/trak-optimizeLegibility.html:
+        * fast/text/weighted-italicized-system-font-expected.html:
+        * fast/text/weighted-italicized-system-font.html:
+        * platform/ios-simulator/ios/fast/text/apple-logo.html:
+        * platform/ios-simulator/ios/fast/text/opticalFontWithWeight-expected.txt:
+        * platform/ios-simulator/ios/fast/text/opticalFontWithWeight.html:
+        * platform/ios-simulator/ios/fast/text/underline-scaling.html:
+        * platform/mac/fast/css/css2-system-fonts-expected.txt:
+
 2017-02-24  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] <audio> controls should center in their container when the page is scaled

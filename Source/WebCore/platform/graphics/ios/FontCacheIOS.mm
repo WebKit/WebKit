@@ -162,7 +162,7 @@ RetainPtr<CTFontRef> platformFontWithFamilySpecialCase(const AtomicString& famil
         return adoptCF(CTFontCreateWithFontDescriptor(fontDescriptor.get(), size, nullptr));
     }
 
-    if (equalLettersIgnoringASCIICase(family, "-webkit-system-font") || equalLettersIgnoringASCIICase(family, "-apple-system") || equalLettersIgnoringASCIICase(family, "-apple-system-font")) {
+    if (equalLettersIgnoringASCIICase(family, "-webkit-system-font") || equalLettersIgnoringASCIICase(family, "-apple-system") || equalLettersIgnoringASCIICase(family, "-apple-system-font") || equalLettersIgnoringASCIICase(family, "system-ui")) {
         return adoptCF(CTFontCreateWithFontDescriptor(systemFontDescriptor(weight, traits & kCTFontTraitBold, traits & kCTFontTraitItalic, size).get(), size, nullptr));
     }
 

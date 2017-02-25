@@ -1,3 +1,12 @@
+2017-02-24  Jon Lee  <jonlee@apple.com>
+
+        Alias "system-ui" for the System font name
+        https://bugs.webkit.org/show_bug.cgi?id=151493
+
+        Reviewed by Tim Horton and Joseph Pecoraro.
+
+        * UserInterface/Models/CSSKeywordCompletions.js: Ditto.
+
 2017-02-23  Devin Rousso  <dcrousso+webkit@gmail.com>
 
         Web Inspector: RTL: DOM Tree spacing is wrong

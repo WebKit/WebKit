@@ -8587,6 +8587,7 @@
 		2EF1BFE9121C9F4200C27627 /* FileStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileStream.h; sourceTree = "<group>"; };
 		2EF1BFF8121CB0CE00C27627 /* FileStreamClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileStreamClient.h; sourceTree = "<group>"; };
 		3103B7DE1DB01556008BB890 /* ColorHash.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ColorHash.h; sourceTree = "<group>"; };
+		31055BB81E4FE18900EB604E /* WebKitFontFamilyNames.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebKitFontFamilyNames.in; sourceTree = "<group>"; };
 		31078CC21880A6A6008099DC /* OESTextureHalfFloatLinear.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OESTextureHalfFloatLinear.cpp; sourceTree = "<group>"; };
 		31078CC31880A6A6008099DC /* OESTextureHalfFloatLinear.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OESTextureHalfFloatLinear.h; sourceTree = "<group>"; };
 		31078CC41880A6A6008099DC /* OESTextureHalfFloatLinear.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = OESTextureHalfFloatLinear.idl; sourceTree = "<group>"; };
@@ -24075,6 +24076,7 @@
 				3FFFF9A6159D9A550020BBD5 /* WebKitCSSViewportRule.cpp */,
 				3FFFF9A7159D9A550020BBD5 /* WebKitCSSViewportRule.h */,
 				3F2B33E3165ABD3500E3987C /* WebKitCSSViewportRule.idl */,
+				31055BB81E4FE18900EB604E /* WebKitFontFamilyNames.in */,
 			);
 			path = css;
 			sourceTree = "<group>";

@@ -142,6 +142,8 @@ String CSSFontFaceSet::familyNameFromPrimitive(const CSSPrimitiveValue& value)
         return monospaceFamily;
     case CSSValueWebkitPictograph:
         return pictographFamily;
+    case CSSValueSystemUi:
+        return systemUiFamily;
     default:
         return { };
     }

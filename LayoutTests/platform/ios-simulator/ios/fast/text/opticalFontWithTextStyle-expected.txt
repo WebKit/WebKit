@@ -4,47 +4,47 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,15) size 784x577
       RenderBlock {DIV} at (0,0) size 784x24
-        RenderText {#text} at (0,1) size 107x22
-          text run at (0,1) width 107: "H1 / Headline"
+        RenderText {#text} at (0,1) size 106x22
+          text run at (0,1) width 106: "H1 / Headline"
       RenderBlock {DIV} at (0,39) size 784x35
-        RenderText {#text} at (0,0) size 122x34
-          text run at (0,0) width 122: "T1 / Title1"
+        RenderText {#text} at (0,0) size 113x34
+          text run at (0,0) width 113: "T1 / Title1"
       RenderBlock {DIV} at (0,89) size 784x29
-        RenderText {#text} at (0,1) size 98x27
-          text run at (0,1) width 98: "T2 / Title2"
+        RenderText {#text} at (0,1) size 99x27
+          text run at (0,1) width 99: "T2 / Title2"
       RenderBlock {DIV} at (0,133) size 784x26
-        RenderText {#text} at (0,0) size 89x25
-          text run at (0,0) width 89: "T3 / Title3"
+        RenderText {#text} at (0,0) size 92x25
+          text run at (0,0) width 92: "T3 / Title3"
       RenderBlock {DIV} at (0,174) size 784x24
-        RenderText {#text} at (0,1) size 705x22
-          text run at (0,1) width 705: "Body Text: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque ornare ornare mi"
+        RenderText {#text} at (0,1) size 707x22
+          text run at (0,1) width 707: "Body Text: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque ornare ornare mi"
       RenderBlock {DIV} at (0,213) size 784x26
-        RenderText {#text} at (0,2) size 735x22
-          text run at (0,2) width 735: "Tall Body Text: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque ornare ornare mi"
+        RenderText {#text} at (0,2) size 737x22
+          text run at (0,2) width 737: "Tall Body Text: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque ornare ornare mi"
       RenderBlock {DIV} at (0,254) size 784x22
-        RenderText {#text} at (0,1) size 87x19
-          text run at (0,1) width 87: "Subheadline"
+        RenderText {#text} at (0,1) size 85x19
+          text run at (0,1) width 85: "Subheadline"
       RenderBlock {DIV} at (0,291) size 784x20
-        RenderText {#text} at (0,1) size 81x17
-          text run at (0,1) width 81: "FN / Footnote"
+        RenderText {#text} at (0,1) size 83x17
+          text run at (0,1) width 83: "FN / Footnote"
       RenderBlock {DIV} at (0,326) size 784x17
         RenderText {#text} at (0,1) size 96x15
           text run at (0,1) width 96: "Cap 1 / Caption 1"
       RenderBlock {DIV} at (0,358) size 784x14
-        RenderText {#text} at (0,0) size 88x14
-          text run at (0,0) width 88: "Cap 2 / Caption 2"
+        RenderText {#text} at (0,0) size 92x14
+          text run at (0,0) width 92: "Cap 2 / Caption 2"
       RenderBlock {DIV} at (0,387) size 784x22
         RenderText {#text} at (0,0) size 154x22
           text run at (0,0) width 154: "Short H1 / Headline"
       RenderBlock {DIV} at (0,424) size 784x22
-        RenderText {#text} at (0,0) size 751x22
-          text run at (0,0) width 751: "Short Body Text: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque ornare ornare mi"
+        RenderText {#text} at (0,0) size 753x22
+          text run at (0,0) width 753: "Short Body Text: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque ornare ornare mi"
       RenderBlock {DIV} at (0,461) size 784x20
-        RenderText {#text} at (0,0) size 128x19
-          text run at (0,0) width 128: "Short Subheadline"
+        RenderText {#text} at (0,0) size 127x19
+          text run at (0,0) width 127: "Short Subheadline"
       RenderBlock {DIV} at (0,496) size 784x18
-        RenderText {#text} at (0,0) size 116x17
-          text run at (0,0) width 116: "Short FN / Footnote"
+        RenderText {#text} at (0,0) size 120x17
+          text run at (0,0) width 120: "Short FN / Footnote"
       RenderBlock {DIV} at (0,529) size 784x15
-        RenderText {#text} at (0,0) size 128x15
-          text run at (0,0) width 128: "Short Cap 1 / Caption 1"
+        RenderText {#text} at (0,0) size 130x15
+          text run at (0,0) width 130: "Short Cap 1 / Caption 1"

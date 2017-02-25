@@ -420,7 +420,7 @@ void RenderThemeMac::updateCachedSystemFontDescription(CSSValueID cssValueId, Fo
         return;
 
     if (fontName.isNull())
-        fontName = AtomicString("-apple-system", AtomicString::ConstructFromLiteral);
+        fontName = AtomicString("system-ui", AtomicString::ConstructFromLiteral);
 
     NSFontManager *fontManager = [NSFontManager sharedFontManager];
     fontDescription.setIsAbsoluteSize(true);

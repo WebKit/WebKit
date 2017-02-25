@@ -1,56 +1,60 @@
-layer at (0,0) size 800x1152
+layer at (0,0) size 800x1233
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x1152
-  RenderBlock {HTML} at (0,0) size 800x1152
-    RenderBody {BODY} at (8,8) size 784x1136
+layer at (0,0) size 800x1233
+  RenderBlock {HTML} at (0,0) size 800x1233
+    RenderBody {BODY} at (8,8) size 784x1217
       RenderBlock {DIV} at (0,0) size 784x29
-        RenderText {#text} at (0,0) size 392x29
-          text run at (0,0) width 392: "This is a test for -webkit-system-font"
+        RenderText {#text} at (0,0) size 397x29
+          text run at (0,0) width 397: "This is a test for -webkit-system-font"
       RenderBlock {DIV} at (0,29) size 784x29
-        RenderText {#text} at (0,0) size 765x29
-          text run at (0,0) width 765: "This is a test for -apple-system. It should be the same as the line above."
+        RenderText {#text} at (0,0) size 767x29
+          text run at (0,0) width 767: "This is a test for -apple-system. It should be the same as the line above."
       RenderBlock {DIV} at (0,58) size 784x74
-        RenderText {#text} at (0,0) size 699x74
-          text run at (0,0) width 699: "This is a test for -webkit-system-font, using the 'font'"
-          text run at (0,37) width 113: "property"
+        RenderText {#text} at (0,0) size 704x74
+          text run at (0,0) width 704: "This is a test for -webkit-system-font, using the 'font'"
+          text run at (0,37) width 112: "property"
       RenderBlock {DIV} at (0,132) size 784x37
-        RenderText {#text} at (0,0) size 742x37
-          text run at (0,0) width 742: "This is a test for -apple-system, using the 'font' property"
-      RenderBlock {DIV} at (0,169) size 784x29
-        RenderInline {B} at (0,0) size 551x29
-          RenderText {#text} at (0,0) size 551x29
-            text run at (0,0) width 551: "This is a test for -webkit-system-font in bold form"
-      RenderBlock {DIV} at (0,198) size 784x29
-        RenderInline {I} at (0,0) size 512x29
-          RenderText {#text} at (0,0) size 512x29
-            text run at (0,0) width 512: "This is a test for -webkit-system-font in italic form"
-      RenderBlock {DIV} at (0,227) size 784x37
-        RenderText {#text} at (0,0) size 655x37
-          text run at (0,0) width 655: "This is a test for -webkit-system-font at size 30px"
-      RenderBlock {DIV} at (0,264) size 784x44
-        RenderText {#text} at (0,0) size 782x44
-          text run at (0,0) width 782: "This is a test for -webkit-system-font at size 36px"
-      RenderBlock {DIV} at (0,308) size 784x102
-        RenderText {#text} at (0,0) size 721x102
-          text run at (0,0) width 721: "This is a test for -webkit-system-font at"
-          text run at (0,51) width 176: "size 42px"
-      RenderBlock {DIV} at (0,410) size 784x116
-        RenderText {#text} at (0,0) size 769x116
-          text run at (0,0) width 769: "This is a test for -webkit-system-font"
-          text run at (0,58) width 255: "at size 48px"
-      RenderBlock {DIV} at (0,526) size 784x132
-        RenderText {#text} at (0,0) size 769x132
-          text run at (0,0) width 769: "This is a test for -webkit-system-"
-          text run at (0,66) width 390: "font at size 54px"
-      RenderBlock {DIV} at (0,658) size 784x146
-        RenderText {#text} at (0,0) size 642x146
-          text run at (0,0) width 642: "This is a test for -webkit-"
-          text run at (0,73) width 642: "system-font at size 60px"
-      RenderBlock {DIV} at (0,804) size 784x158
-        RenderText {#text} at (0,0) size 704x158
-          text run at (0,0) width 704: "This is a test for -webkit-"
-          text run at (0,79) width 703: "system-font at size 66px"
-      RenderBlock {DIV} at (0,962) size 784x174
-        RenderText {#text} at (0,0) size 766x174
-          text run at (0,0) width 766: "This is a test for -webkit-"
-          text run at (0,87) width 759: "system-font at size 72px"
+        RenderText {#text} at (0,0) size 744x37
+          text run at (0,0) width 744: "This is a test for -apple-system, using the 'font' property"
+      RenderBlock {DIV} at (0,169) size 784x37
+        RenderText {#text} at (0,0) size 681x37
+          text run at (0,0) width 681: "This is a test for system-ui, using the 'font' property"
+      RenderBlock {DIV} at (0,206) size 784x29
+        RenderInline {B} at (0,0) size 569x29
+          RenderText {#text} at (0,0) size 569x29
+            text run at (0,0) width 569: "This is a test for -webkit-system-font in bold form"
+      RenderBlock {DIV} at (0,235) size 784x29
+        RenderInline {I} at (0,0) size 530x29
+          RenderText {#text} at (0,0) size 530x29
+            text run at (0,0) width 530: "This is a test for -webkit-system-font in italic form"
+      RenderBlock {DIV} at (0,264) size 784x37
+        RenderText {#text} at (0,0) size 662x37
+          text run at (0,0) width 662: "This is a test for -webkit-system-font at size 30px"
+      RenderBlock {DIV} at (0,301) size 784x88
+        RenderText {#text} at (0,0) size 700x88
+          text run at (0,0) width 700: "This is a test for -webkit-system-font at size"
+          text run at (0,44) width 82: "36px"
+      RenderBlock {DIV} at (0,389) size 784x102
+        RenderText {#text} at (0,0) size 731x102
+          text run at (0,0) width 731: "This is a test for -webkit-system-font at"
+          text run at (0,51) width 178: "size 42px"
+      RenderBlock {DIV} at (0,491) size 784x116
+        RenderText {#text} at (0,0) size 780x116
+          text run at (0,0) width 780: "This is a test for -webkit-system-font"
+          text run at (0,58) width 256: "at size 48px"
+      RenderBlock {DIV} at (0,607) size 784x132
+        RenderText {#text} at (0,0) size 781x132
+          text run at (0,0) width 781: "This is a test for -webkit-system-"
+          text run at (0,66) width 391: "font at size 54px"
+      RenderBlock {DIV} at (0,739) size 784x146
+        RenderText {#text} at (0,0) size 650x146
+          text run at (0,0) width 650: "This is a test for -webkit-"
+          text run at (0,73) width 649: "system-font at size 60px"
+      RenderBlock {DIV} at (0,885) size 784x158
+        RenderText {#text} at (0,0) size 713x158
+          text run at (0,0) width 713: "This is a test for -webkit-"
+          text run at (0,79) width 711: "system-font at size 66px"
+      RenderBlock {DIV} at (0,1043) size 784x174
+        RenderText {#text} at (0,0) size 776x174
+          text run at (0,0) width 776: "This is a test for -webkit-"
+          text run at (0,87) width 767: "system-font at size 72px"
