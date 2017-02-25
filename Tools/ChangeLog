@@ -1,3 +1,27 @@
+2017-02-20  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Remove the data interaction gesture recognizer
+        https://bugs.webkit.org/show_bug.cgi?id=168600
+        <rdar://problem/30313681>
+
+        Reviewed by Anders Carlsson.
+
+        Adjust TestWebKitAPI for changes in WebKit2.
+
+        * TestWebKitAPI/ios/DataInteractionSimulator.h:
+        * TestWebKitAPI/ios/DataInteractionSimulator.mm:
+        (-[DataInteractionSimulator initWithWebView:]):
+        (-[DataInteractionSimulator runFrom:to:]):
+        (-[DataInteractionSimulator _advanceProgress]):
+        (-[DataInteractionSimulator _finishDataInteraction]):
+        (-[MockLongPressGestureRecognizer initWithWindow:]): Deleted.
+        (-[MockLongPressGestureRecognizer locationInView:]): Deleted.
+        (-[MockLongPressGestureRecognizer state]): Deleted.
+        (-[MockLongPressGestureRecognizer numberOfTouches]): Deleted.
+        (-[DataInteractionSimulator _recognizeGestureAtLocation:withState:]): Deleted.
+        (-[DataInteractionSimulator dataInteractionGestureRecognizer]): Deleted.
+        (-[DataInteractionSimulator webView:beginDataInteractionWithSourceIndex:gestureRecognizer:]): Deleted.
+
 2017-02-24  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics: Add alternate classification method

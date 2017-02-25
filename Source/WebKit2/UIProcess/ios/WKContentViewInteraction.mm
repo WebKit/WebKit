@@ -558,11 +558,6 @@ static UIWebSelectionMode toUIWebSelectionMode(WKSelectionGranularity granularit
     [self _createAndConfigureLongPressGestureRecognizer];
 
 #if ENABLE(DATA_INTERACTION)
-    _dataInteractionGestureRecognizer = adoptNS([[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(_dataInteractionGestureRecognized:)]);
-    [_dataInteractionGestureRecognizer setDelay:0.5];
-    [_dataInteractionGestureRecognizer setDelegate:self];
-    [_dataInteractionGestureRecognizer _setRequiresQuietImpulse:YES];
-    [self addGestureRecognizer:_dataInteractionGestureRecognizer.get()];
     [self setupDataInteractionDelegates];
 #endif
 
@@ -642,8 +637,6 @@ static UIWebSelectionMode toUIWebSelectionMode(WKSelectionGranularity granularit
     [self removeGestureRecognizer:_twoFingerSingleTapGestureRecognizer.get()];
 
 #if ENABLE(DATA_INTERACTION)
-    [_dataInteractionGestureRecognizer setDelegate:nil];
-    [self removeGestureRecognizer:_dataInteractionGestureRecognizer.get()];
     [self teardownDataInteractionDelegates];
     _isPerformingDataInteractionOperation = NO;
 #endif
@@ -675,9 +668,6 @@ static UIWebSelectionMode toUIWebSelectionMode(WKSelectionGranularity granularit
     [self removeGestureRecognizer:_nonBlockingDoubleTapGestureRecognizer.get()];
     [self removeGestureRecognizer:_twoFingerDoubleTapGestureRecognizer.get()];
     [self removeGestureRecognizer:_twoFingerSingleTapGestureRecognizer.get()];
-#if ENABLE(DATA_INTERACTION)
-    [self removeGestureRecognizer:_dataInteractionGestureRecognizer.get()];
-#endif
 }
 
 - (void)_addDefaultGestureRecognizers
@@ -689,9 +679,6 @@ static UIWebSelectionMode toUIWebSelectionMode(WKSelectionGranularity granularit
     [self addGestureRecognizer:_nonBlockingDoubleTapGestureRecognizer.get()];
     [self addGestureRecognizer:_twoFingerDoubleTapGestureRecognizer.get()];
     [self addGestureRecognizer:_twoFingerSingleTapGestureRecognizer.get()];
-#if ENABLE(DATA_INTERACTION)
-    [self addGestureRecognizer:_dataInteractionGestureRecognizer.get()];
-#endif
 }
 
 - (UIView*)unscaledView
@@ -1227,14 +1214,6 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
     if (isSamePair(gestureRecognizer, otherGestureRecognizer, _highlightLongPressGestureRecognizer.get(), _previewGestureRecognizer.get()))
         return YES;
 
-#if ENABLE(DATA_INTERACTION)
-    if (isSamePair(gestureRecognizer, otherGestureRecognizer, _highlightLongPressGestureRecognizer.get(), _dataInteractionGestureRecognizer.get()))
-        return YES;
-
-    if (isSamePair(gestureRecognizer, otherGestureRecognizer, _longPressGestureRecognizer.get(), _dataInteractionGestureRecognizer.get()))
-        return YES;
-#endif
-
     return NO;
 }
 
@@ -1405,11 +1384,6 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
         }
     }
 
-#if ENABLE(DATA_INTERACTION)
-    if (gestureRecognizer == _dataInteractionGestureRecognizer)
-        return [self pointIsInDataInteractionContent:point];
-#endif
-
     return YES;
 }
 
@@ -1463,11 +1437,6 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
         return YES;
 
     return _positionInformation.hasSelectionAtPosition;
-}
-
-- (UILongPressGestureRecognizer *)_dataInteractionGestureRecognizer
-{
-    return _dataInteractionGestureRecognizer.get();
 }
 
 #endif

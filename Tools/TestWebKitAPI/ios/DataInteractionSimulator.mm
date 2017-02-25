@@ -39,46 +39,6 @@ using namespace TestWebKitAPI;
 #include <WebKitAdditions/DataInteractionSimulatorAdditions.mm>
 #endif
 
-@interface MockLongPressGestureRecognizer : UILongPressGestureRecognizer {
-    RetainPtr<UIWindow> _window;
-}
-
-@property (nonatomic) CGPoint mockLocationInWindow;
-@property (nonatomic) UIGestureRecognizerState mockState;
-@property (nonatomic) NSInteger mockNumberOfTouches;
-
-@end
-
-@implementation MockLongPressGestureRecognizer
-
-- (instancetype)initWithWindow:(UIWindow *)window
-{
-    if (self = [super init]) {
-        _window = window;
-        _mockState = UIGestureRecognizerStatePossible;
-        _mockNumberOfTouches = 0;
-        _mockLocationInWindow = CGPointZero;
-    }
-    return self;
-}
-
-- (CGPoint)locationInView:(UIView *)view
-{
-    return [view convertPoint:_mockLocationInWindow fromView:_window.get()];
-}
-
-- (UIGestureRecognizerState)state
-{
-    return _mockState;
-}
-
-- (NSUInteger)numberOfTouches
-{
-    return _mockNumberOfTouches;
-}
-
-@end
-
 static double progressIncrementStep = 0.033;
 static double progressTimeStep = 0.016;
 
@@ -98,9 +58,6 @@ static NSArray *dataInteractionEventNames()
 {
     if (self = [super init]) {
         _webView = webView;
-        _gestureRecognizer = adoptNS([[MockLongPressGestureRecognizer alloc] initWithWindow:webView.window]);
-
-        [_gestureRecognizer setMockNumberOfTouches:0];
         [_webView _setTestingDelegate:self];
     }
     return self;
@@ -143,18 +100,15 @@ static NSArray *dataInteractionEventNames()
 
     _startLocation = startLocation;
     _endLocation = endLocation;
-    [_gestureRecognizer setMockNumberOfTouches:1];
 
     if (self.externalItemProvider) {
         _phase = DataInteractionBegan;
         _dataInteractionInfo = adoptNS([[MockDataInteractionInfo alloc] initWithProvider:self.externalItemProvider location:startLocation window:[_webView window]]);
-    } else
-        [self _recognizeGestureAtLocation:_startLocation withState:UIGestureRecognizerStateBegan];
+    }
 
     [self _scheduleAdvanceProgress];
 
     Util::run(&_isDoneWithCurrentRun);
-    [_gestureRecognizer setMockNumberOfTouches:0];
     [_webView clearMessageHandlers:dataInteractionEventNames()];
     _finalSelectionRects = [_webView selectionRectsAfterPresentationUpdate];
 }
@@ -175,7 +129,6 @@ static NSArray *dataInteractionEventNames()
 
     switch (_phase) {
     case DataInteractionUnrecognized:
-        [self _recognizeGestureAtLocation:self._currentLocation withState:UIGestureRecognizerStateChanged];
         [self _scheduleAdvanceProgress];
         break;
     case DataInteractionBegan:
@@ -195,7 +148,6 @@ static NSArray *dataInteractionEventNames()
 - (void)_finishDataInteraction
 {
     if (_phase == DataInteractionUnrecognized) {
-        [self _recognizeGestureAtLocation:self._currentLocation withState:UIGestureRecognizerStateEnded];
         _isDoneWithCurrentRun = true;
         return;
     }
@@ -219,13 +171,6 @@ static NSArray *dataInteractionEventNames()
     [self performSelector:@selector(_advanceProgress) withObject:nil afterDelay:progressTimeStep];
 }
 
-- (void)_recognizeGestureAtLocation:(CGPoint)locationInWindow withState:(UIGestureRecognizerState)state
-{
-    [_gestureRecognizer setMockState:state];
-    [_gestureRecognizer setMockLocationInWindow:locationInWindow];
-    [_webView _simulateDataInteractionGestureRecognized];
-}
-
 - (UIItemProvider *)externalItemProvider
 {
     return _externalItemProvider.get();
@@ -238,35 +183,9 @@ static NSArray *dataInteractionEventNames()
 
 #pragma mark - _WKTestingDelegate
 
-- (UILongPressGestureRecognizer *)dataInteractionGestureRecognizer
-{
-    return _gestureRecognizer.get();
-}
-
 - (void)webViewDidPerformDataInteractionControllerOperation:(WKWebView *)webView
 {
     _isDoneWithCurrentRun = true;
-}
-
-- (void)webView:(WKWebView *)webView beginDataInteractionWithSourceIndex:(NSInteger)sourceIndex gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
-{
-    _didTryToBeginDataInteraction = YES;
-
-    if (self.forceRequestToFail) {
-        [_webView _simulateFailedDataInteractionWithIndex:sourceIndex];
-        return;
-    }
-
-    _phase = DataInteractionBegan;
-
-    // End the data interaction gesture recognizer.
-    auto location = self._currentLocation;
-    [self _recognizeGestureAtLocation:location withState:UIGestureRecognizerStateEnded];
-
-    // Officially begin data interaction by initializing the info.
-    NSArray *items = [_webView _simulatedItemsForDataInteractionWithIndex:sourceIndex];
-    _dataInteractionInfo = adoptNS([[MockDataInteractionInfo alloc] initWithItems:items location:location window:[_webView window]]);
-    [_webView _simulateWillBeginDataInteractionWithIndex:sourceIndex withSession:nil];
 }
 
 - (void)webViewDidSendDataInteractionStartRequest:(WKWebView *)webView

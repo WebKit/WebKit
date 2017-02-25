@@ -5233,11 +5233,6 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
     WebKit::ViewSnapshotStore::singleton().setDisableSnapshotVolatilityForTesting(true);
 }
 
-
-- (void)_simulateDataInteractionGestureRecognized
-{
-}
-
 - (void)_simulateDataInteractionEntered:(id)info
 {
 }

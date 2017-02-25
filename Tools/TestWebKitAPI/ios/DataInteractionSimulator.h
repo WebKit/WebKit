@@ -31,7 +31,6 @@
 #import <WebKit/_WKTestingDelegate.h>
 #import <wtf/BlockPtr.h>
 
-@class MockLongPressGestureRecognizer;
 @class MockDataInteractionInfo;
 
 extern NSString * const DataInteractionEnterEventName;
@@ -49,7 +48,6 @@ typedef NS_ENUM(NSInteger, DataInteractionPhase) {
 
 @interface DataInteractionSimulator : NSObject<_WKTestingDelegate> {
     RetainPtr<TestWKWebView> _webView;
-    RetainPtr<MockLongPressGestureRecognizer> _gestureRecognizer;
     RetainPtr<MockDataInteractionInfo> _dataInteractionInfo;
     RetainPtr<NSMutableArray> _observedEventNames;
     RetainPtr<UIItemProvider> _externalItemProvider;
