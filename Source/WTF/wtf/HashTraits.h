@@ -263,10 +263,10 @@ struct TupleHashTraits : GenericHashTraits<std::tuple<typename FirstTrait::Trait
 
     // We should use emptyValueIsZero = Traits::emptyValueIsZero &&... whenever we switch to C++17. We can't do anything
     // better here right now because GCC can't do C++.
-    template<typename Bool>
-    static constexpr bool allTrue(Bool value) { return value; }
-    template<typename Bool, typename... Bools>
-    static constexpr bool allTrue(Bool value, Bools... values) { return value && allTrue(values...); }
+    template<typename BoolType>
+    static constexpr bool allTrue(BoolType value) { return value; }
+    template<typename BoolType, typename... BoolTypes>
+    static constexpr bool allTrue(BoolType value, BoolTypes... values) { return value && allTrue(values...); }
     static const bool emptyValueIsZero = allTrue(FirstTrait::emptyValueIsZero, Traits::emptyValueIsZero...);
     static EmptyValueType emptyValue() { return std::make_tuple(FirstTrait::emptyValue(), Traits::emptyValue()...); }
 

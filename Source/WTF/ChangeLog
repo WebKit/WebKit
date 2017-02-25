@@ -1,3 +1,15 @@
+2017-02-24  Keith Miller  <keith_miller@apple.com>
+
+        Rubber-stamped by Chris Dumez.
+
+        Replace typename Bool with typename BoolType because X11 has
+        #define Bool int for some unknown reason...
+
+        * wtf/HashFunctions.h:
+        (WTF::TupleHash::allTrue):
+        * wtf/HashTraits.h:
+        (WTF::TupleHashTraits::allTrue):
+
 2017-02-24  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rolling out r212944.

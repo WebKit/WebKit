@@ -207,10 +207,10 @@ namespace WTF {
 
         // We should use safeToCompareToEmptyOrDeleted = DefaultHash<Types>::Hash::safeToCompareToEmptyOrDeleted &&... whenever
         // we switch to C++17. We can't do anything better here right now because GCC can't do C++.
-        template<typename Bool>
-        static constexpr bool allTrue(Bool value) { return value; }
-        template<typename Bool, typename... Bools>
-        static constexpr bool allTrue(Bool value, Bools... values) { return value && allTrue(values...); }
+        template<typename BoolType>
+        static constexpr bool allTrue(BoolType value) { return value; }
+        template<typename BoolType, typename... BoolTypes>
+        static constexpr bool allTrue(BoolType value, BoolTypes... values) { return value && allTrue(values...); }
         static const bool safeToCompareToEmptyOrDeleted = allTrue(DefaultHash<Types>::Hash::safeToCompareToEmptyOrDeleted...);
     };
 
