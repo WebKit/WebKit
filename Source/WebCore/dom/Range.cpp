@@ -944,7 +944,7 @@ String Range::toString() const
         if (type == Node::TEXT_NODE || type == Node::CDATA_SECTION_NODE) {
             auto& data = downcast<CharacterData>(*node).data();
             unsigned length = data.length();
-            unsigned start = node == &startContainer() ? std::min(std::max(0U, m_start.offset()), length) : 0U;
+            unsigned start = node == &startContainer() ? std::min(m_start.offset(), length) : 0U;
             unsigned end = node == &endContainer() ? std::min(std::max(start, m_end.offset()), length) : length;
             builder.append(data, start, end - start);
         }

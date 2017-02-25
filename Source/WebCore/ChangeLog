@@ -1,3 +1,14 @@
+2017-02-24  Alexey Proskuryakov  <ap@apple.com>
+
+        Build fix for newer clang
+        https://bugs.webkit.org/show_bug.cgi?id=168849
+        rdar://problem/30638741
+
+        Reviewed by Ryosuke Niwa.
+
+        * dom/Range.cpp: (WebCore::Range::toString): std::max(0, <unsigned>) is not meaningful,
+        and now triggers a warning.
+
 2017-02-24  Chris Dumez  <cdumez@apple.com>
 
         Download attribute should be sanitized before being used as suggested filename
