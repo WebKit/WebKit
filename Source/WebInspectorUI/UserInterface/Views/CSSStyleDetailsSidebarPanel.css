@@ -29,7 +29,6 @@
     left: 0;
     right: 0;
     bottom: 0;
-
     overflow-y: auto;
     overflow-x: hidden;
 }
@@ -88,9 +87,18 @@
     width: 15px;
     min-width: 15px;
     height: 15px;
-    margin-left: 6px;
     content: url(../Images/Plus15.svg);
     opacity: 0.7;
+
+    --panel-details-css-style-content-options-container-new-rule-margin-start: 6px;
+}
+
+body[dir=ltr] .sidebar > .panel.details.css-style > .content ~ .options-container > .new-rule {
+    margin-left: var(--panel-details-css-style-content-options-container-new-rule-margin-start);
+}
+
+body[dir=rtl] .sidebar > .panel.details.css-style > .content ~ .options-container > .new-rule {
+    margin-right: var(--panel-details-css-style-content-options-container-new-rule-margin-start);
 }
 
 .sidebar > .panel.details.css-style > .content ~ .options-container > .filter-bar {
@@ -99,13 +107,23 @@
 }
 
 .sidebar > .panel.details.css-style > .content ~ .options-container > .toggle-class-toggle {
-    margin: 0 5px 1px 0;
+    margin: 0 0 1px;
     padding: 2px 4px 3px;
     background: none;
     border: none;
     border-radius: 3px;
     white-space: nowrap;
     -webkit-appearance: none;
+
+    --panel-details-css-style-content-options-container-toggle-class-toggle-margin-end: 5px;
+}
+
+body[dir=ltr] .sidebar > .panel.details.css-style > .content ~ .options-container > .toggle-class-toggle {
+    margin-right: var(--panel-details-css-style-content-options-container-toggle-class-toggle-margin-end);
+}
+
+body[dir=rtl] .sidebar > .panel.details.css-style > .content ~ .options-container > .toggle-class-toggle {
+    margin-left: var(--panel-details-css-style-content-options-container-toggle-class-toggle-margin-end);
 }
 
 .sidebar > .panel.details.css-style > .content ~ .options-container > .toggle-class-toggle.selected {
@@ -153,7 +171,17 @@
 .sidebar > .panel.details.css-style > .content ~ .class-list-container > .new-class > .class-name-input {
     width: 100px;
     height: 18px;
-    margin: 0 0 0 2px;
+    margin: 0;
+
+    --panel-details-css-style-content-class-list-container-new-class-class-name-input-margin-start: 2px;
+}
+
+body[dir=ltr] .sidebar > .panel.details.css-style > .content ~ .class-list-container > .new-class > .class-name-input {
+    margin-left: var(--panel-details-css-style-content-class-list-container-new-class-class-name-input-margin-start);
+}
+
+body[dir=rtl] .sidebar > .panel.details.css-style > .content ~ .class-list-container > .new-class > .class-name-input {
+    margin-right: var(--panel-details-css-style-content-class-list-container-new-class-class-name-input-margin-start);
 }
 
 .sidebar > .panel.details.css-style > .content ~ .class-list-container > .new-class.active > .add-class-icon,

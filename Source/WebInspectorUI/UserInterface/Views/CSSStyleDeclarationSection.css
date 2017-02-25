@@ -55,27 +55,54 @@
 
 .style-declaration-section > .header {
     position: relative;
-    padding: var(--style-declaration-section-header-padding);
     font-size: 11px;
     line-height: 12px;
+
+    --style-declaration-section-header-padding-start: 25px;
+    --style-declaration-section-header-padding-end: 5px;
+}
+
+body[dir=ltr] .style-declaration-section > .header {
+    padding: 4px var(--style-declaration-section-header-padding-end) 3px var(--style-declaration-section-header-padding-start);
+}
+
+body[dir=rtl] .style-declaration-section > .header {
+    padding: 4px var(--style-declaration-section-header-padding-start) 3px var(--style-declaration-section-header-padding-end);
 }
 
 .style-declaration-section.locked > .header > .locked-icon {
-    float: right;
     width: 8px;
     height: 10px;
-    margin-left: 5px;
     content: url(../Images/Locked.svg);
+
+    --style-declaration-section-locked-header-locked-icon-margin-start: 5px;
+}
+
+body[dir=ltr] .style-declaration-section.locked > .header > .locked-icon {
+    float: right;
+    margin-left: var(--style-declaration-section-locked-header-locked-icon-margin-start);
+}
+
+body[dir=rtl] .style-declaration-section.locked > .header > .locked-icon {
+    float: left;
+    margin-right: var(--style-declaration-section-locked-header-locked-icon-margin-start);
 }
 
 .style-declaration-section > .header > .icon {
     position: absolute;
-
     top: 2px;
-    left: 4px;
-
     width: 16px;
     height: 16px;
+
+    --style-declaration-section-header-icon-offset-start: 4px;
+}
+
+body[dir=ltr] .style-declaration-section > .header > .icon {
+    left: var(--style-declaration-section-header-icon-offset-start);
+}
+
+body[dir=rtl] .style-declaration-section > .header > .icon {
+    right: var(--style-declaration-section-header-icon-offset-start);
 }
 
 .style-declaration-section > .header > .icon.toggle-able:hover {
@@ -97,7 +124,6 @@
     right: 0;
     bottom: 0;
     left: 0;
-    margin: var(--style-declaration-section-header-padding);
     padding: 0;
     font-family: Menlo, monospace;
     color: black;
@@ -107,6 +133,17 @@
     opacity: 0;
     resize: none;
     -webkit-appearance: none;
+
+    --style-declaration-section-header-textarea-margin-start: var(--style-declaration-section-header-padding-start);
+    --style-declaration-section-header-textarea-margin-end: var(--style-declaration-section-header-padding-end);
+}
+
+body[dir=ltr] .style-declaration-section > .header > textarea {
+    margin: 4px var(--style-declaration-section-header-textarea-margin-end) 3px var(--style-declaration-section-header-textarea-margin-start);
+}
+
+body[dir=rtl] .style-declaration-section > .header > textarea {
+    margin: 4px var(--style-declaration-section-header-textarea-margin-start) 3px var(--style-declaration-section-header-textarea-margin-end);
 }
 
 .style-declaration-section > .header > textarea:focus {
@@ -149,10 +186,11 @@
 
 .style-declaration-section.invalid-selector > .header > .icon {
     top: 4px;
-    left: 6px;
     width: 12px;
     height: 12px;
     content: url(../Images/Error.svg);
+
+    --style-declaration-section-header-icon-offset-start: 6px;
 }
 
 .style-declaration-section.invalid-selector > .header > .selector,

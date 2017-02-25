@@ -84,8 +84,6 @@
     --toolbar-height: 36px;
     --tab-bar-height: 24px;
     --navigation-bar-height: 29px;
-
-    --style-declaration-section-header-padding: 4px 5px 3px 25px;
 }
 
 body.window-inactive {

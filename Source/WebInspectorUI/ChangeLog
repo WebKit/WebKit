@@ -1,5 +1,42 @@
 2017-02-25  Devin Rousso  <dcrousso+webkit@gmail.com>
 
+        Web Inspector: RTL: Styles - Rules sidebar icons are misaligned
+        https://bugs.webkit.org/show_bug.cgi?id=168807
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/CSSStyleDeclarationSection.css:
+        (.style-declaration-section > .header):
+        (body[dir=ltr] .style-declaration-section > .header):
+        (body[dir=rtl] .style-declaration-section > .header):
+        (.style-declaration-section.locked > .header > .locked-icon):
+        (body[dir=ltr] .style-declaration-section.locked > .header > .locked-icon):
+        (body[dir=rtl] .style-declaration-section.locked > .header > .locked-icon):
+        (.style-declaration-section > .header > .icon):
+        (body[dir=ltr] .style-declaration-section > .header > .icon):
+        (body[dir=rtl] .style-declaration-section > .header > .icon):
+        (.style-declaration-section > .header > textarea):
+        (body[dir=ltr] .style-declaration-section > .header > textarea):
+        (body[dir=rtl] .style-declaration-section > .header > textarea):
+        (.style-declaration-section.invalid-selector > .header > .icon):
+
+        * UserInterface/Views/CSSStyleDetailsSidebarPanel.css:
+        (.sidebar > .panel.details.css-style > .content):
+        (.sidebar > .panel.details.css-style > .content ~ .options-container > .new-rule):
+        (body[dir=ltr] .sidebar > .panel.details.css-style > .content ~ .options-container > .new-rule):
+        (body[dir=rtl] .sidebar > .panel.details.css-style > .content ~ .options-container > .new-rule):
+        (.sidebar > .panel.details.css-style > .content ~ .options-container > .toggle-class-toggle):
+        (body[dir=ltr] .sidebar > .panel.details.css-style > .content ~ .options-container > .toggle-class-toggle):
+        (body[dir=rtl] .sidebar > .panel.details.css-style > .content ~ .options-container > .toggle-class-toggle):
+        (.sidebar > .panel.details.css-style > .content ~ .class-list-container > .new-class > .class-name-input):
+        (body[dir=ltr] .sidebar > .panel.details.css-style > .content ~ .class-list-container > .new-class > .class-name-input):
+        (body[dir=rtl] .sidebar > .panel.details.css-style > .content ~ .class-list-container > .new-class > .class-name-input):
+
+        * UserInterface/Views/Variables.css:
+        (:root):
+
+2017-02-25  Devin Rousso  <dcrousso+webkit@gmail.com>
+
         Web Inspector: RTL: disclosure triangles in details section headers should be flipped and aligned right
         https://bugs.webkit.org/show_bug.cgi?id=168283
 
