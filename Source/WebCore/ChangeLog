@@ -1,3 +1,28 @@
+2017-02-25  Zalan Bujtas  <zalan@apple.com>
+
+        Text might wrap when its preferred logical width is used for sizing the containing block.
+        https://bugs.webkit.org/show_bug.cgi?id=168864
+        <rdar://problem/30690734>
+
+        Reviewed by Antti Koivisto.
+
+        In certain cases we end up measuring a text run in 2 different ways.
+        1. preferred width computation -> slow path FontCascade::width() 
+        2. line breaking logic -> fast path FontCascade::widthForSimpleText()
+ 
+        FontCascade::width() and ::widthForSimpleText() might return different results for the same run even when
+        the individual glyph widths are measured to be the same. It's because they run diffrent set of
+        arithmetics on the float values and for certain values these arithmetics produce different results due to the floating point
+        precision.
+        Since RenderText::computePreferredLogicalWidths() currently forces us to use the slow path
+        (to retrieve fontfallback and glyph overflow information) the only alternative solution is to turn off the fast path
+        for all runs that have been already measured using the slow path (which would be just wasteful).
+
+        Test: fast/text/fast-run-width-vs-slow-run-width.html
+
+        * platform/graphics/FontCascade.cpp:
+        (WebCore::FontCascade::widthForSimpleText): Mimics WidthIterator::applyFontTransforms. Use the same set of arithmetics here.  
+
 2017-02-24  Simon Fraser  <simon.fraser@apple.com>
 
         Improve how multiple codegen-properties are handled in CSSProperties.json

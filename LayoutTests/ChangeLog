@@ -1,3 +1,14 @@
+2017-02-25  Zalan Bujtas <zalan@apple.com>
+
+        Text might wrap when its preferred logical width is used for sizing the containing block.
+        https://bugs.webkit.org/show_bug.cgi?id=168864
+        <rdar://problem/30690734>
+
+        Reviewed by Antti Koivisto.
+
+        * fast/text/fast-run-width-vs-slow-run-width-expected.html: Added.
+        * fast/text/fast-run-width-vs-slow-run-width.html: Added.
+
 2017-02-25  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed GTK test gardening
