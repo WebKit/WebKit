@@ -1,3 +1,26 @@
+2017-02-24  Matt Rajca  <mrajca@apple.com>
+
+        Media: notify clients when autoplay is denied
+        https://bugs.webkit.org/show_bug.cgi?id=168840
+
+        Reviewed by Alex Christensen.
+
+        * UIProcess/API/APIUIClient.h:
+        (API::UIClient::handleAutoplayEvent):
+        (API::UIClient::didPlayMediaPreventedFromPlayingWithoutUserGesture): Deleted.
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageUIClient):
+        * UIProcess/API/C/WKPageUIClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::handleAutoplayEvent):
+        (WebKit::WebPageProxy::didPlayMediaPreventedFromPlayingWithoutUserGesture): Deleted.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::handleAutoplayEvent):
+        (WebKit::WebChromeClient::didPlayMediaPreventedFromPlayingWithoutUserGesture): Deleted.
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+
 2017-02-20  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Refactor data interaction to use new WKDataInteraction SPI

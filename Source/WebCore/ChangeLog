@@ -1,3 +1,20 @@
+2017-02-24  Matt Rajca  <mrajca@apple.com>
+
+        Media: notify clients when autoplay is denied
+        https://bugs.webkit.org/show_bug.cgi?id=168840
+
+        Reviewed by Alex Christensen.
+
+        Added API tests.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::setReadyState):
+        (WebCore::HTMLMediaElement::play):
+        (WebCore::HTMLMediaElement::playInternal):
+        * page/AutoplayEvent.h: Added.
+        * page/ChromeClient.h:
+
 2017-02-24  Basuke Suzuki  <Basuke.Suzuki@am.sony.com>
 
         curl: Improve errors by including the domain

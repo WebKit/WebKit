@@ -6528,9 +6528,9 @@ void WebPageProxy::focusedContentMediaElementDidChange(uint64_t elementID)
 }
 #endif
 
-void WebPageProxy::didPlayMediaPreventedFromPlayingWithoutUserGesture()
+void WebPageProxy::handleAutoplayEvent(uint32_t event)
 {
-    m_uiClient->didPlayMediaPreventedFromPlayingWithoutUserGesture(*this);
+    m_uiClient->handleAutoplayEvent(*this, static_cast<AutoplayEvent>(event));
 }
 
 #if PLATFORM(MAC)

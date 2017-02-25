@@ -2242,12 +2242,12 @@ void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClientBase* wkClient
         }
 #endif
 
-        void didPlayMediaPreventedFromPlayingWithoutUserGesture(WebPageProxy& page) override
+        void handleAutoplayEvent(WebPageProxy& page, WebCore::AutoplayEvent event) override
         {
-            if (!m_client.didPlayMediaPreventedFromPlayingWithoutUserGesture)
+            if (!m_client.handleAutoplayEvent)
                 return;
 
-            m_client.didPlayMediaPreventedFromPlayingWithoutUserGesture(toAPI(&page), m_client.base.clientInfo);
+            m_client.handleAutoplayEvent(toAPI(&page), static_cast<WKAutoplayEvent>(event), m_client.base.clientInfo);
         }
     };
 
