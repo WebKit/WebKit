@@ -186,7 +186,7 @@ WebInspector.GradientEditor = class GradientEditor extends WebInspector.Object
         const descriptor = this._gradientTypes[this._gradientTypePicker.value];
         if (!(this._gradient instanceof descriptor.type)) {
             if (descriptor.type === WebInspector.LinearGradient) {
-                this._gradient = new WebInspector.LinearGradient(180, this._gradient.stops);
+                this._gradient = new WebInspector.LinearGradient({value: 180, units: WebInspector.LinearGradient.AngleUnits.DEG}, this._gradient.stops);
 
                 this._angleUnitsChanged();
             } else
