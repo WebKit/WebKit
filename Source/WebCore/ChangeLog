@@ -1,5 +1,11 @@
 2017-02-24  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed GTK build fix after r212965
+
+        * CMakeLists.txt:
+
+2017-02-24  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, rolling out r212944.
 
         Caused a lot of failures on the debug bots

@@ -2091,6 +2091,7 @@ set(WebCore_SOURCES
     platform/LengthSize.cpp
     platform/LinkHash.cpp
     platform/Logging.cpp
+    platform/LowPowerModeNotifier.cpp
     platform/MIMETypeRegistry.cpp
     platform/MainThreadSharedTimer.cpp
     platform/MemoryPressureHandler.cpp
