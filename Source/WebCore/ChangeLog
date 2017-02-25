@@ -1,3 +1,26 @@
+2017-02-24  Simon Fraser  <simon.fraser@apple.com>
+
+        Improve how multiple codegen-properties are handled in CSSProperties.json
+        https://bugs.webkit.org/show_bug.cgi?id=168867
+
+        Reviewed by Zalan Bujtas.
+
+        To make upcoming metadata storage easier, it's better if property entries in CSSProperties.json
+        are always hashes. One property (line-height) used an array, in order to represent settings for
+        two different build flags (ENABLE_TEXT_AUTOSIZING and !ENABLE_TEXT_AUTOSIZING).
+
+        Fix by making "codegen-properties" optionally be an array. The relevant item is selected in
+        removeInactiveCodegenProperties() and used to replace the array.
+
+        Sort @internalProprerties when generating code, otherwise the contents of isInternalCSSProperty()
+        are unstable (the order in @allNames is not stable because it's the keys in a hash).
+
+        * css/CSSProperties.json:
+        * css/makeprop.pl:
+        (matchEnableFlags):
+        (removeInactiveCodegenProperties):
+        (isPropertyEnabled):
+
 2017-02-24  Joseph Pecoraro  <pecoraro@apple.com>
 
         [Resource Timing] Media elements initiated loads should set the initiatorType to their element name (video/audio)

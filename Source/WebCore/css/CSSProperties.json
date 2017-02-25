@@ -1397,23 +1397,20 @@
                 "svg": true
             }
         },
-        "line-height": [
-            {
-                "inherited": true,
-                "codegen-properties": {
+        "line-height": {
+            "inherited": true,
+            "codegen-properties": [
+                {
                     "custom": "All",
                     "enable-if": "ENABLE_TEXT_AUTOSIZING"
-                }
-            },
-            {
-                "inherited": true,
-                "codegen-properties": {
+                },
+                {
                     "getter": "specifiedLineHeight",
                     "conditional-converter": "LineHeight",
                     "enable-if": "!ENABLE_TEXT_AUTOSIZING"
                 }
-            }
-        ],
+            ]
+        },
         "list-style": {
             "inherited": true,
             "codegen-properties": {
