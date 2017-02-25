@@ -1,5 +1,26 @@
 2017-02-24  Joseph Pecoraro  <pecoraro@apple.com>
 
+        [Resource Timing] Media elements initiated loads should set the initiatorType to their element name (video/audio)
+        https://bugs.webkit.org/show_bug.cgi?id=168680
+
+        Reviewed by Youenn Fablet.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::mediaPlayerCreateResourceLoader):
+        Pass in the element so it may be used as the initiator.
+
+        * html/HTMLVideoElement.h:
+        Export create() for TestWebKitAPI to use.
+
+        * loader/MediaResourceLoader.cpp:
+        (WebCore::MediaResourceLoader::MediaResourceLoader):
+        (WebCore::MediaResourceLoader::contextDestroyed):
+        (WebCore::MediaResourceLoader::requestResource):
+        * loader/MediaResourceLoader.h:
+        Include the HTMLMediaElement as the initiator.
+
+2017-02-24  Joseph Pecoraro  <pecoraro@apple.com>
+
         [Resource Timing] Gather timing information with reliable responseEnd time
         https://bugs.webkit.org/show_bug.cgi?id=168351
 

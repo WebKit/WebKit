@@ -6433,7 +6433,7 @@ CachedResourceLoader* HTMLMediaElement::mediaPlayerCachedResourceLoader()
 
 RefPtr<PlatformMediaResourceLoader> HTMLMediaElement::mediaPlayerCreateResourceLoader()
 {
-    return adoptRef(*new MediaResourceLoader(document(), crossOrigin()));
+    return adoptRef(*new MediaResourceLoader(document(), *this, crossOrigin()));
 }
 
 bool HTMLMediaElement::mediaPlayerShouldUsePersistentCache() const

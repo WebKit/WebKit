@@ -36,6 +36,7 @@
 #import <WebCore/PageConfiguration.h>
 #import <WebCore/Document.h>
 #import <WebCore/DocumentLoader.h>
+#import <WebCore/HTMLVideoElement.h>
 #import <WebCore/MediaResourceLoader.h>
 #import <WebCore/Settings.h>
 #import <WebCore/SubresourceLoader.h>
@@ -108,6 +109,7 @@ public:
     Frame* frame { nullptr };
     TestNSURLSessionDataDelegate *delegate { nil };
     RefPtr<MediaResourceLoader> loader;
+    RefPtr<HTMLMediaElement> mediaElement;
 
     virtual void SetUp()
     {
@@ -123,7 +125,8 @@ public:
 
         delegate = [[TestNSURLSessionDataDelegate alloc] init];
         frame = [view _mainCoreFrame];
-        loader = adoptRef(new MediaResourceLoader(*frame->document(), emptyString()));
+        mediaElement = HTMLVideoElement::create(*frame->document());
+        loader = adoptRef(new MediaResourceLoader(*frame->document(), *mediaElement.get(), emptyString()));
     }
 
     virtual void TearDown()

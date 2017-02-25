@@ -39,11 +39,12 @@ namespace WebCore {
 
 class CachedRawResource;
 class Document;
+class HTMLMediaElement;
 class MediaResource;
 
 class MediaResourceLoader final : public PlatformMediaResourceLoader, public ContextDestructionObserver {
 public:
-    WEBCORE_EXPORT MediaResourceLoader(Document&, const String& crossOriginMode);
+    WEBCORE_EXPORT MediaResourceLoader(Document&, HTMLMediaElement&, const String& crossOriginMode);
     WEBCORE_EXPORT virtual ~MediaResourceLoader();
 
     RefPtr<PlatformMediaResource> requestResource(ResourceRequest&&, LoadOptions) final;
@@ -56,6 +57,7 @@ private:
     void contextDestroyed() override;
 
     Document* m_document;
+    RefPtr<HTMLMediaElement> m_mediaElement;
     String m_crossOriginMode;
     HashSet<MediaResource*> m_resources;
 };

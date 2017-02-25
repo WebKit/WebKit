@@ -1,3 +1,14 @@
+2017-02-24  Joseph Pecoraro  <pecoraro@apple.com>
+
+        [Resource Timing] Media elements initiated loads should set the initiatorType to their element name (video/audio)
+        https://bugs.webkit.org/show_bug.cgi?id=168680
+
+        Reviewed by Youenn Fablet.
+
+        * TestWebKitAPI/Tests/WebCore/cocoa/WebCoreNSURLSession.mm:
+        (TestWebKitAPI::WebCoreNSURLSessionTest::SetUp):
+        Include a dummy HTMLVideoElement.
+
 2017-02-24  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Unreviewed, temporarily disable all data interaction tests.
