@@ -1,3 +1,38 @@
+2017-02-25  Devin Rousso  <dcrousso+webkit@gmail.com>
+
+        Web Inspector: RTL: disclosure triangles in details section headers should be flipped and aligned right
+        https://bugs.webkit.org/show_bug.cgi?id=168283
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/DetailsSection.css:
+        (.details-section):
+        (.details-section > .header):
+        (body[dir=ltr] .details-section > .header):
+        (body[dir=rtl] .details-section > .header):
+        (.details-section > .header > .options > .navigation-bar):
+        (body[dir=ltr] .details-section > .header > :matches(label, .node-link, .go-to-arrow, .options > .navigation-bar), body[dir=rtl] .details-section > .header::before):
+        (body[dir=ltr] .details-section > .header::before, body[dir=rtl] .details-section > .header > :matches(label, .node-link, .go-to-arrow, .options > .navigation-bar)):
+        (.details-section > .header::before):
+        (body[dir=rtl] .details-section > .header::before):
+        (.details-section > .header > label):
+        (.details-section > .header > label > input[type="checkbox"]):
+        (body[dir=ltr] .details-section > .header > label > input[type="checkbox"]):
+        (body[dir=rtl] .details-section > .header > label > input[type="checkbox"]):
+        (.details-section > .header .go-to-arrow):
+        (body[dir=ltr] .details-section > .header .go-to-arrow):
+        (body[dir=rtl] .details-section > .header .go-to-arrow):
+        (.details-section > .content > .group > .row.simple > .label):
+        (body[dir=ltr] .details-section > .content > .group > .row.simple > .label):
+        (body[dir=rtl] .details-section > .content > .group > .row.simple > .label):
+        (.details-section > .content > .group > .row.simple > .value):
+        (body[dir=ltr] .details-section > .content > .group > .row.simple > .value):
+        (body[dir=rtl] .details-section > .content > .group > .row.simple > .value):
+        (.details-section > .content > .group > .row.simple > .value .go-to-arrow):
+        (body[dir=ltr] .details-section > .content > .group > .row.simple > .value .go-to-arrow):
+        (body[dir=rtl] .details-section > .content > .group > .row.simple > .value .go-to-arrow):
+        (.details-section > .header > :matches(.node-link, .go-to-arrow)): Deleted.
+
 2017-02-24  Devin Rousso  <dcrousso+webkit@gmail.com>
 
         Web Inspector: RTL: add support for Error page

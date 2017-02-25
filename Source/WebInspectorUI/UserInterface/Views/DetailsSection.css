@@ -27,6 +27,12 @@
     font-size: 10px;
     background-color: var(--panel-background-color);
     border-bottom: 1px solid var(--border-color);
+
+    --details-section-header-padding-end: 5px;
+    --details-section-header-label-checkbox-margin-start: 5px;
+    --details-section-header-go-to-margin-start: -3px;
+    --details-section-content-row-simple-padding-start: 6px;
+    --details-section-content-group-row-simple-value-go-to-margin-start: 5px;
 }
 
 .details-section .details-section {
@@ -46,28 +52,41 @@
     position: -webkit-sticky;
     top: -1px;
     height: 23px;
-
-    background-color: var(--panel-background-color);
-    color: hsl(0, 0%, 22%);
-
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-
+    padding: 4px 0;
     font-size: 11px;
     font-weight: bold;
-
-    padding: 4px 5px 4px 0;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    color: hsl(0, 0%, 22%);
+    background-color: var(--panel-background-color);
+    overflow: hidden;
 
     /* Ensure the headers are displayed above scrollbars. */
     z-index: var(--z-index-header);
 }
 
+body[dir=ltr] .details-section > .header {
+    padding-right: var(--details-section-header-padding-end);
+}
+
+body[dir=rtl] .details-section > .header {
+    padding-left: var(--details-section-header-padding-end);
+}
+
 .details-section > .header > .options > .navigation-bar {
     margin-top: 1px;
     height: 100%;
-    float: right;
     border: none;
+}
+
+body[dir=ltr] .details-section > .header > :matches(label, .node-link, .go-to-arrow, .options > .navigation-bar),
+body[dir=rtl] .details-section > .header::before {
+    float: right;
+}
+
+body[dir=ltr] .details-section > .header::before,
+body[dir=rtl] .details-section > .header > :matches(label, .node-link, .go-to-arrow, .options > .navigation-bar) {
+    float: left;
 }
 
 .details-section > .header > .options > .navigation-bar > .item {
@@ -94,17 +113,17 @@
 
 .details-section > .header::before {
     display: block;
-    float: left;
-
     width: 21px;
     height: 100%;
-
+    content: "";
     background-image: url(../Images/DisclosureTriangles.svg#open-normal);
     background-repeat: no-repeat;
     background-position: center;
     background-size: 13px 13px;
+}
 
-    content: "";
+body[dir=rtl] .details-section > .header::before {
+    transform: scaleX(-1);
 }
 
 .details-section > .header:not(.mouse-over-options-element):active::before {
@@ -120,10 +139,9 @@
 }
 
 .details-section > .header > label {
-    float: right;
     font-size: 10px;
     color: hsla(0, 0%, 0%, 0.6);
-    text-align: right;
+    text-align: end;
 }
 
 .details-section.collapsed  > .header > label {
@@ -131,19 +149,30 @@
 }
 
 .details-section > .header > label > input[type="checkbox"] {
-    margin: 0 0 0 5px;
+    margin: 0;
     vertical-align: 1px;
     font-size: 10px;
 }
 
-.details-section > .header > :matches(.node-link, .go-to-arrow) {
-    float: right;
+body[dir=ltr] .details-section > .header > label > input[type="checkbox"] {
+    margin-left: var(--details-section-header-label-checkbox-margin-start);
+}
+
+body[dir=rtl] .details-section > .header > label > input[type="checkbox"] {
+    margin-right: var(--details-section-header-label-checkbox-margin-start);
 }
 
 .details-section > .header .go-to-arrow {
     width: 10px;
     height: 12px;
-    margin-left: 3px;
+}
+
+body[dir=ltr] .details-section > .header .go-to-arrow {
+    margin-left: var(--details-section-header-go-to-margin-start);
+}
+
+body[dir=rtl] .details-section > .header .go-to-arrow {
+    margin-right: var(--details-section-header-go-to-margin-start);
 }
 
 .details-section > .content {
@@ -214,28 +243,44 @@
 }
 
 .details-section > .content > .group > .row.simple > .label {
-    color: hsl(0, 0%, 20%);
-
-    text-align: right;
-
-    padding-left: 6px;
-
     width: 85px;
+    color: hsl(0, 0%, 20%);
+    text-align: end;
+}
+
+body[dir=ltr] .details-section > .content > .group > .row.simple > .label {
+    padding-left: var(--details-section-content-group-row-simple-padding-start);
+}
+
+body[dir=rtl] .details-section > .content > .group > .row.simple > .label {
+    padding-right: var(--details-section-content-group-row-simple-padding-start);
 }
 
 .details-section > .content > .group > .row.simple > .value {
     word-wrap: break-word;
-
-    padding-right: 6px;
-
-    -webkit-user-select: text;
     cursor: text;
+    -webkit-user-select: text;
+}
+
+body[dir=ltr] .details-section > .content > .group > .row.simple > .value {
+    padding-right: var(--details-section-content-group-row-simple-padding-start);
+}
+
+body[dir=rtl] .details-section > .content > .group > .row.simple > .value {
+    padding-left: var(--details-section-content-group-row-simple-padding-start);
 }
 
 .details-section > .content > .group > .row.simple > .value .go-to-arrow {
     width: 10px;
     height: 12px;
-    margin-left: 5px;
+}
+
+body[dir=ltr] .details-section > .content > .group > .row.simple > .value .go-to-arrow {
+    margin-right: var(--details-section-content-group-row-simple-value-go-to-margin-start);
+}
+
+body[dir=rtl] .details-section > .content > .group > .row.simple > .value .go-to-arrow {
+    margin-left: var(--details-section-content-group-row-simple-value-go-to-margin-start);
 }
 
 .details-section > .content > .group > .row.simple.data > .value {
