@@ -205,6 +205,18 @@ class TimeSeriesView {
         return null;
     }
 
+    lastPointInTimeRange(startTime, endTime)
+    {
+        console.assert(startTime <= endTime);
+        for (let point of this._reverse()) {
+            if (point.time < startTime)
+                return null;
+            if (point.time <= endTime)
+                return point;
+        }
+        return null;
+    }
+
     [Symbol.iterator]()
     {
         const data = this._data;
@@ -215,6 +227,22 @@ class TimeSeriesView {
                 return {value: data[i], done: i++ == end};
             }
         };
+    }
+
+    _reverse()
+    {
+        return {
+            [Symbol.iterator]: () => {
+                const data = this._data;
+                const end = this._startingIndex;
+                let i = this._afterEndingIndex;
+                return {
+                    next() {
+                        return {done: i-- == end, value: data[i]};
+                    }
+                };
+            }
+        }
     }
 }
 

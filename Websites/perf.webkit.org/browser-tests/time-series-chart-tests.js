@@ -1,3 +1,5 @@
+(() => {
+
 const scripts = [
     '../shared/statistics.js',
     'instrumentation.js',
@@ -923,7 +925,7 @@ describe('TimeSeriesChart', () => {
 
 describe('InteractiveTimeSeriesChart', () => {
 
-    it('should change the indicator to the point closest to the last mouse move position', () => {
+    it('should change the unlocked indicator to the point closest to the last mouse move position', () => {
         const context = new BrowsingContext();
         return context.importScripts(scripts, 'ComponentBase', 'TimeSeriesChart', 'InteractiveTimeSeriesChart', 'MeasurementSet', 'MockRemoteAPI').then(() => {
             const chart = createChartWithSampleCluster(context, {}, {interactiveChart: true, interactive: true});
@@ -941,8 +943,7 @@ describe('InteractiveTimeSeriesChart', () => {
             let canvas;
             return waitForComponentsToRender(context).then(() => {
                 expect(chart.currentSelection()).to.be(null);
-                expect(chart.currentPoint()).to.be(null);
-                expect(chart.lockedIndicator()).to.be(null);
+                expect(chart.currentIndicator()).to.be(null);
                 expect(indicatorChangeCalls).to.be.eql([]);
 
                 canvas = chart.content().querySelector('canvas');
@@ -955,10 +956,13 @@ describe('InteractiveTimeSeriesChart', () => {
                 expect(CanvasTest.hasCanvasBeenRedrawn(canvas)).to.be(true);
 
                 expect(chart.currentSelection()).to.be(null);
-                expect(chart.currentPoint()).to.not.be(null);
-                expect(chart.lockedIndicator()).to.be(null);
-                const lastPoint = chart.sampledTimeSeriesData('current').lastPoint();
-                expect(chart.currentPoint()).to.be(lastPoint);
+                const indicator = chart.currentIndicator();
+                expect(indicator).to.not.be(null);
+                const currentView = chart.sampledTimeSeriesData('current');
+                const lastPoint = currentView.lastPoint();
+                expect(indicator.view).to.be(currentView);
+                expect(indicator.point).to.be(lastPoint);
+                expect(indicator.isLocked).to.be(false);
                 expect(indicatorChangeCalls).to.be.eql([[lastPoint.id, false]]);
 
                 expect(selectionChangeCount).to.be(0);
@@ -984,8 +988,7 @@ describe('InteractiveTimeSeriesChart', () => {
             let canvas;
             return waitForComponentsToRender(context).then(() => {
                 expect(chart.currentSelection()).to.be(null);
-                expect(chart.currentPoint()).to.be(null);
-                expect(chart.lockedIndicator()).to.be(null);
+                expect(chart.currentIndicator()).to.be(null);
                 expect(indicatorChangeCalls).to.be.eql([]);
                 canvas = chart.content().querySelector('canvas');
                 const rect = canvas.getBoundingClientRect();
@@ -1003,10 +1006,13 @@ describe('InteractiveTimeSeriesChart', () => {
             }).then(() => {
                 expect(CanvasTest.hasCanvasBeenRedrawn(canvas)).to.be(true);
 
-                const lastPoint = chart.sampledTimeSeriesData('current').lastPoint();
+                const currentView = chart.sampledTimeSeriesData('current');
+                const lastPoint = currentView.lastPoint();
                 expect(chart.currentSelection()).to.be(null);
-                expect(chart.currentPoint()).to.be(lastPoint);
-                expect(chart.lockedIndicator()).to.be(lastPoint);
+                const indicator = chart.currentIndicator();
+                expect(indicator.view).to.be(currentView);
+                expect(indicator.point).to.be(lastPoint);
+                expect(indicator.isLocked).to.be(true);
                 expect(indicatorChangeCalls).to.be.eql([[lastPoint.id, false], [lastPoint.id, true]]);
 
                 expect(selectionChangeCount).to.be(0);
@@ -1034,8 +1040,7 @@ describe('InteractiveTimeSeriesChart', () => {
             let lastPoint;
             return waitForComponentsToRender(context).then(() => {
                 expect(chart.currentSelection()).to.be(null);
-                expect(chart.currentPoint()).to.be(null);
-                expect(chart.lockedIndicator()).to.be(null);
+                expect(chart.currentIndicator()).to.be(null);
                 expect(indicatorChangeCalls).to.be.eql([]);
 
                 canvas = chart.content().querySelector('canvas');
@@ -1047,10 +1052,13 @@ describe('InteractiveTimeSeriesChart', () => {
             }).then(() => {
                 expect(CanvasTest.hasCanvasBeenRedrawn(canvas)).to.be(true);
 
-                lastPoint = chart.sampledTimeSeriesData('current').lastPoint();
+                const currentView = chart.sampledTimeSeriesData('current');
+                lastPoint = currentView.lastPoint();
                 expect(chart.currentSelection()).to.be(null);
-                expect(chart.currentPoint()).to.be(lastPoint);
-                expect(chart.lockedIndicator()).to.be(null);
+                const indicator = chart.currentIndicator();
+                expect(indicator.view).to.be(currentView);
+                expect(indicator.point).to.be(lastPoint);
+                expect(indicator.isLocked).to.be(false);
                 expect(indicatorChangeCalls).to.be.eql([[lastPoint.id, false]]);
 
                 canvas.parentNode.dispatchEvent(new MouseEvent('mousemove', {target: canvas, clientX: rect.right + 50, clientY: rect.bottom + 50, composed: true, bubbles: true}));
@@ -1062,8 +1070,7 @@ describe('InteractiveTimeSeriesChart', () => {
                 expect(CanvasTest.hasCanvasBeenRedrawn(canvas)).to.be(true);
 
                 expect(chart.currentSelection()).to.be(null);
-                expect(chart.currentPoint()).to.be(null);
-                expect(chart.lockedIndicator()).to.be(null);
+                expect(chart.currentIndicator()).to.be(null);
                 expect(indicatorChangeCalls).to.be.eql([[lastPoint.id, false], [null, false]]);
 
                 expect(selectionChangeCount).to.be(0);
@@ -1088,11 +1095,11 @@ describe('InteractiveTimeSeriesChart', () => {
 
             let canvas;
             let rect;
+            let currentView;
             let lastPoint;
             return waitForComponentsToRender(context).then(() => {
                 expect(chart.currentSelection()).to.be(null);
-                expect(chart.currentPoint()).to.be(null);
-                expect(chart.lockedIndicator()).to.be(null);
+                expect(chart.currentIndicator()).to.be(null);
                 expect(indicatorChangeCalls).to.be.eql([]);
 
                 canvas = chart.content().querySelector('canvas');
@@ -1104,10 +1111,13 @@ describe('InteractiveTimeSeriesChart', () => {
             }).then(() => {
                 expect(CanvasTest.hasCanvasBeenRedrawn(canvas)).to.be(true);
 
-                lastPoint = chart.sampledTimeSeriesData('current').lastPoint();
+                currentView = chart.sampledTimeSeriesData('current');
+                lastPoint = currentView.lastPoint();
                 expect(chart.currentSelection()).to.be(null);
-                expect(chart.currentPoint()).to.be(lastPoint);
-                expect(chart.lockedIndicator()).to.be(lastPoint);
+                const indicator = chart.currentIndicator();
+                expect(indicator.view).to.be(currentView);
+                expect(indicator.point).to.be(lastPoint);
+                expect(indicator.isLocked).to.be(true);
                 expect(indicatorChangeCalls).to.be.eql([[lastPoint.id, true]]);
 
                 canvas.parentNode.dispatchEvent(new MouseEvent('mousemove', {target: canvas, clientX: rect.right + 50, clientY: rect.bottom + 50, composed: true, bubbles: true}));
@@ -1119,8 +1129,10 @@ describe('InteractiveTimeSeriesChart', () => {
                 expect(CanvasTest.hasCanvasBeenRedrawn(canvas)).to.be(false);
 
                 expect(chart.currentSelection()).to.be(null);
-                expect(chart.currentPoint()).to.be(lastPoint);
-                expect(chart.lockedIndicator()).to.be(lastPoint);
+                const indicator = chart.currentIndicator();
+                expect(indicator.view).to.be(currentView);
+                expect(indicator.point).to.be(lastPoint);
+                expect(indicator.isLocked).to.be(true);
                 expect(indicatorChangeCalls).to.be.eql([[lastPoint.id, true]]);
 
                 expect(selectionChangeCount).to.be(0);
@@ -1146,11 +1158,11 @@ describe('InteractiveTimeSeriesChart', () => {
             let canvas;
             let rect;
             let y;
+            let currentView;
             let lastPoint;
             return waitForComponentsToRender(context).then(() => {
                 expect(chart.currentSelection()).to.be(null);
-                expect(chart.currentPoint()).to.be(null);
-                expect(chart.lockedIndicator()).to.be(null);
+                expect(chart.currentIndicator()).to.be(null);
                 expect(indicatorChangeCalls).to.be.eql([]);
 
                 canvas = chart.content().querySelector('canvas');
@@ -1163,10 +1175,13 @@ describe('InteractiveTimeSeriesChart', () => {
             }).then(() => {
                 expect(CanvasTest.hasCanvasBeenRedrawn(canvas)).to.be(true);
 
-                lastPoint = chart.sampledTimeSeriesData('current').lastPoint();
+                currentView = chart.sampledTimeSeriesData('current');
+                lastPoint = currentView.lastPoint();
                 expect(chart.currentSelection()).to.be(null);
-                expect(chart.currentPoint()).to.be(lastPoint);
-                expect(chart.lockedIndicator()).to.be(lastPoint);
+                const indicator = chart.currentIndicator();
+                expect(indicator.view).to.be(currentView);
+                expect(indicator.point).to.be(lastPoint);
+                expect(indicator.isLocked).to.be(true);
                 expect(indicatorChangeCalls).to.be.eql([[lastPoint.id, true]]);
 
                 canvas.dispatchEvent(new MouseEvent('click', {target: canvas, clientX: rect.left + 1, clientY: y, composed: true, bubbles: true}));
@@ -1177,9 +1192,11 @@ describe('InteractiveTimeSeriesChart', () => {
                 expect(CanvasTest.hasCanvasBeenRedrawn(canvas)).to.be(true);
 
                 expect(chart.currentSelection()).to.be(null);
-                const firstPoint = chart.sampledTimeSeriesData('current').firstPoint();
-                expect(chart.currentPoint()).to.be(firstPoint);
-                expect(chart.lockedIndicator()).to.be(null);
+                const firstPoint = currentView.firstPoint();
+                const indicator = chart.currentIndicator();
+                expect(indicator.view).to.be(currentView);
+                expect(indicator.point).to.be(firstPoint);
+                expect(indicator.isLocked).to.be(false);
                 expect(indicatorChangeCalls).to.be.eql([[lastPoint.id, true], [firstPoint.id, false]]);
 
                 expect(selectionChangeCount).to.be(0);
@@ -1209,13 +1226,13 @@ describe('InteractiveTimeSeriesChart', () => {
             let canvas;
             let rect;
             let y;
+            let currentView;
             let firstPoint;
             let oldRange;
             let newRange;
             return waitForComponentsToRender(context).then(() => {
                 expect(chart.currentSelection()).to.be(null);
-                expect(chart.currentPoint()).to.be(null);
-                expect(chart.lockedIndicator()).to.be(null);
+                expect(chart.currentIndicator()).to.be(null);
                 expect(selectionChangeCalls).to.be.eql([]);
 
                 canvas = chart.content().querySelector('canvas');
@@ -1228,10 +1245,13 @@ describe('InteractiveTimeSeriesChart', () => {
             }).then(() => {
                 expect(CanvasTest.hasCanvasBeenRedrawn(canvas)).to.be(true);
 
-                firstPoint = chart.sampledTimeSeriesData('current').firstPoint();
+                currentView = chart.sampledTimeSeriesData('current');
+                firstPoint = currentView.firstPoint();
                 expect(chart.currentSelection()).to.be(null);
-                expect(chart.currentPoint()).to.be(firstPoint);
-                expect(chart.lockedIndicator()).to.be(null);
+                let indicator = chart.currentIndicator();
+                expect(indicator.view).to.be(currentView);
+                expect(indicator.point).to.be(firstPoint);
+                expect(indicator.isLocked).to.be(false);
                 expect(indicatorChangeCalls).to.be.eql([[firstPoint.id, false]]);
                 expect(zoomButton.offsetHeight).to.be(0);
 
@@ -1243,8 +1263,10 @@ describe('InteractiveTimeSeriesChart', () => {
                 expect(CanvasTest.hasCanvasBeenRedrawn(canvas)).to.be(false);
 
                 expect(chart.currentSelection()).to.be(null);
-                expect(chart.currentPoint()).to.be(firstPoint);
-                expect(chart.lockedIndicator()).to.be(null);
+                let indicator = chart.currentIndicator();
+                expect(indicator.view).to.be(currentView);
+                expect(indicator.point).to.be(firstPoint);
+                expect(indicator.isLocked).to.be(false);
                 expect(selectionChangeCalls).to.be.eql([]);
                 expect(indicatorChangeCalls).to.be.eql([[firstPoint.id, false]]);
                 expect(zoomButton.offsetHeight).to.be(0);
@@ -1257,8 +1279,7 @@ describe('InteractiveTimeSeriesChart', () => {
                 expect(CanvasTest.hasCanvasBeenRedrawn(canvas)).to.be(true);
 
                 expect(chart.currentSelection()).to.not.be(null);
-                expect(chart.currentPoint()).to.be(null);
-                expect(chart.lockedIndicator()).to.be(null);
+                expect(chart.currentIndicator()).to.be(null);
                 expect(selectionChangeCalls.length).to.be(1);
                 oldRange = selectionChangeCalls[0][0];
                 expect(oldRange).to.be.eql(chart.currentSelection());
@@ -1274,8 +1295,7 @@ describe('InteractiveTimeSeriesChart', () => {
                 expect(CanvasTest.hasCanvasBeenRedrawn(canvas)).to.be(true);
 
                 expect(chart.currentSelection()).to.not.be(null);
-                expect(chart.currentPoint()).to.be(null);
-                expect(chart.lockedIndicator()).to.be(null);
+                expect(chart.currentIndicator()).to.be(null);
                 expect(selectionChangeCalls.length).to.be(2);
                 newRange = selectionChangeCalls[1][0];
                 expect(newRange).to.be.eql(chart.currentSelection());
@@ -1293,8 +1313,7 @@ describe('InteractiveTimeSeriesChart', () => {
                 expect(CanvasTest.hasCanvasBeenRedrawn(canvas)).to.be(true);
 
                 expect(chart.currentSelection()).to.be.eql(newRange);
-                expect(chart.currentPoint()).to.be(null);
-                expect(chart.lockedIndicator()).to.be(null);
+                expect(chart.currentIndicator()).to.be(null);
                 expect(selectionChangeCalls.length).to.be(3);
                 expect(selectionChangeCalls[2][0]).to.be.eql(newRange);
                 expect(selectionChangeCalls[2][1]).to.be(true);
@@ -1337,8 +1356,7 @@ describe('InteractiveTimeSeriesChart', () => {
 
                 selection = chart.currentSelection();
                 expect(selection).to.not.be(null);
-                expect(chart.currentPoint()).to.be(null);
-                expect(chart.lockedIndicator()).to.be(null);
+                expect(chart.currentIndicator()).to.be(null);
                 expect(zoomButton.offsetHeight).to.not.be(0);
                 expect(zoomCalls).to.be.eql([]);
                 zoomButton.click();
@@ -1383,8 +1401,7 @@ describe('InteractiveTimeSeriesChart', () => {
                 expect(CanvasTest.hasCanvasBeenRedrawn(canvas)).to.be(true);
 
                 expect(chart.currentSelection()).to.not.be(null);
-                expect(chart.currentPoint()).to.be(null);
-                expect(chart.lockedIndicator()).to.be(null);
+                expect(chart.currentIndicator()).to.be(null);
 
                 canvas.dispatchEvent(new MouseEvent('click', {target: canvas, clientX: rect.left + 1, clientY: y + 5, composed: true, bubbles: true}));
 
@@ -1394,8 +1411,11 @@ describe('InteractiveTimeSeriesChart', () => {
                 expect(CanvasTest.hasCanvasBeenRedrawn(canvas)).to.be(true);
 
                 expect(chart.currentSelection()).to.be(null);
-                expect(chart.currentPoint()).to.be(chart.sampledTimeSeriesData('current').firstPoint());
-                expect(chart.lockedIndicator()).to.be(null);
+                const currentView = chart.sampledTimeSeriesData('current');
+                const indicator = chart.currentIndicator();
+                expect(indicator.view).to.be(currentView);
+                expect(indicator.point).to.be(currentView.firstPoint());
+                expect(indicator.isLocked).to.be(false);
             });
         });
     });
@@ -1460,3 +1480,5 @@ describe('InteractiveTimeSeriesChart', () => {
     });
 
 });
+
+})();

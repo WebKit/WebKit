@@ -92,11 +92,11 @@ class ChartPane extends ChartPaneBase {
         var state = [this._platformId, this._metricId];
         if (this._mainChart) {
             var selection = this._mainChart.currentSelection();
-            var currentPoint = this._mainChart.currentPoint();
+            const indicator = this._mainChart.currentIndicator();
             if (selection)
                 state[2] = selection;
-            else if (this._mainChartIndicatorWasLocked && currentPoint)
-                state[2] = currentPoint.id;
+            else if (indicator && indicator.isLocked)
+                state[2] = indicator.point.id;
         }
 
         var graphOptions = new Set;
@@ -387,7 +387,8 @@ class ChartPane extends ChartPaneBase {
         }
 
         var markAsOutlierButton = this.content().querySelector('.mark-as-outlier');
-        var firstSelectedPoint = this._mainChart.lockedIndicator();
+        const indicator = this._mainChart.currentIndicator();
+        let firstSelectedPoint = indicator && indicator.isLocked ? indicator.point : null;
         if (!firstSelectedPoint)
             firstSelectedPoint = this._mainChart.firstSelectedPoint('current');
         var alreayMarkedAsOutlier = firstSelectedPoint && firstSelectedPoint.markedOutlier;

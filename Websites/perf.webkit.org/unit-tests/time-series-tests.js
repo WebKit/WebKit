@@ -326,6 +326,14 @@ describe('TimeSeriesView', () => {
             assert.deepEqual(view.firstPointInTimeRange(fivePoints[3].time - 0.1, fivePoints[4].time), fivePoints[3]);
             assert.deepEqual(view.firstPointInTimeRange(fivePoints[4].time, fivePoints[4].time), null);
 
+            assert.deepEqual(view.lastPointInTimeRange(fivePoints[0].time, fivePoints[4].time), fivePoints[3]);
+            assert.deepEqual(view.lastPointInTimeRange(fivePoints[1].time, fivePoints[4].time), fivePoints[3]);
+            assert.deepEqual(view.lastPointInTimeRange(fivePoints[1].time, fivePoints[1].time), fivePoints[1]);
+            assert.deepEqual(view.lastPointInTimeRange(fivePoints[0].time, fivePoints[0].time), null);
+            assert.deepEqual(view.lastPointInTimeRange(fivePoints[1].time + 0.1, fivePoints[2].time), null);
+            assert.deepEqual(view.lastPointInTimeRange(fivePoints[3].time - 0.1, fivePoints[4].time), fivePoints[3]);
+            assert.deepEqual(view.lastPointInTimeRange(fivePoints[4].time, fivePoints[4].time), null);
+
             assert.deepEqual([...view], [fivePoints[1], fivePoints[3]]);
         });
     });
@@ -370,6 +378,14 @@ describe('TimeSeriesView', () => {
             assert.deepEqual(view.firstPointInTimeRange(fivePoints[3].time - 0.1, fivePoints[4].time), fivePoints[3]);
             assert.deepEqual(view.firstPointInTimeRange(fivePoints[4].time, fivePoints[4].time), null);
 
+            assert.deepEqual(view.lastPointInTimeRange(fivePoints[0].time, fivePoints[4].time), fivePoints[3]);
+            assert.deepEqual(view.lastPointInTimeRange(fivePoints[1].time, fivePoints[4].time), fivePoints[3]);
+            assert.deepEqual(view.lastPointInTimeRange(fivePoints[1].time, fivePoints[1].time), fivePoints[1]);
+            assert.deepEqual(view.lastPointInTimeRange(fivePoints[0].time, fivePoints[0].time), null);
+            assert.deepEqual(view.lastPointInTimeRange(fivePoints[1].time + 0.1, fivePoints[2].time), fivePoints[2]);
+            assert.deepEqual(view.lastPointInTimeRange(fivePoints[3].time - 0.1, fivePoints[4].time), fivePoints[3]);
+            assert.deepEqual(view.lastPointInTimeRange(fivePoints[4].time, fivePoints[4].time), null);
+
             assert.deepEqual([...view], fivePoints.slice(1, 4));
         });
 
@@ -406,6 +422,14 @@ describe('TimeSeriesView', () => {
             assert.deepEqual(view.firstPointInTimeRange(fivePoints[3].time - 0.1, fivePoints[4].time), fivePoints[3]);
             assert.deepEqual(view.firstPointInTimeRange(fivePoints[4].time, fivePoints[4].time), null);
 
+            assert.deepEqual(view.lastPointInTimeRange(fivePoints[0].time, fivePoints[4].time), fivePoints[3]);
+            assert.deepEqual(view.lastPointInTimeRange(fivePoints[1].time, fivePoints[4].time), fivePoints[3]);
+            assert.deepEqual(view.lastPointInTimeRange(fivePoints[1].time, fivePoints[1].time), null);
+            assert.deepEqual(view.lastPointInTimeRange(fivePoints[0].time, fivePoints[0].time), null);
+            assert.deepEqual(view.lastPointInTimeRange(fivePoints[1].time + 0.1, fivePoints[2].time), null);
+            assert.deepEqual(view.lastPointInTimeRange(fivePoints[3].time - 0.1, fivePoints[4].time), fivePoints[3]);
+            assert.deepEqual(view.lastPointInTimeRange(fivePoints[4].time, fivePoints[4].time), null);
+
             assert.deepEqual([...view], [fivePoints[3]]);
         });
 
@@ -441,6 +465,14 @@ describe('TimeSeriesView', () => {
             assert.deepEqual(view.firstPointInTimeRange(fivePoints[1].time + 0.1, fivePoints[2].time), null);
             assert.deepEqual(view.firstPointInTimeRange(fivePoints[3].time - 0.1, fivePoints[4].time), fivePoints[3]);
             assert.deepEqual(view.firstPointInTimeRange(fivePoints[4].time, fivePoints[4].time), null);
+
+            assert.deepEqual(view.lastPointInTimeRange(fivePoints[0].time, fivePoints[4].time), fivePoints[3]);
+            assert.deepEqual(view.lastPointInTimeRange(fivePoints[1].time, fivePoints[4].time), fivePoints[3]);
+            assert.deepEqual(view.lastPointInTimeRange(fivePoints[1].time, fivePoints[1].time), null);
+            assert.deepEqual(view.lastPointInTimeRange(fivePoints[0].time, fivePoints[0].time), null);
+            assert.deepEqual(view.lastPointInTimeRange(fivePoints[1].time + 0.1, fivePoints[2].time), null);
+            assert.deepEqual(view.lastPointInTimeRange(fivePoints[3].time - 0.1, fivePoints[4].time), fivePoints[3]);
+            assert.deepEqual(view.lastPointInTimeRange(fivePoints[4].time, fivePoints[4].time), null);
 
             assert.deepEqual([...view], [fivePoints[3]]);
         });

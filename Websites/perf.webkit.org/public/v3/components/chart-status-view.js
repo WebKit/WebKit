@@ -60,15 +60,18 @@ class ChartStatusView extends ComponentBase {
                     previousPoint = view.firstPoint();
                 }
             } else  {
-                currentPoint = this._chart.currentPoint();
-                previousPoint = this._chart.currentPoint(-1);
+                const indicator = this._chart.currentIndicator();
+                if (indicator) {
+                    currentPoint = indicator.point;
+                    previousPoint = indicator.view.previousPoint(currentPoint);
+                }
             }
         } else {
             var data = this._chart.sampledTimeSeriesData('current');
             if (!data)
                 return false;
-            if (data.length)
-                currentPoint = data[data.length - 1];
+            if (data.length())
+                currentPoint = data.lastPoint();
         }
 
         if (currentPoint == this._usedCurrentPoint && previousPoint == this._usedPreviousPoint)
@@ -100,77 +103,55 @@ class ChartStatusView extends ComponentBase {
 
     _computeChartStatus(metric, chart, currentPoint, previousPoint)
     {
-        var currentTimeSeriesData = chart.sampledTimeSeriesData('current');
-        var baselineTimeSeriesData = chart.sampledTimeSeriesData('baseline');
-        var targetTimeSeriesData = chart.sampledTimeSeriesData('target');
-        if (!currentTimeSeriesData)
-            return null;
+        console.assert(currentPoint);
+        const baselineView = chart.sampledTimeSeriesData('baseline');
+        const targetView = chart.sampledTimeSeriesData('target');
 
-        var formatter = metric.makeFormatter(3);
-        var deltaFormatter = metric.makeFormatter(2, true);
+        const formatter = metric.makeFormatter(3);
+        const deltaFormatter = metric.makeFormatter(2, true);
+        const smallerIsBetter = metric.isSmallerBetter();
 
-        if (!currentPoint)
-            currentPoint = currentTimeSeriesData[currentTimeSeriesData.length - 1];
+        const labelForDiff = (diff, referencePoint, name, comparison) => {
+            const relativeDiff = Math.abs(diff * 100).toFixed(1);
+            const referenceValue = referencePoint ? ` (${formatter(referencePoint.value)})` : '';
+            return `${relativeDiff}% ${comparison} than ${name}${referenceValue}`;
+        };
 
-        var baselinePoint = this._findLastPointPriorToTime(currentPoint, baselineTimeSeriesData);
-        var diffFromBaseline = baselinePoint !== undefined ? (currentPoint.value - baselinePoint.value) / baselinePoint.value : undefined;
+        const baselinePoint = baselineView ? baselineView.lastPointInTimeRange(0, currentPoint.time) : null;
+        const targetPoint = targetView ? targetView.lastPointInTimeRange(0, currentPoint.time) : null;
 
-        var targetPoint = this._findLastPointPriorToTime(currentPoint, targetTimeSeriesData);
-        var diffFromTarget = targetPoint !== undefined ? (currentPoint.value - targetPoint.value) / targetPoint.value : undefined;
+        const diffFromBaseline = baselinePoint ? (currentPoint.value - baselinePoint.value) / baselinePoint.value : undefined;
+        const diffFromTarget = targetPoint ? (currentPoint.value - targetPoint.value) / targetPoint.value : undefined;
 
-        var label = '';
-        var className = '';
+        let label = null;
+        let comparison = null;
 
-        function labelForDiff(diff, referencePoint, name, comparison)
-        {
-            var relativeDiff = Math.abs(diff * 100).toFixed(1);
-            var referenceValue = referencePoint ? ` (${formatter(referencePoint.value)})` : '';
-            return `${relativeDiff}% ${comparison} ${name}${referenceValue}`;
-        }
-
-        var smallerIsBetter = metric.isSmallerBetter();
         if (diffFromBaseline !== undefined && diffFromTarget !== undefined) {
             if (diffFromBaseline > 0 == smallerIsBetter) {
-                label = labelForDiff(diffFromBaseline, baselinePoint, 'baseline', 'worse than');
-                className = 'worse';
+                comparison = 'worse';
+                label = labelForDiff(diffFromBaseline, baselinePoint, 'baseline', comparison);
             } else if (diffFromTarget < 0 == smallerIsBetter) {
-                label = labelForDiff(diffFromTarget, targetPoint, 'target', 'better than');
-                className = 'better';
+                comparison = 'better';
+                label = labelForDiff(diffFromTarget, targetPoint, 'target', comparison);
             } else
                 label = labelForDiff(diffFromTarget, targetPoint, 'target', 'until');
         } else if (diffFromBaseline !== undefined) {
-            className = diffFromBaseline > 0 == smallerIsBetter ? 'worse' : 'better';
-            label = labelForDiff(diffFromBaseline, baselinePoint, 'baseline', className + ' than');
+            comparison = diffFromBaseline > 0 == smallerIsBetter ? 'worse' : 'better';
+            label = labelForDiff(diffFromBaseline, baselinePoint, 'baseline', comparison);
         } else if (diffFromTarget !== undefined) {
-            className = diffFromTarget < 0 == smallerIsBetter ? 'better' : 'worse';
-            label = labelForDiff(diffFromTarget, targetPoint, 'target', className + ' than');
+            comparison = diffFromTarget < 0 == smallerIsBetter ? 'better' : 'worse';
+            label = labelForDiff(diffFromTarget, targetPoint, 'target', comparison);
         }
 
-        var valueDelta = null;
-        var relativeDelta = null;
+        let valueDelta = null;
+        let relativeDelta = null;
         if (previousPoint) {
             valueDelta = deltaFormatter(currentPoint.value - previousPoint.value);
-            var relativeDelta = (currentPoint.value - previousPoint.value) / previousPoint.value;
+            relativeDelta = (currentPoint.value - previousPoint.value) / previousPoint.value;
             relativeDelta = (relativeDelta * 100).toFixed(0) + '%';
         }
-        return {
-            className: className,
-            label: label,
-            currentValue: formatter(currentPoint.value),
-            valueDelta: valueDelta,
-            relativeDelta: relativeDelta,
-        };
-    }
 
-    _findLastPointPriorToTime(currentPoint, timeSeriesData)
-    {
-        if (!currentPoint || !timeSeriesData || !timeSeriesData.length)
-            return undefined;
-
-        var i = 0;
-        while (i < timeSeriesData.length - 1 && timeSeriesData[i + 1].time < currentPoint.time)
-            i++;
-        return timeSeriesData[i];
+        return {className: comparison, label, currentValue: formatter(currentPoint.value), valueDelta, relativeDelta};
     }
 
     static htmlTemplate()

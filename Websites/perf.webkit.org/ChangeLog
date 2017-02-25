@@ -1,3 +1,41 @@
+2017-02-24  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION(r212853): Comparisons to baseline no longer shows up
+        https://bugs.webkit.org/show_bug.cgi?id=168863
+
+        Reviewed by Joseph Pecoraro.
+
+        The bug was caused by ChartStatusView's code not being updated to use TimeSeriesView's.
+        Updated the code to use TimeSeriesView's methods to fix the bug.
+
+        Also made InteractiveTimeSeriesChart's currentPoint to return a (TimeSeriesView, point, isLocked) tuple
+        to consolidate it with lockedIndicator() to work towards making the baseline data points selectable.
+
+        * browser-tests/time-series-chart-tests.js: Updated the test cases to use currentIndicator, and added
+        test cases for newly added lastPointInTimeRange.
+
+        * public/v3/components/chart-pane.js:
+        (ChartPane.prototype.serializeState): Updated to use currentIndicator.
+        (ChartPane.prototype._renderFilteringPopover): Ditto.
+
+        * public/v3/components/chart-status-view.js:
+        (ChartStatusView.prototype.updateStatusIfNeeded): Use currentIndicator for an interative time series.
+        Fixed the non-interactive chart's code path for TimeSeriesView.
+        (ChartStatusView.prototype._computeChartStatus): Modernized the code.
+        (ChartStatusView.prototype._findLastPointPriorToTime): Deleted. Replaced by TimeSeriesView's
+        lastPointInTimeRange.
+
+        * public/v3/components/interactive-time-series-chart.js:
+        (InteractiveTimeSeriesChart.prototype.currentIndicator):
+        (InteractiveTimeSeriesChart.prototype.moveLockedIndicatorWithNotification):
+        (InteractiveTimeSeriesChart.prototype._renderChartContent):
+        (InteractiveTimeSeriesChart):
+
+        * public/v3/models/time-series.js:
+        (TimeSeriesView.prototype.lastPointInTimeRange): Added.
+        (TimeSeriesView.prototype._reverse): Added. Traverses the view in the reverse order.
+        * unit-tests/time-series-tests.js:
+
 2017-02-23  Dewei Zhu  <dewei_zhu@apple.com>
 
         Rename 'commit_parent' in 'commits' table to 'commit_previous_commit'.

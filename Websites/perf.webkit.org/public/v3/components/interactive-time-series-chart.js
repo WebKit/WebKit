@@ -16,22 +16,14 @@ class InteractiveTimeSeriesChart extends TimeSeriesChart {
         this._renderedAnnotation = null;
     }
 
-    currentPoint(diff)
+    currentIndicator()
     {
         var id = this._indicatorID;
         if (!id)
             return null;
 
-        if (!this._sampledTimeSeriesData) {
-            // FIXME: Why are we not using diff in this code path?
-            this._ensureFetchedTimeSeries();
-            for (var series of this._fetchedTimeSeries) {
-                var point = series.findById(id);
-                if (point)
-                    return point;
-            }
+        if (!this._sampledTimeSeriesData)
             return null;
-        }
 
         for (var view of this._sampledTimeSeriesData) {
             if (!view)
@@ -39,9 +31,7 @@ class InteractiveTimeSeriesChart extends TimeSeriesChart {
             let point = view.findById(id);
             if (!point)
                 continue;
-            if (!diff)
-                return point;
-            return (point && diff > 0 ? view.nextPoint(point) : view.previousPoint(point)) || point;
+            return {view, point, isLocked: this._indicatorIsLocked};
         }
         return null;
     }
@@ -62,8 +52,6 @@ class InteractiveTimeSeriesChart extends TimeSeriesChart {
         return selection && data ? data.firstPointInTimeRange(selection[0], selection[1]) : null;
     }
 
-    lockedIndicator() { return this._indicatorIsLocked ? this.currentPoint() : null; }
-
     setIndicator(id, shouldLock)
     {
         var selectionDidChange = !!this._sampledTimeSeriesData;
@@ -81,16 +69,16 @@ class InteractiveTimeSeriesChart extends TimeSeriesChart {
 
     moveLockedIndicatorWithNotification(forward)
     {
-        if (!this._indicatorID || !this._indicatorIsLocked)
+        const indicator = this.currentIndicator();
+        if (!indicator || !indicator.isLocked)
             return false;
-
         console.assert(!this._selectionTimeRange);
 
-        var point = this.currentPoint(forward ? 1 : -1);
-        if (!point || this._indicatorID == point.id)
+        const newPoint = forward ? indicator.view.nextPoint(indicator.point) : indicator.view.previousPoint(indicator.point);
+        if (!newPoint)
             return false;
 
-        this._indicatorID = point.id;
+        this._indicatorID = newPoint.id;
         this._lastMouseDownLocation = null;
         this._forceRender = true;
 
@@ -425,24 +413,22 @@ class InteractiveTimeSeriesChart extends TimeSeriesChart {
                 this._annotationLabel.style.display = 'none';
         }
 
-        var indicator = this._options.indicator;
-        if (this._indicatorID && indicator) {
-            context.fillStyle = indicator.lineStyle;
-            context.strokeStyle = indicator.lineStyle;
-            context.lineWidth = indicator.lineWidth;
+        const indicatorOptions = this._options.indicator;
+        const indicator = this.currentIndicator();
+        if (indicator && indicatorOptions) {
+            context.fillStyle = indicatorOptions.lineStyle;
+            context.strokeStyle = indicatorOptions.lineStyle;
+            context.lineWidth = indicatorOptions.lineWidth;
 
-            var point = this.currentPoint();
-            if (point) {
-                var x = metrics.timeToX(point.time);
-                var y = metrics.valueToY(point.value);
+            const x = metrics.timeToX(indicator.point.time);
+            const y = metrics.valueToY(indicator.point.value);
 
-                context.beginPath();
-                context.moveTo(x, metrics.chartY);
-                context.lineTo(x, metrics.chartY + metrics.chartHeight);
-                context.stroke();
+            context.beginPath();
+            context.moveTo(x, metrics.chartY);
+            context.lineTo(x, metrics.chartY + metrics.chartHeight);
+            context.stroke();
 
-                this._fillCircle(context, x, y, indicator.pointRadius);
-            }
+            this._fillCircle(context, x, y, indicatorOptions.pointRadius);
         }
 
         var selectionOptions = this._options.selection;
