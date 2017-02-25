@@ -1,5 +1,15 @@
 2017-02-24  Wenson Hsieh  <wenson_hsieh@apple.com>
 
+        Unreviewed, temporarily disable all data interaction tests.
+
+        They will be reenabled once the bots are ready to build and run them.
+
+        * TestWebKitAPI/Tests/ios/DataInteractionTests.mm:
+        * TestWebKitAPI/ios/DataInteractionSimulator.h:
+        * TestWebKitAPI/ios/DataInteractionSimulator.mm:
+
+2017-02-24  Wenson Hsieh  <wenson_hsieh@apple.com>
+
         Unreviewed, fix the internal build.
 
         * TestWebKitAPI/ios/DataInteractionSimulator.mm:

@@ -26,7 +26,7 @@
 #include "config.h"
 #include "DataInteractionSimulator.h"
 
-#if ENABLE(DATA_INTERACTION)
+#if 0
 
 #import "PlatformUtilities.h"
 #import <UIKit/UIItemProvider_Private.h>
