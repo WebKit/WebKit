@@ -1,5 +1,24 @@
 2017-02-25  Devin Rousso  <dcrousso+webkit@gmail.com>
 
+        Web Inspector: copying a search result out of Search Tab navigation sidebar does nothing
+        https://bugs.webkit.org/show_bug.cgi?id=167074
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Base/Main.js:
+        (WebInspector._copy):
+        * UserInterface/Views/SearchTabContentView.js:
+        (WebInspector.SearchTabContentView.prototype.handleCopyEvent):
+        Provide the container TabContentView with the opportunity to intercept the copy event.
+
+        * UserInterface/Models/SourceCodeTextRange.js:
+        (WebInspector.SourceCodeTextRange.prototype.get synthesizedTextValue):
+        * UserInterface/Views/SearchResultTreeElement.js:
+        (WebInspector.SearchResultTreeElement.prototype.get synthesizedTextValue):
+        Generate a string with the format `${url}:${lineNumber}:${resultLine}`.
+
+2017-02-25  Devin Rousso  <dcrousso+webkit@gmail.com>
+
         Web Inspector: RTL: Styles - Rules sidebar icons are misaligned
         https://bugs.webkit.org/show_bug.cgi?id=168807
 

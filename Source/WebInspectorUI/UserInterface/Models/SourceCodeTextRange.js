@@ -105,6 +105,12 @@ WebInspector.SourceCodeTextRange = class SourceCodeTextRange extends WebInspecto
         return new WebInspector.TextRange(startLine, startColumn, endLine, endColumn);
     }
 
+    get synthesizedTextValue()
+    {
+        // Must add 1 to the lineNumber since it starts counting at 0.
+        return this._sourceCode.url + ":" + (this._startLocation.lineNumber + 1);
+    }
+
     // Private
 
     _startAndEndLocationsInSameMappedResource()

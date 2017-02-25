@@ -80,6 +80,11 @@ WebInspector.SearchResultTreeElement = class SearchResultTreeElement extends Web
     {
         return {text: [this.representedObject.title]};
     }
+
+    get synthesizedTextValue()
+    {
+        return this.representedObject.sourceCodeTextRange.synthesizedTextValue + ":" + this.representedObject.title;
+    }
 };
 
 WebInspector.SearchResultTreeElement.CharactersToShowBeforeSearchMatch = 15;

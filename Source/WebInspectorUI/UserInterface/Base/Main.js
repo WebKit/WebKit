@@ -2108,6 +2108,12 @@ WebInspector._copy = function(event)
             return;
         }
 
+        let tabContentView = this.tabBrowser.selectedTabContentView;
+        if (tabContentView && typeof tabContentView.handleCopyEvent === "function") {
+            tabContentView.handleCopyEvent(event);
+            return;
+        }
+
         return;
     }
 

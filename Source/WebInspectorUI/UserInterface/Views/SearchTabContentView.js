@@ -85,6 +85,17 @@ WebInspector.SearchTabContentView = class SearchTabContentView extends WebInspec
         this.navigationSidebarPanel.performSearch(searchQuery);
     }
 
+    handleCopyEvent(event)
+    {
+        let selectedTreeElement = this.navigationSidebarPanel.contentTreeOutline.selectedTreeElement;
+        if (!selectedTreeElement)
+            return;
+
+        event.clipboardData.setData("text/plain", selectedTreeElement.synthesizedTextValue);
+        event.stopPropagation();
+        event.preventDefault();
+    }
+
     // Protected
 
     initialLayout()
