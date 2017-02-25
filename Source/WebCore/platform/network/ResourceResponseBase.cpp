@@ -224,6 +224,19 @@ String ResourceResponseBase::suggestedFilename() const
     return static_cast<const ResourceResponse*>(this)->platformSuggestedFilename();
 }
 
+String ResourceResponseBase::sanitizeSuggestedFilename(const String& suggestedFilename)
+{
+    if (suggestedFilename.isEmpty())
+        return suggestedFilename;
+
+    ResourceResponse response(URL(ParsedURLString, "http://example.com"), String(), -1, String());
+    response.setHTTPStatusCode(200);
+    String escapedSuggestedFilename = String(suggestedFilename).replace('\"', "\\\"");
+    String value = makeString("attachment; filename=\"", escapedSuggestedFilename, '"');
+    response.setHTTPHeaderField(HTTPHeaderName::ContentDisposition, value);
+    return response.suggestedFilename();
+}
+
 bool ResourceResponseBase::isSuccessful() const
 {
     int code = httpStatusCode();

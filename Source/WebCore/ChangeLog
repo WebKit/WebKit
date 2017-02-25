@@ -1,3 +1,25 @@
+2017-02-24  Chris Dumez  <cdumez@apple.com>
+
+        Download attribute should be sanitized before being used as suggested filename
+        https://bugs.webkit.org/show_bug.cgi?id=168839
+        <rdar://problem/30683109>
+
+        Reviewed by Darin Adler.
+
+        Sanitize Download attribute before using it as a suggested filename for the download.
+        We rely on ResourceResponse's sanitizing of the suggested filename to do so, which has
+        the benefit of being consistent with downloads without the download attribute.
+
+        Tests: fast/dom/HTMLAnchorElement/anchor-file-blob-download-includes-doublequote.html
+               fast/dom/HTMLAnchorElement/anchor-file-blob-download-includes-slashes.html
+               fast/dom/HTMLAnchorElement/anchor-file-blob-download-includes-unicode.html
+
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::handleClick):
+        * platform/network/ResourceResponseBase.cpp:
+        (WebCore::ResourceResponseBase::sanitizeSuggestedFilename):
+        * platform/network/ResourceResponseBase.h:
+
 2017-02-24  Miguel Gomez  <magomez@igalia.com>
 
         [GTK] WebkitWebProcess crashes on exit on nvidia if threaded compositing is enabled
