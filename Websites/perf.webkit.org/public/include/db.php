@@ -180,7 +180,7 @@ class Database
         }
         if (!$rows && $should_insert) {
             $rows = $this->query_and_fetch_all("INSERT INTO $table ($insert_column_names) SELECT $insert_placeholders
-                WHERE NOT EXISTS ($query) RETURNING $returning_column_name", $values);            
+                WHERE NOT EXISTS ($query) RETURNING $returning_column_name", $values);
         }
         if (!$should_update && !$rows)
             $rows = $this->query_and_fetch_all($query, $select_values);
@@ -212,10 +212,16 @@ class Database
             $column_names = $placeholders = '1';
         $query = "SELECT * FROM $table WHERE ($column_names) = ($placeholders)";
         if ($order_by) {
-            assert(ctype_alnum_underscore($order_by));
-            $query .= ' ORDER BY ' . $this->prefixed_name($order_by, $prefix);
-            if ($descending_order)
-                $query .= ' DESC';
+            if (!is_array($order_by))
+                $order_by = array($order_by);
+
+            $order_columns = array();
+            foreach ($order_by as $order_key) {
+                assert(ctype_alnum_underscore($order_key));
+                $order_column = $this->prefixed_name($order_key, $prefix) . ' ' . ($descending_order? 'DESC' : 'ASC');
+                array_push($order_columns, $order_column);
+            }
+            $query .= ' ORDER BY ' . join(', ', $order_columns);
         }
         if ($offset !== NULL)
             $query .= ' OFFSET ' . intval($offset);
