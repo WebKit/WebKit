@@ -48,6 +48,9 @@
     position: relative;
     margin: -0.5px calc(2 * var(--spring-editor-horizontal-margin)) 10px;
     padding: 0 1px;
+
+    --spring-editor-timing-pseudo-offset-start: 0;
+    --spring-editor-timing-pseudo-offset-end: 0;
 }
 
 .spring-editor > .spring-timing > div {
@@ -65,13 +68,21 @@
 }
 
 .spring-editor > .spring-timing::before {
-    left: 0;
     content: "0s";
 }
 
 .spring-editor > .spring-timing::after {
-    right: 0;
     content: attr(data-duration) "s";
+}
+
+body[dir=ltr] .spring-editor > .spring-timing::before,
+body[dir=rtl] .spring-editor > .spring-timing::after {
+    left: var(--spring-editor-timing-pseudo-offset-start);
+}
+
+body[dir=ltr] .spring-editor > .spring-timing::after,
+body[dir=rtl] .spring-editor > .spring-timing::before {
+    right: var(--spring-editor-timing-pseudo-offset-end);
 }
 
 .spring-editor > :matches(.spring-preview, .spring-timing) > div {
@@ -95,8 +106,8 @@
 
 .spring-editor > .number-input-container > .number-input-row > input {
     width: calc(25% - 2 * var(--spring-editor-horizontal-margin));
-    text-align: right;
     margin: 0 var(--spring-editor-horizontal-margin);
+    text-align: end;
 }
 
 .spring-editor > .number-input-container > .number-input-row > input::-webkit-inner-spin-button {

@@ -219,11 +219,17 @@ WebInspector.SpringEditor = class SpringEditor extends WebInspector.Object
     _updatePreviewAnimation(event)
     {
         this._previewContainer.classList.add("animate");
-        this._previewElement.style.transform = "translateX(85px)";
         this._previewElement.style.transitionTimingFunction = this._spring.toString();
 
         this._timingContainer.classList.add("animate");
-        this._timingElement.style.transform = "translateX(170px)";
+
+        if (WebInspector.resolvedLayoutDirection() === WebInspector.LayoutDirection.RTL) {
+            this._previewElement.style.transform = "translateX(-85px)";
+            this._timingElement.style.transform = "translateX(-170px)";
+        } else {
+            this._previewElement.style.transform = "translateX(85px)";
+            this._timingElement.style.transform = "translateX(170px)";
+        }
 
         // Only calculate the duration when a spring parameter is changed.
         if (!event) {

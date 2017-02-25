@@ -1,5 +1,36 @@
 2017-02-25  Devin Rousso  <dcrousso+webkit@gmail.com>
 
+        Web Inspector: RTL: add support for Bezier/Spring editor
+        https://bugs.webkit.org/show_bug.cgi?id=168854
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/BezierEditor.css:
+        (.bezier-editor):
+        (body[dir=ltr] .bezier-editor):
+        (body[dir=rtl] .bezier-editor):
+        (.bezier-editor > .bezier-preview-timing):
+        (body[dir=ltr] .bezier-editor > .bezier-preview-timing):
+        (body[dir=rtl] .bezier-editor > .bezier-preview-timing):
+        (@keyframes bezierPreview):
+        (body[dir=rtl] .bezier-editor > .bezier-container):
+        (.bezier-editor > .number-input-container > input):
+        (body[dir=ltr] .bezier-editor > .number-input-container > input):
+        (body[dir=rtl] .bezier-editor > .number-input-container > input):
+
+        * UserInterface/Views/SpringEditor.css:
+        (.spring-editor > .spring-timing):
+        (.spring-editor > .spring-timing::before):
+        (.spring-editor > .spring-timing::after):
+        (body[dir=ltr] .spring-editor > .spring-timing::before, body[dir=rtl] .spring-editor > .spring-timing::after):
+        (body[dir=ltr] .spring-editor > .spring-timing::after, body[dir=rtl] .spring-editor > .spring-timing::before):
+        (.spring-editor > .number-input-container > .number-input-row > input):
+
+        * UserInterface/Views/SpringEditor.js:
+        (WebInspector.SpringEditor.prototype._updatePreviewAnimation):
+
+2017-02-25  Devin Rousso  <dcrousso+webkit@gmail.com>
+
         Web Inspector: RTL: Elements tab Styles sidebar label/arrows need adjustment
         https://bugs.webkit.org/show_bug.cgi?id=168746
 

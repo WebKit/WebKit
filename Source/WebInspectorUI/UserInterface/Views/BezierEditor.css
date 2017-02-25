@@ -26,6 +26,17 @@
 .bezier-editor {
     width: 200px;
     height: 258px;
+
+    --bezier-editor-preview-translateX: 170px;
+    --bezier-editor-preview-timing-margin-start: 11px;
+}
+
+body[dir=ltr] .bezier-editor {
+    --bezier-editor-preview-translateX-animate: var(--bezier-editor-preview-translateX);
+}
+
+body[dir=rtl] .bezier-editor {
+    --bezier-editor-preview-translateX-animate: calc(-1 * var(--bezier-editor-preview-translateX));
 }
 
 .bezier-editor > .bezier-preview {
@@ -45,10 +56,17 @@
 .bezier-editor > .bezier-preview-timing {
     position: absolute;
     top: 34px;
-    margin-left: 11px;
     border-left: 4px solid transparent;
     border-right: 4px solid transparent;
     border-top: 4px solid black;
+}
+
+body[dir=ltr] .bezier-editor > .bezier-preview-timing {
+    margin-left: var(--bezier-editor-preview-timing-margin-start);
+}
+
+body[dir=rtl] .bezier-editor > .bezier-preview-timing {
+    margin-right: var(--bezier-editor-preview-timing-margin-start);
 }
 
 .bezier-editor > .bezier-preview.animate > div,
@@ -57,14 +75,18 @@
 }
 
 @keyframes bezierPreview {
-    from { transform: translate(0, 0); }
-    10% { transform: translate(0, 0); }
-    90% { transform: translate(170px, 0); }
-    to { transform: translate(170px, 0); }
+    from { transform: translateX(0); }
+    10% { transform: translateX(0); }
+    90% { transform: translateX(var(--bezier-editor-preview-translateX-animate)); }
+    to { transform: translateX(var(--bezier-editor-preview-translateX-animate)); }
 }
 
 .bezier-editor > .bezier-container {
     margin: 0 8px;
+}
+
+body[dir=rtl] .bezier-editor > .bezier-container {
+    transform: scaleX(-1);
 }
 
 .bezier-editor > .bezier-container .linear-curve {
@@ -108,7 +130,7 @@
 .bezier-editor > .number-input-container > input {
     width: 100%;
     margin: 0 2px;
-    padding: 1px 0 1px 1px;
+    padding: 1px 0 1px;
     text-align: right;
     font-size: 12px;
     background-color: white;
@@ -116,4 +138,14 @@
     border-radius: 4px;
     box-shadow: inset 0 0 1px 1px hsl(0, 0%, 89%);
     outline: none;
+
+    --bezier-editor-number-input-padding-start: 1px;
+}
+
+body[dir=ltr] .bezier-editor > .number-input-container > input {
+    padding-left: var(--bezier-editor-number-input-padding-start);
+}
+
+body[dir=rtl] .bezier-editor > .number-input-container > input {
+    padding-right: var(--bezier-editor-number-input-padding-start);
 }
