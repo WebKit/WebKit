@@ -1,3 +1,17 @@
+2017-02-26  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r212942.
+        https://bugs.webkit.org/show_bug.cgi?id=168882
+
+        Made EWS very flaky (Requested by ap on #webkit).
+
+        Reverted changeset:
+
+        "[Modern Media Controls] Dragging controls in fullscreen on
+        macOS prevents scrubbing or interacting with controls"
+        https://bugs.webkit.org/show_bug.cgi?id=168820
+        http://trac.webkit.org/changeset/212942
+
 2017-02-26  Chris Dumez  <cdumez@apple.com>
 
         HitTestResult's linkSuggestedFilename should sanitize download attribute

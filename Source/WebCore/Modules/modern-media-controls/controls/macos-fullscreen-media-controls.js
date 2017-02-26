@@ -125,9 +125,6 @@ class MacOSFullscreenMediaControls extends MacOSMediaControls
 
     _handleMousedown(event)
     {
-        if (event.target !== this.controlsBar.element)
-            return;
-
         event.preventDefault();
         event.stopPropagation();
 
