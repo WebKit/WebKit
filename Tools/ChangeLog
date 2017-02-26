@@ -1,3 +1,29 @@
+2017-02-26  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION (r211312): Double-clicking a word selects it along with the space that follows it
+        https://bugs.webkit.org/show_bug.cgi?id=168821
+        <rdar://problem/30690431>
+
+        Reviewed by Tim Horton.
+
+        Adds the ability for TestWKWebView to send a sequence of clicks to its window, and uses this capability to
+        verify that double clicking to select a word in a WKWebView on Mac selects just the word, and not a trailing
+        space along with it.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2Cocoa/double-click-does-not-select-trailing-space.html: Added.
+        * TestWebKitAPI/Tests/mac/WKWebViewSelectionTests.mm: Copied from Tools/TestWebKitAPI/cocoa/TestWKWebView.h.
+        (TEST):
+        * TestWebKitAPI/cocoa/TestWKWebView.h:
+        * TestWebKitAPI/cocoa/TestWKWebView.mm:
+        (-[TestWKWebViewHostWindow _mouseDownAtPoint:simulatePressure:clickCount:]):
+        (-[TestWKWebViewHostWindow _mouseUpAtPoint:clickCount:]):
+        (-[TestWKWebView mouseDownAtPoint:simulatePressure:]):
+        (-[TestWKWebView mouseUpAtPoint:]):
+        (-[TestWKWebView sendClicksAtPoint:numberOfClicks:]):
+        (-[TestWKWebViewHostWindow _mouseDownAtPoint:simulatePressure:]): Deleted.
+        (-[TestWKWebViewHostWindow _mouseUpAtPoint:]): Deleted.
+
 2017-02-25  Simon Fraser  <simon.fraser@apple.com>
 
         Make check-webkit-style do some basic validation for CSSProperties.json

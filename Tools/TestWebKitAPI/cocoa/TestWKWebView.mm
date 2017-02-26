@@ -94,7 +94,7 @@ NSEventMask __simulated_forceClickAssociatedEventsMask(id self, SEL _cmd)
 }
 #endif
 
-- (void)_mouseDownAtPoint:(NSPoint)point simulatePressure:(BOOL)simulatePressure
+- (void)_mouseDownAtPoint:(NSPoint)point simulatePressure:(BOOL)simulatePressure clickCount:(NSUInteger)clickCount
 {
     NSEventType mouseEventType = NSEventTypeLeftMouseDown;
 
@@ -106,7 +106,7 @@ NSEventMask __simulated_forceClickAssociatedEventsMask(id self, SEL _cmd)
     simulatePressure = NO;
 #endif
 
-    NSEvent *event = [NSEvent mouseEventWithType:mouseEventType location:point modifierFlags:modifierFlags timestamp:GetCurrentEventTime() windowNumber:self.windowNumber context:[NSGraphicsContext currentContext] eventNumber:++gEventNumber clickCount:1 pressure:simulatePressure];
+    NSEvent *event = [NSEvent mouseEventWithType:mouseEventType location:point modifierFlags:modifierFlags timestamp:GetCurrentEventTime() windowNumber:self.windowNumber context:[NSGraphicsContext currentContext] eventNumber:++gEventNumber clickCount:clickCount pressure:simulatePressure];
     if (!simulatePressure) {
         [self sendEvent:event];
         return;
@@ -126,9 +126,9 @@ NSEventMask __simulated_forceClickAssociatedEventsMask(id self, SEL _cmd)
 #endif
 }
 
-- (void)_mouseUpAtPoint:(NSPoint)point
+- (void)_mouseUpAtPoint:(NSPoint)point clickCount:(NSUInteger)clickCount
 {
-    [self sendEvent:[NSEvent mouseEventWithType:NSEventTypeLeftMouseUp location:point modifierFlags:0 timestamp:GetCurrentEventTime() windowNumber:self.windowNumber context:[NSGraphicsContext currentContext] eventNumber:++gEventNumber clickCount:1 pressure:0]];
+    [self sendEvent:[NSEvent mouseEventWithType:NSEventTypeLeftMouseUp location:point modifierFlags:0 timestamp:GetCurrentEventTime() windowNumber:self.windowNumber context:[NSGraphicsContext currentContext] eventNumber:++gEventNumber clickCount:clickCount pressure:0]];
 }
 #endif // PLATFORM(MAC)
 
@@ -286,12 +286,20 @@ NSEventMask __simulated_forceClickAssociatedEventsMask(id self, SEL _cmd)
 @implementation TestWKWebView (MacOnly)
 - (void)mouseDownAtPoint:(NSPoint)point simulatePressure:(BOOL)simulatePressure
 {
-    [_hostWindow _mouseDownAtPoint:point simulatePressure:simulatePressure];
+    [_hostWindow _mouseDownAtPoint:point simulatePressure:simulatePressure clickCount:1];
 }
 
 - (void)mouseUpAtPoint:(NSPoint)point
 {
-    [_hostWindow _mouseUpAtPoint:point];
+    [_hostWindow _mouseUpAtPoint:point clickCount:1];
+}
+
+- (void)sendClicksAtPoint:(NSPoint)point numberOfClicks:(NSUInteger)numberOfClicks
+{
+    for (NSUInteger clickCount = 1; clickCount <= numberOfClicks; ++clickCount) {
+        [_hostWindow _mouseDownAtPoint:point simulatePressure:NO clickCount:clickCount];
+        [_hostWindow _mouseUpAtPoint:point clickCount:clickCount];
+    }
 }
 
 - (void)typeCharacter:(char)character {

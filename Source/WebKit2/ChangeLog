@@ -1,3 +1,17 @@
+2017-02-26  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION (r211312): Double-clicking a word selects it along with the space that follows it
+        https://bugs.webkit.org/show_bug.cgi?id=168821
+        <rdar://problem/30690431>
+
+        Reviewed by Tim Horton.
+
+        Actually encode and decode smartInsertDeleteEnabled when sending WebPageCreationParameters over XPC.
+
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode):
+        (WebKit::WebPageCreationParameters::decode):
+
 2017-02-26  Chris Dumez  <cdumez@apple.com>
 
         HitTestResult's linkSuggestedFilename should sanitize download attribute

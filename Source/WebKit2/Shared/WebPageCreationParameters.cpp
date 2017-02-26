@@ -85,6 +85,9 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << textAutosizingWidth;
     encoder << ignoresViewportScaleLimits;
 #endif
+#if PLATFORM(COCOA)
+    encoder << smartInsertDeleteEnabled;
+#endif
     encoder << appleMailPaginationQuirkEnabled;
     encoder << shouldScaleViewToFitDocument;
     encoder.encodeEnum(userInterfaceLayoutDirection);
@@ -197,6 +200,10 @@ bool WebPageCreationParameters::decode(IPC::Decoder& decoder, WebPageCreationPar
     if (!decoder.decode(parameters.textAutosizingWidth))
         return false;
     if (!decoder.decode(parameters.ignoresViewportScaleLimits))
+        return false;
+#endif
+#if PLATFORM(COCOA)
+    if (!decoder.decode(parameters.smartInsertDeleteEnabled))
         return false;
 #endif
 

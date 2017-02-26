@@ -1,0 +1,23 @@
+<style>
+body {
+    width: 100%;
+    height: 100%;
+}
+
+#editable {
+    width: 100%;
+    height: 400px;
+    font-size: 400px;
+    white-space: nowrap;
+    border: 1px blue dashed;
+}
+</style>
+<div id="editable" contenteditable>Hello world</div>
+<script>
+document.addEventListener("selectionchange", () => {
+    if (!getSelection().rangeCount || getSelection().isCollapsed)
+        return;
+
+    setTimeout(() => window.webkit.messageHandlers.testHandler.postMessage("selected"), 0);
+});
+</script>

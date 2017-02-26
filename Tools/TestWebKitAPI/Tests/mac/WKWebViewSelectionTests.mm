@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,40 +23,27 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WebKit.h>
-#import <wtf/RetainPtr.h>
+#include "config.h"
 
-#if WK_API_ENABLED
+#if WK_API_ENABLED && PLATFORM(MAC)
 
-@interface TestMessageHandler : NSObject <WKScriptMessageHandler>
-- (void)addMessage:(NSString *)message withHandler:(dispatch_block_t)handler;
-@end
+#import "PlatformUtilities.h"
+#import "TestWKWebView.h"
 
-@interface TestWKWebView : WKWebView
-- (void)clearMessageHandlers:(NSArray *)messageNames;
-- (void)performAfterReceivingMessage:(NSString *)message action:(dispatch_block_t)action;
-- (void)loadTestPageNamed:(NSString *)pageName;
-- (void)synchronouslyLoadTestPageNamed:(NSString *)pageName;
-- (NSString *)stringByEvaluatingJavaScript:(NSString *)script;
-- (void)waitForMessage:(NSString *)message;
-- (void)performAfterLoading:(dispatch_block_t)actions;
-@end
+TEST(WKWebViewSelectionTests, DoubleClickDoesNotSelectTrailingSpace)
+{
+    RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
+    [webView synchronouslyLoadTestPageNamed:@"double-click-does-not-select-trailing-space"];
 
-#if PLATFORM(IOS)
-@interface TestWKWebView (IOSOnly)
-@property (nonatomic, readonly) RetainPtr<NSArray> selectionRectsAfterPresentationUpdate;
-@end
-#endif
+    __block bool finishedSelectingText = false;
+    [webView performAfterReceivingMessage:@"selected" action:^() {
+        finishedSelectingText = true;
+    }];
+    [webView sendClicksAtPoint:NSMakePoint(200, 200) numberOfClicks:2];
+    TestWebKitAPI::Util::run(&finishedSelectingText);
 
-#if PLATFORM(MAC)
-@interface TestWKWebView (MacOnly)
-// Simulates clicking with a pressure-sensitive device, if possible.
-- (void)mouseDownAtPoint:(NSPoint)point simulatePressure:(BOOL)simulatePressure;
-- (void)mouseUpAtPoint:(NSPoint)point;
-- (void)sendClicksAtPoint:(NSPoint)point numberOfClicks:(NSUInteger)numberOfClicks;
-- (void)typeCharacter:(char)character;
-@end
-#endif
+    NSString *selectedText = [webView stringByEvaluatingJavaScript:@"getSelection().getRangeAt(0).toString()"];
+    EXPECT_STREQ("Hello", selectedText.UTF8String);
+}
 
-#endif // WK_API_ENABLED
-
+#endif // WK_API_ENABLED && PLATFORM(MAC)
