@@ -26,7 +26,6 @@ import json
 import re
 from sets import Set
 
-
 class JSONChecker(object):
     """Processes JSON lines for checking style."""
 
@@ -107,5 +106,105 @@ class JSONFeaturesChecker(JSONChecker):
                 if 'specification' in feature:
                     if feature['specification'] not in specification_name_set:
                         self._handle_style_error(0, 'json/syntax', 5, 'The feature "%s" has a specification field but no specification of that name exists.' % feature_name)
-        except:
+        except Exception as e:
+            print(e)
             pass
+
+
+class JSONCSSPropertiesChecker(JSONChecker):
+    """Processes CSSProperties.json"""
+
+    def check(self, lines):
+        super(JSONCSSPropertiesChecker, self).check(lines)
+
+        try:
+            properties_definition = json.loads('\n'.join(lines) + '\n')
+            if 'properties' not in properties_definition:
+                self._handle_style_error(0, 'json/syntax', 5, '"properties" key not found, the key is mandatory.')
+                return
+
+            properties = properties_definition['properties']
+            if not isinstance(properties, dict):
+                self._handle_style_error(0, 'json/syntax', 5, '"properties" is not a dictionary.')
+                return
+
+            for property_name, property_value in properties.items():
+                self.check_property(property_name, property_value)
+
+        except Exception as e:
+            print(e)
+            pass
+
+    def validate_comment(self, property_name, property_key, key, value):
+        return
+
+    def validate_type(self, property_name, property_key, key, value, expected_type):
+        if not isinstance(value, expected_type):
+            self._handle_style_error(0, 'json/syntax', 5, '"%s" in "%s" %s is not of %s.' % (key, property_name, property_key, expected_type))
+
+    def validate_boolean(self, property_name, property_key, key, value):
+        self.validate_type(property_name, property_key, key, value, bool)
+
+    def validate_string(self, property_name, property_key, key, value):
+        self.validate_type(property_name, property_key, key, value, basestring)
+
+    def validate_array(self, property_name, property_key, key, value):
+        self.validate_type(property_name, property_key, key, value, list)
+
+    def validate_codegen_properties(self, property_name, property_key, key, value):
+        if isinstance(value, list):
+            for entry in value:
+                self.check_codegen_properties(property_name, entry)
+        else:
+            self.check_codegen_properties(property_name, value)
+
+    def check_property(self, property_name, value):
+        keys_and_validators = {
+            '*': self.validate_comment,
+            'animatable': self.validate_boolean,
+            'inherited': self.validate_boolean,
+            'values': self.validate_array,
+            'codegen-properties': self.validate_codegen_properties,
+        }
+
+        for key, value in value.items():
+            if key not in keys_and_validators:
+                self._handle_style_error(0, 'json/syntax', 5, 'dictionary for property "%s" has unexpected key "%s".' % (property_name, key))
+                return
+
+            keys_and_validators[key](property_name, "", key, value)
+
+    def check_codegen_properties(self, property_name, codegen_properties):
+        if not isinstance(codegen_properties, (dict, list)):
+            self._handle_style_error(0, 'json/syntax', 5, '"codegen_properties" for property "%s" is not a dictionary or array.' % property_name)
+            return
+
+        keys_and_validators = {
+            'aliases': self.validate_array,
+            'auto-functions': self.validate_boolean,
+            'conditional-converter': self.validate_string,
+            'converter': self.validate_string,
+            'custom': self.validate_string,
+            'enable-if': self.validate_string,
+            'fill-layer-property': self.validate_boolean,
+            'font-property': self.validate_boolean,
+            'getter': self.validate_string,
+            'high-priority': self.validate_boolean,
+            'initial': self.validate_string,
+            'internal-only': self.validate_boolean,
+            'longhands': self.validate_array,
+            'name-for-methods': self.validate_string,
+            'no-default-color': self.validate_boolean,
+            'setter': self.validate_string,
+            'skip-builder': self.validate_boolean,
+            'skip-codegen': self.validate_boolean,
+            'svg': self.validate_boolean,
+            'visited-link-color-support': self.validate_boolean,
+        }
+
+        for key, value in codegen_properties.items():
+            if key not in keys_and_validators:
+                self._handle_style_error(0, 'json/syntax', 5, 'codegen_properties for property "%s" has unexpected key "%s".' % (property_name, key))
+                return
+
+            keys_and_validators[key](property_name, 'codegen_properties', key, value)

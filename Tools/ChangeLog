@@ -1,3 +1,29 @@
+2017-02-25  Simon Fraser  <simon.fraser@apple.com>
+
+        Make check-webkit-style do some basic validation for CSSProperties.json
+        https://bugs.webkit.org/show_bug.cgi?id=168874
+
+        Reviewed by Zalan Bujtas.
+
+        Do checking of the keys and the value types.
+        
+        Print exceptions if they occur; previously, coding errors caused silent failure.
+
+        * Scripts/webkitpy/style/checker.py:
+        (CheckerDispatcher._create_checker):
+        * Scripts/webkitpy/style/checkers/jsonchecker.py:
+        (JSONFeaturesChecker.check):
+        (JSONCSSPropertiesChecker):
+        (JSONCSSPropertiesChecker.check):
+        (JSONCSSPropertiesChecker.validate_comment):
+        (JSONCSSPropertiesChecker.validate_type):
+        (JSONCSSPropertiesChecker.validate_boolean):
+        (JSONCSSPropertiesChecker.validate_string):
+        (JSONCSSPropertiesChecker.validate_array):
+        (JSONCSSPropertiesChecker.validate_codegen_properties):
+        (JSONCSSPropertiesChecker.check_property):
+        (JSONCSSPropertiesChecker.check_codegen_properties):
+
 2017-02-26  Chris Dumez  <cdumez@apple.com>
 
         HitTestResult's linkSuggestedFilename should sanitize download attribute

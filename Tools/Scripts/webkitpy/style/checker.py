@@ -47,6 +47,7 @@ from checkers.js import JSChecker
 from checkers.jsonchecker import JSONChecker
 from checkers.jsonchecker import JSONContributorsChecker
 from checkers.jsonchecker import JSONFeaturesChecker
+from checkers.jsonchecker import JSONCSSPropertiesChecker
 from checkers.messagesin import MessagesInChecker
 from checkers.png import PNGChecker
 from checkers.python import PythonChecker
@@ -619,6 +620,8 @@ class CheckerDispatcher(object):
                     checker = ContributorsChecker(file_path, handle_style_error)
             elif basename == 'features.json':
                 checker = JSONFeaturesChecker(file_path, handle_style_error)
+            elif basename == 'CSSProperties.json':
+                checker = JSONCSSPropertiesChecker(file_path, handle_style_error)
             else:
                 checker = JSONChecker(file_path, handle_style_error)
         elif file_type == FileType.PYTHON:
