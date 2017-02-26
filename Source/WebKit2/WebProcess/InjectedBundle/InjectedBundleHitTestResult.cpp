@@ -141,7 +141,7 @@ String InjectedBundleHitTestResult::linkTitle() const
 
 String InjectedBundleHitTestResult::linkSuggestedFilename() const
 {
-    return m_hitTestResult.URLElementDownloadAttribute();
+    return m_hitTestResult.linkSuggestedFilename();
 }
 
 IntRect InjectedBundleHitTestResult::imageRect() const

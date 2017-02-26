@@ -108,4 +108,50 @@ TEST(WebKit2, ContextMenuDownloadHTMLDownloadAttribute)
     Util::run(&didDecideDownloadDestination);
 }
 
+static WKStringRef decideDestinationWithSuggestedFilenameContainingSlashes(WKContextRef, WKDownloadRef download, WKStringRef suggestedFilename, bool*, const void*)
+{
+    // Make sure the suggested filename is provided and matches the value of the download attribute in the HTML, after sanitization.
+    EXPECT_WK_STREQ("test1_test2_downloadAttributeValue.txt", suggestedFilename);
+
+    WKDownloadCancel(download);
+    didDecideDownloadDestination = true;
+
+    return Util::toWK("/tmp/WebKitAPITest/ContextMenuDownload").leakRef();
+}
+
+TEST(WebKit2, ContextMenuDownloadHTMLDownloadAttributeWithSlashes)
+{
+    WKRetainPtr<WKContextRef> context(AdoptWK, Util::createContextWithInjectedBundle());
+
+    WKContextDownloadClientV0 client;
+    memset(&client, 0, sizeof(client));
+    client.base.version = 0;
+    client.decideDestinationWithSuggestedFilename = decideDestinationWithSuggestedFilenameContainingSlashes;
+    WKContextSetDownloadClient(context.get(), &client.base);
+
+    WKRetainPtr<WKPageGroupRef> pageGroup(AdoptWK, WKPageGroupCreateWithIdentifier(Util::toWK("MyGroup").get()));
+    PlatformWebView webView(context.get(), pageGroup.get());
+
+    WKPageLoaderClientV0 loaderClient;
+    memset(&loaderClient, 0, sizeof(loaderClient));
+    loaderClient.base.version = 0;
+    loaderClient.didFinishLoadForFrame = didFinishLoadForFrame;
+    WKPageSetPageLoaderClient(webView.page(), &loaderClient.base);
+
+    WKPageContextMenuClientV3 contextMenuClient;
+    memset(&contextMenuClient, 0, sizeof(contextMenuClient));
+    contextMenuClient.base.version = 3;
+    contextMenuClient.getContextMenuFromProposedMenu = getContextMenuFromProposedMenu;
+    WKPageSetPageContextMenuClient(webView.page(), &contextMenuClient.base);
+
+    WKRetainPtr<WKURLRef> url(AdoptWK, Util::createURLForResource("link-with-download-attribute-with-slashes", "html"));
+
+    WKPageLoadURL(webView.page(), url.get());
+    Util::run(&didFinishLoad);
+
+    // Right click on link.
+    webView.simulateButtonClick(kWKEventMouseButtonRightButton, 50, 50, 0);
+    Util::run(&didDecideDownloadDestination);
+}
+
 }

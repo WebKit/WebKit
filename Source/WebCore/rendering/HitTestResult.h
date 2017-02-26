@@ -62,7 +62,7 @@ public:
     Scrollbar* scrollbar() const { return m_scrollbar.get(); }
     bool isOverWidget() const { return m_isOverWidget; }
 
-    WEBCORE_EXPORT const AtomicString& URLElementDownloadAttribute() const;
+    WEBCORE_EXPORT String linkSuggestedFilename() const;
 
     // Forwarded from HitTestLocation
     bool isRectBasedTest() const { return m_hitTestLocation.isRectBasedTest(); }
