@@ -133,13 +133,13 @@
   cmd: runWebAssemblySpecTest :normal
 
 - path: wasm/spec-tests/linking.wast.js
-  cmd: runWebAssemblySpecTest :skip
+  cmd: runWebAssemblySpecTest :skip # FIXME This test is mostly blocked on implementing re-exporting an import. https://bugs.webkit.org/show_bug.cgi?id=165510
 
 - path: wasm/spec-tests/loop.wast.js
   cmd: runWebAssemblySpecTest :normal
 
 - path: wasm/spec-tests/memory.wast.js
-  cmd: runWebAssemblySpecTest :skip
+  cmd: runWebAssemblySpecTest :normal
 
 - path: wasm/spec-tests/memory_redundancy.wast.js
   cmd: runWebAssemblySpecTest :normal
@@ -148,7 +148,7 @@
   cmd: runWebAssemblySpecTest :normal
 
 - path: wasm/spec-tests/names.wast.js
-  cmd: runWebAssemblySpecTest :skip
+  cmd: runWebAssemblySpecTest :normal
 
 - path: wasm/spec-tests/nop.wast.js
   cmd: runWebAssemblySpecTest :normal

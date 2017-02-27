@@ -212,6 +212,7 @@ auto FunctionParser<Context>::parseExpression(OpType op) -> PartialResult
         ExpressionType pointer;
         ExpressionType result;
         WASM_PARSER_FAIL_IF(!parseVarUInt32(alignment), "can't get load alignment");
+        // FIXME validate alignment. https://bugs.webkit.org/show_bug.cgi?id=168836
         WASM_PARSER_FAIL_IF(!parseVarUInt32(offset), "can't get load offset");
         WASM_TRY_POP_EXPRESSION_STACK_INTO(pointer, "load pointer");
         WASM_TRY_ADD_TO_CONTEXT(load(static_cast<LoadOpType>(op), pointer, result, offset));
@@ -225,6 +226,7 @@ auto FunctionParser<Context>::parseExpression(OpType op) -> PartialResult
         ExpressionType value;
         ExpressionType pointer;
         WASM_PARSER_FAIL_IF(!parseVarUInt32(alignment), "can't get store alignment");
+        // FIXME validate alignment. https://bugs.webkit.org/show_bug.cgi?id=168836
         WASM_PARSER_FAIL_IF(!parseVarUInt32(offset), "can't get store offset");
         WASM_TRY_POP_EXPRESSION_STACK_INTO(value, "store value");
         WASM_TRY_POP_EXPRESSION_STACK_INTO(pointer, "store pointer");

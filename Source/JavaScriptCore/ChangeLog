@@ -1,3 +1,12 @@
+2017-02-27  JF Bastien  <jfbastien@apple.com>
+
+        WebAssembly: miscellaneous spec fixes part deux
+        https://bugs.webkit.org/show_bug.cgi?id=168861
+
+        Reviewed by Keith Miller.
+
+        * wasm/WasmFunctionParser.h: add some FIXME
+
 2017-02-27  Alex Christensen  <achristensen@webkit.org>
 
         [libwebrtc] Enable WebRTC in some Production Builds

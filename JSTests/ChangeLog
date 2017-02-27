@@ -1,3 +1,25 @@
+2017-02-27  JF Bastien  <jfbastien@apple.com>
+
+        WebAssembly: miscellaneous spec fixes part deux
+        https://bugs.webkit.org/show_bug.cgi?id=168861
+
+        Reviewed by Keith Miller.
+
+        * wasm.yaml: more passing tests
+        * wasm/Builder.js: use a Map instead of an Object for the function
+        index space, because Number entries such as 0 were colliding with
+        string entries such as "0". This in turn requires some hashing of
+        objects which are inserted, because Map uses Object's insertion
+        order when comparing.
+        (export.default.Builder):
+        (export.default.Builder.prototype._functionIndexSpaceKeyHash):
+        (export.default.Builder.prototype._registerFunctionToIndexSpace):
+        (export.default.Builder.prototype._getFunctionFromIndexSpace):
+        * wasm/js-api/test_Instance.js: add a FIXME test
+        * wasm/spec-tests/memory.wast.js:
+        (assert_unlinkable):
+        * wasm/spec-tests/names.wast.js:
+
 2017-02-26  Caio Lima  <ticaiolima@gmail.com>
 
         op_get_by_id_with_this should use inline caching

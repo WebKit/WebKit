@@ -30,6 +30,33 @@ import Builder from '../Builder.js';
     assert.eq(result, 42);
 })();
 
+// FIXME exporting a property with a name that's a number doesn't work https://bugs.webkit.org/show_bug.cgi?id=168857
+/*
+(function ExportedNumber() {
+    for (let i = 0; i <= 129; ++i) {
+        const name = i.toString();
+        const builder = (new Builder())
+             .Type().End()
+             .Function().End()
+             .Export()
+                 .Function(name)
+             .End()
+             .Code()
+                 .Function(name, { params: [], ret: "i32" })
+                 .I32Const(i)
+                 .Return()
+             .End()
+             .End();
+        const bin = builder.WebAssembly().get();
+        const module = new WebAssembly.Module(bin);
+        const instance = new WebAssembly.Instance(module);
+        const result = instance.exports[name]();
+        assert.isA(result, "number");
+        assert.eq(result, i);
+    }
+})();
+*/
+
 const wasmModuleWhichImportJS = () => {
     const builder = (new Builder())
         .Type().End()

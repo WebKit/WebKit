@@ -423,7 +423,7 @@ export default class Builder {
             preamble[p.name] = p.value;
         this.setPreamble(preamble);
         this._sections = [];
-        this._functionIndexSpace = {};
+        this._functionIndexSpace = new Map();
         this._functionIndexSpaceCount = 0;
         this._registerSectionBuilders();
     }
@@ -435,18 +435,29 @@ export default class Builder {
         this._preamble = Object.assign(this._preamble || {}, p);
         return this;
     }
+    _functionIndexSpaceKeyHash(obj) {
+        // We don't need a full hash, just something that has a defined order for Map. Objects we insert aren't nested.
+        if (typeof(obj) !== 'object')
+            return obj;
+        const keys = Object.keys(obj).sort();
+        let entries = [];
+        for (let k in keys)
+            entries.push([k, obj[k]]);
+        return JSON.stringify(entries);
+    }
     _registerFunctionToIndexSpace(name) {
         if (typeof(name) === "undefined") {
             // Registering a nameless function still adds it to the function index space. Register it as something that can't normally be registered.
             name = {};
         }
+        const value = this._functionIndexSpaceCount++;
         // Collisions are fine: we'll simply count the function and forget the previous one.
-        this._functionIndexSpace[name] = this._functionIndexSpaceCount++;
+        this._functionIndexSpace.set(this._functionIndexSpaceKeyHash(name), value);
         // Map it both ways, the number space is distinct from the name space.
-        this._functionIndexSpace[this._functionIndexSpace[name]] = name;
+        this._functionIndexSpace.set(this._functionIndexSpaceKeyHash(value), name);
     }
     _getFunctionFromIndexSpace(name) {
-        return this._functionIndexSpace[name];
+        return this._functionIndexSpace.get(this._functionIndexSpaceKeyHash(name));
     }
     _registerSectionBuilders() {
         for (const section in WASM.description.section) {
