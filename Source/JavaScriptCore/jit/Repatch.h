@@ -36,8 +36,7 @@ namespace JSC {
 
 enum class GetByIDKind {
     Normal,
-    Try,
-    WithThis
+    Try
 };
 
 void repatchGetByID(ExecState*, JSValue, const Identifier&, const PropertySlot&, StructureStubInfo&, GetByIDKind);

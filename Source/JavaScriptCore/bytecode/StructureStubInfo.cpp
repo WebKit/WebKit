@@ -222,9 +222,6 @@ void StructureStubInfo::reset(CodeBlock* codeBlock)
     case AccessType::Get:
         resetGetByID(codeBlock, *this, GetByIDKind::Normal);
         break;
-    case AccessType::GetWithThis:
-        resetGetByID(codeBlock, *this, GetByIDKind::WithThis);
-        break;
     case AccessType::Put:
         resetPutByID(codeBlock, *this);
         break;

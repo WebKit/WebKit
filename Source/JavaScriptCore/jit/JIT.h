@@ -623,7 +623,6 @@ namespace JSC {
         void emitSlow_op_get_callee(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_try_get_by_id(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_get_by_id(Instruction*, Vector<SlowCaseEntry>::iterator&);
-        void emitSlow_op_get_by_id_with_this(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_get_arguments_length(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_get_by_val(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_get_argument_by_val(Instruction*, Vector<SlowCaseEntry>::iterator&);
@@ -760,11 +759,9 @@ namespace JSC {
 #if USE(JSVALUE64)
         MacroAssembler::Call callOperation(J_JITOperation_ESsiJI, int, StructureStubInfo*, GPRReg, UniquedStringImpl*);
         MacroAssembler::Call callOperation(WithProfileTag, J_JITOperation_ESsiJI, int, StructureStubInfo*, GPRReg, UniquedStringImpl*);
-        MacroAssembler::Call callOperation(WithProfileTag, J_JITOperation_ESsiJJI, int, StructureStubInfo*, GPRReg, GPRReg, UniquedStringImpl*);
 #else
         MacroAssembler::Call callOperation(J_JITOperation_ESsiJI, int, StructureStubInfo*, GPRReg, GPRReg, UniquedStringImpl*);
         MacroAssembler::Call callOperation(WithProfileTag, J_JITOperation_ESsiJI, int, StructureStubInfo*, GPRReg, GPRReg, UniquedStringImpl*);
-        MacroAssembler::Call callOperation(WithProfileTag, J_JITOperation_ESsiJJI, int, StructureStubInfo*, GPRReg, GPRReg, GPRReg, GPRReg, UniquedStringImpl*);
 #endif
         MacroAssembler::Call callOperation(J_JITOperation_EJI, int, GPRReg, UniquedStringImpl*);
         MacroAssembler::Call callOperation(J_JITOperation_EJJ, int, GPRReg, GPRReg);
@@ -935,7 +932,6 @@ namespace JSC {
         Vector<CallRecord> m_calls;
         Vector<Label> m_labels;
         Vector<JITGetByIdGenerator> m_getByIds;
-        Vector<JITGetByIdWithThisGenerator> m_getByIdsWithThis;
         Vector<JITPutByIdGenerator> m_putByIds;
         Vector<ByValCompilationInfo> m_byValCompilationInfo;
         Vector<CallCompilationInfo> m_callCompilationInfo;
@@ -950,7 +946,6 @@ namespace JSC {
         Label m_exceptionHandler;
 
         unsigned m_getByIdIndex;
-        unsigned m_getByIdWithThisIndex;
         unsigned m_putByIdIndex;
         unsigned m_byValInstructionIndex;
         unsigned m_callLinkInfoIndex;

@@ -48,7 +48,6 @@ namespace JSC {
     macro(OperationGetByIdGeneric) \
     macro(OperationGetByIdBuildList) \
     macro(OperationGetByIdOptimize) \
-    macro(OperationGetByIdWithThisOptimize) \
     macro(OperationInOptimize) \
     macro(OperationIn) \
     macro(OperationGenericIn) \

@@ -343,14 +343,11 @@ AccessGenerationResult PolymorphicAccess::regenerate(
     state.ident = &ident;
     
     state.baseGPR = static_cast<GPRReg>(stubInfo.patch.baseGPR);
-    state.thisGPR = static_cast<GPRReg>(stubInfo.patch.thisGPR);
     state.valueRegs = stubInfo.valueRegs();
 
     ScratchRegisterAllocator allocator(stubInfo.patch.usedRegisters);
     state.allocator = &allocator;
     allocator.lock(state.baseGPR);
-    if (state.thisGPR != InvalidGPRReg)
-        allocator.lock(state.thisGPR);
     allocator.lock(state.valueRegs);
 #if USE(JSVALUE32_64)
     allocator.lock(static_cast<GPRReg>(stubInfo.patch.baseTagGPR));

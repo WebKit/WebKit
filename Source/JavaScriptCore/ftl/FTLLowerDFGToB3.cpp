@@ -2867,40 +2867,10 @@ private:
 
     void compileGetByIdWithThis()
     {
-        if (m_node->child1().useKind() == CellUse && m_node->child2().useKind() == CellUse)
-            setJSValue(getByIdWithThis(lowCell(m_node->child1()), lowCell(m_node->child2())));
-        else {
-            LValue base = lowJSValue(m_node->child1());
-            LValue thisValue = lowJSValue(m_node->child2());
-            
-            LBasicBlock baseCellCase = m_out.newBlock();
-            LBasicBlock notCellCase = m_out.newBlock();
-            LBasicBlock thisValueCellCase = m_out.newBlock();
-            LBasicBlock continuation = m_out.newBlock();
-            
-            m_out.branch(
-                isCell(base, provenType(m_node->child1())), unsure(baseCellCase), unsure(notCellCase));
-            
-            LBasicBlock lastNext = m_out.appendTo(baseCellCase, thisValueCellCase);
-            
-            m_out.branch(
-                isCell(thisValue, provenType(m_node->child2())), unsure(thisValueCellCase), unsure(notCellCase));
-            
-            m_out.appendTo(thisValueCellCase, notCellCase);
-            ValueFromBlock cellResult = m_out.anchor(getByIdWithThis(base, thisValue));
-            m_out.jump(continuation);
-
-            m_out.appendTo(notCellCase, continuation);
-            ValueFromBlock notCellResult = m_out.anchor(vmCall(
-                Int64, m_out.operation(operationGetByIdWithThis),
-                m_callFrame, base, thisValue,
-                m_out.constIntPtr(m_graph.identifiers()[m_node->identifierNumber()])));
-            m_out.jump(continuation);
-            
-            m_out.appendTo(continuation, lastNext);
-            setJSValue(m_out.phi(Int64, cellResult, notCellResult));
-        }
-        
+        LValue base = lowJSValue(m_node->child1());
+        LValue thisValue = lowJSValue(m_node->child2());
+        LValue result = vmCall(Int64, m_out.operation(operationGetByIdWithThis), m_callFrame, base, thisValue, m_out.constIntPtr(m_graph.identifiers()[m_node->identifierNumber()]));
+        setJSValue(result);
     }
 
     void compileGetByValWithThis()
@@ -8107,7 +8077,6 @@ private:
                         stubInfo->codeOrigin = node->origin.semantic;
                         stubInfo->patch.baseGPR = static_cast<int8_t>(baseGPR);
                         stubInfo->patch.valueGPR = static_cast<int8_t>(resultGPR);
-                        stubInfo->patch.thisGPR = static_cast<int8_t>(InvalidGPRReg);
                         stubInfo->patch.usedRegisters = params.unavailableRegisters();
 
                         CCallHelpers::PatchableJump jump = jit.patchableJump();
@@ -9778,74 +9747,6 @@ private:
                             exceptions.get(), optimizationFunction, params[0].gpr(),
                             CCallHelpers::TrustedImmPtr(generator->stubInfo()), params[1].gpr(),
                             CCallHelpers::TrustedImmPtr(uid)).call();
-                        jit.jump().linkTo(done, &jit);
-
-                        generator->reportSlowPathCall(slowPathBegin, slowPathCall);
-
-                        jit.addLinkTask(
-                            [=] (LinkBuffer& linkBuffer) {
-                                generator->finalize(linkBuffer);
-                            });
-                    });
-            });
-
-        return patchpoint;
-    }
-    
-    LValue getByIdWithThis(LValue base, LValue thisValue)
-    {
-        Node* node = m_node;
-        UniquedStringImpl* uid = m_graph.identifiers()[node->identifierNumber()];
-
-        B3::PatchpointValue* patchpoint = m_out.patchpoint(Int64);
-        patchpoint->appendSomeRegister(base);
-        patchpoint->appendSomeRegister(thisValue);
-        patchpoint->append(m_tagMask, ValueRep::lateReg(GPRInfo::tagMaskRegister));
-        patchpoint->append(m_tagTypeNumber, ValueRep::lateReg(GPRInfo::tagTypeNumberRegister));
-
-        patchpoint->clobber(RegisterSet::macroScratchRegisters());
-
-        RefPtr<PatchpointExceptionHandle> exceptionHandle =
-            preparePatchpointForExceptions(patchpoint);
-
-        State* state = &m_ftlState;
-        patchpoint->setGenerator(
-            [=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
-                AllowMacroScratchRegisterUsage allowScratch(jit);
-
-                CallSiteIndex callSiteIndex =
-                    state->jitCode->common.addUniqueCallSiteIndex(node->origin.semantic);
-
-                // This is the direct exit target for operation calls.
-                Box<CCallHelpers::JumpList> exceptions =
-                    exceptionHandle->scheduleExitCreation(params)->jumps(jit);
-
-                // This is the exit for call IC's created by the getById for getters. We don't have
-                // to do anything weird other than call this, since it will associate the exit with
-                // the callsite index.
-                exceptionHandle->scheduleExitCreationForUnwind(params, callSiteIndex);
-
-                auto generator = Box<JITGetByIdWithThisGenerator>::create(
-                    jit.codeBlock(), node->origin.semantic, callSiteIndex,
-                    params.unavailableRegisters(), uid, JSValueRegs(params[0].gpr()),
-                    JSValueRegs(params[1].gpr()), JSValueRegs(params[2].gpr()), AccessType::GetWithThis);
-
-                generator->generateFastPath(jit);
-                CCallHelpers::Label done = jit.label();
-
-                params.addLatePath(
-                    [=] (CCallHelpers& jit) {
-                        AllowMacroScratchRegisterUsage allowScratch(jit);
-
-                        J_JITOperation_ESsiJJI optimizationFunction = operationGetByIdWithThisOptimize;
-
-                        generator->slowPathJump().link(&jit);
-                        CCallHelpers::Label slowPathBegin = jit.label();
-                        CCallHelpers::Call slowPathCall = callOperation(
-                            *state, params.unavailableRegisters(), jit, node->origin.semantic,
-                            exceptions.get(), optimizationFunction, params[0].gpr(),
-                            CCallHelpers::TrustedImmPtr(generator->stubInfo()), params[1].gpr(),
-                            params[2].gpr(), CCallHelpers::TrustedImmPtr(uid)).call();
                         jit.jump().linkTo(done, &jit);
 
                         generator->reportSlowPathCall(slowPathBegin, slowPathCall);

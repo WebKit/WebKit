@@ -253,8 +253,6 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
 
     for (unsigned i = m_getByIds.size(); i--;)
         m_getByIds[i].finalize(linkBuffer);
-    for (unsigned i = m_getByIdsWithThis.size(); i--;)
-        m_getByIdsWithThis[i].finalize(linkBuffer);
     for (unsigned i = m_putByIds.size(); i--;)
         m_putByIds[i].finalize(linkBuffer);
 

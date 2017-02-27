@@ -107,17 +107,6 @@ private:
     bool m_isLengthAccess;
 };
 
-class JITGetByIdWithThisGenerator : public JITByIdGenerator {
-public:
-    JITGetByIdWithThisGenerator() { }
-
-    JITGetByIdWithThisGenerator(
-        CodeBlock*, CodeOrigin, CallSiteIndex, const RegisterSet& usedRegisters, UniquedStringImpl* propertyName,
-        JSValueRegs value, JSValueRegs base, JSValueRegs thisRegs, AccessType);
-
-    void generateFastPath(MacroAssembler&);
-};
-
 class JITPutByIdGenerator : public JITByIdGenerator {
 public:
     JITPutByIdGenerator() { }
