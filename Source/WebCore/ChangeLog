@@ -1,3 +1,25 @@
+2017-02-20  Zalan Bujtas  <zalan@apple.com>
+
+        Simple line layout: Implement absoluteQuadsForRange.
+        https://bugs.webkit.org/show_bug.cgi?id=168613
+        <rdar://problem/30614618>
+
+        Reviewed by Simon Fraser.
+
+        This patch ensures that the commonly used Range::getClientRects calls do not
+        throw us off of the simple line layout path.
+
+        Test: fast/dom/Range/simple-line-layout-getclientrects.html
+
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::absoluteQuadsForRange):
+        * rendering/SimpleLineLayoutFunctions.cpp:
+        (WebCore::SimpleLineLayout::collectAbsoluteQuadsForRange): Special case empty ranges with multiple empty runs.
+        * rendering/SimpleLineLayoutFunctions.h:
+        * rendering/SimpleLineLayoutResolver.cpp:
+        (WebCore::SimpleLineLayout::RunResolver::rangeForRendererWithOffsets):
+        * rendering/SimpleLineLayoutResolver.h:
+
 2017-02-20  Brent Fulgham  <bfulgham@apple.com>
 
         Nullptr dereferences when stopping a load

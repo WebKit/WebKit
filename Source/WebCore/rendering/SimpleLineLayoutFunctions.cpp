@@ -232,6 +232,37 @@ unsigned textOffsetForPoint(const LayoutPoint& point, const RenderText& renderer
     return run.start() + style.fontCascade().offsetForPosition(textRun, point.x() - run.logicalLeft(), true);
 }
 
+Vector<FloatQuad> collectAbsoluteQuadsForRange(const RenderObject& renderer, unsigned start, unsigned end, const Layout& layout, bool* wasFixed)
+{
+    auto& style = downcast<RenderBlockFlow>(*renderer.parent()).style();
+    Vector<FloatQuad> quads;
+    auto resolver = runResolver(downcast<RenderBlockFlow>(*renderer.parent()), layout);
+    for (auto run : resolver.rangeForRendererWithOffsets(renderer, start, end)) {
+        // This run is fully contained.
+        if (start <= run.start() && end >= run.end()) {
+            quads.append(renderer.localToAbsoluteQuad(FloatQuad(run.rect()), UseTransforms, wasFixed));
+            continue;
+        }
+        // Partially contained run.
+        TextRun textRun(run.text(), run.logicalLeft(), run.expansion(), run.expansionBehavior());
+        textRun.setTabSize(!style.collapseWhiteSpace(), style.tabSize());
+        LayoutRect runRect(run.rect());
+        // Special case empty ranges.
+        if (start == end) {
+            runRect.setWidth(0);
+            quads.append(renderer.localToAbsoluteQuad(FloatQuad(runRect), UseTransforms, wasFixed));
+            continue;
+        }
+        ASSERT(start < run.end());
+        ASSERT(end > run.start());
+        auto localStart = std::max(run.start(), start) - run.start();
+        auto localEnd = std::min(run.end(), end) - run.start();
+        style.fontCascade().adjustSelectionRectForText(textRun, runRect, localStart, localEnd);
+        quads.append(renderer.localToAbsoluteQuad(FloatQuad(runRect), UseTransforms, wasFixed));
+    }
+    return quads;
+}
+
 #if ENABLE(TREE_DEBUGGING)
 static void printPrefix(int& printedCharacters, int depth)
 {

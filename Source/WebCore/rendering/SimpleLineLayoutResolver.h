@@ -116,6 +116,7 @@ public:
     Range<Iterator> rangeForRect(const LayoutRect&) const;
     Range<Iterator> rangeForRenderer(const RenderObject&) const;
     Iterator runForPoint(const LayoutPoint&) const;
+    Range<Iterator> rangeForRendererWithOffsets(const RenderObject&, unsigned start, unsigned end) const;
 
 private:
     enum class IndexType { First, Last };

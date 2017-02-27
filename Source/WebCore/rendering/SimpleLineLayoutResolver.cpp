@@ -219,6 +219,26 @@ RunResolver::Iterator RunResolver::runForPoint(const LayoutPoint& point) const
     return --it;
 }
 
+Range<RunResolver::Iterator> RunResolver::rangeForRendererWithOffsets(const RenderObject& renderer, unsigned startOffset, unsigned endOffset) const
+{
+    ASSERT(startOffset <= endOffset);
+    auto range = rangeForRenderer(renderer);
+    auto it = range.begin();
+    // Advance to the firt run with the start offset inside.
+    while (it != range.end() && (*it).end() <= startOffset)
+        ++it;
+    if (it == range.end())
+        return { end(), end() };
+    auto rangeBegin = it;
+    // Special case empty ranges that start at the edge of the run. Apparently normal line layout include those.
+    if (endOffset == startOffset && (*it).start() == endOffset)
+        return { rangeBegin, ++it };
+    // Advance beyond the last run with the end offset.
+    while (it != range.end() && (*it).start() < endOffset)
+        ++it;
+    return { rangeBegin, it };
+}
+
 LineResolver::Iterator::Iterator(RunResolver::Iterator runIterator)
     : m_runIterator(runIterator)
 {
