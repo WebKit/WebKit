@@ -217,7 +217,7 @@ unsigned ComplexTextController::offsetForPosition(float h, bool includePartialGl
                 // could use the glyph's "ligature carets". This is available in CoreText via CTFontGetLigatureCaretPositions().
                 unsigned hitIndex = hitGlyphStart + (hitGlyphEnd - hitGlyphStart) * (m_run.ltr() ? x / adjustedAdvance : 1 - x / adjustedAdvance);
                 unsigned stringLength = complexTextRun.stringLength();
-                TextBreakIterator cursorPositionIterator = TextBreakIteratorCache::singleton().take(StringView(complexTextRun.characters(), stringLength), TextBreakIterator::Mode::Cursor, nullAtom);
+                CachedTextBreakIterator cursorPositionIterator(StringView(complexTextRun.characters(), stringLength), TextBreakIterator::Mode::Cursor, nullAtom);
                 unsigned clusterStart;
                 if (cursorPositionIterator.isBoundary(hitIndex))
                     clusterStart = hitIndex;
@@ -228,8 +228,6 @@ unsigned ComplexTextController::offsetForPosition(float h, bool includePartialGl
                     return complexTextRun.stringLocation() + clusterStart;
 
                 unsigned clusterEnd = cursorPositionIterator.following(hitIndex).value_or(stringLength);
-
-                TextBreakIteratorCache::singleton().put(WTFMove(cursorPositionIterator));
 
                 float clusterWidth;
                 // FIXME: The search stops at the boundaries of complexTextRun. In theory, it should go on into neighboring ComplexTextRuns

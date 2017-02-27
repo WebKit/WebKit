@@ -1,3 +1,17 @@
+2017-02-27  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Use RAII for ICU breaking iterators
+        https://bugs.webkit.org/show_bug.cgi?id=168203
+
+        Reviewed by Simon Fraser.
+
+        * wtf/text/TextBreakIterator.h:
+        (WTF::CachedTextBreakIterator::CachedTextBreakIterator):
+        (WTF::CachedTextBreakIterator::~CachedTextBreakIterator):
+        (WTF::CachedTextBreakIterator::preceding):
+        (WTF::CachedTextBreakIterator::following):
+        (WTF::CachedTextBreakIterator::isBoundary):
+
 2017-02-24  Jer Noble  <jer.noble@apple.com>
 
         Add public method to MediaTime for doing timeScale conversion.

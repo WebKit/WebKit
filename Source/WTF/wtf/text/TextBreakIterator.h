@@ -80,7 +80,7 @@ public:
 private:
     friend class TextBreakIteratorCache;
 
-    // Use TextBreakIteratorCache instead of constructing one of these directly.
+    // Use CachedTextBreakIterator instead of constructing one of these directly.
     WTF_EXPORT TextBreakIterator(StringView, Mode, const AtomicString& locale);
 
     void setText(StringView string)
@@ -105,8 +105,14 @@ private:
     AtomicString m_locale;
 };
 
+class CachedTextBreakIterator;
+
 class TextBreakIteratorCache {
-public:
+// Use CachedTextBreakIterator instead of dealing with the cache directly.
+private:
+    friend class NeverDestroyed<TextBreakIteratorCache>;
+    friend class CachedTextBreakIterator;
+
     static TextBreakIteratorCache& singleton()
     {
         static NeverDestroyed<TextBreakIteratorCache> cache;
@@ -139,15 +145,51 @@ public:
             m_unused.remove(0);
     }
 
-private:
-    friend class NeverDestroyed<TextBreakIteratorCache>;
-
     TextBreakIteratorCache()
     {
     }
 
     static constexpr int capacity = 2;
+    // FIXME: Break this up into different Vectors per mode.
     Vector<TextBreakIterator, capacity> m_unused;
+};
+
+// RAII for TextBreakIterator and TextBreakIteratorCache.
+class CachedTextBreakIterator {
+public:
+    CachedTextBreakIterator(StringView string, TextBreakIterator::Mode mode, const AtomicString& locale)
+        : m_backing(TextBreakIteratorCache::singleton().take(string, mode, locale))
+    {
+    }
+
+    ~CachedTextBreakIterator()
+    {
+        TextBreakIteratorCache::singleton().put(WTFMove(m_backing));
+    }
+
+    CachedTextBreakIterator() = delete;
+    CachedTextBreakIterator(const CachedTextBreakIterator&) = delete;
+    CachedTextBreakIterator(CachedTextBreakIterator&&) = default;
+    CachedTextBreakIterator& operator=(const CachedTextBreakIterator&) = delete;
+    CachedTextBreakIterator& operator=(CachedTextBreakIterator&&) = default;
+
+    std::optional<unsigned> preceding(unsigned location) const
+    {
+        return m_backing.preceding(location);
+    }
+
+    std::optional<unsigned> following(unsigned location) const
+    {
+        return m_backing.following(location);
+    }
+
+    bool isBoundary(unsigned location) const
+    {
+        return m_backing.isBoundary(location);
+    }
+
+private:
+    TextBreakIterator m_backing;
 };
 
 // Note: The returned iterator is good only until you get another iterator, with the exception of acquireLineBreakIterator.
@@ -304,6 +346,7 @@ WTF_EXPORT_PRIVATE unsigned numCharactersInGraphemeClusters(StringView, unsigned
 
 }
 
+using WTF::CachedTextBreakIterator;
 using WTF::LazyLineBreakIterator;
 using WTF::LineBreakIteratorMode;
 using WTF::NonSharedCharacterBreakIterator;
