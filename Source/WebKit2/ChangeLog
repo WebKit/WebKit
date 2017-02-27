@@ -1,3 +1,10 @@
+2017-02-27  Alex Christensen  <achristensen@webkit.org>
+
+        [libwebrtc] Enable WebRTC in some Production Builds
+        https://bugs.webkit.org/show_bug.cgi?id=168858
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2017-02-27  Andy Estes  <aestes@apple.com>
 
         Links cannot be activated when running Mobile Safari with external SDK build of WebKit for iOS Simulator
