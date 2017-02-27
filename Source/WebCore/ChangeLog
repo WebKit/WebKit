@@ -1,3 +1,19 @@
+2017-02-27  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Downloads attributes tests are failing
+        https://bugs.webkit.org/show_bug.cgi?id=168871
+
+        Reviewed by Michael Catanzaro.
+
+        Use libsoup to get the suggested filename from the Content-Disposition header instead of buggy
+        filenameFromHTTPContentDisposition().
+
+        Fixes: fast/dom/HTMLAnchorElement/anchor-file-blob-download-includes-doublequote.html
+               fast/dom/HTMLAnchorElement/anchor-file-blob-download-includes-unicode.html
+
+        * platform/network/soup/ResourceResponseSoup.cpp:
+        (WebCore::ResourceResponse::platformSuggestedFilename):
+
 2017-02-27  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] Dragging controls in fullscreen on macOS prevents scrubbing or interacting with controls
