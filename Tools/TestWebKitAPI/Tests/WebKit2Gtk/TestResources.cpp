@@ -786,7 +786,7 @@ static void serverCallback(SoupServer* server, SoupMessage* message, const char*
     } else if (g_str_equal(path, "/javascript.js") || g_str_equal(path, "/javascript-after-redirection.js")) {
         soup_message_body_append(message->response_body, SOUP_MEMORY_STATIC, kJavascript, strlen(kJavascript));
         soup_message_headers_append(message->response_headers, "Content-Type", "text/javascript");
-        soup_message_headers_append(message->response_headers, "Content-Disposition", "filename=JavaScript.js");
+        soup_message_headers_append(message->response_headers, "Content-Disposition", "attachment; filename=JavaScript.js");
     } else if (g_str_equal(path, "/relative-javascript.html")) {
         static const char* javascriptRelativeHTML = "<html><head><script language='javascript' src='remove-this/javascript.js'></script></head><body></body></html>";
         soup_message_body_append(message->response_body, SOUP_MEMORY_STATIC, javascriptRelativeHTML, strlen(javascriptRelativeHTML));

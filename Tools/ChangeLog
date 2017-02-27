@@ -1,3 +1,14 @@
+2017-02-27  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix two GTK+ unit tests failing after r213062.
+
+        We were building wrong Content-Disposition headers that libsoup doesn't parse correctly.
+
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestDownloads.cpp:
+        (addContentDispositionHTTPHeaderToResponse):
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestResources.cpp:
+        (serverCallback):
+
 2017-02-24  Jer Noble  <jer.noble@apple.com>
 
         Add public method to MediaTime for doing timeScale conversion.

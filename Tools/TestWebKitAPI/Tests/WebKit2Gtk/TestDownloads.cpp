@@ -384,7 +384,7 @@ static const char* kServerSuggestedFilename = "webkit-downloaded-file";
 
 static void addContentDispositionHTTPHeaderToResponse(SoupMessage* message)
 {
-    GUniquePtr<char> contentDisposition(g_strdup_printf("filename=%s", kServerSuggestedFilename));
+    GUniquePtr<char> contentDisposition(g_strdup_printf("attachment; filename=%s", kServerSuggestedFilename));
     soup_message_headers_append(message->response_headers, "Content-Disposition", contentDisposition.get());
 }
 
