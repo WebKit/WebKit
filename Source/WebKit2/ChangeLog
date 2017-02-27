@@ -1,5 +1,14 @@
 2017-02-26  Alexey Proskuryakov  <ap@apple.com>
 
+        Remove unimplemented WKResourceLoadStatisticsManagerSetReducedTimestampResolution
+        https://bugs.webkit.org/show_bug.cgi?id=168880
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/API/C/WKResourceLoadStatisticsManager.h:
+
+2017-02-26  Alexey Proskuryakov  <ap@apple.com>
+
         Remove leftover WebKit2 C API function declarations
         https://bugs.webkit.org/show_bug.cgi?id=168879
 
