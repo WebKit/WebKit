@@ -1,3 +1,14 @@
+2017-02-26  Alexey Proskuryakov  <ap@apple.com>
+
+        Remove some old WKSecurityOrigin binary compatibility stubs
+        https://bugs.webkit.org/show_bug.cgi?id=168881
+
+        Reviewed by Dan Bernstein.
+
+        * Shared/API/c/WKSecurityOriginRef.cpp:
+        (WKSecurityOriginGetHost): Deleted.
+        (WKSecurityOriginGetProtocol): Deleted.
+
 2017-02-26  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         REGRESSION (r211312): Double-clicking a word selects it along with the space that follows it

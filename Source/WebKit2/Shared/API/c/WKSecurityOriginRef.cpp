@@ -80,17 +80,3 @@ unsigned short WKSecurityOriginGetPort(WKSecurityOriginRef securityOrigin)
 {
     return toImpl(securityOrigin)->securityOrigin().port().value_or(0);
 }
-
-// For backwards ABI compatibility.
-extern "C" WK_EXPORT WKStringRef WKSecurityOriginGetHost(WKSecurityOriginRef securityOrigin);
-extern "C" WK_EXPORT WKStringRef WKSecurityOriginGetProtocol(WKSecurityOriginRef securityOrigin);
-
-WKStringRef WKSecurityOriginGetHost(WKSecurityOriginRef securityOrigin)
-{
-    return WKSecurityOriginCopyHost(securityOrigin);
-}
-
-WKStringRef WKSecurityOriginGetProtocol(WKSecurityOriginRef securityOrigin)
-{
-    return WKSecurityOriginCopyProtocol(securityOrigin);
-}
