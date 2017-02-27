@@ -113,6 +113,7 @@ public:
 
     WEBCORE_EXPORT bool isAttachment() const;
     WEBCORE_EXPORT String suggestedFilename() const;
+    WEBCORE_EXPORT static String sanitizeSuggestedFilename(const String&);
 
     WEBCORE_EXPORT void includeCertificateInfo() const;
     const std::optional<CertificateInfo>& certificateInfo() const { return m_certificateInfo; };
