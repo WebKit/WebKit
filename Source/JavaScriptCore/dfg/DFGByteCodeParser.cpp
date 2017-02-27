@@ -46,6 +46,7 @@
 #include "Heap.h"
 #include "JSCInlines.h"
 #include "JSModuleEnvironment.h"
+#include "JSModuleNamespaceObject.h"
 #include "NumberConstructor.h"
 #include "ObjectConstructor.h"
 #include "PreciseJumpTargets.h"
@@ -223,6 +224,7 @@ private:
     Node* handlePutByOffset(Node* base, unsigned identifier, PropertyOffset, const InferredType::Descriptor&, Node* value);
     Node* handleGetByOffset(SpeculatedType, Node* base, unsigned identifierNumber, PropertyOffset, const InferredType::Descriptor&, NodeType = GetByOffset);
     bool handleDOMJITGetter(int resultOperand, const GetByIdVariant&, Node* thisNode, unsigned identifierNumber, SpeculatedType prediction);
+    bool handleModuleNamespaceLoad(int resultOperand, SpeculatedType, Node* base, GetByIdStatus);
 
     // Create a presence ObjectPropertyCondition based on some known offset and structure set. Does not
     // check the validity of the condition, but it may return a null one if it encounters a contradiction.
@@ -2844,6 +2846,34 @@ bool ByteCodeParser::handleDOMJITGetter(int resultOperand, const GetByIdVariant&
     return true;
 }
 
+bool ByteCodeParser::handleModuleNamespaceLoad(int resultOperand, SpeculatedType prediction, Node* base, GetByIdStatus getById)
+{
+    if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCell))
+        return false;
+    addToGraph(CheckCell, OpInfo(m_graph.freeze(getById.moduleNamespaceObject())), Edge(base, CellUse));
+
+    // Ideally we wouldn't have to do this Phantom. But:
+    //
+    // For the constant case: we must do it because otherwise we would have no way of knowing
+    // that the scope is live at OSR here.
+    //
+    // For the non-constant case: GetClosureVar could be DCE'd, but baseline's implementation
+    // won't be able to handle an Undefined scope.
+    addToGraph(Phantom, base);
+
+    // Constant folding in the bytecode parser is important for performance. This may not
+    // have executed yet. If it hasn't, then we won't have a prediction. Lacking a
+    // prediction, we'd otherwise think that it has to exit. Then when it did execute, we
+    // would recompile. But if we can fold it here, we avoid the exit.
+    m_graph.freeze(getById.moduleEnvironment());
+    if (JSValue value = m_graph.tryGetConstantClosureVar(getById.moduleEnvironment(), getById.scopeOffset())) {
+        set(VirtualRegister(resultOperand), weakJSConstant(value));
+        return true;
+    }
+    set(VirtualRegister(resultOperand), addToGraph(GetClosureVar, OpInfo(getById.scopeOffset().offset()), OpInfo(prediction), weakJSConstant(getById.moduleEnvironment())));
+    return true;
+}
+
 template<typename ChecksFunctor>
 bool ByteCodeParser::handleTypedArrayConstructor(
     int resultOperand, InternalFunction* function, int registerOffset,
@@ -3437,6 +3467,14 @@ void ByteCodeParser::handleGetById(
         getById = getByIdStatus.makesCalls() ? GetByIdFlush : GetById;
     else
         getById = TryGetById;
+
+    if (getById != TryGetById && getByIdStatus.isModuleNamespace()) {
+        if (handleModuleNamespaceLoad(destinationOperand, prediction, base, getByIdStatus)) {
+            if (m_graph.compilation())
+                m_graph.compilation()->noticeInlinedGetById();
+            return;
+        }
+    }
 
     // Special path for custom accessors since custom's offset does not have any meanings.
     // So, this is completely different from Simple one. But we have a chance to optimize it when we use DOMJIT.

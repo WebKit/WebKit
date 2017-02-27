@@ -34,6 +34,7 @@
 #include "JSScope.h"
 #include "LLIntData.h"
 #include "LowLevelInterpreter.h"
+#include "ModuleNamespaceAccessCase.h"
 #include "PolymorphicAccess.h"
 #include "StructureStubInfo.h"
 #include <wtf/ListDump.h>
@@ -147,6 +148,15 @@ GetByIdStatus GetByIdStatus::computeForStubInfo(const ConcurrentJSLocker& locker
 #endif // ENABLE(DFG_JIT)
 
 #if ENABLE(JIT)
+GetByIdStatus::GetByIdStatus(const ModuleNamespaceAccessCase& accessCase)
+    : m_state(ModuleNamespace)
+    , m_wasSeenInJIT(true)
+    , m_moduleNamespaceObject(accessCase.moduleNamespaceObject())
+    , m_moduleEnvironment(accessCase.moduleEnvironment())
+    , m_scopeOffset(accessCase.scopeOffset())
+{
+}
+
 GetByIdStatus GetByIdStatus::computeForStubInfoWithoutExitSiteFeedback(
     const ConcurrentJSLocker& locker, CodeBlock* profiledBlock, StructureStubInfo* stubInfo, UniquedStringImpl* uid,
     CallLinkStatus::ExitSiteData callExitSiteData)
@@ -195,6 +205,16 @@ GetByIdStatus GetByIdStatus::computeForStubInfoWithoutExitSiteFeedback(
     }
         
     case CacheType::Stub: {
+        if (list->size() == 1) {
+            const AccessCase& access = list->at(0);
+            switch (access.type()) {
+            case AccessCase::ModuleNamespaceLoad:
+                return GetByIdStatus(access.as<ModuleNamespaceAccessCase>());
+            default:
+                break;
+            }
+        }
+
         for (unsigned listIndex = 0; listIndex < list->size(); ++listIndex) {
             const AccessCase& access = list->at(listIndex);
             if (access.viaProxy())
@@ -376,6 +396,7 @@ bool GetByIdStatus::makesCalls() const
     case NoInformation:
     case TakesSlowPath:
     case Custom:
+    case ModuleNamespace:
         return false;
     case Simple:
         for (unsigned i = m_variants.size(); i--;) {
@@ -419,6 +440,9 @@ void GetByIdStatus::dump(PrintStream& out) const
         break;
     case Custom:
         out.print("Custom");
+        break;
+    case ModuleNamespace:
+        out.print("ModuleNamespace");
         break;
     case TakesSlowPath:
         out.print("TakesSlowPath");

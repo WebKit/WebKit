@@ -1,3 +1,107 @@
+2017-02-22  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        JSModuleNamespace object should have IC
+        https://bugs.webkit.org/show_bug.cgi?id=160590
+
+        Reviewed by Saam Barati.
+
+        This patch optimizes accesses to module namespace objects.
+
+        1. Cache the resolutions for module namespace objects.
+
+            When constructing the module namespace object, we already resolves all the exports.
+            The module namespace object caches this result and leverage it in the later access in
+            getOwnPropertySlot. This avoids resolving bindings through resolveExport.
+
+        2. Introduce ModuleNamespaceLoad IC.
+
+            This patch adds new IC for module namespace objects. The mechanism is simple, getOwnPropertySlot
+            tells us about module namespace object resolution. The IC first checks whether the given object
+            is an expected module namespace object. If this check succeeds, we load the value from the module
+            environment.
+
+        3. Introduce DFG/FTL optimization.
+
+            After exploiting module namespace object accesses in (2), DFG can recognize this in ByteCodeParser.
+            DFG will convert it to CheckCell with the namespace object and GetClosureVar from the cached environment.
+            At that time, we have a chance to fold it to the constant.
+
+        This optimization improves the performance of accessing to module namespace objects.
+
+        Before
+            $ time ../../WebKitBuild/module-ic-tot/Release/bin/jsc -m module-assert-access-namespace.js
+            ../../WebKitBuild/module-ic-tot/Release/bin/jsc -m   0.43s user 0.03s system 101% cpu 0.451 total
+            $ time ../../WebKitBuild/module-ic-tot/Release/bin/jsc -m module-assert-access-binding.js
+            ../../WebKitBuild/module-ic-tot/Release/bin/jsc -m   0.08s user 0.02s system 103% cpu 0.104 total
+
+        After
+            $ time ../../WebKitBuild/module-ic/Release/bin/jsc -m module-assert-access-namespace.js
+            ../../WebKitBuild/module-ic/Release/bin/jsc -m   0.11s user 0.01s system 106% cpu 0.109 total
+            $ time ../../WebKitBuild/module-ic/Release/bin/jsc -m module-assert-access-binding.js
+            ../../WebKitBuild/module-ic/Release/bin/jsc -m module-assert-access-binding.j  0.08s user 0.02s system 102% cpu 0.105 total
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/AccessCase.cpp:
+        (JSC::AccessCase::create):
+        (JSC::AccessCase::guardedByStructureCheck):
+        (JSC::AccessCase::canReplace):
+        (JSC::AccessCase::visitWeak):
+        (JSC::AccessCase::generateWithGuard):
+        (JSC::AccessCase::generateImpl):
+        * bytecode/AccessCase.h:
+        * bytecode/GetByIdStatus.cpp:
+        (JSC::GetByIdStatus::GetByIdStatus):
+        (JSC::GetByIdStatus::computeForStubInfoWithoutExitSiteFeedback):
+        (JSC::GetByIdStatus::makesCalls):
+        (JSC::GetByIdStatus::dump):
+        * bytecode/GetByIdStatus.h:
+        (JSC::GetByIdStatus::isModuleNamespace):
+        (JSC::GetByIdStatus::takesSlowPath):
+        (JSC::GetByIdStatus::moduleNamespaceObject):
+        (JSC::GetByIdStatus::moduleEnvironment):
+        (JSC::GetByIdStatus::scopeOffset):
+        * bytecode/ModuleNamespaceAccessCase.cpp: Added.
+        (JSC::ModuleNamespaceAccessCase::ModuleNamespaceAccessCase):
+        (JSC::ModuleNamespaceAccessCase::create):
+        (JSC::ModuleNamespaceAccessCase::~ModuleNamespaceAccessCase):
+        (JSC::ModuleNamespaceAccessCase::clone):
+        (JSC::ModuleNamespaceAccessCase::emit):
+        * bytecode/ModuleNamespaceAccessCase.h: Added.
+        (JSC::ModuleNamespaceAccessCase::moduleNamespaceObject):
+        (JSC::ModuleNamespaceAccessCase::moduleEnvironment):
+        (JSC::ModuleNamespaceAccessCase::scopeOffset):
+        * bytecode/PolymorphicAccess.cpp:
+        (WTF::printInternal):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleModuleNamespaceLoad):
+        (JSC::DFG::ByteCodeParser::handleGetById):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::loadValue):
+        * jit/Repatch.cpp:
+        (JSC::tryCacheGetByID):
+        * runtime/AbstractModuleRecord.cpp:
+        (JSC::AbstractModuleRecord::getModuleNamespace):
+        * runtime/JSModuleNamespaceObject.cpp:
+        (JSC::JSModuleNamespaceObject::finishCreation):
+        (JSC::JSModuleNamespaceObject::visitChildren):
+        (JSC::getValue):
+        (JSC::JSModuleNamespaceObject::getOwnPropertySlot):
+        (JSC::JSModuleNamespaceObject::getOwnPropertyNames):
+        * runtime/JSModuleNamespaceObject.h:
+        (JSC::isJSModuleNamespaceObject):
+        (JSC::JSModuleNamespaceObject::create): Deleted.
+        (JSC::JSModuleNamespaceObject::createStructure): Deleted.
+        (JSC::JSModuleNamespaceObject::moduleRecord): Deleted.
+        * runtime/JSModuleRecord.h:
+        (JSC::JSModuleRecord::moduleEnvironment): Deleted.
+        * runtime/PropertySlot.h:
+        (JSC::PropertySlot::PropertySlot):
+        (JSC::PropertySlot::domJIT):
+        (JSC::PropertySlot::moduleNamespaceSlot):
+        (JSC::PropertySlot::setValueModuleNamespace):
+        (JSC::PropertySlot::setCacheableCustom):
+
 2017-02-21  Mark Lam  <mark.lam@apple.com>
 
         Add more missing exception checks detected by running marathon.js.
