@@ -28,6 +28,8 @@
 
 #include <WebKit/WKBase.h>
 
+#if !TARGET_OS_IPHONE
+
 #ifndef __cplusplus
 #include <stdbool.h>
 #endif
@@ -67,5 +69,7 @@ WK_EXPORT void WKInspectorToggleElementSelection(WKInspectorRef inspector);
 #ifdef __cplusplus
 }
 #endif
+
+#endif // !TARGET_OS_IPHONE
 
 #endif // WKInspector_h

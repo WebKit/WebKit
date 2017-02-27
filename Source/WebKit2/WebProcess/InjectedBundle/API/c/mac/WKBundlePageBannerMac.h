@@ -27,6 +27,9 @@
 #define WKBundlePageBannerMac_h
 
 #include <WebKit/WKBase.h>
+
+#if !TARGET_OS_IPHONE
+
 #include <WebKit/WKBundlePageBanner.h>
 
 @class CALayer;
@@ -43,5 +46,6 @@ WK_EXPORT CALayer * WKBundlePageBannerGetLayer(WKBundlePageBannerRef pageBanner)
 }
 #endif
 
+#endif // !TARGET_OS_IPHONE
 
 #endif /* WKBundlePageBannerMac_h */
