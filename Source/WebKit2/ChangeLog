@@ -1,3 +1,18 @@
+2017-02-27  Alex Christensen  <achristensen@webkit.org>
+
+        Optimize checkWebRTCAvailability
+        https://bugs.webkit.org/show_bug.cgi?id=168913
+
+        Reviewed by Darin Adler.
+
+        We can optimize startup time by using RTLD_LAZY instead of RTLD_NOW because we don't need to load all the symbols.
+        We just need to check whether libwebrtc.dylib can be found and is a valid dylib for the current architecture.
+        Also, initialize a static bool so it only needs to be checked once.  Right now it's only used when initializing settings,
+        but if we use it for other things in the future there will be no need to reopen the dylib.
+
+        * UIProcess/WebPreferences.cpp:
+        (WebKit::checkWebRTCAvailability):
+
 2017-02-26  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Unreviewed, revert all temporary build fixes for data interaction

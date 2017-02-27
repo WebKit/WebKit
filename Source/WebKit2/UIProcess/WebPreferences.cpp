@@ -199,11 +199,14 @@ FOR_EACH_WEBKIT_DEBUG_PREFERENCE(DEFINE_PREFERENCE_GETTER_AND_SETTERS)
 bool checkWebRTCAvailability()
 {
 #if USE(LIBWEBRTC)
-    void* libwebrtcLibrary = dlopen("libwebrtc.dylib", RTLD_NOW);
-    if (!libwebrtcLibrary)
-        return false;
-    dlclose(libwebrtcLibrary);
-    return true;
+    static bool available = [&] {
+        void* libwebrtcLibrary = dlopen("libwebrtc.dylib", RTLD_LAZY);
+        if (!libwebrtcLibrary)
+            return false;
+        dlclose(libwebrtcLibrary);
+        return true;
+    }();
+    return available;
 #else
     return true;
 #endif
