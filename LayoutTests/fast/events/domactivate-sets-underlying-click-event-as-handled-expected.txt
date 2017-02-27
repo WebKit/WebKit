@@ -1,3 +1,5 @@
+OPEN FILE PANEL
+OPEN FILE PANEL
 To test manually, click on all the form elements (except the textbox) and the details/summary element. The anchor shouldn't be activated (i.e. you shouldn't see any "anchor activated" messages).
 
 Focusing [object HTMLInputElement] type=text and pressing enter

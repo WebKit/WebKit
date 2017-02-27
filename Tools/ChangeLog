@@ -1,3 +1,57 @@
+2017-02-27  Andy Estes  <aestes@apple.com>
+
+        Add a way to test file input without relying on drag and drop
+        https://bugs.webkit.org/show_bug.cgi?id=168848
+        <rdar://problem/22258242>
+
+        Reviewed by Tim Horton.
+
+        Existing layout tests relied on drag and drop support in EventSender to configure a file
+        input element for testing. This had several problems:
+
+        1. WebKitTestRunner has no support for beginDragWithFiles(), and DumpRenderTree doesn't
+           support it on iOS.
+        2. We have no test coverage for selecting files via the runOpenPanel UI delegate, leading to
+           bugs like webkit.org/b/159686.
+
+        Even if we fixed (1), we'd still have a test coverage gap due to (2), so this patch
+        introduces a way for a test to specify the list of files that should be selected by the
+        runOpenPanel UI delegate: TestRunner.setOpenPanelFiles(). It also creates versions of a
+        number of existing file input tests using TestRunner.setOpenPanelFiles() instead of
+        EventSender.beginDragWithFiles().
+
+        * DumpRenderTree/ios/DumpRenderTreeBrowserView.mm:
+        (-[DumpRenderTreeBrowserView webView:runOpenPanelForFileButtonWithResultListener:configuration:]):
+        Overrode to call the corresponding method on UIDelegate.
+        * DumpRenderTree/TestRunner.cpp:
+        (setOpenPanelFilesCallback): Added to call TestRunner::setOpenPanelFiles().
+        (TestRunner::staticFunctions): Registered setOpenPanelFiles.
+        (TestRunner::setOpenPanelFiles): Added. Converts the JavaScript array of file paths to a
+        std::vector of std::strings.
+        * DumpRenderTree/TestRunner.h:
+        (TestRunner::openPanelFiles):
+        * DumpRenderTree/mac/UIDelegate.mm:
+        (-[UIDelegate webView:runOpenPanelForFileButtonWithResultListener:allowMultipleFiles:]):
+        Added. Converts the array of file paths to an NSArray of NSURLs, resolving the file paths
+        relative to the current test URL. Returns either the first item or all items depending on
+        the value of allowMultipleFiles.
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl: Defined setOpenPanelFiles.
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::setOpenPanelFiles): Added. Converts the JavaScript array of file paths to
+        a WKArray of WKURLs, resolving the file paths relative to the current test URL, and sends
+        the WKArray to the UI process with the "SetOpenPanelFileURLs" message.
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::runOpenPanel): Calls the WKOpenPanelResultListener with either the first item or all
+        items, depending on the value of WKOpenPanelParametersGetAllowsMultipleFiles().
+        (WTR::TestController::resetStateToConsistentValues): Clear m_openPanelFileURLs.
+        * WebKitTestRunner/TestController.h:
+        (WTR::TestController::openPanelFileURLs):
+        (WTR::TestController::setOpenPanelFileURLs):
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveMessageFromInjectedBundle): Added code to handle the
+        "SetOpenPanelFileURLs" message.
+
 2017-02-26  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         REGRESSION (r211312): Double-clicking a word selects it along with the space that follows it

@@ -2887,3 +2887,7 @@ imported/w3c/web-platform-tests/fetch/api/redirect/redirect-location.html [ Fail
 [ Debug ] fast/frames/exponential-frames.html [ Skip ]
 
 webkit.org/b/168053 pageoverlay/overlay-remove-reinsert-view.html [ Pass Failure ]
+
+# Bundle upload is not supported on iOS
+fast/files/filereader-zip-bundle-using-open-panel.html [ Skip ]
+http/tests/local/fileapi/upload-zip-bundle-as-blob-using-open-panel.html [ Skip ]

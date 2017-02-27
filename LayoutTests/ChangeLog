@@ -1,5 +1,76 @@
 2017-02-27  Andy Estes  <aestes@apple.com>
 
+        Add a way to test file input without relying on drag and drop
+        https://bugs.webkit.org/show_bug.cgi?id=168848
+        <rdar://problem/22258242>
+
+        Reviewed by Tim Horton.
+
+        Added versions of existing file input tests that use TestRunner.setOpenPanelFiles() instead
+        of EventSender.beginDragWithFiles().
+
+        * fast/dom/FileList-iterator-using-open-panel-expected.txt: Added.
+        * fast/dom/FileList-iterator-using-open-panel.html: Added.
+        * fast/files/apply-blob-url-to-img-using-open-panel-expected.txt: Added.
+        * fast/files/apply-blob-url-to-img-using-open-panel.html: Added.
+        * fast/files/apply-blob-url-to-xhr-using-open-panel-expected.txt: Added.
+        * fast/files/apply-blob-url-to-xhr-using-open-panel.html: Added.
+        * fast/files/file-list-test-using-open-panel-expected.txt: Added.
+        * fast/files/file-list-test-using-open-panel.html: Added.
+        * fast/files/file-reader-abort-using-open-panel-expected.txt: Added.
+        * fast/files/file-reader-abort-using-open-panel.html: Added.
+        * fast/files/file-reader-directory-crash-using-open-panel-expected.txt: Added.
+        * fast/files/file-reader-directory-crash-using-open-panel.html: Added.
+        * fast/files/filereader-zip-bundle-using-open-panel-expected.txt: Added.
+        * fast/files/filereader-zip-bundle-using-open-panel.html: Added.
+        * fast/forms/file/file-input-reset-using-open-panel-expected.html: Added.
+        * fast/forms/file/file-input-reset-using-open-panel.html: Added.
+        * fast/forms/file/file-reset-in-change-using-open-panel-expected.html: Added.
+        * fast/forms/file/file-reset-in-change-using-open-panel.html: Added.
+        * fast/forms/file/get-file-upload-using-open-panel-expected.txt: Added.
+        * fast/forms/file/get-file-upload-using-open-panel.html: Added.
+        * fast/forms/file/input-file-value-using-open-panel-expected.txt: Added.
+        * fast/forms/file/input-file-value-using-open-panel.html: Added.
+        * fast/forms/file/input-file-write-files-using-open-panel-expected.txt: Added.
+        * fast/forms/file/input-file-write-files-using-open-panel.html: Added.
+        * fast/history/page-cache-createObjectURL-using-open-panel-expected.txt: Added.
+        * fast/history/page-cache-createObjectURL-using-open-panel.html: Added.
+        * http/tests/local/blob/resources/hybrid-blob-util.js:
+        (this.setupForTests):
+        (this.runTestsWithDrag):
+        (this.runTestsWithOpenPanel):
+        (this.runTests):
+        * http/tests/local/blob/script-tests/send-hybrid-blob-using-open-panel.js: Added.
+        (runHybridBlobTest):
+        (runTests.F):
+        (runTests.D):
+        (runTests):
+        * http/tests/local/blob/send-hybrid-blob-using-open-panel-expected.txt: Added.
+        * http/tests/local/blob/send-hybrid-blob-using-open-panel.html: Added.
+        * http/tests/local/fileapi/file-last-modified-after-delete-using-open-panel-expected.txt: Added.
+        * http/tests/local/fileapi/file-last-modified-after-delete-using-open-panel.html: Added.
+        * http/tests/local/fileapi/file-last-modified-using-open-panel-expected.txt: Added.
+        * http/tests/local/fileapi/file-last-modified-using-open-panel.html: Added.
+        * http/tests/local/fileapi/resources/setup-file-input-element-for-drag.js:
+        (setFileInputChangeCallback):
+        * http/tests/local/fileapi/script-tests/file-last-modified-after-delete-using-open-panel.js: Added.
+        (onFileChange):
+        (runTest):
+        * http/tests/local/fileapi/script-tests/file-last-modified-using-open-panel.js: Added.
+        (onFileChange):
+        (runTest):
+        * http/tests/local/fileapi/upload-zip-bundle-as-blob-using-open-panel-expected.txt: Added.
+        * http/tests/local/fileapi/upload-zip-bundle-as-blob-using-open-panel.html: Added.
+        * http/tests/local/formdata/send-form-data-constructed-from-form-using-open-panel-expected.txt: Added.
+        * http/tests/local/formdata/send-form-data-constructed-from-form-using-open-panel.html: Added.
+        * http/tests/local/formdata/send-form-data-with-empty-file-filename-using-open-panel-expected.txt: Added.
+        * http/tests/local/formdata/send-form-data-with-empty-file-filename-using-open-panel.html: Added.
+        * media/video-src-blob-using-open-panel-expected.txt: Added.
+        * media/video-src-blob-using-open-panel.html: Added.
+        * platform/ios-simulator/TestExpectations:
+
+2017-02-27  Andy Estes  <aestes@apple.com>
+
         Links cannot be activated when running Mobile Safari with external SDK build of WebKit for iOS Simulator
         https://bugs.webkit.org/show_bug.cgi?id=141906
 

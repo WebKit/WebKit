@@ -1,7 +1,8 @@
-var HybridBlobTestUtil = function(testFunc, opt_filePaths) {
+var HybridBlobTestUtil = function(testFunc, opt_filePaths, opt_useOpenPanel) {
     this.testCallbackFunc = testFunc;
 
     this.testFilePaths = opt_filePaths;
+    this.testUseOpenPanel = opt_useOpenPanel;
     this.testFiles = [];
     this.testFileMap = {};
     this.fileInput = null;
@@ -49,7 +50,7 @@ var HybridBlobTestUtil = function(testFunc, opt_filePaths) {
         this.testCallbackFunc();
     };
 
-    this.runTestsWithDrag = function()
+    this.setupForTests = function()
     {
         this.fileInput = document.createElement("input");
         this.fileInput.id = "file";
@@ -68,19 +69,34 @@ var HybridBlobTestUtil = function(testFunc, opt_filePaths) {
             }
             this.testFilePaths = filePaths;
         }
+    };
+
+    this.runTestsWithDrag = function()
+    {
+        this.setupForTests();
 
         eventSender.beginDragWithFiles(this.testFilePaths);
         eventSender.mouseMoveTo(10, 10);
         eventSender.mouseUp();
     };
 
+    this.runTestsWithOpenPanel = function()
+    {
+        this.setupForTests();
+
+        testRunner.setOpenPanelFiles(this.testFilePaths);
+        UIHelper.activateAt(10, 10);
+    };
+
     this.runTests = function() {
         if (!this.testCallbackFunc)
             testFailed("Test body function is not initialized.");
-        else if (this.testFilePaths)
-            this.runTestsWithDrag();
-        else
+        else if (!this.testFilePaths)
             this.testCallbackFunc();
+        else if (this.testUseOpenPanel)
+            this.runTestsWithOpenPanel();
+        else
+            this.runTestsWithDrag();
     };
 
     this.FileItem = function(path)

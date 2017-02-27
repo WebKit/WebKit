@@ -1795,6 +1795,13 @@ static JSValueRef setSpellCheckerLoggingEnabledCallback(JSContextRef context, JS
     return JSValueMakeUndefined(context);
 }
 
+static JSValueRef setOpenPanelFilesCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    if (argumentCount == 1)
+        static_cast<TestRunner*>(JSObjectGetPrivate(thisObject))->setOpenPanelFiles(context, arguments[0]);
+    return JSValueMakeUndefined(context);
+}
+
 // Static Values
 
 static JSValueRef getTimeoutCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
@@ -2242,6 +2249,7 @@ JSStaticFunction* TestRunner::staticFunctions()
         { "runUIScript", runUIScriptCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "imageCountInGeneralPasteboard", imageCountInGeneralPasteboardCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setSpellCheckerLoggingEnabled", setSpellCheckerLoggingEnabledCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "setOpenPanelFiles", setOpenPanelFilesCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { 0, 0, 0 }
     };
 
@@ -2438,6 +2446,33 @@ void TestRunner::uiScriptDidComplete(const String& result, unsigned callbackID)
 void TestRunner::setAllowsAnySSLCertificate(bool allowsAnySSLCertificate)
 {
     WebCoreTestSupport::setAllowsAnySSLCertificate(allowsAnySSLCertificate);
+}
+
+void TestRunner::setOpenPanelFiles(JSContextRef context, JSValueRef filesValue)
+{
+    if (!JSValueIsArray(context, filesValue))
+        return;
+
+    JSObjectRef files = JSValueToObject(context, filesValue, nullptr);
+    static auto lengthProperty = JSRetainPtr<JSStringRef>(Adopt, JSStringCreateWithUTF8CString("length"));
+    JSValueRef filesLengthValue = JSObjectGetProperty(context, files, lengthProperty.get(), nullptr);
+    if (!JSValueIsNumber(context, filesLengthValue))
+        return;
+
+    m_openPanelFiles.clear();
+    auto filesLength = static_cast<size_t>(JSValueToNumber(context, filesLengthValue, nullptr));
+    for (size_t i = 0; i < filesLength; ++i) {
+        JSValueRef fileValue = JSObjectGetPropertyAtIndex(context, files, i, nullptr);
+        if (!JSValueIsString(context, fileValue))
+            continue;
+
+        auto file = JSRetainPtr<JSStringRef>(Adopt, JSValueToStringCopy(context, fileValue, nullptr));
+        size_t fileBufferSize = JSStringGetMaximumUTF8CStringSize(file.get()) + 1;
+        auto fileBuffer = std::make_unique<char[]>(fileBufferSize);
+        JSStringGetUTF8CString(file.get(), fileBuffer.get(), fileBufferSize);
+
+        m_openPanelFiles.push_back(fileBuffer.get());
+    }
 }
 
 void TestRunner::cleanup()

@@ -262,4 +262,7 @@ interface TestRunner {
     void setStatisticsShouldClassifyResourcesBeforeDataRecordsRemoval(boolean value);
     void setStatisticsMinimumTimeBetweeenDataRecordsRemoval(double seconds);
     void statisticsResetToConsistentState();
+
+    // Open panel
+    void setOpenPanelFiles(object filesArray);
 };

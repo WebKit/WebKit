@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/ui-helper.js"></script>
+
+<input type="file" name="file" id="file" onchange="onInputFileChange()"/>
+<img id='imgToReplace1' src=''/>
+<img id='imgToReplace2' src=''/>
+
+<script>
+description('Tests that a page calling URL.createObjectURL() can use the page cache.');
+window.jsTestIsAsync = true;
+var blobURL = null;
+
+if (window.testRunner)
+    window.testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
+
+function onInputFileChange()
+{
+    var file = document.getElementById("file").files[0];
+    img = document.getElementById('imgToReplace1');
+    shouldBe("img.width", "0");
+    shouldBe("img.height", "0");
+    img.onload = onImgLoad;
+    blobURL = URL.createObjectURL(file);
+    evalAndLog("img.src = blobURL");
+}
+
+function onImgLoad()
+{
+    img = document.getElementById('imgToReplace1');
+    testPassed("Image loaded");
+    shouldBe("img.width", "76");
+    shouldBe("img.height", "103");
+
+    // Force a back navigation back to this page.
+    window.location.href = "resources/page-cache-helper.html";
+}
+
+function onImg2Load()
+{
+    img2 = document.getElementById('imgToReplace2');
+    testPassed("Image2 loaded");
+    shouldBe("img2.width", "76");
+    shouldBe("img2.height", "103");
+
+    finishJSTest();
+}
+
+window.addEventListener("pageshow", function(event) {
+    if (event.persisted) {
+        testPassed("Page did enter and was restored from the page cache");
+
+        debug("Reuse the previous blobURL");
+        img2 = document.getElementById('imgToReplace2');
+        img2.onload = onImg2Load;
+        evalAndLog("img2.src = blobURL");
+    }
+}, false);
+
+window.addEventListener("pagehide", function(event) {
+    if (!event.persisted) {
+        testFailed("Page did not enter the page cache.");
+        finishJSTest();
+    }
+}, false);
+
+window.addEventListener('load', function() {
+    testRunner.setOpenPanelFiles(['../files/resources/abe.png']);
+    var element = document.getElementById('file');
+    var centerX = element.offsetLeft + element.offsetWidth / 2;
+    var centerY = element.offsetTop + element.offsetHeight / 2;
+    UIHelper.activateAt(centerX, centerY);
+}, false);
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

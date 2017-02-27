@@ -363,6 +363,9 @@ public:
     void setStatisticsMinimumTimeBetweeenDataRecordsRemoval(double);
     void statisticsResetToConsistentState();
 
+    // Open panel
+    void setOpenPanelFiles(JSValueRef);
+
 private:
     TestRunner();
 

@@ -363,6 +363,31 @@ DumpRenderTreeDraggingInfo *draggingInfo = nil;
     return [NSData dataWithBytes:"\x00\x01\x02\x03\x04\x05\x06\x07\x08\x09\x0a\x0b\x0c\x0d\x0e\x0f" length:16];
 }
 
+- (void)webView:(WebView *)sender runOpenPanelForFileButtonWithResultListener:(id<WebOpenPanelResultListener>)resultListener allowMultipleFiles:(BOOL)allowMultipleFiles
+{
+    printf("OPEN FILE PANEL\n");
+
+    auto& openPanelFiles = gTestRunner->openPanelFiles();
+    if (openPanelFiles.empty()) {
+        [resultListener cancel];
+        return;
+    }
+
+    NSURL *baseURL = [NSURL URLWithString:[NSString stringWithUTF8String:gTestRunner->testURL().c_str()]];
+    auto filePaths = adoptNS([[NSMutableArray alloc] initWithCapacity:openPanelFiles.size()]);
+    for (auto& filePath : openPanelFiles) {
+        NSURL *fileURL = [NSURL fileURLWithPath:[NSString stringWithUTF8String:filePath.c_str()] relativeToURL:baseURL];
+        [filePaths addObject:fileURL.path];
+    }
+
+    if (allowMultipleFiles) {
+        [resultListener chooseFilenames:filePaths.get()];
+        return;
+    }
+
+    [resultListener chooseFilename:[filePaths firstObject]];
+}
+
 - (void)dealloc
 {
 #if !PLATFORM(IOS)

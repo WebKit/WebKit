@@ -30,6 +30,8 @@
 
 #import <WebCore/WebCoreThreadRun.h>
 #import <WebKit/WebCoreThread.h>
+#import <WebKit/WebUIDelegate.h>
+#import <WebKit/WebUIKitDelegate.h>
 #import <WebKit/WebView.h>
 
 @interface UIWebBrowserView (WebUIKitDelegate)
@@ -76,6 +78,13 @@
     // Forward this to DRT UIDelegate since iOS WebKit by default sends this message to UIKitDelegate.
     id uiDelegate = [[self webView] UIDelegate];
     [uiDelegate webView:sender addMessageToConsole:dictionary withSource:source];
+}
+
+- (void)webView:(WebView *)webView runOpenPanelForFileButtonWithResultListener:(id <WebOpenPanelResultListener>)resultListener configuration:(NSDictionary *)configuration
+{
+    WebThreadLock();
+    BOOL allowMultipleFiles = [configuration[WebOpenPanelConfigurationAllowMultipleFilesKey] boolValue];
+    [webView.UIDelegate webView:webView runOpenPanelForFileButtonWithResultListener:resultListener allowMultipleFiles:allowMultipleFiles];
 }
 
 @end

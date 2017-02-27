@@ -28,9 +28,25 @@ fileInput.addEventListener("drop", function() {
     event.preventDefault();
 }, false);
 
+var fileInputChangeCallback = null;
+fileInput.addEventListener("change", function() {
+    if (event.target.files.length == 1)
+        testPassed("event.target.files contains a File object.");
+    else
+        testPassed("event.target.files does not contain a File object.");
+
+    if (fileInputChangeCallback)
+        fileInputChangeCallback(event.target.files[0]);
+}, false);
+
 function setFileInputDropCallback(fileInputDropCallbackFunc)
 {
     fileInputDropCallback = fileInputDropCallbackFunc;
+}
+
+function setFileInputChangeCallback(fileInputChangeCallbackFunc)
+{
+    fileInputChangeCallback = fileInputChangeCallbackFunc;
 }
 
 function moveMouseToCenterOfElement(element)

@@ -162,6 +162,9 @@ public:
     void setStatisticsMinimumTimeBetweeenDataRecordsRemoval(double);
     void statisticsResetToConsistentState();
 
+    WKArrayRef openPanelFileURLs() const { return m_openPanelFileURLs.get(); }
+    void setOpenPanelFileURLs(WKArrayRef fileURLs) { m_openPanelFileURLs = fileURLs; }
+
 private:
     WKRetainPtr<WKPageConfigurationRef> generatePageConfiguration(WKContextConfigurationRef);
     WKRetainPtr<WKContextConfigurationRef> generateContextConfiguration() const;
@@ -362,6 +365,8 @@ private:
     bool m_shouldShowWebView { false };
     
     bool m_shouldDecideNavigationPolicyAfterDelay { false };
+
+    WKRetainPtr<WKArrayRef> m_openPanelFileURLs;
 
     std::unique_ptr<EventSenderProxy> m_eventSenderProxy;
 

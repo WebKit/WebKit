@@ -1,10 +1,11 @@
 OPEN FILE PANEL
-
-This tests that when AXPress is used DOMActivate will be handled by the input file type.
+Test File.lastModifiedDate.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
-DOMActivate was called
+
+PASS event.target.files contains a File object.
+PASS file.lastModified verified
 PASS successfullyParsed is true
 
 TEST COMPLETE

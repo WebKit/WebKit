@@ -1,3 +1,4 @@
+OPEN FILE PANEL
 
 This tests that when AXPress is used DOMActivate will be handled by the input file type.
 

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/ui-helper.js"></script>
+</head>
+<body>
+<input type="file" onchange="changed(event)"></input>
+<div id="console"></div>
+<script>
+description("Tests that FileList objects have an iterator.");
+jsTestIsAsync = true;
+
+function runTest()
+{
+    testRunner.setOpenPanelFiles(['test.txt']);
+
+    var inputElement = document.getElementsByTagName('input')[0];
+    UIHelper.activateAt(inputElement.offsetLeft + inputElement.offsetWidth / 2,
+        inputElement.offsetTop + inputElement.offsetHeight / 2);
+}
+
+function changed(event)
+{
+    fileList = event.target.files;
+    shouldBe("fileList.__proto__", "FileList.prototype");
+    shouldBeTrue("Symbol.iterator in fileList");
+    forOfSucceeded = false;
+    try {
+        for (var file of fileList) { }
+        forOfSucceeded = true;
+    } catch (e) {
+        forOfSucceeded = false;
+    }
+    shouldBeTrue("forOfSucceeded");
+
+    shouldBeFalse("'entries' in fileList");
+    shouldBeFalse("'keys' in fileList");
+    shouldBeFalse("'forEach' in fileList");
+    shouldBeFalse("'values' in fileList");
+
+    finishJSTest();
+}
+
+runTest();
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

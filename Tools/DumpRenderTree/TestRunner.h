@@ -377,6 +377,9 @@ public:
 
     void setSpellCheckerLoggingEnabled(bool);
 
+    const std::vector<std::string>& openPanelFiles() const { return m_openPanelFiles; }
+    void setOpenPanelFiles(JSContextRef, JSValueRef);
+
 private:
     TestRunner(const std::string& testURL, const std::string& expectedPixelHash);
 
@@ -466,6 +469,8 @@ private:
 
     std::unique_ptr<WTR::UIScriptContext> m_UIScriptContext;
     UIScriptInvocationData* m_pendingUIScriptInvocationData { nullptr };
+
+    std::vector<std::string> m_openPanelFiles;
 
     static JSClassRef getJSClass();
     static JSStaticValue* staticValues();
