@@ -1,3 +1,19 @@
+2017-02-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        NetworkProcess: Stop disabling buffering when NETWORK_CACHE is disabled in build
+        https://bugs.webkit.org/show_bug.cgi?id=168637
+
+        Reviewed by Alex Christensen.
+
+        It was added in r193752 as part of bug #137692 to fix an infinite loop in network process that happened in EFL
+        because they didn't enable the network cache at that time. I think that was actually a workaround, and it was
+        added without any comment so it has stayed there even when EFL enabled disk cache, and now that is gone. Looking
+        at current code I see no reason why buffering can't work with the disk cache disabled, so I think it's time to
+        remove that workaround.
+
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::maximumBufferingTime):
+
 2017-02-21  Maureen Daum  <mdaum@apple.com>
 
         Check what LocalStorage data exists in deleteDatabasesModifiedSince() before attempting deletion.
