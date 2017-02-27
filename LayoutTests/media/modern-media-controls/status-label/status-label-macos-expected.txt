@@ -1,0 +1,17 @@
+Testing StatusText properties when used in MacOSInlineMediaControls.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.body.contains(mediaControls.statusLabel.element) became true
+PASS style.top is "14.5px"
+PASS style.mixBlendMode is "plus-lighter"
+PASS rgba(style.color).r is 255
+PASS rgba(style.color).g is 255
+PASS rgba(style.color).b is 255
+PASS rgba(style.color).a is within 0.001 of 0.45
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

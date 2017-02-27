@@ -1,3 +1,21 @@
+2017-02-27  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] StatusLabel should use similar properties to TimeLabel
+        https://bugs.webkit.org/show_bug.cgi?id=168938
+        <rdar://problem/30743185>
+
+        Reviewed by Dean Jackson.
+
+        We add new tests to ensure we test all the various styles that can be applied
+        to a StatusLabel.
+
+        * media/modern-media-controls/status-label/status-label-expected.txt:
+        * media/modern-media-controls/status-label/status-label-ios-expected.txt: Added.
+        * media/modern-media-controls/status-label/status-label-ios.html: Added.
+        * media/modern-media-controls/status-label/status-label-macos-expected.txt: Added.
+        * media/modern-media-controls/status-label/status-label-macos.html: Added.
+        * media/modern-media-controls/status-label/status-label.html:
+
 2017-02-27  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Unprefix -webkit-line-break

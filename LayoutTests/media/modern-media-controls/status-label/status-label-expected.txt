@@ -19,10 +19,6 @@ PASS style.textOverflow is "ellipsis"
 PASS style.whiteSpace is "nowrap"
 PASS style.overflow is "hidden"
 PASS style.fontSize is "14px"
-PASS rgba(style.color).r is 255
-PASS rgba(style.color).g is 255
-PASS rgba(style.color).b is 255
-PASS rgba(style.color).a is within 0.001 of 0.572
 
 PASS successfullyParsed is true
 

@@ -94,9 +94,10 @@
     -webkit-mask-position-y: 13px;
 }
 
-/* Time labels */
+/* Labels */
 
-.media-controls.ios.inline .time-label {
+.media-controls.ios.inline .time-label,
+.media-controls.ios.inline .status-label {
     top: 14.5px;
     color: black;
 }

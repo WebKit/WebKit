@@ -1,3 +1,25 @@
+2017-02-27  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] StatusLabel should use similar properties to TimeLabel
+        https://bugs.webkit.org/show_bug.cgi?id=168938
+        <rdar://problem/30743185>
+
+        Reviewed by Dean Jackson.
+
+        Ensure we use the same styling properties for StatusLabel and TimeLabel.
+
+        Tests: media/modern-media-controls/status-label/status-label-ios.html
+               media/modern-media-controls/status-label/status-label-macos.html
+
+        * Modules/modern-media-controls/controls/ios-inline-media-controls.css:
+        (.media-controls.ios.inline .time-label,):
+        (.media-controls.ios.inline .time-label): Deleted.
+        * Modules/modern-media-controls/controls/macos-media-controls.css:
+        (.media-controls.mac > .controls-bar .time-label,):
+        (.media-controls.mac > .controls-bar .time-label): Deleted.
+        * Modules/modern-media-controls/controls/status-label.css:
+        (.status-label):
+
 2017-02-27  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Rename ICU cursor iterator to caret iterator
