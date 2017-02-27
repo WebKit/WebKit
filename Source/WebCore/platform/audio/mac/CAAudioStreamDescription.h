@@ -73,7 +73,8 @@ public:
     }
     bool operator!=(const AudioStreamDescription& other) { return !operator == (other); }
 
-    const AudioStreamBasicDescription& streamDescription() { return m_streamDescription; }
+    const AudioStreamBasicDescription& streamDescription() const { return m_streamDescription; }
+    AudioStreamBasicDescription& streamDescription() { return m_streamDescription; }
 
 private:
     void calculateFormat();

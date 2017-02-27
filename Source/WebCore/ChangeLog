@@ -1,3 +1,35 @@
+2017-02-21  Jer Noble  <jer.noble@apple.com>
+
+        AudioTrackPrivateMediaStreamCocoa should not exclusively lock its read and write threads.
+        https://bugs.webkit.org/show_bug.cgi?id=168643
+
+        Reviewed by Eric Carlson.
+
+        Locking the write thread causes the read thread to drop audio samples and generates audible
+        glitches, and the realtime audio thread backing the read thread should never block. There's
+        no real reason to lock these threads against one another here; they both rely on the
+        AudioSampleDataSource and it's CARingBuffer to safely and simultaneously read and write
+        data.
+
+        The one piece which locks previously protected against unsafe access was during creation of
+        the audio unit.  Without a lock, the audio unit could begin playback after the unit was
+        created and assigned to m_remoteIOUnit but before the ring buffer was created. To protect
+        against this possibility, create the unit, set the input and output descriptions, but only
+        assign the new audio unit to m_remoteIOUnit after the ring buffer has been created and
+        initialized.
+
+        * platform/audio/mac/CAAudioStreamDescription.h:
+        * platform/mediastream/mac/AudioTrackPrivateMediaStreamCocoa.cpp:
+        (WebCore::AudioTrackPrivateMediaStreamCocoa::~AudioTrackPrivateMediaStreamCocoa):
+        (WebCore::AudioTrackPrivateMediaStreamCocoa::playInternal):
+        (WebCore::AudioTrackPrivateMediaStreamCocoa::play):
+        (WebCore::AudioTrackPrivateMediaStreamCocoa::pause):
+        (WebCore::AudioTrackPrivateMediaStreamCocoa::setVolume):
+        (WebCore::AudioTrackPrivateMediaStreamCocoa::createAudioUnit):
+        (WebCore::AudioTrackPrivateMediaStreamCocoa::setupAudioUnit): Renamed to createAudioUnit()
+        (WebCore::AudioTrackPrivateMediaStreamCocoa::audioSamplesAvailable):
+        * platform/mediastream/mac/AudioTrackPrivateMediaStreamCocoa.h:
+
 2017-02-27  Youenn Fablet  <youenn@apple.com>
 
         [WebRTC] RealtimOutgoingVideoSource should not need to do image conversion

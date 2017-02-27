@@ -48,8 +48,6 @@ AudioTrackPrivateMediaStreamCocoa::AudioTrackPrivateMediaStreamCocoa(MediaStream
 
 AudioTrackPrivateMediaStreamCocoa::~AudioTrackPrivateMediaStreamCocoa()
 {
-    std::lock_guard<Lock> lock(m_internalStateLock);
-
     streamTrack().source().removeObserver(*this);
 
     if (m_dataSource)
@@ -68,8 +66,6 @@ AudioTrackPrivateMediaStreamCocoa::~AudioTrackPrivateMediaStreamCocoa()
 
 void AudioTrackPrivateMediaStreamCocoa::playInternal()
 {
-    ASSERT(m_internalStateLock.isHeld());
-
     if (m_isPlaying)
         return;
 
@@ -85,14 +81,11 @@ void AudioTrackPrivateMediaStreamCocoa::playInternal()
 
 void AudioTrackPrivateMediaStreamCocoa::play()
 {
-    std::lock_guard<Lock> lock(m_internalStateLock);
     playInternal();
 }
 
 void AudioTrackPrivateMediaStreamCocoa::pause()
 {
-    std::lock_guard<Lock> lock(m_internalStateLock);
-
     m_isPlaying = false;
     m_autoPlay = false;
 
@@ -109,9 +102,9 @@ void AudioTrackPrivateMediaStreamCocoa::setVolume(float volume)
         m_dataSource->setVolume(m_volume);
 }
 
-OSStatus AudioTrackPrivateMediaStreamCocoa::setupAudioUnit()
+AudioComponentInstance AudioTrackPrivateMediaStreamCocoa::createAudioUnit(const CAAudioStreamDescription& inputDescription, CAAudioStreamDescription& outputDescription)
 {
-    ASSERT(m_internalStateLock.isHeld());
+    AudioComponentInstance remoteIOUnit { nullptr };
 
     AudioComponentDescription ioUnitDescription { kAudioUnitType_Output, 0, kAudioUnitManufacturer_Apple, 0, 0 };
 #if PLATFORM(IOS)
@@ -123,69 +116,66 @@ OSStatus AudioTrackPrivateMediaStreamCocoa::setupAudioUnit()
     AudioComponent ioComponent = AudioComponentFindNext(nullptr, &ioUnitDescription);
     ASSERT(ioComponent);
     if (!ioComponent) {
-        LOG(Media, "AudioTrackPrivateMediaStreamCocoa::setupAudioUnit(%p) unable to find remote IO unit component", this);
-        return -1;
+        LOG(Media, "AudioTrackPrivateMediaStreamCocoa::createAudioUnit(%p) unable to find remote IO unit component", this);
+        return nullptr;
     }
 
-    OSStatus err = AudioComponentInstanceNew(ioComponent, &m_remoteIOUnit);
+    OSStatus err = AudioComponentInstanceNew(ioComponent, &remoteIOUnit);
     if (err) {
-        LOG(Media, "AudioTrackPrivateMediaStreamCocoa::setupAudioUnit(%p) unable to open vpio unit, error %d (%.4s)", this, (int)err, (char*)&err);
-        return -1;
+        LOG(Media, "AudioTrackPrivateMediaStreamCocoa::createAudioUnit(%p) unable to open vpio unit, error %d (%.4s)", this, (int)err, (char*)&err);
+        return nullptr;
     }
 
 #if PLATFORM(IOS)
     UInt32 param = 1;
-    err = AudioUnitSetProperty(m_remoteIOUnit, kAudioOutputUnitProperty_EnableIO, kAudioUnitScope_Output, 0, &param, sizeof(param));
+    err = AudioUnitSetProperty(remoteIOUnit, kAudioOutputUnitProperty_EnableIO, kAudioUnitScope_Output, 0, &param, sizeof(param));
     if (err) {
-        LOG(Media, "AudioTrackPrivateMediaStreamCocoa::setupAudioUnit(%p) unable to enable vpio unit output, error %d (%.4s)", this, (int)err, (char*)&err);
-        return err;
+        LOG(Media, "AudioTrackPrivateMediaStreamCocoa::createAudioUnit(%p) unable to enable vpio unit output, error %d (%.4s)", this, (int)err, (char*)&err);
+        return nullptr;
     }
 #endif
 
     AURenderCallbackStruct callback = { inputProc, this };
-    err = AudioUnitSetProperty(m_remoteIOUnit, kAudioUnitProperty_SetRenderCallback, kAudioUnitScope_Global, 0, &callback, sizeof(callback));
+    err = AudioUnitSetProperty(remoteIOUnit, kAudioUnitProperty_SetRenderCallback, kAudioUnitScope_Global, 0, &callback, sizeof(callback));
     if (err) {
-        LOG(Media, "AudioTrackPrivateMediaStreamCocoa::setupAudioUnit(%p) unable to set vpio unit speaker proc, error %d (%.4s)", this, (int)err, (char*)&err);
-        return err;
+        LOG(Media, "AudioTrackPrivateMediaStreamCocoa::createAudioUnit(%p) unable to set vpio unit speaker proc, error %d (%.4s)", this, (int)err, (char*)&err);
+        return nullptr;
     }
 
-    AudioStreamBasicDescription outputDescription = { };
     UInt32 size = sizeof(outputDescription);
-    err  = AudioUnitGetProperty(m_remoteIOUnit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Input, 0, &outputDescription, &size);
+    err  = AudioUnitGetProperty(remoteIOUnit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Input, 0, &outputDescription, &size);
     if (err) {
-        LOG(Media, "AudioTrackPrivateMediaStreamCocoa::setupAudioUnits(%p) unable to get input stream format, error %d (%.4s)", this, (int)err, (char*)&err);
-        return err;
+        LOG(Media, "AudioTrackPrivateMediaStreamCocoa::createAudioUnits(%p) unable to get input stream format, error %d (%.4s)", this, (int)err, (char*)&err);
+        return nullptr;
     }
 
-    outputDescription = m_inputDescription->streamDescription();
-    outputDescription.mSampleRate = AudioSession::sharedSession().sampleRate();
+    outputDescription = inputDescription;
+    outputDescription.streamDescription().mSampleRate = AudioSession::sharedSession().sampleRate();
 
-    err = AudioUnitSetProperty(m_remoteIOUnit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Input, 0, &outputDescription, sizeof(outputDescription));
+    err = AudioUnitSetProperty(remoteIOUnit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Input, 0, &outputDescription.streamDescription(), sizeof(outputDescription.streamDescription()));
     if (err) {
-        LOG(Media, "AudioTrackPrivateMediaStreamCocoa::setupAudioUnits(%p) unable to set input stream format, error %d (%.4s)", this, (int)err, (char*)&err);
-        return err;
+        LOG(Media, "AudioTrackPrivateMediaStreamCocoa::createAudioUnits(%p) unable to set input stream format, error %d (%.4s)", this, (int)err, (char*)&err);
+        return nullptr;
     }
-    m_outputDescription = std::make_unique<CAAudioStreamDescription>(outputDescription);
 
-    err = AudioUnitInitialize(m_remoteIOUnit);
+    err = AudioUnitInitialize(remoteIOUnit);
     if (err) {
-        LOG(Media, "AudioTrackPrivateMediaStreamCocoa::setupAudioUnits(%p) AudioUnitInitialize() failed, error %d (%.4s)", this, (int)err, (char*)&err);
-        return err;
+        LOG(Media, "AudioTrackPrivateMediaStreamCocoa::createAudioUnits(%p) AudioUnitInitialize() failed, error %d (%.4s)", this, (int)err, (char*)&err);
+        return nullptr;
     }
 
     AudioSession::sharedSession().setPreferredBufferSize(renderBufferSize);
 
-    return err;
+    return remoteIOUnit;
 }
 
 void AudioTrackPrivateMediaStreamCocoa::audioSamplesAvailable(const MediaTime& sampleTime, const PlatformAudioData& audioData, const AudioStreamDescription& description, size_t sampleCount)
 {
+    // This function is called on a background thread. The following protectedThis object ensures the object is not
+    // destroyed on the main thread before this function exits.
     Ref<AudioTrackPrivateMediaStreamCocoa> protectedThis { *this };
     ASSERT(description.platformDescription().type == PlatformDescription::CAAudioStreamBasicType);
 
-    std::lock_guard<Lock> lock(m_internalStateLock);
-
-    CAAudioStreamDescription streamDescription = toCAAudioStreamDescription(description);
     if (!m_inputDescription || *m_inputDescription != description) {
 
         m_inputDescription = nullptr;
@@ -197,23 +187,26 @@ void AudioTrackPrivateMediaStreamCocoa::audioSamplesAvailable(const MediaTime& s
             m_remoteIOUnit = nullptr;
         }
 
-        m_inputDescription = std::make_unique<CAAudioStreamDescription>(streamDescription);
-        if (setupAudioUnit()) {
-            m_inputDescription = nullptr;
+        CAAudioStreamDescription inputDescription = toCAAudioStreamDescription(description);
+        CAAudioStreamDescription outputDescription;
+
+        auto remoteIOUnit = createAudioUnit(inputDescription, outputDescription);
+        if (!remoteIOUnit)
             return;
-        }
+
+        m_inputDescription = std::make_unique<CAAudioStreamDescription>(inputDescription);
+        m_outputDescription = std::make_unique<CAAudioStreamDescription>(outputDescription);
 
         if (!m_dataSource)
             m_dataSource = AudioSampleDataSource::create(description.sampleRate() * 2);
-        if (!m_dataSource)
-            return;
 
-        if (m_dataSource->setInputFormat(streamDescription))
+        if (m_dataSource->setInputFormat(inputDescription) || m_dataSource->setOutputFormat(outputDescription)) {
+            AudioComponentInstanceDispose(remoteIOUnit);
             return;
-        if (m_dataSource->setOutputFormat(*m_outputDescription.get()))
-            return;
+        }
 
         m_dataSource->setVolume(m_volume);
+        m_remoteIOUnit = remoteIOUnit;
     }
 
     m_dataSource->pushSamples(sampleTime, audioData, sampleCount);
@@ -229,11 +222,9 @@ void AudioTrackPrivateMediaStreamCocoa::sourceStopped()
 
 OSStatus AudioTrackPrivateMediaStreamCocoa::render(UInt32 sampleCount, AudioBufferList& ioData, UInt32 /*inBusNumber*/, const AudioTimeStamp& timeStamp, AudioUnitRenderActionFlags& actionFlags)
 {
+    // This function is called on a high-priority background thread. The following protectedThis object ensures the object is not
+    // destroyed on the main thread before this function exits.
     Ref<AudioTrackPrivateMediaStreamCocoa> protectedThis { *this };
-
-    std::unique_lock<Lock> lock(m_internalStateLock, std::try_to_lock);
-    if (!lock.owns_lock())
-        return kAudioConverterErr_UnspecifiedError;
 
     if (!m_isPlaying || m_muted || !m_dataSource || streamTrack().muted() || streamTrack().ended() || !streamTrack().enabled()) {
         AudioSampleBufferList::zeroABL(ioData, static_cast<size_t>(sampleCount));
