@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003-2006, 2008-2009, 2012-2016 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2017 Apple Inc. All rights reserved.
  *  Copyright (C) 2007 Eric Seidel (eric@webkit.org)
  *
  *  This library is free software; you can redistribute it and/or
@@ -1972,7 +1972,12 @@ JSValue JSObject::toPrimitive(ExecState* exec, PreferredPrimitiveType preferredT
 
 bool JSObject::getPrimitiveNumber(ExecState* exec, double& number, JSValue& result) const
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     result = toPrimitive(exec, PreferNumber);
+    RETURN_IF_EXCEPTION(scope, false);
+    scope.release();
     number = result.toNumber(exec);
     return !result.isString();
 }

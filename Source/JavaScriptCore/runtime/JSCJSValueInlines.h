@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2012, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -638,12 +638,17 @@ ALWAYS_INLINE bool JSValue::getUInt32(uint32_t& v) const
 
 ALWAYS_INLINE Identifier JSValue::toPropertyKey(ExecState* exec) const
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     if (isString())
         return asString(*this)->toIdentifier(exec);
 
     JSValue primitive = toPrimitive(exec, PreferString);
+    RETURN_IF_EXCEPTION(scope, vm.propertyNames->emptyIdentifier);
     if (primitive.isSymbol())
         return Identifier::fromUid(asSymbol(primitive)->privateName());
+    scope.release();
     return primitive.toString(exec)->toIdentifier(exec);
 }
 
