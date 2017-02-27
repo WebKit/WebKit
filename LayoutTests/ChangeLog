@@ -1,3 +1,20 @@
+2017-02-27  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        compositing/transitions/transform-on-large-layer.html : ImageDiff produced stderr output
+        https://bugs.webkit.org/show_bug.cgi?id=168217
+
+        Reviewed by Simon Fraser.
+
+        ImageDiff reports an error for image size mismatch of expected and
+        actual images. But, Nwtr ignores the errors for ref tests at the moment
+        (Bug 168033). They should have same window size before fixing the
+        bug.
+
+        * compositing/transitions/transform-on-large-layer-expected.html:
+        Do not resize the window to match the actual.
+        * fast/css/sticky/sticky-left-percentage-expected.html: Resize the
+        window to match the actual.
+
 2017-02-27  Antti Koivisto  <antti@apple.com>
 
         Add a test verifying cache deduplication is not sensitive to SHA1 collision attack
