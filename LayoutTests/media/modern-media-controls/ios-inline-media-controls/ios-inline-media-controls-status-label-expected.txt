@@ -1,0 +1,17 @@
+Testing the IOSInlineMediaControls layout with the statusLabel property set.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Default state
+PASS mediaControls.controlsBar.children.includes(mediaControls.statusLabel) is false
+PASS mediaControls.controlsBar.children.includes(mediaControls.timeControl) is true
+
+After setting statusLabel.enabled = true
+PASS mediaControls.controlsBar.children.includes(mediaControls.statusLabel) is true
+PASS mediaControls.controlsBar.children.includes(mediaControls.timeControl) is false
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

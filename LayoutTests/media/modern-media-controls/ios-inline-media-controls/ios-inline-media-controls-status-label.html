@@ -1,0 +1,37 @@
+<script src="../../../resources/js-test-pre.js"></script>
+<script src="../resources/media-controls-loader.js" type="text/javascript"></script>
+<script src="../resources/media-controls-utils.js" type="text/javascript"></script>
+<body>
+<script type="text/javascript">
+
+description("Testing the <code>IOSInlineMediaControls</code> layout with the <code>statusLabel</code> property set.");
+
+window.jsTestIsAsync = true;
+
+const mediaControls = new IOSInlineMediaControls({ width: 680, height: 50 });
+
+let numberOfFrames = 0;
+scheduler.frameDidFire = function()
+{
+
+    numberOfFrames++;
+
+    if (numberOfFrames == 1) {
+        debug("Default state");
+        shouldBeFalse("mediaControls.controlsBar.children.includes(mediaControls.statusLabel)");
+        shouldBeTrue("mediaControls.controlsBar.children.includes(mediaControls.timeControl)");
+        mediaControls.statusLabel.enabled = true;
+    } else if (numberOfFrames == 2) {
+        debug("");
+        debug("After setting statusLabel.enabled = true");
+        shouldBeTrue("mediaControls.controlsBar.children.includes(mediaControls.statusLabel)");
+        shouldBeFalse("mediaControls.controlsBar.children.includes(mediaControls.timeControl)");
+        debug("");
+        finishMediaControlsTest();
+    }
+
+};
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>

@@ -31,6 +31,7 @@ controls/status-label.js
 controls/controls-bar.js
 controls/tracks-panel.js
 controls/media-controls.js
+controls/inline-layout-support.js
 controls/ios-inline-media-controls.js
 controls/macos-media-controls.js
 controls/macos-inline-media-controls.js
