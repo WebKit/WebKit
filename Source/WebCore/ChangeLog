@@ -1,3 +1,211 @@
+2017-02-08  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-grid] Move the track sizing algorithm to its own class
+        https://bugs.webkit.org/show_bug.cgi?id=167988
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        This is about moving the track sizing algorithm code out of RenderGrid to a new class
+        GridTrackSizingAlgorithm, making RenderGrid more compact and easy to maintain. A nice side
+        effect of this patch is the removal of the GridSizingData structure as it is no longer
+        needed. All the data structures in that class were transferred to GridTrackSizingAlgorithm
+        as private attribute members. The GridTrack class was also moved to the new file.
+
+        The algorithm execution starts with the call to run(). It's mandatory to call setup() before
+        any call to run() in order to properly configure the behaviour of the algorithm. You can
+        call setup() & run() multiple times for a single layout operation (normally twice, one for
+        columns and another one for rows). The algorithm uses a state machine to verify that the
+        client issues the calls in the proper order (i.e. first columns and then rows). After
+        finishing the layout, the client should call reset() to allow the algorithm to perform
+        cleanups and to prepare itself for another round of calls.
+
+        In order to implement the different behaviours of the algorithm depending on whether the
+        available size is definite or not, a strategy pattern was implemented in the
+        GridTrackSizingAlgorithmStrategy class. It has two subclasses, one for definite sizes and
+        another one for indefinite ones.
+
+        We took advantage of this change to perform some renames of the track sizing algorithm
+        methods that were still using the names from the first versions of the specs. Not only that,
+        the original track sizing algorithm method (computeUsedBreadthOfGridTracks) was split in 4
+        different parts representing the 4 steps of the algorithm.
+
+        No new tests as this is about moving code and refactoring.
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * rendering/GridTrackSizingAlgorithm.cpp: Added.
+        (WebCore::GridTrack::baseSize):
+        (WebCore::GridTrack::growthLimit):
+        (WebCore::GridTrack::setBaseSize):
+        (WebCore::GridTrack::setGrowthLimit):
+        (WebCore::GridTrack::growthLimitIfNotInfinite):
+        (WebCore::GridTrack::setTempSize):
+        (WebCore::GridTrack::growTempSize):
+        (WebCore::GridTrack::setGrowthLimitCap):
+        (WebCore::GridTrack::ensureGrowthLimitIsBiggerThanBaseSize):
+        (WebCore::shouldClearOverrideContainingBlockContentSizeForChild):
+        (WebCore::hasOverrideContainingBlockContentSizeForChild):
+        (WebCore::setOverrideContainingBlockContentSizeForChild):
+        (WebCore::flowAwareDirectionForChild):
+        (WebCore::overrideContainingBlockContentSizeForChild):
+        (WebCore::computeMarginLogicalSizeForChild):
+        (WebCore::marginIntrinsicLogicalWidthForChild):
+        (WebCore::GridTrackSizingAlgorithm::setFreeSpace):
+        (WebCore::GridTrackSizingAlgorithm::rawGridTrackSize):
+        (WebCore::GridTrackSizingAlgorithm::computeTrackBasedSize):
+        (WebCore::GridTrackSizingAlgorithm::initialBaseSize):
+        (WebCore::GridTrackSizingAlgorithm::initialGrowthLimit):
+        (WebCore::GridTrackSizingAlgorithm::sizeTrackToFitNonSpanningItem):
+        (WebCore::GridTrackSizingAlgorithm::spanningItemCrossesFlexibleSizedTracks):
+        (WebCore::GridItemWithSpan::GridItemWithSpan):
+        (WebCore::GridItemWithSpan::gridItem):
+        (WebCore::GridItemWithSpan::span):
+        (WebCore::GridItemWithSpan::operator<):
+        (WebCore::GridTrackSizingAlgorithm::itemSizeForTrackSizeComputationPhase):
+        (WebCore::shouldProcessTrackForTrackSizeComputationPhase):
+        (WebCore::trackSizeForTrackSizeComputationPhase):
+        (WebCore::updateTrackSizeForTrackSizeComputationPhase):
+        (WebCore::trackShouldGrowBeyondGrowthLimitsForTrackSizeComputationPhase):
+        (WebCore::markAsInfinitelyGrowableForTrackSizeComputationPhase):
+        (WebCore::GridTrackSizingAlgorithm::increaseSizesToAccommodateSpanningItems):
+        (WebCore::sortByGridTrackGrowthPotential):
+        (WebCore::clampGrowthShareIfNeeded):
+        (WebCore::GridTrackSizingAlgorithm::distributeSpaceToTracks):
+        (WebCore::GridTrackSizingAlgorithm::assumedRowsSizeForOrthogonalChild):
+        (WebCore::GridTrackSizingAlgorithm::gridAreaBreadthForChild):
+        (WebCore::GridTrackSizingAlgorithm::gridTrackSize):
+        (WebCore::GridTrackSizingAlgorithm::computeFlexFactorUnitSize):
+        (WebCore::GridTrackSizingAlgorithm::computeFlexSizedTracksGrowth):
+        (WebCore::GridTrackSizingAlgorithm::findFrUnitSize):
+        (WebCore::GridTrackSizingAlgorithm::computeGridContainerIntrinsicSizes):
+        (WebCore::GridTrackSizingAlgorithmStrategy::logicalHeightForChild):
+        (WebCore::GridTrackSizingAlgorithmStrategy::minContentForChild):
+        (WebCore::GridTrackSizingAlgorithmStrategy::maxContentForChild):
+        (WebCore::GridTrackSizingAlgorithmStrategy::minSizeForChild):
+        (WebCore::GridTrackSizingAlgorithmStrategy::updateOverrideContainingBlockContentSizeForChild):
+        (WebCore::IndefiniteSizeStrategy::minLogicalWidthForChild):
+        (WebCore::IndefiniteSizeStrategy::layoutGridItemForMinSizeComputation):
+        (WebCore::IndefiniteSizeStrategy::maximizeTracks):
+        (WebCore::normalizedFlexFraction):
+        (WebCore::IndefiniteSizeStrategy::findUsedFlexFraction):
+        (WebCore::IndefiniteSizeStrategy::recomputeUsedFlexFractionIfNeeded):
+        (WebCore::DefiniteSizeStrategy::minLogicalWidthForChild):
+        (WebCore::DefiniteSizeStrategy::maximizeTracks):
+        (WebCore::DefiniteSizeStrategy::layoutGridItemForMinSizeComputation):
+        (WebCore::DefiniteSizeStrategy::findUsedFlexFraction):
+        (WebCore::DefiniteSizeStrategy::recomputeUsedFlexFractionIfNeeded):
+        (WebCore::GridTrackSizingAlgorithm::initializeTrackSizes):
+        (WebCore::GridTrackSizingAlgorithm::resolveIntrinsicTrackSizes):
+        (WebCore::GridTrackSizingAlgorithm::stretchFlexibleTracks):
+        (WebCore::GridTrackSizingAlgorithm::advanceNextState):
+        (WebCore::GridTrackSizingAlgorithm::isValidTransition):
+        (WebCore::GridTrackSizingAlgorithm::setup):
+        (WebCore::GridTrackSizingAlgorithm::run):
+        (WebCore::GridTrackSizingAlgorithm::reset):
+        (WebCore::GridTrackSizingAlgorithm::tracksAreWiderThanMinTrackBreadth):
+        (WebCore::GridTrackSizingAlgorithm::StateMachine::StateMachine):
+        (WebCore::GridTrackSizingAlgorithm::StateMachine::~StateMachine):
+        * rendering/GridTrackSizingAlgorithm.h: Added.
+        (WebCore::GridTrack::GridTrack):
+        (WebCore::GridTrack::infiniteGrowthPotential):
+        (WebCore::GridTrack::plannedSize):
+        (WebCore::GridTrack::setPlannedSize):
+        (WebCore::GridTrack::tempSize):
+        (WebCore::GridTrack::infinitelyGrowable):
+        (WebCore::GridTrack::setInfinitelyGrowable):
+        (WebCore::GridTrack::growthLimitCap):
+        (WebCore::GridTrack::growthLimitIsInfinite):
+        (WebCore::GridTrack::isGrowthLimitBiggerThanBaseSize):
+        (WebCore::GridTrackSizingAlgorithmStrategy::GridTrackSizingAlgorithmStrategy):
+        (WebCore::GridTrackSizingAlgorithmStrategy::computeTrackBasedSize):
+        (WebCore::GridTrackSizingAlgorithmStrategy::direction):
+        (WebCore::GridTrackSizingAlgorithmStrategy::findFrUnitSize):
+        (WebCore::GridTrackSizingAlgorithmStrategy::distributeSpaceToTracks):
+        (WebCore::GridTrackSizingAlgorithmStrategy::renderGrid):
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::RenderGrid):
+        (WebCore::RenderGrid::computeTrackBasedLogicalHeight):
+        (WebCore::RenderGrid::computeTrackSizesForDefiniteSize):
+        (WebCore::RenderGrid::repeatTracksSizingIfNeeded):
+        (WebCore::RenderGrid::layoutBlock):
+        (WebCore::RenderGrid::computeIntrinsicLogicalWidths):
+        (WebCore::RenderGrid::computeTrackSizesForIndefiniteSize):
+        (WebCore::RenderGrid::placeSpecifiedMajorAxisItemsOnGrid):
+        (WebCore::RenderGrid::applyStretchAlignmentToTracksIfNeeded):
+        (WebCore::RenderGrid::layoutGridItems):
+        (WebCore::RenderGrid::gridAreaBreadthForChildIncludingAlignmentOffsets):
+        (WebCore::RenderGrid::populateGridPositionsForDirection):
+        (WebCore::RenderGrid::columnAxisOffsetForChild):
+        (WebCore::RenderGrid::rowAxisOffsetForChild):
+        (WebCore::RenderGrid::findChildLogicalPosition):
+        (WebCore::GridTrack::GridTrack): Deleted.
+        (WebCore::GridTrack::baseSize): Deleted.
+        (WebCore::GridTrack::growthLimit): Deleted.
+        (WebCore::GridTrack::setBaseSize): Deleted.
+        (WebCore::GridTrack::setGrowthLimit): Deleted.
+        (WebCore::GridTrack::infiniteGrowthPotential): Deleted.
+        (WebCore::GridTrack::growthLimitIfNotInfinite): Deleted.
+        (WebCore::GridTrack::plannedSize): Deleted.
+        (WebCore::GridTrack::setPlannedSize): Deleted.
+        (WebCore::GridTrack::tempSize): Deleted.
+        (WebCore::GridTrack::setTempSize): Deleted.
+        (WebCore::GridTrack::growTempSize): Deleted.
+        (WebCore::GridTrack::infinitelyGrowable): Deleted.
+        (WebCore::GridTrack::setInfinitelyGrowable): Deleted.
+        (WebCore::GridTrack::setGrowthLimitCap): Deleted.
+        (WebCore::GridTrack::growthLimitCap): Deleted.
+        (WebCore::GridTrack::growthLimitIsInfinite): Deleted.
+        (WebCore::GridTrack::isGrowthLimitBiggerThanBaseSize): Deleted.
+        (WebCore::GridTrack::ensureGrowthLimitIsBiggerThanBaseSize): Deleted.
+        (WebCore::RenderGrid::GridSizingData::GridSizingData): Deleted.
+        (WebCore::RenderGrid::GridSizingData::freeSpace): Deleted.
+        (WebCore::RenderGrid::GridSizingData::availableSpace): Deleted.
+        (WebCore::RenderGrid::GridSizingData::setAvailableSpace): Deleted.
+        (WebCore::RenderGrid::GridSizingData::advanceNextState): Deleted.
+        (WebCore::RenderGrid::GridSizingData::isValidTransition): Deleted.
+        (WebCore::RenderGrid::GridSizingData::grid): Deleted.
+        (WebCore::RenderGrid::GridSizingData::setFreeSpace): Deleted.
+        (WebCore::RenderGrid::computeTrackSizesForDirection): Deleted.
+        (WebCore::RenderGrid::computeIntrinsicLogicalHeight): Deleted.
+        (WebCore::normalizedFlexFraction): Deleted.
+        (WebCore::RenderGrid::computeUsedBreadthOfGridTracks): Deleted.
+        (WebCore::RenderGrid::computeFlexSizedTracksGrowth): Deleted.
+        (WebCore::RenderGrid::computeUsedBreadthOfMinLength): Deleted.
+        (WebCore::RenderGrid::computeUsedBreadthOfMaxLength): Deleted.
+        (WebCore::RenderGrid::computeFlexFactorUnitSize): Deleted.
+        (WebCore::RenderGrid::findFlexFactorUnitSize): Deleted.
+        (WebCore::hasOverrideContainingBlockContentSizeForChild): Deleted.
+        (WebCore::setOverrideContainingBlockContentSizeForChild): Deleted.
+        (WebCore::shouldClearOverrideContainingBlockContentSizeForChild): Deleted.
+        (WebCore::RenderGrid::rawGridTrackSize): Deleted.
+        (WebCore::RenderGrid::gridTrackSize): Deleted.
+        (WebCore::RenderGrid::logicalHeightForChild): Deleted.
+        (WebCore::RenderGrid::minSizeForChild): Deleted.
+        (WebCore::RenderGrid::updateOverrideContainingBlockContentSizeForChild): Deleted.
+        (WebCore::RenderGrid::minContentForChild): Deleted.
+        (WebCore::RenderGrid::maxContentForChild): Deleted.
+        (WebCore::GridItemWithSpan::GridItemWithSpan): Deleted.
+        (WebCore::GridItemWithSpan::gridItem): Deleted.
+        (WebCore::GridItemWithSpan::span): Deleted.
+        (WebCore::GridItemWithSpan::operator<): Deleted.
+        (WebCore::RenderGrid::spanningItemCrossesFlexibleSizedTracks): Deleted.
+        (WebCore::RenderGrid::resolveContentBasedTrackSizingFunctions): Deleted.
+        (WebCore::RenderGrid::resolveContentBasedTrackSizingFunctionsForNonSpanningItems): Deleted.
+        (WebCore::trackSizeForTrackSizeComputationPhase): Deleted.
+        (WebCore::RenderGrid::shouldProcessTrackForTrackSizeComputationPhase): Deleted.
+        (WebCore::RenderGrid::trackShouldGrowBeyondGrowthLimitsForTrackSizeComputationPhase): Deleted.
+        (WebCore::RenderGrid::markAsInfinitelyGrowableForTrackSizeComputationPhase): Deleted.
+        (WebCore::RenderGrid::updateTrackSizeForTrackSizeComputationPhase): Deleted.
+        (WebCore::RenderGrid::currentItemSizeForTrackSizeComputationPhase): Deleted.
+        (WebCore::RenderGrid::resolveContentBasedTrackSizingFunctionsForItems): Deleted.
+        (WebCore::sortByGridTrackGrowthPotential): Deleted.
+        (WebCore::clampGrowthShareIfNeeded): Deleted.
+        (WebCore::RenderGrid::distributeSpaceToTracks): Deleted.
+        (WebCore::RenderGrid::tracksAreWiderThanMinTrackBreadth): Deleted.
+        (WebCore::RenderGrid::assumedRowsSizeForOrthogonalChild): Deleted.
+        (WebCore::RenderGrid::gridAreaBreadthForChild): Deleted.
+        * rendering/RenderGrid.h:
+
 2017-02-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GStreamer] Crash in MediaPlayerPrivateGStreamerMSE::buffered() when MEDIA_STREAM is disabled

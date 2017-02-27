@@ -2373,6 +2373,7 @@ set(WebCore_SOURCES
     rendering/FloatingObjects.cpp
     rendering/FlowThreadController.cpp
     rendering/Grid.cpp
+    rendering/GridTrackSizingAlgorithm.cpp
     rendering/HitTestLocation.cpp
     rendering/HitTestResult.cpp
     rendering/HitTestingTransformState.cpp
