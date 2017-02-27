@@ -1,5 +1,24 @@
 2017-02-27  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Flickering when leaving accelerated compositing mode
+        https://bugs.webkit.org/show_bug.cgi?id=168911
+
+        Reviewed by Žan Doberšek.
+
+        It doesn't always happen, and it's too fast, more noticeable in websites with a dark background, because we are
+        drawing a single white frame. This happens when we leave AC mode during the layer flush that schedules an update
+        on the compositor, which at that point only clears the area and renders nothing. However,
+        CoordinatedGraphicsScene::paintToCurrentGLContext() always renders a white background when no web view color has
+        been set. And that's the white frame we get. We could prevent that last update from happening by checking if we
+        still have a graphics root layer after syncDisplayState() in the layer flush, the same way we check the layer
+        tree host is still valid.
+
+        * WebProcess/WebPage/CoordinatedGraphics/CompositingCoordinator.h:
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.cpp:
+        (WebKit::CoordinatedLayerTreeHost::layerFlushTimerFired):
+
+2017-02-27  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Rendering artifacts when resizing the window in X11 with AC mode enabled
         https://bugs.webkit.org/show_bug.cgi?id=168728
 

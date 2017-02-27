@@ -167,7 +167,7 @@ void CoordinatedLayerTreeHost::layerFlushTimerFired()
 
     m_coordinator.syncDisplayState();
 
-    if (!m_isValid)
+    if (!m_isValid || !m_coordinator.rootCompositingLayer())
         return;
 
     bool didSync = m_coordinator.flushPendingLayerChanges();
