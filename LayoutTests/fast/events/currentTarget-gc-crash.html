@@ -9,6 +9,7 @@ function f1() {
     window.frames.event = window.event;
     gc();
 }
+let startedTimer = false;
 function f2() {
     var h = new XMLHttpRequest();
     h.onreadystatechange = f1;
@@ -18,7 +19,11 @@ function f2() {
     try {
         e.currentTarget.click();
     } catch(e) { }
-    setTimeout(finishJSTest, 100);
+
+    if (!startedTimer) {
+        setTimeout(finishJSTest, 100);
+        startedTimer = true;
+    }
 }
 </script>
 </head>
