@@ -1,5 +1,26 @@
 2017-02-21  Jer Noble  <jer.noble@apple.com>
 
+        AudioSampleDataSource should not exclusively lock its read and write threads.
+        https://bugs.webkit.org/show_bug.cgi?id=168646
+
+        Reviewed by Eric Carlson.
+
+        Locking the write thread causes the read thread to drop audio samples and generates audible
+        glitches, and the realtime audio thread backing the read thread should never block. There's
+        no real reason to lock these threads against one another here; they both rely on the
+        CARingBuffer to safely and simultaneously read and write data.
+
+        * platform/audio/mac/AudioSampleDataSource.cpp:
+        (WebCore::AudioSampleDataSource::setPaused):
+        (WebCore::AudioSampleDataSource::pushSamplesInternal):
+        (WebCore::AudioSampleDataSource::pushSamples):
+        (WebCore::AudioSampleDataSource::pullSamplesInternal):
+        (WebCore::AudioSampleDataSource::pullAvalaibleSamplesAsChunks):
+        (WebCore::AudioSampleDataSource::pullSamples):
+        * platform/audio/mac/AudioSampleDataSource.h:
+
+2017-02-21  Jer Noble  <jer.noble@apple.com>
+
         AudioTrackPrivateMediaStreamCocoa should not exclusively lock its read and write threads.
         https://bugs.webkit.org/show_bug.cgi?id=168643
 

@@ -70,8 +70,6 @@ AudioSampleDataSource::~AudioSampleDataSource()
 
 void AudioSampleDataSource::setPaused(bool paused)
 {
-    std::lock_guard<Lock> lock(m_lock);
-
     if (paused == m_paused)
         return;
 
@@ -143,8 +141,6 @@ MediaTime AudioSampleDataSource::hostTime() const
 
 void AudioSampleDataSource::pushSamplesInternal(const AudioBufferList& bufferList, const MediaTime& presentationTime, size_t sampleCount)
 {
-    ASSERT(m_lock.isHeld());
-
     const AudioBufferList* sampleBufferList;
     if (m_converter) {
         m_scratchBuffer->reset();
@@ -190,8 +186,6 @@ void AudioSampleDataSource::pushSamplesInternal(const AudioBufferList& bufferLis
 
 void AudioSampleDataSource::pushSamples(const AudioStreamBasicDescription& sampleDescription, CMSampleBufferRef sampleBuffer)
 {
-    std::lock_guard<Lock> lock(m_lock);
-
     ASSERT_UNUSED(sampleDescription, *m_inputDescription == sampleDescription);
     ASSERT(m_ringBuffer);
     
@@ -201,14 +195,12 @@ void AudioSampleDataSource::pushSamples(const AudioStreamBasicDescription& sampl
 
 void AudioSampleDataSource::pushSamples(const MediaTime& sampleTime, const PlatformAudioData& audioData, size_t sampleCount)
 {
-    std::unique_lock<Lock> lock(m_lock, std::try_to_lock);
     ASSERT(is<WebAudioBufferList>(audioData));
     pushSamplesInternal(*downcast<WebAudioBufferList>(audioData).list(), sampleTime, sampleCount);
 }
 
 bool AudioSampleDataSource::pullSamplesInternal(AudioBufferList& buffer, size_t& sampleCount, uint64_t timeStamp, double /*hostTime*/, PullMode mode)
 {
-    ASSERT(m_lock.isHeld());
     size_t byteCount = sampleCount * m_outputDescription->bytesPerFrame();
 
     ASSERT(buffer.mNumberBuffers == m_ringBuffer->channelCount());
@@ -298,8 +290,7 @@ bool AudioSampleDataSource::pullSamplesInternal(AudioBufferList& buffer, size_t&
 
 bool AudioSampleDataSource::pullAvalaibleSamplesAsChunks(AudioBufferList& buffer, size_t sampleCountPerChunk, uint64_t timeStamp, Function<void()>&& consumeFilledBuffer)
 {
-    std::unique_lock<Lock> lock(m_lock, std::try_to_lock);
-    if (!lock.owns_lock() || !m_ringBuffer)
+    if (!m_ringBuffer)
         return false;
 
     ASSERT(buffer.mNumberBuffers == m_ringBuffer->channelCount());
@@ -324,8 +315,7 @@ bool AudioSampleDataSource::pullAvalaibleSamplesAsChunks(AudioBufferList& buffer
 
 bool AudioSampleDataSource::pullSamples(AudioBufferList& buffer, size_t sampleCount, uint64_t timeStamp, double hostTime, PullMode mode)
 {
-    std::unique_lock<Lock> lock(m_lock, std::try_to_lock);
-    if (!lock.owns_lock() || !m_ringBuffer) {
+    if (!m_ringBuffer) {
         size_t byteCount = sampleCount * m_outputDescription->bytesPerFrame();
         AudioSampleBufferList::zeroABL(buffer, byteCount);
         return false;
@@ -336,8 +326,7 @@ bool AudioSampleDataSource::pullSamples(AudioBufferList& buffer, size_t sampleCo
 
 bool AudioSampleDataSource::pullSamples(AudioSampleBufferList& buffer, size_t sampleCount, uint64_t timeStamp, double hostTime, PullMode mode)
 {
-    std::unique_lock<Lock> lock(m_lock, std::try_to_lock);
-    if (!lock.owns_lock() || !m_ringBuffer) {
+    if (!m_ringBuffer) {
         buffer.zero();
         return false;
     }
