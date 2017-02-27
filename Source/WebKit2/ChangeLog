@@ -1,5 +1,24 @@
 2017-02-27  Alexey Proskuryakov  <ap@apple.com>
 
+        Remove some deprecated WKPage plug-in information functions
+        https://bugs.webkit.org/show_bug.cgi?id=168897
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageGetProcessIdentifier):
+        (WKPageGetPluginInformationBundleIdentifierKey): Deleted.
+        (WKPageGetPluginInformationBundleVersionKey): Deleted.
+        (WKPageGetPluginInformationDisplayNameKey): Deleted.
+        (WKPageGetPluginInformationFrameURLKey): Deleted.
+        (WKPageGetPluginInformationMIMETypeKey): Deleted.
+        (WKPageGetPluginInformationPageURLKey): Deleted.
+        (WKPageGetPluginInformationPluginspageAttributeURLKey): Deleted.
+        (WKPageGetPluginInformationPluginURLKey): Deleted.
+        * UIProcess/API/C/WKPage.h:
+
+2017-02-27  Alexey Proskuryakov  <ap@apple.com>
+
         Stop exporting C++ member variables from class extensions in WKDOMInternals.h
         https://bugs.webkit.org/show_bug.cgi?id=168886
 
