@@ -575,7 +575,7 @@ void WebInspectorProxy::inspectedViewFrameDidChange(CGFloat currentDimension)
 
         // Preserve the top position of the inspected view so banners in Safari still work. But don't use that
         // top position for the inspector view since the banners only stretch as wide as the the inspected view.
-        inspectedViewFrame = NSMakeRect(inspectorWidth, 0, NSWidth(inspectedViewFrame), inspectedViewTop);
+        inspectedViewFrame = NSMakeRect(inspectorWidth, 0, parentWidth - inspectorWidth, inspectedViewTop);
         CGFloat insetExcludingBanners = 0;
         if ([inspectedView isKindOfClass:[WKView class]])
             insetExcludingBanners = ((WKView *)inspectedView)._topContentInset - ((WKView *)inspectedView)._totalHeightOfBanners;
