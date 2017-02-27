@@ -1,3 +1,22 @@
+2017-02-22  Antti Koivisto  <antti@apple.com>
+
+        Replace SimpleLineLayout::Range by WTF::IteratorRange
+        https://bugs.webkit.org/show_bug.cgi?id=168742
+
+        Reviewed by Zalan Bujtas.
+
+        Kill a redundant custom type.
+
+        * rendering/SimpleLineLayoutResolver.cpp:
+        (WebCore::SimpleLineLayout::RunResolver::rangeForRect):
+        (WebCore::SimpleLineLayout::RunResolver::rangeForRenderer):
+        (WebCore::SimpleLineLayout::RunResolver::rangeForRendererWithOffsets):
+        * rendering/SimpleLineLayoutResolver.h:
+        (WebCore::SimpleLineLayout::LineResolver::rangeForRect):
+        (WebCore::SimpleLineLayout::Range::Range): Deleted.
+        (WebCore::SimpleLineLayout::Range::begin): Deleted.
+        (WebCore::SimpleLineLayout::Range::end): Deleted.
+
 2017-02-22  Zalan Bujtas  <zalan@apple.com>
 
         Simple line layout: Set the pagination strut on the flow when the first line does not fit the page.
