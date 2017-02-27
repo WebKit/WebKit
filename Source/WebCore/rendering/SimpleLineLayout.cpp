@@ -1045,20 +1045,22 @@ std::unique_ptr<Layout> create(RenderBlockFlow& flow)
     Layout::RunVector runs;
     createTextRuns(runs, flow, lineCount);
     Layout::SimplePaginationStruts struts;
-    if (flow.view().layoutState() && flow.view().layoutState()->isPaginated())
+    auto isPaginated = flow.view().layoutState() && flow.view().layoutState()->isPaginated();
+    if (isPaginated)
         adjustLinePositionsForPagination(runs, struts, flow, lineCount);
-    return Layout::create(runs, struts, lineCount);
+    return Layout::create(runs, struts, lineCount, isPaginated);
 }
 
-std::unique_ptr<Layout> Layout::create(const RunVector& runVector, SimplePaginationStruts& struts, unsigned lineCount)
+std::unique_ptr<Layout> Layout::create(const RunVector& runVector, SimplePaginationStruts& struts, unsigned lineCount, bool isPaginated)
 {
     void* slot = WTF::fastMalloc(sizeof(Layout) + sizeof(Run) * runVector.size());
-    return std::unique_ptr<Layout>(new (NotNull, slot) Layout(runVector, struts, lineCount));
+    return std::unique_ptr<Layout>(new (NotNull, slot) Layout(runVector, struts, lineCount, isPaginated));
 }
 
-Layout::Layout(const RunVector& runVector, SimplePaginationStruts& struts, unsigned lineCount)
+Layout::Layout(const RunVector& runVector, SimplePaginationStruts& struts, unsigned lineCount, bool isPaginated)
     : m_lineCount(lineCount)
     , m_runCount(runVector.size())
+    , m_isPaginated(isPaginated)
     , m_paginationStruts(WTFMove(struts))
 {
     memcpy(m_runs, runVector.data(), m_runCount * sizeof(Run));

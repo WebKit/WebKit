@@ -74,7 +74,7 @@ namespace SimpleLineLayout {
 inline LayoutUnit computeFlowHeight(const RenderBlockFlow& flow, const Layout& layout)
 {
     auto flowHeight = lineHeightFromFlow(flow) * layout.lineCount();
-    if (!layout.isPaginated())
+    if (!layout.hasPaginationStruts())
         return flowHeight;
     for (auto& strutEntry : layout.struts())
         flowHeight += strutEntry.offset;

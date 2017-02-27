@@ -1,3 +1,34 @@
+2017-02-22  Zalan Bujtas  <zalan@apple.com>
+
+        Simple line layout: ensureLineBoxes for paginated content.
+        https://bugs.webkit.org/show_bug.cgi?id=168729
+        <rdar://problem/30654400>
+
+        Reviewed by Antti Koivisto.
+
+        This patch sets the layout state bits for paginated subtree layout, when we are switching
+        over from simple line runs to inline tree. 
+
+        Not enabled yet.
+
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::ensureLineBoxes):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::pushLayoutStateForPagination): LayoutUnit(1) is not the real height, it's just
+        an indicator that we've got paginated content.
+        * rendering/RenderView.h:
+        * rendering/SimpleLineLayout.cpp:
+        (WebCore::SimpleLineLayout::create):
+        (WebCore::SimpleLineLayout::Layout::create):
+        (WebCore::SimpleLineLayout::Layout::Layout):
+        * rendering/SimpleLineLayout.h:
+        (WebCore::SimpleLineLayout::Layout::isPaginated):
+        (WebCore::SimpleLineLayout::Layout::hasPaginationStruts):
+        * rendering/SimpleLineLayoutFunctions.h:
+        (WebCore::SimpleLineLayout::computeFlowHeight):
+        * rendering/SimpleLineLayoutResolver.h:
+        (WebCore::SimpleLineLayout::RunResolver::Run::computeBaselinePosition):
+
 2017-02-22  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         [GStreamer][EME] Fix issue with allowed systems extraction

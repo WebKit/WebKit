@@ -132,6 +132,7 @@ public:
 
     // Subtree push/pop
     void pushLayoutState(RenderObject&);
+    void pushLayoutStateForPagination(RenderBlockFlow&);
     void popLayoutState(RenderObject&) { return popLayoutState(); } // Just doing this to keep popLayoutState() private and to make the subtree calls symmetrical.
 
     // Returns true if layoutState should be used for its cached offset and clip.
