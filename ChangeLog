@@ -1,3 +1,9 @@
+2017-02-26  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] Unreviewed, bump GTK version numbers also on trunk
+
+        * Source/cmake/OptionsGTK.cmake:
+
 2017-02-23  Tomas Popela  <tpopela@redhat.com>
 
         [GTK] Compilation fails if using ninja together with icecream and cmake > 3.5
