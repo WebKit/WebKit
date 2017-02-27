@@ -1505,15 +1505,9 @@ int RenderText::previousOffset(int current) const
         return current - 1;
 
     StringImpl* textImpl = m_text.impl();
-    UBreakIterator* iterator = cursorMovementIterator(StringView(textImpl->characters16(), textImpl->length()));
-    if (!iterator)
-        return current - 1;
-
-    long result = ubrk_preceding(iterator, current);
-    if (result == UBRK_DONE)
-        result = current - 1;
-
-
+    TextBreakIterator iterator = TextBreakIteratorCache::singleton().take(StringView(textImpl->characters16(), textImpl->length()), TextBreakIterator::Mode::Cursor, nullAtom);
+    auto result = iterator.preceding(current).value_or(current - 1);
+    TextBreakIteratorCache::singleton().put(WTFMove(iterator));
     return result;
 }
 
@@ -1685,14 +1679,9 @@ int RenderText::nextOffset(int current) const
         return current + 1;
 
     StringImpl* textImpl = m_text.impl();
-    UBreakIterator* iterator = cursorMovementIterator(StringView(textImpl->characters16(), textImpl->length()));
-    if (!iterator)
-        return current + 1;
-
-    long result = ubrk_following(iterator, current);
-    if (result == UBRK_DONE)
-        result = current + 1;
-
+    TextBreakIterator iterator = TextBreakIteratorCache::singleton().take(StringView(textImpl->characters16(), textImpl->length()), TextBreakIterator::Mode::Cursor, nullAtom);
+    auto result = iterator.following(current).value_or(current + 1);
+    TextBreakIteratorCache::singleton().put(WTFMove(iterator));
     return result;
 }
 

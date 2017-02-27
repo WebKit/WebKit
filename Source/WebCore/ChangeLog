@@ -1,3 +1,21 @@
+2017-02-26  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Stop compiling our own cursorMovementIterator()
+        https://bugs.webkit.org/show_bug.cgi?id=168211
+
+        Reviewed by David Hyatt.
+
+        Covered by existing tests.
+
+        Hook up the caret iterator.
+
+        * platform/graphics/ComplexTextController.cpp:
+        (WebCore::ComplexTextController::offsetForPosition):
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::previousOffset):
+        (WebCore::RenderText::nextOffset):
+        * rendering/RenderText.h:
+
 2017-02-26  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r212942.

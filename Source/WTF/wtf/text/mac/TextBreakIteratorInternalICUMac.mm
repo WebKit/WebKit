@@ -21,9 +21,33 @@
 #include "config.h"
 #include "TextBreakIteratorInternalICU.h"
 
+#include "TextBreakIterator.h"
 #include <wtf/RetainPtr.h>
 
 namespace WTF {
+
+static Variant<TextBreakIteratorICU, TextBreakIteratorPlatform> mapModeToBackingIterator(StringView string, TextBreakIterator::Mode mode, const AtomicString& locale)
+{
+    switch (mode) {
+    case TextBreakIterator::Mode::Line:
+        return TextBreakIteratorICU(string, TextBreakIteratorICU::Mode::Line, locale.string().utf8().data());
+    case TextBreakIterator::Mode::Cursor:
+#if USE_ICU_CURSOR_ITERATOR
+        return TextBreakIteratorICU(string, TextBreakIteratorICU::Mode::Cursor, locale.string().utf8().data());
+#else
+        return TextBreakIteratorCF(string, TextBreakIteratorCF::Mode::Cursor);
+#endif
+    case TextBreakIterator::Mode::Delete:
+        return TextBreakIteratorCF(string, TextBreakIteratorCF::Mode::Delete);
+    }
+}
+
+TextBreakIterator::TextBreakIterator(StringView string, Mode mode, const AtomicString& locale)
+    : m_backing(mapModeToBackingIterator(string, mode, locale))
+    , m_mode(mode)
+    , m_locale(locale)
+{
+}
 
 static const int maxLocaleStringLength = 32;
 

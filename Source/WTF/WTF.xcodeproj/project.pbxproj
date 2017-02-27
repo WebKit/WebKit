@@ -117,6 +117,9 @@
 		1C181C931D307AB800F5FA16 /* UTextProviderUTF16.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C181C8D1D307AB800F5FA16 /* UTextProviderUTF16.cpp */; };
 		1C181C941D307AB800F5FA16 /* UTextProviderUTF16.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C181C8E1D307AB800F5FA16 /* UTextProviderUTF16.h */; };
 		1C181C961D30800A00F5FA16 /* TextBreakIteratorInternalICUMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C181C951D30800A00F5FA16 /* TextBreakIteratorInternalICUMac.mm */; };
+		1CCDB14B1E566626006C73C0 /* TextBreakIteratorCF.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CCDB1491E566626006C73C0 /* TextBreakIteratorCF.h */; };
+		1CCDB14F1E566898006C73C0 /* TextBreakIteratorICU.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CCDB14D1E566898006C73C0 /* TextBreakIteratorICU.h */; };
+		1CCDB1531E566BC5006C73C0 /* CFStringSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CCDB1511E566BC5006C73C0 /* CFStringSPI.h */; };
 		1FA47C8A152502DA00568D1B /* WebCoreThread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1FA47C88152502DA00568D1B /* WebCoreThread.cpp */; };
 		1FA47C8B152502DA00568D1B /* WebCoreThread.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FA47C89152502DA00568D1B /* WebCoreThread.h */; };
 		26147B0A15DDCCDC00DDB907 /* IntegerToStringConversion.h in Headers */ = {isa = PBXBuildFile; fileRef = 26147B0815DDCCDC00DDB907 /* IntegerToStringConversion.h */; };
@@ -493,6 +496,9 @@
 		1C181C8D1D307AB800F5FA16 /* UTextProviderUTF16.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UTextProviderUTF16.cpp; sourceTree = "<group>"; };
 		1C181C8E1D307AB800F5FA16 /* UTextProviderUTF16.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UTextProviderUTF16.h; sourceTree = "<group>"; };
 		1C181C951D30800A00F5FA16 /* TextBreakIteratorInternalICUMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TextBreakIteratorInternalICUMac.mm; path = mac/TextBreakIteratorInternalICUMac.mm; sourceTree = "<group>"; };
+		1CCDB1491E566626006C73C0 /* TextBreakIteratorCF.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TextBreakIteratorCF.h; path = cf/TextBreakIteratorCF.h; sourceTree = "<group>"; };
+		1CCDB14D1E566898006C73C0 /* TextBreakIteratorICU.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextBreakIteratorICU.h; sourceTree = "<group>"; };
+		1CCDB1511E566BC5006C73C0 /* CFStringSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CFStringSPI.h; path = cf/CFStringSPI.h; sourceTree = "<group>"; };
 		1FA47C88152502DA00568D1B /* WebCoreThread.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebCoreThread.cpp; sourceTree = "<group>"; };
 		1FA47C89152502DA00568D1B /* WebCoreThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreThread.h; sourceTree = "<group>"; };
 		26147B0815DDCCDC00DDB907 /* IntegerToStringConversion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntegerToStringConversion.h; sourceTree = "<group>"; };
@@ -797,6 +803,7 @@
 				1C181C8C1D307AB800F5FA16 /* UTextProviderLatin1.h */,
 				1C181C8D1D307AB800F5FA16 /* UTextProviderUTF16.cpp */,
 				1C181C8E1D307AB800F5FA16 /* UTextProviderUTF16.h */,
+				1CCDB14D1E566898006C73C0 /* TextBreakIteratorICU.h */,
 			);
 			path = icu;
 			sourceTree = "<group>";
@@ -879,6 +886,7 @@
 				A5BA15F8182435A600A82E69 /* StringCF.cpp */,
 				A5BA15F9182435A600A82E69 /* StringImplCF.cpp */,
 				93934BD418A1F16900D0D6A1 /* StringViewCF.cpp */,
+				1CCDB1491E566626006C73C0 /* TextBreakIteratorCF.h */,
 			);
 			name = cf;
 			sourceTree = "<group>";
@@ -1300,6 +1308,7 @@
 			isa = PBXGroup;
 			children = (
 				DCEE21FA1CEA7538000C2396 /* CFBundleSPI.h */,
+				1CCDB1511E566BC5006C73C0 /* CFStringSPI.h */,
 			);
 			name = cf;
 			sourceTree = "<group>";
@@ -1382,7 +1391,9 @@
 				DE5A09FC1BA36992003D4424 /* CommonCryptoSPI.h in Headers */,
 				0F8F2B91172E00FC007DBDA5 /* CompilationThread.h in Headers */,
 				A8A47398151A825B004123FF /* Compiler.h in Headers */,
+				1CCDB1531E566BC5006C73C0 /* CFStringSPI.h in Headers */,
 				0FDB698E1B7C643A000C1078 /* Condition.h in Headers */,
+				1CCDB14F1E566898006C73C0 /* TextBreakIteratorICU.h in Headers */,
 				A8A4748C151A8264004123FF /* config.h in Headers */,
 				0F8F2B9C172F2596007DBDA5 /* ConversionMode.h in Headers */,
 				515F794F1CFC9F4A00CCED93 /* CrossThreadCopier.h in Headers */,
@@ -1473,6 +1484,7 @@
 				0F9495841C571CC900413A48 /* OrderMaker.h in Headers */,
 				14E785E81DFB330100209BD1 /* OrdinalNumber.h in Headers */,
 				A8A473F6151A825B004123FF /* OSAllocator.h in Headers */,
+				1CCDB14B1E566626006C73C0 /* TextBreakIteratorCF.h in Headers */,
 				7CBBA07419BB7FDC00BBF025 /* OSObjectPtr.h in Headers */,
 				A8A473FA151A825B004123FF /* OSRandomSource.h in Headers */,
 				A8A473FE151A825B004123FF /* PackedIntVector.h in Headers */,

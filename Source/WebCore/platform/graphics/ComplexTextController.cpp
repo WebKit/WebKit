@@ -217,20 +217,19 @@ unsigned ComplexTextController::offsetForPosition(float h, bool includePartialGl
                 // could use the glyph's "ligature carets". This is available in CoreText via CTFontGetLigatureCaretPositions().
                 unsigned hitIndex = hitGlyphStart + (hitGlyphEnd - hitGlyphStart) * (m_run.ltr() ? x / adjustedAdvance : 1 - x / adjustedAdvance);
                 unsigned stringLength = complexTextRun.stringLength();
-                UBreakIterator* cursorPositionIterator = cursorMovementIterator(StringView(complexTextRun.characters(), stringLength));
+                TextBreakIterator cursorPositionIterator = TextBreakIteratorCache::singleton().take(StringView(complexTextRun.characters(), stringLength), TextBreakIterator::Mode::Cursor, nullAtom);
                 unsigned clusterStart;
-                if (ubrk_isBoundary(cursorPositionIterator, hitIndex))
+                if (cursorPositionIterator.isBoundary(hitIndex))
                     clusterStart = hitIndex;
-                else {
-                    int preceeding = ubrk_preceding(cursorPositionIterator, hitIndex);
-                    clusterStart = preceeding == UBRK_DONE ? 0 : preceeding;
-                }
+                else
+                    clusterStart = cursorPositionIterator.preceding(hitIndex).value_or(0);
 
                 if (!includePartialGlyphs)
                     return complexTextRun.stringLocation() + clusterStart;
 
-                int following = ubrk_following(cursorPositionIterator, hitIndex);
-                unsigned clusterEnd = following == UBRK_DONE ? stringLength : following;
+                unsigned clusterEnd = cursorPositionIterator.following(hitIndex).value_or(stringLength);
+
+                TextBreakIteratorCache::singleton().put(WTFMove(cursorPositionIterator));
 
                 float clusterWidth;
                 // FIXME: The search stops at the boundaries of complexTextRun. In theory, it should go on into neighboring ComplexTextRuns

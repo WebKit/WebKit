@@ -1,3 +1,58 @@
+2017-02-26  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Stop compiling our own cursorMovementIterator()
+        https://bugs.webkit.org/show_bug.cgi?id=168211
+
+        Reviewed by David Hyatt.
+
+        This patch creates a unified Text Breaking API, which can be backed by either ICU
+        or CoreFoundation (for ports which can use it). Rather than using inheritance and
+        virtual functions to implement this, because there are only two subclasses, the
+        simpler option of just using a Variant is used instead. There is also a cache which
+        allows you to reuse iterators without reconstructing them. This cache is better
+        than the previous method of having a single static iterator because the cache
+        lets you use two iterators simultaneously.
+
+        In the future, I will hook up all iterators to use this shared class. However, for
+        this patch, I've only hooked up the caret position iterator (backed by CoreFoundation
+        on Cocoa ports and UBRK_CHARACTER on other ports). 
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/spi/cf/CFStringSPI.h: Added.
+        * wtf/text/TextBreakIterator.cpp:
+        (WTF::initializeIteratorWithRules): Deleted.
+        (WTF::cursorMovementIterator): Deleted.
+        * wtf/text/TextBreakIterator.h:
+        (WTF::TextBreakIterator::preceding):
+        (WTF::TextBreakIterator::following):
+        (WTF::TextBreakIterator::isBoundary):
+        (WTF::TextBreakIterator::setText):
+        (WTF::TextBreakIterator::mode):
+        (WTF::TextBreakIterator::locale):
+        (WTF::TextBreakIteratorCache::singleton):
+        (WTF::TextBreakIteratorCache::take):
+        (WTF::TextBreakIteratorCache::put):
+        (WTF::TextBreakIteratorCache::TextBreakIteratorCache):
+        * wtf/text/cf/TextBreakIteratorCF.h: Added.
+        (WTF::TextBreakIteratorCF::TextBreakIteratorCF):
+        (WTF::TextBreakIteratorCF::setText):
+        (WTF::TextBreakIteratorCF::preceding):
+        (WTF::TextBreakIteratorCF::following):
+        (WTF::TextBreakIteratorCF::isBoundary):
+        * wtf/text/icu/TextBreakIteratorICU.h: Added.
+        (WTF::TextBreakIteratorICU::set8BitText):
+        (WTF::TextBreakIteratorICU::TextBreakIteratorICU):
+        (WTF::TextBreakIteratorICU::operator=):
+        (WTF::TextBreakIteratorICU::~TextBreakIteratorICU):
+        (WTF::TextBreakIteratorICU::setText):
+        (WTF::TextBreakIteratorICU::preceding):
+        (WTF::TextBreakIteratorICU::following):
+        (WTF::TextBreakIteratorICU::isBoundary):
+        * wtf/text/icu/UTextProviderLatin1.h:
+        * wtf/text/mac/TextBreakIteratorInternalICUMac.mm:
+        (WTF::mapModeToBackingIterator):
+        (WTF::TextBreakIterator::TextBreakIterator):
+
 2017-02-24  Joseph Pecoraro  <pecoraro@apple.com>
 
         [Resource Timing] Gather timing information with reliable responseEnd time

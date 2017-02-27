@@ -138,6 +138,7 @@ public:
     bool containsCaretOffset(unsigned) const;
     bool hasRenderedText() const;
 
+    // FIXME: These should return unsigneds.
     int previousOffset(int current) const final;
     int previousOffsetForBackwardDeletion(int current) const final;
     int nextOffset(int current) const final;
