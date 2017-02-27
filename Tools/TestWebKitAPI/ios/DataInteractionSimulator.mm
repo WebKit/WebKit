@@ -26,7 +26,7 @@
 #include "config.h"
 #include "DataInteractionSimulator.h"
 
-#if ENABLE(DATA_INTERACTION)
+#if 0
 
 #import "PlatformUtilities.h"
 #import <UIKit/UIItemProvider_Private.h>
@@ -147,7 +147,7 @@ static NSArray *dataInteractionEventNames()
     switch (_phase) {
     case DataInteractionBeginning: {
         NSMutableArray<UIItemProvider *> *itemProviders = [NSMutableArray array];
-        NSArray<WKDataInteractionItem *> *items = [_webView _simulatedItemsForSession:_dataInteractionSession.get()];
+        NSArray *items = [_webView _simulatedItemsForSession:_dataInteractionSession.get()];
         if (!items.count) {
             _phase = DataInteractionCancelled;
             _currentProgress = 1;
@@ -155,11 +155,15 @@ static NSArray *dataInteractionEventNames()
             return;
         }
 
+#if HAS_DATA_INTERACTION_ITEMS
         for (WKDataInteractionItem *item in items)
             [itemProviders addObject:item.itemProvider];
+#endif
 
         _dataInteractionInfo = adoptNS([[MockDataInteractionInfo alloc] initWithProvider:itemProviders.firstObject location:self._currentLocation window:[_webView window]]);
+#if HAS_DATA_INTERACTION_ITEMS
         [_dataInteractionSession setItems:items];
+#endif
         [_webView _simulateWillBeginDataInteractionWithSession:_dataInteractionSession.get()];
         _phase = DataInteractionBegan;
         break;

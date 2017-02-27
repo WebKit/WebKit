@@ -1,3 +1,9 @@
+2017-02-27  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Unreviewed, roll out r213065.
+
+        * UIProcess/ios/WKContentViewInteraction.h:
+
 2017-02-27  Alexey Proskuryakov  <ap@apple.com>
 
         Remove some deprecated WKPage plug-in information functions

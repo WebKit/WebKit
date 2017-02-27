@@ -1,3 +1,14 @@
+2017-02-27  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Unreviewed, roll out r213065.
+
+        We need these temporary fixes to keep the perf bots running.
+
+        * TestWebKitAPI/Tests/ios/DataInteractionTests.mm:
+        * TestWebKitAPI/ios/DataInteractionSimulator.h:
+        * TestWebKitAPI/ios/DataInteractionSimulator.mm:
+        (-[DataInteractionSimulator _advanceProgress]):
+
 2017-02-27  Simon Fraser  <simon.fraser@apple.com>
 
         Add specification and status metadata to CSSProperties.json, and validate it
