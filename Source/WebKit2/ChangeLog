@@ -1,3 +1,12 @@
+2017-02-27  Alexey Proskuryakov  <ap@apple.com>
+
+        Stop exporting C++ member variables from class extensions in WKDOMInternals.h
+        https://bugs.webkit.org/show_bug.cgi?id=168886
+
+        Reviewed by Tim Horton.
+
+        * WebProcess/InjectedBundle/API/mac/WKDOMInternals.h: These are @package variables.
+
 2017-02-27  Alex Christensen  <achristensen@webkit.org>
 
         Optimize checkWebRTCAvailability

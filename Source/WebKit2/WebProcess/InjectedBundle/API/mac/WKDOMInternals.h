@@ -41,7 +41,7 @@ class Document;
 @class WKDOMText;
 
 @interface WKDOMNode () {
-@public
+@package
     RefPtr<WebCore::Node> _impl;
 }
 
@@ -49,7 +49,7 @@ class Document;
 @end
 
 @interface WKDOMRange () {
-@public
+@package
     RefPtr<WebCore::Range> _impl;
 }
 
