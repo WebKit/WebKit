@@ -33,37 +33,37 @@ const sampleCluster = {
     "configurations": {
         "current": [
             [
-                1000, 100, 1, 100, 100, false,
+                1000, 100, 1, 100, 100 * 100, false,
                 [ [ 2000, 1, "4000", posixTime('2016-01-05T17:35:00Z')] ],
                 posixTime('2016-01-05T17:35:00Z'), 5000, posixTime('2016-01-05T19:23:00Z'), "10", 7
             ],
             [
-                1001, 131, 1, 131, 131, true,
+                1001, 131, 1, 131, 131 * 131, true,
                 [ [ 2001, 1, "4001", posixTime('2016-01-05T18:43:01Z')] ],
                 posixTime('2016-01-05T18:43:01Z'), 5001, posixTime('2016-01-05T20:58:01Z'), "11", 7
             ],
             [
-                1002, 122, 1, 122, 122, false,
+                1002, 122, 1, 122, 122 * 122, false,
                 [ [ 2002, 1, "4002", posixTime('2016-01-05T20:01:02Z') ] ],
                 posixTime('2016-01-05T20:01:02Z'), 5002, posixTime('2016-01-05T22:37:02Z'), "12", 7
             ],
             [
-                1003, 113, 1, 113, 113, false,
+                1003, 113, 1, 113, 113 * 113, false,
                 [ [ 2003, 1, "4003", posixTime('2016-01-05T23:19:03Z') ] ],
                 posixTime('2016-01-05T23:19:03Z'), 5003, posixTime('2016-01-06T23:19:03Z'), "13", 7
             ],
             [
-                1004, 124, 1, 124, 124, false,
+                1004, 124, 1, 124, 124 * 124, false,
                 [ [ 2004, 1, "4004", posixTime('2016-01-06T01:52:04Z') ] ],
                 posixTime('2016-01-06T01:52:04Z'), 5004, posixTime('2016-01-06T02:42:04Z'), "14", 7
             ],
             [
-                1005, 115, 1, 115, 115, true,
+                1005, 115, 1, 115, 115 * 115, true,
                 [ [ 2005, 1, "4005", posixTime('2016-01-06T03:22:05Z') ] ],
                 posixTime('2016-01-06T03:22:05Z'), 5005, posixTime('2016-01-06T06:01:05Z'), "15", 7
             ],
             [
-                1006, 116, 1, 116, 116, false,
+                1006, 116, 1, 116, 116 * 116, false,
                 [ [ 2006, 1, "4006", posixTime('2016-01-06T05:59:06Z') ] ],
                 posixTime('2016-01-06T05:59:06Z'), 5006, posixTime('2016-01-06T08:34:06Z'), "16", 7
             ]
@@ -71,26 +71,35 @@ const sampleCluster = {
     },
 };
 
-function createChartWithSampleCluster(context, chartOptions = {}, options = {})
+function createChartWithSampleCluster(context, sourceList = null, chartOptions = {}, className = 'TimeSeriesChart')
 {
-    const TimeSeriesChart = context.symbols[options.interactiveChart ? 'InteractiveTimeSeriesChart' : 'TimeSeriesChart'];
+    const TimeSeriesChart = context.symbols[className];
     const MeasurementSet = context.symbols.MeasurementSet;
 
-    const chart = new TimeSeriesChart([
-        {
-            type: 'current',
-            lineStyle: options.lineStyle || '#666',
-            measurementSet: MeasurementSet.findSet(1, 1, 0),
-            interactive: options.interactive || false,
-            includeOutliers: options.includeOutliers || false,
-            sampleData: options.sampleData || false,
-        }], chartOptions);
+    if (sourceList == null)
+        sourceList = [{type: 'current'}];
+
+    const sampleCluster = MeasurementSet.findSet(1, 1, 0);
+    for (let source of sourceList) {
+        if (!source.type)
+            source.type = 'current';
+        source.measurementSet = sampleCluster;
+    }
+
+    const chart = new TimeSeriesChart(sourceList, chartOptions);
     const element = chart.element();
-    element.style.width = options.width || '300px';
-    element.style.height = options.height || '100px';
+    element.style.width = chartOptions.width || '300px';
+    element.style.height = chartOptions.height || '100px';
     context.document.body.appendChild(element);
 
     return chart;
+}
+
+function createInteractiveChartWithSampleCluster(context, sourceList = null, chartOptions = {})
+{
+    if (sourceList == null)
+        sourceList = [{type: 'current', interactive: true}];
+    return createChartWithSampleCluster(context, sourceList, chartOptions, 'InteractiveTimeSeriesChart');
 }
 
 function respondWithSampleCluster(request)
@@ -605,7 +614,7 @@ describe('TimeSeriesChart', () => {
         it('should not contain an outlier when includeOutliers is false', () => {
             const context = new BrowsingContext();
             return context.importScripts(scripts, 'ComponentBase', 'TimeSeriesChart', 'MeasurementSet', 'MockRemoteAPI').then(() => {
-                const chart = createChartWithSampleCluster(context, {}, {includeOutliers: false});
+                const chart = createChartWithSampleCluster(context, [{includeOutliers: false}])
 
                 chart.setDomain(sampleCluster.startTime, sampleCluster.endTime);
                 chart.fetchMeasurementSets();
@@ -623,7 +632,7 @@ describe('TimeSeriesChart', () => {
         it('should contain every outlier when includeOutliers is true', () => {
             const context = new BrowsingContext();
             return context.importScripts(scripts, 'ComponentBase', 'TimeSeriesChart', 'MeasurementSet', 'MockRemoteAPI').then(() => {
-                const chart = createChartWithSampleCluster(context, {}, {includeOutliers: true});
+                const chart = createChartWithSampleCluster(context, [{includeOutliers: true}])
 
                 chart.setDomain(sampleCluster.startTime, sampleCluster.endTime);
                 chart.fetchMeasurementSets();
@@ -641,7 +650,7 @@ describe('TimeSeriesChart', () => {
         it('should only contain data points in the domain and one preceding point when there are no succeeding points', () => {
             const context = new BrowsingContext();
             return context.importScripts(scripts, 'ComponentBase', 'TimeSeriesChart', 'MeasurementSet', 'MockRemoteAPI').then(() => {
-                const chart = createChartWithSampleCluster(context, {}, {includeOutliers: true});
+                const chart = createChartWithSampleCluster(context, [{includeOutliers: true}])
 
                 chart.setDomain(posixTime('2016-01-06T00:00:00Z'), posixTime('2016-01-07T00:00:00Z'));
                 chart.fetchMeasurementSets();
@@ -657,7 +666,7 @@ describe('TimeSeriesChart', () => {
         it('should only contain data points in the domain and one succeeding point when there are no preceding points', () => {
             const context = new BrowsingContext();
             return context.importScripts(scripts, 'ComponentBase', 'TimeSeriesChart', 'MeasurementSet', 'MockRemoteAPI').then(() => {
-                const chart = createChartWithSampleCluster(context, {}, {includeOutliers: true});
+                const chart = createChartWithSampleCluster(context, [{includeOutliers: true}])
 
                 chart.setDomain(posixTime('2016-01-05T00:00:00Z'), posixTime('2016-01-06T00:00:00Z'));
                 chart.fetchMeasurementSets();
@@ -674,7 +683,7 @@ describe('TimeSeriesChart', () => {
         it('should only contain data points in the domain and one preceding point and one succeeding point', () => {
             const context = new BrowsingContext();
             return context.importScripts(scripts, 'ComponentBase', 'TimeSeriesChart', 'MeasurementSet', 'MockRemoteAPI').then(() => {
-                const chart = createChartWithSampleCluster(context, {}, {includeOutliers: true});
+                const chart = createChartWithSampleCluster(context, [{includeOutliers: true}])
 
                 chart.setDomain(posixTime('2016-01-05T21:00:00Z'), posixTime('2016-01-06T02:00:00Z'));
                 chart.fetchMeasurementSets();
@@ -692,7 +701,7 @@ describe('TimeSeriesChart', () => {
         it('should update the canvas size and its content after the window has been resized', () => {
             const context = new BrowsingContext();
             return context.importScripts(scripts, 'ComponentBase', 'TimeSeriesChart', 'MeasurementSet', 'MockRemoteAPI').then(() => {
-                const chart = createChartWithSampleCluster(context, {}, {width: '100%', height: '100%'});
+                const chart = createChartWithSampleCluster(context, null, {width: '100%', height: '100%'});
 
                 let dataChangeCount = 0;
                 chart.listenToAction('dataChange', () => dataChangeCount++);
@@ -742,7 +751,7 @@ describe('TimeSeriesChart', () => {
         it('should not update update the canvas when the window has been resized but its dimensions stays the same', () => {
             const context = new BrowsingContext();
             return context.importScripts(scripts, 'ComponentBase', 'TimeSeriesChart', 'MeasurementSet', 'MockRemoteAPI').then(() => {
-                const chart = createChartWithSampleCluster(context, {}, {width: '100px', height: '100px'});
+                const chart = createChartWithSampleCluster(context, null, {width: '100px', height: '100px'});
 
                 let dataChangeCount = 0;
                 chart.listenToAction('dataChange', () => dataChangeCount++);
@@ -788,14 +797,14 @@ describe('TimeSeriesChart', () => {
         it('should render Y-axis', () => {
             const context = new BrowsingContext();
             return context.importScripts(scripts, 'ComponentBase', 'TimeSeriesChart', 'MeasurementSet', 'MockRemoteAPI', 'Metric').then(() => {
-                const chartWithoutYAxis = createChartWithSampleCluster(context, {axis:
+                const chartWithoutYAxis = createChartWithSampleCluster(context, null, {axis:
                     {
                         gridStyle: '#ccc',
                         fontSize: 1,
                         valueFormatter: context.symbols.Metric.makeFormatter('ms', 3),
                     }
                 });
-                const chartWithYAxis1 = createChartWithSampleCluster(context, {axis:
+                const chartWithYAxis1 = createChartWithSampleCluster(context, null, {axis:
                     {
                         yAxisWidth: 4,
                         gridStyle: '#ccc',
@@ -803,7 +812,7 @@ describe('TimeSeriesChart', () => {
                         valueFormatter: context.symbols.Metric.makeFormatter('ms', 3),
                     }
                 });
-                const chartWithYAxis2 = createChartWithSampleCluster(context, {axis:
+                const chartWithYAxis2 = createChartWithSampleCluster(context, null, {axis:
                     {
                         yAxisWidth: 4,
                         gridStyle: '#ccc',
@@ -840,8 +849,11 @@ describe('TimeSeriesChart', () => {
         it('should render the sampled time series', () => {
             const context = new BrowsingContext();
             return context.importScripts(scripts, 'ComponentBase', 'TimeSeriesChart', 'InteractiveTimeSeriesChart', 'MeasurementSet', 'MockRemoteAPI').then(() => {
-                const chartWithoutSampling = createChartWithSampleCluster(context, {}, {lineStyle: 'rgb(0, 128, 255)', width: '100px', height: '100px', sampleData: false});
-                const chartWithSampling = createChartWithSampleCluster(context, {}, {lineStyle: 'rgb(0, 128, 255)', width: '100px', height: '100px', sampleData: true});
+                const lineStyle = 'rgb(0, 128, 255)';
+                const lineColor = {r: 0, g: 128, b: 255};
+                const chartOptions = {width: '100px', height: '100px'};
+                const chartWithoutSampling = createChartWithSampleCluster(context, [{lineStyle, sampleData: false}], chartOptions);
+                const chartWithSampling = createChartWithSampleCluster(context, [{lineStyle, sampleData: true}], chartOptions);
 
                 chartWithoutSampling.setDomain(sampleCluster.startTime, sampleCluster.endTime);
                 chartWithoutSampling.fetchMeasurementSets();
@@ -857,8 +869,8 @@ describe('TimeSeriesChart', () => {
                     canvasWithSampling = chartWithSampling.content().querySelector('canvas');
 
                     CanvasTest.expectCanvasesMatch(canvasWithSampling, canvasWithoutSampling);
-                    expect(CanvasTest.canvasContainsColor(canvasWithoutSampling, {r: 0, g: 128, b: 255})).to.be(true);
-                    expect(CanvasTest.canvasContainsColor(canvasWithSampling, {r: 0, g: 128, b: 255})).to.be(true);
+                    expect(CanvasTest.canvasContainsColor(canvasWithoutSampling, lineColor)).to.be(true);
+                    expect(CanvasTest.canvasContainsColor(canvasWithSampling, lineColor)).to.be(true);
 
                     const diff = sampleCluster.endTime - sampleCluster.startTime;
                     chartWithoutSampling.setDomain(sampleCluster.startTime - 2 * diff, sampleCluster.endTime);
@@ -871,8 +883,8 @@ describe('TimeSeriesChart', () => {
                     expect(CanvasTest.hasCanvasBeenRedrawn(canvasWithoutSampling)).to.be(true);
                     expect(CanvasTest.hasCanvasBeenRedrawn(canvasWithSampling)).to.be(true);
 
-                    expect(CanvasTest.canvasContainsColor(canvasWithoutSampling, {r: 0, g: 128, b: 255})).to.be(true);
-                    expect(CanvasTest.canvasContainsColor(canvasWithSampling, {r: 0, g: 128, b: 255})).to.be(true);
+                    expect(CanvasTest.canvasContainsColor(canvasWithoutSampling, lineColor)).to.be(true);
+                    expect(CanvasTest.canvasContainsColor(canvasWithSampling, lineColor)).to.be(true);
 
                     CanvasTest.expectCanvasesMismatch(canvasWithSampling, canvasWithoutSampling);
                 });
@@ -882,14 +894,9 @@ describe('TimeSeriesChart', () => {
         it('should render annotations', () => {
             const context = new BrowsingContext();
             return context.importScripts(scripts, 'ComponentBase', 'TimeSeriesChart', 'InteractiveTimeSeriesChart', 'MeasurementSet', 'MockRemoteAPI').then(() => {
-                const options = {annotations: {
-                    textStyle: '#000',
-                    textBackground: '#fff',
-                    minWidth: 3,
-                    barHeight: 7,
-                    barSpacing: 2}};
-                const chartWithoutAnnotations = createChartWithSampleCluster(context, options);
-                const chartWithAnnotations = createChartWithSampleCluster(context, options);
+                const options = {annotations: { textStyle: '#000', textBackground: '#fff', minWidth: 3, barHeight: 7, barSpacing: 2}};
+                const chartWithoutAnnotations = createChartWithSampleCluster(context, null, options);
+                const chartWithAnnotations = createChartWithSampleCluster(context, null, options);
 
                 chartWithoutAnnotations.setDomain(sampleCluster.startTime, sampleCluster.endTime);
                 chartWithoutAnnotations.fetchMeasurementSets();
@@ -928,7 +935,7 @@ describe('InteractiveTimeSeriesChart', () => {
     it('should change the unlocked indicator to the point closest to the last mouse move position', () => {
         const context = new BrowsingContext();
         return context.importScripts(scripts, 'ComponentBase', 'TimeSeriesChart', 'InteractiveTimeSeriesChart', 'MeasurementSet', 'MockRemoteAPI').then(() => {
-            const chart = createChartWithSampleCluster(context, {}, {interactiveChart: true, interactive: true});
+            const chart = createInteractiveChartWithSampleCluster(context);
 
             chart.setDomain(sampleCluster.startTime, sampleCluster.endTime);
             chart.fetchMeasurementSets();
@@ -973,7 +980,7 @@ describe('InteractiveTimeSeriesChart', () => {
     it('should lock the indicator to the point closest to the clicked position', () => {
         const context = new BrowsingContext();
         return context.importScripts(scripts, 'ComponentBase', 'TimeSeriesChart', 'InteractiveTimeSeriesChart', 'MeasurementSet', 'MockRemoteAPI').then(() => {
-            const chart = createChartWithSampleCluster(context, {}, {interactiveChart: true, interactive: true});
+            const chart = createInteractiveChartWithSampleCluster(context);
 
             chart.setDomain(sampleCluster.startTime, sampleCluster.endTime);
             chart.fetchMeasurementSets();
@@ -1023,7 +1030,7 @@ describe('InteractiveTimeSeriesChart', () => {
     it('should clear the unlocked indicator when the mouse cursor exits the chart', () => {
         const context = new BrowsingContext();
         return context.importScripts(scripts, 'ComponentBase', 'TimeSeriesChart', 'InteractiveTimeSeriesChart', 'MeasurementSet', 'MockRemoteAPI').then(() => {
-            const chart = createChartWithSampleCluster(context, {}, {interactiveChart: true, interactive: true});
+            const chart = createInteractiveChartWithSampleCluster(context);
 
             chart.setDomain(sampleCluster.startTime, sampleCluster.endTime);
             chart.fetchMeasurementSets();
@@ -1081,7 +1088,7 @@ describe('InteractiveTimeSeriesChart', () => {
     it('should not clear the locked indicator when the mouse cursor exits the chart', () => {
         const context = new BrowsingContext();
         return context.importScripts(scripts, 'ComponentBase', 'TimeSeriesChart', 'InteractiveTimeSeriesChart', 'MeasurementSet', 'MockRemoteAPI').then(() => {
-            const chart = createChartWithSampleCluster(context, {}, {interactiveChart: true, interactive: true});
+            const chart = createInteractiveChartWithSampleCluster(context);
 
             chart.setDomain(sampleCluster.startTime, sampleCluster.endTime);
             chart.fetchMeasurementSets();
@@ -1143,7 +1150,7 @@ describe('InteractiveTimeSeriesChart', () => {
     it('should clear the locked indicator when clicked', () => {
         const context = new BrowsingContext();
         return context.importScripts(scripts, 'ComponentBase', 'TimeSeriesChart', 'InteractiveTimeSeriesChart', 'MeasurementSet', 'MockRemoteAPI').then(() => {
-            const chart = createChartWithSampleCluster(context, {}, {interactiveChart: true, interactive: true});
+            const chart = createInteractiveChartWithSampleCluster(context);
 
             chart.setDomain(sampleCluster.startTime, sampleCluster.endTime);
             chart.fetchMeasurementSets();
@@ -1207,9 +1214,7 @@ describe('InteractiveTimeSeriesChart', () => {
     it('should change the selection when the mouse cursor is dragged', () => {
         const context = new BrowsingContext();
         return context.importScripts(scripts, 'ComponentBase', 'TimeSeriesChart', 'InteractiveTimeSeriesChart', 'MeasurementSet', 'MockRemoteAPI').then(() => {
-            const chart = createChartWithSampleCluster(context,
-                {selection: {lineStyle: '#f93', lineWidth: 2, fillStyle: '#ccc'}},
-                {interactiveChart: true, interactive: true});
+            const chart = createInteractiveChartWithSampleCluster(context, null, {selection: {lineStyle: '#f93', lineWidth: 2, fillStyle: '#ccc'}});
 
             chart.setDomain(sampleCluster.startTime, sampleCluster.endTime);
             chart.fetchMeasurementSets();
@@ -1325,9 +1330,7 @@ describe('InteractiveTimeSeriesChart', () => {
     it('should dispatch the "zoom" action when the zoom button is clicked', () => {
         const context = new BrowsingContext();
         return context.importScripts(scripts, 'ComponentBase', 'TimeSeriesChart', 'InteractiveTimeSeriesChart', 'MeasurementSet', 'MockRemoteAPI').then(() => {
-            const chart = createChartWithSampleCluster(context,
-                {selection: {lineStyle: '#f93', lineWidth: 2, fillStyle: '#ccc'}, zoomButton: true},
-                {interactiveChart: true, interactive: true});
+            const chart = createInteractiveChartWithSampleCluster(context, null, {selection: {lineStyle: '#f93', lineWidth: 2, fillStyle: '#ccc'}, zoomButton: true});
 
             chart.setDomain(sampleCluster.startTime, sampleCluster.endTime);
             chart.fetchMeasurementSets();
@@ -1374,9 +1377,7 @@ describe('InteractiveTimeSeriesChart', () => {
     it('should clear the selection when clicked', () => {
         const context = new BrowsingContext();
         return context.importScripts(scripts, 'ComponentBase', 'TimeSeriesChart', 'InteractiveTimeSeriesChart', 'MeasurementSet', 'MockRemoteAPI').then(() => {
-            const chart = createChartWithSampleCluster(context,
-                {selection: {lineStyle: '#f93', lineWidth: 2, fillStyle: '#ccc'}},
-                {interactiveChart: true, interactive: true});
+            const chart = createInteractiveChartWithSampleCluster(context, null, {selection: {lineStyle: '#f93', lineWidth: 2, fillStyle: '#ccc'}});
 
             chart.setDomain(sampleCluster.startTime, sampleCluster.endTime);
             chart.fetchMeasurementSets();
@@ -1423,13 +1424,8 @@ describe('InteractiveTimeSeriesChart', () => {
     it('should dispatch "annotationClick" action when an annotation is clicked', () => {
         const context = new BrowsingContext();
         return context.importScripts(scripts, 'ComponentBase', 'TimeSeriesChart', 'InteractiveTimeSeriesChart', 'MeasurementSet', 'MockRemoteAPI').then(() => {
-            const options = {annotations: {
-                textStyle: '#000',
-                textBackground: '#fff',
-                minWidth: 3,
-                barHeight: 10,
-                barSpacing: 1}};
-            const chart = createChartWithSampleCluster(context, options, {interactiveChart: true});
+            const chart = createInteractiveChartWithSampleCluster(context, null,
+                {annotations: { textStyle: '#000', textBackground: '#fff', minWidth: 3, barHeight: 10, barSpacing: 1}});
 
             chart.setDomain(sampleCluster.startTime, sampleCluster.endTime);
             chart.fetchMeasurementSets();
@@ -1475,6 +1471,112 @@ describe('InteractiveTimeSeriesChart', () => {
                 return waitForComponentsToRender(context);
             }).then(() => {
                 expect(CanvasTest.hasCanvasBeenRedrawn(canvas)).to.be(false);
+            });
+        });
+    });
+
+    describe('render', () => {
+        it('should render the unlocked indicator when options.indicator is specified', () => {
+            const context = new BrowsingContext();
+            return context.importScripts(scripts, 'ComponentBase', 'InteractiveTimeSeriesChart', 'MeasurementSet', 'MockRemoteAPI').then(() => {
+                const chartWithoutIndicator = createInteractiveChartWithSampleCluster(context);
+                const chartWithIndicator = createInteractiveChartWithSampleCluster(context, null,
+                    {indicator: {lineStyle: 'rgb(51, 204, 255)', lineWidth: 2, pointRadius: 2}, interactiveChart: true});
+                const indicatorColor = {r: 51, g: 204, b: 255};
+
+                chartWithoutIndicator.setDomain(sampleCluster.startTime, sampleCluster.endTime);
+                chartWithoutIndicator.fetchMeasurementSets();
+                respondWithSampleCluster(context.symbols.MockRemoteAPI.requests[0]);
+
+                chartWithIndicator.setDomain(sampleCluster.startTime, sampleCluster.endTime);
+                chartWithIndicator.fetchMeasurementSets();
+
+                let canvasWithoutIndicator;
+                let canvasWithIndicator;
+                return waitForComponentsToRender(context).then(() => {
+                    canvasWithoutIndicator = chartWithoutIndicator.content().querySelector('canvas');
+                    canvasWithIndicator = chartWithIndicator.content().querySelector('canvas');
+
+                    const rect = canvasWithIndicator.getBoundingClientRect();
+                    const x = rect.right - 1;
+                    const y = rect.top + rect.height / 2;
+                    canvasWithIndicator.dispatchEvent(new MouseEvent('mousemove', {target: canvasWithIndicator, clientX: x, clientY: y, composed: true, bubbles: true}));
+
+                    CanvasTest.fillCanvasBeforeRedrawCheck(canvasWithIndicator);
+                    return waitForComponentsToRender(context);
+                }).then(() => {
+                    expect(CanvasTest.hasCanvasBeenRedrawn(canvasWithIndicator)).to.be(true);
+
+                    const indicator = chartWithIndicator.currentIndicator();
+                    const currentView = chartWithIndicator.sampledTimeSeriesData('current');
+                    expect(indicator.view).to.be(currentView);
+                    expect(indicator.point).to.be(currentView.lastPoint());
+                    expect(indicator.isLocked).to.be(false);
+
+                    CanvasTest.expectCanvasesMismatch(canvasWithoutIndicator, canvasWithIndicator);
+                    expect(CanvasTest.canvasContainsColor(canvasWithoutIndicator, indicatorColor)).to.be(false);
+                    expect(CanvasTest.canvasContainsColor(canvasWithIndicator, indicatorColor)).to.be(true);
+                });
+            });
+        });
+
+        it('should render the locked indicator differently from the unlocked indicator when options.lockedIndicator is specified', () => {
+            const context = new BrowsingContext();
+            return context.importScripts(scripts, 'ComponentBase', 'InteractiveTimeSeriesChart', 'MeasurementSet', 'MockRemoteAPI').then(() => {
+                const chartOptions = {
+                    indicator: {lineStyle: 'rgb(51, 204, 255)', lineWidth: 2, pointRadius: 3},
+                    lockedIndicator: {lineStyle: 'rgb(51, 102, 204)', fillStyle: 'rgb(250, 250, 250)', lineWidth: 2, pointRadius: 3}
+                };
+                const unlockedColor = {r: 51, g: 204, b: 255};
+                const lockedColor = {r: 51, g: 102, b: 204};
+                const lockedFillColor = {r: 250, g: 250, b: 250};
+                const chartWithUnlockedIndicator = createInteractiveChartWithSampleCluster(context, null, chartOptions);
+                const chartWithLockedIndicator = createInteractiveChartWithSampleCluster(context, null, chartOptions);
+
+                chartWithUnlockedIndicator.setDomain(sampleCluster.startTime, sampleCluster.endTime);
+                chartWithUnlockedIndicator.fetchMeasurementSets();
+                respondWithSampleCluster(context.symbols.MockRemoteAPI.requests[0]);
+
+                chartWithLockedIndicator.setDomain(sampleCluster.startTime, sampleCluster.endTime);
+                chartWithLockedIndicator.fetchMeasurementSets();
+
+                let canvasWithUnlockedIndicator;
+                let canvasWithLockedIndicator;
+                return waitForComponentsToRender(context).then(() => {
+                    canvasWithUnlockedIndicator = chartWithUnlockedIndicator.content().querySelector('canvas');
+                    canvasWithLockedIndicator = chartWithLockedIndicator.content().querySelector('canvas');
+
+                    const rect = canvasWithUnlockedIndicator.getBoundingClientRect();
+                    const x = rect.right - 1;
+                    const y = rect.top + rect.height / 2;
+                    canvasWithUnlockedIndicator.dispatchEvent(new MouseEvent('mousemove', {target: canvasWithUnlockedIndicator, clientX: x, clientY: y, composed: true, bubbles: true}));
+                    canvasWithLockedIndicator.dispatchEvent(new MouseEvent('click', {target: canvasWithLockedIndicator, clientX: x, clientY: y, composed: true, bubbles: true}));
+
+                    CanvasTest.fillCanvasBeforeRedrawCheck(canvasWithUnlockedIndicator);
+                    CanvasTest.fillCanvasBeforeRedrawCheck(canvasWithLockedIndicator);
+                    return waitForComponentsToRender(context);
+                }).then(() => {
+                    expect(CanvasTest.hasCanvasBeenRedrawn(canvasWithUnlockedIndicator)).to.be(true);
+                    expect(CanvasTest.hasCanvasBeenRedrawn(canvasWithLockedIndicator)).to.be(true);
+
+                    let indicator = chartWithUnlockedIndicator.currentIndicator();
+                    let currentView = chartWithUnlockedIndicator.sampledTimeSeriesData('current');
+                    expect(indicator.view).to.be(currentView);
+                    expect(indicator.point).to.be(currentView.lastPoint());
+                    expect(indicator.isLocked).to.be(false);
+
+                    indicator = chartWithLockedIndicator.currentIndicator();
+                    currentView = chartWithLockedIndicator.sampledTimeSeriesData('current');
+                    expect(indicator.view).to.be(currentView);
+                    expect(indicator.point).to.be(currentView.lastPoint());
+                    expect(indicator.isLocked).to.be(true);
+
+                    CanvasTest.expectCanvasesMismatch(canvasWithUnlockedIndicator, canvasWithLockedIndicator);
+                    expect(CanvasTest.canvasContainsColor(canvasWithUnlockedIndicator, unlockedColor)).to.be(true);
+                    expect(CanvasTest.canvasContainsColor(canvasWithUnlockedIndicator, lockedFillColor)).to.be(false);
+                    expect(CanvasTest.canvasContainsColor(canvasWithLockedIndicator, lockedColor)).to.be(true);
+                    expect(CanvasTest.canvasContainsColor(canvasWithLockedIndicator, lockedFillColor)).to.be(true);
+                });
             });
         });
     });

@@ -1,3 +1,29 @@
+2017-02-27  Ryosuke Niwa  <rniwa@webkit.org>
+
+        A Locked indicator should be visually distinct from an unlocked indicator
+        https://bugs.webkit.org/show_bug.cgi?id=168868
+        <rdar://problem/29666054>
+
+        Reviewed by Antti Koivisto.
+
+        Added the support for specifying options.lockedIndicator in addition to options.indicator to style
+        an locked indicator differently from an unlocked one.
+
+        * browser-tests/time-series-chart-tests.js: Added new test cases for indicators.
+        (createChartWithSampleCluster): Renamed and swapped the order of arguments to better match
+        TimeSeriesChart's constructor. Now the second argument is an array of source as is in the constructor.
+        (createInteractiveChartWithSampleCluster): Added.
+
+        * public/v3/components/chart-styles.js:
+        (ChartStyles.overviewChartOptions): Changed the color of a selection to blue.
+        (ChartStyles.mainChartOptions): Ditto. Also use a different style for a locked indicator.
+
+        * public/v3/components/interactive-time-series-chart.js:
+        (InteractiveTimeSeriesChart.prototype._layout): Removed the unused variable.
+        (InteractiveTimeSeriesChart.prototype._renderChartContent): Use options.lockedIndicator when rendering
+        a locked indicator. Also stroke the circle in addition to filling it so that we can use a blue circle
+        with a white hole for a locked indicator to make it even more visually distinctive from an unlocked one.
+
 2017-02-25  Dewei Zhu  <dewei_zhu@apple.com>
 
         Commit should order by 'commit_order' as secondary key.

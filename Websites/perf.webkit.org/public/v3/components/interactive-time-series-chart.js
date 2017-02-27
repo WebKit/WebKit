@@ -366,7 +366,6 @@ class InteractiveTimeSeriesChart extends TimeSeriesChart {
         var metrics = super._layout();
         metrics.doneWork |= this._forceRender;
         this._forceRender = false;
-        this._lastRenderigMetrics = metrics;
         return metrics;
     }
 
@@ -413,10 +412,10 @@ class InteractiveTimeSeriesChart extends TimeSeriesChart {
                 this._annotationLabel.style.display = 'none';
         }
 
-        const indicatorOptions = this._options.indicator;
         const indicator = this.currentIndicator();
+        const indicatorOptions = (indicator && indicator.isLocked ? this._options.lockedIndicator : null) || this._options.indicator;
         if (indicator && indicatorOptions) {
-            context.fillStyle = indicatorOptions.lineStyle;
+            context.fillStyle = indicatorOptions.fillStyle || indicatorOptions.lineStyle;
             context.strokeStyle = indicatorOptions.lineStyle;
             context.lineWidth = indicatorOptions.lineWidth;
 
@@ -429,6 +428,7 @@ class InteractiveTimeSeriesChart extends TimeSeriesChart {
             context.stroke();
 
             this._fillCircle(context, x, y, indicatorOptions.pointRadius);
+            context.stroke();
         }
 
         var selectionOptions = this._options.selection;
