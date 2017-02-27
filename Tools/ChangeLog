@@ -1,3 +1,14 @@
+2017-02-20  Filip Pizlo  <fpizlo@apple.com>
+
+        The collector thread should only start when the mutator doesn't have heap access
+        https://bugs.webkit.org/show_bug.cgi?id=167737
+
+        Reviewed by Keith Miller.
+        
+        Make more tests collect continuously.
+
+        * Scripts/run-jsc-stress-tests:
+
 2017-02-20  Florian Bruhin  <git@the-compiler.org>
 
         Handle EINTR during webkitpy server process select()

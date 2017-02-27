@@ -1,3 +1,190 @@
+2017-02-20  Filip Pizlo  <fpizlo@apple.com>
+
+        The collector thread should only start when the mutator doesn't have heap access
+        https://bugs.webkit.org/show_bug.cgi?id=167737
+
+        Reviewed by Keith Miller.
+        
+        This turns the collector thread's workflow into a state machine, so that the mutator thread can
+        run it directly. This reduces the amount of synchronization we do with the collector thread, and
+        means that most apps will never start the collector thread. The collector thread will still start
+        when we need to finish collecting and we don't have heap access.
+        
+        In this new world, "stopping the world" means relinquishing control of collection to the mutator.
+        This means tracking who is conducting collection. I use the GCConductor enum to say who is
+        conducting. It's either GCConductor::Mutator or GCConductor::Collector. I use the term "conn" to
+        refer to the concept of conducting (having the conn, relinquishing the conn, taking the conn).
+        So, stopping the world means giving the mutator the conn. Releasing heap access means giving the
+        collector the conn.
+        
+        This meant bringing back the conservative scan of the calling thread. It turns out that this
+        scan was too slow to be called on each GC increment because apparently setjmp() now does system
+        calls. So, I wrote our own callee save register saving for the GC. Then I had doubts about
+        whether or not it was correct, so I also made it so that the GC only rarely asks for the register
+        state. I think we still want to use my register saving code instead of setjmp because setjmp
+        seems to save things we don't need, and that could make us overly conservative.
+        
+        It turns out that this new scheduling discipline makes the old space-time scheduler perform
+        better than the new stochastic space-time scheduler on systems with fewer than 4 cores. This is
+        because the mutator having the conn enables us to time the mutator<->collector context switches
+        by polling. The OS is never involved. So, we can use super precise timing. This allows the old
+        space-time schduler to shine like it hadn't before.
+        
+        The splay results imply that this is all a good thing. On 2-core systems, this reduces pause
+        times by 40% and it increases throughput about 5%. On 1-core systems, this reduces pause times by
+        half and reduces throughput by 8%. On 4-or-more-core systems, this doesn't seem to have much
+        effect.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::visitChildren):
+        * dfg/DFGWorklist.cpp:
+        (JSC::DFG::Worklist::ThreadBody::ThreadBody):
+        (JSC::DFG::Worklist::dump):
+        (JSC::DFG::numberOfWorklists):
+        (JSC::DFG::ensureWorklistForIndex):
+        (JSC::DFG::existingWorklistForIndexOrNull):
+        (JSC::DFG::existingWorklistForIndex):
+        * dfg/DFGWorklist.h:
+        (JSC::DFG::numberOfWorklists): Deleted.
+        (JSC::DFG::ensureWorklistForIndex): Deleted.
+        (JSC::DFG::existingWorklistForIndexOrNull): Deleted.
+        (JSC::DFG::existingWorklistForIndex): Deleted.
+        * heap/CollectingScope.h: Added.
+        (JSC::CollectingScope::CollectingScope):
+        (JSC::CollectingScope::~CollectingScope):
+        * heap/CollectorPhase.cpp: Added.
+        (JSC::worldShouldBeSuspended):
+        (WTF::printInternal):
+        * heap/CollectorPhase.h: Added.
+        * heap/EdenGCActivityCallback.cpp:
+        (JSC::EdenGCActivityCallback::lastGCLength):
+        * heap/FullGCActivityCallback.cpp:
+        (JSC::FullGCActivityCallback::doCollection):
+        (JSC::FullGCActivityCallback::lastGCLength):
+        * heap/GCConductor.cpp: Added.
+        (JSC::gcConductorShortName):
+        (WTF::printInternal):
+        * heap/GCConductor.h: Added.
+        * heap/GCFinalizationCallback.cpp: Added.
+        (JSC::GCFinalizationCallback::GCFinalizationCallback):
+        (JSC::GCFinalizationCallback::~GCFinalizationCallback):
+        * heap/GCFinalizationCallback.h: Added.
+        (JSC::GCFinalizationCallbackFuncAdaptor::GCFinalizationCallbackFuncAdaptor):
+        (JSC::createGCFinalizationCallback):
+        * heap/Heap.cpp:
+        (JSC::Heap::Thread::Thread):
+        (JSC::Heap::Heap):
+        (JSC::Heap::lastChanceToFinalize):
+        (JSC::Heap::gatherStackRoots):
+        (JSC::Heap::updateObjectCounts):
+        (JSC::Heap::sweepSynchronously):
+        (JSC::Heap::collectAllGarbage):
+        (JSC::Heap::collectAsync):
+        (JSC::Heap::collectSync):
+        (JSC::Heap::shouldCollectInCollectorThread):
+        (JSC::Heap::collectInCollectorThread):
+        (JSC::Heap::checkConn):
+        (JSC::Heap::runNotRunningPhase):
+        (JSC::Heap::runBeginPhase):
+        (JSC::Heap::runFixpointPhase):
+        (JSC::Heap::runConcurrentPhase):
+        (JSC::Heap::runReloopPhase):
+        (JSC::Heap::runEndPhase):
+        (JSC::Heap::changePhase):
+        (JSC::Heap::finishChangingPhase):
+        (JSC::Heap::stopThePeriphery):
+        (JSC::Heap::resumeThePeriphery):
+        (JSC::Heap::stopTheMutator):
+        (JSC::Heap::resumeTheMutator):
+        (JSC::Heap::stopIfNecessarySlow):
+        (JSC::Heap::collectInMutatorThread):
+        (JSC::Heap::waitForCollector):
+        (JSC::Heap::acquireAccessSlow):
+        (JSC::Heap::releaseAccessSlow):
+        (JSC::Heap::relinquishConn):
+        (JSC::Heap::finishRelinquishingConn):
+        (JSC::Heap::handleNeedFinalize):
+        (JSC::Heap::notifyThreadStopping):
+        (JSC::Heap::finalize):
+        (JSC::Heap::addFinalizationCallback):
+        (JSC::Heap::requestCollection):
+        (JSC::Heap::waitForCollection):
+        (JSC::Heap::updateAllocationLimits):
+        (JSC::Heap::didFinishCollection):
+        (JSC::Heap::collectIfNecessaryOrDefer):
+        (JSC::Heap::notifyIsSafeToCollect):
+        (JSC::Heap::preventCollection):
+        (JSC::Heap::performIncrement):
+        (JSC::Heap::markToFixpoint): Deleted.
+        (JSC::Heap::shouldCollectInThread): Deleted.
+        (JSC::Heap::collectInThread): Deleted.
+        (JSC::Heap::stopTheWorld): Deleted.
+        (JSC::Heap::resumeTheWorld): Deleted.
+        * heap/Heap.h:
+        (JSC::Heap::machineThreads):
+        (JSC::Heap::lastFullGCLength):
+        (JSC::Heap::lastEdenGCLength):
+        (JSC::Heap::increaseLastFullGCLength):
+        * heap/HeapInlines.h:
+        (JSC::Heap::mutatorIsStopped): Deleted.
+        * heap/HeapStatistics.cpp: Removed.
+        * heap/HeapStatistics.h: Removed.
+        * heap/HelpingGCScope.h: Removed.
+        * heap/IncrementalSweeper.cpp:
+        (JSC::IncrementalSweeper::stopSweeping):
+        (JSC::IncrementalSweeper::willFinishSweeping): Deleted.
+        * heap/IncrementalSweeper.h:
+        * heap/MachineStackMarker.cpp:
+        (JSC::MachineThreads::gatherFromCurrentThread):
+        (JSC::MachineThreads::gatherConservativeRoots):
+        (JSC::callWithCurrentThreadState):
+        * heap/MachineStackMarker.h:
+        * heap/MarkedAllocator.cpp:
+        (JSC::MarkedAllocator::allocateSlowCaseImpl):
+        * heap/MarkedBlock.cpp:
+        (JSC::MarkedBlock::Handle::sweep):
+        * heap/MarkedSpace.cpp:
+        (JSC::MarkedSpace::sweep):
+        * heap/MutatorState.cpp:
+        (WTF::printInternal):
+        * heap/MutatorState.h:
+        * heap/RegisterState.h: Added.
+        * heap/RunningScope.h: Added.
+        (JSC::RunningScope::RunningScope):
+        (JSC::RunningScope::~RunningScope):
+        * heap/SlotVisitor.cpp:
+        (JSC::SlotVisitor::SlotVisitor):
+        (JSC::SlotVisitor::drain):
+        (JSC::SlotVisitor::drainFromShared):
+        (JSC::SlotVisitor::drainInParallelPassively):
+        (JSC::SlotVisitor::donateAll):
+        (JSC::SlotVisitor::donate):
+        * heap/SlotVisitor.h:
+        (JSC::SlotVisitor::codeName):
+        * heap/StochasticSpaceTimeMutatorScheduler.cpp:
+        (JSC::StochasticSpaceTimeMutatorScheduler::beginCollection):
+        (JSC::StochasticSpaceTimeMutatorScheduler::synchronousDrainingDidStall):
+        (JSC::StochasticSpaceTimeMutatorScheduler::timeToStop):
+        * heap/SweepingScope.h: Added.
+        (JSC::SweepingScope::SweepingScope):
+        (JSC::SweepingScope::~SweepingScope):
+        * jit/JITWorklist.cpp:
+        (JSC::JITWorklist::Thread::Thread):
+        * jsc.cpp:
+        (GlobalObject::finishCreation):
+        (functionFlashHeapAccess):
+        * runtime/InitializeThreading.cpp:
+        (JSC::initializeThreading):
+        * runtime/JSCellInlines.h:
+        (JSC::JSCell::classInfo):
+        * runtime/Options.cpp:
+        (JSC::overrideDefaults):
+        * runtime/Options.h:
+        * runtime/TestRunnerUtils.cpp:
+        (JSC::finalizeStatsAtEndOfTesting):
+
 2017-02-21  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         ASSERTION FAILED: "!scope.exception()" with Object.isSealed/isFrozen and uninitialized module bindings

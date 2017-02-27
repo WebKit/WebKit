@@ -75,8 +75,8 @@ public:
     
     WTF_EXPORT_PRIVATE ~AutomaticThreadCondition();
     
-    WTF_EXPORT_PRIVATE void notifyOne(const LockHolder&);
-    WTF_EXPORT_PRIVATE void notifyAll(const LockHolder&);
+    WTF_EXPORT_PRIVATE void notifyOne(const AbstractLocker&);
+    WTF_EXPORT_PRIVATE void notifyAll(const AbstractLocker&);
     
     // You can reuse this condition for other things, just as you would any other condition.
     // However, since conflating conditions could lead to thundering herd, it's best to avoid it.
@@ -90,9 +90,9 @@ private:
     
     WTF_EXPORT_PRIVATE AutomaticThreadCondition();
 
-    void add(const LockHolder&, AutomaticThread*);
-    void remove(const LockHolder&, AutomaticThread*);
-    bool contains(const LockHolder&, AutomaticThread*);
+    void add(const AbstractLocker&, AutomaticThread*);
+    void remove(const AbstractLocker&, AutomaticThread*);
+    bool contains(const AbstractLocker&, AutomaticThread*);
     
     Condition m_condition;
     Vector<AutomaticThread*> m_threads;
@@ -113,24 +113,24 @@ public:
     virtual ~AutomaticThread();
     
     // Sometimes it's possible to optimize for the case that there is no underlying thread.
-    bool hasUnderlyingThread(const LockHolder&) const { return m_hasUnderlyingThread; }
+    bool hasUnderlyingThread(const AbstractLocker&) const { return m_hasUnderlyingThread; }
     
     // This attempts to quickly stop the thread. This will succeed if the thread happens to not be
     // running. Returns true if the thread has been stopped. A good idiom for stopping your automatic
     // thread is to first try this, and if that doesn't work, to tell the thread using your own
     // mechanism (set some flag and then notify the condition).
-    bool tryStop(const LockHolder&);
+    bool tryStop(const AbstractLocker&);
 
-    bool isWaiting(const LockHolder&);
+    bool isWaiting(const AbstractLocker&);
 
-    bool notify(const LockHolder&);
+    bool notify(const AbstractLocker&);
 
     void join();
     
 protected:
     // This logically creates the thread, but in reality the thread won't be created until someone
     // calls AutomaticThreadCondition::notifyOne() or notifyAll().
-    AutomaticThread(const LockHolder&, Box<Lock>, RefPtr<AutomaticThreadCondition>);
+    AutomaticThread(const AbstractLocker&, Box<Lock>, RefPtr<AutomaticThreadCondition>);
     
     // To understand PollResult and WorkResult, imagine that poll() and work() are being called like
     // so:
@@ -159,7 +159,7 @@ protected:
     // }
     
     enum class PollResult { Work, Stop, Wait };
-    virtual PollResult poll(const LockHolder&) = 0;
+    virtual PollResult poll(const AbstractLocker&) = 0;
     
     enum class WorkResult { Continue, Stop };
     virtual WorkResult work() = 0;
@@ -168,12 +168,12 @@ protected:
     // when the thread dies. These methods let you do this. You can override these methods, and you
     // can be sure that the default ones don't do anything (so you don't need a super call).
     virtual void threadDidStart();
-    virtual void threadIsStopping(const LockHolder&);
+    virtual void threadIsStopping(const AbstractLocker&);
     
 private:
     friend class AutomaticThreadCondition;
     
-    void start(const LockHolder&);
+    void start(const AbstractLocker&);
     
     Box<Lock> m_lock;
     RefPtr<AutomaticThreadCondition> m_condition;

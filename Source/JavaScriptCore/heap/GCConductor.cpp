@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,31 +23,44 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "GCConductor.h"
 
-#include "JSExportMacros.h"
-#include <wtf/Vector.h>
+#include <wtf/PrintStream.h>
 
 namespace JSC {
 
-class Heap;
-
-class HeapStatistics {
-public:
-    NO_RETURN static void exitWithFailure();
-    JS_EXPORT_PRIVATE static void reportSuccess();
-
-    static void initialize();
-    static void recordGCPauseTime(double start, double end);
-
-    static void dumpObjectStatistics(Heap*);
-
-private:
-    static void logStatistics();
-    static Vector<double>* s_pauseTimeStarts;
-    static Vector<double>* s_pauseTimeEnds;
-    static double s_startTime;
-    static double s_endTime;
-};
+const char* gcConductorShortName(GCConductor conn)
+{
+    switch (conn) {
+    case GCConductor::Mutator:
+        return "M";
+    case GCConductor::Collector:
+        return "C";
+    }
+    
+    RELEASE_ASSERT_NOT_REACHED();
+}
 
 } // namespace JSC
+
+namespace WTF {
+
+using namespace JSC;
+
+void printInternal(PrintStream& out, GCConductor conn)
+{
+    switch (conn) {
+    case GCConductor::Mutator:
+        out.print("Mutator");
+        return;
+    case GCConductor::Collector:
+        out.print("Collector");
+        return;
+    }
+    
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+} // namespace WTF
+
