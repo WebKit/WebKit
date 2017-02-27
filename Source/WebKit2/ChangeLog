@@ -1,3 +1,24 @@
+2017-02-27  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r213010. rdar://problem/30704432
+
+    2017-02-26  Chris Dumez  <cdumez@apple.com>
+
+            HitTestResult's linkSuggestedFilename should sanitize download attribute
+            https://bugs.webkit.org/show_bug.cgi?id=168856
+            <rdar://problem/30683109>
+
+            Reviewed by Antti Koivisto.
+
+            HitTestResult's linkSuggestedFilename should sanitize download attribute.
+            This is used by the context menu's "Download Linked File" & "Download Linked
+            File As..." actions.
+
+            * Shared/WebHitTestResultData.cpp:
+            (WebKit::WebHitTestResultData::WebHitTestResultData):
+            * WebProcess/InjectedBundle/InjectedBundleHitTestResult.cpp:
+            (WebKit::InjectedBundleHitTestResult::linkSuggestedFilename):
+
 2017-02-17  JF Bastien  <jfbastien@apple.com>
 
         A/B test concurrent GC
