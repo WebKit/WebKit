@@ -1,3 +1,53 @@
+2017-02-26  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Hangs when showing Google search results
+        https://bugs.webkit.org/show_bug.cgi?id=168699
+
+        Reviewed by Žan Doberšek.
+
+        Connection::sendOutgoingMessage() can poll forever if sendmsg fails with EAGAIN or EWOULDBLOCK. For example if
+        socket read buffers are full, poll will be blocked until we read the pending data, but we can't read because
+        the thread is blocked in the poll. In case of EAGAIN/EWOULDBLOCK we should poll using the run loop, to allow
+        reads to happen in thread while we wait for the socket to be writable again. In the GTK+ port we use
+        GSocketMonitor to poll socket file descriptor without blocking, using the run loop. This patch renames the
+        socket monitor as readSocketMonitor and adds another one for polling output. When sendmsg fails with
+        EAGAIN/EWOULDBLOCK, the pending message is saved and the write monitor starts polling. Once the socket is
+        writable again we send the pending message. Helper class MessageInfo and a new one UnixMessage have been moved
+        to its own header file to be able to use std::unique_ptr member to save the pending message.
+
+        * Platform/IPC/Connection.cpp: Include UnixMessage.h as required by std::unique_ptr.
+        * Platform/IPC/Connection.h: Add write socket monitor and also keep the GSocket as a member to reuse it.
+        * Platform/IPC/glib/GSocketMonitor.cpp: Use Function instead of std::function.
+        (IPC::GSocketMonitor::start):
+        * Platform/IPC/glib/GSocketMonitor.h:
+        * Platform/IPC/unix/ConnectionUnix.cpp:
+        (IPC::Connection::platformInitialize): Initialize the GSocket here since we rely on it to take the ownership of
+        the descriptor. We were leaking it if the connection was invalidated without being opened.
+        (IPC::Connection::platformInvalidate): Destroy the GSocket even when not connected. Also stop the write monitor.
+        (IPC::Connection::processMessage):
+        (IPC::Connection::open):
+        (IPC::Connection::platformCanSendOutgoingMessages): Return false if we have a pending message to ensure
+        Connection doesn't try to send more messages until the pending message is dispatched. We don't need to check
+        m_isConnected because the caller already checks that.
+        (IPC::Connection::sendOutgoingMessage): Split it in two. This creates and prepares a UnixMessage and then calls
+        sendOutputMessage() to do the rest.
+        (IPC::Connection::sendOutputMessage): Send the message, or save it if sendmsg fails with EAGAIN or EWOULDBLOCK
+        to be sent later when the socket is writable.
+        * Platform/IPC/unix/UnixMessage.h: Added.
+        (IPC::MessageInfo::MessageInfo):
+        (IPC::MessageInfo::setMessageBodyIsOutOfLine):
+        (IPC::MessageInfo::isMessageBodyIsOutOfLine):
+        (IPC::MessageInfo::bodySize):
+        (IPC::MessageInfo::attachmentCount):
+        (IPC::UnixMessage::UnixMessage):
+        (IPC::UnixMessage::~UnixMessage):
+        (IPC::UnixMessage::attachments):
+        (IPC::UnixMessage::messageInfo):
+        (IPC::UnixMessage::body):
+        (IPC::UnixMessage::bodySize):
+        (IPC::UnixMessage::appendAttachment):
+        * PlatformGTK.cmake:
+
 2017-02-20  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Remove code under USE(GRAPHICS_SURFACE)

@@ -79,6 +79,7 @@ enum class WaitForOption {
 while (0)
 
 class MachMessage;
+class UnixMessage;
 
 class Connection : public ThreadSafeRefCounted<Connection> {
 public:
@@ -308,12 +309,16 @@ private:
     // Called on the connection queue.
     void readyReadHandler();
     bool processMessage();
+    bool sendOutputMessage(UnixMessage&);
 
     Vector<uint8_t> m_readBuffer;
     Vector<int> m_fileDescriptors;
     int m_socketDescriptor;
+    std::unique_ptr<UnixMessage> m_pendingOutputMessage;
 #if PLATFORM(GTK)
-    GSocketMonitor m_socketMonitor;
+    GRefPtr<GSocket> m_socket;
+    GSocketMonitor m_readSocketMonitor;
+    GSocketMonitor m_writeSocketMonitor;
 #endif
 #elif OS(DARWIN)
     // Called on the connection queue.
