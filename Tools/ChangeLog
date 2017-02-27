@@ -1,3 +1,28 @@
+2017-02-27  Simon Fraser  <simon.fraser@apple.com>
+
+        Add specification and status metadata to CSSProperties.json, and validate it
+        https://bugs.webkit.org/show_bug.cgi?id=168901
+
+        Reviewed by Darin Adler.
+
+        Enhance check-webkit-style to validate the status and spec data in CSSProperties.json.
+        
+        Current validation is basic type validation and some cross-referencing, but could be
+        enhanced.
+
+        * Scripts/webkitpy/style/checkers/jsonchecker.py:
+        (JSONCSSPropertiesChecker.check):
+        (JSONCSSPropertiesChecker.check_category):
+        (JSONCSSPropertiesChecker):
+        (JSONCSSPropertiesChecker.check_categories):
+        (JSONCSSPropertiesChecker.validate_url):
+        (JSONCSSPropertiesChecker.validate_status_type):
+        (JSONCSSPropertiesChecker.validate_comment):
+        (JSONCSSPropertiesChecker.validate_status):
+        (JSONCSSPropertiesChecker.validate_property_category):
+        (JSONCSSPropertiesChecker.validate_property_specification):
+        (JSONCSSPropertiesChecker.check_property):
+
 2017-02-27  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix two GTK+ unit tests failing after r213062.

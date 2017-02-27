@@ -123,6 +123,9 @@ class JSONCSSPropertiesChecker(JSONChecker):
                 self._handle_style_error(0, 'json/syntax', 5, '"properties" key not found, the key is mandatory.')
                 return
 
+            self._categories = properties_definition['categories']
+            self.check_categories()
+
             properties = properties_definition['properties']
             if not isinstance(properties, dict):
                 self._handle_style_error(0, 'json/syntax', 5, '"properties" is not a dictionary.')
@@ -135,8 +138,23 @@ class JSONCSSPropertiesChecker(JSONChecker):
             print(e)
             pass
 
-    def validate_comment(self, property_name, property_key, key, value):
-        return
+    def check_category(self, category, category_value):
+        keys_and_validators = {
+            "shortname": self.validate_string,
+            "longname": self.validate_string,
+            "url": self.validate_url,
+            "status": self.validate_status_type,
+        }
+        for key, value in category_value.items():
+            if key not in keys_and_validators:
+                self._handle_style_error(0, 'json/syntax', 5, 'dictionary for specification "%s" has unexpected key "%s".' % (category, key))
+                return
+
+            keys_and_validators[key](category, "", key, value)
+
+    def check_categories(self):
+        for key, value in self._categories.items():
+            self.check_category(key, value)
 
     def validate_type(self, property_name, property_key, key, value, expected_type):
         if not isinstance(value, expected_type):
@@ -151,12 +169,81 @@ class JSONCSSPropertiesChecker(JSONChecker):
     def validate_array(self, property_name, property_key, key, value):
         self.validate_type(property_name, property_key, key, value, list)
 
+    def validate_url(self, property_name, property_key, key, value):
+        self.validate_string(property_name, property_key, key, value)
+        # FIXME: make sure it's url-like.
+
+    def validate_status_type(self, property_name, property_key, key, value):
+        self.validate_string(property_name, property_key, key, value)
+
+        allowed_statuses = {
+            'done',
+            'in development',
+            'under consideration',
+            'experimental',
+            'non-standard',
+            'not implemented',
+            'not considering',
+            'obsolete',
+        }
+        if value not in allowed_statuses:
+            self._handle_style_error(0, 'json/syntax', 5, 'status "%s" for property "%s" is not one of the recognized status values' % (value, property_name))
+
+    def validate_comment(self, property_name, property_key, key, value):
+        self.validate_string(property_name, property_key, key, value)
+
     def validate_codegen_properties(self, property_name, property_key, key, value):
         if isinstance(value, list):
             for entry in value:
                 self.check_codegen_properties(property_name, entry)
         else:
             self.check_codegen_properties(property_name, value)
+
+    def validate_status(self, property_name, property_key, key, value):
+        if isinstance(value, dict):
+            keys_and_validators = {
+                'comment': self.validate_comment,
+                'enabled-by-default': self.validate_boolean,
+                'status': self.validate_status_type,
+            }
+
+            for key, value in value.items():
+                if key not in keys_and_validators:
+                    self._handle_style_error(0, 'json/syntax', 5, 'dictionary for "status" of property "%s" has unexpected key "%s".' % (property_name, key))
+                    return
+
+                keys_and_validators[key](property_name, "", key, value)
+        else:
+            self.validate_string(property_name, property_key, key, value)
+
+    def validate_property_category(self, property_name, property_key, key, value):
+        self.validate_string(property_name, property_key, key, value)
+
+        if value not in self._categories:
+            self._handle_style_error(0, 'json/syntax', 5, 'property "%s" has category "%s" which is not in the set of categories.' % (property_name, value))
+            return
+
+    def validate_property_specification(self, property_name, property_key, key, value):
+        self.validate_type(property_name, property_key, key, value, dict)
+
+        keys_and_validators = {
+            'category': self.validate_property_category,
+            'url': self.validate_url,
+            'documentation-url': self.validate_url,
+            'keywords': self.validate_array,
+            'description': self.validate_string,
+            'comment': self.validate_comment,
+            'non-canonical-url': self.validate_url,
+        }
+
+        for key, value in value.items():
+            if key not in keys_and_validators:
+                self._handle_style_error(0, 'json/syntax', 5, 'dictionary for "specification" of property "%s" has unexpected key "%s".' % (property_name, key))
+                return
+
+            keys_and_validators[key](property_name, "specification", key, value)
+
+            # redundant urls
 
     def check_property(self, property_name, value):
         keys_and_validators = {
@@ -165,6 +252,8 @@ class JSONCSSPropertiesChecker(JSONChecker):
             'inherited': self.validate_boolean,
             'values': self.validate_array,
             'codegen-properties': self.validate_codegen_properties,
+            'status': self.validate_status,
+            'specification': self.validate_property_specification,
         }
 
         for key, value in value.items():
