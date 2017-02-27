@@ -221,7 +221,7 @@ inline float RunResolver::Run::computeBaselinePosition() const
 {
     auto& resolver = m_iterator.resolver();
     auto offset = resolver.m_borderAndPaddingBefore + resolver.m_lineHeight * lineIndex();
-    if (!resolver.m_layout.hasPaginationStruts())
+    if (!resolver.m_layout.hasLineStruts())
         return offset + resolver.m_baseline;
     for (auto& strutEntry : resolver.m_layout.struts()) {
         if (strutEntry.lineBreak > lineIndex())

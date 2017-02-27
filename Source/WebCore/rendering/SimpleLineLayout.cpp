@@ -914,7 +914,7 @@ struct PaginatedLine {
 };
 using PaginatedLines = Vector<PaginatedLine, 20>;
 
-static PaginatedLine computeLineTopAndBottomWithOverflow(const RenderBlockFlow& flow, unsigned lineIndex, Layout::SimplePaginationStruts& struts)
+static PaginatedLine computeLineTopAndBottomWithOverflow(const RenderBlockFlow& flow, unsigned lineIndex, Layout::SimpleLineStruts& struts)
 {
     // FIXME: Add visualOverflowForDecorations.
     auto& fontMetrics = flow.style().fontCascade().fontMetrics();
@@ -937,7 +937,7 @@ static PaginatedLine computeLineTopAndBottomWithOverflow(const RenderBlockFlow& 
     return { topPosition, bottomPosition, bottomPosition - topPosition };
 }
 
-static unsigned computeLineBreakIndex(unsigned breakCandidate, unsigned lineCount, unsigned widows, const Layout::SimplePaginationStruts& struts)
+static unsigned computeLineBreakIndex(unsigned breakCandidate, unsigned lineCount, unsigned widows, const Layout::SimpleLineStruts& struts)
 {
     // First line does not fit the current page.
     if (!breakCandidate)
@@ -956,19 +956,6 @@ static unsigned computeLineBreakIndex(unsigned breakCandidate, unsigned lineCoun
     return std::max<unsigned>(struts.last().lineBreak + 1, lineBreak);
 }
 
-static void setPageBreakForLine(unsigned lineBreak, PaginatedLines& lines, RenderBlockFlow& flow)
-{
-    if (!lineBreak) {
-        // When the line does not fit the current page, just add a page break in front.
-        auto line = lines.first();
-        flow.setPageBreak(line.top, flow.pageRemainingLogicalHeightForOffset(line.top, RenderBlockFlow::ExcludePageBoundary));
-        return;
-    }
-    auto beforeLineBreak = lines.at(lineBreak - 1);
-    auto spaceShortage = flow.pageRemainingLogicalHeightForOffset(beforeLineBreak.top, RenderBlockFlow::ExcludePageBoundary) - beforeLineBreak.height;
-    flow.setPageBreak(beforeLineBreak.bottom, spaceShortage);
-}
-
 static LayoutUnit computeOffsetAfterLineBreak(LayoutUnit lineBreakPosition, bool isFirstLine, bool atTheTopOfColumnOrPage, const RenderBlockFlow& flow)
 {
     // No offset for top of the page lines unless widows pushed the line break.
@@ -976,6 +963,23 @@ static LayoutUnit computeOffsetAfterLineBreak(LayoutUnit lineBreakPosition, bool
     if (atTheTopOfColumnOrPage)
         return offset;
     return offset + flow.pageRemainingLogicalHeightForOffset(lineBreakPosition, RenderBlockFlow::ExcludePageBoundary);
+}
+
+static void setPageBreakForLine(unsigned lineBreakIndex, PaginatedLines& lines, RenderBlockFlow& flow, Layout::SimpleLineStruts& struts,
+    bool atTheTopOfColumnOrPage)
+{
+    if (!lineBreakIndex) {
+        // When the first line does not fit the current page, just add a page break in front and set the strut on the block.
+        auto line = lines.first();
+        auto remainingLogicalHeight = flow.pageRemainingLogicalHeightForOffset(line.top, RenderBlockFlow::ExcludePageBoundary);
+        flow.setPageBreak(line.top, line.height - remainingLogicalHeight);
+        flow.setPaginationStrut(remainingLogicalHeight);
+        return;
+    }
+    auto beforeLineBreak = lines.at(lineBreakIndex - 1);
+    auto spaceShortage = flow.pageRemainingLogicalHeightForOffset(beforeLineBreak.top, RenderBlockFlow::ExcludePageBoundary) - beforeLineBreak.height;
+    flow.setPageBreak(beforeLineBreak.bottom, spaceShortage);
+    struts.append({ lineBreakIndex, computeOffsetAfterLineBreak(lines[lineBreakIndex].top, !lineBreakIndex, atTheTopOfColumnOrPage, flow) });
 }
 
 static void updateMinimumPageHeight(RenderBlockFlow& flow, unsigned lineCount)
@@ -987,7 +991,7 @@ static void updateMinimumPageHeight(RenderBlockFlow& flow, unsigned lineCount)
     flow.updateMinimumPageHeight(0, minimumLineCount * lineHeightFromFlow(flow));
 }
 
-static void adjustLinePositionsForPagination(Layout::RunVector& runs, Layout::SimplePaginationStruts& struts,
+static void adjustLinePositionsForPagination(Layout::RunVector& runs, Layout::SimpleLineStruts& struts,
     RenderBlockFlow& flow, unsigned lineCount)
 {
     updateMinimumPageHeight(flow, lineCount);
@@ -1009,8 +1013,7 @@ static void adjustLinePositionsForPagination(Layout::RunVector& runs, Layout::Si
             auto lineBreakIndex = computeLineBreakIndex(lineIndex, lineCount, widows, struts);
             // Are we still at the top of the column/page?
             atTheTopOfColumnOrPage = atTheTopOfColumnOrPage ? lineIndex == lineBreakIndex : false;
-            setPageBreakForLine(lineBreakIndex, lines, flow);
-            struts.append({ lineBreakIndex, computeOffsetAfterLineBreak(lines[lineBreakIndex].top, !lineBreakIndex, atTheTopOfColumnOrPage, flow) });
+            setPageBreakForLine(lineBreakIndex, lines, flow, struts, atTheTopOfColumnOrPage);
             // Recompute line positions that we already visited but window break pushed them to a new page.
             for (auto i = lineBreakIndex; i < lines.size(); ++i)
                 lines.at(i) = computeLineTopAndBottomWithOverflow(flow, i, struts);
@@ -1044,24 +1047,24 @@ std::unique_ptr<Layout> create(RenderBlockFlow& flow)
     unsigned lineCount = 0;
     Layout::RunVector runs;
     createTextRuns(runs, flow, lineCount);
-    Layout::SimplePaginationStruts struts;
+    Layout::SimpleLineStruts struts;
     auto isPaginated = flow.view().layoutState() && flow.view().layoutState()->isPaginated();
     if (isPaginated)
         adjustLinePositionsForPagination(runs, struts, flow, lineCount);
     return Layout::create(runs, struts, lineCount, isPaginated);
 }
 
-std::unique_ptr<Layout> Layout::create(const RunVector& runVector, SimplePaginationStruts& struts, unsigned lineCount, bool isPaginated)
+std::unique_ptr<Layout> Layout::create(const RunVector& runVector, SimpleLineStruts& struts, unsigned lineCount, bool isPaginated)
 {
     void* slot = WTF::fastMalloc(sizeof(Layout) + sizeof(Run) * runVector.size());
     return std::unique_ptr<Layout>(new (NotNull, slot) Layout(runVector, struts, lineCount, isPaginated));
 }
 
-Layout::Layout(const RunVector& runVector, SimplePaginationStruts& struts, unsigned lineCount, bool isPaginated)
+Layout::Layout(const RunVector& runVector, SimpleLineStruts& struts, unsigned lineCount, bool isPaginated)
     : m_lineCount(lineCount)
     , m_runCount(runVector.size())
     , m_isPaginated(isPaginated)
-    , m_paginationStruts(WTFMove(struts))
+    , m_lineStruts(WTFMove(struts))
 {
     memcpy(m_runs, runVector.data(), m_runCount * sizeof(Run));
 }
