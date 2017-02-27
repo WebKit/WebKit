@@ -1,3 +1,19 @@
+2017-02-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GStreamer] Crash in MediaPlayerPrivateGStreamerMSE::buffered() when MEDIA_STREAM is disabled
+        https://bugs.webkit.org/show_bug.cgi?id=168662
+
+        Reviewed by Michael Catanzaro.
+
+        When MEDIA_STREAM is disabled, if MediaPlayer::loadWithNextMediaEngine is called with a current engine and
+        there's no type specified, the next media engine that is used is the MSE one. Since there's no actually a media
+        stream, the engine is created but never loaded. When buffered is called it tries to use its media source that is
+        nullptr. It doesn't happen when MEDIA_STREAM is enabled, because the next media engine returned is Owr that
+        doesn't implement buffered and always returns an empty PlatformTimeRanges.
+
+        * platform/graphics/gstreamer/mse/MediaPlayerPrivateGStreamerMSE.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerMSE::buffered): Return an empty PlatformTimeRanges if m_mediaSource is nullptr.
+
 2017-02-21  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION (r207720): /more/conformance/conformance/quickCheckAPI-S_V.html test fails
