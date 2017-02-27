@@ -52,6 +52,8 @@ public:
 private:
     AcceleratedSurfaceX11(WebPage&);
 
+    void createPixmap();
+
     Display* m_display { nullptr };
     WebCore::XUniqueWindow m_window;
     WebCore::XUniqueWindow m_parentWindow;
