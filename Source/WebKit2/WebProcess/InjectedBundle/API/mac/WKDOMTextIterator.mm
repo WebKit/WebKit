@@ -33,7 +33,7 @@
 #import <WebCore/TextIterator.h>
 
 @interface WKDOMTextIterator () {
-@public
+@private
     std::unique_ptr<WebCore::TextIterator> _textIterator;
     Vector<unichar> _upconvertedText;
 }

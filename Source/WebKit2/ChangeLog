@@ -1,5 +1,14 @@
 2017-02-26  Alexey Proskuryakov  <ap@apple.com>
 
+        Stop exporting C++ member variables from WKDOMTextIterator
+        https://bugs.webkit.org/show_bug.cgi?id=168885
+
+        Reviewed by Dan Bernstein.
+
+        * WebProcess/InjectedBundle/API/mac/WKDOMTextIterator.mm:
+
+2017-02-26  Alexey Proskuryakov  <ap@apple.com>
+
         Add preprocessor guards to Mac specific files that are exposed as private headers on iOS
         https://bugs.webkit.org/show_bug.cgi?id=168878
 
