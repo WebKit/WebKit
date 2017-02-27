@@ -1,3 +1,11 @@
+2017-02-26  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Unreviewed, revert all temporary build fixes for data interaction
+
+        Rolls out r212990, r212988 and r212984.
+
+        * UIProcess/ios/WKContentViewInteraction.h:
+
 2017-02-27  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Rendering artifacts when resizing the window in X11 with AC mode enabled

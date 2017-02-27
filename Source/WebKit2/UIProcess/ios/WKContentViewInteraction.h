@@ -189,9 +189,7 @@ struct WKAutoCorrectionData {
 #if ENABLE(DATA_INTERACTION)
     WebKit::WKDataInteractionState _dataInteractionState;
     BOOL _isPerformingDataInteractionOperation;
-#if HAS_DATA_INTERACTION_SPI
     RetainPtr<WKDataInteraction> _dataInteraction;
-#endif
     CGPoint _deferredActionSheetRequestLocation;
 #endif
 }
@@ -200,10 +198,7 @@ struct WKAutoCorrectionData {
 
 @interface WKContentView (WKInteraction) <UIGestureRecognizerDelegate, UIWebTouchEventsGestureRecognizerDelegate, UITextInputPrivate, UIWebFormAccessoryDelegate, UIWKInteractionViewProtocol, WKFileUploadPanelDelegate, WKActionSheetAssistantDelegate
 #if ENABLE(DATA_INTERACTION)
-    , WKDataInteractionItemVisualTarget, WKViewDataInteractionDestinationDelegate
-#if HAS_DATA_INTERACTION_SPI
-    , WKDataInteractionDelegate
-#endif
+    , WKDataInteractionItemVisualTarget, WKDataInteractionDelegate, WKViewDataInteractionDestinationDelegate
 #endif
 >
 

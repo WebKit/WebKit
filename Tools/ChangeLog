@@ -1,3 +1,14 @@
+2017-02-26  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Unreviewed, revert all temporary build fixes for data interaction
+
+        Rolls out r212990, r212988 and r212984.
+
+        * TestWebKitAPI/Tests/ios/DataInteractionTests.mm:
+        * TestWebKitAPI/ios/DataInteractionSimulator.h:
+        * TestWebKitAPI/ios/DataInteractionSimulator.mm:
+        (-[DataInteractionSimulator _advanceProgress]):
+
 2017-02-27  Alex Christensen  <achristensen@webkit.org>
 
         [libwebrtc] Enable WebRTC in some Production Builds
