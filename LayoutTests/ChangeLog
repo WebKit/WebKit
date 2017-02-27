@@ -1,3 +1,20 @@
+2017-02-21  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION (r207720): /more/conformance/conformance/quickCheckAPI-S_V.html test fails
+        https://bugs.webkit.org/show_bug.cgi?id=168632
+        <rdar://problem/30620129>
+
+        Reviewed by Darin Adler.
+
+        Import layout test coverage.
+
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/context/context-lost-expected.txt: Added.
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/context/context-lost.html: Added.
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/more/conformance/argGenerators-S_V.js: Added.
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/more/conformance/quickCheckAPI-S_V-expected.txt: Added.
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/more/conformance/quickCheckAPI-S_V.html: Added.
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/more/conformance/quickCheckAPI.js: Added.
+
 2017-02-20  Joseph Pecoraro  <pecoraro@apple.com>
 
         ASSERTION FAILED: m_normalWorld->hasOneRef() under WorkerThread::stop
