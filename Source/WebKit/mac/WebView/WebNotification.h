@@ -26,14 +26,12 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <wtf/RetainPtr.h>
-
 @class WebNotificationPrivate;
 @class WebSecurityOrigin;
 
 @interface WebNotification : NSObject
 {
-    RetainPtr<WebNotificationPrivate> _private;
+    WebNotificationPrivate *_private;
 }
 
 - (NSString *)title;

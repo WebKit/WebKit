@@ -65,7 +65,7 @@ Notification* core(WebNotification *notification)
 {
     if (!(self = [super init]))
         return nil;
-    _private = adoptNS([[WebNotificationPrivate alloc] init]);
+    _private = [[WebNotificationPrivate alloc] init];
     _private->_internal = coreNotification;
     _private->_notificationID = notificationID;
     return self;
@@ -77,6 +77,12 @@ Notification* core(WebNotification *notification)
 - (id)init
 {
     return nil;
+}
+
+- (void)dealloc
+{
+    [_private release];
+    [super dealloc];
 }
 
 - (NSString *)title
