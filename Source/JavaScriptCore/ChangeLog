@@ -1,3 +1,14 @@
+2017-02-21  Mark Lam  <mark.lam@apple.com>
+
+        Add more missing exception checks detected by running marathon.js.
+        https://bugs.webkit.org/show_bug.cgi?id=168697
+
+        Reviewed by Saam Barati.
+
+        * runtime/StringPrototype.cpp:
+        (JSC::replaceUsingRegExpSearch):
+        (JSC::replaceUsingStringSearch):
+
 2017-02-21  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, fix cloop. I managed to have my local patch for relanding be the one without the cloop
