@@ -36,6 +36,7 @@
 #import "MediaConstraints.h"
 #import "MediaSampleAVFObjC.h"
 #import "NotImplemented.h"
+#import "PixelBufferConformerCV.h"
 #import "PlatformLayer.h"
 #import "RealtimeMediaSourceCenter.h"
 #import "RealtimeMediaSourceSettings.h"
@@ -102,7 +103,7 @@ using namespace WebCore;
 
 namespace WebCore {
 
-const OSType videoCaptureFormat = kCVPixelFormatType_32BGRA;
+const OSType videoCaptureFormat = kCVPixelFormatType_420YpCbCr8Planar;
 
 RefPtr<AVMediaCaptureSource> AVVideoCaptureSource::create(AVCaptureDeviceTypedef* device, const AtomicString& id, const MediaConstraints* constraints, String& invalidConstraint)
 {
@@ -462,16 +463,16 @@ RetainPtr<CGImageRef> AVVideoCaptureSource::currentFrameCGImage()
     CVPixelBufferRef pixelBuffer = static_cast<CVPixelBufferRef>(CMSampleBufferGetImageBuffer(m_buffer.get()));
     ASSERT(CVPixelBufferGetPixelFormatType(pixelBuffer) == videoCaptureFormat);
 
-    CVPixelBufferLockBaseAddress(pixelBuffer, 0);
-    void *baseAddress = CVPixelBufferGetBaseAddress(pixelBuffer);
-    size_t bytesPerRow = CVPixelBufferGetBytesPerRow(pixelBuffer);
-    size_t width = CVPixelBufferGetWidth(pixelBuffer);
-    size_t height = CVPixelBufferGetHeight(pixelBuffer);
+    if (!m_pixelBufferConformer) {
+#if USE(VIDEOTOOLBOX)
+        NSDictionary *attributes = @{ (NSString *)kCVPixelBufferPixelFormatTypeKey: @(kCVPixelFormatType_32BGRA) };
+#else
+        NSDictionary *attributes = nil;
+#endif
+        m_pixelBufferConformer = std::make_unique<PixelBufferConformerCV>((CFDictionaryRef)attributes);
+    }
 
-    RetainPtr<CGDataProviderRef> provider = adoptCF(CGDataProviderCreateWithData(NULL, baseAddress, bytesPerRow * height, NULL));
-    m_lastImage = adoptCF(CGImageCreate(width, height, 8, 32, bytesPerRow, sRGBColorSpaceRef(), kCGBitmapByteOrder32Little | kCGImageAlphaPremultipliedFirst, provider.get(), NULL, true, kCGRenderingIntentDefault));
-
-    CVPixelBufferUnlockBaseAddress(pixelBuffer, 0);
+    m_lastImage = m_pixelBufferConformer->createImageFromPixelBuffer(pixelBuffer);
 
     return m_lastImage;
 }

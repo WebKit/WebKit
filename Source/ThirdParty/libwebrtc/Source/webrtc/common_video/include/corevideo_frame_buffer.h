@@ -19,7 +19,7 @@
 
 namespace webrtc {
 
-class CoreVideoFrameBuffer : public NativeHandleBuffer {
+class WEBRTC_EXPORT CoreVideoFrameBuffer : public NativeHandleBuffer {
  public:
   explicit CoreVideoFrameBuffer(CVPixelBufferRef pixel_buffer);
   CoreVideoFrameBuffer(CVPixelBufferRef pixel_buffer,

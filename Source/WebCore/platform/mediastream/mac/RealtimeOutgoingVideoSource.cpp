@@ -31,6 +31,7 @@
 
 #if USE(LIBWEBRTC)
 
+#include <webrtc/common_video/include/corevideo_frame_buffer.h>
 #include <webrtc/common_video/libyuv/include/webrtc_libyuv.h>
 #include <webrtc/media/base/videoframe.h>
 
@@ -72,45 +73,49 @@ void RealtimeOutgoingVideoSource::RemoveSink(rtc::VideoSinkInterface<webrtc::Vid
     m_sinks.removeFirst(sink);
 }
 
+void RealtimeOutgoingVideoSource::sendFrame(rtc::scoped_refptr<webrtc::VideoFrameBuffer>&& buffer)
+{
+    webrtc::VideoFrame frame(buffer, 0, 0, webrtc::kVideoRotation_0);
+    for (auto* sink : m_sinks)
+        sink->OnFrame(frame);
+}
+
 void RealtimeOutgoingVideoSource::videoSampleAvailable(MediaSample& sample)
 {
     if (!m_sinks.size())
         return;
 
-
     // FIXME: Shouldn't we use RealtimeMediaSource::size()
     const auto& settings = m_videoSource->settings();
 
-    // FIXME: We should not need to allocate one buffer per frame.
-    auto dest = webrtc::I420Buffer::Create(settings.width(), settings.height());
-
-    if (!m_muted && m_enabled) {
-        ASSERT(sample.platformSample().type == PlatformSample::CMSampleBufferType);
-        auto pixelBuffer = static_cast<CVPixelBufferRef>(CMSampleBufferGetImageBuffer(sample.platformSample().sample.cmSampleBuffer));
-        auto pixelFormatType = CVPixelBufferGetPixelFormatType(pixelBuffer);
-
-        CVPixelBufferLockBaseAddress(pixelBuffer, 0);
-        uint8_t* src = reinterpret_cast<uint8_t*>(CVPixelBufferGetBaseAddressOfPlane(pixelBuffer, 0));
-
-        if (pixelFormatType == kCVPixelFormatType_420YpCbCr8Planar) {
-            // We probably can memcpy the data directly
-            webrtc::ConvertToI420(webrtc::kI420, src, 0, 0, settings.width(), settings.height(), 0, webrtc::kVideoRotation_0, dest);
-        } else if (pixelFormatType == kCVPixelFormatType_32BGRA)
-            webrtc::ConvertToI420(webrtc::kARGB, src, 0, 0, settings.width(), settings.height(), 0, webrtc::kVideoRotation_0, dest);
-        else {
-            // FIXME: Mock source conversion works with kBGRA while regular camera works with kARGB
-            ASSERT(pixelFormatType == kCVPixelFormatType_32ARGB);
-            webrtc::ConvertToI420(webrtc::kBGRA, src, 0, 0, settings.width(), settings.height(), 0, webrtc::kVideoRotation_0, dest);
-        }
-
-        CVPixelBufferUnlockBaseAddress(pixelBuffer, 0);
-    } else {
-        dest->SetToBlack();
+    if (m_muted || !m_enabled) {
+        auto blackBuffer = m_bufferPool.CreateBuffer(settings.width(), settings.height());
+        blackBuffer->SetToBlack();
+        sendFrame(WTFMove(blackBuffer));
     }
 
-    webrtc::VideoFrame frame(dest, 0, 0,  webrtc::kVideoRotation_0);
-    for (auto* sink : m_sinks)
-        sink->OnFrame(frame);
+    ASSERT(sample.platformSample().type == PlatformSample::CMSampleBufferType);
+    auto pixelBuffer = static_cast<CVPixelBufferRef>(CMSampleBufferGetImageBuffer(sample.platformSample().sample.cmSampleBuffer));
+    auto pixelFormatType = CVPixelBufferGetPixelFormatType(pixelBuffer);
+
+    if (pixelFormatType == kCVPixelFormatType_420YpCbCr8Planar) {
+        sendFrame(new rtc::RefCountedObject<webrtc::CoreVideoFrameBuffer>(pixelBuffer));
+        return;
+    }
+
+    CVPixelBufferLockBaseAddress(pixelBuffer, 0);
+    auto* source = reinterpret_cast<uint8_t*>(CVPixelBufferGetBaseAddressOfPlane(pixelBuffer, 0));
+
+    auto newBuffer = m_bufferPool.CreateBuffer(settings.width(), settings.height());
+    if (pixelFormatType == kCVPixelFormatType_32BGRA)
+        webrtc::ConvertToI420(webrtc::kARGB, source, 0, 0, settings.width(), settings.height(), 0, webrtc::kVideoRotation_0, newBuffer);
+    else {
+        // FIXME: Mock source conversion works with kBGRA while regular camera works with kARGB
+        ASSERT(pixelFormatType == kCVPixelFormatType_32ARGB);
+        webrtc::ConvertToI420(webrtc::kBGRA, source, 0, 0, settings.width(), settings.height(), 0, webrtc::kVideoRotation_0, newBuffer);
+    }
+    CVPixelBufferUnlockBaseAddress(pixelBuffer, 0);
+    sendFrame(WTFMove(newBuffer));
 }
 
 } // namespace WebCore

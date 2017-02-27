@@ -21,6 +21,13 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		41109AAC1E5FA19200C0955A /* corevideo_frame_buffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 41109AA51E5FA19200C0955A /* corevideo_frame_buffer.h */; };
+		41109AAD1E5FA19200C0955A /* i420_buffer_pool.h in Headers */ = {isa = PBXBuildFile; fileRef = 41109AA61E5FA19200C0955A /* i420_buffer_pool.h */; };
+		41109AAE1E5FA19200C0955A /* video_frame_buffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 41109AA71E5FA19200C0955A /* video_frame_buffer.h */; };
+		41109AAF1E5FA19200C0955A /* frame_callback.h in Headers */ = {isa = PBXBuildFile; fileRef = 41109AA81E5FA19200C0955A /* frame_callback.h */; };
+		41109AB01E5FA19200C0955A /* bitrate_adjuster.h in Headers */ = {isa = PBXBuildFile; fileRef = 41109AA91E5FA19200C0955A /* bitrate_adjuster.h */; };
+		41109AB11E5FA19200C0955A /* incoming_video_stream.h in Headers */ = {isa = PBXBuildFile; fileRef = 41109AAA1E5FA19200C0955A /* incoming_video_stream.h */; };
+		41109AB21E5FA19200C0955A /* video_image.h in Headers */ = {isa = PBXBuildFile; fileRef = 41109AAB1E5FA19200C0955A /* video_image.h */; };
 		4140B8201E4E3383007409E6 /* audio_encoder_pcm.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4140B8181E4E3383007409E6 /* audio_encoder_pcm.cc */; };
 		4140B8211E4E3383007409E6 /* audio_encoder_pcm.h in Headers */ = {isa = PBXBuildFile; fileRef = 4140B8191E4E3383007409E6 /* audio_encoder_pcm.h */; };
 		4140B8221E4E3383007409E6 /* audio_decoder_pcm.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4140B81A1E4E3383007409E6 /* audio_decoder_pcm.cc */; };
@@ -2648,6 +2655,13 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		41109AA51E5FA19200C0955A /* corevideo_frame_buffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = corevideo_frame_buffer.h; path = include/corevideo_frame_buffer.h; sourceTree = "<group>"; };
+		41109AA61E5FA19200C0955A /* i420_buffer_pool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = i420_buffer_pool.h; path = include/i420_buffer_pool.h; sourceTree = "<group>"; };
+		41109AA71E5FA19200C0955A /* video_frame_buffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = video_frame_buffer.h; path = include/video_frame_buffer.h; sourceTree = "<group>"; };
+		41109AA81E5FA19200C0955A /* frame_callback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = frame_callback.h; path = include/frame_callback.h; sourceTree = "<group>"; };
+		41109AA91E5FA19200C0955A /* bitrate_adjuster.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = bitrate_adjuster.h; path = include/bitrate_adjuster.h; sourceTree = "<group>"; };
+		41109AAA1E5FA19200C0955A /* incoming_video_stream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = incoming_video_stream.h; path = include/incoming_video_stream.h; sourceTree = "<group>"; };
+		41109AAB1E5FA19200C0955A /* video_image.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = video_image.h; path = include/video_image.h; sourceTree = "<group>"; };
 		4140B8181E4E3383007409E6 /* audio_encoder_pcm.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = audio_encoder_pcm.cc; path = g711/audio_encoder_pcm.cc; sourceTree = "<group>"; };
 		4140B8191E4E3383007409E6 /* audio_encoder_pcm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = audio_encoder_pcm.h; path = g711/audio_encoder_pcm.h; sourceTree = "<group>"; };
 		4140B81A1E4E3383007409E6 /* audio_decoder_pcm.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = audio_decoder_pcm.cc; path = g711/audio_decoder_pcm.cc; sourceTree = "<group>"; };
@@ -5146,6 +5160,20 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		41109AA41E5FA18100C0955A /* include */ = {
+			isa = PBXGroup;
+			children = (
+				41109AA51E5FA19200C0955A /* corevideo_frame_buffer.h */,
+				41109AA61E5FA19200C0955A /* i420_buffer_pool.h */,
+				41109AA71E5FA19200C0955A /* video_frame_buffer.h */,
+				41109AA81E5FA19200C0955A /* frame_callback.h */,
+				41109AA91E5FA19200C0955A /* bitrate_adjuster.h */,
+				41109AAA1E5FA19200C0955A /* incoming_video_stream.h */,
+				41109AAB1E5FA19200C0955A /* video_image.h */,
+			);
+			name = include;
+			sourceTree = "<group>";
+		};
 		4140B8161E4E335E007409E6 /* g711 */ = {
 			isa = PBXGroup;
 			children = (
@@ -6351,6 +6379,7 @@
 			isa = PBXGroup;
 			children = (
 				5CDD83411E43256400621E92 /* h264 */,
+				41109AA41E5FA18100C0955A /* include */,
 				5CDD83651E4325C200621E92 /* libyuv */,
 				5C4B4C101E431F75002651C8 /* bitrate_adjuster.cc */,
 				5C4B4C111E431F75002651C8 /* corevideo_frame_buffer.cc */,
@@ -9481,6 +9510,7 @@
 				5CDD83CD1E439A6F00621E92 /* encoded_frame.h in Headers */,
 				5CDD85A01E43B5C000621E92 /* encoder_rtcp_feedback.h in Headers */,
 				5CDD8B991E43C2B500621E92 /* energy_inverse.h in Headers */,
+				41109AAC1E5FA19200C0955A /* corevideo_frame_buffer.h in Headers */,
 				5CDD8B9B1E43C2B500621E92 /* enh_upsample.h in Headers */,
 				5CDD8B9F1E43C2B500621E92 /* enhancer.h in Headers */,
 				5CDD8B9D1E43C2B500621E92 /* enhancer_interface.h in Headers */,
@@ -9585,6 +9615,7 @@
 				5C4B48E41E42C1E3002651C8 /* hybriddataengine.h in Headers */,
 				5C63F8021E416288002CA531 /* ifaddrs_converter.h in Headers */,
 				5C63F8051E416288002CA531 /* ignore_wundef.h in Headers */,
+				41109AAE1E5FA19200C0955A /* video_frame_buffer.h in Headers */,
 				5CDD8BB41E43C2B500621E92 /* ilbc.h in Headers */,
 				5CDD8BB61E43C2B500621E92 /* index_conv_dec.h in Headers */,
 				5CDD8BB81E43C2B500621E92 /* index_conv_enc.h in Headers */,
@@ -9613,6 +9644,7 @@
 				5C4B4C711E431F9C002651C8 /* lapped_transform.h in Headers */,
 				5CDD84201E439B2900621E92 /* legacy_encoded_audio_frame.h in Headers */,
 				5CDD90281E43CEDE00621E92 /* level_controller.h in Headers */,
+				41109AB11E5FA19200C0955A /* incoming_video_stream.h in Headers */,
 				5CDD90251E43CEDE00621E92 /* level_controller_constants.h in Headers */,
 				5CDD84B91E43AF1300621E92 /* level_estimator_impl.h in Headers */,
 				5CDD84601E43AE2900621E92 /* level_indicator.h in Headers */,
@@ -9623,6 +9655,7 @@
 				5C63F8101E416288002CA531 /* logging.h in Headers */,
 				5C63F8121E416288002CA531 /* logsinks.h in Headers */,
 				5CDD87061E43BA7500621E92 /* loudness_histogram.h in Headers */,
+				41109AB21E5FA19200C0955A /* video_image.h in Headers */,
 				5CDD87C61E43BC0500621E92 /* lpc_analysis.h in Headers */,
 				5CDD8BC21E43C2B500621E92 /* lpc_encode.h in Headers */,
 				5CDD87C81E43BC0500621E92 /* lpc_gain_swb_tables.h in Headers */,
@@ -9638,6 +9671,7 @@
 				5C63F8131E416288002CA531 /* maccocoathreadhelper.h in Headers */,
 				5C63F8161E416288002CA531 /* macconversion.h in Headers */,
 				5C63F8181E416288002CA531 /* macutils.h in Headers */,
+				41109AB01E5FA19200C0955A /* bitrate_adjuster.h in Headers */,
 				5C63F81A1E416288002CA531 /* macwindowpicker.h in Headers */,
 				5C63F81B1E416288002CA531 /* mathutils.h in Headers */,
 				5CDD907E1E43D15C00621E92 /* matrix.h in Headers */,
@@ -9791,6 +9825,7 @@
 				5C63F8561E416288002CA531 /* race_checker.h in Headers */,
 				5C63F8581E416288002CA531 /* random.h in Headers */,
 				5CDD8A4B1E43BFB300621E92 /* random_vector.h in Headers */,
+				41109AAF1E5FA19200C0955A /* frame_callback.h in Headers */,
 				5CDD895C1E43BF3A00621E92 /* rapid_resync_request.h in Headers */,
 				5C63F85A1E416288002CA531 /* rate_limiter.h in Headers */,
 				5C63F85C1E416288002CA531 /* rate_statistics.h in Headers */,
@@ -9839,6 +9874,7 @@
 				5CDD889B1E43BE3C00621E92 /* rtcp_receiver.h in Headers */,
 				5CDD889E1E43BE3C00621E92 /* rtcp_sender.h in Headers */,
 				5CDD88A11E43BE3C00621E92 /* rtcp_utility.h in Headers */,
+				41109AAD1E5FA19200C0955A /* i420_buffer_pool.h in Headers */,
 				5C63F9651E41737B002CA531 /* rtcstatscollector.h in Headers */,
 				5CDD8AB71E43C00F00621E92 /* rtp_file_source.h in Headers */,
 				5CDD88B11E43BE3C00621E92 /* rtp_format.h in Headers */,

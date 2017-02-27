@@ -26,7 +26,7 @@ namespace webrtc {
 // changes, old buffers will be purged from the pool.
 // Note that CreateBuffer will crash if more than kMaxNumberOfFramesBeforeCrash
 // are created. This is to prevent memory leaks where frames are not returned.
-class I420BufferPool {
+class WEBRTC_EXPORT I420BufferPool {
  public:
   I420BufferPool()
       : I420BufferPool(false) {}

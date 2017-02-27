@@ -34,6 +34,7 @@
 #include "RealtimeMediaSource.h"
 #include <webrtc/api/mediastreaminterface.h>
 #include <webrtc/base/optional.h>
+#include <webrtc/common_video/include/i420_buffer_pool.h>
 #include <webrtc/media/base/videosinkinterface.h>
 
 namespace WebCore {
@@ -47,6 +48,8 @@ public:
 
 private:
     RealtimeOutgoingVideoSource(Ref<RealtimeMediaSource>&&);
+
+    void sendFrame(rtc::scoped_refptr<webrtc::VideoFrameBuffer>&&);
 
     // Notifier API
     void RegisterObserver(webrtc::ObserverInterface*) final { }
@@ -71,6 +74,7 @@ private:
     void videoSampleAvailable(MediaSample&) final;
 
     Vector<rtc::VideoSinkInterface<webrtc::VideoFrame>*> m_sinks;
+    webrtc::I420BufferPool m_bufferPool;
     Ref<RealtimeMediaSource> m_videoSource;
     bool m_enabled { true };
     bool m_muted { false };

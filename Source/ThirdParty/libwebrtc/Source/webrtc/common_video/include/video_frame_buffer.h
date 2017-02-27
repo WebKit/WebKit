@@ -157,7 +157,7 @@ class WEBRTC_EXPORT I420Buffer : public VideoFrameBuffer {
 // This is used for convenience as most native-handle implementations can share
 // many VideoFrame implementations, but need to implement a few others (such
 // as their own destructors or conversion methods back to software I420).
-class NativeHandleBuffer : public VideoFrameBuffer {
+class WEBRTC_EXPORT NativeHandleBuffer : public VideoFrameBuffer {
  public:
   NativeHandleBuffer(void* native_handle, int width, int height);
 
