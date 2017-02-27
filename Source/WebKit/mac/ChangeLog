@@ -1,3 +1,13 @@
+2017-02-27  Aakash Jain  <aakash_jain@apple.com>
+
+        Enable SUPPORTS_TEXT_BASED_API in WebKitLegacy for iOS
+        https://bugs.webkit.org/show_bug.cgi?id=168919
+
+        Reviewed by Tim Horton.
+
+        * Configurations/WebKitLegacy.xcconfig: Enable SUPPORTS_TEXT_BASED_API.
+        * migrate-headers.sh: Run the migrate-headers script for installapi phase.
+
 2017-02-27  Alex Christensen  <achristensen@webkit.org>
 
         [libwebrtc] Enable WebRTC in some Production Builds
