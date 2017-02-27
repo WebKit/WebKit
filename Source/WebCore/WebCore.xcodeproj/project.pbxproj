@@ -2365,6 +2365,24 @@
 		5778BD821DA4806C009E3009 /* SubtleCrypto.h in Headers */ = {isa = PBXBuildFile; fileRef = 5778BD811DA4802C009E3009 /* SubtleCrypto.h */; };
 		5778BD841DA4817B009E3009 /* SubtleCrypto.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5778BD831DA4817B009E3009 /* SubtleCrypto.cpp */; };
 		57A9C88E1DA70BF800BC7305 /* JSSubtleCryptoCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 57A9C88D1DA70BF800BC7305 /* JSSubtleCryptoCustom.cpp */; };
+		57B5F7D41E57CF6800F34F90 /* SiteBoundCredential.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 57B5F7D21E57CF6800F34F90 /* SiteBoundCredential.cpp */; };
+		57B5F7D51E57CF6800F34F90 /* SiteBoundCredential.h in Headers */ = {isa = PBXBuildFile; fileRef = 57B5F7D31E57CF6800F34F90 /* SiteBoundCredential.h */; };
+		57B5F7D81E57D3C900F34F90 /* CredentialData.h in Headers */ = {isa = PBXBuildFile; fileRef = 57B5F7D71E57D3C900F34F90 /* CredentialData.h */; };
+		57B5F7DB1E57D4CC00F34F90 /* SiteBoundCredentialData.h in Headers */ = {isa = PBXBuildFile; fileRef = 57B5F7DA1E57D4CC00F34F90 /* SiteBoundCredentialData.h */; };
+		57B5F7E01E57DBC800F34F90 /* JSSiteBoundCredential.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 57B5F7DC1E57DBC800F34F90 /* JSSiteBoundCredential.cpp */; };
+		57B5F7E11E57DBC800F34F90 /* JSSiteBoundCredential.h in Headers */ = {isa = PBXBuildFile; fileRef = 57B5F7DD1E57DBC800F34F90 /* JSSiteBoundCredential.h */; };
+		57B5F7E21E57DBC800F34F90 /* JSSiteBoundCredentialData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 57B5F7DE1E57DBC800F34F90 /* JSSiteBoundCredentialData.cpp */; };
+		57B5F7E31E57DBC800F34F90 /* JSSiteBoundCredentialData.h in Headers */ = {isa = PBXBuildFile; fileRef = 57B5F7DF1E57DBC800F34F90 /* JSSiteBoundCredentialData.h */; };
+		57B5F7E61E57DBE000F34F90 /* JSCredentialData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 57B5F7E41E57DBE000F34F90 /* JSCredentialData.cpp */; };
+		57B5F7E71E57DBE000F34F90 /* JSCredentialData.h in Headers */ = {isa = PBXBuildFile; fileRef = 57B5F7E51E57DBE000F34F90 /* JSCredentialData.h */; };
+		57B5F7EC1E57F1E300F34F90 /* PasswordCredential.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 57B5F7EA1E57F1E300F34F90 /* PasswordCredential.cpp */; };
+		57B5F7ED1E57F1E300F34F90 /* PasswordCredential.h in Headers */ = {isa = PBXBuildFile; fileRef = 57B5F7EB1E57F1E300F34F90 /* PasswordCredential.h */; };
+		57B5F7F01E5B8C5A00F34F90 /* JSPasswordCredential.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 57B5F7EE1E5B8C5A00F34F90 /* JSPasswordCredential.cpp */; };
+		57B5F7F11E5B8C5A00F34F90 /* JSPasswordCredential.h in Headers */ = {isa = PBXBuildFile; fileRef = 57B5F7EF1E5B8C5A00F34F90 /* JSPasswordCredential.h */; };
+		57C7A68C1E56967500C67D71 /* BasicCredential.h in Headers */ = {isa = PBXBuildFile; fileRef = 57C7A68B1E56967500C67D71 /* BasicCredential.h */; };
+		57C7A6941E578ACA00C67D71 /* BasicCredential.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 57C7A6931E578ACA00C67D71 /* BasicCredential.cpp */; };
+		57C7A69F1E57917800C67D71 /* JSBasicCredential.h in Headers */ = {isa = PBXBuildFile; fileRef = 57C7A69D1E57910D00C67D71 /* JSBasicCredential.h */; };
+		57C7A6A01E57919B00C67D71 /* JSBasicCredential.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 57C7A69C1E57910D00C67D71 /* JSBasicCredential.cpp */; };
 		57D0018D1DD5413200ED19D9 /* JSCryptoKeyUsage.h in Headers */ = {isa = PBXBuildFile; fileRef = 57D0018C1DD5413200ED19D9 /* JSCryptoKeyUsage.h */; };
 		57D0018F1DD5415300ED19D9 /* JSCryptoKeyUsage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 57D0018E1DD5415300ED19D9 /* JSCryptoKeyUsage.cpp */; };
 		57E2335B1DC7D5E500F28D01 /* JSJsonWebKey.h in Headers */ = {isa = PBXBuildFile; fileRef = 57E2335A1DC7D5E500F28D01 /* JSJsonWebKey.h */; };
@@ -9744,6 +9762,29 @@
 		5778BD811DA4802C009E3009 /* SubtleCrypto.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SubtleCrypto.h; sourceTree = "<group>"; };
 		5778BD831DA4817B009E3009 /* SubtleCrypto.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SubtleCrypto.cpp; sourceTree = "<group>"; };
 		57A9C88D1DA70BF800BC7305 /* JSSubtleCryptoCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSubtleCryptoCustom.cpp; sourceTree = "<group>"; };
+		57B5F7D11E57CF0E00F34F90 /* SiteBoundCredential.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = SiteBoundCredential.idl; sourceTree = "<group>"; };
+		57B5F7D21E57CF6800F34F90 /* SiteBoundCredential.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SiteBoundCredential.cpp; sourceTree = "<group>"; };
+		57B5F7D31E57CF6800F34F90 /* SiteBoundCredential.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SiteBoundCredential.h; sourceTree = "<group>"; };
+		57B5F7D61E57D36A00F34F90 /* CredentialData.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = CredentialData.idl; sourceTree = "<group>"; };
+		57B5F7D71E57D3C900F34F90 /* CredentialData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CredentialData.h; sourceTree = "<group>"; };
+		57B5F7D91E57D44E00F34F90 /* SiteBoundCredentialData.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = SiteBoundCredentialData.idl; sourceTree = "<group>"; };
+		57B5F7DA1E57D4CC00F34F90 /* SiteBoundCredentialData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SiteBoundCredentialData.h; sourceTree = "<group>"; };
+		57B5F7DC1E57DBC800F34F90 /* JSSiteBoundCredential.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSiteBoundCredential.cpp; sourceTree = "<group>"; };
+		57B5F7DD1E57DBC800F34F90 /* JSSiteBoundCredential.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSiteBoundCredential.h; sourceTree = "<group>"; };
+		57B5F7DE1E57DBC800F34F90 /* JSSiteBoundCredentialData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSiteBoundCredentialData.cpp; sourceTree = "<group>"; };
+		57B5F7DF1E57DBC800F34F90 /* JSSiteBoundCredentialData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSiteBoundCredentialData.h; sourceTree = "<group>"; };
+		57B5F7E41E57DBE000F34F90 /* JSCredentialData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCredentialData.cpp; sourceTree = "<group>"; };
+		57B5F7E51E57DBE000F34F90 /* JSCredentialData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCredentialData.h; sourceTree = "<group>"; };
+		57B5F7E91E57E00000F34F90 /* PasswordCredential.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = PasswordCredential.idl; sourceTree = "<group>"; };
+		57B5F7EA1E57F1E300F34F90 /* PasswordCredential.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PasswordCredential.cpp; sourceTree = "<group>"; };
+		57B5F7EB1E57F1E300F34F90 /* PasswordCredential.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PasswordCredential.h; sourceTree = "<group>"; };
+		57B5F7EE1E5B8C5A00F34F90 /* JSPasswordCredential.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSPasswordCredential.cpp; sourceTree = "<group>"; };
+		57B5F7EF1E5B8C5A00F34F90 /* JSPasswordCredential.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSPasswordCredential.h; sourceTree = "<group>"; };
+		57C7A6891E56946D00C67D71 /* BasicCredential.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = BasicCredential.idl; sourceTree = "<group>"; };
+		57C7A68B1E56967500C67D71 /* BasicCredential.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BasicCredential.h; sourceTree = "<group>"; };
+		57C7A6931E578ACA00C67D71 /* BasicCredential.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BasicCredential.cpp; sourceTree = "<group>"; };
+		57C7A69C1E57910D00C67D71 /* JSBasicCredential.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSBasicCredential.cpp; sourceTree = "<group>"; };
+		57C7A69D1E57910D00C67D71 /* JSBasicCredential.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSBasicCredential.h; sourceTree = "<group>"; };
 		57D0018B1DD3DBA400ED19D9 /* CryptoKeyUsage.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = CryptoKeyUsage.idl; sourceTree = "<group>"; };
 		57D0018C1DD5413200ED19D9 /* JSCryptoKeyUsage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCryptoKeyUsage.h; sourceTree = "<group>"; };
 		57D0018E1DD5415300ED19D9 /* JSCryptoKeyUsage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCryptoKeyUsage.cpp; sourceTree = "<group>"; };
@@ -15962,6 +16003,7 @@
 				1221E0581C02B409006A1A00 /* Animation */,
 				1AE96A791D1A0A5C00B86768 /* ApplePay */,
 				A83B79100CCB001B000B0825 /* Core */,
+				57C7A68D1E569A8400C67D71 /* Credentials */,
 				E1FF8F61180745C600132674 /* Crypto */,
 				A83B790E0CCAFF97000B0825 /* CSS */,
 				5CE5D9A61DB899A800CE7A8D /* Encoding */,
@@ -17689,6 +17731,43 @@
 				510192D018B6B9AB007FC7A1 /* ImageControlsRootElementMac.h */,
 			);
 			path = mac;
+			sourceTree = "<group>";
+		};
+		57C7A6881E56946D00C67D71 /* credentials */ = {
+			isa = PBXGroup;
+			children = (
+				57C7A6931E578ACA00C67D71 /* BasicCredential.cpp */,
+				57C7A68B1E56967500C67D71 /* BasicCredential.h */,
+				57C7A6891E56946D00C67D71 /* BasicCredential.idl */,
+				57B5F7D71E57D3C900F34F90 /* CredentialData.h */,
+				57B5F7D61E57D36A00F34F90 /* CredentialData.idl */,
+				57B5F7EA1E57F1E300F34F90 /* PasswordCredential.cpp */,
+				57B5F7EB1E57F1E300F34F90 /* PasswordCredential.h */,
+				57B5F7E91E57E00000F34F90 /* PasswordCredential.idl */,
+				57B5F7D21E57CF6800F34F90 /* SiteBoundCredential.cpp */,
+				57B5F7D31E57CF6800F34F90 /* SiteBoundCredential.h */,
+				57B5F7D11E57CF0E00F34F90 /* SiteBoundCredential.idl */,
+				57B5F7DA1E57D4CC00F34F90 /* SiteBoundCredentialData.h */,
+				57B5F7D91E57D44E00F34F90 /* SiteBoundCredentialData.idl */,
+			);
+			path = credentials;
+			sourceTree = "<group>";
+		};
+		57C7A68D1E569A8400C67D71 /* Credentials */ = {
+			isa = PBXGroup;
+			children = (
+				57C7A69C1E57910D00C67D71 /* JSBasicCredential.cpp */,
+				57C7A69D1E57910D00C67D71 /* JSBasicCredential.h */,
+				57B5F7E41E57DBE000F34F90 /* JSCredentialData.cpp */,
+				57B5F7E51E57DBE000F34F90 /* JSCredentialData.h */,
+				57B5F7EE1E5B8C5A00F34F90 /* JSPasswordCredential.cpp */,
+				57B5F7EF1E5B8C5A00F34F90 /* JSPasswordCredential.h */,
+				57B5F7DC1E57DBC800F34F90 /* JSSiteBoundCredential.cpp */,
+				57B5F7DD1E57DBC800F34F90 /* JSSiteBoundCredential.h */,
+				57B5F7DE1E57DBC800F34F90 /* JSSiteBoundCredentialData.cpp */,
+				57B5F7DF1E57DBC800F34F90 /* JSSiteBoundCredentialData.h */,
+			);
+			name = Credentials;
 			sourceTree = "<group>";
 		};
 		59B5977111086556007159E8 /* jsc */ = {
@@ -19633,6 +19712,7 @@
 			children = (
 				CE26169D187E6554007955F3 /* airplay */,
 				1A58E8611D19D37300C0EA73 /* applepay */,
+				57C7A6881E56946D00C67D71 /* credentials */,
 				CDA98DBD16014E0800FEA3B1 /* encryptedmedia */,
 				41F54F7C1C50C4F600338488 /* fetch */,
 				518F4FE9194CA4B60081BAAE /* gamepad */,
@@ -25332,11 +25412,13 @@
 				49E912AB0EFAC906009D0CAF /* Animation.h in Headers */,
 				316FE1120E6E1DA700BF6088 /* AnimationBase.h in Headers */,
 				319848011A1D817B00A13318 /* AnimationEvent.h in Headers */,
+				57B5F7D81E57D3C900F34F90 /* CredentialData.h in Headers */,
 				49E912AD0EFAC906009D0CAF /* AnimationList.h in Headers */,
 				31DCD29D1AB4FBDE0072E817 /* AnimationTrigger.h in Headers */,
 				0F580FAF149800D400FB5BD8 /* AnimationUtilities.h in Headers */,
 				93309DD7099E64920056E581 /* AppendNodeCommand.h in Headers */,
 				7C6579E31E00827000E3A27A /* ApplePayLineItem.h in Headers */,
+				57C7A68C1E56967500C67D71 /* BasicCredential.h in Headers */,
 				7C6523011E00D03400677F22 /* ApplePayPayment.h in Headers */,
 				1A8A64521D19FCFB00D0E00F /* ApplePayPaymentAuthorizedEvent.h in Headers */,
 				7C6522FB1E00C90900677F22 /* ApplePayPaymentContact.h in Headers */,
@@ -25689,6 +25771,7 @@
 				E1BD331C182D8EE900C05D9F /* CryptoAlgorithmRsaSsaParamsDeprecated.h in Headers */,
 				E125F82C1822CFEC00D84CD9 /* CryptoAlgorithmSHA1.h in Headers */,
 				E19AC3EF1824DC7900349426 /* CryptoAlgorithmSHA224.h in Headers */,
+				57B5F7F11E5B8C5A00F34F90 /* JSPasswordCredential.h in Headers */,
 				E19AC3F11824DC7900349426 /* CryptoAlgorithmSHA256.h in Headers */,
 				E19AC3F31824DC7900349426 /* CryptoAlgorithmSHA384.h in Headers */,
 				E19AC3F51824DC7900349426 /* CryptoAlgorithmSHA512.h in Headers */,
@@ -25977,6 +26060,7 @@
 				A7CA59630B27C1F200FA021D /* DragClient.h in Headers */,
 				A7CA595D0B27BD9E00FA021D /* DragController.h in Headers */,
 				A7B6E69F0B291A9600D0529F /* DragData.h in Headers */,
+				57B5F7D51E57CF6800F34F90 /* SiteBoundCredential.h in Headers */,
 				A7CFB3D20B7ED10A0070C32D /* DragImage.h in Headers */,
 				81F65FF613788FAA00FF6F2D /* DragState.h in Headers */,
 				E1BA66F11742BD8600C20251 /* DynamicLinkerInterposing.h in Headers */,
@@ -26461,6 +26545,7 @@
 				AA4C3A770B2B1679002334A2 /* InlineStyleSheetOwner.h in Headers */,
 				BCEA485A097D93020094C9E4 /* InlineTextBox.h in Headers */,
 				1C010701192594DF008A4201 /* InlineTextBoxStyle.h in Headers */,
+				57B5F7E31E57DBC800F34F90 /* JSSiteBoundCredentialData.h in Headers */,
 				510A58E51BAA40B100C19282 /* InProcessIDBServer.h in Headers */,
 				2EB767571DA19BDF003E23B5 /* InputEvent.h in Headers */,
 				37E3524D12450C6600BAF5D9 /* InputType.h in Headers */,
@@ -26666,6 +26751,7 @@
 				65DF31F809D1CC60000BE325 /* JSDOMImplementation.h in Headers */,
 				4138F8581D253F0E001CB61E /* JSDOMIterator.h in Headers */,
 				A9D248070D757E7D00FDF959 /* JSDOMMimeType.h in Headers */,
+				57B5F7E11E57DBC800F34F90 /* JSSiteBoundCredential.h in Headers */,
 				A9D248090D757E7D00FDF959 /* JSDOMMimeTypeArray.h in Headers */,
 				52CCA9E315E3F62C0053C77F /* JSDOMNamedFlowCollection.h in Headers */,
 				1ACE53E00A8D18810022947D /* JSDOMParser.h in Headers */,
@@ -26773,6 +26859,7 @@
 				A80E7B0D0A19D606007FB8C5 /* JSHTMLLinkElement.h in Headers */,
 				1AE2AB280A1CE63B00B42B25 /* JSHTMLMapElement.h in Headers */,
 				BC491B790C023EFD009D6316 /* JSHTMLMarqueeElement.h in Headers */,
+				57C7A69F1E57917800C67D71 /* JSBasicCredential.h in Headers */,
 				E446143A0CD689C800FADA75 /* JSHTMLMediaElement.h in Headers */,
 				1AE2AE5C0A1D26F200B42B25 /* JSHTMLMenuElement.h in Headers */,
 				A80E7A180A19C3D6007FB8C5 /* JSHTMLMetaElement.h in Headers */,
@@ -27471,6 +27558,7 @@
 				979F43D41075E44A0000F83B /* NavigationScheduler.h in Headers */,
 				A9C6E5A60D746458006442E9 /* Navigator.h in Headers */,
 				E12719C70EEEC16800F61213 /* NavigatorBase.h in Headers */,
+				57B5F7ED1E57F1E300F34F90 /* PasswordCredential.h in Headers */,
 				9711460414EF009A00674FD9 /* NavigatorGeolocation.h in Headers */,
 				5EA725D61ACABD5700EAD17B /* NavigatorMediaDevices.h in Headers */,
 				996E59DF1DF0128D006612B9 /* NavigatorWebDriver.h in Headers */,
@@ -27778,6 +27866,7 @@
 				836DAA061CEAB80D00A2B707 /* RenderDescendantIterator.h in Headers */,
 				D302754A12A5FE84004BD828 /* RenderDetailsMarker.h in Headers */,
 				A76E5F7F135E0DCF00A69837 /* RenderedDocumentMarker.h in Headers */,
+				57B5F7E71E57DBE000F34F90 /* JSCredentialData.h in Headers */,
 				9B32CDA913DF7FA900F34D13 /* RenderedPosition.h in Headers */,
 				E43A023B17EB370A004CDD25 /* RenderElement.h in Headers */,
 				0F5B7A5510F65D7A00376302 /* RenderEmbeddedObject.h in Headers */,
@@ -27983,6 +28072,7 @@
 				078E094317D16E1C00420AA1 /* RTCSessionDescriptionDescriptor.h in Headers */,
 				078E094417D16E1C00420AA1 /* RTCSessionDescriptionRequest.h in Headers */,
 				078E092A17D14D1C00420AA1 /* RTCStatsReport.h in Headers */,
+				57B5F7DB1E57D4CC00F34F90 /* SiteBoundCredentialData.h in Headers */,
 				5E2C43681BCEE3770001E2BC /* RTCTrackEvent.h in Headers */,
 				078E094717D16E1C00420AA1 /* RTCVoidRequest.h in Headers */,
 				5824ABA31AE81116009074B7 /* RubyElement.h in Headers */,
@@ -29283,6 +29373,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				570440531E5278B200356601 /* CryptoAlgorithmAES_CFB.cpp in Sources */,
+				57C7A6A01E57919B00C67D71 /* JSBasicCredential.cpp in Sources */,
 				41E1B1D00FF5986900576B3B /* AbstractWorker.cpp in Sources */,
 				37F57AB91A50726900876F98 /* AccessibilityARIAGrid.cpp in Sources */,
 				37F57ABA1A50726F00876F98 /* AccessibilityARIAGridCell.cpp in Sources */,
@@ -29357,6 +29448,7 @@
 				A8C4A80E09D563270003AC8D /* Attr.cpp in Sources */,
 				E4A814D81C70E10500BF85AC /* AttributeChangeInvalidation.cpp in Sources */,
 				FD629EA4154B47160006D026 /* AudioBasicInspectorNode.cpp in Sources */,
+				57B5F7E61E57DBE000F34F90 /* JSCredentialData.cpp in Sources */,
 				FD315FF612B0267600C1A359 /* AudioBasicProcessorNode.cpp in Sources */,
 				FD315FF812B0267600C1A359 /* AudioBuffer.cpp in Sources */,
 				FD315FFB12B0267600C1A359 /* AudioBufferSourceNode.cpp in Sources */,
@@ -30329,6 +30421,7 @@
 				120DE3FE1C87E18800B6D4DD /* JSAnimationEffect.cpp in Sources */,
 				3198480B1A1E6CE400A13318 /* JSAnimationEvent.cpp in Sources */,
 				1221E06C1C03D224006A1A00 /* JSAnimationTimeline.cpp in Sources */,
+				57B5F7E21E57DBC800F34F90 /* JSSiteBoundCredentialData.cpp in Sources */,
 				1221E0731C03E4C2006A1A00 /* JSAnimationTimelineCustom.cpp in Sources */,
 				7C6579EF1E00856600E3A27A /* JSApplePayLineItem.cpp in Sources */,
 				7C65231E1E018B5A00677F22 /* JSApplePayPayment.cpp in Sources */,
@@ -30369,6 +30462,7 @@
 				7C77C3D41DEF178E00A50BFA /* JSBlobPropertyBag.cpp in Sources */,
 				14DCF3B21B6BE2080062D4C3 /* JSByteLengthQueuingStrategy.cpp in Sources */,
 				1449E287107D4DB400B5793F /* JSCallbackData.cpp in Sources */,
+				57B5F7D41E57CF6800F34F90 /* SiteBoundCredential.cpp in Sources */,
 				65DF323909D1DE65000BE325 /* JSCanvasGradient.cpp in Sources */,
 				65DF323B09D1DE65000BE325 /* JSCanvasPattern.cpp in Sources */,
 				49EED1441051969400099FAB /* JSCanvasRenderingContext2D.cpp in Sources */,
@@ -31298,6 +31392,7 @@
 				D6E276AF14637455001D280A /* MutationObserverRegistration.cpp in Sources */,
 				C6F08FBC1430FE8F00685849 /* MutationRecord.cpp in Sources */,
 				52B6C9C515E3F4DF00690B05 /* NamedFlowCollection.cpp in Sources */,
+				57B5F7EC1E57F1E300F34F90 /* PasswordCredential.cpp in Sources */,
 				314BE3A61B3103FB00141982 /* NamedImageGeneratedImage.cpp in Sources */,
 				BCF34A3711A231CD00C71804 /* NamedNodeMap.cpp in Sources */,
 				A81872240977D3C0005826D9 /* NameNodeList.cpp in Sources */,
@@ -31687,6 +31782,7 @@
 				5824ABA21AE81116009074B7 /* RubyElement.cpp in Sources */,
 				5824ABA61AE81384009074B7 /* RubyTextElement.cpp in Sources */,
 				A79BADA1161E7F3F00C2E652 /* RuleFeature.cpp in Sources */,
+				57B5F7E01E57DBC800F34F90 /* JSSiteBoundCredential.cpp in Sources */,
 				A79BADA3161E7F3F00C2E652 /* RuleSet.cpp in Sources */,
 				2D76BB8419456F8100CFD29A /* RunLoopObserver.cpp in Sources */,
 				1A569D1E0D7E2B82007C3983 /* runtime_array.cpp in Sources */,
@@ -31822,6 +31918,7 @@
 				5C688AA31D3814BF000B54FA /* SocketProvider.cpp in Sources */,
 				510D4A36103165EE0049EA54 /* SocketStreamHandle.cpp in Sources */,
 				51ABAE1F103C1913008C5260 /* SocketStreamHandleImplCFNet.cpp in Sources */,
+				57C7A6941E578ACA00C67D71 /* BasicCredential.cpp in Sources */,
 				E45390470EAFD637003695C8 /* SoundIOS.mm in Sources */,
 				4B3043C90AE0371D00A82647 /* SoundMac.mm in Sources */,
 				84A81F3D0FC7DFF000955300 /* SourceAlpha.cpp in Sources */,
@@ -32191,6 +32288,7 @@
 				E17B491516A9B094001C8839 /* TransitionEvent.cpp in Sources */,
 				49E911D10EF86D47009D0CAF /* TranslateTransformOperation.cpp in Sources */,
 				854FE7360A2297BE0058D7AD /* Traversal.cpp in Sources */,
+				57B5F7F01E5B8C5A00F34F90 /* JSPasswordCredential.cpp in Sources */,
 				14D64B5C134A5B6B00E58FDA /* TreeScope.cpp in Sources */,
 				A77E1FEF14AACB6E005B7CB6 /* TreeScopeAdopter.cpp in Sources */,
 				854FE7380A2297BE0058D7AD /* TreeWalker.cpp in Sources */,

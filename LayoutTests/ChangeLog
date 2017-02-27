@@ -1,3 +1,22 @@
+2017-02-27  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [CredentialManagement] Add IDL definitions for Credential, SiteBoundCredential, and PasswordCredential
+        https://bugs.webkit.org/show_bug.cgi?id=168616
+        <rdar://problem/30167149>
+
+        Reviewed by Daniel Bates.
+
+        * credentials/idlharness-expected.txt: Added.
+        * credentials/idlharness.html: Added.
+        * platform/mac-elcapitan/js/dom/global-constructors-attributes-expected.txt:
+        * platform/mac-wk1/js/dom/global-constructors-attributes-expected.txt:
+        * platform/mac-yosemite/js/dom/global-constructors-attributes-expected.txt:
+        * platform/mac/js/dom/global-constructors-attributes-expected.txt:
+        * resources/WebIDLParser.js: Added.
+        * resources/idlharness.js: Renamed from LayoutTests/imported/w3c/resources/idlharness.js.
+        Removed LayoutTests/imported/w3c/resources/idlharness.js since it is not needed any more.
+        Added resources/idlharness.js for idl harness.
+
 2017-02-27  Jer Noble  <jer.noble@apple.com>
 
         [WebRTC] Fix remote audio rendering

@@ -298,6 +298,11 @@ PASS Object.getOwnPropertyDescriptor(global, 'Counter').hasOwnProperty('get') is
 PASS Object.getOwnPropertyDescriptor(global, 'Counter').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(global, 'Counter').enumerable is false
 PASS Object.getOwnPropertyDescriptor(global, 'Counter').configurable is true
+PASS Object.getOwnPropertyDescriptor(global, 'Credential').value is Credential
+PASS Object.getOwnPropertyDescriptor(global, 'Credential').hasOwnProperty('get') is false
+PASS Object.getOwnPropertyDescriptor(global, 'Credential').hasOwnProperty('set') is false
+PASS Object.getOwnPropertyDescriptor(global, 'Credential').enumerable is false
+PASS Object.getOwnPropertyDescriptor(global, 'Credential').configurable is true
 PASS Object.getOwnPropertyDescriptor(global, 'Crypto').value is Crypto
 PASS Object.getOwnPropertyDescriptor(global, 'Crypto').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'Crypto').hasOwnProperty('set') is false
@@ -1158,6 +1163,11 @@ PASS Object.getOwnPropertyDescriptor(global, 'PageTransitionEvent').hasOwnProper
 PASS Object.getOwnPropertyDescriptor(global, 'PageTransitionEvent').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(global, 'PageTransitionEvent').enumerable is false
 PASS Object.getOwnPropertyDescriptor(global, 'PageTransitionEvent').configurable is true
+PASS Object.getOwnPropertyDescriptor(global, 'PasswordCredential').value is PasswordCredential
+PASS Object.getOwnPropertyDescriptor(global, 'PasswordCredential').hasOwnProperty('get') is false
+PASS Object.getOwnPropertyDescriptor(global, 'PasswordCredential').hasOwnProperty('set') is false
+PASS Object.getOwnPropertyDescriptor(global, 'PasswordCredential').enumerable is false
+PASS Object.getOwnPropertyDescriptor(global, 'PasswordCredential').configurable is true
 PASS Object.getOwnPropertyDescriptor(global, 'Path2D').value is Path2D
 PASS Object.getOwnPropertyDescriptor(global, 'Path2D').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'Path2D').hasOwnProperty('set') is false
@@ -2088,6 +2098,11 @@ PASS Object.getOwnPropertyDescriptor(global, 'SharedArrayBuffer').hasOwnProperty
 PASS Object.getOwnPropertyDescriptor(global, 'SharedArrayBuffer').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(global, 'SharedArrayBuffer').enumerable is false
 PASS Object.getOwnPropertyDescriptor(global, 'SharedArrayBuffer').configurable is true
+PASS Object.getOwnPropertyDescriptor(global, 'SiteBoundCredential').value is SiteBoundCredential
+PASS Object.getOwnPropertyDescriptor(global, 'SiteBoundCredential').hasOwnProperty('get') is false
+PASS Object.getOwnPropertyDescriptor(global, 'SiteBoundCredential').hasOwnProperty('set') is false
+PASS Object.getOwnPropertyDescriptor(global, 'SiteBoundCredential').enumerable is false
+PASS Object.getOwnPropertyDescriptor(global, 'SiteBoundCredential').configurable is true
 PASS Object.getOwnPropertyDescriptor(global, 'SourceBuffer').value is SourceBuffer
 PASS Object.getOwnPropertyDescriptor(global, 'SourceBuffer').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'SourceBuffer').hasOwnProperty('set') is false
