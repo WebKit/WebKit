@@ -115,6 +115,7 @@ class MacOSFullscreenMediaControls extends MacOSMediaControls
 
         this._rightContainer.buttonMargin = buttonMargin;
 
+        this._leftContainer.layout();
         this._centerContainer.layout();
         this._rightContainer.layout();
 
@@ -125,6 +126,9 @@ class MacOSFullscreenMediaControls extends MacOSMediaControls
 
     _handleMousedown(event)
     {
+        if (event.target !== this.controlsBar.element)
+            return;
+
         event.preventDefault();
         event.stopPropagation();
 

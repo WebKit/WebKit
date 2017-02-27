@@ -1,3 +1,19 @@
+2017-02-27  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] Dragging controls in fullscreen on macOS prevents scrubbing or interacting with controls
+        https://bugs.webkit.org/show_bug.cgi?id=168820
+        <rdar://problem/30690281>
+
+        Reviewed by Jon Lee.
+
+        Making the existing test more robust and adding a new test that checks what happens
+        when we initiate a drag over some controls.
+
+        * media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-drag-expected.txt:
+        * media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-drag-is-prevented-over-button-expected.txt: Added.
+        * media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-drag-is-prevented-over-button.html: Added.
+        * media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-drag.html:
+
 2017-02-27  Andy Estes  <aestes@apple.com>
 
         Add a way to test file input without relying on drag and drop

@@ -6,7 +6,7 @@
 
 window.jsTestIsAsync = true;
 
-description("This test pauses the video, presses the fullscreen button, and drags the controls when the mouse is over a button. It should follow the mouse drag.");
+description("This test pauses the video, presses the fullscreen button, and drags the controls when the mouse is over a button. It should not move.");
 
 const media = document.querySelector("video");
 const shadowRoot = window.internals.shadowRoot(media);
@@ -22,13 +22,13 @@ media.addEventListener("webkitfullscreenchange", () => {
         shouldBecomeEqual("!!mediaControls.querySelector('.buttons-container.left')", "true", () => {
             shouldBecomeEqualToString("mediaControls.querySelector('.buttons-container.left').style.width", "116px", () => {
                 const bounds = mediaControls.querySelector(".controls-bar").getBoundingClientRect();
-                eventSender.mouseMoveTo(bounds.left + 118, bounds.top + 10);
+                eventSender.mouseMoveTo(bounds.left + 68, bounds.top + 10);
                 eventSender.mouseDown();
-                eventSender.mouseMoveTo(bounds.left + 68, bounds.top - 90);
+                eventSender.mouseMoveTo(bounds.left + 18, bounds.top - 90);
                 eventSender.mouseUp();
 
                 window.requestAnimationFrame(() => {
-                    shouldBeEqualToString("mediaControls.querySelector('.controls-bar').style.transform", "translate(-50px, -100px)");
+                    shouldBeEqualToString("mediaControls.querySelector('.controls-bar').style.transform", "");
                     finishJSTest();
                 });
             });
