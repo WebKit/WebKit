@@ -161,6 +161,7 @@ private:
     String m_selectedStylesheetSetName;
 
     bool m_usesStyleBasedEditability { false };
+    bool m_isUpdatingStyleResolver { false };
 };
 
 inline void Scope::flushPendingUpdate()
