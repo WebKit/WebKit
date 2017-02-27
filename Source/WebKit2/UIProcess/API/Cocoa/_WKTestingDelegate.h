@@ -27,8 +27,6 @@
 
 #if WK_API_ENABLED
 
-#import <wtf/RetainPtr.h>
-
 @class WKWebView;
 
 NS_ASSUME_NONNULL_BEGIN
