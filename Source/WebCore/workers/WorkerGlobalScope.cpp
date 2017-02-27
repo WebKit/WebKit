@@ -97,8 +97,21 @@ WorkerGlobalScope::~WorkerGlobalScope()
 {
     ASSERT(currentThread() == thread().threadID());
 
+#if ENABLE(WEB_TIMING)
+    m_performance = nullptr;
+#endif
+
     // Notify proxy that we are going away. This can free the WorkerThread object, so do not access it after this.
     thread().workerReportingProxy().workerGlobalScopeDestroyed();
+}
+
+void WorkerGlobalScope::removeAllEventListeners()
+{
+    EventTarget::removeAllEventListeners();
+
+#if ENABLE(WEB_TIMING)
+    m_performance->removeAllEventListeners();
+#endif
 }
 
 void WorkerGlobalScope::applyContentSecurityPolicyResponseHeaders(const ContentSecurityPolicyResponseHeaders& contentSecurityPolicyResponseHeaders)
@@ -358,7 +371,7 @@ Crypto& WorkerGlobalScope::crypto()
 
 Performance& WorkerGlobalScope::performance() const
 {
-    return m_performance;
+    return *m_performance;
 }
 
 #endif

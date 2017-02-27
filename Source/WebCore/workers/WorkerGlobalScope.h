@@ -104,6 +104,8 @@ public:
     Performance& performance() const;
 #endif
 
+    void removeAllEventListeners() final;
+
 protected:
     WorkerGlobalScope(const URL&, const String& identifier, const String& userAgent, WorkerThread&, bool shouldBypassMainWorldContentSecurityPolicy, Ref<SecurityOrigin>&& topOrigin, MonotonicTime timeOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*);
 
@@ -177,7 +179,7 @@ private:
 #endif
 
 #if ENABLE(WEB_TIMING)
-    Ref<Performance> m_performance;
+    RefPtr<Performance> m_performance;
 #endif
 
     mutable RefPtr<Crypto> m_crypto;

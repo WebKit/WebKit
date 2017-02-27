@@ -1,3 +1,24 @@
+2017-02-20  Joseph Pecoraro  <pecoraro@apple.com>
+
+        ASSERTION FAILED: m_normalWorld->hasOneRef() under WorkerThread::stop
+        https://bugs.webkit.org/show_bug.cgi?id=168356
+        <rdar://problem/30592486>
+
+        Reviewed by Ryosuke Niwa.
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::removeAllEventListeners):
+        Remove Performance object EventListeners.
+
+        * workers/WorkerGlobalScope.cpp:
+        (WebCore::WorkerGlobalScope::~WorkerGlobalScope):
+        (WebCore::WorkerGlobalScope::removeAllEventListeners):
+        (WebCore::WorkerGlobalScope::performance):
+        * workers/WorkerGlobalScope.h:
+        Remove Performance object EventListeners.
+        Also clear Performance early in destruction since its ContextDestructionObserver
+        destruction makes checks about the WorkerThread.
+
 2017-02-20  Zalan Bujtas  <zalan@apple.com>
 
         Simple line layout: Implement absoluteQuadsForRange.
