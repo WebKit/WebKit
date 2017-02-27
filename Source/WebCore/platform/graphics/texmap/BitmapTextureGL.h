@@ -38,7 +38,11 @@ class FilterOperation;
 
 class BitmapTextureGL : public BitmapTexture {
 public:
-    BitmapTextureGL(PassRefPtr<GraphicsContext3D>, const Flags = NoFlag);
+    static Ref<BitmapTexture> create(Ref<GraphicsContext3D>&& context3D, const Flags flags = NoFlag)
+    {
+        return adoptRef(*new BitmapTextureGL(WTFMove(context3D), flags));
+    }
+
     virtual ~BitmapTextureGL();
 
     IntSize size() const override;
@@ -73,18 +77,17 @@ public:
     GC3Dint internalFormat() const { return m_internalFormat; }
 
 private:
+    BitmapTextureGL(RefPtr<GraphicsContext3D>&&, const Flags);
 
-    Platform3DObject m_id;
+    Platform3DObject m_id { 0 };
     IntSize m_textureSize;
     IntRect m_dirtyRect;
-    Platform3DObject m_fbo;
-    Platform3DObject m_rbo;
-    Platform3DObject m_depthBufferObject;
-    bool m_shouldClear;
+    Platform3DObject m_fbo { 0 };
+    Platform3DObject m_rbo { 0 };
+    Platform3DObject m_depthBufferObject { 0 };
+    bool m_shouldClear { true };
     ClipStack m_clipStack;
     RefPtr<GraphicsContext3D> m_context3D;
-
-    BitmapTextureGL();
 
     void clearIfNeeded();
     void createFboIfNeeded();
@@ -93,7 +96,13 @@ private:
 
     GC3Dint m_internalFormat;
     GC3Denum m_format;
-    GC3Denum m_type;
+    GC3Denum m_type {
+#if OS(DARWIN)
+        GL_UNSIGNED_INT_8_8_8_8_REV
+#else
+        GraphicsContext3D::UNSIGNED_BYTE
+#endif
+    };
 };
 
 BitmapTextureGL* toBitmapTextureGL(BitmapTexture*);

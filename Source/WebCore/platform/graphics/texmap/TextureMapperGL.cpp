@@ -748,8 +748,7 @@ IntRect TextureMapperGL::clipBounds()
 
 PassRefPtr<BitmapTexture> TextureMapperGL::createTexture()
 {
-    BitmapTextureGL* texture = new BitmapTextureGL(m_context3D);
-    return adoptRef(texture);
+    return BitmapTextureGL::create(*m_context3D);
 }
 
 std::unique_ptr<TextureMapper> TextureMapper::platformCreateAccelerated()
