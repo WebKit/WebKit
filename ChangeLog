@@ -1,5 +1,11 @@
 2017-02-26  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed. Bump GTK+ versions numbers.
+
+        * Source/cmake/OptionsGTK.cmake:
+
+2017-02-26  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed, rolling out r213024.
 
         Wrong version numbers
