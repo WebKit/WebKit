@@ -1,3 +1,14 @@
+2017-02-26  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed, rolling out r213024.
+
+        Wrong version numbers
+
+        Reverted changeset:
+
+        "[GTK] Unreviewed, bump GTK version numbers also on trunk"
+        http://trac.webkit.org/changeset/213024
+
 2017-02-26  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] Unreviewed, bump GTK version numbers also on trunk
