@@ -29,6 +29,7 @@
 # patch. This makes it easier to track and review changes in generated code.
 
 import optparse
+import os
 import sys
 from webkitpy.common.system import executive
 
@@ -43,11 +44,16 @@ def main(argv):
         help='Disable verobse output')
     option_parser.add_option('--reset-results', action='store_true', default=False,
         help='Overwrites the reference files with the generated results')
+    option_parser.add_option('--json-output', action='store', type='string', dest='json_file_name',
+        help='Create a file at specified path, listing test results in JSON format.')
     options, args = option_parser.parse_args()    
 
     from webkitpy.bindings.main import BindingsTests
 
-    return BindingsTests(options.reset_results, [ 'JS' ], executive.Executive(), not options.no_verbose, args).main()
+    if options.json_file_name:
+        options.json_file_name = os.path.abspath(options.json_file_name)
+
+    return BindingsTests(options.reset_results, [ 'JS' ], executive.Executive(), not options.no_verbose, args, options.json_file_name).main()
 
 
 if __name__ == '__main__':

@@ -1,3 +1,17 @@
+2017-02-27  Srinivasan Vijayaraghavan  <svijayaraghavan@apple.com>
+
+        Add machine-readable results for bindings tests
+        https://bugs.webkit.org/show_bug.cgi?id=168626
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Scripts/run-bindings-tests:
+        (main): Add optional --json-output command-line parameter.
+        * Scripts/webkitpy/bindings/main.py:
+        (BindingsTests.__init__): Add variables to store machine-readable results.
+        (BindingsTests.detect_changes): Store results in machine-readable form if applicable.
+        (BindingsTests.main): Write data to JSON file if applicable.
+
 2017-02-27  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Unreviewed, roll out r213065.
