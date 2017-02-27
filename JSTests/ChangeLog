@@ -1,3 +1,51 @@
+2017-02-26  Caio Lima  <ticaiolima@gmail.com>
+
+        op_get_by_id_with_this should use inline caching
+        https://bugs.webkit.org/show_bug.cgi?id=162124
+
+        Reviewed by Saam Barati.
+
+        * microbenchmarks/super-getter.js: Added.
+        (A.prototype.get f):
+        (A):
+        (B.prototype.get f):
+        (B):
+        * stress/super-force-ic-fail.js: Added.
+        (let.assert):
+        (let.aObj.get foo):
+        (let.obj.jaz):
+        (let.bObj.get foo):
+        (let.obj2.foo):
+        * stress/super-get-by-id.js: Added.
+        (assert):
+        (Base):
+        (Base.prototype.get name):
+        (Base.prototype.set name):
+        (Subclass.prototype.get name):
+        (Subclass):
+        (getterName):
+        (getterValue):
+        (PolymorphicSubclass.prototype.get value):
+        (PolymorphicSubclass):
+        (i.let.BaseCode):
+        (i.get value):
+        (MegamorphicSubclass.prototype.get value):
+        (MegamorphicSubclass):
+        (let.subObj.get value):
+        (i.catch):
+        (subObj.get value):
+        (BaseException):
+        (BaseException.prototype.get name):
+        (SubclassException.prototype.get name):
+        (SubclassException):
+        (prototype.foo):
+        (prototype.get name):
+        (SubclassExceptionComplex.prototype.get name):
+        (SubclassExceptionComplex):
+        * stress/super-getter-reset-ic.js: Added.
+        (let.assert):
+        (let.B.f):
+
 2017-02-24  JF Bastien  <jfbastien@apple.com>
 
         WebAssembly: miscellaneous spec fixes

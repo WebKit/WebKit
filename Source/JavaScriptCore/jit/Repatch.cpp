@@ -139,17 +139,21 @@ static bool forceICFailure(ExecState*)
 #endif
 }
 
-inline J_JITOperation_ESsiJI appropriateOptimizingGetByIdFunction(GetByIDKind kind)
+inline FunctionPtr appropriateOptimizingGetByIdFunction(GetByIDKind kind)
 {
     if (kind == GetByIDKind::Normal)
         return operationGetByIdOptimize;
+    else if (kind == GetByIDKind::WithThis)
+        return operationGetByIdWithThisOptimize;
     return operationTryGetByIdOptimize;
 }
 
-inline J_JITOperation_ESsiJI appropriateGenericGetByIdFunction(GetByIDKind kind)
+inline FunctionPtr appropriateGenericGetByIdFunction(GetByIDKind kind)
 {
     if (kind == GetByIDKind::Normal)
         return operationGetById;
+    else if (kind == GetByIDKind::WithThis)
+        return operationGetByIdWithThisGeneric;
     return operationTryGetById;
 }
 
@@ -303,6 +307,10 @@ static InlineCacheAction tryCacheGetByID(ExecState* exec, JSValue baseValue, con
                     type = AccessCase::CustomAccessorGetter;
                 else
                     type = AccessCase::CustomValueGetter;
+
+                // we don't emit IC for DOMJIT when op is get_by_id_with_this
+                if (Options::useDOMJIT() && kind == GetByIDKind::WithThis && type == AccessCase::CustomAccessorGetter && domJIT)
+                    return GiveUpOnCache;
 
                 newCase = GetterSetterAccessCase::create(
                     vm, codeBlock, type, offset, structure, conditionSet, loadTargetFromProxy,

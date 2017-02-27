@@ -418,6 +418,7 @@ void AccessCase::generateImpl(AccessGenerationState& state)
     const Identifier& ident = *state.ident;
     JSValueRegs valueRegs = state.valueRegs;
     GPRReg baseGPR = state.baseGPR;
+    GPRReg thisGPR = state.thisGPR != InvalidGPRReg ? state.thisGPR : baseGPR;
     GPRReg scratchGPR = state.scratchGPR;
 
     ASSERT(m_conditionSet.structuresEnsureValidityAssumingImpurePropertyWatchpoint());
@@ -665,7 +666,7 @@ void AccessCase::generateImpl(AccessGenerationState& state)
                 loadedValueGPR, calleeFrame.withOffset(CallFrameSlot::callee * sizeof(Register)));
 
             jit.storeCell(
-                baseGPR,
+                thisGPR,
                 calleeFrame.withOffset(virtualRegisterForArgument(0).offset() * sizeof(Register)));
 
             if (m_type == Setter) {
@@ -725,28 +726,31 @@ void AccessCase::generateImpl(AccessGenerationState& state)
             // to make some space here.
             jit.makeSpaceOnStackForCCall();
 
+            // Check if it is a super access
+            GPRReg baseForCustomGetGPR = baseGPR != thisGPR ? thisGPR : baseForGetGPR;
+
             // getter: EncodedJSValue (*GetValueFunc)(ExecState*, EncodedJSValue thisValue, PropertyName);
             // setter: void (*PutValueFunc)(ExecState*, EncodedJSValue thisObject, EncodedJSValue value);
             // Custom values are passed the slotBase (the property holder), custom accessors are passed the thisVaule (reciever).
             // FIXME: Remove this differences in custom values and custom accessors.
             // https://bugs.webkit.org/show_bug.cgi?id=158014
-            GPRReg baseForCustomValue = m_type == CustomValueGetter || m_type == CustomValueSetter ? baseForAccessGPR : baseForGetGPR;
+            GPRReg baseForCustom = m_type == CustomValueGetter || m_type == CustomValueSetter ? baseForAccessGPR : baseForCustomGetGPR; 
 #if USE(JSVALUE64)
             if (m_type == CustomValueGetter || m_type == CustomAccessorGetter) {
                 jit.setupArgumentsWithExecState(
-                    baseForCustomValue,
+                    baseForCustom,
                     CCallHelpers::TrustedImmPtr(ident.impl()));
             } else
-                jit.setupArgumentsWithExecState(baseForCustomValue, valueRegs.gpr());
+                jit.setupArgumentsWithExecState(baseForCustom, valueRegs.gpr());
 #else
             if (m_type == CustomValueGetter || m_type == CustomAccessorGetter) {
                 jit.setupArgumentsWithExecState(
-                    EABI_32BIT_DUMMY_ARG baseForCustomValue,
+                    EABI_32BIT_DUMMY_ARG baseForCustom,
                     CCallHelpers::TrustedImm32(JSValue::CellTag),
                     CCallHelpers::TrustedImmPtr(ident.impl()));
             } else {
                 jit.setupArgumentsWithExecState(
-                    EABI_32BIT_DUMMY_ARG baseForCustomValue,
+                    EABI_32BIT_DUMMY_ARG baseForCustom,
                     CCallHelpers::TrustedImm32(JSValue::CellTag),
                     valueRegs.payloadGPR(), valueRegs.tagGPR());
             }
