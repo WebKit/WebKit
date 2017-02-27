@@ -34,6 +34,7 @@
 #import "ManagedConfigurationSPI.h"
 #import "NativeWebKeyboardEvent.h"
 #import "NativeWebTouchEvent.h"
+#import "RemoteLayerTreeDrawingAreaProxy.h"
 #import "SmartMagnificationController.h"
 #import "TextInputSPI.h"
 #import "UIKitSPI.h"
@@ -524,11 +525,9 @@ static UIWebSelectionMode toUIWebSelectionMode(WKSelectionGranularity granularit
 
     [self.layer addObserver:self forKeyPath:@"transform" options:NSKeyValueObservingOptionInitial context:nil];
 
-#if ENABLE(TOUCH_EVENTS)
     _touchEventGestureRecognizer = adoptNS([[UIWebTouchEventsGestureRecognizer alloc] initWithTarget:self action:@selector(_webTouchEventsRecognized:) touchDelegate:self]);
     [_touchEventGestureRecognizer setDelegate:self];
     [self addGestureRecognizer:_touchEventGestureRecognizer.get()];
-#endif
 
     _singleTapGestureRecognizer = adoptNS([[WKSyntheticClickTapGestureRecognizer alloc] initWithTarget:self action:@selector(_singleTapCommited:)]);
     [_singleTapGestureRecognizer setDelegate:self];
@@ -635,6 +634,8 @@ static UIWebSelectionMode toUIWebSelectionMode(WKSelectionGranularity granularit
 
     [_twoFingerSingleTapGestureRecognizer setDelegate:nil];
     [self removeGestureRecognizer:_twoFingerSingleTapGestureRecognizer.get()];
+
+    _layerTreeTransactionIdAtLastTouchStart = 0;
 
 #if ENABLE(DATA_INTERACTION)
     [self teardownDataInteractionDelegates];
@@ -858,13 +859,16 @@ static UIWebSelectionMode toUIWebSelectionMode(WKSelectionGranularity granularit
     return superDidResign;
 }
 
-#if ENABLE(TOUCH_EVENTS)
 - (void)_webTouchEventsRecognized:(UIWebTouchEventsGestureRecognizer *)gestureRecognizer
 {
     const _UIWebTouchEvent* lastTouchEvent = gestureRecognizer.lastTouchEvent;
-    NativeWebTouchEvent nativeWebTouchEvent(lastTouchEvent);
 
     _lastInteractionLocation = lastTouchEvent->locationInDocumentCoordinates;
+    if (lastTouchEvent->type == UIWebTouchEventTouchBegin)
+        _layerTreeTransactionIdAtLastTouchStart = downcast<RemoteLayerTreeDrawingAreaProxy>(*_page->drawingArea()).lastCommittedLayerTreeTransactionID();
+
+#if ENABLE(TOUCH_EVENTS)
+    NativeWebTouchEvent nativeWebTouchEvent(lastTouchEvent);
     nativeWebTouchEvent.setCanPreventNativeGestures(!_canSendTouchEventsAsynchronously || [gestureRecognizer isDefaultPrevented]);
 
     if (_canSendTouchEventsAsynchronously)
@@ -874,8 +878,8 @@ static UIWebSelectionMode toUIWebSelectionMode(WKSelectionGranularity granularit
 
     if (nativeWebTouchEvent.allTouchPointsAreReleased())
         _canSendTouchEventsAsynchronously = NO;
-}
 #endif
+}
 
 - (void)_inspectorNodeSearchRecognized:(UIGestureRecognizer *)gestureRecognizer
 {
@@ -1637,7 +1641,7 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
     }
 
     [_inputPeripheral endEditing];
-    _page->commitPotentialTap();
+    _page->commitPotentialTap(_layerTreeTransactionIdAtLastTouchStart);
 
     if (!_isExpectingFastSingleTapCommit)
         [self _finishInteraction];
@@ -1676,7 +1680,7 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
         [self becomeFirstResponder];
 
     [_inputPeripheral endEditing];
-    _page->handleTap(location);
+    _page->handleTap(location, _layerTreeTransactionIdAtLastTouchStart);
 }
 
 - (void)useSelectionAssistantWithMode:(UIWebSelectionMode)selectionMode

@@ -990,10 +990,10 @@ public:
     void willStartUserTriggeredZooming();
 
     void potentialTapAtPosition(const WebCore::FloatPoint&, uint64_t& requestID);
-    void commitPotentialTap();
+    void commitPotentialTap(uint64_t layerTreeTransactionIdAtLastTouchStart);
     void cancelPotentialTap();
     void tapHighlightAtPosition(const WebCore::FloatPoint&, uint64_t& requestID);
-    void handleTap(const WebCore::FloatPoint&);
+    void handleTap(const WebCore::FloatPoint&, uint64_t layerTreeTransactionIdAtLastTouchStart);
 
     void inspectorNodeSearchMovedToPosition(const WebCore::FloatPoint&);
     void inspectorNodeSearchEndedAtPosition(const WebCore::FloatPoint&);
@@ -1664,7 +1664,6 @@ private:
     bool m_dynamicViewportSizeUpdateWaitingForTarget { false };
     bool m_dynamicViewportSizeUpdateWaitingForLayerTreeCommit { false };
     uint64_t m_dynamicViewportSizeUpdateLayerTreeTransactionID { 0 };
-    uint64_t m_layerTreeTransactionIdAtLastTouchStart { 0 };
     uint64_t m_currentDynamicViewportSizeUpdateID { 0 };
     bool m_hasNetworkRequestsOnSuspended { false };
     bool m_isKeyboardAnimatingIn { false };

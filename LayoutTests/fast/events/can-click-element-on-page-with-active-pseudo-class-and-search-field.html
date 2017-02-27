@@ -2,6 +2,7 @@
 <html>
 <head>
 <script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/ui-helper.js"></script>
 <style>
 body:active {
     /* Must be non-empty. */
@@ -28,13 +29,7 @@ function runTest()
     var square = iframe.contentDocument.getElementById("square");
     var x = iframe.offsetLeft + square.offsetLeft + Math.floor(square.offsetWidth / 2);
     var y = iframe.offsetTop + square.offsetTop + Math.floor(square.offsetHeight / 2);
-    if (testRunner.runUIScript && window.TouchEvent)
-        testRunner.runUIScript("(function() { uiController.singleTapAtPoint(" + x + ", " + y + "); })()");
-    else if (window.eventSender) {
-        eventSender.mouseMoveTo(x, y);
-        eventSender.mouseDown();
-        eventSender.mouseUp();
-    }
+    UIHelper.activateAt(x, y);
 }
 </script>
 </head>

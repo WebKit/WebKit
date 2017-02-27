@@ -1,3 +1,34 @@
+2017-02-27  Andy Estes  <aestes@apple.com>
+
+        Links cannot be activated when running Mobile Safari with external SDK build of WebKit for iOS Simulator
+        https://bugs.webkit.org/show_bug.cgi?id=141906
+
+        Reviewed by Tim Horton.
+
+        Even if Touch Events are disabled, we still need to register a
+        UIWebTouchEventsGestureRecognizer to record the layer tree transaction ID when a touch
+        begins. Click events are only generated for touches that occur after the current frame's
+        load has committed, and we use the transaction ID from when the touch began to implement
+        this check.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::handleTouchEventSynchronously):
+        (WebKit::WebPageProxy::resetState):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/WKContentViewInteraction.h: Declared _layerTreeTransactionIdAtLastTouchStart.
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView setupInteraction]): Register a UIWebTouchEventsGestureRecognizer even if
+        Touch Events are disabled.
+        (-[WKContentView cleanupInteraction]): Reset _layerTreeTransactionIdAtLastTouchStart to 0.
+        (-[WKContentView _webTouchEventsRecognized:]): Update _layerTreeTransactionIdAtLastTouchStart
+        when a touch begins, even if Touch Events are disabled.
+        (-[WKContentView _singleTapCommited:]): Passed _layerTreeTransactionIdAtLastTouchStart to
+        WebPageProxy::commitPotentialTap().
+        (-[WKContentView _attemptClickAtLocation:]): Ditto for WebPageProxy::handleTap().
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::commitPotentialTap):
+        (WebKit::WebPageProxy::handleTap):
+
 2017-02-26  Zan Dobersek  <zdobersek@igalia.com>
 
         [CoordinatedGraphics] Remove CoordinatedGraphicsScene::paintToGraphicsContext()

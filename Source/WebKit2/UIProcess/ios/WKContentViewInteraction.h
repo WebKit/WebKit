@@ -160,6 +160,7 @@ struct WKAutoCorrectionData {
     UIWKKeyWebEventCompletionHandler _keyWebEventHandler;
 
     CGPoint _lastInteractionLocation;
+    uint64_t _layerTreeTransactionIdAtLastTouchStart;
 
     WebKit::WKSelectionDrawingInfo _lastSelectionDrawingInfo;
 
