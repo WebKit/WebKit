@@ -39,6 +39,10 @@
 #include "MachMessage.h"
 #endif
 
+#if USE(UNIX_DOMAIN_SOCKETS)
+#include "UnixMessage.h"
+#endif
+
 namespace IPC {
 
 struct Connection::ReplyHandler {
