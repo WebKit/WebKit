@@ -1,0 +1,37 @@
+<body>
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+function makeCollision(file)
+{
+    return "resources/make-sha1-collision.php?path=" + file;
+}
+
+function addImageFrame(src, timeout)
+{
+    if (window.internals)
+        internals.clearMemoryCache();
+
+    const frame = document.createElement("iframe");
+    frame.width = 100;
+    frame.height = 100;
+    frame.src = src;
+    document.body.appendChild(frame);
+    document.body.appendChild(document.createTextNode("\n"));
+
+    return new Promise(resolve => setTimeout(resolve, timeout));
+}
+
+async function test() {
+    // Need to wait long enough for disk cache writes to happen.
+    await addImageFrame(makeCollision("shattered-nocollision-1.pdf"), 1000);
+    await addImageFrame(makeCollision("shattered-nocollision-2.pdf"), 1000);
+    await addImageFrame(makeCollision("shattered-nocollision-1.pdf"), 1000);
+    await addImageFrame(makeCollision("shattered-nocollision-2.pdf"), 1000);
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+test();
+</script>

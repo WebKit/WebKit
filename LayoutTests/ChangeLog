@@ -1,3 +1,35 @@
+2017-02-27  Antti Koivisto  <antti@apple.com>
+
+        Add a test verifying cache deduplication is not sensitive to SHA1 collision attack
+        https://bugs.webkit.org/show_bug.cgi?id=168774
+
+        Reviewed by Alex Christensen.
+
+        We use SHA1 for deduplicating disk cache resources. Since a real world SHA1 collision was demonstrated
+        recently (http://shattered.io/) we can add a test that shows it can't be used for cache poisoning.
+
+        There are two protections in the cache code that both individually stop this type of attack:
+
+        - When deduplicating the data is verified to be equal by a bytewise comparison.
+        - SHA1 computations include random salt unique to cache instance.
+
+        Commenting out both protections is needed to make this test fail.
+
+        * http/tests/cache/disk-cache/resources/make-sha1-collision.php: Added.
+
+        This script turns the nocolliding pdfs into colliding ones on the fly, in memory. This way we don't need
+        to land the colliding versions and risk blowing up the infrastructure.
+
+        * http/tests/cache/disk-cache/resources/shattered-nocollision-1.pdf: Added.
+        * http/tests/cache/disk-cache/resources/shattered-nocollision-2.pdf: Added.
+
+        > shasum shattered-nocollision-*
+        5439274cf677fe3b7c51264f88a5ecee97319ee9  shattered-nocollision-1.pdf
+        7fdd163dc21064b7f26e1199fc560ee6e0307498  shattered-nocollision-2.pdf
+
+        * http/tests/cache/disk-cache/shattered-deduplication-expected.html: Added.
+        * http/tests/cache/disk-cache/shattered-deduplication.html: Added.
+
 2017-02-27  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Downloads attributes tests are failing
