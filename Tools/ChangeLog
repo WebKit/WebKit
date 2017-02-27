@@ -1,3 +1,13 @@
+2017-02-24  Jer Noble  <jer.noble@apple.com>
+
+        Add public method to MediaTime for doing timeScale conversion.
+        https://bugs.webkit.org/show_bug.cgi?id=168860
+
+        Reviewed by Eric Carlson.
+
+        * TestWebKitAPI/Tests/WTF/MediaTime.cpp:
+        (TestWebKitAPI::TEST):
+
 2017-02-26  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Unreviewed, revert all temporary build fixes for data interaction

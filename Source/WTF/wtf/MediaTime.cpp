@@ -470,7 +470,14 @@ const MediaTime& MediaTime::indefiniteTime()
     return *time;
 }
 
-void MediaTime::setTimeScale(uint32_t timeScale)
+MediaTime MediaTime::toTimeScale(uint32_t timeScale, RoundingFlags flags) const
+{
+    MediaTime result = *this;
+    result.setTimeScale(timeScale, flags);
+    return result;
+}
+
+void MediaTime::setTimeScale(uint32_t timeScale, RoundingFlags flags)
 {
     if (hasDoubleValue()) {
         *this = MediaTime::createWithDouble(m_timeValueAsDouble, timeScale);
@@ -479,19 +486,76 @@ void MediaTime::setTimeScale(uint32_t timeScale)
 
     if (timeScale == m_timeScale)
         return;
+
     timeScale = std::min(MaximumTimeScale, timeScale);
-    int64_t wholePart = m_timeValue / m_timeScale;
 
-    // If setting the time scale will cause an overflow, divide the
-    // timescale by two until the number will fit, and round the
-    // result.
-    int64_t newWholePart;
-    while (!safeMultiply(wholePart, static_cast<int64_t>(timeScale), newWholePart))
-        timeScale /= 2;
+    int64_t newValue = 0;
+    int64_t remainder = 0;
+    if (safeMultiply(m_timeValue, static_cast<int64_t>(timeScale), newValue)) {
+        remainder = newValue % m_timeScale;
+        newValue = newValue / m_timeScale;
+    } else {
+        int64_t highPart = (m_timeValue >> 32) * timeScale;
+        int64_t highRemainder = highPart % m_timeScale;
+        highPart /= m_timeScale;
 
-    int64_t remainder = m_timeValue % m_timeScale;
-    m_timeValue = newWholePart + (remainder * timeScale) / m_timeScale;
-    m_timeScale = timeScale;
+        int64_t lowPart = (m_timeValue & 0xFFFFFFFF) * timeScale + highRemainder;
+        highPart += (lowPart >> 32);
+        lowPart &= 0xFFFFFFFF;
+        remainder = lowPart % m_timeScale;
+        lowPart /= m_timeScale;
+
+        if (highPart < std::numeric_limits<int32_t>::min()) {
+            *this = negativeInfiniteTime();
+            return;
+        }
+
+        if (highPart > std::numeric_limits<int32_t>::max()) {
+            *this = positiveInfiniteTime();
+            return;
+        }
+
+        newValue = (highPart << 32) + lowPart;
+    }
+
+    m_timeValue = newValue;
+    std::swap(m_timeScale, timeScale);
+
+    if (!remainder)
+        return;
+
+    m_timeFlags |= HasBeenRounded;
+    switch (flags) {
+    case RoundingFlags::HalfAwayFromZero:
+        if (static_cast<int64_t>(llabs(remainder)) * 2 >= static_cast<int64_t>(timeScale)) {
+            // round up (away from zero)
+            if (remainder < 0)
+                m_timeValue--;
+            else
+                m_timeValue++;
+        }
+        break;
+
+    case RoundingFlags::TowardZero:
+        break;
+
+    case RoundingFlags::AwayFromZero:
+        if (remainder < 0)
+            m_timeValue--;
+        else
+            m_timeValue++;
+        break;
+
+    case RoundingFlags::TowardPositiveInfinity:
+        if (remainder > 0)
+            m_timeValue++;
+        break;
+        
+    case RoundingFlags::TowardNegativeInfinity:
+        if (remainder < 0)
+            m_timeValue--;
+        break;
+    }
 }
 
 void MediaTime::dump(PrintStream &out) const

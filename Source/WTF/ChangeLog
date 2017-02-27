@@ -1,3 +1,18 @@
+2017-02-24  Jer Noble  <jer.noble@apple.com>
+
+        Add public method to MediaTime for doing timeScale conversion.
+        https://bugs.webkit.org/show_bug.cgi?id=168860
+
+        Reviewed by Eric Carlson.
+
+        The newly public method, modeled on CMTimeConvertScale, allows callers to specify what rounding technique
+        will be used when converting to a new time scale.
+
+        * wtf/MediaTime.cpp:
+        (WTF::MediaTime::toTimeScale):
+        (WTF::MediaTime::setTimeScale):
+        * wtf/MediaTime.h:
+
 2017-02-26  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Stop compiling our own cursorMovementIterator()
