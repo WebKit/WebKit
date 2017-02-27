@@ -1785,8 +1785,6 @@ webkit.org/b/168568 http/tests/xmlhttprequest/timeout-greater-than-default-netwo
 
 webkit.org/b/168569 http/tests/appcache/main-resource-fallback-for-network-error-crash.html [ Timeout ]
 
-webkit.org/b/168570 fast/events/message-port-postMessage-recursive.html [ Timeout ]
-
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests timing out
 #////////////////////////////////////////////////////////////////////////////////////////

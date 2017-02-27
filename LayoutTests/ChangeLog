@@ -1,3 +1,12 @@
+2017-02-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Test fast/events/message-port-postMessage-recursive.html times out
+        https://bugs.webkit.org/show_bug.cgi?id=168570
+
+        Reviewed by Michael Catanzaro.
+
+        * platform/gtk/TestExpectations:
+
 2017-02-21  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION (r207720): /more/conformance/conformance/quickCheckAPI-S_V.html test fails
