@@ -28,7 +28,7 @@ namespace WTF {
 class TextBreakIteratorCF {
 public:
     enum class Mode {
-        Cursor,
+        Caret,
         Delete
     };
 
@@ -36,7 +36,7 @@ public:
         : m_string(string.createCFStringWithoutCopying())
     {
         switch (mode) {
-        case Mode::Cursor:
+        case Mode::Caret:
             m_type = kCFStringComposedCharacterCluster;
             break;
         case Mode::Delete:

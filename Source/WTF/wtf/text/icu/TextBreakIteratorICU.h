@@ -24,21 +24,21 @@
 #include <wtf/Optional.h>
 #include <wtf/text/icu/UTextProviderLatin1.h>
 
-#define USE_ICU_CURSOR_ITERATOR (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101200)
+#define USE_ICU_CARET_ITERATOR (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101200)
 
 namespace WTF {
 
-#if USE_ICU_CURSOR_ITERATOR
-static String cursorRules()
+#if USE_ICU_CARET_ITERATOR
+static String caretRules()
 {
     return ASCIILiteral(
         // This rule set is based on character-break iterator rules of ICU 57
         // <http://source.icu-project.org/repos/icu/icu/tags/release-57-1/source/data/brkitr/>.
         // The major differences from the original ones are listed below:
         // * Replaced '[\p{Grapheme_Cluster_Break = SpacingMark}]' with '[\p{General_Category = Spacing Mark} - $Extend]' for ICU 3.8 or earlier;
-        // * Removed rules that prevent a cursor from moving after prepend characters (Bug 24342);
-        // * Added rules that prevent a cursor from moving after virama signs of Indic languages except Tamil (Bug 15790), and;
-        // * Added rules that prevent a cursor from moving before Japanese half-width katakara voiced marks.
+        // * Removed rules that prevent a caret from moving after prepend characters (Bug 24342);
+        // * Added rules that prevent a caret from moving after virama signs of Indic languages except Tamil (Bug 15790), and;
+        // * Added rules that prevent a caret from moving before Japanese half-width katakara voiced marks.
         // * Added rules for regional indicator symbols.
         "$CR      = [\\p{Grapheme_Cluster_Break = CR}];"
         "$LF      = [\\p{Grapheme_Cluster_Break = LF}];"
@@ -136,8 +136,8 @@ public:
     enum class Mode {
         Line,
         Character,
-#if USE_ICU_CURSOR_ITERATOR
-        Cursor,
+#if USE_ICU_CARET_ITERATOR
+        Caret,
 #endif
     };
 
@@ -169,8 +169,8 @@ public:
         case Mode::Character:
             type = UBRK_CHARACTER;
             break;
-#if USE_ICU_CURSOR_ITERATOR
-        case Mode::Cursor:
+#if USE_ICU_CARET_ITERATOR
+        case Mode::Caret:
             type = UBRK_CHARACTER;
             break;
 #endif
@@ -187,12 +187,12 @@ public:
 
         // FIXME: Handle weak / normal / strict line breaking.
         UErrorCode status = U_ZERO_ERROR;
-#if USE_ICU_CURSOR_ITERATOR
-        if (mode == Mode::Cursor) {
-            static NeverDestroyed<String> cursorRules = WTF::cursorRules();
-            static NeverDestroyed<StringView::UpconvertedCharacters> upconvertedRules = StringView(cursorRules).upconvertedCharacters();
+#if USE_ICU_CARET_ITERATOR
+        if (mode == Mode::Caret) {
+            static NeverDestroyed<String> caretRules = WTF::caretRules();
+            static NeverDestroyed<StringView::UpconvertedCharacters> upconvertedRules = StringView(caretRules).upconvertedCharacters();
             UParseError parseError;
-            m_iterator = ubrk_openRules(upconvertedRules.get(), cursorRules.get().length(), text, textLength, &parseError, &status);
+            m_iterator = ubrk_openRules(upconvertedRules.get(), caretRules.get().length(), text, textLength, &parseError, &status);
         } else
 #endif
             m_iterator = ubrk_open(type, locale, text, textLength, &status);

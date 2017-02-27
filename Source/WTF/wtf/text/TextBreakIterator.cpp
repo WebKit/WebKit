@@ -43,7 +43,7 @@ static Variant<TextBreakIteratorICU, TextBreakIteratorPlatform> mapModeToBacking
     switch (mode) {
     case TextBreakIterator::Mode::Line:
         return TextBreakIteratorICU(string, TextBreakIteratorICU::Mode::Line, locale.string().utf8().data());
-    case TextBreakIterator::Mode::Cursor:
+    case TextBreakIterator::Mode::Caret:
         return TextBreakIteratorICU(string, TextBreakIteratorICU::Mode::Character, locale.string().utf8().data());
     case TextBreakIterator::Mode::Delete:
         return TextBreakIteratorICU(string, TextBreakIteratorICU::Mode::Character, locale.string().utf8().data());

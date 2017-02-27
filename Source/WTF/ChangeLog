@@ -1,5 +1,24 @@
 2017-02-27  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        Rename ICU cursor iterator to caret iterator
+        https://bugs.webkit.org/show_bug.cgi?id=168206
+
+        Reviewed by Simon Fraser.
+
+        * wtf/text/TextBreakIterator.cpp:
+        (WTF::mapModeToBackingIterator):
+        * wtf/text/TextBreakIterator.h:
+        * wtf/text/cf/TextBreakIteratorCF.h:
+        (WTF::TextBreakIteratorCF::TextBreakIteratorCF):
+        * wtf/text/icu/TextBreakIteratorICU.h:
+        (WTF::caretRules):
+        (WTF::TextBreakIteratorICU::TextBreakIteratorICU):
+        (WTF::cursorRules): Deleted.
+        * wtf/text/mac/TextBreakIteratorInternalICUMac.mm:
+        (WTF::mapModeToBackingIterator):
+
+2017-02-27  Myles C. Maxfield  <mmaxfield@apple.com>
+
         Use RAII for ICU breaking iterators
         https://bugs.webkit.org/show_bug.cgi?id=168203
 

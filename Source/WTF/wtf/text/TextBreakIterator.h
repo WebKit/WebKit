@@ -46,7 +46,7 @@ class TextBreakIterator {
 public:
     enum class Mode {
         Line,
-        Cursor,
+        Caret,
         Delete
     };
 
