@@ -213,7 +213,11 @@ endif ()
 # See https://bugs.webkit.org/show_bug.cgi?id=129771
 # The Apple Toolchain doesn't support response files.
 if (NOT APPLE)
-    set(CMAKE_NINJA_FORCE_RESPONSE_FILE 1)
+   # If using Ninja with cmake >= 3.6.0 and icecream, then the build is broken
+   # if enable the response files. See https://bugs.webkit.org/show_bug.cgi?id=168770
+   if (NOT ((${CMAKE_CXX_COMPILER} MATCHES ".*icecc.*") AND (CMAKE_GENERATOR STREQUAL "Ninja") AND (${CMAKE_VERSION} VERSION_GREATER 3.5)))
+      set(CMAKE_NINJA_FORCE_RESPONSE_FILE 1)
+   endif ()
 endif ()
 
 # Macros for determining HAVE values.
