@@ -74,6 +74,7 @@ private:
     rtc::scoped_refptr<webrtc::AudioTrackInterface> m_track;
     Ref<AudioSampleDataSource> m_sampleConverter;
     CAAudioStreamDescription m_inputStreamDescription;
+    CAAudioStreamDescription m_outputStreamDescription;
 
     Vector<uint16_t> m_audioBuffer;
     uint64_t m_startFrame { 0 };

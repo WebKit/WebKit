@@ -73,7 +73,7 @@ void MediaStreamAudioSourceNode::setFormat(size_t numberOfChannels, float source
         return;
 
     // The sample-rate must be equal to the context's sample-rate.
-    if (!numberOfChannels || numberOfChannels > AudioContext::maxNumberOfChannels() || sourceSampleRate != sampleRate) {
+    if (!numberOfChannels || numberOfChannels > AudioContext::maxNumberOfChannels()) {
         // process() will generate silence for these uninitialized values.
         LOG(Media, "MediaStreamAudioSourceNode::setFormat(%u, %f) - unhandled format change", static_cast<unsigned>(numberOfChannels), sourceSampleRate);
         m_sourceNumberOfChannels = 0;

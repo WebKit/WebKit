@@ -66,7 +66,7 @@ private:
     static OSStatus inputProc(void*, AudioUnitRenderActionFlags*, const AudioTimeStamp*, UInt32 inBusNumber, UInt32 numberOfFrames, AudioBufferList*);
     OSStatus render(UInt32 sampleCount, AudioBufferList&, UInt32 inBusNumber, const AudioTimeStamp&, AudioUnitRenderActionFlags&);
 
-    AudioComponentInstance createAudioUnit(const CAAudioStreamDescription& inputDescription, CAAudioStreamDescription& outputDescription);
+    AudioComponentInstance createAudioUnit(CAAudioStreamDescription&);
     void cleanup();
     void zeroBufferList(AudioBufferList&, size_t);
     void playInternal();

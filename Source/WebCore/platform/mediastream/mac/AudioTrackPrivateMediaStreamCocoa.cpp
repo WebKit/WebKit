@@ -102,7 +102,7 @@ void AudioTrackPrivateMediaStreamCocoa::setVolume(float volume)
         m_dataSource->setVolume(m_volume);
 }
 
-AudioComponentInstance AudioTrackPrivateMediaStreamCocoa::createAudioUnit(const CAAudioStreamDescription& inputDescription, CAAudioStreamDescription& outputDescription)
+AudioComponentInstance AudioTrackPrivateMediaStreamCocoa::createAudioUnit(CAAudioStreamDescription& outputDescription)
 {
     AudioComponentInstance remoteIOUnit { nullptr };
 
@@ -142,14 +142,13 @@ AudioComponentInstance AudioTrackPrivateMediaStreamCocoa::createAudioUnit(const 
         return nullptr;
     }
 
-    UInt32 size = sizeof(outputDescription);
-    err  = AudioUnitGetProperty(remoteIOUnit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Input, 0, &outputDescription, &size);
+    UInt32 size = sizeof(outputDescription.streamDescription());
+    err  = AudioUnitGetProperty(remoteIOUnit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Input, 0, &outputDescription.streamDescription(), &size);
     if (err) {
         LOG(Media, "AudioTrackPrivateMediaStreamCocoa::createAudioUnits(%p) unable to get input stream format, error %d (%.4s)", this, (int)err, (char*)&err);
         return nullptr;
     }
 
-    outputDescription = inputDescription;
     outputDescription.streamDescription().mSampleRate = AudioSession::sharedSession().sampleRate();
 
     err = AudioUnitSetProperty(remoteIOUnit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Input, 0, &outputDescription.streamDescription(), sizeof(outputDescription.streamDescription()));
@@ -190,7 +189,7 @@ void AudioTrackPrivateMediaStreamCocoa::audioSamplesAvailable(const MediaTime& s
         CAAudioStreamDescription inputDescription = toCAAudioStreamDescription(description);
         CAAudioStreamDescription outputDescription;
 
-        auto remoteIOUnit = createAudioUnit(inputDescription, outputDescription);
+        auto remoteIOUnit = createAudioUnit(outputDescription);
         if (!remoteIOUnit)
             return;
 

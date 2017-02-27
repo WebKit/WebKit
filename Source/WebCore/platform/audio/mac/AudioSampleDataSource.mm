@@ -141,24 +141,27 @@ MediaTime AudioSampleDataSource::hostTime() const
 
 void AudioSampleDataSource::pushSamplesInternal(const AudioBufferList& bufferList, const MediaTime& presentationTime, size_t sampleCount)
 {
+    MediaTime sampleTime = presentationTime;
+
     const AudioBufferList* sampleBufferList;
     if (m_converter) {
         m_scratchBuffer->reset();
-        OSStatus err = m_scratchBuffer->copyFrom(bufferList, m_converter);
+        OSStatus err = m_scratchBuffer->copyFrom(bufferList, sampleCount, m_converter);
         if (err)
             return;
 
         sampleBufferList = m_scratchBuffer->bufferList().list();
+        sampleCount = m_scratchBuffer->sampleCount();
+        sampleTime = presentationTime.toTimeScale(m_outputDescription->sampleRate(), MediaTime::RoundingFlags::TowardZero);
     } else
         sampleBufferList = &bufferList;
 
-    MediaTime sampleTime = presentationTime;
+    if (m_expectedNextPushedSampleTime.isValid() && abs(m_expectedNextPushedSampleTime - sampleTime).timeValue() == 1)
+        sampleTime = m_expectedNextPushedSampleTime;
+    m_expectedNextPushedSampleTime = sampleTime + MediaTime(sampleCount, sampleTime.timeScale());
+
     if (m_inputSampleOffset == MediaTime::invalidTime()) {
         m_inputSampleOffset = MediaTime(1 - sampleTime.timeValue(), sampleTime.timeScale());
-        if (m_inputSampleOffset.timeScale() != sampleTime.timeScale()) {
-            // FIXME: It should be possible to do this without calling CMTimeConvertScale.
-            m_inputSampleOffset = toMediaTime(CMTimeConvertScale(toCMTime(m_inputSampleOffset), sampleTime.timeScale(), kCMTimeRoundingMethod_Default));
-        }
         LOG(MediaCaptureSamples, "@@ pushSamples: input sample offset is %lld, m_maximumSampleCount = %zu", m_inputSampleOffset.timeValue(), m_maximumSampleCount);
     }
     sampleTime += m_inputSampleOffset;
@@ -267,11 +270,9 @@ bool AudioSampleDataSource::pullSamplesInternal(AudioBufferList& buffer, size_t&
 #endif
 
         if (framesAvailable < sampleCount) {
-            const double twentyMS = .02;
-            double sampleRate = m_outputDescription->sampleRate();
-            auto delta = static_cast<int64_t>(timeStamp) - endFrame;
-            if (delta > 0 && delta < sampleRate * twentyMS)
-                m_outputSampleOffset -= delta;
+            int64_t delta = static_cast<int64_t>(timeStamp) - static_cast<int64_t>(endFrame);
+            if (delta > 0)
+                m_outputSampleOffset -= std::min<int64_t>(delta, sampleCount);
         }
 
         if (!framesAvailable) {
@@ -300,8 +301,15 @@ bool AudioSampleDataSource::pullAvalaibleSamplesAsChunks(AudioBufferList& buffer
     uint64_t startFrame = 0;
     uint64_t endFrame = 0;
     m_ringBuffer->getCurrentFrameBounds(startFrame, endFrame);
+    if (m_transitioningFromPaused) {
+        m_outputSampleOffset = timeStamp + (endFrame - sampleCountPerChunk);
+        m_transitioningFromPaused = false;
+    }
+
+    timeStamp += m_outputSampleOffset;
+
     if (timeStamp < startFrame)
-        return false;
+        timeStamp = startFrame;
 
     startFrame = timeStamp;
     while (endFrame - startFrame >= sampleCountPerChunk) {

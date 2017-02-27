@@ -88,7 +88,12 @@ void RealtimeIncomingAudioSource::OnData(const void* audioData, int bitsPerSampl
     auto mediaTime = toMediaTime(startTime);
     m_numberOfFrames += numberOfFrames;
 
-    m_streamFormat = streamDescription(sampleRate, numberOfChannels);
+    AudioStreamBasicDescription newDescription = streamDescription(sampleRate, numberOfChannels);
+    if (newDescription != m_streamFormat) {
+        m_streamFormat = newDescription;
+        if (m_audioSourceProvider)
+            m_audioSourceProvider->prepare(&m_streamFormat);
+    }
 
     WebAudioBufferList audioBufferList { CAAudioStreamDescription(m_streamFormat), WTF::safeCast<uint32_t>(numberOfFrames) };
     audioBufferList.buffer(0)->mDataByteSize = numberOfChannels * numberOfFrames * bitsPerSample / 8;
@@ -138,8 +143,13 @@ RealtimeMediaSourceSupportedConstraints& RealtimeIncomingAudioSource::supportedC
 
 AudioSourceProvider* RealtimeIncomingAudioSource::audioSourceProvider()
 {
-    // FIXME: Create the audioSourceProvider
-    return nullptr;
+    if (!m_audioSourceProvider) {
+        m_audioSourceProvider = WebAudioSourceProviderAVFObjC::create(*this);
+        if (m_numberOfFrames)
+            m_audioSourceProvider->prepare(&m_streamFormat);
+    }
+
+    return m_audioSourceProvider.get();
 }
 
 } // namespace WebCore

@@ -124,8 +124,14 @@ public:
 
 private:
     webrtc::AudioSourceInterface* GetSource() const final { return m_source; }
-    void AddSink(webrtc::AudioTrackSinkInterface*) final { }
-    void RemoveSink(webrtc::AudioTrackSinkInterface*) final { }
+    void AddSink(webrtc::AudioTrackSinkInterface* sink) final {
+        if (m_source)
+            m_source->AddSink(sink);
+    }
+    void RemoveSink(webrtc::AudioTrackSinkInterface* sink) final {
+        if (m_source)
+            m_source->RemoveSink(sink);
+    }
     void RegisterObserver(webrtc::ObserverInterface*) final { }
     void UnregisterObserver(webrtc::ObserverInterface*) final { }
 
@@ -135,7 +141,7 @@ private:
     TrackState state() const final { return kLive; }
     bool set_enabled(bool enabled) final { m_enabled = enabled; return true; }
 
-    bool m_enabled;
+    bool m_enabled { true };
     std::string m_id;
     webrtc::AudioSourceInterface* m_source { nullptr };
 };

@@ -82,10 +82,12 @@ protected:
     MediaTime hostTime() const;
 
     uint64_t m_timeStamp { 0 };
+    uint64_t m_lastPushedSampleCount { 0 };
+    MediaTime m_expectedNextPushedSampleTime { MediaTime::invalidTime() };
     double m_hostTime { -1 };
 
     MediaTime m_inputSampleOffset;
-    uint64_t m_outputSampleOffset { 0 };
+    int64_t m_outputSampleOffset { 0 };
 
     AudioConverterRef m_converter;
     RefPtr<AudioSampleBufferList> m_scratchBuffer;

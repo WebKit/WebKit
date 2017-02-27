@@ -28,6 +28,8 @@
 
 #if USE(LIBWEBRTC)
 
+#include <wtf/CurrentTime.h>
+
 namespace WebCore {
 
 LibWebRTCAudioModule::LibWebRTCAudioModule()
@@ -75,9 +77,13 @@ const unsigned bytesPerSample = 2;
 
 void LibWebRTCAudioModule::StartPlayoutOnAudioThread()
 {
+    double startTime = WTF::monotonicallyIncreasingTimeMS();
     while (true) {
         PollFromSource();
-        m_audioTaskRunner->SleepMs(pollInterval);
+
+        double now = WTF::monotonicallyIncreasingTimeMS();
+        double sleepFor = pollInterval - remainder(now - startTime, pollInterval);
+        m_audioTaskRunner->SleepMs(sleepFor);
         if (!m_isPlaying)
             return;
     }

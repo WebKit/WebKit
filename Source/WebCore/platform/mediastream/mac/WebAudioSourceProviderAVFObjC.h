@@ -41,7 +41,8 @@ typedef struct opaqueCMSampleBuffer *CMSampleBufferRef;
 
 namespace WebCore {
 
-class CARingBuffer;
+class AudioSampleDataSource;
+class CAAudioStreamDescription;
 
 class WebAudioSourceProviderAVFObjC : public RefCounted<WebAudioSourceProviderAVFObjC>, public AudioSourceProvider, RealtimeMediaSource::Observer {
 public:
@@ -62,11 +63,9 @@ private:
     void audioSamplesAvailable(const MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t) final;
 
     size_t m_listBufferSize { 0 };
-    std::unique_ptr<AudioBufferList> m_list;
-    AudioConverterRef m_converter;
-    std::unique_ptr<AudioStreamBasicDescription> m_inputDescription;
-    std::unique_ptr<AudioStreamBasicDescription> m_outputDescription;
-    std::unique_ptr<CARingBuffer> m_ringBuffer;
+    std::unique_ptr<CAAudioStreamDescription> m_inputDescription;
+    std::unique_ptr<CAAudioStreamDescription> m_outputDescription;
+    RefPtr<AudioSampleDataSource> m_dataSource;
 
     uint64_t m_writeCount { 0 };
     uint64_t m_readCount { 0 };

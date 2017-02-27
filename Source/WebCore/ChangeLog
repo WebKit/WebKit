@@ -1,3 +1,104 @@
+2017-02-27  Jer Noble  <jer.noble@apple.com>
+
+        [WebRTC] Fix remote audio rendering
+        https://bugs.webkit.org/show_bug.cgi?id=168898
+
+        Reviewed by Eric Carlson.
+
+        Test: webrtc/audio-peer-connection-webaudio.html
+
+        Fix MediaStreamAudioSourceNode by not bailing out early if the input sample rate doesn't match
+        the AudioContext's sample rate; there's code in setFormat() to do the sample rate conversion
+        correctly.
+
+        * Modules/webaudio/MediaStreamAudioSourceNode.cpp:
+        (WebCore::MediaStreamAudioSourceNode::setFormat):
+
+        Fix AudioSampleBufferList by making the AudioConverter input proc a free function, and passing
+        its refCon a struct containing only the information it needs to perform its task. Because the
+        conversion may result in a different number of output samples than input ones, just ask to
+        generate the entire capacity of the scratch buffer, and signal that the input buffer was fully
+        converted with a special return value.
+
+        * platform/audio/mac/AudioSampleBufferList.cpp:
+        (WebCore::audioConverterFromABLCallback):
+        (WebCore::AudioSampleBufferList::copyFrom):
+        (WebCore::AudioSampleBufferList::convertInput): Deleted.
+        (WebCore::AudioSampleBufferList::audioConverterCallback): Deleted.
+        * platform/audio/mac/AudioSampleBufferList.h:
+
+        Fix AudioSampleDataSource by updating both the sampleCount and the sampleTime after doing
+        a sample rate conversion to take into account that both the number of samples may have changed,
+        as well as the timeScale of the sampleTime. This may result in small off-by-one rounding errors
+        due to the sample rate conversion of sampleTime, so remember what the next expected sampleTime
+        should be, and correct sampleTime if it is indeed off-by-one. If the pull operation has gotten
+        ahead of the push operation, delay the next pull by the empty amount by rolling back the
+        m_outputSampleOffset. Introduce the same offset behavior during pull operations.
+
+        * platform/audio/mac/AudioSampleDataSource.h:
+        * platform/audio/mac/AudioSampleDataSource.mm:
+        (WebCore::AudioSampleDataSource::pushSamplesInternal):
+        (WebCore::AudioSampleDataSource::pullSamplesInternal):
+        (WebCore::AudioSampleDataSource::pullAvalaibleSamplesAsChunks):
+
+        Fix MediaPlayerPrivateMediaStreamAVFObjC by obeying the m_muted property.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::setVolume):
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::setMuted):
+
+        Fix LibWebRTCAudioModule by sleeping for the correct amount after emitting frames. Previously,
+        LibWebRTCAudioModule would sleep for a fixed amount of time, which meant it would get slowly out
+        of sync when emitting frames took a non-zero amount of time. Now, the amount of time before the
+        next cycle starts is correctly calculated, and then LibWebRTCAudioModule sleeps for a dynamic amount
+        of time in order to wake up correctly at the beginning of the next cycle.
+
+        * platform/mediastream/libwebrtc/LibWebRTCAudioModule.cpp:
+        (WebCore::LibWebRTCAudioModule::StartPlayoutOnAudioThread):
+
+        Fix AudioTrackPrivateMediaStreamCocoa by just using the output unit's preferred format
+        description (with the current system sample rate), rather than whatever is the current
+        input description.
+
+        * platform/mediastream/mac/AudioTrackPrivateMediaStreamCocoa.cpp:
+        (WebCore::AudioTrackPrivateMediaStreamCocoa::createAudioUnit):
+        (WebCore::AudioTrackPrivateMediaStreamCocoa::audioSamplesAvailable):
+        * platform/mediastream/mac/AudioTrackPrivateMediaStreamCocoa.h:
+
+        Fix RealtimeIncomingAudioSource by actually creating an AudioSourceProvider when asked.
+
+        * platform/mediastream/mac/RealtimeIncomingAudioSource.cpp:
+        (WebCore::RealtimeIncomingAudioSource::OnData):
+        (WebCore::RealtimeIncomingAudioSource::audioSourceProvider):
+        * platform/mediastream/mac/RealtimeIncomingAudioSource.h:
+
+        Fix RealtimeOutgoingAudioSource by using the outgoing format description rather than the
+        incoming one to determine the sample rate, channel count, sample byte size, etc., to use
+        when delivering data upstream to libWebRTC.
+
+        * platform/mediastream/mac/RealtimeOutgoingAudioSource.cpp:
+        (WebCore::RealtimeOutgoingAudioSource::audioSamplesAvailable):
+        (WebCore::RealtimeOutgoingAudioSource::pullAudioData):
+        * platform/mediastream/mac/RealtimeOutgoingAudioSource.h:
+
+        Fix WebAudioSourceProviderAVFObjC by using a AudioSampleDataSource to do format and sample
+        rate conversion rather than trying to duplicate all that code and use a CARingBuffer and 
+        AudioConverter directly.
+
+        * platform/mediastream/mac/WebAudioSourceProviderAVFObjC.h:
+        * platform/mediastream/mac/WebAudioSourceProviderAVFObjC.mm:
+        (WebCore::WebAudioSourceProviderAVFObjC::~WebAudioSourceProviderAVFObjC):
+        (WebCore::WebAudioSourceProviderAVFObjC::provideInput):
+        (WebCore::WebAudioSourceProviderAVFObjC::prepare):
+        (WebCore::WebAudioSourceProviderAVFObjC::unprepare):
+        (WebCore::WebAudioSourceProviderAVFObjC::audioSamplesAvailable):
+
+        Fix the MockLibWebRTCAudioTrack by passing along the AddSink() sink to its AudioSourceInterface,
+        allowing the RealtimeOutgoingAudioSource to push data into the libWebRTC network stack. Also,
+        make sure m_enabled is initialized to a good value.
+
+        * testing/MockLibWebRTCPeerConnection.h:
+
 2017-02-21  Jer Noble  <jer.noble@apple.com>
 
         AudioSampleDataSource should not exclusively lock its read and write threads.

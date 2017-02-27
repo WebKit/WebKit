@@ -1,3 +1,13 @@
+2017-02-27  Jer Noble  <jer.noble@apple.com>
+
+        [WebRTC] Fix remote audio rendering
+        https://bugs.webkit.org/show_bug.cgi?id=168898
+
+        Reviewed by Eric Carlson.
+
+        * webrtc/audio-peer-connection-webaudio-expected.txt: Added.
+        * webrtc/audio-peer-connection-webaudio.html: Added.
+
 2017-02-27  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         compositing/transitions/transform-on-large-layer.html : ImageDiff produced stderr output
