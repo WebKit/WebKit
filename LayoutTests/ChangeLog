@@ -1,3 +1,18 @@
+2017-02-27  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Unprefix -webkit-line-break
+        https://bugs.webkit.org/show_bug.cgi?id=168213
+
+        Reviewed by Darin Adler.
+
+        Updating expected results.
+
+        * fast/css/getComputedStyle/computed-style-expected.txt:
+        * fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * fast/text/line-break-unprefixed.html: Added.
+        * fast/text/line-break-unprefixed-expected.html: Added.
+        * svg/css/getComputedStyle-basic-expected.txt:
+
 2017-02-27  Ryan Haddad  <ryanhaddad@apple.com>
 
         Mark imported/w3c/web-platform-tests/IndexedDB/idbdatabase-deleteObjectStore-exception-order.htm as flaky.

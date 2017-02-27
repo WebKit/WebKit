@@ -3106,7 +3106,7 @@ void Editor::applyEditingStyleToElement(Element* element) const
     CSSStyleDeclaration* style = downcast<StyledElement>(*element).cssomStyle();
     style->setPropertyInternal(CSSPropertyWordWrap, "break-word", false);
     style->setPropertyInternal(CSSPropertyWebkitNbspMode, "space", false);
-    style->setPropertyInternal(CSSPropertyWebkitLineBreak, "after-white-space", false);
+    style->setPropertyInternal(CSSPropertyLineBreak, "after-white-space", false);
 }
 
 bool Editor::findString(const String& target, FindOptions options)

@@ -354,7 +354,7 @@ static const CSSPropertyID computedProperties[] = {
     CSSPropertyWebkitInitialLetter,
     CSSPropertyWebkitLineAlign,
     CSSPropertyWebkitLineBoxContain,
-    CSSPropertyWebkitLineBreak,
+    CSSPropertyLineBreak,
     CSSPropertyWebkitLineClamp,
     CSSPropertyWebkitLineGrid,
     CSSPropertyWebkitLineSnap,
@@ -3314,7 +3314,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propertyID,
             return zoomAdjustedPixelValue(style->fontCascade().wordSpacing(), *style);
         case CSSPropertyWordWrap:
             return cssValuePool.createValue(style->overflowWrap());
-        case CSSPropertyWebkitLineBreak:
+        case CSSPropertyLineBreak:
             return cssValuePool.createValue(style->lineBreak());
         case CSSPropertyWebkitNbspMode:
             return cssValuePool.createValue(style->nbspMode());

@@ -721,7 +721,7 @@ bool CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyID propertyId
         return valueID == CSSValueAuto || valueID == CSSValueNone || valueID == CSSValueAntialiased || valueID == CSSValueSubpixelAntialiased;
     case CSSPropertyWebkitLineAlign:
         return valueID == CSSValueNone || valueID == CSSValueEdges;
-    case CSSPropertyWebkitLineBreak: // auto | loose | normal | strict | after-white-space
+    case CSSPropertyLineBreak: // auto | loose | normal | strict | after-white-space
         return valueID == CSSValueAuto || valueID == CSSValueLoose || valueID == CSSValueNormal || valueID == CSSValueStrict || valueID == CSSValueAfterWhiteSpace;
     case CSSPropertyWebkitLineSnap:
         return valueID == CSSValueNone || valueID == CSSValueBaseline || valueID == CSSValueContain;
@@ -881,7 +881,7 @@ bool CSSParserFastPaths::isKeywordPropertyID(CSSPropertyID propertyId)
     case CSSPropertyWebkitFontSmoothing:
     case CSSPropertyWebkitHyphens:
     case CSSPropertyWebkitLineAlign:
-    case CSSPropertyWebkitLineBreak:
+    case CSSPropertyLineBreak:
     case CSSPropertyWebkitLineSnap:
     case CSSPropertyWebkitMarginAfterCollapse:
     case CSSPropertyWebkitMarginBeforeCollapse:

@@ -4928,7 +4928,7 @@
                 "comment": "Added in https://trac.webkit.org/changeset/108133"
             }
         },
-        "-webkit-line-break": {
+        "line-break": {
             "inherited": true,
             "values": [
                 "auto",
@@ -4937,15 +4937,18 @@
                 "strict",
                 {
                     "value": "after-white-space",
-                    "status": "non-standard"
+                    "status": "non-standard",
+                    "comment": "Added in https://trac.webkit.org/changeset/7763"
                 }
             ],
-            "status": {
-                "status": "experimental"
-            },
             "specification": {
                 "category": "css-text",
                 "url": "https://www.w3.org/TR/css-text-3/#line-break"
+            },
+            "codegen-properties": {
+                "aliases": [
+                    "-webkit-line-break"
+                ]
             }
         },
         "-webkit-line-clamp": {
