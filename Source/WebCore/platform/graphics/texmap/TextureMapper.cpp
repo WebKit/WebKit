@@ -41,8 +41,7 @@ std::unique_ptr<TextureMapper> TextureMapper::create()
 }
 
 TextureMapper::TextureMapper()
-    : m_context(0)
-    , m_interpolationQuality(InterpolationDefault)
+    : m_interpolationQuality(InterpolationDefault)
     , m_textDrawingMode(TextModeFill)
     , m_isMaskMode(false)
     , m_wrapMode(StretchWrap)

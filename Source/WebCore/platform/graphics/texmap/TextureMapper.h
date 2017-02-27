@@ -74,8 +74,6 @@ public:
 
     // makes a surface the target for the following drawTexture calls.
     virtual void bindSurface(BitmapTexture* surface) = 0;
-    void setGraphicsContext(GraphicsContext* context) { m_context = context; }
-    GraphicsContext* graphicsContext() { return m_context; }
     virtual void beginClip(const TransformationMatrix&, const FloatRect&) = 0;
     virtual void endClip() = 0;
     virtual IntRect clipBounds() = 0;
@@ -100,7 +98,6 @@ public:
     void setWrapMode(WrapMode m) { m_wrapMode = m; }
 
 protected:
-    GraphicsContext* m_context;
     std::unique_ptr<BitmapTexturePool> m_texturePool;
 
     bool isInMaskMode() const { return m_isMaskMode; }

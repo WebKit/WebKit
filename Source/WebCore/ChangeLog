@@ -1,3 +1,19 @@
+2017-02-26  Zan Dobersek  <zdobersek@igalia.com>
+
+        [CoordinatedGraphics] Remove CoordinatedGraphicsScene::paintToGraphicsContext()
+        https://bugs.webkit.org/show_bug.cgi?id=168903
+
+        Reviewed by Carlos Garcia Campos.
+
+        Remove the GraphicsContext pointer member from the TextureMapper class
+        since the getter and setter methods are not used anywhere.
+
+        * platform/graphics/texmap/TextureMapper.cpp:
+        (WebCore::TextureMapper::TextureMapper):
+        * platform/graphics/texmap/TextureMapper.h:
+        (WebCore::TextureMapper::setGraphicsContext): Deleted.
+        (WebCore::TextureMapper::graphicsContext): Deleted.
+
 2017-02-26  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Stop compiling our own cursorMovementIterator()
