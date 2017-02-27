@@ -100,6 +100,10 @@ static const bool ignoreSSLErrors = getenv("WEBKIT_IGNORE_SSL_ERRORS");
 
 static CString certificatePath()
 {
+    char* envPath = getenv("CURL_CA_BUNDLE_PATH");
+    if (envPath)
+        return envPath;
+
 #if USE(CF)
     CFBundleRef webKitBundleRef = webKitBundle();
     if (webKitBundleRef) {
@@ -111,9 +115,6 @@ static CString certificatePath()
         }
     }
 #endif
-    char* envPath = getenv("CURL_CA_BUNDLE_PATH");
-    if (envPath)
-       return envPath;
 
     return CString();
 }
