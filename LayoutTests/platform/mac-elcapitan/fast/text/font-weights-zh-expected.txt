@@ -67,8 +67,8 @@ layer at (0,0) size 785x15064
         RenderText {#text} at (0,0) size 267x18
           text run at (0,0) width 267: "Font: Heiti SC Weight: 900 Style: normal"
       RenderBlock {DIV} at (0,434) size 769x16
-        RenderText {#text} at (0,0) size 144x16
-          text run at (0,0) width 144: "\x{679C}\x{57CE}\x{7684}\x{7F8E}\x{8B7D}\x{3002}\x{4E2D}\x{56FD}\x{53E4}"
+        RenderText {#text} at (0,0) size 153x16
+          text run at (0,0) width 153: "\x{679C}\x{57CE}\x{7684}\x{7F8E}\x{8B7D}\x{3002}\x{4E2D}\x{56FD}\x{53E4}"
       RenderBlock {DIV} at (0,450) size 769x18
         RenderText {#text} at (0,0) size 321x18
           text run at (0,0) width 321: "Font: STHeitiSC-Light Weight: 100 Style: normal"
@@ -121,8 +121,8 @@ layer at (0,0) size 785x15064
         RenderText {#text} at (0,0) size 321x18
           text run at (0,0) width 321: "Font: STHeitiSC-Light Weight: 900 Style: normal"
       RenderBlock {DIV} at (0,740) size 769x16
-        RenderText {#text} at (0,0) size 144x16
-          text run at (0,0) width 144: "\x{679C}\x{57CE}\x{7684}\x{7F8E}\x{8B7D}\x{3002}\x{4E2D}\x{56FD}\x{53E4}"
+        RenderText {#text} at (0,0) size 153x16
+          text run at (0,0) width 153: "\x{679C}\x{57CE}\x{7684}\x{7F8E}\x{8B7D}\x{3002}\x{4E2D}\x{56FD}\x{53E4}"
       RenderBlock {DIV} at (0,756) size 769x18
         RenderText {#text} at (0,0) size 341x18
           text run at (0,0) width 341: "Font: STHeitiSC-Medium Weight: 100 Style: normal"

@@ -1,3 +1,19 @@
+2017-02-28  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [macOS] Migrate off of CTFontCreateForCSS
+        https://bugs.webkit.org/show_bug.cgi?id=168678
+
+        Reviewed by David Hyatt.
+
+        Exhaustively test the font matching algorithm on Sierra.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebCore/FontCache.cpp: Added.
+        (TestWebKitAPI::FontCacheTest::SetUp):
+        (TestWebKitAPI::createPlatformFont):
+        (TestWebKitAPI::compareFonts):
+        (TestWebKitAPI::TEST_F):
+
 2017-02-28  Basuke Suzuki  <Basuke.Suzuki@am.sony.com>
 
         Windows build doesn't start build if the git branch is not master

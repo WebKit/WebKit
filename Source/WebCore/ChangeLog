@@ -1,3 +1,98 @@
+2017-02-28  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [macOS] Migrate off of CTFontCreateForCSS
+        https://bugs.webkit.org/show_bug.cgi?id=168678
+
+        Reviewed by David Hyatt.
+
+        This patch implements the Font Matching Algorithm detailed in
+        https://drafts.csswg.org/css-fonts-4/#font-matching-algorithm
+        Previously, this was implemented inside Core Text (via
+        CTFontCreateForCSS()), but that implementation does not understand
+        variation fonts. Therefore it should move to WebKit (along with
+        the general fact that CSS algorithms should be implemented in a
+        CSS engine, not the platform's text engine).
+
+        This implementation is not completely divorced from the platform,
+        however - Core Text exposes font weights on a [-1, 1] range, but
+        CSS operates on a [1, 999] range. In order to provide the mapping
+        to CSS weights, Core Text infrastructure is necessary. Therefore,
+        this new implementation of the matching algorithm is only used
+        on certain operating systems.
+
+        The new implementation of the algorithm is not bug-compatible with
+        the existing implementation; this patch does represent a behavior
+        change. However, I have reviewed the differences manually and
+        believe this algorithm to be a progression over the previous one
+        (except for one case with Helvetica Neue - see
+        LayoutTests/ChangeLog for more information about that).
+
+        This patch also represents a 27% performance progression on our
+        standard page load test (just measuring the performance of the font
+        matching algorithm, and nothing else). (Because font matching is
+        only a small part of the entire test, the overall progression is
+        much smaller.)
+
+        Tests: FontCacheTest.FontLookupFromFamilyName
+               FontCacheTest.FontLookupFromPostScriptName
+
+        * platform/graphics/FontCache.h:
+        (WebCore::FontCache::createFontPlatformDataForTesting): Allow for
+        unit testing.
+        * platform/graphics/cocoa/FontCacheCoreText.cpp:
+        (WebCore::isSystemFont): Inlined.
+        (WebCore::FontDatabase::singleton): Cache results of Core Text
+        lookups.
+        (WebCore::FontDatabase::Range::Range): Because of variation fonts,
+        fonts' weights, widths, and slopes need to be represented as a range
+        instead of an individual value.
+        (WebCore::FontDatabase::Range::isValid):
+        (WebCore::FontDatabase::Range::expand):
+        (WebCore::FontDatabase::Range::includes):
+        (WebCore::FontDatabase::InstalledFont::InstalledFont): Represents a
+        Font Descriptor as well as some lookup information about it.
+        (WebCore::FontDatabase::InstalledFontCollection::InstalledFontCollection):
+        A collection of installed fonts.
+        (WebCore::FontDatabase::InstalledFontCollection::insertInstalledFont):
+        Cache minima and maxima.
+        (WebCore::FontDatabase::InstalledFontCollection::isEmpty):
+        (WebCore::FontDatabase::InstalledFontCollection::size):
+        (WebCore::FontDatabase::lookupFamilyName): Get all the fonts in
+        the family.
+        (WebCore::FontDatabase::lookupPostScriptName): Get the font with
+        the given PostScript name.
+        (WebCore::FontDatabase::clear):
+        (WebCore::FontDatabase::FontDatabase): Cache.
+        (WebCore::iterateActiveFontsWithReturn): The Font Matching Algorithm
+        works by starting with every font in the family, and the eliminating
+        items from the set iteratively. Instead of actually removing items
+        from a vector or linked list, we instead want to treat the collection
+        as immutable and keep a parallel side-table of which items have been
+        eliminated (in order to reduce copies and allocations). This makes
+        sense because most families only have a handful of fonts in them.
+        This function consults with the side-table to iterate only over the
+        fonts which have not been eliminated.
+        (WebCore::iterateActiveFonts): Ditto.
+        (WebCore::findClosestStretch):
+        (WebCore::filterStretch): Eliminate fonts based on their stretch
+        value.
+        (WebCore::findClosestStyle):
+        (WebCore::filterStyle): Eliminate fonts based on their style value.
+        (WebCore::findClosestWeight):
+        (WebCore::filterWeight): Eliminate fonts based on their weight value.
+        (WebCore::computeTargetWeight):
+        (WebCore::findClosestFont): If we have a set of fonts in a family,
+        select the font in the set which best matches the criteria.
+        (WebCore::platformFontLookupWithFamily): While findClosestFont()
+        function satisfies the spec's notion of the font matching algorithm,
+        WebKit actually claims to be able to look up fonts by their PostScript
+        name. Therefore, this function has a higher-level of logic to rectify
+        the confusion that results when the PostScript name doesn't agree with
+        the other CSS properties (like if you say "Helvetica-Bold" but also say
+        font-weight: 100).
+        * platform/spi/cocoa/CoreTextSPI.h: Add signature for system CSS
+        font weight support.
+
 2017-02-24  Matt Rajca  <mrajca@apple.com>
 
         Media: notify clients when autoplayed media ends without being paused

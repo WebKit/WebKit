@@ -40,10 +40,6 @@
 
 namespace WebCore {
 
-void platformInvalidateFontCache()
-{
-}
-
 bool requiresCustomFallbackFont(UChar32 character)
 {
     return character == AppleLogo || character == blackCircle || character == narrowNonBreakingSpace;

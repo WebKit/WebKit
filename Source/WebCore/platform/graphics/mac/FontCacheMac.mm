@@ -107,10 +107,6 @@ RetainPtr<CTFontRef> platformFontWithFamilySpecialCase(const AtomicString& famil
     return nullptr;
 }
 
-void platformInvalidateFontCache()
-{
-}
-
 Ref<Font> FontCache::lastResortFallbackFont(const FontDescription& fontDescription)
 {
     // FIXME: Would be even better to somehow get the user's default font here.  For now we'll pick

@@ -30,6 +30,7 @@
 #pragma once
 
 #include "FontDescription.h"
+#include "FontPlatformData.h"
 #include "Timer.h"
 #include <array>
 #include <limits.h>
@@ -225,6 +226,8 @@ public:
     RefPtr<OpenTypeVerticalData> verticalData(const FontPlatformData&);
 #endif
 
+    std::unique_ptr<FontPlatformData> createFontPlatformDataForTesting(const FontDescription&, const AtomicString& family);
+
 private:
     FontCache();
     ~FontCache() = delete;
@@ -238,7 +241,7 @@ private:
 #if PLATFORM(COCOA)
     FontPlatformData* getCustomFallbackFont(const UInt32, const FontDescription&);
 #endif
-    std::unique_ptr<FontPlatformData> createFontPlatformData(const FontDescription&, const AtomicString& family, const FontFeatureSettings* fontFaceFeatures, const FontVariantSettings* fontFaceVariantSettings);
+    WEBCORE_EXPORT std::unique_ptr<FontPlatformData> createFontPlatformData(const FontDescription&, const AtomicString& family, const FontFeatureSettings* fontFaceFeatures, const FontVariantSettings* fontFaceVariantSettings);
     
     static const AtomicString& alternateFamilyName(const AtomicString&);
     static const AtomicString& platformAlternateFamilyName(const AtomicString&);
@@ -250,6 +253,11 @@ private:
 #endif
     friend class Font;
 };
+
+inline std::unique_ptr<FontPlatformData> FontCache::createFontPlatformDataForTesting(const FontDescription& fontDescription, const AtomicString& family)
+{
+    return createFontPlatformData(fontDescription, family, nullptr, nullptr);
+}
 
 #if PLATFORM(COCOA)
 
@@ -273,7 +281,6 @@ RetainPtr<CTFontRef> preparePlatformFont(CTFontRef, TextRenderingMode, const Fon
 FontWeight fontWeightFromCoreText(CGFloat weight);
 uint16_t toCoreTextFontWeight(FontWeight);
 bool isFontWeightBold(FontWeight);
-void platformInvalidateFontCache();
 SynthesisPair computeNecessarySynthesis(CTFontRef, const FontDescription&, bool isPlatformFont = false);
 RetainPtr<CTFontRef> platformFontWithFamilySpecialCase(const AtomicString& family, FontWeight, CTFontSymbolicTraits, float size);
 RetainPtr<CTFontRef> platformFontWithFamily(const AtomicString& family, CTFontSymbolicTraits, FontWeight, TextRenderingMode, float size);

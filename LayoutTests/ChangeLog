@@ -1,3 +1,37 @@
+2017-02-28  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [macOS] Migrate off of CTFontCreateForCSS
+        https://bugs.webkit.org/show_bug.cgi?id=168678
+
+        Reviewed by David Hyatt.
+
+        Updating test results.
+
+        Note that there is a slight regression here with Helvetica Neue. In
+        particular, this family includes a Bold font with a weight of 700,
+        and a Condensed Black font with a weight of 900. Because we don't
+        currently have any notion of font-stretch, our model can only
+        distinguish between these fonts due to their differing weights, not
+        their widths. This means that requests for weights 800 or 900 will
+        match the Condensed Black font in accordance with the font matching
+        algorithm. This gives visually surprising results because weights
+        100-700 match regular-width fonts.
+
+        However, this regression is intentional and temporary - my next task
+        is to properly implement font-stretch, which will educate our model
+        on the difference between these two fonts. This will fix the regression
+        and allow the tests below to be reset to their original expected
+        results.
+
+        * platform/mac-elcapitan/fast/text/font-weights-expected.png: Copied from LayoutTests/platform/mac/fast/text/font-weights-expected.png.
+        * platform/mac-elcapitan/fast/text/font-weights-expected.txt: Copied from LayoutTests/platform/mac/fast/text/font-weights-expected.txt.
+        * platform/mac-elcapitan/fast/text/font-weights-zh-expected.png: Copied from LayoutTests/platform/mac/fast/text/font-weights-zh-expected.png.
+        * platform/mac-elcapitan/fast/text/font-weights-zh-expected.txt: Copied from LayoutTests/platform/mac/fast/text/font-weights-zh-expected.txt.
+        * platform/mac/fast/text/font-weights-expected.png:
+        * platform/mac/fast/text/font-weights-expected.txt:
+        * platform/mac/fast/text/font-weights-zh-expected.png:
+        * platform/mac/fast/text/font-weights-zh-expected.txt:
+
 2017-02-28  Ryan Haddad  <ryanhaddad@apple.com>
 
         Mark imported/w3c/web-platform-tests/IndexedDB/idb-binary-key-roundtrip.htm as flaky on El Capitan.
