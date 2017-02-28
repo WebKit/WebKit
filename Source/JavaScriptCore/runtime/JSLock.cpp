@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2008, 2012, 2014, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2017 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -78,7 +78,6 @@ JSLock::JSLock(VM* vm)
     : m_ownerThreadID(std::thread::id())
     , m_lockCount(0)
     , m_lockDropDepth(0)
-    , m_hasExclusiveThread(false)
     , m_vm(vm)
     , m_entryAtomicStringTable(nullptr)
 {
@@ -94,13 +93,6 @@ void JSLock::willDestroyVM(VM* vm)
     m_vm = nullptr;
 }
 
-void JSLock::setExclusiveThread(std::thread::id threadId)
-{
-    RELEASE_ASSERT(!m_lockCount && m_ownerThreadID == std::thread::id());
-    m_hasExclusiveThread = (threadId != std::thread::id());
-    m_ownerThreadID = threadId;
-}
-
 void JSLock::lock()
 {
     lock(1);
@@ -109,15 +101,16 @@ void JSLock::lock()
 void JSLock::lock(intptr_t lockCount)
 {
     ASSERT(lockCount > 0);
-    if (currentThreadIsHoldingLock()) {
-        m_lockCount += lockCount;
-        return;
+    bool success = m_lock.tryLock();
+    if (UNLIKELY(!success)) {
+        if (currentThreadIsHoldingLock()) {
+            m_lockCount += lockCount;
+            return;
+        }
+        m_lock.lock();
     }
 
-    if (!m_hasExclusiveThread) {
-        m_lock.lock();
-        m_ownerThreadID = std::this_thread::get_id();
-    }
+    m_ownerThreadID = std::this_thread::get_id();
     ASSERT(!m_lockCount);
     m_lockCount = lockCount;
 
@@ -175,11 +168,8 @@ void JSLock::unlock(intptr_t unlockCount)
     m_lockCount -= unlockCount;
 
     if (!m_lockCount) {
-        
-        if (!m_hasExclusiveThread) {
-            m_ownerThreadID = std::thread::id();
-            m_lock.unlock();
-        }
+        m_ownerThreadID = std::thread::id();
+        m_lock.unlock();
     }
 }
 
@@ -214,20 +204,12 @@ void JSLock::unlock(ExecState* exec)
 
 bool JSLock::currentThreadIsHoldingLock()
 {
-    ASSERT(!m_hasExclusiveThread || (exclusiveThread() == std::this_thread::get_id()));
-    if (m_hasExclusiveThread)
-        return !!m_lockCount;
     return m_ownerThreadID == std::this_thread::get_id();
 }
 
 // This function returns the number of locks that were dropped.
 unsigned JSLock::dropAllLocks(DropAllLocks* dropper)
 {
-    if (m_hasExclusiveThread) {
-        ASSERT(exclusiveThread() == std::this_thread::get_id());
-        return 0;
-    }
-
     if (!currentThreadIsHoldingLock())
         return 0;
 
@@ -247,8 +229,6 @@ unsigned JSLock::dropAllLocks(DropAllLocks* dropper)
 
 void JSLock::grabAllLocks(DropAllLocks* dropper, unsigned droppedLockCount)
 {
-    ASSERT(!m_hasExclusiveThread || !droppedLockCount);
-
     // If no locks were dropped, nothing to do!
     if (!droppedLockCount)
         return;

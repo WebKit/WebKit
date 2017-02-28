@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -53,9 +53,7 @@ VM& commonVMSlow()
     ScriptController::initializeThreading();
     g_commonVMOrNull = &VM::createLeaked(LargeHeap).leakRef();
     g_commonVMOrNull->heap.acquireAccess(); // At any time, we may do things that affect the GC.
-#if !PLATFORM(IOS)
-    g_commonVMOrNull->setExclusiveThread(std::this_thread::get_id());
-#else
+#if PLATFORM(IOS)
     g_commonVMOrNull->heap.setRunLoop(WebThreadRunLoop());
     g_commonVMOrNull->heap.machineThreads().addCurrentThread();
 #endif

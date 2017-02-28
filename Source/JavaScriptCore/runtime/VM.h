@@ -611,10 +611,6 @@ public:
     RTTraceList* m_rtTraceList;
 #endif
 
-    bool hasExclusiveThread() const { return m_apiLock->hasExclusiveThread(); }
-    std::thread::id exclusiveThread() const { return m_apiLock->exclusiveThread(); }
-    void setExclusiveThread(std::thread::id threadId) { m_apiLock->setExclusiveThread(threadId); }
-
     std::thread::id ownerThread() const { return m_apiLock->ownerThread(); }
 
     JS_EXPORT_PRIVATE void resetDateCache();

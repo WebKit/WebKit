@@ -1,3 +1,47 @@
+2017-02-28  Mark Lam  <mark.lam@apple.com>
+
+        Remove setExclusiveThread() and peers from the JSLock.
+        https://bugs.webkit.org/show_bug.cgi?id=168977
+
+        Reviewed by Filip Pizlo.
+
+        JSLock::setExclusiveThread() was only used by WebCore.  Benchmarking with
+        Speedometer, we see that removal of exclusive thread status has no measurable
+        impact on performance.  So, let's remove the code for handling exclusive thread
+        status, and simplify the JSLock code.
+
+        For the records, exclusive thread status does improve JSLock locking/unlocking
+        time by up to 20%.  However, this difference is not measurable in the way WebCore
+        uses the JSLock as confirmed by Speedometer.
+
+        Also applied a minor optimization in JSLock::lock() to assume the initial lock
+        entry case (as opposed to the re-entry case).  This appears to shows a small
+        fractional improvement (about 5%) in JSLock cumulative locking and unlocking
+        time in a micro-benchmark.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::Heap):
+        * heap/MachineStackMarker.cpp:
+        (JSC::MachineThreads::MachineThreads):
+        (JSC::MachineThreads::addCurrentThread):
+        * heap/MachineStackMarker.h:
+        * runtime/JSLock.cpp:
+        (JSC::JSLock::JSLock):
+        (JSC::JSLock::lock):
+        (JSC::JSLock::unlock):
+        (JSC::JSLock::currentThreadIsHoldingLock):
+        (JSC::JSLock::dropAllLocks):
+        (JSC::JSLock::grabAllLocks):
+        (JSC::JSLock::setExclusiveThread): Deleted.
+        * runtime/JSLock.h:
+        (JSC::JSLock::ownerThread):
+        (JSC::JSLock::hasExclusiveThread): Deleted.
+        (JSC::JSLock::exclusiveThread): Deleted.
+        * runtime/VM.h:
+        (JSC::VM::hasExclusiveThread): Deleted.
+        (JSC::VM::exclusiveThread): Deleted.
+        (JSC::VM::setExclusiveThread): Deleted.
+
 2017-02-28  Saam Barati  <sbarati@apple.com>
 
         Arm64 disassembler prints "ars" instead of "asr"

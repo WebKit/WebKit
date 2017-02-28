@@ -190,14 +190,10 @@ static inline PlatformThread getCurrentPlatformThread()
 #endif
 }
 
-MachineThreads::MachineThreads(Heap* heap)
+MachineThreads::MachineThreads()
     : m_registeredThreads(0)
     , m_threadSpecificForMachineThreads(0)
-#if !ASSERT_DISABLED
-    , m_heap(heap)
-#endif
 {
-    UNUSED_PARAM(heap);
     threadSpecificKeyCreate(&m_threadSpecificForMachineThreads, removeThread);
     activeMachineThreadsManager().add(this);
 }
@@ -234,8 +230,6 @@ bool MachineThreads::Thread::operator==(const PlatformThread& other) const
 
 void MachineThreads::addCurrentThread()
 {
-    ASSERT(!m_heap->vm()->hasExclusiveThread() || m_heap->vm()->exclusiveThread() == std::this_thread::get_id());
-
     if (threadSpecificGet(m_threadSpecificForMachineThreads)) {
 #ifndef NDEBUG
         LockHolder lock(m_registeredThreadsMutex);

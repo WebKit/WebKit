@@ -1,3 +1,15 @@
+2017-02-28  Mark Lam  <mark.lam@apple.com>
+
+        Remove setExclusiveThread() and peers from the JSLock.
+        https://bugs.webkit.org/show_bug.cgi?id=168977
+
+        Reviewed by Filip Pizlo.
+
+        No new tests because this should already be covered by existing tests.
+
+        * bindings/js/CommonVM.cpp:
+        (WebCore::commonVMSlow):
+
 2017-02-28  Dave Hyatt  <hyatt@apple.com>
 
         Centering text inside a button set to display flex and justify-content: center is impossible

@@ -67,7 +67,7 @@ struct CurrentThreadState {
 class MachineThreads {
     WTF_MAKE_NONCOPYABLE(MachineThreads);
 public:
-    MachineThreads(Heap*);
+    MachineThreads();
     ~MachineThreads();
 
     void gatherConservativeRoots(ConservativeRoots&, JITStubRoutineSet&, CodeBlockSet&, CurrentThreadState*);
@@ -163,9 +163,6 @@ private:
     Lock m_registeredThreadsMutex;
     Thread* m_registeredThreads;
     WTF::ThreadSpecificKey m_threadSpecificForMachineThreads;
-#if !ASSERT_DISABLED
-    Heap* m_heap;
-#endif
 };
 
 #define DECLARE_AND_COMPUTE_CURRENT_THREAD_STATE(stateName) \

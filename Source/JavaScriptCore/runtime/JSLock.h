@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2008, 2009, 2014, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2017 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -93,14 +93,7 @@ public:
 
     VM* vm() { return m_vm; }
 
-    bool hasExclusiveThread() const { return m_hasExclusiveThread; }
-    std::thread::id exclusiveThread() const
-    {
-        ASSERT(m_hasExclusiveThread);
-        return m_ownerThreadID;
-    }
     std::thread::id ownerThread() const { return m_ownerThreadID; }
-    JS_EXPORT_PRIVATE void setExclusiveThread(std::thread::id);
     JS_EXPORT_PRIVATE bool currentThreadIsHoldingLock();
 
     void willDestroyVM(VM*);
@@ -136,7 +129,6 @@ private:
     std::thread::id m_ownerThreadID;
     intptr_t m_lockCount;
     unsigned m_lockDropDepth;
-    bool m_hasExclusiveThread;
     bool m_shouldReleaseHeapAccess;
     VM* m_vm;
     AtomicStringTable* m_entryAtomicStringTable; 
