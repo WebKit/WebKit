@@ -690,6 +690,7 @@ set(JavaScriptCore_SOURCES
     runtime/CommonSlowPathsExceptions.cpp
     runtime/CompilationResult.cpp
     runtime/Completion.cpp
+    runtime/ConfigFile.cpp
     runtime/ConsoleClient.cpp
     runtime/ConsoleObject.cpp
     runtime/ConstantMode.cpp

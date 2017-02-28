@@ -50,30 +50,22 @@
 
 namespace WTF {
 
-static PrintStream* s_file;
+static const size_t maxPathLength = 1024;
 
+static PrintStream* s_file;
 static uint64_t s_fileData[(sizeof(FilePrintStream) + 7) / 8];
 static uint64_t s_lockedFileData[(sizeof(LockedPrintStream) + 7) / 8];
 
 static void initializeLogFileOnce()
 {
-    FilePrintStream* file = nullptr;
-    
+    const char* filename = nullptr;
+
+    if (s_file)
+        return;
+
 #if DATA_LOG_TO_FILE
-    const long maxPathLength = 1024;
-
-    char filenameSuffix[maxPathLength + 1];
-
-#if PLATFORM(WIN)
-    _snprintf(filenameSuffix, sizeof(filenameSuffix), ".%d.txt", GetCurrentProcessId());
-#else
-    snprintf(filenameSuffix, sizeof(filenameSuffix), ".%d.txt", getpid());
-#endif
-
 #if DATA_LOG_TO_DARWIN_TEMP_DIR
     char filenameBuffer[maxPathLength + 1];
-    unsigned suffixLength = strlen(filenameSuffix);
-
 #if defined(DATA_LOG_FILENAME)
     char* logBasename = strrchr(DATA_LOG_FILENAME, '/');
     if (!logBasename)
@@ -82,13 +74,11 @@ static void initializeLogFileOnce()
     const char* logBasename = "WTFLog";
 #endif
 
-    const char* filename = nullptr;
-
     bool success = confstr(_CS_DARWIN_USER_TEMP_DIR, filenameBuffer, sizeof(filenameBuffer));
     if (success) {
         // FIXME: Assert that the path ends with a slash instead of adding a slash if it does not exist
         // once <rdar://problem/23579077> is fixed in all iOS Simulator versions that we use.
-        size_t lastComponentLength = strlen(logBasename) + suffixLength;
+        size_t lastComponentLength = strlen(logBasename) + 20; // More than enough for ".<pid>.txt"
         size_t dirnameLength = strlen(filenameBuffer);
         bool shouldAddPathSeparator = filenameBuffer[dirnameLength - 1] != '/' && logBasename[0] != '/';
         if (lastComponentLength + shouldAddPathSeparator <= sizeof(filenameBuffer) - dirnameLength - 1) {
@@ -99,36 +89,23 @@ static void initializeLogFileOnce()
         }
     }
 #elif defined(DATA_LOG_FILENAME)
-    const char* filename = DATA_LOG_FILENAME;
+    filename = DATA_LOG_FILENAME;
 #else
-    const char* filename = getenv("WTF_DATA_LOG_FILENAME");
+    filename = getenv("WTF_DATA_LOG_FILENAME");
 #endif
     char actualFilename[maxPathLength + 1];
 
-    if (filename) {
+    if (filename && !strstr(filename, "%pid")) {
 #if PLATFORM(WIN)
-        _snprintf(actualFilename, sizeof(actualFilename), "%s%s", filename, filenameSuffix);
+        _snprintf(actualFilename, sizeof(actualFilename), "%s.%%pid.txt", filename);
 #else
-        snprintf(actualFilename, sizeof(actualFilename), "%s%s", filename, filenameSuffix);
+        snprintf(actualFilename, sizeof(actualFilename), "%s.%%pid.txt", filename);
 #endif
-        
-        file = FilePrintStream::open(actualFilename, "w").release();
-        if (file)
-            WTFLogAlways("*** DataLog output to \"%s\" ***\n", actualFilename);
-        else
-            WTFLogAlways("Warning: Could not open DataLog file %s for writing.\n", actualFilename);
+        filename = actualFilename;
     }
 #endif // DATA_LOG_TO_FILE
-    
-    if (!file) {
-        // Use placement new; this makes it easier to use dataLog() to debug
-        // fastMalloc.
-        file = new (s_fileData) FilePrintStream(stderr, FilePrintStream::Borrow);
-    }
-    
-    setvbuf(file->file(), 0, _IONBF, 0); // Prefer unbuffered output, so that we get a full log upon crash or deadlock.
-    
-    s_file = new (s_lockedFileData) LockedPrintStream(std::unique_ptr<FilePrintStream>(file));
+
+    setDataFile(filename);
 }
 
 static void initializeLogFile()
@@ -139,6 +116,60 @@ static void initializeLogFile()
         [] {
             initializeLogFileOnce();
         });
+}
+
+void setDataFile(const char* path)
+{
+    FilePrintStream* file = nullptr;
+    char formattedPath[maxPathLength + 1];
+    const char* pathToOpen = path;
+
+    if (path) {
+        const char* pidFormat = strstr(path, "%pid");
+        if (pidFormat) {
+            size_t leadingPathLength = pidFormat - path;
+            size_t pathCharactersAvailable = std::min(maxPathLength, leadingPathLength);
+            strncpy(formattedPath, path, pathCharactersAvailable);
+            char* nextDest = formattedPath + pathCharactersAvailable;
+            pathCharactersAvailable = maxPathLength - pathCharactersAvailable;
+            if (pathCharactersAvailable) {
+                int pidTextLength;
+#if PLATFORM(WIN)
+                pidTextLength = _snprintf(nextDest, pathCharactersAvailable, "%d", GetCurrentProcessId());
+#else
+                pidTextLength = snprintf(nextDest, pathCharactersAvailable, "%d", getpid());
+#endif
+                if (pidTextLength < 0 || static_cast<size_t>(pidTextLength) >= pathCharactersAvailable)
+                    pathCharactersAvailable = 0;
+                else {
+                    pathCharactersAvailable -= static_cast<size_t>(pidTextLength);
+                    nextDest += pidTextLength;
+                    strncpy(nextDest, pidFormat + 4, pathCharactersAvailable);
+                }
+            }
+            formattedPath[maxPathLength] = '\0';
+            pathToOpen = formattedPath;
+        }
+
+        file = FilePrintStream::open(pathToOpen, "w").release();
+        if (file)
+            WTFLogAlways("*** DataLog output to \"%s\" ***\n", pathToOpen);
+        else
+            WTFLogAlways("Warning: Could not open DataLog file %s for writing.\n", pathToOpen);
+    }
+
+    if (!file) {
+        // Use placement new; this makes it easier to use dataLog() to debug
+        // fastMalloc.
+        file = new (s_fileData) FilePrintStream(stderr, FilePrintStream::Borrow);
+    }
+
+    setvbuf(file->file(), 0, _IONBF, 0); // Prefer unbuffered output, so that we get a full log upon crash or deadlock.
+
+    if (s_file)
+        s_file->flush();
+
+    s_file = new (s_lockedFileData) LockedPrintStream(std::unique_ptr<FilePrintStream>(file));
 }
 
 PrintStream& dataFile()

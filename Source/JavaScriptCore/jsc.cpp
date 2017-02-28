@@ -29,6 +29,7 @@
 #include "ButterflyInlines.h"
 #include "CodeBlock.h"
 #include "Completion.h"
+#include "ConfigFile.h"
 #include "DOMJITGetterSetter.h"
 #include "DOMJITPatchpoint.h"
 #include "DOMJITPatchpointParams.h"
@@ -3761,6 +3762,12 @@ int jscmain(int argc, char** argv)
     // Note that the options parsing can affect VM creation, and thus
     // comes first.
     CommandLine options(argc, argv);
+
+    if (Options::configFile()) {
+        ConfigFile configFile(Options::configFile());
+        configFile.setProcessName("jsc");
+        configFile.parse();
+    }
 
     // Initialize JSC before getting VM.
     WTF::initializeMainThread();

@@ -1,3 +1,67 @@
+2017-02-28  Michael Saboff  <msaboff@apple.com>
+
+        Add ability to configure JSC options from a file
+        https://bugs.webkit.org/show_bug.cgi?id=168914
+
+        Reviewed by Filip Pizlo.
+
+        Added the ability to set options and DataLog file location via a configuration file.
+        The configuration file is specified with the --configFile option to JSC or the
+        JSC_configFile environment variable.
+
+        The file format allows for options conditionally dependent on various attributes.
+        Currently those attributes are the process name, parent process name and build
+        type (Release or Debug).  In this patch, the parent process type is not set.
+        That will be set up in WebKit code with a follow up patch.
+
+        Here is an example config file:
+
+            logFile = "/tmp/jscLog.%pid.txt"
+
+            jscOptions {
+                dumpOptions = 2
+            }
+
+            build == "Debug" {
+                jscOptions {
+                    useConcurrentJIT = false
+                    dumpDisassembly = true
+                }
+            }
+
+            build == "Release" && processName == "jsc" {
+                jscOptions {
+                    asyncDisassembly = true
+                }
+            }
+
+        Eliminated the prior options file code.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * jsc.cpp:
+        (jscmain):
+        * runtime/ConfigFile.cpp: Added.
+        (JSC::ConfigFileScanner::ConfigFileScanner):
+        (JSC::ConfigFileScanner::start):
+        (JSC::ConfigFileScanner::lineNumber):
+        (JSC::ConfigFileScanner::currentBuffer):
+        (JSC::ConfigFileScanner::atFileEnd):
+        (JSC::ConfigFileScanner::tryConsume):
+        (JSC::ConfigFileScanner::tryConsumeString):
+        (JSC::ConfigFileScanner::tryConsumeUpto):
+        (JSC::ConfigFileScanner::fillBufferIfNeeded):
+        (JSC::ConfigFileScanner::fillBuffer):
+        (JSC::ConfigFile::ConfigFile):
+        (JSC::ConfigFile::setProcessName):
+        (JSC::ConfigFile::setParentProcessName):
+        (JSC::ConfigFile::parse):
+        * runtime/ConfigFile.h: Added.
+        * runtime/Options.cpp:
+        (JSC::Options::initialize):
+        (JSC::Options::setOptions):
+        * runtime/Options.h:
+
 2017-02-27  Alex Christensen  <achristensen@webkit.org>
 
         Begin enabling WebRTC on 64-bit
