@@ -99,6 +99,7 @@ class UserInputBridge;
 class InspectorClient;
 class InspectorController;
 class LibWebRTCProvider;
+class LowPowerModeNotifier;
 class MainFrame;
 class MediaCanStartListener;
 class MediaPlaybackTarget;
@@ -576,6 +577,9 @@ public:
     WEBCORE_EXPORT bool hasSelectionAtPosition(const FloatPoint&) const;
 #endif
 
+    bool isLowPowerModeEnabled() const;
+    WEBCORE_EXPORT void setLowPowerModeEnabledOverrideForTesting(std::optional<bool>);
+
 private:
     WEBCORE_EXPORT void initGroup();
 
@@ -597,6 +601,8 @@ private:
     std::optional<std::pair<MediaCanStartListener&, Document&>> takeAnyMediaCanStartListener();
 
     Vector<Ref<PluginViewBase>> pluginViews();
+
+    void handleLowModePowerChange(bool);
 
     enum class TimerThrottlingState { Disabled, Enabled, EnabledIncreasing };
     void hiddenPageDOMTimerThrottlingStateChanged();
@@ -780,6 +786,8 @@ private:
     std::optional<EventThrottlingBehavior> m_eventThrottlingBehaviorOverride;
 
     std::unique_ptr<PerformanceMonitor> m_performanceMonitor;
+    std::unique_ptr<LowPowerModeNotifier> m_lowPowerModeNotifier;
+    std::optional<bool> m_lowPowerModeEnabledOverrideForTesting;
 
     bool m_isRunningUserScripts { false };
 };

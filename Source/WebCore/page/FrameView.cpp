@@ -2563,8 +2563,12 @@ void FrameView::updateScriptedAnimationsAndTimersThrottlingState(const IntRect& 
     // We don't throttle zero-size or display:none frames because those are usually utility frames.
     bool shouldThrottle = visibleRect.isEmpty() && !m_size.isEmpty() && frame().ownerRenderer();
 
-    if (auto* scriptedAnimationController = document->scriptedAnimationController())
-        scriptedAnimationController->setThrottled(shouldThrottle);
+    if (auto* scriptedAnimationController = document->scriptedAnimationController()) {
+        if (shouldThrottle)
+            scriptedAnimationController->addThrottlingReason(ScriptedAnimationController::ThrottlingReason::OutsideViewport);
+        else
+            scriptedAnimationController->removeThrottlingReason(ScriptedAnimationController::ThrottlingReason::OutsideViewport);
+    }
 
     document->setTimerThrottlingEnabled(shouldThrottle);
 }

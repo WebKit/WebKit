@@ -1,3 +1,60 @@
+2017-02-28  Chris Dumez  <cdumez@apple.com>
+
+        [iOS] Throttle requestAnimationFrame to 30fps in low power mode
+        https://bugs.webkit.org/show_bug.cgi?id=168837
+        <rdar://problem/30700929>
+
+        Reviewed by Simon Fraser.
+
+        Throttle requestAnimationFrame to 30fps in low power mode on iOS to save battery.
+
+        ScriptedAnimationController now maintains an OptionSet of throttling reasons.
+        Throttling reasons for now are: OutsideViewport, VisuallyIdle, and LowPowerMode.
+        The requestAnimationFrame interval is then determined based on those throttling
+        reasons:
+        - OutsideViewport or VisuallyIdle: 10 seconds (very aggressive throttling)
+        - LowPowerMode: 30fps
+        - No reasons: 60fps
+
+        The Page now keeps track of low power mode state using a LowPowerModeNotifier.
+        Whenever low power mode changes, it updates the throttling reasons in all the
+        documents' ScriptedAnimationControllers in the frame tree.
+
+        Tests: fast/animation/request-animation-frame-throttling-detached-iframe.html
+               fast/animation/request-animation-frame-throttling-lowPowerMode.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::requestAnimationFrame):
+        * dom/Document.h:
+        * dom/ScriptedAnimationController.cpp:
+        (WebCore::ScriptedAnimationController::ScriptedAnimationController):
+        (WebCore::throttlingReasonToString):
+        (WebCore::throttlingReasonsToString):
+        (WebCore::ScriptedAnimationController::addThrottlingReason):
+        (WebCore::ScriptedAnimationController::removeThrottlingReason):
+        (WebCore::ScriptedAnimationController::isThrottled):
+        (WebCore::ScriptedAnimationController::interval):
+        (WebCore::ScriptedAnimationController::page):
+        (WebCore::ScriptedAnimationController::scheduleAnimation):
+        * dom/ScriptedAnimationController.h:
+        (WebCore::ScriptedAnimationController::create):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::updateScriptedAnimationsAndTimersThrottlingState):
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+        (WebCore::Page::isLowPowerModeEnabled):
+        (WebCore::Page::setLowPowerModeEnabledOverrideForTesting):
+        (WebCore::updateScriptedAnimationsThrottlingReason):
+        (WebCore::Page::setIsVisuallyIdleInternal):
+        (WebCore::Page::handleLowModePowerChange):
+        * page/Page.h:
+        * testing/Internals.cpp:
+        (WebCore::Internals::resetToConsistentState):
+        (WebCore::Internals::requestAnimationFrameInterval):
+        (WebCore::Internals::setLowPowerModeEnabled):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2017-02-28  Youenn Fablet  <youenn@apple.com>
 
         [WebRTC] Limit libwebrtc logging in Debug build

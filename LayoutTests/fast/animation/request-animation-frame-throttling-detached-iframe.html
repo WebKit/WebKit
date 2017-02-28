@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+description("Test that requestAnimationFrame gets the right throttling in an iframe when inserted into a document.");
+jsTestIsAsync = true;
+
+let i = 0;
+function doWork()
+{
+    i++;
+    requestAnimationFrame(doWork);
+}
+
+requestAnimationFrame(doWork);
+
+const frame = document.createElement("iframe");
+frame.src = "resources/frame-with-animation.html";
+frame.onload = function() {
+    shouldBeFalse("internals.isRequestAnimationFrameThrottled()");
+    shouldBe("internals.requestAnimationFrameInterval", "0.015");
+    shouldBeFalse("frame.contentWindow.internals.isRequestAnimationFrameThrottled()");
+    shouldBe("frame.contentWindow.internals.requestAnimationFrameInterval", "0.015");
+
+    evalAndLog("internals.setLowPowerModeEnabled(true);");
+    shouldBeTrue("internals.isRequestAnimationFrameThrottled()");
+    shouldBe("internals.requestAnimationFrameInterval", "0.030");
+    shouldBeTrue("frame.contentWindow.internals.isRequestAnimationFrameThrottled()");
+    shouldBe("frame.contentWindow.internals.requestAnimationFrameInterval", "0.030");
+    evalAndLog("frame.remove()");
+
+    evalAndLog("document.body.appendChild(frame)");
+    frame.onload = function() {
+        shouldBeTrue("internals.isRequestAnimationFrameThrottled()");
+        shouldBe("internals.requestAnimationFrameInterval", "0.030");
+        shouldBeTrue("frame.contentWindow.internals.isRequestAnimationFrameThrottled()");
+        shouldBe("frame.contentWindow.internals.requestAnimationFrameInterval", "0.030");
+
+        evalAndLog("frame.remove()");
+        evalAndLog("internals.setLowPowerModeEnabled(false);");
+        shouldBeFalse("internals.isRequestAnimationFrameThrottled()");
+        shouldBe("internals.requestAnimationFrameInterval", "0.015");
+
+        evalAndLog("document.body.appendChild(frame)");
+        frame.onload = function() {
+            shouldBeFalse("frame.contentWindow.internals.isRequestAnimationFrameThrottled()");
+            shouldBe("frame.contentWindow.internals.requestAnimationFrameInterval", "0.015");
+            finishJSTest();
+        }
+    }
+};
+document.body.appendChild(frame);
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -40,25 +40,34 @@
 #include "Settings.h"
 #include <wtf/Ref.h>
 #include <wtf/SystemTracing.h>
+#include <wtf/text/StringBuilder.h>
 
 #if USE(REQUEST_ANIMATION_FRAME_TIMER)
 #include <algorithm>
 #include <wtf/CurrentTime.h>
 
 // Allow a little more than 60fps to make sure we can at least hit that frame rate.
-#define MinimumAnimationInterval 0.015
-#define MinimumThrottledAnimationInterval 10
+static const Seconds fullSpeedAnimationInterval { 0.015 };
+// Allow a little more than 30fps to make sure we can at least hit that frame rate.
+static const Seconds halfSpeedThrottlingAnimationInterval { 0.030 };
+static const Seconds aggressiveThrottlingAnimationInterval { 10 };
 #endif
+
+#define RELEASE_LOG_IF_ALLOWED(fmt, ...) RELEASE_LOG_IF(page() && page()->isAlwaysOnLoggingAllowed(), PerformanceLogging, "%p - ScriptedAnimationController::" fmt, this, ##__VA_ARGS__)
 
 namespace WebCore {
 
-ScriptedAnimationController::ScriptedAnimationController(Document* document, PlatformDisplayID displayID)
-    : m_document(document)
+ScriptedAnimationController::ScriptedAnimationController(Document& document, PlatformDisplayID displayID)
+    : m_document(&document)
 #if USE(REQUEST_ANIMATION_FRAME_TIMER)
     , m_animationTimer(*this, &ScriptedAnimationController::animationTimerFired)
 #endif
 {
     windowScreenDidChange(displayID);
+
+    auto* page = document.page();
+    if (page && page->isLowPowerModeEnabled())
+        addThrottlingReason(ThrottlingReason::LowPowerMode);
 }
 
 ScriptedAnimationController::~ScriptedAnimationController()
@@ -86,28 +95,78 @@ void ScriptedAnimationController::resume()
         scheduleAnimation();
 }
 
-void ScriptedAnimationController::setThrottled(bool isThrottled)
+#if USE(REQUEST_ANIMATION_FRAME_TIMER) && USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR) && !RELEASE_LOG_DISABLED
+
+static const char* throttlingReasonToString(ScriptedAnimationController::ThrottlingReason reason)
+{
+    switch (reason) {
+    case ScriptedAnimationController::ThrottlingReason::VisuallyIdle:
+        return "VisuallyIdle";
+    case ScriptedAnimationController::ThrottlingReason::OutsideViewport:
+        return "OutsideViewport";
+    case ScriptedAnimationController::ThrottlingReason::LowPowerMode:
+        return "LowPowerMode";
+    }
+}
+
+static String throttlingReasonsToString(OptionSet<ScriptedAnimationController::ThrottlingReason> reasons)
+{
+    if (reasons.isEmpty())
+        return ASCIILiteral("[Unthrottled]");
+
+    StringBuilder builder;
+    for (auto reason : reasons) {
+        if (!builder.isEmpty())
+            builder.append('|');
+        builder.append(throttlingReasonToString(reason));
+    }
+    return builder.toString();
+}
+
+#endif
+
+void ScriptedAnimationController::addThrottlingReason(ThrottlingReason reason)
 {
 #if USE(REQUEST_ANIMATION_FRAME_TIMER) && USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
-    if (m_isThrottled == isThrottled)
+    if (m_throttlingReasons.contains(reason))
         return;
 
-    LOG(Animations, "%p - Setting RequestAnimationFrame throttling state to %d in frame %p (isMainFrame: %d)", this, isThrottled, m_document->frame(), m_document->frame() ? m_document->frame()->isMainFrame() : 0);
+    m_throttlingReasons |= reason;
 
-    m_isThrottled = isThrottled;
+    RELEASE_LOG_IF_ALLOWED("addThrottlingReason(%s) -> %s", throttlingReasonToString(reason), throttlingReasonsToString(m_throttlingReasons).utf8().data());
+
     if (m_animationTimer.isActive()) {
         m_animationTimer.stop();
         scheduleAnimation();
     }
 #else
-    UNUSED_PARAM(isThrottled);
+    UNUSED_PARAM(reason);
+#endif
+}
+
+void ScriptedAnimationController::removeThrottlingReason(ThrottlingReason reason)
+{
+#if USE(REQUEST_ANIMATION_FRAME_TIMER) && USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
+    if (!m_throttlingReasons.contains(reason))
+        return;
+
+    m_throttlingReasons -= reason;
+
+    RELEASE_LOG_IF_ALLOWED("removeThrottlingReason(%s) -> %s", throttlingReasonToString(reason), throttlingReasonsToString(m_throttlingReasons).utf8().data());
+
+    if (m_animationTimer.isActive()) {
+        m_animationTimer.stop();
+        scheduleAnimation();
+    }
+#else
+    UNUSED_PARAM(reason);
 #endif
 }
 
 bool ScriptedAnimationController::isThrottled() const
 {
 #if USE(REQUEST_ANIMATION_FRAME_TIMER) && USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
-    return m_isThrottled;
+    return !m_throttlingReasons.isEmpty();
 #else
     return false;
 #endif
@@ -192,6 +251,23 @@ void ScriptedAnimationController::windowScreenDidChange(PlatformDisplayID displa
 #endif
 }
 
+Seconds ScriptedAnimationController::interval() const
+{
+#if USE(REQUEST_ANIMATION_FRAME_TIMER) && USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
+    if (m_throttlingReasons.contains(ThrottlingReason::VisuallyIdle) || m_throttlingReasons.contains(ThrottlingReason::OutsideViewport))
+        return aggressiveThrottlingAnimationInterval;
+    if (m_throttlingReasons.contains(ThrottlingReason::LowPowerMode))
+        return halfSpeedThrottlingAnimationInterval;
+    ASSERT(m_throttlingReasons.isEmpty());
+#endif
+    return fullSpeedAnimationInterval;
+}
+
+Page* ScriptedAnimationController::page() const
+{
+    return m_document ? m_document->page() : nullptr;
+}
+
 void ScriptedAnimationController::scheduleAnimation()
 {
     if (!requestAnimationFrameEnabled())
@@ -199,7 +275,7 @@ void ScriptedAnimationController::scheduleAnimation()
 
 #if USE(REQUEST_ANIMATION_FRAME_TIMER)
 #if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
-    if (!m_isUsingTimer && !m_isThrottled) {
+    if (!m_isUsingTimer && !isThrottled()) {
         if (DisplayRefreshMonitorManager::sharedManager().scheduleAnimation(*this))
             return;
 
@@ -209,13 +285,8 @@ void ScriptedAnimationController::scheduleAnimation()
     if (m_animationTimer.isActive())
         return;
 
-    double animationInterval = MinimumAnimationInterval;
-#if USE(REQUEST_ANIMATION_FRAME_TIMER) && USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
-    if (m_isThrottled)
-        animationInterval = MinimumThrottledAnimationInterval;
-#endif
-
-    double scheduleDelay = std::max<double>(animationInterval - (m_document->domWindow()->nowTimestamp() - m_lastAnimationFrameTimestamp), 0);
+    Seconds animationInterval = interval();
+    double scheduleDelay = std::max<double>(animationInterval.value() - (m_document->domWindow()->nowTimestamp() - m_lastAnimationFrameTimestamp), 0);
     m_animationTimer.startOneShot(scheduleDelay);
 #else
     if (FrameView* frameView = m_document->view())

@@ -1,0 +1,31 @@
+Test that requestAnimationFrame gets the right throttling in an iframe when inserted into a document.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS internals.isRequestAnimationFrameThrottled() is false
+PASS internals.requestAnimationFrameInterval is 0.015
+PASS frame.contentWindow.internals.isRequestAnimationFrameThrottled() is false
+PASS frame.contentWindow.internals.requestAnimationFrameInterval is 0.015
+internals.setLowPowerModeEnabled(true);
+PASS internals.isRequestAnimationFrameThrottled() is true
+PASS internals.requestAnimationFrameInterval is 0.030
+PASS frame.contentWindow.internals.isRequestAnimationFrameThrottled() is true
+PASS frame.contentWindow.internals.requestAnimationFrameInterval is 0.030
+frame.remove()
+document.body.appendChild(frame)
+PASS internals.isRequestAnimationFrameThrottled() is true
+PASS internals.requestAnimationFrameInterval is 0.030
+PASS frame.contentWindow.internals.isRequestAnimationFrameThrottled() is true
+PASS frame.contentWindow.internals.requestAnimationFrameInterval is 0.030
+frame.remove()
+internals.setLowPowerModeEnabled(false);
+PASS internals.isRequestAnimationFrameThrottled() is false
+PASS internals.requestAnimationFrameInterval is 0.015
+document.body.appendChild(frame)
+PASS frame.contentWindow.internals.isRequestAnimationFrameThrottled() is false
+PASS frame.contentWindow.internals.requestAnimationFrameInterval is 0.015
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

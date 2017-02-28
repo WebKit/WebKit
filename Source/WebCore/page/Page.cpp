@@ -57,6 +57,7 @@
 #include "InspectorInstrumentation.h"
 #include "LibWebRTCProvider.h"
 #include "Logging.h"
+#include "LowPowerModeNotifier.h"
 #include "MainFrame.h"
 #include "MediaCanStartListener.h"
 #include "Navigator.h"
@@ -84,6 +85,7 @@
 #include "SVGDocumentExtensions.h"
 #include "SchemeRegistry.h"
 #include "ScriptController.h"
+#include "ScriptedAnimationController.h"
 #include "ScrollingCoordinator.h"
 #include "Settings.h"
 #include "SharedBuffer.h"
@@ -263,6 +265,7 @@ Page::Page(PageConfiguration&& pageConfiguration)
     , m_isClosing(false)
     , m_isUtilityPage(isUtilityPageChromeClient(chrome().client()))
     , m_performanceMonitor(isUtilityPage() ? nullptr : std::make_unique<PerformanceMonitor>(*this))
+    , m_lowPowerModeNotifier(std::make_unique<LowPowerModeNotifier>([this](bool isLowPowerModeEnabled) { handleLowModePowerChange(isLowPowerModeEnabled); }))
 {
     updateTimerThrottlingState();
 
@@ -954,6 +957,20 @@ bool Page::isOnlyNonUtilityPage() const
     return !isUtilityPage() && nonUtilityPageCount == 1;
 }
 
+bool Page::isLowPowerModeEnabled() const
+{
+    if (m_lowPowerModeEnabledOverrideForTesting)
+        return m_lowPowerModeEnabledOverrideForTesting.value();
+
+    return m_lowPowerModeNotifier->isLowPowerModeEnabled();
+}
+
+void Page::setLowPowerModeEnabledOverrideForTesting(std::optional<bool> isEnabled)
+{
+    m_lowPowerModeEnabledOverrideForTesting = isEnabled;
+    handleLowModePowerChange(m_lowPowerModeEnabledOverrideForTesting.value_or(false));
+}
+
 void Page::setTopContentInset(float contentInset)
 {
     if (m_topContentInset == contentInset)
@@ -1094,12 +1111,32 @@ void Page::resumeScriptedAnimations()
     }
 }
 
+enum class ThrottlingReasonOperation { Add, Remove };
+static void updateScriptedAnimationsThrottlingReason(Page& page, ThrottlingReasonOperation operation, ScriptedAnimationController::ThrottlingReason reason)
+{
+    for (Frame* frame = &page.mainFrame(); frame; frame = frame->tree().traverseNext()) {
+        auto* document = frame->document();
+        if (!document)
+            continue;
+        auto* scriptedAnimationController = document->scriptedAnimationController();
+        if (!scriptedAnimationController)
+            continue;
+
+        if (operation == ThrottlingReasonOperation::Add)
+            scriptedAnimationController->addThrottlingReason(reason);
+        else
+            scriptedAnimationController->removeThrottlingReason(reason);
+    }
+}
+
 void Page::setIsVisuallyIdleInternal(bool isVisuallyIdle)
 {
-    for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
-        if (frame->document())
-            frame->document()->scriptedAnimationControllerSetThrottled(isVisuallyIdle);
-    }
+    updateScriptedAnimationsThrottlingReason(*this, isVisuallyIdle ? ThrottlingReasonOperation::Add : ThrottlingReasonOperation::Remove, ScriptedAnimationController::ThrottlingReason::VisuallyIdle);
+}
+
+void Page::handleLowModePowerChange(bool isLowPowerModeEnabled)
+{
+    updateScriptedAnimationsThrottlingReason(*this, isLowPowerModeEnabled ? ThrottlingReasonOperation::Add : ThrottlingReasonOperation::Remove, ScriptedAnimationController::ThrottlingReason::LowPowerMode);
 }
 
 void Page::userStyleSheetLocationChanged()

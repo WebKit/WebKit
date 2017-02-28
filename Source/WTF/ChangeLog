@@ -1,3 +1,19 @@
+2017-02-28  Chris Dumez  <cdumez@apple.com>
+
+        [iOS] Throttle requestAnimationFrame to 30fps in low power mode
+        https://bugs.webkit.org/show_bug.cgi?id=168837
+        <rdar://problem/30700929>
+
+        Reviewed by Simon Fraser.
+
+        Add support for operator -= on WTF::OptionSet for convenience:
+            set -= Enum::A;
+        looks much better than:
+            set = set - Enum::A;
+
+        * wtf/OptionSet.h:
+        (WTF::OptionSet::operator-=):
+
 2017-02-28  Michael Saboff  <msaboff@apple.com>
 
         Add ability to configure JSC options from a file

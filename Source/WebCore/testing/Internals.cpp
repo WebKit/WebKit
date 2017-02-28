@@ -436,6 +436,7 @@ void Internals::resetToConsistentState(Page& page)
 #endif
 
     page.setShowAllPlugins(false);
+    page.setLowPowerModeEnabledOverrideForTesting(std::nullopt);
 
 #if USE(QUICK_LOOK)
     MockQuickLookHandleClient::singleton().setPassword("");
@@ -1019,6 +1020,14 @@ bool Internals::isRequestAnimationFrameThrottled() const
     return scriptedAnimationController->isThrottled();
 }
 
+double Internals::requestAnimationFrameInterval() const
+{
+    auto* scriptedAnimationController = contextDocument()->scriptedAnimationController();
+    if (!scriptedAnimationController)
+        return INFINITY;
+    return scriptedAnimationController->interval().value();
+}
+
 bool Internals::areTimersThrottled() const
 {
     return contextDocument()->isTimerThrottlingEnabled();
@@ -1288,6 +1297,19 @@ ExceptionOr<void> Internals::setMarkedTextMatchesAreHighlighted(bool flag)
 void Internals::invalidateFontCache()
 {
     FontCache::singleton().invalidate();
+}
+
+ExceptionOr<void> Internals::setLowPowerModeEnabled(bool isEnabled)
+{
+    auto* document = contextDocument();
+    if (!document)
+        return Exception { INVALID_ACCESS_ERR };
+    auto* page = document->page();
+    if (!page)
+        return Exception { INVALID_ACCESS_ERR };
+
+    page->setLowPowerModeEnabledOverrideForTesting(isEnabled);
+    return { };
 }
 
 ExceptionOr<void> Internals::setScrollViewPosition(int x, int y)

@@ -5481,12 +5481,6 @@ void Document::resumeScriptedAnimationControllerCallbacks()
         m_scriptedAnimationController->resume();
 }
 
-void Document::scriptedAnimationControllerSetThrottled(bool isThrottled)
-{
-    if (m_scriptedAnimationController)
-        m_scriptedAnimationController->setThrottled(isThrottled);
-}
-
 void Document::windowScreenDidChange(PlatformDisplayID displayID)
 {
     if (m_scriptedAnimationController)
@@ -6058,9 +6052,9 @@ int Document::requestAnimationFrame(Ref<RequestAnimationFrameCallback>&& callbac
 {
     if (!m_scriptedAnimationController) {
 #if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
-        m_scriptedAnimationController = ScriptedAnimationController::create(this, page() ? page()->chrome().displayID() : 0);
+        m_scriptedAnimationController = ScriptedAnimationController::create(*this, page() ? page()->chrome().displayID() : 0);
 #else
-        m_scriptedAnimationController = ScriptedAnimationController::create(this, 0);
+        m_scriptedAnimationController = ScriptedAnimationController::create(*this, 0);
 #endif
         // It's possible that the Page may have suspended scripted animations before
         // we were created. We need to make sure that we don't start up the animation

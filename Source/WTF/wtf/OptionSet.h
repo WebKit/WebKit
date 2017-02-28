@@ -125,6 +125,13 @@ public:
         return lhs;
     }
 
+    friend OptionSet& operator-=(OptionSet& lhs, OptionSet rhs)
+    {
+        lhs.m_storage &= ~rhs.m_storage;
+
+        return lhs;
+    }
+
     constexpr friend OptionSet operator-(OptionSet lhs, OptionSet rhs)
     {
         return OptionSet::fromRaw(lhs.m_storage & ~rhs.m_storage);
