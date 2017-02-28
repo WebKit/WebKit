@@ -128,7 +128,7 @@ bool WebCore::isQuickLookPreviewURL(const URL& url)
 {
     // Use some known protocols as a short-cut to avoid loading the QuickLook framework.
     if (url.protocolIsInHTTPFamily() || url.isBlankURL() || url.protocolIsBlob() || url.protocolIsData() || SchemeRegistry::shouldTreatURLSchemeAsLocal(url.protocol().toString()))
-        return NO;
+        return false;
     return url.protocolIs(QLPreviewProtocol());
 }
 

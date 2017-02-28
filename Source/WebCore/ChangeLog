@@ -1,5 +1,12 @@
 2017-02-28  Tim Horton  <timothy_horton@apple.com>
 
+        Apply a review comment that was missing in r213182
+
+        * loader/ios/QuickLook.mm:
+        (WebCore::isQuickLookPreviewURL):
+
+2017-02-28  Tim Horton  <timothy_horton@apple.com>
+
         [iOS] Getting QLPreviewProtocol slows down first navigation in Web process
         https://bugs.webkit.org/show_bug.cgi?id=168940
         <rdar://problem/29468999>
