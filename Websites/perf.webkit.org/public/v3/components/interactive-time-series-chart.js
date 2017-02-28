@@ -74,14 +74,16 @@ class InteractiveTimeSeriesChart extends TimeSeriesChart {
             return false;
         console.assert(!this._selectionTimeRange);
 
-        const newPoint = forward ? indicator.view.nextPoint(indicator.point) : indicator.view.previousPoint(indicator.point);
-        if (!newPoint)
+        const constrainedView = indicator.view.viewTimeRange(this._startTime, this._endTime);
+        const newPoint = forward ? constrainedView.nextPoint(indicator.point) : constrainedView.previousPoint(indicator.point);
+        if (!newPoint || this._indicatorID == newPoint.id)
             return false;
 
         this._indicatorID = newPoint.id;
         this._lastMouseDownLocation = null;
         this._forceRender = true;
 
+        this.enqueueToRender();
         this._notifyIndicatorChanged();
     }
 

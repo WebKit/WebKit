@@ -1,5 +1,23 @@
 2017-02-27  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Arrow key shouldn't move the indicator beyond the visible points
+        https://bugs.webkit.org/show_bug.cgi?id=168956
+
+        Reviewed by Joseph Pecoraro.
+
+        The bug was caused by moveLockedIndicatorWithNotification using the full sampled time series view
+        instead of the one constrained by the domain. Since the time series chart expands the visible domain
+        to include at least one point before the start time and one point after the end tiem to draw lines
+        extending beyond the visible region (otherwise it looks as though the graph ends there), we need to
+        use a view constrained by the start time and the end time before looking for a next/previous point.
+
+        * browser-tests/time-series-chart-tests.js: Added test cases for moveLockedIndicatorWithNotification.
+        * public/v3/components/interactive-time-series-chart.js:
+        (InteractiveTimeSeriesChart.prototype.moveLockedIndicatorWithNotification): Fixed the bug. Also
+        enqueue itself to render instead of relying on a parent component to do it.
+
+2017-02-27  Ryosuke Niwa  <rniwa@webkit.org>
+
         A Locked indicator should be visually distinct from an unlocked indicator
         https://bugs.webkit.org/show_bug.cgi?id=168868
         <rdar://problem/29666054>

@@ -1581,6 +1581,197 @@ describe('InteractiveTimeSeriesChart', () => {
         });
     });
 
+    describe('moveLockedIndicatorWithNotification', () => {
+        it('should move the locked indicator to the right when forward boolean is true', () => {
+            const context = new BrowsingContext();
+            return context.importScripts(scripts, 'ComponentBase', 'InteractiveTimeSeriesChart', 'MeasurementSet', 'MockRemoteAPI').then(() => {
+                const chart = createInteractiveChartWithSampleCluster(context);
+
+                chart.setDomain(sampleCluster.startTime, sampleCluster.endTime);
+                chart.fetchMeasurementSets();
+                let indicatorChangeCount = 0;
+                chart.listenToAction('indicatorChange', () => indicatorChangeCount++);
+                respondWithSampleCluster(context.symbols.MockRemoteAPI.requests[0]);
+
+                let canvas;
+                return waitForComponentsToRender(context).then(() => {
+                    expect(indicatorChangeCount).to.be(0);
+
+                    canvas = chart.content().querySelector('canvas');
+
+                    const rect = canvas.getBoundingClientRect();
+                    const x = rect.left + 1;
+                    const y = rect.top + rect.height / 2;
+                    canvas.dispatchEvent(new MouseEvent('click', {target: canvas, clientX: x, clientY: y, composed: true, bubbles: true}));
+
+                    CanvasTest.fillCanvasBeforeRedrawCheck(canvas);
+                    return waitForComponentsToRender(context);
+                }).then(() => {
+                    expect(CanvasTest.hasCanvasBeenRedrawn(canvas)).to.be(true);
+                    expect(indicatorChangeCount).to.be(1);
+
+                    let indicator = chart.currentIndicator();
+                    let currentView = chart.sampledTimeSeriesData('current');
+                    expect(indicator.view).to.be(currentView);
+                    expect(indicator.point).to.be(currentView.firstPoint());
+                    expect(indicator.isLocked).to.be(true);
+
+                    chart.moveLockedIndicatorWithNotification(true);
+
+                    CanvasTest.fillCanvasBeforeRedrawCheck(canvas);
+                    return waitForComponentsToRender(context);
+                }).then(() => {
+                    expect(CanvasTest.hasCanvasBeenRedrawn(canvas)).to.be(true);
+                    expect(indicatorChangeCount).to.be(2);
+
+                    let indicator = chart.currentIndicator();
+                    let currentView = chart.sampledTimeSeriesData('current');
+                    expect(indicator.view).to.be(currentView);
+                    expect(indicator.point).to.not.be(currentView.firstPoint());
+                    expect(indicator.point).to.be(currentView.nextPoint(currentView.firstPoint()));
+                    expect(currentView.previousPoint(indicator.point)).to.be(currentView.firstPoint());
+                    expect(indicator.isLocked).to.be(true);
+                    expect(indicatorChangeCount).to.be(2);
+                });
+            });
+        });
+
+        it('should move the locked indicator to the left when forward boolean is false', () => {
+            const context = new BrowsingContext();
+            return context.importScripts(scripts, 'ComponentBase', 'InteractiveTimeSeriesChart', 'MeasurementSet', 'MockRemoteAPI').then(() => {
+                const chart = createInteractiveChartWithSampleCluster(context);
+
+                chart.setDomain(sampleCluster.startTime, sampleCluster.endTime);
+                chart.fetchMeasurementSets();
+                let indicatorChangeCount = 0;
+                chart.listenToAction('indicatorChange', () => indicatorChangeCount++);
+                respondWithSampleCluster(context.symbols.MockRemoteAPI.requests[0]);
+
+                let canvas;
+                return waitForComponentsToRender(context).then(() => {
+                    expect(indicatorChangeCount).to.be(0);
+
+                    canvas = chart.content().querySelector('canvas');
+
+                    const rect = canvas.getBoundingClientRect();
+                    const x = rect.right - 1;
+                    const y = rect.top + rect.height / 2;
+                    canvas.dispatchEvent(new MouseEvent('click', {target: canvas, clientX: x, clientY: y, composed: true, bubbles: true}));
+
+                    CanvasTest.fillCanvasBeforeRedrawCheck(canvas);
+                    return waitForComponentsToRender(context);
+                }).then(() => {
+                    expect(CanvasTest.hasCanvasBeenRedrawn(canvas)).to.be(true);
+                    expect(indicatorChangeCount).to.be(1);
+
+                    let indicator = chart.currentIndicator();
+                    let currentView = chart.sampledTimeSeriesData('current');
+                    expect(indicator.view).to.be(currentView);
+                    expect(indicator.point).to.be(currentView.lastPoint());
+                    expect(indicator.isLocked).to.be(true);
+
+                    chart.moveLockedIndicatorWithNotification(false);
+
+                    CanvasTest.fillCanvasBeforeRedrawCheck(canvas);
+                    return waitForComponentsToRender(context);
+                }).then(() => {
+                    expect(CanvasTest.hasCanvasBeenRedrawn(canvas)).to.be(true);
+                    expect(indicatorChangeCount).to.be(2);
+
+                    let indicator = chart.currentIndicator();
+                    let currentView = chart.sampledTimeSeriesData('current');
+                    expect(indicator.view).to.be(currentView);
+                    expect(indicator.point).to.not.be(currentView.firstPoint());
+                    expect(indicator.point).to.be(currentView.previousPoint(currentView.lastPoint()));
+                    expect(currentView.nextPoint(indicator.point)).to.be(currentView.lastPoint());
+                    expect(indicator.isLocked).to.be(true);
+                    expect(indicatorChangeCount).to.be(2);
+                });
+            });
+        });
+
+        it('should not move the locked indicator when there are no points within the domain', () => {
+            const context = new BrowsingContext();
+            return context.importScripts(scripts, 'ComponentBase', 'InteractiveTimeSeriesChart', 'MeasurementSet', 'MockRemoteAPI').then(() => {
+                const chart = createInteractiveChartWithSampleCluster(context);
+
+                // The domain inclues points 2, 3
+                chart.setDomain(posixTime('2016-01-05T20:00:00Z'), posixTime('2016-01-06T00:00:00Z'));
+                chart.fetchMeasurementSets();
+                let indicatorChangeCount = 0;
+                chart.listenToAction('indicatorChange', () => indicatorChangeCount++);
+                respondWithSampleCluster(context.symbols.MockRemoteAPI.requests[0]);
+
+                let canvas;
+                let currentView;
+                return waitForComponentsToRender(context).then(() => {
+                    expect(indicatorChangeCount).to.be(0);
+
+                    canvas = chart.content().querySelector('canvas');
+
+                    const rect = canvas.getBoundingClientRect();
+                    const x = rect.right - 1;
+                    const y = rect.top + rect.height / 2;
+                    canvas.dispatchEvent(new MouseEvent('click', {target: canvas, clientX: x, clientY: y, composed: true, bubbles: true}));
+
+                    CanvasTest.fillCanvasBeforeRedrawCheck(canvas);
+                    return waitForComponentsToRender(context);
+                }).then(() => {
+                    expect(CanvasTest.hasCanvasBeenRedrawn(canvas)).to.be(true);
+                    expect(indicatorChangeCount).to.be(1);
+
+                    currentView = chart.sampledTimeSeriesData('current');
+                    expect(currentView.length()).to.be(4); // points 0 and 4 are added to draw lines extending beyond the domain.
+                    expect([...currentView].map((point) => point.id)).to.be.eql([1000, 1002, 1003, 1004]);
+
+                    const indicator = chart.currentIndicator();
+                    expect(indicator.view).to.be(currentView);
+                    expect(indicator.point.id).to.be(1003);
+                    expect(indicator.isLocked).to.be(true);
+
+                    chart.moveLockedIndicatorWithNotification(true);
+
+                    CanvasTest.fillCanvasBeforeRedrawCheck(canvas);
+                    return waitForComponentsToRender(context);
+                }).then(() => {
+                    expect(CanvasTest.hasCanvasBeenRedrawn(canvas)).to.be(false);
+
+                    expect(indicatorChangeCount).to.be(1);
+                    const indicator = chart.currentIndicator();
+                    expect(indicator.view).to.be(currentView);
+                    expect(indicator.point.id).to.be(1003);
+                    expect(indicator.isLocked).to.be(true);
+
+                    chart.moveLockedIndicatorWithNotification(false);
+
+                    CanvasTest.fillCanvasBeforeRedrawCheck(canvas);
+                    return waitForComponentsToRender(context);
+                }).then(() => {
+                    expect(CanvasTest.hasCanvasBeenRedrawn(canvas)).to.be(true);
+
+                    expect(indicatorChangeCount).to.be(2);
+                    const indicator = chart.currentIndicator();
+                    expect(indicator.view).to.be(currentView);
+                    expect(indicator.point.id).to.be(1002);
+                    expect(indicator.isLocked).to.be(true);
+
+                    chart.moveLockedIndicatorWithNotification(false);
+
+                    CanvasTest.fillCanvasBeforeRedrawCheck(canvas);
+                    return waitForComponentsToRender(context);
+                }).then(() => {
+                    expect(CanvasTest.hasCanvasBeenRedrawn(canvas)).to.be(false);
+
+                    expect(indicatorChangeCount).to.be(2);
+                    const indicator = chart.currentIndicator();
+                    expect(indicator.view).to.be(currentView);
+                    expect(indicator.point.id).to.be(1002);
+                    expect(indicator.isLocked).to.be(true);
+                });
+            });
+        });
+
+    });
 });
 
 })();
