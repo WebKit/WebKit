@@ -811,6 +811,9 @@ class Port(object):
     def jsc_results_directory(self):
         return self._build_path()
 
+    def bindings_results_directory(self):
+        return self._build_path()
+
     def results_directory(self):
         """Absolute path to the place to store the test results (uses --results-directory)."""
         if not self._results_directory:
