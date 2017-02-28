@@ -43,7 +43,7 @@ class MacOSInlineMediaControls extends MacOSMediaControls
             cssClassName: "right"
         });
 
-        this._matchLayoutTraits();
+        this.layoutTraitsDidChange();
 
         this._backgroundTint = new BackgroundTint;
 
@@ -61,20 +61,6 @@ class MacOSInlineMediaControls extends MacOSMediaControls
     }
 
     // Public
-
-    get layoutTraits()
-    {
-        return this._layoutTraits;
-    }
-
-    set layoutTraits(layoutTraits)
-    {
-        if (this._layoutTraits === layoutTraits)
-            return;
-
-        this._layoutTraits = layoutTraits;
-        this._matchLayoutTraits();
-    }
 
     layout()
     {
@@ -116,9 +102,7 @@ class MacOSInlineMediaControls extends MacOSMediaControls
             this.layout();
     }
 
-    // Private
-
-    _matchLayoutTraits()
+    layoutTraitsDidChange()
     {
         if (!this.leftContainer || !this.rightContainer)
             return;
@@ -164,4 +148,5 @@ class MacOSInlineMediaControls extends MacOSMediaControls
 
         this.element.classList.toggle("compact", layoutTraits & LayoutTraits.Compact);
     }
+
 }

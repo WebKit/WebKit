@@ -1,3 +1,31 @@
+2017-02-27  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] Adhere to tight padding on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=168949
+        <rdar://problem/30746164>
+
+        Reviewed by Jon Lee.
+
+        We used to only support custom margins on macOS, to support this on iOS as
+        well, we promote the notification when the layoutTraits property is set to
+        MediaControls and expose a new protected method layoutTraitsDidChange() for
+        subclasses to implement. IOSInlineMediaControls now implements that method
+        and will use tighter margins for the TightPadding layout trait.
+
+        Test: media/modern-media-controls/ios-inline-media-controls/ios-inline-media-controls-tight-padding.html
+
+        * Modules/modern-media-controls/controls/ios-inline-media-controls.js:
+        (IOSInlineMediaControls.prototype.layoutTraitsDidChange):
+        (IOSInlineMediaControls):
+        * Modules/modern-media-controls/controls/macos-inline-media-controls.js:
+        (MacOSInlineMediaControls.prototype.get layoutTraits): Deleted.
+        (MacOSInlineMediaControls.prototype.set layoutTraits): Deleted.
+        (MacOSInlineMediaControls.prototype._matchLayoutTraits): Deleted.
+        * Modules/modern-media-controls/controls/media-controls.js:
+        (MediaControls.prototype.get layoutTraits):
+        (MediaControls.prototype.set layoutTraits):
+        (MediaControls.prototype.layoutTraitsDidChange):
+
 2017-02-27  Youenn Fablet  <youenn@apple.com>
 
         [WebRTC] Support modern RTCStatsReport

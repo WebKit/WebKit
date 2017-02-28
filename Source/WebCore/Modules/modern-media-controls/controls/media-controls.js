@@ -59,6 +59,20 @@ class MediaControls extends LayoutNode
 
     // Public
 
+    get layoutTraits()
+    {
+        return this._layoutTraits;
+    }
+
+    set layoutTraits(layoutTraits)
+    {
+        if (this._layoutTraits === layoutTraits)
+            return;
+
+        this._layoutTraits = layoutTraits;
+        this.layoutTraitsDidChange();
+    }
+
     get showsStartButton()
     {
         return !!this._showsStartButton;
@@ -152,6 +166,11 @@ class MediaControls extends LayoutNode
     }
 
     controlsBarVisibilityDidChange(controlsBar)
+    {
+        // Implemented by subclasses as needed.
+    }
+
+    layoutTraitsDidChange()
     {
         // Implemented by subclasses as needed.
     }

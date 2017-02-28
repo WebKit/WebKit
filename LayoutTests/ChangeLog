@@ -1,3 +1,16 @@
+2017-02-27  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] Adhere to tight padding on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=168949
+        <rdar://problem/30746164>
+
+        Reviewed by Jon Lee.
+
+        Adding a new test for the TightPadding layout trait on iOS.
+
+        * media/modern-media-controls/ios-inline-media-controls/ios-inline-media-controls-tight-padding-expected.txt: Added.
+        * media/modern-media-controls/ios-inline-media-controls/ios-inline-media-controls-tight-padding.html: Added.
+
 2017-02-27  Ryan Haddad  <ryanhaddad@apple.com>
 
         Mark compositing/video/video-poster.html as flaky on macOS release.

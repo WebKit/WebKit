@@ -47,6 +47,8 @@ class IOSInlineMediaControls extends MediaControls
             cssClassName: "right"
         });
 
+        this.layoutTraitsDidChange();
+
         this.controlsBar.children = [this.leftContainer, this.rightContainer];
 
         this._pinchGestureRecognizer = new PinchGestureRecognizer(this.element, this);
@@ -66,7 +68,7 @@ class IOSInlineMediaControls extends MediaControls
             this.delegate.iOSInlineMediaControlsRecognizedPinchInGesture();
     }
 
-    // Public
+    // Protected
 
     layout()
     {
@@ -74,6 +76,20 @@ class IOSInlineMediaControls extends MediaControls
 
         if (this.controlsBar.visible)
             this.controlsBar.children = this._inlineLayoutSupport.childrenAfterPerformingLayout();
+    }
+
+    layoutTraitsDidChange()
+    {
+        if (!this.leftContainer || !this.rightContainer)
+            return;
+
+        const margin = (this.layoutTraits & LayoutTraits.TightPadding) ? 12 : 24;
+        this.leftContainer.leftMargin = margin;
+        this.leftContainer.rightMargin = margin;
+        this.leftContainer.buttonMargin = margin;
+        this.rightContainer.leftMargin = margin;
+        this.rightContainer.rightMargin = margin;
+        this.rightContainer.buttonMargin = margin;
     }
 
 }
