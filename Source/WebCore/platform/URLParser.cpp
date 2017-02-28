@@ -36,7 +36,6 @@
 namespace WebCore {
 
 #define URL_PARSER_DEBUGGING 0
-#define COMPARE_URLPARSERS 0
 
 #if URL_PARSER_DEBUGGING
 #define URL_PARSER_LOG(...) LOG(URLParser, __VA_ARGS__)
@@ -1389,7 +1388,13 @@ void URLParser::parse(const CharacterType* input, const unsigned length, const U
                 ++c;
                 copyURLPartsUntil(base, URLPart::SchemeEnd, c, isUTF8Encoding);
                 appendToASCIIBuffer("://", 3);
-                state = State::SpecialAuthorityIgnoreSlashes;
+                if (m_urlIsSpecial)
+                    state = State::SpecialAuthorityIgnoreSlashes;
+                else {
+                    m_url.m_userStart = currentPosition(c);
+                    state = State::AuthorityOrHost;
+                    authorityOrHostBegin = c;
+                }
             } else {
                 copyURLPartsUntil(base, URLPart::PortEnd, c, isUTF8Encoding);
                 appendToASCIIBuffer('/');

@@ -403,9 +403,9 @@ PASS Parsing: <#x> against <sc://ñ>
 PASS Parsing: <?x> against <sc://ñ> 
 PASS Parsing: <sc://?> against <about:blank> 
 PASS Parsing: <sc://#> against <about:blank> 
-FAIL Parsing: <///> against <sc://x/> assert_equals: href expected "sc:///" but got "///"
-FAIL Parsing: <////> against <sc://x/> assert_equals: href expected "sc:////" but got "////"
-FAIL Parsing: <////x/> against <sc://x/> assert_equals: href expected "sc:////x/" but got "sc://x/"
+PASS Parsing: <///> against <sc://x/> 
+PASS Parsing: <////> against <sc://x/> 
+PASS Parsing: <////x/> against <sc://x/> 
 PASS Parsing: <tftp://foobar.com/someconfig;mode=netascii> against <about:blank> 
 PASS Parsing: <telnet://user:pass@foobar.com:23/> against <about:blank> 
 PASS Parsing: <ut2004://10.10.10.10:7777/Index.ut2> against <about:blank> 
