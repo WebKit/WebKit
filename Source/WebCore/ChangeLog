@@ -1,3 +1,28 @@
+2017-02-27  Zan Dobersek  <zdobersek@igalia.com>
+
+        [TextureMapper] Remove InterpolationQuality, TextDrawingModeFlags member variables
+        https://bugs.webkit.org/show_bug.cgi?id=168906
+
+        Reviewed by Carlos Garcia Campos.
+
+        Remove the InterpolationQuality and TextDrawingModeFlags member variables from the
+        TextureMapper class. These weren't modified anywhere in the code.
+
+        BitmapTexture::updateContents() still sets the image interpolation quality and
+        drawing mode on the ImageBuffer's GraphicsContext, but now uses the default
+        InterpolationDefault and TextModeFill values.
+
+        * platform/graphics/texmap/BitmapTexture.cpp:
+        (WebCore::BitmapTexture::updateContents):
+        * platform/graphics/texmap/TextureMapper.cpp:
+        (WebCore::TextureMapper::TextureMapper): Deleted.
+        (WebCore::TextureMapper::~TextureMapper): Deleted.
+        * platform/graphics/texmap/TextureMapper.h:
+        (WebCore::TextureMapper::setImageInterpolationQuality): Deleted.
+        (WebCore::TextureMapper::setTextDrawingMode): Deleted.
+        (WebCore::TextureMapper::imageInterpolationQuality): Deleted.
+        (WebCore::TextureMapper::textDrawingMode): Deleted.
+
 2017-02-26  Zan Dobersek  <zdobersek@igalia.com>
 
         [CoordinatedGraphics] Remove CoordinatedGraphicsScene::paintToGraphicsContext()

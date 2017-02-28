@@ -21,7 +21,7 @@
 #define TextureMapper_h
 
 #include "BitmapTexture.h"
-#include "GraphicsContext.h"
+#include "Color.h"
 #include "IntRect.h"
 #include "IntSize.h"
 #include "TransformationMatrix.h"
@@ -79,12 +79,6 @@ public:
     virtual IntRect clipBounds() = 0;
     virtual PassRefPtr<BitmapTexture> createTexture() = 0;
 
-    void setImageInterpolationQuality(InterpolationQuality quality) { m_interpolationQuality = quality; }
-    void setTextDrawingMode(TextDrawingModeFlags mode) { m_textDrawingMode = mode; }
-
-    InterpolationQuality imageInterpolationQuality() const { return m_interpolationQuality; }
-    TextDrawingModeFlags textDrawingMode() const { return m_textDrawingMode; }
-
     virtual void beginPainting(PaintFlags = 0) { }
     virtual void endPainting() { }
 
@@ -113,11 +107,9 @@ private:
         return nullptr;
     }
 #endif
-    InterpolationQuality m_interpolationQuality;
-    TextDrawingModeFlags m_textDrawingMode;
-    bool m_isMaskMode;
+    bool m_isMaskMode { false };
     TransformationMatrix m_patternTransform;
-    WrapMode m_wrapMode;
+    WrapMode m_wrapMode { StretchWrap };
 };
 
 }

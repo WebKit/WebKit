@@ -28,6 +28,10 @@
 
 namespace WebCore {
 
+TextureMapper::TextureMapper() = default;
+
+TextureMapper::~TextureMapper() = default;
+
 PassRefPtr<BitmapTexture> TextureMapper::acquireTextureFromPool(const IntSize& size, const BitmapTexture::Flags flags)
 {
     RefPtr<BitmapTexture> selectedTexture = m_texturePool->acquireTexture(size, flags);
@@ -39,15 +43,5 @@ std::unique_ptr<TextureMapper> TextureMapper::create()
 {
     return platformCreateAccelerated();
 }
-
-TextureMapper::TextureMapper()
-    : m_interpolationQuality(InterpolationDefault)
-    , m_textDrawingMode(TextModeFill)
-    , m_isMaskMode(false)
-    , m_wrapMode(StretchWrap)
-{ }
-
-TextureMapper::~TextureMapper()
-{ }
 
 } // namespace
