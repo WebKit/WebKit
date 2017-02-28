@@ -1,17 +1,4 @@
 
-const scripts = [
-    '../shared/statistics.js',
-    'instrumentation.js',
-    'models/data-model.js',
-    'models/metric.js',
-    'models/time-series.js',
-    'models/measurement-set.js',
-    'models/measurement-cluster.js',
-    'models/measurement-adaptor.js',
-    'components/base.js',
-    'components/time-series-chart.js',
-    'components/interactive-time-series-chart.js'];
-
 describe('TimeSeriesChart', () => {
 
     it('should be constructible with an empty sourec list and an empty options', () => {
