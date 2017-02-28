@@ -1,3 +1,35 @@
+2017-02-28  Yongjun Zhang  <yongjun_zhang@apple.com>
+
+        Add delegate method to handle images with alternate data.
+        https://bugs.webkit.org/show_bug.cgi?id=168785
+        <rdar://problem/28776219>
+
+        Add delegate methods to WKUIDelegatePrivate so that a WebKit client can provide alternate URL or data for an image
+        before long-press or preview. When an image has alternate URL or data, we can change the actions accordingly.
+
+        Reviewed by Enrica Casucci.
+
+        * UIProcess/API/Cocoa/WKUIDelegatePrivate.h: Add two delegate methods _webView:getAlternateURLFromImage:completionHandler:
+            and _webView:alternateURLFromImage:userInfo;
+        * UIProcess/API/Cocoa/_WKActivatedElementInfo.h: Add an readonly property userInfo so that alternate data can be
+            carried by _WKActivatedElementInfo and be processed by WebKit client.
+        * UIProcess/API/Cocoa/_WKActivatedElementInfo.mm:
+        (-[_WKActivatedElementInfo _initWithType:URL:location:title:ID:rect:image:]):
+        (-[_WKActivatedElementInfo _initWithType:URL:location:title:ID:rect:image:userInfo:]): A new initializer that also takes userInfo.
+        (-[_WKActivatedElementInfo userInfo]):
+        * UIProcess/API/Cocoa/_WKActivatedElementInfoInternal.h: A new delegate method for WKActionSheetAssistantDelegate to fetch
+            alternate data before showing image sheet.
+        * UIProcess/ios/WKActionSheetAssistant.h:
+        * UIProcess/ios/WKActionSheetAssistant.mm:
+        (-[WKActionSheetAssistant showImageSheet]): Before showing the image sheet, if the image doesn't have linked URL (i.e. not a image
+            link), try to fetch its alternate URL and data.
+        (-[WKActionSheetAssistant defaultActionsForImageSheet:]): Drive-by fix. We always use positionInformation's URL to populate the
+            actions, however, we should use elementInfo's URL since the two URLs could mismatch.
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView actionSheetAssistant:getAlternateURLForImage:completion:]):
+        (-[WKContentView _presentedViewControllerForPreviewItemController:]): Before previewing an image, synchronously get alternate
+            data for the image and update the actions accordingly.
+
 2017-02-28  Brady Eidson  <beidson@apple.com>
         
         Refactor WebViewImpl creation in preparation for supporting multiple WebsiteDataStores.

@@ -4012,6 +4012,17 @@ static bool isAssistableInputType(InputType type)
     return [self selectedText];
 }
 
+- (void)actionSheetAssistant:(WKActionSheetAssistant *)assistant getAlternateURLForImage:(UIImage *)image completion:(void (^)(NSURL *alternateURL, NSDictionary *userInfo))completion
+{
+    id <WKUIDelegatePrivate> uiDelegate = static_cast<id <WKUIDelegatePrivate>>([_webView UIDelegate]);
+    if ([uiDelegate respondsToSelector:@selector(_webView:getAlternateURLFromImage:completionHandler:)]) {
+        [uiDelegate _webView:_webView getAlternateURLFromImage:image completionHandler:^(NSURL *alternateURL, NSDictionary *userInfo) {
+            completion(alternateURL, userInfo);
+        }];
+    } else
+        completion(nil, nil);
+}
+
 @end
 
 @implementation WKContentView (WKTesting)
@@ -4257,12 +4268,27 @@ static NSString *previewIdentifierForElementAction(_WKElementAction *action)
         if (!isValidURLForImagePreview)
             return nil;
 
-        RetainPtr<_WKActivatedElementInfo> elementInfo = adoptNS([[_WKActivatedElementInfo alloc] _initWithType:_WKActivatedElementTypeImage URL:targetURL location:_positionInformation.request.point title:_positionInformation.title ID:_positionInformation.idAttribute rect:_positionInformation.bounds image:_positionInformation.image.get()]);
+        RetainPtr<NSURL> alternateURL = targetURL;
+        RetainPtr<NSDictionary> imageInfo;
+        RetainPtr<CGImageRef> cgImage = _positionInformation.image->makeCGImageCopy();
+        RetainPtr<UIImage> uiImage = adoptNS([[UIImage alloc] initWithCGImage:cgImage.get()]);
+        if ([uiDelegate respondsToSelector:@selector(_webView:alternateURLFromImage:userInfo:)]) {
+            NSDictionary *userInfo;
+            alternateURL = [uiDelegate _webView:_webView alternateURLFromImage:uiImage.get() userInfo:&userInfo];
+            imageInfo = userInfo;
+        }
+
+        RetainPtr<_WKActivatedElementInfo> elementInfo = adoptNS([[_WKActivatedElementInfo alloc] _initWithType:_WKActivatedElementTypeImage URL:alternateURL.get() location:_positionInformation.request.point title:_positionInformation.title ID:_positionInformation.idAttribute rect:_positionInformation.bounds image:_positionInformation.image.get() userInfo:imageInfo.get()]);
         _page->startInteractionWithElementAtPosition(_positionInformation.request.point);
 
         if ([uiDelegate respondsToSelector:@selector(_webView:willPreviewImageWithURL:)])
             [uiDelegate _webView:_webView willPreviewImageWithURL:targetURL];
-        return [[[WKImagePreviewViewController alloc] initWithCGImage:_positionInformation.image->makeCGImageCopy() defaultActions:[_actionSheetAssistant defaultActionsForImageSheet:elementInfo.get()] elementInfo:elementInfo] autorelease];
+
+        auto defaultActions = [_actionSheetAssistant defaultActionsForImageSheet:elementInfo.get()];
+        if (imageInfo && [uiDelegate respondsToSelector:@selector(_webView:actionsForElement:defaultActions:)])
+            defaultActions = [uiDelegate _webView:_webView actionsForElement:elementInfo.get() defaultActions:defaultActions.get()];
+
+        return [[[WKImagePreviewViewController alloc] initWithCGImage:cgImage defaultActions:defaultActions elementInfo:elementInfo] autorelease];
     }
 
     return nil;

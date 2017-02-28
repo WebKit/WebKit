@@ -334,26 +334,44 @@ static const CGFloat presentationElementRectPadding = 15;
 
     const auto& positionInformation = [delegate positionInformationForActionSheetAssistant:self];
 
-    NSURL *targetURL = [NSURL _web_URLWithWTFString:positionInformation.url];
-    auto elementBounds = positionInformation.bounds;
-    auto elementInfo = adoptNS([[_WKActivatedElementInfo alloc] _initWithType:_WKActivatedElementTypeImage URL:targetURL location:positionInformation.request.point title:positionInformation.title ID:positionInformation.idAttribute rect:elementBounds image:positionInformation.image.get()]);
-    if ([delegate respondsToSelector:@selector(actionSheetAssistant:showCustomSheetForElement:)] && [delegate actionSheetAssistant:self showCustomSheetForElement:elementInfo.get()])
+    void (^showImageSheetWithAlternateURLBlock)(NSURL*, NSDictionary *userInfo) = ^(NSURL *alternateURL, NSDictionary *userInfo) {
+        NSURL *targetURL = [NSURL _web_URLWithWTFString:positionInformation.url] ?: alternateURL;
+        auto elementBounds = positionInformation.bounds;
+        auto elementInfo = adoptNS([[_WKActivatedElementInfo alloc] _initWithType:_WKActivatedElementTypeImage URL:targetURL location:positionInformation.request.point title:positionInformation.title ID:positionInformation.idAttribute rect:elementBounds image:positionInformation.image.get() userInfo:userInfo]);
+        if ([delegate respondsToSelector:@selector(actionSheetAssistant:showCustomSheetForElement:)] && [delegate actionSheetAssistant:self showCustomSheetForElement:elementInfo.get()])
+            return;
+        auto defaultActions = [self defaultActionsForImageSheet:elementInfo.get()];
+
+        RetainPtr<NSArray> actions = [delegate actionSheetAssistant:self decideActionsForElement:elementInfo.get() defaultActions:WTFMove(defaultActions)];
+
+        if (![actions count])
+            return;
+
+        if (!alternateURL && userInfo) {
+            [UIApp _cancelAllTouches];
+            return;
+        }
+
+        [self _createSheetWithElementActions:actions.get() showLinkTitle:YES];
+        if (!_interactionSheet)
+            return;
+
+        _elementInfo = WTFMove(elementInfo);
+
+        if (![_interactionSheet presentSheet:[self _shouldPresentAtTouchLocationForElementRect:elementBounds] ? WKActionSheetPresentAtTouchLocation : WKActionSheetPresentAtElementRect])
+            [self cleanupSheet];
+    };
+
+    if (positionInformation.url.isEmpty() && positionInformation.image && [delegate respondsToSelector:@selector(actionSheetAssistant:getAlternateURLForImage:completion:)]) {
+        RetainPtr<UIImage> uiImage = adoptNS([[UIImage alloc] initWithCGImage:positionInformation.image->makeCGImageCopy().get()]);
+
+        [delegate actionSheetAssistant:self getAlternateURLForImage:uiImage.get() completion:^(NSURL *alternateURL, NSDictionary *userInfo) {
+            showImageSheetWithAlternateURLBlock(alternateURL, userInfo);
+        }];
         return;
-    auto defaultActions = [self defaultActionsForImageSheet:elementInfo.get()];
+    }
 
-    RetainPtr<NSArray> actions = [delegate actionSheetAssistant:self decideActionsForElement:elementInfo.get() defaultActions:WTFMove(defaultActions)];
-
-    if (![actions count])
-        return;
-
-    [self _createSheetWithElementActions:actions.get() showLinkTitle:YES];
-    if (!_interactionSheet)
-        return;
-
-    _elementInfo = WTFMove(elementInfo);
-
-    if (![_interactionSheet presentSheet:[self _shouldPresentAtTouchLocationForElementRect:elementBounds] ? WKActionSheetPresentAtTouchLocation : WKActionSheetPresentAtElementRect])
-        [self cleanupSheet];
+    showImageSheetWithAlternateURLBlock(nil, nil);
 }
 
 - (BOOL)_shouldPresentAtTouchLocationForElementRect:(CGRect)elementRect
@@ -436,11 +454,10 @@ static const CGFloat presentationElementRectPadding = 15;
     if (!delegate)
         return nil;
 
-    const auto& positionInformation = [delegate positionInformationForActionSheetAssistant:self];
-    NSURL *targetURL = [NSURL _web_URLWithWTFString:positionInformation.url];
+    NSURL *targetURL = [elementInfo URL];
 
     auto defaultActions = adoptNS([[NSMutableArray alloc] init]);
-    if (!positionInformation.url.isEmpty()) {
+    if (targetURL) {
         [self _appendOpenActionsForURL:targetURL actions:defaultActions.get() elementInfo:elementInfo];
         [defaultActions addObject:[_WKElementAction _elementActionWithType:_WKElementActionTypeShare assistant:self]];
     }

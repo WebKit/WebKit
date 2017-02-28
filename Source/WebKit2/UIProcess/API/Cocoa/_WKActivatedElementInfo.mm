@@ -47,6 +47,7 @@
     RefPtr<WebKit::ShareableBitmap> _image;
 #if PLATFORM(IOS)
     RetainPtr<UIImage> _uiImage;
+    RetainPtr<NSDictionary> _userInfo;
 #endif
 #if PLATFORM(MAC)
     RetainPtr<NSImage> _nsImage;
@@ -54,6 +55,11 @@
 }
 
 - (instancetype)_initWithType:(_WKActivatedElementType)type URL:(NSURL *)url location:(CGPoint)location title:(NSString *)title ID:(NSString *)ID rect:(CGRect)rect image:(WebKit::ShareableBitmap*)image
+{
+    return [self _initWithType:type URL:url location:location title:title ID:ID rect:rect image:image userInfo:nil];
+}
+
+- (instancetype)_initWithType:(_WKActivatedElementType)type URL:(NSURL *)url location:(CGPoint)location title:(NSString *)title ID:(NSString *)ID rect:(CGRect)rect image:(WebKit::ShareableBitmap*)image userInfo:(NSDictionary *)userInfo
 {
     if (!(self = [super init]))
         return nil;
@@ -65,6 +71,9 @@
     _type = type;
     _image = image;
     _ID = ID;
+#if PLATFORM(IOS)
+    _userInfo = adoptNS([userInfo copy]);
+#endif
 
     return self;
 }
@@ -90,6 +99,11 @@
 }
 
 #if PLATFORM(IOS)
+- (NSDictionary *)userInfo
+{
+    return _userInfo.get();
+}
+
 - (UIImage *)image
 {
     if (_uiImage)
