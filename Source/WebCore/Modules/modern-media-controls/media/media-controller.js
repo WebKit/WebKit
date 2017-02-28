@@ -23,8 +23,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-const CompactModeMaxWidth = 241;
-const ReducedPaddingMaxWidth = 300;
 const AudioTightPaddingMaxWidth = 400;
 
 class MediaController
@@ -74,16 +72,11 @@ class MediaController
         } else if (this.media.webkitDisplayingFullscreen)
             return traits | LayoutTraits.Fullscreen;
 
-        const controlsWidth = this._controlsWidth();
-        if (controlsWidth <= CompactModeMaxWidth)
+        if (traits & LayoutTraits.macOS)
             return traits | LayoutTraits.Compact;
 
-        const isAudio = this.isAudio;
-        if (isAudio && controlsWidth <= AudioTightPaddingMaxWidth)
+        if (this.isAudio && this._controlsWidth() <= AudioTightPaddingMaxWidth)
             return traits | LayoutTraits.TightPadding;
-
-        if (!isAudio && controlsWidth <= ReducedPaddingMaxWidth)
-            return traits | LayoutTraits.ReducedPadding;
 
         return traits;
     }

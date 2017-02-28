@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-const MinimumScrubberWidth = 168;
+const MinimumScrubberWidthDefault = 168;
+const MinimumScrubberWidthCompact = 124;
 const ElapsedTimeLabelLeftMargin = -2;
 const ElapsedTimeLabelWidth = 40;
 const RemainingTimeLabelWidth = 49;
@@ -87,7 +88,7 @@ class TimeControl extends LayoutItem
 
     get isSufficientlyWide()
     {
-        return this.scrubber.width >= MinimumScrubberWidth;
+        return this.scrubber.width >= ((this.layoutTraits & LayoutTraits.Compact) ? MinimumScrubberWidthCompact : MinimumScrubberWidthDefault);
     }
 
 }

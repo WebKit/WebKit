@@ -33,7 +33,7 @@ class Scrubber extends Slider
             layoutDelegate
         });
 
-         this.height = 23;
+        this.layoutTraitsDidChange();
 
         // Add the element used to draw the track on iOS.
         if (this.layoutTraits & LayoutTraits.iOS)
@@ -56,6 +56,11 @@ class Scrubber extends Slider
 
         this._buffered = buffered;
         this.needsLayout = true;
+    }
+
+    layoutTraitsDidChange()
+    {
+        this.height = (this.layoutTraits & LayoutTraits.Compact) ? 15 : 23; 
     }
 
     // Protected

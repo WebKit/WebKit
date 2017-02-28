@@ -29,8 +29,7 @@ const LayoutTraits = {
     iOS            : 1 << 1,
     Fullscreen     : 1 << 2,
     Compact        : 1 << 3,
-    ReducedPadding : 1 << 4,
-    TightPadding   : 1 << 5
+    TightPadding   : 1 << 4
 };
 
 class LayoutItem extends LayoutNode

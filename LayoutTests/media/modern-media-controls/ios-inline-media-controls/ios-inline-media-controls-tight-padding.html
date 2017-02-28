@@ -6,7 +6,7 @@
 
 description("Testing <code>IOSInlineMediaControls</code> with tight padding.");
 
-const mediaControls = new MacOSInlineMediaControls({ width: 400 });
+const mediaControls = new IOSInlineMediaControls({ width: 400 });
 mediaControls.layoutTraits = LayoutTraits.iOS | LayoutTraits.TightPadding;
 
 shouldBe("mediaControls.leftContainer.leftMargin", "12");

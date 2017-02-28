@@ -46,7 +46,7 @@ media.addEventListener("webkitfullscreenchange", function() {
         media.webkitExitFullscreen()
     } else {
         debug("Media exited fullscreen");
-        shouldBe("mediaController.layoutTraits", "LayoutTraits.macOS");
+        shouldBe("mediaController.layoutTraits", "LayoutTraits.macOS | LayoutTraits.Compact");
         shouldBeTrue("mediaController.controls instanceof MacOSInlineMediaControls");
 
         debug("");

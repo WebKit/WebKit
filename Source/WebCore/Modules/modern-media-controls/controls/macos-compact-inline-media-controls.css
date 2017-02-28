@@ -39,10 +39,6 @@
     -webkit-mask-position-y: 6px;
 }
 
-.media-controls.mac.inline.compact .scrubber.slider {
-    top: 12px;
-}
-
 .media-controls.mac.inline.compact button.mute {
     -webkit-mask-position-y: 6px;
 }
@@ -55,8 +51,14 @@
 
 .media-controls.mac.inline.compact .time-label,
 .media-controls.mac.inline.compact .status-label {
-    top: 5px;
+    top: 4px;
     font-size: 12px;
+}
+
+/* Scrubber */
+
+.media-controls.mac.inline.compact .scrubber.slider {
+    top: 5px;
 }
 
 /* Volume slider */

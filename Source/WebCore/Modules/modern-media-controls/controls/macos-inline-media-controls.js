@@ -40,6 +40,7 @@ class MacOSInlineMediaControls extends MacOSMediaControls
         });
 
         this.rightContainer = new ButtonsContainer({
+            buttons: [this.muteButton, this.airplayButton, this.pipButton, this.tracksButton, this.fullscreenButton],
             cssClassName: "right"
         });
 
@@ -115,20 +116,6 @@ class MacOSInlineMediaControls extends MacOSMediaControls
             this.rightContainer.leftMargin = 12;
             this.rightContainer.rightMargin = 8;
             this.rightContainer.buttonMargin = 12;
-        } else if (layoutTraits & LayoutTraits.TightPadding) {
-            this.leftContainer.leftMargin = 12;
-            this.leftContainer.rightMargin = 12;
-            this.leftContainer.buttonMargin = 12;
-            this.rightContainer.leftMargin = 12;
-            this.rightContainer.rightMargin = 12;
-            this.rightContainer.buttonMargin = 12;
-        } else if (layoutTraits & LayoutTraits.ReducedPadding) {
-            this.leftContainer.leftMargin = 12;
-            this.leftContainer.rightMargin = 16;
-            this.leftContainer.buttonMargin = 16;
-            this.rightContainer.leftMargin = 0;
-            this.rightContainer.rightMargin = 12;
-            this.rightContainer.buttonMargin = 16;
         } else {
             this.leftContainer.leftMargin = 24;
             this.leftContainer.rightMargin = 24;
@@ -138,13 +125,9 @@ class MacOSInlineMediaControls extends MacOSMediaControls
             this.rightContainer.buttonMargin = 24;
         }
 
-        if (layoutTraits & LayoutTraits.Compact)
-            this.rightContainer.buttons = [this.muteButton, this.fullscreenButton];
-        else
-            this.rightContainer.buttons = [this.muteButton, this.airplayButton, this.pipButton, this.tracksButton, this.fullscreenButton];
-
         this.leftContainer.buttons.forEach(button => button.layoutTraitsDidChange());
         this.rightContainer.buttons.forEach(button => button.layoutTraitsDidChange());
+        this.timeControl.scrubber.layoutTraitsDidChange();
 
         this.element.classList.toggle("compact", layoutTraits & LayoutTraits.Compact);
     }

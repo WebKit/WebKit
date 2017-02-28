@@ -8,7 +8,7 @@ PASS mediaController.layoutTraits is LayoutTraits.macOS | LayoutTraits.Fullscree
 PASS mediaController.controls instanceof MacOSFullscreenMediaControls is true
 
 Media exited fullscreen
-PASS mediaController.layoutTraits is LayoutTraits.macOS
+PASS mediaController.layoutTraits is LayoutTraits.macOS | LayoutTraits.Compact
 PASS mediaController.controls instanceof MacOSInlineMediaControls is true
 
 PASS successfullyParsed is true

@@ -1,5 +1,32 @@
 2017-02-27  Antoine Quint  <graouts@apple.com>
 
+        [Modern Media Controls] Use compact mode by default on macOS
+        https://bugs.webkit.org/show_bug.cgi?id=168958
+        <rdar://problem/30748638>
+
+        Reviewed by Jon Lee.
+
+        Rebaseline tests to account for compact mode being the default mode for macOS
+        and remove tests that would check dynamically applying compact mode at some
+        threshold and the reduced padding mode.
+
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-compact-expected.txt:
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-compact.html:
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-reduced-padding-expected.txt: Removed.
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-reduced-padding.html: Removed.
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-tight-padding-expected.txt: Removed.
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-tight-padding.html: Removed.
+        * media/modern-media-controls/media-controller/media-controller-compact.html:
+        * media/modern-media-controls/media-controller/media-controller-fullscreen-change-expected.txt:
+        * media/modern-media-controls/media-controller/media-controller-fullscreen-change.html:
+        * media/modern-media-controls/media-controller/media-controller-reduced-padding-expected.txt: Removed.
+        * media/modern-media-controls/media-controller/media-controller-reduced-padding.html: Removed.
+        * media/modern-media-controls/media-controller/media-controller-toggle-compact-mode-expected.txt: Removed.
+        * media/modern-media-controls/media-controller/media-controller-toggle-compact-mode.html: Removed.
+        * platform/mac/TestExpectations:
+
+2017-02-27  Antoine Quint  <graouts@apple.com>
+
         [Modern Media Controls] Adhere to tight padding on iOS
         https://bugs.webkit.org/show_bug.cgi?id=168949
         <rdar://problem/30746164>

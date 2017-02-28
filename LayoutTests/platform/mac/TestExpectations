@@ -1477,6 +1477,7 @@ media/modern-media-controls/scrubber-support/ipad/scrubber-support-drag.html [ S
 media/modern-media-controls/ios-inline-media-controls/ios-inline-media-controls-audio-background.html [ Skip ]
 media/modern-media-controls/media-controller/media-controller-ios-only-enable-tap-gesture-recognizer-with-fades-when-idle.html [ Skip ]
 media/modern-media-controls/media-controller/media-controller-ios-do-not-hide-controls-when-tapping-button.html [ Skip ]
+media/modern-media-controls/media-controller/media-controller-tight-padding.html [ Skip ]
 
 # This one always times out on the bots, cannot reproduce locally.
 webkit.org/b/165234 media/modern-media-controls/audio/audio-controls-buttons.html [ Skip ]

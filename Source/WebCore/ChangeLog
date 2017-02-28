@@ -1,5 +1,36 @@
 2017-02-27  Antoine Quint  <graouts@apple.com>
 
+        [Modern Media Controls] Use compact mode by default on macOS
+        https://bugs.webkit.org/show_bug.cgi?id=168958
+        <rdar://problem/30748638>
+
+        Reviewed by Jon Lee.
+
+        We now use the compact layout mode by default on macOS.
+
+        * Modules/modern-media-controls/controls/layout-item.js: Remove the ReducedPadding trait.
+        * Modules/modern-media-controls/controls/macos-compact-inline-media-controls.css: 
+        (.media-controls.mac.inline.compact .time-label,): Vertically align the time label with
+        the scrubber in compact mode.
+        (.media-controls.mac.inline.compact .scrubber.slider): Correctly position the scrubber in
+        compact mode so that it's vertically aligned.
+        * Modules/modern-media-controls/controls/macos-inline-media-controls.js:
+        (MacOSInlineMediaControls.prototype.layoutTraitsDidChange): Remove handling of tight and
+        reduced padding traits since these do not apply to macOS anymore. We also notify the
+        scrubber of a layout trait change so that it may adjust its height.
+        * Modules/modern-media-controls/controls/scrubber.js:
+        (Scrubber):
+        (Scrubber.prototype.layoutTraitsDidChange): Adjust the height of the scrubber to match
+        compact layout traits.
+        * Modules/modern-media-controls/controls/time-control.js:
+        (TimeControl.prototype.get isSufficientlyWide): Adjust the minimum scrubber width for
+        TimeControl visibility to match compact layout traits.
+        * Modules/modern-media-controls/media/media-controller.js:
+        (MediaController.prototype.get layoutTraits): Use the compact layout trait by default
+        on macOS and make the tight padding specific to iOS.
+
+2017-02-27  Antoine Quint  <graouts@apple.com>
+
         [Modern Media Controls] Adhere to tight padding on iOS
         https://bugs.webkit.org/show_bug.cgi?id=168949
         <rdar://problem/30746164>
