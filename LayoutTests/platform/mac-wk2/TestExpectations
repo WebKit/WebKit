@@ -637,3 +637,5 @@ webkit.org/b/168336 [ Debug ] imported/w3c/web-platform-tests/streams/readable-s
 webkit.org/b/168089 [ Release ] animations/trigger-container-scroll-empty.html [ Pass Failure ]
 
 webkit.org/b/168391 [ ElCapitan Debug ] storage/indexeddb/modern/idbcursor-continue-primary-key-1.html [ Pass Timeout ]
+
+webkit.org/b/168380 [ ElCapitan Debug ] imported/w3c/web-platform-tests/IndexedDB/idb-binary-key-roundtrip.htm [ Pass Failure ]

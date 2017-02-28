@@ -1,3 +1,12 @@
+2017-02-28  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Mark imported/w3c/web-platform-tests/IndexedDB/idb-binary-key-roundtrip.htm as flaky on El Capitan.
+        https://bugs.webkit.org/show_bug.cgi?id=168380
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2017-02-27  Dave Hyatt  <hyatt@apple.com>
 
         Update flexbox to Blink's tip of tree
