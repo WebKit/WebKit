@@ -567,6 +567,8 @@
 		0FFD4D6018651FA300512F6E /* AsyncScrollingCoordinator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FFD4D5E18651FA300512F6E /* AsyncScrollingCoordinator.cpp */; };
 		0FFD4D6118651FA300512F6E /* AsyncScrollingCoordinator.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FFD4D5F18651FA300512F6E /* AsyncScrollingCoordinator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		10FB084B14E15C7E00A3DB98 /* PublicURLManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 10FB084A14E15C7E00A3DB98 /* PublicURLManager.h */; };
+		112B34D21E60B8A700BB310A /* SimpleLineLayoutPagination.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 112B34D01E60B8A700BB310A /* SimpleLineLayoutPagination.cpp */; };
+		112B34D51E60B98300BB310A /* SimpleLineLayoutPagination.h in Headers */ = {isa = PBXBuildFile; fileRef = 112B34D41E60B98300BB310A /* SimpleLineLayoutPagination.h */; };
 		120DE3ED1C86CA3E00B6D4DD /* WebAnimation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 120DE3EA1C80161C00B6D4DD /* WebAnimation.cpp */; };
 		120DE3F11C86CCC600B6D4DD /* AnimationEffect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 120DE3EE1C86CCBD00B6D4DD /* AnimationEffect.cpp */; };
 		120DE3F81C87C5A800B6D4DD /* JSWebAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = 120DE3F51C87C58E00B6D4DD /* JSWebAnimation.h */; };
@@ -7676,6 +7678,8 @@
 		0FFD4D5E18651FA300512F6E /* AsyncScrollingCoordinator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AsyncScrollingCoordinator.cpp; sourceTree = "<group>"; };
 		0FFD4D5F18651FA300512F6E /* AsyncScrollingCoordinator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AsyncScrollingCoordinator.h; sourceTree = "<group>"; };
 		10FB084A14E15C7E00A3DB98 /* PublicURLManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PublicURLManager.h; sourceTree = "<group>"; };
+		112B34D01E60B8A700BB310A /* SimpleLineLayoutPagination.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SimpleLineLayoutPagination.cpp; sourceTree = "<group>"; };
+		112B34D41E60B98300BB310A /* SimpleLineLayoutPagination.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimpleLineLayoutPagination.h; sourceTree = "<group>"; };
 		120DE3EA1C80161C00B6D4DD /* WebAnimation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebAnimation.cpp; sourceTree = "<group>"; };
 		120DE3EB1C80161C00B6D4DD /* WebAnimation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebAnimation.h; sourceTree = "<group>"; };
 		120DE3EC1C80161C00B6D4DD /* WebAnimation.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebAnimation.idl; sourceTree = "<group>"; };
@@ -24309,6 +24313,8 @@
 				585D6E021A1A792E00FA4F12 /* SimpleLineLayoutFlowContents.h */,
 				E4E9B11A18145692003ACCDF /* SimpleLineLayoutFunctions.cpp */,
 				E4E9B11C1814569C003ACCDF /* SimpleLineLayoutFunctions.h */,
+				112B34D41E60B98300BB310A /* SimpleLineLayoutPagination.h */,
+				112B34D01E60B8A700BB310A /* SimpleLineLayoutPagination.cpp */,
 				585D6DFB1A15355600FA4F12 /* SimpleLineLayoutResolver.cpp */,
 				E4E9B1181810916F003ACCDF /* SimpleLineLayoutResolver.h */,
 				582CB0541A78A2B200AFFCC4 /* SimpleLineLayoutTextFragmentIterator.cpp */,
@@ -27988,6 +27994,7 @@
 				931CBD11161A44E900E4C874 /* ScrollingStateTree.h in Headers */,
 				1AF62F2614DAFEA10041556C /* ScrollingThread.h in Headers */,
 				1AAADDA414DB409F00AF64B3 /* ScrollingTree.h in Headers */,
+				112B34D51E60B98300BB310A /* SimpleLineLayoutPagination.h in Headers */,
 				93C38C03164473DD00091EB2 /* ScrollingTreeFixedNode.h in Headers */,
 				0FEA3E88191B3BD7000F1B55 /* ScrollingTreeFrameScrollingNode.h in Headers */,
 				0FC4E411187F82E10045882C /* ScrollingTreeFrameScrollingNodeIOS.h in Headers */,
@@ -29526,6 +29533,7 @@
 				975CA28A130365F800E99AD9 /* Crypto.cpp in Sources */,
 				E172AF6D180F24C600FBADB9 /* CryptoAlgorithm.cpp in Sources */,
 				E125F8411824253A00D84CD9 /* CryptoAlgorithmAES_CBC.cpp in Sources */,
+				112B34D21E60B8A700BB310A /* SimpleLineLayoutPagination.cpp in Sources */,
 				E125F845182425C900D84CD9 /* CryptoAlgorithmAES_CBCMac.cpp in Sources */,
 				E1FE137A184D21BB00892F13 /* CryptoAlgorithmAES_KW.cpp in Sources */,
 				E1FE137E184D270200892F13 /* CryptoAlgorithmAES_KWMac.cpp in Sources */,

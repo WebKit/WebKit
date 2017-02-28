@@ -51,6 +51,7 @@
 #include "RenderView.h"
 #include "Settings.h"
 #include "SimpleLineLayoutFunctions.h"
+#include "SimpleLineLayoutPagination.h"
 #include "VerticalPositionCache.h"
 #include "VisiblePosition.h"
 
@@ -3670,6 +3671,10 @@ void RenderBlockFlow::layoutSimpleLines(bool relayoutChildren, LayoutUnit& repai
     if (needsLayout) {
         deleteLineBoxesBeforeSimpleLineLayout();
         m_simpleLineLayout = SimpleLineLayout::create(*this);
+    }
+    if (view().layoutState() && view().layoutState()->isPaginated()) {
+        m_simpleLineLayout->setIsPaginated();
+        SimpleLineLayout::adjustLinePositionsForPagination(*m_simpleLineLayout, *this);
     }
     for (auto& renderer : childrenOfType<RenderObject>(*this))
         renderer.clearNeedsLayout();

@@ -1,3 +1,47 @@
+2017-02-24  Zalan Bujtas  <zalan@apple.com>
+
+        Simple line layout: Re-adjust paginated lines when block height changes.
+        https://bugs.webkit.org/show_bug.cgi?id=168838
+        <rdar://problem/30701233>
+
+        Reviewed by Antti Koivisto.
+
+        When the estimated block height is wrong, we issue an additional layout on the inline children
+        so that we get the pagination right (this layout is setChildNeedsLayout(MarkOnlyThis) only).
+        Since the height change only affects the struts and page breaks (and again, the relayoutChildren flag is false)
+        we don't need to re-layout the content, but instead we just need to re-adjust the pagination for the simple lines. 
+        This patch also moves the pagination logic to SimpleLineLayoutPagination.cpp.
+
+        Not enabled yet.
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::layoutSimpleLines):
+        * rendering/RenderingAllInOne.cpp:
+        * rendering/SimpleLineLayout.cpp:
+        (WebCore::SimpleLineLayout::canUseForWithReason):
+        (WebCore::SimpleLineLayout::create):
+        (WebCore::SimpleLineLayout::Layout::create):
+        (WebCore::SimpleLineLayout::Layout::Layout):
+        (WebCore::SimpleLineLayout::computeLineTopAndBottomWithOverflow): Deleted.
+        (WebCore::SimpleLineLayout::computeLineBreakIndex): Deleted.
+        (WebCore::SimpleLineLayout::computeOffsetAfterLineBreak): Deleted.
+        (WebCore::SimpleLineLayout::setPageBreakForLine): Deleted.
+        (WebCore::SimpleLineLayout::updateMinimumPageHeight): Deleted.
+        (WebCore::SimpleLineLayout::adjustLinePositionsForPagination): Deleted.
+        * rendering/SimpleLineLayout.h:
+        (WebCore::SimpleLineLayout::Layout::setIsPaginated):
+        (WebCore::SimpleLineLayout::Layout::setLineStruts):
+        * rendering/SimpleLineLayoutPagination.cpp: Added.
+        (WebCore::SimpleLineLayout::computeLineTopAndBottomWithOverflow):
+        (WebCore::SimpleLineLayout::computeLineBreakIndex):
+        (WebCore::SimpleLineLayout::computeOffsetAfterLineBreak):
+        (WebCore::SimpleLineLayout::setPageBreakForLine):
+        (WebCore::SimpleLineLayout::updateMinimumPageHeight):
+        (WebCore::SimpleLineLayout::adjustLinePositionsForPagination):
+        * rendering/SimpleLineLayoutPagination.h: Added.
+
 2017-02-24  Alex Christensen  <achristensen@webkit.org>
 
         Non-special relative URLs should not ignore extra slashes
