@@ -322,12 +322,12 @@ body[dir=rtl] .tab-bar.collapsed > .item > .close {
     display: none;
 }
 
-.tab-bar.collapsed:not(.hide-titles) > .item:not(.pinned, .default-tab):hover > .icon,
+.tab-bar.collapsed:not(.hide-titles) > .item:not(.pinned):hover > .icon,
 .tab-bar.hide-titles > .item.selected:hover > .icon {
     display: none;
 }
 
-.tab-bar.collapsed:not(.hide-titles) > .item:not(.default-tab):hover > .close,
+.tab-bar.collapsed:not(.hide-titles) > .item:hover > .close,
 .tab-bar.hide-titles > .item.selected:hover > .close {
     display: inline-block;
 }

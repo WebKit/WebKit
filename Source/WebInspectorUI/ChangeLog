@@ -1,5 +1,18 @@
 2017-02-28  Devin Rousso  <dcrousso+webkit@gmail.com>
 
+        Web Inspector: It is possible to get the New Tab button in addition to the seven expected tabs
+        https://bugs.webkit.org/show_bug.cgi?id=168976
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/TabBar.css:
+        (.tab-bar.collapsed:not(.hide-titles) > .item:not(.pinned):hover > .icon):
+        (.tab-bar.collapsed:not(.hide-titles) > .item:hover > .close):
+        (.tab-bar.collapsed:not(.hide-titles) > .item:not(.pinned, .default-tab):hover > .icon): Deleted.
+        (.tab-bar.collapsed:not(.hide-titles) > .item:not(.default-tab):hover > .close): Deleted.
+
+2017-02-28  Devin Rousso  <dcrousso+webkit@gmail.com>
+
         Web Inspector: CSS variable uses that are unresolved should have an error or warning icon
         https://bugs.webkit.org/show_bug.cgi?id=168352
 
