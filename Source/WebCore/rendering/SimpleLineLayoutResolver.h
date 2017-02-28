@@ -109,6 +109,7 @@ public:
 private:
     enum class IndexType { First, Last };
     unsigned lineIndexForHeight(LayoutUnit, IndexType) const;
+    unsigned adjustLineIndexForStruts(LayoutUnit, unsigned lineIndexCandidate) const;
 
     const RenderBlockFlow& m_flowRenderer;
     const Layout& m_layout;

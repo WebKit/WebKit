@@ -132,6 +132,26 @@ RunResolver::RunResolver(const RenderBlockFlow& flow, const Layout& layout)
 {
 }
 
+unsigned RunResolver::adjustLineIndexForStruts(LayoutUnit y, unsigned lineIndexCandidate) const
+{
+    auto& struts = m_layout.struts();
+    // We need to offset the lineIndex with line struts when there's an actual strut before the candidate.
+    auto& strut = struts.first();
+    if (strut.lineBreak >= lineIndexCandidate)
+        return lineIndexCandidate;
+    // Jump over the first strut since we know that the line we are looking for is beyond the strut.
+    unsigned strutIndex = 1;
+    float topPosition = strut.lineBreak * m_lineHeight + strut.offset;
+    for (auto lineIndex = strut.lineBreak; lineIndex < m_layout.lineCount(); ++lineIndex) {
+        if (strutIndex < struts.size() && struts.at(strutIndex).lineBreak == lineIndex)
+            topPosition += struts.at(strutIndex++).offset;
+        if (y >= topPosition && y < (topPosition + m_lineHeight))
+            return lineIndex;
+        topPosition += m_lineHeight;
+    }
+    return m_layout.lineCount() - 1;
+}
+
 unsigned RunResolver::lineIndexForHeight(LayoutUnit height, IndexType type) const
 {
     ASSERT(m_lineHeight);
@@ -142,7 +162,10 @@ unsigned RunResolver::lineIndexForHeight(LayoutUnit height, IndexType type) cons
     else
         y -= m_baseline - m_ascent;
     y = std::max<float>(y, 0);
-    return std::min<unsigned>(y / m_lineHeight, m_layout.lineCount() - 1);
+    auto lineIndexCandidate =  std::min<unsigned>(y / m_lineHeight, m_layout.lineCount() - 1);
+    if (m_layout.hasLineStruts())
+        return adjustLineIndexForStruts(y, lineIndexCandidate);
+    return lineIndexCandidate;
 }
 
 WTF::IteratorRange<RunResolver::Iterator> RunResolver::rangeForRect(const LayoutRect& rect) const
