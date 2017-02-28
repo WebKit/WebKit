@@ -196,6 +196,9 @@ void LinkBuffer::copyCompactAndLinkCode(MacroAssembler& macroAssembler, void* ow
 
 void LinkBuffer::linkCode(MacroAssembler& macroAssembler, void* ownerUID, JITCompilationEffort effort)
 {
+    // Ensure that the end of the last invalidation point does not extend beyond the end of the buffer.
+    macroAssembler.label();
+
 #if !ENABLE(BRANCH_COMPACTION)
 #if defined(ASSEMBLER_HAS_CONSTANT_POOL) && ASSEMBLER_HAS_CONSTANT_POOL
     macroAssembler.m_assembler.buffer().flushConstantPool(false);
