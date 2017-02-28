@@ -1,3 +1,18 @@
+2017-02-26  Zan Dobersek  <zdobersek@igalia.com>
+
+        [CoordinatedGraphics] Remove CoordinatedGraphicsScene::paintToGraphicsContext()
+        https://bugs.webkit.org/show_bug.cgi?id=168903
+
+        Reviewed by Carlos Garcia Campos.
+
+        Remove the CoordinatedGraphicsScene::paintToGraphicsContext() method as it
+        is not used anywhere. Also enables removing the GraphicsContext pointer
+        member from the TextureMapper class.
+
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsScene.cpp:
+        (WebKit::CoordinatedGraphicsScene::paintToGraphicsContext): Deleted.
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsScene.h:
+
 2017-02-25  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] Unreviewed, document deficiency in webkit_website_data_manager_clear() API

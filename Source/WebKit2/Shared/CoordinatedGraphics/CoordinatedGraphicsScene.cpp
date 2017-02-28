@@ -125,32 +125,6 @@ void CoordinatedGraphicsScene::paintToCurrentGLContext(const TransformationMatri
         updateViewport();
 }
 
-void CoordinatedGraphicsScene::paintToGraphicsContext(PlatformGraphicsContext* platformContext, const Color& backgroundColor, bool drawsBackground)
-{
-    if (!m_textureMapper)
-        m_textureMapper = TextureMapper::create();
-    syncRemoteContent();
-    TextureMapperLayer* layer = rootLayer();
-
-    if (!layer)
-        return;
-
-    GraphicsContext graphicsContext(platformContext);
-    m_textureMapper->setGraphicsContext(&graphicsContext);
-    m_textureMapper->beginPainting();
-
-    IntRect clipRect = graphicsContext.clipBounds();
-    if (drawsBackground)
-        m_textureMapper->drawSolidColor(clipRect, TransformationMatrix(), backgroundColor);
-    else
-        m_textureMapper->drawSolidColor(clipRect, TransformationMatrix(), m_viewBackgroundColor);
-
-    layer->paint();
-    m_fpsCounter.updateFPSAndDisplay(*m_textureMapper, clipRect.location());
-    m_textureMapper->endPainting();
-    m_textureMapper->setGraphicsContext(0);
-}
-
 void CoordinatedGraphicsScene::updateViewport()
 {
     if (!m_client)
