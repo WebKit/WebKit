@@ -47,7 +47,7 @@ const Icons = {
 };
 
 const IconsWithFullscreenVariants = [Icons.Airplay, Icons.Tracks, Icons.Pause, Icons.EnterPiP, Icons.Play, Icons.VolumeDown, Icons.VolumeUp];
-const IconsWithCompactVariants = [Icons.Play, Icons.Pause, Icons.SkipBack, Icons.Volume, Icons.VolumeMuted, Icons.EnterFullscreen];
+const IconsWithCompactVariants = [Icons.Play, Icons.Pause, Icons.SkipBack, Icons.Volume, Icons.VolumeMuted, Icons.Airplay, Icons.EnterPiP, Icons.Tracks, Icons.EnterFullscreen];
 
 const iconService = new class IconService {
 

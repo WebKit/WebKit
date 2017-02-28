@@ -43,6 +43,18 @@
     -webkit-mask-position-y: 6px;
 }
 
+.media-controls.mac.inline.compact button.airplay {
+    -webkit-mask-position-y: 7px;
+}
+
+.media-controls.mac.inline.compact button.pip {
+    -webkit-mask-position-y: 7px;
+}
+
+.media-controls.mac.inline.compact button.tracks {
+    -webkit-mask-position-y: 7px;
+}
+
 .media-controls.mac.inline.compact button.fullscreen {
     -webkit-mask-position-y: 6.5px;
 }

@@ -1,3 +1,29 @@
+2017-02-28  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] Add missing compact mode assets for macOS
+        https://bugs.webkit.org/show_bug.cgi?id=168980
+        <rdar://problem/30763269>
+
+        Reviewed by Jon Lee.
+
+        Adding missing compact mode assets for the AirPlay, tracks, PiP and volume buttons.
+
+        * Modules/modern-media-controls/controls/icon-service.js:
+        * Modules/modern-media-controls/controls/macos-compact-inline-media-controls.css:
+        (.media-controls.mac.inline.compact button.airplay):
+        (.media-controls.mac.inline.compact button.pip):
+        (.media-controls.mac.inline.compact button.tracks):
+        * Modules/modern-media-controls/images/macOS/airplay-compact@1x.png: Added.
+        * Modules/modern-media-controls/images/macOS/airplay-compact@2x.png: Added.
+        * Modules/modern-media-controls/images/macOS/media-selection-compact@1x.png: Added.
+        * Modules/modern-media-controls/images/macOS/media-selection-compact@2x.png: Added.
+        * Modules/modern-media-controls/images/macOS/pip-in-compact@1x.png: Added.
+        * Modules/modern-media-controls/images/macOS/pip-in-compact@2x.png: Added.
+        * Modules/modern-media-controls/images/macOS/volume-compact@1x.png:
+        * Modules/modern-media-controls/images/macOS/volume-compact@2x.png:
+        * Modules/modern-media-controls/images/macOS/volume-mute-compact@1x.png: Added.
+        * Modules/modern-media-controls/images/macOS/volume-mute-compact@2x.png: Added.
+
 2017-02-28  Chris Dumez  <cdumez@apple.com>
 
         [iOS] Throttle requestAnimationFrame to 30fps in low power mode
