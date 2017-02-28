@@ -900,8 +900,22 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
             createCodeMirrorVariableTextMarkers(this._codeMirror, range, (marker, variable, variableString) => {
                 const dontCreateIfMissing = true;
                 let variableProperty = this._style.nodeStyles.computedStyle.propertyForName(variableString, dontCreateIfMissing);
-                if (!variableProperty)
+                if (!variableProperty) {
+                    let from = {line: marker.range.startLine, ch: marker.range.startColumn};
+                    let to = {line: marker.range.endLine, ch: marker.range.endColumn};
+                    this._codeMirror.markText(from, to, {className: "invalid"});
+
+                    let invalidMarker = document.createElement("button");
+                    invalidMarker.classList.add("invalid-warning-marker", "clickable");
+                    invalidMarker.title = WebInspector.UIString("The variable “%s” does not exist.\nClick to delete and open autocomplete.").format(variableString);
+                    invalidMarker.addEventListener("click", (event) => {
+                        this._codeMirror.replaceRange("", from, to);
+                        this._codeMirror.setCursor(from);
+                        this._completionController.completeAtCurrentPositionIfNeeded(true);
+                    });
+                    this._codeMirror.setBookmark(from, invalidMarker);
                     return;
+                }
 
                 let trimmedValue = variableProperty.value.trim();
                 let swatch = new WebInspector.InlineSwatch(WebInspector.InlineSwatch.Type.Variable, trimmedValue, this._codeMirror.getOption("readOnly"));

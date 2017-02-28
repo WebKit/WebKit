@@ -773,6 +773,7 @@ localizedStrings["The selector “%s” is invalid.\nClick to revert to the prev
 localizedStrings["The value “%s” is not supported for this property."] = "The value “%s” is not supported for this property.";
 localizedStrings["The value “%s” is not supported for this property.\nClick to delete and open autocomplete."] = "The value “%s” is not supported for this property.\nClick to delete and open autocomplete.";
 localizedStrings["The value “%s” needs units.\nClick to add “px” to the value."] = "The value “%s” needs units.\nClick to add “px” to the value.";
+localizedStrings["The variable “%s” does not exist.\nClick to delete and open autocomplete."] = "The variable “%s” does not exist.\nClick to delete and open autocomplete.";
 localizedStrings["The “%s”\ntable is empty."] = "The “%s”\ntable is empty.";
 localizedStrings["The “webkit” prefix is needed for this property.\nClick to insert a duplicate with the prefix."] = "The “webkit” prefix is needed for this property.\nClick to insert a duplicate with the prefix.";
 localizedStrings["The “webkit” prefix is not necessary.\nClick to insert a duplicate without the prefix."] = "The “webkit” prefix is not necessary.\nClick to insert a duplicate without the prefix.";

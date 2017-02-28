@@ -1,3 +1,16 @@
+2017-02-28  Devin Rousso  <dcrousso+webkit@gmail.com>
+
+        Web Inspector: CSS variable uses that are unresolved should have an error or warning icon
+        https://bugs.webkit.org/show_bug.cgi?id=168352
+
+        Reviewed by Brian Burg.
+
+        * Localizations/en.lproj/localizedStrings.js:
+
+        * UserInterface/Views/CSSStyleDeclarationTextEditor.js:
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._createInlineSwatches.update):
+        Insert a warning icon if the variable is not found in the computed style.
+
 2017-02-25  Devin Rousso  <dcrousso+webkit@gmail.com>
 
         Web Inspector: RTL: add support for Color Picker
