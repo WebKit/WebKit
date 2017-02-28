@@ -42,6 +42,13 @@ class CheckPatchRelevance(AbstractStep):
         "Source/JavaScriptCore/",
         "Source/WTF/"
         "Source/bmalloc/",
+        "Makefile",
+        "Makefile.shared",
+        "Source/Makefile",
+        "Source/Makefile.shared",
+        "Tools/Scripts/build-webkit",
+        "Tools/Scripts/build-jsc",
+        "Tools/Scripts/webkitdirs.pm",
     ]
 
     group_to_paths_mapping = {
