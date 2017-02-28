@@ -1,3 +1,14 @@
+2017-02-24  Alex Christensen  <achristensen@webkit.org>
+
+        .. should not remove windows drive letters in paths of file URLs
+        https://bugs.webkit.org/show_bug.cgi?id=168824
+
+        Reviewed by Youenn Fablet.
+
+        * fast/url/file-expected.txt:
+        * fast/url/file-http-base-expected.txt:
+        * fast/url/relative-win-expected.txt:
+
 2017-02-23  Tomas Popela  <tpopela@redhat.com>
 
         [GTK] Drag and drop is always moving the content even if copy is requested

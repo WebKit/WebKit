@@ -1,3 +1,20 @@
+2017-02-24  Alex Christensen  <achristensen@webkit.org>
+
+        .. should not remove windows drive letters in paths of file URLs
+        https://bugs.webkit.org/show_bug.cgi?id=168824
+
+        Reviewed by Youenn Fablet.
+
+        It's specified in https://url.spec.whatwg.org/#shorten-a-urls-path and helps behavior for browsers on Windows.
+        It can't hurt to pass a few more web platform tests, though.
+
+        * platform/URLParser.cpp:
+        (WebCore::URLParser::copyURLPartsUntil):
+        (WebCore::URLParser::shouldPopPath):
+        (WebCore::URLParser::popPath):
+        (WebCore::URLParser::parse):
+        * platform/URLParser.h:
+
 2017-02-23  Zalan Bujtas  <zalan@apple.com>
 
         Simple line layout: Adjust RunResolver::lineIndexForHeight with line struts.

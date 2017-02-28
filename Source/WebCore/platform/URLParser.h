@@ -57,6 +57,7 @@ private:
     URL m_url;
     Vector<LChar> m_asciiBuffer;
     bool m_urlIsSpecial { false };
+    bool m_urlIsFile { false };
     bool m_hostHasPercentOrNonASCII { false };
     String m_inputString;
     const void* m_inputBegin { nullptr };
@@ -123,6 +124,7 @@ private:
     template<typename CharacterType> void copyURLPartsUntil(const URL& base, URLPart, const CodePointIterator<CharacterType>&, bool& isUTF8Encoding);
     static size_t urlLengthUntilPart(const URL&, URLPart);
     void popPath();
+    bool shouldPopPath(unsigned);
 };
 
 }
