@@ -53,6 +53,7 @@ class Document;
 class DocumentLoader;
 class Frame;
 class ImageLoader;
+class Settings;
 class URL;
 
 // The CachedResourceLoader provides a per-context interface to the MemoryCache

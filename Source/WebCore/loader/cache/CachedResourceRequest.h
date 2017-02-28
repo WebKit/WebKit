@@ -76,6 +76,7 @@ public:
     void applyBlockedStatus(const ContentExtensions::BlockedStatus&);
 #endif
     void setDomainForCachePartition(Document&);
+    void setDomainForCachePartition(const String&);
     bool isLinkPreload() const { return m_isLinkPreload; }
     void setIsLinkPreload() { m_isLinkPreload = true; }
 

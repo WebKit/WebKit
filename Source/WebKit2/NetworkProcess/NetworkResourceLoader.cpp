@@ -472,8 +472,9 @@ void NetworkResourceLoader::continueWillSendRequest(ResourceRequest&& newRequest
 {
     RELEASE_LOG_IF_ALLOWED("continueWillSendRequest: (pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ")", m_parameters.webPageID, m_parameters.webFrameID, m_parameters.identifier);
 
-    // If there is a match in the network cache, we need to reuse the original cache policy.
+    // If there is a match in the network cache, we need to reuse the original cache policy and partition.
     newRequest.setCachePolicy(originalRequest().cachePolicy());
+    newRequest.setCachePartition(originalRequest().cachePartition());
 
 #if ENABLE(NETWORK_CACHE)
     if (m_isWaitingContinueWillSendRequestForCachedRedirect) {

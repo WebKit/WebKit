@@ -1,3 +1,13 @@
+2017-02-28  Alex Christensen  <achristensen@webkit.org>
+
+        Main resource requests need cachePartition
+        https://bugs.webkit.org/show_bug.cgi?id=168806
+
+        Reviewed by Brady Eidson.
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::continueWillSendRequest):
+
 2017-02-27  Alex Christensen  <achristensen@webkit.org>
 
         Begin enabling WebRTC on 64-bit

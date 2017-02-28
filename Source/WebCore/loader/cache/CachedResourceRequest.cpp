@@ -134,6 +134,11 @@ void CachedResourceRequest::setDomainForCachePartition(Document& document)
     m_resourceRequest.setDomainForCachePartition(document.topOrigin().domainForCachePartition());
 }
 
+void CachedResourceRequest::setDomainForCachePartition(const String& domain)
+{
+    m_resourceRequest.setDomainForCachePartition(domain);
+}
+
 static inline String acceptHeaderValueFromType(CachedResource::Type type)
 {
     switch (type) {

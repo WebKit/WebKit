@@ -1,5 +1,36 @@
 2017-02-28  Alex Christensen  <achristensen@webkit.org>
 
+        Main resource requests need cachePartition
+        https://bugs.webkit.org/show_bug.cgi?id=168806
+        <rdar://30639764>
+
+        Reviewed by Brady Eidson.
+
+        Test: http/tests/security/credentials-main-resource.html
+
+        r211751 caused an unintended regression on pages whose main resource is protected
+        by basic authentication.  We were not setting the cache partition for main resource
+        requests, and we use the cache partition now for credentials, so the credentials for
+        the main resource were not being put into a partition in the CredentialStorage that
+        would not be used for subresources of the page, whose requests had the correct partition
+        for the domain of the page.  This caused users to have to enter their credentials twice,
+        once for the main resource and once for any subresources.  This is fixed by using the
+        domain from the main resource request as the cache partition.  Elsewhere the Document is
+        used to get the cache partition, but there is no Document yet when requesting the main resource.
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::startLoadingMainResource):
+        Set the cache partition for the main resource loads based on the SecurityOrigin of the
+        initial request if we are loading the main resource for a new top document.  If the main resource
+        request is redirected, then we will still use the partition of the initial request because that is
+        what the user requested and that is where the user entered the credentials.
+        * loader/cache/CachedResourceLoader.h:
+        * loader/cache/CachedResourceRequest.cpp:
+        (WebCore::CachedResourceRequest::setDomainForCachePartition):
+        * loader/cache/CachedResourceRequest.h:
+
+2017-02-28  Alex Christensen  <achristensen@webkit.org>
+
         REGRESSION: LayoutTest http/tests/security/credentials-iframes.html is failing on ios-simulator
         https://bugs.webkit.org/show_bug.cgi?id=167967
 
