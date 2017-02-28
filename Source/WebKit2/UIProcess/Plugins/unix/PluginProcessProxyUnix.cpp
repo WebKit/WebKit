@@ -33,6 +33,7 @@
 #include "PluginProcessCreationParameters.h"
 #include "ProcessExecutablePath.h"
 #include <WebCore/FileSystem.h>
+#include <WebCore/PlatformDisplay.h>
 #include <sys/wait.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
@@ -84,6 +85,8 @@ bool PluginProcessProxy::scanPlugin(const String& pluginPath, RawPluginMetaData&
 #if PLATFORM(GTK)
     bool requiresGtk2 = pluginRequiresGtk2(pluginPath);
     if (requiresGtk2) {
+        if (PlatformDisplay::sharedDisplay().type() != PlatformDisplay::Type::X11)
+            return false;
 #if ENABLE(PLUGIN_PROCESS_GTK2)
         pluginProcessPath.append('2');
         if (!fileExists(pluginProcessPath))

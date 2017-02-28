@@ -72,6 +72,10 @@
 #include <bindings/ScriptValue.h>
 #include <wtf/text/StringBuilder.h>
 
+#if PLUGIN_ARCHITECTURE(X11)
+#include <WebCore/PlatformDisplay.h>
+#endif
+
 using namespace JSC;
 using namespace WebCore;
 
@@ -1677,7 +1681,8 @@ void PluginView::didFailLoad(WebFrame* webFrame, bool wasCancelled)
 uint64_t PluginView::createPluginContainer()
 {
     uint64_t windowID = 0;
-    m_webPage->sendSync(Messages::WebPageProxy::CreatePluginContainer(), Messages::WebPageProxy::CreatePluginContainer::Reply(windowID));
+    if (PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::X11)
+        m_webPage->sendSync(Messages::WebPageProxy::CreatePluginContainer(), Messages::WebPageProxy::CreatePluginContainer::Reply(windowID));
     return windowID;
 }
 
