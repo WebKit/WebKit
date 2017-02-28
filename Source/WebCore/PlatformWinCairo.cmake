@@ -37,6 +37,8 @@ list(APPEND WebCore_SOURCES
     platform/graphics/cairo/RefPtrCairo.cpp
     platform/graphics/cairo/TransformationMatrixCairo.cpp
 
+    platform/graphics/texmap/TextureMapperTiledBackingStore.cpp
+
     platform/graphics/win/FontCustomPlatformDataCairo.cpp
     platform/graphics/win/FontPlatformDataCairoWin.cpp
     platform/graphics/win/GlyphPageTreeNodeCairoWin.cpp

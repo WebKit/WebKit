@@ -1,5 +1,11 @@
 2017-02-27  Alex Christensen  <achristensen@webkit.org>
 
+        Fix WinCairo build.
+
+        * PlatformWinCairo.cmake:
+
+2017-02-27  Alex Christensen  <achristensen@webkit.org>
+
         Begin enabling WebRTC on 64-bit
         https://bugs.webkit.org/show_bug.cgi?id=168915
 
