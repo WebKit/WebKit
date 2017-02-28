@@ -2799,7 +2799,7 @@ media/modern-media-controls/start-support/start-support-fullscreen.html [ Skip ]
 media/modern-media-controls/volume-down-support [ Skip ]
 media/modern-media-controls/volume-up-support [ Skip ]
 
-# These tests are mouse-specific
+# These tests are macOS-specific or mouse-specific
 media/modern-media-controls/media-controller/media-controller-auto-hide-mouse-leave-after-play.html [ Skip ]
 media/modern-media-controls/media-controller/media-controller-auto-hide-mouse-enter-and-mouse-leave.html [ Skip ]
 media/modern-media-controls/media-controller/media-controller-auto-hide-mouse-enter-over-controls-bar.html [ Skip ]
@@ -2811,6 +2811,7 @@ media/modern-media-controls/media-controller/media-controller-click-on-video-bac
 media/modern-media-controls/media-controller/media-controller-click-on-video-background-should-pause-fullscreen.html [ Skip ]
 media/modern-media-controls/media-controller/media-controller-click-on-video-background-to-dismiss-tracks-panel-should-not-toggle-playback.html [ Skip ]
 media/modern-media-controls/media-controller/media-controller-click-on-video-controls-should-not-pause.html [ Skip ]
+media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-audio-background.html [ Skip ]
 
 # Tests designed for macOS that have iOS equivalents in "ipad" directories
 media/modern-media-controls/fullscreen-support/fullscreen-support-click.html [ Skip ]

@@ -1,3 +1,15 @@
+2017-02-27  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] Use a solid background for <audio> controls on macOS
+        https://bugs.webkit.org/show_bug.cgi?id=168941
+        <rdar://problem/30744316>
+
+        Unreviewed test gardening.
+
+        Skipping a macOS-specific test on iOS.
+
+        * platform/ios-simulator/TestExpectations:
+
 2017-02-27  Youenn Fablet  <youenn@apple.com>
 
         [WebRTC] Add support for libwebrtc TCP incoming connections
