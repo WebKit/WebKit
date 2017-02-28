@@ -382,6 +382,8 @@ float FontCascade::width(const TextRun& run, HashSet<const Font*>* fallbackFonts
 
 float FontCascade::widthForSimpleText(StringView text) const
 {
+    if (text.isNull() || text.isEmpty())
+        return 0;
     ASSERT(codePath(TextRun(text)) != FontCascade::Complex);
     float* cacheEntry = m_fonts->widthCache().add(text, std::numeric_limits<float>::quiet_NaN());
     if (cacheEntry && !std::isnan(*cacheEntry))
@@ -409,9 +411,12 @@ float FontCascade::widthForSimpleText(StringView text) const
     }
     if (hasKerningOrLigatures) {
         font.applyTransforms(&glyphs[0], &advances[0], glyphs.size(), enableKerning(), requiresShaping());
-        runWidth = 0;
+        // This is needed only to match the result of the slow path. Same glyph widths but different floating point arithmentics can
+        // produce different run width.
+        float runWidthDifferenceWithTransformApplied = -runWidth;
         for (auto& advance : advances)
-            runWidth += advance.width();
+            runWidthDifferenceWithTransformApplied += advance.width();
+        runWidth += runWidthDifferenceWithTransformApplied;
     }
 
     if (cacheEntry)
