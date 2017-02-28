@@ -55,9 +55,7 @@ void initializeThreading()
     static std::once_flag initializeThreadingOnceFlag;
 
     std::call_once(initializeThreadingOnceFlag, []{
-        WTF::double_conversion::initialize();
         WTF::initializeThreading();
-        WTF::initializeGCThreads();
         Options::initialize();
 #if ENABLE(WRITE_BARRIER_PROFILING)
         WriteBarrierCounters::initialize();

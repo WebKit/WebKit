@@ -41,7 +41,7 @@
 namespace WTF {
 
 static bool callbacksPaused; // This global variable is only accessed from main thread.
-#if !OS(DARWIN) || PLATFORM(GTK)
+#if !OS(DARWIN) && !PLATFORM(GTK)
 static ThreadIdentifier mainThreadIdentifier;
 #endif
 
@@ -53,28 +53,14 @@ static Deque<Function<void ()>>& functionQueue()
     return functionQueue;
 }
 
-#if !OS(DARWIN) || PLATFORM(GTK)
-
-void initializeMainThread()
-{
-    static bool initializedMainThread;
-    if (initializedMainThread)
-        return;
-    initializedMainThread = true;
-
-    mainThreadIdentifier = currentThread();
-
-    initializeMainThreadPlatform();
-    initializeGCThreads();
-}
-
-#else
-
+#if OS(DARWIN) || PLATFORM(GTK)
 static pthread_once_t initializeMainThreadKeyOnce = PTHREAD_ONCE_INIT;
 
 static void initializeMainThreadOnce()
 {
+    initializeThreading();
     initializeMainThreadPlatform();
+    initializeGCThreads();
 }
 
 void initializeMainThread()
@@ -82,17 +68,19 @@ void initializeMainThread()
     pthread_once(&initializeMainThreadKeyOnce, initializeMainThreadOnce);
 }
 
-#if !USE(WEB_THREAD)
+#if !USE(WEB_THREAD) && !PLATFORM(GTK)
 static void initializeMainThreadToProcessMainThreadOnce()
 {
+    initializeThreading();
     initializeMainThreadToProcessMainThreadPlatform();
+    initializeGCThreads();
 }
 
 void initializeMainThreadToProcessMainThread()
 {
     pthread_once(&initializeMainThreadKeyOnce, initializeMainThreadToProcessMainThreadOnce);
 }
-#else
+#elif !PLATFORM(GTK)
 static pthread_once_t initializeWebThreadKeyOnce = PTHREAD_ONCE_INIT;
 
 static void initializeWebThreadOnce()
@@ -106,6 +94,20 @@ void initializeWebThread()
 }
 #endif // !USE(WEB_THREAD)
 
+#else
+void initializeMainThread()
+{
+    static bool initializedMainThread;
+    if (initializedMainThread)
+        return;
+    initializedMainThread = true;
+
+    initializeThreading();
+    mainThreadIdentifier = currentThread();
+
+    initializeMainThreadPlatform();
+    initializeGCThreads();
+}
 #endif
 
 // 0.1 sec delays in UI is approximate threshold when they become noticeable. Have a limit that's half of that.
@@ -176,7 +178,7 @@ void setMainThreadCallbacksPaused(bool paused)
         scheduleDispatchFunctionsOnMainThread();
 }
 
-#if !OS(DARWIN) || PLATFORM(GTK)
+#if !OS(DARWIN) && !PLATFORM(GTK)
 bool isMainThread()
 {
     return currentThread() == mainThreadIdentifier;

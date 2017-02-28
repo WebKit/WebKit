@@ -33,6 +33,8 @@
 #include <glib.h>
 #include <wtf/RunLoop.h>
 
+static pthread_t mainThreadPthread;
+
 namespace WTF {
 
 class MainThreadDispatcher {
@@ -59,6 +61,13 @@ private:
 
 void initializeMainThreadPlatform()
 {
+    mainThreadPthread = pthread_self();
+}
+
+bool isMainThread()
+{
+    ASSERT(mainThreadPthread);
+    return pthread_equal(pthread_self(), mainThreadPthread);
 }
 
 void scheduleDispatchFunctionsOnMainThread()

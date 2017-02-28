@@ -51,7 +51,6 @@ void InitializeWebKit2()
 #endif
 
     JSC::initializeThreading();
-    WTF::initializeMainThread();
     RunLoop::initializeMainRunLoop();
 
 #if !LOG_DISABLED || !RELEASE_LOG_DISABLED
