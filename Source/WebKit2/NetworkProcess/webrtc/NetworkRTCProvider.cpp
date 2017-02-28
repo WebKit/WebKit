@@ -28,6 +28,7 @@
 
 #if USE(LIBWEBRTC)
 
+#include "Logging.h"
 #include "NetworkConnectionToWebProcess.h"
 #include "NetworkProcess.h"
 #include "NetworkRTCSocket.h"
@@ -55,6 +56,12 @@ NetworkRTCProvider::NetworkRTCProvider(NetworkConnectionToWebProcess& connection
     , m_rtcNetworkThread(createThread())
     , m_packetSocketFactory(makeUniqueRef<rtc::BasicPacketSocketFactory>(m_rtcNetworkThread.get()))
 {
+#if defined(NDEBUG)
+    rtc::LogMessage::LogToDebug(rtc::LS_NONE);
+#else
+    if (WebKit2LogWebRTC.state != WTFLogChannelOn)
+        rtc::LogMessage::LogToDebug(rtc::LS_WARNING);
+#endif
 }
 
 void NetworkRTCProvider::close()

@@ -1,5 +1,16 @@
 2017-02-28  Youenn Fablet  <youenn@apple.com>
 
+        [WebRTC] Limit libwebrtc logging in Debug build
+        https://bugs.webkit.org/show_bug.cgi?id=168974
+
+        Reviewed by Alex Christensen.
+
+        * NetworkProcess/webrtc/NetworkRTCProvider.cpp:
+        (WebKit::NetworkRTCProvider::NetworkRTCProvider):
+        * Platform/Logging.h:
+
+2017-02-28  Youenn Fablet  <youenn@apple.com>
+
         [WebRTC] NetworkRTCProvider should stop the network thread from the main thread
         https://bugs.webkit.org/show_bug.cgi?id=168972
 

@@ -29,6 +29,7 @@
 #if USE(LIBWEBRTC)
 
 #include "LibWebRTCAudioModule.h"
+#include "Logging.h"
 #include <webrtc/api/peerconnectionfactory.h>
 #include <webrtc/api/peerconnectionfactoryproxy.h>
 #include <webrtc/base/physicalsocketserver.h>
@@ -86,6 +87,9 @@ static void initializePeerConnectionFactoryAndThreads()
 {
 #if defined(NDEBUG)
     rtc::LogMessage::LogToDebug(rtc::LS_NONE);
+#else
+    if (LogWebRTC.state != WTFLogChannelOn)
+        rtc::LogMessage::LogToDebug(rtc::LS_WARNING);
 #endif
     auto& factoryAndThreads = staticFactoryAndThreads();
 
