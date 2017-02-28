@@ -1,5 +1,18 @@
 2017-02-27  Alexey Proskuryakov  <ap@apple.com>
 
+        Remove _WKWebsiteDataRecord.h
+        https://bugs.webkit.org/show_bug.cgi?id=168954
+
+        Reviewed by Dan Bernstein.
+
+        This doesn't seem to have ever been used, so better to remove it than to add an
+        implementation.
+
+        * UIProcess/API/Cocoa/_WKWebsiteDataRecord.h: Removed.
+        * WebKit2.xcodeproj/project.pbxproj:
+
+2017-02-27  Alexey Proskuryakov  <ap@apple.com>
+
         WKPageIsPlayingVideoInEnhancedFullscreen availability mismatch
         https://bugs.webkit.org/show_bug.cgi?id=168952
 
