@@ -142,6 +142,7 @@
 #include "ScrollAlignment.cpp"
 #include "SelectionSubtreeRoot.cpp"
 #include "SimpleLineLayout.cpp"
+#include "SimpleLineLayoutCoverage.cpp"
 #include "SimpleLineLayoutFlowContents.cpp"
 #include "SimpleLineLayoutFunctions.cpp"
 #include "SimpleLineLayoutPagination.cpp"

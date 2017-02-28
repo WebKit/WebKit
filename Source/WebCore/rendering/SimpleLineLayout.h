@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "SimpleLineLayoutCoverage.h"
 #include "TextFlags.h"
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -41,6 +42,8 @@ class RenderBlockFlow;
 namespace SimpleLineLayout {
 
 bool canUseFor(const RenderBlockFlow&);
+AvoidanceReasonFlags canUseForWithReason(const RenderBlockFlow&, IncludeReasons);
+
 
 struct Run {
 #if COMPILER(MSVC)

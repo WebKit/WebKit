@@ -569,6 +569,8 @@
 		10FB084B14E15C7E00A3DB98 /* PublicURLManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 10FB084A14E15C7E00A3DB98 /* PublicURLManager.h */; };
 		112B34D21E60B8A700BB310A /* SimpleLineLayoutPagination.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 112B34D01E60B8A700BB310A /* SimpleLineLayoutPagination.cpp */; };
 		112B34D51E60B98300BB310A /* SimpleLineLayoutPagination.h in Headers */ = {isa = PBXBuildFile; fileRef = 112B34D41E60B98300BB310A /* SimpleLineLayoutPagination.h */; };
+		11E067EC1E62461300162D16 /* SimpleLineLayoutCoverage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 11E067EB1E62461300162D16 /* SimpleLineLayoutCoverage.cpp */; };
+		11E067EE1E6246E500162D16 /* SimpleLineLayoutCoverage.h in Headers */ = {isa = PBXBuildFile; fileRef = 11E067ED1E6246E500162D16 /* SimpleLineLayoutCoverage.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		120DE3ED1C86CA3E00B6D4DD /* WebAnimation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 120DE3EA1C80161C00B6D4DD /* WebAnimation.cpp */; };
 		120DE3F11C86CCC600B6D4DD /* AnimationEffect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 120DE3EE1C86CCBD00B6D4DD /* AnimationEffect.cpp */; };
 		120DE3F81C87C5A800B6D4DD /* JSWebAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = 120DE3F51C87C58E00B6D4DD /* JSWebAnimation.h */; };
@@ -7680,6 +7682,8 @@
 		10FB084A14E15C7E00A3DB98 /* PublicURLManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PublicURLManager.h; sourceTree = "<group>"; };
 		112B34D01E60B8A700BB310A /* SimpleLineLayoutPagination.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SimpleLineLayoutPagination.cpp; sourceTree = "<group>"; };
 		112B34D41E60B98300BB310A /* SimpleLineLayoutPagination.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimpleLineLayoutPagination.h; sourceTree = "<group>"; };
+		11E067EB1E62461300162D16 /* SimpleLineLayoutCoverage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SimpleLineLayoutCoverage.cpp; sourceTree = "<group>"; };
+		11E067ED1E6246E500162D16 /* SimpleLineLayoutCoverage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimpleLineLayoutCoverage.h; sourceTree = "<group>"; };
 		120DE3EA1C80161C00B6D4DD /* WebAnimation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebAnimation.cpp; sourceTree = "<group>"; };
 		120DE3EB1C80161C00B6D4DD /* WebAnimation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebAnimation.h; sourceTree = "<group>"; };
 		120DE3EC1C80161C00B6D4DD /* WebAnimation.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebAnimation.idl; sourceTree = "<group>"; };
@@ -24309,6 +24313,8 @@
 				CDCFABBB18C0AE31006F8450 /* SelectionSubtreeRoot.h */,
 				E48944A0180B57D800F165D8 /* SimpleLineLayout.cpp */,
 				E48944A1180B57D800F165D8 /* SimpleLineLayout.h */,
+				11E067EB1E62461300162D16 /* SimpleLineLayoutCoverage.cpp */,
+				11E067ED1E6246E500162D16 /* SimpleLineLayoutCoverage.h */,
 				585D6E011A1A792E00FA4F12 /* SimpleLineLayoutFlowContents.cpp */,
 				585D6E021A1A792E00FA4F12 /* SimpleLineLayoutFlowContents.h */,
 				E4E9B11A18145692003ACCDF /* SimpleLineLayoutFunctions.cpp */,
@@ -25918,6 +25924,7 @@
 				97B38E27151C4271004622E9 /* DOMWindowNotifications.h in Headers */,
 				97D2AD0414B823A60093DF32 /* DOMWindowProperty.h in Headers */,
 				89F60B11157F686E0075E157 /* DOMWindowQuota.h in Headers */,
+				11E067EE1E6246E500162D16 /* SimpleLineLayoutCoverage.h in Headers */,
 				AA2A5AD616A4861600975A25 /* DOMWindowSpeechSynthesis.h in Headers */,
 				A8CCBB49151F831600AB7CE9 /* DOMWindowWebDatabase.h in Headers */,
 				BC53DA2E1143121E000D817E /* DOMWrapperWorld.h in Headers */,
@@ -32083,6 +32090,7 @@
 				9759E94214EF1CF80026A2DD /* TextTrackCue.cpp in Sources */,
 				071A9EC2168FBC43002629F9 /* TextTrackCueGeneric.cpp in Sources */,
 				9759E94514EF1CF80026A2DD /* TextTrackCueList.cpp in Sources */,
+				11E067EC1E62461300162D16 /* SimpleLineLayoutCoverage.cpp in Sources */,
 				076970861463AD8700F502CF /* TextTrackList.cpp in Sources */,
 				B1AD4E7313A12A4600846B27 /* TextTrackLoader.cpp in Sources */,
 				CD1E7347167BC78E009A885D /* TextTrackRepresentation.cpp in Sources */,
