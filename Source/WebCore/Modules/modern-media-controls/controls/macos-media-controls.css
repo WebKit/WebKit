@@ -50,3 +50,11 @@
     height: 100% !important;
     -webkit-appearance: none !important;
 }
+
+:host(audio) .media-controls.mac.inline > .controls-bar {
+    background-color: rgb(41, 41, 41);
+}
+
+:host(audio) .media-controls.mac.inline > .controls-bar > .background-tint {
+    display: none;
+}

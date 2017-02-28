@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<script src="../../../resources/js-test-pre.js"></script>
+<body>
+<audio src="../../content/test.wav" style="width: 300px;" controls></audio>
+<script type="text/javascript">
+
+window.jsTestIsAsync = true;
+
+description("Testing that we show a gray background for macOS audio elements.");
+
+const mediaControls = window.internals.shadowRoot(document.querySelector('audio')).lastElementChild;
+
+shouldBecomeEqual("mediaControls.querySelector('.controls-bar') instanceof HTMLDivElement", "true", () => {
+    shouldBeEqualToString("getComputedStyle(mediaControls.querySelector('.controls-bar')).backgroundColor", "rgb(41, 41, 41)");
+    shouldBeEqualToString("getComputedStyle(mediaControls.querySelector('.controls-bar > .background-tint')).display", "none");
+    finishJSTest();
+});
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
