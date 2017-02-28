@@ -1,3 +1,14 @@
+2017-02-28  Jonathan Bedard  <jbedard@apple.com>
+
+        webkitpy: Regular expression for parsing simctl device information is wrong for iPad Pro
+        https://bugs.webkit.org/show_bug.cgi?id=168394
+
+        Reviewed by Daniel Bates.
+
+        * Scripts/webkitpy/xcode/simulator.py:
+        (Simulator): Allow for parenthesis in device name.
+        * Scripts/webkitpy/xcode/simulator_unittest.py: Add iPad Pro to test.
+
 2017-02-28  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [macOS] Migrate off of CTFontCreateForCSS
