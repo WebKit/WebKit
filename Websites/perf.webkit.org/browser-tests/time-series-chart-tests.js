@@ -282,8 +282,9 @@ describe('TimeSeriesChart', () => {
         }
 
         it('should generate [0.5, 1.0, 1.5, 2.0] for [0.3, 2.3] when maxLabels is 5', () => {
-            return new BrowsingContext().importScripts(scripts, 'TimeSeriesChart', 'Metric').then((symbols) => {
-                const [TimeSeriesChart, Metric] = symbols;
+            const context = new BrowsingContext;
+            return ChartTest.importChartScripts(context).then((TimeSeriesChart) => {
+                const Metric = context.symbols.Metric;
                 const grid = TimeSeriesChart.computeValueGrid(0.3, 2.3, 5, Metric.makeFormatter('pt', 2));
                 expect(grid.map((item) => approximate(item.value))).to.eql([0.5, 1.0, 1.5, 2.0]);
                 expect(grid.map((item) => item.label)).to.eql(['0.5 pt', '1.0 pt', '1.5 pt', '2.0 pt']);
@@ -291,8 +292,9 @@ describe('TimeSeriesChart', () => {
         });
 
         it('should generate [0.4, 0.6, 0.8, 1, 1.2, 1.4, 1.6, 1.8, 2, 2.2] for [0.3, 2.3] when maxLabels is 10', () => {
-            return new BrowsingContext().importScripts(scripts, 'TimeSeriesChart', 'Metric').then((symbols) => {
-                const [TimeSeriesChart, Metric] = symbols;
+            const context = new BrowsingContext;
+            return ChartTest.importChartScripts(context).then((TimeSeriesChart) => {
+                const Metric = context.symbols.Metric;
                 const grid = TimeSeriesChart.computeValueGrid(0.3, 2.3, 10, Metric.makeFormatter('pt', 2));
                 expect(grid.map((item) => approximate(item.value))).to.eql([0.4, 0.6, 0.8, 1, 1.2, 1.4, 1.6, 1.8, 2, 2.2]);
                 expect(grid.map((item) => item.label)).to.eql(['0.4 pt', '0.6 pt', '0.8 pt', '1.0 pt', '1.2 pt', '1.4 pt', '1.6 pt', '1.8 pt', '2.0 pt', '2.2 pt']);
@@ -300,8 +302,9 @@ describe('TimeSeriesChart', () => {
         });
 
         it('should generate [1, 2] for [0.3, 2.3] when maxLabels is 2', () => {
-            return new BrowsingContext().importScripts(scripts, 'TimeSeriesChart', 'Metric').then((symbols) => {
-                const [TimeSeriesChart, Metric] = symbols;
+            const context = new BrowsingContext;
+            return ChartTest.importChartScripts(context).then((TimeSeriesChart) => {
+                const Metric = context.symbols.Metric;
                 const grid = TimeSeriesChart.computeValueGrid(0.3, 2.3, 2, Metric.makeFormatter('pt', 2));
                 expect(grid.map((item) => item.value)).to.eql([1, 2]);
                 expect(grid.map((item) => item.label)).to.eql(['1.0 pt', '2.0 pt']);
@@ -309,8 +312,9 @@ describe('TimeSeriesChart', () => {
         });
 
         it('should generate [0.4, 0.6, 0.8, 1.0, 1.2] for [0.3, 1.3] when maxLabels is 5', () => {
-            return new BrowsingContext().importScripts(scripts, 'TimeSeriesChart', 'Metric').then((symbols) => {
-                const [TimeSeriesChart, Metric] = symbols;
+            const context = new BrowsingContext;
+            return ChartTest.importChartScripts(context).then((TimeSeriesChart) => {
+                const Metric = context.symbols.Metric;
                 const grid = TimeSeriesChart.computeValueGrid(0.3, 1.3, 5, Metric.makeFormatter('pt', 2));
                 expect(grid.map((item) => approximate(item.value))).to.eql([0.4, 0.6, 0.8, 1.0, 1.2]);
                 expect(grid.map((item) => item.label)).to.eql(['0.4 pt', '0.6 pt', '0.8 pt', '1.0 pt', '1.2 pt']);
@@ -318,8 +322,9 @@ describe('TimeSeriesChart', () => {
         });
 
         it('should generate [0.2, 0.4, 0.6, 0.8, 1, 1.2] for [0.2, 1.3] when maxLabels is 10', () => {
-            return new BrowsingContext().importScripts(scripts, 'TimeSeriesChart', 'Metric').then((symbols) => {
-                const [TimeSeriesChart, Metric] = symbols;
+            const context = new BrowsingContext;
+            return ChartTest.importChartScripts(context).then((TimeSeriesChart) => {
+                const Metric = context.symbols.Metric;
                 const grid = TimeSeriesChart.computeValueGrid(0.2, 1.3, 10, Metric.makeFormatter('pt', 2));
                 expect(grid.map((item) => approximate(item.value))).to.eql([0.2, 0.4, 0.6, 0.8, 1, 1.2]);
                 expect(grid.map((item) => item.label)).to.eql(['0.2 pt', '0.4 pt', '0.6 pt', '0.8 pt', '1.0 pt', '1.2 pt']);
@@ -327,8 +332,9 @@ describe('TimeSeriesChart', () => {
         });
 
         it('should generate [0.5, 1.0] for [0.3, 1.3] when maxLabels is 4', () => {
-            return new BrowsingContext().importScripts(scripts, 'TimeSeriesChart', 'Metric').then((symbols) => {
-                const [TimeSeriesChart, Metric] = symbols;
+            const context = new BrowsingContext;
+            return ChartTest.importChartScripts(context).then((TimeSeriesChart) => {
+                const Metric = context.symbols.Metric;
                 const grid = TimeSeriesChart.computeValueGrid(0.3, 1.3, 4, Metric.makeFormatter('pt', 2));
                 expect(grid.map((item) => approximate(item.value))).to.eql([0.5, 1.0]);
                 expect(grid.map((item) => item.label)).to.eql(['0.5 pt', '1.0 pt']);
@@ -336,8 +342,9 @@ describe('TimeSeriesChart', () => {
         });
 
         it('should generate [10, 20, 30] for [4, 35] when maxLabels is 4', () => {
-            return new BrowsingContext().importScripts(scripts, 'TimeSeriesChart', 'Metric').then((symbols) => {
-                const [TimeSeriesChart, Metric] = symbols;
+            const context = new BrowsingContext;
+            return ChartTest.importChartScripts(context).then((TimeSeriesChart) => {
+                const Metric = context.symbols.Metric;
                 const grid = TimeSeriesChart.computeValueGrid(4, 35, 4, Metric.makeFormatter('pt', 2));
                 expect(grid.map((item) => item.value)).to.eql([10, 20, 30]);
                 expect(grid.map((item) => item.label)).to.eql(['10 pt', '20 pt', '30 pt']);
@@ -345,8 +352,9 @@ describe('TimeSeriesChart', () => {
         });
 
         it('should generate [10, 20, 30] for [4, 35] when maxLabels is 6', () => {
-            return new BrowsingContext().importScripts(scripts, 'TimeSeriesChart', 'Metric').then((symbols) => {
-                const [TimeSeriesChart, Metric] = symbols;
+            const context = new BrowsingContext;
+            return ChartTest.importChartScripts(context).then((TimeSeriesChart) => {
+                const Metric = context.symbols.Metric;
                 const grid = TimeSeriesChart.computeValueGrid(4, 35, 6, Metric.makeFormatter('pt', 2));
                 expect(grid.map((item) => item.value)).to.eql([10, 20, 30]);
                 expect(grid.map((item) => item.label)).to.eql(['10 pt', '20 pt', '30 pt']);
@@ -354,8 +362,9 @@ describe('TimeSeriesChart', () => {
         });
 
         it('should generate [10, 15, 20, 25, 30, 35] for [6, 35] when maxLabels is 6', () => {
-            return new BrowsingContext().importScripts(scripts, 'TimeSeriesChart', 'Metric').then((symbols) => {
-                const [TimeSeriesChart, Metric] = symbols;
+            const context = new BrowsingContext;
+            return ChartTest.importChartScripts(context).then((TimeSeriesChart) => {
+                const Metric = context.symbols.Metric;
                 const grid = TimeSeriesChart.computeValueGrid(6, 35, 6, Metric.makeFormatter('pt', 2));
                 expect(grid.map((item) => item.value)).to.eql([10, 15, 20, 25, 30, 35]);
                 expect(grid.map((item) => item.label)).to.eql(['10 pt', '15 pt', '20 pt', '25 pt', '30 pt', '35 pt']);
@@ -363,8 +372,9 @@ describe('TimeSeriesChart', () => {
         });
 
         it('should generate [110, 115, 120, 125, 130] for [107, 134] when maxLabels is 6', () => {
-            return new BrowsingContext().importScripts(scripts, 'TimeSeriesChart', 'Metric').then((symbols) => {
-                const [TimeSeriesChart, Metric] = symbols;
+            const context = new BrowsingContext;
+            return ChartTest.importChartScripts(context).then((TimeSeriesChart) => {
+                const Metric = context.symbols.Metric;
                 const grid = TimeSeriesChart.computeValueGrid(107, 134, 6, Metric.makeFormatter('pt', 3));
                 expect(grid.map((item) => item.value)).to.eql([110, 115, 120, 125, 130]);
                 expect(grid.map((item) => item.label)).to.eql(['110 pt', '115 pt', '120 pt', '125 pt', '130 pt']);
@@ -372,8 +382,9 @@ describe('TimeSeriesChart', () => {
         });
 
         it('should generate [5e7, 10e7] for [1e7, 1e8] when maxLabels is 4', () => {
-            return new BrowsingContext().importScripts(scripts, 'TimeSeriesChart', 'Metric').then((symbols) => {
-                const [TimeSeriesChart, Metric] = symbols;
+            const context = new BrowsingContext;
+            return ChartTest.importChartScripts(context).then((TimeSeriesChart) => {
+                const Metric = context.symbols.Metric;
                 const grid = TimeSeriesChart.computeValueGrid(1e7, 1e8, 4, Metric.makeFormatter('pt', 3));
                 expect(grid.map((item) => item.value)).to.eql([5e7, 10e7]);
                 expect(grid.map((item) => item.label)).to.eql(['50.0 Mpt', '100 Mpt']);
@@ -381,8 +392,9 @@ describe('TimeSeriesChart', () => {
         });
 
         it('should generate [2e7, 4e7, 6e7, 8e7, 10e7] for [1e7, 1e8] when maxLabels is 5', () => {
-            return new BrowsingContext().importScripts(scripts, 'TimeSeriesChart', 'Metric').then((symbols) => {
-                const [TimeSeriesChart, Metric] = symbols;
+            const context = new BrowsingContext;
+            return ChartTest.importChartScripts(context).then((TimeSeriesChart) => {
+                const Metric = context.symbols.Metric;
                 const grid = TimeSeriesChart.computeValueGrid(1e7, 1e8, 5, Metric.makeFormatter('pt', 3));
                 expect(grid.map((item) => item.value)).to.eql([2e7, 4e7, 6e7, 8e7, 10e7]);
                 expect(grid.map((item) => item.label)).to.eql(['20.0 Mpt', '40.0 Mpt', '60.0 Mpt', '80.0 Mpt', '100 Mpt']);
@@ -390,8 +402,9 @@ describe('TimeSeriesChart', () => {
         });
 
         it('should generate [-1.5, -1.0, -0.5, 0.0, 0.5] for [-1.8, 0.7] when maxLabels is 5', () => {
-            return new BrowsingContext().importScripts(scripts, 'TimeSeriesChart', 'Metric').then((symbols) => {
-                const [TimeSeriesChart, Metric] = symbols;
+            const context = new BrowsingContext;
+            return ChartTest.importChartScripts(context).then((TimeSeriesChart) => {
+                const Metric = context.symbols.Metric;
                 const grid = TimeSeriesChart.computeValueGrid(-1.8, 0.7, 5, Metric.makeFormatter('pt', 2));
                 expect(grid.map((item) => approximate(item.value))).to.eql([-1.5, -1.0, -0.5, 0.0, 0.5]);
                 expect(grid.map((item) => item.label)).to.eql(['-1.5 pt', '-1.0 pt', '-0.5 pt', '0.0 pt', '0.5 pt']);
@@ -399,8 +412,9 @@ describe('TimeSeriesChart', () => {
         });
 
         it('should generate [200ms, 400ms, 600ms, 800ms, 1.00s, 1.20s] for [0.2, 1.3] when maxLabels is 10 and unit is seconds', () => {
-            return new BrowsingContext().importScripts(scripts, 'TimeSeriesChart', 'Metric').then((symbols) => {
-                const [TimeSeriesChart, Metric] = symbols;
+            const context = new BrowsingContext;
+            return ChartTest.importChartScripts(context).then((TimeSeriesChart) => {
+                const Metric = context.symbols.Metric;
                 const grid = TimeSeriesChart.computeValueGrid(0.2, 1.3, 10, Metric.makeFormatter('s', 3));
                 expect(grid.map((item) => approximate(item.value))).to.eql([0.2, 0.4, 0.6, 0.8, 1, 1.2]);
                 expect(grid.map((item) => item.label)).to.eql(['200 ms', '400 ms', '600 ms', '800 ms', '1.00 s', '1.20 s']);
@@ -408,8 +422,9 @@ describe('TimeSeriesChart', () => {
         });
 
         it('should generate [2.0GB, 4.0GB, 6.0GB] for [1.2GB, 7.2GB] when maxLabels is 4 and unit is bytes', () => {
-            return new BrowsingContext().importScripts(scripts, 'TimeSeriesChart', 'Metric').then((symbols) => {
-                const [TimeSeriesChart, Metric] = symbols;
+            const context = new BrowsingContext;
+            return ChartTest.importChartScripts(context).then((TimeSeriesChart) => {
+                const Metric = context.symbols.Metric;
                 const gigabytes = Math.pow(1024, 3);
                 const grid = TimeSeriesChart.computeValueGrid(1.2 * gigabytes, 7.2 * gigabytes, 4, Metric.makeFormatter('B', 2));
                 expect(grid.map((item) => approximate(item.value))).to.eql([2 * gigabytes, 4 * gigabytes, 6 * gigabytes]);
@@ -418,8 +433,9 @@ describe('TimeSeriesChart', () => {
         });
 
         it('should generate [0.6GB, 0.8GB, 1.0GB, 1.2GB] for [0.53GB, 1.23GB] when maxLabels is 4 and unit is bytes', () => {
-            return new BrowsingContext().importScripts(scripts, 'TimeSeriesChart', 'Metric').then((symbols) => {
-                const [TimeSeriesChart, Metric] = symbols;
+            const context = new BrowsingContext;
+            return ChartTest.importChartScripts(context).then((TimeSeriesChart) => {
+                const Metric = context.symbols.Metric;
                 const gigabytes = Math.pow(1024, 3);
                 const grid = TimeSeriesChart.computeValueGrid(0.53 * gigabytes, 1.23 * gigabytes, 4, Metric.makeFormatter('B', 2));
                 expect(grid.map((item) => item.label)).to.eql(['0.6 GB', '0.8 GB', '1.0 GB', '1.2 GB']);
