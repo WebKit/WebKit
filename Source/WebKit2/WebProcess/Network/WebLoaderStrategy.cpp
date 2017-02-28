@@ -175,7 +175,7 @@ void WebLoaderStrategy::scheduleLoad(ResourceLoader& resourceLoader, CachedResou
     }
 
 #if USE(QUICK_LOOK)
-    if (resourceLoader.request().url().protocolIs(QLPreviewProtocol())) {
+    if (isQuickLookPreviewURL(resourceLoader.request().url())) {
         LOG(NetworkScheduling, "(WebProcess) WebLoaderStrategy::scheduleLoad, url '%s' will be handled as a QuickLook resource.", resourceLoader.url().string().utf8().data());
         RELEASE_LOG_IF_ALLOWED(resourceLoader, "scheduleLoad: URL will be handled as a QuickLook resource (frame = %p, resourceID = %" PRIu64 ")", resourceLoader.frame(), identifier);
         startLocalLoad(resourceLoader);

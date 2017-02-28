@@ -1,3 +1,31 @@
+2017-02-28  Tim Horton  <timothy_horton@apple.com>
+
+        [iOS] Getting QLPreviewProtocol slows down first navigation in Web process
+        https://bugs.webkit.org/show_bug.cgi?id=168940
+        <rdar://problem/29468999>
+
+        Reviewed by Simon Fraser.
+
+        No new tests, just a performance improvement.
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::isRemoteWebArchive):
+        * loader/PolicyChecker.cpp:
+        (WebCore::PolicyChecker::checkNavigationPolicy):
+        * loader/ResourceLoadNotifier.cpp:
+        (WebCore::ResourceLoadNotifier::dispatchWillSendRequest):
+        Make use of isQuickLookPreviewURL.
+
+        * loader/ios/QuickLook.h:
+        * loader/ios/QuickLook.mm:
+        (WebCore::isQuickLookPreviewURL):
+        Add isQuickLookPreviewURL, which first early-returns if the protocol
+        of the URL is a well-known protocol, and then falls back to loading QuickLook.
+
+        In a microbenchmark this is a 30-40% improvement in total time spent
+        loading an empty HTML document (wall-clock time between loadHTMLString
+        and didFinishNavigation).
+
 2017-02-28  Simon Fraser  <simon.fraser@apple.com>
 
         Add Geolocation and DeviceOrientation to features.json 

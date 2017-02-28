@@ -119,7 +119,7 @@ void ResourceLoadNotifier::dispatchWillSendRequest(DocumentLoader* loader, unsig
 {
 #if USE(QUICK_LOOK)
     // Always allow QuickLook-generated URLs based on the protocol scheme.
-    if (!request.isNull() && request.url().protocolIs(QLPreviewProtocol()))
+    if (!request.isNull() && isQuickLookPreviewURL(request.url()))
         return;
 #endif
 

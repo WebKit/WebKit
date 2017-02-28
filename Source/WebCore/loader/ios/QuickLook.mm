@@ -39,6 +39,7 @@
 #import "ResourceError.h"
 #import "ResourceLoader.h"
 #import "ResourceRequest.h"
+#import "SchemeRegistry.h"
 #import "SharedBuffer.h"
 #import <WebCore/NetworkLoadMetrics.h>
 #import <wtf/NeverDestroyed.h>
@@ -121,6 +122,14 @@ const char* WebCore::QLPreviewProtocol()
 {
     static NeverDestroyed<Vector<char>> previewProtocol(createQLPreviewProtocol());
     return previewProtocol.get().data();
+}
+
+bool WebCore::isQuickLookPreviewURL(const URL& url)
+{
+    // Use some known protocols as a short-cut to avoid loading the QuickLook framework.
+    if (url.protocolIsInHTTPFamily() || url.isBlankURL() || url.protocolIsBlob() || url.protocolIsData() || SchemeRegistry::shouldTreatURLSchemeAsLocal(url.protocol().toString()))
+        return NO;
+    return url.protocolIs(QLPreviewProtocol());
 }
 
 static RefPtr<QuickLookHandleClient>& testingClient()
