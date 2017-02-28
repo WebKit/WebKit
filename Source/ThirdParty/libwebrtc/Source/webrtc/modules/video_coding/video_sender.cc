@@ -110,14 +110,18 @@ int32_t VideoSender::RegisterSendCodec(const VideoCodec* sendCodec,
     numLayers = 1;
   }
 
+  // WEBKIT change: the frame dropper does not work consistently. We disable it for now.
+  // FIXME: Investigate why and enable it again. See https://bugs.webkit.org/show_bug.cgi?id=168973.
+  _mediaOpt.EnableFrameDropper(false);
+
   // If we have screensharing and we have layers, we disable frame dropper.
-  bool disable_frame_dropper =
-      numLayers > 1 && sendCodec->mode == kScreensharing;
-  if (disable_frame_dropper) {
-    _mediaOpt.EnableFrameDropper(false);
-  } else if (frame_dropper_enabled_) {
-    _mediaOpt.EnableFrameDropper(true);
-  }
+  // bool disable_frame_dropper =
+  //    numLayers > 1 && sendCodec->mode == kScreensharing;
+  // if (disable_frame_dropper) {
+  //   _mediaOpt.EnableFrameDropper(false);
+  // } else if (frame_dropper_enabled_) {
+  //   _mediaOpt.EnableFrameDropper(true);
+  // }
   {
     rtc::CritScope cs(&params_crit_);
     next_frame_types_.clear();

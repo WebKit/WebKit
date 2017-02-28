@@ -1,3 +1,13 @@
+2017-02-28  Youenn Fablet  <youenn@apple.com>
+
+        [WebRTC] LibWebRTC frame dropper is not working consistently
+        https://bugs.webkit.org/show_bug.cgi?id=168973
+
+        Reviewed by Eric Carlson.
+
+        * Source/webrtc/modules/video_coding/video_sender.cc: Disable temporarily the frame dropper as it is sometimes
+        dropping too many frames.
+
 2017-02-27  Youenn Fablet  <youenn@apple.com>
 
         [WebRTC] RealtimOutgoingVideoSource should not need to do image conversion
