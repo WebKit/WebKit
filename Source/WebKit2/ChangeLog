@@ -1,3 +1,13 @@
+2017-02-27  Brent Fulgham  <bfulgham@apple.com>
+
+        [Mac] Don't use undefined sandbox rule on macOS 10.11 or earlier
+        https://bugs.webkit.org/show_bug.cgi?id=168942
+        <rdar://problem/30743376>
+
+        Reviewed by Ryosuke Niwa.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2017-02-27  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Unreviewed, roll out r213065.
