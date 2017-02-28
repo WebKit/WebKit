@@ -1,3 +1,14 @@
+2017-02-28  Brady Eidson  <beidson@apple.com>
+
+        Fix API test regression(s):
+        REGRESSION (r213168): API test WKUserContentController.ScriptMessageHandlerMultipleHandlerRemoval crashing
+        https://bugs.webkit.org/show_bug.cgi?id=168991
+
+        Unreviewed.
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::createNewWebProcessRespectingProcessCountLimit):
+
 2017-02-28  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Data interaction should support attachment elements

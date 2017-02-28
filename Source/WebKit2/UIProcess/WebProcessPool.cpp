@@ -795,7 +795,8 @@ WebProcessProxy& WebProcessPool::createNewWebProcessRespectingProcessCountLimit(
     }
 
     // Choose the process with fewest pages.
-    auto* processes = mustMatchDataStore ? &m_processes : &processesMatchingDataStore;
+    auto* processes = mustMatchDataStore ? &processesMatchingDataStore : &m_processes;
+    ASSERT(!processes->isEmpty());
     auto& process = *std::min_element(processes->begin(), processes->end(), [](const RefPtr<WebProcessProxy>& a, const RefPtr<WebProcessProxy>& b) {
         return a->pageCount() < b->pageCount();
     });
