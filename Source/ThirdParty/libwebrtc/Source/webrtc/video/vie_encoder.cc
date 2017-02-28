@@ -787,6 +787,10 @@ void ViEEncoder::OnBitrateUpdated(uint32_t bitrate_bps,
 }
 
 void ViEEncoder::OveruseDetected() {
+#if defined(WEBRTC_WEBKIT_BUILD)
+  // WEBKIT Change: We disable OveruseDetected for now.
+  // FIXME: Investigate using it. See https://bugs.webkit.org/show_bug.cgi?id=168990.
+#else
   RTC_DCHECK_RUN_ON(&encoder_queue_);
   if (degradation_preference_ ==
           VideoSendStream::DegradationPreference::kMaintainResolution ||
@@ -805,6 +809,7 @@ void ViEEncoder::OveruseDetected() {
     ++cpu_restricted_counter_;
     source_proxy_->RequestResolutionLowerThan(current_pixel_count);
   }
+#endif
 }
 
 void ViEEncoder::NormalUsage() {
