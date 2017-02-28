@@ -320,6 +320,10 @@ static void overrideDefaults()
         else
             Options::gcIncrementScale() = 0;
     }
+
+#if PLATFORM(IOS)
+    Options::useSigillCrashAnalyzer() = true;
+#endif
 }
 
 static void recomputeDependentOptions()

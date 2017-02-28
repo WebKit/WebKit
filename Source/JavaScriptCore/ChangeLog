@@ -1,5 +1,15 @@
 2017-02-28  Mark Lam  <mark.lam@apple.com>
 
+        Enable the SigillCrashAnalyzer by default for iOS.
+        https://bugs.webkit.org/show_bug.cgi?id=168989
+
+        Reviewed by Keith Miller.
+
+        * runtime/Options.cpp:
+        (JSC::overrideDefaults):
+
+2017-02-28  Mark Lam  <mark.lam@apple.com>
+
         Remove setExclusiveThread() and peers from the JSLock.
         https://bugs.webkit.org/show_bug.cgi?id=168977
 
