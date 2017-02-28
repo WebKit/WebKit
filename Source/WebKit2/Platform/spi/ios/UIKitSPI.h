@@ -40,6 +40,7 @@
 #import <UIKit/UIImagePickerController_Private.h>
 #import <UIKit/UIImage_Private.h>
 #import <UIKit/UIInterface_Private.h>
+#import <UIKit/UIItemProvider_Private.h>
 #import <UIKit/UIKeyboardImpl.h>
 #import <UIKit/UIKeyboardIntl.h>
 #import <UIKit/UIKeyboard_Private.h>

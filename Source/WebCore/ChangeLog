@@ -1,3 +1,22 @@
+2017-02-28  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Data interaction should support attachment elements
+        https://bugs.webkit.org/show_bug.cgi?id=168916
+        <rdar://problem/30664519>
+
+        Reviewed by Ryosuke Niwa.
+
+        Teaches DragController to recognize and initiate dragging on attachment elements, and also adds a new
+        convenience method to the WebItemProviderPasteboard for block enumeration of available UIItemProviders. Covered
+        by a new API test: DataInteractionTests.AttachmentElementItemProviders.
+
+        * page/DragController.cpp:
+        (WebCore::DragController::draggableElement):
+        (WebCore::DragController::startDrag):
+        * platform/ios/WebItemProviderPasteboard.h:
+        * platform/ios/WebItemProviderPasteboard.mm:
+        (-[WebItemProviderPasteboard enumerateItemProvidersWithBlock:]):
+
 2017-02-28  Mark Lam  <mark.lam@apple.com>
 
         Remove setExclusiveThread() and peers from the JSLock.

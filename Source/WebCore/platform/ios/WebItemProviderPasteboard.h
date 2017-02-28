@@ -45,6 +45,8 @@ WEBCORE_EXPORT @interface WebItemProviderPasteboard : NSObject<AbstractPasteboar
 - (void)incrementPendingOperationCount;
 - (void)decrementPendingOperationCount;
 
+- (void)enumerateItemProvidersWithBlock:(void (^)(UIItemProvider *itemProvider, NSUInteger index, BOOL *stop))block;
+
 @end
 
 NS_ASSUME_NONNULL_END

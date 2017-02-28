@@ -1,3 +1,20 @@
+2017-02-28  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Data interaction should support attachment elements
+        https://bugs.webkit.org/show_bug.cgi?id=168916
+        <rdar://problem/30664519>
+
+        Reviewed by Ryosuke Niwa.
+
+        Adds a new unit test verifying that a client injected bundle is able to augment UIItemProvider data vended to
+        the UI process.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2Cocoa/attachment-element.html: Added.
+        * TestWebKitAPI/Tests/ios/DataInteractionTests.mm:
+        (-[CustomItemProviderWebView _adjustedDataInteractionItemProviders:]):
+        (TestWebKitAPI::TEST):
+
 2017-02-28  Chris Dumez  <cdumez@apple.com>
 
         [iOS] Throttle requestAnimationFrame to 30fps in low power mode

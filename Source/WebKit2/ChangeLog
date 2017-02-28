@@ -1,3 +1,21 @@
+2017-02-28  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Data interaction should support attachment elements
+        https://bugs.webkit.org/show_bug.cgi?id=168916
+        <rdar://problem/30664519>
+
+        Reviewed by Ryosuke Niwa.
+
+        Teaches WKContentView to recognize attachment elements as data interactive content, and add an internal hook to
+        adjust the list of item providers before initiating data interaction.
+
+        * Platform/spi/ios/UIKitSPI.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _adjustedDataInteractionItemProviders:]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView pointIsInDataInteractionContent:]):
+
 2017-02-28  Yongjun Zhang  <yongjun_zhang@apple.com>
 
         Add delegate method to handle images with alternate data.

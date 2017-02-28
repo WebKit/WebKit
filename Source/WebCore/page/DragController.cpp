@@ -64,6 +64,7 @@
 #include "PlatformKeyboardEvent.h"
 #include "PluginDocument.h"
 #include "PluginViewBase.h"
+#include "Position.h"
 #include "RenderFileUploadControl.h"
 #include "RenderImage.h"
 #include "RenderView.h"
@@ -75,6 +76,7 @@
 #include "StyleProperties.h"
 #include "Text.h"
 #include "TextEvent.h"
+#include "VisiblePosition.h"
 #include "htmlediting.h"
 #include "markup.h"
 
@@ -654,12 +656,20 @@ Element* DragController::draggableElement(const Frame* sourceFrame, Element* sta
     if (!startElement)
         return nullptr;
 #if ENABLE(ATTACHMENT_ELEMENT)
-    // Unlike image elements, attachment elements are immediately selected upon mouse down,
-    // but for those elements we still want to use the single element drag behavior as long as
-    // the element is the only content of the selection.
-    const VisibleSelection& selection = sourceFrame->selection().selection();
-    if (selection.isRange() && is<HTMLAttachmentElement>(selection.start().anchorNode()) && selection.start().anchorNode() == selection.end().anchorNode())
-        state.type = DragSourceActionNone;
+    if (is<HTMLAttachmentElement>(startElement)) {
+        auto selection = sourceFrame->selection().selection();
+        bool isSingleAttachmentSelection = selection.start() == Position(startElement, Position::PositionIsBeforeAnchor) && selection.end() == Position(startElement, Position::PositionIsAfterAnchor);
+        bool isAttachmentElementInCurrentSelection = false;
+        if (auto selectedRange = selection.toNormalizedRange()) {
+            auto compareResult = selectedRange->compareNode(*startElement);
+            isAttachmentElementInCurrentSelection = !compareResult.hasException() && compareResult.releaseReturnValue() == Range::NODE_INSIDE;
+        }
+
+        if (!isAttachmentElementInCurrentSelection || isSingleAttachmentSelection) {
+            state.type = DragSourceActionAttachment;
+            return startElement;
+        }
+    }
 #endif
 
     for (auto* renderer = startElement->renderer(); renderer; renderer = renderer->parent()) {
@@ -997,11 +1007,22 @@ bool DragController::startDrag(Frame& src, const DragState& state, DragOperation
     }
 
 #if ENABLE(ATTACHMENT_ELEMENT)
-    if (!attachmentURL.isEmpty() && (m_dragSourceAction & DragSourceActionAttachment)) {
+    if (m_dragSourceAction & DragSourceActionAttachment) {
         if (!dataTransfer.pasteboard().hasData()) {
-            m_draggingAttachmentURL = attachmentURL;
             selectElement(element);
-            declareAndWriteAttachment(dataTransfer, element, attachmentURL);
+            if (!attachmentURL.isEmpty()) {
+                // Use the attachment URL specified by the file attribute to populate the pasteboard.
+                m_draggingAttachmentURL = attachmentURL;
+                declareAndWriteAttachment(dataTransfer, element, attachmentURL);
+            } else if (src.editor().client()) {
+#if PLATFORM(COCOA)
+                // Otherwise, if no file URL is specified, call out to the injected bundle to populate the pasteboard with data.
+                auto& editor = src.editor();
+                editor.willWriteSelectionToPasteboard(src.selection().toNormalizedRange());
+                editor.writeSelectionToPasteboard(dataTransfer.pasteboard());
+                editor.didWriteSelectionToPasteboard();
+#endif
+            }
         }
         
         m_client.willPerformDragSourceAction(DragSourceActionAttachment, dragOrigin, dataTransfer);

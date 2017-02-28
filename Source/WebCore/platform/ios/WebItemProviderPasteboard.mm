@@ -248,6 +248,11 @@ static BOOL isImageType(NSString *type)
     _pendingOperationCount--;
 }
 
+- (void)enumerateItemProvidersWithBlock:(void (^)(UIItemProvider *itemProvider, NSUInteger index, BOOL *stop))block
+{
+    [_itemProviders enumerateObjectsUsingBlock:block];
+}
+
 @end
 
 #endif // ENABLE(DATA_INTERACTION)

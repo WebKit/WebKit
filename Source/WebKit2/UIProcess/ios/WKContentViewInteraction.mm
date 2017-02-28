@@ -1437,7 +1437,7 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
     InteractionInformationRequest request(roundedIntPoint(point));
     [self ensurePositionInformationIsUpToDate:request];
 
-    if (_positionInformation.isImage || _positionInformation.isLink)
+    if (_positionInformation.isImage || _positionInformation.isLink || _positionInformation.isAttachment)
         return YES;
 
     return _positionInformation.hasSelectionAtPosition;
