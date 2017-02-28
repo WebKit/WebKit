@@ -91,9 +91,6 @@ interface IWebPreferencesPrivate : IUnknown
     HRESULT experimentalNotificationsEnabled([out, retval] BOOL *enabled);
     HRESULT setExperimentalNotificationsEnabled([in] BOOL enabled);
 
-    HRESULT allowsPageCacheWithWindowOpener([out, retval] BOOL* usesPageCache);
-    HRESULT setAllowsPageCacheWithWindowOpener([in] BOOL usesPageCache);
-
     HRESULT setShouldUseHighResolutionTimers([in] BOOL useHighResolutionTimers);
     HRESULT shouldUseHighResolutionTimers([out, retval] BOOL* useHighResolutionTimers);
 
@@ -194,4 +191,7 @@ interface IWebPreferencesPrivate3 : IWebPreferencesPrivate2
 interface IWebPreferencesPrivate4 : IWebPreferencesPrivate3
 {
     HRESULT setApplicationId([in] BSTR applicationId);
+
+    HRESULT allowsPageCacheWithWindowOpener([out, retval] BOOL* usesPageCache);
+    HRESULT setAllowsPageCacheWithWindowOpener([in] BOOL usesPageCache);
 }
