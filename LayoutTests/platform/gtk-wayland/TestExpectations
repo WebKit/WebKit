@@ -72,6 +72,7 @@ webkit.org/b/157179 editing/pasteboard/dataTransfer-setData-getData.html [ Crash
 webkit.org/b/157179 editing/pasteboard/drag-and-drop-image-contenteditable.html [ Crash ]
 webkit.org/b/157179 editing/pasteboard/drag-and-drop-inputimage-contenteditable.html [ Crash ]
 webkit.org/b/157179 editing/pasteboard/drag-and-drop-objectimage-contenteditable.html [ Crash ]
+webkit.org/b/157179 editing/pasteboard/drag-drop-copy-content.html [ Crash ]
 webkit.org/b/157179 editing/pasteboard/drag-drop-input-textarea.html [ Crash ]
 webkit.org/b/157179 editing/pasteboard/drag-drop-modifies-page.html [ Crash ]
 webkit.org/b/157179 editing/pasteboard/drag-drop-url-text.html [ Crash ]

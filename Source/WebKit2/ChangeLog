@@ -1,3 +1,16 @@
+2017-02-23  Tomas Popela  <tpopela@redhat.com>
+
+        [GTK] Drag and drop is always moving the content even if copy is requested
+        https://bugs.webkit.org/show_bug.cgi?id=168424
+
+        Reviewed by Carlos Garcia Campos.
+
+        Drag and drop is always moving the content around even if the copy is
+        requested (i.e. by pressing the Control key).
+
+        * UIProcess/gtk/DragAndDropHandler.cpp:
+        (WebKit::DragAndDropHandler::drop):
+
 2017-02-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Better handle Thread and RunLoop initialization
