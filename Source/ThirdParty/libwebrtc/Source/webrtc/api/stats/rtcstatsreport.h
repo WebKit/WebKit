@@ -17,6 +17,7 @@
 #include <vector>
 
 #include "webrtc/api/stats/rtcstats.h"
+#include "webrtc/base/export.h"
 #include "webrtc/base/refcount.h"
 #include "webrtc/base/scoped_ref_ptr.h"
 
@@ -24,7 +25,7 @@ namespace webrtc {
 
 // A collection of stats.
 // This is accessible as a map from |RTCStats::id| to |RTCStats|.
-class RTCStatsReport : public rtc::RefCountInterface {
+class WEBRTC_EXPORT RTCStatsReport : public rtc::RefCountInterface {
  public:
   typedef std::map<std::string, std::unique_ptr<const RTCStats>> StatsMap;
 

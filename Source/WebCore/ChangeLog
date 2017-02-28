@@ -1,3 +1,120 @@
+2017-02-27  Youenn Fablet  <youenn@apple.com>
+
+        [WebRTC] Support modern RTCStatsReport
+        https://bugs.webkit.org/show_bug.cgi?id=166916
+        <rdar://problem/30293780>
+
+        Reviewed by Alex Christensen.
+
+        Updating binding generator and IDL parser to handle maplike.
+        Covered by binding tests.
+
+        Added support for maplike binding from JS wrapper to DOM class.
+        The principle is to have the JSXX wrapper having a @backingMap slot containing a Map.
+        All maplike methods are forwarded to the corresponding Map methods.
+        The XX object is responsible to add key/value pairs using a helper routine.
+        The creation of the Map is done at creation of the JSXX wrapper.
+
+        DOM class is interacting with the map through DOMMapLike.
+        Extracted DOMGuarded from DOM promise implementation.
+        This allows reusing this code for DOMMapLike.
+
+        Covered by binding tests and manual tests.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * Modules/mediastream/RTCStatsReport.h:
+        (WebCore::RTCStatsReport::InboundRTPStreamStats::InboundRTPStreamStats):
+        (WebCore::RTCStatsReport::OutboundRTPStreamStats::OutboundRTPStreamStats):
+        (WebCore::RTCStatsReport::create):
+        (WebCore::RTCStatsReport::synchronizeBackingMap):
+        (WebCore::RTCStatsReport::backingMap):
+        (WebCore::RTCStatsReport::addStats):
+        * Modules/mediastream/RTCStatsReport.idl:
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.cpp:
+        (WebCore::fromStdString):
+        (WebCore::fillRTCStats):
+        (WebCore::fillRTCRTPStreamStats):
+        (WebCore::fillInboundRTPStreamStats):
+        (WebCore::fillOutboundRTPStreamStats):
+        (WebCore::LibWebRTCMediaEndpoint::StatsCollector::OnStatsDelivered):
+        * Modules/mediastream/libwebrtc/LibWebRTCPeerConnectionBackend.h:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSDOMBindingInternals.js: Added.
+        (mapLikeForEach):
+        * bindings/js/JSDOMGlobalObject.cpp:
+        (WebCore::JSDOMGlobalObject::visitChildren):
+        * bindings/js/JSDOMGlobalObject.h:
+        * bindings/js/JSDOMGuardedObject.cpp: Added.
+        (WebCore::DOMGuardedObject::DOMGuardedObject):
+        (WebCore::DOMGuardedObject::~DOMGuardedObject):
+        (WebCore::DOMGuardedObject::clear):
+        (WebCore::DOMGuardedObject::contextDestroyed):
+        * bindings/js/JSDOMGuardedObject.h: Added.
+        (WebCore::DOMGuardedObject::isSuspended):
+        (WebCore::DOMGuardedObject::visitAggregate):
+        (WebCore::DOMGuardedObject::guardedObject):
+        (WebCore::DOMGuardedObject::globalObject):
+        (WebCore::DOMGuardedObject::isEmpty):
+        (WebCore::DOMGuarded::DOMGuarded):
+        (WebCore::DOMGuarded::guarded):
+        * bindings/js/JSDOMMapLike.cpp: Added.
+        (WebCore::getBackingMap):
+        (WebCore::initializeBackingMap):
+        (WebCore::createBackingMap):
+        (WebCore::forwardAttributeGetterToBackingMap):
+        (WebCore::forwardFunctionCallToBackingMap):
+        (WebCore::forwardForEachCallToBackingMap):
+        * bindings/js/JSDOMMapLike.h: Added.
+        (WebCore::DOMMapLike::set):
+        (WebCore::synchronizeBackingMap):
+        (WebCore::forwardSizeToMapLike):
+        (WebCore::forwardEntriesToMapLike):
+        (WebCore::forwardKeysToMapLike):
+        (WebCore::forwardValuesToMapLike):
+        (WebCore::forwardClearToMapLike):
+        (WebCore::forwardForEachToMapLike):
+        (WebCore::forwardHasToMapLike):
+        (WebCore::forwardAddToMapLike):
+        (WebCore::forwardDeleteToMapLike):
+        * bindings/js/JSDOMPromise.cpp:
+        (WebCore::DeferredPromise::promise):
+        (WebCore::DeferredPromise::reject):
+        * bindings/js/JSDOMPromise.h:
+        (WebCore::DeferredPromise::resolve):
+        (WebCore::DeferredPromise::resolveWithNewlyCreated):
+        (WebCore::DeferredPromise::reject):
+        (WebCore::DeferredPromise::resolveWithCallback):
+        (WebCore::DeferredPromise::rejectWithCallback):
+        (WebCore::DeferredPromise::DeferredPromise):
+        (WebCore::DeferredPromise::deferred):
+        * bindings/js/WebCoreBuiltinNames.h:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (PrototypeFunctionCount):
+        (GeneratePropertiesHashTable):
+        (InterfaceNeedsIterator):
+        (GenerateImplementation):
+        (GenerateParametersCheck):
+        * bindings/scripts/IDLParser.pm:
+        (assert):
+        (parseAttributeOrOperationOrIterator):
+        (parseSerializer):
+        (parseAttributeOrOperationRest):
+        (parseAttribute):
+        (parseAttributeRest):
+        (parseOperationOrIterator):
+        (parseOptionalIterableInterface):
+        (parseMapLikeRest):
+        (parseMapLikeProperties):
+        (parseOperationRest):
+        (applyMemberList):
+        * bindings/scripts/test/JS/JSMapLike.cpp: Added.
+        * bindings/scripts/test/JS/JSMapLike.h: Added.
+        * bindings/scripts/test/JS/JSReadOnlyMapLike.cpp: Added.
+        * bindings/scripts/test/JS/JSReadOnlyMapLike.h: Added.
+        * bindings/scripts/test/TestMapLike.idl: Added.
+        * bindings/scripts/test/TestReadOnlyMapLike.idl: Added.
+
 2017-02-27  Mark Lam  <mark.lam@apple.com>
 
         Introduce a VM Traps mechanism and refactor Watchdog to use it.

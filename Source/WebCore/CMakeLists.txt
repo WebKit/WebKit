@@ -935,7 +935,6 @@ set(WebCore_SOURCES
     Modules/mediastream/RTCRtpSender.cpp
     Modules/mediastream/RTCRtpTransceiver.cpp
     Modules/mediastream/RTCSessionDescription.cpp
-    Modules/mediastream/RTCStatsReport.cpp
     Modules/mediastream/RTCTrackEvent.cpp
     Modules/mediastream/SDPProcessor.cpp
     Modules/mediastream/UserMediaController.cpp
@@ -1121,6 +1120,8 @@ set(WebCore_SOURCES
     bindings/js/JSDOMExceptionHandling.cpp
     bindings/js/JSDOMGlobalObject.cpp
     bindings/js/JSDOMGlobalObjectTask.cpp
+    bindings/js/JSDOMGuardedObject.cpp
+    bindings/js/JSDOMMapLike.cpp
     bindings/js/JSDOMPromise.cpp
     bindings/js/JSDOMStringMapCustom.cpp
     bindings/js/JSDOMWindowBase.cpp
@@ -3700,6 +3701,7 @@ set(WebCore_BUILTINS_SOURCES
     ${WEBCORE_DIR}/Modules/streams/StreamInternals.js
     ${WEBCORE_DIR}/Modules/streams/WritableStream.js
     ${WEBCORE_DIR}/Modules/streams/WritableStreamInternals.js
+    ${WEBCORE_DIR}/bindings/js/JSDOMBindingInternals.js
     ${WEBCORE_DIR}/xml/XMLHttpRequest.js
 )
 

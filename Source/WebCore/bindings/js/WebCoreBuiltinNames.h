@@ -35,6 +35,7 @@ namespace WebCore {
     macro(appendFromJS) \
     macro(associatedReadableByteStreamController) \
     macro(autoAllocateChunkSize) \
+    macro(backingMap) \
     macro(body) \
     macro(byobRequest) \
     macro(cancel) \

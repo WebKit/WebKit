@@ -14,6 +14,7 @@
 #include <string>
 
 #include "webrtc/api/stats/rtcstats.h"
+#include "webrtc/base/export.h"
 
 namespace webrtc {
 
@@ -301,7 +302,7 @@ class RTCRTPStreamStats : public RTCStats {
 // https://w3c.github.io/webrtc-stats/#inboundrtpstats-dict*
 // TODO(hbos): Finish implementation and support the remote case
 // |is_remote = true|. Tracking bug crbug.com/657855
-class RTCInboundRTPStreamStats final : public RTCRTPStreamStats {
+class WEBRTC_EXPORT RTCInboundRTPStreamStats final : public RTCRTPStreamStats {
  public:
   WEBRTC_RTCSTATS_DECL();
 
@@ -343,7 +344,7 @@ class RTCInboundRTPStreamStats final : public RTCRTPStreamStats {
 // https://w3c.github.io/webrtc-stats/#outboundrtpstats-dict*
 // TODO(hbos): Finish implementation and support the remote case
 // |is_remote = true|. Tracking bug crbug.com/657856
-class RTCOutboundRTPStreamStats final : public RTCRTPStreamStats {
+class WEBRTC_EXPORT RTCOutboundRTPStreamStats final : public RTCRTPStreamStats {
  public:
   WEBRTC_RTCSTATS_DECL();
 

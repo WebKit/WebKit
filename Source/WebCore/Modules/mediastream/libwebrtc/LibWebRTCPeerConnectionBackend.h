@@ -38,7 +38,7 @@ namespace WebCore {
 class LibWebRTCMediaEndpoint;
 class RTCRtpReceiver;
 class RTCSessionDescription;
-class RTCstatsReport;
+class RTCStatsReport;
 class RealtimeOutgoingAudioSource;
 class RealtimeOutgoingVideoSource;
 

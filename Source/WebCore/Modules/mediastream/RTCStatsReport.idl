@@ -27,6 +27,70 @@
     Conditional=WEB_RTC,
     ImplementationLacksVTable,
 ] interface RTCStatsReport {
-    // FIXME: Make it setlike
-    //readonly maplike<DOMString, object>;
+    readonly maplike<DOMString, object>;
+};
+
+enum RTCStatsType {
+    "codec",
+    "inbound-rtp",
+    "outbound-rtp",
+    "peer-connection",
+    "data-channel",
+    "track",
+    "transport",
+    "candidate-pair",
+    "local-candidate",
+    "remote-candidate",
+    "certificate"
+};
+
+dictionary RTCStats {
+    unsigned long long timestamp;
+    RTCStatsType type;
+    DOMString id;
+
+};
+
+dictionary RTCRTPStreamStats : RTCStats {
+    DOMString ssrc;
+    DOMString associateStatsId;
+    boolean isRemote = false;
+    DOMString mediaType;
+    DOMString mediaTrackId;
+    DOMString transportId;
+    DOMString codecId;
+    unsigned long firCount;
+    unsigned long pliCount;
+    unsigned long nackCount;
+    unsigned long sliCount;
+    unsigned long long qpSum;
+};
+
+[ JSGenerateToJSObject ]
+dictionary RTCInboundRTPStreamStats : RTCRTPStreamStats {
+    unsigned long packetsReceived;
+    unsigned long long bytesReceived;
+    unsigned long packetsLost;
+    double jitter;
+    double fractionLost;
+    unsigned long packetsDiscarded;
+    unsigned long packetsRepaired;
+    unsigned long burstPacketsLost;
+    unsigned long burstPacketsDiscarded;
+    unsigned long burstLossCount;
+    unsigned long burstDiscardCount;
+    double burstLossRate;
+    double burstDiscardRate;
+    double gapLossRate;
+    double gapDiscardRate;
+    unsigned long framesDecoded;
+};
+
+[ JSGenerateToJSObject ]
+dictionary RTCOutboundRTPStreamStats : RTCRTPStreamStats {
+    unsigned long packetsSent;
+    unsigned long long bytesSent;
+    double targetBitrate;
+    double roundTripTime;
+    unsigned long framesEncoded;
 };

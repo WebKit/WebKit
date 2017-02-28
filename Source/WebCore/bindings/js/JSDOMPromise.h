@@ -25,41 +25,38 @@
 
 #pragma once
 
-#include "ActiveDOMCallback.h"
 #include "JSDOMConvert.h"
-#include <heap/StrongInlines.h>
+#include "JSDOMGuardedObject.h"
 #include <runtime/JSPromiseDeferred.h>
 
 namespace WebCore {
 
-class DeferredPromise : public RefCounted<DeferredPromise>, public ActiveDOMCallback {
+class DeferredPromise : public DOMGuarded<JSC::JSPromiseDeferred> {
 public:
     static Ref<DeferredPromise> create(JSDOMGlobalObject& globalObject, JSC::JSPromiseDeferred& deferred)
     {
         return adoptRef(*new DeferredPromise(globalObject, deferred));
     }
 
-    ~DeferredPromise();
-
-    template<class IDLType> 
+    template<class IDLType>
     void resolve(typename IDLType::ParameterType value)
     {
         if (isSuspended())
             return;
-        ASSERT(m_deferred);
-        ASSERT(m_globalObject);
-        JSC::ExecState* exec = m_globalObject->globalExec();
+        ASSERT(deferred());
+        ASSERT(globalObject());
+        JSC::ExecState* exec = globalObject()->globalExec();
         JSC::JSLockHolder locker(exec);
-        resolve(*exec, toJS<IDLType>(*exec, *m_globalObject.get(), std::forward<typename IDLType::ParameterType>(value)));
+        resolve(*exec, toJS<IDLType>(*exec, *globalObject(), std::forward<typename IDLType::ParameterType>(value)));
     }
 
     void resolve()
     {
         if (isSuspended())
             return;
-        ASSERT(m_deferred);
-        ASSERT(m_globalObject);
-        JSC::ExecState* exec = m_globalObject->globalExec();
+        ASSERT(deferred());
+        ASSERT(globalObject());
+        JSC::ExecState* exec = globalObject()->globalExec();
         JSC::JSLockHolder locker(exec);
         resolve(*exec, JSC::jsUndefined());
     }
@@ -69,23 +66,23 @@ public:
     {
         if (isSuspended())
             return;
-        ASSERT(m_deferred);
-        ASSERT(m_globalObject);
-        JSC::ExecState* exec = m_globalObject->globalExec();
+        ASSERT(deferred());
+        ASSERT(globalObject());
+        JSC::ExecState* exec = globalObject()->globalExec();
         JSC::JSLockHolder locker(exec);
-        resolve(*exec, toJSNewlyCreated<IDLType>(*exec, *m_globalObject.get(), std::forward<typename IDLType::ParameterType>(value)));
+        resolve(*exec, toJSNewlyCreated<IDLType>(*exec, *globalObject(), std::forward<typename IDLType::ParameterType>(value)));
     }
 
-    template<class IDLType> 
+    template<class IDLType>
     void reject(typename IDLType::ParameterType value)
     {
         if (isSuspended())
             return;
-        ASSERT(m_deferred);
-        ASSERT(m_globalObject);
-        JSC::ExecState* exec = m_globalObject->globalExec();
+        ASSERT(deferred());
+        ASSERT(globalObject());
+        JSC::ExecState* exec = globalObject()->globalExec();
         JSC::JSLockHolder locker(exec);
-        reject(*exec, toJS<IDLType>(*exec, *m_globalObject.get(), std::forward<typename IDLType::ParameterType>(value)));
+        reject(*exec, toJS<IDLType>(*exec, *globalObject(), std::forward<typename IDLType::ParameterType>(value)));
     }
 
     void reject();
@@ -99,11 +96,11 @@ public:
     {
         if (isSuspended())
             return;
-        ASSERT(m_deferred);
-        ASSERT(m_globalObject);
-        JSC::ExecState* exec = m_globalObject->globalExec();
+        ASSERT(deferred());
+        ASSERT(globalObject());
+        JSC::ExecState* exec = globalObject()->globalExec();
         JSC::JSLockHolder locker(exec);
-        resolve(*exec, callback(*exec, *m_globalObject.get()));
+        resolve(*exec, callback(*exec, *globalObject()));
     }
 
     template<typename Callback>
@@ -111,32 +108,23 @@ public:
     {
         if (isSuspended())
             return;
-        ASSERT(m_deferred);
-        ASSERT(m_globalObject);
-        JSC::ExecState* exec = m_globalObject->globalExec();
+        ASSERT(deferred());
+        ASSERT(globalObject());
+        JSC::ExecState* exec = globalObject()->globalExec();
         JSC::JSLockHolder locker(exec);
-        reject(*exec, callback(*exec, *m_globalObject.get()));
+        reject(*exec, callback(*exec, *globalObject()));
     }
 
     JSC::JSValue promise() const;
 
-    bool isSuspended() { return !m_deferred || !canInvokeCallback(); } // The wrapper world has gone away or active DOM objects have been suspended.
-    JSDOMGlobalObject* globalObject() { return m_globalObject.get(); }
-
-    void visitAggregate(JSC::SlotVisitor& visitor) { visitor.append(m_deferred); }
-
 private:
-    DeferredPromise(JSDOMGlobalObject&, JSC::JSPromiseDeferred&);
+    DeferredPromise(JSDOMGlobalObject& globalObject, JSC::JSPromiseDeferred& deferred) : DOMGuarded<JSC::JSPromiseDeferred>(globalObject, deferred) { }
 
-    void clear();
-    void contextDestroyed() override;
+    JSC::JSPromiseDeferred* deferred() const { return guarded(); }
 
     void callFunction(JSC::ExecState&, JSC::JSValue function, JSC::JSValue resolution);
-    void resolve(JSC::ExecState& state, JSC::JSValue resolution) { callFunction(state, m_deferred->resolve(), resolution); }
-    void reject(JSC::ExecState& state, JSC::JSValue resolution) { callFunction(state, m_deferred->reject(), resolution); }
-
-    JSC::Weak<JSC::JSPromiseDeferred> m_deferred;
-    JSC::Weak<JSDOMGlobalObject> m_globalObject;
+    void resolve(JSC::ExecState& state, JSC::JSValue resolution) { callFunction(state, deferred()->resolve(), resolution); }
+    void reject(JSC::ExecState& state, JSC::JSValue resolution) { callFunction(state, deferred()->reject(), resolution); }
 };
 
 class DOMPromiseBase {

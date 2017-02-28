@@ -1064,6 +1064,7 @@ sub PrototypeFunctionCount
     }
 
     $count += scalar @{$interface->iterable->functions} if $interface->iterable;
+    $count += scalar @{$interface->mapLike->functions} if $interface->mapLike;
     $count += scalar @{$interface->serializable->functions} if $interface->serializable;
 
     return $count;
@@ -2281,7 +2282,10 @@ sub GeneratePropertiesHashTable
 
     return 0 if !$propertyCount;
 
-    foreach my $attribute (@{$interface->attributes}) {
+    my @attributes = @{$interface->attributes};
+    push(@attributes, @{$interface->mapLike->attributes}) if $interface->mapLike;
+
+    foreach my $attribute (@attributes) {
         next if ($attribute->isStatic);
         next if AttributeShouldBeOnInstance($interface, $attribute) != $isInstance;
 
@@ -2322,6 +2326,7 @@ sub GeneratePropertiesHashTable
 
     my @functions = @{$interface->functions};
     push(@functions, @{$interface->iterable->functions}) if IsKeyValueIterableInterface($interface);
+    push(@functions, @{$interface->mapLike->functions}) if $interface->mapLike;
     push(@functions, @{$interface->serializable->functions}) if $interface->serializable;
     foreach my $function (@functions) {
         next if ($function->extendedAttributes->{PrivateIdentifier} and not $function->extendedAttributes->{PublicIdentifier});
@@ -2988,13 +2993,15 @@ sub GetAttributeWithName
 sub InterfaceNeedsIterator
 {
     my ($interface) = @_;
-    
+
+    # FIXME: This should return 1 for maplike once we support them.
+    return 1 if $interface->mapLike;
+
     return 1 if $interface->iterable;
     if (GetIndexedGetterFunction($interface)) {
         my $lengthAttribute = GetAttributeWithName($interface, "length");
         return 1 if $lengthAttribute and $codeGenerator->IsIntegerType($lengthAttribute->type);
     }
-    # FIXME: This should return 1 for maplike and setlike once we support them.
     return 0;
 }
 
@@ -3040,11 +3047,15 @@ sub GenerateImplementation
 
     my @functions = @{$interface->functions};
     push(@functions, @{$interface->iterable->functions}) if IsKeyValueIterableInterface($interface);
+    push(@functions, @{$interface->mapLike->functions}) if $interface->mapLike;
     push(@functions, @{$interface->serializable->functions}) if $interface->serializable;
+
+    my @attributes = @{$interface->attributes};
+    push(@attributes, @{$interface->mapLike->attributes}) if $interface->mapLike;
 
     my $numConstants = @{$interface->constants};
     my $numFunctions = @functions;
-    my $numAttributes = @{$interface->attributes};
+    my $numAttributes = @attributes;
 
     if ($numFunctions > 0) {
         my $inAppleCopyright = 0;
@@ -3090,7 +3101,7 @@ sub GenerateImplementation
     if ($numAttributes > 0 || NeedsConstructorProperty($interface)) {
         push(@implContent, "// Attributes\n\n");
 
-        foreach my $attribute (@{$interface->attributes}) {
+        foreach my $attribute (@attributes) {
             next if $attribute->extendedAttributes->{ForwardDeclareInHeader};
             next if IsJSBuiltin($interface, $attribute);
 
@@ -3104,7 +3115,7 @@ sub GenerateImplementation
             }
             push(@implContent, "#endif\n") if $conditionalString;
         }
-        
+
         if (NeedsConstructorProperty($interface)) {
             my $getter = "js" . $interfaceName . "Constructor";
             push(@implContent, "JSC::EncodedJSValue ${getter}(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);\n");
@@ -3358,6 +3369,8 @@ sub GenerateImplementation
             if (IsKeyValueIterableInterface($interface)) {
                 my $functionName = GetFunctionName($interface, $className, @{$interface->iterable->functions}[0]);
                 push(@implContent, "    putDirect(vm, vm.propertyNames->iteratorSymbol, JSFunction::create(vm, globalObject(), 0, ASCIILiteral(\"[Symbol.Iterator]\"), $functionName), DontEnum);\n");
+            } elsif ($interface->mapLike) {
+                push(@implContent, "    putDirect(vm, vm.propertyNames->iteratorSymbol, getDirect(vm, vm.propertyNames->builtinNames().valuesPublicName()), DontEnum);\n");
             } else {
                 AddToImplIncludes("<builtins/BuiltinNames.h>");
                 push(@implContent, "    putDirect(vm, vm.propertyNames->iteratorSymbol, globalObject()->arrayPrototype()->getDirect(vm, vm.propertyNames->builtinNames().valuesPrivateName()), DontEnum);\n");
@@ -3433,6 +3446,7 @@ sub GenerateImplementation
         push(@implContent, "    putDirect(vm, vm.propertyNames->valueOf, globalObject()->objectProtoValueOfFunction(), DontDelete | ReadOnly | DontEnum);\n");
         push(@implContent, "    putDirect(vm, vm.propertyNames->toPrimitiveSymbol, jsUndefined(), DontDelete | ReadOnly | DontEnum);\n");
     }
+    push(@implContent, "    synchronizeBackingMap(*globalObject()->globalExec(), *globalObject(), *this);\n") if $interface->mapLike;
 
     # Support for RuntimeEnabled attributes on instances.
     foreach my $attribute (@{$interface->attributes}) {
@@ -3586,7 +3600,7 @@ sub GenerateImplementation
 
     $numAttributes = $numAttributes + 1 if NeedsConstructorProperty($interface);
     if ($numAttributes > 0) {
-        foreach my $attribute (@{$interface->attributes}) {
+        foreach my $attribute (@attributes) {
             next if IsJSBuiltin($interface, $attribute);
 
             my $name = $attribute->name;
@@ -3695,13 +3709,18 @@ sub GenerateImplementation
                     unshift(@arguments, "impl") if !$attribute->isStatic;
                 } elsif ($attribute->isStatic) {
                     $functionName = "${interfaceName}::${functionName}";
+                } elsif ($attribute->isMapLike) {
+                    my $ucPropertyName = $codeGenerator->WK_ucfirst($functionName);
+                    $functionName = "forward" . $codeGenerator->WK_ucfirst($functionName) . "ToMapLike";
+                    push(@arguments, "state");
+                    push(@arguments, "thisObject");
                 } else {
                     $functionName = "impl.${functionName}";
                 }
 
                 unshift(@arguments, @callWithArgs);
                 my $jsType = NativeToJSValueUsingReferences($attribute, $interface, "${functionName}(" . join(", ", @arguments) . ")", "thisObject");
-                push(@implContent, "    auto& impl = thisObject.wrapped();\n") if !$attribute->isStatic;
+                push(@implContent, "    auto& impl = thisObject.wrapped();\n") unless $attribute->isStatic or $attribute->isMapLike;
                 push(@implContent, "    JSValue result = $jsType;\n");
 
                 push(@implContent, "    thisObject.m_" . $attribute->name . ".set(state.vm(), &thisObject, result);\n") if $attribute->extendedAttributes->{CachedAttribute};
@@ -3776,7 +3795,7 @@ sub GenerateImplementation
         push(@implContent, "}\n\n");
     }
 
-    foreach my $attribute (@{$interface->attributes}) {
+    foreach my $attribute (@attributes) {
         if (!IsReadonly($attribute)) {
             next if IsJSBuiltin($interface, $attribute);
 
@@ -3951,8 +3970,10 @@ sub GenerateImplementation
     # Functions
     if ($numFunctions > 0) {
         my $inAppleCopyright = 0;
-        foreach my $function (@{$interface->functions}) {
+        foreach my $function (@functions) {
             next if IsJSBuiltin($interface, $function);
+            next if $function->isIterable;
+            next if $function->isSerializer;
             if ($function->extendedAttributes->{AppleCopyright}) {
                 if (!$inAppleCopyright) {
                     push(@implContent, $beginAppleCopyrightForSourceFiles);
@@ -4080,7 +4101,7 @@ END
                 if ($isCustom) {
                     push(@implContent, "    return JSValue::encode(castedThis->" . $functionImplementationName . "(*state));\n");
                 } else {
-                    push(@implContent, "    auto& impl = castedThis->wrapped();\n");
+                    push(@implContent, "    auto& impl = castedThis->wrapped();\n") unless $function->isMapLike;
 
                     GenerateArgumentsCountCheck(\@implContent, $function, $interface);
 
@@ -4170,6 +4191,7 @@ END
 
     GenerateImplementationIterableFunctions($interface) if $interface->iterable;
     GenerateSerializerFunction($interface, $className) if $interface->serializable;
+    AddToImplIncludes("JSDOMMapLike.h") if $interface->mapLike;
 
     if ($needsVisitChildren) {
         push(@implContent, "void ${className}::visitChildren(JSCell* cell, SlotVisitor& visitor)\n");
@@ -4652,11 +4674,15 @@ sub GenerateParametersCheck
 
     if ($implementedBy) {
         AddToImplIncludes("${implementedBy}.h", $conditional);
-        unshift(@arguments, "impl") if !$function->isStatic;
+        unshift(@arguments, "impl") unless $function->isStatic;
         $functionName = "WebCore::${implementedBy}::${functionImplementationName}";
     } elsif ($function->isStatic || $isConstructor) {
         $functionName = "${interfaceName}::${functionImplementationName}";
-    } else {
+    } elsif ($function->isMapLike) {
+        $functionName = "forward" . $codeGenerator->WK_ucfirst($function->name) . "ToMapLike";
+        push(@arguments, "*state");
+        push(@arguments, "*castedThis");
+     } else {
         $functionName = "impl.${functionImplementationName}";
     }
 
