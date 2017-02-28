@@ -227,7 +227,7 @@ list(APPEND WebCore_SOURCES
     editing/mac/TextAlternativeWithRange.mm
     editing/mac/TextUndoInsertionMarkupMac.mm
 
-    fileapi/FileMac.mm
+    fileapi/FileCocoa.mm
 
     html/HTMLSlotElement.cpp
 

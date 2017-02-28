@@ -6274,7 +6274,7 @@
 		E15A36D71104572000B7B639 /* XMLNSNames.h in Headers */ = {isa = PBXBuildFile; fileRef = E15A36D61104572000B7B639 /* XMLNSNames.h */; };
 		E15A36D91104572700B7B639 /* XMLNSNames.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E15A36D81104572700B7B639 /* XMLNSNames.cpp */; };
 		E15FF7D518C9553800FE4C87 /* KeypressCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = E15FF7D418C9553800FE4C87 /* KeypressCommand.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		E164A2E9191AC5BB0010737D /* FileMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = E164A2E7191AC5BB0010737D /* FileMac.mm */; };
+		E164A2E9191AC5BB0010737D /* FileCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = E164A2E7191AC5BB0010737D /* FileCocoa.mm */; };
 		E164A2ED191AE6350010737D /* BlobDataFileReferenceMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = E164A2EB191AE6350010737D /* BlobDataFileReferenceMac.mm */; };
 		E164FAA318315BF400DB4E61 /* CryptoKeyRSA.h in Headers */ = {isa = PBXBuildFile; fileRef = E164FAA218315BF400DB4E61 /* CryptoKeyRSA.h */; };
 		E164FAA518315E1A00DB4E61 /* CryptoKeyRSAMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E164FAA418315E1A00DB4E61 /* CryptoKeyRSAMac.cpp */; };
@@ -14453,7 +14453,7 @@
 		E15A36D61104572000B7B639 /* XMLNSNames.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XMLNSNames.h; sourceTree = "<group>"; };
 		E15A36D81104572700B7B639 /* XMLNSNames.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XMLNSNames.cpp; sourceTree = "<group>"; };
 		E15FF7D418C9553800FE4C87 /* KeypressCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KeypressCommand.h; sourceTree = "<group>"; };
-		E164A2E7191AC5BB0010737D /* FileMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileMac.mm; sourceTree = "<group>"; };
+		E164A2E7191AC5BB0010737D /* FileCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileCocoa.mm; sourceTree = "<group>"; };
 		E164A2EB191AE6350010737D /* BlobDataFileReferenceMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BlobDataFileReferenceMac.mm; sourceTree = "<group>"; };
 		E164FAA218315BF400DB4E61 /* CryptoKeyRSA.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptoKeyRSA.h; sourceTree = "<group>"; };
 		E164FAA418315E1A00DB4E61 /* CryptoKeyRSAMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CryptoKeyRSAMac.cpp; sourceTree = "<group>"; };
@@ -19867,6 +19867,7 @@
 				976D6C61122B8A3D001FD1F7 /* File.cpp */,
 				976D6C62122B8A3D001FD1F7 /* File.h */,
 				E1AB1EB714E9E35800449E13 /* File.idl */,
+				E164A2E7191AC5BB0010737D /* FileCocoa.mm */,
 				976D6C64122B8A3D001FD1F7 /* FileError.h */,
 				E1AB1EBB14E9E37A00449E13 /* FileError.idl */,
 				978D07B5145A0F030096908D /* FileException.cpp */,
@@ -19875,7 +19876,6 @@
 				976D6C66122B8A3D001FD1F7 /* FileList.cpp */,
 				976D6C67122B8A3D001FD1F7 /* FileList.h */,
 				E1AB1EA814E9E27D00449E13 /* FileList.idl */,
-				E164A2E7191AC5BB0010737D /* FileMac.mm */,
 				976D6C69122B8A3D001FD1F7 /* FileReader.cpp */,
 				976D6C6A122B8A3D001FD1F7 /* FileReader.h */,
 				14BDF59A1365399100148393 /* FileReader.idl */,
@@ -30018,7 +30018,7 @@
 				1A88A90417553CD7000C74F9 /* FileIconLoader.cpp in Sources */,
 				F55B3DBD1251F12D003EF269 /* FileInputType.cpp in Sources */,
 				976D6C85122B8A3D001FD1F7 /* FileList.cpp in Sources */,
-				E164A2E9191AC5BB0010737D /* FileMac.mm in Sources */,
+				E164A2E9191AC5BB0010737D /* FileCocoa.mm in Sources */,
 				976D6C88122B8A3D001FD1F7 /* FileReader.cpp in Sources */,
 				2E75841D12779ADA0062628B /* FileReaderLoader.cpp in Sources */,
 				2EDF369C122C94B4002F7D4E /* FileReaderSync.cpp in Sources */,
