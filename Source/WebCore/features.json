@@ -251,6 +251,17 @@
         "category": "html"
     },
     {
+        "name": "DeviceOrientation Events",
+        "status": {
+            "status": "Done",
+            "enabled-by-default": true
+        },
+        "description": "DOM events that provide information about the physical orientation and motion of a hosting device.",
+        "url": "https://w3c.github.io/deviceorientation/spec-source-orientation.html",
+        "keywords": ["device orientation", "devicemotion", "acceleration", "rotation"],
+        "comment": "compassHeading and compassAccuracy are only available on iOS devices"
+    },
+    {
         "name": "Encoding",
         "status": {
             "status": "Done",
@@ -287,6 +298,15 @@
         "url": "http://dev.w3.org/fxtf/filters-2/",
         "keywords": ["css filters", "filter effects", "filters"],
         "category": "css"
+    },
+    {
+        "name": "Geolocation API",
+        "status": {
+            "status": "Done",
+            "enabled-by-default": true
+        },
+        "description": "An API that provides scripted access to geographical location information associated with the hosting device.",
+        "url": "https://www.w3.org/TR/geolocation-API/"
     },
     {
         "name": "Geometry Interfaces",
@@ -1071,7 +1091,7 @@
     {
         "name": "ViewportAPI",
         "status": {
-        	"status": "Under Consideration"
+            "status": "Under Consideration"
         },
         "url": "https://github.com/WICG/ViewportAPI",
         "description": "A proposal to add explicit APIs to the Web for querying and setting the visual viewport.",
