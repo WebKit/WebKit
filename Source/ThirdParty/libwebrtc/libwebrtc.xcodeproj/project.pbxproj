@@ -169,6 +169,8 @@
 		5C11A0201E457578004F0987 /* file_audio_device_factory.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C11A01A1E457578004F0987 /* file_audio_device_factory.h */; };
 		5C11A0211E457578004F0987 /* file_audio_device.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5C11A01B1E457578004F0987 /* file_audio_device.cc */; };
 		5C11A0221E457578004F0987 /* file_audio_device.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C11A01C1E457578004F0987 /* file_audio_device.h */; };
+		5C316D891E66323F008BE64D /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C316D881E66323F008BE64D /* CoreFoundation.framework */; };
+		5C316D8B1E66333C008BE64D /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C316D8A1E66333C008BE64D /* Foundation.framework */; };
 		5C4B463A1E42AA2C002651C8 /* constant_time_test.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B451C1E42A71B002651C8 /* constant_time_test.c */; };
 		5C4B463B1E42AA2C002651C8 /* cpu-intel.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B451D1E42A71B002651C8 /* cpu-intel.c */; };
 		5C4B463C1E42AA2C002651C8 /* crypto.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B451E1E42A71B002651C8 /* crypto.c */; };
@@ -2740,6 +2742,8 @@
 		5C11A01C1E457578004F0987 /* file_audio_device.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = file_audio_device.h; path = dummy/file_audio_device.h; sourceTree = "<group>"; };
 		5C11A0331E4576A9004F0987 /* usrsctp.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = usrsctp.xcconfig; sourceTree = "<group>"; };
 		5C11A12D1E4577E1004F0987 /* libusrsctp.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libusrsctp.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		5C316D881E66323F008BE64D /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
+		5C316D8A1E66333C008BE64D /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		5C4B43B01E42877A002651C8 /* boringssl.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = boringssl.xcconfig; sourceTree = "<group>"; };
 		5C4B43B21E42A49E002651C8 /* a_bitstr.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = a_bitstr.c; sourceTree = "<group>"; };
 		5C4B43B31E42A49E002651C8 /* a_bool.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = a_bool.c; sourceTree = "<group>"; };
@@ -5138,6 +5142,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5C316D8B1E66333C008BE64D /* Foundation.framework in Frameworks */,
+				5C316D891E66323F008BE64D /* CoreFoundation.framework in Frameworks */,
 				5C85C4CB1E5780DD00D097B1 /* CFNetwork.framework in Frameworks */,
 				5C0073461E552CA20042215A /* SystemConfiguration.framework in Frameworks */,
 				5C0073431E552C800042215A /* CoreGraphics.framework in Frameworks */,
@@ -7196,6 +7202,8 @@
 		5CB3048A1DE4143400D2C405 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				5C316D8A1E66333C008BE64D /* Foundation.framework */,
+				5C316D881E66323F008BE64D /* CoreFoundation.framework */,
 				5C85C4CA1E5780DD00D097B1 /* CFNetwork.framework */,
 				5C0073451E552CA20042215A /* SystemConfiguration.framework */,
 				5C0073411E552C800042215A /* CoreGraphics.framework */,
