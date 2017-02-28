@@ -1,3 +1,14 @@
+2017-02-28  Youenn Fablet  <youenn@apple.com>
+
+        [WebRTC] NetworkRTCProvider should stop the network thread from the main thread
+        https://bugs.webkit.org/show_bug.cgi?id=168972
+
+        Reviewed by Alex Christensen.
+
+        * NetworkProcess/webrtc/NetworkRTCProvider.cpp:
+        (WebKit::NetworkRTCProvider::close): Ensuring to stop the network thread from the main thread when provider is
+        getting closed.
+
 2017-02-24  Matt Rajca  <mrajca@apple.com>
 
         Media: notify clients when autoplayed media ends without being paused

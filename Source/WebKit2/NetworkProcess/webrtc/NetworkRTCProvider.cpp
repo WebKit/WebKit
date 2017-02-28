@@ -65,6 +65,10 @@ void NetworkRTCProvider::close()
 
     callOnRTCNetworkThread([this]() {
         m_sockets.clear();
+        callOnMainThread([provider = makeRef(*this)]() {
+            if (provider->m_rtcNetworkThread)
+                provider->m_rtcNetworkThread->Stop();
+        });
     });
 }
 
