@@ -773,10 +773,14 @@ gboolean webkit_website_data_manager_remove_finish(WebKitWebsiteDataManager* man
  * @user_data: (closure): the data to pass to callback function
  *
  * Asynchronously clear the website data of the given @types modified in the past @timespan.
- * If @timespan is 0 all website data will be removed.
+ * If @timespan is 0, all website data will be removed.
  *
  * When the operation is finished, @callback will be called. You can then call
  * webkit_website_data_manager_clear_finish() to get the result of the operation.
+ *
+ * Due to implementation limitations, this function does not currently delete
+ * any stored cookies if @timespan is nonzero. This behavior may change in the
+ * future.
  *
  * Since: 2.16
  */
