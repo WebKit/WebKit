@@ -264,7 +264,7 @@ if (isAppleWinWebKit() || isWinCairo()) {
         chdir File::Spec->catdir($baseProductDir, configuration());
         $result = system("ninja");
     } else {
-        $result = buildVisualStudioProject(File::Spec->catfile("WebKitBuild", configuration(), "WebKit.sln"), $clean);
+        $result = buildVisualStudioProject(File::Spec->catfile($baseProductDir, configuration(), "WebKit.sln"), $clean);
     }
     if (exitStatus($result)) {
         my $scriptDir = relativeScriptsDir();
