@@ -1,5 +1,35 @@
 2017-02-27  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Split tests for InteractiveTimeSeriesChart into a separate test file.
+        https://bugs.webkit.org/show_bug.cgi?id=168960
+
+        Reviewed by Joseph Pecoraro.
+
+        Extracted the test cases for InteractiveTimeSeriesChart charts from time-series-chart-tests.js
+        into interactive-time-series-chart-tests.js now that the former file has gotten really big over time.
+
+        Also extracted a bunch of helper functions time-series-chart-tests.js as ChartTest in index.html.
+        Any test which instantiates a time series chart can use this helper class.
+
+        * browser-tests/index.html:
+        (ChartTest.importChartScripts): Ditto.
+        (ChartTest.posixTime): Moved from time-series-chart-tests.js.
+        (ChartTest.sampleCluster): Ditto.
+        (ChartTest.createChartWithSampleCluster): Ditto.
+        (ChartTest.createInteractiveChartWithSampleCluster): Ditto.
+        (ChartTest.respondWithSampleCluster):
+        * browser-tests/interactive-time-series-chart-tests.js: Extracted from time-series-chart-tests.js.
+        * browser-tests/time-series-chart-tests.js:
+        (posixTime): Moved.
+        (dayInMilliseconds): Moved.
+        (sampleCluster): Moved.
+        (createChartWithSampleCluster): Moved.
+        (createInteractiveChartWithSampleCluster): Moved.
+        (respondWithSampleCluster): Moved.
+        * unit-tests/analysis-task-tests.js: Fixed a typo. s/adopter/adapter/.
+
+2017-02-27  Ryosuke Niwa  <rniwa@webkit.org>
+
         Calling build() on a baseline point results in an exception
         https://bugs.webkit.org/show_bug.cgi?id=168959
 

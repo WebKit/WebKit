@@ -18,6 +18,7 @@ mocha.setup('bdd');
 <script src="close-button-tests.js"></script>
 <script src="editable-text-tests.js"></script>
 <script src="time-series-chart-tests.js"></script>
+<script src="interactive-time-series-chart-tests.js"></script>
 <script>
 
 afterEach(() => {
@@ -184,8 +185,127 @@ const CanvasTest = {
     expectCanvasesMismatch(canvas1, canvas2) { return canvasRefTest(canvas1, canvas2, false); },
 }
 
+const dayInMilliseconds = 24 * 3600 * 1000;
+
+function posixTime(string) { return +new Date(string); }
+
+const ChartTest = {
+    importChartScripts(context)
+    {
+        return context.importScripts([
+            '../shared/statistics.js',
+            'instrumentation.js',
+            'models/data-model.js',
+            'models/metric.js',
+            'models/time-series.js',
+            'models/measurement-set.js',
+            'models/measurement-cluster.js',
+            'models/measurement-adaptor.js',
+            'components/base.js',
+            'components/time-series-chart.js',
+            'components/interactive-time-series-chart.js'],
+            'ComponentBase', 'TimeSeriesChart', 'InteractiveTimeSeriesChart', 'Metric', 'MeasurementSet', 'MockRemoteAPI').then(() => {
+                return context.symbols.TimeSeriesChart;
+            })
+    },
+
+    posixTime: posixTime,
+
+    sampleCluster: {
+        "clusterStart": posixTime('2016-01-01T00:00:00Z'),
+        "clusterSize": 7 * dayInMilliseconds,
+        "startTime": posixTime('2016-01-01T00:00:00Z'),
+        "endTime": posixTime('2016-01-08T00:00:00Z'),
+        "lastModified": posixTime('2016-01-18T00:00:00Z'),
+        "clusterCount": 1,
+        "status": "OK",
+        "formatMap": [
+            "id", "mean", "iterationCount", "sum", "squareSum", "markedOutlier",
+            "revisions",
+            "commitTime", "build", "buildTime", "buildNumber", "builder"
+        ],
+        "configurations": {
+            "current": [
+                [
+                    1000, 100, 1, 100, 100 * 100, false,
+                    [ [ 2000, 1, "4000", posixTime('2016-01-05T17:35:00Z')] ],
+                    posixTime('2016-01-05T17:35:00Z'), 5000, posixTime('2016-01-05T19:23:00Z'), "10", 7
+                ],
+                [
+                    1001, 131, 1, 131, 131 * 131, true,
+                    [ [ 2001, 1, "4001", posixTime('2016-01-05T18:43:01Z')] ],
+                    posixTime('2016-01-05T18:43:01Z'), 5001, posixTime('2016-01-05T20:58:01Z'), "11", 7
+                ],
+                [
+                    1002, 122, 1, 122, 122 * 122, false,
+                    [ [ 2002, 1, "4002", posixTime('2016-01-05T20:01:02Z') ] ],
+                    posixTime('2016-01-05T20:01:02Z'), 5002, posixTime('2016-01-05T22:37:02Z'), "12", 7
+                ],
+                [
+                    1003, 113, 1, 113, 113 * 113, false,
+                    [ [ 2003, 1, "4003", posixTime('2016-01-05T23:19:03Z') ] ],
+                    posixTime('2016-01-05T23:19:03Z'), 5003, posixTime('2016-01-06T23:19:03Z'), "13", 7
+                ],
+                [
+                    1004, 124, 1, 124, 124 * 124, false,
+                    [ [ 2004, 1, "4004", posixTime('2016-01-06T01:52:04Z') ] ],
+                    posixTime('2016-01-06T01:52:04Z'), 5004, posixTime('2016-01-06T02:42:04Z'), "14", 7
+                ],
+                [
+                    1005, 115, 1, 115, 115 * 115, true,
+                    [ [ 2005, 1, "4005", posixTime('2016-01-06T03:22:05Z') ] ],
+                    posixTime('2016-01-06T03:22:05Z'), 5005, posixTime('2016-01-06T06:01:05Z'), "15", 7
+                ],
+                [
+                    1006, 116, 1, 116, 116 * 116, false,
+                    [ [ 2006, 1, "4006", posixTime('2016-01-06T05:59:06Z') ] ],
+                    posixTime('2016-01-06T05:59:06Z'), 5006, posixTime('2016-01-06T08:34:06Z'), "16", 7
+                ]
+            ]
+        },
+    },
+
+    createChartWithSampleCluster(context, sourceList = null, chartOptions = {}, className = 'TimeSeriesChart')
+    {
+        const TimeSeriesChart = context.symbols[className];
+        const MeasurementSet = context.symbols.MeasurementSet;
+
+        if (sourceList == null)
+            sourceList = [{type: 'current'}];
+
+        const sampleCluster = MeasurementSet.findSet(1, 1, 0);
+        for (let source of sourceList) {
+            if (!source.type)
+                source.type = 'current';
+            source.measurementSet = sampleCluster;
+        }
+
+        const chart = new TimeSeriesChart(sourceList, chartOptions);
+        const element = chart.element();
+        element.style.width = chartOptions.width || '300px';
+        element.style.height = chartOptions.height || '100px';
+        context.document.body.appendChild(element);
+
+        return chart;
+    },
+
+    createInteractiveChartWithSampleCluster(context, sourceList = null, chartOptions = {})
+    {
+        if (sourceList == null)
+            sourceList = [{type: 'current', interactive: true}];
+        return this.createChartWithSampleCluster(context, sourceList, chartOptions, 'InteractiveTimeSeriesChart');
+    },
+
+    respondWithSampleCluster(request)
+    {
+        expect(request.url).to.be('../data/measurement-set-1-1.json');
+        expect(request.method).to.be('GET');
+        request.resolve(this.sampleCluster);
+    },
+};
+
 mocha.checkLeaks();
-mocha.globals(['expect', 'BrowsingContext', 'CanvasTest', 'wait', 'waitForComponentsToRender']);
+mocha.globals(['expect', 'BrowsingContext', 'CanvasTest', 'ChartTest', 'wait', 'waitForComponentsToRender']);
 mocha.run();
 
 </script>

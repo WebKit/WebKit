@@ -1,4 +1,3 @@
-(() => {
 
 const scripts = [
     '../shared/statistics.js',
@@ -13,113 +12,17 @@ const scripts = [
     'components/time-series-chart.js',
     'components/interactive-time-series-chart.js'];
 
-function posixTime(string) { return +new Date(string); }
-
-const dayInMilliseconds = 24 * 3600 * 1000;
-
-const sampleCluster = {
-    "clusterStart": posixTime('2016-01-01T00:00:00Z'),
-    "clusterSize": 7 * dayInMilliseconds,
-    "startTime": posixTime('2016-01-01T00:00:00Z'),
-    "endTime": posixTime('2016-01-08T00:00:00Z'),
-    "lastModified": posixTime('2016-01-18T00:00:00Z'),
-    "clusterCount": 1,
-    "status": "OK",
-    "formatMap": [
-        "id", "mean", "iterationCount", "sum", "squareSum", "markedOutlier",
-        "revisions",
-        "commitTime", "build", "buildTime", "buildNumber", "builder"
-    ],
-    "configurations": {
-        "current": [
-            [
-                1000, 100, 1, 100, 100 * 100, false,
-                [ [ 2000, 1, "4000", posixTime('2016-01-05T17:35:00Z')] ],
-                posixTime('2016-01-05T17:35:00Z'), 5000, posixTime('2016-01-05T19:23:00Z'), "10", 7
-            ],
-            [
-                1001, 131, 1, 131, 131 * 131, true,
-                [ [ 2001, 1, "4001", posixTime('2016-01-05T18:43:01Z')] ],
-                posixTime('2016-01-05T18:43:01Z'), 5001, posixTime('2016-01-05T20:58:01Z'), "11", 7
-            ],
-            [
-                1002, 122, 1, 122, 122 * 122, false,
-                [ [ 2002, 1, "4002", posixTime('2016-01-05T20:01:02Z') ] ],
-                posixTime('2016-01-05T20:01:02Z'), 5002, posixTime('2016-01-05T22:37:02Z'), "12", 7
-            ],
-            [
-                1003, 113, 1, 113, 113 * 113, false,
-                [ [ 2003, 1, "4003", posixTime('2016-01-05T23:19:03Z') ] ],
-                posixTime('2016-01-05T23:19:03Z'), 5003, posixTime('2016-01-06T23:19:03Z'), "13", 7
-            ],
-            [
-                1004, 124, 1, 124, 124 * 124, false,
-                [ [ 2004, 1, "4004", posixTime('2016-01-06T01:52:04Z') ] ],
-                posixTime('2016-01-06T01:52:04Z'), 5004, posixTime('2016-01-06T02:42:04Z'), "14", 7
-            ],
-            [
-                1005, 115, 1, 115, 115 * 115, true,
-                [ [ 2005, 1, "4005", posixTime('2016-01-06T03:22:05Z') ] ],
-                posixTime('2016-01-06T03:22:05Z'), 5005, posixTime('2016-01-06T06:01:05Z'), "15", 7
-            ],
-            [
-                1006, 116, 1, 116, 116 * 116, false,
-                [ [ 2006, 1, "4006", posixTime('2016-01-06T05:59:06Z') ] ],
-                posixTime('2016-01-06T05:59:06Z'), 5006, posixTime('2016-01-06T08:34:06Z'), "16", 7
-            ]
-        ]
-    },
-};
-
-function createChartWithSampleCluster(context, sourceList = null, chartOptions = {}, className = 'TimeSeriesChart')
-{
-    const TimeSeriesChart = context.symbols[className];
-    const MeasurementSet = context.symbols.MeasurementSet;
-
-    if (sourceList == null)
-        sourceList = [{type: 'current'}];
-
-    const sampleCluster = MeasurementSet.findSet(1, 1, 0);
-    for (let source of sourceList) {
-        if (!source.type)
-            source.type = 'current';
-        source.measurementSet = sampleCluster;
-    }
-
-    const chart = new TimeSeriesChart(sourceList, chartOptions);
-    const element = chart.element();
-    element.style.width = chartOptions.width || '300px';
-    element.style.height = chartOptions.height || '100px';
-    context.document.body.appendChild(element);
-
-    return chart;
-}
-
-function createInteractiveChartWithSampleCluster(context, sourceList = null, chartOptions = {})
-{
-    if (sourceList == null)
-        sourceList = [{type: 'current', interactive: true}];
-    return createChartWithSampleCluster(context, sourceList, chartOptions, 'InteractiveTimeSeriesChart');
-}
-
-function respondWithSampleCluster(request)
-{
-    expect(request.url).to.be('../data/measurement-set-1-1.json');
-    expect(request.method).to.be('GET');
-    request.resolve(sampleCluster);
-}
-
 describe('TimeSeriesChart', () => {
 
     it('should be constructible with an empty sourec list and an empty options', () => {
-        return new BrowsingContext().importScripts(scripts, 'TimeSeriesChart').then((TimeSeriesChart) => {
+        return ChartTest.importChartScripts(new BrowsingContext).then((TimeSeriesChart) => {
             new TimeSeriesChart([], {});
         });
     });
 
     describe('computeTimeGrid', () => {
         it('should return an empty array when the start and the end times are identical', () => {
-            return new BrowsingContext().importScripts(scripts, 'TimeSeriesChart').then((TimeSeriesChart) => {
+            return ChartTest.importChartScripts(new BrowsingContext).then((TimeSeriesChart) => {
                 const someTime = Date.now();
                 const labels = TimeSeriesChart.computeTimeGrid(someTime, someTime, 0);
                 expect(labels).to.be.a('array');
@@ -131,7 +34,7 @@ describe('TimeSeriesChart', () => {
         const millisecondsPerDay = 24 * millisecondsPerHour;
 
         it('should return an empty array when maxLabels is 0', () => {
-            return new BrowsingContext().importScripts(scripts, 'TimeSeriesChart').then((TimeSeriesChart) => {
+            return ChartTest.importChartScripts(new BrowsingContext).then((TimeSeriesChart) => {
                 const endTime = Date.now();
                 const labels = TimeSeriesChart.computeTimeGrid(endTime - millisecondsPerDay, endTime, 0);
                 expect(labels).to.be.a('array');
@@ -140,7 +43,7 @@ describe('TimeSeriesChart', () => {
         });
 
         it('should return an empty array when maxLabels is 0 even when the interval spans multiple months', () => {
-            return new BrowsingContext().importScripts(scripts, 'TimeSeriesChart').then((TimeSeriesChart) => {
+            return ChartTest.importChartScripts(new BrowsingContext).then((TimeSeriesChart) => {
                 const endTime = Date.now();
                 const labels = TimeSeriesChart.computeTimeGrid(endTime - 120 * millisecondsPerDay, endTime, 0);
                 expect(labels).to.be.a('array');
@@ -156,7 +59,7 @@ describe('TimeSeriesChart', () => {
         }
 
         it('should generate one hour label with just day for two hour interval when maxLabels is 1', () => {
-            return new BrowsingContext().importScripts(scripts, 'TimeSeriesChart').then((TimeSeriesChart) => {
+            return ChartTest.importChartScripts(new BrowsingContext).then((TimeSeriesChart) => {
                 const endTime = new Date('2017-01-15T07:53:00Z');
                 const labels = TimeSeriesChart.computeTimeGrid(endTime - 2 * millisecondsPerHour, +endTime, 1);
                 expect(labels).to.be.a('array');
@@ -166,7 +69,7 @@ describe('TimeSeriesChart', () => {
         });
 
         it('should generate two two-hour labels for four hour interval when maxLabels is 2', () => {
-            return new BrowsingContext().importScripts(scripts, 'TimeSeriesChart').then((TimeSeriesChart) => {
+            return ChartTest.importChartScripts(new BrowsingContext).then((TimeSeriesChart) => {
                 const endTime = new Date('2017-01-15T07:53:00Z');
                 const labels = TimeSeriesChart.computeTimeGrid(endTime - 4 * millisecondsPerHour, +endTime, 2);
                 expect(labels).to.be.a('array');
@@ -177,7 +80,7 @@ describe('TimeSeriesChart', () => {
         });
 
         it('should generate six two-hour labels for twelve hour interval when maxLabels is 6', () => {
-            return new BrowsingContext().importScripts(scripts, 'TimeSeriesChart').then((TimeSeriesChart) => {
+            return ChartTest.importChartScripts(new BrowsingContext).then((TimeSeriesChart) => {
                 const endTime = new Date('2017-01-15T07:53:00Z');
                 const labels = TimeSeriesChart.computeTimeGrid(+endTime, +endTime + 12 * millisecondsPerHour, 6);
                 expect(labels).to.be.a('array');
@@ -192,7 +95,7 @@ describe('TimeSeriesChart', () => {
         });
 
         it('should generate six two-hour labels with one date label for twelve hour interval that cross a day when maxLabels is 6', () => {
-            return new BrowsingContext().importScripts(scripts, 'TimeSeriesChart').then((TimeSeriesChart) => {
+            return ChartTest.importChartScripts(new BrowsingContext).then((TimeSeriesChart) => {
                 const endTime = new Date('2017-01-15T16:12:00Z');
                 const labels = TimeSeriesChart.computeTimeGrid(+endTime, +endTime + 12 * millisecondsPerHour, 6);
                 expect(labels).to.be.a('array');
@@ -207,7 +110,7 @@ describe('TimeSeriesChart', () => {
         });
 
         it('should generate three two-hour labels for six hour interval that cross a year when maxLabels is 5', () => {
-            return new BrowsingContext().importScripts(scripts, 'TimeSeriesChart').then((TimeSeriesChart) => {
+            return ChartTest.importChartScripts(new BrowsingContext).then((TimeSeriesChart) => {
                 const endTime = new Date('2016-12-31T21:37:00Z');
                 const labels = TimeSeriesChart.computeTimeGrid(+endTime, +endTime + 6 * millisecondsPerHour, 5);
                 expect(labels).to.be.a('array');
@@ -219,7 +122,7 @@ describe('TimeSeriesChart', () => {
         });
 
         it('should generate one one-day label for one day interval when maxLabels is 1', () => {
-            return new BrowsingContext().importScripts(scripts, 'TimeSeriesChart').then((TimeSeriesChart) => {
+            return ChartTest.importChartScripts(new BrowsingContext).then((TimeSeriesChart) => {
                 const endTime = new Date('2017-01-15T07:53:00Z');
                 const labels = TimeSeriesChart.computeTimeGrid(endTime - millisecondsPerDay, +endTime, 1);
                 expect(labels).to.be.a('array');
@@ -229,7 +132,7 @@ describe('TimeSeriesChart', () => {
         });
 
         it('should generate two one-day labels for one day interval when maxLabels is 2', () => {
-            return new BrowsingContext().importScripts(scripts, 'TimeSeriesChart').then((TimeSeriesChart) => {
+            return ChartTest.importChartScripts(new BrowsingContext).then((TimeSeriesChart) => {
                 const endTime = new Date('2017-01-15T07:53:00Z');
                 const labels = TimeSeriesChart.computeTimeGrid(endTime - millisecondsPerDay, +endTime, 2);
                 expect(labels).to.be.a('array');
@@ -240,7 +143,7 @@ describe('TimeSeriesChart', () => {
         });
 
         it('should generate four half-day labels for two day interval when maxLabels is 5', () => {
-            return new BrowsingContext().importScripts(scripts, 'TimeSeriesChart').then((TimeSeriesChart) => {
+            return ChartTest.importChartScripts(new BrowsingContext).then((TimeSeriesChart) => {
                 const endTime = new Date('2017-01-15T16:12:00Z');
                 const labels = TimeSeriesChart.computeTimeGrid(+endTime, +endTime + 2 * millisecondsPerDay, 5);
                 expect(labels).to.be.a('array');
@@ -253,7 +156,7 @@ describe('TimeSeriesChart', () => {
         });
 
         it('should generate four half-day labels for two day interval that cross a year when maxLabels is 5', () => {
-            return new BrowsingContext().importScripts(scripts, 'TimeSeriesChart').then((TimeSeriesChart) => {
+            return ChartTest.importChartScripts(new BrowsingContext).then((TimeSeriesChart) => {
                 const endTime = new Date('2016-12-31T09:12:00Z');
                 const labels = TimeSeriesChart.computeTimeGrid(+endTime, +endTime + 2 * millisecondsPerDay, 5);
                 expect(labels).to.be.a('array');
@@ -266,7 +169,7 @@ describe('TimeSeriesChart', () => {
         });
 
         it('should generate seven per-day labels for one week interval when maxLabels is 10', () => {
-            return new BrowsingContext().importScripts(scripts, 'TimeSeriesChart').then((TimeSeriesChart) => {
+            return ChartTest.importChartScripts(new BrowsingContext).then((TimeSeriesChart) => {
                 const endTime = new Date('2017-01-15T07:53:00Z');
                 const labels = TimeSeriesChart.computeTimeGrid(endTime - 7 * millisecondsPerDay, endTime, 10);
                 expect(labels).to.be.a('array');
@@ -282,7 +185,7 @@ describe('TimeSeriesChart', () => {
         });
 
         it('should generate three two-day labels for one week interval when maxLabels is 4', () => {
-            return new BrowsingContext().importScripts(scripts, 'TimeSeriesChart').then((TimeSeriesChart) => {
+            return ChartTest.importChartScripts(new BrowsingContext).then((TimeSeriesChart) => {
                 const endTime = new Date('2017-01-15T07:53:00Z');
                 const labels = TimeSeriesChart.computeTimeGrid(endTime - 7 * millisecondsPerDay, endTime, 4);
                 expect(labels).to.be.a('array');
@@ -294,7 +197,7 @@ describe('TimeSeriesChart', () => {
         });
 
         it('should generate seven one-day labels for two week interval when maxLabels is 8', () => {
-            return new BrowsingContext().importScripts(scripts, 'TimeSeriesChart').then((TimeSeriesChart) => {
+            return ChartTest.importChartScripts(new BrowsingContext).then((TimeSeriesChart) => {
                 const endTime = new Date('2017-01-15T18:53:00Z');
                 const labels = TimeSeriesChart.computeTimeGrid(+endTime, +endTime + 14 * millisecondsPerDay, 8);
                 expect(labels).to.be.a('array');
@@ -310,7 +213,7 @@ describe('TimeSeriesChart', () => {
         });
 
         it('should generate two one-week labels for two week interval when maxLabels is 3', () => {
-            return new BrowsingContext().importScripts(scripts, 'TimeSeriesChart').then((TimeSeriesChart) => {
+            return ChartTest.importChartScripts(new BrowsingContext).then((TimeSeriesChart) => {
                 const endTime = new Date('2017-01-15T18:53:00Z');
                 const labels = TimeSeriesChart.computeTimeGrid(+endTime, +endTime + 14 * millisecondsPerDay, 3);
                 expect(labels).to.be.a('array');
@@ -321,7 +224,7 @@ describe('TimeSeriesChart', () => {
         });
 
         it('should generate seven one-month labels for six and half months interval starting before 15th when maxLabels is 7', () => {
-            return new BrowsingContext().importScripts(scripts, 'TimeSeriesChart').then((TimeSeriesChart) => {
+            return ChartTest.importChartScripts(new BrowsingContext).then((TimeSeriesChart) => {
                 const endTime = new Date('2017-01-15T18:53:00Z');
                 const labels = TimeSeriesChart.computeTimeGrid(new Date('2016-07-12T18:53:00Z'), new Date('2017-01-18T08:17:53Z'), 7);
                 expect(labels).to.be.a('array');
@@ -337,7 +240,7 @@ describe('TimeSeriesChart', () => {
         });
 
         it('should generate seven one-month labels for six months interval staring after 15th when maxLabels is 7', () => {
-            return new BrowsingContext().importScripts(scripts, 'TimeSeriesChart').then((TimeSeriesChart) => {
+            return ChartTest.importChartScripts(new BrowsingContext).then((TimeSeriesChart) => {
                 const endTime = new Date('2017-01-15T18:53:00Z');
                 const labels = TimeSeriesChart.computeTimeGrid(new Date('2016-07-18T18:53:00Z'), new Date('2017-01-18T08:17:53Z'), 7);
                 expect(labels).to.be.a('array');
@@ -351,7 +254,7 @@ describe('TimeSeriesChart', () => {
         });
 
         it('should generate six two-months labels for one year interval when maxLabels is 7', () => {
-            return new BrowsingContext().importScripts(scripts, 'TimeSeriesChart').then((TimeSeriesChart) => {
+            return ChartTest.importChartScripts(new BrowsingContext).then((TimeSeriesChart) => {
                 const endTime = new Date('2017-01-15T18:53:00Z');
                 const labels = TimeSeriesChart.computeTimeGrid(new Date('2016-07-11T18:53:00Z'), new Date('2017-07-27T08:17:53Z'), 7);
                 expect(labels).to.be.a('array');
@@ -366,7 +269,7 @@ describe('TimeSeriesChart', () => {
         });
 
         it('should generate four three-months labels for one year interval when maxLabels is 5', () => {
-            return new BrowsingContext().importScripts(scripts, 'TimeSeriesChart').then((TimeSeriesChart) => {
+            return ChartTest.importChartScripts(new BrowsingContext).then((TimeSeriesChart) => {
                 const endTime = new Date('2017-01-15T18:53:00Z');
                 const labels = TimeSeriesChart.computeTimeGrid(new Date('2016-07-11T18:53:00Z'), new Date('2017-07-27T08:17:53Z'), 5);
                 expect(labels).to.be.a('array');
@@ -542,15 +445,15 @@ describe('TimeSeriesChart', () => {
 
         it('should fetch the measurement set and create a canvas element upon receiving the data', () => {
             const context = new BrowsingContext();
-            return context.importScripts(scripts, 'ComponentBase', 'TimeSeriesChart', 'MeasurementSet', 'MockRemoteAPI').then(() => {
-                const chart = createChartWithSampleCluster(context);
+            return ChartTest.importChartScripts(context).then(() => {
+                const chart = ChartTest.createChartWithSampleCluster(context);
 
-                chart.setDomain(sampleCluster.startTime, sampleCluster.endTime);
+                chart.setDomain(ChartTest.sampleCluster.startTime, ChartTest.sampleCluster.endTime);
                 chart.fetchMeasurementSets();
 
                 const requests = context.symbols.MockRemoteAPI.requests;
                 expect(requests.length).to.be(1);
-                respondWithSampleCluster(requests[0]);
+                ChartTest.respondWithSampleCluster(requests[0]);
 
                 expect(chart.content().querySelector('canvas')).to.be(null);
                 return waitForComponentsToRender(context).then(() => {
@@ -561,19 +464,19 @@ describe('TimeSeriesChart', () => {
 
         it('should immediately enqueue to render when the measurement set had already been fetched', () => {
             const context = new BrowsingContext();
-            return context.importScripts(scripts, 'ComponentBase', 'TimeSeriesChart', 'MeasurementSet', 'MockRemoteAPI').then(() => {
-                const chart = createChartWithSampleCluster(context);
+            return ChartTest.importChartScripts(context).then(() => {
+                const chart = ChartTest.createChartWithSampleCluster(context);
 
                 let set = context.symbols.MeasurementSet.findSet(1, 1, 0);
-                let promise = set.fetchBetween(sampleCluster.startTime, sampleCluster.endTime);
+                let promise = set.fetchBetween(ChartTest.sampleCluster.startTime, ChartTest.sampleCluster.endTime);
 
                 const requests = context.symbols.MockRemoteAPI.requests;
                 expect(requests.length).to.be(1);
-                respondWithSampleCluster(requests[0]);
+                ChartTest.respondWithSampleCluster(requests[0]);
 
                 return promise.then(() => {
                     expect(chart.content().querySelector('canvas')).to.be(null);
-                    chart.setDomain(sampleCluster.startTime, sampleCluster.endTime);
+                    chart.setDomain(ChartTest.sampleCluster.startTime, ChartTest.sampleCluster.endTime);
                     chart.fetchMeasurementSets();
                     return waitForComponentsToRender(context);
                 }).then(() => {
@@ -585,18 +488,18 @@ describe('TimeSeriesChart', () => {
 
         it('should dispatch "dataChange" action once the fetched data becomes available', () => {
             const context = new BrowsingContext();
-            return context.importScripts(scripts, 'ComponentBase', 'TimeSeriesChart', 'MeasurementSet', 'MockRemoteAPI').then(() => {
-                const chart = createChartWithSampleCluster(context);
+            return ChartTest.importChartScripts(context).then(() => {
+                const chart = ChartTest.createChartWithSampleCluster(context);
 
                 let dataChangeCount = 0;
                 chart.listenToAction('dataChange', () => dataChangeCount++);
 
-                chart.setDomain(sampleCluster.startTime, sampleCluster.endTime);
+                chart.setDomain(ChartTest.sampleCluster.startTime, ChartTest.sampleCluster.endTime);
                 chart.fetchMeasurementSets();
 
                 const requests = context.symbols.MockRemoteAPI.requests;
                 expect(requests.length).to.be(1);
-                respondWithSampleCluster(requests[0]);
+                ChartTest.respondWithSampleCluster(requests[0]);
 
                 expect(dataChangeCount).to.be(0);
                 expect(chart.sampledTimeSeriesData('current')).to.be(null);
@@ -613,12 +516,12 @@ describe('TimeSeriesChart', () => {
     describe('sampledTimeSeriesData', () => {
         it('should not contain an outlier when includeOutliers is false', () => {
             const context = new BrowsingContext();
-            return context.importScripts(scripts, 'ComponentBase', 'TimeSeriesChart', 'MeasurementSet', 'MockRemoteAPI').then(() => {
-                const chart = createChartWithSampleCluster(context, [{includeOutliers: false}])
+            return ChartTest.importChartScripts(context).then(() => {
+                const chart = ChartTest.createChartWithSampleCluster(context, [{includeOutliers: false}])
 
-                chart.setDomain(sampleCluster.startTime, sampleCluster.endTime);
+                chart.setDomain(ChartTest.sampleCluster.startTime, ChartTest.sampleCluster.endTime);
                 chart.fetchMeasurementSets();
-                respondWithSampleCluster(context.symbols.MockRemoteAPI.requests[0]);
+                ChartTest.respondWithSampleCluster(context.symbols.MockRemoteAPI.requests[0]);
 
                 return waitForComponentsToRender(context).then(() => {
                     const view = chart.sampledTimeSeriesData('current');
@@ -631,12 +534,12 @@ describe('TimeSeriesChart', () => {
 
         it('should contain every outlier when includeOutliers is true', () => {
             const context = new BrowsingContext();
-            return context.importScripts(scripts, 'ComponentBase', 'TimeSeriesChart', 'MeasurementSet', 'MockRemoteAPI').then(() => {
-                const chart = createChartWithSampleCluster(context, [{includeOutliers: true}])
+            return ChartTest.importChartScripts(context).then(() => {
+                const chart = ChartTest.createChartWithSampleCluster(context, [{includeOutliers: true}])
 
-                chart.setDomain(sampleCluster.startTime, sampleCluster.endTime);
+                chart.setDomain(ChartTest.sampleCluster.startTime, ChartTest.sampleCluster.endTime);
                 chart.fetchMeasurementSets();
-                respondWithSampleCluster(context.symbols.MockRemoteAPI.requests[0]);
+                ChartTest.respondWithSampleCluster(context.symbols.MockRemoteAPI.requests[0]);
 
                 return waitForComponentsToRender(context).then(() => {
                     const view = chart.sampledTimeSeriesData('current');
@@ -649,12 +552,12 @@ describe('TimeSeriesChart', () => {
 
         it('should only contain data points in the domain and one preceding point when there are no succeeding points', () => {
             const context = new BrowsingContext();
-            return context.importScripts(scripts, 'ComponentBase', 'TimeSeriesChart', 'MeasurementSet', 'MockRemoteAPI').then(() => {
-                const chart = createChartWithSampleCluster(context, [{includeOutliers: true}])
+            return ChartTest.importChartScripts(context).then(() => {
+                const chart = ChartTest.createChartWithSampleCluster(context, [{includeOutliers: true}])
 
                 chart.setDomain(posixTime('2016-01-06T00:00:00Z'), posixTime('2016-01-07T00:00:00Z'));
                 chart.fetchMeasurementSets();
-                respondWithSampleCluster(context.symbols.MockRemoteAPI.requests[0]);
+                ChartTest.respondWithSampleCluster(context.symbols.MockRemoteAPI.requests[0]);
 
                 return waitForComponentsToRender(context).then(() => {
                     const view = chart.sampledTimeSeriesData('current');
@@ -665,13 +568,13 @@ describe('TimeSeriesChart', () => {
 
         it('should only contain data points in the domain and one succeeding point when there are no preceding points', () => {
             const context = new BrowsingContext();
-            return context.importScripts(scripts, 'ComponentBase', 'TimeSeriesChart', 'MeasurementSet', 'MockRemoteAPI').then(() => {
-                const chart = createChartWithSampleCluster(context, [{includeOutliers: true}])
+            return ChartTest.importChartScripts(context).then(() => {
+                const chart = ChartTest.createChartWithSampleCluster(context, [{includeOutliers: true}])
 
                 chart.setDomain(posixTime('2016-01-05T00:00:00Z'), posixTime('2016-01-06T00:00:00Z'));
                 chart.fetchMeasurementSets();
                 chart.fetchMeasurementSets();
-                respondWithSampleCluster(context.symbols.MockRemoteAPI.requests[0]);
+                ChartTest.respondWithSampleCluster(context.symbols.MockRemoteAPI.requests[0]);
 
                 return waitForComponentsToRender(context).then(() => {
                     const view = chart.sampledTimeSeriesData('current');
@@ -682,12 +585,12 @@ describe('TimeSeriesChart', () => {
 
         it('should only contain data points in the domain and one preceding point and one succeeding point', () => {
             const context = new BrowsingContext();
-            return context.importScripts(scripts, 'ComponentBase', 'TimeSeriesChart', 'MeasurementSet', 'MockRemoteAPI').then(() => {
-                const chart = createChartWithSampleCluster(context, [{includeOutliers: true}])
+            return ChartTest.importChartScripts(context).then(() => {
+                const chart = ChartTest.createChartWithSampleCluster(context, [{includeOutliers: true}])
 
                 chart.setDomain(posixTime('2016-01-05T21:00:00Z'), posixTime('2016-01-06T02:00:00Z'));
                 chart.fetchMeasurementSets();
-                respondWithSampleCluster(context.symbols.MockRemoteAPI.requests[0]);
+                ChartTest.respondWithSampleCluster(context.symbols.MockRemoteAPI.requests[0]);
 
                 return waitForComponentsToRender(context).then(() => {
                     const view = chart.sampledTimeSeriesData('current');
@@ -700,18 +603,18 @@ describe('TimeSeriesChart', () => {
     describe('render', () => {
         it('should update the canvas size and its content after the window has been resized', () => {
             const context = new BrowsingContext();
-            return context.importScripts(scripts, 'ComponentBase', 'TimeSeriesChart', 'MeasurementSet', 'MockRemoteAPI').then(() => {
-                const chart = createChartWithSampleCluster(context, null, {width: '100%', height: '100%'});
+            return ChartTest.importChartScripts(context).then(() => {
+                const chart = ChartTest.createChartWithSampleCluster(context, null, {width: '100%', height: '100%'});
 
                 let dataChangeCount = 0;
                 chart.listenToAction('dataChange', () => dataChangeCount++);
 
-                chart.setDomain(sampleCluster.startTime, sampleCluster.endTime);
+                chart.setDomain(ChartTest.sampleCluster.startTime, ChartTest.sampleCluster.endTime);
                 chart.fetchMeasurementSets();
 
                 const requests = context.symbols.MockRemoteAPI.requests;
                 expect(requests.length).to.be(1);
-                respondWithSampleCluster(requests[0]);
+                ChartTest.respondWithSampleCluster(requests[0]);
 
                 expect(dataChangeCount).to.be(0);
                 expect(chart.sampledTimeSeriesData('current')).to.be(null);
@@ -750,18 +653,18 @@ describe('TimeSeriesChart', () => {
 
         it('should not update update the canvas when the window has been resized but its dimensions stays the same', () => {
             const context = new BrowsingContext();
-            return context.importScripts(scripts, 'ComponentBase', 'TimeSeriesChart', 'MeasurementSet', 'MockRemoteAPI').then(() => {
-                const chart = createChartWithSampleCluster(context, null, {width: '100px', height: '100px'});
+            return ChartTest.importChartScripts(context).then(() => {
+                const chart = ChartTest.createChartWithSampleCluster(context, null, {width: '100px', height: '100px'});
 
                 let dataChangeCount = 0;
                 chart.listenToAction('dataChange', () => dataChangeCount++);
 
-                chart.setDomain(sampleCluster.startTime, sampleCluster.endTime);
+                chart.setDomain(ChartTest.sampleCluster.startTime, ChartTest.sampleCluster.endTime);
                 chart.fetchMeasurementSets();
 
                 const requests = context.symbols.MockRemoteAPI.requests;
                 expect(requests.length).to.be(1);
-                respondWithSampleCluster(requests[0]);
+                ChartTest.respondWithSampleCluster(requests[0]);
                 expect(dataChangeCount).to.be(0);
 
                 let canvas;
@@ -796,15 +699,15 @@ describe('TimeSeriesChart', () => {
 
         it('should render Y-axis', () => {
             const context = new BrowsingContext();
-            return context.importScripts(scripts, 'ComponentBase', 'TimeSeriesChart', 'MeasurementSet', 'MockRemoteAPI', 'Metric').then(() => {
-                const chartWithoutYAxis = createChartWithSampleCluster(context, null, {axis:
+            return ChartTest.importChartScripts(context).then(() => {
+                const chartWithoutYAxis = ChartTest.createChartWithSampleCluster(context, null, {axis:
                     {
                         gridStyle: '#ccc',
                         fontSize: 1,
                         valueFormatter: context.symbols.Metric.makeFormatter('ms', 3),
                     }
                 });
-                const chartWithYAxis1 = createChartWithSampleCluster(context, null, {axis:
+                const chartWithYAxis1 = ChartTest.createChartWithSampleCluster(context, null, {axis:
                     {
                         yAxisWidth: 4,
                         gridStyle: '#ccc',
@@ -812,7 +715,7 @@ describe('TimeSeriesChart', () => {
                         valueFormatter: context.symbols.Metric.makeFormatter('ms', 3),
                     }
                 });
-                const chartWithYAxis2 = createChartWithSampleCluster(context, null, {axis:
+                const chartWithYAxis2 = ChartTest.createChartWithSampleCluster(context, null, {axis:
                     {
                         yAxisWidth: 4,
                         gridStyle: '#ccc',
@@ -821,16 +724,16 @@ describe('TimeSeriesChart', () => {
                     }
                 });
 
-                chartWithoutYAxis.setDomain(sampleCluster.startTime, sampleCluster.endTime);
+                chartWithoutYAxis.setDomain(ChartTest.sampleCluster.startTime, ChartTest.sampleCluster.endTime);
                 chartWithoutYAxis.fetchMeasurementSets();
-                chartWithYAxis1.setDomain(sampleCluster.startTime, sampleCluster.endTime);
+                chartWithYAxis1.setDomain(ChartTest.sampleCluster.startTime, ChartTest.sampleCluster.endTime);
                 chartWithYAxis1.fetchMeasurementSets();
-                chartWithYAxis2.setDomain(sampleCluster.startTime, sampleCluster.endTime);
+                chartWithYAxis2.setDomain(ChartTest.sampleCluster.startTime, ChartTest.sampleCluster.endTime);
                 chartWithYAxis2.fetchMeasurementSets();
 
                 const requests = context.symbols.MockRemoteAPI.requests;
                 expect(requests.length).to.be(1);
-                respondWithSampleCluster(requests[0]);
+                ChartTest.respondWithSampleCluster(requests[0]);
 
                 return waitForComponentsToRender(context).then(() => {
                     let canvasWithoutYAxis = chartWithoutYAxis.content().querySelector('canvas');
@@ -848,18 +751,18 @@ describe('TimeSeriesChart', () => {
 
         it('should render the sampled time series', () => {
             const context = new BrowsingContext();
-            return context.importScripts(scripts, 'ComponentBase', 'TimeSeriesChart', 'InteractiveTimeSeriesChart', 'MeasurementSet', 'MockRemoteAPI').then(() => {
+            return ChartTest.importChartScripts(context).then(() => {
                 const lineStyle = 'rgb(0, 128, 255)';
                 const lineColor = {r: 0, g: 128, b: 255};
                 const chartOptions = {width: '100px', height: '100px'};
-                const chartWithoutSampling = createChartWithSampleCluster(context, [{lineStyle, sampleData: false}], chartOptions);
-                const chartWithSampling = createChartWithSampleCluster(context, [{lineStyle, sampleData: true}], chartOptions);
+                const chartWithoutSampling = ChartTest.createChartWithSampleCluster(context, [{lineStyle, sampleData: false}], chartOptions);
+                const chartWithSampling = ChartTest.createChartWithSampleCluster(context, [{lineStyle, sampleData: true}], chartOptions);
 
-                chartWithoutSampling.setDomain(sampleCluster.startTime, sampleCluster.endTime);
+                chartWithoutSampling.setDomain(ChartTest.sampleCluster.startTime, ChartTest.sampleCluster.endTime);
                 chartWithoutSampling.fetchMeasurementSets();
-                respondWithSampleCluster(context.symbols.MockRemoteAPI.requests[0]);
+                ChartTest.respondWithSampleCluster(context.symbols.MockRemoteAPI.requests[0]);
 
-                chartWithSampling.setDomain(sampleCluster.startTime, sampleCluster.endTime);
+                chartWithSampling.setDomain(ChartTest.sampleCluster.startTime, ChartTest.sampleCluster.endTime);
                 chartWithSampling.fetchMeasurementSets();
 
                 let canvasWithSampling;
@@ -872,9 +775,9 @@ describe('TimeSeriesChart', () => {
                     expect(CanvasTest.canvasContainsColor(canvasWithoutSampling, lineColor)).to.be(true);
                     expect(CanvasTest.canvasContainsColor(canvasWithSampling, lineColor)).to.be(true);
 
-                    const diff = sampleCluster.endTime - sampleCluster.startTime;
-                    chartWithoutSampling.setDomain(sampleCluster.startTime - 2 * diff, sampleCluster.endTime);
-                    chartWithSampling.setDomain(sampleCluster.startTime - 2 * diff, sampleCluster.endTime);
+                    const diff = ChartTest.sampleCluster.endTime - ChartTest.sampleCluster.startTime;
+                    chartWithoutSampling.setDomain(ChartTest.sampleCluster.startTime - 2 * diff, ChartTest.sampleCluster.endTime);
+                    chartWithSampling.setDomain(ChartTest.sampleCluster.startTime - 2 * diff, ChartTest.sampleCluster.endTime);
 
                     CanvasTest.fillCanvasBeforeRedrawCheck(canvasWithoutSampling);
                     CanvasTest.fillCanvasBeforeRedrawCheck(canvasWithSampling);
@@ -893,24 +796,24 @@ describe('TimeSeriesChart', () => {
 
         it('should render annotations', () => {
             const context = new BrowsingContext();
-            return context.importScripts(scripts, 'ComponentBase', 'TimeSeriesChart', 'InteractiveTimeSeriesChart', 'MeasurementSet', 'MockRemoteAPI').then(() => {
+            return ChartTest.importChartScripts(context).then(() => {
                 const options = {annotations: { textStyle: '#000', textBackground: '#fff', minWidth: 3, barHeight: 7, barSpacing: 2}};
-                const chartWithoutAnnotations = createChartWithSampleCluster(context, null, options);
-                const chartWithAnnotations = createChartWithSampleCluster(context, null, options);
+                const chartWithoutAnnotations = ChartTest.createChartWithSampleCluster(context, null, options);
+                const chartWithAnnotations = ChartTest.createChartWithSampleCluster(context, null, options);
 
-                chartWithoutAnnotations.setDomain(sampleCluster.startTime, sampleCluster.endTime);
+                chartWithoutAnnotations.setDomain(ChartTest.sampleCluster.startTime, ChartTest.sampleCluster.endTime);
                 chartWithoutAnnotations.fetchMeasurementSets();
-                respondWithSampleCluster(context.symbols.MockRemoteAPI.requests[0]);
+                ChartTest.respondWithSampleCluster(context.symbols.MockRemoteAPI.requests[0]);
 
-                chartWithAnnotations.setDomain(sampleCluster.startTime, sampleCluster.endTime);
+                chartWithAnnotations.setDomain(ChartTest.sampleCluster.startTime, ChartTest.sampleCluster.endTime);
                 chartWithAnnotations.fetchMeasurementSets();
 
                 let canvasWithAnnotations;
                 return waitForComponentsToRender(context).then(() => {
-                    const diff = sampleCluster.endTime - sampleCluster.startTime;
+                    const diff = ChartTest.sampleCluster.endTime - ChartTest.sampleCluster.startTime;
                     chartWithAnnotations.setAnnotations([{
-                        startTime: sampleCluster.startTime + diff / 4,
-                        endTime: sampleCluster.startTime + diff / 2,
+                        startTime: ChartTest.sampleCluster.startTime + diff / 4,
+                        endTime: ChartTest.sampleCluster.startTime + diff / 2,
                         label: 'hello, world',
                         fillStyle: 'rgb(0, 0, 255)',
                     }]);
@@ -929,849 +832,3 @@ describe('TimeSeriesChart', () => {
     });
 
 });
-
-describe('InteractiveTimeSeriesChart', () => {
-
-    it('should change the unlocked indicator to the point closest to the last mouse move position', () => {
-        const context = new BrowsingContext();
-        return context.importScripts(scripts, 'ComponentBase', 'TimeSeriesChart', 'InteractiveTimeSeriesChart', 'MeasurementSet', 'MockRemoteAPI').then(() => {
-            const chart = createInteractiveChartWithSampleCluster(context);
-
-            chart.setDomain(sampleCluster.startTime, sampleCluster.endTime);
-            chart.fetchMeasurementSets();
-            respondWithSampleCluster(context.symbols.MockRemoteAPI.requests[0]);
-
-            const indicatorChangeCalls = [];
-            chart.listenToAction('indicatorChange', (...args) => indicatorChangeCalls.push(args));
-
-            let selectionChangeCount = 0;
-            chart.listenToAction('selectionChange', () => selectionChangeCount++);
-
-            let canvas;
-            return waitForComponentsToRender(context).then(() => {
-                expect(chart.currentSelection()).to.be(null);
-                expect(chart.currentIndicator()).to.be(null);
-                expect(indicatorChangeCalls).to.be.eql([]);
-
-                canvas = chart.content().querySelector('canvas');
-                const rect = canvas.getBoundingClientRect();
-                canvas.dispatchEvent(new MouseEvent('mousemove', {target: canvas, clientX: rect.right - 1, clientY: rect.top + rect.height / 2, composed: true, bubbles: true}));
-
-                CanvasTest.fillCanvasBeforeRedrawCheck(canvas);
-                return waitForComponentsToRender(context);
-            }).then(() => {
-                expect(CanvasTest.hasCanvasBeenRedrawn(canvas)).to.be(true);
-
-                expect(chart.currentSelection()).to.be(null);
-                const indicator = chart.currentIndicator();
-                expect(indicator).to.not.be(null);
-                const currentView = chart.sampledTimeSeriesData('current');
-                const lastPoint = currentView.lastPoint();
-                expect(indicator.view).to.be(currentView);
-                expect(indicator.point).to.be(lastPoint);
-                expect(indicator.isLocked).to.be(false);
-                expect(indicatorChangeCalls).to.be.eql([[lastPoint.id, false]]);
-
-                expect(selectionChangeCount).to.be(0);
-            });
-        });
-    });
-
-    it('should lock the indicator to the point closest to the clicked position', () => {
-        const context = new BrowsingContext();
-        return context.importScripts(scripts, 'ComponentBase', 'TimeSeriesChart', 'InteractiveTimeSeriesChart', 'MeasurementSet', 'MockRemoteAPI').then(() => {
-            const chart = createInteractiveChartWithSampleCluster(context);
-
-            chart.setDomain(sampleCluster.startTime, sampleCluster.endTime);
-            chart.fetchMeasurementSets();
-            respondWithSampleCluster(context.symbols.MockRemoteAPI.requests[0]);
-
-            const indicatorChangeCalls = [];
-            chart.listenToAction('indicatorChange', (...args) => indicatorChangeCalls.push(args));
-
-            let selectionChangeCount = 0;
-            chart.listenToAction('selectionChange', () => selectionChangeCount++);
-
-            let canvas;
-            return waitForComponentsToRender(context).then(() => {
-                expect(chart.currentSelection()).to.be(null);
-                expect(chart.currentIndicator()).to.be(null);
-                expect(indicatorChangeCalls).to.be.eql([]);
-                canvas = chart.content().querySelector('canvas');
-                const rect = canvas.getBoundingClientRect();
-
-                const x = rect.right - 1;
-                const y = rect.top + rect.height / 2;
-                canvas.dispatchEvent(new MouseEvent('mousemove', {target: canvas, clientX: x, clientY: y, composed: true, bubbles: true}));
-                canvas.dispatchEvent(new MouseEvent('mousedown', {target: canvas, clientX: x, clientY: y, composed: true, bubbles: true}));
-                canvas.dispatchEvent(new MouseEvent('mousemove', {target: canvas, clientX: x - 0.5, clientY: y + 0.5, composed: true, bubbles: true}));
-                canvas.dispatchEvent(new MouseEvent('mouseup', {target: canvas, clientX: x - 0.5, clientY: y + 0.5, composed: true, bubbles: true}));
-                canvas.dispatchEvent(new MouseEvent('click', {target: canvas, clientX: x - 0.5, clientY: y + 0.5, composed: true, bubbles: true}));
-
-                CanvasTest.fillCanvasBeforeRedrawCheck(canvas);
-                return waitForComponentsToRender(context);
-            }).then(() => {
-                expect(CanvasTest.hasCanvasBeenRedrawn(canvas)).to.be(true);
-
-                const currentView = chart.sampledTimeSeriesData('current');
-                const lastPoint = currentView.lastPoint();
-                expect(chart.currentSelection()).to.be(null);
-                const indicator = chart.currentIndicator();
-                expect(indicator.view).to.be(currentView);
-                expect(indicator.point).to.be(lastPoint);
-                expect(indicator.isLocked).to.be(true);
-                expect(indicatorChangeCalls).to.be.eql([[lastPoint.id, false], [lastPoint.id, true]]);
-
-                expect(selectionChangeCount).to.be(0);
-            });
-        });
-    });
-
-    it('should clear the unlocked indicator when the mouse cursor exits the chart', () => {
-        const context = new BrowsingContext();
-        return context.importScripts(scripts, 'ComponentBase', 'TimeSeriesChart', 'InteractiveTimeSeriesChart', 'MeasurementSet', 'MockRemoteAPI').then(() => {
-            const chart = createInteractiveChartWithSampleCluster(context);
-
-            chart.setDomain(sampleCluster.startTime, sampleCluster.endTime);
-            chart.fetchMeasurementSets();
-            respondWithSampleCluster(context.symbols.MockRemoteAPI.requests[0]);
-
-            const indicatorChangeCalls = [];
-            chart.listenToAction('indicatorChange', (...args) => indicatorChangeCalls.push(args));
-
-            let selectionChangeCount = 0;
-            chart.listenToAction('selectionChange', () => selectionChangeCount++);
-
-            let canvas;
-            let rect;
-            let lastPoint;
-            return waitForComponentsToRender(context).then(() => {
-                expect(chart.currentSelection()).to.be(null);
-                expect(chart.currentIndicator()).to.be(null);
-                expect(indicatorChangeCalls).to.be.eql([]);
-
-                canvas = chart.content().querySelector('canvas');
-                rect = canvas.getBoundingClientRect();
-                canvas.dispatchEvent(new MouseEvent('mousemove', {target: canvas, clientX: rect.right - 1, clientY: rect.top + rect.height / 2, composed: true, bubbles: true}));
-
-                CanvasTest.fillCanvasBeforeRedrawCheck(canvas);
-                return waitForComponentsToRender(context);
-            }).then(() => {
-                expect(CanvasTest.hasCanvasBeenRedrawn(canvas)).to.be(true);
-
-                const currentView = chart.sampledTimeSeriesData('current');
-                lastPoint = currentView.lastPoint();
-                expect(chart.currentSelection()).to.be(null);
-                const indicator = chart.currentIndicator();
-                expect(indicator.view).to.be(currentView);
-                expect(indicator.point).to.be(lastPoint);
-                expect(indicator.isLocked).to.be(false);
-                expect(indicatorChangeCalls).to.be.eql([[lastPoint.id, false]]);
-
-                canvas.parentNode.dispatchEvent(new MouseEvent('mousemove', {target: canvas, clientX: rect.right + 50, clientY: rect.bottom + 50, composed: true, bubbles: true}));
-                canvas.dispatchEvent(new MouseEvent('mouseleave', {target: canvas, clientX: rect.right + 50, clientY: rect.bottom + 50, composed: true, bubbles: true}));
-
-                CanvasTest.fillCanvasBeforeRedrawCheck(canvas);
-                return waitForComponentsToRender(context);
-            }).then(() => {
-                expect(CanvasTest.hasCanvasBeenRedrawn(canvas)).to.be(true);
-
-                expect(chart.currentSelection()).to.be(null);
-                expect(chart.currentIndicator()).to.be(null);
-                expect(indicatorChangeCalls).to.be.eql([[lastPoint.id, false], [null, false]]);
-
-                expect(selectionChangeCount).to.be(0);
-            });
-        });
-    });
-
-    it('should not clear the locked indicator when the mouse cursor exits the chart', () => {
-        const context = new BrowsingContext();
-        return context.importScripts(scripts, 'ComponentBase', 'TimeSeriesChart', 'InteractiveTimeSeriesChart', 'MeasurementSet', 'MockRemoteAPI').then(() => {
-            const chart = createInteractiveChartWithSampleCluster(context);
-
-            chart.setDomain(sampleCluster.startTime, sampleCluster.endTime);
-            chart.fetchMeasurementSets();
-            respondWithSampleCluster(context.symbols.MockRemoteAPI.requests[0]);
-
-            const indicatorChangeCalls = [];
-            chart.listenToAction('indicatorChange', (...args) => indicatorChangeCalls.push(args));
-
-            let selectionChangeCount = 0;
-            chart.listenToAction('selectionChange', () => selectionChangeCount++);
-
-            let canvas;
-            let rect;
-            let currentView;
-            let lastPoint;
-            return waitForComponentsToRender(context).then(() => {
-                expect(chart.currentSelection()).to.be(null);
-                expect(chart.currentIndicator()).to.be(null);
-                expect(indicatorChangeCalls).to.be.eql([]);
-
-                canvas = chart.content().querySelector('canvas');
-                rect = canvas.getBoundingClientRect();
-                canvas.dispatchEvent(new MouseEvent('click', {target: canvas, clientX: rect.right - 1, clientY: rect.top + rect.height / 2, composed: true, bubbles: true}));
-
-                CanvasTest.fillCanvasBeforeRedrawCheck(canvas);
-                return waitForComponentsToRender(context);
-            }).then(() => {
-                expect(CanvasTest.hasCanvasBeenRedrawn(canvas)).to.be(true);
-
-                currentView = chart.sampledTimeSeriesData('current');
-                lastPoint = currentView.lastPoint();
-                expect(chart.currentSelection()).to.be(null);
-                const indicator = chart.currentIndicator();
-                expect(indicator.view).to.be(currentView);
-                expect(indicator.point).to.be(lastPoint);
-                expect(indicator.isLocked).to.be(true);
-                expect(indicatorChangeCalls).to.be.eql([[lastPoint.id, true]]);
-
-                canvas.parentNode.dispatchEvent(new MouseEvent('mousemove', {target: canvas, clientX: rect.right + 50, clientY: rect.bottom + 50, composed: true, bubbles: true}));
-                canvas.dispatchEvent(new MouseEvent('mouseleave', {target: canvas, clientX: rect.right + 50, clientY: rect.bottom + 50, composed: true, bubbles: true}));
-
-                CanvasTest.fillCanvasBeforeRedrawCheck(canvas);
-                return waitForComponentsToRender(context);
-            }).then(() => {
-                expect(CanvasTest.hasCanvasBeenRedrawn(canvas)).to.be(false);
-
-                expect(chart.currentSelection()).to.be(null);
-                const indicator = chart.currentIndicator();
-                expect(indicator.view).to.be(currentView);
-                expect(indicator.point).to.be(lastPoint);
-                expect(indicator.isLocked).to.be(true);
-                expect(indicatorChangeCalls).to.be.eql([[lastPoint.id, true]]);
-
-                expect(selectionChangeCount).to.be(0);
-            })
-        });
-    });
-
-    it('should clear the locked indicator when clicked', () => {
-        const context = new BrowsingContext();
-        return context.importScripts(scripts, 'ComponentBase', 'TimeSeriesChart', 'InteractiveTimeSeriesChart', 'MeasurementSet', 'MockRemoteAPI').then(() => {
-            const chart = createInteractiveChartWithSampleCluster(context);
-
-            chart.setDomain(sampleCluster.startTime, sampleCluster.endTime);
-            chart.fetchMeasurementSets();
-            respondWithSampleCluster(context.symbols.MockRemoteAPI.requests[0]);
-
-            const indicatorChangeCalls = [];
-            chart.listenToAction('indicatorChange', (...args) => indicatorChangeCalls.push(args));
-
-            let selectionChangeCount = 0;
-            chart.listenToAction('selectionChange', () => selectionChangeCount++);
-
-            let canvas;
-            let rect;
-            let y;
-            let currentView;
-            let lastPoint;
-            return waitForComponentsToRender(context).then(() => {
-                expect(chart.currentSelection()).to.be(null);
-                expect(chart.currentIndicator()).to.be(null);
-                expect(indicatorChangeCalls).to.be.eql([]);
-
-                canvas = chart.content().querySelector('canvas');
-                rect = canvas.getBoundingClientRect();
-                y = rect.top + rect.height / 2;
-                canvas.dispatchEvent(new MouseEvent('click', {target: canvas, clientX: rect.right - 1, clientY: y, composed: true, bubbles: true}));
-
-                CanvasTest.fillCanvasBeforeRedrawCheck(canvas);
-                return waitForComponentsToRender(context);
-            }).then(() => {
-                expect(CanvasTest.hasCanvasBeenRedrawn(canvas)).to.be(true);
-
-                currentView = chart.sampledTimeSeriesData('current');
-                lastPoint = currentView.lastPoint();
-                expect(chart.currentSelection()).to.be(null);
-                const indicator = chart.currentIndicator();
-                expect(indicator.view).to.be(currentView);
-                expect(indicator.point).to.be(lastPoint);
-                expect(indicator.isLocked).to.be(true);
-                expect(indicatorChangeCalls).to.be.eql([[lastPoint.id, true]]);
-
-                canvas.dispatchEvent(new MouseEvent('click', {target: canvas, clientX: rect.left + 1, clientY: y, composed: true, bubbles: true}));
-
-                CanvasTest.fillCanvasBeforeRedrawCheck(canvas);
-                return waitForComponentsToRender(context);
-            }).then(() => {
-                expect(CanvasTest.hasCanvasBeenRedrawn(canvas)).to.be(true);
-
-                expect(chart.currentSelection()).to.be(null);
-                const firstPoint = currentView.firstPoint();
-                const indicator = chart.currentIndicator();
-                expect(indicator.view).to.be(currentView);
-                expect(indicator.point).to.be(firstPoint);
-                expect(indicator.isLocked).to.be(false);
-                expect(indicatorChangeCalls).to.be.eql([[lastPoint.id, true], [firstPoint.id, false]]);
-
-                expect(selectionChangeCount).to.be(0);
-            })
-        });
-    });
-
-    it('should change the selection when the mouse cursor is dragged', () => {
-        const context = new BrowsingContext();
-        return context.importScripts(scripts, 'ComponentBase', 'TimeSeriesChart', 'InteractiveTimeSeriesChart', 'MeasurementSet', 'MockRemoteAPI').then(() => {
-            const chart = createInteractiveChartWithSampleCluster(context, null, {selection: {lineStyle: '#f93', lineWidth: 2, fillStyle: '#ccc'}});
-
-            chart.setDomain(sampleCluster.startTime, sampleCluster.endTime);
-            chart.fetchMeasurementSets();
-            respondWithSampleCluster(context.symbols.MockRemoteAPI.requests[0]);
-
-            const indicatorChangeCalls = [];
-            chart.listenToAction('indicatorChange', (...args) => indicatorChangeCalls.push(args));
-
-            const selectionChangeCalls = [];
-            chart.listenToAction('selectionChange', (...args) => selectionChangeCalls.push(args));
-
-            const zoomButton = chart.content('zoom-button');
-
-            let canvas;
-            let rect;
-            let y;
-            let currentView;
-            let firstPoint;
-            let oldRange;
-            let newRange;
-            return waitForComponentsToRender(context).then(() => {
-                expect(chart.currentSelection()).to.be(null);
-                expect(chart.currentIndicator()).to.be(null);
-                expect(selectionChangeCalls).to.be.eql([]);
-
-                canvas = chart.content().querySelector('canvas');
-                rect = canvas.getBoundingClientRect();
-                y = rect.top + rect.height / 2;
-                canvas.dispatchEvent(new MouseEvent('mousemove', {target: canvas, clientX: rect.left + 5, clientY: y, composed: true, bubbles: true}));
-
-                CanvasTest.fillCanvasBeforeRedrawCheck(canvas);
-                return waitForComponentsToRender(context);
-            }).then(() => {
-                expect(CanvasTest.hasCanvasBeenRedrawn(canvas)).to.be(true);
-
-                currentView = chart.sampledTimeSeriesData('current');
-                firstPoint = currentView.firstPoint();
-                expect(chart.currentSelection()).to.be(null);
-                let indicator = chart.currentIndicator();
-                expect(indicator.view).to.be(currentView);
-                expect(indicator.point).to.be(firstPoint);
-                expect(indicator.isLocked).to.be(false);
-                expect(indicatorChangeCalls).to.be.eql([[firstPoint.id, false]]);
-                expect(zoomButton.offsetHeight).to.be(0);
-
-                canvas.dispatchEvent(new MouseEvent('mousedown', {target: canvas, clientX: rect.left + 5, clientY: y, composed: true, bubbles: true}));
-
-                CanvasTest.fillCanvasBeforeRedrawCheck(canvas);
-                return waitForComponentsToRender(context);
-            }).then(() => {
-                expect(CanvasTest.hasCanvasBeenRedrawn(canvas)).to.be(false);
-
-                expect(chart.currentSelection()).to.be(null);
-                let indicator = chart.currentIndicator();
-                expect(indicator.view).to.be(currentView);
-                expect(indicator.point).to.be(firstPoint);
-                expect(indicator.isLocked).to.be(false);
-                expect(selectionChangeCalls).to.be.eql([]);
-                expect(indicatorChangeCalls).to.be.eql([[firstPoint.id, false]]);
-                expect(zoomButton.offsetHeight).to.be(0);
-
-                canvas.dispatchEvent(new MouseEvent('mousemove', {target: canvas, clientX: rect.left + 15, clientY: y + 5, composed: true, bubbles: true}));
-
-                CanvasTest.fillCanvasBeforeRedrawCheck(canvas);
-                return waitForComponentsToRender(context);
-            }).then(() => {
-                expect(CanvasTest.hasCanvasBeenRedrawn(canvas)).to.be(true);
-
-                expect(chart.currentSelection()).to.not.be(null);
-                expect(chart.currentIndicator()).to.be(null);
-                expect(selectionChangeCalls.length).to.be(1);
-                oldRange = selectionChangeCalls[0][0];
-                expect(oldRange).to.be.eql(chart.currentSelection());
-                expect(selectionChangeCalls[0][1]).to.be(false);
-                expect(indicatorChangeCalls).to.be.eql([[firstPoint.id, false], [null, false]]);
-                expect(zoomButton.offsetHeight).to.be(0);
-
-                canvas.dispatchEvent(new MouseEvent('mousemove', {target: canvas, clientX: rect.right - 5, clientY: y + 5, composed: true, bubbles: true}));
-
-                CanvasTest.fillCanvasBeforeRedrawCheck(canvas);
-                return waitForComponentsToRender(context);
-            }).then(() => {
-                expect(CanvasTest.hasCanvasBeenRedrawn(canvas)).to.be(true);
-
-                expect(chart.currentSelection()).to.not.be(null);
-                expect(chart.currentIndicator()).to.be(null);
-                expect(selectionChangeCalls.length).to.be(2);
-                newRange = selectionChangeCalls[1][0];
-                expect(newRange).to.be.eql(chart.currentSelection());
-                expect(newRange[0]).to.be(oldRange[0]);
-                expect(newRange[1]).to.be.greaterThan(oldRange[1]);
-                expect(selectionChangeCalls[1][1]).to.be(false);
-                expect(zoomButton.offsetHeight).to.be(0);
-
-                canvas.dispatchEvent(new MouseEvent('mouseup', {target: canvas, clientX: rect.right - 5, clientY: y + 5, composed: true, bubbles: true}));
-                canvas.dispatchEvent(new MouseEvent('click', {target: canvas, clientX: rect.right - 5, clientY: y + 5, composed: true, bubbles: true}));
-
-                CanvasTest.fillCanvasBeforeRedrawCheck(canvas);
-                return waitForComponentsToRender(context);
-            }).then(() => {
-                expect(CanvasTest.hasCanvasBeenRedrawn(canvas)).to.be(true);
-
-                expect(chart.currentSelection()).to.be.eql(newRange);
-                expect(chart.currentIndicator()).to.be(null);
-                expect(selectionChangeCalls.length).to.be(3);
-                expect(selectionChangeCalls[2][0]).to.be.eql(newRange);
-                expect(selectionChangeCalls[2][1]).to.be(true);
-                expect(zoomButton.offsetHeight).to.be(0);
-            });
-        });
-    });
-
-    it('should dispatch the "zoom" action when the zoom button is clicked', () => {
-        const context = new BrowsingContext();
-        return context.importScripts(scripts, 'ComponentBase', 'TimeSeriesChart', 'InteractiveTimeSeriesChart', 'MeasurementSet', 'MockRemoteAPI').then(() => {
-            const chart = createInteractiveChartWithSampleCluster(context, null, {selection: {lineStyle: '#f93', lineWidth: 2, fillStyle: '#ccc'}, zoomButton: true});
-
-            chart.setDomain(sampleCluster.startTime, sampleCluster.endTime);
-            chart.fetchMeasurementSets();
-            respondWithSampleCluster(context.symbols.MockRemoteAPI.requests[0]);
-
-            const zoomCalls = [];
-            chart.listenToAction('zoom', (...args) => zoomCalls.push(args));
-            const zoomButton = chart.content('zoom-button');
-
-            let selection;
-            let canvas;
-            return waitForComponentsToRender(context).then(() => {
-                expect(zoomButton.offsetHeight).to.be(0);
-                canvas = chart.content().querySelector('canvas');
-                const rect = canvas.getBoundingClientRect();
-                const y = rect.top + rect.height / 2;
-                canvas.dispatchEvent(new MouseEvent('mousemove', {target: canvas, clientX: rect.left + 5, clientY: y, composed: true, bubbles: true}));
-                canvas.dispatchEvent(new MouseEvent('mousedown', {target: canvas, clientX: rect.left + 5, clientY: y, composed: true, bubbles: true}));
-                canvas.dispatchEvent(new MouseEvent('mousemove', {target: canvas, clientX: rect.right - 10, clientY: y + 5, composed: true, bubbles: true}));
-                canvas.dispatchEvent(new MouseEvent('mouseup', {target: canvas, clientX: rect.right - 10, clientY: y + 5, composed: true, bubbles: true}));
-
-                CanvasTest.fillCanvasBeforeRedrawCheck(canvas);
-                return waitForComponentsToRender(context);
-            }).then(() => {
-                expect(CanvasTest.hasCanvasBeenRedrawn(canvas)).to.be(true);
-
-                selection = chart.currentSelection();
-                expect(selection).to.not.be(null);
-                expect(chart.currentIndicator()).to.be(null);
-                expect(zoomButton.offsetHeight).to.not.be(0);
-                expect(zoomCalls).to.be.eql([]);
-                zoomButton.click();
-            }).then(() => {
-                expect(zoomCalls).to.be.eql([[selection]]);
-
-                CanvasTest.fillCanvasBeforeRedrawCheck(canvas);
-                return waitForComponentsToRender(context);
-            }).then(() => {
-                expect(CanvasTest.hasCanvasBeenRedrawn(canvas)).to.be(false);
-            });
-        });
-    });
-
-    it('should clear the selection when clicked', () => {
-        const context = new BrowsingContext();
-        return context.importScripts(scripts, 'ComponentBase', 'TimeSeriesChart', 'InteractiveTimeSeriesChart', 'MeasurementSet', 'MockRemoteAPI').then(() => {
-            const chart = createInteractiveChartWithSampleCluster(context, null, {selection: {lineStyle: '#f93', lineWidth: 2, fillStyle: '#ccc'}});
-
-            chart.setDomain(sampleCluster.startTime, sampleCluster.endTime);
-            chart.fetchMeasurementSets();
-            respondWithSampleCluster(context.symbols.MockRemoteAPI.requests[0]);
-
-            let canvas;
-            let rect;
-            let y;
-            return waitForComponentsToRender(context).then(() => {
-                canvas = chart.content().querySelector('canvas');
-                rect = canvas.getBoundingClientRect();
-                y = rect.top + rect.height / 2;
-                canvas.dispatchEvent(new MouseEvent('mousemove', {target: canvas, clientX: rect.left + 5, clientY: y, composed: true, bubbles: true}));
-                canvas.dispatchEvent(new MouseEvent('mousedown', {target: canvas, clientX: rect.left + 5, clientY: y, composed: true, bubbles: true}));
-                canvas.dispatchEvent(new MouseEvent('mousemove', {target: canvas, clientX: rect.right - 10, clientY: y + 5, composed: true, bubbles: true}));
-                canvas.dispatchEvent(new MouseEvent('mouseup', {target: canvas, clientX: rect.right - 10, clientY: y + 5, composed: true, bubbles: true}));
-                canvas.dispatchEvent(new MouseEvent('click', {target: canvas, clientX: rect.right - 10, clientY: y + 5, composed: true, bubbles: true}));
-
-                CanvasTest.fillCanvasBeforeRedrawCheck(canvas);
-                return waitForComponentsToRender(context);
-            }).then(() => {
-                expect(CanvasTest.hasCanvasBeenRedrawn(canvas)).to.be(true);
-
-                expect(chart.currentSelection()).to.not.be(null);
-                expect(chart.currentIndicator()).to.be(null);
-
-                canvas.dispatchEvent(new MouseEvent('click', {target: canvas, clientX: rect.left + 1, clientY: y + 5, composed: true, bubbles: true}));
-
-                CanvasTest.fillCanvasBeforeRedrawCheck(canvas);
-                return waitForComponentsToRender(context);
-            }).then(() => {
-                expect(CanvasTest.hasCanvasBeenRedrawn(canvas)).to.be(true);
-
-                expect(chart.currentSelection()).to.be(null);
-                const currentView = chart.sampledTimeSeriesData('current');
-                const indicator = chart.currentIndicator();
-                expect(indicator.view).to.be(currentView);
-                expect(indicator.point).to.be(currentView.firstPoint());
-                expect(indicator.isLocked).to.be(false);
-            });
-        });
-    });
-
-    it('should dispatch "annotationClick" action when an annotation is clicked', () => {
-        const context = new BrowsingContext();
-        return context.importScripts(scripts, 'ComponentBase', 'TimeSeriesChart', 'InteractiveTimeSeriesChart', 'MeasurementSet', 'MockRemoteAPI').then(() => {
-            const chart = createInteractiveChartWithSampleCluster(context, null,
-                {annotations: { textStyle: '#000', textBackground: '#fff', minWidth: 3, barHeight: 10, barSpacing: 1}});
-
-            chart.setDomain(sampleCluster.startTime, sampleCluster.endTime);
-            chart.fetchMeasurementSets();
-            respondWithSampleCluster(context.symbols.MockRemoteAPI.requests[0]);
-
-            const diff = sampleCluster.endTime - sampleCluster.startTime;
-            const annotations = [{
-                startTime: sampleCluster.startTime + diff / 2,
-                endTime: sampleCluster.endTime - diff / 4,
-                label: 'hello, world',
-                fillStyle: 'rgb(0, 0, 255)',
-            }]
-            chart.setAnnotations(annotations);
-
-            const annotationClickCalls = [];
-            chart.listenToAction('annotationClick', (...args) => annotationClickCalls.push(args));
-
-            let canvas;
-            let init;
-            return waitForComponentsToRender(context).then(() => {
-                expect(annotationClickCalls).to.be.eql([]);
-                expect(chart.content('annotation-label').textContent).to.not.contain('hello, world');
-
-                canvas = chart.content().querySelector('canvas');
-                const rect = canvas.getBoundingClientRect();
-                init = {target: canvas, clientX: rect.right - rect.width / 4, clientY: rect.bottom - 5, composed: true, bubbles: true};
-                canvas.dispatchEvent(new MouseEvent('mousemove', init));
-
-                CanvasTest.fillCanvasBeforeRedrawCheck(canvas);
-                return waitForComponentsToRender(context);
-            }).then(() => {
-                expect(CanvasTest.hasCanvasBeenRedrawn(canvas)).to.be(true);
-
-                expect(chart.content('annotation-label').textContent).to.contain('hello, world');
-                expect(annotationClickCalls).to.be.eql([]);
-                canvas.dispatchEvent(new MouseEvent('mousedown', init));
-                canvas.dispatchEvent(new MouseEvent('mouseup', init));
-                canvas.dispatchEvent(new MouseEvent('click', init));
-
-                expect(annotationClickCalls).to.be.eql([[annotations[0]]]);
-
-                CanvasTest.fillCanvasBeforeRedrawCheck(canvas);
-                return waitForComponentsToRender(context);
-            }).then(() => {
-                expect(CanvasTest.hasCanvasBeenRedrawn(canvas)).to.be(false);
-            });
-        });
-    });
-
-    describe('render', () => {
-        it('should render the unlocked indicator when options.indicator is specified', () => {
-            const context = new BrowsingContext();
-            return context.importScripts(scripts, 'ComponentBase', 'InteractiveTimeSeriesChart', 'MeasurementSet', 'MockRemoteAPI').then(() => {
-                const chartWithoutIndicator = createInteractiveChartWithSampleCluster(context);
-                const chartWithIndicator = createInteractiveChartWithSampleCluster(context, null,
-                    {indicator: {lineStyle: 'rgb(51, 204, 255)', lineWidth: 2, pointRadius: 2}, interactiveChart: true});
-                const indicatorColor = {r: 51, g: 204, b: 255};
-
-                chartWithoutIndicator.setDomain(sampleCluster.startTime, sampleCluster.endTime);
-                chartWithoutIndicator.fetchMeasurementSets();
-                respondWithSampleCluster(context.symbols.MockRemoteAPI.requests[0]);
-
-                chartWithIndicator.setDomain(sampleCluster.startTime, sampleCluster.endTime);
-                chartWithIndicator.fetchMeasurementSets();
-
-                let canvasWithoutIndicator;
-                let canvasWithIndicator;
-                return waitForComponentsToRender(context).then(() => {
-                    canvasWithoutIndicator = chartWithoutIndicator.content().querySelector('canvas');
-                    canvasWithIndicator = chartWithIndicator.content().querySelector('canvas');
-
-                    const rect = canvasWithIndicator.getBoundingClientRect();
-                    const x = rect.right - 1;
-                    const y = rect.top + rect.height / 2;
-                    canvasWithIndicator.dispatchEvent(new MouseEvent('mousemove', {target: canvasWithIndicator, clientX: x, clientY: y, composed: true, bubbles: true}));
-
-                    CanvasTest.fillCanvasBeforeRedrawCheck(canvasWithIndicator);
-                    return waitForComponentsToRender(context);
-                }).then(() => {
-                    expect(CanvasTest.hasCanvasBeenRedrawn(canvasWithIndicator)).to.be(true);
-
-                    const indicator = chartWithIndicator.currentIndicator();
-                    const currentView = chartWithIndicator.sampledTimeSeriesData('current');
-                    expect(indicator.view).to.be(currentView);
-                    expect(indicator.point).to.be(currentView.lastPoint());
-                    expect(indicator.isLocked).to.be(false);
-
-                    CanvasTest.expectCanvasesMismatch(canvasWithoutIndicator, canvasWithIndicator);
-                    expect(CanvasTest.canvasContainsColor(canvasWithoutIndicator, indicatorColor)).to.be(false);
-                    expect(CanvasTest.canvasContainsColor(canvasWithIndicator, indicatorColor)).to.be(true);
-                });
-            });
-        });
-
-        it('should render the locked indicator differently from the unlocked indicator when options.lockedIndicator is specified', () => {
-            const context = new BrowsingContext();
-            return context.importScripts(scripts, 'ComponentBase', 'InteractiveTimeSeriesChart', 'MeasurementSet', 'MockRemoteAPI').then(() => {
-                const chartOptions = {
-                    indicator: {lineStyle: 'rgb(51, 204, 255)', lineWidth: 2, pointRadius: 3},
-                    lockedIndicator: {lineStyle: 'rgb(51, 102, 204)', fillStyle: 'rgb(250, 250, 250)', lineWidth: 2, pointRadius: 3}
-                };
-                const unlockedColor = {r: 51, g: 204, b: 255};
-                const lockedColor = {r: 51, g: 102, b: 204};
-                const lockedFillColor = {r: 250, g: 250, b: 250};
-                const chartWithUnlockedIndicator = createInteractiveChartWithSampleCluster(context, null, chartOptions);
-                const chartWithLockedIndicator = createInteractiveChartWithSampleCluster(context, null, chartOptions);
-
-                chartWithUnlockedIndicator.setDomain(sampleCluster.startTime, sampleCluster.endTime);
-                chartWithUnlockedIndicator.fetchMeasurementSets();
-                respondWithSampleCluster(context.symbols.MockRemoteAPI.requests[0]);
-
-                chartWithLockedIndicator.setDomain(sampleCluster.startTime, sampleCluster.endTime);
-                chartWithLockedIndicator.fetchMeasurementSets();
-
-                let canvasWithUnlockedIndicator;
-                let canvasWithLockedIndicator;
-                return waitForComponentsToRender(context).then(() => {
-                    canvasWithUnlockedIndicator = chartWithUnlockedIndicator.content().querySelector('canvas');
-                    canvasWithLockedIndicator = chartWithLockedIndicator.content().querySelector('canvas');
-
-                    const rect = canvasWithUnlockedIndicator.getBoundingClientRect();
-                    const x = rect.right - 1;
-                    const y = rect.top + rect.height / 2;
-                    canvasWithUnlockedIndicator.dispatchEvent(new MouseEvent('mousemove', {target: canvasWithUnlockedIndicator, clientX: x, clientY: y, composed: true, bubbles: true}));
-                    canvasWithLockedIndicator.dispatchEvent(new MouseEvent('click', {target: canvasWithLockedIndicator, clientX: x, clientY: y, composed: true, bubbles: true}));
-
-                    CanvasTest.fillCanvasBeforeRedrawCheck(canvasWithUnlockedIndicator);
-                    CanvasTest.fillCanvasBeforeRedrawCheck(canvasWithLockedIndicator);
-                    return waitForComponentsToRender(context);
-                }).then(() => {
-                    expect(CanvasTest.hasCanvasBeenRedrawn(canvasWithUnlockedIndicator)).to.be(true);
-                    expect(CanvasTest.hasCanvasBeenRedrawn(canvasWithLockedIndicator)).to.be(true);
-
-                    let indicator = chartWithUnlockedIndicator.currentIndicator();
-                    let currentView = chartWithUnlockedIndicator.sampledTimeSeriesData('current');
-                    expect(indicator.view).to.be(currentView);
-                    expect(indicator.point).to.be(currentView.lastPoint());
-                    expect(indicator.isLocked).to.be(false);
-
-                    indicator = chartWithLockedIndicator.currentIndicator();
-                    currentView = chartWithLockedIndicator.sampledTimeSeriesData('current');
-                    expect(indicator.view).to.be(currentView);
-                    expect(indicator.point).to.be(currentView.lastPoint());
-                    expect(indicator.isLocked).to.be(true);
-
-                    CanvasTest.expectCanvasesMismatch(canvasWithUnlockedIndicator, canvasWithLockedIndicator);
-                    expect(CanvasTest.canvasContainsColor(canvasWithUnlockedIndicator, unlockedColor)).to.be(true);
-                    expect(CanvasTest.canvasContainsColor(canvasWithUnlockedIndicator, lockedFillColor)).to.be(false);
-                    expect(CanvasTest.canvasContainsColor(canvasWithLockedIndicator, lockedColor)).to.be(true);
-                    expect(CanvasTest.canvasContainsColor(canvasWithLockedIndicator, lockedFillColor)).to.be(true);
-                });
-            });
-        });
-    });
-
-    describe('moveLockedIndicatorWithNotification', () => {
-        it('should move the locked indicator to the right when forward boolean is true', () => {
-            const context = new BrowsingContext();
-            return context.importScripts(scripts, 'ComponentBase', 'InteractiveTimeSeriesChart', 'MeasurementSet', 'MockRemoteAPI').then(() => {
-                const chart = createInteractiveChartWithSampleCluster(context);
-
-                chart.setDomain(sampleCluster.startTime, sampleCluster.endTime);
-                chart.fetchMeasurementSets();
-                let indicatorChangeCount = 0;
-                chart.listenToAction('indicatorChange', () => indicatorChangeCount++);
-                respondWithSampleCluster(context.symbols.MockRemoteAPI.requests[0]);
-
-                let canvas;
-                return waitForComponentsToRender(context).then(() => {
-                    expect(indicatorChangeCount).to.be(0);
-
-                    canvas = chart.content().querySelector('canvas');
-
-                    const rect = canvas.getBoundingClientRect();
-                    const x = rect.left + 1;
-                    const y = rect.top + rect.height / 2;
-                    canvas.dispatchEvent(new MouseEvent('click', {target: canvas, clientX: x, clientY: y, composed: true, bubbles: true}));
-
-                    CanvasTest.fillCanvasBeforeRedrawCheck(canvas);
-                    return waitForComponentsToRender(context);
-                }).then(() => {
-                    expect(CanvasTest.hasCanvasBeenRedrawn(canvas)).to.be(true);
-                    expect(indicatorChangeCount).to.be(1);
-
-                    let indicator = chart.currentIndicator();
-                    let currentView = chart.sampledTimeSeriesData('current');
-                    expect(indicator.view).to.be(currentView);
-                    expect(indicator.point).to.be(currentView.firstPoint());
-                    expect(indicator.isLocked).to.be(true);
-
-                    chart.moveLockedIndicatorWithNotification(true);
-
-                    CanvasTest.fillCanvasBeforeRedrawCheck(canvas);
-                    return waitForComponentsToRender(context);
-                }).then(() => {
-                    expect(CanvasTest.hasCanvasBeenRedrawn(canvas)).to.be(true);
-                    expect(indicatorChangeCount).to.be(2);
-
-                    let indicator = chart.currentIndicator();
-                    let currentView = chart.sampledTimeSeriesData('current');
-                    expect(indicator.view).to.be(currentView);
-                    expect(indicator.point).to.not.be(currentView.firstPoint());
-                    expect(indicator.point).to.be(currentView.nextPoint(currentView.firstPoint()));
-                    expect(currentView.previousPoint(indicator.point)).to.be(currentView.firstPoint());
-                    expect(indicator.isLocked).to.be(true);
-                    expect(indicatorChangeCount).to.be(2);
-                });
-            });
-        });
-
-        it('should move the locked indicator to the left when forward boolean is false', () => {
-            const context = new BrowsingContext();
-            return context.importScripts(scripts, 'ComponentBase', 'InteractiveTimeSeriesChart', 'MeasurementSet', 'MockRemoteAPI').then(() => {
-                const chart = createInteractiveChartWithSampleCluster(context);
-
-                chart.setDomain(sampleCluster.startTime, sampleCluster.endTime);
-                chart.fetchMeasurementSets();
-                let indicatorChangeCount = 0;
-                chart.listenToAction('indicatorChange', () => indicatorChangeCount++);
-                respondWithSampleCluster(context.symbols.MockRemoteAPI.requests[0]);
-
-                let canvas;
-                return waitForComponentsToRender(context).then(() => {
-                    expect(indicatorChangeCount).to.be(0);
-
-                    canvas = chart.content().querySelector('canvas');
-
-                    const rect = canvas.getBoundingClientRect();
-                    const x = rect.right - 1;
-                    const y = rect.top + rect.height / 2;
-                    canvas.dispatchEvent(new MouseEvent('click', {target: canvas, clientX: x, clientY: y, composed: true, bubbles: true}));
-
-                    CanvasTest.fillCanvasBeforeRedrawCheck(canvas);
-                    return waitForComponentsToRender(context);
-                }).then(() => {
-                    expect(CanvasTest.hasCanvasBeenRedrawn(canvas)).to.be(true);
-                    expect(indicatorChangeCount).to.be(1);
-
-                    let indicator = chart.currentIndicator();
-                    let currentView = chart.sampledTimeSeriesData('current');
-                    expect(indicator.view).to.be(currentView);
-                    expect(indicator.point).to.be(currentView.lastPoint());
-                    expect(indicator.isLocked).to.be(true);
-
-                    chart.moveLockedIndicatorWithNotification(false);
-
-                    CanvasTest.fillCanvasBeforeRedrawCheck(canvas);
-                    return waitForComponentsToRender(context);
-                }).then(() => {
-                    expect(CanvasTest.hasCanvasBeenRedrawn(canvas)).to.be(true);
-                    expect(indicatorChangeCount).to.be(2);
-
-                    let indicator = chart.currentIndicator();
-                    let currentView = chart.sampledTimeSeriesData('current');
-                    expect(indicator.view).to.be(currentView);
-                    expect(indicator.point).to.not.be(currentView.firstPoint());
-                    expect(indicator.point).to.be(currentView.previousPoint(currentView.lastPoint()));
-                    expect(currentView.nextPoint(indicator.point)).to.be(currentView.lastPoint());
-                    expect(indicator.isLocked).to.be(true);
-                    expect(indicatorChangeCount).to.be(2);
-                });
-            });
-        });
-
-        it('should not move the locked indicator when there are no points within the domain', () => {
-            const context = new BrowsingContext();
-            return context.importScripts(scripts, 'ComponentBase', 'InteractiveTimeSeriesChart', 'MeasurementSet', 'MockRemoteAPI').then(() => {
-                const chart = createInteractiveChartWithSampleCluster(context);
-
-                // The domain inclues points 2, 3
-                chart.setDomain(posixTime('2016-01-05T20:00:00Z'), posixTime('2016-01-06T00:00:00Z'));
-                chart.fetchMeasurementSets();
-                let indicatorChangeCount = 0;
-                chart.listenToAction('indicatorChange', () => indicatorChangeCount++);
-                respondWithSampleCluster(context.symbols.MockRemoteAPI.requests[0]);
-
-                let canvas;
-                let currentView;
-                return waitForComponentsToRender(context).then(() => {
-                    expect(indicatorChangeCount).to.be(0);
-
-                    canvas = chart.content().querySelector('canvas');
-
-                    const rect = canvas.getBoundingClientRect();
-                    const x = rect.right - 1;
-                    const y = rect.top + rect.height / 2;
-                    canvas.dispatchEvent(new MouseEvent('click', {target: canvas, clientX: x, clientY: y, composed: true, bubbles: true}));
-
-                    CanvasTest.fillCanvasBeforeRedrawCheck(canvas);
-                    return waitForComponentsToRender(context);
-                }).then(() => {
-                    expect(CanvasTest.hasCanvasBeenRedrawn(canvas)).to.be(true);
-                    expect(indicatorChangeCount).to.be(1);
-
-                    currentView = chart.sampledTimeSeriesData('current');
-                    expect(currentView.length()).to.be(4); // points 0 and 4 are added to draw lines extending beyond the domain.
-                    expect([...currentView].map((point) => point.id)).to.be.eql([1000, 1002, 1003, 1004]);
-
-                    const indicator = chart.currentIndicator();
-                    expect(indicator.view).to.be(currentView);
-                    expect(indicator.point.id).to.be(1003);
-                    expect(indicator.isLocked).to.be(true);
-
-                    chart.moveLockedIndicatorWithNotification(true);
-
-                    CanvasTest.fillCanvasBeforeRedrawCheck(canvas);
-                    return waitForComponentsToRender(context);
-                }).then(() => {
-                    expect(CanvasTest.hasCanvasBeenRedrawn(canvas)).to.be(false);
-
-                    expect(indicatorChangeCount).to.be(1);
-                    const indicator = chart.currentIndicator();
-                    expect(indicator.view).to.be(currentView);
-                    expect(indicator.point.id).to.be(1003);
-                    expect(indicator.isLocked).to.be(true);
-
-                    chart.moveLockedIndicatorWithNotification(false);
-
-                    CanvasTest.fillCanvasBeforeRedrawCheck(canvas);
-                    return waitForComponentsToRender(context);
-                }).then(() => {
-                    expect(CanvasTest.hasCanvasBeenRedrawn(canvas)).to.be(true);
-
-                    expect(indicatorChangeCount).to.be(2);
-                    const indicator = chart.currentIndicator();
-                    expect(indicator.view).to.be(currentView);
-                    expect(indicator.point.id).to.be(1002);
-                    expect(indicator.isLocked).to.be(true);
-
-                    chart.moveLockedIndicatorWithNotification(false);
-
-                    CanvasTest.fillCanvasBeforeRedrawCheck(canvas);
-                    return waitForComponentsToRender(context);
-                }).then(() => {
-                    expect(CanvasTest.hasCanvasBeenRedrawn(canvas)).to.be(false);
-
-                    expect(indicatorChangeCount).to.be(2);
-                    const indicator = chart.currentIndicator();
-                    expect(indicator.view).to.be(currentView);
-                    expect(indicator.point.id).to.be(1002);
-                    expect(indicator.isLocked).to.be(true);
-                });
-            });
-        });
-
-    });
-});
-
-})();

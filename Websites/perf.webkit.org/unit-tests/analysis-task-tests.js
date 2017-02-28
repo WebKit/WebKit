@@ -204,10 +204,10 @@ describe('AnalysisTask', function () {
         });
 
         it('should find CommitLog objects for `causes` when MeasurementAdaptor created matching objects', function (done) {
-            var adoptor = new MeasurementAdaptor(measurementCluster().formatMap);
-            var adoptedMeasurement = adoptor.applyTo(measurementCluster().configurations.current[0]);
-            assert.equal(adoptedMeasurement.id, 37188161);
-            assert.equal(adoptedMeasurement.rootSet().commitForRepository(MockModels.webkit).revision(), '196051');
+            var adaptor = new MeasurementAdaptor(measurementCluster().formatMap);
+            var adaptedMeasurement = adaptor.applyTo(measurementCluster().configurations.current[0]);
+            assert.equal(adaptedMeasurement.id, 37188161);
+            assert.equal(adaptedMeasurement.rootSet().commitForRepository(MockModels.webkit).revision(), '196051');
 
             var promise = AnalysisTask.fetchAll();
             requests[0].resolve(sampleAnalysisTask());
