@@ -61,7 +61,7 @@ class MeasurementAdaptor {
             configType: null,
             rootSet: function () { return MeasurementRootSet.ensureSingleton(id, row[self._revisionsIndex]); },
             build: function () {
-                if (cachedBuild == null)
+                if (cachedBuild == null && builderId)
                     cachedBuild = new Build(buildId, Builder.findById(builderId), row[self._buildNumberIndex], row[self._buildTimeIndex]);
                 return cachedBuild;
             },

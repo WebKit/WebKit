@@ -1,5 +1,20 @@
 2017-02-27  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Calling build() on a baseline point results in an exception
+        https://bugs.webkit.org/show_bug.cgi?id=168959
+
+        Reviewed by Joseph Pecoraro.
+
+        Some baseline points may lack the build information. e.g. A custom data point made by an user.
+        Only instantiate Build object in a point object returned by MeasurementAdaptor when the builder id
+        is available so that we don't hit an assertion inside Build's constructor.
+
+        * public/v3/models/measurement-adaptor.js:
+        (MeasurementAdaptor.prototype.applyTo..build): Only instantiate Build when builderId is set.
+        * unit-tests/measurement-adaptor-tests.js: Added a test case.
+
+2017-02-27  Ryosuke Niwa  <rniwa@webkit.org>
+
         Arrow key shouldn't move the indicator beyond the visible points
         https://bugs.webkit.org/show_bug.cgi?id=168956
 
