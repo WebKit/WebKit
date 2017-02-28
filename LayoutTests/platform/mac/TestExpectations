@@ -1233,6 +1233,8 @@ webkit.org/b/149592 fast/shadow-dom/touch-event-ios.html [ Failure ]
 # Marking test as flaky in El Capitan
 webkit.org/b/149819 [ Debug ElCapitan+ ] compositing/video/video-poster.html [ Pass Crash ]
 
+webkit.org/b/168953 [ Release ] compositing/video/video-poster.html [ Pass Failure ]
+
 # Flaky on Mac
 webkit.org/b/148435 storage/domstorage/events/basic-body-attribute.html [ Pass Failure ]
 
