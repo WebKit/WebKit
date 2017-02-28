@@ -1,3 +1,132 @@
+2017-02-27  Mark Lam  <mark.lam@apple.com>
+
+        Introduce a VM Traps mechanism and refactor Watchdog to use it.
+        https://bugs.webkit.org/show_bug.cgi?id=168842
+
+        Reviewed by Filip Pizlo.
+
+        Currently, the traps mechanism is only used for the JSC watchdog, and for
+        asynchronous termination requests (which is currently only used for worker
+        threads termination).
+
+        This first cut of the traps mechanism still relies on polling from DFG and FTL
+        code.  This is done to keep the patch as small as possible.  The work to do
+        a non-polling version of the traps mechanism for DFG and FTL code is deferred to
+        another patch.
+
+        In this patch, worker threads still need to set the VM::m_needAsynchronousTerminationSupport
+        flag to enable the traps polling in the DFG and FTL code.  When we have the
+        non-polling version of the DFG and FTL traps mechanism, we can remove the use of
+        the VM::m_needAsynchronousTerminationSupport flag.
+
+        Note: this patch also separates asynchronous termination support from the JSC
+        watchdog.  This separation allows us to significantly simplify the locking
+        requirements in the watchdog code, and make it easier to reason about its
+        correctness.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/BytecodeList.json:
+        * bytecode/BytecodeUseDef.h:
+        (JSC::computeUsesForBytecodeOffset):
+        (JSC::computeDefsForBytecodeOffset):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpBytecode):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::emitLoopHint):
+        (JSC::BytecodeGenerator::emitCheckTraps):
+        (JSC::BytecodeGenerator::emitWatchdog): Deleted.
+        * bytecompiler/BytecodeGenerator.h:
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::capabilityLevel):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileCheckTraps):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCheckTraps):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCheckWatchdogTimer): Deleted.
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::executeProgram):
+        (JSC::Interpreter::executeCall):
+        (JSC::Interpreter::executeConstruct):
+        (JSC::Interpreter::execute):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileSlowCases):
+        * jit/JIT.h:
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_check_traps):
+        (JSC::JIT::emitSlow_op_check_traps):
+        (JSC::JIT::emit_op_watchdog): Deleted.
+        (JSC::JIT::emitSlow_op_watchdog): Deleted.
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * llint/LLIntSlowPaths.h:
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/VM.cpp:
+        (JSC::VM::~VM):
+        (JSC::VM::ensureWatchdog):
+        (JSC::VM::handleTraps):
+        * runtime/VM.h:
+        (JSC::VM::ownerThread):
+        (JSC::VM::needTrapHandling):
+        (JSC::VM::needTrapHandlingAddress):
+        (JSC::VM::notifyNeedTermination):
+        (JSC::VM::notifyNeedWatchdogCheck):
+        (JSC::VM::needAsynchronousTerminationSupport):
+        (JSC::VM::setNeedAsynchronousTerminationSupport):
+        * runtime/VMInlines.h:
+        (JSC::VM::shouldTriggerTermination): Deleted.
+        * runtime/VMTraps.cpp: Added.
+        (JSC::VMTraps::fireTrap):
+        (JSC::VMTraps::takeTrap):
+        * runtime/VMTraps.h: Added.
+        (JSC::VMTraps::needTrapHandling):
+        (JSC::VMTraps::needTrapHandlingAddress):
+        (JSC::VMTraps::hasTrapForEvent):
+        (JSC::VMTraps::setTrapForEvent):
+        (JSC::VMTraps::clearTrapForEvent):
+        * runtime/Watchdog.cpp:
+        (JSC::Watchdog::Watchdog):
+        (JSC::Watchdog::setTimeLimit):
+        (JSC::Watchdog::shouldTerminate):
+        (JSC::Watchdog::enteredVM):
+        (JSC::Watchdog::exitedVM):
+        (JSC::Watchdog::startTimer):
+        (JSC::Watchdog::stopTimer):
+        (JSC::Watchdog::willDestroyVM):
+        (JSC::Watchdog::terminateSoon): Deleted.
+        (JSC::Watchdog::shouldTerminateSlow): Deleted.
+        * runtime/Watchdog.h:
+        (JSC::Watchdog::shouldTerminate): Deleted.
+        (JSC::Watchdog::timerDidFireAddress): Deleted.
+
 2017-02-27  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r213019.

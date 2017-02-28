@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009, 2012-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -328,7 +328,7 @@ void JIT::privateCompileMainPass()
         DEFINE_OP(op_jngreatereq)
         DEFINE_OP(op_jtrue)
         DEFINE_OP(op_loop_hint)
-        DEFINE_OP(op_watchdog)
+        DEFINE_OP(op_check_traps)
         DEFINE_OP(op_lshift)
         DEFINE_OP(op_mod)
         DEFINE_OP(op_mov)
@@ -504,7 +504,7 @@ void JIT::privateCompileSlowCases()
         DEFINE_SLOWCASE_OP(op_jngreater)
         DEFINE_SLOWCASE_OP(op_jngreatereq)
         DEFINE_SLOWCASE_OP(op_loop_hint)
-        DEFINE_SLOWCASE_OP(op_watchdog)
+        DEFINE_SLOWCASE_OP(op_check_traps)
         DEFINE_SLOWCASE_OP(op_lshift)
         DEFINE_SLOWCASE_OP(op_mod)
         DEFINE_SLOWCASE_OP(op_mul)

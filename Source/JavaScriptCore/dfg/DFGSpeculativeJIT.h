@@ -762,6 +762,8 @@ public:
         return lastNode->op() == Branch && lastNode->child1() == m_currentNode ? m_block->size() - 1 : UINT_MAX;
     }
     
+    void compileCheckTraps(Node*);
+
     void compileMovHint(Node*);
     void compileMovHintAndCheck(Node*);
 

@@ -1895,6 +1895,17 @@ void SpeculativeJIT::linkOSREntries(LinkBuffer& linkBuffer)
             dumpContext.dump(WTF::dataFile());
     }
 }
+    
+void SpeculativeJIT::compileCheckTraps(Node*)
+{
+    GPRTemporary unused(this);
+    GPRReg unusedGPR = unused.gpr();
+
+    JITCompiler::Jump needTrapHandling = m_jit.branchTest8(JITCompiler::NonZero,
+        JITCompiler::AbsoluteAddress(m_jit.vm()->needTrapHandlingAddress()));
+
+    addSlowPathGenerator(slowPathCall(needTrapHandling, this, operationHandleTraps, unusedGPR));
+}
 
 void SpeculativeJIT::compileDoublePutByVal(Node* node, SpeculateCellOperand& base, SpeculateStrictInt32Operand& property)
 {

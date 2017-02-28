@@ -904,6 +904,7 @@ set(JavaScriptCore_SOURCES
     runtime/TypeofType.cpp
     runtime/VM.cpp
     runtime/VMEntryScope.cpp
+    runtime/VMTraps.cpp
     runtime/VarOffset.cpp
     runtime/Watchdog.cpp
     runtime/WeakMapConstructor.cpp

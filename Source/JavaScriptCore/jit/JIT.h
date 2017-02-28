@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2012-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -530,7 +530,7 @@ namespace JSC {
         void emit_op_jngreatereq(Instruction*);
         void emit_op_jtrue(Instruction*);
         void emit_op_loop_hint(Instruction*);
-        void emit_op_watchdog(Instruction*);
+        void emit_op_check_traps(Instruction*);
         void emit_op_lshift(Instruction*);
         void emit_op_mod(Instruction*);
         void emit_op_mov(Instruction*);
@@ -638,7 +638,7 @@ namespace JSC {
         void emitSlow_op_jngreatereq(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_jtrue(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_loop_hint(Instruction*, Vector<SlowCaseEntry>::iterator&);
-        void emitSlow_op_watchdog(Instruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_check_traps(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_lshift(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_mod(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_mul(Instruction*, Vector<SlowCaseEntry>::iterator&);

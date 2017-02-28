@@ -1386,8 +1386,8 @@ void CodeBlock::dumpBytecode(
             printLocationAndOp(out, exec, location, it, "loop_hint");
             break;
         }
-        case op_watchdog: {
-            printLocationAndOp(out, exec, location, it, "watchdog");
+        case op_check_traps: {
+            printLocationAndOp(out, exec, location, it, "check_traps");
             break;
         }
         case op_log_shadow_chicken_prologue: {

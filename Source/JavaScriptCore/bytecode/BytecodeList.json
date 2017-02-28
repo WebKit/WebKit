@@ -150,7 +150,7 @@
             { "name" : "op_create_rest", "length": 4 },
             { "name" : "op_get_rest_length", "length": 3 },
             { "name" : "op_yield", "length" : 4 },
-            { "name" : "op_watchdog", "length" : 1 },
+            { "name" : "op_check_traps", "length" : 1 },
             { "name" : "op_log_shadow_chicken_prologue", "length" : 2},
             { "name" : "op_log_shadow_chicken_tail", "length" : 3}
         ]

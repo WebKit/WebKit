@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -5383,9 +5383,9 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             NEXT_OPCODE(op_loop_hint);
         }
         
-        case op_watchdog: {
-            addToGraph(CheckWatchdogTimer);
-            NEXT_OPCODE(op_watchdog); 
+        case op_check_traps: {
+            addToGraph(CheckTraps);
+            NEXT_OPCODE(op_check_traps);
         }
             
         case op_create_lexical_environment: {

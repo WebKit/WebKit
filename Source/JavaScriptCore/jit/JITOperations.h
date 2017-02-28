@@ -384,7 +384,7 @@ EncodedJSValue JIT_OPERATION operationNewAsyncFunctionWithInvalidatedReallocatio
 void JIT_OPERATION operationSetFunctionName(ExecState*, JSCell*, EncodedJSValue) WTF_INTERNAL;
 JSCell* JIT_OPERATION operationNewObject(ExecState*, Structure*) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationNewRegexp(ExecState*, void*) WTF_INTERNAL;
-UnusedPtr JIT_OPERATION operationHandleWatchdogTimer(ExecState*) WTF_INTERNAL;
+UnusedPtr JIT_OPERATION operationHandleTraps(ExecState*) WTF_INTERNAL;
 void JIT_OPERATION operationThrow(ExecState*, EncodedJSValue) WTF_INTERNAL;
 void JIT_OPERATION operationDebug(ExecState*, int32_t) WTF_INTERNAL;
 #if ENABLE(DFG_JIT)

@@ -1021,8 +1021,8 @@ private:
         case MaterializeCreateActivation:
             compileMaterializeCreateActivation();
             break;
-        case CheckWatchdogTimer:
-            compileCheckWatchdogTimer();
+        case CheckTraps:
+            compileCheckTraps();
             break;
         case CreateRest:
             compileCreateRest();
@@ -8983,20 +8983,20 @@ private:
         setJSValue(activation);
     }
 
-    void compileCheckWatchdogTimer()
+    void compileCheckTraps()
     {
-        LBasicBlock timerDidFire = m_out.newBlock();
+        LBasicBlock needTrapHandling = m_out.newBlock();
         LBasicBlock continuation = m_out.newBlock();
         
-        LValue state = m_out.load8ZeroExt32(m_out.absolute(vm().watchdog()->timerDidFireAddress()));
+        LValue state = m_out.load8ZeroExt32(m_out.absolute(vm().needTrapHandlingAddress()));
         m_out.branch(m_out.isZero32(state),
-            usually(continuation), rarely(timerDidFire));
+            usually(continuation), rarely(needTrapHandling));
 
-        LBasicBlock lastNext = m_out.appendTo(timerDidFire, continuation);
+        LBasicBlock lastNext = m_out.appendTo(needTrapHandling, continuation);
 
         lazySlowPath(
             [=] (const Vector<Location>&) -> RefPtr<LazySlowPath::Generator> {
-                return createLazyCallGenerator(operationHandleWatchdogTimer, InvalidGPRReg);
+                return createLazyCallGenerator(operationHandleTraps, InvalidGPRReg);
             });
         m_out.jump(continuation);
         

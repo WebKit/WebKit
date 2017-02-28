@@ -2396,6 +2396,8 @@
 		FE6491391D78F3AF00A694D4 /* ExceptionScope.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE6491381D78F3A300A694D4 /* ExceptionScope.cpp */; };
 		FE68C6371B90DE040042BCB3 /* MacroAssemblerPrinter.h in Headers */ = {isa = PBXBuildFile; fileRef = FE68C6361B90DDD90042BCB3 /* MacroAssemblerPrinter.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE68C6381B90DE0B0042BCB3 /* MacroAssemblerPrinter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE68C6351B90DDD90042BCB3 /* MacroAssemblerPrinter.cpp */; };
+		FE6F56DE1E64EAD600D17801 /* VMTraps.h in Headers */ = {isa = PBXBuildFile; fileRef = FE6F56DD1E64E92000D17801 /* VMTraps.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FE6F56DF1E64EADB00D17801 /* VMTraps.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE6F56DC1E64E92000D17801 /* VMTraps.cpp */; };
 		FE7BA60F1A1A7CEC00F1F7B4 /* HeapVerifier.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE7BA60D1A1A7CEC00F1F7B4 /* HeapVerifier.cpp */; };
 		FE7BA6101A1A7CEC00F1F7B4 /* HeapVerifier.h in Headers */ = {isa = PBXBuildFile; fileRef = FE7BA60E1A1A7CEC00F1F7B4 /* HeapVerifier.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE7C41961B97FC4B00F4D598 /* PingPongStackOverflowTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FEDA50D41B97F442009A3B4F /* PingPongStackOverflowTest.cpp */; };
@@ -4965,6 +4967,8 @@
 		FE6491381D78F3A300A694D4 /* ExceptionScope.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExceptionScope.cpp; sourceTree = "<group>"; };
 		FE68C6351B90DDD90042BCB3 /* MacroAssemblerPrinter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MacroAssemblerPrinter.cpp; sourceTree = "<group>"; };
 		FE68C6361B90DDD90042BCB3 /* MacroAssemblerPrinter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MacroAssemblerPrinter.h; sourceTree = "<group>"; };
+		FE6F56DC1E64E92000D17801 /* VMTraps.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VMTraps.cpp; sourceTree = "<group>"; };
+		FE6F56DD1E64E92000D17801 /* VMTraps.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VMTraps.h; sourceTree = "<group>"; };
 		FE7BA60D1A1A7CEC00F1F7B4 /* HeapVerifier.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HeapVerifier.cpp; sourceTree = "<group>"; };
 		FE7BA60E1A1A7CEC00F1F7B4 /* HeapVerifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HeapVerifier.h; sourceTree = "<group>"; };
 		FE80C1961D775B27008510C0 /* CatchScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CatchScope.h; sourceTree = "<group>"; };
@@ -6871,6 +6875,8 @@
 				FE5932A5183C5A2600A1ECCC /* VMEntryScope.cpp */,
 				FE5932A6183C5A2600A1ECCC /* VMEntryScope.h */,
 				FE90BB3A1B7CF64E006B3F03 /* VMInlines.h */,
+				FE6F56DC1E64E92000D17801 /* VMTraps.cpp */,
+				FE6F56DD1E64E92000D17801 /* VMTraps.h */,
 				FED94F2B171E3E2300BE77A4 /* Watchdog.cpp */,
 				FED94F2C171E3E2300BE77A4 /* Watchdog.h */,
 				14BFCE6810CDB1FC00364CCE /* WeakGCMap.h */,
@@ -8435,6 +8441,7 @@
 				E3FF75331D9CEA1800C7E16D /* DOMJITGetterSetter.h in Headers */,
 				E35CA1541DBC3A5C00F83516 /* DOMJITHeapRange.h in Headers */,
 				E3C08E3C1DA41B810039478F /* DOMJITPatchpoint.h in Headers */,
+				FE6F56DE1E64EAD600D17801 /* VMTraps.h in Headers */,
 				E37AD83C1DA4928600F3D412 /* DOMJITPatchpointParams.h in Headers */,
 				E37AD83D1DA4928600F3D412 /* DOMJITReg.h in Headers */,
 				E350708A1DC49BBF0089BCD6 /* DOMJITSignature.h in Headers */,
@@ -9988,6 +9995,7 @@
 				149559EE0DDCDDF700648087 /* DebuggerCallFrame.cpp in Sources */,
 				A5FC84B31D1DDAD9006B5C46 /* DebuggerLocation.cpp in Sources */,
 				A5A1A0951D8CB341004C2EB8 /* DebuggerParseData.cpp in Sources */,
+				FE6F56DF1E64EADB00D17801 /* VMTraps.cpp in Sources */,
 				0F2D4DDD19832D34007D4B19 /* DebuggerScope.cpp in Sources */,
 				2A7A58EF1808A4C40020BDF7 /* DeferGC.cpp in Sources */,
 				0FC712DE17CD8779008CC93C /* DeferredCompilationCallback.cpp in Sources */,

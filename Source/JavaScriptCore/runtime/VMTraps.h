@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,59 +20,60 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #pragma once
 
 #include <wtf/Lock.h>
-#include <wtf/Ref.h>
-#include <wtf/ThreadSafeRefCounted.h>
-#include <wtf/WorkQueue.h>
+#include <wtf/Locker.h>
 
 namespace JSC {
 
-class ExecState;
 class VM;
 
-class Watchdog : public WTF::ThreadSafeRefCounted<Watchdog> {
-    WTF_MAKE_FAST_ALLOCATED;
+class VMTraps {
 public:
-    class Scope;
+    enum EventType {
+        // Sorted in servicing priority order from highest to lowest.
+        NeedTermination,
+        NeedWatchdogCheck,
+        NumberOfEventTypes, // This entry must be last in this list.
+        Invalid
+    };
 
-    Watchdog(VM*);
-    void willDestroyVM(VM*);
+    bool needTrapHandling() { return m_needTrapHandling; }
+    void* needTrapHandlingAddress() { return &m_needTrapHandling; }
 
-    typedef bool (*ShouldTerminateCallback)(ExecState*, void* data1, void* data2);
-    void setTimeLimit(std::chrono::microseconds limit, ShouldTerminateCallback = 0, void* data1 = 0, void* data2 = 0);
+    JS_EXPORT_PRIVATE void fireTrap(EventType);
 
-    bool shouldTerminate(ExecState*);
-
-    bool hasTimeLimit();
-    void enteredVM();
-    void exitedVM();
-
-    static const std::chrono::microseconds noTimeLimit;
+    bool takeTrap(EventType);
+    EventType takeTopPriorityTrap();
 
 private:
-    void startTimer(std::chrono::microseconds timeLimit);
-    void stopTimer();
+    VM& vm() const;
 
-    Lock m_lock; // Guards access to m_vm.
-    VM* m_vm;
+    bool hasTrapForEvent(Locker<Lock>&, EventType eventType)
+    {
+        ASSERT(eventType < NumberOfEventTypes);
+        return (m_trapsBitField & (1 << eventType));
+    }
+    void setTrapForEvent(Locker<Lock>&, EventType eventType)
+    {
+        ASSERT(eventType < NumberOfEventTypes);
+        m_trapsBitField |= (1 << eventType);
+    }
+    void clearTrapForEvent(Locker<Lock>&, EventType eventType)
+    {
+        ASSERT(eventType < NumberOfEventTypes);
+        m_trapsBitField &= ~(1 << eventType);
+    }
 
-    std::chrono::microseconds m_timeLimit;
-
-    std::chrono::microseconds m_cpuDeadline;
-    std::chrono::microseconds m_wallClockDeadline;
-
-    bool m_hasEnteredVM { false };
-
-    ShouldTerminateCallback m_callback;
-    void* m_callbackData1;
-    void* m_callbackData2;
-
-    Ref<WorkQueue> m_timerQueue;
+    Lock m_lock;
+    union {
+        uint8_t m_needTrapHandling { false };
+        uint8_t m_trapsBitField;
+    };
 
     friend class LLIntOffsetsExtractor;
 };

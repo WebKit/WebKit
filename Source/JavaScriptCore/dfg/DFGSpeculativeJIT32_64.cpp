@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2017 Apple Inc. All rights reserved.
  * Copyright (C) 2011 Intel Corporation. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -5543,17 +5543,9 @@ void SpeculativeJIT::compile(Node* node)
         emitInvalidationPoint(node);
         break;
 
-    case CheckWatchdogTimer: {
-        ASSERT(m_jit.vm()->watchdog());
-        GPRTemporary unused(this);
-        GPRReg unusedGPR = unused.gpr();
-        
-        JITCompiler::Jump timerDidFire = m_jit.branchTest8(JITCompiler::NonZero,
-            JITCompiler::AbsoluteAddress(m_jit.vm()->watchdog()->timerDidFireAddress()));
-        
-        addSlowPathGenerator(slowPathCall(timerDidFire, this, operationHandleWatchdogTimer, unusedGPR));
+    case CheckTraps:
+        compileCheckTraps(node);
         break;
-    }
 
     case CountExecution:
         m_jit.add64(TrustedImm32(1), MacroAssembler::AbsoluteAddress(node->executionCounter()->address()));

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,41 +23,35 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
-#include "ProfilerDatabase.h"
-#include "VM.h"
-#include "Watchdog.h"
+#include "config.h"
+#include "VMTraps.h"
 
 namespace JSC {
-    
-bool VM::ensureStackCapacityFor(Register* newTopOfStack)
+
+void VMTraps::fireTrap(VMTraps::EventType eventType)
 {
-#if ENABLE(JIT)
-    ASSERT(wtfThreadData().stack().isGrowingDownward());
-    return newTopOfStack >= m_softStackLimit;
-#else
-    return ensureStackCapacityForCLoop(newTopOfStack);
-#endif
-    
+    auto locker = holdLock(m_lock);
+    setTrapForEvent(locker, eventType);
 }
 
-bool VM::isSafeToRecurseSoft() const
+bool VMTraps::takeTrap(VMTraps::EventType eventType)
 {
-    bool safe = isSafeToRecurse(m_softStackLimit);
-#if !ENABLE(JIT)
-    safe = safe && isSafeToRecurseSoftCLoop();
-#endif
-    return safe;
+    auto locker = holdLock(m_lock);
+    if (hasTrapForEvent(locker, eventType)) {
+        clearTrapForEvent(locker, eventType);
+        return true;
+    }
+    return false;
 }
 
-template<typename Func>
-void VM::logEvent(CodeBlock* codeBlock, const char* summary, const Func& func)
+auto VMTraps::takeTopPriorityTrap() -> EventType
 {
-    if (LIKELY(!m_perBytecodeProfiler))
-        return;
-    
-    m_perBytecodeProfiler->logEvent(codeBlock, summary, func());
+    for (int i = 0; i < NumberOfEventTypes; ++i) {
+        EventType eventType = static_cast<EventType>(i);
+        if (takeTrap(eventType))
+            return eventType;
+    }
+    return Invalid;
 }
 
 } // namespace JSC

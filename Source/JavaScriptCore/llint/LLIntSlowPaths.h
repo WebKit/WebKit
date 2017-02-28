@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2014, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -118,7 +118,7 @@ LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_tear_off_arguments);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_strcat);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_to_primitive);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_throw);
-LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_handle_watchdog_timer);
+LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_handle_traps);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_debug);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_handle_exception);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_get_from_scope);

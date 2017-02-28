@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2012-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2017 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Patrick Gansterer <paroga@paroga.com>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -943,17 +943,15 @@ void JIT::emit_op_throw_static_error(Instruction* currentInstruction)
     slowPathCall.call();
 }
 
-void JIT::emit_op_watchdog(Instruction*)
+void JIT::emit_op_check_traps(Instruction*)
 {
-    ASSERT(m_vm->watchdog());
-    addSlowCase(branchTest8(NonZero, AbsoluteAddress(m_vm->watchdog()->timerDidFireAddress())));
+    addSlowCase(branchTest8(NonZero, AbsoluteAddress(m_vm->needTrapHandlingAddress())));
 }
 
-void JIT::emitSlow_op_watchdog(Instruction*, Vector<SlowCaseEntry>::iterator& iter)
+void JIT::emitSlow_op_check_traps(Instruction*, Vector<SlowCaseEntry>::iterator& iter)
 {
-    ASSERT(m_vm->watchdog());
     linkSlowCase(iter);
-    callOperation(operationHandleWatchdogTimer);
+    callOperation(operationHandleTraps);
 }
 
 void JIT::emit_op_new_regexp(Instruction* currentInstruction)

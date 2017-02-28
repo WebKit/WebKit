@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2016 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008-2017 Apple Inc. All Rights Reserved.
  * Copyright (C) 2011, 2012 Google Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -40,7 +40,6 @@
 #include <runtime/Exception.h>
 #include <runtime/ExceptionHelpers.h>
 #include <runtime/JSLock.h>
-#include <runtime/Watchdog.h>
 
 using namespace JSC;
 
@@ -52,7 +51,7 @@ WorkerScriptController::WorkerScriptController(WorkerGlobalScope* workerGlobalSc
     , m_workerGlobalScopeWrapper(*m_vm)
 {
     m_vm->heap.acquireAccess(); // It's not clear that we have good discipline for heap access, so turn it on permanently.
-    m_vm->ensureWatchdog();
+    m_vm->setNeedAsynchronousTerminationSupport();
     JSVMClientData::initNormalWorld(m_vm.get());
 }
 
@@ -157,9 +156,7 @@ void WorkerScriptController::scheduleExecutionTermination()
     // accurately reflect that state when called from another thread.
     LockHolder locker(m_scheduledTerminationMutex);
     m_isTerminatingExecution = true;
-
-    ASSERT(m_vm->watchdog());
-    m_vm->watchdog()->terminateSoon();
+    m_vm->notifyNeedTermination();
 }
 
 bool WorkerScriptController::isTerminatingExecution() const

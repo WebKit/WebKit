@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -53,7 +53,7 @@ void computeUsesForBytecodeOffset(Block* codeBlock, OpcodeID opcodeID, Instructi
     case op_create_direct_arguments:
     case op_create_cloned_arguments:
     case op_get_rest_length:
-    case op_watchdog:
+    case op_check_traps:
     case op_get_argument:
         return;
     case op_assert:
@@ -359,7 +359,7 @@ void computeDefsForBytecodeOffset(Block* codeBlock, OpcodeID opcodeID, Instructi
     case op_profile_control_flow:
     case op_put_to_arguments:
     case op_set_function_name:
-    case op_watchdog:
+    case op_check_traps:
     case op_log_shadow_chicken_prologue:
     case op_log_shadow_chicken_tail:
     case op_yield:

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2009, 2012-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2017 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Cameron Zwarich <cwzwarich@uwaterloo.ca>
  * Copyright (C) 2012 Igalia, S.L.
  *
@@ -704,7 +704,7 @@ namespace JSC {
         void emitJumpIfNotFunctionApply(RegisterID* cond, Label& target);
 
         void emitEnter();
-        void emitWatchdog();
+        void emitCheckTraps();
 
         RegisterID* emitHasIndexedProperty(RegisterID* dst, RegisterID* base, RegisterID* propertyName);
         RegisterID* emitHasStructureProperty(RegisterID* dst, RegisterID* base, RegisterID* propertyName, RegisterID* enumerator);

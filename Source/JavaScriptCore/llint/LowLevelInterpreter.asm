@@ -1,4 +1,4 @@
-# Copyright (C) 2011-2016 Apple Inc. All rights reserved.
+# Copyright (C) 2011-2017 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -1544,19 +1544,17 @@ _llint_op_loop_hint:
     dispatch(1)
 
 
-_llint_op_watchdog:
+_llint_op_check_traps:
     traceExecution()
     loadp CodeBlock[cfr], t1
     loadp CodeBlock::m_vm[t1], t1
-    loadp VM::m_watchdog[t1], t0
-    btpnz t0, .handleWatchdogTimer
-.afterWatchdogTimerCheck:
+    loadb VM::m_traps+VMTraps::m_needTrapHandling[t1], t0
+    btpnz t0, .handleTraps
+.afterHandlingTraps:
     dispatch(1)
-.handleWatchdogTimer:
-    loadb Watchdog::m_timerDidFire[t0], t0
-    btbz t0, .afterWatchdogTimerCheck
-    callWatchdogTimerHandler(.throwHandler)
-    jmp .afterWatchdogTimerCheck
+.handleTraps:
+    callTrapHandler(.throwHandler)
+    jmp .afterHandlingTraps
 .throwHandler:
     jmp _llint_throw_from_slow_path_trampoline
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1101,7 +1101,7 @@ private:
         case Phantom:
         case Check:
         case PutGlobalVariable:
-        case CheckWatchdogTimer:
+        case CheckTraps:
         case LogShadowChickenPrologue:
         case LogShadowChickenTail:
         case Unreachable:
