@@ -69,7 +69,7 @@ void RenderButton::addChild(RenderObject* newChild, RenderObject* beforeChild)
         // Create an anonymous block.
         ASSERT(!firstChild());
         m_inner = createAnonymousBlock(style().display());
-        setupInnerStyle(&m_inner->mutableStyle());
+        updateAnonymousChildStyle(*m_inner, m_inner->mutableStyle());
         RenderFlexibleBox::addChild(m_inner);
     }
     
@@ -88,38 +88,23 @@ void RenderButton::removeChild(RenderObject& oldChild)
     } else
         m_inner->removeChild(oldChild);
 }
-
-void RenderButton::styleWillChange(StyleDifference diff, const RenderStyle& newStyle)
+    
+void RenderButton::updateAnonymousChildStyle(const RenderObject& child, RenderStyle& childStyle) const
 {
-    if (m_inner) {
-        // RenderBlock::setStyle is going to apply a new style to the inner block, which
-        // will have the initial flex value, 0. The current value is 1, because we set
-        // it right below. Here we change it back to 0 to avoid getting a spurious layout hint
-        // because of the difference. Same goes for the other properties.
-        // FIXME: Make this hack unnecessary.
-        m_inner->mutableStyle().setFlexGrow(newStyle.initialFlexGrow());
-        m_inner->mutableStyle().setMarginTop(newStyle.initialMargin());
-        m_inner->mutableStyle().setMarginBottom(newStyle.initialMargin());
-    }
-    RenderBlock::styleWillChange(diff, newStyle);
-}
-
-void RenderButton::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
-{
-    RenderBlock::styleDidChange(diff, oldStyle);
-
-    if (m_inner) // RenderBlock handled updating the anonymous block's style.
-        setupInnerStyle(&m_inner->mutableStyle());
-}
-
-void RenderButton::setupInnerStyle(RenderStyle* innerStyle) 
-{
-    innerStyle->setFlexGrow(1.0f);
+    ASSERT_UNUSED(child, !m_inner || &child == m_inner);
+    
+    childStyle.setFlexGrow(1.0f);
+    // min-width: 0; is needed for correct shrinking.
+    childStyle.setMinWidth(Length(0, Fixed));
     // Use margin:auto instead of align-items:center to get safe centering, i.e.
     // when the content overflows, treat it the same as align-items: flex-start.
-    innerStyle->setMarginTop(Length());
-    innerStyle->setMarginBottom(Length());
-    innerStyle->setFlexDirection(style().flexDirection());
+    childStyle.setMarginTop(Length());
+    childStyle.setMarginBottom(Length());
+    childStyle.setFlexDirection(style().flexDirection());
+    childStyle.setJustifyContent(style().justifyContent());
+    childStyle.setFlexWrap(style().flexWrap());
+    childStyle.setAlignItems(style().alignItems());
+    childStyle.setAlignContent(style().alignContent());
 }
 
 void RenderButton::updateFromElement()
