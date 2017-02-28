@@ -1,3 +1,25 @@
+2017-02-28  Alex Christensen  <achristensen@webkit.org>
+
+        REGRESSION: LayoutTest http/tests/security/credentials-iframes.html is failing on ios-simulator
+        https://bugs.webkit.org/show_bug.cgi?id=167967
+
+        Reviewed by Brady Eidson.
+
+        XHR credentials have a persistence of CredentialPersistenceNone because we keep
+        them in the WebCore::CredentialStorage.  We were storing them to CFNetwork's NSURLCredentialStorage
+        on iOS and then they were being given as the proposedCredential in
+        NetworkDataTaskCocoa::tryPasswordBasedAuthentication even though we set CredentialPersistenceNone.
+
+        This fixes http/tests/security/credentials-iframes.html
+
+        * platform/network/CredentialStorage.cpp:
+        (WebCore::CredentialStorage::set):
+        * platform/network/CredentialStorage.h:
+        * platform/network/cf/CredentialStorageCFNet.cpp:
+        (WebCore::CredentialStorage::saveToPersistentStorage): Deleted.
+        * platform/network/mac/CredentialStorageMac.mm:
+        (WebCore::CredentialStorage::saveToPersistentStorage): Deleted.
+
 2017-02-27  Alex Christensen  <achristensen@webkit.org>
 
         Fix WinCairo build.

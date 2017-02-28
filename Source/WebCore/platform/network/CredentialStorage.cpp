@@ -70,11 +70,6 @@ void CredentialStorage::set(const String& partitionName, const Credential& crede
 
     m_protectionSpaceToCredentialMap.set(std::make_pair(partitionName, protectionSpace), credential);
 
-#if PLATFORM(IOS)
-    if (protectionSpace.authenticationScheme() != ProtectionSpaceAuthenticationSchemeClientCertificateRequested)
-        saveToPersistentStorage(protectionSpace, credential);
-#endif
-
     if (!protectionSpace.isProxy() && protectionSpace.authenticationScheme() != ProtectionSpaceAuthenticationSchemeClientCertificateRequested) {
         m_originsWithCredentials.add(originStringFromURL(url));
 

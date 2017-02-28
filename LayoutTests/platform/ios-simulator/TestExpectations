@@ -2869,8 +2869,6 @@ webkit.org/b/167211 imported/w3c/web-platform-tests/html/browsers/history/the-lo
 
 webkit.org/b/167619 css3/filters/backdrop/dynamic-with-clip-path.html [ ImageOnlyFailure ]
 
-webkit.org/b/167967 http/tests/security/credentials-iframes.html [ Failure ]
-
 webkit.org/b/168054 compositing/masks/solid-color-masked.html [ ImageOnlyFailure ]
 
 webkit.org/b/168215 imported/w3c/web-platform-tests/html/semantics/text-level-semantics/the-a-element/a-download-click.html [ Skip ]

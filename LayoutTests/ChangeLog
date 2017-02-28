@@ -1,3 +1,12 @@
+2017-02-28  Alex Christensen  <achristensen@webkit.org>
+
+        REGRESSION: LayoutTest http/tests/security/credentials-iframes.html is failing on ios-simulator
+        https://bugs.webkit.org/show_bug.cgi?id=167967
+
+        Reviewed by Brady Eidson.
+
+        * platform/ios-simulator/TestExpectations:
+
 2017-02-27  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] Use compact mode by default on macOS
