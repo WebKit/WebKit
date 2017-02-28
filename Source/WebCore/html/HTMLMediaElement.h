@@ -974,7 +974,6 @@ private:
     bool m_creatingControls : 1;
     bool m_receivedLayoutSizeChanged : 1;
     bool m_hasEverNotifiedAboutPlaying : 1;
-    bool m_preventedFromPlayingWithoutUserGesture : 1;
 
     bool m_hasEverHadAudio : 1;
     bool m_hasEverHadVideo : 1;
@@ -990,6 +989,9 @@ private:
     bool m_tracksAreReady : 1;
     bool m_haveVisibleTextTrack : 1;
     bool m_processingPreferenceChange : 1;
+
+    enum class PlaybackWithoutUserGesture { None, Started, Prevented };
+    PlaybackWithoutUserGesture m_playbackWithoutUserGesture;
 
     String m_subtitleTrackLanguage;
     MediaTime m_lastTextTrackUpdateTime { -1, 1 };

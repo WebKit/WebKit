@@ -1,3 +1,27 @@
+2017-02-24  Matt Rajca  <mrajca@apple.com>
+
+        Media: notify clients when autoplayed media ends without being paused
+        https://bugs.webkit.org/show_bug.cgi?id=168852
+
+        Reviewed by Alex Christensen.
+
+        Added API tests.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::setReadyState):
+         Set state accordingly if we autoplayed or if playback was prevented.
+        (WebCore::HTMLMediaElement::play):
+         Update state if playback was prevented.
+        (WebCore::HTMLMediaElement::playInternal):
+         Update state if playback began without user interaction.
+        (WebCore::HTMLMediaElement::pauseInternal):
+         Update state.
+        (WebCore::HTMLMediaElement::mediaPlayerTimeChanged):
+         If playback ends and it began without user interaction, send a DidPlayMediaWithoutInterference event.
+        (WebCore::HTMLMediaElement::stopWithoutDestroyingMediaPlayer): Ditto.
+        * html/HTMLMediaElement.h:
+        * page/AutoplayEvent.h:
+
 2017-02-27  Dave Hyatt  <hyatt@apple.com>
 
         Update flexbox to Blink's tip of tree

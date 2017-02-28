@@ -11,10 +11,22 @@
             function play() {
                 document.getElementById("video").play();
             }
+
+            function beganPlaying() {
+                try {
+                    window.webkit.messageHandlers.testHandler.postMessage("playing");
+                } catch(e) { }
+            }
+
+            function endedPlaying() {
+                try {
+                    window.webkit.messageHandlers.testHandler.postMessage("ended");
+                } catch(e) { }
+            }
         </script>
     </head>
     <body onload="pageLoaded()">
         <button onclick="play()">Play</button>
-        <video id="video" src="test.mp4" />
+        <video id="video" onplaying=beganPlaying() onended=endedPlaying() src="test.mp4" />
     </body>
 </html>

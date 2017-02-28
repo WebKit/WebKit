@@ -1,3 +1,14 @@
+2017-02-24  Matt Rajca  <mrajca@apple.com>
+
+        Media: notify clients when autoplayed media ends without being paused
+        https://bugs.webkit.org/show_bug.cgi?id=168852
+
+        Reviewed by Alex Christensen.
+
+        * TestWebKitAPI/Tests/WebKit2/js-play-with-controls.html:
+        * TestWebKitAPI/Tests/WebKit2Cocoa/WebsitePolicies.mm:
+        (TEST): Added.
+
 2017-02-28  Jonathan Bedard  <jbedard@apple.com>
 
         webkitpy: jsc-ews should run when Makefiles and build scripts are changed
