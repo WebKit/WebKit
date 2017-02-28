@@ -46,6 +46,7 @@ class StepsTest(unittest.TestCase):
         options.quiet = True
         options.test = True
         options.iterate_on_new_tests = 0
+        options.root = '/tmp'
         return options
 
     def _run_step(self, step, tool=None, options=None, state=None):
@@ -154,8 +155,7 @@ MOCK run_and_throw_if_fail: ['Tools/Scripts/run-webkit-tests', '--debug', '--qui
         # FIXME: We shouldn't use a real port-object here, but there is too much to mock at the moment.
         tool._deprecated_port = DeprecatedPort()
         step = steps.RunTests(tool, mock_options)
-        expected_logs = """MOCK run_command: ['perl', 'Tools/Scripts/webkit-build-directory', '--configuration', '--release', '--mac'], cwd=/mock-checkout
-MOCK run_and_throw_if_fail: ['Tools/Scripts/run-javascriptcore-tests', '--no-fail-fast', '--release', '--json-output=/MOCK output of child process/jsc_test_results.json'], cwd=/mock-checkout
+        expected_logs = """MOCK run_and_throw_if_fail: ['Tools/Scripts/run-javascriptcore-tests', '--no-fail-fast', '--release', '--json-output=/tmp/jsc_test_results.json'], cwd=/mock-checkout
 """
         OutputCapture().assert_outputs(self, step.run, [{}], expected_logs=expected_logs)
 
@@ -168,8 +168,7 @@ MOCK run_and_throw_if_fail: ['Tools/Scripts/run-javascriptcore-tests', '--no-fai
         # FIXME: We shouldn't use a real port-object here, but there is too much to mock at the moment.
         tool._deprecated_port = DeprecatedPort()
         step = steps.RunTests(tool, mock_options)
-        expected_logs = """MOCK run_command: ['perl', 'Tools/Scripts/webkit-build-directory', '--configuration', '--release', '--mac'], cwd=/mock-checkout
-MOCK run_and_throw_if_fail: ['Tools/Scripts/run-javascriptcore-tests', '--no-fail-fast', '--debug', '--json-output=/MOCK output of child process/jsc_test_results.json'], cwd=/mock-checkout
+        expected_logs = """MOCK run_and_throw_if_fail: ['Tools/Scripts/run-javascriptcore-tests', '--no-fail-fast', '--debug', '--json-output=/tmp/jsc_test_results.json'], cwd=/mock-checkout
 """
         OutputCapture().assert_outputs(self, step.run, [{}], expected_logs=expected_logs)
 

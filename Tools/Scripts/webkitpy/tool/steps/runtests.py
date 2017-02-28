@@ -153,7 +153,7 @@ class RunTests(AbstractStep):
     def _run_javascriptcore_tests(self):
         args = self._tool.deprecated_port().run_javascriptcore_tests_command(self._options.build_style)
 
-        results_directory = self._tool.port_factory.get().jsc_results_directory()
+        results_directory = self._tool.port_factory.get(options=self._options).jsc_results_directory()
         results_file_path = self._tool.filesystem.join(results_directory, "jsc_test_results.json")
         args.append("--json-output=%s" % results_file_path)
         self._tool.executive.run_and_throw_if_fail(args, cwd=self._tool.scm().checkout_root)
