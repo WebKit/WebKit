@@ -1,3 +1,22 @@
+2017-02-23  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GStreamer] Several layout tests trigger GStreamer-CRITICAL **: gst_bin_get_by_name: assertion 'GST_IS_BIN (bin)' failed
+        https://bugs.webkit.org/show_bug.cgi?id=167016
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        This is because we create AudioSourceProviderGStreamer objects that are never loaded. In the destructor the
+        AudioSourceProviderGStreamer calls gst_bin_get_by_name() on its m_audioSinkBin that is nullptr. We could simply
+        check m_audioSinkBin in the destructor, but I think it's better to simply not create
+        AudioSourceProviderGStreamer for nothing. MediaPlayerPrivateGStreamer should create the AudioSourceProvider on demand.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::MediaPlayerPrivateGStreamer): Do not create the AudioSourceProvider.
+        (WebCore::MediaPlayerPrivateGStreamer::createAudioSink): Call ensureAudioSourceProvider() before using m_audioSourceProvider.
+        (WebCore::MediaPlayerPrivateGStreamer::ensureAudioSourceProvider): Create the AudioSourceProvider if needed.
+        (WebCore::MediaPlayerPrivateGStreamer::audioSourceProvider): Ensure and return the m_audioSourceProvider.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h:
+
 2017-02-23  Tomas Popela  <tpopela@redhat.com>
 
         [GTK] Drag and drop is always moving the content even if copy is requested
