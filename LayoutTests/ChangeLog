@@ -1,3 +1,13 @@
+2017-02-27  Andy Estes  <aestes@apple.com>
+
+        [iOS] Enable file replacement
+        https://bugs.webkit.org/show_bug.cgi?id=168907
+        <rdar://problem/22258242>
+
+        Reviewed by David Kilzer.
+
+        * platform/ios-simulator/TestExpectations: Un-skipped file replacement tests on iOS.
+
 2017-02-27  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] Use a solid background for <audio> controls on macOS

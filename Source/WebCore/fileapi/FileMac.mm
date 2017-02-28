@@ -23,42 +23,39 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "File.h"
+#import "config.h"
+#import "File.h"
 
 #if ENABLE(FILE_REPLACEMENT)
 
-#include "FileSystem.h"
+#import "FileSystem.h"
+
+#if PLATFORM(IOS)
+#import <MobileCoreServices/MobileCoreServices.h>
+#endif
 
 namespace WebCore {
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
 bool File::shouldReplaceFile(const String& path)
 {
     if (path.isEmpty())
         return false;
 
-    FSRef pathRef;
-    Boolean targetIsFolder;
-    Boolean wasAliased;
-    NSString *aliasedPath = path;
-
-    // Determine if the file is an alias, and if so, get the target path.
-    if (FSPathMakeRef((UInt8 *)[path fileSystemRepresentation], &pathRef, NULL) == noErr) {
-        if (FSResolveAliasFileWithMountFlags(&pathRef, TRUE, &targetIsFolder, &wasAliased, kResolveAliasFileNoUI) == noErr && wasAliased) {
-            char pathFromPathRef[PATH_MAX + 1]; // +1 is for \0 
-            if (FSRefMakePath(&pathRef, (unsigned char *)pathFromPathRef, PATH_MAX) == noErr)
-                aliasedPath = [[NSFileManager defaultManager] stringWithFileSystemRepresentation:pathFromPathRef length:strlen(pathFromPathRef)];
-        }
-    }
-    
-    if (!aliasedPath)
+    NSError *error;
+    NSURL *pathURL = [NSURL URLByResolvingAliasFileAtURL:[NSURL fileURLWithPath:path isDirectory:NO] options:NSURLBookmarkResolutionWithoutUI error:&error];
+    if (!pathURL) {
+        LOG_ERROR("Failed to resolve alias at path %s with error %@.\n", path.utf8().data(), error);
         return false;
+    }
 
-    return [[NSWorkspace sharedWorkspace] isFilePackageAtPath:aliasedPath];
+    NSString *uti;
+    if (![pathURL getResourceValue:&uti forKey:NSURLTypeIdentifierKey error:&error]) {
+        LOG_ERROR("Failed to get type identifier of resource at URL %@ with error %@.\n", pathURL, error);
+        return false;
+    }
+
+    return UTTypeConformsTo((CFStringRef)uti, kUTTypePackage);
 }
-#pragma clang diagnostic pop
 
 void File::computeNameAndContentTypeForReplacedFile(const String& path, const String& nameOverride, String& effectiveName, String& effectiveContentType)
 {

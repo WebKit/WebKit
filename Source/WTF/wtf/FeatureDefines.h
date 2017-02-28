@@ -239,10 +239,6 @@ the public iOS SDK. We will also need to update the FeatureDefines.xcconfig file
 #define ENABLE_INPUT_TYPE_COLOR_POPOVER 1
 #endif
 
-#if !defined(ENABLE_FILE_REPLACEMENT)
-#define ENABLE_FILE_REPLACEMENT 1
-#endif
-
 #if !defined(ENABLE_PRIMARY_SNAPSHOTTED_PLUGIN_HEURISTIC)
 #define ENABLE_PRIMARY_SNAPSHOTTED_PLUGIN_HEURISTIC 1
 #endif
@@ -257,6 +253,10 @@ the public iOS SDK. We will also need to update the FeatureDefines.xcconfig file
 
 #if !defined(ENABLE_DATA_DETECTION)
 #define ENABLE_DATA_DETECTION 1
+#endif
+
+#if !defined(ENABLE_FILE_REPLACEMENT)
+#define ENABLE_FILE_REPLACEMENT 1
 #endif
 
 #if !defined(ENABLE_KEYBOARD_KEY_ATTRIBUTE)
