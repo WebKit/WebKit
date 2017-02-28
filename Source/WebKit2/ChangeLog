@@ -1,3 +1,44 @@
+2017-02-27  Youenn Fablet  <youenn@apple.com>
+
+        [WebRTC] Add support for libwebrtc TCP incoming connections
+        https://bugs.webkit.org/show_bug.cgi?id=168748
+
+        Reviewed by Alex Christensen.
+
+        Covered by added layout tests.
+
+        When a libwebrtc server socket is signalling a new connnection through SignalNewConnection, we do:
+        - Wrap the incoming socket into a LibWebRTCSocketClient
+        - Store it into a pending socket map with an identifier
+        - Send a message to the web process of a new connection with the server socket identifier and new connection socket identifier.
+        The Web process then creates a WebRTCSocket wrapper around it by sendinig a WrapNewTCPConnection message.
+        It then propagates the SignalNewConnection to libwebrtc code path.
+
+        * NetworkProcess/webrtc/LibWebRTCSocketClient.cpp:
+        (WebKit::LibWebRTCSocketClient::LibWebRTCSocketClient):
+        (WebKit::LibWebRTCSocketClient::signalReadPacket):
+        (WebKit::LibWebRTCSocketClient::signalSentPacket):
+        (WebKit::LibWebRTCSocketClient::signalNewConnection):
+        (WebKit::LibWebRTCSocketClient::signalAddressReady):
+        (WebKit::LibWebRTCSocketClient::signalConnect):
+        (WebKit::LibWebRTCSocketClient::signalClose):
+        * NetworkProcess/webrtc/LibWebRTCSocketClient.h:
+        * NetworkProcess/webrtc/NetworkRTCProvider.cpp:
+        (WebKit::NetworkRTCProvider::wrapNewTCPConnection):
+        (WebKit::NetworkRTCProvider::newConnection):
+        * NetworkProcess/webrtc/NetworkRTCProvider.h:
+        * NetworkProcess/webrtc/NetworkRTCProvider.messages.in:
+        * WebProcess/Network/webrtc/LibWebRTCSocket.cpp:
+        (WebKit::LibWebRTCSocket::signalNewConnection):
+        * WebProcess/Network/webrtc/LibWebRTCSocket.h:
+        * WebProcess/Network/webrtc/LibWebRTCSocketFactory.cpp:
+        (WebKit::LibWebRTCSocketFactory::createNewConnectionSocket):
+        * WebProcess/Network/webrtc/LibWebRTCSocketFactory.h:
+        * WebProcess/Network/webrtc/WebRTCSocket.cpp:
+        (WebKit::WebRTCSocket::signalNewConnection):
+        * WebProcess/Network/webrtc/WebRTCSocket.h:
+        * WebProcess/Network/webrtc/WebRTCSocket.messages.in:
+
 2017-02-27  Brent Fulgham  <bfulgham@apple.com>
 
         [Mac] Don't use undefined sandbox rule on macOS 10.11 or earlier

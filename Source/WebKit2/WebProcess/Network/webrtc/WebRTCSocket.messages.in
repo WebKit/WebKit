@@ -28,6 +28,7 @@ messages -> WebRTCSocket {
     SignalAddressReady(WebKit::RTCNetwork::SocketAddress address)
     SignalConnect()
     SignalClose(int error)
+    SignalNewConnection(uint64_t newSocketIdentifier, WebKit::RTCNetwork::SocketAddress remoteAddress)
 }
 
 #endif // USE(LIBWEBRTC)

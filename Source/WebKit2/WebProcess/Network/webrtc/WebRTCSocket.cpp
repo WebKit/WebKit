@@ -90,6 +90,13 @@ void WebRTCSocket::signalClose(int error)
     });
 }
 
+void WebRTCSocket::signalNewConnection(uint64_t newSocketIdentifier, const RTCNetwork::SocketAddress& remoteAddress)
+{
+    signalOnNetworkThread(m_factory, m_identifier, [newSocketIdentifier, remoteAddress = RTCNetwork::isolatedCopy(remoteAddress.value)](LibWebRTCSocket& socket) {
+        socket.signalNewConnection(socket.m_factory.createNewConnectionSocket(socket, newSocketIdentifier, remoteAddress));
+    });
+}
+
 } // namespace WebKit
 
 #endif // USE(LIBWEBRTC)

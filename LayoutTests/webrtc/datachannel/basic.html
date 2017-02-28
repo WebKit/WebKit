@@ -9,9 +9,6 @@
   <body>
     <script src ="../routines.js"></script>
     <script>
-if (window.internals)
-    internals.useMockRTCPeerConnectionFactory("TwoRealPeerConnections");
-
 var localChannel;
 var remoteChannel;
 
@@ -60,6 +57,9 @@ var finishTest;
 promise_test((test) => {
     counter = 0;
     return new Promise((resolve, reject) => {
+        if (window.internals)
+            internals.useMockRTCPeerConnectionFactory("TwoRealPeerConnections");
+
         finishTest = resolve;
         createConnections((localConnection) => {
             localChannel = localConnection.createDataChannel('sendDataChannel');
@@ -76,6 +76,9 @@ promise_test((test) => {
 promise_test((test) => {
     counter = 0;
     return new Promise((resolve, reject) => {
+        if (window.internals)
+            internals.useMockRTCPeerConnectionFactory("TwoRealPeerConnections");
+
         finishTest = resolve;
         createConnections((localConnection) => {
             localChannel = localConnection.createDataChannel('sendDataChannel');
@@ -88,6 +91,45 @@ promise_test((test) => {
         });
     });
 }, "Basic data channel exchange from receiver to offerer");
+
+promise_test((test) => {
+    counter = 0;
+    return new Promise((resolve, reject) => {
+        if (window.internals)
+            internals.useMockRTCPeerConnectionFactory("TwoRealPeerConnections");
+
+        finishTest = resolve;
+        createConnections((localConnection) => {
+            localChannel = localConnection.createDataChannel('sendDataChannel');
+            localChannel.onopen = () => { sendMessages(localChannel) };
+        }, (remoteConnection) => {
+            remoteConnection.ondatachannel = (event) => {
+                remoteChannel = event.channel;
+                remoteChannel.onmessage = receiveMessages;
+            };
+        }, (candidate) => { return candidate.candidate.toLowerCase().indexOf("udp") == -1; });
+    });
+}, "Basic data channel exchange from offerer to receiver using UDP only");
+
+promise_test((test) => {
+    counter = 0;
+    return new Promise((resolve, reject) => {
+        if (window.internals)
+            internals.useMockRTCPeerConnectionFactory("TwoRealPeerConnections");
+
+        finishTest = resolve;
+        createConnections((localConnection) => {
+            localChannel = localConnection.createDataChannel('sendDataChannel');
+            localChannel.onopen = () => { sendMessages(localChannel) };
+        }, (remoteConnection) => {
+            remoteConnection.ondatachannel = (event) => {
+                remoteChannel = event.channel;
+                remoteChannel.onmessage = receiveMessages;
+            };
+        }, (candidate) => { return candidate.candidate.toLowerCase().indexOf("tcp") == -1; });
+    });
+}, "Basic data channel exchange from offerer to receiver using TCP only");
+
     </script>
   </body>
 </html>

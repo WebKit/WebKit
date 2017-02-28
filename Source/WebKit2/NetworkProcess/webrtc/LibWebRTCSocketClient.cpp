@@ -51,14 +51,25 @@ LibWebRTCSocketClient::LibWebRTCSocketClient(uint64_t identifier, NetworkRTCProv
 
     m_socket->SignalReadPacket.connect(this, &LibWebRTCSocketClient::signalReadPacket);
     m_socket->SignalSentPacket.connect(this, &LibWebRTCSocketClient::signalSentPacket);
-    m_socket->SignalConnect.connect(this, &LibWebRTCSocketClient::signalConnect);
     m_socket->SignalClose.connect(this, &LibWebRTCSocketClient::signalClose);
 
-    if (type == Type::ClientTCP) {
+    switch (type) {
+    case Type::ServerConnectionTCP:
+        return;
+    case Type::ClientTCP:
+        m_socket->SignalConnect.connect(this, &LibWebRTCSocketClient::signalConnect);
         m_socket->SignalAddressReady.connect(this, &LibWebRTCSocketClient::signalAddressReady);
         return;
+    case Type::ServerTCP:
+        m_socket->SignalConnect.connect(this, &LibWebRTCSocketClient::signalConnect);
+        m_socket->SignalNewConnection.connect(this, &LibWebRTCSocketClient::signalNewConnection);
+        signalAddressReady();
+        return;
+    case Type::UDP:
+        m_socket->SignalConnect.connect(this, &LibWebRTCSocketClient::signalConnect);
+        signalAddressReady();
+        return;
     }
-    signalAddressReady();
 }
 
 void LibWebRTCSocketClient::sendTo(const WebCore::SharedBuffer& buffer, const rtc::SocketAddress& socketAddress, const rtc::PacketOptions& options)
@@ -79,8 +90,9 @@ void LibWebRTCSocketClient::setOption(int option, int value)
     m_socket->SetOption(static_cast<rtc::Socket::Option>(option), value);
 }
 
-void LibWebRTCSocketClient::signalReadPacket(rtc::AsyncPacketSocket*, const char* value, size_t length, const rtc::SocketAddress& address, const rtc::PacketTime& packetTime)
+void LibWebRTCSocketClient::signalReadPacket(rtc::AsyncPacketSocket* socket, const char* value, size_t length, const rtc::SocketAddress& address, const rtc::PacketTime& packetTime)
 {
+    ASSERT_UNUSED(socket, m_socket.get() == socket);
     auto buffer = WebCore::SharedBuffer::create(value, length);
     m_rtcProvider.sendFromMainThread([identifier = m_identifier, buffer = WTFMove(buffer), address = RTCNetwork::isolatedCopy(address), packetTime](IPC::Connection& connection) {
         IPC::DataReference data(reinterpret_cast<const uint8_t*>(buffer->data()), buffer->size());
@@ -88,15 +100,23 @@ void LibWebRTCSocketClient::signalReadPacket(rtc::AsyncPacketSocket*, const char
     });
 }
 
-void LibWebRTCSocketClient::signalSentPacket(rtc::AsyncPacketSocket*, const rtc::SentPacket& sentPacket)
+void LibWebRTCSocketClient::signalSentPacket(rtc::AsyncPacketSocket* socket, const rtc::SentPacket& sentPacket)
 {
+    ASSERT_UNUSED(socket, m_socket.get() == socket);
     m_rtcProvider.sendFromMainThread([identifier = m_identifier, sentPacket](IPC::Connection& connection) {
         connection.send(Messages::WebRTCSocket::SignalSentPacket(sentPacket.packet_id, sentPacket.send_time_ms), identifier);
     });
 }
 
-void LibWebRTCSocketClient::signalAddressReady(rtc::AsyncPacketSocket*, const rtc::SocketAddress& address)
+void LibWebRTCSocketClient::signalNewConnection(rtc::AsyncPacketSocket* socket, rtc::AsyncPacketSocket* newSocket)
 {
+    ASSERT_UNUSED(socket, m_socket.get() == socket);
+    m_rtcProvider.newConnection(*this, std::unique_ptr<rtc::AsyncPacketSocket>(newSocket));
+}
+
+void LibWebRTCSocketClient::signalAddressReady(rtc::AsyncPacketSocket* socket, const rtc::SocketAddress& address)
+{
+    ASSERT_UNUSED(socket, m_socket.get() == socket);
     m_rtcProvider.sendFromMainThread([identifier = m_identifier, address = RTCNetwork::isolatedCopy(address)](IPC::Connection& connection) {
         connection.send(Messages::WebRTCSocket::SignalAddressReady(RTCNetwork::SocketAddress(address)), identifier);
     });
@@ -107,15 +127,17 @@ void LibWebRTCSocketClient::signalAddressReady()
     signalAddressReady(m_socket.get(), m_socket->GetLocalAddress());
 }
 
-void LibWebRTCSocketClient::signalConnect(rtc::AsyncPacketSocket*)
+void LibWebRTCSocketClient::signalConnect(rtc::AsyncPacketSocket* socket)
 {
+    ASSERT_UNUSED(socket, m_socket.get() == socket);
     m_rtcProvider.sendFromMainThread([identifier = m_identifier](IPC::Connection& connection) {
         connection.send(Messages::WebRTCSocket::SignalConnect(), identifier);
     });
 }
 
-void LibWebRTCSocketClient::signalClose(rtc::AsyncPacketSocket*, int error)
+void LibWebRTCSocketClient::signalClose(rtc::AsyncPacketSocket* socket, int error)
 {
+    ASSERT_UNUSED(socket, m_socket.get() == socket);
     m_rtcProvider.sendFromMainThread([identifier = m_identifier, error](IPC::Connection& connection) {
         connection.send(Messages::WebRTCSocket::SignalClose(error), identifier);
     });

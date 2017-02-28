@@ -106,6 +106,12 @@ void LibWebRTCSocket::signalClose(int error)
     SignalClose(this, error);
 }
 
+void LibWebRTCSocket::signalNewConnection(rtc::AsyncPacketSocket* newConnectionSocket)
+{
+    ASSERT(m_type == Type::ServerTCP);
+    SignalNewConnection(this, newConnectionSocket);
+}
+
 static inline String authKey(const rtc::PacketOptions& options)
 {
     if (options.packet_time_params.srtp_auth_key.size() <= 0)

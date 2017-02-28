@@ -28,6 +28,7 @@ messages -> NetworkRTCProvider {
     CreateClientTCPSocket(int identifier, WebKit::RTCNetwork::SocketAddress localAddress, WebKit::RTCNetwork::SocketAddress remoteAddress, int options)
     CreateResolver(uint64_t identifier, String address)
     StopResolver(uint64_t identifier)
+    WrapNewTCPConnection(uint64_t identifier, uint64_t newConnectionSocketIdentifier)
 }
 
 #endif // USE(LIBWEBRTC)

@@ -55,7 +55,8 @@ private:
     void signalAddressReady(const RTCNetwork::SocketAddress&);
     void signalConnect();
     void signalClose(int);
-    
+    void signalNewConnection(uint64_t newSocketIdentifier, const WebKit::RTCNetwork::SocketAddress&);
+
     LibWebRTCSocketFactory& m_factory;
     uint64_t m_identifier { 0 };
 };

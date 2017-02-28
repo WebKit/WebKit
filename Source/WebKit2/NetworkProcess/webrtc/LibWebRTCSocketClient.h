@@ -49,9 +49,11 @@ class NetworkRTCProvider;
 
 class LibWebRTCSocketClient final : public sigslot::has_slots<> {
 public:
-    enum class Type { UDP, ServerTCP, ClientTCP };
+    enum class Type { UDP, ServerTCP, ClientTCP, ServerConnectionTCP };
 
     LibWebRTCSocketClient(uint64_t identifier, NetworkRTCProvider&, std::unique_ptr<rtc::AsyncPacketSocket>&&, Type);
+
+    uint64_t identifier() const { return m_identifier; }
 
 private:
     friend class NetworkRTCSocket;
@@ -65,6 +67,7 @@ private:
     void signalAddressReady(rtc::AsyncPacketSocket*, const rtc::SocketAddress&);
     void signalConnect(rtc::AsyncPacketSocket*);
     void signalClose(rtc::AsyncPacketSocket*, int);
+    void signalNewConnection(rtc::AsyncPacketSocket* socket, rtc::AsyncPacketSocket* newSocket);
 
     void signalAddressReady();
 

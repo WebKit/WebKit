@@ -2,13 +2,13 @@
 var localConnection;
 var remoteConnection;
 
-function createConnections(setupLocalConnection, setupRemoteConnection) {
+function createConnections(setupLocalConnection, setupRemoteConnection, filterOutICECandidate) {
     localConnection = new RTCPeerConnection();
-    localConnection.onicecandidate = iceCallback1;
+    localConnection.onicecandidate = (event) => { iceCallback1(event, filterOutICECandidate) };
     setupLocalConnection(localConnection);
 
     remoteConnection = new RTCPeerConnection();
-    remoteConnection.onicecandidate = iceCallback2;
+    remoteConnection.onicecandidate = (event) => { iceCallback2(event, filterOutICECandidate) };
     setupRemoteConnection(remoteConnection);
 
     localConnection.createOffer().then(gotDescription1, onCreateSessionDescriptionError);
@@ -40,14 +40,25 @@ function gotDescription2(desc)
     localConnection.setRemoteDescription(desc);
 }
 
-function iceCallback1(event)
+function iceCallback1(event, filterOutICECandidate)
 {
-    if (event.candidate)
-        remoteConnection.addIceCandidate(event.candidate).then(onAddIceCandidateSuccess, onAddIceCandidateError);
+    if (!event.candidate)
+        return;
+
+    if (filterOutICECandidate && filterOutICECandidate(event.candidate))
+        return;
+
+    remoteConnection.addIceCandidate(event.candidate).then(onAddIceCandidateSuccess, onAddIceCandidateError);
 }
 
-function iceCallback2(event)
+function iceCallback2(event, filterOutICECandidate)
 {
+    if (!event.candidate)
+        return;
+
+    if (filterOutICECandidate && filterOutICECandidate(event.candidate))
+        return;
+
     if (event.candidate)
         localConnection.addIceCandidate(event.candidate).then(onAddIceCandidateSuccess, onAddIceCandidateError);
 }

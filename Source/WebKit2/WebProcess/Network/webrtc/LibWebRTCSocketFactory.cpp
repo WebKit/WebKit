@@ -86,6 +86,21 @@ rtc::AsyncPacketSocket* LibWebRTCSocketFactory::CreateClientTcpSocket(const rtc:
     return socket.release();
 }
 
+rtc::AsyncPacketSocket* LibWebRTCSocketFactory::createNewConnectionSocket(LibWebRTCSocket& serverSocket, uint64_t newConnectionSocketIdentifier, const rtc::SocketAddress& remoteAddress)
+{
+    auto socket = std::make_unique<LibWebRTCSocket>(*this, ++s_uniqueSocketIdentifier, LibWebRTCSocket::Type::ServerConnectionTCP, serverSocket.localAddress(), remoteAddress);
+    socket->setState(LibWebRTCSocket::STATE_CONNECTED);
+    m_sockets.set(socket->identifier(), socket.get());
+
+    callOnMainThread([identifier = socket->identifier(), newConnectionSocketIdentifier]() {
+        if (!WebProcess::singleton().networkConnection().connection().send(Messages::NetworkRTCProvider::WrapNewTCPConnection(identifier, newConnectionSocketIdentifier), 0)) {
+            // FIXME: Set error back to socket
+            return;
+        }
+    });
+    return socket.release();
+}
+
 void LibWebRTCSocketFactory::detach(LibWebRTCSocket& socket)
 {
     ASSERT(m_sockets.contains(socket.identifier()));

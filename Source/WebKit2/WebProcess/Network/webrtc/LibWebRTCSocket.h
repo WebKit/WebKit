@@ -48,7 +48,7 @@ class LibWebRTCSocketFactory;
 
 class LibWebRTCSocket final : public rtc::AsyncPacketSocket {
 public:
-    enum class Type { UDP, ServerTCP, ClientTCP };
+    enum class Type { UDP, ServerTCP, ClientTCP, ServerConnectionTCP };
 
     LibWebRTCSocket(LibWebRTCSocketFactory&, uint64_t identifier, Type, const rtc::SocketAddress& localAddress, const rtc::SocketAddress& remoteAddress);
     ~LibWebRTCSocket();
@@ -69,6 +69,7 @@ private:
     void signalAddressReady(const rtc::SocketAddress&);
     void signalConnect();
     void signalClose(int);
+    void signalNewConnection(rtc::AsyncPacketSocket*);
 
     // AsyncPacketSocket API
     int GetError() const final { return m_error; }

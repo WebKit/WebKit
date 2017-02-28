@@ -47,6 +47,8 @@ public:
 
     std::unique_ptr<LibWebRTCResolver> takeResolver(uint64_t identifier) { return m_resolvers.take(identifier); }
 
+    rtc::AsyncPacketSocket* createNewConnectionSocket(LibWebRTCSocket&, uint64_t newConnectionSocketIdentifier, const rtc::SocketAddress&);
+
 private:
     rtc::AsyncPacketSocket* CreateUdpSocket(const rtc::SocketAddress&, uint16_t minPort, uint16_t maxPort) final;
     rtc::AsyncPacketSocket* CreateServerTcpSocket(const rtc::SocketAddress&, uint16_t min_port, uint16_t max_port, int options) final;
