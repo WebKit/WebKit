@@ -1,3 +1,12 @@
+2017-02-27  Alex Christensen  <achristensen@webkit.org>
+
+        Begin enabling WebRTC on 64-bit
+        https://bugs.webkit.org/show_bug.cgi?id=168915
+
+        Reviewed by Eric Carlson.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2017-02-27  Mark Lam  <mark.lam@apple.com>
 
         Introduce a VM Traps mechanism and refactor Watchdog to use it.
