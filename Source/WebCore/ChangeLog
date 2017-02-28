@@ -1,5 +1,30 @@
 2017-02-27  Zan Dobersek  <zdobersek@igalia.com>
 
+        [TextureMapper] Clean up BitmapTextureGL construction
+        https://bugs.webkit.org/show_bug.cgi?id=168909
+
+        Reviewed by Carlos Garcia Campos.
+
+        Have the BitmapTextureGL constructor accept an rvalue reference pointer
+        to the GraphicsContext3D object. A static create() method is also added
+        to help with constructing these objects. Construction sites are updated
+        appropriately.
+
+        The BitmapTextureGL constructor is further cleaned up by moving default
+        member initializations together with the member declarations.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerBase::pushTextureToCompositor):
+        * platform/graphics/texmap/BitmapTextureGL.cpp:
+        (WebCore::BitmapTextureGL::BitmapTextureGL):
+        * platform/graphics/texmap/BitmapTextureGL.h:
+        * platform/graphics/texmap/BitmapTexturePool.cpp:
+        (WebCore::BitmapTexturePool::createTexture):
+        * platform/graphics/texmap/TextureMapperGL.cpp:
+        (WebCore::TextureMapperGL::createTexture):
+
+2017-02-27  Zan Dobersek  <zdobersek@igalia.com>
+
         [TextureMapper] Remove InterpolationQuality, TextDrawingModeFlags member variables
         https://bugs.webkit.org/show_bug.cgi?id=168906
 
