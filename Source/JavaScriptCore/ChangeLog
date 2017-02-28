@@ -1,3 +1,49 @@
+2017-02-22  Keith Miller  <keith_miller@apple.com>
+
+        Remove the demand executable allocator
+        https://bugs.webkit.org/show_bug.cgi?id=168754
+
+        Reviewed by Saam Barati.
+
+        We currently only use the demand executable allocator for non-iOS 32-bit platforms.
+        Benchmark results on a MBP indicate there is no appreciable performance difference
+        between a the fixed and demand allocators. In a future patch I will go back through
+        this code and remove more of the abstractions.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * jit/ExecutableAllocator.cpp:
+        (JSC::FixedVMPoolExecutableAllocator::FixedVMPoolExecutableAllocator):
+        (JSC::FixedVMPoolExecutableAllocator::initializeSeparatedWXHeaps):
+        (JSC::FixedVMPoolExecutableAllocator::jitWriteThunkGenerator):
+        (JSC::FixedVMPoolExecutableAllocator::genericWriteToJITRegion):
+        (JSC::ExecutableAllocator::initializeAllocator):
+        (JSC::ExecutableAllocator::ExecutableAllocator):
+        (JSC::FixedVMPoolExecutableAllocator::~FixedVMPoolExecutableAllocator):
+        (JSC::ExecutableAllocator::isValid):
+        (JSC::ExecutableAllocator::underMemoryPressure):
+        (JSC::ExecutableAllocator::memoryPressureMultiplier):
+        (JSC::ExecutableAllocator::allocate):
+        (JSC::ExecutableAllocator::isValidExecutableMemory):
+        (JSC::ExecutableAllocator::getLock):
+        (JSC::ExecutableAllocator::committedByteCount):
+        (JSC::ExecutableAllocator::dumpProfile):
+        (JSC::DemandExecutableAllocator::DemandExecutableAllocator): Deleted.
+        (JSC::DemandExecutableAllocator::~DemandExecutableAllocator): Deleted.
+        (JSC::DemandExecutableAllocator::bytesAllocatedByAllAllocators): Deleted.
+        (JSC::DemandExecutableAllocator::bytesCommittedByAllocactors): Deleted.
+        (JSC::DemandExecutableAllocator::dumpProfileFromAllAllocators): Deleted.
+        (JSC::DemandExecutableAllocator::allocateNewSpace): Deleted.
+        (JSC::DemandExecutableAllocator::notifyNeedPage): Deleted.
+        (JSC::DemandExecutableAllocator::notifyPageIsFree): Deleted.
+        (JSC::DemandExecutableAllocator::allocators): Deleted.
+        (JSC::DemandExecutableAllocator::allocatorsMutex): Deleted.
+        * jit/ExecutableAllocator.h:
+        * jit/ExecutableAllocatorFixedVMPool.cpp: Removed.
+        * jit/JITStubRoutine.h:
+        (JSC::JITStubRoutine::canPerformRangeFilter):
+        (JSC::JITStubRoutine::filteringStartAddress):
+        (JSC::JITStubRoutine::filteringExtentSize):
+
 2017-02-22  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         JSModuleNamespace object should have IC
