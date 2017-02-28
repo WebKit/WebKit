@@ -1,18 +1,6 @@
-Test that setting and getting display: -webkit-flex and -webkit-inline-flex works as expected
-
-On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+Test that setting and getting display: flex and inline-flex works as expected
 
 
-Test getting |display| set through CSS
-PASS getComputedStyle(flexboxElement, '').getPropertyValue('display') is 'flex'
-PASS getComputedStyle(inlineFlexboxElement, '').getPropertyValue('display') is 'inline-flex'
-
-Test getting and setting display through JS
-PASS getComputedStyle(element, '').getPropertyValue('display') is 'block'
-PASS getComputedStyle(element, '').getPropertyValue('display') is 'flex'
-PASS getComputedStyle(element, '').getPropertyValue('display') is 'block'
-PASS getComputedStyle(element, '').getPropertyValue('display') is 'inline-flex'
-PASS successfullyParsed is true
-
-TEST COMPLETE
+PASS Test getting |display| set through CSS 
+PASS Test getting and setting display through JS 
 

@@ -2,7 +2,7 @@
 <html>
 <style>
 .flexbox {
-    display: -webkit-flex;
+    display: flex;
     background-color: #aaa;
     border: 5px solid blue;
     float:left;
@@ -14,8 +14,11 @@
     background-color: lime;
 }
 </style>
-<script src="../../resources/check-layout.js"></script>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../resources/check-layout-th.js"></script>
 <body onload="checkLayout('.flexbox')">
+<div id=log></div>
 
 <div data-expected-width=130 data-expected-height=30 class=flexbox>
     <div style="background-color:pink; width: 20px; height: 20px;"></div>
@@ -25,8 +28,8 @@
 <div style="clear: left; position: relative">
     <div style="width: 100px; height: 100px; background-color: green; float: left"></div>
     <div data-expected-height=30 data-offset-x=100 data-offset-y=0 class="flexbox" style="float: none">
-        <div data-expected-height=20 data style="height: 20px; -webkit-flex: 1"></div>
-        <div data-expected-height=20 style="height: 20px; -webkit-flex: 1"></div>
+        <div data-expected-height=20 data style="height: 20px; flex: 1"></div>
+        <div data-expected-height=20 style="height: 20px; flex: 1"></div>
     </div>
 </div>
 

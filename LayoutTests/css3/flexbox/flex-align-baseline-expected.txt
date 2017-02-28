@@ -6,14 +6,6 @@ PASS firstChild.offsetTop is lastChild.offsetTop
 PASS firstChild.offsetTop is lastChild.offsetTop
 PASS firstChild.offsetLeft is lastChild.offsetLeft
 PASS firstChild.offsetLeft is lastChild.offsetLeft
-PASS firstChild.offsetTop is lastChild.offsetTop
-PASS firstChild.offsetTop is lastChild.offsetTop
-PASS firstChild.offsetLeft is lastChild.offsetLeft
-PASS firstChild.offsetLeft is lastChild.offsetLeft
-PASS firstChild.offsetTop is lastChild.offsetTop
-PASS firstChild.offsetTop is lastChild.offsetTop
-PASS firstChild.offsetLeft is lastChild.offsetLeft
-PASS firstChild.offsetLeft is lastChild.offsetLeft
 PASS firstChild.offsetLeft is lastChild.offsetLeft
 PASS firstChild.offsetLeft is lastChild.offsetLeft
 PASS firstChild.offsetTop is 0
@@ -45,14 +37,6 @@ horizontal-tb ltr row-reverse
 horizontal-tb rtl row-reverse
 horizontal-tb ltr column-reverse
 horizontal-tb rtl column-reverse
-horizontal-bt ltr row
-horizontal-bt rtl row
-horizontal-bt ltr column
-horizontal-bt rtl column
-horizontal-bt ltr row-reverse
-horizontal-bt rtl row-reverse
-horizontal-bt ltr column-reverse
-horizontal-bt rtl column-reverse
 vertical-lr ltr row
 vertical-lr rtl row
 vertical-lr ltr column

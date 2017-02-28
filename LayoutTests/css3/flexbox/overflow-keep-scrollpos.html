@@ -1,16 +1,17 @@
 <!DOCTYPE html>
 <html>
 <head>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
 <style>
 div.flexbox {
-    display: -webkit-flex;
+    display: flex;
 }
 div.overflow-auto {
     overflow: auto;
 }
 div.flex {
-    -webkit-flex: 1;
+    flex: 1;
 }
 .container {
     width: 100px;
@@ -21,12 +22,13 @@ div.flex {
     function runTest() {
         document.querySelector('.overflow-auto').scrollTop = 50;
         document.querySelector('#sidebar').innerHTML = '';
-        shouldBe("document.querySelector('.overflow-auto').scrollTop", "50");
+        assert_equals(document.querySelector('.overflow-auto').scrollTop, 50);
     }
 </script>
 
 </head>
-<body onload="runTest()">
+<body onload="test(runTest, 'Scroll position is correct')">
+<div id=log></div>
 <div class="container flexbox">
     <div class="flex overflow-auto flexbox">
         <div style="height: 400px"></div>
@@ -34,6 +36,5 @@ div.flex {
     <div id="sidebar">foo</div>
 </div>
 <div id="console"></div>
-<script src="../resources/js-test-post.js"></script>
 </body>
 </html>

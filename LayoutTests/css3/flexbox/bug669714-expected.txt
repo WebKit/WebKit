@@ -1,0 +1,16 @@
+XXX and YYY should be on separate lines and not overlap, i.e. the height of .flex should not be 0.
+
+XXX
+YYY
+
+FAIL #container 1 assert_equals: 
+<div class="layout-column" id="container">
+    <div class="layout-row">
+      <div class="layout-column">
+        <div class="flex" data-expected-height="18">XXX<span id="relpos"> </span></div>
+        <div>YYY</div>
+      </div>
+    </div>
+</div>
+height expected 18 but got 0
+

@@ -1,38 +1,42 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<style>
-.flexbox { display: -webkit-flex; }
-.flexboxInline { display: -webkit-inline-flex; }
-</style>
-<script src="../../resources/js-test-pre.js"></script>
+<link href="resources/flexbox.css" rel="stylesheet">
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
 </head>
 <body>
+<p>Test that setting and getting display: flex and inline-flex works as expected</p>
+<div id="log"></div>
 <div class="flexbox" id="flexbox"></div>
-<div class="flexboxInline" id="flexboxInline"></div>
+<div class="inline-flexbox" id="flexboxInline"></div>
 <script>
-description('Test that setting and getting display: -webkit-flex and -webkit-inline-flex works as expected');
 
-debug("Test getting |display| set through CSS");
+test(function() {
 var flexboxElement = document.getElementById("flexbox");
-shouldBe("getComputedStyle(flexboxElement, '').getPropertyValue('display')", "'flex'");
+assert_equals(getComputedStyle(flexboxElement, '').getPropertyValue('display'), 'flex');
 var inlineFlexboxElement = document.getElementById("flexboxInline");
-shouldBe("getComputedStyle(inlineFlexboxElement, '').getPropertyValue('display')", "'inline-flex'");
+assert_equals(getComputedStyle(inlineFlexboxElement, '').getPropertyValue('display'), 'inline-flex');
+}, "Test getting |display| set through CSS");
 
-debug("");
-debug("Test getting and setting display through JS");
+test(function() {
 var element = document.createElement("div");
 document.body.appendChild(element);
-shouldBe("getComputedStyle(element, '').getPropertyValue('display')", "'block'");
-element.style.display = "-webkit-flex";
-shouldBe("getComputedStyle(element, '').getPropertyValue('display')", "'flex'");
+assert_equals(getComputedStyle(element, '').getPropertyValue('display'), 'block');
+element.style.display = "flex";
+assert_equals(getComputedStyle(element, '').getPropertyValue('display'), 'flex');
 
 element = document.createElement("div");
 document.body.appendChild(element);
-shouldBe("getComputedStyle(element, '').getPropertyValue('display')", "'block'");
+assert_equals(getComputedStyle(element, '').getPropertyValue('display'), 'block');
+element.style.display = "inline-flex";
+assert_equals(getComputedStyle(element, '').getPropertyValue('display'), 'inline-flex');
+element.style.display = "-webkit-flex";
+assert_equals(getComputedStyle(element, '').getPropertyValue('display'), 'flex');
 element.style.display = "-webkit-inline-flex";
-shouldBe("getComputedStyle(element, '').getPropertyValue('display')", "'inline-flex'");
+assert_equals(getComputedStyle(element, '').getPropertyValue('display'), 'inline-flex');
+
+}, "Test getting and setting display through JS");
 </script>
-<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>

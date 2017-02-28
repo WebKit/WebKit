@@ -1,3 +1,329 @@
+2017-02-27  Dave Hyatt  <hyatt@apple.com>
+
+        Update flexbox to Blink's tip of tree
+        https://bugs.webkit.org/show_bug.cgi?id=168657
+
+        Reviewed by Zalan Bujtas.
+
+        * css3/flexbox/align-absolute-child-expected.txt:
+        * css3/flexbox/align-absolute-child.html:
+        * css3/flexbox/alignContent-applies-with-flexWrap-wrap-with-single-line-expected.txt: Added.
+        * css3/flexbox/alignContent-applies-with-flexWrap-wrap-with-single-line.html: Added.
+        * css3/flexbox/anonymous-block-merge-crash.html:
+        * css3/flexbox/assert-generated-new-flexbox-expected.txt: Added.
+        * css3/flexbox/assert-generated-new-flexbox.html: Added.
+        * css3/flexbox/auto-height-dynamic-expected.txt:
+        * css3/flexbox/auto-height-dynamic.html:
+        * css3/flexbox/auto-height-with-flex-expected.html: Added.
+        * css3/flexbox/auto-height-with-flex.html: Added.
+        * css3/flexbox/auto-margins-expected.html: Removed.
+        * css3/flexbox/auto-margins.html: Removed.
+        * css3/flexbox/border-and-padding-abspos-expected.txt: Added.
+        * css3/flexbox/border-and-padding-abspos.html: Added.
+        * css3/flexbox/box-orient-button-expected.txt: Added.
+        * css3/flexbox/box-orient-button.html: Added.
+        * css3/flexbox/box-sizing-expected.txt:
+        * css3/flexbox/box-sizing-min-max-sizes-expected.txt:
+        * css3/flexbox/box-sizing-min-max-sizes.html:
+        * css3/flexbox/box-sizing.html:
+        * css3/flexbox/bug527039-expected.txt: Added.
+        * css3/flexbox/bug527039.html: Added.
+        * css3/flexbox/bug580586-expected.txt: Added.
+        * css3/flexbox/bug580586.html: Added.
+        * css3/flexbox/bug604346-expected.html: Added.
+        * css3/flexbox/bug604346.html: Added.
+        * css3/flexbox/bug605682-expected.txt: Added.
+        * css3/flexbox/bug605682.html: Added.
+        * css3/flexbox/bug633212-expected.txt: Added.
+        * css3/flexbox/bug633212.html: Added.
+        * css3/flexbox/bug646288-expected.txt: Added.
+        * css3/flexbox/bug646288.html: Added.
+        * css3/flexbox/bug669714-expected.txt: Added.
+        * css3/flexbox/bug669714.html: Added.
+        * css3/flexbox/canvas-dynamic-change-expected.txt: Added.
+        * css3/flexbox/canvas-dynamic-change.html: Added.
+        * css3/flexbox/change-flexitem-into-abspos-expected.txt: Added.
+        * css3/flexbox/change-flexitem-into-abspos.html: Added.
+        * css3/flexbox/child-overflow-expected.html:
+        * css3/flexbox/child-overflow.html:
+        * css3/flexbox/column-flex-child-with-overflow-scroll-expected.txt: Added.
+        * css3/flexbox/column-flex-child-with-overflow-scroll.html: Added.
+        * css3/flexbox/columns-auto-size.html:
+        * css3/flexbox/columns-center-with-margins-and-wrap-expected.html: Added.
+        * css3/flexbox/columns-center-with-margins-and-wrap.html: Added.
+        * css3/flexbox/columns-center-with-margins-expected.html: Added.
+        * css3/flexbox/columns-center-with-margins.html: Added.
+        * css3/flexbox/columns-height-set-via-top-bottom-expected.txt:
+        * css3/flexbox/columns-height-set-via-top-bottom.html:
+        * css3/flexbox/content-height-with-scrollbars.html:
+        * css3/flexbox/cross-axis-scrollbar-expected.html:
+        * css3/flexbox/cross-axis-scrollbar.html:
+        * css3/flexbox/css-properties-expected.txt:
+        * css3/flexbox/css-properties.html:
+        * css3/flexbox/csswg/flex-margin-no-collapse.html:
+        * css3/flexbox/definite-cross-sizes-expected.txt: Added.
+        * css3/flexbox/definite-cross-sizes.html: Added.
+        * css3/flexbox/definite-main-size-expected.txt: Added.
+        * css3/flexbox/definite-main-size.html: Added.
+        * css3/flexbox/display-flexbox-set-get-expected.txt:
+        * css3/flexbox/display-flexbox-set-get.html:
+        * css3/flexbox/flex-algorithm-expected.txt:
+        * css3/flexbox/flex-algorithm-min-max-expected.txt:
+        * css3/flexbox/flex-algorithm-min-max.html:
+        * css3/flexbox/flex-algorithm-with-margins-expected.txt:
+        * css3/flexbox/flex-algorithm-with-margins.html:
+        * css3/flexbox/flex-algorithm.html:
+        * css3/flexbox/flex-align-baseline-expected.txt:
+        * css3/flexbox/flex-align-baseline.html:
+        * css3/flexbox/flex-align-column-expected.txt:
+        * css3/flexbox/flex-align-column.html:
+        * css3/flexbox/flex-align-end-expected.txt:
+        * css3/flexbox/flex-align-end.html:
+        * css3/flexbox/flex-align-max-expected.txt:
+        * css3/flexbox/flex-align-max.html:
+        * css3/flexbox/flex-align-percent-height-expected.txt:
+        * css3/flexbox/flex-align-percent-height.html:
+        * css3/flexbox/flex-align-stretch-expected.txt:
+        * css3/flexbox/flex-align-stretch.html:
+        * css3/flexbox/flex-align-vertical-writing-mode.html:
+        * css3/flexbox/flex-align.html:
+        * css3/flexbox/flex-column-relayout-assert-expected.txt: Added.
+        * css3/flexbox/flex-column-relayout-assert.html: Added.
+        * css3/flexbox/flex-factor-less-than-one-expected.txt: Added.
+        * css3/flexbox/flex-factor-less-than-one.html: Added.
+        * css3/flexbox/flex-flow-2-expected.txt:
+        * css3/flexbox/flex-flow-2.html:
+        * css3/flexbox/flex-flow-auto-margins-expected.txt:
+        * css3/flexbox/flex-flow-auto-margins-no-available-space-assert-expected.txt: Added.
+        * css3/flexbox/flex-flow-auto-margins-no-available-space-assert.html: Added.
+        * css3/flexbox/flex-flow-auto-margins-no-available-space-expected.txt:
+        * css3/flexbox/flex-flow-auto-margins-no-available-space.html:
+        * css3/flexbox/flex-flow-auto-margins.html:
+        * css3/flexbox/flex-flow-border-expected.txt:
+        * css3/flexbox/flex-flow-border.html:
+        * css3/flexbox/flex-flow-expected.txt:
+        * css3/flexbox/flex-flow-initial-expected.txt:
+        * css3/flexbox/flex-flow-initial.html:
+        * css3/flexbox/flex-flow-margins-auto-size-expected.txt:
+        * css3/flexbox/flex-flow-margins-auto-size.html:
+        * css3/flexbox/flex-flow-margins-expected.txt:
+        * css3/flexbox/flex-flow-margins.html:
+        * css3/flexbox/flex-flow-orientations-expected.txt:
+        * css3/flexbox/flex-flow-orientations.html:
+        * css3/flexbox/flex-flow-overflow-expected.txt:
+        * css3/flexbox/flex-flow-overflow.html:
+        * css3/flexbox/flex-flow-padding-expected.txt:
+        * css3/flexbox/flex-flow-padding.html:
+        * css3/flexbox/flex-flow.html:
+        * css3/flexbox/flex-item-child-overflow-expected.txt:
+        * css3/flexbox/flex-item-child-overflow.html:
+        * css3/flexbox/flex-item-contains-strict-expected.txt: Added.
+        * css3/flexbox/flex-item-contains-strict.html: Added.
+        * css3/flexbox/flex-item-firstLine-valid-expected.txt:
+        * css3/flexbox/flex-item-firstLine-valid.html:
+        * css3/flexbox/flex-justify-content-expected.txt:
+        * css3/flexbox/flex-justify-content.html:
+        * css3/flexbox/flex-longhand-parsing-expected.txt:
+        * css3/flexbox/flex-longhand-parsing.html:
+        * css3/flexbox/flex-no-flex-expected.txt:
+        * css3/flexbox/flex-no-flex.html:
+        * css3/flexbox/flex-one-sets-flex-basis-to-zero-px-expected.txt: Added.
+        * css3/flexbox/flex-one-sets-flex-basis-to-zero-px.html: Added.
+        * css3/flexbox/flex-order-expected.html: Added.
+        * css3/flexbox/flex-order-expected.png: Removed.
+        * css3/flexbox/flex-order-expected.txt: Removed.
+        * css3/flexbox/flex-order.html:
+        * css3/flexbox/flex-property-parsing-expected.txt:
+        * css3/flexbox/flex-property-parsing.html:
+        * css3/flexbox/flex-shorthand-flex-basis-middle-expected.txt: Added.
+        * css3/flexbox/flex-shorthand-flex-basis-middle.html: Added.
+        * css3/flexbox/flexbox-baseline.html:
+        * css3/flexbox/flexbox-height-with-overflow-auto-expected.txt: Added.
+        * css3/flexbox/flexbox-height-with-overflow-auto.html: Added.
+        * css3/flexbox/flexbox-ignore-container-firstLetter-expected.txt:
+        * css3/flexbox/flexbox-ignore-container-firstLetter.html:
+        * css3/flexbox/flexbox-ignore-firstLetter-expected.txt:
+        * css3/flexbox/flexbox-ignore-firstLetter.html:
+        * css3/flexbox/flexbox-ignore-firstLine-expected.txt:
+        * css3/flexbox/flexbox-ignore-firstLine.html:
+        * css3/flexbox/flexbox-lines-must-be-stretched-by-default-expected.txt:
+        * css3/flexbox/flexbox-lines-must-be-stretched-by-default.html:
+        * css3/flexbox/flexbox-overflow-auto-expected.html:
+        * css3/flexbox/flexbox-overflow-auto.html:
+        * css3/flexbox/flexbox-with-multi-column-property-expected.html: Added.
+        * css3/flexbox/flexbox-with-multi-column-property.html: Added.
+        * css3/flexbox/flexbox-wordwrap-expected.txt: Added.
+        * css3/flexbox/flexbox-wordwrap.html: Added.
+        * css3/flexbox/flexitem-expected.txt:
+        * css3/flexbox/flexitem-no-margin-collapsing-expected.txt:
+        * css3/flexbox/flexitem-no-margin-collapsing.html:
+        * css3/flexbox/flexitem-percent-height-change-expected.txt:
+        * css3/flexbox/flexitem-percent-height-change.html:
+        * css3/flexbox/flexitem-stretch-image-expected.txt:
+        * css3/flexbox/flexitem-stretch-image.html:
+        * css3/flexbox/flexitem-stretch-range.html:
+        * css3/flexbox/flexitem.html:
+        * css3/flexbox/floated-flexbox-expected.txt:
+        * css3/flexbox/floated-flexbox.html:
+        * css3/flexbox/floated-flexitem.html:
+        * css3/flexbox/inline-flex-crash.html:
+        * css3/flexbox/inline-flex-crash2.html:
+        * css3/flexbox/inline-flex-expected.txt:
+        * css3/flexbox/inline-flex.html:
+        * css3/flexbox/inline-flexbox-ignore-firstLine-expected.txt:
+        * css3/flexbox/inline-flexbox-ignore-firstLine.html:
+        * css3/flexbox/inline-flexbox-wrap-vertically-width-calculation-expected.txt: Added.
+        * css3/flexbox/inline-flexbox-wrap-vertically-width-calculation.html: Added.
+        * css3/flexbox/insert-text-crash.html:
+        * css3/flexbox/intrinsic-min-width-applies-with-fixed-width-expected.txt:
+        * css3/flexbox/intrinsic-min-width-applies-with-fixed-width.html:
+        * css3/flexbox/intrinsic-width-orthogonal-writing-mode-expected.txt: Added.
+        * css3/flexbox/intrinsic-width-orthogonal-writing-mode.html: Added.
+        * css3/flexbox/large-flex-shrink-assert-expected.txt: Added.
+        * css3/flexbox/large-flex-shrink-assert.html: Added.
+        * css3/flexbox/line-wrapping.html:
+        * css3/flexbox/mainAxisExtent-crash-expected.txt: Added.
+        * css3/flexbox/mainAxisExtent-crash.html: Added.
+        * css3/flexbox/max-width-violation-expected.txt: Added.
+        * css3/flexbox/max-width-violation.html: Added.
+        * css3/flexbox/min-size-auto-expected.txt:
+        * css3/flexbox/min-size-auto.html:
+        * css3/flexbox/minimum-size-image-expected.txt: Added.
+        * css3/flexbox/minimum-size-image.html: Added.
+        * css3/flexbox/multiline-align-content-expected.txt:
+        * css3/flexbox/multiline-align-content-horizontal-column-expected.txt:
+        * css3/flexbox/multiline-align-content-horizontal-column.html:
+        * css3/flexbox/multiline-align-content.html:
+        * css3/flexbox/multiline-align-self-expected.txt:
+        * css3/flexbox/multiline-align-self.html:
+        * css3/flexbox/multiline-column-auto-expected.txt:
+        * css3/flexbox/multiline-column-auto.html:
+        * css3/flexbox/multiline-column-overflow-expected.html: Added.
+        * css3/flexbox/multiline-column-overflow.html: Added.
+        * css3/flexbox/multiline-expected.txt:
+        * css3/flexbox/multiline-justify-content-expected.txt:
+        * css3/flexbox/multiline-justify-content.html:
+        * css3/flexbox/multiline-min-max-expected.txt: Added.
+        * css3/flexbox/multiline-min-max.html: Added.
+        * css3/flexbox/multiline-min-preferred-width-expected.txt:
+        * css3/flexbox/multiline-min-preferred-width.html:
+        * css3/flexbox/multiline-reverse-wrap-baseline.html:
+        * css3/flexbox/multiline-reverse-wrap-overflow-expected.txt:
+        * css3/flexbox/multiline-reverse-wrap-overflow.html:
+        * css3/flexbox/multiline-shrink-to-fit-expected.html:
+        * css3/flexbox/multiline-shrink-to-fit.html:
+        * css3/flexbox/multiline.html:
+        * css3/flexbox/negative-flex-rounding-assert.html:
+        * css3/flexbox/negative-margins-assert.html:
+        * css3/flexbox/negative-overflow-expected.txt:
+        * css3/flexbox/negative-overflow.html:
+        * css3/flexbox/nested-flexbox-min-size-auto-expected.txt: Added.
+        * css3/flexbox/nested-flexbox-min-size-auto.html: Added.
+        * css3/flexbox/nested-orthogonal-flexbox-relayout-expected.html: Added.
+        * css3/flexbox/nested-orthogonal-flexbox-relayout.html: Added.
+        * css3/flexbox/nested-stretch-expected.txt:
+        * css3/flexbox/nested-stretch.html:
+        * css3/flexbox/order-painting.html:
+        * css3/flexbox/orthogonal-flex-directions-expected.txt:
+        * css3/flexbox/orthogonal-flex-directions.html:
+        * css3/flexbox/orthogonal-writing-modes-and-intrinsic-sizing-expected.txt: Added.
+        * css3/flexbox/orthogonal-writing-modes-and-intrinsic-sizing.html: Added.
+        * css3/flexbox/overflow-and-padding-expected.txt: Added.
+        * css3/flexbox/overflow-and-padding.html: Added.
+        * css3/flexbox/overflow-auto-dynamic-changes-abspos-expected.html: Added.
+        * css3/flexbox/overflow-auto-dynamic-changes-abspos.html: Added.
+        * css3/flexbox/overflow-auto-dynamic-changes-expected.html: Added.
+        * css3/flexbox/overflow-auto-dynamic-changes.html: Added.
+        * css3/flexbox/overflow-auto-resizes-correctly-expected.txt: Added.
+        * css3/flexbox/overflow-auto-resizes-correctly.html: Added.
+        * css3/flexbox/overflow-keep-scrollpos-expected.txt:
+        * css3/flexbox/overflow-keep-scrollpos.html:
+        * css3/flexbox/percent-height-children-of-alignSelf-stretch-flex-item-expected.txt: Added.
+        * css3/flexbox/percent-height-children-of-alignSelf-stretch-flex-item.html: Added.
+        * css3/flexbox/percent-margins-expected.txt:
+        * css3/flexbox/percent-margins.html:
+        * css3/flexbox/percentage-height-in-abspos-expected.html: Added.
+        * css3/flexbox/percentage-height-in-abspos.html: Added.
+        * css3/flexbox/percentage-height-replaced-element-expected.txt: Added.
+        * css3/flexbox/percentage-height-replaced-element.html: Added.
+        * css3/flexbox/percentage-heights-expected.txt:
+        * css3/flexbox/percentage-heights.html:
+        * css3/flexbox/percentage-max-width-cross-axis-expected.txt: Added.
+        * css3/flexbox/percentage-max-width-cross-axis.html: Added.
+        * css3/flexbox/percentage-sizes-expected.txt:
+        * css3/flexbox/percentage-sizes-quirks-expected.txt:
+        * css3/flexbox/percentage-sizes-quirks.html:
+        * css3/flexbox/percentage-sizes.html:
+        * css3/flexbox/percentage-width-in-abspos-expected.html: Added.
+        * css3/flexbox/percentage-width-in-abspos.html: Added.
+        * css3/flexbox/perpendicular-writing-modes-inside-flex-item-expected.txt:
+        * css3/flexbox/perpendicular-writing-modes-inside-flex-item.html:
+        * css3/flexbox/position-absolute-child-expected.txt:
+        * css3/flexbox/position-absolute-child.html:
+        * css3/flexbox/position-absolute-children-expected.txt:
+        * css3/flexbox/position-absolute-children.html:
+        * css3/flexbox/preferred-widths-expected.txt:
+        * css3/flexbox/preferred-widths-orthogonal.html:
+        * css3/flexbox/preferred-widths.html:
+        * css3/flexbox/relayout-align-items-expected.txt:
+        * css3/flexbox/relayout-align-items.html:
+        * css3/flexbox/relayout-image-load-expected.txt:
+        * css3/flexbox/relayout-image-load.html:
+        * css3/flexbox/relpos-with-percentage-top-expected.txt: Added.
+        * css3/flexbox/relpos-with-percentage-top.html: Added.
+        * css3/flexbox/relpos-with-scrollable-with-abspos-crash-expected.txt: Added.
+        * css3/flexbox/relpos-with-scrollable-with-abspos-crash.html: Added.
+        * css3/flexbox/resize-min-content-flexbox-expected.txt: Added.
+        * css3/flexbox/resize-min-content-flexbox.html: Added.
+        * css3/flexbox/resources/box-orient-button.js: Added.
+        (setFlexDirection):
+        (gebi):
+        (test):
+        * css3/flexbox/scrollbars-auto-expected.html: Added.
+        * css3/flexbox/scrollbars-auto.html: Added.
+        * css3/flexbox/scrollbars-expected.html: Added.
+        * css3/flexbox/scrollbars.html: Added.
+        * css3/flexbox/shrinking-column-flexbox-expected.txt: Added.
+        * css3/flexbox/shrinking-column-flexbox.html: Added.
+        * css3/flexbox/stretch-after-sibling-size-change-expected.txt:
+        * css3/flexbox/stretch-after-sibling-size-change.html:
+        * css3/flexbox/stretch-input-in-column-expected.html:
+        * css3/flexbox/stretch-simplified-layout-expected.txt:
+        * css3/flexbox/stretch-simplified-layout.html:
+        * css3/flexbox/stretch-table-child-expected.txt: Added.
+        * css3/flexbox/stretch-table-child.html: Added.
+        * css3/flexbox/stretched-child-shrink-on-relayout-expected.txt: Added.
+        * css3/flexbox/stretched-child-shrink-on-relayout.html: Added.
+        * css3/flexbox/stretching-orthogonal-flows-expected.html: Added.
+        * css3/flexbox/stretching-orthogonal-flows.html: Added.
+        * css3/flexbox/style-change-expected.txt:
+        * css3/flexbox/style-change.html:
+        * css3/flexbox/text-overflow-on-flexbox-expected.html: Added.
+        * css3/flexbox/text-overflow-on-flexbox.html: Added.
+        * css3/flexbox/true-centering-expected.txt:
+        * css3/flexbox/true-centering.html:
+        * css3/flexbox/undefined-min-width-expected.txt: Added.
+        * css3/flexbox/undefined-min-width.html: Added.
+        * css3/flexbox/vertical-align-do-not-effect-flex-items-expected.html: Added.
+        * css3/flexbox/vertical-align-do-not-effect-flex-items.html: Added.
+        * css3/flexbox/vertical-flexbox-percentage-ignored-expected.html: Added.
+        * css3/flexbox/vertical-flexbox-percentage-ignored.html: Added.
+        * css3/flexbox/whitespace-in-flexitem-expected.html: Added.
+        * css3/flexbox/whitespace-in-flexitem.html: Added.
+        * css3/flexbox/width-change-and-relayout-children-expected.txt:
+        * css3/flexbox/width-change-and-relayout-children.html:
+        * css3/flexbox/wrapping-column-dynamic-changes-expected.txt: Added.
+        * css3/flexbox/wrapping-column-dynamic-changes.html: Added.
+        * css3/flexbox/writing-modes-expected.txt:
+        * css3/flexbox/writing-modes.html:
+        * css3/flexbox/z-index.html:
+        * resources/check-layout-th.js: Added.
+        (checkSubtreeExpectedValues):
+        (checkAttribute):
+        (assert_tolerance):
+        (checkExpectedValues):
+        (window.checkLayout):
+
 2017-02-28  Alex Christensen  <achristensen@webkit.org>
 
         Main resource requests need cachePartition

@@ -386,6 +386,16 @@ public:
     virtual void updateLogicalHeight();
     virtual LogicalExtentComputedValues computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop) const;
 
+    void cacheIntrinsicContentLogicalHeightForFlexItem(LayoutUnit) const;
+    
+    // This function will compute the logical border-box height, without laying
+    // out the box. This means that the result is only "correct" when the height
+    // is explicitly specified. This function exists so that intrinsic width
+    // calculations have a way to deal with children that have orthogonal writing modes.
+    // When there is no explicit height, this function assumes a content height of
+    // zero (and returns just border + padding).
+    LayoutUnit computeLogicalHeightWithoutLayout() const;
+
     RenderBoxRegionInfo* renderBoxRegionInfo(RenderRegion*, RenderBoxRegionInfoFlags = CacheRenderBoxRegionInfo) const;
     void computeLogicalWidthInRegion(LogicalExtentComputedValues&, RenderRegion* = nullptr) const;
 
@@ -403,7 +413,9 @@ public:
     bool sizesLogicalWidthToFitContent(SizeType) const;
 
     bool hasStretchedLogicalWidth() const;
-
+    bool isStretchingColumnFlexItem() const;
+    bool columnFlexItemHasStretchAlignment() const;
+    
     LayoutUnit shrinkLogicalWidthToAvoidFloats(LayoutUnit childMarginStart, LayoutUnit childMarginEnd, const RenderBlock& cb, RenderRegion*) const;
 
     LayoutUnit computeLogicalWidthInRegionUsing(SizeType, Length logicalWidth, LayoutUnit availableLogicalWidth, const RenderBlock& containingBlock, RenderRegion*) const;
@@ -418,9 +430,6 @@ public:
     virtual LayoutUnit computeReplacedLogicalWidth(ShouldComputePreferred  = ComputeActual) const;
     virtual LayoutUnit computeReplacedLogicalHeight() const;
 
-    bool hasDefiniteLogicalWidth() const;
-    static bool percentageLogicalHeightIsResolvableFromBlock(const RenderBlock& containingBlock, bool outOfFlowPositioned, bool scrollsOverflowY);
-    bool hasDefiniteLogicalHeight() const;
     std::optional<LayoutUnit> computePercentageLogicalHeight(const Length& height) const;
 
     virtual LayoutUnit availableLogicalWidth() const { return contentLogicalWidth(); }
@@ -463,9 +472,12 @@ public:
 
     bool usesCompositedScrolling() const;
     
+    bool percentageLogicalHeightIsResolvable() const;
     bool hasUnsplittableScrollingOverflow() const;
     bool isUnsplittableForPagination() const;
 
+    bool shouldTreatChildAsReplacedInTableCells() const;
+    
     LayoutRect localCaretRect(InlineBox*, unsigned caretOffset, LayoutUnit* extraWidthToEndOfLine = nullptr) override;
 
     virtual LayoutRect overflowClipRect(const LayoutPoint& location, RenderRegion*, OverlayScrollbarSizeRelevancy = IgnoreOverlayScrollbarSize, PaintPhase = PaintPhaseBlockBackground);
@@ -605,6 +617,9 @@ public:
     virtual bool needsLayoutAfterRegionRangeChange() const { return false; }
 
     const RenderBox* findEnclosingScrollableContainer() const;
+    
+    bool isGridItem() const { return parent() && parent()->isRenderGrid(); }
+    bool isFlexItem() const { return parent() && parent()->isFlexibleBox(); }
 
 protected:
     RenderBox(Element&, RenderStyle&&, BaseTypeFlags);
@@ -617,6 +632,8 @@ protected:
     void willBeRemovedFromTree() override;
 
     bool createsNewFormattingContext() const;
+
+    virtual ItemPosition selfAlignmentNormalBehavior() const { return ItemPositionStretch; }
 
     // Returns false if it could not cheaply compute the extent (e.g. fixed background), in which case the returned rect may be incorrect.
     bool getBackgroundPaintedExtent(const LayoutPoint& paintOffset, LayoutRect&) const;
@@ -647,12 +664,13 @@ protected:
     void paintRootBoxFillLayers(const PaintInfo&);
 
     RenderObject* splitAnonymousBoxesAroundChild(RenderObject* beforeChild);
- 
+
+    bool skipContainingBlockForPercentHeightCalculation(const RenderBox& containingBlock, bool isPerpendicularWritingMode) const;
+
 private:
     void updateShapeOutsideInfoAfterStyleChange(const RenderStyle&, const RenderStyle* oldStyle);
 
     void updateGridPositionAfterStyleChange(const RenderStyle&, const RenderStyle* oldStyle);
-    bool isGridItem() const { return parent() && parent()->isRenderGrid(); }
 
     bool scrollLayer(ScrollDirection, ScrollGranularity, float multiplier, Element** stopElement);
 
@@ -666,12 +684,8 @@ private:
     // Returns true if we did a full repaint.
     bool repaintLayerRectsForImage(WrappedImagePtr, const FillLayer& layers, bool drawingBackground);
 
-    bool skipContainingBlockForPercentHeightCalculation(const RenderBox& containingBlock, bool isPerpendicularWritingMode) const;
-   
     LayoutUnit containingBlockLogicalWidthForPositioned(const RenderBoxModelObject& containingBlock, RenderRegion* = nullptr, bool checkForPerpendicularWritingMode = true) const;
     LayoutUnit containingBlockLogicalHeightForPositioned(const RenderBoxModelObject& containingBlock, bool checkForPerpendicularWritingMode = true) const;
-
-    LayoutUnit viewLogicalHeightForPercentages() const;
 
     void computePositionedLogicalHeight(LogicalExtentComputedValues&) const;
     void computePositionedLogicalWidthUsing(SizeType, Length logicalWidth, const RenderBoxModelObject& containerBlock, TextDirection containerDirection,

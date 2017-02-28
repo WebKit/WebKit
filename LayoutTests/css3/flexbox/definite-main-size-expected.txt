@@ -1,0 +1,14 @@
+
+PASS .flexbox 1 
+PASS .flexbox 2 
+PASS .flexbox 3 
+PASS .flexbox 4 
+Simple case of percentage resolution:
+
+auto flex-basis. However, as this is a width, we follow regular width rules and resolve the percentage:
+
+Simple case of percentage resolution, columns:
+
+auto flex-basis, we should ignore the percentage height here:
+
+

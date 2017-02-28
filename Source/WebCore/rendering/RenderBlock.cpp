@@ -1258,6 +1258,9 @@ void RenderBlock::setLogicalTopForChild(RenderBox& child, LayoutUnit logicalTop,
 
 void RenderBlock::updateBlockChildDirtyBitsBeforeLayout(bool relayoutChildren, RenderBox& child)
 {
+    if (child.isOutOfFlowPositioned())
+        return;
+
     // FIXME: Technically percentage height objects only need a relayout if their percentage isn't going to be turned into
     // an auto value. Add a method to determine this, so that we can avoid the relayout.
     if (relayoutChildren || (child.hasRelativeLogicalHeight() && !isRenderView()))
@@ -1471,9 +1474,19 @@ void RenderBlock::layoutPositionedObject(RenderBox& r, bool relayoutChildren, bo
     }
 
     r.layoutIfNeeded();
+    
+    auto* parent = r.parent();
+    bool layoutChanged = false;
+    if (parent->isFlexibleBox() && downcast<RenderFlexibleBox>(parent)->setStaticPositionForPositionedLayout(r)) {
+        // The static position of an abspos child of a flexbox depends on its size
+        // (for example, they can be centered). So we may have to reposition the
+        // item after layout.
+        // FIXME: We could probably avoid a layout here and just reposition?
+        layoutChanged = true;
+    }
 
     // Lay out again if our estimate was wrong.
-    if (needsBlockDirectionLocationSetBeforeLayout && logicalTopForChild(r) != oldLogicalTop) {
+    if (layoutChanged || (needsBlockDirectionLocationSetBeforeLayout && logicalTopForChild(r) != oldLogicalTop)) {
         r.setChildNeedsLayout(MarkOnlyThis);
         r.layoutIfNeeded();
     }
@@ -2789,21 +2802,7 @@ void RenderBlock::computeBlockPreferredLogicalWidths(LayoutUnit& minLogicalWidth
         margin = marginStart + marginEnd;
 
         LayoutUnit childMinPreferredLogicalWidth, childMaxPreferredLogicalWidth;
-        if (is<RenderBox>(*child) && child->isHorizontalWritingMode() != isHorizontalWritingMode()) {
-            auto& childBox = downcast<RenderBox>(*child);
-            childMinPreferredLogicalWidth = childMaxPreferredLogicalWidth = childBox.computeLogicalHeight(childBox.borderAndPaddingLogicalHeight(), 0).m_extent;
-        } else {
-            childMinPreferredLogicalWidth = child->minPreferredLogicalWidth();
-            childMaxPreferredLogicalWidth = child->maxPreferredLogicalWidth();
-
-            if (is<RenderBlock>(*child)) {
-                const Length& computedInlineSize = child->style().logicalWidth();
-                if (computedInlineSize.isMaxContent())
-                    childMinPreferredLogicalWidth = childMaxPreferredLogicalWidth;
-                else if (computedInlineSize.isMinContent())
-                    childMaxPreferredLogicalWidth = childMinPreferredLogicalWidth;
-            }
-        }
+        computeChildPreferredLogicalWidths(*child, childMinPreferredLogicalWidth, childMaxPreferredLogicalWidth);
 
         LayoutUnit w = childMinPreferredLogicalWidth + margin;
         minLogicalWidth = std::max(w, minLogicalWidth);
@@ -2848,6 +2847,34 @@ void RenderBlock::computeBlockPreferredLogicalWidths(LayoutUnit& minLogicalWidth
     maxLogicalWidth = std::max<LayoutUnit>(0, maxLogicalWidth);
 
     maxLogicalWidth = std::max(floatLeftWidth + floatRightWidth, maxLogicalWidth);
+}
+
+void RenderBlock::computeChildPreferredLogicalWidths(RenderObject& child, LayoutUnit& minPreferredLogicalWidth, LayoutUnit& maxPreferredLogicalWidth) const
+{
+    if (child.isBox() && child.isHorizontalWritingMode() != isHorizontalWritingMode()) {
+        // If the child is an orthogonal flow, child's height determines the width,
+        // but the height is not available until layout.
+        // http://dev.w3.org/csswg/css-writing-modes-3/#orthogonal-shrink-to-fit
+        if (!child.needsLayout()) {
+            minPreferredLogicalWidth = maxPreferredLogicalWidth = downcast<RenderBox>(child).logicalHeight();
+            return;
+        }
+        minPreferredLogicalWidth = maxPreferredLogicalWidth = downcast<RenderBox>(child).computeLogicalHeightWithoutLayout();
+        return;
+    }
+    minPreferredLogicalWidth = child.minPreferredLogicalWidth();
+    maxPreferredLogicalWidth = child.maxPreferredLogicalWidth();
+    
+    // For non-replaced blocks if the inline size is min|max-content or a definite
+    // size the min|max-content contribution is that size plus border, padding and
+    // margin https://drafts.csswg.org/css-sizing/#block-intrinsic
+    if (child.isRenderBlock()) {
+        const Length& computedInlineSize = child.style().logicalWidth();
+        if (computedInlineSize.isMaxContent())
+            minPreferredLogicalWidth = maxPreferredLogicalWidth;
+        else if (computedInlineSize.isMinContent())
+            maxPreferredLogicalWidth = minPreferredLogicalWidth;
+    }
 }
 
 bool RenderBlock::hasLineIfEmpty() const
@@ -3822,4 +3849,57 @@ void RenderBlock::checkPositionedObjectsNeedLayout()
 
 #endif
 
+bool RenderBlock::hasDefiniteLogicalHeight() const
+{
+    return (bool)availableLogicalHeightForPercentageComputation();
+}
+
+std::optional<LayoutUnit> RenderBlock::availableLogicalHeightForPercentageComputation() const
+{
+    std::optional<LayoutUnit> availableHeight;
+    
+    // For anonymous blocks that are skipped during percentage height calculation,
+    // we consider them to have an indefinite height.
+    if (skipContainingBlockForPercentHeightCalculation(*this, false))
+        return availableHeight;
+    
+    const auto& styleToUse = style();
+    
+    // A positioned element that specified both top/bottom or that specifies
+    // height should be treated as though it has a height explicitly specified
+    // that can be used for any percentage computations.
+    bool isOutOfFlowPositionedWithSpecifiedHeight = isOutOfFlowPositioned() && (!styleToUse.logicalHeight().isAuto() || (!styleToUse.logicalTop().isAuto() && !styleToUse.logicalBottom().isAuto()));
+    
+    std::optional<LayoutUnit> stretchedFlexHeight;
+    if (isFlexItem())
+        stretchedFlexHeight = downcast<RenderFlexibleBox>(parent())->childLogicalHeightForPercentageResolution(*this);
+    
+    if (stretchedFlexHeight)
+        availableHeight = stretchedFlexHeight;
+    else if (isGridItem() && hasOverrideLogicalContentHeight())
+        availableHeight = overrideLogicalContentHeight();
+    else if (styleToUse.logicalHeight().isFixed()) {
+        LayoutUnit contentBoxHeight = adjustContentBoxLogicalHeightForBoxSizing((LayoutUnit)styleToUse.logicalHeight().value());
+        availableHeight = std::max(LayoutUnit(), constrainContentBoxLogicalHeightByMinMax(contentBoxHeight - scrollbarLogicalHeight(), std::nullopt));
+    } else if (styleToUse.logicalHeight().isPercentOrCalculated() && !isOutOfFlowPositionedWithSpecifiedHeight) {
+        std::optional<LayoutUnit> heightWithScrollbar = computePercentageLogicalHeight(styleToUse.logicalHeight());
+        if (heightWithScrollbar) {
+            LayoutUnit contentBoxHeightWithScrollbar = adjustContentBoxLogicalHeightForBoxSizing(heightWithScrollbar.value());
+            // We need to adjust for min/max height because this method does not
+            // handle the min/max of the current block, its caller does. So the
+            // return value from the recursive call will not have been adjusted
+            // yet.
+            LayoutUnit contentBoxHeight = constrainContentBoxLogicalHeightByMinMax(contentBoxHeightWithScrollbar - scrollbarLogicalHeight(), std::nullopt);
+            availableHeight = std::max(LayoutUnit(), contentBoxHeight);
+        }
+    } else if (isOutOfFlowPositionedWithSpecifiedHeight) {
+        // Don't allow this to affect the block' size() member variable, since this
+        // can get called while the block is still laying out its kids.
+        LogicalExtentComputedValues computedValues = computeLogicalHeight(logicalHeight(), LayoutUnit());
+        availableHeight = computedValues.m_extent - borderAndPaddingLogicalHeight() - scrollbarLogicalHeight();
+    } else if (isRenderView())
+        availableHeight = view().pageOrViewLogicalHeight();
+    
+    return availableHeight;
+}
 } // namespace WebCore

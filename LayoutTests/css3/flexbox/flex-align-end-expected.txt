@@ -1,64 +1,50 @@
+
+PASS .flexbox 1 
+PASS .flexbox 2 
+PASS .flexbox 3 
+PASS .flexbox 4 
+PASS .flexbox 5 
+PASS .flexbox 6 
+PASS .flexbox 7 
+PASS .flexbox 8 
+PASS .flexbox 9 
+PASS .flexbox 10 
+PASS .flexbox 11 
+PASS .flexbox 12 
+PASS .flexbox 13 
+PASS .flexbox 14 
+PASS .flexbox 15 
+PASS .flexbox 16 
+PASS .flexbox 17 
+PASS .flexbox 18 
+PASS .flexbox 19 
+PASS .flexbox 20 
+PASS .flexbox 21 
+PASS .flexbox 22 
+PASS .flexbox 23 
+PASS .flexbox 24 
 horizontal-tb ltr row
-PASS
 horizontal-tb rtl row
-PASS
 horizontal-tb ltr column
-PASS
 horizontal-tb rtl column
-PASS
 horizontal-tb ltr row-reverse
-PASS
 horizontal-tb rtl row-reverse
-PASS
 horizontal-tb ltr column-reverse
-PASS
 horizontal-tb rtl column-reverse
-PASS
-horizontal-bt ltr row
-PASS
-horizontal-bt rtl row
-PASS
-horizontal-bt ltr column
-PASS
-horizontal-bt rtl column
-PASS
-horizontal-bt ltr row-reverse
-PASS
-horizontal-bt rtl row-reverse
-PASS
-horizontal-bt ltr column-reverse
-PASS
-horizontal-bt rtl column-reverse
-PASS
 vertical-lr ltr row
-PASS
 vertical-lr rtl row
-PASS
 vertical-lr ltr column
-PASS
 vertical-lr rtl column
-PASS
 vertical-lr ltr row-reverse
-PASS
 vertical-lr rtl row-reverse
-PASS
 vertical-lr ltr column-reverse
-PASS
 vertical-lr rtl column-reverse
-PASS
 vertical-rl ltr row
-PASS
 vertical-rl rtl row
-PASS
 vertical-rl ltr column
-PASS
 vertical-rl rtl column
-PASS
 vertical-rl ltr row-reverse
-PASS
 vertical-rl rtl row-reverse
-PASS
 vertical-rl ltr column-reverse
-PASS
 vertical-rl rtl column-reverse
-PASS
+

@@ -276,6 +276,11 @@ void RenderTableCell::layout()
         layoutBlock(cellWidthChanged());
     }
     invalidateHasEmptyCollapsedBorders();
+    
+    // FIXME: This value isn't the intrinsic content logical height, but we need
+    // to update the value as its used by flexbox layout. crbug.com/367324
+    cacheIntrinsicContentLogicalHeightForFlexItem(contentLogicalHeight());
+
     setCellWidthChanged(false);
 }
 

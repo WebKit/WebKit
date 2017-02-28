@@ -26,8 +26,11 @@
     padding: 3px;
 }
 </style>
-<script src="../../resources/check-layout.js"></script>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../resources/check-layout-th.js"></script>
 <body onload="checkLayout('.flexbox')">
+<div id=log></div>
 
 All blue boxes are 100x100px with box-sizing: border-box and 2px border (4px border-top), we expect offsetWidth/Height to be <b>100x100</b>
 
@@ -80,9 +83,9 @@ All blue boxes are 100x100px with box-sizing: border-box and 2px border (4px bor
 
 <h3>flex-flow: column, flex-box has box-sizing: border-box, flex items have flex: 1</h3>
 <div class="flexbox column" style="box-sizing: border-box; border: 2px solid lightblue; padding: 3px; height: 343px; width: 100px;" data-expected-width=100 data-expected-height=343>
-    <div style="-webkit-flex: 1; -moz-flex: 1" data-expected-height=111></div>
-    <div style="-webkit-flex: 1; -moz-flex: 1" data-expected-height=111></div>
-    <div style="-webkit-flex: 1; -moz-flex: 1" data-expected-height=111></div>
+    <div style="flex: 1;" data-expected-height=111></div>
+    <div style="flex: 1;" data-expected-height=111></div>
+    <div style="flex: 1;" data-expected-height=111></div>
 </div>
 
 <script>

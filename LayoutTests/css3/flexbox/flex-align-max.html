@@ -13,7 +13,7 @@ body {
     border: 0;
 }
 .vertical-rl {
-    -webkit-writing-mode: vertical-rl;
+    writing-mode: vertical-rl;
 }
 .flexbox :nth-child(1) {
     background-color: blue;
@@ -25,31 +25,34 @@ body {
     background-color: red;
 }
 </style>
-<script src="../../resources/check-layout.js"></script>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../resources/check-layout-th.js"></script>
 <body onload="checkLayout('.flexbox')">
+<div id=log></div>
 
 <div class="flexbox">
-  <div data-expected-height="50" style="-webkit-flex: 1 0 0; max-height: 100px"></div>
-  <div data-expected-height="50" style="-webkit-flex: 1 0 0; height: 50px"></div>
-  <div data-expected-height="25" style="-webkit-flex: 1 0 0; max-height: 25px"></div>
+  <div data-expected-height="50" style="flex: 1 0 0; max-height: 100px"></div>
+  <div data-expected-height="50" style="flex: 1 0 0; height: 50px"></div>
+  <div data-expected-height="25" style="flex: 1 0 0; max-height: 25px"></div>
 </div>
 
 <div class="flexbox column" style="width: 200px">
-  <div data-expected-width="150" style="-webkit-flex: 1 0 20px; max-width: 150px"></div>
-  <div data-expected-width="100" style="-webkit-flex: 1 0 20px; width: 100px"></div>
-  <div data-expected-width="200" style="-webkit-flex: 1 0 20px;"></div>
+  <div data-expected-width="150" style="flex: 1 0 20px; max-width: 150px"></div>
+  <div data-expected-width="100" style="flex: 1 0 20px; width: 100px"></div>
+  <div data-expected-width="200" style="flex: 1 0 20px;"></div>
 </div>
 
 <div class="flexbox vertical-rl" style="height: 60px">
-  <div data-expected-width="100" style="-webkit-flex: 1 0 20px; max-width: 110px"></div>
-  <div data-expected-width="100" style="-webkit-flex: 1 0 20px; width: 100px"></div>
-  <div data-expected-width="50" style="-webkit-flex: 1 0 20px; max-width: 50px"></div>
+  <div data-expected-width="100" style="flex: 1 0 20px; max-width: 110px"></div>
+  <div data-expected-width="100" style="flex: 1 0 20px; width: 100px"></div>
+  <div data-expected-width="50" style="flex: 1 0 20px; max-width: 50px"></div>
 </div>
 
 <div class="flexbox column vertical-rl" style="height: 50px">
-  <div data-expected-height="50" style="-webkit-flex: 1 0 100px; max-height: 100px"></div>
-  <div data-expected-height="50" style="-webkit-flex: 1 0 100px; height: 50px"></div>
-  <div data-expected-height="25" style="-webkit-flex: 1 0 100px; max-height: 25px"></div>
+  <div data-expected-height="50" style="flex: 1 0 100px; max-height: 100px"></div>
+  <div data-expected-height="50" style="flex: 1 0 100px; height: 50px"></div>
+  <div data-expected-height="25" style="flex: 1 0 100px; max-height: 25px"></div>
 </div>
 
 </body>

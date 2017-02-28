@@ -1,11 +1,5 @@
-Tests that 'initial' is handled correctly for the -webkit-flex-flow shorthand.
-
-On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+Tests that 'initial' is handled correctly for the flex-flow shorthand.
 
 
-PASS window.getComputedStyle(test1).webkitFlexDirection is "row"
-PASS window.getComputedStyle(test2).webkitFlexDirection is "row"
-PASS successfullyParsed is true
-
-TEST COMPLETE
+PASS initial value is correct 
 

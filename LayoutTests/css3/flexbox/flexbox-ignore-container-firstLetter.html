@@ -2,223 +2,32 @@
 <html>
 <link href="resources/flexbox.css" rel="stylesheet">
 <style>
-    body {
-        line-height: 20px;
-    }
-
-    .flexbox-first-letter::first-letter {
-        line-height: 100px;
-        color: red;
-    }
-
-    .container-first-letter::first-letter {
-        line-height: 200px;
-        color: green;
-    }
-
-    .float {
-        float: left;
-    }
-
-    .flexbox-before::before {
-        content: "Anonymous item.";
-        display: -webkit-flex;
-        display: flex;
-    }
-
-    .flexbox-after::before {
-        content: "Anonymous item.";
-        display: -webkit-flex;
-        display: flex;
-    }
-
-    .inline-flexbox-before::before {
-        content: "Anonymous item.";
-        display: -webkit-inline-flex;
-        display: inline-flex;
-    }
-
-    .inline-flexbox-after::before {
-        content: "Anonymous item.";
-        display: -webkit-inline-flex;
-        display: inline-flex;
-    }
-
-    .before-after-first-letter::first-letter {
-        line-height: 50px;
-        color: blue;
-    }
+    .container::first-letter { line-height: 100px; }
+    .flexboxFirstLetter::first-letter { line-height: 200px; }
+    p { line-height: 20px; }
 </style>
 
-<script src="../../resources/check-layout.js"></script>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../resources/check-layout-th.js"></script>
 <body onload="checkLayout('.container')">
+<div id=log></div>
 <p>This test flex item should ignore container's firstLetter pseudo element.</p>
 
 <div class="container">
-    <div class="flexbox flexbox-first-letter">
-        <div class="item" data-expected-height=20>The first item.</div>
-        <div class="item" data-expected-height=20>The second item.</div>
+    <div class="flexbox flexboxFirstLetter">
+        <p data-expected-height=20>The first item.</p>
+        <p data-expected-height=20>The second item.</p>
     </div>
+    <p data-expected-height=100>Out of flex.</p>
 </div>
 
 <div class="container">
-    <div class="inline-flexbox flexbox-first-letter">
-        <div class="item" data-expected-height=20>The first item.</div>
-        <div class="item" data-expected-height=20>The second item.</div>
-    </div>
-</div>
-
-<div class="container">
-    <div class="flexbox flexbox-first-letter" data-expected-height=20>
-        Anonymous item.
-    </div>
-</div>
-
-<div class="container">
-    <div class="inline-flexbox flexbox-first-letter" data-expected-height=20>
-        Anonymous item.
-    </div>
-</div>
-
-<div class="container container-first-letter">
-    <div class="flexbox flexbox-first-letter">
-        <div class="item" data-expected-height=20>The first item.</div>
-        <div class="item" data-expected-height=20>The second item.</div>
-    </div>
-    <div data-expected-height=200>Out of flexbox.</div>
-</div>
-
-<div class="container container-first-letter">
-    <div class="inline-flexbox flexbox-first-letter">
-        <div class="item" data-expected-height=20>The first item.</div>
-        <div class="item" data-expected-height=20>The second item.</div>
-    </div>
-    <div data-expected-height=20>Out of flexbox.</div>
-</div>
-
-<div class="container container-first-letter">
-    <div class="flexbox flexbox-first-letter float">
-        <div class="item" data-expected-height=20>The first item.</div>
-        <div class="item" data-expected-height=20>The second item.</div>
-    </div>
-    <div data-expected-height=200>Out of flexbox.</div>
-</div>
-
-<div class="container container-first-letter">
-    <div class="inline-flexbox flexbox-first-letter float">
-        <div class="item" data-expected-height=20>The first item.</div>
-        <div class="item" data-expected-height=20>The second item.</div>
-    </div>
-    <div data-expected-height=200>Out of flexbox.</div>
-</div>
-
-<div class="container container-first-letter">
-    <div class="flexbox flexbox-first-letter" data-expected-height=20>
-        Anonymous item.
-    </div>
-    <div data-expected-height=200>Out of flexbox.</div>
-</div>
-
-<div class="container container-first-letter">
-    <div class="inline-flexbox flexbox-first-letter" data-expected-height=20>
-        Anonymous item.
-    </div>
-    <div data-expected-height=20>Out of flexbox.</div>
-</div>
-
-<div class="container container-first-letter">
     <div class="flexbox">
-        <div class="item" data-expected-height=20>The first item.</div>
-        <div class="item" data-expected-height=20>The second item.</div>
+        <p data-expected-height=20>The first item.</p>
+        <p data-expected-height=20>The second item.</p>
     </div>
-    <div data-expected-height=200>Out of flexbox.</div>
+    <p data-expected-height=100>Out of flex.</p>
 </div>
-
-<div class="container container-first-letter">
-    <div class="inline-flexbox">
-        <div class="item" data-expected-height=20>The first item.</div>
-        <div class="item" data-expected-height=20>The second item.</div>
-    </div>
-    <div data-expected-height=20>Out of flexbox.</div>
-</div>
-
-<div class="container container-first-letter">
-    <div class="flexbox float">
-        <div class="item" data-expected-height=20>The first item.</div>
-        <div class="item" data-expected-height=20>The second item.</div>
-    </div>
-    <div data-expected-height=200>Out of flexbox.</div>
-</div>
-
-<div class="container container-first-letter">
-    <div class="inline-flexbox float">
-        <div class="item" data-expected-height=20>The first item.</div>
-        <div class="item" data-expected-height=20>The second item.</div>
-    </div>
-    <div data-expected-height=200>Out of flexbox.</div>
-</div>
-
-<div class="container container-first-letter">
-    <div class="flexbox" data-expected-height=20>
-        Anonymous item.
-    </div>
-    <div data-expected-height=200>Out of flexbox.</div>
-</div>
-
-<div class="container container-first-letter">
-    <div class="inline-flexbox" data-expected-height=20>
-        Anonymous item.
-    </div>
-    <div data-expected-height=20>Out of flexbox.</div>
-</div>
-
-<div class="container container-first-letter">
-    <div class="flexbox-before" data-expected-height=220>Out of flexbox.</div>
-</div>
-
-<div class="container">
-    <div class="flexbox-before before-after-first-letter" data-expected-height=70>Out of flexbox.</div>
-</div>
-
-<div class="container container-first-letter">
-    <div class="flexbox-before before-after-first-letter" data-expected-height=70>Out of flexbox.</div>
-</div>
-
-<div class="container container-first-letter">
-    <div class="flexbox-after" data-expected-height=220>Out of flexbox.</div>
-</div>
-
-<div class="container container-first-letter">
-    <div class="flexbox-after before-after-first-letter" data-expected-height=70>Out of flexbox.</div>
-</div>
-
-<div class="container">
-    <div class="flexbox-after before-after-first-letter" data-expected-height=70>Out of flexbox.</div>
-</div>
-
-<div class="container container-first-letter">
-    <div class="inline-flexbox-before" data-expected-height=20>Out of flexbox.</div>
-</div>
-
-<div class="container">
-    <div class="inline-flexbox-before before-after-first-letter" data-expected-height=20>Out of flexbox.</div>
-</div>
-
-<div class="container container-first-letter">
-    <div class="inline-flexbox-before before-after-first-letter" data-expected-height=20>Out of flexbox.</div>
-</div>
-
-<div class="container container-first-letter">
-    <div class="inline-flexbox-after" data-expected-height=20>Out of flexbox.</div>
-</div>
-
-<div class="container container-first-letter">
-    <div class="inline-flexbox-after before-after-first-letter" data-expected-height=20>Out of flexbox.</div>
-</div>
-
-<div class="container">
-    <div class="inline-flexbox-after before-after-first-letter" data-expected-height=20>Out of flexbox.</div>
-</div>
-
 </body>
 </html>

@@ -12,9 +12,12 @@
     width: 50px;
 }
 </style>
-<script src="../../resources/check-layout.js"></script>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../resources/check-layout-th.js"></script>
 </head>
 <body>
+<div id=log></div>
 <div id="from-stretch" class="flexbox">
     <div data-expected-height="10" data-offset-y="90"></div>
     <div data-expected-height="10" data-offset-y="90" class="align-self-auto"></div>
@@ -36,8 +39,8 @@
 </div>
 <script>
 document.body.offsetLeft;
-document.getElementById("from-stretch").style.webkitAlignItems = "flex-end";
-document.getElementById("to-stretch").style.webkitAlignItems = "stretch";
+document.getElementById("from-stretch").style.alignItems = "flex-end";
+document.getElementById("to-stretch").style.alignItems = "stretch";
 checkLayout(".flexbox");
 </script>
 </body>

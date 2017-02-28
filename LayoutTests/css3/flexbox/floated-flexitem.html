@@ -3,7 +3,7 @@
 <style>
 #flexbox {
   background-color: lightgrey;
-  -webkit-align-items: flex-start;
+  align-items: flex-start;
 }
 #flexbox > * {
   border: 1px solid green;
@@ -14,7 +14,7 @@
 This example is from the spec. There should be four flex items. Anonymous item 3 shouldn't have
 a green border because the anonymous block is the flex item.
 </p>
-<div id="flexbox" style="display: -webkit-flex">
+<div id="flexbox" style="display: flex">
 
     <!-- flex item: block child -->
     <div id="item1">block</div>

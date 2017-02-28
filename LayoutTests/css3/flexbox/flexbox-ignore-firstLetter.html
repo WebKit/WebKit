@@ -6,8 +6,11 @@
     p { line-height: 20px; }
 </style>
 
-<script src="../../resources/check-layout.js"></script>
-<body onload="checkLayout('.flexbox'); checkLayout('.inline-flexbox')">
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../resources/check-layout-th.js"></script>
+<body onload="checkLayout('.flexbox, .inline-flexbox')">
+<div id=log></div>
 <p>This test flex item should ignore flex container's firstLetter pseudo element.</p>
 
 <div class="flexbox">

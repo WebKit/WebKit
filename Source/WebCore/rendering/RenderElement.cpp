@@ -599,6 +599,9 @@ void RenderElement::removeChildInternal(RenderObject& oldChild, NotifyChildrenTy
         downcast<RenderBox>(oldChild).deleteLineBoxWrapper();
     else if (is<RenderLineBreak>(oldChild))
         downcast<RenderLineBreak>(oldChild).deleteInlineBoxWrapper();
+    
+    if (!documentBeingDestroyed() && is<RenderFlexibleBox>(this) && !oldChild.isFloatingOrOutOfFlowPositioned() && oldChild.isBox())
+        downcast<RenderFlexibleBox>(this)->clearCachedChildIntrinsicContentLogicalHeight(downcast<RenderBox>(oldChild));
 
     // If oldChild is the start or end of the selection, then clear the selection to
     // avoid problems of invalid pointers.

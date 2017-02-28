@@ -1,0 +1,45 @@
+
+FAIL .flexbox 1 assert_equals: 
+<div class="flexbox column" style="height: 10px;" data-expected-height="10">
+    <!-- should use min(transferred, content height) = 10px as minimum height,
+         which the image will shrink to due to default flex-shrink. -->
+    <img src="../../images/resources/green-10.png" style="width: 100px;" data-expected-height="10">
+</div>
+height expected 10 but got 20
+PASS .flexbox 2 
+PASS .flexbox 3 
+FAIL .flexbox 4 assert_equals: 
+<div class="flexbox column" style="height: 10px;" data-expected-height="10">
+    <!-- should use min(specified, content height) = 10px as minimum height,
+         which the image will shrink to due to default flex-shrink. -->
+    <img src="../../images/resources/green-10.png" style="height: 100px;" data-expected-height="10">
+</div>
+height expected 10 but got 20
+PASS .flexbox 5 
+FAIL .flexbox 6 assert_equals: 
+<div class="flexbox" style="width: 10px;" data-expected-width="10">
+    <!-- should use min(transferred, content width) = 10px as minimum width,
+         which the image will shrink to due to default flex-shrink. -->
+    <img src="../../images/resources/green-10.png" style="height: 100px;" data-expected-width="10">
+</div>
+width expected 10 but got 20
+PASS .flexbox 7 
+PASS .flexbox 8 
+FAIL .flexbox 9 assert_equals: 
+<div class="flexbox" style="width: 10px;" data-expected-width="10">
+    <!-- should use min(specified, content width) = 10px as minimum width,
+         which the image will shrink to due to default flex-shrink. -->
+    <img src="../../images/resources/green-10.png" style="width: 100px;" data-expected-width="10">
+</div>
+width expected 10 but got 20
+PASS .flexbox 10 
+
+
+
+
+
+
+
+
+
+

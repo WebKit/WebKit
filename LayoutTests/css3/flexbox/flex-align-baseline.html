@@ -30,26 +30,23 @@
     direction: rtl;
 }
 .horizontal-tb {
-    -webkit-writing-mode: horizontal-tb;
-}
-.horizontal-bt {
-    -webkit-writing-mode: horizontal-bt;
+    writing-mode: horizontal-tb;
 }
 .vertical-rl {
-    -webkit-writing-mode: vertical-rl;
+    writing-mode: vertical-rl;
 }
 .vertical-lr {
-    -webkit-writing-mode: vertical-lr;
+    writing-mode: vertical-lr;
 }
 </style>
 <script>
 if (window.testRunner)
     testRunner.dumpAsText();
 </script>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 <body>
 <script>
-var writingModes = ['horizontal-tb', 'horizontal-bt', 'vertical-lr', 'vertical-rl'];
+var writingModes = ['horizontal-tb', 'vertical-lr', 'vertical-rl'];
 var flexFlows = ['row', 'column', 'row-reverse', 'column-reverse'];
 var directions = ['ltr', 'rtl'];
 
@@ -67,7 +64,7 @@ writingModes.forEach(function(writingMode) {
             var isHorizontalFlow = (writingMode.indexOf('horizontal') != -1) ? !isColumn : isColumn;
 
             var container = document.createElement('div');
-            container.innerHTML = '<div class="flexbox ' + flexboxClassName + '" style="-webkit-align-items: baseline;">' +
+            container.innerHTML = '<div class="flexbox ' + flexboxClassName + '" style="align-items: baseline;">' +
                 '<div><div style="display:inline-block;"></div></div>' +
                 '<div style="margin-top:20px;"><div style="display:inline-block;"></div></div>' +
             '</div>';
@@ -96,6 +93,5 @@ for (var i = 0, len = flexboxen.length; i < len; i++) {
         shouldBe('firstChild.offsetLeft', 'lastChild.offsetLeft');
 }
 </script>
-<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>

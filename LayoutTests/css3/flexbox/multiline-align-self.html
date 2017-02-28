@@ -3,10 +3,10 @@
 <style>
 .flexbox {
     position: relative;
-    display: -webkit-flex;
+    display: flex;
     background-color: grey;
     max-width: 600px;
-    -webkit-align-content: flex-start;
+    align-content: flex-start;
 }
 .title {
     margin-top: 1em;
@@ -18,34 +18,31 @@
     direction: rtl;
 }
 .horizontal-tb {
-    -webkit-writing-mode: horizontal-tb;
-}
-.horizontal-bt {
-    -webkit-writing-mode: horizontal-bt;
+    writing-mode: horizontal-tb;
 }
 .vertical-rl {
-    -webkit-writing-mode: vertical-rl;
+    writing-mode: vertical-rl;
 }
 .vertical-lr {
-    -webkit-writing-mode: vertical-lr;
+    writing-mode: vertical-lr;
 }
 .row {
-    -webkit-flex-flow: row;
+    flex-flow: row;
 }
 .row-reverse {
-    -webkit-flex-flow: row-reverse;
+    flex-flow: row-reverse;
 }
 .column {
-    -webkit-flex-flow: column;
+    flex-flow: column;
 }
 .column-reverse {
-    -webkit-flex-flow: column-reverse;
+    flex-flow: column-reverse;
 }
 .wrap {
-  -webkit-flex-wrap: wrap;
+  flex-wrap: wrap;
 }
 .wrap-reverse {
-  -webkit-flex-wrap: wrap-reverse;
+  flex-wrap: wrap-reverse;
 }
 .flexbox > :nth-child(1) {
     background-color: #0f0;
@@ -91,8 +88,11 @@
     background-color: #003;
 }
 </style>
-<script src="../../resources/check-layout.js"></script>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../resources/check-layout-th.js"></script>
 <body onload="checkLayout('.flexbox')">
+<div id=log></div>
 
 <script>
 var expectations = {
@@ -394,304 +394,6 @@ var expectations = {
             },
         },
     },
-    'horizontal-bt': {
-        'row': {
-            'ltr': {
-                'wrap': {
-                    'flexbox': [70, 60],
-                    'child1': [10, 10, 0, 50],
-                    'child2': [10, 10, 10, 40],
-                    'child3': [10, 10, 20, 30],
-                    'child4': [10, 10, 30, 45],
-                    'child5': [10, 10, 40, 45],
-                    'child6': [10, 30, 50, 30],
-                    'child7': [10, 30, 60, 30],
-                    'child8': [10, 10, 0, 20],
-                    'child9': [10, 10, 10, 10],
-                    'child10': [10, 10, 20, 0],
-                    'child11': [10, 10, 30, 15],
-                    'child12': [10, 10, 40, 15],
-                    'child13': [10, 30, 50, 0],
-                    'child14': [10, 30, 60, 0],
-                },
-                'wrap-reverse': {
-                    'flexbox': [70, 60],
-                    'child1': [10, 10, 0, 0],
-                    'child2': [10, 10, 10, 10],
-                    'child3': [10, 10, 20, 20],
-                    'child4': [10, 10, 30, 0],
-                    'child5': [10, 10, 40, 0],
-                    'child6': [10, 30, 50, 0],
-                    'child7': [10, 30, 60, 0],
-                    'child8': [10, 10, 0, 30],
-                    'child9': [10, 10, 10, 40],
-                    'child10': [10, 10, 20, 50],
-                    'child11': [10, 10, 30, 30],
-                    'child12': [10, 10, 40, 30],
-                    'child13': [10, 30, 50, 30],
-                    'child14': [10, 30, 60, 30],
-                },
-            },
-            'rtl': {
-                'wrap': {
-                    'flexbox': [70, 60],
-                    'child1': [10, 10, 60, 50],
-                    'child2': [10, 10, 50, 40],
-                    'child3': [10, 10, 40, 30],
-                    'child4': [10, 10, 30, 45],
-                    'child5': [10, 10, 20, 45],
-                    'child6': [10, 30, 10, 30],
-                    'child7': [10, 30, 0, 30],
-                    'child8': [10, 10, 60, 20],
-                    'child9': [10, 10, 50, 10],
-                    'child10': [10, 10, 40, 0],
-                    'child11': [10, 10, 30, 15],
-                    'child12': [10, 10, 20, 15],
-                    'child13': [10, 30, 10, 0],
-                    'child14': [10, 30, 0, 0],
-                },
-                'wrap-reverse': {
-                    'flexbox': [70, 60],
-                    'child1': [10, 10, 60, 0],
-                    'child2': [10, 10, 50, 10],
-                    'child3': [10, 10, 40, 20],
-                    'child4': [10, 10, 30, 0],
-                    'child5': [10, 10, 20, 0],
-                    'child6': [10, 30, 10, 0],
-                    'child7': [10, 30, 0, 0],
-                    'child8': [10, 10, 60, 30],
-                    'child9': [10, 10, 50, 40],
-                    'child10': [10, 10, 40, 50],
-                    'child11': [10, 10, 30, 30],
-                    'child12': [10, 10, 20, 30],
-                    'child13': [10, 30, 10, 30],
-                    'child14': [10, 30, 0, 30],
-                },
-            },
-        },
-        'column': {
-            'ltr': {
-                'wrap': {
-                    'flexbox': [600, 70],
-                    'child1': [10, 10, 0, 60],
-                    'child2': [10, 10, 10, 50],
-                    'child3': [10, 10, 20, 40],
-                    'child4': [10, 10, 0, 30],
-                    'child5': [10, 10, 5, 20],
-                    'child6': [30, 10, 0, 10],
-                    'child7': [30, 10, 0, 0],
-                    'child8': [10, 10, 30, 60],
-                    'child9': [10, 10, 40, 50],
-                    'child10': [10, 10, 50, 40],
-                    'child11': [10, 10, 30, 30],
-                    'child12': [10, 10, 35, 20],
-                    'child13': [30, 10, 30, 10],
-                    'child14': [30, 10, 30, 0],
-                },
-                'wrap-reverse': {
-                    'flexbox': [600, 70],
-                    'child1': [10, 10, 590, 60],
-                    'child2': [10, 10, 580, 50],
-                    'child3': [10, 10, 570, 40],
-                    'child4': [10, 10, 590, 30],
-                    'child5': [10, 10, 590, 20],
-                    'child6': [30, 10, 570, 10],
-                    'child7': [30, 10, 570, 0],
-                    'child8': [10, 10, 560, 60],
-                    'child9': [10, 10, 550, 50],
-                    'child10': [10, 10, 540, 40],
-                    'child11': [10, 10, 560, 30],
-                    'child12': [10, 10, 560, 20],
-                    'child13': [30, 10, 540, 10],
-                    'child14': [30, 10, 540, 0],
-                },
-            },
-            'rtl': {
-                'wrap': {
-                    'flexbox': [600, 70],
-                    'child1': [10, 10, 590, 60],
-                    'child2': [10, 10, 580, 50],
-                    'child3': [10, 10, 570, 40],
-                    'child4': [10, 10, 590, 30],
-                    'child5': [10, 10, 585, 20],
-                    'child6': [30, 10, 570, 10],
-                    'child7': [30, 10, 570, 0],
-                    'child8': [10, 10, 560, 60],
-                    'child9': [10, 10, 550, 50],
-                    'child10': [10, 10, 540, 40],
-                    'child11': [10, 10, 560, 30],
-                    'child12': [10, 10, 555, 20],
-                    'child13': [30, 10, 540, 10],
-                    'child14': [30, 10, 540, 0],
-                },
-                'wrap-reverse': {
-                    'flexbox': [600, 70],
-                    'child1': [10, 10, 0, 60],
-                    'child2': [10, 10, 10, 50],
-                    'child3': [10, 10, 20, 40],
-                    'child4': [10, 10, 0, 30],
-                    'child5': [10, 10, 0, 20],
-                    'child6': [30, 10, 0, 10],
-                    'child7': [30, 10, 0, 0],
-                    'child8': [10, 10, 30, 60],
-                    'child9': [10, 10, 40, 50],
-                    'child10': [10, 10, 50, 40],
-                    'child11': [10, 10, 30, 30],
-                    'child12': [10, 10, 30, 20],
-                    'child13': [30, 10, 30, 10],
-                    'child14': [30, 10, 30, 0],
-                },
-            },
-        },
-        'row-reverse': {
-            'ltr': {
-                'wrap': {
-                    'flexbox': [70, 60],
-                    'child1': [10, 10, 60, 50],
-                    'child2': [10, 10, 50, 40],
-                    'child3': [10, 10, 40, 30],
-                    'child4': [10, 10, 30, 45],
-                    'child5': [10, 10, 20, 45],
-                    'child6': [10, 30, 10, 30],
-                    'child7': [10, 30, 0, 30],
-                    'child8': [10, 10, 60, 20],
-                    'child9': [10, 10, 50, 10],
-                    'child10': [10, 10, 40, 0],
-                    'child11': [10, 10, 30, 15],
-                    'child12': [10, 10, 20, 15],
-                    'child13': [10, 30, 10, 0],
-                    'child14': [10, 30, 0, 0],
-                },
-                'wrap-reverse': {
-                    'flexbox': [70, 60],
-                    'child1': [10, 10, 60, 0],
-                    'child2': [10, 10, 50, 10],
-                    'child3': [10, 10, 40, 20],
-                    'child4': [10, 10, 30, 0],
-                    'child5': [10, 10, 20, 0],
-                    'child6': [10, 30, 10, 0],
-                    'child7': [10, 30, 0, 0],
-                    'child8': [10, 10, 60, 30],
-                    'child9': [10, 10, 50, 40],
-                    'child10': [10, 10, 40, 50],
-                    'child11': [10, 10, 30, 30],
-                    'child12': [10, 10, 20, 30],
-                    'child13': [10, 30, 10, 30],
-                    'child14': [10, 30, 0, 30],
-                },
-            },
-            'rtl': {
-                'wrap': {
-                    'flexbox': [70, 60],
-                    'child1': [10, 10, 0, 50],
-                    'child2': [10, 10, 10, 40],
-                    'child3': [10, 10, 20, 30],
-                    'child4': [10, 10, 30, 45],
-                    'child5': [10, 10, 40, 45],
-                    'child6': [10, 30, 50, 30],
-                    'child7': [10, 30, 60, 30],
-                    'child8': [10, 10, 0, 20],
-                    'child9': [10, 10, 10, 10],
-                    'child10': [10, 10, 20, 0],
-                    'child11': [10, 10, 30, 15],
-                    'child12': [10, 10, 40, 15],
-                    'child13': [10, 30, 50, 0],
-                    'child14': [10, 30, 60, 0],
-                },
-                'wrap-reverse': {
-                    'flexbox': [70, 60],
-                    'child1': [10, 10, 0, 0],
-                    'child2': [10, 10, 10, 10],
-                    'child3': [10, 10, 20, 20],
-                    'child4': [10, 10, 30, 0],
-                    'child5': [10, 10, 40, 0],
-                    'child6': [10, 30, 50, 0],
-                    'child7': [10, 30, 60, 0],
-                    'child8': [10, 10, 0, 30],
-                    'child9': [10, 10, 10, 40],
-                    'child10': [10, 10, 20, 50],
-                    'child11': [10, 10, 30, 30],
-                    'child12': [10, 10, 40, 30],
-                    'child13': [10, 30, 50, 30],
-                    'child14': [10, 30, 60, 30],
-                },
-            },
-        },
-        'column-reverse': {
-            'ltr': {
-                'wrap': {
-                    'flexbox': [600, 70],
-                    'child1': [10, 10, 0, 0],
-                    'child2': [10, 10, 10, 10],
-                    'child3': [10, 10, 20, 20],
-                    'child4': [10, 10, 0, 30],
-                    'child5': [10, 10, 5, 40],
-                    'child6': [30, 10, 0, 50],
-                    'child7': [30, 10, 0, 60],
-                    'child8': [10, 10, 30, 0],
-                    'child9': [10, 10, 40, 10],
-                    'child10': [10, 10, 50, 20],
-                    'child11': [10, 10, 30, 30],
-                    'child12': [10, 10, 35, 40],
-                    'child13': [30, 10, 30, 50],
-                    'child14': [30, 10, 30, 60],
-                },
-                'wrap-reverse': {
-                    'flexbox': [600, 70],
-                    'child1': [10, 10, 590, 0],
-                    'child2': [10, 10, 580, 10],
-                    'child3': [10, 10, 570, 20],
-                    'child4': [10, 10, 590, 30],
-                    'child5': [10, 10, 590, 40],
-                    'child6': [30, 10, 570, 50],
-                    'child7': [30, 10, 570, 60],
-                    'child8': [10, 10, 560, 0],
-                    'child9': [10, 10, 550, 10],
-                    'child10': [10, 10, 540, 20],
-                    'child11': [10, 10, 560, 30],
-                    'child12': [10, 10, 560, 40],
-                    'child13': [30, 10, 540, 50],
-                    'child14': [30, 10, 540, 60],
-                },
-            },
-            'rtl': {
-                'wrap': {
-                    'flexbox': [600, 70],
-                    'child1': [10, 10, 590, 0],
-                    'child2': [10, 10, 580, 10],
-                    'child3': [10, 10, 570, 20],
-                    'child4': [10, 10, 590, 30],
-                    'child5': [10, 10, 585, 40],
-                    'child6': [30, 10, 570, 50],
-                    'child7': [30, 10, 570, 60],
-                    'child8': [10, 10, 560, 0],
-                    'child9': [10, 10, 550, 10],
-                    'child10': [10, 10, 540, 20],
-                    'child11': [10, 10, 560, 30],
-                    'child12': [10, 10, 555, 40],
-                    'child13': [30, 10, 540, 50],
-                    'child14': [30, 10, 540, 60],
-                },
-                'wrap-reverse': {
-                    'flexbox': [600, 70],
-                    'child1': [10, 10, 0, 0],
-                    'child2': [10, 10, 10, 10],
-                    'child3': [10, 10, 20, 20],
-                    'child4': [10, 10, 0, 30],
-                    'child5': [10, 10, 0, 40],
-                    'child6': [30, 10, 0, 50],
-                    'child7': [30, 10, 0, 60],
-                    'child8': [10, 10, 30, 0],
-                    'child9': [10, 10, 40, 10],
-                    'child10': [10, 10, 50, 20],
-                    'child11': [10, 10, 30, 30],
-                    'child12': [10, 10, 30, 40],
-                    'child13': [30, 10, 30, 50],
-                    'child14': [30, 10, 30, 60],
-                },
-            },
-        },
-    },
     'vertical-rl': {
         'row': {
             'ltr': {
@@ -770,7 +472,7 @@ var expectations = {
         'column': {
             'ltr': {
                 'wrap': {
-                    'flexbox': [70, 170],
+                    'flexbox': [70, 30],
                     'child1': [10, 10, 60, 0],
                     'child2': [10, 10, 50, 10],
                     'child3': [10, 10, 40, 20],
@@ -787,43 +489,43 @@ var expectations = {
                     'child14': [10, 30, 0, 30],
                 },
                 'wrap-reverse': {
-                    'flexbox': [70, 170],
-                    'child1': [10, 10, 60, 160],
-                    'child2': [10, 10, 50, 150],
-                    'child3': [10, 10, 40, 140],
-                    'child4': [10, 10, 30, 160],
-                    'child5': [10, 10, 20, 160],
-                    'child6': [10, 30, 10, 140],
-                    'child7': [10, 30, 0, 140],
-                    'child8': [10, 10, 60, 130],
-                    'child9': [10, 10, 50, 120],
-                    'child10': [10, 10, 40, 110],
-                    'child11': [10, 10, 30, 130],
-                    'child12': [10, 10, 20, 130],
-                    'child13': [10, 30, 10, 110],
-                    'child14': [10, 30, 0, 110],
+                    'flexbox': [70, 30],
+                    'child1': [10, 10, 60, 20],
+                    'child2': [10, 10, 50, 10],
+                    'child3': [10, 10, 40, 0],
+                    'child4': [10, 10, 30, 20],
+                    'child5': [10, 10, 20, 20],
+                    'child6': [10, 30, 10, 0],
+                    'child7': [10, 30, 0, 0],
+                    'child8': [10, 10, 60, -10],
+                    'child9': [10, 10, 50, -20],
+                    'child10': [10, 10, 40, -30],
+                    'child11': [10, 10, 30, -10],
+                    'child12': [10, 10, 20, -10],
+                    'child13': [10, 30, 10, -30],
+                    'child14': [10, 30, 0, -30],
                 },
             },
             'rtl': {
                 'wrap': {
-                    'flexbox': [70, 170],
-                    'child1': [10, 10, 60, 160],
-                    'child2': [10, 10, 50, 150],
-                    'child3': [10, 10, 40, 140],
-                    'child4': [10, 10, 30, 160],
-                    'child5': [10, 10, 20, 155],
-                    'child6': [10, 30, 10, 140],
-                    'child7': [10, 30, 0, 140],
-                    'child8': [10, 10, 60, 130],
-                    'child9': [10, 10, 50, 120],
-                    'child10': [10, 10, 40, 110],
-                    'child11': [10, 10, 30, 130],
-                    'child12': [10, 10, 20, 125],
-                    'child13': [10, 30, 10, 110],
-                    'child14': [10, 30, 0, 110],
+                    'flexbox': [70, 30],
+                    'child1': [10, 10, 60, 20],
+                    'child2': [10, 10, 50, 10],
+                    'child3': [10, 10, 40, 0],
+                    'child4': [10, 10, 30, 20],
+                    'child5': [10, 10, 20, 15],
+                    'child6': [10, 30, 10, 0],
+                    'child7': [10, 30, 0, 0],
+                    'child8': [10, 10, 60, -10],
+                    'child9': [10, 10, 50, -20],
+                    'child10': [10, 10, 40, -30],
+                    'child11': [10, 10, 30, -10],
+                    'child12': [10, 10, 20, -15],
+                    'child13': [10, 30, 10, -30],
+                    'child14': [10, 30, 0, -30],
                 },
                 'wrap-reverse': {
-                    'flexbox': [70, 170],
+                    'flexbox': [70, 30],
                     'child1': [10, 10, 60, 0],
                     'child2': [10, 10, 50, 10],
                     'child3': [10, 10, 40, 20],
@@ -918,7 +620,7 @@ var expectations = {
         'column-reverse': {
             'ltr': {
                 'wrap': {
-                    'flexbox': [70, 170],
+                    'flexbox': [70, 30],
                     'child1': [10, 10, 0, 0],
                     'child2': [10, 10, 10, 10],
                     'child3': [10, 10, 20, 20],
@@ -935,43 +637,43 @@ var expectations = {
                     'child14': [10, 30, 60, 30],
                 },
                 'wrap-reverse': {
-                    'flexbox': [70, 170],
-                    'child1': [10, 10, 0, 160],
-                    'child2': [10, 10, 10, 150],
-                    'child3': [10, 10, 20, 140],
-                    'child4': [10, 10, 30, 160],
-                    'child5': [10, 10, 40, 160],
-                    'child6': [10, 30, 50, 140],
-                    'child7': [10, 30, 60, 140],
-                    'child8': [10, 10, 0, 130],
-                    'child9': [10, 10, 10, 120],
-                    'child10': [10, 10, 20, 110],
-                    'child11': [10, 10, 30, 130],
-                    'child12': [10, 10, 40, 130],
-                    'child13': [10, 30, 50, 110],
-                    'child14': [10, 30, 60, 110],
+                    'flexbox': [70, 30],
+                    'child1': [10, 10, 0, 20],
+                    'child2': [10, 10, 10, 10],
+                    'child3': [10, 10, 20, 0],
+                    'child4': [10, 10, 30, 20],
+                    'child5': [10, 10, 40, 20],
+                    'child6': [10, 30, 50, 0],
+                    'child7': [10, 30, 60, 0],
+                    'child8': [10, 10, 0, -10],
+                    'child9': [10, 10, 10, -20],
+                    'child10': [10, 10, 20, -30],
+                    'child11': [10, 10, 30, -10],
+                    'child12': [10, 10, 40, -10],
+                    'child13': [10, 30, 50, -30],
+                    'child14': [10, 30, 60, -30],
                 },
             },
             'rtl': {
                 'wrap': {
-                    'flexbox': [70, 170],
-                    'child1': [10, 10, 0, 160],
-                    'child2': [10, 10, 10, 150],
-                    'child3': [10, 10, 20, 140],
-                    'child4': [10, 10, 30, 160],
-                    'child5': [10, 10, 40, 155],
-                    'child6': [10, 30, 50, 140],
-                    'child7': [10, 30, 60, 140],
-                    'child8': [10, 10, 0, 130],
-                    'child9': [10, 10, 10, 120],
-                    'child10': [10, 10, 20, 110],
-                    'child11': [10, 10, 30, 130],
-                    'child12': [10, 10, 40, 125],
-                    'child13': [10, 30, 50, 110],
-                    'child14': [10, 30, 60, 110],
+                    'flexbox': [70, 30],
+                    'child1': [10, 10, 0, 20],
+                    'child2': [10, 10, 10, 10],
+                    'child3': [10, 10, 20, 0],
+                    'child4': [10, 10, 30, 20],
+                    'child5': [10, 10, 40, 15],
+                    'child6': [10, 30, 50, 0],
+                    'child7': [10, 30, 60, 0],
+                    'child8': [10, 10, 0, -10],
+                    'child9': [10, 10, 10, -20],
+                    'child10': [10, 10, 20, -30],
+                    'child11': [10, 10, 30, -10],
+                    'child12': [10, 10, 40, -15],
+                    'child13': [10, 30, 50, -30],
+                    'child14': [10, 30, 60, -30],
                 },
                 'wrap-reverse': {
-                    'flexbox': [70, 170],
+                    'flexbox': [70, 30],
                     'child1': [10, 10, 0, 0],
                     'child2': [10, 10, 10, 10],
                     'child3': [10, 10, 20, 20],
@@ -1068,7 +770,7 @@ var expectations = {
         'column': {
             'ltr': {
                 'wrap': {
-                    'flexbox': [70, 170],
+                    'flexbox': [70, 30],
                     'child1': [10, 10, 0, 0],
                     'child2': [10, 10, 10, 10],
                     'child3': [10, 10, 20, 20],
@@ -1085,43 +787,43 @@ var expectations = {
                     'child14': [10, 30, 60, 30],
                 },
                 'wrap-reverse': {
-                    'flexbox': [70, 170],
-                    'child1': [10, 10, 0, 160],
-                    'child2': [10, 10, 10, 150],
-                    'child3': [10, 10, 20, 140],
-                    'child4': [10, 10, 30, 160],
-                    'child5': [10, 10, 40, 160],
-                    'child6': [10, 30, 50, 140],
-                    'child7': [10, 30, 60, 140],
-                    'child8': [10, 10, 0, 130],
-                    'child9': [10, 10, 10, 120],
-                    'child10': [10, 10, 20, 110],
-                    'child11': [10, 10, 30, 130],
-                    'child12': [10, 10, 40, 130],
-                    'child13': [10, 30, 50, 110],
-                    'child14': [10, 30, 60, 110],
+                    'flexbox': [70, 30],
+                    'child1': [10, 10, 0, 20],
+                    'child2': [10, 10, 10, 10],
+                    'child3': [10, 10, 20, 0],
+                    'child4': [10, 10, 30, 20],
+                    'child5': [10, 10, 40, 20],
+                    'child6': [10, 30, 50, 0],
+                    'child7': [10, 30, 60, 0],
+                    'child8': [10, 10, 0, -10],
+                    'child9': [10, 10, 10, -20],
+                    'child10': [10, 10, 20, -30],
+                    'child11': [10, 10, 30, -10],
+                    'child12': [10, 10, 40, -10],
+                    'child13': [10, 30, 50, -30],
+                    'child14': [10, 30, 60, -30],
                 },
             },
             'rtl': {
                 'wrap': {
-                    'flexbox': [70, 170],
-                    'child1': [10, 10, 0, 160],
-                    'child2': [10, 10, 10, 150],
-                    'child3': [10, 10, 20, 140],
-                    'child4': [10, 10, 30, 160],
-                    'child5': [10, 10, 40, 155],
-                    'child6': [10, 30, 50, 140],
-                    'child7': [10, 30, 60, 140],
-                    'child8': [10, 10, 0, 130],
-                    'child9': [10, 10, 10, 120],
-                    'child10': [10, 10, 20, 110],
-                    'child11': [10, 10, 30, 130],
-                    'child12': [10, 10, 40, 125],
-                    'child13': [10, 30, 50, 110],
-                    'child14': [10, 30, 60, 110],
+                    'flexbox': [70, 30],
+                    'child1': [10, 10, 0, 20],
+                    'child2': [10, 10, 10, 10],
+                    'child3': [10, 10, 20, 0],
+                    'child4': [10, 10, 30, 20],
+                    'child5': [10, 10, 40, 15],
+                    'child6': [10, 30, 50, 0],
+                    'child7': [10, 30, 60, 0],
+                    'child8': [10, 10, 0, -10],
+                    'child9': [10, 10, 10, -20],
+                    'child10': [10, 10, 20, -30],
+                    'child11': [10, 10, 30, -10],
+                    'child12': [10, 10, 40, -15],
+                    'child13': [10, 30, 50, -30],
+                    'child14': [10, 30, 60, -30],
                 },
                 'wrap-reverse': {
-                    'flexbox': [70, 170],
+                    'flexbox': [70, 30],
                     'child1': [10, 10, 0, 0],
                     'child2': [10, 10, 10, 10],
                     'child3': [10, 10, 20, 20],
@@ -1216,7 +918,7 @@ var expectations = {
         'column-reverse': {
             'ltr': {
                 'wrap': {
-                    'flexbox': [70, 170],
+                    'flexbox': [70, 30],
                     'child1': [10, 10, 60, 0],
                     'child2': [10, 10, 50, 10],
                     'child3': [10, 10, 40, 20],
@@ -1233,43 +935,43 @@ var expectations = {
                     'child14': [10, 30, 0, 30],
                 },
                 'wrap-reverse': {
-                    'flexbox': [70, 170],
-                    'child1': [10, 10, 60, 160],
-                    'child2': [10, 10, 50, 150],
-                    'child3': [10, 10, 40, 140],
-                    'child4': [10, 10, 30, 160],
-                    'child5': [10, 10, 20, 160],
-                    'child6': [10, 30, 10, 140],
-                    'child7': [10, 30, 0, 140],
-                    'child8': [10, 10, 60, 130],
-                    'child9': [10, 10, 50, 120],
-                    'child10': [10, 10, 40, 110],
-                    'child11': [10, 10, 30, 130],
-                    'child12': [10, 10, 20, 130],
-                    'child13': [10, 30, 10, 110],
-                    'child14': [10, 30, 0, 110],
+                    'flexbox': [70, 30],
+                    'child1': [10, 10, 60, 20],
+                    'child2': [10, 10, 50, 10],
+                    'child3': [10, 10, 40, 0],
+                    'child4': [10, 10, 30, 20],
+                    'child5': [10, 10, 20, 20],
+                    'child6': [10, 30, 10, 0],
+                    'child7': [10, 30, 0, 0],
+                    'child8': [10, 10, 60, -10],
+                    'child9': [10, 10, 50, -20],
+                    'child10': [10, 10, 40, -30],
+                    'child11': [10, 10, 30, -10],
+                    'child12': [10, 10, 20, -10],
+                    'child13': [10, 30, 10, -30],
+                    'child14': [10, 30, 0, -30],
                 },
             },
             'rtl': {
                 'wrap': {
-                    'flexbox': [70, 170],
-                    'child1': [10, 10, 60, 160],
-                    'child2': [10, 10, 50, 150],
-                    'child3': [10, 10, 40, 140],
-                    'child4': [10, 10, 30, 160],
-                    'child5': [10, 10, 20, 155],
-                    'child6': [10, 30, 10, 140],
-                    'child7': [10, 30, 0, 140],
-                    'child8': [10, 10, 60, 130],
-                    'child9': [10, 10, 50, 120],
-                    'child10': [10, 10, 40, 110],
-                    'child11': [10, 10, 30, 130],
-                    'child12': [10, 10, 20, 125],
-                    'child13': [10, 30, 10, 110],
-                    'child14': [10, 30, 0, 110],
+                    'flexbox': [70, 30],
+                    'child1': [10, 10, 60, 20],
+                    'child2': [10, 10, 50, 10],
+                    'child3': [10, 10, 40, 0],
+                    'child4': [10, 10, 30, 20],
+                    'child5': [10, 10, 20, 15],
+                    'child6': [10, 30, 10, 0],
+                    'child7': [10, 30, 0, 0],
+                    'child8': [10, 10, 60, -10],
+                    'child9': [10, 10, 50, -20],
+                    'child10': [10, 10, 40, -30],
+                    'child11': [10, 10, 30, -10],
+                    'child12': [10, 10, 20, -15],
+                    'child13': [10, 30, 10, -30],
+                    'child14': [10, 30, 0, -30],
                 },
                 'wrap-reverse': {
-                    'flexbox': [70, 170],
+                    'flexbox': [70, 30],
                     'child1': [10, 10, 60, 0],
                     'child2': [10, 10, 50, 10],
                     'child3': [10, 10, 40, 20],
@@ -1301,9 +1003,9 @@ function mainAxisDirection(writingMode, flexDirection)
 function addChild(flexbox, mainAxis, crossAxis, preferredSize, crossAxisLength, alignment, expectations)
 {
     var child = document.createElement('div');
-    child.setAttribute('style', '-webkit-flex: 1 ' + preferredSize + 'px;'
+    child.setAttribute('style', 'flex: 1 ' + preferredSize + 'px;'
         + crossAxis + ': ' + crossAxisLength + ';'
-        + '-webkit-align-self: ' + alignment);
+        + 'align-self: ' + alignment);
 
     child.setAttribute("data-expected-width", expectations[0]);
     child.setAttribute("data-expected-height", expectations[1]);
@@ -1313,7 +1015,7 @@ function addChild(flexbox, mainAxis, crossAxis, preferredSize, crossAxisLength, 
     flexbox.appendChild(child);
 }
 
-var writingModes = ['horizontal-tb', 'horizontal-bt', 'vertical-rl', 'vertical-lr'];
+var writingModes = ['horizontal-tb', 'vertical-rl', 'vertical-lr'];
 var flexDirections = ['row', 'column', 'row-reverse', 'column-reverse'];
 var directions = ['ltr', 'rtl'];
 var wraps = ['wrap', 'wrap-reverse'];

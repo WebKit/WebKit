@@ -1194,5 +1194,8 @@ svg/custom/filter-source-alpha.svg [ Skip ]
 # Test landed disabled in r26904; never enabled
 svg/custom/font-face-fallback.svg [ Skip ]
 
+# Test disabled until we can fix layout of orthogonal writing mode roots
+fast/table/colspanMinWidth-vertical.html [ Skip ]
+
 ### END OF -disabled tests
 ########################################

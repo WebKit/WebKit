@@ -1,0 +1,11 @@
+
+PASS .columns 1 
+PASS .columns 2 
+You should see no red
+
+Column 1
+Column 2
+This second part is just to ensure we don't assert
+
+Column 1
+Column 2

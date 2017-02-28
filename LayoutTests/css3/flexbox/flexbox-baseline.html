@@ -5,20 +5,20 @@ body {
     margin: 0;
 }
 .inline-flexbox {
-    display: -webkit-inline-flex;
+    display: inline-flex;
     background-color: lightgrey;
     margin-top: 5px;
 }
 .flexbox {
-    display: -webkit-flex;
+    display: flex;
     background-color: grey;
     margin-top: 10px;
 }
 .column {
-    -webkit-flex-flow: column;
+    flex-flow: column;
 }
 .column-reverse {
-    -webkit-flex-flow: column-reverse;
+    flex-flow: column-reverse;
 }
 </style>
 
@@ -30,9 +30,9 @@ of those flex items. -->
 <div>
 before text
 <div class="inline-flexbox" style="height: 50px;">
-    <div style="-webkit-align-self: flex-end">below</div>
-    <div style="-webkit-align-self: baseline; margin-top: 15px">baseline</div>
-    <div style="-webkit-align-self: flex-start">above</div>
+    <div style="align-self: flex-end">below</div>
+    <div style="align-self: baseline; margin-top: 15px">baseline</div>
+    <div style="align-self: flex-start">above</div>
 </div>
 after text
 </div>
@@ -43,9 +43,9 @@ item's baseline. -->
 <div>
 before text
 <div class="inline-flexbox" style="height: 40px">
-    <div style="-webkit-align-self: flex-end">baseline</div>
-    <div style="-webkit-align-self: baseline; -webkit-writing-mode: vertical-rl"></div>
-    <div style="-webkit-align-self: flex-start">above</div>
+    <div style="align-self: flex-end">baseline</div>
+    <div style="align-self: baseline; writing-mode: vertical-rl"></div>
+    <div style="align-self: flex-start">above</div>
 </div>
 after text
 </div>
@@ -73,7 +73,7 @@ baseline (bottom of the content box of the first item). -->
 <div>
 should align with the middle
 <div class="inline-flexbox" style="width: 40px; height: 40px">
-    <div style="-webkit-writing-mode: vertical-rl; height: 20px; width: 40px; border-bottom: 1px solid black; min-height: 0px;"></div>
+    <div style="writing-mode: vertical-rl; height: 20px; width: 40px; border-bottom: 1px solid black"></div>
 </div>
 of the grey flexbox
 </div>
@@ -111,8 +111,8 @@ baseline (bottom of the content box of the first item). -->
 <div>
 should align with the middle
 <div class="inline-flexbox column" style="width: 40px; height: 40px;">
-    <div style="-webkit-writing-mode: vertical-rl; width: 40px; height: 20px; border-bottom: 1px solid black; min-height: 0px;"></div>
-    <div style="-webkit-writing-mode: vertical-rl; width: 40px; height: 20px; min-height: 0px;"></div>
+    <div style="writing-mode: vertical-rl; width: 40px; height: 20px; border-bottom: 1px solid black"></div>
+    <div style="writing-mode: vertical-rl; width: 40px; height: 20px"></div>
 </div>
 of the grey flexbox
 </div>
@@ -143,7 +143,7 @@ after text
 before text
 <div class="inline-flexbox" style="height: 40px;">
     <div>baseline</div>
-    <div style="-webkit-align-self: baseline; margin-top: auto">below</div>
+    <div style="align-self: baseline; margin-top: auto">below</div>
 </div>
 after text
 </div>
@@ -153,7 +153,7 @@ before text
 <div style="display: inline-block">
 <div class="inline-flexbox" style="height: 40px;">
     <div>above</div>
-    <div style="-webkit-align-self: baseline; margin-top: 10px">baseline</div>
+    <div style="align-self: baseline; margin-top: 10px">baseline</div>
     <div>above</div>
 </div>
 after
@@ -205,7 +205,7 @@ as being in its initial scroll position when computing the baseline. -->
 <div>
 before text
 <div id="flexbox-with-scrollbar" class="inline-flexbox" style="height: 65px; width: 150px">
-    <div id="flexitem-with-scrollbar" style="-webkit-align-self: baseline; padding-top: 15px; height: 50px; overflow-y: scroll;">
+    <div id="flexitem-with-scrollbar" style="align-self: baseline; padding-top: 15px; height: 50px; overflow-y: scroll;">
         The baseline is based on<br>
         the non-scrolled position;<br>
         this won't line up.

@@ -8,13 +8,13 @@
     display: inline-block;
 }
 .flexbox {
-    display: -webkit-flex;
+    display: flex;
     background-color: grey;
     width: 100px;
     height: 100px;
 }
 .flexbox > * {
-    -webkit-flex: none;
+    flex: none;
 }
 .title {
     margin-top: 1em;
@@ -26,28 +26,25 @@
     direction: rtl;
 }
 .horizontal-tb {
-    -webkit-writing-mode: horizontal-tb;
-}
-.horizontal-bt {
-    -webkit-writing-mode: horizontal-bt;
+    writing-mode: horizontal-tb;
 }
 .vertical-rl {
-    -webkit-writing-mode: vertical-rl;
+    writing-mode: vertical-rl;
 }
 .vertical-lr {
-    -webkit-writing-mode: vertical-lr;
+    writing-mode: vertical-lr;
 }
 .row {
-    -webkit-flex-flow: row;
+    flex-flow: row;
 }
 .row-reverse {
-    -webkit-flex-flow: row-reverse;
+    flex-flow: row-reverse;
 }
 .column {
-    -webkit-flex-flow: column;
+    flex-flow: column;
 }
 .column-reverse {
-    -webkit-flex-flow: column-reverse;
+    flex-flow: column-reverse;
 }
 .physical {
     margin: 10px 20px 30px 40px;
@@ -77,8 +74,11 @@
     background-color: red;
 }
 </style>
-<script src="../../resources/check-layout.js"></script>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../resources/check-layout-th.js"></script>
 <body onload="checkLayout('.flexbox')">
+<div id=log></div>
 
 <script>
 function positionAsString(position)
@@ -101,7 +101,7 @@ var physicalExpectations = {
             flexbox: physicalFlexBoxPosition,
             column: [20, 20, 80, 23],
             row: [20, 20, 80, 23],
-            'column-reverse': [20, 20, 80, 23],
+            'column-reverse': [20, 20, 80, 73],
             'row-reverse': [20, 20, 80, 23],
         },
         ltr : {
@@ -109,26 +109,8 @@ var physicalExpectations = {
             flexbox: physicalFlexBoxPosition,
             column: [20, 20, 80, 23],
             row: [20, 20, 80, 23],
-            'column-reverse': [20, 20, 80, 23],
+            'column-reverse': [20, 20, 80, 73],
             'row-reverse': [20, 20, 80, 23],
-        }
-    },
-    'horizontal-bt': {
-        rtl: {
-            container: physicalContainerSize,
-            flexbox: physicalFlexBoxPosition,
-            column: [20, 20, 80, 73],
-            row: [20, 20, 80, 73],
-            'column-reverse': [20, 20, 80, 73],
-            'row-reverse': [20, 20, 80, 73],
-        },
-        ltr : {
-            container: physicalContainerSize,
-            flexbox: physicalFlexBoxPosition,
-            column: [20, 20, 80, 73],
-            row: [20, 20, 80, 73],
-            'column-reverse': [20, 20, 80, 73],
-            'row-reverse': [20, 20, 80, 73],
         }
     },
     'vertical-lr': {
@@ -137,7 +119,7 @@ var physicalExpectations = {
             flexbox: physicalFlexBoxPosition,
             column: [20, 20, 80, 73],
             row: [20, 20, 80, 73],
-            'column-reverse': [20, 20, 40, 73],
+            'column-reverse': [20, 20, 80, 73],
             'row-reverse': [20, 20, 80, 23],
         },
         ltr : {
@@ -145,7 +127,7 @@ var physicalExpectations = {
             flexbox: physicalFlexBoxPosition,
             column: [20, 20, 80, 23],
             row: [20, 20, 80, 23],
-            'column-reverse': [20, 20, 40, 23],
+            'column-reverse': [20, 20, 80, 23],
             'row-reverse': [20, 20, 80, 73],
         }
     },
@@ -155,7 +137,7 @@ var physicalExpectations = {
             flexbox: physicalFlexBoxPosition,
             column: [20, 20, 80, 73],
             row: [20, 20, 80, 73],
-            'column-reverse': [20, 20, 48, 73],
+            'column-reverse': [20, 20, 80, 73],
             'row-reverse': [20, 20, 80, 23],
         },
         ltr : {
@@ -163,7 +145,7 @@ var physicalExpectations = {
             flexbox: physicalFlexBoxPosition,
             column: [20, 20, 80, 23],
             row: [20, 20, 80, 23],
-            'column-reverse': [20, 20, 48, 23],
+            'column-reverse': [20, 20, 80, 23],
             'row-reverse': [20, 20, 80, 73],
         }
     }
@@ -176,7 +158,7 @@ var logicalExpectations = {
             flexbox: [20, 10],
             column: [20, 20, 22, 73],
             row: [20, 20, 22, 73],
-            'column-reverse': [20, 20, 92, 10],
+            'column-reverse': [20, 20, 22, 73],
             'row-reverse': [20, 20, 22, 73],
         },
         ltr : {
@@ -184,26 +166,8 @@ var logicalExpectations = {
             flexbox: [40, 10],
             column: [20, 20, 118, 73],
             row: [20, 20, 118, 73],
-            'column-reverse': [20, 20, 48, 10],
+            'column-reverse': [20, 20, 118, 73],
             'row-reverse': [20, 20, 118, 73],
-        }
-    },
-    'horizontal-bt': {
-        rtl: {
-            container: [160, 140],
-            flexbox: [20, 30],
-            column: [20, 20, 22, 47],
-            row: [20, 20, 22, 110],
-            'column-reverse': [20, 20, 92, 47],
-            'row-reverse': [20, 20, 22, 110],
-        },
-        ltr : {
-            container: [160, 140],
-            flexbox: [40, 30],
-            column: [20, 20, 118, 47],
-            row: [20, 20, 118, 110],
-            'column-reverse': [20, 20, 48, 47],
-            'row-reverse': [20, 20, 118, 110],
         }
     },
     'vertical-lr': {
@@ -212,7 +176,7 @@ var logicalExpectations = {
             flexbox: [10, 20],
             column: [20, 20, 73, 22],
             row: [20, 20, 73, 22],
-            'column-reverse': [20, 20, 23, 92],
+            'column-reverse': [20, 20, 73, 22],
             'row-reverse': [20, 20, 73, 22],
         },
         ltr : {
@@ -220,7 +184,7 @@ var logicalExpectations = {
             flexbox: [10, 40],
             column: [20, 20, 73, 118],
             row: [20, 20, 73, 118],
-            'column-reverse': [20, 20, 23, 48],
+            'column-reverse': [20, 20, 73, 118],
             'row-reverse': [20, 20, 73, 118],
         }
     },
@@ -229,23 +193,23 @@ var logicalExpectations = {
             container: [140, 160],
             flexbox: [30, 20],
             column: [20, 20, 47, 22],
-            row: [20, 20, 110, 22],
-            'column-reverse': [20, 20, 47, 92],
-            'row-reverse': [20, 20, 110, 22],
+            row: [20, 20, 47, 22],
+            'column-reverse': [20, 20, 47, 22],
+            'row-reverse': [20, 20, 47, 22],
         },
         ltr : {
             container: [140, 160],
             flexbox: [30, 40],
             column: [20, 20, 47, 118],
-            row: [20, 20, 110, 118],
-            'column-reverse': [20, 20, 47, 48],
-            'row-reverse': [20, 20, 110, 118],
+            row: [20, 20, 47, 118],
+            'column-reverse': [20, 20, 47, 118],
+            'row-reverse': [20, 20, 47, 118],
         }
     }
 }
 
-var writingModes = ['horizontal-tb', 'horizontal-bt', 'vertical-lr', 'vertical-rl'];
-var flexFlows = ['row', 'column', 'row-reverse', 'row-reverse'];
+var writingModes = ['horizontal-tb', 'vertical-lr', 'vertical-rl'];
+var flexFlows = ['row', 'column', 'row-reverse', 'column-reverse'];
 var directions = ['ltr', 'rtl'];
 var marginTypes = ['physical', 'logical'];
 

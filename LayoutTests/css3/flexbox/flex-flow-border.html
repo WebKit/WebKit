@@ -8,7 +8,7 @@
     display: inline-block;
 }
 .flexbox {
-    display: -webkit-flex;
+    display: flex;
     background-color: grey;
     width: 100px;
     height: 100px;
@@ -28,28 +28,25 @@
     direction: rtl;
 }
 .horizontal-tb {
-    -webkit-writing-mode: horizontal-tb;
-}
-.horizontal-bt {
-    -webkit-writing-mode: horizontal-bt;
+    writing-mode: horizontal-tb;
 }
 .vertical-rl {
-    -webkit-writing-mode: vertical-rl;
+    writing-mode: vertical-rl;
 }
 .vertical-lr {
-    -webkit-writing-mode: vertical-lr;
+    writing-mode: vertical-lr;
 }
 .row {
-    -webkit-flex-flow: row;    
+    flex-flow: row;
 }
 .row-reverse {
-    -webkit-flex-flow: row-reverse;
+    flex-flow: row-reverse;
 }
 .column {
-    -webkit-flex-flow: column;
+    flex-flow: column;
 }
 .column-reverse {
-    -webkit-flex-flow: column-reverse;
+    flex-flow: column-reverse;
 }
 .physical {
     border-width: 10px 20px 30px 40px;
@@ -79,8 +76,11 @@
     background-color: red;
 }
 </style>
-<script src="../../resources/check-layout.js"></script>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../resources/check-layout-th.js"></script>
 <body onload="checkLayout('.flexbox')">
+<div id=log></div>
 
 <script>
 function positionAsString(position)
@@ -114,20 +114,6 @@ var physicalExpectations = {
             position: physicalFlexBoxClientPosition,
             column: [20, 70, 48, 23],
             row: [90, 20, 48, 23]
-        }
-    },
-    'horizontal-bt': {
-        rtl: {
-            size: physicalFlexBoxOffsetSize,
-            position: physicalFlexBoxClientPosition,
-            column: [20, 70, 118, 23],
-            row: [90, 20, 48, 73]
-        },
-        ltr : {
-            size: physicalFlexBoxOffsetSize,
-            position: physicalFlexBoxClientPosition,
-            column: [20, 70, 48, 23],
-            row: [90, 20, 48, 73]
         }
     },
     'vertical-lr': {
@@ -175,20 +161,6 @@ var logicalExpectations = {
             row: [90, 20, 48, 23]
         }
     },
-    'horizontal-bt': {
-        rtl: {
-            size: [160, 140],
-            position: [20, 30],
-            column: [20, 70, 92, 47],
-            row: [90, 20, 22, 97]
-        },
-        ltr : {
-            size: [160, 140],
-            position: [40, 30],
-            column: [20, 70, 48, 47],
-            row: [90, 20, 48, 97]
-        }
-    },
     'vertical-lr': {
         rtl: {
             size: [140, 160],
@@ -219,7 +191,7 @@ var logicalExpectations = {
     }
 }
 
-var writingModes = ['horizontal-tb', 'horizontal-bt', 'vertical-lr', 'vertical-rl'];
+var writingModes = ['horizontal-tb', 'vertical-lr', 'vertical-rl'];
 var flexFlows = ['row', 'column', 'row-reverse', 'column-reverse'];
 var directions = ['rtl', 'ltr'];
 var marginTypes = ['physical', 'logical'];
@@ -243,7 +215,7 @@ writingModes.forEach(function(writingMode) {
                 container.setAttribute('data-expected-height', expectations.size[1]);
 
                 container.innerHTML = '\n<div class="flexbox ' + flexboxClassName + '" ' + positionAsString(expectations.position) + ' ' + offsetSizeAsString(expectations.size) + '>\n' +
-                    '<div style="-webkit-flex: 1 auto; height: 20px; width: 20px;" ' + asString(expectations[flexFlow.replace("-reverse", "")]) + '></div>\n' +
+                    '<div style="flex: 1 auto; height: 20px; width: 20px;" ' + asString(expectations[flexFlow.replace("-reverse", "")]) + '></div>\n' +
                 '</div>\n';
 
                 document.body.appendChild(container);   

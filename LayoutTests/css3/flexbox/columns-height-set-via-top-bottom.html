@@ -9,7 +9,7 @@
     border: 2px solid orange;
 }
 .flexbox {
-    -webkit-flex-direction: column;
+    flex-direction: column;
     position: absolute;
     top: 0;
     right: 0;
@@ -24,20 +24,23 @@
     background-color: lightgreen;
 }
 </style>
-<script src="../../resources/check-layout.js"></script>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../resources/check-layout-th.js"></script>
 <body onload="checkLayout('.flexbox')">
+<div id=log></div>
 
 <div class="container">
     <div data-expected-height=100 class="flexbox column">
         <div data-expected-height=30 data-expected-width=80 style="height: 30px"></div>
-        <div data-expected-height=50 data-expected-width=80 style="-webkit-flex: 1; -moz-flex: 1"></div>
+        <div data-expected-height=50 data-expected-width=80 style="flex: 1;"></div>
     </div>
 </div>
 
 <div class="container">
     <div class="flexbox column wrap">
         <div data-expected-height=50 data-expected-width=40 style="height: 50px"></div>
-        <div data-expected-height=80 data-expected-width=40 style="-webkit-flex: 1 50px; -moz-flex: 1 50px"></div>
+        <div data-expected-height=80 data-expected-width=40 style="flex: 1 50px;"></div>
     </div>
 </div>
 </body>

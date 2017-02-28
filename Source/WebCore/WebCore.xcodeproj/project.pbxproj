@@ -3664,6 +3664,7 @@
 		949C77091D6E498700C0DE4F /* CSSParserObserverWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 949C77071D6E48ED00C0DE4F /* CSSParserObserverWrapper.h */; };
 		949C770B1D6E49ED00C0DE4F /* CSSParserObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = 949C770A1D6E49C300C0DE4F /* CSSParserObserver.h */; };
 		94D4AC621DC24C8E0080F02D /* CSSCustomPropertyValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94D4AC611DC24C810080F02D /* CSSCustomPropertyValue.cpp */; };
+		94DD79741E54E3D10058FB80 /* FlexibleBoxAlgorithm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94DD79721E54E3A20058FB80 /* FlexibleBoxAlgorithm.cpp */; };
 		94DE5C7E1D78CB2E00164F2A /* CSSParserIdioms.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94DE5C7D1D78CB2500164F2A /* CSSParserIdioms.cpp */; };
 		94DE5C811D7F3A1400164F2A /* CSSAtRuleID.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94DE5C7F1D7F39D000164F2A /* CSSAtRuleID.cpp */; };
 		94DE5C821D7F3A1400164F2A /* CSSAtRuleID.h in Headers */ = {isa = PBXBuildFile; fileRef = 94DE5C801D7F39D000164F2A /* CSSAtRuleID.h */; };
@@ -11438,6 +11439,8 @@
 		949C77071D6E48ED00C0DE4F /* CSSParserObserverWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CSSParserObserverWrapper.h; path = parser/CSSParserObserverWrapper.h; sourceTree = "<group>"; };
 		949C770A1D6E49C300C0DE4F /* CSSParserObserver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CSSParserObserver.h; path = parser/CSSParserObserver.h; sourceTree = "<group>"; };
 		94D4AC611DC24C810080F02D /* CSSCustomPropertyValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSCustomPropertyValue.cpp; sourceTree = "<group>"; };
+		94DD79721E54E3A20058FB80 /* FlexibleBoxAlgorithm.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FlexibleBoxAlgorithm.cpp; sourceTree = "<group>"; };
+		94DD79731E54E3A20058FB80 /* FlexibleBoxAlgorithm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FlexibleBoxAlgorithm.h; sourceTree = "<group>"; };
 		94DE5C7D1D78CB2500164F2A /* CSSParserIdioms.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CSSParserIdioms.cpp; path = parser/CSSParserIdioms.cpp; sourceTree = "<group>"; };
 		94DE5C7F1D7F39D000164F2A /* CSSAtRuleID.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CSSAtRuleID.cpp; path = parser/CSSAtRuleID.cpp; sourceTree = "<group>"; };
 		94DE5C801D7F39D000164F2A /* CSSAtRuleID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CSSAtRuleID.h; path = parser/CSSAtRuleID.h; sourceTree = "<group>"; };
@@ -24215,6 +24218,8 @@
 				31313F641443B35E006E2A90 /* FilterEffectRenderer.h */,
 				A8CFF0480A154F09000A4234 /* FixedTableLayout.cpp */,
 				A8CFF04A0A154F09000A4234 /* FixedTableLayout.h */,
+				94DD79721E54E3A20058FB80 /* FlexibleBoxAlgorithm.cpp */,
+				94DD79731E54E3A20058FB80 /* FlexibleBoxAlgorithm.h */,
 				9A528E8117D7F52F00AA9518 /* FloatingObjects.cpp */,
 				9A528E8217D7F52F00AA9518 /* FloatingObjects.h */,
 				D72F6D77153159A3001EE44E /* FlowThreadController.cpp */,
@@ -29909,6 +29914,7 @@
 				1C26497A0D7E248A00BD10F2 /* DocumentLoaderMac.cpp in Sources */,
 				CE057FA51220731100A476D5 /* DocumentMarkerController.cpp in Sources */,
 				14947FFD12F80CD200A0F631 /* DocumentOrderedMap.cpp in Sources */,
+				94DD79741E54E3D10058FB80 /* FlexibleBoxAlgorithm.cpp in Sources */,
 				A8C2280E11D4A59700D5A7D3 /* DocumentParser.cpp in Sources */,
 				4A4F48A916B0DFC000EDBB29 /* DocumentRuleSets.cpp in Sources */,
 				AD6E71AC1668899D00320C13 /* DocumentSharedObjectPool.cpp in Sources */,

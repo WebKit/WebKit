@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<style>
+body {
+  position: relative;
+  width: 800px;
+  height: 600px;
+}
+
+#container {
+  background-color: red;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+#top-bar {
+  background-color: green;
+  height: 20%;
+}
+
+#content {
+  background-color: blue;
+  flex-basis: 100%;
+}
+</style>
+
+
+<div id="container">
+  <div id="top-bar">
+  Tests that percentage heights get resolved correctly when the flexbox is
+  </div>
+  <div id="content">
+  absolutely positioned without an explicit height. You should see no red.
+  </div>
+</div>
+
+

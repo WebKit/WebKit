@@ -30,20 +30,20 @@
     direction: rtl;
 }
 .horizontal-tb {
-    -webkit-writing-mode: horizontal-tb;
-}
-.horizontal-bt {
-    -webkit-writing-mode: horizontal-bt;
+    writing-mode: horizontal-tb;
 }
 .vertical-rl {
-    -webkit-writing-mode: vertical-rl;
+    writing-mode: vertical-rl;
 }
 .vertical-lr {
-    -webkit-writing-mode: vertical-lr;
+    writing-mode: vertical-lr;
 }
 </style>
-<script src="../../resources/check-layout.js"></script>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../resources/check-layout-th.js"></script>
 <body onload="checkLayout('.flexbox')">
+<div id=log></div>
 
 <script>
 function positionAsString(position)
@@ -57,12 +57,6 @@ var expectations = {
         'row-reverse': { rtl: [0, -10], ltr: [-10, -10]},
         'column': { rtl: [0, 0], ltr: [-10, 0]},
         'column-reverse': { rtl: [0, -10], ltr: [-10, -10]}
-    },
-    'horizontal-bt': {
-        'row': { rtl: [-10, 0], ltr: [0, 0]},
-        'row-reverse': { rtl: [0, 0], ltr: [-10, 0]},
-        'column': { rtl: [0, -10], ltr: [-10, -10]},
-        'column-reverse': { rtl: [0, 0], ltr: [-10, 0]}
     },
     'vertical-lr': {
         'row': { rtl: [-10, -10], ltr: [-10, 0]},
@@ -78,7 +72,7 @@ var expectations = {
     }
 }
 
-var writingModes = ['horizontal-tb', 'horizontal-bt', 'vertical-lr', 'vertical-rl'];
+var writingModes = ['horizontal-tb', 'vertical-lr', 'vertical-rl'];
 var flexFlows = ['row', 'column', 'row-reverse', 'column-reverse'];
 var directions = ['ltr', 'rtl'];
 

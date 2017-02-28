@@ -86,6 +86,7 @@
 #include "OverlapTestRequestClient.h"
 #include "Page.h"
 #include "PlatformMouseEvent.h"
+#include "RenderFlexibleBox.h"
 #include "RenderFlowThread.h"
 #include "RenderGeometryMap.h"
 #include "RenderInline.h"
@@ -3520,6 +3521,10 @@ void RenderLayer::updateScrollbarsAfterLayout()
                 m_inOverflowRelayout = false;
             }
         }
+        
+        RenderObject* parent = renderer().parent();
+        if (parent && parent->isFlexibleBox() && renderer().isBox())
+            downcast<RenderFlexibleBox>(parent)->clearCachedMainSizeForChild(*renderBox());
     }
 
     // Set up the range (and page step/line step).

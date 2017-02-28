@@ -117,6 +117,8 @@ public:
     bool tracksAreWiderThanMinTrackBreadth() const;
 #endif
 
+    SizingOperation sizingOperation() const { return m_sizingOperation; }
+
 private:
     GridTrackSize gridTrackSize(GridTrackSizingDirection direction, unsigned translatedIndex) const { return gridTrackSize(direction, translatedIndex, m_sizingOperation); }
     const GridTrackSize& rawGridTrackSize(GridTrackSizingDirection, unsigned translatedIndex) const;

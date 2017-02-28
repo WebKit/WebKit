@@ -1,0 +1,36 @@
+Check if box-orient is working in <button>. See https://bugs.webkit.org/show_bug.cgi?id=25406
+
+reference of horizontal button:
+hello world
+
+reference of vertical button:
+hello
+world
+
+default:
+
+hello
+world
+horizontal:
+
+hello
+world
+vertical:
+
+hello
+world
+default => vertical:
+
+hello
+world
+vertical => horizontal:
+
+hello
+world
+
+PASS default height 
+PASS horizontal height 
+PASS vertical height 
+PASS toHorizontal height 
+PASS toVertical height 
+

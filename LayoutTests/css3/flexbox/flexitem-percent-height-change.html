@@ -2,7 +2,9 @@
 <html>
 <head>
 <link rel="stylesheet" href="resources/flexbox.css">
-<script src="../../resources/check-layout.js"></script>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../resources/check-layout-th.js"></script>
 <script>
 window.onload = function()
 {
@@ -15,6 +17,7 @@ window.onload = function()
 </script>
 </head>
 <body>
+<div id=log></div>
 <div id="outer" data-expected-height="100">
   <div class="flexbox" data-expected-height="100" style="height: 100%">
     <div class="flex-one" data-expected-height="100" style="overflow-y: auto; height: 100%">

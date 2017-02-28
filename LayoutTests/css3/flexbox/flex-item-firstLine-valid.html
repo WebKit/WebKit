@@ -6,8 +6,11 @@
     p::first-line { line-height: 100px;}
 </style>
 
-<script src="../../resources/check-layout.js"></script>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../resources/check-layout-th.js"></script>
 <body onload="checkLayout('.flexbox')">
+<div id=log></div>
 <p>This test flex item should ignore flex container's firstLine pseudo element, but flex item's firstLine should be valid.</p>
 
 <div class="flexbox">

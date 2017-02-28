@@ -5,7 +5,7 @@ body {
     margin: 0;
 }
 .flexbox {
-    display: -webkit-flex;
+    display: flex;
     background-color: #aaa;
     position: relative;
 }
@@ -21,24 +21,24 @@ body {
     height: 200px;
 }
 .row div {
-    -webkit-flex: 1 auto;
+    flex: 1 auto;
 }
 .noflex .row :nth-child(1) {
     width: 50px;
-    -webkit-flex: none;
+    flex: none;
 }
 
 .column {
-    -webkit-flex-direction: column;
+    flex-direction: column;
     width: 200px;
     height: 200px;
 }
 .column div {
-    -webkit-flex: 1 auto;
+    flex: 1 auto;
 }
 .noflex .column :nth-child(1) {
     height: 50px;
-    -webkit-flex: none;
+    flex: none;
 }
 
 </style>
@@ -49,8 +49,11 @@ function runTest()
     checkLayout('.flexbox');
 }
 </script>
-<script src="../../resources/check-layout.js"></script>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../resources/check-layout-th.js"></script>
 <body onload="runTest()">
+<div id=log></div>
 
 <div class="flexbox row">
     <div data-expected-width="50"></div>

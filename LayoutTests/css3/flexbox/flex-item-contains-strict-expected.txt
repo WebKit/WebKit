@@ -1,0 +1,44 @@
+Stretched:
+
+Column
+ 
+Row
+ 
+Column
+ 
+Row
+Flex-start:
+
+Column
+ 
+Row
+ 
+Column
+ 
+Row
+
+PASS .inline-flex 1 
+PASS .inline-flex 2 
+FAIL .inline-flex 3 assert_equals: 
+<div class="inline-flex" style="align-items: flex-start;" data-expected-width="0" data-expected-height="0">
+  <div style="contain: strict;" data-expected-width="0" data-expected-height="0">Row</div>
+</div>
+width expected 0 but got 30
+FAIL .inline-flex 4 assert_equals: 
+<div class="inline-flex" style="flex-direction: column; align-items: flex-start;" data-expected-width="0" data-expected-height="0">
+  <div style="contain: strict;" data-expected-width="0" data-expected-height="0">Column</div>
+</div>
+width expected 0 but got 52
+PASS .inline-flex 5 
+PASS .inline-flex 6 
+FAIL .inline-flex 7 assert_equals: 
+<div class="inline-flex" data-expected-width="0" data-expected-height="0">
+  <div style="contain: strict;" data-expected-width="0" data-expected-height="0">Row</div>
+</div>
+width expected 0 but got 30
+FAIL .inline-flex 8 assert_equals: 
+<div class="inline-flex" style="display: inline-flex; flex-direction: column;" data-expected-width="0" data-expected-height="0">
+  <div style="contain: strict;" data-expected-width="0" data-expected-height="0">Column</div>
+</div>
+width expected 0 but got 52
+

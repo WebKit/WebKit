@@ -62,7 +62,7 @@ public:
 
     // Required by GridTrackSizingAlgorithm. Keep them under control.
     bool isOrthogonalChild(const RenderBox&) const;
-    LayoutUnit guttersSize(const Grid&, GridTrackSizingDirection, unsigned startLine, unsigned span) const;
+    LayoutUnit guttersSize(const Grid&, GridTrackSizingDirection, unsigned startLine, unsigned span, SizingOperation) const;
 private:
     const char* renderName() const override;
     bool isRenderGrid() const override { return true; }
@@ -118,7 +118,6 @@ private:
     void applyStretchAlignmentToTracksIfNeeded(GridTrackSizingDirection);
 
     void paintChildren(PaintInfo& forSelf, const LayoutPoint& paintOffset, PaintInfo& forChild, bool usePrintRect) override;
-    bool needToStretchChildLogicalHeight(const RenderBox&) const;
     LayoutUnit marginLogicalHeightForChild(const RenderBox&) const;
     LayoutUnit computeMarginLogicalSizeForChild(GridTrackSizingDirection, const RenderBox&) const;
     LayoutUnit availableAlignmentSpaceForChildBeforeStretching(LayoutUnit gridAreaBreadthForChild, const RenderBox&) const;
@@ -140,7 +139,7 @@ private:
     std::optional<int> inlineBlockBaseline(LineDirectionMode) const final;
     bool isInlineBaselineAlignedChild(const RenderBox&) const;
 
-    LayoutUnit gridGapForDirection(GridTrackSizingDirection) const;
+    LayoutUnit gridGapForDirection(GridTrackSizingDirection, SizingOperation) const;
 
     unsigned numTracks(GridTrackSizingDirection, const Grid&) const;
 

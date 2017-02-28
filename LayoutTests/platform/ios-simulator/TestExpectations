@@ -2886,3 +2886,17 @@ imported/w3c/web-platform-tests/fetch/api/redirect/redirect-location.html [ Fail
 [ Debug ] fast/frames/exponential-frames.html [ Skip ]
 
 webkit.org/b/168053 pageoverlay/overlay-remove-reinsert-view.html [ Pass Failure ]
+
+# Skip some flexbox tests that aren't designed to run in smaller viewports
+css3/flexbox/overflow-auto-resizes-correctly.html [ Skip ]
+css3/flexbox/flexbox-height-with-overflow-auto.html [ Skip ]
+css3/flexbox/flex-flow-auto-margins-no-available-space-assert.html [ Skip ]
+css3/flexbox/flex-one-sets-flex-basis-to-zero-px.html [ Skip ]
+
+# Skip test because checkboxes/radio buttons don't behave the same on iOS
+fast/replaced/table-percent-height.html [ Skip ]
+fast/table/003.html [ Skip ]
+
+# Bundle upload is not supported on iOS
+fast/files/filereader-zip-bundle-using-open-panel.html [ Skip ]
+http/tests/local/fileapi/upload-zip-bundle-as-blob-using-open-panel.html [ Skip ]

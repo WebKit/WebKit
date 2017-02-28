@@ -4,14 +4,14 @@
 .flexbox {
     width: 100px;
     height: 100px;
-    display: -webkit-flex;
+    display: flex;
     background-color: #aaa;
     position: relative;
 }
 .flexbox > div {
     height: 110px;
     width: 60px;
-    -webkit-flex: none;
+    flex: none;
 }
 .vertical > div {
     width: 110px;
@@ -30,67 +30,67 @@
     direction: rtl;
 }
 .horizontal-tb {
-    -webkit-writing-mode: horizontal-tb;
-}
-.horizontal-bt {
-    -webkit-writing-mode: horizontal-bt;
+    writing-mode: horizontal-tb;
 }
 .vertical-rl {
-    -webkit-writing-mode: vertical-rl;
+    writing-mode: vertical-rl;
 }
 .vertical-lr {
-    -webkit-writing-mode: vertical-lr;
+    writing-mode: vertical-lr;
 }
 .row-reverse {
-    -webkit-flex-flow: row-reverse;
+    flex-flow: row-reverse;
 }
 .column {
-    -webkit-flex-flow: column;
+    flex-flow: column;
 }
 .column-reverse {
-    -webkit-flex-flow: column-reverse;
+    flex-flow: column-reverse;
 }
 </style>
-<script src="../../resources/check-layout.js"></script>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../resources/check-layout-th.js"></script>
 <body onload="checkLayout('.flexbox')">
+<div id=log></div>
 
-<div class="flexbox" style="-webkit-align-items: center; -webkit-justify-content: center;">
+<div class="flexbox" style="align-items: center; justify-content: center;">
     <div data-offset-x="-10" data-offset-y="-5"></div>
     <div data-offset-x="50" data-offset-y="-5"></div>
 </div>
 
-<div class="flexbox row-reverse" style="-webkit-align-items: center; -webkit-justify-content: center;">
+<div class="flexbox row-reverse" style="align-items: center; justify-content: center;">
     <div data-offset-x="50" data-offset-y="-5"></div>
     <div data-offset-x="-10" data-offset-y="-5"></div>
 </div>
 
-<div class="flexbox column vertical" style="-webkit-align-items: center; -webkit-justify-content: center;">
+<div class="flexbox column vertical" style="align-items: center; justify-content: center;">
     <div data-offset-x="-5" data-offset-y="-10"></div>
     <div data-offset-x="-5" data-offset-y="50"></div>
 </div>
 
-<div class="flexbox column-reverse vertical" style="-webkit-align-items: center; -webkit-justify-content: center;">
+<div class="flexbox column-reverse vertical" style="align-items: center; justify-content: center;">
     <div data-offset-x="-5" data-offset-y="50"></div>
     <div data-offset-x="-5" data-offset-y="-10"></div>
 </div>
 
-<div class="flexbox" style="-webkit-align-items: center; -webkit-justify-content: space-around;">
+<div class="flexbox" style="align-items: center; justify-content: space-around;">
     <div data-offset-x="-10" data-offset-y="-5"></div>
     <div data-offset-x="50" data-offset-y="-5"></div>
 </div>
 
-<div class="flexbox" style="-webkit-align-items: flex-start; -webkit-justify-content: flex-start;">
+<div class="flexbox" style="align-items: flex-start; justify-content: flex-start;">
     <div data-offset-x=0 data-offset-y=0></div>
     <div data-offset-x=60 data-offset-y=0></div>
 </div>
 
-<div class="flexbox" style="-webkit-align-items: flex-start; -webkit-justify-content: space-between;">
+<div class="flexbox" style="align-items: flex-start; justify-content: space-between;">
     <div data-offset-x=0 data-offset-y=0></div>
     <div data-offset-x=60 data-offset-y=0></div>
 </div>
 
 <script>
-var writingModes = ['horizontal-tb', 'horizontal-bt', 'vertical-lr', 'vertical-rl'];
+var writingModes = ['horizontal-tb', 'vertical-lr', 'vertical-rl'];
 var flexFlows = ['row', 'column', 'row-reverse', 'column-reverse'];
 var directions = ['ltr', 'rtl'];
 
@@ -123,7 +123,7 @@ writingModes.forEach(function(writingMode) {
                     isReverse = direction == 'ltr';
                     break;
                 case 'column':
-                    isReverse = writingMode == 'vertical-rl' || writingMode == 'horizontal-bt';
+                    isReverse = writingMode == 'vertical-rl';
                     break;
                 case 'column-reverse':
                     isReverse = writingMode == 'vertical-lr' || writingMode == 'horizontal-tb';
@@ -140,7 +140,7 @@ writingModes.forEach(function(writingMode) {
             }
 
             var container = document.createElement('div');
-            container.innerHTML = '<div class="flexbox ' + flexboxClassName + '" style="-webkit-align-items: center; -webkit-justify-content: center;">\n' +
+            container.innerHTML = '<div class="flexbox ' + flexboxClassName + '" style="align-items: center; justify-content: center;">\n' +
                 '<div ' + firstChildExpected + '></div>\n' +
                 '<div ' + lastChildExpected + '></div>\n' +
             '</div>';

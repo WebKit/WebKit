@@ -8,13 +8,13 @@
     display: inline-block;
 }
 .flexbox {
-    display: -webkit-flex;
+    display: flex;
     background-color: grey;
     width: 100px;
     height: 100px;
 }
 .flexbox > * {
-    -webkit-flex: none;
+    flex: none;
 }
 .title {
     margin-top: 1em;
@@ -26,28 +26,25 @@
     direction: rtl;
 }
 .horizontal-tb {
-    -webkit-writing-mode: horizontal-tb;
-}
-.horizontal-bt {
-    -webkit-writing-mode: horizontal-bt;
+    writing-mode: horizontal-tb;
 }
 .vertical-rl {
-    -webkit-writing-mode: vertical-rl;
+    writing-mode: vertical-rl;
 }
 .vertical-lr {
-    -webkit-writing-mode: vertical-lr;
+    writing-mode: vertical-lr;
 }
 .row {
-    -webkit-flex-flow: row;    
+    flex-flow: row;
 }
 .row-reverse {
-    -webkit-flex-flow: row-reverse;
+    flex-flow: row-reverse;
 }
 .column {
-    -webkit-flex-flow: column;
+    flex-flow: column;
 }
 .column-reverse {
-    -webkit-flex-flow: column-reverse;
+    flex-flow: column-reverse;
 }
 .flexbox > :nth-child(1) {
     background-color: blue;
@@ -59,8 +56,11 @@
     background-color: red;
 }
 </style>
-<script src="../../resources/check-layout.js"></script>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../resources/check-layout-th.js"></script>
 <body onload="checkLayout('.flexbox')">
+<div id=log></div>
 
 <script>
 function asString(position)
@@ -85,24 +85,6 @@ var expectations = {
         'row-reverse': {
             rtl: [[0, 0], [20, 0]],
             ltr: [[80, 0], [60, 0]]
-        }
-    },
-    'horizontal-bt': {
-        column: {
-            rtl: [[80, 80], [80, 60]],
-            ltr: [[0, 80], [0, 60]]
-        },
-        'column-reverse': {
-            rtl: [[80, 0], [80, 20]],
-            ltr: [[0, 0], [0, 20]]
-        },
-        row: {
-            rtl: [[80, 80], [60, 80]],
-            ltr: [[0, 80], [20, 80]]
-        },
-        'row-reverse': {
-            rtl: [[0, 80], [20, 80]],
-            ltr: [[80, 80], [60, 80]]
         }
     },
     'vertical-lr': {
@@ -143,25 +125,9 @@ var expectations = {
     }
 };
 
-var writingModes = ['horizontal-tb', 'horizontal-bt', 'vertical-lr', 'vertical-rl'];
+var writingModes = ['horizontal-tb', 'vertical-lr', 'vertical-rl'];
 var flexFlows = ['row', 'column', 'row-reverse', 'column-reverse'];
 var directions = ['rtl', 'ltr'];
-
-function physicalWritingMode(writingMode, flexFlow, direction)
-{
-    if (flexFlow.indexOf('column') == -1)
-        return writingMode;
-
-    var isReverse = flexFlow.indexOf('reverse') != -1;
-    switch (writingMode) {
-    case 'horizontal-tb':
-    case 'horizontal-bt':
-        return isReverse ? 'vertical-rl' : 'vertical-lr';
-    case 'vertical-lr':
-    case 'vertical-rl':
-        return isReverse ? 'horizontal-bt' : 'horizontal-tb';
-    }
-}
 
 writingModes.forEach(function(writingMode) {
     flexFlows.forEach(function(flexFlow) {

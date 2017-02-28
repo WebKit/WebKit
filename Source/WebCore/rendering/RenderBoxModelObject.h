@@ -322,6 +322,8 @@ private:
         float thickness, float drawThickness, BoxSide, const RenderStyle&,
         Color, EBorderStyle, BackgroundBleedAvoidance, bool includeLogicalLeftEdge, bool includeLogicalRightEdge);
     void paintMaskForTextFillBox(ImageBuffer*, const IntRect&, InlineFlowBox*, const LayoutRect&);
+    
+    RenderBlock* containingBlockForAutoHeightDetection(Length logicalHeight) const;
 };
 
 } // namespace WebCore

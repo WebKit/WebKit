@@ -213,8 +213,7 @@ bool RenderStyle::isCSSGridLayoutEnabled()
 
 static StyleSelfAlignmentData resolvedSelfAlignment(const StyleSelfAlignmentData& value, ItemPosition normalValueBehavior)
 {
-    ASSERT(value.position() != ItemPositionAuto);
-    if (value.position() == ItemPositionNormal)
+    if (value.position() == ItemPositionNormal || value.position() == ItemPositionAuto)
         return { normalValueBehavior, OverflowAlignmentDefault };
     return value;
 }
@@ -224,13 +223,13 @@ StyleSelfAlignmentData RenderStyle::resolvedAlignItems(ItemPosition normalValueB
     return resolvedSelfAlignment(alignItems(), normalValueBehaviour);
 }
 
-StyleSelfAlignmentData RenderStyle::resolvedAlignSelf(const RenderStyle& parentStyle, ItemPosition normalValueBehaviour) const
+StyleSelfAlignmentData RenderStyle::resolvedAlignSelf(const RenderStyle* parentStyle, ItemPosition normalValueBehaviour) const
 {
     // The auto keyword computes to the parent's align-items computed value.
     // We will return the behaviour of 'normal' value if needed, which is specific of each layout model.
-    if (alignSelf().position() == ItemPositionAuto)
-        return parentStyle.resolvedAlignItems(normalValueBehaviour);
-    return resolvedSelfAlignment(alignSelf(), normalValueBehaviour);
+    if (!parentStyle || alignSelf().position() != ItemPositionAuto)
+        return resolvedSelfAlignment(alignSelf(), normalValueBehaviour);
+    return parentStyle->resolvedAlignItems(normalValueBehaviour);
 }
 
 StyleSelfAlignmentData RenderStyle::resolvedJustifyItems(ItemPosition normalValueBehaviour) const
@@ -243,13 +242,13 @@ StyleSelfAlignmentData RenderStyle::resolvedJustifyItems(ItemPosition normalValu
     return resolvedSelfAlignment(justifyItems(), normalValueBehaviour);
 }
 
-StyleSelfAlignmentData RenderStyle::resolvedJustifySelf(const RenderStyle& parentStyle, ItemPosition normalValueBehaviour) const
+StyleSelfAlignmentData RenderStyle::resolvedJustifySelf(const RenderStyle* parentStyle, ItemPosition normalValueBehaviour) const
 {
     // The auto keyword computes to the parent's justify-items computed value.
     // We will return the behaviour of 'normal' value if needed, which is specific of each layout model.
-    if (justifySelf().position() == ItemPositionAuto)
-        return parentStyle.resolvedJustifyItems(normalValueBehaviour);
-    return resolvedSelfAlignment(justifySelf(), normalValueBehaviour);
+    if (!parentStyle || justifySelf().position() != ItemPositionAuto)
+        return resolvedSelfAlignment(justifySelf(), normalValueBehaviour);
+    return parentStyle->resolvedJustifyItems(normalValueBehaviour);
 }
 
 static inline ContentPosition resolvedContentAlignmentPosition(const StyleContentAlignmentData& value, const StyleContentAlignmentData& normalValueBehavior)

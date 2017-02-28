@@ -1,28 +1,31 @@
 <!DOCTYPE html>
 <style>
 #test1 {
-  -webkit-flex-flow: column;
+  flex-flow: column;
 }
 #test1 {
-  -webkit-flex-flow: initial;
+  flex-flow: initial;
 }
 #test2 {
-  -webkit-flex-direction: column;
+  flex-direction: column;
 }
 #test2 {
-  -webkit-flex-direction: initial;
+  flex-direction: initial;
 }
 </style>
+<p>Tests that 'initial' is handled correctly for the flex-flow shorthand.</p>
+<div id="log"></div>
 <span id="test1"></span>
 <span id="test2"></span>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
 <script>
-description("Tests that 'initial' is handled correctly for the -webkit-flex-flow shorthand.");
-value1 = window.getComputedStyle(test1).webkitFlexDirection;
-value2 = window.getComputedStyle(test2).webkitFlexDirection;
-shouldBeEqualToString('window.getComputedStyle(test1).webkitFlexDirection', 'row');
-shouldBeEqualToString('window.getComputedStyle(test2).webkitFlexDirection', 'row');
+value1 = window.getComputedStyle(test1).flexDirection;
+value2 = window.getComputedStyle(test2).flexDirection;
+test(function() {
+assert_equals(window.getComputedStyle(test1).flexDirection, "row");
+assert_equals(window.getComputedStyle(test2).flexDirection, "row");
+}, "initial value is correct");
 if (window.testRunner)
    testRunner.dumpAsText();
 </script>
-<script src="../../resources/js-test-post.js"></script>

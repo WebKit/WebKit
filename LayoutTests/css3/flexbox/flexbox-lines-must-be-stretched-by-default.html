@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <style>
 .flex-container {
     display: flex;
@@ -18,14 +18,15 @@
     background-color:blue;
 }
 </style>
-<script src="../../resources/check-layout.js"></script>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../resources/check-layout-th.js"></script>
 <body>
-<p>'Test for BUG=647694 - align-content "stretch" is not applied by default when grid is disabled.'</p>
 <script>
 function runTest(gridEnabled)
 {
     if (window.internals)
-        window.internals.settings.setCSSGridLayoutEnabled(gridEnabled);
+        internals.settings.setCSSGridLayoutEnabled(gridEnabled);
 
     var flexContainer = document.createElement("div");
     if (gridEnabled)
@@ -60,4 +61,6 @@ function runTest(gridEnabled)
 runTest(false);
 runTest(true);
 </script>
+<p>'Test for BUG=647694 - align-content "stretch" is not applied by default when grid is disabled.'</p>
+<div id="log"></div>
 </body>

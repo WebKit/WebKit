@@ -2,16 +2,16 @@
 <html>
 <style>
 .flexbox {
-    display: -webkit-flex;
+    display: flex;
     background-color: #aaa;
     position: relative;
-    -webkit-flex-wrap: wrap;
-    -webkit-flex-direction: column;
+    flex-wrap: wrap;
+    flex-direction: column;
     float: left;
-    -webkit-align-content: flex-start;
+    align-content: flex-start;
 }
 .flexbox > * {
-    -webkit-flex: none;
+    flex: none;
 }
 .flexbox :nth-child(1) {
     background-color: lightblue;
@@ -35,7 +35,7 @@
   <div style="width: 100px; height: 10px"></div>
   <div style="width: 100px; height: 20px"></div>
 </div>
-<p style="clear:left">The grey background should be 400px wide.</p>
+<p style="clear:left">The grey background should be 100px wide.</p>
 
 <div class="flexbox" style="height: 30px">
   <div style="width: 100px; height: 20px"></div>
@@ -43,7 +43,7 @@
   <div style="width: 100px; height: 10px"></div>
   <div style="width: 100px; height: 20px"></div>
 </div>
-<p style="clear:left">The grey background should be 400px wide.</p>
+<p style="clear:left">The grey background should be 100px wide.</p>
 
 <div style="width: 150px">
 <div class="flexbox">
@@ -53,7 +53,7 @@
   <div style="width: 100px; height: 20px"></div>
 </div>
 </div>
-<p style="clear:left">The grey background should be 150px wide.</p>
+<p style="clear:left">The grey background should be 100px wide.</p>
 
 <div style="width: 150px">
 <div class="flexbox" style="height: 35px">
@@ -63,7 +63,7 @@
   <div style="width: 100px; height: 20px"></div>
 </div>
 </div>
-<p style="clear:left">The grey background should be 150px wide and 5px should
+<p style="clear:left">The grey background should be 100px wide and 5px should
 stick out the bottom.</p>
 
 </body>

@@ -15,16 +15,18 @@
     margin: 20px;
 }
 .flexbox > * {
-    -webkit-flex: none;
-    -moz-flex: none;
+    flex: none;
 }
 .flexbox > :nth-child(1) {
     background-color: blue;
     margin: auto;
 }
 </style>
-<script src="../../resources/check-layout.js"></script>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../resources/check-layout-th.js"></script>
 <body onload="checkLayout('.flexbox')">
+<div id=log></div>
 
 <div class="container">
   <div class="flexbox row">

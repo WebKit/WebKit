@@ -26,24 +26,23 @@ body {
 }
 
 .flex1 {
-    -webkit-flex: 1;
-    -moz-flex: 1;
+    flex: 1;
 }
 .flex2 {
-    -webkit-flex: 2;
-    -moz-flex: 2;
+    flex: 2;
 }
 .flex3 {
-    -webkit-flex: 3;
-    -moz-flex: 3;
+    flex: 3;
 }
 .flex1-0-0 {
-    -webkit-flex: 1 0 0px;
-    -moz-flex: 1 0 0px;
+    flex: 1 0 0px;
 }
 </style>
-<script src="../../resources/check-layout.js"></script>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../resources/check-layout-th.js"></script>
 <body onload="checkLayout('.flexbox')">
+<div id=log></div>
 <div class="flexbox">
   <div data-expected-width="100" class="flex1-0-0" style="max-width: 100px;"></div>
   <div data-expected-width="250" class="flex1-0-0"></div>
@@ -53,39 +52,39 @@ body {
 <!-- The first two flexitems should hit their max width and the third item fills the remaining space. -->
 <div class="flexbox">
   <div data-expected-width="50" class="flex1-0-0" style="max-width: 50px;"></div>
-  <div data-expected-width="300" style="-webkit-flex: 4 0 0; -moz-flex: 4 0 0; max-width: 300px;"></div>
-  <div data-expected-width="250" style="-webkit-flex: 1 0 0; -moz-flex: 1 0 0"></div>
+  <div data-expected-width="300" style="flex: 4 0 0; max-width: 300px;"></div>
+  <div data-expected-width="250" style="flex: 1 0 0;"></div>
 </div>
 
 <div class="flexbox">
   <div data-expected-width="100" class="flex1-0-0" style="max-width: 100px;"></div>
-  <div data-expected-width="300" style="-webkit-flex: 1 0 200px; -moz-flex: 1 0 200px; max-width: 300px;"></div>
+  <div data-expected-width="300" style="flex: 1 0 200px; max-width: 300px;"></div>
   <div data-expected-width="200" class="flex1-0-0"></div>
 </div>
 
 <!-- Test min-width. -->
 <div class="flexbox">
-  <div data-expected-width="350" style="-webkit-flex: 1 1 400px; -moz-flex: 1 1 400px; min-width: 350px;"></div>
-  <div data-expected-width="250" style="-webkit-flex: 1 1 400px; -moz-flex: 1 1 400px"></div>
+  <div data-expected-width="350" style="flex: 1 1 400px; min-width: 350px;"></div>
+  <div data-expected-width="250" style="flex: 1 1 400px;"></div>
 </div>
 
 <!-- The flex items can overflow the flexbox. -->
 <div class="flexbox">
-  <div data-expected-width="350" style="-webkit-flex: 1 1 400px; -moz-flex: 1 1 400px; min-width: 350px;"></div>
-  <div data-expected-width="300" style="-webkit-flex: 2 0 300px; -moz-flex: 2 0 300px; max-width: 300px;"></div>
+  <div data-expected-width="350" style="flex: 1 1 400px; min-width: 350px;"></div>
+  <div data-expected-width="300" style="flex: 2 0 300px; max-width: 300px;"></div>
   <div data-expected-width="0" class="flex1-0-0"></div>
 </div>
 
 <div class="flexbox">
   <div data-expected-width="100" data-offset-x="0" class="flex1-0-0" style="margin: 0 auto; max-width: 100px;"></div>
-  <div data-expected-width="333" data-offset-x="100" style="-webkit-flex: 2 0 0; -moz-flex: 2 0 0"></div>
+  <div data-expected-width="333" data-offset-x="100" style="flex: 2 0 0;"></div>
   <div data-expected-width="167" data-offset-x="433" class="flex1-0-0"></div>
 </div>
 
 <!-- min-width and max-width take priority over the preferred size. -->
 <div class="flexbox">
   <div data-expected-width="500" class="flex1-0-0" style="min-width: 300px"></div>
-  <div data-expected-width="100" style="-webkit-flex: 1 0 50%; -moz-flex: 1 0 50%; max-width: 100px"></div>
+  <div data-expected-width="100" style="flex: 1 0 50%; max-width: 100px"></div>
 </div>
 
 <div class="flexbox" style="width: 200px">
@@ -104,8 +103,8 @@ body {
 </div>
 
 <div class="flexbox" style="width: 200px">
-  <div data-expected-width="150" style="-webkit-flex: 1 50px; -moz-flex: 1 50px; min-width: 100px"></div>
-  <div data-expected-width="50" style="-webkit-flex: 1 100px; -moz-flex: 1 100px; max-width: 50px"></div>
+  <div data-expected-width="150" style="flex: 1 50px; min-width: 100px"></div>
+  <div data-expected-width="50" style="flex: 1 100px; max-width: 50px"></div>
 </div>
 
 <div class="flexbox">

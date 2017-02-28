@@ -1,128 +1,98 @@
+
+PASS .flexbox 1 
+PASS .flexbox 2 
+PASS .flexbox 3 
+PASS .flexbox 4 
+PASS .flexbox 5 
+PASS .flexbox 6 
+PASS .flexbox 7 
+PASS .flexbox 8 
+PASS .flexbox 9 
+PASS .flexbox 10 
+PASS .flexbox 11 
+PASS .flexbox 12 
+PASS .flexbox 13 
+PASS .flexbox 14 
+PASS .flexbox 15 
+PASS .flexbox 16 
+PASS .flexbox 17 
+PASS .flexbox 18 
+PASS .flexbox 19 
+PASS .flexbox 20 
+PASS .flexbox 21 
+PASS .flexbox 22 
+PASS .flexbox 23 
+PASS .flexbox 24 
+PASS .flexbox 25 
+PASS .flexbox 26 
+PASS .flexbox 27 
+PASS .flexbox 28 
+PASS .flexbox 29 
+PASS .flexbox 30 
+PASS .flexbox 31 
+PASS .flexbox 32 
+PASS .flexbox 33 
+PASS .flexbox 34 
+PASS .flexbox 35 
+PASS .flexbox 36 
+PASS .flexbox 37 
+PASS .flexbox 38 
+PASS .flexbox 39 
+PASS .flexbox 40 
+PASS .flexbox 41 
+PASS .flexbox 42 
+PASS .flexbox 43 
+PASS .flexbox 44 
+PASS .flexbox 45 
+PASS .flexbox 46 
+PASS .flexbox 47 
+PASS .flexbox 48 
 horizontal-tb ltr row physical
-PASS
 horizontal-tb rtl row physical
-PASS
 horizontal-tb ltr column physical
-PASS
 horizontal-tb rtl column physical
-PASS
 horizontal-tb ltr row-reverse physical
-PASS
 horizontal-tb rtl row-reverse physical
-PASS
-horizontal-tb ltr row-reverse physical
-PASS
-horizontal-tb rtl row-reverse physical
-PASS
-horizontal-bt ltr row physical
-PASS
-horizontal-bt rtl row physical
-PASS
-horizontal-bt ltr column physical
-PASS
-horizontal-bt rtl column physical
-PASS
-horizontal-bt ltr row-reverse physical
-PASS
-horizontal-bt rtl row-reverse physical
-PASS
-horizontal-bt ltr row-reverse physical
-PASS
-horizontal-bt rtl row-reverse physical
-PASS
+horizontal-tb ltr column-reverse physical
+horizontal-tb rtl column-reverse physical
 vertical-lr ltr row physical
-PASS
 vertical-lr rtl row physical
-PASS
 vertical-lr ltr column physical
-PASS
 vertical-lr rtl column physical
-PASS
 vertical-lr ltr row-reverse physical
-PASS
 vertical-lr rtl row-reverse physical
-PASS
-vertical-lr ltr row-reverse physical
-PASS
-vertical-lr rtl row-reverse physical
-PASS
+vertical-lr ltr column-reverse physical
+vertical-lr rtl column-reverse physical
 vertical-rl ltr row physical
-PASS
 vertical-rl rtl row physical
-PASS
 vertical-rl ltr column physical
-PASS
 vertical-rl rtl column physical
-PASS
 vertical-rl ltr row-reverse physical
-PASS
 vertical-rl rtl row-reverse physical
-PASS
-vertical-rl ltr row-reverse physical
-PASS
-vertical-rl rtl row-reverse physical
-PASS
+vertical-rl ltr column-reverse physical
+vertical-rl rtl column-reverse physical
 horizontal-tb ltr row logical
-PASS
 horizontal-tb rtl row logical
-PASS
 horizontal-tb ltr column logical
-PASS
 horizontal-tb rtl column logical
-PASS
 horizontal-tb ltr row-reverse logical
-PASS
 horizontal-tb rtl row-reverse logical
-PASS
-horizontal-tb ltr row-reverse logical
-PASS
-horizontal-tb rtl row-reverse logical
-PASS
-horizontal-bt ltr row logical
-PASS
-horizontal-bt rtl row logical
-PASS
-horizontal-bt ltr column logical
-PASS
-horizontal-bt rtl column logical
-PASS
-horizontal-bt ltr row-reverse logical
-PASS
-horizontal-bt rtl row-reverse logical
-PASS
-horizontal-bt ltr row-reverse logical
-PASS
-horizontal-bt rtl row-reverse logical
-PASS
+horizontal-tb ltr column-reverse logical
+horizontal-tb rtl column-reverse logical
 vertical-lr ltr row logical
-PASS
 vertical-lr rtl row logical
-PASS
 vertical-lr ltr column logical
-PASS
 vertical-lr rtl column logical
-PASS
 vertical-lr ltr row-reverse logical
-PASS
 vertical-lr rtl row-reverse logical
-PASS
-vertical-lr ltr row-reverse logical
-PASS
-vertical-lr rtl row-reverse logical
-PASS
+vertical-lr ltr column-reverse logical
+vertical-lr rtl column-reverse logical
 vertical-rl ltr row logical
-PASS
 vertical-rl rtl row logical
-PASS
 vertical-rl ltr column logical
-PASS
 vertical-rl rtl column logical
-PASS
 vertical-rl ltr row-reverse logical
-PASS
 vertical-rl rtl row-reverse logical
-PASS
-vertical-rl ltr row-reverse logical
-PASS
-vertical-rl rtl row-reverse logical
-PASS
+vertical-rl ltr column-reverse logical
+vertical-rl rtl column-reverse logical
+

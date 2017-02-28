@@ -1,65 +1,50 @@
+
+PASS .flexbox 1 
+PASS .flexbox 2 
+PASS .flexbox 3 
+PASS .flexbox 4 
+PASS .flexbox 5 
+PASS .flexbox 6 
+PASS .flexbox 7 
+PASS .flexbox 8 
+PASS .flexbox 9 
+PASS .flexbox 10 
+PASS .flexbox 11 
+PASS .flexbox 12 
+PASS .flexbox 13 
+PASS .flexbox 14 
+PASS .flexbox 15 
+PASS .flexbox 16 
+PASS .flexbox 17 
+PASS .flexbox 18 
+PASS .flexbox 19 
+PASS .flexbox 20 
+PASS .flexbox 21 
+PASS .flexbox 22 
+PASS .flexbox 23 
+PASS .flexbox 24 
 horizontal-tb overflowY row
-PASS
 horizontal-tb overflowX row
-PASS
 horizontal-tb overflowY column
-PASS
 horizontal-tb overflowX column
-PASS
 horizontal-tb overflowY row-reverse
-PASS
 horizontal-tb overflowX row-reverse
-PASS
 horizontal-tb overflowY column-reverse
-PASS
 horizontal-tb overflowX column-reverse
-PASS
-horizontal-bt overflowY row
-PASS
-horizontal-bt overflowX row
-PASS
-horizontal-bt overflowY column
-PASS
-horizontal-bt overflowX column
-PASS
-horizontal-bt overflowY row-reverse
-PASS
-horizontal-bt overflowX row-reverse
-PASS
-horizontal-bt overflowY column-reverse
-PASS
-horizontal-bt overflowX column-reverse
-PASS
 vertical-lr overflowY row
-PASS
 vertical-lr overflowX row
-PASS
 vertical-lr overflowY column
-PASS
 vertical-lr overflowX column
-PASS
 vertical-lr overflowY row-reverse
-PASS
 vertical-lr overflowX row-reverse
-PASS
 vertical-lr overflowY column-reverse
-PASS
 vertical-lr overflowX column-reverse
-PASS
 vertical-rl overflowY row
-PASS
 vertical-rl overflowX row
-PASS
 vertical-rl overflowY column
-PASS
 vertical-rl overflowX column
-PASS
 vertical-rl overflowY row-reverse
-PASS
 vertical-rl overflowX row-reverse
-PASS
 vertical-rl overflowY column-reverse
-PASS
 vertical-rl overflowX column-reverse
-PASS
 

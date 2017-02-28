@@ -26,28 +26,26 @@ body {
 }
 
 .flex1 {
-    -webkit-flex: 1;
-    -moz-flex: 1;
+    flex: 1;
 }
 .flex2 {
-    -webkit-flex: 2;
-    -moz-flex: 2;
+    flex: 2;
 }
 .flex4 {
-    -webkit-flex: 4;
-    -moz-flex: 4;
+    flex: 4;
 }
 .flex1-0-0 {
-    -webkit-flex: 1 0 0px;
-    -moz-flex: 1 0 0px;
+    flex: 1 0 0px;
 }
 .flex2-0-0 {
-    -webkit-flex: 2 0 0px;
-    -moz-flex: 2 0 0px;
+    flex: 2 0 0px;
 }
 </style>
-<script src="../../resources/check-layout.js"></script>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../resources/check-layout-th.js"></script>
 <body onload="checkLayout('.flexbox')">
+<div id=log></div>
 <div class="flexbox">
   <div data-expected-width="200" class="flex1-0-0"></div>
   <div data-expected-width="100" data-offset-x="250" class="flex-none" style="width: 100px; margin: 0 50px;"></div>
@@ -69,28 +67,28 @@ body {
 
 <div class="flexbox">
   <div data-expected-width="100" class="flex1-0-0"></div>
-  <div data-expected-width="300" data-offset-x="100" style="-webkit-flex: 2 0 100px; -moz-flex: 2 0 100px; margin-left: auto;"></div>
+  <div data-expected-width="300" data-offset-x="100" style="flex: 2 0 100px; margin-left: auto;"></div>
   <div data-expected-width="100" data-offset-x="400" class="flex1-0-0" style="margin-right: 100px"></div>
 </div>
 
 <!-- Margins set to auto don't have negative flex. -->
 <div class="flexbox">
-  <div data-expected-width="150" style="-webkit-flex: 1 1 300px; -moz-flex: 1 1 300px"></div>
-  <div data-expected-width="300" data-offset-x="150" style="-webkit-flex: 1 0 300px; -moz-flex: 1 0 300px; margin: 0 auto;"></div>
-  <div data-expected-width="150" data-offset-x="450" style="-webkit-flex: 1 1 300px; -moz-flex: 1 1 300px"></div>
+  <div data-expected-width="150" style="flex: 1 1 300px;"></div>
+  <div data-expected-width="300" data-offset-x="150" style="flex: 1 0 300px; margin: 0 auto;"></div>
+  <div data-expected-width="150" data-offset-x="450" style="flex: 1 1 300px;"></div>
 </div>
 
 <div class="flexbox">
-  <div data-expected-width="300px" data-offset-x="150" style="-webkit-flex: 0 0 300px; -moz-flex: 0 0 300px; margin: 0 auto;"></div>
+  <div data-expected-width="300" data-offset-x="150" style="flex: 0 0 300px; margin: 0 auto;"></div>
 </div>
 
 <!-- margin: auto safe centers, which means it won't overflow to before the start of the flexbox. -->
 <div class="flexbox">
-  <div data-expected-width="700px" data-offset-x="0" style="-webkit-flex: 0 0 700px; -moz-flex: 0 0 700px; margin: 0 auto;"></div>
+  <div data-expected-width="700" data-offset-x="0" style="flex: 0 0 700px; margin: 0 auto;"></div>
 </div>
 
 <div class="flexbox">
-  <div data-expected-width="600px" data-offset-x="0" style="-webkit-flex: 1 0 300px; -moz-flex: 1 0 300px; margin: 0 auto;"></div>
+  <div data-expected-width="600" data-offset-x="0" style="flex: 1 0 300px; margin: 0 auto;"></div>
 </div>
 
 <div class="flexbox">
@@ -105,8 +103,8 @@ body {
 </div>
 
 <div class="flexbox" style="padding: 100px;">
-  <div data-expected-width="300" data-offset-x="100" style="-webkit-flex: 1 0 0px; -moz-flex: 1 0 0px; margin: 0 auto;"></div>
-  <div data-expected-width="300" data-offset-x="400" style="-webkit-flex: 1 0 0em; -moz-flex: 1 0 0em; margin: 0 auto;"></div>
+  <div data-expected-width="300" data-offset-x="100" style="flex: 1 0 0px; margin: 0 auto;"></div>
+  <div data-expected-width="300" data-offset-x="400" style="flex: 1 0 0em; margin: 0 auto;"></div>
 </div>
 
 <div class="flexbox">

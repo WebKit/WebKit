@@ -2854,7 +2854,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propertyID,
         case CSSPropertyFlex:
             return getCSSPropertyValuesForShorthandProperties(flexShorthand());
         case CSSPropertyFlexBasis:
-            return cssValuePool.createValue(style->flexBasis());
+            return cssValuePool.createValue(style->flexBasis(), *style);
         case CSSPropertyFlexDirection:
             return cssValuePool.createValue(style->flexDirection());
         case CSSPropertyFlexFlow:

@@ -93,6 +93,11 @@ public:
     void addPercentHeightDescendant(RenderBox&);
     static void removePercentHeightDescendant(RenderBox&);
     TrackedRendererListHashSet* percentHeightDescendants() const;
+    bool hasPercentHeightDescendants() const
+    {
+        TrackedRendererListHashSet* objects = percentHeightDescendants();
+        return objects && !objects->isEmpty();
+    }
     static bool hasPercentHeightContainerMap();
     static bool hasPercentHeightDescendant(RenderBox&);
     static void clearPercentHeightDescendantsFrom(RenderBox&);
@@ -308,6 +313,9 @@ public:
     virtual bool cachedFlowThreadContainingBlockNeedsUpdate() const;
     void resetFlowThreadContainingBlockAndChildInfoIncludingDescendants();
 
+    std::optional<LayoutUnit> availableLogicalHeightForPercentageComputation() const;
+    bool hasDefiniteLogicalHeight() const;
+    
 protected:
     RenderFlowThread* locateFlowThreadContainingBlock() const override;
     void willBeDestroyed() override;
@@ -395,6 +403,8 @@ protected:
 
     void preparePaginationBeforeBlockLayout(bool&);
 
+    void computeChildPreferredLogicalWidths(RenderObject&, LayoutUnit& minPreferredLogicalWidth, LayoutUnit& maxPreferredLogicalWidth) const;
+
 private:
     static std::unique_ptr<RenderBlock> createAnonymousBlockWithStyleAndDisplay(Document&, const RenderStyle&, EDisplay);
 
@@ -444,7 +454,7 @@ private:
     virtual bool isPointInOverflowControl(HitTestResult&, const LayoutPoint& locationInContainer, const LayoutPoint& accumulatedOffset);
 
     void computeBlockPreferredLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const;
-
+    
     LayoutRect rectWithOutlineForRepaint(const RenderLayerModelObject* repaintContainer, LayoutUnit outlineWidth) const final;
     const RenderStyle& outlineStyleForRepaint() const final;
 

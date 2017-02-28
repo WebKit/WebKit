@@ -1,27 +1,27 @@
 <!DOCTYPE html>
 <html>
+<link href="resources/flexbox.css" rel="stylesheet">
 <style>
 .flexbox {
     width: 600px;
-    display: -webkit-flex;
     background-color: #aaa;
     position: relative;
     min-height: 10px;
 }
 .flexbox > * {
-    -webkit-flex: 1 0 0;
+    flex: 1 0 0;
     margin: 0;
     border: 0;
     padding: 0;
     font-size: 12px;
     min-width: 0;
 }
-.column {
-    -webkit-flex-direction: column;
-}
 </style>
-<script src="../../resources/check-layout.js"></script>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../resources/check-layout-th.js"></script>
 <body onload="checkLayout('.flexbox')">
+<div id=log></div>
 <div class="flexbox" style="height:200px">
   <button data-expected-display="block" data-expected-width="100" data-expected-height="200">button</button>
   <canvas data-expected-display="block" data-expected-width="100" data-expected-height="200">canvas</canvas>
@@ -46,32 +46,32 @@
 </div>
 
 <div class="flexbox">
-  <img data-expected-display="block" data-expected-width="200" style="-webkit-flex: 1 0 auto;" src="../images/resources/blue-100.png">
-  <img data-expected-display="block" data-expected-width="200" data-expected-height="100" style="-webkit-flex: 2 0 0;" src="doesnotexist.png">
-  <img data-expected-display="block" data-expected-width="200" data-expected-height="100" style="-webkit-flex: 2 0 0;" src="doesnotexist.png" alt="placeholder text">
+  <img data-expected-display="block" data-expected-width="200" style="flex: 1 0 auto;" src="../images/resources/blue-100.png">
+  <img data-expected-display="block" data-expected-width="200" data-expected-height="100" style="flex: 2 0 0;" src="doesnotexist.png">
+  <img data-expected-display="block" data-expected-width="200" data-expected-height="100" style="flex: 2 0 0;" src="doesnotexist.png" alt="placeholder text">
 </div>
 
 <div class="flexbox">
-  <svg data-expected-display="block" data-expected-width="100" style="-webkit-flex: 1 0 auto; width: 100px; height: 100px;">
+  <svg data-expected-display="block" data-expected-bounding-client-rect-width="100" style="flex: 1 0 auto; width: 100px; height: 100px">
     <circle cx="50" cy="50" r="50" fill="blue">
     </circle>
   </svg>
-  <svg data-expected-display="block" data-expected-width="500" style="-webkit-flex: 1 1 auto; height: 100px; width: 100%">
+  <svg data-expected-display="block" data-expected-bounding-client-rect-width="500" style="flex: 1 1 auto; height: 100px; width: 100%">
     <circle cx="50" cy="50" r="50" fill="green">
     </circle>
   </svg>
 </div>
 
 <div class="flexbox">
-  <span data-expected-display="block" data-expected-width="200" style="-webkit-flex: 2 0 0"></span>
-  <button data-expected-display="block" data-expected-width="100" style="-webkit-flex: 1 0 0">button</button>
-  <span data-expected-display="block" data-expected-width="300" style="-webkit-flex: 2 2 100px"></span>
+  <span data-expected-display="block" data-expected-width="200" style="flex: 2 0 0"></span>
+  <button data-expected-display="block" data-expected-width="100" style="flex: 1 0 0">button</button>
+  <span data-expected-display="block" data-expected-width="300" style="flex: 2 2 100px"></span>
 </div>
 
 <div class="flexbox" style="width: 700px">
   <div data-expected-display="block" data-expected-width="100" style="display: inline-block;"></div>
   <div data-expected-display="-webkit-box" data-expected-width="100" style="display: -webkit-inline-box;"></div>
-  <div data-expected-display="flex" data-expected-width="100" style="display: -webkit-inline-flex;"></div>
+  <div data-expected-display="flex" data-expected-width="100" style="display: inline-flex;"></div>
   <div data-expected-display="block" data-expected-width="100" style="display: table-cell"></div>
   <div data-expected-display="block" data-expected-width="100" style="display: compact"></div>
   <div data-expected-display="block" data-expected-width="100" style="display: run-in"></div>
@@ -94,8 +94,8 @@
 </div>
 
 <div class="flexbox column" style="width:100px">
-  <iframe data-expected-display="block" data-expected-width="100px" src="data:text/html,<body bgcolor=#fff>iframe</body>"></iframe>
-  <iframe seamless data-expected-display="block" data-expected-width="100px" src="data:text/html,<body bgcolor=#fff>iframe</body>"></iframe>
+  <iframe data-expected-display="block" data-expected-width="100" src="data:text/html,<body bgcolor=#fff>iframe</body>"></iframe>
+  <iframe seamless data-expected-display="block" data-expected-width="100" src="data:text/html,<body bgcolor=#fff>iframe</body>"></iframe>
 </div>
 
 <div class="flexbox column" style="height:210px">
@@ -116,7 +116,10 @@
     <img data-expected-height="60" style="min-height:60px" src="../images/resources/green-10.png">
     <img data-expected-height="75" style="min-height:150%" src="../images/resources/blue-100.png">
     <img data-expected-height="75" style="min-height:150%" src="../images/resources/green-10.png">
-    <!-- TODO: test min-content, max-content, fill-available, fit-content when these are implemented for height -->
+    <img data-expected-height="10" style="min-height:-webkit-min-content;height:1px" src="../images/resources/blue-10.png">
+    <img data-expected-height="100" style="min-height:-webkit-max-content;height:1px" src="../images/resources/green-100.png">
+    <img data-expected-height="50" style="min-height:-webkit-fill-available" src="../images/resources/blue-10.png">
+    <img data-expected-height="10" style="min-height:-webkit-fit-content;height:1px" src="../images/resources/green-10.png">
 </div>
 
 <!-- tests that max-height shrinks the height of flex items less than the height of the flexbox -->
@@ -125,7 +128,28 @@
     <img data-expected-height="40" style="max-height:40px" src="../images/resources/green-10.png">
     <img data-expected-height="25" style="max-height:50%" src="../images/resources/blue-100.png">
     <img data-expected-height="25" style="max-height:50%" src="../images/resources/green-10.png">
-    <!-- TODO: test min-content, max-content, fill-available, fit-content when these are implemented for height -->
+    <img data-expected-height="10" style="max-height:-webkit-min-content;height:1000px;" src="../images/resources/blue-10.png">
+    <img data-expected-height="100" style="max-height:-webkit-max-content;height:1000px;" src="../images/resources/green-100.png">
+    <img data-expected-height="50" style="max-height:-webkit-fill-available" src="../images/resources/blue-100.png">
+    <img data-expected-height="10" style="max-height:-webkit-fit-content;height:1000px" src="../images/resources/green-10.png">
+</div>
+
+<!-- tests that images can shrink below their CSS height with min-height: min-content -->
+<div class="flexbox column" style="height:50px">
+    <img data-expected-height="50" style="flex-shrink:1;height:1000px;min-height:-webkit-min-content;" src="../images/resources/blue-10.png">
+</div>
+
+<!-- tests that text can shrink below its CSS height with min-height: min-content -->
+<div class="flexbox column" style="height:50px">
+    <div data-expected-height="50" style="flex-shrink:1;height:1000px;min-height:-webkit-min-content;" src="../images/resources/blue-10.png">
+      Some text<br>
+      Some more text
+    </div>
+</div>
+
+<!-- tests that images can shrink below their CSS width with min-width: min-content -->
+<div class="flexbox" style="width:50px">
+    <img data-expected-width="50" style="flex-shrink:1;width:1000px;min-width:-webkit-min-content;" src="../images/resources/blue-10.png">
 </div>
 
 <!-- tests that min-width expands the width of flex items beyond the width of the flexbox -->

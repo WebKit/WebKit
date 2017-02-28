@@ -23,7 +23,9 @@
     background-color: green;
 }
 </style>
-<script src="../../resources/check-layout.js"></script>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../resources/check-layout-th.js"></script>
 <script>
 window.onload = function() {
     checkLayout('.flexbox');
@@ -36,6 +38,7 @@ window.onload = function() {
 </script>
 </head>
 <body>
+<div id=log></div>
 
 <div class="flexbox align-items-flex-end" data-expected-scroll-height="50">
     <div></div>
@@ -63,11 +66,11 @@ window.onload = function() {
     <div></div>
 </div>
 
-<div class="flexbox align-items-center vertical-padding" data-expected-scroll-height="80">
+<div class="flexbox align-items-center vertical-padding" data-expected-scroll-height="90">
     <div></div>
 </div>
 
-<div class="flexbox vertical-padding" data-expected-scroll-height="105">
+<div class="flexbox vertical-padding" data-expected-scroll-height="115">
     <div></div>
 </div>
 

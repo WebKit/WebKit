@@ -4,9 +4,12 @@
 <link href="resources/flexbox.css" rel="stylesheet">
 <style>
 </style>
-<script src="../../resources/check-layout.js"></script>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../resources/check-layout-th.js"></script>
 </head>
 <body>
+<div id=log></div>
 <p>Test to make sure that we properly relayout when an image loads. You
 should see a green 100x100 image.</p>
 <div id="test" class="flexbox">
@@ -16,8 +19,6 @@ should see a green 100x100 image.</p>
     </div>
 </div>
 <script>
-if (window.testRunner)
-    testRunner.waitUntilDone();
 
 function changeImage()
 {
@@ -28,8 +29,6 @@ setTimeout(changeImage, 0);
 function imageLoaded()
 {
     checkLayout('#test')
-    if (window.testRunner)
-        testRunner.notifyDone();
 }
 </script>
 </body>

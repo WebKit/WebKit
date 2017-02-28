@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <style>
 .flexbox {
-    display: -webkit-flex;
+    display: flex;
 }
 .column, .column .fixed {
     height: 50px;
@@ -16,10 +16,10 @@
     height: 20px;
 }
 .flexbox > div {
-    -webkit-flex: 0 0 auto;
+    flex: 0 0 auto;
 }
 .column > .flexbox {
-    -webkit-flex-direction: column;
+    flex-direction: column;
 }
 .container > div > :nth-child(1) {
     background-color: orange;
@@ -34,8 +34,11 @@
     background-color: purple;
 }
 </style>
-<script src="../../resources/check-layout.js"></script>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../resources/check-layout-th.js"></script>
 <body onload="checkLayout('.flexbox')">
+<div id=log></div>
 
 <div class="container row">
     <div class="flexbox">
@@ -75,25 +78,25 @@
 
 <div class="container row">
     <div class="flexbox">
-        <div style="-webkit-flex: 0 0 50%" data-expected-width=25></div>
+        <div style="flex: 0 0 50%" data-expected-width=25></div>
     </div>
 </div>
 
 <div class="container column">
     <div class="flexbox">
-        <div style="-webkit-flex: 0 0 50%" data-expected-height=0></div>
+        <div style="flex: 0 0 50%" data-expected-height=0></div>
     </div>
 </div>
 
 <div class="container row">
     <div class="flexbox fixed">
-        <div style="-webkit-flex: 0 0 50%" data-expected-width=25></div>
+        <div style="flex: 0 0 50%" data-expected-width=25></div>
     </div>
 </div>
 
 <div class="container column">
     <div class="flexbox fixed">
-        <div style="-webkit-flex: 0 0 50%" data-expected-height=25></div>
+        <div style="flex: 0 0 50%" data-expected-height=25></div>
     </div>
 </div>
 

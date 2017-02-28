@@ -12,15 +12,14 @@ body {
 }
 
 .vertical-rl {
-    -webkit-writing-mode: vertical-rl;
+    writing-mode: vertical-rl;
 }
 
 .vertical-lr {
-    -webkit-writing-mode: vertical-lr;
+    writing-mode: vertical-lr;
 }
 
 .column > div {
-    -webkit-flex: none;
     flex: none;
     background-color: green;
     width: 100px;
@@ -29,21 +28,18 @@ body {
 
 .row > div {
     background-color: green;
-    -webkit-flex: 1;
     flex: 1;
     height: 50px;
     min-height: 0;
 }
 
 .vertical-lr > .column > div {
-    -webkit-flex: none;
     flex: none;
     height: 50px;
     width: 20px;
 }
 
 .vertical-lr > .row > div {
-    -webkit-flex: 1;
     flex: 1;
     width: 100px;
 }
@@ -137,7 +133,7 @@ This test passes if no red is showing.
 </div>
 
 </div>
-<!-- FIXME: Add tests for horizontal-bt and vertical-rl.  Setting the logical
+<!-- FIXME: Add tests for vertical-rl.  Setting the logical
 bottom border on these tests cause additional scrollbars to appear. -->
 
 </body>

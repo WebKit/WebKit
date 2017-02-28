@@ -209,7 +209,7 @@ LayoutUnit GridTrackSizingAlgorithm::computeTrackBasedSize() const
     for (auto& track : allTracks)
         size += track.baseSize();
 
-    size += m_renderGrid->guttersSize(m_grid, m_direction, 0, allTracks.size());
+    size += m_renderGrid->guttersSize(m_grid, m_direction, 0, allTracks.size(), m_sizingOperation);
 
     return size;
 }
@@ -460,7 +460,7 @@ void GridTrackSizingAlgorithm::increaseSizesToAccommodateSpanningItems(const Gri
         if (filteredTracks.isEmpty())
             continue;
 
-        spanningTracksSize += m_renderGrid->guttersSize(m_grid, m_direction, itemSpan.startLine(), itemSpan.integerSpan());
+        spanningTracksSize += m_renderGrid->guttersSize(m_grid, m_direction, itemSpan.startLine(), itemSpan.integerSpan(), m_sizingOperation);
 
         LayoutUnit extraSpace = itemSizeForTrackSizeComputationPhase(phase, gridItemWithSpan.gridItem()) - spanningTracksSize;
         extraSpace = std::max<LayoutUnit>(extraSpace, 0);
@@ -569,7 +569,7 @@ LayoutUnit GridTrackSizingAlgorithm::assumedRowsSizeForOrthogonalChild(const Ren
             gridAreaSize += valueForLength(maxTrackSize.length(), containingBlockAvailableSize);
     }
 
-    gridAreaSize += m_renderGrid->guttersSize(m_grid, ForRows, span.startLine(), span.integerSpan());
+    gridAreaSize += m_renderGrid->guttersSize(m_grid, ForRows, span.startLine(), span.integerSpan(), m_sizingOperation);
 
     return gridAreaIsIndefinite ? std::max(child.maxPreferredLogicalWidth(), gridAreaSize) : gridAreaSize;
 }
@@ -588,7 +588,7 @@ LayoutUnit GridTrackSizingAlgorithm::gridAreaBreadthForChild(const RenderBox& ch
     for (auto trackPosition : span)
         gridAreaBreadth += allTracks[trackPosition].baseSize();
 
-    gridAreaBreadth += m_renderGrid->guttersSize(m_grid, direction, span.startLine(), span.integerSpan());
+    gridAreaBreadth += m_renderGrid->guttersSize(m_grid, direction, span.startLine(), span.integerSpan(), m_sizingOperation);
 
     return gridAreaBreadth;
 }
@@ -906,7 +906,7 @@ bool IndefiniteSizeStrategy::recomputeUsedFlexFractionIfNeeded(double& flexFract
 
     LayoutUnit freeSpace = checkMaxSize ? maxSize.value() : LayoutUnit(-1);
     const Grid& grid = m_algorithm.grid();
-    freeSpace = std::max(freeSpace, minSize.value()) - renderGrid->guttersSize(grid, ForRows, 0, grid.numTracks(ForRows));
+    freeSpace = std::max(freeSpace, minSize.value()) - renderGrid->guttersSize(grid, ForRows, 0, grid.numTracks(ForRows), m_algorithm.sizingOperation());
 
     size_t numberOfTracks = m_algorithm.tracks(ForRows).size();
     flexFraction = findFrUnitSize(GridSpan::translatedDefiniteGridSpan(0, numberOfTracks), freeSpace);

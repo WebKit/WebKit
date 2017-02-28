@@ -1,16 +1,18 @@
-PASS beforePosition[key] is afterPosition[key]
-PASS beforePosition[key] is afterPosition[key]
-PASS beforePosition[key] is afterPosition[key]
-PASS beforePosition[key] is afterPosition[key]
-PASS beforePosition[key] is afterPosition[key]
-PASS beforePosition[key] is afterPosition[key]
-PASS beforePosition[key] is afterPosition[key]
-PASS
-PASS
-PASS
-PASS
-PASS
-PASS
-PASS
-PASS
-PASS
+
+PASS position of top 
+PASS position of right 
+PASS position of bottom 
+PASS position of left 
+PASS position of width 
+PASS position of height 
+PASS position of toJSON 
+PASS .flexbox 1 
+PASS .flexbox 2 
+PASS .flexbox 3 
+PASS .flexbox 4 
+PASS .flexbox 5 
+PASS .flexbox 6 
+PASS .flexbox 7 
+PASS .flexbox 8 
+PASS .flexbox 9 
+

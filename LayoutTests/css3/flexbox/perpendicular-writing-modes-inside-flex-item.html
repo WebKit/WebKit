@@ -1,22 +1,22 @@
 <!DOCTYPE html>
 <style>
 .flexbox {
-    display: -webkit-flex;
-    -webkit-flex-direction: column;
+    display: flex;
+    flex-direction: column;
     height: 300px;
     width: 200px;
     padding: 3px;
     border: 4px solid black;
 }
 .flexitem {
-    -webkit-flex: 1;
+    flex: 1;
     padding: 3px;
     border: 4px solid cyan;
     min-height: 0;
 }
 .vertical {
     position: relative;
-    -webkit-writing-mode: vertical-lr;
+    writing-mode: vertical-lr;
     padding: 3px;
     border: 4px solid blue;
 }
@@ -28,9 +28,12 @@
 }
 </style>
 
-<script src="../../resources/check-layout.js"></script>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../resources/check-layout-th.js"></script>
 
 <body onload="checkLayout('.flexbox')">
+<div id=log></div>
     <div class="flexbox">
         <div class="flexitem" data-expected-width=200 data-expected-height=300>
             <div class="vertical" data-expected-height=286>

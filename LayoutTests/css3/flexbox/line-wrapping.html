@@ -8,10 +8,10 @@ body {
     border: 1px solid;
 }
 .column {
-    -webkit-flex-flow: column;
+    flex-flow: column;
 }
 .flexbox {
-    display: -webkit-flex;
+    display: flex;
     background-color: gray;
     position: relative;
 }
@@ -23,13 +23,15 @@ body {
     line-height: 0px;
 }
 .horizontal-tb {
-    -webkit-writing-mode: horizontal-tb;
+    writing-mode: horizontal-tb;
 }
 .vertical-rl {
-    -webkit-writing-mode: vertical-rl;
+    writing-mode: vertical-rl;
+    -webkit-text-orientation: sideways-right;
 }
 .vertical-lr {
-    -webkit-writing-mode: vertical-lr;
+    writing-mode: vertical-lr;
+    -webkit-text-orientation: sideways-right;
 }
 
 .horizontal-tb.row, .horizontal-tb.fixed.column {
@@ -40,17 +42,17 @@ body {
 }
 
 .horizontal-tb.row > div {
-    -webkit-flex: 1;
+    flex: 1;
 }
 .vertical-lr.row > div, .vertical-rl.row > div {
-    -webkit-flex: 1;
+    flex: 1;
 }
 
 .horizontal-tb.column > div {
-    -webkit-flex: 1 auto;
+    flex: 1 auto;
 }
 .vertical-lr.column > div, .vertical-rl.column > div {
-    -webkit-flex: 1 auto;
+    flex: 1 auto;
 }
 
 .horizontal-tb.fixed {
@@ -113,7 +115,7 @@ body {
     <div data-expected-width=100 data-expected-height=100>
         <div data-offset-y=0></div><div data-offset-y=0></div><div data-offset-y=20 data-offset-x=0></div>
     </div>
-    <div data-expected-width=100 data-expected-height=40 style="-webkit-align-self: flex-start;">
+    <div data-expected-width=100 data-expected-height=40 style="align-self: flex-start;">
         <div data-offset-y=0></div><div data-offset-y=0></div><div data-offset-y=20 data-offset-x=100></div>
     </div>
 </div>
@@ -122,7 +124,7 @@ body {
     <div data-expected-width=200 data-expected-height=50>
         <div data-offset-y=0></div><div data-offset-y=0></div><div data-offset-y=0></div><div data-offset-y=0></div><div data-offset-y=0></div><div data-offset-y=20 data-offset-x=0></div>
     </div>
-    <div data-expected-width=200 data-expected-height=50 style="-webkit-align-self: flex-start;">
+    <div data-expected-width=200 data-expected-height=50 style="align-self: flex-start;">
         <div data-offset-y=50></div><div data-offset-y=50></div><div data-offset-y=50></div><div data-offset-y=50></div><div data-offset-y=50></div><div data-offset-y=70 data-offset-x=0></div>
     </div>
 </div>
@@ -131,7 +133,7 @@ body {
     <div data-expected-width=200 data-expected-height=50>
         <div data-offset-y=0></div><div data-offset-y=0></div>
     </div>
-    <div data-expected-width=80 data-expected-height=50 style="-webkit-align-self: flex-start;">
+    <div data-expected-width=80 data-expected-height=50 style="align-self: flex-start;">
         <div data-offset-y=50></div><div data-offset-y=50></div>
     </div>
 </div>
@@ -140,7 +142,7 @@ body {
     <div data-expected-width=250 data-expected-height=100>
         <div data-offset-y=0></div><div data-offset-y=0></div><div data-offset-y=20 data-offset-x=0></div>
     </div>
-    <div data-expected-width=250 data-expected-height=40 style="-webkit-align-self: flex-start;">
+    <div data-expected-width=250 data-expected-height=40 style="align-self: flex-start;">
         <div data-offset-y=0></div><div data-offset-y=0></div><div data-offset-y=20 data-offset-x=250></div>
     </div>
 </div>
@@ -149,7 +151,7 @@ body {
     <div data-expected-width=500 data-expected-height=40>
         <div data-offset-y=0></div><div data-offset-y=0></div><div data-offset-y=0></div><div data-offset-y=0></div><div data-offset-y=0></div><div data-offset-y=20 data-offset-x=0></div>
     </div>
-    <div data-expected-width=500 data-expected-height=40 style="-webkit-align-self: flex-start;">
+    <div data-expected-width=500 data-expected-height=40 style="align-self: flex-start;">
         <div data-offset-y=40></div><div data-offset-y=40></div><div data-offset-y=40></div><div data-offset-y=40></div><div data-offset-y=40></div><div data-offset-y=60 data-offset-x=0></div>
     </div>
 </div>
@@ -160,7 +162,7 @@ body {
     <div data-expected-height data-expected-width=100>
         <div data-offset-x=4></div><div data-offset-x=4></div><div data-offset-x=24 data-offset-y=0></div>
     </div>
-    <div data-expected-height=100 data-expected-width=40 style="-webkit-align-self: flex-start;">
+    <div data-expected-height=100 data-expected-width=40 style="align-self: flex-start;">
         <div data-offset-x=4></div><div data-offset-x=4></div><div data-offset-x=24 data-offset-y=100></div>
     </div>
 </div>
@@ -169,7 +171,7 @@ body {
     <div data-expected-height=200 data-expected-width=50>
         <div data-offset-x=4></div><div data-offset-x=4></div><div data-offset-x=4></div><div data-offset-x=4></div><div data-offset-x=4></div><div data-offset-x=24 data-offset-y=0></div>
     </div>
-    <div data-expected-height=200 data-expected-width=50 style="-webkit-align-self: flex-start;">
+    <div data-expected-height=200 data-expected-width=50 style="align-self: flex-start;">
         <div data-offset-x=54></div><div data-offset-x=54></div><div data-offset-x=54></div><div data-offset-x=54></div><div data-offset-x=54></div><div data-offset-x=74 data-offset-y=0></div>
     </div>
 </div>
@@ -178,7 +180,7 @@ body {
     <div data-expected-height=200 data-expected-width=50>
         <div data-offset-x=4></div><div data-offset-x=4></div>
     </div>
-    <div data-expected-height=80 data-expected-width=50 style="-webkit-align-self: flex-start;">
+    <div data-expected-height=80 data-expected-width=50 style="align-self: flex-start;">
         <div data-offset-x=54></div><div data-offset-x=54></div>
     </div>
 </div>
@@ -187,7 +189,7 @@ body {
     <div data-expected-height=250 data-expected-width=100>
         <div data-offset-x=4></div><div data-offset-x=4></div><div data-offset-x=24 data-offset-y=0></div>
     </div>
-    <div data-expected-height=250 data-expected-width=40 style="-webkit-align-self: flex-start;">
+    <div data-expected-height=250 data-expected-width=40 style="align-self: flex-start;">
         <div data-offset-x=4></div><div data-offset-x=4></div><div data-offset-x=24 data-offset-y=250></div>
     </div>
 </div>
@@ -196,7 +198,7 @@ body {
     <div data-expected-height=500 data-expected-width=40>
         <div data-offset-x=4></div><div data-offset-x=4></div><div data-offset-x=4></div><div data-offset-x=4></div><div data-offset-x=4></div><div data-offset-x=24 data-offset-y=0></div>
     </div>
-    <div data-expected-height=500 data-expected-width=40 style="-webkit-align-self: flex-start;">
+    <div data-expected-height=500 data-expected-width=40 style="align-self: flex-start;">
         <div data-offset-x=44></div><div data-offset-x=44></div><div data-offset-x=44></div><div data-offset-x=44></div><div data-offset-x=44></div><div data-offset-x=64 data-offset-y=0></div>
     </div>
 </div>
@@ -206,7 +208,7 @@ body {
     <div data-expected-height=100 data-expected-width=100>
         <div data-offset-x=80></div><div data-offset-x=80></div><div data-offset-x=60 data-offset-y=0></div>
     </div>
-    <div data-expected-height=100 data-expected-width=40 style="-webkit-align-self: flex-start;">
+    <div data-expected-height=100 data-expected-width=40 style="align-self: flex-start;">
         <div data-offset-x=80></div><div data-offset-x=80></div><div data-offset-x=60 data-offset-y=100></div>
     </div>
 </div>
@@ -215,7 +217,7 @@ body {
     <div data-expected-height=200 data-expected-width=50>
         <div data-offset-x=80></div><div data-offset-x=80></div><div data-offset-x=80></div><div data-offset-x=80></div><div data-offset-x=80></div><div data-offset-x=60 data-offset-y=0></div>
     </div>
-    <div data-expected-height=200 data-expected-width=50 style="-webkit-align-self: flex-start;">
+    <div data-expected-height=200 data-expected-width=50 style="align-self: flex-start;">
         <div data-offset-x=30></div><div data-offset-x=30></div><div data-offset-x=30></div><div data-offset-x=30></div><div data-offset-x=30></div><div data-offset-x=10 data-offset-y=0></div>
     </div>
 </div>
@@ -224,7 +226,7 @@ body {
     <div data-expected-height=200 data-expected-width=50>
         <div data-offset-x=80></div><div data-offset-x=80></div>
     </div>
-    <div data-expected-height=80 data-expected-width=50 style="-webkit-align-self: flex-start;">
+    <div data-expected-height=80 data-expected-width=50 style="align-self: flex-start;">
         <div data-offset-x=30></div><div data-offset-x=30></div>
     </div>
 </div>
@@ -233,7 +235,7 @@ body {
     <div data-expected-height=250 data-expected-width=100>
         <div data-offset-x=80></div><div data-offset-x=80></div><div data-offset-x=60 data-offset-y=0></div>
     </div>
-    <div data-expected-height=250 data-expected-width=40 style="-webkit-align-self: flex-start;">
+    <div data-expected-height=250 data-expected-width=40 style="align-self: flex-start;">
         <div data-offset-x=80></div><div data-offset-x=80></div><div data-offset-x=60 data-offset-y=250></div>
     </div>
 </div>
@@ -242,7 +244,7 @@ body {
     <div data-expected-height=500 data-expected-width=40>
         <div data-offset-x=60></div><div data-offset-x=60></div><div data-offset-x=60></div><div data-offset-x=60></div><div data-offset-x=60></div><div data-offset-x=40 data-offset-y=0></div>
     </div>
-    <div data-expected-height=500 data-expected-width=40 style="-webkit-align-self: flex-start;">
+    <div data-expected-height=500 data-expected-width=40 style="align-self: flex-start;">
         <div data-offset-x=20></div><div data-offset-x=20></div><div data-offset-x=20></div><div data-offset-x=20></div><div data-offset-x=20></div><div data-offset-x=0 data-offset-y=0></div>
     </div>
 </div>

@@ -8,8 +8,8 @@
     min-width: -o-min-content;
     min-width: min-content;
     outline: 2px solid;
-    display: -webkit-flex;
-    -webkit-flex-wrap: wrap;
+    display: flex;
+    flex-wrap: wrap;
 }
 .max-content {
     width: 10px;
@@ -19,8 +19,8 @@
     min-width: -o-max-content;
     min-width: max-content;
     outline: 2px solid;
-    display: -webkit-flex;
-    -webkit-flex-wrap: wrap;
+    display: flex;
+    flex-wrap: wrap;
 }
 .fit-content {
     width: 10px;
@@ -30,8 +30,8 @@
     min-width: -o-fit-content;
     min-width: fit-content;
     outline: 2px solid;
-    display: -webkit-flex;
-    -webkit-flex-wrap: wrap;
+    display: flex;
+    flex-wrap: wrap;
 }
 .child {
     width: 20px;
@@ -43,9 +43,12 @@ div {
     line-height: 0;
 }
 </style>
-<script src="../../resources/check-layout.js"></script>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../resources/check-layout-th.js"></script>
 
 <body onload="checkLayout('body > div')">
+<div id=log></div>
 <p>Check that min-width intrinsic size still applies if a fixed width is set.</p>
 
 <div class="min-content" data-expected-width=20>

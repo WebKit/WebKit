@@ -1,0 +1,8 @@
+ 
+
+FAIL hbox dimensions assert_equals: expected 104 but got 89
+FAIL intrinsicHeightBox dimensions assert_equals: expected 104 but got 89
+PASS scrollbarSize should not be zero 
+FAIL inner dimensions assert_equals: expected 100 but got 85
+FAIL vbox dimensions assert_equals: expected 100 but got 85
+

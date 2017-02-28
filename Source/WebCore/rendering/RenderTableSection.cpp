@@ -520,6 +520,72 @@ LayoutUnit RenderTableSection::distributeExtraLogicalHeightToRows(LayoutUnit ext
     return extraLogicalHeight - remainingExtraLogicalHeight;
 }
 
+static bool shouldFlexCellChild(const RenderTableCell& cell, const RenderBox& cellDescendant)
+{
+    if (!cell.style().logicalHeight().isSpecified())
+        return false;
+    if (cellDescendant.scrollsOverflowY())
+        return true;
+    return cellDescendant.shouldTreatChildAsReplacedInTableCells();
+}
+
+void RenderTableSection::relayoutCellIfFlexed(RenderTableCell& cell, int rowIndex, int rowHeight)
+{
+    // Force percent height children to lay themselves out again.
+    // This will cause these children to grow to fill the cell.
+    // FIXME: There is still more work to do here to fully match WinIE (should
+    // it become necessary to do so). In quirks mode, WinIE behaves like we
+    // do, but it will clip the cells that spill out of the table section. In
+    // strict mode, Mozilla and WinIE both regrow the table to accommodate the
+    // new height of the cell (thus letting the percentages cause growth one
+    // time only). We may also not be handling row-spanning cells correctly.
+    //
+    // Note also the oddity where replaced elements always flex, and yet blocks/tables do
+    // not necessarily flex. WinIE is crazy and inconsistent, and we can't hope to
+    // match the behavior perfectly, but we'll continue to refine it as we discover new
+    // bugs. :)
+    bool cellChildrenFlex = false;
+    bool flexAllChildren = cell.style().logicalHeight().isFixed() || (!table()->style().logicalHeight().isAuto() && rowHeight != cell.logicalHeight());
+    
+    for (auto& renderer : childrenOfType<RenderBox>(cell)) {
+        if (renderer.style().logicalHeight().isPercentOrCalculated()
+            && (flexAllChildren || shouldFlexCellChild(cell, renderer))
+            && (!is<RenderTable>(renderer) || downcast<RenderTable>(renderer).hasSections())) {
+            cellChildrenFlex = true;
+            break;
+        }
+    }
+
+    if (!cellChildrenFlex) {
+        if (TrackedRendererListHashSet* percentHeightDescendants = cell.percentHeightDescendants()) {
+            for (auto* descendant : *percentHeightDescendants) {
+                if (flexAllChildren || shouldFlexCellChild(cell, *descendant)) {
+                    cellChildrenFlex = true;
+                    break;
+                }
+            }
+        }
+    }
+    
+    if (!cellChildrenFlex)
+        return;
+
+    cell.setChildNeedsLayout(MarkOnlyThis);
+        // Alignment within a cell is based off the calculated
+    // height, which becomes irrelevant once the cell has
+    // been resized based off its percentage.
+    cell.setOverrideLogicalContentHeightFromRowHeight(rowHeight);
+    cell.layoutIfNeeded();
+    
+    if (!cell.isBaselineAligned())
+        return;
+    
+    // If the baseline moved, we may have to update the data for our row. Find out the new baseline.
+    LayoutUnit baseline = cell.cellBaselinePosition();
+    if (baseline > cell.borderAndPaddingBefore())
+        m_grid[rowIndex].baseline = std::max(m_grid[rowIndex].baseline, baseline);
+}
+
 void RenderTableSection::layoutRows()
 {
 #ifndef NDEBUG
@@ -564,68 +630,7 @@ void RenderTableSection::layoutRows()
             int rowIndex = cell->rowIndex();
             LayoutUnit rHeight = m_rowPos[rowIndex + cell->rowSpan()] - m_rowPos[rowIndex] - vspacing;
 
-            // Force percent height children to lay themselves out again.
-            // This will cause these children to grow to fill the cell.
-            // FIXME: There is still more work to do here to fully match WinIE (should
-            // it become necessary to do so).  In quirks mode, WinIE behaves like we
-            // do, but it will clip the cells that spill out of the table section.  In
-            // strict mode, Mozilla and WinIE both regrow the table to accommodate the
-            // new height of the cell (thus letting the percentages cause growth one
-            // time only).  We may also not be handling row-spanning cells correctly.
-            //
-            // Note also the oddity where replaced elements always flex, and yet blocks/tables do
-            // not necessarily flex.  WinIE is crazy and inconsistent, and we can't hope to
-            // match the behavior perfectly, but we'll continue to refine it as we discover new
-            // bugs. :)
-            bool cellChildrenFlex = false;
-            bool flexAllChildren = cell->style().logicalHeight().isFixed()
-                || (!table()->style().logicalHeight().isAuto() && rHeight != cell->logicalHeight());
-
-            for (auto& renderer : childrenOfType<RenderObject>(*cell)) {
-                if (!is<RenderText>(renderer) && renderer.style().logicalHeight().isPercentOrCalculated() && (flexAllChildren || ((renderer.isReplaced() || (is<RenderBox>(renderer) && downcast<RenderBox>(renderer).scrollsOverflow())) && !is<RenderTextControl>(renderer)))) {
-                    // Tables with no sections do not flex.
-                    if (!is<RenderTable>(renderer) || downcast<RenderTable>(renderer).hasSections()) {
-                        renderer.setNeedsLayout(MarkOnlyThis);
-                        cellChildrenFlex = true;
-                    }
-                }
-            }
-
-            if (TrackedRendererListHashSet* percentHeightDescendants = cell->percentHeightDescendants()) {
-                TrackedRendererListHashSet::iterator end = percentHeightDescendants->end();
-                for (TrackedRendererListHashSet::iterator it = percentHeightDescendants->begin(); it != end; ++it) {
-                    RenderBox* box = *it;
-                    if (!box->isReplaced() && !box->scrollsOverflow() && !flexAllChildren)
-                        continue;
-
-                    while (box != cell) {
-                        if (box->normalChildNeedsLayout())
-                            break;
-                        box->setChildNeedsLayout(MarkOnlyThis);
-                        box = box->containingBlock();
-                        ASSERT(box);
-                        if (!box)
-                            break;
-                    }
-                    cellChildrenFlex = true;
-                }
-            }
-
-            if (cellChildrenFlex) {
-                cell->setChildNeedsLayout(MarkOnlyThis);
-                // Alignment within a cell is based off the calculated
-                // height, which becomes irrelevant once the cell has
-                // been resized based off its percentage.
-                cell->setOverrideLogicalContentHeightFromRowHeight(rHeight);
-                cell->layoutIfNeeded();
-
-                // If the baseline moved, we may have to update the data for our row. Find out the new baseline.
-                if (cell->isBaselineAligned()) {
-                    LayoutUnit baseline = cell->cellBaselinePosition();
-                    if (baseline > cell->borderAndPaddingBefore())
-                        m_grid[r].baseline = std::max(m_grid[r].baseline, baseline);
-                }
-            }
+            relayoutCellIfFlexed(*cell, r, rHeight);
 
             cell->computeIntrinsicPadding(rHeight);
 

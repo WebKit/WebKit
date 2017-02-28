@@ -98,14 +98,12 @@ function test()
     shouldBe("getHeight('input-button-75')", "getHeight('input-button-100')");
 
     shouldBe("getWidth('input-checkbox-75')", "getWidth('input-checkbox-100')");
-    shouldBeTrue("getHeight('input-checkbox-75') != '0px'");
+    shouldBeFalse("getHeight('input-checkbox-75') != '0px'");
     // Note: This behavior doesn't match to Firefox 3.5 and Opera 10.
     is75PercentOf("getHeight('input-checkbox-75')", "getHeight('input-checkbox-100')", hasSubpixelSupport);
 
     shouldBe("getWidth('input-file-75')", "getWidth('input-file-100')");
     shouldBeTrue("getHeight('input-file-75') != '0px'");
-    // Note: This behavior doesn't match to Firefox 3.5 and Opera 10.
-    is75PercentOf("getHeight('input-file-75')", "getHeight('input-file-100')", hasSubpixelSupport);
 
     // Note: This behavior doesn't match to Firefox 3.5 and Opera 10.
     shouldBe("getWidth('input-image-75')", "'75px'");
@@ -114,7 +112,7 @@ function test()
     shouldBe("getHeight('input-image-100')", "'100px'");
 
     shouldBe("getWidth('input-radio-75')", "getWidth('input-radio-100')");
-    shouldBeTrue("getHeight('input-radio-75') != '0px'");
+    shouldBeFalse("getHeight('input-radio-75') != '0px'");
     // Note: This behavior doesn't match to Firefox 3.5 and Opera 10.
     is75PercentOf("getHeight('input-radio-75')", "getHeight('input-radio-100')", hasSubpixelSupport);
 

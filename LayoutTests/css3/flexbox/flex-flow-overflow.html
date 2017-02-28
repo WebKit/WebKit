@@ -8,7 +8,7 @@
     display: inline-block;
 }
 .flexbox {
-    display: -webkit-flex;
+    display: flex;
     background-color: grey;
     width: 100px;
     height: 100px;
@@ -23,35 +23,35 @@
     direction: rtl;
 }
 .horizontal-tb {
-    -webkit-writing-mode: horizontal-tb;
-}
-.horizontal-bt {
-    -webkit-writing-mode: horizontal-bt;
+    writing-mode: horizontal-tb;
 }
 .vertical-rl {
-    -webkit-writing-mode: vertical-rl;
+    writing-mode: vertical-rl;
 }
 .vertical-lr {
-    -webkit-writing-mode: vertical-lr;
+    writing-mode: vertical-lr;
 }
 .row {
-    -webkit-flex-flow: row;    
+    flex-flow: row;    
 }
 .row-reverse {
-    -webkit-flex-flow: row-reverse;
+    flex-flow: row-reverse;
 }
 .column {
-    -webkit-flex-flow: column;
+    flex-flow: column;
 }
 .column-reverse {
-    -webkit-flex-flow: column-reverse;
+    flex-flow: column-reverse;
 }
 .flexbox > :nth-child(1) {
     background-color: blue;
 }
 </style>
-<script src="../../resources/check-layout.js"></script>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../resources/check-layout-th.js"></script>
 <body onload="checkLayout('.flexbox')">
+<div id=log></div>
 
 <script>
 function positionAsString(position)
@@ -73,12 +73,6 @@ var expectations = {
         'rtl-column-reverse': [-5, -5],
         'ltr-column-reverse': [0, -5],
     },
-    'horizontal-bt': {
-        rtl: [-5, -5],
-        ltr: [0, -5],
-        'rtl-column-reverse': [-5, 0],
-        'ltr-column-reverse': [0, 0],
-    },
     'vertical-lr': {
         rtl: [0, -5],
         ltr: [0, 0],
@@ -93,7 +87,7 @@ var expectations = {
     }
 }
 
-var writingModes = ['horizontal-tb', 'horizontal-bt', 'vertical-lr', 'vertical-rl'];
+var writingModes = ['horizontal-tb', 'vertical-lr', 'vertical-rl'];
 var flexFlows = ['row', 'column', 'row-reverse', 'column-reverse'];
 var directions = ['rtl', 'ltr'];
 
@@ -119,7 +113,7 @@ writingModes.forEach(function(writingMode) {
                 flowDirection = direction + "-column-reverse";
 
             container.innerHTML = '\n<div class="flexbox ' + flexboxClassName + '" ' + sizeAsString(containerSize) + '>\n' +
-                '<div style="-webkit-flex: 1 0 auto; width: 105px; height: 105px;" ' + sizeAsString([105, 105])  + ' ' + positionAsString(expectations[writingMode][flowDirection]) + '></div>\n' +
+                '<div style="flex: 1 0 auto; width: 105px; height: 105px;" ' + sizeAsString([105, 105])  + ' ' + positionAsString(expectations[writingMode][flowDirection]) + '></div>\n' +
             '</div>\n';
 
             document.body.appendChild(container);   

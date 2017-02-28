@@ -5,9 +5,9 @@ body {
     margin: 0;
 }
 .flexbox {
-    display: -webkit-flex;
+    display: flex;
     position: relative;
-    -webkit-flex-flow: column;
+    flex-flow: column;
 }
 .flexbox > div {
     height: 0;
@@ -19,8 +19,11 @@ body {
     background-color: blue;
 }
 </style>
-<script src="../../resources/check-layout.js"></script>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../resources/check-layout-th.js"></script>
 <body onload="checkLayout('.flexbox')">
+<div id=log></div>
 
 <div data-expected-height=0 data-offset-x=0 data-offset-y=0 class="flexbox">
     <div data-expected-height=0 data-offset-x=0 data-offset-y=0>

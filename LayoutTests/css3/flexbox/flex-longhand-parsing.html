@@ -1,68 +1,67 @@
 <!DOCTYPE html>
 <html>
 <head>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 </head>
 <body>
 <div id="flexbox">
     <div id="flexitem"></div>
 </div>
 <script>
-description('Tests the interaction between the -webkit-flex shorthand propery and the -webkit-flex-grow, -webkit-flex-shrink, and -webkit-flex-basis longhand properties.');
+description('Tests the interaction between the flex shorthand propery and the flex-grow, flex-shrink, and flex-basis longhand properties.');
 
 var flexitem = document.getElementById("flexitem");
 
 // Test default value.
-shouldBeEqualToString('flexitem.style.webkitFlex', '');
-shouldBeEqualToString('getComputedStyle(flexitem).webkitFlex', '0 1 auto');
+shouldBeEqualToString('flexitem.style.flex', '');
+shouldBeEqualToString('getComputedStyle(flexitem).flex', '0 1 auto');
 
-flexitem.style.webkitFlexGrow = 2;
-shouldBeEqualToString('flexitem.style.webkitFlexGrow', '2');
-shouldBeEqualToString('getComputedStyle(flexitem).webkitFlexGrow', '2');
-shouldBeEqualToString('getComputedStyle(flexitem).webkitFlex', '2 1 auto');
+flexitem.style.flexGrow = 2;
+shouldBeEqualToString('flexitem.style.flexGrow', '2');
+shouldBeEqualToString('getComputedStyle(flexitem).flexGrow', '2');
+shouldBeEqualToString('getComputedStyle(flexitem).flex', '2 1 auto');
 
-flexitem.style.webkitFlexShrink = 3;
-shouldBeEqualToString('flexitem.style.webkitFlexShrink', '3');
-shouldBeEqualToString('getComputedStyle(flexitem).webkitFlexShrink', '3');
-shouldBeEqualToString('getComputedStyle(flexitem).webkitFlex', '2 3 auto');
+flexitem.style.flexShrink = 3;
+shouldBeEqualToString('flexitem.style.flexShrink', '3');
+shouldBeEqualToString('getComputedStyle(flexitem).flexShrink', '3');
+shouldBeEqualToString('getComputedStyle(flexitem).flex', '2 3 auto');
 
-flexitem.style.webkitFlexBasis = 0;
-shouldBeEqualToString('flexitem.style.webkitFlexBasis', '0px');
-shouldBeEqualToString('getComputedStyle(flexitem).webkitFlexBasis', '0px');
-shouldBeEqualToString('getComputedStyle(flexitem).webkitFlex', '2 3 0px');
+flexitem.style.flexBasis = 0;
+shouldBeEqualToString('flexitem.style.flexBasis', '0px');
+shouldBeEqualToString('getComputedStyle(flexitem).flexBasis', '0px');
+shouldBeEqualToString('getComputedStyle(flexitem).flex', '2 3 0px');
 
-flexitem.style.webkitFlexShrink = 0;
-shouldBeEqualToString('flexitem.style.webkitFlexShrink', '0');
-shouldBeEqualToString('getComputedStyle(flexitem).webkitFlex', '2 0 0px');
+flexitem.style.flexShrink = 0;
+shouldBeEqualToString('flexitem.style.flexShrink', '0');
+shouldBeEqualToString('getComputedStyle(flexitem).flex', '2 0 0px');
 
-flexitem.style.webkitFlexBasis = '50%';
-shouldBeEqualToString('flexitem.style.webkitFlexBasis', '50%');
-shouldBeEqualToString('getComputedStyle(flexitem).webkitFlexBasis', '50%');
-shouldBeEqualToString('getComputedStyle(flexitem).webkitFlex', '2 0 50%');
+flexitem.style.flexBasis = '50%';
+shouldBeEqualToString('flexitem.style.flexBasis', '50%');
+shouldBeEqualToString('getComputedStyle(flexitem).flexBasis', '50%');
+shouldBeEqualToString('getComputedStyle(flexitem).flex', '2 0 50%');
 
-flexitem.style.webkitFlexBasis = 'auto';
-shouldBeEqualToString('flexitem.style.webkitFlexBasis', 'auto');
-shouldBeEqualToString('getComputedStyle(flexitem).webkitFlex', '2 0 auto');
+flexitem.style.flexBasis = 'auto';
+shouldBeEqualToString('flexitem.style.flexBasis', 'auto');
+shouldBeEqualToString('getComputedStyle(flexitem).flex', '2 0 auto');
 
-flexitem.style.webkitFlex = 'none';
-shouldBeEqualToString('flexitem.style.webkitFlex', '0 0 auto');
-shouldBeEqualToString('flexitem.style.webkitFlexGrow', '0');
-shouldBeEqualToString('flexitem.style.webkitFlexShrink', '0');
-shouldBeEqualToString('flexitem.style.webkitFlexBasis', 'auto');
-shouldBeEqualToString('getComputedStyle(flexitem).webkitFlex', '0 0 auto');
+flexitem.style.flex = 'none';
+shouldBeEqualToString('flexitem.style.flex', '0 0 auto');
+shouldBeEqualToString('flexitem.style.flexGrow', '0');
+shouldBeEqualToString('flexitem.style.flexShrink', '0');
+shouldBeEqualToString('flexitem.style.flexBasis', 'auto');
+shouldBeEqualToString('getComputedStyle(flexitem).flex', '0 0 auto');
 
-flexitem.style.webkitFlexGrow = 1.5;
-shouldBeEqualToString('flexitem.style.webkitFlex', '1.5 0 auto');
-shouldBeEqualToString('getComputedStyle(flexitem).webkitFlex', '1.5 0 auto');
+flexitem.style.flexGrow = 1.5;
+shouldBeEqualToString('flexitem.style.flex', '1.5 0 auto');
+shouldBeEqualToString('getComputedStyle(flexitem).flex', '1.5 0 auto');
 
-flexitem.style.webkitFlex = 3;
-shouldBeEqualToString('flexitem.style.webkitFlex', '3 1 0px');
-shouldBeEqualToString('flexitem.style.webkitFlexGrow', '3');
-shouldBeEqualToString('flexitem.style.webkitFlexShrink', '1');
-shouldBeEqualToString('flexitem.style.webkitFlexBasis', '0px');
-shouldBeEqualToString('getComputedStyle(flexitem).webkitFlex', '3 1 0px');
+flexitem.style.flex = 3;
+shouldBeEqualToString('flexitem.style.flex', '3 1 0px');
+shouldBeEqualToString('flexitem.style.flexGrow', '3');
+shouldBeEqualToString('flexitem.style.flexShrink', '1');
+shouldBeEqualToString('flexitem.style.flexBasis', '0px');
+shouldBeEqualToString('getComputedStyle(flexitem).flex', '3 1 0px');
 
 </script>
-<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>

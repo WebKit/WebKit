@@ -5,7 +5,7 @@ body {
     margin: 0;
 }
 .flexbox {
-    display: -webkit-flex;
+    display: flex;
     background-color: #aaa;
     position: relative;
 }
@@ -24,14 +24,17 @@ body {
   background-color: yellow !important;
 }
 </style>
-<script src="../../resources/check-layout.js"></script>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../resources/check-layout-th.js"></script>
 <body>
+<div id=log></div>
 
 <p>This test verifies that changing order, align-content, align-items, align-self, or justify-content will relayout.</p>
 
 <div id="flexbox" class="flexbox" style="width: 300px; height: 300px;">
-  <div id="a" style="-webkit-flex: 0 0 auto; width: 100px; height: 100px;"></div>
-  <div id="b" style="-webkit-flex: 0 0 auto; width: 100px; height: 100px;"></div>
+  <div id="a" style="flex: 0 0 auto; width: 100px; height: 100px;"></div>
+  <div id="b" style="flex: 0 0 auto; width: 100px; height: 100px;"></div>
 </div>
 <script>
 
@@ -50,21 +53,21 @@ function checkValues(aXOffset, aYOffset, bXOffset, bYOffset)
 
 checkValues(0, 0, 100, 0);
 
-flexbox.style.webkitJustifyContent = "flex-end";
+flexbox.style.justifyContent = "flex-end";
 checkValues(100, 0, 200, 0);
 
-flexbox.style.webkitAlignItems = "flex-end";
+flexbox.style.alignItems = "flex-end";
 checkValues(100, 200, 200, 200);
 
-bDiv.style.webkitOrder = -1;
+bDiv.style.order = -1;
 checkValues(200, 200, 100, 200);
 
-aDiv.style.webkitAlignSelf = "flex-start";
+aDiv.style.alignSelf = "flex-start";
 checkValues(200, 0, 100, 200);
 
 flexbox.style.width = "100px";
-flexbox.style.webkitFlexWrap = "wrap";
-flexbox.style.webkitAlignContent = "flex-end";
+flexbox.style.flexWrap = "wrap";
+flexbox.style.alignContent = "flex-end";
 checkValues(0, 200, 0, 100);
 
 </script>

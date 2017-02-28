@@ -1,240 +1,239 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 </head>
 <body>
 <div id="flexbox">
     <div id="flexitem"></div>
 </div>
 <script>
-description('Tests being able to set the display to -webkit-flex and -webkit-inline-flex.');
+description('Tests being able to set the display to flex and inline-flex.');
 
 var flexbox = document.getElementById("flexbox");
 
-flexbox.style.display = '-webkit-flex';
-shouldBeEqualToString('flexbox.style.display', '-webkit-flex');
+flexbox.style.display = 'flex';
+shouldBeEqualToString('flexbox.style.display', 'flex');
 
 flexbox.style.display = 'inline';
 shouldBeEqualToString('flexbox.style.display', 'inline');
 
-flexbox.style.display = '-webkit-inline-flex';
-shouldBeEqualToString('flexbox.style.display', '-webkit-inline-flex');
+flexbox.style.display = 'inline-flex';
+shouldBeEqualToString('flexbox.style.display', 'inline-flex');
 
 flexbox.style.display = 'junk';
-shouldBeEqualToString('flexbox.style.display', '-webkit-inline-flex');
+shouldBeEqualToString('flexbox.style.display', 'inline-flex');
 
 flexbox.style.display = 'block';
 shouldBeEqualToString('flexbox.style.display', 'block');
 
+flexbox.style.display = 'flex';
 
 var flexitem = document.getElementById("flexitem");
-shouldBeEqualToString('flexitem.style.webkitOrder', '');
+shouldBeEqualToString('flexitem.style.order', '');
 
-flexitem.style.webkitOrder = 2;
-shouldBeEqualToString('flexitem.style.webkitOrder', '2');
+flexitem.style.order = 2;
+shouldBeEqualToString('flexitem.style.order', '2');
 
-flexitem.style.webkitOrder = -1;
-shouldBeEqualToString('flexitem.style.webkitOrder', '-1');
+flexitem.style.order = -1;
+shouldBeEqualToString('flexitem.style.order', '-1');
 
-flexitem.style.webkitOrder = 0;
-shouldBeEqualToString('flexitem.style.webkitOrder', '0');
+flexitem.style.order = 0;
+shouldBeEqualToString('flexitem.style.order', '0');
 
-// -webkit-order must be an integer.
-flexitem.style.webkitOrder = 1.5;
-shouldBeEqualToString('flexitem.style.webkitOrder', '0');
+// order must be an integer.
+flexitem.style.order = 1.5;
+shouldBeEqualToString('flexitem.style.order', '0');
 
-flexitem.style.webkitOrder = "test";
-shouldBeEqualToString('flexitem.style.webkitOrder', '0');
+flexitem.style.order = "test";
+shouldBeEqualToString('flexitem.style.order', '0');
 
-flexitem.style.webkitOrder = '';
-shouldBeEqualToString('flexitem.style.webkitOrder', '');
+flexitem.style.order = '';
+shouldBeEqualToString('flexitem.style.order', '');
 
 
-flexbox.style.display = '-webkit-flex';
-
-shouldBeEqualToString('flexbox.style.webkitJustifyContent', '');
+shouldBeEqualToString('flexbox.style.justifyContent', '');
 // The initial value is 'normal'.
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitJustifyContent', 'normal');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).justifyContent', 'normal');
 
-flexbox.style.webkitJustifyContent = 'foo';
-shouldBeEqualToString('flexbox.style.webkitJustifyContent', '');
+flexbox.style.justifyContent = 'foo';
+shouldBeEqualToString('flexbox.style.justifyContent', '');
 
-flexbox.style.webkitJustifyContent = 'flex-start';
-shouldBeEqualToString('flexbox.style.webkitJustifyContent', 'flex-start');
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitJustifyContent', 'flex-start');
+flexbox.style.justifyContent = 'flex-start';
+shouldBeEqualToString('flexbox.style.justifyContent', 'flex-start');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).justifyContent', 'flex-start');
 
-flexbox.style.webkitJustifyContent = 'flex-end';
-shouldBeEqualToString('flexbox.style.webkitJustifyContent', 'flex-end');
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitJustifyContent', 'flex-end');
+flexbox.style.justifyContent = 'flex-end';
+shouldBeEqualToString('flexbox.style.justifyContent', 'flex-end');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).justifyContent', 'flex-end');
 
-flexbox.style.webkitJustifyContent = 'center';
-shouldBeEqualToString('flexbox.style.webkitJustifyContent', 'center');
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitJustifyContent', 'center');
+flexbox.style.justifyContent = 'center';
+shouldBeEqualToString('flexbox.style.justifyContent', 'center');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).justifyContent', 'center');
 
-flexbox.style.webkitJustifyContent = 'space-between';
-shouldBeEqualToString('flexbox.style.webkitJustifyContent', 'space-between');
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitJustifyContent', 'space-between');
+flexbox.style.justifyContent = 'space-between';
+shouldBeEqualToString('flexbox.style.justifyContent', 'space-between');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).justifyContent', 'space-between');
 
-flexbox.style.webkitJustifyContent = '';
-shouldBeEqualToString('flexbox.style.webkitJustifyContent', '');
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitJustifyContent', 'normal');
+flexbox.style.justifyContent = '';
+shouldBeEqualToString('flexbox.style.justifyContent', '');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).justifyContent', 'normal');
 
-shouldBeEqualToString('flexbox.style.webkitAlignSelf', '');
+shouldBeEqualToString('flexbox.style.alignSelf', '');
 // The initial value is 'auto', which will be resolved depending on parent's style (except for the 'document' element).
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitAlignSelf', 'normal');
-shouldBeEqualToString('window.getComputedStyle(document.documentElement, null).webkitAlignSelf', 'normal');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).alignSelf', 'normal');
+shouldBeEqualToString('window.getComputedStyle(document.documentElement, null).alignSelf', 'normal');
 
-flexbox.style.webkitAlignSelf = 'foo';
-shouldBeEqualToString('flexbox.style.webkitAlignSelf', '');
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitAlignSelf', 'normal');
+flexbox.style.alignSelf = 'foo';
+shouldBeEqualToString('flexbox.style.alignSelf', '');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).alignSelf', 'normal');
 
-flexbox.style.webkitAlignSelf = 'auto';
-shouldBeEqualToString('flexbox.style.webkitAlignSelf', 'auto');
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitAlignSelf', 'normal');
+flexbox.style.alignSelf = 'auto';
+shouldBeEqualToString('flexbox.style.alignSelf', 'auto');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).alignSelf', 'normal');
 
-flexbox.style.webkitAlignSelf = 'flex-start';
-shouldBeEqualToString('flexbox.style.webkitAlignSelf', 'flex-start');
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitAlignSelf', 'flex-start');
+flexbox.style.alignSelf = 'flex-start';
+shouldBeEqualToString('flexbox.style.alignSelf', 'flex-start');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).alignSelf', 'flex-start');
 
-flexbox.style.webkitAlignSelf = 'flex-end';
-shouldBeEqualToString('flexbox.style.webkitAlignSelf', 'flex-end');
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitAlignSelf', 'flex-end');
+flexbox.style.alignSelf = 'flex-end';
+shouldBeEqualToString('flexbox.style.alignSelf', 'flex-end');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).alignSelf', 'flex-end');
 
-flexbox.style.webkitAlignSelf = 'center';
-shouldBeEqualToString('flexbox.style.webkitAlignSelf', 'center');
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitAlignSelf', 'center');
+flexbox.style.alignSelf = 'center';
+shouldBeEqualToString('flexbox.style.alignSelf', 'center');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).alignSelf', 'center');
 
-flexbox.style.webkitAlignSelf = 'stretch';
-shouldBeEqualToString('flexbox.style.webkitAlignSelf', 'stretch');
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitAlignSelf', 'stretch');
+flexbox.style.alignSelf = 'stretch';
+shouldBeEqualToString('flexbox.style.alignSelf', 'stretch');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).alignSelf', 'stretch');
 
-flexbox.style.webkitAlignSelf = 'baseline';
-shouldBeEqualToString('flexbox.style.webkitAlignSelf', 'baseline');
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitAlignSelf', 'baseline');
+flexbox.style.alignSelf = 'baseline';
+shouldBeEqualToString('flexbox.style.alignSelf', 'baseline');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).alignSelf', 'baseline');
 
-flexbox.style.webkitAlignSelf = '';
-shouldBeEqualToString('flexbox.style.webkitAlignSelf', '');
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitAlignSelf', 'normal');
+flexbox.style.alignSelf = '';
+shouldBeEqualToString('flexbox.style.alignSelf', '');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).alignSelf', 'normal');
 
-shouldBeEqualToString('flexbox.style.webkitAlignItems', '');
-shouldBeEqualToString('flexitem.style.webkitAlignSelf', '');
+shouldBeEqualToString('flexbox.style.alignItems', '');
+shouldBeEqualToString('flexitem.style.alignSelf', '');
 // The initial value is 'auto', which will be resolved to 'normal' in case of flexbox containers.
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitAlignItems', 'normal');
-shouldBeEqualToString('window.getComputedStyle(flexitem, null).webkitAlignSelf', 'normal');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).alignItems', 'normal');
+shouldBeEqualToString('window.getComputedStyle(flexitem, null).alignSelf', 'normal');
 
-flexbox.style.webkitAlignItems = 'foo';
-shouldBeEqualToString('flexbox.style.webkitAlignItems', '');
-shouldBeEqualToString('flexitem.style.webkitAlignSelf', '');
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitAlignItems', 'normal');
-shouldBeEqualToString('window.getComputedStyle(flexitem, null).webkitAlignSelf', 'normal');
+flexbox.style.alignItems = 'foo';
+shouldBeEqualToString('flexbox.style.alignItems', '');
+shouldBeEqualToString('flexitem.style.alignSelf', '');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).alignItems', 'normal');
+shouldBeEqualToString('window.getComputedStyle(flexitem, null).alignSelf', 'normal');
 
 // The 'auto' value is not valid for the align-items property.
-flexbox.style.webkitAlignItems = 'auto';
-shouldBeEqualToString('flexbox.style.webkitAlignItems', '');
-shouldBeEqualToString('flexitem.style.webkitAlignSelf', '');
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitAlignItems', 'normal');
-shouldBeEqualToString('window.getComputedStyle(flexitem, null).webkitAlignSelf', 'normal');
+flexbox.style.alignItems = 'auto';
+shouldBeEqualToString('flexbox.style.alignItems', '');
+shouldBeEqualToString('flexitem.style.alignSelf', '');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).alignItems', 'normal');
+shouldBeEqualToString('window.getComputedStyle(flexitem, null).alignSelf', 'normal');
 
-flexbox.style.webkitAlignItems = 'flex-start';
-shouldBeEqualToString('flexbox.style.webkitAlignItems', 'flex-start');
-shouldBeEqualToString('flexitem.style.webkitAlignSelf', '');
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitAlignItems', 'flex-start');
-shouldBeEqualToString('window.getComputedStyle(flexitem, null).webkitAlignSelf', 'flex-start');
+flexbox.style.alignItems = 'flex-start';
+shouldBeEqualToString('flexbox.style.alignItems', 'flex-start');
+shouldBeEqualToString('flexitem.style.alignSelf', '');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).alignItems', 'flex-start');
+shouldBeEqualToString('window.getComputedStyle(flexitem, null).alignSelf', 'flex-start');
 
-flexbox.style.webkitAlignItems = 'flex-end';
-shouldBeEqualToString('flexbox.style.webkitAlignItems', 'flex-end');
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitAlignItems', 'flex-end');
-shouldBeEqualToString('window.getComputedStyle(flexitem, null).webkitAlignSelf', 'flex-end');
+flexbox.style.alignItems = 'flex-end';
+shouldBeEqualToString('flexbox.style.alignItems', 'flex-end');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).alignItems', 'flex-end');
+shouldBeEqualToString('window.getComputedStyle(flexitem, null).alignSelf', 'flex-end');
 
-flexbox.style.webkitAlignItems = 'center';
-shouldBeEqualToString('flexbox.style.webkitAlignItems', 'center');
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitAlignItems', 'center');
-shouldBeEqualToString('window.getComputedStyle(flexitem, null).webkitAlignSelf', 'center');
+flexbox.style.alignItems = 'center';
+shouldBeEqualToString('flexbox.style.alignItems', 'center');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).alignItems', 'center');
+shouldBeEqualToString('window.getComputedStyle(flexitem, null).alignSelf', 'center');
 
-flexbox.style.webkitAlignItems = 'stretch';
-shouldBeEqualToString('flexbox.style.webkitAlignItems', 'stretch');
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitAlignItems', 'stretch');
-shouldBeEqualToString('window.getComputedStyle(flexitem, null).webkitAlignSelf', 'stretch');
+flexbox.style.alignItems = 'stretch';
+shouldBeEqualToString('flexbox.style.alignItems', 'stretch');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).alignItems', 'stretch');
+shouldBeEqualToString('window.getComputedStyle(flexitem, null).alignSelf', 'stretch');
 
-flexbox.style.webkitAlignItems = 'baseline';
-shouldBeEqualToString('flexbox.style.webkitAlignItems', 'baseline');
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitAlignItems', 'baseline');
-shouldBeEqualToString('window.getComputedStyle(flexitem, null).webkitAlignSelf', 'baseline');
+flexbox.style.alignItems = 'baseline';
+shouldBeEqualToString('flexbox.style.alignItems', 'baseline');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).alignItems', 'baseline');
+shouldBeEqualToString('window.getComputedStyle(flexitem, null).alignSelf', 'baseline');
 
-flexbox.style.webkitAlignItems = '';
-shouldBeEqualToString('flexbox.style.webkitAlignItems', '');
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitAlignItems', 'normal');
-shouldBeEqualToString('window.getComputedStyle(flexitem, null).webkitAlignSelf', 'normal');
+flexbox.style.alignItems = '';
+shouldBeEqualToString('flexbox.style.alignItems', '');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).alignItems', 'normal');
+shouldBeEqualToString('window.getComputedStyle(flexitem, null).alignSelf', 'normal');
 
 flexbox.style.display = 'none';
-shouldBeEqualToString('flexbox.style.webkitAlignItems', '');
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitAlignItems', 'normal');
-shouldBeEqualToString('window.getComputedStyle(flexitem, null).webkitAlignSelf', 'normal');
-flexbox.style.display = '';
+shouldBeEqualToString('flexbox.style.alignItems', '');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).alignItems', 'normal');
+shouldBeEqualToString('window.getComputedStyle(flexitem, null).alignSelf', 'normal');
+flexbox.style.display = 'flex';
 
 
 // FIXME: This should probably return stretch. See https://bugs.webkit.org/show_bug.cgi?id=14563.
 var detachedFlexbox = document.createElement('div');
 var detachedFlexItem = document.createElement('div');
 detachedFlexbox.appendChild(detachedFlexItem);
-shouldBeEqualToString('window.getComputedStyle(detachedFlexbox, null).webkitAlignSelf', '');
-shouldBeEqualToString('window.getComputedStyle(detachedFlexItem, null).webkitAlignSelf', '');
+shouldBeEqualToString('window.getComputedStyle(detachedFlexbox, null).alignSelf', '');
+shouldBeEqualToString('window.getComputedStyle(detachedFlexItem, null).alignSelf', '');
 
 
-shouldBeEqualToString('flexbox.style.webkitFlexDirection', '');
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexDirection', 'row');
+shouldBeEqualToString('flexbox.style.flexDirection', '');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).flexDirection', 'row');
 
-flexbox.style.webkitFlexDirection = 'foo';
-shouldBeEqualToString('flexbox.style.webkitFlexDirection', '');
+flexbox.style.flexDirection = 'foo';
+shouldBeEqualToString('flexbox.style.flexDirection', '');
 
-flexbox.style.webkitFlexDirection = 'row';
-shouldBeEqualToString('flexbox.style.webkitFlexDirection', 'row');
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexDirection', 'row');
+flexbox.style.flexDirection = 'row';
+shouldBeEqualToString('flexbox.style.flexDirection', 'row');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).flexDirection', 'row');
 
-flexbox.style.webkitFlexDirection = 'row-reverse';
-shouldBeEqualToString('flexbox.style.webkitFlexDirection', 'row-reverse');
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexDirection', 'row-reverse');
+flexbox.style.flexDirection = 'row-reverse';
+shouldBeEqualToString('flexbox.style.flexDirection', 'row-reverse');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).flexDirection', 'row-reverse');
 
-flexbox.style.webkitFlexDirection = 'column';
-shouldBeEqualToString('flexbox.style.webkitFlexDirection', 'column');
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexDirection', 'column');
+flexbox.style.flexDirection = 'column';
+shouldBeEqualToString('flexbox.style.flexDirection', 'column');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).flexDirection', 'column');
 
-flexbox.style.webkitFlexDirection = 'column-reverse';
-shouldBeEqualToString('flexbox.style.webkitFlexDirection', 'column-reverse');
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexDirection', 'column-reverse');
+flexbox.style.flexDirection = 'column-reverse';
+shouldBeEqualToString('flexbox.style.flexDirection', 'column-reverse');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).flexDirection', 'column-reverse');
 
-shouldBeEqualToString('flexbox.style.webkitFlexWrap', '');
+shouldBeEqualToString('flexbox.style.flexWrap', '');
 // The initial value is 'nowrap'.
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexWrap', 'nowrap');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).flexWrap', 'nowrap');
 
-flexbox.style.webkitFlexWrap = 'foo';
-shouldBeEqualToString('flexbox.style.webkitFlexWrap', '');
+flexbox.style.flexWrap = 'foo';
+shouldBeEqualToString('flexbox.style.flexWrap', '');
 
-flexbox.style.webkitFlexWrap = 'nowrap';
-shouldBeEqualToString('flexbox.style.webkitFlexWrap', 'nowrap');
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexWrap', 'nowrap');
+flexbox.style.flexWrap = 'nowrap';
+shouldBeEqualToString('flexbox.style.flexWrap', 'nowrap');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).flexWrap', 'nowrap');
 
-flexbox.style.webkitFlexWrap = 'wrap';
-shouldBeEqualToString('flexbox.style.webkitFlexWrap', 'wrap');
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexWrap', 'wrap');
+flexbox.style.flexWrap = 'wrap';
+shouldBeEqualToString('flexbox.style.flexWrap', 'wrap');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).flexWrap', 'wrap');
 
-flexbox.style.webkitFlexWrap = 'wrap-reverse';
-shouldBeEqualToString('flexbox.style.webkitFlexWrap', 'wrap-reverse');
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexWrap', 'wrap-reverse');
+flexbox.style.flexWrap = 'wrap-reverse';
+shouldBeEqualToString('flexbox.style.flexWrap', 'wrap-reverse');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).flexWrap', 'wrap-reverse');
 
-flexbox.style.webkitFlexFlow = '';
-shouldBeEqualToString('flexbox.style.webkitFlexFlow', '');
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexFlow', 'row nowrap');
+flexbox.style.flexFlow = '';
+shouldBeEqualToString('flexbox.style.flexFlow', '');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).flexFlow', 'row nowrap');
 
-flexbox.style.webkitFlexFlow = 'foo';
-shouldBeEqualToString('flexbox.style.webkitFlexFlow', '');
+flexbox.style.flexFlow = 'foo';
+shouldBeEqualToString('flexbox.style.flexFlow', '');
 
 function testFlexFlowValue(value, expected, expectedComputed)
 {
-    flexbox.style.webkitFlexFlow = value;
-    shouldBeEqualToString('flexbox.style.webkitFlexFlow', expected.replace(/^ /, '').replace(/ $/, ''));
-    shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexFlow', expectedComputed);
+    flexbox.style.flexFlow = value;
+    shouldBeEqualToString('flexbox.style.flexFlow', expected.replace(/^ /, '').replace(/ $/, ''));
+    shouldBeEqualToString('window.getComputedStyle(flexbox, null).flexFlow', expectedComputed);
 }
 
 var directions = ['', 'row', 'row-reverse', 'column', 'column-reverse'];
@@ -248,74 +247,71 @@ directions.forEach(function(direction) {
     });
 });
 
-flexbox.style.webkitFlexFlow = '';
-shouldBeEqualToString('flexbox.style.webkitFlexFlow', '');
-flexbox.style.webkitFlexFlow = 'wrap wrap-reverse';
-shouldBeEqualToString('flexbox.style.webkitFlexFlow', '');
-flexbox.style.webkitFlexFlow = 'column row';
-shouldBeEqualToString('flexbox.style.webkitFlexFlow', '');
+flexbox.style.flexFlow = '';
+shouldBeEqualToString('flexbox.style.flexFlow', '');
+flexbox.style.flexFlow = 'wrap wrap-reverse';
+shouldBeEqualToString('flexbox.style.flexFlow', '');
+flexbox.style.flexFlow = 'column row';
+shouldBeEqualToString('flexbox.style.flexFlow', '');
 
-flexbox.style.webkitFlexFlow = '';
-shouldBeEqualToString('flexbox.style.webkitFlexFlow', '');
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexFlow', 'row nowrap');
-flexbox.style.webkitFlexDirection = 'column';
-flexbox.style.webkitFlexWrap = 'initial';
-shouldBeEqualToString('flexbox.style.webkitFlexFlow', 'column');
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexFlow', 'column nowrap');
-flexbox.style.webkitFlexWrap = 'wrap';
-shouldBeEqualToString('flexbox.style.webkitFlexFlow', 'column wrap');
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexFlow', 'column wrap');
-flexbox.style.webkitFlexFlow = 'row-reverse wrap-reverse';
-shouldBeEqualToString('flexbox.style.webkitFlexFlow', 'row-reverse wrap-reverse');
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexFlow', 'row-reverse wrap-reverse');
+flexbox.style.flexFlow = '';
+shouldBeEqualToString('flexbox.style.flexFlow', '');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).flexFlow', 'row nowrap');
+flexbox.style.flexDirection = 'column';
+flexbox.style.flexWrap = 'initial';
+shouldBeEqualToString('flexbox.style.flexFlow', 'column');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).flexFlow', 'column nowrap');
+flexbox.style.flexWrap = 'wrap';
+shouldBeEqualToString('flexbox.style.flexFlow', 'column wrap');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).flexFlow', 'column wrap');
+flexbox.style.flexFlow = 'row-reverse wrap-reverse';
+shouldBeEqualToString('flexbox.style.flexFlow', 'row-reverse wrap-reverse');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).flexFlow', 'row-reverse wrap-reverse');
 
-// -webkit-flex-flow is a shorthand, so it shouldn't show up as a computed property.
+// flex-flow is a shorthand, so it shouldn't show up as a computed property.
 var computedStyle = getComputedStyle(flexbox);
 var foundFlexFlow = false;
 for (var i = 0; i < computedStyle.length; ++i) {
-    if (computedStyle[i] == 'webkitFlexFlow')
+    if (computedStyle[i] == 'flexFlow')
         foundFlexFlow = true;
 }
 shouldBeFalse('foundFlexFlow');
 
-flexbox.style.display = '-webkit-flex';
-
 // The initial value is 'normal'.
-shouldBeEqualToString('flexbox.style.webkitAlignContent', '');
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitAlignContent', 'normal');
+shouldBeEqualToString('flexbox.style.alignContent', '');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).alignContent', 'normal');
 
-flexbox.style.webkitAlignContent = 'flex-start';
-shouldBeEqualToString('flexbox.style.webkitAlignContent', 'flex-start');
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitAlignContent', 'flex-start');
+flexbox.style.alignContent = 'flex-start';
+shouldBeEqualToString('flexbox.style.alignContent', 'flex-start');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).alignContent', 'flex-start');
 
-flexbox.style.webkitAlignContent = 'flex-end';
-shouldBeEqualToString('flexbox.style.webkitAlignContent', 'flex-end');
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitAlignContent', 'flex-end');
+flexbox.style.alignContent = 'flex-end';
+shouldBeEqualToString('flexbox.style.alignContent', 'flex-end');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).alignContent', 'flex-end');
 
-flexbox.style.webkitAlignContent = 'center';
-shouldBeEqualToString('flexbox.style.webkitAlignContent', 'center');
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitAlignContent', 'center');
+flexbox.style.alignContent = 'center';
+shouldBeEqualToString('flexbox.style.alignContent', 'center');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).alignContent', 'center');
 
-flexbox.style.webkitAlignContent = 'space-between';
-shouldBeEqualToString('flexbox.style.webkitAlignContent', 'space-between');
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitAlignContent', 'space-between');
+flexbox.style.alignContent = 'space-between';
+shouldBeEqualToString('flexbox.style.alignContent', 'space-between');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).alignContent', 'space-between');
 
-flexbox.style.webkitAlignContent = 'space-around';
-shouldBeEqualToString('flexbox.style.webkitAlignContent', 'space-around');
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitAlignContent', 'space-around');
+flexbox.style.alignContent = 'space-around';
+shouldBeEqualToString('flexbox.style.alignContent', 'space-around');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).alignContent', 'space-around');
 
-flexbox.style.webkitAlignContent = 'stretch';
-shouldBeEqualToString('flexbox.style.webkitAlignContent', 'stretch');
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitAlignContent', 'stretch');
+flexbox.style.alignContent = 'stretch';
+shouldBeEqualToString('flexbox.style.alignContent', 'stretch');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).alignContent', 'stretch');
 
-flexbox.style.webkitAlignContent = '';
-shouldBeEqualToString('flexbox.style.webkitAlignContent', '');
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitAlignContent', 'normal');
+flexbox.style.alignContent = '';
+shouldBeEqualToString('flexbox.style.alignContent', '');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).alignContent', 'normal');
 
-flexbox.style.webkitAlignContent = 'foo';
-shouldBeEqualToString('flexbox.style.webkitAlignContent', '');
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitAlignContent', 'normal');
+flexbox.style.alignContent = 'foo';
+shouldBeEqualToString('flexbox.style.alignContent', '');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).alignContent', 'normal');
 </script>
-<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>

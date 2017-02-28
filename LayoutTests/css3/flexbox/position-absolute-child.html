@@ -10,39 +10,36 @@ body {
 }
 
 .flexbox {
-    display: -webkit-flex;
+    display: flex;
     background-color: #aaa;
     position: relative;
 }
 .flexbox div {
     border: 0;
-    -webkit-flex: none;
+    flex: none;
 }
 
 .horizontal-tb {
-    -webkit-writing-mode: horizontal-tb;
-}
-.horizontal-bt {
-    -webkit-writing-mode: horizontal-bt;
+    writing-mode: horizontal-tb;
 }
 .vertical-rl {
-    -webkit-writing-mode: vertical-rl;
+    writing-mode: vertical-rl;
 }
 .vertical-lr {
-    -webkit-writing-mode: vertical-lr;
+    writing-mode: vertical-lr;
 }
 
 .row {
-    -webkit-flex-flow: row;
+    flex-flow: row;
 }
 .row-reverse {
-    -webkit-flex-flow: row-reverse;
+    flex-flow: row-reverse;
 }
 .column {
-    -webkit-flex-flow: column;
+    flex-flow: column;
 }
 .column-reverse {
-    -webkit-flex-flow: column-reverse;
+    flex-flow: column-reverse;
 }
 
 .flexbox :nth-child(1) {
@@ -63,8 +60,11 @@ body {
 }
 
 </style>
-<script src="../../resources/check-layout.js"></script>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../resources/check-layout-th.js"></script>
 <body onload="checkLayout('.flexbox')">
+<div id=log></div>
 
 <script>
 function getFlexDirection(flexFlow, writingMode)
@@ -74,206 +74,111 @@ function getFlexDirection(flexFlow, writingMode)
     return (flexFlow.indexOf('row') != -1) ? 'height' : 'width';
 }
 
-var writingModes = ['horizontal-tb', 'horizontal-bt', 'vertical-rl', 'vertical-lr'];
+var writingModes = ['horizontal-tb', 'vertical-rl', 'vertical-lr'];
 var flexFlows = ['row', 'column', 'row-reverse', 'column-reverse'];
 var directions = ['ltr', 'rtl'];
 
+// In each group, you have 3x3 tests. The first 3 test "regular" flexbox,
+// the second test justify-content: space-between, and the final three test
+// justify-content: center; align-items: center;
+// In each of these groups, the absolute item is in position 0, 1, 2.
+// crossAxisOffset is used for the absolute-positioned child.
 var expectations = {
     'horizontal-tb': {
         row: {
             ltr: [
                 { offsets: [0, 0, 240], sizes: [0, 240, 360] },
-                { offsets: [0, 150, 150], sizes: [150, 0, 450] },
-                { offsets: [0, 200, 600], sizes: [200, 400, 0] },
+                { offsets: [0, 0, 150], sizes: [150, 0, 450] },
+                { offsets: [0, 200, 0], sizes: [200, 400, 0] },
                 { offsets: [0, 0, 560] },
-                { offsets: [0, 560, 560] },
-                { offsets: [0, 560, 600] },
-                { offsets: [10, 10, 50], crossAxisOffset: 0 },
-                { offsets: [10, 50, 50], crossAxisOffset: 0 },
-                { offsets: [10, 50, 90], crossAxisOffset: 0 },
+                { offsets: [0, 0, 560] },
+                { offsets: [0, 560, 0] },
+                { offsets: [30, 10, 50], crossAxisOffset: 30 },
+                { offsets: [10, 30, 50], crossAxisOffset: 30 },
+                { offsets: [10, 50, 30], crossAxisOffset: 30 },
             ],
             rtl: [
                 { offsets: [600, 360, 0], sizes: [0, 240, 360] },
-                { offsets: [450, 450, 0], sizes: [150, 0, 450] },
-                { offsets: [400, 0, 0], sizes: [200, 400, 0] },
+                { offsets: [450, 600, 0], sizes: [150, 0, 450] },
+                { offsets: [400, 0, 600], sizes: [200, 400, 0] },
                 { offsets: [580, 560, 0] },
-                { offsets: [560, 20, 0] },
-                { offsets: [560, 0, -20] },
-                { offsets: [50, 50, 10], crossAxisOffset: 0 },
-                { offsets: [50, 10, 10], crossAxisOffset: 0 },
-                { offsets: [50, 10, -30], crossAxisOffset: 0 },
+                { offsets: [560, 580, 0] },
+                { offsets: [560, 0, 580] },
+                { offsets: [30, 50, 10], crossAxisOffset: 30 },
+                { offsets: [50, 30, 10], crossAxisOffset: 30 },
+                { offsets: [50, 10, 30], crossAxisOffset: 30 },
             ],
         },
         column: {
             ltr: [
                 { offsets: [0, 0, 48], sizes: [0, 48, 72] },
-                { offsets: [0, 30, 30], sizes: [30, 0, 90] },
-                { offsets: [0, 40, 120], sizes: [40, 80, 0] },
+                { offsets: [0, 0, 30], sizes: [30, 0, 90] },
+                { offsets: [0, 40, 0], sizes: [40, 80, 0] },
                 { offsets: [0, 0, 80] },
-                { offsets: [0, 80, 80] },
-                { offsets: [0, 80, 120] },
-                { offsets: [10, 10, 50], crossAxisOffset: 0 },
-                { offsets: [10, 50, 50], crossAxisOffset: 0 },
-                { offsets: [10, 50, 90], crossAxisOffset: 0 },
+                { offsets: [0, 0, 80] },
+                { offsets: [0, 80, 0] },
+                { offsets: [30, 10, 50], crossAxisOffset: 30 },
+                { offsets: [10, 30, 50], crossAxisOffset: 30 },
+                { offsets: [10, 50, 30], crossAxisOffset: 30 },
             ],
             rtl: [
                 { offsets: [0, 0, 48], sizes: [0, 48, 72] },
-                { offsets: [0, 30, 30], sizes: [30, 0, 90] },
-                { offsets: [0, 40, 120], sizes: [40, 80, 0] },
+                { offsets: [0, 0, 30], sizes: [30, 0, 90] },
+                { offsets: [0, 40, 0], sizes: [40, 80, 0] },
                 { offsets: [0, 0, 80] },
-                { offsets: [0, 80, 80] },
-                { offsets: [0, 80, 120] },
-                { offsets: [10, 10, 50], crossAxisOffset: 60 },
-                { offsets: [10, 50, 50], crossAxisOffset: 60 },
-                { offsets: [10, 50, 90], crossAxisOffset: 60 },
+                { offsets: [0, 0, 80] },
+                { offsets: [0, 80, 0] },
+                { offsets: [30, 10, 50], crossAxisOffset: 30 },
+                { offsets: [10, 30, 50], crossAxisOffset: 30 },
+                { offsets: [10, 50, 30], crossAxisOffset: 30 },
             ],
         },
         'row-reverse': {
             ltr: [
                 { offsets: [600, 360, 0], sizes: [0, 240, 360] },
-                { offsets: [450, 450, 0], sizes: [150, 0, 450] },
-                { offsets: [400, 0, 0], sizes: [200, 400, 0] },
-                { offsets: [600, 560, 0] },
-                { offsets: [560, 40, 0] },
-                { offsets: [560, 0, 0] },
-                { offsets: [90, 50, 10], crossAxisOffset: 0 },
-                { offsets: [50, 50, 10], crossAxisOffset: 0 },
-                { offsets: [50, 10, 10], crossAxisOffset: 0 },
-            ],
-            rtl: [
-                { offsets: [0, 0, 240], sizes: [0, 240, 360] },
-                { offsets: [0, 150, 150], sizes: [150, 0, 450] },
-                { offsets: [0, 200, 600], sizes: [200, 400, 0] },
-                { offsets: [-20, 0, 560] },
-                { offsets: [0, 540, 560] },
-                { offsets: [0, 560, 580] },
-                { offsets: [-30, 10, 50], crossAxisOffset: 0 },
-                { offsets: [10, 10, 50], crossAxisOffset: 0 },
-                { offsets: [10, 50, 50], crossAxisOffset: 0 },
-            ],
-        },
-        'column-reverse': {
-            ltr: [
-                { offsets: [120, 72, 0], sizes: [0, 48, 72] },
-                { offsets: [90, 90, 0], sizes: [30, 0, 90] },
-                { offsets: [80, 0, 0], sizes: [40, 80, 0] },
-                { offsets: [120, 80, 0] },
-                { offsets: [80, 40, 0] },
-                { offsets: [80, 0, 0] },
-                { offsets: [90, 50, 10], crossAxisOffset: 0 },
-                { offsets: [50, 50, 10], crossAxisOffset: 0 },
-                { offsets: [50, 10, 10], crossAxisOffset: 0 },
-            ],
-            rtl: [
-                { offsets: [120, 72, 0], sizes: [0, 48, 72] },
-                { offsets: [90, 90, 0], sizes: [30, 0, 90] },
-                { offsets: [80, 0, 0], sizes: [40, 80, 0] },
-                { offsets: [120, 80, 0] },
-                { offsets: [80, 40, 0] },
-                { offsets: [80, 0, 0] },
-                { offsets: [90, 50, 10], crossAxisOffset: 60 },
-                { offsets: [50, 50, 10], crossAxisOffset: 60 },
-                { offsets: [50, 10, 10], crossAxisOffset: 60 },
-            ],
-        },
-    },
-    'horizontal-bt': {
-        // This matches the horizontal-tb values above.
-        row: {
-            ltr: [
-                { offsets: [0, 0, 240], sizes: [0, 240, 360] },
-                { offsets: [0, 150, 150], sizes: [150, 0, 450] },
-                { offsets: [0, 200, 600], sizes: [200, 400, 0] },
-                { offsets: [0, 0, 560] },
-                { offsets: [0, 560, 560] },
-                { offsets: [0, 560, 600] },
-                { offsets: [10, 10, 50], crossAxisOffset: 60 },
-                { offsets: [10, 50, 50], crossAxisOffset: 60 },
-                { offsets: [10, 50, 90], crossAxisOffset: 60 },
-            ],
-            rtl: [
-                { offsets: [600, 360, 0], sizes: [0, 240, 360] },
-                { offsets: [450, 450, 0], sizes: [150, 0, 450] },
-                { offsets: [400, 0, 0], sizes: [200, 400, 0] },
+                { offsets: [450, 600, 0], sizes: [150, 0, 450] },
+                { offsets: [400, 0, 600], sizes: [200, 400, 0] },
                 { offsets: [580, 560, 0] },
-                { offsets: [560, 20, 0] },
-                { offsets: [560, 0, -20] },
-                { offsets: [50, 50, 10], crossAxisOffset: 60 },
-                { offsets: [50, 10, 10], crossAxisOffset: 60 },
-                { offsets: [50, 10, -30], crossAxisOffset: 60 },
-            ],
-        },
-        // horizontal-bt flips the main axis direction so the offsets are different from horizontal-tb.
-        column: {
-            ltr: [
-                { offsets: [120, 72, 0], sizes: [0, 48, 72] },
-                { offsets: [90, 90, 0], sizes: [30, 0, 90] },
-                { offsets: [80, 0, 0], sizes: [40, 80, 0] },
-                { offsets: [100, 80, 0] },
-                { offsets: [80, 20, 0] },
-                { offsets: [80, 0, -20] },
-                { offsets: [50, 50, 10], crossAxisOffset: 0 },
-                { offsets: [50, 10, 10], crossAxisOffset: 0 },
-                { offsets: [50, 10, -30], crossAxisOffset: 0 },
-            ],
-            rtl: [
-                { offsets: [120, 72, 0], sizes: [0, 48, 72] },
-                { offsets: [90, 90, 0], sizes: [30, 0, 90] },
-                { offsets: [80, 0, 0], sizes: [40, 80, 0] },
-                { offsets: [100, 80, 0] },
-                { offsets: [80, 20, 0] },
-                { offsets: [80, 0, -20] },
-                { offsets: [50, 50, 10], crossAxisOffset: 60 },
-                { offsets: [50, 10, 10], crossAxisOffset: 60 },
-                { offsets: [50, 10, -30], crossAxisOffset: 60 },
-            ],
-        },
-        'row-reverse': {
-            ltr: [
-                { offsets: [600, 360, 0], sizes: [0, 240, 360] },
-                { offsets: [450, 450, 0], sizes: [150, 0, 450] },
-                { offsets: [400, 0, 0], sizes: [200, 400, 0] },
-                { offsets: [600, 560, 0] },
-                { offsets: [560, 40, 0] },
-                { offsets: [560, 0, 0] },
-                { offsets: [90, 50, 10], crossAxisOffset: 60 },
-                { offsets: [50, 50, 10], crossAxisOffset: 60 },
-                { offsets: [50, 10, 10], crossAxisOffset: 60 },
+                { offsets: [560, 580, 0] },
+                { offsets: [560, 0, 580] },
+                { offsets: [30, 50, 10], crossAxisOffset: 30 },
+                { offsets: [50, 30, 10], crossAxisOffset: 30 },
+                { offsets: [50, 10, 30], crossAxisOffset: 30 },
             ],
             rtl: [
                 { offsets: [0, 0, 240], sizes: [0, 240, 360] },
-                { offsets: [0, 150, 150], sizes: [150, 0, 450] },
-                { offsets: [0, 200, 600], sizes: [200, 400, 0] },
-                { offsets: [-20, 0, 560] },
-                { offsets: [0, 540, 560] },
-                { offsets: [0, 560, 580] },
-                { offsets: [-30, 10, 50], crossAxisOffset: 60 },
-                { offsets: [10, 10, 50], crossAxisOffset: 60 },
-                { offsets: [10, 50, 50], crossAxisOffset: 60 },
+                { offsets: [0, 0, 150], sizes: [150, 0, 450] },
+                { offsets: [0, 200, 0], sizes: [200, 400, 0] },
+                { offsets: [0, 0, 560] },
+                { offsets: [0, 0, 560] },
+                { offsets: [0, 560, 0] },
+                { offsets: [30, 10, 50], crossAxisOffset: 30 },
+                { offsets: [10, 30, 50], crossAxisOffset: 30 },
+                { offsets: [10, 50, 30], crossAxisOffset: 30 },
             ],
         },
         'column-reverse': {
             ltr: [
-                { offsets: [0, 0, 48], sizes: [0, 48, 72] },
-                { offsets: [0, 30, 30], sizes: [30, 0, 90] },
-                { offsets: [0, 40, 120], sizes: [40, 80, 0] },
-                { offsets: [-20, 0, 80] },
-                { offsets: [0, 60, 80] },
-                { offsets: [0, 80, 100] },
-                { offsets: [-30, 10, 50], crossAxisOffset: 0 },
-                { offsets: [10, 10, 50], crossAxisOffset: 0 },
-                { offsets: [10, 50, 50], crossAxisOffset: 0 },
+                { offsets: [120, 72, 0], sizes: [0, 48, 72] },
+                { offsets: [90, 120, 0], sizes: [30, 0, 90] },
+                { offsets: [80, 0, 120], sizes: [40, 80, 0] },
+                { offsets: [100, 80, 0] },
+                { offsets: [80, 100, 0] },
+                { offsets: [80, 0, 100] },
+                { offsets: [30, 50, 10], crossAxisOffset: 30 },
+                { offsets: [50, 30, 10], crossAxisOffset: 30 },
+                { offsets: [50, 10, 30], crossAxisOffset: 30 },
             ],
             rtl: [
-                { offsets: [0, 0, 48], sizes: [0, 48, 72] },
-                { offsets: [0, 30, 30], sizes: [30, 0, 90] },
-                { offsets: [0, 40, 120], sizes: [40, 80, 0] },
-                { offsets: [-20, 0, 80] },
-                { offsets: [0, 60, 80] },
-                { offsets: [0, 80, 100] },
-                { offsets: [-30, 10, 50], crossAxisOffset: 60 },
-                { offsets: [10, 10, 50], crossAxisOffset: 60 },
-                { offsets: [10, 50, 50], crossAxisOffset: 60 },
+                { offsets: [120, 72, 0], sizes: [0, 48, 72] },
+                { offsets: [90, 120, 0], sizes: [30, 0, 90] },
+                { offsets: [80, 0, 120], sizes: [40, 80, 0] },
+                { offsets: [100, 80, 0] },
+                { offsets: [80, 100, 0] },
+                { offsets: [80, 0, 100] },
+                { offsets: [30, 50, 10], crossAxisOffset: 30 },
+                { offsets: [50, 30, 10], crossAxisOffset: 30 },
+                { offsets: [50, 10, 30], crossAxisOffset: 30 },
             ],
         },
     },
@@ -282,98 +187,98 @@ var expectations = {
             // The same as horizontal-tb + column.
             ltr: [
                 { offsets: [0, 0, 48], sizes: [0, 48, 72] },
-                { offsets: [0, 30, 30], sizes: [30, 0, 90] },
-                { offsets: [0, 40, 120], sizes: [40, 80, 0] },
+                { offsets: [0, 0, 30], sizes: [30, 0, 90] },
+                { offsets: [0, 40, 0], sizes: [40, 80, 0] },
                 { offsets: [0, 0, 80] },
-                { offsets: [0, 80, 80] },
-                { offsets: [0, 80, 120] },
-                { offsets: [10, 10, 50], crossAxisOffset: 60 },
-                { offsets: [10, 50, 50], crossAxisOffset: 60 },
-                { offsets: [10, 50, 90], crossAxisOffset: 60 },
+                { offsets: [0, 0, 80] },
+                { offsets: [0, 80, 0] },
+                { offsets: [30, 10, 50], crossAxisOffset: 30 },
+                { offsets: [10, 30, 50], crossAxisOffset: 30 },
+                { offsets: [10, 50, 30], crossAxisOffset: 30 },
             ],
             rtl: [
                 { offsets: [120, 72, 0], sizes: [0, 48, 72] },
-                { offsets: [90, 90, 0], sizes: [30, 0, 90] },
-                { offsets: [80, 0, 0], sizes: [40, 80, 0] },
+                { offsets: [90, 120, 0], sizes: [30, 0, 90] },
+                { offsets: [80, 0, 120], sizes: [40, 80, 0] },
                 { offsets: [100, 80, 0] },
-                { offsets: [80, 20, 0] },
-                { offsets: [80, 0, -20] },
-                { offsets: [50, 50, 10], crossAxisOffset: 60 },
-                { offsets: [50, 10, 10], crossAxisOffset: 60 },
-                { offsets: [50, 10, -30], crossAxisOffset: 60 },
+                { offsets: [80, 100, 0] },
+                { offsets: [80, 0, 100] },
+                { offsets: [30, 50, 10], crossAxisOffset: 30 },
+                { offsets: [50, 30, 10], crossAxisOffset: 30 },
+                { offsets: [50, 10, 30], crossAxisOffset: 30 },
             ],
         },
         column: {
             // The same as horizontal-tb + row.
             ltr: [
                 { offsets: [600, 360, 0], sizes: [0, 240, 360] },
-                { offsets: [450, 450, 0], sizes: [150, 0, 450] },
-                { offsets: [400, 0, 0], sizes: [200, 400, 0] },
+                { offsets: [450, 600, 0], sizes: [150, 0, 450] },
+                { offsets: [400, 0, 600], sizes: [200, 400, 0] },
                 { offsets: [580, 560, 0] },
-                { offsets: [560, 20, 0] },
-                { offsets: [560, 0, -20] },
-                { offsets: [50, 50, 10], crossAxisOffset: 0 },
-                { offsets: [50, 10, 10], crossAxisOffset: 0 },
-                { offsets: [50, 10, -30], crossAxisOffset: 0 },
+                { offsets: [560, 580, 0] },
+                { offsets: [560, 0, 580] },
+                { offsets: [30, 50, 10], crossAxisOffset: 30 },
+                { offsets: [50, 30, 10], crossAxisOffset: 30 },
+                { offsets: [50, 10, 30], crossAxisOffset: 30 },
             ],
             rtl: [
                 { offsets: [600, 360, 0], sizes: [0, 240, 360] },
-                { offsets: [450, 450, 0], sizes: [150, 0, 450] },
-                { offsets: [400, 0, 0], sizes: [200, 400, 0] },
+                { offsets: [450, 600, 0], sizes: [150, 0, 450] },
+                { offsets: [400, 0, 600], sizes: [200, 400, 0] },
                 { offsets: [580, 560, 0] },
-                { offsets: [560, 20, 0] },
-                { offsets: [560, 0, -20] },
-                { offsets: [50, 50, 10], crossAxisOffset: 60 },
-                { offsets: [50, 10, 10], crossAxisOffset: 60 },
-                { offsets: [50, 10, -30], crossAxisOffset: 60 },
+                { offsets: [560, 580, 0] },
+                { offsets: [560, 0, 580] },
+                { offsets: [30, 50, 10], crossAxisOffset: 30 },
+                { offsets: [50, 30, 10], crossAxisOffset: 30 },
+                { offsets: [50, 10, 30], crossAxisOffset: 30 },
             ],
         },
         'row-reverse': {
             ltr: [
                 { offsets: [120, 72, 0], sizes: [0, 48, 72] },
-                { offsets: [90, 90, 0], sizes: [30, 0, 90] },
-                { offsets: [80, 0, 0], sizes: [40, 80, 0] },
-                { offsets: [120, 80, 0] },
-                { offsets: [80, 40, 0] },
-                { offsets: [80, 0, 0] },
-                { offsets: [90, 50, 10], crossAxisOffset: 60 },
-                { offsets: [50, 50, 10], crossAxisOffset: 60 },
-                { offsets: [50, 10, 10], crossAxisOffset: 60 },
+                { offsets: [90, 120, 0], sizes: [30, 0, 90] },
+                { offsets: [80, 0, 120], sizes: [40, 80, 0] },
+                { offsets: [100, 80, 0] },
+                { offsets: [80, 100, 0] },
+                { offsets: [80, 0, 100] },
+                { offsets: [30, 50, 10], crossAxisOffset: 30 },
+                { offsets: [50, 30, 10], crossAxisOffset: 30 },
+                { offsets: [50, 10, 30], crossAxisOffset: 30 },
             ],
             rtl: [
                 { offsets: [0, 0, 48], sizes: [0, 48, 72] },
-                { offsets: [0, 30, 30], sizes: [30, 0, 90] },
-                { offsets: [0, 40, 120], sizes: [40, 80, 0] },
-                { offsets: [-20, 0, 80] },
-                { offsets: [0, 60, 80] },
-                { offsets: [0, 80, 100] },
-                { offsets: [-30, 10, 50], crossAxisOffset: 60 },
-                { offsets: [10, 10, 50], crossAxisOffset: 60 },
-                { offsets: [10, 50, 50], crossAxisOffset: 60 },
+                { offsets: [0, 0, 30], sizes: [30, 0, 90] },
+                { offsets: [0, 40, 0], sizes: [40, 80, 0] },
+                { offsets: [0, 0, 80] },
+                { offsets: [0, 0, 80] },
+                { offsets: [0, 80, 0] },
+                { offsets: [30, 10, 50], crossAxisOffset: 30 },
+                { offsets: [10, 30, 50], crossAxisOffset: 30 },
+                { offsets: [10, 50, 30], crossAxisOffset: 30 },
             ],
         },
         'column-reverse': {
             ltr: [
                 { offsets: [0, 0, 240], sizes: [0, 240, 360] },
-                { offsets: [0, 150, 150], sizes: [150, 0, 450] },
-                { offsets: [0, 200, 600], sizes: [200, 400, 0] },
-                { offsets: [-20, 0, 560] },
-                { offsets: [0, 540, 560] },
-                { offsets: [0, 560, 580] },
-                { offsets: [-30, 10, 50], crossAxisOffset: 0 },
-                { offsets: [10, 10, 50], crossAxisOffset: 0 },
-                { offsets: [10, 50, 50], crossAxisOffset: 0 },
+                { offsets: [0, 0, 150], sizes: [150, 0, 450] },
+                { offsets: [0, 200, 0], sizes: [200, 400, 0] },
+                { offsets: [0, 0, 560] },
+                { offsets: [0, 0, 560] },
+                { offsets: [0, 560, 0] },
+                { offsets: [30, 10, 50], crossAxisOffset: 30 },
+                { offsets: [10, 30, 50], crossAxisOffset: 30 },
+                { offsets: [10, 50, 30], crossAxisOffset: 30 },
             ],
             rtl: [
                 { offsets: [0, 0, 240], sizes: [0, 240, 360] },
-                { offsets: [0, 150, 150], sizes: [150, 0, 450] },
-                { offsets: [0, 200, 600], sizes: [200, 400, 0] },
-                { offsets: [-20, 0, 560] },
-                { offsets: [0, 540, 560] },
-                { offsets: [0, 560, 580] },
-                { offsets: [-30, 10, 50], crossAxisOffset: 60 },
-                { offsets: [10, 10, 50], crossAxisOffset: 60 },
-                { offsets: [10, 50, 50], crossAxisOffset: 60 },
+                { offsets: [0, 0, 150], sizes: [150, 0, 450] },
+                { offsets: [0, 200, 0], sizes: [200, 400, 0] },
+                { offsets: [0, 0, 560] },
+                { offsets: [0, 0, 560] },
+                { offsets: [0, 560, 0] },
+                { offsets: [30, 10, 50], crossAxisOffset: 30 },
+                { offsets: [10, 30, 50], crossAxisOffset: 30 },
+                { offsets: [10, 50, 30], crossAxisOffset: 30 },
             ],
         }
     },
@@ -382,98 +287,97 @@ var expectations = {
             // The same as horizontal-tb + column.
             ltr: [
                 { offsets: [0, 0, 48], sizes: [0, 48, 72] },
-                { offsets: [0, 30, 30], sizes: [30, 0, 90] },
-                { offsets: [0, 40, 120], sizes: [40, 80, 0] },
+                { offsets: [0, 0, 30], sizes: [30, 0, 90] },
+                { offsets: [0, 40, 0], sizes: [40, 80, 0] },
                 { offsets: [0, 0, 80] },
-                { offsets: [0, 80, 80] },
-                { offsets: [0, 80, 120] },
-                { offsets: [10, 10, 50], crossAxisOffset: 0 },
-                { offsets: [10, 50, 50], crossAxisOffset: 0 },
-                { offsets: [10, 50, 90], crossAxisOffset: 0 },
+                { offsets: [0, 0, 80] },
+                { offsets: [0, 80, 0] },
+                { offsets: [30, 10, 50], crossAxisOffset: 30 },
+                { offsets: [10, 30, 50], crossAxisOffset: 30 },
+                { offsets: [10, 50, 30], crossAxisOffset: 30 },
             ],
             rtl: [
                 { offsets: [120, 72, 0], sizes: [0, 48, 72] },
-                { offsets: [90, 90, 0], sizes: [30, 0, 90] },
-                { offsets: [80, 0, 0], sizes: [40, 80, 0] },
+                { offsets: [90, 120, 0], sizes: [30, 0, 90] },
+                { offsets: [80, 0, 120], sizes: [40, 80, 0] },
                 { offsets: [100, 80, 0] },
-                { offsets: [80, 20, 0] },
-                { offsets: [80, 0, -20] },
-                { offsets: [50, 50, 10], crossAxisOffset: 0 },
-                { offsets: [50, 10, 10], crossAxisOffset: 0 },
-                { offsets: [50, 10, -30], crossAxisOffset: 0 },
+                { offsets: [80, 100, 0] },
+                { offsets: [80, 0, 100] },
+                { offsets: [30, 50, 10], crossAxisOffset: 30 },
+                { offsets: [50, 30, 10], crossAxisOffset: 30 },
+                { offsets: [50, 10, 30], crossAxisOffset: 30 },
             ],
         },
         column: {
-            // The same as horizontal-bt + row.
             ltr: [
                 { offsets: [0, 0, 240], sizes: [0, 240, 360] },
-                { offsets: [0, 150, 150], sizes: [150, 0, 450] },
-                { offsets: [0, 200, 600], sizes: [200, 400, 0] },
+                { offsets: [0, 0, 150], sizes: [150, 0, 450] },
+                { offsets: [0, 200, 0], sizes: [200, 400, 0] },
                 { offsets: [0, 0, 560] },
-                { offsets: [0, 560, 560] },
-                { offsets: [0, 560, 600] },
-                { offsets: [10, 10, 50], crossAxisOffset: 0 },
-                { offsets: [10, 50, 50], crossAxisOffset: 0 },
-                { offsets: [10, 50, 90], crossAxisOffset: 0 },
+                { offsets: [0, 0, 560] },
+                { offsets: [0, 560, 0] },
+                { offsets: [30, 10, 50], crossAxisOffset: 30 },
+                { offsets: [10, 30, 50], crossAxisOffset: 30 },
+                { offsets: [10, 50, 30], crossAxisOffset: 30 },
             ],
             rtl: [
                 { offsets: [0, 0, 240], sizes: [0, 240, 360] },
-                { offsets: [0, 150, 150], sizes: [150, 0, 450] },
-                { offsets: [0, 200, 600], sizes: [200, 400, 0] },
+                { offsets: [0, 0, 150], sizes: [150, 0, 450] },
+                { offsets: [0, 200, 0], sizes: [200, 400, 0] },
                 { offsets: [0, 0, 560] },
-                { offsets: [0, 560, 560] },
-                { offsets: [0, 560, 600] },
-                { offsets: [10, 10, 50], crossAxisOffset: 60 },
-                { offsets: [10, 50, 50], crossAxisOffset: 60 },
-                { offsets: [10, 50, 90], crossAxisOffset: 60 },
+                { offsets: [0, 0, 560] },
+                { offsets: [0, 560, 0] },
+                { offsets: [30, 10, 50], crossAxisOffset: 30 },
+                { offsets: [10, 30, 50], crossAxisOffset: 30 },
+                { offsets: [10, 50, 30], crossAxisOffset: 30 },
             ],
         },
         'row-reverse': {
             ltr: [
                 { offsets: [120, 72, 0], sizes: [0, 48, 72] },
-                { offsets: [90, 90, 0], sizes: [30, 0, 90] },
-                { offsets: [80, 0, 0], sizes: [40, 80, 0] },
-                { offsets: [120, 80, 0] },
-                { offsets: [80, 40, 0] },
-                { offsets: [80, 0, 0] },
-                { offsets: [90, 50, 10], crossAxisOffset: 0 },
-                { offsets: [50, 50, 10], crossAxisOffset: 0 },
-                { offsets: [50, 10, 10], crossAxisOffset: 0 },
+                { offsets: [90, 120, 0], sizes: [30, 0, 90] },
+                { offsets: [80, 0, 120], sizes: [40, 80, 0] },
+                { offsets: [100, 80, 0] },
+                { offsets: [80, 100, 0] },
+                { offsets: [80, 0, 100] },
+                { offsets: [30, 50, 10], crossAxisOffset: 30 },
+                { offsets: [50, 30, 10], crossAxisOffset: 30 },
+                { offsets: [50, 10, 30], crossAxisOffset: 30 },
             ],
             rtl: [
                 { offsets: [0, 0, 48], sizes: [0, 48, 72] },
-                { offsets: [0, 30, 30], sizes: [30, 0, 90] },
-                { offsets: [0, 40, 120], sizes: [40, 80, 0] },
-                { offsets: [-20, 0, 80] },
-                { offsets: [0, 60, 80] },
-                { offsets: [0, 80, 100] },
-                { offsets: [-30, 10, 50], crossAxisOffset: 0 },
-                { offsets: [10, 10, 50], crossAxisOffset: 0 },
-                { offsets: [10, 50, 50], crossAxisOffset: 0 },
+                { offsets: [0, 0, 30], sizes: [30, 0, 90] },
+                { offsets: [0, 40, 0], sizes: [40, 80, 0] },
+                { offsets: [0, 0, 80] },
+                { offsets: [0, 0, 80] },
+                { offsets: [0, 80, 0] },
+                { offsets: [30, 10, 50], crossAxisOffset: 30 },
+                { offsets: [10, 30, 50], crossAxisOffset: 30 },
+                { offsets: [10, 50, 30], crossAxisOffset: 30 },
             ],
         },
         'column-reverse': {
             ltr: [
                 { offsets: [600, 360, 0], sizes: [0, 240, 360] },
-                { offsets: [450, 450, 0], sizes: [150, 0, 450] },
-                { offsets: [400, 0, 0], sizes: [200, 400, 0] },
-                { offsets: [600, 560, 0] },
-                { offsets: [560, 40, 0] },
-                { offsets: [560, 0, 0] },
-                { offsets: [90, 50, 10], crossAxisOffset: 0 },
-                { offsets: [50, 50, 10], crossAxisOffset: 0 },
-                { offsets: [50, 10, 10], crossAxisOffset: 0 },
+                { offsets: [450, 600, 0], sizes: [150, 0, 450] },
+                { offsets: [400, 0, 600], sizes: [200, 400, 0] },
+                { offsets: [580, 560, 0] },
+                { offsets: [560, 580, 0] },
+                { offsets: [560, 0, 580] },
+                { offsets: [30, 50, 10], crossAxisOffset: 30 },
+                { offsets: [50, 30, 10], crossAxisOffset: 30 },
+                { offsets: [50, 10, 30], crossAxisOffset: 30 },
             ],
             rtl: [
                 { offsets: [600, 360, 0], sizes: [0, 240, 360] },
-                { offsets: [450, 450, 0], sizes: [150, 0, 450] },
-                { offsets: [400, 0, 0], sizes: [200, 400, 0] },
-                { offsets: [600, 560, 0] },
-                { offsets: [560, 40, 0] },
-                { offsets: [560, 0, 0] },
-                { offsets: [90, 50, 10], crossAxisOffset: 60 },
-                { offsets: [50, 50, 10], crossAxisOffset: 60 },
-                { offsets: [50, 10, 10], crossAxisOffset: 60 },
+                { offsets: [450, 600, 0], sizes: [150, 0, 450] },
+                { offsets: [400, 0, 600], sizes: [200, 400, 0] },
+                { offsets: [580, 560, 0] },
+                { offsets: [560, 580, 0] },
+                { offsets: [560, 0, 580] },
+                { offsets: [30, 50, 10], crossAxisOffset: 30 },
+                { offsets: [50, 30, 10], crossAxisOffset: 30 },
+                { offsets: [50, 10, 30], crossAxisOffset: 30 },
             ],
         },
     }
@@ -502,7 +406,7 @@ function addJustifyContentSpaceBetweenTests(writingMode, flexFlow, direction, fl
         var flexbox = document.createElement('div');
         flexbox.className = 'flexbox ' + flexboxClassName;
         setFlexboxSize(flexbox, flexDirection);
-        flexbox.style.webkitJustifyContent = 'space-between';
+        flexbox.style.justifyContent = 'space-between';
         for (var childIndex = 1; childIndex <= 3; ++childIndex) {
             var child = document.createElement('div');
             child.style[flexDirection] = '40px';
@@ -536,8 +440,8 @@ function addAlignItemsCenterTests(writingMode, flexFlow, direction, flexDirectio
         flexbox.style.height = '100px';
         flexbox.style.width = '100px';
         flexbox.style.margin = "20px";
-        flexbox.style.webkitJustifyContent = 'center';
-        flexbox.style.webkitAlignItems = 'center';
+        flexbox.style.justifyContent = 'center';
+        flexbox.style.alignItems = 'center';
 
         for (var childIndex = 1; childIndex <= 3; ++childIndex) {
             var child = document.createElement('div');
@@ -576,7 +480,7 @@ writingModes.forEach(function(writingMode) {
                 setFlexboxSize(flexbox, flexDirection);
                 for (var childIndex = 1; childIndex <= 3; ++childIndex) {
                     var child = document.createElement('div');
-                    child.style.webkitFlex = childIndex;
+                    child.style.flex = childIndex;
                     if (childIndex == absoluteIndex)
                         child.style.position = 'absolute';
 

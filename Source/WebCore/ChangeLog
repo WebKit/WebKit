@@ -1,3 +1,225 @@
+2017-02-27  Dave Hyatt  <hyatt@apple.com>
+
+        Update flexbox to Blink's tip of tree
+        https://bugs.webkit.org/show_bug.cgi?id=168657
+
+        Reviewed by Zalan Bujtas.
+
+        Added new tests in css3/flexbox.
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::propertyValue):
+        * rendering/FlexibleBoxAlgorithm.cpp: Added.
+        (WebCore::FlexItem::FlexItem):
+        (WebCore::FlexLayoutAlgorithm::FlexLayoutAlgorithm):
+        (WebCore::FlexLayoutAlgorithm::computeNextFlexLine):
+        * rendering/FlexibleBoxAlgorithm.h: Added.
+        (WebCore::FlexItem::hypotheticalMainAxisMarginBoxSize):
+        (WebCore::FlexItem::flexBaseMarginBoxSize):
+        (WebCore::FlexItem::flexedMarginBoxSize):
+        (WebCore::FlexLayoutAlgorithm::isMultiline):
+        * rendering/GridTrackSizingAlgorithm.cpp:
+        (WebCore::GridTrackSizingAlgorithm::computeTrackBasedSize):
+        (WebCore::GridTrackSizingAlgorithm::increaseSizesToAccommodateSpanningItems):
+        (WebCore::GridTrackSizingAlgorithm::assumedRowsSizeForOrthogonalChild):
+        (WebCore::GridTrackSizingAlgorithm::gridAreaBreadthForChild):
+        (WebCore::IndefiniteSizeStrategy::recomputeUsedFlexFractionIfNeeded):
+        * rendering/GridTrackSizingAlgorithm.h:
+        * rendering/OrderIterator.cpp:
+        (WebCore::OrderIterator::next):
+        (WebCore::OrderIterator::reset):
+        (WebCore::OrderIteratorPopulator::~OrderIteratorPopulator):
+        (WebCore::OrderIteratorPopulator::collectChild):
+        (WebCore::OrderIteratorPopulator::OrderIteratorPopulator): Deleted.
+        (WebCore::OrderIteratorPopulator::removeDuplicatedOrderValues): Deleted.
+        * rendering/OrderIterator.h:
+        (WebCore::OrderIteratorPopulator::OrderIteratorPopulator):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::updateBlockChildDirtyBitsBeforeLayout):
+        (WebCore::RenderBlock::layoutPositionedObject):
+        (WebCore::RenderBlock::computeBlockPreferredLogicalWidths):
+        (WebCore::RenderBlock::computeChildPreferredLogicalWidths):
+        (WebCore::RenderBlock::hasDefiniteLogicalHeight):
+        (WebCore::RenderBlock::availableLogicalHeightForPercentageComputation):
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::hasPercentHeightDescendants):
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::computeInlinePreferredLogicalWidths):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::columnFlexItemHasStretchAlignment):
+        (WebCore::RenderBox::isStretchingColumnFlexItem):
+        (WebCore::RenderBox::hasStretchedLogicalWidth):
+        (WebCore::RenderBox::sizesLogicalWidthToFitContent):
+        (WebCore::RenderBox::computeInlineDirectionMargins):
+        (WebCore::RenderBox::cacheIntrinsicContentLogicalHeightForFlexItem):
+        (WebCore::RenderBox::updateLogicalHeight):
+        (WebCore::RenderBox::computeLogicalHeightWithoutLayout):
+        (WebCore::RenderBox::skipContainingBlockForPercentHeightCalculation):
+        (WebCore::RenderBox::shouldTreatChildAsReplacedInTableCells):
+        (WebCore::tableCellShouldHaveZeroInitialSize):
+        (WebCore::RenderBox::computePercentageLogicalHeight):
+        (WebCore::RenderBox::computeReplacedLogicalHeightUsing):
+        (WebCore::RenderBox::availableLogicalHeightUsing):
+        (WebCore::RenderBox::percentageLogicalHeightIsResolvable):
+        (WebCore::RenderBox::hasUnsplittableScrollingOverflow):
+        (WebCore::flexItemHasStretchAlignment): Deleted.
+        (WebCore::isStretchingColumnFlexItem): Deleted.
+        (WebCore::logicalWidthIsResolvable): Deleted.
+        (WebCore::RenderBox::hasDefiniteLogicalWidth): Deleted.
+        (WebCore::percentageLogicalHeightIsResolvable): Deleted.
+        (WebCore::RenderBox::percentageLogicalHeightIsResolvableFromBlock): Deleted.
+        (WebCore::RenderBox::hasDefiniteLogicalHeight): Deleted.
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::isGridItem):
+        (WebCore::RenderBox::isFlexItem):
+        (WebCore::RenderBox::selfAlignmentNormalBehavior):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::isOutOfFlowPositionedWithImplicitHeight):
+        (WebCore::RenderBoxModelObject::containingBlockForAutoHeightDetection):
+        (WebCore::RenderBoxModelObject::hasAutoHeightOrContainingBlockWithAutoHeight):
+        * rendering/RenderBoxModelObject.h:
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::removeChildInternal):
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::LineContext::LineContext):
+        (WebCore::RenderFlexibleBox::RenderFlexibleBox):
+        (WebCore::RenderFlexibleBox::computeIntrinsicLogicalWidths):
+        (WebCore::contentAlignmentNormalBehavior):
+        (WebCore::RenderFlexibleBox::styleDidChange):
+        (WebCore::RenderFlexibleBox::layoutBlock):
+        (WebCore::RenderFlexibleBox::repositionLogicalHeightDependentFlexItems):
+        (WebCore::RenderFlexibleBox::clientLogicalBottomAfterRepositioning):
+        (WebCore::RenderFlexibleBox::hasOrthogonalFlow):
+        (WebCore::RenderFlexibleBox::flexBasisForChild):
+        (WebCore::RenderFlexibleBox::crossAxisExtentForChild):
+        (WebCore::RenderFlexibleBox::cachedChildIntrinsicContentLogicalHeight):
+        (WebCore::RenderFlexibleBox::setCachedChildIntrinsicContentLogicalHeight):
+        (WebCore::RenderFlexibleBox::clearCachedChildIntrinsicContentLogicalHeight):
+        (WebCore::RenderFlexibleBox::childIntrinsicLogicalHeight):
+        (WebCore::RenderFlexibleBox::childIntrinsicLogicalWidth):
+        (WebCore::RenderFlexibleBox::crossAxisIntrinsicExtentForChild):
+        (WebCore::RenderFlexibleBox::mainAxisExtentForChild):
+        (WebCore::RenderFlexibleBox::mainAxisContentExtentForChildIncludingScrollbar):
+        (WebCore::RenderFlexibleBox::crossAxisExtent):
+        (WebCore::RenderFlexibleBox::mainAxisExtent):
+        (WebCore::RenderFlexibleBox::mainAxisContentExtent):
+        (WebCore::RenderFlexibleBox::computeMainAxisExtentForChild):
+        (WebCore::RenderFlexibleBox::transformedWritingMode):
+        (WebCore::RenderFlexibleBox::flowAwareMarginStartForChild):
+        (WebCore::RenderFlexibleBox::flowAwareMarginEndForChild):
+        (WebCore::RenderFlexibleBox::flowAwareMarginBeforeForChild):
+        (WebCore::RenderFlexibleBox::crossAxisMarginExtentForChild):
+        (WebCore::RenderFlexibleBox::flowAwareLocationForChild):
+        (WebCore::RenderFlexibleBox::useChildAspectRatio):
+        (WebCore::RenderFlexibleBox::computeMainSizeFromAspectRatioUsing):
+        (WebCore::RenderFlexibleBox::setFlowAwareLocationForChild):
+        (WebCore::RenderFlexibleBox::mainAxisLengthIsDefinite):
+        (WebCore::RenderFlexibleBox::crossAxisLengthIsDefinite):
+        (WebCore::RenderFlexibleBox::cacheChildMainSize):
+        (WebCore::RenderFlexibleBox::clearCachedMainSizeForChild):
+        (WebCore::RenderFlexibleBox::computeInnerFlexBaseSizeForChild):
+        (WebCore::RenderFlexibleBox::layoutFlexItems):
+        (WebCore::RenderFlexibleBox::autoMarginOffsetInMainAxis):
+        (WebCore::RenderFlexibleBox::updateAutoMarginsInMainAxis):
+        (WebCore::RenderFlexibleBox::hasAutoMarginsInCrossAxis):
+        (WebCore::RenderFlexibleBox::availableAlignmentSpaceForChild):
+        (WebCore::RenderFlexibleBox::updateAutoMarginsInCrossAxis):
+        (WebCore::RenderFlexibleBox::marginBoxAscentForChild):
+        (WebCore::RenderFlexibleBox::computeChildMarginValue):
+        (WebCore::RenderFlexibleBox::adjustChildSizeForMinAndMax):
+        (WebCore::RenderFlexibleBox::crossSizeForPercentageResolution):
+        (WebCore::RenderFlexibleBox::mainSizeForPercentageResolution):
+        (WebCore::RenderFlexibleBox::childLogicalHeightForPercentageResolution):
+        (WebCore::RenderFlexibleBox::adjustChildSizeForAspectRatioCrossAxisMinAndMax):
+        (WebCore::RenderFlexibleBox::constructFlexItem):
+        (WebCore::RenderFlexibleBox::freezeViolations):
+        (WebCore::RenderFlexibleBox::freezeInflexibleItems):
+        (WebCore::RenderFlexibleBox::resolveFlexibleLengths):
+        (WebCore::alignmentOffset):
+        (WebCore::RenderFlexibleBox::setOverrideMainAxisContentSizeForChild):
+        (WebCore::RenderFlexibleBox::staticMainAxisPositionForPositionedChild):
+        (WebCore::RenderFlexibleBox::staticCrossAxisPositionForPositionedChild):
+        (WebCore::RenderFlexibleBox::staticInlinePositionForPositionedChild):
+        (WebCore::RenderFlexibleBox::staticBlockPositionForPositionedChild):
+        (WebCore::RenderFlexibleBox::setStaticPositionForPositionedLayout):
+        (WebCore::RenderFlexibleBox::prepareChildForPositionedLayout):
+        (WebCore::RenderFlexibleBox::alignmentForChild):
+        (WebCore::RenderFlexibleBox::resetAutoMarginsAndLogicalTopInCrossAxis):
+        (WebCore::RenderFlexibleBox::needToStretchChildLogicalHeight):
+        (WebCore::RenderFlexibleBox::childHasIntrinsicMainAxisSize):
+        (WebCore::RenderFlexibleBox::crossAxisOverflowForChild):
+        (WebCore::RenderFlexibleBox::layoutAndPlaceChildren):
+        (WebCore::RenderFlexibleBox::layoutColumnReverse):
+        (WebCore::initialAlignContentOffset):
+        (WebCore::alignContentSpaceBetweenChildren):
+        (WebCore::RenderFlexibleBox::alignFlexLines):
+        (WebCore::RenderFlexibleBox::adjustAlignmentForChild):
+        (WebCore::RenderFlexibleBox::alignChildren):
+        (WebCore::RenderFlexibleBox::applyStretchAlignmentToChild):
+        (WebCore::RenderFlexibleBox::flipForRightToLeftColumn):
+        (WebCore::RenderFlexibleBox::flipForWrapReverse):
+        (WebCore::RenderFlexibleBox::Violation::Violation): Deleted.
+        (WebCore::RenderFlexibleBox::setCrossAxisExtent): Deleted.
+        (WebCore::RenderFlexibleBox::flowAwareMarginAfterForChild): Deleted.
+        (WebCore::RenderFlexibleBox::mainAxisBorderAndPaddingExtentForChild): Deleted.
+        (WebCore::RenderFlexibleBox::mainAxisScrollbarExtentForChild): Deleted.
+        (WebCore::RenderFlexibleBox::preferredMainAxisContentExtentForChild): Deleted.
+        (WebCore::RenderFlexibleBox::computeNextFlexLine): Deleted.
+        (WebCore::RenderFlexibleBox::setLogicalOverrideSize): Deleted.
+        (WebCore::RenderFlexibleBox::numberOfInFlowPositionedChildren): Deleted.
+        (WebCore::RenderFlexibleBox::needToStretchChild): Deleted.
+        (WebCore::contentAlignmentNormalBehaviorFlexibleBox): Deleted.
+        * rendering/RenderFlexibleBox.h:
+        (WebCore::RenderFlexibleBox::orderIterator):
+        (WebCore::RenderFlexibleBox::isFlexibleBoxImpl):
+        * rendering/RenderFullScreen.h:
+        * rendering/RenderGrid.cpp:
+        (WebCore::selfAlignmentChangedToStretchInRowAxis):
+        (WebCore::selfAlignmentChangedFromStretchInRowAxis):
+        (WebCore::selfAlignmentChangedFromStretchInColumnAxis):
+        (WebCore::RenderGrid::styleDidChange):
+        (WebCore::RenderGrid::computeTrackBasedLogicalHeight):
+        (WebCore::RenderGrid::computeTrackSizesForDefiniteSize):
+        (WebCore::RenderGrid::gridGapForDirection):
+        (WebCore::RenderGrid::guttersSize):
+        (WebCore::RenderGrid::computeTrackSizesForIndefiniteSize):
+        (WebCore::RenderGrid::computeAutoRepeatTracksCount):
+        (WebCore::RenderGrid::trackSizesForComputedStyle):
+        (WebCore::RenderGrid::offsetAndBreadthForPositionedChild):
+        (WebCore::RenderGrid::populateGridPositionsForDirection):
+        (WebCore::RenderGrid::alignSelfForChild):
+        (WebCore::RenderGrid::justifySelfForChild):
+        (WebCore::RenderGrid::columnAxisPositionForChild):
+        (WebCore::RenderGrid::rowAxisPositionForChild):
+        (WebCore::RenderGrid::columnAxisOffsetForChild):
+        (WebCore::RenderGrid::rowAxisOffsetForChild):
+        (WebCore::RenderGrid::needToStretchChildLogicalHeight): Deleted.
+        * rendering/RenderGrid.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateScrollbarsAfterLayout):
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::computeLogicalHeight):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::layout):
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::layout):
+        * rendering/RenderTableSection.cpp:
+        (WebCore::shouldFlexCellChild):
+        (WebCore::RenderTableSection::relayoutCellIfFlexed):
+        (WebCore::RenderTableSection::layoutRows):
+        * rendering/RenderTableSection.h:
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::computeLogicalHeight):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::resolvedSelfAlignment):
+        (WebCore::RenderStyle::resolvedAlignSelf):
+        (WebCore::RenderStyle::resolvedJustifySelf):
+        * rendering/style/RenderStyle.h:
+        * style/RenderTreeUpdater.cpp:
+        (WebCore::textRendererIsNeeded):
+
 2017-02-28  Alex Christensen  <achristensen@webkit.org>
 
         Main resource requests need cachePartition

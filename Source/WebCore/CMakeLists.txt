@@ -2385,6 +2385,7 @@ set(WebCore_SOURCES
     rendering/CounterNode.cpp
     rendering/EllipsisBox.cpp
     rendering/FilterEffectRenderer.cpp
+    rendering/FlexibleBoxAlgorithm.cpp
     rendering/FixedTableLayout.cpp
     rendering/FloatingObjects.cpp
     rendering/FlowThreadController.cpp

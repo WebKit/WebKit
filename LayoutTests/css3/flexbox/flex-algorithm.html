@@ -24,24 +24,23 @@ body {
 }
 
 .flex1 {
-    -webkit-flex: 1;
-    -moz-flex: 1;
+    flex: 1;
 }
 .flex2 {
-    -webkit-flex: 2;
-    -moz-flex: 2;
+    flex: 2;
 }
 .flex3 {
-    -webkit-flex: 3;
-    -moz-flex: 3;
+    flex: 3;
 }
 .flex1-0-0 {
-    -webkit-flex: 1 0 0px;
-    -moz-flex: 1 0 0px;
+    flex: 1 0 0px;
 }
 </style>
-<script src="../../resources/check-layout.js"></script>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../resources/check-layout-th.js"></script>
 <body onload="checkLayout('.flexbox')">
+<div id=log></div>
 
 <div class="flexbox">
   <div data-expected-width="200" class="flex1"></div>
@@ -50,9 +49,9 @@ body {
 </div>
 
 <div class="flexbox">
-  <div data-expected-width="200" style="-webkit-flex: .5; -moz-flex: .5"></div>
-  <div data-expected-width="200" style="-webkit-flex: .5; -moz-flex: .5"></div>
-  <div data-expected-width="200" style="-webkit-flex: .5; -moz-flex: .5"></div>
+  <div data-expected-width="200" style="flex: .5;"></div>
+  <div data-expected-width="200" style="flex: .5;"></div>
+  <div data-expected-width="200" style="flex: .5;"></div>
 </div>
 
 <div class="flexbox">
@@ -76,61 +75,61 @@ body {
 <!-- The first two boxes should fill the extra 300px evenly (each gets 150px extra). -->
 <div class="flexbox">
   <div data-expected-width="150" class="flex1"></div>
-  <div data-expected-width="350" style="-webkit-flex: 1 200px; -moz-flex: 1 200px"></div>
+  <div data-expected-width="350" style="flex: 1 200px;"></div>
   <div data-expected-width="100" class="flex-none" style="width: 100px"></div>
 </div>
 
 <!-- Like the last test, except the middle box gets more space than the first box. -->
 <div class="flexbox">
   <div data-expected-width="100" class="flex1"></div>
-  <div data-expected-width="400" style="-webkit-flex: 2 33.333333%; -moz-flex: 2 33.333333%"></div>
+  <div data-expected-width="400" style="flex: 2 33.333333%;"></div>
   <div data-expected-width="100" class="flex-none" style="width: 100px"></div>
 </div>
 
 <!-- Test some negative flexing. -->
 <div class="flexbox">
-  <div data-expected-width="200" style="-webkit-flex: 1 1 300px; -moz-flex: 1 1 300px"></div>
-  <div data-expected-width="200" style="-webkit-flex: 2 1 300px; -moz-flex: 2 1 300px"></div>
-  <div data-expected-width="200" style="-webkit-flex: 3 1 300px; -moz-flex: 3 1 300px"></div>
+  <div data-expected-width="200" style="flex: 1 1 300px;"></div>
+  <div data-expected-width="200" style="flex: 2 1 300px;"></div>
+  <div data-expected-width="200" style="flex: 3 1 300px;"></div>
 </div>
 
 <div class="flexbox">
-  <div data-expected-width="250" style="-webkit-flex: 1 1 300px; -moz-flex: 1 1 300px"></div>
-  <div data-expected-width="150" style="-webkit-flex: 2 3 300px; -moz-flex: 2 3 300px"></div>
+  <div data-expected-width="250" style="flex: 1 1 300px;"></div>
+  <div data-expected-width="150" style="flex: 2 3 300px;"></div>
   <div data-expected-width="200" class="flex-none" style="width: 200px"></div>
 </div>
 
 <div class="flexbox">
-  <div data-expected-width="50" style="-webkit-flex: 1 1 100px; -moz-flex: 1 1 100px"></div>
-  <div data-expected-width="250" style="-webkit-flex: 1 1 500px; -moz-flex: 1 1 500px"></div>
+  <div data-expected-width="50" style="flex: 1 1 100px;"></div>
+  <div data-expected-width="250" style="flex: 1 1 500px;"></div>
   <div data-expected-width="300" class="flex-none" style="width: 300px"></div>
 </div>
 
 <div class="flexbox">
-  <div data-expected-width="50" style="-webkit-flex: 1 1 100px; -moz-flex: 1 1 100px"></div>
-  <div data-expected-width="250" style="-webkit-flex: 1 1 500px; -moz-flex: 1 1 500px; margin-right: 300px;"></div>
+  <div data-expected-width="50" style="flex: 1 1 100px;"></div>
+  <div data-expected-width="250" style="flex: 1 1 500px; margin-right: 300px;"></div>
 </div>
 
 <div class="flexbox">
-  <div data-expected-width="50" style="-webkit-flex: 1 1 100px; -moz-flex: 1 1 100px"></div>
-  <div data-expected-width="550" style="-webkit-flex: 1 1 500px; -moz-flex: 1 1 500px; padding-left: 300px;"></div>
+  <div data-expected-width="50" style="flex: 1 1 100px;"></div>
+  <div data-expected-width="550" style="flex: 1 1 500px; padding-left: 300px;"></div>
 </div>
 
 <div class="flexbox">
-  <div data-expected-width="50" style="-webkit-flex: 1 1 100px; -moz-flex: 1 1 100px"></div>
-  <div data-expected-width="550" style="-webkit-flex: 1 1 500px; -moz-flex: 1 1 500px; border-left: 200px dashed orange; border-right: 100px dashed orange;"></div>
+  <div data-expected-width="50" style="flex: 1 1 100px;"></div>
+  <div data-expected-width="550" style="flex: 1 1 500px; border-left: 200px dashed orange; border-right: 100px dashed orange;"></div>
 </div>
 
 <!-- Test some overflow cases. -->
 <div class="flexbox">
-  <div data-expected-width="600" style="-webkit-flex: 0 100000000000000000000000000000000000000 600px; -moz-flex: 0 100000000000000000000000000000000000000 600px"></div>
-  <div data-expected-width="600" style="-webkit-flex: 0 100000000000000000000000000000000000000 600px; -moz-flex: 0 100000000000000000000000000000000000000 600px"></div>
+  <div data-expected-width="600" style="flex: 0 100000000000000000000000000000000000000 600px;"></div>
+  <div data-expected-width="600" style="flex: 0 100000000000000000000000000000000000000 600px;"></div>
 </div>
 
 <div class="flexbox">
-  <div data-expected-width="600" style="-webkit-flex: 100000000000000000000000000000000000000 0 600px; -moz-flex: 100000000000000000000000000000000000000 0 600px"></div>
-  <div data-expected-width="600" style="-webkit-flex: 0 100000000000000000000000000000000000000 600px; -moz-flex: 0 100000000000000000000000000000000000000 600px"></div>
-  <div data-expected-width="33554428" style="-webkit-flex: 1 1 100000000000000000000000000000000000000px; -moz-flex: 1 1 100000000000000000000000000000000000000px"></div>
+  <div data-expected-width="600" style="flex: 100000000000000000000000000000000000000 0 600px;"></div>
+  <div data-expected-width="600" style="flex: 0 100000000000000000000000000000000000000 600px;"></div>
+  <div data-expected-width="33554428" style="flex: 1 1 100000000000000000000000000000000000000px;"></div>
 </div>
 
 <!-- Test flexitem borders. -->
@@ -141,7 +140,7 @@ body {
 </div>
 
 <div class="flexbox">
-  <div data-expected-width="300" style="width: 100px; border: 100px solid black; -webkit-flex: none;"></div>
+  <div data-expected-width="300" style="width: 100px; border: 100px solid black; flex: none;"></div>
   <div data-expected-width="200" class="flex2"></div>
   <div data-expected-width="100" class="flex1"></div>
 </div>
@@ -198,7 +197,7 @@ body {
   </div>
 </div>
 
-<div class="flexbox" style="height: 60px; -webkit-flex-flow: row wrap; position: relative;">
+<div class="flexbox" style="height: 60px; flex-flow: row wrap; position: relative;">
   <div data-offset-x="0" data-offset-y="0" style="position: absolute;"></div>
   <div data-offset-x="0" data-offset-y="0" style="width: 700px;"></div>
 </div>

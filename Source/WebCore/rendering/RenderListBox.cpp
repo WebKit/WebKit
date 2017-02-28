@@ -260,7 +260,9 @@ LayoutUnit RenderListBox::listHeight() const
 
 RenderBox::LogicalExtentComputedValues RenderListBox::computeLogicalHeight(LayoutUnit, LayoutUnit logicalTop) const
 {
-    LayoutUnit height = itemHeight() * size() - rowSpacing + verticalBorderAndPaddingExtent();
+    LayoutUnit height = itemHeight() * size() - rowSpacing;
+    cacheIntrinsicContentLogicalHeightForFlexItem(height);
+    height += verticalBorderAndPaddingExtent();
     return RenderBox::computeLogicalHeight(height, logicalTop);
 }
 

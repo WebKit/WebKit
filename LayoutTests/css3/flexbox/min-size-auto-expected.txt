@@ -1,7 +1,8 @@
-PASS successfullyParsed is true
 
-TEST COMPLETE
-PASS
-PASS
-PASS
-PASS
+PASS .flexbox, .inline-flexbox 1 
+PASS .flexbox, .inline-flexbox 2 
+PASS .flexbox, .inline-flexbox 3 
+PASS .flexbox, .inline-flexbox 4 
+PASS .flexbox, .inline-flexbox 5 
+PASS .flexbox, .inline-flexbox 6 
+
