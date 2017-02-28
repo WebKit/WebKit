@@ -89,12 +89,12 @@ static WebProcessProxy::WebPageProxyMap& globalPageMap()
     return pageMap;
 }
 
-Ref<WebProcessProxy> WebProcessProxy::create(WebProcessPool& processPool)
+Ref<WebProcessProxy> WebProcessProxy::create(WebProcessPool& processPool, WebsiteDataStore* websiteDataStore)
 {
-    return adoptRef(*new WebProcessProxy(processPool));
+    return adoptRef(*new WebProcessProxy(processPool, websiteDataStore));
 }
 
-WebProcessProxy::WebProcessProxy(WebProcessPool& processPool)
+WebProcessProxy::WebProcessProxy(WebProcessPool& processPool, WebsiteDataStore* websiteDataStore)
     : ChildProcessProxy(processPool.alwaysRunsAtBackgroundPriority())
     , m_responsivenessTimer(*this)
     , m_processPool(processPool)
@@ -104,6 +104,7 @@ WebProcessProxy::WebProcessProxy(WebProcessPool& processPool)
     , m_isResponsive(NoOrMaybe::Maybe)
     , m_visiblePageCounter([this](RefCounterEvent) { updateBackgroundResponsivenessTimer(); })
     , m_backgroundResponsivenessTimer(std::make_unique<BackgroundProcessResponsivenessTimer>(*this))
+    , m_websiteDataStore(websiteDataStore)
 {
     WebPasteboardProxy::singleton().addWebProcessProxy(*this);
 

@@ -557,11 +557,11 @@ void WebProcessPool::resolvePathsForSandboxExtensions()
     platformResolvePathsForSandboxExtensions();
 }
 
-WebProcessProxy& WebProcessPool::createNewWebProcess()
+WebProcessProxy& WebProcessPool::createNewWebProcess(WebsiteDataStore* websiteDataStore)
 {
     ensureNetworkProcess();
 
-    Ref<WebProcessProxy> process = WebProcessProxy::create(*this);
+    Ref<WebProcessProxy> process = WebProcessProxy::create(*this, websiteDataStore);
 
     WebProcessCreationParameters parameters;
 
@@ -693,7 +693,7 @@ void WebProcessPool::warmInitialProcess()
     if (m_processes.size() >= maximumNumberOfProcesses())
         return;
 
-    createNewWebProcess();
+    createNewWebProcess(nullptr);
     m_haveInitialEmptyProcess = true;
 }
 
@@ -769,13 +769,34 @@ void WebProcessPool::disconnectProcess(WebProcessProxy* process)
 #endif
 }
 
-WebProcessProxy& WebProcessPool::createNewWebProcessRespectingProcessCountLimit()
+WebProcessProxy& WebProcessPool::createNewWebProcessRespectingProcessCountLimit(WebsiteDataStore* websiteDataStore)
 {
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=168676
+    // Once WebsiteDataStores are not per-process, remove this nonsense.
+
+#if PLATFORM(COCOA)
+    bool mustMatchDataStore = websiteDataStore && websiteDataStore != &API::WebsiteDataStore::defaultDataStore()->websiteDataStore();
+#else
+    bool mustMatchDataStore = false;
+#endif
+
     if (m_processes.size() < maximumNumberOfProcesses())
-        return createNewWebProcess();
+        return createNewWebProcess(websiteDataStore);
+
+    Vector<RefPtr<WebProcessProxy>> processesMatchingDataStore;
+    if (mustMatchDataStore) {
+        for (auto& process : m_processes) {
+            if (process->websiteDataStore() == websiteDataStore)
+                processesMatchingDataStore.append(process);
+        }
+
+        if (processesMatchingDataStore.isEmpty())
+            return createNewWebProcess(websiteDataStore);
+    }
 
     // Choose the process with fewest pages.
-    auto& process = *std::min_element(m_processes.begin(), m_processes.end(), [](const RefPtr<WebProcessProxy>& a, const RefPtr<WebProcessProxy>& b) {
+    auto* processes = mustMatchDataStore ? &m_processes : &processesMatchingDataStore;
+    auto& process = *std::min_element(processes->begin(), processes->end(), [](const RefPtr<WebProcessProxy>& a, const RefPtr<WebProcessProxy>& b) {
         return a->pageCount() < b->pageCount();
     });
 
@@ -792,21 +813,23 @@ Ref<WebPageProxy> WebProcessPool::createWebPage(PageClient& pageClient, Ref<API:
         pageConfiguration->setUserContentController(&pageConfiguration->pageGroup()->userContentController());
     if (!pageConfiguration->visitedLinkStore())
         pageConfiguration->setVisitedLinkStore(m_visitedLinkStore.ptr());
-    if (!pageConfiguration->websiteDataStore()) {
+
+    bool pageHasWebsiteDataStore = pageConfiguration->websiteDataStore();
+    if (!pageHasWebsiteDataStore) {
         ASSERT(!pageConfiguration->sessionID().isValid());
         pageConfiguration->setWebsiteDataStore(m_websiteDataStore.get());
         pageConfiguration->setSessionID(pageConfiguration->preferences()->privateBrowsingEnabled() ? SessionID::legacyPrivateSessionID() : SessionID::defaultSessionID());
     }
 
     RefPtr<WebProcessProxy> process;
-    if (m_haveInitialEmptyProcess) {
+    if (m_haveInitialEmptyProcess && !pageHasWebsiteDataStore) {
         process = m_processes.last();
         m_haveInitialEmptyProcess = false;
     } else if (pageConfiguration->relatedPage()) {
         // Sharing processes, e.g. when creating the page via window.open().
         process = &pageConfiguration->relatedPage()->process();
     } else
-        process = &createNewWebProcessRespectingProcessCountLimit();
+        process = &createNewWebProcessRespectingProcessCountLimit(&pageConfiguration->websiteDataStore()->websiteDataStore());
 
     return process->createWebPage(pageClient, WTFMove(pageConfiguration));
 }

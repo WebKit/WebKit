@@ -1,3 +1,17 @@
+2017-02-28  Brady Eidson  <beidson@apple.com>
+        
+        Refactor WebViewImpl creation in preparation for supporting multiple WebsiteDataStores.
+        https://bugs.webkit.org/show_bug.cgi?id=168676
+
+        Reviewed by Alex Christensen and Sam Weinig.
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::createNewWebProcess):
+        (WebKit::WebProcessPool::warmInitialProcess):
+        (WebKit::WebProcessPool::createNewWebProcessRespectingProcessCountLimit):
+        (WebKit::WebProcessPool::createWebPage):
+        * UIProcess/WebProcessPool.h:
+
 2017-02-28  Youenn Fablet  <youenn@apple.com>
 
         [WebRTC] Limit libwebrtc logging in Debug build
