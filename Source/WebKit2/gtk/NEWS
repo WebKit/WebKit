@@ -1,4 +1,18 @@
 ==================
+WebKitGTK+ 2.15.91
+==================
+
+What's new in WebKitGTK+ 2.15.91?
+
+  - Fix rendering artifacts when resizing the window in accelerated compositing mode.
+  - Remove flickering when leaving accelerated compositing mode.
+  - Fix a web process crash when loading duck duck go.
+  - Properly handle copy drag and drop operations.
+  - Fix a hang when sending an IPC messages fails because socket read buffers are full.
+  - Ensure we never try to load GTK2 plugins in Wayland.
+  - Fix several crashes and rendering issues.
+
+==================
 WebKitGTK+ 2.15.90
 ==================
 
