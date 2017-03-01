@@ -1,3 +1,21 @@
+2017-02-28  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        NetworkProcess aborts in WebKit::NetworkLoad::didCompleteWithError at Source/WebKit2/NetworkProcess/NetworkLoad.cpp:423
+        https://bugs.webkit.org/show_bug.cgi?id=168963
+
+        Reviewed by Antti Koivisto.
+
+        This is trying to call SpeculativeLoad::didFailLoading() after SpeculativeLoad has already been
+        completed. SpeculativeLoad::didComplete() call its completion handler that removes the load from
+        m_pendingPreloads. When the completion handler returns the SpeculativeLoad is deleted. So, we should always
+        ensure that SpeculativeLoad is not used after didComplete() call. In SpeculativeLoad::willSendRedirectedRequest(),
+        the call to NetworkLoad::continueWillSendRequest() causes SpeculativeLoad::didFailLoading() to be called. We
+        don't really need to call continueWillSendRequest() though, since the network load is going to be deleted anyway
+        by didComplete(), and the willSendRequest completion handler does nothing when the request is null.
+
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoad.cpp:
+        (WebKit::NetworkCache::SpeculativeLoad::willSendRedirectedRequest):
+
 2017-02-28  Alexey Proskuryakov  <ap@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=168899
