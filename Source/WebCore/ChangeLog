@@ -1,3 +1,15 @@
+2017-02-28  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Addressing post-review comments on r213163
+        https://bugs.webkit.org/show_bug.cgi?id=168678
+
+        Unreviewed.
+
+        No new tests because there is no behavior change.
+
+        * platform/graphics/cocoa/FontCacheCoreText.cpp:
+        (WebCore::platformFontLookupWithFamily):
+
 2017-02-28  Simon Fraser  <simon.fraser@apple.com>
 
         Don't use the LinearGlyphMask format if accelerated drawing is disabled

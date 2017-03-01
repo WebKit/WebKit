@@ -923,7 +923,7 @@ public:
         Range weightBounds;
     };
 
-    const InstalledFontFamily& lookUpFamilyName(const String& familyName)
+    const InstalledFontFamily& collectionForFamily(const String& familyName)
     {
         auto folded = familyName.foldCase();
         return m_familyNameToFontDescriptors.ensure(folded, [&] {
@@ -946,7 +946,7 @@ public:
         }).iterator->value;
     }
 
-    const InstalledFont& lookupPostScriptName(const AtomicString& postScriptName)
+    const InstalledFont& fontForPostScriptName(const AtomicString& postScriptName)
     {
         auto folded = postScriptName.string().foldCase();
         return m_postScriptNameToFontDescriptors.ensure(folded, [&] {
@@ -979,9 +979,8 @@ template <typename T>
 using IterateActiveFontsWithReturnCallback = std::function<std::optional<T>(const FontDatabase::InstalledFont&, size_t)>;
 
 template <typename T>
-inline std::optional<T> iterateActiveFontsWithReturn(const FontDatabase::InstalledFontFamily& installedFonts, const Vector<bool>& filter, IterateActiveFontsWithReturnCallback<T> callback)
+inline std::optional<T> iterateActiveFontsWithReturn(const FontDatabase::InstalledFontFamily& installedFonts, const std::unique_ptr<bool[]>& filter, IterateActiveFontsWithReturnCallback<T> callback)
 {
-    ASSERT(installedFonts.size() == filter.size());
     for (size_t i = 0; i < installedFonts.size(); ++i) {
         if (!filter[i])
             continue;
@@ -992,7 +991,7 @@ inline std::optional<T> iterateActiveFontsWithReturn(const FontDatabase::Install
 }
 
 template <typename T>
-inline void iterateActiveFonts(const FontDatabase::InstalledFontFamily& installedFonts, const Vector<bool>& filter, T callback)
+inline void iterateActiveFonts(const FontDatabase::InstalledFontFamily& installedFonts, const std::unique_ptr<bool[]>& filter, T callback)
 {
     iterateActiveFontsWithReturn<int>(installedFonts, filter, [&](const FontDatabase::InstalledFont& font, size_t i) -> std::optional<int> {
         callback(font, i);
@@ -1000,18 +999,18 @@ inline void iterateActiveFonts(const FontDatabase::InstalledFontFamily& installe
     });
 }
 
-static inline std::optional<float> findClosestStretch(float, const FontDatabase::InstalledFontFamily&, const Vector<bool>&)
+static inline std::optional<float> findClosestStretch(float, const FontDatabase::InstalledFontFamily&, const std::unique_ptr<bool[]>&)
 {
     // FIXME: Implement this.
     return 0;
 }
 
-static inline void filterStretch(float, const FontDatabase::InstalledFontFamily&, Vector<bool>&)
+static inline void filterStretch(float, const FontDatabase::InstalledFontFamily&, std::unique_ptr<bool[]>&)
 {
     // FIXME: Implement this.
 }
 
-static inline std::optional<float> findClosestStyle(float targetStyle, const FontDatabase::InstalledFontFamily& installedFonts, const Vector<bool>& filter)
+static inline std::optional<float> findClosestStyle(float targetStyle, const FontDatabase::InstalledFontFamily& installedFonts, const std::unique_ptr<bool[]>& filter)
 {
     std::function<float(const FontDatabase::InstalledFont&)> computeScore;
 
@@ -1081,7 +1080,7 @@ static inline std::optional<float> findClosestStyle(float targetStyle, const Fon
     });
 
     if (!minimumScore)
-        return { };
+        return std::nullopt;
     auto& winner = installedFonts.installedFonts[closestIndex];
     if (winner.style.includes(targetStyle))
         return targetStyle;
@@ -1091,7 +1090,7 @@ static inline std::optional<float> findClosestStyle(float targetStyle, const Fon
     return winner.style.maximum;
 }
 
-static inline void filterStyle(float target, const FontDatabase::InstalledFontFamily& installedFonts, Vector<bool>& filter)
+static inline void filterStyle(float target, const FontDatabase::InstalledFontFamily& installedFonts, std::unique_ptr<bool[]>& filter)
 {
     iterateActiveFonts(installedFonts, filter, [&](auto& installedFont, size_t i) {
         if (!installedFont.style.includes(target))
@@ -1099,29 +1098,30 @@ static inline void filterStyle(float target, const FontDatabase::InstalledFontFa
     });
 }
 
-static inline std::optional<float> findClosestWeight(float targetWeight, const FontDatabase::InstalledFontFamily& installedFonts, const Vector<bool>& filter)
+static inline std::optional<float> findClosestWeight(float targetWeight, const FontDatabase::InstalledFontFamily& installedFonts, const std::unique_ptr<bool[]>& filter)
 {
     {
+        // The spec states: "If the desired weight is 400, 500 is checked first ... If the desired weight is 500, 400 is checked first"
         IterateActiveFontsWithReturnCallback<float> searchFor400 = [&](const FontDatabase::InstalledFont& font, size_t) -> std::optional<float> {
             if (font.weight.includes(400))
                 return 400;
-            return { };
+            return std::nullopt;
         };
         IterateActiveFontsWithReturnCallback<float> searchFor500 = [&](const FontDatabase::InstalledFont& font, size_t) -> std::optional<float> {
             if (font.weight.includes(500))
                 return 500;
-            return { };
+            return std::nullopt;
         };
         if (targetWeight == 400) {
             if (auto result = iterateActiveFontsWithReturn(installedFonts, filter, searchFor400))
-                return result.value();
+                return result;
             if (auto result = iterateActiveFontsWithReturn(installedFonts, filter, searchFor500))
-                return result.value();
+                return result;
         } else if (targetWeight == 500) {
             if (auto result = iterateActiveFontsWithReturn(installedFonts, filter, searchFor500))
-                return result.value();
+                return result;
             if (auto result = iterateActiveFontsWithReturn(installedFonts, filter, searchFor400))
-                return result.value();
+                return result;
         }
     }
 
@@ -1162,7 +1162,7 @@ static inline std::optional<float> findClosestWeight(float targetWeight, const F
     });
 
     if (!minimumScore)
-        return { };
+        return std::nullopt;
     auto& winner = installedFonts.installedFonts[closestIndex];
     if (winner.weight.includes(targetWeight))
         return targetWeight;
@@ -1172,7 +1172,7 @@ static inline std::optional<float> findClosestWeight(float targetWeight, const F
     return winner.weight.maximum;
 }
 
-static inline void filterWeight(float target, const FontDatabase::InstalledFontFamily& installedFonts, Vector<bool>& filter)
+static inline void filterWeight(float target, const FontDatabase::InstalledFontFamily& installedFonts, std::unique_ptr<bool[]>& filter)
 {
     iterateActiveFonts(installedFonts, filter, [&](auto& installedFont, size_t i) {
         if (!installedFont.weight.includes(target))
@@ -1212,8 +1212,11 @@ static const FontDatabase::InstalledFont* findClosestFont(const FontDatabase::In
     ASSERT(!familyFonts.isEmpty());
 
     // Parallel to familyFonts.
-    Vector<bool> filter(familyFonts.size(), true);
+    std::unique_ptr<bool[]> filter { new bool[familyFonts.size()] };
+    for (size_t i = 0; i < familyFonts.size(); ++i)
+        filter[i] = true;
 
+    // FIXME: Implement this.
     float targetStretch = 0;
     if (auto closestStretch = findClosestStretch(targetStretch, familyFonts, filter))
         filterStretch(closestStretch.value(), familyFonts, filter);
@@ -1232,12 +1235,9 @@ static const FontDatabase::InstalledFont* findClosestFont(const FontDatabase::In
     else
         return nullptr;
 
-    auto findFont = [&](const FontDatabase::InstalledFont& font, size_t) -> std::optional<std::reference_wrapper<const FontDatabase::InstalledFont>> {
-        return std::reference_wrapper<const FontDatabase::InstalledFont>(font);
-    };
-    if (const auto& result = iterateActiveFontsWithReturn<std::reference_wrapper<const FontDatabase::InstalledFont>>(familyFonts, filter, findFont))
-        return &result.value().get();
-    return nullptr;
+    return iterateActiveFontsWithReturn<const FontDatabase::InstalledFont*>(familyFonts, filter, [](const FontDatabase::InstalledFont& font, size_t) {
+        return &font;
+    }).value_or(nullptr);
 }
 
 #endif // !SHOULD_USE_CORE_TEXT_FONT_LOOKUP
@@ -1252,16 +1252,23 @@ static RetainPtr<CTFontRef> platformFontLookupWithFamily(const AtomicString& fam
 #if SHOULD_USE_CORE_TEXT_FONT_LOOKUP
     return adoptCF(CTFontCreateForCSS(family.string().createCFString().get(), toCoreTextFontWeight(weight), requestedTraits, size));
 #else
-    const auto& familyFonts = FontDatabase::singleton().lookUpFamilyName(family.string());
+    const auto& familyFonts = FontDatabase::singleton().collectionForFamily(family.string());
     if (familyFonts.isEmpty()) {
-        const auto& postScriptFont = FontDatabase::singleton().lookupPostScriptName(family);
+        // The CSS spec states that font-family only accepts a name of an actual font family. However, in WebKit, we claim to also
+        // support supplying a PostScript name instead. However, this creates problems when the other properties (font-weight,
+        // font-style) disagree with the traits of the PostScript-named font. The solution we have come up with is, when the default
+        // values for font-weight and font-style are supplied, honor the PostScript name, but if font-weight specifies bold or
+        // font-style specifies italic, then we run the regular matching algorithm on the family of the PostScript font. This way,
+        // if content simply states "font-family: PostScriptName;" without specifying the other font properties, it will be honored,
+        // but if a <b> appears as a descendent element, it will be honored too.
+        const auto& postScriptFont = FontDatabase::singleton().fontForPostScriptName(family);
         if (!postScriptFont.fontDescriptor)
             return nullptr;
         if (((requestedTraits & kCTFontTraitItalic) && postScriptFont.style.maximum < italicThreshold) || (weight >= FontWeight600 && postScriptFont.weight.maximum < 600)) {
             auto postScriptFamilyName = adoptCF(static_cast<CFStringRef>(CTFontDescriptorCopyAttribute(postScriptFont.fontDescriptor.get(), kCTFontFamilyNameAttribute)));
             if (!postScriptFamilyName)
                 return nullptr;
-            const auto& familyFonts = FontDatabase::singleton().lookUpFamilyName(String(postScriptFamilyName.get()));
+            const auto& familyFonts = FontDatabase::singleton().collectionForFamily(String(postScriptFamilyName.get()));
             if (familyFonts.isEmpty())
                 return nullptr;
             if (const auto* installedFont = findClosestFont(familyFonts, requestedTraits, weight)) {
