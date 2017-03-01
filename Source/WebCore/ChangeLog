@@ -1,3 +1,20 @@
+2017-02-28  Simon Fraser  <simon.fraser@apple.com>
+
+        Make the repaint indicators show subpixel antialiased text indication a bit more clearly
+        https://bugs.webkit.org/show_bug.cgi?id=168988
+
+        Reviewed by Tim Horton.
+
+        Put a more obvious stroke around the repaint count when subpixel-antialiased layer text is enabled.
+
+        * platform/graphics/ca/PlatformCALayer.cpp:
+        (WebCore::PlatformCALayer::drawRepaintIndicator):
+        (WebCore::PlatformCALayer::drawTextAtPoint):
+        * platform/graphics/ca/PlatformCALayer.h:
+        * platform/graphics/ca/win/PlatformCALayerWin.cpp:
+        (PlatformCALayerWin::drawTextAtPoint):
+        * platform/graphics/ca/win/PlatformCALayerWin.h:
+
 2017-02-28  Alex Christensen  <achristensen@webkit.org>
 
         LibWebRTCProvider should check existence of libwebrtc.dylib

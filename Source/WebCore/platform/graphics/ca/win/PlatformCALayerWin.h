@@ -161,7 +161,7 @@ public:
     PlatformCALayer* rootLayer() const override;
     void setNeedsLayout() override;
     void setNeedsCommit() override;
-    void drawTextAtPoint(CGContextRef, CGFloat x, CGFloat y, CGSize scale, CGFloat fontSize, const char* text, size_t length) const override;
+    void drawTextAtPoint(CGContextRef, CGFloat x, CGFloat y, CGSize scale, CGFloat fontSize, const char* text, size_t length, CGFloat strokeWidth, Color strokeColor) const override;
 
     String layerTreeAsString() const override;
 

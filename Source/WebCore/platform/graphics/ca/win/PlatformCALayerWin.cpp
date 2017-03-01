@@ -952,7 +952,7 @@ TiledBacking* PlatformCALayerWin::tiledBacking()
     return reinterpret_cast<WebTiledBackingLayerWin*>(intern(this))->tiledBacking();
 }
 
-void PlatformCALayerWin::drawTextAtPoint(CGContextRef context, CGFloat x, CGFloat y, CGSize scale, CGFloat fontSize, const char* message, size_t length) const
+void PlatformCALayerWin::drawTextAtPoint(CGContextRef context, CGFloat x, CGFloat y, CGSize scale, CGFloat fontSize, const char* message, size_t length, CGFloat, Color) const
 {
     String text(message, length);
 

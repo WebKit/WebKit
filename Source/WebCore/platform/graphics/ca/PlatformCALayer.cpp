@@ -116,10 +116,12 @@ void PlatformCALayer::drawRepaintIndicator(CGContextRef context, PlatformCALayer
         CGContextStrokeRect(context, indicatorBox);
     }
 
+    CGFloat strokeWidthAsPercentageOfFontSize = 0;
+    Color strokeColor;
+
     if (!platformCALayer->isOpaque() && platformCALayer->supportsSubpixelAntialiasedText()) {
-        // Draw a gray shadow behind the repaint count.
-        CGContextSetRGBFillColor(context, 1, 1, 1, 0.4);
-        platformCALayer->drawTextAtPoint(context, indicatorBox.x() + 7, indicatorBox.y() + 24, CGSizeMake(1, -1), 22, text, strlen(text));
+        strokeColor = Color(0, 0, 0, 200);
+        strokeWidthAsPercentageOfFontSize = -4.5; // Negative means "stroke and fill"; see docs for kCTStrokeWidthAttributeName.
     }
 
     if (platformCALayer->acceleratesDrawing())
@@ -127,7 +129,7 @@ void PlatformCALayer::drawRepaintIndicator(CGContextRef context, PlatformCALayer
     else
         CGContextSetRGBFillColor(context, 1, 1, 1, 1);
     
-    platformCALayer->drawTextAtPoint(context, indicatorBox.x() + 5, indicatorBox.y() + 22, CGSizeMake(1, -1), 22, text, strlen(text));
+    platformCALayer->drawTextAtPoint(context, indicatorBox.x() + 5, indicatorBox.y() + 22, CGSizeMake(1, -1), 22, text, strlen(text), strokeWidthAsPercentageOfFontSize, strokeColor);
     
     CGContextEndTransparencyLayer(context);
 }
@@ -138,13 +140,25 @@ void PlatformCALayer::flipContext(CGContextRef context, CGFloat height)
     CGContextTranslateCTM(context, 0, -height);
 }
 
-// This function is needed to work around a bug in Windows CG <rdar://problem/22703470>
-void PlatformCALayer::drawTextAtPoint(CGContextRef context, CGFloat x, CGFloat y, CGSize scale, CGFloat fontSize, const char* text, size_t length) const
+void PlatformCALayer::drawTextAtPoint(CGContextRef context, CGFloat x, CGFloat y, CGSize scale, CGFloat fontSize, const char* text, size_t length, CGFloat strokeWidthAsPercentageOfFontSize, Color strokeColor) const
 {
     auto matrix = CGAffineTransformMakeScale(scale.width, scale.height);
     auto font = adoptCF(CTFontCreateWithName(CFSTR("Helvetica"), fontSize, &matrix));
-    CFTypeRef keys[] = { kCTFontAttributeName, kCTForegroundColorFromContextAttributeName };
-    CFTypeRef values[] = { font.get(), kCFBooleanTrue };
+    auto strokeWidthNumber = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberCGFloatType, &strokeWidthAsPercentageOfFontSize));
+
+    CFTypeRef keys[] = {
+        kCTFontAttributeName,
+        kCTForegroundColorFromContextAttributeName,
+        kCTStrokeWidthAttributeName,
+        kCTStrokeColorAttributeName,
+    };
+    CFTypeRef values[] = {
+        font.get(),
+        kCFBooleanTrue,
+        strokeWidthNumber.get(),
+        cachedCGColor(strokeColor),
+    };
+
     auto attributes = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, keys, values, WTF_ARRAY_LENGTH(keys), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
     auto string = adoptCF(CFStringCreateWithBytesNoCopy(kCFAllocatorDefault, reinterpret_cast<const UInt8*>(text), length, kCFStringEncodingUTF8, false, kCFAllocatorNull));
     auto attributedString = adoptCF(CFAttributedStringCreate(kCFAllocatorDefault, string.get(), attributes.get()));
