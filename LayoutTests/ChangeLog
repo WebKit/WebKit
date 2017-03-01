@@ -1,5 +1,18 @@
 2017-03-01  Antoine Quint  <graouts@apple.com>
 
+        LayoutTest media/modern-media-controls/play-pause-button/play-pause-button.html is a flaky timeout
+        https://bugs.webkit.org/show_bug.cgi?id=167447
+        <rdar://problem/30790539>
+
+        Reviewed by Dean Jackson.
+
+        Use a chain of asynchronous assertions to make the test more robust.
+
+        * media/modern-media-controls/play-pause-button/play-pause-button-expected.txt:
+        * media/modern-media-controls/play-pause-button/play-pause-button.html:
+
+2017-03-01  Antoine Quint  <graouts@apple.com>
+
         [mac-wk1 debug] LayoutTest media/modern-media-controls/tracks-panel/tracks-panel-hide-click-outside.html is a flaky timeout
         https://bugs.webkit.org/show_bug.cgi?id=165290
         <rdar://problem/30787749>

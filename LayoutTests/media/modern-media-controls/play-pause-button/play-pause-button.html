@@ -30,19 +30,21 @@ fullscreenPauseButton.playing = true;
 const iOSPauseButton = new PlayPauseButton({ layoutTraits: LayoutTraits.iOS });
 iOSPauseButton.playing = true;
 
-scheduler.frameDidFire = function()
-{
-    if ([playButton, pauseButton, iOSPlayButton, iOSPauseButton, fullscreenPlayButton, fullscreenPauseButton].some(button => button.width == 0))
-        return;
-
-    shouldBeTrue('playButton.element.style.webkitMaskImage.includes("macOS/play@")');
-    shouldBeTrue('pauseButton.element.style.webkitMaskImage.includes("macOS/pause@")');
-    shouldBeTrue('iOSPlayButton.element.style.webkitMaskImage.includes("iOS/play@")');
-    shouldBeTrue('iOSPauseButton.element.style.webkitMaskImage.includes("iOS/pause@")');
-    shouldBeTrue('fullscreenPlayButton.element.style.webkitMaskImage.includes("macOS/play-fullscreen@")');
-    shouldBeTrue('fullscreenPauseButton.element.style.webkitMaskImage.includes("macOS/pause-fullscreen@")');
-    finishMediaControlsTest();
-};
+shouldBecomeEqual('playButton.element.style.webkitMaskImage.includes("macOS/play@")', "true", () => {
+    shouldBecomeEqual('pauseButton.element.style.webkitMaskImage.includes("macOS/pause@")', "true", () => {
+        shouldBecomeEqual('iOSPlayButton.element.style.webkitMaskImage.includes("iOS/play@")', "true", () => {
+            shouldBecomeEqual('iOSPauseButton.element.style.webkitMaskImage.includes("iOS/pause@")', "true", () => {
+                shouldBecomeEqual('fullscreenPlayButton.element.style.webkitMaskImage.includes("macOS/play-fullscreen@")', "true", () => {
+                    shouldBecomeEqual('fullscreenPauseButton.element.style.webkitMaskImage.includes("macOS/pause-fullscreen@")', "true", () => {
+                        debug("");
+                        finishJSTest();
+                    });
+                });
+            });
+        });
+        
+    });
+});
 
 </script>
 <script src="../../../resources/js-test-post.js"></script>

@@ -10,12 +10,13 @@ PASS playButton.iconName is "play"
 PASS playButton.playing is false
 PASS pauseButton.playing is true
 PASS pauseButton.iconName is "pause"
-PASS playButton.element.style.webkitMaskImage.includes("macOS/play@") is true
-PASS pauseButton.element.style.webkitMaskImage.includes("macOS/pause@") is true
-PASS iOSPlayButton.element.style.webkitMaskImage.includes("iOS/play@") is true
-PASS iOSPauseButton.element.style.webkitMaskImage.includes("iOS/pause@") is true
-PASS fullscreenPlayButton.element.style.webkitMaskImage.includes("macOS/play-fullscreen@") is true
-PASS fullscreenPauseButton.element.style.webkitMaskImage.includes("macOS/pause-fullscreen@") is true
+PASS playButton.element.style.webkitMaskImage.includes("macOS/play@") became true
+PASS pauseButton.element.style.webkitMaskImage.includes("macOS/pause@") became true
+PASS iOSPlayButton.element.style.webkitMaskImage.includes("iOS/play@") became true
+PASS iOSPauseButton.element.style.webkitMaskImage.includes("iOS/pause@") became true
+PASS fullscreenPlayButton.element.style.webkitMaskImage.includes("macOS/play-fullscreen@") became true
+PASS fullscreenPauseButton.element.style.webkitMaskImage.includes("macOS/pause-fullscreen@") became true
+
 PASS successfullyParsed is true
 
 TEST COMPLETE
