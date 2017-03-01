@@ -1,3 +1,49 @@
+2017-03-01  Jonathan Bedard  <jbedard@apple.com>
+
+        webkitpy: Move some device management from iOSSimulatorPort to iOSPort class
+        https://bugs.webkit.org/show_bug.cgi?id=168681
+
+        Reviewed by Daniel Bates.
+
+        This patch moves high-level device management into iOSPort and adds a new iOSDevicePort class
+        which inherits from iOSPort.  Additionally, this change renames device_id_for_worker_number to
+        device_for_worker_number and manages devices by object instead of by UDID.
+
+        * Scripts/webkitpy/port/factory.py:
+        (PortFactory): Correct import path for IOSSimulatorPort and IOSDevicePort.
+        * Scripts/webkitpy/port/ios.py:
+        (IOSPort.__init__): Define variables shared between iOS ports.
+        (IOSPort.driver_cmd_line_for_logging): From IOSSimulatorPort.
+        (IOSPort.driver_name): From IOSSimulatorPort.
+        (IOSPort.using_multiple_devices): Check if this port supports multiple devices.
+        (IOSPort._testing_device): Map worker number to device.
+        (IOSPort.device_for_worker_number): Return _testing_device() or _current_device based on using_multiple_devices. 
+        (IOSSimulatorPort): Moved to ios_simulator.py
+        * Scripts/webkitpy/port/ios_device.py: Added.
+        (IOSDevicePort): Moved functionality from IOSPort.
+        (IOSDevicePort.determine_full_port_name): Moved from IOSPort.
+        (IOSDevicePort._build_driver_flags): Ditto.
+        (IOSDevicePort.operating_system): Ditto.
+        * Scripts/webkitpy/port/ios_simulator.py: Added.
+        (IOSSimulatorPort): Moved from ios.py.
+        (IOSSimulatorPort.__init__): Init parent class, setup device map.
+        (IOSSimulatorPort._create_simulators): Use object over unbound methods.
+        (IOSSimulatorPort.setup_test_run): Ditto.
+        (IOSSimulatorPort.using_multiple_devices): True if we are managing the simulators.
+        (IOSSimulatorPort._create_device): Use object over unbound methods.
+        (IOSSimulatorPort._remove_device): Ditto.
+        (IOSSimulatorPort.driver_name): Moved to parent class.
+        (IOSSimulatorPort.driver_cmd_line_for_logging): Ditto.
+        (IOSSimulatorPort.child_processes): Ditto.
+        (IOSSimulatorPort._testing_device): Ditto.
+        (IOSSimulatorPort.device_id_for_worker_number): Renamed as device_for_worker_number.
+        (SimulatorProcess.__init__): Call find_device_by_udid, device_id_for_worker_number has been removed.
+        * Scripts/webkitpy/xcode/simulator.py:
+        (Simulator): Make _managed_devices public.
+        (Simulator.create_device): Ditto.
+        (Simulator.remove_device): Ditto.
+        (Simulator.device_number): Ditto.
+
 2017-03-01  Alexey Proskuryakov  <ap@apple.com>
 
         IndexedDB.IndexedDBMultiProcess is a flaky timeout

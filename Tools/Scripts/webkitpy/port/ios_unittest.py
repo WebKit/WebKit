@@ -22,7 +22,7 @@
 
 import time
 
-from webkitpy.port.ios import IOSSimulatorPort
+from webkitpy.port.ios_simulator import IOSSimulatorPort
 from webkitpy.port import darwin_testcase
 from webkitpy.common.system.filesystem_mock import MockFileSystem
 from webkitpy.common.system.outputcapture import OutputCapture

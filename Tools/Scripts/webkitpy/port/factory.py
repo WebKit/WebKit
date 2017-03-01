@@ -80,17 +80,17 @@ def _builder_options(builder_name):
 class PortFactory(object):
     # Order matters.  For port classes that have a port_name with a
     # common prefix, the more specific port class should be listed
-    # first.  For example, 'ios.IOSSimulatorPort' (port_name='ios-simulator')
-    # should be listed before 'ios.IOSPort' (port_name='ios').  If this
+    # first.  For example, 'ios_simulator.IOSSimulatorPort' (port_name='ios-simulator')
+    # should be listed before 'ios_device.IOSDevicePort' (port_name='ios').  If this
     # rule is not followed, then `webkit-patch --ios-simulator` will try
-    # to use IOSPort instead of IOSSimulatorPort because 'ios'
-    # (IOSPort.port_name) is a prefix of 'ios-simulator' (port_name
+    # to use IOSDevicePort instead of IOSSimulatorPort because 'ios'
+    # (IOSDevicePort.port_name) is a prefix of 'ios-simulator' (port_name
     # derived from '--ios-simulator' command-line switch), for example.
     PORT_CLASSES = (
         'efl.EflPort',
         'gtk.GtkPort',
-        'ios.IOSSimulatorPort',
-        'ios.IOSPort',
+        'ios_simulator.IOSSimulatorPort',
+        'ios_device.IOSDevicePort',
         'mac.MacPort',
         'mock_drt.MockDRTPort',
         'test.TestPort',
