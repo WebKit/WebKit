@@ -1,5 +1,18 @@
 2017-02-28  Antoine Quint  <graouts@apple.com>
 
+        [mac-wk1 debug] LayoutTest media/modern-media-controls/skip-back-button/skip-back-button.html is a flaky timeout
+        https://bugs.webkit.org/show_bug.cgi?id=164620
+        <rdar://problem/30771094>
+
+        Reviewed by Dean Jackson.
+
+        Use the asynchronous assertion methods for this test to be on the safe side, this should address flakiness.
+
+        * media/modern-media-controls/skip-back-button/skip-back-button-expected.txt:
+        * media/modern-media-controls/skip-back-button/skip-back-button.html:
+
+2017-02-28  Antoine Quint  <graouts@apple.com>
+
         LayoutTest media/modern-media-controls/airplay-support/airplay-support.html is a flaky timeout
         https://bugs.webkit.org/show_bug.cgi?id=167442
         <rdar://problem/30770374>

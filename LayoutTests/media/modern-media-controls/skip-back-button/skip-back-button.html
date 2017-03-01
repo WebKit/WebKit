@@ -17,15 +17,9 @@ shouldBeEqualToString("skipBackButton.iconName", `${Icons.SkipBack}`);
 
 const iOSSkipBackButton = new SkipBackButton({ layoutTraits: LayoutTraits.iOS });
 
-scheduler.frameDidFire = function()
-{
-    if ([skipBackButton, iOSSkipBackButton].some(button => button.width == 0))
-        return;
-
-    shouldBeTrue('skipBackButton.element.style.webkitMaskImage.includes("macOS/interval-skip-back@")');
-    shouldBeTrue('iOSSkipBackButton.element.style.webkitMaskImage.includes("iOS/interval-skip-back@")');
-    finishMediaControlsTest();
-};
+shouldBecomeEqual('skipBackButton.element.style.webkitMaskImage.includes("macOS/interval-skip-back@")', "true", () => {
+    shouldBecomeEqual('iOSSkipBackButton.element.style.webkitMaskImage.includes("iOS/interval-skip-back@")', "true", finishJSTest);
+});
 
 </script>
 <script src="../../../resources/js-test-post.js"></script>

@@ -7,8 +7,8 @@ PASS skipBackButton.element.localName is "button"
 PASS skipBackButton.element.classList.contains("icon") is true
 PASS skipBackButton.element.classList.contains("skip-back") is true
 PASS skipBackButton.iconName is "interval-skip-back"
-PASS skipBackButton.element.style.webkitMaskImage.includes("macOS/interval-skip-back@") is true
-PASS iOSSkipBackButton.element.style.webkitMaskImage.includes("iOS/interval-skip-back@") is true
+PASS skipBackButton.element.style.webkitMaskImage.includes("macOS/interval-skip-back@") became true
+PASS iOSSkipBackButton.element.style.webkitMaskImage.includes("iOS/interval-skip-back@") became true
 PASS successfullyParsed is true
 
 TEST COMPLETE
