@@ -28,7 +28,6 @@
 
 #if ENABLE(RESOURCE_USAGE) && OS(LINUX)
 
-#include "CurrentProcessMemoryStatus.h"
 #include <errno.h>
 #include <fcntl.h>
 #include <heap/GCActivityCallback.h>
@@ -38,6 +37,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include <wtf/linux/CurrentProcessMemoryStatus.h>
 
 namespace WebCore {
 

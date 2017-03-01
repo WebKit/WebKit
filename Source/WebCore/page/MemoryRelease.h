@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "MemoryPressureHandler.h"
+#include <wtf/MemoryPressureHandler.h>
 
 namespace WebCore {
 

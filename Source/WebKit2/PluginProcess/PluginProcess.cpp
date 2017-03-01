@@ -36,8 +36,8 @@
 #include "PluginProcessCreationParameters.h"
 #include "PluginProcessProxyMessages.h"
 #include "WebProcessConnection.h"
-#include <WebCore/MemoryPressureHandler.h>
 #include <WebCore/NotImplemented.h>
+#include <wtf/MemoryPressureHandler.h>
 #include <wtf/RunLoop.h>
 
 #if PLATFORM(MAC)

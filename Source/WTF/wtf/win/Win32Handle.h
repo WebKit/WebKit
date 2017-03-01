@@ -22,14 +22,13 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Win32Handle_h
-#define Win32Handle_h
+#pragma once
 
 #include <memory>
 #include <windows.h>
 #include <wtf/Noncopyable.h>
 
-namespace WebCore {
+namespace WTF {
 
 class Win32Handle {
     WTF_MAKE_NONCOPYABLE(Win32Handle);
@@ -63,6 +62,5 @@ private:
     HANDLE m_handle;
 };
 
-} // namespace WebCore
+} // namespace WTF
 
-#endif // Win32Handle_h

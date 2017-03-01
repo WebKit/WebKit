@@ -29,7 +29,6 @@
 
 #include "COMPtr.h"
 #include "MediaPlayerPrivate.h"
-#include "Win32Handle.h"
 
 #include <D3D9.h>
 #include <Dxva2api.h>
@@ -44,6 +43,7 @@
 #include <wtf/Lock.h>
 #include <wtf/ThreadingPrimitives.h>
 #include <wtf/WeakPtr.h>
+#include <wtf/Win32Handle.h>
 
 namespace WebCore {
 

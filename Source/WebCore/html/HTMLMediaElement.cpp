@@ -70,7 +70,6 @@
 #include "MediaPlayer.h"
 #include "MediaQueryEvaluator.h"
 #include "MediaResourceLoader.h"
-#include "MemoryPressureHandler.h"
 #include "NetworkingContext.h"
 #include "NoEventDispatchAssertion.h"
 #include "Page.h"
@@ -95,6 +94,7 @@
 #include <runtime/Uint8Array.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/MathExtras.h>
+#include <wtf/MemoryPressureHandler.h>
 #include <wtf/Ref.h>
 #include <wtf/text/CString.h>
 

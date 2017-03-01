@@ -44,11 +44,11 @@
 #include "IgnoreOpensDuringUnloadCountIncrementer.h"
 #include "Logging.h"
 #include "MainFrame.h"
-#include "MemoryPressureHandler.h"
 #include "NoEventDispatchAssertion.h"
 #include "Page.h"
 #include "Settings.h"
 #include "SubframeLoader.h"
+#include <wtf/MemoryPressureHandler.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/SetForScope.h>
 #include <wtf/text/CString.h>

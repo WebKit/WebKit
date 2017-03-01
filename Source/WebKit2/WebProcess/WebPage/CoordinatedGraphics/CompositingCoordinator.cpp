@@ -35,8 +35,8 @@
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/InspectorController.h>
 #include <WebCore/MainFrame.h>
-#include <WebCore/MemoryPressureHandler.h>
 #include <WebCore/Page.h>
+#include <wtf/MemoryPressureHandler.h>
 #include <wtf/SetForScope.h>
 
 using namespace WebCore;

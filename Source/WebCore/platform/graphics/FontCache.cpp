@@ -33,9 +33,9 @@
 #include "FontCascade.h"
 #include "FontPlatformData.h"
 #include "FontSelector.h"
-#include "MemoryPressureHandler.h"
 #include "WebKitFontFamilyNames.h"
 #include <wtf/HashMap.h>
+#include <wtf/MemoryPressureHandler.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/AtomicStringHash.h>

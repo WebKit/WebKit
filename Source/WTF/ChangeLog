@@ -1,3 +1,83 @@
+2017-03-01  Andreas Kling  <akling@apple.com>
+
+        Move MemoryPressureHandler to WTF
+        <https://webkit.org/b/168908>
+
+        Reviewed by Sam Weinig.
+
+        Move MemoryPressureHandler down to WTF so it can be used from JavaScriptCore.
+
+        I had to do a blind rewrite of the Windows memory checking timer since it can
+        no longer use WebCore::Timer. I also moved the Win32Handle helper class to WTF.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/MemoryPressureHandler.cpp: Renamed from Source/WebCore/platform/MemoryPressureHandler.cpp.
+        (WTF::MemoryPressureHandler::singleton):
+        (WTF::MemoryPressureHandler::MemoryPressureHandler):
+        (WTF::MemoryPressureHandler::setShouldUsePeriodicMemoryMonitor):
+        (WTF::toString):
+        (WTF::thresholdForPolicy):
+        (WTF::policyForFootprint):
+        (WTF::MemoryPressureHandler::measurementTimerFired):
+        (WTF::MemoryPressureHandler::beginSimulatedMemoryPressure):
+        (WTF::MemoryPressureHandler::endSimulatedMemoryPressure):
+        (WTF::MemoryPressureHandler::releaseMemory):
+        (WTF::MemoryPressureHandler::ReliefLogger::logMemoryUsageChange):
+        (WTF::MemoryPressureHandler::install):
+        (WTF::MemoryPressureHandler::uninstall):
+        (WTF::MemoryPressureHandler::holdOff):
+        (WTF::MemoryPressureHandler::respondToMemoryPressure):
+        (WTF::MemoryPressureHandler::platformReleaseMemory):
+        (WTF::MemoryPressureHandler::ReliefLogger::platformMemoryUsage):
+        (WTF::MemoryPressureHandler::platformInitialize):
+        * wtf/MemoryPressureHandler.h: Renamed from Source/WebCore/platform/MemoryPressureHandler.h.
+        (WTF::MemoryPressureHandler::setMemoryKillCallback):
+        (WTF::MemoryPressureHandler::setProcessIsEligibleForMemoryKillCallback):
+        (WTF::MemoryPressureHandler::setLowMemoryHandler):
+        (WTF::MemoryPressureHandler::isUnderMemoryPressure):
+        (WTF::MemoryPressureHandler::setUnderMemoryPressure):
+        (WTF::MemoryPressureHandler::ReliefLogger::ReliefLogger):
+        (WTF::MemoryPressureHandler::ReliefLogger::~ReliefLogger):
+        (WTF::MemoryPressureHandler::ReliefLogger::logString):
+        (WTF::MemoryPressureHandler::ReliefLogger::setLoggingEnabled):
+        (WTF::MemoryPressureHandler::ReliefLogger::loggingEnabled):
+        (WTF::MemoryPressureHandler::ReliefLogger::MemoryUsage::MemoryUsage):
+        * wtf/PlatformEfl.cmake:
+        * wtf/PlatformGTK.cmake:
+        * wtf/PlatformMac.cmake:
+        * wtf/PlatformWin.cmake:
+        * wtf/cocoa/MemoryPressureHandlerCocoa.mm: Renamed from Source/WebCore/platform/cocoa/MemoryPressureHandlerCocoa.mm.
+        (WTF::MemoryPressureHandler::platformReleaseMemory):
+        (WTF::MemoryPressureHandler::install):
+        (WTF::MemoryPressureHandler::uninstall):
+        (WTF::MemoryPressureHandler::holdOff):
+        (WTF::MemoryPressureHandler::respondToMemoryPressure):
+        (WTF::MemoryPressureHandler::ReliefLogger::platformMemoryUsage):
+        * wtf/linux/CurrentProcessMemoryStatus.cpp: Renamed from Source/WebCore/platform/linux/CurrentProcessMemoryStatus.cpp.
+        (WTF::systemPageSize):
+        (WTF::currentProcessMemoryStatus):
+        * wtf/linux/CurrentProcessMemoryStatus.h: Renamed from Source/WebCore/platform/linux/CurrentProcessMemoryStatus.h.
+        * wtf/linux/MemoryPressureHandlerLinux.cpp: Renamed from Source/WebCore/platform/linux/MemoryPressureHandlerLinux.cpp.
+        (WTF::MemoryPressureHandler::EventFDPoller::EventFDPoller):
+        * wtf/win/MemoryPressureHandlerWin.cpp: Renamed from Source/WebCore/platform/win/MemoryPressureHandlerWin.cpp.
+        (WTF::MemoryPressureHandler::platformInitialize):
+        (WTF::MemoryPressureHandler::windowsMeasurementTimerFired):
+        (WTF::MemoryPressureHandler::platformReleaseMemory):
+        (WTF::MemoryPressureHandler::install):
+        (WTF::MemoryPressureHandler::uninstall):
+        (WTF::MemoryPressureHandler::holdOff):
+        (WTF::MemoryPressureHandler::respondToMemoryPressure):
+        (WTF::MemoryPressureHandler::ReliefLogger::platformMemoryUsage):
+        * wtf/win/Win32Handle.h: Renamed from Source/WebCore/platform/win/Win32Handle.h.
+        (WTF::Win32Handle::Win32Handle):
+        (WTF::Win32Handle::~Win32Handle):
+        (WTF::Win32Handle::clear):
+        (WTF::Win32Handle::isValid):
+        (WTF::Win32Handle::get):
+        (WTF::Win32Handle::release):
+        (WTF::Win32Handle::operator=):
+
 2017-02-28  Chris Dumez  <cdumez@apple.com>
 
         [iOS] Throttle requestAnimationFrame to 30fps in low power mode

@@ -85,7 +85,6 @@
 #import <WebCore/KeyboardEvent.h>
 #import <WebCore/MainFrame.h>
 #import <WebCore/MediaSessionManagerIOS.h>
-#import <WebCore/MemoryPressureHandler.h>
 #import <WebCore/Node.h>
 #import <WebCore/NotImplemented.h>
 #import <WebCore/Page.h>
@@ -107,6 +106,7 @@
 #import <WebCore/WebEvent.h>
 #import <WebCore/htmlediting.h>
 #import <wtf/MathExtras.h>
+#import <wtf/MemoryPressureHandler.h>
 #import <wtf/SetForScope.h>
 
 using namespace WebCore;

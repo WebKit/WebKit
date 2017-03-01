@@ -9,6 +9,7 @@ list(APPEND WTF_SOURCES
     text/cf/StringViewCF.cpp
 
     win/MainThreadWin.cpp
+    win/MemoryPressureHandlerWin.cpp
     win/RunLoopWin.cpp
     win/WorkQueueWin.cpp
 )

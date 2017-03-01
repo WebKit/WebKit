@@ -35,7 +35,6 @@
 #include "LegacyTileLayer.h"
 #include "LegacyTileLayerPool.h"
 #include "Logging.h"
-#include "MemoryPressureHandler.h"
 #include "QuartzCoreSPI.h"
 #include "SystemMemory.h"
 #include "WAKWindow.h"
@@ -43,6 +42,7 @@
 #include "WebCoreSystemInterface.h"
 #include "WebCoreThreadRun.h"
 #include <wtf/CurrentTime.h>
+#include <wtf/MemoryPressureHandler.h>
 #include <wtf/RAMSize.h>
 
 @interface WAKView (WebViewExtras)

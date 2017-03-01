@@ -32,12 +32,12 @@
 #include "LegacyTileGridTile.h"
 #include "LegacyTileLayer.h"
 #include "LegacyTileLayerPool.h"
-#include "MemoryPressureHandler.h"
 #include "QuartzCoreSPI.h"
 #include "SystemMemory.h"
 #include "WAKWindow.h"
 #include <algorithm>
 #include <functional>
+#include <wtf/MemoryPressureHandler.h>
 
 namespace WebCore {
 

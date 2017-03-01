@@ -26,12 +26,12 @@
 #ifndef WidthCache_h
 #define WidthCache_h
 
-#include "MemoryPressureHandler.h"
 #include "TextRun.h"
 #include <wtf/Forward.h>
 #include <wtf/HashFunctions.h>
 #include <wtf/HashSet.h>
 #include <wtf/Hasher.h>
+#include <wtf/MemoryPressureHandler.h>
 
 namespace WebCore {
 

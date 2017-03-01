@@ -7,6 +7,10 @@ list(APPEND WTF_SOURCES
     glib/GRefPtr.cpp
     glib/MainThreadGLib.cpp
     glib/RunLoopGLib.cpp
+
+    linux/CurrentProcessMemoryStatus.cpp
+    linux/MemoryPressureHandlerLinux.cpp
+
     PlatformUserPreferredLanguagesUnix.cpp
     UniStdExtras.cpp
 

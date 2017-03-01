@@ -324,7 +324,6 @@ list(APPEND WebCore_SOURCES
     platform/cocoa/LocalizedStringsCocoa.mm
     platform/cocoa/MIMETypeRegistryCocoa.mm
     platform/cocoa/MachSendRight.cpp
-    platform/cocoa/MemoryPressureHandlerCocoa.mm
     platform/cocoa/NetworkExtensionContentFilter.mm
     platform/cocoa/ParentalControlsContentFilter.mm
     platform/cocoa/ScrollController.mm

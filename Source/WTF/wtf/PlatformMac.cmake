@@ -22,6 +22,7 @@ list(APPEND WTF_SOURCES
 
     cf/RunLoopCF.cpp
 
+    cocoa/MemoryPressureHandlerCocoa.mm
     cocoa/WorkQueueCocoa.cpp
 
     mac/DeprecatedSymbolsUsedBySafari.mm

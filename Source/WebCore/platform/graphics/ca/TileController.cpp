@@ -43,8 +43,8 @@
 #endif
 
 #if PLATFORM(IOS)
-#include "MemoryPressureHandler.h"
 #include "TileControllerMemoryHandlerIOS.h"
+#include <wtf/MemoryPressureHandler.h>
 #endif
 
 namespace WebCore {

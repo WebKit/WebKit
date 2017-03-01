@@ -39,12 +39,12 @@
 #include "HitTestResult.h"
 #include "InspectorController.h"
 #include "InspectorInstrumentationCookie.h"
-#include "MemoryPressureHandler.h"
 #include "Page.h"
 #include "ScriptExecutionContext.h"
 #include "StorageArea.h"
 #include "WorkerGlobalScope.h"
 #include "WorkerInspectorController.h"
+#include <wtf/MemoryPressureHandler.h>
 #include <wtf/RefPtr.h>
 
 #if ENABLE(WEB_REPLAY)

@@ -65,6 +65,7 @@ set(WTF_HEADERS
     MathExtras.h
     MediaTime.h
     MemoryFootprint.h
+    MemoryPressureHandler.h
     MessageQueue.h
     MetaAllocator.h
     MetaAllocatorHandle.h
@@ -206,6 +207,7 @@ set(WTF_SOURCES
     MainThread.cpp
     MediaTime.cpp
     MemoryFootprint.cpp
+    MemoryPressureHandler.cpp
     MetaAllocator.cpp
     MonotonicTime.cpp
     NumberOfCores.cpp

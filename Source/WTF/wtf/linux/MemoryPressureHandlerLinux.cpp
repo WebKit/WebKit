@@ -29,9 +29,6 @@
 
 #if OS(LINUX)
 
-#include "CurrentProcessMemoryStatus.h"
-#include "Logging.h"
-
 #include <errno.h>
 #include <fcntl.h>
 #include <malloc.h>
@@ -41,13 +38,16 @@
 #include <unistd.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/MainThread.h>
+#include <wtf/linux/CurrentProcessMemoryStatus.h>
 #include <wtf/text/WTFString.h>
 
 #if USE(GLIB)
 #include <glib-unix.h>
 #endif
 
-namespace WebCore {
+#define LOG_CHANNEL_PREFIX Log
+
+namespace WTF {
 
 // Disable memory event reception for a minimum of s_minimumHoldOffTime
 // seconds after receiving an event. Don't let events fire any sooner than
@@ -103,7 +103,7 @@ MemoryPressureHandler::EventFDPoller::EventFDPoller(int fd, std::function<void (
 {
 #if USE(GLIB)
     m_source = adoptGRef(g_source_new(&eventFDSourceFunctions, sizeof(EventFDSource)));
-    g_source_set_name(m_source.get(), "WebCore: MemoryPressureHandler");
+    g_source_set_name(m_source.get(), "WTF: MemoryPressureHandler");
     if (!g_unix_set_fd_nonblocking(m_fd.value(), TRUE, nullptr)) {
         LOG(MemoryPressure, "Failed to set eventfd nonblocking");
         return;
@@ -117,7 +117,7 @@ MemoryPressureHandler::EventFDPoller::EventFDPoller(int fd, std::function<void (
     }, this, nullptr);
     g_source_attach(m_source.get(), nullptr);
 #else
-    m_threadID = createThread("WebCore: MemoryPressureHandler", [this] { readAndNotify(); }
+    m_threadID = createThread("WTF: MemoryPressureHandler", [this] { readAndNotify(); }
 #endif
 }
 
@@ -315,6 +315,6 @@ void MemoryPressureHandler::setMemoryPressureMonitorHandle(int fd)
     m_eventFD = fd;
 }
 
-} // namespace WebCore
+} // namespace WTF
 
 #endif // OS(LINUX)

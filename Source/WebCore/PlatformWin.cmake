@@ -128,7 +128,6 @@ list(APPEND WebCore_SOURCES
     platform/win/KeyEventWin.cpp
     platform/win/LocalizedStringsWin.cpp
     platform/win/LoggingWin.cpp
-    platform/win/MemoryPressureHandlerWin.cpp
     platform/win/MIMETypeRegistryWin.cpp
     platform/win/MainThreadSharedTimerWin.cpp
     platform/win/PasteboardWin.cpp

@@ -92,7 +92,6 @@
 #include "MediaProducer.h"
 #include "MemoryCache.h"
 #include "MemoryInfo.h"
-#include "MemoryPressureHandler.h"
 #include "MockLibWebRTCPeerConnection.h"
 #include "MockPageOverlay.h"
 #include "MockPageOverlayClient.h"
@@ -146,6 +145,7 @@
 #include <inspector/InspectorValues.h>
 #include <runtime/JSCInlines.h>
 #include <runtime/JSCJSValue.h>
+#include <wtf/MemoryPressureHandler.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuffer.h>
 #include <wtf/text/StringBuilder.h>

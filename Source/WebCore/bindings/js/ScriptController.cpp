@@ -39,7 +39,6 @@
 #include "JSMainThreadExecState.h"
 #include "LoadableModuleScript.h"
 #include "MainFrame.h"
-#include "MemoryPressureHandler.h"
 #include "ModuleFetchFailureKind.h"
 #include "NP_jsobject.h"
 #include "Page.h"
@@ -63,6 +62,7 @@
 #include <runtime/JSModuleRecord.h>
 #include <runtime/JSNativeStdFunction.h>
 #include <runtime/JSScriptFetcher.h>
+#include <wtf/MemoryPressureHandler.h>
 #include <wtf/SetForScope.h>
 #include <wtf/Threading.h>
 #include <wtf/text/TextPosition.h>

@@ -26,12 +26,19 @@
 #include "config.h"
 #include "MemoryPressureHandler.h"
 
-#include "Logging.h"
 #include <wtf/MemoryFootprint.h>
 
-namespace WebCore {
+#define LOG_CHANNEL_PREFIX Log
 
-WEBCORE_EXPORT bool MemoryPressureHandler::ReliefLogger::s_loggingEnabled = false;
+namespace WTF {
+
+#if RELEASE_LOG_DISABLED
+WTFLogChannel LogMemoryPressure = { WTFLogChannelOn, "MemoryPressure" };
+#else
+WTFLogChannel LogMemoryPressure = { WTFLogChannelOn, "MemoryPressure", LOG_CHANNEL_WEBKIT_SUBSYSTEM, OS_LOG_DEFAULT };
+#endif
+
+WTF_EXPORT_PRIVATE bool MemoryPressureHandler::ReliefLogger::s_loggingEnabled = false;
 
 MemoryPressureHandler& MemoryPressureHandler::singleton()
 {
@@ -42,6 +49,8 @@ MemoryPressureHandler& MemoryPressureHandler::singleton()
 MemoryPressureHandler::MemoryPressureHandler()
 #if OS(LINUX)
     : m_holdOffTimer(RunLoop::main(), this, &MemoryPressureHandler::holdOffTimerFired)
+#elif OS(WINDOWS)
+    : m_windowsMeasurementTimer(RunLoop::main(), this, &MemoryPressureHandler::windowsMeasurementTimerFired)
 #endif
 {
 }
@@ -210,6 +219,10 @@ void MemoryPressureHandler::holdOff(unsigned) { }
 void MemoryPressureHandler::respondToMemoryPressure(Critical, Synchronous) { }
 void MemoryPressureHandler::platformReleaseMemory(Critical) { }
 std::optional<MemoryPressureHandler::ReliefLogger::MemoryUsage> MemoryPressureHandler::ReliefLogger::platformMemoryUsage() { return std::nullopt; }
+#endif
+
+#if !PLATFORM(WIN)
+void MemoryPressureHandler::platformInitialize() { }
 #endif
 
 } // namespace WebCore

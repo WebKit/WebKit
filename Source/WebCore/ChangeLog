@@ -1,3 +1,33 @@
+2017-03-01  Andreas Kling  <akling@apple.com>
+
+        Move MemoryPressureHandler to WTF
+        <https://webkit.org/b/168908>
+
+        Reviewed by Sam Weinig.
+
+        * CMakeLists.txt:
+        * PlatformMac.cmake:
+        * PlatformWin.cmake:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/ScriptController.cpp:
+        * history/PageCache.cpp:
+        * html/HTMLMediaElement.cpp:
+        * inspector/InspectorInstrumentation.h:
+        * inspector/InspectorMemoryAgent.h:
+        * page/FrameView.cpp:
+        * page/MemoryRelease.h:
+        * page/linux/ResourceUsageThreadLinux.cpp:
+        * platform/Linux.cmake:
+        * platform/graphics/FontCache.cpp:
+        * platform/graphics/WidthCache.h:
+        * platform/graphics/ca/TileController.cpp:
+        * platform/graphics/win/MediaPlayerPrivateMediaFoundation.h:
+        * platform/ios/LegacyTileCache.mm:
+        * platform/ios/LegacyTileGrid.mm:
+        * platform/ios/LegacyTileLayerPool.mm:
+        * platform/ios/TileControllerMemoryHandlerIOS.cpp:
+        * testing/Internals.cpp:
+
 2017-03-01  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] Popup menus are too small in HiDPI mode.

@@ -26,8 +26,8 @@
 #include "config.h"
 #include "TileControllerMemoryHandlerIOS.h"
 
-#include "MemoryPressureHandler.h"
 #include "TileController.h"
+#include <wtf/MemoryPressureHandler.h>
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {

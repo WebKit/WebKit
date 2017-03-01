@@ -28,10 +28,10 @@
 #if ENABLE(RESOURCE_USAGE)
 
 #include "InspectorWebAgentBase.h"
-#include "MemoryPressureHandler.h"
 #include "ResourceUsageData.h"
 #include <inspector/InspectorBackendDispatchers.h>
 #include <inspector/InspectorFrontendDispatchers.h>
+#include <wtf/MemoryPressureHandler.h>
 
 namespace WebCore {
 

@@ -40,10 +40,10 @@
 #import <WebCore/CertificateInfo.h>
 #import <WebCore/FileSystem.h>
 #import <WebCore/LocalizedStrings.h>
-#import <WebCore/MemoryPressureHandler.h>
 #import <WebKitSystemInterface.h>
 #import <notify.h>
 #import <sysexits.h>
+#import <wtf/MemoryPressureHandler.h>
 #import <wtf/text/WTFString.h>
 
 using namespace WebCore;

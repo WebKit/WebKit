@@ -63,7 +63,6 @@
 #include "Logging.h"
 #include "MainFrame.h"
 #include "MemoryCache.h"
-#include "MemoryPressureHandler.h"
 #include "OverflowEvent.h"
 #include "Page.h"
 #include "PageCache.h"
@@ -98,6 +97,7 @@
 #include "WheelEventTestTrigger.h"
 
 #include <wtf/CurrentTime.h>
+#include <wtf/MemoryPressureHandler.h>
 #include <wtf/Ref.h>
 #include <wtf/SetForScope.h>
 #include <wtf/SystemTracing.h>

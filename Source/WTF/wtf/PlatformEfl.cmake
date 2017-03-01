@@ -10,6 +10,9 @@ list(APPEND WTF_SOURCES
     efl/WorkQueueEfl.cpp
 
     glib/GRefPtr.cpp
+
+    linux/CurrentProcessMemoryStatus.cpp
+    linux/MemoryPressureHandlerLinux.cpp
 )
 
 list(APPEND WTF_LIBRARIES

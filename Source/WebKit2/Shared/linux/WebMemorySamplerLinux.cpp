@@ -30,7 +30,6 @@
 
 #include <JavaScriptCore/MemoryStatistics.h>
 #include <WebCore/CommonVM.h>
-#include <WebCore/CurrentProcessMemoryStatus.h>
 #include <WebCore/JSDOMWindow.h>
 #include <WebCore/NotImplemented.h>
 #include <runtime/JSCInlines.h>
@@ -38,6 +37,7 @@
 #include <string.h>
 #include <sys/sysinfo.h>
 #include <wtf/CurrentTime.h>
+#include <wtf/linux/CurrentProcessMemoryStatus.h>
 #include <wtf/text/WTFString.h>
 
 using namespace WebCore;

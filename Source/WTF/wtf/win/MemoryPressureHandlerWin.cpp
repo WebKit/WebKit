@@ -26,42 +26,25 @@
 #include "config.h"
 #include "MemoryPressureHandler.h"
 
-#include <WebCore/Timer.h>
-#include <WebCore/Win32Handle.h>
 #include <psapi.h>
 #include <wtf/NeverDestroyed.h>
 
-namespace WebCore {
+namespace WTF {
 
-// We create a timer for checking the memory usage at regular intervals.
-
-class CheckMemoryTimer : public TimerBase {
-public:
-    CheckMemoryTimer(MemoryPressureHandler&);
-
-private:
-    virtual void fired();
-
-    void handleMemoryLow();
-
-    MemoryPressureHandler& m_pressureHandler;
-    Win32Handle m_lowMemoryHandle;
-};
-
-CheckMemoryTimer::CheckMemoryTimer(MemoryPressureHandler& pressureHandler)
-    : m_pressureHandler(pressureHandler)
+void MemoryPressureHandler::platformInitialize()
 {
     m_lowMemoryHandle = CreateMemoryResourceNotification(LowMemoryResourceNotification);
 }
 
-void CheckMemoryTimer::fired()
+void MemoryPressureHandler::windowsMeasurementTimerFired()
 {
-    m_pressureHandler.setUnderMemoryPressure(false);
+    setUnderMemoryPressure(false);
 
     BOOL memoryLow;
 
     if (QueryMemoryResourceNotification(m_lowMemoryHandle.get(), &memoryLow) && memoryLow) {
-        handleMemoryLow();
+        setUnderMemoryPressure(true);
+        releaseMemory(Critical::Yes);
         return;
     }
 
@@ -76,32 +59,21 @@ void CheckMemoryTimer::fired()
     // We should start releasing memory before we reach 1GB.
     const int maxMemoryUsageBytes = 0.9 * 1024 * 1024 * 1024;
 
-    if (counters.PrivateUsage > maxMemoryUsageBytes)
-        handleMemoryLow();
+    if (counters.PrivateUsage > maxMemoryUsageBytes) {
+        setUnderMemoryPressure(true);
+        releaseMemory(Critical::Yes);
+    }
 #endif
-}
-
-void CheckMemoryTimer::handleMemoryLow()
-{
-    m_pressureHandler.setUnderMemoryPressure(true);
-    m_pressureHandler.releaseMemory(Critical::Yes);
 }
 
 void MemoryPressureHandler::platformReleaseMemory(Critical)
 {
 }
 
-static std::unique_ptr<CheckMemoryTimer>& memCheckTimer()
-{
-    static NeverDestroyed<std::unique_ptr<CheckMemoryTimer>> memCheckTimer;
-    return memCheckTimer;
-}
-
 void MemoryPressureHandler::install()
 {
     m_installed = true;
-    memCheckTimer() = std::make_unique<CheckMemoryTimer>(*this);
-    memCheckTimer()->startRepeating(60.0);
+    m_windowsMeasurementTimer.startRepeating(60.0);
 }
 
 void MemoryPressureHandler::uninstall()
@@ -109,7 +81,7 @@ void MemoryPressureHandler::uninstall()
     if (!m_installed)
         return;
 
-    memCheckTimer() = nullptr;
+    m_windowsMeasurementTimer.stop();
     m_installed = false;
 }
 
@@ -129,4 +101,4 @@ std::optional<MemoryPressureHandler::ReliefLogger::MemoryUsage> MemoryPressureHa
     return std::nullopt;
 }
 
-} // namespace WebCore
+} // namespace WTF

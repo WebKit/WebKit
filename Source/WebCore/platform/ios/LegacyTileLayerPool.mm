@@ -31,8 +31,8 @@
 #include "LegacyTileLayer.h"
 #include "LegacyTileGrid.h"
 #include "Logging.h"
-#include "MemoryPressureHandler.h"
 #include <wtf/CurrentTime.h>
+#include <wtf/MemoryPressureHandler.h>
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {

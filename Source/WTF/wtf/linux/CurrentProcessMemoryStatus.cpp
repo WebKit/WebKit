@@ -23,24 +23,55 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "CurrentProcessMemoryStatus.h"
 
 #if OS(LINUX)
 
-namespace WebCore {
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
 
-struct ProcessMemoryStatus {
-    size_t size { 0 };
-    size_t resident { 0 };
-    size_t shared { 0 };
-    size_t text { 0 };
-    size_t lib { 0 };
-    size_t data { 0 };
-    size_t dt { 0 };
-};
+namespace WTF {
 
-void currentProcessMemoryStatus(ProcessMemoryStatus&);
+static inline size_t systemPageSize()
+{
+    static size_t pageSize = 0;
+    if (!pageSize)
+        pageSize = sysconf(_SC_PAGE_SIZE);
+    return pageSize;
+}
 
-} // namespace WebCore
+void currentProcessMemoryStatus(ProcessMemoryStatus& memoryStatus)
+{
+    FILE* file = fopen("/proc/self/statm", "r");
+    if (!file)
+        return;
+
+    char buffer[128];
+    char* line = fgets(buffer, 128, file);
+    fclose(file);
+    if (!line)
+        return;
+
+    size_t pageSize = systemPageSize();
+    char* end = nullptr;
+    unsigned long long intValue = strtoull(line, &end, 10);
+    memoryStatus.size = intValue * pageSize;
+    intValue = strtoull(end, &end, 10);
+    memoryStatus.resident = intValue * pageSize;
+    intValue = strtoull(end, &end, 10);
+    memoryStatus.shared = intValue * pageSize;
+    intValue = strtoull(end, &end, 10);
+    memoryStatus.text = intValue * pageSize;
+    intValue = strtoull(end, &end, 10);
+    memoryStatus.lib = intValue * pageSize;
+    intValue = strtoull(end, &end, 10);
+    memoryStatus.data = intValue * pageSize;
+    intValue = strtoull(end, &end, 10);
+    memoryStatus.dt = intValue * pageSize;
+}
+
+} // namespace WTF
 
 #endif // OS(LINUX)

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2015 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2011-2017 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,24 +26,17 @@
 #import "config.h"
 #import "MemoryPressureHandler.h"
 
-#import "Logging.h"
 #import <mach/mach.h>
 #import <mach/task_info.h>
 #import <malloc/malloc.h>
 #import <notify.h>
 #import <wtf/CurrentTime.h>
 
-#if PLATFORM(IOS)
-#import "GraphicsServicesSPI.h"
-#import "SystemMemory.h"
-#import "WebCoreThreadInternal.h"
-#endif
-
 #define ENABLE_FMW_FOOTPRINT_COMPARISON 0
 
 extern "C" void cache_simulate_memory_warning_event(uint64_t);
 
-namespace WebCore {
+namespace WTF {
 
 void MemoryPressureHandler::platformReleaseMemory(Critical critical)
 {
@@ -59,8 +52,8 @@ static dispatch_source_t _timer_event_source = 0;
 static int _notifyToken;
 
 // Disable memory event reception for a minimum of s_minimumHoldOffTime
-// seconds after receiving an event.  Don't let events fire any sooner than
-// s_holdOffMultiplier times the last cleanup processing time.  Effectively 
+// seconds after receiving an event. Don't let events fire any sooner than
+// s_holdOffMultiplier times the last cleanup processing time. Effectively 
 // this is 1 / s_holdOffMultiplier percent of the time.
 // These value seems reasonable and testing verifies that it throttles frequent
 // low memory events, greatly reducing CPU usage.
@@ -197,4 +190,4 @@ std::optional<MemoryPressureHandler::ReliefLogger::MemoryUsage> MemoryPressureHa
     return MemoryUsage {static_cast<size_t>(vmInfo.internal), static_cast<size_t>(vmInfo.phys_footprint)};
 }
 
-} // namespace WebCore
+} // namespace WTF
