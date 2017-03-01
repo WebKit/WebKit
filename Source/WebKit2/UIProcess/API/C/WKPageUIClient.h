@@ -52,6 +52,7 @@ enum {
     kWKAutoplayEventDidPreventFromAutoplaying,
     kWKAutoplayEventDidPlayMediaPreventedFromAutoplaying,
     kWKAutoplayEventDidEndMediaPlaybackWithoutUserInterference,
+    kWKAutoplayEventUserDidInterfereWithPlayback,
 };
 typedef uint32_t WKAutoplayEvent;
 

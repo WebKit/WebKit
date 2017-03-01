@@ -3350,8 +3350,18 @@ void HTMLMediaElement::setMuted(bool muted)
         m_muted = muted;
         m_explicitlyMuted = true;
 
-        if (ScriptController::processingUserGestureForMedia())
+        if (ScriptController::processingUserGestureForMedia()) {
             removeBehaviorsRestrictionsAfterFirstUserGesture(MediaElementSession::AllRestrictions & ~MediaElementSession::RequireUserGestureToControlControlsManager);
+
+            if (hasAudio() && m_muted) {
+                if (m_playbackWithoutUserGesture == PlaybackWithoutUserGesture::Started) {
+                    if (Page* page = document().page())
+                        page->chrome().client().handleAutoplayEvent(AutoplayEvent::UserDidInterfereWithPlayback);
+                }
+
+                m_playbackWithoutUserGesture = PlaybackWithoutUserGesture::None;
+            }
+        }
 
         // Avoid recursion when the player reports volume changes.
         if (!processingMediaPlayerCallback()) {
@@ -7088,6 +7098,17 @@ MediaProducer::MediaStateFlags HTMLMediaElement::mediaState() const
 void HTMLMediaElement::pageMutedStateDidChange()
 {
     updateVolume();
+
+    if (Page* page = document().page()) {
+        if (hasAudio() && !muted() && page->isAudioMuted()) {
+            if (m_playbackWithoutUserGesture == PlaybackWithoutUserGesture::Started) {
+                if (Page* page = document().page())
+                    page->chrome().client().handleAutoplayEvent(AutoplayEvent::UserDidInterfereWithPlayback);
+            }
+
+            m_playbackWithoutUserGesture = PlaybackWithoutUserGesture::None;
+        }
+    }
 }
 
 bool HTMLMediaElement::effectiveMuted() const

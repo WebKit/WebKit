@@ -1,3 +1,12 @@
+2017-02-28  Matt Rajca  <mrajca@apple.com>
+
+        Media: notify clients when autoplayed media is muted
+        https://bugs.webkit.org/show_bug.cgi?id=168987
+
+        Reviewed by Alex Christensen.
+
+        * UIProcess/API/C/WKPageUIClient.h:
+
 2017-03-01  Brady Eidson  <beidson@apple.com>
 
         Add SPI to create WebsiteDataStore objects pointing to custom paths.

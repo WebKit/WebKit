@@ -12,6 +12,10 @@
                 document.getElementById("video").play();
             }
 
+            function mute() {
+                document.getElementById("video").muted = true;
+            }
+
             function beganPlaying() {
                 try {
                     window.webkit.messageHandlers.testHandler.postMessage("playing");
@@ -27,6 +31,7 @@
     </head>
     <body onload="pageLoaded()">
         <button onclick="play()">Play</button>
+        <button onclick="mute()">Mute</button>
         <video id="video" onplaying=beganPlaying() onended=endedPlaying() src="test.mp4" />
     </body>
 </html>
