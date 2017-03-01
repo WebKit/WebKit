@@ -1,3 +1,22 @@
+2017-03-01  Joseph Pecoraro  <pecoraro@apple.com>
+
+        [WebRTC] Install libwebrtc.dylib inside of WebCore.framework
+        https://bugs.webkit.org/show_bug.cgi?id=168859
+
+        Reviewed by Dan Bernstein.
+
+        * Configurations/Base.xcconfig:
+        Define some general configuration variables.
+
+        * Configurations/DebugRelease.xcconfig:
+        Define WK_RELOCATABLE_FRAMEWORKS for Debug/Release builds.
+
+        * Configurations/libwebrtc.xcconfig:
+        Set INSTALL_PATH to be inside WebCore.framework's sub-Frameworks directory
+        unless WK_USE_OVERRIDE_FRAMEWORKS_DIR. Set the install name of the dylib to
+        be relative to WebCore / WebKit when frameworks are relocatable, such as
+        WK_USE_OVERRIDE_FRAMEWORKS_DIR or WK_RELOCATABLE_FRAMEWORKS.
+
 2017-02-28  Youenn Fablet  <youenn@apple.com>
 
         [WebRTC] CPU Overuse libwebrtc detector is decreasing the quality of the video

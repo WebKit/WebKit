@@ -1,3 +1,15 @@
+2017-03-01  Joseph Pecoraro  <pecoraro@apple.com>
+
+        [WebRTC] Install libwebrtc.dylib inside of WebCore.framework
+        https://bugs.webkit.org/show_bug.cgi?id=168859
+
+        Reviewed by Dan Bernstein.
+
+        * Configurations/BaseTarget.xcconfig:
+        * Configurations/WebKit.xcconfig:
+        Set library search path to find the libwebrtc.dylib inside of WebCore's Frameworks
+        or in the WK_OVERRIDE_FRAMEWORKS_DIR.
+
 2017-02-28  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         NetworkProcess aborts in WebKit::NetworkLoad::didCompleteWithError at Source/WebKit2/NetworkProcess/NetworkLoad.cpp:423
