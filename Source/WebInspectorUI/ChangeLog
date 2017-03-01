@@ -1,5 +1,17 @@
 2017-02-28  Devin Rousso  <dcrousso+webkit@gmail.com>
 
+        Web Inspector: RTL: expose the Layout Direction setting in Production builds, keep using LTR by default
+        https://bugs.webkit.org/show_bug.cgi?id=168999
+
+        Reviewed by Brian Burg.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Views/SettingsTabContentView.js:
+        (WebInspector.SettingsTabContentView.prototype.layout):
+        Remove the WebInspector.isDebugUIEnabled() check around the Layout Direction setting.
+
+2017-02-28  Devin Rousso  <dcrousso+webkit@gmail.com>
+
         Web Inspector: It is possible to get the New Tab button in addition to the seven expected tabs
         https://bugs.webkit.org/show_bug.cgi?id=168976
 

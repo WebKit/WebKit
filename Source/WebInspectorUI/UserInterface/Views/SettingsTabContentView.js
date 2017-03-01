@@ -191,30 +191,28 @@ WebInspector.SettingsTabContentView = class SettingsTabContentView extends WebIn
             });
         });
 
-        if (WebInspector.isDebugUIEnabled()) {
-            this.element.appendChild(document.createElement("br"));
+        this.element.appendChild(document.createElement("br"));
 
-            createContainer(WebInspector.unlocalizedString("Layout Direction:"), (valueControllerContainer) => {
-                let selectElement = valueControllerContainer.appendChild(document.createElement("select"));
-                selectElement.addEventListener("change", (event) => {
-                    WebInspector.setLayoutDirection(selectElement.value);
-                });
-
-                let currentLayoutDirection = WebInspector.settings.layoutDirection.value;
-                let options = new Map([
-                    [WebInspector.LayoutDirection.System, WebInspector.unlocalizedString("System Default")],
-                    [WebInspector.LayoutDirection.LTR, WebInspector.unlocalizedString("Left to Right (LTR)")],
-                    [WebInspector.LayoutDirection.RTL, WebInspector.unlocalizedString("Right to Left (RTL)")],
-                ]);
-
-                for (let [key, value] of options) {
-                    let optionElement = selectElement.appendChild(document.createElement("option"));
-                    optionElement.value = key;
-                    optionElement.textContent = value;
-                    optionElement.selected = currentLayoutDirection === key;
-                }
+        createContainer(WebInspector.UIString("Layout Direction:"), (valueControllerContainer) => {
+            let selectElement = valueControllerContainer.appendChild(document.createElement("select"));
+            selectElement.addEventListener("change", (event) => {
+                WebInspector.setLayoutDirection(selectElement.value);
             });
-        }
+
+            let currentLayoutDirection = WebInspector.settings.layoutDirection.value;
+            let options = new Map([
+                [WebInspector.LayoutDirection.System, WebInspector.UIString("System Default")],
+                [WebInspector.LayoutDirection.LTR, WebInspector.UIString("Left to Right (LTR)")],
+                [WebInspector.LayoutDirection.RTL, WebInspector.UIString("Right to Left (RTL)")],
+            ]);
+
+            for (let [key, value] of options) {
+                let optionElement = selectElement.appendChild(document.createElement("option"));
+                optionElement.value = key;
+                optionElement.textContent = value;
+                optionElement.selected = currentLayoutDirection === key;
+            }
+        });
     }
 };
 
