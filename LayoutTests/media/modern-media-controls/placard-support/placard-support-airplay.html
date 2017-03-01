@@ -15,7 +15,7 @@
     }
     
 </style>
-<video src="../../content/test.mp4" controls autoplay></video>
+<video src="../../content/test.mp4" controls></video>
 <div id="host"></div>
 <script type="text/javascript">
 
@@ -27,11 +27,13 @@ const container = document.querySelector("div#host");
 const media = document.querySelector("video");
 const mediaController = createControls(container, media, null);
 
-(function makeAirPlayAvailable()
+media.addEventListener("canplay", makeAirPlayAvailable);
+
+function makeAirPlayAvailable()
 {
     media.addEventListener("webkitplaybacktargetavailabilitychanged", playbackTargetAvailabilityChangedOnce, true);
     window.internals.setMockMediaPlaybackTargetPickerEnabled(true);
-})();
+}
 
 function playbackTargetAvailabilityChangedOnce(event)
 {
@@ -50,8 +52,7 @@ function playbackTargetAvailabilityChangedAgain(event)
         return;
 
     media.removeEventListener('webkitplaybacktargetavailabilitychanged', playbackTargetAvailabilityChangedAgain, true);
-
-    window.setTimeout(enterAirPlay, 100);
+    enterAirPlay();
 }
 
 function enterAirPlay()
