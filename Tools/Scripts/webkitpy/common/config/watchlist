@@ -87,6 +87,9 @@
         "CSS": {
             "filename": r"Source/WebCore/css/",
         },
+        "CSSJSON": {
+            "filename": r"Source/WebCore/css/CSSProperties.json",
+        },
         "DOM": {
             "filename": r"Source/WebCore/dom/",
         },
@@ -365,6 +368,7 @@
         "ContentSecurityPolicyFiles|ContentSecurityPolicyUsage" : [ "mkwst@chromium.org", "dbates@webkit.org" ],
         "CoreAnimation" : [ "simon.fraser@apple.com" ],
         "CSS": [ "alexis@webkit.org", "macpherson@chromium.org", "esprehn+autocc@chromium.org", "glenn@skynav.com", "gyuyoung.kim@webkit.org" ],
+        "CSSJSON": [ "simon.fraser@apple.com", "dbates@webkit.org" ],
         "CSSGridLayout": [ "svillar@igalia.com", "jfernandez@igalia.com", "rego@igalia.com" ],
         "cURLNetwork": [ "galpeter@inf.u-szeged.hu" ],
         "DOM": [ "esprehn+autocc@chromium.org", "kangil.han@samsung.com", "cdumez@apple.com", "dbates@webkit.org" ],

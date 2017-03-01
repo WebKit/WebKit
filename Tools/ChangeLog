@@ -1,3 +1,9 @@
+2017-03-01  Simon Fraser  <simon.fraser@apple.com>
+
+        Add a way to watch the CSSProperties.json file, and add me and Dan Bates to watch it.
+
+        * Scripts/webkitpy/common/config/watchlist:
+
 2017-03-01  Jonathan Bedard  <jbedard@apple.com>
 
         webkitpy: Move some device management from iOSSimulatorPort to iOSPort class
