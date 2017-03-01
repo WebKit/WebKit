@@ -44,7 +44,7 @@ const ClassInfo JSDollarVMPrototype::s_info = { "DollarVMPrototype", &Base::s_in
     
 bool JSDollarVMPrototype::currentThreadOwnsJSLock(ExecState* exec)
 {
-    return exec->vm().apiLock().currentThreadIsHoldingLock();
+    return exec->vm().currentThreadIsHoldingAPILock();
 }
 
 static bool ensureCurrentThreadOwnsJSLock(ExecState* exec)

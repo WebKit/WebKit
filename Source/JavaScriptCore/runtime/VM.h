@@ -611,8 +611,6 @@ public:
     RTTraceList* m_rtTraceList;
 #endif
 
-    std::thread::id ownerThread() const { return m_apiLock->ownerThread(); }
-
     JS_EXPORT_PRIVATE void resetDateCache();
 
     RegExpCache* regExpCache() { return m_regExpCache; }
@@ -724,6 +722,8 @@ private:
     bool ensureStackCapacityForCLoop(Register* newTopOfStack);
     bool isSafeToRecurseSoftCLoop() const;
 #endif // !ENABLE(JIT)
+
+    std::optional<PlatformThread> ownerThread() const { return m_apiLock->ownerThread(); }
 
     JS_EXPORT_PRIVATE void throwException(ExecState*, Exception*);
     JS_EXPORT_PRIVATE JSValue throwException(ExecState*, JSValue);

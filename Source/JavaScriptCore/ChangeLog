@@ -1,3 +1,57 @@
+2017-03-01  Mark Lam  <mark.lam@apple.com>
+
+        [Re-landing] Change JSLock to stash PlatformThread instead of std::thread::id.
+        https://bugs.webkit.org/show_bug.cgi?id=168996
+
+        Reviewed by Filip Pizlo and Saam Barati.
+
+        PlatformThread is more useful because it allows us to:
+        1. find the MachineThreads::Thread which is associated with it.
+        2. suspend / resume threads.
+        3. send a signal to a thread.
+
+        We can't do those with std::thread::id.  We will need one or more of these
+        capabilities to implement non-polling VM traps later.
+
+        Update: Since we don't have a canonical "uninitialized" value for PlatformThread,
+        we now have a JSLock::m_hasOwnerThread flag that is set to true if and only the
+        m_ownerThread value is valid.  JSLock::currentThreadIsHoldingLock() now checks
+        JSLock::m_hasOwnerThread before doing the thread identity comparison.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * heap/MachineStackMarker.cpp:
+        (JSC::MachineThreads::Thread::createForCurrentThread):
+        (JSC::MachineThreads::machineThreadForCurrentThread):
+        (JSC::MachineThreads::removeThread):
+        (JSC::MachineThreads::Thread::suspend):
+        (JSC::MachineThreads::tryCopyOtherThreadStacks):
+        (JSC::getCurrentPlatformThread): Deleted.
+        * heap/MachineStackMarker.h:
+        * runtime/JSCellInlines.h:
+        (JSC::JSCell::classInfo):
+        * runtime/JSLock.cpp:
+        (JSC::JSLock::JSLock):
+        (JSC::JSLock::lock):
+        (JSC::JSLock::unlock):
+        (JSC::JSLock::currentThreadIsHoldingLock): Deleted.
+        * runtime/JSLock.h:
+        (JSC::JSLock::ownerThread):
+        (JSC::JSLock::currentThreadIsHoldingLock):
+        * runtime/PlatformThread.h: Added.
+        (JSC::currentPlatformThread):
+        * runtime/VM.cpp:
+        (JSC::VM::~VM):
+        * runtime/VM.h:
+        (JSC::VM::ownerThread):
+        * runtime/Watchdog.cpp:
+        (JSC::Watchdog::setTimeLimit):
+        (JSC::Watchdog::shouldTerminate):
+        (JSC::Watchdog::startTimer):
+        (JSC::Watchdog::stopTimer):
+        * tools/JSDollarVMPrototype.cpp:
+        (JSC::JSDollarVMPrototype::currentThreadOwnsJSLock):
+        * tools/VMInspector.cpp:
+
 2017-03-01  Saam Barati  <sbarati@apple.com>
 
         Implement a mega-disassembler that'll be used in the FTL
