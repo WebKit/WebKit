@@ -1,3 +1,12 @@
+2017-03-01  Konstantin Tokarev  <annulen@yandex.ru>
+
+        Removed unused WTF_COMPILER_SUPPORTS_CXX_USER_LITERALS macro
+        https://bugs.webkit.org/show_bug.cgi?id=168969
+
+        Reviewed by Darin Adler.
+
+        * wtf/Compiler.h:
+
 2017-03-01  Tomas Popela  <tpopela@redhat.com>
 
         [WTF] va_list is not ended in StringPrintStream
