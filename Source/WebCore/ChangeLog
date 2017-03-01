@@ -1,5 +1,12 @@
 2017-03-01  Tomas Popela  <tpopela@redhat.com>
 
+        Unreviewed compiler warning fix after r213218
+
+        * platform/gtk/PlatformKeyboardEventGtk.cpp:
+        (WebCore::PlatformKeyboardEvent::PlatformKeyboardEvent):
+
+2017-03-01  Tomas Popela  <tpopela@redhat.com>
+
         [Cairo] Incorrectly determining height in GraphicsContext::roundToDevicePixels()
         https://bugs.webkit.org/show_bug.cgi?id=169031
 
