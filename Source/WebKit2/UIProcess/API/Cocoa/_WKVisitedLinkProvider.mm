@@ -28,12 +28,6 @@
 
 #if WK_API_ENABLED
 
-// Defined for binary compatibility with Safari in iOS 10.
-
-__attribute__((visibility("default")))
-@interface _WKVisitedLinkProvider : _WKVisitedLinkStore
-@end
-
 @implementation _WKVisitedLinkProvider
 @end
 
