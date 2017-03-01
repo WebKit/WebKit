@@ -2296,6 +2296,8 @@ webkit.org/b/169007 css3/flexbox/overflow-auto-resizes-correctly.html [ Failure 
 webkit.org/b/118220 http/tests/cache/partitioned-cache.html [ Failure ]
 webkit.org/b/118220 http/tests/cache/partitioned-cache-iframe.html [ Failure ]
 
+webkit.org/b/169010 tables/mozilla/bugs/bug32205-5.html [ Failure ]
+
 webkit.org/b/118221 fast/text/complex-first-glyph-with-initial-advance.html [ ImageOnlyFailure ]
 
 webkit.org/b/118416 storage/websql/sql-error-codes.html [ Failure ]
