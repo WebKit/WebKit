@@ -101,9 +101,14 @@ static bool parse(const char* string, OptionRange& value)
 
 static bool parse(const char* string, const char*& value)
 {
-    if (!strlen(string))
-        string = nullptr;
-    value = string;
+    if (!strlen(string)) {
+        value = nullptr;
+        return true;
+    }
+
+    // FIXME <https://webkit.org/b/169057>: This could leak if this option is set more than once.
+    // Given that Options are typically used for testing, this isn't considered to be a problem.
+    value = WTF::fastStrDup(string);
     return true;
 }
 
@@ -222,14 +227,14 @@ bool OptionRange::init(const char* rangeString)
         return true;
     }
     
-    m_rangeString = rangeString;
+    const char* p = rangeString;
 
-    if (*rangeString == '!') {
+    if (*p == '!') {
         invert = true;
-        rangeString++;
+        p++;
     }
 
-    int scanResult = sscanf(rangeString, " %u:%u", &m_lowLimit, &m_highLimit);
+    int scanResult = sscanf(p, " %u:%u", &m_lowLimit, &m_highLimit);
 
     if (!scanResult || scanResult == EOF) {
         m_state = InitError;
@@ -244,6 +249,9 @@ bool OptionRange::init(const char* rangeString)
         return false;
     }
 
+    // FIXME <https://webkit.org/b/169057>: This could leak if this particular option is set more than once.
+    // Given that these options are used for testing, this isn't considered to be problem.
+    m_rangeString = WTF::fastStrDup(rangeString);
     m_state = invert ? Inverted : Normal;
 
     return true;
