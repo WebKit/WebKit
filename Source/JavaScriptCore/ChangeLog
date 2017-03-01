@@ -1,5 +1,53 @@
 2017-02-28  Mark Lam  <mark.lam@apple.com>
 
+        Change JSLock to stash PlatformThread instead of std::thread::id.
+        https://bugs.webkit.org/show_bug.cgi?id=168996
+
+        Reviewed by Filip Pizlo.
+
+        PlatformThread is more useful because it allows us to:
+        1. find the MachineThreads::Thread which is associated with it.
+        2. suspend / resume threads.
+        3. send a signal to a thread.
+
+        We can't do those with std::thread::id.  We will need one or more of these
+        capabilities to implement non-polling VM traps later.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * heap/MachineStackMarker.cpp:
+        (JSC::MachineThreads::Thread::createForCurrentThread):
+        (JSC::MachineThreads::machineThreadForCurrentThread):
+        (JSC::MachineThreads::removeThread):
+        (JSC::MachineThreads::Thread::suspend):
+        (JSC::MachineThreads::tryCopyOtherThreadStacks):
+        (JSC::getCurrentPlatformThread): Deleted.
+        * heap/MachineStackMarker.h:
+        * runtime/JSCellInlines.h:
+        (JSC::JSCell::classInfo):
+        * runtime/JSLock.cpp:
+        (JSC::JSLock::lock):
+        (JSC::JSLock::unlock):
+        (JSC::JSLock::currentThreadIsHoldingLock): Deleted.
+        * runtime/JSLock.h:
+        (JSC::JSLock::ownerThread):
+        (JSC::JSLock::currentThreadIsHoldingLock):
+        * runtime/PlatformThread.h: Added.
+        (JSC::currentPlatformThread):
+        * runtime/VM.cpp:
+        (JSC::VM::~VM):
+        * runtime/VM.h:
+        (JSC::VM::ownerThread):
+        * runtime/Watchdog.cpp:
+        (JSC::Watchdog::setTimeLimit):
+        (JSC::Watchdog::shouldTerminate):
+        (JSC::Watchdog::startTimer):
+        (JSC::Watchdog::stopTimer):
+        * tools/JSDollarVMPrototype.cpp:
+        (JSC::JSDollarVMPrototype::currentThreadOwnsJSLock):
+        * tools/VMInspector.cpp:
+
+2017-02-28  Mark Lam  <mark.lam@apple.com>
+
         Enable the SigillCrashAnalyzer by default for iOS.
         https://bugs.webkit.org/show_bug.cgi?id=168989
 

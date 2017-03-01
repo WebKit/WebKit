@@ -20,8 +20,8 @@
 
 #pragma once
 
+#include "PlatformThread.h"
 #include <mutex>
-#include <thread>
 #include <wtf/Assertions.h>
 #include <wtf/Lock.h>
 #include <wtf/Noncopyable.h>
@@ -93,8 +93,8 @@ public:
 
     VM* vm() { return m_vm; }
 
-    std::thread::id ownerThread() const { return m_ownerThreadID; }
-    JS_EXPORT_PRIVATE bool currentThreadIsHoldingLock();
+    std::optional<PlatformThread> ownerThread() const { return m_ownerThread; }
+    bool currentThreadIsHoldingLock() { return m_ownerThread == currentPlatformThread(); }
 
     void willDestroyVM(VM*);
 
@@ -126,7 +126,7 @@ private:
     void grabAllLocks(DropAllLocks*, unsigned lockCount);
 
     Lock m_lock;
-    std::thread::id m_ownerThreadID;
+    std::optional<PlatformThread> m_ownerThread;
     intptr_t m_lockCount;
     unsigned m_lockDropDepth;
     bool m_shouldReleaseHeapAccess;

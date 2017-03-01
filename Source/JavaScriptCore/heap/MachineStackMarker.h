@@ -21,15 +21,12 @@
 
 #pragma once
 
+#include "PlatformThread.h"
 #include "RegisterState.h"
 #include <wtf/Lock.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/ScopedLambda.h>
 #include <wtf/ThreadSpecific.h>
-
-#if OS(DARWIN)
-#include <mach/thread_act.h>
-#endif
 
 #if USE(PTHREADS) && !OS(WINDOWS) && !OS(DARWIN)
 #include <semaphore.h>
@@ -42,14 +39,6 @@
 #include <ucontext.h>
 #endif
 #endif
-
-#if OS(DARWIN)
-typedef mach_port_t PlatformThread;
-#elif OS(WINDOWS)
-typedef DWORD PlatformThread;
-#elif USE(PTHREADS)
-typedef pthread_t PlatformThread;
-#endif // OS(DARWIN)
 
 namespace JSC {
 

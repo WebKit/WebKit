@@ -139,7 +139,7 @@ auto VMInspector::codeBlockForMachinePC(const VMInspector::Locker&, void* machin
     CodeBlock* codeBlock = nullptr;
     bool hasTimeout = false;
     iterate([&] (VM& vm) {
-        if (!vm.apiLock().currentThreadIsHoldingLock())
+        if (!vm.currentThreadIsHoldingAPILock())
             return FunctorStatus::Continue;
 
         // It is safe to call Heap::forEachCodeBlockIgnoringJITPlans here because:
