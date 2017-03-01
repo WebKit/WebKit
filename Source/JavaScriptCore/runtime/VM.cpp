@@ -392,7 +392,7 @@ VM::~VM()
     // Clear this first to ensure that nobody tries to remove themselves from it.
     m_perBytecodeProfiler = nullptr;
 
-    ASSERT(currentThreadIsHoldingAPILock());
+    ASSERT(m_apiLock->currentThreadIsHoldingLock());
     m_apiLock->willDestroyVM(this);
     heap.lastChanceToFinalize();
 

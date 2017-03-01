@@ -55,7 +55,7 @@ Watchdog::Watchdog(VM* vm)
 void Watchdog::setTimeLimit(std::chrono::microseconds limit,
     ShouldTerminateCallback callback, void* data1, void* data2)
 {
-    ASSERT(m_vm->currentThreadIsHoldingAPILock());
+    ASSERT(m_vm->ownerThread() == std::this_thread::get_id());
 
     m_timeLimit = limit;
     m_callback = callback;
@@ -68,7 +68,7 @@ void Watchdog::setTimeLimit(std::chrono::microseconds limit,
 
 bool Watchdog::shouldTerminate(ExecState* exec)
 {
-    ASSERT(m_vm->currentThreadIsHoldingAPILock());
+    ASSERT(m_vm->ownerThread() == std::this_thread::get_id());
     // FIXME: Will unindent the following before landing. Leaving indented for now to minimize the code diff.
     {
         if (currentWallClockTime() < m_wallClockDeadline)
@@ -138,7 +138,7 @@ void Watchdog::exitedVM()
 void Watchdog::startTimer(std::chrono::microseconds timeLimit)
 {
     ASSERT(m_hasEnteredVM);
-    ASSERT(m_vm->currentThreadIsHoldingAPILock());
+    ASSERT(m_vm->ownerThread() == std::this_thread::get_id());
     ASSERT(hasTimeLimit());
     ASSERT(timeLimit <= m_timeLimit);
 
@@ -168,7 +168,7 @@ void Watchdog::startTimer(std::chrono::microseconds timeLimit)
 void Watchdog::stopTimer()
 {
     ASSERT(m_hasEnteredVM);
-    ASSERT(m_vm->currentThreadIsHoldingAPILock());
+    ASSERT(m_vm->ownerThread() == std::this_thread::get_id());
     m_cpuDeadline = noTimeLimit;
 }
 

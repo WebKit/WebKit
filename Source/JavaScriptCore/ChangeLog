@@ -1,5 +1,47 @@
 2017-03-01  Mark Lam  <mark.lam@apple.com>
 
+        REGRESSION (r213202?): Assertion failed: (!"initialized()"), function operator().
+        https://bugs.webkit.org/show_bug.cgi?id=169042
+
+        Not reviewed.
+
+        Rolling out r213229 and r213202.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * heap/MachineStackMarker.cpp:
+        (JSC::getCurrentPlatformThread):
+        (JSC::MachineThreads::Thread::createForCurrentThread):
+        (JSC::MachineThreads::machineThreadForCurrentThread):
+        (JSC::MachineThreads::removeThread):
+        (JSC::MachineThreads::Thread::suspend):
+        (JSC::MachineThreads::tryCopyOtherThreadStacks):
+        * heap/MachineStackMarker.h:
+        * runtime/JSCellInlines.h:
+        (JSC::JSCell::classInfo):
+        * runtime/JSLock.cpp:
+        (JSC::JSLock::JSLock):
+        (JSC::JSLock::lock):
+        (JSC::JSLock::unlock):
+        (JSC::JSLock::currentThreadIsHoldingLock):
+        * runtime/JSLock.h:
+        (JSC::JSLock::ownerThread):
+        (JSC::JSLock::currentThreadIsHoldingLock): Deleted.
+        * runtime/PlatformThread.h: Removed.
+        * runtime/VM.cpp:
+        (JSC::VM::~VM):
+        * runtime/VM.h:
+        (JSC::VM::ownerThread):
+        * runtime/Watchdog.cpp:
+        (JSC::Watchdog::setTimeLimit):
+        (JSC::Watchdog::shouldTerminate):
+        (JSC::Watchdog::startTimer):
+        (JSC::Watchdog::stopTimer):
+        * tools/JSDollarVMPrototype.cpp:
+        (JSC::JSDollarVMPrototype::currentThreadOwnsJSLock):
+        * tools/VMInspector.cpp:
+
+2017-03-01  Mark Lam  <mark.lam@apple.com>
+
         REGRESSION (r213202?): Assertion failed: (!"initialized()"), function operator()
         https://bugs.webkit.org/show_bug.cgi?id=169042
 

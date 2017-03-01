@@ -75,7 +75,8 @@ JSLockHolder::~JSLockHolder()
 }
 
 JSLock::JSLock(VM* vm)
-    : m_lockCount(0)
+    : m_ownerThreadID(std::thread::id())
+    , m_lockCount(0)
     , m_lockDropDepth(0)
     , m_vm(vm)
     , m_entryAtomicStringTable(nullptr)
@@ -109,7 +110,7 @@ void JSLock::lock(intptr_t lockCount)
         m_lock.lock();
     }
 
-    m_ownerThread = currentPlatformThread();
+    m_ownerThreadID = std::this_thread::get_id();
     ASSERT(!m_lockCount);
     m_lockCount = lockCount;
 
@@ -167,7 +168,7 @@ void JSLock::unlock(intptr_t unlockCount)
     m_lockCount -= unlockCount;
 
     if (!m_lockCount) {
-        m_ownerThread = { };
+        m_ownerThreadID = std::thread::id();
         m_lock.unlock();
     }
 }
@@ -199,6 +200,11 @@ void JSLock::lock(ExecState* exec)
 void JSLock::unlock(ExecState* exec)
 {
     exec->vm().apiLock().unlock();
+}
+
+bool JSLock::currentThreadIsHoldingLock()
+{
+    return m_ownerThreadID == std::this_thread::get_id();
 }
 
 // This function returns the number of locks that were dropped.

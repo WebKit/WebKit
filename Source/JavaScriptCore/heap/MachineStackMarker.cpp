@@ -179,6 +179,17 @@ static ActiveMachineThreadsManager& activeMachineThreadsManager()
     return *manager;
 }
     
+static inline PlatformThread getCurrentPlatformThread()
+{
+#if OS(DARWIN)
+    return pthread_mach_thread_np(pthread_self());
+#elif OS(WINDOWS)
+    return GetCurrentThreadId();
+#elif USE(PTHREADS)
+    return pthread_self();
+#endif
+}
+
 MachineThreads::MachineThreads()
     : m_registeredThreads(0)
     , m_threadSpecificForMachineThreads(0)
@@ -203,7 +214,7 @@ MachineThreads::~MachineThreads()
 Thread* MachineThreads::Thread::createForCurrentThread()
 {
     auto stackBounds = wtfThreadData().stack();
-    return new Thread(currentPlatformThread(), stackBounds.origin(), stackBounds.end());
+    return new Thread(getCurrentPlatformThread(), stackBounds.origin(), stackBounds.end());
 }
 
 bool MachineThreads::Thread::operator==(const PlatformThread& other) const
@@ -239,7 +250,7 @@ void MachineThreads::addCurrentThread()
 Thread* MachineThreads::machineThreadForCurrentThread()
 {
     LockHolder lock(m_registeredThreadsMutex);
-    PlatformThread platformThread = currentPlatformThread();
+    PlatformThread platformThread = getCurrentPlatformThread();
     for (Thread* thread = m_registeredThreads; thread; thread = thread->next) {
         if (*thread == platformThread)
             return thread;
@@ -271,7 +282,7 @@ void THREAD_SPECIFIC_CALL MachineThreads::removeThread(void* p)
             return;
 #endif
 
-        machineThreads->removeThreadIfFound(currentPlatformThread());
+        machineThreads->removeThreadIfFound(getCurrentPlatformThread());
     }
 }
 
@@ -364,7 +375,7 @@ bool MachineThreads::Thread::suspend()
     ASSERT(threadIsSuspended);
     return threadIsSuspended;
 #elif USE(PTHREADS)
-    ASSERT_WITH_MESSAGE(currentPlatformThread() != platformThread, "Currently we don't support suspend the current thread itself.");
+    ASSERT_WITH_MESSAGE(getCurrentPlatformThread() != platformThread, "Currently we don't support suspend the current thread itself.");
     {
         // During suspend, suspend or resume should not be executed from the other threads.
         // We use global lock instead of per thread lock.
@@ -937,14 +948,14 @@ bool MachineThreads::tryCopyOtherThreadStacks(LockHolder&, void* buffer, size_t 
 
     *size = 0;
 
-    PlatformThread platformThread = currentPlatformThread();
+    PlatformThread currentPlatformThread = getCurrentPlatformThread();
     int numberOfThreads = 0; // Using 0 to denote that we haven't counted the number of threads yet.
     int index = 1;
     Thread* threadsToBeDeleted = nullptr;
 
     Thread* previousThread = nullptr;
     for (Thread* thread = m_registeredThreads; thread; index++) {
-        if (*thread != platformThread) {
+        if (*thread != currentPlatformThread) {
             bool success = thread->suspend();
 #if OS(DARWIN)
             if (!success) {
@@ -988,12 +999,12 @@ bool MachineThreads::tryCopyOtherThreadStacks(LockHolder&, void* buffer, size_t 
     }
 
     for (Thread* thread = m_registeredThreads; thread; thread = thread->next) {
-        if (*thread != platformThread)
+        if (*thread != currentPlatformThread)
             tryCopyOtherThreadStack(thread, buffer, capacity, size);
     }
 
     for (Thread* thread = m_registeredThreads; thread; thread = thread->next) {
-        if (*thread != platformThread)
+        if (*thread != currentPlatformThread)
             thread->resume();
     }
 
