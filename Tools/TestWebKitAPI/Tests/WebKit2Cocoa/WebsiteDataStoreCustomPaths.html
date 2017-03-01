@@ -1,0 +1,35 @@
+<script>
+
+// This test opens an IndexedDB, a WebSQL db, and makes a localStorage write.
+
+function log(msg)
+{
+    window.webkit.messageHandlers.testHandler.postMessage(msg);
+    //alert(msg);
+}
+
+localStorage.foo = "bar";
+log('localstorage written');
+
+var request = window.indexedDB.open("WebsiteDataStoreCustomPaths");
+
+request.onsuccess = function(event)
+{
+    log('Success opening indexed database');
+}
+
+request.onerror = function()
+{
+    log('Unexpected error opening indexed database');
+}
+
+try {
+openDatabase('WebsiteDataStoreCustomPathsSQL', '1.0', 'Test DB', 524288, function() {
+    log('WebSQL database created');
+});
+} catch(e) {
+    // An exception is fine, because the database tracker will still be installed at the expected path
+    log('Exception: ' + e);
+}
+
+</script>

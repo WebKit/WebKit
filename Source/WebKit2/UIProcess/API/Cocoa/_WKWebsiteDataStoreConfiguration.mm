@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,28 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WKWebsiteDataStore.h>
+#import "config.h"
+#import "_WKWebsiteDataStoreConfiguration.h"
 
 #if WK_API_ENABLED
 
-NS_ASSUME_NONNULL_BEGIN
-
-@class _WKWebsiteDataStoreConfiguration;
-
-typedef NS_OPTIONS(NSUInteger, _WKWebsiteDataStoreFetchOptions) {
-    _WKWebsiteDataStoreFetchOptionComputeSizes = 1 << 0,
-} WK_API_AVAILABLE(macosx(10.12), ios(10.0));
-
-@interface WKWebsiteDataStore (WKPrivate)
-
-- (instancetype)_initWithConfiguration:(_WKWebsiteDataStoreConfiguration *)configuration;
-
-- (void)_fetchDataRecordsOfTypes:(NSSet<NSString *> *)dataTypes withOptions:(_WKWebsiteDataStoreFetchOptions)options completionHandler:(void (^)(NSArray<WKWebsiteDataRecord *> *))completionHandler;
-
-@property (nonatomic, setter=_setResourceLoadStatisticsEnabled:) BOOL _resourceLoadStatisticsEnabled WK_API_AVAILABLE(macosx(10.12), ios(10.0));
+@implementation _WKWebsiteDataStoreConfiguration
 
 @end
-
-NS_ASSUME_NONNULL_END
 
 #endif

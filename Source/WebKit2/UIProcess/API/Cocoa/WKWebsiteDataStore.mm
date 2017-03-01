@@ -31,6 +31,7 @@
 #import "WKNSArray.h"
 #import "WKWebsiteDataRecordInternal.h"
 #import "WebsiteDataFetchOption.h"
+#import "_WKWebsiteDataStoreConfiguration.h"
 #import <wtf/BlockPtr.h>
 
 @implementation WKWebsiteDataStore
@@ -144,6 +145,25 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
 @end
 
 @implementation WKWebsiteDataStore (WKPrivate)
+
+- (instancetype)_initWithConfiguration:(_WKWebsiteDataStoreConfiguration *)configuration
+{
+    if (!(self = [super init]))
+        return nil;
+
+    auto config = API::WebsiteDataStore::defaultDataStoreConfiguration();
+
+    if (configuration.webStorageDirectory)
+        config.localStorageDirectory = configuration.webStorageDirectory;
+    if (configuration.webSQLDatabaseDirectory)
+        config.webSQLDatabaseDirectory = configuration.webSQLDatabaseDirectory;
+    if (configuration.indexedDBDatabaseDirectory)
+        config.indexedDBDatabaseDirectory = configuration.indexedDBDatabaseDirectory;
+
+    API::Object::constructInWrapper<API::WebsiteDataStore>(self, config);
+
+    return self;
+}
 
 - (void)_fetchDataRecordsOfTypes:(NSSet<NSString *> *)dataTypes withOptions:(_WKWebsiteDataStoreFetchOptions)options completionHandler:(void (^)(NSArray<WKWebsiteDataRecord *> *))completionHandler
 {

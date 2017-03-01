@@ -1,3 +1,24 @@
+2017-03-01  Brady Eidson  <beidson@apple.com>
+
+        Add SPI to create WebsiteDataStore objects pointing to custom paths.
+        https://bugs.webkit.org/show_bug.cgi?id=169044
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/APIWebsiteDataStore.h:
+
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (-[WKWebsiteDataStore _initWithConfiguration:]):
+
+        * UIProcess/API/Cocoa/WKWebsiteDataStorePrivate.h:
+
+        * UIProcess/API/Cocoa/_WKWebsiteDataStoreConfiguration.h: Copied from Source/WebKit2/UIProcess/API/Cocoa/WKWebsiteDataStorePrivate.h.
+        * UIProcess/API/Cocoa/_WKWebsiteDataStoreConfiguration.mm: Copied from Source/WebKit2/UIProcess/API/Cocoa/WKWebsiteDataStorePrivate.h.
+
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2017-03-01  Jon Lee  <jonlee@apple.com>
 
         Update peer connection preference

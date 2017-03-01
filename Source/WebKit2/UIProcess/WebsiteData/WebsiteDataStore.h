@@ -63,6 +63,7 @@ public:
         String applicationCacheFlatFileSubdirectoryName;
 
         String mediaCacheDirectory;
+        String indexedDBDatabaseDirectory;
         String webSQLDatabaseDirectory;
         String localStorageDirectory;
         String mediaKeysStorageDirectory;

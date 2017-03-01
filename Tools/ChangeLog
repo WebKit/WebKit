@@ -1,3 +1,18 @@
+2017-03-01  Brady Eidson  <beidson@apple.com>
+
+        Add SPI to create WebsiteDataStore objects pointing to custom paths.
+        https://bugs.webkit.org/show_bug.cgi?id=169044
+
+        Reviewed by Tim Horton.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        
+        * TestWebKitAPI/Tests/WebKit2Cocoa/WebsiteDataStoreCustomPaths.html: Added.
+        * TestWebKitAPI/Tests/WebKit2Cocoa/WebsiteDataStoreCustomPaths.mm: Added.
+        (-[WebsiteDataStoreCustomPathsMessageHandler userContentController:didReceiveScriptMessage:]):
+        (getNextMessage):
+        (TEST):
+
 2017-03-01  Simon Fraser  <simon.fraser@apple.com>
 
         Add a way to watch the CSSProperties.json file, and add me and Dan Bates to watch it.

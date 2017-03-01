@@ -38,6 +38,8 @@ public:
     static RefPtr<WebsiteDataStore> defaultDataStore();
     static Ref<WebsiteDataStore> createNonPersistentDataStore();
     static Ref<WebsiteDataStore> create(WebKit::WebsiteDataStore::Configuration);
+
+    explicit WebsiteDataStore(WebKit::WebsiteDataStore::Configuration);
     virtual ~WebsiteDataStore();
 
     bool isPersistent();
@@ -58,15 +60,14 @@ public:
     static String defaultWebSQLDatabaseDirectory();
     static String defaultResourceLoadStatisticsDirectory();
 
+    static WebKit::WebsiteDataStore::Configuration defaultDataStoreConfiguration();
+
 private:
-    WebsiteDataStore(WebKit::WebsiteDataStore::Configuration);
     WebsiteDataStore();
 
     static String tempDirectoryFileSystemRepresentation(const String& directoryName);
     static String cacheDirectoryFileSystemRepresentation(const String& directoryName);
     static String websiteDataDirectoryFileSystemRepresentation(const String& directoryName);
-
-    static WebKit::WebsiteDataStore::Configuration defaultDataStoreConfiguration();
 
     RefPtr<WebKit::WebsiteDataStore> m_websiteDataStore;
 };
