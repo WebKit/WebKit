@@ -1,3 +1,35 @@
+2017-03-01  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] fast/canvas/canvas-createPattern-video-loading.html makes its subsequent test timeout
+        https://bugs.webkit.org/show_bug.cgi?id=169019
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        The timeout happens normally when the media player is deleted and the pipeline state is set to NULL. The call to
+        gst_element_set_state() never returns because of different deadlocks with the video sink. Sometimes the deadlock
+        happens with the sample mutex used by VideoRenderRequestScheduler. VideoRenderRequestScheduler::requestRender()
+        calls webkitVideoSinkRepaintRequested() with the lock held, that ends up calling
+        MediaPlayerPrivateGStreamerBase::triggerRepaint(). When rendering can't be accelerated the draw timer is
+        scheduled and triggerRepaint blocks until the timer is fired. If the media player is destroyed before the timer
+        is fired, when setting the pipeline state to NULL, other VideoRenderRequestScheduler methods can be called, like
+        stop() that tries to get the sample mutex that is still held by requestRender(). So, first we need to make
+        sure that requestRender() releases the lock before calling webkitVideoSinkRepaintRequested(). But that's not
+        enough, we also need to ensure that the pipeline is set to NULL state after everyting has been properly
+        stopped. This is currently done in ~MediaPlayerPrivateGStreamer that happens before
+        ~MediaPlayerPrivateGStreamerBase, so gst_element_set_state() is hanging before allowing the
+        MediaPlayerPrivateGStreamerBase to be cleaned up. We should move the call to the end of
+        ~MediaPlayerPrivateGStreamerBase and ensure the draw timer and mutex are properly cleaned up before.
+
+        Fixes: fast/canvas/canvas-createPattern-video-loading.html
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::~MediaPlayerPrivateGStreamer): Do not reset pipeline here.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerBase::~MediaPlayerPrivateGStreamerBase): Stop the draw mutex and notify the
+        lock to ensure we unblock. Do the pipeline reset at the end.
+        * platform/graphics/gstreamer/VideoSinkGStreamer.cpp:
+        (VideoRenderRequestScheduler::requestRender): Release the mutex lock before calling webkitVideoSinkRepaintRequested().
+
 2017-03-01  Tomas Popela  <tpopela@redhat.com>
 
         Unreviewed compiler warning fix after r213218

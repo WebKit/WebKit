@@ -1,3 +1,14 @@
+2017-03-01  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] fast/canvas/canvas-createPattern-video-loading.html makes its subsequent test timeout
+        https://bugs.webkit.org/show_bug.cgi?id=169019
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Unskip tests previously skipped because of this timeout.
+
+        * platform/gtk/TestExpectations:
+
 2017-03-01  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [GTK] fast/canvas/canvas-createPattern-video-loading.html makes a following test timeout
