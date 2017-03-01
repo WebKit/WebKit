@@ -257,6 +257,7 @@ public:
         m_origin = NodeOrigin(CodeOrigin(0), CodeOrigin(0), true);
         for (unsigned i = codeBlock()->numParameters(); i--;) {
             Node* node = m_graph.m_arguments[i];
+            m_out.setOrigin(node);
             VirtualRegister operand = virtualRegisterForArgument(i);
             
             LValue jsValue = m_out.load64(addressFor(operand));
@@ -11852,7 +11853,9 @@ private:
                 terminate(Uncountable);
                 return m_out.int32Zero;
             }
-            return m_out.constInt32(value.asInt32());
+            LValue result = m_out.constInt32(value.asInt32());
+            result->setOrigin(B3::Origin(edge.node()));
+            return result;
         }
         
         LoweredNodeValue value = m_int32Values.get(edge.node());
@@ -11967,7 +11970,9 @@ private:
                 terminate(Uncountable);
                 return m_out.intPtrZero;
             }
-            return frozenPointer(value);
+            LValue result = frozenPointer(value);
+            result->setOrigin(B3::Origin(edge.node()));
+            return result;
         }
         
         LoweredNodeValue value = m_jsValueValues.get(edge.node());
@@ -12060,7 +12065,9 @@ private:
                 terminate(Uncountable);
                 return m_out.booleanFalse;
             }
-            return m_out.constBool(value.asBoolean());
+            LValue result = m_out.constBool(value.asBoolean());
+            result->setOrigin(B3::Origin(edge.node()));
+            return result;
         }
         
         LoweredNodeValue value = m_booleanValues.get(edge.node());
@@ -12100,8 +12107,11 @@ private:
         DFG_ASSERT(m_graph, m_node, !isDouble(edge.useKind()));
         DFG_ASSERT(m_graph, m_node, edge.useKind() != Int52RepUse);
         
-        if (edge->hasConstant())
-            return m_out.constInt64(JSValue::encode(edge->asJSValue()));
+        if (edge->hasConstant()) {
+            LValue result = m_out.constInt64(JSValue::encode(edge->asJSValue()));
+            result->setOrigin(B3::Origin(edge.node()));
+            return result;
+        }
 
         LoweredNodeValue value = m_jsValueValues.get(edge.node());
         if (isValid(value))

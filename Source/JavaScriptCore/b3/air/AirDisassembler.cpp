@@ -31,6 +31,7 @@
 #include "AirBasicBlock.h"
 #include "AirCode.h"
 #include "AirInst.h"
+#include "B3Value.h"
 #include "Disassembler.h"
 #include "LinkBuffer.h"
 
@@ -68,25 +69,26 @@ void Disassembler::addInst(Inst* inst, CCallHelpers::Label start, CCallHelpers::
     RELEASE_ASSERT(addResult.isNewEntry);
 }
 
-void Disassembler::dump(Code& code, PrintStream& out, LinkBuffer& linkBuffer)
+void Disassembler::dump(Code& code, PrintStream& out, LinkBuffer& linkBuffer, const char* airPrefix, const char* asmPrefix, std::function<void(Inst&)> doToEachInst)
 {
-    auto dumpRange = [&] (CCallHelpers::Label startLabel, CCallHelpers::Label endLabel) {
+    auto dumpAsmRange = [&] (CCallHelpers::Label startLabel, CCallHelpers::Label endLabel) {
         RELEASE_ASSERT(startLabel.isSet());
         RELEASE_ASSERT(endLabel.isSet());
         CodeLocationLabel start = linkBuffer.locationOf(startLabel);
         CodeLocationLabel end = linkBuffer.locationOf(endLabel);
         RELEASE_ASSERT(bitwise_cast<uintptr_t>(end.executableAddress()) >= bitwise_cast<uintptr_t>(start.executableAddress()));
-        const char* prefix = "      ";
-        disassemble(start, bitwise_cast<uintptr_t>(end.executableAddress()) - bitwise_cast<uintptr_t>(start.executableAddress()), prefix, out);
+        disassemble(start, bitwise_cast<uintptr_t>(end.executableAddress()) - bitwise_cast<uintptr_t>(start.executableAddress()), asmPrefix, out);
     };
 
     for (BasicBlock* block : m_blocks) {
         block->dumpHeader(out);
         if (code.isEntrypoint(block))
-            dumpRange(m_entrypointStart, m_entrypointEnd);
+            dumpAsmRange(m_entrypointStart, m_entrypointEnd);
 
         for (Inst& inst : *block) {
-            out.print("    ");
+            doToEachInst(inst);
+
+            out.print(airPrefix);
             inst.dump(out);
             out.print("\n");
 
@@ -96,7 +98,7 @@ void Disassembler::dump(Code& code, PrintStream& out, LinkBuffer& linkBuffer)
                 continue;
             }
             auto pair = iter->value;
-            dumpRange(pair.first, pair.second);
+            dumpAsmRange(pair.first, pair.second);
         }
         block->dumpFooter(out);
     }
@@ -104,7 +106,7 @@ void Disassembler::dump(Code& code, PrintStream& out, LinkBuffer& linkBuffer)
     // FIXME: We could be better about various late paths. We can implement
     // this later if we find a strong use for it.
     out.print("# Late paths\n");
-    dumpRange(m_latePathStart, m_latePathEnd);
+    dumpAsmRange(m_latePathStart, m_latePathEnd);
 }
 
 } } } // namespace JSC::B3::Air

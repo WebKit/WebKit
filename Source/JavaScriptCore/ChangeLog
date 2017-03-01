@@ -1,3 +1,107 @@
+2017-03-01  Saam Barati  <sbarati@apple.com>
+
+        Implement a mega-disassembler that'll be used in the FTL
+        https://bugs.webkit.org/show_bug.cgi?id=168685
+
+        Reviewed by Mark Lam.
+
+        This patch extends the previous Air disassembler to print the
+        DFG and B3 nodes belonging to particular Air instructions.
+        The algorithm I'm using to do this is not perfect. For example,
+        it won't try to print the entire DFG/B3 graph. It'll just print
+        the related nodes for particular Air instructions. We can make the
+        algorithm more sophisticated as we get more experience looking at
+        these IR dumps and get a better feel for what we want out of them.
+
+        This is an example of the output:
+
+        ...
+        ...
+        200:<!0:->  InvalidationPoint(MustGen, W:SideState, Exits, bc#28, exit: bc#25 --> _getEntry#DlGw2r:<0x10276f980> bc#37)
+           Void @54 = Patchpoint(@29:ColdAny, @29:ColdAny, @53:ColdAny, DFG:@200, generator = 0x1015d6c18, earlyClobbered = [], lateClobbered = [], usedRegisters = [%r0, %r19, %r20, %r21, %r22, %fp], resultConstraint = WarmAny, ExitsSideways|WritesPinned|ReadsPinned|Reads:Top)
+               Patch &Patchpoint2, %r20, %r20, %r0, @54
+         76:< 6:->  GetByOffset(KnownCell:@44, KnownCell:@44, JS|UseAsOther, Array, id3{_elementData}, 2, inferredType = Object, R:NamedProperties(3), Exits, bc#37)  predicting Array
+           Int64 @57 = Load(@29, DFG:@76, offset = 32, ControlDependent|Reads:100...101)
+               Move 32(%r20), %r5, @57
+                      0x389cc9ac0:    ldur   x5, [x20, #32]
+        115:<!0:->  CheckStructure(Cell:@76, MustGen, [0x1027eae20:[Array, {}, ArrayWithContiguous, Proto:0x1027e0140]], R:JSCell_structureID, Exits, bc#46)
+           Int32 @58 = Load(@57, DFG:@115, ControlDependent|Reads:16...17)
+               Move32 (%r5), %r1, @58
+                      0x389cc9ac4:    ldur   w1, [x5]
+           Int32 @59 = Const32(DFG:@115, 92)
+           Int32 @60 = NotEqual(@58, $92(@59), DFG:@115)
+           Void @61 = Check(@60:WarmAny, @57:ColdAny, @29:ColdAny, @29:ColdAny, @53:ColdAny, @57:ColdAny, DFG:@115, generator = 0x1057991e0, earlyClobbered = [], lateClobbered = [], usedRegisters = [%r0, %r5, %r19, %r20, %r21, %r22, %fp], ExitsSideways|Reads:Top)
+               Patch &Branch32(3,SameAsRep)1, NotEqual, %r1, $92, %r5, %r20, %r20, %r0, %r5, @61
+                      0x389cc9ac8:    cmp    w1, #92
+                      0x389cc9acc:    b.ne   0x389cc9dac
+        117:< 2:->  GetButterfly(Cell:@76, Storage|PureInt, R:JSObject_butterfly, Exits, bc#46)
+           Int64 @64 = Load(@57, DFG:@117, offset = 8, ControlDependent|Reads:24...25)
+               Move 8(%r5), %r4, @64
+                      0x389cc9ad0:    ldur   x4, [x5, #8]
+         79:< 2:->  GetArrayLength(KnownCell:@76, Untyped:@117, JS|PureInt|UseAsInt, Nonboolint32, Contiguous+OriginalArray+InBounds+AsIs, R:Butterfly_publicLength, Exits, bc#46)
+           Int32 @67 = Load(@64, DFG:@79, offset = -8, ControlDependent|Reads:3...4)
+               Move32 -8(%r4), %r2, @67
+                      0x389cc9ad4:    ldur   w2, [x4, #-8]
+      192:< 1:->  JSConstant(JS|PureInt, Nonboolint32, Int32: -1, bc#0)
+           Int32 @68 = Const32(DFG:@192, -1)
+               Move $0xffffffffffffffff, %r1, $-1(@68)
+                      0x389cc9ad8:    mov    x1, #-1
+         83:<!2:->  ArithAdd(Int32:Kill:@79, Int32:Kill:@192, Number|MustGen|PureInt|UseAsInt, Int32, Unchecked, Exits, bc#55)
+           Int32 @69 = Add(@67, $-1(@68), DFG:@83)
+               Add32 %r2, %r1, %r1, @69
+                      0x389cc9adc:    add    w1, w2, w1
+         86:< 3:->  BitAnd(Check:Int32:@71, Int32:Kill:@83, Int32|UseAsOther|UseAsInt|ReallyWantsInt, Int32, Exits, bc#60)
+           Int32 @70 = Below(@53, $-281474976710656(@15), DFG:@86)
+           Void @71 = Check(@70:WarmAny, @53:ColdAny, @29:ColdAny, @29:ColdAny, @53:ColdAny, @69:ColdAny, DFG:@86, generator = 0x105799370, earlyClobbered = [], lateClobbered = [], usedRegisters = [%r0, %r1, %r2, %r4, %r5, %r19, %r20, %r21, %r22, %fp], ExitsSideways|Reads:Top)
+               Patch &Branch64(3,SameAsRep)0, Below, %r0, %r22, %r0, %r20, %r20, %r0, %r1, @71
+                      0x389cc9ae0:    cmp    x0, x22
+                      0x389cc9ae4:    b.lo   0x389cc9dc0
+           Int32 @72 = Trunc(@53, DFG:@86)
+           Int32 @73 = BitAnd(@69, @72, DFG:@86)
+               And32 %r1, %r0, %r1, @73
+                      0x389cc9ae8:    and    w1, w1, w0
+           16:<!0:->  PutStack(KnownInt32:@71, MustGen, loc27, machine:loc3, FlushedInt32, W:Stack(-28), bc#19)
+           Int32 @72 = Trunc(@53, DFG:@86)
+           Int64 @11 = SlotBase(stack0)
+           Void @76 = Store(@72, @11, DFG:@16, offset = 32, ControlDependent|Writes:94...95)
+               Move32 %r0, -64(%fp), @76
+                      0x389cc9aec:    stur   w0, [fp, #-64]
+           12:<!0:->  PutStack(Untyped:@86, MustGen, loc28, machine:loc4, FlushedJSValue, W:Stack(-29), bc#19)
+           Int64 @77 = ZExt32(@73, DFG:@12)
+           Int64 @78 = Add(@77, $-281474976710656(@15), DFG:@12)
+               Add64 %r1, %r22, %r3, @78
+                      0x389cc9af0:    add    x3, x1, x22
+           Int64 @11 = SlotBase(stack0)
+           Void @81 = Store(@78, @11, DFG:@12, offset = 24, ControlDependent|Writes:95...96)
+               Move %r3, -72(%fp), @81
+                      0x389cc9af4:    stur   x3, [fp, #-72]
+           10:<!0:->  PutStack(KnownInt32:@46, MustGen, loc29, machine:loc5, FlushedInt32, W:Stack(-30), bc#19)
+           Int32 @82 = Trunc(@24, DFG:@10)
+           Int64 @11 = SlotBase(stack0)
+           Void @85 = Store(@82, @11, DFG:@10, offset = 16, ControlDependent|Writes:96...97)
+               Move32 %r21, -80(%fp), @85
+                      0x389cc9af8:    stur   w21, [fp, #-80]
+          129:<!10:->  GetByVal(KnownCell:Kill:@76, Int32:Kill:@86, Untyped:Kill:@117, JS|MustGen|UseAsOther, FinalOther, Contiguous+OriginalArray+OutOfBounds+AsIs, R:World, W:Heap, Exits, ClobbersExit, bc#19)  predicting FinalOther
+           Int32 @89 = AboveEqual(@73, @67, DFG:@129)
+           Void @90 = Branch(@89, DFG:@129, Terminal)
+               Branch32 AboveOrEqual, %r1, %r2, @90
+                      0x389cc9afc:    cmp    w1, w2
+                      0x389cc9b00:    b.hs   0x389cc9bec
+        ...
+        ...
+
+        * b3/air/AirDisassembler.cpp:
+        (JSC::B3::Air::Disassembler::dump):
+        * b3/air/AirDisassembler.h:
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::compile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::lower):
+        (JSC::FTL::DFG::LowerDFGToB3::lowInt32):
+        (JSC::FTL::DFG::LowerDFGToB3::lowCell):
+        (JSC::FTL::DFG::LowerDFGToB3::lowBoolean):
+        (JSC::FTL::DFG::LowerDFGToB3::lowJSValue):
+
 2017-03-01  Mark Lam  <mark.lam@apple.com>
 
         REGRESSION (r213202?): Assertion failed: (!"initialized()"), function operator().
