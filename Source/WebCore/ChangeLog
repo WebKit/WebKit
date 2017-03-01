@@ -1,3 +1,9 @@
+2017-03-01  Simon Fraser  <simon.fraser@apple.com>
+
+        Try to fix Windows build after r213191.
+
+        * platform/spi/win/CoreTextSPIWin.h:
+
 2017-03-01  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r213062): [SOUP] UTF-8 filename in Content-Disposition header incorrectly handled since r213062
