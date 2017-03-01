@@ -1,3 +1,40 @@
+2017-02-28  Brian Burg  <bburg@apple.com>
+
+        REGRESSION(r211344): Remote Inspector: listingForAutomationTarget() is called off-main-thread, causing assertions
+        https://bugs.webkit.org/show_bug.cgi?id=168695
+        <rdar://problem/30643899>
+
+        Reviewed by Joseph Pecoraro.
+
+        The aforementioned commit added some new calls to update target listings. This causes RemoteInspector
+        to update some listings underneath an incoming setup message on the XPC queue, which is not a safe place
+        to gather listing information for RemoteAutomationTargets.
+
+        Update the listing asynchronously since we don't need it immediately. Since this really only happens when
+        the connection to the target is set up and shut down, we can trigger listings to be refreshed from
+        the async block that's called on the target's queue inside RemoteConnectionToTarget::{setup,close}.
+
+        * inspector/remote/RemoteInspector.h:
+        Make updateListingForTarget(unsigned) usable from RemoteConnectionToTarget.
+
+        * inspector/remote/cocoa/RemoteConnectionToTargetCocoa.mm:
+        (Inspector::RemoteConnectionToTarget::setup):
+        (Inspector::RemoteConnectionToTarget::close):
+        Grab the target identifier while the RemoteControllableTarget pointer is still valid,
+        and use it inside the block later after it may have been destructed already. If that happens,
+        then updateTargetListing will bail out because the targetIdentifier cannot be found in the mapping.
+
+        * inspector/remote/cocoa/RemoteInspectorCocoa.mm:
+        (Inspector::RemoteInspector::updateTargetListing):
+        We need to make sure to request a listing push after the target is updated, so implicitly call
+        pushListingsSoon() from here. That method doesn't require any particular queue or holding a lock.
+
+        (Inspector::RemoteInspector::receivedSetupMessage):
+        (Inspector::RemoteInspector::receivedDidCloseMessage):
+        (Inspector::RemoteInspector::receivedConnectionDiedMessage):
+        Remove calls to updateTargetListing() and pushListingsSoon(), as these happen implicitly
+        and asynchronously on the target's queue when the connection to target is opened or closed.
+
 2017-03-01  Tomas Popela  <tpopela@redhat.com>
 
         Leak under Options::setOptions

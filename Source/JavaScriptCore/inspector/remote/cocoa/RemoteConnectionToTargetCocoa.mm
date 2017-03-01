@@ -159,12 +159,15 @@ bool RemoteConnectionToTarget::setup(bool isAutomaticInspection, bool automatica
     if (!m_target)
         return false;
 
+    unsigned targetIdentifier = this->targetIdentifier().value_or(0);
+    
     ref();
     dispatchAsyncOnTarget(^{
         {
             std::lock_guard<Lock> lock(m_targetMutex);
+
             if (!m_target || !m_target->remoteControlAllowed()) {
-                RemoteInspector::singleton().setupFailed(targetIdentifier().value_or(0));
+                RemoteInspector::singleton().setupFailed(targetIdentifier);
                 m_target = nullptr;
             } else if (is<RemoteInspectionTarget>(m_target)) {
                 auto castedTarget = downcast<RemoteInspectionTarget>(m_target);
@@ -173,10 +176,14 @@ bool RemoteConnectionToTarget::setup(bool isAutomaticInspection, bool automatica
 
                 if (automaticallyPause)
                     castedTarget->pause();
+
+                RemoteInspector::singleton().updateTargetListing(targetIdentifier);
             } else if (is<RemoteAutomationTarget>(m_target)) {
                 auto castedTarget = downcast<RemoteAutomationTarget>(m_target);
                 castedTarget->connect(this);
                 m_connected = true;
+
+                RemoteInspector::singleton().updateTargetListing(targetIdentifier);
             }
         }
         deref();
@@ -194,16 +201,19 @@ void RemoteConnectionToTarget::targetClosed()
 
 void RemoteConnectionToTarget::close()
 {
+    unsigned targetIdentifier = m_target ? m_target->targetIdentifier() : 0;
+    
     ref();
     dispatchAsyncOnTarget(^{
         {
             std::lock_guard<Lock> lock(m_targetMutex);
-
             if (m_target) {
                 if (m_connected)
                     m_target->disconnect(this);
 
                 m_target = nullptr;
+                
+                RemoteInspector::singleton().updateTargetListing(targetIdentifier);
             }
         }
         deref();
