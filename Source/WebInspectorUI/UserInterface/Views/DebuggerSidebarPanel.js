@@ -465,7 +465,7 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
         this._addBreakpointsForSourceCode(resource);
         this._addIssuesForSourceCode(resource);
 
-        if (!this.contentBrowser.currentContentView)
+        if (this.parentSidebar && !this.contentBrowser.currentContentView)
             this.showDefaultContentViewForTreeElement(treeElement);
     }
 
@@ -540,7 +540,7 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
         this._addBreakpointsForSourceCode(script);
         this._addIssuesForSourceCode(script);
 
-        if (!this.contentBrowser.currentContentView)
+        if (this.parentSidebar && !this.contentBrowser.currentContentView)
             this.showDefaultContentViewForTreeElement(treeElement);
 
         return treeElement;
