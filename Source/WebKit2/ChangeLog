@@ -1,3 +1,21 @@
+2017-02-28  Brady Eidson  <beidson@apple.com>
+
+        Move resolving symlinks of some WebsiteDataStore paths from WebProcessPool to... WebsiteDataStore!.
+        https://bugs.webkit.org/show_bug.cgi?id=168696.
+
+        Reviewed by Alex Christensen.
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::createNewWebProcess):
+
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::resolveDirectoriesIfNecessary):
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+        (WebKit::WebsiteDataStore::resolvedApplicationCacheDirectory):
+        (WebKit::WebsiteDataStore::resolvedMediaCacheDirectory):
+        (WebKit::WebsiteDataStore::resolvedMediaKeysDirectory):
+        (WebKit::WebsiteDataStore::resolvedDatabaseDirectory):
+
 2017-02-28  Alex Christensen  <achristensen@webkit.org>
 
         LibWebRTCProvider should check existence of libwebrtc.dylib

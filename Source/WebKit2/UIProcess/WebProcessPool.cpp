@@ -565,25 +565,36 @@ WebProcessProxy& WebProcessPool::createNewWebProcess(WebsiteDataStore* websiteDa
 
     WebProcessCreationParameters parameters;
 
+    if (websiteDataStore)
+        websiteDataStore->resolveDirectoriesIfNecessary();
+
     parameters.injectedBundlePath = m_resolvedPaths.injectedBundlePath;
     if (!parameters.injectedBundlePath.isEmpty())
         SandboxExtension::createHandleWithoutResolvingPath(parameters.injectedBundlePath, SandboxExtension::ReadOnly, parameters.injectedBundlePathExtensionHandle);
 
-    parameters.applicationCacheDirectory = m_resolvedPaths.applicationCacheDirectory;
+    parameters.applicationCacheDirectory = websiteDataStore ? websiteDataStore->resolvedApplicationCacheDirectory() : m_resolvedPaths.applicationCacheDirectory;
+    if (parameters.applicationCacheDirectory.isEmpty())
+        parameters.applicationCacheDirectory = m_resolvedPaths.applicationCacheDirectory;
     if (!parameters.applicationCacheDirectory.isEmpty())
         SandboxExtension::createHandleWithoutResolvingPath(parameters.applicationCacheDirectory, SandboxExtension::ReadWrite, parameters.applicationCacheDirectoryExtensionHandle);
 
     parameters.applicationCacheFlatFileSubdirectoryName = m_configuration->applicationCacheFlatFileSubdirectoryName();
 
-    parameters.webSQLDatabaseDirectory = m_resolvedPaths.webSQLDatabaseDirectory;
+    parameters.webSQLDatabaseDirectory = websiteDataStore ? websiteDataStore->resolvedDatabaseDirectory() : m_resolvedPaths.webSQLDatabaseDirectory;
+    if (parameters.webSQLDatabaseDirectory.isEmpty())
+        parameters.webSQLDatabaseDirectory = m_resolvedPaths.webSQLDatabaseDirectory;
     if (!parameters.webSQLDatabaseDirectory.isEmpty())
         SandboxExtension::createHandleWithoutResolvingPath(parameters.webSQLDatabaseDirectory, SandboxExtension::ReadWrite, parameters.webSQLDatabaseDirectoryExtensionHandle);
 
-    parameters.mediaCacheDirectory = m_resolvedPaths.mediaCacheDirectory;
+    parameters.mediaCacheDirectory = websiteDataStore ? websiteDataStore->resolvedMediaCacheDirectory() : m_resolvedPaths.mediaCacheDirectory;
+    if (parameters.mediaCacheDirectory.isEmpty())
+        parameters.mediaCacheDirectory = m_resolvedPaths.mediaCacheDirectory;
     if (!parameters.mediaCacheDirectory.isEmpty())
         SandboxExtension::createHandleWithoutResolvingPath(parameters.mediaCacheDirectory, SandboxExtension::ReadWrite, parameters.mediaCacheDirectoryExtensionHandle);
 
-    parameters.mediaKeyStorageDirectory = m_resolvedPaths.mediaKeyStorageDirectory;
+    parameters.mediaKeyStorageDirectory = websiteDataStore ? websiteDataStore->resolvedMediaKeysDirectory() : m_resolvedPaths.mediaKeyStorageDirectory;
+    if (parameters.mediaKeyStorageDirectory.isEmpty())
+        parameters.mediaKeyStorageDirectory = m_resolvedPaths.mediaKeyStorageDirectory;
     if (!parameters.mediaKeyStorageDirectory.isEmpty())
         SandboxExtension::createHandleWithoutResolvingPath(parameters.mediaKeyStorageDirectory, SandboxExtension::ReadWrite, parameters.mediaKeyStorageDirectoryExtensionHandle);
 

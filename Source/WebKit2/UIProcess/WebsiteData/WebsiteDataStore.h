@@ -89,6 +89,12 @@ public:
     void removeData(OptionSet<WebsiteDataType>, const Vector<WebsiteDataRecord>&, std::function<void ()> completionHandler);
     void removeDataForTopPrivatelyOwnedDomains(OptionSet<WebsiteDataType>, OptionSet<WebsiteDataFetchOption>, const Vector<String>& topPrivatelyOwnedDomains, std::function<void(Vector<String>)> completionHandler);
 
+    void resolveDirectoriesIfNecessary();
+    const String& resolvedApplicationCacheDirectory() const { return m_resolvedConfiguration.applicationCacheDirectory; }
+    const String& resolvedMediaCacheDirectory() const { return m_resolvedConfiguration.mediaCacheDirectory; }
+    const String& resolvedMediaKeysDirectory() const { return m_resolvedConfiguration.mediaKeysStorageDirectory; }
+    const String& resolvedDatabaseDirectory() const { return m_resolvedConfiguration.webSQLDatabaseDirectory; }
+
     StorageManager* storageManager() { return m_storageManager.get(); }
 
 private:
@@ -121,6 +127,8 @@ private:
     const WebCore::SessionID m_sessionID;
 
     const Configuration m_configuration;
+    Configuration m_resolvedConfiguration;
+    bool m_hasResolvedDirectories { false };
 
     const RefPtr<StorageManager> m_storageManager;
     const RefPtr<WebResourceLoadStatisticsStore> m_resourceLoadStatistics;

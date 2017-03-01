@@ -104,6 +104,18 @@ WebsiteDataStore::~WebsiteDataStore()
     }
 }
 
+void WebsiteDataStore::resolveDirectoriesIfNecessary()
+{
+    if (m_hasResolvedDirectories)
+        return;
+    m_hasResolvedDirectories = true;
+
+    m_resolvedConfiguration.applicationCacheDirectory = resolveAndCreateReadWriteDirectoryForSandboxExtension(m_configuration.applicationCacheDirectory);
+    m_resolvedConfiguration.mediaCacheDirectory = resolveAndCreateReadWriteDirectoryForSandboxExtension(m_configuration.mediaCacheDirectory);
+    m_resolvedConfiguration.mediaKeysStorageDirectory = resolveAndCreateReadWriteDirectoryForSandboxExtension(m_configuration.mediaKeysStorageDirectory);
+    m_resolvedConfiguration.webSQLDatabaseDirectory = resolveAndCreateReadWriteDirectoryForSandboxExtension(m_configuration.webSQLDatabaseDirectory);
+}
+
 void WebsiteDataStore::cloneSessionData(WebPageProxy& sourcePage, WebPageProxy& newPage)
 {
     auto& sourceDataStore = sourcePage.websiteDataStore();
