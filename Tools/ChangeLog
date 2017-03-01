@@ -1,3 +1,15 @@
+2017-03-01  Alexey Proskuryakov  <ap@apple.com>
+
+        IndexedDB.IndexedDBMultiProcess is a flaky timeout
+        https://bugs.webkit.org/show_bug.cgi?id=160780
+
+        Reviewed by Brady Eidson.
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/IndexedDBMultiProcess.mm: Releasing the object
+        once doesn't necessarily deallocate the object, there can be other references.
+        We can use -[WKWebView _close] or -[WKWebView _killWebContentProcessAndResetState].
+        The latter seems more appropriate, because "kill" is what the comment says.
+
 2017-02-28  Srinivasan Vijayaraghavan  <svijayaraghavan@apple.com>
 
         Add ability for webkitpy to run bindings tests

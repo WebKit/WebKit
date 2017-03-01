@@ -31,6 +31,7 @@
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKUserContentControllerPrivate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
+#import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <WebKit/_WKUserStyleSheet.h>
 #import <wtf/Deque.h>
@@ -106,7 +107,7 @@ TEST(IndexedDB, IndexedDBMultiProcess)
     EXPECT_WK_STREQ(@"Blocked!", string6.get());
 
     // Kill the blocking web process
-    webView2 = nil;
+    [webView2 _killWebContentProcessAndResetState];
 
     RetainPtr<NSString> string7 = (NSString *)[getNextMessage() body];
     EXPECT_WK_STREQ(@"Deleted!", string7.get());
