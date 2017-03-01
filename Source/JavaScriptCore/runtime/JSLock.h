@@ -94,7 +94,7 @@ public:
     VM* vm() { return m_vm; }
 
     std::optional<PlatformThread> ownerThread() const { return m_ownerThread; }
-    bool currentThreadIsHoldingLock() { return m_ownerThread == currentPlatformThread(); }
+    bool currentThreadIsHoldingLock() { return m_ownerThread && m_ownerThread == currentPlatformThread(); }
 
     void willDestroyVM(VM*);
 
