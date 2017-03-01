@@ -7,7 +7,7 @@ PASS rewindButton.element.localName is "button"
 PASS rewindButton.element.classList.contains("icon") is true
 PASS rewindButton.element.classList.contains("rewind") is true
 PASS rewindButton.iconName is "rewind"
-PASS rewindButton.element.style.webkitMaskImage.includes("macOS/rewind@") is true
+PASS rewindButton.element.style.webkitMaskImage.includes("macOS/rewind@") became true
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -17,14 +17,7 @@ shouldBeTrue('rewindButton.element.classList.contains("icon")');
 shouldBeTrue('rewindButton.element.classList.contains("rewind")');
 shouldBeEqualToString("rewindButton.iconName", `${Icons.Rewind}`);
 
-scheduler.frameDidFire = function()
-{
-    if (rewindButton.width == 0)
-        return;
-
-    shouldBeTrue('rewindButton.element.style.webkitMaskImage.includes("macOS/rewind@")');
-    finishMediaControlsTest();
-};
+shouldBecomeEqual('rewindButton.element.style.webkitMaskImage.includes("macOS/rewind@")', "true", finishJSTest);
 
 </script>
 <script src="../../../resources/js-test-post.js"></script>
