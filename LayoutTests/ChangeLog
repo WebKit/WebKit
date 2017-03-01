@@ -1,3 +1,17 @@
+2017-03-01  Antoine Quint  <graouts@apple.com>
+
+        [mac-wk1 debug] LayoutTest media/modern-media-controls/tracks-panel/tracks-panel-hide-click-outside.html is a flaky timeout
+        https://bugs.webkit.org/show_bug.cgi?id=165290
+        <rdar://problem/30787749>
+
+        Reviewed by Jon Lee.
+
+        We now rely on actual DOM state to ensure that the tracks panel is shown and hidden. While
+        I couldn't reproduce the flakiness, this should be a more robust approach.
+
+        * media/modern-media-controls/tracks-panel/tracks-panel-hide-click-outside-expected.txt:
+        * media/modern-media-controls/tracks-panel/tracks-panel-hide-click-outside.html:
+
 2017-03-01  James Craig  <jcraig@apple.com>
 
         AX: add role aliases for ARIA DPUB module

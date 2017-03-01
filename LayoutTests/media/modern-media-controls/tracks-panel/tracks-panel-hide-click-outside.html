@@ -13,26 +13,20 @@ document.body.appendChild(mediaControls.element);
 debug("mediaControls.showTracksPanel()");
 mediaControls.showTracksPanel();
 
-scheduler.frameDidFire = function()
-{
-    window.requestAnimationFrame(() => {
+shouldBecomeEqual("document.body.contains(mediaControls.tracksPanel.element)", "true", () => {
+    shouldBeTrue("mediaControls.tracksPanel.presented");
+    debug("");
+    debug("Clicking outside of the panel");
+    eventSender.mouseMoveTo(10, 10);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+    shouldBecomeEqual("document.body.contains(mediaControls.tracksPanel.element)", "false", () => {
+        shouldBeFalse("mediaControls.tracksPanel.presented");
         debug("");
-        debug("Clicking outside of the panel");
-        eventSender.mouseMoveTo(10, 10);
-        eventSender.mouseDown();
-        eventSender.mouseUp();
-        mediaControls.tracksPanel.element.addEventListener("transitionend", (event) => {
-            debug("");
-            debug("Transition ended");
-            shouldBeFalse("mediaControls.tracksPanel.presented");
-
-            debug("");
-            mediaControls.element.remove();
-            finishJSTest();
-        });
+        mediaControls.element.remove();
+        finishJSTest();
     });
-    scheduler.frameDidFire = null;
-}
+});
 
 </script>
 <script src="../../../resources/js-test-post.js"></script>
