@@ -4625,6 +4625,14 @@
                 "url": "https://www.w3.org/TR/css-align-3/#propdef-justify-items"
             }
         },
+        "place-content": {
+            "codegen-properties": {
+                "longhands": [
+                    "align-content",
+                    "justify-content"
+                ]
+            }
+        },
         "grid": {
             "codegen-properties": {
                 "longhands": [

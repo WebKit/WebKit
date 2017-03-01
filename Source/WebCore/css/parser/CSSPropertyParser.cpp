@@ -5254,6 +5254,39 @@ bool CSSPropertyParser::consumeGridShorthand(bool important)
     return true;
 }
 
+static RefPtr<CSSValue> consumeSimplifiedContentPosition(CSSParserTokenRange& range)
+{
+    CSSValueID id = range.peek().id();
+    if (identMatches<CSSValueNormal, CSSValueBaseline, CSSValueLastBaseline>(id))
+        return CSSContentDistributionValue::create(CSSValueInvalid, range.consumeIncludingWhitespace().id(), CSSValueInvalid);
+    if (identMatches<CSSValueSpaceBetween, CSSValueSpaceAround, CSSValueSpaceEvenly, CSSValueStretch>(id))
+        return CSSContentDistributionValue::create(range.consumeIncludingWhitespace().id(), CSSValueInvalid, CSSValueInvalid);
+    if (identMatches<CSSValueStart, CSSValueEnd, CSSValueCenter, CSSValueFlexStart, CSSValueFlexEnd, CSSValueLeft, CSSValueRight>(id))
+        return CSSContentDistributionValue::create(CSSValueInvalid, range.consumeIncludingWhitespace().id(), CSSValueInvalid);
+    return nullptr;
+}
+
+bool CSSPropertyParser::consumePlaceContentShorthand(bool important)
+{
+    ASSERT(shorthandForProperty(CSSPropertyPlaceContent).length() == 2);
+
+    if (m_range.atEnd())
+        return false;
+
+    RefPtr<CSSValue> alignContentValue = consumeSimplifiedContentPosition(m_range);
+    if (!alignContentValue)
+        return false;
+    RefPtr<CSSValue> justifyContentValue = m_range.atEnd() ? alignContentValue : consumeSimplifiedContentPosition(m_range);
+    if (!justifyContentValue)
+        return false;
+    if (!m_range.atEnd())
+        return false;
+
+    addProperty(CSSPropertyAlignContent, CSSPropertyPlaceContent, alignContentValue.releaseNonNull(), important);
+    addProperty(CSSPropertyJustifyContent, CSSPropertyPlaceContent, justifyContentValue.releaseNonNull(), important);
+    return true;
+}
+
 bool CSSPropertyParser::parseShorthand(CSSPropertyID property, bool important)
 {
     switch (property) {
@@ -5435,6 +5468,8 @@ bool CSSPropertyParser::parseShorthand(CSSPropertyID property, bool important)
         return consumeGridTemplateShorthand(CSSPropertyGridTemplate, important);
     case CSSPropertyGrid:
         return consumeGridShorthand(important);
+    case CSSPropertyPlaceContent:
+        return consumePlaceContentShorthand(important);
     case CSSPropertyWebkitMarquee:
         return consumeShorthandGreedily(webkitMarqueeShorthand(), important);
     default:

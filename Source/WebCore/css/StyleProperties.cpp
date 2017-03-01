@@ -187,6 +187,8 @@ String StyleProperties::getPropertyValue(CSSPropertyID propertyID) const
         return getShorthandValue(gridColumnShorthand());
     case CSSPropertyGridRow:
         return getShorthandValue(gridRowShorthand());
+    case CSSPropertyPlaceContent:
+        return getShorthandValue(placeContentShorthand());
     case CSSPropertyFont:
         return fontValue();
     case CSSPropertyMargin:

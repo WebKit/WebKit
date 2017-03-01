@@ -1,3 +1,30 @@
+2017-03-01  Javier Fernandez  <jfernandez@igalia.com>
+
+        [css-align] Implement the place-content shorthand
+        https://bugs.webkit.org/show_bug.cgi?id=168771
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        The CSS Box Alignment specification defines a new shorthand to set the
+        Content Alignment properties (align-content and justify-content) at the
+        same time.
+
+        This patch provides the implementation of the CSS parsing logic and the
+        required regression tests.
+
+        Test: css3/parse-place-content.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::propertyValue):
+        * css/CSSProperties.json:
+        * css/StyleProperties.cpp:
+        (WebCore::StyleProperties::getPropertyValue):
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::consumeSimplifiedContentPosition):
+        (WebCore::CSSPropertyParser::consumePlaceContentShorthand):
+        (WebCore::CSSPropertyParser::parseShorthand):
+        * css/parser/CSSPropertyParser.h:
+
 2017-03-01  Simon Fraser  <simon.fraser@apple.com>
 
         Try to fix Windows build after r213191.

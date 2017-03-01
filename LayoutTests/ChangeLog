@@ -1,3 +1,23 @@
+2017-03-01  Javier Fernandez  <jfernandez@igalia.com>
+
+        [css-align] Implement the place-content shorthand
+        https://bugs.webkit.org/show_bug.cgi?id=168771
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        Regression tests for the new place-content alignment shorthand.
+        Added also a new parsing utility script which uses the testharness functions.
+
+        * css3/parse-place-content-expected.txt: Added.
+        * css3/parse-place-content.html: Added.
+        * css3/resources/alignment-parsing-utils-th.js: Added.
+        (checkValues):
+        (checkBadValues):
+        (checkInitialValues):
+        (checkInheritValues):
+        (checkLegacyValues):
+        (checkSupportedValues):
+
 2017-03-01  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] fast/canvas/canvas-createPattern-video-loading.html makes its subsequent test timeout
