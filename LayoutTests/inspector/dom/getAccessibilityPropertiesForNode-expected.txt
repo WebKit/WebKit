@@ -4,10 +4,10 @@ Checking Web Inspector protocol for the Accessibility Node Inspector.
     exists: true
     label: 
     role: 
-    childNodeIds.length: 54
+    childNodeIds.length: 93
 
 
-Total elements to be tested: 83.
+Total elements to be tested: 122.
 
 <div onclick="void(0);">click</div>
     exists: true
@@ -414,6 +414,279 @@ Total elements to be tested: 83.
     checked: false
     focused: false
     required: false
+
+<div role="doc-toc">doc-toc</div>
+    exists: true
+    label: 
+    role: navigation
+    childNodeIds.length: 1
+    parentNodeId: exists
+
+<div role="doc-tip">doc-tip</div>
+    exists: true
+    label: 
+    role: group
+    childNodeIds.length: 1
+    parentNodeId: exists
+
+<div role="doc-subtitle">doc-subtitle</div>
+    exists: true
+    label: doc-subtitle
+    role: heading
+    childNodeIds.length: 1
+    parentNodeId: exists
+    headingLevel: 2
+
+<div role="doc-qna">doc-qna</div>
+    exists: true
+    label: 
+    role: group
+    childNodeIds.length: 1
+    parentNodeId: exists
+
+<div role="doc-pullquote">doc-pullquote</div>
+    exists: true
+    label: 
+    role: group
+    childNodeIds.length: 1
+    parentNodeId: exists
+
+<div role="doc-prologue">doc-prologue</div>
+    exists: true
+    label: 
+    role: region
+    childNodeIds.length: 1
+    parentNodeId: exists
+
+<div role="doc-preface">doc-preface</div>
+    exists: true
+    label: 
+    role: region
+    childNodeIds.length: 1
+    parentNodeId: exists
+
+<div role="doc-part">doc-part</div>
+    exists: true
+    label: 
+    role: region
+    childNodeIds.length: 1
+    parentNodeId: exists
+
+<div role="doc-pagelist">doc-pagelist</div>
+    exists: true
+    label: 
+    role: navigation
+    childNodeIds.length: 1
+    parentNodeId: exists
+
+<div role="doc-pagebreak">doc-pagebreak</div>
+    exists: true
+    label: 
+    role: group
+    childNodeIds.length: 1
+    parentNodeId: exists
+
+<div role="doc-notice">doc-notice</div>
+    exists: true
+    label: 
+    role: group
+    childNodeIds.length: 1
+    parentNodeId: exists
+
+<div role="doc-noteref">doc-noteref</div>
+    exists: true
+    label: doc-noteref
+    role: link
+    childNodeIds.length: 1
+    parentNodeId: exists
+
+<div role="doc-introduction">doc-introduction</div>
+    exists: true
+    label: 
+    role: region
+    childNodeIds.length: 1
+    parentNodeId: exists
+
+<div role="doc-index">doc-index</div>
+    exists: true
+    label: 
+    role: navigation
+    childNodeIds.length: 1
+    parentNodeId: exists
+
+<div role="doc-glossref">doc-glossref</div>
+    exists: true
+    label: doc-glossref
+    role: link
+    childNodeIds.length: 1
+    parentNodeId: exists
+
+<div role="doc-glossary">doc-glossary</div>
+    exists: true
+    label: 
+    role: region
+    childNodeIds.length: 1
+    parentNodeId: exists
+
+<div role="doc-foreword">doc-foreword</div>
+    exists: true
+    label: 
+    role: region
+    childNodeIds.length: 1
+    parentNodeId: exists
+
+<div role="doc-footnote">doc-footnote</div>
+    exists: true
+    label: 
+    role: group
+    childNodeIds.length: 1
+    parentNodeId: exists
+
+<div role="doc-example">doc-example</div>
+    exists: true
+    label: 
+    role: group
+    childNodeIds.length: 1
+    parentNodeId: exists
+
+<div role="doc-errata">doc-errata</div>
+    exists: true
+    label: 
+    role: region
+    childNodeIds.length: 1
+    parentNodeId: exists
+
+<div role="doc-epilogue">doc-epilogue</div>
+    exists: true
+    label: 
+    role: region
+    childNodeIds.length: 1
+    parentNodeId: exists
+
+<div role="doc-epigraph">doc-epigraph</div>
+    exists: true
+    label: 
+    role: group
+    childNodeIds.length: 1
+    parentNodeId: exists
+
+<div role="doc-endnotes">doc-endnotes</div>
+    exists: true
+    label: 
+    role: region
+    childNodeIds.length: 1
+    parentNodeId: exists
+
+<div role="doc-endnote">doc-endnote</div>
+    exists: true
+    label: 
+    role: group
+    childNodeIds.length: 1
+    parentNodeId: exists
+
+<div role="doc-dedication">doc-dedication</div>
+    exists: true
+    label: 
+    role: group
+    childNodeIds.length: 1
+    parentNodeId: exists
+
+<div role="doc-credits">doc-credits</div>
+    exists: true
+    label: 
+    role: region
+    childNodeIds.length: 1
+    parentNodeId: exists
+
+<div role="doc-credit">doc-credit</div>
+    exists: true
+    label: 
+    role: group
+    childNodeIds.length: 1
+    parentNodeId: exists
+
+<div role="doc-cover">doc-cover</div>
+    exists: true
+    label: 
+    role: img
+    parentNodeId: exists
+
+<div role="doc-conclusion">doc-conclusion</div>
+    exists: true
+    label: 
+    role: region
+    childNodeIds.length: 1
+    parentNodeId: exists
+
+<div role="doc-colophon">doc-colophon</div>
+    exists: true
+    label: 
+    role: group
+    childNodeIds.length: 1
+    parentNodeId: exists
+
+<div role="doc-chapter">doc-chapter</div>
+    exists: true
+    label: 
+    role: region
+    childNodeIds.length: 1
+    parentNodeId: exists
+
+<div role="doc-biblioref">doc-biblioref</div>
+    exists: true
+    label: doc-biblioref
+    role: link
+    childNodeIds.length: 1
+    parentNodeId: exists
+
+<div role="doc-bibliography">doc-bibliography</div>
+    exists: true
+    label: 
+    role: region
+    childNodeIds.length: 1
+    parentNodeId: exists
+
+<div role="doc-biblioentry">doc-biblioentry</div>
+    exists: true
+    label: 
+    role: group
+    childNodeIds.length: 1
+    parentNodeId: exists
+
+<div role="doc-backlink">doc-backlink</div>
+    exists: true
+    label: doc-backlink
+    role: link
+    childNodeIds.length: 1
+    parentNodeId: exists
+
+<div role="doc-appendix">doc-appendix</div>
+    exists: true
+    label: 
+    role: region
+    childNodeIds.length: 1
+    parentNodeId: exists
+
+<div role="doc-afterword">doc-afterword</div>
+    exists: true
+    label: 
+    role: region
+    childNodeIds.length: 1
+    parentNodeId: exists
+
+<div role="doc-acknowledgments">doc-acknowledgments</div>
+    exists: true
+    label: 
+    role: region
+    childNodeIds.length: 1
+    parentNodeId: exists
+
+<div role="doc-abstract">doc-abstract</div>
+    exists: true
+    label: 
+    role: region
+    childNodeIds.length: 1
+    parentNodeId: exists
 
 <div role="checkbox" aria-checked="false">unchecked</div>
     exists: true

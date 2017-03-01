@@ -874,6 +874,201 @@ div[role=directory]
       AXSubrole: AXContentList
       AXRoleDescription: content list
       
+div[role=doc-abstract]
+      AXRole: AXGroup
+      AXSubrole: AXLandmarkRegion
+      AXRoleDescription: region
+      
+div[role=doc-acknowledgments]
+      AXRole: AXGroup
+      AXSubrole: AXLandmarkRegion
+      AXRoleDescription: region
+      
+div[role=doc-afterword]
+      AXRole: AXGroup
+      AXSubrole: AXLandmarkRegion
+      AXRoleDescription: region
+      
+div[role=doc-appendix]
+      AXRole: AXGroup
+      AXSubrole: AXLandmarkRegion
+      AXRoleDescription: region
+      
+div[role=doc-backlink]
+      AXRole: AXLink
+      AXSubrole: 
+      AXRoleDescription: link
+      
+div[role=doc-biblioentry]
+      AXRole: AXGroup
+      AXSubrole: 
+      AXRoleDescription: group
+      
+div[role=doc-bibliography]
+      AXRole: AXGroup
+      AXSubrole: AXLandmarkRegion
+      AXRoleDescription: region
+      
+div[role=doc-biblioref]
+      AXRole: AXLink
+      AXSubrole: 
+      AXRoleDescription: link
+      
+div[role=doc-chapter]
+      AXRole: AXGroup
+      AXSubrole: AXLandmarkRegion
+      AXRoleDescription: region
+      
+div[role=doc-colophon]
+      AXRole: AXGroup
+      AXSubrole: 
+      AXRoleDescription: group
+      
+div[role=doc-conclusion]
+      AXRole: AXGroup
+      AXSubrole: AXLandmarkRegion
+      AXRoleDescription: region
+      
+div[role=doc-cover]
+      AXRole: AXImage
+      AXSubrole: 
+      AXRoleDescription: image
+      
+div[role=doc-credit]
+      AXRole: AXGroup
+      AXSubrole: 
+      AXRoleDescription: group
+      
+div[role=doc-credits]
+      AXRole: AXGroup
+      AXSubrole: AXLandmarkRegion
+      AXRoleDescription: region
+      
+div[role=doc-dedication]
+      AXRole: AXGroup
+      AXSubrole: 
+      AXRoleDescription: group
+      
+div[role=doc-endnote]
+      AXRole: AXGroup
+      AXSubrole: 
+      AXRoleDescription: group
+      
+div[role=doc-endnotes]
+      AXRole: AXGroup
+      AXSubrole: AXLandmarkRegion
+      AXRoleDescription: region
+      
+div[role=doc-epigraph]
+      AXRole: AXGroup
+      AXSubrole: 
+      AXRoleDescription: group
+      
+div[role=doc-epilogue]
+      AXRole: AXGroup
+      AXSubrole: AXLandmarkRegion
+      AXRoleDescription: region
+      
+div[role=doc-errata]
+      AXRole: AXGroup
+      AXSubrole: AXLandmarkRegion
+      AXRoleDescription: region
+      
+div[role=doc-example]
+      AXRole: AXGroup
+      AXSubrole: 
+      AXRoleDescription: group
+      
+div[role=doc-footnote]
+      AXRole: AXGroup
+      AXSubrole: 
+      AXRoleDescription: group
+      
+div[role=doc-foreword]
+      AXRole: AXGroup
+      AXSubrole: AXLandmarkRegion
+      AXRoleDescription: region
+      
+div[role=doc-glossary]
+      AXRole: AXGroup
+      AXSubrole: AXLandmarkRegion
+      AXRoleDescription: region
+      
+div[role=doc-glossref]
+      AXRole: AXLink
+      AXSubrole: 
+      AXRoleDescription: link
+      
+div[role=doc-index]
+      AXRole: AXGroup
+      AXSubrole: AXLandmarkNavigation
+      AXRoleDescription: navigation
+      
+div[role=doc-introduction]
+      AXRole: AXGroup
+      AXSubrole: AXLandmarkRegion
+      AXRoleDescription: region
+      
+div[role=doc-noteref]
+      AXRole: AXLink
+      AXSubrole: 
+      AXRoleDescription: link
+      
+div[role=doc-notice]
+      AXRole: AXGroup
+      AXSubrole: 
+      AXRoleDescription: group
+      
+div[role=doc-pagebreak]
+      AXRole: AXGroup
+      AXSubrole: 
+      AXRoleDescription: group
+      
+div[role=doc-pagelist]
+      AXRole: AXGroup
+      AXSubrole: AXLandmarkNavigation
+      AXRoleDescription: navigation
+      
+div[role=doc-part]
+      AXRole: AXGroup
+      AXSubrole: AXLandmarkRegion
+      AXRoleDescription: region
+      
+div[role=doc-preface]
+      AXRole: AXGroup
+      AXSubrole: AXLandmarkRegion
+      AXRoleDescription: region
+      
+div[role=doc-prologue]
+      AXRole: AXGroup
+      AXSubrole: AXLandmarkRegion
+      AXRoleDescription: region
+      
+div[role=doc-pullquote]
+      AXRole: AXGroup
+      AXSubrole: 
+      AXRoleDescription: group
+      
+div[role=doc-qna]
+      AXRole: AXGroup
+      AXSubrole: 
+      AXRoleDescription: group
+      
+div[role=doc-subtitle]
+      AXRole: AXHeading
+      AXSubrole: 
+      AXRoleDescription: heading
+      
+div[role=doc-tip]
+      AXRole: AXGroup
+      AXSubrole: 
+      AXRoleDescription: group
+      
+div[role=doc-toc]
+      AXRole: AXGroup
+      AXSubrole: AXLandmarkNavigation
+      AXRoleDescription: navigation
+      
 div[role=document]
       AXRole: AXGroup
       AXSubrole: AXDocument

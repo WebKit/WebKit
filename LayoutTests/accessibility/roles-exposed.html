@@ -256,15 +256,56 @@
 <div role="definition"               data-platform="atk,mac" class="ex">X</div>
 <div role="dialog"                   data-platform="atk,mac" class="ex">X</div>
 <div role="directory"                data-platform="atk,mac" class="ex">X</div>
-<div data-platform="atk,mac" role="document" class="ex">X</div>
-<div data-platform="atk,mac" role="form"     class="ex">X</div>
-<div data-platform="atk,mac" role="grid"                     class="ex">
-<div data-platform="atk,mac" role="rowgroup"             class="ex">
-<div data-platform="atk,mac" role="row"              class="ex">
+<!-- The 'doc-*' roles are defined the ARIA DPUB mobile: https://www.w3.org/TR/dpub-aam-1.0/ -->
+<!-- Editor's draft is currently at https://rawgit.com/w3c/aria/master/dpub-aam/dpub-aam.html -->
+<div role="doc-abstract"             data-platform="atk,mac" class="ex">X</div>
+<div role="doc-acknowledgments"      data-platform="atk,mac" class="ex">X</div>
+<div role="doc-afterword"            data-platform="atk,mac" class="ex">X</div>
+<div role="doc-appendix"             data-platform="atk,mac" class="ex">X</div>
+<div role="doc-backlink"             data-platform="atk,mac" class="ex">X</div>
+<div role="doc-biblioentry"          data-platform="atk,mac" class="ex">X</div>
+<div role="doc-bibliography"         data-platform="atk,mac" class="ex">X</div>
+<div role="doc-biblioref"            data-platform="atk,mac" class="ex">X</div>
+<div role="doc-chapter"              data-platform="atk,mac" class="ex">X</div>
+<div role="doc-colophon"             data-platform="atk,mac" class="ex">X</div>
+<div role="doc-conclusion"           data-platform="atk,mac" class="ex">X</div>
+<div role="doc-cover"                data-platform="atk,mac" class="ex">X</div>
+<div role="doc-credit"               data-platform="atk,mac" class="ex">X</div>
+<div role="doc-credits"              data-platform="atk,mac" class="ex">X</div>
+<div role="doc-dedication"           data-platform="atk,mac" class="ex">X</div>
+<div role="doc-endnote"              data-platform="atk,mac" class="ex">X</div>
+<div role="doc-endnotes"             data-platform="atk,mac" class="ex">X</div>
+<div role="doc-epigraph"             data-platform="atk,mac" class="ex">X</div>
+<div role="doc-epilogue"             data-platform="atk,mac" class="ex">X</div>
+<div role="doc-errata"               data-platform="atk,mac" class="ex">X</div>
+<div role="doc-example"              data-platform="atk,mac" class="ex">X</div>
+<div role="doc-footnote"             data-platform="atk,mac" class="ex">X</div>
+<div role="doc-foreword"             data-platform="atk,mac" class="ex">X</div>
+<div role="doc-glossary"             data-platform="atk,mac" class="ex">X</div>
+<div role="doc-glossref"             data-platform="atk,mac" class="ex">X</div>
+<div role="doc-index"                data-platform="atk,mac" class="ex">X</div>
+<div role="doc-introduction"         data-platform="atk,mac" class="ex">X</div>
+<div role="doc-noteref"              data-platform="atk,mac" class="ex">X</div>
+<div role="doc-notice"               data-platform="atk,mac" class="ex">X</div>
+<div role="doc-pagebreak"            data-platform="atk,mac" class="ex">X</div>
+<div role="doc-pagelist"             data-platform="atk,mac" class="ex">X</div>
+<div role="doc-part"                 data-platform="atk,mac" class="ex">X</div>
+<div role="doc-preface"              data-platform="atk,mac" class="ex">X</div>
+<div role="doc-prologue"             data-platform="atk,mac" class="ex">X</div>
+<div role="doc-pullquote"            data-platform="atk,mac" class="ex">X</div>
+<div role="doc-qna"                  data-platform="atk,mac" class="ex">X</div>
+<div role="doc-subtitle"             data-platform="atk,mac" class="ex">X</div>
+<div role="doc-tip"                  data-platform="atk,mac" class="ex">X</div>
+<div role="doc-toc"                  data-platform="atk,mac" class="ex">X</div>
+<div role="document"                 data-platform="atk,mac" class="ex">X</div>
+<div role="form"                     data-platform="atk,mac" class="ex">X</div>
+<div role="grid"                     data-platform="atk,mac" class="ex">
+    <div role="rowgroup"             data-platform="atk,mac" class="ex">
+        <div role="row"              data-platform="atk,mac" class="ex">
             <!-- Note: diff between rowheader, columnheader, and gridcell is in cross-reference from grid; need additional non-role verification in another test. -->
-            <div data-platform="atk,mac" role="rowheader"    class="ex">X</div>
-            <div data-platform="atk,mac" role="columnheader" class="ex">X</div>
-            <div data-platform="atk,mac" role="gridcell"     class="ex">X</div>
+            <div role="rowheader"    data-platform="atk,mac" class="ex">X</div>
+            <div role="columnheader" data-platform="atk,mac" class="ex">X</div>
+            <div role="gridcell"     data-platform="atk,mac" class="ex">X</div>
         </div>
     </div>
 </div>
@@ -275,7 +316,7 @@
 <div role="list"                     data-platform="atk,mac" class="ex">
     <div role="listitem"             data-platform="atk,mac" class="ex">X</div>
 </div>
-<div role="listbox" data-platform="atk,mac" class="ex">
+<div role="listbox"                  data-platform="atk,mac" class="ex">
     <div role="option"               data-platform="atk,mac" class="ex">X</div>
 </div>
 <div role="log"                      data-platform="atk,mac" class="ex">X</div>
@@ -296,24 +337,24 @@
 </div>
 <div role="navigation"               data-platform="atk,mac" class="ex">X</div>
 <div role="note"                     data-platform="atk,mac" class="ex">X</div>
-<div role="presentation" data-platform="atk,mac" class="ex">X</div>
+<div role="presentation"             data-platform="atk,mac" class="ex">X</div>
 <div role="progressbar"              data-platform="atk,mac" class="ex">X</div>
 <div role="radiogroup"               data-platform="atk,mac" class="ex">
     <div role="radio"                data-platform="atk,mac" class="ex">X</div>
 </div>
-<div role="region" data-platform="atk,mac" class="ex">X</div>
+<div role="region"                   data-platform="atk,mac" class="ex">X</div>
 <div role="scrollbar"                data-platform="atk,mac" class="ex">X</div>
 <div role="search"                   data-platform="atk,mac" class="ex">X</div>
 <div role="searchbox"                data-platform="atk,mac" class="ex">X</div>
 <div role="separator"                data-platform="atk,mac" class="ex">X</div>
 <div role="slider"                   data-platform="atk,mac" class="ex">X</div>
 <div role="spinbutton"               data-platform="atk,mac" class="ex">X</div>
-<div role="status" data-platform="atk,mac" class="ex">X</div>
-<div role="switch" data-platform="atk,mac" class="ex">X</div>
+<div role="status"                   data-platform="atk,mac" class="ex">X</div>
+<div role="switch"                   data-platform="atk,mac" class="ex">X</div>
 <div role="tablist"                  data-platform="atk,mac" class="ex">
     <div role="tab"                  data-platform="atk,mac" class="ex">X</div>
 </div>
-<div role="tabpanel" data-platform="atk,mac" class="ex">X</div>
+<div role="tabpanel"                 data-platform="atk,mac" class="ex">X</div>
 <div role="textbox"                  data-platform="atk,mac" class="ex">X</div>
 <div role="timer"                    data-platform="atk,mac" class="ex">X</div>
 <div role="toolbar"                  data-platform="atk,mac" class="ex">X</div>

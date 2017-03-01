@@ -1,3 +1,18 @@
+2017-03-01  James Craig  <jcraig@apple.com>
+
+        AX: add role aliases for ARIA DPUB module
+        https://bugs.webkit.org/show_bug.cgi?id=168978
+        <rdar://problem/30762724>
+
+        Reviewed by Chris Fleizach.
+
+        Added role aliases for ARIA DPUB module.
+
+        * accessibility/roles-exposed-expected.txt:
+        * accessibility/roles-exposed.html:
+        * inspector/dom/getAccessibilityPropertiesForNode-expected.txt:
+        * inspector/dom/getAccessibilityPropertiesForNode.html:
+
 2017-03-01  Ryan Haddad  <ryanhaddad@apple.com>
 
         Mark media/modern-media-controls/fullscreen-support/fullscreen-support-enabled.html as flaky on ios-simulator.

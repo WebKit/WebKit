@@ -1,3 +1,19 @@
+2017-03-01  James Craig  <jcraig@apple.com>
+
+        AX: add role aliases for ARIA DPUB module
+        https://bugs.webkit.org/show_bug.cgi?id=168978
+        <rdar://problem/30762724>
+
+        Reviewed by Chris Fleizach.
+
+        Added role aliases for ARIA DPUB module, and updated existing tests.
+
+        Test: accessibility/roles-exposed.html
+        Test: inspector/dom/getAccessibilityPropertiesForNode.html
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::initializeRoleMap): 
+
 2017-03-01  Alex Christensen  <achristensen@webkit.org>
 
         Don't call libwebrtc functions if libwebrtc.dylib doesn't exist while testing
