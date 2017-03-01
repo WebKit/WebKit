@@ -26,7 +26,7 @@ function runTest()
         testRunner.notifyDone();
 }
 
-setTimeout("runTest()", 0);
+onload = function() { setTimeout(runTest, 0); }
 </script>
 <script src="../../resources/js-test-post.js"></script>
 <div>

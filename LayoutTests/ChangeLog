@@ -1,3 +1,65 @@
+2017-02-27  Chris Dumez  <cdumez@apple.com>
+
+        LayoutTest fast/events/currentTarget-gc-crash.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=168917
+
+        Reviewed by Alex Christensen.
+
+        Make sure we never call finishJSTest() more than once.
+
+        * fast/events/currentTarget-gc-crash.html:
+
+2017-02-27  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        compositing/transitions/transform-on-large-layer.html : ImageDiff produced stderr output
+        https://bugs.webkit.org/show_bug.cgi?id=168217
+
+        Reviewed by Simon Fraser.
+
+        ImageDiff reports an error for image size mismatch of expected and
+        actual images. But, Nwtr ignores the errors for ref tests at the moment
+        (Bug 168033). They should have same window size before fixing the
+        bug.
+
+        * compositing/transitions/transform-on-large-layer-expected.html:
+        Do not resize the window to match the actual.
+        * fast/css/sticky/sticky-left-percentage-expected.html: Resize the
+        window to match the actual.
+
+2017-02-23  Javier Fernandez  <jfernandez@igalia.com>
+
+        [GTK] Layout test imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-api-texttracks.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=168799
+
+        Unreviewed test gardening.
+
+        * platform/gtk/TestExpectations:
+
+2017-02-23  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] Gardening of some flaky tests
+
+        Unreviewed.
+
+        * platform/gtk/TestExpectations: Update some expectations or add new cases of flaky tests.
+
+2017-02-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed GTK+ gardening. Mark http/tests/media/video-redirect.html as timing out.
+
+        * platform/gtk/TestExpectations:
+
+2017-02-20  Alexey Proskuryakov  <ap@apple.com>
+
+        LayoutTest fast/multicol/column-span-parent-continuation-crash.html is a flaky timeout
+        https://bugs.webkit.org/show_bug.cgi?id=168341
+
+        Reviewed by Daniel Bates.
+
+        * fast/multicol/column-span-parent-continuation-crash.html: Make sure that the
+        document is fully parsed before the test runs. I'm not sure if the zero delay
+        is still needed, but it doesn't hurt.
+
 2017-02-25  Zalan Bujtas <zalan@apple.com>
 
         Text might wrap when its preferred logical width is used for sizing the containing block.
