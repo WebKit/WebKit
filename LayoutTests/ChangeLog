@@ -1,3 +1,18 @@
+2017-02-28  Antoine Quint  <graouts@apple.com>
+
+        [mac-wk1] LayoutTest media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-buttons-containers-styles.html is a flaky timeout
+        https://bugs.webkit.org/show_bug.cgi?id=167589
+        <rdar://problem/30772101>
+
+        Reviewed by Jon Lee.
+
+        Making this test more robust by making width assertions timer-based so that we lessen the assumptions
+        made about when the values ought to be reached.
+
+        * media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-buttons-containers-styles-expected.txt:
+        * media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-buttons-containers-styles.html:
+        * platform/mac-wk1/TestExpectations:
+
 2017-02-28  Javier Fernandez  <jfernandez@igalia.com>
 
         [GTK] Unreviewed test gardening

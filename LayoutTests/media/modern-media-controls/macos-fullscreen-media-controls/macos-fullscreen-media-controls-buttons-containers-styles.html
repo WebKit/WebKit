@@ -34,25 +34,17 @@ const buttons = centerContainer.buttons.concat(rightContainer.buttons);
 
 document.getElementById("container").appendChild(mediaControls.element);
 
-let centerContainerBounds, rightContainerBounds;
-shouldBecomeEqual("buttons.some(button => button.element.style.width == '')", "false", () => {
-    // All buttons have been loaded, we wait for the next tick to ensure
-    // that their CSS properties have also been committed.
-    window.requestAnimationFrame(() => {
-        centerContainerBounds = centerContainer.element.getBoundingClientRect();
+debug("");
+shouldBecomeEqual("centerContainer.element.getBoundingClientRect().width", "178", () => {
+    shouldBe("centerContainer.element.getBoundingClientRect().left", "311");
+    shouldBe("centerContainer.element.getBoundingClientRect().top", "500");
+    shouldBe("centerContainer.element.getBoundingClientRect().height", "44");
 
-        debug("");
-        shouldBe("centerContainerBounds.left", "311");
-        shouldBe("centerContainerBounds.top", "500");
-        shouldBe("centerContainerBounds.width", "178");
-        shouldBe("centerContainerBounds.height", "44");
-
-        debug("");
-        rightContainerBounds = rightContainer.element.getBoundingClientRect();
-        shouldBeCloseTo("rightContainerBounds.left", 496, 0.5);
-        shouldBe("rightContainerBounds.top", "500");
-        shouldBeCloseTo("rightContainerBounds.width", 138, 0.5);
-        shouldBe("rightContainerBounds.height", "44");
+    debug("");
+    shouldBecomeEqual("Math.floor(rightContainer.element.getBoundingClientRect().width)", "138", () => {
+        shouldBeCloseTo("rightContainer.element.getBoundingClientRect().left", 496, 0.5);
+        shouldBe("rightContainer.element.getBoundingClientRect().top", "500");
+        shouldBe("rightContainer.element.getBoundingClientRect().height", "44");
 
         debug("");
         mediaControls.element.remove();
