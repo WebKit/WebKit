@@ -1,5 +1,21 @@
 2017-02-28  Antoine Quint  <graouts@apple.com>
 
+        LayoutTest media/modern-media-controls/airplay-support/airplay-support.html is a flaky timeout
+        https://bugs.webkit.org/show_bug.cgi?id=167442
+        <rdar://problem/30770374>
+
+        Reviewed by Dean Jackson.
+
+        This test would sometime fail when calling media.webkitShowPlaybackTargetPicker() due to the requirement
+        that the media be playable for that call to succeed. So we add an event listener for the "canplay" event
+        before we proceed to ensure that this call will always succeed. The fact that the media is playing is
+        irrelevant so we remove the "autoplay" attribute.
+
+        * media/modern-media-controls/airplay-support/airplay-support.html:
+        * platform/mac/TestExpectations:
+
+2017-02-28  Antoine Quint  <graouts@apple.com>
+
         LayoutTest media/modern-media-controls/placard-support/placard-support-airplay.html is a flaky timeout
         https://bugs.webkit.org/show_bug.cgi?id=167441
         <rdar://problem/30770034>
