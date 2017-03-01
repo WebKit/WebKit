@@ -15,7 +15,7 @@ Expected 24 for offsetLeft, but got 23.
     <div data-expected-height="" data-expected-width="100">
         <div data-offset-x="4"></div><div data-offset-x="4"></div><div data-offset-x="24" data-offset-y="0"></div>
     </div>
-    <div data-expected-height="100" data-expected-width="40" style="-webkit-align-self: flex-start;">
+    <div data-expected-height="100" data-expected-width="40" style="align-self: flex-start;">
         <div data-offset-x="4"></div><div data-offset-x="4"></div><div data-offset-x="24" data-offset-y="100"></div>
     </div>
 </div>
@@ -37,7 +37,7 @@ Expected 74 for offsetLeft, but got 73.
     <div data-expected-height="200" data-expected-width="50">
         <div data-offset-x="4"></div><div data-offset-x="4"></div><div data-offset-x="4"></div><div data-offset-x="4"></div><div data-offset-x="4"></div><div data-offset-x="24" data-offset-y="0"></div>
     </div>
-    <div data-expected-height="200" data-expected-width="50" style="-webkit-align-self: flex-start;">
+    <div data-expected-height="200" data-expected-width="50" style="align-self: flex-start;">
         <div data-offset-x="54"></div><div data-offset-x="54"></div><div data-offset-x="54"></div><div data-offset-x="54"></div><div data-offset-x="54"></div><div data-offset-x="74" data-offset-y="0"></div>
     </div>
 </div>
@@ -51,7 +51,7 @@ Expected 54 for offsetLeft, but got 53.
     <div data-expected-height="200" data-expected-width="50">
         <div data-offset-x="4"></div><div data-offset-x="4"></div>
     </div>
-    <div data-expected-height="80" data-expected-width="50" style="-webkit-align-self: flex-start;">
+    <div data-expected-height="80" data-expected-width="50" style="align-self: flex-start;">
         <div data-offset-x="54"></div><div data-offset-x="54"></div>
     </div>
 </div>
@@ -67,7 +67,7 @@ Expected 24 for offsetLeft, but got 23.
     <div data-expected-height="250" data-expected-width="100">
         <div data-offset-x="4"></div><div data-offset-x="4"></div><div data-offset-x="24" data-offset-y="0"></div>
     </div>
-    <div data-expected-height="250" data-expected-width="40" style="-webkit-align-self: flex-start;">
+    <div data-expected-height="250" data-expected-width="40" style="align-self: flex-start;">
         <div data-offset-x="4"></div><div data-offset-x="4"></div><div data-offset-x="24" data-offset-y="250"></div>
     </div>
 </div>
@@ -89,7 +89,7 @@ Expected 64 for offsetLeft, but got 63.
     <div data-expected-height="500" data-expected-width="40">
         <div data-offset-x="4"></div><div data-offset-x="4"></div><div data-offset-x="4"></div><div data-offset-x="4"></div><div data-offset-x="4"></div><div data-offset-x="24" data-offset-y="0"></div>
     </div>
-    <div data-expected-height="500" data-expected-width="40" style="-webkit-align-self: flex-start;">
+    <div data-expected-height="500" data-expected-width="40" style="align-self: flex-start;">
         <div data-offset-x="44"></div><div data-offset-x="44"></div><div data-offset-x="44"></div><div data-offset-x="44"></div><div data-offset-x="44"></div><div data-offset-x="64" data-offset-y="0"></div>
     </div>
 </div>
