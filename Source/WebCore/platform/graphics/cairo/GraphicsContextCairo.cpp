@@ -727,7 +727,7 @@ FloatRect GraphicsContext::roundToDevicePixels(const FloatRect& frect, RoundingM
         width = 1;
     else
         width = round(width);
-    if (height > -1 && width < 0)
+    if (height > -1 && height < 0)
         height = -1;
     else if (height > 0 && height < 1)
         height = 1;
