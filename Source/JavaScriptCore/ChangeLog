@@ -1,3 +1,135 @@
+2017-03-01  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Allow UnlinkedCodeBlock to dump its bytecode sequence
+        https://bugs.webkit.org/show_bug.cgi?id=168968
+
+        Reviewed by Saam Barati.
+
+        This patch decouples dumping bytecode sequence from CodeBlock.
+        This change allows UnlinkedCodeBlock to dump its bytecode sequence.
+        It is useful because we now have complex phase between UnlinkedCodeBlock and CodeBlock,
+        called Generatorification.
+
+        We introduce BytecodeDumper<Block>. Both CodeBlock and UnlinkedCodeBlock can use
+        this class to dump bytecode sequence.
+
+        And this patch also adds Option::dumpBytecodesBeforeGeneratorification,
+        which dumps unlinked bytecode sequence before generatorification if it is enabled.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/BytecodeDumper.cpp: Added.
+        (JSC::getStructureID):
+        (JSC::getSpecialPointer):
+        (JSC::getPutByIdFlags):
+        (JSC::getToThisStatus):
+        (JSC::getPointer):
+        (JSC::getStructureChain):
+        (JSC::getStructure):
+        (JSC::getCallLinkInfo):
+        (JSC::getBasicBlockLocation):
+        (JSC::BytecodeDumper<Block>::actualPointerFor):
+        (JSC::BytecodeDumper<CodeBlock>::actualPointerFor):
+        (JSC::beginDumpProfiling):
+        (JSC::BytecodeDumper<Block>::dumpValueProfiling):
+        (JSC::BytecodeDumper<CodeBlock>::dumpValueProfiling):
+        (JSC::BytecodeDumper<Block>::dumpArrayProfiling):
+        (JSC::BytecodeDumper<CodeBlock>::dumpArrayProfiling):
+        (JSC::BytecodeDumper<Block>::dumpProfilesForBytecodeOffset):
+        (JSC::dumpRareCaseProfile):
+        (JSC::dumpArithProfile):
+        (JSC::BytecodeDumper<CodeBlock>::dumpProfilesForBytecodeOffset):
+        (JSC::BytecodeDumper<Block>::vm):
+        (JSC::BytecodeDumper<Block>::identifier):
+        (JSC::regexpToSourceString):
+        (JSC::regexpName):
+        (JSC::printLocationAndOp):
+        (JSC::isConstantRegisterIndex):
+        (JSC::debugHookName):
+        (JSC::BytecodeDumper<Block>::registerName):
+        (JSC::idName):
+        (JSC::BytecodeDumper<Block>::constantName):
+        (JSC::BytecodeDumper<Block>::printUnaryOp):
+        (JSC::BytecodeDumper<Block>::printBinaryOp):
+        (JSC::BytecodeDumper<Block>::printConditionalJump):
+        (JSC::BytecodeDumper<Block>::printGetByIdOp):
+        (JSC::dumpStructure):
+        (JSC::dumpChain):
+        (JSC::BytecodeDumper<Block>::printGetByIdCacheStatus):
+        (JSC::BytecodeDumper<Block>::printPutByIdCacheStatus):
+        (JSC::BytecodeDumper<Block>::dumpCallLinkStatus):
+        (JSC::BytecodeDumper<CodeBlock>::dumpCallLinkStatus):
+        (JSC::BytecodeDumper<Block>::printCallOp):
+        (JSC::BytecodeDumper<Block>::printPutByIdOp):
+        (JSC::BytecodeDumper<Block>::printLocationOpAndRegisterOperand):
+        (JSC::BytecodeDumper<Block>::dumpBytecode):
+        (JSC::BytecodeDumper<Block>::dumpIdentifiers):
+        (JSC::BytecodeDumper<Block>::dumpConstants):
+        (JSC::BytecodeDumper<Block>::dumpRegExps):
+        (JSC::BytecodeDumper<Block>::dumpExceptionHandlers):
+        (JSC::BytecodeDumper<Block>::dumpSwitchJumpTables):
+        (JSC::BytecodeDumper<Block>::dumpStringSwitchJumpTables):
+        (JSC::BytecodeDumper<Block>::dumpBlock):
+        * bytecode/BytecodeDumper.h: Added.
+        (JSC::BytecodeDumper::BytecodeDumper):
+        (JSC::BytecodeDumper::block):
+        (JSC::BytecodeDumper::instructionsBegin):
+        * bytecode/BytecodeGeneratorification.cpp:
+        (JSC::BytecodeGeneratorification::BytecodeGeneratorification):
+        (JSC::performGeneratorification):
+        * bytecode/BytecodeLivenessAnalysis.cpp:
+        (JSC::BytecodeLivenessAnalysis::dumpResults):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpBytecode):
+        (JSC::CodeBlock::finishCreation):
+        (JSC::CodeBlock::propagateTransitions):
+        (JSC::CodeBlock::finalizeLLIntInlineCaches):
+        (JSC::CodeBlock::hasOpDebugForLineAndColumn):
+        (JSC::CodeBlock::usesOpcode):
+        (JSC::CodeBlock::valueProfileForBytecodeOffset):
+        (JSC::CodeBlock::arithProfileForPC):
+        (JSC::CodeBlock::insertBasicBlockBoundariesForControlFlowProfiler):
+        (JSC::idName): Deleted.
+        (JSC::CodeBlock::registerName): Deleted.
+        (JSC::CodeBlock::constantName): Deleted.
+        (JSC::regexpToSourceString): Deleted.
+        (JSC::regexpName): Deleted.
+        (JSC::debugHookName): Deleted.
+        (JSC::CodeBlock::printUnaryOp): Deleted.
+        (JSC::CodeBlock::printBinaryOp): Deleted.
+        (JSC::CodeBlock::printConditionalJump): Deleted.
+        (JSC::CodeBlock::printGetByIdOp): Deleted.
+        (JSC::dumpStructure): Deleted.
+        (JSC::dumpChain): Deleted.
+        (JSC::CodeBlock::printGetByIdCacheStatus): Deleted.
+        (JSC::CodeBlock::printPutByIdCacheStatus): Deleted.
+        (JSC::CodeBlock::printCallOp): Deleted.
+        (JSC::CodeBlock::printPutByIdOp): Deleted.
+        (JSC::CodeBlock::dumpExceptionHandlers): Deleted.
+        (JSC::CodeBlock::beginDumpProfiling): Deleted.
+        (JSC::CodeBlock::dumpValueProfiling): Deleted.
+        (JSC::CodeBlock::dumpArrayProfiling): Deleted.
+        (JSC::CodeBlock::dumpRareCaseProfile): Deleted.
+        (JSC::CodeBlock::dumpArithProfile): Deleted.
+        (JSC::CodeBlock::printLocationAndOp): Deleted.
+        (JSC::CodeBlock::printLocationOpAndRegisterOperand): Deleted.
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::constantRegisters):
+        (JSC::CodeBlock::numberOfRegExps):
+        (JSC::CodeBlock::bitVectors):
+        (JSC::CodeBlock::bitVector):
+        * bytecode/HandlerInfo.h:
+        (JSC::HandlerInfoBase::typeName):
+        * bytecode/UnlinkedCodeBlock.cpp:
+        (JSC::UnlinkedCodeBlock::dump):
+        * bytecode/UnlinkedCodeBlock.h:
+        (JSC::UnlinkedCodeBlock::getConstant):
+        * bytecode/UnlinkedInstructionStream.cpp:
+        (JSC::UnlinkedInstructionStream::UnlinkedInstructionStream):
+        * bytecode/UnlinkedInstructionStream.h:
+        (JSC::UnlinkedInstructionStream::Reader::next):
+        * runtime/Options.h:
+
 2017-02-28  Mark Lam  <mark.lam@apple.com>
 
         Change JSLock to stash PlatformThread instead of std::thread::id.

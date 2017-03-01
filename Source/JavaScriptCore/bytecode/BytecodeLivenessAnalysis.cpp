@@ -194,7 +194,7 @@ void BytecodeLivenessAnalysis::dumpResults()
             FastBitVector liveBefore = getLivenessInfoAtBytecodeOffset(bytecodeOffset);
             dumpBitVector(liveBefore);
             dataLogF("\n");
-            codeBlock->dumpBytecode(WTF::dataFile(), codeBlock->globalObject()->globalExec(), instructionsBegin, currentInstruction);
+            codeBlock->dumpBytecode(WTF::dataFile(), instructionsBegin, currentInstruction);
 
             OpcodeID opcodeID = interpreter->getOpcodeID(instructionsBegin[bytecodeOffset].u.opcode);
             unsigned opcodeLength = opcodeLengths[opcodeID];

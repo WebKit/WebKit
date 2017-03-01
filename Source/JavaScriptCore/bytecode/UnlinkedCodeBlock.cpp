@@ -413,4 +413,8 @@ void UnlinkedCodeBlock::shrinkToFit()
     }
 }
 
+void UnlinkedCodeBlock::dump(PrintStream&) const
+{
+}
+
 } // namespace JSC

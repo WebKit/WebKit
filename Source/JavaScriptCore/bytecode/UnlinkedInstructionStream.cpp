@@ -95,7 +95,7 @@ UnlinkedInstructionStream::UnlinkedInstructionStream(const Vector<UnlinkedInstru
         unsigned opLength = opcodeLength(opcode);
 
         for (unsigned j = 1; j < opLength; ++j)
-            append32(ptr, pc[j].u.index);
+            append32(ptr, pc[j].u.unsignedValue);
 
         i += opLength;
     }

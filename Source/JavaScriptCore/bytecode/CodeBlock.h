@@ -191,9 +191,9 @@ public:
 
     void dumpBytecode();
     void dumpBytecode(PrintStream&);
-    void dumpBytecode(
-        PrintStream&, unsigned bytecodeOffset,
-        const StubInfoMap& = StubInfoMap(), const CallLinkInfoMap& = CallLinkInfoMap());
+    void dumpBytecode(PrintStream& out, const Instruction* begin, const Instruction*& it, const StubInfoMap& = StubInfoMap(), const CallLinkInfoMap& = CallLinkInfoMap());
+    void dumpBytecode(PrintStream& out, unsigned bytecodeOffset, const StubInfoMap& = StubInfoMap(), const CallLinkInfoMap& = CallLinkInfoMap());
+
     void dumpExceptionHandlers(PrintStream&);
     void printStructures(PrintStream&, const Instruction*);
     void printStructure(PrintStream&, const char* name, const Instruction*, int operand);
@@ -542,6 +542,7 @@ public:
         return result;
     }
 
+    const Vector<WriteBarrier<Unknown>>& constantRegisters() { return m_constantRegisters; }
     WriteBarrier<Unknown>& constantRegister(int index) { return m_constantRegisters[index - FirstConstantRegisterIndex]; }
     static ALWAYS_INLINE bool isConstantRegisterIndex(int index) { return index >= FirstConstantRegisterIndex; }
     ALWAYS_INLINE JSValue getConstant(int index) const { return m_constantRegisters[index - FirstConstantRegisterIndex].get(); }
@@ -552,6 +553,10 @@ public:
     FunctionExecutable* functionExpr(int index) { return m_functionExprs[index].get(); }
     
     RegExp* regexp(int index) const { return m_unlinkedCode->regexp(index); }
+    unsigned numberOfRegExps() const { return m_unlinkedCode->numberOfRegExps(); }
+
+    const Vector<BitVector>& bitVectors() const { return m_unlinkedCode->bitVectors(); }
+    const BitVector& bitVector(size_t i) { return m_unlinkedCode->bitVector(i); }
 
     unsigned numberOfConstantBuffers() const
     {
@@ -916,30 +921,6 @@ private:
         ASSERT(isConstantRegisterIndex(index) && static_cast<size_t>(index - FirstConstantRegisterIndex) < m_constantRegisters.size());
         m_constantRegisters[index - FirstConstantRegisterIndex].set(m_globalObject->vm(), this, value);
     }
-
-    void dumpBytecode(
-        PrintStream&, ExecState*, const Instruction* begin, const Instruction*&,
-        const StubInfoMap& = StubInfoMap(), const CallLinkInfoMap& = CallLinkInfoMap());
-
-    CString registerName(int r) const;
-    CString constantName(int index) const;
-    void printUnaryOp(PrintStream&, ExecState*, int location, const Instruction*&, const char* op);
-    void printBinaryOp(PrintStream&, ExecState*, int location, const Instruction*&, const char* op);
-    void printConditionalJump(PrintStream&, ExecState*, const Instruction*, const Instruction*&, int location, const char* op);
-    void printGetByIdOp(PrintStream&, ExecState*, int location, const Instruction*&);
-    void printGetByIdCacheStatus(PrintStream&, ExecState*, int location, const StubInfoMap&);
-    enum CacheDumpMode { DumpCaches, DontDumpCaches };
-    void printCallOp(PrintStream&, ExecState*, int location, const Instruction*&, const char* op, CacheDumpMode, bool& hasPrintedProfiling, const CallLinkInfoMap&);
-    void printPutByIdOp(PrintStream&, ExecState*, int location, const Instruction*&, const char* op);
-    void printPutByIdCacheStatus(PrintStream&, int location, const StubInfoMap&);
-    void printLocationAndOp(PrintStream&, ExecState*, int location, const Instruction*&, const char* op);
-    void printLocationOpAndRegisterOperand(PrintStream&, ExecState*, int location, const Instruction*& it, const char* op, int operand);
-
-    void beginDumpProfiling(PrintStream&, bool& hasPrintedProfiling);
-    void dumpValueProfiling(PrintStream&, const Instruction*&, bool& hasPrintedProfiling);
-    void dumpArrayProfiling(PrintStream&, const Instruction*&, bool& hasPrintedProfiling);
-    void dumpRareCaseProfile(PrintStream&, const char* name, RareCaseProfile*, bool& hasPrintedProfiling);
-    void dumpArithProfile(PrintStream&, ArithProfile*, bool& hasPrintedProfiling);
 
     bool shouldVisitStrongly(const ConcurrentJSLocker&);
     bool shouldJettisonDueToWeakReference();

@@ -46,7 +46,7 @@ struct HandlerInfoBase {
     HandlerType type() const { return static_cast<HandlerType>(typeBits); }
     void setType(HandlerType type) { typeBits = static_cast<uint32_t>(type); }
 
-    const char* typeName()
+    const char* typeName() const
     {
         switch (type()) {
         case HandlerType::Catch:

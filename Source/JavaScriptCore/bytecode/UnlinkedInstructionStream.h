@@ -142,7 +142,7 @@ ALWAYS_INLINE const UnlinkedInstruction* UnlinkedInstructionStream::Reader::next
     m_unpackedBuffer[0].u.opcode = static_cast<OpcodeID>(read8());
     unsigned opLength = opcodeLength(m_unpackedBuffer[0].u.opcode);
     for (unsigned i = 1; i < opLength; ++i)
-        m_unpackedBuffer[i].u.index = read32();
+        m_unpackedBuffer[i].u.unsignedValue = read32();
     return m_unpackedBuffer;
 }
 

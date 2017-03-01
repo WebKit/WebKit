@@ -27,6 +27,7 @@
 #include "config.h"
 #include "BytecodeGeneratorification.h"
 
+#include "BytecodeDumper.h"
 #include "BytecodeLivenessAnalysisInlines.h"
 #include "BytecodeRewriter.h"
 #include "BytecodeUseDef.h"
@@ -66,7 +67,7 @@ public:
                 }
 
                 case op_yield: {
-                    unsigned liveCalleeLocalsIndex = pc[2].u.index;
+                    unsigned liveCalleeLocalsIndex = pc[2].u.unsignedValue;
                     if (liveCalleeLocalsIndex >= m_yields.size())
                         m_yields.resize(liveCalleeLocalsIndex + 1);
                     YieldData& data = m_yields[liveCalleeLocalsIndex];
@@ -261,6 +262,9 @@ void BytecodeGeneratorification::run()
 
 void performGeneratorification(UnlinkedCodeBlock* codeBlock, UnlinkedCodeBlock::UnpackedInstructions& instructions, SymbolTable* generatorFrameSymbolTable, int generatorFrameSymbolTableIndex)
 {
+    if (Options::dumpBytecodesBeforeGeneratorification())
+        BytecodeDumper<UnlinkedCodeBlock>::dumpBlock(codeBlock, instructions, WTF::dataFile());
+
     BytecodeGeneratorification pass(codeBlock, instructions, generatorFrameSymbolTable, generatorFrameSymbolTableIndex);
     pass.run();
 }
