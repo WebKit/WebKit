@@ -51,7 +51,7 @@ void useMockRTCPeerConnectionFactory(LibWebRTCProvider* provider, const String& 
 {
     if (provider && !realPeerConnectionFactory()) {
         auto& factory = getRealPeerConnectionFactory();
-        factory = &provider->factory();
+        factory = provider->factory();
     }
 
     LibWebRTCProvider::setPeerConnectionFactory(MockLibWebRTCPeerConnectionFactory::create(String(testCase)));
@@ -162,6 +162,9 @@ MockLibWebRTCPeerConnectionFactory::MockLibWebRTCPeerConnectionFactory(String&& 
 
 rtc::scoped_refptr<webrtc::PeerConnectionInterface> MockLibWebRTCPeerConnectionFactory::CreatePeerConnection(const webrtc::PeerConnectionInterface::RTCConfiguration& configuration, std::unique_ptr<cricket::PortAllocator> portAllocator, std::unique_ptr<rtc::RTCCertificateGeneratorInterface> generator, webrtc::PeerConnectionObserver* observer)
 {
+    if (!realPeerConnectionFactory())
+        return nullptr;
+
     if (m_numberOfRealPeerConnections) {
         auto connection = realPeerConnectionFactory()->CreatePeerConnection(configuration, WTFMove(portAllocator), WTFMove(generator), observer);
         --m_numberOfRealPeerConnections;

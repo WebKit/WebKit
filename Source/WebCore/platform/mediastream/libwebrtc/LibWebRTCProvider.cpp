@@ -27,9 +27,9 @@
 #include "LibWebRTCProvider.h"
 
 #if USE(LIBWEBRTC)
-
 #include "LibWebRTCAudioModule.h"
 #include "Logging.h"
+#include <dlfcn.h>
 #include <webrtc/api/peerconnectionfactory.h>
 #include <webrtc/api/peerconnectionfactoryproxy.h>
 #include <webrtc/base/physicalsocketserver.h>
@@ -37,9 +37,11 @@
 #include <webrtc/sdk/objc/Framework/Classes/videotoolboxvideocodecfactory.h>
 #include <wtf/Function.h>
 #include <wtf/NeverDestroyed.h>
+#endif
 
 namespace WebCore {
 
+#if USE(LIBWEBRTC)
 struct PeerConnectionFactoryAndThreads : public rtc::MessageHandler {
     std::unique_ptr<LibWebRTCAudioModule> audioDeviceModule;
     std::unique_ptr<rtc::Thread> networkThread;
@@ -111,11 +113,13 @@ static void initializePeerConnectionFactoryAndThreads()
     ASSERT(factoryAndThreads.factory);
 }
 
-webrtc::PeerConnectionFactoryInterface& LibWebRTCProvider::factory()
+webrtc::PeerConnectionFactoryInterface* LibWebRTCProvider::factory()
 {
+    if (!webRTCAvailable())
+        return nullptr;
     if (!staticFactoryAndThreads().factory)
         initializePeerConnectionFactoryAndThreads();
-    return *staticFactoryAndThreads().factory;
+    return staticFactoryAndThreads().factory;
 }
 
 void LibWebRTCProvider::setPeerConnectionFactory(rtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface>&& factory)
@@ -166,7 +170,22 @@ rtc::scoped_refptr<webrtc::PeerConnectionInterface> LibWebRTCProvider::createPee
 
     return createActualPeerConnection(observer, WTFMove(portAllocator));
 }
+#endif // USE(LIBWEBRTC)
+
+bool LibWebRTCProvider::webRTCAvailable()
+{
+#if USE(LIBWEBRTC)
+    static bool available = [] {
+        void* libwebrtcLibrary = dlopen("libwebrtc.dylib", RTLD_LAZY);
+        if (!libwebrtcLibrary)
+            return false;
+        dlclose(libwebrtcLibrary);
+        return true;
+    }();
+    return available;
+#else
+    return true;
+#endif
+}
 
 } // namespace WebCore
-
-#endif // USE(LIBWEBRTC)

@@ -29,6 +29,7 @@
 #include "FontSmoothingLevel.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebPreferencesKeys.h"
+#include <WebCore/LibWebRTCProvider.h>
 #include <WebCore/Settings.h>
 #include <WebCore/TextEncodingRegistry.h>
 #include <wtf/NeverDestroyed.h>

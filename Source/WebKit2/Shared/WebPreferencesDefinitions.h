@@ -312,11 +312,6 @@
 //   DEFAULT_EXPERIMENTAL_FEATURE_ENABLED (for features that are ready for
 //   wider testing).
 
-// Disable webrtc feature if libwebrtc library is not present
-namespace WebKit {
-bool checkWebRTCAvailability();
-}
-
 #define FOR_EACH_WEBKIT_EXPERIMENTAL_FEATURE_PREFERENCE(macro) \
     macro(SpringTimingFunctionEnabled, springTimingFunctionEnabled, Bool, bool, DEFAULT_EXPERIMENTAL_FEATURES_ENABLED, "CSS Spring Animations", "CSS Spring Animation prototype") \
     macro(GamepadsEnabled, gamepadsEnabled, Bool, bool, DEFAULT_EXPERIMENTAL_FEATURES_ENABLED, "Gamepads", "Web Gamepad API support") \
@@ -328,7 +323,7 @@ bool checkWebRTCAvailability();
     macro(UserTimingEnabled, userTimingEnabled, Bool, bool, DEFAULT_EXPERIMENTAL_FEATURES_ENABLED, "User Timing", "Enable UserTiming API") \
     macro(WebAnimationsEnabled, webAnimationsEnabled, Bool, bool, false, "Web Animations", "Web Animations prototype") \
     macro(WebGL2Enabled, webGL2Enabled, Bool, bool, DEFAULT_EXPERIMENTAL_FEATURES_ENABLED, "WebGL 2.0", "WebGL 2 prototype") \
-    macro(PeerConnectionEnabled, peerConnectionEnabled, Bool, bool, checkWebRTCAvailability(), "WebRTC", "Enable WebRTC API") \
+    macro(PeerConnectionEnabled, peerConnectionEnabled, Bool, bool, WebCore::LibWebRTCProvider::webRTCAvailable(), "WebRTC", "Enable WebRTC API") \
     \
 
 #if PLATFORM(COCOA)

@@ -1,3 +1,15 @@
+2017-02-28  Alex Christensen  <achristensen@webkit.org>
+
+        LibWebRTCProvider should check existence of libwebrtc.dylib
+        https://bugs.webkit.org/show_bug.cgi?id=168986
+
+        Reviewed by Youenn Fablet.
+
+        * Shared/WebPreferencesDefinitions.h:
+        * Shared/WebPreferencesStore.cpp:
+        * UIProcess/WebPreferences.cpp:
+        (WebKit::checkWebRTCAvailability): Deleted.
+
 2017-02-28  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Unreviewed, build fix after r213176.

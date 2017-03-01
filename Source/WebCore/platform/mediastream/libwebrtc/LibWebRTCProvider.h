@@ -50,13 +50,14 @@ public:
     LibWebRTCProvider() = default;
     virtual ~LibWebRTCProvider() = default;
 
+    static bool webRTCAvailable();
 #if USE(LIBWEBRTC)
     WEBCORE_EXPORT virtual rtc::scoped_refptr<webrtc::PeerConnectionInterface> createPeerConnection(webrtc::PeerConnectionObserver&);
 
     // FIXME: Make these methods not static.
     static WEBCORE_EXPORT void callOnWebRTCNetworkThread(Function<void()>&&);
     static WEBCORE_EXPORT void callOnWebRTCSignalingThread(Function<void()>&&);
-    static WEBCORE_EXPORT webrtc::PeerConnectionFactoryInterface& factory();
+    static WEBCORE_EXPORT webrtc::PeerConnectionFactoryInterface* factory();
     // Used for mock testing
     static void setPeerConnectionFactory(rtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface>&&);
 

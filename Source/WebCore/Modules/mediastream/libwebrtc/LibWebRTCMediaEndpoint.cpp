@@ -155,11 +155,16 @@ static inline std::string streamId(RTCPeerConnection& connection)
 
 void LibWebRTCMediaEndpoint::doCreateOffer()
 {
+    if (!LibWebRTCProvider::factory()) {
+        m_peerConnectionBackend.createOfferFailed(Exception { NOT_SUPPORTED_ERR, ASCIILiteral("libwebrtc backend is missing.") });
+        return;
+    }
+        
     m_isInitiator = true;
     auto& senders = m_peerConnectionBackend.connection().getSenders();
     if (senders.size()) {
         // FIXME: We only support one stream for the moment.
-        auto stream = LibWebRTCProvider::factory().CreateLocalMediaStream(streamId(m_peerConnectionBackend.connection()));
+        auto stream = LibWebRTCProvider::factory()->CreateLocalMediaStream(streamId(m_peerConnectionBackend.connection()));
         for (RTCRtpSender& sender : senders) {
             auto* track = sender.track();
             if (track) {
@@ -167,13 +172,13 @@ void LibWebRTCMediaEndpoint::doCreateOffer()
                 auto& source = track->source();
                 if (source.type() == RealtimeMediaSource::Audio) {
                     auto trackSource = RealtimeOutgoingAudioSource::create(source);
-                    auto rtcTrack = LibWebRTCProvider::factory().CreateAudioTrack(track->id().utf8().data(), trackSource.ptr());
+                    auto rtcTrack = LibWebRTCProvider::factory()->CreateAudioTrack(track->id().utf8().data(), trackSource.ptr());
                     trackSource->setTrack(rtc::scoped_refptr<webrtc::AudioTrackInterface>(rtcTrack));
                     m_peerConnectionBackend.addAudioSource(WTFMove(trackSource));
                     stream->AddTrack(WTFMove(rtcTrack));
                 } else {
                     auto videoSource = RealtimeOutgoingVideoSource::create(source);
-                    auto videoTrack = LibWebRTCProvider::factory().CreateVideoTrack(track->id().utf8().data(), videoSource.ptr());
+                    auto videoTrack = LibWebRTCProvider::factory()->CreateVideoTrack(track->id().utf8().data(), videoSource.ptr());
                     m_peerConnectionBackend.addVideoSource(WTFMove(videoSource));
                     stream->AddTrack(WTFMove(videoTrack));
                 }
@@ -186,12 +191,17 @@ void LibWebRTCMediaEndpoint::doCreateOffer()
 
 void LibWebRTCMediaEndpoint::doCreateAnswer()
 {
+    if (!LibWebRTCProvider::factory()) {
+        m_peerConnectionBackend.createAnswerFailed(Exception { NOT_SUPPORTED_ERR, ASCIILiteral("libwebrtc backend is missing.") });
+        return;
+    }
+
     m_isInitiator = false;
 
     auto& senders = m_peerConnectionBackend.connection().getSenders();
     if (senders.size()) {
         // FIXME: We only support one stream for the moment.
-        auto stream = LibWebRTCProvider::factory().CreateLocalMediaStream(streamId(m_peerConnectionBackend.connection()));
+        auto stream = LibWebRTCProvider::factory()->CreateLocalMediaStream(streamId(m_peerConnectionBackend.connection()));
         for (RTCRtpSender& sender : senders) {
             auto* track = sender.track();
             if (track) {
@@ -199,13 +209,13 @@ void LibWebRTCMediaEndpoint::doCreateAnswer()
                 auto& source = track->source();
                 if (source.type() == RealtimeMediaSource::Audio) {
                     auto trackSource = RealtimeOutgoingAudioSource::create(source);
-                    auto rtcTrack = LibWebRTCProvider::factory().CreateAudioTrack(track->id().utf8().data(), trackSource.ptr());
+                    auto rtcTrack = LibWebRTCProvider::factory()->CreateAudioTrack(track->id().utf8().data(), trackSource.ptr());
                     trackSource->setTrack(rtc::scoped_refptr<webrtc::AudioTrackInterface>(rtcTrack));
                     m_peerConnectionBackend.addAudioSource(WTFMove(trackSource));
                     stream->AddTrack(WTFMove(rtcTrack));
                 } else {
                     auto videoSource = RealtimeOutgoingVideoSource::create(source);
-                    auto videoTrack = LibWebRTCProvider::factory().CreateVideoTrack(track->id().utf8().data(), videoSource.ptr());
+                    auto videoTrack = LibWebRTCProvider::factory()->CreateVideoTrack(track->id().utf8().data(), videoSource.ptr());
                     m_peerConnectionBackend.addVideoSource(WTFMove(videoSource));
                     stream->AddTrack(WTFMove(videoTrack));
                 }
