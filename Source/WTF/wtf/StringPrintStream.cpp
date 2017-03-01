@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "config.h"
@@ -52,32 +52,34 @@ void StringPrintStream::vprintf(const char* format, va_list argList)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(m_next < m_size);
     ASSERT(!m_buffer[m_next]);
-    
+
     va_list firstPassArgList;
     va_copy(firstPassArgList, argList);
-    
+
     int numberOfBytesNotIncludingTerminatorThatWouldHaveBeenWritten =
         vsnprintf(m_buffer + m_next, m_size - m_next, format, firstPassArgList);
-    
+
+    va_end(firstPassArgList);
+
     int numberOfBytesThatWouldHaveBeenWritten =
         numberOfBytesNotIncludingTerminatorThatWouldHaveBeenWritten + 1;
-    
+
     if (m_next + numberOfBytesThatWouldHaveBeenWritten <= m_size) {
         m_next += numberOfBytesNotIncludingTerminatorThatWouldHaveBeenWritten;
         return; // This means that vsnprintf() succeeded.
     }
-    
+
     increaseSize(m_next + numberOfBytesThatWouldHaveBeenWritten);
-    
+
     int numberOfBytesNotIncludingTerminatorThatWereWritten =
         vsnprintf(m_buffer + m_next, m_size - m_next, format, argList);
-    
+
     int numberOfBytesThatWereWritten = numberOfBytesNotIncludingTerminatorThatWereWritten + 1;
-    
+
     ASSERT_UNUSED(numberOfBytesThatWereWritten, m_next + numberOfBytesThatWereWritten <= m_size);
-    
+
     m_next += numberOfBytesNotIncludingTerminatorThatWereWritten;
-    
+
     ASSERT_WITH_SECURITY_IMPLICATION(m_next < m_size);
     ASSERT(!m_buffer[m_next]);
 }
@@ -110,10 +112,10 @@ void StringPrintStream::increaseSize(size_t newSize)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(newSize > m_size);
     ASSERT(newSize > sizeof(m_inlineBuffer));
-    
+
     // Use exponential resizing to reduce thrashing.
     m_size = newSize << 1;
-    
+
     // Use fastMalloc instead of fastRealloc because we know that for the sizes we're using,
     // fastRealloc will just do malloc+free anyway. Also, this simplifies the code since
     // we can't realloc the inline buffer.
