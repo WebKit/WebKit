@@ -27,10 +27,10 @@
 
 #include "APIDictionary.h"
 #include "APIUserContentExtension.h"
-#include "WKAPICast.h"
 #include "WKArray.h"
 #include "WKContextPrivate.h"
 #include "WKMutableDictionary.h"
+#include "WKPageGroup.h"
 #include "WKPreferencesRefPrivate.h"
 #include "WebPageGroup.h"
 #include "WebUserContentControllerProxy.h"
@@ -40,13 +40,6 @@
 #endif
 
 // Deprecated functions that should be removed from the framework once nobody uses them.
-
-extern "C" {
-WK_EXPORT WKStringRef WKPageGroupCopyIdentifier(WKPageGroupRef pageGroup);
-WK_EXPORT void WKPageGroupAddUserContentFilter(WKPageGroupRef pageGroup, WKUserContentFilterRef userContentFilter);
-WK_EXPORT void WKPageGroupRemoveUserContentFilter(WKPageGroupRef pageGroup, WKStringRef userContentFilterName);
-WK_EXPORT void WKPageGroupRemoveAllUserContentFilters(WKPageGroupRef pageGroup);
-}
 
 using namespace WebKit;
 
@@ -80,14 +73,5 @@ void WKPageGroupRemoveUserContentFilter(WKPageGroupRef pageGroupRef, WKStringRef
 #else
     UNUSED_PARAM(pageGroupRef);
     UNUSED_PARAM(userContentFilterNameRef);
-#endif
-}
-
-void WKPageGroupRemoveAllUserContentFilters(WKPageGroupRef pageGroupRef)
-{
-#if ENABLE(CONTENT_EXTENSIONS)
-    toImpl(pageGroupRef)->userContentController().removeAllUserContentExtensions();
-#else
-    UNUSED_PARAM(pageGroupRef);
 #endif
 }
