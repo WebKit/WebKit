@@ -1,5 +1,16 @@
 2017-03-01  Antoine Quint  <graouts@apple.com>
 
+        [ios-simulator] Unskip media/modern-media-controls/audio/audio-controls-metrics.html
+        https://bugs.webkit.org/show_bug.cgi?id=167258
+
+        Reviewed by Jon Lee.
+
+        Unskip test now that we can pass it reliably.
+
+        * platform/ios-simulator-wk2/TestExpectations:
+
+2017-03-01  Antoine Quint  <graouts@apple.com>
+
         LayoutTest media/modern-media-controls/play-pause-button/play-pause-button.html is a flaky timeout
         https://bugs.webkit.org/show_bug.cgi?id=167447
         <rdar://problem/30790539>

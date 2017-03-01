@@ -1,3 +1,18 @@
+2017-03-01  Antoine Quint  <graouts@apple.com>
+
+        [ios-simulator] Unskip media/modern-media-controls/audio/audio-controls-metrics.html
+        https://bugs.webkit.org/show_bug.cgi?id=167258
+        <rdar://problem/30282740>
+
+        We weren't enforcing the min-width to be 200px as well as the default width, and the
+        UA stylesheet would override it. Setting a default min-width that trumps the UA
+        stylesheet makes the test work correctly on iOS and we can safely unskip this test.
+
+        Reviewed by Jon Lee.
+
+        * Modules/modern-media-controls/controls/media-controls.css:
+        (:host(audio)):
+
 2017-03-01  Javier Fernandez  <jfernandez@igalia.com>
 
         Missing 'specification' section in the place-content shorthand

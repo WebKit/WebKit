@@ -25,6 +25,7 @@
 
 :host(audio) {
     width: 200px;
+    min-width: 200px !important;
     min-height: 50px !important;
 }
 
