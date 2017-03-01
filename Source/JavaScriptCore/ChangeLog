@@ -1,3 +1,15 @@
+2017-03-01  Tomas Popela  <tpopela@redhat.com>
+
+        Leak under Options::setOptions
+        https://bugs.webkit.org/show_bug.cgi?id=169029
+
+        Reviewed by Michael Saboff.
+
+        Don't leak the optionsStrCopy variable.
+
+        * runtime/Options.cpp:
+        (JSC::Options::setOptions):
+
 2017-03-01  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Allow UnlinkedCodeBlock to dump its bytecode sequence

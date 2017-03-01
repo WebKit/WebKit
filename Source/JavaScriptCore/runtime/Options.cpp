@@ -557,6 +557,7 @@ bool Options::setOptions(const char* optionsStr)
         p = strstr(p, "=");
         if (!p) {
             dataLogF("'=' not found in option string: %p\n", optionStart);
+            WTF::fastFree(optionsStrCopy);
             return false;
         }
         p++;
@@ -568,6 +569,7 @@ bool Options::setOptions(const char* optionsStr)
             p = strstr(p + 1, "\"");
             if (!p) {
                 dataLogF("Missing trailing '\"' in option string: %p\n", optionStart);
+                WTF::fastFree(optionsStrCopy);
                 return false; // End of string not found.
             }
             hasStringValue = true;
@@ -609,6 +611,8 @@ bool Options::setOptions(const char* optionsStr)
     dumpOptionsIfNeeded();
 
     ensureOptionsAreCoherent();
+
+    WTF::fastFree(optionsStrCopy);
 
     return success;
 }
