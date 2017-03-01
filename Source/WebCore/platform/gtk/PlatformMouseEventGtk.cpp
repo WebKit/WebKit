@@ -41,6 +41,7 @@ PlatformMouseEvent::PlatformMouseEvent(GdkEventButton* event)
     m_timestamp = event->time;
     m_position = IntPoint((int)event->x, (int)event->y);
     m_globalPosition = IntPoint((int)event->x_root, (int)event->y_root);
+    m_modifierFlags = 0;
 
     if (event->state & GDK_SHIFT_MASK)
         m_modifiers |= PlatformEvent::Modifier::ShiftKey;
@@ -87,6 +88,7 @@ PlatformMouseEvent::PlatformMouseEvent(GdkEventMotion* motion)
     m_timestamp = motion->time;
     m_position = IntPoint((int)motion->x, (int)motion->y);
     m_globalPosition = IntPoint((int)motion->x_root, (int)motion->y_root);
+    m_modifierFlags = 0;
 
     if (motion->state & GDK_SHIFT_MASK)
         m_modifiers |= PlatformEvent::Modifier::ShiftKey;
