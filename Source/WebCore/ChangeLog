@@ -1,3 +1,25 @@
+2017-03-01  Alex Christensen  <achristensen@webkit.org>
+
+        Don't call libwebrtc functions if libwebrtc.dylib doesn't exist while testing
+        https://bugs.webkit.org/show_bug.cgi?id=169045
+        <rdar://problem/30735413>
+
+        Reviewed by Youenn Fablet.
+
+        WebRTC tests fail instead of crashing now if libwebrtc.dylib is missing.
+        All other tests pass instead of crashing immediately when creating an Internals object.
+
+        * Modules/mediastream/RTCController.cpp:
+        (WebCore::RTCController::disableICECandidateFiltering):
+        (WebCore::RTCController::enableICECandidateFiltering):
+        * Modules/mediastream/libwebrtc/LibWebRTCPeerConnectionBackend.cpp:
+        (WebCore::createLibWebRTCPeerConnectionBackend):
+        * testing/Internals.cpp:
+        (WebCore::Internals::enableMockMediaEndpoint):
+        (WebCore::Internals::emulateRTCPeerConnectionPlatformEvent):
+        (WebCore::Internals::useMockRTCPeerConnectionFactory):
+        * testing/Internals.h:
+
 2017-03-01  Javier Fernandez  <jfernandez@igalia.com>
 
         [css-align] Implement the place-content shorthand

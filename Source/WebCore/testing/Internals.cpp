@@ -1138,16 +1138,25 @@ void Internals::enableMockSpeechSynthesizer()
 
 void Internals::enableMockMediaEndpoint()
 {
+    if (!LibWebRTCProvider::webRTCAvailable())
+        return;
+
     MediaEndpoint::create = MockMediaEndpoint::create;
 }
 
 void Internals::emulateRTCPeerConnectionPlatformEvent(RTCPeerConnection& connection, const String& action)
 {
+    if (!LibWebRTCProvider::webRTCAvailable())
+        return;
+
     connection.emulatePlatformEvent(action);
 }
 
 void Internals::useMockRTCPeerConnectionFactory(const String& testCase)
 {
+    if (!LibWebRTCProvider::webRTCAvailable())
+        return;
+
 #if USE(LIBWEBRTC)
     Document* document = contextDocument();
     LibWebRTCProvider* provider = (document && document->page()) ? &document->page()->libWebRTCProvider() : nullptr;

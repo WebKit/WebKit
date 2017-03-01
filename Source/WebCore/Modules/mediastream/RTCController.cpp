@@ -27,6 +27,7 @@
 
 #if ENABLE(WEB_RTC)
 
+#include "LibWebRTCProvider.h"
 #include "RTCPeerConnection.h"
 
 namespace WebCore {
@@ -47,6 +48,9 @@ void RTCController::add(RTCPeerConnection& connection)
 
 void RTCController::disableICECandidateFiltering()
 {
+    if (!LibWebRTCProvider::webRTCAvailable())
+        return;
+
     m_shouldFilterICECandidates = false;
     for (RTCPeerConnection& connection : m_peerConnections)
         connection.disableICECandidateFiltering();
@@ -54,6 +58,9 @@ void RTCController::disableICECandidateFiltering()
 
 void RTCController::enableICECandidateFiltering()
 {
+    if (!LibWebRTCProvider::webRTCAvailable())
+        return;
+
     m_shouldFilterICECandidates = true;
     for (RTCPeerConnection& connection : m_peerConnections)
         connection.enableICECandidateFiltering();

@@ -45,6 +45,8 @@ namespace WebCore {
 
 static std::unique_ptr<PeerConnectionBackend> createLibWebRTCPeerConnectionBackend(RTCPeerConnection& peerConnection)
 {
+    if (!LibWebRTCProvider::webRTCAvailable())
+        return nullptr;
     return std::make_unique<LibWebRTCPeerConnectionBackend>(peerConnection);
 }
 
