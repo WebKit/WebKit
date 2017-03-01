@@ -995,7 +995,7 @@ void PlatformCALayerCocoa::updateCustomAppearance(GraphicsLayer::CustomAppearanc
 }
 
 #if (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 90300) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200)
-static NSString *layerContentsFormat(bool wantsDeepColor, bool supportsSubpixelAntialiasedFonts)
+static NSString *layerContentsFormat(bool acceleratesDrawing, bool wantsDeepColor, bool supportsSubpixelAntialiasedFonts)
 {
 #if PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 90300
     if (wantsDeepColor)
@@ -1005,10 +1005,11 @@ static NSString *layerContentsFormat(bool wantsDeepColor, bool supportsSubpixelA
 #endif
 
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
-    if (supportsSubpixelAntialiasedFonts)
+    if (supportsSubpixelAntialiasedFonts && acceleratesDrawing)
         return kCAContentsFormatRGBA8ColorRGBA8LinearGlyphMask;
 #else
     UNUSED_PARAM(supportsSubpixelAntialiasedFonts);
+    UNUSED_PARAM(acceleratesDrawing);
 #endif
 
     return nil;
@@ -1020,7 +1021,7 @@ void PlatformCALayerCocoa::updateContentsFormat()
     if (m_layerType == LayerTypeWebLayer || m_layerType == LayerTypeTiledBackingTileLayer) {
         BEGIN_BLOCK_OBJC_EXCEPTIONS
 #if (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 90300) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200)
-        if (NSString *formatString = layerContentsFormat(wantsDeepColorBackingStore(), supportsSubpixelAntialiasedText()))
+        if (NSString *formatString = layerContentsFormat(acceleratesDrawing(), wantsDeepColorBackingStore(), supportsSubpixelAntialiasedText()))
             [m_layer setContentsFormat:formatString];
 #endif
         END_BLOCK_OBJC_EXCEPTIONS

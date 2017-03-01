@@ -1,5 +1,21 @@
 2017-02-28  Simon Fraser  <simon.fraser@apple.com>
 
+        Don't use the LinearGlyphMask format if accelerated drawing is disabled
+        https://bugs.webkit.org/show_bug.cgi?id=168997
+
+        Reviewed by Tim Horton.
+
+        Non-accelerated drawing doesn't work into LinearGlyphMask-format backing store,
+        so don't use that backing store format when accelerated drawing is disabled.
+
+        * platform/graphics/ca/PlatformCALayer.cpp:
+        (WebCore::PlatformCALayer::drawRepaintIndicator):
+        * platform/graphics/ca/cocoa/PlatformCALayerCocoa.mm:
+        (layerContentsFormat):
+        (PlatformCALayerCocoa::updateContentsFormat):
+
+2017-02-28  Simon Fraser  <simon.fraser@apple.com>
+
         Make the repaint indicators show subpixel antialiased text indication a bit more clearly
         https://bugs.webkit.org/show_bug.cgi?id=168988
 

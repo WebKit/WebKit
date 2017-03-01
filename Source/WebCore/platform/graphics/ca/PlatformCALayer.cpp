@@ -119,7 +119,7 @@ void PlatformCALayer::drawRepaintIndicator(CGContextRef context, PlatformCALayer
     CGFloat strokeWidthAsPercentageOfFontSize = 0;
     Color strokeColor;
 
-    if (!platformCALayer->isOpaque() && platformCALayer->supportsSubpixelAntialiasedText()) {
+    if (!platformCALayer->isOpaque() && platformCALayer->supportsSubpixelAntialiasedText() && platformCALayer->acceleratesDrawing()) {
         strokeColor = Color(0, 0, 0, 200);
         strokeWidthAsPercentageOfFontSize = -4.5; // Negative means "stroke and fill"; see docs for kCTStrokeWidthAttributeName.
     }
