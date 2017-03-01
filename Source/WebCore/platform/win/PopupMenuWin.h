@@ -135,6 +135,7 @@ private:
     bool m_scrollbarCapturingMouse { false };
     bool m_showPopup { false };
     float m_scaleFactor { 1 };
+    FontCascade m_font;
 
     friend class AccessiblePopupMenu;
 };

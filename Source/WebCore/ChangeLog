@@ -1,3 +1,18 @@
+2017-03-01  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] Popup menus are too small in HiDPI mode.
+        https://bugs.webkit.org/show_bug.cgi?id=168965
+
+        Reviewed by Brent Fulgham.
+
+        Scale font with device scale factor.
+
+        * platform/win/PopupMenuWin.cpp:
+        (WebCore::PopupMenuWin::show):
+        (WebCore::PopupMenuWin::calculatePositionAndSize):
+        (WebCore::PopupMenuWin::paint):
+        * platform/win/PopupMenuWin.h:
+
 2017-03-01  Joseph Pecoraro  <pecoraro@apple.com>
 
         [WebRTC] Install libwebrtc.dylib inside of WebCore.framework
