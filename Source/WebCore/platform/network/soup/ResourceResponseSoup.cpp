@@ -98,8 +98,6 @@ String ResourceResponse::platformSuggestedFilename() const
 {
     SoupMessageHeaders* soupHeaders = soup_message_headers_new(SOUP_MESSAGE_HEADERS_RESPONSE);
     String contentDisposition(httpHeaderField(HTTPHeaderName::ContentDisposition));
-    if (contentDisposition.is8Bit())
-        contentDisposition = String::fromUTF8WithLatin1Fallback(contentDisposition.characters8(), contentDisposition.length());
     soup_message_headers_append(soupHeaders, "Content-Disposition", contentDisposition.utf8().data());
     GRefPtr<GHashTable> params;
     soup_message_headers_get_content_disposition(soupHeaders, nullptr, &params.outPtr());
