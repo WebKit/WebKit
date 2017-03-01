@@ -1791,7 +1791,8 @@ webkit.org/b/163780 media/media-controls-drag-timeline-set-controls-property.htm
 
 webkit.org/b/163781 media/muted-video-is-playing-audio.html [ Timeout ]
 
-webkit.org/b/163850 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/playing-the-media-resource/pause-move-within-document.html [ Timeout ]
+webkit.org/b/163850 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/playing-the-media-resource/pause-move-to-other-document.html [ Skip ]
+webkit.org/b/163850 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/playing-the-media-resource/pause-move-within-document.html [ Skip ]
 
 webkit.org/b/168373 http/tests/media/track-in-band-hls-metadata-crash.html [ Timeout ]
 webkit.org/b/168373 media/media-fullscreen-loop-inline.html [ Timeout ]
