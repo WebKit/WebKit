@@ -4631,6 +4631,10 @@
                     "align-content",
                     "justify-content"
                 ]
+            },
+            "specification": {
+                "category": "css-align",
+                "url": "https://www.w3.org/TR/css-align-3/#propdef-place-content"
             }
         },
         "grid": {

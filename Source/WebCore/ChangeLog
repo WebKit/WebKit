@@ -1,3 +1,16 @@
+2017-03-01  Javier Fernandez  <jfernandez@igalia.com>
+
+        Missing 'specification' section in the place-content shorthand
+        https://bugs.webkit.org/show_bug.cgi?id=169052
+
+        Reviewed by Darin Adler.
+
+        Added 'specification' section in the place-content shorthand.
+
+        No new tests, no new functionality.
+
+        * css/CSSProperties.json:
+
 2017-02-28  Matt Rajca  <mrajca@apple.com>
 
         Media: notify clients when autoplayed media is muted
