@@ -2234,16 +2234,10 @@ void Document::frameDestroyed()
     FrameDestructionObserver::frameDestroyed();
 }
 
-void Document::didBecomeCurrentDocumentInView()
-{
-    ASSERT(view());
-    if (!hasLivingRenderTree())
-        createRenderTree();
-}
-
 void Document::destroyRenderTree()
 {
     ASSERT(hasLivingRenderTree());
+    ASSERT(m_pageCacheState != InPageCache);
 
     FrameView* frameView = frame()->document() == this ? frame()->view() : nullptr;
 

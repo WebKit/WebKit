@@ -1,3 +1,7 @@
+2017-03-02  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Rollout r212886. rdar://problem/30812601
+
 2017-02-27  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r213010. rdar://problem/30704432
