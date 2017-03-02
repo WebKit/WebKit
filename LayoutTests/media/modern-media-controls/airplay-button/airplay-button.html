@@ -19,17 +19,11 @@ const macOSFullscreenAirplayButton = new AirplayButton({ layoutTraits: LayoutTra
 
 const iOSAirplayButton = new AirplayButton({ layoutTraits: LayoutTraits.iOS });
 
-scheduler.frameDidFire = function()
-{
-    if ([airplayButton, macOSFullscreenAirplayButton, iOSAirplayButton].some(button => button.width == 0))
-        return;
-
-    shouldBeTrue('airplayButton.element.style.webkitMaskImage.includes("macOS/airplay@")');
-    shouldBeTrue('macOSFullscreenAirplayButton.element.style.webkitMaskImage.includes("macOS/airplay-fullscreen@")');
-    shouldBeTrue('iOSAirplayButton.element.style.webkitMaskImage.includes("iOS/airplay@")');
-
-    finishJSTest();
-};
+shouldBecomeEqual('airplayButton.element.style.webkitMaskImage.includes("macOS/airplay@")', "true", () => {
+    shouldBecomeEqual('macOSFullscreenAirplayButton.element.style.webkitMaskImage.includes("macOS/airplay-fullscreen@")', "true", () => {
+        shouldBecomeEqual('iOSAirplayButton.element.style.webkitMaskImage.includes("iOS/airplay@")', "true", finishJSTest);
+    });
+});
 
 </script>
 <script src="../../../resources/js-test-post.js"></script>

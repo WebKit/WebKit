@@ -7,9 +7,9 @@ PASS airplayButton.element.localName is "button"
 PASS airplayButton.element.classList.contains("icon") is true
 PASS airplayButton.element.classList.contains("airplay") is true
 PASS airplayButton.iconName is "airplay"
-PASS airplayButton.element.style.webkitMaskImage.includes("macOS/airplay@") is true
-PASS macOSFullscreenAirplayButton.element.style.webkitMaskImage.includes("macOS/airplay-fullscreen@") is true
-PASS iOSAirplayButton.element.style.webkitMaskImage.includes("iOS/airplay@") is true
+PASS airplayButton.element.style.webkitMaskImage.includes("macOS/airplay@") became true
+PASS macOSFullscreenAirplayButton.element.style.webkitMaskImage.includes("macOS/airplay-fullscreen@") became true
+PASS iOSAirplayButton.element.style.webkitMaskImage.includes("iOS/airplay@") became true
 PASS successfullyParsed is true
 
 TEST COMPLETE
