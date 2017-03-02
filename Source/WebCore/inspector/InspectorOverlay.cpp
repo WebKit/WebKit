@@ -342,7 +342,7 @@ void InspectorOverlay::update()
     drawPaintRects();
 
     // Position DOM elements.
-    overlayPage()->mainFrame().document()->recalcStyle(Style::Force);
+    overlayPage()->mainFrame().document()->resolveStyle(Document::ResolveStyleType::Rebuild);
     if (overlayView->needsLayout())
         overlayView->layout();
 

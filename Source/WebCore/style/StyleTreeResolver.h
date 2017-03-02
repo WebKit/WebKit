@@ -52,7 +52,7 @@ public:
     TreeResolver(Document&);
     ~TreeResolver();
 
-    std::unique_ptr<Update> resolve(Change);
+    std::unique_ptr<Update> resolve();
 
     static ElementUpdate createAnimatedElementUpdate(std::unique_ptr<RenderStyle>, Element&, Change parentChange);
 
@@ -76,11 +76,11 @@ private:
     struct Parent {
         Element* element;
         const RenderStyle& style;
-        Change change;
+        Change change { NoChange };
         bool didPushScope { false };
         bool elementNeedingStyleRecalcAffectsNextSiblingElementStyle { false };
 
-        Parent(Document&, Change);
+        Parent(Document&);
         Parent(Element&, const RenderStyle&, Change);
     };
 

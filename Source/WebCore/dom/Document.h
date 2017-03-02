@@ -45,7 +45,6 @@
 #include "RenderPtr.h"
 #include "ScriptExecutionContext.h"
 #include "StringWithDirection.h"
-#include "StyleChange.h"
 #include "Supplementable.h"
 #include "TextResourceDecoder.h"
 #include "Timer.h"
@@ -521,7 +520,8 @@ public:
     WEBCORE_EXPORT Ref<CSSStyleDeclaration> createCSSStyleDeclaration();
     Ref<Text> createEditingTextNode(const String&);
 
-    void recalcStyle(Style::Change = Style::NoChange);
+    enum class ResolveStyleType { Normal, Rebuild };
+    void resolveStyle(ResolveStyleType = ResolveStyleType::Normal);
     WEBCORE_EXPORT void updateStyleIfNeeded();
     bool needsStyleRecalc() const;
     unsigned lastStyleUpdateSizeForTesting() const { return m_lastStyleUpdateSizeForTesting; }

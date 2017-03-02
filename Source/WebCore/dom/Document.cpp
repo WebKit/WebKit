@@ -1737,7 +1737,7 @@ bool Document::hasPendingForcedStyleRecalc() const
     return m_styleRecalcTimer.isActive() && m_pendingStyleRecalcShouldForce;
 }
 
-void Document::recalcStyle(Style::Change change)
+void Document::resolveStyle(ResolveStyleType type)
 {
     ASSERT(!view() || !view()->isPainting());
 
@@ -1778,9 +1778,9 @@ void Document::recalcStyle(Style::Change change)
         WidgetHierarchyUpdatesSuspensionScope suspendWidgetHierarchyUpdates;
 
         if (m_pendingStyleRecalcShouldForce)
-            change = Style::Force;
+            type = ResolveStyleType::Rebuild;
 
-        if (change == Style::Force) {
+        if (type == ResolveStyleType::Rebuild) {
             // This may get set again during style resolve.
             m_hasNodesWithPlaceholderStyle = false;
 
@@ -1794,10 +1794,13 @@ void Document::recalcStyle(Style::Change change)
             auto documentChange = Style::determineChange(documentStyle, m_renderView->style());
             if (documentChange != Style::NoChange)
                 renderView()->setStyle(WTFMove(documentStyle));
+
+            if (auto* documentElement = this->documentElement())
+                documentElement->invalidateStyleForSubtree();
         }
 
         Style::TreeResolver resolver(*this);
-        auto styleUpdate = resolver.resolve(change);
+        auto styleUpdate = resolver.resolve();
 
         m_lastStyleUpdateSizeForTesting = styleUpdate ? styleUpdate->size() : 0;
 
@@ -1867,7 +1870,7 @@ void Document::updateStyleIfNeeded()
     if (!needsStyleRecalc())
         return;
 
-    recalcStyle();
+    resolveStyle();
 }
 
 void Document::updateLayout()
@@ -1917,12 +1920,12 @@ void Document::updateLayoutIgnorePendingStylesheets(Document::RunPostLayoutTasks
         if (bodyElement && !bodyElement->renderer() && m_pendingSheetLayout == NoLayoutWithPendingSheets) {
             m_pendingSheetLayout = DidLayoutWithPendingSheets;
             styleScope().didChangeActiveStyleSheetCandidates();
-            recalcStyle(Style::Force);
+            resolveStyle(ResolveStyleType::Rebuild);
         } else if (m_hasNodesWithPlaceholderStyle)
             // If new nodes have been added or style recalc has been done with style sheets still pending, some nodes 
             // may not have had their real style calculated yet. Normally this gets cleaned when style sheets arrive 
             // but here we need up-to-date style immediately.
-            recalcStyle(Style::Force);
+            resolveStyle(ResolveStyleType::Rebuild);
     }
 
     updateLayout();
@@ -2135,7 +2138,7 @@ void Document::createRenderTree()
 
     renderView()->setIsInWindow(true);
 
-    recalcStyle(Style::Force);
+    resolveStyle(ResolveStyleType::Rebuild);
 }
 
 void Document::didBecomeCurrentDocumentInFrame()
@@ -5036,9 +5039,9 @@ void Document::finishedParsing()
     if (RefPtr<Frame> f = frame()) {
         // FrameLoader::finishedParsing() might end up calling Document::implicitClose() if all
         // resource loads are complete. HTMLObjectElements can start loading their resources from
-        // post attach callbacks triggered by recalcStyle().  This means if we parse out an <object>
+        // post attach callbacks triggered by resolveStyle(). This means if we parse out an <object>
         // tag and then reach the end of the document without updating styles, we might not have yet
-        // started the resource load and might fire the window load event too early.  To avoid this
+        // started the resource load and might fire the window load event too early. To avoid this
         // we force the styles to be up to date before calling FrameLoader::finishedParsing().
         // See https://bugs.webkit.org/show_bug.cgi?id=36864 starting around comment 35.
         updateStyleIfNeeded();
@@ -5820,7 +5823,7 @@ void Document::webkitWillEnterFullScreenForElement(Element* element)
 
     m_fullScreenElement->setContainsFullScreenElementOnAncestorsCrossingFrameBoundaries(true);
 
-    recalcStyle(Style::Force);
+    resolveStyle(ResolveStyleType::Rebuild);
 }
 
 void Document::webkitDidEnterFullScreenForElement(Element*)

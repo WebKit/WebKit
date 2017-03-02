@@ -92,10 +92,9 @@ TreeResolver::Scope::Scope(ShadowRoot& shadowRoot, Scope& enclosingScope)
 {
 }
 
-TreeResolver::Parent::Parent(Document& document, Change change)
+TreeResolver::Parent::Parent(Document& document)
     : element(nullptr)
     , style(*document.renderStyle())
-    , change(change)
 {
 }
 
@@ -452,7 +451,7 @@ void TreeResolver::resolveComposedTree()
     popParentsToDepth(1);
 }
 
-std::unique_ptr<Update> TreeResolver::resolve(Change change)
+std::unique_ptr<Update> TreeResolver::resolve()
 {
     auto& renderView = *m_document.renderView();
 
@@ -461,12 +460,12 @@ std::unique_ptr<Update> TreeResolver::resolve(Change change)
         m_document.styleScope().resolver();
         return nullptr;
     }
-    if (change != Force && !documentElement->childNeedsStyleRecalc() && !documentElement->needsStyleRecalc())
+    if (!documentElement->childNeedsStyleRecalc() && !documentElement->needsStyleRecalc())
         return nullptr;
 
     m_update = std::make_unique<Update>(m_document);
     m_scopeStack.append(adoptRef(*new Scope(m_document)));
-    m_parentStack.append(Parent(m_document, change));
+    m_parentStack.append(Parent(m_document));
 
     // Pseudo element removal and similar may only work with these flags still set. Reset them after the style recalc.
     renderView.setUsesFirstLineRules(renderView.usesFirstLineRules() || scope().styleResolver.usesFirstLineRules());
