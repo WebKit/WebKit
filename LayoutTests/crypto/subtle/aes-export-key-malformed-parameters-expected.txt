@@ -7,6 +7,10 @@ PASS crypto.subtle.exportKey("spki", key) rejected promise  with NotSupportedErr
 PASS crypto.subtle.exportKey("pkcs8", key) rejected promise  with NotSupportedError (DOM Exception 9): The algorithm is not supported.
 PASS crypto.subtle.exportKey("spki", key) rejected promise  with NotSupportedError (DOM Exception 9): The algorithm is not supported.
 PASS crypto.subtle.exportKey("pkcs8", key) rejected promise  with NotSupportedError (DOM Exception 9): The algorithm is not supported.
+PASS crypto.subtle.exportKey("spki", key) rejected promise  with NotSupportedError (DOM Exception 9): The algorithm is not supported.
+PASS crypto.subtle.exportKey("pkcs8", key) rejected promise  with NotSupportedError (DOM Exception 9): The algorithm is not supported.
+PASS crypto.subtle.exportKey("spki", key) rejected promise  with NotSupportedError (DOM Exception 9): The algorithm is not supported.
+PASS crypto.subtle.exportKey("pkcs8", key) rejected promise  with NotSupportedError (DOM Exception 9): The algorithm is not supported.
 PASS successfullyParsed is true
 
 TEST COMPLETE

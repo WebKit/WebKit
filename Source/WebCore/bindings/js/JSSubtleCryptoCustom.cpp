@@ -31,6 +31,7 @@
 #include "CryptoAlgorithm.h"
 #include "CryptoAlgorithmRegistry.h"
 #include "JSAesCbcCfbParams.h"
+#include "JSAesGcmParams.h"
 #include "JSAesKeyGenParams.h"
 #include "JSCryptoAlgorithmParameters.h"
 #include "JSCryptoKey.h"
@@ -118,6 +119,12 @@ static std::unique_ptr<CryptoAlgorithmParameters> normalizeCryptoAlgorithmParame
                 auto params = convertDictionary<CryptoAlgorithmAesCbcCfbParams>(state, value);
                 RETURN_IF_EXCEPTION(scope, nullptr);
                 result = std::make_unique<CryptoAlgorithmAesCbcCfbParams>(params);
+                break;
+            }
+            case CryptoAlgorithmIdentifier::AES_GCM: {
+                auto params = convertDictionary<CryptoAlgorithmAesGcmParams>(state, value);
+                RETURN_IF_EXCEPTION(scope, nullptr);
+                result = std::make_unique<CryptoAlgorithmAesGcmParams>(params);
                 break;
             }
             default:

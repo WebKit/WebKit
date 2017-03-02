@@ -1,3 +1,79 @@
+2017-02-22  Jiewen Tan  <jiewen_tan@apple.com>
+
+        WebCrypto API support for AES-GCM
+        https://bugs.webkit.org/show_bug.cgi?id=157175
+        <rdar://problem/27311691>
+
+        Reviewed by Brent Fulgham.
+
+        This patch adds support for AES-GCM. Operations of AES-GCM include: encrypt, decrypt, generateKey,
+        importKey, exportKey, wrapKey, and unwrapKey. https://www.w3.org/TR/WebCryptoAPI/#aes-gcm
+
+        Tests: crypto/subtle/aes-gcm-decrypt-malformed-parameters.html
+               crypto/subtle/aes-gcm-encrypt-malformed-parameters.html
+               crypto/subtle/aes-gcm-generate-export-key-jwk-length-128.html
+               crypto/subtle/aes-gcm-generate-export-key-jwk-length-192.html
+               crypto/subtle/aes-gcm-generate-export-key-jwk-length-256.html
+               crypto/subtle/aes-gcm-generate-export-raw-key.html
+               crypto/subtle/aes-gcm-generate-key-encrypt-decrypt.html
+               crypto/subtle/aes-gcm-generate-key.html
+               crypto/subtle/aes-gcm-import-jwk-key-length-128.html
+               crypto/subtle/aes-gcm-import-jwk-key-length-192.html
+               crypto/subtle/aes-gcm-import-jwk-key-length-256.html
+               crypto/subtle/aes-gcm-import-key-decrypt-additional-data-tag-length-32.html
+               crypto/subtle/aes-gcm-import-key-decrypt-additional-data.html
+               crypto/subtle/aes-gcm-import-key-decrypt-tagLengths.html
+               crypto/subtle/aes-gcm-import-key-decrypt.html
+               crypto/subtle/aes-gcm-import-key-encrypt-additional-data-tag-length-32.html
+               crypto/subtle/aes-gcm-import-key-encrypt-additional-data.html
+               crypto/subtle/aes-gcm-import-key-encrypt-tagLengths.html
+               crypto/subtle/aes-gcm-import-key-encrypt.html
+               crypto/subtle/aes-gcm-import-key-unwrap-jwk-key.html
+               crypto/subtle/aes-gcm-import-key-unwrap-raw-key.html
+               crypto/subtle/aes-gcm-import-key-wrap-jwk-key.html
+               crypto/subtle/aes-gcm-import-key-wrap-raw-key.html
+               crypto/subtle/aes-gcm-import-raw-key.html
+               crypto/workers/subtle/aes-gcm-import-key-decrypt.html
+               crypto/workers/subtle/aes-gcm-import-key-encrypt.html
+               crypto/workers/subtle/aes-gcm-import-key-unwrap-key.html
+               crypto/workers/subtle/aes-gcm-import-key-wrap-key.html
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * PlatformGTK.cmake:
+        * PlatformMac.cmake:
+        Add CryptoAlgorithmAES_CFBMac.cpp as well.
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSSubtleCryptoCustom.cpp:
+        (WebCore::normalizeCryptoAlgorithmParameters):
+        Add support for AES-GCM.
+        * crypto/CommonCryptoUtilities.h:
+        Include SPI header for AES-GCM support.
+        * crypto/CryptoAlgorithmParameters.h:
+        * crypto/algorithms/CryptoAlgorithmAES_GCM.cpp: Added.
+        (WebCore::usagesAreInvalidForCryptoAlgorithmAES_GCM):
+        (WebCore::tagLengthIsValid):
+        (WebCore::CryptoAlgorithmAES_GCM::create):
+        (WebCore::CryptoAlgorithmAES_GCM::identifier):
+        (WebCore::CryptoAlgorithmAES_GCM::encrypt):
+        (WebCore::CryptoAlgorithmAES_GCM::decrypt):
+        (WebCore::CryptoAlgorithmAES_GCM::generateKey):
+        (WebCore::CryptoAlgorithmAES_GCM::importKey):
+        (WebCore::CryptoAlgorithmAES_GCM::exportKey):
+        * crypto/algorithms/CryptoAlgorithmAES_GCM.h: Added.
+        * crypto/gnutls/CryptoAlgorithmAES_GCMGnuTLS.cpp: Added.
+        (WebCore::CryptoAlgorithmAES_GCM::platformEncrypt):
+        (WebCore::CryptoAlgorithmAES_GCM::platformDecrypt):
+        * crypto/mac/CryptoAlgorithmAES_GCMMac.cpp: Added.
+        (WebCore::encryptAES_GCM):
+        (WebCore::decyptAES_GCM):
+        (WebCore::CryptoAlgorithmAES_GCM::platformEncrypt):
+        (WebCore::CryptoAlgorithmAES_GCM::platformDecrypt):
+        * crypto/mac/CryptoAlgorithmRegistryMac.cpp:
+        (WebCore::CryptoAlgorithmRegistry::platformRegisterAlgorithms):
+        * crypto/parameters/AesGcmParams.idl: Added.
+        * crypto/parameters/CryptoAlgorithmAesGcmParams.h: Added.
+
 2017-03-02  Alex Christensen  <achristensen@webkit.org>
 
         Continue enabling WebRTC

@@ -340,6 +340,7 @@ set(WebCore_NON_SVG_IDL_FILES
     crypto/WebKitSubtleCrypto.idl
 
     crypto/parameters/AesCbcCfbParams.idl
+    crypto/parameters/AesGcmParams.idl
     crypto/parameters/AesKeyGenParams.idl
     crypto/parameters/HmacKeyParams.idl
     crypto/parameters/RsaHashedImportParams.idl
