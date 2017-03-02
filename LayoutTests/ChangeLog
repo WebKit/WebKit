@@ -1,3 +1,12 @@
+2017-03-02  Youenn Fablet  <youenn@apple.com>
+
+        Activate some new webrtc tests
+        https://bugs.webkit.org/show_bug.cgi?id=168850
+
+        Unreviewed.
+
+        * platform/ios-simulator-wk2/TestExpectations: Disabling webrtc tests for ios wk2 debug.
+
 2017-03-02  Chris Dumez  <cdumez@apple.com>
 
         Download attribute set to "*\" save file with name "example.com"
