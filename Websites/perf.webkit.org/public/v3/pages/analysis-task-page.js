@@ -302,8 +302,8 @@ class AnalysisTaskPage extends PageWithHeading {
             this._chartPane.setMainSelection([this._startPoint.time, this._endPoint.time]);
 
         var points = this._chartPane.selectedPoints();
-        this._newTestGroupFormForChart.setRootSetMap(points && points.length >= 2 ?
-                {'A': points[0].rootSet(), 'B': points[points.length - 1].rootSet()} : null);
+        this._newTestGroupFormForChart.setRootSetMap(points && points.length() >= 2 ?
+                {'A': points.firstPoint().rootSet(), 'B': points.lastPoint().rootSet()} : null);
         this._newTestGroupFormForChart.enqueueToRender();
         this._newTestGroupFormForChart.element().style.display = this._triggerable ? null : 'none';
 

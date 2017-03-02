@@ -1,3 +1,10 @@
+2017-03-01  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Build fix after r212853. Make creating an analysis task work again.
+
+        * public/v3/pages/analysis-task-page.js:
+        (AnalysisTaskPage.prototype.render):
+
 2017-02-27  Ryosuke Niwa  <rniwa@webkit.org>
 
         Fix tests after r213119 and r213120.
