@@ -63,6 +63,8 @@ public:
     void clickMouseButton(int x, int y, unsigned button = 1, unsigned mouseModifiers = 0);
     void keyStroke(unsigned keyVal, unsigned keyModifiers = 0);
 
+    void emitPopupMenuSignal();
+
     WebKitJavascriptResult* runJavaScriptAndWaitUntilFinished(const char* javascript, GError**);
     WebKitJavascriptResult* runJavaScriptFromGResourceAndWaitUntilFinished(const char* resource, GError**);
 

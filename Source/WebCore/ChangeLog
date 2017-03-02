@@ -1,3 +1,42 @@
+2017-03-02  Tomas Popela  <tpopela@redhat.com>
+
+        [WK2] Keyboard menu key should show context menu
+        https://bugs.webkit.org/show_bug.cgi?id=72099
+
+        Reviewed by Carlos Garcia Campos.
+
+        Show the context menu when the GtkWidget::popup-menu signal is
+        emitted. This signal is triggered by pressing a key (usually
+        the Menu key or the Shift + F10 shortcut) or it could be emitted on
+        WebKitWebView.
+
+        Test: fast/events/context-activated-by-key-event.html
+
+        Also could be tested by:
+
+        ManualTests/keyboard-menukey-event.html
+        ManualTests/win/contextmenu-key.html
+        ManualTests/win/contextmenu-key2.html
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::sendContextMenuEventForKey):
+        Correctly send the mouse event that used for showing the context menu.
+        Previously the event was immediately dispatched as it is, but this was
+        only the right way if some element was focused on the page. If there
+        was no focused element or non-empty text range then the event lacked
+        the right node, where it was supposed to be shown. The correct node
+        is determined and added to the event in the sendContextMenuEvent() so
+        we have to use this function to send the event.
+
+        Also use absoluteBoundingBoxRect() instead of
+        pixelSnappedAbsoluteClippedOverflowRect() when determining
+        a coordinate where to show the context menu for the currently focus
+        element. The latter is not returning a right box (it is bigger) which
+        could lead to the situation that no menu will be displayed at all,
+        because the HitTest won't contain the right element as the
+        determined coordinates could be outside of the element.
+        * page/EventHandler.h:
+
 2017-03-02  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Crash in WebCore::CoordinatedGraphicsLayer::notifyFlushRequired

@@ -1,3 +1,33 @@
+2017-03-02  Tomas Popela  <tpopela@redhat.com>
+
+        [WK2] Keyboard menu key should show context menu
+        https://bugs.webkit.org/show_bug.cgi?id=72099
+
+        Reviewed by Carlos Garcia Campos.
+
+        Show the context menu when the GtkWidget::popup-menu signal is
+        emitted. This signal is triggered by pressing a key (usually
+        the Menu key or the Shift + F10 shortcut) or it could be emitted on
+        WebKitWebView.
+
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkit_web_view_class_init):
+        (webkit_web_view_class_init): Update the documentation for the
+        context-menu signal
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBasePopupMenu): Connect to the popup-menu signal and
+        save the event that was used to trigger the signal. If there is no
+        such event create a new GdkEvent with GDK_NOTHING type.
+        (webkitWebViewBasePopupMenu):
+        (webkit_web_view_base_class_init):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::handleContextMenuKeyEvent):
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::contextMenuForKeyEvent):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2017-03-01  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Replace -[WKWebView adjustedDataInteractionItemProviders:] with a UI delegate method

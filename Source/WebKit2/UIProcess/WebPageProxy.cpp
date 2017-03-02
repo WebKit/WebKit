@@ -4654,6 +4654,11 @@ void WebPageProxy::contextMenuItemSelected(const WebContextMenuItemData& item)
 
     m_process->send(Messages::WebPage::DidSelectItemFromActiveContextMenu(item), m_pageID);
 }
+
+void WebPageProxy::handleContextMenuKeyEvent()
+{
+    m_process->send(Messages::WebPage::ContextMenuForKeyEvent(), m_pageID);
+}
 #endif // ENABLE(CONTEXT_MENUS)
 
 #if PLATFORM(IOS)

@@ -33,10 +33,24 @@ public:
     void checkContextMenuEvent(GdkEvent* event)
     {
         g_assert(event);
-        g_assert_cmpint(event->type, ==, GDK_BUTTON_PRESS);
-        g_assert_cmpint(event->button.button, ==, 3);
-        g_assert_cmpint(event->button.x, ==, m_menuPositionX);
-        g_assert_cmpint(event->button.y, ==, m_menuPositionY);
+        g_assert_cmpint(event->type, ==, m_expectedEventType);
+
+        switch (m_expectedEventType) {
+        case GDK_BUTTON_PRESS:
+            g_assert_cmpint(event->button.button, ==, 3);
+            g_assert_cmpint(event->button.x, ==, m_menuPositionX);
+            g_assert_cmpint(event->button.y, ==, m_menuPositionY);
+            break;
+        case GDK_KEY_PRESS:
+            g_assert_cmpint(event->key.keyval, ==, GDK_KEY_Menu);
+            break;
+        case GDK_NOTHING:
+            // GDK_NOTHING means that the context menu was triggered by the
+            // popup-menu signal. We don't have anything to check here.
+            break;
+        default:
+            g_assert_not_reached();
+        }
     }
 
     static gboolean contextMenuCallback(WebKitWebView* webView, WebKitContextMenu* contextMenu, GdkEvent* event, WebKitHitTestResult* hitTestResult, ContextMenuTest* test)
@@ -58,6 +72,7 @@ public:
     ContextMenuTest()
         : m_menuPositionX(0)
         , m_menuPositionY(0)
+        , m_expectedEventType(GDK_BUTTON_PRESS)
     {
         g_signal_connect(m_webView, "context-menu", G_CALLBACK(contextMenuCallback), this);
         g_signal_connect(m_webView, "context-menu-dismissed", G_CALLBACK(contextMenuDismissedCallback), this);
@@ -199,6 +214,7 @@ public:
 
     void showContextMenuAndWaitUntilFinished()
     {
+        m_expectedEventType = GDK_BUTTON_PRESS;
         showContextMenuAtPositionAndWaitUntilFinished(0, 0);
     }
 
@@ -214,8 +230,35 @@ public:
         g_main_loop_run(m_mainLoop);
     }
 
+    static gboolean emitPopupMenuSignalIdleCallback(ContextMenuTest* test)
+    {
+        test->emitPopupMenuSignal();
+        return FALSE;
+    }
+
+    void showContextMenuTriggeredByPopupEventAndWaitUntilFinished()
+    {
+        m_expectedEventType = GDK_NOTHING;
+        g_idle_add(reinterpret_cast<GSourceFunc>(emitPopupMenuSignalIdleCallback), this);
+        g_main_loop_run(m_mainLoop);
+    }
+
+    static gboolean simulateMenuKeyIdleCallback(ContextMenuTest* test)
+    {
+        test->keyStroke(GDK_KEY_Menu);
+        return FALSE;
+    }
+
+    void showContextMenuTriggeredByContextMenuKeyAndWaitUntilFinished()
+    {
+        m_expectedEventType = GDK_KEY_PRESS;
+        g_idle_add(reinterpret_cast<GSourceFunc>(simulateMenuKeyIdleCallback), this);
+        g_main_loop_run(m_mainLoop);
+    }
+
     double m_menuPositionX;
     double m_menuPositionY;
+    GdkEventType m_expectedEventType;
 };
 
 class ContextMenuDefaultTest: public ContextMenuTest {
@@ -365,10 +408,8 @@ public:
     DefaultMenuType m_expectedMenuType;
 };
 
-static void testContextMenuDefaultMenu(ContextMenuDefaultTest* test, gconstpointer)
+static void prepareContextMenuTestView(ContextMenuDefaultTest* test)
 {
-    test->showInWindowAndWaitUntilMapped();
-
     GUniquePtr<char> baseDir(g_strdup_printf("file://%s/", Test::getResourcesDir().data()));
     const char* linksHTML =
         "<html><body>"
@@ -388,6 +429,13 @@ static void testContextMenuDefaultMenu(ContextMenuDefaultTest* test, gconstpoint
         "</body></html>";
     test->loadHtml(linksHTML, baseDir.get());
     test->waitUntilLoadFinished();
+}
+
+static void testContextMenuDefaultMenu(ContextMenuDefaultTest* test, gconstpointer)
+{
+    test->showInWindowAndWaitUntilMapped();
+
+    prepareContextMenuTestView(test);
 
     // Context menu for selection.
     // This test should always be the first because any other click removes the selection.
@@ -425,6 +473,26 @@ static void testContextMenuDefaultMenu(ContextMenuDefaultTest* test, gconstpoint
     // Context menu for editable.
     test->m_expectedMenuType = ContextMenuDefaultTest::Editable;
     test->showContextMenuAtPositionAndWaitUntilFinished(5, 35);
+}
+
+static void testPopupEventSignal(ContextMenuDefaultTest* test, gconstpointer)
+{
+    test->showInWindowAndWaitUntilMapped();
+
+    prepareContextMenuTestView(test);
+
+    test->m_expectedMenuType = ContextMenuDefaultTest::Selection;
+    test->showContextMenuTriggeredByPopupEventAndWaitUntilFinished();
+}
+
+static void testContextMenuKey(ContextMenuDefaultTest* test, gconstpointer)
+{
+    test->showInWindowAndWaitUntilMapped();
+
+    prepareContextMenuTestView(test);
+
+    test->m_expectedMenuType = ContextMenuDefaultTest::Selection;
+    test->showContextMenuTriggeredByContextMenuKeyAndWaitUntilFinished();
 }
 
 class ContextMenuCustomTest: public ContextMenuTest {
@@ -917,6 +985,8 @@ static void testContextMenuWebExtensionNode(ContextMenuWebExtensionNodeTest* tes
 void beforeAll()
 {
     ContextMenuDefaultTest::add("WebKitWebView", "default-menu", testContextMenuDefaultMenu);
+    ContextMenuDefaultTest::add("WebKitWebView", "context-menu-key", testContextMenuKey);
+    ContextMenuDefaultTest::add("WebKitWebView", "popup-event-signal", testPopupEventSignal);
     ContextMenuCustomTest::add("WebKitWebView", "populate-menu", testContextMenuPopulateMenu);
     ContextMenuCustomFullTest::add("WebKitWebView", "custom-menu", testContextMenuCustomMenu);
     ContextMenuDisabledTest::add("WebKitWebView", "disable-menu", testContextMenuDisableMenu);

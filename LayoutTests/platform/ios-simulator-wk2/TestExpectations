@@ -1916,3 +1916,6 @@ fast/css/deferred-parsing/hover-test.html [ Skip ]
 webkit.org/b/166025 http/tests/fetch/fetching-same-resource-with-diffferent-options.html [ Pass Failure ]
 
 imported/w3c/web-platform-tests/webrtc [ Skip ]
+
+# Skipped because there is no key to show the context menu
+fast/events/context-activated-by-key-event.html [ Skip ]

@@ -1,3 +1,17 @@
+2017-03-02  Tomas Popela  <tpopela@redhat.com>
+
+        [WK2] Keyboard menu key should show context menu
+        https://bugs.webkit.org/show_bug.cgi?id=72099
+
+        Reviewed by Carlos Garcia Campos.
+
+        Skip the fast/events/context-activated-by-key-event.html on Mac as it
+        does not have a key to activate the context menu and on iOS as well.
+
+        * platform/ios-simulator-wk2/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2017-03-02  Javier Fernandez  <jfernandez@igalia.com>
 
         [GTK] Unreviewed test gardening 

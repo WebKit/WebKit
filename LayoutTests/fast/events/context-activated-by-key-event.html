@@ -1,0 +1,56 @@
+<html>
+<body>
+<div id="contenteditable" contenteditable>This tests whether the context menu is displayed on the menu key press.</div>
+<a id="link" href="example.com">example.com</a>
+<p id='result'></p>
+</body>
+</html>
+
+
+<script>
+function log(text) {
+  document.getElementById('result').appendChild(document.createTextNode(text));
+  document.getElementById('result').appendChild(document.createElement("br"));
+}
+
+function onWindowContextMenu(event) {
+  log('PASS WINDOW');
+  event.stopPropagation();
+}
+function onContentEditableContextMenu(event) {
+  if (window.getSelection().toString())
+    log('PASS CONTENTEDITABLE SELECTION');
+  else
+    log('PASS CONTENTEDITABLE');
+  event.stopPropagation();
+}
+function onFocusedElementContextMenu(event) {
+  log('PASS ELEMENT');
+  event.stopPropagation();
+}
+
+window.addEventListener('contextmenu', onWindowContextMenu);
+document.getElementById('contenteditable').addEventListener('contextmenu', onContentEditableContextMenu);
+document.getElementById('link').addEventListener('contextmenu', onFocusedElementContextMenu);
+
+if (window.testRunner) {
+  eventSender.keyDown('menu');
+
+  var rect = document.getElementById('contenteditable').getBoundingClientRect();
+  var x = rect.left + rect.width / 2;
+  var y = rect.top + rect.height / 2;
+  eventSender.mouseMoveTo(x, y);
+  eventSender.mouseDown();
+  eventSender.mouseUp();
+  eventSender.keyDown('menu');
+
+  document.getElementById('link').focus();
+  eventSender.keyDown('menu');
+
+  window.getSelection().selectAllChildren(document.getElementById('contenteditable'));
+  eventSender.keyDown('menu');
+
+  testRunner.dumpAsText();
+}
+
+</script>
