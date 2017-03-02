@@ -27,14 +27,8 @@ from webkitpy.common.net.jsctestresults import JSCTestResults
 
 class JSCTestResultsTest(unittest.TestCase):
     def test_results_from_string(self):
-        none_item = None
-        empty_json = ''
-        invalid_json = '{"allApiTestsPassed":'
         incomplete_json_v1 = '{"allApiTestsPassed": true}'
         incomplete_json_v2 = '{"stressTestFailures":[]}'
-        self.assertEqual(None, JSCTestResults.results_from_string(none_item))
-        self.assertEqual(None, JSCTestResults.results_from_string(empty_json))
-        self.assertEqual(None, JSCTestResults.results_from_string(invalid_json))
         self.assertEqual(None, JSCTestResults.results_from_string(incomplete_json_v1))
         self.assertEqual(None, JSCTestResults.results_from_string(incomplete_json_v2))
 

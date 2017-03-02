@@ -30,6 +30,7 @@ import logging
 
 from webkitpy.common.net.layouttestresults import LayoutTestResults
 from webkitpy.common.net.unittestresults import UnitTestResults
+from webkitpy.tool.bot.abstracttestresultsreader import AbstractTestResultsReader
 from webkitpy.tool.steps.runtests import RunTests
 
 _log = logging.getLogger(__name__)
@@ -37,7 +38,7 @@ _log = logging.getLogger(__name__)
 
 # FIXME: This class no longer has a clear purpose, and should probably
 # be made part of Port, or renamed to LayoutTestResultsArchiver or something more fitting?
-class LayoutTestResultsReader(object):
+class LayoutTestResultsReader(AbstractTestResultsReader):
     def __init__(self, host, results_directory, archive_directory):
         self._host = host
         self._results_directory = results_directory

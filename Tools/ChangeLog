@@ -1,3 +1,33 @@
+2017-03-02  Srinivasan Vijayaraghavan  <svijayaraghavan@apple.com>
+
+        Refactor test results classes in webkitpy to enable faster EWS iteration
+        https://bugs.webkit.org/show_bug.cgi?id=169053
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Scripts/webkitpy/common/net/abstracttestresults.py:
+        (AbstractTestResults): Import json for parse_json_string().
+        (AbstractTestResults.parse_json_string): Abstracted out from JSCTestResults.results_from_string().
+        * Scripts/webkitpy/common/net/abstracttestresults_unittest.py: Added.
+        (AbstractTestResultsTest): Class that tests AbstractTestResults.
+        (AbstractTestResultsTest.test_parse_json_string_invalid_inputs): Move unit tests from JSCTestResultsTest.
+        (AbstractTestResultsTest.test_parse_json_string_valid_input): Add a unit test for a success case.
+        * Scripts/webkitpy/common/net/jsctestresults.py:
+        (JSCTestResults.results_from_string): Call parse_json_string because it was abstracted out.
+        * Scripts/webkitpy/common/net/jsctestresults_unittest.py:
+        (JSCTestResultsTest.test_results_from_string): Remove JSON parsing unit tests, because they were moved.
+        * Scripts/webkitpy/tool/bot/abstracttestresultsreader.py: Added.
+        (AbstractTestResultsReader): Generic TestResultsReader with functions common to jsc, bindings etc.
+        (AbstractTestResultsReader.__init__): Moved from JSCTestResultsReader.__init__().
+        (AbstractTestResultsReader._read_file_contents): Moved from JSCTestResultsReader._read_file_contents().
+        (AbstractTestResultsReader.results): Stub.
+        * Scripts/webkitpy/tool/bot/jsctestresultsreader.py:
+        (JSCTestResultsReader): Now inherits from AbstractTestResultsReader.
+        (JSCTestResultsReader.__init__): Deleted.
+        (JSCTestResultsReader._read_file_contents): Deleted.
+        * Scripts/webkitpy/tool/bot/layouttestresultsreader.py:
+        (LayoutTestResultsReader): Now inherits from AbstractTestResultsReader.
+
 2017-03-02  Alex Christensen  <achristensen@webkit.org>
 
         Continue enabling WebRTC

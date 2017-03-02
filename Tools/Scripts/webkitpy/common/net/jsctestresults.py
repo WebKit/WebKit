@@ -20,7 +20,6 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import json
 import logging
 
 from webkitpy.common.net.abstracttestresults import AbstractTestResults
@@ -45,13 +44,8 @@ class JSCTestResults(AbstractTestResults):
 
     @classmethod
     def results_from_string(cls, string):
-        if not string:
-            return None
-
-        try:
-            parsed_results = json.loads(string)
-        except ValueError:
-            _log.error('Invalid JSON results')
+        parsed_results = cls.parse_json_string(string)
+        if not parsed_results:
             return None
 
         if 'allApiTestsPassed' not in parsed_results or 'stressTestFailures' not in parsed_results:

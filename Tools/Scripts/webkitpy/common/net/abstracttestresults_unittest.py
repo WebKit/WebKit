@@ -20,16 +20,24 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import logging
+import unittest
 
-from webkitpy.common.net.jsctestresults import JSCTestResults
-from webkitpy.tool.bot.abstracttestresultsreader import AbstractTestResultsReader
-
-_log = logging.getLogger(__name__)
+from webkitpy.common.net.abstracttestresults import AbstractTestResults
 
 
-class JSCTestResultsReader(AbstractTestResultsReader):
-    def results(self):
-        results_path = self._host.filesystem.join(self._results_directory, 'jsc_test_results.json')
-        contents = self._read_file_contents(results_path)
-        return JSCTestResults.results_from_string(contents)
+class AbstractTestResultsTest(unittest.TestCase):
+    def test_parse_json_string_invalid_inputs(self):
+        none_item = None
+        empty_json = ''
+        invalid_json = '{"allApiTestsPassed":'
+        invalid_json_v2 = '{"err'
+        self.assertEqual(None, AbstractTestResults.parse_json_string(none_item))
+        self.assertEqual(None, AbstractTestResults.parse_json_string(empty_json))
+        self.assertEqual(None, AbstractTestResults.parse_json_string(invalid_json))
+        self.assertEqual(None, AbstractTestResults.parse_json_string(invalid_json_v2))
+
+    def test_parse_json_string_valid_input(self):
+        test_string = '{"failures": ["fail1", "fail2"], "errors": []}'
+        test_dict = {"failures": ["fail1", "fail2"], "errors": []}
+
+        self.assertEqual(test_dict, AbstractTestResults.parse_json_string(test_string))

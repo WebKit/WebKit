@@ -22,14 +22,20 @@
 
 import logging
 
-from webkitpy.common.net.jsctestresults import JSCTestResults
-from webkitpy.tool.bot.abstracttestresultsreader import AbstractTestResultsReader
-
 _log = logging.getLogger(__name__)
 
 
-class JSCTestResultsReader(AbstractTestResultsReader):
+class AbstractTestResultsReader(object):
+    def __init__(self, host, results_directory):
+        self._host = host
+        self._results_directory = results_directory
+
+    def _read_file_contents(self, path):
+        try:
+            return self._host.filesystem.read_text_file(path)
+        except (IOError, KeyError):
+            _log.error('File could not be read: %s' % path)
+            return None
+
     def results(self):
-        results_path = self._host.filesystem.join(self._results_directory, 'jsc_test_results.json')
-        contents = self._read_file_contents(results_path)
-        return JSCTestResults.results_from_string(contents)
+        raise NotImplementedError("subclasses must implement")

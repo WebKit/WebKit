@@ -20,12 +20,24 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import json
 import logging
 
 _log = logging.getLogger(__name__)
 
 
 class AbstractTestResults(object):
+    @classmethod
+    def parse_json_string(cls, string):
+        if not string:
+            return None
+
+        try:
+            return json.loads(string)
+        except ValueError:
+            _log.error('Invalid JSON results')
+            return None
+
     def failing_tests(self):
         raise NotImplementedError("subclasses must implement")
 
