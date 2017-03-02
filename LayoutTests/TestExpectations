@@ -218,7 +218,9 @@ webkit.org/b/132791 svg/as-object/sizing/svg-in-object-placeholder-height-auto.h
 
 webkit.org/b/133057 fast/table/border-collapsing/collapsed-borders-adjoining-sections.html [ ImageOnlyFailure ]
 
-webkit.org/b/142548 editing/selection/extend-by-character-007.html [ Failure ]
+webkit.org/b/169075 editing/selection/extend-by-character-007.html [ Failure ]
+webkit.org/b/169075 editing/selection/regional-indicators.html [ Failure ]
+webkit.org/b/169075 editing/deleting/skip-virama-001.html [ Failure ]
 
 # CSS Font Loading is not yet enabled on all platforms
 webkit.org/b/135390 fast/css/fontloader-download-error.html [ Skip ]
