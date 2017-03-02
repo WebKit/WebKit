@@ -1,3 +1,13 @@
+2017-03-02  Javier Fernandez  <jfernandez@igalia.com>
+
+        [GTK] Unreviewed test gardening
+        https://bugs.webkit.org/show_bug.cgi?id=169081
+
+        Unreviewed GTK+ gardening. Moved some failures to the GTK TestExpectations
+
+        * TestExpectations:
+        * platform/gtk/TestExpectations:
+
 2017-03-02  Tomas Popela  <tpopela@redhat.com>
 
         [WK2] Keyboard menu key should show context menu

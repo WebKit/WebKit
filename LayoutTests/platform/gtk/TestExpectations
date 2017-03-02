@@ -2918,6 +2918,9 @@ webkit.org/b/168572 js/dom/regress-157246.html [ Failure ]
 
 webkit.org/b/168719 fast/css/paint-order-shadow.html [ ImageOnlyFailure ]
 
+webkit.org/b/169075 editing/selection/regional-indicators.html [ Failure ]
+webkit.org/b/169075 editing/deleting/skip-virama-001.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing
 #////////////////////////////////////////////////////////////////////////////////////////
