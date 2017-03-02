@@ -3785,6 +3785,7 @@ fast/layers/prevent-hit-test-during-layout.html [ Skip ]
 
 # webrtc not supported
 imported/w3c/web-platform-tests/webrtc [ Skip ]
+webrtc [ Skip ]
 
 # Resource Timing networking data not yet available.
 imported/w3c/web-platform-tests/resource-timing/rt-nextHopProtocol.html [ Failure ]

@@ -30,8 +30,6 @@ function testImage()
 
         imageData = canvas.getContext('2d').getImageData(0, 0, canvas.width, canvas.height);
         assert_true(imageData.data.every( (pixel, index) => {
-            if (index % 4 === 3)
-                return pixel === 255;
             return pixel === 0;
         }));
 

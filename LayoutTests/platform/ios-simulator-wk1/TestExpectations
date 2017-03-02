@@ -7,6 +7,10 @@ fast/viewport/ios/ipad/width-is-device-width.html [ Pass ]
 
 editing/input/focus-change-with-marked-text.html [ Pass ]
 
+# Skip WebRTC for now in WK1
+imported/w3c/web-platform-tests/webrtc [ Skip ]
+webrtc [ Skip ]
+
 # <rdar://problem/6501130> LayoutTests: Enable editing tests after we support editing
 editing/deleting/4922367.html
 editing/deleting/5126166.html

@@ -12,18 +12,6 @@
 var localChannel;
 var remoteChannel;
 
-function startTest() {
-    createConnections((localConnection) => {
-        localChannel = localConnection.createDataChannel('sendDataChannel');
-        localChannel.onopen = () => { sendMessages(localChannel) };
-    }, (remoteConnection) => {
-        remoteConnection.ondatachannel = (event) => {
-            remoteChannel = event.channel;
-            remoteChannel.onmessage = receiveMessages;
-        };
-    });
-}
-
 function closeDataChannels() {
     localChannel.close();
     remoteChannel.close();
