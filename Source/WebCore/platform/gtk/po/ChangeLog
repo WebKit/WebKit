@@ -1,3 +1,9 @@
+2017-03-02  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed, restore inadvertently-removed non-breaking spaces in Polish translation
+
+        * pl.po:
+
 2017-03-02  Piotr Drąg  <piotrdrag@gmail.com>
 
         [l10n] Updated Polish translation of WebKitGTK+ for 2.16
