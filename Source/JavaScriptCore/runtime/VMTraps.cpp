@@ -34,22 +34,15 @@ void VMTraps::fireTrap(VMTraps::EventType eventType)
     setTrapForEvent(locker, eventType);
 }
 
-bool VMTraps::takeTrap(VMTraps::EventType eventType)
+auto VMTraps::takeTopPriorityTrap(VMTraps::Mask mask) -> EventType
 {
     auto locker = holdLock(m_lock);
-    if (hasTrapForEvent(locker, eventType)) {
-        clearTrapForEvent(locker, eventType);
-        return true;
-    }
-    return false;
-}
-
-auto VMTraps::takeTopPriorityTrap() -> EventType
-{
     for (int i = 0; i < NumberOfEventTypes; ++i) {
         EventType eventType = static_cast<EventType>(i);
-        if (takeTrap(eventType))
+        if (hasTrapForEvent(locker, eventType, mask)) {
+            clearTrapForEvent(locker, eventType);
             return eventType;
+        }
     }
     return Invalid;
 }

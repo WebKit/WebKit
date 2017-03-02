@@ -671,9 +671,9 @@ public:
     template<typename Func>
     void logEvent(CodeBlock*, const char* summary, const Func& func);
 
-    void handleTraps(ExecState*);
+    void handleTraps(ExecState*, VMTraps::Mask = VMTraps::Mask::allEventTypes());
 
-    bool needTrapHandling() { return m_traps.needTrapHandling(); }
+    bool needTrapHandling(VMTraps::Mask mask = VMTraps::Mask::allEventTypes()) { return m_traps.needTrapHandling(mask); }
     void* needTrapHandlingAddress() { return m_traps.needTrapHandlingAddress(); }
 
     void notifyNeedTermination() { m_traps.fireTrap(VMTraps::NeedTermination); }

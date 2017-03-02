@@ -861,7 +861,8 @@ failedJSONP:
     }
 
     if (UNLIKELY(vm.needTrapHandling())) {
-        vm.handleTraps(callFrame);
+        VMTraps::Mask mask(VMTraps::NeedTermination, VMTraps::NeedWatchdogCheck);
+        vm.handleTraps(callFrame, mask);
         RETURN_IF_EXCEPTION(throwScope, throwScope.exception());
     }
 
@@ -921,7 +922,8 @@ JSValue Interpreter::executeCall(CallFrame* callFrame, JSObject* function, CallT
         newCodeBlock = 0;
 
     if (UNLIKELY(vm.needTrapHandling())) {
-        vm.handleTraps(callFrame);
+        VMTraps::Mask mask(VMTraps::NeedTermination, VMTraps::NeedWatchdogCheck);
+        vm.handleTraps(callFrame, mask);
         RETURN_IF_EXCEPTION(throwScope, throwScope.exception());
     }
 
@@ -986,7 +988,8 @@ JSObject* Interpreter::executeConstruct(CallFrame* callFrame, JSObject* construc
         newCodeBlock = 0;
 
     if (UNLIKELY(vm.needTrapHandling())) {
-        vm.handleTraps(callFrame);
+        VMTraps::Mask mask(VMTraps::NeedTermination, VMTraps::NeedWatchdogCheck);
+        vm.handleTraps(callFrame, mask);
         RETURN_IF_EXCEPTION(throwScope, throwScope.exception());
     }
 
@@ -1050,7 +1053,8 @@ JSValue Interpreter::execute(CallFrameClosure& closure)
     StackStats::CheckPoint stackCheckPoint;
 
     if (UNLIKELY(vm.needTrapHandling())) {
-        vm.handleTraps(closure.oldCallFrame);
+        VMTraps::Mask mask(VMTraps::NeedTermination, VMTraps::NeedWatchdogCheck);
+        vm.handleTraps(closure.oldCallFrame, mask);
         RETURN_IF_EXCEPTION(throwScope, throwScope.exception());
     }
 
@@ -1153,7 +1157,8 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSValue
     }
 
     if (UNLIKELY(vm.needTrapHandling())) {
-        vm.handleTraps(callFrame);
+        VMTraps::Mask mask(VMTraps::NeedTermination, VMTraps::NeedWatchdogCheck);
+        vm.handleTraps(callFrame, mask);
         RETURN_IF_EXCEPTION(throwScope, throwScope.exception());
     }
 
@@ -1194,7 +1199,8 @@ JSValue Interpreter::execute(ModuleProgramExecutable* executable, CallFrame* cal
     }
 
     if (UNLIKELY(vm.needTrapHandling())) {
-        vm.handleTraps(callFrame);
+        VMTraps::Mask mask(VMTraps::NeedTermination, VMTraps::NeedWatchdogCheck);
+        vm.handleTraps(callFrame, mask);
         RETURN_IF_EXCEPTION(throwScope, throwScope.exception());
     }
 

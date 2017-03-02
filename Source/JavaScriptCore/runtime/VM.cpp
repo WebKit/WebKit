@@ -946,14 +946,17 @@ void VM::verifyExceptionCheckNeedIsSatisfied(unsigned recursionDepth, ExceptionE
 }
 #endif
 
-void VM::handleTraps(ExecState* exec)
+void VM::handleTraps(ExecState* exec, VMTraps::Mask mask)
 {
     auto scope = DECLARE_THROW_SCOPE(*this);
 
-    ASSERT(needTrapHandling());
-    while (needTrapHandling()) {
-        auto trapEventType = m_traps.takeTopPriorityTrap();
+    ASSERT(needTrapHandling(mask));
+    while (needTrapHandling(mask)) {
+        auto trapEventType = m_traps.takeTopPriorityTrap(mask);
         switch (trapEventType) {
+        case VMTraps::NeedDebuggerBreak:
+            RELEASE_ASSERT_NOT_REACHED();
+
         case VMTraps::NeedWatchdogCheck:
             ASSERT(m_watchdog);
             if (LIKELY(!m_watchdog->shouldTerminate(exec)))
