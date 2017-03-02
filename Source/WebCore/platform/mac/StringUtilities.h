@@ -25,18 +25,9 @@
 
 #pragma once
 
-#import <WebKit/WKDeclarationSpecifiers.h>
+#import "PlatformExportMacros.h"
 #import <wtf/Forward.h>
 
-namespace WebKit {
-
-#ifdef __OBJC__
-
-// NOTE: This does not use String::operator NSString*() since that function
-// expects to be called on the thread running WebCore.
-NSString *nsStringFromWebCoreString(const String&);
-NSString *formattedPhoneNumberString(NSString *originalPhoneNumber);
-
-#endif // defined(__OBJC__)
-
+namespace WebCore {
+WEBCORE_EXPORT bool stringMatchesWildcardString(const String& stringToBeMatched, const String& wildcardString);
 }

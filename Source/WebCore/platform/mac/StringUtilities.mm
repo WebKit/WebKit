@@ -23,20 +23,40 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#import "config.h"
+#import "StringUtilities.h"
 
-#import <WebKit/WKDeclarationSpecifiers.h>
-#import <wtf/Forward.h>
+#import <wtf/text/StringBuilder.h>
+#import <yarr/RegularExpression.h>
 
-namespace WebKit {
-
-#ifdef __OBJC__
-
-// NOTE: This does not use String::operator NSString*() since that function
-// expects to be called on the thread running WebCore.
-NSString *nsStringFromWebCoreString(const String&);
-NSString *formattedPhoneNumberString(NSString *originalPhoneNumber);
-
-#endif // defined(__OBJC__)
+namespace WebCore {
+    
+static String wildcardRegexPatternString(const String& string)
+{
+    String metaCharacters = ".|+?()[]{}^$";
+    UChar escapeCharacter = '\\';
+    UChar wildcardCharacter = '*';
+    
+    StringBuilder stringBuilder;
+    
+    stringBuilder.append('^');
+    for (unsigned i = 0; i < string.length(); i++) {
+        auto character = string[i];
+        if (metaCharacters.contains(character) || character == escapeCharacter)
+            stringBuilder.append(escapeCharacter);
+        else if (character == wildcardCharacter)
+            stringBuilder.append('.');
+        
+        stringBuilder.append(character);
+    }
+    stringBuilder.append('$');
+        
+    return stringBuilder.toString();
+}
+    
+bool stringMatchesWildcardString(const String& string, const String& wildcardString)
+{
+    return JSC::Yarr::RegularExpression(wildcardRegexPatternString(wildcardString), TextCaseInsensitive).match(string) != -1;
+}
 
 }

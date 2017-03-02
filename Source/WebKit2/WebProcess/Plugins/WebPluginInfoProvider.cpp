@@ -39,7 +39,9 @@
 #include <wtf/text/StringHash.h>
 
 #if PLATFORM(MAC)
-#include "StringUtilities.h"
+#include <WebCore/StringUtilities.h>
+
+using namespace WebCore;
 #endif
 
 namespace WebKit {

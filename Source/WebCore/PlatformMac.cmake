@@ -486,6 +486,7 @@ list(APPEND WebCore_SOURCES
     platform/mac/ScrollbarThemeMac.mm
     platform/mac/SerializedPlatformRepresentationMac.mm
     platform/mac/SoundMac.mm
+    platform/mac/StringUtilities.mm
     platform/mac/SuddenTermination.mm
     platform/mac/SystemSleepListenerMac.mm
     platform/mac/ThemeMac.mm

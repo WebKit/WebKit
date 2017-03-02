@@ -1,3 +1,17 @@
+2017-03-02  Aakash Jain  <aakash_jain@apple.com>
+
+        Move stringMatchesWildcardString from WebKit2 to WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=169065
+
+        Reviewed by Alexey Proskuryakov.
+
+        * WebCore.xcodeproj/project.pbxproj: Added StringUtilities.h and StringUtilities.mm
+        * PlatformMac.cmake: Added StringUtilities.mm
+        * platform/mac/StringUtilities.h: Added.
+        * platform/mac/StringUtilities.mm: Added.
+        (WebCore::wildcardRegexPatternString): Added.
+        (WebCore::stringMatchesWildcardString): Added.
+
 2017-02-28  Matt Rajca  <mrajca@apple.com>
 
         Media: send "did interfere with playback" events when the user pauses an autoplaying element

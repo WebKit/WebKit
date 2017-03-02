@@ -1,3 +1,15 @@
+2017-03-02  Aakash Jain  <aakash_jain@apple.com>
+
+        Move stringMatchesWildcardString from WebKit2 to WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=169065
+
+        Reviewed by Alexey Proskuryakov.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj: Moved StringUtilities.mm
+        * TestWebKitAPI/Tests/WebCore/StringUtilities.mm: Copied from Tools/TestWebKitAPI/Tests/WebKit2/mac/StringUtilities.mm.
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit2/mac/StringUtilities.mm: Removed.
+
 2017-02-28  Matt Rajca  <mrajca@apple.com>
 
         Media: send "did interfere with playback" events when the user pauses an autoplaying element
