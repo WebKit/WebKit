@@ -1,3 +1,19 @@
+2017-03-02  Andreas Kling  <akling@apple.com>
+
+        Don't keep dead resources in MemoryCache while under memory pressure.
+        <https://webkit.org/b/169070>
+
+        Reviewed by Antti Koivisto.
+
+        Have CachedResource::deleteIfPossible() remove the resource from the MemoryCache
+        if we're under memory pressure and that was the only thing keeping it alive.
+
+        This is consistent with the policy where dead resources are evicted from the cache
+        as we come under pressure.
+
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::deleteIfPossible):
+
 2017-03-01  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r213062): [SOUP] UTF-8 filename in Content-Disposition header incorrectly handled since r213062
