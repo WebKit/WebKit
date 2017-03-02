@@ -1,5 +1,20 @@
 2017-03-01  Antoine Quint  <graouts@apple.com>
 
+        [mac-wk1] LayoutTest media/modern-media-controls/tracks-button/tracks-button.html is a flaky timeout
+        https://bugs.webkit.org/show_bug.cgi?id=168476
+        <rdar://problem/30799198>
+
+        Reviewed by Jon Lee.
+
+        Write all tests as asynchronous assertions to improve robustness. Since this test should no longer be flaky,
+        mark it as Pass on platforms where it was marked as flaky.
+
+        * media/modern-media-controls/tracks-button/tracks-button-expected.txt:
+        * media/modern-media-controls/tracks-button/tracks-button.html:
+        * platform/mac-wk1/TestExpectations:
+
+2017-03-01  Antoine Quint  <graouts@apple.com>
+
         [mac-wk1] LayoutTest media/modern-media-controls/airplay-button/airplay-button.html is a flaky timeout
         https://bugs.webkit.org/show_bug.cgi?id=168409
         <rdar://problem/30799198>

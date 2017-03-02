@@ -7,8 +7,8 @@ PASS tracksButton.element.localName is "button"
 PASS tracksButton.element.classList.contains("icon") is true
 PASS tracksButton.element.classList.contains("tracks") is true
 PASS tracksButton.iconName is "media-selection"
-PASS tracksButton.element.style.webkitMaskImage.includes("macOS/media-selection@") is true
-PASS fullscreenTracksButton.element.style.webkitMaskImage.includes("macOS/media-selection-fullscreen@") is true
+PASS tracksButton.element.style.webkitMaskImage.includes("macOS/media-selection@") became true
+PASS fullscreenTracksButton.element.style.webkitMaskImage.includes("macOS/media-selection-fullscreen@") became true
 PASS successfullyParsed is true
 
 TEST COMPLETE

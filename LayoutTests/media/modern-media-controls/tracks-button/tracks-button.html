@@ -17,15 +17,9 @@ shouldBeEqualToString("tracksButton.iconName", `${Icons.Tracks}`);
 
 const fullscreenTracksButton = new TracksButton({ layoutTraits: LayoutTraits.macOS | LayoutTraits.Fullscreen });
 
-scheduler.frameDidFire = function()
-{
-    if ([tracksButton, fullscreenTracksButton].some(button => button.width == 0))
-        return;
-
-    shouldBeTrue('tracksButton.element.style.webkitMaskImage.includes("macOS/media-selection@")');
-    shouldBeTrue('fullscreenTracksButton.element.style.webkitMaskImage.includes("macOS/media-selection-fullscreen@")');
-    finishMediaControlsTest();
-};
+shouldBecomeEqual('tracksButton.element.style.webkitMaskImage.includes("macOS/media-selection@")', "true", () => {
+    shouldBecomeEqual('fullscreenTracksButton.element.style.webkitMaskImage.includes("macOS/media-selection-fullscreen@")', "true", finishJSTest);
+});
 
 </script>
 <script src="../../../resources/js-test-post.js"></script>

@@ -322,4 +322,3 @@ webkit.org/b/167127 pointer-lock/locked-element-removed-from-dom.html
 webkit.org/b/167857 pageoverlay/overlay-remove-reinsert-view.html [ Skip ]
 
 webkit.org/b/168378 media/modern-media-controls/media-controller/media-controller-resize.html [ Pass Failure ]
-webkit.org/b/168476 media/modern-media-controls/tracks-button/tracks-button.html [ Pass Timeout ]
