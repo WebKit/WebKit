@@ -1,5 +1,18 @@
 2017-03-01  Antoine Quint  <graouts@apple.com>
 
+        LayoutTest media/modern-media-controls/pip-button/pip-button.html is a flaky timeout
+        https://bugs.webkit.org/show_bug.cgi?id=167350
+        <rdar://problem/30799132>
+
+        Reviewed by Jon Lee.
+
+        Write both tests as asynchronous assertions to improve robustness.
+
+        * media/modern-media-controls/pip-button/pip-button-expected.txt:
+        * media/modern-media-controls/pip-button/pip-button.html:
+
+2017-03-01  Antoine Quint  <graouts@apple.com>
+
         [mac-wk1] LayoutTest media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-buttons-styles.html is a flaky timeout
         https://bugs.webkit.org/show_bug.cgi?id=168934
         <rdar://problem/30798593>

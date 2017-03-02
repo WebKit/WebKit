@@ -17,15 +17,12 @@ shouldBeEqualToString("pipButton.iconName", `${Icons.EnterPiP}`);
 
 const iOSPiPButton = new PiPButton({ layoutTraits: LayoutTraits.iOS });
 
-scheduler.frameDidFire = function()
-{
-    if ([pipButton, iOSPiPButton].some(button => button.width == 0))
-        return;
-
-    shouldBeTrue('pipButton.element.style.webkitMaskImage.includes("macOS/pip-in@")');
-    shouldBeTrue('iOSPiPButton.element.style.webkitMaskImage.includes("iOS/pip-in@")');
-    finishMediaControlsTest();
-};
+shouldBecomeEqual('pipButton.element.style.webkitMaskImage.includes("macOS/pip-in@")', "true", () => {
+    shouldBecomeEqual('iOSPiPButton.element.style.webkitMaskImage.includes("iOS/pip-in@")', "true", () => {
+        debug("");
+        finishJSTest();
+    });
+});
 
 </script>
 <script src="../../../resources/js-test-post.js"></script>

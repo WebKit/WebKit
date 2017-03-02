@@ -7,8 +7,9 @@ PASS pipButton.element.localName is "button"
 PASS pipButton.element.classList.contains("icon") is true
 PASS pipButton.element.classList.contains("pip") is true
 PASS pipButton.iconName is "pip-in"
-PASS pipButton.element.style.webkitMaskImage.includes("macOS/pip-in@") is true
-PASS iOSPiPButton.element.style.webkitMaskImage.includes("iOS/pip-in@") is true
+PASS pipButton.element.style.webkitMaskImage.includes("macOS/pip-in@") became true
+PASS iOSPiPButton.element.style.webkitMaskImage.includes("iOS/pip-in@") became true
+
 PASS successfullyParsed is true
 
 TEST COMPLETE
