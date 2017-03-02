@@ -1,3 +1,18 @@
+2017-03-01  Chris Dumez  <cdumez@apple.com>
+
+        [WK2][!NETWORK_SESSION] Failure to download when using a download attribute with no value on an anchor
+        https://bugs.webkit.org/show_bug.cgi?id=169060
+        <rdar://problem/30773140>
+
+        Reviewed by Darin Adler.
+
+        In the !NETWORK_SESSION code path, we were failing to use the suggested filename coming from the
+        network layer in the case where the download attribute is present but has no value. We were ending
+        up passing an empty string as suggested filename to Safari which is not handled properly.
+
+        * UIProcess/Downloads/DownloadProxy.cpp:
+        (WebKit::DownloadProxy::decideDestinationWithSuggestedFilename):
+
 2017-02-28  Matt Rajca  <mrajca@apple.com>
 
         Media: notify clients when autoplayed media is muted

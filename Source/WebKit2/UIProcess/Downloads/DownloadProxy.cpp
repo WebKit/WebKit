@@ -201,7 +201,7 @@ void DownloadProxy::decideDestinationWithSuggestedFilename(const String& filenam
     if (!m_processPool)
         return;
 
-    String suggestedFilename = MIMETypeRegistry::appendFileExtensionIfNecessary(m_suggestedFilename.isNull() ? filename : m_suggestedFilename, mimeType);
+    String suggestedFilename = MIMETypeRegistry::appendFileExtensionIfNecessary(m_suggestedFilename.isEmpty() ? filename : m_suggestedFilename, mimeType);
     destination = m_processPool->downloadClient().decideDestinationWithSuggestedFilename(m_processPool.get(), this, suggestedFilename, allowOverwrite);
 
     if (!destination.isNull())
