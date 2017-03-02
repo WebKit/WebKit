@@ -1,3 +1,16 @@
+2017-03-02  Keith Miller  <keith_miller@apple.com>
+
+        WebAssemblyFunction should have Function.prototype as its prototype
+        https://bugs.webkit.org/show_bug.cgi?id=169101
+
+        Reviewed by Filip Pizlo.
+
+        Per https://github.com/WebAssembly/design/blob/master/JS.md#exported-function-exotic-objects our JSWebAssemblyFunction
+        objects should have Function.prototype as their prototype.
+
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+
 2017-03-02  Mark Lam  <mark.lam@apple.com>
 
         Add Options::alwaysCheckTraps() and Options::usePollingTraps() options.
