@@ -512,8 +512,7 @@ private:
         case WasmAddress: {
             WasmAddressValue* wasmAddress = address->as<WasmAddressValue>();
             Value* pointer = wasmAddress->child(0);
-            ASSERT(Arg::isValidIndexForm(1, offset, width));
-            if (m_locked.contains(pointer))
+            if (!Arg::isValidIndexForm(1, offset, width) || m_locked.contains(pointer))
                 return fallback();
 
             // FIXME: We should support ARM64 LDR 32-bit addressing, which will

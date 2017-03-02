@@ -1,3 +1,18 @@
+2017-03-02  Keith Miller  <keith_miller@apple.com>
+
+        Fix addressing mode for B3WasmAddress
+        https://bugs.webkit.org/show_bug.cgi?id=169092
+
+        Reviewed by Filip Pizlo.
+
+        Fix the potential addressing modes for B3WasmAddress. ARM does not
+        support a base + index*1 + offset addressing mode. I think when I
+        read it the first time I assumed it would always work on both ARM
+        and X86. While true for X86 it's not true for ARM.
+
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::effectiveAddr):
+
 2017-03-02  Mark Lam  <mark.lam@apple.com>
 
         Add support for selective handling of VM traps.
