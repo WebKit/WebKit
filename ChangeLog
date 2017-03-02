@@ -1,3 +1,11 @@
+2017-03-01  Andy Estes  <aestes@apple.com>
+
+        Build libwebrtc as part of the All Source scheme in WebKit.xcworkspace.
+
+        Rubber-stamped by Tim Horton.
+
+        * WebKit.xcworkspace/xcshareddata/xcschemes/All Source.xcscheme:
+
 2017-02-26  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Bump GTK+ versions numbers.
