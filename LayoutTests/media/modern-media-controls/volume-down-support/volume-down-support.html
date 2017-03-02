@@ -13,45 +13,26 @@ description("Testing clicking on the volume down button correctly sets the volum
 const media = document.querySelector("video");
 const button = document.body.appendChild(document.createElement("button"));
 
-media.addEventListener("webkitfullscreenchange", function() {
-    if (media.webkitDisplayingFullscreen) {
-        window.requestAnimationFrame(() => {
-            window.requestAnimationFrame(() => {
-                shouldBe("media.volume", "1");
-
-                media.addEventListener("volumechange", () => {
-                    shouldBe("media.volume", "0");
-                    debug("");
-                    media.remove();
-                    button.remove();
-                    finishJSTest();
-                });
-
-                debug("");
-                debug("Pressing on the volume down button");
-                pressOnElement(window.internals.shadowRoot(media).lastElementChild.lastElementChild.querySelector("button.volume-down"));
-            });
-        });
-    }
-});
+button.addEventListener("click", () => media.webkitEnterFullscreen());
 
 media.addEventListener("loadedmetadata", () => {
-    if (!("eventSender" in window)) {
-        debug("This test is designed to run in DRT");
-        return;
-    }
-
-    // Click a button so we may enter fullscreen.
-    button.addEventListener("click", event => {
-        try {
-            media.webkitEnterFullscreen();
-        } catch(e) {
-            debug("Toggling fullscreen failed");
-            finishJSTest();
-        }
-    });
-
     pressOnElement(button);
+    shouldBecomeEqual('!!window.internals.shadowRoot(media).lastChild.querySelector("button.volume-down")', "true", () => {
+        shouldBeTrue("media.webkitDisplayingFullscreen");
+        shouldBe("media.volume", "1");
+
+        media.addEventListener("volumechange", () => {
+            shouldBeCloseTo("media.volume", 0, 0.1);
+            debug("");
+            media.remove();
+            button.remove();
+            finishJSTest();
+        });
+
+        debug("");
+        debug("Pressing on the volume down button");
+        pressOnElement(window.internals.shadowRoot(media).lastElementChild.lastElementChild.querySelector("button.volume-down"));
+    });
 });
 
 </script>

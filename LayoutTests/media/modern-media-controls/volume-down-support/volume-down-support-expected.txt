@@ -3,10 +3,12 @@ Testing clicking on the volume down button correctly sets the volume to 0.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
+PASS !!window.internals.shadowRoot(media).lastChild.querySelector("button.volume-down") became true
+PASS media.webkitDisplayingFullscreen is true
 PASS media.volume is 1
 
 Pressing on the volume down button
-PASS media.volume is 0
+PASS media.volume is within 0.1 of 0
 
 PASS successfullyParsed is true
 

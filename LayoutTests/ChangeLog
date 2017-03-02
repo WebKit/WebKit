@@ -1,5 +1,20 @@
 2017-03-01  Antoine Quint  <graouts@apple.com>
 
+        LayoutTest media/modern-media-controls/volume-down-support/volume-down-support.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=168935
+        <rdar://problem/30796699>
+
+        Reviewed by Dean Jackson.
+
+        Use asynchronous assertions to guarantee we've entered fullscreen and the volume down button
+        is present and leave a little room for error when checking the volume since we would sometime
+        see a value of 0.009 rather than 0.
+
+        * media/modern-media-controls/volume-down-support/volume-down-support-expected.txt:
+        * media/modern-media-controls/volume-down-support/volume-down-support.html:
+
+2017-03-01  Antoine Quint  <graouts@apple.com>
+
         [mac-wk1] LayoutTest media/modern-media-controls/seek-backward-support/seek-backward-support.html is a flaky timeout
         https://bugs.webkit.org/show_bug.cgi?id=165386
         <rdar://problem/30793480>
