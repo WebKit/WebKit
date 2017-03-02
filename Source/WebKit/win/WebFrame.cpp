@@ -1067,7 +1067,7 @@ void WebFrame::invalidate()
     ASSERT(coreFrame);
 
     if (Document* document = coreFrame->document())
-        document->resolveStyle(Style::Force);
+        document->resolveStyle(WebCore::Document::ResolveStyleType::Rebuild);
 }
 
 HRESULT WebFrame::inViewSourceMode(BOOL* flag)

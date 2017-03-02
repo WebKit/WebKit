@@ -1,5 +1,12 @@
 2017-03-01  Alex Christensen  <achristensen@webkit.org>
 
+        Actually fix Windows build.
+
+        * platform/graphics/win/MediaPlayerPrivateMediaFoundation.h:
+        Win32Handle is now in WTF namespace.
+
+2017-03-01  Alex Christensen  <achristensen@webkit.org>
+
         Fix WinCairo build after r213214
         https://bugs.webkit.org/show_bug.cgi?id=168908
 

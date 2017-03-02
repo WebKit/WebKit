@@ -245,9 +245,9 @@ private:
         Direct3DPresenter* m_presenter { nullptr };
 
         DWORD m_threadID { 0 };
-        Win32Handle m_schedulerThread;
-        Win32Handle m_threadReadyEvent;
-        Win32Handle m_flushEvent;
+        WTF::Win32Handle m_schedulerThread;
+        WTF::Win32Handle m_threadReadyEvent;
+        WTF::Win32Handle m_flushEvent;
 
         float m_playbackRate { 1.0f };
         MFTIME m_frameDuration { 0 };
