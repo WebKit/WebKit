@@ -1,5 +1,20 @@
 2017-03-01  Antoine Quint  <graouts@apple.com>
 
+        [mac-wk1] LayoutTest media/modern-media-controls/seek-backward-support/seek-backward-support.html is a flaky timeout
+        https://bugs.webkit.org/show_bug.cgi?id=165386
+        <rdar://problem/30793480>
+
+        Reviewed by Jon Lee.
+
+        We rewrite the test to use asynchronous assertions and key off the various steps needed to enter fullscreen
+        and start pressing the skip back button. We also no longer expect a specific currentTime to be reached but
+        only check that pressing the skip back button eventually gets us far enough in the past.
+
+        * media/modern-media-controls/seek-backward-support/seek-backward-support-expected.txt:
+        * media/modern-media-controls/seek-backward-support/seek-backward-support.html:
+
+2017-03-01  Antoine Quint  <graouts@apple.com>
+
         LayoutTest media/modern-media-controls/seek-forward-support/seek-forward-support.html is a flaky timeout
         https://bugs.webkit.org/show_bug.cgi?id=168943
         <rdar://problem/30796542>
