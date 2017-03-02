@@ -1,15 +1,14 @@
-<html>
-    <head>
-        <script>
-            function requestAccess()
-            {
-                var options = { audio: false, video: true };
-                navigator.mediaDevices.getUserMedia(options)
-                    .then(stream => { console.log("Got user media"); })
-                    .catch(error => { console.log(error); });
-            }
-        </script>
-    </head>
-    <body>
-    </body>
-</html>
+<script>
+function gotUserMedia(mediaStream)
+{
+    console.log("Got user media");
+}
+
+function userMediaError(error)
+{
+    console.log(error);
+}
+
+var options = { audio: false, video: true};
+navigator.webkitGetUserMedia(options, gotUserMedia, userMediaError);
+</script>

@@ -2327,11 +2327,6 @@ void Document::prepareForDestruction()
     }
 #endif
 
-    if (page() && m_mediaState != MediaProducer::IsNotPlaying) {
-        m_mediaState = MediaProducer::IsNotPlaying;
-        page()->updateIsPlayingMedia(HTMLMediaElementInvalidID);
-    }
-
     detachFromFrame();
 
     m_hasPreparedForDestruction = true;

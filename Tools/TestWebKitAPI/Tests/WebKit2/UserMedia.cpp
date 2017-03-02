@@ -25,24 +25,15 @@
 #include "PlatformUtilities.h"
 #include "PlatformWebView.h"
 #include "Test.h"
-#include <WebKit/WKPagePrivate.h>
-#include <WebKit/WKPreferencesRef.h>
-#include <WebKit/WKPreferencesRefPrivate.h>
 #include <WebKit/WKRetainPtr.h>
 #include <string.h>
 #include <vector>
 
 namespace TestWebKitAPI {
 
-static bool wasPrompted;
-static bool isPlayingChanged;
-static bool didFinishLoad;
+static bool done;
 
-static void nullJavaScriptCallback(WKSerializedScriptValueRef, WKErrorRef error, void*)
-{
-}
-
-static void decidePolicyForUserMediaPermissionRequestCallBack(WKPageRef, WKFrameRef, WKSecurityOriginRef, WKSecurityOriginRef, WKUserMediaPermissionRequestRef permissionRequest, const void* /* clientInfo */)
+void decidePolicyForUserMediaPermissionRequestCallBack(WKPageRef, WKFrameRef, WKSecurityOriginRef, WKSecurityOriginRef, WKUserMediaPermissionRequestRef permissionRequest, const void* /* clientInfo */)
 {
     WKRetainPtr<WKArrayRef> audioDeviceUIDs = WKUserMediaPermissionRequestAudioDeviceUIDs(permissionRequest);
     WKRetainPtr<WKArrayRef> videoDeviceUIDs = WKUserMediaPermissionRequestVideoDeviceUIDs(permissionRequest);
@@ -63,73 +54,27 @@ static void decidePolicyForUserMediaPermissionRequestCallBack(WKPageRef, WKFrame
         WKUserMediaPermissionRequestAllow(permissionRequest, audioDeviceUID.get(), videoDeviceUID.get());
     }
 
-    wasPrompted = true;
+    done = true;
 }
 
-static void isPlayingDidChangeCallback(WKPageRef page, const void*)
-{
-    isPlayingChanged = true;
-}
-
-static void didFinishLoadForFrame(WKPageRef page, WKFrameRef, WKTypeRef, const void*)
-{
-    didFinishLoad = true;
-}
-
-TEST(WebKit2, UserMediaBasic)
+TEST(WebKit2, DISABLED_UserMediaBasic)
 {
     auto context = adoptWK(WKContextCreate());
-
-    WKRetainPtr<WKPageGroupRef> pageGroup(AdoptWK, WKPageGroupCreateWithIdentifier(Util::toWK("GetUserMedia").get()));
-    WKPreferencesRef preferences = WKPageGroupGetPreferences(pageGroup.get());
-    WKPreferencesSetMediaStreamEnabled(preferences, true);
-    WKPreferencesSetFileAccessFromFileURLsAllowed(preferences, true);
-    WKPreferencesSetMediaCaptureRequiresSecureConnection(preferences, false);
-    WKPreferencesSetMockCaptureDevicesEnabled(preferences, true);
-
-    WKPageLoaderClientV0 loaderClient;
-    memset(&loaderClient, 0, sizeof(loaderClient));
-    loaderClient.base.version = 0;
-    loaderClient.didFinishLoadForFrame = didFinishLoadForFrame;
-
-    WKPageUIClientV6 uiClient;
+    PlatformWebView webView(context.get());
+    WKPageUIClientV5 uiClient;
     memset(&uiClient, 0, sizeof(uiClient));
-    uiClient.base.version = 6;
-    uiClient.isPlayingAudioDidChange = isPlayingDidChangeCallback;
+
+
+    uiClient.base.version = 5;
     uiClient.decidePolicyForUserMediaPermissionRequest = decidePolicyForUserMediaPermissionRequestCallBack;
 
-    PlatformWebView webView(context.get(), pageGroup.get());
     WKPageSetPageUIClient(webView.page(), &uiClient.base);
-    WKPageSetPageLoaderClient(webView.page(), &loaderClient.base);
 
+    done = false;
     auto url = adoptWK(Util::createURLForResource("getUserMedia", "html"));
-    ASSERT(url.get());
     WKPageLoadURL(webView.page(), url.get());
-    Util::run(&didFinishLoad);
 
-    WKMediaState captureState = WKPageGetMediaState(webView.page());
-    EXPECT_FALSE(captureState & kWKMediaHasActiveVideoCaptureDevice);
-    EXPECT_FALSE(captureState & kWKMediaHasActiveAudioCaptureDevice);
-
-    WKPageRunJavaScriptInMainFrame(webView.page(), Util::toWK("requestAccess()").get(), 0, nullJavaScriptCallback);
-    Util::run(&wasPrompted);
-
-    captureState = WKPageGetMediaState(webView.page());
-    if (!(captureState & kWKMediaHasActiveVideoCaptureDevice)) {
-        Util::run(&isPlayingChanged);
-        captureState = WKPageGetMediaState(webView.page());
-    }
-
-    EXPECT_TRUE(captureState & kWKMediaHasActiveVideoCaptureDevice);
-    EXPECT_FALSE(captureState & kWKMediaHasActiveAudioCaptureDevice);
-
-    isPlayingChanged = false;
-    WKPageLoadURL(webView.page(), adoptWK(Util::createURLForResource("simple", "html")).get());
-    Util::run(&isPlayingChanged);
-
-    captureState = WKPageGetMediaState(webView.page());
-    EXPECT_FALSE(captureState & kWKMediaHasActiveVideoCaptureDevice);
-    EXPECT_FALSE(captureState & kWKMediaHasActiveAudioCaptureDevice);
+    Util::run(&done);
 }
 
 } // namespace TestWebKitAPI

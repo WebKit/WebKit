@@ -1,3 +1,17 @@
+2017-03-02  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r213281.
+
+        This change caused API test WebKit2.UserMediaBasic to time
+        out.
+
+        Reverted changeset:
+
+        "[MediaStream] UIClient may not be notified of capture state
+        change when leaving a page"
+        https://bugs.webkit.org/show_bug.cgi?id=169014
+        http://trac.webkit.org/changeset/213281
+
 2017-03-02  Jon Lee  <jonlee@apple.com>
 
         Improve consistency of captions rendering on Mac
