@@ -1,3 +1,26 @@
+2017-03-02  Jon Lee  <jonlee@apple.com>
+
+        Improve consistency of captions rendering on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=169071
+
+        Reviewed by Eric Carlson.
+
+        * page/CaptionUserPreferencesMediaAF.h:
+        (WebCore::CaptionUserPreferencesMediaAF::captionsEdgeColorForTextColor): Deleted.
+        (WebCore::CaptionUserPreferencesMediaAF::cssPropertyWithTextEdgeColor): Deleted.
+
+        * page/CaptionUserPreferencesMediaAF.cpp:
+        (WebCore::appendCSS): Helper function to add a CSS rule with a provided StringBuilder.
+        (WebCore::CaptionUserPreferencesMediaAF::windowRoundedCornerRadiusCSS): Refactor to use
+        appendCSS.
+        (WebCore::CaptionUserPreferencesMediaAF::colorPropertyCSS): Ditto.
+        (WebCore::CaptionUserPreferencesMediaAF::captionsTextEdgeCSS): Update text edge styles.
+        - Add a blur to the shadow
+        - Drop shadow style includes 1px text border
+        - Always use black for the text edge color
+        Also convert the stroke rules to using the CSS property and values instead of straight strings.
+        (WebCore::CaptionUserPreferencesMediaAF::captionsStyleSheetOverride): Fly-by fix of a typo.
+
 2017-03-02  Chris Dumez  <cdumez@apple.com>
 
         Download attribute set to "*\" save file with name "example.com"

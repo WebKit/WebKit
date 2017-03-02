@@ -327,6 +327,16 @@ String CaptionUserPreferencesMediaAF::captionsTextColorCSS() const
 
     return colorPropertyCSS(CSSPropertyColor, textColor, important);
 }
+
+static void appendCSS(StringBuilder& builder, CSSPropertyID id, const String& value, bool important)
+{
+    builder.append(getPropertyNameString(id));
+    builder.append(':');
+    builder.append(value);
+    if (important)
+        builder.appendLiteral(" !important");
+    builder.append(';');
+}
     
 String CaptionUserPreferencesMediaAF::windowRoundedCornerRadiusCSS() const
 {
@@ -336,58 +346,14 @@ String CaptionUserPreferencesMediaAF::windowRoundedCornerRadiusCSS() const
         return emptyString();
 
     StringBuilder builder;
-    builder.append(getPropertyNameString(CSSPropertyBorderRadius));
-    builder.append(String::format(":%.02fpx", radius));
-    if (behavior == kMACaptionAppearanceBehaviorUseValue)
-        builder.appendLiteral(" !important");
-    builder.append(';');
-
-    return builder.toString();
-}
-    
-Color CaptionUserPreferencesMediaAF::captionsEdgeColorForTextColor(const Color& textColor) const
-{
-    int distanceFromWhite = differenceSquared(textColor, Color::white);
-    int distanceFromBlack = differenceSquared(textColor, Color::black);
-    
-    if (distanceFromWhite < distanceFromBlack)
-        return textColor.dark();
-    
-    return textColor.light();
-}
-
-String CaptionUserPreferencesMediaAF::cssPropertyWithTextEdgeColor(CSSPropertyID id, const String& value, const Color& textColor, bool important) const
-{
-    StringBuilder builder;
-    
-    builder.append(getPropertyNameString(id));
-    builder.append(':');
-    builder.append(value);
-    builder.append(' ');
-    builder.append(captionsEdgeColorForTextColor(textColor).serialized());
-    if (important)
-        builder.appendLiteral(" !important");
-    builder.append(';');
-    if (id == CSSPropertyWebkitTextStroke) {
-        builder.append(" paint-order: stroke;");
-        builder.append(" stroke-linejoin: round;");
-        builder.append(" stroke-linecap: round;");
-    }
-    
+    appendCSS(builder, CSSPropertyBorderRadius, String::format("%.02fpx", radius), behavior == kMACaptionAppearanceBehaviorUseValue);
     return builder.toString();
 }
 
 String CaptionUserPreferencesMediaAF::colorPropertyCSS(CSSPropertyID id, const Color& color, bool important) const
 {
     StringBuilder builder;
-    
-    builder.append(getPropertyNameString(id));
-    builder.append(':');
-    builder.append(color.serialized());
-    if (important)
-        builder.appendLiteral(" !important");
-    builder.append(';');
-    
+    appendCSS(builder, id, color.serialized(), important);
     return builder.toString();
 }
 
@@ -417,38 +383,37 @@ String CaptionUserPreferencesMediaAF::strokeWidth() const
 
 String CaptionUserPreferencesMediaAF::captionsTextEdgeCSS() const
 {
-    static NeverDestroyed<const String> edgeStyleRaised(ASCIILiteral(" -.05em -.05em 0 "));
-    static NeverDestroyed<const String> edgeStyleDepressed(ASCIILiteral(" .05em .05em 0 "));
-    static NeverDestroyed<const String> edgeStyleDropShadow(ASCIILiteral(" .075em .075em 0 "));
-
-    bool unused;
-    Color color = captionsTextColor(unused);
-    if (!color.isValid())
-        color = Color { Color::black };
-    color = captionsEdgeColorForTextColor(color);
+    static NeverDestroyed<const String> edgeStyleRaised(ASCIILiteral(" -.1em -.1em .16em "));
+    static NeverDestroyed<const String> edgeStyleDepressed(ASCIILiteral(" .1em .1em .16em "));
+    static NeverDestroyed<const String> edgeStyleDropShadow(ASCIILiteral(" 0 .1em .16em "));
 
     MACaptionAppearanceBehavior behavior;
     MACaptionAppearanceTextEdgeStyle textEdgeStyle = MACaptionAppearanceGetTextEdgeStyle(kMACaptionAppearanceDomainUser, &behavior);
-    switch (textEdgeStyle) {
-    case kMACaptionAppearanceTextEdgeStyleUndefined:
-    case kMACaptionAppearanceTextEdgeStyleNone:
-        return emptyString();
-            
-    case kMACaptionAppearanceTextEdgeStyleRaised:
-        return cssPropertyWithTextEdgeColor(CSSPropertyTextShadow, edgeStyleRaised, color, behavior == kMACaptionAppearanceBehaviorUseValue);
-    case kMACaptionAppearanceTextEdgeStyleDepressed:
-        return cssPropertyWithTextEdgeColor(CSSPropertyTextShadow, edgeStyleDepressed, color, behavior == kMACaptionAppearanceBehaviorUseValue);
-    case kMACaptionAppearanceTextEdgeStyleDropShadow:
-        return cssPropertyWithTextEdgeColor(CSSPropertyTextShadow, edgeStyleDropShadow, color, behavior == kMACaptionAppearanceBehaviorUseValue);
-    case kMACaptionAppearanceTextEdgeStyleUniform:
-        return cssPropertyWithTextEdgeColor(CSSPropertyWebkitTextStroke, strokeWidth(), color, behavior == kMACaptionAppearanceBehaviorUseValue);
     
-    default:
-        ASSERT_NOT_REACHED();
-        break;
+    if (textEdgeStyle == kMACaptionAppearanceTextEdgeStyleUndefined || textEdgeStyle == kMACaptionAppearanceTextEdgeStyleNone)
+        return emptyString();
+
+    StringBuilder builder;
+    bool important = behavior == kMACaptionAppearanceBehaviorUseValue;
+    if (textEdgeStyle == kMACaptionAppearanceTextEdgeStyleRaised)
+        appendCSS(builder, CSSPropertyTextShadow, makeString(edgeStyleRaised.get(), " black"), important);
+    else if (textEdgeStyle == kMACaptionAppearanceTextEdgeStyleDepressed)
+        appendCSS(builder, CSSPropertyTextShadow, makeString(edgeStyleDepressed.get(), " black"), important);
+    else if (textEdgeStyle == kMACaptionAppearanceTextEdgeStyleDropShadow)
+        appendCSS(builder, CSSPropertyTextShadow, makeString(edgeStyleDropShadow.get(), " black"), important);
+
+    if (textEdgeStyle == kMACaptionAppearanceTextEdgeStyleDropShadow || textEdgeStyle == kMACaptionAppearanceTextEdgeStyleUniform) {
+        if (textEdgeStyle == kMACaptionAppearanceTextEdgeStyleDropShadow)
+            appendCSS(builder, CSSPropertyWebkitTextStroke, ".03em black", important);
+        else
+            appendCSS(builder, CSSPropertyWebkitTextStroke, makeString(strokeWidth(), " black"), important);
+
+        appendCSS(builder, CSSPropertyPaintOrder, getValueName(CSSValueStroke), important);
+        appendCSS(builder, CSSPropertyStrokeLinejoin, getValueName(CSSValueRound), important);
+        appendCSS(builder, CSSPropertyStrokeLinecap, getValueName(CSSValueRound), important);
     }
     
-    return emptyString();
+    return builder.toString();
 }
 
 String CaptionUserPreferencesMediaAF::captionsDefaultFontCSS() const
@@ -620,7 +585,7 @@ String CaptionUserPreferencesMediaAF::captionsStyleSheetOverride() const
     }
 #endif // HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
 
-    LOG(Media, "CaptionUserPreferencesMediaAF::captionsStyleSheetOverrideSetting sytle to:\n%s", captionsOverrideStyleSheet.toString().utf8().data());
+    LOG(Media, "CaptionUserPreferencesMediaAF::captionsStyleSheetOverrideSetting style to:\n%s", captionsOverrideStyleSheet.toString().utf8().data());
 
     return captionsOverrideStyleSheet.toString();
 }
