@@ -128,6 +128,12 @@ void UserMediaProcessManager::willCreateMediaStream(UserMediaPermissionRequestMa
     }
 
     unsigned currentExtensions = state.sandboxExtensionsGranted();
+
+#if ENABLE(WEB_RTC) && USE(LIBWEBRTC)
+    if (currentExtensions == ProcessState::SandboxExtensionsGranted::None && (withAudio || withVideo))
+        proxy.page().process().send(Messages::WebPage::DisableICECandidateFiltering(), proxy.page().pageID());
+#endif
+
     if (!(requiredExtensions & currentExtensions)) {
         SandboxExtension::HandleArray handles;
         handles.allocate(extensionCount);
@@ -191,6 +197,11 @@ void UserMediaProcessManager::endedCaptureSession(UserMediaPermissionRequestMana
 
     if (params.isEmpty())
         return;
+
+#if ENABLE(WEB_RTC) && USE(LIBWEBRTC)
+    if (currentExtensions == ProcessState::SandboxExtensionsGranted::None && proxy.page().preferences().iceCandidateFilteringEnabled())
+        proxy.page().process().send(Messages::WebPage::EnableICECandidateFiltering(), proxy.page().pageID());
+#endif
 
     state.setSandboxExtensionsGranted(currentExtensions);
     proxy.page().process().send(Messages::WebPage::RevokeUserMediaDeviceSandboxExtensions(params), proxy.page().pageID());

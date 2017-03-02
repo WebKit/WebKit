@@ -1541,6 +1541,26 @@ bool WKPreferencesGetMockCaptureDevicesEnabled(WKPreferencesRef preferencesRef)
     return toImpl(preferencesRef)->mockCaptureDevicesEnabled();
 }
 
+void WKPreferencesSetICECandidateFilteringEnabled(WKPreferencesRef preferencesRef, bool enabled)
+{
+    toImpl(preferencesRef)->setICECandidateFilteringEnabled(enabled);
+}
+
+bool WKPreferencesGetICECandidateFilteringEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->iceCandidateFilteringEnabled();
+}
+
+void WKPreferencesSetEnumeratingAllNetworkInterfacesEnabled(WKPreferencesRef preferencesRef, bool enabled)
+{
+    toImpl(preferencesRef)->setEnumeratingAllNetworkInterfacesEnabled(enabled);
+}
+
+bool WKPreferencesGetEnumeratingAllNetworkInterfacesEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->enumeratingAllNetworkInterfacesEnabled();
+}
+
 void WKPreferencesSetMediaCaptureRequiresSecureConnection(WKPreferencesRef preferencesRef, bool enabled)
 {
     toImpl(preferencesRef)->setMediaCaptureRequiresSecureConnection(enabled);

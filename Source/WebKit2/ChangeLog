@@ -1,3 +1,37 @@
+2017-03-02  Youenn Fablet  <youenn@apple.com>
+
+        [WebRTC] Activate ICE candidate privacy policy
+        https://bugs.webkit.org/show_bug.cgi?id=168975
+
+        Reviewed by Alex Christensen.
+
+        Disabling network enumeration by default.
+        Enabling ICE candidate filtering by default.
+        Chaning ICE candidate filtering according userMediaAccess policy:
+        - If access is denied, filtering is on.
+        - If access is granted, filtering is off.
+
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+        * Shared/WebPreferencesDefinitions.h:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetICECandidateFilteringEnabled):
+        (WKPreferencesGetICECandidateFilteringEnabled):
+        (WKPreferencesSetEnumeratingAllNetworkInterfacesEnabled):
+        (WKPreferencesGetEnumeratingAllNetworkInterfacesEnabled):
+        * UIProcess/API/C/WKPreferencesRefPrivate.h:
+        * UIProcess/UserMediaPermissionRequestManagerProxy.cpp:
+        (WebKit::toWebCore):
+        (WebKit::UserMediaPermissionRequestManagerProxy::userMediaAccessWasGranted):
+        * UIProcess/UserMediaProcessManager.cpp:
+        (WebKit::UserMediaProcessManager::willCreateMediaStream):
+        (WebKit::UserMediaProcessManager::endedCaptureSession):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::creationParameters):
+        * WebProcess/WebPage/WebPage.cpp:
+
 2017-03-02  Tomas Popela  <tpopela@redhat.com>
 
         [WK2] Keyboard menu key should show context menu

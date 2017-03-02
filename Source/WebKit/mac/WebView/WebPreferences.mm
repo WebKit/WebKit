@@ -2834,6 +2834,26 @@ static NSString *classIBCreatorID = nil;
     [self _setBoolValue:flag forKey:WebKitMockCaptureDevicesEnabledPreferenceKey];
 }
 
+- (BOOL)enumeratingAllNetworkInterfacesEnabled
+{
+    return [self _boolValueForKey:WebKitEnumeratingAllNetworkInterfacesEnabledPreferenceKey];
+}
+
+- (void)setEnumeratingAllNetworkInterfacesEnabled:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitEnumeratingAllNetworkInterfacesEnabledPreferenceKey];
+}
+
+- (BOOL)iceCandidateFilteringEnabled
+{
+    return [self _boolValueForKey:WebKitICECandidateFilteringEnabledPreferenceKey];
+}
+
+- (void)setIceCandidateFilteringEnabled:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitICECandidateFilteringEnabledPreferenceKey];
+}
+
 - (BOOL)mediaCaptureRequiresSecureConnection
 {
     return [self _boolValueForKey:WebKitMediaCaptureRequiresSecureConnectionPreferenceKey];

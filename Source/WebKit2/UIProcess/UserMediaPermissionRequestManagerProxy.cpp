@@ -157,7 +157,7 @@ static uint64_t toWebCore(UserMediaPermissionRequestProxy::UserMediaAccessDenial
         return static_cast<uint64_t>(UserMediaRequest::MediaAccessDenialReason::OtherFailure);
         break;
     }
-    
+
     ASSERT_NOT_REACHED();
     return static_cast<uint64_t>(UserMediaRequest::MediaAccessDenialReason::OtherFailure);
 }

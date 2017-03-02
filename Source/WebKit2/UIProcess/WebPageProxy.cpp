@@ -5571,11 +5571,9 @@ WebPageCreationParameters WebPageProxy::creationParameters()
     parameters.overrideContentSecurityPolicy = m_overrideContentSecurityPolicy;
 
 #if ENABLE(WEB_RTC)
-    // FIXME: We should tie ICE filtering with getUserMedia permission.
-    parameters.disableICECandidateFiltering = true;
+    parameters.iceCandidateFilteringEnabled = m_preferences->iceCandidateFilteringEnabled();
 #if USE(LIBWEBRTC)
-    // FIXME: Turn down network interface enumeration by default.
-    parameters.enableEnumeratingAllNetworkInterfaces = true;
+    parameters.enumeratingAllNetworkInterfacesEnabled = m_preferences->enumeratingAllNetworkInterfacesEnabled();
 #endif
 #endif
 

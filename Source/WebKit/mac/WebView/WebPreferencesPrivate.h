@@ -496,6 +496,12 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification;
 - (void)setMockCaptureDevicesEnabled:(BOOL)flag;
 - (BOOL)mockCaptureDevicesEnabled;
 
+- (void)setEnumeratingAllNetworkInterfacesEnabled:(BOOL)flag;
+- (BOOL)enumeratingAllNetworkInterfacesEnabled;
+
+- (void)setIceCandidateFilteringEnabled:(BOOL)flag;
+- (BOOL)iceCandidateFilteringEnabled;
+
 - (void)setMediaCaptureRequiresSecureConnection:(BOOL)flag;
 - (BOOL)mediaCaptureRequiresSecureConnection;
 

@@ -1,3 +1,18 @@
+2017-03-02  Youenn Fablet  <youenn@apple.com>
+
+        [WebRTC] Activate ICE candidate privacy policy
+        https://bugs.webkit.org/show_bug.cgi?id=168975
+
+        Reviewed by Alex Christensen.
+
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.mm:
+        (-[WebPreferences enumeratingAllNetworkInterfacesEnabled]):
+        (-[WebPreferences setEnumeratingAllNetworkInterfacesEnabled:]):
+        (-[WebPreferences iceCandidateFilteringEnabled]):
+        (-[WebPreferences setIceCandidateFilteringEnabled:]):
+        * WebView/WebPreferencesPrivate.h:
+
 2017-03-01  Alex Christensen  <achristensen@webkit.org>
 
         Unreviewed, rolling out r213259.

@@ -553,10 +553,10 @@ WebPage::WebPage(uint64_t pageID, WebPageCreationParameters&& parameters)
 #endif
 
 #if ENABLE(WEB_RTC)
-    if (parameters.disableICECandidateFiltering)
+    if (!parameters.iceCandidateFilteringEnabled)
         disableICECandidateFiltering();
 #if USE(LIBWEBRTC)
-    if (parameters.enableEnumeratingAllNetworkInterfaces)
+    if (parameters.enumeratingAllNetworkInterfacesEnabled)
         enableEnumeratingAllNetworkInterfaces();
 #endif
 #endif

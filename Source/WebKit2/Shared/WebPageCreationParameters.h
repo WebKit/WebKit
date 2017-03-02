@@ -147,9 +147,9 @@ struct WebPageCreationParameters {
     String overrideContentSecurityPolicy;
 
 #if ENABLE(WEB_RTC)
-    bool disableICECandidateFiltering { false };
+    bool iceCandidateFilteringEnabled { true };
 #if USE(LIBWEBRTC)
-    bool enableEnumeratingAllNetworkInterfaces { false };
+    bool enumeratingAllNetworkInterfacesEnabled { false };
 #endif
 #endif
 };

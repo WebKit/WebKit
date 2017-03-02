@@ -1,3 +1,18 @@
+2017-03-02  Youenn Fablet  <youenn@apple.com>
+
+        [WebRTC] Activate ICE candidate privacy policy
+        https://bugs.webkit.org/show_bug.cgi?id=168975
+
+        Reviewed by Alex Christensen.
+
+        Test: webrtc/datachannel/filter-ice-candidate.html
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::Internals): Disabling ICE candidate filtering by default for rwt.
+        (WebCore::Internals::setICECandidateFiltering):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2017-03-02  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] UIClient may not be notified of capture state change when leaving a page

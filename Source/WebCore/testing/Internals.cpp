@@ -460,6 +460,12 @@ Internals::Internals(Document& document)
 #if ENABLE(WEB_RTC)
     enableMockMediaEndpoint();
     useMockRTCPeerConnectionFactory(String());
+#if USE(LIBWEBRTC)
+    if (document.page()) {
+        document.page()->libWebRTCProvider().enableEnumeratingAllNetworkInterfaces();
+        document.page()->rtcController().disableICECandidateFiltering();
+    }
+#endif
 #endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
@@ -1164,6 +1170,19 @@ void Internals::useMockRTCPeerConnectionFactory(const String& testCase)
 #else
     UNUSED_PARAM(testCase);
 #endif
+}
+
+void Internals::setICECandidateFiltering(bool enabled)
+{
+    Document* document = contextDocument();
+    auto* page = document->page();
+    if (!page)
+        return;
+    auto& rtcController = page->rtcController();
+    if (enabled)
+        rtcController.enableICECandidateFiltering();
+    else
+        rtcController.disableICECandidateFiltering();
 }
 
 #endif

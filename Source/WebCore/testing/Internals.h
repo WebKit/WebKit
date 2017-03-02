@@ -398,6 +398,7 @@ public:
     void enableMockMediaEndpoint();
     void emulateRTCPeerConnectionPlatformEvent(RTCPeerConnection&, const String& action);
     void useMockRTCPeerConnectionFactory(const String&);
+    void setICECandidateFiltering(bool);
 #endif
 
     String getImageSourceURL(Element&);
