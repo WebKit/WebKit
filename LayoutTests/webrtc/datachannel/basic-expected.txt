@@ -1,4 +1,6 @@
 
 PASS Basic data channel exchange from offerer to receiver 
 PASS Basic data channel exchange from receiver to offerer 
+PASS Basic data channel exchange from offerer to receiver using UDP only 
+PASS Basic data channel exchange from offerer to receiver using TCP only 
 

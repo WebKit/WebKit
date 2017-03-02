@@ -8,9 +8,6 @@
     <script src ="routines.js"></script>
     <script>
     var test = async_test(() => {
-        if (window.internals)
-            internals.useMockRTCPeerConnectionFactory("TwoRealPeerConnections");
-
         if (window.testRunner)
             testRunner.setUserMediaPermission(true);
 
@@ -19,10 +16,13 @@
         var heardBip = false;
 
         navigator.mediaDevices.getUserMedia({audio: true}).then((stream) => {
+            if (window.internals)
+                internals.useMockRTCPeerConnectionFactory("TwoRealPeerConnections");
+
             createConnections((firstConnection) => {
                 firstConnection.addStream(stream);
             }, (secondConnection) => {
-                secondConnection.onaddstream = (streamEvent) => { 
+                secondConnection.onaddstream = (streamEvent) => {
                     var context = new webkitAudioContext();
                     var sourceNode = context.createMediaStreamSource(streamEvent.stream);
                     var analyser = context.createAnalyser();
@@ -60,15 +60,15 @@
                             done();
                     };
 
-                    var done = () => {
+                    var done = test.step_func_done(() => {
                         clearTimeout(timeout);
                         clearInterval(interval);
 
-                        assert_true(heardHum);
-                        assert_true(heardBip);
-                        assert_true(heardBop);
+                        assert_true(heardHum, "heard hum");
+                        assert_true(heardBip, "heard bip");
+                        assert_true(heardBop, "heard bop");
                         test.done();
-                    };
+                    };);
 
                     var timeout = setTimeout(done, 3000);
                     var interval = setInterval(analyse, 1000 / 30);

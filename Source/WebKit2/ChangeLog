@@ -1,3 +1,13 @@
+2017-03-02  Youenn Fablet  <youenn@apple.com>
+
+        Activate some new webrtc tests
+        https://bugs.webkit.org/show_bug.cgi?id=168850
+
+        Reviewed by Alex Christensen.
+
+        * Shared/WebPreferencesDefinitions.h: Activating peer connection by default when libwebrtc is on.
+        This allows ensuring the network process will have its sandbox extension.
+
 2017-03-02  Brian Burg  <bburg@apple.com>
 
         Web Automation: _WKAutomationSessionDelegate should work with WKWebViews
