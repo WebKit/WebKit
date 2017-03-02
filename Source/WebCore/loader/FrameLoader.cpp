@@ -2430,6 +2430,11 @@ void FrameLoader::detachChildren()
     // https://html.spec.whatwg.org/multipage/browsers.html#unload-a-document
     IgnoreOpensDuringUnloadCountIncrementer ignoreOpensDuringUnloadCountIncrementer(m_frame.document());
 
+    // Any subframe inserted by unload event handlers executed in the loop below will not get unloaded
+    // because we create a copy of the subframes list before looping. Therefore, it would be unsafe to
+    // allow loading of subframes at this point.
+    SubframeLoadingDisabler subframeLoadingDisabler(m_frame.document());
+
     Vector<Ref<Frame>, 16> childrenToDetach;
     childrenToDetach.reserveInitialCapacity(m_frame.tree().childCount());
     for (Frame* child = m_frame.tree().lastChild(); child; child = child->tree().previousSibling())
