@@ -618,6 +618,7 @@ private:
 } // namespace WebKit
 
 #if ENABLE(DATA_INTERACTION)
+
 @implementation WebUITextIndicatorData
 
 @synthesize dataInteractionImage=_dataInteractionImage;
@@ -1786,7 +1787,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
 - (void)_setDataInteractionData:(CGImageRef)image textIndicator:(std::optional<TextIndicatorData>)indicatorData atClientPosition:(CGPoint)clientPosition anchorPoint:(CGPoint)anchorPoint action:(uint64_t)action
 {
     if (indicatorData)
-        _private->textIndicatorData = [[[WebUITextIndicatorData alloc] initWithImage:image TextIndicatorData:indicatorData.value() scale:_private->page->deviceScaleFactor()] retain];
+        _private->textIndicatorData = [[[WebUITextIndicatorData alloc] initWithImage:image textIndicatorData:indicatorData.value() scale:_private->page->deviceScaleFactor()] retain];
     else
         _private->textIndicatorData = [[[WebUITextIndicatorData alloc] initWithImage:image scale:_private->page->deviceScaleFactor()] retain];
 }

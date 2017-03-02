@@ -212,6 +212,8 @@ WebViewLayerFlushScheduler::WebViewLayerFlushScheduler(LayerFlushController* flu
     [formDelegateForwarder release];
     [_caretChangeListeners release];
     [_fixedPositionContent release];
+#endif
+#if ENABLE(DATA_INTERACTION)
     [textIndicatorData release];
 #endif
 

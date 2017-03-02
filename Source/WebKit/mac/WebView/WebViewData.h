@@ -284,8 +284,12 @@ private:
     int32_t didDrawTiles;
     WTF::Lock pendingFixedPositionLayoutRectMutex;
     CGRect pendingFixedPositionLayoutRect;
+#endif
+    
+#if ENABLE(DATA_INTERACTION)
     WebUITextIndicatorData *textIndicatorData;
 #endif
+
 
 #if !PLATFORM(IOS)
     // WebKit has both a global plug-in database and a separate, per WebView plug-in database. Dashboard uses the per WebView database.
