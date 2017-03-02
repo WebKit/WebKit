@@ -1,3 +1,10 @@
+2017-03-01  Alex Christensen  <achristensen@webkit.org>
+
+        Fix WinCairo build after r213214
+        https://bugs.webkit.org/show_bug.cgi?id=168908
+
+        * platform/graphics/win/MediaPlayerPrivateMediaFoundation.h:
+
 2017-03-01  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Implement font-stretch for installed fonts

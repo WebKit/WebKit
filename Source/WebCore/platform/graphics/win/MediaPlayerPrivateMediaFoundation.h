@@ -24,8 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MediaPlayerPrivateMediaFoundation_h
-#define MediaPlayerPrivateMediaFoundation_h
+#pragma once
 
 #include "COMPtr.h"
 #include "MediaPlayerPrivate.h"
@@ -43,7 +42,7 @@
 #include <wtf/Lock.h>
 #include <wtf/ThreadingPrimitives.h>
 #include <wtf/WeakPtr.h>
-#include <wtf/Win32Handle.h>
+#include <wtf/win/Win32Handle.h>
 
 namespace WebCore {
 
@@ -483,5 +482,3 @@ private:
 };
 
 }
-
-#endif
