@@ -21,15 +21,9 @@ mutedButton.muted = true;
 shouldBeTrue("mutedButton.muted");
 shouldBeEqualToString("mutedButton.iconName", `${Icons.VolumeMuted}`);
 
-scheduler.frameDidFire = function()
-{
-    if ([muteButton, mutedButton].some(button => button.width == 0))
-        return;
-
-    shouldBeTrue('muteButton.element.style.webkitMaskImage.includes("macOS/volume@")');
-    shouldBeTrue('mutedButton.element.style.webkitMaskImage.includes("macOS/volume-mute@")');
-    finishMediaControlsTest();
-};
+shouldBecomeEqual('muteButton.element.style.webkitMaskImage.includes("macOS/volume@")', "true", () => {
+    shouldBecomeEqual('mutedButton.element.style.webkitMaskImage.includes("macOS/volume-mute@")', "true", finishJSTest);
+});
 
 </script>
 <script src="../../../resources/js-test-post.js"></script>

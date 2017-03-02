@@ -10,8 +10,8 @@ PASS muteButton.iconName is "volume"
 PASS muteButton.muted is false
 PASS mutedButton.muted is true
 PASS mutedButton.iconName is "volume-mute"
-PASS muteButton.element.style.webkitMaskImage.includes("macOS/volume@") is true
-PASS mutedButton.element.style.webkitMaskImage.includes("macOS/volume-mute@") is true
+PASS muteButton.element.style.webkitMaskImage.includes("macOS/volume@") became true
+PASS mutedButton.element.style.webkitMaskImage.includes("macOS/volume-mute@") became true
 PASS successfullyParsed is true
 
 TEST COMPLETE

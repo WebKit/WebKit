@@ -1,3 +1,16 @@
+2017-03-02  Antoine Quint  <graouts@apple.com>
+
+        [mac-wk1] LayoutTest media/modern-media-controls/mute-button/mute-button.html is a flaky timeout
+        https://bugs.webkit.org/show_bug.cgi?id=165320
+        <rdar://problem/30809600>
+
+        Reviewed by Dean Jackson.
+
+        Use asynchronous assertions to improve robustness.
+
+        * media/modern-media-controls/mute-button/mute-button-expected.txt:
+        * media/modern-media-controls/mute-button/mute-button.html:
+
 2017-03-02  Youenn Fablet  <youenn@apple.com>
 
         Activate some new webrtc tests
