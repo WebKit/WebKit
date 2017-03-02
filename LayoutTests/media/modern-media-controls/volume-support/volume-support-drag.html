@@ -25,62 +25,58 @@ const container = document.querySelector("div#host");
 const media = document.querySelector("video");
 const mediaController = createControls(container, media, null);
 
+const muteButton = mediaController.controls.muteButton.element;
+const volumeSlider = mediaController.controls.volumeSlider.children[1].element;
+
 debug("By default, the volume slider should be set to 0 because the media is muted");
 shouldBe("mediaController.controls.volumeSlider.value", "0");
 
-let numberOfFrames = 0;
-scheduler.frameDidFire = function() {
-    const muteButtonElement = mediaController.controls.muteButton.element;
-    const muteButtonBounds = muteButtonElement.getBoundingClientRect();
-    if (media.paused || muteButtonBounds.width === 0)
-        return;
-
-    numberOfFrames++;
-
-    if (numberOfFrames == 1) {
+media.addEventListener("play", () => {
+    media.pause();
+    shouldBecomeDifferent("muteButton.getBoundingClientRect().width", "0", () => {
+        const muteButtonBounds = muteButton.getBoundingClientRect();
         // Controls are now visible, let's hover over the mute button to make the volume control visible.
         eventSender.mouseMoveTo(muteButtonBounds.left + muteButtonBounds.width / 2, muteButtonBounds.top + muteButtonBounds.height / 2);
-    } else if (numberOfFrames == 2) {
-        // Volume slider is visible, let's start dragging in the middle of it.
-        const bounds = mediaController.controls.volumeSlider.children[1].element.getBoundingClientRect();
-        const centerX = bounds.left + bounds.width / 2;
-        const dragStartY = bounds.top + bounds.height / 2;
-        const dragEndY = bounds.top;
-        const delta = dragEndY - dragStartY;
-        const iterations = Math.abs(delta);
+        shouldBecomeDifferent("volumeSlider.getBoundingClientRect().width", "0", () => {
+            // Volume slider is visible, let's start dragging in the middle of it.
+            const bounds = volumeSlider.getBoundingClientRect();
+            const centerX = bounds.left + bounds.width / 2;
+            const dragStartY = bounds.top + bounds.height / 2;
+            const dragEndY = bounds.top;
+            const delta = dragEndY - dragStartY;
+            const iterations = Math.abs(delta);
 
-        debug("");
-        debug("Before starting to drag the volume slider, the media should be muted still");
-        shouldBeTrue("media.muted");
+            debug("");
+            debug("Before starting to drag the volume slider, the media should be muted still");
+            shouldBeTrue("media.muted");
 
-        eventSender.mouseMoveTo(centerX, dragStartY);
-        eventSender.mouseDown();
+            eventSender.mouseMoveTo(centerX, dragStartY);
+            eventSender.mouseDown();
 
-        debug("");
-        debug("We initiated a volume slider drag, the media should no longer be muted and the volume set");
-        shouldBeFalse("media.muted");
-        shouldBe("media.volume", "0.5");
+            debug("");
+            debug("We initiated a volume slider drag, the media should no longer be muted and the volume set");
+            shouldBecomeEqual("media.muted", "false", () => {
+                shouldBecomeEqual("media.volume", "0.5", () => {
+                    for (let i = 1; i <= iterations; ++i)
+                        eventSender.mouseMoveTo(bounds.left + bounds.width / 2, dragStartY + i * Math.sign(delta));
 
-        for (let i = 1; i <= iterations; ++i)
-            eventSender.mouseMoveTo(bounds.left + bounds.width / 2, dragStartY + i * Math.sign(delta));
+                    eventSender.mouseUp();
 
-        eventSender.mouseUp();
+                    debug("");
+                    debug("We finished dragging to set the volume to 1");
+                    shouldBecomeEqual("media.volume", "1", () => {
+                        // Ensure the volume slider remains visible.
+                        shouldBeTrue("mediaController.controls.volumeSlider.parent.visible");
 
-        debug("");
-        debug("We finished dragging to set the volume to 1");
-        shouldBe("media.volume", "1");
-
-        // Ensure the volume slider remains visible.
-        shouldBeTrue("mediaController.controls.volumeSlider.parent.visible");
-
-        container.remove();
-        media.remove();
-        finishMediaControlsTest();
-    }
-};
-
-// First, ensure controls are shown.
-mediaController.controls.showsStartButton = false;
+                        container.remove();
+                        media.remove();
+                        finishJSTest();
+                    });
+                });
+            });
+        });
+    });
+});
 
 </script>
 <script src="../../../resources/js-test-post.js"></script>
