@@ -30,13 +30,24 @@
 #import <Foundation/Foundation.h>
 #import <WebKit/WKBase.h>
 
+@class WKWebView;
 @class _WKAutomationSession;
 
 @protocol _WKAutomationSessionDelegate <NSObject>
 @optional
-- (WKPageRef)_automationSessionDidRequestNewWindow:(_WKAutomationSession *)automationSession;
+
 - (void)_automationSessionDidDisconnectFromRemote:(_WKAutomationSession *)automationSession;
 
+- (WKWebView *)_automationSessionDidRequestNewWebView:(_WKAutomationSession *)automationSession;
+- (BOOL)_automationSession:(_WKAutomationSession *)automationSession isShowingJavaScriptDialogForWebView:(WKWebView *)webView;
+- (void)_automationSession:(_WKAutomationSession *)automationSession dismissCurrentJavaScriptDialogForWebView:(WKWebView *)webView;
+- (void)_automationSession:(_WKAutomationSession *)automationSession acceptCurrentJavaScriptDialogForWebView:(WKWebView *)webView;
+- (NSString *)_automationSession:(_WKAutomationSession *)automationSession messageOfCurrentJavaScriptDialogForWebView:(WKWebView *)webView;
+- (void)_automationSession:(_WKAutomationSession *)automationSession setUserInput:(NSString *)value forCurrentJavaScriptDialogForWebView:(WKWebView *)webView;
+
+// FIXME: Objective-C delegate methods shouldn't use C API types like WKPageRef. We need to
+// migrate clients to use WKWebView, or expose the same behavior via a C SPI for those clients.
+- (WKPageRef)_automationSessionDidRequestNewWindow:(_WKAutomationSession *)automationSession;
 - (BOOL)_automationSession:(_WKAutomationSession *)automationSession isShowingJavaScriptDialogOnPage:(WKPageRef)page;
 - (void)_automationSession:(_WKAutomationSession *)automationSession dismissCurrentJavaScriptDialogOnPage:(WKPageRef)page;
 - (void)_automationSession:(_WKAutomationSession *)automationSession acceptCurrentJavaScriptDialogOnPage:(WKPageRef)page;

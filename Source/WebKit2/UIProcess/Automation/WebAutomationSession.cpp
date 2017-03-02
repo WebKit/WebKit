@@ -121,7 +121,7 @@ void WebAutomationSession::terminate()
 #endif
 
     if (m_client)
-        m_client->didDisconnectFromRemote(this);
+        m_client->didDisconnectFromRemote(*this);
 }
 
 WebPageProxy* WebAutomationSession::webPageProxyForHandle(const String& handle)
@@ -252,7 +252,7 @@ void WebAutomationSession::createBrowsingContext(Inspector::ErrorString& errorSt
     if (!m_client)
         FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InternalError, "The remote session could not request a new browsing context.");
 
-    WebPageProxy* page = m_client->didRequestNewWindow(this);
+    WebPageProxy* page = m_client->didRequestNewWindow(*this);
     if (!page)
         FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InternalError, "The remote session failed to create a new browsing context.");
 
@@ -531,7 +531,7 @@ void WebAutomationSession::isShowingJavaScriptDialog(Inspector::ErrorString& err
     if (!page)
         FAIL_WITH_PREDEFINED_ERROR(WindowNotFound);
 
-    *result = m_client->isShowingJavaScriptDialogOnPage(this, page);
+    *result = m_client->isShowingJavaScriptDialogOnPage(*this, *page);
 }
 
 void WebAutomationSession::dismissCurrentJavaScriptDialog(Inspector::ErrorString& errorString, const String& browsingContextHandle)
@@ -544,10 +544,10 @@ void WebAutomationSession::dismissCurrentJavaScriptDialog(Inspector::ErrorString
     if (!page)
         FAIL_WITH_PREDEFINED_ERROR(WindowNotFound);
 
-    if (!m_client->isShowingJavaScriptDialogOnPage(this, page))
+    if (!m_client->isShowingJavaScriptDialogOnPage(*this, *page))
         FAIL_WITH_PREDEFINED_ERROR(NoJavaScriptDialog);
 
-    m_client->dismissCurrentJavaScriptDialogOnPage(this, page);
+    m_client->dismissCurrentJavaScriptDialogOnPage(*this, *page);
 }
 
 void WebAutomationSession::acceptCurrentJavaScriptDialog(Inspector::ErrorString& errorString, const String& browsingContextHandle)
@@ -560,10 +560,10 @@ void WebAutomationSession::acceptCurrentJavaScriptDialog(Inspector::ErrorString&
     if (!page)
         FAIL_WITH_PREDEFINED_ERROR(WindowNotFound);
 
-    if (!m_client->isShowingJavaScriptDialogOnPage(this, page))
+    if (!m_client->isShowingJavaScriptDialogOnPage(*this, *page))
         FAIL_WITH_PREDEFINED_ERROR(NoJavaScriptDialog);
 
-    m_client->acceptCurrentJavaScriptDialogOnPage(this, page);
+    m_client->acceptCurrentJavaScriptDialogOnPage(*this, *page);
 }
 
 void WebAutomationSession::messageOfCurrentJavaScriptDialog(Inspector::ErrorString& errorString, const String& browsingContextHandle, String* text)
@@ -576,10 +576,10 @@ void WebAutomationSession::messageOfCurrentJavaScriptDialog(Inspector::ErrorStri
     if (!page)
         FAIL_WITH_PREDEFINED_ERROR(WindowNotFound);
 
-    if (!m_client->isShowingJavaScriptDialogOnPage(this, page))
+    if (!m_client->isShowingJavaScriptDialogOnPage(*this, *page))
         FAIL_WITH_PREDEFINED_ERROR(NoJavaScriptDialog);
 
-    *text = m_client->messageOfCurrentJavaScriptDialogOnPage(this, page);
+    *text = m_client->messageOfCurrentJavaScriptDialogOnPage(*this, *page);
 }
 
 void WebAutomationSession::setUserInputForCurrentJavaScriptPrompt(Inspector::ErrorString& errorString, const String& browsingContextHandle, const String& promptValue)
@@ -592,10 +592,10 @@ void WebAutomationSession::setUserInputForCurrentJavaScriptPrompt(Inspector::Err
     if (!page)
         FAIL_WITH_PREDEFINED_ERROR(WindowNotFound);
 
-    if (!m_client->isShowingJavaScriptDialogOnPage(this, page))
+    if (!m_client->isShowingJavaScriptDialogOnPage(*this, *page))
         FAIL_WITH_PREDEFINED_ERROR(NoJavaScriptDialog);
 
-    m_client->setUserInputForCurrentJavaScriptPromptOnPage(this, page, promptValue);
+    m_client->setUserInputForCurrentJavaScriptPromptOnPage(*this, *page, promptValue);
 }
 
 void WebAutomationSession::getAllCookies(ErrorString& errorString, const String& browsingContextHandle, Ref<GetAllCookiesCallback>&& callback)

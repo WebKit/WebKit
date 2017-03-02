@@ -43,20 +43,29 @@ public:
 
 private:
     // From API::AutomationSessionClient
-    WebPageProxy* didRequestNewWindow(WebAutomationSession*) override;
-    void didDisconnectFromRemote(WebAutomationSession *) override;
+    WebPageProxy* didRequestNewWindow(WebAutomationSession&) override;
+    void didDisconnectFromRemote(WebAutomationSession&) override;
 
-    bool isShowingJavaScriptDialogOnPage(WebAutomationSession*, WebPageProxy*) override;
-    void dismissCurrentJavaScriptDialogOnPage(WebAutomationSession*, WebPageProxy*) override;
-    void acceptCurrentJavaScriptDialogOnPage(WebAutomationSession*, WebPageProxy*) override;
-    String messageOfCurrentJavaScriptDialogOnPage(WebAutomationSession*, WebPageProxy*) override;
-    void setUserInputForCurrentJavaScriptPromptOnPage(WebAutomationSession*, WebPageProxy*, const String&) override;
+    bool isShowingJavaScriptDialogOnPage(WebAutomationSession&, WebPageProxy&) override;
+    void dismissCurrentJavaScriptDialogOnPage(WebAutomationSession&, WebPageProxy&) override;
+    void acceptCurrentJavaScriptDialogOnPage(WebAutomationSession&, WebPageProxy&) override;
+    String messageOfCurrentJavaScriptDialogOnPage(WebAutomationSession&, WebPageProxy&) override;
+    void setUserInputForCurrentJavaScriptPromptOnPage(WebAutomationSession&, WebPageProxy&, const String&) override;
 
     WeakObjCPtr<id <_WKAutomationSessionDelegate>> m_delegate;
 
     struct {
-        bool didRequestNewWindow : 1;
         bool didDisconnectFromRemote : 1;
+
+        bool didRequestNewWebView : 1;
+        bool isShowingJavaScriptDialogForWebView : 1;
+        bool dismissCurrentJavaScriptDialogForWebView : 1;
+        bool acceptCurrentJavaScriptDialogForWebView : 1;
+        bool messageOfCurrentJavaScriptDialogForWebView : 1;
+        bool setUserInputForCurrentJavaScriptPromptForWebView : 1;
+
+        // FIXME 28524687: these delegate methods should be removed.
+        bool didRequestNewWindow : 1;
         bool isShowingJavaScriptDialogOnPage : 1;
         bool dismissCurrentJavaScriptDialogOnPage : 1;
         bool acceptCurrentJavaScriptDialogOnPage : 1;

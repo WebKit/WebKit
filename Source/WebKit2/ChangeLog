@@ -1,3 +1,60 @@
+2017-03-02  Brian Burg  <bburg@apple.com>
+
+        Web Automation: _WKAutomationSessionDelegate should work with WKWebViews
+        https://bugs.webkit.org/show_bug.cgi?id=169091
+        <rdar://problem/30810538>
+
+        Reviewed by Tim Horton.
+
+        As a first step towards fixing the mistake of using WKPageRef in an Objective-C SPI,
+        add the correct delegate methods that take WKWebView so that Objective-C clients can
+        use this functionality.
+
+        In a future patch, we'll remove the WKPageRef delegate methods when they are no longer
+        being used by clients. Clients should switch to using WKWebView, or wait for a C SPI
+        with equivalent functionality (something like WKAutomationSessionClient) to be ported.
+
+        While I'm fixing this mess, make API::AutomationSessionClient use references instead
+        of pointers. We null-check all WebPageProxy parameters before calling its methods.
+
+        * UIProcess/API/APIAutomationSessionClient.h:
+        (API::AutomationSessionClient::didDisconnectFromRemote):
+        (API::AutomationSessionClient::didRequestNewWindow):
+        (API::AutomationSessionClient::isShowingJavaScriptDialogOnPage):
+        (API::AutomationSessionClient::dismissCurrentJavaScriptDialogOnPage):
+        (API::AutomationSessionClient::acceptCurrentJavaScriptDialogOnPage):
+        (API::AutomationSessionClient::messageOfCurrentJavaScriptDialogOnPage):
+        (API::AutomationSessionClient::setUserInputForCurrentJavaScriptPromptOnPage):
+        Change pointer to reference.
+
+        * UIProcess/API/Cocoa/_WKAutomationSessionDelegate.h:
+        Add duplicate delegate methods that take/return WKWebView instead of WKPageRef.
+        Adjust the delegate method names to reflect parameter type and avoid conflicts with the
+        WKPageRef-using methods that we need to remove eventually.
+
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::terminate):
+        (WebKit::WebAutomationSession::createBrowsingContext):
+        (WebKit::WebAutomationSession::isShowingJavaScriptDialog):
+        (WebKit::WebAutomationSession::dismissCurrentJavaScriptDialog):
+        (WebKit::WebAutomationSession::acceptCurrentJavaScriptDialog):
+        (WebKit::WebAutomationSession::messageOfCurrentJavaScriptDialog):
+        (WebKit::WebAutomationSession::setUserInputForCurrentJavaScriptPrompt):
+        Dereference `this` and `webPageProxy` when calling API::AutomationSessionClient methods.
+
+        * UIProcess/Cocoa/AutomationSessionClient.h:
+        * UIProcess/Cocoa/AutomationSessionClient.mm:
+        (WebKit::AutomationSessionClient::AutomationSessionClient):
+        (WebKit::AutomationSessionClient::didDisconnectFromRemote):
+        (WebKit::AutomationSessionClient::didRequestNewWindow):
+        (WebKit::AutomationSessionClient::isShowingJavaScriptDialogOnPage):
+        (WebKit::AutomationSessionClient::dismissCurrentJavaScriptDialogOnPage):
+        (WebKit::AutomationSessionClient::acceptCurrentJavaScriptDialogOnPage):
+        (WebKit::AutomationSessionClient::messageOfCurrentJavaScriptDialogOnPage):
+        (WebKit::AutomationSessionClient::setUserInputForCurrentJavaScriptPromptOnPage):
+        Now there are two possible delegate methods for most of these, so try to use the
+        WKWebView-based delegate method first and fall back to the WKPageRef delegate method.
+
 2017-03-02  Alex Christensen  <achristensen@webkit.org>
 
         Continue enabling WebRTC
