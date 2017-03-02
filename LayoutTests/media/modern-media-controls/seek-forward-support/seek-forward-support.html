@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <script src="../../../resources/js-test-pre.js"></script>
+<script src="../resources/media-controls-utils.js" type="text/javascript"></script>
 <body>
 <video src="../../content/test.mp4" style="width: 320px; height: 240px;" controls></video>
 <div id="shadow"></div>
@@ -7,58 +8,37 @@
 
 window.jsTestIsAsync = true;
 
-description("Testing the fast forward button in fullscreen.");
+description("Testing the forward button in fullscreen.");
 
 const media = document.querySelector("video");
 const button = document.body.appendChild(document.createElement("button"));
-let shadowRoot = window.internals.shadowRoot(media);
 
-media.addEventListener("webkitfullscreenchange", function() {
-    if (media.webkitDisplayingFullscreen) {
-        window.requestAnimationFrame(() => {
-            debug("Media entered fullscreen");
-            shouldBe("media.currentTime", "0");
-            shouldBeTrue("media.paused");
-
-            const forwardButtonElement = shadowRoot.lastChild.querySelector("button.forward");
-            forwardButtonElement.dispatchEvent(new MouseEvent("mousedown"));
-
-            setTimeout(() => {
-                debug("");
-                debug("Media was fast-forwarded for 1 second");
-                forwardButtonElement.dispatchEvent(new MouseEvent("mouseup"));
-
-                shouldBeGreaterThanOrEqual("media.currentTime", "1");
-                shouldBeTrue("media.paused");
-
-                debug("");
-                media.remove();
-                button.remove();
-                finishJSTest();
-            }, 1000);
-        });
-    }
-});
+button.addEventListener("click", () => media.webkitEnterFullscreen());
 
 media.addEventListener("loadedmetadata", () => {
-    if (!("eventSender" in window)) {
-        debug("This test is designed to run in DRT");
-        return;
-    }
+    pressOnElement(button);
+    shouldBecomeEqual('!!window.internals.shadowRoot(media).lastChild.querySelector("button.forward")', "true", () => {
+        shouldBeTrue("media.webkitDisplayingFullscreen");
+        debug("");
+        debug("Setting media.currentTime to 2s");
+        media.currentTime = 2;
+        shouldBe("media.currentTime", "2");
+        shouldBeTrue("media.paused");
 
-    // Click a button so we may enter fullscreen.
-    button.addEventListener("click", event => {
-        try {
-            media.webkitEnterFullscreen();
-        } catch(e) {
-            debug("Toggling fullscreen failed");
+        debug("");
+        debug("Starting to press on the skip forward button");
+        const forwardButtonElement = window.internals.shadowRoot(media).lastChild.querySelector("button.forward");
+        forwardButtonElement.dispatchEvent(new MouseEvent("mousedown"));
+
+        shouldBecomeEqual("media.currentTime > 2.5", "true", () => {
+            forwardButtonElement.dispatchEvent(new MouseEvent("mouseup"));
+            shouldBeTrue("media.paused");
+            debug("");
+            media.remove();
+            button.remove();
             finishJSTest();
-        }
+        });
     });
-
-    eventSender.mouseMoveTo(button.offsetLeft + 1, button.offsetTop + 1);
-    eventSender.mouseDown();
-    eventSender.mouseUp();
 });
 
 </script>

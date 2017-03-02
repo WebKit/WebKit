@@ -1,5 +1,20 @@
 2017-03-01  Antoine Quint  <graouts@apple.com>
 
+        LayoutTest media/modern-media-controls/seek-forward-support/seek-forward-support.html is a flaky timeout
+        https://bugs.webkit.org/show_bug.cgi?id=168943
+        <rdar://problem/30796542>
+
+        Reviewed by Jon Lee.
+
+        We rewrite the test to use asynchronous assertions and key off the various steps needed to enter fullscreen
+        and start pressing the skip forward button. We also no longer expect a specific currentTime to be reached but
+        only check that pressing the skip forward button eventually gets us far enough in the future.
+
+        * media/modern-media-controls/seek-forward-support/seek-forward-support-expected.txt:
+        * media/modern-media-controls/seek-forward-support/seek-forward-support.html:
+
+2017-03-01  Antoine Quint  <graouts@apple.com>
+
         Unskip media/modern-media-controls/audio/audio-controls-buttons.html
         https://bugs.webkit.org/show_bug.cgi?id=165234
         <rdar://problem/30282714>
