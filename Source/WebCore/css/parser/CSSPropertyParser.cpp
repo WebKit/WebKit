@@ -4631,8 +4631,13 @@ bool CSSPropertyParser::consumeFlex(bool important)
             flexGrow = 1;
         if (flexShrink == unsetValue)
             flexShrink = 1;
+        
+        // FIXME: Using % here is a hack to work around intrinsic sizing implementation being
+        // a mess (e.g., turned off for nested column flexboxes, failing to relayout properly even
+        // if turned back on for nested columns, etc.). We have layout test coverage of both
+        // scenarios.
         if (!flexBasis)
-            flexBasis = CSSPrimitiveValue::create(0, CSSPrimitiveValue::UnitType::CSS_PX);
+            flexBasis = CSSPrimitiveValue::create(0, CSSPrimitiveValue::UnitType::CSS_PERCENTAGE);
     }
 
     if (!m_range.atEnd())

@@ -1,3 +1,18 @@
+2017-03-02  Dave Hyatt  <hyatt@apple.com>
+
+        flex-basis should be 0% (not 0px) when omitted
+        https://bugs.webkit.org/show_bug.cgi?id=169100
+        rdar://problem/30429154
+
+        Reviewed by Dean Jackson.
+
+        * css3/flexbox/bug669714-expected.txt:
+        * css3/flexbox/columns-auto-size-expected.txt:
+        * css3/flexbox/flex-longhand-parsing-expected.txt:
+        * css3/flexbox/flex-longhand-parsing.html:
+        * css3/flexbox/flex-property-parsing-expected.txt:
+        * css3/flexbox/flex-property-parsing.html:
+
 2017-03-02  Ryan Haddad  <ryanhaddad@apple.com>
 
         Mark inspector/model/color.html as flaky.

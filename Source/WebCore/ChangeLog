@@ -1,3 +1,16 @@
+2017-03-02  Dave Hyatt  <hyatt@apple.com>
+
+        flex-basis should be 0% (not 0px) when omitted
+        https://bugs.webkit.org/show_bug.cgi?id=169100
+        rdar://problem/30429154
+
+        Reviewed by Dean Jackson.
+
+        Covered by existing tests.
+
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::CSSPropertyParser::consumeFlex):
+
 2017-02-22  Jiewen Tan  <jiewen_tan@apple.com>
 
         WebCrypto API support for AES-GCM

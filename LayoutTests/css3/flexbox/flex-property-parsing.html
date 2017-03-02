@@ -28,16 +28,16 @@ shouldBeEqualToString('flexitem.style.flex', '');
 shouldBeEqualToString('getComputedStyle(flexitem).flex', '0 1 auto');
 
 flexitem.style.flex = '2';
-shouldBeEqualToString('flexitem.style.flex', '2 1 0px');
-shouldBeEqualToString('getComputedStyle(flexitem).flex', '2 1 0px');
+shouldBeEqualToString('flexitem.style.flex', '2 1 0%');
+shouldBeEqualToString('getComputedStyle(flexitem).flex', '2 1 0%');
 
 flexitem.style.flex = '0';
-shouldBeEqualToString('flexitem.style.flex', '0 1 0px');
-shouldBeEqualToString('getComputedStyle(flexitem).flex', '0 1 0px');
+shouldBeEqualToString('flexitem.style.flex', '0 1 0%');
+shouldBeEqualToString('getComputedStyle(flexitem).flex', '0 1 0%');
 
 flexitem.style.flex = '1.5';
-shouldBeEqualToString('flexitem.style.flex', '1.5 1 0px');
-shouldBeEqualToString('getComputedStyle(flexitem).flex', '1.5 1 0px');
+shouldBeEqualToString('flexitem.style.flex', '1.5 1 0%');
+shouldBeEqualToString('getComputedStyle(flexitem).flex', '1.5 1 0%');
 
 flexitem.style.flex = 'auto';
 shouldBeEqualToString('flexitem.style.flex', '1 1 auto');
@@ -61,16 +61,16 @@ shouldBeEqualToString('flexitem.style.flex', '0 0 auto');
 shouldBeEqualToString('getComputedStyle(flexitem).flex', '0 0 auto');
 
 flexitem.style.flex = '0 0';
-shouldBeEqualToString('flexitem.style.flex', '0 0 0px');
-shouldBeEqualToString('getComputedStyle(flexitem).flex', '0 0 0px');
+shouldBeEqualToString('flexitem.style.flex', '0 0 0%');
+shouldBeEqualToString('getComputedStyle(flexitem).flex', '0 0 0%');
 
 flexitem.style.flex = '0 1';
-shouldBeEqualToString('flexitem.style.flex', '0 1 0px');
-shouldBeEqualToString('getComputedStyle(flexitem).flex', '0 1 0px');
+shouldBeEqualToString('flexitem.style.flex', '0 1 0%');
+shouldBeEqualToString('getComputedStyle(flexitem).flex', '0 1 0%');
 
 flexitem.style.flex = '1 0';
-shouldBeEqualToString('flexitem.style.flex', '1 0 0px');
-shouldBeEqualToString('getComputedStyle(flexitem).flex', '1 0 0px');
+shouldBeEqualToString('flexitem.style.flex', '1 0 0%');
+shouldBeEqualToString('getComputedStyle(flexitem).flex', '1 0 0%');
 
 flexitem.style.flex = '2 auto';
 shouldBeEqualToString('flexitem.style.flex', '2 1 auto');

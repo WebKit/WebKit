@@ -1,12 +1,5 @@
 
-FAIL .flexbox 1 assert_equals: 
-<div class="flexbox column vertical" style="margin-left: 100px;">
-  <div data-expected-width="50" data-offset-x="20" style="min-width: 0; flex: 1;"><div data-expected-width="50" data-offset-x="20" class="child-div" style="width: 50px"></div></div>
-  <div data-expected-width="0" data-offset-x="20" style="flex: 1;"></div>
-  <div data-expected-width="10" data-offset-x="10" style="width: 10px;"></div>
-  <div data-expected-width="10" data-offset-x="0" style="flex: 1 auto;"><div style="width: 10px"></div></div>
-</div>
-width expected 50 but got 0
+PASS .flexbox 1 
 PASS .flexbox 2 
 PASS .flexbox 3 
 PASS .flexbox 4 
@@ -15,13 +8,6 @@ PASS .flexbox 6
 PASS .flexbox 7 
 PASS .flexbox 8 
 PASS .flexbox 9 
-FAIL .flexbox 10 assert_equals: 
-<div class="flexbox column horizontal">
-  <div data-expected-height="0" data-offset-y="0" style="flex: 1;"></div>
-  <div data-expected-height="10" data-offset-y="0" style="height: 10px;"></div>
-  <div data-expected-height="10" data-offset-y="10" style="flex: 1 auto;"><div style="height: 10px"></div></div>
-  <div data-expected-height="10" data-offset-y="20" style="min-height: 0; flex: 1;"><div data-expected-height="10" data-offset-y="20" class="child-div" style="height: 10px"></div></div>
-</div>
-height expected 10 but got 0
+PASS .flexbox 10 
 PASS .flexbox 11 
 

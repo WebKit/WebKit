@@ -28,11 +28,11 @@ PASS flexitem.style.flexBasis is "auto"
 PASS getComputedStyle(flexitem).flex is "0 0 auto"
 PASS flexitem.style.flex is "1.5 0 auto"
 PASS getComputedStyle(flexitem).flex is "1.5 0 auto"
-PASS flexitem.style.flex is "3 1 0px"
+PASS flexitem.style.flex is "3 1 0%"
 PASS flexitem.style.flexGrow is "3"
 PASS flexitem.style.flexShrink is "1"
-PASS flexitem.style.flexBasis is "0px"
-PASS getComputedStyle(flexitem).flex is "3 1 0px"
+PASS flexitem.style.flexBasis is "0%"
+PASS getComputedStyle(flexitem).flex is "3 1 0%"
 PASS successfullyParsed is true
 
 TEST COMPLETE

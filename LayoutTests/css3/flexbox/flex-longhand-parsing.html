@@ -56,11 +56,11 @@ shouldBeEqualToString('flexitem.style.flex', '1.5 0 auto');
 shouldBeEqualToString('getComputedStyle(flexitem).flex', '1.5 0 auto');
 
 flexitem.style.flex = 3;
-shouldBeEqualToString('flexitem.style.flex', '3 1 0px');
+shouldBeEqualToString('flexitem.style.flex', '3 1 0%');
 shouldBeEqualToString('flexitem.style.flexGrow', '3');
 shouldBeEqualToString('flexitem.style.flexShrink', '1');
-shouldBeEqualToString('flexitem.style.flexBasis', '0px');
-shouldBeEqualToString('getComputedStyle(flexitem).flex', '3 1 0px');
+shouldBeEqualToString('flexitem.style.flexBasis', '0%');
+shouldBeEqualToString('getComputedStyle(flexitem).flex', '3 1 0%');
 
 </script>
 </body>
