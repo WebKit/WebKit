@@ -1,3 +1,11 @@
+2017-03-01  Alex Christensen  <achristensen@webkit.org>
+
+        Fix Windows build after r213266
+        https://bugs.webkit.org/show_bug.cgi?id=169049
+
+        * WebFrame.cpp:
+        (WebFrame::invalidate):
+
 2017-02-27  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] Http preload tests are failing.
