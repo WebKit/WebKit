@@ -1,3 +1,16 @@
+2017-03-02  Chris Dumez  <cdumez@apple.com>
+
+        Download attribute set to "*\" save file with name "example.com"
+        https://bugs.webkit.org/show_bug.cgi?id=169066
+        <rdar://problem/30740875>
+
+        Reviewed by Alex Christensen.
+
+        Add layout test coverage.
+
+        * fast/dom/HTMLAnchorElement/anchor-file-blob-download-includes-backslash-expected.txt: Added.
+        * fast/dom/HTMLAnchorElement/anchor-file-blob-download-includes-backslash.html: Added.
+
 2017-03-02  Youenn Fablet  <youenn@apple.com>
 
         [WebRTC] Activate ICE candidate privacy policy

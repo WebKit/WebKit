@@ -1,3 +1,26 @@
+2017-03-02  Chris Dumez  <cdumez@apple.com>
+
+        Download attribute set to "*\" save file with name "example.com"
+        https://bugs.webkit.org/show_bug.cgi?id=169066
+        <rdar://problem/30740875>
+
+        Reviewed by Alex Christensen.
+
+        The issue is that a backslash in recognized as an escaping character in
+        a quoted string as per RFC2616:
+        "
+        The backslash character ("\") MAY be used as a single-character
+        quoting mechanism only within quoted-string and comment constructs.
+        "
+
+        We therefore need to escape the backslashes in the filename before
+        using it in the Content-Disposition header, inside the quoted string.
+
+        Test: fast/dom/HTMLAnchorElement/anchor-file-blob-download-includes-backslash.html
+
+        * platform/network/ResourceResponseBase.cpp:
+        (WebCore::ResourceResponseBase::sanitizeSuggestedFilename):
+
 2017-03-02  Youenn Fablet  <youenn@apple.com>
 
         [WebRTC] Activate ICE candidate privacy policy
