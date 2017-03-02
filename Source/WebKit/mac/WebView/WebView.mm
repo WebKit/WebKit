@@ -190,6 +190,7 @@
 #import <WebCore/SecurityPolicy.h>
 #import <WebCore/Settings.h>
 #import <WebCore/SocketProvider.h>
+#import <WebCore/SoftLinking.h>
 #import <WebCore/StyleProperties.h>
 #import <WebCore/TextResourceDecoder.h>
 #import <WebCore/ThreadCheck.h>
@@ -238,7 +239,6 @@
 #import <WebCore/AVKitSPI.h>
 #import <WebCore/LookupSPI.h>
 #import <WebCore/NSImmediateActionGestureRecognizerSPI.h>
-#import <WebCore/SoftLinking.h>
 #import <WebCore/TextIndicator.h>
 #import <WebCore/TextIndicatorWindow.h>
 #import <WebCore/WebVideoFullscreenController.h>
@@ -317,6 +317,12 @@
 #if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
 #import <WebCore/WebPlaybackSessionInterfaceMac.h>
 #import <WebCore/WebPlaybackSessionModelMediaElement.h>
+#endif
+
+#if ENABLE(DATA_INTERACTION)
+#import <UIKit/UIImage.h>
+SOFT_LINK_FRAMEWORK(UIKit)
+SOFT_LINK_CLASS(UIKit, UIImage)
 #endif
 
 #if HAVE(TOUCH_BAR) && ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
@@ -610,6 +616,65 @@ private:
 };
 
 } // namespace WebKit
+
+#if ENABLE(DATA_INTERACTION)
+@implementation WebUITextIndicatorData
+
+@synthesize dataInteractionImage=_dataInteractionImage;
+@synthesize selectionRectInRootViewCoordinates=_selectionRectInRootViewCoordinates;
+@synthesize textBoundingRectInRootViewCoordinates=_textBoundingRectInRootViewCoordinates;
+@synthesize textRectsInBoundingRectCoordinates=_textRectsInBoundingRectCoordinates;
+@synthesize contentImageWithHighlight=_contentImageWithHighlight;
+@synthesize contentImage=_contentImage;
+
+@end
+
+@implementation WebUITextIndicatorData (WebUITextIndicatorInternal)
+
+- (WebUITextIndicatorData *)initWithImage:(CGImageRef)image textIndicatorData:(WebCore::TextIndicatorData &)indicatorData scale:(CGFloat)scale
+{
+    if (!(self = [super init]))
+        return nil;
+    
+    _dataInteractionImage = [[[getUIImageClass() alloc] initWithCGImage:image scale:scale orientation:UIImageOrientationDownMirrored] retain];
+    _selectionRectInRootViewCoordinates = indicatorData.selectionRectInRootViewCoordinates;
+    _textBoundingRectInRootViewCoordinates = indicatorData.textBoundingRectInRootViewCoordinates;
+    
+    NSMutableArray *textRectsInBoundingRectCoordinates = [NSMutableArray array];
+    for (auto rect : indicatorData.textRectsInBoundingRectCoordinates)
+        [textRectsInBoundingRectCoordinates addObject:[NSValue valueWithCGRect:rect]];
+    _textRectsInBoundingRectCoordinates = [[NSArray arrayWithArray:textRectsInBoundingRectCoordinates] retain];
+    _contentImageScaleFactor = indicatorData.contentImageScaleFactor;
+    if (indicatorData.contentImageWithHighlight)
+        _contentImageWithHighlight = [[[getUIImageClass() alloc] initWithCGImage:indicatorData.contentImageWithHighlight.get()->nativeImage().get() scale:scale orientation:UIImageOrientationDownMirrored] retain];
+    if (indicatorData.contentImage)
+        _contentImage = [[[getUIImageClass() alloc] initWithCGImage:indicatorData.contentImage.get()->nativeImage().get() scale:scale orientation:UIImageOrientationDownMirrored] retain];
+    
+    return self;
+}
+
+- (WebUITextIndicatorData *)initWithImage:(CGImageRef)image scale:(CGFloat)scale
+{
+    if (!(self = [super init]))
+        return nil;
+    
+    _dataInteractionImage = [[getUIImageClass() alloc] initWithCGImage:image scale:scale orientation:UIImageOrientationDownMirrored];
+    
+    return self;
+}
+
+- (void)dealloc
+{
+    [_dataInteractionImage release];
+    [_textRectsInBoundingRectCoordinates release];
+    [_contentImageWithHighlight release];
+    [_contentImage release];
+    
+    [super dealloc];
+}
+
+@end
+#endif // ENABLE(DATA_INTERACTION)
 
 @interface WebView (WebFileInternal)
 #if !PLATFORM(IOS)
@@ -1710,7 +1775,39 @@ static void WebKitInitializeGamepadProviderIfNecessary()
         }
     });
 }
-#endif // PLATFORM(IOS)
+#endif
+
+#if ENABLE(DATA_INTERACTION) && defined(__cplusplus)
+- (BOOL)_requestStartDataInteraction:(CGPoint)clientPosition globalPosition:(CGPoint)globalPosition
+{
+    return _private->page->mainFrame().eventHandler().tryToBeginDataInteractionAtPoint(IntPoint(clientPosition), IntPoint(globalPosition));
+}
+
+- (void)_setDataInteractionData:(CGImageRef)image textIndicator:(std::optional<TextIndicatorData>)indicatorData atClientPosition:(CGPoint)clientPosition anchorPoint:(CGPoint)anchorPoint action:(uint64_t)action
+{
+    if (indicatorData)
+        _private->textIndicatorData = [[[WebUITextIndicatorData alloc] initWithImage:image TextIndicatorData:indicatorData.value() scale:_private->page->deviceScaleFactor()] retain];
+    else
+        _private->textIndicatorData = [[[WebUITextIndicatorData alloc] initWithImage:image scale:_private->page->deviceScaleFactor()] retain];
+}
+
+- (WebUITextIndicatorData *)_getDataInteractionData
+{
+    return _private->textIndicatorData;
+}
+#else
+- (BOOL)_requestStartDataInteraction:(CGPoint)clientPosition globalPosition:(CGPoint)globalPosition
+{
+    return NO;
+}
+- (void)_setDataInteractionData:(CGImageRef)image textIndicator:(TextIndicatorData&)indicatorData atClientPosition:(CGPoint)clientPosition anchorPoint:(CGPoint)anchorPoint action:(uint64_t)action
+{
+}
+- (WebUITextIndicatorData *)_getDataInteractionData
+{
+    return nil;
+}
+#endif // ENABLE(DATA_INTERACTION) && defined(__cplusplus)
 
 static NSMutableSet *knownPluginMIMETypes()
 {

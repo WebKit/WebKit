@@ -212,6 +212,7 @@ WebViewLayerFlushScheduler::WebViewLayerFlushScheduler(LayerFlushController* flu
     [formDelegateForwarder release];
     [_caretChangeListeners release];
     [_fixedPositionContent release];
+    [textIndicatorData release];
 #endif
 
     [super dealloc];

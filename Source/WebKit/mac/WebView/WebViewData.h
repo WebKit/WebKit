@@ -55,6 +55,8 @@ class WebPlaybackSessionModelMediaElement;
 #endif
 }
 
+@class UIImage;
+@class WebUITextIndicatorData;
 @class WebImmediateActionController;
 @class WebInspector;
 @class WebNodeHighlight;
@@ -282,6 +284,7 @@ private:
     int32_t didDrawTiles;
     WTF::Lock pendingFixedPositionLayoutRectMutex;
     CGRect pendingFixedPositionLayoutRect;
+    WebUITextIndicatorData *textIndicatorData;
 #endif
 
 #if !PLATFORM(IOS)

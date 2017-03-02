@@ -59,6 +59,10 @@
 
 using namespace WebCore;
 
+#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/WebDragClientAdditionsWebKit1.mm>)
+#import <WebKitAdditions/WebDragClientAdditionsWebKit1.mm>
+#endif
+
 WebDragClient::WebDragClient(WebView* webView)
     : m_webView(webView) 
 {
@@ -198,11 +202,11 @@ WebCore::DragSourceAction WebDragClient::dragSourceActionMaskForPoint(const IntP
 void WebDragClient::willPerformDragSourceAction(WebCore::DragSourceAction, const WebCore::IntPoint&, WebCore::DataTransfer&)
 {
 }
-
+#if !ENABLE(DATA_INTERACTION)
 void WebDragClient::startDrag(WebCore::DragImage, const IntPoint&, const IntPoint&, const FloatPoint&, DataTransfer&, Frame&, WebCore::DragSourceAction)
 {
 }
-
+#endif
 void WebDragClient::beginDrag(DragItem, Frame&, const IntPoint&, const IntPoint&, DataTransfer&, DragSourceAction)
 {
 }

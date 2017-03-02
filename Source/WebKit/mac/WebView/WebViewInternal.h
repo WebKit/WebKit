@@ -40,6 +40,7 @@
 #import <WebCore/HTMLMediaElementEnums.h>
 #import <WebCore/LayoutMilestones.h>
 #import <WebCore/TextAlternativeWithRange.h>
+#import <WebCore/TextIndicator.h>
 #import <WebCore/TextIndicatorWindow.h>
 #import <WebCore/WebCoreKeyboardUIMode.h>
 #import <functional>
@@ -87,6 +88,13 @@ WebLayoutMilestones kitLayoutMilestones(WebCore::LayoutMilestones);
 
 #if USE(DICTATION_ALTERNATIVES)
 OBJC_CLASS NSTextAlternatives;
+#endif
+
+#if ENABLE(DATA_INTERACTION) && defined(__cplusplus)
+@interface WebUITextIndicatorData (WebUITextIndicatorInternal)
+- (WebUITextIndicatorData *)initWithImage:(CGImageRef)image textIndicatorData:(WebCore::TextIndicatorData&)indicatorData scale:(CGFloat)scale;
+- (WebUITextIndicatorData *)initWithImage:(CGImageRef)image scale:(CGFloat)scale;
+@end
 #endif
 
 @interface WebView (WebViewEditingExtras)
@@ -246,6 +254,10 @@ OBJC_CLASS NSTextAlternatives;
 
 - (void)_documentScaleChanged;
 - (BOOL)_fetchCustomFixedPositionLayoutRect:(NSRect*)rect;
+#endif
+
+#if ENABLE(DATA_INTERACTION) && defined(__cplusplus)
+- (void)_setDataInteractionData:(CGImageRef)image textIndicator:(std::optional<WebCore::TextIndicatorData>)textIndicator atClientPosition:(CGPoint)clientPosition anchorPoint:(CGPoint)anchorPoint action:(uint64_t)action;
 #endif
 
 - (void)_preferencesChanged:(WebPreferences *)preferences;
