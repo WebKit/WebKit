@@ -1,3 +1,12 @@
+2017-03-02  Aakash Jain  <aakash_jain@apple.com>
+
+        IsSmartPtr<WKRetainPtr<T>>::value should not be exported
+        https://bugs.webkit.org/show_bug.cgi?id=169047
+
+        Reviewed by Alexey Proskuryakov.
+
+        * UIProcess/API/cpp/WKRetainPtr.h:
+
 2017-03-02  Youenn Fablet  <youenn@apple.com>
 
         Activate some new webrtc tests

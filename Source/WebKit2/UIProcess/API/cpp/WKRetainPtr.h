@@ -263,7 +263,7 @@ using WebKit::retainWK;
 namespace WTF {
 
 template <typename T> struct IsSmartPtr<WKRetainPtr<T>> {
-    static const bool value = true;
+    WTF_INTERNAL static const bool value = true;
 };
 
 template<typename P> struct DefaultHash<WKRetainPtr<P>> {
