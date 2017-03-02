@@ -1898,6 +1898,7 @@ void SpeculativeJIT::linkOSREntries(LinkBuffer& linkBuffer)
     
 void SpeculativeJIT::compileCheckTraps(Node*)
 {
+    ASSERT(Options::usePollingTraps());
     GPRTemporary unused(this);
     GPRReg unusedGPR = unused.gpr();
 

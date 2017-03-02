@@ -462,6 +462,8 @@ VM*& VM::sharedInstanceInternal()
 Watchdog& VM::ensureWatchdog()
 {
     if (!m_watchdog) {
+        Options::usePollingTraps() = true; // Force polling traps on until we have support for signal based traps.
+
         m_watchdog = adoptRef(new Watchdog(this));
         
         // The LLINT peeks into the Watchdog object directly. In order to do that,
@@ -971,6 +973,12 @@ void VM::handleTraps(ExecState* exec, VMTraps::Mask mask)
             RELEASE_ASSERT_NOT_REACHED();
         }
     }
+}
+
+void VM::setNeedAsynchronousTerminationSupport()
+{
+    Options::usePollingTraps() = true; // Force polling traps on until we have support for signal based traps.
+    m_needAsynchronousTerminationSupport = true;
 }
 
 } // namespace JSC

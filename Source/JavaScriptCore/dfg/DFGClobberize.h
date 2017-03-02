@@ -434,6 +434,14 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         write(JSCell_cellState);
         return;
 
+    case CheckTraps:
+        if (Options::usePollingTraps()) {
+            read(InternalState);
+            write(InternalState);
+        } else
+            write(Watchpoint_fire);
+        return;
+
     case InvalidationPoint:
         write(SideState);
         def(HeapLocation(InvalidationPointLoc, Watchpoint_fire), LazyNode(node));
@@ -1411,7 +1419,6 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         return;
         
     case CountExecution:
-    case CheckTraps:
         read(InternalState);
         write(InternalState);
         return;

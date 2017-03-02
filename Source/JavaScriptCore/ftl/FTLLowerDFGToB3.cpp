@@ -1023,7 +1023,8 @@ private:
             compileMaterializeCreateActivation();
             break;
         case CheckTraps:
-            compileCheckTraps();
+            if (Options::usePollingTraps())
+                compileCheckTraps();
             break;
         case CreateRest:
             compileCreateRest();
@@ -8986,6 +8987,7 @@ private:
 
     void compileCheckTraps()
     {
+        ASSERT(Options::usePollingTraps());
         LBasicBlock needTrapHandling = m_out.newBlock();
         LBasicBlock continuation = m_out.newBlock();
         

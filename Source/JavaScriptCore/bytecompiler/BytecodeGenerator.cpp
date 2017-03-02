@@ -1274,7 +1274,7 @@ void BytecodeGenerator::emitLoopHint()
 
 void BytecodeGenerator::emitCheckTraps()
 {
-    if (vm()->watchdog() || vm()->needAsynchronousTerminationSupport())
+    if (Options::alwaysCheckTraps() || vm()->watchdog() || vm()->needAsynchronousTerminationSupport())
         emitOpcode(op_check_traps);
 }
 

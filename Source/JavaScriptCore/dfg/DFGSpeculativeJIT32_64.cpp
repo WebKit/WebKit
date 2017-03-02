@@ -5544,7 +5544,10 @@ void SpeculativeJIT::compile(Node* node)
         break;
 
     case CheckTraps:
-        compileCheckTraps(node);
+        if (Options::usePollingTraps())
+            compileCheckTraps(node);
+        else
+            noResult(node); // This is a no-op.
         break;
 
     case CountExecution:

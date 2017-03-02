@@ -1,3 +1,40 @@
+2017-03-02  Mark Lam  <mark.lam@apple.com>
+
+        Add Options::alwaysCheckTraps() and Options::usePollingTraps() options.
+        https://bugs.webkit.org/show_bug.cgi?id=169088
+
+        Reviewed by Keith Miller.
+
+        Options::alwaysCheckTraps() forces the op_check_traps bytecode to always be
+        generated.  This is useful for testing purposes until we have signal based
+        traps, at which point, we will always emit the op_check_traps bytecode and remove
+        this option.
+
+        Options::usePollingTraps() enables the use of polling VM traps all the time.
+        This will be useful for benchmark comparisons, (between polling and non-polling
+        traps), as well as for forcing polling traps later for ports that don't support
+        signal based traps.
+
+        Note: signal based traps are not fully implemented yet.  As a result, if the VM
+        watchdog is in use, we will force Options::usePollingTraps() to be true.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitCheckTraps):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileCheckTraps):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCheckTraps):
+        * runtime/Options.cpp:
+        (JSC::recomputeDependentOptions):
+        * runtime/Options.h:
+
 2017-03-02  Keith Miller  <keith_miller@apple.com>
 
         Fix addressing mode for B3WasmAddress

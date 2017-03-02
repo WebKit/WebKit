@@ -680,7 +680,7 @@ public:
     void notifyNeedWatchdogCheck() { m_traps.fireTrap(VMTraps::NeedWatchdogCheck); }
 
     bool needAsynchronousTerminationSupport() const { return m_needAsynchronousTerminationSupport; }
-    void setNeedAsynchronousTerminationSupport() { m_needAsynchronousTerminationSupport = true; }
+    JS_EXPORT_PRIVATE void setNeedAsynchronousTerminationSupport();
 
 private:
     friend class LLIntOffsetsExtractor;
