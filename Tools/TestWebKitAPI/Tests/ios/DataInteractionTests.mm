@@ -34,7 +34,6 @@
 #import <MobileCoreServices/MobileCoreServices.h>
 #import <UIKit/UIItemProvider_Private.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
-#import <WebKit/WKWebViewPrivate.h>
 
 @implementation TestWKWebView (DataInteractionTests)
 
@@ -46,22 +45,6 @@
 - (NSString *)editorValue
 {
     return [self stringByEvaluatingJavaScript:@"editor.value"];
-}
-
-@end
-
-@interface CustomItemProviderWebView : TestWKWebView
-@property (nonatomic) BlockPtr<NSArray *(NSArray *)> convertItemProvidersBlock;
-@end
-
-@implementation CustomItemProviderWebView
-
-- (NSArray *)_adjustedDataInteractionItemProviders:(NSArray *)originalItemProviders
-{
-    if (!self.convertItemProvidersBlock)
-        return [super _adjustedDataInteractionItemProviders:originalItemProviders];
-
-    return self.convertItemProvidersBlock(originalItemProviders);
 }
 
 @end
@@ -272,12 +255,13 @@ TEST(DataInteractionTests, AttachmentElementItemProviders)
 {
     RetainPtr<WKWebViewConfiguration> configuration = [WKWebViewConfiguration testwebkitapi_configurationWithTestPlugInClassName:@"BundleEditingDelegatePlugIn"];
     [configuration _setAttachmentElementEnabled:YES];
-    auto webView = adoptNS([[CustomItemProviderWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get()]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get()]);
+    auto dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
     [webView synchronouslyLoadTestPageNamed:@"attachment-element"];
 
     NSString *injectedTypeIdentifier = @"org.webkit.data";
     __block RetainPtr<NSString> injectedString;
-    [webView setConvertItemProvidersBlock:^NSArray *(NSArray *originalItemProviders)
+    [dataInteractionSimulator setConvertItemProvidersBlock:^NSArray *(NSArray *originalItemProviders)
     {
         for (UIItemProvider *provider in originalItemProviders) {
             NSData *injectedData = [provider copyDataRepresentationForTypeIdentifier:injectedTypeIdentifier error:nil];
@@ -289,7 +273,6 @@ TEST(DataInteractionTests, AttachmentElementItemProviders)
         return originalItemProviders;
     }];
 
-    auto dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
     [dataInteractionSimulator runFrom:CGPointMake(50, 50) to:CGPointMake(50, 400)];
 
     EXPECT_WK_STREQ("hello", [injectedString UTF8String]);

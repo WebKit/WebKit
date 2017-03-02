@@ -1,3 +1,21 @@
+2017-03-01  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Replace -[WKWebView adjustedDataInteractionItemProviders:] with a UI delegate method
+        https://bugs.webkit.org/show_bug.cgi?id=169013
+
+        Reviewed by Dan Bernstein.
+
+        Adjusts TestWebKitAPI for changes in WebKit2. See Source/WebKit2/ChangeLog for more details.
+
+        * TestWebKitAPI/Tests/ios/DataInteractionTests.mm:
+        (TestWebKitAPI::TEST):
+        (-[CustomItemProviderWebView _adjustedDataInteractionItemProviders:]): Deleted.
+        * TestWebKitAPI/ios/DataInteractionSimulator.h:
+        * TestWebKitAPI/ios/DataInteractionSimulator.mm:
+        (-[DataInteractionSimulator initWithWebView:]):
+        (-[DataInteractionSimulator dealloc]):
+        (-[DataInteractionSimulator _webView:adjustedDataInteractionItemProviders:]):
+
 2017-03-01  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] DRT should not dispatch messages after test is done.

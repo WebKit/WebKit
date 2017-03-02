@@ -3726,11 +3726,6 @@ static int32_t activeOrientation(WKWebView *webView)
 {
 }
 
-- (NSArray *)_adjustedDataInteractionItemProviders:(NSArray *)originalItemProviders
-{
-    return originalItemProviders;
-}
-
 #endif
 
 - (void)_didRelaunchProcess

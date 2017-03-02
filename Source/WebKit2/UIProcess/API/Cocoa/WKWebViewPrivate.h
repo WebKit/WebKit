@@ -188,8 +188,6 @@ typedef NS_ENUM(NSInteger, _WKImmediateActionType) {
 - (void)_accessibilityRetrieveSpeakSelectionContent;
 - (void)_accessibilityDidGetSpeakSelectionContent:(NSString *)content;
 
-- (NSArray *)_adjustedDataInteractionItemProviders:(NSArray *)originalItemProviders WK_API_AVAILABLE(ios(WK_IOS_TBA));
-
 #else
 @property (readonly) NSColor *_pageExtendedBackgroundColor;
 @property (nonatomic, setter=_setDrawsBackground:) BOOL _drawsBackground;

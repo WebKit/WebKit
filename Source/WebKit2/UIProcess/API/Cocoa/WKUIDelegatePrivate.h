@@ -30,6 +30,7 @@
 #import <WebKit/WKSecurityOrigin.h>
 #import <WebKit/_WKActivatedElementInfo.h>
 
+@class UIItemProvider;
 @class UIScrollView;
 @class UIViewController;
 @class _WKContextMenuElementInfo;
@@ -86,6 +87,7 @@ struct UIEdgeInsets;
 - (UIViewController *)_presentingViewControllerForWebView:(WKWebView *)webView WK_API_AVAILABLE(ios(10.0));
 - (void)_webView:(WKWebView *)webView getAlternateURLFromImage:(UIImage *)image completionHandler:(void (^)(NSURL *alternateURL, NSDictionary *userInfo))completionHandler WK_API_AVAILABLE(ios(WK_IOS_TBA));
 - (NSURL *)_webView:(WKWebView *)webView alternateURLFromImage:(UIImage *)image userInfo:(NSDictionary **)userInfo WK_API_AVAILABLE(ios(WK_IOS_TBA));
+- (NSArray<UIItemProvider *> *)_webView:(WKWebView *)webView adjustedDataInteractionItemProviders:(NSArray<UIItemProvider *> *)originalItemProviders WK_API_AVAILABLE(ios(WK_IOS_TBA));
 #else
 - (NSMenu *)_webView:(WKWebView *)webView contextMenu:(NSMenu *)menu forElement:(_WKContextMenuElementInfo *)element WK_API_AVAILABLE(macosx(10.12));
 - (NSMenu *)_webView:(WKWebView *)webView contextMenu:(NSMenu *)menu forElement:(_WKContextMenuElementInfo *)element userInfo:(id <NSSecureCoding>)userInfo WK_API_AVAILABLE(macosx(10.12));

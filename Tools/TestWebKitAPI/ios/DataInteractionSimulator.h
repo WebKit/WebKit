@@ -28,6 +28,7 @@
 #import "TestWKWebView.h"
 #import <UIKit/UIItemProvider.h>
 #import <UIKit/UIKit.h>
+#import <WebKit/WKUIDelegatePrivate.h>
 #import <WebKit/_WKTestingDelegate.h>
 #import <wtf/BlockPtr.h>
 
@@ -48,7 +49,7 @@ typedef NS_ENUM(NSInteger, DataInteractionPhase) {
     DataInteractionPerforming = 4
 };
 
-@interface DataInteractionSimulator : NSObject<_WKTestingDelegate> {
+@interface DataInteractionSimulator : NSObject<_WKTestingDelegate, WKUIDelegatePrivate> {
     RetainPtr<TestWKWebView> _webView;
     RetainPtr<MockDataInteractionSession> _dataInteractionSession;
     RetainPtr<MockDataInteractionInfo> _dataInteractionInfo;
@@ -66,6 +67,7 @@ typedef NS_ENUM(NSInteger, DataInteractionPhase) {
 - (instancetype)initWithWebView:(TestWKWebView *)webView;
 - (void)runFrom:(CGPoint)startLocation to:(CGPoint)endLocation;
 
+@property (nonatomic) BlockPtr<NSArray *(NSArray *)> convertItemProvidersBlock;
 @property (nonatomic, strong) UIItemProvider *externalItemProvider;
 @property (nonatomic, readonly) NSArray *observedEventNames;
 @property (nonatomic, readonly) NSArray *finalSelectionRects;

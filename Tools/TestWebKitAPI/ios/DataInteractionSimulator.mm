@@ -59,6 +59,7 @@ static NSArray *dataInteractionEventNames()
     if (self = [super init]) {
         _webView = webView;
         [_webView _setTestingDelegate:self];
+        [_webView setUIDelegate:self];
     }
     return self;
 }
@@ -67,6 +68,9 @@ static NSArray *dataInteractionEventNames()
 {
     if ([_webView _testingDelegate] == self)
         [_webView _setTestingDelegate:nil];
+
+    if ([_webView UIDelegate] == self)
+        [_webView setUIDelegate:nil];
 
     [super dealloc];
 }
@@ -210,6 +214,13 @@ static NSArray *dataInteractionEventNames()
 - (void)webViewDidPerformDataInteractionControllerOperation:(WKWebView *)webView
 {
     _isDoneWithCurrentRun = true;
+}
+
+#pragma mark - WKUIDelegatePrivate
+
+- (NSArray<UIItemProvider *>*)_webView:(WKWebView *)webView adjustedDataInteractionItemProviders:(NSArray<UIItemProvider *>*)originalItemProviders
+{
+    return self.convertItemProvidersBlock ? self.convertItemProvidersBlock(originalItemProviders) : originalItemProviders;
 }
 
 @end

@@ -1,3 +1,18 @@
+2017-03-01  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Replace -[WKWebView adjustedDataInteractionItemProviders:] with a UI delegate method
+        https://bugs.webkit.org/show_bug.cgi?id=169013
+
+        Reviewed by Dan Bernstein.
+
+        Rather than introduce new SPI on WKWebView directly, we should follow convention and add the hook to the private
+        version of the UI delegate.
+
+        * UIProcess/API/Cocoa/WKUIDelegatePrivate.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _adjustedDataInteractionItemProviders:]): Deleted.
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+
 2017-03-01  Alex Christensen  <achristensen@webkit.org>
 
         Unreviewed, rolling out r213259.
