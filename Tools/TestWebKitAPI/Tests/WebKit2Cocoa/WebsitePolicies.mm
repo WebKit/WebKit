@@ -390,6 +390,16 @@ TEST(WebKit2, WebsitePoliciesUserInterferenceWithPlaying)
     [webView mouseDownAtPoint:muteButtonClickPoint simulatePressure:NO];
     [webView mouseUpAtPoint:muteButtonClickPoint];
     runUntilReceivesAutoplayEvent(kWKAutoplayEventUserDidInterfereWithPlayback);
+
+    receivedAutoplayEvent = std::nullopt;
+    [webView loadRequest:jsPlayRequest];
+    [webView waitForMessage:@"playing"];
+    ASSERT_TRUE(receivedAutoplayEvent == std::nullopt);
+
+    const NSPoint playButtonClickPoint = NSMakePoint(20, 256);
+    [webView mouseDownAtPoint:playButtonClickPoint simulatePressure:NO];
+    [webView mouseUpAtPoint:playButtonClickPoint];
+    runUntilReceivesAutoplayEvent(kWKAutoplayEventUserDidInterfereWithPlayback);
 }
 #endif
 

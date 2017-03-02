@@ -3256,6 +3256,12 @@ void HTMLMediaElement::pauseInternal()
     }
 
     m_autoplaying = false;
+
+    if (ScriptController::processingUserGestureForMedia() && m_playbackWithoutUserGesture == PlaybackWithoutUserGesture::Started) {
+        if (Page* page = document().page())
+            page->chrome().client().handleAutoplayEvent(AutoplayEvent::UserDidInterfereWithPlayback);
+    }
+
     m_playbackWithoutUserGesture = PlaybackWithoutUserGesture::None;
 
     if (!m_paused) {

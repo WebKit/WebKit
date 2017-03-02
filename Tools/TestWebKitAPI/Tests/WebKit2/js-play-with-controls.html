@@ -9,7 +9,11 @@
             }
 
             function play() {
-                document.getElementById("video").play();
+                var video = document.getElementById("video");
+                if (video.paused)
+                    video.play();
+                else
+                    video.pause();
             }
 
             function mute() {
