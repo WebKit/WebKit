@@ -1,3 +1,17 @@
+2017-03-01  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] DRT should not dispatch messages after test is done.
+        https://bugs.webkit.org/show_bug.cgi?id=169026
+
+        Reviewed by Brent Fulgham.
+
+        Exiting the message loop with PostQuitMessage will leave room for
+        a few messages to be dispatched after the test is done.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (dump):
+        (runTest):
+
 2017-03-01  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Implement font-stretch for installed fonts

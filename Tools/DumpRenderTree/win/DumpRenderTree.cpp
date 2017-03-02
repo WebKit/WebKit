@@ -743,7 +743,6 @@ void dump()
 
 fail:
     // This will exit from our message loop.
-    ::PostQuitMessage(0);
     done = true;
 }
 
@@ -1211,7 +1210,7 @@ static void runTest(const string& inputLine)
     request->setHTTPMethod(methodBStr);
     frame->loadRequest(request.get());
 
-    while (true) {
+    while (!done) {
 #if USE(CF)
         CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, true);
 #endif
