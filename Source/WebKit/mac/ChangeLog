@@ -1,3 +1,12 @@
+2017-03-01  Alex Christensen  <achristensen@webkit.org>
+
+        Continue enabling WebRTC
+        https://bugs.webkit.org/show_bug.cgi?id=169056
+
+        Reviewed by Jon Lee.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2017-02-27  Alex Christensen  <achristensen@webkit.org>
 
         Begin enabling WebRTC on 64-bit
