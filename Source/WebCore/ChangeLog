@@ -1,3 +1,18 @@
+2017-03-02  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] UIClient may not be notified of capture state change when leaving a page
+        https://bugs.webkit.org/show_bug.cgi?id=169014
+        <rdar://problem/30632267>
+
+        Reviewed by Youenn Fablet.
+
+        Enable and update the WebKit API test WebKit2.UserMedia.
+
+        * dom/Document.cpp:
+        (WebCore::Document::prepareForDestruction): Always call page.updateIsPlayingMedia() if there
+        is active media in the document because it won't be possible when the state changes later
+        because the frame will have been cleared.
+
 2017-03-02  Tomas Popela  <tpopela@redhat.com>
 
         [WK2] Keyboard menu key should show context menu
