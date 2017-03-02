@@ -3,22 +3,22 @@ Testing the MacOSInlineMediaControls computed styles in compact mode.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
+
 PlayPauseButton
-PASS style.height is "25px"
-PASS style.webkitMaskPositionY is "6px"
+PASS getComputedStyle(button.element).webkitMaskPositionY became "6px"
+PASS getComputedStyle(button.element).height is "25px"
 
 SkipBackButton
-PASS style.height is "25px"
-PASS style.webkitMaskPositionY is "6px"
+PASS getComputedStyle(button.element).webkitMaskPositionY became "6px"
+PASS getComputedStyle(button.element).height is "25px"
 
 MuteButton
-PASS style.height is "25px"
-PASS style.webkitMaskPositionY is "6px"
+PASS getComputedStyle(button.element).webkitMaskPositionY became "6px"
+PASS getComputedStyle(button.element).height is "25px"
 
 FullscreenButton
-PASS style.height is "25px"
-PASS style.webkitMaskPositionY is "6.5px"
-
+PASS getComputedStyle(button.element).webkitMaskPositionY became "6.5px"
+PASS getComputedStyle(button.element).height is "25px"
 PASS successfullyParsed is true
 
 TEST COMPLETE

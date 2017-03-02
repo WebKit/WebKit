@@ -10,6 +10,7 @@ window.jsTestIsAsync = true;
 
 const mediaControls = new MacOSInlineMediaControls({ width: 240 });
 mediaControls.layoutTraits = LayoutTraits.macOS | LayoutTraits.Compact;
+document.body.appendChild(mediaControls.element);
 
 const buttonPositions = [
     [mediaControls.playPauseButton, 6],
@@ -18,25 +19,21 @@ const buttonPositions = [
     [mediaControls.fullscreenButton, 6.5]
 ];
 
-let style;
-scheduler.frameDidFire = function()
+let button, y;
+(function testButton(index)
 {
-    document.body.appendChild(mediaControls.element);
-
-    if (buttonPositions.some(buttonPosition => buttonPosition[0].width == 0))
-        return;
-
-    for (let [button, y] of buttonPositions) {
-        style = window.getComputedStyle(button.element);
-        debug(button.constructor.name);
-        shouldBeEqualToString("style.height", "25px");
-        shouldBeEqualToString("style.webkitMaskPositionY", `${y}px`);
-        debug("");
-    }
-
-    mediaControls.element.remove();
-    finishMediaControlsTest();
-};
+    [button, y] = buttonPositions[index];
+    debug("");
+    debug(button.constructor.name);
+    shouldBecomeEqualToString("getComputedStyle(button.element).webkitMaskPositionY", `${y}px`, () => {
+        shouldBeEqualToString("getComputedStyle(button.element).height", "25px");
+        if (index === buttonPositions.length - 1) {
+            mediaControls.element.remove();
+            finishJSTest();
+        } else
+            testButton(index + 1);
+    });
+})(0);
 
 </script>
 <script src="../../../resources/js-test-post.js"></script>

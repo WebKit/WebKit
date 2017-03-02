@@ -3,43 +3,41 @@ Testing the MacOSFullscreenMediaControls computed styles.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS buttonPositions.some(buttonPosition => buttonPosition[0].element.style.width == '') became false
 
 RewindButton
-PASS style.left is "27px"
-PASS style.webkitMaskPositionY is "17px"
-PASS style.height is "44px"
+PASS getComputedStyle(button.element).webkitMaskPositionY became "17px"
+PASS getComputedStyle(button.element).left is "27px"
+PASS getComputedStyle(button.element).height is "44px"
 
 PlayPauseButton
-PASS style.left is "78px"
-PASS style.webkitMaskPositionY is "12px"
-PASS style.height is "44px"
+PASS getComputedStyle(button.element).webkitMaskPositionY became "12px"
+PASS getComputedStyle(button.element).left is "78px"
+PASS getComputedStyle(button.element).height is "44px"
 
 ForwardButton
-PASS style.left is "127px"
-PASS style.webkitMaskPositionY is "17px"
-PASS style.height is "44px"
+PASS getComputedStyle(button.element).webkitMaskPositionY became "17px"
+PASS getComputedStyle(button.element).left is "127px"
+PASS getComputedStyle(button.element).height is "44px"
 
 AirplayButton
-PASS style.left is "12px"
-PASS style.webkitMaskPositionY is "18px"
-PASS style.height is "44px"
+PASS getComputedStyle(button.element).webkitMaskPositionY became "18px"
+PASS getComputedStyle(button.element).left is "12px"
+PASS getComputedStyle(button.element).height is "44px"
 
 PiPButton
-PASS style.left is "44px"
-PASS style.webkitMaskPositionY is "18px"
-PASS style.height is "44px"
+PASS getComputedStyle(button.element).webkitMaskPositionY became "18px"
+PASS getComputedStyle(button.element).left is "44px"
+PASS getComputedStyle(button.element).height is "44px"
 
 TracksButton
-PASS style.left is "79px"
-PASS style.webkitMaskPositionY is "18px"
-PASS style.height is "44px"
+PASS getComputedStyle(button.element).webkitMaskPositionY became "18px"
+PASS getComputedStyle(button.element).left is "79px"
+PASS getComputedStyle(button.element).height is "44px"
 
 FullscreenButton
-PASS style.left is "111px"
-PASS style.webkitMaskPositionY is "18px"
-PASS style.height is "44px"
-
+PASS getComputedStyle(button.element).webkitMaskPositionY became "18px"
+PASS getComputedStyle(button.element).left is "111px"
+PASS getComputedStyle(button.element).height is "44px"
 PASS successfullyParsed is true
 
 TEST COMPLETE

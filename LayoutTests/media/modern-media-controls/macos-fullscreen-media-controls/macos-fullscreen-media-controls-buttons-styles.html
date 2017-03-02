@@ -21,23 +21,22 @@ const buttonPositions = [
     [mediaControls.fullscreenButton, 111, 18]
 ];
 
-let style;
-shouldBecomeEqual("buttonPositions.some(buttonPosition => buttonPosition[0].element.style.width == '')", "false", () => {
-    requestAnimationFrame(() => {
-        for (let [button, x, y, width] of buttonPositions) {
-            debug("");
-            style = window.getComputedStyle(button.element);
-            debug(button.constructor.name);
-            shouldBeEqualToString("style.left", `${x}px`);
-            shouldBeEqualToString("style.webkitMaskPositionY", `${y}px`);
-            shouldBeEqualToString("style.height", "44px");
-        }
-
-        debug("");
-        mediaControls.element.remove();
-        finishMediaControlsTest();
+let button, x, y;
+(function testButton(index)
+{
+    [button, x, y, width] = buttonPositions[index];
+    debug("");
+    debug(button.constructor.name);
+    shouldBecomeEqualToString("getComputedStyle(button.element).webkitMaskPositionY", `${y}px`, () => {
+        shouldBeEqualToString("getComputedStyle(button.element).left", `${x}px`);
+        shouldBeEqualToString("getComputedStyle(button.element).height", "44px");
+        if (index === buttonPositions.length - 1) {
+            mediaControls.element.remove();
+            finishJSTest();
+        } else
+            testButton(index + 1);
     });
-});
+})(0);
 
 </script>
 <script src="../../../resources/js-test-post.js"></script>
