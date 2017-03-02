@@ -44,6 +44,11 @@ String CSSFontValue::customCSSText() const
             result.append(' ');
         result.append(weight->cssText());
     }
+    if (weight) {
+        if (!result.isEmpty())
+            result.append(' ');
+        result.append(stretch->cssText());
+    }
     if (size) {
         if (!result.isEmpty())
             result.append(' ');
@@ -69,6 +74,7 @@ bool CSSFontValue::equals(const CSSFontValue& other) const
     return compareCSSValuePtr(style, other.style)
         && compareCSSValuePtr(variant, other.variant)
         && compareCSSValuePtr(weight, other.weight)
+        && compareCSSValuePtr(stretch, other.stretch)
         && compareCSSValuePtr(size, other.size)
         && compareCSSValuePtr(lineHeight, other.lineHeight)
         && compareCSSValuePtr(family, other.family);

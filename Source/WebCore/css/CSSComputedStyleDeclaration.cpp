@@ -155,6 +155,7 @@ static const CSSPropertyID computedProperties[] = {
     CSSPropertyFloat,
     CSSPropertyFontFamily,
     CSSPropertyFontSize,
+    CSSPropertyFontStretch,
     CSSPropertyFontStyle,
     CSSPropertyFontSynthesis,
     CSSPropertyFontVariant,
@@ -1918,6 +1919,30 @@ static Ref<CSSPrimitiveValue> fontStyleFromStyle(const RenderStyle& style)
     return CSSValuePool::singleton().createIdentifierValue(CSSValueNormal);
 }
 
+static Ref<CSSPrimitiveValue> fontStretchFromStyle(const RenderStyle& style)
+{
+    float stretch = style.fontDescription().stretch();
+    if (stretch == 50)
+        return CSSValuePool::singleton().createIdentifierValue(CSSValueUltraCondensed);
+    if (stretch == 62.5)
+        return CSSValuePool::singleton().createIdentifierValue(CSSValueExtraCondensed);
+    if (stretch == 75)
+        return CSSValuePool::singleton().createIdentifierValue(CSSValueCondensed);
+    if (stretch == 87.5)
+        return CSSValuePool::singleton().createIdentifierValue(CSSValueSemiCondensed);
+    if (stretch == 100)
+        return CSSValuePool::singleton().createIdentifierValue(CSSValueNormal);
+    if (stretch == 112.5)
+        return CSSValuePool::singleton().createIdentifierValue(CSSValueSemiExpanded);
+    if (stretch == 125)
+        return CSSValuePool::singleton().createIdentifierValue(CSSValueExpanded);
+    if (stretch == 150)
+        return CSSValuePool::singleton().createIdentifierValue(CSSValueExtraExpanded);
+    if (stretch == 200)
+        return CSSValuePool::singleton().createIdentifierValue(CSSValueUltraExpanded);
+    return CSSValuePool::singleton().createValue(stretch, CSSPrimitiveValue::CSS_PERCENTAGE);
+}
+
 static Ref<CSSValue> fontVariantFromStyle(const RenderStyle& style)
 {
     if (style.fontDescription().variantSettings().isAllNormal())
@@ -2888,6 +2913,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propertyID,
             else
                 computedFont->variant = CSSValuePool::singleton().createIdentifierValue(CSSValueNormal);
             computedFont->weight = fontWeightFromStyle(*style);
+            computedFont->stretch = fontStretchFromStyle(*style);
             computedFont->size = fontSizeFromStyle(*style);
             computedFont->lineHeight = lineHeightFromStyle(*style);
             computedFont->family = fontFamilyListFromStyle(*style);
@@ -2899,6 +2925,8 @@ RefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propertyID,
             return fontSizeFromStyle(*style);
         case CSSPropertyFontStyle:
             return fontStyleFromStyle(*style);
+        case CSSPropertyFontStretch:
+            return fontStretchFromStyle(*style);
         case CSSPropertyFontVariant:
             return fontVariantFromStyle(*style);
         case CSSPropertyFontWeight:
@@ -3900,7 +3928,6 @@ RefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propertyID,
             break;
 
         /* Unimplemented @font-face properties */
-        case CSSPropertyFontStretch:
         case CSSPropertySrc:
         case CSSPropertyUnicodeRange:
             break;

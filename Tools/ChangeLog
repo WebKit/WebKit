@@ -1,3 +1,17 @@
+2017-03-01  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Implement font-stretch for installed fonts
+        https://bugs.webkit.org/show_bug.cgi?id=168888
+
+        Reviewed by Darin Adler and Dave Hyatt.
+
+        Update TestWebKitAPI tests to test font-stretch too.
+
+        * TestWebKitAPI/Tests/WebCore/FontCache.cpp:
+        (TestWebKitAPI::createPlatformFont):
+        (TestWebKitAPI::compareFonts):
+        (TestWebKitAPI::TEST_F):
+
 2017-03-01  Alex Christensen  <achristensen@webkit.org>
 
         Unreviewed, rolling out r213259.

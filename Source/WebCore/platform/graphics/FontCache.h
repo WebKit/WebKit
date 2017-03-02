@@ -73,6 +73,7 @@ struct FontDescriptionKey {
     FontDescriptionKey(const FontDescription& description)
         : m_size(description.computedPixelSize())
         , m_weight(description.weight())
+        , m_stretch(description.stretch())
         , m_flags(makeFlagsKey(description))
         , m_featureSettings(description.featureSettings())
 #if ENABLE(VARIATION_FONTS)
@@ -88,6 +89,7 @@ struct FontDescriptionKey {
     {
         return m_size == other.m_size
             && m_weight == other.m_weight
+            && m_stretch == other.m_stretch
             && m_flags == other.m_flags
 #if ENABLE(VARIATION_FONTS)
             && m_variationSettings == other.m_variationSettings
@@ -107,6 +109,7 @@ struct FontDescriptionKey {
         IntegerHasher hasher;
         hasher.add(m_size);
         hasher.add(m_weight);
+        hasher.add(m_stretch);
         for (unsigned flagItem : m_flags)
             hasher.add(flagItem);
         hasher.add(m_featureSettings.hash());
@@ -151,6 +154,7 @@ private:
     // FontCascade::locale() is explicitly not included in this struct.
     unsigned m_size { 0 };
     unsigned m_weight { 0 };
+    float m_stretch { 0 };
     std::array<unsigned, 2> m_flags {{ 0, 0 }};
     FontFeatureSettings m_featureSettings;
 #if ENABLE(VARIATION_FONTS)

@@ -877,6 +877,20 @@ static RefPtr<CSSPrimitiveValue> consumeFontWeight(CSSParserTokenRange& range)
     return CSSValuePool::singleton().createIdentifierValue(static_cast<CSSValueID>(CSSValue100 + weight / 100 - 1));
 }
 
+static RefPtr<CSSPrimitiveValue> consumeFontStretchKeywordValue(CSSParserTokenRange& range)
+{
+    return consumeIdent<CSSValueUltraCondensed, CSSValueExtraCondensed, CSSValueCondensed, CSSValueSemiCondensed, CSSValueNormal, CSSValueSemiExpanded, CSSValueExpanded, CSSValueExtraExpanded, CSSValueUltraExpanded>(range);
+}
+
+static RefPtr<CSSPrimitiveValue> consumeFontStretch(CSSParserTokenRange& range)
+{
+    if (auto result = consumeFontStretchKeywordValue(range))
+        return result;
+    if (auto percent = consumePercent(range, ValueRangeAll))
+        return percent;
+    return consumeNumber(range, ValueRangeAll);
+}
+
 static String concatenateFamilyName(CSSParserTokenRange& range)
 {
     StringBuilder builder;
@@ -3650,6 +3664,8 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
         return consumeFontFamily(m_range);
     case CSSPropertyFontWeight:
         return consumeFontWeight(m_range);
+    case CSSPropertyFontStretch:
+        return consumeFontStretch(m_range);
     case CSSPropertyFontSynthesis:
         return consumeFontSynthesis(m_range);
 #if ENABLE(VARIATION_FONTS)
@@ -4169,6 +4185,10 @@ bool CSSPropertyParser::parseFontFaceDescriptor(CSSPropertyID propId)
         parsedValue = consumeFontFaceUnicodeRange(m_range);
         break;
     case CSSPropertyFontStretch:
+        // FIXME: Implement this.
+        m_range.consumeIncludingWhitespace();
+        parsedValue = CSSValuePool::singleton().createIdentifierValue(CSSValueNormal);
+        break;
     case CSSPropertyFontStyle: {
         CSSValueID id = m_range.consumeIncludingWhitespace().id();
         if (!CSSParserFastPaths::isValidKeywordPropertyAndValue(propId, id, m_context.mode))
@@ -4252,8 +4272,8 @@ bool CSSPropertyParser::consumeFont(bool important)
     RefPtr<CSSPrimitiveValue> fontStyle;
     RefPtr<CSSPrimitiveValue> fontVariantCaps;
     RefPtr<CSSPrimitiveValue> fontWeight;
-    
-    // FIXME-NEWPARSER: Implement. RefPtr<CSSPrimitiveValue> fontStretch;
+    RefPtr<CSSPrimitiveValue> fontStretch;
+
     while (!m_range.atEnd()) {
         CSSValueID id = m_range.peek().id();
         if (!fontStyle && CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyFontStyle, id, m_context.mode)) {
@@ -4272,10 +4292,11 @@ bool CSSPropertyParser::consumeFont(bool important)
             if (fontWeight)
                 continue;
         }
-        /* FIXME-NEWPARSER: Implement
-         if (!fontStretch && CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyFontStretch, id, m_context.mode, m_styleSheetContents))
-            fontStretch = consumeIdent(m_range);
-        else*/
+        if (!fontStretch) {
+            fontStretch = consumeFontStretchKeywordValue(m_range);
+            if (fontStretch)
+                continue;
+        }
         break;
     }
 
@@ -4285,6 +4306,7 @@ bool CSSPropertyParser::consumeFont(bool important)
     bool hasStyle = fontStyle;
     bool hasVariant = fontVariantCaps;
     bool hasWeight = fontWeight;
+    bool hasStretch = fontStretch;
     
     addProperty(CSSPropertyFontStyle, CSSPropertyFont, fontStyle ? fontStyle.releaseNonNull() : CSSValuePool::singleton().createIdentifierValue(CSSValueNormal), important, !hasStyle);
     addProperty(CSSPropertyFontVariantCaps, CSSPropertyFont, fontVariantCaps ? fontVariantCaps.releaseNonNull() : CSSValuePool::singleton().createIdentifierValue(CSSValueNormal), important, !hasVariant);
@@ -4293,8 +4315,9 @@ bool CSSPropertyParser::consumeFont(bool important)
     addProperty(CSSPropertyFontVariantLigatures, CSSPropertyFont, CSSValuePool::singleton().createIdentifierValue(CSSValueNormal), important, true);
     addProperty(CSSPropertyFontVariantNumeric, CSSPropertyFont, CSSValuePool::singleton().createIdentifierValue(CSSValueNormal), important, true);
 */
-    
+
     addProperty(CSSPropertyFontWeight, CSSPropertyFont, fontWeight ? fontWeight.releaseNonNull() : CSSValuePool::singleton().createIdentifierValue(CSSValueNormal), important, !hasWeight);
+    addProperty(CSSPropertyFontStretch, CSSPropertyFont, fontStretch ? fontStretch.releaseNonNull() : CSSValuePool::singleton().createIdentifierValue(CSSValueNormal), important, !hasStretch);
 
     // Now a font size _must_ come.
     RefPtr<CSSValue> fontSize = consumeFontSize(m_range, m_context.mode);

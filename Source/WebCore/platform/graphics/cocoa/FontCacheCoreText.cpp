@@ -789,6 +789,7 @@ static inline bool isSystemFont(const AtomicString& family)
 
 #if !SHOULD_USE_CORE_TEXT_FONT_LOOKUP
 
+constexpr float stretchThreshold = 100;
 constexpr float italicThreshold = 20;
 constexpr float weightThreshold = 500;
 
@@ -859,9 +860,11 @@ public:
             if (traits) {
                 auto widthNumber = static_cast<CFNumberRef>(CFDictionaryGetValue(traits.get(), kCTFontWidthTrait));
                 if (widthNumber) {
-                    // FIXME: Normalize this from Core Text's [-1, 1] range to CSS's [50%, 200%] range.
-                    auto success = CFNumberGetValue(widthNumber, kCFNumberFloatType, &width);
+                    // FIXME: The normalization from Core Text's [-1, 1] range to CSS's [50%, 200%] range isn't perfect.
+                    float ctWidth;
+                    auto success = CFNumberGetValue(widthNumber, kCFNumberFloatType, &ctWidth);
                     ASSERT_UNUSED(success, success);
+                    width = ctWidth < 0.5 ? ctWidth * 50 + 100 : ctWidth * 150 + 50;
                 }
 
                 auto symbolicTraitsNumber = static_cast<CFNumberRef>(CFDictionaryGetValue(traits.get(), kCTFontSymbolicTrait));
@@ -999,15 +1002,63 @@ inline void iterateActiveFonts(const FontDatabase::InstalledFontFamily& installe
     });
 }
 
-static inline std::optional<float> findClosestStretch(float, const FontDatabase::InstalledFontFamily&, const std::unique_ptr<bool[]>&)
+static inline std::optional<float> findClosestStretch(float targetStretch, const FontDatabase::InstalledFontFamily& installedFonts, const std::unique_ptr<bool[]>& filter)
 {
-    // FIXME: Implement this.
-    return 0;
+    std::function<float(const FontDatabase::InstalledFont&)> computeScore;
+
+    if (targetStretch >= stretchThreshold) {
+        float threshold = std::max(targetStretch, installedFonts.stretchBounds.maximum);
+        computeScore = [&, threshold](const FontDatabase::InstalledFont& font) -> float {
+            ASSERT(font.stretch.isValid());
+            if (font.stretch.includes(targetStretch))
+                return 0;
+            ASSERT(font.stretch.minimum > targetStretch || font.stretch.maximum < targetStretch);
+            if (font.stretch.minimum > targetStretch)
+                return font.stretch.minimum - targetStretch;
+            ASSERT(font.stretch.maximum < targetStretch);
+            return threshold - font.stretch.maximum;
+        };
+    } else {
+        ASSERT(targetStretch < stretchThreshold);
+        float threshold = std::min(targetStretch, installedFonts.stretchBounds.minimum);
+        computeScore = [&, threshold](const FontDatabase::InstalledFont& font) -> float {
+            if (font.stretch.includes(targetStretch))
+                return 0;
+            ASSERT(font.stretch.minimum > targetStretch || font.stretch.maximum < targetStretch);
+            if (font.stretch.maximum < targetStretch)
+                return targetStretch - font.stretch.maximum;
+            ASSERT(font.stretch.minimum > targetStretch);
+            return font.stretch.minimum - threshold;
+        };
+    }
+
+    size_t closestIndex = 0;
+    std::optional<float> minimumScore;
+    iterateActiveFonts(installedFonts, filter, [&](auto& installedFont, size_t i) {
+        auto score = computeScore(installedFont);
+        if (!minimumScore || score < minimumScore.value()) {
+            minimumScore = score;
+            closestIndex = i;
+        }
+    });
+
+    if (!minimumScore)
+        return std::nullopt;
+    auto& winner = installedFonts.installedFonts[closestIndex];
+    if (winner.stretch.includes(targetStretch))
+        return targetStretch;
+    if (winner.stretch.minimum > targetStretch)
+        return winner.stretch.minimum;
+    ASSERT(winner.stretch.maximum < targetStretch);
+    return winner.stretch.maximum;
 }
 
-static inline void filterStretch(float, const FontDatabase::InstalledFontFamily&, std::unique_ptr<bool[]>&)
+static inline void filterStretch(float target, const FontDatabase::InstalledFontFamily& installedFonts, std::unique_ptr<bool[]>& filter)
 {
-    // FIXME: Implement this.
+    iterateActiveFonts(installedFonts, filter, [&](auto& installedFont, size_t i) {
+        if (!installedFont.stretch.includes(target))
+            filter[i] = false;
+    });
 }
 
 static inline std::optional<float> findClosestStyle(float targetStyle, const FontDatabase::InstalledFontFamily& installedFonts, const std::unique_ptr<bool[]>& filter)
@@ -1207,7 +1258,7 @@ static inline float computeTargetWeight(FontWeight weight)
     }
 }
 
-static const FontDatabase::InstalledFont* findClosestFont(const FontDatabase::InstalledFontFamily& familyFonts, CTFontSymbolicTraits requestedTraits, FontWeight weight)
+static const FontDatabase::InstalledFont* findClosestFont(const FontDatabase::InstalledFontFamily& familyFonts, CTFontSymbolicTraits requestedTraits, FontWeight weight, float stretch)
 {
     ASSERT(!familyFonts.isEmpty());
 
@@ -1217,7 +1268,7 @@ static const FontDatabase::InstalledFont* findClosestFont(const FontDatabase::In
         filter[i] = true;
 
     // FIXME: Implement this.
-    float targetStretch = 0;
+    float targetStretch = stretch;
     if (auto closestStretch = findClosestStretch(targetStretch, familyFonts, filter))
         filterStretch(closestStretch.value(), familyFonts, filter);
     else
@@ -1242,7 +1293,7 @@ static const FontDatabase::InstalledFont* findClosestFont(const FontDatabase::In
 
 #endif // !SHOULD_USE_CORE_TEXT_FONT_LOOKUP
 
-static RetainPtr<CTFontRef> platformFontLookupWithFamily(const AtomicString& family, CTFontSymbolicTraits requestedTraits, FontWeight weight, float size)
+static RetainPtr<CTFontRef> platformFontLookupWithFamily(const AtomicString& family, CTFontSymbolicTraits requestedTraits, FontWeight weight, float stretch, float size)
 {
     const auto& whitelist = fontWhitelist();
     if (!isSystemFont(family) && whitelist.size() && !whitelist.contains(family))
@@ -1250,6 +1301,7 @@ static RetainPtr<CTFontRef> platformFontLookupWithFamily(const AtomicString& fam
 
 
 #if SHOULD_USE_CORE_TEXT_FONT_LOOKUP
+    UNUSED_PARAM(stretch);
     return adoptCF(CTFontCreateForCSS(family.string().createCFString().get(), toCoreTextFontWeight(weight), requestedTraits, size));
 #else
     const auto& familyFonts = FontDatabase::singleton().collectionForFamily(family.string());
@@ -1271,7 +1323,7 @@ static RetainPtr<CTFontRef> platformFontLookupWithFamily(const AtomicString& fam
             const auto& familyFonts = FontDatabase::singleton().collectionForFamily(String(postScriptFamilyName.get()));
             if (familyFonts.isEmpty())
                 return nullptr;
-            if (const auto* installedFont = findClosestFont(familyFonts, requestedTraits, weight)) {
+            if (const auto* installedFont = findClosestFont(familyFonts, requestedTraits, weight, stretch)) {
                 if (!installedFont->fontDescriptor)
                     return nullptr;
                 return adoptCF(CTFontCreateWithFontDescriptor(installedFont->fontDescriptor.get(), size, nullptr));
@@ -1281,7 +1333,7 @@ static RetainPtr<CTFontRef> platformFontLookupWithFamily(const AtomicString& fam
         return adoptCF(CTFontCreateWithFontDescriptor(postScriptFont.fontDescriptor.get(), size, nullptr));
     }
 
-    if (const auto* installedFont = findClosestFont(familyFonts, requestedTraits, weight))
+    if (const auto* installedFont = findClosestFont(familyFonts, requestedTraits, weight, stretch))
         return adoptCF(CTFontCreateWithFontDescriptor(installedFont->fontDescriptor.get(), size, nullptr));
 
     return nullptr;
@@ -1304,14 +1356,14 @@ static void invalidateFontCache()
     FontCache::singleton().invalidate();
 }
 
-static RetainPtr<CTFontRef> fontWithFamily(const AtomicString& family, CTFontSymbolicTraits desiredTraits, FontWeight weight, const FontFeatureSettings& featureSettings, const FontVariantSettings& variantSettings, const FontVariationSettings& variationSettings, const FontFeatureSettings* fontFaceFeatures, const FontVariantSettings* fontFaceVariantSettings, const TextRenderingMode& textRenderingMode, float size)
+static RetainPtr<CTFontRef> fontWithFamily(const AtomicString& family, CTFontSymbolicTraits desiredTraits, FontWeight weight, float stretch, const FontFeatureSettings& featureSettings, const FontVariantSettings& variantSettings, const FontVariationSettings& variationSettings, const FontFeatureSettings* fontFaceFeatures, const FontVariantSettings* fontFaceVariantSettings, const TextRenderingMode& textRenderingMode, float size)
 {
     if (family.isEmpty())
         return nullptr;
 
     auto foundFont = platformFontWithFamilySpecialCase(family, weight, desiredTraits, size);
     if (!foundFont)
-        foundFont = platformFontLookupWithFamily(family, desiredTraits, weight, size);
+        foundFont = platformFontLookupWithFamily(family, desiredTraits, weight, stretch, size);
     return preparePlatformFont(foundFont.get(), textRenderingMode, fontFaceFeatures, fontFaceVariantSettings, featureSettings, variantSettings, variationSettings);
 }
 
@@ -1352,7 +1404,7 @@ std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDe
     CTFontSymbolicTraits traits = computeTraits(fontDescription);
     float size = fontDescription.computedPixelSize();
 
-    auto font = fontWithFamily(family, traits, fontDescription.weight(), fontDescription.featureSettings(), fontDescription.variantSettings(), fontDescription.variationSettings(), fontFaceFeatures, fontFaceVariantSettings, fontDescription.textRenderingMode(), size);
+    auto font = fontWithFamily(family, traits, fontDescription.weight(), fontDescription.stretch(), fontDescription.featureSettings(), fontDescription.variantSettings(), fontDescription.variationSettings(), fontFaceFeatures, fontFaceVariantSettings, fontDescription.textRenderingMode(), size);
 
 #if PLATFORM(MAC)
     if (!font) {
@@ -1363,7 +1415,7 @@ std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDe
         // Ignore the result because we want to use our own algorithm to actually find the font.
         autoActivateFont(family.string(), size);
 
-        font = fontWithFamily(family, traits, fontDescription.weight(), fontDescription.featureSettings(), fontDescription.variantSettings(), fontDescription.variationSettings(), fontFaceFeatures, fontFaceVariantSettings, fontDescription.textRenderingMode(), size);
+        font = fontWithFamily(family, traits, fontDescription.weight(), fontDescription.stretch(), fontDescription.featureSettings(), fontDescription.variantSettings(), fontDescription.variationSettings(), fontFaceFeatures, fontFaceVariantSettings, fontDescription.textRenderingMode(), size);
     }
 #endif
 

@@ -114,6 +114,7 @@ public:
     static bool convertOverflowScrolling(StyleResolver&, const CSSValue&);
 #endif
     static FontFeatureSettings convertFontFeatureSettings(StyleResolver&, const CSSValue&);
+    static float convertFontStretch(StyleResolver&, const CSSValue&);
 #if ENABLE(VARIATION_FONTS)
     static FontVariationSettings convertFontVariationSettings(StyleResolver&, const CSSValue&);
 #endif
@@ -1151,6 +1152,38 @@ inline FontFeatureSettings StyleBuilderConverter::convertFontFeatureSettings(Sty
         settings.insert(FontFeature(feature.tag(), feature.value()));
     }
     return settings;
+}
+
+inline float StyleBuilderConverter::convertFontStretch(StyleResolver&, const CSSValue& value)
+{
+    ASSERT(is<CSSPrimitiveValue>(value));
+    const auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
+    if (primitiveValue.isPercentage() || primitiveValue.isNumber())
+        return primitiveValue.floatValue();
+
+    switch (primitiveValue.valueID()) {
+    case CSSValueUltraCondensed:
+        return 50;
+    case CSSValueExtraCondensed:
+        return 62.5;
+    case CSSValueCondensed:
+        return 75;
+    case CSSValueSemiCondensed:
+        return 87.5;
+    case CSSValueNormal:
+        return 100;
+    case CSSValueSemiExpanded:
+        return 112.5;
+    case CSSValueExpanded:
+        return 125;
+    case CSSValueExtraExpanded:
+        return 150;
+    case CSSValueUltraExpanded:
+        return 200;
+    default:
+        ASSERT_NOT_REACHED();
+        return 100;
+    }
 }
 
 #if ENABLE(VARIATION_FONTS)

@@ -42,7 +42,7 @@ struct SameSizeAsFontCascadeDescription {
     char c;
 #endif
     AtomicString string;
-    float size;
+    float size[2];
     unsigned bitfields1;
     unsigned bitfields2 : 22;
     void* array;

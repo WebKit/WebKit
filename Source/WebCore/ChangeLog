@@ -1,3 +1,82 @@
+2017-03-01  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Implement font-stretch for installed fonts
+        https://bugs.webkit.org/show_bug.cgi?id=168888
+
+        Reviewed by Darin Adler and Dave Hyatt.
+
+        This patch implements the font-stretch property. Both parsing and the implementation is
+        implemented. Contrary to the name, this property doesn't actually stretch fonts; instead,
+        it provides one more input to the font selection routine.
+
+        The mapping from Core Text's [-1, 1] width values to font-stretch's percentage-based
+        values is not perfect. For now, I've implemented a piecewise linear curve mapping the
+        two. However, I expect to be able to improve this transfer function soon.
+
+        This patch does not implement the font-stretch descriptor in @font-face, and therefore
+        does not work with web fonts. I will add this support in
+        https://bugs.webkit.org/show_bug.cgi?id=168892. The reason it isn't done in this patch is
+        it requires some architectural changes to our CSSFontFace classes which are large enough
+        they should be separated into their own patch.
+
+        This patch lays the groundwork for implementing the 'wdth' variation axis. It does this
+        by adding a floating-point value to RenderStyle instead of just an enum. The font-stretch
+        keywords get converted to these floating-point numbers in accordance with the Fonts spec.
+        This patch doesn't actually implement the variations piece of font-stretch, because that
+        piece also requires some architectural changes. This patch just implements the installed
+        font selection piece.
+
+        This patch also fixes the regression introduced in r213163 with Helvetica Neue. Now that
+        our font selection algorithm has a concept of font stretch, weights 800 and 900 of
+        Helvetica Neue are rendered as expected. (And this patch updates the tests to make sure.)
+
+        Tests: fast/text/font-stretch-parse.html
+               fast/text/font-stretch-shorthand.html
+               FontCacheTest.FontLookupFromFamilyName
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::fontStretchFromStyle): Map style values to CSS keywords.
+        (WebCore::ComputedStyleExtractor::propertyValue): Call the above function.
+        * css/CSSFontValue.cpp:
+        (WebCore::CSSFontValue::customCSSText): Used in getComputedStyle() for the "font"
+        shorthand.
+        (WebCore::CSSFontValue::equals):
+        * css/CSSFontValue.h:
+        * css/CSSProperties.json:
+        * css/StyleBuilderConverter.h:
+        (WebCore::StyleBuilderConverter::convertFontStretch): Map CSS keywords to style values.
+        * css/StyleProperties.cpp:
+        (WebCore::StyleProperties::appendFontLonghandValueIfExplicit): Used for
+        Element.style.font.
+        (WebCore::StyleProperties::fontValue):
+        * css/parser/CSSParserFastPaths.cpp:
+        (WebCore::CSSParserFastPaths::isKeywordPropertyID): Now that variation fonts are being
+        implemented, font-stretch is no longer a keyword property. Instead, it can also take a
+        number or percentage.
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::consumeFontStretch): Parse the value.
+        (WebCore::CSSPropertyParser::parseSingleValue): Call the above function.
+        (WebCore::CSSPropertyParser::consumeFont): Ditto.
+        * platform/graphics/FontCache.h:
+        (WebCore::FontDescriptionKey::FontDescriptionKey): Caches should be sensitive to this
+        new value.
+        (WebCore::FontDescriptionKey::operator==):
+        (WebCore::FontDescriptionKey::computeHash):
+        * platform/graphics/FontDescription.h:
+        (WebCore::FontDescription::stretch): The parsed style value.
+        (WebCore::FontDescription::setStretch):
+        (WebCore::FontDescription::operator==):
+        (WebCore::FontCascadeDescription::initialStretch):
+        * platform/graphics/cocoa/FontCacheCoreText.cpp:
+        (WebCore::FontDatabase::InstalledFont::InstalledFont): Update the installed font selection
+        algorithm to understand font-stretch.
+        (WebCore::findClosestStretch):
+        (WebCore::filterStretch):
+        (WebCore::findClosestFont):
+        (WebCore::platformFontLookupWithFamily):
+        (WebCore::fontWithFamily):
+        (WebCore::FontCache::createFontPlatformData):
+
 2017-03-01  Antti Koivisto  <antti@apple.com>
 
         Rename recalcStyle to resolveStyle and clean up the signature

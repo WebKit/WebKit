@@ -315,6 +315,30 @@
                 "url": "https://www.w3.org/TR/css-fonts-3/#font-weight-prop"
             }
         },
+        "font-stretch": {
+            "inherited": true,
+            "values": [
+                "normal",
+                "ultra-condensed",
+                "extra-condensed",
+                "condensed",
+                "semi-condensed",
+                "semi-expanded",
+                "expanded",
+                "extra-expanded",
+                "ultra-expanded"
+            ],
+            "codegen-properties": {
+                "name-for-methods": "Stretch",
+                "font-property": true,
+                "high-priority": true,
+                "converter": "FontStretch"
+            },
+            "specification": {
+                "category": "css-fonts",
+                "url": "https://www.w3.org/TR/css-fonts-3/#font-stretch-prop"
+            }
+        },
         "text-rendering": {
             "inherited": true,
             "values": [
@@ -1999,6 +2023,7 @@
                     "font-style",
                     "font-variant-caps",
                     "font-weight",
+                    "font-stretch",
                     "line-height"
                 ]
             },
@@ -2022,26 +2047,6 @@
             "specification": {
                 "category": "css-fonts",
                 "url": "https://www.w3.org/TR/css-fonts-3/#propdef-font-variant"
-            }
-        },
-        "font-stretch": {
-            "values": [
-                "normal",
-                "ultra-condensed",
-                "extra-condensed",
-                "condensed",
-                "semi-condensed",
-                "semi-expanded",
-                "expanded",
-                "extra-expanded",
-                "ultra-expanded"
-            ],
-            "codegen-properties": {
-                "skip-builder": true
-            },
-            "specification": {
-                "category": "css-fonts",
-                "url": "https://www.w3.org/TR/css-fonts-3/#font-stretch-prop"
             }
         },
         "glyph-orientation-horizontal": {

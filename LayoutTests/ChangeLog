@@ -1,3 +1,29 @@
+2017-03-01  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Implement font-stretch for installed fonts
+        https://bugs.webkit.org/show_bug.cgi?id=168888
+
+        Reviewed by Darin Adler and Dave Hyatt.
+
+        Updating tests for the "font" shorthand to include the font-stretch keywords.
+
+        * fast/css/font-calculated-value-expected.txt:
+        * fast/css/font-calculated-value.html:
+        * fast/css/font-shorthand-expected.txt:
+        * fast/css/font-shorthand-from-longhands-expected.txt:
+        * fast/css/font-shorthand-from-longhands.html:
+        * fast/css/getComputedStyle/computed-style-font-expected.txt:
+        * fast/css/getComputedStyle/computed-style-font-family-expected.txt:
+        * fast/css/getComputedStyle/script-tests/computed-style-font.js:
+        * fast/inspector-support/style-expected.txt:
+        * fast/text/font-stretch-parse-expected.txt: Added.
+        * fast/text/font-stretch-parse.html: Added.
+        * fast/text/font-stretch-shorthand-expected.html: Added.
+        * fast/text/font-stretch-shorthand.html: Added.
+        * platform/mac/fast/css/css2-system-fonts-expected.txt:
+        * platform/mac/fast/text/font-weights-expected.png:
+        * platform/mac/fast/text/font-weights-expected.txt:
+
 2017-03-01  Antoine Quint  <graouts@apple.com>
 
         LayoutTest media/modern-media-controls/media-controller/media-controller-resize.html is a flaky failure
