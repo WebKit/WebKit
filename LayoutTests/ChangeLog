@@ -1,5 +1,20 @@
 2017-03-01  Antoine Quint  <graouts@apple.com>
 
+        LayoutTest media/modern-media-controls/media-controller/media-controller-resize.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=168378
+        <rdar://problem/30799326>
+
+        Reviewed by Simon Fraser.
+
+        Use asynchronous assertions to improve robustness. Since this test should no longer be flaky, remove it
+        from the list of flaky tests.
+
+        * media/modern-media-controls/media-controller/media-controller-resize-expected.txt:
+        * media/modern-media-controls/media-controller/media-controller-resize.html:
+        * platform/mac-wk1/TestExpectations:
+
+2017-03-01  Antoine Quint  <graouts@apple.com>
+
         [mac-wk1] LayoutTest media/modern-media-controls/tracks-button/tracks-button.html is a flaky timeout
         https://bugs.webkit.org/show_bug.cgi?id=168476
         <rdar://problem/30799198>

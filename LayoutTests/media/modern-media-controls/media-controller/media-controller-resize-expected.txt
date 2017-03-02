@@ -8,10 +8,8 @@ PASS mediaControls.style.width is "320px"
 PASS mediaControls.style.height is "240px"
 
 Resizing to 400x300
-
-Shadow root received a resize event
-PASS mediaControls.style.width is "400px"
-PASS mediaControls.style.height is "300px"
+PASS mediaControls.style.width became "400px"
+PASS mediaControls.style.height became "300px"
 
 PASS successfullyParsed is true
 
