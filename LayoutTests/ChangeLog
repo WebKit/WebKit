@@ -1,3 +1,16 @@
+2017-03-02  Antoine Quint  <graouts@apple.com>
+
+        LayoutTest media/modern-media-controls/pip-support/pip-support-click.html is a flaky timeout
+        https://bugs.webkit.org/show_bug.cgi?id=168658
+        <rdar://problem/30799251>
+
+        Reviewed by Dean Jackson.
+
+        Use an asynchronous assertion to determine when the PiP button has been sized and can thus be clicked.
+
+        * media/modern-media-controls/pip-support/pip-support-click-expected.txt:
+        * media/modern-media-controls/pip-support/pip-support-click.html:
+
 2017-03-02  Ryan Haddad  <ryanhaddad@apple.com>
 
         Land TestExpectations for rdar://problem/30735372.

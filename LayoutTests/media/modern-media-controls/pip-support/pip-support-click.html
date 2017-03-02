@@ -28,19 +28,6 @@ const container = document.querySelector("div#host");
 const media = document.querySelector("video");
 const mediaController = createControls(container, media, null);
 
-scheduler.frameDidFire = function() {
-    if (media.paused)
-        return;
-
-    const button = mediaController.controls.pipButton.element;
-    if (button.getBoundingClientRect().width === 0)
-        return;
-
-    media.pause();
-    pressOnElement(button);
-    scheduler.frameDidFire = null;
-};
-
 media.addEventListener("webkitpresentationmodechanged", () => {
     shouldBeEqualToString("media.webkitPresentationMode", "picture-in-picture");
 
@@ -51,6 +38,11 @@ media.addEventListener("webkitpresentationmodechanged", () => {
     container.remove();
     media.remove();
     finishMediaControlsTest();
+});
+
+shouldBecomeDifferent("mediaController.controls.pipButton.element.getBoundingClientRect().width", "0", () => {
+    media.pause();
+    pressOnElement(mediaController.controls.pipButton.element);
 });
 
 </script>
