@@ -670,3 +670,5 @@ fast/events/context-activated-by-key-event.html [ Skip ]
 [ Release ] imported/w3c/web-platform-tests/webrtc/rtcpeerconnection/rtcpeerconnection-constructor.html [ Skip ]
 [ Release ] imported/w3c/web-platform-tests/webrtc/rtcpeerconnection/rtcpeerconnection-idl.html [ Skip ]
 [ Release ] js/dom/global-constructors-attributes.html [ Skip ]
+
+webkit.org/b/168933 fast/regions/inline-block-inside-anonymous-overflow-with-covered-controls.html [ Pass ImageOnlyFailure ]
