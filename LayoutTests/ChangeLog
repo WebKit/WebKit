@@ -1,3 +1,18 @@
+2017-03-01  Antoine Quint  <graouts@apple.com>
+
+        Unskip media/modern-media-controls/audio/audio-controls-buttons.html
+        https://bugs.webkit.org/show_bug.cgi?id=165234
+        <rdar://problem/30282714>
+
+        Reviewed by Jon Lee.
+
+        Update this test to follow the same pattern used in media/modern-media-controls/airplay-support/airplay-support.html
+        which has proven to be robust.
+
+        * media/modern-media-controls/audio/audio-controls-buttons-expected.txt:
+        * media/modern-media-controls/audio/audio-controls-buttons.html:
+        * platform/mac/TestExpectations:
+
 2017-03-01  Chris Dumez  <cdumez@apple.com>
 
         [WK2][!NETWORK_SESSION] Failure to download when using a download attribute with no value on an anchor

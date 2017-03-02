@@ -1479,9 +1479,6 @@ media/modern-media-controls/media-controller/media-controller-ios-only-enable-ta
 media/modern-media-controls/media-controller/media-controller-ios-do-not-hide-controls-when-tapping-button.html [ Skip ]
 media/modern-media-controls/media-controller/media-controller-tight-padding.html [ Skip ]
 
-# This one always times out on the bots, cannot reproduce locally.
-webkit.org/b/165234 media/modern-media-controls/audio/audio-controls-buttons.html [ Skip ]
-
 webkit.org/b/167263 media/modern-media-controls/media-controller/media-controller-auto-hide.html [ Pass Failure ]
 
 webkit.org/b/167275 media/modern-media-controls/tracks-support/tracks-support-show-panel-after-dragging-controls.html [ Pass Failure ]

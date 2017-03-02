@@ -2,7 +2,7 @@
 <script src="../resources/media-controls-loader.js" type="text/javascript"></script>
 <script src="../resources/media-controls-utils.js" type="text/javascript"></script>
 <body>
-<audio src="../../content/test.mp4" style="width: 600px; height: 50px;" autoplay controls></audio>
+<audio src="../../content/test.mp4" style="width: 600px; height: 50px;" controls></audio>
 <div id="container"></div>
 <script type="text/javascript">
 
@@ -14,30 +14,42 @@ const shadowRoot = document.querySelector("#container");
 const media = document.querySelector("audio");
 const mediaController = createControls(shadowRoot, media, null);
 
-window.internals.setMockMediaPlaybackTargetPickerEnabled(false);
+media.addEventListener("canplay", makeAirPlayAvailable);
 
-media.addEventListener("webkitplaybacktargetavailabilitychanged", playbackTargetAvailabilityChanged);
-
-function playbackTargetAvailabilityChanged(event)
+function makeAirPlayAvailable()
 {
-    if (event.availability != "available")
+    debug("Making AirPlay routes available.");
+    media.addEventListener("webkitplaybacktargetavailabilitychanged", playbackTargetAvailabilityChangedOnce, true);
+    window.internals.setMockMediaPlaybackTargetPickerEnabled(true);
+}
+
+function playbackTargetAvailabilityChangedOnce(event)
+{
+    media.removeEventListener('webkitplaybacktargetavailabilitychanged', playbackTargetAvailabilityChangedOnce, true);
+    media.addEventListener('webkitplaybacktargetavailabilitychanged', playbackTargetAvailabilityChangedAgain, true);
+
+    window.internals.setMockMediaPlaybackTargetPickerState('Sleepy TV', 'DeviceAvailable');
+}
+    
+function playbackTargetAvailabilityChangedAgain(event)
+{
+    // setMockMediaPlaybackTargetPickerState happens asynchronously in WK2 and a
+    // "webkitplaybacktargetavailabilitychanged" is always sent when an event listener
+    // is added, so we may get a "not available" event first.
+    if (event.availability == 'not-available')
         return;
 
-    media.removeEventListener("webkitplaybacktargetavailabilitychanged", playbackTargetAvailabilityChanged);
-
     debug("AirPlay routes became available.");
+    media.removeEventListener('webkitplaybacktargetavailabilitychanged', playbackTargetAvailabilityChangedAgain, true);
 
-    scheduler.frameDidFire = function()
-    {
-        shouldBe("mediaController.controls.controlsBar.children[2].children.length", "2");
-        shouldBe("mediaController.controls.controlsBar.children[2].children[0]", "mediaController.controls.muteButton");
-        shouldBe("mediaController.controls.controlsBar.children[2].children[1]", "mediaController.controls.airplayButton");
+    shouldBe("mediaController.controls.rightContainer.children.length", "2");
+    shouldBe("mediaController.controls.rightContainer.children[0]", "mediaController.controls.muteButton");
+    shouldBe("mediaController.controls.rightContainer.children[1]", "mediaController.controls.airplayButton");
 
-        debug("");
-        shadowRoot.remove();
-        media.remove();
-        finishMediaControlsTest();
-    };
+    debug("");
+    shadowRoot.remove();
+    media.remove();
+    finishJSTest();
 }
 
 </script>
