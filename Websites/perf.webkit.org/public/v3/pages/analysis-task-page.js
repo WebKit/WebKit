@@ -16,12 +16,6 @@ class AnalysisTaskChartPane extends ChartPaneBase {
             this._page._chartSelectionDidChange();
     }
 
-    _updateStatus()
-    {
-        super._updateStatus();
-        this._page.enqueueToRender();
-    }
-
     selectedPoints()
     {
         return this._mainChart ? this._mainChart.selectedPoints('current') : null;

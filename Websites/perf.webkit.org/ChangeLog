@@ -1,3 +1,154 @@
+2017-03-02  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Make baseline data points selectable
+        https://bugs.webkit.org/show_bug.cgi?id=169069
+        <rdar://problem/29209427>
+
+        Reviewed by Antti Koivisto.
+
+        Add the capability to select data points other than "current" configuration type.
+
+        This patch refactors the way the "chart status" is computed. Before this patch, ChartStatusView was
+        responsible for determining two data points for which to compute the status, and computing the status
+        between two data points. ChartPaneStatusView which inherits from ChartStatusView and used in the charts
+        page relied upon ChartStatusView to compute these values, and computed the list of revision ranges for
+        each relevant repository between the data points. ChartPane then had callbacks on ChartPaneStatusView
+        to know whenever these values changed. Because of this entangled mess, ChartStatusView had to be aware
+        of InteractiveTimeSeriesChart even though only ChartPaneStatusView could be used with it.
+
+        This patch dramatically simplifies the situation by adding referencePoints() on TimeSeriesChart and
+        InteractiveTimeSeriesChart which returns the current point, the previous point if there is any, and
+        their time series view. It also extracts ChartStatusEvaluator which computes the current status values
+        and ChartRevisionRange which computes a list of revision differences both based on the referencePoints.
+        As a result, ChartPaneStatusView no longer inherits from ChartStatusView, and ChartStatusView has been
+        renamed to DashboardChartStatusView to reflect its purpose. Furthermore, ChartPane which used to rely on
+        ChartPaneStatusView's revisionCallback to update the commit log viewer simply uses another instance of
+        ChartRevisionRange, eliminating the need for the callback.
+
+        To implement these classes easily, this patch also introduces a new class, LazilyEvaluatedFunction to
+        memoize the return value of a function when called with the same arguments. Delaying the computation of
+        a value and avoiding the work when the values are the same is a very common pattern in the perf dashboard
+        so I expect this class would be used in a lot more places in the future.
+
+        * browser-tests/chart-revision-range-tests.js: Added. Tests for ChartRevisionRange.
+        * browser-tests/chart-status-evaluator-tests.js: Added. Tests for ChartStatusEvaluator.
+
+        * browser-tests/index.html:
+        (BrowsingContext):
+        (BrowsingContext.importScripts): Fixed the bug that calling importScripts twice results in MockRemoteAPI
+        being loaded twice.
+        (ChartTest.importChartScripts): Import more model objects.
+        (ChartTest.sampleCluster): Made this a getter.
+        (ChartTest.makeModelObjectsForSampleCluster):
+        (ChartTest.makeSampleCluster): Added. Cutomizes the valus of baseline / target based on options.
+        (ChartTest.respondWithSampleCluster): Now takes an options argument for makeSampleCluster.
+
+        * public/v3/components/chart-pane-base.js:
+        (ChartPaneBase): Added _openRepository to keep track of the currently open repository instead of relying
+        on _mainChartStatus or _commitLogViewer to keep track of it.
+        (ChartPaneBase.prototype.configure):  The callback for when the user clicked on a repository name in
+        ChartPaneStatusView has been replaced by "openRepository" action.
+        (ChartPaneBase.prototype.setOpenRepository): Moved from ChartPane.
+        (ChartPaneBase.prototype._mainSelectionDidChange):
+        (ChartPaneBase.prototype._indicatorDidChange):
+        (ChartPaneBase.prototype._didFetchData):
+        (ChartPaneBase.prototype._updateCommitLogViewer): Renamed from _updateStatus.
+        (ChartPaneBase.prototype.openNewRepository): Renamed from _requestOpeningCommitViewer. Fixed a bug that
+        clicking on the repository name inside ChartPaneStatusView would not focus the pane, which resulted in
+        arrow keys to be ignored instead of moving the main chart's indicator or the currently open repository.
+        (ChartPaneBase.prototype._keyup):
+        (ChartPaneBase.prototype._moveOpenRepository): Moved from ChartPaneStatusView's
+        moveRepositoryWithNotification. Used when changing the open repository by up/down arrow keys.
+
+        * public/v3/components/chart-revision-range.js: Added. Extracted from ChartPaneStatusView.
+        (ChartRevisionRange): Added.
+        (ChartRevisionRange.prototype.revisionList): Added.
+        (ChartRevisionRange.prototype.rangeForRepository): Added.
+        (ChartRevisionRange._revisionForPoint): Added. Extracted from ChartPaneStatusView's
+        _updateRevisionListForNewCurrentRepository.
+        (ChartRevisionRange._computeRevisionList): Ditto from computeChartStatusLabels.
+
+        * public/v3/components/chart-status-evaluator.js: Added.
+        (ChartStatusEvaluator): Added.
+        (ChartStatusEvaluator.prototype.status): Added.
+        (ChartStatusEvaluator.computeChartStatus): Added. Extracted from ChartStatusView's updateStatusIfNeeded.
+
+        * public/v3/components/chart-status-view.js: Removed.
+        (ChartStatusView): Deleted. Split into ChartStatusEvaluator and DashboardChartStatusView.
+
+        * public/v3/components/chart-styles.js:
+        (ChartStyles.baselineStyle): Make baseline data points interactive. This single line change is what
+        enables the user to interact with the data points. The rest of changes in this patch mostly deals with
+        the status text such as "5% worse than baseline" and the list of revisions shown in the commit log viewer
+        which would have shown the wrong range without these changes.
+
+        * public/v3/components/dashboard-chart-status-view.js: Added. Extracted from ChartStatusView.
+        (DashboardChartStatusView): Added.
+        (DashboardChartStatusView.prototype.render): Added.
+        (DashboardChartStatusView.htmlTemplate): Added.
+        (DashboardChartStatusView.cssTemplate): Added.
+
+        * public/v3/components/interactive-time-series-chart.js:
+        (InteractiveTimeSeriesChart.prototype.referencePoints): Added. Return the first point and the last point
+        as the reference points when there is a selection. Only report the previous point if they are distinct as
+        showing a range of revisions from a data point to itself makes no sense. When there is a indicator simply
+        return it and its previous point as reference points. Otherwise return null unlike TimeSeriesChart's
+        referencePoints which always returns the latest point as the reference point.
+
+        * public/v3/components/time-series-chart.js:
+        (TimeSeriesChart.prototype.referencePoints): Added. Return the latest point as the reference point. It
+        never returns the previous point even if there were more data points as there is no way for the user to
+        specify which data points to compare.
+
+        * public/v3/index.html: Include newly added files.
+
+        * public/v3/lazily-evaluated-function.js: Added.
+        (LazilyEvaluatedFunction): Added.
+        (LazilyEvaluatedFunction.prototype.evaluate): Added.
+
+        * public/v3/models/commit-log.js:
+        (CommitLog.prototype.diff): Fixed a bug that computing the diff of two Subversion-like revisions results
+        in "from" field to be unexpectedly an integer instead of a string.
+
+        * public/v3/models/metric.js:
+        (Metric): Moved the code to compute the unit from the metric name from v2's RunsData class. This makes
+        writing tests easier since it eliminates the need to load v2's data.js.
+        (Metric.prototype.unit):
+        (Metric.prototype.isSmallerBetter): Ditto for determining whether the unit is smaller-is-better.
+
+        * public/v3/pages/analysis-task-page.js:
+        (AnalysisTaskChartPane.prototype._updateStatus): Deleted the unused code.
+
+        * public/v3/pages/chart-pane-status-view.js:
+        (ChartPaneStatusView): No longer inherits from ChartStatusView. Uses ChartStatusEvaluator and
+        ChartRevisionRange to to compute the chart status and the list of revision changes.
+        (ChartPaneStatusView.prototype.pointsRangeForAnalysis): Deleted.
+        (ChartPaneStatusView.prototype.render): Split it into _renderStatus and _renderBuildRevisionTable using
+        LazilyEvaluatedFunction.
+        (ChartPaneStatusView.prototype._renderStatus): Added.
+        (ChartPaneStatusView.prototype._renderBuildRevisionTable): Added.
+        (ChartPaneStatusView.prototype.setCurrentRepository): _updateRevisionListForNewCurrentRepository has been
+        moved into ChartRevisionRange. Just enqueue itself to re-render.
+        (ChartPaneStatusView.prototype._setRevisionRange): Deleted.
+        (ChartPaneStatusView.prototype.moveRepositoryWithNotification): Deleted.
+        (ChartPaneStatusView.prototype.updateRevisionList): Deleted.
+        (ChartPaneStatusView.prototype._updateRevisionListForNewCurrentRepository): Deleted.
+        (ChartPaneStatusView.prototype.computeChartStatusLabels): Deleted.
+        (ChartPaneStatusView.htmlTemplate):
+        (ChartPaneStatusView.cssTemplate):
+
+        * public/v3/pages/chart-pane.js:
+        (ChartPane.prototype.openNewRepository): Overrides the one in ChartPaneBase, which has been renamed from
+        _requestOpeningCommitViewer.
+        (ChartPane.prototype._analyzeRange):
+        (ChartPane.prototype._renderActionToolbar): Use the main chart's selection directly to determine whether
+        an analysis task can be created for the currenty selected range.
+
+        * public/v3/pages/dashboard-page.js:
+        (DashboardPage.prototype._createChartForCell):
+
+        * unit-tests/lazily-evaluated-function-tests.js: Added. Tests for LazilyEvaluatedFunction.
+
 2017-03-01  Ryosuke Niwa  <rniwa@webkit.org>
 
         Build fix after r212853. Make creating an analysis task work again.

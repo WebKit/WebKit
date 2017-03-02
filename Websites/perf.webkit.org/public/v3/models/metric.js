@@ -8,6 +8,19 @@ class Metric extends LabeledObject {
         object.test.addMetric(this);
         this._test = object.test;
         this._platforms = [];
+
+        const suffix = this.name().match('([A-z][a-z]+|FrameRate)$')[0];
+        this._unit = {
+            'FrameRate': 'fps',
+            'Runs': '/s',
+            'Time': 'ms',
+            'Duration': 'ms',
+            'Malloc': 'B',
+            'Heap': 'B',
+            'Allocations': 'B',
+            'Size': 'B',
+            'Score': 'pt',
+        }[suffix];
     }
 
     aggregatorName() { return this._aggregatorName; }
@@ -57,8 +70,13 @@ class Metric extends LabeledObject {
         return this.name() + suffix;
     }
 
-    unit() { return RunsData.unitFromMetricName(this.name()); }
-    isSmallerBetter() { return RunsData.isSmallerBetter(this.unit()); }
+    unit() { return this._unit; }
+
+    isSmallerBetter()
+    {
+        const unit = this._unit;
+        return unit != 'fps' && unit != '/s' && unit != 'pt';
+    }
 
     makeFormatter(sigFig, alwaysShowSign) { return Metric.makeFormatter(this.unit(), sigFig, alwaysShowSign); }
 

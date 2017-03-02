@@ -12,6 +12,7 @@ class ChartPaneBase extends ComponentBase {
         this._metric = null;
         this._disableSampling = false;
         this._showOutliers = false;
+        this._openRepository = null;
 
         this._overviewChart = null;
         this._mainChart = null;
@@ -53,10 +54,13 @@ class ChartPaneBase extends ComponentBase {
         this._mainChart.listenToAction('annotationClick', this._openAnalysisTask.bind(this));
         this.renderReplace(this.content().querySelector('.chart-pane-main'), this._mainChart);
 
-        this._mainChartStatus = new ChartPaneStatusView(result.metric, this._mainChart, this._requestOpeningCommitViewer.bind(this));
+        this._revisionRange = new ChartRevisionRange(this._mainChart);
+
+        this._mainChartStatus = new ChartPaneStatusView(result.metric, this._mainChart);
+        this._mainChartStatus.listenToAction('openRepository', this.openNewRepository.bind(this));
         this.renderReplace(this.content().querySelector('.chart-pane-details'), this._mainChartStatus);
 
-        this.content().querySelector('.chart-pane').addEventListener('keyup', this._keyup.bind(this));
+        this.content().querySelector('.chart-pane').addEventListener('keydown', this._keyup.bind(this));
 
         this.fetchAnalysisTasks(false);
     }
@@ -125,11 +129,18 @@ class ChartPaneBase extends ComponentBase {
             this._mainChart.setSelection(selection);
     }
 
+    setOpenRepository(repository)
+    {
+        this._openRepository = repository;
+        this._mainChartStatus.setCurrentRepository(repository);
+        this._updateCommitLogViewer();
+    }
+
     _overviewSelectionDidChange(domain, didEndDrag) { }
 
     _mainSelectionDidChange(selection, didEndDrag)
     {
-        this._updateStatus();
+        this._updateCommitLogViewer();
     }
 
     _mainSelectionDidZoom(selection)
@@ -141,19 +152,19 @@ class ChartPaneBase extends ComponentBase {
 
     _indicatorDidChange(indicatorID, isLocked)
     {
-        this._updateStatus();
+        this._updateCommitLogViewer();
     }
 
     _didFetchData()
     {
-        this._updateStatus();
+        this._updateCommitLogViewer();
     }
 
-    _updateStatus()
+    _updateCommitLogViewer()
     {
-        var range = this._mainChartStatus.updateRevisionList();
+        const range = this._revisionRange.rangeForRepository(this._openRepository);
         const updateRendering = () => { this.enqueueToRender(); };
-        this._commitLogViewer.view(range.repository, range.from, range.to).then(updateRendering);
+        this._commitLogViewer.view(this._openRepository, range.from, range.to).then(updateRendering);
         updateRendering();
     }
 
@@ -166,12 +177,10 @@ class ChartPaneBase extends ComponentBase {
 
     router() { return null; }
 
-    _requestOpeningCommitViewer(repository, from, to)
+    openNewRepository(repository)
     {
-        this._mainChartStatus.setCurrentRepository(repository);
-        const updateRendering = () => { this.enqueueToRender(); };
-        this._commitLogViewer.view(repository, from, to).then(updateRendering);
-        updateRendering();
+        this.content().querySelector('.chart-pane').focus();
+        this.setOpenRepository(repository);
     }
 
     _keyup(event)
@@ -186,11 +195,13 @@ class ChartPaneBase extends ComponentBase {
                 return;
             break;
         case 38: // Up
-            if (!this._mainChartStatus.moveRepositoryWithNotification(false))
+            if (!this._moveOpenRepository(false))
                 return;
+            break;
         case 40: // Down
-            if (!this._mainChartStatus.moveRepositoryWithNotification(true))
+            if (!this._moveOpenRepository(true))
                 return;
+            break;
         default:
             return;
         }
@@ -199,6 +210,28 @@ class ChartPaneBase extends ComponentBase {
 
         event.preventDefault();
         event.stopPropagation();
+    }
+
+    _moveOpenRepository(forward)
+    {
+        const openRepository = this._openRepository;
+        if (!openRepository)
+            return false;
+
+        const revisionList = this._revisionRange.revisionList();
+        if (!revisionList)
+            return false;
+
+        const currentIndex = revisionList.findIndex((info) => info.repository == openRepository);
+        console.assert(currentIndex >= 0);
+
+        const newIndex = currentIndex + (forward ? 1 : -1);
+        if (newIndex < 0 || newIndex >= revisionList.length)
+            return false;
+
+        this.openNewRepository(revisionList[newIndex].repository);
+
+        return true;
     }
 
     render()

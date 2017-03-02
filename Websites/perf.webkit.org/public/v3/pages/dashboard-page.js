@@ -137,7 +137,7 @@ class DashboardPage extends PageWithHeading {
         chart.listenToAction('dataChange', () => this._fetchedData())
         this._charts.push(chart);
 
-        var statusView = new ChartStatusView(result.metric, chart);
+        var statusView = new DashboardChartStatusView(result.metric, chart);
         this._statusViews.push(statusView);
 
         return {

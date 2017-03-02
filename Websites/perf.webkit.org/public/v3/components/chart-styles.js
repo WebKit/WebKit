@@ -52,6 +52,7 @@ class ChartStyles {
             backgroundIntervalStyle: 'rgba(255, 153, 153, 0.1)',
             backgroundPointStyle: '#f99',
             backgroundLineStyle: '#fcc',
+            interactive: true,
         };
     }
 

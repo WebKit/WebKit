@@ -57,7 +57,7 @@ class CommitLog extends DataModelObject {
         var from = previousCommit.revision();
         var label = null;
         if (parseInt(to) == to) { // e.g. r12345.
-            from = parseInt(from) + 1;
+            from = (parseInt(from) + 1).toString();
             label = `r${from}-r${this.revision()}`;
         } else if (to.length == 40) { // e.g. git hash
             label = `${from.substring(0, 8)}..${to.substring(0, 8)}`;

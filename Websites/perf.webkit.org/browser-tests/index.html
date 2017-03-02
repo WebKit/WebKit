@@ -19,6 +19,8 @@ mocha.setup('bdd');
 <script src="editable-text-tests.js"></script>
 <script src="time-series-chart-tests.js"></script>
 <script src="interactive-time-series-chart-tests.js"></script>
+<script src="chart-status-evaluator-tests.js"></script>
+<script src="chart-revision-range-tests.js"></script>
 <script>
 
 afterEach(() => {
@@ -40,6 +42,7 @@ class BrowsingContext {
         this.symbols = {};
         this.global = this.iframe.contentWindow;
         this.document = this.iframe.contentDocument;
+        this._didLoadMockRemote = false;
     }
 
     importScripts(pathList, ...symbolList)
@@ -48,8 +51,12 @@ class BrowsingContext {
         const global = this.iframe.contentWindow;
 
         pathList = pathList.map((path) => `../public/v3/${path}`);
+        if (!this._didLoadMockRemote) {
+            this._didLoadMockRemote = true;
+            pathList.unshift('../unit-tests/resources/mock-remote-api.js');
+        }
 
-        return Promise.all(['../unit-tests/resources/mock-remote-api.js', ...pathList].map((path) => {
+        return Promise.all(pathList.map((path) => {
             return new Promise((resolve, reject) => {
                 let script = doc.createElement('script');
                 script.addEventListener('load', resolve);
@@ -196,22 +203,45 @@ const ChartTest = {
             '../shared/statistics.js',
             'instrumentation.js',
             'models/data-model.js',
-            'models/metric.js',
             'models/time-series.js',
             'models/measurement-set.js',
             'models/measurement-cluster.js',
             'models/measurement-adaptor.js',
+            'models/repository.js',
+            'models/platform.js',
+            'models/test.js',
+            'models/metric.js',
+            'models/root-set.js',
+            'models/commit-log.js',
             'components/base.js',
             'components/time-series-chart.js',
             'components/interactive-time-series-chart.js'],
-            'ComponentBase', 'TimeSeriesChart', 'InteractiveTimeSeriesChart', 'Metric', 'MeasurementSet', 'MockRemoteAPI').then(() => {
+            'ComponentBase', 'TimeSeriesChart', 'InteractiveTimeSeriesChart',
+            'Platform', 'Metric', 'Test', 'Repository', 'MeasurementSet', 'MockRemoteAPI').then(() => {
                 return context.symbols.TimeSeriesChart;
             })
     },
 
     posixTime: posixTime,
 
-    sampleCluster: {
+    get sampleCluster() { return this.makeSampleCluster(); },
+
+    makeModelObjectsForSampleCluster(context)
+    {
+        const test = context.symbols.Test.ensureSingleton(2, {name: 'Test'});
+        const metric = context.symbols.Metric.ensureSingleton(1, {name: 'Time', test})
+        const platform = context.symbols.Platform.ensureSingleton(1,
+            {name: 'SomePlatform', metrics: [metric], lastModifiedByMetric: [posixTime('2016-01-18T00:00:00Z')]});
+        metric.addPlatform(platform);
+        context.symbols.Repository.ensureSingleton(1, {name: 'SomeApp'});
+        context.symbols.Repository.ensureSingleton(2, {name: 'macOS'});
+    },
+
+    makeSampleCluster(options = {})
+    {
+        const baselineStart = options.baselineIsSmaller ? 30 : 130;
+        const targetStart = options.targetIsBigger ? 120 : 90;
+        return {
         "clusterStart": posixTime('2016-01-01T00:00:00Z'),
         "clusterSize": 7 * dayInMilliseconds,
         "startTime": posixTime('2016-01-01T00:00:00Z'),
@@ -228,41 +258,65 @@ const ChartTest = {
             "current": [
                 [
                     1000, 100, 1, 100, 100 * 100, false,
-                    [ [ 2000, 1, "4000", posixTime('2016-01-05T17:35:00Z')] ],
+                    [ [2000, 1, "4000", posixTime('2016-01-05T17:35:00Z')], [3000, 2, "15B42", 0] ],
                     posixTime('2016-01-05T17:35:00Z'), 5000, posixTime('2016-01-05T19:23:00Z'), "10", 7
                 ],
                 [
                     1001, 131, 1, 131, 131 * 131, true,
-                    [ [ 2001, 1, "4001", posixTime('2016-01-05T18:43:01Z')] ],
+                    [ [2001, 1, "4001", posixTime('2016-01-05T18:43:01Z')], [3000, 2, "15B42", 0] ],
                     posixTime('2016-01-05T18:43:01Z'), 5001, posixTime('2016-01-05T20:58:01Z'), "11", 7
                 ],
                 [
                     1002, 122, 1, 122, 122 * 122, false,
-                    [ [ 2002, 1, "4002", posixTime('2016-01-05T20:01:02Z') ] ],
+                    [ [2002, 1, "4002", posixTime('2016-01-05T20:01:02Z')], [3000, 2, "15B42", 0] ],
                     posixTime('2016-01-05T20:01:02Z'), 5002, posixTime('2016-01-05T22:37:02Z'), "12", 7
                 ],
                 [
                     1003, 113, 1, 113, 113 * 113, false,
-                    [ [ 2003, 1, "4003", posixTime('2016-01-05T23:19:03Z') ] ],
+                    [ [2003, 1, "4003", posixTime('2016-01-05T23:19:03Z')], [3000, 2, "15B42", 0] ],
                     posixTime('2016-01-05T23:19:03Z'), 5003, posixTime('2016-01-06T23:19:03Z'), "13", 7
                 ],
                 [
                     1004, 124, 1, 124, 124 * 124, false,
-                    [ [ 2004, 1, "4004", posixTime('2016-01-06T01:52:04Z') ] ],
+                    [ [2004, 1, "4004", posixTime('2016-01-06T01:52:04Z')], [3001, 2, "15C50", 0] ],
                     posixTime('2016-01-06T01:52:04Z'), 5004, posixTime('2016-01-06T02:42:04Z'), "14", 7
                 ],
                 [
                     1005, 115, 1, 115, 115 * 115, true,
-                    [ [ 2005, 1, "4005", posixTime('2016-01-06T03:22:05Z') ] ],
+                    [ [2005, 1, "4005", posixTime('2016-01-06T03:22:05Z')], [3001, 2, "15C50", 0] ],
                     posixTime('2016-01-06T03:22:05Z'), 5005, posixTime('2016-01-06T06:01:05Z'), "15", 7
                 ],
                 [
                     1006, 116, 1, 116, 116 * 116, false,
-                    [ [ 2006, 1, "4006", posixTime('2016-01-06T05:59:06Z') ] ],
+                    [ [2006, 1, "4006", posixTime('2016-01-06T05:59:06Z')], [3001, 2, "15C50", 0] ],
                     posixTime('2016-01-06T05:59:06Z'), 5006, posixTime('2016-01-06T08:34:06Z'), "16", 7
                 ]
+            ],
+            "baseline": [
+                [
+                    7000, baselineStart, 1, baselineStart, baselineStart * baselineStart, false,
+                    [ ],
+                    posixTime('2016-01-05T12:00:30Z'), 5030, posixTime('2016-01-05T12:00:30Z'), "30", 7
+                ],
+                [
+                    7001, baselineStart + 1, 1, baselineStart + 1, Math.pow(baselineStart + 1, 2), false,
+                    [ ],
+                    posixTime('2016-01-06T00:00:31Z'), 5031, posixTime('2016-01-06T00:00:31Z'), "31", 7
+                ],
+            ],
+            "target": [
+                [
+                    8000, targetStart, 1, targetStart, targetStart * targetStart, false,
+                    [ ],
+                    posixTime('2016-01-05T12:00:30Z'), 5030, posixTime('2016-01-05T12:00:30Z'), "90", 7
+                ],
+                [
+                    8001, targetStart + 1, 1, targetStart + 1, Math.pow(targetStart + 1, 2), false,
+                    [ ],
+                    posixTime('2016-01-06T00:00:31Z'), 5031, posixTime('2016-01-06T00:00:31Z'), "91", 7
+                ],
             ]
-        },
+        }};
     },
 
     createChartWithSampleCluster(context, sourceList = null, chartOptions = {}, className = 'TimeSeriesChart')
@@ -296,11 +350,11 @@ const ChartTest = {
         return this.createChartWithSampleCluster(context, sourceList, chartOptions, 'InteractiveTimeSeriesChart');
     },
 
-    respondWithSampleCluster(request)
+    respondWithSampleCluster(request, options)
     {
         expect(request.url).to.be('../data/measurement-set-1-1.json');
         expect(request.method).to.be('GET');
-        request.resolve(this.sampleCluster);
+        request.resolve(this.makeSampleCluster(options));
     },
 };
 

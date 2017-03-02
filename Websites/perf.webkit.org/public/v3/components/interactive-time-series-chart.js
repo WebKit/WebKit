@@ -52,6 +52,27 @@ class InteractiveTimeSeriesChart extends TimeSeriesChart {
         return selection && data ? data.firstPointInTimeRange(selection[0], selection[1]) : null;
     }
 
+    referencePoints(type)
+    {
+        const selection = this.currentSelection();
+        if (selection) {
+            const view = this.selectedPoints('current');
+            if (!view)
+                return null;
+            const firstPoint = view.lastPoint();
+            const lastPoint = view.firstPoint();
+            if (!firstPoint)
+                return null;
+            return {view, currentPoint: firstPoint, previousPoint: firstPoint != lastPoint ? lastPoint : null};
+        } else  {
+            const indicator = this.currentIndicator();
+            if (!indicator)
+                return null;
+            return {view: indicator.view, currentPoint: indicator.point, previousPoint: indicator.view.previousPoint(indicator.point)};
+        }
+        return null;
+    }
+
     setIndicator(id, shouldLock)
     {
         var selectionDidChange = !!this._sampledTimeSeriesData;

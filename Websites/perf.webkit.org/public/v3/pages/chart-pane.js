@@ -181,19 +181,10 @@ class ChartPane extends ChartPaneBase {
 
     router() { return this._chartsPage.router(); }
 
-    _requestOpeningCommitViewer(repository, from, to)
+    openNewRepository(repository)
     {
-        super._requestOpeningCommitViewer(repository, from, to);
+        this.content().querySelector('.chart-pane').focus();
         this._chartsPage.setOpenRepository(repository);
-    }
-
-    setOpenRepository(repository)
-    {
-        if (repository != this._commitLogViewer.currentRepository()) {
-            var range = this._mainChartStatus.setCurrentRepository(repository);
-            this._commitLogViewer.view(repository, range.from, range.to).then(() => { this.enqueueToRender(); });
-            this.enqueueToRender();
-        }
     }
 
     _indicatorDidChange(indicatorID, isLocked)
@@ -203,17 +194,16 @@ class ChartPane extends ChartPaneBase {
         super._indicatorDidChange(indicatorID, isLocked);
     }
 
-    _analyzeRange(pointsRangeForAnalysis)
+    _analyzeRange(startPoint, endPoint)
     {
         var router = this._chartsPage.router();
         var newWindow = window.open(router.url('analysis/task/create'), '_blank');
 
         var analyzePopover = this.content().querySelector('.chart-pane-analyze-popover');
         var name = analyzePopover.querySelector('input').value;
-        var self = this;
-        AnalysisTask.create(name, pointsRangeForAnalysis.startPointId, pointsRangeForAnalysis.endPointId).then(function (data) {
+        AnalysisTask.create(name, startPoint.id, endPoint.id).then((data) => {
             newWindow.location.href = router.url('analysis/task/' + data['taskId']);
-            self.fetchAnalysisTasks(true);
+            this.fetchAnalysisTasks(true);
         }, function (error) {
             newWindow.location.href = router.url('analysis/task/create', {error: error});
         });
@@ -279,16 +269,17 @@ class ChartPane extends ChartPaneBase {
             platformPopover.style.display = 'none';
 
         var analyzePopover = this.content().querySelector('.chart-pane-analyze-popover');
-        var pointsRangeForAnalysis = this._mainChartStatus.pointsRangeForAnalysis();
-        if (pointsRangeForAnalysis) {
+        const selectedPoints = this._mainChart.selectedPoints('current');
+        const hasSelectedPoints = selectedPoints && selectedPoints.length();
+        if (hasSelectedPoints) {
             actions.push(this._makePopoverActionItem(analyzePopover, 'Analyze', false));
-            analyzePopover.onsubmit = function (event) {
-                event.preventDefault();
-                self._analyzeRange(pointsRangeForAnalysis);
-            }
+            analyzePopover.onsubmit = this.createEventHandler(() => {
+                console.log(selectedPoints.length());
+                this._analyzeRange(selectedPoints.firstPoint(), selectedPoints.lastPoint());
+            });
         } else {
             analyzePopover.style.display = 'none';
-            analyzePopover.onsubmit = function (event) { event.preventDefault(); }
+            analyzePopover.onsubmit = this.createEventHandler(() => {});
         }
 
         var filteringOptions = this.content().querySelector('.chart-pane-filtering-options');

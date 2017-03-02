@@ -131,6 +131,17 @@ class TimeSeriesChart extends ComponentBase {
         return null;
     }
 
+    referencePoints(type)
+    {
+        const view = this.sampledTimeSeriesData(type);
+        if (!view || !this._startTime || !this._endTime)
+            return null;
+        const point = view.lastPointInTimeRange(this._startTime, this._endTime);
+        if (!point)
+            return null;
+        return {view, currentPoint: point, previousPoint: null};
+    }
+
     setAnnotations(annotations)
     {
         this._annotations = annotations;
