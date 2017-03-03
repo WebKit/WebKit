@@ -1,5 +1,21 @@
 2017-03-02  Antoine Quint  <graouts@apple.com>
 
+        LayoutTest media/modern-media-controls/media-controller/media-controller-auto-hide-mouse-enter-and-mouse-leave.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=167348
+        <rdar://problem/30822186>
+
+        Reviewed by Tim Horton.
+
+        Since timing is hard to test accurately, simplify the test to only check that we're transitioning
+        from one state to another and use the asynchronous, polling-based assertions to check that we will
+        be transitioning between those two states (visible and faded).
+
+        * media/modern-media-controls/media-controller/media-controller-auto-hide-mouse-enter-and-mouse-leave-expected.txt:
+        * media/modern-media-controls/media-controller/media-controller-auto-hide-mouse-enter-and-mouse-leave.html:
+        * platform/mac/TestExpectations:
+
+2017-03-02  Antoine Quint  <graouts@apple.com>
+
         LayoutTest media/modern-media-controls/media-controller/media-controller-auto-hide.html is flaky
         https://bugs.webkit.org/show_bug.cgi?id=167263
         <rdar://problem/30821398>

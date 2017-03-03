@@ -3,17 +3,19 @@ Testing the controls bar appears when the mouse enters and disappears when the m
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-Video started playing, controls bar is visible by default.
-PASS controlsBar.classList.contains('faded') is false
+PASS !!shadowRoot.querySelector('.controls-bar') became true
 
-Auto-hide timer has elapsed, controls bar should be faded.
-PASS controlsBar.classList.contains('faded') is true
+Video started playing, controls bar should become visible by default.
+PASS shadowRoot.querySelector('.controls-bar').classList.contains('faded') became false
 
-Mouse moved over the media, controls bar should be visible.
-PASS controlsBar.classList.contains('faded') is false
+Controls bar should become faded when the auto-hide timer elapses.
+PASS shadowRoot.querySelector('.controls-bar').classList.contains('faded') became true
 
-Mouse moved out of the media, controls bar should be faded.
-PASS controlsBar.classList.contains('faded') is true
+Mouse moved over the media, controls bar should become visible again.
+PASS shadowRoot.querySelector('.controls-bar').classList.contains('faded') became false
+
+Mouse moved out of the media, controls bar should become faded.
+PASS shadowRoot.querySelector('.controls-bar').classList.contains('faded') became true
 
 PASS successfullyParsed is true
 
