@@ -463,14 +463,12 @@ RetainPtr<CGImageRef> AVVideoCaptureSource::currentFrameCGImage()
     CVPixelBufferRef pixelBuffer = static_cast<CVPixelBufferRef>(CMSampleBufferGetImageBuffer(m_buffer.get()));
     ASSERT(CVPixelBufferGetPixelFormatType(pixelBuffer) == videoCaptureFormat);
 
-    if (!m_pixelBufferConformer) {
-#if USE(VIDEOTOOLBOX)
-        NSDictionary *attributes = @{ (NSString *)kCVPixelBufferPixelFormatTypeKey: @(kCVPixelFormatType_32BGRA) };
-#else
-        NSDictionary *attributes = nil;
-#endif
-        m_pixelBufferConformer = std::make_unique<PixelBufferConformerCV>((CFDictionaryRef)attributes);
-    }
+    if (!m_pixelBufferConformer)
+        m_pixelBufferConformer = std::make_unique<PixelBufferConformerCV>((CFDictionaryRef)@{ (NSString *)kCVPixelBufferPixelFormatTypeKey: @(kCVPixelFormatType_32BGRA) });
+
+    ASSERT(m_pixelBufferConformer);
+    if (!m_pixelBufferConformer)
+        return nullptr;
 
     m_lastImage = m_pixelBufferConformer->createImageFromPixelBuffer(pixelBuffer);
 
