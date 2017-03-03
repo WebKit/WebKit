@@ -1,3 +1,13 @@
+2017-03-03  Javier Fernandez  <jfernandez@igalia.com>
+
+        [GTK] Unreviewed test gardening
+        https://bugs.webkit.org/show_bug.cgi?id=169127
+
+        Unreviewed GTK+ gardening. Removed duplicated TestExpectations entry.
+
+        * platform/gtk/TestExpectations:
+        - editing/selection/extend-by-character-007.html fails in GTK as well, so using the general TestExpectations entry.
+
 2017-03-03  Antoine Quint  <graouts@apple.com>
 
         LayoutTest media/modern-media-controls/tracks-support/tracks-support-show-panel-after-dragging-controls.html is flaky
