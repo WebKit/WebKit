@@ -52,6 +52,7 @@ class NetworkRTCSocket;
 class NetworkRTCProvider : public ThreadSafeRefCounted<NetworkRTCProvider>, public rtc::MessageHandler {
 public:
     static Ref<NetworkRTCProvider> create(NetworkConnectionToWebProcess& connection) { return adoptRef(*new NetworkRTCProvider(connection)); }
+    ~NetworkRTCProvider();
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
     void didReceiveNetworkRTCMonitorMessage(IPC::Connection& connection, IPC::Decoder& decoder) { m_rtcMonitor.didReceiveMessage(connection, decoder); }

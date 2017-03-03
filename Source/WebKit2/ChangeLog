@@ -1,5 +1,23 @@
 2017-03-02  Youenn Fablet  <youenn@apple.com>
 
+        Move part of NetworkRTCProvider::close implementation in NetworkRTCProvider destructor
+        https://bugs.webkit.org/show_bug.cgi?id=169104
+
+        Reviewed by Alex Christensen.
+
+        Improving NetworkRTCProvider clean-up by moving some member field cleaning to the destructor.
+        The remaining cleaning is still kept in NetworkRTCProvider::close as we need to go to the rtc network thread and
+        for that, we take a ref of NetworkRTCProvider.
+        Stopping any resolver before freeing them.
+
+        * NetworkProcess/webrtc/NetworkRTCMonitor.h:
+        * NetworkProcess/webrtc/NetworkRTCProvider.cpp:
+        (WebKit::NetworkRTCProvider::~NetworkRTCProvider):
+        (WebKit::NetworkRTCProvider::close):
+        * NetworkProcess/webrtc/NetworkRTCProvider.h:
+
+2017-03-02  Youenn Fablet  <youenn@apple.com>
+
         [iOS] Replicate NetworkProcess Mac sandboxing in iOS to allow TCP/UDP
         https://bugs.webkit.org/show_bug.cgi?id=169105
 

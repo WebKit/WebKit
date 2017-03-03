@@ -48,6 +48,7 @@ public:
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
     void stopUpdating();
+    bool isStarted() const { return m_isStarted; }
 
 private:
     void startUpdating();

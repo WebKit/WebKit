@@ -64,10 +64,19 @@ NetworkRTCProvider::NetworkRTCProvider(NetworkConnectionToWebProcess& connection
 #endif
 }
 
+NetworkRTCProvider::~NetworkRTCProvider()
+{
+    ASSERT(!m_connection);
+    ASSERT(!m_sockets.size());
+    ASSERT(!m_rtcMonitor.isStarted());
+
+    for (auto identifier : m_resolvers.keys())
+        stopResolver(identifier);
+}
+
 void NetworkRTCProvider::close()
 {
     m_connection = nullptr;
-    m_resolvers.clear();
     m_rtcMonitor.stopUpdating();
 
     callOnRTCNetworkThread([this]() {
