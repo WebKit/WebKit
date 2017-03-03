@@ -3,14 +3,9 @@ Testing the controls bar fades out as expected after the auto-hide delay expires
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-Video started playing, controls bar is visible by default.
-PASS controlsBar.classList.contains('faded') is false
-
-Auto-hide timer has been going for 200ms, controls bar should still be visible.
-PASS controlsBar.classList.contains('faded') is false
-
-Auto-hide timer has elapsed, controls bar should be faded.
-PASS controlsBar.classList.contains('faded') is true
+PASS !!shadowRoot.querySelector('.controls-bar') became true
+PASS shadowRoot.querySelector('.controls-bar').classList.contains('faded') became false
+PASS shadowRoot.querySelector('.controls-bar').classList.contains('faded') became true
 
 PASS successfullyParsed is true
 

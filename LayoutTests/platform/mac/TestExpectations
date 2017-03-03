@@ -1481,8 +1481,6 @@ media/modern-media-controls/media-controller/media-controller-ios-only-enable-ta
 media/modern-media-controls/media-controller/media-controller-ios-do-not-hide-controls-when-tapping-button.html [ Skip ]
 media/modern-media-controls/media-controller/media-controller-tight-padding.html [ Skip ]
 
-webkit.org/b/167263 media/modern-media-controls/media-controller/media-controller-auto-hide.html [ Pass Failure ]
-
 webkit.org/b/167275 media/modern-media-controls/tracks-support/tracks-support-show-panel-after-dragging-controls.html [ Pass Failure ]
 
 webkit.org/b/167347 media/modern-media-controls/media-controller/media-controller-auto-hide-mouse-enter-and-mouse-leave.html [ Pass Failure ]
