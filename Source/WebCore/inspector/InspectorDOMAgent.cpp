@@ -50,6 +50,7 @@
 #include "DOMWindow.h"
 #include "Document.h"
 #include "DocumentType.h"
+#include "Editing.h"
 #include "Element.h"
 #include "Event.h"
 #include "EventListener.h"
@@ -91,7 +92,6 @@
 #include "TextNodeTraversal.h"
 #include "Timer.h"
 #include "XPathResult.h"
-#include "htmlediting.h"
 #include "markup.h"
 #include <inspector/IdentifiersFactory.h>
 #include <inspector/InjectedScript.h>

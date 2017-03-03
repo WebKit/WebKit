@@ -44,6 +44,7 @@
 #import "AccessibilityTableRow.h"
 #import "ColorMac.h"
 #import "ContextMenuController.h"
+#import "Editing.h"
 #import "Font.h"
 #import "FontCascade.h"
 #import "Frame.h"
@@ -62,7 +63,6 @@
 #import "WebCoreFrameView.h"
 #import "WebCoreObjCExtras.h"
 #import "WebCoreSystemInterface.h"
-#import "htmlediting.h"
 
 using namespace WebCore;
 using namespace HTMLNames;

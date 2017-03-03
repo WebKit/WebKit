@@ -33,6 +33,7 @@
 #import "DataTransfer.h"
 #import "DocumentFragment.h"
 #import "DocumentLoader.h"
+#import "Editing.h"
 #import "Editor.h"
 #import "EditorClient.h"
 #import "File.h"
@@ -64,7 +65,6 @@
 #import "TypingCommand.h"
 #import "UUID.h"
 #import "WebNSAttributedStringExtras.h"
-#import "htmlediting.h"
 #import "markup.h"
 
 namespace WebCore {

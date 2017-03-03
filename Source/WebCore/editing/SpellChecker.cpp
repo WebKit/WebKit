@@ -28,6 +28,7 @@
 
 #include "Document.h"
 #include "DocumentMarkerController.h"
+#include "Editing.h"
 #include "Editor.h"
 #include "Frame.h"
 #include "Page.h"
@@ -36,7 +37,6 @@
 #include "Settings.h"
 #include "TextCheckerClient.h"
 #include "TextCheckingHelper.h"
-#include "htmlediting.h"
 
 namespace WebCore {
 

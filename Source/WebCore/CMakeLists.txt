@@ -1557,6 +1557,7 @@ set(WebCore_SOURCES
     editing/DictationAlternative.cpp
     editing/DictationCommand.cpp
     editing/EditCommand.cpp
+    editing/Editing.cpp
     editing/EditingStyle.cpp
     editing/Editor.cpp
     editing/EditorCommand.cpp
@@ -1600,7 +1601,6 @@ set(WebCore_SOURCES
     editing/VisibleSelection.cpp
     editing/VisibleUnits.cpp
     editing/WrapContentsInDummySpanCommand.cpp
-    editing/htmlediting.cpp
     editing/markup.cpp
 
     fileapi/AsyncFileStream.cpp

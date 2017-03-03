@@ -30,6 +30,7 @@
 #include "CharacterData.h"
 #include "DeleteSelectionCommand.h"
 #include "Document.h"
+#include "Editing.h"
 #include "Editor.h"
 #include "EditorClient.h"
 #include "Element.h"
@@ -63,7 +64,6 @@
 #include "StyleProperties.h"
 #include "TypingCommand.h"
 #include "VisibleUnits.h"
-#include "htmlediting.h"
 #include <stdio.h>
 #include <wtf/text/CString.h>
 

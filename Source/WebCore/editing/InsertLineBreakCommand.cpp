@@ -27,6 +27,7 @@
 #include "InsertLineBreakCommand.h"
 
 #include "Document.h"
+#include "Editing.h"
 #include "Frame.h"
 #include "FrameSelection.h"
 #include "HTMLBRElement.h"
@@ -37,7 +38,6 @@
 #include "RenderText.h"
 #include "Text.h"
 #include "VisibleUnits.h"
-#include "htmlediting.h"
 
 namespace WebCore {
 

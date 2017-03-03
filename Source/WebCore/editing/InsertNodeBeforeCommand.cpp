@@ -27,9 +27,9 @@
 #include "InsertNodeBeforeCommand.h"
 
 #include "Document.h"
+#include "Editing.h"
 #include "RenderElement.h"
 #include "Text.h"
-#include "htmlediting.h"
 
 namespace WebCore {
 

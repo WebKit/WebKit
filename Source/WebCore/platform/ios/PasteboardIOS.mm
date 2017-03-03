@@ -29,6 +29,7 @@
 #import "Document.h"
 #import "DocumentFragment.h"
 #import "DocumentLoader.h"
+#import "Editing.h"
 #import "Editor.h"
 #import "EditorClient.h"
 #import "Frame.h"
@@ -46,7 +47,6 @@
 #import "Text.h"
 #import "URL.h"
 #import "WebNSAttributedStringExtras.h"
-#import "htmlediting.h"
 #import "markup.h"
 #import <MobileCoreServices/MobileCoreServices.h>
 

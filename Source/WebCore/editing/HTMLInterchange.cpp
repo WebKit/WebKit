@@ -26,11 +26,11 @@
 #include "config.h"
 #include "HTMLInterchange.h"
 
+#include "Editing.h"
 #include "RenderElement.h"
 #include "RenderText.h"
 #include "Text.h"
 #include "TextIterator.h"
-#include "htmlediting.h"
 #include <wtf/text/StringBuilder.h>
 #include <wtf/unicode/CharacterNames.h>
 

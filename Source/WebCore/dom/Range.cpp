@@ -29,6 +29,7 @@
 #include "ClientRectList.h"
 #include "Comment.h"
 #include "DocumentFragment.h"
+#include "Editing.h"
 #include "Event.h"
 #include "ExceptionCode.h"
 #include "Frame.h"
@@ -47,7 +48,6 @@
 #include "TextIterator.h"
 #include "VisiblePosition.h"
 #include "VisibleUnits.h"
-#include "htmlediting.h"
 #include "markup.h"
 #include <stdio.h>
 #include <wtf/RefCountedLeakCounter.h>

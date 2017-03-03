@@ -1,3 +1,12 @@
+2017-03-02  Sam Weinig  <sam@webkit.org>
+
+        Rename htmlediting.h/cpp to Editing.h/cpp
+        https://bugs.webkit.org/show_bug.cgi?id=169103
+
+        Reviewed by Alex Christensen.
+
+        * AccessibleTextImpl.cpp:
+
 2017-03-01  Alex Christensen  <achristensen@webkit.org>
 
         Actually fix Windows build.

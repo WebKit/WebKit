@@ -26,6 +26,7 @@
 #include "config.h"
 #include "InsertListCommand.h"
 
+#include "Editing.h"
 #include "ElementTraversal.h"
 #include "HTMLBRElement.h"
 #include "HTMLLIElement.h"
@@ -33,7 +34,6 @@
 #include "HTMLUListElement.h"
 #include "Range.h"
 #include "VisibleUnits.h"
-#include "htmlediting.h"
 
 namespace WebCore {
 

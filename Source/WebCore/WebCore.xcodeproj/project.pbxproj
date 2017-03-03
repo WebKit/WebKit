@@ -3385,8 +3385,8 @@
 		93309DE4099E64920056E581 /* EditCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 93309D95099E64910056E581 /* EditCommand.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93309DE5099E64920056E581 /* HTMLInterchange.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93309D96099E64910056E581 /* HTMLInterchange.cpp */; };
 		93309DE6099E64920056E581 /* HTMLInterchange.h in Headers */ = {isa = PBXBuildFile; fileRef = 93309D97099E64910056E581 /* HTMLInterchange.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		93309DE7099E64920056E581 /* htmlediting.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93309D98099E64910056E581 /* htmlediting.cpp */; };
-		93309DE8099E64920056E581 /* htmlediting.h in Headers */ = {isa = PBXBuildFile; fileRef = 93309D99099E64910056E581 /* htmlediting.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		93309DE7099E64920056E581 /* Editing.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93309D98099E64910056E581 /* Editing.cpp */; };
+		93309DE8099E64920056E581 /* Editing.h in Headers */ = {isa = PBXBuildFile; fileRef = 93309D99099E64910056E581 /* Editing.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93309DE9099E64920056E581 /* InsertIntoTextNodeCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93309D9A099E64910056E581 /* InsertIntoTextNodeCommand.cpp */; };
 		93309DEA099E64920056E581 /* InsertIntoTextNodeCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 93309D9B099E64910056E581 /* InsertIntoTextNodeCommand.h */; };
 		93309DEB099E64920056E581 /* InsertLineBreakCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93309D9C099E64910056E581 /* InsertLineBreakCommand.cpp */; };
@@ -11167,8 +11167,8 @@
 		93309D95099E64910056E581 /* EditCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EditCommand.h; sourceTree = "<group>"; };
 		93309D96099E64910056E581 /* HTMLInterchange.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLInterchange.cpp; sourceTree = "<group>"; };
 		93309D97099E64910056E581 /* HTMLInterchange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLInterchange.h; sourceTree = "<group>"; };
-		93309D98099E64910056E581 /* htmlediting.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = htmlediting.cpp; sourceTree = "<group>"; };
-		93309D99099E64910056E581 /* htmlediting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = htmlediting.h; sourceTree = "<group>"; };
+		93309D98099E64910056E581 /* Editing.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Editing.cpp; sourceTree = "<group>"; };
+		93309D99099E64910056E581 /* Editing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Editing.h; sourceTree = "<group>"; };
 		93309D9A099E64910056E581 /* InsertIntoTextNodeCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InsertIntoTextNodeCommand.cpp; sourceTree = "<group>"; };
 		93309D9B099E64910056E581 /* InsertIntoTextNodeCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InsertIntoTextNodeCommand.h; sourceTree = "<group>"; };
 		93309D9C099E64910056E581 /* InsertLineBreakCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InsertLineBreakCommand.cpp; sourceTree = "<group>"; };
@@ -19067,8 +19067,8 @@
 				D05CED280A40BB2C00C5AF38 /* FormatBlockCommand.h */,
 				93309DBE099E64910056E581 /* FrameSelection.cpp */,
 				93309DBF099E64910056E581 /* FrameSelection.h */,
-				93309D98099E64910056E581 /* htmlediting.cpp */,
-				93309D99099E64910056E581 /* htmlediting.h */,
+				93309D98099E64910056E581 /* Editing.cpp */,
+				93309D99099E64910056E581 /* Editing.h */,
 				93309D96099E64910056E581 /* HTMLInterchange.cpp */,
 				93309D97099E64910056E581 /* HTMLInterchange.h */,
 				DB23C2C90A508D29002489EB /* IndentOutdentCommand.cpp */,
@@ -26382,7 +26382,7 @@
 				A8EA79F70A1916DF00A8EF5F /* HTMLDListElement.h in Headers */,
 				93F198E508245E59001E9ABC /* HTMLDocument.h in Headers */,
 				977B3867122883E900B81FF8 /* HTMLDocumentParser.h in Headers */,
-				93309DE8099E64920056E581 /* htmlediting.h in Headers */,
+				93309DE8099E64920056E581 /* Editing.h in Headers */,
 				93F198E608245E59001E9ABC /* HTMLElement.h in Headers */,
 				A17C81230F2A5CF7005DAAEB /* HTMLElementFactory.h in Headers */,
 				977B37241228721700B81FF8 /* HTMLElementStack.h in Headers */,
@@ -30234,7 +30234,7 @@
 				A8EA79F50A1916DF00A8EF5F /* HTMLDListElement.cpp in Sources */,
 				93F19A9108245E59001E9ABC /* HTMLDocument.cpp in Sources */,
 				977B3866122883E900B81FF8 /* HTMLDocumentParser.cpp in Sources */,
-				93309DE7099E64920056E581 /* htmlediting.cpp in Sources */,
+				93309DE7099E64920056E581 /* Editing.cpp in Sources */,
 				93F19A9208245E59001E9ABC /* HTMLElement.cpp in Sources */,
 				A17C81220F2A5CF7005DAAEB /* HTMLElementFactory.cpp in Sources */,
 				977B37231228721700B81FF8 /* HTMLElementStack.cpp in Sources */,

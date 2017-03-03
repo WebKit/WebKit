@@ -42,6 +42,7 @@
 #include "DictationCommand.h"
 #include "DocumentFragment.h"
 #include "DocumentMarkerController.h"
+#include "Editing.h"
 #include "EditorClient.h"
 #include "EventHandler.h"
 #include "EventNames.h"
@@ -95,7 +96,6 @@
 #include "TypingCommand.h"
 #include "UserTypingGestureIndicator.h"
 #include "VisibleUnits.h"
-#include "htmlediting.h"
 #include "markup.h"
 #include <wtf/unicode/CharacterNames.h>
 

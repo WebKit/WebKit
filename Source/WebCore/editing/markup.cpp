@@ -36,6 +36,7 @@
 #include "ChildListMutationScope.h"
 #include "DocumentFragment.h"
 #include "DocumentType.h"
+#include "Editing.h"
 #include "Editor.h"
 #include "ElementIterator.h"
 #include "ExceptionCode.h"
@@ -62,7 +63,6 @@
 #include "TypedElementDescendantIterator.h"
 #include "VisibleSelection.h"
 #include "VisibleUnits.h"
-#include "htmlediting.h"
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/StringBuilder.h>
 

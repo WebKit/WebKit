@@ -29,6 +29,7 @@
 #if PLATFORM(MAC)
 
 #import "Document.h"
+#import "Editing.h"
 #import "FocusController.h"
 #import "Frame.h"
 #import "FrameSelection.h"
@@ -44,7 +45,6 @@
 #import "VisibleSelection.h"
 #import "VisibleUnits.h"
 #import "WebCoreSystemInterface.h"
-#import "htmlediting.h"
 #import <PDFKit/PDFKit.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/RefPtr.h>

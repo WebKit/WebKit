@@ -27,6 +27,7 @@
 #include "Position.h"
 
 #include "CSSComputedStyleDeclaration.h"
+#include "Editing.h"
 #include "HTMLBRElement.h"
 #include "HTMLBodyElement.h"
 #include "HTMLHtmlElement.h"
@@ -50,7 +51,6 @@
 #include "TextStream.h"
 #include "VisiblePosition.h"
 #include "VisibleUnits.h"
-#include "htmlediting.h"
 #include <stdio.h>
 #include <wtf/text/CString.h>
 #include <wtf/unicode/CharacterNames.h>

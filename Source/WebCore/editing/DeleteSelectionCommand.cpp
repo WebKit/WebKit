@@ -28,6 +28,7 @@
 
 #include "Document.h"
 #include "DocumentMarkerController.h"
+#include "Editing.h"
 #include "Editor.h"
 #include "EditorClient.h"
 #include "ElementIterator.h"
@@ -43,7 +44,6 @@
 #include "RenderedDocumentMarker.h"
 #include "Text.h"
 #include "VisibleUnits.h"
-#include "htmlediting.h"
 
 namespace WebCore {
 

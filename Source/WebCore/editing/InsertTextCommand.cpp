@@ -27,13 +27,13 @@
 #include "InsertTextCommand.h"
 
 #include "Document.h"
+#include "Editing.h"
 #include "Editor.h"
 #include "Frame.h"
 #include "HTMLElement.h"
 #include "HTMLInterchange.h"
 #include "Text.h"
 #include "VisibleUnits.h"
-#include "htmlediting.h"
 
 namespace WebCore {
 

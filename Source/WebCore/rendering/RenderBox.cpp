@@ -28,6 +28,7 @@
 #include "CSSFontSelector.h"
 #include "ControlStates.h"
 #include "Document.h"
+#include "Editing.h"
 #include "EventHandler.h"
 #include "FloatQuad.h"
 #include "FloatRoundedRect.h"
@@ -67,7 +68,6 @@
 #include "ScrollbarTheme.h"
 #include "StyleScrollSnapPoints.h"
 #include "TransformState.h"
-#include "htmlediting.h"
 #include <algorithm>
 #include <math.h>
 #include <wtf/StackStats.h>

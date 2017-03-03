@@ -27,12 +27,12 @@
 #include "FormatBlockCommand.h"
 
 #include "Document.h"
+#include "Editing.h"
 #include "Element.h"
 #include "HTMLElement.h"
 #include "HTMLNames.h"
 #include "Range.h"
 #include "VisibleUnits.h"
-#include "htmlediting.h"
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {

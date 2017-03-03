@@ -35,6 +35,7 @@
 #include "DataTransfer.h"
 #include "Document.h"
 #include "DocumentFragment.h"
+#include "Editing.h"
 #include "ElementIterator.h"
 #include "EventNames.h"
 #include "Frame.h"
@@ -58,7 +59,6 @@
 #include "Text.h"
 #include "TextIterator.h"
 #include "VisibleUnits.h"
-#include "htmlediting.h"
 #include "markup.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>

@@ -28,6 +28,7 @@
 #include "VisiblePosition.h"
 
 #include "Document.h"
+#include "Editing.h"
 #include "FloatQuad.h"
 #include "HTMLElement.h"
 #include "HTMLHtmlElement.h"
@@ -40,7 +41,6 @@
 #include "Text.h"
 #include "TextStream.h"
 #include "VisibleUnits.h"
-#include "htmlediting.h"
 #include <stdio.h>
 #include <wtf/text/CString.h>
 

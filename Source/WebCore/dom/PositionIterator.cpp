@@ -26,13 +26,13 @@
 #include "config.h"
 #include "PositionIterator.h"
 
+#include "Editing.h"
 #include "HTMLBodyElement.h"
 #include "HTMLElement.h"
 #include "HTMLHtmlElement.h"
 #include "HTMLNames.h"
 #include "RenderBlockFlow.h"
 #include "RenderText.h"
-#include "htmlediting.h"
 
 namespace WebCore {
 

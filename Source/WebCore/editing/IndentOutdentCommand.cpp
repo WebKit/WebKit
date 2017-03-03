@@ -27,6 +27,7 @@
 #include "IndentOutdentCommand.h"
 
 #include "Document.h"
+#include "Editing.h"
 #include "ElementTraversal.h"
 #include "HTMLBRElement.h"
 #include "HTMLNames.h"
@@ -38,7 +39,6 @@
 #include "SplitElementCommand.h"
 #include "Text.h"
 #include "VisibleUnits.h"
-#include "htmlediting.h"
 
 namespace WebCore {
 

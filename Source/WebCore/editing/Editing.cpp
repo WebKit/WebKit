@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "htmlediting.h"
+#include "Editing.h"
 
 #include "AXObjectCache.h"
 #include "Document.h"

@@ -27,6 +27,7 @@
 #include "InsertParagraphSeparatorCommand.h"
 
 #include "Document.h"
+#include "Editing.h"
 #include "EditingStyle.h"
 #include "HTMLBRElement.h"
 #include "HTMLFormElement.h"
@@ -36,7 +37,6 @@
 #include "RenderText.h"
 #include "Text.h"
 #include "VisibleUnits.h"
-#include "htmlediting.h"
 
 namespace WebCore {
 

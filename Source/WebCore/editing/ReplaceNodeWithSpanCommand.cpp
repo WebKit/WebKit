@@ -31,8 +31,8 @@
 #include "config.h"
 #include "ReplaceNodeWithSpanCommand.h"
 
+#include "Editing.h"
 #include "HTMLSpanElement.h"
-#include "htmlediting.h"
 
 namespace WebCore {
 

@@ -35,6 +35,7 @@
 #include "AccessibilityListBox.h"
 #include "AccessibilitySpinButton.h"
 #include "AccessibilityTable.h"
+#include "Editing.h"
 #include "ElementIterator.h"
 #include "EventNames.h"
 #include "FloatRect.h"
@@ -70,7 +71,6 @@
 #include "UserGestureIndicator.h"
 #include "VisibleUnits.h"
 #include "Widget.h"
-#include "htmlediting.h"
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/unicode/CharacterNames.h>

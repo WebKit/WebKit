@@ -42,6 +42,7 @@
 #include "DOMTokenList.h"
 #include "DocumentAnimation.h"
 #include "DocumentSharedObjectPool.h"
+#include "Editing.h"
 #include "ElementIterator.h"
 #include "ElementRareData.h"
 #include "EventDispatcher.h"
@@ -102,7 +103,6 @@
 #include "XLinkNames.h"
 #include "XMLNSNames.h"
 #include "XMLNames.h"
-#include "htmlediting.h"
 #include "markup.h"
 #include <wtf/CurrentTime.h>
 #include <wtf/NeverDestroyed.h>

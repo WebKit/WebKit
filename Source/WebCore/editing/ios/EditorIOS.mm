@@ -35,6 +35,7 @@
 #import "DocumentFragment.h"
 #import "DocumentLoader.h"
 #import "DocumentMarkerController.h"
+#import "Editing.h"
 #import "EditorClient.h"
 #import "FontCascade.h"
 #import "Frame.h"
@@ -59,10 +60,9 @@
 #import "Text.h"
 #import "TypingCommand.h"
 #import "WAKAppKitStubs.h"
-#import "htmlediting.h"
 #import "markup.h"
 #import <MobileCoreServices/MobileCoreServices.h>
-#include <wtf/text/StringBuilder.h>
+#import <wtf/text/StringBuilder.h>
 
 SOFT_LINK_FRAMEWORK(AppSupport)
 SOFT_LINK(AppSupport, CPSharedResourcesDirectory, CFStringRef, (void), ())

@@ -33,6 +33,7 @@
 #import "ColorMac.h"
 #import "DocumentFragment.h"
 #import "DocumentLoader.h"
+#import "Editing.h"
 #import "EditingStyle.h"
 #import "EditorClient.h"
 #import "Frame.h"
@@ -47,7 +48,6 @@
 #import "RenderStyle.h"
 #import "SoftLinking.h"
 #import "Text.h"
-#import "htmlediting.h"
 #import <wtf/BlockObjCExceptions.h>
 
 #if PLATFORM(IOS)

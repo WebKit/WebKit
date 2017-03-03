@@ -39,6 +39,7 @@
 #include "AccessibilityListBoxOption.h"
 #include "AccessibilityTable.h"
 #include "Document.h"
+#include "Editing.h"
 #include "Frame.h"
 #include "FrameView.h"
 #include "HTMLNames.h"
@@ -65,7 +66,6 @@
 #include "WebKitAccessibleInterfaceText.h"
 #include "WebKitAccessibleInterfaceValue.h"
 #include "WebKitAccessibleUtil.h"
-#include "htmlediting.h"
 #include <glib/gprintf.h>
 #include <wtf/text/CString.h>
 

@@ -30,6 +30,7 @@
 #include "AXObjectCache.h"
 #include "Chrome.h"
 #include "Document.h"
+#include "Editing.h"
 #include "Editor.h"
 #include "EditorClient.h"
 #include "Element.h"
@@ -58,7 +59,6 @@
 #include "ShadowRoot.h"
 #include "SpatialNavigation.h"
 #include "Widget.h"
-#include "htmlediting.h" // For firstPositionInOrBeforeNode
 #include <limits>
 #include <wtf/CurrentTime.h>
 #include <wtf/Ref.h>

@@ -48,6 +48,7 @@
 #import "ChromeClient.h"
 #import "ColorMac.h"
 #import "ContextMenuController.h"
+#import "Editing.h"
 #import "Editor.h"
 #import "Font.h"
 #import "FontCascade.h"
@@ -74,7 +75,6 @@
 #import "WebCoreFrameView.h"
 #import "WebCoreObjCExtras.h"
 #import "WebCoreSystemInterface.h"
-#import "htmlediting.h"
 #import <wtf/ObjcRuntimeExtras.h>
 #if ENABLE(TREE_DEBUGGING) || ENABLE(METER_ELEMENT)
 #import <wtf/text/StringBuilder.h>

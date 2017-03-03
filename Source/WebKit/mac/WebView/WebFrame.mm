@@ -65,6 +65,7 @@
 #import <WebCore/DocumentFragment.h>
 #import <WebCore/DocumentLoader.h>
 #import <WebCore/DocumentMarkerController.h>
+#import <WebCore/Editing.h>
 #import <WebCore/Editor.h>
 #import <WebCore/EventHandler.h>
 #import <WebCore/EventNames.h>
@@ -97,7 +98,6 @@
 #import <WebCore/TextIterator.h>
 #import <WebCore/ThreadCheck.h>
 #import <WebCore/VisibleUnits.h>
-#import <WebCore/htmlediting.h>
 #import <WebCore/markup.h>
 #import <WebKitSystemInterface.h>
 #import <bindings/ScriptValue.h>

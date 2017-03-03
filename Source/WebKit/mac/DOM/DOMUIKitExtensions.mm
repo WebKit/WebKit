@@ -29,7 +29,6 @@
 
 #import "DOMUIKitExtensions.h"
 
-#import <WebCore/CachedImage.h>
 #import "DOM.h"
 #import "DOMCore.h"
 #import "DOMExtensions.h"
@@ -41,11 +40,12 @@
 #import "DOMInternal.h"
 #import "DOMNodeInternal.h"
 #import "DOMRangeInternal.h"
+#import <WebCore/CachedImage.h>
+#import <WebCore/Editing.h>
 #import <WebCore/FloatPoint.h>
 #import <WebCore/FontCascade.h>
 #import <WebCore/FrameSelection.h>
 #import <WebCore/HTMLAreaElement.h>
-#import <WebCore/htmlediting.h>
 #import <WebCore/HTMLImageElement.h>
 #import <WebCore/HTMLInputElement.h>
 #import <WebCore/HTMLSelectElement.h>
@@ -57,10 +57,10 @@
 #import <WebCore/RenderBlock.h>
 #import <WebCore/RenderBlockFlow.h>
 #import <WebCore/RenderBox.h>
-#import <WebCore/RoundedRect.h>
 #import <WebCore/RenderObject.h>
 #import <WebCore/RenderStyleConstants.h>
 #import <WebCore/RenderText.h>
+#import <WebCore/RoundedRect.h>
 #import <WebCore/SharedBuffer.h>
 #import <WebCore/VisiblePosition.h>
 #import <WebCore/VisibleUnits.h>

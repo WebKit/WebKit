@@ -41,6 +41,7 @@
 #include "DragData.h"
 #include "DragImage.h"
 #include "DragState.h"
+#include "Editing.h"
 #include "Editor.h"
 #include "EditorClient.h"
 #include "EventHandler.h"
@@ -77,7 +78,6 @@
 #include "Text.h"
 #include "TextEvent.h"
 #include "VisiblePosition.h"
-#include "htmlediting.h"
 #include "markup.h"
 
 #if ENABLE(DATA_INTERACTION)

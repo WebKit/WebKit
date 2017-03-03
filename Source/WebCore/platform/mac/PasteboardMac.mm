@@ -31,15 +31,14 @@
 #import "DocumentFragment.h"
 #import "DocumentLoader.h"
 #import "DragData.h"
+#import "Editing.h"
 #import "Editor.h"
 #import "EditorClient.h"
 #import "Frame.h"
-#import "FrameView.h"
 #import "FrameLoaderClient.h"
+#import "FrameView.h"
 #import "HitTestResult.h"
-#import "htmlediting.h"
 #import "Image.h"
-#import "URL.h"
 #import "LegacyWebArchive.h"
 #import "LoaderNSURLExtras.h"
 #import "MIMETypeRegistry.h"
@@ -47,11 +46,12 @@
 #import "PlatformStrategies.h"
 #import "RenderImage.h"
 #import "Text.h"
+#import "URL.h"
 #import "WebCoreNSStringExtras.h"
 #import "WebNSAttributedStringExtras.h"
 #import "markup.h"
-#import <wtf/StdLibExtras.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/StdLibExtras.h>
 #import <wtf/text/StringBuilder.h>
 #import <wtf/unicode/CharacterNames.h>
 

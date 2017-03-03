@@ -29,6 +29,7 @@
 
 #include "AXObjectCache.h"
 #include "CSSAnimationController.h"
+#include "Editing.h"
 #include "FloatQuad.h"
 #include "FlowThreadController.h"
 #include "FrameSelection.h"
@@ -69,7 +70,6 @@
 #include "SVGRenderSupport.h"
 #include "StyleResolver.h"
 #include "TransformState.h"
-#include "htmlediting.h"
 #include <algorithm>
 #include <stdio.h>
 #include <wtf/RefCountedLeakCounter.h>

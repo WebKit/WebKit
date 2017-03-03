@@ -33,6 +33,7 @@
 #include "Chrome.h"
 #include "CreateLinkCommand.h"
 #include "DocumentFragment.h"
+#include "Editing.h"
 #include "EditorClient.h"
 #include "Event.h"
 #include "EventHandler.h"
@@ -58,7 +59,6 @@
 #include "UnlinkCommand.h"
 #include "UserGestureIndicator.h"
 #include "UserTypingGestureIndicator.h"
-#include "htmlediting.h"
 #include "markup.h"
 #include <wtf/text/AtomicString.h>
 

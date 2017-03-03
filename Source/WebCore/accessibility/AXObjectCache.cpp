@@ -62,6 +62,7 @@
 #include "AccessibilityTree.h"
 #include "AccessibilityTreeItem.h"
 #include "Document.h"
+#include "Editing.h"
 #include "Editor.h"
 #include "ElementIterator.h"
 #include "FocusController.h"
@@ -93,7 +94,6 @@
 #include "ScrollView.h"
 #include "TextBoundaries.h"
 #include "TextIterator.h"
-#include "htmlediting.h"
 #include <wtf/DataLog.h>
 
 #if ENABLE(VIDEO)

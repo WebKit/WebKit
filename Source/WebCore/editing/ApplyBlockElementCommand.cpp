@@ -27,13 +27,13 @@
 #include "config.h"
 #include "ApplyBlockElementCommand.h"
 
+#include "Editing.h"
 #include "HTMLBRElement.h"
 #include "HTMLNames.h"
 #include "RenderElement.h"
 #include "RenderStyle.h"
 #include "Text.h"
 #include "VisibleUnits.h"
-#include "htmlediting.h"
 
 namespace WebCore {
 

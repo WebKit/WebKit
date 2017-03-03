@@ -34,6 +34,7 @@
 #include "CSSStyleRule.h"
 #include "CSSValueList.h"
 #include "CSSValuePool.h"
+#include "Editing.h"
 #include "Editor.h"
 #include "Frame.h"
 #include "HTMLFontElement.h"
@@ -50,7 +51,6 @@
 #include "StyleRule.h"
 #include "StyledElement.h"
 #include "VisibleUnits.h"
-#include "htmlediting.h"
 
 namespace WebCore {
 

@@ -36,6 +36,7 @@
 
 #include "AccessibilityObject.h"
 #include "Document.h"
+#include "Editing.h"
 #include "FontCascade.h"
 #include "FrameView.h"
 #include "HTMLParserIdioms.h"
@@ -50,7 +51,6 @@
 #include "VisibleUnits.h"
 #include "WebKitAccessibleUtil.h"
 #include "WebKitAccessibleWrapperAtk.h"
-#include "htmlediting.h"
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/text/CString.h>
 

@@ -29,13 +29,13 @@
 #include "AXObjectCache.h"
 #include "CompositeEditCommand.h"
 #include "Document.h"
+#include "Editing.h"
 #include "Editor.h"
 #include "Element.h"
 #include "Frame.h"
 #include "HTMLInputElement.h"
 #include "HTMLTextAreaElement.h"
 #include "NodeTraversal.h"
-#include "htmlediting.h"
 
 namespace WebCore {
 

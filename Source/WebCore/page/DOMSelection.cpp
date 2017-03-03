@@ -32,12 +32,12 @@
 #include "DOMSelection.h"
 
 #include "Document.h"
+#include "Editing.h"
 #include "ExceptionCode.h"
 #include "Frame.h"
 #include "FrameSelection.h"
 #include "Range.h"
 #include "TextIterator.h"
-#include "htmlediting.h"
 
 namespace WebCore {
 

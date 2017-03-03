@@ -25,17 +25,17 @@
 
 #include "config.h"
 #include "CreateLinkCommand.h"
-#include "htmlediting.h"
-#include "Text.h"
 
+#include "Editing.h"
 #include "HTMLAnchorElement.h"
+#include "Text.h"
 
 namespace WebCore {
 
 CreateLinkCommand::CreateLinkCommand(Document& document, const String& url)
     : CompositeEditCommand(document)
+    , m_url(url)
 {
-    m_url = url;
 }
 
 void CreateLinkCommand::doApply()

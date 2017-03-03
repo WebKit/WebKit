@@ -26,9 +26,9 @@
 #include "config.h"
 #include "DeleteFromTextNodeCommand.h"
 
+#include "Editing.h"
 #include "Document.h"
 #include "Text.h"
-#include "htmlediting.h"
 
 namespace WebCore {
 

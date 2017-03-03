@@ -29,6 +29,7 @@
 
 #include "Document.h"
 #include "DocumentMarkerController.h"
+#include "Editing.h"
 #include "Editor.h"
 #include "Element.h"
 #include "Event.h"
@@ -43,7 +44,6 @@
 #include "TextEvent.h"
 #include "TextIterator.h"
 #include "VisibleUnits.h"
-#include "htmlediting.h"
 #include "markup.h"
 #include <wtf/NeverDestroyed.h>
 

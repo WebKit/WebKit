@@ -29,6 +29,7 @@
 #import "WebVisiblePositionInternal.h"
 
 #import <WebCore/DocumentMarkerController.h>
+#import <WebCore/Editing.h>
 #import <WebCore/FrameSelection.h>
 #import <WebCore/HTMLTextFormControlElement.h>
 #import <WebCore/Node.h>
@@ -37,12 +38,11 @@
 #import <WebCore/RenderTextControl.h>
 #import <WebCore/RenderedDocumentMarker.h>
 #import <WebCore/TextBoundaries.h>
-#import <WebCore/TextGranularity.h>
 #import <WebCore/TextFlags.h>
+#import <WebCore/TextGranularity.h>
 #import <WebCore/TextIterator.h>
 #import <WebCore/VisiblePosition.h>
 #import <WebCore/VisibleUnits.h>
-#import <WebCore/htmlediting.h>
 
 
 #import "DOMNodeInternal.h"

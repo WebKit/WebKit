@@ -30,6 +30,7 @@
 #include "CSSParser.h"
 #include "CSSValuePool.h"
 #include "Document.h"
+#include "Editing.h"
 #include "Editor.h"
 #include "ElementIterator.h"
 #include "Frame.h"
@@ -48,7 +49,6 @@
 #include "TextIterator.h"
 #include "TextNodeTraversal.h"
 #include "VisibleUnits.h"
-#include "htmlediting.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/StringBuilder.h>

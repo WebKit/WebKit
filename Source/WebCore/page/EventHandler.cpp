@@ -36,6 +36,7 @@
 #include "CursorList.h"
 #include "DragController.h"
 #include "DragState.h"
+#include "Editing.h"
 #include "Editor.h"
 #include "EditorClient.h"
 #include "EventNames.h"
@@ -93,7 +94,6 @@
 #include "WheelEvent.h"
 #include "WheelEventDeltaFilter.h"
 #include "WindowsKeyboardCodes.h"
-#include "htmlediting.h"
 #include <wtf/Assertions.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/NeverDestroyed.h>

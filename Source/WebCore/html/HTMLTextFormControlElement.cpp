@@ -29,6 +29,7 @@
 #include "CSSPrimitiveValueMappings.h"
 #include "ChromeClient.h"
 #include "Document.h"
+#include "Editing.h"
 #include "Event.h"
 #include "EventNames.h"
 #include "ExceptionCode.h"
@@ -48,7 +49,6 @@
 #include "ShadowRoot.h"
 #include "Text.h"
 #include "TextControlInnerElements.h"
-#include "htmlediting.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {

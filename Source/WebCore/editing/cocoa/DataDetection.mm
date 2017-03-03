@@ -30,6 +30,7 @@
 #import "CSSStyleDeclaration.h"
 #import "DataDetectorsSPI.h"
 #import "DataDetectorsUISPI.h"
+#import "Editing.h"
 #import "ElementAncestorIterator.h"
 #import "ElementTraversal.h"
 #import "FrameView.h"
@@ -47,7 +48,6 @@
 #import "TextIterator.h"
 #import "VisiblePosition.h"
 #import "VisibleUnits.h"
-#import "htmlediting.h"
 #import <wtf/text/StringBuilder.h>
 
 #import "DataDetectorsCoreSoftLink.h"

@@ -27,9 +27,10 @@
 
 #import "WebFrameIOS.h"
 
+#import <WebCore/DocumentMarkerController.h>
+#import <WebCore/Editing.h>
 #import <WebCore/Editor.h>
 #import <WebCore/Element.h>
-#import <WebCore/DocumentMarkerController.h>
 #import <WebCore/EventHandler.h>
 #import <WebCore/FloatRect.h>
 #import <WebCore/Frame.h>
@@ -37,7 +38,6 @@
 #import <WebCore/FrameSnapshotting.h>
 #import <WebCore/FrameView.h>
 #import <WebCore/HitTestResult.h>
-#import <WebCore/htmlediting.h>
 #import <WebCore/Position.h>
 #import <WebCore/Range.h>
 #import <WebCore/RenderObject.h>

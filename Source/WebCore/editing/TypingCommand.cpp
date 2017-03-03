@@ -31,6 +31,7 @@
 #include "DataTransfer.h"
 #include "DeleteSelectionCommand.h"
 #include "Document.h"
+#include "Editing.h"
 #include "Editor.h"
 #include "Element.h"
 #include "Frame.h"
@@ -46,7 +47,6 @@
 #include "StaticRange.h"
 #include "TextIterator.h"
 #include "VisibleUnits.h"
-#include "htmlediting.h"
 
 namespace WebCore {
 
