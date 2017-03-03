@@ -52,7 +52,6 @@ static Deque<RetainPtr<WKScriptMessage>> scriptMessages;
 
 - (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message
 {
-    printf("Message!\n");
     receivedScriptMessage = true;
     scriptMessages.append(message);
 }
@@ -75,23 +74,23 @@ TEST(WebKit2, WebsiteDataStoreCustomPaths)
     RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"testHandler"];
 
-    NSString *sqlPath = [@"~/Library/WebKit/TestWebKitAPI/CustomWebsiteData/WebSQL/" stringByExpandingTildeInPath];
-    NSString *idbPath = [@"~/Library/WebKit/TestWebKitAPI/CustomWebsiteData/IndexedDB/" stringByExpandingTildeInPath];
-    NSString *localStoragePath = [@"~/Library/WebKit/TestWebKitAPI/CustomWebsiteData/LocalStorage/" stringByExpandingTildeInPath];
+    NSURL *sqlPath = [NSURL fileURLWithPath:[@"~/Library/WebKit/TestWebKitAPI/CustomWebsiteData/WebSQL/" stringByExpandingTildeInPath]];
+    NSURL *idbPath = [NSURL fileURLWithPath:[@"~/Library/WebKit/TestWebKitAPI/CustomWebsiteData/IndexedDB/" stringByExpandingTildeInPath]];
+    NSURL *localStoragePath = [NSURL fileURLWithPath:[@"~/Library/WebKit/TestWebKitAPI/CustomWebsiteData/LocalStorage/" stringByExpandingTildeInPath]];
 
-    [[NSFileManager defaultManager] removeItemAtURL:[NSURL fileURLWithPath:sqlPath] error:nil];
-    [[NSFileManager defaultManager] removeItemAtURL:[NSURL fileURLWithPath:idbPath] error:nil];
-    [[NSFileManager defaultManager] removeItemAtURL:[NSURL fileURLWithPath:localStoragePath] error:nil];
+    [[NSFileManager defaultManager] removeItemAtURL:sqlPath error:nil];
+    [[NSFileManager defaultManager] removeItemAtURL:idbPath error:nil];
+    [[NSFileManager defaultManager] removeItemAtURL:localStoragePath error:nil];
 
-    EXPECT_FALSE([[NSFileManager defaultManager] fileExistsAtPath:sqlPath]);
-    EXPECT_FALSE([[NSFileManager defaultManager] fileExistsAtPath:localStoragePath]);
-    EXPECT_FALSE([[NSFileManager defaultManager] fileExistsAtPath:idbPath]);
+    EXPECT_FALSE([[NSFileManager defaultManager] fileExistsAtPath:sqlPath.path]);
+    EXPECT_FALSE([[NSFileManager defaultManager] fileExistsAtPath:localStoragePath.path]);
+    EXPECT_FALSE([[NSFileManager defaultManager] fileExistsAtPath:idbPath.path]);
 
     _WKWebsiteDataStoreConfiguration *websiteDataStoreConfiguration = [[_WKWebsiteDataStoreConfiguration alloc] init];
-    websiteDataStoreConfiguration.webSQLDatabaseDirectory = sqlPath;
-    websiteDataStoreConfiguration.indexedDBDatabaseDirectory = idbPath;
-    websiteDataStoreConfiguration.webStorageDirectory = localStoragePath;
-    
+    websiteDataStoreConfiguration._webSQLDatabaseDirectory = sqlPath;
+    websiteDataStoreConfiguration._indexedDBDatabaseDirectory = idbPath;
+    websiteDataStoreConfiguration._webStorageDirectory = localStoragePath;
+
     configuration.get().websiteDataStore = [[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfiguration];
     [websiteDataStoreConfiguration release];
 
@@ -105,8 +104,8 @@ TEST(WebKit2, WebsiteDataStoreCustomPaths)
     getNextMessage();
     getNextMessage();
 
-    EXPECT_TRUE([[NSFileManager defaultManager] fileExistsAtPath:sqlPath]);
-    EXPECT_TRUE([[NSFileManager defaultManager] fileExistsAtPath:localStoragePath]);
+    EXPECT_TRUE([[NSFileManager defaultManager] fileExistsAtPath:sqlPath.path]);
+    EXPECT_TRUE([[NSFileManager defaultManager] fileExistsAtPath:localStoragePath.path]);
 
     // FIXME: <rdar://problem/30785618> - We don't yet support IDB database processes at custom paths per WebsiteDataStore
     // EXPECT_TRUE([[NSFileManager defaultManager] fileExistsAtPath:idbPath]);

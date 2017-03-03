@@ -153,12 +153,12 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
 
     auto config = API::WebsiteDataStore::defaultDataStoreConfiguration();
 
-    if (configuration.webStorageDirectory)
-        config.localStorageDirectory = configuration.webStorageDirectory;
-    if (configuration.webSQLDatabaseDirectory)
-        config.webSQLDatabaseDirectory = configuration.webSQLDatabaseDirectory;
-    if (configuration.indexedDBDatabaseDirectory)
-        config.indexedDBDatabaseDirectory = configuration.indexedDBDatabaseDirectory;
+    if (configuration._webStorageDirectory)
+        config.localStorageDirectory = configuration._webStorageDirectory.path;
+    if (configuration._webSQLDatabaseDirectory)
+        config.webSQLDatabaseDirectory = configuration._webSQLDatabaseDirectory.path;
+    if (configuration._indexedDBDatabaseDirectory)
+        config.indexedDBDatabaseDirectory = configuration._indexedDBDatabaseDirectory.path;
 
     API::Object::constructInWrapper<API::WebsiteDataStore>(self, config);
 

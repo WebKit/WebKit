@@ -28,8 +28,46 @@
 
 #if WK_API_ENABLED
 
-@implementation _WKWebsiteDataStoreConfiguration
+#import <wtf/RetainPtr.h>
 
+static void checkURLArgument(NSURL *url)
+{
+    if (url && ![url isFileURL])
+        [NSException raise:NSInvalidArgumentException format:@"%@ is not a file URL", url];
+}
+
+@implementation _WKWebsiteDataStoreConfiguration {
+    RetainPtr<NSURL> _webStorageDirectoryURL;
+    RetainPtr<NSURL> _indexedDBDatabaseDirectoryURL;
+    RetainPtr<NSURL> _webSQLDatabaseDirectoryURL;
+}
+
+-(NSURL *)_webStorageDirectory {
+    return _webStorageDirectoryURL.get();
+}
+
+-(void)_setWebStorageDirectory:(NSURL *)url {
+    checkURLArgument(url);
+    _webStorageDirectoryURL = adoptNS([url copy]);
+}
+
+-(NSURL *)_indexedDBDatabaseDirectory {
+    return _indexedDBDatabaseDirectoryURL.get();
+}
+
+-(void)_setIndexedDBDatabaseDirectory:(NSURL *)url {
+    checkURLArgument(url);
+    _indexedDBDatabaseDirectoryURL = adoptNS([url copy]);
+}
+
+-(NSURL *)_webSQLDatabaseDirectory {
+    return _webSQLDatabaseDirectoryURL.get();
+}
+
+-(void)_setWebSQLDatabaseDirectory:(NSURL *)url {
+    checkURLArgument(url);
+    _webSQLDatabaseDirectoryURL = adoptNS([url copy]);
+}
 @end
 
 #endif

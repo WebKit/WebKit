@@ -34,9 +34,9 @@ NS_ASSUME_NONNULL_BEGIN
 WK_CLASS_AVAILABLE(macosx(10.13), ios(11.0))
 @interface _WKWebsiteDataStoreConfiguration : NSObject
 
-@property (nonatomic, copy) NSString *webStorageDirectory;
-@property (nonatomic, copy) NSString *indexedDBDatabaseDirectory;
-@property (nonatomic, copy) NSString *webSQLDatabaseDirectory;
+@property (nonatomic, copy, setter=_setWebStorageDirectory:) NSURL *_webStorageDirectory;
+@property (nonatomic, copy, setter=_setIndexedDBDatabaseDirectory:) NSURL *_indexedDBDatabaseDirectory;
+@property (nonatomic, copy, setter=_setWebSQLDatabaseDirectory:) NSURL *_webSQLDatabaseDirectory;
 
 @end
 
