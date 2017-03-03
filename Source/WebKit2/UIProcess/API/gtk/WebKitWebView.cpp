@@ -656,6 +656,9 @@ static void webkitWebViewConstructed(GObject* object)
     if (!priv->settings)
         priv->settings = adoptGRef(webkit_settings_new());
 
+    if (!priv->userContentManager)
+        priv->userContentManager = adoptGRef(webkit_user_content_manager_new());
+
     if (priv->isEphemeral && !webkit_web_context_is_ephemeral(priv->context.get())) {
         priv->websiteDataManager = adoptGRef(webkit_website_data_manager_new_ephemeral());
         webkitWebsiteDataManagerAddProcessPool(priv->websiteDataManager.get(), webkitWebContextGetProcessPool(priv->context.get()));
@@ -2259,8 +2262,7 @@ WebKitWebContext* webkit_web_view_get_context(WebKitWebView *webView)
  * webkit_web_view_get_user_content_manager:
  * @web_view: a #WebKitWebView
  *
- * Gets the user content manager associated to @web_view, or %NULL if the
- * view does not have an user content manager.
+ * Gets the user content manager associated to @web_view.
  *
  * Returns: (transfer none): the #WebKitUserContentManager associated with the view
  *
