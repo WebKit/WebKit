@@ -1,3 +1,11 @@
+2017-03-02  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] Update expectation for WebRTC tests.
+
+        Unreviewed test gardening.
+
+        * platform/gtk/TestExpectations:
+
 2017-03-02  Youenn Fablet  <youenn@apple.com>
 
         Fixing typo in LayoutTests/webrtc/audio-peer-connection-webaudio.html
