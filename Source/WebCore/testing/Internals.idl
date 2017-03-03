@@ -247,6 +247,7 @@ enum EventThrottlingBehavior {
     readonly attribute unsigned long workerThreadCount;
 
     readonly attribute boolean areSVGAnimationsPaused;
+    [MayThrowException] double svgAnimationsInterval(SVGSVGElement element);
 
     // Flags for layerTreeAsText.
     const unsigned short LAYER_TREE_INCLUDES_VISIBLE_RECTS = 1;

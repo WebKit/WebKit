@@ -111,8 +111,10 @@
 #include "RenderView.h"
 #include "RenderedDocumentMarker.h"
 #include "ResourceLoadObserver.h"
+#include "SMILTimeContainer.h"
 #include "SVGDocumentExtensions.h"
 #include "SVGPathStringBuilder.h"
+#include "SVGSVGElement.h"
 #include "SchemeRegistry.h"
 #include "ScriptedAnimationController.h"
 #include "ScrollingCoordinator.h"
@@ -520,6 +522,21 @@ bool Internals::areSVGAnimationsPaused() const
         return false;
 
     return document->accessSVGExtensions().areAnimationsPaused();
+}
+
+ExceptionOr<double> Internals::svgAnimationsInterval(SVGSVGElement& element) const
+{
+    auto* document = contextDocument();
+    if (!document)
+        return 0;
+
+    if (!document->svgExtensions())
+        return 0;
+
+    if (document->accessSVGExtensions().areAnimationsPaused())
+        return 0;
+
+    return element.timeContainer().animationFrameDelay().value();
 }
 
 String Internals::address(Node& node)

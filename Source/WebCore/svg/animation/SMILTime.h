@@ -27,15 +27,15 @@
 
 #include <algorithm>
 #include <cmath>
+#include <wtf/Seconds.h>
 
 namespace WebCore {
-
-const double SMILAnimationFrameDelay = 1.0 / 60;
 
 class SMILTime {
 public:
     SMILTime() : m_time(0) { }
     SMILTime(double time) : m_time(time) { ASSERT(!std::isnan(time)); }
+    SMILTime(Seconds time) : m_time(time.value()) { ASSERT(!std::isnan(time.value())); }
     SMILTime(const SMILTime& o) : m_time(o.m_time) { }
     
     static SMILTime unresolved() { return unresolvedValue; }

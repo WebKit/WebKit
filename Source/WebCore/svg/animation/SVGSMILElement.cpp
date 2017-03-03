@@ -1036,6 +1036,7 @@ float SVGSMILElement::calculateAnimationPercentAndRepeat(SMILTime elapsed, unsig
     
 SMILTime SVGSMILElement::calculateNextProgressTime(SMILTime elapsed) const
 {
+    ASSERT(m_timeContainer);
     if (m_activeState == Active) {
         // If duration is indefinite the value does not actually change over time. Same is true for <set>.
         SMILTime simpleDuration = this->simpleDuration();
@@ -1047,7 +1048,7 @@ SMILTime SVGSMILElement::calculateNextProgressTime(SMILTime elapsed) const
                 return repeatingDurationEnd;
             return m_intervalEnd;
         } 
-        return elapsed + SMILAnimationFrameDelay;
+        return elapsed + m_timeContainer->animationFrameDelay();
     }
     return m_intervalBegin >= elapsed ? m_intervalBegin : SMILTime::unresolved();
 }

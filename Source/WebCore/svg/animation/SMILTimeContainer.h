@@ -42,12 +42,14 @@ class SVGSVGElement;
 
 class SMILTimeContainer final : public RefCounted<SMILTimeContainer>  {
 public:
-    static Ref<SMILTimeContainer> create(SVGSVGElement* owner) { return adoptRef(*new SMILTimeContainer(owner)); }
+    static Ref<SMILTimeContainer> create(SVGSVGElement& owner) { return adoptRef(*new SMILTimeContainer(owner)); }
     ~SMILTimeContainer();
 
     void schedule(SVGSMILElement*, SVGElement*, const QualifiedName&);
     void unschedule(SVGSMILElement*, SVGElement*, const QualifiedName&);
     void notifyIntervalsChanged();
+
+    WEBCORE_EXPORT Seconds animationFrameDelay() const;
 
     SMILTime elapsed() const;
 
@@ -63,7 +65,7 @@ public:
     void setDocumentOrderIndexesDirty() { m_documentOrderIndexesDirty = true; }
 
 private:
-    SMILTimeContainer(SVGSVGElement* owner);
+    SMILTimeContainer(SVGSVGElement& owner);
 
     void timerFired();
     void startTimer(SMILTime elapsed, SMILTime fireTime, SMILTime minimumDelay = 0);
@@ -87,7 +89,7 @@ private:
     typedef HashMap<ElementAttributePair, std::unique_ptr<AnimationsVector>> GroupedAnimationsMap;
     GroupedAnimationsMap m_scheduledAnimations;
 
-    SVGSVGElement* m_ownerSVGElement;
+    SVGSVGElement& m_ownerSVGElement;
 
 #ifndef NDEBUG
     bool m_preventScheduledAnimationsChanges;

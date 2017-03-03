@@ -1,3 +1,16 @@
+2017-03-03  Chris Dumez  <cdumez@apple.com>
+
+        [iOS] Throttle SVG SMIL animations to 30fps in low power mode
+        https://bugs.webkit.org/show_bug.cgi?id=169137
+        <rdar://problem/30833754>
+
+        Reviewed by Simon Fraser.
+
+        Add layout test coverage.
+
+        * svg/animations/animations-lowPowerMode-throttling-expected.txt: Added.
+        * svg/animations/animations-lowPowerMode-throttling.html: Added.
+
 2017-03-03  Sam Weinig  <sam@webkit.org>
 
         REGRESSION (r209760): Apple Pay doesn't work on casper.com, shopspring.com, maybe other sites
