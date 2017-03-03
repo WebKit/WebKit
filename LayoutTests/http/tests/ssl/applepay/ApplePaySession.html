@@ -188,12 +188,12 @@ function go() {
     debug("Testing PaymentRequest.shippingMethods")
     debug("");
     logAndShouldNotThrow("request = validRequest(); request.shippingMethods = undefined;", "new ApplePaySession(2, request)")
+    logAndShouldNotThrow("request = validRequest(); request.shippingMethods = [];", "new ApplePaySession(2, request)")
     logAndShouldThrow("request = validRequest(); request.shippingMethods = '';", "new ApplePaySession(2, request)")
     logAndShouldThrow("request = validRequest(); request.shippingMethods = 'invalid';", "new ApplePaySession(2, request)")
     logAndShouldThrow("request = validRequest(); request.shippingMethods = null;", "new ApplePaySession(2, request)")
     logAndShouldThrow("request = validRequest(); request.shippingMethods = 7;", "new ApplePaySession(2, request)")
     logAndShouldThrow("request = validRequest(); request.shippingMethods = { };", "new ApplePaySession(2, request)")
-    logAndShouldThrow("request = validRequest(); request.shippingMethods = [];", "new ApplePaySession(2, request)")
     logAndShouldThrow("request = validRequest(); request.shippingMethods = [{ }];", "new ApplePaySession(2, request)")
     logAndShouldThrow("request = validRequest(); request.shippingMethods = [{ amount: '', }];", "new ApplePaySession(2, request)")
     logAndShouldThrow("request = validRequest(); request.shippingMethods = [{ amount: '', detail: '' }];", "new ApplePaySession(2, request)")
