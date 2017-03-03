@@ -6,6 +6,7 @@
 .objc_class_name_WebPDFView
 .objc_class_name_WebPDFViewPlaceholder
 .objc_class_name_WebSelectionRect
+.objc_class_name_WebUITextIndicatorData
 .objc_class_name_WebVisiblePosition
 _WebDatabaseOriginsDidChangeNotification
 _WebKitCreatePathWithShrinkWrappedRects

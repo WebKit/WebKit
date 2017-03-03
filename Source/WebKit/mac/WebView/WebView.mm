@@ -675,6 +675,9 @@ private:
 }
 
 @end
+#else
+@implementation WebUITextIndicatorData
+@end
 #endif // ENABLE(DATA_INTERACTION)
 
 @interface WebView (WebFileInternal)
