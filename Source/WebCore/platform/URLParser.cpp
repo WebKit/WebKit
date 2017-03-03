@@ -1907,7 +1907,8 @@ void URLParser::parse(const CharacterType* input, const unsigned length, const U
         LOG_FINAL_STATE("File");
         if (base.isValid() && base.protocolIs("file")) {
             copyURLPartsUntil(base, URLPart::QueryEnd, c, isUTF8Encoding);
-            appendToASCIIBuffer(':');
+            m_url.m_fragmentEnd = m_url.m_queryEnd;
+            break;
         }
         syntaxViolation(c);
         appendToASCIIBuffer("///", 3);

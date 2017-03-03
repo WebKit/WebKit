@@ -9,7 +9,7 @@ test	file:///BASE/test		/BASE/test
 //test	file://test/	test	/
 ///	file:///		/
 ///test	file:///test		/test
-file:	file:///BASE/:///		/
+file:	file:///BASE/		/BASE/
 file:test	file:///BASE/test		/BASE/test
 file:/	file:///		/
 file:/test	file:///test		/test
