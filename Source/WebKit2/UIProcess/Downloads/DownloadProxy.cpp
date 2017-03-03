@@ -201,7 +201,7 @@ void DownloadProxy::decideDestinationWithSuggestedFilename(const String& filenam
         return;
 
     String suggestedFilename = filename;
-    if (!m_suggestedFilename.isNull())
+    if (!m_suggestedFilename.isEmpty())
         suggestedFilename = m_suggestedFilename;
     
     destination = m_processPool->downloadClient().decideDestinationWithSuggestedFilename(m_processPool.get(), this, suggestedFilename, allowOverwrite);
