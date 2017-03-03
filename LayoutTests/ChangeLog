@@ -1,5 +1,11 @@
 2017-03-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed GTK+ gardening. Skip tests that require FILE_REPLACEMENT.
+
+        * platform/gtk/TestExpectations:
+
+2017-03-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed GTK+ gardening. Mark several WebCryptoAPI tests as failing.
 
         * platform/gtk/TestExpectations:

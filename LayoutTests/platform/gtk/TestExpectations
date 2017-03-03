@@ -864,6 +864,10 @@ plugins/form-value.html [ Skip ]
 # We don't have LastResource font.
 fast/text/font-weight-download-2.html [ Failure ]
 
+# Require FILE_REPLACEMENT.
+fast/files/filereader-zip-bundle-using-open-panel.html [ Skip ]
+http/tests/local/fileapi/upload-zip-bundle-as-blob-using-open-panel.html [ Skip ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures
 #////////////////////////////////////////////////////////////////////////////////////////
