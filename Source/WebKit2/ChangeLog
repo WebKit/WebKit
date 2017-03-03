@@ -1,3 +1,17 @@
+2017-03-02  Joseph Pecoraro  <pecoraro@apple.com>
+
+        [Mac] Set the NSURLSessionTask priority to match the request's priority
+        https://bugs.webkit.org/show_bug.cgi?id=169115
+        <rdar://problem/28881392>
+
+        Reviewed by Alex Christensen.
+
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        (WebKit::toNSURLSessionTaskPriority):
+        (WebKit::NetworkDataTaskCocoa::NetworkDataTaskCocoa):
+        Set the priority on the task based on the ResourceRequest's priority.
+        This is used for HTTP/2 request prioritization.
+
 2017-03-02  Mark Lam  <mark.lam@apple.com>
 
         Add WebKit2 hooks to notify the VM that the user has requested a debugger break.
