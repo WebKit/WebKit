@@ -31,7 +31,7 @@
 #include "HTMLNames.h"
 #include "HTMLObjectElement.h"
 #include "NodeRareData.h"
-#include "RenderFieldset.h"
+#include "RenderElement.h"
 #include <wtf/StdLibExtras.h>
 
 namespace WebCore {
@@ -154,7 +154,7 @@ const AtomicString& HTMLFieldSetElement::formControlType() const
 
 RenderPtr<RenderElement> HTMLFieldSetElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
-    return createRenderer<RenderFieldset>(*this, WTFMove(style));
+    return RenderElement::createFor(*this, WTFMove(style), RenderElement::OnlyCreateBlockAndFlexboxRenderers);
 }
 
 HTMLLegendElement* HTMLFieldSetElement::legend() const

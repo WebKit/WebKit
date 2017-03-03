@@ -51,7 +51,7 @@ public:
     RenderRubyBase* rubyBase() const;
     RenderRubyBase* rubyBaseSafe(); // creates the base if it doesn't already exist
 
-    RenderObject* layoutSpecialExcludedChild(bool relayoutChildren) override;
+    void layoutExcludedChildren(bool relayoutChildren) override;
     void layout() override;
     void layoutBlock(bool relayoutChildren, LayoutUnit pageHeight = 0) override;
 

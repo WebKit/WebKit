@@ -469,18 +469,19 @@ protected:
     
     virtual void cachePriorCharactersIfNeeded(const LazyLineBreakIterator&) {};
     
+protected:
+    // Called to lay out the legend for a fieldset or the ruby text of a ruby run. Also used by multi-column layout to handle
+    // the flow thread child.
+    void layoutExcludedChildren(bool relayoutChildren) override;
+    
 private:
     bool recomputeLogicalWidthAndColumnWidth();
     LayoutUnit columnGap() const;
     
     RenderBlockFlow* previousSiblingWithOverhangingFloats(bool& parentHasFloats) const;
 
-    // Called to lay out the legend for a fieldset or the ruby text of a ruby run. Also used by multi-column layout to handle
-    // the flow thread child.
-    virtual RenderObject* layoutSpecialExcludedChild(bool /*relayoutChildren*/);
-
     void checkForPaginationLogicalHeightChange(bool& relayoutChildren, LayoutUnit& pageLogicalHeight, bool& pageLogicalHeightChanged);
-    
+
     void paintInlineChildren(PaintInfo&, const LayoutPoint&) override;
     void paintFloats(PaintInfo&, const LayoutPoint&, bool preservePhase = false) override;
 

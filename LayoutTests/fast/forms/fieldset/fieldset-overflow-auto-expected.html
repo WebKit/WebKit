@@ -1,0 +1,32 @@
+<!doctype html>
+<html>
+    <head>
+        <style>
+            .contents { border:2px solid skyblue; background-color:#cccccc; -webkit-margin-before:6px; -webkit-margin-after:6px }
+            .fieldset { vertical-align:bottom; -webkit-logical-width:320px; position:relative; display:inline-block;  padding:40px; -webkit-padding-before:0}
+            .legend {  -webkit-logical-height:64px; -webkit-logical-width: 284px; -webkit-margin-after:34px;background-color:#3080f0; border:8px solid lightblue; font-size:48px }
+            .behind-box { position:absolute; border:12px solid navy; z-index:-1 }
+            #scroll { overflow:auto; position:absolute;bottom:0;left:0;right:0; top:80px; bottom:12px; right:12px; left:12px; padding:28px 28px 0 28px  }
+        </style>
+    </head>
+    <body>
+        <div class=fieldset>
+            <div class="behind-box" style="left:0; top:34px; right:0; bottom:0;"></div>
+            <div class=legend>Legend Title</div>
+            
+            <div id=scroll>
+                
+            <div class=contents>Fieldset Contents</div>
+            
+                <div class=contents>More Fieldset Contents</div>
+            <div class=contents>More Fieldset Contents</div>
+            <div class=contents>More Fieldset Contents</div>
+            <div class=contents>More Fieldset Contents</div>
+            <div class=contents>More Fieldset Contents</div>
+            <div class=contents style="margin-bottom:0">More Fieldset Contents</div>
+            
+            </div>
+            
+        </div>
+    </body>
+</html>

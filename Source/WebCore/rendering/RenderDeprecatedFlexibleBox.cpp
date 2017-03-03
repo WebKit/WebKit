@@ -95,7 +95,7 @@ public:
 
             if (m_currentChild && notFirstOrdinalValue())
                 m_ordinalValues.add(m_currentChild->style().boxOrdinalGroup());
-        } while (!m_currentChild || (!m_currentChild->isAnonymous()
+        } while (!m_currentChild || m_currentChild->isExcludedFromNormalLayout() || (!m_currentChild->isAnonymous()
                  && m_currentChild->style().boxOrdinalGroup() != m_currentOrdinal));
         return m_currentChild;
     }
@@ -302,6 +302,11 @@ void RenderDeprecatedFlexibleBox::layoutBlock(bool relayoutChildren, LayoutUnit)
     LayoutSize oldLayoutDelta = view().layoutDelta();
 #endif
 
+    // Fieldsets need to find their legend and position it inside the border of the object.
+    // The legend then gets skipped during normal layout. The same is true for ruby text.
+    // It doesn't get included in the normal layout process but is instead skipped.
+    layoutExcludedChildren(relayoutChildren);
+
     ChildFrameRects oldChildRects;
     appendChildFrameRects(this, oldChildRects);
     
@@ -426,9 +431,6 @@ void RenderDeprecatedFlexibleBox::layoutHorizontalBox(bool relayoutChildren)
             child->markForPaginationRelayoutIfNeeded();
             
             // Apply the child's current layout delta.
-            layoutChildIfNeededApplyingDelta(child, childLayoutDelta);
-            
-            // Now do the layout.
             layoutChildIfNeededApplyingDelta(child, childLayoutDelta);
 
             // Update our height and overflow height.

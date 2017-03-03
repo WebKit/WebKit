@@ -1,3 +1,33 @@
+2017-03-03  Dave Hyatt  <hyatt@apple.com>
+
+        Enable fieldsets to be flexboxes, grids and multicolumn.
+        https://bugs.webkit.org/show_bug.cgi?id=169082
+
+        Reviewed by Simon Fraser.
+
+        * fast/forms/fieldset/abs-pos-child-sizing-expected.html: Added.
+        * fast/forms/fieldset/abs-pos-child-sizing.html: Added.
+        * fast/forms/fieldset/fieldset-deprecated-flexbox-expected.html: Added.
+        * fast/forms/fieldset/fieldset-deprecated-flexbox.html: Added.
+        * fast/forms/fieldset/fieldset-flexbox-expected.html: Added.
+        * fast/forms/fieldset/fieldset-flexbox.html: Added.
+        * fast/forms/fieldset/fieldset-grid-expected.html: Added.
+        * fast/forms/fieldset/fieldset-grid.html: Added.
+        * fast/forms/fieldset/fieldset-multicolumn-expected.html: Added.
+        * fast/forms/fieldset/fieldset-multicolumn.html: Added.
+        * fast/forms/fieldset/fieldset-overflow-auto-expected.html: Added.
+        * fast/forms/fieldset/fieldset-overflow-auto.html: Added.
+        * fast/forms/fieldset/fieldset-overflow-hidden-expected.html: Added.
+        * fast/forms/fieldset/fieldset-overflow-hidden.html: Added.
+        * fast/forms/fieldset/fieldset-positioned-children-expected.html: Added.
+        * fast/forms/fieldset/fieldset-positioned-children.html: Added.
+        * fast/forms/fieldset/fieldset-positioned-legend-expected.html: Added.
+        * fast/forms/fieldset/fieldset-positioned-legend.html: Added.
+        * fast/forms/fieldset/fieldset-self-painting-legend-expected.html: Added.
+        * fast/forms/fieldset/fieldset-self-painting-legend.html: Added.
+        * fast/forms/fieldset/fieldset-writing-modes-expected.html: Added.
+        * fast/forms/fieldset/fieldset-writing-modes.html: Added.
+
 2017-03-03  Ryan Haddad  <ryanhaddad@apple.com>
 
         Mark imported/w3c/web-platform-tests/IndexedDB/idbcursor_iterating.htm as flaky on El Capitan Release builds.

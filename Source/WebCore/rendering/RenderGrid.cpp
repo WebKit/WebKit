@@ -241,6 +241,11 @@ void RenderGrid::layoutBlock(bool relayoutChildren, LayoutUnit)
     setLogicalHeight(0);
     updateLogicalWidth();
 
+    // Fieldsets need to find their legend and position it inside the border of the object.
+    // The legend then gets skipped during normal layout. The same is true for ruby text.
+    // It doesn't get included in the normal layout process but is instead skipped.
+    layoutExcludedChildren(relayoutChildren);
+
     placeItemsOnGrid(m_grid, TrackSizing);
 
     // At this point the logical width is always definite as the above call to updateLogicalWidth()
@@ -393,11 +398,20 @@ LayoutUnit RenderGrid::guttersSize(const Grid& grid, GridTrackSizingDirection di
 
 void RenderGrid::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const
 {
+    LayoutUnit childMinWidth;
+    LayoutUnit childMaxWidth;
+    bool hadExcludedChildren = computePreferredWidthsForExcludedChildren(childMinWidth, childMaxWidth);
+    
     Grid grid(const_cast<RenderGrid&>(*this));
     placeItemsOnGrid(grid, IntrinsicSizeComputation);
 
     GridTrackSizingAlgorithm algorithm(this, grid);
     computeTrackSizesForIndefiniteSize(algorithm, ForColumns, grid, minLogicalWidth, maxLogicalWidth);
+
+    if (hadExcludedChildren) {
+        minLogicalWidth = std::max(minLogicalWidth, childMinWidth);
+        maxLogicalWidth = std::max(maxLogicalWidth, childMaxWidth);
+    }
 
     LayoutUnit scrollbarWidth = intrinsicScrollbarLogicalWidth();
     minLogicalWidth += scrollbarWidth;
@@ -581,7 +595,7 @@ void RenderGrid::placeItemsOnGrid(Grid& grid, SizingOperation sizingOperation) c
     Vector<RenderBox*> specifiedMajorAxisAutoGridItems;
     bool hasAnyOrthogonalGridItem = false;
     for (auto* child = grid.orderIterator().first(); child; child = grid.orderIterator().next()) {
-        if (child->isOutOfFlowPositioned())
+        if (grid.orderIterator().shouldSkipChild(*child))
             continue;
 
         hasAnyOrthogonalGridItem = hasAnyOrthogonalGridItem || isOrthogonalChild(*child);
@@ -624,7 +638,7 @@ void RenderGrid::placeItemsOnGrid(Grid& grid, SizingOperation sizingOperation) c
 
 #if ENABLE(ASSERT)
     for (auto* child = grid.orderIterator().first(); child; child = grid.orderIterator().next()) {
-        if (child->isOutOfFlowPositioned())
+        if (grid.orderIterator().shouldSkipChild(*child))
             continue;
 
         GridArea area = grid.gridItemArea(*child);
@@ -644,11 +658,9 @@ void RenderGrid::populateExplicitGridAndOrderIterator(Grid& grid) const
     unsigned maximumColumnIndex = GridPositionsResolver::explicitGridColumnCount(style(), autoRepeatColumns);
 
     for (RenderBox* child = firstChildBox(); child; child = child->nextSiblingBox()) {
-        if (child->isOutOfFlowPositioned())
+        if (!populator.collectChild(*child))
             continue;
-
-        populator.collectChild(*child);
-
+        
         GridSpan rowPositions = GridPositionsResolver::resolveGridPositionsFromStyle(style(), *child, ForRows, autoRepeatRows);
         if (!rowPositions.isIndefinite()) {
             smallestRowStart = std::min(smallestRowStart, rowPositions.untranslatedStartLine());
@@ -884,8 +896,10 @@ void RenderGrid::layoutGridItems()
     populateGridPositionsForDirection(ForRows);
 
     for (RenderBox* child = firstChildBox(); child; child = child->nextSiblingBox()) {
-        if (child->isOutOfFlowPositioned()) {
-            prepareChildForPositionedLayout(*child);
+        
+        if (m_grid.orderIterator().shouldSkipChild(*child)) {
+            if (child->isOutOfFlowPositioned())
+                prepareChildForPositionedLayout(*child);
             continue;
         }
 

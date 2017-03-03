@@ -153,6 +153,14 @@ void RenderMultiColumnFlowThread::populate()
     LayoutStateDisabler layoutStateDisabler(view());
     RenderTreeInternalMutationScope reparentingIsOn(view());
     multicolContainer->moveChildrenTo(this, multicolContainer->firstChild(), this, true);
+    
+    if (multicolContainer->isFieldset()) {
+        // Keep legends out of the flow thread.
+        for (auto& box : childrenOfType<RenderBox>(*this)) {
+            if (box.isLegend())
+                moveChildTo(multicolContainer, &box, true);
+        }
+    }
 }
 
 void RenderMultiColumnFlowThread::evacuateAndDestroy()

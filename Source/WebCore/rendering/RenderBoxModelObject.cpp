@@ -1718,6 +1718,12 @@ void RenderBoxModelObject::paintBorder(const PaintInfo& info, const LayoutRect& 
     if (rect.isEmpty())
         return;
 
+    auto rectToClipOut = paintRectToClipOutFromBorder(rect);
+    bool appliedClipAlready = !rectToClipOut.isEmpty();
+    GraphicsContextStateSaver stateSave(graphicsContext, appliedClipAlready);
+    if (!rectToClipOut.isEmpty())
+        graphicsContext.clipOut(snapRectToDevicePixels(rectToClipOut, document().deviceScaleFactor()));
+
     // border-image is not affected by border-radius.
     if (paintNinePieceImage(graphicsContext, rect, style, style.borderImage()))
         return;
@@ -1856,7 +1862,7 @@ void RenderBoxModelObject::paintBorder(const PaintInfo& info, const LayoutRect& 
     }
 
     bool clipToOuterBorder = outerBorder.isRounded();
-    GraphicsContextStateSaver stateSaver(graphicsContext, clipToOuterBorder);
+    GraphicsContextStateSaver stateSaver(graphicsContext, clipToOuterBorder && !appliedClipAlready);
     if (clipToOuterBorder) {
         // Clip to the inner and outer radii rects.
         if (bleedAvoidance != BackgroundBleedUseTransparencyLayer)
