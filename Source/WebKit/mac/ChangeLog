@@ -1,3 +1,12 @@
+2017-03-03  Alexey Proskuryakov  <ap@apple.com>
+
+        Build fix
+        rdar://problem/30825660
+
+        Suggested by Dan Bernstein.
+
+        * Configurations/WebKitLegacy.xcconfig:
+
 2017-03-02  Sam Weinig  <sam@webkit.org>
 
         Rename htmlediting.h/cpp to Editing.h/cpp
