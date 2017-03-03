@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,6 +38,18 @@
 
 namespace JSC {
 
+void JSWebAssemblyInstance::setMemory(VM& vm, ExecState* exec, JSWebAssemblyMemory* memory)
+{
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    // We create stub memories even for modules that should eventually get a memory so we want to avoid recompling there.
+    if (memory->memory()) {
+        auto codeBlock = m_codeBlock->module()->codeBlock(vm, exec, memory);
+        RETURN_IF_EXCEPTION(scope,);
+        m_codeBlock.set(vm, this, codeBlock);
+    }
+    m_memory.set(vm, this, memory);
+}
+
 JSWebAssemblyInstance* JSWebAssemblyInstance::create(VM& vm, Structure* structure, JSWebAssemblyModule* module, JSModuleNamespaceObject* moduleNamespaceObject)
 {
     // FIXME: These objects could be pretty big we should try to throw OOM here.
@@ -67,7 +79,7 @@ void JSWebAssemblyInstance::finishCreation(VM& vm, JSWebAssemblyModule* module, 
     m_globals = MallocPtr<uint64_t>::malloc(extraMemorySize);
     heap()->reportExtraMemoryAllocated(extraMemorySize);
 
-    m_module.set(vm, this, module);
+    m_codeBlock.set(vm, this, module->codeBlock());
     m_moduleNamespaceObject.set(vm, this, moduleNamespaceObject);
     putDirect(vm, Identifier::fromString(&vm, "exports"), moduleNamespaceObject, None);
 }
@@ -83,7 +95,7 @@ void JSWebAssemblyInstance::visitChildren(JSCell* cell, SlotVisitor& visitor)
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
 
     Base::visitChildren(thisObject, visitor);
-    visitor.append(thisObject->m_module);
+    visitor.append(thisObject->m_codeBlock);
     visitor.append(thisObject->m_moduleNamespaceObject);
     visitor.append(thisObject->m_memory);
     visitor.append(thisObject->m_table);

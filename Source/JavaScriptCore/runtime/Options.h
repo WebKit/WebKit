@@ -430,6 +430,8 @@ typedef const char* optionString;
     \
     v(bool, useWebAssembly, true, Normal, "Expose the WebAssembly global object.") \
     v(bool, simulateWebAssemblyLowMemory, false, Normal, "If true, the Memory object won't mmap the full 'maximum' range and instead will allocate the minimum required amount.") \
+    v(bool, useWebAssemblyFastMemory, true, Normal, "If true, we will try to use a 32-bit address space with a signal handler to bounds check wasm memory.")
+
 
 enum OptionEquivalence {
     SameOption,

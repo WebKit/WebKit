@@ -29,6 +29,7 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "JSCInlines.h"
+#include "WasmFaultSignalHandler.h"
 
 namespace JSC {
 
@@ -43,11 +44,13 @@ void JSWebAssemblyCallee::finishCreation(VM& vm, Wasm::Entrypoint&& entrypoint)
     Base::finishCreation(vm);
 
     m_entrypoint = WTFMove(entrypoint);
+    Wasm::registerCode(vm, m_entrypoint.compilation->codeRef().executableMemory()->start(), m_entrypoint.compilation->codeRef().executableMemory()->end());
 }
 
 void JSWebAssemblyCallee::destroy(JSCell* cell)
 {
     JSWebAssemblyCallee* thisObject = static_cast<JSWebAssemblyCallee*>(cell);
+    Wasm::unregisterCode(*cell->vm(), thisObject->m_entrypoint.compilation->codeRef().executableMemory()->start(), thisObject->m_entrypoint.compilation->codeRef().executableMemory()->end());
     thisObject->JSWebAssemblyCallee::~JSWebAssemblyCallee();
 }
 

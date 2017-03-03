@@ -241,6 +241,7 @@ VM::VM(VMType vmType, HeapType heapType)
 #if ENABLE(WEBASSEMBLY)
     webAssemblyCalleeStructure.set(*this, JSWebAssemblyCallee::createStructure(*this, 0, jsNull()));
     webAssemblyToJSCalleeStructure.set(*this, WebAssemblyToJSCallee::createStructure(*this, 0, jsNull()));
+    webAssemblyCodeBlockStructure.set(*this, JSWebAssemblyCodeBlock::createStructure(*this, 0, jsNull()));
     webAssemblyToJSCallee.set(*this, WebAssemblyToJSCallee::create(*this, webAssemblyToJSCalleeStructure.get()));
 #endif
     moduleProgramExecutableStructure.set(*this, ModuleProgramExecutable::createStructure(*this, 0, jsNull()));

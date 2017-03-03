@@ -58,6 +58,7 @@ public:
     MacroAssemblerCodePtr ctiNativeTailCallWithoutSavedTags(VM*);    
 
     MacroAssemblerCodeRef ctiStub(VM*, ThunkGenerator);
+    MacroAssemblerCodeRef existingCTIStub(ThunkGenerator);
 
     NativeExecutable* hostFunctionStub(VM*, NativeFunction, NativeFunction constructor, const String& name);
     NativeExecutable* hostFunctionStub(VM*, NativeFunction, NativeFunction constructor, ThunkGenerator, Intrinsic, const DOMJIT::Signature*, const String& name);

@@ -40,6 +40,7 @@
 #include "LinkBuffer.h"
 #include "RegisterSet.h"
 #include "WasmFormat.h"
+#include "WasmSignature.h"
 
 namespace JSC { namespace Wasm {
 

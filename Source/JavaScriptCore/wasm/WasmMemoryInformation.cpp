@@ -29,6 +29,7 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "WasmCallingConvention.h"
+#include "WasmMemory.h"
 #include <wtf/NeverDestroyed.h>
 
 namespace JSC { namespace Wasm {
@@ -48,6 +49,8 @@ const PinnedRegisterInfo& PinnedRegisterInfo::get()
         Vector<unsigned> pinnedSizes = { 0 };
         unsigned remainingPinnedRegisters = pinnedSizes.size() + 1;
         jscCallingConvention().m_calleeSaveRegisters.forEach([&] (Reg reg) {
+            if (!reg.isGPR())
+                return;
             GPRReg gpr = reg.gpr();
             if (!remainingPinnedRegisters || RegisterSet::stackRegisters().get(reg))
                 return;
@@ -71,7 +74,7 @@ PinnedRegisterInfo::PinnedRegisterInfo(Vector<PinnedSizeRegisterInfo>&& sizeRegi
 {
 }
 
-MemoryInformation::MemoryInformation(PageCount initial, PageCount maximum,  bool isImport)
+MemoryInformation::MemoryInformation(VM& vm, PageCount initial, PageCount maximum, std::optional<Memory::Mode> recompileMode, bool isImport)
     : m_initial(initial)
     , m_maximum(maximum)
     , m_isImport(isImport)
@@ -79,6 +82,19 @@ MemoryInformation::MemoryInformation(PageCount initial, PageCount maximum,  bool
     RELEASE_ASSERT(!!m_initial);
     RELEASE_ASSERT(!m_maximum || m_maximum >= m_initial);
     ASSERT(!!*this);
+
+    if (!recompileMode) {
+        if (!isImport) {
+            m_reservedMemory = Memory::create(vm, initial, maximum, Memory::Signaling);
+            if (m_reservedMemory) {
+                ASSERT(!!*m_reservedMemory);
+                m_mode = m_reservedMemory->mode();
+                return;
+            }
+        }
+        m_mode = Memory::lastAllocatedMode();
+    } else
+        m_mode = *recompileMode;
 }
 
 } } // namespace JSC::Wasm

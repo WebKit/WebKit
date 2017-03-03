@@ -137,6 +137,7 @@ public:
     T* ptr() const { ASSERT(m_ptr); return m_ptr; }
     T& get() const { ASSERT(m_ptr); return *m_ptr; }
     operator T&() const { ASSERT(m_ptr); return *m_ptr; }
+    bool operator!() const { ASSERT(m_ptr); return !*m_ptr; }
 
     template<typename U> Ref<T> replace(Ref<U>&&) WARN_UNUSED_RETURN;
 

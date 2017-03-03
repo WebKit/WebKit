@@ -49,9 +49,9 @@ public:
     JS_EXPORT_PRIVATE Plan(VM*, const uint8_t*, size_t);
     JS_EXPORT_PRIVATE ~Plan();
 
-    bool parseAndValidateModule();
+    bool parseAndValidateModule(std::optional<Memory::Mode> = std::nullopt);
 
-    JS_EXPORT_PRIVATE void run();
+    JS_EXPORT_PRIVATE void run(std::optional<Memory::Mode> = std::nullopt);
 
     JS_EXPORT_PRIVATE void initializeCallees(JSGlobalObject*, std::function<void(unsigned, JSWebAssemblyCallee*, JSWebAssemblyCallee*)>);
 
@@ -91,6 +91,8 @@ public:
         RELEASE_ASSERT(!failed());
         return WTFMove(m_wasmExitStubs);
     }
+
+    Memory::Mode mode() const { return m_moduleInformation->memory.mode(); }
 
 private:
     std::unique_ptr<ModuleInformation> m_moduleInformation;

@@ -207,6 +207,7 @@ public:
 
 private:
     ExpressionType emitCheckAndPreparePointer(ExpressionType pointer, uint32_t offset, uint32_t sizeOfOp);
+    B3::Kind memoryKind(B3::Opcode memoryOp);
     ExpressionType emitLoadOp(LoadOpType, Origin, ExpressionType pointer, uint32_t offset);
     void emitStoreOp(StoreOpType, Origin, ExpressionType pointer, ExpressionType value, uint32_t offset);
 
@@ -259,7 +260,7 @@ B3IRGenerator::B3IRGenerator(VM& vm, const ModuleInformation& info, Procedure& p
     for (const PinnedSizeRegisterInfo& regInfo : pinnedRegs.sizeRegisters)
         m_proc.pinRegister(regInfo.sizeRegister);
 
-    if (info.hasMemory()) {
+    if (info.memory) {
         m_proc.setWasmBoundsCheckGenerator([=] (CCallHelpers& jit, GPRReg pinnedGPR, unsigned) {
             AllowMacroScratchRegisterUsage allowScratch(jit);
             ASSERT_UNUSED(pinnedGPR, m_memorySizeGPR == pinnedGPR);
@@ -282,8 +283,8 @@ static MemoryBaseAndSize getMemoryBaseAndSize(VM& vm, Value* instance, Procedure
 {
     Value* memoryObject = block->appendNew<MemoryValue>(proc, Load, pointerType(), Origin(), instance, JSWebAssemblyInstance::offsetOfMemory());
 
-    static_assert(sizeof(decltype(vm.topJSWebAssemblyInstance->memory()->memory()->memory())) == sizeof(void*), "codegen relies on this size");
-    static_assert(sizeof(decltype(vm.topJSWebAssemblyInstance->memory()->memory()->size())) == sizeof(uint64_t), "codegen relies on this size");
+    static_assert(sizeof(decltype(vm.topJSWebAssemblyInstance->memory()->memory().memory())) == sizeof(void*), "codegen relies on this size");
+    static_assert(sizeof(decltype(vm.topJSWebAssemblyInstance->memory()->memory().size())) == sizeof(uint64_t), "codegen relies on this size");
     MemoryBaseAndSize result;
     result.base = block->appendNew<MemoryValue>(proc, Load, pointerType(), Origin(), memoryObject, JSWebAssemblyMemory::offsetOfMemory());
     result.size = block->appendNew<MemoryValue>(proc, Load, Int64, Origin(), memoryObject, JSWebAssemblyMemory::offsetOfSize());
@@ -454,9 +455,12 @@ auto B3IRGenerator::setGlobal(uint32_t index, ExpressionType value) -> PartialRe
 
 inline Value* B3IRGenerator::emitCheckAndPreparePointer(ExpressionType pointer, uint32_t offset, uint32_t sizeOfOperation)
 {
-    ASSERT(m_memoryBaseGPR && m_memorySizeGPR);
-    ASSERT(sizeOfOperation + offset > offset);
-    m_currentBlock->appendNew<WasmBoundsCheckValue>(m_proc, Origin(), pointer, m_memorySizeGPR, sizeOfOperation + offset - 1);
+    ASSERT(m_memoryBaseGPR);
+    if (m_info.memory.mode() == Memory::Mode::BoundsChecking) {
+        ASSERT(m_memorySizeGPR);
+        ASSERT(sizeOfOperation + offset > offset);
+        m_currentBlock->appendNew<WasmBoundsCheckValue>(m_proc, Origin(), pointer, m_memorySizeGPR, sizeOfOperation + offset - 1);
+    }
     pointer = m_currentBlock->appendNew<Value>(m_proc, ZExt32, Origin(), pointer);
     return m_currentBlock->appendNew<WasmAddressValue>(m_proc, Origin(), pointer, m_memoryBaseGPR);
 }
@@ -486,70 +490,77 @@ inline uint32_t sizeOfLoadOp(LoadOpType op)
     RELEASE_ASSERT_NOT_REACHED();
 }
 
+inline B3::Kind B3IRGenerator::memoryKind(B3::Opcode memoryOp)
+{
+    if (m_info.memory.mode() == Memory::Signaling)
+        return trapping(memoryOp);
+    return memoryOp;
+}
+
 inline Value* B3IRGenerator::emitLoadOp(LoadOpType op, Origin origin, ExpressionType pointer, uint32_t offset)
 {
     switch (op) {
     case LoadOpType::I32Load8S: {
-        return m_currentBlock->appendNew<MemoryValue>(m_proc, Load8S, origin, pointer, offset);
+        return m_currentBlock->appendNew<MemoryValue>(m_proc, memoryKind(Load8S), origin, pointer, offset);
     }
 
     case LoadOpType::I64Load8S: {
-        Value* value = m_currentBlock->appendNew<MemoryValue>(m_proc, Load8S, origin, pointer, offset);
+        Value* value = m_currentBlock->appendNew<MemoryValue>(m_proc, memoryKind(Load8S), origin, pointer, offset);
         return m_currentBlock->appendNew<Value>(m_proc, SExt32, origin, value);
     }
 
     case LoadOpType::I32Load8U: {
-        return m_currentBlock->appendNew<MemoryValue>(m_proc, Load8Z, origin, pointer, offset);
+        return m_currentBlock->appendNew<MemoryValue>(m_proc, memoryKind(Load8Z), origin, pointer, offset);
     }
 
     case LoadOpType::I64Load8U: {
-        Value* value = m_currentBlock->appendNew<MemoryValue>(m_proc, Load8Z, origin, pointer, offset);
+        Value* value = m_currentBlock->appendNew<MemoryValue>(m_proc, memoryKind(Load8Z), origin, pointer, offset);
         return m_currentBlock->appendNew<Value>(m_proc, ZExt32, origin, value);
     }
 
     case LoadOpType::I32Load16S: {
-        return m_currentBlock->appendNew<MemoryValue>(m_proc, Load16S, origin, pointer, offset);
+        return m_currentBlock->appendNew<MemoryValue>(m_proc, memoryKind(Load16S), origin, pointer, offset);
     }
     case LoadOpType::I64Load16S: {
-        Value* value = m_currentBlock->appendNew<MemoryValue>(m_proc, Load16S, origin, pointer, offset);
+        Value* value = m_currentBlock->appendNew<MemoryValue>(m_proc, memoryKind(Load16S), origin, pointer, offset);
         return m_currentBlock->appendNew<Value>(m_proc, SExt32, origin, value);
     }
 
     case LoadOpType::I32Load: {
-        return m_currentBlock->appendNew<MemoryValue>(m_proc, Load, Int32, origin, pointer, offset);
+        return m_currentBlock->appendNew<MemoryValue>(m_proc, memoryKind(Load), Int32, origin, pointer, offset);
     }
 
     case LoadOpType::I64Load32U: {
-        Value* value = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, Int32, origin, pointer, offset);
+        Value* value = m_currentBlock->appendNew<MemoryValue>(m_proc, memoryKind(Load), Int32, origin, pointer, offset);
         return m_currentBlock->appendNew<Value>(m_proc, ZExt32, origin, value);
     }
 
     case LoadOpType::I64Load32S: {
-        Value* value = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, Int32, origin, pointer, offset);
+        Value* value = m_currentBlock->appendNew<MemoryValue>(m_proc, memoryKind(Load), Int32, origin, pointer, offset);
         return m_currentBlock->appendNew<Value>(m_proc, SExt32, origin, value);
     }
 
     case LoadOpType::I64Load: {
-        return m_currentBlock->appendNew<MemoryValue>(m_proc, Load, Int64, origin, pointer, offset);
+        return m_currentBlock->appendNew<MemoryValue>(m_proc, memoryKind(Load), Int64, origin, pointer, offset);
     }
 
     case LoadOpType::F32Load: {
-        return m_currentBlock->appendNew<MemoryValue>(m_proc, Load, Float, origin, pointer, offset);
+        return m_currentBlock->appendNew<MemoryValue>(m_proc, memoryKind(Load), Float, origin, pointer, offset);
     }
 
     case LoadOpType::F64Load: {
-        return m_currentBlock->appendNew<MemoryValue>(m_proc, Load, Double, origin, pointer, offset);
+        return m_currentBlock->appendNew<MemoryValue>(m_proc, memoryKind(Load), Double, origin, pointer, offset);
     }
 
     // FIXME: B3 doesn't support Load16Z yet. We should lower to that value when
     // it's added. https://bugs.webkit.org/show_bug.cgi?id=165884
     case LoadOpType::I32Load16U: {
-        Value* value = m_currentBlock->appendNew<MemoryValue>(m_proc, Load16S, origin, pointer, offset);
+        Value* value = m_currentBlock->appendNew<MemoryValue>(m_proc, memoryKind(Load16S), origin, pointer, offset);
         return m_currentBlock->appendNew<Value>(m_proc, BitAnd, Origin(), value,
                 m_currentBlock->appendNew<Const32Value>(m_proc, Origin(), 0x0000ffff));
     }
     case LoadOpType::I64Load16U: {
-        Value* value = m_currentBlock->appendNew<MemoryValue>(m_proc, Load16S, origin, pointer, offset);
+        Value* value = m_currentBlock->appendNew<MemoryValue>(m_proc, memoryKind(Load16S), origin, pointer, offset);
         Value* partialResult = m_currentBlock->appendNew<Value>(m_proc, BitAnd, Origin(), value,
                 m_currentBlock->appendNew<Const32Value>(m_proc, Origin(), 0x0000ffff));
 
@@ -631,7 +642,7 @@ inline void B3IRGenerator::emitStoreOp(StoreOpType op, Origin origin, Expression
         FALLTHROUGH;
 
     case StoreOpType::I32Store8:
-        m_currentBlock->appendNew<MemoryValue>(m_proc, Store8, origin, value, pointer, offset);
+        m_currentBlock->appendNew<MemoryValue>(m_proc, memoryKind(Store8), origin, value, pointer, offset);
         return;
 
     case StoreOpType::I64Store16:
@@ -639,7 +650,7 @@ inline void B3IRGenerator::emitStoreOp(StoreOpType op, Origin origin, Expression
         FALLTHROUGH;
 
     case StoreOpType::I32Store16:
-        m_currentBlock->appendNew<MemoryValue>(m_proc, Store16, origin, value, pointer, offset);
+        m_currentBlock->appendNew<MemoryValue>(m_proc, memoryKind(Store16), origin, value, pointer, offset);
         return;
 
     case StoreOpType::I64Store32:
@@ -650,7 +661,7 @@ inline void B3IRGenerator::emitStoreOp(StoreOpType op, Origin origin, Expression
     case StoreOpType::I32Store:
     case StoreOpType::F32Store:
     case StoreOpType::F64Store:
-        m_currentBlock->appendNew<MemoryValue>(m_proc, Store, origin, value, pointer, offset);
+        m_currentBlock->appendNew<MemoryValue>(m_proc, memoryKind(Store), origin, value, pointer, offset);
         return;
     }
     RELEASE_ASSERT_NOT_REACHED();

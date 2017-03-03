@@ -316,7 +316,7 @@ auto ModuleParser::parseMemoryHelper(bool isImport) -> PartialResult
     ASSERT(initialPageCount);
     ASSERT(!maximumPageCount || maximumPageCount >= initialPageCount);
 
-    m_result.module->memory = MemoryInformation(initialPageCount, maximumPageCount, isImport);
+    m_result.module->memory = MemoryInformation(*m_vm, initialPageCount, maximumPageCount, m_mode, isImport);
     return { };
 }
 

@@ -334,6 +334,7 @@ public:
 #if ENABLE(WEBASSEMBLY)
     Strong<Structure> webAssemblyCalleeStructure;
     Strong<Structure> webAssemblyToJSCalleeStructure;
+    Strong<Structure> webAssemblyCodeBlockStructure;
     Strong<JSCell> webAssemblyToJSCallee;
 #endif
     Strong<Structure> moduleProgramExecutableStructure;

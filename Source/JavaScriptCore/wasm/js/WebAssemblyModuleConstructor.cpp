@@ -80,31 +80,8 @@ JSValue WebAssemblyModuleConstructor::createModule(ExecState* state, Structure* 
     uint8_t* base = getWasmBufferFromValue(state, state->argument(0), byteOffset, byteSize);
     RETURN_IF_EXCEPTION(scope, { });
 
-    Wasm::Plan plan(&vm, base + byteOffset, byteSize);
-    // On failure, a new WebAssembly.CompileError is thrown.
-    plan.run();
-    if (plan.failed())
-        return throwException(state, scope, createJSWebAssemblyCompileError(state, vm, plan.errorMessage()));
-
-    // On success, a new WebAssembly.Module object is returned with [[Module]] set to the validated Ast.module.
-
-    // The export symbol table is the same for all Instances of a Module.
-    SymbolTable* exportSymbolTable = SymbolTable::create(vm);
-    for (auto& exp : plan.exports()) {
-        auto offset = exportSymbolTable->takeNextScopeOffset(NoLockingNecessary);
-        exportSymbolTable->set(NoLockingNecessary, exp.field.impl(), SymbolTableEntry(VarOffset(offset)));
-    }
-
-    // Only wasm-internal functions have a callee, stubs to JS do not.
-    unsigned calleeCount = plan.internalFunctionCount();
-    JSWebAssemblyModule* result = JSWebAssemblyModule::create(vm, structure, plan.takeModuleInformation(), plan.takeCallLinkInfos(), plan.takeWasmExitStubs(), exportSymbolTable, calleeCount);
-    plan.initializeCallees(state->jsCallee()->globalObject(), 
-        [&] (unsigned calleeIndex, JSWebAssemblyCallee* jsEntrypointCallee, JSWebAssemblyCallee* wasmEntrypointCallee) {
-            result->setJSEntrypointCallee(vm, calleeIndex, jsEntrypointCallee);
-            result->setWasmEntrypointCallee(vm, calleeIndex, wasmEntrypointCallee);
-        });
-
-    return result;
+    scope.release();
+    return JSWebAssemblyModule::create(vm, state, structure, base + byteOffset, byteSize);
 }
 
 WebAssemblyModuleConstructor* WebAssemblyModuleConstructor::create(VM& vm, Structure* structure, WebAssemblyModulePrototype* thisPrototype)

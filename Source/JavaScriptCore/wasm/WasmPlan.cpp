@@ -35,6 +35,7 @@
 #include "WasmB3IRGenerator.h"
 #include "WasmBinding.h"
 #include "WasmCallingConvention.h"
+#include "WasmFaultSignalHandler.h"
 #include "WasmMemory.h"
 #include "WasmModuleParser.h"
 #include "WasmValidate.h"
@@ -61,14 +62,14 @@ Plan::Plan(VM* vm, const uint8_t* source, size_t sourceLength)
 {
 }
 
-bool Plan::parseAndValidateModule()
+bool Plan::parseAndValidateModule(std::optional<Memory::Mode> recompileMode)
 {
     MonotonicTime startTime;
     if (verbose || Options::reportCompileTimes())
         startTime = MonotonicTime::now();
 
     {
-        ModuleParser moduleParser(m_vm, m_source, m_sourceLength);
+        ModuleParser moduleParser(m_vm, m_source, m_sourceLength, recompileMode);
         auto parseResult = moduleParser.parse();
         if (!parseResult) {
             m_errorMessage = parseResult.error();
@@ -109,10 +110,12 @@ bool Plan::parseAndValidateModule()
 // The reason this is OK is that we guarantee that the main thread doesn't continue until all threads
 // that could touch its stack are done executing.
 SUPPRESS_ASAN 
-void Plan::run()
+void Plan::run(std::optional<Memory::Mode> recompileMode)
 {
-    if (!parseAndValidateModule())
+    if (!parseAndValidateModule(recompileMode))
         return;
+    if (recompileMode)
+        ASSERT(m_moduleInformation->memory.mode() == recompileMode);
 
     auto tryReserveCapacity = [this] (auto& vector, size_t size, const char* what) {
         if (UNLIKELY(!vector.tryReserveCapacity(size))) {

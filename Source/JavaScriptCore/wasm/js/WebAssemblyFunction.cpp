@@ -56,6 +56,8 @@ static EncodedJSValue JSC_HOST_CALL callWebAssemblyFunction(ExecState* exec)
     Wasm::SignatureIndex signatureIndex = wasmFunction->signatureIndex();
     const Wasm::Signature* signature = Wasm::SignatureInformation::get(&vm, signatureIndex);
 
+    // Make sure that the memory we think we are going to run with matches the one we expect.
+    ASSERT(wasmFunction->instance()->codeBlock()->isSafeToRun(wasmFunction->instance()->memory()));
     {
         // Check if we have a disallowed I64 use.
 

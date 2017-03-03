@@ -256,7 +256,6 @@ struct ModuleInformation {
     }
 
     uint32_t importFunctionCount() const { return importFunctionSignatureIndices.size(); }
-    bool hasMemory() const { return !!memory; }
 
     ~ModuleInformation();
 };

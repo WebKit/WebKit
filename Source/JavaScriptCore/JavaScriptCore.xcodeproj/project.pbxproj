@@ -1324,6 +1324,10 @@
 		535557161D9DFA32006D583B /* WasmMemory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 535557151D9DFA32006D583B /* WasmMemory.cpp */; };
 		5370B4F51BF26202005C40FC /* AdaptiveInferredPropertyValueWatchpointBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5370B4F31BF25EA2005C40FC /* AdaptiveInferredPropertyValueWatchpointBase.cpp */; };
 		5370B4F61BF26205005C40FC /* AdaptiveInferredPropertyValueWatchpointBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 5370B4F41BF25EA2005C40FC /* AdaptiveInferredPropertyValueWatchpointBase.h */; };
+		5381B9371E60E9660090F794 /* WasmFaultSignalHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5381B9361E60E9660090F794 /* WasmFaultSignalHandler.cpp */; };
+		5381B9391E60E97D0090F794 /* WasmFaultSignalHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 5381B9381E60E97D0090F794 /* WasmFaultSignalHandler.h */; };
+		5381B9401E65DFEB0090F794 /* JSWebAssemblyCodeBlock.h in Headers */ = {isa = PBXBuildFile; fileRef = 5381B93F1E65DFEB0090F794 /* JSWebAssemblyCodeBlock.h */; };
+		5383AA301E65E8A100A532FC /* JSWebAssemblyCodeBlock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5383AA2F1E65E8A100A532FC /* JSWebAssemblyCodeBlock.cpp */; };
 		53917E7B1B7906FA000EBD33 /* JSGenericTypedArrayViewPrototypeFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = 53917E7A1B7906E4000EBD33 /* JSGenericTypedArrayViewPrototypeFunctions.h */; };
 		539FB8BA1C99DA7C00940FA1 /* JSArrayInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 539FB8B91C99DA7C00940FA1 /* JSArrayInlines.h */; };
 		53B0BE341E561AC900A8FC29 /* GetterSetterAccessCase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53B0BE331E561AC900A8FC29 /* GetterSetterAccessCase.cpp */; };
@@ -3791,6 +3795,10 @@
 		535557151D9DFA32006D583B /* WasmMemory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WasmMemory.cpp; sourceTree = "<group>"; };
 		5370B4F31BF25EA2005C40FC /* AdaptiveInferredPropertyValueWatchpointBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AdaptiveInferredPropertyValueWatchpointBase.cpp; sourceTree = "<group>"; };
 		5370B4F41BF25EA2005C40FC /* AdaptiveInferredPropertyValueWatchpointBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AdaptiveInferredPropertyValueWatchpointBase.h; sourceTree = "<group>"; };
+		5381B9361E60E9660090F794 /* WasmFaultSignalHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WasmFaultSignalHandler.cpp; sourceTree = "<group>"; };
+		5381B9381E60E97D0090F794 /* WasmFaultSignalHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmFaultSignalHandler.h; sourceTree = "<group>"; };
+		5381B93F1E65DFEB0090F794 /* JSWebAssemblyCodeBlock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebAssemblyCodeBlock.h; sourceTree = "<group>"; };
+		5383AA2F1E65E8A100A532FC /* JSWebAssemblyCodeBlock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JSWebAssemblyCodeBlock.cpp; path = js/JSWebAssemblyCodeBlock.cpp; sourceTree = "<group>"; };
 		53917E7A1B7906E4000EBD33 /* JSGenericTypedArrayViewPrototypeFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSGenericTypedArrayViewPrototypeFunctions.h; sourceTree = "<group>"; };
 		53917E7C1B791106000EBD33 /* JSTypedArrayViewPrototype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSTypedArrayViewPrototype.h; sourceTree = "<group>"; };
 		53917E831B791CB8000EBD33 /* TypedArrayPrototype.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; name = TypedArrayPrototype.js; path = builtins/TypedArrayPrototype.js; sourceTree = SOURCE_ROOT; };
@@ -6227,6 +6235,8 @@
 				53F40E961D5A7BEC0099A1B6 /* WasmModuleParser.cpp */,
 				53F40E941D5A7AEF0099A1B6 /* WasmModuleParser.h */,
 				ADB6F67C1E15D7500082F384 /* WasmPageCount.cpp */,
+				5381B9361E60E9660090F794 /* WasmFaultSignalHandler.cpp */,
+				5381B9381E60E97D0090F794 /* WasmFaultSignalHandler.h */,
 				79B759731DFA4C600052174C /* WasmPageCount.h */,
 				53F40E8C1D5901F20099A1B6 /* WasmParser.h */,
 				531374BE1D5CE95000AF7A0B /* WasmPlan.cpp */,
@@ -7821,6 +7831,8 @@
 			children = (
 				79E423E01DEE65320078D355 /* JSWebAssemblyCallee.cpp */,
 				79E423E11DEE65320078D355 /* JSWebAssemblyCallee.h */,
+				5383AA2F1E65E8A100A532FC /* JSWebAssemblyCodeBlock.cpp */,
+				5381B93F1E65DFEB0090F794 /* JSWebAssemblyCodeBlock.h */,
 				AD2FCBA61DB58DA400B3E736 /* JSWebAssemblyCompileError.cpp */,
 				AD2FCBA71DB58DA400B3E736 /* JSWebAssemblyCompileError.h */,
 				796FB4391DFF8C3F0039C95D /* JSWebAssemblyHelpers.h */,
@@ -7961,6 +7973,7 @@
 				0FEC85721BDACDC70080FF74 /* AirBasicBlock.h in Headers */,
 				0FB3878E1BFBC44D00E3AB1E /* AirBlockWorklist.h in Headers */,
 				0F61832A1C45BF070072450B /* AirCCallingConvention.h in Headers */,
+				5381B9401E65DFEB0090F794 /* JSWebAssemblyCodeBlock.h in Headers */,
 				0FEC85741BDACDC70080FF74 /* AirCCallSpecial.h in Headers */,
 				0FEC85761BDACDC70080FF74 /* AirCode.h in Headers */,
 				0F10F1A31C420BF0001C07D2 /* AirCustom.h in Headers */,
@@ -8280,6 +8293,7 @@
 				A7D89CF417A0B8CC00773AD8 /* DFGBlockInsertionSet.h in Headers */,
 				0FC3CCFC19ADA410006AC72A /* DFGBlockMap.h in Headers */,
 				0FC3CCFD19ADA410006AC72A /* DFGBlockMapInlines.h in Headers */,
+				5381B9391E60E97D0090F794 /* WasmFaultSignalHandler.h in Headers */,
 				0FC3CCFE19ADA410006AC72A /* DFGBlockSet.h in Headers */,
 				0FBF158D19B7A53100695DD0 /* DFGBlockSetInlines.h in Headers */,
 				0FC3CD0019ADA410006AC72A /* DFGBlockWorklist.h in Headers */,
@@ -10077,6 +10091,7 @@
 				0FC841681BA8C3210061837D /* DFGInferredTypeCheck.cpp in Sources */,
 				A704D90517A0BAA8006BA554 /* DFGInPlaceAbstractState.cpp in Sources */,
 				0F3BD1B71B896A0700598AA6 /* DFGInsertionSet.cpp in Sources */,
+				5381B9371E60E9660090F794 /* WasmFaultSignalHandler.cpp in Sources */,
 				0F300B7B18AB1B1400A6D72E /* DFGIntegerCheckCombiningPhase.cpp in Sources */,
 				0F898F311B27689F0083A33C /* DFGIntegerRangeOptimizationPhase.cpp in Sources */,
 				0FC97F3D18202119002C9B26 /* DFGInvalidationPointInjectionPhase.cpp in Sources */,
@@ -10480,6 +10495,7 @@
 				86C568E011A213EE0007F7F0 /* MacroAssemblerARM.cpp in Sources */,
 				FEB137571BB11EF900CD5100 /* MacroAssemblerARM64.cpp in Sources */,
 				A729009C17976C6000317298 /* MacroAssemblerARMv7.cpp in Sources */,
+				5383AA301E65E8A100A532FC /* JSWebAssemblyCodeBlock.cpp in Sources */,
 				0F6DB7EC1D617D1100CDBF8E /* MacroAssemblerCodeRef.cpp in Sources */,
 				FE68C6381B90DE0B0042BCB3 /* MacroAssemblerPrinter.cpp in Sources */,
 				A7A4AE0817973B26005612B1 /* MacroAssemblerX86Common.cpp in Sources */,

@@ -1,3 +1,172 @@
+2017-03-03  Keith Miller  <keith_miller@apple.com>
+
+        WASM should support faster loads.
+        https://bugs.webkit.org/show_bug.cgi?id=162693
+
+        Reviewed by Saam Barati.
+
+        This patch adds support for WebAssembly using a 32-bit address
+        space for memory (along with some extra space for offset
+        overflow). With a 32-bit address space (we call them
+        Signaling/fast memories), we reserve the virtual address space for
+        2^32 + offset bytes of memory and only mark the usable section as
+        read/write. If wasm code would read/write out of bounds we use a
+        custom signal handler to catch the SIGBUS. The signal handler then
+        checks if the faulting instruction is wasm code and tells the
+        thread to resume executing from the wasm exception
+        handler. Otherwise, the signal handler crashes the process, as
+        usual.
+
+        All of the allocations of these memories are managed by the
+        Wasm::Memory class. In order to avoid TLB churn in the OS we cache
+        old Signaling memories that are no longer in use. Since getting
+        the wrong memory can cause recompiles, we try to reserve a memory
+        for modules that do not import a memory. If a module does import a
+        memory, we try to guess the type of memory we are going to get
+        based on the last one allocated.
+
+        This patch also changes how the wasm JS-api manages objects. Since
+        we can compile different versions of code, this patch adds a new
+        JSWebAssemblyCodeBlock class that holds all the information
+        specific to running a module in a particular bounds checking
+        mode. Additionally, the Wasm::Memory object is now a reference
+        counted class that is shared between the JSWebAssemblyMemory
+        object and the ArrayBuffer that also views it.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * jit/JITThunks.cpp:
+        (JSC::JITThunks::existingCTIStub):
+        * jit/JITThunks.h:
+        * jsc.cpp:
+        (jscmain):
+        * runtime/Options.h:
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+        * wasm/JSWebAssemblyCodeBlock.h: Copied from Source/JavaScriptCore/wasm/js/JSWebAssemblyModule.h.
+        (JSC::JSWebAssemblyCodeBlock::create):
+        (JSC::JSWebAssemblyCodeBlock::createStructure):
+        (JSC::JSWebAssemblyCodeBlock::functionImportCount):
+        (JSC::JSWebAssemblyCodeBlock::mode):
+        (JSC::JSWebAssemblyCodeBlock::module):
+        (JSC::JSWebAssemblyCodeBlock::jsEntrypointCalleeFromFunctionIndexSpace):
+        (JSC::JSWebAssemblyCodeBlock::wasmEntrypointCalleeFromFunctionIndexSpace):
+        (JSC::JSWebAssemblyCodeBlock::setJSEntrypointCallee):
+        (JSC::JSWebAssemblyCodeBlock::setWasmEntrypointCallee):
+        (JSC::JSWebAssemblyCodeBlock::callees):
+        (JSC::JSWebAssemblyCodeBlock::offsetOfCallees):
+        (JSC::JSWebAssemblyCodeBlock::allocationSize):
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::B3IRGenerator):
+        (JSC::Wasm::getMemoryBaseAndSize):
+        (JSC::Wasm::B3IRGenerator::emitCheckAndPreparePointer):
+        (JSC::Wasm::B3IRGenerator::emitLoadOp):
+        (JSC::Wasm::B3IRGenerator::emitStoreOp):
+        * wasm/WasmCallingConvention.h:
+        * wasm/WasmFaultSignalHandler.cpp: Added.
+        (JSC::Wasm::trapHandler):
+        (JSC::Wasm::registerCode):
+        (JSC::Wasm::unregisterCode):
+        (JSC::Wasm::fastMemoryEnabled):
+        (JSC::Wasm::enableFastMemory):
+        * wasm/WasmFaultSignalHandler.h: Copied from Source/JavaScriptCore/wasm/js/JSWebAssemblyCallee.cpp.
+        * wasm/WasmFormat.h:
+        (JSC::Wasm::ModuleInformation::importFunctionCount):
+        (JSC::Wasm::ModuleInformation::hasMemory): Deleted.
+        * wasm/WasmMemory.cpp:
+        (JSC::Wasm::mmapBytes):
+        (JSC::Wasm::Memory::lastAllocatedMode):
+        (JSC::Wasm::availableFastMemories):
+        (JSC::Wasm::tryGetFastMemory):
+        (JSC::Wasm::releaseFastMemory):
+        (JSC::Wasm::Memory::Memory):
+        (JSC::Wasm::Memory::createImpl):
+        (JSC::Wasm::Memory::create):
+        (JSC::Wasm::Memory::~Memory):
+        (JSC::Wasm::Memory::grow):
+        (JSC::Wasm::Memory::dump):
+        (JSC::Wasm::Memory::makeString):
+        * wasm/WasmMemory.h:
+        (JSC::Wasm::Memory::operator bool):
+        (JSC::Wasm::Memory::size):
+        (JSC::Wasm::Memory::check):
+        (JSC::Wasm::Memory::Memory): Deleted.
+        (JSC::Wasm::Memory::offsetOfMemory): Deleted.
+        (JSC::Wasm::Memory::offsetOfSize): Deleted.
+        * wasm/WasmMemoryInformation.cpp:
+        (JSC::Wasm::MemoryInformation::MemoryInformation):
+        * wasm/WasmMemoryInformation.h:
+        (JSC::Wasm::MemoryInformation::hasReservedMemory):
+        (JSC::Wasm::MemoryInformation::takeReservedMemory):
+        (JSC::Wasm::MemoryInformation::mode):
+        * wasm/WasmModuleParser.cpp:
+        * wasm/WasmModuleParser.h:
+        (JSC::Wasm::ModuleParser::ModuleParser):
+        * wasm/WasmPlan.cpp:
+        (JSC::Wasm::Plan::parseAndValidateModule):
+        (JSC::Wasm::Plan::run):
+        * wasm/WasmPlan.h:
+        (JSC::Wasm::Plan::mode):
+        * wasm/js/JSWebAssemblyCallee.cpp:
+        (JSC::JSWebAssemblyCallee::finishCreation):
+        (JSC::JSWebAssemblyCallee::destroy):
+        * wasm/js/JSWebAssemblyCodeBlock.cpp: Added.
+        (JSC::JSWebAssemblyCodeBlock::JSWebAssemblyCodeBlock):
+        (JSC::JSWebAssemblyCodeBlock::destroy):
+        (JSC::JSWebAssemblyCodeBlock::isSafeToRun):
+        (JSC::JSWebAssemblyCodeBlock::visitChildren):
+        (JSC::JSWebAssemblyCodeBlock::UnconditionalFinalizer::finalizeUnconditionally):
+        * wasm/js/JSWebAssemblyInstance.cpp:
+        (JSC::JSWebAssemblyInstance::setMemory):
+        (JSC::JSWebAssemblyInstance::finishCreation):
+        (JSC::JSWebAssemblyInstance::visitChildren):
+        * wasm/js/JSWebAssemblyInstance.h:
+        (JSC::JSWebAssemblyInstance::module):
+        (JSC::JSWebAssemblyInstance::codeBlock):
+        (JSC::JSWebAssemblyInstance::memoryMode):
+        (JSC::JSWebAssemblyInstance::setMemory): Deleted.
+        * wasm/js/JSWebAssemblyMemory.cpp:
+        (JSC::JSWebAssemblyMemory::create):
+        (JSC::JSWebAssemblyMemory::JSWebAssemblyMemory):
+        (JSC::JSWebAssemblyMemory::buffer):
+        (JSC::JSWebAssemblyMemory::grow):
+        (JSC::JSWebAssemblyMemory::destroy):
+        * wasm/js/JSWebAssemblyMemory.h:
+        (JSC::JSWebAssemblyMemory::memory):
+        (JSC::JSWebAssemblyMemory::offsetOfMemory):
+        (JSC::JSWebAssemblyMemory::offsetOfSize):
+        * wasm/js/JSWebAssemblyModule.cpp:
+        (JSC::JSWebAssemblyModule::buildCodeBlock):
+        (JSC::JSWebAssemblyModule::create):
+        (JSC::JSWebAssemblyModule::JSWebAssemblyModule):
+        (JSC::JSWebAssemblyModule::codeBlock):
+        (JSC::JSWebAssemblyModule::finishCreation):
+        (JSC::JSWebAssemblyModule::visitChildren):
+        (JSC::JSWebAssemblyModule::UnconditionalFinalizer::finalizeUnconditionally): Deleted.
+        * wasm/js/JSWebAssemblyModule.h:
+        (JSC::JSWebAssemblyModule::takeReservedMemory):
+        (JSC::JSWebAssemblyModule::signatureIndexFromFunctionIndexSpace):
+        (JSC::JSWebAssemblyModule::codeBlock):
+        (JSC::JSWebAssemblyModule::functionImportCount): Deleted.
+        (JSC::JSWebAssemblyModule::jsEntrypointCalleeFromFunctionIndexSpace): Deleted.
+        (JSC::JSWebAssemblyModule::wasmEntrypointCalleeFromFunctionIndexSpace): Deleted.
+        (JSC::JSWebAssemblyModule::setJSEntrypointCallee): Deleted.
+        (JSC::JSWebAssemblyModule::setWasmEntrypointCallee): Deleted.
+        (JSC::JSWebAssemblyModule::callees): Deleted.
+        (JSC::JSWebAssemblyModule::offsetOfCallees): Deleted.
+        (JSC::JSWebAssemblyModule::allocationSize): Deleted.
+        * wasm/js/WebAssemblyFunction.cpp:
+        (JSC::callWebAssemblyFunction):
+        * wasm/js/WebAssemblyInstanceConstructor.cpp:
+        (JSC::constructJSWebAssemblyInstance):
+        * wasm/js/WebAssemblyMemoryConstructor.cpp:
+        (JSC::constructJSWebAssemblyMemory):
+        * wasm/js/WebAssemblyModuleConstructor.cpp:
+        (JSC::WebAssemblyModuleConstructor::createModule):
+        * wasm/js/WebAssemblyModuleRecord.cpp:
+        (JSC::WebAssemblyModuleRecord::link):
+        (JSC::WebAssemblyModuleRecord::evaluate):
+
 2017-03-03  Mark Lam  <mark.lam@apple.com>
 
         Gardening: fix broken ARM64 build.

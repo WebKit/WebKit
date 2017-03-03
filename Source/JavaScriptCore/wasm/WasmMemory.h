@@ -27,62 +27,69 @@
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "WasmCallingConvention.h"
 #include "WasmPageCount.h"
+
+#include <wtf/Optional.h>
+#include <wtf/RefCounted.h>
+#include <wtf/RefPtr.h>
 
 namespace WTF {
 class PrintStream;
 }
 
-namespace JSC { namespace Wasm {
+namespace JSC {
 
-class Memory {
+class VM;
+
+namespace Wasm {
+
+class Memory : public RefCounted<Memory> {
     WTF_MAKE_NONCOPYABLE(Memory);
     WTF_MAKE_FAST_ALLOCATED;
 public:
     void dump(WTF::PrintStream&) const;
 
     // FIXME: We should support other modes. see: https://bugs.webkit.org/show_bug.cgi?id=162693
-    enum class Mode {
-        BoundsChecking
+    enum Mode {
+        BoundsChecking,
+        Signaling,
+        NumberOfModes
     };
     const char* makeString(Mode) const;
 
+    explicit operator bool() const { return !!m_memory; }
+
+    static RefPtr<Memory> create(VM&, PageCount initial, PageCount maximum, std::optional<Mode> requiredMode = std::nullopt);
+
     Memory() = default;
-    JS_EXPORT_PRIVATE Memory(PageCount initial, PageCount maximum, bool& failed);
-    Memory(Memory&& other)
-        : m_memory(other.m_memory)
-        , m_size(other.m_size)
-        , m_initial(other.m_initial)
-        , m_maximum(other.m_maximum)
-        , m_mappedCapacity(other.m_mappedCapacity)
-        , m_mode(other.m_mode)
-    {
-        // Moving transfers ownership of the allocated memory.
-        other.m_memory = nullptr;
-    }
     ~Memory();
 
     void* memory() const { return m_memory; }
-    uint64_t size() const { return m_size; }
+    size_t size() const { return m_size; }
     PageCount sizeInPages() const { return PageCount::fromBytes(m_size); }
 
     PageCount initial() const { return m_initial; }
     PageCount maximum() const { return m_maximum; }
 
+    static Mode lastAllocatedMode();
     Mode mode() const { return m_mode; }
 
+    // grow() should only be called from the JSWebAssemblyMemory object since that object needs to update internal
+    // pointers with the current base and size.
     bool grow(PageCount);
 
-    static ptrdiff_t offsetOfMemory() { return OBJECT_OFFSETOF(Memory, m_memory); }
-    static ptrdiff_t offsetOfSize() { return OBJECT_OFFSETOF(Memory, m_size); }
-    
+    void check() {  ASSERT(!deletionHasBegun()); }
 private:
+    static RefPtr<Memory> createImpl(VM&, PageCount initial, PageCount maximum, std::optional<Mode> requiredMode = std::nullopt);
+    Memory(void* memory, PageCount initial, PageCount maximum, size_t mappedCapacity, Mode);
+    Memory(PageCount initial, PageCount maximum);
+
+    // FIXME: we should move these to the instance to avoid a load on instance->instance calls.
     void* m_memory { nullptr };
-    uint64_t m_size { 0 };
+    size_t m_size { 0 };
     PageCount m_initial;
     PageCount m_maximum;
-    uint64_t m_mappedCapacity { 0 };
+    size_t m_mappedCapacity { 0 };
     Mode m_mode { Mode::BoundsChecking };
 };
 

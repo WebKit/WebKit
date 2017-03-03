@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,7 +29,7 @@
 
 #include "JSDestructibleObject.h"
 #include "JSObject.h"
-#include "JSWebAssemblyCallee.h"
+#include "JSWebAssemblyCodeBlock.h"
 #include "UnconditionalFinalizer.h"
 #include "WasmFormat.h"
 #include <wtf/Bag.h>
@@ -37,85 +37,47 @@
 
 namespace JSC {
 
+namespace Wasm {
+class Plan;
+}
+
 class SymbolTable;
+class JSWebAssemblyMemory;
 
 class JSWebAssemblyModule : public JSDestructibleObject {
 public:
     typedef JSDestructibleObject Base;
 
-    static JSWebAssemblyModule* create(VM&, Structure*, std::unique_ptr<Wasm::ModuleInformation>&&, Bag<CallLinkInfo>&&, Vector<Wasm::WasmExitStubs>&&, SymbolTable*, unsigned);
+    static JSWebAssemblyModule* create(VM&, ExecState*, Structure*, uint8_t* source, size_t byteSize);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
     DECLARE_INFO;
 
     const Wasm::ModuleInformation& moduleInformation() const { return *m_moduleInformation.get(); }
+    RefPtr<Wasm::Memory> takeReservedMemory() { return m_moduleInformation->memory.takeReservedMemory(); }
     SymbolTable* exportSymbolTable() const { return m_exportSymbolTable.get(); }
     Wasm::SignatureIndex signatureIndexFromFunctionIndexSpace(unsigned functionIndexSpace) const
     {
         return m_moduleInformation->signatureIndexFromFunctionIndexSpace(functionIndexSpace);
     }
-    unsigned functionImportCount() const { return m_wasmExitStubs.size(); }
 
-    JSWebAssemblyCallee* jsEntrypointCalleeFromFunctionIndexSpace(unsigned functionIndexSpace)
-    {
-        RELEASE_ASSERT(functionIndexSpace >= functionImportCount());
-        unsigned calleeIndex = functionIndexSpace - functionImportCount();
-        RELEASE_ASSERT(calleeIndex < m_calleeCount);
-        return callees()[calleeIndex].get();
-    }
+    // Returns the code block that this module was originally compiled expecting to use. This won't need to recompile.
+    JSWebAssemblyCodeBlock* codeBlock() { return m_codeBlocks[m_moduleInformation->memory.mode()].get(); }
+    // Returns the appropriate code block for the given memory, possibly triggering a recompile.
+    JSWebAssemblyCodeBlock* codeBlock(VM&, ExecState*, JSWebAssemblyMemory*);
 
-    JSWebAssemblyCallee* wasmEntrypointCalleeFromFunctionIndexSpace(unsigned functionIndexSpace)
-    {
-        RELEASE_ASSERT(functionIndexSpace >= functionImportCount());
-        unsigned calleeIndex = functionIndexSpace - functionImportCount();
-        RELEASE_ASSERT(calleeIndex < m_calleeCount);
-        return callees()[calleeIndex + m_calleeCount].get();
-    }
+private:
+    JSWebAssemblyCodeBlock* buildCodeBlock(VM&, ExecState*, Wasm::Plan&, std::optional<Wasm::Memory::Mode> mode = std::nullopt);
 
-    void setJSEntrypointCallee(VM& vm, unsigned calleeIndex, JSWebAssemblyCallee* callee)
-    {
-        RELEASE_ASSERT(calleeIndex < m_calleeCount);
-        callees()[calleeIndex].set(vm, this, callee);
-    }
-
-    void setWasmEntrypointCallee(VM& vm, unsigned calleeIndex, JSWebAssemblyCallee* callee)
-    {
-        RELEASE_ASSERT(calleeIndex < m_calleeCount);
-        callees()[calleeIndex + m_calleeCount].set(vm, this, callee);
-    }
-
-    WriteBarrier<JSWebAssemblyCallee>* callees()
-    {
-        return bitwise_cast<WriteBarrier<JSWebAssemblyCallee>*>(bitwise_cast<char*>(this) + offsetOfCallees());
-    }
-
-protected:
-    JSWebAssemblyModule(VM&, Structure*, std::unique_ptr<Wasm::ModuleInformation>&&, Bag<CallLinkInfo>&&, Vector<Wasm::WasmExitStubs>&&, unsigned calleeCount);
-    void finishCreation(VM&, SymbolTable*);
+    JSWebAssemblyModule(VM&, Structure*);
+    void finishCreation(VM&, ExecState*, uint8_t* source, size_t byteSize);
     static void destroy(JSCell*);
     static void visitChildren(JSCell*, SlotVisitor&);
 
-private:
-    static size_t offsetOfCallees()
-    {
-        return WTF::roundUpToMultipleOf<sizeof(WriteBarrier<JSWebAssemblyCallee>)>(sizeof(JSWebAssemblyModule));
-    }
-
-    static size_t allocationSize(unsigned numCallees)
-    {
-        return offsetOfCallees() + sizeof(WriteBarrier<JSWebAssemblyCallee>) * numCallees * 2;
-    }
-
-    class UnconditionalFinalizer : public JSC::UnconditionalFinalizer { 
-        void finalizeUnconditionally() override;
-    };
-
-    UnconditionalFinalizer m_unconditionalFinalizer;
+    RefPtr<ArrayBuffer> m_sourceBuffer;
     std::unique_ptr<Wasm::ModuleInformation> m_moduleInformation;
-    Bag<CallLinkInfo> m_callLinkInfos;
     WriteBarrier<SymbolTable> m_exportSymbolTable;
-    Vector<Wasm::WasmExitStubs> m_wasmExitStubs;
-    unsigned m_calleeCount;
+    WriteBarrier<JSWebAssemblyCodeBlock> m_codeBlocks[Wasm::Memory::NumberOfModes];
 };
 
 } // namespace JSC

@@ -72,6 +72,7 @@
 #include "SuperSampler.h"
 #include "TestRunnerUtils.h"
 #include "TypeProfilerLog.h"
+#include "WasmFaultSignalHandler.h"
 #include "WasmPlan.h"
 #include "WasmMemory.h"
 #include <locale.h>
@@ -3773,6 +3774,9 @@ int jscmain(int argc, char** argv)
     WTF::initializeMainThread();
     JSC::initializeThreading();
     startTimeoutThreadIfNeeded();
+#if ENABLE(WEBASSEMBLY)
+    JSC::Wasm::enableFastMemory();
+#endif
 
     int result;
     result = runJSC(

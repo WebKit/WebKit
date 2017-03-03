@@ -49,13 +49,29 @@ void dataLog(const Types&... values)
 template<typename... Types>
 void dataLogLn(const Types&... values)
 {
-    dataFile().print(values..., "\n");
+    dataLog(values..., "\n");
+}
+
+template<typename... Types>
+void dataLogIf(bool shouldLog, const Types&... values)
+{
+    if (shouldLog)
+        dataLog(values...);
+}
+
+template<typename... Types>
+void dataLogLnIf(bool shouldLog, const Types&... values)
+{
+    if (shouldLog)
+        dataLogLn(values...);
 }
 
 } // namespace WTF
 
 using WTF::dataLog;
 using WTF::dataLogLn;
+using WTF::dataLogIf;
+using WTF::dataLogLnIf;
 using WTF::dataLogF;
 using WTF::dataLogFString;
 

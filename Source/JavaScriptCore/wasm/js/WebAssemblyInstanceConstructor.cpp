@@ -84,11 +84,7 @@ static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyInstance(ExecState* ex
 
     JSWebAssemblyInstance* instance = JSWebAssemblyInstance::create(vm, instanceStructure, jsModule, moduleRecord->getModuleNamespace(exec));
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    {
-        // Always start with a dummy Memory, so that wasm -> wasm thunks avoid checking for a nullptr Memory when trying to set pinned registers.
-        Wasm::Memory memory;
-        instance->setMemory(vm, JSWebAssemblyMemory::create(vm, exec->lexicalGlobalObject()->WebAssemblyMemoryStructure(), WTFMove(memory)));
-    }
+
 
     // Let funcs, memories and tables be initially-empty lists of callable JavaScript objects, WebAssembly.Memory objects and WebAssembly.Table objects, respectively.
     // Let imports be an initially-empty list of external values.
@@ -178,12 +174,12 @@ static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyInstance(ExecState* ex
                 return JSValue::encode(throwException(exec, throwScope, createJSWebAssemblyLinkError(exec, vm, ASCIILiteral("Memory import is not an instance of WebAssembly.Memory"))));
 
             Wasm::PageCount expectedInitial = moduleInformation.memory.initial();
-            Wasm::PageCount actualInitial = memory->memory()->initial();
+            Wasm::PageCount actualInitial = memory->memory().initial();
             if (actualInitial < expectedInitial)
                 return JSValue::encode(throwException(exec, throwScope, createJSWebAssemblyLinkError(exec, vm, ASCIILiteral("Memory import provided an 'initial' that is too small"))));
 
             if (Wasm::PageCount expectedMaximum = moduleInformation.memory.maximum()) {
-                Wasm::PageCount actualMaximum = memory->memory()->maximum();
+                Wasm::PageCount actualMaximum = memory->memory().maximum();
                 if (!actualMaximum) {
                     return JSValue::encode(
                         throwException(exec, throwScope, createJSWebAssemblyLinkError(exec, vm, ASCIILiteral("Memory import did not have a 'maximum' but the module requires that it does"))));
@@ -194,9 +190,11 @@ static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyInstance(ExecState* ex
                         throwException(exec, throwScope, createJSWebAssemblyLinkError(exec, vm, ASCIILiteral("Memory imports 'maximum' is larger than the module's expected 'maximum'"))));
                 }
             }
+
             // ii. Append v to memories.
             // iii. Append v.[[Memory]] to imports.
-            instance->setMemory(vm, memory);
+            instance->setMemory(vm, exec, memory);
+            RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
             break;
         }
         case Wasm::ExternalKind::Global: {
@@ -237,12 +235,17 @@ static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyInstance(ExecState* ex
         if (moduleInformation.memory && !hasMemoryImport) {
             RELEASE_ASSERT(!moduleInformation.memory.isImport());
             // We create a memory when it's a memory definition.
-            bool failed;
-            Wasm::Memory memory(moduleInformation.memory.initial(), moduleInformation.memory.maximum(), failed);
-            if (failed)
-                return JSValue::encode(throwException(exec, throwScope, createOutOfMemoryError(exec)));
-            instance->setMemory(vm,
-               JSWebAssemblyMemory::create(vm, exec->lexicalGlobalObject()->WebAssemblyMemoryStructure(), WTFMove(memory)));
+            RefPtr<Wasm::Memory> memory;
+            if (moduleInformation.memory.hasReservedMemory())
+                memory = jsModule->takeReservedMemory();
+            else {
+                memory = Wasm::Memory::create(vm, moduleInformation.memory.initial(), moduleInformation.memory.maximum());
+                if (!memory)
+                    return JSValue::encode(throwException(exec, throwScope, createOutOfMemoryError(exec)));
+            }
+            instance->setMemory(vm, exec,
+                JSWebAssemblyMemory::create(vm, exec->lexicalGlobalObject()->WebAssemblyMemoryStructure(), memory.releaseNonNull()));
+            RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
         }
     }
 
@@ -263,6 +266,11 @@ static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyInstance(ExecState* ex
             ASSERT(table); 
             instance->setTable(vm, table);
         }
+    }
+
+    if (!instance->memory()) {
+        // Make sure we have a dummy memory, so that wasm -> wasm thunks avoid checking for a nullptr Memory when trying to set pinned registers.
+        instance->setMemory(vm, exec, JSWebAssemblyMemory::create(vm, exec->lexicalGlobalObject()->WebAssemblyMemoryStructure(), adoptRef(*(new Wasm::Memory()))));
     }
 
     // Globals

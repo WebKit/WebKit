@@ -92,10 +92,11 @@ void WebAssemblyModuleRecord::link(ExecState* state, JSWebAssemblyInstance* inst
     auto* globalObject = state->lexicalGlobalObject();
 
     JSWebAssemblyModule* module = instance->module();
+    JSWebAssemblyCodeBlock* codeBlock = instance->codeBlock();
     const Wasm::ModuleInformation& moduleInformation = module->moduleInformation();
 
     SymbolTable* exportSymbolTable = module->exportSymbolTable();
-    unsigned functionImportCount = module->functionImportCount();
+    unsigned functionImportCount = codeBlock->functionImportCount();
 
     // FIXME wire up the imports. https://bugs.webkit.org/show_bug.cgi?id=165118
 
@@ -116,8 +117,8 @@ void WebAssemblyModuleRecord::link(ExecState* state, JSWebAssemblyInstance* inst
             //     a. Let func be an Exported Function Exotic Object created from c.
             //     b. Append func to funcs.
             //     c. Return func.
-            JSWebAssemblyCallee* jsEntrypointCallee = module->jsEntrypointCalleeFromFunctionIndexSpace(exp.kindIndex);
-            JSWebAssemblyCallee* wasmEntrypointCallee = module->wasmEntrypointCalleeFromFunctionIndexSpace(exp.kindIndex);
+            JSWebAssemblyCallee* jsEntrypointCallee = codeBlock->jsEntrypointCalleeFromFunctionIndexSpace(exp.kindIndex);
+            JSWebAssemblyCallee* wasmEntrypointCallee = codeBlock->wasmEntrypointCalleeFromFunctionIndexSpace(exp.kindIndex);
             Wasm::SignatureIndex signatureIndex = module->signatureIndexFromFunctionIndexSpace(exp.kindIndex);
             const Wasm::Signature* signature = Wasm::SignatureInformation::get(&vm, signatureIndex);
             WebAssemblyFunction* function = WebAssemblyFunction::create(vm, globalObject, signature->argumentCount(), exp.field.string(), instance, jsEntrypointCallee, wasmEntrypointCallee, signatureIndex);
@@ -182,12 +183,12 @@ void WebAssemblyModuleRecord::link(ExecState* state, JSWebAssemblyInstance* inst
         // The start function must not take any arguments or return anything. This is enforced by the parser.
         ASSERT(!signature->argumentCount());
         ASSERT(signature->returnType() == Wasm::Void);
-        if (startFunctionIndexSpace < module->functionImportCount()) {
+        if (startFunctionIndexSpace < codeBlock->functionImportCount()) {
             JSCell* startFunction = instance->importFunction(startFunctionIndexSpace)->get();
             m_startFunction.set(vm, this, startFunction);
         } else {
-            JSWebAssemblyCallee* jsEntrypointCallee = module->jsEntrypointCalleeFromFunctionIndexSpace(startFunctionIndexSpace);
-            JSWebAssemblyCallee* wasmEntrypointCallee = module->wasmEntrypointCalleeFromFunctionIndexSpace(startFunctionIndexSpace);
+            JSWebAssemblyCallee* jsEntrypointCallee = codeBlock->jsEntrypointCalleeFromFunctionIndexSpace(startFunctionIndexSpace);
+            JSWebAssemblyCallee* wasmEntrypointCallee = codeBlock->wasmEntrypointCalleeFromFunctionIndexSpace(startFunctionIndexSpace);
             WebAssemblyFunction* function = WebAssemblyFunction::create(vm, globalObject, signature->argumentCount(), "start", instance, jsEntrypointCallee, wasmEntrypointCallee, signatureIndex);
             m_startFunction.set(vm, this, function);
         }
@@ -211,6 +212,7 @@ JSValue WebAssemblyModuleRecord::evaluate(ExecState* state)
 
     {
         JSWebAssemblyModule* module = m_instance->module();
+        JSWebAssemblyCodeBlock* codeBlock = m_instance->codeBlock();
         const Wasm::ModuleInformation& moduleInformation = module->moduleInformation();
         JSWebAssemblyTable* table = m_instance->table();
         for (const Wasm::Element& element : moduleInformation.elements) {
@@ -233,13 +235,13 @@ JSValue WebAssemblyModuleRecord::evaluate(ExecState* state)
                 // for the import.
                 // https://bugs.webkit.org/show_bug.cgi?id=165510
                 uint32_t functionIndex = element.functionIndices[i];
-                if (functionIndex < module->functionImportCount()) {
+                if (functionIndex < codeBlock->functionImportCount()) {
                     return JSValue::decode(
                         throwVMRangeError(state, scope, ASCIILiteral("Element is setting the table value with an import. This is not yet implemented. FIXME.")));
                 }
 
-                JSWebAssemblyCallee* jsEntrypointCallee = module->jsEntrypointCalleeFromFunctionIndexSpace(functionIndex);
-                JSWebAssemblyCallee* wasmEntrypointCallee = module->wasmEntrypointCalleeFromFunctionIndexSpace(functionIndex);
+                JSWebAssemblyCallee* jsEntrypointCallee = codeBlock->jsEntrypointCalleeFromFunctionIndexSpace(functionIndex);
+                JSWebAssemblyCallee* wasmEntrypointCallee = codeBlock->wasmEntrypointCalleeFromFunctionIndexSpace(functionIndex);
                 Wasm::SignatureIndex signatureIndex = module->signatureIndexFromFunctionIndexSpace(functionIndex);
                 const Wasm::Signature* signature = Wasm::SignatureInformation::get(&vm, signatureIndex);
                 // FIXME: Say we export local function "foo" at function index 0.
@@ -259,8 +261,8 @@ JSValue WebAssemblyModuleRecord::evaluate(ExecState* state)
         const Vector<Wasm::Segment::Ptr>& data = m_instance->module()->moduleInformation().data;
         JSWebAssemblyMemory* jsMemory = m_instance->memory();
         if (!data.isEmpty()) {
-            uint8_t* memory = reinterpret_cast<uint8_t*>(jsMemory->memory()->memory());
-            uint64_t sizeInBytes = jsMemory->memory()->size();
+            uint8_t* memory = reinterpret_cast<uint8_t*>(jsMemory->memory().memory());
+            uint64_t sizeInBytes = jsMemory->memory().size();
             for (auto& segment : data) {
                 if (segment->sizeInBytes) {
                     uint32_t offset;

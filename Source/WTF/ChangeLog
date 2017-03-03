@@ -1,3 +1,28 @@
+2017-03-03  Keith Miller  <keith_miller@apple.com>
+
+        WASM should support faster loads.
+        https://bugs.webkit.org/show_bug.cgi?id=162693
+
+        Reviewed by Saam Barati.
+
+        Add new forms of dataLog that take a boolean which describes if the log should happen. This makes cases where we have a static const bool for printing nicer since you can do:
+
+        dataLogIf(verbose, things, to, print);
+
+        instead of:
+
+        if (verbose)
+            dataLog(things, to, print);
+
+        Also, add a operator! to Ref that has the same semantics as C++ refs.
+
+        * wtf/DataLog.h:
+        (WTF::dataLogLn):
+        (WTF::dataLogIf):
+        (WTF::dataLogLnIf):
+        * wtf/Ref.h:
+        (WTF::Ref::operator!):
+
 2017-03-02  Jer Noble  <jer.noble@apple.com>
 
         Sufficently large timeValue and timeScale arguments to MediaTime will cause wrapping in toTimeScale().

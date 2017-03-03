@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,49 +23,20 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
 #if ENABLE(WEBASSEMBLY)
-
-#include "JSDestructibleObject.h"
-#include "JSObject.h"
-#include "WasmMemory.h"
-#include <wtf/RefPtr.h>
 
 namespace JSC {
 
-class ArrayBuffer;
-class JSArrayBuffer;
+class VM;
 
-class JSWebAssemblyMemory : public JSDestructibleObject {
-public:
-    typedef JSDestructibleObject Base;
+namespace Wasm {
 
-    static JSWebAssemblyMemory* create(VM&, Structure*, Ref<Wasm::Memory>&&);
-    static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
+void registerCode(VM&, void* start, void* end);
+void unregisterCode(VM&, void* start, void* end);
 
-    DECLARE_INFO;
+bool fastMemoryEnabled();
+JS_EXPORT_PRIVATE void enableFastMemory();
 
-    Wasm::Memory& memory() { return m_memory.get(); }
-    JSArrayBuffer* buffer(VM& vm, JSGlobalObject*);
-    Wasm::PageCount grow(ExecState*, uint32_t delta, bool shouldThrowExceptionsOnFailure);
-
-    static ptrdiff_t offsetOfMemory() { return OBJECT_OFFSETOF(JSWebAssemblyMemory, m_memoryBase); }
-    static ptrdiff_t offsetOfSize() { return OBJECT_OFFSETOF(JSWebAssemblyMemory, m_memorySize); }
-
-private:
-    JSWebAssemblyMemory(VM&, Structure*, Ref<Wasm::Memory>&&);
-    void finishCreation(VM&);
-    static void destroy(JSCell*);
-    static void visitChildren(JSCell*, SlotVisitor&);
-
-    void* m_memoryBase;
-    size_t m_memorySize;
-    Ref<Wasm::Memory> m_memory;
-    WriteBarrier<JSArrayBuffer> m_bufferWrapper;
-    RefPtr<ArrayBuffer> m_buffer;
-};
-
-} // namespace JSC
+} } // namespace JSC::Wasm
 
 #endif // ENABLE(WEBASSEMBLY)
