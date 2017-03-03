@@ -1,3 +1,10 @@
+2017-03-03  Alex Christensen  <achristensen@webkit.org>
+
+        Remove empty build directories.
+
+        * build: Removed.
+        * build/Debug: Removed.
+
 2017-03-01  Joseph Pecoraro  <pecoraro@apple.com>
 
         [WebRTC] Install libwebrtc.dylib inside of WebCore.framework
