@@ -112,7 +112,6 @@ public:
     void convertToLuminanceMask();
     
     String toDataURL(const String& mimeType, std::optional<double> quality = std::nullopt, CoordinateSystem = LogicalCoordinateSystem) const;
-    Vector<uint8_t> toData(const String& mimeType, std::optional<double> quality = std::nullopt) const;
 #if !USE(CG)
     AffineTransform baseTransform() const { return AffineTransform(); }
     void transformColorSpace(ColorSpace srcColorSpace, ColorSpace dstColorSpace);
@@ -175,7 +174,6 @@ private:
     WEBCORE_EXPORT ImageBuffer(const FloatSize&, float resolutionScale, ColorSpace, RenderingMode, bool& success);
 #if USE(CG)
     ImageBuffer(const FloatSize&, float resolutionScale, CGColorSpaceRef, RenderingMode, bool& success);
-    RetainPtr<CGImageRef> toCGImage(const String& mimeType) const;
 #elif USE(DIRECT2D)
     ImageBuffer(const FloatSize&, float resolutionScale, ColorSpace, RenderingMode, const GraphicsContext*, bool& success);
 #endif
@@ -183,7 +181,6 @@ private:
 
 #if USE(CG)
 String dataURL(const ImageData&, const String& mimeType, std::optional<double> quality);
-Vector<uint8_t> data(const ImageData&, const String& mimeType, std::optional<double> quality);
 #endif
 
 } // namespace WebCore

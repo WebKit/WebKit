@@ -37,5 +37,4 @@ typedef (CanvasRenderingContext2D or WebGLRenderingContextBase) RenderingContext
     [Custom] RenderingContext? getContext(DOMString contextId, any... arguments);
 
     [Custom, MayThrowException] DOMString toDataURL(optional DOMString? type);
-    [CallWith=ScriptExecutionContext, MayThrowException] void toBlob(BlobCallback callback, optional DOMString type, optional any quality);
 };

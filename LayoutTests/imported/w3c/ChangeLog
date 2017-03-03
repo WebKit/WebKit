@@ -1,3 +1,15 @@
+2017-03-03  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r213344.
+
+        This changed caused LayoutTest crashes under GuardMalloc.
+
+        Reverted changeset:
+
+        "Add support for canvas.toBlob"
+        https://bugs.webkit.org/show_bug.cgi?id=148878
+        http://trac.webkit.org/changeset/213344
+
 2017-03-02  Jiewen Tan  <jiewen_tan@apple.com>
 
         WebCrypto API support for AES-GCM

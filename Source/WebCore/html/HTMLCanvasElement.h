@@ -39,7 +39,6 @@
 
 namespace WebCore {
 
-class BlobCallback;
 class CanvasRenderingContext;
 class GraphicsContext;
 class GraphicsContextStateSaver;
@@ -102,7 +101,6 @@ public:
     static String toEncodingMimeType(const String& mimeType);
     WEBCORE_EXPORT ExceptionOr<String> toDataURL(const String& mimeType, std::optional<double> quality);
     ExceptionOr<String> toDataURL(const String& mimeType) { return toDataURL(mimeType, std::nullopt); }
-    ExceptionOr<void> toBlob(ScriptExecutionContext&, Ref<BlobCallback>&&, const String& mimeType, JSC::JSValue qualityValue);
 
     // Used for rendering
     void didDraw(const FloatRect&);

@@ -539,12 +539,12 @@ void ImageBuffer::putByteArray(Multiply multiplied, Uint8ClampedArray* source, c
 #if !PLATFORM(GTK)
 static cairo_status_t writeFunction(void* output, const unsigned char* data, unsigned int length)
 {
-    if (!reinterpret_cast<Vector<uint8_t>*>(output)->tryAppend(data, length))
+    if (!reinterpret_cast<Vector<unsigned char>*>(output)->tryAppend(data, length))
         return CAIRO_STATUS_WRITE_ERROR;
     return CAIRO_STATUS_SUCCESS;
 }
 
-static bool encodeImage(cairo_surface_t* image, const String& mimeType, Vector<uint8_t>* output)
+static bool encodeImage(cairo_surface_t* image, const String& mimeType, Vector<char>* output)
 {
     ASSERT_UNUSED(mimeType, mimeType == "image/png"); // Only PNG output is supported for now.
 
@@ -553,29 +553,19 @@ static bool encodeImage(cairo_surface_t* image, const String& mimeType, Vector<u
 
 String ImageBuffer::toDataURL(const String& mimeType, std::optional<double>, CoordinateSystem) const
 {
-    Vector<uint8_t> encodedImage = toData(mimeType, quality);
-    if (encodedImage.isEmpty())
-        return "data:,";
-
-    Vector<char> base64Data;
-    base64Encode(encodedImage.data(), encodedImage.size(), base64Data);
-
-    return "data:" + mimeType + ";base64," + base64Data;
-}
-
-Vector<uint8_t> ImageBuffer::toData(const String& mimeType, std::optional<double> quality) const
-{
     ASSERT(MIMETypeRegistry::isSupportedImageMIMETypeForEncoding(mimeType));
 
     cairo_surface_t* image = cairo_get_target(context().platformContext()->cr());
 
-    Vector<uint8_t> encodedImage;
+    Vector<char> encodedImage;
     if (!image || !encodeImage(image, mimeType, &encodedImage))
-        return { };
+        return "data:,";
 
-    return encodedImage;
+    Vector<char> base64Data;
+    base64Encode(encodedImage, base64Data);
+
+    return "data:" + mimeType + ";base64," + base64Data;
 }
-
 #endif
 
 #if ENABLE(ACCELERATED_2D_CANVAS) && !USE(COORDINATED_GRAPHICS_THREADED)
