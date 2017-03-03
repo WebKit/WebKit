@@ -50,13 +50,13 @@
         grid-gap: 10px 20px;
         grid-template-rows: 100px 1fr auto;
         grid-template-columns: 1fr 200px;
-        grid-template-areas: "title   title"
-                             "content aside"
-                             "footer  aside";
+        grid-template-areas: "header  header"
+                             "content aside "
+                             "footer  aside ";
     }
 
-    .title {
-        grid-area: title;
+    .header {
+        grid-area: header;
     }
 
     .content {
@@ -76,7 +76,7 @@
             grid-gap: 0;
             grid-template-rows: auto 1fr auto auto;
             grid-template-columns: 1fr;
-            grid-template-areas: "title  "
+            grid-template-areas: "header "
                                  "content"
                                  "aside  "
                                  "footer ";
@@ -85,7 +85,7 @@
 </style>
 
 <div class="grid responsive">
-    <div class="item-1 title">Title</div>
+    <div class="item-1 header">Header</div>
     <div class="item-2 content">Content</div>
     <div class="item-3 aside">Aside</div>
     <div class="item-4 footer">Footer</div>
