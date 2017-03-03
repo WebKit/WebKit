@@ -24,14 +24,12 @@
  */
 
 #import "config.h"
+#import "WebProcessCocoa.h"
 
 #import <CoreFoundation/CoreFoundation.h>
 #import <wtf/OSObjectPtr.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/spi/darwin/XPCSPI.h>
-
-extern "C"
-void _WKSetCrashReportApplicationSpecificInformation(NSString *infoString);
 
 namespace WebKit {
 

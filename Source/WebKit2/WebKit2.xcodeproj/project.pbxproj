@@ -1958,6 +1958,7 @@
 		E49D40D91AD3FB210066B7B9 /* NetworkCacheBlobStorage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E49D40D81AD3FB210066B7B9 /* NetworkCacheBlobStorage.cpp */; };
 		E4E864921B16750100C82F40 /* VersionChecks.mm in Sources */ = {isa = PBXBuildFile; fileRef = E4E8648F1B1673FB00C82F40 /* VersionChecks.mm */; };
 		E4E864931B16750700C82F40 /* VersionChecks.h in Headers */ = {isa = PBXBuildFile; fileRef = E4E8648E1B1673FB00C82F40 /* VersionChecks.h */; };
+		ECA680D81E690E2500731D20 /* WebProcessCocoa.h in Headers */ = {isa = PBXBuildFile; fileRef = ECA680D71E690DF800731D20 /* WebProcessCocoa.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		ED82A7F2128C6FAF004477B3 /* WKBundlePageOverlay.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A22F0FF1289FCD90085E74F /* WKBundlePageOverlay.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		EDCA71B7128DDA8C00201B26 /* WKBundlePageOverlay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A22F1001289FCD90085E74F /* WKBundlePageOverlay.cpp */; };
 		F036978815F4BF0500C3A80E /* WebColorPicker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F036978715F4BF0500C3A80E /* WebColorPicker.cpp */; };
@@ -4229,6 +4230,7 @@
 		E49D40D81AD3FB210066B7B9 /* NetworkCacheBlobStorage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkCacheBlobStorage.cpp; sourceTree = "<group>"; };
 		E4E8648E1B1673FB00C82F40 /* VersionChecks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VersionChecks.h; sourceTree = "<group>"; };
 		E4E8648F1B1673FB00C82F40 /* VersionChecks.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VersionChecks.mm; sourceTree = "<group>"; };
+		ECA680D71E690DF800731D20 /* WebProcessCocoa.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebProcessCocoa.h; sourceTree = "<group>"; };
 		F036978715F4BF0500C3A80E /* WebColorPicker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebColorPicker.cpp; sourceTree = "<group>"; };
 		F43370961E4D6A4400052B0E /* _WKTestingDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKTestingDelegate.h; sourceTree = "<group>"; };
 		F6113E24126CE1820057D0A7 /* APIUserContentURLPattern.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIUserContentURLPattern.h; sourceTree = "<group>"; };
@@ -6205,6 +6207,7 @@
 				52D5A1B21C5749F200DE34A3 /* WebVideoFullscreenManager.h */,
 				52D5A1B31C5749F200DE34A3 /* WebVideoFullscreenManager.messages.in */,
 				52D5A1B41C5749F200DE34A3 /* WebVideoFullscreenManager.mm */,
+				ECA680D71E690DF800731D20 /* WebProcessCocoa.h */,
 			);
 			path = cocoa;
 			sourceTree = "<group>";
@@ -8591,6 +8594,7 @@
 				51A728DE1B1BAD3800102EEE /* WKBundleNavigationActionPrivate.h in Headers */,
 				BC4BEFE1120A1A4C00FBA0C7 /* WKBundleNodeHandle.h in Headers */,
 				BC57450C1263B155006F0F12 /* WKBundleNodeHandlePrivate.h in Headers */,
+				ECA680D81E690E2500731D20 /* WebProcessCocoa.h in Headers */,
 				BC20528111C94284008F3375 /* WKBundlePage.h in Headers */,
 				7CF47FF717275B71008ACB91 /* WKBundlePageBanner.h in Headers */,
 				7CF47FFF17276AE3008ACB91 /* WKBundlePageBannerMac.h in Headers */,

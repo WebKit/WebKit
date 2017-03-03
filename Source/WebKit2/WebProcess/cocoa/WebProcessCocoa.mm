@@ -25,6 +25,7 @@
 
 #import "config.h"
 #import "WebProcess.h"
+#import "WebProcessCocoa.h"
 
 #import "CustomProtocolManager.h"
 #import "Logging.h"
@@ -448,8 +449,6 @@ void WebProcess::destroyRenderingResources()
 }
 
 // FIXME: This should live somewhere else, and it should have the implementation in line instead of calling out to WKSI.
-WK_EXTERN void _WKSetCrashReportApplicationSpecificInformation(NSString *infoString);
-
 void _WKSetCrashReportApplicationSpecificInformation(NSString *infoString)
 {
     return WKSetCrashReportApplicationSpecificInformation((__bridge CFStringRef)infoString);
