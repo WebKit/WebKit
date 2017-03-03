@@ -2848,8 +2848,6 @@ media/modern-media-controls/media-controller/media-controller-reduced-padding.ht
 media/modern-media-controls/media-controller/media-controller-tight-padding.html [ Skip ]
 media/modern-media-controls/media-controller/media-controller-toggle-compact-mode.html [ Skip ]
 
-webkit.org/b/168343 media/modern-media-controls/media-controller/media-controller-ios-do-not-hide-controls-when-tapping-button.html [ Pass Timeout ]
-
 webkit.org/b/168668 media/modern-media-controls/fullscreen-support/fullscreen-support-enabled.html [ Pass Failure ]
 
 # Form validation popover does not obey minimum font size setting on iOS but Dynamic Type instead.

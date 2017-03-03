@@ -3,6 +3,7 @@ Testing that tapping on the skip back button while playing on iOS does not fade 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
+PASS window.internals.shadowRoot(media).querySelector('button.skip-back').getBoundingClientRect().width became different from 0
 PASS window.internals.shadowRoot(media).querySelector('.controls-bar').classList.contains('faded') is false
 PASS successfullyParsed is true
 

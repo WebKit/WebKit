@@ -12,10 +12,12 @@ description("Testing that tapping on the skip back button while playing on iOS d
 const media = document.querySelector("video");
 
 media.addEventListener("play", event => {
-    pressOnElement(window.internals.shadowRoot(media).querySelector("button.skip-back"), () => {
-        window.requestAnimationFrame(() => {
-            shouldBeFalse("window.internals.shadowRoot(media).querySelector('.controls-bar').classList.contains('faded')");
-            finishJSTest();
+    shouldBecomeDifferent("window.internals.shadowRoot(media).querySelector('button.skip-back').getBoundingClientRect().width", "0", () => {
+        pressOnElement(window.internals.shadowRoot(media).querySelector("button.skip-back"), () => {
+            window.requestAnimationFrame(() => {
+                shouldBeFalse("window.internals.shadowRoot(media).querySelector('.controls-bar').classList.contains('faded')");
+                finishJSTest();
+            });
         });
     });
 });
