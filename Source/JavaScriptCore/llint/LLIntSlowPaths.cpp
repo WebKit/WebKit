@@ -1497,6 +1497,7 @@ LLINT_SLOW_PATH_DECL(slow_path_throw)
 LLINT_SLOW_PATH_DECL(slow_path_handle_traps)
 {
     LLINT_BEGIN_NO_SET_PC();
+    ASSERT(vm.needTrapHandling());
     vm.handleTraps(exec);
     LLINT_RETURN_TWO(throwScope.exception(), exec);
 }

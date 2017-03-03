@@ -1,3 +1,26 @@
+2017-03-03  Mark Lam  <mark.lam@apple.com>
+
+        We should only check for traps that we're able to handle.
+        https://bugs.webkit.org/show_bug.cgi?id=169136
+
+        Reviewed by Michael Saboff.
+
+        The execute methods in interpreter were checking for the existence of any traps
+        (without masking) and only handling a subset of those via a mask.  This can
+        result in a failed assertion on debug builds.
+
+        This patch fixes this by applying the same mask for both the needTrapHandling()
+        check and the handleTraps() call.  Also added a few assertions.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::executeProgram):
+        (JSC::Interpreter::executeCall):
+        (JSC::Interpreter::executeConstruct):
+        (JSC::Interpreter::execute):
+        * jit/JITOperations.cpp:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+
 2017-03-02  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Remote Inspector: Move updateTargetListing() methods to RemoteInspector.cpp

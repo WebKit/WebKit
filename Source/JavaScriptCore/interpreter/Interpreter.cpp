@@ -860,8 +860,8 @@ failedJSONP:
         codeBlock = jsCast<ProgramCodeBlock*>(tempCodeBlock);
     }
 
-    if (UNLIKELY(vm.needTrapHandling())) {
-        VMTraps::Mask mask(VMTraps::NeedTermination, VMTraps::NeedWatchdogCheck);
+    VMTraps::Mask mask(VMTraps::NeedTermination, VMTraps::NeedWatchdogCheck);
+    if (UNLIKELY(vm.needTrapHandling(mask))) {
         vm.handleTraps(callFrame, mask);
         RETURN_IF_EXCEPTION(throwScope, throwScope.exception());
     }
@@ -921,8 +921,8 @@ JSValue Interpreter::executeCall(CallFrame* callFrame, JSObject* function, CallT
     } else
         newCodeBlock = 0;
 
-    if (UNLIKELY(vm.needTrapHandling())) {
-        VMTraps::Mask mask(VMTraps::NeedTermination, VMTraps::NeedWatchdogCheck);
+    VMTraps::Mask mask(VMTraps::NeedTermination, VMTraps::NeedWatchdogCheck);
+    if (UNLIKELY(vm.needTrapHandling(mask))) {
         vm.handleTraps(callFrame, mask);
         RETURN_IF_EXCEPTION(throwScope, throwScope.exception());
     }
@@ -987,8 +987,8 @@ JSObject* Interpreter::executeConstruct(CallFrame* callFrame, JSObject* construc
     } else
         newCodeBlock = 0;
 
-    if (UNLIKELY(vm.needTrapHandling())) {
-        VMTraps::Mask mask(VMTraps::NeedTermination, VMTraps::NeedWatchdogCheck);
+    VMTraps::Mask mask(VMTraps::NeedTermination, VMTraps::NeedWatchdogCheck);
+    if (UNLIKELY(vm.needTrapHandling(mask))) {
         vm.handleTraps(callFrame, mask);
         RETURN_IF_EXCEPTION(throwScope, throwScope.exception());
     }
@@ -1052,8 +1052,8 @@ JSValue Interpreter::execute(CallFrameClosure& closure)
 
     StackStats::CheckPoint stackCheckPoint;
 
-    if (UNLIKELY(vm.needTrapHandling())) {
-        VMTraps::Mask mask(VMTraps::NeedTermination, VMTraps::NeedWatchdogCheck);
+    VMTraps::Mask mask(VMTraps::NeedTermination, VMTraps::NeedWatchdogCheck);
+    if (UNLIKELY(vm.needTrapHandling(mask))) {
         vm.handleTraps(closure.oldCallFrame, mask);
         RETURN_IF_EXCEPTION(throwScope, throwScope.exception());
     }
@@ -1156,8 +1156,8 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSValue
         }
     }
 
-    if (UNLIKELY(vm.needTrapHandling())) {
-        VMTraps::Mask mask(VMTraps::NeedTermination, VMTraps::NeedWatchdogCheck);
+    VMTraps::Mask mask(VMTraps::NeedTermination, VMTraps::NeedWatchdogCheck);
+    if (UNLIKELY(vm.needTrapHandling(mask))) {
         vm.handleTraps(callFrame, mask);
         RETURN_IF_EXCEPTION(throwScope, throwScope.exception());
     }
@@ -1198,8 +1198,8 @@ JSValue Interpreter::execute(ModuleProgramExecutable* executable, CallFrame* cal
         codeBlock = jsCast<ModuleProgramCodeBlock*>(tempCodeBlock);
     }
 
-    if (UNLIKELY(vm.needTrapHandling())) {
-        VMTraps::Mask mask(VMTraps::NeedTermination, VMTraps::NeedWatchdogCheck);
+    VMTraps::Mask mask(VMTraps::NeedTermination, VMTraps::NeedWatchdogCheck);
+    if (UNLIKELY(vm.needTrapHandling(mask))) {
         vm.handleTraps(callFrame, mask);
         RETURN_IF_EXCEPTION(throwScope, throwScope.exception());
     }

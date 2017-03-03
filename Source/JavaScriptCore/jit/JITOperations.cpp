@@ -1212,6 +1212,7 @@ UnusedPtr JIT_OPERATION operationHandleTraps(ExecState* exec)
 {
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
+    ASSERT(vm.needTrapHandling());
     vm.handleTraps(exec);
     return nullptr;
 }
