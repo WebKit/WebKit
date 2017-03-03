@@ -1,5 +1,11 @@
 2017-03-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed GTK+ gardening. Another reftest failing with 2 pixels in image diff.
+
+        * platform/gtk/TestExpectations:
+
+2017-03-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed GTK+ gardening. Mark RAF throttling tests as failing.
 
         * platform/gtk/TestExpectations:
