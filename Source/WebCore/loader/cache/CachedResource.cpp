@@ -549,12 +549,6 @@ void CachedResource::decodedDataDeletionTimerFired()
 bool CachedResource::deleteIfPossible()
 {
     if (canDelete()) {
-        if (inCache() && MemoryPressureHandler::singleton().isUnderMemoryPressure()) {
-            MemoryCache::singleton().remove(*this);
-            // MemoryCache::remove() will call back into deleteIfPossible() and succeed.
-            // FIXME: This would be less incomprehensible if CachedResource were ref-counted.
-            return true;
-        }
         if (!inCache()) {
             InspectorInstrumentation::willDestroyCachedResource(*this);
             delete this;
