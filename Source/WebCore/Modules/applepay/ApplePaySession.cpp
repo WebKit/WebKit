@@ -297,9 +297,6 @@ static ExceptionOr<PaymentRequest::ShippingMethod> convertAndValidate(ApplePaySh
 
 static ExceptionOr<Vector<PaymentRequest::ShippingMethod>> convertAndValidate(Vector<ApplePayShippingMethod>&& shippingMethods)
 {
-    if (shippingMethods.isEmpty())
-        return Exception { TypeError, "At least one shipping method must be provided." };
-
     Vector<PaymentRequest::ShippingMethod> result;
     result.reserveInitialCapacity(shippingMethods.size());
     

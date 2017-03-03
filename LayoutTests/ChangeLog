@@ -1,3 +1,15 @@
+2017-03-03  Sam Weinig  <sam@webkit.org>
+
+        REGRESSION (r209760): Apple Pay doesn't work on casper.com, shopspring.com, maybe other sites
+        <rdar://problem/30313445>
+        https://bugs.webkit.org/show_bug.cgi?id=169149
+
+        Reviewed by Simon Fraser.
+
+        * http/tests/ssl/applepay/ApplePaySession-expected.txt:
+        * http/tests/ssl/applepay/ApplePaySession.html:
+        Update test for relaxed ApplePayShippingMethod sequence requirements.
+
 2017-03-03  Alex Christensen  <achristensen@webkit.org>
 
         [URLParser] Fix file: as a relative file URL
