@@ -1,5 +1,22 @@
 2017-03-02  Antoine Quint  <graouts@apple.com>
 
+        [ios-simulator Debug WK2] LayoutTest media/modern-media-controls/fullscreen-support/fullscreen-support-enabled.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=168668
+        <rdar://problem/30823677>
+
+        Reviewed by Simon Fraser.
+
+        This test would sometime fail for the first assertion because we may need more than just metadata
+        to determine that we can be in a state where the fullscreen button becomes enabled (see the logic
+        in FullscreenSupport). So we now use an asynchronous assertion to determine we've enabled the
+        fullscreen button and then force it to error to disable it.
+
+        * media/modern-media-controls/fullscreen-support/fullscreen-support-enabled-expected.txt:
+        * media/modern-media-controls/fullscreen-support/fullscreen-support-enabled.html:
+        * platform/ios-simulator/TestExpectations:
+
+2017-03-02  Antoine Quint  <graouts@apple.com>
+
         [iOS Release WK2] LayoutTest media/modern-media-controls/media-controller/media-controller-ios-do-not-hide-controls-when-tapping-button.html is a flaky timeout
         https://bugs.webkit.org/show_bug.cgi?id=168343
         <rdar://problem/30823389>

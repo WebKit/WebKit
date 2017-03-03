@@ -27,17 +27,18 @@ const container = document.querySelector("div#host");
 const media = document.querySelector("video");
 const mediaController = createControls(container, media, null);
 
-media.addEventListener("loadedmetadata", () => {
-    shouldBeTrue("mediaController.controls.fullscreenButton.enabled");
-    media.src = "";
-});
-
-media.addEventListener("error", () => {
-    shouldBeFalse("mediaController.controls.fullscreenButton.enabled");
+debug("Once media loads and we have tracks in the video, the fullscreen button should become enabled");
+shouldBecomeEqual("mediaController.controls.fullscreenButton.enabled", "true", () => {
+    media.addEventListener("error", () => {
+        shouldBeFalse("mediaController.controls.fullscreenButton.enabled");
+        debug("");
+        container.remove();
+        media.remove();
+        finishJSTest();
+    });
     debug("");
-    container.remove();
-    media.remove();
-    finishJSTest();
+    debug("We now set the media source to be the empty string to force an error, which should disable the fullscreen button");
+    media.src = "";
 });
 
 </script>

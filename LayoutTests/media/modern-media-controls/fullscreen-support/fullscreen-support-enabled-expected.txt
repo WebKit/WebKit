@@ -3,7 +3,10 @@ Testing the FullscreenSupport behavior.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS mediaController.controls.fullscreenButton.enabled is true
+Once media loads and we have tracks in the video, the fullscreen button should become enabled
+PASS mediaController.controls.fullscreenButton.enabled became true
+
+We now set the media source to be the empty string to force an error, which should disable the fullscreen button
 PASS mediaController.controls.fullscreenButton.enabled is false
 
 PASS successfullyParsed is true
