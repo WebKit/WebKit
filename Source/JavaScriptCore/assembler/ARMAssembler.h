@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2009, 2010 University of Szeged
+ * Copyright (C) 2017 Apple Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -699,6 +700,14 @@ namespace JSC {
         void bkpt(ARMWord value)
         {
             m_buffer.putInt(BKPT | ((value & 0xff0) << 4) | (value & 0xf));
+        }
+
+        static bool isBkpt(void* address)
+        {
+            ARMWord expected = BKPT;
+            ARMWord immediateMask = (0xff0 << 4) | 0xf);
+            ARMWord candidateInstruction = *reinterpret_cast<ARMWord*>(address);
+            return (candidateInstruction & ~immediateMask) == expected;
         }
 
         void nop()

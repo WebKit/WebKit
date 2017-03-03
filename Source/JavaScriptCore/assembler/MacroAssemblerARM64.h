@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2014-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -3347,6 +3347,8 @@ public:
     {
         m_assembler.brk(imm);
     }
+
+    static bool isBreakpoint(void* address) { return ARM64Assembler::isBrk(address); }
 
     void nop()
     {

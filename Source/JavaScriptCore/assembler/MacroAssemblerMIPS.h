@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2017 Apple Inc. All rights reserved.
  * Copyright (C) 2010 MIPS Technologies, Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -2157,6 +2157,8 @@ public:
     {
         m_assembler.bkpt();
     }
+
+    static bool isBreakpoint(void* address) { return MIPSAssembler::isBkpt(address); }
 
     Call nearCall()
     {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2014, 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -868,6 +868,14 @@ public:
         insn(excepnGeneration(ExcepnOp_BREAKPOINT, imm, 0));
     }
     
+    ALWAYS_INLINE static bool isBrk(void* address)
+    {
+        int expected = excepnGeneration(ExcepnOp_BREAKPOINT, 0, 0);
+        int immediateMask = excepnGenerationImmMask();
+        int candidateInstruction = *reinterpret_cast<int*>(address);
+        return (candidateInstruction & ~immediateMask) == expected;
+    }
+
     template<int datasize>
     ALWAYS_INLINE void cbnz(RegisterID rt, int32_t offset = 0)
     {
@@ -3281,6 +3289,11 @@ private:
         ASSERT((opc == ExcepnOp_BREAKPOINT || opc == ExcepnOp_HALT) ? !LL : (LL && (LL < 4)));
         const int op2 = 0;
         return (0xd4000000 | opc << 21 | imm16 << 5 | op2 << 2 | LL);
+    }
+    ALWAYS_INLINE static int excepnGenerationImmMask()
+    {
+        uint16_t imm16 =  std::numeric_limit<uint16_t>::max();
+        return (static_cast<int>(imm16) << 5);
     }
 
     ALWAYS_INLINE static int extract(Datasize sf, RegisterID rm, int imms, RegisterID rn, RegisterID rd)

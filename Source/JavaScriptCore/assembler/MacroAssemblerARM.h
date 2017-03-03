@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2013-2016 Apple Inc.
+ * Copyright (C) 2008-2017 Apple Inc.
  * Copyright (C) 2009, 2010 University of Szeged
  * All rights reserved.
  *
@@ -954,6 +954,8 @@ public:
     {
         m_assembler.bkpt(0);
     }
+
+    static bool isBreakpoint(void* address) { return ARMAssembler::isBkpt(address); }
 
     Call nearCall()
     {

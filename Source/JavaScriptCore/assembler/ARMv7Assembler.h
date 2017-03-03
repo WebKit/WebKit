@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2010, 2012, 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2017 Apple Inc. All rights reserved.
  * Copyright (C) 2010 University of Szeged
  *
  * Redistribution and use in source and binary forms, with or without
@@ -985,6 +985,14 @@ public:
     void bkpt(uint8_t imm = 0)
     {
         m_formatter.oneWordOp8Imm8(OP_BKPT, imm);
+    }
+
+    static bool isBkpt(void* address)
+    {
+        unsigned short expected = OP_BKPT;
+        unsigned short immediateMask = 0xff;
+        unsigned short candidateInstruction = *reinterpret_cast<unsigned short*>(address);
+        return (candidateInstruction & ~immediateMask) == expected;
     }
 
     ALWAYS_INLINE void clz(RegisterID rd, RegisterID rm)

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2012-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -2760,6 +2760,12 @@ public:
         m_formatter.oneByteOp(OP_INT3);
     }
     
+    static bool isInt3(void* address)
+    {
+        uint8_t candidateInstruction = *reinterpret_cast<uint8_t*>(address);
+        return candidateInstruction == OP_INT3;
+    }
+
     void ret()
     {
         m_formatter.oneByteOp(OP_RET);

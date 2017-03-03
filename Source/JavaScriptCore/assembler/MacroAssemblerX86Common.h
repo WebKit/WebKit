@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2014-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -2556,6 +2556,8 @@ public:
     {
         m_assembler.int3();
     }
+
+    static bool isBreakpoint(void* address) { return X86Assembler::isInt3(address); }
 
     Call nearTailCall()
     {

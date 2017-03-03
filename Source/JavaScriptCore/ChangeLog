@@ -1,5 +1,38 @@
 2017-03-03  Mark Lam  <mark.lam@apple.com>
 
+        Add MacroAssembler::isBreakpoint() query function.
+        https://bugs.webkit.org/show_bug.cgi?id=169139
+
+        Reviewed by Michael Saboff.
+
+        This will be needed soon when we use breakpoint instructions to implement
+        non-polling VM traps, and need to discern between a VM trap signal and a genuine
+        assertion breakpoint.
+
+        * assembler/ARM64Assembler.h:
+        (JSC::ARM64Assembler::isBrk):
+        (JSC::ARM64Assembler::excepnGenerationImmMask):
+        * assembler/ARMAssembler.h:
+        (JSC::ARMAssembler::isBkpt):
+        * assembler/ARMv7Assembler.h:
+        (JSC::ARMv7Assembler::isBkpt):
+        * assembler/MIPSAssembler.h:
+        (JSC::MIPSAssembler::isBkpt):
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::isBreakpoint):
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::isBreakpoint):
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::isBreakpoint):
+        * assembler/MacroAssemblerMIPS.h:
+        (JSC::MacroAssemblerMIPS::isBreakpoint):
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::isBreakpoint):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::isInt3):
+
+2017-03-03  Mark Lam  <mark.lam@apple.com>
+
         We should only check for traps that we're able to handle.
         https://bugs.webkit.org/show_bug.cgi?id=169136
 
