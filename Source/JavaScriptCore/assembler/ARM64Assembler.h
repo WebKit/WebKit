@@ -3292,7 +3292,7 @@ private:
     }
     ALWAYS_INLINE static int excepnGenerationImmMask()
     {
-        uint16_t imm16 =  std::numeric_limit<uint16_t>::max();
+        uint16_t imm16 =  std::numeric_limits<uint16_t>::max();
         return (static_cast<int>(imm16) << 5);
     }
 
