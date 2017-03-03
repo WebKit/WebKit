@@ -1,5 +1,13 @@
 2017-03-02  Antoine Quint  <graouts@apple.com>
 
+        Remove references to tests that no longer exist and remove a duplicate test.
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator/TestExpectations:
+
+2017-03-02  Antoine Quint  <graouts@apple.com>
+
         [ios-simulator Debug WK2] LayoutTest media/modern-media-controls/fullscreen-support/fullscreen-support-enabled.html is a flaky failure
         https://bugs.webkit.org/show_bug.cgi?id=168668
         <rdar://problem/30823677>
