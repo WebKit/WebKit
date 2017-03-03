@@ -349,6 +349,9 @@ Testing PaymentRequest.shippingMethods
 SETUP: request = validRequest(); request.shippingMethods = undefined;
 PASS new ApplePaySession(2, request) did not throw exception.
 
+SETUP: request = validRequest(); request.shippingMethods = [];
+PASS new ApplePaySession(2, request) did not throw exception.
+
 SETUP: request = validRequest(); request.shippingMethods = '';
 PASS new ApplePaySession(2, request) threw exception TypeError: Value is not a sequence.
 
@@ -363,9 +366,6 @@ PASS new ApplePaySession(2, request) threw exception TypeError: Value is not a s
 
 SETUP: request = validRequest(); request.shippingMethods = { };
 PASS new ApplePaySession(2, request) threw exception TypeError: Type error.
-
-SETUP: request = validRequest(); request.shippingMethods = [];
-PASS new ApplePaySession(2, request) threw exception TypeError: At least one shipping method must be provided..
 
 SETUP: request = validRequest(); request.shippingMethods = [{ }];
 PASS new ApplePaySession(2, request) threw exception TypeError: Member ApplePayShippingMethod.amount is required and must be an instance of DOMString.
