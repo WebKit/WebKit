@@ -157,6 +157,7 @@ WebProcess::WebProcess()
 #if PLATFORM(IOS)
     , m_viewUpdateDispatcher(ViewUpdateDispatcher::create())
 #endif
+    , m_webInspectorInterruptDispatcher(WebInspectorInterruptDispatcher::create())
     , m_iconDatabaseProxy(*new WebIconDatabaseProxy(*this))
     , m_webLoaderStrategy(*new WebLoaderStrategy)
     , m_dnsPrefetchHystereris([this](HysteresisState state) { if (state == HysteresisState::Stopped) m_dnsPrefetchedHosts.clear(); })
@@ -221,6 +222,7 @@ void WebProcess::initializeConnection(IPC::Connection* connection)
 #if PLATFORM(IOS)
     m_viewUpdateDispatcher->initializeConnection(connection);
 #endif // PLATFORM(IOS)
+    m_webInspectorInterruptDispatcher->initializeConnection(connection);
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
     m_pluginProcessConnectionManager->initializeConnection(connection);

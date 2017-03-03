@@ -676,6 +676,7 @@ public:
     bool needTrapHandling(VMTraps::Mask mask = VMTraps::Mask::allEventTypes()) { return m_traps.needTrapHandling(mask); }
     void* needTrapHandlingAddress() { return m_traps.needTrapHandlingAddress(); }
 
+    void notifyNeedDebuggerBreak() { m_traps.fireTrap(VMTraps::NeedDebuggerBreak); }
     void notifyNeedTermination() { m_traps.fireTrap(VMTraps::NeedTermination); }
     void notifyNeedWatchdogCheck() { m_traps.fireTrap(VMTraps::NeedWatchdogCheck); }
 

@@ -957,7 +957,9 @@ void VM::handleTraps(ExecState* exec, VMTraps::Mask mask)
         auto trapEventType = m_traps.takeTopPriorityTrap(mask);
         switch (trapEventType) {
         case VMTraps::NeedDebuggerBreak:
-            RELEASE_ASSERT_NOT_REACHED();
+            if (Options::alwaysCheckTraps())
+                dataLog("VM ", RawPointer(this), " on pid ", getCurrentProcessID(), " received NeedDebuggerBreak trap\n");
+            return;
 
         case VMTraps::NeedWatchdogCheck:
             ASSERT(m_watchdog);

@@ -1970,6 +1970,10 @@
 		F6A90813133C20510082C3F4 /* WebCookieManagerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = F6A90811133C1F3D0082C3F4 /* WebCookieManagerMac.mm */; };
 		F6D632BC133D198200743D77 /* WebCookieManagerProxyMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = F6D632BA133D181B00743D77 /* WebCookieManagerProxyMac.mm */; };
 		FED3C1DC1B447EAC00E0EB7F /* APISerializedScriptValueCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = FED3C1DA1B447AE800E0EB7F /* APISerializedScriptValueCocoa.mm */; };
+		FEDBDCD61E68D20000A59F8F /* WebInspectorInterruptDispatcherMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FEDBDCD41E68D19C00A59F8F /* WebInspectorInterruptDispatcherMessageReceiver.cpp */; };
+		FEDBDCD71E68D20500A59F8F /* WebInspectorInterruptDispatcherMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = FEDBDCD51E68D19C00A59F8F /* WebInspectorInterruptDispatcherMessages.h */; };
+		FEE43FD31E67B0180077D6D1 /* WebInspectorInterruptDispatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = FEE43FD11E67AFC60077D6D1 /* WebInspectorInterruptDispatcher.h */; };
+		FEE43FD41E67B0210077D6D1 /* WebInspectorInterruptDispatcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FEE43FD01E67AFC60077D6D1 /* WebInspectorInterruptDispatcher.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -4237,6 +4241,11 @@
 		F6A90811133C1F3D0082C3F4 /* WebCookieManagerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCookieManagerMac.mm; sourceTree = "<group>"; };
 		F6D632BA133D181B00743D77 /* WebCookieManagerProxyMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCookieManagerProxyMac.mm; sourceTree = "<group>"; };
 		FED3C1DA1B447AE800E0EB7F /* APISerializedScriptValueCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = APISerializedScriptValueCocoa.mm; sourceTree = "<group>"; };
+		FEDBDCD41E68D19C00A59F8F /* WebInspectorInterruptDispatcherMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebInspectorInterruptDispatcherMessageReceiver.cpp; sourceTree = "<group>"; };
+		FEDBDCD51E68D19C00A59F8F /* WebInspectorInterruptDispatcherMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebInspectorInterruptDispatcherMessages.h; sourceTree = "<group>"; };
+		FEE43FD01E67AFC60077D6D1 /* WebInspectorInterruptDispatcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebInspectorInterruptDispatcher.cpp; sourceTree = "<group>"; };
+		FEE43FD11E67AFC60077D6D1 /* WebInspectorInterruptDispatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebInspectorInterruptDispatcher.h; sourceTree = "<group>"; };
+		FEE43FD21E67AFC60077D6D1 /* WebInspectorInterruptDispatcher.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebInspectorInterruptDispatcher.messages.in; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -6446,6 +6455,9 @@
 				1C8E2A1C1277833F00BC7BD0 /* WebInspector.messages.in */,
 				A55BA8321BA3E6FA007CD33D /* WebInspectorFrontendAPIDispatcher.cpp */,
 				A55BA8331BA3E6FA007CD33D /* WebInspectorFrontendAPIDispatcher.h */,
+				FEE43FD01E67AFC60077D6D1 /* WebInspectorInterruptDispatcher.cpp */,
+				FEE43FD11E67AFC60077D6D1 /* WebInspectorInterruptDispatcher.h */,
+				FEE43FD21E67AFC60077D6D1 /* WebInspectorInterruptDispatcher.messages.in */,
 				1C891D6219B124FF00BA79DD /* WebInspectorUI.cpp */,
 				1C891D6319B124FF00BA79DD /* WebInspectorUI.h */,
 				1C891D6419B124FF00BA79DD /* WebInspectorUI.messages.in */,
@@ -7616,6 +7628,8 @@
 				510523781C73DA70007993CB /* WebIDBConnectionToClientMessages.h */,
 				510523721C73D37B007993CB /* WebIDBConnectionToServerMessageReceiver.cpp */,
 				510523731C73D37B007993CB /* WebIDBConnectionToServerMessages.h */,
+				FEDBDCD41E68D19C00A59F8F /* WebInspectorInterruptDispatcherMessageReceiver.cpp */,
+				FEDBDCD51E68D19C00A59F8F /* WebInspectorInterruptDispatcherMessages.h */,
 				1C8E2A311277852400BC7BD0 /* WebInspectorMessageReceiver.cpp */,
 				1C8E2A321277852400BC7BD0 /* WebInspectorMessages.h */,
 				1CA8B943127C882A00576C2B /* WebInspectorProxyMessageReceiver.cpp */,
@@ -8562,6 +8576,7 @@
 				BC204EEF11C83EC8008F3375 /* WKBundle.h in Headers */,
 				BC204EF011C83EC8008F3375 /* WKBundleAPICast.h in Headers */,
 				935EEB9F127761AC003322B8 /* WKBundleBackForwardList.h in Headers */,
+				FEDBDCD71E68D20500A59F8F /* WebInspectorInterruptDispatcherMessages.h in Headers */,
 				935EEB9B1277617C003322B8 /* WKBundleBackForwardListItem.h in Headers */,
 				51EFC1CF1524E62500C9A938 /* WKBundleDOMWindowExtension.h in Headers */,
 				7CBB81211AA0F970006B1942 /* WKBundleFileHandleRef.h in Headers */,
@@ -8776,6 +8791,7 @@
 				1A7E377518E4A33A003D0FFF /* WKScriptMessageHandler.h in Headers */,
 				7CC99A3618EF7CBC0048C8B4 /* WKScriptMessageInternal.h in Headers */,
 				0FCB4E5418BBE044000FCFC9 /* WKScrollView.h in Headers */,
+				FEE43FD31E67B0180077D6D1 /* WebInspectorInterruptDispatcher.h in Headers */,
 				51CD1C651B34B9D400142CA5 /* WKSecurityOrigin.h in Headers */,
 				51CD1C671B34B9DF00142CA5 /* WKSecurityOriginInternal.h in Headers */,
 				51CD1C5E1B3493B400142CA5 /* WKSecurityOriginRef.h in Headers */,
@@ -9730,6 +9746,7 @@
 				1A2D82A6127F4EAB001EB962 /* NPObjectProxy.cpp in Sources */,
 				1A2D82A8127F4EAB001EB962 /* NPRemoteObjectMap.cpp in Sources */,
 				1A2161B111F37664008AD0F5 /* NPRuntimeObjectMap.cpp in Sources */,
+				FEE43FD41E67B0210077D6D1 /* WebInspectorInterruptDispatcher.cpp in Sources */,
 				1A2162B011F38971008AD0F5 /* NPRuntimeUtilities.cpp in Sources */,
 				1A2D84A4127F6AD1001EB962 /* NPVariantData.cpp in Sources */,
 				BC8ACA1416670D89004C1941 /* ObjCObjectGraph.mm in Sources */,
@@ -10213,6 +10230,7 @@
 				5110AE0C133C16CB0072717A /* WKIconDatabase.cpp in Sources */,
 				5123CF1B133D260A0056F800 /* WKIconDatabaseCG.cpp in Sources */,
 				BCCF6AC212C91F34008F9C35 /* WKImage.cpp in Sources */,
+				FEDBDCD61E68D20000A59F8F /* WebInspectorInterruptDispatcherMessageReceiver.cpp in Sources */,
 				BCCF6AC912C91F59008F9C35 /* WKImageCG.cpp in Sources */,
 				933DF8301B3BC0B400AEA9E3 /* WKImagePreviewViewController.mm in Sources */,
 				9321D5881A38EE74008052BE /* WKImmediateActionController.mm in Sources */,

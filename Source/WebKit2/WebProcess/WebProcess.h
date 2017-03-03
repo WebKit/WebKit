@@ -36,6 +36,7 @@
 #include "TextCheckerState.h"
 #include "ViewUpdateDispatcher.h"
 #include "VisitedLinkTable.h"
+#include "WebInspectorInterruptDispatcher.h"
 #include <WebCore/HysteresisActivity.h>
 #include <WebCore/ResourceLoadStatisticsStore.h>
 #include <WebCore/SessionID.h>
@@ -351,6 +352,7 @@ private:
 #if PLATFORM(IOS)
     RefPtr<ViewUpdateDispatcher> m_viewUpdateDispatcher;
 #endif
+    RefPtr<WebInspectorInterruptDispatcher> m_webInspectorInterruptDispatcher;
 
     HashMap<WebCore::SessionID, HashMap<unsigned, double>> m_plugInAutoStartOriginHashes;
     HashSet<String> m_plugInAutoStartOrigins;

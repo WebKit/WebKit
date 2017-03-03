@@ -572,6 +572,7 @@ set(WebKit2_SOURCES
     WebProcess/WebPage/WebDocumentLoader.cpp
     WebProcess/WebPage/WebFrame.cpp
     WebProcess/WebPage/WebInspector.cpp
+    WebProcess/WebPage/WebInspectorInterruptDispatcher.cpp
     WebProcess/WebPage/WebInspectorFrontendAPIDispatcher.cpp
     WebProcess/WebPage/WebInspectorUI.cpp
     WebProcess/WebPage/WebOpenPanelResultListener.cpp
@@ -679,6 +680,7 @@ set(WebKit2_MESSAGES_IN_FILES
     WebProcess/WebPage/RemoteWebInspectorUI.messages.in
     WebProcess/WebPage/VisitedLinkTableController.messages.in
     WebProcess/WebPage/WebInspector.messages.in
+    WebProcess/WebPage/WebInspectorInterruptDispatcher.messages.in
     WebProcess/WebPage/WebInspectorUI.messages.in
     WebProcess/WebPage/WebPage.messages.in
 )

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2014, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2017 Apple Inc. All rights reserved.
  * Portions Copyright (c) 2011 Motorola Mobility, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,6 +35,7 @@
 #include "WebAutomationSession.h"
 #include "WebFramePolicyListenerProxy.h"
 #include "WebFrameProxy.h"
+#include "WebInspectorInterruptDispatcherMessages.h"
 #include "WebInspectorMessages.h"
 #include "WebInspectorProxyMessages.h"
 #include "WebInspectorUIMessages.h"
@@ -121,6 +122,7 @@ void WebInspectorProxy::connect()
 
     eagerlyCreateInspectorPage();
 
+    m_inspectedPage->process().send(Messages::WebInspectorInterruptDispatcher::NotifyNeedDebuggerBreak(), 0);
     m_inspectedPage->process().send(Messages::WebInspector::Show(), m_inspectedPage->pageID());
 }
 
