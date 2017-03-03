@@ -868,6 +868,10 @@ fast/text/font-weight-download-2.html [ Failure ]
 fast/files/filereader-zip-bundle-using-open-panel.html [ Skip ]
 http/tests/local/fileapi/upload-zip-bundle-as-blob-using-open-panel.html [ Skip ]
 
+# RAF throttling requires REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR.
+fast/animation/request-animation-frame-throttling-detached-iframe.html [ Failure ]
+fast/animation/request-animation-frame-throttling-lowPowerMode.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures
 #////////////////////////////////////////////////////////////////////////////////////////

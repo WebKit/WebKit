@@ -1,5 +1,11 @@
 2017-03-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed GTK+ gardening. Mark RAF throttling tests as failing.
+
+        * platform/gtk/TestExpectations:
+
+2017-03-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed GTK+ gardening. Rebaseline fast/dom/HTMLAnchorElement/anchor-file-blob-download-includes-slashes.html after r213284.
 
         * platform/gtk/fast/dom/HTMLAnchorElement/anchor-file-blob-download-includes-slashes-expected.txt:
