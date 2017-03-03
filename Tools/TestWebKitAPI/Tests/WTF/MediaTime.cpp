@@ -279,6 +279,13 @@ TEST(WTF, MediaTime)
     EXPECT_EQ(MediaTime(numeric_limits<int64_t>::min(), 1).toTimeScale(2), MediaTime::negativeInfiniteTime());
     int64_t maxInt32 = numeric_limits<int32_t>::max();
     EXPECT_EQ(MediaTime(maxInt32 * 2, 1).toTimeScale(2).timeValue(), maxInt32 * 4);
+    int64_t bigInt = 1LL << 62;
+    EXPECT_EQ(MediaTime(bigInt, 1U << 31).toTimeScale(1U << 30).timeValue(), bigInt / 2);
+    EXPECT_EQ(MediaTime(bigInt + 1, 1U << 31).toTimeScale(1U << 30, MediaTime::RoundingFlags::TowardZero).timeValue(), bigInt / 2);
+    EXPECT_EQ(MediaTime(bigInt + 1, 1U << 31).toTimeScale(1U << 30).hasBeenRounded(), true);
+    EXPECT_EQ(MediaTime(bigInt - 2, MediaTime::MaximumTimeScale).toTimeScale(MediaTime::MaximumTimeScale - 1).hasBeenRounded(), true);
+    EXPECT_EQ(MediaTime(bigInt, 1).toTimeScale(MediaTime::MaximumTimeScale), MediaTime::positiveInfiniteTime());
+    EXPECT_EQ(MediaTime(-bigInt, 1).toTimeScale(MediaTime::MaximumTimeScale), MediaTime::negativeInfiniteTime());
 }
 
 }

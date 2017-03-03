@@ -1,3 +1,17 @@
+2017-03-02  Jer Noble  <jer.noble@apple.com>
+
+        Sufficently large timeValue and timeScale arguments to MediaTime will cause wrapping in toTimeScale().
+        https://bugs.webkit.org/show_bug.cgi?id=169098
+
+        Reviewed by Keith Miller.
+
+        Use a non-standard but Clang & GCC supported __int128_t type extension to do the 128-bit math rather than
+        rolling our own. Since this is only available in 64-bit builds, for 32-bit, just fix the underlying 128-bit
+        math.
+
+        * wtf/MediaTime.cpp:
+        (WTF::MediaTime::setTimeScale):
+
 2017-03-01  Konstantin Tokarev  <annulen@yandex.ru>
 
         Removed unused WTF_COMPILER_SUPPORTS_CXX_USER_LITERALS macro

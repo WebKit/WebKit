@@ -1,3 +1,13 @@
+2017-03-02  Jer Noble  <jer.noble@apple.com>
+
+        Sufficently large timeValue and timeScale arguments to MediaTime will cause wrapping in toTimeScale().
+        https://bugs.webkit.org/show_bug.cgi?id=169098
+
+        Reviewed by Keith Miller.
+
+        * TestWebKitAPI/Tests/WTF/MediaTime.cpp:
+        (TestWebKitAPI::TEST):
+
 2017-03-02  Srinivasan Vijayaraghavan  <svijayaraghavan@apple.com>
 
         Add ability to read bindings test results

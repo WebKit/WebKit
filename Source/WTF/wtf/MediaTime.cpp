@@ -489,34 +489,31 @@ void MediaTime::setTimeScale(uint32_t timeScale, RoundingFlags flags)
 
     timeScale = std::min(MaximumTimeScale, timeScale);
 
-    int64_t newValue = 0;
-    int64_t remainder = 0;
-    if (safeMultiply(m_timeValue, static_cast<int64_t>(timeScale), newValue)) {
-        remainder = newValue % m_timeScale;
-        newValue = newValue / m_timeScale;
-    } else {
-        int64_t highPart = (m_timeValue >> 32) * timeScale;
-        int64_t highRemainder = highPart % m_timeScale;
-        highPart /= m_timeScale;
+#if CPU(X86_64) || CPU(ARM64)
+    __int128_t newValue = static_cast<__int128_t>(m_timeValue) * timeScale;
+    int64_t remainder = newValue % m_timeScale;
+    newValue = newValue / m_timeScale;
 
-        int64_t lowPart = (m_timeValue & 0xFFFFFFFF) * timeScale + highRemainder;
-        highPart += (lowPart >> 32);
-        lowPart &= 0xFFFFFFFF;
-        remainder = lowPart % m_timeScale;
-        lowPart /= m_timeScale;
-
-        if (highPart < std::numeric_limits<int32_t>::min()) {
-            *this = negativeInfiniteTime();
-            return;
-        }
-
-        if (highPart > std::numeric_limits<int32_t>::max()) {
-            *this = positiveInfiniteTime();
-            return;
-        }
-
-        newValue = (highPart << 32) + lowPart;
+    if (newValue < std::numeric_limits<int64_t>::min()) {
+        *this = negativeInfiniteTime();
+        return;
     }
+
+    if (newValue > std::numeric_limits<int64_t>::max()) {
+        *this = positiveInfiniteTime();
+        return;
+    }
+#else
+    int64_t newValue = m_timeValue / m_timeScale;
+    int64_t partialRemainder = (m_timeValue % m_timeScale) * timeScale;
+    int64_t remainder = partialRemainder % m_timeScale;
+
+    if (!safeMultiply<int64_t>(newValue, static_cast<int64_t>(timeScale), newValue)
+        || !safeAdd(newValue, partialRemainder / m_timeScale, newValue)) {
+        *this = newValue < 0 ? negativeInfiniteTime() : positiveInfiniteTime();
+        return;
+    }
+#endif
 
     m_timeValue = newValue;
     std::swap(m_timeScale, timeScale);
