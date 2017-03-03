@@ -1,3 +1,14 @@
+2017-03-02  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Should be able to push nodes in an iframe subtree to the frontend
+        https://bugs.webkit.org/show_bug.cgi?id=169086
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/DOMTreeContentView.js:
+        (WebInspector.DOMTreeContentView.prototype._selectedNodeDidChange):
+        Use the URL of the main frame instead of the content frame URL.
+
 2017-03-01  Devin Rousso  <dcrousso+webkit@gmail.com>
 
         Web Inspector: Annotators should not be enabled if the TextEditor is not visible

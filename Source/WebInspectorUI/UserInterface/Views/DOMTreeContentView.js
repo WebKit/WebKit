@@ -372,7 +372,7 @@ WebInspector.DOMTreeContentView = class DOMTreeContentView extends WebInspector.
     {
         var selectedDOMNode = this._domTreeOutline.selectedDOMNode();
         if (selectedDOMNode && !this._dontSetLastSelectedNodePath)
-            this._lastSelectedNodePathSetting.value = {url: selectedDOMNode.ownerDocument.documentURL.hash, path: selectedDOMNode.path()};
+            this._lastSelectedNodePathSetting.value = {url: WebInspector.frameResourceManager.mainFrame.url.hash, path: selectedDOMNode.path()};
 
         if (selectedDOMNode)
             ConsoleAgent.addInspectedNode(selectedDOMNode.id);

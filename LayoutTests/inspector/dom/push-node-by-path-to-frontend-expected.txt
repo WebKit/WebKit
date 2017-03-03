@@ -1,0 +1,17 @@
+Test for DOM.pushNodeByPathToFrontend.
+
+  
+
+== Running test suite: DOM.pushNodeByPathToFrontend
+-- Running test case: InlineFrameDocumentNode
+Push node with path: 1,HTML,1,BODY,1,IFRAME,0,#document
+PASS: Pushed node has correct path.
+
+-- Running test case: InlineFrameDOMNode
+Push node with path: 1,HTML,1,BODY,2,IFRAME,0,#document,0,HTML,1,BODY,0,DIV
+PASS: Pushed node has correct path.
+
+-- Running test case: InlineFrameFramesetDOMNode
+Push node with path: 1,HTML,1,BODY,3,IFRAME,0,#document,0,HTML,1,FRAMESET,0,FRAME,0,#document,0,HTML,1,BODY,0,P
+PASS: Pushed node has correct path.
+

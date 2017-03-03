@@ -2147,28 +2147,37 @@ Node* InspectorDOMAgent::nodeForPath(const String& path)
 {
     // The path is of form "1,HTML,2,BODY,1,DIV"
     if (!m_document)
-        return 0;
+        return nullptr;
 
     Node* node = m_document.get();
     Vector<String> pathTokens;
     path.split(',', false, pathTokens);
     if (!pathTokens.size())
-        return 0;
+        return nullptr;
+
     for (size_t i = 0; i < pathTokens.size() - 1; i += 2) {
         bool success = true;
         unsigned childNumber = pathTokens[i].toUInt(&success);
         if (!success)
-            return 0;
-        if (childNumber >= innerChildNodeCount(node))
-            return 0;
+            return nullptr;
 
-        Node* child = innerFirstChild(node);
-        String childName = pathTokens[i + 1];
-        for (size_t j = 0; child && j < childNumber; ++j)
-            child = innerNextSibling(child);
+        Node* child;
+        if (is<HTMLFrameOwnerElement>(*node)) {
+            ASSERT(!childNumber);
+            auto& frameOwner = downcast<HTMLFrameOwnerElement>(*node);
+            child = frameOwner.contentDocument();
+        } else {
+            if (childNumber >= innerChildNodeCount(node))
+                return nullptr;
 
+            child = innerFirstChild(node);
+            for (size_t j = 0; child && j < childNumber; ++j)
+                child = innerNextSibling(child);
+        }
+
+        const auto& childName = pathTokens[i + 1];
         if (!child || child->nodeName() != childName)
-            return 0;
+            return nullptr;
         node = child;
     }
     return node;

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("DOM.pushNodeByPathToFrontend");
+
+    function addTestCase({name, description, path}) {
+        suite.addTestCase({
+            name, description,
+            test(resolve, reject) {
+                InspectorTest.log("Push node with path: " + path);
+                WebInspector.domTreeManager.pushNodeByPathToFrontend(path, (nodeIdentifier) => {
+                    if (!nodeIdentifier) {
+                        reject();
+                        return;
+                    }
+
+                    let node = WebInspector.domTreeManager.nodeForId(nodeIdentifier);
+                    InspectorTest.expectEqual(node.path(), path, "Pushed node has correct path.");
+                    resolve();
+                });
+            }
+        });
+    }
+
+    addTestCase({
+        name: "InlineFrameDocumentNode",
+        description: "Check that a child frame document node can be pushed.",
+        path: "1,HTML,1,BODY,1,IFRAME,0,#document"
+    });
+
+    addTestCase({
+        name: "InlineFrameDOMNode",
+        description: "Check that a node belonging to an inline frame's DOM can be pushed.",
+        path: "1,HTML,1,BODY,2,IFRAME,0,#document,0,HTML,1,BODY,0,DIV"
+    });
+
+    addTestCase({
+        name: "InlineFrameFramesetDOMNode",
+        description: "Check that a node belonging to a frameset frame's DOM can be pushed.",
+        path: "1,HTML,1,BODY,3,IFRAME,0,#document,0,HTML,1,FRAMESET,0,FRAME,0,#document,0,HTML,1,BODY,0,P"
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Test for DOM.pushNodeByPathToFrontend.</p>
+<iframe src="about:blank"></iframe>
+<iframe srcdoc="<div></div>"></iframe>
+<iframe src="./resources/frameset-iframe.html"></iframe>
+</body>
+</html>

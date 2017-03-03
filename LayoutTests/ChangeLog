@@ -1,3 +1,18 @@
+2017-03-02  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Should be able to push nodes in an iframe subtree to the frontend
+        https://bugs.webkit.org/show_bug.cgi?id=169086
+
+        Reviewed by Joseph Pecoraro.
+
+        Added test coverage for DOMTreeManager.prototype.pushNodeByPathToFrontend,
+        which now supports pushing iframe document nodes (#document) and their descendants.
+
+        * inspector/dom/push-node-by-path-to-frontend-expected.txt: Added.
+        * inspector/dom/push-node-by-path-to-frontend.html: Added.
+        * inspector/dom/resources/frameset-frame.html: Added.
+        * inspector/dom/resources/frameset-iframe.html: Added.
+
 2017-03-02  Antoine Quint  <graouts@apple.com>
 
         LayoutTest media/modern-media-controls/tracks-support/tracks-support-click-track-in-panel.html is a flaky timeout
