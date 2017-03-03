@@ -256,6 +256,8 @@ void Frame::setView(RefPtr<FrameView>&& view)
         m_eventHandler->clear();
 
     bool hadLivingRenderTree = m_doc ? m_doc->hasLivingRenderTree() : false;
+    // Try and catch cases where this might still be happening after r213311.
+    ASSERT_WITH_SECURITY_IMPLICATION(!hadLivingRenderTree);
     if (hadLivingRenderTree)
         m_doc->destroyRenderTree();
 
