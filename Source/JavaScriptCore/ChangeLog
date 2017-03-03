@@ -1,3 +1,17 @@
+2017-03-02  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Remote Inspector: Move updateTargetListing() methods to RemoteInspector.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=169074
+
+        Reviewed by Joseph Pecoraro.
+
+        They are not actually cocoa specific.
+
+        * inspector/remote/RemoteInspector.cpp:
+        (Inspector::RemoteInspector::updateTargetListing):
+        * inspector/remote/RemoteInspector.h:
+        * inspector/remote/cocoa/RemoteInspectorCocoa.mm:
+
 2017-03-02  Mark Lam  <mark.lam@apple.com>
 
         Add WebKit2 hooks to notify the VM that the user has requested a debugger break.

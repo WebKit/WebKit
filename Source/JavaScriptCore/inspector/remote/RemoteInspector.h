@@ -94,9 +94,9 @@ public:
     RetainPtr<CFDataRef> parentProcessAuditData() const { return m_parentProcessAuditData; }
     void setParentProcessInformation(pid_t, RetainPtr<CFDataRef> auditData);
     void setParentProcessInfomationIsDelayed();
+#endif
 
     void updateTargetListing(unsigned targetIdentifier);
-#endif
 
 private:
     RemoteInspector();

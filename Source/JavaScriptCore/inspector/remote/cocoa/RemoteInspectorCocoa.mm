@@ -445,28 +445,6 @@ void RemoteInspector::pushListingsSoon()
     });
 }
 
-#pragma mark - Update Listing with lock
-
-void RemoteInspector::updateTargetListing(unsigned targetIdentifier)
-{
-    auto target = m_targetMap.get(targetIdentifier);
-    if (!target)
-        return;
-
-    updateTargetListing(*target);
-}
-
-void RemoteInspector::updateTargetListing(const RemoteControllableTarget& target)
-{
-    RetainPtr<NSDictionary> targetListing = listingForTarget(target);
-    if (!targetListing)
-        return;
-
-    m_targetListingMap.set(target.targetIdentifier(), targetListing);
-
-    pushListingsSoon();
-}
-
 #pragma mark - Received XPC Messages
 
 void RemoteInspector::receivedSetupMessage(NSDictionary *userInfo)
