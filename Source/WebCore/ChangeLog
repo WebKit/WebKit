@@ -1,3 +1,77 @@
+2017-03-02  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Migrate font-stretch to use fixed-point values
+        https://bugs.webkit.org/show_bug.cgi?id=169107
+
+        Reviewed by Dean Jackson.
+
+        There are a few benefits of using fixed-point values:
+        - Not all of the entropy of a float is necessary for font selection. In particular, values are
+        expected to stay between around -1000 to 1000, and only need to have a few fractional bits.
+        Therefore, the values can be represented by 16-bit fixed point numbers, which includes one sign
+        bit and two fractional bits. This is smaller than the 32-bit floating point numbers we were
+        using, which means FontDescription can be slimmed down. This becomes even more important when
+        the rest of the variation font properties are implemented, since those will use these fixed-
+        point values too.
+        - Fixed point values have a larger distance between adjacent representable values, which means
+        there are more collisions, which means our cache hit rates are higher.
+
+        No new tests because there is no behavior change.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::fontStretchFromStyle):
+        * css/StyleBuilderConverter.h:
+        (WebCore::StyleBuilderConverter::convertFontStretch):
+        * platform/graphics/FontCache.h:
+        (WebCore::FontDescriptionKey::FontDescriptionKey):
+        * platform/graphics/FontDescription.h:
+        (WebCore::FontDescription::stretch):
+        (WebCore::FontDescription::setStretch):
+        (WebCore::FontCascadeDescription::initialStretch):
+        * platform/graphics/cocoa/FontCacheCoreText.cpp:
+        (WebCore::defaultFontSelectionValues):
+        (WebCore::preparePlatformFont):
+        (WebCore::FontDatabase::InstalledFont::InstalledFont):
+        (WebCore::FontDatabase::InstalledFontFamily::expand):
+        (WebCore::FontDatabase::capabilitiesForFontDescriptor):
+        (WebCore::FontDatabase::stretchThreshold):
+        (WebCore::FontDatabase::italicThreshold):
+        (WebCore::FontDatabase::weightThreshold):
+        (WebCore::findClosestStretch):
+        (WebCore::filterStretch):
+        (WebCore::findClosestStyle):
+        (WebCore::filterStyle):
+        (WebCore::findClosestWeight):
+        (WebCore::filterWeight):
+        (WebCore::computeTargetWeight):
+        (WebCore::findClosestFont):
+        (WebCore::platformFontLookupWithFamily):
+        (WebCore::fontWithFamily):
+        (WebCore::defaultVariationValues): Deleted.
+        (WebCore::FontDatabase::Range::Range): Deleted.
+        (WebCore::FontDatabase::Range::isValid): Deleted.
+        (WebCore::FontDatabase::Range::expand): Deleted.
+        (WebCore::FontDatabase::Range::includes): Deleted.
+        (): Deleted.
+        * platform/text/TextFlags.h:
+        (WebCore::FontSelectionValue::FontSelectionValue):
+        (WebCore::FontSelectionValue::operator float):
+        (WebCore::FontSelectionValue::operator+):
+        (WebCore::FontSelectionValue::operator-):
+        (WebCore::FontSelectionValue::operator*):
+        (WebCore::FontSelectionValue::operator/):
+        (WebCore::FontSelectionValue::operator==):
+        (WebCore::FontSelectionValue::operator!=):
+        (WebCore::FontSelectionValue::operator<):
+        (WebCore::FontSelectionValue::operator<=):
+        (WebCore::FontSelectionValue::operator>):
+        (WebCore::FontSelectionValue::operator>=):
+        (WebCore::FontSelectionValue::rawValue):
+        (WebCore::FontSelectionRange::isValid):
+        (WebCore::FontSelectionRange::expand):
+        (WebCore::FontSelectionRange::includes):
+        (WebCore::FontSelectionCapabilities::expand):
+
 2017-03-02  Alex Christensen  <achristensen@webkit.org>
 
         Modernize ContentExtensionParser

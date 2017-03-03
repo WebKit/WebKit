@@ -73,12 +73,12 @@ struct FontDescriptionKey {
     FontDescriptionKey(const FontDescription& description)
         : m_size(description.computedPixelSize())
         , m_weight(description.weight())
-        , m_stretch(description.stretch())
         , m_flags(makeFlagsKey(description))
         , m_featureSettings(description.featureSettings())
 #if ENABLE(VARIATION_FONTS)
         , m_variationSettings(description.variationSettings())
 #endif
+        , m_stretch(description.stretch().rawValue())
     { }
 
     explicit FontDescriptionKey(WTF::HashTableDeletedValueType)
@@ -154,12 +154,12 @@ private:
     // FontCascade::locale() is explicitly not included in this struct.
     unsigned m_size { 0 };
     unsigned m_weight { 0 };
-    float m_stretch { 0 };
     std::array<unsigned, 2> m_flags {{ 0, 0 }};
     FontFeatureSettings m_featureSettings;
 #if ENABLE(VARIATION_FONTS)
     FontVariationSettings m_variationSettings;
 #endif
+    uint16_t m_stretch { 0 };
 };
 
 struct FontDescriptionKeyHash {

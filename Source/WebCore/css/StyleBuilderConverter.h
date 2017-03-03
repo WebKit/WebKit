@@ -114,7 +114,7 @@ public:
     static bool convertOverflowScrolling(StyleResolver&, const CSSValue&);
 #endif
     static FontFeatureSettings convertFontFeatureSettings(StyleResolver&, const CSSValue&);
-    static float convertFontStretch(StyleResolver&, const CSSValue&);
+    static FontSelectionValue convertFontStretch(StyleResolver&, const CSSValue&);
 #if ENABLE(VARIATION_FONTS)
     static FontVariationSettings convertFontVariationSettings(StyleResolver&, const CSSValue&);
 #endif
@@ -1154,35 +1154,43 @@ inline FontFeatureSettings StyleBuilderConverter::convertFontFeatureSettings(Sty
     return settings;
 }
 
-inline float StyleBuilderConverter::convertFontStretch(StyleResolver&, const CSSValue& value)
+inline FontSelectionValue StyleBuilderConverter::convertFontStretch(StyleResolver&, const CSSValue& value)
 {
     ASSERT(is<CSSPrimitiveValue>(value));
     const auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
-    if (primitiveValue.isPercentage() || primitiveValue.isNumber())
-        return primitiveValue.floatValue();
+    if (primitiveValue.isPercentage() || primitiveValue.isNumber()) {
+        auto value = primitiveValue.floatValue();
+        if (value <= static_cast<float>(FontSelectionValue::maximumValue())
+            && value >= static_cast<float>(FontSelectionValue::minimumValue()))
+            return FontSelectionValue(value);
+        if (value < static_cast<float>(FontSelectionValue::minimumValue()))
+            return FontSelectionValue::minimumValue();
+        ASSERT(value > static_cast<float>(FontSelectionValue::maximumValue()));
+        return FontSelectionValue::maximumValue();
+    }
 
     switch (primitiveValue.valueID()) {
     case CSSValueUltraCondensed:
-        return 50;
+        return FontSelectionValue(50);
     case CSSValueExtraCondensed:
-        return 62.5;
+        return FontSelectionValue(62.5f);
     case CSSValueCondensed:
-        return 75;
+        return FontSelectionValue(75);
     case CSSValueSemiCondensed:
-        return 87.5;
+        return FontSelectionValue(87.5f);
     case CSSValueNormal:
-        return 100;
+        return FontSelectionValue(100);
     case CSSValueSemiExpanded:
-        return 112.5;
+        return FontSelectionValue(112.5f);
     case CSSValueExpanded:
-        return 125;
+        return FontSelectionValue(125);
     case CSSValueExtraExpanded:
-        return 150;
+        return FontSelectionValue(150);
     case CSSValueUltraExpanded:
-        return 200;
+        return FontSelectionValue(200);
     default:
         ASSERT_NOT_REACHED();
-        return 100;
+        return FontSelectionValue(100);
     }
 }
 

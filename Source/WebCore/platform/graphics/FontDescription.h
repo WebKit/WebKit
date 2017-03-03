@@ -46,7 +46,7 @@ public:
 
     float computedSize() const { return m_computedSize; }
     FontItalic italic() const { return static_cast<FontItalic>(m_italic); }
-    float stretch() const { return m_stretch; }
+    FontSelectionValue stretch() const { return m_stretch; }
     int computedPixelSize() const { return int(m_computedSize + 0.5f); }
     FontWeight weight() const { return static_cast<FontWeight>(m_weight); }
     FontWeight lighterWeight() const;
@@ -98,7 +98,7 @@ public:
 
     void setComputedSize(float s) { m_computedSize = clampToFloat(s); }
     void setItalic(FontItalic i) { m_italic = i; }
-    void setStretch(float stretch) { m_stretch = stretch; }
+    void setStretch(FontSelectionValue stretch) { m_stretch = stretch; }
     void setIsItalic(bool i) { setItalic(i ? FontItalicOn : FontItalicOff); }
     void setWeight(FontWeight w) { m_weight = w; }
     void setRenderingMode(FontRenderingMode mode) { m_renderingMode = static_cast<unsigned>(mode); }
@@ -136,8 +136,8 @@ private:
     FontVariationSettings m_variationSettings;
     AtomicString m_locale;
 
-    float m_stretch { 100 }; // Stretch, or "width," of the font
     float m_computedSize { 0 }; // Computed size adjusted for the minimum font size and the zoom factor.
+    FontSelectionValue m_stretch { 100 }; // Stretch, or "width," of the font
     unsigned m_orientation : 1; // FontOrientation - Whether the font is rendering on a horizontal line or a vertical line.
     unsigned m_nonCJKGlyphOrientation : 1; // NonCJKGlyphOrientation - Only used by vertical text. Determines the default orientation for non-ideograph glyphs.
     unsigned m_widthVariant : 2; // FontWidthVariant
@@ -265,7 +265,7 @@ public:
 
     // Initial values for font properties.
     static FontItalic initialItalic() { return FontItalicOff; }
-    static float initialStretch() { return 100; }
+    static FontSelectionValue initialStretch() { return FontSelectionValue(100); }
     static FontSmallCaps initialSmallCaps() { return FontSmallCapsOff; }
     static Kerning initialKerning() { return Kerning::Auto; }
     static FontSmoothingMode initialFontSmoothing() { return AutoSmoothing; }

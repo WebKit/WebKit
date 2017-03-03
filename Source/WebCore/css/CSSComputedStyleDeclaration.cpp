@@ -1921,26 +1921,26 @@ static Ref<CSSPrimitiveValue> fontStyleFromStyle(const RenderStyle& style)
 
 static Ref<CSSPrimitiveValue> fontStretchFromStyle(const RenderStyle& style)
 {
-    float stretch = style.fontDescription().stretch();
-    if (stretch == 50)
+    auto stretch = style.fontDescription().stretch();
+    if (stretch == FontSelectionValue(50))
         return CSSValuePool::singleton().createIdentifierValue(CSSValueUltraCondensed);
-    if (stretch == 62.5)
+    if (stretch == FontSelectionValue(62.5f))
         return CSSValuePool::singleton().createIdentifierValue(CSSValueExtraCondensed);
-    if (stretch == 75)
+    if (stretch == FontSelectionValue(75))
         return CSSValuePool::singleton().createIdentifierValue(CSSValueCondensed);
-    if (stretch == 87.5)
+    if (stretch == FontSelectionValue(87.5f))
         return CSSValuePool::singleton().createIdentifierValue(CSSValueSemiCondensed);
-    if (stretch == 100)
+    if (stretch == FontSelectionValue(100))
         return CSSValuePool::singleton().createIdentifierValue(CSSValueNormal);
-    if (stretch == 112.5)
+    if (stretch == FontSelectionValue(112.5f))
         return CSSValuePool::singleton().createIdentifierValue(CSSValueSemiExpanded);
-    if (stretch == 125)
+    if (stretch == FontSelectionValue(125))
         return CSSValuePool::singleton().createIdentifierValue(CSSValueExpanded);
-    if (stretch == 150)
+    if (stretch == FontSelectionValue(150))
         return CSSValuePool::singleton().createIdentifierValue(CSSValueExtraExpanded);
-    if (stretch == 200)
+    if (stretch == FontSelectionValue(200))
         return CSSValuePool::singleton().createIdentifierValue(CSSValueUltraExpanded);
-    return CSSValuePool::singleton().createValue(stretch, CSSPrimitiveValue::CSS_PERCENTAGE);
+    return CSSValuePool::singleton().createValue(static_cast<float>(stretch), CSSPrimitiveValue::CSS_PERCENTAGE);
 }
 
 static Ref<CSSValue> fontVariantFromStyle(const RenderStyle& style)

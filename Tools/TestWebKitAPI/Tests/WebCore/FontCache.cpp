@@ -56,7 +56,7 @@ static std::unique_ptr<FontPlatformData> createPlatformFont(const char* familyNa
     description.setOneFamily(familyNameString);
     description.setWeight(weight);
     description.setItalic(italic);
-    description.setStretch(stretch);
+    description.setStretch(FontSelectionValue(stretch));
     description.setComputedSize(size);
 
     auto& fontCache = FontCache::singleton();
