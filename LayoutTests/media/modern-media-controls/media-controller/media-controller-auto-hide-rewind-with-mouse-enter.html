@@ -1,45 +1,38 @@
 <!DOCTYPE html>
 <script src="../../../resources/js-test-pre.js"></script>
 <body>
-<video src="../../content/test.mp4" style="position: absolute; left: 0; top: 0; width: 320px; height: 240px;" controls autoplay data-auto-hide-delay="250"></video>
+<video src="../../content/CC+Subtitles.mov" style="position: absolute; left: 0; top: 0; width: 320px; height: 240px;" controls autoplay data-auto-hide-delay="1000"></video>
 <script type="text/javascript">
 
 window.jsTestIsAsync = true;
 
 description("Testing the controls bar reappears when the mouse enters the media.");
 
-let controlsBar;
+const media = document.querySelector("video");
+const shadowRoot = window.internals.shadowRoot(media);
 
-document.querySelector("video").addEventListener("play", (event) => {
-    window.requestAnimationFrame(() => {
-        const media = event.target;
-        controlsBar = window.internals.shadowRoot(media).querySelector(".controls-bar");
-
-        debug("Video started playing, controls bar is visible by default.");
-        shouldBeFalse("controlsBar.classList.contains('faded')");
-
-        setTimeout(() => {
+media.addEventListener("play", (event) => {
+    shouldBecomeEqual("!!shadowRoot.querySelector('.controls-bar')", "true", () => {
+        debug("");
+        debug("Video started playing, controls bar should become visible by default.");
+        shouldBecomeEqual("shadowRoot.querySelector('.controls-bar').classList.contains('faded')", "false", () => {
             debug("");
-            debug("Auto-hide timer has elapsed, controls bar should be faded.");
-            shouldBeTrue("controlsBar.classList.contains('faded')");
-
-            eventSender.mouseMoveTo(100, 100);
-            window.requestAnimationFrame(() => {
+            debug("Controls bar should fade when the auto-hide timer has elapsed.");
+            shouldBecomeEqual("shadowRoot.querySelector('.controls-bar').classList.contains('faded')", "true", () => {
+                eventSender.mouseMoveTo(100, 100);
                 debug("");
-                debug("Mouse moved over the media, controls bar should be visible.");
-                shouldBeFalse("controlsBar.classList.contains('faded')");
+                debug("Mouse moved over the media, controls bar should become visible.");
+                shouldBecomeEqual("shadowRoot.querySelector('.controls-bar').classList.contains('faded')", "false", () => {
+                    debug("");
+                    debug("Controls bar should fade when the auto-hide timer has elapsed.");
+                    shouldBecomeEqual("shadowRoot.querySelector('.controls-bar').classList.contains('faded')", "true", () => {
+                        debug("");
+                        media.remove();
+                        finishJSTest();
+                    });
+                });
             });
-
-            setTimeout(() => {
-                debug("");
-                debug("Auto-hide timer has elapsed, controls bar should be faded.");
-                shouldBeTrue("controlsBar.classList.contains('faded')");
-
-                debug("");
-                media.remove();
-                finishJSTest();
-            }, 300);
-        }, 300);
+        });
     });
 });
 
