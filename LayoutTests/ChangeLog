@@ -1,3 +1,18 @@
+2017-03-03  Antoine Quint  <graouts@apple.com>
+
+        LayoutTest media/modern-media-controls/tracks-support/tracks-support-show-panel-after-dragging-controls.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=167275
+        <rdar://problem/30824290>
+
+        Reviewed by Dean Jackson.
+
+        Ensure that we have metrics for buttons before attempting to click on them and let dragging interaction
+        apply changes to CSS on the next rAF before trying to pursue the next step.
+
+        * media/modern-media-controls/tracks-support/tracks-support-show-panel-after-dragging-controls-expected.txt:
+        * media/modern-media-controls/tracks-support/tracks-support-show-panel-after-dragging-controls.html:
+        * platform/mac/TestExpectations:
+
 2017-03-03  Joseph Pecoraro  <pecoraro@apple.com>
 
         LayoutTest performance-api/performance-observer-basic.html is a flaky timeout

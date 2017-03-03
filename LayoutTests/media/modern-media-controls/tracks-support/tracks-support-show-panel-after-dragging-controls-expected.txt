@@ -3,7 +3,9 @@ Testing the display of a tracks panel after dragging the controls bar in fullscr
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS shadowRoot.querySelector('button.tracks').getBoundingClientRect().right === shadowRoot.querySelector('.tracks-panel').getBoundingClientRect().right is true
+PASS shadowRoot.querySelector('button.fullscreen').getBoundingClientRect() became different from 0
+PASS shadowRoot.querySelector('button.tracks').getBoundingClientRect() became different from 0
+PASS shadowRoot.querySelector('button.tracks').getBoundingClientRect().right is shadowRoot.querySelector('.tracks-panel').getBoundingClientRect().right
 PASS shadowRoot.querySelector('.tracks-panel').style.bottom is "151px"
 
 PASS successfullyParsed is true

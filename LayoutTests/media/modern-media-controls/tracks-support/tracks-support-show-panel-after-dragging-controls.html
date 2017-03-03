@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <script src="../../../resources/js-test-pre.js"></script>
+<script src="../resources/media-controls-utils.js" type="text/javascript"></script>
 <body>
 <video src="../../content/CC+Subtitles.mov" style="width: 320px; height: 240px;" controls autoplay></video>
 <script type="text/javascript">
@@ -16,29 +17,29 @@ media.addEventListener("webkitbeginfullscreen", () => {
 });
 
 media.addEventListener("webkitfullscreenchange", () => {
-    if (media.webkitDisplayingFullscreen) {
-        window.requestAnimationFrame(() => {
-            const bounds = shadowRoot.querySelector(".controls-bar").getBoundingClientRect();
-            eventSender.mouseMoveTo(bounds.left + 118, bounds.top + 10);
-            eventSender.mouseDown();
-            eventSender.mouseMoveTo(bounds.left + 68, bounds.top - 40);
-            eventSender.mouseUp();
+    if (!media.webkitDisplayingFullscreen)
+        return;
 
-            window.requestAnimationFrame(() => {
-                window.requestAnimationFrame(() => {
-                    clickOnButton("tracks");
-                    window.requestAnimationFrame(() => {
-                        shouldBeTrue("shadowRoot.querySelector('button.tracks').getBoundingClientRect().right === shadowRoot.querySelector('.tracks-panel').getBoundingClientRect().right");
-                        shouldBeEqualToString("shadowRoot.querySelector('.tracks-panel').style.bottom", "151px");
+    window.requestAnimationFrame(() => {
+        const bounds = shadowRoot.querySelector(".controls-bar").getBoundingClientRect();
+        eventSender.mouseMoveTo(bounds.left + 118, bounds.top + 10);
+        eventSender.mouseDown();
+        eventSender.mouseMoveTo(bounds.left + 68, bounds.top - 40);
+        eventSender.mouseUp();
 
-                        debug("");
-                        media.remove();
-                        finishJSTest();
-                    });
+        requestAnimationFrame(() => {
+            clickOnButton("tracks", () => {
+                requestAnimationFrame(() => {
+                    shouldBe("shadowRoot.querySelector('button.tracks').getBoundingClientRect().right", "shadowRoot.querySelector('.tracks-panel').getBoundingClientRect().right")
+                    shouldBeEqualToString("shadowRoot.querySelector('.tracks-panel').style.bottom", "151px");
+
+                    debug("");
+                    media.remove();
+                    finishJSTest();
                 });
             });
         });
-    }
+    });
 });
 
 media.addEventListener("play", () => {
@@ -46,12 +47,11 @@ media.addEventListener("play", () => {
     window.requestAnimationFrame(() => clickOnButton("fullscreen"));
 });
 
-function clickOnButton(name)
+function clickOnButton(name, continuation)
 {
-    const bounds = shadowRoot.querySelector(`button.${name}`).getBoundingClientRect();
-    eventSender.mouseMoveTo(bounds.left + 1, bounds.top + 1);
-    eventSender.mouseDown();
-    eventSender.mouseUp();
+    shouldBecomeDifferent(`shadowRoot.querySelector('button.${name}').getBoundingClientRect()`, "0", () => {
+        pressOnElement(shadowRoot.querySelector(`button.${name}`), continuation);
+    });
 }
 
 </script>
