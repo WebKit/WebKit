@@ -796,7 +796,7 @@
         }
     },
     {
-        "name": "Filter Effects backdrop-filter propery",
+        "name": "Filter Effects backdrop-filter property",
         "status": {
             "status": "Done",
             "enabled-by-default": true
