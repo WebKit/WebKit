@@ -175,7 +175,7 @@ private:
     
 class ContentExtensionRule {
 public:
-    ContentExtensionRule(const Trigger&, const Action&);
+    ContentExtensionRule(Trigger&&, Action&&);
 
     const Trigger& trigger() const { return m_trigger; }
     const Action& action() const { return m_action; }

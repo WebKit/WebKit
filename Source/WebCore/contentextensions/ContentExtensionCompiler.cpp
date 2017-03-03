@@ -205,13 +205,12 @@ static void addUniversalActionsToDFA(DFA& dfa, const UniversalActionSet& univers
     root.setActions(actionsStart, static_cast<uint16_t>(actionsLength));
 }
 
-std::error_code compileRuleList(ContentExtensionCompilationClient& client, String&& ruleList)
+std::error_code compileRuleList(ContentExtensionCompilationClient& client, String&& ruleJSON)
 {
-    Vector<ContentExtensionRule> parsedRuleList;
-    auto parserError = parseRuleList(ruleList, parsedRuleList);
-    ruleList = String();
-    if (parserError)
-        return parserError;
+    auto ruleList = parseRuleList(WTFMove(ruleJSON));
+    if (!ruleList.hasValue())
+        return ruleList.error();
+    Vector<ContentExtensionRule> parsedRuleList = WTFMove(ruleList.value());
 
 #if CONTENT_EXTENSIONS_PERFORMANCE_REPORTING
     double patternPartitioningStart = monotonicallyIncreasingTime();

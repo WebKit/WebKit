@@ -1,3 +1,29 @@
+2017-03-02  Alex Christensen  <achristensen@webkit.org>
+
+        Modernize ContentExtensionParser
+        https://bugs.webkit.org/show_bug.cgi?id=169106
+
+        Reviewed by Andy Estes.
+
+        We were returning std::error_code and passing the return value as a parameter reference.
+        because we wrote this code before we had WTF::Expected.
+
+        No change in behavior, verified by many API tests.
+
+        * contentextensions/ContentExtensionCompiler.cpp:
+        (WebCore::ContentExtensions::compileRuleList):
+        * contentextensions/ContentExtensionParser.cpp:
+        (WebCore::ContentExtensions::getDomainList):
+        (WebCore::ContentExtensions::loadTrigger):
+        (WebCore::ContentExtensions::loadAction):
+        (WebCore::ContentExtensions::loadRule):
+        (WebCore::ContentExtensions::loadEncodedRules):
+        (WebCore::ContentExtensions::parseRuleList):
+        * contentextensions/ContentExtensionParser.h:
+        * contentextensions/ContentExtensionRule.cpp:
+        (WebCore::ContentExtensions::ContentExtensionRule::ContentExtensionRule):
+        * contentextensions/ContentExtensionRule.h:
+
 2017-03-02  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r213301.

@@ -32,9 +32,9 @@ namespace WebCore {
 
 namespace ContentExtensions {
 
-ContentExtensionRule::ContentExtensionRule(const Trigger& trigger, const Action& action)
-    : m_trigger(trigger)
-    , m_action(action)
+ContentExtensionRule::ContentExtensionRule(Trigger&& trigger, Action&& action)
+    : m_trigger(WTFMove(trigger))
+    , m_action(WTFMove(action))
 {
     ASSERT(!m_trigger.urlFilter.isEmpty());
 }
