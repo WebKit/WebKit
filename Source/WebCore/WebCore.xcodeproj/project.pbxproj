@@ -2383,16 +2383,16 @@
 		57B5F7ED1E57F1E300F34F90 /* PasswordCredential.h in Headers */ = {isa = PBXBuildFile; fileRef = 57B5F7EB1E57F1E300F34F90 /* PasswordCredential.h */; };
 		57B5F7F01E5B8C5A00F34F90 /* JSPasswordCredential.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 57B5F7EE1E5B8C5A00F34F90 /* JSPasswordCredential.cpp */; };
 		57B5F7F11E5B8C5A00F34F90 /* JSPasswordCredential.h in Headers */ = {isa = PBXBuildFile; fileRef = 57B5F7EF1E5B8C5A00F34F90 /* JSPasswordCredential.h */; };
-		57C7A68C1E56967500C67D71 /* BasicCredential.h in Headers */ = {isa = PBXBuildFile; fileRef = 57C7A68B1E56967500C67D71 /* BasicCredential.h */; };
-		57C7A6941E578ACA00C67D71 /* BasicCredential.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 57C7A6931E578ACA00C67D71 /* BasicCredential.cpp */; };
-		57C7A69F1E57917800C67D71 /* JSBasicCredential.h in Headers */ = {isa = PBXBuildFile; fileRef = 57C7A69D1E57910D00C67D71 /* JSBasicCredential.h */; };
-		57C7A6A01E57919B00C67D71 /* JSBasicCredential.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 57C7A69C1E57910D00C67D71 /* JSBasicCredential.cpp */; };
 		57B5F7F81E5BE84000F34F90 /* CryptoAlgorithmAES_GCM.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 57B5F7F61E5BE84000F34F90 /* CryptoAlgorithmAES_GCM.cpp */; };
 		57B5F7F91E5BE84000F34F90 /* CryptoAlgorithmAES_GCM.h in Headers */ = {isa = PBXBuildFile; fileRef = 57B5F7F71E5BE84000F34F90 /* CryptoAlgorithmAES_GCM.h */; };
 		57B5F8091E5D1A9800F34F90 /* CryptoAlgorithmAesGcmParams.h in Headers */ = {isa = PBXBuildFile; fileRef = 57B5F8081E5D1A9800F34F90 /* CryptoAlgorithmAesGcmParams.h */; };
 		57B5F80E1E5D2F2D00F34F90 /* CryptoAlgorithmAES_GCMMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 57B5F80D1E5D2F2D00F34F90 /* CryptoAlgorithmAES_GCMMac.cpp */; };
 		57B5F80F1E5E2A4B00F34F90 /* JSAesGcmParams.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 57B5F80A1E5D22DA00F34F90 /* JSAesGcmParams.cpp */; };
 		57B5F8101E5E2A4E00F34F90 /* JSAesGcmParams.h in Headers */ = {isa = PBXBuildFile; fileRef = 57B5F80B1E5D22DA00F34F90 /* JSAesGcmParams.h */; };
+		57C7A68C1E56967500C67D71 /* BasicCredential.h in Headers */ = {isa = PBXBuildFile; fileRef = 57C7A68B1E56967500C67D71 /* BasicCredential.h */; };
+		57C7A6941E578ACA00C67D71 /* BasicCredential.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 57C7A6931E578ACA00C67D71 /* BasicCredential.cpp */; };
+		57C7A69F1E57917800C67D71 /* JSBasicCredential.h in Headers */ = {isa = PBXBuildFile; fileRef = 57C7A69D1E57910D00C67D71 /* JSBasicCredential.h */; };
+		57C7A6A01E57919B00C67D71 /* JSBasicCredential.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 57C7A69C1E57910D00C67D71 /* JSBasicCredential.cpp */; };
 		57D0018D1DD5413200ED19D9 /* JSCryptoKeyUsage.h in Headers */ = {isa = PBXBuildFile; fileRef = 57D0018C1DD5413200ED19D9 /* JSCryptoKeyUsage.h */; };
 		57D0018F1DD5415300ED19D9 /* JSCryptoKeyUsage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 57D0018E1DD5415300ED19D9 /* JSCryptoKeyUsage.cpp */; };
 		57E2335B1DC7D5E500F28D01 /* JSJsonWebKey.h in Headers */ = {isa = PBXBuildFile; fileRef = 57E2335A1DC7D5E500F28D01 /* JSJsonWebKey.h */; };
@@ -9792,11 +9792,6 @@
 		57B5F7EB1E57F1E300F34F90 /* PasswordCredential.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PasswordCredential.h; sourceTree = "<group>"; };
 		57B5F7EE1E5B8C5A00F34F90 /* JSPasswordCredential.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSPasswordCredential.cpp; sourceTree = "<group>"; };
 		57B5F7EF1E5B8C5A00F34F90 /* JSPasswordCredential.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSPasswordCredential.h; sourceTree = "<group>"; };
-		57C7A6891E56946D00C67D71 /* BasicCredential.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = BasicCredential.idl; sourceTree = "<group>"; };
-		57C7A68B1E56967500C67D71 /* BasicCredential.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BasicCredential.h; sourceTree = "<group>"; };
-		57C7A6931E578ACA00C67D71 /* BasicCredential.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BasicCredential.cpp; sourceTree = "<group>"; };
-		57C7A69C1E57910D00C67D71 /* JSBasicCredential.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSBasicCredential.cpp; sourceTree = "<group>"; };
-		57C7A69D1E57910D00C67D71 /* JSBasicCredential.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSBasicCredential.h; sourceTree = "<group>"; };
 		57B5F7F61E5BE84000F34F90 /* CryptoAlgorithmAES_GCM.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CryptoAlgorithmAES_GCM.cpp; sourceTree = "<group>"; };
 		57B5F7F71E5BE84000F34F90 /* CryptoAlgorithmAES_GCM.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptoAlgorithmAES_GCM.h; sourceTree = "<group>"; };
 		57B5F8071E5D19F200F34F90 /* AesGcmParams.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = AesGcmParams.idl; sourceTree = "<group>"; };
@@ -9804,6 +9799,11 @@
 		57B5F80A1E5D22DA00F34F90 /* JSAesGcmParams.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAesGcmParams.cpp; sourceTree = "<group>"; };
 		57B5F80B1E5D22DA00F34F90 /* JSAesGcmParams.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSAesGcmParams.h; sourceTree = "<group>"; };
 		57B5F80D1E5D2F2D00F34F90 /* CryptoAlgorithmAES_GCMMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CryptoAlgorithmAES_GCMMac.cpp; sourceTree = "<group>"; };
+		57C7A6891E56946D00C67D71 /* BasicCredential.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = BasicCredential.idl; sourceTree = "<group>"; };
+		57C7A68B1E56967500C67D71 /* BasicCredential.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BasicCredential.h; sourceTree = "<group>"; };
+		57C7A6931E578ACA00C67D71 /* BasicCredential.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BasicCredential.cpp; sourceTree = "<group>"; };
+		57C7A69C1E57910D00C67D71 /* JSBasicCredential.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSBasicCredential.cpp; sourceTree = "<group>"; };
+		57C7A69D1E57910D00C67D71 /* JSBasicCredential.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSBasicCredential.h; sourceTree = "<group>"; };
 		57D0018B1DD3DBA400ED19D9 /* CryptoKeyUsage.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = CryptoKeyUsage.idl; sourceTree = "<group>"; };
 		57D0018C1DD5413200ED19D9 /* JSCryptoKeyUsage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCryptoKeyUsage.h; sourceTree = "<group>"; };
 		57D0018E1DD5415300ED19D9 /* JSCryptoKeyUsage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCryptoKeyUsage.cpp; sourceTree = "<group>"; };
@@ -29110,6 +29110,7 @@
 			buildConfigurationList = 149C283908902B11008A9EFC /* Build configuration list for PBXNativeTarget "WebCore" */;
 			buildPhases = (
 				5D2F7DA00C6879C600B5B72B /* Update Info.plist with version information */,
+				A5E79CEC1E67F2CF00FB8153 /* Make Frameworks Symbolic Link */,
 				93F198A608245E59001E9ABC /* Headers */,
 				1C11CCB40AA6093700DADB20 /* Copy Generated Headers */,
 				5D87BC0711E43BDE00702B6F /* Copy Forwarding and ICU Headers */,
@@ -29350,6 +29351,20 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "SRC_DIR=\"$SRCROOT/Modules/modern-media-controls\"\nDST_DIR=\"$BUILT_PRODUCTS_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/modern-media-controls\"\n\nmkdir -p \"$DST_DIR\"\n\nif [ \"${PLATFORM_NAME}\" == \"macosx\" ]; then\n    IMG_OS_PREFIX=\"macOS\"\nfi\n\nif [ \"${PLATFORM_NAME}\" == \"iphoneos\" ] || [ \"${PLATFORM_NAME}\" == \"iphonesimulator\" ]; then\n    IMG_OS_PREFIX=\"iOS\"\nfi\n\nif [ -n \"$IMG_OS_PREFIX\" ]; then\n    mkdir -p \"$DST_DIR/images\"\n    rsync -aq --exclude \".svn\" --exclude \".DS_Store\" \"$SRC_DIR/images/$IMG_OS_PREFIX\" \"$DST_DIR/images\"\nfi\n\ncd \"$SRC_DIR\"\ncat controls/*.css > \"$DST_DIR/modern-media-controls.css\"\ncat `cat js-files` > \"$DST_DIR/modern-media-controls.js\"";
+		};
+		A5E79CEC1E67F2CF00FB8153 /* Make Frameworks Symbolic Link */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Make Frameworks Symbolic Link";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if [[ ${PLATFORM_NAME} != \"macosx\" ]]; then\n    exit 0\nfi\n\nif [[ ${WK_USE_OVERRIDE_FRAMEWORKS_DIR} == \"YES\" ]]; then\n    exit 0\nfi\n\n# ENABLE_WEB_RTC cannot be relied on because of its conditionals.\nif [[ ${CONFIGURATION} == \"Production\" && ${TARGET_MAC_OS_X_VERSION_MAJOR} < 101300 ]]; then\n    exit 0\nfi\n\nln -shf Versions/Current/Frameworks \"$TARGET_BUILD_DIR/WebCore.framework/Frameworks\"\n";
 		};
 		DD041FBD09D9DDBE0010AF2A /* Generate Derived Sources */ = {
 			isa = PBXShellScriptBuildPhase;
