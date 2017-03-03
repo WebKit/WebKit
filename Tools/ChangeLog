@@ -1,3 +1,27 @@
+2017-03-02  Srinivasan Vijayaraghavan  <svijayaraghavan@apple.com>
+
+        Add ability to read bindings test results
+        https://bugs.webkit.org/show_bug.cgi?id=169063
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Scripts/webkitpy/common/net/bindingstestresults.py: Added.
+        (BindingsTestResults): Conforms to the AbstractTestResults interface.
+        (BindingsTestResults.__init__): Constructor.
+        (BindingsTestResults.results_from_string): Generates BindingsTestResults object from JSON string.
+        (BindingsTestResults.is_subset): Compare failing tests in two BindingsTestResults objects.
+        (BindingsTestResults.equals): Checks if two BindingsTestResults objects contain the same failing test names.
+        (BindingsTestResults.all_passed): Return True if all bindings tests passed.
+        (BindingsTestResults.failing_tests): Returns a list of failing tests.
+        (BindingsTestResults.did_exceed_test_failure_limit): Always returns False, exists to conform to the interface.
+        * Scripts/webkitpy/common/net/bindingstestresults_unittest.py: Added.
+        (BindingsTestResultsTest): Class to test BindingsTestResults.
+        (BindingsTestResultsTest.test_results_from_string): Unit tests string -> BindingsTestResults conversion.
+        (BindingsTestResultsTest.test_results_from_string_success): Ditto, for success cases.
+        * Scripts/webkitpy/tool/bot/bindingstestresultsreader.py: Added.
+        (BindingsTestResultsReader): Conforms to the AbstractTestResultsReader interface.
+        (BindingsTestResultsReader.results): Reads the results file and returns a BindingsTestResults object.
+
 2017-03-02  Aakash Jain  <aakash_jain@apple.com>
 
         Move stringMatchesWildcardString from WebKit2 to WebCore
