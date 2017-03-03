@@ -34,6 +34,8 @@ CODE_SIGN_ENTITLEMENTS_ios_testb3 = entitlements.plist;
 CODE_SIGN_ENTITLEMENTS_ios_testWasm = entitlements.plist;
 CODE_SIGN_ENTITLEMENTS_ios_testRegExp = entitlements.plist;
 
+OTHER_CODE_SIGN_FLAGS[sdk=iphone*] = -i com.apple.jsc;
+
 SKIP_INSTALL = $(SKIP_INSTALL_$(FORCE_TOOL_INSTALL));
 SKIP_INSTALL_ = YES;
 SKIP_INSTALL_NO = YES;
