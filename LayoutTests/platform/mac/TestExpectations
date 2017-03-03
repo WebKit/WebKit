@@ -1547,3 +1547,5 @@ webkit.org/b/168927 fast/dom/timer-throttling-hidden-page.html [ Pass Failure ]
 
 # Skipped because Mac doesn't have a key to show the context menu
 fast/events/context-activated-by-key-event.html [ Skip ]
+
+webkit.org/b/168136 performance-api/performance-observer-periodic.html [ Pass Failure ]
