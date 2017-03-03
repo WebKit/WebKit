@@ -1,5 +1,14 @@
 2017-03-02  Youenn Fablet  <youenn@apple.com>
 
+        Fixing typo in LayoutTests/webrtc/audio-peer-connection-webaudio.html
+        https://bugs.webkit.org/show_bug.cgi?id=169111
+
+        Unreviewed.
+
+        * webrtc/audio-peer-connection-webaudio.html:
+
+2017-03-02  Youenn Fablet  <youenn@apple.com>
+
         [iOS] Enable webrtc tests for debug builds
         https://bugs.webkit.org/show_bug.cgi?id=169108
 
