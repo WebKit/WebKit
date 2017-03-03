@@ -692,7 +692,7 @@ media/session [ Skip ]
 # GTK enables some of this tests on their TestExpectations file.
 [ Release ] webrtc [ Skip ]
 
-[ Debug ] webrtc/audio-peer-connection-webaudio.html [ Failure ]
+webrtc/audio-peer-connection-webaudio.html [ Failure ]
 fast/mediastream/getUserMedia-webaudio.html [ Skip ]
 fast/mediastream/RTCPeerConnection-AddRemoveStream.html [ Skip ]
 fast/mediastream/RTCPeerConnection-closed-state.html [ Skip ]

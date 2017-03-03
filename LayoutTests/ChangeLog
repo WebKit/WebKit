@@ -1,3 +1,15 @@
+2017-03-02  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r213332.
+
+        These tests are failing on ios-simulator debug.
+
+        Reverted changeset:
+
+        "[iOS] Enable webrtc tests for debug builds"
+        https://bugs.webkit.org/show_bug.cgi?id=169108
+        http://trac.webkit.org/changeset/213332
+
 2017-03-02  Antoine Quint  <graouts@apple.com>
 
         LayoutTest media/modern-media-controls/media-controller/media-controller-auto-hide-rewind-with-mouse-enter.html is a flaky failure
