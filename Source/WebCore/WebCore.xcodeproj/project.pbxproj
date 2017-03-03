@@ -2387,12 +2387,6 @@
 		57C7A6941E578ACA00C67D71 /* BasicCredential.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 57C7A6931E578ACA00C67D71 /* BasicCredential.cpp */; };
 		57C7A69F1E57917800C67D71 /* JSBasicCredential.h in Headers */ = {isa = PBXBuildFile; fileRef = 57C7A69D1E57910D00C67D71 /* JSBasicCredential.h */; };
 		57C7A6A01E57919B00C67D71 /* JSBasicCredential.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 57C7A69C1E57910D00C67D71 /* JSBasicCredential.cpp */; };
-		57B5F7F81E5BE84000F34F90 /* CryptoAlgorithmAES_GCM.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 57B5F7F61E5BE84000F34F90 /* CryptoAlgorithmAES_GCM.cpp */; };
-		57B5F7F91E5BE84000F34F90 /* CryptoAlgorithmAES_GCM.h in Headers */ = {isa = PBXBuildFile; fileRef = 57B5F7F71E5BE84000F34F90 /* CryptoAlgorithmAES_GCM.h */; };
-		57B5F8091E5D1A9800F34F90 /* CryptoAlgorithmAesGcmParams.h in Headers */ = {isa = PBXBuildFile; fileRef = 57B5F8081E5D1A9800F34F90 /* CryptoAlgorithmAesGcmParams.h */; };
-		57B5F80E1E5D2F2D00F34F90 /* CryptoAlgorithmAES_GCMMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 57B5F80D1E5D2F2D00F34F90 /* CryptoAlgorithmAES_GCMMac.cpp */; };
-		57B5F80F1E5E2A4B00F34F90 /* JSAesGcmParams.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 57B5F80A1E5D22DA00F34F90 /* JSAesGcmParams.cpp */; };
-		57B5F8101E5E2A4E00F34F90 /* JSAesGcmParams.h in Headers */ = {isa = PBXBuildFile; fileRef = 57B5F80B1E5D22DA00F34F90 /* JSAesGcmParams.h */; };
 		57D0018D1DD5413200ED19D9 /* JSCryptoKeyUsage.h in Headers */ = {isa = PBXBuildFile; fileRef = 57D0018C1DD5413200ED19D9 /* JSCryptoKeyUsage.h */; };
 		57D0018F1DD5415300ED19D9 /* JSCryptoKeyUsage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 57D0018E1DD5415300ED19D9 /* JSCryptoKeyUsage.cpp */; };
 		57E2335B1DC7D5E500F28D01 /* JSJsonWebKey.h in Headers */ = {isa = PBXBuildFile; fileRef = 57E2335A1DC7D5E500F28D01 /* JSJsonWebKey.h */; };
@@ -9799,13 +9793,6 @@
 		57C7A6931E578ACA00C67D71 /* BasicCredential.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BasicCredential.cpp; sourceTree = "<group>"; };
 		57C7A69C1E57910D00C67D71 /* JSBasicCredential.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSBasicCredential.cpp; sourceTree = "<group>"; };
 		57C7A69D1E57910D00C67D71 /* JSBasicCredential.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSBasicCredential.h; sourceTree = "<group>"; };
-		57B5F7F61E5BE84000F34F90 /* CryptoAlgorithmAES_GCM.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CryptoAlgorithmAES_GCM.cpp; sourceTree = "<group>"; };
-		57B5F7F71E5BE84000F34F90 /* CryptoAlgorithmAES_GCM.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptoAlgorithmAES_GCM.h; sourceTree = "<group>"; };
-		57B5F8071E5D19F200F34F90 /* AesGcmParams.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = AesGcmParams.idl; sourceTree = "<group>"; };
-		57B5F8081E5D1A9800F34F90 /* CryptoAlgorithmAesGcmParams.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptoAlgorithmAesGcmParams.h; sourceTree = "<group>"; };
-		57B5F80A1E5D22DA00F34F90 /* JSAesGcmParams.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAesGcmParams.cpp; sourceTree = "<group>"; };
-		57B5F80B1E5D22DA00F34F90 /* JSAesGcmParams.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSAesGcmParams.h; sourceTree = "<group>"; };
-		57B5F80D1E5D2F2D00F34F90 /* CryptoAlgorithmAES_GCMMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CryptoAlgorithmAES_GCMMac.cpp; sourceTree = "<group>"; };
 		57D0018B1DD3DBA400ED19D9 /* CryptoKeyUsage.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = CryptoKeyUsage.idl; sourceTree = "<group>"; };
 		57D0018C1DD5413200ED19D9 /* JSCryptoKeyUsage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCryptoKeyUsage.h; sourceTree = "<group>"; };
 		57D0018E1DD5415300ED19D9 /* JSCryptoKeyUsage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCryptoKeyUsage.cpp; sourceTree = "<group>"; };
@@ -23527,7 +23514,6 @@
 			children = (
 				E125F843182425C900D84CD9 /* CryptoAlgorithmAES_CBCMac.cpp */,
 				570440571E53851600356601 /* CryptoAlgorithmAES_CFBMac.cpp */,
-				57B5F80D1E5D2F2D00F34F90 /* CryptoAlgorithmAES_GCMMac.cpp */,
 				E1FE137C184D270200892F13 /* CryptoAlgorithmAES_KWMac.cpp */,
 				E125F8371822F1EB00D84CD9 /* CryptoAlgorithmHMACMac.cpp */,
 				E1BB84AC1822CA7400525043 /* CryptoAlgorithmRegistryMac.cpp */,
@@ -23548,8 +23534,6 @@
 				E125F8401824253A00D84CD9 /* CryptoAlgorithmAES_CBC.h */,
 				5712526A1E52527C008FF369 /* CryptoAlgorithmAES_CFB.cpp */,
 				571252681E524EB1008FF369 /* CryptoAlgorithmAES_CFB.h */,
-				57B5F7F61E5BE84000F34F90 /* CryptoAlgorithmAES_GCM.cpp */,
-				57B5F7F71E5BE84000F34F90 /* CryptoAlgorithmAES_GCM.h */,
 				E1FE1378184D21BB00892F13 /* CryptoAlgorithmAES_KW.cpp */,
 				E1FE1379184D21BB00892F13 /* CryptoAlgorithmAES_KW.h */,
 				E125F82F1822F11B00D84CD9 /* CryptoAlgorithmHMAC.cpp */,
@@ -23597,11 +23581,9 @@
 			isa = PBXGroup;
 			children = (
 				572093D11DDCEA4B00310AB0 /* AesCbcCfbParams.idl */,
-				57B5F8071E5D19F200F34F90 /* AesGcmParams.idl */,
 				577483101DADC49900716EF9 /* AesKeyGenParams.idl */,
 				572093D21DDCEB9A00310AB0 /* CryptoAlgorithmAesCbcCfbParams.h */,
 				E125F8391824104800D84CD9 /* CryptoAlgorithmAesCbcParamsDeprecated.h */,
-				57B5F8081E5D1A9800F34F90 /* CryptoAlgorithmAesGcmParams.h */,
 				577483111DADC55D00716EF9 /* CryptoAlgorithmAesKeyGenParams.h */,
 				E19AC3F61824E5D100349426 /* CryptoAlgorithmAesKeyGenParamsDeprecated.h */,
 				577483181DB4491F00716EF9 /* CryptoAlgorithmHmacKeyParams.h */,
@@ -23777,8 +23759,6 @@
 			children = (
 				5704405B1E53937900356601 /* JSAesCbcCfbParams.cpp */,
 				570440591E53936200356601 /* JSAesCbcCfbParams.h */,
-				57B5F80A1E5D22DA00F34F90 /* JSAesGcmParams.cpp */,
-				57B5F80B1E5D22DA00F34F90 /* JSAesGcmParams.h */,
 				577483151DAEC32200716EF9 /* JSAesKeyGenParams.cpp */,
 				577483131DAEC2EA00716EF9 /* JSAesKeyGenParams.h */,
 				5739E1301DAC7FD100E14383 /* JSCryptoAlgorithmParameters.cpp */,
@@ -25579,7 +25559,6 @@
 				BCE789861120E7A60060ECE5 /* BidiRun.h in Headers */,
 				A8C402931348B2220063F1E5 /* BidiRunList.h in Headers */,
 				FD31608D12B026F700C1A359 /* Biquad.h in Headers */,
-				57B5F8091E5D1A9800F34F90 /* CryptoAlgorithmAesGcmParams.h in Headers */,
 				FD31602512B0267600C1A359 /* BiquadDSPKernel.h in Headers */,
 				FDC54F051399B0DA008D9117 /* BiquadFilterNode.h in Headers */,
 				FD31602712B0267600C1A359 /* BiquadProcessor.h in Headers */,
@@ -26453,7 +26432,6 @@
 				A871DB310A150BD600B12A68 /* HTMLTableRowElement.h in Headers */,
 				93442C9E0D2B335C00338FF9 /* HTMLTableRowsCollection.h in Headers */,
 				A871DB250A150BD600B12A68 /* HTMLTableSectionElement.h in Headers */,
-				57B5F8101E5E2A4E00F34F90 /* JSAesGcmParams.h in Headers */,
 				D66817FB166FE6D700FA07B4 /* HTMLTemplateElement.h in Headers */,
 				A81369D6097374F600D74463 /* HTMLTextAreaElement.h in Headers */,
 				9BC6C21B13CCC97B008E0337 /* HTMLTextFormControlElement.h in Headers */,
@@ -27322,7 +27300,6 @@
 				E1271A580EEECDE400F61213 /* JSWorkerNavigator.h in Headers */,
 				7C4C96DD1AD4483500365A60 /* JSWritableStream.h in Headers */,
 				8358CB701C53277500E0C2D8 /* JSXMLDocument.h in Headers */,
-				57B5F7F91E5BE84000F34F90 /* CryptoAlgorithmAES_GCM.h in Headers */,
 				BC348BD40DB7F804004ABAB9 /* JSXMLHttpRequest.h in Headers */,
 				83D35AF21C718D9000F70D5A /* JSXMLHttpRequestEventTarget.h in Headers */,
 				F916C48E0DB510F80076CD83 /* JSXMLHttpRequestProgressEvent.h in Headers */,
@@ -30901,7 +30878,6 @@
 				B658FFA11522EF3A00DD5595 /* JSRadioNodeList.cpp in Sources */,
 				65DF320109D1CC60000BE325 /* JSRange.cpp in Sources */,
 				6C4C96DE1AD4483500363F64 /* JSReadableByteStreamController.cpp in Sources */,
-				57B5F80E1E5D2F2D00F34F90 /* CryptoAlgorithmAES_GCMMac.cpp in Sources */,
 				7C4C96DC1AD4483500365A50 /* JSReadableStream.cpp in Sources */,
 				6C4C96DE1AD4483500365672 /* JSReadableStreamBYOBRequest.cpp in Sources */,
 				6C4C96DE1AD4483500365A50 /* JSReadableStreamDefaultController.cpp in Sources */,
@@ -31372,7 +31348,6 @@
 				C9027F411B1D0AD200BFBFEF /* MediaSession.cpp in Sources */,
 				C96F5EC71B5872260091EA9D /* MediaSessionInterruptionProvider.cpp in Sources */,
 				C96F5EC61B5872260091EA9D /* MediaSessionInterruptionProviderMac.mm in Sources */,
-				57B5F80F1E5E2A4B00F34F90 /* JSAesGcmParams.cpp in Sources */,
 				C90F65551B2253B1002163A1 /* MediaSessionManager.cpp in Sources */,
 				CD669D681D23364B004D1866 /* MediaSessionManagerCocoa.cpp in Sources */,
 				07638A9A1884487200E15A1B /* MediaSessionManagerIOS.mm in Sources */,
@@ -31548,7 +31523,6 @@
 				2D6E468417D660F500ECF8BB /* PDFDocumentImageMac.mm in Sources */,
 				41E408391DCB748900EFCE19 /* PeerConnectionBackend.cpp in Sources */,
 				8A7CC97012076F8A001D4588 /* PendingScript.cpp in Sources */,
-				57B5F7F81E5BE84000F34F90 /* CryptoAlgorithmAES_GCM.cpp in Sources */,
 				E526AF3F1727F8F200E41781 /* Performance.cpp in Sources */,
 				CB38FD4B1CCCF36600592A3F /* PerformanceEntry.cpp in Sources */,
 				AD5A0C241DECACC400707054 /* PerformanceLogging.cpp in Sources */,

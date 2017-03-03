@@ -38,7 +38,6 @@ public:
     enum class Class {
         None,
         AesCbcCfbParams,
-        AesGcmParams,
         AesKeyGenParams,
         HmacKeyParams,
         RsaHashedKeyGenParams,

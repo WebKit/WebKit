@@ -31,24 +31,6 @@ crypto.subtle.generateKey({name: "aes-cbc", length: 128}, extractable, ["decrypt
     return shouldReject('crypto.subtle.exportKey("spki", key)');
 }).then(function() {
     return shouldReject('crypto.subtle.exportKey("pkcs8", key)');
-}).then(function() {
-    return crypto.subtle.generateKey({name: "aes-cfb-8", length: 128}, extractable, ["decrypt", "encrypt", "unwrapKey", "wrapKey"]);
-}).then(function(result) {
-    key = result;
-
-    // Not support format.
-    return shouldReject('crypto.subtle.exportKey("spki", key)');
-}).then(function() {
-    return shouldReject('crypto.subtle.exportKey("pkcs8", key)');
-}).then(function() {
-    return crypto.subtle.generateKey({name: "aes-gcm", length: 128}, extractable, ["decrypt", "encrypt", "unwrapKey", "wrapKey"]);
-}).then(function(result) {
-    key = result;
-
-    // Not support format.
-    return shouldReject('crypto.subtle.exportKey("spki", key)');
-}).then(function() {
-    return shouldReject('crypto.subtle.exportKey("pkcs8", key)');
 }).then(finishJSTest, finishJSTest);
 </script>
 

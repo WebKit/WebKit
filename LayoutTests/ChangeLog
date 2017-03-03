@@ -1,3 +1,15 @@
+2017-03-02  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r213301.
+
+        This change broke internal builds.
+
+        Reverted changeset:
+
+        "WebCrypto API support for AES-GCM"
+        https://bugs.webkit.org/show_bug.cgi?id=157175
+        http://trac.webkit.org/changeset/213301
+
 2017-03-02  Antoine Quint  <graouts@apple.com>
 
         LayoutTest media/modern-media-controls/volume-support/volume-support-drag.html is a flaky failure
