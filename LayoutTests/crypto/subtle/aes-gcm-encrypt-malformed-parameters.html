@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../resources/common.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+description("Test encrypting using AES-GCM with malformed parameters");
+
+jsTestIsAsync = true;
+
+var extractable = false;
+var plainText = asciiToUint8Array("Hello, World!");
+var rawKey = asciiToUint8Array("jnOw99oOZFLIEPMr");
+
+crypto.subtle.importKey("raw", rawKey, "aes-gcm", extractable, ["encrypt"]).then(function(result) {
+    key = result;
+
+    // Wrong tag length
+    shouldReject('crypto.subtle.encrypt({name: "aes-gcm", iv: asciiToUint8Array("jnOw99oOZFLIEPMrd"), tagLength: 0}, key, plainText)');
+    shouldReject('crypto.subtle.encrypt({name: "aes-gcm", iv: asciiToUint8Array("jnOw99oOZFLIEPMrd"), tagLength: -1}, key, plainText)');
+    shouldReject('crypto.subtle.encrypt({name: "aes-gcm", iv: asciiToUint8Array("jnOw99oOZFLIEPMrd"), tagLength: 129}, key, plainText)');
+    shouldReject('crypto.subtle.encrypt({name: "aes-gcm", iv: asciiToUint8Array("jnOw99oOZFLIEPMrd"), tagLength: 70}, key, plainText)');
+
+    finishJSTest();
+});
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -25,6 +25,10 @@ PASS crypto.subtle.generateKey({name: "aes-cfb-8", length: 128}, extractable, ["
 PASS crypto.subtle.generateKey({name: "aes-cfb-8", length: 128}, extractable, ["verify"]) rejected promise  with SyntaxError (DOM Exception 12): A required parameter was missing or out-of-range.
 PASS crypto.subtle.generateKey({name: "aes-cfb-8", length: 128}, extractable, ["deriveKey"]) rejected promise  with SyntaxError (DOM Exception 12): A required parameter was missing or out-of-range.
 PASS crypto.subtle.generateKey({name: "aes-cfb-8", length: 128}, extractable, ["deriveBits"]) rejected promise  with SyntaxError (DOM Exception 12): A required parameter was missing or out-of-range.
+PASS crypto.subtle.generateKey({name: "aes-gcm", length: 128}, extractable, ["sign"]) rejected promise  with SyntaxError (DOM Exception 12): A required parameter was missing or out-of-range.
+PASS crypto.subtle.generateKey({name: "aes-gcm", length: 128}, extractable, ["verify"]) rejected promise  with SyntaxError (DOM Exception 12): A required parameter was missing or out-of-range.
+PASS crypto.subtle.generateKey({name: "aes-gcm", length: 128}, extractable, ["deriveKey"]) rejected promise  with SyntaxError (DOM Exception 12): A required parameter was missing or out-of-range.
+PASS crypto.subtle.generateKey({name: "aes-gcm", length: 128}, extractable, ["deriveBits"]) rejected promise  with SyntaxError (DOM Exception 12): A required parameter was missing or out-of-range.
 PASS crypto.subtle.generateKey({name: "aes-cbc", length: 111}, extractable, ["encrypt"]) rejected promise  with OperationError (DOM Exception 34): The operation failed for an operation-specific reason.
 PASS crypto.subtle.generateKey({name: "aes-kw", length: 111}, extractable, ["wrapKey"]) rejected promise  with OperationError (DOM Exception 34): The operation failed for an operation-specific reason.
 PASS successfullyParsed is true

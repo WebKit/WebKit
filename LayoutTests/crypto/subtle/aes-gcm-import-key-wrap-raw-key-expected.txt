@@ -1,0 +1,10 @@
+Test wrapping a raw key with AES-GCM using an imported key
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS bytesToHexString(wrappedKey) is expectWrappedKey
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

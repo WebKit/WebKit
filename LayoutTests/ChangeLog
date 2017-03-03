@@ -1,3 +1,80 @@
+2017-03-02  Jiewen Tan  <jiewen_tan@apple.com>
+
+        WebCrypto API support for AES-GCM
+        https://bugs.webkit.org/show_bug.cgi?id=157175
+        <rdar://problem/27311691>
+
+        Reviewed by Brent Fulgham.
+
+        This patch also adds some tests for AES-CFB.
+
+        * crypto/subtle/aes-export-key-malformed-parameters-expected.txt:
+        * crypto/subtle/aes-export-key-malformed-parameters.html:
+        * crypto/subtle/aes-gcm-decrypt-malformed-parameters-expected.txt: Added.
+        * crypto/subtle/aes-gcm-decrypt-malformed-parameters.html: Added.
+        * crypto/subtle/aes-gcm-encrypt-malformed-parameters-expected.txt: Added.
+        * crypto/subtle/aes-gcm-encrypt-malformed-parameters.html: Added.
+        * crypto/subtle/aes-gcm-generate-export-key-jwk-length-128-expected.txt: Added.
+        * crypto/subtle/aes-gcm-generate-export-key-jwk-length-128.html: Added.
+        * crypto/subtle/aes-gcm-generate-export-key-jwk-length-192-expected.txt: Added.
+        * crypto/subtle/aes-gcm-generate-export-key-jwk-length-192.html: Added.
+        * crypto/subtle/aes-gcm-generate-export-key-jwk-length-256-expected.txt: Added.
+        * crypto/subtle/aes-gcm-generate-export-key-jwk-length-256.html: Added.
+        * crypto/subtle/aes-gcm-generate-export-raw-key-expected.txt: Added.
+        * crypto/subtle/aes-gcm-generate-export-raw-key.html: Added.
+        * crypto/subtle/aes-gcm-generate-key-encrypt-decrypt-expected.txt: Added.
+        * crypto/subtle/aes-gcm-generate-key-encrypt-decrypt.html: Added.
+        * crypto/subtle/aes-gcm-generate-key-expected.txt: Added.
+        * crypto/subtle/aes-gcm-generate-key.html: Added.
+        * crypto/subtle/aes-gcm-import-jwk-key-length-128-expected.txt: Added.
+        * crypto/subtle/aes-gcm-import-jwk-key-length-128.html: Added.
+        * crypto/subtle/aes-gcm-import-jwk-key-length-192-expected.txt: Added.
+        * crypto/subtle/aes-gcm-import-jwk-key-length-192.html: Added.
+        * crypto/subtle/aes-gcm-import-jwk-key-length-256-expected.txt: Added.
+        * crypto/subtle/aes-gcm-import-jwk-key-length-256.html: Added.
+        * crypto/subtle/aes-gcm-import-key-decrypt-additional-data-expected.txt: Added.
+        * crypto/subtle/aes-gcm-import-key-decrypt-additional-data-tag-length-32-expected.txt: Added.
+        * crypto/subtle/aes-gcm-import-key-decrypt-additional-data-tag-length-32.html: Added.
+        * crypto/subtle/aes-gcm-import-key-decrypt-additional-data.html: Added.
+        * crypto/subtle/aes-gcm-import-key-decrypt-expected.txt: Added.
+        * crypto/subtle/aes-gcm-import-key-decrypt-tagLengths-expected.txt: Added.
+        * crypto/subtle/aes-gcm-import-key-decrypt-tagLengths.html: Added.
+        * crypto/subtle/aes-gcm-import-key-decrypt.html: Added.
+        * crypto/subtle/aes-gcm-import-key-encrypt-additional-data-expected.txt: Added.
+        * crypto/subtle/aes-gcm-import-key-encrypt-additional-data-tag-length-32-expected.txt: Added.
+        * crypto/subtle/aes-gcm-import-key-encrypt-additional-data-tag-length-32.html: Added.
+        * crypto/subtle/aes-gcm-import-key-encrypt-additional-data.html: Added.
+        * crypto/subtle/aes-gcm-import-key-encrypt-expected.txt: Added.
+        * crypto/subtle/aes-gcm-import-key-encrypt-tagLengths-expected.txt: Added.
+        * crypto/subtle/aes-gcm-import-key-encrypt-tagLengths.html: Added.
+        * crypto/subtle/aes-gcm-import-key-encrypt.html: Added.
+        * crypto/subtle/aes-gcm-import-key-unwrap-jwk-key-expected.txt: Added.
+        * crypto/subtle/aes-gcm-import-key-unwrap-jwk-key.html: Added.
+        * crypto/subtle/aes-gcm-import-key-unwrap-raw-key-expected.txt: Added.
+        * crypto/subtle/aes-gcm-import-key-unwrap-raw-key.html: Added.
+        * crypto/subtle/aes-gcm-import-key-wrap-jwk-key-expected.txt: Added.
+        * crypto/subtle/aes-gcm-import-key-wrap-jwk-key.html: Added.
+        * crypto/subtle/aes-gcm-import-key-wrap-raw-key-expected.txt: Added.
+        * crypto/subtle/aes-gcm-import-key-wrap-raw-key.html: Added.
+        * crypto/subtle/aes-gcm-import-raw-key-expected.txt: Added.
+        * crypto/subtle/aes-gcm-import-raw-key.html: Added.
+        * crypto/subtle/aes-generate-key-malformed-parameters-expected.txt:
+        * crypto/subtle/aes-generate-key-malformed-parameters.html:
+        * crypto/subtle/aes-import-key-malformed-parameters-expected.txt:
+        * crypto/subtle/aes-import-key-malformed-parameters.html:
+        * crypto/workers/subtle/aes-gcm-import-key-decrypt-expected.txt: Added.
+        * crypto/workers/subtle/aes-gcm-import-key-decrypt.html: Added.
+        * crypto/workers/subtle/aes-gcm-import-key-encrypt-expected.txt: Added.
+        * crypto/workers/subtle/aes-gcm-import-key-encrypt.html: Added.
+        * crypto/workers/subtle/aes-gcm-import-key-unwrap-key-expected.txt: Added.
+        * crypto/workers/subtle/aes-gcm-import-key-unwrap-key.html: Added.
+        * crypto/workers/subtle/aes-gcm-import-key-wrap-key-expected.txt: Added.
+        * crypto/workers/subtle/aes-gcm-import-key-wrap-key.html: Added.
+        * crypto/workers/subtle/resources/aes-gcm-import-key-decrypt.js: Added.
+        * crypto/workers/subtle/resources/aes-gcm-import-key-encrypt.js: Added.
+        * crypto/workers/subtle/resources/aes-gcm-import-key-unwrap-key.js: Added.
+        * crypto/workers/subtle/resources/aes-gcm-import-key-wrap-key.js: Added.
+
 2017-03-02  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r213332.
