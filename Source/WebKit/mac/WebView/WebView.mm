@@ -675,7 +675,7 @@ private:
 }
 
 @end
-#else
+#elif !PLATFORM(MAC)
 @implementation WebUITextIndicatorData
 @end
 #endif // ENABLE(DATA_INTERACTION)
