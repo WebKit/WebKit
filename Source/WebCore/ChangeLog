@@ -1,3 +1,46 @@
+2017-03-02  Andy Estes  <aestes@apple.com>
+
+        Add support for canvas.toBlob
+        https://bugs.webkit.org/show_bug.cgi?id=148878
+        <rdar://problem/22590406>
+
+        Reviewed by Tim Horton.
+
+        These tests now pass:
+        imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/toBlob.jpeg.html
+        imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/toBlob.png.html
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        * fileapi/BlobCallback.cpp: Added.
+        (WebCore::BlobCallback::scheduleCallback):
+        * fileapi/BlobCallback.h: Added.
+        (WebCore::BlobCallback::~BlobCallback):
+        * fileapi/BlobCallback.idl: Added.
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::toBlob):
+        * html/HTMLCanvasElement.h:
+        * html/HTMLCanvasElement.idl:
+        * platform/graphics/ImageBuffer.h:
+        * platform/graphics/cairo/ImageBufferCairo.cpp:
+        (WebCore::writeFunction):
+        (WebCore::encodeImage):
+        (WebCore::ImageBuffer::toDataURL):
+        (WebCore::ImageBuffer::toData):
+        * platform/graphics/cg/ImageBufferCG.cpp:
+        (WebCore::data):
+        (WebCore::ImageBuffer::toDataURL):
+        (WebCore::ImageBuffer::toData):
+        (WebCore::ImageBuffer::toCGImage):
+        (WebCore::cgImage):
+        (WebCore::dataURL):
+        * platform/graphics/gtk/ImageBufferGtk.cpp:
+        (WebCore::ImageBuffer::toDataURL):
+        (WebCore::ImageBuffer::toData):
+        * platform/graphics/win/ImageBufferDirect2D.cpp:
+        (WebCore::ImageBuffer::toData):
+
 2017-03-02  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Migrate font-stretch to use fixed-point values

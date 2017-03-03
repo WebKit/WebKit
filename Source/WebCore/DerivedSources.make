@@ -403,6 +403,7 @@ JS_BINDING_IDLS = \
     $(WebCore)/dom/WheelEvent.idl \
     $(WebCore)/dom/XMLDocument.idl \
     $(WebCore)/fileapi/Blob.idl \
+    $(WebCore)/fileapi/BlobCallback.idl \
     $(WebCore)/fileapi/BlobLineEndings.idl \
     $(WebCore)/fileapi/BlobPropertyBag.idl \
     $(WebCore)/fileapi/File.idl \

@@ -1,3 +1,14 @@
+2017-03-02  Andy Estes  <aestes@apple.com>
+
+        Add support for canvas.toBlob
+        https://bugs.webkit.org/show_bug.cgi?id=148878
+        <rdar://problem/22590406>
+
+        Reviewed by Tim Horton.
+
+        * web-platform-tests/html/semantics/embedded-content/the-canvas-element/toBlob.jpeg-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/the-canvas-element/toBlob.png-expected.txt:
+
 2017-03-02  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r213301.
