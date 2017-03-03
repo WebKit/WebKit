@@ -1,5 +1,18 @@
 2017-03-02  Antoine Quint  <graouts@apple.com>
 
+        LayoutTest media/modern-media-controls/tracks-support/tracks-support-click-track-in-panel.html is a flaky timeout
+        https://bugs.webkit.org/show_bug.cgi?id=169109
+        <rdar://problem/30824252>
+
+        Reviewed by Simon Fraser.
+
+        Ensure the tracks button is sized before pressing it to make the track panel appear.
+
+        * media/modern-media-controls/tracks-support/tracks-support-click-track-in-panel-expected.txt:
+        * media/modern-media-controls/tracks-support/tracks-support-click-track-in-panel.html:
+
+2017-03-02  Antoine Quint  <graouts@apple.com>
+
         Remove references to tests that no longer exist and remove a duplicate test.
 
         Unreviewed test gardening.

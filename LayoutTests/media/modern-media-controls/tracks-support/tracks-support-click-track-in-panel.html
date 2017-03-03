@@ -19,7 +19,11 @@ media.addEventListener("play", () => {
     dumpAudioTracksEnabledState();
 
     media.audioTracks.addEventListener("change", audioTracksDidChange);
-    clickOnTracksButton(clickOnSecondAudioTrack);
+
+    debug("");
+    shouldBecomeDifferent("shadowRoot.lastChild.querySelector('button.tracks').getBoundingClientRect().width", "0", () => {
+        clickOnTracksButton(clickOnSecondAudioTrack);
+    });
 });
 
 function clickOnTracksButton(continuation)

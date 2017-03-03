@@ -7,6 +7,8 @@ media.audioTracks[0].enabled = true
 media.audioTracks[1].enabled = false
 media.audioTracks[2].enabled = false
 
+PASS shadowRoot.lastChild.querySelector('button.tracks').getBoundingClientRect().width became different from 0
+
 Clicking on the tracks button
 Clicking on second audio track in tracks panel
 
