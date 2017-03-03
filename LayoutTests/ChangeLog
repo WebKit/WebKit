@@ -1,3 +1,15 @@
+2017-03-03  Joseph Pecoraro  <pecoraro@apple.com>
+
+        LayoutTest performance-api/performance-observer-basic.html is a flaky timeout
+        https://bugs.webkit.org/show_bug.cgi?id=169097
+
+        Reviewed by Ryosuke Niwa.
+
+        * performance-api/performance-now-api.html:
+        * performance-api/performance-observer-basic.html:
+        Reorder the scripts so that testWorker is guarenteed
+        to be defined before code that uses it.
+
 2017-03-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed GTK+ gardening. Another reftest failing with 2 pixels in image diff.
