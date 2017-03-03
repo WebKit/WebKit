@@ -1,3 +1,12 @@
+2017-03-03  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Mark imported/w3c/web-platform-tests/IndexedDB/idbcursor_iterating.htm as flaky on El Capitan Release builds.
+        https://bugs.webkit.org/show_bug.cgi?id=164870
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2017-03-03  Javier Fernandez  <jfernandez@igalia.com>
 
         [GTK] Unreviewed test gardening
