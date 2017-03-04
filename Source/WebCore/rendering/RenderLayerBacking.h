@@ -321,9 +321,10 @@ private:
     void updateImageContents();
 
     Color rendererBackgroundColor() const;
+
+    void updateDirectlyCompositedBoxDecorations(bool isSimpleContainer, bool& didUpdateContentsRect);
     void updateDirectlyCompositedBackgroundColor(bool isSimpleContainer, bool& didUpdateContentsRect);
     void updateDirectlyCompositedBackgroundImage(bool isSimpleContainer, bool& didUpdateContentsRect);
-    void updateDirectlyCompositedContents(bool isSimpleContainer, bool& didUpdateContentsRect);
 
     void resetContentsRect();
 
