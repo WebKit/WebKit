@@ -1,3 +1,15 @@
+2017-03-03  Jer Noble  <jer.noble@apple.com>
+
+        [Win64] '__int128_t': undeclared identifier in MediaTime.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=169123
+
+        Reviewed by Alex Christensen.
+
+        Don't perform the 128-bit optimized path on Windows, where the __int128_t intrinsic isn't available.
+
+        * wtf/MediaTime.cpp:
+        (WTF::MediaTime::setTimeScale):
+
 2017-03-03  Keith Miller  <keith_miller@apple.com>
 
         WASM should support faster loads.

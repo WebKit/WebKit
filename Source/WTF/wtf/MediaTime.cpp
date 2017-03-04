@@ -489,7 +489,7 @@ void MediaTime::setTimeScale(uint32_t timeScale, RoundingFlags flags)
 
     timeScale = std::min(MaximumTimeScale, timeScale);
 
-#if CPU(X86_64) || CPU(ARM64)
+#if !PLATFORM(WIN) && (CPU(X86_64) || CPU(ARM64))
     __int128_t newValue = static_cast<__int128_t>(m_timeValue) * timeScale;
     int64_t remainder = newValue % m_timeScale;
     newValue = newValue / m_timeScale;
