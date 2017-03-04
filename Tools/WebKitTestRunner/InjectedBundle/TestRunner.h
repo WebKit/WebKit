@@ -105,6 +105,7 @@ public:
     void setCustomElementsEnabled(bool);
     void setModernMediaControlsEnabled(bool);
     void setWebGL2Enabled(bool);
+    void setWebGPUEnabled(bool);
     void setFetchAPIEnabled(bool);
     void setAllowUniversalAccessFromFileURLs(bool);
     void setAllowFileAccessFromFileURLs(bool);

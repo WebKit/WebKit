@@ -151,6 +151,11 @@ public:
     bool webGL2Enabled() const { return m_isWebGL2Enabled; }
 #endif
 
+#if ENABLE(WEBGPU)
+    void setWebGPUEnabled(bool isEnabled) { m_isWebGPUEnabled = isEnabled; }
+    bool webGPUEnabled() const { return m_isWebGPUEnabled; }
+#endif
+
 #if ENABLE(FETCH_API)
     void setFetchAPIEnabled(bool isEnabled) { m_isFetchAPIEnabled = isEnabled; }
     bool fetchAPIEnabled() const { return m_isFetchAPIEnabled; }
@@ -270,6 +275,10 @@ private:
 
 #if ENABLE(WEBGL2)
     bool m_isWebGL2Enabled { false };
+#endif
+
+#if ENABLE(WEBGPU)
+    bool m_isWebGPUEnabled { false };
 #endif
 
 #if ENABLE(FETCH_API)

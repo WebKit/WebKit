@@ -619,6 +619,9 @@ public:
 #if ENABLE(WEBGL2)
         [NSNumber numberWithBool:NO], WebKitWebGL2EnabledPreferenceKey,
 #endif
+#if ENABLE(WEBGPU)
+        [NSNumber numberWithBool:NO], WebKitWebGPUEnabledPreferenceKey,
+#endif
 #if ENABLE(FETCH_API)
         [NSNumber numberWithBool:YES], WebKitFetchAPIEnabledPreferenceKey,
 #endif
@@ -2060,6 +2063,16 @@ static NSString *classIBCreatorID = nil;
 - (void)setForceWebGLUsesLowPower:(BOOL)forceLowPower
 {
     [self _setBoolValue:forceLowPower forKey:WebKitForceWebGLUsesLowPowerPreferenceKey];
+}
+
+- (BOOL)webGPUEnabled
+{
+    return [self _boolValueForKey:WebKitWebGPUEnabledPreferenceKey];
+}
+
+- (void)setWebGPUEnabled:(BOOL)enabled
+{
+    [self _setBoolValue:enabled forKey:WebKitWebGPUEnabledPreferenceKey];
 }
 
 - (BOOL)accelerated2dCanvasEnabled

@@ -1,5 +1,23 @@
 2017-03-03  Dean Jackson  <dino@apple.com>
 
+        Add WebGPU compile flag and experimental feature flag
+        https://bugs.webkit.org/show_bug.cgi?id=169161
+        <rdar://problem/30846689>
+
+        Reviewed by Tim Horton.
+
+        Add ENABLE_WEBGPU, an experimental feature flag, a RuntimeEnabledFeature,
+        and an InternalSetting.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * Shared/WebPreferencesDefinitions.h:
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::overrideBoolPreferenceForTestRunner):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+
+2017-03-03  Dean Jackson  <dino@apple.com>
+
         Move Input Events and Gamepad from experimental features into main preferences
         https://bugs.webkit.org/show_bug.cgi?id=169157
         <rdar://problems/30845587>

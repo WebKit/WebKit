@@ -847,6 +847,7 @@ static void enableExperimentalFeatures(WebPreferences* preferences)
     [preferences setUserTimingEnabled:YES];
     [preferences setWebAnimationsEnabled:YES];
     [preferences setWebGL2Enabled:YES];
+    [preferences setWebGPUEnabled:YES];
     [preferences setPeerConnectionEnabled:YES];
 }
 
@@ -944,6 +945,7 @@ static void resetWebPreferencesToConsistentValues()
     [preferences setCustomElementsEnabled:YES];
 
     [preferences setWebGL2Enabled:YES];
+    [preferences setWebGPUEnabled:YES];
 
     [preferences setFetchAPIEnabled:YES];
 

@@ -1,5 +1,27 @@
 2017-03-03  Dean Jackson  <dino@apple.com>
 
+        Add WebGPU compile flag and experimental feature flag
+        https://bugs.webkit.org/show_bug.cgi?id=169161
+        <rdar://problem/30846689>
+
+        Reviewed by Tim Horton.
+
+        Add ENABLE_WEBGPU, an experimental feature flag, a RuntimeEnabledFeature,
+        and an InternalSetting.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (enableExperimentalFeatures):
+        (resetWebPreferencesToConsistentValues):
+        * TestWebKitAPI/Configurations/FeatureDefines.xcconfig:
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::beginTesting):
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::setWebGL2Enabled):
+        (WTR::TestRunner::setWebGPUEnabled):
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+
+2017-03-03  Dean Jackson  <dino@apple.com>
+
         Add a script to synchronize FeatureDefines.xcconfig files
         https://bugs.webkit.org/show_bug.cgi?id=169151
         <rdar://problem/30841856>

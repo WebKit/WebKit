@@ -328,6 +328,7 @@ void InjectedBundle::beginTesting(WKDictionaryRef settings)
     m_testRunner->setCustomElementsEnabled(true);
 
     m_testRunner->setWebGL2Enabled(true);
+    m_testRunner->setWebGPUEnabled(true);
 
     m_testRunner->setFetchAPIEnabled(true);
 

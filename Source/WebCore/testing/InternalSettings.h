@@ -113,6 +113,7 @@ public:
     static void setIndexedDBWorkersEnabled(bool);
     static void setCSSGridLayoutEnabled(bool);
     static void setWebGL2Enabled(bool);
+    static void setWebGPUEnabled(bool);
 
 private:
     explicit InternalSettings(Page*);
@@ -189,6 +190,7 @@ private:
         bool m_indexedDBWorkersEnabled;
         bool m_cssGridLayoutEnabled;
         bool m_webGL2Enabled;
+        bool m_webGPUEnabled;
     };
 
     Page* m_page;

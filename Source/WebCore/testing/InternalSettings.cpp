@@ -105,6 +105,9 @@ InternalSettings::Backup::Backup(Settings& settings)
 #if ENABLE(WEBGL2)
     , m_webGL2Enabled(RuntimeEnabledFeatures::sharedFeatures().webGL2Enabled())
 #endif
+#if ENABLE(WEBGPU)
+    , m_webGPUEnabled(RuntimeEnabledFeatures::sharedFeatures().webGPUEnabled())
+#endif
 {
 }
 
@@ -189,6 +192,9 @@ void InternalSettings::Backup::restoreTo(Settings& settings)
     RuntimeEnabledFeatures::sharedFeatures().setCSSGridLayoutEnabled(m_cssGridLayoutEnabled);
 #if ENABLE(WEBGL2)
     RuntimeEnabledFeatures::sharedFeatures().setWebGL2Enabled(m_webGL2Enabled);
+#endif
+#if ENABLE(WEBGPU)
+    RuntimeEnabledFeatures::sharedFeatures().setWebGPUEnabled(m_webGPUEnabled);
 #endif
 }
 
@@ -689,6 +695,15 @@ void InternalSettings::setWebGL2Enabled(bool enabled)
 {
 #if ENABLE(WEBGL2)
     RuntimeEnabledFeatures::sharedFeatures().setWebGL2Enabled(enabled);
+#else
+    UNUSED_PARAM(enabled);
+#endif
+}
+
+void InternalSettings::setWebGPUEnabled(bool enabled)
+{
+#if ENABLE(WEBGPU)
+    RuntimeEnabledFeatures::sharedFeatures().setWebGPUEnabled(enabled);
 #else
     UNUSED_PARAM(enabled);
 #endif

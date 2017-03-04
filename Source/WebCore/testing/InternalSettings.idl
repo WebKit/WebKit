@@ -86,6 +86,7 @@ enum ForcedAccessibilityValue { "system", "on", "off" };
     void setIndexedDBWorkersEnabled(boolean enabled);
     void setCSSGridLayoutEnabled(boolean enabled);
     void setWebGL2Enabled(boolean enabled);
+    void setWebGPUEnabled(boolean enabled);
 
     [MayThrowException] DOMString userInterfaceDirectionPolicy();
     [MayThrowException] void setUserInterfaceDirectionPolicy(DOMString policy);
