@@ -1,3 +1,18 @@
+2017-03-04  Aakash Jain  <aakash_jain@apple.com>
+
+        Add symbols required by TAPI in a header file
+        https://bugs.webkit.org/show_bug.cgi?id=169113
+        <rdar://problem/30772033>
+
+        Reviewed by Alexey Proskuryakov.
+
+        The symbols from binary and headers should match precisely, otherwise TAPI would
+        complain. There are few symbols which are not actually needed in header file, but
+        we still need to add them in a header file to make TAPI happy.
+
+        * Platform/ExtraPrivateSymbolsForTAPI.h: Added.
+        * WebKit2.xcodeproj/project.pbxproj: Added Platform/ExtraPrivateSymbolsForTAPI.h
+
 2017-03-04  Joseph Pecoraro  <pecoraro@apple.com>
 
         Remove duplicate initialization guard in WebKit2 logging initialization

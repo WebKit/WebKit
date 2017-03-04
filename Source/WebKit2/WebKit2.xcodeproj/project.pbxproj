@@ -4230,6 +4230,7 @@
 		E49D40D81AD3FB210066B7B9 /* NetworkCacheBlobStorage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkCacheBlobStorage.cpp; sourceTree = "<group>"; };
 		E4E8648E1B1673FB00C82F40 /* VersionChecks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VersionChecks.h; sourceTree = "<group>"; };
 		E4E8648F1B1673FB00C82F40 /* VersionChecks.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VersionChecks.mm; sourceTree = "<group>"; };
+		ECA680D31E6904B500731D20 /* ExtraPrivateSymbolsForTAPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExtraPrivateSymbolsForTAPI.h; sourceTree = "<group>"; };
 		ECA680D71E690DF800731D20 /* WebProcessCocoa.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebProcessCocoa.h; sourceTree = "<group>"; };
 		F036978715F4BF0500C3A80E /* WebColorPicker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebColorPicker.cpp; sourceTree = "<group>"; };
 		F43370961E4D6A4400052B0E /* _WKTestingDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKTestingDelegate.h; sourceTree = "<group>"; };
@@ -7100,6 +7101,7 @@
 				1A7E814E1152D2240003695B /* mac */,
 				CE1A0BCA1A48E6C60054EF74 /* spi */,
 				51B15A7D138439B200321AD8 /* unix */,
+				ECA680D31E6904B500731D20 /* ExtraPrivateSymbolsForTAPI.h */,
 				51A7F2F4125BF8D4008AEB1D /* Logging.cpp */,
 				51A7F2F2125BF820008AEB1D /* Logging.h */,
 				0FDCD7F61D47E92A009F08BC /* LogInitialization.h */,
