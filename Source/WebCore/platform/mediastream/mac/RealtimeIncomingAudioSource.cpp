@@ -81,7 +81,7 @@ void RealtimeIncomingAudioSource::OnData(const void* audioData, int bitsPerSampl
         return;
 
     ASSERT(bitsPerSample == 16);
-    // FIXME: We ought to be able to assert numberOfChannels == 2.
+    ASSERT(numberOfChannels == 2);
     ASSERT(sampleRate == 48000);
 
     CMTime startTime = CMTimeMake(m_numberOfFrames, sampleRate);

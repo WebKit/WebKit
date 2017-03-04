@@ -1,3 +1,14 @@
+2017-03-04  Alex Christensen  <achristensen@webkit.org>
+
+        Cleanup after r213418
+        https://bugs.webkit.org/show_bug.cgi?id=169165
+
+        Reviewed by Youenn Fablet.
+
+        * WebKit/patch-libwebrtc:
+        I made another change after the last patch I uploaded to stop crashing.
+        This should be reflected in our patch.
+
 2017-03-03  Youenn Fablet  <youenn@apple.com>
 
         [WebRTC] Update libwebrtc source code

@@ -1249,6 +1249,20 @@ index ca02c72..dcdf6f8 100644
  
    virtual bool SendData(
        const SendDataParams& params,
+diff --git a/webrtc/media/engine/internalencoderfactory.cc b/webrtc/media/engine/internalencoderfactory.cc
+index 544070f..2b4e6ef 100644
+--- a/webrtc/media/engine/internalencoderfactory.cc
++++ b/webrtc/media/engine/internalencoderfactory.cc
+@@ -33,7 +33,8 @@ bool IsFlexfecAdvertisedFieldTrialEnabled() {
+ }  // namespace
+ 
+ InternalEncoderFactory::InternalEncoderFactory() {
+-  supported_codecs_.push_back(cricket::VideoCodec(kVp8CodecName));
++  if (webrtc::VP8Decoder::IsSupported())
++    supported_codecs_.push_back(cricket::VideoCodec(kVp8CodecName));
+   if (webrtc::VP9Encoder::IsSupported())
+     supported_codecs_.push_back(cricket::VideoCodec(kVp9CodecName));
+   if (webrtc::H264Encoder::IsSupported()) {
 diff --git a/webrtc/media/engine/webrtcvideocapturer.cc b/webrtc/media/engine/webrtcvideocapturer.cc
 index 11458d1..133c758 100644
 --- a/webrtc/media/engine/webrtcvideocapturer.cc
