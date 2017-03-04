@@ -2818,8 +2818,6 @@ media/modern-media-controls/pip-support/pip-support-enabled.html [ Skip ]
 media/modern-media-controls/placard-support/placard-support-pip.html [ Skip ]
 media/modern-media-controls/scrubber-support/scrubber-support-drag.html [ Skip ]
 media/modern-media-controls/scrubber-support/ipad/scrubber-support-drag.html [ Skip ]
-media/modern-media-controls/media-documents/media-document-audio-mac-sizing.html [ Skip ]
-media/modern-media-controls/media-documents/media-document-video-mac-sizing.html [ Skip ]
 
 # These tests use uiController and need to be skipped in open-source
 media/modern-media-controls/placard-support/ipad/placard-support-pip.html [ Skip ]

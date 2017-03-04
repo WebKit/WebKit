@@ -60,6 +60,5 @@ media/tracks-support.js
 media/volume-down-support.js
 media/volume-support.js
 media/volume-up-support.js
-media/media-document-controller.js
 media/media-controller.js
 main.js

@@ -104,26 +104,38 @@ void MediaDocumentParser::createDocumentStructure()
 #endif
 
     auto body = HTMLBodyElement::create(document);
+    if (RuntimeEnabledFeatures::sharedFeatures().modernMediaControlsEnabled()) {
+        StringBuilder bodyStyle;
+        bodyStyle.appendLiteral("margin: 0; padding: 0;");
+        bodyStyle.appendLiteral("background-color: rgb(38, 38, 38);");
+        bodyStyle.appendLiteral("display: flex; justify-content: center; align-items: center;");
+        body->setAttribute(styleAttr, bodyStyle.toString());
+    }
     rootElement->appendChild(body);
 
     auto videoElement = HTMLVideoElement::create(document);
     m_mediaElement = videoElement.ptr();
     videoElement->setAttributeWithoutSynchronization(controlsAttr, emptyAtom);
     videoElement->setAttributeWithoutSynchronization(autoplayAttr, emptyAtom);
-    videoElement->setAttributeWithoutSynchronization(playsinlineAttr, emptyAtom);
-    videoElement->setSrc(document.url());
-    if (auto* loader = document.loader())
-        videoElement->setAttributeWithoutSynchronization(typeAttr, loader->responseMIMEType());
+    videoElement->setAttributeWithoutSynchronization(nameAttr, AtomicString("media", AtomicString::ConstructFromLiteral));
 
-    if (!RuntimeEnabledFeatures::sharedFeatures().modernMediaControlsEnabled()) {
-        StringBuilder elementStyle;
-        elementStyle.appendLiteral("max-width: 100%; max-height: 100%;");
+    StringBuilder elementStyle;
+    elementStyle.appendLiteral("max-width: 100%; max-height: 100%;");
 #if PLATFORM(IOS)
-        elementStyle.appendLiteral("width: 100%; height: auto;");
+    elementStyle.appendLiteral("width: 100%; height: auto;");
 #endif
-        videoElement->setAttribute(styleAttr, elementStyle.toString());
+    if (RuntimeEnabledFeatures::sharedFeatures().modernMediaControlsEnabled()) {
+        elementStyle.appendLiteral("min-height: 50px;");
     }
+    videoElement->setAttribute(styleAttr, elementStyle.toString());
 
+    auto sourceElement = HTMLSourceElement::create(document);
+    sourceElement->setSrc(document.url());
+
+    if (auto* loader = document.loader())
+        sourceElement->setType(loader->responseMIMEType());
+
+    videoElement->appendChild(sourceElement);
     body->appendChild(videoElement);
 
     Frame* frame = document.frame();
