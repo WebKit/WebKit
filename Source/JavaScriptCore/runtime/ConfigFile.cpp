@@ -35,6 +35,10 @@
 #include <wtf/StringExtras.h>
 #include <wtf/text/StringBuilder.h>
 
+#if OS(UNIX) || OS(DARWIN)
+#include <unistd.h>
+#endif
+
 namespace JSC {
 
 static const size_t s_processNameMax = 128;
