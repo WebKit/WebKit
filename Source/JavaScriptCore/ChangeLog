@@ -1,5 +1,22 @@
 2017-03-03  Michael Saboff  <msaboff@apple.com>
 
+        Add support for relative pathnames to JSC config files
+        https://bugs.webkit.org/show_bug.cgi?id=169154
+
+        Reviewed by Saam Barati.
+
+        If the config file is a relative path, prepend the current working directory.
+        After canonicalizing the config file path, we extract its directory path and
+        use that for the directory for a relative log pathname.
+
+        * runtime/ConfigFile.cpp:
+        (JSC::ConfigFile::ConfigFile):
+        (JSC::ConfigFile::parse):
+        (JSC::ConfigFile::canonicalizePaths):
+        * runtime/ConfigFile.h:
+
+2017-03-03  Michael Saboff  <msaboff@apple.com>
+
         Add load / store exclusive instruction group to ARM64 disassembler
         https://bugs.webkit.org/show_bug.cgi?id=169152
 

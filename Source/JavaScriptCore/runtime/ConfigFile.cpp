@@ -38,11 +38,6 @@
 namespace JSC {
 
 static const size_t s_processNameMax = 128;
-#if PLATFORM(WIN)
-static const size_t s_maxPathLength = 260; // Windows value for "MAX_PATH"
-#else
-static const size_t s_maxPathLength = PATH_MAX;
-#endif
 char ConfigFile::s_processName[s_processNameMax + 1] = { 0 };
 char ConfigFile::s_parentProcessName[s_processNameMax + 1] = { 0 };
 
@@ -211,8 +206,15 @@ private:
 };
 
 ConfigFile::ConfigFile(const char* filename)
-    : m_filename(filename)
 {
+    if (!filename)
+        m_filename[0] = '\0';
+    else {
+        strncpy(m_filename, filename, s_maxPathLength);
+        m_filename[s_maxPathLength] = '\0';
+    }
+
+    m_configDirectory[0] = '\0';
 }
 
 void ConfigFile::setProcessName(const char* processName)
@@ -230,6 +232,8 @@ void ConfigFile::parse()
     enum StatementNesting { TopLevelStatment, NestedStatement, NestedStatementFailedCriteria };
     enum ParseResult { ParseOK, ParseError, NestedStatementDone };
 
+    canonicalizePaths();
+
     ConfigFileScanner scanner(m_filename);
 
     if (!scanner.start())
@@ -242,8 +246,12 @@ void ConfigFile::parse()
     auto parseLogFile = [&](StatementNesting statementNesting) {
         char* filename = nullptr;
         if (scanner.tryConsume('=') && (filename = scanner.tryConsumeString())) {
-            if (statementNesting != NestedStatementFailedCriteria)
-                strncpy(logPathname, filename, s_maxPathLength);
+            if (statementNesting != NestedStatementFailedCriteria) {
+                if (filename[0] != '/')
+                    snprintf(logPathname, s_maxPathLength + 1, "%s/%s", m_configDirectory, filename);
+                else
+                    strncpy(logPathname, filename, s_maxPathLength);
+            }
 
             return ParseOK;
         }
@@ -408,6 +416,42 @@ void ConfigFile::parse()
         }
     } else
         WTF::dataLogF("Error in JSC Config file on or near line %u, parsing '%s'\n", scanner.lineNumber(), scanner.currentBuffer());
+}
+
+void ConfigFile::canonicalizePaths()
+{
+    if (!m_filename[0])
+        return;
+
+#if OS(UNIX) || OS(DARWIN)
+    if (m_filename[0] != '/') {
+        // Relative path
+        char filenameBuffer[s_maxPathLength + 1];
+
+        if (getcwd(filenameBuffer, sizeof(filenameBuffer))) {
+            size_t pathnameLength = strlen(filenameBuffer);
+            bool shouldAddPathSeparator = filenameBuffer[pathnameLength - 1] != '/';
+            if (sizeof(filenameBuffer) - 1  >= pathnameLength + shouldAddPathSeparator) {
+                if (shouldAddPathSeparator)
+                    strncat(filenameBuffer, "/", 1);
+                strncat(filenameBuffer, m_filename, sizeof(filenameBuffer) - strlen(filenameBuffer) - 1);
+                strncpy(m_filename, filenameBuffer, s_maxPathLength);
+                m_filename[s_maxPathLength] = '\0';
+            }
+        }
+    }
+
+    char* lastPathSeperator = strrchr(m_filename, '/');
+
+    if (lastPathSeperator) {
+        unsigned dirnameLength = lastPathSeperator - &m_filename[0];
+        strncpy(m_configDirectory, m_filename, dirnameLength);
+        m_configDirectory[dirnameLength] = '\0';
+    } else {
+        m_configDirectory[0] = '/';
+        m_configDirectory[1] = '\0';
+    }
+#endif
 }
 
 } // namespace JSC

@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <limits.h>
+
 namespace JSC {
 
 class ConfigFile {
@@ -36,10 +38,19 @@ public:
     JS_EXPORT_PRIVATE void parse();
 
 private:
+    void canonicalizePaths();
+
+#if PLATFORM(WIN)
+    static const size_t s_maxPathLength = 260; // Windows value for "MAX_PATH"
+#else
+    static const size_t s_maxPathLength = PATH_MAX;
+#endif
+
     static char s_processName[];
     static char s_parentProcessName[];
 
-    const char* m_filename;
+    char m_filename[s_maxPathLength + 1];
+    char m_configDirectory[s_maxPathLength + 1];
 };
 
 } // namespace JSC
