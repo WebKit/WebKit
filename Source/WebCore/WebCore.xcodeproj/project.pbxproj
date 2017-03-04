@@ -4033,6 +4033,10 @@
 		A149786E1ABAF33800CEF7E4 /* ContentFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A149786C1ABAF33800CEF7E4 /* ContentFilter.cpp */; };
 		A149786F1ABAF33800CEF7E4 /* ContentFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = A149786D1ABAF33800CEF7E4 /* ContentFilter.h */; };
 		A14978711ABAF3A500CEF7E4 /* PlatformContentFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = A14978701ABAF3A500CEF7E4 /* PlatformContentFilter.h */; };
+		A15D75151E68F7C400A35FBC /* BlobCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A15D75121E68F7B100A35FBC /* BlobCallback.cpp */; };
+		A15D75161E68F7C800A35FBC /* BlobCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = A15D75131E68F7B100A35FBC /* BlobCallback.h */; };
+		A15D751A1E68F89E00A35FBC /* JSBlobCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A15D75171E68F83600A35FBC /* JSBlobCallback.cpp */; };
+		A15D751B1E68F8A300A35FBC /* JSBlobCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = A15D75181E68F83600A35FBC /* JSBlobCallback.h */; };
 		A15E31F31E0CB0B2004B371C /* QuickLook.mm in Sources */ = {isa = PBXBuildFile; fileRef = A15E31F21E0CB0AA004B371C /* QuickLook.mm */; };
 		A15E31F41E0CB0B5004B371C /* QuickLook.h in Headers */ = {isa = PBXBuildFile; fileRef = A15E31F11E0CB0AA004B371C /* QuickLook.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A15E6BF11E212A6A0080AF34 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A15E6BF01E212A6A0080AF34 /* Foundation.framework */; };
@@ -11894,6 +11898,11 @@
 		A149786C1ABAF33800CEF7E4 /* ContentFilter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ContentFilter.cpp; sourceTree = "<group>"; };
 		A149786D1ABAF33800CEF7E4 /* ContentFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContentFilter.h; sourceTree = "<group>"; };
 		A14978701ABAF3A500CEF7E4 /* PlatformContentFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformContentFilter.h; sourceTree = "<group>"; };
+		A15D75121E68F7B100A35FBC /* BlobCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BlobCallback.cpp; sourceTree = "<group>"; };
+		A15D75131E68F7B100A35FBC /* BlobCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlobCallback.h; sourceTree = "<group>"; };
+		A15D75141E68F7B100A35FBC /* BlobCallback.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = BlobCallback.idl; sourceTree = "<group>"; };
+		A15D75171E68F83600A35FBC /* JSBlobCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSBlobCallback.cpp; sourceTree = "<group>"; };
+		A15D75181E68F83600A35FBC /* JSBlobCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSBlobCallback.h; sourceTree = "<group>"; };
 		A15E31F11E0CB0AA004B371C /* QuickLook.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuickLook.h; sourceTree = "<group>"; };
 		A15E31F21E0CB0AA004B371C /* QuickLook.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = QuickLook.mm; sourceTree = "<group>"; };
 		A15E6BF01E212A6A0080AF34 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -18947,6 +18956,8 @@
 			children = (
 				2E2D99CB10E2BBDA00496337 /* JSBlob.cpp */,
 				2E2D99CC10E2BBDA00496337 /* JSBlob.h */,
+				A15D75171E68F83600A35FBC /* JSBlobCallback.cpp */,
+				A15D75181E68F83600A35FBC /* JSBlobCallback.h */,
 				7C77C3D91DEF86D700A50BFA /* JSBlobLineEndings.cpp */,
 				7C77C3DA1DEF86D700A50BFA /* JSBlobLineEndings.h */,
 				7C77C3D21DEF178E00A50BFA /* JSBlobPropertyBag.cpp */,
@@ -19881,6 +19892,9 @@
 				14A98E05136386A200C9FED2 /* Blob.idl */,
 				976D6C5C122B8A3D001FD1F7 /* BlobBuilder.cpp */,
 				976D6C5D122B8A3D001FD1F7 /* BlobBuilder.h */,
+				A15D75121E68F7B100A35FBC /* BlobCallback.cpp */,
+				A15D75131E68F7B100A35FBC /* BlobCallback.h */,
+				A15D75141E68F7B100A35FBC /* BlobCallback.idl */,
 				7C77C3D61DEF850A00A50BFA /* BlobLineEndings.h */,
 				7C77C3D81DEF854000A50BFA /* BlobLineEndings.idl */,
 				7C77C3D01DEE472400A50BFA /* BlobPropertyBag.h */,
@@ -26912,6 +26926,7 @@
 				1AE2ABAB0A1CE90500B42B25 /* JSHTMLPreElement.h in Headers */,
 				A4226E5C1163D695008B8397 /* JSHTMLProgressElement.h in Headers */,
 				1AE2AEC80A1D297B00B42B25 /* JSHTMLQuoteElement.h in Headers */,
+				A15D751B1E68F8A300A35FBC /* JSBlobCallback.h in Headers */,
 				1AE2ABAD0A1CE90500B42B25 /* JSHTMLScriptElement.h in Headers */,
 				E1E6EEA80B628DB3005F2F70 /* JSHTMLSelectElement.h in Headers */,
 				AB4CB4EB0B8BDA3D009F40B0 /* JSHTMLSelectElementCustom.h in Headers */,
@@ -28306,6 +28321,7 @@
 				FEE1811416C319E800084849 /* SQLTransactionBackend.h in Headers */,
 				97BC6A521505F081001B74AC /* SQLTransactionCallback.h in Headers */,
 				97BC6A571505F081001B74AC /* SQLTransactionCoordinator.h in Headers */,
+				A15D75161E68F7C800A35FBC /* BlobCallback.h in Headers */,
 				97BC6A581505F081001B74AC /* SQLTransactionErrorCallback.h in Headers */,
 				FE36FD1816C7826500F887C1 /* SQLTransactionState.h in Headers */,
 				FE36FD1716C7826500F887C1 /* SQLTransactionStateMachine.h in Headers */,
@@ -31103,6 +31119,7 @@
 				B2FA3E080AB75A6F000E5AC4 /* JSSVGTitleElement.cpp in Sources */,
 				B2FA3E0A0AB75A6F000E5AC4 /* JSSVGTransform.cpp in Sources */,
 				B2FA3E0C0AB75A6F000E5AC4 /* JSSVGTransformList.cpp in Sources */,
+				A15D75151E68F7C400A35FBC /* BlobCallback.cpp in Sources */,
 				B2FA3E0E0AB75A6F000E5AC4 /* JSSVGTRefElement.cpp in Sources */,
 				B2FA3E100AB75A6F000E5AC4 /* JSSVGTSpanElement.cpp in Sources */,
 				B2FA3E120AB75A6F000E5AC4 /* JSSVGUnitTypes.cpp in Sources */,
@@ -32453,6 +32470,7 @@
 				444D4E230F708B2E003158E0 /* WebCoreURLResponseIOS.mm in Sources */,
 				93F19B0708245E59001E9ABC /* WebCoreView.m in Sources */,
 				A5E616731894581F009ADF50 /* WebDebuggerAgent.cpp in Sources */,
+				A15D751A1E68F89E00A35FBC /* JSBlobCallback.cpp in Sources */,
 				FE0D84EB1048436E001A179E /* WebEvent.mm in Sources */,
 				225A16B60D5C11E900090295 /* WebEventRegion.mm in Sources */,
 				D3F3D36D1A69B7DC0059FC2B /* WebGL2RenderingContext.cpp in Sources */,

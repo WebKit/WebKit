@@ -77,17 +77,28 @@ static bool encodeImage(cairo_surface_t* surface, const String& mimeType, std::o
 
 String ImageBuffer::toDataURL(const String& mimeType, std::optional<double> quality, CoordinateSystem) const
 {
+    Vector<uint8_t> imageData = toData(mimeType, quality);
+    if (imageData.isEmpty())
+        return "data:,";
+
+    Vector<char> base64Data;
+    base64Encode(imageData.data(), imageData.size(), base64Data);
+
+    return "data:" + mimeType + ";base64," + base64Data;
+}
+
+Vector<uint8_t> ImageBuffer::toData(const String& mimeType, std::optional<double> quality) const
+{
     ASSERT(MIMETypeRegistry::isSupportedImageMIMETypeForEncoding(mimeType));
 
     GUniqueOutPtr<gchar> buffer;
     gsize bufferSize;
     if (!encodeImage(m_data.m_surface.get(), mimeType, quality, buffer, bufferSize))
-        return "data:,";
+        return { };
 
-    Vector<char> base64Data;
-    base64Encode(buffer.get(), bufferSize, base64Data);
-
-    return "data:" + mimeType + ";base64," + base64Data;
+    Vector<uint8_t> imageData;
+    imageData.append(buffer.get(), bufferSize);
+    return imageData;
 }
 
 }

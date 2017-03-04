@@ -260,6 +260,12 @@ String ImageBuffer::toDataURL(const String&, std::optional<double>, CoordinateSy
     return ASCIILiteral("data:,");
 }
 
+Vector<uint8_t> ImageBuffer::toData(const String& mimeType, std::optional<double> quality) const
+{
+    notImplemented();
+    return { };
+}
+
 String ImageDataToDataURL(const ImageData& source, const String& mimeType, const double* quality)
 {
     notImplemented();

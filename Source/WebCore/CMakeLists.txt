@@ -475,6 +475,7 @@ set(WebCore_NON_SVG_IDL_FILES
     dom/XMLDocument.idl
 
     fileapi/Blob.idl
+    fileapi/BlobCallback.idl
     fileapi/BlobLineEndings.idl
     fileapi/BlobPropertyBag.idl
     fileapi/File.idl
@@ -1605,6 +1606,7 @@ set(WebCore_SOURCES
     fileapi/AsyncFileStream.cpp
     fileapi/Blob.cpp
     fileapi/BlobBuilder.cpp
+    fileapi/BlobCallback.cpp
     fileapi/BlobURL.cpp
     fileapi/File.cpp
     fileapi/FileException.cpp

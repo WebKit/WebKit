@@ -28,6 +28,8 @@
 #include "config.h"
 #include "HTMLCanvasElement.h"
 
+#include "Blob.h"
+#include "BlobCallback.h"
 #include "CanvasGradient.h"
 #include "CanvasPattern.h"
 #include "CanvasRenderingContext2D.h"
@@ -483,6 +485,36 @@ ExceptionOr<String> HTMLCanvasElement::toDataURL(const String& mimeType, std::op
     makeRenderingResultsAvailable();
 
     return buffer()->toDataURL(encodingMIMEType, quality);
+}
+
+ExceptionOr<void> HTMLCanvasElement::toBlob(ScriptExecutionContext& context, Ref<BlobCallback>&& callback, const String& mimeType, JSC::JSValue qualityValue)
+{
+    if (!m_originClean)
+        return Exception { SECURITY_ERR };
+
+    if (m_size.isEmpty() || !buffer()) {
+        callback->scheduleCallback(context, nullptr);
+        return { };
+    }
+
+    String encodingMIMEType = toEncodingMimeType(mimeType);
+    std::optional<double> quality;
+    if (qualityValue.isNumber())
+        quality = qualityValue.toNumber(context.execState());
+
+#if USE(CG)
+    if (auto imageData = getImageData()) {
+        Vector<uint8_t> blobData = data(*imageData, encodingMIMEType, quality);
+        callback->scheduleCallback(context, Blob::create(WTFMove(blobData), encodingMIMEType));
+        return { };
+    }
+#endif
+
+    makeRenderingResultsAvailable();
+
+    Vector<uint8_t> blobData = buffer()->toData(encodingMIMEType, quality);
+    callback->scheduleCallback(context, Blob::create(WTFMove(blobData), encodingMIMEType));
+    return { };
 }
 
 RefPtr<ImageData> HTMLCanvasElement::getImageData()
