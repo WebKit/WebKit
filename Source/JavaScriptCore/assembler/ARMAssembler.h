@@ -705,7 +705,7 @@ namespace JSC {
         static bool isBkpt(void* address)
         {
             ARMWord expected = BKPT;
-            ARMWord immediateMask = (0xff0 << 4) | 0xf);
+            ARMWord immediateMask = (0xff0 << 4) | 0xf;
             ARMWord candidateInstruction = *reinterpret_cast<ARMWord*>(address);
             return (candidateInstruction & ~immediateMask) == expected;
         }

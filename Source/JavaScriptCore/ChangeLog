@@ -1,3 +1,10 @@
+2017-03-04  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [ARM] Unreviewed buildfix after r213376.
+
+        * assembler/ARMAssembler.h:
+        (JSC::ARMAssembler::isBkpt): Typo fixed.
+
 2017-03-03  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [JSC] build fix after r213399
