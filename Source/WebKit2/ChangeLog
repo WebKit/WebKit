@@ -1,3 +1,17 @@
+2017-03-03  Brent Fulgham  <bfulgham@apple.com>
+
+        [MediaStream iOS] REGRESSION(r212883): Missing function definition breaks sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=169148
+        <rdar://problem/30825728>
+
+        Reviewed by Alex Christensen.
+
+        The changes in r212883 added a call to 'shared-preferences-read', which is not defined
+        for iOS. In fact, it's not needed since 'user-preference-read' does everything we need on iOS.
+        Switch to the correct preference rule.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb: Add missing function
+
 2017-03-03  Aakash Jain  <aakash_jain@apple.com>
 
         Move declaration of _WKSetCrashReportApplicationSpecificInformation to header file
