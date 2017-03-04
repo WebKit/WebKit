@@ -1,3 +1,9 @@
+2017-03-04  Lucas Forschler  <lforschler@apple.com>
+
+        Test commit against svn.webkit.org after SHA-1 cleanup.
+        
+        Unreviewed.
+
 2017-03-03  Dean Jackson  <dino@apple.com>
 
         Add WebGPU compile flag and experimental feature flag
