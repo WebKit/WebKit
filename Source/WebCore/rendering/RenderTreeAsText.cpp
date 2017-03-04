@@ -272,30 +272,14 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
             return;
 
         const RenderBoxModelObject& box = downcast<RenderBoxModelObject>(o);
-        LayoutUnit borderTop = box.borderTop();
-        LayoutUnit borderRight = box.borderRight();
-        LayoutUnit borderBottom = box.borderBottom();
-        LayoutUnit borderLeft = box.borderLeft();
-        if (box.isFieldset()) {
-            const auto& block = downcast<RenderBlock>(box);
-            if (o.style().writingMode() == TopToBottomWritingMode)
-                borderTop -= block.intrinsicBorderForFieldset();
-            else if (o.style().writingMode() == BottomToTopWritingMode)
-                borderBottom -= block.intrinsicBorderForFieldset();
-            else if (o.style().writingMode() == LeftToRightWritingMode)
-                borderLeft -= block.intrinsicBorderForFieldset();
-            else if (o.style().writingMode() == RightToLeftWritingMode)
-                borderRight -= block.intrinsicBorderForFieldset();
-            
-        }
-        if (borderTop || borderRight || borderBottom || borderLeft) {
+        if (box.borderTop() || box.borderRight() || box.borderBottom() || box.borderLeft()) {
             ts << " [border:";
 
             BorderValue prevBorder = o.style().borderTop();
-            if (!borderTop)
+            if (!box.borderTop())
                 ts << " none";
             else {
-                ts << " (" << borderTop << "px ";
+                ts << " (" << box.borderTop() << "px ";
                 printBorderStyle(ts, o.style().borderTopStyle());
                 Color col = o.style().borderTopColor();
                 if (!col.isValid())
@@ -305,10 +289,10 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
 
             if (o.style().borderRight() != prevBorder) {
                 prevBorder = o.style().borderRight();
-                if (!borderRight)
+                if (!box.borderRight())
                     ts << " none";
                 else {
-                    ts << " (" << borderRight << "px ";
+                    ts << " (" << box.borderRight() << "px ";
                     printBorderStyle(ts, o.style().borderRightStyle());
                     Color col = o.style().borderRightColor();
                     if (!col.isValid())
@@ -319,10 +303,10 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
 
             if (o.style().borderBottom() != prevBorder) {
                 prevBorder = box.style().borderBottom();
-                if (!borderBottom)
+                if (!box.borderBottom())
                     ts << " none";
                 else {
-                    ts << " (" << borderBottom << "px ";
+                    ts << " (" << box.borderBottom() << "px ";
                     printBorderStyle(ts, o.style().borderBottomStyle());
                     Color col = o.style().borderBottomColor();
                     if (!col.isValid())
@@ -333,10 +317,10 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
 
             if (o.style().borderLeft() != prevBorder) {
                 prevBorder = o.style().borderLeft();
-                if (!borderLeft)
+                if (!box.borderLeft())
                     ts << " none";
                 else {
-                    ts << " (" << borderLeft << "px ";
+                    ts << " (" << box.borderLeft() << "px ";
                     printBorderStyle(ts, o.style().borderLeftStyle());
                     Color col = o.style().borderLeftColor();
                     if (!col.isValid())

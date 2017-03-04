@@ -1307,8 +1307,6 @@ void RenderTableCell::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoin
         return;
 
     LayoutRect paintRect = LayoutRect(paintOffset, frameRect().size());
-    adjustBorderBoxRectForPainting(paintRect);
-
     paintBoxShadow(paintInfo, paintRect, style(), Normal);
     
     // Paint our cell background.
@@ -1331,10 +1329,7 @@ void RenderTableCell::paintMask(PaintInfo& paintInfo, const LayoutPoint& paintOf
     if (!tableElt->collapseBorders() && style().emptyCells() == HIDE && !firstChild())
         return;
    
-    LayoutRect paintRect = LayoutRect(paintOffset, frameRect().size());
-    adjustBorderBoxRectForPainting(paintRect);
-
-    paintMaskImages(paintInfo, paintRect);
+    paintMaskImages(paintInfo, LayoutRect(paintOffset, frameRect().size()));
 }
 
 bool RenderTableCell::boxShadowShouldBeAppliedToBackground(const LayoutPoint&, BackgroundBleedAvoidance, InlineFlowBox*) const

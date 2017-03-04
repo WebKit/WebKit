@@ -77,20 +77,14 @@ void OrderIterator::reset()
     m_isReset = true;
 }
 
-bool OrderIterator::shouldSkipChild(const RenderObject& child) const
-{
-    return child.isOutOfFlowPositioned() || child.isExcludedFromNormalLayout();
-}
-
 OrderIteratorPopulator::~OrderIteratorPopulator()
 {
     m_iterator.reset();
 }
 
-bool OrderIteratorPopulator::collectChild(const RenderBox& child)
+void OrderIteratorPopulator::collectChild(const RenderBox& child)
 {
     m_iterator.m_orderValues.insert(child.style().order());
-    return !m_iterator.shouldSkipChild(child);
 }
 
 

@@ -87,13 +87,9 @@ int RenderTextControlMultiLine::baselinePosition(FontBaseline baselineType, bool
     return RenderBox::baselinePosition(baselineType, firstLine, direction, linePositionMode);
 }
 
-void RenderTextControlMultiLine::layoutExcludedChildren(bool relayoutChildren)
+RenderObject* RenderTextControlMultiLine::layoutSpecialExcludedChild(bool relayoutChildren)
 {
-    RenderTextControl::layoutExcludedChildren(relayoutChildren);
-    HTMLElement* placeholder = textFormControlElement().placeholderElement();
-    RenderElement* placeholderRenderer = placeholder ? placeholder->renderer() : 0;
-    if (!placeholderRenderer)
-        return;
+    RenderObject* placeholderRenderer = RenderTextControl::layoutSpecialExcludedChild(relayoutChildren);
     if (is<RenderBox>(placeholderRenderer)) {
         auto& placeholderBox = downcast<RenderBox>(*placeholderRenderer);
         placeholderBox.mutableStyle().setLogicalWidth(Length(contentLogicalWidth() - placeholderBox.borderAndPaddingLogicalWidth(), Fixed));
@@ -101,6 +97,7 @@ void RenderTextControlMultiLine::layoutExcludedChildren(bool relayoutChildren)
         placeholderBox.setX(borderLeft() + paddingLeft());
         placeholderBox.setY(borderTop() + paddingTop());
     }
+    return placeholderRenderer;
 }
     
 }

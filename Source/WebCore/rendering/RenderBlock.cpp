@@ -245,13 +245,15 @@ struct RenderBlockRareData {
     WTF_MAKE_NONCOPYABLE(RenderBlockRareData); WTF_MAKE_FAST_ALLOCATED;
 public:
     RenderBlockRareData()
+        : m_paginationStrut(0)
+        , m_pageLogicalOffset(0)
+        , m_flowThreadContainingBlock(std::nullopt)
     {
     }
 
     LayoutUnit m_paginationStrut;
     LayoutUnit m_pageLogicalOffset;
-    LayoutUnit m_intrinsicBorderForFieldset;
-    
+
     std::optional<RenderFlowThread*> m_flowThreadContainingBlock;
 };
 
@@ -1603,9 +1605,6 @@ void RenderBlock::paintChildren(PaintInfo& paintInfo, const LayoutPoint& paintOf
 
 bool RenderBlock::paintChild(RenderBox& child, PaintInfo& paintInfo, const LayoutPoint& paintOffset, PaintInfo& paintInfoForChild, bool usePrintRect, PaintBlockType paintType)
 {
-    if (child.isExcludedAndPlacedInBorder())
-        return true;
-
     // Check for page-break-before: always, and if it's set, break and bail.
     bool checkBeforeAlways = !childrenInline() && (usePrintRect && alwaysPageBreak(child.style().breakBefore()));
     LayoutUnit absoluteChildY = paintOffset.y() + child.y();
@@ -1697,10 +1696,6 @@ void RenderBlock::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffs
         }
     }
 
-    // Paint legends just above the border before we scroll or clip.
-    if (paintPhase == PaintPhaseBlockBackground || paintPhase == PaintPhaseChildBlockBackground || paintPhase == PaintPhaseSelection)
-        paintExcludedChildrenInBorder(paintInfo, paintOffset);
-    
     if (paintPhase == PaintPhaseMask && style().visibility() == VISIBLE) {
         paintMask(paintInfo, paintOffset);
         return;
@@ -2772,20 +2767,9 @@ void RenderBlock::computeBlockPreferredLogicalWidths(LayoutUnit& minLogicalWidth
     RenderObject* child = firstChild();
     RenderBlock* containingBlock = this->containingBlock();
     LayoutUnit floatLeftWidth = 0, floatRightWidth = 0;
-    
-    LayoutUnit childMinWidth;
-    LayoutUnit childMaxWidth;
-    bool hadExcludedChildren = computePreferredWidthsForExcludedChildren(childMinWidth, childMaxWidth);
-    if (hadExcludedChildren) {
-        minLogicalWidth = std::max(childMinWidth, minLogicalWidth);
-        maxLogicalWidth = std::max(childMaxWidth, maxLogicalWidth);
-    }
-
     while (child) {
-        // Positioned children don't affect the min/max width. Legends in fieldsets are skipped here
-        // since they compute outside of any one layout system. Other children excluded from
-        // normal layout are only used with block flows, so it's ok to calculate them here.
-        if (child->isOutOfFlowPositioned() || child->isExcludedAndPlacedInBorder()) {
+        // Positioned children don't affect the min/max width
+        if (child->isOutOfFlowPositioned()) {
             child = child->nextSibling();
             continue;
         }
@@ -3786,8 +3770,7 @@ const char* RenderBlock::renderName() const
 {
     if (isBody())
         return "RenderBody"; // FIXME: Temporary hack until we know that the regression tests pass.
-    if (isFieldset())
-        return "RenderFieldSet"; // FIXME: Remove eventually, but done to keep tests from breaking.
+
     if (isFloating())
         return "RenderBlock (floating)";
     if (isOutOfFlowPositioned())
@@ -3919,267 +3902,4 @@ std::optional<LayoutUnit> RenderBlock::availableLogicalHeightForPercentageComput
     
     return availableHeight;
 }
-    
-void RenderBlock::layoutExcludedChildren(bool relayoutChildren)
-{
-    if (!isFieldset())
-        return;
-
-    setIntrinsicBorderForFieldset(0);
-
-    RenderBox* box = findFieldsetLegend();
-    if (!box)
-        return;
-    
-    box->setIsExcludedFromNormalLayout(true);
-    for (auto& child : childrenOfType<RenderBox>(*this)) {
-        if (&child == box || !child.isLegend())
-            continue;
-        child.setIsExcludedFromNormalLayout(false);
-    }
-
-    RenderBox& legend = *box;
-    if (relayoutChildren)
-        legend.setChildNeedsLayout(MarkOnlyThis);
-    legend.layoutIfNeeded();
-    
-    LayoutUnit logicalLeft;
-    if (style().isLeftToRightDirection()) {
-        switch (legend.style().textAlign()) {
-        case CENTER:
-            logicalLeft = (logicalWidth() - logicalWidthForChild(legend)) / 2;
-            break;
-        case RIGHT:
-            logicalLeft = logicalWidth() - borderEnd() - paddingEnd() - logicalWidthForChild(legend);
-            break;
-        default:
-            logicalLeft = borderStart() + paddingStart() + marginStartForChild(legend);
-            break;
-        }
-    } else {
-        switch (legend.style().textAlign()) {
-        case LEFT:
-            logicalLeft = borderStart() + paddingStart();
-            break;
-        case CENTER: {
-            // Make sure that the extra pixel goes to the end side in RTL (since it went to the end side
-            // in LTR).
-            LayoutUnit centeredWidth = logicalWidth() - logicalWidthForChild(legend);
-            logicalLeft = centeredWidth - centeredWidth / 2;
-            break;
-        }
-        default:
-            logicalLeft = logicalWidth() - borderStart() - paddingStart() - marginStartForChild(legend) - logicalWidthForChild(legend);
-            break;
-        }
-    }
-    
-    setLogicalLeftForChild(legend, logicalLeft);
-    
-    LayoutUnit fieldsetBorderBefore = borderBefore();
-    LayoutUnit legendLogicalHeight = logicalHeightForChild(legend);
-    LayoutUnit legendAfterMargin = marginAfterForChild(legend);
-    LayoutUnit topPositionForLegend = std::max(LayoutUnit(), (fieldsetBorderBefore - legendLogicalHeight) / 2);
-    LayoutUnit bottomPositionForLegend = topPositionForLegend + legendLogicalHeight + legendAfterMargin;
-
-    // Place the legend now.
-    setLogicalTopForChild(legend, topPositionForLegend);
-
-    // If the bottom of the legend (including its after margin) is below the fieldset border,
-    // then we need to add in sufficient intrinsic border to account for this gap.
-    // FIXME: Should we support the before margin of the legend? Not entirely clear.
-    // FIXME: Consider dropping support for the after margin of the legend. Not sure other
-    // browsers support that anyway.
-    if (bottomPositionForLegend > fieldsetBorderBefore)
-        setIntrinsicBorderForFieldset(bottomPositionForLegend - fieldsetBorderBefore);
-    
-    // Now that the legend is included in the border extent, we can set our logical height
-    // to the borderBefore (which includes the legend and its after margin if they were bigger
-    // than the actual fieldset border) and then add in our padding before.
-    setLogicalHeight(borderBefore() + paddingBefore());
-}
-
-RenderBox* RenderBlock::findFieldsetLegend(FieldsetFindLegendOption option) const
-{
-    for (auto& legend : childrenOfType<RenderBox>(*this)) {
-        if (option == FieldsetIgnoreFloatingOrOutOfFlow && legend.isFloatingOrOutOfFlowPositioned())
-            continue;
-        if (legend.isLegend())
-            return const_cast<RenderBox*>(&legend);
-    }
-    return nullptr;
-}
-
-void RenderBlock::adjustBorderBoxRectForPainting(LayoutRect& paintRect)
-{
-    if (!isFieldset() || !intrinsicBorderForFieldset())
-        return;
-    
-    auto* legend = findFieldsetLegend();
-    if (!legend)
-        return;
-
-    if (style().isHorizontalWritingMode()) {
-        LayoutUnit yOff = std::max(LayoutUnit(), (legend->height() - RenderBox::borderBefore()) / 2);
-        paintRect.setHeight(paintRect.height() - yOff);
-        if (style().writingMode() == TopToBottomWritingMode)
-            paintRect.setY(paintRect.y() + yOff);
-    } else {
-        LayoutUnit xOff = std::max(LayoutUnit(), (legend->width() - RenderBox::borderBefore()) / 2);
-        paintRect.setWidth(paintRect.width() - xOff);
-        if (style().writingMode() == LeftToRightWritingMode)
-            paintRect.setX(paintRect.x() + xOff);
-    }
-}
-
-LayoutRect RenderBlock::paintRectToClipOutFromBorder(const LayoutRect& paintRect)
-{
-    LayoutRect clipRect;
-    if (!isFieldset())
-        return clipRect;
-    auto* legend = findFieldsetLegend();
-    if (!legend)
-        return clipRect;
-
-    LayoutUnit borderExtent = RenderBox::borderBefore();
-    if (style().isHorizontalWritingMode()) {
-        clipRect.setX(paintRect.x() + legend->x());
-        clipRect.setY(style().writingMode() == TopToBottomWritingMode ? paintRect.y() : paintRect.y() + paintRect.height() - borderExtent);
-        clipRect.setWidth(legend->width());
-        clipRect.setHeight(borderExtent);
-    } else {
-        clipRect.setX(style().writingMode() == LeftToRightWritingMode ? paintRect.x() : paintRect.x() + paintRect.width() - borderExtent);
-        clipRect.setY(paintRect.y() + legend->y());
-        clipRect.setWidth(borderExtent);
-        clipRect.setHeight(legend->height());
-    }
-    return clipRect;
-}
-
-LayoutUnit RenderBlock::intrinsicBorderForFieldset() const
-{
-    auto* rareData = getBlockRareData(this);
-    return rareData ? rareData->m_intrinsicBorderForFieldset : LayoutUnit();
-}
-
-void RenderBlock::setIntrinsicBorderForFieldset(LayoutUnit padding)
-{
-    auto* rareData = getBlockRareData(this);
-    if (!rareData) {
-        if (!padding)
-            return;
-        rareData = &ensureBlockRareData(this);
-    }
-    rareData->m_intrinsicBorderForFieldset = padding;
-}
-
-LayoutUnit RenderBlock::borderTop() const
-{
-    if (style().writingMode() != TopToBottomWritingMode || !intrinsicBorderForFieldset())
-        return RenderBox::borderTop();
-    return RenderBox::borderTop() + intrinsicBorderForFieldset();
-}
-
-LayoutUnit RenderBlock::borderLeft() const
-{
-    if (style().writingMode() != LeftToRightWritingMode || !intrinsicBorderForFieldset())
-        return RenderBox::borderLeft();
-    return RenderBox::borderLeft() + intrinsicBorderForFieldset();
-}
-
-LayoutUnit RenderBlock::borderBottom() const
-{
-    if (style().writingMode() != BottomToTopWritingMode || !intrinsicBorderForFieldset())
-        return RenderBox::borderBottom();
-    return RenderBox::borderBottom() + intrinsicBorderForFieldset();
-}
-
-LayoutUnit RenderBlock::borderRight() const
-{
-    if (style().writingMode() != RightToLeftWritingMode || !intrinsicBorderForFieldset())
-        return RenderBox::borderRight();
-    return RenderBox::borderRight() + intrinsicBorderForFieldset();
-}
-
-LayoutUnit RenderBlock::borderBefore() const
-{
-    return RenderBox::borderBefore() + intrinsicBorderForFieldset();
-}
-
-bool RenderBlock::computePreferredWidthsForExcludedChildren(LayoutUnit& minWidth, LayoutUnit& maxWidth) const
-{
-    if (!isFieldset())
-        return false;
-    
-    auto* legend = findFieldsetLegend();
-    if (!legend)
-        return false;
-    
-    legend->setIsExcludedFromNormalLayout(true);
-
-    computeChildPreferredLogicalWidths(*legend, minWidth, maxWidth);
-    
-    // These are going to be added in later, so we subtract them out to reflect the
-    // fact that the legend is outside the scrollable area.
-    auto scrollbarWidth = intrinsicScrollbarLogicalWidth();
-    minWidth -= scrollbarWidth;
-    maxWidth -= scrollbarWidth;
-    
-    const auto& childStyle = legend->style();
-    auto startMarginLength = childStyle.marginStartUsing(&style());
-    auto endMarginLength = childStyle.marginEndUsing(&style());
-    LayoutUnit margin;
-    LayoutUnit marginStart;
-    LayoutUnit marginEnd;
-    if (startMarginLength.isFixed())
-        marginStart += startMarginLength.value();
-    if (endMarginLength.isFixed())
-        marginEnd += endMarginLength.value();
-    margin = marginStart + marginEnd;
-    
-    minWidth += margin;
-    maxWidth += margin;
-
-    return true;
-}
-
-LayoutUnit RenderBlock::adjustBorderBoxLogicalHeightForBoxSizing(LayoutUnit height) const
-{
-    // FIXME: We're doing this to match other browsers even though it's questionable.
-    // Shouldn't height:100px mean the fieldset content gets 100px of height even if the
-    // resulting fieldset becomes much taller because of the legend?
-    LayoutUnit bordersPlusPadding = borderAndPaddingLogicalHeight();
-    if (style().boxSizing() == CONTENT_BOX)
-        return height + bordersPlusPadding - intrinsicBorderForFieldset();
-    return std::max(height, bordersPlusPadding);
-}
-
-LayoutUnit RenderBlock::adjustContentBoxLogicalHeightForBoxSizing(std::optional<LayoutUnit> height) const
-{
-    // FIXME: We're doing this to match other browsers even though it's questionable.
-    // Shouldn't height:100px mean the fieldset content gets 100px of height even if the
-    // resulting fieldset becomes much taller because of the legend?
-    if (!height)
-        return 0;
-    LayoutUnit result = height.value();
-    if (style().boxSizing() == BORDER_BOX)
-        result -= borderAndPaddingLogicalHeight();
-    else
-        result -= intrinsicBorderForFieldset();
-    return std::max(LayoutUnit(), result);
-}
-
-void RenderBlock::paintExcludedChildrenInBorder(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
-{
-    if (!isFieldset())
-        return;
-    
-    RenderBox* box = findFieldsetLegend();
-    if (!box || !box->isExcludedFromNormalLayout() || box->hasSelfPaintingLayer())
-        return;
-    
-    LayoutPoint childPoint = flipForWritingModeForChild(box, paintOffset);
-    box->paintAsInlineBlock(paintInfo, childPoint);
-}
-    
 } // namespace WebCore

@@ -226,7 +226,7 @@ public:
 
     virtual bool isDetailsMarker() const { return false; }
     virtual bool isEmbeddedObject() const { return false; }
-    bool isFieldset() const;
+    virtual bool isFieldset() const { return false; }
     virtual bool isFileUploadControl() const { return false; }
     virtual bool isFrame() const { return false; }
     virtual bool isFrameSet() const { return false; }
@@ -447,10 +447,6 @@ public:
     bool isRenderFlowThread() const { return m_bitfields.hasRareData() && rareData().isRenderFlowThread(); }
     bool hasOutlineAutoAncestor() const { return m_bitfields.hasRareData() && rareData().hasOutlineAutoAncestor(); }
     bool isRegisteredForVisibleInViewportCallback() { return m_bitfields.hasRareData() && rareData().isRegisteredForVisibleInViewportCallback(); }
-
-    bool isExcludedFromNormalLayout() const { return m_bitfields.isExcludedFromNormalLayout(); }
-    void setIsExcludedFromNormalLayout(bool excluded) { m_bitfields.setIsExcludedFromNormalLayout(excluded); }
-    bool isExcludedAndPlacedInBorder() const { return isExcludedFromNormalLayout() && isLegend(); }
 
     enum VisibleInViewportState {
         VisibilityUnknown,
@@ -905,7 +901,6 @@ private:
             , m_hasTransformRelatedProperty(false)
             , m_everHadLayout(false)
             , m_childrenInline(false)
-            , m_isExcludedFromNormalLayout(false)
             , m_positionedState(IsStaticallyPositioned)
             , m_selectionState(SelectionNone)
             , m_flowThreadState(NotInsideFlowThread)
@@ -941,8 +936,6 @@ private:
 
         // from RenderBlock
         ADD_BOOLEAN_BITFIELD(childrenInline, ChildrenInline);
-        
-        ADD_BOOLEAN_BITFIELD(isExcludedFromNormalLayout, IsExcludedFromNormalLayout);
 
     private:
         unsigned m_positionedState : 2; // PositionedState

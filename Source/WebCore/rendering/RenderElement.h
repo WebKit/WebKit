@@ -36,8 +36,7 @@ class RenderElement : public RenderObject {
 public:
     virtual ~RenderElement();
 
-    enum RendererCreationType { CreateAllRenderers, OnlyCreateBlockAndFlexboxRenderers };
-    static RenderPtr<RenderElement> createFor(Element&, RenderStyle&&, RendererCreationType = CreateAllRenderers);
+    static RenderPtr<RenderElement> createFor(Element&, RenderStyle&&);
 
     bool hasInitializedStyle() const { return m_hasInitializedStyle; }
 

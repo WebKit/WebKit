@@ -46,7 +46,7 @@
 #include "HTMLTableElement.h"
 #include "HostWindow.h"
 #include "RenderAncestorIterator.h"
-#include "RenderBlock.h"
+#include "RenderFieldset.h"
 #include "RenderObject.h"
 #include "SVGElement.h"
 #include "Settings.h"
@@ -186,8 +186,7 @@ static void setAtkRelationSetFromCoreObject(AccessibilityObject* coreObject, Atk
         if (AccessibilityObject* label = coreObject->titleUIElement())
             atk_relation_set_add_relation_by_type(relationSet, ATK_RELATION_LABELLED_BY, label->wrapper());
     } else if (coreObject->roleValue() == LegendRole) {
-        RenderBlock* renderFieldset = *coreObject->renderer()->parent();
-        if (renderFieldset && renderFieldset->isFieldset()) {
+        if (RenderFieldset* renderFieldset = ancestorsOfType<RenderFieldset>(*coreObject->renderer()).first()) {
             AccessibilityObject* fieldset = coreObject->axObjectCache()->getOrCreate(renderFieldset);
             atk_relation_set_add_relation_by_type(relationSet, ATK_RELATION_LABEL_FOR, fieldset->wrapper());
         }

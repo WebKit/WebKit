@@ -314,7 +314,7 @@ private:
 
     void addOverflowFromChildren() final;
 
-    void adjustBorderBoxRectForPainting(LayoutRect&) override;
+    void subtractCaptionRect(LayoutRect&) const;
 
     void recalcCollapsedBorders();
     void recalcSections() const;

@@ -37,7 +37,6 @@
 namespace WebCore {
 
 class RenderBox;
-class RenderObject;
     
 class OrderIterator {
 public:
@@ -48,8 +47,6 @@ public:
     RenderBox* currentChild() const { return m_currentChild; }
     RenderBox* first();
     RenderBox* next();
-
-    bool shouldSkipChild(const RenderObject&) const;
 
 private:
     void reset();
@@ -72,8 +69,7 @@ public:
     }
     ~OrderIteratorPopulator();
 
-    // The return value indicates that the child should be skipped when iterating.
-    bool collectChild(const RenderBox&);
+    void collectChild(const RenderBox&);
 
 private:
     OrderIterator& m_iterator;

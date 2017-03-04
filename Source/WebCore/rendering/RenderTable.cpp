@@ -753,7 +753,7 @@ void RenderTable::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffs
         paintOutline(paintInfo, LayoutRect(paintOffset, size()));
 }
 
-void RenderTable::adjustBorderBoxRectForPainting(LayoutRect& rect)
+void RenderTable::subtractCaptionRect(LayoutRect& rect) const
 {
     for (unsigned i = 0; i < m_captions.size(); i++) {
         LayoutUnit captionLogicalHeight = m_captions[i]->logicalHeight() + m_captions[i]->marginBefore() + m_captions[i]->marginAfter();
@@ -768,8 +768,6 @@ void RenderTable::adjustBorderBoxRectForPainting(LayoutRect& rect)
                 rect.move(captionLogicalHeight, 0);
         }
     }
-    
-    RenderBlock::adjustBorderBoxRectForPainting(rect);
 }
 
 void RenderTable::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
@@ -778,8 +776,8 @@ void RenderTable::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint& p
         return;
 
     LayoutRect rect(paintOffset, size());
-    adjustBorderBoxRectForPainting(rect);
-    
+    subtractCaptionRect(rect);
+
     BackgroundBleedAvoidance bleedAvoidance = determineBackgroundBleedAvoidance(paintInfo.context());
     if (!boxShadowShouldBeAppliedToBackground(rect.location(), bleedAvoidance))
         paintBoxShadow(paintInfo, rect, style(), Normal);
@@ -796,7 +794,7 @@ void RenderTable::paintMask(PaintInfo& paintInfo, const LayoutPoint& paintOffset
         return;
 
     LayoutRect rect(paintOffset, size());
-    adjustBorderBoxRectForPainting(rect);
+    subtractCaptionRect(rect);
 
     paintMaskImages(paintInfo, rect);
 }

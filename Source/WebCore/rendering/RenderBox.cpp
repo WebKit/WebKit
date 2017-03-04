@@ -1336,7 +1336,6 @@ void RenderBox::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint& pai
 
     LayoutRect paintRect = borderBoxRectInRegion(currentRenderNamedFlowFragment());
     paintRect.moveBy(paintOffset);
-    adjustBorderBoxRectForPainting(paintRect);
 
 #if PLATFORM(IOS)
     // Workaround for <rdar://problem/6209763>. Force the painting bounds of checkboxes and radio controls to be square.
@@ -1586,7 +1585,6 @@ void RenderBox::paintMask(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
         return;
 
     LayoutRect paintRect = LayoutRect(paintOffset, size());
-    adjustBorderBoxRectForPainting(paintRect);
     paintMaskImages(paintInfo, paintRect);
 }
 
@@ -4567,7 +4565,7 @@ bool RenderBox::createsNewFormattingContext() const
 
 bool RenderBox::avoidsFloats() const
 {
-    return (isReplaced() && !isAnonymousInlineBlock()) || isHR() || isLegend() || isFieldset() || createsNewFormattingContext();
+    return (isReplaced() && !isAnonymousInlineBlock()) || isHR() || isLegend() || createsNewFormattingContext();
 }
 
 void RenderBox::addVisualEffectOverflow()

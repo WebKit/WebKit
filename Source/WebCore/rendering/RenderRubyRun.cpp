@@ -213,19 +213,17 @@ RenderRubyRun* RenderRubyRun::staticCreateRubyRun(const RenderObject* parentRuby
     return renderer;
 }
 
-void RenderRubyRun::layoutExcludedChildren(bool relayoutChildren)
+RenderObject* RenderRubyRun::layoutSpecialExcludedChild(bool relayoutChildren)
 {
-    RenderBlockFlow::layoutExcludedChildren(relayoutChildren);
-
     StackStats::LayoutCheckPoint layoutCheckPoint;
     // Don't bother positioning the RenderRubyRun yet.
     RenderRubyText* rt = rubyText();
     if (!rt)
-        return;
-    rt->setIsExcludedFromNormalLayout(true);
+        return 0;
     if (relayoutChildren)
         rt->setChildNeedsLayout(MarkOnlyThis);
     rt->layoutIfNeeded();
+    return rt;
 }
 
 void RenderRubyRun::layout()

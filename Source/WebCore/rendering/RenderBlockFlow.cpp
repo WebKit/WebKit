@@ -432,7 +432,7 @@ void RenderBlockFlow::computeColumnCountAndWidth()
 bool RenderBlockFlow::willCreateColumns(std::optional<unsigned> desiredColumnCount) const
 {
     // The following types are not supposed to create multicol context.
-    if (isFileUploadControl() || isTextControl() || isListBox())
+    if (isFieldset() || isFileUploadControl() || isTextControl() || isListBox())
         return false;
 
     if (!firstChild())
@@ -637,7 +637,7 @@ void RenderBlockFlow::layoutBlockChildren(bool relayoutChildren, LayoutUnit& max
     // Fieldsets need to find their legend and position it inside the border of the object.
     // The legend then gets skipped during normal layout. The same is true for ruby text.
     // It doesn't get included in the normal layout process but is instead skipped.
-    layoutExcludedChildren(relayoutChildren);
+    RenderObject* childToExclude = layoutSpecialExcludedChild(relayoutChildren);
 
     LayoutUnit previousFloatLogicalBottom = 0;
     maxFloatLogicalBottom = 0;
@@ -648,7 +648,7 @@ void RenderBlockFlow::layoutBlockChildren(bool relayoutChildren, LayoutUnit& max
         RenderBox& child = *next;
         next = child.nextSiblingBox();
 
-        if (child.isExcludedFromNormalLayout())
+        if (childToExclude == &child)
             continue; // Skip this child, since it will be positioned by the specialized subclass (fieldsets and ruby runs).
 
         updateBlockChildDirtyBitsBeforeLayout(relayoutChildren, child);
@@ -3874,15 +3874,11 @@ void RenderBlockFlow::adjustComputedFontSizes(float size, float visibleWidth)
 }
 #endif // ENABLE(TEXT_AUTOSIZING)
 
-void RenderBlockFlow::layoutExcludedChildren(bool relayoutChildren)
+RenderObject* RenderBlockFlow::layoutSpecialExcludedChild(bool relayoutChildren)
 {
-    RenderBlock::layoutExcludedChildren(relayoutChildren);
-
-    auto* flowThread = multiColumnFlowThread();
+    RenderMultiColumnFlowThread* flowThread = multiColumnFlowThread();
     if (!flowThread)
-        return;
-
-    flowThread->setIsExcludedFromNormalLayout(true);
+        return nullptr;
 
     setLogicalTopForChild(*flowThread, borderAndPaddingBefore());
 
@@ -3908,11 +3904,13 @@ void RenderBlockFlow::layoutExcludedChildren(bool relayoutChildren)
         flowThread->setNeedsHeightsRecalculation(false);
     }
     determineLogicalLeftPositionForChild(*flowThread);
+
+    return flowThread;
 }
 
 void RenderBlockFlow::addChild(RenderObject* newChild, RenderObject* beforeChild)
 {
-    if (multiColumnFlowThread() && (!isFieldset() || !newChild->isLegend()))
+    if (multiColumnFlowThread())
         return multiColumnFlowThread()->addChild(newChild, beforeChild);
     auto* beforeChildOrPlaceholder = beforeChild;
     if (auto* containingFlowThread = flowThreadContainingBlock())

@@ -156,13 +156,13 @@ RenderElement::~RenderElement()
         view().unregisterForVisibleInViewportCallback(*this);
 }
 
-RenderPtr<RenderElement> RenderElement::createFor(Element& element, RenderStyle&& style, RendererCreationType creationType)
+RenderPtr<RenderElement> RenderElement::createFor(Element& element, RenderStyle&& style)
 {
     // Minimal support for content properties replacing an entire element.
     // Works only if we have exactly one piece of content and it's a URL.
     // Otherwise acts as if we didn't support this feature.
     const ContentData* contentData = style.contentData();
-    if (creationType == CreateAllRenderers && contentData && !contentData->next() && is<ImageContentData>(*contentData) && !element.isPseudoElement()) {
+    if (contentData && !contentData->next() && is<ImageContentData>(*contentData) && !element.isPseudoElement()) {
         Style::loadPendingResources(style, element.document(), &element);
         auto& styleImage = downcast<ImageContentData>(*contentData).image();
         auto image = createRenderer<RenderImage>(element, WTFMove(style), const_cast<StyleImage*>(&styleImage));
@@ -175,15 +175,32 @@ RenderPtr<RenderElement> RenderElement::createFor(Element& element, RenderStyle&
     case CONTENTS:
         return nullptr;
     case INLINE:
-        if (creationType == CreateAllRenderers)
-            return createRenderer<RenderInline>(element, WTFMove(style));
-        FALLTHROUGH; // Fieldsets should make a block flow if display:inline is set.
+        return createRenderer<RenderInline>(element, WTFMove(style));
     case BLOCK:
     case INLINE_BLOCK:
     case COMPACT:
         return createRenderer<RenderBlockFlow>(element, WTFMove(style));
     case LIST_ITEM:
         return createRenderer<RenderListItem>(element, WTFMove(style));
+    case TABLE:
+    case INLINE_TABLE:
+        return createRenderer<RenderTable>(element, WTFMove(style));
+    case TABLE_ROW_GROUP:
+    case TABLE_HEADER_GROUP:
+    case TABLE_FOOTER_GROUP:
+        return createRenderer<RenderTableSection>(element, WTFMove(style));
+    case TABLE_ROW:
+        return createRenderer<RenderTableRow>(element, WTFMove(style));
+    case TABLE_COLUMN_GROUP:
+    case TABLE_COLUMN:
+        return createRenderer<RenderTableCol>(element, WTFMove(style));
+    case TABLE_CELL:
+        return createRenderer<RenderTableCell>(element, WTFMove(style));
+    case TABLE_CAPTION:
+        return createRenderer<RenderTableCaption>(element, WTFMove(style));
+    case BOX:
+    case INLINE_BOX:
+        return createRenderer<RenderDeprecatedFlexibleBox>(element, WTFMove(style));
     case FLEX:
     case INLINE_FLEX:
     case WEBKIT_FLEX:
@@ -192,34 +209,6 @@ RenderPtr<RenderElement> RenderElement::createFor(Element& element, RenderStyle&
     case GRID:
     case INLINE_GRID:
         return createRenderer<RenderGrid>(element, WTFMove(style));
-    case BOX:
-    case INLINE_BOX:
-        return createRenderer<RenderDeprecatedFlexibleBox>(element, WTFMove(style));
-    default: {
-        if (creationType == OnlyCreateBlockAndFlexboxRenderers)
-            return createRenderer<RenderBlockFlow>(element, WTFMove(style));
-        switch (style.display()) {
-        case TABLE:
-        case INLINE_TABLE:
-            return createRenderer<RenderTable>(element, WTFMove(style));
-        case TABLE_CELL:
-            return createRenderer<RenderTableCell>(element, WTFMove(style));
-        case TABLE_CAPTION:
-            return createRenderer<RenderTableCaption>(element, WTFMove(style));
-        case TABLE_ROW_GROUP:
-        case TABLE_HEADER_GROUP:
-        case TABLE_FOOTER_GROUP:
-            return createRenderer<RenderTableSection>(element, WTFMove(style));
-        case TABLE_ROW:
-            return createRenderer<RenderTableRow>(element, WTFMove(style));
-        case TABLE_COLUMN_GROUP:
-        case TABLE_COLUMN:
-            return createRenderer<RenderTableCol>(element, WTFMove(style));
-        default:
-            break;
-        }
-        break;
-    }
     }
     ASSERT_NOT_REACHED();
     return nullptr;
@@ -1219,10 +1208,9 @@ void RenderElement::paintAsInlineBlock(PaintInfo& paintInfo, const LayoutPoint& 
     // Paint all phases atomically, as though the element established its own stacking context.
     // (See Appendix E.2, section 6.4 on inline block/table/replaced elements in the CSS2.1 specification.)
     // This is also used by other elements (e.g. flex items and grid items).
-    PaintPhase paintPhaseToUse = isExcludedAndPlacedInBorder() ? paintInfo.phase : PaintPhaseForeground;
-    if (paintInfo.phase == PaintPhaseSelection)
+    if (paintInfo.phase == PaintPhaseSelection) {
         paint(paintInfo, childPoint);
-    else if (paintInfo.phase == paintPhaseToUse) {
+    } else if (paintInfo.phase == PaintPhaseForeground) {
         paintPhase(*this, PaintPhaseBlockBackground, paintInfo, childPoint);
         paintPhase(*this, PaintPhaseChildBlockBackgrounds, paintInfo, childPoint);
         paintPhase(*this, PaintPhaseFloat, paintInfo, childPoint);
@@ -1230,7 +1218,7 @@ void RenderElement::paintAsInlineBlock(PaintInfo& paintInfo, const LayoutPoint& 
         paintPhase(*this, PaintPhaseOutline, paintInfo, childPoint);
 
         // Reset |paintInfo| to the original phase.
-        paintInfo.phase = paintPhaseToUse;
+        paintInfo.phase = PaintPhaseForeground;
     }
 }
 
