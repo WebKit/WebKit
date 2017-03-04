@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script type='text/javascript'>
+if (window.testRunner) {
+  testRunner.dumpAsText();
+  testRunner.waitUntilDone();
+}
+</script>
+</head>
+<body>
+<p>The suggested filename above should be "abe.png" and the download should succeed.</p>
+<a id="download-url" href="/css/resources/abe.png" download>Link with download attribute.</a>
+<script>
+function click(elmt)
+{
+    if (!window.eventSender) {
+        alert('Click the link to run the test.');
+        return;
+    }
+    eventSender.mouseMoveTo(elmt.offsetLeft + 5, elmt.offsetTop + 5);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+}
+
+function runTest()
+{
+    var link = document.getElementById("download-url");
+    click(link);
+}
+runTest();
+</script>
+</body>
+</html>
