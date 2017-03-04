@@ -41,5 +41,7 @@
 	<array>
 		<string>audio</string>
 	</array>
+	<key>CanInheritApplicationStateFromOtherProcesses</key>
+	<true/>
 </dict>
 </plist>

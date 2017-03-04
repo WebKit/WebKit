@@ -30,6 +30,7 @@
 
 #import "AccessibilityIOS.h"
 #import "AssistedNodeInformation.h"
+#import "CelestialSPI.h"
 #import "DataReference.h"
 #import "DrawingArea.h"
 #import "EditingRange.h"
@@ -98,6 +99,7 @@
 #import <WebCore/RenderView.h>
 #import <WebCore/Settings.h>
 #import <WebCore/SharedBuffer.h>
+#import <WebCore/SoftLinking.h>
 #import <WebCore/StyleProperties.h>
 #import <WebCore/TextIndicator.h>
 #import <WebCore/TextIterator.h>
@@ -109,6 +111,14 @@
 #import <wtf/MemoryPressureHandler.h>
 #import <wtf/SetForScope.h>
 
+SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL(Celestial)
+
+SOFT_LINK_CLASS_OPTIONAL(Celestial, AVSystemController)
+
+SOFT_LINK_CONSTANT_MAY_FAIL(Celestial, AVSystemController_PIDToInheritApplicationStateFrom, NSString *)
+
+#define AVSystemController_PIDToInheritApplicationStateFrom getAVSystemController_PIDToInheritApplicationStateFrom()
+
 using namespace WebCore;
 
 namespace WebKit {
@@ -119,6 +129,14 @@ const int blockSelectionStartHeight = 100;
 void WebPage::platformInitialize()
 {
     platformInitializeAccessibility();
+
+    if (canLoadAVSystemController_PIDToInheritApplicationStateFrom()) {
+        pid_t pid = WebProcess::singleton().presenterApplicationPid();
+        NSError *error = nil;
+        [[getAVSystemControllerClass() sharedAVSystemController] setAttribute:@(pid) forKey:AVSystemController_PIDToInheritApplicationStateFrom error:&error];
+        if (error)
+            WTFLogAlways("Failed to set up PID proxying: %s", [[error localizedDescription] UTF8String]);
+    }
 }
 
 void WebPage::platformDetach()

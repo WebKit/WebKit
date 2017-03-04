@@ -1,3 +1,20 @@
+2017-03-04  Eric Carlson  <eric.carlson@apple.com>
+
+        [iOS] The web process should inherit application state from UI process
+        https://bugs.webkit.org/show_bug.cgi?id=169156
+        <rdar://problem/30845473>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Platform/spi/ios/CelestialSPI.h: Added.
+
+        * WebKit2.xcodeproj/project.pbxproj: Include CelestialSPI.h.
+
+        * WebProcess/EntryPoint/mac/XPCService/WebContentService/Info-iOS.plist: Add entitlement.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::platformInitialize): Set up PID proxying.
+
 2017-03-04  Aakash Jain  <aakash_jain@apple.com>
 
         Add symbols required by TAPI from Shared/API/Cocoa/WebKit.m in a header file
