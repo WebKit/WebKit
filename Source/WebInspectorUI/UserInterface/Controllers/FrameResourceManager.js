@@ -49,6 +49,7 @@ WebInspector.FrameResourceManager = class FrameResourceManager extends WebInspec
         this._mainFrame = null;
         this._resourceRequestIdentifierMap = new Map;
         this._orphanedResources = new Map;
+        this._webSocketIdentifierToURL = new Map;
 
         if (this._mainFrame !== oldMainFrame)
             this._mainFrameDidChange(oldMainFrame);
@@ -198,6 +199,94 @@ WebInspector.FrameResourceManager = class FrameResourceManager extends WebInspec
 
         // Associate the resource with the requestIdentifier so it can be found in future loading events.
         this._resourceRequestIdentifierMap.set(requestIdentifier, resource);
+    }
+
+    webSocketCreated(requestId, url)
+    {
+        this._webSocketIdentifierToURL.set(requestId, url);
+    }
+
+    webSocketWillSendHandshakeRequest(requestId, timestamp, request)
+    {
+        let url = this._webSocketIdentifierToURL.get(requestId);
+        console.assert(url);
+        if (!url)
+            return;
+
+        // FIXME: <webkit.org/b/168475> Web Inspector: Correctly display iframe's and worker's WebSockets
+        let frameIdentifier = WebInspector.frameResourceManager.mainFrame.id;
+        let loaderIdentifier = WebInspector.frameResourceManager.mainFrame.id;
+        let targetId;
+
+        let frame = this.frameForIdentifier(frameIdentifier);
+        let requestData = null;
+        let elapsedTime = WebInspector.timelineManager.computeElapsedTime(timestamp);
+        let initiatorSourceCodeLocation = null;
+
+        let resource = new WebInspector.WebSocketResource(url, loaderIdentifier, targetId, requestId, request.headers, requestData, elapsedTime, initiatorSourceCodeLocation);
+        frame.addResource(resource);
+
+        this._resourceRequestIdentifierMap.set(requestId, resource);
+    }
+
+    webSocketHandshakeResponseReceived(requestId, timestamp, response)
+    {
+        let resource = this._resourceRequestIdentifierMap.get(requestId);
+        console.assert(resource);
+        if (!resource)
+            return;
+
+        resource.readyState = WebInspector.WebSocketResource.ReadyState.Open;
+
+        let elapsedTime = WebInspector.timelineManager.computeElapsedTime(timestamp);
+        resource.markAsFinished(elapsedTime);
+
+        // FIXME: <webkit.org/b/169166> Web Inspector: WebSockets: Implement timing information
+        let responseTiming = response.timing || null;
+
+        resource.updateForResponse(resource.url, resource.mimeType, resource.type, response.headers, response.status, response.statusText, elapsedTime, responseTiming);
+    }
+
+    webSocketFrameReceived(requestId, timestamp, response)
+    {
+        this._webSocketFrameReceivedOrSent(requestId, timestamp, response);
+    }
+
+    webSocketFrameSent(requestId, timestamp, response)
+    {
+        this._webSocketFrameReceivedOrSent(requestId, timestamp, response);
+    }
+
+    webSocketClosed(requestId, timestamp)
+    {
+        let resource = this._resourceRequestIdentifierMap.get(requestId);
+        console.assert(resource);
+        if (!resource)
+            return;
+
+        resource.readyState = WebInspector.WebSocketResource.ReadyState.Closed;
+
+        let elapsedTime = WebInspector.timelineManager.computeElapsedTime(timestamp);
+        resource.markAsFinished(elapsedTime);
+
+        this._webSocketIdentifierToURL.delete(requestId);
+        this._resourceRequestIdentifierMap.delete(requestId);
+    }
+
+    _webSocketFrameReceivedOrSent(requestId, timestamp, response)
+    {
+        let resource = this._resourceRequestIdentifierMap.get(requestId);
+        console.assert(resource);
+        if (!resource)
+            return;
+
+        let isIncoming = !!response.mask;
+        let data = response.payloadData;
+        let opcode = response.opcode;
+
+        let elapsedTime = WebInspector.timelineManager.computeElapsedTime(timestamp);
+
+        resource.addFrame(data, isIncoming, opcode, timestamp, elapsedTime);
     }
 
     markResourceRequestAsServedFromMemoryCache(requestIdentifier)

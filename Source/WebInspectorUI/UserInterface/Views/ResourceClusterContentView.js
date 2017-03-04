@@ -83,6 +83,10 @@ WebInspector.ResourceClusterContentView = class ResourceClusterContentView exten
             this._responseContentView = new WebInspector.FontResourceContentView(this._resource);
             break;
 
+        case WebInspector.Resource.Type.WebSocket:
+            // FIXME: <webkit.org/b/169011> Web Inspector: Show individual messages in the content pane for a WebSocket
+            break;
+
         default:
             this._responseContentView = new WebInspector.GenericResourceContentView(this._resource);
             break;

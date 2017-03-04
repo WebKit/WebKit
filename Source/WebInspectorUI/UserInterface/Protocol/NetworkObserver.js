@@ -62,29 +62,29 @@ WebInspector.NetworkObserver = class NetworkObserver
         WebInspector.frameResourceManager.resourceRequestWasServedFromMemoryCache(requestId, frameId, loaderId, resource, timestamp, initiator);
     }
 
+    webSocketCreated(requestId, url)
+    {
+        WebInspector.frameResourceManager.webSocketCreated(requestId, url);
+    }
+
     webSocketWillSendHandshakeRequest(requestId, timestamp, request)
     {
-        // FIXME: Not implemented.
+        WebInspector.frameResourceManager.webSocketWillSendHandshakeRequest(requestId, timestamp, request);
     }
 
     webSocketHandshakeResponseReceived(requestId, timestamp, response)
     {
-        // FIXME: Not implemented.
-    }
-
-    webSocketCreated(requestId, url)
-    {
-        // FIXME: Not implemented.
+        WebInspector.frameResourceManager.webSocketHandshakeResponseReceived(requestId, timestamp, response);
     }
 
     webSocketClosed(requestId, timestamp)
     {
-        // FIXME: Not implemented.
+        WebInspector.frameResourceManager.webSocketClosed(requestId, timestamp);
     }
 
     webSocketFrameReceived(requestId, timestamp, response)
     {
-        // FIXME: Not implemented.
+        WebInspector.frameResourceManager.webSocketFrameReceived(requestId, timestamp, response);
     }
 
     webSocketFrameError(requestId, timestamp, errorMessage)
@@ -94,6 +94,6 @@ WebInspector.NetworkObserver = class NetworkObserver
 
     webSocketFrameSent(requestId, timestamp, response)
     {
-        // FIXME: Not implemented.
+        WebInspector.frameResourceManager.webSocketFrameSent(requestId, timestamp, response);
     }
 };

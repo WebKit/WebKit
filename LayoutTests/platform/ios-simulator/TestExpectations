@@ -212,6 +212,7 @@ storage/websql/quota-tracking.html
 # iOS doesn't have a local inspector
 inspector/ [ Skip ]
 http/tests/inspector/ [ Skip ]
+http/tests/websocket/tests/hybi/inspector/ [ Skip ]
 
 # Some CSS3 Text tests are not enabled on iOS
 webkit.org/b/76173 fast/css3-text/css3-text-align-last

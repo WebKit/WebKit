@@ -1,3 +1,22 @@
+2017-03-04  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Show Web Socket connections in Network tab
+        https://bugs.webkit.org/show_bug.cgi?id=167520
+
+        Reviewed by Joseph Pecoraro.
+
+        * http/tests/websocket/tests/hybi/inspector/client-close-expected.txt: Added.
+        * http/tests/websocket/tests/hybi/inspector/client-close.html: Added.
+        * http/tests/websocket/tests/hybi/inspector/client-close_wsh.py: Added.
+        (web_socket_do_extra_handshake):
+        (web_socket_transfer_data):
+        * http/tests/websocket/tests/hybi/inspector/server-close-expected.txt: Added.
+        * http/tests/websocket/tests/hybi/inspector/server-close.html: Added.
+        * http/tests/websocket/tests/hybi/inspector/server-close_wsh.py: Added.
+        (web_socket_do_extra_handshake):
+        (web_socket_transfer_data):
+        * platform/ios-simulator/TestExpectations:
+
 2017-03-03  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r213400.

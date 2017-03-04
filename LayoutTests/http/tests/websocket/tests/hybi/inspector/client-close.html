@@ -1,0 +1,69 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../../../inspector/resources/inspector-test.js"></script>
+<script>
+function createWebSocketConnection()
+{
+    let webSocket = new WebSocket("ws://127.0.0.1:8880/websocket/tests/hybi/inspector/client-close");
+
+    webSocket.onopen = function()
+    {
+        webSocket.send("A message.");
+    };
+
+    webSocket.onmessage = function()
+    {
+        webSocket.close();
+    };
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("WebSocket.ClientClose");
+
+    suite.addTestCase({
+        name: "WebSocket.ClientClose",
+        description: "WebInspector.WebSocketResource.Event.ReadyStateChanged events are fired in order when WebSocket connection is closed by the client.",
+        test(resolve, reject) {
+            WebInspector.Frame.singleFireEventListener(WebInspector.Frame.Event.ResourceWasAdded, function(event) {
+                let resource = event.data.resource;
+
+                InspectorTest.expectThat(resource instanceof WebInspector.WebSocketResource, "WebSocketResource should be created.");
+                InspectorTest.expectEqual(resource.type, WebInspector.Resource.Type.WebSocket, "WebSocketResource should be a WebSocket type.");
+                InspectorTest.expectEqual(resource.readyState, WebInspector.WebSocketResource.ReadyState.Connecting, "WebSocketResource should be in a Connecting state.");
+
+                let runCount = 0;
+
+                resource.addEventListener(WebInspector.WebSocketResource.Event.ReadyStateChanged, function(event) {
+                    let data = event.data;
+                    runCount++;
+
+                    if (runCount === 1) {
+                        InspectorTest.expectEqual(data.previousState, WebInspector.WebSocketResource.ReadyState.Connecting, "WebSocketResource previous state should be Connecting.");
+                        InspectorTest.expectEqual(data.state, WebInspector.WebSocketResource.ReadyState.Open, "WebSocketResource state should change to Open.");
+                        InspectorTest.expectEqual(resource.readyState, WebInspector.WebSocketResource.ReadyState.Open, "WebSocketResource should be in a Open state.");
+                        return;
+                    }
+
+                    if (runCount === 2) {
+                        InspectorTest.expectEqual(data.previousState, WebInspector.WebSocketResource.ReadyState.Open, "WebSocketResource previous state should be Open.");
+                        InspectorTest.expectEqual(data.state, WebInspector.WebSocketResource.ReadyState.Closed, "WebSocketResource state should change to Closed.");
+                        InspectorTest.expectEqual(resource.readyState, WebInspector.WebSocketResource.ReadyState.Closed, "WebSocketResource should be in a Closed state.");
+                        resolve();
+                    }
+                });
+            });
+
+            InspectorTest.evaluateInPage("createWebSocketConnection()");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests WebSockets connection closed by the client.</p>
+</body>
+</html>

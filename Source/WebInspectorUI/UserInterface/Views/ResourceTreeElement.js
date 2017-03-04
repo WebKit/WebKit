@@ -91,6 +91,9 @@ WebInspector.ResourceTreeElement = class ResourceTreeElement extends WebInspecto
 
     ondblclick()
     {
+        if (this._resource.type === WebInspector.Resource.Type.WebSocket)
+            return;
+
         InspectorFrontendHost.openInNewTab(this._resource.url);
     }
 

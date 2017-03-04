@@ -1,3 +1,64 @@
+2017-03-04  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Show Web Socket connections in Network tab
+        https://bugs.webkit.org/show_bug.cgi?id=167520
+
+        Reviewed by Joseph Pecoraro.
+
+        Show Web Socket connections in Network and Resources tabs. Display HTTP headers
+        of Web Socket handshake request in the details sidebar.
+
+        * UserInterface/Controllers/FrameResourceManager.js:
+        (WebInspector.FrameResourceManager.prototype.initialize):
+        (WebInspector.FrameResourceManager.prototype.webSocketCreated):
+        (WebInspector.FrameResourceManager.prototype.webSocketWillSendHandshakeRequest):
+        webSocketWillSendHandshakeRequest doesn't receive a request URL as one of its parameters.
+        Store URLs received from webSocketCreated method in _webSocketIdentifierToURL map.
+
+        (WebInspector.FrameResourceManager.prototype.webSocketHandshakeResponseReceived):
+        (WebInspector.FrameResourceManager.prototype.webSocketFrameReceived):
+        (WebInspector.FrameResourceManager.prototype.webSocketFrameSent):
+        (WebInspector.FrameResourceManager.prototype.webSocketClosed):
+        Mark resource as finished when Web Socket handshake is complete or Web Socket is closed.
+        This may change in the future.
+
+        (WebInspector.FrameResourceManager.prototype._webSocketFrameReceivedOrSent):
+        * UserInterface/Main.html:
+
+        * UserInterface/Models/WebSocketResource.js: Added.
+        (WebInspector.WebSocketResource):
+        (WebInspector.WebSocketResource.prototype.set readyState):
+        (WebInspector.WebSocketResource.prototype.get readyState):
+        (WebInspector.WebSocketResource.prototype.get frames):
+        (WebInspector.WebSocketResource.prototype.addFrame):
+        Introduce WebSocketResource model to store WebSocket frames (incoming and outgoing messages)
+        and readyState.
+
+        * UserInterface/Protocol/NetworkObserver.js:
+        (WebInspector.NetworkObserver.prototype.webSocketCreated):
+        (WebInspector.NetworkObserver.prototype.webSocketWillSendHandshakeRequest):
+        (WebInspector.NetworkObserver.prototype.webSocketHandshakeResponseReceived):
+        (WebInspector.NetworkObserver.prototype.webSocketClosed):
+        (WebInspector.NetworkObserver.prototype.webSocketFrameReceived):
+        (WebInspector.NetworkObserver.prototype.webSocketFrameError):
+        (WebInspector.NetworkObserver.prototype.webSocketFrameSent):
+        (WebInspector.NetworkObserver):
+        Add corresponding methods for the newly added FrameResourceManager methods.
+
+        * UserInterface/Test.html:
+        * UserInterface/Views/NetworkSidebarPanel.js:
+        (WebInspector.NetworkSidebarPanel.prototype.treeElementAddedOrChanged):
+        Don't show the go to arrow for WebSocket items since WebSocketContentView isn't implemented
+        yet.
+
+        * UserInterface/Views/ResourceClusterContentView.js:
+        (WebInspector.ResourceClusterContentView.prototype.get responseContentView):
+        Don't show any content views for WebSocket items.
+
+        * UserInterface/Views/ResourceTreeElement.js:
+        (WebInspector.ResourceTreeElement.prototype.ondblclick):
+        Don't open WebSocket URL in a new browser tab.
+
 2017-03-02  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Should be able to push nodes in an iframe subtree to the frontend
