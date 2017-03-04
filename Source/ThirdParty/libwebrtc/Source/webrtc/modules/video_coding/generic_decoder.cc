@@ -48,6 +48,16 @@ int32_t VCMDecodedFrameCallback::Decoded(VideoFrame& decodedImage) {
 
 int32_t VCMDecodedFrameCallback::Decoded(VideoFrame& decodedImage,
                                          int64_t decode_time_ms) {
+  Decoded(decodedImage,
+          decode_time_ms >= 0 ? rtc::Optional<int32_t>(decode_time_ms)
+                              : rtc::Optional<int32_t>(),
+          rtc::Optional<uint8_t>());
+  return WEBRTC_VIDEO_CODEC_OK;
+}
+
+void VCMDecodedFrameCallback::Decoded(VideoFrame& decodedImage,
+                                      rtc::Optional<int32_t> decode_time_ms,
+                                      rtc::Optional<uint8_t> qp) {
   TRACE_EVENT_INSTANT1("webrtc", "VCMDecodedFrameCallback::Decoded",
                        "timestamp", decodedImage.timestamp());
   // TODO(holmer): We should improve this so that we can handle multiple
@@ -63,27 +73,27 @@ int32_t VCMDecodedFrameCallback::Decoded(VideoFrame& decodedImage,
   if (frameInfo == NULL) {
     LOG(LS_WARNING) << "Too many frames backed up in the decoder, dropping "
                        "this one.";
-    return WEBRTC_VIDEO_CODEC_OK;
+    return;
   }
 
   const int64_t now_ms = _clock->TimeInMilliseconds();
-  if (decode_time_ms < 0) {
+  if (!decode_time_ms) {
     decode_time_ms =
-        static_cast<int32_t>(now_ms - frameInfo->decodeStartTimeMs);
+        rtc::Optional<int32_t>(now_ms - frameInfo->decodeStartTimeMs);
   }
-  _timing->StopDecodeTimer(decodedImage.timestamp(), decode_time_ms, now_ms,
+  _timing->StopDecodeTimer(decodedImage.timestamp(), *decode_time_ms, now_ms,
                            frameInfo->renderTimeMs);
 
-  decodedImage.set_render_time_ms(frameInfo->renderTimeMs);
+  decodedImage.set_timestamp_us(
+      frameInfo->renderTimeMs * rtc::kNumMicrosecsPerMillisec);
   decodedImage.set_rotation(frameInfo->rotation);
   // TODO(sakal): Investigate why callback is NULL sometimes and replace if
   // statement with a DCHECK.
   if (callback) {
-    callback->FrameToRender(decodedImage);
+    callback->FrameToRender(decodedImage, qp);
   } else {
     LOG(LS_WARNING) << "No callback, dropping frame.";
   }
-  return WEBRTC_VIDEO_CODEC_OK;
 }
 
 int32_t VCMDecodedFrameCallback::ReceivedDecodedReferenceFrame(

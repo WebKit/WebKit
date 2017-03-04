@@ -48,7 +48,7 @@ int win32_inet_pton(int af, const char* src, void *dst);
 
 inline std::wstring ToUtf16(const char* utf8, size_t len) {
   int len16 = ::MultiByteToWideChar(CP_UTF8, 0, utf8, static_cast<int>(len),
-                                    NULL, 0);
+                                    nullptr, 0);
   wchar_t* ws = STACK_ARRAY(wchar_t, len16);
   ::MultiByteToWideChar(CP_UTF8, 0, utf8, static_cast<int>(len), ws, len16);
   return std::wstring(ws, len16);
@@ -60,10 +60,10 @@ inline std::wstring ToUtf16(const std::string& str) {
 
 inline std::string ToUtf8(const wchar_t* wide, size_t len) {
   int len8 = ::WideCharToMultiByte(CP_UTF8, 0, wide, static_cast<int>(len),
-                                   NULL, 0, NULL, NULL);
+                                   nullptr, 0, nullptr, nullptr);
   char* ns = STACK_ARRAY(char, len8);
   ::WideCharToMultiByte(CP_UTF8, 0, wide, static_cast<int>(len), ns, len8,
-                        NULL, NULL);
+                        nullptr, nullptr);
   return std::string(ns, len8);
 }
 
@@ -98,21 +98,19 @@ bool GetOsVersion(int* major, int* minor, int* build);
 
 inline bool IsWindowsVistaOrLater() {
   int major;
-  return (GetOsVersion(&major, NULL, NULL) && major >= kWindowsVista);
+  return (GetOsVersion(&major, nullptr, nullptr) && major >= kWindowsVista);
 }
 
 inline bool IsWindowsXpOrLater() {
   int major, minor;
-  return (GetOsVersion(&major, &minor, NULL) &&
-          (major >= kWindowsVista ||
-          (major == kWindows2000 && minor >= 1)));
+  return (GetOsVersion(&major, &minor, nullptr) &&
+          (major >= kWindowsVista || (major == kWindows2000 && minor >= 1)));
 }
 
 inline bool IsWindows8OrLater() {
   int major, minor;
-  return (GetOsVersion(&major, &minor, NULL) &&
-          (major > kWindowsVista ||
-          (major == kWindowsVista && minor >= 2)));
+  return (GetOsVersion(&major, &minor, nullptr) &&
+          (major > kWindowsVista || (major == kWindowsVista && minor >= 2)));
 }
 
 // Determine the current integrity level of the process.

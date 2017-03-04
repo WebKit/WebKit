@@ -243,7 +243,7 @@ TEST(ThreadTest, Names) {
   delete thread;
   thread = new Thread();
   // Name with no object parameter
-  EXPECT_TRUE(thread->SetName("No object", NULL));
+  EXPECT_TRUE(thread->SetName("No object", nullptr));
   EXPECT_TRUE(thread->Start());
   thread->Stop();
   delete thread;
@@ -292,7 +292,7 @@ TEST(ThreadTest, Invoke) {
 TEST(ThreadTest, TwoThreadsInvokeNoDeadlock) {
   AutoThread thread;
   Thread* current_thread = Thread::Current();
-  ASSERT_TRUE(current_thread != NULL);
+  ASSERT_TRUE(current_thread != nullptr);
 
   Thread other_thread;
   other_thread.Start();
@@ -356,13 +356,14 @@ TEST(ThreadTest, ThreeThreadsInvoke) {
 
     // Asynchronously invoke SetAndInvokeSet on |thread1| and wait until
     // |thread1| starts the call.
-    static void AsyncInvokeSetAndWait(
-        Thread* thread1, Thread* thread2, LockedBool* out) {
+    static void AsyncInvokeSetAndWait(AsyncInvoker* invoker,
+                                      Thread* thread1,
+                                      Thread* thread2,
+                                      LockedBool* out) {
       CriticalSection crit;
       LockedBool async_invoked(false);
 
-      AsyncInvoker invoker;
-      invoker.AsyncInvoke<void>(
+      invoker->AsyncInvoke<void>(
           RTC_FROM_HERE, thread1,
           Bind(&SetAndInvokeSet, &async_invoked, thread2, out));
 
@@ -370,14 +371,15 @@ TEST(ThreadTest, ThreeThreadsInvoke) {
     }
   };
 
+  AsyncInvoker invoker;
   LockedBool thread_a_called(false);
 
   // Start the sequence A --(invoke)--> B --(async invoke)--> C --(invoke)--> A.
   // Thread B returns when C receives the call and C should be blocked until A
   // starts to process messages.
   thread_b.Invoke<void>(RTC_FROM_HERE,
-                        Bind(&LocalFuncs::AsyncInvokeSetAndWait, &thread_c,
-                             thread_a, &thread_a_called));
+                        Bind(&LocalFuncs::AsyncInvokeSetAndWait, &invoker,
+                             &thread_c, thread_a, &thread_a_called));
   EXPECT_FALSE(thread_a_called.Get());
 
   EXPECT_TRUE_WAIT(thread_a_called.Get(), 2000);
@@ -441,7 +443,7 @@ class AsyncInvokeTest : public testing::Test {
   AsyncInvokeTest()
       : int_value_(0),
         invoke_started_(true, false),
-        expected_thread_(NULL) {}
+        expected_thread_(nullptr) {}
 
   int int_value_;
   Event invoke_started_;
@@ -522,6 +524,41 @@ TEST_F(AsyncInvokeTest, KillInvokerBeforeExecute) {
   // Invoker is destroyed. Function should not execute.
   Thread::Current()->ProcessMessages(kWaitTimeout);
   EXPECT_EQ(0, int_value_);
+}
+
+TEST_F(AsyncInvokeTest, KillInvokerDuringExecute) {
+  // Use these events to get in a state where the functor is in the middle of
+  // executing, and then to wait for it to finish, ensuring the "EXPECT_FALSE"
+  // is run.
+  Event functor_started(false, false);
+  Event functor_continue(false, false);
+  Event functor_finished(false, false);
+
+  Thread thread;
+  thread.Start();
+  volatile bool invoker_destroyed = false;
+  {
+    AsyncInvoker invoker;
+    invoker.AsyncInvoke<void>(RTC_FROM_HERE, &thread,
+                              [&functor_started, &functor_continue,
+                               &functor_finished, &invoker_destroyed] {
+                                functor_started.Set();
+                                functor_continue.Wait(Event::kForever);
+                                rtc::Thread::Current()->SleepMs(kWaitTimeout);
+                                EXPECT_FALSE(invoker_destroyed);
+                                functor_finished.Set();
+                              });
+    functor_started.Wait(Event::kForever);
+
+    // Allow the functor to continue and immediately destroy the invoker.
+    functor_continue.Set();
+  }
+
+  // If the destructor DIDN'T wait for the functor to finish executing, it will
+  // hit the EXPECT_FALSE(invoker_destroyed) after it finishes sleeping for a
+  // second.
+  invoker_destroyed = true;
+  functor_finished.Wait(Event::kForever);
 }
 
 TEST_F(AsyncInvokeTest, Flush) {
@@ -751,7 +788,7 @@ class ComThreadTest : public testing::Test, public MessageHandler {
   ComThreadTest() : done_(false) {}
  protected:
   virtual void OnMessage(Message* message) {
-    HRESULT hr = CoInitializeEx(NULL, COINIT_MULTITHREADED);
+    HRESULT hr = CoInitializeEx(nullptr, COINIT_MULTITHREADED);
     // S_FALSE means the thread was already inited for a multithread apartment.
     EXPECT_EQ(S_FALSE, hr);
     if (SUCCEEDED(hr)) {

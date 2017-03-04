@@ -19,10 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
 @class RTCVideoSource;
 
 RTC_EXPORT
-@interface RTCVideoTrack : RTCMediaStreamTrack {
-  NSMutableArray *_adapters;
-  RTCVideoSource *_source;
-}
+@interface RTCVideoTrack : RTCMediaStreamTrack
 
 /** The video source for this video track. */
 @property(nonatomic, readonly) RTCVideoSource *source;

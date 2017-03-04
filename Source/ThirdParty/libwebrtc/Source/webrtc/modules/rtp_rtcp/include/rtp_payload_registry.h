@@ -22,57 +22,36 @@
 
 namespace webrtc {
 
-// This strategy deals with the audio/video-specific aspects
-// of payload handling.
+struct CodecInst;
+class VideoCodec;
+
+// TODO(magjed): Remove once external code is updated.
 class RTPPayloadStrategy {
  public:
-  virtual ~RTPPayloadStrategy() {}
-
-  virtual bool CodecsMustBeUnique() const = 0;
-
-  virtual bool PayloadIsCompatible(const RtpUtility::Payload& payload,
-                                   uint32_t frequency,
-                                   size_t channels,
-                                   uint32_t rate) const = 0;
-
-  virtual void UpdatePayloadRate(RtpUtility::Payload* payload,
-                                 uint32_t rate) const = 0;
-
-  virtual RtpUtility::Payload* CreatePayloadType(
-      const char payload_name[RTP_PAYLOAD_NAME_SIZE],
-      int8_t payload_type,
-      uint32_t frequency,
-      size_t channels,
-      uint32_t rate) const = 0;
-
-  virtual int GetPayloadTypeFrequency(
-      const RtpUtility::Payload& payload) const = 0;
-
-  static RTPPayloadStrategy* CreateStrategy(bool handling_audio);
-
- protected:
-  RTPPayloadStrategy() {}
+  static RTPPayloadStrategy* CreateStrategy(bool handling_audio) {
+    return nullptr;
+  }
 };
 
 class RTPPayloadRegistry {
  public:
-  // The registry takes ownership of the strategy.
-  explicit RTPPayloadRegistry(RTPPayloadStrategy* rtp_payload_strategy);
+  RTPPayloadRegistry();
   ~RTPPayloadRegistry();
+  // TODO(magjed): Remove once external code is updated.
+  explicit RTPPayloadRegistry(RTPPayloadStrategy* rtp_payload_strategy)
+      : RTPPayloadRegistry() {}
 
-  int32_t RegisterReceivePayload(const char payload_name[RTP_PAYLOAD_NAME_SIZE],
-                                 int8_t payload_type,
-                                 uint32_t frequency,
-                                 size_t channels,
-                                 uint32_t rate,
+  // TODO(magjed): Split RTPPayloadRegistry into separate Audio and Video class
+  // and simplify the code. http://crbug/webrtc/6743.
+  int32_t RegisterReceivePayload(const CodecInst& audio_codec,
                                  bool* created_new_payload_type);
+  int32_t RegisterReceivePayload(const VideoCodec& video_codec);
 
   int32_t DeRegisterReceivePayload(int8_t payload_type);
 
-  int32_t ReceivePayloadType(const char payload_name[RTP_PAYLOAD_NAME_SIZE],
-                             uint32_t frequency,
-                             size_t channels,
-                             uint32_t rate,
+  int32_t ReceivePayloadType(const CodecInst& audio_codec,
+                             int8_t* payload_type) const;
+  int32_t ReceivePayloadType(const VideoCodec& video_codec,
                              int8_t* payload_type) const;
 
   bool RtxEnabled() const;
@@ -117,13 +96,9 @@ class RTPPayloadRegistry {
   // Returns true if the new media payload type has not changed.
   bool ReportMediaPayloadType(uint8_t media_payload_type);
 
-  int8_t red_payload_type() const {
-    rtc::CritScope cs(&crit_sect_);
-    return red_payload_type_;
-  }
+  int8_t red_payload_type() const { return GetPayloadTypeWithName("red"); }
   int8_t ulpfec_payload_type() const {
-    rtc::CritScope cs(&crit_sect_);
-    return ulpfec_payload_type_;
+    return GetPayloadTypeWithName("ulpfec");
   }
   int8_t last_received_payload_type() const {
     rtc::CritScope cs(&crit_sect_);
@@ -144,19 +119,15 @@ class RTPPayloadRegistry {
  private:
   // Prunes the payload type map of the specific payload type, if it exists.
   void DeregisterAudioCodecOrRedTypeRegardlessOfPayloadType(
-      const char payload_name[RTP_PAYLOAD_NAME_SIZE],
-      size_t payload_name_length,
-      uint32_t frequency,
-      size_t channels,
-      uint32_t rate);
+      const CodecInst& audio_codec);
 
   bool IsRtxInternal(const RTPHeader& header) const;
+  // Returns the payload type for the payload with name |payload_name|, or -1 if
+  // no such payload is registered.
+  int8_t GetPayloadTypeWithName(const char* payload_name) const;
 
   rtc::CriticalSection crit_sect_;
-  RtpUtility::PayloadTypeMap payload_type_map_;
-  std::unique_ptr<RTPPayloadStrategy> rtp_payload_strategy_;
-  int8_t red_payload_type_;
-  int8_t ulpfec_payload_type_;
+  std::map<int, RtpUtility::Payload> payload_type_map_;
   int8_t incoming_payload_type_;
   int8_t last_received_payload_type_;
   int8_t last_received_media_payload_type_;

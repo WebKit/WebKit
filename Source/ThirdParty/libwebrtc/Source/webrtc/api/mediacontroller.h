@@ -11,34 +11,8 @@
 #ifndef WEBRTC_API_MEDIACONTROLLER_H_
 #define WEBRTC_API_MEDIACONTROLLER_H_
 
-#include "webrtc/base/thread.h"
-
-namespace cricket {
-class ChannelManager;
-struct MediaConfig;
-}  // namespace cricket
-
-namespace webrtc {
-class Call;
-class VoiceEngine;
-class RtcEventLog;
-
-// The MediaController currently owns shared state between media channels, but
-// in the future will create and own RtpSenders and RtpReceivers.
-class MediaControllerInterface {
- public:
-  static MediaControllerInterface* Create(
-      const cricket::MediaConfig& config,
-      rtc::Thread* worker_thread,
-      cricket::ChannelManager* channel_manager,
-      webrtc::RtcEventLog* event_log);
-
-  virtual ~MediaControllerInterface() {}
-  virtual void Close() = 0;
-  virtual webrtc::Call* call_w() = 0;
-  virtual cricket::ChannelManager* channel_manager() const = 0;
-  virtual const cricket::MediaConfig& config() const = 0;
-};
-}  // namespace webrtc
+// Including this file is deprecated. It is no longer part of the public API.
+// This only includes the file in its new location for backwards compatibility.
+#include "webrtc/pc/mediacontroller.h"
 
 #endif  // WEBRTC_API_MEDIACONTROLLER_H_

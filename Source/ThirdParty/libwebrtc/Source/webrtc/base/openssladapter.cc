@@ -8,8 +8,6 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#if HAVE_OPENSSL_SSL_H
-
 #include "webrtc/base/openssladapter.h"
 
 #if defined(WEBRTC_POSIX)
@@ -28,7 +26,7 @@
 #include <openssl/x509v3.h>
 
 #include "webrtc/base/arraysize.h"
-#include "webrtc/base/common.h"
+#include "webrtc/base/checks.h"
 #include "webrtc/base/logging.h"
 #include "webrtc/base/openssl.h"
 #include "webrtc/base/safe_conversions.h"
@@ -42,14 +40,14 @@
 
 #if defined(WEBRTC_WIN)
   #define MUTEX_TYPE HANDLE
-  #define MUTEX_SETUP(x) (x) = CreateMutex(NULL, FALSE, NULL)
-  #define MUTEX_CLEANUP(x) CloseHandle(x)
-  #define MUTEX_LOCK(x) WaitForSingleObject((x), INFINITE)
-  #define MUTEX_UNLOCK(x) ReleaseMutex(x)
-  #define THREAD_ID GetCurrentThreadId()
+#define MUTEX_SETUP(x) (x) = CreateMutex(nullptr, FALSE, nullptr)
+#define MUTEX_CLEANUP(x) CloseHandle(x)
+#define MUTEX_LOCK(x) WaitForSingleObject((x), INFINITE)
+#define MUTEX_UNLOCK(x) ReleaseMutex(x)
+#define THREAD_ID GetCurrentThreadId()
 #elif defined(WEBRTC_POSIX)
   #define MUTEX_TYPE pthread_mutex_t
-  #define MUTEX_SETUP(x) pthread_mutex_init(&(x), NULL)
+  #define MUTEX_SETUP(x) pthread_mutex_init(&(x), nullptr)
   #define MUTEX_CLEANUP(x) pthread_mutex_destroy(&(x))
   #define MUTEX_LOCK(x) pthread_mutex_lock(&(x))
   #define MUTEX_UNLOCK(x) pthread_mutex_unlock(&(x))
@@ -77,24 +75,16 @@ static int socket_free(BIO* data);
 
 // TODO(davidben): This should be const once BoringSSL is assumed.
 static BIO_METHOD methods_socket = {
-  BIO_TYPE_BIO,
-  "socket",
-  socket_write,
-  socket_read,
-  socket_puts,
-  0,
-  socket_ctrl,
-  socket_new,
-  socket_free,
-  NULL,
+    BIO_TYPE_BIO, "socket",   socket_write, socket_read, socket_puts, 0,
+    socket_ctrl,  socket_new, socket_free,  nullptr,
 };
 
 static BIO_METHOD* BIO_s_socket2() { return(&methods_socket); }
 
 static BIO* BIO_new_socket(rtc::AsyncSocket* socket) {
   BIO* ret = BIO_new(BIO_s_socket2());
-  if (ret == NULL) {
-          return NULL;
+  if (ret == nullptr) {
+    return nullptr;
   }
   ret->ptr = socket;
   return ret;
@@ -109,7 +99,7 @@ static int socket_new(BIO* b) {
 }
 
 static int socket_free(BIO* b) {
-  if (b == NULL)
+  if (b == nullptr)
     return 0;
   return 1;
 }
@@ -149,9 +139,6 @@ static int socket_puts(BIO* b, const char* str) {
 }
 
 static long socket_ctrl(BIO* b, int cmd, long num, void* ptr) {
-  RTC_UNUSED(num);
-  RTC_UNUSED(ptr);
-
   switch (cmd) {
   case BIO_CTRL_RESET:
     return 0;
@@ -176,7 +163,7 @@ namespace rtc {
 #ifndef OPENSSL_IS_BORINGSSL
 
 // This array will store all of the mutexes available to OpenSSL.
-static MUTEX_TYPE* mutex_buf = NULL;
+static MUTEX_TYPE* mutex_buf = nullptr;
 
 static void locking_function(int mode, int n, const char * file, int line) {
   if (mode & CRYPTO_LOCK) {
@@ -196,7 +183,7 @@ static unsigned long id_function() {  // NOLINT
 static CRYPTO_dynlock_value* dyn_create_function(const char* file, int line) {
   CRYPTO_dynlock_value* value = new CRYPTO_dynlock_value;
   if (!value)
-    return NULL;
+    return nullptr;
   MUTEX_SETUP(value->mutex);
   return value;
 }
@@ -218,7 +205,7 @@ static void dyn_destroy_function(CRYPTO_dynlock_value* l,
 
 #endif  // #ifndef OPENSSL_IS_BORINGSSL
 
-VerificationCallback OpenSSLAdapter::custom_verify_callback_ = NULL;
+VerificationCallback OpenSSLAdapter::custom_verify_callback_ = nullptr;
 
 bool OpenSSLAdapter::InitializeSSL(VerificationCallback callback) {
   if (!InitializeSSLThread() || !SSL_library_init())
@@ -259,29 +246,29 @@ bool OpenSSLAdapter::CleanupSSL() {
 #ifndef OPENSSL_IS_BORINGSSL
   if (!mutex_buf)
     return false;
-  CRYPTO_set_id_callback(NULL);
-  CRYPTO_set_locking_callback(NULL);
-  CRYPTO_set_dynlock_create_callback(NULL);
-  CRYPTO_set_dynlock_lock_callback(NULL);
-  CRYPTO_set_dynlock_destroy_callback(NULL);
+  CRYPTO_set_id_callback(nullptr);
+  CRYPTO_set_locking_callback(nullptr);
+  CRYPTO_set_dynlock_create_callback(nullptr);
+  CRYPTO_set_dynlock_lock_callback(nullptr);
+  CRYPTO_set_dynlock_destroy_callback(nullptr);
   for (int i = 0; i < CRYPTO_num_locks(); ++i)
     MUTEX_CLEANUP(mutex_buf[i]);
   delete [] mutex_buf;
-  mutex_buf = NULL;
+  mutex_buf = nullptr;
 #endif  // #ifndef OPENSSL_IS_BORINGSSL
   return true;
 }
 
 OpenSSLAdapter::OpenSSLAdapter(AsyncSocket* socket)
-  : SSLAdapter(socket),
-    state_(SSL_NONE),
-    ssl_read_needs_write_(false),
-    ssl_write_needs_read_(false),
-    restartable_(false),
-    ssl_(NULL), ssl_ctx_(NULL),
-    ssl_mode_(SSL_MODE_TLS),
-    custom_verification_succeeded_(false) {
-}
+    : SSLAdapter(socket),
+      state_(SSL_NONE),
+      ssl_read_needs_write_(false),
+      ssl_write_needs_read_(false),
+      restartable_(false),
+      ssl_(nullptr),
+      ssl_ctx_(nullptr),
+      ssl_mode_(SSL_MODE_TLS),
+      custom_verification_succeeded_(false) {}
 
 OpenSSLAdapter::~OpenSSLAdapter() {
   Cleanup();
@@ -289,7 +276,7 @@ OpenSSLAdapter::~OpenSSLAdapter() {
 
 void
 OpenSSLAdapter::SetMode(SSLMode mode) {
-  ASSERT(state_ == SSL_NONE);
+  RTC_DCHECK(state_ == SSL_NONE);
   ssl_mode_ = mode;
 }
 
@@ -318,10 +305,10 @@ OpenSSLAdapter::StartSSL(const char* hostname, bool restartable) {
 int
 OpenSSLAdapter::BeginSSL() {
   LOG(LS_INFO) << "BeginSSL: " << ssl_host_name_;
-  ASSERT(state_ == SSL_CONNECTING);
+  RTC_DCHECK(state_ == SSL_CONNECTING);
 
   int err = 0;
-  BIO* bio = NULL;
+  BIO* bio = nullptr;
 
   // First set up the context
   if (!ssl_ctx_)
@@ -351,7 +338,7 @@ OpenSSLAdapter::BeginSSL() {
                      SSL_MODE_ACCEPT_MOVING_WRITE_BUFFER);
 
   // the SSL object owns the bio now
-  bio = NULL;
+  bio = nullptr;
 
   // Do the connect
   err = ContinueSSL();
@@ -370,7 +357,7 @@ ssl_error:
 
 int
 OpenSSLAdapter::ContinueSSL() {
-  ASSERT(state_ == SSL_CONNECTING);
+  RTC_DCHECK(state_ == SSL_CONNECTING);
 
   // Clear the DTLS timer
   Thread::Current()->Clear(this, MSG_TIMEOUT);
@@ -442,12 +429,12 @@ OpenSSLAdapter::Cleanup() {
 
   if (ssl_) {
     SSL_free(ssl_);
-    ssl_ = NULL;
+    ssl_ = nullptr;
   }
 
   if (ssl_ctx_) {
     SSL_CTX_free(ssl_ctx_);
-    ssl_ctx_ = NULL;
+    ssl_ctx_ = nullptr;
   }
 
   // Clear the DTLS timer
@@ -627,7 +614,7 @@ void
 OpenSSLAdapter::OnConnectEvent(AsyncSocket* socket) {
   LOG(LS_INFO) << "OpenSSLAdapter::OnConnectEvent";
   if (state_ != SSL_WAIT) {
-    ASSERT(state_ == SSL_NONE);
+    RTC_DCHECK(state_ == SSL_NONE);
     AsyncSocketAdapter::OnConnectEvent(socket);
     return;
   }
@@ -705,9 +692,6 @@ OpenSSLAdapter::OnCloseEvent(AsyncSocket* socket, int err) {
   AsyncSocketAdapter::OnCloseEvent(socket, err);
 }
 
-// This code is taken from the "Network Security with OpenSSL"
-// sample in chapter 5
-
 bool OpenSSLAdapter::VerifyServerName(SSL* ssl, const char* host,
                                       bool ignore_bad_cert) {
   if (!host)
@@ -715,7 +699,7 @@ bool OpenSSLAdapter::VerifyServerName(SSL* ssl, const char* host,
 
   // Checking the return from SSL_get_peer_certificate here is not strictly
   // necessary.  With our setup, it is not possible for it to return
-  // NULL.  However, it is good form to check the return.
+  // null.  However, it is good form to check the return.
   X509* certificate = SSL_get_peer_certificate(ssl);
   if (!certificate)
     return false;
@@ -733,74 +717,39 @@ bool OpenSSLAdapter::VerifyServerName(SSL* ssl, const char* host,
     BIO_free(mem);
 
     char* cipher_description =
-      SSL_CIPHER_description(SSL_get_current_cipher(ssl), NULL, 128);
+        SSL_CIPHER_description(SSL_get_current_cipher(ssl), nullptr, 128);
     LOG(LS_INFO) << "Cipher: " << cipher_description;
     OPENSSL_free(cipher_description);
   }
 #endif
 
   bool ok = false;
-  int extension_count = X509_get_ext_count(certificate);
-  for (int i = 0; i < extension_count; ++i) {
-    X509_EXTENSION* extension = X509_get_ext(certificate, i);
-    int extension_nid = OBJ_obj2nid(X509_EXTENSION_get_object(extension));
-
-    if (extension_nid == NID_subject_alt_name) {
-      const X509V3_EXT_METHOD* meth = X509V3_EXT_get(extension);
-      if (!meth)
+  GENERAL_NAMES* names = reinterpret_cast<GENERAL_NAMES*>(
+      X509_get_ext_d2i(certificate, NID_subject_alt_name, nullptr, nullptr));
+  if (names) {
+    for (size_t i = 0; i < sk_GENERAL_NAME_num(names); i++) {
+      const GENERAL_NAME* name = sk_GENERAL_NAME_value(names, i);
+      if (name->type != GEN_DNS)
+        continue;
+      std::string value(
+          reinterpret_cast<const char*>(ASN1_STRING_data(name->d.dNSName)),
+          ASN1_STRING_length(name->d.dNSName));
+      // string_match takes NUL-terminated strings, so check for embedded NULs.
+      if (value.find('\0') != std::string::npos)
+        continue;
+      if (string_match(host, value.c_str())) {
+        ok = true;
         break;
-
-      void* ext_str = NULL;
-
-      // We assign this to a local variable, instead of passing the address
-      // directly to ASN1_item_d2i.
-      // See http://readlist.com/lists/openssl.org/openssl-users/0/4761.html.
-      unsigned char* ext_value_data = extension->value->data;
-
-      const unsigned char **ext_value_data_ptr =
-          (const_cast<const unsigned char **>(&ext_value_data));
-
-      if (meth->it) {
-        ext_str = ASN1_item_d2i(NULL, ext_value_data_ptr,
-                                extension->value->length,
-                                ASN1_ITEM_ptr(meth->it));
-      } else {
-        ext_str = meth->d2i(NULL, ext_value_data_ptr, extension->value->length);
       }
-
-      STACK_OF(CONF_VALUE)* value = meth->i2v(meth, ext_str, NULL);
-
-      // Cast to size_t to be compilable for both OpenSSL and BoringSSL.
-      for (size_t j = 0; j < static_cast<size_t>(sk_CONF_VALUE_num(value));
-           ++j) {
-        CONF_VALUE* nval = sk_CONF_VALUE_value(value, j);
-        // The value for nval can contain wildcards
-        if (!strcmp(nval->name, "DNS") && string_match(host, nval->value)) {
-          ok = true;
-          break;
-        }
-      }
-      sk_CONF_VALUE_pop_free(value, X509V3_conf_free);
-      value = NULL;
-
-      if (meth->it) {
-        ASN1_item_free(reinterpret_cast<ASN1_VALUE*>(ext_str),
-                       ASN1_ITEM_ptr(meth->it));
-      } else {
-        meth->ext_free(ext_str);
-      }
-      ext_str = NULL;
     }
-    if (ok)
-      break;
+    GENERAL_NAMES_free(names);
   }
 
   char data[256];
   X509_NAME* subject;
-  if (!ok
-      && ((subject = X509_get_subject_name(certificate)) != NULL)
-      && (X509_NAME_get_text_by_NID(subject, NID_commonName,
-                                    data, sizeof(data)) > 0)) {
+  if (!ok && ((subject = X509_get_subject_name(certificate)) != nullptr) &&
+      (X509_NAME_get_text_by_NID(subject, NID_commonName, data, sizeof(data)) >
+       0)) {
     data[sizeof(data)-1] = 0;
     if (_stricmp(data, host) == 0)
       ok = true;
@@ -917,8 +866,8 @@ bool OpenSSLAdapter::ConfigureTrustedRootCertificates(SSL_CTX* ctx) {
   for (size_t i = 0; i < arraysize(kSSLCertCertificateList); i++) {
     const unsigned char* cert_buffer = kSSLCertCertificateList[i];
     size_t cert_buffer_len = kSSLCertCertificateSizeList[i];
-    X509* cert = d2i_X509(NULL, &cert_buffer,
-                          checked_cast<long>(cert_buffer_len));
+    X509* cert =
+        d2i_X509(nullptr, &cert_buffer, checked_cast<long>(cert_buffer_len));
     if (cert) {
       int return_value = X509_STORE_add_cert(SSL_CTX_get_cert_store(ctx), cert);
       if (return_value == 0) {
@@ -936,16 +885,16 @@ SSL_CTX*
 OpenSSLAdapter::SetupSSLContext() {
   SSL_CTX* ctx = SSL_CTX_new(ssl_mode_ == SSL_MODE_DTLS ?
       DTLSv1_client_method() : TLSv1_client_method());
-  if (ctx == NULL) {
+  if (ctx == nullptr) {
     unsigned long error = ERR_get_error();  // NOLINT: type used by OpenSSL.
     LOG(LS_WARNING) << "SSL_CTX creation failed: "
                     << '"' << ERR_reason_error_string(error) << "\" "
                     << "(error=" << error << ')';
-    return NULL;
+    return nullptr;
   }
   if (!ConfigureTrustedRootCertificates(ctx)) {
     SSL_CTX_free(ctx);
-    return NULL;
+    return nullptr;
   }
 
 #if !defined(NDEBUG)
@@ -964,5 +913,3 @@ OpenSSLAdapter::SetupSSLContext() {
 }
 
 } // namespace rtc
-
-#endif  // HAVE_OPENSSL_SSL_H

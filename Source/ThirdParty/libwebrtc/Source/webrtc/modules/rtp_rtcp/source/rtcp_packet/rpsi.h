@@ -12,7 +12,6 @@
 #define WEBRTC_MODULES_RTP_RTCP_SOURCE_RTCP_PACKET_RPSI_H_
 
 #include "webrtc/base/basictypes.h"
-#include "webrtc/base/constructormagic.h"
 #include "webrtc/modules/rtp_rtcp/source/rtcp_packet/psfb.h"
 
 namespace webrtc {
@@ -49,8 +48,6 @@ class Rpsi : public Psfb {
   uint8_t payload_type_;
   uint64_t picture_id_;
   size_t block_length_;
-
-  RTC_DISALLOW_COPY_AND_ASSIGN(Rpsi);
 };
 }  // namespace rtcp
 }  // namespace webrtc

@@ -7,7 +7,7 @@
 # be found in the AUTHORS file in the root of the source tree.
 
 import("//third_party/protobuf/proto_library.gni")
-import("../build/webrtc.gni")
+import("../webrtc.gni")
 
 group("tools") {
   # This target shall build all targets in tools/.
@@ -30,11 +30,13 @@ group("tools") {
   if (rtc_include_tests) {
     public_deps += [
       ":activity_metric",
-      ":rtp_analyzer",
       ":tools_unittests",
     ]
     if (rtc_enable_protobuf) {
-      public_deps += [ ":event_log_visualizer" ]
+      public_deps += [
+        ":event_log_visualizer",
+        ":rtp_analyzer",
+      ]
     }
   }
 }
@@ -83,6 +85,29 @@ rtc_executable("psnr_ssim_analyzer") {
   deps = [
     ":command_line_parser",
     ":video_quality_analysis",
+    "//build/win:default_exe_manifest",
+  ]
+}
+
+rtc_static_library("reference_less_video_analysis_lib") {
+  sources = [
+    "frame_analyzer/reference_less_video_analysis_lib.cc",
+    "frame_analyzer/reference_less_video_analysis_lib.h",
+  ]
+
+  deps = [
+    ":video_quality_analysis",
+  ]
+}
+
+rtc_executable("reference_less_video_analysis") {
+  sources = [
+    "frame_analyzer/reference_less_video_analysis.cc",
+  ]
+
+  deps = [
+    ":command_line_parser",
+    ":reference_less_video_analysis_lib",
     "//build/win:default_exe_manifest",
   ]
 }
@@ -177,8 +202,13 @@ if (rtc_enable_protobuf) {
     }
     defines = [ "ENABLE_RTC_EVENT_LOG" ]
     deps = [
+      "../call:call_interfaces",
       "../logging:rtc_event_log_impl",
       "../logging:rtc_event_log_parser",
+      "../modules/audio_coding:ana_debug_dump_proto",
+
+      # TODO(kwiberg): Remove this dependency.
+      "../api/audio_codecs:audio_codecs_api",
       "../modules/congestion_controller",
       "../modules/rtp_rtcp",
       "../system_wrappers:system_wrappers_default",
@@ -234,7 +264,11 @@ if (rtc_include_tests) {
     ]
   }
 
-  tools_unittests_resources = [ "//resources/foreman_cif.yuv" ]
+  tools_unittests_resources = [
+    "//resources/foreman_cif.yuv",
+    "//resources/reference_less_video_test_file.y4m",
+    "//resources/video_quality_analysis_frame.txt",
+  ]
 
   if (is_ios) {
     bundle_data("tools_unittests_bundle_data") {
@@ -250,6 +284,7 @@ if (rtc_include_tests) {
     testonly = true
 
     sources = [
+      "frame_analyzer/reference_less_video_analysis_unittest.cc",
       "frame_analyzer/video_quality_analysis_unittest.cc",
       "frame_editing/frame_editing_unittest.cc",
       "simple_command_line_parser_unittest.cc",
@@ -266,8 +301,9 @@ if (rtc_include_tests) {
     deps = [
       ":command_line_parser",
       ":frame_editing_lib",
+      ":reference_less_video_analysis_lib",
       ":video_quality_analysis",
-      "../test:test_support_main",
+      "../test:test_main",
       "//testing/gtest",
     ]
 

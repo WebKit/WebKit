@@ -97,8 +97,8 @@ FileOutputFrameReceiver::~FileOutputFrameReceiver() {
   }
 }
 
-int32_t FileOutputFrameReceiver::FrameToRender(
-    webrtc::VideoFrame& video_frame) {
+int32_t FileOutputFrameReceiver::FrameToRender(webrtc::VideoFrame& video_frame,
+                                               rtc::Optional<uint8_t> qp) {
   if (timing_file_ == NULL) {
     std::string basename;
     std::string extension;

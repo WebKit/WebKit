@@ -125,7 +125,7 @@ class DelayBasedBweTest : public ::testing::Test {
                         int64_t send_time_ms,
                         uint16_t sequence_number,
                         size_t payload_size,
-                        int probe_cluster_id);
+                        const PacedPacketInfo& pacing_info);
 
   // Generates a frame of packets belonging to a stream at a given bitrate and
   // with a given ssrc. The stream is pushed through a very simple simulated

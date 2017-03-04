@@ -224,7 +224,7 @@ void SocketTest::ConnectInternal(const IPAddress& loopback) {
 
   // Ensure no pending server connections, since we haven't done anything yet.
   EXPECT_FALSE(sink.Check(server.get(), testing::SSE_READ));
-  EXPECT_TRUE(NULL == server->Accept(&accept_addr));
+  EXPECT_TRUE(nullptr == server->Accept(&accept_addr));
   EXPECT_TRUE(accept_addr.IsNil());
 
   // Attempt connect to listening socket.
@@ -335,7 +335,7 @@ void SocketTest::ConnectFailInternal(const IPAddress& loopback) {
 
   // Should be no pending server connections.
   EXPECT_FALSE(sink.Check(server.get(), testing::SSE_READ));
-  EXPECT_TRUE(NULL == server->Accept(&accept_addr));
+  EXPECT_TRUE(nullptr == server->Accept(&accept_addr));
   EXPECT_EQ(IPAddress(), accept_addr.ipaddr());
 }
 
@@ -376,7 +376,7 @@ void SocketTest::ConnectWithDnsLookupFailInternal(const IPAddress& loopback) {
   EXPECT_TRUE(client->GetRemoteAddress().IsNil());
   // Should be no pending server connections.
   EXPECT_FALSE(sink.Check(server.get(), testing::SSE_READ));
-  EXPECT_TRUE(NULL == server->Accept(&accept_addr));
+  EXPECT_TRUE(nullptr == server->Accept(&accept_addr));
   EXPECT_TRUE(accept_addr.IsNil());
 }
 
@@ -1038,7 +1038,7 @@ void SocketTest::SocketRecvTimestamp(const IPAddress& loopback) {
   EXPECT_EQ(0, socket->Bind(SocketAddress(loopback, 0)));
   SocketAddress address = socket->GetLocalAddress();
 
-  uint64_t send_time_1 = TimeMicros();
+  int64_t send_time_1 = TimeMicros();
   socket->SendTo("foo", 3, address);
   int64_t recv_timestamp_1;
   char buffer[3];
@@ -1048,7 +1048,7 @@ void SocketTest::SocketRecvTimestamp(const IPAddress& loopback) {
   const int64_t kTimeBetweenPacketsMs = 100;
   Thread::SleepMs(kTimeBetweenPacketsMs);
 
-  uint64_t send_time_2 = TimeMicros();
+  int64_t send_time_2 = TimeMicros();
   socket->SendTo("bar", 3, address);
   int64_t recv_timestamp_2;
   socket->RecvFrom(buffer, 3, nullptr, &recv_timestamp_2);

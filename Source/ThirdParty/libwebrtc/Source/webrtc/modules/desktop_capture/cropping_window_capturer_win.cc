@@ -210,12 +210,6 @@ DesktopRect CroppingWindowCapturerWin::GetWindowRectInVirtualScreen() {
 }  // namespace
 
 // static
-DesktopCapturer* CroppingWindowCapturer::Create(
-    const DesktopCaptureOptions& options) {
-  return new CroppingWindowCapturerWin(options);
-}
-
-// static
 std::unique_ptr<DesktopCapturer> CroppingWindowCapturer::CreateCapturer(
     const DesktopCaptureOptions& options) {
   return std::unique_ptr<DesktopCapturer>(

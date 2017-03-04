@@ -16,15 +16,41 @@
 
 #include "webrtc/system_wrappers/include/field_trial_default.h"
 
-static NSString * const kRTCEnableImprovedBitrateEstimateString =
-   @"WebRTC-ImprovedBitrateEstimate/Enabled/";
+NSString * const kRTCFieldTrialAudioSendSideBweKey = @"WebRTC-Audio-SendSideBwe";
+NSString * const kRTCFieldTrialSendSideBweWithOverheadKey = @"WebRTC-SendSideBwe-WithOverhead";
+NSString * const kRTCFieldTrialFlexFec03AdvertisedKey = @"WebRTC-FlexFEC-03-Advertised";
+NSString * const kRTCFieldTrialFlexFec03Key = @"WebRTC-FlexFEC-03";
+NSString * const kRTCFieldTrialImprovedBitrateEstimateKey = @"WebRTC-ImprovedBitrateEstimate";
+NSString * const kRTCFieldTrialMedianSlopeFilterKey = @"WebRTC-BweMedianSlopeFilter";
+NSString * const kRTCFieldTrialTrendlineFilterKey = @"WebRTC-BweTrendlineFilter";
+NSString * const kRTCFieldTrialH264HighProfileKey = @"WebRTC-H264HighProfile";
+NSString * const kRTCFieldTrialEnabledValue = @"Enabled";
 
 static std::unique_ptr<char[]> gFieldTrialInitString;
 
-void RTCInitFieldTrials(RTCFieldTrialOptions options) {
+NSString *RTCFieldTrialMedianSlopeFilterValue(
+    size_t windowSize, double thresholdGain) {
+  NSString *format = @"Enabled-%zu,%lf";
+  return [NSString stringWithFormat:format, windowSize, thresholdGain];
+}
+
+NSString *RTCFieldTrialTrendlineFilterValue(
+    size_t windowSize, double smoothingCoeff, double thresholdGain) {
+  NSString *format = @"Enabled-%zu,%lf,%lf";
+  return [NSString stringWithFormat:format, windowSize, smoothingCoeff, thresholdGain];
+}
+
+void RTCInitFieldTrialDictionary(NSDictionary<NSString *, NSString *> *fieldTrials) {
+  if (!fieldTrials) {
+    RTCLogWarning(@"No fieldTrials provided.");
+    return;
+  }
+  // Assemble the keys and values into the field trial string.
+  // We don't perform any extra format checking. That should be done by the underlying WebRTC calls.
   NSMutableString *fieldTrialInitString = [NSMutableString string];
-  if (options & RTCFieldTrialOptionsImprovedBitrateEstimate) {
-    [fieldTrialInitString appendString:kRTCEnableImprovedBitrateEstimateString];
+  for (NSString *key in fieldTrials) {
+    NSString *fieldTrialEntry = [NSString stringWithFormat:@"%@/%@/", key, fieldTrials[key]];
+    [fieldTrialInitString appendString:fieldTrialEntry];
   }
   size_t len = fieldTrialInitString.length + 1;
   gFieldTrialInitString.reset(new char[len]);

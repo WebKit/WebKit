@@ -15,10 +15,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 RTC_EXPORT
-@interface RTCRtpEncodingParameters : NSObject {
-    BOOL _isActive;
-    NSNumber *_maxBitrateBps;
-}
+@interface RTCRtpEncodingParameters : NSObject
 
 /** Controls whether the encoding is currently transmitted. */
 @property(nonatomic, assign) BOOL isActive;
@@ -27,6 +24,9 @@ RTC_EXPORT
  *  limit.
  */
 @property(nonatomic, copy, nullable) NSNumber *maxBitrateBps;
+
+/** The SSRC being used by this encoding. */
+@property(nonatomic, readonly, nullable) NSNumber *ssrc;
 
 - (instancetype)init NS_DESIGNATED_INITIALIZER;
 

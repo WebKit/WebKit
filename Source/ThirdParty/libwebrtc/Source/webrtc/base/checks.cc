@@ -67,7 +67,7 @@ void DumpBacktrace() {
   PrintError("\n==== C stack trace ===============================\n\n");
   if (size == 0) {
     PrintError("(empty)\n");
-  } else if (symbols == NULL) {
+  } else if (symbols == nullptr) {
     PrintError("(no symbols)\n");
   } else {
     for (int i = 1; i < size; ++i) {
@@ -76,8 +76,9 @@ void DumpBacktrace() {
         PrintError("%2d: ", i);
         int status;
         size_t length;
-        char* demangled = abi::__cxa_demangle(mangled, NULL, &length, &status);
-        PrintError("%s\n", demangled != NULL ? demangled : mangled);
+        char* demangled =
+            abi::__cxa_demangle(mangled, nullptr, &length, &status);
+        PrintError("%s\n", demangled != nullptr ? demangled : mangled);
         free(demangled);
       } else {
         // If parsing failed, at least print the unparsed symbol.

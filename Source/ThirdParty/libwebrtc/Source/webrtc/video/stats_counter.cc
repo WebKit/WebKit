@@ -26,11 +26,15 @@ const uint32_t kStreamId0 = 0;
 }  // namespace
 
 std::string AggregatedStats::ToString() const {
+  return ToStringWithMultiplier(1);
+}
+
+std::string AggregatedStats::ToStringWithMultiplier(int multiplier) const {
   std::stringstream ss;
   ss << "periodic_samples:" << num_samples << ", {";
-  ss << "min:" << min << ", ";
-  ss << "avg:" << average << ", ";
-  ss << "max:" << max << "}";
+  ss << "min:" << (min * multiplier) << ", ";
+  ss << "avg:" << (average * multiplier) << ", ";
+  ss << "max:" << (max * multiplier) << "}";
   return ss.str();
 }
 
@@ -84,10 +88,14 @@ class Samples {
     samples_[stream_id].Add(sample);
     ++total_count_;
   }
-  void Set(int sample, uint32_t stream_id) {
+  void Set(int64_t sample, uint32_t stream_id) {
     samples_[stream_id].Set(sample);
     ++total_count_;
   }
+  void SetLast(int64_t sample, uint32_t stream_id) {
+    samples_[stream_id].SetLast(sample);
+  }
+  int64_t GetLast(uint32_t stream_id) { return samples_[stream_id].GetLast(); }
 
   int64_t Count() const { return total_count_; }
   bool Empty() const { return total_count_ == 0; }
@@ -134,10 +142,12 @@ class Samples {
       ++count_;
       max_ = std::max(sample, max_);
     }
-    void Set(int sample) {
+    void Set(int64_t sample) {
       sum_ = sample;
       ++count_;
     }
+    void SetLast(int64_t sample) { last_sum_ = sample; }
+    int64_t GetLast() const { return last_sum_; }
     void Reset() {
       if (count_ > 0)
         last_sum_ = sum_;
@@ -168,7 +178,9 @@ StatsCounter::StatsCounter(Clock* clock,
       clock_(clock),
       observer_(observer),
       last_process_time_ms_(-1),
-      paused_(false) {
+      paused_(false),
+      pause_time_ms_(-1),
+      min_pause_time_ms_(0) {
   RTC_DCHECK_GT(process_intervals_ms_, 0);
 }
 
@@ -184,10 +196,22 @@ AggregatedStats StatsCounter::ProcessAndGetStats() {
   return aggregated_counter_->ComputeStats();
 }
 
+void StatsCounter::ProcessAndPauseForDuration(int64_t min_pause_time_ms) {
+  ProcessAndPause();
+  min_pause_time_ms_ = min_pause_time_ms;
+}
+
 void StatsCounter::ProcessAndPause() {
   if (HasSample())
     TryProcess();
   paused_ = true;
+  pause_time_ms_ = clock_->TimeInMilliseconds();
+}
+
+void StatsCounter::ProcessAndStopPause() {
+  if (HasSample())
+    TryProcess();
+  Resume();
 }
 
 bool StatsCounter::HasSample() const {
@@ -211,16 +235,25 @@ bool StatsCounter::TimeToProcess(int* elapsed_intervals) {
   return true;
 }
 
-void StatsCounter::Set(int sample, uint32_t stream_id) {
-  TryProcess();
-  samples_->Set(sample, stream_id);
-  paused_ = false;
-}
-
 void StatsCounter::Add(int sample) {
   TryProcess();
   samples_->Add(sample, kStreamId0);
-  paused_ = false;
+  ResumeIfMinTimePassed();
+}
+
+void StatsCounter::Set(int64_t sample, uint32_t stream_id) {
+  if (paused_ && sample == samples_->GetLast(stream_id)) {
+    // Do not add same sample while paused (will reset pause).
+    return;
+  }
+  TryProcess();
+  samples_->Set(sample, stream_id);
+  ResumeIfMinTimePassed();
+}
+
+void StatsCounter::SetLast(int64_t sample, uint32_t stream_id) {
+  RTC_DCHECK(!HasSample()) << "Should be set before first sample is added.";
+  samples_->SetLast(sample, stream_id);
 }
 
 // Reports periodically computed metric.
@@ -260,6 +293,17 @@ void StatsCounter::TryProcess() {
 
 bool StatsCounter::IncludeEmptyIntervals() const {
   return include_empty_intervals_ && !paused_ && !aggregated_counter_->Empty();
+}
+void StatsCounter::ResumeIfMinTimePassed() {
+  if (paused_ &&
+      (clock_->TimeInMilliseconds() - pause_time_ms_) >= min_pause_time_ms_) {
+    Resume();
+  }
+}
+
+void StatsCounter::Resume() {
+  paused_ = false;
+  min_pause_time_ms_ = 0;
 }
 
 // StatsCounter sub-classes.
@@ -394,8 +438,12 @@ RateAccCounter::RateAccCounter(Clock* clock,
                    include_empty_intervals,
                    observer) {}
 
-void RateAccCounter::Set(int sample, uint32_t stream_id) {
+void RateAccCounter::Set(int64_t sample, uint32_t stream_id) {
   StatsCounter::Set(sample, stream_id);
+}
+
+void RateAccCounter::SetLast(int64_t sample, uint32_t stream_id) {
+  StatsCounter::SetLast(sample, stream_id);
 }
 
 bool RateAccCounter::GetMetric(int* metric) const {

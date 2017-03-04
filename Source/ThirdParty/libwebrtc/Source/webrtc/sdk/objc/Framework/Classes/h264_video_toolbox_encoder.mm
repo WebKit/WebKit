@@ -342,13 +342,14 @@ namespace webrtc {
 // drastically reduced bitrate, so we want to avoid that. In steady state
 // conditions, 0.95 seems to give us better overall bitrate over long periods
 // of time.
-H264VideoToolboxEncoder::H264VideoToolboxEncoder(
-    const cricket::VideoCodec& codec)
+H264VideoToolboxEncoder::H264VideoToolboxEncoder(const cricket::VideoCodec& codec)
     : callback_(nullptr),
       compression_session_(nullptr),
       bitrate_adjuster_(Clock::GetRealTimeClock(), .5, .95),
+      packetization_mode_(H264PacketizationMode::NonInterleaved),
       profile_(internal::ExtractProfile(codec)) {
   LOG(LS_INFO) << "Using profile " << internal::CFStringToString(profile_);
+  RTC_CHECK(cricket::CodecNamesEq(codec.name, cricket::kH264CodecName));
 }
 
 H264VideoToolboxEncoder::~H264VideoToolboxEncoder() {
@@ -360,18 +361,9 @@ int H264VideoToolboxEncoder::InitEncode(const VideoCodec* codec_settings,
                                         size_t max_payload_size) {
   RTC_DCHECK(codec_settings);
   RTC_DCHECK_EQ(codec_settings->codecType, kVideoCodecH264);
-  {
-    rtc::CritScope lock(&quality_scaler_crit_);
-    quality_scaler_.Init(internal::kLowH264QpThreshold,
-                         internal::kHighH264QpThreshold,
-                         codec_settings->startBitrate, codec_settings->width,
-                         codec_settings->height, codec_settings->maxFramerate);
-    QualityScaler::Resolution res = quality_scaler_.GetScaledResolution();
-    // TODO(tkchin): We may need to enforce width/height dimension restrictions
-    // to match what the encoder supports.
-    width_ = res.width;
-    height_ = res.height;
-  }
+
+  width_ = codec_settings->width;
+  height_ = codec_settings->height;
   // We can only set average bitrate on the HW encoder.
   target_bitrate_bps_ = codec_settings->startBitrate;
   bitrate_adjuster_.SetTargetBitrateBps(target_bitrate_bps_);
@@ -386,7 +378,9 @@ int H264VideoToolboxEncoder::Encode(
     const VideoFrame& frame,
     const CodecSpecificInfo* codec_specific_info,
     const std::vector<FrameType>* frame_types) {
-  RTC_DCHECK(!frame.IsZeroSize());
+  // |input_frame| size should always match codec settings.
+  RTC_DCHECK_EQ(frame.width(), width_);
+  RTC_DCHECK_EQ(frame.height(), height_);
   if (!callback_ || !compression_session_) {
     return WEBRTC_VIDEO_CODEC_UNINITIALIZED;
   }
@@ -398,18 +392,6 @@ int H264VideoToolboxEncoder::Encode(
   }
 #endif
   bool is_keyframe_required = false;
-
-  quality_scaler_.OnEncodeFrame(frame.width(), frame.height());
-  const QualityScaler::Resolution scaled_res =
-      quality_scaler_.GetScaledResolution();
-
-  if (scaled_res.width != width_ || scaled_res.height != height_) {
-    width_ = scaled_res.width;
-    height_ = scaled_res.height;
-    int ret = ResetCompressionSession();
-    if (ret < 0)
-      return ret;
-  }
 
   // Get a pixel buffer from the pool and copy frame data over.
   CVPixelBufferPoolRef pixel_buffer_pool =
@@ -457,11 +439,8 @@ int H264VideoToolboxEncoder::Encode(
     if (!pixel_buffer) {
       return WEBRTC_VIDEO_CODEC_ERROR;
     }
-    // TODO(magjed): Optimize by merging scaling and NV12 pixel buffer
-    // conversion once libyuv::MergeUVPlanes is available.
-    rtc::scoped_refptr<VideoFrameBuffer> scaled_i420_buffer =
-        quality_scaler_.GetScaledBuffer(frame.video_frame_buffer());
-    if (!internal::CopyVideoFrameToPixelBuffer(scaled_i420_buffer,
+    RTC_DCHECK(pixel_buffer);
+    if (!internal::CopyVideoFrameToPixelBuffer(frame.video_frame_buffer(),
                                                pixel_buffer)) {
       LOG(LS_ERROR) << "Failed to copy frame data.";
       CVBufferRelease(pixel_buffer);
@@ -492,6 +471,9 @@ int H264VideoToolboxEncoder::Encode(
       this, codec_specific_info, width_, height_, frame.render_time_ms(),
       frame.timestamp(), frame.rotation()));
 
+  encode_params->codec_specific_info.codecSpecific.H264.packetization_mode =
+      packetization_mode_;
+
   // Update the bitrate if needed.
   SetBitrateBps(bitrate_adjuster_.GetAdjustedBitrateBps());
 
@@ -517,11 +499,6 @@ int H264VideoToolboxEncoder::RegisterEncodeCompleteCallback(
   return WEBRTC_VIDEO_CODEC_OK;
 }
 
-void H264VideoToolboxEncoder::OnDroppedFrame() {
-  rtc::CritScope lock(&quality_scaler_crit_);
-  quality_scaler_.ReportDroppedFrame();
-}
-
 int H264VideoToolboxEncoder::SetChannelParameters(uint32_t packet_loss,
                                                   int64_t rtt) {
   // Encoder doesn't know anything about packet loss or rtt so just return.
@@ -533,10 +510,6 @@ int H264VideoToolboxEncoder::SetRates(uint32_t new_bitrate_kbit,
   target_bitrate_bps_ = 1000 * new_bitrate_kbit;
   bitrate_adjuster_.SetTargetBitrateBps(target_bitrate_bps_);
   SetBitrateBps(bitrate_adjuster_.GetAdjustedBitrateBps());
-
-  rtc::CritScope lock(&quality_scaler_crit_);
-  quality_scaler_.ReportFramerate(frame_rate);
-
   return WEBRTC_VIDEO_CODEC_OK;
 }
 
@@ -709,8 +682,6 @@ void H264VideoToolboxEncoder::OnEncodedFrame(
   }
   if (info_flags & kVTEncodeInfo_FrameDropped) {
     LOG(LS_INFO) << "H264 encode dropped frame.";
-    rtc::CritScope lock(&quality_scaler_crit_);
-    quality_scaler_.ReportDroppedFrame();
     return;
   }
 
@@ -752,19 +723,20 @@ void H264VideoToolboxEncoder::OnEncodedFrame(
   frame.rotation_ = rotation;
 
   h264_bitstream_parser_.ParseBitstream(buffer->data(), buffer->size());
-  int qp;
-  if (h264_bitstream_parser_.GetLastSliceQp(&qp)) {
-    rtc::CritScope lock(&quality_scaler_crit_);
-    quality_scaler_.ReportQP(qp);
-  }
+  h264_bitstream_parser_.GetLastSliceQp(&frame.qp_);
 
-  EncodedImageCallback::Result result =
+  EncodedImageCallback::Result res =
       callback_->OnEncodedImage(frame, &codec_specific_info, header.get());
-  if (result.error != EncodedImageCallback::Result::OK) {
-    LOG(LS_ERROR) << "Encode callback failed: " << result.error;
+  if (res.error != EncodedImageCallback::Result::OK) {
+    LOG(LS_ERROR) << "Encode callback failed: " << res.error;
     return;
   }
-  bitrate_adjuster_.Update(frame._size);
+  bitrate_adjuster_.Update(frame._length);
 }
 
+VideoEncoder::ScalingSettings H264VideoToolboxEncoder::GetScalingSettings()
+    const {
+  return VideoEncoder::ScalingSettings(true, internal::kLowH264QpThreshold,
+                                       internal::kHighH264QpThreshold);
+}
 }  // namespace webrtc

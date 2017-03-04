@@ -6,7 +6,7 @@
 # in the file PATENTS.  All contributing project authors may
 # be found in the AUTHORS file in the root of the source tree.
 
-import("../build/webrtc.gni")
+import("../webrtc.gni")
 
 group("p2p") {
   public_deps = [
@@ -27,17 +27,19 @@ rtc_static_library("rtc_p2p") {
     "base/basicpacketsocketfactory.h",
     "base/candidate.h",
     "base/common.h",
-    "base/dtlstransport.h",
     "base/dtlstransportchannel.cc",
     "base/dtlstransportchannel.h",
+    "base/dtlstransportinternal.h",
+    "base/icetransportinternal.h",
+    "base/jseptransport.cc",
+    "base/jseptransport.h",
     "base/p2pconstants.cc",
     "base/p2pconstants.h",
-    "base/p2ptransport.cc",
-    "base/p2ptransport.h",
     "base/p2ptransportchannel.cc",
     "base/p2ptransportchannel.h",
     "base/packetsocketfactory.h",
     "base/packettransportinterface.h",
+    "base/packettransportinternal.h",
     "base/port.cc",
     "base/port.h",
     "base/portallocator.cc",
@@ -59,11 +61,7 @@ rtc_static_library("rtc_p2p") {
     "base/stunrequest.h",
     "base/tcpport.cc",
     "base/tcpport.h",
-    "base/transport.cc",
     "base/transport.h",
-    "base/transportchannel.cc",
-    "base/transportchannel.h",
-    "base/transportchannelimpl.h",
     "base/transportcontroller.cc",
     "base/transportcontroller.h",
     "base/transportdescription.cc",
@@ -74,15 +72,15 @@ rtc_static_library("rtc_p2p") {
     "base/turnport.cc",
     "base/turnport.h",
     "base/udpport.h",
-    "base/udptransportchannel.cc",
-    "base/udptransportchannel.h",
+    "base/udptransport.cc",
+    "base/udptransport.h",
     "client/basicportallocator.cc",
     "client/basicportallocator.h",
     "client/socketmonitor.cc",
     "client/socketmonitor.h",
   ]
 
-  defines = [ "FEATURE_ENABLE_SSL" ]
+  defines = []
 
   deps = [
     "../base:rtc_base",
@@ -141,6 +139,63 @@ rtc_static_library("rtc_p2p") {
   }
 }
 
+if (rtc_include_tests) {
+  rtc_source_set("rtc_p2p_unittests") {
+    testonly = true
+    sources = [
+      "base/asyncstuntcpsocket_unittest.cc",
+      "base/dtlstransportchannel_unittest.cc",
+      "base/fakedtlstransport.h",
+      "base/fakeicetransport.h",
+      "base/fakepackettransport.h",
+      "base/fakeportallocator.h",
+      "base/faketransportcontroller.h",
+      "base/jseptransport_unittest.cc",
+      "base/mockicetransport.h",
+      "base/p2ptransportchannel_unittest.cc",
+      "base/port_unittest.cc",
+      "base/portallocator_unittest.cc",
+      "base/pseudotcp_unittest.cc",
+      "base/relayport_unittest.cc",
+      "base/relayserver_unittest.cc",
+      "base/stun_unittest.cc",
+      "base/stunport_unittest.cc",
+      "base/stunrequest_unittest.cc",
+      "base/stunserver_unittest.cc",
+      "base/tcpport_unittest.cc",
+      "base/testrelayserver.h",
+      "base/teststunserver.h",
+      "base/testturnserver.h",
+      "base/transportcontroller_unittest.cc",
+      "base/transportdescriptionfactory_unittest.cc",
+      "base/turnport_unittest.cc",
+      "base/turnserver_unittest.cc",
+      "base/udptransport_unittest.cc",
+      "client/basicportallocator_unittest.cc",
+    ]
+    if (rtc_use_quic) {
+      sources += [
+        "quic/quicconnectionhelper_unittest.cc",
+        "quic/quicsession_unittest.cc",
+        "quic/quictransport_unittest.cc",
+        "quic/quictransportchannel_unittest.cc",
+        "quic/reliablequicstream_unittest.cc",
+      ]
+    }
+    deps = [
+      ":rtc_p2p",
+      "../api:fakemetricsobserver",
+      "//testing/gmock",
+      "//testing/gtest",
+    ]
+    if (!build_with_chromium && is_clang) {
+      # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
+      suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
+    }
+    defines = [ "GTEST_RELATIVE_PATH" ]
+  }
+}
+
 rtc_static_library("libstunprober") {
   sources = [
     "stunprober/stunprober.cc",
@@ -156,4 +211,23 @@ rtc_static_library("libstunprober") {
     "..:webrtc_common",
     "../base:rtc_base",
   ]
+}
+
+if (rtc_include_tests) {
+  rtc_source_set("libstunprober_unittests") {
+    testonly = true
+    sources = [
+      "stunprober/stunprober_unittest.cc",
+    ]
+    deps = [
+      ":libstunprober",
+      "//testing/gmock",
+      "//testing/gtest",
+    ]
+    if (!build_with_chromium && is_clang) {
+      # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
+      suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
+    }
+    defines = [ "GTEST_RELATIVE_PATH" ]
+  }
 }

@@ -1,0 +1,46 @@
+# Copyright (c) 2016 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+import("../../webrtc.gni")
+
+group("utility") {
+  public_deps = [
+    ":audio_frame_operations",
+  ]
+}
+
+rtc_static_library("audio_frame_operations") {
+  sources = [
+    "audio_frame_operations.cc",
+    "audio_frame_operations.h",
+  ]
+
+  deps = [
+    "../..:webrtc_common",
+    "../../base:rtc_base_approved",
+    "../../modules/audio_coding:audio_format_conversion",
+  ]
+}
+
+if (rtc_include_tests) {
+  rtc_source_set("utility_tests") {
+    testonly = true
+    sources = [
+      "audio_frame_operations_unittest.cc",
+    ]
+    deps = [
+      ":audio_frame_operations",
+      "../../base:rtc_base_approved",
+      "../../test:test_support",
+      "//testing/gtest",
+    ]
+    if (!build_with_chromium && is_clang) {
+      # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
+      suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
+    }
+  }
+}

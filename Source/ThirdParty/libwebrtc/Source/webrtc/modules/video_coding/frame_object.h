@@ -37,6 +37,11 @@ class FrameObject : public webrtc::VCMEncodedFrame {
   // When this frame should be rendered.
   virtual int64_t RenderTime() const = 0;
 
+  // This information is currently needed by the timing calculation class.
+  // TODO(philipel): Remove this function when a new timing class has
+  //                 been implemented.
+  virtual bool delayed_by_retransmission() const { return 0; }
+
   size_t size() { return _length; }
 
   // The tuple (|picture_id|, |spatial_layer|) uniquely identifies a frame
@@ -72,6 +77,7 @@ class RtpFrameObject : public FrameObject {
   uint32_t Timestamp() const override;
   int64_t ReceivedTime() const override;
   int64_t RenderTime() const override;
+  bool delayed_by_retransmission() const override;
   rtc::Optional<RTPVideoTypeHeader> GetCodecHeader() const;
 
  private:

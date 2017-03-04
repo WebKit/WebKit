@@ -201,7 +201,7 @@ TEST_F(PpsParserTest, ZeroPps) {
 
 TEST_F(PpsParserTest, MaxPps) {
   generated_pps_.bottom_field_pic_order_in_frame_present_flag = true;
-  generated_pps_.pic_init_qp_minus26 = std::numeric_limits<int32_t>::max();
+  generated_pps_.pic_init_qp_minus26 = 25;
   generated_pps_.redundant_pic_cnt_present_flag = 1;  // 1 bit value.
   generated_pps_.weighted_bipred_idc = (1 << 2) - 1;  // 2 bit value.
   generated_pps_.weighted_pred_flag = true;
@@ -210,7 +210,7 @@ TEST_F(PpsParserTest, MaxPps) {
   generated_pps_.sps_id = 1;
   RunTest();
 
-  generated_pps_.pic_init_qp_minus26 = std::numeric_limits<int32_t>::min() + 1;
+  generated_pps_.pic_init_qp_minus26 = -25;
   RunTest();
 }
 

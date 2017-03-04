@@ -16,7 +16,7 @@ namespace rtc {
 
 // Test that Win32SocketServer::Wait works as expected.
 TEST(Win32SocketServerTest, TestWait) {
-  Win32SocketServer server(NULL);
+  Win32SocketServer server(nullptr);
   uint32_t start = Time();
   server.Wait(1000, true);
   EXPECT_GE(TimeSince(start), 1000);
@@ -24,12 +24,12 @@ TEST(Win32SocketServerTest, TestWait) {
 
 // Test that Win32Socket::Pump does not touch general Windows messages.
 TEST(Win32SocketServerTest, TestPump) {
-  Win32SocketServer server(NULL);
+  Win32SocketServer server(nullptr);
   SocketServerScope scope(&server);
-  EXPECT_EQ(TRUE, PostMessage(NULL, WM_USER, 999, 0));
+  EXPECT_EQ(TRUE, PostMessage(nullptr, WM_USER, 999, 0));
   server.Pump();
   MSG msg;
-  EXPECT_EQ(TRUE, PeekMessage(&msg, NULL, WM_USER, 0, PM_REMOVE));
+  EXPECT_EQ(TRUE, PeekMessage(&msg, nullptr, WM_USER, 0, PM_REMOVE));
   EXPECT_EQ(static_cast<UINT>(WM_USER), msg.message);
   EXPECT_EQ(999u, msg.wParam);
 }
@@ -37,7 +37,7 @@ TEST(Win32SocketServerTest, TestPump) {
 // Test that Win32Socket passes all the generic Socket tests.
 class Win32SocketTest : public SocketTest {
  protected:
-  Win32SocketTest() : server_(NULL), scope_(&server_) {}
+  Win32SocketTest() : server_(nullptr), scope_(&server_) {}
   Win32SocketServer server_;
   SocketServerScope scope_;
 };

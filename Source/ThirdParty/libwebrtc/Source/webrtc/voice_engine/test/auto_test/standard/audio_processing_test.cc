@@ -101,6 +101,7 @@ class AudioProcessingTest : public AfterStreamingFixture {
 
 #if !defined(WEBRTC_IOS) && !defined(WEBRTC_ANDROID)
 
+// Duplicated in apm_helpers_unittest.cc.
 TEST_F(AudioProcessingTest, AgcIsOnByDefault) {
   bool agc_enabled = false;
   webrtc::AgcModes agc_mode = webrtc::kAgcAdaptiveAnalog;
@@ -110,12 +111,14 @@ TEST_F(AudioProcessingTest, AgcIsOnByDefault) {
   EXPECT_EQ(webrtc::kAgcAdaptiveAnalog, agc_mode);
 }
 
+// Duplicated in apm_helpers_unittest.cc.
 TEST_F(AudioProcessingTest, CanEnableAgcWithAllModes) {
   TryEnablingAgcWithMode(webrtc::kAgcAdaptiveDigital);
   TryEnablingAgcWithMode(webrtc::kAgcAdaptiveAnalog);
   TryEnablingAgcWithMode(webrtc::kAgcFixedDigital);
 }
 
+// Duplicated in apm_helpers_unittest.cc.
 TEST_F(AudioProcessingTest, EcIsDisabledAndAecIsDefaultEcMode) {
   bool ec_enabled = true;
   webrtc::EcModes ec_mode = webrtc::kEcDefault;
@@ -125,14 +128,17 @@ TEST_F(AudioProcessingTest, EcIsDisabledAndAecIsDefaultEcMode) {
   EXPECT_EQ(webrtc::kEcAec, ec_mode);
 }
 
+// Not needed anymore - apm_helpers::SetEcStatus() doesn't take kEcAec.
 TEST_F(AudioProcessingTest, EnablingEcAecShouldEnableEcAec) {
   TryEnablingEcWithMode(webrtc::kEcAec, webrtc::kEcAec);
 }
 
+// Duplicated in apm_helpers_unittest.cc.
 TEST_F(AudioProcessingTest, EnablingEcConferenceShouldEnableEcAec) {
   TryEnablingEcWithMode(webrtc::kEcConference, webrtc::kEcAec);
 }
 
+// Not needed anymore - apm_helpers::SetEcStatus() doesn't take kEcDefault.
 TEST_F(AudioProcessingTest, EcModeIsPreservedWhenEcIsTurnedOff) {
   TryEnablingEcWithMode(webrtc::kEcConference, webrtc::kEcAec);
 
@@ -146,6 +152,7 @@ TEST_F(AudioProcessingTest, EcModeIsPreservedWhenEcIsTurnedOff) {
   EXPECT_EQ(webrtc::kEcAec, ec_mode);
 }
 
+// Not needed anymore - apm_helpers::SetEcStatus() doesn't take kEcDefault.
 TEST_F(AudioProcessingTest, CanEnableAndDisableEcModeSeveralTimesInARow) {
   for (int i = 0; i < 10; i++) {
     EXPECT_EQ(0, voe_apm_->SetEcStatus(true));
@@ -162,11 +169,13 @@ TEST_F(AudioProcessingTest, CanEnableAndDisableEcModeSeveralTimesInARow) {
 
 #endif   // !WEBRTC_IOS && !WEBRTC_ANDROID
 
+// Duplicated in apm_helpers_unittest.cc.
 TEST_F(AudioProcessingTest, EnablingEcAecmShouldEnableEcAecm) {
   // This one apparently applies to Android and iPhone as well.
   TryEnablingEcWithMode(webrtc::kEcAecm, webrtc::kEcAecm);
 }
 
+// Duplicated in apm_helpers_unittest.cc.
 TEST_F(AudioProcessingTest, EcAecmModeIsEnabledAndSpeakerphoneByDefault) {
   bool cng_enabled = false;
   webrtc::AecmModes aecm_mode = webrtc::kAecmEarpiece;
@@ -177,6 +186,7 @@ TEST_F(AudioProcessingTest, EcAecmModeIsEnabledAndSpeakerphoneByDefault) {
   EXPECT_EQ(webrtc::kAecmSpeakerphone, aecm_mode);
 }
 
+// Duplicated in apm_helpers_unittest.cc.
 TEST_F(AudioProcessingTest, CanSetAecmMode) {
   EXPECT_EQ(0, voe_apm_->SetEcStatus(true, webrtc::kEcAecm));
 
@@ -189,6 +199,7 @@ TEST_F(AudioProcessingTest, CanSetAecmMode) {
   TryEnablingAecmWithMode(webrtc::kAecmSpeakerphone, false);
 }
 
+// Duplicated in apm_helpers_unittest.cc.
 TEST_F(AudioProcessingTest, NsIsOffWithModerateSuppressionByDefault) {
   bool ns_status = true;
   webrtc::NsModes ns_mode = webrtc::kNsDefault;
@@ -198,6 +209,7 @@ TEST_F(AudioProcessingTest, NsIsOffWithModerateSuppressionByDefault) {
   EXPECT_EQ(webrtc::kNsModerateSuppression, ns_mode);
 }
 
+// Duplicated in apm_helpers_unittest.cc.
 TEST_F(AudioProcessingTest, CanSetNsMode) {
   // Concrete suppression values map to themselves.
   TryEnablingNsWithMode(webrtc::kNsHighSuppression,
@@ -216,6 +228,8 @@ TEST_F(AudioProcessingTest, CanSetNsMode) {
                         webrtc::kNsModerateSuppression);
 }
 
+// TODO(solenberg): Duplicate this test at the voe::Channel layer.
+// Not needed anymore - API is unused.
 TEST_F(AudioProcessingTest, VadIsDisabledByDefault) {
   bool vad_enabled;
   bool disabled_dtx;
@@ -227,6 +241,7 @@ TEST_F(AudioProcessingTest, VadIsDisabledByDefault) {
   EXPECT_FALSE(vad_enabled);
 }
 
+// Not needed anymore - API is unused.
 TEST_F(AudioProcessingTest, VoiceActivityIndicatorReturns1WithSpeechOn) {
   // This sleep is necessary since the voice detection algorithm needs some
   // time to detect the speech from the fake microphone.
@@ -234,6 +249,7 @@ TEST_F(AudioProcessingTest, VoiceActivityIndicatorReturns1WithSpeechOn) {
   EXPECT_EQ(1, voe_apm_->VoiceActivityIndicator(channel_));
 }
 
+// Not needed anymore - API is unused.
 TEST_F(AudioProcessingTest, CanSetDelayOffset) {
   voe_apm_->SetDelayOffsetMs(50);
   EXPECT_EQ(50, voe_apm_->DelayOffsetMs());
@@ -241,10 +257,13 @@ TEST_F(AudioProcessingTest, CanSetDelayOffset) {
   EXPECT_EQ(-50, voe_apm_->DelayOffsetMs());
 }
 
+// Duplicated in apm_helpers_unittest.cc.
 TEST_F(AudioProcessingTest, HighPassFilterIsOnByDefault) {
   EXPECT_TRUE(voe_apm_->IsHighPassFilterEnabled());
 }
 
+// TODO(solenberg): Check that sufficient testing is done in APM.
+// Not needed anymore - API is unused.
 TEST_F(AudioProcessingTest, CanSetHighPassFilter) {
   EXPECT_EQ(0, voe_apm_->EnableHighPassFilter(true));
   EXPECT_TRUE(voe_apm_->IsHighPassFilterEnabled());
@@ -252,10 +271,12 @@ TEST_F(AudioProcessingTest, CanSetHighPassFilter) {
   EXPECT_FALSE(voe_apm_->IsHighPassFilterEnabled());
 }
 
+// Duplicated in apm_helpers_unittest.cc.
 TEST_F(AudioProcessingTest, StereoChannelSwappingIsOffByDefault) {
   EXPECT_FALSE(voe_apm_->IsStereoChannelSwappingEnabled());
 }
 
+// Duplicated in apm_helpers_unittest.cc.
 TEST_F(AudioProcessingTest, CanSetStereoChannelSwapping) {
   voe_apm_->EnableStereoChannelSwapping(true);
   EXPECT_TRUE(voe_apm_->IsStereoChannelSwappingEnabled());
@@ -263,6 +284,7 @@ TEST_F(AudioProcessingTest, CanSetStereoChannelSwapping) {
   EXPECT_FALSE(voe_apm_->IsStereoChannelSwappingEnabled());
 }
 
+// TODO(solenberg): Check that sufficient testing is done in APM.
 TEST_F(AudioProcessingTest, CanStartAndStopDebugRecording) {
   std::string output_path = webrtc::test::OutputPath();
   std::string output_file = output_path + "apm_debug.txt";
@@ -274,6 +296,7 @@ TEST_F(AudioProcessingTest, CanStartAndStopDebugRecording) {
 
 #if defined(WEBRTC_IOS) || defined(WEBRTC_ANDROID)
 
+// Duplicated in apm_helpers_unittest.cc.
 TEST_F(AudioProcessingTest, AgcIsOffByDefaultAndDigital) {
   bool agc_enabled = true;
   webrtc::AgcModes agc_mode = webrtc::kAgcAdaptiveAnalog;
@@ -283,16 +306,19 @@ TEST_F(AudioProcessingTest, AgcIsOffByDefaultAndDigital) {
   EXPECT_EQ(webrtc::kAgcAdaptiveDigital, agc_mode);
 }
 
+// Duplicated in apm_helpers_unittest.cc.
 TEST_F(AudioProcessingTest, CanEnableAgcInAdaptiveDigitalMode) {
   TryEnablingAgcWithMode(webrtc::kAgcAdaptiveDigital);
 }
 
+// Duplicated in apm_helpers_unittest.cc.
 TEST_F(AudioProcessingTest, AgcIsPossibleExceptInAdaptiveAnalogMode) {
   EXPECT_EQ(-1, voe_apm_->SetAgcStatus(true, webrtc::kAgcAdaptiveAnalog));
   EXPECT_EQ(0, voe_apm_->SetAgcStatus(true, webrtc::kAgcFixedDigital));
   EXPECT_EQ(0, voe_apm_->SetAgcStatus(true, webrtc::kAgcAdaptiveDigital));
 }
 
+// Duplicated in apm_helpers_unittest.cc.
 TEST_F(AudioProcessingTest, EcIsDisabledAndAecmIsDefaultEcMode) {
   bool ec_enabled = true;
   webrtc::EcModes ec_mode = webrtc::kEcDefault;
@@ -302,6 +328,7 @@ TEST_F(AudioProcessingTest, EcIsDisabledAndAecmIsDefaultEcMode) {
   EXPECT_EQ(webrtc::kEcAecm, ec_mode);
 }
 
+// Not needed anymore - API is unused.
 TEST_F(AudioProcessingTest, TestVoiceActivityDetection) {
   TryDetectingSilence();
   TryDetectingSpeechAfterSilence();

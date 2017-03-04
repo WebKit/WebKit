@@ -15,7 +15,6 @@
 #include <string>
 #include <vector>
 
-#include "webrtc/base/constructormagic.h"
 #include "webrtc/modules/rtp_rtcp/source/rtcp_packet.h"
 
 namespace webrtc {
@@ -54,8 +53,6 @@ class Bye : public RtcpPacket {
   uint32_t sender_ssrc_;
   std::vector<uint32_t> csrcs_;
   std::string reason_;
-
-  RTC_DISALLOW_COPY_AND_ASSIGN(Bye);
 };
 
 }  // namespace rtcp

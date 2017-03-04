@@ -15,18 +15,19 @@
 #include <algorithm>  // sort
 #include <vector>
 
+#include "webrtc/api/audio_codecs/audio_decoder.h"
 #include "webrtc/base/checks.h"
 #include "webrtc/base/format_macros.h"
 #include "webrtc/base/logging.h"
 #include "webrtc/base/safe_conversions.h"
 #include "webrtc/common_audio/signal_processing/include/signal_processing_library.h"
 #include "webrtc/common_types.h"
-#include "webrtc/modules/audio_coding/codecs/audio_decoder.h"
 #include "webrtc/modules/audio_coding/acm2/acm_resampler.h"
 #include "webrtc/modules/audio_coding/acm2/call_statistics.h"
 #include "webrtc/modules/audio_coding/neteq/include/neteq.h"
 #include "webrtc/system_wrappers/include/clock.h"
 #include "webrtc/system_wrappers/include/trace.h"
+#include "webrtc/modules/audio_coding/acm2/rent_a_codec.h"
 
 namespace webrtc {
 
@@ -102,7 +103,6 @@ int AcmReceiver::InsertPacket(const WebRtcRTPHeader& rtp_header,
       RTC_DCHECK(last_audio_format_);
       last_packet_sample_rate_hz_ = rtc::Optional<int>(ci->plfreq);
     }
-
   }  // |crit_sect_| is released.
 
   if (neteq_->InsertPacket(rtp_header, incoming_payload, receive_timestamp) <
@@ -163,7 +163,7 @@ int AcmReceiver::GetAudio(int desired_freq_hz,
     audio_frame->sample_rate_hz_ = desired_freq_hz;
     RTC_DCHECK_EQ(
         audio_frame->sample_rate_hz_,
-        rtc::checked_cast<int>(audio_frame->samples_per_channel_ * 100));
+        rtc::dchecked_cast<int>(audio_frame->samples_per_channel_ * 100));
     resampled_last_output_frame_ = true;
   } else {
     resampled_last_output_frame_ = false;
@@ -200,7 +200,7 @@ int32_t AcmReceiver::AddCodec(int acm_codec_id,
     return *ned;
   }();
   const rtc::Optional<SdpAudioFormat> new_format =
-      RentACodec::NetEqDecoderToSdpAudioFormat(neteq_decoder);
+      NetEqDecoderToSdpAudioFormat(neteq_decoder);
 
   rtc::CritScope lock(&crit_sect_);
 

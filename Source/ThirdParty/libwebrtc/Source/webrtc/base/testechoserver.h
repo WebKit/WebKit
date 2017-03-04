@@ -43,7 +43,7 @@ class TestEchoServer : public sigslot::has_slots<> {
 
  private:
   void OnAccept(AsyncSocket* socket) {
-    AsyncSocket* raw_socket = socket->Accept(NULL);
+    AsyncSocket* raw_socket = socket->Accept(nullptr);
     if (raw_socket) {
       AsyncTCPSocket* packet_socket = new AsyncTCPSocket(raw_socket, false);
       packet_socket->SignalReadPacket.connect(this, &TestEchoServer::OnPacket);

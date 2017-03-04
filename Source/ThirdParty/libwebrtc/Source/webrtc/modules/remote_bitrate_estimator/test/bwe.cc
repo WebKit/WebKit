@@ -12,7 +12,6 @@
 
 #include <limits>
 
-#include "webrtc/base/common.h"
 #include "webrtc/base/constructormagic.h"
 #include "webrtc/modules/remote_bitrate_estimator/test/estimators/nada.h"
 #include "webrtc/modules/remote_bitrate_estimator/test/estimators/remb.h"

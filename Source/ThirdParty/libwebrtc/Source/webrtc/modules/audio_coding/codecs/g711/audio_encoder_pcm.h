@@ -71,8 +71,6 @@ class AudioEncoderPcm : public AudioEncoder {
 
 struct CodecInst;
 
-#ifdef WEBRTC_CODEC_G711
-
 class AudioEncoderPcmA final : public AudioEncoderPcm {
  public:
   struct Config : public AudioEncoderPcm::Config {
@@ -120,7 +118,7 @@ class AudioEncoderPcmU final : public AudioEncoderPcm {
   static const int kSampleRateHz = 8000;
   RTC_DISALLOW_COPY_AND_ASSIGN(AudioEncoderPcmU);
 };
-#endif
+
 }  // namespace webrtc
 
 #endif  // WEBRTC_MODULES_AUDIO_CODING_CODECS_G711_AUDIO_ENCODER_PCM_H_

@@ -83,18 +83,6 @@ class ProxyServer : public sigslot::has_slots<> {
   RTC_DISALLOW_COPY_AND_ASSIGN(ProxyServer);
 };
 
-// SocksProxyServer is a simple extension of ProxyServer to implement SOCKS.
-class SocksProxyServer : public ProxyServer {
- public:
-  SocksProxyServer(SocketFactory* int_factory, const SocketAddress& int_addr,
-                   SocketFactory* ext_factory, const SocketAddress& ext_ip)
-      : ProxyServer(int_factory, int_addr, ext_factory, ext_ip) {
-  }
- protected:
-  AsyncProxyServerSocket* WrapSocket(AsyncSocket* socket) override;
-  RTC_DISALLOW_COPY_AND_ASSIGN(SocksProxyServer);
-};
-
 }  // namespace rtc
 
 #endif  // WEBRTC_BASE_PROXYSERVER_H_

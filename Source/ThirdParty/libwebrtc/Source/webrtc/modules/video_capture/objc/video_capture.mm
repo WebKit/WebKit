@@ -22,13 +22,12 @@ using namespace webrtc;
 using namespace videocapturemodule;
 
 rtc::scoped_refptr<VideoCaptureModule> VideoCaptureImpl::Create(
-    const int32_t capture_id,
     const char* deviceUniqueIdUTF8) {
-  return VideoCaptureIos::Create(capture_id, deviceUniqueIdUTF8);
+  return VideoCaptureIos::Create(deviceUniqueIdUTF8);
 }
 
-VideoCaptureIos::VideoCaptureIos(const int32_t capture_id)
-    : VideoCaptureImpl(capture_id), is_capturing_(false), id_(capture_id) {
+VideoCaptureIos::VideoCaptureIos()
+    : is_capturing_(false) {
   capability_.width = kDefaultWidth;
   capability_.height = kDefaultHeight;
   capability_.maxFPS = kDefaultFrameRate;
@@ -43,14 +42,13 @@ VideoCaptureIos::~VideoCaptureIos() {
 }
 
 rtc::scoped_refptr<VideoCaptureModule> VideoCaptureIos::Create(
-    const int32_t capture_id,
     const char* deviceUniqueIdUTF8) {
   if (!deviceUniqueIdUTF8[0]) {
     return NULL;
   }
 
   rtc::scoped_refptr<VideoCaptureIos> capture_module(
-      new rtc::RefCountedObject<VideoCaptureIos>(capture_id));
+      new rtc::RefCountedObject<VideoCaptureIos>());
 
   const int32_t name_length = strlen(deviceUniqueIdUTF8);
   if (name_length > kVideoCaptureUniqueNameLength)
@@ -61,8 +59,7 @@ rtc::scoped_refptr<VideoCaptureModule> VideoCaptureIos::Create(
   capture_module->_deviceUniqueId[name_length] = '\0';
 
   capture_module->capture_device_ =
-      [[RTCVideoCaptureIosObjC alloc] initWithOwner:capture_module
-                                          captureId:capture_module->id_];
+      [[RTCVideoCaptureIosObjC alloc] initWithOwner:capture_module];
   if (!capture_module->capture_device_) {
     return nullptr;
   }

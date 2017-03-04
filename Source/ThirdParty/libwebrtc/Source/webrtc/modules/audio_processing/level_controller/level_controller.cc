@@ -59,7 +59,7 @@ float FrameEnergy(const AudioBuffer& audio) {
 float PeakLevel(const AudioBuffer& audio) {
   float peak_level = 0.f;
   for (size_t k = 0; k < audio.num_channels(); ++k) {
-    auto channel_peak_level = std::max_element(
+    auto* channel_peak_level = std::max_element(
         audio.channels_const_f()[k],
         audio.channels_const_f()[k] + audio.num_frames(),
         [](float a, float b) { return std::abs(a) < std::abs(b); });
@@ -208,8 +208,8 @@ void LevelController::Initialize(int sample_rate_hz) {
 }
 
 void LevelController::Process(AudioBuffer* audio) {
-  RTC_DCHECK_LT(0u, audio->num_channels());
-  RTC_DCHECK_GE(2u, audio->num_channels());
+  RTC_DCHECK_LT(0, audio->num_channels());
+  RTC_DCHECK_GE(2, audio->num_channels());
   RTC_DCHECK_NE(0.f, dc_forgetting_factor_);
   RTC_DCHECK(sample_rate_hz_);
   data_dumper_->DumpWav("lc_input", audio->num_frames(),

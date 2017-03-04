@@ -84,7 +84,7 @@ bool Fir::Create(uint8_t* packet,
   size_t index_end = *index + BlockLength();
   CreateHeader(kFeedbackMessageType, kPacketType, HeaderLength(), packet,
                index);
-  RTC_DCHECK_EQ(Psfb::media_ssrc(), 0u);
+  RTC_DCHECK_EQ(Psfb::media_ssrc(), 0);
   CreateCommonFeedback(packet + *index);
   *index += kCommonFeedbackLength;
 

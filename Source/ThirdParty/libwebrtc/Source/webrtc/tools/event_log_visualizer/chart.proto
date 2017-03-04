@@ -9,6 +9,7 @@ message ChartStyle {
     UNDEFINED = 0;
     LINE_CHART = 1;
     BAR_CHART = 2;
+    LINE_STEP_CHART = 3;
   }
 }
 

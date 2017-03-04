@@ -8,6 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include <type_traits>
+
 #include "webrtc/base/bind.h"
 #include "webrtc/base/gunit.h"
 
@@ -71,26 +73,6 @@ int Multiply(int a, int b) { return a * b; }
 
 // Try to catch any problem with scoped_refptr type deduction in rtc::Bind at
 // compile time.
-static_assert(
-    is_same<
-        rtc::remove_reference<const scoped_refptr<RefCountInterface>&>::type,
-        const scoped_refptr<RefCountInterface>>::value,
-    "const scoped_refptr& should be captured by value");
-
-static_assert(is_same<rtc::remove_reference<const scoped_refptr<F>&>::type,
-                      const scoped_refptr<F>>::value,
-              "const scoped_refptr& should be captured by value");
-
-static_assert(
-    is_same<rtc::remove_reference<const int&>::type, const int>::value,
-    "const int& should be captured as const int");
-
-static_assert(is_same<rtc::remove_reference<const F&>::type, const F>::value,
-              "const F& should be captured as const F");
-
-static_assert(is_same<rtc::remove_reference<F&>::type, F>::value,
-              "F& should be captured as F");
-
 #define EXPECT_IS_CAPTURED_AS_PTR(T)                              \
   static_assert(is_same<detail::PointerType<T>::type, T*>::value, \
                 "PointerType")
@@ -105,6 +87,8 @@ EXPECT_IS_CAPTURED_AS_PTR(double);
 EXPECT_IS_CAPTURED_AS_PTR(A);
 EXPECT_IS_CAPTURED_AS_PTR(D);
 EXPECT_IS_CAPTURED_AS_PTR(RefCountInterface*);
+EXPECT_IS_CAPTURED_AS_PTR(
+    decltype(Unretained<RefCountedObject<RefCountInterface>>));
 
 EXPECT_IS_CAPTURED_AS_SCOPED_REFPTR(RefCountInterface);
 EXPECT_IS_CAPTURED_AS_SCOPED_REFPTR(B);

@@ -26,7 +26,6 @@ class AudioDeviceModule : public RefCountedModule {
 
   enum AudioLayer {
     kPlatformDefaultAudio = 0,
-    kWindowsWaveAudio = 1,
     kWindowsCoreAudio = 2,
     kLinuxAlsaAudio = 3,
     kLinuxPulseAudio = 4,

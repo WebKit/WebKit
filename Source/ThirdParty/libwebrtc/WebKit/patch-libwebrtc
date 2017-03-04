@@ -1,54 +1,95 @@
-diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/api/datachannelinterface.h b/Source/ThirdParty/libwebrtc/Source/webrtc/api/datachannelinterface.h
-index ddeb1e5..4b2e232 100644
---- a/Source/ThirdParty/libwebrtc/Source/webrtc/api/datachannelinterface.h
-+++ b/Source/ThirdParty/libwebrtc/Source/webrtc/api/datachannelinterface.h
-@@ -75,7 +75,7 @@ class DataChannelObserver {
+diff --git a/webrtc/api/datachannelinterface.h b/webrtc/api/datachannelinterface.h
+index 92bdee2..48aa38c 100644
+--- a/webrtc/api/datachannelinterface.h
++++ b/webrtc/api/datachannelinterface.h
+@@ -91,7 +91,7 @@ class DataChannelObserver {
    //  A data buffer was successfully received.
    virtual void OnMessage(const DataBuffer& buffer) = 0;
    // The data channel's buffered_amount has changed.
--  virtual void OnBufferedAmountChange(uint64_t previous_amount){};
-+  virtual void OnBufferedAmountChange(uint64_t){};
+-  virtual void OnBufferedAmountChange(uint64_t previous_amount) {}
++  virtual void OnBufferedAmountChange(uint64_t) {}
  
   protected:
    virtual ~DataChannelObserver() {}
-diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/api/jsep.h b/Source/ThirdParty/libwebrtc/Source/webrtc/api/jsep.h
-index e11a2ad..9d7bf9d 100644
---- a/Source/ThirdParty/libwebrtc/Source/webrtc/api/jsep.h
-+++ b/Source/ThirdParty/libwebrtc/Source/webrtc/api/jsep.h
-@@ -98,7 +98,7 @@ class SessionDescriptionInterface {
-   // Removes the candidates from the description.
+diff --git a/webrtc/api/jsep.h b/webrtc/api/jsep.h
+index aa6e9a1..3a7abf0 100644
+--- a/webrtc/api/jsep.h
++++ b/webrtc/api/jsep.h
+@@ -25,6 +25,7 @@
+ #include <string>
+ #include <vector>
+ 
++#include "webrtc/base/export.h"
+ #include "webrtc/base/refcount.h"
+ 
+ namespace cricket {
+@@ -70,7 +71,7 @@ class IceCandidateInterface {
+ // Creates a IceCandidateInterface based on SDP string.
+ // Returns null if the sdp string can't be parsed.
+ // |error| may be null.
+-IceCandidateInterface* CreateIceCandidate(const std::string& sdp_mid,
++WEBRTC_DYLIB_EXPORT IceCandidateInterface* CreateIceCandidate(const std::string& sdp_mid,
+                                           int sdp_mline_index,
+                                           const std::string& sdp,
+                                           SdpParseError* error);
+@@ -92,7 +93,7 @@ class IceCandidateCollection {
+ // and is therefore not expected to be thread safe.
+ //
+ // An instance can be created by CreateSessionDescription.
+-class SessionDescriptionInterface {
++class WEBRTC_DYLIB_EXPORT SessionDescriptionInterface {
+  public:
+   // Supported types:
+   static const char kOffer[];
+@@ -126,7 +127,7 @@ class SessionDescriptionInterface {
+   //
    // Returns the number of candidates removed.
    virtual size_t RemoveCandidates(
 -      const std::vector<cricket::Candidate>& candidates) { return 0; }
 +      const std::vector<cricket::Candidate>&) { return 0; }
  
-   // Returns the number of m- lines in the session description.
+   // Returns the number of m= sections in the session description.
    virtual size_t number_of_mediasections() const = 0;
-diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/api/mediastreaminterface.h b/Source/ThirdParty/libwebrtc/Source/webrtc/api/mediastreaminterface.h
-index baebad7..91a8705 100644
---- a/Source/ThirdParty/libwebrtc/Source/webrtc/api/mediastreaminterface.h
-+++ b/Source/ThirdParty/libwebrtc/Source/webrtc/api/mediastreaminterface.h
-@@ -134,9 +134,9 @@ class VideoTrackInterface
-       public rtc::VideoSourceInterface<VideoFrame> {
-  public:
-   // Register a video sink for this track.
+@@ -143,7 +144,7 @@ class SessionDescriptionInterface {
+ // Creates a SessionDescriptionInterface based on the SDP string and the type.
+ // Returns null if the sdp string can't be parsed or the type is unsupported.
+ // |error| may be null.
+-SessionDescriptionInterface* CreateSessionDescription(const std::string& type,
++WEBRTC_DYLIB_EXPORT SessionDescriptionInterface* CreateSessionDescription(const std::string& type,
+                                                       const std::string& sdp,
+                                                       SdpParseError* error);
+ 
+diff --git a/webrtc/api/mediastreaminterface.h b/webrtc/api/mediastreaminterface.h
+index 2d16e52..861b468 100644
+--- a/webrtc/api/mediastreaminterface.h
++++ b/webrtc/api/mediastreaminterface.h
+@@ -154,14 +154,14 @@ class VideoTrackInterface
+ 
+   // Register a video sink for this track. Used to connect the track to the
+   // underlying video engine.
 -  void AddOrUpdateSink(rtc::VideoSinkInterface<VideoFrame>* sink,
--                       const rtc::VideoSinkWants& wants) override{};
--  void RemoveSink(rtc::VideoSinkInterface<VideoFrame>* sink) override{};
+-                       const rtc::VideoSinkWants& wants) override {}
+-  void RemoveSink(rtc::VideoSinkInterface<VideoFrame>* sink) override {}
 +  void AddOrUpdateSink(rtc::VideoSinkInterface<VideoFrame>*,
-+                       const rtc::VideoSinkWants&) override {};
-+  void RemoveSink(rtc::VideoSinkInterface<VideoFrame>*) override {};
++                       const rtc::VideoSinkWants&) override {}
++  void RemoveSink(rtc::VideoSinkInterface<VideoFrame>*) override {}
  
    virtual VideoTrackSourceInterface* GetSource() const = 0;
  
-@@ -174,15 +174,15 @@ class AudioSourceInterface : public MediaSourceInterface {
-   // Sets the volume to the source. |volume| is in  the range of [0, 10].
+   virtual ContentHint content_hint() const { return ContentHint::kNone; }
+-  virtual void set_content_hint(ContentHint hint) {}
++  virtual void set_content_hint(ContentHint) {}
+ 
+  protected:
+   virtual ~VideoTrackInterface() {}
+@@ -198,15 +198,15 @@ class AudioSourceInterface : public MediaSourceInterface {
+   // Sets the volume of the source. |volume| is in  the range of [0, 10].
    // TODO(tommi): This method should be on the track and ideally volume should
    // be applied in the track in a way that does not affect clones of the track.
 -  virtual void SetVolume(double volume) {}
 +  virtual void SetVolume(double) {}
  
-   // Registers/unregisters observer to the audio source.
+   // Registers/unregisters observers to the audio source.
 -  virtual void RegisterAudioObserver(AudioObserver* observer) {}
 -  virtual void UnregisterAudioObserver(AudioObserver* observer) {}
 +  virtual void RegisterAudioObserver(AudioObserver*) {}
@@ -62,51 +103,50 @@ index baebad7..91a8705 100644
  };
  
  // Interface of the audio processor used by the audio track to collect
-@@ -230,7 +230,7 @@ class AudioTrackInterface : public MediaStreamTrackInterface {
+@@ -258,7 +258,7 @@ class AudioTrackInterface : public MediaStreamTrackInterface {
    // Return true on success, otherwise false.
-   // TODO(xians): Change the interface to int GetSignalLevel() and pure virtual
-   // after Chrome has the correct implementation of the interface.
+   // TODO(deadbeef): Change the interface to int GetSignalLevel() and pure
+   // virtual after it's implemented in chromium.
 -  virtual bool GetSignalLevel(int* level) { return false; }
 +  virtual bool GetSignalLevel(int*) { return false; }
  
-   // Get the audio processor used by the audio track. Return NULL if the track
+   // Get the audio processor used by the audio track. Return null if the track
    // does not have any processor.
-diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/api/peerconnectionfactory.h b/Source/ThirdParty/libwebrtc/Source/webrtc/api/peerconnectionfactory.h
-index 7a30ab4..f02f9b9 100644
---- a/Source/ThirdParty/libwebrtc/Source/webrtc/api/peerconnectionfactory.h
-+++ b/Source/ThirdParty/libwebrtc/Source/webrtc/api/peerconnectionfactory.h
-@@ -81,10 +81,10 @@ class PeerConnectionFactory : public PeerConnectionFactoryInterface {
-   bool StartAecDump(rtc::PlatformFile file, int64_t max_size_bytes) override;
-   void StopAecDump() override;
-   // TODO(ivoc) Remove after Chrome is updated.
--  bool StartRtcEventLog(rtc::PlatformFile file) override { return false; }
-+  bool StartRtcEventLog(rtc::PlatformFile) override { return false; }
-   // TODO(ivoc) Remove after Chrome is updated.
--  bool StartRtcEventLog(rtc::PlatformFile file,
--                        int64_t max_size_bytes) override {
-+  bool StartRtcEventLog(rtc::PlatformFile,
-+                        int64_t) override {
-     return false;
+diff --git a/webrtc/api/mediatypes.cc b/webrtc/api/mediatypes.cc
+index 2e3538d..55289fa 100644
+--- a/webrtc/api/mediatypes.cc
++++ b/webrtc/api/mediatypes.cc
+@@ -28,7 +28,7 @@ std::string MediaTypeToString(MediaType type) {
+     case MEDIA_TYPE_DATA:
+       return kMediaTypeData;
    }
-   // TODO(ivoc) Remove after Chrome is updated.
-diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/api/peerconnectioninterface.h b/Source/ThirdParty/libwebrtc/Source/webrtc/api/peerconnectioninterface.h
-index ea056bf..76cce17 100644
---- a/Source/ThirdParty/libwebrtc/Source/webrtc/api/peerconnectioninterface.h
-+++ b/Source/ThirdParty/libwebrtc/Source/webrtc/api/peerconnectioninterface.h
-@@ -119,9 +119,9 @@ class MetricsObserverInterface : public rtc::RefCountInterface {
-   // |type| is the type of the enum counter to be incremented. |counter|
-   // is the particular counter in that type. |counter_max| is the next sequence
-   // number after the highest counter.
--  virtual void IncrementEnumCounter(PeerConnectionEnumCounterType type,
--                                    int counter,
--                                    int counter_max) {}
-+  virtual void IncrementEnumCounter(PeerConnectionEnumCounterType,
-+                                    int /* counter */,
-+                                    int /* counter_max */) {}
- 
-   // This is used to handle sparse counters like SSL cipher suites.
-   // TODO(guoweis): Remove the implementation once the dependency's interface
-@@ -389,14 +389,14 @@ class PeerConnectionInterface : public rtc::RefCountInterface {
+-  FATAL();
++  RTC_FATAL();
+   // Not reachable; avoids compile warning.
+   return "";
+ }
+@@ -41,7 +41,7 @@ MediaType MediaTypeFromString(const std::string& type_str) {
+   } else if (type_str == kMediaTypeData) {
+     return MEDIA_TYPE_DATA;
+   }
+-  FATAL();
++  RTC_FATAL();
+   // Not reachable; avoids compile warning.
+   return static_cast<MediaType>(-1);
+ }
+diff --git a/webrtc/api/peerconnectioninterface.h b/webrtc/api/peerconnectioninterface.h
+index 165f2d5..b911de4 100644
+--- a/webrtc/api/peerconnectioninterface.h
++++ b/webrtc/api/peerconnectioninterface.h
+@@ -83,6 +83,7 @@
+ #include "webrtc/api/stats/rtcstatscollectorcallback.h"
+ #include "webrtc/api/statstypes.h"
+ #include "webrtc/api/umametrics.h"
++#include "webrtc/base/export.h"
+ #include "webrtc/base/fileutils.h"
+ #include "webrtc/base/network.h"
+ #include "webrtc/base/rtccertificate.h"
+@@ -521,14 +522,14 @@ class PeerConnectionInterface : public rtc::RefCountInterface {
    // |streams| indicates which stream labels the track should be associated
    // with.
    virtual rtc::scoped_refptr<RtpSenderInterface> AddTrack(
@@ -124,27 +164,27 @@ index ea056bf..76cce17 100644
      return false;
    }
  
-@@ -410,8 +410,8 @@ class PeerConnectionInterface : public rtc::RefCountInterface {
+@@ -554,8 +555,8 @@ class PeerConnectionInterface : public rtc::RefCountInterface {
    // |stream_id| is used to populate the msid attribute; if empty, one will
    // be generated automatically.
    virtual rtc::scoped_refptr<RtpSenderInterface> CreateSender(
 -      const std::string& kind,
 -      const std::string& stream_id) {
-+      const std::string& /* kind */,
-+      const std::string& /* stream_id */) {
++      const std::string&,
++      const std::string&) {
      return rtc::scoped_refptr<RtpSenderInterface>();
    }
  
-@@ -433,7 +433,7 @@ class PeerConnectionInterface : public rtc::RefCountInterface {
+@@ -589,7 +590,7 @@ class PeerConnectionInterface : public rtc::RefCountInterface {
    // TODO(hbos): Default implementation that does nothing only exists as to not
    // break third party projects. As soon as they have been updated this should
    // be changed to "= 0;".
 -  virtual void GetStats(RTCStatsCollectorCallback* callback) {}
 +  virtual void GetStats(RTCStatsCollectorCallback*) {}
  
-   virtual rtc::scoped_refptr<DataChannelInterface> CreateDataChannel(
-       const std::string& label,
-@@ -444,23 +444,23 @@ class PeerConnectionInterface : public rtc::RefCountInterface {
+   // Create a data channel with the provided config, or default config if none
+   // is provided. Note that an offer/answer negotiation is still necessary
+@@ -630,41 +631,41 @@ class PeerConnectionInterface : public rtc::RefCountInterface {
  
    // Create a new offer.
    // The CreateSessionDescriptionObserver callback will be called when done.
@@ -176,9 +216,19 @@ index ea056bf..76cce17 100644
  
    // Sets the local session description.
    // JsepInterface takes the ownership of |desc| even if it fails.
-@@ -475,11 +475,11 @@ class PeerConnectionInterface : public rtc::RefCountInterface {
-   // Restarts or updates the ICE Agent process of gathering local candidates
-   // and pinging remote candidates.
+   // The |observer| callback will be called when done.
+-  virtual void SetLocalDescription(SetSessionDescriptionObserver* observer,
+-                                   SessionDescriptionInterface* desc) = 0;
++  virtual void SetLocalDescription(SetSessionDescriptionObserver*,
++                                   SessionDescriptionInterface*) = 0;
+   // Sets the remote session description.
+   // JsepInterface takes the ownership of |desc| even if it fails.
+   // The |observer| callback will be called when done.
+-  virtual void SetRemoteDescription(SetSessionDescriptionObserver* observer,
+-                                    SessionDescriptionInterface* desc) = 0;
++  virtual void SetRemoteDescription(SetSessionDescriptionObserver*,
++                                    SessionDescriptionInterface*) = 0;
+   // Deprecated; Replaced by SetConfiguration.
    // TODO(deadbeef): Remove once Chrome is moved over to SetConfiguration.
 -  virtual bool UpdateIce(const IceServers& configuration,
 -                         const MediaConstraintsInterface* constraints) {
@@ -188,39 +238,72 @@ index ea056bf..76cce17 100644
    }
 -  virtual bool UpdateIce(const IceServers& configuration) { return false; }
 +  virtual bool UpdateIce(const IceServers&) { return false; }
-   // Sets the PeerConnection's global configuration to |config|.
-   // Any changes to STUN/TURN servers or ICE candidate policy will affect the
-   // next gathering phase, and cause the next call to createOffer to generate
-@@ -488,7 +488,7 @@ class PeerConnectionInterface : public rtc::RefCountInterface {
+ 
    // TODO(deadbeef): Make this pure virtual once all Chrome subclasses of
    // PeerConnectionInterface implement it.
+@@ -696,14 +697,14 @@ class PeerConnectionInterface : public rtc::RefCountInterface {
+   // TODO(deadbeef): Make this pure virtual once all Chrome subclasses of
+   // PeerConnectionInterface implement it.
+   virtual bool SetConfiguration(
+-      const PeerConnectionInterface::RTCConfiguration& config,
+-      RTCError* error) {
++      const PeerConnectionInterface::RTCConfiguration&,
++      RTCError*) {
+     return false;
+   }
+   // Version without error output param for backwards compatibility.
+   // TODO(deadbeef): Remove once chromium is updated.
    virtual bool SetConfiguration(
 -      const PeerConnectionInterface::RTCConfiguration& config) {
 +      const PeerConnectionInterface::RTCConfiguration&) {
      return false;
    }
-   // Provides a remote candidate to the ICE Agent.
-@@ -501,7 +501,7 @@ class PeerConnectionInterface : public rtc::RefCountInterface {
  
-   // Removes a group of remote candidates from the ICE agent.
+@@ -711,13 +712,13 @@ class PeerConnectionInterface : public rtc::RefCountInterface {
+   // A copy of the |candidate| will be created and added to the remote
+   // description. So the caller of this method still has the ownership of the
+   // |candidate|.
+-  virtual bool AddIceCandidate(const IceCandidateInterface* candidate) = 0;
++  virtual bool AddIceCandidate(const IceCandidateInterface*) = 0;
+ 
+   // Removes a group of remote candidates from the ICE agent. Needed mainly for
+   // continual gathering, to avoid an ever-growing list of candidates as
+   // networks come and go.
    virtual bool RemoveIceCandidates(
 -      const std::vector<cricket::Candidate>& candidates) {
 +      const std::vector<cricket::Candidate>&) {
      return false;
    }
  
-@@ -518,8 +518,8 @@ class PeerConnectionInterface : public rtc::RefCountInterface {
+@@ -725,7 +726,7 @@ class PeerConnectionInterface : public rtc::RefCountInterface {
+   //
+   // There can only be one observer at a time. Before the observer is
+   // destroyed, RegisterUMAOberver(nullptr) should be called.
+-  virtual void RegisterUMAObserver(UMAObserver* observer) = 0;
++  virtual void RegisterUMAObserver(UMAObserver*) = 0;
+ 
+   // Returns the current SignalingState.
+   virtual SignalingState signaling_state() = 0;
+@@ -738,8 +739,8 @@ class PeerConnectionInterface : public rtc::RefCountInterface {
    // automatically after 10 minutes have passed, or when the StopRtcEventLog
    // function is called.
    // TODO(ivoc): Make this pure virtual when Chrome is updated.
 -  virtual bool StartRtcEventLog(rtc::PlatformFile file,
 -                                int64_t max_size_bytes) {
 +  virtual bool StartRtcEventLog(rtc::PlatformFile,
-+                                int64_t /* max_size_bytes */) {
++                                int64_t) {
      return false;
    }
  
-@@ -553,21 +553,21 @@ class PeerConnectionObserver {
+@@ -767,28 +768,28 @@ class PeerConnectionObserver {
+ 
+   // Triggered when the SignalingState changed.
+   virtual void OnSignalingChange(
+-      PeerConnectionInterface::SignalingState new_state) = 0;
++      PeerConnectionInterface::SignalingState) = 0;
+ 
+   // TODO(deadbeef): Once all subclasses override the scoped_refptr versions
+   // of the below three methods, make them pure virtual and remove the raw
    // pointer version.
  
    // Triggered when media is received on a new stream from remote peer.
@@ -240,15 +323,31 @@ index ea056bf..76cce17 100644
  
    // Triggered when a remote peer opens a data channel.
    virtual void OnDataChannel(
--      rtc::scoped_refptr<DataChannelInterface> data_channel){};
-+      rtc::scoped_refptr<DataChannelInterface>){};
+-      rtc::scoped_refptr<DataChannelInterface> data_channel) {}
++      rtc::scoped_refptr<DataChannelInterface>) {}
    // Deprecated; please use the version that uses a scoped_refptr.
 -  virtual void OnDataChannel(DataChannelInterface* data_channel) {}
 +  virtual void OnDataChannel(DataChannelInterface*) {}
  
    // Triggered when renegotiation is needed. For example, an ICE restart
    // has begun.
-@@ -588,10 +588,10 @@ class PeerConnectionObserver {
+@@ -801,30 +802,30 @@ class PeerConnectionObserver {
+   // seconds, not 30, and this actually represents a combination ICE + DTLS
+   // state, so it may be "failed" if DTLS fails while ICE succeeds.
+   virtual void OnIceConnectionChange(
+-      PeerConnectionInterface::IceConnectionState new_state) = 0;
++      PeerConnectionInterface::IceConnectionState) = 0;
+ 
+   // Called any time the IceGatheringState changes.
+   virtual void OnIceGatheringChange(
+-      PeerConnectionInterface::IceGatheringState new_state) = 0;
++      PeerConnectionInterface::IceGatheringState) = 0;
+ 
+   // A new ICE candidate has been gathered.
+-  virtual void OnIceCandidate(const IceCandidateInterface* candidate) = 0;
++  virtual void OnIceCandidate(const IceCandidateInterface*) = 0;
+ 
+   // Ice candidates have been removed.
    // TODO(honghaiz): Make this a pure virtual method when all its subclasses
    // implement it.
    virtual void OnIceCandidatesRemoved(
@@ -257,42 +356,531 @@ index ea056bf..76cce17 100644
  
    // Called when the ICE connection receiving status changes.
 -  virtual void OnIceConnectionReceivingChange(bool receiving) {}
-+  virtual void OnIceConnectionReceivingChange(bool /* receiving */) {}
++  virtual void OnIceConnectionReceivingChange(bool) {}
+ 
+   // Called when a track is added to streams.
+   // TODO(zhihuang) Make this a pure virtual method when all its subclasses
+   // implement it.
+   virtual void OnAddTrack(
+-      rtc::scoped_refptr<RtpReceiverInterface> receiver,
+-      const std::vector<rtc::scoped_refptr<MediaStreamInterface>>& streams) {}
++      rtc::scoped_refptr<RtpReceiverInterface>,
++      const std::vector<rtc::scoped_refptr<MediaStreamInterface>>&) {}
  
   protected:
    // Dtor protected as objects shouldn't be deleted via this interface.
-diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/api/rtpsender.cc b/Source/ThirdParty/libwebrtc/Source/webrtc/api/rtpsender.cc
-index 2e01d96..0dc7916 100644
---- a/Source/ThirdParty/libwebrtc/Source/webrtc/api/rtpsender.cc
-+++ b/Source/ThirdParty/libwebrtc/Source/webrtc/api/rtpsender.cc
-@@ -204,7 +204,7 @@ void AudioRtpSender::SetAudioSend() {
-     return;
+@@ -880,34 +881,34 @@ class PeerConnectionFactoryInterface : public rtc::RefCountInterface {
+     rtc::CryptoOptions crypto_options;
+   };
+ 
+-  virtual void SetOptions(const Options& options) = 0;
++  virtual void SetOptions(const Options&) = 0;
+ 
+   virtual rtc::scoped_refptr<PeerConnectionInterface> CreatePeerConnection(
+-      const PeerConnectionInterface::RTCConfiguration& configuration,
+-      std::unique_ptr<cricket::PortAllocator> allocator,
+-      std::unique_ptr<rtc::RTCCertificateGeneratorInterface> cert_generator,
+-      PeerConnectionObserver* observer) = 0;
++      const PeerConnectionInterface::RTCConfiguration&,
++      std::unique_ptr<cricket::PortAllocator>,
++      std::unique_ptr<rtc::RTCCertificateGeneratorInterface>,
++      PeerConnectionObserver*) = 0;
+ 
+   // Deprecated; should use RTCConfiguration for everything that previously
+   // used constraints.
+   virtual rtc::scoped_refptr<PeerConnectionInterface> CreatePeerConnection(
+-      const PeerConnectionInterface::RTCConfiguration& configuration,
+-      const MediaConstraintsInterface* constraints,
+-      std::unique_ptr<cricket::PortAllocator> allocator,
+-      std::unique_ptr<rtc::RTCCertificateGeneratorInterface> cert_generator,
+-      PeerConnectionObserver* observer) = 0;
++      const PeerConnectionInterface::RTCConfiguration&,
++      const MediaConstraintsInterface*,
++      std::unique_ptr<cricket::PortAllocator>,
++      std::unique_ptr<rtc::RTCCertificateGeneratorInterface>,
++      PeerConnectionObserver*) = 0;
+ 
+   virtual rtc::scoped_refptr<MediaStreamInterface>
+-      CreateLocalMediaStream(const std::string& label) = 0;
++      CreateLocalMediaStream(const std::string&) = 0;
+ 
+   // Creates an AudioSourceInterface.
+   // |options| decides audio processing settings.
+   virtual rtc::scoped_refptr<AudioSourceInterface> CreateAudioSource(
+-      const cricket::AudioOptions& options) = 0;
++      const cricket::AudioOptions&) = 0;
+   // Deprecated - use version above.
+   // Can use CopyConstraintsIntoAudioOptions to bridge the gap.
+   virtual rtc::scoped_refptr<AudioSourceInterface> CreateAudioSource(
+-      const MediaConstraintsInterface* constraints) = 0;
++      const MediaConstraintsInterface*) = 0;
+ 
+   // Creates a VideoTrackSourceInterface from |capturer|.
+   // TODO(deadbeef): We should aim to remove cricket::VideoCapturer from the
+@@ -917,7 +918,7 @@ class PeerConnectionFactoryInterface : public rtc::RefCountInterface {
+   // TODO(deadbeef): Make pure virtual once downstream mock PC factory classes
+   // are updated.
+   virtual rtc::scoped_refptr<VideoTrackSourceInterface> CreateVideoSource(
+-      std::unique_ptr<cricket::VideoCapturer> capturer) {
++      std::unique_ptr<cricket::VideoCapturer>) {
+     return nullptr;
    }
-   cricket::AudioOptions options;
--#if !defined(WEBRTC_CHROMIUM_BUILD)
-+#if !defined(WEBRTC_CHROMIUM_BUILD) && !defined(WEBRTC_WEBKIT_BUILD)
-   // TODO(tommi): Remove this hack when we move CreateAudioSource out of
-   // PeerConnection.  This is a bit of a strange way to apply local audio
-   // options since it is also applied to all streams/channels, local or remote.
-diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/base/checks.h b/Source/ThirdParty/libwebrtc/Source/webrtc/base/checks.h
-index 653ed32..57a8b51 100644
---- a/Source/ThirdParty/libwebrtc/Source/webrtc/base/checks.h
-+++ b/Source/ThirdParty/libwebrtc/Source/webrtc/base/checks.h
-@@ -221,7 +221,9 @@ class FatalMessageVoidify {
+ 
+@@ -928,8 +929,8 @@ class PeerConnectionFactoryInterface : public rtc::RefCountInterface {
+   // |constraints| is only used for the invocation of this method, and can
+   // safely be destroyed afterwards.
+   virtual rtc::scoped_refptr<VideoTrackSourceInterface> CreateVideoSource(
+-      std::unique_ptr<cricket::VideoCapturer> capturer,
+-      const MediaConstraintsInterface* constraints) {
++      std::unique_ptr<cricket::VideoCapturer>,
++      const MediaConstraintsInterface*) {
+     return nullptr;
+   }
+ 
+@@ -1009,7 +1010,7 @@ CreateBuiltinAudioEncoderFactory() {
+ // rtc::Thread::Current()->Run(), or call
+ // rtc::Thread::Current()->ProcessMessages() within the application's own
+ // message loop.
+-rtc::scoped_refptr<PeerConnectionFactoryInterface> CreatePeerConnectionFactory(
++WEBRTC_DYLIB_EXPORT rtc::scoped_refptr<PeerConnectionFactoryInterface> CreatePeerConnectionFactory(
+     rtc::scoped_refptr<AudioEncoderFactory> audio_encoder_factory,
+     rtc::scoped_refptr<AudioDecoderFactory> audio_decoder_factory);
+ 
+@@ -1040,7 +1041,7 @@ rtc::scoped_refptr<PeerConnectionFactoryInterface> CreatePeerConnectionFactory(
+ 
+ // Deprecated variant of the above.
+ // TODO(kwiberg): Remove.
+-rtc::scoped_refptr<PeerConnectionFactoryInterface> CreatePeerConnectionFactory(
++WEBRTC_DYLIB_EXPORT rtc::scoped_refptr<PeerConnectionFactoryInterface> CreatePeerConnectionFactory(
+     rtc::Thread* network_thread,
+     rtc::Thread* worker_thread,
+     rtc::Thread* signaling_thread,
+diff --git a/webrtc/api/stats/rtcstats.h b/webrtc/api/stats/rtcstats.h
+index b3afee0..219cc5e 100644
+--- a/webrtc/api/stats/rtcstats.h
++++ b/webrtc/api/stats/rtcstats.h
+@@ -18,6 +18,7 @@
+ #include <vector>
+ 
+ #include "webrtc/base/checks.h"
++#include "webrtc/base/export.h"
+ 
+ namespace webrtc {
+ 
+@@ -140,7 +141,7 @@ class RTCStats {
+ //
+ #define WEBRTC_RTCSTATS_DECL()                                                 \
+  public:                                                                       \
+-  static const char kType[];                                                   \
++  WEBRTC_DYLIB_EXPORT static const char kType[];                                                   \
+                                                                                \
+   std::unique_ptr<webrtc::RTCStats> copy() const override;                     \
+   const char* type() const override;                                           \
+diff --git a/webrtc/api/stats/rtcstatsreport.h b/webrtc/api/stats/rtcstatsreport.h
+index 6d9ae6d..7e80aed 100644
+--- a/webrtc/api/stats/rtcstatsreport.h
++++ b/webrtc/api/stats/rtcstatsreport.h
+@@ -17,6 +17,7 @@
+ #include <vector>
+ 
+ #include "webrtc/api/stats/rtcstats.h"
++#include "webrtc/base/export.h"
+ #include "webrtc/base/refcount.h"
+ #include "webrtc/base/scoped_ref_ptr.h"
+ 
+@@ -24,7 +25,7 @@ namespace webrtc {
+ 
+ // A collection of stats.
+ // This is accessible as a map from |RTCStats::id| to |RTCStats|.
+-class RTCStatsReport : public rtc::RefCountInterface {
++class WEBRTC_DYLIB_EXPORT RTCStatsReport : public rtc::RefCountInterface {
+  public:
+   typedef std::map<std::string, std::unique_ptr<const RTCStats>> StatsMap;
+ 
+diff --git a/webrtc/api/umametrics.h b/webrtc/api/umametrics.h
+index 8999447..07802c8 100644
+--- a/webrtc/api/umametrics.h
++++ b/webrtc/api/umametrics.h
+@@ -116,9 +116,9 @@ class MetricsObserverInterface : public rtc::RefCountInterface {
+   // |type| is the type of the enum counter to be incremented. |counter|
+   // is the particular counter in that type. |counter_max| is the next sequence
+   // number after the highest counter.
+-  virtual void IncrementEnumCounter(PeerConnectionEnumCounterType type,
+-                                    int counter,
+-                                    int counter_max) {}
++  virtual void IncrementEnumCounter(PeerConnectionEnumCounterType,
++                                    int,
++                                    int) {}
+ 
+   // This is used to handle sparse counters like SSL cipher suites.
+   // TODO(guoweis): Remove the implementation once the dependency's interface
+diff --git a/webrtc/api/video/i420_buffer.h b/webrtc/api/video/i420_buffer.h
+index 388a3dd..8d8c121 100644
+--- a/webrtc/api/video/i420_buffer.h
++++ b/webrtc/api/video/i420_buffer.h
+@@ -15,6 +15,7 @@
+ 
+ #include "webrtc/api/video/video_rotation.h"
+ #include "webrtc/api/video/video_frame_buffer.h"
++#include "webrtc/base/export.h"
+ #include "webrtc/system_wrappers/include/aligned_malloc.h"
+ 
+ namespace webrtc {
+@@ -43,7 +44,7 @@ class I420Buffer : public VideoFrameBuffer {
+                                                VideoRotation rotation);
+ 
+   // Sets the buffer to all black.
+-  static void SetBlack(I420Buffer* buffer);
++  WEBRTC_DYLIB_EXPORT static void SetBlack(I420Buffer* buffer);
+ 
+   // Sets all three planes to all zeros. Used to work around for
+   // quirks in memory checkers
+diff --git a/webrtc/api/video/video_frame.h b/webrtc/api/video/video_frame.h
+index 8840782..0a2b938 100644
+--- a/webrtc/api/video/video_frame.h
++++ b/webrtc/api/video/video_frame.h
+@@ -15,6 +15,7 @@
+ 
+ #include "webrtc/api/video/video_rotation.h"
+ #include "webrtc/api/video/video_frame_buffer.h"
++#include "webrtc/base/export.h"
+ 
+ // TODO(nisse): Transition hack, some downstream applications expect
+ // that including this file also defines base/timeutils.h constants.
+@@ -23,7 +24,7 @@
+ 
+ namespace webrtc {
+ 
+-class VideoFrame {
++class WEBRTC_DYLIB_EXPORT VideoFrame {
+  public:
+   // TODO(nisse): This constructor is consistent with the now deleted
+   // cricket::WebRtcVideoFrame. We should consider whether or not we
+diff --git a/webrtc/base/array_view.h b/webrtc/base/array_view.h
+index 7a0bb28..0b77d90 100644
+--- a/webrtc/base/array_view.h
++++ b/webrtc/base/array_view.h
+@@ -88,7 +88,7 @@ class ArrayViewBase {
+   static_assert(Size > 0, "ArrayView size must be variable or non-negative");
+ 
+  public:
+-  ArrayViewBase(T* data, size_t size) : data_(data) {}
++  ArrayViewBase(T* data, size_t) : data_(data) {}
+ 
+   static constexpr size_t size() { return Size; }
+   static constexpr bool empty() { return false; }
+@@ -105,7 +105,7 @@ class ArrayViewBase {
+ template <typename T>
+ class ArrayViewBase<T, 0> {
+  public:
+-  explicit ArrayViewBase(T* data, size_t size) {}
++  explicit ArrayViewBase(T*, size_t) {}
+ 
+   static constexpr size_t size() { return 0; }
+   static constexpr bool empty() { return true; }
+diff --git a/webrtc/base/asyncpacketsocket.h b/webrtc/base/asyncpacketsocket.h
+index a540947..06779ad 100644
+--- a/webrtc/base/asyncpacketsocket.h
++++ b/webrtc/base/asyncpacketsocket.h
+@@ -13,6 +13,7 @@
+ 
+ #include "webrtc/base/constructormagic.h"
+ #include "webrtc/base/dscp.h"
++#include "webrtc/base/export.h"
+ #include "webrtc/base/sigslot.h"
+ #include "webrtc/base/socket.h"
+ #include "webrtc/base/timeutils.h"
+@@ -22,7 +23,7 @@ namespace rtc {
+ // This structure holds the info needed to update the packet send time header
+ // extension, including the information needed to update the authentication tag
+ // after changing the value.
+-struct PacketTimeUpdateParams {
++struct WEBRTC_DYLIB_EXPORT PacketTimeUpdateParams {
+   PacketTimeUpdateParams();
+   ~PacketTimeUpdateParams();
+ 
+@@ -65,7 +66,7 @@ inline PacketTime CreatePacketTime(int64_t not_before) {
+ 
+ // Provides the ability to receive packets asynchronously. Sends are not
+ // buffered since it is acceptable to drop packets under high load.
+-class AsyncPacketSocket : public sigslot::has_slots<> {
++class WEBRTC_DYLIB_EXPORT AsyncPacketSocket : public sigslot::has_slots<> {
+  public:
+   enum State {
+     STATE_CLOSED,
+diff --git a/webrtc/base/asyncresolverinterface.h b/webrtc/base/asyncresolverinterface.h
+index 75c36ab..f90c212 100644
+--- a/webrtc/base/asyncresolverinterface.h
++++ b/webrtc/base/asyncresolverinterface.h
+@@ -11,13 +11,14 @@
+ #ifndef WEBRTC_BASE_ASYNCRESOLVERINTERFACE_H_
+ #define WEBRTC_BASE_ASYNCRESOLVERINTERFACE_H_
+ 
++#include "webrtc/base/export.h"
+ #include "webrtc/base/sigslot.h"
+ #include "webrtc/base/socketaddress.h"
+ 
+ namespace rtc {
+ 
+ // This interface defines the methods to resolve the address asynchronously.
+-class AsyncResolverInterface {
++class WEBRTC_DYLIB_EXPORT AsyncResolverInterface {
+  public:
+   AsyncResolverInterface();
+   virtual ~AsyncResolverInterface();
+diff --git a/webrtc/base/checks.h b/webrtc/base/checks.h
+index c15a08c..3aa0b89 100644
+--- a/webrtc/base/checks.h
++++ b/webrtc/base/checks.h
+@@ -37,6 +37,7 @@ NO_RETURN void rtc_FatalMessage(const char* file, int line, const char* msg);
+ #include <string>
+ 
+ #include "webrtc/base/safe_compare.h"
++#include "webrtc/base/export.h"
+ 
+ // The macros here print a message to stderr and abort under various
+ // conditions. All will accept additional stream messages. For example:
+@@ -73,7 +74,7 @@ NO_RETURN void rtc_FatalMessage(const char* file, int line, const char* msg);
+ //   messages if the condition doesn't hold. Prefer them to raw RTC_CHECK and
+ //   RTC_DCHECK.
+ //
+-// - FATAL() aborts unconditionally.
++// - RTC_FATAL() aborts unconditionally.
+ //
+ // TODO(ajm): Ideally, checks.h would be combined with logging.h, but
+ // consolidation with system_wrappers/logging.h should happen first.
+@@ -141,7 +142,7 @@ std::string* MakeCheckOpString(const t1& v1, const t2& v2, const char* names) {
+ extern template std::string* MakeCheckOpString<int, int>(
+     const int&, const int&, const char* names);
+ extern template
+-std::string* MakeCheckOpString<unsigned long, unsigned long>(
++WEBRTC_DYLIB_EXPORT std::string* MakeCheckOpString<unsigned long, unsigned long>(
+     const unsigned long&, const unsigned long&, const char* names);
+ extern template
+ std::string* MakeCheckOpString<unsigned long, unsigned int>(
+@@ -221,13 +222,13 @@ class FatalMessageVoidify {
  #define RTC_UNREACHABLE_CODE_HIT false
  #define RTC_NOTREACHED() RTC_DCHECK(RTC_UNREACHABLE_CODE_HIT)
  
-+#ifndef FATAL
- #define FATAL() rtc::FatalMessage(__FILE__, __LINE__).stream()
-+#endif
+-#define FATAL() rtc::FatalMessage(__FILE__, __LINE__).stream()
++#define RTC_FATAL() rtc::FatalMessage(__FILE__, __LINE__).stream()
  // TODO(ajm): Consider adding RTC_NOTIMPLEMENTED macro when
  // base/logging.h and system_wrappers/logging.h are consolidated such that we
  // can match the Chromium behavior.
-diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/base/messagehandler.h b/Source/ThirdParty/libwebrtc/Source/webrtc/base/messagehandler.h
-index 6a3c2ef..795d04e 100644
---- a/Source/ThirdParty/libwebrtc/Source/webrtc/base/messagehandler.h
-+++ b/Source/ThirdParty/libwebrtc/Source/webrtc/base/messagehandler.h
-@@ -40,7 +40,7 @@ class FunctorMessageHandler : public MessageHandler {
+ 
+ // Like a stripped-down LogMessage from logging.h, except that it aborts.
+-class FatalMessage {
++class WEBRTC_DYLIB_EXPORT FatalMessage {
+  public:
+   FatalMessage(const char* file, int line);
+   // Used for RTC_CHECK_EQ(), etc. Takes ownership of the given string.
+diff --git a/webrtc/base/copyonwritebuffer.h b/webrtc/base/copyonwritebuffer.h
+index fe3f561..0cd6653 100644
+--- a/webrtc/base/copyonwritebuffer.h
++++ b/webrtc/base/copyonwritebuffer.h
+@@ -16,12 +16,13 @@
+ 
+ #include "webrtc/base/buffer.h"
+ #include "webrtc/base/checks.h"
++#include "webrtc/base/export.h"
+ #include "webrtc/base/refcount.h"
+ #include "webrtc/base/scoped_ref_ptr.h"
+ 
+ namespace rtc {
+ 
+-class CopyOnWriteBuffer {
++class WEBRTC_DYLIB_EXPORT CopyOnWriteBuffer {
+  public:
+   // An empty buffer.
+   CopyOnWriteBuffer();
+diff --git a/webrtc/base/event.h b/webrtc/base/event.h
+index d4b5872..fb51d9c 100644
+--- a/webrtc/base/event.h
++++ b/webrtc/base/event.h
+@@ -12,6 +12,7 @@
+ #define WEBRTC_BASE_EVENT_H__
+ 
+ #include "webrtc/base/constructormagic.h"
++#include "webrtc/base/export.h"
+ #if defined(WEBRTC_WIN)
+ #include "webrtc/base/win32.h"  // NOLINT: consider this a system header.
+ #elif defined(WEBRTC_POSIX)
+@@ -22,7 +23,7 @@
+ 
+ namespace rtc {
+ 
+-class Event {
++class WEBRTC_DYLIB_EXPORT Event {
+  public:
+   static const int kForever = -1;
+ 
+diff --git a/webrtc/base/fakenetwork.h b/webrtc/base/fakenetwork.h
+index 108e738..7191ffe 100644
+--- a/webrtc/base/fakenetwork.h
++++ b/webrtc/base/fakenetwork.h
+@@ -79,7 +79,7 @@ class FakeNetworkManager : public NetworkManagerBase,
+   virtual void StopUpdating() { --start_count_; }
+ 
+   // MessageHandler interface.
+-  virtual void OnMessage(Message* msg) {
++  virtual void OnMessage(Message*) {
+     DoUpdateNetworks();
+   }
+ 
+diff --git a/webrtc/base/flags.cc b/webrtc/base/flags.cc
+index 9b7177c..a7f1c98 100644
+--- a/webrtc/base/flags.cc
++++ b/webrtc/base/flags.cc
+@@ -57,7 +57,7 @@ void Flag::SetToDefault() {
+       variable_->s = default_.s;
+       return;
+   }
+-  FATAL() << "unreachable code";
++  RTC_FATAL() << "unreachable code";
+ }
+ 
+ 
+@@ -68,7 +68,7 @@ static const char* Type2String(Flag::Type type) {
+     case Flag::FLOAT: return "float";
+     case Flag::STRING: return "string";
+   }
+-  FATAL() << "unreachable code";
++  RTC_FATAL() << "unreachable code";
+ }
+ 
+ 
+@@ -87,7 +87,7 @@ static void PrintFlagValue(Flag::Type type, FlagValue* p) {
+       printf("%s", p->s);
+       return;
+   }
+-  FATAL() << "unreachable code";
++  RTC_FATAL() << "unreachable code";
+ }
+ 
+ 
+diff --git a/webrtc/base/helpers.h b/webrtc/base/helpers.h
+index fcf77af..15fe16e 100644
+--- a/webrtc/base/helpers.h
++++ b/webrtc/base/helpers.h
+@@ -13,6 +13,7 @@
+ 
+ #include <string>
+ #include "webrtc/base/basictypes.h"
++#include "webrtc/base/export.h"
+ 
+ namespace rtc {
+ 
+@@ -25,7 +26,7 @@ bool InitRandom(const char* seed, size_t len);
+ 
+ // Generates a (cryptographically) random string of the given length.
+ // We generate base64 values so that they will be printable.
+-std::string CreateRandomString(size_t length);
++WEBRTC_DYLIB_EXPORT std::string CreateRandomString(size_t length);
+ 
+ // Generates a (cryptographically) random string of the given length.
+ // We generate base64 values so that they will be printable.
+diff --git a/webrtc/base/ipaddress.h b/webrtc/base/ipaddress.h
+index ef1e3d8..90dca48 100644
+--- a/webrtc/base/ipaddress.h
++++ b/webrtc/base/ipaddress.h
+@@ -27,6 +27,7 @@
+ 
+ #include "webrtc/base/basictypes.h"
+ #include "webrtc/base/byteorder.h"
++#include "webrtc/base/export.h"
+ #if defined(WEBRTC_WIN)
+ #include "webrtc/base/win32.h"
+ #endif
+@@ -86,8 +87,8 @@ class IPAddress {
+   friend std::ostream& operator<<(std::ostream& os, const IPAddress& addr);
+ 
+   int family() const { return family_; }
+-  in_addr ipv4_address() const;
+-  in6_addr ipv6_address() const;
++  WEBRTC_DYLIB_EXPORT in_addr ipv4_address() const;
++  WEBRTC_DYLIB_EXPORT in6_addr ipv6_address() const;
+ 
+   // Returns the number of bytes needed to store the raw address.
+   size_t Size() const;
+diff --git a/webrtc/base/location.h b/webrtc/base/location.h
+index a541bbe..bbff0b1 100644
+--- a/webrtc/base/location.h
++++ b/webrtc/base/location.h
+@@ -13,6 +13,8 @@
+ 
+ #include <string>
+ 
++#include "webrtc/base/event.h"
++#include "webrtc/base/export.h"
+ #include "webrtc/system_wrappers/include/stringize_macros.h"
+ 
+ namespace rtc {
+@@ -21,7 +23,7 @@ namespace rtc {
+ // significantly brought to life.
+ // This is a stripped down version of:
+ // https://code.google.com/p/chromium/codesearch#chromium/src/base/location.h
+-class Location {
++class WEBRTC_DYLIB_EXPORT Location {
+  public:
+   // Constructor should be called with a long-lived char*, such as __FILE__.
+   // It assumes the provided value will persist as a global constant, and it
+@@ -50,7 +52,7 @@ class Location {
+ #define RTC_FROM_HERE RTC_FROM_HERE_WITH_FUNCTION(__FUNCTION__)
+ 
+ #define RTC_FROM_HERE_WITH_FUNCTION(function_name) \
+-  ::rtc::Location(function_name, __FILE__ ":" STRINGIZE(__LINE__))
++  ::rtc::Location(function_name, __FILE__ ":" RTC_STRINGIZE(__LINE__))
+ 
+ }  // namespace rtc
+ 
+diff --git a/webrtc/base/logging.h b/webrtc/base/logging.h
+index 8f476a0..5f04094 100644
+--- a/webrtc/base/logging.h
++++ b/webrtc/base/logging.h
+@@ -58,6 +58,7 @@
+ #endif
+ 
+ #include "webrtc/base/basictypes.h"
++#include "webrtc/base/export.h"
+ #include "webrtc/base/constructormagic.h"
+ #include "webrtc/base/thread_annotations.h"
+ 
+@@ -175,7 +176,7 @@ class LogMessage {
+ 
+   // These are the available logging channels
+   //  Debug: Debug console on Windows, otherwise stderr
+-  static void LogToDebug(LoggingSeverity min_sev);
++  WEBRTC_DYLIB_EXPORT static void LogToDebug(LoggingSeverity min_sev);
+   static LoggingSeverity GetLogToDebug() { return dbg_sev_; }
+ 
+   // Sets whether logs will be directed to stderr in debug mode.
+diff --git a/webrtc/base/messagehandler.h b/webrtc/base/messagehandler.h
+index 72c0dc6..1185647 100644
+--- a/webrtc/base/messagehandler.h
++++ b/webrtc/base/messagehandler.h
+@@ -14,6 +14,7 @@
+ #include <memory>
+ #include <utility>
+ 
++#include "webrtc/base/export.h"
+ #include "webrtc/base/constructormagic.h"
+ 
+ namespace rtc {
+@@ -22,10 +23,10 @@ struct Message;
+ 
+ // Messages get dispatched to a MessageHandler
+ 
+-class MessageHandler {
++class WEBRTC_DYLIB_EXPORT MessageHandler {
+  public:
+-  virtual ~MessageHandler();
+-  virtual void OnMessage(Message* msg) = 0;
++  WEBRTC_DYLIB_EXPORT virtual ~MessageHandler();
++  virtual void OnMessage(Message*) = 0;
+ 
+  protected:
+   MessageHandler() {}
+@@ -40,7 +41,7 @@ class FunctorMessageHandler : public MessageHandler {
   public:
    explicit FunctorMessageHandler(const FunctorT& functor)
        : functor_(functor) {}
@@ -301,16 +889,7 @@ index 6a3c2ef..795d04e 100644
      result_ = functor_();
    }
    const ReturnT& result() const { return result_; }
-@@ -56,7 +56,7 @@ class FunctorMessageHandler<class std::unique_ptr<ReturnT>, FunctorT>
-     : public MessageHandler {
-  public:
-   explicit FunctorMessageHandler(const FunctorT& functor) : functor_(functor) {}
--  virtual void OnMessage(Message* msg) { result_ = std::move(functor_()); }
-+  virtual void OnMessage(Message*) { result_ = std::move(functor_()); }
-   std::unique_ptr<ReturnT> result() { return std::move(result_); }
- 
-  private:
-@@ -70,7 +70,7 @@ class FunctorMessageHandler<void, FunctorT> : public MessageHandler {
+@@ -60,7 +61,7 @@ class FunctorMessageHandler<void, FunctorT> : public MessageHandler {
   public:
    explicit FunctorMessageHandler(const FunctorT& functor)
        : functor_(functor) {}
@@ -319,11 +898,19 @@ index 6a3c2ef..795d04e 100644
      functor_();
    }
    void result() const {}
-diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/base/network.h b/Source/ThirdParty/libwebrtc/Source/webrtc/base/network.h
-index 7d509c6..56a7a7d 100644
---- a/Source/ThirdParty/libwebrtc/Source/webrtc/base/network.h
-+++ b/Source/ThirdParty/libwebrtc/Source/webrtc/base/network.h
-@@ -118,7 +118,7 @@ class NetworkManager : public DefaultLocalAddressProvider {
+diff --git a/webrtc/base/network.h b/webrtc/base/network.h
+index 52d7d35..b10fb40 100644
+--- a/webrtc/base/network.h
++++ b/webrtc/base/network.h
+@@ -19,6 +19,7 @@
+ #include <string>
+ #include <vector>
+ 
++#include "webrtc/base/export.h"
+ #include "webrtc/base/ipaddress.h"
+ #include "webrtc/base/networkmonitor.h"
+ #include "webrtc/base/messagehandler.h"
+@@ -119,7 +120,7 @@ class NetworkManager : public DefaultLocalAddressProvider {
    // useful as binding to such interfaces allow default routing behavior like
    // http traffic.
    // TODO(guoweis): remove this body when chromium implements this.
@@ -332,122 +919,183 @@ index 7d509c6..56a7a7d 100644
  
    // Dumps the current list of networks in the network manager.
    virtual void DumpNetworks() {}
-diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/base/sanitizer.h b/Source/ThirdParty/libwebrtc/Source/webrtc/base/sanitizer.h
-index e27a692..004b449 100644
---- a/Source/ThirdParty/libwebrtc/Source/webrtc/base/sanitizer.h
-+++ b/Source/ThirdParty/libwebrtc/Source/webrtc/base/sanitizer.h
-@@ -42,6 +42,12 @@
- #define RTC_NO_SANITIZE(what)
- #endif
+@@ -136,7 +137,7 @@ class NetworkManager : public DefaultLocalAddressProvider {
+ };
  
-+#if !RTC_HAS_ASAN
-+#define SANITIZER_UNUSED3(x, y, z)  (void)&(x); \
-+  (void)&(y); \
-+  (void)&(z)
-+#endif
-+
- // Ask ASan to mark the memory range [ptr, ptr + element_size * num_elements)
- // as being unaddressable, so that reads and writes are not allowed. ASan may
- // narrow the range to the nearest alignment boundaries.
-@@ -50,6 +56,8 @@ static inline void rtc_AsanPoison(const volatile void* ptr,
+ // Base class for NetworkManager implementations.
+-class NetworkManagerBase : public NetworkManager {
++class WEBRTC_DYLIB_EXPORT NetworkManagerBase : public NetworkManager {
+  public:
+   NetworkManagerBase();
+   ~NetworkManagerBase() override;
+@@ -206,7 +207,7 @@ class BasicNetworkManager : public NetworkManagerBase,
+                             public MessageHandler,
+                             public sigslot::has_slots<> {
+  public:
+-  BasicNetworkManager();
++  WEBRTC_DYLIB_EXPORT BasicNetworkManager();
+   ~BasicNetworkManager() override;
+ 
+   void StartUpdating() override;
+@@ -278,7 +279,7 @@ class BasicNetworkManager : public NetworkManagerBase,
+ };
+ 
+ // Represents a Unix-type network interface, with a name and single address.
+-class Network {
++class WEBRTC_DYLIB_EXPORT Network {
+  public:
+   Network(const std::string& name,
+           const std::string& description,
+diff --git a/webrtc/base/opensslidentity.cc b/webrtc/base/opensslidentity.cc
+index 9495496..d20ef55 100644
+--- a/webrtc/base/opensslidentity.cc
++++ b/webrtc/base/opensslidentity.cc
+@@ -407,11 +407,11 @@ OpenSSLCertificate* OpenSSLCertificate::GetReference() const {
+ std::string OpenSSLCertificate::ToPEMString() const {
+   BIO* bio = BIO_new(BIO_s_mem());
+   if (!bio) {
+-    FATAL() << "unreachable code";
++    RTC_FATAL() << "unreachable code";
+   }
+   if (!PEM_write_bio_X509(bio, x509_)) {
+     BIO_free(bio);
+-    FATAL() << "unreachable code";
++    RTC_FATAL() << "unreachable code";
+   }
+   BIO_write(bio, "\0", 1);
+   char* buffer;
+@@ -428,11 +428,11 @@ void OpenSSLCertificate::ToDER(Buffer* der_buffer) const {
+   // Calculates the DER representation of the certificate, from scratch.
+   BIO* bio = BIO_new(BIO_s_mem());
+   if (!bio) {
+-    FATAL() << "unreachable code";
++    RTC_FATAL() << "unreachable code";
+   }
+   if (!i2d_X509_bio(bio, x509_)) {
+     BIO_free(bio);
+-    FATAL() << "unreachable code";
++    RTC_FATAL() << "unreachable code";
+   }
+   char* data;
+   size_t length = BIO_get_mem_data(bio, &data);
+diff --git a/webrtc/base/safe_conversions.h b/webrtc/base/safe_conversions.h
+index ff9cc44..2a44f56 100644
+--- a/webrtc/base/safe_conversions.h
++++ b/webrtc/base/safe_conversions.h
+@@ -63,11 +63,11 @@ inline Dst saturated_cast(Src value) {
+ 
+     // Should fail only on attempting to assign NaN to a saturated integer.
+     case internal::TYPE_INVALID:
+-      FATAL();
++      RTC_FATAL();
+       return std::numeric_limits<Dst>::max();
+   }
+ 
+-  FATAL();
++  RTC_FATAL();
+   return static_cast<Dst>(value);
+ }
+ 
+diff --git a/webrtc/base/safe_conversions_impl.h b/webrtc/base/safe_conversions_impl.h
+index 52e52ef..63daeb9 100644
+--- a/webrtc/base/safe_conversions_impl.h
++++ b/webrtc/base/safe_conversions_impl.h
+@@ -113,7 +113,7 @@ struct RangeCheckImpl {};
+ // Dst range always contains the result: nothing to check.
+ template <typename Dst, typename Src, DstSign IsDstSigned, SrcSign IsSrcSigned>
+ struct RangeCheckImpl<Dst, Src, IsDstSigned, IsSrcSigned, CONTAINS_RANGE> {
+-  static RangeCheckResult Check(Src value) {
++  static RangeCheckResult Check(Src) {
+     return TYPE_VALID;
+   }
+ };
+diff --git a/webrtc/base/sanitizer.h b/webrtc/base/sanitizer.h
+index e27a692..c5f83c8 100644
+--- a/webrtc/base/sanitizer.h
++++ b/webrtc/base/sanitizer.h
+@@ -50,6 +50,10 @@ static inline void rtc_AsanPoison(const volatile void* ptr,
                                    size_t num_elements) {
  #if RTC_HAS_ASAN
    ASAN_POISON_MEMORY_REGION(ptr, element_size * num_elements);
 +#else
-+  SANITIZER_UNUSED3(ptr, element_size, num_elements);
++  (void)ptr;
++  (void)element_size;
++  (void)num_elements;
  #endif
  }
  
-@@ -61,6 +69,8 @@ static inline void rtc_AsanUnpoison(const volatile void* ptr,
+@@ -61,6 +65,10 @@ static inline void rtc_AsanUnpoison(const volatile void* ptr,
                                      size_t num_elements) {
  #if RTC_HAS_ASAN
    ASAN_UNPOISON_MEMORY_REGION(ptr, element_size * num_elements);
 +#else
-+  SANITIZER_UNUSED3(ptr, element_size, num_elements);
++  (void)ptr;
++  (void)element_size;
++  (void)num_elements;
  #endif
  }
  
-@@ -71,6 +81,8 @@ static inline void rtc_MsanMarkUninitialized(const volatile void* ptr,
+@@ -71,6 +79,10 @@ static inline void rtc_MsanMarkUninitialized(const volatile void* ptr,
                                               size_t num_elements) {
  #if RTC_HAS_MSAN
    __msan_poison(ptr, element_size * num_elements);
 +#else
-+  SANITIZER_UNUSED3(ptr, element_size, num_elements);
++  (void)ptr;
++  (void)element_size;
++  (void)num_elements;
  #endif
  }
  
-@@ -82,6 +94,8 @@ static inline void rtc_MsanCheckInitialized(const volatile void* ptr,
+@@ -82,6 +94,10 @@ static inline void rtc_MsanCheckInitialized(const volatile void* ptr,
                                              size_t num_elements) {
  #if RTC_HAS_MSAN
    __msan_check_mem_is_initialized(ptr, element_size * num_elements);
 +#else
-+  SANITIZER_UNUSED3(ptr, element_size, num_elements);
++  (void)ptr;
++  (void)element_size;
++  (void)num_elements;
  #endif
  }
  
-diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/base/sha1digest.cc b/Source/ThirdParty/libwebrtc/Source/webrtc/base/sha1digest.cc
-index c090a06..c29c859 100644
---- a/Source/ThirdParty/libwebrtc/Source/webrtc/base/sha1digest.cc
-+++ b/Source/ThirdParty/libwebrtc/Source/webrtc/base/sha1digest.cc
-@@ -17,15 +17,15 @@ size_t Sha1Digest::Size() const {
- }
+diff --git a/webrtc/base/sigslot.h b/webrtc/base/sigslot.h
+index 4534ec9..7209b57 100644
+--- a/webrtc/base/sigslot.h
++++ b/webrtc/base/sigslot.h
+@@ -407,7 +407,7 @@ namespace sigslot {
+ 		_signal_base& operator= (_signal_base const& that);
  
- void Sha1Digest::Update(const void* buf, size_t len) {
--  SHA1Update(&ctx_, static_cast<const uint8_t*>(buf), len);
-+  SHA1_UPDATE(&ctx_, static_cast<const uint8_t*>(buf), len);
- }
+ 	public:
+-		_signal_base(const _signal_base& s) : _signal_base_interface(&_signal_base::do_slot_disconnect, &_signal_base::do_slot_duplicate) {
++		_signal_base(const _signal_base&) : _signal_base_interface(&_signal_base::do_slot_disconnect, &_signal_base::do_slot_duplicate) {
+ 			lock_block<mt_policy> lock(this);
+ 			connections_list::const_iterator it = m_connected_slots.begin();
+ 			connections_list::const_iterator itEnd = m_connected_slots.end();
+diff --git a/webrtc/base/socketaddress.h b/webrtc/base/socketaddress.h
+index bcff390..34d44de 100644
+--- a/webrtc/base/socketaddress.h
++++ b/webrtc/base/socketaddress.h
+@@ -15,6 +15,7 @@
+ #include <vector>
+ #include <iosfwd>
+ #include "webrtc/base/basictypes.h"
++#include "webrtc/base/export.h"
+ #include "webrtc/base/ipaddress.h"
  
- size_t Sha1Digest::Finish(void* buf, size_t len) {
-   if (len < kSize) {
-     return 0;
-   }
--  SHA1Final(&ctx_, static_cast<uint8_t*>(buf));
--  SHA1Init(&ctx_);  // Reset for next use.
-+  SHA1_FINAL(&ctx_, static_cast<uint8_t*>(buf));
-+  SHA1_INIT(&ctx_);  // Reset for next use.
-   return kSize;
- }
- 
-diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/base/sha1digest.h b/Source/ThirdParty/libwebrtc/Source/webrtc/base/sha1digest.h
-index d321cb8..a5fb658 100644
---- a/Source/ThirdParty/libwebrtc/Source/webrtc/base/sha1digest.h
-+++ b/Source/ThirdParty/libwebrtc/Source/webrtc/base/sha1digest.h
-@@ -12,7 +12,21 @@
- #define WEBRTC_BASE_SHA1DIGEST_H_
- 
- #include "webrtc/base/messagedigest.h"
-+
-+#ifdef USE_RTC_SHA1
- #include "webrtc/base/sha1.h"
-+#define SHA1_INIT SHA1Init
-+#define SHA1_INIT SHA1Init
-+#define SHA1_UPDATE SHA1Update
-+#define SHA1_FINAL SHA1Final
-+#else
-+#include <openssl/sha.h>
-+#define SHA1_CTX SHA_CTX
-+#define SHA1_INIT SHA1_Init
-+#define SHA1_UPDATE SHA1_Update
-+#define SHA1_FINAL(x, y) SHA1_Final(y, x)
-+#define SHA1_DIGEST_SIZE 20
-+#endif
- 
+ #undef SetPort
+@@ -25,7 +26,7 @@ struct sockaddr_storage;
  namespace rtc {
  
-@@ -21,7 +35,7 @@ class Sha1Digest : public MessageDigest {
+ // Records an IP address and port.
+-class SocketAddress {
++class WEBRTC_DYLIB_EXPORT SocketAddress {
   public:
-   enum { kSize = SHA1_DIGEST_SIZE };
-   Sha1Digest() {
--    SHA1Init(&ctx_);
-+    SHA1_INIT(&ctx_);
-   }
-   size_t Size() const override;
-   void Update(const void* buf, size_t len) override;
-diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/base/socketserver.h b/Source/ThirdParty/libwebrtc/Source/webrtc/base/socketserver.h
-index 7071f22..a4f12d7 100644
---- a/Source/ThirdParty/libwebrtc/Source/webrtc/base/socketserver.h
-+++ b/Source/ThirdParty/libwebrtc/Source/webrtc/base/socketserver.h
-@@ -32,7 +32,7 @@ class SocketServer : public SocketFactory {
+   // Creates a nil address.
+   SocketAddress();
+diff --git a/webrtc/base/socketserver.h b/webrtc/base/socketserver.h
+index 5eada4a..75aae19 100644
+--- a/webrtc/base/socketserver.h
++++ b/webrtc/base/socketserver.h
+@@ -35,7 +35,7 @@ class SocketServer : public SocketFactory {
    // When the socket server is installed into a Thread, this function is
    // called to allow the socket server to use the thread's message queue for
    // any messaging that it might need to perform.
@@ -456,10 +1104,10 @@ index 7071f22..a4f12d7 100644
  
    // Sleeps until:
    //  1) cms milliseconds have elapsed (unless cms == kForever)
-diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/base/stream.h b/Source/ThirdParty/libwebrtc/Source/webrtc/base/stream.h
-index bc94906..3acd830 100644
---- a/Source/ThirdParty/libwebrtc/Source/webrtc/base/stream.h
-+++ b/Source/ThirdParty/libwebrtc/Source/webrtc/base/stream.h
+diff --git a/webrtc/base/stream.h b/webrtc/base/stream.h
+index dbc2ad7..f71d91b 100644
+--- a/webrtc/base/stream.h
++++ b/webrtc/base/stream.h
 @@ -132,7 +132,7 @@ class StreamInterface : public MessageHandler {
    // processed.  Read and ConsumeReadData invalidate the buffer returned by
    // GetReadData.
@@ -468,7 +1116,7 @@ index bc94906..3acd830 100644
 +  virtual void ConsumeReadData(size_t) {}
  
    // GetWriteBuffer returns a pointer to a buffer which is owned by the stream.
-   // The buffer has a capacity of buf_len bytes.  NULL is returned if there is
+   // The buffer has a capacity of buf_len bytes.  null is returned if there is
 @@ -146,7 +146,7 @@ class StreamInterface : public MessageHandler {
    // when it is available.  If the requested amount is too large, return an
    // error.
@@ -478,11 +1126,113 @@ index bc94906..3acd830 100644
  
    // Write data_len bytes found in data, circumventing any throttling which
    // would could cause SR_BLOCK to be returned.  Returns true if all the data
-diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/media/base/mediachannel.h b/Source/ThirdParty/libwebrtc/Source/webrtc/media/base/mediachannel.h
-index 80b9d4d..f3af2da 100644
---- a/Source/ThirdParty/libwebrtc/Source/webrtc/media/base/mediachannel.h
-+++ b/Source/ThirdParty/libwebrtc/Source/webrtc/media/base/mediachannel.h
-@@ -1159,13 +1159,13 @@ class DataMediaChannel : public MediaChannel {
+diff --git a/webrtc/base/thread.h b/webrtc/base/thread.h
+index 5751df3..e2ce219 100644
+--- a/webrtc/base/thread.h
++++ b/webrtc/base/thread.h
+@@ -22,6 +22,7 @@
+ #endif
+ #include "webrtc/base/constructormagic.h"
+ #include "webrtc/base/event.h"
++#include "webrtc/base/export.h"
+ #include "webrtc/base/messagequeue.h"
+ 
+ #if defined(WEBRTC_WIN)
+@@ -93,7 +94,7 @@ class Runnable {
+ 
+ // WARNING! SUBCLASSES MUST CALL Stop() IN THEIR DESTRUCTORS!  See ~Thread().
+ 
+-class LOCKABLE Thread : public MessageQueue {
++class WEBRTC_DYLIB_EXPORT LOCKABLE Thread : public MessageQueue {
+  public:
+   // Create a new Thread and optionally assign it to the passed SocketServer.
+   Thread();
+diff --git a/webrtc/common_video/include/corevideo_frame_buffer.h b/webrtc/common_video/include/corevideo_frame_buffer.h
+index a00b677..211eb2c 100644
+--- a/webrtc/common_video/include/corevideo_frame_buffer.h
++++ b/webrtc/common_video/include/corevideo_frame_buffer.h
+@@ -15,11 +15,12 @@
+ 
+ #include <vector>
+ 
++#include "webrtc/base/export.h"
+ #include "webrtc/common_video/include/video_frame_buffer.h"
+ 
+ namespace webrtc {
+ 
+-class CoreVideoFrameBuffer : public NativeHandleBuffer {
++class WEBRTC_DYLIB_EXPORT CoreVideoFrameBuffer : public NativeHandleBuffer {
+  public:
+   explicit CoreVideoFrameBuffer(CVPixelBufferRef pixel_buffer);
+   CoreVideoFrameBuffer(CVPixelBufferRef pixel_buffer,
+diff --git a/webrtc/common_video/include/i420_buffer_pool.h b/webrtc/common_video/include/i420_buffer_pool.h
+index 454a8cd..937b95e 100644
+--- a/webrtc/common_video/include/i420_buffer_pool.h
++++ b/webrtc/common_video/include/i420_buffer_pool.h
+@@ -15,6 +15,7 @@
+ #include <limits>
+ 
+ #include "webrtc/api/video/i420_buffer.h"
++#include "webrtc/base/export.h"
+ #include "webrtc/base/race_checker.h"
+ 
+ namespace webrtc {
+@@ -26,7 +27,7 @@ namespace webrtc {
+ // changes, old buffers will be purged from the pool.
+ // Note that CreateBuffer will crash if more than kMaxNumberOfFramesBeforeCrash
+ // are created. This is to prevent memory leaks where frames are not returned.
+-class I420BufferPool {
++class WEBRTC_DYLIB_EXPORT I420BufferPool {
+  public:
+   I420BufferPool()
+       : I420BufferPool(false) {}
+diff --git a/webrtc/common_video/include/video_frame_buffer.h b/webrtc/common_video/include/video_frame_buffer.h
+index dfdd480..4473283 100644
+--- a/webrtc/common_video/include/video_frame_buffer.h
++++ b/webrtc/common_video/include/video_frame_buffer.h
+@@ -18,6 +18,7 @@
+ // expect it to declare I420Buffer. Delete after callers are updated.
+ #include "webrtc/api/video/i420_buffer.h"
+ #include "webrtc/base/callback.h"
++#include "webrtc/base/export.h"
+ #include "webrtc/base/scoped_ref_ptr.h"
+ 
+ namespace webrtc {
+@@ -26,7 +27,7 @@ namespace webrtc {
+ // This is used for convenience as most native-handle implementations can share
+ // many VideoFrame implementations, but need to implement a few others (such
+ // as their own destructors or conversion methods back to software I420).
+-class NativeHandleBuffer : public VideoFrameBuffer {
++class WEBRTC_DYLIB_EXPORT NativeHandleBuffer : public VideoFrameBuffer {
+  public:
+   NativeHandleBuffer(void* native_handle, int width, int height);
+ 
+diff --git a/webrtc/common_video/libyuv/include/webrtc_libyuv.h b/webrtc/common_video/libyuv/include/webrtc_libyuv.h
+index 6d7ed1f..e4c0d03 100644
+--- a/webrtc/common_video/libyuv/include/webrtc_libyuv.h
++++ b/webrtc/common_video/libyuv/include/webrtc_libyuv.h
+@@ -19,6 +19,7 @@
+ #include <vector>
+ 
+ #include "webrtc/api/video/video_frame.h"
++#include "webrtc/base/export.h"
+ #include "webrtc/common_types.h"  // RawVideoTypes.
+ #include "webrtc/typedefs.h"
+ 
+@@ -102,7 +103,7 @@ int ExtractBuffer(const VideoFrame& input_frame, size_t size, uint8_t* buffer);
+ // remember to delete the I420Buffer forward declaration above. The only
+ // exception at the time of this writing is VideoCaptureImpl::IncomingFrame,
+ // which still needs libyuv::ConvertToI420.
+-int ConvertToI420(VideoType src_video_type,
++WEBRTC_DYLIB_EXPORT int ConvertToI420(VideoType src_video_type,
+                   const uint8_t* src_frame,
+                   int crop_x,
+                   int crop_y,
+diff --git a/webrtc/media/base/mediachannel.h b/webrtc/media/base/mediachannel.h
+index ca02c72..dcdf6f8 100644
+--- a/webrtc/media/base/mediachannel.h
++++ b/webrtc/media/base/mediachannel.h
+@@ -1178,13 +1178,13 @@ class DataMediaChannel : public MediaChannel {
    virtual bool SetRecvParameters(const DataRecvParameters& params) = 0;
  
    // TODO(pthatcher): Implement this.
@@ -494,15 +1244,40 @@ index 80b9d4d..f3af2da 100644
  
 -  virtual void OnNetworkRouteChanged(const std::string& transport_name,
 -                                     const rtc::NetworkRoute& network_route) {}
-+  virtual void OnNetworkRouteChanged(const std::string& /* transport_name */,
++  virtual void OnNetworkRouteChanged(const std::string&,
 +                                     const rtc::NetworkRoute&) {}
  
    virtual bool SendData(
        const SendDataParams& params,
-diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/media/engine/webrtcvideodecoderfactory.h b/Source/ThirdParty/libwebrtc/Source/webrtc/media/engine/webrtcvideodecoderfactory.h
+diff --git a/webrtc/media/engine/webrtcvideocapturer.cc b/webrtc/media/engine/webrtcvideocapturer.cc
+index 11458d1..133c758 100644
+--- a/webrtc/media/engine/webrtcvideocapturer.cc
++++ b/webrtc/media/engine/webrtcvideocapturer.cc
+@@ -48,10 +48,20 @@ class WebRtcVcmFactory : public WebRtcVcmFactoryInterface {
+  public:
+   virtual rtc::scoped_refptr<webrtc::VideoCaptureModule> Create(
+       const char* device) {
++#if RTC_HAS_ASAN
++    // FIXME: this shouldn't be necessary.
++    return nullptr;
++#else
+     return webrtc::VideoCaptureFactory::Create(device);
++#endif
+   }
+   virtual webrtc::VideoCaptureModule::DeviceInfo* CreateDeviceInfo() {
++#if RTC_HAS_ASAN
++    // FIXME: this shouldn't be necessary.
++    return nullptr;
++#else
+     return webrtc::VideoCaptureFactory::CreateDeviceInfo();
++#endif
+   }
+   virtual void DestroyDeviceInfo(webrtc::VideoCaptureModule::DeviceInfo* info) {
+     delete info;
+diff --git a/webrtc/media/engine/webrtcvideodecoderfactory.h b/webrtc/media/engine/webrtcvideodecoderfactory.h
 index 7f0921f..482274e 100644
---- a/Source/ThirdParty/libwebrtc/Source/webrtc/media/engine/webrtcvideodecoderfactory.h
-+++ b/Source/ThirdParty/libwebrtc/Source/webrtc/media/engine/webrtcvideodecoderfactory.h
+--- a/webrtc/media/engine/webrtcvideodecoderfactory.h
++++ b/webrtc/media/engine/webrtcvideodecoderfactory.h
 @@ -32,7 +32,7 @@ class WebRtcVideoDecoderFactory {
        webrtc::VideoCodecType type) = 0;
    virtual webrtc::VideoDecoder* CreateVideoDecoderWithParams(
@@ -512,10 +1287,10 @@ index 7f0921f..482274e 100644
      return CreateVideoDecoder(type);
    }
    virtual ~WebRtcVideoDecoderFactory() {}
-diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/media/engine/webrtcvideoencoderfactory.h b/Source/ThirdParty/libwebrtc/Source/webrtc/media/engine/webrtcvideoencoderfactory.h
-index 35e4092..c95c6f7 100644
---- a/Source/ThirdParty/libwebrtc/Source/webrtc/media/engine/webrtcvideoencoderfactory.h
-+++ b/Source/ThirdParty/libwebrtc/Source/webrtc/media/engine/webrtcvideoencoderfactory.h
+diff --git a/webrtc/media/engine/webrtcvideoencoderfactory.h b/webrtc/media/engine/webrtcvideoencoderfactory.h
+index 35e4092..bf67642 100644
+--- a/webrtc/media/engine/webrtcvideoencoderfactory.h
++++ b/webrtc/media/engine/webrtcvideoencoderfactory.h
 @@ -36,9 +36,9 @@ class WebRtcVideoEncoderFactory {
  
      VideoCodec(webrtc::VideoCodecType t,
@@ -523,9 +1298,9 @@ index 35e4092..c95c6f7 100644
 -               int w,
 -               int h,
 -               int fr)
-+               int /* w */,
-+               int /* h */,
-+               int /* fr */)
++               int,
++               int,
++               int)
          : type(t), name(nm) {}
    };
  
@@ -538,16 +1313,16 @@ index 35e4092..c95c6f7 100644
      return false;
    }
  
-diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/media/engine/webrtcvideoengine2.cc b/Source/ThirdParty/libwebrtc/Source/webrtc/media/engine/webrtcvideoengine2.cc
-index c43dff8..dd57ee5 100644
---- a/Source/ThirdParty/libwebrtc/Source/webrtc/media/engine/webrtcvideoengine2.cc
-+++ b/Source/ThirdParty/libwebrtc/Source/webrtc/media/engine/webrtcvideoengine2.cc
-@@ -115,10 +115,13 @@ class WebRtcSimulcastEncoderFactory
+diff --git a/webrtc/media/engine/webrtcvideoengine2.cc b/webrtc/media/engine/webrtcvideoengine2.cc
+index 8b4c5df..d1ac3ad 100644
+--- a/webrtc/media/engine/webrtcvideoengine2.cc
++++ b/webrtc/media/engine/webrtcvideoengine2.cc
+@@ -97,11 +97,13 @@ class WebRtcSimulcastEncoderFactory
+   webrtc::VideoEncoder* CreateVideoEncoder(
        const cricket::VideoCodec& codec) override {
      RTC_DCHECK(factory_ != NULL);
++#if !defined(RTC_DISABLE_VP8)
      // If it's a codec type we can simulcast, create a wrapped encoder.
-+#ifndef RTC_DISABLE_VP8
-+    ASSERT(webrtc::VP8Encoder::IsSupported());
      if (CodecNamesEq(codec.name.c_str(), kVp8CodecName)) {
        return new webrtc::SimulcastEncoderAdapter(
            new EncoderFactoryAdapter(factory_));
@@ -556,126 +1331,106 @@ index c43dff8..dd57ee5 100644
      webrtc::VideoEncoder* encoder = factory_->CreateVideoEncoder(codec);
      if (encoder) {
        non_simulcast_encoders_.push_back(encoder);
-@@ -430,9 +433,11 @@ void AddCodecAndMaybeRtxCodec(const VideoCodec& codec,
- 
- std::vector<VideoCodec> DefaultVideoCodecList() {
-   std::vector<VideoCodec> codecs;
--  AddCodecAndMaybeRtxCodec(
-+  if (webrtc::VP8Encoder::IsSupported() && webrtc::VP8Decoder::IsSupported()) {
-+    AddCodecAndMaybeRtxCodec(
-       MakeVideoCodecWithDefaultFeedbackParams(kDefaultVp8PlType, kVp8CodecName),
-       &codecs);
-+  }
-   if (webrtc::VP9Encoder::IsSupported() && webrtc::VP9Decoder::IsSupported()) {
-     AddCodecAndMaybeRtxCodec(MakeVideoCodecWithDefaultFeedbackParams(
-                                  kDefaultVp9PlType, kVp9CodecName),
-diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/modules/audio_coding/acm2/rent_a_codec.cc b/Source/ThirdParty/libwebrtc/Source/webrtc/modules/audio_coding/acm2/rent_a_codec.cc
-index 9468f0c..e4960f9 100644
---- a/Source/ThirdParty/libwebrtc/Source/webrtc/modules/audio_coding/acm2/rent_a_codec.cc
-+++ b/Source/ThirdParty/libwebrtc/Source/webrtc/modules/audio_coding/acm2/rent_a_codec.cc
-@@ -231,12 +231,14 @@ std::unique_ptr<AudioEncoder> CreateEncoder(
-   if (STR_CASE_CMP(speech_inst.plname, "opus") == 0)
-     return std::unique_ptr<AudioEncoder>(new AudioEncoderOpus(speech_inst));
- #endif
-+#ifdef WEBRTC_CODEC_G711
-   if (STR_CASE_CMP(speech_inst.plname, "pcmu") == 0)
-     return std::unique_ptr<AudioEncoder>(new AudioEncoderPcmU(speech_inst));
-   if (STR_CASE_CMP(speech_inst.plname, "pcma") == 0)
-     return std::unique_ptr<AudioEncoder>(new AudioEncoderPcmA(speech_inst));
-   if (STR_CASE_CMP(speech_inst.plname, "l16") == 0)
-     return std::unique_ptr<AudioEncoder>(new AudioEncoderPcm16B(speech_inst));
-+#endif
- #ifdef WEBRTC_CODEC_ILBC
-   if (STR_CASE_CMP(speech_inst.plname, "ilbc") == 0)
-     return std::unique_ptr<AudioEncoder>(new AudioEncoderIlbc(speech_inst));
-diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/modules/audio_coding/codecs/builtin_audio_decoder_factory.cc b/Source/ThirdParty/libwebrtc/Source/webrtc/modules/audio_coding/codecs/builtin_audio_decoder_factory.cc
-index 05b65c3..40ac08f 100644
---- a/Source/ThirdParty/libwebrtc/Source/webrtc/modules/audio_coding/codecs/builtin_audio_decoder_factory.cc
-+++ b/Source/ThirdParty/libwebrtc/Source/webrtc/modules/audio_coding/codecs/builtin_audio_decoder_factory.cc
-@@ -16,7 +16,9 @@
- #include "webrtc/base/optional.h"
- #include "webrtc/common_types.h"
- #include "webrtc/modules/audio_coding/codecs/cng/webrtc_cng.h"
-+#ifdef WEBRTC_CODEC_G711
- #include "webrtc/modules/audio_coding/codecs/g711/audio_decoder_pcm.h"
-+#endif
- #ifdef WEBRTC_CODEC_G722
- #include "webrtc/modules/audio_coding/codecs/g722/audio_decoder_g722.h"
- #endif
-@@ -50,6 +52,7 @@ std::unique_ptr<AudioDecoder> Unique(AudioDecoder* d) {
- // TODO(kwiberg): These factory functions should probably be moved to each
- // decoder.
- NamedDecoderConstructor decoder_constructors[] = {
-+#ifdef WEBRTC_CODEC_G711
-     {"pcmu",
-      [](const SdpAudioFormat& format) {
-        return format.clockrate_hz == 8000 && format.num_channels >= 1
-@@ -62,6 +65,7 @@ NamedDecoderConstructor decoder_constructors[] = {
-                   ? Unique(new AudioDecoderPcmA(format.num_channels))
-                   : nullptr;
-      }},
-+#endif
- #ifdef WEBRTC_CODEC_ILBC
-     {"ilbc",
-      [](const SdpAudioFormat& format) {
-diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/modules/audio_coding/codecs/g711/audio_encoder_pcm.cc b/Source/ThirdParty/libwebrtc/Source/webrtc/modules/audio_coding/codecs/g711/audio_encoder_pcm.cc
-index baa5d38..7cc4b13 100644
---- a/Source/ThirdParty/libwebrtc/Source/webrtc/modules/audio_coding/codecs/g711/audio_encoder_pcm.cc
-+++ b/Source/ThirdParty/libwebrtc/Source/webrtc/modules/audio_coding/codecs/g711/audio_encoder_pcm.cc
-@@ -104,6 +104,8 @@ void AudioEncoderPcm::Reset() {
-   speech_buffer_.clear();
- }
- 
-+#ifdef WEBRTC_CODEC_G711
-+
- AudioEncoderPcmA::AudioEncoderPcmA(const CodecInst& codec_inst)
-     : AudioEncoderPcmA(CreateConfig<AudioEncoderPcmA>(codec_inst)) {}
- 
-@@ -138,4 +140,5 @@ AudioEncoder::CodecType AudioEncoderPcmU::GetCodecType() const {
-   return AudioEncoder::CodecType::kPcmU;
- }
- 
-+#endif
- }  // namespace webrtc
-diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/modules/audio_coding/codecs/g711/audio_encoder_pcm.h b/Source/ThirdParty/libwebrtc/Source/webrtc/modules/audio_coding/codecs/g711/audio_encoder_pcm.h
-index 7213445..b1679de 100644
---- a/Source/ThirdParty/libwebrtc/Source/webrtc/modules/audio_coding/codecs/g711/audio_encoder_pcm.h
-+++ b/Source/ThirdParty/libwebrtc/Source/webrtc/modules/audio_coding/codecs/g711/audio_encoder_pcm.h
-@@ -71,6 +71,8 @@ class AudioEncoderPcm : public AudioEncoder {
- 
- struct CodecInst;
- 
-+#ifdef WEBRTC_CODEC_G711
-+
- class AudioEncoderPcmA final : public AudioEncoderPcm {
-  public:
-   struct Config : public AudioEncoderPcm::Config {
-@@ -118,7 +120,7 @@ class AudioEncoderPcmU final : public AudioEncoderPcm {
-   static const int kSampleRateHz = 8000;
-   RTC_DISALLOW_COPY_AND_ASSIGN(AudioEncoderPcmU);
- };
--
-+#endif
- }  // namespace webrtc
- 
- #endif  // WEBRTC_MODULES_AUDIO_CODING_CODECS_G711_AUDIO_ENCODER_PCM_H_
-diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/modules/desktop_capture/screen_capturer_mac.mm b/Source/ThirdParty/libwebrtc/Source/webrtc/modules/desktop_capture/screen_capturer_mac.mm
-index f11b36d..ba10db7 100644
---- a/Source/ThirdParty/libwebrtc/Source/webrtc/modules/desktop_capture/screen_capturer_mac.mm
-+++ b/Source/ThirdParty/libwebrtc/Source/webrtc/modules/desktop_capture/screen_capturer_mac.mm
-@@ -1021,7 +1021,7 @@ std::unique_ptr<DesktopCapturer> DesktopCapturer::CreateRawScreenCapturer(
-     return nullptr;
+diff --git a/webrtc/modules/audio_coding/acm2/audio_coding_module.cc b/webrtc/modules/audio_coding/acm2/audio_coding_module.cc
+index daeea35..16108a3 100644
+--- a/webrtc/modules/audio_coding/acm2/audio_coding_module.cc
++++ b/webrtc/modules/audio_coding/acm2/audio_coding_module.cc
+@@ -1202,7 +1202,7 @@ int AudioCodingModuleImpl::SetOpusApplication(OpusApplicationMode application) {
+       app = AudioEncoder::Application::kAudio;
+       break;
+     default:
+-      FATAL();
++      RTC_FATAL();
+       return 0;
    }
- 
--  return capturer;
-+  return std::move(capturer);
+   return encoder_stack_->SetApplication(app) ? 0 : -1;
+diff --git a/webrtc/modules/audio_coding/acm2/rent_a_codec.cc b/webrtc/modules/audio_coding/acm2/rent_a_codec.cc
+index b353b38..4b98fa5 100644
+--- a/webrtc/modules/audio_coding/acm2/rent_a_codec.cc
++++ b/webrtc/modules/audio_coding/acm2/rent_a_codec.cc
+@@ -219,7 +219,7 @@ std::unique_ptr<AudioEncoder> CreateCngEncoder(
+       config.vad_mode = Vad::kVadVeryAggressive;
+       break;
+     default:
+-      FATAL();
++      RTC_FATAL();
+   }
+   return std::unique_ptr<AudioEncoder>(new AudioEncoderCng(std::move(config)));
+ }
+@@ -234,7 +234,7 @@ std::unique_ptr<AudioDecoder> CreateIsacDecoder(
+   return std::unique_ptr<AudioDecoder>(
+       new AudioDecoderIsac(sample_rate_hz, bwinfo));
+ #else
+-  FATAL() << "iSAC is not supported.";
++  RTC_FATAL() << "iSAC is not supported.";
+   return std::unique_ptr<AudioDecoder>();
+ #endif
+ }
+diff --git a/webrtc/modules/audio_coding/codecs/cng/audio_encoder_cng.cc b/webrtc/modules/audio_coding/codecs/cng/audio_encoder_cng.cc
+index bcb11ee..85af7dd 100644
+--- a/webrtc/modules/audio_coding/codecs/cng/audio_encoder_cng.cc
++++ b/webrtc/modules/audio_coding/codecs/cng/audio_encoder_cng.cc
+@@ -139,7 +139,7 @@ AudioEncoder::EncodedInfo AudioEncoderCng::EncodeImpl(
+       break;
+     }
+     case Vad::kError: {
+-      FATAL();  // Fails only if fed invalid data.
++      RTC_FATAL();  // Fails only if fed invalid data.
+       break;
+     }
+   }
+diff --git a/webrtc/modules/audio_coding/codecs/ilbc/audio_encoder_ilbc.cc b/webrtc/modules/audio_coding/codecs/ilbc/audio_encoder_ilbc.cc
+index ca11587..1974e83 100644
+--- a/webrtc/modules/audio_coding/codecs/ilbc/audio_encoder_ilbc.cc
++++ b/webrtc/modules/audio_coding/codecs/ilbc/audio_encoder_ilbc.cc
+@@ -81,7 +81,7 @@ int AudioEncoderIlbc::GetTargetBitrate() const {
+       // 50 bytes per frame of 30 ms => (approx) 13333 bits/s.
+       return 13333;
+     default:
+-      FATAL();
++      RTC_FATAL();
+   }
  }
  
- }  // namespace webrtc
-diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/modules/include/module.h b/Source/ThirdParty/libwebrtc/Source/webrtc/modules/include/module.h
+@@ -149,7 +149,7 @@ size_t AudioEncoderIlbc::RequiredOutputSizeBytes() const {
+     case 3:   return 50;
+     case 4:   return 2 * 38;
+     case 6:   return 2 * 50;
+-    default:  FATAL();
++    default:  RTC_FATAL();
+   }
+ }
+ 
+diff --git a/webrtc/modules/audio_coding/neteq/tools/rtp_file_source.cc b/webrtc/modules/audio_coding/neteq/tools/rtp_file_source.cc
+index 9ca48e9..791e5bf 100644
+--- a/webrtc/modules/audio_coding/neteq/tools/rtp_file_source.cc
++++ b/webrtc/modules/audio_coding/neteq/tools/rtp_file_source.cc
+@@ -94,7 +94,7 @@ bool RtpFileSource::OpenFile(const std::string& file_name) {
+     return true;
+   rtp_reader_.reset(RtpFileReader::Create(RtpFileReader::kPcap, file_name));
+   if (!rtp_reader_) {
+-    FATAL() << "Couldn't open input file as either a rtpdump or .pcap. Note "
++    RTC_FATAL() << "Couldn't open input file as either a rtpdump or .pcap. Note "
+                "that .pcapng is not supported.";
+   }
+   return true;
+diff --git a/webrtc/modules/audio_device/audio_device_impl.cc b/webrtc/modules/audio_device/audio_device_impl.cc
+index 5040189..cae83d3 100644
+--- a/webrtc/modules/audio_device/audio_device_impl.cc
++++ b/webrtc/modules/audio_device/audio_device_impl.cc
+@@ -1731,7 +1731,7 @@ int32_t AudioDeviceModuleImpl::PlayoutSampleRate(
+ 
+ int32_t AudioDeviceModuleImpl::ResetAudioDevice() {
+   LOG(INFO) << __FUNCTION__;
+-  FATAL() << "Should never be called";
++  RTC_FATAL() << "Should never be called";
+   return -1;
+ }
+ 
+diff --git a/webrtc/modules/include/module.h b/webrtc/modules/include/module.h
 index 432ed40..2141f97 100644
---- a/Source/ThirdParty/libwebrtc/Source/webrtc/modules/include/module.h
-+++ b/Source/ThirdParty/libwebrtc/Source/webrtc/modules/include/module.h
+--- a/webrtc/modules/include/module.h
++++ b/webrtc/modules/include/module.h
 @@ -53,7 +53,7 @@ class Module {
    //
    // NOTE: This method is not called from the worker thread itself, but from
@@ -685,10 +1440,10 @@ index 432ed40..2141f97 100644
  
   protected:
    virtual ~Module() {}
-diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/modules/video_coding/codecs/vp8/include/vp8.h b/Source/ThirdParty/libwebrtc/Source/webrtc/modules/video_coding/codecs/vp8/include/vp8.h
+diff --git a/webrtc/modules/video_coding/codecs/vp8/include/vp8.h b/webrtc/modules/video_coding/codecs/vp8/include/vp8.h
 index dd35142..c9e45ee 100644
---- a/Source/ThirdParty/libwebrtc/Source/webrtc/modules/video_coding/codecs/vp8/include/vp8.h
-+++ b/Source/ThirdParty/libwebrtc/Source/webrtc/modules/video_coding/codecs/vp8/include/vp8.h
+--- a/webrtc/modules/video_coding/codecs/vp8/include/vp8.h
++++ b/webrtc/modules/video_coding/codecs/vp8/include/vp8.h
 @@ -19,6 +19,7 @@ namespace webrtc {
  
  class VP8Encoder : public VideoEncoder {
@@ -705,34 +1460,113 @@ index dd35142..c9e45ee 100644
    static VP8Decoder* Create();
  
    virtual ~VP8Decoder() {}
-diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/modules/video_coding/codecs/vp8/vp8_impl.cc b/Source/ThirdParty/libwebrtc/Source/webrtc/modules/video_coding/codecs/vp8/vp8_impl.cc
-index b6b463c..85b6a56 100644
---- a/Source/ThirdParty/libwebrtc/Source/webrtc/modules/video_coding/codecs/vp8/vp8_impl.cc
-+++ b/Source/ThirdParty/libwebrtc/Source/webrtc/modules/video_coding/codecs/vp8/vp8_impl.cc
-@@ -103,10 +103,18 @@ int NumStreamsDisabled(const std::vector<bool>& streams) {
- }
- }  // namespace
- 
-+bool VP8Encoder::IsSupported() {
-+  return true;
-+}
-+
- VP8Encoder* VP8Encoder::Create() {
-   return new VP8EncoderImpl();
+diff --git a/webrtc/modules/video_coding/utility/simulcast_rate_allocator.cc b/webrtc/modules/video_coding/utility/simulcast_rate_allocator.cc
+index 0a81550..a5fda05 100644
+--- a/webrtc/modules/video_coding/utility/simulcast_rate_allocator.cc
++++ b/webrtc/modules/video_coding/utility/simulcast_rate_allocator.cc
+@@ -23,8 +23,10 @@ SimulcastRateAllocator::SimulcastRateAllocator(
+     const VideoCodec& codec,
+     std::unique_ptr<TemporalLayersFactory> tl_factory)
+     : codec_(codec), tl_factory_(std::move(tl_factory)) {
++#if !defined(RTC_DISABLE_VP8)
+   if (tl_factory_.get())
+     tl_factory_->SetListener(this);
++#endif
  }
  
-+bool VP8Decoder::IsSupported() {
-+  return true;
-+}
-+
- VP8Decoder* VP8Decoder::Create() {
-   return new VP8DecoderImpl();
- }
-diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/p2p/base/port.h b/Source/ThirdParty/libwebrtc/Source/webrtc/p2p/base/port.h
-index 3c84a14..def9f5d 100644
---- a/Source/ThirdParty/libwebrtc/Source/webrtc/p2p/base/port.h
-+++ b/Source/ThirdParty/libwebrtc/Source/webrtc/p2p/base/port.h
-@@ -241,9 +241,9 @@ class Port : public PortInterface, public rtc::MessageHandler,
+ void SimulcastRateAllocator::OnTemporalLayersCreated(int simulcast_id,
+diff --git a/webrtc/modules/video_coding/video_codec_initializer.cc b/webrtc/modules/video_coding/video_codec_initializer.cc
+index 39ce8f2..d7291de 100644
+--- a/webrtc/modules/video_coding/video_codec_initializer.cc
++++ b/webrtc/modules/video_coding/video_codec_initializer.cc
+@@ -36,6 +36,7 @@ bool VideoCodecInitializer::SetupCodec(
+   std::unique_ptr<TemporalLayersFactory> tl_factory;
+   switch (codec->codecType) {
+     case kVideoCodecVP8: {
++#if !defined(RTC_DISABLE_VP8)
+       if (!codec->VP8()->tl_factory) {
+         if (codec->mode == kScreensharing &&
+             (codec->numberOfSimulcastStreams > 1 ||
+@@ -49,6 +50,7 @@ bool VideoCodecInitializer::SetupCodec(
+         }
+         codec->VP8()->tl_factory = tl_factory.get();
+       }
++#endif
+       break;
+     }
+     default: {
+diff --git a/webrtc/modules/video_coding/video_coding_impl.cc b/webrtc/modules/video_coding/video_coding_impl.cc
+index c53a687..833a2ee 100644
+--- a/webrtc/modules/video_coding/video_coding_impl.cc
++++ b/webrtc/modules/video_coding/video_coding_impl.cc
+@@ -111,6 +111,7 @@ class VideoCodingModuleImpl : public VideoCodingModule {
+   int32_t RegisterSendCodec(const VideoCodec* sendCodec,
+                             uint32_t numberOfCores,
+                             uint32_t maxPayloadSize) override {
++#if !defined(RTC_DISABLE_VP8)
+     if (sendCodec != nullptr && sendCodec->codecType == kVideoCodecVP8) {
+       // Set up a rate allocator and temporal layers factory for this vp8
+       // instance. The codec impl will have a raw pointer to the TL factory,
+@@ -126,6 +127,7 @@ class VideoCodingModuleImpl : public VideoCodingModule {
+       return sender_.RegisterSendCodec(&vp8_codec, numberOfCores,
+                                        maxPayloadSize);
+     }
++#endif
+     return sender_.RegisterSendCodec(sendCodec, numberOfCores, maxPayloadSize);
+   }
+ 
+diff --git a/webrtc/p2p/base/basicpacketsocketfactory.h b/webrtc/p2p/base/basicpacketsocketfactory.h
+index 5046e0f..39fb562 100644
+--- a/webrtc/p2p/base/basicpacketsocketfactory.h
++++ b/webrtc/p2p/base/basicpacketsocketfactory.h
+@@ -11,6 +11,7 @@
+ #ifndef WEBRTC_P2P_BASE_BASICPACKETSOCKETFACTORY_H_
+ #define WEBRTC_P2P_BASE_BASICPACKETSOCKETFACTORY_H_
+ 
++#include "webrtc/base/export.h"
+ #include "webrtc/p2p/base/packetsocketfactory.h"
+ 
+ namespace rtc {
+@@ -19,7 +20,7 @@ class AsyncSocket;
+ class SocketFactory;
+ class Thread;
+ 
+-class BasicPacketSocketFactory : public PacketSocketFactory {
++class WEBRTC_DYLIB_EXPORT BasicPacketSocketFactory : public PacketSocketFactory {
+  public:
+   BasicPacketSocketFactory();
+   explicit BasicPacketSocketFactory(Thread* thread);
+diff --git a/webrtc/p2p/base/icetransportinternal.h b/webrtc/p2p/base/icetransportinternal.h
+index e9b40dc..5347b37 100644
+--- a/webrtc/p2p/base/icetransportinternal.h
++++ b/webrtc/p2p/base/icetransportinternal.h
+@@ -63,7 +63,7 @@ class IceTransportInternal : public rtc::PacketTransportInternal {
+ 
+   // TODO(zhihuang): Remove this once it's no longer called in
+   // remoting/protocol/libjingle_transport_factory.cc
+-  virtual void SetIceProtocolType(IceProtocolType type) {}
++  virtual void SetIceProtocolType(IceProtocolType) {}
+ 
+   virtual void SetIceCredentials(const std::string& ice_ufrag,
+                                  const std::string& ice_pwd) {
+diff --git a/webrtc/p2p/base/packettransportinternal.h b/webrtc/p2p/base/packettransportinternal.h
+index 325c00e..287e66c 100644
+--- a/webrtc/p2p/base/packettransportinternal.h
++++ b/webrtc/p2p/base/packettransportinternal.h
+@@ -59,7 +59,7 @@ class PacketTransportInternal : public sigslot::has_slots<> {
+ 
+   // TODO(pthatcher): Once Chrome's MockPacketTransportInterface implements
+   // this, remove the default implementation.
+-  virtual bool GetOption(rtc::Socket::Option opt, int* value) { return false; }
++  virtual bool GetOption(rtc::Socket::Option, int*) { return false; }
+ 
+   // Returns the most recent error that occurred on this channel.
+   virtual int GetError() = 0;
+diff --git a/webrtc/p2p/base/port.h b/webrtc/p2p/base/port.h
+index 4d15656..58accdd 100644
+--- a/webrtc/p2p/base/port.h
++++ b/webrtc/p2p/base/port.h
+@@ -249,9 +249,9 @@ class Port : public PortInterface, public rtc::MessageHandler,
    // port implemented this method.
    // TODO(mallinath) - Make it pure virtual.
    virtual bool HandleIncomingPacket(
@@ -742,10 +1576,10 @@ index 3c84a14..def9f5d 100644
 +      rtc::AsyncPacketSocket*, const char*, size_t,
 +      const rtc::SocketAddress&,
 +      const rtc::PacketTime&) {
-     ASSERT(false);
+     RTC_NOTREACHED();
      return false;
    }
-@@ -360,7 +360,7 @@ class Port : public PortInterface, public rtc::MessageHandler,
+@@ -382,7 +382,7 @@ class Port : public PortInterface, public rtc::MessageHandler,
    }
  
    // Extra work to be done in subclasses when a connection is destroyed.
@@ -754,11 +1588,11 @@ index 3c84a14..def9f5d 100644
  
   private:
    void Construct();
-diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/p2p/base/stun.h b/Source/ThirdParty/libwebrtc/Source/webrtc/p2p/base/stun.h
-index 153f63d..5533b31 100644
---- a/Source/ThirdParty/libwebrtc/Source/webrtc/p2p/base/stun.h
-+++ b/Source/ThirdParty/libwebrtc/Source/webrtc/p2p/base/stun.h
-@@ -217,7 +217,7 @@ class StunAttribute {
+diff --git a/webrtc/p2p/base/stun.h b/webrtc/p2p/base/stun.h
+index 028787c..355be9e 100644
+--- a/webrtc/p2p/base/stun.h
++++ b/webrtc/p2p/base/stun.h
+@@ -215,7 +215,7 @@ class StunAttribute {
    virtual StunAttributeValueType value_type() const = 0;
  
    // Only XorAddressAttribute needs this so far.
@@ -767,11 +1601,11 @@ index 153f63d..5533b31 100644
  
    // Reads the body (not the type or length) for this type of attribute from
    // the given buffer.  Return value is true if successful.
-diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/p2p/base/stunrequest.h b/Source/ThirdParty/libwebrtc/Source/webrtc/p2p/base/stunrequest.h
-index f6d216d..ed860a8 100644
---- a/Source/ThirdParty/libwebrtc/Source/webrtc/p2p/base/stunrequest.h
-+++ b/Source/ThirdParty/libwebrtc/Source/webrtc/p2p/base/stunrequest.h
-@@ -110,11 +110,11 @@ class StunRequest : public rtc::MessageHandler {
+diff --git a/webrtc/p2p/base/stunrequest.h b/webrtc/p2p/base/stunrequest.h
+index 99dff14..e1aab31 100644
+--- a/webrtc/p2p/base/stunrequest.h
++++ b/webrtc/p2p/base/stunrequest.h
+@@ -115,11 +115,11 @@ class StunRequest : public rtc::MessageHandler {
  
    // Fills in a request object to be sent.  Note that request's transaction ID
    // will already be set and cannot be changed.
@@ -786,194 +1620,162 @@ index f6d216d..ed860a8 100644
    virtual void OnTimeout() {}
    // Called when the message is sent.
    virtual void OnSent();
-diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/p2p/base/transport.h b/Source/ThirdParty/libwebrtc/Source/webrtc/p2p/base/transport.h
-index adef653..cd156f9 100644
---- a/Source/ThirdParty/libwebrtc/Source/webrtc/p2p/base/transport.h
-+++ b/Source/ThirdParty/libwebrtc/Source/webrtc/p2p/base/transport.h
-@@ -267,11 +267,11 @@ class Transport : public sigslot::has_slots<> {
+diff --git a/webrtc/p2p/base/transportchannelimpl.h b/webrtc/p2p/base/transportchannelimpl.h
+index f72cb2d..21b859b 100644
+--- a/webrtc/p2p/base/transportchannelimpl.h
++++ b/webrtc/p2p/base/transportchannelimpl.h
+@@ -40,7 +40,7 @@ class TransportChannelImpl : public TransportChannel {
+   virtual void SetIceTiebreaker(uint64_t tiebreaker) = 0;
+   // TODO(pthatcher): Remove this once it's no longer called in
+   // remoting/protocol/libjingle_transport_factory.cc
+-  virtual void SetIceProtocolType(IceProtocolType type) {}
++  virtual void SetIceProtocolType(IceProtocolType) {}
+   // TODO(honghaiz): Remove this once the call in chromoting is removed.
+   virtual void SetIceCredentials(const std::string& ice_ufrag,
+                                  const std::string& ice_pwd) {
+diff --git a/webrtc/p2p/client/basicportallocator.h b/webrtc/p2p/client/basicportallocator.h
+index cd178f9..e67c80f 100644
+--- a/webrtc/p2p/client/basicportallocator.h
++++ b/webrtc/p2p/client/basicportallocator.h
+@@ -17,6 +17,7 @@
  
-   // Must be called before applying local session description.
-   virtual void SetLocalCertificate(
--      const rtc::scoped_refptr<rtc::RTCCertificate>& certificate) {}
-+      const rtc::scoped_refptr<rtc::RTCCertificate>&) {}
+ #include "webrtc/p2p/base/portallocator.h"
+ #include "webrtc/base/checks.h"
++#include "webrtc/base/export.h"
+ #include "webrtc/base/messagequeue.h"
+ #include "webrtc/base/network.h"
+ #include "webrtc/base/thread.h"
+@@ -25,7 +26,7 @@ namespace cricket {
  
-   // Get a copy of the local certificate provided by SetLocalCertificate.
-   virtual bool GetLocalCertificate(
--      rtc::scoped_refptr<rtc::RTCCertificate>* certificate) {
-+      rtc::scoped_refptr<rtc::RTCCertificate>*) {
+ class BasicPortAllocator : public PortAllocator {
+  public:
+-  BasicPortAllocator(rtc::NetworkManager* network_manager,
++  WEBRTC_DYLIB_EXPORT BasicPortAllocator(rtc::NetworkManager* network_manager,
+                      rtc::PacketSocketFactory* socket_factory);
+   explicit BasicPortAllocator(rtc::NetworkManager* network_manager);
+   BasicPortAllocator(rtc::NetworkManager* network_manager,
+diff --git a/webrtc/pc/mediastream.h b/webrtc/pc/mediastream.h
+index 56fbed9..fa59157 100644
+--- a/webrtc/pc/mediastream.h
++++ b/webrtc/pc/mediastream.h
+@@ -18,10 +18,11 @@
+ 
+ #include "webrtc/api/mediastreaminterface.h"
+ #include "webrtc/api/notifier.h"
++#include "webrtc/base/basictypes.h"
+ 
+ namespace webrtc {
+ 
+-class MediaStream : public Notifier<MediaStreamInterface> {
++class WEBRTC_DYLIB_EXPORT MediaStream : public Notifier<MediaStreamInterface> {
+  public:
+   static rtc::scoped_refptr<MediaStream> Create(const std::string& label);
+ 
+diff --git a/webrtc/pc/peerconnectionfactory.h b/webrtc/pc/peerconnectionfactory.h
+index 53c6745..fda8f15 100644
+--- a/webrtc/pc/peerconnectionfactory.h
++++ b/webrtc/pc/peerconnectionfactory.h
+@@ -87,10 +87,10 @@ class PeerConnectionFactory : public PeerConnectionFactoryInterface {
+   bool StartAecDump(rtc::PlatformFile file, int64_t max_size_bytes) override;
+   void StopAecDump() override;
+   // TODO(ivoc) Remove after Chrome is updated.
+-  bool StartRtcEventLog(rtc::PlatformFile file) override { return false; }
++  bool StartRtcEventLog(rtc::PlatformFile) override { return false; }
+   // TODO(ivoc) Remove after Chrome is updated.
+-  bool StartRtcEventLog(rtc::PlatformFile file,
+-                        int64_t max_size_bytes) override {
++  bool StartRtcEventLog(rtc::PlatformFile,
++                        int64_t) override {
      return false;
    }
+   // TODO(ivoc) Remove after Chrome is updated.
+diff --git a/webrtc/sdk/objc/Framework/Classes/h264_video_toolbox_decoder.cc b/webrtc/sdk/objc/Framework/Classes/h264_video_toolbox_decoder.cc
+index 2507027..e661c56 100644
+--- a/webrtc/sdk/objc/Framework/Classes/h264_video_toolbox_decoder.cc
++++ b/webrtc/sdk/objc/Framework/Classes/h264_video_toolbox_decoder.cc
+@@ -97,7 +97,7 @@ int H264VideoToolboxDecoder::Decode(
+     int64_t render_time_ms) {
+   RTC_DCHECK(input_image._buffer);
  
-@@ -320,10 +320,10 @@ class Transport : public sigslot::has_slots<> {
-   bool RemoveRemoteCandidates(const std::vector<Candidate>& candidates,
-                               std::string* error);
- 
--  virtual bool GetSslRole(rtc::SSLRole* ssl_role) const { return false; }
-+  virtual bool GetSslRole(rtc::SSLRole*) const { return false; }
- 
-   // Must be called before channel is starting to connect.
--  virtual bool SetSslMaxProtocolVersion(rtc::SSLProtocolVersion version) {
-+  virtual bool SetSslMaxProtocolVersion(rtc::SSLProtocolVersion) {
-     return false;
+-#if defined(WEBRTC_IOS)
++#if defined(WEBRTC_IOS) && !defined(WEBRTC_WEBKIT_BUILD)
+   if (!RTCIsUIApplicationActive()) {
+     // Ignore all decode requests when app isn't active. In this state, the
+     // hardware decoder has been invalidated by the OS.
+diff --git a/webrtc/sdk/objc/Framework/Classes/h264_video_toolbox_encoder.mm b/webrtc/sdk/objc/Framework/Classes/h264_video_toolbox_encoder.mm
+index e50b225..4d4a141 100644
+--- a/webrtc/sdk/objc/Framework/Classes/h264_video_toolbox_encoder.mm
++++ b/webrtc/sdk/objc/Framework/Classes/h264_video_toolbox_encoder.mm
+@@ -384,7 +384,7 @@ CFStringRef ExtractProfile(const cricket::VideoCodec& codec) {
+   if (!callback_ || !compression_session_) {
+     return WEBRTC_VIDEO_CODEC_UNINITIALIZED;
    }
- 
-diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Classes/RTCNSGLVideoView.m b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Classes/RTCNSGLVideoView.m
-index 415efe8..d87102a 100644
---- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Classes/RTCNSGLVideoView.m
-+++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Classes/RTCNSGLVideoView.m
-@@ -8,6 +8,8 @@
-  *  be found in the AUTHORS file in the root of the source tree.
-  */
- 
-+#import <AVFoundation/AVFoundation.h>
-+
- #if !TARGET_OS_IPHONE
- 
- #import "WebRTC/RTCNSGLVideoView.h"
-diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Classes/RTCOpenGLDefines.h b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Classes/RTCOpenGLDefines.h
-index 1ef642b..52bd234 100644
---- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Classes/RTCOpenGLDefines.h
-+++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Classes/RTCOpenGLDefines.h
-@@ -8,6 +8,8 @@
-  *  be found in the AUTHORS file in the root of the source tree.
-  */
- 
-+#import <AVFoundation/AVFoundation.h>
-+
- #if TARGET_OS_IPHONE
- #define RTC_PIXEL_FORMAT GL_LUMINANCE
- #define SHADER_VERSION
-diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Classes/videotoolboxvideocodecfactory.cc b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Classes/videotoolboxvideocodecfactory.cc
-index 4bf7a4d..8cee4df 100644
---- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Classes/videotoolboxvideocodecfactory.cc
-+++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Classes/videotoolboxvideocodecfactory.cc
-@@ -12,10 +12,8 @@
- #include "webrtc/base/logging.h"
- #include "webrtc/common_video/h264/profile_level_id.h"
- #include "webrtc/media/base/codec.h"
 -#if defined(WEBRTC_IOS)
- #include "webrtc/sdk/objc/Framework/Classes/h264_video_toolbox_encoder.h"
- #include "webrtc/sdk/objc/Framework/Classes/h264_video_toolbox_decoder.h"
--#endif
++#if defined(WEBRTC_IOS) && !defined(WEBRTC_WEBKIT_BUILD)
+   if (!RTCIsUIApplicationActive()) {
+     // Ignore all encode requests when app isn't active. In this state, the
+     // hardware encoder has been invalidated by the OS.
+diff --git a/webrtc/sdk/objc/Framework/Classes/videotoolboxvideocodecfactory.h b/webrtc/sdk/objc/Framework/Classes/videotoolboxvideocodecfactory.h
+index 8acd9dd..0103486 100644
+--- a/webrtc/sdk/objc/Framework/Classes/videotoolboxvideocodecfactory.h
++++ b/webrtc/sdk/objc/Framework/Classes/videotoolboxvideocodecfactory.h
+@@ -11,6 +11,7 @@
+ #ifndef WEBRTC_SDK_OBJC_FRAMEWORK_CLASSES_VIDEOTOOLBOXVIDEOCODECFACTORY_H_
+ #define WEBRTC_SDK_OBJC_FRAMEWORK_CLASSES_VIDEOTOOLBOXVIDEOCODECFACTORY_H_
  
- // TODO(kthelgason): delete this when CreateVideoDecoder takes
- // a cricket::VideoCodec instead of webrtc::VideoCodecType.
-@@ -38,7 +36,6 @@ namespace webrtc {
++#include "webrtc/base/export.h"
+ #include "webrtc/media/engine/webrtcvideoencoderfactory.h"
+ #include "webrtc/media/engine/webrtcvideodecoderfactory.h"
  
- VideoToolboxVideoEncoderFactory::VideoToolboxVideoEncoderFactory() {
- // Hardware H264 encoding only supported on iOS for now.
--#if defined(WEBRTC_IOS)
-   // TODO(magjed): Push Constrained High profile as well when negotiation is
-   // ready, http://crbug/webrtc/6337.
-   cricket::VideoCodec constrained_baseline(cricket::kH264CodecName);
-@@ -52,29 +49,24 @@ VideoToolboxVideoEncoderFactory::VideoToolboxVideoEncoderFactory() {
-   constrained_baseline.SetParam(cricket::kH264FmtpLevelAsymmetryAllowed, "1");
-   constrained_baseline.SetParam(cricket::kH264FmtpPacketizationMode, "1");
-   supported_codecs_.push_back(constrained_baseline);
--#endif
- }
+@@ -19,7 +20,7 @@ namespace webrtc {
+ class VideoToolboxVideoEncoderFactory
+     : public cricket::WebRtcVideoEncoderFactory {
+  public:
+-  VideoToolboxVideoEncoderFactory();
++  WEBRTC_DYLIB_EXPORT VideoToolboxVideoEncoderFactory();
+   ~VideoToolboxVideoEncoderFactory();
  
- VideoToolboxVideoEncoderFactory::~VideoToolboxVideoEncoderFactory() {}
+   // WebRtcVideoEncoderFactory implementation.
+@@ -33,7 +34,7 @@ class VideoToolboxVideoEncoderFactory
+   mutable std::vector<cricket::VideoCodec> supported_codecs_;
+ };
  
- VideoEncoder* VideoToolboxVideoEncoderFactory::CreateVideoEncoder(
-     const cricket::VideoCodec& codec) {
--#if defined(WEBRTC_IOS)
-   if (FindMatchingCodec(supported_codecs_, codec)) {
-     LOG(LS_INFO) << "Creating HW encoder for " << codec.name;
-     return new H264VideoToolboxEncoder(codec);
-   }
--#endif
-   LOG(LS_INFO) << "No HW encoder found for codec " << codec.name;
-   return nullptr;
- }
- 
- void VideoToolboxVideoEncoderFactory::DestroyVideoEncoder(
-     VideoEncoder* encoder) {
--#if defined(WEBRTC_IOS)
-   delete encoder;
-   encoder = nullptr;
--#endif
- }
- 
- const std::vector<cricket::VideoCodec>&
-@@ -85,9 +77,7 @@ VideoToolboxVideoEncoderFactory::supported_codecs() const {
- // VideoToolboxVideoDecoderFactory
- 
- VideoToolboxVideoDecoderFactory::VideoToolboxVideoDecoderFactory() {
--#if defined(WEBRTC_IOS)
-   supported_codecs_.push_back(cricket::VideoCodec("H264"));
--#endif
- }
- 
- VideoToolboxVideoDecoderFactory::~VideoToolboxVideoDecoderFactory() {}
-@@ -95,22 +85,18 @@ VideoToolboxVideoDecoderFactory::~VideoToolboxVideoDecoderFactory() {}
- VideoDecoder* VideoToolboxVideoDecoderFactory::CreateVideoDecoder(
-     VideoCodecType type) {
-   const auto codec = cricket::VideoCodec(NameFromCodecType(type));
--#if defined(WEBRTC_IOS)
-   if (FindMatchingCodec(supported_codecs_, codec)) {
-     LOG(LS_INFO) << "Creating HW decoder for " << codec.name;
-     return new H264VideoToolboxDecoder();
-   }
--#endif
-   LOG(LS_INFO) << "No HW decoder found for codec " << codec.name;
-   return nullptr;
- }
- 
- void VideoToolboxVideoDecoderFactory::DestroyVideoDecoder(
-     VideoDecoder* decoder) {
--#if defined(WEBRTC_IOS)
-   delete decoder;
-   decoder = nullptr;
--#endif
- }
- 
- }  // namespace webrtc
-diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/system_wrappers/include/stringize_macros.h b/Source/ThirdParty/libwebrtc/Source/webrtc/system_wrappers/include/stringize_macros.h
-index 9c8e7e9..06926c4 100644
---- a/Source/ThirdParty/libwebrtc/Source/webrtc/system_wrappers/include/stringize_macros.h
-+++ b/Source/ThirdParty/libwebrtc/Source/webrtc/system_wrappers/include/stringize_macros.h
-@@ -33,6 +33,8 @@
+-class VideoToolboxVideoDecoderFactory
++class WEBRTC_DYLIB_EXPORT VideoToolboxVideoDecoderFactory
+     : public cricket::WebRtcVideoDecoderFactory {
+  public:
+   VideoToolboxVideoDecoderFactory();
+diff --git a/webrtc/system_wrappers/include/stringize_macros.h b/webrtc/system_wrappers/include/stringize_macros.h
+index 9c8e7e9..aa5306b 100644
+--- a/webrtc/system_wrappers/include/stringize_macros.h
++++ b/webrtc/system_wrappers/include/stringize_macros.h
+@@ -33,6 +33,6 @@
  // Then:
  //   STRINGIZE(A) produces "FOO"
  //   STRINGIZE(B(y)) produces "myobj->FunctionCall(y)"
-+#ifndef STRINGIZE
- #define STRINGIZE(x) STRINGIZE_NO_EXPANSION(x)
-+#endif
+-#define STRINGIZE(x) STRINGIZE_NO_EXPANSION(x)
++#define RTC_STRINGIZE(x) STRINGIZE_NO_EXPANSION(x)
  
  #endif  // WEBRTC_SYSTEM_WRAPPERS_INCLUDE_STRINGIZE_MACROS_H_
-diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/typedefs.h b/Source/ThirdParty/libwebrtc/Source/webrtc/typedefs.h
-index 98b32f7..d5f4afa 100644
---- a/Source/ThirdParty/libwebrtc/Source/webrtc/typedefs.h
-+++ b/Source/ThirdParty/libwebrtc/Source/webrtc/typedefs.h
-@@ -99,13 +99,17 @@
- #endif
- #endif
+diff --git a/webrtc/voice_engine/utility.cc b/webrtc/voice_engine/utility.cc
+index f394762..5a818ec 100644
+--- a/webrtc/voice_engine/utility.cc
++++ b/webrtc/voice_engine/utility.cc
+@@ -59,7 +59,7 @@ void RemixAndResample(const int16_t* src_data,
  
-+#ifndef NO_RETURN
- // Annotate a function that will not return control flow to the caller.
- #if defined(_MSC_VER)
- #define NO_RETURN __declspec(noreturn)
- #elif defined(__GNUC__)
-+#ifndef NO_RETURN
- #define NO_RETURN __attribute__ ((__noreturn__))
-+#endif
- #else
- #define NO_RETURN
- #endif
-+#endif // NO_RETURN
- 
- #endif  // WEBRTC_TYPEDEFS_H_
-diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/video/video_encoder.cc b/Source/ThirdParty/libwebrtc/Source/webrtc/video/video_encoder.cc
-index f4e81565..5b5c6c2 100644
---- a/Source/ThirdParty/libwebrtc/Source/webrtc/video/video_encoder.cc
-+++ b/Source/ThirdParty/libwebrtc/Source/webrtc/video/video_encoder.cc
-@@ -39,7 +39,7 @@ bool VideoEncoder::IsSupportedSoftware(EncoderType codec_type) {
-     case kH264:
-       return H264Encoder::IsSupported();
-     case kVp8:
--      return true;
-+      return VP8Encoder::IsSupported();
-     case kVp9:
-       return VP9Encoder::IsSupported();
-     case kUnsupportedCodec:
+   if (resampler->InitializeIfNeeded(sample_rate_hz, dst_frame->sample_rate_hz_,
+                                     audio_ptr_num_channels) == -1) {
+-    FATAL() << "InitializeIfNeeded failed: sample_rate_hz = " << sample_rate_hz
++    RTC_FATAL() << "InitializeIfNeeded failed: sample_rate_hz = " << sample_rate_hz
+             << ", dst_frame->sample_rate_hz_ = " << dst_frame->sample_rate_hz_
+             << ", audio_ptr_num_channels = " << audio_ptr_num_channels;
+   }
+@@ -68,7 +68,7 @@ void RemixAndResample(const int16_t* src_data,
+   int out_length = resampler->Resample(audio_ptr, src_length, dst_frame->data_,
+                                        AudioFrame::kMaxDataSizeSamples);
+   if (out_length == -1) {
+-    FATAL() << "Resample failed: audio_ptr = " << audio_ptr
++    RTC_FATAL() << "Resample failed: audio_ptr = " << audio_ptr
+             << ", src_length = " << src_length
+             << ", dst_frame->data_ = " << dst_frame->data_;
+   }

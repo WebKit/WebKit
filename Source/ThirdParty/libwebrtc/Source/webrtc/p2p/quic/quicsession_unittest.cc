@@ -23,7 +23,6 @@
 #include "net/quic/crypto/quic_crypto_server_config.h"
 #include "net/quic/quic_crypto_client_stream.h"
 #include "net/quic/quic_crypto_server_stream.h"
-#include "webrtc/base/common.h"
 #include "webrtc/base/gunit.h"
 #include "webrtc/p2p/base/faketransportcontroller.h"
 #include "webrtc/p2p/quic/quicconnectionhelper.h"

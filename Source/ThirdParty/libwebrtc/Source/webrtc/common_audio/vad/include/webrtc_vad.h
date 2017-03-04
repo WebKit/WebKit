@@ -39,7 +39,7 @@ void WebRtcVad_Free(VadInst* handle);
 // - handle [i/o] : Instance that should be initialized.
 //
 // returns        : 0 - (OK),
-//                 -1 - (NULL pointer or Default mode could not be set).
+//                 -1 - (null pointer or Default mode could not be set).
 int WebRtcVad_Init(VadInst* handle);
 
 // Sets the VAD operating mode. A more aggressive (higher mode) VAD is more
@@ -51,7 +51,7 @@ int WebRtcVad_Init(VadInst* handle);
 // - mode   [i]   : Aggressiveness mode (0, 1, 2, or 3).
 //
 // returns        : 0 - (OK),
-//                 -1 - (NULL pointer, mode could not be set or the VAD instance
+//                 -1 - (null pointer, mode could not be set or the VAD instance
 //                       has not been initialized).
 int WebRtcVad_set_mode(VadInst* handle, int mode);
 

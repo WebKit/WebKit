@@ -54,7 +54,7 @@ class CallDoStuffOnThread : public Thread {
   explicit CallDoStuffOnThread(ThreadCheckerClass* thread_checker_class)
       : Thread(),
         thread_checker_class_(thread_checker_class) {
-    SetName("call_do_stuff_on_thread", NULL);
+    SetName("call_do_stuff_on_thread", nullptr);
   }
 
   void Run() override { thread_checker_class_->DoStuff(); }
@@ -78,7 +78,7 @@ class DeleteThreadCheckerClassOnThread : public Thread {
       ThreadCheckerClass* thread_checker_class)
       : Thread(),
         thread_checker_class_(thread_checker_class) {
-    SetName("delete_thread_checker_class_on_thread", NULL);
+    SetName("delete_thread_checker_class_on_thread", nullptr);
   }
 
   void Run() override { thread_checker_class_.reset(); }

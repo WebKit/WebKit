@@ -38,12 +38,13 @@ ProbeBitrateEstimator::ProbeBitrateEstimator() {}
 
 int ProbeBitrateEstimator::HandleProbeAndEstimateBitrate(
     const PacketInfo& packet_info) {
-  RTC_DCHECK_NE(packet_info.probe_cluster_id, PacketInfo::kNotAProbe);
+  int cluster_id = packet_info.pacing_info.probe_cluster_id;
+  RTC_DCHECK_NE(cluster_id, PacedPacketInfo::kNotAProbe);
 
   EraseOldClusters(packet_info.arrival_time_ms - kMaxClusterHistoryMs);
 
   int payload_size_bits = packet_info.payload_size * 8;
-  AggregatedCluster* cluster = &clusters_[packet_info.probe_cluster_id];
+  AggregatedCluster* cluster = &clusters_[cluster_id];
 
   if (packet_info.send_time_ms < cluster->first_send_ms) {
     cluster->first_send_ms = packet_info.send_time_ms;
@@ -72,7 +73,7 @@ int ProbeBitrateEstimator::HandleProbeAndEstimateBitrate(
   if (send_interval_ms <= 0 || send_interval_ms > kMaxProbeIntervalMs ||
       receive_interval_ms <= 0 || receive_interval_ms > kMaxProbeIntervalMs) {
     LOG(LS_INFO) << "Probing unsuccessful, invalid send/receive interval"
-                 << " [cluster id: " << packet_info.probe_cluster_id
+                 << " [cluster id: " << cluster_id
                  << "] [send interval: " << send_interval_ms << " ms]"
                  << " [receive interval: " << receive_interval_ms << " ms]";
     return -1;
@@ -94,8 +95,8 @@ int ProbeBitrateEstimator::HandleProbeAndEstimateBitrate(
   float ratio = receive_bps / send_bps;
   if (ratio > kValidRatio) {
     LOG(LS_INFO) << "Probing unsuccessful, receive/send ratio too high"
-                 << " [cluster id: " << packet_info.probe_cluster_id
-                 << "] [send: " << send_size << " bytes / " << send_interval_ms
+                 << " [cluster id: " << cluster_id << "] [send: " << send_size
+                 << " bytes / " << send_interval_ms
                  << " ms = " << send_bps / 1000 << " kb/s]"
                  << " [receive: " << receive_size << " bytes / "
                  << receive_interval_ms << " ms = " << receive_bps / 1000
@@ -106,9 +107,9 @@ int ProbeBitrateEstimator::HandleProbeAndEstimateBitrate(
     return -1;
   }
   LOG(LS_INFO) << "Probing successful"
-               << " [cluster id: " << packet_info.probe_cluster_id
-               << "] [send: " << send_size << " bytes / " << send_interval_ms
-               << " ms = " << send_bps / 1000 << " kb/s]"
+               << " [cluster id: " << cluster_id << "] [send: " << send_size
+               << " bytes / " << send_interval_ms << " ms = " << send_bps / 1000
+               << " kb/s]"
                << " [receive: " << receive_size << " bytes / "
                << receive_interval_ms << " ms = " << receive_bps / 1000
                << " kb/s]";

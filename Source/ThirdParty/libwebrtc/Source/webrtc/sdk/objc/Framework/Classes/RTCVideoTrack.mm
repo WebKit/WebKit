@@ -16,7 +16,9 @@
 #import "RTCVideoRendererAdapter+Private.h"
 #import "RTCVideoSource+Private.h"
 
-@implementation RTCVideoTrack
+@implementation RTCVideoTrack {
+  NSMutableArray *_adapters;
+}
 
 @synthesize source = _source;
 

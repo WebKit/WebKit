@@ -36,7 +36,6 @@ class NackModule : public Module {
   void ClearUpTo(uint16_t seq_num);
   void UpdateRtt(int64_t rtt_ms);
   void Clear();
-  void Stop();
 
   // Module implementation
   int64_t TimeUntilNextProcess() override;
@@ -82,16 +81,20 @@ class NackModule : public Module {
   NackSender* const nack_sender_;
   KeyFrameRequestSender* const keyframe_request_sender_;
 
+  // TODO(philipel): Some of the variables below are consistently used on a
+  // known thread (e.g. see |initialized_|). Those probably do not need
+  // synchronized access.
   std::map<uint16_t, NackInfo, DescendingSeqNumComp<uint16_t>> nack_list_
       GUARDED_BY(crit_);
   std::set<uint16_t, DescendingSeqNumComp<uint16_t>> keyframe_list_
       GUARDED_BY(crit_);
   video_coding::Histogram reordering_histogram_ GUARDED_BY(crit_);
-  bool running_ GUARDED_BY(crit_);
   bool initialized_ GUARDED_BY(crit_);
   int64_t rtt_ms_ GUARDED_BY(crit_);
   uint16_t newest_seq_num_ GUARDED_BY(crit_);
-  int64_t next_process_time_ms_ GUARDED_BY(crit_);
+
+  // Only touched on the process thread.
+  int64_t next_process_time_ms_;
 };
 
 }  // namespace webrtc

@@ -15,11 +15,11 @@
 #include <utility>
 #include <vector>
 
+#include "webrtc/api/video/video_frame.h"
 #include "webrtc/base/criticalsection.h"
 #include "webrtc/base/thread_checker.h"
 #include "webrtc/media/base/videosinkinterface.h"
 #include "webrtc/media/base/videosourcebase.h"
-#include "webrtc/video_frame.h"
 
 namespace rtc {
 

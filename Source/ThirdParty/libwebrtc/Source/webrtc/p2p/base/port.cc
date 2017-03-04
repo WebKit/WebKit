@@ -16,6 +16,7 @@
 #include "webrtc/p2p/base/common.h"
 #include "webrtc/p2p/base/portallocator.h"
 #include "webrtc/base/base64.h"
+#include "webrtc/base/checks.h"
 #include "webrtc/base/crc32.h"
 #include "webrtc/base/helpers.h"
 #include "webrtc/base/logging.h"
@@ -59,11 +60,11 @@ inline bool TooLongWithoutResponse(
 // We will restrict RTT estimates (when used for determining state) to be
 // within a reasonable range.
 const int MINIMUM_RTT = 100;   // 0.1 seconds
-const int MAXIMUM_RTT = 3000;  // 3 seconds
+const int MAXIMUM_RTT = 60000;  // 60 seconds
 
 // When we don't have any RTT data, we have to pick something reasonable.  We
 // use a large value just in case the connection is really slow.
-const int DEFAULT_RTT = MAXIMUM_RTT;
+const int DEFAULT_RTT = 3000;  // 3 seconds
 
 // Computes our estimate of the RTT given the current estimate.
 inline int ConservativeRTTEstimate(int rtt) {
@@ -73,8 +74,9 @@ inline int ConservativeRTTEstimate(int rtt) {
 // Weighting of the old rtt value to new data.
 const int RTT_RATIO = 3;  // 3 : 1
 
-// The delay before we begin checking if this port is useless.
-const int kPortTimeoutDelay = 30 * 1000;  // 30 seconds
+// The delay before we begin checking if this port is useless. We set
+// it to a little higher than a total STUN timeout.
+const int kPortTimeoutDelay = cricket::STUN_TOTAL_TIMEOUT + 5000;
 }  // namespace
 
 namespace cricket {
@@ -89,10 +91,11 @@ const char RELAY_PORT_TYPE[] = "relay";
 const char UDP_PROTOCOL_NAME[] = "udp";
 const char TCP_PROTOCOL_NAME[] = "tcp";
 const char SSLTCP_PROTOCOL_NAME[] = "ssltcp";
+const char TLS_PROTOCOL_NAME[] = "tls";
 
-static const char* const PROTO_NAMES[] = { UDP_PROTOCOL_NAME,
-                                           TCP_PROTOCOL_NAME,
-                                           SSLTCP_PROTOCOL_NAME };
+static const char* const PROTO_NAMES[] = {UDP_PROTOCOL_NAME, TCP_PROTOCOL_NAME,
+                                          SSLTCP_PROTOCOL_NAME,
+                                          TLS_PROTOCOL_NAME};
 
 const char* ProtoToString(ProtocolType proto) {
   return PROTO_NAMES[proto];
@@ -182,7 +185,7 @@ Port::Port(rtc::Thread* thread,
       ice_role_(ICEROLE_UNKNOWN),
       tiebreaker_(0),
       shared_socket_(false) {
-  ASSERT(factory_ != NULL);
+  RTC_DCHECK(factory_ != NULL);
   Construct();
 }
 
@@ -191,7 +194,7 @@ void Port::Construct() {
   // relies on it.  If the username_fragment and password are empty,
   // we should just create one.
   if (ice_username_fragment_.empty()) {
-    ASSERT(password_.empty());
+    RTC_DCHECK(password_.empty());
     ice_username_fragment_ = rtc::CreateRandomString(ICE_UFRAG_LENGTH);
     password_ = rtc::CreateRandomString(ICE_PWD_LENGTH);
   }
@@ -250,8 +253,23 @@ void Port::AddAddress(const rtc::SocketAddress& address,
                       uint32_t type_preference,
                       uint32_t relay_preference,
                       bool final) {
+  AddAddress(address, base_address, related_address, protocol, relay_protocol,
+             tcptype, type, type_preference, relay_preference, "", final);
+}
+
+void Port::AddAddress(const rtc::SocketAddress& address,
+                      const rtc::SocketAddress& base_address,
+                      const rtc::SocketAddress& related_address,
+                      const std::string& protocol,
+                      const std::string& relay_protocol,
+                      const std::string& tcptype,
+                      const std::string& type,
+                      uint32_t type_preference,
+                      uint32_t relay_preference,
+                      const std::string& url,
+                      bool final) {
   if (protocol == TCP_PROTOCOL_NAME && type == LOCAL_PORT_TYPE) {
-    ASSERT(!tcptype.empty());
+    RTC_DCHECK(!tcptype.empty());
   }
 
   std::string foundation =
@@ -265,6 +283,7 @@ void Port::AddAddress(const rtc::SocketAddress& address,
   c.set_network_name(network_->name());
   c.set_network_type(network_->type());
   c.set_related_address(related_address);
+  c.set_url(url);
   candidates_.push_back(c);
   SignalCandidateReady(this, c);
 
@@ -353,8 +372,8 @@ bool Port::GetStunMessage(const char* data,
   // NOTE: This could clearly be optimized to avoid allocating any memory.
   //       However, at the data rates we'll be looking at on the client side,
   //       this probably isn't worth worrying about.
-  ASSERT(out_msg != NULL);
-  ASSERT(out_username != NULL);
+  RTC_DCHECK(out_msg != NULL);
+  RTC_DCHECK(out_username != NULL);
   out_username->clear();
 
   // Don't bother parsing the packet if we can tell it's not STUN.
@@ -537,7 +556,7 @@ bool Port::MaybeIceRoleConflict(
       }
       break;
     default:
-      ASSERT(false);
+      RTC_NOTREACHED();
   }
   return ret;
 }
@@ -552,12 +571,12 @@ void Port::CreateStunUsername(const std::string& remote_username,
 
 void Port::SendBindingResponse(StunMessage* request,
                                const rtc::SocketAddress& addr) {
-  ASSERT(request->type() == STUN_BINDING_REQUEST);
+  RTC_DCHECK(request->type() == STUN_BINDING_REQUEST);
 
   // Retrieve the username from the request.
   const StunByteStringAttribute* username_attr =
       request->GetByteString(STUN_ATTR_USERNAME);
-  ASSERT(username_attr != NULL);
+  RTC_DCHECK(username_attr != NULL);
   if (username_attr == NULL) {
     // No valid username, skip the response.
     return;
@@ -616,7 +635,7 @@ void Port::SendBindingResponse(StunMessage* request,
 void Port::SendBindingErrorResponse(StunMessage* request,
                                     const rtc::SocketAddress& addr,
                                     int error_code, const std::string& reason) {
-  ASSERT(request->type() == STUN_BINDING_REQUEST);
+  RTC_DCHECK(request->type() == STUN_BINDING_REQUEST);
 
   // Fill in the response message.
   StunMessage response;
@@ -659,7 +678,7 @@ void Port::Prune() {
 }
 
 void Port::OnMessage(rtc::Message *pmsg) {
-  ASSERT(pmsg->message_id == MSG_DESTROY_IF_DEAD);
+  RTC_DCHECK(pmsg->message_id == MSG_DESTROY_IF_DEAD);
   bool dead =
       (state_ == State::INIT || state_ == State::PRUNED) &&
       connections_.empty() &&
@@ -670,7 +689,7 @@ void Port::OnMessage(rtc::Message *pmsg) {
 }
 
 void Port::OnNetworkTypeChanged(const rtc::Network* network) {
-  ASSERT(network == network_);
+  RTC_DCHECK(network == network_);
 
   UpdateNetworkCost();
 }
@@ -713,7 +732,7 @@ void Port::EnablePortPackets() {
 void Port::OnConnectionDestroyed(Connection* conn) {
   AddressMap::iterator iter =
       connections_.find(conn->remote_candidate().address());
-  ASSERT(iter != connections_.end());
+  RTC_DCHECK(iter != connections_.end());
   connections_.erase(iter);
   HandleConnectionDestroyed(conn);
 
@@ -730,7 +749,7 @@ void Port::OnConnectionDestroyed(Connection* conn) {
 }
 
 void Port::Destroy() {
-  ASSERT(connections_.empty());
+  RTC_DCHECK(connections_.empty());
   LOG_J(LS_INFO, this) << "Port deleted";
   SignalDestroyed(this);
   delete this;
@@ -790,7 +809,7 @@ class ConnectionRequest : public StunRequest {
       request->AddAttribute(new StunUInt64Attribute(
           STUN_ATTR_ICE_CONTROLLED, connection_->port()->IceTiebreaker()));
     } else {
-      ASSERT(false);
+      RTC_NOTREACHED();
     }
 
     // Adding PRIORITY Attribute.
@@ -867,7 +886,7 @@ Connection::Connection(Port* port,
       last_data_received_(0),
       last_ping_response_received_(0),
       reported_(false),
-      state_(STATE_WAITING),
+      state_(IceCandidatePairState::WAITING),
       receiving_timeout_(WEAK_CONNECTION_RECEIVE_TIMEOUT),
       time_created_ms_(rtc::TimeMillis()) {
   // All of our connections start in WAITING state.
@@ -881,7 +900,7 @@ Connection::~Connection() {
 }
 
 const Candidate& Connection::local_candidate() const {
-  ASSERT(local_candidate_index_ < port_->Candidates().size());
+  RTC_DCHECK(local_candidate_index_ < port_->Candidates().size());
   return port_->Candidates()[local_candidate_index_];
 }
 
@@ -936,8 +955,8 @@ void Connection::UpdateReceiving(int64_t now) {
   SignalStateChange(this);
 }
 
-void Connection::set_state(State state) {
-  State old_state = state_;
+void Connection::set_state(IceCandidatePairState state) {
+  IceCandidatePairState old_state = state_;
   state_ = state;
   if (state != old_state) {
     LOG_J(LS_VERBOSE, this) << "set_state";
@@ -1038,7 +1057,7 @@ void Connection::OnReadPacket(
         break;
 
       default:
-        ASSERT(false);
+        RTC_NOTREACHED();
         break;
     }
   }
@@ -1125,12 +1144,12 @@ void Connection::Destroy() {
 }
 
 void Connection::FailAndDestroy() {
-  set_state(Connection::STATE_FAILED);
+  set_state(IceCandidatePairState::FAILED);
   Destroy();
 }
 
 void Connection::FailAndPrune() {
-  set_state(Connection::STATE_FAILED);
+  set_state(IceCandidatePairState::FAILED);
   Prune();
 }
 
@@ -1222,7 +1241,7 @@ void Connection::Ping(int64_t now) {
                           << ", id=" << rtc::hex_encode(req->id())
                           << ", nomination=" << nomination_;
   requests_.Send(req);
-  state_ = STATE_INPROGRESS;
+  state_ = IceCandidatePairState::IN_PROGRESS;
   num_pings_sent_++;
 }
 
@@ -1232,6 +1251,7 @@ void Connection::ReceivedPing() {
 }
 
 void Connection::ReceivedPingResponse(int rtt, const std::string& request_id) {
+  RTC_DCHECK_GE(rtt, 0);
   // We've already validated that this is a STUN binding response with
   // the correct local and remote username for this connection.
   // So if we're not already, become writable. We may be bringing a pruned
@@ -1245,13 +1265,21 @@ void Connection::ReceivedPingResponse(int rtt, const std::string& request_id) {
     acked_nomination_ = iter->nomination;
   }
 
+  total_round_trip_time_ms_ += rtt;
+  current_round_trip_time_ms_ = rtc::Optional<uint32_t>(
+      static_cast<uint32_t>(rtt));
+
   pings_since_last_response_.clear();
   last_ping_response_received_ = rtc::TimeMillis();
   UpdateReceiving(last_ping_response_received_);
   set_write_state(STATE_WRITABLE);
-  set_state(STATE_SUCCEEDED);
+  set_state(IceCandidatePairState::SUCCEEDED);
+  if (rtt_samples_ > 0) {
+    rtt_ = (RTT_RATIO * rtt_ + rtt) / (RTT_RATIO + 1);
+  } else {
+    rtt_ = rtt;
+  }
   rtt_samples_++;
-  rtt_ = (RTT_RATIO * rtt_ + rtt) / (RTT_RATIO + 1);
 }
 
 bool Connection::dead(int64_t now) const {
@@ -1330,8 +1358,8 @@ std::string Connection::ToString() const {
      << ":" << remote.protocol() << ":" << remote.address().ToSensitiveString()
      << "|" << CONNECT_STATE_ABBREV[connected()]
      << RECEIVE_STATE_ABBREV[receiving()] << WRITE_STATE_ABBREV[write_state()]
-     << ICESTATE[state()] << "|" << remote_nomination() << "|" << nomination()
-     << "|" << priority() << "|";
+     << ICESTATE[static_cast<int>(state())] << "|" << remote_nomination() << "|"
+     << nomination() << "|" << priority() << "|";
   if (rtt_ < DEFAULT_RTT) {
     ss << rtt_ << "]";
   } else {
@@ -1453,7 +1481,7 @@ void Connection::MaybeUpdatePeerReflexiveCandidate(
 }
 
 void Connection::OnMessage(rtc::Message *pmsg) {
-  ASSERT(pmsg->message_id == MSG_DELETE);
+  RTC_DCHECK(pmsg->message_id == MSG_DELETE);
   LOG(LS_INFO) << "Connection deleted with number of pings sent: "
                << num_pings_sent_;
   SignalDestroyed(this);
@@ -1470,6 +1498,19 @@ ConnectionInfo Connection::stats() {
   stats_.recv_total_bytes = recv_rate_tracker_.TotalSampleCount();
   stats_.sent_bytes_second = round(send_rate_tracker_.ComputeRate());
   stats_.sent_total_bytes = send_rate_tracker_.TotalSampleCount();
+  stats_.receiving = receiving_;
+  stats_.writable = write_state_ == STATE_WRITABLE;
+  stats_.timeout = write_state_ == STATE_WRITE_TIMEOUT;
+  stats_.new_connection = !reported_;
+  stats_.rtt = rtt_;
+  stats_.local_candidate = local_candidate();
+  stats_.remote_candidate = remote_candidate();
+  stats_.key = this;
+  stats_.state = state_;
+  stats_.priority = priority();
+  stats_.nominated = nominated();
+  stats_.total_round_trip_time_ms = total_round_trip_time_ms_;
+  stats_.current_round_trip_time_ms = current_round_trip_time_ms_;
   return stats_;
 }
 
@@ -1568,7 +1609,7 @@ int ProxyConnection::Send(const void* data, size_t size,
   int sent = port_->SendTo(data, size, remote_candidate_.address(),
                            options, true);
   if (sent <= 0) {
-    ASSERT(sent < 0);
+    RTC_DCHECK(sent < 0);
     error_ = port_->GetError();
     stats_.sent_discarded_packets++;
   } else {

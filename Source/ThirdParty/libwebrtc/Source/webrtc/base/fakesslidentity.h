@@ -15,7 +15,7 @@
 #include <memory>
 #include <vector>
 
-#include "webrtc/base/common.h"
+#include "webrtc/base/checks.h"
 #include "webrtc/base/messagedigest.h"
 #include "webrtc/base/sslidentity.h"
 
@@ -45,7 +45,7 @@ class FakeSSLCertificate : public rtc::SSLCertificate {
   }
   void ToDER(Buffer* der_buffer) const override {
     std::string der_string;
-    VERIFY(SSLIdentity::PemToDer(kPemTypeCertificate, data_, &der_string));
+    RTC_CHECK(SSLIdentity::PemToDer(kPemTypeCertificate, data_, &der_string));
     der_buffer->SetData(der_string.c_str(), der_string.size());
   }
   int64_t CertificateExpirationTime() const override {

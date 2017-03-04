@@ -8,9 +8,9 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/base/byteorder.h"
+#include <stdint.h>
 
-#include "webrtc/base/basictypes.h"
+#include "webrtc/base/byteorder.h"
 #include "webrtc/base/gunit.h"
 
 namespace rtc {

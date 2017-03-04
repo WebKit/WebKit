@@ -6,7 +6,7 @@
 # in the file PATENTS.  All contributing project authors may
 # be found in the AUTHORS file in the root of the source tree.
 
-import("../../build/webrtc.gni")
+import("../../webrtc.gni")
 
 config("media_file_config") {
   visibility = [ ":*" ]  # Only targets in this file can depend on this.
@@ -34,7 +34,32 @@ rtc_static_library("media_file") {
 
   deps = [
     "../..:webrtc_common",
+    "../../base:rtc_base_approved",
     "../../common_audio",
     "../../system_wrappers",
   ]
+}
+
+if (rtc_include_tests) {
+  rtc_source_set("media_file_unittests") {
+    testonly = true
+    sources = [
+      "media_file_unittest.cc",
+    ]
+    deps = [
+      ":media_file",
+      "../../system_wrappers:system_wrappers",
+      "../../test:test_support",
+    ]
+    if (is_win) {
+      cflags = [
+        # TODO(kjellander): bugs.webrtc.org/261: Fix this warning.
+        "/wd4373",  # virtual function override.
+      ]
+    }
+    if (!build_with_chromium && is_clang) {
+      # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
+      suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
+    }
+  }
 }

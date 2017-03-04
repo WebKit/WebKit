@@ -16,8 +16,8 @@
 
 #include <algorithm>  // find_if()
 
+#include "webrtc/api/audio_codecs/audio_decoder.h"
 #include "webrtc/base/logging.h"
-#include "webrtc/modules/audio_coding/codecs/audio_decoder.h"
 #include "webrtc/modules/audio_coding/neteq/decoder_database.h"
 #include "webrtc/modules/audio_coding/neteq/tick_timer.h"
 
@@ -43,8 +43,8 @@ class NewTimestampIsLarger {
 bool EqualSampleRates(uint8_t pt1,
                       uint8_t pt2,
                       const DecoderDatabase& decoder_database) {
-  auto di1 = decoder_database.GetDecoderInfo(pt1);
-  auto di2 = decoder_database.GetDecoderInfo(pt2);
+  auto* di1 = decoder_database.GetDecoderInfo(pt1);
+  auto* di2 = decoder_database.GetDecoderInfo(pt2);
   return di1 && di2 && di1->SampleRateHz() == di2->SampleRateHz();
 }
 }  // namespace

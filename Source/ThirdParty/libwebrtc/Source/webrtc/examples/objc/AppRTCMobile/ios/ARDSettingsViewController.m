@@ -18,7 +18,7 @@ typedef NS_ENUM(int, ARDSettingsSections) {
   ARDSettingsSectionBitRate
 };
 
-@interface ARDSettingsViewController () {
+@interface ARDSettingsViewController () <UITextFieldDelegate> {
   ARDSettingsModel *_settingsModel;
 }
 
@@ -200,8 +200,11 @@ typedef NS_ENUM(int, ARDSettingsSections) {
 
     UITextField *textField = [[UITextField alloc]
         initWithFrame:CGRectMake(10, 0, cell.bounds.size.width - 20, cell.bounds.size.height)];
+    NSString *currentMaxBitrate = [_settingsModel currentMaxBitrateSettingFromStore].stringValue;
+    textField.text = currentMaxBitrate;
     textField.placeholder = @"Enter max bit rate (kbps)";
     textField.keyboardType = UIKeyboardTypeNumberPad;
+    textField.delegate = self;
 
     // Numerical keyboards have no return button, we need to add one manually.
     UIToolbar *numberToolbar =
@@ -225,6 +228,16 @@ typedef NS_ENUM(int, ARDSettingsSections) {
 
 - (void)numberTextFieldDidEndEditing:(id)sender {
   [self.view endEditing:YES];
+}
+
+- (void)textFieldDidEndEditing:(UITextField *)textField {
+  NSNumber *bitrateNumber = nil;
+
+  if (textField.text.length != 0) {
+    bitrateNumber = [NSNumber numberWithInteger:textField.text.intValue];
+  }
+
+  [_settingsModel storeMaxBitrateSetting:bitrateNumber];
 }
 
 @end

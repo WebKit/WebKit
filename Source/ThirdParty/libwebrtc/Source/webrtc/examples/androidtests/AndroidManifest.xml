@@ -1,0 +1,31 @@
+<!--
+ *  Copyright 2017 The WebRTC Project Authors. All rights reserved.
+ *
+ *  Use of this source code is governed by a BSD-style license
+ *  that can be found in the LICENSE file in the root of the source
+ *  tree. An additional intellectual property rights grant can be found
+ *  in the file PATENTS.  All contributing project authors may
+ *  be found in the AUTHORS file in the root of the source tree.
+-->
+
+<manifest
+      xmlns:android="http://schemas.android.com/apk/res/android"
+      package="org.appspot.apprtc.test">
+
+    <uses-permission android:name="android.permissions.RUN_INSTRUMENTATION" />
+    <uses-sdk android:minSdkVersion="13" android:targetSdkVersion="21" />
+
+    <uses-permission android:name="android.permission.RUN_INSTRUMENTATION" />
+
+    <application>
+        <uses-library android:name="android.test.runner" />
+    </application>
+
+    <!-- Needed for chromium-junit4 tag. crbug.com/640116
+         TODO(sakal): Remove once the tag is no longer needed. -->
+    <!--suppress MissingPrefix -->
+    <instrumentation android:name="android.support.test.runner.AndroidJUnitRunner"
+        android:targetPackage="org.appspot.apprtc"
+        android:label="Tests for AppRTCMobile"
+        chromium-junit4="true"/>
+</manifest>

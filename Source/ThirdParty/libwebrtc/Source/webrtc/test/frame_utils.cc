@@ -8,8 +8,12 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include <stdio.h>
+#include <string.h>
+
+#include "webrtc/api/video/i420_buffer.h"
+#include "webrtc/api/video/video_frame.h"
 #include "webrtc/test/frame_utils.h"
-#include "webrtc/video_frame.h"
 
 namespace webrtc {
 namespace test {

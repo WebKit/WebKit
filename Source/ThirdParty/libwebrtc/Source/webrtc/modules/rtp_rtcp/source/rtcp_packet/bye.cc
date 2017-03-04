@@ -101,7 +101,7 @@ bool Bye::Create(uint8_t* packet,
     *index += reason_length;
     // Add padding bytes if needed.
     size_t bytes_to_pad = index_end - *index;
-    RTC_DCHECK_LE(bytes_to_pad, 3u);
+    RTC_DCHECK_LE(bytes_to_pad, 3);
     if (bytes_to_pad > 0) {
       memset(&packet[*index], 0, bytes_to_pad);
       *index += bytes_to_pad;

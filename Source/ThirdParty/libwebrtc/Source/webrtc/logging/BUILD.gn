@@ -6,7 +6,7 @@
 # in the file PATENTS.  All contributing project authors may
 # be found in the AUTHORS file in the root of the source tree.
 
-import("../build/webrtc.gni")
+import("../webrtc.gni")
 import("//third_party/protobuf/proto_library.gni")
 if (is_android) {
   import("//build/config/android/config.gni")
@@ -41,7 +41,8 @@ rtc_static_library("rtc_event_log_impl") {
   deps = [
     ":rtc_event_log_api",
     "..:webrtc_common",
-    "../api:call_api",
+    "../call:call_interfaces",
+    "../modules/audio_coding:audio_network_adaptor",
     "../modules/rtp_rtcp",
   ]
 
@@ -55,29 +56,6 @@ rtc_static_library("rtc_event_log_impl") {
   }
 }
 
-if (rtc_include_tests) {
-  rtc_source_set("rtc_event_log_tests") {
-    testonly = true
-    sources = [
-      "rtc_event_log/ringbuffer_unittest.cc",
-      "rtc_event_log/rtc_event_log_unittest.cc",
-      "rtc_event_log/rtc_event_log_unittest_helper.cc",
-    ]
-    deps = [
-      ":rtc_event_log_impl",
-      ":rtc_event_log_parser",
-      "../modules/rtp_rtcp",
-      "../system_wrappers:metrics_default",
-      "//testing/gmock",
-      "//testing/gtest",
-    ]
-    if (!build_with_chromium && is_clang) {
-      # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
-      suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
-    }
-  }
-}
-
 if (rtc_enable_protobuf) {
   proto_library("rtc_event_log_proto") {
     sources = [
@@ -85,9 +63,7 @@ if (rtc_enable_protobuf) {
     ]
     proto_out_dir = "webrtc/logging/rtc_event_log"
   }
-}
 
-if (rtc_enable_protobuf) {
   rtc_static_library("rtc_event_log_parser") {
     sources = [
       "rtc_event_log/rtc_event_log_parser.cc",
@@ -102,6 +78,75 @@ if (rtc_enable_protobuf) {
     if (!build_with_chromium && is_clang) {
       # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
       suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
+    }
+  }
+
+  if (rtc_include_tests) {
+    rtc_source_set("rtc_event_log_tests") {
+      testonly = true
+      sources = [
+        "rtc_event_log/ringbuffer_unittest.cc",
+        "rtc_event_log/rtc_event_log_unittest.cc",
+        "rtc_event_log/rtc_event_log_unittest_helper.cc",
+      ]
+      deps = [
+        ":rtc_event_log_impl",
+        ":rtc_event_log_parser",
+        "../call",
+        "../modules/rtp_rtcp",
+        "../system_wrappers:metrics_default",
+        "//testing/gmock",
+        "//testing/gtest",
+      ]
+      if (!build_with_chromium && is_clang) {
+        # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
+        suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
+      }
+    }
+    rtc_test("rtc_event_log2rtp_dump") {
+      testonly = true
+      sources = [
+        "rtc_event_log/rtc_event_log2rtp_dump.cc",
+      ]
+      deps = [
+        ":rtc_event_log_api",
+        ":rtc_event_log_impl",
+        ":rtc_event_log_parser",
+        "../base:rtc_base_approved",
+        "../call:call_interfaces",
+        "../modules/rtp_rtcp:rtp_rtcp",
+        "../system_wrappers:field_trial_default",
+        "../system_wrappers:metrics_default",
+        "../test:rtp_test_utils",
+        "//third_party/gflags",
+      ]
+      if (!build_with_chromium && is_clang) {
+        # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
+        suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
+      }
+    }
+  }
+  if (rtc_include_tests) {
+    rtc_executable("rtc_event_log2text") {
+      testonly = true
+      sources = [
+        "rtc_event_log/rtc_event_log2text.cc",
+      ]
+      deps = [
+        ":rtc_event_log_api",
+        ":rtc_event_log_impl",
+        ":rtc_event_log_parser",
+        "../base:rtc_base_approved",
+
+        # TODO(kwiberg): Remove this dependency.
+        "../api/audio_codecs:audio_codecs_api",
+        "../modules/rtp_rtcp:rtp_rtcp",
+        "//third_party/gflags",
+      ]
+      if (!build_with_chromium && is_clang) {
+        # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
+        suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
+      }
     }
   }
 }

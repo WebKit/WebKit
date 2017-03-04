@@ -14,7 +14,6 @@
 #include <vector>
 
 #include "webrtc/base/basictypes.h"
-#include "webrtc/base/constructormagic.h"
 #include "webrtc/modules/rtp_rtcp/source/rtcp_packet/psfb.h"
 
 namespace webrtc {
@@ -58,8 +57,6 @@ class Remb : public Psfb {
 
   uint64_t bitrate_bps_;
   std::vector<uint32_t> ssrcs_;
-
-  RTC_DISALLOW_COPY_AND_ASSIGN(Remb);
 };
 }  // namespace rtcp
 }  // namespace webrtc

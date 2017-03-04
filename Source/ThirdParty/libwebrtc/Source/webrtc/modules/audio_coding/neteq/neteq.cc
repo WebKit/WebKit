@@ -19,8 +19,7 @@ namespace webrtc {
 
 std::string NetEq::Config::ToString() const {
   std::stringstream ss;
-  ss << "sample_rate_hz=" << sample_rate_hz << ", enable_audio_classifier="
-     << (enable_audio_classifier ? "true" : "false")
+  ss << "sample_rate_hz=" << sample_rate_hz
      << ", enable_post_decode_vad="
      << (enable_post_decode_vad ? "true" : "false")
      << ", max_packets_in_buffer=" << max_packets_in_buffer

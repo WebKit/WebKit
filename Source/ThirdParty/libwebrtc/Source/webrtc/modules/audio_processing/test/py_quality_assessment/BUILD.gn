@@ -1,0 +1,72 @@
+# Copyright (c) 2017 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../../../webrtc.gni")
+
+copy("py_quality_assessment") {
+  testonly = true
+  sources = [
+    "README.md",
+    "apm_quality_assessment-export.py",
+    "apm_quality_assessment-gencfgs.py",
+    "apm_quality_assessment.py",
+    "apm_quality_assessment.sh",
+  ]
+  outputs = [
+    "$root_build_dir/py_quality_assessment/{{source_file_part}}",
+  ]
+  deps = [
+    ":apm_configs",
+    ":lib",
+    ":output",
+    "../..:audioproc_f",
+    "//resources/audio_processing/test/py_quality_assessment:probing_signals",
+  ]
+}  # py_quality_assessment
+
+copy("lib") {
+  testonly = true
+  sources = [
+    "quality_assessment/__init__.py",
+    "quality_assessment/audioproc_wrapper.py",
+    "quality_assessment/data_access.py",
+    "quality_assessment/eval_scores.py",
+    "quality_assessment/evaluation.py",
+    "quality_assessment/noise_generation.py",
+    "quality_assessment/simulation.py",
+  ]
+  visibility = [ ":*" ]  # Only targets in this file can depend on this.
+  outputs = [
+    "$root_build_dir/py_quality_assessment/quality_assessment/{{source_file_part}}",
+  ]
+  deps = [
+    "//resources/audio_processing/test/py_quality_assessment:noise_tracks",
+  ]
+}  # lib
+
+copy("apm_configs") {
+  testonly = true
+  sources = [
+    "apm_configs/default.json",
+  ]
+  visibility = [ ":*" ]  # Only targets in this file can depend on this.
+  outputs = [
+    "$root_build_dir/py_quality_assessment/apm_configs/{{source_file_part}}",
+  ]
+}  # apm_configs
+
+copy("output") {
+  testonly = true
+  sources = [
+    "output/README.md",
+  ]
+  visibility = [ ":*" ]  # Only targets in this file can depend on this.
+  outputs = [
+    "$root_build_dir/py_quality_assessment/output/{{source_file_part}}",
+  ]
+}  # output

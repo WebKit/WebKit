@@ -104,9 +104,9 @@ void WebRtcAecm_CalcLinearEnergiesNeon(AecmCore* aecm,
 void WebRtcAecm_StoreAdaptiveChannelNeon(AecmCore* aecm,
                                          const uint16_t* far_spectrum,
                                          int32_t* echo_est) {
-  RTC_DCHECK_EQ(0u, (uintptr_t)echo_est % 32);
-  RTC_DCHECK_EQ(0u, (uintptr_t)aecm->channelStored % 16);
-  RTC_DCHECK_EQ(0u, (uintptr_t)aecm->channelAdapt16 % 16);
+  RTC_DCHECK_EQ(0, (uintptr_t)echo_est % 32);
+  RTC_DCHECK_EQ(0, (uintptr_t)aecm->channelStored % 16);
+  RTC_DCHECK_EQ(0, (uintptr_t)aecm->channelAdapt16 % 16);
 
   // This is C code of following optimized code.
   // During startup we store the channel every block.
@@ -161,9 +161,9 @@ void WebRtcAecm_StoreAdaptiveChannelNeon(AecmCore* aecm,
 }
 
 void WebRtcAecm_ResetAdaptiveChannelNeon(AecmCore* aecm) {
-  RTC_DCHECK_EQ(0u, (uintptr_t)aecm->channelStored % 16);
-  RTC_DCHECK_EQ(0u, (uintptr_t)aecm->channelAdapt16 % 16);
-  RTC_DCHECK_EQ(0u, (uintptr_t)aecm->channelAdapt32 % 32);
+  RTC_DCHECK_EQ(0, (uintptr_t)aecm->channelStored % 16);
+  RTC_DCHECK_EQ(0, (uintptr_t)aecm->channelAdapt16 % 16);
+  RTC_DCHECK_EQ(0, (uintptr_t)aecm->channelAdapt32 % 32);
 
   // The C code of following optimized code.
   // for (i = 0; i < PART_LEN1; i++) {

@@ -131,8 +131,8 @@ MouseCursorMonitorX11::~MouseCursorMonitorX11() {
 
 void MouseCursorMonitorX11::Init(Callback* callback, Mode mode) {
   // Init can be called only once per instance of MouseCursorMonitor.
-  assert(!callback_);
-  assert(callback);
+  RTC_DCHECK(!callback_);
+  RTC_DCHECK(callback);
 
   callback_ = callback;
   mode_ = mode;
@@ -152,7 +152,7 @@ void MouseCursorMonitorX11::Init(Callback* callback, Mode mode) {
 }
 
 void MouseCursorMonitorX11::Capture() {
-  assert(callback_);
+  RTC_DCHECK(callback_);
 
   // Process X11 events in case XFixes has sent cursor notification.
   x_display_->ProcessPendingXEvents();
@@ -204,7 +204,7 @@ bool MouseCursorMonitorX11::HandleXEvent(const XEvent& event) {
 }
 
 void MouseCursorMonitorX11::CaptureCursor() {
-  assert(have_xfixes_);
+  RTC_DCHECK(have_xfixes_);
 
   XFixesCursorImage* img;
   {

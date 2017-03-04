@@ -138,7 +138,7 @@ BOOL RTCSetupVerticesForProgram(GLuint program, GLuint* vertexBuffer, GLuint* ve
 }
 
 // Set vertex data to the currently bound vertex buffer.
-void RTCSetVertexData(webrtc::VideoRotation rotation) {
+void RTCSetVertexData(RTCVideoRotation rotation) {
   // When modelview and projection matrices are identity (default) the world is
   // contained in the square around origin with unit size 2. Drawing to these
   // coordinates is equivalent to drawing to the entire screen. The texture is
@@ -156,16 +156,16 @@ void RTCSetVertexData(webrtc::VideoRotation rotation) {
   // Rotate the UV coordinates.
   int rotation_offset;
   switch (rotation) {
-    case webrtc::kVideoRotation_0:
+    case RTCVideoRotation_0:
       rotation_offset = 0;
       break;
-    case webrtc::kVideoRotation_90:
+    case RTCVideoRotation_90:
       rotation_offset = 1;
       break;
-    case webrtc::kVideoRotation_180:
+    case RTCVideoRotation_180:
       rotation_offset = 2;
       break;
-    case webrtc::kVideoRotation_270:
+    case RTCVideoRotation_270:
       rotation_offset = 3;
       break;
   }

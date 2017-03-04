@@ -156,6 +156,12 @@ class SSLStreamAdapter : public StreamAdapterInterface {
   // next lower will be used.
   virtual void SetMaxProtocolVersion(SSLProtocolVersion version) = 0;
 
+  // Set the initial retransmission timeout for DTLS messages. When the timeout
+  // expires, the message gets retransmitted and the timeout is exponentially
+  // increased.
+  // This should only be called before StartSSL().
+  virtual void SetInitialRetransmissionTimeout(int timeout_ms) = 0;
+
   // StartSSL starts negotiation with a peer, whose certificate is verified
   // using the certificate digest. Generally, SetIdentity() and possibly
   // SetServerRole() should have been called before this.
@@ -205,7 +211,7 @@ class SSLStreamAdapter : public StreamAdapterInterface {
   //                        part of the RFC defining each exporter
   //                        usage (IN)
   // context/context_len -- a context to bind to for this connection;
-  //                        optional, can be NULL, 0 (IN)
+  //                        optional, can be null, 0 (IN)
   // use_context         -- whether to use the context value
   //                        (needed to distinguish no context from
   //                        zero-length ones).
@@ -228,10 +234,9 @@ class SSLStreamAdapter : public StreamAdapterInterface {
   // SS_OPENING but IsTlsConnected should return true.
   virtual bool IsTlsConnected() = 0;
 
-  // Capabilities testing
-  static bool HaveDtls();
-  static bool HaveDtlsSrtp();
-  static bool HaveExporter();
+  // Capabilities testing.
+  // Used to have "DTLS supported", "DTLS-SRTP supported" etc. methods, but now
+  // that's assumed.
   static bool IsBoringSsl();
 
   // Returns true iff the supplied cipher is deemed to be strong.
@@ -243,6 +248,10 @@ class SSLStreamAdapter : public StreamAdapterInterface {
   // introduced such that any caller could depend on sslstreamadapter.h without
   // depending on specific SSL implementation.
   static std::string SslCipherSuiteToName(int cipher_suite);
+
+  // Use our timeutils.h source of timing in BoringSSL, allowing us to test
+  // using a fake clock.
+  static void enable_time_callback_for_testing();
 
   sigslot::signal1<SSLHandshakeError> SignalSSLHandshakeError;
 

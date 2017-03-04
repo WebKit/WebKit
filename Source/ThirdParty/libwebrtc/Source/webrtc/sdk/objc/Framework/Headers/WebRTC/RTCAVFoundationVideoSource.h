@@ -15,10 +15,6 @@
 @class RTCMediaConstraints;
 @class RTCPeerConnectionFactory;
 
-namespace webrtc {
-class AVFoundationVideoCapturer;
-}
-
 NS_ASSUME_NONNULL_BEGIN
 
 /**
@@ -29,11 +25,19 @@ NS_ASSUME_NONNULL_BEGIN
  * counted video source interface.
  */
 RTC_EXPORT
-@interface RTCAVFoundationVideoSource : RTCVideoSource {
-  webrtc::AVFoundationVideoCapturer *_capturer;
-}
+@interface RTCAVFoundationVideoSource : RTCVideoSource
 
 - (instancetype)init NS_UNAVAILABLE;
+
+/**
+ * Calling this function will cause frames to be scaled down to the
+ * requested resolution. Also, frames will be cropped to match the
+ * requested aspect ratio, and frames will be dropped to match the
+ * requested fps. The requested aspect ratio is orientation agnostic and
+ * will be adjusted to maintain the input orientation, so it doesn't
+ * matter if e.g. 1280x720 or 720x1280 is requested.
+ */
+- (void)adaptOutputFormatToWidth:(int)width height:(int)height fps:(int)fps;
 
 /** Returns whether rear-facing camera is available for use. */
 @property(nonatomic, readonly) BOOL canUseBackCamera;

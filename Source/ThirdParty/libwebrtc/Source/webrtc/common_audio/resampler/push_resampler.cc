@@ -32,8 +32,8 @@ void CheckValidInitParams(int src_sample_rate_hz, int dst_sample_rate_hz,
 #if !defined(WEBRTC_WIN) && defined(__clang__)
   RTC_DCHECK_GT(src_sample_rate_hz, 0);
   RTC_DCHECK_GT(dst_sample_rate_hz, 0);
-  RTC_DCHECK_GT(num_channels, 0u);
-  RTC_DCHECK_LE(num_channels, 2u);
+  RTC_DCHECK_GT(num_channels, 0);
+  RTC_DCHECK_LE(num_channels, 2);
 #endif
 }
 

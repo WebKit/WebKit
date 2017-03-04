@@ -13,16 +13,19 @@
 
 #include <memory>
 
-#include "webrtc/api/call/audio_send_stream.h"
-#include "webrtc/api/call/audio_state.h"
 #include "webrtc/base/constructormagic.h"
 #include "webrtc/base/thread_checker.h"
+#include "webrtc/call/audio_send_stream.h"
+#include "webrtc/call/audio_state.h"
 #include "webrtc/call/bitrate_allocator.h"
 
 namespace webrtc {
 class CongestionController;
 class VoiceEngine;
 class RtcEventLog;
+class RtcpBandwidthObserver;
+class RtcpRttStats;
+class PacketRouter;
 
 namespace voe {
 class ChannelProxy;
@@ -35,15 +38,17 @@ class AudioSendStream final : public webrtc::AudioSendStream,
   AudioSendStream(const webrtc::AudioSendStream::Config& config,
                   const rtc::scoped_refptr<webrtc::AudioState>& audio_state,
                   rtc::TaskQueue* worker_queue,
+                  PacketRouter* packet_router,
                   CongestionController* congestion_controller,
                   BitrateAllocator* bitrate_allocator,
-                  RtcEventLog* event_log);
+                  RtcEventLog* event_log,
+                  RtcpRttStats* rtcp_rtt_stats);
   ~AudioSendStream() override;
 
   // webrtc::AudioSendStream implementation.
   void Start() override;
   void Stop() override;
-  bool SendTelephoneEvent(int payload_type, int event,
+  bool SendTelephoneEvent(int payload_type, int payload_frequency, int event,
                           int duration_ms) override;
   void SetMuted(bool muted) override;
   webrtc::AudioSendStream::Stats GetStats() const override;
@@ -54,7 +59,8 @@ class AudioSendStream final : public webrtc::AudioSendStream,
   // Implements BitrateAllocatorObserver.
   uint32_t OnBitrateUpdated(uint32_t bitrate_bps,
                             uint8_t fraction_loss,
-                            int64_t rtt) override;
+                            int64_t rtt,
+                            int64_t probing_interval_ms) override;
 
   const webrtc::AudioSendStream::Config& config() const;
   void SetTransportOverhead(int transport_overhead_per_packet);
@@ -71,6 +77,8 @@ class AudioSendStream final : public webrtc::AudioSendStream,
   std::unique_ptr<voe::ChannelProxy> channel_proxy_;
 
   BitrateAllocator* const bitrate_allocator_;
+  CongestionController* const congestion_controller_;
+  std::unique_ptr<RtcpBandwidthObserver> bandwidth_observer_;
 
   RTC_DISALLOW_IMPLICIT_CONSTRUCTORS(AudioSendStream);
 };

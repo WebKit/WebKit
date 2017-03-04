@@ -40,11 +40,7 @@ class DesktopRect;
 // be used if that functionality is necessary.
 class ScreenCapturerWinMagnifier : public DesktopCapturer {
  public:
-  // |fallback_capturer| will be used to capture the screen if a non-primary
-  // screen is being captured, or the OS does not support Magnification API, or
-  // the magnifier capturer fails (e.g. in Windows8 Metro mode).
-  explicit ScreenCapturerWinMagnifier(
-      std::unique_ptr<DesktopCapturer> fallback_capturer);
+  ScreenCapturerWinMagnifier();
   ~ScreenCapturerWinMagnifier() override;
 
   // Overridden from ScreenCapturer:
@@ -103,13 +99,8 @@ class ScreenCapturerWinMagnifier : public DesktopCapturer {
   // Makes sure the current frame exists and matches |size|.
   void CreateCurrentFrameIfNecessary(const DesktopSize& size);
 
-  // Start the fallback capturer and select the screen.
-  void StartFallbackCapturer();
-
   static Atomic32 tls_index_;
 
-  std::unique_ptr<DesktopCapturer> fallback_capturer_;
-  bool fallback_capturer_started_ = false;
   Callback* callback_ = nullptr;
   std::unique_ptr<SharedMemoryFactory> shared_memory_factory_;
   ScreenId current_screen_id_ = kFullDesktopScreenId;

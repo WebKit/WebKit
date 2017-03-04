@@ -20,7 +20,7 @@ VcmCapturer::VcmCapturer() : started_(false), sink_(nullptr), vcm_(NULL) {}
 
 bool VcmCapturer::Init(size_t width, size_t height, size_t target_fps) {
   VideoCaptureModule::DeviceInfo* device_info =
-      VideoCaptureFactory::CreateDeviceInfo(42);  // Any ID (42) will do.
+      VideoCaptureFactory::CreateDeviceInfo();
 
   char device_name[256];
   char unique_name[256];
@@ -31,8 +31,8 @@ bool VcmCapturer::Init(size_t width, size_t height, size_t target_fps) {
     return false;
   }
 
-  vcm_ = webrtc::VideoCaptureFactory::Create(0, unique_name);
-  vcm_->RegisterCaptureDataCallback(*this);
+  vcm_ = webrtc::VideoCaptureFactory::Create(unique_name);
+  vcm_->RegisterCaptureDataCallback(this);
 
   device_info->GetCapability(vcm_->CurrentDeviceName(), 0, capability_);
   delete device_info;
@@ -100,14 +100,11 @@ void VcmCapturer::Destroy() {
 
 VcmCapturer::~VcmCapturer() { Destroy(); }
 
-void VcmCapturer::OnIncomingCapturedFrame(const int32_t id,
-                                          const VideoFrame& frame) {
+void VcmCapturer::OnFrame(const VideoFrame& frame) {
   rtc::CritScope lock(&crit_);
   if (started_ && sink_)
     sink_->OnFrame(frame);
 }
 
-void VcmCapturer::OnCaptureDelayChanged(const int32_t id, const int32_t delay) {
-}
 }  // test
 }  // webrtc

@@ -6,7 +6,7 @@
 # in the file PATENTS.  All contributing project authors may
 # be found in the AUTHORS file in the root of the source tree.
 
-import("../build/webrtc.gni")
+import("../webrtc.gni")
 
 group("stats") {
   public_deps = [
@@ -57,6 +57,9 @@ if (rtc_include_tests) {
     deps = [
       ":rtc_stats",
       ":rtc_stats_test_utils",
+      "../api:rtc_stats_api",
+      "../base:rtc_base_approved",
+      "../base:rtc_base_tests_main",
       "../base:rtc_base_tests_utils",
       "../system_wrappers:metrics_default",
       "//testing/gmock",

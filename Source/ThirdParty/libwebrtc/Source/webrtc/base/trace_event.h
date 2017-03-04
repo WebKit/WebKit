@@ -577,11 +577,8 @@
 
 // Implementation detail: internal macro to create static category.
 #define INTERNAL_TRACE_EVENT_GET_CATEGORY_INFO(category) \
-    static const unsigned char* INTERNAL_TRACE_EVENT_UID(catstatic) = 0; \
-    if (!INTERNAL_TRACE_EVENT_UID(catstatic)) { \
-      INTERNAL_TRACE_EVENT_UID(catstatic) = \
-          TRACE_EVENT_API_GET_CATEGORY_ENABLED(category); \
-    }
+    static const unsigned char* INTERNAL_TRACE_EVENT_UID(catstatic) = \
+        TRACE_EVENT_API_GET_CATEGORY_ENABLED(category);
 
 // Implementation detail: internal macro to create static category and add
 // event if the category is enabled.
@@ -820,10 +817,9 @@ static inline void AddTraceEvent(char phase,
                                 const char* name,
                                 unsigned long long id,
                                 unsigned char flags) {
-  TRACE_EVENT_API_ADD_TRACE_EVENT(
-      phase, category_enabled, name, id,
-      kZeroNumArgs, NULL, NULL, NULL,
-      flags);
+  TRACE_EVENT_API_ADD_TRACE_EVENT(phase, category_enabled, name, id,
+                                  kZeroNumArgs, nullptr, nullptr, nullptr,
+                                  flags);
 }
 
 template<class ARG1_TYPE>
@@ -870,7 +866,7 @@ static inline void AddTraceEvent(char phase,
 class TraceEndOnScopeClose {
  public:
   // Note: members of data_ intentionally left uninitialized. See Initialize.
-  TraceEndOnScopeClose() : p_data_(NULL) {}
+  TraceEndOnScopeClose() : p_data_(nullptr) {}
   ~TraceEndOnScopeClose() {
     if (p_data_)
       AddEventIfEnabled();
@@ -888,12 +884,10 @@ class TraceEndOnScopeClose {
   void AddEventIfEnabled() {
     // Only called when p_data_ is non-null.
     if (*p_data_->category_enabled) {
-      TRACE_EVENT_API_ADD_TRACE_EVENT(
-          TRACE_EVENT_PHASE_END,
-          p_data_->category_enabled,
-          p_data_->name, kNoEventId,
-          kZeroNumArgs, NULL, NULL, NULL,
-          TRACE_EVENT_FLAG_NONE);
+      TRACE_EVENT_API_ADD_TRACE_EVENT(TRACE_EVENT_PHASE_END,
+                                      p_data_->category_enabled, p_data_->name,
+                                      kNoEventId, kZeroNumArgs, nullptr,
+                                      nullptr, nullptr, TRACE_EVENT_FLAG_NONE);
     }
   }
 

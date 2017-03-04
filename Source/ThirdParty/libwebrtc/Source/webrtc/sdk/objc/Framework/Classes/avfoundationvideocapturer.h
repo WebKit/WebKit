@@ -13,9 +13,9 @@
 
 #import <AVFoundation/AVFoundation.h>
 
+#include "webrtc/api/video/video_frame.h"
 #include "webrtc/common_video/include/i420_buffer_pool.h"
 #include "webrtc/media/base/videocapturer.h"
-#include "webrtc/video_frame.h"
 
 @class RTCAVFoundationVideoCapturerInternal;
 
@@ -57,6 +57,10 @@ class AVFoundationVideoCapturer : public cricket::VideoCapturer {
   // frame for capture.
   void CaptureSampleBuffer(CMSampleBufferRef sample_buffer,
                            webrtc::VideoRotation rotation);
+
+  // Called to adjust the size of output frames to supplied |width| and
+  // |height|. Also drops frames to make the output match |fps|.
+  void AdaptOutputFormat(int width, int height, int fps);
 
  private:
   RTCAVFoundationVideoCapturerInternal *_capturer;

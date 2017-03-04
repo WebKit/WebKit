@@ -1,9 +1,11 @@
 include_rules = [
   "+webrtc/base",
-  "+webrtc/voice_engine",
-  "+webrtc/modules/audio_coding/codecs/mock",
   "+webrtc/call",
+  "+webrtc/common_audio/resampler",
   "+webrtc/logging/rtc_event_log",
+  "+webrtc/modules/audio_coding/codecs/mock",
+  "+webrtc/modules/audio_device",
+  "+webrtc/modules/audio_mixer",
   "+webrtc/modules/audio_processing/include",
   "+webrtc/modules/bitrate_controller",
   "+webrtc/modules/congestion_controller",

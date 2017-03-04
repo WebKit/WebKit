@@ -19,7 +19,7 @@
 #include <string>
 
 #include "webrtc/base/basictypes.h"
-#include "webrtc/base/common.h"
+#include "webrtc/base/checks.h"
 #include "webrtc/base/logging.h"
 #include "webrtc/base/messagequeue.h"
 #include "webrtc/base/stream.h"
@@ -78,7 +78,7 @@ StreamResult StreamInterface::ReadLine(std::string* line) {
   StreamResult result = SR_SUCCESS;
   while (true) {
     char ch;
-    result = Read(&ch, sizeof(ch), NULL, NULL);
+    result = Read(&ch, sizeof(ch), nullptr, nullptr);
     if (result != SR_SUCCESS) {
       break;
     }
@@ -103,11 +103,11 @@ void StreamInterface::PostEvent(int events, int err) {
 }
 
 const void* StreamInterface::GetReadData(size_t* data_len) {
-  return NULL;
+  return nullptr;
 }
 
 void* StreamInterface::GetWriteBuffer(size_t* buf_len) {
-  return NULL;
+  return nullptr;
 }
 
 bool StreamInterface::SetPosition(size_t position) {
@@ -156,7 +156,7 @@ void StreamInterface::OnMessage(Message* msg) {
 StreamAdapterInterface::StreamAdapterInterface(StreamInterface* stream,
                                                bool owned)
     : stream_(stream), owned_(owned) {
-  if (NULL != stream_)
+  if (nullptr != stream_)
     stream_->SignalEvent.connect(this, &StreamAdapterInterface::OnEvent);
 }
 
@@ -208,21 +208,21 @@ bool StreamAdapterInterface::Flush() {
 }
 
 void StreamAdapterInterface::Attach(StreamInterface* stream, bool owned) {
-  if (NULL != stream_)
+  if (nullptr != stream_)
     stream_->SignalEvent.disconnect(this);
   if (owned_)
     delete stream_;
   stream_ = stream;
   owned_ = owned;
-  if (NULL != stream_)
+  if (nullptr != stream_)
     stream_->SignalEvent.connect(this, &StreamAdapterInterface::OnEvent);
 }
 
 StreamInterface* StreamAdapterInterface::Detach() {
-  if (NULL != stream_)
+  if (nullptr != stream_)
     stream_->SignalEvent.disconnect(this);
   StreamInterface* stream = stream_;
-  stream_ = NULL;
+  stream_ = nullptr;
   return stream;
 }
 
@@ -273,7 +273,7 @@ StreamResult StreamTap::Read(void* buffer, size_t buffer_len,
   StreamResult res = StreamAdapterInterface::Read(buffer, buffer_len,
                                                   read, error);
   if ((res == SR_SUCCESS) && (tap_result_ == SR_SUCCESS)) {
-    tap_result_ = tap_->WriteAll(buffer, *read, NULL, &tap_error_);
+    tap_result_ = tap_->WriteAll(buffer, *read, nullptr, &tap_error_);
   }
   return res;
 }
@@ -287,7 +287,7 @@ StreamResult StreamTap::Write(const void* data, size_t data_len,
   StreamResult res = StreamAdapterInterface::Write(data, data_len,
                                                    written, error);
   if ((res == SR_SUCCESS) && (tap_result_ == SR_SUCCESS)) {
-    tap_result_ = tap_->WriteAll(data, *written, NULL, &tap_error_);
+    tap_result_ = tap_->WriteAll(data, *written, nullptr, &tap_error_);
   }
   return res;
 }
@@ -325,8 +325,7 @@ void NullStream::Close() {
 // FileStream
 ///////////////////////////////////////////////////////////////////////////////
 
-FileStream::FileStream() : file_(NULL) {
-}
+FileStream::FileStream() : file_(nullptr) {}
 
 FileStream::~FileStream() {
   FileStream::Close();
@@ -351,7 +350,7 @@ bool FileStream::Open(const std::string& filename, const char* mode,
   if (!file_ && error) {
     *error = errno;
   }
-  return (file_ != NULL);
+  return (file_ != nullptr);
 }
 
 bool FileStream::OpenShare(const std::string& filename, const char* mode,
@@ -365,7 +364,7 @@ bool FileStream::OpenShare(const std::string& filename, const char* mode,
       *error = errno;
       return false;
     }
-    return file_ != NULL;
+    return file_ != nullptr;
   } else {
     if (error) {
       *error = -1;
@@ -380,11 +379,11 @@ bool FileStream::OpenShare(const std::string& filename, const char* mode,
 bool FileStream::DisableBuffering() {
   if (!file_)
     return false;
-  return (setvbuf(file_, NULL, _IONBF, 0) == 0);
+  return (setvbuf(file_, nullptr, _IONBF, 0) == 0);
 }
 
 StreamState FileStream::GetState() const {
-  return (file_ == NULL) ? SS_CLOSED : SS_OPEN;
+  return (file_ == nullptr) ? SS_CLOSED : SS_OPEN;
 }
 
 StreamResult FileStream::Read(void* buffer, size_t buffer_len,
@@ -422,7 +421,7 @@ StreamResult FileStream::Write(const void* data, size_t data_len,
 void FileStream::Close() {
   if (file_) {
     DoClose();
-    file_ = NULL;
+    file_ = nullptr;
   }
 }
 
@@ -433,7 +432,7 @@ bool FileStream::SetPosition(size_t position) {
 }
 
 bool FileStream::GetPosition(size_t* position) const {
-  ASSERT(NULL != position);
+  RTC_DCHECK(nullptr != position);
   if (!file_)
     return false;
   long result = ftell(file_);
@@ -445,7 +444,7 @@ bool FileStream::GetPosition(size_t* position) const {
 }
 
 bool FileStream::GetSize(size_t* size) const {
-  ASSERT(NULL != size);
+  RTC_DCHECK(nullptr != size);
   if (!file_)
     return false;
   struct stat file_stats;
@@ -457,7 +456,7 @@ bool FileStream::GetSize(size_t* size) const {
 }
 
 bool FileStream::GetAvailable(size_t* size) const {
-  ASSERT(NULL != size);
+  RTC_DCHECK(nullptr != size);
   if (!GetSize(size))
     return false;
   long result = ftell(file_);
@@ -486,16 +485,16 @@ bool FileStream::Flush() {
     return (0 == fflush(file_));
   }
   // try to flush empty file?
-  ASSERT(false);
+  RTC_NOTREACHED();
   return false;
 }
 
 #if defined(WEBRTC_POSIX) && !defined(__native_client__)
 
 bool FileStream::TryLock() {
-  if (file_ == NULL) {
+  if (file_ == nullptr) {
     // Stream not open.
-    ASSERT(false);
+    RTC_NOTREACHED();
     return false;
   }
 
@@ -503,9 +502,9 @@ bool FileStream::TryLock() {
 }
 
 bool FileStream::Unlock() {
-  if (file_ == NULL) {
+  if (file_ == nullptr) {
     // Stream not open.
-    ASSERT(false);
+    RTC_NOTREACHED();
     return false;
   }
 
@@ -523,9 +522,7 @@ void FileStream::DoClose() {
 ///////////////////////////////////////////////////////////////////////////////
 
 MemoryStreamBase::MemoryStreamBase()
-  : buffer_(NULL), buffer_length_(0), data_length_(0),
-    seek_position_(0) {
-}
+    : buffer_(nullptr), buffer_length_(0), data_length_(0), seek_position_(0) {}
 
 StreamState MemoryStreamBase::GetState() const {
   return SS_OPEN;
@@ -562,7 +559,7 @@ StreamResult MemoryStreamBase::Write(const void* buffer, size_t bytes,
     if (SR_SUCCESS != result) {
       return result;
     }
-    ASSERT(buffer_length_ >= new_buffer_length);
+    RTC_DCHECK(buffer_length_ >= new_buffer_length);
     available = buffer_length_ - seek_position_;
   }
 
@@ -610,7 +607,7 @@ bool MemoryStreamBase::GetAvailable(size_t* size) const {
 }
 
 bool MemoryStreamBase::ReserveSize(size_t size) {
-  return (SR_SUCCESS == DoReserve(size, NULL));
+  return (SR_SUCCESS == DoReserve(size, nullptr));
 }
 
 StreamResult MemoryStreamBase::DoReserve(size_t size, int* error) {
@@ -619,17 +616,14 @@ StreamResult MemoryStreamBase::DoReserve(size_t size, int* error) {
 
 ///////////////////////////////////////////////////////////////////////////////
 
-MemoryStream::MemoryStream()
-  : buffer_alloc_(NULL) {
-}
+MemoryStream::MemoryStream() : buffer_alloc_(nullptr) {}
 
-MemoryStream::MemoryStream(const char* data)
-  : buffer_alloc_(NULL) {
+MemoryStream::MemoryStream(const char* data) : buffer_alloc_(nullptr) {
   SetData(data, strlen(data));
 }
 
 MemoryStream::MemoryStream(const void* data, size_t length)
-  : buffer_alloc_(NULL) {
+    : buffer_alloc_(nullptr) {
   SetData(data, length);
 }
 
@@ -807,7 +801,7 @@ const void* FifoBuffer::GetReadData(size_t* size) {
 
 void FifoBuffer::ConsumeReadData(size_t size) {
   CritScope cs(&crit_);
-  ASSERT(size <= data_length_);
+  RTC_DCHECK(size <= data_length_);
   const bool was_writable = data_length_ < buffer_length_;
   read_position_ = (read_position_ + size) % buffer_length_;
   data_length_ -= size;
@@ -819,7 +813,7 @@ void FifoBuffer::ConsumeReadData(size_t size) {
 void* FifoBuffer::GetWriteBuffer(size_t* size) {
   CritScope cs(&crit_);
   if (state_ == SS_CLOSED) {
-    return NULL;
+    return nullptr;
   }
 
   // if empty, reset the write position to the beginning, so we can get
@@ -837,7 +831,7 @@ void* FifoBuffer::GetWriteBuffer(size_t* size) {
 
 void FifoBuffer::ConsumeWriteBuffer(size_t size) {
   CritScope cs(&crit_);
-  ASSERT(size <= buffer_length_ - data_length_);
+  RTC_DCHECK(size <= buffer_length_ - data_length_);
   const bool was_readable = (data_length_ > 0);
   data_length_ += size;
   if (!was_readable && size > 0) {
@@ -943,8 +937,8 @@ StreamResult LoggingAdapter::Write(const void* data, size_t data_len,
 }
 
 void LoggingAdapter::Close() {
-  LogMultiline(level_, label_.c_str(), false, NULL, 0, hex_mode_, &lms_);
-  LogMultiline(level_, label_.c_str(), true, NULL, 0, hex_mode_, &lms_);
+  LogMultiline(level_, label_.c_str(), false, nullptr, 0, hex_mode_, &lms_);
+  LogMultiline(level_, label_.c_str(), true, nullptr, 0, hex_mode_, &lms_);
   LOG_V(level_) << label_ << " Closed locally";
   StreamAdapterInterface::Close();
 }
@@ -953,8 +947,8 @@ void LoggingAdapter::OnEvent(StreamInterface* stream, int events, int err) {
   if (events & SE_OPEN) {
     LOG_V(level_) << label_ << " Open";
   } else if (events & SE_CLOSE) {
-    LogMultiline(level_, label_.c_str(), false, NULL, 0, hex_mode_, &lms_);
-    LogMultiline(level_, label_.c_str(), true, NULL, 0, hex_mode_, &lms_);
+    LogMultiline(level_, label_.c_str(), false, nullptr, 0, hex_mode_, &lms_);
+    LogMultiline(level_, label_.c_str(), true, nullptr, 0, hex_mode_, &lms_);
     LOG_V(level_) << label_ << " Closed with error: " << err;
   }
   StreamAdapterInterface::OnEvent(stream, events, err);
@@ -1066,10 +1060,11 @@ StreamReference::StreamReference(StreamRefCount* stream_ref_count,
 ///////////////////////////////////////////////////////////////////////////////
 
 StreamResult Flow(StreamInterface* source,
-                  char* buffer, size_t buffer_len,
+                  char* buffer,
+                  size_t buffer_len,
                   StreamInterface* sink,
-                  size_t* data_len /* = NULL */) {
-  ASSERT(buffer_len > 0);
+                  size_t* data_len /* = nullptr */) {
+  RTC_DCHECK(buffer_len > 0);
 
   StreamResult result;
   size_t count, read_pos, write_pos;
@@ -1083,8 +1078,8 @@ StreamResult Flow(StreamInterface* source,
   do {
     // Read until buffer is full, end of stream, or error
     while (!end_of_stream && (read_pos < buffer_len)) {
-      result = source->Read(buffer + read_pos, buffer_len - read_pos,
-                            &count, NULL);
+      result = source->Read(buffer + read_pos, buffer_len - read_pos, &count,
+                            nullptr);
       if (result == SR_EOS) {
         end_of_stream = true;
       } else if (result != SR_SUCCESS) {
@@ -1100,8 +1095,8 @@ StreamResult Flow(StreamInterface* source,
     // Write until buffer is empty, or error (including end of stream)
     write_pos = 0;
     while (write_pos < read_pos) {
-      result = sink->Write(buffer + write_pos, read_pos - write_pos,
-                           &count, NULL);
+      result = sink->Write(buffer + write_pos, read_pos - write_pos, &count,
+                           nullptr);
       if (result != SR_SUCCESS) {
         if (data_len) {
           *data_len = read_pos - write_pos;

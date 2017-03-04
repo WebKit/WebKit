@@ -37,8 +37,8 @@ class MediaFileTest : public testing::Test {
 TEST_F(MediaFileTest, MAYBE_StartPlayingAudioFileWithoutError) {
   // TODO(leozwang): Use hard coded filename here, we want to
   // loop through all audio files in future
-  const std::string audio_file = webrtc::test::ProjectRootPath() +
-      "data/voice_engine/audio_tiny48.wav";
+  const std::string audio_file =
+      webrtc::test::ResourcePath("voice_engine/audio_tiny48", "wav");
   ASSERT_EQ(0, media_file_->StartPlayingAudioFile(
       audio_file.c_str(),
       0,

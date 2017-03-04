@@ -22,14 +22,13 @@
 #include "webrtc/base/platform_thread.h"
 #include "webrtc/base/timeutils.h"
 #include "webrtc/common_types.h"
-#include "webrtc/modules/audio_coding/acm2/acm_common_defs.h"
 #include "webrtc/modules/audio_coding/codecs/audio_format_conversion.h"
 #include "webrtc/modules/audio_coding/test/utility.h"
 #include "webrtc/system_wrappers/include/event_wrapper.h"
 #include "webrtc/system_wrappers/include/trace.h"
 #include "webrtc/test/gtest.h"
 #include "webrtc/test/testsupport/fileutils.h"
-#include "webrtc/voice_engine_configurations.h"
+#include "webrtc/typedefs.h"
 
 namespace webrtc {
 
@@ -678,7 +677,7 @@ void APITest::TestDelay(char side) {
   double averageEstimDelay = 0;
   double averageDelay = 0;
 
-  CircularBuffer estimDelayCB(100);
+  test::CircularBuffer estimDelayCB(100);
   estimDelayCB.SetArithMean(true);
 
   if (side == 'A') {

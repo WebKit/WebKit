@@ -9,7 +9,7 @@
  */
 
 #include "webrtc/base/task.h"
-#include "webrtc/base/common.h"
+#include "webrtc/base/checks.h"
 #include "webrtc/base/taskrunner.h"
 
 namespace rtc {
@@ -31,14 +31,16 @@ Task::Task(TaskParent *parent)
   unique_id_ = unique_id_seed_++;
 
   // sanity check that we didn't roll-over our id seed
-  ASSERT(unique_id_ < unique_id_seed_);
+  RTC_DCHECK(unique_id_ < unique_id_seed_);
 }
 
 Task::~Task() {
   // Is this task being deleted in the correct manner?
-  ASSERT(!done_ || GetRunner()->is_ok_to_delete(this));
-  ASSERT(state_ == STATE_INIT || done_);
-  ASSERT(state_ == STATE_INIT || blocked_);
+#if RTC_DCHECK_IS_ON
+  RTC_DCHECK(!done_ || GetRunner()->is_ok_to_delete(this));
+#endif
+  RTC_DCHECK(state_ == STATE_INIT || done_);
+  RTC_DCHECK(state_ == STATE_INIT || blocked_);
 
   // If the task is being deleted without being done, it
   // means that it hasn't been removed from its parent.
@@ -68,11 +70,11 @@ void Task::Start() {
 
 void Task::Step() {
   if (done_) {
-#if !defined(NDEBUG)
+#if RTC_DCHECK_IS_ON
     // we do not know how !blocked_ happens when done_ - should be impossible.
     // But it causes problems, so in retail build, we force blocked_, and
     // under debug we assert.
-    ASSERT(blocked_);
+    RTC_DCHECK(blocked_);
 #else
     blocked_ = true;
 #endif
@@ -88,9 +90,9 @@ void Task::Step() {
 //   SignalDone();
 
     Stop();
-#if !defined(NDEBUG)
+#if RTC_DCHECK_IS_ON
     // verify that stop removed this from its parent
-    ASSERT(!parent()->IsChildTask(this));
+    RTC_DCHECK(!parent()->IsChildTask(this));
 #endif
     return;
   }
@@ -125,9 +127,9 @@ void Task::Step() {
 //    SignalDone();
 
     Stop();
-#if !defined(NDEBUG)
+#if RTC_DCHECK_IS_ON
     // verify that stop removed this from its parent
-    ASSERT(!parent()->IsChildTask(this));
+    RTC_DCHECK(!parent()->IsChildTask(this));
 #endif
     blocked_ = true;
   }
@@ -150,9 +152,9 @@ void Task::Abort(bool nowake) {
     // "done_" is set before calling "Stop()" to ensure that this code 
     // doesn't execute more than once (recursively) for the same task.
     Stop();
-#if !defined(NDEBUG)
+#if RTC_DCHECK_IS_ON
     // verify that stop removed this from its parent
-    ASSERT(!parent()->IsChildTask(this));
+    RTC_DCHECK(!parent()->IsChildTask(this));
 #endif
     if (!nowake) {
       // WakeTasks to self-delete.

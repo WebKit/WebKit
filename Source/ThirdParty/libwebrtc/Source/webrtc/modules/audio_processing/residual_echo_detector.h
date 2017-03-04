@@ -16,6 +16,7 @@
 #include "webrtc/base/array_view.h"
 #include "webrtc/modules/audio_processing/echo_detector/circular_buffer.h"
 #include "webrtc/modules/audio_processing/echo_detector/mean_variance_estimator.h"
+#include "webrtc/modules/audio_processing/echo_detector/moving_max.h"
 #include "webrtc/modules/audio_processing/echo_detector/normalized_covariance_estimator.h"
 
 namespace webrtc {
@@ -45,6 +46,10 @@ class ResidualEchoDetector {
 
   // This function should be called while holding the capture lock.
   float echo_likelihood() const { return echo_likelihood_; }
+
+  float echo_likelihood_recent_max() const {
+    return recent_likelihood_max_.max();
+  }
 
  private:
   // Keep track if the |Process| function has been previously called.
@@ -76,6 +81,7 @@ class ResidualEchoDetector {
   float echo_likelihood_ = 0.f;
   // Reliability of the current likelihood.
   float reliability_ = 0.f;
+  MovingMax recent_likelihood_max_;
 };
 
 }  // namespace webrtc

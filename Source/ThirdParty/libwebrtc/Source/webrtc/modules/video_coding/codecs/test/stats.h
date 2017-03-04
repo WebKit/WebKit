@@ -28,6 +28,7 @@ struct FrameStatistic {
   int decode_return_code;
   int encode_time_in_us;
   int decode_time_in_us;
+  int qp;
   int frame_number;
   // How many packets were discarded of the encoded frame data (if any).
   int packets_dropped;

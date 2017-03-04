@@ -1,2 +1,0 @@
-# Tests that are too slow.
-CommonFormats/AudioProcessingTest*

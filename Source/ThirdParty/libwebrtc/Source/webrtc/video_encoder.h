@@ -15,9 +15,11 @@
 #include <string>
 #include <vector>
 
+#include "webrtc/base/checks.h"
 #include "webrtc/common_types.h"
 #include "webrtc/typedefs.h"
 #include "webrtc/video_frame.h"
+#include "webrtc/base/optional.h"
 
 namespace webrtc {
 
@@ -58,6 +60,8 @@ class EncodedImageCallback {
       const EncodedImage& encoded_image,
       const CodecSpecificInfo* codec_specific_info,
       const RTPFragmentationHeader* fragmentation) = 0;
+
+  virtual void OnDroppedFrame() {}
 };
 
 class VideoEncoder {
@@ -68,7 +72,20 @@ class VideoEncoder {
     kVp9,
     kUnsupportedCodec,
   };
-
+  struct QpThresholds {
+    QpThresholds(int l, int h) : low(l), high(h) {}
+    QpThresholds() : low(-1), high(-1) {}
+    int low;
+    int high;
+  };
+  struct ScalingSettings {
+    ScalingSettings(bool on, int low, int high)
+        : enabled(on),
+          thresholds(rtc::Optional<QpThresholds>(QpThresholds(low, high))) {}
+    explicit ScalingSettings(bool on) : enabled(on) {}
+    const bool enabled;
+    const rtc::Optional<QpThresholds> thresholds;
+  };
   static VideoEncoder* Create(EncoderType codec_type);
   // Returns true if this type of encoder can be created using
   // VideoEncoder::Create.
@@ -148,10 +165,25 @@ class VideoEncoder {
   //          - framerate       : The target frame rate
   //
   // Return value                : WEBRTC_VIDEO_CODEC_OK if OK, < 0 otherwise.
-  virtual int32_t SetRates(uint32_t bitrate, uint32_t framerate) = 0;
+  virtual int32_t SetRates(uint32_t bitrate, uint32_t framerate) {
+    RTC_NOTREACHED() << "SetRate(uint32_t, uint32_t) is deprecated.";
+    return -1;
+  }
+
+  // Default fallback: Just use the sum of bitrates as the single target rate.
+  // TODO(sprang): Remove this default implementation when we remove SetRates().
+  virtual int32_t SetRateAllocation(const BitrateAllocation& allocation,
+                                    uint32_t framerate) {
+    return SetRates(allocation.get_sum_kbps(), framerate);
+  }
+
+  // Any encoder implementation wishing to use the WebRTC provided
+  // quality scaler must implement this method.
+  virtual ScalingSettings GetScalingSettings() const {
+    return ScalingSettings(false);
+  }
 
   virtual int32_t SetPeriodicKeyFrames(bool enable) { return -1; }
-  virtual void OnDroppedFrame() {}
   virtual bool SupportsNativeHandle() const { return false; }
   virtual const char* ImplementationName() const { return "unknown"; }
 };

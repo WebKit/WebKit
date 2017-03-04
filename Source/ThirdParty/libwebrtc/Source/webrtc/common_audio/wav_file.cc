@@ -107,7 +107,7 @@ size_t WavReader::ReadSamples(size_t num_samples, float* samples) {
 
 void WavReader::Close() {
   RTC_CHECK_EQ(0, fclose(file_handle_));
-  file_handle_ = NULL;
+  file_handle_ = nullptr;
 }
 
 WavWriter::WavWriter(const std::string& filename, int sample_rate,
@@ -123,7 +123,7 @@ WavWriter::WavWriter(const std::string& filename, int sample_rate,
   // Write a blank placeholder header, since we need to know the total number
   // of samples before we can fill in the real data.
   static const uint8_t blank_header[kWavHeaderSize] = {0};
-  RTC_CHECK_EQ(1u, fwrite(blank_header, kWavHeaderSize, 1, file_handle_));
+  RTC_CHECK_EQ(1, fwrite(blank_header, kWavHeaderSize, 1, file_handle_));
 }
 
 WavWriter::~WavWriter() {
@@ -168,9 +168,9 @@ void WavWriter::Close() {
   uint8_t header[kWavHeaderSize];
   WriteWavHeader(header, num_channels_, sample_rate_, kWavFormat,
                  kBytesPerSample, num_samples_);
-  RTC_CHECK_EQ(1u, fwrite(header, kWavHeaderSize, 1, file_handle_));
+  RTC_CHECK_EQ(1, fwrite(header, kWavHeaderSize, 1, file_handle_));
   RTC_CHECK_EQ(0, fclose(file_handle_));
-  file_handle_ = NULL;
+  file_handle_ = nullptr;
 }
 
 }  // namespace webrtc

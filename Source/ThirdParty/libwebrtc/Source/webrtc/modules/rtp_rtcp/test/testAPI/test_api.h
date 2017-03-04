@@ -10,6 +10,7 @@
 #ifndef WEBRTC_MODULES_RTP_RTCP_TEST_TESTAPI_TEST_API_H_
 #define WEBRTC_MODULES_RTP_RTCP_TEST_TESTAPI_TEST_API_H_
 
+#include "webrtc/api/call/transport.h"
 #include "webrtc/common_types.h"
 #include "webrtc/modules/rtp_rtcp/include/receive_statistics.h"
 #include "webrtc/modules/rtp_rtcp/include/rtp_header_parser.h"
@@ -18,7 +19,6 @@
 #include "webrtc/modules/rtp_rtcp/include/rtp_rtcp.h"
 #include "webrtc/modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "webrtc/test/gtest.h"
-#include "webrtc/transport.h"
 
 namespace webrtc {
 

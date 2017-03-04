@@ -39,7 +39,7 @@ void TestTcpInternal(const SocketAddress& loopback) {
       ->CreateAsyncSocket(loopback.family(), SOCK_STREAM);
   AsyncTCPSocket* tcp_socket = AsyncTCPSocket::Create(
       socket, loopback, server.address());
-  ASSERT_TRUE(tcp_socket != NULL);
+  ASSERT_TRUE(tcp_socket != nullptr);
 
   TestClient client(tcp_socket);
   SocketAddress addr = client.address(), from;

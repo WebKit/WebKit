@@ -10,6 +10,7 @@
 
 #include "webrtc/p2p/quic/quictransport.h"
 
+#include "webrtc/base/checks.h"
 #include "webrtc/p2p/base/p2ptransportchannel.h"
 
 namespace cricket {
@@ -87,7 +88,7 @@ void QuicTransport::DestroyTransportChannel(TransportChannelImpl* channel) {
 }
 
 bool QuicTransport::GetSslRole(rtc::SSLRole* ssl_role) const {
-  ASSERT(ssl_role != NULL);
+  RTC_DCHECK(ssl_role != NULL);
   *ssl_role = local_role_;
   return true;
 }

@@ -15,7 +15,6 @@
 #include <memory>
 
 #include "webrtc/modules/include/module_common_types.h"
-#include "webrtc/modules/video_processing/include/video_processing_defines.h"
 
 namespace webrtc {
 

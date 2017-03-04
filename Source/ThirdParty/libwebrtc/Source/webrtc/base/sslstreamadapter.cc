@@ -9,13 +9,8 @@
  */
 
 #include "webrtc/base/sslstreamadapter.h"
-#include "webrtc/base/sslconfig.h"
-
-#if SSL_USE_OPENSSL
 
 #include "webrtc/base/opensslstreamadapter.h"
-
-#endif  // SSL_USE_OPENSSL
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -101,11 +96,7 @@ CryptoOptions CryptoOptions::NoGcm() {
 }
 
 SSLStreamAdapter* SSLStreamAdapter::Create(StreamInterface* stream) {
-#if SSL_USE_OPENSSL
   return new OpenSSLStreamAdapter(stream);
-#else  // !SSL_USE_OPENSSL
-  return NULL;
-#endif  // SSL_USE_OPENSSL
 }
 
 SSLStreamAdapter::SSLStreamAdapter(StreamInterface* stream)
@@ -137,16 +128,6 @@ bool SSLStreamAdapter::GetDtlsSrtpCryptoSuite(int* crypto_suite) {
   return false;
 }
 
-#if SSL_USE_OPENSSL
-bool SSLStreamAdapter::HaveDtls() {
-  return OpenSSLStreamAdapter::HaveDtls();
-}
-bool SSLStreamAdapter::HaveDtlsSrtp() {
-  return OpenSSLStreamAdapter::HaveDtlsSrtp();
-}
-bool SSLStreamAdapter::HaveExporter() {
-  return OpenSSLStreamAdapter::HaveExporter();
-}
 bool SSLStreamAdapter::IsBoringSsl() {
   return OpenSSLStreamAdapter::IsBoringSsl();
 }
@@ -160,7 +141,9 @@ bool SSLStreamAdapter::IsAcceptableCipher(const std::string& cipher,
 std::string SSLStreamAdapter::SslCipherSuiteToName(int cipher_suite) {
   return OpenSSLStreamAdapter::SslCipherSuiteToName(cipher_suite);
 }
-#endif  // SSL_USE_OPENSSL
+void SSLStreamAdapter::enable_time_callback_for_testing() {
+  OpenSSLStreamAdapter::enable_time_callback_for_testing();
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 

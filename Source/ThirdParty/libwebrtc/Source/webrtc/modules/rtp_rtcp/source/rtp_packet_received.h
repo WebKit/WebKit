@@ -18,7 +18,7 @@ namespace webrtc {
 // Class to hold rtp packet with metadata for receiver side.
 class RtpPacketReceived : public rtp::Packet {
  public:
-  RtpPacketReceived() : Packet(nullptr) {}
+  RtpPacketReceived() = default;
   explicit RtpPacketReceived(const ExtensionManager* extensions)
       : Packet(extensions) {}
 

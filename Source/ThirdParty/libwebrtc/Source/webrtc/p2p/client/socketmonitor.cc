@@ -10,7 +10,7 @@
 
 #include "webrtc/p2p/client/socketmonitor.h"
 
-#include "webrtc/base/common.h"
+#include "webrtc/base/checks.h"
 
 namespace cricket {
 
@@ -50,7 +50,7 @@ void ConnectionMonitor::OnMessage(rtc::Message *message) {
   rtc::CritScope cs(&crit_);
   switch (message->message_id) {
     case MSG_MONITOR_START:
-      ASSERT(rtc::Thread::Current() == network_thread_);
+      RTC_DCHECK(rtc::Thread::Current() == network_thread_);
       if (!monitoring_) {
         monitoring_ = true;
         PollConnectionStats_w();
@@ -58,7 +58,7 @@ void ConnectionMonitor::OnMessage(rtc::Message *message) {
       break;
 
     case MSG_MONITOR_STOP:
-      ASSERT(rtc::Thread::Current() == network_thread_);
+      RTC_DCHECK(rtc::Thread::Current() == network_thread_);
       if (monitoring_) {
         monitoring_ = false;
         network_thread_->Clear(this);
@@ -66,12 +66,12 @@ void ConnectionMonitor::OnMessage(rtc::Message *message) {
       break;
 
     case MSG_MONITOR_POLL:
-      ASSERT(rtc::Thread::Current() == network_thread_);
+      RTC_DCHECK(rtc::Thread::Current() == network_thread_);
       PollConnectionStats_w();
       break;
 
     case MSG_MONITOR_SIGNAL: {
-      ASSERT(rtc::Thread::Current() == monitoring_thread_);
+      RTC_DCHECK(rtc::Thread::Current() == monitoring_thread_);
       std::vector<ConnectionInfo> infos = connection_infos_;
       crit_.Leave();
       SignalUpdate(this, infos);
@@ -82,7 +82,7 @@ void ConnectionMonitor::OnMessage(rtc::Message *message) {
 }
 
 void ConnectionMonitor::PollConnectionStats_w() {
-  ASSERT(rtc::Thread::Current() == network_thread_);
+  RTC_DCHECK(rtc::Thread::Current() == network_thread_);
   rtc::CritScope cs(&crit_);
 
   // Gather connection infos

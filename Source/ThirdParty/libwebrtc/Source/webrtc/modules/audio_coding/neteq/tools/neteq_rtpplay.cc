@@ -116,9 +116,18 @@ const bool pcm16b_swb48_dummy =
 DEFINE_int32(g722, 9, "RTP payload type for G.722");
 const bool g722_dummy =
     google::RegisterFlagValidator(&FLAGS_g722, &ValidatePayloadType);
-DEFINE_int32(avt, 106, "RTP payload type for AVT/DTMF");
+DEFINE_int32(avt, 106, "RTP payload type for AVT/DTMF (8 kHz)");
 const bool avt_dummy =
     google::RegisterFlagValidator(&FLAGS_avt, &ValidatePayloadType);
+DEFINE_int32(avt_16, 114, "RTP payload type for AVT/DTMF (16 kHz)");
+const bool avt_16_dummy =
+    google::RegisterFlagValidator(&FLAGS_avt_16, &ValidatePayloadType);
+DEFINE_int32(avt_32, 115, "RTP payload type for AVT/DTMF (32 kHz)");
+const bool avt_32_dummy =
+    google::RegisterFlagValidator(&FLAGS_avt_32, &ValidatePayloadType);
+DEFINE_int32(avt_48, 116, "RTP payload type for AVT/DTMF (48 kHz)");
+const bool avt_48_dummy =
+    google::RegisterFlagValidator(&FLAGS_avt_48, &ValidatePayloadType);
 DEFINE_int32(red, 117, "RTP payload type for redundant audio (RED)");
 const bool red_dummy =
     google::RegisterFlagValidator(&FLAGS_red, &ValidatePayloadType);
@@ -179,7 +188,13 @@ std::string CodecName(NetEqDecoder codec) {
     case NetEqDecoder::kDecoderRED:
       return "redundant audio (RED)";
     case NetEqDecoder::kDecoderAVT:
-      return "AVT/DTMF";
+      return "AVT/DTMF (8 kHz)";
+    case NetEqDecoder::kDecoderAVT16kHz:
+      return "AVT/DTMF (16 kHz)";
+    case NetEqDecoder::kDecoderAVT32kHz:
+      return "AVT/DTMF (32 kHz)";
+    case NetEqDecoder::kDecoderAVT48kHz:
+      return "AVT/DTMF (48 kHz)";
     case NetEqDecoder::kDecoderCNGnb:
       return "comfort noise (8 kHz)";
     case NetEqDecoder::kDecoderCNGwb:
@@ -213,6 +228,9 @@ void PrintCodecMapping() {
                          FLAGS_pcm16b_swb48);
   PrintCodecMappingEntry(NetEqDecoder::kDecoderG722, FLAGS_g722);
   PrintCodecMappingEntry(NetEqDecoder::kDecoderAVT, FLAGS_avt);
+  PrintCodecMappingEntry(NetEqDecoder::kDecoderAVT16kHz, FLAGS_avt_16);
+  PrintCodecMappingEntry(NetEqDecoder::kDecoderAVT32kHz, FLAGS_avt_32);
+  PrintCodecMappingEntry(NetEqDecoder::kDecoderAVT48kHz, FLAGS_avt_48);
   PrintCodecMappingEntry(NetEqDecoder::kDecoderRED, FLAGS_red);
   PrintCodecMappingEntry(NetEqDecoder::kDecoderCNGnb, FLAGS_cn_nb);
   PrintCodecMappingEntry(NetEqDecoder::kDecoderCNGwb, FLAGS_cn_wb);
@@ -223,18 +241,19 @@ void PrintCodecMapping() {
 int CodecSampleRate(uint8_t payload_type) {
   if (payload_type == FLAGS_pcmu || payload_type == FLAGS_pcma ||
       payload_type == FLAGS_ilbc || payload_type == FLAGS_pcm16b ||
-      payload_type == FLAGS_cn_nb)
+      payload_type == FLAGS_cn_nb || payload_type == FLAGS_avt)
     return 8000;
   if (payload_type == FLAGS_isac || payload_type == FLAGS_pcm16b_wb ||
-      payload_type == FLAGS_g722 || payload_type == FLAGS_cn_wb)
+      payload_type == FLAGS_g722 || payload_type == FLAGS_cn_wb ||
+      payload_type == FLAGS_avt_16)
     return 16000;
   if (payload_type == FLAGS_isac_swb || payload_type == FLAGS_pcm16b_swb32 ||
-      payload_type == FLAGS_cn_swb32)
+      payload_type == FLAGS_cn_swb32 || payload_type == FLAGS_avt_32)
     return 32000;
   if (payload_type == FLAGS_opus || payload_type == FLAGS_pcm16b_swb48 ||
-      payload_type == FLAGS_cn_swb48)
+      payload_type == FLAGS_cn_swb48 || payload_type == FLAGS_avt_48)
     return 48000;
-  if (payload_type == FLAGS_avt || payload_type == FLAGS_red)
+  if (payload_type == FLAGS_red)
     return 0;
   return -1;
 }
@@ -376,6 +395,11 @@ int RunTest(int argc, char* argv[]) {
        std::make_pair(NetEqDecoder::kDecoderPCM16Bswb48kHz, "pcm16-swb48")},
       {FLAGS_g722, std::make_pair(NetEqDecoder::kDecoderG722, "g722")},
       {FLAGS_avt, std::make_pair(NetEqDecoder::kDecoderAVT, "avt")},
+      {FLAGS_avt_16, std::make_pair(NetEqDecoder::kDecoderAVT16kHz, "avt-16")},
+      {FLAGS_avt_32,
+       std::make_pair(NetEqDecoder::kDecoderAVT32kHz, "avt-32")},
+      {FLAGS_avt_48,
+       std::make_pair(NetEqDecoder::kDecoderAVT48kHz, "avt-48")},
       {FLAGS_red, std::make_pair(NetEqDecoder::kDecoderRED, "red")},
       {FLAGS_cn_nb, std::make_pair(NetEqDecoder::kDecoderCNGnb, "cng-nb")},
       {FLAGS_cn_wb, std::make_pair(NetEqDecoder::kDecoderCNGwb, "cng-wb")},
@@ -407,7 +431,8 @@ int RunTest(int argc, char* argv[]) {
     std::set<uint8_t> cn_types = std_set_int32_to_uint8(
         {FLAGS_cn_nb, FLAGS_cn_wb, FLAGS_cn_swb32, FLAGS_cn_swb48});
     std::set<uint8_t> forbidden_types =
-        std_set_int32_to_uint8({FLAGS_g722, FLAGS_red, FLAGS_avt});
+        std_set_int32_to_uint8({FLAGS_g722, FLAGS_red, FLAGS_avt,
+                                FLAGS_avt_16, FLAGS_avt_32, FLAGS_avt_48});
     input.reset(new NetEqReplacementInput(std::move(input), replacement_pt,
                                           cn_types, forbidden_types));
 

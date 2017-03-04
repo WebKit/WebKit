@@ -16,7 +16,6 @@
 #include <stdlib.h>
 
 #include "webrtc/common_types.h"
-#include "webrtc/modules/audio_coding/acm2/acm_common_defs.h"
 #include "webrtc/modules/audio_coding/codecs/audio_format_conversion.h"
 #include "webrtc/modules/audio_coding/include/audio_coding_module.h"
 #include "webrtc/modules/audio_coding/test/utility.h"

@@ -14,10 +14,11 @@
 #ifndef WEBRTC_BASE_SCOPEDPTRCOLLECTION_H_
 #define WEBRTC_BASE_SCOPEDPTRCOLLECTION_H_
 
+#include <stddef.h>
+
 #include <algorithm>
 #include <vector>
 
-#include "webrtc/base/basictypes.h"
 #include "webrtc/base/constructormagic.h"
 
 namespace rtc {

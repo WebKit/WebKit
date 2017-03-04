@@ -32,10 +32,13 @@ std::unique_ptr<DtxController> CreateController(int initial_dtx_enabled) {
 void CheckDecision(DtxController* controller,
                    const rtc::Optional<int>& uplink_bandwidth_bps,
                    bool expected_dtx_enabled) {
+  if (uplink_bandwidth_bps) {
+    Controller::NetworkMetrics network_metrics;
+    network_metrics.uplink_bandwidth_bps = uplink_bandwidth_bps;
+    controller->UpdateNetworkMetrics(network_metrics);
+  }
   AudioNetworkAdaptor::EncoderRuntimeConfig config;
-  Controller::NetworkMetrics metrics;
-  metrics.uplink_bandwidth_bps = uplink_bandwidth_bps;
-  controller->MakeDecision(metrics, &config);
+  controller->MakeDecision(&config);
   EXPECT_EQ(rtc::Optional<bool>(expected_dtx_enabled), config.enable_dtx);
 }
 

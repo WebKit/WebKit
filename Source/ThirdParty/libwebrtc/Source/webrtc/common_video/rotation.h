@@ -8,19 +8,11 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+// TODO(nisse): Delete this file, once downstream code is updated.
+
 #ifndef WEBRTC_COMMON_VIDEO_ROTATION_H_
 #define WEBRTC_COMMON_VIDEO_ROTATION_H_
 
-namespace webrtc {
-
-// enum for clockwise rotation.
-enum VideoRotation {
-  kVideoRotation_0 = 0,
-  kVideoRotation_90 = 90,
-  kVideoRotation_180 = 180,
-  kVideoRotation_270 = 270
-};
-
-}  // namespace webrtc
+#include "webrtc/api/video/video_rotation.h"
 
 #endif  // WEBRTC_COMMON_VIDEO_ROTATION_H_

@@ -20,19 +20,13 @@
 namespace webrtc {
 
 VoECodec* VoECodec::GetInterface(VoiceEngine* voiceEngine) {
-#ifndef WEBRTC_VOICE_ENGINE_CODEC_API
-  return NULL;
-#else
   if (NULL == voiceEngine) {
     return NULL;
   }
   VoiceEngineImpl* s = static_cast<VoiceEngineImpl*>(voiceEngine);
   s->AddRef();
   return s;
-#endif
 }
-
-#ifdef WEBRTC_VOICE_ENGINE_CODEC_API
 
 VoECodecImpl::VoECodecImpl(voe::SharedData* shared) : _shared(shared) {
   WEBRTC_TRACE(kTraceMemory, kTraceVoice, VoEId(_shared->instance_id(), -1),
@@ -137,8 +131,9 @@ int VoECodecImpl::SetBitRate(int channel, int bitrate_bps) {
     _shared->SetLastError(VE_NOT_INITED, kTraceError);
     return -1;
   }
+  constexpr int64_t kDefaultProbingIntervalMs = 3000;
   _shared->channel_manager().GetChannel(channel).channel()->SetBitRate(
-      bitrate_bps);
+      bitrate_bps, kDefaultProbingIntervalMs);
   return 0;
 }
 
@@ -392,7 +387,5 @@ int VoECodecImpl::GetOpusDtxStatus(int channel, bool* enabled) {
   }
   return channelPtr->GetOpusDtx(enabled);
 }
-
-#endif  // WEBRTC_VOICE_ENGINE_CODEC_API
 
 }  // namespace webrtc

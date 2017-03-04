@@ -11,11 +11,13 @@
 #include <list>
 #include <memory>
 
-#include "webrtc/api/call/audio_state.h"
-#include "webrtc/call.h"
+#include "webrtc/call/audio_state.h"
+#include "webrtc/call/call.h"
 #include "webrtc/logging/rtc_event_log/rtc_event_log.h"
 #include "webrtc/modules/audio_coding/codecs/mock/mock_audio_decoder_factory.h"
+#include "webrtc/modules/audio_mixer/audio_mixer_impl.h"
 #include "webrtc/test/gtest.h"
+#include "webrtc/test/mock_transport.h"
 #include "webrtc/test/mock_voice_engine.h"
 
 namespace {
@@ -26,6 +28,10 @@ struct CallHelper {
       : voice_engine_(decoder_factory) {
     webrtc::AudioState::Config audio_state_config;
     audio_state_config.voice_engine = &voice_engine_;
+    audio_state_config.audio_mixer = webrtc::AudioMixerImpl::Create();
+    EXPECT_CALL(voice_engine_, audio_device_module());
+    EXPECT_CALL(voice_engine_, audio_processing());
+    EXPECT_CALL(voice_engine_, audio_transport());
     webrtc::Call::Config config(&event_log_);
     config.audio_state = webrtc::AudioState::Create(audio_state_config);
     call_.reset(webrtc::Call::Create(config));
@@ -217,9 +223,10 @@ TEST(CallTest, CreateDestroy_AssociateAudioSendReceiveStreams_SendFirst) {
 
 TEST(CallTest, CreateDestroy_FlexfecReceiveStream) {
   CallHelper call;
-  FlexfecReceiveStream::Config config;
-  config.flexfec_payload_type = 118;
-  config.flexfec_ssrc = 38837212;
+  MockTransport rtcp_send_transport;
+  FlexfecReceiveStream::Config config(&rtcp_send_transport);
+  config.payload_type = 118;
+  config.remote_ssrc = 38837212;
   config.protected_media_ssrcs = {27273};
 
   FlexfecReceiveStream* stream = call->CreateFlexfecReceiveStream(config);
@@ -229,13 +236,14 @@ TEST(CallTest, CreateDestroy_FlexfecReceiveStream) {
 
 TEST(CallTest, CreateDestroy_FlexfecReceiveStreams) {
   CallHelper call;
-  FlexfecReceiveStream::Config config;
-  config.flexfec_payload_type = 118;
+  MockTransport rtcp_send_transport;
+  FlexfecReceiveStream::Config config(&rtcp_send_transport);
+  config.payload_type = 118;
   std::list<FlexfecReceiveStream*> streams;
 
   for (int i = 0; i < 2; ++i) {
     for (uint32_t ssrc = 0; ssrc < 1234567; ssrc += 34567) {
-      config.flexfec_ssrc = ssrc;
+      config.remote_ssrc = ssrc;
       config.protected_media_ssrcs = {ssrc + 1};
       FlexfecReceiveStream* stream = call->CreateFlexfecReceiveStream(config);
       EXPECT_NE(stream, nullptr);
@@ -254,28 +262,29 @@ TEST(CallTest, CreateDestroy_FlexfecReceiveStreams) {
 
 TEST(CallTest, MultipleFlexfecReceiveStreamsProtectingSingleVideoStream) {
   CallHelper call;
-  FlexfecReceiveStream::Config config;
-  config.flexfec_payload_type = 118;
+  MockTransport rtcp_send_transport;
+  FlexfecReceiveStream::Config config(&rtcp_send_transport);
+  config.payload_type = 118;
   config.protected_media_ssrcs = {1324234};
   FlexfecReceiveStream* stream;
   std::list<FlexfecReceiveStream*> streams;
 
-  config.flexfec_ssrc = 838383;
+  config.remote_ssrc = 838383;
   stream = call->CreateFlexfecReceiveStream(config);
   EXPECT_NE(stream, nullptr);
   streams.push_back(stream);
 
-  config.flexfec_ssrc = 424993;
+  config.remote_ssrc = 424993;
   stream = call->CreateFlexfecReceiveStream(config);
   EXPECT_NE(stream, nullptr);
   streams.push_back(stream);
 
-  config.flexfec_ssrc = 99383;
+  config.remote_ssrc = 99383;
   stream = call->CreateFlexfecReceiveStream(config);
   EXPECT_NE(stream, nullptr);
   streams.push_back(stream);
 
-  config.flexfec_ssrc = 5548;
+  config.remote_ssrc = 5548;
   stream = call->CreateFlexfecReceiveStream(config);
   EXPECT_NE(stream, nullptr);
   streams.push_back(stream);

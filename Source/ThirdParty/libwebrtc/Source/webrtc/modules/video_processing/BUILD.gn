@@ -7,18 +7,12 @@
 # be found in the AUTHORS file in the root of the source tree.
 
 import("//build/config/arm.gni")
-import("../../build/webrtc.gni")
+import("../../webrtc.gni")
 
 build_video_processing_sse2 = current_cpu == "x86" || current_cpu == "x64"
 
 rtc_static_library("video_processing") {
   sources = [
-    "frame_preprocessor.cc",
-    "frame_preprocessor.h",
-    "include/video_processing.h",
-    "include/video_processing_defines.h",
-    "spatial_resampler.cc",
-    "spatial_resampler.h",
     "util/denoiser_filter.cc",
     "util/denoiser_filter.h",
     "util/denoiser_filter_c.cc",
@@ -27,15 +21,12 @@ rtc_static_library("video_processing") {
     "util/noise_estimation.h",
     "util/skin_detection.cc",
     "util/skin_detection.h",
-    "video_decimator.cc",
-    "video_decimator.h",
     "video_denoiser.cc",
     "video_denoiser.h",
-    "video_processing_impl.cc",
-    "video_processing_impl.h",
   ]
 
   deps = [
+    "../../base:rtc_base_approved",
     "../../common_audio",
     "../../common_video",
     "../../modules/utility",
@@ -56,9 +47,18 @@ rtc_static_library("video_processing") {
 
 if (build_video_processing_sse2) {
   rtc_static_library("video_processing_sse2") {
+    # TODO(mbonadei): Remove (bugs.webrtc.org/6828)
+    # Errors on cyclic dependency with :video_processing if enabled.
+    check_includes = false
+
     sources = [
       "util/denoiser_filter_sse2.cc",
       "util/denoiser_filter_sse2.h",
+    ]
+
+    deps = [
+      "../../base:rtc_base_approved",
+      "../../system_wrappers",
     ]
 
     if (!build_with_chromium && is_clang) {
@@ -74,13 +74,37 @@ if (build_video_processing_sse2) {
 
 if (rtc_build_with_neon) {
   rtc_static_library("video_processing_neon") {
+    # TODO(mbonadei): Remove (bugs.webrtc.org/6828)
+    # Errors on cyclic dependency with :video_processing if enabled.
+    check_includes = false
+
     sources = [
       "util/denoiser_filter_neon.cc",
       "util/denoiser_filter_neon.h",
     ]
+
     if (current_cpu != "arm64") {
       suppressed_configs += [ "//build/config/compiler:compiler_arm_fpu" ]
       cflags = [ "-mfpu=neon" ]
+    }
+  }
+}
+
+if (rtc_include_tests) {
+  rtc_source_set("video_processing_unittests") {
+    testonly = true
+    sources = [
+      "test/denoiser_test.cc",
+    ]
+    deps = [
+      ":video_processing",
+      "../../common_video:common_video",
+      "../../test:test_support",
+      "../../test:video_test_common",
+    ]
+    if (!build_with_chromium && is_clang) {
+      # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
+      suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
     }
   }
 }

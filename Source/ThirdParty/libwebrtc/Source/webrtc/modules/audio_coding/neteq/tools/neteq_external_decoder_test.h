@@ -14,7 +14,7 @@
 #include <memory>
 #include <string>
 
-#include "webrtc/modules/audio_coding/codecs/audio_decoder.h"
+#include "webrtc/api/audio_codecs/audio_decoder.h"
 #include "webrtc/modules/audio_coding/neteq/include/neteq.h"
 #include "webrtc/modules/include/module_common_types.h"
 

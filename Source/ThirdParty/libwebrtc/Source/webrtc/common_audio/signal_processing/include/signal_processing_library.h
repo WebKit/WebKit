@@ -343,8 +343,8 @@ void WebRtcSpl_ScaleAndAddVectors(const int16_t* in_vector1,
 //
 // Output:
 //      - out_vector       : Output vector
-// Return value            : 0 if OK, -1 if (in_vector1 == NULL
-//                           || in_vector2 == NULL || out_vector == NULL
+// Return value            : 0 if OK, -1 if (in_vector1 == null
+//                           || in_vector2 == null || out_vector == null
 //                           || length <= 0 || right_shift < 0).
 typedef int (*ScaleAndAddVectorsWithRound)(const int16_t* in_vector1,
                                            int16_t in_vector1_scale,

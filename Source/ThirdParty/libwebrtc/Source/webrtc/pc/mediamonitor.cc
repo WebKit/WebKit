@@ -8,7 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/base/common.h"
+#include "webrtc/base/checks.h"
 #include "webrtc/pc/channelmanager.h"
 #include "webrtc/pc/mediamonitor.h"
 
@@ -50,7 +50,7 @@ void MediaMonitor::OnMessage(rtc::Message* message) {
 
   switch (message->message_id) {
   case MSG_MONITOR_START:
-    ASSERT(rtc::Thread::Current() == worker_thread_);
+    RTC_DCHECK(rtc::Thread::Current() == worker_thread_);
     if (!monitoring_) {
       monitoring_ = true;
       PollMediaChannel();
@@ -58,7 +58,7 @@ void MediaMonitor::OnMessage(rtc::Message* message) {
     break;
 
   case MSG_MONITOR_STOP:
-    ASSERT(rtc::Thread::Current() == worker_thread_);
+    RTC_DCHECK(rtc::Thread::Current() == worker_thread_);
     if (monitoring_) {
       monitoring_ = false;
       worker_thread_->Clear(this);
@@ -66,12 +66,12 @@ void MediaMonitor::OnMessage(rtc::Message* message) {
     break;
 
   case MSG_MONITOR_POLL:
-    ASSERT(rtc::Thread::Current() == worker_thread_);
+    RTC_DCHECK(rtc::Thread::Current() == worker_thread_);
     PollMediaChannel();
     break;
 
   case MSG_MONITOR_SIGNAL:
-    ASSERT(rtc::Thread::Current() == monitor_thread_);
+    RTC_DCHECK(rtc::Thread::Current() == monitor_thread_);
     Update();
     break;
   }
@@ -79,7 +79,7 @@ void MediaMonitor::OnMessage(rtc::Message* message) {
 
 void MediaMonitor::PollMediaChannel() {
   rtc::CritScope cs(&crit_);
-  ASSERT(rtc::Thread::Current() == worker_thread_);
+  RTC_DCHECK(rtc::Thread::Current() == worker_thread_);
 
   GetStats();
 

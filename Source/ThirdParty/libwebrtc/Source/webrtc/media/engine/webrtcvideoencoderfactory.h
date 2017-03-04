@@ -36,9 +36,9 @@ class WebRtcVideoEncoderFactory {
 
     VideoCodec(webrtc::VideoCodecType t,
                const std::string& nm,
-               int /* w */,
-               int /* h */,
-               int /* fr */)
+               int,
+               int,
+               int)
         : type(t), name(nm) {}
   };
 

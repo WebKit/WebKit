@@ -141,6 +141,9 @@ void FuzzOneInputTest(const uint8_t* data, size_t size) {
       std::make_pair(NetEqDecoder::kDecoderPCM16Bswb48kHz, "pcm16-swb48");
   codecs[9] = std::make_pair(NetEqDecoder::kDecoderG722, "g722");
   codecs[106] = std::make_pair(NetEqDecoder::kDecoderAVT, "avt");
+  codecs[114] = std::make_pair(NetEqDecoder::kDecoderAVT16kHz, "avt-16");
+  codecs[115] = std::make_pair(NetEqDecoder::kDecoderAVT32kHz, "avt-32");
+  codecs[116] = std::make_pair(NetEqDecoder::kDecoderAVT48kHz, "avt-48");
   codecs[117] = std::make_pair(NetEqDecoder::kDecoderRED, "red");
   codecs[13] = std::make_pair(NetEqDecoder::kDecoderCNGnb, "cng-nb");
   codecs[98] = std::make_pair(NetEqDecoder::kDecoderCNGwb, "cng-wb");

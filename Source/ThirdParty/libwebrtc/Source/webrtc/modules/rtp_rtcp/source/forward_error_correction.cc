@@ -103,9 +103,9 @@ int ForwardErrorCorrection::EncodeFec(const PacketList& media_packets,
   const size_t num_media_packets = media_packets.size();
 
   // Sanity check arguments.
-  RTC_DCHECK_GT(num_media_packets, 0u);
+  RTC_DCHECK_GT(num_media_packets, 0);
   RTC_DCHECK_GE(num_important_packets, 0);
-  RTC_DCHECK_LE(static_cast<size_t>(num_important_packets), num_media_packets);
+  RTC_DCHECK_LE(num_important_packets, num_media_packets);
   RTC_DCHECK(fec_packets->empty());
   const size_t max_media_packets = fec_header_writer_->MaxMediaPackets();
   if (num_media_packets > max_media_packets) {
@@ -239,7 +239,7 @@ void ForwardErrorCorrection::GenerateFecPayloads(
       pkt_mask_idx += media_pkt_idx / 8;
       media_pkt_idx %= 8;
     }
-    RTC_DCHECK_GT(fec_packet->length, 0u)
+    RTC_DCHECK_GT(fec_packet->length, 0)
         << "Packet mask is wrong or poorly designed.";
   }
 }

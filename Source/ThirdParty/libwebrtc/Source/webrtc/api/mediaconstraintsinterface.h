@@ -28,9 +28,12 @@
 
 namespace webrtc {
 
-// MediaConstraintsInterface
 // Interface used for passing arguments about media constraints
 // to the MediaStream and PeerConnection implementation.
+//
+// Constraints may be either "mandatory", which means that unless satisfied,
+// the method taking the constraints should fail, or "optional", which means
+// they may not be satisfied..
 class MediaConstraintsInterface {
  public:
   struct Constraint {
@@ -80,6 +83,8 @@ class MediaConstraintsInterface {
   static const char kHighpassFilter[];  // googHighpassFilter
   static const char kTypingNoiseDetection[];  // googTypingNoiseDetection
   static const char kAudioMirroring[];  // googAudioMirroring
+  static const char
+      kAudioNetworkAdaptorConfig[];  // goodAudioNetworkAdaptorConfig
 
   // Google-specific constraint keys for a local video source
   static const char kNoiseReduction[];  // googNoiseReduction
@@ -138,6 +143,11 @@ bool FindConstraint(const MediaConstraintsInterface* constraints,
 void CopyConstraintsIntoRtcConfiguration(
     const MediaConstraintsInterface* constraints,
     PeerConnectionInterface::RTCConfiguration* configuration);
+
+// Copy all relevant constraints into an AudioOptions object.
+void CopyConstraintsIntoAudioOptions(
+    const MediaConstraintsInterface* constraints,
+    cricket::AudioOptions* options);
 
 }  // namespace webrtc
 

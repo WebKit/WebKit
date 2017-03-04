@@ -15,30 +15,17 @@
 #include <memory>
 
 #include "webrtc/base/constructormagic.h"
+#include "webrtc/base/numerics/exp_filter.h"
 #include "webrtc/base/optional.h"
-#include "webrtc/base/exp_filter.h"
 #include "webrtc/base/sequenced_task_checker.h"
 #include "webrtc/base/task_queue.h"
 #include "webrtc/base/thread_annotations.h"
+#include "webrtc/modules/video_coding/utility/quality_scaler.h"
 
 namespace webrtc {
 
-class Clock;
 class EncodedFrameObserver;
 class VideoFrame;
-
-// CpuOveruseObserver is called when a system overuse is detected and
-// VideoEngine cannot keep up the encoding frequency.
-class CpuOveruseObserver {
- public:
-  // Called as soon as an overuse is detected.
-  virtual void OveruseDetected() = 0;
-  // Called periodically when the system is not overused any longer.
-  virtual void NormalUsage() = 0;
-
- protected:
-  virtual ~CpuOveruseObserver() {}
-};
 
 struct CpuOveruseOptions {
   CpuOveruseOptions();
@@ -77,9 +64,8 @@ class CpuOveruseMetricsObserver {
 // check for overuse.
 class OveruseFrameDetector {
  public:
-  OveruseFrameDetector(Clock* clock,
-                       const CpuOveruseOptions& options,
-                       CpuOveruseObserver* overuse_observer,
+  OveruseFrameDetector(const CpuOveruseOptions& options,
+                       AdaptationObserverInterface* overuse_observer,
                        EncodedFrameObserver* encoder_timing_,
                        CpuOveruseMetricsObserver* metrics_observer);
   ~OveruseFrameDetector();
@@ -92,10 +78,10 @@ class OveruseFrameDetector {
   void StopCheckForOveruse();
 
   // Called for each captured frame.
-  void FrameCaptured(const VideoFrame& frame, int64_t time_when_first_seen_ms);
+  void FrameCaptured(const VideoFrame& frame, int64_t time_when_first_seen_us);
 
   // Called for each sent frame.
-  void FrameSent(uint32_t timestamp, int64_t time_sent_in_ms);
+  void FrameSent(uint32_t timestamp, int64_t time_sent_in_us);
 
  protected:
   void CheckForOveruse();  // Protected for test purposes.
@@ -104,15 +90,15 @@ class OveruseFrameDetector {
   class SendProcessingUsage;
   class CheckOveruseTask;
   struct FrameTiming {
-    FrameTiming(int64_t capture_ntp_ms, uint32_t timestamp, int64_t now)
-        : capture_ntp_ms(capture_ntp_ms),
+    FrameTiming(int64_t capture_time_us, uint32_t timestamp, int64_t now)
+        : capture_time_us(capture_time_us),
           timestamp(timestamp),
-          capture_ms(now),
-          last_send_ms(-1) {}
-    int64_t capture_ntp_ms;
+          capture_us(now),
+          last_send_us(-1) {}
+    int64_t capture_time_us;
     uint32_t timestamp;
-    int64_t capture_ms;
-    int64_t last_send_ms;
+    int64_t capture_us;
+    int64_t last_send_us;
   };
 
   void EncodedFrameTimeMeasured(int encode_duration_ms);
@@ -131,18 +117,17 @@ class OveruseFrameDetector {
   const CpuOveruseOptions options_;
 
   // Observer getting overuse reports.
-  CpuOveruseObserver* const observer_;
+  AdaptationObserverInterface* const observer_;
   EncodedFrameObserver* const encoder_timing_;
 
   // Stats metrics.
   CpuOveruseMetricsObserver* const metrics_observer_;
   rtc::Optional<CpuOveruseMetrics> metrics_ GUARDED_BY(task_checker_);
-  Clock* const clock_;
 
   int64_t num_process_times_ GUARDED_BY(task_checker_);
 
-  int64_t last_capture_time_ms_ GUARDED_BY(task_checker_);
-  int64_t last_processed_capture_time_ms_ GUARDED_BY(task_checker_);
+  int64_t last_capture_time_us_ GUARDED_BY(task_checker_);
+  int64_t last_processed_capture_time_us_ GUARDED_BY(task_checker_);
 
   // Number of pixels of last captured frame.
   int num_pixels_ GUARDED_BY(task_checker_);

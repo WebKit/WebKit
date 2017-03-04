@@ -27,6 +27,7 @@ FrameStatistic::FrameStatistic()
       decode_return_code(0),
       encode_time_in_us(0),
       decode_time_in_us(0),
+      qp(-1),
       frame_number(0),
       packets_dropped(0),
       total_packets(0),
@@ -72,6 +73,8 @@ void Stats::PrintSummary() {
   // Calculate min, max, average and total encoding time
   int total_encoding_time_in_us = 0;
   int total_decoding_time_in_us = 0;
+  int total_qp = 0;
+  int total_qp_count = 0;
   size_t total_encoded_frames_lengths = 0;
   size_t total_encoded_key_frames_lengths = 0;
   size_t total_encoded_nonkey_frames_lengths = 0;
@@ -88,6 +91,10 @@ void Stats::PrintSummary() {
     } else {
       total_encoded_nonkey_frames_lengths += it->encoded_frame_length_in_bytes;
       nbr_nonkeyframes++;
+    }
+    if (it->qp >= 0) {
+      total_qp += it->qp;
+      ++total_qp_count;
     }
   }
 
@@ -169,6 +176,9 @@ void Stats::PrintSummary() {
   frame = std::max_element(stats_.begin(), stats_.end(), LessForBitRate);
   printf("  Max bit rate: %7d kbps (frame %d)\n", frame->bit_rate_in_kbps,
          frame->frame_number);
+
+  int avg_qp = (total_qp_count > 0) ? (total_qp / total_qp_count) : -1;
+  printf("Average QP: %d\n", avg_qp);
 
   printf("\n");
   printf("Total encoding time  : %7d ms.\n", total_encoding_time_in_us / 1000);

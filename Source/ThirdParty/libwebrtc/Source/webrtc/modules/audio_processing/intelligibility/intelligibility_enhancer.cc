@@ -58,7 +58,7 @@ void MapToErbBands(const float* pow,
                    const std::vector<std::vector<float>>& filter_bank,
                    float* result) {
   for (size_t i = 0; i < filter_bank.size(); ++i) {
-    RTC_DCHECK_GT(filter_bank[i].size(), 0u);
+    RTC_DCHECK_GT(filter_bank[i].size(), 0);
     result[i] = kPowerNormalizationFactor *
                 DotProduct(filter_bank[i].data(), pow, filter_bank[i].size());
   }
@@ -380,7 +380,7 @@ bool IntelligibilityEnhancer::IsSpeech(const float* audio) {
 }
 
 void IntelligibilityEnhancer::DelayHighBands(AudioBuffer* audio) {
-  RTC_DCHECK_EQ(audio->num_bands(), high_bands_buffers_.size() + 1u);
+  RTC_DCHECK_EQ(audio->num_bands(), high_bands_buffers_.size() + 1);
   for (size_t i = 0u; i < high_bands_buffers_.size(); ++i) {
     Band band = static_cast<Band>(i + 1);
     high_bands_buffers_[i]->Delay(audio->split_channels_f(band), chunk_length_);

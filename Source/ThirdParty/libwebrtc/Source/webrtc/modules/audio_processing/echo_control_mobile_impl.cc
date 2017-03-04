@@ -33,7 +33,7 @@ int16_t MapSetting(EchoControlMobile::RoutingMode mode) {
     case EchoControlMobile::kLoudSpeakerphone:
       return 4;
   }
-  RTC_DCHECK(false);
+  RTC_NOTREACHED();
   return -1;
 }
 
@@ -154,7 +154,7 @@ void EchoControlMobileImpl::PackRenderAudioBuffer(
     size_t num_output_channels,
     size_t num_channels,
     std::vector<int16_t>* packed_buffer) {
-  RTC_DCHECK_GE(160u, audio->num_frames_per_band());
+  RTC_DCHECK_GE(160, audio->num_frames_per_band());
   RTC_DCHECK_EQ(num_channels, audio->num_channels());
 
   // The ordering convention must be followed to pass to the correct AECM.
@@ -187,7 +187,7 @@ int EchoControlMobileImpl::ProcessCaptureAudio(AudioBuffer* audio,
   }
 
   RTC_DCHECK(stream_properties_);
-  RTC_DCHECK_GE(160u, audio->num_frames_per_band());
+  RTC_DCHECK_GE(160, audio->num_frames_per_band());
   RTC_DCHECK_EQ(audio->num_channels(), stream_properties_->num_output_channels);
   RTC_DCHECK_GE(cancellers_.size(), stream_properties_->num_reverse_channels *
                                         audio->num_channels());

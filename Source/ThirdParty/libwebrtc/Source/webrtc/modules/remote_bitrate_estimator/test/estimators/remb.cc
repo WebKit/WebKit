@@ -12,7 +12,6 @@
 
 #include "webrtc/modules/remote_bitrate_estimator/test/estimators/remb.h"
 
-#include "webrtc/base/common.h"
 #include "webrtc/modules/bitrate_controller/include/bitrate_controller.h"
 #include "webrtc/modules/remote_bitrate_estimator/remote_bitrate_estimator_abs_send_time.h"
 #include "webrtc/modules/remote_bitrate_estimator/test/bwe_test_logging.h"
@@ -66,7 +65,9 @@ int RembBweSender::GetFeedbackIntervalMs() const {
 RembReceiver::RembReceiver(int flow_id, bool plot)
     : BweReceiver(flow_id),
       estimate_log_prefix_(),
+#if BWE_TEST_LOGGING_COMPILE_TIME_ENABLE
       plot_estimate_(plot),
+#endif
       clock_(0),
       recv_stats_(ReceiveStatistics::Create(&clock_)),
       latest_estimate_bps_(-1),
@@ -120,12 +121,13 @@ FeedbackPacket* RembReceiver::GetFeedback(int64_t now_ms) {
                                 estimated_bps, latest_report_block_);
     last_feedback_ms_ = now_ms;
 
+#if BWE_TEST_LOGGING_COMPILE_TIME_ENABLE
     double estimated_kbps = static_cast<double>(estimated_bps) / 1000.0;
-    RTC_UNUSED(estimated_kbps);
     if (plot_estimate_) {
       BWE_TEST_LOGGING_PLOT(0, estimate_log_prefix_,
                             clock_.TimeInMilliseconds(), estimated_kbps);
     }
+#endif
   }
   return feedback;
 }

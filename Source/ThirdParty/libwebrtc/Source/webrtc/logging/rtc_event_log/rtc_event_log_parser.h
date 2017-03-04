@@ -42,12 +42,15 @@ class ParsedRtcEventLog {
     RTP_EVENT = 3,
     RTCP_EVENT = 4,
     AUDIO_PLAYOUT_EVENT = 5,
-    BWE_PACKET_LOSS_EVENT = 6,
-    BWE_PACKET_DELAY_EVENT = 7,
+    LOSS_BASED_BWE_UPDATE = 6,
+    DELAY_BASED_BWE_UPDATE = 7,
     VIDEO_RECEIVER_CONFIG_EVENT = 8,
     VIDEO_SENDER_CONFIG_EVENT = 9,
     AUDIO_RECEIVER_CONFIG_EVENT = 10,
-    AUDIO_SENDER_CONFIG_EVENT = 11
+    AUDIO_SENDER_CONFIG_EVENT = 11,
+    AUDIO_NETWORK_ADAPTATION_EVENT = 16,
+    BWE_PROBE_CLUSTER_CREATED_EVENT = 17,
+    BWE_PROBE_RESULT_EVENT = 18
   };
 
   // Reads an RtcEventLog file and returns true if parsing was successful.
@@ -70,8 +73,8 @@ class ParsedRtcEventLog {
 
   // Reads the header, direction, media type, header length and packet length
   // from the RTP event at |index|, and stores the values in the corresponding
-  // output parameters. The output parameters can be set to nullptr if those
-  // values aren't needed.
+  // output parameters. Each output parameter can be set to nullptr if that
+  // value isn't needed.
   // NB: The header must have space for at least IP_PACKET_SIZE bytes.
   void GetRtpHeader(size_t index,
                     PacketDirection* incoming,
@@ -82,7 +85,7 @@ class ParsedRtcEventLog {
 
   // Reads packet, direction, media type and packet length from the RTCP event
   // at |index|, and stores the values in the corresponding output parameters.
-  // The output parameters can be set to nullptr if those values aren't needed.
+  // Each output parameter can be set to nullptr if that value isn't needed.
   // NB: The packet must have space for at least IP_PACKET_SIZE bytes.
   void GetRtcpPacket(size_t index,
                      PacketDirection* incoming,
@@ -114,14 +117,30 @@ class ParsedRtcEventLog {
   void GetAudioPlayout(size_t index, uint32_t* ssrc) const;
 
   // Reads bitrate, fraction loss (as defined in RFC 1889) and total number of
-  // expected packets from the BWE event at |index| and stores the values in
-  // the corresponding output parameters. The output parameters can be set to
-  // nullptr if those values aren't needed.
-  // NB: The packet must have space for at least IP_PACKET_SIZE bytes.
-  void GetBwePacketLossEvent(size_t index,
-                             int32_t* bitrate,
+  // expected packets from the loss based BWE event at |index| and stores the
+  // values in
+  // the corresponding output parameters. Each output parameter can be set to
+  // nullptr if that
+  // value isn't needed.
+  void GetLossBasedBweUpdate(size_t index,
+                             int32_t* bitrate_bps,
                              uint8_t* fraction_loss,
                              int32_t* total_packets) const;
+
+  // Reads bitrate and detector_state from the delay based BWE event at |index|
+  // and stores the values in the corresponding output parameters. Each output
+  // parameter can be set to nullptr if that
+  // value isn't needed.
+  void GetDelayBasedBweUpdate(size_t index,
+                              int32_t* bitrate_bps,
+                              BandwidthUsage* detector_state) const;
+
+  // Reads a audio network adaptation event to a (non-NULL)
+  // AudioNetworkAdaptor::EncoderRuntimeConfig struct. Only the fields that are
+  // stored in the protobuf will be written.
+  void GetAudioNetworkAdaptation(
+      size_t index,
+      AudioNetworkAdaptor::EncoderRuntimeConfig* config) const;
 
  private:
   std::vector<rtclog::Event> events_;

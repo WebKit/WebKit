@@ -11,9 +11,9 @@
 #define WEBRTC_BASE_EXPORT_H_
 
 #ifdef WEBRTC_WEBKIT_BUILD
-#define WEBRTC_EXPORT __attribute__((visibility ("default")))
+#define WEBRTC_DYLIB_EXPORT __attribute__((visibility ("default")))
 #else
-#define WEBRTC_EXPORT
+#define WEBRTC_DYLIB_EXPORT
 #endif
 
 #endif

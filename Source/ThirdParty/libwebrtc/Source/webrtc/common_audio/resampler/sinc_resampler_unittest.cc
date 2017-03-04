@@ -25,7 +25,6 @@
 #include "webrtc/system_wrappers/include/stringize_macros.h"
 #include "webrtc/test/gmock.h"
 #include "webrtc/test/gtest.h"
-#include "webrtc/test/test_suite.h"
 
 using testing::_;
 

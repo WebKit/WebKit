@@ -118,7 +118,7 @@ void RunFineBufferTest(int sample_rate, int frame_size_in_samples) {
                               sample_rate);
 
   std::unique_ptr<int8_t[]> out_buffer;
-  out_buffer.reset(new int8_t[fine_buffer.RequiredPlayoutBufferSizeBytes()]);
+  out_buffer.reset(new int8_t[kFrameSizeBytes]);
   std::unique_ptr<int8_t[]> in_buffer;
   in_buffer.reset(new int8_t[kFrameSizeBytes]);
   for (int i = 0; i < kNumberOfFrames; ++i) {

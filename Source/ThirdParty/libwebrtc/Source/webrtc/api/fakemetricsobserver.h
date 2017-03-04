@@ -13,6 +13,7 @@
 
 #include <map>
 #include <string>
+#include <vector>
 
 #include "webrtc/api/peerconnectioninterface.h"
 #include "webrtc/base/thread_checker.h"

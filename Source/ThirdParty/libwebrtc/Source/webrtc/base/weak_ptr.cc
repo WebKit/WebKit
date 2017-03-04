@@ -73,7 +73,7 @@ void WeakReferenceOwner::Invalidate() {
   RTC_DCHECK(checker_.CalledSequentially());
   if (flag_.get()) {
     flag_->Invalidate();
-    flag_ = NULL;
+    flag_ = nullptr;
   }
 }
 

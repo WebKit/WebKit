@@ -51,12 +51,13 @@ class AudioMixer : public rtc::RefCountInterface {
     virtual ~Source() {}
   };
 
-  // Returns true if adding/removing was successful. A source is never
-  // added twice and removal is never attempted if a source has not
-  // been successfully added to the mixer. Addition and removal can
-  // happen on different threads.
+  // Returns true if adding was successful. A source is never added
+  // twice. Addition and removal can happen on different threads.
   virtual bool AddSource(Source* audio_source) = 0;
-  virtual bool RemoveSource(Source* audio_source) = 0;
+
+  // Removal is never attempted if a source has not been successfully
+  // added to the mixer.
+  virtual void RemoveSource(Source* audio_source) = 0;
 
   // Performs mixing by asking registered audio sources for audio. The
   // mixed result is placed in the provided AudioFrame. This method

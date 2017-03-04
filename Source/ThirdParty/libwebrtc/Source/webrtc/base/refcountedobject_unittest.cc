@@ -30,7 +30,7 @@ class RefClass : public RefCountInterface {
   RefClass() {}
 
  protected:
-  virtual ~RefClass() {}
+  ~RefClass() override {}
 };
 
 class RefClassWithRvalue : public RefCountInterface {
@@ -38,7 +38,7 @@ class RefClassWithRvalue : public RefCountInterface {
   explicit RefClassWithRvalue(std::unique_ptr<A> a) : a_(std::move(a)) {}
 
  protected:
-  virtual ~RefClassWithRvalue() {}
+  ~RefClassWithRvalue() override {}
 
  public:
   std::unique_ptr<A> a_;
@@ -50,7 +50,7 @@ class RefClassWithMixedValues : public RefCountInterface {
       : a_(std::move(a)), b_(b), c_(c) {}
 
  protected:
-  virtual ~RefClassWithMixedValues() {}
+  ~RefClassWithMixedValues() override {}
 
  public:
   std::unique_ptr<A> a_;

@@ -18,6 +18,7 @@
 #include <string>
 #include <vector>
 
+#include "webrtc/api/mediatypes.h"
 #include "webrtc/media/base/codec.h"
 #include "webrtc/media/base/cryptoparams.h"
 #include "webrtc/media/base/mediachannel.h"
@@ -25,7 +26,7 @@
 #include "webrtc/media/base/mediaengine.h"  // For DataChannelType
 #include "webrtc/media/base/streamparams.h"
 #include "webrtc/p2p/base/sessiondescription.h"
-#include "webrtc/p2p/base/transport.h"
+#include "webrtc/p2p/base/jseptransport.h"
 #include "webrtc/p2p/base/transportdescriptionfactory.h"
 
 namespace cricket {
@@ -36,14 +37,6 @@ typedef std::vector<VideoCodec> VideoCodecs;
 typedef std::vector<DataCodec> DataCodecs;
 typedef std::vector<CryptoParams> CryptoParamsVec;
 typedef std::vector<webrtc::RtpExtension> RtpHeaderExtensions;
-
-enum MediaType {
-  MEDIA_TYPE_AUDIO,
-  MEDIA_TYPE_VIDEO,
-  MEDIA_TYPE_DATA
-};
-
-std::string MediaTypeToString(MediaType type);
 
 enum MediaContentDirection {
   MD_INACTIVE,
@@ -99,6 +92,10 @@ struct RtpTransceiverDirection {
       MediaContentDirection md);
 
   MediaContentDirection ToMediaContentDirection() const;
+
+  RtpTransceiverDirection Reversed() const {
+    return RtpTransceiverDirection(recv, send);
+  }
 };
 
 RtpTransceiverDirection
@@ -408,10 +405,18 @@ class VideoContentDescription : public MediaContentDescriptionImpl<VideoCodec> {
 
 class DataContentDescription : public MediaContentDescriptionImpl<DataCodec> {
  public:
+  DataContentDescription() {}
+
   virtual ContentDescription* Copy() const {
     return new DataContentDescription(*this);
   }
   virtual MediaType type() const { return MEDIA_TYPE_DATA; }
+
+  bool use_sctpmap() const { return use_sctpmap_; }
+  void set_use_sctpmap(bool enable) { use_sctpmap_ = enable; }
+
+ private:
+  bool use_sctpmap_ = true;
 };
 
 // Creates media session descriptions according to the supplied codecs and
@@ -463,9 +468,9 @@ class MediaSessionDescriptionFactory {
       const MediaSessionOptions& options,
       const SessionDescription* current_description) const;
   SessionDescription* CreateAnswer(
-        const SessionDescription* offer,
-        const MediaSessionOptions& options,
-        const SessionDescription* current_description) const;
+      const SessionDescription* offer,
+      const MediaSessionOptions& options,
+      const SessionDescription* current_description) const;
 
  private:
   const AudioCodecs& GetAudioCodecsForOffer(
@@ -493,7 +498,8 @@ class MediaSessionDescriptionFactory {
       const std::string& content_name,
       const SessionDescription* offer_desc,
       const TransportOptions& transport_options,
-      const SessionDescription* current_desc) const;
+      const SessionDescription* current_desc,
+      bool require_transport_attributes) const;
 
   bool AddTransportAnswer(
       const std::string& content_name,
@@ -527,26 +533,26 @@ class MediaSessionDescriptionFactory {
       StreamParamsVec* current_streams,
       SessionDescription* desc) const;
 
-  bool AddAudioContentForAnswer(
-      const SessionDescription* offer,
-      const MediaSessionOptions& options,
-      const SessionDescription* current_description,
-      StreamParamsVec* current_streams,
-      SessionDescription* answer) const;
+  bool AddAudioContentForAnswer(const SessionDescription* offer,
+                                const MediaSessionOptions& options,
+                                const SessionDescription* current_description,
+                                const TransportInfo* bundle_transport,
+                                StreamParamsVec* current_streams,
+                                SessionDescription* answer) const;
 
-  bool AddVideoContentForAnswer(
-      const SessionDescription* offer,
-      const MediaSessionOptions& options,
-      const SessionDescription* current_description,
-      StreamParamsVec* current_streams,
-      SessionDescription* answer) const;
+  bool AddVideoContentForAnswer(const SessionDescription* offer,
+                                const MediaSessionOptions& options,
+                                const SessionDescription* current_description,
+                                const TransportInfo* bundle_transport,
+                                StreamParamsVec* current_streams,
+                                SessionDescription* answer) const;
 
-  bool AddDataContentForAnswer(
-      const SessionDescription* offer,
-      const MediaSessionOptions& options,
-      const SessionDescription* current_description,
-      StreamParamsVec* current_streams,
-      SessionDescription* answer) const;
+  bool AddDataContentForAnswer(const SessionDescription* offer,
+                               const MediaSessionOptions& options,
+                               const SessionDescription* current_description,
+                               const TransportInfo* bundle_transport,
+                               StreamParamsVec* current_streams,
+                               SessionDescription* answer) const;
 
   AudioCodecs audio_send_codecs_;
   AudioCodecs audio_recv_codecs_;

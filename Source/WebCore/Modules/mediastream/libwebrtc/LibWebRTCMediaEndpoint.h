@@ -32,9 +32,9 @@
 #include "RealtimeOutgoingVideoSource.h"
 
 #include <webrtc/api/jsep.h>
-#include <webrtc/api/peerconnectionfactory.h>
 #include <webrtc/api/peerconnectioninterface.h>
-#include <webrtc/api/rtcstatscollector.h>
+#include <webrtc/pc/peerconnectionfactory.h>
+#include <webrtc/pc/rtcstatscollector.h>
 
 #include <wtf/ThreadSafeRefCounted.h>
 

@@ -55,5 +55,18 @@ NS_ASSUME_NONNULL_BEGIN
  * @return NSDictionary with RTC width and height parameters
  */
 - (nullable NSDictionary *)currentMediaConstraintFromStoreAsRTCDictionary;
+
+/**
+ * Returns current max bitrate setting from store if present.
+ */
+- (nullable NSNumber *)currentMaxBitrateSettingFromStore;
+
+/**
+ * Stores the provided bitrate value into the store.
+ *
+ * @param bitrate NSNumber representation of the max bitrate value.
+ */
+- (void)storeMaxBitrateSetting:(nullable NSNumber *)bitrate;
+
 @end
 NS_ASSUME_NONNULL_END

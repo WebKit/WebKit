@@ -13,6 +13,7 @@
 #include "webrtc/base/checks.h"
 #include "webrtc/base/task_queue.h"
 #include "webrtc/base/timeutils.h"
+#include "webrtc/base/trace_event.h"
 #include "webrtc/modules/include/module.h"
 #include "webrtc/system_wrappers/include/logging.h"
 
@@ -129,7 +130,8 @@ void ProcessThreadImpl::PostTask(std::unique_ptr<rtc::QueuedTask> task) {
   wake_up_->Set();
 }
 
-void ProcessThreadImpl::RegisterModule(Module* module) {
+void ProcessThreadImpl::RegisterModule(Module* module,
+                                       const rtc::Location& from) {
   RTC_DCHECK(thread_checker_.CalledOnValidThread());
   RTC_DCHECK(module);
 
@@ -150,7 +152,7 @@ void ProcessThreadImpl::RegisterModule(Module* module) {
 
   {
     rtc::CritScope lock(&lock_);
-    modules_.push_back(ModuleCallback(module));
+    modules_.push_back(ModuleCallback(module, from));
   }
 
   // Wake the thread calling ProcessThreadImpl::Process() to update the
@@ -189,6 +191,7 @@ bool ProcessThreadImpl::Run(void* obj) {
 }
 
 bool ProcessThreadImpl::Process() {
+  TRACE_EVENT1("webrtc", "ProcessThreadImpl", "name", thread_name_);
   int64_t now = rtc::TimeMillis();
   int64_t next_checkpoint = now + (1000 * 60);
 
@@ -206,7 +209,12 @@ bool ProcessThreadImpl::Process() {
 
       if (m.next_callback <= now ||
           m.next_callback == kCallProcessImmediately) {
-        m.module->Process();
+        {
+          TRACE_EVENT2("webrtc", "ModuleProcess", "function",
+                       m.location.function_name(), "file",
+                       m.location.file_and_line());
+          m.module->Process();
+        }
         // Use a new 'now' reference to calculate when the next callback
         // should occur.  We'll continue to use 'now' above for the baseline
         // of calculating how long we should wait, to reduce variance.

@@ -6,7 +6,7 @@
 # in the file PATENTS.  All contributing project authors may
 # be found in the AUTHORS file in the root of the source tree.
 
-import("../../build/webrtc.gni")
+import("../../webrtc.gni")
 
 group("audio_mixer") {
   public_deps = [
@@ -16,17 +16,20 @@ group("audio_mixer") {
 }
 
 rtc_static_library("audio_mixer_impl") {
-  visibility = [
-    "../../audio:audio",
-    "../../modules/*",
-  ]
   sources = [
     "audio_mixer_impl.cc",
     "audio_mixer_impl.h",
+    "default_output_rate_calculator.cc",
+    "default_output_rate_calculator.h",
+    "frame_combiner.cc",
+    "frame_combiner.h",
+    "output_rate_calculator.h",
   ]
 
   public = [
     "audio_mixer_impl.h",
+    "default_output_rate_calculator.h",  # For creating a mixer with limiter disabled.
+    "frame_combiner.h",
   ]
 
   public_deps = [
@@ -36,10 +39,10 @@ rtc_static_library("audio_mixer_impl") {
   deps = [
     ":audio_frame_manipulator",
     "../..:webrtc_common",
+    "../../audio/utility:audio_frame_operations",
     "../../base:rtc_base_approved",
-    "../../modules/audio_processing",
-    "../../modules/utility",
     "../../system_wrappers",
+    "../audio_processing",
   ]
 }
 
@@ -55,7 +58,27 @@ rtc_static_library("audio_frame_manipulator") {
   ]
 
   deps = [
+    "../../audio/utility",
     "../../base:rtc_base_approved",
-    "../../modules/utility",
   ]
+}
+
+if (rtc_include_tests) {
+  rtc_source_set("audio_mixer_unittests") {
+    testonly = true
+    sources = [
+      "audio_frame_manipulator_unittest.cc",
+      "audio_mixer_impl_unittest.cc",
+      "frame_combiner_unittest.cc",
+    ]
+    deps = [
+      ":audio_frame_manipulator",
+      ":audio_mixer_impl",
+      "../../api:audio_mixer_api",
+      "../../base:rtc_base",
+      "../../base:rtc_base_approved",
+      "../../test:test_support",
+      "//testing/gmock",
+    ]
+  }
 }

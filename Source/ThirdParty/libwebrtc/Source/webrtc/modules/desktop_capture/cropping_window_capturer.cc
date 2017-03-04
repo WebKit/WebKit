@@ -101,12 +101,8 @@ void CroppingWindowCapturer::OnCaptureResult(
 }
 
 #if !defined(WEBRTC_WIN)
-// static
-DesktopCapturer* CroppingWindowCapturer::Create(
-    const DesktopCaptureOptions& options) {
-  return DesktopCapturer::CreateWindowCapturer(options).release();
-}
-
+// CroppingWindowCapturer is implemented only for windows. On other platforms
+// the regular window capturer is used.
 // static
 std::unique_ptr<DesktopCapturer> CroppingWindowCapturer::CreateCapturer(
     const DesktopCaptureOptions& options) {

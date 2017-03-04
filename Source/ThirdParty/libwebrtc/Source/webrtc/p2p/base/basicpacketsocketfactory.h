@@ -20,7 +20,7 @@ class AsyncSocket;
 class SocketFactory;
 class Thread;
 
-class WEBRTC_EXPORT BasicPacketSocketFactory : public PacketSocketFactory {
+class WEBRTC_DYLIB_EXPORT BasicPacketSocketFactory : public PacketSocketFactory {
  public:
   BasicPacketSocketFactory();
   explicit BasicPacketSocketFactory(Thread* thread);

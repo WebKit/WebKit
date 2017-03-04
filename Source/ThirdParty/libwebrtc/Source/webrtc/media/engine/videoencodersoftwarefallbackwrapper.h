@@ -15,6 +15,7 @@
 #include <string>
 #include <vector>
 
+#include "webrtc/media/base/codec.h"
 #include "webrtc/video_encoder.h"
 
 namespace webrtc {
@@ -24,7 +25,7 @@ namespace webrtc {
 // hardware restrictions, such as max resolution.
 class VideoEncoderSoftwareFallbackWrapper : public VideoEncoder {
  public:
-  VideoEncoderSoftwareFallbackWrapper(VideoCodecType codec_type,
+  VideoEncoderSoftwareFallbackWrapper(const cricket::VideoCodec& codec,
                                       webrtc::VideoEncoder* encoder);
 
   int32_t InitEncode(const VideoCodec* codec_settings,
@@ -39,10 +40,11 @@ class VideoEncoderSoftwareFallbackWrapper : public VideoEncoder {
                  const CodecSpecificInfo* codec_specific_info,
                  const std::vector<FrameType>* frame_types) override;
   int32_t SetChannelParameters(uint32_t packet_loss, int64_t rtt) override;
-
-  int32_t SetRates(uint32_t bitrate, uint32_t framerate) override;
-  void OnDroppedFrame() override;
+  int32_t SetRateAllocation(const BitrateAllocation& bitrate_allocation,
+                            uint32_t framerate) override;
   bool SupportsNativeHandle() const override;
+  ScalingSettings GetScalingSettings() const override;
+  const char *ImplementationName() const override;
 
  private:
   bool InitFallbackEncoder();
@@ -55,7 +57,7 @@ class VideoEncoderSoftwareFallbackWrapper : public VideoEncoder {
 
   // The last bitrate/framerate set, and a flag for noting they are set.
   bool rates_set_;
-  uint32_t bitrate_;
+  BitrateAllocation bitrate_allocation_;
   uint32_t framerate_;
 
   // The last channel parameters set, and a flag for noting they are set.
@@ -63,7 +65,7 @@ class VideoEncoderSoftwareFallbackWrapper : public VideoEncoder {
   uint32_t packet_loss_;
   int64_t rtt_;
 
-  const EncoderType encoder_type_;
+  const cricket::VideoCodec codec_;
   webrtc::VideoEncoder* const encoder_;
 
   std::unique_ptr<webrtc::VideoEncoder> fallback_encoder_;

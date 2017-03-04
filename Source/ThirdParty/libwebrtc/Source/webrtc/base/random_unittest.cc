@@ -23,7 +23,7 @@ namespace {
 // Computes the positive remainder of x/n.
 template <typename T>
 T fdiv_remainder(T x, T n) {
-  RTC_CHECK_GE(n, static_cast<T>(0));
+  RTC_CHECK_GE(n, 0);
   T remainder = x % n;
   if (remainder < 0)
     remainder += n;

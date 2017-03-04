@@ -10,9 +10,9 @@
 #ifndef WEBRTC_TEST_FAKE_TEXTURE_FRAME_H_
 #define WEBRTC_TEST_FAKE_TEXTURE_FRAME_H_
 
+#include "webrtc/api/video/video_frame.h"
 #include "webrtc/base/checks.h"
 #include "webrtc/common_video/include/video_frame_buffer.h"
-#include "webrtc/video_frame.h"
 
 namespace webrtc {
 namespace test {
@@ -39,11 +39,7 @@ class FakeNativeHandleBuffer : public NativeHandleBuffer {
  private:
   rtc::scoped_refptr<VideoFrameBuffer> NativeToI420Buffer() override {
     rtc::scoped_refptr<I420Buffer> buffer = I420Buffer::Create(width_, height_);
-    int half_height = (height_ + 1) / 2;
-    int half_width = (width_ + 1) / 2;
-    memset(buffer->MutableDataY(), 0, height_ * width_);
-    memset(buffer->MutableDataU(), 0, half_height * half_width);
-    memset(buffer->MutableDataV(), 0, half_height * half_width);
+    I420Buffer::SetBlack(buffer);
     return buffer;
   }
 };

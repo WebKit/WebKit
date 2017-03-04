@@ -14,7 +14,7 @@
 #include <memory>
 #include <set>
 
-#include "webrtc/base/basictypes.h"
+#include "webrtc/base/checks.h"
 #include "webrtc/base/constructormagic.h"
 
 namespace rtc {
@@ -33,7 +33,7 @@ class TaskParent {
 
   bool AllChildrenDone();
   bool AnyChildError();
-#if !defined(NDEBUG)
+#if RTC_DCHECK_IS_ON
   bool IsChildTask(Task *task);
 #endif
 

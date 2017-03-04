@@ -44,6 +44,8 @@ struct UlpfecConfig {
         red_payload_type(-1),
         red_rtx_payload_type(-1) {}
   std::string ToString() const;
+  bool operator==(const UlpfecConfig& other) const;
+
   // Payload type used for ULPFEC packets.
   int ulpfec_payload_type;
 
@@ -52,26 +54,6 @@ struct UlpfecConfig {
 
   // RTX payload type for RED payload.
   int red_rtx_payload_type;
-};
-
-// Settings for FlexFEC forward error correction.
-// Set the payload type to '-1' to disable.
-struct FlexfecConfig {
-  FlexfecConfig();
-  ~FlexfecConfig();
-  std::string ToString() const;
-
-  // Payload type of FlexFEC.
-  int flexfec_payload_type;
-
-  // SSRC of FlexFEC stream.
-  uint32_t flexfec_ssrc;
-
-  // Vector containing a single element, corresponding to the SSRC of the media
-  // stream being protected by this FlexFEC stream. The vector MUST have size 1.
-  //
-  // TODO(brandtr): Update comment above when we support multistream protection.
-  std::vector<uint32_t> protected_media_ssrcs;
 };
 
 // RTP header extension, see RFC 5285.
@@ -113,6 +95,10 @@ struct RtpExtension {
 
   static const char* kPlayoutDelayUri;
   static const int kPlayoutDelayDefaultId;
+
+  // Inclusive min and max IDs for one-byte header extensions, per RFC5285.
+  static const int kMinId;
+  static const int kMaxId;
 
   std::string uri;
   int id;
@@ -244,17 +230,6 @@ class VideoEncoderConfig {
   // Access to the copy constructor is private to force use of the Copy()
   // method for those exceptional cases where we do use it.
   VideoEncoderConfig(const VideoEncoderConfig&);
-};
-
-struct VideoDecoderH264Settings {
-  std::string sprop_parameter_sets;
-};
-
-class DecoderSpecificSettings {
- public:
-  DecoderSpecificSettings();
-  virtual ~DecoderSpecificSettings();
-  rtc::Optional<VideoDecoderH264Settings> h264_extra_settings;
 };
 
 }  // namespace webrtc

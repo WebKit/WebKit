@@ -10,53 +10,38 @@
 
 #include "webrtc/modules/rtp_rtcp/source/dtmf_queue.h"
 
-#include <string.h>
+namespace {
+constexpr size_t kDtmfOutbandMax = 20;
+}
 
 namespace webrtc {
-DTMFqueue::DTMFqueue() : next_empty_index_(0) {
-  memset(dtmf_key_, 0, sizeof(dtmf_key_));
-  memset(dtmf_length, 0, sizeof(dtmf_length));
-  memset(dtmf_level_, 0, sizeof(dtmf_level_));
-}
+DtmfQueue::DtmfQueue() {}
 
-DTMFqueue::~DTMFqueue() {}
+DtmfQueue::~DtmfQueue() {}
 
-int32_t DTMFqueue::AddDTMF(uint8_t key, uint16_t len, uint8_t level) {
+bool DtmfQueue::AddDtmf(const Event& event) {
   rtc::CritScope lock(&dtmf_critsect_);
-
-  if (next_empty_index_ >= DTMF_OUTBAND_MAX) {
-    return -1;
+  if (queue_.size() >= kDtmfOutbandMax) {
+    return false;
   }
-  int32_t index = next_empty_index_;
-  dtmf_key_[index] = key;
-  dtmf_length[index] = len;
-  dtmf_level_[index] = level;
-  next_empty_index_++;
-  return 0;
+  queue_.push_back(event);
+  return true;
 }
 
-int8_t DTMFqueue::NextDTMF(uint8_t* dtmf_key, uint16_t* len, uint8_t* level) {
+bool DtmfQueue::NextDtmf(Event* event) {
+  RTC_DCHECK(event);
   rtc::CritScope lock(&dtmf_critsect_);
-  if (next_empty_index_ == 0)
-    return -1;
+  if (queue_.empty()) {
+    return false;
+  }
 
-  *dtmf_key = dtmf_key_[0];
-  *len = dtmf_length[0];
-  *level = dtmf_level_[0];
-
-  memmove(&(dtmf_key_[0]), &(dtmf_key_[1]),
-          next_empty_index_ * sizeof(uint8_t));
-  memmove(&(dtmf_length[0]), &(dtmf_length[1]),
-          next_empty_index_ * sizeof(uint16_t));
-  memmove(&(dtmf_level_[0]), &(dtmf_level_[1]),
-          next_empty_index_ * sizeof(uint8_t));
-
-  next_empty_index_--;
-  return 0;
+  *event = queue_.front();
+  queue_.pop_front();
+  return true;
 }
 
-bool DTMFqueue::PendingDTMF() {
+bool DtmfQueue::PendingDtmf() const {
   rtc::CritScope lock(&dtmf_critsect_);
-  return next_empty_index_ > 0;
+  return !queue_.empty();
 }
 }  // namespace webrtc

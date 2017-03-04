@@ -13,9 +13,6 @@
 
 #include "webrtc/voice_engine/test/auto_test/voe_test_common.h"
 
-// Read WEBRTC_VOICE_ENGINE_XXX_API compiler flags
-#include "webrtc/voice_engine_configurations.h"
-
 // Select the tests to execute, list order below is same as they will be
 // executed. Note that, all settings below will be overriden by sub-API
 // settings in voice_engine_configurations.h.
@@ -27,9 +24,7 @@
 #define _TEST_AUDIO_PROCESSING_
 #define _TEST_FILE_
 #define _TEST_NETWORK_
-#define _TEST_VIDEO_SYNC_
 #define _TEST_NETEQ_STATS_
-#define _TEST_XMEDIA_
 
 #define TESTED_AUDIO_LAYER kAudioPlatformDefault
 //#define TESTED_AUDIO_LAYER kAudioLinuxPulse
@@ -42,36 +37,6 @@
 // Enable this when running instrumentation of some kind to exclude tests
 // that will not pass due to slowed down execution.
 // #define _INSTRUMENTATION_TESTING_
-
-// Exclude (override) API tests given preprocessor settings in
-// engine_configurations.h
-#ifndef WEBRTC_VOICE_ENGINE_CODEC_API
-#undef _TEST_CODEC_
-#endif
-#ifndef WEBRTC_VOICE_ENGINE_VOLUME_CONTROL_API
-#undef _TEST_VOLUME_
-#endif
-#ifndef WEBRTC_VOICE_ENGINE_RTP_RTCP_API
-#undef _TEST_RTP_RTCP_
-#endif
-#ifndef WEBRTC_VOICE_ENGINE_AUDIO_PROCESSING_API
-#undef _TEST_AUDIO_PROCESSING_
-#endif
-#ifndef WEBRTC_VOICE_ENGINE_FILE_API
-#undef _TEST_FILE_
-#endif
-#ifndef WEBRTC_VOICE_ENGINE_VIDEO_SYNC_API
-#undef _TEST_VIDEO_SYNC_
-#endif
-#ifndef WEBRTC_VOICE_ENGINE_HARDWARE_API
-#undef _TEST_HARDWARE_
-#endif
-#ifndef WEBRTC_VOICE_ENGINE_EXTERNAL_MEDIA_API
-#undef _TEST_XMEDIA_
-#endif
-#ifndef WEBRTC_VOICE_ENGINE_NETEQ_STATS_API
-#undef _TEST_NETEQ_STATS_
-#endif
 
 // Some parts can cause problems while running Insure
 #ifdef __INSURE__

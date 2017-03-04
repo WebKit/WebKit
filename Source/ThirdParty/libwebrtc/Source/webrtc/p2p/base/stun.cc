@@ -15,7 +15,7 @@
 #include <memory>
 
 #include "webrtc/base/byteorder.h"
-#include "webrtc/base/common.h"
+#include "webrtc/base/checks.h"
 #include "webrtc/base/crc32.h"
 #include "webrtc/base/logging.h"
 #include "webrtc/base/messagedigest.h"
@@ -48,7 +48,7 @@ StunMessage::StunMessage()
     : type_(0),
       length_(0),
       transaction_id_(EMPTY_TRANSACTION_ID) {
-  ASSERT(IsValidTransactionId(transaction_id_));
+  RTC_DCHECK(IsValidTransactionId(transaction_id_));
   attrs_ = new std::vector<StunAttribute*>();
 }
 
@@ -61,7 +61,7 @@ StunMessage::~StunMessage() {
 bool StunMessage::IsLegacy() const {
   if (transaction_id_.size() == kStunLegacyTransactionIdLength)
     return true;
-  ASSERT(transaction_id_.size() == kStunTransactionIdLength);
+  RTC_DCHECK(transaction_id_.size() == kStunTransactionIdLength);
   return false;
 }
 
@@ -73,11 +73,10 @@ bool StunMessage::SetTransactionID(const std::string& str) {
   return true;
 }
 
-bool StunMessage::AddAttribute(StunAttribute* attr) {
+void StunMessage::AddAttribute(StunAttribute* attr) {
   // Fail any attributes that aren't valid for this type of message.
-  if (attr->value_type() != GetAttributeValueType(attr->type())) {
-    return false;
-  }
+  RTC_DCHECK_EQ(attr->value_type(), GetAttributeValueType(attr->type()));
+
   attrs_->push_back(attr);
   attr->SetOwner(this);
   size_t attr_length = attr->length();
@@ -85,7 +84,6 @@ bool StunMessage::AddAttribute(StunAttribute* attr) {
     attr_length += (4 - (attr_length % 4));
   }
   length_ += static_cast<uint16_t>(attr_length + 4);
-  return true;
 }
 
 const StunAddressAttribute* StunMessage::GetAddress(int type) const {
@@ -198,7 +196,7 @@ bool StunMessage::ValidateMessageIntegrity(const char* data, size_t size,
                                       password.c_str(), password.size(),
                                       temp_data.get(), mi_pos,
                                       hmac, sizeof(hmac));
-  ASSERT(ret == sizeof(hmac));
+  RTC_DCHECK(ret == sizeof(hmac));
   if (ret != sizeof(hmac))
     return false;
 
@@ -219,7 +217,7 @@ bool StunMessage::AddMessageIntegrity(const char* key,
   StunByteStringAttribute* msg_integrity_attr =
       new StunByteStringAttribute(STUN_ATTR_MESSAGE_INTEGRITY,
           std::string(kStunMessageIntegritySize, '0'));
-  VERIFY(AddAttribute(msg_integrity_attr));
+  AddAttribute(msg_integrity_attr);
 
   // Calculate the HMAC for the message.
   ByteBufferWriter buf;
@@ -233,7 +231,7 @@ bool StunMessage::AddMessageIntegrity(const char* key,
                                       key, keylen,
                                       buf.Data(), msg_len_for_hmac,
                                       hmac, sizeof(hmac));
-  ASSERT(ret == sizeof(hmac));
+  RTC_DCHECK(ret == sizeof(hmac));
   if (ret != sizeof(hmac)) {
     LOG(LS_ERROR) << "HMAC computation failed. Message-Integrity "
                   << "has dummy value.";
@@ -280,7 +278,7 @@ bool StunMessage::AddFingerprint() {
   // it can't fail.
   StunUInt32Attribute* fingerprint_attr =
      new StunUInt32Attribute(STUN_ATTR_FINGERPRINT, 0);
-  VERIFY(AddAttribute(fingerprint_attr));
+  AddAttribute(fingerprint_attr);
 
   // Calculate the CRC-32 for the message and insert it.
   ByteBufferWriter buf;
@@ -324,7 +322,7 @@ bool StunMessage::Read(ByteBufferReader* buf) {
     // RFC3489 instead of RFC5389.
     transaction_id.insert(0, magic_cookie);
   }
-  ASSERT(IsValidTransactionId(transaction_id));
+  RTC_DCHECK(IsValidTransactionId(transaction_id));
   transaction_id_ = transaction_id;
 
   if (length_ != buf->Length())
@@ -357,7 +355,7 @@ bool StunMessage::Read(ByteBufferReader* buf) {
     }
   }
 
-  ASSERT(buf->Length() == rest);
+  RTC_DCHECK(buf->Length() == rest);
   return true;
 }
 
@@ -655,12 +653,12 @@ StunUInt32Attribute::StunUInt32Attribute(uint16_t type)
 }
 
 bool StunUInt32Attribute::GetBit(size_t index) const {
-  ASSERT(index < 32);
+  RTC_DCHECK(index < 32);
   return static_cast<bool>((bits_ >> index) & 0x1);
 }
 
 void StunUInt32Attribute::SetBit(size_t index, bool value) {
-  ASSERT(index < 32);
+  RTC_DCHECK(index < 32);
   bits_ &= ~(1 << index);
   bits_ |= value ? (1 << index) : 0;
 }
@@ -731,14 +729,14 @@ void StunByteStringAttribute::CopyBytes(const void* bytes, size_t length) {
 }
 
 uint8_t StunByteStringAttribute::GetByte(size_t index) const {
-  ASSERT(bytes_ != NULL);
-  ASSERT(index < length());
+  RTC_DCHECK(bytes_ != NULL);
+  RTC_DCHECK(index < length());
   return static_cast<uint8_t>(bytes_[index]);
 }
 
 void StunByteStringAttribute::SetByte(size_t index, uint8_t value) {
-  ASSERT(bytes_ != NULL);
-  ASSERT(index < length());
+  RTC_DCHECK(bytes_ != NULL);
+  RTC_DCHECK(index < length());
   bytes_[index] = value;
 }
 

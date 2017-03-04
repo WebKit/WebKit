@@ -24,31 +24,43 @@
 
 namespace webrtc {
 
+// C++ version of: https://www.w3.org/TR/webrtc/#idl-def-rtcdatachannelinit
+// TODO(deadbeef): Use rtc::Optional for the "-1 if unset" things.
 struct DataChannelInit {
-  DataChannelInit()
-      : reliable(false),
-        ordered(true),
-        maxRetransmitTime(-1),
-        maxRetransmits(-1),
-        negotiated(false),
-        id(-1) {
-  }
+  // Deprecated. Reliability is assumed, and channel will be unreliable if
+  // maxRetransmitTime or MaxRetransmits is set.
+  bool reliable = false;
 
-  bool reliable;           // Deprecated.
-  bool ordered;            // True if ordered delivery is required.
-  int maxRetransmitTime;   // The max period of time in milliseconds in which
-                           // retransmissions will be sent.  After this time, no
-                           // more retransmissions will be sent. -1 if unset.
-  int maxRetransmits;      // The max number of retransmissions. -1 if unset.
-  std::string protocol;    // This is set by the application and opaque to the
-                           // WebRTC implementation.
-  bool negotiated;         // True if the channel has been externally negotiated
-                           // and we do not send an in-band signalling in the
-                           // form of an "open" message.
-  int id;                  // The stream id, or SID, for SCTP data channels. -1
-                           // if unset.
+  // True if ordered delivery is required.
+  bool ordered = true;
+
+  // The max period of time in milliseconds in which retransmissions will be
+  // sent. After this time, no more retransmissions will be sent. -1 if unset.
+  //
+  // Cannot be set along with |maxRetransmits|.
+  int maxRetransmitTime = -1;
+
+  // The max number of retransmissions. -1 if unset.
+  //
+  // Cannot be set along with |maxRetransmitTime|.
+  int maxRetransmits = -1;
+
+  // This is set by the application and opaque to the WebRTC implementation.
+  std::string protocol;
+
+  // True if the channel has been externally negotiated and we do not send an
+  // in-band signalling in the form of an "open" message. If this is true, |id|
+  // below must be set; otherwise it should be unset and will be negotiated
+  // in-band.
+  bool negotiated = false;
+
+  // The stream id, or SID, for SCTP data channels. -1 if unset (see above).
+  int id = -1;
 };
 
+// At the JavaScript level, data can be passed in as a string or a blob, so
+// this structure's |binary| flag tells whether the data should be interpreted
+// as binary or text.
 struct DataBuffer {
   DataBuffer(const rtc::CopyOnWriteBuffer& data, bool binary)
       : data(data),
@@ -68,6 +80,10 @@ struct DataBuffer {
   bool binary;
 };
 
+// Used to implement RTCDataChannel events.
+//
+// The code responding to these callbacks should unwind the stack before
+// using any other webrtc APIs; re-entrancy is not supported.
 class DataChannelObserver {
  public:
   // The data channel state have changed.
@@ -75,7 +91,7 @@ class DataChannelObserver {
   //  A data buffer was successfully received.
   virtual void OnMessage(const DataBuffer& buffer) = 0;
   // The data channel's buffered_amount has changed.
-  virtual void OnBufferedAmountChange(uint64_t){};
+  virtual void OnBufferedAmountChange(uint64_t) {}
 
  protected:
   virtual ~DataChannelObserver() {}
@@ -83,7 +99,8 @@ class DataChannelObserver {
 
 class DataChannelInterface : public rtc::RefCountInterface {
  public:
-  // Keep in sync with DataChannel.java:State and
+  // C++ version of: https://www.w3.org/TR/webrtc/#idl-def-rtcdatachannelstate
+  // Unlikely to change, but keep in sync with DataChannel.java:State and
   // RTCDataChannel.h:RTCDataChannelState.
   enum DataState {
     kConnecting,
@@ -107,14 +124,20 @@ class DataChannelInterface : public rtc::RefCountInterface {
     return "";
   }
 
+  // Used to receive events from the data channel. Only one observer can be
+  // registered at a time. UnregisterObserver should be called before the
+  // observer object is destroyed.
   virtual void RegisterObserver(DataChannelObserver* observer) = 0;
   virtual void UnregisterObserver() = 0;
+
   // The label attribute represents a label that can be used to distinguish this
   // DataChannel object from other DataChannel objects.
   virtual std::string label() const = 0;
-  virtual bool reliable() const = 0;
 
-  // TODO(tommyw): Remove these dummy implementations when all classes have
+  // The accessors below simply return the properties from the DataChannelInit
+  // the data channel was constructed with.
+  virtual bool reliable() const = 0;
+  // TODO(deadbeef): Remove these dummy implementations when all classes have
   // implemented these APIs. They should all just return the values the
   // DataChannel was created with.
   virtual bool ordered() const { return false; }
@@ -123,21 +146,33 @@ class DataChannelInterface : public rtc::RefCountInterface {
   virtual std::string protocol() const { return std::string(); }
   virtual bool negotiated() const { return false; }
 
+  // Returns the ID from the DataChannelInit, if it was negotiated out-of-band.
+  // If negotiated in-band, this ID will be populated once the DTLS role is
+  // determined, and until then this will return -1.
   virtual int id() const = 0;
   virtual DataState state() const = 0;
-  // TODO(hbos): Default implementations of [messages/bytes]_[sent/received] as
-  // to not break Chromium. Fix Chromium's implementation as soon as this rolls.
-  // crbug.com/654927
-  virtual uint32_t messages_sent() const { return 0; }
-  virtual uint64_t bytes_sent() const { return 0; }
-  virtual uint32_t messages_received() const { return 0; }
-  virtual uint64_t bytes_received() const { return 0; }
-  // The buffered_amount returns the number of bytes of application data
-  // (UTF-8 text and binary data) that have been queued using SendBuffer but
-  // have not yet been transmitted to the network.
+  virtual uint32_t messages_sent() const = 0;
+  virtual uint64_t bytes_sent() const = 0;
+  virtual uint32_t messages_received() const = 0;
+  virtual uint64_t bytes_received() const = 0;
+
+  // Returns the number of bytes of application data (UTF-8 text and binary
+  // data) that have been queued using Send but have not yet been processed at
+  // the SCTP level. See comment above Send below.
   virtual uint64_t buffered_amount() const = 0;
+
+  // Begins the graceful data channel closing procedure. See:
+  // https://tools.ietf.org/html/draft-ietf-rtcweb-data-channel-13#section-6.7
   virtual void Close() = 0;
-  // Sends |data| to the remote peer.
+
+  // Sends |data| to the remote peer. If the data can't be sent at the SCTP
+  // level (due to congestion control), it's buffered at the data channel level,
+  // up to a maximum of 16MB. If Send is called while this buffer is full, the
+  // data channel will be closed abruptly.
+  //
+  // So, it's important to use buffered_amount() and OnBufferedAmountChange to
+  // ensure the data channel is used efficiently but without filling this
+  // buffer.
   virtual bool Send(const DataBuffer& buffer) = 0;
 
  protected:

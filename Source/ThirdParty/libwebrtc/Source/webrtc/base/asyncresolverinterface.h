@@ -18,7 +18,7 @@
 namespace rtc {
 
 // This interface defines the methods to resolve the address asynchronously.
-class WEBRTC_EXPORT AsyncResolverInterface {
+class WEBRTC_DYLIB_EXPORT AsyncResolverInterface {
  public:
   AsyncResolverInterface();
   virtual ~AsyncResolverInterface();

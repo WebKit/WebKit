@@ -70,7 +70,7 @@ void NetEqReplacementInput::ReplacePacket() {
 
   RTC_DCHECK(packet_);
 
-  RTC_CHECK_EQ(forbidden_types_.count(packet_->header.header.payloadType), 0u)
+  RTC_CHECK_EQ(forbidden_types_.count(packet_->header.header.payloadType), 0)
       << "Payload type " << static_cast<int>(packet_->header.header.payloadType)
       << " is forbidden.";
 

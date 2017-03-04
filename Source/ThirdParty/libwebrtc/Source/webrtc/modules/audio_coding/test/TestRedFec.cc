@@ -18,7 +18,7 @@
 #include "webrtc/modules/audio_coding/test/utility.h"
 #include "webrtc/system_wrappers/include/trace.h"
 #include "webrtc/test/testsupport/fileutils.h"
-#include "webrtc/voice_engine_configurations.h"
+#include "webrtc/typedefs.h"
 
 #ifdef SUPPORT_RED_WB
 #undef SUPPORT_RED_WB

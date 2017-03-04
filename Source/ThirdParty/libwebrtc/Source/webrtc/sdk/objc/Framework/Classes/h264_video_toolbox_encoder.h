@@ -12,10 +12,10 @@
 #ifndef WEBRTC_SDK_OBJC_FRAMEWORK_CLASSES_H264_VIDEO_TOOLBOX_ENCODER_H_
 #define WEBRTC_SDK_OBJC_FRAMEWORK_CLASSES_H264_VIDEO_TOOLBOX_ENCODER_H_
 
+#include "webrtc/api/video/video_rotation.h"
 #include "webrtc/base/criticalsection.h"
 #include "webrtc/common_video/h264/h264_bitstream_parser.h"
 #include "webrtc/common_video/include/bitrate_adjuster.h"
-#include "webrtc/common_video/rotation.h"
 #include "webrtc/media/base/codec.h"
 #include "webrtc/modules/video_coding/codecs/h264/include/h264.h"
 #include "webrtc/modules/video_coding/utility/quality_scaler.h"
@@ -46,7 +46,6 @@ class H264VideoToolboxEncoder : public H264Encoder {
 
   int RegisterEncodeCompleteCallback(EncodedImageCallback* callback) override;
 
-  void OnDroppedFrame() override;
   int SetChannelParameters(uint32_t packet_loss, int64_t rtt) override;
 
   int SetRates(uint32_t new_bitrate_kbit, uint32_t frame_rate) override;
@@ -67,6 +66,8 @@ class H264VideoToolboxEncoder : public H264Encoder {
                       uint32_t timestamp,
                       VideoRotation rotation);
 
+  ScalingSettings GetScalingSettings() const override;
+
  private:
   int ResetCompressionSession();
   void ConfigureCompressionSession();
@@ -79,16 +80,14 @@ class H264VideoToolboxEncoder : public H264Encoder {
   EncodedImageCallback* callback_;
   VTCompressionSessionRef compression_session_;
   BitrateAdjuster bitrate_adjuster_;
+  H264PacketizationMode packetization_mode_;
   uint32_t target_bitrate_bps_;
   uint32_t encoder_bitrate_bps_;
   int32_t width_;
   int32_t height_;
   const CFStringRef profile_;
 
-  rtc::CriticalSection quality_scaler_crit_;
-  QualityScaler quality_scaler_ GUARDED_BY(quality_scaler_crit_);
   H264BitstreamParser h264_bitstream_parser_;
-  bool enable_scaling_;
   std::vector<uint8_t> nv12_scale_buffer_;
 };  // H264VideoToolboxEncoder
 

@@ -11,7 +11,6 @@
 #include "webrtc/base/arraysize.h"
 #include "webrtc/base/bytebuffer.h"
 #include "webrtc/base/byteorder.h"
-#include "webrtc/base/common.h"
 #include "webrtc/base/gunit.h"
 
 namespace rtc {

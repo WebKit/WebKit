@@ -13,7 +13,6 @@
 
 #include <vector>
 
-#include "webrtc/base/constructormagic.h"
 #include "webrtc/modules/rtp_rtcp/source/rtcp_packet.h"
 
 namespace webrtc {
@@ -51,8 +50,6 @@ class ExtendedJitterReport : public RtcpPacket {
   }
 
   std::vector<uint32_t> inter_arrival_jitters_;
-
-  RTC_DISALLOW_COPY_AND_ASSIGN(ExtendedJitterReport);
 };
 
 }  // namespace rtcp

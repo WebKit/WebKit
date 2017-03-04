@@ -33,19 +33,25 @@ ChannelController::ChannelController(const Config& config)
                 config_.intial_channels_to_encode);
 }
 
+ChannelController::~ChannelController() = default;
+
+void ChannelController::UpdateNetworkMetrics(
+    const NetworkMetrics& network_metrics) {
+  if (network_metrics.uplink_bandwidth_bps)
+    uplink_bandwidth_bps_ = network_metrics.uplink_bandwidth_bps;
+}
+
 void ChannelController::MakeDecision(
-    const NetworkMetrics& metrics,
     AudioNetworkAdaptor::EncoderRuntimeConfig* config) {
   // Decision on |num_channels| should not have been made.
   RTC_DCHECK(!config->num_channels);
 
-  if (metrics.uplink_bandwidth_bps) {
+  if (uplink_bandwidth_bps_) {
     if (channels_to_encode_ == 2 &&
-        *metrics.uplink_bandwidth_bps <= config_.channel_2_to_1_bandwidth_bps) {
+        *uplink_bandwidth_bps_ <= config_.channel_2_to_1_bandwidth_bps) {
       channels_to_encode_ = 1;
     } else if (channels_to_encode_ == 1 &&
-               *metrics.uplink_bandwidth_bps >=
-                   config_.channel_1_to_2_bandwidth_bps) {
+               *uplink_bandwidth_bps_ >= config_.channel_1_to_2_bandwidth_bps) {
       channels_to_encode_ =
           std::min(static_cast<size_t>(2), config_.num_encoder_channels);
     }

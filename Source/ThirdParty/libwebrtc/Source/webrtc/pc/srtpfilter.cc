@@ -20,8 +20,8 @@
 #include "webrtc/base/buffer.h"
 #include "webrtc/base/byteorder.h"
 #include "webrtc/base/checks.h"
-#include "webrtc/base/common.h"
 #include "webrtc/base/logging.h"
+#include "webrtc/base/sslstreamadapter.h"
 #include "webrtc/base/stringencode.h"
 #include "webrtc/base/timeutils.h"
 #include "webrtc/media/base/rtputils.h"
@@ -225,6 +225,18 @@ bool SrtpFilter::GetSrtpOverhead(int* srtp_overhead) const {
   *srtp_overhead = send_session_->GetSrtpOverhead();
   return true;
 }
+
+#if defined(ENABLE_EXTERNAL_AUTH)
+bool SrtpFilter::IsExternalAuthActive() const {
+  if (!IsActive()) {
+    LOG(LS_WARNING) << "Failed to check IsExternalAuthActive: SRTP not active";
+    return false;
+  }
+
+  RTC_CHECK(send_session_);
+  return send_session_->IsExternalAuthActive();
+}
+#endif
 
 void SrtpFilter::set_signal_silent_time(int signal_silent_time_in_ms) {
   signal_silent_time_in_ms_ = signal_silent_time_in_ms;
@@ -463,12 +475,7 @@ bool SrtpSession::inited_ = false;
 // This lock protects SrtpSession::inited_.
 rtc::GlobalLockPod SrtpSession::lock_;
 
-SrtpSession::SrtpSession()
-    : session_(nullptr),
-      rtp_auth_tag_len_(0),
-      rtcp_auth_tag_len_(0),
-      srtp_stat_(new SrtpStat()),
-      last_send_seq_num_(-1) {
+SrtpSession::SrtpSession() : srtp_stat_(new SrtpStat()) {
   SignalSrtpError.repeat(srtp_stat_->SignalSrtpError);
 }
 
@@ -594,6 +601,11 @@ bool SrtpSession::UnprotectRtcp(void* p, int in_len, int* out_len) {
 bool SrtpSession::GetRtpAuthParams(uint8_t** key, int* key_len, int* tag_len) {
 #if defined(ENABLE_EXTERNAL_AUTH)
   RTC_DCHECK(thread_checker_.CalledOnValidThread());
+  RTC_DCHECK(IsExternalAuthActive());
+  if (!IsExternalAuthActive()) {
+    return false;
+  }
+
   ExternalHmacContext* external_hmac = nullptr;
   // stream_template will be the reference context for other streams.
   // Let's use it for getting the keys.
@@ -620,6 +632,12 @@ bool SrtpSession::GetRtpAuthParams(uint8_t** key, int* key_len, int* tag_len) {
 int SrtpSession::GetSrtpOverhead() const {
   return rtp_auth_tag_len_;
 }
+
+#if defined(ENABLE_EXTERNAL_AUTH)
+bool SrtpSession::IsExternalAuthActive() const {
+  return external_auth_active_;
+}
+#endif
 
 bool SrtpSession::GetSendStreamPacketIndex(void* p,
                                            int in_len,
@@ -663,15 +681,12 @@ bool SrtpSession::SetKey(int type, int cs, const uint8_t* key, size_t len) {
     // RTP HMAC is shortened to 32 bits, but RTCP remains 80 bits.
     srtp_crypto_policy_set_aes_cm_128_hmac_sha1_32(&policy.rtp);
     srtp_crypto_policy_set_aes_cm_128_hmac_sha1_80(&policy.rtcp);
-#if !defined(ENABLE_EXTERNAL_AUTH)
-    // TODO(jbauch): Re-enable once https://crbug.com/628400 is resolved.
   } else if (cs == rtc::SRTP_AEAD_AES_128_GCM) {
     srtp_crypto_policy_set_aes_gcm_128_16_auth(&policy.rtp);
     srtp_crypto_policy_set_aes_gcm_128_16_auth(&policy.rtcp);
   } else if (cs == rtc::SRTP_AEAD_AES_256_GCM) {
     srtp_crypto_policy_set_aes_gcm_256_16_auth(&policy.rtp);
     srtp_crypto_policy_set_aes_gcm_256_16_auth(&policy.rtcp);
-#endif  // ENABLE_EXTERNAL_AUTH
   } else {
     LOG(LS_WARNING) << "Failed to create SRTP session: unsupported"
                     << " cipher_suite " << cs;
@@ -705,8 +720,9 @@ bool SrtpSession::SetKey(int type, int cs, const uint8_t* key, size_t len) {
   // We want to set this option only for rtp packets.
   // By default policy structure is initialized to HMAC_SHA1.
 #if defined(ENABLE_EXTERNAL_AUTH)
-  // Enable external HMAC authentication only for outgoing streams.
-  if (type == ssrc_any_outbound) {
+  // Enable external HMAC authentication only for outgoing streams and only
+  // for cipher suites that support it (i.e. only non-GCM cipher suites).
+  if (type == ssrc_any_outbound && !rtc::IsGcmCryptoSuite(cs)) {
     policy.rtp.auth_type = EXTERNAL_HMAC_SHA1;
   }
 #endif
@@ -722,6 +738,9 @@ bool SrtpSession::SetKey(int type, int cs, const uint8_t* key, size_t len) {
   srtp_set_user_data(session_, this);
   rtp_auth_tag_len_ = policy.rtp.auth_tag_len;
   rtcp_auth_tag_len_ = policy.rtcp.auth_tag_len;
+#if defined(ENABLE_EXTERNAL_AUTH)
+  external_auth_active_ = (policy.rtp.auth_type == EXTERNAL_HMAC_SHA1);
+#endif
   return true;
 }
 

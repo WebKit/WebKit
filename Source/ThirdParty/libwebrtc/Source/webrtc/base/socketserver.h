@@ -17,6 +17,9 @@
 namespace rtc {
 
 class MessageQueue;
+// Needs to be forward declared because there's a circular dependency between
+// NetworkMonitor and Thread.
+// TODO(deadbeef): Fix this.
 class NetworkBinderInterface;
 
 // Provides the ability to wait for activity on a set of sockets.  The Thread

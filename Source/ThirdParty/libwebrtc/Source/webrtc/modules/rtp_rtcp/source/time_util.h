@@ -11,7 +11,8 @@
 #ifndef WEBRTC_MODULES_RTP_RTCP_SOURCE_TIME_UTIL_H_
 #define WEBRTC_MODULES_RTP_RTCP_SOURCE_TIME_UTIL_H_
 
-#include "webrtc/base/basictypes.h"
+#include <stdint.h>
+
 #include "webrtc/system_wrappers/include/ntp_time.h"
 
 namespace webrtc {
@@ -20,11 +21,6 @@ namespace webrtc {
 inline uint32_t NtpToRtp(NtpTime ntp, uint32_t freq) {
   uint32_t tmp = (static_cast<uint64_t>(ntp.fractions()) * freq) >> 32;
   return ntp.seconds() * freq + tmp;
-}
-// Return the current RTP timestamp from the NTP timestamp
-// returned by the specified clock.
-inline uint32_t CurrentRtp(const Clock& clock, uint32_t freq) {
-  return NtpToRtp(NtpTime(clock), freq);
 }
 
 // Helper function for compact ntp representation:

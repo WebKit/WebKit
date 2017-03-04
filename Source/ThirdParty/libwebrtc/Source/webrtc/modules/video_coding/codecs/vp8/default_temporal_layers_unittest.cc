@@ -53,7 +53,8 @@ TEST(TemporalLayersTest, 2Layers) {
   DefaultTemporalLayers tl(2, 0);
   vpx_codec_enc_cfg_t cfg;
   CodecSpecificInfoVP8 vp8_info;
-  tl.ConfigureBitrates(500, 500, 30, &cfg);
+  tl.OnRatesUpdated(500, 500, 30);
+  tl.UpdateConfiguration(&cfg);
 
   int expected_flags[16] = {
       kTemporalUpdateLastAndGoldenRefAltRef,
@@ -94,7 +95,8 @@ TEST(TemporalLayersTest, 3Layers) {
   DefaultTemporalLayers tl(3, 0);
   vpx_codec_enc_cfg_t cfg;
   CodecSpecificInfoVP8 vp8_info;
-  tl.ConfigureBitrates(500, 500, 30, &cfg);
+  tl.OnRatesUpdated(500, 500, 30);
+  tl.UpdateConfiguration(&cfg);
 
   int expected_flags[16] = {
       kTemporalUpdateLastAndGoldenRefAltRef,
@@ -135,7 +137,8 @@ TEST(TemporalLayersTest, 4Layers) {
   DefaultTemporalLayers tl(4, 0);
   vpx_codec_enc_cfg_t cfg;
   CodecSpecificInfoVP8 vp8_info;
-  tl.ConfigureBitrates(500, 500, 30, &cfg);
+  tl.OnRatesUpdated(500, 500, 30);
+  tl.UpdateConfiguration(&cfg);
   int expected_flags[16] = {
       kTemporalUpdateLast,
       kTemporalUpdateNone,
@@ -175,7 +178,8 @@ TEST(TemporalLayersTest, KeyFrame) {
   DefaultTemporalLayers tl(3, 0);
   vpx_codec_enc_cfg_t cfg;
   CodecSpecificInfoVP8 vp8_info;
-  tl.ConfigureBitrates(500, 500, 30, &cfg);
+  tl.OnRatesUpdated(500, 500, 30);
+  tl.UpdateConfiguration(&cfg);
 
   int expected_flags[8] = {
       kTemporalUpdateLastAndGoldenRefAltRef,

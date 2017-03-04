@@ -217,16 +217,17 @@ TEST_F(AudioEncoderCngTest, CheckFrameSizePropagation) {
   EXPECT_EQ(17U, cng_->Num10MsFramesInNextPacket());
 }
 
-TEST_F(AudioEncoderCngTest, CheckChangeBitratePropagation) {
+TEST_F(AudioEncoderCngTest, CheckTargetAudioBitratePropagation) {
   CreateCng(MakeCngConfig());
-  EXPECT_CALL(*mock_encoder_, SetTargetBitrate(4711));
-  cng_->SetTargetBitrate(4711);
+  EXPECT_CALL(*mock_encoder_,
+              OnReceivedUplinkBandwidth(4711, rtc::Optional<int64_t>()));
+  cng_->OnReceivedUplinkBandwidth(4711, rtc::Optional<int64_t>());
 }
 
-TEST_F(AudioEncoderCngTest, CheckProjectedPacketLossRatePropagation) {
+TEST_F(AudioEncoderCngTest, CheckPacketLossFractionPropagation) {
   CreateCng(MakeCngConfig());
-  EXPECT_CALL(*mock_encoder_, SetProjectedPacketLossRate(0.5));
-  cng_->SetProjectedPacketLossRate(0.5);
+  EXPECT_CALL(*mock_encoder_, OnReceivedUplinkPacketLossFraction(0.5));
+  cng_->OnReceivedUplinkPacketLossFraction(0.5);
 }
 
 TEST_F(AudioEncoderCngTest, EncodeCallsVad) {

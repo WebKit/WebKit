@@ -92,6 +92,7 @@
 
 // Wait until "ex" is true, or "timeout" expires, using fake clock where
 // messages are processed every millisecond.
+// TODO(pthatcher): Allow tests to control how many milliseconds to advance.
 #define SIMULATED_WAIT(ex, timeout, clock)                    \
   for (int64_t start = rtc::TimeMillis();                     \
        !(ex) && rtc::TimeMillis() < start + (timeout);) {     \

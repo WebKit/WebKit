@@ -18,13 +18,14 @@
 #include <stdio.h>
 #include <vector>
 
+#include "webrtc/api/video/video_frame.h"
 #include "webrtc/base/export.h"
 #include "webrtc/common_types.h"  // RawVideoTypes.
-#include "webrtc/common_video/rotation.h"
 #include "webrtc/typedefs.h"
-#include "webrtc/video_frame.h"
 
 namespace webrtc {
+
+class I420Buffer;
 
 // Supported video types.
 enum VideoType {
@@ -98,10 +99,11 @@ int ExtractBuffer(const VideoFrame& input_frame, size_t size, uint8_t* buffer);
 // Return value: 0 if OK, < 0 otherwise.
 
 // TODO(nisse): Delete this wrapper, and let users call libyuv directly. Most
-// calls pass |src_video_type| == kI420, and should use libyuv::I420Copy. The
-// only exception at the time of this writing is
-// VideoCaptureImpl::IncomingFrame, which still needs libyuv::ConvertToI420.
-WEBRTC_EXPORT int ConvertToI420(VideoType src_video_type,
+// calls pass |src_video_type| == kI420, and should use libyuv::I420Copy. Also
+// remember to delete the I420Buffer forward declaration above. The only
+// exception at the time of this writing is VideoCaptureImpl::IncomingFrame,
+// which still needs libyuv::ConvertToI420.
+WEBRTC_DYLIB_EXPORT int ConvertToI420(VideoType src_video_type,
                   const uint8_t* src_frame,
                   int crop_x,
                   int crop_y,

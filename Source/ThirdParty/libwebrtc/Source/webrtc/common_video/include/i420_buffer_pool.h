@@ -14,8 +14,9 @@
 #include <list>
 #include <limits>
 
+#include "webrtc/api/video/i420_buffer.h"
+#include "webrtc/base/export.h"
 #include "webrtc/base/race_checker.h"
-#include "webrtc/common_video/include/video_frame_buffer.h"
 
 namespace webrtc {
 
@@ -26,7 +27,7 @@ namespace webrtc {
 // changes, old buffers will be purged from the pool.
 // Note that CreateBuffer will crash if more than kMaxNumberOfFramesBeforeCrash
 // are created. This is to prevent memory leaks where frames are not returned.
-class WEBRTC_EXPORT I420BufferPool {
+class WEBRTC_DYLIB_EXPORT I420BufferPool {
  public:
   I420BufferPool()
       : I420BufferPool(false) {}

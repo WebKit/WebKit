@@ -11,13 +11,13 @@
 #include <memory>
 
 #include "webrtc/p2p/base/basicpacketsocketfactory.h"
+#include "webrtc/p2p/base/jseptransport.h"
 #include "webrtc/p2p/base/relayport.h"
 #include "webrtc/p2p/base/stunport.h"
 #include "webrtc/p2p/base/tcpport.h"
 #include "webrtc/p2p/base/testrelayserver.h"
 #include "webrtc/p2p/base/teststunserver.h"
 #include "webrtc/p2p/base/testturnserver.h"
-#include "webrtc/p2p/base/transport.h"
 #include "webrtc/p2p/base/turnport.h"
 #include "webrtc/base/arraysize.h"
 #include "webrtc/base/buffer.h"
@@ -146,7 +146,7 @@ class TestPort : public Port {
   virtual void PrepareAddress() {
     rtc::SocketAddress addr(ip(), min_port());
     AddAddress(addr, addr, rtc::SocketAddress(), "udp", "", "", Type(),
-               ICE_TYPE_PREFERENCE_HOST, 0, true);
+               ICE_TYPE_PREFERENCE_HOST, 0, "", true);
   }
 
   virtual bool SupportsProtocol(const std::string& protocol) const {
@@ -158,7 +158,7 @@ class TestPort : public Port {
   // Exposed for testing candidate building.
   void AddCandidateAddress(const rtc::SocketAddress& addr) {
     AddAddress(addr, addr, rtc::SocketAddress(), "udp", "", "", Type(),
-               type_preference_, 0, false);
+               type_preference_, 0, "", false);
   }
   void AddCandidateAddress(const rtc::SocketAddress& addr,
                            const rtc::SocketAddress& base_address,
@@ -166,7 +166,7 @@ class TestPort : public Port {
                            int type_preference,
                            bool final) {
     AddAddress(addr, base_address, rtc::SocketAddress(), "udp", "", "", type,
-               type_preference, 0, final);
+               type_preference, 0, "", final);
   }
 
   virtual Connection* CreateConnection(const Candidate& remote_candidate,
@@ -221,6 +221,23 @@ class TestPort : public Port {
   std::unique_ptr<IceMessage> last_stun_msg_;
   int type_preference_ = 0;
 };
+
+static void SendPingAndReceiveResponse(
+    Connection* lconn, TestPort* lport, Connection* rconn, TestPort* rport,
+    rtc::ScopedFakeClock* clock, int64_t ms) {
+  lconn->Ping(rtc::TimeMillis());
+  ASSERT_TRUE_WAIT(lport->last_stun_msg(), kDefaultTimeout);
+  ASSERT_TRUE(lport->last_stun_buf());
+  rconn->OnReadPacket(lport->last_stun_buf()->data<char>(),
+                      lport->last_stun_buf()->size(),
+                      rtc::PacketTime());
+  clock->AdvanceTime(rtc::TimeDelta::FromMilliseconds(ms));
+  ASSERT_TRUE_WAIT(rport->last_stun_msg(), kDefaultTimeout);
+  ASSERT_TRUE(rport->last_stun_buf());
+  lconn->OnReadPacket(rport->last_stun_buf()->data<char>(),
+                      rport->last_stun_buf()->size(),
+                      rtc::PacketTime());
+}
 
 class TestChannel : public sigslot::has_slots<> {
  public:
@@ -543,27 +560,44 @@ class PortTest : public testing::Test, public sigslot::has_slots<> {
   }
   static const char* StunName(NATType type) {
     switch (type) {
-      case NAT_OPEN_CONE:       return "stun(open cone)";
-      case NAT_ADDR_RESTRICTED: return "stun(addr restricted)";
-      case NAT_PORT_RESTRICTED: return "stun(port restricted)";
-      case NAT_SYMMETRIC:       return "stun(symmetric)";
-      default:                  return "stun(?)";
+      case NAT_OPEN_CONE:
+        return "stun(open cone)";
+      case NAT_ADDR_RESTRICTED:
+        return "stun(addr restricted)";
+      case NAT_PORT_RESTRICTED:
+        return "stun(port restricted)";
+      case NAT_SYMMETRIC:
+        return "stun(symmetric)";
+      default:
+        return "stun(?)";
     }
   }
   static const char* RelayName(RelayType type, ProtocolType proto) {
     if (type == RELAY_TURN) {
       switch (proto) {
-        case PROTO_UDP:           return "turn(udp)";
-        case PROTO_TCP:           return "turn(tcp)";
-        case PROTO_SSLTCP:        return "turn(ssltcp)";
-        default:                  return "turn(?)";
+        case PROTO_UDP:
+          return "turn(udp)";
+        case PROTO_TCP:
+          return "turn(tcp)";
+        case PROTO_SSLTCP:
+          return "turn(ssltcp)";
+        case PROTO_TLS:
+          return "turn(tls)";
+        default:
+          return "turn(?)";
       }
     } else {
       switch (proto) {
-        case PROTO_UDP:           return "gturn(udp)";
-        case PROTO_TCP:           return "gturn(tcp)";
-        case PROTO_SSLTCP:        return "gturn(ssltcp)";
-        default:                  return "gturn(?)";
+        case PROTO_UDP:
+          return "gturn(udp)";
+        case PROTO_TCP:
+          return "gturn(tcp)";
+        case PROTO_SSLTCP:
+          return "gturn(ssltcp)";
+        case PROTO_TLS:
+          return "gturn(tls)";
+        default:
+          return "gturn(?)";
       }
     }
   }
@@ -1283,7 +1317,7 @@ TEST_F(PortTest, TestConnectionDead) {
   ch1.CreateConnection(GetCandidate(port2));
   int64_t after_created = rtc::TimeMillis();
   Connection* conn = ch1.conn();
-  ASSERT(conn != nullptr);
+  ASSERT_NE(conn, nullptr);
   // It is not dead if it is after MIN_CONNECTION_LIFETIME but not pruned.
   conn->UpdateState(after_created + MIN_CONNECTION_LIFETIME + 1);
   rtc::Thread::Current()->ProcessMessages(0);
@@ -1301,7 +1335,7 @@ TEST_F(PortTest, TestConnectionDead) {
   // Create a connection again and receive a ping.
   ch1.CreateConnection(GetCandidate(port2));
   conn = ch1.conn();
-  ASSERT(conn != nullptr);
+  ASSERT_NE(conn, nullptr);
   int64_t before_last_receiving = rtc::TimeMillis();
   conn->ReceivedPing();
   int64_t after_last_receiving = rtc::TimeMillis();
@@ -1769,6 +1803,105 @@ TEST_F(PortTest, TestSendStunMessage) {
   retransmit_attr = msg->GetUInt32(STUN_ATTR_RETRANSMIT_COUNT);
   ASSERT_TRUE(retransmit_attr != NULL);
   EXPECT_EQ(2U, retransmit_attr->value());
+}
+
+TEST_F(PortTest, TestNomination) {
+  std::unique_ptr<TestPort> lport(
+      CreateTestPort(kLocalAddr1, "lfrag", "lpass"));
+  std::unique_ptr<TestPort> rport(
+      CreateTestPort(kLocalAddr2, "rfrag", "rpass"));
+  lport->SetIceRole(cricket::ICEROLE_CONTROLLING);
+  lport->SetIceTiebreaker(kTiebreaker1);
+  rport->SetIceRole(cricket::ICEROLE_CONTROLLED);
+  rport->SetIceTiebreaker(kTiebreaker2);
+
+  lport->PrepareAddress();
+  rport->PrepareAddress();
+  ASSERT_FALSE(lport->Candidates().empty());
+  ASSERT_FALSE(rport->Candidates().empty());
+  Connection* lconn = lport->CreateConnection(rport->Candidates()[0],
+                                              Port::ORIGIN_MESSAGE);
+  Connection* rconn = rport->CreateConnection(lport->Candidates()[0],
+                                              Port::ORIGIN_MESSAGE);
+
+  // |lconn| is controlling, |rconn| is controlled.
+  uint32_t nomination = 1234;
+  lconn->set_nomination(nomination);
+
+  EXPECT_FALSE(lconn->nominated());
+  EXPECT_FALSE(rconn->nominated());
+  EXPECT_EQ(lconn->nominated(), lconn->stats().nominated);
+  EXPECT_EQ(rconn->nominated(), rconn->stats().nominated);
+
+  // Send ping (including the nomination value) from |lconn| to |rconn|. This
+  // should set the remote nomination of |rconn|.
+  lconn->Ping(0);
+  ASSERT_TRUE_WAIT(lport->last_stun_msg(), kDefaultTimeout);
+  ASSERT_TRUE(lport->last_stun_buf());
+  rconn->OnReadPacket(lport->last_stun_buf()->data<char>(),
+                      lport->last_stun_buf()->size(),
+                      rtc::PacketTime());
+  EXPECT_EQ(nomination, rconn->remote_nomination());
+  EXPECT_FALSE(lconn->nominated());
+  EXPECT_TRUE(rconn->nominated());
+  EXPECT_EQ(lconn->nominated(), lconn->stats().nominated);
+  EXPECT_EQ(rconn->nominated(), rconn->stats().nominated);
+
+  // This should result in an acknowledgment sent back from |rconn| to |lconn|,
+  // updating the acknowledged nomination of |lconn|.
+  ASSERT_TRUE_WAIT(rport->last_stun_msg(), kDefaultTimeout);
+  ASSERT_TRUE(rport->last_stun_buf());
+  lconn->OnReadPacket(rport->last_stun_buf()->data<char>(),
+                      rport->last_stun_buf()->size(),
+                      rtc::PacketTime());
+  EXPECT_EQ(nomination, lconn->acked_nomination());
+  EXPECT_TRUE(lconn->nominated());
+  EXPECT_TRUE(rconn->nominated());
+  EXPECT_EQ(lconn->nominated(), lconn->stats().nominated);
+  EXPECT_EQ(rconn->nominated(), rconn->stats().nominated);
+}
+
+TEST_F(PortTest, TestRoundTripTime) {
+  rtc::ScopedFakeClock clock;
+
+  std::unique_ptr<TestPort> lport(
+      CreateTestPort(kLocalAddr1, "lfrag", "lpass"));
+  std::unique_ptr<TestPort> rport(
+      CreateTestPort(kLocalAddr2, "rfrag", "rpass"));
+  lport->SetIceRole(cricket::ICEROLE_CONTROLLING);
+  lport->SetIceTiebreaker(kTiebreaker1);
+  rport->SetIceRole(cricket::ICEROLE_CONTROLLED);
+  rport->SetIceTiebreaker(kTiebreaker2);
+
+  lport->PrepareAddress();
+  rport->PrepareAddress();
+  ASSERT_FALSE(lport->Candidates().empty());
+  ASSERT_FALSE(rport->Candidates().empty());
+  Connection* lconn = lport->CreateConnection(rport->Candidates()[0],
+                                              Port::ORIGIN_MESSAGE);
+  Connection* rconn = rport->CreateConnection(lport->Candidates()[0],
+                                              Port::ORIGIN_MESSAGE);
+
+  EXPECT_EQ(0u, lconn->stats().total_round_trip_time_ms);
+  EXPECT_FALSE(lconn->stats().current_round_trip_time_ms);
+
+  SendPingAndReceiveResponse(
+      lconn, lport.get(), rconn, rport.get(), &clock, 10);
+  EXPECT_EQ(10u, lconn->stats().total_round_trip_time_ms);
+  ASSERT_TRUE(lconn->stats().current_round_trip_time_ms);
+  EXPECT_EQ(10u, *lconn->stats().current_round_trip_time_ms);
+
+  SendPingAndReceiveResponse(
+      lconn, lport.get(), rconn, rport.get(), &clock, 20);
+  EXPECT_EQ(30u, lconn->stats().total_round_trip_time_ms);
+  ASSERT_TRUE(lconn->stats().current_round_trip_time_ms);
+  EXPECT_EQ(20u, *lconn->stats().current_round_trip_time_ms);
+
+  SendPingAndReceiveResponse(
+      lconn, lport.get(), rconn, rport.get(), &clock, 30);
+  EXPECT_EQ(60u, lconn->stats().total_round_trip_time_ms);
+  ASSERT_TRUE(lconn->stats().current_round_trip_time_ms);
+  EXPECT_EQ(30u, *lconn->stats().current_round_trip_time_ms);
 }
 
 TEST_F(PortTest, TestUseCandidateAttribute) {
@@ -2377,7 +2510,7 @@ TEST_F(PortTest, TestConnectionPriority) {
   lport->set_type_preference(cricket::ICE_TYPE_PREFERENCE_HOST);
   std::unique_ptr<TestPort> rport(
       CreateTestPort(kLocalAddr2, "rfrag", "rpass"));
-  rport->set_type_preference(cricket::ICE_TYPE_PREFERENCE_RELAY);
+  rport->set_type_preference(cricket::ICE_TYPE_PREFERENCE_RELAY_UDP);
   lport->set_component(123);
   lport->AddCandidateAddress(SocketAddress("192.168.1.4", 1234));
   rport->set_component(23);

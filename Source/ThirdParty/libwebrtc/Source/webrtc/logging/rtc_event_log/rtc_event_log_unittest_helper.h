@@ -11,7 +11,7 @@
 #ifndef WEBRTC_LOGGING_RTC_EVENT_LOG_RTC_EVENT_LOG_UNITTEST_HELPER_H_
 #define WEBRTC_LOGGING_RTC_EVENT_LOG_RTC_EVENT_LOG_UNITTEST_HELPER_H_
 
-#include "webrtc/call.h"
+#include "webrtc/call/call.h"
 #include "webrtc/logging/rtc_event_log/rtc_event_log_parser.h"
 
 namespace webrtc {
@@ -55,11 +55,37 @@ class RtcEventLogTestHelper {
                                  int32_t bitrate,
                                  uint8_t fraction_loss,
                                  int32_t total_packets);
+  static void VerifyBweDelayEvent(const ParsedRtcEventLog& parsed_log,
+                                  size_t index,
+                                  int32_t bitrate,
+                                  BandwidthUsage detector_state);
+
+  static void VerifyAudioNetworkAdaptation(
+      const ParsedRtcEventLog& parsed_log,
+      size_t index,
+      const AudioNetworkAdaptor::EncoderRuntimeConfig& config);
 
   static void VerifyLogStartEvent(const ParsedRtcEventLog& parsed_log,
                                   size_t index);
   static void VerifyLogEndEvent(const ParsedRtcEventLog& parsed_log,
                                 size_t index);
+
+  static void VerifyBweProbeCluster(const ParsedRtcEventLog& parsed_log,
+                                    size_t index,
+                                    uint32_t id,
+                                    uint32_t bitrate_bps,
+                                    uint32_t min_probes,
+                                    uint32_t min_bytes);
+
+  static void VerifyProbeResultSuccess(const ParsedRtcEventLog& parsed_log,
+                                       size_t index,
+                                       uint32_t id,
+                                       uint32_t bitrate_bps);
+
+  static void VerifyProbeResultFailure(const ParsedRtcEventLog& parsed_log,
+                                       size_t index,
+                                       uint32_t id,
+                                       ProbeFailureReason failure_reason);
 };
 
 }  // namespace webrtc

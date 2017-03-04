@@ -20,19 +20,13 @@
 namespace webrtc {
 
 VoEVolumeControl* VoEVolumeControl::GetInterface(VoiceEngine* voiceEngine) {
-#ifndef WEBRTC_VOICE_ENGINE_VOLUME_CONTROL_API
-  return NULL;
-#else
   if (NULL == voiceEngine) {
     return NULL;
   }
   VoiceEngineImpl* s = static_cast<VoiceEngineImpl*>(voiceEngine);
   s->AddRef();
   return s;
-#endif
 }
-
-#ifdef WEBRTC_VOICE_ENGINE_VOLUME_CONTROL_API
 
 VoEVolumeControlImpl::VoEVolumeControlImpl(voe::SharedData* shared)
     : _shared(shared) {
@@ -413,7 +407,5 @@ int VoEVolumeControlImpl::GetOutputVolumePan(int channel,
   }
   return channelPtr->GetOutputVolumePan(left, right);
 }
-
-#endif  // #ifdef WEBRTC_VOICE_ENGINE_VOLUME_CONTROL_API
 
 }  // namespace webrtc

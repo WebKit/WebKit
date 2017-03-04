@@ -11,12 +11,14 @@
 #ifndef WEBRTC_MODULES_DESKTOP_CAPTURE_WIN_DXGI_TEXTURE_H_
 #define WEBRTC_MODULES_DESKTOP_CAPTURE_WIN_DXGI_TEXTURE_H_
 
+#include <D3D11.h>
 #include <DXGI1_2.h>
 
 #include <memory>
 
 #include "webrtc/modules/desktop_capture/desktop_frame.h"
 #include "webrtc/modules/desktop_capture/desktop_geometry.h"
+#include "webrtc/modules/desktop_capture/resolution_change_detector.h"
 
 namespace webrtc {
 
@@ -25,19 +27,18 @@ class DesktopRegion;
 // A texture copied or mapped from a DXGI_OUTDUPL_FRAME_INFO and IDXGIResource.
 class DxgiTexture {
  public:
-  // Creates a DxgiTexture instance, which represents the DesktopRect area of
+  // Creates a DxgiTexture instance, which represents the |desktop_size| area of
   // entire screen -- usually a monitor on the system.
-  explicit DxgiTexture(const DesktopRect& desktop_rect);
+  DxgiTexture();
 
   virtual ~DxgiTexture();
 
   // Copies selected regions of a frame represented by frame_info and resource.
   // Returns false if anything wrong.
-  virtual bool CopyFrom(const DXGI_OUTDUPL_FRAME_INFO& frame_info,
-                        IDXGIResource* resource,
-                        const DesktopRegion& region) = 0;
+  bool CopyFrom(const DXGI_OUTDUPL_FRAME_INFO& frame_info,
+                IDXGIResource* resource);
 
-  const DesktopRect& desktop_rect() const { return desktop_rect_; }
+  const DesktopSize& desktop_size() const { return desktop_size_; }
 
   uint8_t* bits() const { return static_cast<uint8_t*>(rect_.pBits); }
 
@@ -55,13 +56,18 @@ class DxgiTexture {
   const DesktopFrame& AsDesktopFrame();
 
  protected:
-  DXGI_MAPPED_RECT rect_ = {0};
+  DXGI_MAPPED_RECT* rect();
 
- private:
+  virtual bool CopyFromTexture(const DXGI_OUTDUPL_FRAME_INFO& frame_info,
+                               ID3D11Texture2D* texture) = 0;
+
   virtual bool DoRelease() = 0;
 
-  const DesktopRect desktop_rect_;
+ private:
+  DXGI_MAPPED_RECT rect_ = {0};
+  DesktopSize desktop_size_;
   std::unique_ptr<DesktopFrame> frame_;
+  ResolutionChangeDetector resolution_change_detector_;
 };
 
 }  // namespace webrtc

@@ -34,6 +34,7 @@
 #include <algorithm>
 #include <memory>
 
+#include "webrtc/base/checks.h"
 #include "webrtc/base/logging.h"
 #include "webrtc/base/networkmonitor.h"
 #include "webrtc/base/socket.h"  // includes something that makes windows happy
@@ -110,7 +111,7 @@ std::string AdapterTypeToString(AdapterType type) {
     case ADAPTER_TYPE_LOOPBACK:
       return "Loopback";
     default:
-      RTC_DCHECK(false) << "Invalid type " << type;
+      RTC_NOTREACHED() << "Invalid type " << type;
       return std::string();
   }
 }
@@ -265,7 +266,7 @@ void NetworkManagerBase::MergeNetworkList(const NetworkList& new_networks,
       if (current_list.ips[0].family() == AF_INET) {
         stats->ipv4_network_count++;
       } else {
-        ASSERT(current_list.ips[0].family() == AF_INET6);
+        RTC_DCHECK(current_list.ips[0].family() == AF_INET6);
         stats->ipv6_network_count++;
       }
     }
@@ -301,7 +302,7 @@ void NetworkManagerBase::MergeNetworkList(const NetworkList& new_networks,
       if (!existing_net->active()) {
         *changed = true;
       }
-      ASSERT(net->active());
+      RTC_DCHECK(net->active());
       if (existing_net != net) {
         delete net;
       }
@@ -391,9 +392,10 @@ Network* NetworkManagerBase::GetNetworkFromAddress(
 }
 
 BasicNetworkManager::BasicNetworkManager()
-    : thread_(NULL), sent_first_update_(false), start_count_(0),
-      ignore_non_default_routes_(false) {
-}
+    : thread_(nullptr),
+      sent_first_update_(false),
+      start_count_(0),
+      ignore_non_default_routes_(false) {}
 
 BasicNetworkManager::~BasicNetworkManager() {
 }
@@ -407,7 +409,7 @@ void BasicNetworkManager::OnNetworksChanged() {
 
 bool BasicNetworkManager::CreateNetworks(bool include_ignored,
                                          NetworkList* networks) const {
-  ASSERT(false);
+  RTC_NOTREACHED();
   LOG(LS_WARNING) << "BasicNetworkManager doesn't work on NaCl yet";
   return false;
 }
@@ -419,8 +421,8 @@ void BasicNetworkManager::ConvertIfAddrs(struct ifaddrs* interfaces,
                                          NetworkList* networks) const {
   NetworkMap current_networks;
 
-  for (struct ifaddrs* cursor = interfaces;
-       cursor != NULL; cursor = cursor->ifa_next) {
+  for (struct ifaddrs* cursor = interfaces; cursor != nullptr;
+       cursor = cursor->ifa_next) {
     IPAddress prefix;
     IPAddress mask;
     InterfaceAddress ip;
@@ -517,7 +519,7 @@ unsigned int GetPrefix(PIP_ADAPTER_PREFIX prefixlist,
   unsigned int best_length = 0;
   while (prefixlist) {
     // Look for the longest matching prefix in the prefixlist.
-    if (prefixlist->Address.lpSockaddr == NULL ||
+    if (prefixlist->Address.lpSockaddr == nullptr ||
         prefixlist->Address.lpSockaddr->sa_family != ip.family()) {
       prefixlist = prefixlist->Next;
       continue;
@@ -659,7 +661,7 @@ bool BasicNetworkManager::CreateNetworks(bool include_ignored,
 #if defined(WEBRTC_LINUX)
 bool IsDefaultRoute(const std::string& network_name) {
   FileStream fs;
-  if (!fs.Open("/proc/net/route", "r", NULL)) {
+  if (!fs.Open("/proc/net/route", "r", nullptr)) {
     LOG(LS_WARNING) << "Couldn't read /proc/net/route, skipping default "
                     << "route check (assuming everything is a default route).";
     return true;
@@ -710,7 +712,7 @@ bool BasicNetworkManager::IsIgnoredNetwork(const Network& network) const {
   // VMware Virtual Ethernet Adapter for VMnet1
   // but don't ignore any GUEST side adapters with a description like:
   // VMware Accelerated AMD PCNet Adapter #2
-  if (strstr(network.description().c_str(), "VMnet") != NULL) {
+  if (strstr(network.description().c_str(), "VMnet") != nullptr) {
     return true;
   }
 #endif
@@ -739,7 +741,7 @@ void BasicNetworkManager::StartUpdating() {
 }
 
 void BasicNetworkManager::StopUpdating() {
-  ASSERT(Thread::Current() == thread_);
+  RTC_DCHECK(Thread::Current() == thread_);
   if (!start_count_)
     return;
 
@@ -785,7 +787,7 @@ void BasicNetworkManager::OnMessage(Message* msg) {
       break;
     }
     default:
-      ASSERT(false);
+      RTC_NOTREACHED();
   }
 }
 
@@ -825,9 +827,9 @@ AdapterType BasicNetworkManager::GetAdapterTypeFromName(
 }
 
 IPAddress BasicNetworkManager::QueryDefaultLocalAddress(int family) const {
-  ASSERT(thread_ == Thread::Current());
-  ASSERT(thread_->socketserver() != nullptr);
-  ASSERT(family == AF_INET || family == AF_INET6);
+  RTC_DCHECK(thread_ == Thread::Current());
+  RTC_DCHECK(thread_->socketserver() != nullptr);
+  RTC_DCHECK(family == AF_INET || family == AF_INET6);
 
   std::unique_ptr<AsyncSocket> socket(
       thread_->socketserver()->CreateAsyncSocket(family, SOCK_DGRAM));
@@ -854,7 +856,7 @@ void BasicNetworkManager::UpdateNetworksOnce() {
   if (!start_count_)
     return;
 
-  ASSERT(Thread::Current() == thread_);
+  RTC_DCHECK(Thread::Current() == thread_);
 
   NetworkList list;
   if (!CreateNetworks(false, &list)) {

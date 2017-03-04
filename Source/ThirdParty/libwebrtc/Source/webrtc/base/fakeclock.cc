@@ -15,12 +15,12 @@
 
 namespace rtc {
 
-uint64_t FakeClock::TimeNanos() const {
+int64_t FakeClock::TimeNanos() const {
   CritScope cs(&lock_);
   return time_;
 }
 
-void FakeClock::SetTimeNanos(uint64_t nanos) {
+void FakeClock::SetTimeNanos(int64_t nanos) {
   {
     CritScope cs(&lock_);
     RTC_DCHECK(nanos >= time_);

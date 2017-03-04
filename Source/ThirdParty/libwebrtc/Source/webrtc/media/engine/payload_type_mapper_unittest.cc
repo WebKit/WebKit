@@ -60,27 +60,13 @@ TEST_F(PayloadTypeMapperTest, StaticPayloadTypes) {
 }
 
 TEST_F(PayloadTypeMapperTest, WebRTCPayloadTypes) {
-  // Tests that the payload mapper knows about the formats we've been using in
-  // WebRTC, with their hard coded values.
-  auto video_mapping = [this] (const char *name) {
-    return FindMapping({name, kVideoCodecClockrate, 0});
+  // Tests that the payload mapper knows about the audio and data formats we've
+  // been using in WebRTC, with their hard coded values.
+  auto data_mapping = [this] (const char *name) {
+    return FindMapping({name, 0, 0});
   };
-  EXPECT_EQ(kDefaultVp8PlType,  video_mapping(kVp8CodecName));
-  EXPECT_EQ(kDefaultVp9PlType,  video_mapping(kVp9CodecName));
-  EXPECT_EQ(kDefaultH264PlType, video_mapping(kH264CodecName));
-  EXPECT_EQ(kDefaultRedPlType,  video_mapping(kRedCodecName));
-  EXPECT_EQ(kDefaultUlpfecType, video_mapping(kUlpfecCodecName));
-  EXPECT_EQ(kDefaultFlexfecPlType, video_mapping(kFlexfecCodecName));
-
-  auto rtx_mapping = [this] (int payload_type) {
-    return FindMapping({kRtxCodecName, kVideoCodecClockrate, 0,
-        {{ kCodecParamAssociatedPayloadType, std::to_string(payload_type)}}});
-  };
-  EXPECT_EQ(kDefaultRtxVp8PlType,  rtx_mapping(kDefaultVp8PlType));
-  EXPECT_EQ(kDefaultRtxVp9PlType,  rtx_mapping(kDefaultVp9PlType));
-  EXPECT_EQ(kDefaultRtxH264ConstrainedBaselinePlType,
-            rtx_mapping(kDefaultH264PlType));
-  EXPECT_EQ(kDefaultRtxRedPlType,  rtx_mapping(kDefaultRedPlType));
+  EXPECT_EQ(kGoogleRtpDataCodecPlType, data_mapping(kGoogleRtpDataCodecName));
+  EXPECT_EQ(kGoogleSctpDataCodecPlType, data_mapping(kGoogleSctpDataCodecName));
 
   EXPECT_EQ(102, FindMapping({kIlbcCodecName,  8000, 1}));
   EXPECT_EQ(103, FindMapping({kIsacCodecName, 16000, 1}));
@@ -89,6 +75,11 @@ TEST_F(PayloadTypeMapperTest, WebRTCPayloadTypes) {
   EXPECT_EQ(106, FindMapping({kCnCodecName,   32000, 1}));
   EXPECT_EQ(111, FindMapping({kOpusCodecName, 48000, 2,
         {{"minptime", "10"}, {"useinbandfec", "1"}}}));
+  // TODO(solenberg): Remove 16k, 32k, 48k DTMF checks once these payload types
+  // are dynamically assigned.
+  EXPECT_EQ(110, FindMapping({kDtmfCodecName, 48000, 1}));
+  EXPECT_EQ(112, FindMapping({kDtmfCodecName, 32000, 1}));
+  EXPECT_EQ(113, FindMapping({kDtmfCodecName, 16000, 1}));
   EXPECT_EQ(126, FindMapping({kDtmfCodecName, 8000, 1}));
 }
 

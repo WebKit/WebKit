@@ -13,6 +13,7 @@
 class EcMetricsTest : public AfterStreamingFixture {
 };
 
+// Duplicated in apm_helpers_unittest.cc.
 TEST_F(EcMetricsTest, EcMetricsAreOnByDefault) {
   // AEC must be enabled fist.
   EXPECT_EQ(0, voe_apm_->SetEcStatus(true, webrtc::kEcAec));
@@ -22,6 +23,7 @@ TEST_F(EcMetricsTest, EcMetricsAreOnByDefault) {
   EXPECT_TRUE(enabled);
 }
 
+// Duplicated in apm_helpers_unittest.cc.
 TEST_F(EcMetricsTest, CanEnableAndDisableEcMetrics) {
   // AEC must be enabled fist.
   EXPECT_EQ(0, voe_apm_->SetEcStatus(true, webrtc::kEcAec));
@@ -35,6 +37,8 @@ TEST_F(EcMetricsTest, CanEnableAndDisableEcMetrics) {
   ASSERT_FALSE(ec_on);
 }
 
+// TODO(solenberg): Do we have higher or lower level tests that verify metrics?
+//                  It's not the right test for this level.
 TEST_F(EcMetricsTest, ManualTestEcMetrics) {
   SwitchToManualMicrophone();
 
@@ -63,6 +67,7 @@ TEST_F(EcMetricsTest, ManualTestEcMetrics) {
   EXPECT_EQ(0, voe_apm_->SetEcMetricsStatus(false));
 }
 
+// Duplicated in apm_helpers_unittest.cc.
 TEST_F(EcMetricsTest, GetEcMetricsFailsIfEcNotEnabled) {
   int dummy = 0;
   EXPECT_EQ(0, voe_apm_->SetEcMetricsStatus(true));
@@ -70,6 +75,7 @@ TEST_F(EcMetricsTest, GetEcMetricsFailsIfEcNotEnabled) {
   EXPECT_EQ(VE_APM_ERROR, voe_base_->LastError());
 }
 
+// Duplicated in apm_helpers_unittest.cc.
 TEST_F(EcMetricsTest, GetEcDelayMetricsFailsIfEcNotEnabled) {
   int dummy = 0;
   float dummy_f = 0;
@@ -78,6 +84,8 @@ TEST_F(EcMetricsTest, GetEcDelayMetricsFailsIfEcNotEnabled) {
   EXPECT_EQ(VE_APM_ERROR, voe_base_->LastError());
 }
 
+// TODO(solenberg): Do we have higher or lower level tests that verify metrics?
+//                  It's not the right test for this level.
 TEST_F(EcMetricsTest, ManualVerifyEcDelayMetrics) {
   SwitchToManualMicrophone();
   TEST_LOG("Verify EC Delay metrics:");

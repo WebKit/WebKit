@@ -28,6 +28,8 @@ namespace cricket {
 // SEC_ENABLED:  Crypto in outgoing offer and answer (if supplied in offer).
 // SEC_REQUIRED: Crypto in outgoing offer and answer. Fail any offer with absent
 //               or unsupported crypto.
+// TODO(deadbeef): Remove this or rename it to something more appropriate, like
+// SdesPolicy.
 enum SecurePolicy {
   SEC_DISABLED,
   SEC_ENABLED,

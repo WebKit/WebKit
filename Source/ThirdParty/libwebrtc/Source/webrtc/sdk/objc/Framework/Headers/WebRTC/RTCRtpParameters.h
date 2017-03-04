@@ -17,10 +17,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 RTC_EXPORT
-@interface RTCRtpParameters : NSObject {
-    NSArray<RTCRtpEncodingParameters *> *_encodings;
-    NSArray<RTCRtpCodecParameters *> *_codecs;
-}
+@interface RTCRtpParameters : NSObject
 
 /** The currently active encodings in the order of preference. */
 @property(nonatomic, copy) NSArray<RTCRtpEncodingParameters *> *encodings;

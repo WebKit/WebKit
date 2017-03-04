@@ -10,86 +10,75 @@
 
 #include "webrtc/common_video/include/incoming_video_stream.h"
 
+#include <memory>
+
 #include "webrtc/base/timeutils.h"
+#include "webrtc/base/trace_event.h"
 #include "webrtc/common_video/video_render_frames.h"
 #include "webrtc/system_wrappers/include/critical_section_wrapper.h"
 #include "webrtc/system_wrappers/include/event_wrapper.h"
 
 namespace webrtc {
+namespace {
+const char kIncomingQueueName[] = "IncomingVideoStream";
+}
+
+// Capture by moving (std::move) into a lambda isn't possible in C++11
+// (supported in C++14). This class provides the functionality of what would be
+// something like (inside OnFrame):
+// VideoFrame frame(video_frame);
+// incoming_render_queue_.PostTask([this, frame = std::move(frame)](){
+//   if (render_buffers_.AddFrame(std::move(frame)) == 1)
+//     Dequeue();
+// });
+class IncomingVideoStream::NewFrameTask : public rtc::QueuedTask {
+ public:
+  NewFrameTask(IncomingVideoStream* stream, VideoFrame frame)
+      : stream_(stream), frame_(std::move(frame)) {}
+
+ private:
+  bool Run() override {
+    RTC_DCHECK(rtc::TaskQueue::IsCurrent(kIncomingQueueName));
+    if (stream_->render_buffers_.AddFrame(std::move(frame_)) == 1)
+      stream_->Dequeue();
+    return true;
+  }
+
+  IncomingVideoStream* stream_;
+  VideoFrame frame_;
+};
 
 IncomingVideoStream::IncomingVideoStream(
     int32_t delay_ms,
     rtc::VideoSinkInterface<VideoFrame>* callback)
-    : incoming_render_thread_(&IncomingVideoStreamThreadFun,
-                              this,
-                              "IncomingVideoStreamThread"),
-      deliver_buffer_event_(EventTimerWrapper::Create()),
-      external_callback_(callback),
-      render_buffers_(new VideoRenderFrames(delay_ms)) {
-  RTC_DCHECK(external_callback_);
-
-  render_thread_checker_.DetachFromThread();
-
-  deliver_buffer_event_->StartTimer(false, kEventStartupTimeMs);
-  incoming_render_thread_.Start();
-  incoming_render_thread_.SetPriority(rtc::kRealtimePriority);
-}
+    : render_buffers_(delay_ms),
+      callback_(callback),
+      incoming_render_queue_(kIncomingQueueName,
+                             rtc::TaskQueue::Priority::HIGH) {}
 
 IncomingVideoStream::~IncomingVideoStream() {
   RTC_DCHECK(main_thread_checker_.CalledOnValidThread());
-
-  {
-    rtc::CritScope cs(&buffer_critsect_);
-    render_buffers_.reset();
-  }
-
-  deliver_buffer_event_->Set();
-  incoming_render_thread_.Stop();
-  deliver_buffer_event_->StopTimer();
 }
 
 void IncomingVideoStream::OnFrame(const VideoFrame& video_frame) {
+  TRACE_EVENT0("webrtc", "IncomingVideoStream::OnFrame");
   RTC_CHECK_RUNS_SERIALIZED(&decoder_race_checker_);
-  // Hand over or insert frame.
-  rtc::CritScope csB(&buffer_critsect_);
-  if (render_buffers_->AddFrame(video_frame) == 1) {
-    deliver_buffer_event_->Set();
-  }
+  RTC_DCHECK(!incoming_render_queue_.IsCurrent());
+  incoming_render_queue_.PostTask(
+      std::unique_ptr<rtc::QueuedTask>(new NewFrameTask(this, video_frame)));
 }
 
-bool IncomingVideoStream::IncomingVideoStreamThreadFun(void* obj) {
-  return static_cast<IncomingVideoStream*>(obj)->IncomingVideoStreamProcess();
-}
+void IncomingVideoStream::Dequeue() {
+  TRACE_EVENT0("webrtc", "IncomingVideoStream::Dequeue");
+  RTC_DCHECK(incoming_render_queue_.IsCurrent());
+  rtc::Optional<VideoFrame> frame_to_render = render_buffers_.FrameToRender();
+  if (frame_to_render)
+    callback_->OnFrame(*frame_to_render);
 
-bool IncomingVideoStream::IncomingVideoStreamProcess() {
-  RTC_DCHECK_RUN_ON(&render_thread_checker_);
-
-  if (kEventError != deliver_buffer_event_->Wait(kEventMaxWaitTimeMs)) {
-    // Get a new frame to render and the time for the frame after this one.
-    rtc::Optional<VideoFrame> frame_to_render;
-    uint32_t wait_time;
-    {
-      rtc::CritScope cs(&buffer_critsect_);
-      if (!render_buffers_.get()) {
-        // Terminating
-        return false;
-      }
-      frame_to_render = render_buffers_->FrameToRender();
-      wait_time = render_buffers_->TimeToNextFrameRelease();
-    }
-
-    // Set timer for next frame to render.
-    if (wait_time > kEventMaxWaitTimeMs) {
-      wait_time = kEventMaxWaitTimeMs;
-    }
-
-    deliver_buffer_event_->StartTimer(false, wait_time);
-
-    if (frame_to_render) {
-      external_callback_->OnFrame(*frame_to_render);
-    }
+  if (render_buffers_.HasPendingFrames()) {
+    uint32_t wait_time = render_buffers_.TimeToNextFrameRelease();
+    incoming_render_queue_.PostDelayedTask([this]() { Dequeue(); }, wait_time);
   }
-  return true;
 }
 
 }  // namespace webrtc

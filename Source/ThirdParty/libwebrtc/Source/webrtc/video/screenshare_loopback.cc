@@ -244,7 +244,8 @@ void Loopback() {
                   flags::NumTemporalLayers(),
                   flags::SelectedTL(),
                   flags::MinTransmitBitrateKbps() * 1000,
-                  false,
+                  false,  // ULPFEC disabled.
+                  false,  // FlexFEC disabled.
                   flags::EncodedFramePath(),
                   ""};
   params.audio = {false, false};

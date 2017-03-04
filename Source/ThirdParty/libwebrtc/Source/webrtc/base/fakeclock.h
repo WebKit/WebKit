@@ -26,18 +26,23 @@ class FakeClock : public ClockInterface {
   ~FakeClock() override {}
 
   // ClockInterface implementation.
-  uint64_t TimeNanos() const override;
+  int64_t TimeNanos() const override;
 
   // Methods that can be used by the test to control the time.
 
   // Should only be used to set a time in the future.
-  void SetTimeNanos(uint64_t nanos);
+  void SetTimeNanos(int64_t nanos);
+  void SetTimeMicros(int64_t micros) {
+    SetTimeNanos(kNumNanosecsPerMicrosec * micros);
+  }
 
   void AdvanceTime(TimeDelta delta);
-
+  void AdvanceTimeMicros(int64_t micros) {
+    AdvanceTime(rtc::TimeDelta::FromMicroseconds(micros));
+  }
  private:
   CriticalSection lock_;
-  uint64_t time_ GUARDED_BY(lock_) = 0u;
+  int64_t time_ GUARDED_BY(lock_) = 0;
 };
 
 // Helper class that sets itself as the global clock in its constructor and
@@ -46,6 +51,16 @@ class ScopedFakeClock : public FakeClock {
  public:
   ScopedFakeClock();
   ~ScopedFakeClock() override;
+
+ private:
+  ClockInterface* prev_clock_;
+};
+
+// Helper class to "undo" the fake clock temporarily.
+class ScopedRealClock {
+ public:
+  ScopedRealClock();
+  ~ScopedRealClock();
 
  private:
   ClockInterface* prev_clock_;

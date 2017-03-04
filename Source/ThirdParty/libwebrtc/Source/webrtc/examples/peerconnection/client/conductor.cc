@@ -15,7 +15,7 @@
 #include <vector>
 
 #include "webrtc/api/test/fakeconstraints.h"
-#include "webrtc/base/common.h"
+#include "webrtc/base/checks.h"
 #include "webrtc/base/json.h"
 #include "webrtc/base/logging.h"
 #include "webrtc/examples/peerconnection/client/defaults.h"
@@ -63,7 +63,7 @@ Conductor::Conductor(PeerConnectionClient* client, MainWindow* main_wnd)
 }
 
 Conductor::~Conductor() {
-  ASSERT(peer_connection_.get() == NULL);
+  RTC_DCHECK(peer_connection_.get() == NULL);
 }
 
 bool Conductor::connection_active() const {
@@ -76,8 +76,8 @@ void Conductor::Close() {
 }
 
 bool Conductor::InitializePeerConnection() {
-  ASSERT(peer_connection_factory_.get() == NULL);
-  ASSERT(peer_connection_.get() == NULL);
+  RTC_DCHECK(peer_connection_factory_.get() == NULL);
+  RTC_DCHECK(peer_connection_.get() == NULL);
 
   peer_connection_factory_  = webrtc::CreatePeerConnectionFactory();
 
@@ -111,8 +111,8 @@ bool Conductor::ReinitializePeerConnectionForLoopback() {
 }
 
 bool Conductor::CreatePeerConnection(bool dtls) {
-  ASSERT(peer_connection_factory_.get() != NULL);
-  ASSERT(peer_connection_.get() == NULL);
+  RTC_DCHECK(peer_connection_factory_.get() != NULL);
+  RTC_DCHECK(peer_connection_.get() == NULL);
 
   webrtc::PeerConnectionInterface::RTCConfiguration config;
   webrtc::PeerConnectionInterface::IceServer server;
@@ -144,7 +144,7 @@ void Conductor::DeletePeerConnection() {
 }
 
 void Conductor::EnsureStreamingUI() {
-  ASSERT(peer_connection_.get() != NULL);
+  RTC_DCHECK(peer_connection_.get() != NULL);
   if (main_wnd_->IsWindow()) {
     if (main_wnd_->current_ui() != MainWindow::STREAMING)
       main_wnd_->SwitchToStreamingUI();
@@ -230,11 +230,11 @@ void Conductor::OnPeerDisconnected(int id) {
 }
 
 void Conductor::OnMessageFromPeer(int peer_id, const std::string& message) {
-  ASSERT(peer_id_ == peer_id || peer_id_ == -1);
-  ASSERT(!message.empty());
+  RTC_DCHECK(peer_id_ == peer_id || peer_id_ == -1);
+  RTC_DCHECK(!message.empty());
 
   if (!peer_connection_.get()) {
-    ASSERT(peer_id_ == -1);
+    RTC_DCHECK(peer_id_ == -1);
     peer_id_ = peer_id;
 
     if (!InitializePeerConnection()) {
@@ -243,7 +243,7 @@ void Conductor::OnMessageFromPeer(int peer_id, const std::string& message) {
       return;
     }
   } else if (peer_id != peer_id_) {
-    ASSERT(peer_id_ != -1);
+    RTC_DCHECK(peer_id_ != -1);
     LOG(WARNING) << "Received a message from unknown peer while already in a "
                     "conversation with a different peer.";
     return;
@@ -349,8 +349,8 @@ void Conductor::DisconnectFromServer() {
 }
 
 void Conductor::ConnectToPeer(int peer_id) {
-  ASSERT(peer_id_ == -1);
-  ASSERT(peer_id != -1);
+  RTC_DCHECK(peer_id_ == -1);
+  RTC_DCHECK(peer_id != -1);
 
   if (peer_connection_.get()) {
     main_wnd_->MessageBox("Error",
@@ -366,11 +366,11 @@ void Conductor::ConnectToPeer(int peer_id) {
   }
 }
 
-cricket::VideoCapturer* Conductor::OpenVideoCaptureDevice() {
+std::unique_ptr<cricket::VideoCapturer> Conductor::OpenVideoCaptureDevice() {
   std::vector<std::string> device_names;
   {
     std::unique_ptr<webrtc::VideoCaptureModule::DeviceInfo> info(
-        webrtc::VideoCaptureFactory::CreateDeviceInfo(0));
+        webrtc::VideoCaptureFactory::CreateDeviceInfo());
     if (!info) {
       return nullptr;
     }
@@ -386,7 +386,7 @@ cricket::VideoCapturer* Conductor::OpenVideoCaptureDevice() {
   }
 
   cricket::WebRtcVideoDeviceCapturerFactory factory;
-  cricket::VideoCapturer* capturer = nullptr;
+  std::unique_ptr<cricket::VideoCapturer> capturer;
   for (const auto& name : device_names) {
     capturer = factory.Create(cricket::Device(name, 0));
     if (capturer) {
@@ -443,7 +443,7 @@ void Conductor::UIThreadCallback(int msg_id, void* data) {
       LOG(INFO) << "PEER_CONNECTION_CLOSED";
       DeletePeerConnection();
 
-      ASSERT(active_streams_.empty());
+      RTC_DCHECK(active_streams_.empty());
 
       if (main_wnd_->IsWindow()) {
         if (client_->is_connected()) {
@@ -507,7 +507,7 @@ void Conductor::UIThreadCallback(int msg_id, void* data) {
     }
 
     default:
-      ASSERT(false);
+      RTC_NOTREACHED();
       break;
   }
 }

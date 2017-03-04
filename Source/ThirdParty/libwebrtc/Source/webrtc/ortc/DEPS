@@ -1,0 +1,17 @@
+include_rules = [
+  "+webrtc/api",
+  "+webrtc/base",
+  "+webrtc/call",
+  "+webrtc/logging/rtc_event_log",
+  "+webrtc/media",
+  "+webrtc/modules/audio_coding",
+  "+webrtc/p2p",
+  "+webrtc/pc",
+
+  "+webrtc/modules/rtp_rtcp",
+  "+webrtc/system_wrappers",
+
+  "+webrtc/modules/audio_device",
+  "+webrtc/modules/video_coding",
+  "+webrtc/modules/video_render",
+]

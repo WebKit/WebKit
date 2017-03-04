@@ -16,6 +16,7 @@
 #include <utility>
 #include <vector>
 
+#include "webrtc/api/call/transport.h"
 #include "webrtc/base/constructormagic.h"
 #include "webrtc/base/criticalsection.h"
 #include "webrtc/base/deprecation.h"
@@ -31,11 +32,10 @@
 #include "webrtc/modules/rtp_rtcp/source/rtp_packet_history.h"
 #include "webrtc/modules/rtp_rtcp/source/rtp_rtcp_config.h"
 #include "webrtc/modules/rtp_rtcp/source/rtp_utility.h"
-#include "webrtc/modules/rtp_rtcp/source/ssrc_database.h"
-#include "webrtc/transport.h"
 
 namespace webrtc {
 
+class OverheadObserver;
 class RateLimiter;
 class RtcEventLog;
 class RtpPacketToSend;
@@ -58,7 +58,8 @@ class RTPSender {
             SendSideDelayObserver* send_side_delay_observer,
             RtcEventLog* event_log,
             SendPacketObserver* send_packet_observer,
-            RateLimiter* nack_rate_limiter);
+            RateLimiter* nack_rate_limiter,
+            OverheadObserver* overhead_observer);
 
   ~RTPSender();
 
@@ -70,8 +71,8 @@ class RTPSender {
   uint32_t FecOverheadRate() const;
   uint32_t NackOverheadRate() const;
 
-  // Includes size of RTP and FEC headers.
-  size_t MaxDataPayloadLength() const;
+  // Excluding size of RTP and FEC headers.
+  size_t MaxPayloadSize() const;
 
   int32_t RegisterPayload(const char* payload_name,
                           const int8_t payload_type,
@@ -85,8 +86,6 @@ class RTPSender {
 
   int8_t SendPayloadType() const;
 
-  void SetSendingStatus(bool enabled);
-
   void SetSendingMediaStatus(bool enabled);
   bool SendingMedia() const;
 
@@ -96,7 +95,6 @@ class RTPSender {
   uint32_t TimestampOffset() const;
   void SetTimestampOffset(uint32_t timestamp);
 
-  uint32_t GenerateNewSSRC();
   void SetSSRC(uint32_t ssrc);
 
   uint16_t SequenceNumber() const;
@@ -104,7 +102,7 @@ class RTPSender {
 
   void SetCsrcs(const std::vector<uint32_t>& csrcs);
 
-  void SetMaxPayloadLength(size_t max_payload_length);
+  void SetMaxRtpPacketSize(size_t max_packet_size);
 
   bool SendOutgoingData(FrameType frame_type,
                         int8_t payload_type,
@@ -118,17 +116,15 @@ class RTPSender {
 
   // RTP header extension
   int32_t RegisterRtpHeaderExtension(RTPExtensionType type, uint8_t id);
-  bool IsRtpHeaderExtensionRegistered(RTPExtensionType type);
+  bool IsRtpHeaderExtensionRegistered(RTPExtensionType type) const;
   int32_t DeregisterRtpHeaderExtension(RTPExtensionType type);
-
-  size_t RtpHeaderExtensionLength() const;
 
   bool TimeToSendPacket(uint32_t ssrc,
                         uint16_t sequence_number,
                         int64_t capture_time_ms,
                         bool retransmission,
-                        int probe_cluster_id);
-  size_t TimeToSendPadding(size_t bytes, int probe_cluster_id);
+                        const PacedPacketInfo& pacing_info);
+  size_t TimeToSendPadding(size_t bytes, const PacedPacketInfo& pacing_info);
 
   // NACK.
   int SelectiveRetransmissions() const;
@@ -164,7 +160,8 @@ class RTPSender {
 
   size_t RtpHeaderLength() const;
   uint16_t AllocateSequenceNumber(uint16_t packets_to_send);
-  size_t MaxPayloadLength() const;
+  // Including RTP headers.
+  size_t MaxRtpPacketSize() const;
 
   uint32_t SSRC() const;
 
@@ -179,9 +176,9 @@ class RTPSender {
   // Send a DTMF tone using RFC 2833 (4733).
   int32_t SendTelephoneEvent(uint8_t key, uint16_t time_ms, uint8_t level);
 
-  // Set audio packet size, used to determine when it's time to send a DTMF
-  // packet in silence (CNG).
-  int32_t SetAudioPacketSize(uint16_t packet_size_samples);
+  // This function is deprecated. It was previously used to determine when it
+  // was time to send a DTMF packet in silence (CNG).
+  RTC_DEPRECATED int32_t SetAudioPacketSize(uint16_t packet_size_samples);
 
   // Store the audio level in d_bov for
   // header-extension-for-audio-level-indication.
@@ -196,12 +193,6 @@ class RTPSender {
 
   bool SetFecParameters(const FecProtectionParams& delta_params,
                         const FecProtectionParams& key_params);
-
-  RTC_DEPRECATED
-  size_t SendPadData(size_t bytes,
-                     bool timestamp_provided,
-                     uint32_t timestamp,
-                     int64_t capture_time_ms);
 
   // Called on update of RTP statistics.
   void RegisterRtpStatisticsCallback(StreamDataCountersCallback* callback);
@@ -223,28 +214,24 @@ class RTPSender {
   // time.
   typedef std::map<int64_t, int> SendDelayMap;
 
-  size_t SendPadData(size_t bytes, int probe_cluster_id);
-
-  size_t DeprecatedSendPadData(size_t bytes,
-                               bool timestamp_provided,
-                               uint32_t timestamp,
-                               int64_t capture_time_ms,
-                               int probe_cluster_id);
+  size_t SendPadData(size_t bytes, const PacedPacketInfo& pacing_info);
 
   bool PrepareAndSendPacket(std::unique_ptr<RtpPacketToSend> packet,
                             bool send_over_rtx,
                             bool is_retransmit,
-                            int probe_cluster_id);
+                            const PacedPacketInfo& pacing_info);
 
   // Return the number of bytes sent.  Note that both of these functions may
   // return a larger value that their argument.
-  size_t TrySendRedundantPayloads(size_t bytes, int probe_cluster_id);
+  size_t TrySendRedundantPayloads(size_t bytes,
+                                  const PacedPacketInfo& pacing_info);
 
   std::unique_ptr<RtpPacketToSend> BuildRtxPacket(
       const RtpPacketToSend& packet);
 
   bool SendPacketToNetwork(const RtpPacketToSend& packet,
-                           const PacketOptions& options);
+                           const PacketOptions& options,
+                           const PacedPacketInfo& pacing_info);
 
   void UpdateDelayStatistics(int64_t capture_time_ms, int64_t now_ms);
   void UpdateOnSendPacket(int packet_id,
@@ -258,6 +245,12 @@ class RTPSender {
                       bool is_rtx,
                       bool is_retransmit);
   bool IsFecPacket(const RtpPacketToSend& packet) const;
+
+  void AddPacketToTransportFeedback(uint16_t packet_id,
+                                    const RtpPacketToSend& packet,
+                                    const PacedPacketInfo& pacing_info);
+
+  void UpdateRtpOverhead(const RtpPacketToSend& packet);
 
   Clock* const clock_;
   const int64_t clock_delta_ms_;
@@ -276,7 +269,7 @@ class RTPSender {
   Transport* transport_;
   bool sending_media_ GUARDED_BY(send_critsect_);
 
-  size_t max_payload_length_;
+  size_t max_packet_size_;
 
   int8_t payload_type_ GUARDED_BY(send_critsect_);
   std::map<int8_t, RtpUtility::Payload*> payload_type_map_;
@@ -310,13 +303,13 @@ class RTPSender {
 
   // RTP variables
   uint32_t timestamp_offset_ GUARDED_BY(send_critsect_);
-  SSRCDatabase* const ssrc_db_;
   uint32_t remote_ssrc_ GUARDED_BY(send_critsect_);
   bool sequence_number_forced_ GUARDED_BY(send_critsect_);
   uint16_t sequence_number_ GUARDED_BY(send_critsect_);
   uint16_t sequence_number_rtx_ GUARDED_BY(send_critsect_);
-  bool ssrc_forced_ GUARDED_BY(send_critsect_);
-  uint32_t ssrc_ GUARDED_BY(send_critsect_);
+  // Must be explicitly set by the application, use of rtc::Optional
+  // only to keep track of correct use.
+  rtc::Optional<uint32_t> ssrc_ GUARDED_BY(send_critsect_);
   uint32_t last_rtp_timestamp_ GUARDED_BY(send_critsect_);
   int64_t capture_time_ms_ GUARDED_BY(send_critsect_);
   int64_t last_timestamp_time_ms_ GUARDED_BY(send_critsect_);
@@ -324,11 +317,15 @@ class RTPSender {
   bool last_packet_marker_bit_ GUARDED_BY(send_critsect_);
   std::vector<uint32_t> csrcs_ GUARDED_BY(send_critsect_);
   int rtx_ GUARDED_BY(send_critsect_);
-  uint32_t ssrc_rtx_ GUARDED_BY(send_critsect_);
+  rtc::Optional<uint32_t> ssrc_rtx_ GUARDED_BY(send_critsect_);
   // Mapping rtx_payload_type_map_[associated] = rtx.
   std::map<int8_t, int8_t> rtx_payload_type_map_ GUARDED_BY(send_critsect_);
+  size_t rtp_overhead_bytes_per_packet_ GUARDED_BY(send_critsect_);
 
   RateLimiter* const retransmission_rate_limiter_;
+  OverheadObserver* overhead_observer_;
+
+  const bool send_side_bwe_with_overhead_;
 
   RTC_DISALLOW_IMPLICIT_CONSTRUCTORS(RTPSender);
 };

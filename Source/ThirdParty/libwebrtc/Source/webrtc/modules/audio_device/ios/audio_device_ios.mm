@@ -8,10 +8,6 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#if !defined(__has_feature) || !__has_feature(objc_arc)
-#error "This file requires ARC support."
-#endif
-
 #import <AVFoundation/AVFoundation.h>
 #import <Foundation/Foundation.h>
 
@@ -25,7 +21,7 @@
 #include "webrtc/base/thread.h"
 #include "webrtc/base/thread_annotations.h"
 #include "webrtc/modules/audio_device/fine_audio_buffer.h"
-#include "webrtc/modules/utility/include/helpers_ios.h"
+#include "webrtc/sdk/objc/Framework/Classes/helpers.h"
 
 #import "WebRTC/RTCLogging.h"
 #import "webrtc/modules/audio_device/ios/objc/RTCAudioSession.h"
@@ -104,7 +100,7 @@ AudioDeviceIOS::AudioDeviceIOS()
   LOGI() << "ctor" << ios::GetCurrentThreadDescription();
   thread_ = rtc::Thread::Current();
   audio_session_observer_ =
-      [[WebRTCAudioSessionDelegateAdapter alloc] initWithObserver:this];
+      [[RTCAudioSessionDelegateAdapter alloc] initWithObserver:this];
 }
 
 AudioDeviceIOS::~AudioDeviceIOS() {
@@ -134,8 +130,8 @@ AudioDeviceGeneric::InitStatus AudioDeviceIOS::Init() {
   // here. They have not been set and confirmed yet since configureForWebRTC
   // is not called until audio is about to start. However, it makes sense to
   // store the parameters now and then verify at a later stage.
-  WebRTCAudioSessionConfiguration* config =
-      [WebRTCAudioSessionConfiguration webRTCConfiguration];
+  RTCAudioSessionConfiguration* config =
+      [RTCAudioSessionConfiguration webRTCConfiguration];
   playout_parameters_.reset(config.sampleRate,
                             config.outputNumberOfChannels);
   record_parameters_.reset(config.sampleRate,
@@ -267,7 +263,7 @@ int32_t AudioDeviceIOS::StopRecording() {
 int32_t AudioDeviceIOS::SetLoudspeakerStatus(bool enable) {
   LOGI() << "SetLoudspeakerStatus(" << enable << ")";
 
-  WebRTCAudioSession* session = [WebRTCAudioSession sharedInstance];
+  RTCAudioSession* session = [RTCAudioSession sharedInstance];
   [session lockForConfiguration];
   NSString* category = session.category;
   AVAudioSessionCategoryOptions options = session.categoryOptions;
@@ -294,7 +290,7 @@ int32_t AudioDeviceIOS::SetLoudspeakerStatus(bool enable) {
 
 int32_t AudioDeviceIOS::GetLoudspeakerStatus(bool& enabled) const {
   LOGI() << "GetLoudspeakerStatus";
-  WebRTCAudioSession* session = [WebRTCAudioSession sharedInstance];
+  RTCAudioSession* session = [RTCAudioSession sharedInstance];
   AVAudioSessionCategoryOptions options = session.categoryOptions;
   enabled = options & AVAudioSessionCategoryOptionDefaultToSpeaker;
   return 0;
@@ -368,7 +364,7 @@ OSStatus AudioDeviceIOS::OnDeliverRecordedData(
                   static_cast<unsigned int>(frames_per_buffer),
                   static_cast<unsigned int>(num_frames));
 
-    WebRTCAudioSession *session = [WebRTCAudioSession sharedInstance];
+    RTCAudioSession *session = [RTCAudioSession sharedInstance];
     RTCLogWarning(@"Session:\n %@", session);
     return result;
   }
@@ -407,9 +403,9 @@ OSStatus AudioDeviceIOS::OnGetPlayoutData(AudioUnitRenderActionFlags* flags,
                                           UInt32 num_frames,
                                           AudioBufferList* io_data) {
   // Verify 16-bit, noninterleaved mono PCM signal format.
-  RTC_DCHECK_EQ(1u, io_data->mNumberBuffers);
+  RTC_DCHECK_EQ(1, io_data->mNumberBuffers);
   AudioBuffer* audio_buffer = &io_data->mBuffers[0];
-  RTC_DCHECK_EQ(1u, audio_buffer->mNumberChannels);
+  RTC_DCHECK_EQ(1, audio_buffer->mNumberChannels);
   // Get pointer to internal audio buffer to which new audio data shall be
   // written.
   const size_t size_in_bytes = audio_buffer->mDataByteSize;
@@ -485,13 +481,13 @@ void AudioDeviceIOS::HandleInterruptionEnd() {
 
   is_interrupted_ = false;
   RTCLog(@"Interruption ended. Updating audio unit state.");
-  UpdateAudioUnit([WebRTCAudioSession sharedInstance].canPlayOrRecord);
+  UpdateAudioUnit([RTCAudioSession sharedInstance].canPlayOrRecord);
 }
 
 void AudioDeviceIOS::HandleValidRouteChange() {
   RTC_DCHECK(thread_checker_.CalledOnValidThread());
 
-  WebRTCAudioSession* session = [WebRTCAudioSession sharedInstance];
+  RTCAudioSession* session = [RTCAudioSession sharedInstance];
   RTCLog(@"%@", session);
   HandleSampleRateChange(session.sampleRate);
 }
@@ -521,7 +517,7 @@ void AudioDeviceIOS::HandleSampleRateChange(float sample_rate) {
 
   // The audio unit is already initialized or started.
   // Check to see if the sample rate or buffer size has changed.
-  WebRTCAudioSession* session = [WebRTCAudioSession sharedInstance];
+  RTCAudioSession* session = [RTCAudioSession sharedInstance];
   const double session_sample_rate = session.sampleRate;
   const NSTimeInterval session_buffer_duration = session.IOBufferDuration;
   const size_t session_frames_per_buffer =
@@ -591,7 +587,7 @@ void AudioDeviceIOS::UpdateAudioDeviceBuffer() {
 void AudioDeviceIOS::SetupAudioBuffersForActiveAudioSession() {
   LOGI() << "SetupAudioBuffersForActiveAudioSession";
   // Verify the current values once the audio session has been activated.
-  WebRTCAudioSession* session = [WebRTCAudioSession sharedInstance];
+  RTCAudioSession* session = [RTCAudioSession sharedInstance];
   double sample_rate = session.sampleRate;
   NSTimeInterval io_buffer_duration = session.IOBufferDuration;
   RTCLog(@"%@", session);
@@ -600,8 +596,8 @@ void AudioDeviceIOS::SetupAudioBuffersForActiveAudioSession() {
   // hardware sample rate but continue and use the non-ideal sample rate after
   // reinitializing the audio parameters. Most BT headsets only support 8kHz or
   // 16kHz.
-  WebRTCAudioSessionConfiguration* webRTCConfig =
-      [WebRTCAudioSessionConfiguration webRTCConfiguration];
+  RTCAudioSessionConfiguration* webRTCConfig =
+      [RTCAudioSessionConfiguration webRTCConfiguration];
   if (sample_rate != webRTCConfig.sampleRate) {
     LOG(LS_WARNING) << "Unable to set the preferred sample rate";
   }
@@ -631,17 +627,11 @@ void AudioDeviceIOS::SetupAudioBuffersForActiveAudioSession() {
   // or deliver, any number of samples (and not only multiple of 10ms) to match
   // the native audio unit buffer size.
   RTC_DCHECK(audio_device_buffer_);
+  const size_t buffer_size_in_bytes = playout_parameters_.GetBytesPerBuffer();
   fine_audio_buffer_.reset(new FineAudioBuffer(
-      audio_device_buffer_, playout_parameters_.GetBytesPerBuffer(),
+      audio_device_buffer_, buffer_size_in_bytes,
       playout_parameters_.sample_rate()));
-
-  // The extra/temporary playoutbuffer must be of this size to avoid
-  // unnecessary memcpy while caching data between successive callbacks.
-  const int required_playout_buffer_size =
-      fine_audio_buffer_->RequiredPlayoutBufferSizeBytes();
-  LOG(LS_INFO) << " required playout buffer size: "
-               << required_playout_buffer_size;
-  playout_audio_buffer_.reset(new SInt8[required_playout_buffer_size]);
+  playout_audio_buffer_.reset(new SInt8[buffer_size_in_bytes]);
 
   // Allocate AudioBuffers to be used as storage for the received audio.
   // The AudioBufferList structure works as a placeholder for the
@@ -731,7 +721,7 @@ void AudioDeviceIOS::UpdateAudioUnit(bool can_play_or_record) {
   if (should_start_audio_unit) {
     RTCLog(@"Starting audio unit for UpdateAudioUnit");
     // Log session settings before trying to start audio streaming.
-    WebRTCAudioSession* session = [WebRTCAudioSession sharedInstance];
+    RTCAudioSession* session = [RTCAudioSession sharedInstance];
     RTCLog(@"%@", session);
     if (!audio_unit_->Start()) {
       RTCLogError(@"Failed to start audio unit.");
@@ -761,7 +751,7 @@ void AudioDeviceIOS::ConfigureAudioSession() {
     RTCLogWarning(@"Audio session already configured.");
     return;
   }
-  WebRTCAudioSession* session = [WebRTCAudioSession sharedInstance];
+  RTCAudioSession* session = [RTCAudioSession sharedInstance];
   [session lockForConfiguration];
   [session configureWebRTCSession:nil];
   [session unlockForConfiguration];
@@ -776,7 +766,7 @@ void AudioDeviceIOS::UnconfigureAudioSession() {
     RTCLogWarning(@"Audio session already unconfigured.");
     return;
   }
-  WebRTCAudioSession* session = [WebRTCAudioSession sharedInstance];
+  RTCAudioSession* session = [RTCAudioSession sharedInstance];
   [session lockForConfiguration];
   [session unconfigureWebRTCSession:nil];
   [session unlockForConfiguration];
@@ -792,7 +782,7 @@ bool AudioDeviceIOS::InitPlayOrRecord() {
     return false;
   }
 
-  WebRTCAudioSession* session = [WebRTCAudioSession sharedInstance];
+  RTCAudioSession* session = [RTCAudioSession sharedInstance];
   // Subscribe to audio session events.
   [session pushDelegate:audio_session_observer_];
 
@@ -829,7 +819,7 @@ void AudioDeviceIOS::ShutdownPlayOrRecord() {
   audio_unit_.reset();
 
   // Remove audio session notification observers.
-  WebRTCAudioSession* session = [WebRTCAudioSession sharedInstance];
+  RTCAudioSession* session = [RTCAudioSession sharedInstance];
   [session removeDelegate:audio_session_observer_];
 
   // All I/O should be stopped or paused prior to deactivating the audio

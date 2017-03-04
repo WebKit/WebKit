@@ -35,10 +35,17 @@ class DecodedImageCallback {
   // decode time excluding waiting time for any previous pending frame to
   // return. This is necessary for breaking positive feedback in the delay
   // estimation when the decoder has a single output buffer.
-  // TODO(perkj): Remove default implementation when chromium has been updated.
   virtual int32_t Decoded(VideoFrame& decodedImage, int64_t decode_time_ms) {
     // The default implementation ignores custom decode time value.
     return Decoded(decodedImage);
+  }
+  // TODO(sakal): Remove other implementations when upstream projects have been
+  // updated.
+  virtual void Decoded(VideoFrame& decodedImage,
+                       rtc::Optional<int32_t> decode_time_ms,
+                       rtc::Optional<uint8_t> qp) {
+    Decoded(decodedImage,
+            decode_time_ms ? static_cast<int32_t>(*decode_time_ms) : -1);
   }
 
   virtual int32_t ReceivedDecodedReferenceFrame(const uint64_t pictureId) {
@@ -50,15 +57,6 @@ class DecodedImageCallback {
 
 class VideoDecoder {
  public:
-  enum DecoderType {
-    kH264,
-    kVp8,
-    kVp9,
-    kUnsupportedCodec,
-  };
-
-  static VideoDecoder* Create(DecoderType codec_type);
-
   virtual ~VideoDecoder() {}
 
   virtual int32_t InitDecode(const VideoCodec* codec_settings,
@@ -81,67 +79,6 @@ class VideoDecoder {
   virtual bool PrefersLateDecoding() const { return true; }
 
   virtual const char* ImplementationName() const { return "unknown"; }
-};
-
-// Class used to wrap external VideoDecoders to provide a fallback option on
-// software decoding when a hardware decoder fails to decode a stream due to
-// hardware restrictions, such as max resolution.
-class VideoDecoderSoftwareFallbackWrapper : public webrtc::VideoDecoder {
- public:
-  VideoDecoderSoftwareFallbackWrapper(VideoCodecType codec_type,
-                                      VideoDecoder* decoder);
-
-  int32_t InitDecode(const VideoCodec* codec_settings,
-                     int32_t number_of_cores) override;
-
-  int32_t Decode(const EncodedImage& input_image,
-                 bool missing_frames,
-                 const RTPFragmentationHeader* fragmentation,
-                 const CodecSpecificInfo* codec_specific_info,
-                 int64_t render_time_ms) override;
-
-  int32_t RegisterDecodeCompleteCallback(
-      DecodedImageCallback* callback) override;
-
-  int32_t Release() override;
-  bool PrefersLateDecoding() const override;
-
-  const char* ImplementationName() const override;
-
- private:
-  bool InitFallbackDecoder();
-
-  const DecoderType decoder_type_;
-  VideoDecoder* const decoder_;
-
-  VideoCodec codec_settings_;
-  int32_t number_of_cores_;
-  std::string fallback_implementation_name_;
-  std::unique_ptr<VideoDecoder> fallback_decoder_;
-  DecodedImageCallback* callback_;
-};
-
-// Video decoder class to be used for unknown codecs. Doesn't support decoding
-// but logs messages to LS_ERROR.
-class NullVideoDecoder : public VideoDecoder {
- public:
-  NullVideoDecoder();
-
-  int32_t InitDecode(const VideoCodec* codec_settings,
-                     int32_t number_of_cores) override;
-
-  int32_t Decode(const EncodedImage& input_image,
-                 bool missing_frames,
-                 const RTPFragmentationHeader* fragmentation,
-                 const CodecSpecificInfo* codec_specific_info,
-                 int64_t render_time_ms) override;
-
-  int32_t RegisterDecodeCompleteCallback(
-      DecodedImageCallback* callback) override;
-
-  int32_t Release() override;
-
-  const char* ImplementationName() const override;
 };
 
 }  // namespace webrtc

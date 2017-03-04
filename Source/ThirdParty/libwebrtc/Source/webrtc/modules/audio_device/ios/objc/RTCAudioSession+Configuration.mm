@@ -14,9 +14,9 @@
 #import "webrtc/modules/audio_device/ios/objc/RTCAudioSession+Private.h"
 #import "webrtc/modules/audio_device/ios/objc/RTCAudioSessionConfiguration.h"
 
-@implementation WebRTCAudioSession (Configuration)
+@implementation RTCAudioSession (Configuration)
 
-- (BOOL)setConfiguration:(WebRTCAudioSessionConfiguration *)configuration
+- (BOOL)setConfiguration:(RTCAudioSessionConfiguration *)configuration
                    error:(NSError **)outError {
   return [self setConfiguration:configuration
                          active:NO
@@ -24,7 +24,7 @@
                           error:outError];
 }
 
-- (BOOL)setConfiguration:(WebRTCAudioSessionConfiguration *)configuration
+- (BOOL)setConfiguration:(RTCAudioSessionConfiguration *)configuration
                   active:(BOOL)active
                    error:(NSError **)outError {
   return [self setConfiguration:configuration
@@ -35,7 +35,7 @@
 
 #pragma mark - Private
 
-- (BOOL)setConfiguration:(WebRTCAudioSessionConfiguration *)configuration
+- (BOOL)setConfiguration:(RTCAudioSessionConfiguration *)configuration
                   active:(BOOL)active
          shouldSetActive:(BOOL)shouldSetActive
                    error:(NSError **)outError {

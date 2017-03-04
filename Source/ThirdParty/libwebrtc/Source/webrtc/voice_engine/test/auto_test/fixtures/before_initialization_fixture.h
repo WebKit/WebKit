@@ -14,18 +14,16 @@
 #include "webrtc/common_types.h"
 #include "webrtc/test/gmock.h"
 #include "webrtc/test/gtest.h"
-#include "webrtc/voice_engine_configurations.h"
+#include "webrtc/typedefs.h"
 #include "webrtc/voice_engine/include/voe_audio_processing.h"
 #include "webrtc/voice_engine/include/voe_base.h"
 #include "webrtc/voice_engine/include/voe_codec.h"
 #include "webrtc/voice_engine/include/voe_errors.h"
-#include "webrtc/voice_engine/include/voe_external_media.h"
 #include "webrtc/voice_engine/include/voe_file.h"
 #include "webrtc/voice_engine/include/voe_hardware.h"
 #include "webrtc/voice_engine/include/voe_neteq_stats.h"
 #include "webrtc/voice_engine/include/voe_network.h"
 #include "webrtc/voice_engine/include/voe_rtp_rtcp.h"
-#include "webrtc/voice_engine/include/voe_video_sync.h"
 #include "webrtc/voice_engine/include/voe_volume_control.h"
 #include "webrtc/voice_engine/test/auto_test/voe_test_common.h"
 
@@ -57,9 +55,7 @@ class BeforeInitializationFixture : public testing::Test {
   webrtc::VoEAudioProcessing* voe_apm_;
   webrtc::VoENetwork*         voe_network_;
   webrtc::VoEFile*            voe_file_;
-  webrtc::VoEVideoSync*       voe_vsync_;
   webrtc::VoEHardware*        voe_hardware_;
-  webrtc::VoEExternalMedia*   voe_xmedia_;
   webrtc::VoENetEqStats*      voe_neteq_stats_;
 };
 

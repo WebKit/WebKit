@@ -7,10 +7,9 @@
 # be found in the AUTHORS file in the root of the source tree.
 
 import("//build/config/ui.gni")
-import("../../build/webrtc.gni")
+import("../../webrtc.gni")
 
-use_desktop_capture_differ_sse2 =
-    !is_ios && (current_cpu == "x86" || current_cpu == "x64")
+use_desktop_capture_differ_sse2 = current_cpu == "x86" || current_cpu == "x64"
 
 rtc_static_library("primitives") {
   sources = [
@@ -23,14 +22,83 @@ rtc_static_library("primitives") {
     "desktop_region.h",
     "shared_desktop_frame.cc",
     "shared_desktop_frame.h",
+    "shared_memory.cc",
+    "shared_memory.h",
   ]
 
   deps = [
+    "../..:webrtc_common",
     "../../base:rtc_base",  # TODO(kjellander): Cleanup in bugs.webrtc.org/3806.
   ]
 }
 
 if (rtc_include_tests) {
+  rtc_source_set("desktop_capture_modules_tests") {
+    testonly = true
+    sources = []
+    deps = []
+    if (rtc_desktop_capture_supported) {
+      deps += [
+        ":desktop_capture_mock",
+        ":primitives",
+        ":screen_drawer",
+        "../../base:rtc_base",
+        "../../base:rtc_base_approved",
+        "../../system_wrappers:system_wrappers",
+        "../../test:test_support",
+        "../../test:video_test_support",
+      ]
+      sources += [
+        "screen_capturer_integration_test.cc",
+        "screen_drawer_unittest.cc",
+      ]
+    }
+  }
+
+  rtc_source_set("desktop_capture_unittests") {
+    testonly = true
+    sources = [
+      "desktop_and_cursor_composer_unittest.cc",
+      "desktop_capturer_differ_wrapper_unittest.cc",
+      "desktop_frame_rotation_unittest.cc",
+      "desktop_region_unittest.cc",
+      "differ_block_unittest.cc",
+      "fallback_desktop_capturer_wrapper_unittest.cc",
+      "mouse_cursor_monitor_unittest.cc",
+      "rgba_color_unittest.cc",
+      "test_utils.cc",
+      "test_utils.h",
+      "test_utils_unittest.cc",
+      "win/cursor_unittest.cc",
+      "win/cursor_unittest_resources.h",
+      "win/cursor_unittest_resources.rc",
+    ]
+    deps = [
+      ":desktop_capture",
+      ":desktop_capture_mock",
+      ":primitives",
+      ":rgba_color",
+      "../..:webrtc_common",
+      "../../base:rtc_base_approved",
+      "../../system_wrappers:system_wrappers",
+      "../../test:test_support",
+      "//testing/gmock",
+    ]
+    if (rtc_desktop_capture_supported) {
+      sources += [
+        "screen_capturer_helper_unittest.cc",
+        "screen_capturer_mac_unittest.cc",
+        "screen_capturer_unittest.cc",
+        "window_capturer_unittest.cc",
+      ]
+      deps += [ ":desktop_capture_mock" ]
+    }
+    if (!build_with_chromium && is_clang) {
+      # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
+      suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
+    }
+  }
+
   source_set("rgba_color") {
     testonly = true
 
@@ -41,6 +109,11 @@ if (rtc_include_tests) {
     sources = [
       "rgba_color.cc",
       "rgba_color.h",
+    ]
+
+    deps = [
+      ":primitives",
+      "../..:webrtc_common",
     ]
   }
 
@@ -57,6 +130,12 @@ if (rtc_include_tests) {
       "screen_drawer_linux.cc",
       "screen_drawer_mac.cc",
       "screen_drawer_win.cc",
+    ]
+
+    deps = [
+      ":primitives",
+      "../../base:rtc_base_approved",
+      "../../system_wrappers",
     ]
   }
 
@@ -76,7 +155,12 @@ if (rtc_include_tests) {
       "fake_desktop_capturer.h",
       "mock_desktop_capturer_callback.cc",
       "mock_desktop_capturer_callback.h",
-      "screen_capturer_mock_objects.h",
+    ]
+
+    deps = [
+      ":primitives",
+      "../../base:rtc_base_approved",
+      "../../test:test_support",
     ]
   }
 }
@@ -94,8 +178,16 @@ rtc_static_library("desktop_capture") {
     "desktop_capture_options.h",
     "desktop_capturer.cc",
     "desktop_capturer.h",
+    "desktop_capturer_differ_wrapper.cc",
+    "desktop_capturer_differ_wrapper.h",
+    "desktop_frame_rotation.cc",
+    "desktop_frame_rotation.h",
     "desktop_frame_win.cc",
     "desktop_frame_win.h",
+    "differ_block.cc",
+    "differ_block.h",
+    "fallback_desktop_capturer_wrapper.cc",
+    "fallback_desktop_capturer_wrapper.h",
     "mac/desktop_configuration.h",
     "mac/desktop_configuration.mm",
     "mac/desktop_configuration_monitor.cc",
@@ -111,13 +203,13 @@ rtc_static_library("desktop_capture") {
     "mouse_cursor_monitor.h",
     "mouse_cursor_monitor_mac.mm",
     "mouse_cursor_monitor_win.cc",
+    "resolution_change_detector.cc",
+    "resolution_change_detector.h",
     "screen_capture_frame_queue.h",
     "screen_capturer_helper.cc",
     "screen_capturer_helper.h",
     "screen_capturer_mac.mm",
     "screen_capturer_win.cc",
-    "shared_memory.cc",
-    "shared_memory.h",
     "win/cursor.cc",
     "win/cursor.h",
     "win/d3d_device.cc",
@@ -176,15 +268,6 @@ rtc_static_library("desktop_capture") {
     ]
   }
 
-  if (!is_ios) {
-    sources += [
-      "desktop_capturer_differ_wrapper.cc",
-      "desktop_capturer_differ_wrapper.h",
-      "differ_block.cc",
-      "differ_block.h",
-    ]
-  }
-
   if (is_mac) {
     libs = [
       "AppKit.framework",
@@ -202,8 +285,10 @@ rtc_static_library("desktop_capture") {
 
   deps = [
     ":primitives",
+    "../..:webrtc_common",
     "../../base:rtc_base",  # TODO(kjellander): Cleanup in bugs.webrtc.org/3806.
     "../../system_wrappers",
+    "//third_party/libyuv",
   ]
 
   if (use_desktop_capture_differ_sse2) {

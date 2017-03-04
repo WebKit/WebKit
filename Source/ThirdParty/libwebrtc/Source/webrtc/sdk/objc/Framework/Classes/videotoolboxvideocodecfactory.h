@@ -17,10 +17,10 @@
 
 namespace webrtc {
 
-class WEBRTC_EXPORT VideoToolboxVideoEncoderFactory
+class VideoToolboxVideoEncoderFactory
     : public cricket::WebRtcVideoEncoderFactory {
  public:
-  VideoToolboxVideoEncoderFactory();
+  WEBRTC_DYLIB_EXPORT VideoToolboxVideoEncoderFactory();
   ~VideoToolboxVideoEncoderFactory();
 
   // WebRtcVideoEncoderFactory implementation.
@@ -29,10 +29,12 @@ class WEBRTC_EXPORT VideoToolboxVideoEncoderFactory
   const std::vector<cricket::VideoCodec>& supported_codecs() const override;
 
  private:
-  std::vector<cricket::VideoCodec> supported_codecs_;
+  // TODO(magjed): Mutable because it depends on a field trial and it is
+  // recalculated every call to supported_codecs().
+  mutable std::vector<cricket::VideoCodec> supported_codecs_;
 };
 
-class WEBRTC_EXPORT VideoToolboxVideoDecoderFactory
+class WEBRTC_DYLIB_EXPORT VideoToolboxVideoDecoderFactory
     : public cricket::WebRtcVideoDecoderFactory {
  public:
   VideoToolboxVideoDecoderFactory();

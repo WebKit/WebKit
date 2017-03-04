@@ -18,6 +18,9 @@
 #include <windows.h>
 #include <algorithm>
 
+#include "Shlwapi.h"
+#include "WinDef.h"
+
 #include "webrtc/system_wrappers/include/utf_util_win.h"
 #define GET_CURRENT_DIR _getcwd
 #else
@@ -98,7 +101,7 @@ void SetExecutablePath(const std::string& path) {
   relative_dir_path_set = true;
 }
 
-bool FileExists(std::string& file_name) {
+bool FileExists(const std::string& file_name) {
   struct stat file_info = {0};
   return stat(file_name.c_str(), &file_info) == 0;
 }
@@ -127,24 +130,23 @@ std::string ProjectRootPath() {
   if (path == kFallbackPath) {
     return kCannotFindProjectRootDir;
   }
-  if (relative_dir_path_set && strcmp(relative_dir_path, ".") != 0) {
+  if (relative_dir_path_set) {
     path = path + kPathDelimiter + relative_dir_path;
   }
-  // Remove two directory levels from the path, i.e. a path like
-  // /absolute/path/src/out/Debug will become /absolute/path/src/
-  size_t path_delimiter_index = path.find_last_of(kPathDelimiter);
-  if (path_delimiter_index != std::string::npos) {
-    // Move up one directory in the directory tree.
-    path = path.substr(0, path_delimiter_index);
-    path_delimiter_index = path.find_last_of(kPathDelimiter);
-    if (path_delimiter_index != std::string::npos) {
-      // Move up another directory in the directory tree. We should now be at
-      // the project root.
-      return path.substr(0, path_delimiter_index) + kPathDelimiter;
-    }
+  path = path + kPathDelimiter + ".." + kPathDelimiter + "..";
+  char canonical_path[FILENAME_MAX];
+#ifdef WIN32
+  BOOL succeeded = PathCanonicalizeA(canonical_path, path.c_str());
+#else
+  bool succeeded = realpath(path.c_str(), canonical_path) != NULL;
+#endif
+  if (succeeded) {
+    path = std::string(canonical_path) + kPathDelimiter;
+    return path;
+  } else {
+    fprintf(stderr, "Cannot find project root directory!\n");
+    return kCannotFindProjectRootDir;
   }
-  fprintf(stderr, "Cannot find project root directory!\n");
-  return kCannotFindProjectRootDir;
 #endif
 }
 
@@ -204,7 +206,7 @@ std::string TempFilename(const std::string &dir, const std::string &prefix) {
 #endif
 }
 
-bool CreateDir(std::string directory_name) {
+bool CreateDir(const std::string& directory_name) {
   struct stat path_info = {0};
   // Check if the path exists already:
   if (stat(directory_name.c_str(), &path_info) == 0) {
@@ -224,7 +226,8 @@ bool CreateDir(std::string directory_name) {
   return true;
 }
 
-std::string ResourcePath(std::string name, std::string extension) {
+std::string ResourcePath(const std::string& name,
+                         const std::string& extension) {
 #if defined(WEBRTC_IOS)
   return IOSResourcePath(name, extension);
 #else
@@ -268,7 +271,7 @@ std::string ResourcePath(std::string name, std::string extension) {
 #endif  // defined (WEBRTC_IOS)
 }
 
-size_t GetFileSize(std::string filename) {
+size_t GetFileSize(const std::string& filename) {
   FILE* f = fopen(filename.c_str(), "rb");
   size_t size = 0;
   if (f != NULL) {

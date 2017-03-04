@@ -10,9 +10,9 @@
 
 #include "webrtc/modules/audio_processing/vad/standalone_vad.h"
 
+#include "webrtc/audio/utility/audio_frame_operations.h"
 #include "webrtc/base/checks.h"
 #include "webrtc/modules/include/module_common_types.h"
-#include "webrtc/modules/utility/include/audio_frame_operations.h"
 #include "webrtc/typedefs.h"
 
 namespace webrtc {

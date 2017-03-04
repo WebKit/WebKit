@@ -292,7 +292,7 @@ bool ScreenCapturerLinux::HandleXEvent(const XEvent& event) {
 
 std::unique_ptr<DesktopFrame> ScreenCapturerLinux::CaptureScreen() {
   std::unique_ptr<SharedDesktopFrame> frame = queue_.current_frame()->Share();
-  assert(x_server_pixel_buffer_.window_size().equals(frame->size()));
+  RTC_DCHECK(x_server_pixel_buffer_.window_size().equals(frame->size()));
 
   // Pass the screen size to the helper, so it can clip the invalid region if it
   // expands that region to a grid.
@@ -412,7 +412,7 @@ std::unique_ptr<DesktopCapturer> DesktopCapturer::CreateRawScreenCapturer(
     return nullptr;
   }
 
-  return capturer;
+  return std::move(capturer);
 }
 
 }  // namespace webrtc

@@ -18,6 +18,7 @@
 #include <algorithm>
 #include <sstream>
 
+#include "webrtc/base/checks.h"
 #include "webrtc/base/format_macros.h"
 #include "webrtc/base/platform_thread.h"
 #include "webrtc/system_wrappers/include/critical_section_wrapper.h"
@@ -79,7 +80,7 @@ void Logging::SetGlobalEnable(bool enabled) {
 void Logging::Log(const char format[], ...) {
   CriticalSectionScoped cs(crit_sect_.get());
   ThreadMap::iterator it = thread_map_.find(rtc::CurrentThreadId());
-  assert(it != thread_map_.end());
+  RTC_DCHECK(it != thread_map_.end());
   const State& state = it->second.stack.top();
   if (state.enabled) {
     printf("%s\t", state.tag.c_str());
@@ -116,7 +117,7 @@ void Logging::Plot(int figure,
                    const std::string& alg_name) {
   CriticalSectionScoped cs(crit_sect_.get());
   ThreadMap::iterator it = thread_map_.find(rtc::CurrentThreadId());
-  assert(it != thread_map_.end());
+  RTC_DCHECK(it != thread_map_.end());
   const State& state = it->second.stack.top();
   if (state.enabled) {
     printf("PLOT\t%d\t%s:%" PRIu32 "@%s\t%f\t%f\n", figure, name.c_str(), ssrc,
@@ -130,7 +131,7 @@ void Logging::PlotBar(int figure,
                       int flow_id) {
   CriticalSectionScoped cs(crit_sect_.get());
   ThreadMap::iterator it = thread_map_.find(rtc::CurrentThreadId());
-  assert(it != thread_map_.end());
+  RTC_DCHECK(it != thread_map_.end());
   const State& state = it->second.stack.top();
   if (state.enabled) {
     printf("BAR\t%d\t%s_%d\t%f\n", figure, name.c_str(), flow_id, value);
@@ -143,7 +144,7 @@ void Logging::PlotBaselineBar(int figure,
                               int flow_id) {
   CriticalSectionScoped cs(crit_sect_.get());
   ThreadMap::iterator it = thread_map_.find(rtc::CurrentThreadId());
-  assert(it != thread_map_.end());
+  RTC_DCHECK(it != thread_map_.end());
   const State& state = it->second.stack.top();
   if (state.enabled) {
     printf("BASELINE\t%d\t%s_%d\t%f\n", figure, name.c_str(), flow_id, value);
@@ -159,7 +160,7 @@ void Logging::PlotErrorBar(int figure,
                            int flow_id) {
   CriticalSectionScoped cs(crit_sect_.get());
   ThreadMap::iterator it = thread_map_.find(rtc::CurrentThreadId());
-  assert(it != thread_map_.end());
+  RTC_DCHECK(it != thread_map_.end());
   const State& state = it->second.stack.top();
   if (state.enabled) {
     printf("ERRORBAR\t%d\t%s_%d\t%f\t%f\t%f\t%s\n", figure, name.c_str(),
@@ -178,7 +179,7 @@ void Logging::PlotLimitErrorBar(int figure,
                                 int flow_id) {
   CriticalSectionScoped cs(crit_sect_.get());
   ThreadMap::iterator it = thread_map_.find(rtc::CurrentThreadId());
-  assert(it != thread_map_.end());
+  RTC_DCHECK(it != thread_map_.end());
   const State& state = it->second.stack.top();
   if (state.enabled) {
     printf("LIMITERRORBAR\t%d\t%s_%d\t%f\t%f\t%f\t%s\t%f\t%s\n", figure,
@@ -193,7 +194,7 @@ void Logging::PlotLabel(int figure,
                         int num_flows) {
   CriticalSectionScoped cs(crit_sect_.get());
   ThreadMap::iterator it = thread_map_.find(rtc::CurrentThreadId());
-  assert(it != thread_map_.end());
+  RTC_DCHECK(it != thread_map_.end());
   const State& state = it->second.stack.top();
   if (state.enabled) {
     printf("LABEL\t%d\t%s\t%s\t%d\n", figure, title.c_str(), y_label.c_str(),
@@ -242,7 +243,7 @@ void Logging::PushState(const std::string& append_to_tag, int64_t timestamp_ms,
 void Logging::PopState() {
   CriticalSectionScoped cs(crit_sect_.get());
   ThreadMap::iterator it = thread_map_.find(rtc::CurrentThreadId());
-  assert(it != thread_map_.end());
+  RTC_DCHECK(it != thread_map_.end());
   std::stack<State>* stack = &it->second.stack;
   int64_t newest_timestamp_ms = stack->top().timestamp_ms;
   stack->pop();

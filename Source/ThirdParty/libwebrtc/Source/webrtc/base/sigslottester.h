@@ -57,7 +57,7 @@ class SigslotTester0 : public sigslot::has_slots<> {
   void OnSignalCallback() { callback_count_++; }
   int callback_count_;
 
-  DISALLOW_COPY_AND_ASSIGN(SigslotTester0);
+  RTC_DISALLOW_COPY_AND_ASSIGN(SigslotTester0);
 };
 
 // Versions below are for testing signals that pass arguments. For all the

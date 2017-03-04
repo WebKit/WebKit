@@ -25,38 +25,11 @@
 
 namespace webrtc {
 
-static const int kDtmfFrequencyHz = 8000;
-
 RTPSenderAudio::RTPSenderAudio(Clock* clock, RTPSender* rtp_sender)
     : clock_(clock),
-      rtp_sender_(rtp_sender),
-      packet_size_samples_(160),
-      dtmf_event_is_on_(false),
-      dtmf_event_first_packet_sent_(false),
-      dtmf_payload_type_(-1),
-      dtmf_timestamp_(0),
-      dtmf_key_(0),
-      dtmf_length_samples_(0),
-      dtmf_level_(0),
-      dtmf_time_last_sent_(0),
-      dtmf_timestamp_last_sent_(0),
-      inband_vad_active_(false),
-      cngnb_payload_type_(-1),
-      cngwb_payload_type_(-1),
-      cngswb_payload_type_(-1),
-      cngfb_payload_type_(-1),
-      last_payload_type_(-1),
-      audio_level_dbov_(0) {}
+      rtp_sender_(rtp_sender) {}
 
 RTPSenderAudio::~RTPSenderAudio() {}
-
-// set audio packet size, used to determine when it's time to send a DTMF packet
-// in silence (CNG)
-int32_t RTPSenderAudio::SetAudioPacketSize(uint16_t packet_size_samples) {
-  rtc::CritScope cs(&send_audio_critsect_);
-  packet_size_samples_ = packet_size_samples;
-  return 0;
-}
 
 int32_t RTPSenderAudio::RegisterAudioPayload(
     const char payloadName[RTP_PAYLOAD_NAME_SIZE],
@@ -89,8 +62,8 @@ int32_t RTPSenderAudio::RegisterAudioPayload(
     // Don't add it to the list
     // we dont want to allow send with a DTMF payloadtype
     dtmf_payload_type_ = payload_type;
+    dtmf_payload_freq_ = frequency;
     return 0;
-    // The default timestamp rate is 8000 Hz, but other rates may be defined.
   }
   *payload = new RtpUtility::Payload;
   (*payload)->typeSpecific.Audio.frequency = frequency;
@@ -151,31 +124,30 @@ bool RTPSenderAudio::SendAudio(FrameType frame_type,
                                const uint8_t* payload_data,
                                size_t payload_size,
                                const RTPFragmentationHeader* fragmentation) {
-  // TODO(pwestin) Breakup function in smaller functions.
-  uint16_t dtmf_length_ms = 0;
-  uint8_t key = 0;
-  uint8_t audio_level_dbov;
-  int8_t dtmf_payload_type;
-  uint16_t packet_size_samples;
+  // From RFC 4733:
+  // A source has wide latitude as to how often it sends event updates. A
+  // natural interval is the spacing between non-event audio packets. [...]
+  // Alternatively, a source MAY decide to use a different spacing for event
+  // updates, with a value of 50 ms RECOMMENDED.
+  constexpr int kDtmfIntervalTimeMs = 50;
+  uint8_t audio_level_dbov = 0;
+  uint32_t dtmf_payload_freq = 0;
   {
     rtc::CritScope cs(&send_audio_critsect_);
     audio_level_dbov = audio_level_dbov_;
-    dtmf_payload_type = dtmf_payload_type_;
-    packet_size_samples = packet_size_samples_;
+    dtmf_payload_freq = dtmf_payload_freq_;
   }
 
   // Check if we have pending DTMFs to send
-  if (!dtmf_event_is_on_ && dtmf_queue_.PendingDTMF()) {
-    int64_t delaySinceLastDTMF =
-        clock_->TimeInMilliseconds() - dtmf_time_last_sent_;
-
-    if (delaySinceLastDTMF > 100) {
+  if (!dtmf_event_is_on_ && dtmf_queue_.PendingDtmf()) {
+    if ((clock_->TimeInMilliseconds() - dtmf_time_last_sent_) >
+        kDtmfIntervalTimeMs) {
       // New tone to play
       dtmf_timestamp_ = rtp_timestamp;
-      if (dtmf_queue_.NextDTMF(&key, &dtmf_length_ms, &dtmf_level_) >= 0) {
+      if (dtmf_queue_.NextDtmf(&dtmf_current_event_)) {
         dtmf_event_first_packet_sent_ = false;
-        dtmf_key_ = key;
-        dtmf_length_samples_ = (kDtmfFrequencyHz / 1000) * dtmf_length_ms;
+        dtmf_length_samples_ =
+            dtmf_current_event_.duration_ms * (dtmf_payload_freq / 1000);
         dtmf_event_is_on_ = true;
       }
     }
@@ -188,7 +160,10 @@ bool RTPSenderAudio::SendAudio(FrameType frame_type,
       // kEmptyFrame is used to drive the DTMF when in CN mode
       // it can be triggered more frequently than we want to send the
       // DTMF packets.
-      if (packet_size_samples > (rtp_timestamp - dtmf_timestamp_last_sent_)) {
+      const unsigned int dtmf_interval_time_rtp =
+          dtmf_payload_freq * kDtmfIntervalTimeMs / 1000;
+      if ((rtp_timestamp - dtmf_timestamp_last_sent_) <
+          dtmf_interval_time_rtp) {
         // not time to send yet
         return true;
       }
@@ -211,7 +186,7 @@ bool RTPSenderAudio::SendAudio(FrameType frame_type,
     if (send) {
       if (dtmf_duration_samples > 0xffff) {
         // RFC 4733 2.5.2.3 Long-Duration Events
-        SendTelephoneEventPacket(ended, dtmf_payload_type, dtmf_timestamp_,
+        SendTelephoneEventPacket(ended, dtmf_timestamp_,
                                  static_cast<uint16_t>(0xffff), false);
 
         // set new timestap for this segment
@@ -219,11 +194,10 @@ bool RTPSenderAudio::SendAudio(FrameType frame_type,
         dtmf_duration_samples -= 0xffff;
         dtmf_length_samples_ -= 0xffff;
 
-        return SendTelephoneEventPacket(
-            ended, dtmf_payload_type, dtmf_timestamp_,
+        return SendTelephoneEventPacket(ended, dtmf_timestamp_,
             static_cast<uint16_t>(dtmf_duration_samples), false);
       } else {
-        if (!SendTelephoneEventPacket(ended, dtmf_payload_type, dtmf_timestamp_,
+        if (!SendTelephoneEventPacket(ended, dtmf_timestamp_,
                                       dtmf_duration_samples,
                                       !dtmf_event_first_packet_sent_)) {
           return false;
@@ -242,6 +216,7 @@ bool RTPSenderAudio::SendAudio(FrameType frame_type,
     }
     return false;
   }
+
   std::unique_ptr<RtpPacketToSend> packet = rtp_sender_->AllocatePacket();
   packet->SetMarker(MarkerBit(frame_type, payload_type));
   packet->SetPayloadType(payload_type);
@@ -299,18 +274,22 @@ int32_t RTPSenderAudio::SetAudioLevel(uint8_t level_dbov) {
 int32_t RTPSenderAudio::SendTelephoneEvent(uint8_t key,
                                            uint16_t time_ms,
                                            uint8_t level) {
+  DtmfQueue::Event event;
   {
     rtc::CritScope lock(&send_audio_critsect_);
     if (dtmf_payload_type_ < 0) {
       // TelephoneEvent payloadtype not configured
       return -1;
     }
+    event.payload_type = dtmf_payload_type_;
   }
-  return dtmf_queue_.AddDTMF(key, time_ms, level);
+  event.key = key;
+  event.duration_ms = time_ms;
+  event.level = level;
+  return dtmf_queue_.AddDtmf(event) ? 0 : -1;
 }
 
 bool RTPSenderAudio::SendTelephoneEventPacket(bool ended,
-                                              int8_t dtmf_payload_type,
                                               uint32_t dtmf_timestamp,
                                               uint16_t duration,
                                               bool marker_bit) {
@@ -327,7 +306,7 @@ bool RTPSenderAudio::SendTelephoneEventPacket(bool ended,
     constexpr size_t kDtmfSize = 4;
     std::unique_ptr<RtpPacketToSend> packet(
         new RtpPacketToSend(kNoExtensions, kRtpHeaderSize + kDtmfSize));
-    packet->SetPayloadType(dtmf_payload_type);
+    packet->SetPayloadType(dtmf_current_event_.payload_type);
     packet->SetMarker(marker_bit);
     packet->SetSsrc(rtp_sender_->SSRC());
     packet->SetTimestamp(dtmf_timestamp);
@@ -347,13 +326,13 @@ bool RTPSenderAudio::SendTelephoneEventPacket(bool ended,
     */
     // R bit always cleared
     uint8_t R = 0x00;
-    uint8_t volume = dtmf_level_;
+    uint8_t volume = dtmf_current_event_.level;
 
     // First packet un-ended
     uint8_t E = ended ? 0x80 : 0x00;
 
     // First byte is Event number, equals key number
-    dtmfbuffer[0] = dtmf_key_;
+    dtmfbuffer[0] = dtmf_current_event_.key;
     dtmfbuffer[1] = E | R | volume;
     ByteWriter<uint16_t>::WriteBigEndian(dtmfbuffer + 2, duration);
 

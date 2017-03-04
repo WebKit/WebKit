@@ -26,8 +26,8 @@ enum FirewallDirection { FD_IN, FD_OUT, FD_ANY };
 
 class FirewallSocketServer : public SocketServer {
  public:
-  FirewallSocketServer(SocketServer * server,
-                       FirewallManager * manager = NULL,
+  FirewallSocketServer(SocketServer* server,
+                       FirewallManager* manager = nullptr,
                        bool should_delete_server = false);
   ~FirewallSocketServer() override;
 
@@ -35,7 +35,7 @@ class FirewallSocketServer : public SocketServer {
   void set_socketserver(SocketServer* server) {
     if (server_ && should_delete_server_) {
       delete server_;
-      server_ = NULL;
+      server_ = nullptr;
       should_delete_server_ = false;
     }
     server_ = server;

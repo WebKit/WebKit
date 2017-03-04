@@ -27,7 +27,7 @@ VCMPacket::VCMPacket()
       timesNacked(-1),
       frameType(kEmptyFrame),
       codec(kVideoCodecUnknown),
-      isFirstPacket(false),
+      is_first_packet_in_frame(false),
       completeNALU(kNaluUnset),
       insertStartCode(false),
       width(0),
@@ -49,7 +49,7 @@ VCMPacket::VCMPacket(const uint8_t* ptr,
       timesNacked(-1),
       frameType(rtpHeader.frameType),
       codec(kVideoCodecUnknown),
-      isFirstPacket(rtpHeader.type.Video.isFirstPacket),
+      is_first_packet_in_frame(rtpHeader.type.Video.is_first_packet_in_frame),
       completeNALU(kNaluComplete),
       insertStartCode(false),
       width(rtpHeader.type.Video.width),
@@ -61,7 +61,7 @@ VCMPacket::VCMPacket(const uint8_t* ptr,
     video_header.rotation = rtpHeader.type.Video.rotation;
   }
   // Playout decisions are made entirely based on first packet in a frame.
-  if (isFirstPacket) {
+  if (is_first_packet_in_frame) {
     video_header.playout_delay = rtpHeader.type.Video.playout_delay;
   } else {
     video_header.playout_delay = {-1, -1};
@@ -79,7 +79,7 @@ void VCMPacket::Reset() {
   timesNacked = -1;
   frameType = kEmptyFrame;
   codec = kVideoCodecUnknown;
-  isFirstPacket = false;
+  is_first_packet_in_frame = false;
   completeNALU = kNaluUnset;
   insertStartCode = false;
   width = 0;
@@ -93,9 +93,9 @@ void VCMPacket::CopyCodecSpecifics(const RTPVideoHeader& videoHeader) {
       // Handle all packets within a frame as depending on the previous packet
       // TODO(holmer): This should be changed to make fragments independent
       // when the VP8 RTP receiver supports fragments.
-      if (isFirstPacket && markerBit)
+      if (is_first_packet_in_frame && markerBit)
         completeNALU = kNaluComplete;
-      else if (isFirstPacket)
+      else if (is_first_packet_in_frame)
         completeNALU = kNaluStart;
       else if (markerBit)
         completeNALU = kNaluEnd;
@@ -105,9 +105,9 @@ void VCMPacket::CopyCodecSpecifics(const RTPVideoHeader& videoHeader) {
       codec = kVideoCodecVP8;
       return;
     case kRtpVideoVp9:
-      if (isFirstPacket && markerBit)
+      if (is_first_packet_in_frame && markerBit)
         completeNALU = kNaluComplete;
-      else if (isFirstPacket)
+      else if (is_first_packet_in_frame)
         completeNALU = kNaluStart;
       else if (markerBit)
         completeNALU = kNaluEnd;
@@ -117,13 +117,13 @@ void VCMPacket::CopyCodecSpecifics(const RTPVideoHeader& videoHeader) {
       codec = kVideoCodecVP9;
       return;
     case kRtpVideoH264:
-      isFirstPacket = videoHeader.isFirstPacket;
-      if (isFirstPacket)
+      is_first_packet_in_frame = videoHeader.is_first_packet_in_frame;
+      if (is_first_packet_in_frame)
         insertStartCode = true;
 
-      if (isFirstPacket && markerBit) {
+      if (is_first_packet_in_frame && markerBit) {
         completeNALU = kNaluComplete;
-      } else if (isFirstPacket) {
+      } else if (is_first_packet_in_frame) {
         completeNALU = kNaluStart;
       } else if (markerBit) {
         completeNALU = kNaluEnd;

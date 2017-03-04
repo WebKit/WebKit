@@ -14,8 +14,8 @@
 #include <memory>
 
 #include "webrtc/base/constructormagic.h"
+#include "webrtc/common_audio/smoothing_filter.h"
 #include "webrtc/modules/audio_coding/audio_network_adaptor/controller.h"
-#include "webrtc/modules/audio_coding/audio_network_adaptor/smoothing_filter.h"
 
 namespace webrtc {
 
@@ -64,16 +64,17 @@ class FecController final : public Controller {
     const Clock* clock;
   };
 
-  explicit FecController(const Config& config);
-
   // Dependency injection for testing.
   FecController(const Config& config,
                 std::unique_ptr<SmoothingFilter> smoothing_filter);
 
+  explicit FecController(const Config& config);
+
   ~FecController() override;
 
-  void MakeDecision(const NetworkMetrics& metrics,
-                    AudioNetworkAdaptor::EncoderRuntimeConfig* config) override;
+  void UpdateNetworkMetrics(const NetworkMetrics& network_metrics) override;
+
+  void MakeDecision(AudioNetworkAdaptor::EncoderRuntimeConfig* config) override;
 
  private:
   // Characterize Threshold with packet_loss = slope * bandwidth + offset.
@@ -87,12 +88,13 @@ class FecController final : public Controller {
                                const Config::Threshold& threshold,
                                const ThresholdInfo& threshold_info) const;
 
-  bool FecEnablingDecision(const NetworkMetrics& metrics) const;
-  bool FecDisablingDecision(const NetworkMetrics& metrics) const;
+  bool FecEnablingDecision(const rtc::Optional<float>& packet_loss) const;
+  bool FecDisablingDecision(const rtc::Optional<float>& packet_loss) const;
 
   const Config config_;
   bool fec_enabled_;
-  std::unique_ptr<SmoothingFilter> packet_loss_smoothed_;
+  rtc::Optional<int> uplink_bandwidth_bps_;
+  const std::unique_ptr<SmoothingFilter> packet_loss_smoother_;
 
   const ThresholdInfo fec_enabling_threshold_info_;
   const ThresholdInfo fec_disabling_threshold_info_;

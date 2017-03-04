@@ -10,10 +10,11 @@
 
 #include "webrtc/voice_engine/voe_base_impl.h"
 
+#include "webrtc/api/audio_codecs/builtin_audio_decoder_factory.h"
 #include "webrtc/base/format_macros.h"
+#include "webrtc/base/location.h"
 #include "webrtc/base/logging.h"
 #include "webrtc/common_audio/signal_processing/include/signal_processing_library.h"
-#include "webrtc/modules/audio_coding/codecs/builtin_audio_decoder_factory.h"
 #include "webrtc/modules/audio_coding/include/audio_coding_module.h"
 #include "webrtc/modules/audio_device/audio_device_impl.h"
 #include "webrtc/modules/audio_processing/include/audio_processing.h"
@@ -213,7 +214,8 @@ int VoEBaseImpl::Init(
   // Register the ADM to the process thread, which will drive the error
   // callback mechanism
   if (shared_->process_thread()) {
-    shared_->process_thread()->RegisterModule(shared_->audio_device());
+    shared_->process_thread()->RegisterModule(shared_->audio_device(),
+                                              RTC_FROM_HERE);
   }
 
   bool available = false;
@@ -374,9 +376,8 @@ int VoEBaseImpl::CreateChannel(const ChannelConfig& config) {
 int VoEBaseImpl::InitializeChannel(voe::ChannelOwner* channel_owner) {
   if (channel_owner->channel()->SetEngineInformation(
           shared_->statistics(), *shared_->output_mixer(),
-          *shared_->transmit_mixer(), *shared_->process_thread(),
-          *shared_->audio_device(), voiceEngineObserverPtr_,
-          &callbackCritSect_) != 0) {
+          *shared_->process_thread(), *shared_->audio_device(),
+          voiceEngineObserverPtr_, &callbackCritSect_) != 0) {
     shared_->SetLastError(
         VE_CHANNEL_NOT_CREATED, kTraceError,
         "CreateChannel() failed to associate engine and channel."
@@ -436,7 +437,6 @@ int VoEBaseImpl::StartReceive(int channel) {
                           "StartReceive() failed to locate channel");
     return -1;
   }
-  channelPtr->ResetDiscardedPacketCount();
   return 0;
 }
 
@@ -535,7 +535,7 @@ int VoEBaseImpl::GetVersion(char version[1024]) {
   }
 
   std::string versionString = VoiceEngine::GetVersionString();
-  RTC_DCHECK_GT(1024u, versionString.size() + 1);
+  RTC_DCHECK_GT(1024, versionString.size() + 1);
   char* end = std::copy(versionString.cbegin(), versionString.cend(), version);
   end[0] = '\n';
   end[1] = '\0';

@@ -11,6 +11,10 @@
 #import "ARDVideoCallView.h"
 
 #import <AVFoundation/AVFoundation.h>
+
+#import <WebRTC/RTCEAGLVideoView.h>
+#import <WebRTC/RTCMTLVideoView.h>
+
 #import "UIImage+ARDUtilities.h"
 
 static CGFloat const kButtonPadding = 16;
@@ -38,8 +42,15 @@ static CGFloat const kStatusBarHeight = 20;
 
 - (instancetype)initWithFrame:(CGRect)frame {
   if (self = [super initWithFrame:frame]) {
-    _remoteVideoView = [[RTCEAGLVideoView alloc] initWithFrame:CGRectZero];
-    _remoteVideoView.delegate = self;
+
+#if defined(RTC_SUPPORTS_METAL)
+    _remoteVideoView = [[RTCMTLVideoView alloc] initWithFrame:CGRectZero];
+#else
+    RTCEAGLVideoView *remoteView = [[RTCEAGLVideoView alloc] initWithFrame:CGRectZero];
+    remoteView.delegate = self;
+    _remoteVideoView = remoteView;
+#endif
+
     [self addSubview:_remoteVideoView];
 
     _localVideoView = [[RTCCameraPreviewView alloc] initWithFrame:CGRectZero];

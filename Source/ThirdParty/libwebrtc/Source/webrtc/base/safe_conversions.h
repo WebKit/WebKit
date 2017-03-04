@@ -27,12 +27,18 @@ inline bool IsValueInRangeForNumericType(Src value) {
   return internal::RangeCheck<Dst>(value) == internal::TYPE_VALID;
 }
 
-// checked_cast<> is analogous to static_cast<> for numeric types,
-// except that it CHECKs that the specified numeric conversion will not
-// overflow or underflow. NaN source will always trigger a CHECK.
+// checked_cast<> and dchecked_cast<> are analogous to static_cast<> for
+// numeric types, except that they [D]CHECK that the specified numeric
+// conversion will not overflow or underflow. NaN source will always trigger
+// the [D]CHECK.
 template <typename Dst, typename Src>
 inline Dst checked_cast(Src value) {
   RTC_CHECK(IsValueInRangeForNumericType<Dst>(value));
+  return static_cast<Dst>(value);
+}
+template <typename Dst, typename Src>
+inline Dst dchecked_cast(Src value) {
+  RTC_DCHECK(IsValueInRangeForNumericType<Dst>(value));
   return static_cast<Dst>(value);
 }
 
@@ -57,11 +63,11 @@ inline Dst saturated_cast(Src value) {
 
     // Should fail only on attempting to assign NaN to a saturated integer.
     case internal::TYPE_INVALID:
-      FATAL();
+      RTC_FATAL();
       return std::numeric_limits<Dst>::max();
   }
 
-  FATAL();
+  RTC_FATAL();
   return static_cast<Dst>(value);
 }
 

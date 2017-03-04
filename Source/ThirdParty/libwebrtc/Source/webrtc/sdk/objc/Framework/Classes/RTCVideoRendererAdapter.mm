@@ -27,9 +27,10 @@ class VideoRendererAdapter
   void OnFrame(const webrtc::VideoFrame& nativeVideoFrame) override {
     RTCVideoFrame* videoFrame = [[RTCVideoFrame alloc]
         initWithVideoBuffer:nativeVideoFrame.video_frame_buffer()
-                   rotation:nativeVideoFrame.rotation()
+                   rotation:static_cast<RTCVideoRotation>(
+                                nativeVideoFrame.rotation())
                 timeStampNs:nativeVideoFrame.timestamp_us() *
-                                rtc::kNumNanosecsPerMicrosec];
+                            rtc::kNumNanosecsPerMicrosec];
     CGSize current_size = (videoFrame.rotation % 180 == 0)
                               ? CGSizeMake(videoFrame.width, videoFrame.height)
                               : CGSizeMake(videoFrame.height, videoFrame.width);
@@ -47,7 +48,9 @@ class VideoRendererAdapter
 };
 }
 
-@implementation RTCVideoRendererAdapter
+@implementation RTCVideoRendererAdapter {
+  std::unique_ptr<webrtc::VideoRendererAdapter> _adapter;
+}
 
 @synthesize videoRenderer = _videoRenderer;
 

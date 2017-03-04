@@ -20,11 +20,10 @@ namespace webrtc {
 namespace videocapturemodule {
 class VideoCaptureIos : public VideoCaptureImpl {
  public:
-  explicit VideoCaptureIos(const int32_t capture_id);
+  VideoCaptureIos();
   virtual ~VideoCaptureIos();
 
   static rtc::scoped_refptr<VideoCaptureModule> Create(
-      const int32_t capture_id,
       const char* device_unique_id_utf8);
 
   // Implementation of VideoCaptureImpl.
@@ -36,7 +35,6 @@ class VideoCaptureIos : public VideoCaptureImpl {
  private:
   RTCVideoCaptureIosObjC* capture_device_;
   bool is_capturing_;
-  int32_t id_;
   VideoCaptureCapability capability_;
 };
 

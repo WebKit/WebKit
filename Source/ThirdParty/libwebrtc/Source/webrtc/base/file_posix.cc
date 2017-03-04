@@ -81,7 +81,7 @@ size_t File::ReadAt(uint8_t* buffer, size_t length, size_t offset) {
 }
 
 bool File::Seek(size_t offset) {
-  RTC_DCHECK_LE(offset, static_cast<size_t>(std::numeric_limits<off_t>::max()));
+  RTC_DCHECK_LE(offset, std::numeric_limits<off_t>::max());
   return lseek(file_, static_cast<off_t>(offset), SEEK_SET) != -1;
 }
 

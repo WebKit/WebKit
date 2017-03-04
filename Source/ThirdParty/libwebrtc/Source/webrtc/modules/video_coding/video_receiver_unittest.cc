@@ -15,6 +15,7 @@
 #include "webrtc/modules/video_coding/include/mock/mock_video_codec_interface.h"
 #include "webrtc/modules/video_coding/include/video_coding.h"
 #include "webrtc/modules/video_coding/test/test_util.h"
+#include "webrtc/modules/video_coding/timing.h"
 #include "webrtc/modules/video_coding/video_coding_impl.h"
 #include "webrtc/system_wrappers/include/clock.h"
 #include "webrtc/test/gtest.h"
@@ -33,7 +34,9 @@ class TestVideoReceiver : public ::testing::Test {
   TestVideoReceiver() : clock_(0) {}
 
   virtual void SetUp() {
-    receiver_.reset(new VideoReceiver(&clock_, &event_factory_, nullptr));
+    timing_.reset(new VCMTiming(&clock_));
+    receiver_.reset(
+        new VideoReceiver(&clock_, &event_factory_, nullptr, timing_.get()));
     receiver_->RegisterExternalDecoder(&decoder_, kUnusedPayloadType);
     const size_t kMaxNackListSize = 250;
     const int kMaxPacketAgeToNack = 450;
@@ -75,6 +78,7 @@ class TestVideoReceiver : public ::testing::Test {
   NiceMock<MockVideoDecoder> decoder_;
   NiceMock<MockPacketRequestCallback> packet_request_callback_;
 
+  std::unique_ptr<VCMTiming> timing_;
   std::unique_ptr<VideoReceiver> receiver_;
 };
 
@@ -119,14 +123,14 @@ TEST_F(TestVideoReceiver, PaddingOnlyFramesWithLosses) {
   header.type.Video.codec = kRtpVideoVp8;
   // Insert one video frame to get one frame decoded.
   header.frameType = kVideoFrameKey;
-  header.type.Video.isFirstPacket = true;
+  header.type.Video.is_first_packet_in_frame = true;
   header.header.markerBit = true;
   InsertAndVerifyDecodableFrame(payload, kFrameSize, &header);
   clock_.AdvanceTimeMilliseconds(33);
   header.header.timestamp += 3000;
 
   header.frameType = kEmptyFrame;
-  header.type.Video.isFirstPacket = false;
+  header.type.Video.is_first_packet_in_frame = false;
   header.header.markerBit = false;
   // Insert padding frames.
   for (int i = 0; i < 10; ++i) {
@@ -162,7 +166,7 @@ TEST_F(TestVideoReceiver, PaddingOnlyAndVideo) {
   WebRtcRTPHeader header;
   memset(&header, 0, sizeof(header));
   header.frameType = kEmptyFrame;
-  header.type.Video.isFirstPacket = false;
+  header.type.Video.is_first_packet_in_frame = false;
   header.header.markerBit = false;
   header.header.paddingLength = kPaddingSize;
   header.header.payloadType = kUnusedPayloadType;
@@ -178,7 +182,7 @@ TEST_F(TestVideoReceiver, PaddingOnlyAndVideo) {
         header.frameType = kVideoFrameKey;
       else
         header.frameType = kVideoFrameDelta;
-      header.type.Video.isFirstPacket = true;
+      header.type.Video.is_first_packet_in_frame = true;
       header.header.markerBit = true;
       InsertAndVerifyDecodableFrame(payload, kFrameSize, &header);
       clock_.AdvanceTimeMilliseconds(33);
@@ -187,7 +191,7 @@ TEST_F(TestVideoReceiver, PaddingOnlyAndVideo) {
 
     // Insert 2 padding only frames.
     header.frameType = kEmptyFrame;
-    header.type.Video.isFirstPacket = false;
+    header.type.Video.is_first_packet_in_frame = false;
     header.header.markerBit = false;
     for (int j = 0; j < 2; ++j) {
       // InsertAndVerifyPaddingFrame(payload, &header);

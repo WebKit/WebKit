@@ -14,12 +14,14 @@
 #include <string>
 #include <vector>
 
+#include "webrtc/call/call.h"
 #include "webrtc/config.h"
 #include "webrtc/media/base/mediaengine.h"
 
 namespace webrtc {
 class AudioDecoderFactory;
 class AudioDeviceModule;
+class AudioMixer;
 }
 namespace cricket {
 class WebRtcVideoDecoderFactory;
@@ -38,12 +40,22 @@ class WebRtcMediaEngineFactory {
       WebRtcVideoEncoderFactory* video_encoder_factory,
       WebRtcVideoDecoderFactory* video_decoder_factory);
 
+  // TODO(deadbeef): Change these to return an std::unique_ptr<>, to indicate
+  // that the caller owns the returned object.
   static MediaEngineInterface* Create(
       webrtc::AudioDeviceModule* adm,
       const rtc::scoped_refptr<webrtc::AudioDecoderFactory>&
           audio_decoder_factory,
       WebRtcVideoEncoderFactory* video_encoder_factory,
       WebRtcVideoDecoderFactory* video_decoder_factory);
+
+  static MediaEngineInterface* Create(
+      webrtc::AudioDeviceModule* adm,
+      const rtc::scoped_refptr<webrtc::AudioDecoderFactory>&
+          audio_decoder_factory,
+      WebRtcVideoEncoderFactory* video_encoder_factory,
+      WebRtcVideoDecoderFactory* video_decoder_factory,
+      rtc::scoped_refptr<webrtc::AudioMixer> audio_mixer);
 };
 
 // Verify that extension IDs are within 1-byte extension range and are not
@@ -57,6 +69,9 @@ std::vector<webrtc::RtpExtension> FilterRtpExtensions(
     const std::vector<webrtc::RtpExtension>& extensions,
     bool (*supported)(const std::string&),
     bool filter_redundant_extensions);
+
+webrtc::Call::Config::BitrateConfig GetBitrateConfigForCodec(
+    const Codec& codec);
 
 }  // namespace cricket
 

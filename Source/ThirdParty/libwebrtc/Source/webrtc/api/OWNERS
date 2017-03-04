@@ -7,11 +7,6 @@ tkchin@webrtc.org
 tommi@webrtc.org
 deadbeef@webrtc.org
 
-per-file androidvideotracksource.*=sakal@webrtc.org
-per-file androidvideotracksource.*=magjed@webrtc.org
-per-file rtcstats*=hbos@webrtc.org
-per-file rtcstats*=hta@webrtc.org
-
 # These are for the common case of adding or renaming files. If you're doing
 # structural changes, please get a review from a reviewer in this file.
 per-file *.gn=*

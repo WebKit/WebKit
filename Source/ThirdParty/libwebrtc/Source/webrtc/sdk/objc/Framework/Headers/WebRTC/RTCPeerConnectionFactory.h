@@ -12,18 +12,6 @@
 
 #import <WebRTC/RTCMacros.h>
 
-#import "webrtc/base/scoped_ref_ptr.h"
-
-#import <memory>
-
-namespace rtc {
-class Thread;
-}
-
-namespace webrtc {
-class PeerConnectionFactoryInterface;
-}
-
 NS_ASSUME_NONNULL_BEGIN
 
 @class RTCAVFoundationVideoSource;
@@ -38,13 +26,7 @@ NS_ASSUME_NONNULL_BEGIN
 @protocol RTCPeerConnectionDelegate;
 
 RTC_EXPORT
-@interface RTCPeerConnectionFactory : NSObject {
-  std::unique_ptr<rtc::Thread> _networkThread;
-  std::unique_ptr<rtc::Thread> _workerThread;
-  std::unique_ptr<rtc::Thread> _signalingThread;
-  BOOL _hasStartedAecDump;
-  rtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface> _nativeFactory;
-}
+@interface RTCPeerConnectionFactory : NSObject
 
 - (instancetype)init NS_DESIGNATED_INITIALIZER;
 

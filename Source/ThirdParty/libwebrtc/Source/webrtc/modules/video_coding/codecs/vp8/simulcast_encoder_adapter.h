@@ -48,7 +48,8 @@ class SimulcastEncoderAdapter : public VP8Encoder {
              const std::vector<FrameType>* frame_types) override;
   int RegisterEncodeCompleteCallback(EncodedImageCallback* callback) override;
   int SetChannelParameters(uint32_t packet_loss, int64_t rtt) override;
-  int SetRates(uint32_t new_bitrate_kbit, uint32_t new_framerate) override;
+  int SetRateAllocation(const BitrateAllocation& bitrate,
+                        uint32_t new_framerate) override;
 
   // Eventual handler for the contained encoders' EncodedImageCallbacks, but
   // called from an internal helper that also knows the correct stream
@@ -59,7 +60,7 @@ class SimulcastEncoderAdapter : public VP8Encoder {
       const CodecSpecificInfo* codec_specific_info,
       const RTPFragmentationHeader* fragmentation);
 
-  void OnDroppedFrame() override;
+  VideoEncoder::ScalingSettings GetScalingSettings() const override;
 
   bool SupportsNativeHandle() const override;
   const char* ImplementationName() const override;
@@ -103,12 +104,10 @@ class SimulcastEncoderAdapter : public VP8Encoder {
   bool Initialized() const;
 
   std::unique_ptr<VideoEncoderFactory> factory_;
-  std::unique_ptr<TemporalLayersFactory> screensharing_tl_factory_;
   VideoCodec codec_;
   std::vector<StreamInfo> streaminfos_;
   EncodedImageCallback* encoded_complete_callback_;
   std::string implementation_name_;
-  std::unique_ptr<SimulcastRateAllocator> rate_allocator_;
 };
 
 }  // namespace webrtc

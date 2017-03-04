@@ -129,7 +129,24 @@ struct MediaConfig {
     // VideoReceiveStream, where the value is passed on to the
     // IncomingVideoStream constructor.
     bool disable_prerenderer_smoothing = false;
+
+    // Enables periodic bandwidth probing in application-limited region.
+    bool periodic_alr_bandwidth_probing = false;
   } video;
+
+  bool operator==(const MediaConfig& o) const {
+    return enable_dscp == o.enable_dscp &&
+           video.enable_cpu_overuse_detection ==
+               o.video.enable_cpu_overuse_detection &&
+           video.suspend_below_min_bitrate ==
+               o.video.suspend_below_min_bitrate &&
+           video.disable_prerenderer_smoothing ==
+               o.video.disable_prerenderer_smoothing &&
+           video.periodic_alr_bandwidth_probing ==
+               o.video.periodic_alr_bandwidth_probing;
+  }
+
+  bool operator!=(const MediaConfig& o) const { return !(*this == o); }
 };
 
 // Options that can be applied to a VoiceMediaChannel or a VoiceMediaEngine.
@@ -553,6 +570,7 @@ struct MediaSenderInfo {
   float fraction_lost;
   int64_t rtt_ms;
   std::string codec_name;
+  rtc::Optional<int> codec_payload_type;
   std::vector<SsrcSenderInfo> local_stats;
   std::vector<SsrcReceiverInfo> remote_stats;
 };
@@ -598,6 +616,7 @@ struct MediaReceiverInfo {
   int packets_lost;
   float fraction_lost;
   std::string codec_name;
+  rtc::Optional<int> codec_payload_type;
   std::vector<SsrcReceiverInfo> local_stats;
   std::vector<SsrcSenderInfo> remote_stats;
 };
@@ -613,8 +632,8 @@ struct VoiceSenderInfo : public MediaSenderInfo {
         echo_return_loss(0),
         echo_return_loss_enhancement(0),
         residual_echo_likelihood(0.0f),
-        typing_noise_detected(false) {
-  }
+        residual_echo_likelihood_recent_max(0.0f),
+        typing_noise_detected(false) {}
 
   int ext_seqnum;
   int jitter_ms;
@@ -625,6 +644,7 @@ struct VoiceSenderInfo : public MediaSenderInfo {
   int echo_return_loss;
   int echo_return_loss_enhancement;
   float residual_echo_likelihood;
+  float residual_echo_likelihood_recent_max;
   bool typing_noise_detected;
 };
 
@@ -698,9 +718,6 @@ struct VideoSenderInfo : public MediaSenderInfo {
   std::vector<SsrcGroup> ssrc_groups;
   // TODO(hbos): Move this to |VideoMediaInfo::send_codecs|?
   std::string encoder_implementation_name;
-  // TODO(hbos): Move this to |MediaSenderInfo| when supported by
-  // |VoiceSenderInfo| as well (which also extends that class).
-  rtc::Optional<uint32_t> codec_payload_type;
   int packets_cached;
   int firs_rcvd;
   int plis_rcvd;
@@ -732,7 +749,9 @@ struct VideoReceiverInfo : public MediaReceiverInfo {
         framerate_output(0),
         framerate_render_input(0),
         framerate_render_output(0),
+        frames_received(0),
         frames_decoded(0),
+        frames_rendered(0),
         decode_ms(0),
         max_decode_ms(0),
         jitter_buffer_ms(0),
@@ -746,9 +765,6 @@ struct VideoReceiverInfo : public MediaReceiverInfo {
   std::vector<SsrcGroup> ssrc_groups;
   // TODO(hbos): Move this to |VideoMediaInfo::receive_codecs|?
   std::string decoder_implementation_name;
-  // TODO(hbos): Move this to |MediaReceiverInfo| when supported by
-  // |VoiceReceiverInfo| as well (which also extends that class).
-  rtc::Optional<uint32_t> codec_payload_type;
   int packets_concealed;
   int firs_sent;
   int plis_sent;
@@ -762,7 +778,10 @@ struct VideoReceiverInfo : public MediaReceiverInfo {
   int framerate_render_input;
   // Framerate that the renderer reports.
   int framerate_render_output;
+  uint32_t frames_received;
   uint32_t frames_decoded;
+  uint32_t frames_rendered;
+  rtc::Optional<uint64_t> qp_sum;
 
   // All stats below are gathered per-VideoReceiver, but some will be correlated
   // across MediaStreamTracks.  NOTE(hta): when sinking stats into per-SSRC
@@ -831,9 +850,13 @@ struct VoiceMediaInfo {
   void Clear() {
     senders.clear();
     receivers.clear();
+    send_codecs.clear();
+    receive_codecs.clear();
   }
   std::vector<VoiceSenderInfo> senders;
   std::vector<VoiceReceiverInfo> receivers;
+  RtpCodecParametersMap send_codecs;
+  RtpCodecParametersMap receive_codecs;
 };
 
 struct VideoMediaInfo {
@@ -968,12 +991,6 @@ class VoiceMediaChannel : public MediaChannel {
   virtual bool GetActiveStreams(AudioInfo::StreamList* actives) = 0;
   // Get the current energy level of the stream sent to the speaker.
   virtual int GetOutputLevel() = 0;
-  // Get the time in milliseconds since last recorded keystroke, or negative.
-  virtual int GetTimeSinceLastTyping() = 0;
-  // Temporarily exposed field for tuning typing detect options.
-  virtual void SetTypingDetectionParameters(int time_window,
-    int cost_per_typing, int reporting_threshold, int penalty_decay,
-    int type_event_delay) = 0;
   // Set speaker output volume of the specified ssrc.
   virtual bool SetOutputVolume(uint32_t ssrc, double volume) = 0;
   // Returns if the telephone-event has been negotiated.
@@ -1074,8 +1091,11 @@ enum DataMessageType {
 // signal fires, on up the chain.
 struct ReceiveDataParams {
   // The in-packet stream indentifier.
-  // For SCTP, this is really SID, not SSRC.
-  uint32_t ssrc;
+  // RTP data channels use SSRCs, SCTP data channels use SIDs.
+  union {
+    uint32_t ssrc;
+    int sid;
+  };
   // The type of message (binary, text, or control).
   DataMessageType type;
   // A per-stream value incremented per packet in the stream.
@@ -1083,18 +1103,16 @@ struct ReceiveDataParams {
   // A per-stream value monotonically increasing with time.
   int timestamp;
 
-  ReceiveDataParams() :
-      ssrc(0),
-      type(DMT_TEXT),
-      seq_num(0),
-      timestamp(0) {
-  }
+  ReceiveDataParams() : sid(0), type(DMT_TEXT), seq_num(0), timestamp(0) {}
 };
 
 struct SendDataParams {
   // The in-packet stream indentifier.
-  // For SCTP, this is really SID, not SSRC.
-  uint32_t ssrc;
+  // RTP data channels use SSRCs, SCTP data channels use SIDs.
+  union {
+    uint32_t ssrc;
+    int sid;
+  };
   // The type of message (binary, text, or control).
   DataMessageType type;
 
@@ -1113,15 +1131,14 @@ struct SendDataParams {
   // is supported, not both at the same time.
   int max_rtx_ms;
 
-  SendDataParams() :
-      ssrc(0),
-      type(DMT_TEXT),
-      // TODO(pthatcher): Make these true by default?
-      ordered(false),
-      reliable(false),
-      max_rtx_count(0),
-      max_rtx_ms(0) {
-  }
+  SendDataParams()
+      : sid(0),
+        type(DMT_TEXT),
+        // TODO(pthatcher): Make these true by default?
+        ordered(false),
+        reliable(false),
+        max_rtx_count(0),
+        max_rtx_ms(0) {}
 };
 
 enum SendDataResult { SDR_SUCCESS, SDR_ERROR, SDR_BLOCK };
@@ -1153,6 +1170,8 @@ class DataMediaChannel : public MediaChannel {
     ERROR_RECV_SRTP_REPLAY,               // Packet replay detected.
   };
 
+  DataMediaChannel() {}
+  DataMediaChannel(const MediaConfig& config) : MediaChannel(config) {}
   virtual ~DataMediaChannel() {}
 
   virtual bool SetSendParameters(const DataSendParameters& params) = 0;
@@ -1164,7 +1183,7 @@ class DataMediaChannel : public MediaChannel {
   virtual bool SetSend(bool send) = 0;
   virtual bool SetReceive(bool receive) = 0;
 
-  virtual void OnNetworkRouteChanged(const std::string& /* transport_name */,
+  virtual void OnNetworkRouteChanged(const std::string&,
                                      const rtc::NetworkRoute&) {}
 
   virtual bool SendData(
@@ -1178,8 +1197,6 @@ class DataMediaChannel : public MediaChannel {
   // Signal when the media channel is ready to send the stream. Arguments are:
   //     writable(bool)
   sigslot::signal1<bool> SignalReadyToSend;
-  // Signal for notifying that the remote side has closed the DataChannel.
-  sigslot::signal1<uint32_t> SignalStreamClosedRemotely;
 };
 
 }  // namespace cricket

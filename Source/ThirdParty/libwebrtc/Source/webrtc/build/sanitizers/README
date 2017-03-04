@@ -1,3 +1,0 @@
-This directory contains suppressions for sanitizer tools.
-They're overriding the default ones for Chromium using our
-webrtc/supplement.gypi file.

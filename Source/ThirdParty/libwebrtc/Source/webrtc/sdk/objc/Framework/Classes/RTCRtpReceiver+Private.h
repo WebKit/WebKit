@@ -14,6 +14,20 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+namespace webrtc {
+
+class RtpReceiverDelegateAdapter : public RtpReceiverObserverInterface {
+ public:
+  RtpReceiverDelegateAdapter(RTCRtpReceiver* receiver);
+
+  void OnFirstPacketReceived(cricket::MediaType media_type) override;
+
+ private:
+  __weak RTCRtpReceiver* receiver_;
+};
+
+}  // namespace webrtc
+
 @interface RTCRtpReceiver ()
 
 @property(nonatomic, readonly)
@@ -23,6 +37,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)initWithNativeRtpReceiver:
     (rtc::scoped_refptr<webrtc::RtpReceiverInterface>)nativeRtpReceiver
     NS_DESIGNATED_INITIALIZER;
+
++ (RTCRtpMediaType)mediaTypeForNativeMediaType:(cricket::MediaType)nativeMediaType;
 
 @end
 

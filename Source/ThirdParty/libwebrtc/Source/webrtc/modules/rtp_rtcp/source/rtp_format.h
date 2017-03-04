@@ -18,6 +18,7 @@
 #include "webrtc/modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 
 namespace webrtc {
+class RtpPacketToSend;
 
 class RtpPacketizer {
  public:
@@ -33,15 +34,11 @@ class RtpPacketizer {
                               const RTPFragmentationHeader* fragmentation) = 0;
 
   // Get the next payload with payload header.
-  // buffer is a pointer to where the output will be written.
-  // bytes_to_send is an output variable that will contain number of bytes
-  // written to buffer. The parameter last_packet is true for the last packet of
-  // the frame, false otherwise (i.e., call the function again to get the
-  // next packet).
-  // Returns true on success or false if there was no payload to packetize.
-  virtual bool NextPacket(uint8_t* buffer,
-                          size_t* bytes_to_send,
-                          bool* last_packet) = 0;
+  // Write payload and set marker bit of the |packet|.
+  // The parameter |last_packet| is true for the last packet of the frame, false
+  // otherwise (i.e., call the function again to get the next packet).
+  // Returns true on success, false otherwise.
+  virtual bool NextPacket(RtpPacketToSend* packet, bool* last_packet) = 0;
 
   virtual ProtectionType GetProtectionType() = 0;
 

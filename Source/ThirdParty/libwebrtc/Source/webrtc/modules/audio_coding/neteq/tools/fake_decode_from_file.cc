@@ -26,13 +26,13 @@ int FakeDecodeFromFile::DecodeInternal(const uint8_t* encoded,
     // Decoder is asked to produce codec-internal comfort noise.
     RTC_DCHECK(!encoded);  // NetEq always sends nullptr in this case.
     RTC_DCHECK(cng_mode_);
-    RTC_DCHECK_GT(last_decoded_length_, 0u);
+    RTC_DCHECK_GT(last_decoded_length_, 0);
     std::fill_n(decoded, last_decoded_length_, 0);
     *speech_type = kComfortNoise;
     return last_decoded_length_;
   }
 
-  RTC_CHECK_GE(encoded_len, 12u);
+  RTC_CHECK_GE(encoded_len, 12);
   uint32_t timestamp_to_decode =
       ByteReader<uint32_t>::ReadLittleEndian(encoded);
   uint32_t samples_to_decode =
@@ -66,7 +66,7 @@ int FakeDecodeFromFile::DecodeInternal(const uint8_t* encoded,
       ByteReader<uint32_t>::ReadLittleEndian(&encoded[8]);
   if (original_payload_size_bytes == 1) {
     // This is a comfort noise payload.
-    RTC_DCHECK_GT(last_decoded_length_, 0u);
+    RTC_DCHECK_GT(last_decoded_length_, 0);
     std::fill_n(decoded, last_decoded_length_, 0);
     *speech_type = kComfortNoise;
     cng_mode_ = true;
@@ -90,7 +90,7 @@ void FakeDecodeFromFile::PrepareEncoded(uint32_t timestamp,
                                         size_t samples,
                                         size_t original_payload_size_bytes,
                                         rtc::ArrayView<uint8_t> encoded) {
-  RTC_CHECK_GE(encoded.size(), 12u);
+  RTC_CHECK_GE(encoded.size(), 12);
   ByteWriter<uint32_t>::WriteLittleEndian(&encoded[0], timestamp);
   ByteWriter<uint32_t>::WriteLittleEndian(&encoded[4],
                                           rtc::checked_cast<uint32_t>(samples));

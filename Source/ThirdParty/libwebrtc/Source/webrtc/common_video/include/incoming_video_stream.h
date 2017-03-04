@@ -11,18 +11,12 @@
 #ifndef WEBRTC_COMMON_VIDEO_INCLUDE_INCOMING_VIDEO_STREAM_H_
 #define WEBRTC_COMMON_VIDEO_INCLUDE_INCOMING_VIDEO_STREAM_H_
 
-#include <memory>
-
-#include "webrtc/base/criticalsection.h"
-#include "webrtc/base/platform_thread.h"
 #include "webrtc/base/race_checker.h"
-#include "webrtc/base/thread_annotations.h"
-#include "webrtc/base/thread_checker.h"
+#include "webrtc/base/task_queue.h"
 #include "webrtc/common_video/video_render_frames.h"
 #include "webrtc/media/base/videosinkinterface.h"
 
 namespace webrtc {
-class EventTimerWrapper;
 
 class IncomingVideoStream : public rtc::VideoSinkInterface<VideoFrame> {
  public:
@@ -30,28 +24,19 @@ class IncomingVideoStream : public rtc::VideoSinkInterface<VideoFrame> {
                       rtc::VideoSinkInterface<VideoFrame>* callback);
   ~IncomingVideoStream() override;
 
- protected:
-  static bool IncomingVideoStreamThreadFun(void* obj);
-  bool IncomingVideoStreamProcess();
-
  private:
-  enum { kEventStartupTimeMs = 10 };
-  enum { kEventMaxWaitTimeMs = 100 };
-  enum { kFrameRatePeriodMs = 1000 };
-
   void OnFrame(const VideoFrame& video_frame) override;
+  void Dequeue();
+
+  // Fwd decl of a QueuedTask implementation for carrying frames over to the TQ.
+  class NewFrameTask;
 
   rtc::ThreadChecker main_thread_checker_;
-  rtc::ThreadChecker render_thread_checker_;
   rtc::RaceChecker decoder_race_checker_;
 
-  rtc::CriticalSection buffer_critsect_;
-  rtc::PlatformThread incoming_render_thread_;
-  std::unique_ptr<EventTimerWrapper> deliver_buffer_event_;
-
-  rtc::VideoSinkInterface<VideoFrame>* const external_callback_;
-  std::unique_ptr<VideoRenderFrames> render_buffers_
-      GUARDED_BY(buffer_critsect_);
+  VideoRenderFrames render_buffers_;  // Only touched on the TaskQueue.
+  rtc::VideoSinkInterface<VideoFrame>* const callback_;
+  rtc::TaskQueue incoming_render_queue_;
 };
 
 }  // namespace webrtc

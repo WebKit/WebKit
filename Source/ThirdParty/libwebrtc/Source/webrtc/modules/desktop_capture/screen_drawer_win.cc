@@ -150,6 +150,7 @@ void ScreenDrawerWin::Clear() {
 // TODO(zijiehe): Find the right signal to indicate the finish of all pending
 // paintings.
 void ScreenDrawerWin::WaitForPendingDraws() {
+  BringToFront();
   SleepMs(50);
 }
 

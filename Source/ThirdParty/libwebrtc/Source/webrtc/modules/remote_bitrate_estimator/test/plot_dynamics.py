@@ -140,8 +140,16 @@ def main():
   detector_state.addSubplot(['offset_ms'], "Time (s)", "Offset")
   detector_state.addSubplot(['gamma_ms'], "Time (s)", "Gamma")
 
+  trendline_state = Figure("TrendlineState")
+  trendline_state.addSubplot(["accumulated_delay_ms", "smoothed_delay_ms"],
+                             "Time (s)", "Delay (ms)")
+  trendline_state.addSubplot(["trendline_slope"], "Time (s)", "Slope")
+
+  target_bitrate = Figure("TargetBitrate")
+  target_bitrate.addSubplot(['target_bitrate_bps'], "Time (s)", "Bitrate (bps)")
+
   # Select which figures to plot here.
-  figures = [receiver, detector_state]
+  figures = [receiver, detector_state, trendline_state, target_bitrate]
 
   # Add samples to the figures.
   for line in sys.stdin:

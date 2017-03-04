@@ -8,7 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#import <AVFoundation/AVFoundation.h>
+#import <Foundation/Foundation.h>
 
 #if !TARGET_OS_IPHONE
 

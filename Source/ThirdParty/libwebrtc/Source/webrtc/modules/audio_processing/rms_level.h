@@ -11,8 +11,8 @@
 #ifndef WEBRTC_MODULES_AUDIO_PROCESSING_RMS_LEVEL_H_
 #define WEBRTC_MODULES_AUDIO_PROCESSING_RMS_LEVEL_H_
 
-#include <cstddef>
-
+#include "webrtc/base/array_view.h"
+#include "webrtc/base/optional.h"
 #include "webrtc/typedefs.h"
 
 namespace webrtc {
@@ -23,34 +23,50 @@ namespace webrtc {
 // with the intent that it can provide the RTP audio level indication.
 //
 // The expected approach is to provide constant-sized chunks of audio to
-// Process(). When enough chunks have been accumulated to form a packet, call
-// RMS() to get the audio level indicator for the RTP header.
-class RMSLevel {
+// Analyze(). When enough chunks have been accumulated to form a packet, call
+// Average() to get the audio level indicator for the RTP header.
+class RmsLevel {
  public:
-  static const int kMinLevel = 127;
+  struct Levels {
+    int average;
+    int peak;
+  };
 
-  RMSLevel();
-  ~RMSLevel();
+  static constexpr int kMinLevelDb = 127;
+
+  RmsLevel();
+  ~RmsLevel();
 
   // Can be called to reset internal states, but is not required during normal
   // operation.
   void Reset();
 
-  // Pass each chunk of audio to Process() to accumulate the level.
-  void Process(const int16_t* data, size_t length);
+  // Pass each chunk of audio to Analyze() to accumulate the level.
+  void Analyze(rtc::ArrayView<const int16_t> data);
 
   // If all samples with the given |length| have a magnitude of zero, this is
   // a shortcut to avoid some computation.
-  void ProcessMuted(size_t length);
+  void AnalyzeMuted(size_t length);
 
-  // Computes the RMS level over all data passed to Process() since the last
-  // call to RMS(). The returned value is positive but should be interpreted as
-  // negative as per the RFC. It is constrained to [0, 127].
-  int RMS();
+  // Computes the RMS level over all data passed to Analyze() since the last
+  // call to Average(). The returned value is positive but should be interpreted
+  // as negative as per the RFC. It is constrained to [0, 127]. Resets the
+  // internal state to start a new measurement period.
+  int Average();
+
+  // Like Average() above, but also returns the RMS peak value. Resets the
+  // internal state to start a new measurement period.
+  Levels AverageAndPeak();
 
  private:
+  // Compares |block_size| with |block_size_|. If they are different, calls
+  // Reset() and stores the new size.
+  void CheckBlockSize(size_t block_size);
+
   float sum_square_;
   size_t sample_count_;
+  float max_sum_square_;
+  rtc::Optional<size_t> block_size_;
 };
 
 }  // namespace webrtc

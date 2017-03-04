@@ -23,6 +23,7 @@ void AddStream(std::vector<StreamParams>* streams, const StreamParams& stream) {
 }
 
 const char kFecSsrcGroupSemantics[] = "FEC";
+const char kFecFrSsrcGroupSemantics[] = "FEC-FR";
 const char kFidSsrcGroupSemantics[] = "FID";
 const char kSimSsrcGroupSemantics[] = "SIM";
 
@@ -200,10 +201,33 @@ bool IsOneSsrcStream(const StreamParams& sp) {
   if (sp.ssrcs.size() == 1 && sp.ssrc_groups.empty()) {
     return true;
   }
+  const SsrcGroup* fid_group = sp.get_ssrc_group(kFidSsrcGroupSemantics);
+  const SsrcGroup* fecfr_group = sp.get_ssrc_group(kFecFrSsrcGroupSemantics);
   if (sp.ssrcs.size() == 2) {
-    const SsrcGroup* fid_group = sp.get_ssrc_group(kFidSsrcGroupSemantics);
-    if (fid_group != NULL) {
-      return (sp.ssrcs == fid_group->ssrcs);
+    if (fid_group != nullptr && sp.ssrcs == fid_group->ssrcs) {
+      return true;
+    }
+    if (fecfr_group != nullptr && sp.ssrcs == fecfr_group->ssrcs) {
+      return true;
+    }
+  }
+  if (sp.ssrcs.size() == 3) {
+    if (fid_group == nullptr || fecfr_group == nullptr) {
+      return false;
+    }
+    if (sp.ssrcs[0] != fid_group->ssrcs[0] ||
+        sp.ssrcs[0] != fecfr_group->ssrcs[0]) {
+      return false;
+    }
+    // We do not check for FlexFEC over RTX,
+    // as this combination is not supported.
+    if (sp.ssrcs[1] == fid_group->ssrcs[1] &&
+        sp.ssrcs[2] == fecfr_group->ssrcs[1]) {
+      return true;
+    }
+    if (sp.ssrcs[1] == fecfr_group->ssrcs[1] &&
+        sp.ssrcs[2] == fid_group->ssrcs[1]) {
+      return true;
     }
   }
   return false;

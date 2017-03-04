@@ -14,6 +14,7 @@
 
 #include "gflags/gflags.h"
 #include "webrtc/modules/audio_coding/neteq/tools/neteq_performance_test.h"
+#include "webrtc/test/testsupport/fileutils.h"
 #include "webrtc/typedefs.h"
 
 // Flag validators.
@@ -59,6 +60,7 @@ int main(int argc, char* argv[]) {
       "default is 0.1\n";
   google::SetUsageMessage(usage);
   google::ParseCommandLineFlags(&argc, &argv, true);
+  webrtc::test::SetExecutablePath(argv[0]);
 
   if (argc != 1) {
     // Print usage information.

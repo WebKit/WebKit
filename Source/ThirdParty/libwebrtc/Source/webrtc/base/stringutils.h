@@ -32,8 +32,6 @@
 
 #include <string>
 
-#include "webrtc/base/basictypes.h"
-
 ///////////////////////////////////////////////////////////////////////////////
 // Generic string/memory utilities
 ///////////////////////////////////////////////////////////////////////////////
@@ -138,8 +136,8 @@ struct Traits {
 // String utilities which work with char or wchar_t
 ///////////////////////////////////////////////////////////////////////////////
 
-template<class CTYPE>
-inline const CTYPE* nonnull(const CTYPE* str, const CTYPE* def_str = NULL) {
+template <class CTYPE>
+inline const CTYPE* nonnull(const CTYPE* str, const CTYPE* def_str = nullptr) {
   return str ? str : (def_str ? def_str : Traits<CTYPE>::empty_str());
 }
 

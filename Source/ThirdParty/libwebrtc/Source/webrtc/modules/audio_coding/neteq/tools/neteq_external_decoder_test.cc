@@ -11,8 +11,8 @@
 
 #include "webrtc/modules/audio_coding/neteq/tools/neteq_external_decoder_test.h"
 
+#include "webrtc/api/audio_codecs/builtin_audio_decoder_factory.h"
 #include "webrtc/base/format_macros.h"
-#include "webrtc/modules/audio_coding/codecs/builtin_audio_decoder_factory.h"
 #include "webrtc/test/gtest.h"
 
 namespace webrtc {

@@ -13,6 +13,7 @@
 
 #include "webrtc/modules/desktop_capture/desktop_capturer.h"
 #include "webrtc/modules/desktop_capture/desktop_capture_options.h"
+#include "webrtc/modules/desktop_capture/fallback_desktop_capturer_wrapper.h"
 #include "webrtc/modules/desktop_capture/win/screen_capturer_win_directx.h"
 #include "webrtc/modules/desktop_capture/win/screen_capturer_win_gdi.h"
 #include "webrtc/modules/desktop_capture/win/screen_capturer_win_magnifier.h"
@@ -31,7 +32,12 @@ std::unique_ptr<DesktopCapturer> DesktopCapturer::CreateRawScreenCapturer(
   }
 
   if (options.allow_use_magnification_api()) {
-    capturer.reset(new ScreenCapturerWinMagnifier(std::move(capturer)));
+    // ScreenCapturerWinMagnifier cannot work on Windows XP or earlier, as well
+    // as 64-bit only Windows, and it may randomly crash on multi-screen
+    // systems. So we may need to fallback to use original capturer.
+    capturer.reset(new FallbackDesktopCapturerWrapper(
+        std::unique_ptr<DesktopCapturer>(new ScreenCapturerWinMagnifier()),
+        std::move(capturer)));
   }
 
   return capturer;

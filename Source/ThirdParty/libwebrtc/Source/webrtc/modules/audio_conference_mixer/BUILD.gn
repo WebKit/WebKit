@@ -6,7 +6,7 @@
 # in the file PATENTS.  All contributing project authors may
 # be found in the AUTHORS file in the root of the source tree.
 
-import("../../build/webrtc.gni")
+import("../../webrtc.gni")
 
 config("audio_conference_mixer_config") {
   visibility = [ ":*" ]  # Only targets in this file can depend on this.
@@ -39,8 +39,34 @@ rtc_static_library("audio_conference_mixer") {
   }
 
   deps = [
+    "../..:webrtc_common",
+    "../../audio/utility:audio_frame_operations",
+    "../../base:rtc_base_approved",
     "../../system_wrappers",
     "../audio_processing",
-    "../utility",
   ]
+}
+
+if (rtc_include_tests) {
+  rtc_source_set("audio_conference_mixer_unittests") {
+    testonly = true
+    sources = [
+      "test/audio_conference_mixer_unittest.cc",
+    ]
+    deps = [
+      ":audio_conference_mixer",
+      "../../test:test_support",
+      "//testing/gmock",
+    ]
+    if (is_win) {
+      cflags = [
+        # TODO(kjellander): bugs.webrtc.org/261: Fix this warning.
+        "/wd4373",  # virtual function override.
+      ]
+    }
+    if (!build_with_chromium && is_clang) {
+      # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
+      suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
+    }
+  }
 }

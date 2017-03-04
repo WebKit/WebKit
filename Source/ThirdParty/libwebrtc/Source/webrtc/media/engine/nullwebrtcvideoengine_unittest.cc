@@ -25,7 +25,9 @@ class WebRtcMediaEngineNullVideo
       WebRtcVideoEncoderFactory* video_encoder_factory,
       WebRtcVideoDecoderFactory* video_decoder_factory)
       : CompositeMediaEngine<WebRtcVoiceEngine, NullWebRtcVideoEngine>(
-            adm, audio_decoder_factory) {
+            adm,
+            audio_decoder_factory,
+            nullptr) {
     video_.SetExternalDecoderFactory(video_decoder_factory);
     video_.SetExternalEncoderFactory(video_encoder_factory);
   }

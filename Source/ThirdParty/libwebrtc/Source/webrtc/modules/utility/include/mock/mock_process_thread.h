@@ -13,8 +13,8 @@
 
 #include <memory>
 
+#include "webrtc/base/location.h"
 #include "webrtc/modules/utility/include/process_thread.h"
-
 #include "webrtc/test/gmock.h"
 
 namespace webrtc {
@@ -29,7 +29,7 @@ class MockProcessThread : public ProcessThread {
   MOCK_METHOD0(Stop, void());
   MOCK_METHOD1(WakeUp, void(Module* module));
   MOCK_METHOD1(PostTask, void(rtc::QueuedTask* task));
-  MOCK_METHOD1(RegisterModule, void(Module* module));
+  MOCK_METHOD2(RegisterModule, void(Module* module, const rtc::Location&));
   MOCK_METHOD1(DeRegisterModule, void(Module* module));
 
   // MOCK_METHOD1 gets confused with mocking this method, so we work around it

@@ -16,9 +16,8 @@ namespace webrtc {
 namespace videocapturemodule {
 
 rtc::scoped_refptr<VideoCaptureModule> VideoCaptureImpl::Create(
-    const int32_t id,
     const char* deviceUniqueIdUTF8) {
-  return new rtc::RefCountedObject<VideoCaptureImpl>(id);
+  return new rtc::RefCountedObject<VideoCaptureImpl>();
 }
 
 }  // namespace videocapturemodule

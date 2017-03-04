@@ -1,3 +1,0 @@
-The files in this directory are downloaded from gs://chrome-webrtc-resources,
-which is a google-internal bucket. If you're a non-Googler you'll have to download
-and compile these tools manually in order to use them.

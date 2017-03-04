@@ -13,7 +13,5 @@
 @interface RTCIceServer (JSON)
 
 + (RTCIceServer *)serverFromJSONDictionary:(NSDictionary *)dictionary;
-// CEOD provides different JSON, and this parses that.
-+ (RTCIceServer *)serverFromCEODJSONDictionary:(NSDictionary *)dictionary;
 
 @end

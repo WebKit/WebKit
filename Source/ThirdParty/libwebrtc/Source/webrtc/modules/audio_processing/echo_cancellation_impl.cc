@@ -106,8 +106,7 @@ EchoCancellationImpl::EchoCancellationImpl(rtc::CriticalSection* crit_render,
       stream_has_echo_(false),
       delay_logging_enabled_(false),
       extended_filter_enabled_(false),
-      delay_agnostic_enabled_(false),
-      aec3_enabled_(false) {
+      delay_agnostic_enabled_(false) {
   RTC_DCHECK(crit_render);
   RTC_DCHECK(crit_capture);
 }
@@ -151,7 +150,7 @@ int EchoCancellationImpl::ProcessCaptureAudio(AudioBuffer* audio,
   }
 
   RTC_DCHECK(stream_properties_);
-  RTC_DCHECK_GE(160u, audio->num_frames_per_band());
+  RTC_DCHECK_GE(160, audio->num_frames_per_band());
   RTC_DCHECK_EQ(audio->num_channels(), stream_properties_->num_proc_channels);
 
   int err = AudioProcessing::kNoError;
@@ -341,18 +340,9 @@ bool EchoCancellationImpl::is_delay_agnostic_enabled() const {
   return delay_agnostic_enabled_;
 }
 
-bool EchoCancellationImpl::is_aec3_enabled() const {
-  rtc::CritScope cs(crit_capture_);
-  return aec3_enabled_;
-}
-
 std::string EchoCancellationImpl::GetExperimentsDescription() {
   rtc::CritScope cs(crit_capture_);
-  std::string description = (aec3_enabled_ ? "AEC3;" : "");
-  if (refined_adaptive_filter_enabled_) {
-    description += "RefinedAdaptiveFilter;";
-  }
-  return description;
+  return refined_adaptive_filter_enabled_ ? "RefinedAdaptiveFilter;" : "";
 }
 
 bool EchoCancellationImpl::is_refined_adaptive_filter_enabled() const {
@@ -450,7 +440,7 @@ void EchoCancellationImpl::PackRenderAudioBuffer(
     size_t num_output_channels,
     size_t num_channels,
     std::vector<float>* packed_buffer) {
-  RTC_DCHECK_GE(160u, audio->num_frames_per_band());
+  RTC_DCHECK_GE(160, audio->num_frames_per_band());
   RTC_DCHECK_EQ(num_channels, audio->num_channels());
 
   packed_buffer->clear();
@@ -473,7 +463,6 @@ void EchoCancellationImpl::SetExtraOptions(const webrtc::Config& config) {
     delay_agnostic_enabled_ = config.Get<DelayAgnostic>().enabled;
     refined_adaptive_filter_enabled_ =
         config.Get<RefinedAdaptiveFilter>().enabled;
-    aec3_enabled_ = config.Get<EchoCanceller3>().enabled;
   }
   Configure();
 }
@@ -493,8 +482,6 @@ int EchoCancellationImpl::Configure() {
                                      extended_filter_enabled_ ? 1 : 0);
     WebRtcAec_enable_delay_agnostic(WebRtcAec_aec_core(canceller->state()),
                                     delay_agnostic_enabled_ ? 1 : 0);
-    WebRtcAec_enable_aec3(WebRtcAec_aec_core(canceller->state()),
-                          aec3_enabled_ ? 1 : 0);
     WebRtcAec_enable_refined_adaptive_filter(
         WebRtcAec_aec_core(canceller->state()),
         refined_adaptive_filter_enabled_);

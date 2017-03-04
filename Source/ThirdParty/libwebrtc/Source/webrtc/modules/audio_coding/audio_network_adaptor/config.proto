@@ -1,5 +1,7 @@
 syntax = "proto2";
 option optimize_for = LITE_RUNTIME;
+option java_package = "org.webrtc.AudioNetworkAdaptor";
+option java_outer_classname = "Config";
 package webrtc.audio_network_adaptor.config;
 
 message FecController {
@@ -41,7 +43,7 @@ message FrameLengthController {
   // Uplink packet loss fraction below which frame length can increase.
   optional float fl_increasing_packet_loss_fraction = 1;
 
-  // Uplink packet loss fraction below which frame length should decrease.
+  // Uplink packet loss fraction above which frame length should decrease.
   optional float fl_decreasing_packet_loss_fraction = 2;
 
   // Uplink bandwidth below which frame length can switch from 20ms to 60ms.
@@ -49,6 +51,12 @@ message FrameLengthController {
 
   // Uplink bandwidth above which frame length should switch from 60ms to 20ms.
   optional int32 fl_60ms_to_20ms_bandwidth_bps = 4;
+
+  // Uplink bandwidth below which frame length can switch from 60ms to 120ms.
+  optional int32 fl_60ms_to_120ms_bandwidth_bps = 5;
+
+  // Uplink bandwidth above which frame length should switch from 120ms to 60ms.
+  optional int32 fl_120ms_to_60ms_bandwidth_bps = 6;
 }
 
 message ChannelController {

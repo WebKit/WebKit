@@ -1,5 +1,7 @@
-mflodman@webrtc.org
 stefan@webrtc.org
+terelius@webrtc.org
+philipel@webrtc.org
+mflodman@webrtc.org
 
 # These are for the common case of adding or renaming files. If you're doing
 # structural changes, please get a review from a reviewer in this file.

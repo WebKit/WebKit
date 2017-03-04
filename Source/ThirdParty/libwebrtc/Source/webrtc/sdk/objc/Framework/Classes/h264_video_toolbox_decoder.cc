@@ -17,6 +17,7 @@
 #include "RTCUIApplication.h"
 #endif
 #include "libyuv/convert.h"
+#include "webrtc/api/video/video_frame.h"
 #include "webrtc/base/checks.h"
 #include "webrtc/base/logging.h"
 #include "webrtc/common_video/include/corevideo_frame_buffer.h"

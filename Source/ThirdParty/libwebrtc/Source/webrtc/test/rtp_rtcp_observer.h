@@ -17,11 +17,16 @@
 #include "webrtc/base/criticalsection.h"
 #include "webrtc/base/event.h"
 #include "webrtc/modules/rtp_rtcp/include/rtp_header_parser.h"
+#include "webrtc/system_wrappers/include/field_trial.h"
 #include "webrtc/test/constants.h"
 #include "webrtc/test/direct_transport.h"
 #include "webrtc/test/gtest.h"
 #include "webrtc/typedefs.h"
 #include "webrtc/video_send_stream.h"
+
+namespace {
+const int kShortTimeoutMs = 500;
+}
 
 namespace webrtc {
 namespace test {
@@ -37,7 +42,13 @@ class RtpRtcpObserver {
 
   virtual ~RtpRtcpObserver() {}
 
-  virtual bool Wait() { return observation_complete_.Wait(timeout_ms_); }
+  virtual bool Wait() {
+    if (field_trial::IsEnabled("WebRTC-QuickPerfTest")) {
+      observation_complete_.Wait(kShortTimeoutMs);
+      return true;
+    }
+    return observation_complete_.Wait(timeout_ms_);
+  }
 
   virtual Action OnSendRtp(const uint8_t* packet, size_t length) {
     return SEND_PACKET;

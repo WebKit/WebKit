@@ -8,6 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include "webrtc/system_wrappers/include/clock.h"
 #include "webrtc/system_wrappers/include/ntp_time.h"
 #include "webrtc/test/gtest.h"
 
@@ -45,23 +46,19 @@ TEST(NtpTimeTest, SetIsSameAs2ParameterConstructor) {
   EXPECT_EQ(ntp1, ntp2);
 }
 
-TEST(NtpTimeTest, SetCurrentIsSameAs1ParameterConstructor) {
-  SimulatedClock clock(0x0123456789abcdef);
-
-  NtpTime ntp1(clock);
-  NtpTime ntp2;
-  EXPECT_NE(ntp1, ntp2);
-
-  ntp2.SetCurrent(clock);
-  EXPECT_EQ(ntp1, ntp2);
-}
-
 TEST(NtpTimeTest, ToMsMeansToNtpMilliseconds) {
   SimulatedClock clock(0x123456789abc);
 
-  NtpTime ntp(clock);
+  NtpTime ntp = clock.CurrentNtpTime();
   EXPECT_EQ(ntp.ToMs(), Clock::NtpToMs(ntp.seconds(), ntp.fractions()));
   EXPECT_EQ(ntp.ToMs(), clock.CurrentNtpInMilliseconds());
+}
+
+TEST(NtpTimeTest, CanExplicitlyConvertToAndFromUint64) {
+  uint64_t untyped_time = 0x123456789;
+  NtpTime time(untyped_time);
+  EXPECT_EQ(untyped_time, static_cast<uint64_t>(time));
+  EXPECT_EQ(NtpTime(0x12345678, 0x90abcdef), NtpTime(0x1234567890abcdef));
 }
 
 }  // namespace

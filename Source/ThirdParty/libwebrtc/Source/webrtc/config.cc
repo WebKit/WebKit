@@ -31,23 +31,10 @@ std::string UlpfecConfig::ToString() const {
   return ss.str();
 }
 
-FlexfecConfig::FlexfecConfig()
-    : flexfec_payload_type(-1), flexfec_ssrc(0), protected_media_ssrcs() {}
-
-FlexfecConfig::~FlexfecConfig() = default;
-
-std::string FlexfecConfig::ToString() const {
-  std::stringstream ss;
-  ss << "{flexfec_payload_type: " << flexfec_payload_type;
-  ss << ", flexfec_ssrc: " << flexfec_ssrc;
-  ss << ", protected_media_ssrcs: [";
-  size_t i = 0;
-  for (; i + 1 < protected_media_ssrcs.size(); ++i)
-    ss << protected_media_ssrcs[i] << ", ";
-  if (!protected_media_ssrcs.empty())
-    ss << protected_media_ssrcs[i];
-  ss << "]}";
-  return ss.str();
+bool UlpfecConfig::operator==(const UlpfecConfig& other) const {
+  return ulpfec_payload_type == other.ulpfec_payload_type &&
+         red_payload_type == other.red_payload_type &&
+         red_rtx_payload_type == other.red_rtx_payload_type;
 }
 
 std::string RtpExtension::ToString() const {
@@ -85,9 +72,11 @@ const char* RtpExtension::kPlayoutDelayUri =
     "http://www.webrtc.org/experiments/rtp-hdrext/playout-delay";
 const int RtpExtension::kPlayoutDelayDefaultId = 6;
 
+const int RtpExtension::kMinId = 1;
+const int RtpExtension::kMaxId = 14;
+
 bool RtpExtension::IsSupportedForAudio(const std::string& uri) {
-  return uri == webrtc::RtpExtension::kAbsSendTimeUri ||
-         uri == webrtc::RtpExtension::kAudioLevelUri ||
+  return uri == webrtc::RtpExtension::kAudioLevelUri ||
          uri == webrtc::RtpExtension::kTransportSequenceNumberUri;
 }
 
@@ -167,11 +156,11 @@ VideoEncoderConfig::VideoEncoderConfig(const VideoEncoderConfig&) = default;
 void VideoEncoderConfig::EncoderSpecificSettings::FillEncoderSpecificSettings(
     VideoCodec* codec) const {
   if (codec->codecType == kVideoCodecH264) {
-    FillVideoCodecH264(&codec->codecSpecific.H264);
+    FillVideoCodecH264(codec->H264());
   } else if (codec->codecType == kVideoCodecVP8) {
-    FillVideoCodecVp8(&codec->codecSpecific.VP8);
+    FillVideoCodecVp8(codec->VP8());
   } else if (codec->codecType == kVideoCodecVP9) {
-    FillVideoCodecVp9(&codec->codecSpecific.VP9);
+    FillVideoCodecVp9(codec->VP9());
   } else {
     RTC_NOTREACHED() << "Encoder specifics set/used for unknown codec type.";
   }
@@ -218,9 +207,5 @@ void VideoEncoderConfig::Vp9EncoderSpecificSettings::FillVideoCodecVp9(
     VideoCodecVP9* vp9_settings) const {
   *vp9_settings = specifics_;
 }
-
-DecoderSpecificSettings::DecoderSpecificSettings() = default;
-
-DecoderSpecificSettings::~DecoderSpecificSettings() = default;
 
 }  // namespace webrtc

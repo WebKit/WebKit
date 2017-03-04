@@ -11,153 +11,23 @@
 #ifndef WEBRTC_COMMON_VIDEO_INCLUDE_VIDEO_FRAME_BUFFER_H_
 #define WEBRTC_COMMON_VIDEO_INCLUDE_VIDEO_FRAME_BUFFER_H_
 
-#include <stdint.h>
-
 #include <memory>
 
+#include "webrtc/api/video/video_frame_buffer.h"
+// TODO(nisse): For backwards compatibility, files including this file
+// expect it to declare I420Buffer. Delete after callers are updated.
+#include "webrtc/api/video/i420_buffer.h"
 #include "webrtc/base/callback.h"
 #include "webrtc/base/export.h"
-#include "webrtc/base/refcount.h"
 #include "webrtc/base/scoped_ref_ptr.h"
-#include "webrtc/common_video/rotation.h"
-#include "webrtc/system_wrappers/include/aligned_malloc.h"
 
 namespace webrtc {
-
-// Interface of a simple frame buffer containing pixel data. This interface does
-// not contain any frame metadata such as rotation, timestamp, pixel_width, etc.
-class VideoFrameBuffer : public rtc::RefCountInterface {
- public:
-  // The resolution of the frame in pixels. For formats where some planes are
-  // subsampled, this is the highest-resolution plane.
-  virtual int width() const = 0;
-  virtual int height() const = 0;
-
-  // Returns pointer to the pixel data for a given plane. The memory is owned by
-  // the VideoFrameBuffer object and must not be freed by the caller.
-  virtual const uint8_t* DataY() const = 0;
-  virtual const uint8_t* DataU() const = 0;
-  virtual const uint8_t* DataV() const = 0;
-
-  // Returns the number of bytes between successive rows for a given plane.
-  virtual int StrideY() const = 0;
-  virtual int StrideU() const = 0;
-  virtual int StrideV() const = 0;
-
-  // Return the handle of the underlying video frame. This is used when the
-  // frame is backed by a texture.
-  virtual void* native_handle() const = 0;
-
-  // Returns a new memory-backed frame buffer converted from this buffer's
-  // native handle.
-  virtual rtc::scoped_refptr<VideoFrameBuffer> NativeToI420Buffer() = 0;
-
- protected:
-  virtual ~VideoFrameBuffer();
-};
-
-// Plain I420 buffer in standard memory.
-class WEBRTC_EXPORT I420Buffer : public VideoFrameBuffer {
- public:
-  I420Buffer(int width, int height);
-  I420Buffer(int width, int height, int stride_y, int stride_u, int stride_v);
-
-  static rtc::scoped_refptr<I420Buffer> Create(int width, int height);
-  static rtc::scoped_refptr<I420Buffer> Create(int width,
-                                               int height,
-                                               int stride_y,
-                                               int stride_u,
-                                               int stride_v);
-
-  // Sets all three planes to all zeros. Used to work around for
-  // quirks in memory checkers
-  // (https://bugs.chromium.org/p/libyuv/issues/detail?id=377) and
-  // ffmpeg (http://crbug.com/390941).
-  // TODO(nisse): Should be deleted if/when those issues are resolved
-  // in a better way.
-  void InitializeData();
-
-  // Sets the frame buffer to all black.
-  void SetToBlack();
-
-  int width() const override;
-  int height() const override;
-  const uint8_t* DataY() const override;
-  const uint8_t* DataU() const override;
-  const uint8_t* DataV() const override;
-
-  uint8_t* MutableDataY();
-  uint8_t* MutableDataU();
-  uint8_t* MutableDataV();
-  int StrideY() const override;
-  int StrideU() const override;
-  int StrideV() const override;
-
-  void* native_handle() const override;
-  rtc::scoped_refptr<VideoFrameBuffer> NativeToI420Buffer() override;
-
-  // Create a new buffer and copy the pixel data.
-  static rtc::scoped_refptr<I420Buffer> Copy(const VideoFrameBuffer& buffer);
-
-  // Scale the cropped area of |src| to the size of |this| buffer, and
-  // write the result into |this|.
-  void CropAndScaleFrom(const VideoFrameBuffer& src,
-                        int offset_x,
-                        int offset_y,
-                        int crop_width,
-                        int crop_height);
-
-  // The common case of a center crop, when needed to adjust the
-  // aspect ratio without distorting the image.
-  void CropAndScaleFrom(const VideoFrameBuffer& src);
-
-  // Scale all of |src| to the size of |this| buffer, with no cropping.
-  void ScaleFrom(const VideoFrameBuffer& src);
-
-  // Deprecated methods, using smart pointer references.
-  // TODO(nisse): Delete once downstream applications are updated.
-  static rtc::scoped_refptr<I420Buffer> Copy(
-      const rtc::scoped_refptr<VideoFrameBuffer>& buffer) {
-    return Copy(*buffer);
-  }
-  void CropAndScaleFrom(const rtc::scoped_refptr<VideoFrameBuffer>& src,
-                        int offset_x,
-                        int offset_y,
-                        int crop_width,
-                        int crop_height) {
-    CropAndScaleFrom(*src, offset_x, offset_y, crop_width, crop_height);
-  }
-  void CropAndScaleFrom(const rtc::scoped_refptr<VideoFrameBuffer>& src) {
-    CropAndScaleFrom(*src);
-  }
-  void ScaleFrom(const rtc::scoped_refptr<VideoFrameBuffer>& src) {
-    ScaleFrom(*src);
-  }
-
-  // Returns a rotated versions of |src|. Native buffers are not
-  // supported. The reason this function doesn't return an I420Buffer,
-  // is that it returns |src| unchanged in case |rotation| is zero.
-  static rtc::scoped_refptr<VideoFrameBuffer> Rotate(
-      rtc::scoped_refptr<VideoFrameBuffer> src,
-      VideoRotation rotation);
-
- protected:
-  ~I420Buffer() override;
-
- private:
-  const int width_;
-  const int height_;
-  const int stride_y_;
-  const int stride_u_;
-  const int stride_v_;
-  const std::unique_ptr<uint8_t, AlignedFreeDeleter> data_;
-};
 
 // Base class for native-handle buffer is a wrapper around a |native_handle|.
 // This is used for convenience as most native-handle implementations can share
 // many VideoFrame implementations, but need to implement a few others (such
 // as their own destructors or conversion methods back to software I420).
-class WEBRTC_EXPORT NativeHandleBuffer : public VideoFrameBuffer {
+class WEBRTC_DYLIB_EXPORT NativeHandleBuffer : public VideoFrameBuffer {
  public:
   NativeHandleBuffer(void* native_handle, int width, int height);
 

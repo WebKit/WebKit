@@ -239,8 +239,7 @@ struct AecCore {
   int delay_agnostic_enabled;
   // 1 = extended filter mode enabled, 0 = disabled.
   int extended_filter_enabled;
-  // 1 = next generation aec mode enabled, 0 = disabled.
-  int aec3_enabled;
+  // 1 = refined filter adaptation aec mode enabled, 0 = disabled.
   bool refined_adaptive_filter_enabled;
 
   // Runtime selection of number of filter partitions.
@@ -309,12 +308,6 @@ void WebRtcAec_enable_delay_agnostic(AecCore* self, int enable);
 // Returns non-zero if delay agnostic (i.e., signal based delay estimation) is
 // enabled and zero if disabled.
 int WebRtcAec_delay_agnostic_enabled(AecCore* self);
-
-// Non-zero enables, zero disables.
-void WebRtcAec_enable_aec3(AecCore* self, int enable);
-
-// Returns 1 if the next generation aec is enabled and zero if disabled.
-int WebRtcAec_aec3_enabled(AecCore* self);
 
 // Turns on/off the refined adaptive filter feature.
 void WebRtcAec_enable_refined_adaptive_filter(AecCore* self, bool enable);

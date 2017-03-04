@@ -41,7 +41,7 @@ template <typename Packet>
 bool ParseSinglePacket(const uint8_t* buffer, size_t size, Packet* packet) {
   rtcp::CommonHeader header;
   RTC_CHECK(header.Parse(buffer, size));
-  RTC_CHECK_EQ(static_cast<ptrdiff_t>(size), header.NextPacket() - buffer);
+  RTC_CHECK_EQ(size, header.NextPacket() - buffer);
   return packet->Parse(header);
 }
 // Same function, but takes raw buffer as single argument instead of pair.

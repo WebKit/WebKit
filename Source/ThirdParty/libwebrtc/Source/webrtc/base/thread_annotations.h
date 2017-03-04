@@ -16,8 +16,8 @@
 // of their multi-threaded code. The annotations can also help program
 // analysis tools to identify potential thread safety issues.
 
-#ifndef BASE_THREAD_ANNOTATIONS_H_
-#define BASE_THREAD_ANNOTATIONS_H_
+#ifndef WEBRTC_BASE_THREAD_ANNOTATIONS_H_
+#define WEBRTC_BASE_THREAD_ANNOTATIONS_H_
 
 #if defined(__clang__) && (!defined(SWIG))
 #define THREAD_ANNOTATION_ATTRIBUTE__(x) __attribute__((x))
@@ -97,4 +97,4 @@
 #define NO_THREAD_SAFETY_ANALYSIS \
   THREAD_ANNOTATION_ATTRIBUTE__(no_thread_safety_analysis)
 
-#endif  // BASE_THREAD_ANNOTATIONS_H_
+#endif  // WEBRTC_BASE_THREAD_ANNOTATIONS_H_

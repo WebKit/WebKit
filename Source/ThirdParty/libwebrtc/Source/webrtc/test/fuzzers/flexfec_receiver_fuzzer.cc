@@ -14,6 +14,7 @@
 #include "webrtc/modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "webrtc/modules/rtp_rtcp/include/flexfec_receiver.h"
 #include "webrtc/modules/rtp_rtcp/source/byte_io.h"
+#include "webrtc/modules/rtp_rtcp/source/rtp_packet_received.h"
 
 namespace webrtc {
 
@@ -61,7 +62,10 @@ void FuzzOneInput(const uint8_t* data, size_t size) {
       ByteWriter<uint16_t>::WriteBigEndian(packet.get() + 2, media_seq_num++);
       ByteWriter<uint32_t>::WriteBigEndian(packet.get() + 8, media_ssrc);
     }
-    receiver.AddAndProcessReceivedPacket(packet.get(), packet_length);
+    RtpPacketReceived parsed_packet;
+    if (parsed_packet.Parse(packet.get(), packet_length)) {
+      receiver.OnRtpPacket(parsed_packet);
+    }
   }
 }
 

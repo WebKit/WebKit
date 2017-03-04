@@ -247,7 +247,7 @@ void RemoteBitrateEstimatorTest::IncomingPacket(uint32_t ssrc,
 // target bitrate after the call to this function.
 bool RemoteBitrateEstimatorTest::GenerateAndProcessFrame(uint32_t ssrc,
                                                          uint32_t bitrate_bps) {
-  RTC_DCHECK_GT(bitrate_bps, 0u);
+  RTC_DCHECK_GT(bitrate_bps, 0);
   stream_generator_->SetBitrateBps(bitrate_bps);
   testing::RtpStream::PacketList packets;
   int64_t next_time_us = stream_generator_->GenerateFrame(
@@ -270,7 +270,8 @@ bool RemoteBitrateEstimatorTest::GenerateAndProcessFrame(uint32_t ssrc,
     delete packet;
     packets.pop_front();
   }
-  bitrate_estimator_->Process();
+  if (bitrate_estimator_->TimeUntilNextProcess() <= 0)
+    bitrate_estimator_->Process();
   clock_.AdvanceTimeMicroseconds(next_time_us - clock_.TimeInMicroseconds());
   return overuse;
 }

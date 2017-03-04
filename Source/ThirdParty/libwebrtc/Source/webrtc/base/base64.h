@@ -17,29 +17,28 @@
 
 namespace rtc {
 
-class Base64
-{
-public:
+class Base64 {
+ public:
   enum DecodeOption {
-    DO_PARSE_STRICT =  1,  // Parse only base64 characters
-    DO_PARSE_WHITE  =  2,  // Parse only base64 and whitespace characters
-    DO_PARSE_ANY    =  3,  // Parse all characters
-    DO_PARSE_MASK   =  3,
+    DO_PARSE_STRICT = 1,  // Parse only base64 characters
+    DO_PARSE_WHITE = 2,   // Parse only base64 and whitespace characters
+    DO_PARSE_ANY = 3,     // Parse all characters
+    DO_PARSE_MASK = 3,
 
-    DO_PAD_YES      =  4,  // Padding is required
-    DO_PAD_ANY      =  8,  // Padding is optional
-    DO_PAD_NO       = 12,  // Padding is disallowed
-    DO_PAD_MASK     = 12,
+    DO_PAD_YES = 4,  // Padding is required
+    DO_PAD_ANY = 8,  // Padding is optional
+    DO_PAD_NO = 12,  // Padding is disallowed
+    DO_PAD_MASK = 12,
 
-    DO_TERM_BUFFER  = 16,  // Must termiante at end of buffer
-    DO_TERM_CHAR    = 32,  // May terminate at any character boundary
-    DO_TERM_ANY     = 48,  // May terminate at a sub-character bit offset
-    DO_TERM_MASK    = 48,
+    DO_TERM_BUFFER = 16,  // Must termiante at end of buffer
+    DO_TERM_CHAR = 32,    // May terminate at any character boundary
+    DO_TERM_ANY = 48,     // May terminate at a sub-character bit offset
+    DO_TERM_MASK = 48,
 
     // Strictest interpretation
     DO_STRICT = DO_PARSE_STRICT | DO_PAD_YES | DO_TERM_BUFFER,
 
-    DO_LAX    = DO_PARSE_ANY | DO_PAD_ANY | DO_TERM_CHAR,
+    DO_LAX = DO_PARSE_ANY | DO_PAD_ANY | DO_TERM_CHAR,
   };
   typedef int DecodeFlags;
 
@@ -57,12 +56,24 @@ public:
   // encoded characters.
   static bool IsBase64Encoded(const std::string& str);
 
-  static void EncodeFromArray(const void* data, size_t len,
+  static void EncodeFromArray(const void* data,
+                              size_t len,
                               std::string* result);
-  static bool DecodeFromArray(const char* data, size_t len, DecodeFlags flags,
-                              std::string* result, size_t* data_used);
-  static bool DecodeFromArray(const char* data, size_t len, DecodeFlags flags,
-                              std::vector<char>* result, size_t* data_used);
+  static bool DecodeFromArray(const char* data,
+                              size_t len,
+                              DecodeFlags flags,
+                              std::string* result,
+                              size_t* data_used);
+  static bool DecodeFromArray(const char* data,
+                              size_t len,
+                              DecodeFlags flags,
+                              std::vector<char>* result,
+                              size_t* data_used);
+  static bool DecodeFromArray(const char* data,
+                              size_t len,
+                              DecodeFlags flags,
+                              std::vector<uint8_t>* result,
+                              size_t* data_used);
 
   // Convenience Methods
   static inline std::string Encode(const std::string& data) {
@@ -72,33 +83,41 @@ public:
   }
   static inline std::string Decode(const std::string& data, DecodeFlags flags) {
     std::string result;
-    DecodeFromArray(data.data(), data.size(), flags, &result, NULL);
+    DecodeFromArray(data.data(), data.size(), flags, &result, nullptr);
     return result;
   }
-  static inline bool Decode(const std::string& data, DecodeFlags flags,
-                            std::string* result, size_t* data_used)
-  {
+  static inline bool Decode(const std::string& data,
+                            DecodeFlags flags,
+                            std::string* result,
+                            size_t* data_used) {
     return DecodeFromArray(data.data(), data.size(), flags, result, data_used);
   }
-  static inline bool Decode(const std::string& data, DecodeFlags flags,
-                            std::vector<char>* result, size_t* data_used)
-  {
+  static inline bool Decode(const std::string& data,
+                            DecodeFlags flags,
+                            std::vector<char>* result,
+                            size_t* data_used) {
     return DecodeFromArray(data.data(), data.size(), flags, result, data_used);
   }
 
-private:
+ private:
   static const char Base64Table[];
   static const unsigned char DecodeTable[];
 
-  static size_t GetNextQuantum(DecodeFlags parse_flags, bool illegal_pads,
-                               const char* data, size_t len, size_t* dpos,
-                               unsigned char qbuf[4], bool* padded);
-  template<typename T>
-  static bool DecodeFromArrayTemplate(const char* data, size_t len,
-                                      DecodeFlags flags, T* result,
+  static size_t GetNextQuantum(DecodeFlags parse_flags,
+                               bool illegal_pads,
+                               const char* data,
+                               size_t len,
+                               size_t* dpos,
+                               unsigned char qbuf[4],
+                               bool* padded);
+  template <typename T>
+  static bool DecodeFromArrayTemplate(const char* data,
+                                      size_t len,
+                                      DecodeFlags flags,
+                                      T* result,
                                       size_t* data_used);
 };
 
-} // namespace rtc
+}  // namespace rtc
 
-#endif // WEBRTC_BASE_BASE64_H__
+#endif  // WEBRTC_BASE_BASE64_H__

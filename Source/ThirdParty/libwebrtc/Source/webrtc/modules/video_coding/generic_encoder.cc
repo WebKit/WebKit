@@ -12,6 +12,7 @@
 
 #include <vector>
 
+#include "webrtc/api/video/i420_buffer.h"
 #include "webrtc/base/checks.h"
 #include "webrtc/base/logging.h"
 #include "webrtc/base/trace_event.h"
@@ -28,7 +29,7 @@ VCMGenericEncoder::VCMGenericEncoder(
     : encoder_(encoder),
       vcm_encoded_frame_callback_(encoded_frame_callback),
       internal_source_(internal_source),
-      encoder_params_({0, 0, 0, 0}),
+      encoder_params_({BitrateAllocation(), 0, 0, 0}),
       is_screenshare_(false) {}
 
 VCMGenericEncoder::~VCMGenericEncoder() {}
@@ -90,11 +91,23 @@ void VCMGenericEncoder::SetEncoderParameters(const EncoderParameters& params) {
         params.input_frame_rate != encoder_params_.input_frame_rate;
     encoder_params_ = params;
   }
-  if (channel_parameters_have_changed)
-    encoder_->SetChannelParameters(params.loss_rate, params.rtt);
+  if (channel_parameters_have_changed) {
+    int res = encoder_->SetChannelParameters(params.loss_rate, params.rtt);
+    if (res != 0) {
+      LOG(LS_WARNING) << "Error set encoder parameters (loss = "
+                      << params.loss_rate << ", rtt = " << params.rtt
+                      << "): " << res;
+    }
+  }
   if (rates_have_changed) {
-    uint32_t target_bitrate_kbps = (params.target_bitrate + 500) / 1000;
-    encoder_->SetRates(target_bitrate_kbps, params.input_frame_rate);
+    int res = encoder_->SetRateAllocation(params.target_bitrate,
+                                          params.input_frame_rate);
+    if (res != 0) {
+      LOG(LS_WARNING) << "Error set encoder rate (total bitrate bps = "
+                      << params.target_bitrate.get_sum_bps()
+                      << ", framerate = " << params.input_frame_rate
+                      << "): " << res;
+    }
   }
 }
 
@@ -111,17 +124,18 @@ int32_t VCMGenericEncoder::SetPeriodicKeyFrames(bool enable) {
 int32_t VCMGenericEncoder::RequestFrame(
     const std::vector<FrameType>& frame_types) {
   RTC_DCHECK_RUNS_SERIALIZED(&race_checker_);
-  VideoFrame image;
-  return encoder_->Encode(image, NULL, &frame_types);
+
+  // TODO(nisse): Used only with internal source. Delete as soon as
+  // that feature is removed. The only implementation I've been able
+  // to find ignores what's in the frame.
+  return encoder_->Encode(VideoFrame(I420Buffer::Create(1, 1),
+                                     kVideoRotation_0, 0),
+                          NULL, &frame_types);
+  return 0;
 }
 
 bool VCMGenericEncoder::InternalSource() const {
   return internal_source_;
-}
-
-void VCMGenericEncoder::OnDroppedFrame() {
-  RTC_DCHECK_RUNS_SERIALIZED(&race_checker_);
-  encoder_->OnDroppedFrame();
 }
 
 bool VCMGenericEncoder::SupportsNativeHandle() const {

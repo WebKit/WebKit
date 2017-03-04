@@ -30,9 +30,8 @@ namespace test {
 // Used to perform an audio processing simulation from an aec dump.
 class AecDumpBasedSimulator final : public AudioProcessingSimulator {
  public:
-  explicit AecDumpBasedSimulator(const SimulationSettings& settings)
-      : AudioProcessingSimulator(settings) {}
-  ~AecDumpBasedSimulator() override {}
+  explicit AecDumpBasedSimulator(const SimulationSettings& settings);
+  ~AecDumpBasedSimulator() override;
 
   // Processes the messages in the aecdump file.
   void Process() override;
@@ -55,6 +54,9 @@ class AecDumpBasedSimulator final : public AudioProcessingSimulator {
   };
 
   FILE* dump_input_file_;
+  std::unique_ptr<ChannelBuffer<float>> artificial_nearend_buf_;
+  std::unique_ptr<ChannelBufferWavReader> artificial_nearend_buffer_reader_;
+  bool artificial_nearend_eof_reported_ = false;
   InterfaceType interface_used_ = InterfaceType::kNotSpecified;
 
   RTC_DISALLOW_IMPLICIT_CONSTRUCTORS(AecDumpBasedSimulator);

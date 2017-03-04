@@ -16,7 +16,6 @@
 
 #include "webrtc/base/byteorder.h"
 #include "webrtc/base/checks.h"
-#include "webrtc/base/common.h"
 #include "webrtc/base/ipaddress.h"
 #include "webrtc/base/logging.h"
 #include "webrtc/base/nethelpers.h"
@@ -250,7 +249,7 @@ WinPing::PingResult WinPing::Ping(IPAddress ip,
     src.sin6_family = AF_INET6;
     dst.sin6_family = AF_INET6;
     dst.sin6_addr = ip.ipv6_address();
-    result = send6_(hping6_, NULL, NULL, NULL, &src, &dst, data_,
+    result = send6_(hping6_, nullptr, nullptr, nullptr, &src, &dst, data_,
                     int16_t(data_size), &ipopt, reply_, reply_size, timeout);
   }
   if (result == 0) {
@@ -331,7 +330,7 @@ WinPing::PingResult WinPing::Ping(IPAddress ip,
 //     RequestSize          - The number of bytes in the request data buffer.
 //
 //     RequestOptions       - Pointer to the IP header options for the request.
-//                            May be NULL.
+//                            May be null.
 //
 //     ReplyBuffer          - A buffer to hold any replies to the request.
 //                            On return, the buffer will contain an array of

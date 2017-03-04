@@ -8,8 +8,6 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#import <AVFoundation/AVFoundation.h>
-
 #if TARGET_OS_IPHONE
 #define RTC_PIXEL_FORMAT GL_LUMINANCE
 #define SHADER_VERSION

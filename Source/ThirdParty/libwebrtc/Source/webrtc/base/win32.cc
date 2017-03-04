@@ -17,7 +17,7 @@
 #include "webrtc/base/arraysize.h"
 #include "webrtc/base/basictypes.h"
 #include "webrtc/base/byteorder.h"
-#include "webrtc/base/common.h"
+#include "webrtc/base/checks.h"
 #include "webrtc/base/logging.h"
 
 namespace rtc {
@@ -35,7 +35,7 @@ static int inet_pton_v6(const char* src, void* dst);
 const char* win32_inet_ntop(int af, const void *src,
                             char* dst, socklen_t size) {
   if (!src || !dst) {
-    return NULL;
+    return nullptr;
   }
   switch (af) {
     case AF_INET: {
@@ -45,7 +45,7 @@ const char* win32_inet_ntop(int af, const void *src,
       return inet_ntop_v6(src, dst, size);
     }
   }
-  return NULL;
+  return nullptr;
 }
 
 // As above, but for inet_pton. Implements inet_pton for v4 and v6.
@@ -66,7 +66,7 @@ int win32_inet_pton(int af, const char* src, void* dst) {
 // Outputs "dotted-quad" decimal notation.
 const char* inet_ntop_v4(const void* src, char* dst, socklen_t size) {
   if (size < INET_ADDRSTRLEN) {
-    return NULL;
+    return nullptr;
   }
   const struct in_addr* as_in_addr =
       reinterpret_cast<const struct in_addr*>(src);
@@ -81,7 +81,7 @@ const char* inet_ntop_v4(const void* src, char* dst, socklen_t size) {
 // Helper function for inet_ntop for IPv6 addresses.
 const char* inet_ntop_v6(const void* src, char* dst, socklen_t size) {
   if (size < INET6_ADDRSTRLEN) {
-    return NULL;
+    return nullptr;
   }
   const uint16_t* as_shorts = reinterpret_cast<const uint16_t*>(src);
   int runpos[8];
@@ -318,7 +318,7 @@ int inet_pton_v6(const char* src, void* dst) {
 //
 
 void FileTimeToUnixTime(const FILETIME& ft, time_t* ut) {
-  ASSERT(NULL != ut);
+  RTC_DCHECK(nullptr != ut);
 
   // FILETIME has an earlier date base than time_t (1/1/1970), so subtract off
   // the difference.
@@ -342,7 +342,7 @@ void FileTimeToUnixTime(const FILETIME& ft, time_t* ut) {
 }
 
 void UnixTimeToFileTime(const time_t& ut, FILETIME* ft) {
-  ASSERT(NULL != ft);
+  RTC_DCHECK(nullptr != ft);
 
   // FILETIME has an earlier date base than time_t (1/1/1970), so add in
   // the difference.
@@ -373,9 +373,9 @@ bool Utf8ToWindowsFilename(const std::string& utf8, std::wstring* filename) {
   // TODO: Write unittests
 
   // Convert to Utf16
-  int wlen = ::MultiByteToWideChar(CP_UTF8, 0, utf8.c_str(),
-                                   static_cast<int>(utf8.length() + 1), NULL,
-                                   0);
+  int wlen =
+      ::MultiByteToWideChar(CP_UTF8, 0, utf8.c_str(),
+                            static_cast<int>(utf8.length() + 1), nullptr, 0);
   if (0 == wlen) {
     return false;
   }
@@ -388,11 +388,11 @@ bool Utf8ToWindowsFilename(const std::string& utf8, std::wstring* filename) {
   // Replace forward slashes with backslashes
   std::replace(wfilename, wfilename + wlen, L'/', L'\\');
   // Convert to complete filename
-  DWORD full_len = ::GetFullPathName(wfilename, 0, NULL, NULL);
+  DWORD full_len = ::GetFullPathName(wfilename, 0, nullptr, nullptr);
   if (0 == full_len) {
     return false;
   }
-  wchar_t* filepart = NULL;
+  wchar_t* filepart = nullptr;
   wchar_t* full_filename = STACK_ARRAY(wchar_t, full_len + 6);
   wchar_t* start = full_filename + 6;
   if (0 == ::GetFullPathName(wfilename, full_len, start, &filepart)) {
@@ -404,13 +404,13 @@ bool Utf8ToWindowsFilename(const std::string& utf8, std::wstring* filename) {
     // Non-unc path:     <pathname>
     //      Becomes: \\?\<pathname>
     start -= 4;
-    ASSERT(start >= full_filename);
+    RTC_DCHECK(start >= full_filename);
     memcpy(start, kLongPathPrefix, 4 * sizeof(wchar_t));
   } else if (start[2] != L'?') {
     // Unc path:       \\<server>\<pathname>
     //  Becomes: \\?\UNC\<server>\<pathname>
     start -= 6;
-    ASSERT(start >= full_filename);
+    RTC_DCHECK(start >= full_filename);
     memcpy(start, kLongPathPrefix, 7 * sizeof(wchar_t));
   } else {
     // Already in long-path form.
@@ -436,9 +436,8 @@ bool GetCurrentProcessIntegrityLevel(int* level) {
   HANDLE process = ::GetCurrentProcess(), token;
   if (OpenProcessToken(process, TOKEN_QUERY | TOKEN_QUERY_SOURCE, &token)) {
     DWORD size;
-    if (!GetTokenInformation(token, TokenIntegrityLevel, NULL, 0, &size) &&
+    if (!GetTokenInformation(token, TokenIntegrityLevel, nullptr, 0, &size) &&
         GetLastError() == ERROR_INSUFFICIENT_BUFFER) {
-
       char* buf = STACK_ARRAY(char, size);
       TOKEN_MANDATORY_LABEL* til =
           reinterpret_cast<TOKEN_MANDATORY_LABEL*>(buf);

@@ -23,6 +23,7 @@
 #include "vpx/vp8cx.h"
 #include "vpx/vp8dx.h"
 
+#include "webrtc/api/video/video_frame.h"
 #include "webrtc/common_video/include/i420_buffer_pool.h"
 #include "webrtc/modules/video_coding/include/video_codec_interface.h"
 #include "webrtc/modules/video_coding/codecs/vp8/include/vp8.h"
@@ -32,7 +33,6 @@
 
 namespace webrtc {
 
-class SimulcastRateAllocator;
 class TemporalLayers;
 
 class VP8EncoderImpl : public VP8Encoder {
@@ -55,9 +55,10 @@ class VP8EncoderImpl : public VP8Encoder {
 
   int SetChannelParameters(uint32_t packet_loss, int64_t rtt) override;
 
-  int SetRates(uint32_t new_bitrate_kbit, uint32_t frame_rate) override;
+  int SetRateAllocation(const BitrateAllocation& bitrate,
+                        uint32_t new_framerate) override;
 
-  void OnDroppedFrame() override;
+  ScalingSettings GetScalingSettings() const override;
 
   const char* ImplementationName() const override;
 
@@ -94,7 +95,6 @@ class VP8EncoderImpl : public VP8Encoder {
 
   EncodedImageCallback* encoded_complete_callback_;
   VideoCodec codec_;
-  std::unique_ptr<SimulcastRateAllocator> rate_allocator_;
   bool inited_;
   int64_t timestamp_;
   bool feedback_mode_;
@@ -117,8 +117,6 @@ class VP8EncoderImpl : public VP8Encoder {
   std::vector<vpx_codec_ctx_t> encoders_;
   std::vector<vpx_codec_enc_cfg_t> configurations_;
   std::vector<vpx_rational_t> downsampling_factors_;
-  QualityScaler quality_scaler_;
-  bool quality_scaler_enabled_;
 };  // end of VP8EncoderImpl class
 
 class VP8DecoderImpl : public VP8Decoder {
@@ -151,7 +149,8 @@ class VP8DecoderImpl : public VP8Decoder {
 
   int ReturnFrame(const vpx_image_t* img,
                   uint32_t timeStamp,
-                  int64_t ntp_time_ms);
+                  int64_t ntp_time_ms,
+                  int qp);
 
   I420BufferPool buffer_pool_;
   DecodedImageCallback* decode_complete_callback_;
@@ -165,6 +164,7 @@ class VP8DecoderImpl : public VP8Decoder {
   int last_frame_width_;
   int last_frame_height_;
   bool key_frame_required_;
+  const bool use_postproc_arm_;
 };  // end of VP8DecoderImpl class
 }  // namespace webrtc
 

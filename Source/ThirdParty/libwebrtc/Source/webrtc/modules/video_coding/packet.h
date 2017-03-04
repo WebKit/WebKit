@@ -11,6 +11,7 @@
 #ifndef WEBRTC_MODULES_VIDEO_CODING_PACKET_H_
 #define WEBRTC_MODULES_VIDEO_CODING_PACKET_H_
 
+#include "webrtc/base/deprecation.h"
 #include "webrtc/modules/include/module_common_types.h"
 #include "webrtc/modules/video_coding/jitter_buffer_common.h"
 #include "webrtc/typedefs.h"
@@ -39,7 +40,10 @@ class VCMPacket {
   FrameType frameType;
   VideoCodecType codec;
 
-  bool isFirstPacket;                // Is this first packet in a frame.
+  union {
+    RTC_DEPRECATED bool isFirstPacket;  // Is this first packet in a frame.
+    bool is_first_packet_in_frame;
+  };
   VCMNaluCompleteness completeNALU;  // Default is kNaluIncomplete.
   bool insertStartCode;  // True if a start code should be inserted before this
                          // packet.

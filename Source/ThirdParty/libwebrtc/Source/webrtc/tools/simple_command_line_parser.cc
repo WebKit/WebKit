@@ -18,8 +18,6 @@
 namespace webrtc {
 namespace test {
 
-using std::string;
-
 CommandLineParser::CommandLineParser() {}
 CommandLineParser::~CommandLineParser() {}
 
@@ -28,7 +26,7 @@ void CommandLineParser::Init(int argc, char** argv) {
 }
 
 bool CommandLineParser::IsStandaloneFlag(std::string flag) {
-  return flag.find("=") == string::npos;
+  return flag.find("=") == std::string::npos;
 }
 
 bool CommandLineParser::IsFlagWellFormed(std::string flag) {
@@ -55,7 +53,7 @@ bool CommandLineParser::IsFlagWellFormed(std::string flag) {
 std::string CommandLineParser::GetCommandLineFlagName(std::string flag) {
   size_t dash_pos = flag.find("--");
   size_t equal_pos = flag.find("=");
-  if (equal_pos == string::npos) {
+  if (equal_pos == std::string::npos) {
     return flag.substr(dash_pos + 2);
   } else {
     return flag.substr(dash_pos + 2, equal_pos - 2);
@@ -64,7 +62,7 @@ std::string CommandLineParser::GetCommandLineFlagName(std::string flag) {
 
 std::string CommandLineParser::GetCommandLineFlagValue(std::string flag) {
   size_t equal_pos = flag.find("=");
-  if (equal_pos == string::npos) {
+  if (equal_pos == std::string::npos) {
     return "";
   } else {
     return flag.substr(equal_pos + 1);

@@ -218,7 +218,7 @@ void StatisticsCalculator::GetNetworkStatistics(
   stats->added_zero_samples = added_zero_samples_;
   stats->current_buffer_size_ms =
       static_cast<uint16_t>(num_samples_in_buffers * 1000 / fs_hz);
-  const int ms_per_packet = rtc::checked_cast<int>(
+  const int ms_per_packet = rtc::dchecked_cast<int>(
       decision_logic.packet_length_samples() / (fs_hz / 1000));
   stats->preferred_buffer_size_ms = (delay_manager.TargetLevel() >> 8) *
       ms_per_packet;

@@ -11,26 +11,30 @@
 #ifndef WEBRTC_MODULES_RTP_RTCP_SOURCE_DTMF_QUEUE_H_
 #define WEBRTC_MODULES_RTP_RTCP_SOURCE_DTMF_QUEUE_H_
 
+#include <list>
+
 #include "webrtc/base/criticalsection.h"
-#include "webrtc/modules/rtp_rtcp/source/rtp_rtcp_config.h"
-#include "webrtc/typedefs.h"
 
 namespace webrtc {
-class DTMFqueue {
+class DtmfQueue {
  public:
-  DTMFqueue();
-  ~DTMFqueue();
+  struct Event {
+    uint16_t duration_ms = 0;
+    uint8_t payload_type = 0;
+    uint8_t key = 0;
+    uint8_t level = 0;
+  };
 
-  int32_t AddDTMF(uint8_t dtmf_key, uint16_t len, uint8_t level);
-  int8_t NextDTMF(uint8_t* dtmf_key, uint16_t* len, uint8_t* level);
-  bool PendingDTMF();
+  DtmfQueue();
+  ~DtmfQueue();
+
+  bool AddDtmf(const Event& event);
+  bool NextDtmf(Event* event);
+  bool PendingDtmf() const;
 
  private:
   rtc::CriticalSection dtmf_critsect_;
-  uint8_t next_empty_index_;
-  uint8_t dtmf_key_[DTMF_OUTBAND_MAX];
-  uint16_t dtmf_length[DTMF_OUTBAND_MAX];
-  uint8_t dtmf_level_[DTMF_OUTBAND_MAX];
+  std::list<Event> queue_;
 };
 }  // namespace webrtc
 

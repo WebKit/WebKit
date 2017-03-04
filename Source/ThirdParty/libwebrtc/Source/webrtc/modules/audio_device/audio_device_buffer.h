@@ -12,6 +12,7 @@
 #define WEBRTC_MODULES_AUDIO_DEVICE_AUDIO_DEVICE_BUFFER_H_
 
 #include "webrtc/base/buffer.h"
+#include "webrtc/base/criticalsection.h"
 #include "webrtc/base/task_queue.h"
 #include "webrtc/base/thread_annotations.h"
 #include "webrtc/base/thread_checker.h"
@@ -34,6 +35,43 @@ class AudioDeviceBuffer {
     LOG_START = 0,
     LOG_STOP,
     LOG_ACTIVE,
+  };
+
+  struct Stats {
+    void ResetRecStats() {
+      rec_callbacks = 0;
+      rec_samples = 0;
+      max_rec_level = 0;
+    }
+
+    void ResetPlayStats() {
+      play_callbacks = 0;
+      play_samples = 0;
+      max_play_level = 0;
+    }
+
+    // Total number of recording callbacks where the source provides 10ms audio
+    // data each time.
+    uint64_t rec_callbacks = 0;
+
+    // Total number of playback callbacks where the sink asks for 10ms audio
+    // data each time.
+    uint64_t play_callbacks = 0;
+
+    // Total number of recorded audio samples.
+    uint64_t rec_samples = 0;
+
+    // Total number of played audio samples.
+    uint64_t play_samples = 0;
+
+    // Contains max level (max(abs(x))) of recorded audio packets over the last
+    // 10 seconds where a new measurement is done twice per second. The level
+    // is reset to zero at each call to LogStats().
+    int16_t max_rec_level = 0;
+
+    // Contains max level of recorded audio packets over the last 10 seconds
+    // where a new measurement is done twice per second.
+    int16_t max_play_level = 0;
   };
 
   AudioDeviceBuffer();
@@ -92,9 +130,8 @@ class AudioDeviceBuffer {
   // state = LOG_ACTIVE => logs are printed and the timer is kept alive.
   void LogStats(LogState state);
 
-  // Updates counters in each play/record callback but does it on the task
-  // queue to ensure that they can be read by LogStats() without any locks since
-  // each task is serialized by the task queue.
+  // Updates counters in each play/record callback. These counters are later
+  // (periodically) read by LogStats() using a lock.
   void UpdateRecStats(int16_t max_abs, size_t samples_per_channel);
   void UpdatePlayStats(int16_t max_abs, size_t samples_per_channel);
 
@@ -119,6 +156,8 @@ class AudioDeviceBuffer {
 
   // Native (platform specific) audio thread driving the recording side.
   rtc::ThreadChecker recording_thread_checker_;
+
+  rtc::CriticalSection lock_;
 
   // Task queue used to invoke LogStats() periodically. Tasks are executed on a
   // worker thread but it does not necessarily have to be the same thread for
@@ -184,43 +223,8 @@ class AudioDeviceBuffer {
   // Counts number of times LogStats() has been called.
   size_t num_stat_reports_ ACCESS_ON(task_queue_);
 
-  // Total number of recording callbacks where the source provides 10ms audio
-  // data each time.
-  uint64_t rec_callbacks_ ACCESS_ON(task_queue_);
-
-  // Total number of recording callbacks stored at the last timer task.
-  uint64_t last_rec_callbacks_ ACCESS_ON(task_queue_);
-
-  // Total number of playback callbacks where the sink asks for 10ms audio
-  // data each time.
-  uint64_t play_callbacks_ ACCESS_ON(task_queue_);
-
-  // Total number of playout callbacks stored at the last timer task.
-  uint64_t last_play_callbacks_ ACCESS_ON(task_queue_);
-
-  // Total number of recorded audio samples.
-  uint64_t rec_samples_ ACCESS_ON(task_queue_);
-
-  // Total number of recorded samples stored at the previous timer task.
-  uint64_t last_rec_samples_ ACCESS_ON(task_queue_);
-
-  // Total number of played audio samples.
-  uint64_t play_samples_ ACCESS_ON(task_queue_);
-
-  // Total number of played samples stored at the previous timer task.
-  uint64_t last_play_samples_ ACCESS_ON(task_queue_);
-
-  // Contains max level (max(abs(x))) of recorded audio packets over the last
-  // 10 seconds where a new measurement is done twice per second. The level
-  // is reset to zero at each call to LogStats().
-  int16_t max_rec_level_ ACCESS_ON(task_queue_);
-
-  // Contains max level of recorded audio packets over the last 10 seconds
-  // where a new measurement is done twice per second.
-  int16_t max_play_level_ ACCESS_ON(task_queue_);
-
   // Time stamp of last timer task (drives logging).
-  uint64_t last_timer_task_time_ ACCESS_ON(task_queue_);
+  int64_t last_timer_task_time_ ACCESS_ON(task_queue_);
 
   // Counts number of audio callbacks modulo 50 to create a signal when
   // a new storage of audio stats shall be done.
@@ -228,8 +232,15 @@ class AudioDeviceBuffer {
   int16_t play_stat_count_ ACCESS_ON(playout_thread_checker_);
 
   // Time stamps of when playout and recording starts.
-  uint64_t play_start_time_ ACCESS_ON(main_thread_checker_);
-  uint64_t rec_start_time_ ACCESS_ON(main_thread_checker_);
+  int64_t play_start_time_ ACCESS_ON(main_thread_checker_);
+  int64_t rec_start_time_ ACCESS_ON(main_thread_checker_);
+
+  // Contains counters for playout and recording statistics.
+  Stats stats_ GUARDED_BY(lock_);
+
+  // Stores current stats at each timer task. Used to calculate differences
+  // between two successive timer events.
+  Stats last_stats_ ACCESS_ON(task_queue_);
 
   // Set to true at construction and modified to false as soon as one audio-
   // level estimate larger than zero is detected.

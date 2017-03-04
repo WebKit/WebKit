@@ -15,11 +15,12 @@
 #include <string>
 #include <vector>
 
+#include "webrtc/api/audio_codecs/audio_decoder_factory.h"
 #include "webrtc/base/deprecation.h"
 #include "webrtc/base/function_view.h"
 #include "webrtc/base/optional.h"
 #include "webrtc/common_types.h"
-#include "webrtc/modules/audio_coding/codecs/audio_decoder_factory.h"
+#include "webrtc/modules/audio_coding/codecs/audio_encoder.h"
 #include "webrtc/modules/audio_coding/include/audio_coding_module_typedefs.h"
 #include "webrtc/modules/audio_coding/neteq/include/neteq.h"
 #include "webrtc/modules/include/module.h"
@@ -637,7 +638,8 @@ class AudioCodingModule {
   //
   virtual int SetMaximumPlayoutDelay(int time_ms) = 0;
 
-  //
+  // TODO(kwiberg): Consider if this is needed anymore, now that voe::Channel
+  //                doesn't use it.
   // The shortest latency, in milliseconds, required by jitter buffer. This
   // is computed based on inter-arrival times and playout mode of NetEq. The
   // actual delay is the maximum of least-required-delay and the minimum-delay

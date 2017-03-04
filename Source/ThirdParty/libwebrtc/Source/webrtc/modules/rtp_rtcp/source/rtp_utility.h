@@ -36,8 +36,6 @@ struct Payload {
   PayloadUnion typeSpecific;
 };
 
-typedef std::map<int8_t, Payload*> PayloadTypeMap;
-
 bool StringCompare(const char* str1, const char* str2, const uint32_t length);
 
 // Round up to the nearest size that is a multiple of 4.
@@ -58,9 +56,6 @@ class RtpHeaderParser {
                                    const RtpHeaderExtensionMap* ptrExtensionMap,
                                    const uint8_t* ptrRTPDataExtensionEnd,
                                    const uint8_t* ptr) const;
-
-  uint8_t ParsePaddingBytes(const uint8_t* ptrRTPDataExtensionEnd,
-                            const uint8_t* ptr) const;
 
   const uint8_t* const _ptrRTPDataBegin;
   const uint8_t* const _ptrRTPDataEnd;

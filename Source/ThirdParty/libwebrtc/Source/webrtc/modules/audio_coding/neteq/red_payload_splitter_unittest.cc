@@ -17,7 +17,7 @@
 #include <memory>
 #include <utility>  // pair
 
-#include "webrtc/modules/audio_coding/codecs/builtin_audio_decoder_factory.h"
+#include "webrtc/api/audio_codecs/builtin_audio_decoder_factory.h"
 #include "webrtc/modules/audio_coding/codecs/mock/mock_audio_decoder_factory.h"
 #include "webrtc/modules/audio_coding/neteq/mock/mock_decoder_database.h"
 #include "webrtc/modules/audio_coding/neteq/packet.h"

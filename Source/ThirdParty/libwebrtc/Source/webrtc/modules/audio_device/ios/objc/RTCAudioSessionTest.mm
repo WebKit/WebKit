@@ -32,10 +32,10 @@
     previousRoute:(AVAudioSessionRouteDescription *)previousRoute {
 }
 
-- (void)audioSessionMediaServicesWereLost:(RTCAudioSession *)session {
+- (void)audioSessionMediaServerTerminated:(RTCAudioSession *)session {
 }
 
-- (void)audioSessionMediaServicesWereReset:(RTCAudioSession *)session {
+- (void)audioSessionMediaServerReset:(RTCAudioSession *)session {
 }
 
 - (void)audioSessionShouldConfigure:(RTCAudioSession *)session {

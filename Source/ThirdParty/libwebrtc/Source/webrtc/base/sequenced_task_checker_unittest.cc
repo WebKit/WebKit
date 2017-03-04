@@ -35,14 +35,13 @@ class CallCalledSequentiallyOnThread {
   }
 
  private:
-  static bool Run(void* obj) {
+  static void Run(void* obj) {
     CallCalledSequentiallyOnThread* call_stuff_on_thread =
         static_cast<CallCalledSequentiallyOnThread*>(obj);
     EXPECT_EQ(
         call_stuff_on_thread->expect_true_,
         call_stuff_on_thread->sequenced_task_checker_->CalledSequentially());
     call_stuff_on_thread->thread_has_run_event_.Set();
-    return false;
   }
 
   const bool expect_true_;

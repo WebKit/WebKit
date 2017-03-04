@@ -13,7 +13,7 @@
 #include <memory>
 #include <vector>
 
-#include "webrtc/call.h"
+#include "webrtc/call/call.h"
 #include "webrtc/logging/rtc_event_log/rtc_event_log.h"
 #include "webrtc/test/encoder_settings.h"
 #include "webrtc/test/fake_audio_device.h"
@@ -56,7 +56,6 @@ class CallTest : public ::testing::Test {
   static const uint32_t kFlexfecSendSsrc;
   static const uint32_t kReceiverLocalVideoSsrc;
   static const uint32_t kReceiverLocalAudioSsrc;
-  static const uint32_t kReceiverLocalFlexfecSsrc;
   static const int kNackRtpHistoryMs;
 
  protected:

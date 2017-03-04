@@ -61,7 +61,6 @@
 #define WEBRTC_CPU_DETECTION
 #endif
 
-// TODO(pbos): Use webrtc/base/basictypes.h instead to include fixed-size ints.
 #include <stdint.h>
 
 // Annotate a function indicating the caller must examine the return value.
@@ -104,12 +103,10 @@
 #if defined(_MSC_VER)
 #define NO_RETURN __declspec(noreturn)
 #elif defined(__GNUC__)
-#ifndef NO_RETURN
 #define NO_RETURN __attribute__ ((__noreturn__))
-#endif
 #else
 #define NO_RETURN
 #endif
-#endif // NO_RETURN
+#endif
 
 #endif  // WEBRTC_TYPEDEFS_H_

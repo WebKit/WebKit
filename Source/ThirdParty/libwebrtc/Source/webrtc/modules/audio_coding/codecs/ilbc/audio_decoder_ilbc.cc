@@ -76,7 +76,7 @@ std::vector<AudioDecoder::ParseResult> AudioDecoderIlbc::ParsePayload(
     return results;
   }
 
-  RTC_DCHECK_EQ(0u, payload.size() % bytes_per_frame);
+  RTC_DCHECK_EQ(0, payload.size() % bytes_per_frame);
   if (payload.size() == bytes_per_frame) {
     std::unique_ptr<EncodedAudioFrame> frame(
         new LegacyEncodedAudioFrame(this, std::move(payload)));

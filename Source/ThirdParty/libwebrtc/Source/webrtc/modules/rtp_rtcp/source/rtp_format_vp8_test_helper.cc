@@ -17,22 +17,22 @@ namespace webrtc {
 
 namespace test {
 
+constexpr RtpPacketToSend::ExtensionManager* kNoExtensions = nullptr;
+
 RtpFormatVp8TestHelper::RtpFormatVp8TestHelper(const RTPVideoHeaderVP8* hdr)
-    : payload_data_(NULL),
-      buffer_(NULL),
+    : packet_(kNoExtensions),
+      payload_data_(NULL),
       data_ptr_(NULL),
       fragmentation_(NULL),
       hdr_info_(hdr),
       payload_start_(0),
       payload_size_(0),
-      buffer_size_(0),
       sloppy_partitioning_(false),
       inited_(false) {}
 
 RtpFormatVp8TestHelper::~RtpFormatVp8TestHelper() {
   delete fragmentation_;
   delete [] payload_data_;
-  delete [] buffer_;
 }
 
 bool RtpFormatVp8TestHelper::Init(const size_t* partition_sizes,
@@ -45,9 +45,7 @@ bool RtpFormatVp8TestHelper::Init(const size_t* partition_sizes,
   for (size_t p = 0; p < num_partitions; ++p) {
     payload_size_ += partition_sizes[p];
   }
-  buffer_size_ = payload_size_ + 6;  // Add space for payload descriptor.
   payload_data_ = new uint8_t[payload_size_];
-  buffer_ = new uint8_t[buffer_size_];
   size_t j = 0;
   // Loop through the partitions again.
   for (size_t p = 0; p < num_partitions; ++p) {
@@ -70,15 +68,13 @@ void RtpFormatVp8TestHelper::GetAllPacketsAndCheck(
     const bool* expected_frag_start,
     size_t expected_num_packets) {
   ASSERT_TRUE(inited_);
-  size_t send_bytes = 0;
   bool last = false;
   for (size_t i = 0; i < expected_num_packets; ++i) {
     std::ostringstream ss;
     ss << "Checking packet " << i;
     SCOPED_TRACE(ss.str());
-    EXPECT_TRUE(packetizer->NextPacket(buffer_, &send_bytes, &last));
-    CheckPacket(send_bytes, expected_sizes[i], last,
-                expected_frag_start[i]);
+    EXPECT_TRUE(packetizer->NextPacket(&packet_, &last));
+    CheckPacket(expected_sizes[i], last, expected_frag_start[i]);
   }
   EXPECT_TRUE(last);
 }
@@ -127,67 +123,68 @@ void RtpFormatVp8TestHelper::GetAllPacketsAndCheck(
 
 void RtpFormatVp8TestHelper::CheckHeader(bool frag_start) {
   payload_start_ = 1;
-  EXPECT_BIT_EQ(buffer_[0], 6, 0);  // Check reserved bit.
+  rtc::ArrayView<const uint8_t> buffer = packet_.payload();
+  EXPECT_BIT_EQ(buffer[0], 6, 0);  // Check reserved bit.
 
   if (hdr_info_->pictureId != kNoPictureId ||
       hdr_info_->temporalIdx != kNoTemporalIdx ||
       hdr_info_->tl0PicIdx != kNoTl0PicIdx ||
       hdr_info_->keyIdx != kNoKeyIdx) {
-    EXPECT_BIT_X_EQ(buffer_[0], 1);
+    EXPECT_BIT_X_EQ(buffer[0], 1);
     ++payload_start_;
     CheckPictureID();
     CheckTl0PicIdx();
     CheckTIDAndKeyIdx();
   } else {
-    EXPECT_BIT_X_EQ(buffer_[0], 0);
+    EXPECT_BIT_X_EQ(buffer[0], 0);
   }
 
-  EXPECT_BIT_N_EQ(buffer_[0], hdr_info_->nonReference ? 1 : 0);
-  EXPECT_BIT_S_EQ(buffer_[0], frag_start ? 1 : 0);
+  EXPECT_BIT_N_EQ(buffer[0], hdr_info_->nonReference ? 1 : 0);
+  EXPECT_BIT_S_EQ(buffer[0], frag_start ? 1 : 0);
 
   // Check partition index.
   if (!sloppy_partitioning_) {
     // The test payload data is constructed such that the payload value is the
     // same as the partition index.
-    EXPECT_EQ(buffer_[0] & 0x0F, buffer_[payload_start_]);
+    EXPECT_EQ(buffer[0] & 0x0F, buffer[payload_start_]);
   } else {
     // Partition should be set to 0.
-    EXPECT_EQ(buffer_[0] & 0x0F, 0);
+    EXPECT_EQ(buffer[0] & 0x0F, 0);
   }
 }
 
 // Verify that the I bit and the PictureID field are both set in accordance
 // with the information in hdr_info_->pictureId.
 void RtpFormatVp8TestHelper::CheckPictureID() {
+  auto buffer = packet_.payload();
   if (hdr_info_->pictureId != kNoPictureId) {
-    EXPECT_BIT_I_EQ(buffer_[1], 1);
+    EXPECT_BIT_I_EQ(buffer[1], 1);
     if (hdr_info_->pictureId > 0x7F) {
-      EXPECT_BIT_EQ(buffer_[payload_start_], 7, 1);
-      EXPECT_EQ(buffer_[payload_start_] & 0x7F,
+      EXPECT_BIT_EQ(buffer[payload_start_], 7, 1);
+      EXPECT_EQ(buffer[payload_start_] & 0x7F,
                 (hdr_info_->pictureId >> 8) & 0x7F);
-      EXPECT_EQ(buffer_[payload_start_ + 1],
-                hdr_info_->pictureId & 0xFF);
+      EXPECT_EQ(buffer[payload_start_ + 1], hdr_info_->pictureId & 0xFF);
       payload_start_ += 2;
     } else {
-      EXPECT_BIT_EQ(buffer_[payload_start_], 7, 0);
-      EXPECT_EQ(buffer_[payload_start_] & 0x7F,
-                (hdr_info_->pictureId) & 0x7F);
+      EXPECT_BIT_EQ(buffer[payload_start_], 7, 0);
+      EXPECT_EQ(buffer[payload_start_] & 0x7F, (hdr_info_->pictureId) & 0x7F);
       payload_start_ += 1;
     }
   } else {
-    EXPECT_BIT_I_EQ(buffer_[1], 0);
+    EXPECT_BIT_I_EQ(buffer[1], 0);
   }
 }
 
 // Verify that the L bit and the TL0PICIDX field are both set in accordance
 // with the information in hdr_info_->tl0PicIdx.
 void RtpFormatVp8TestHelper::CheckTl0PicIdx() {
+  auto buffer = packet_.payload();
   if (hdr_info_->tl0PicIdx != kNoTl0PicIdx) {
-    EXPECT_BIT_L_EQ(buffer_[1], 1);
-    EXPECT_EQ(buffer_[payload_start_], hdr_info_->tl0PicIdx);
+    EXPECT_BIT_L_EQ(buffer[1], 1);
+    EXPECT_EQ(buffer[payload_start_], hdr_info_->tl0PicIdx);
     ++payload_start_;
   } else {
-    EXPECT_BIT_L_EQ(buffer_[1], 0);
+    EXPECT_BIT_L_EQ(buffer[1], 0);
   }
 }
 
@@ -195,36 +192,39 @@ void RtpFormatVp8TestHelper::CheckTl0PicIdx() {
 // field are all set in accordance with the information in
 // hdr_info_->temporalIdx and hdr_info_->keyIdx, respectively.
 void RtpFormatVp8TestHelper::CheckTIDAndKeyIdx() {
+  auto buffer = packet_.payload();
   if (hdr_info_->temporalIdx == kNoTemporalIdx &&
       hdr_info_->keyIdx == kNoKeyIdx) {
-    EXPECT_BIT_T_EQ(buffer_[1], 0);
-    EXPECT_BIT_K_EQ(buffer_[1], 0);
+    EXPECT_BIT_T_EQ(buffer[1], 0);
+    EXPECT_BIT_K_EQ(buffer[1], 0);
     return;
   }
   if (hdr_info_->temporalIdx != kNoTemporalIdx) {
-    EXPECT_BIT_T_EQ(buffer_[1], 1);
-    EXPECT_TID_EQ(buffer_[payload_start_], hdr_info_->temporalIdx);
-    EXPECT_BIT_Y_EQ(buffer_[payload_start_], hdr_info_->layerSync ? 1 : 0);
+    EXPECT_BIT_T_EQ(buffer[1], 1);
+    EXPECT_TID_EQ(buffer[payload_start_], hdr_info_->temporalIdx);
+    EXPECT_BIT_Y_EQ(buffer[payload_start_], hdr_info_->layerSync ? 1 : 0);
   } else {
-    EXPECT_BIT_T_EQ(buffer_[1], 0);
-    EXPECT_TID_EQ(buffer_[payload_start_], 0);
-    EXPECT_BIT_Y_EQ(buffer_[payload_start_], 0);
+    EXPECT_BIT_T_EQ(buffer[1], 0);
+    EXPECT_TID_EQ(buffer[payload_start_], 0);
+    EXPECT_BIT_Y_EQ(buffer[payload_start_], 0);
   }
   if (hdr_info_->keyIdx != kNoKeyIdx) {
-    EXPECT_BIT_K_EQ(buffer_[1], 1);
-    EXPECT_KEYIDX_EQ(buffer_[payload_start_], hdr_info_->keyIdx);
+    EXPECT_BIT_K_EQ(buffer[1], 1);
+    EXPECT_KEYIDX_EQ(buffer[payload_start_], hdr_info_->keyIdx);
   } else {
-    EXPECT_BIT_K_EQ(buffer_[1], 0);
-    EXPECT_KEYIDX_EQ(buffer_[payload_start_], 0);
+    EXPECT_BIT_K_EQ(buffer[1], 0);
+    EXPECT_KEYIDX_EQ(buffer[payload_start_], 0);
   }
   ++payload_start_;
 }
 
 // Verify that the payload (i.e., after the headers) of the packet stored in
 // buffer_ is identical to the expected (as found in data_ptr_).
-void RtpFormatVp8TestHelper::CheckPayload(size_t payload_end) {
+void RtpFormatVp8TestHelper::CheckPayload() {
+  auto buffer = packet_.payload();
+  size_t payload_end = buffer.size();
   for (size_t i = payload_start_; i < payload_end; ++i, ++data_ptr_)
-    EXPECT_EQ(buffer_[i], *data_ptr_);
+    EXPECT_EQ(buffer[i], *data_ptr_);
 }
 
 // Verify that the input variable "last" agrees with the position of data_ptr_.
@@ -236,13 +236,12 @@ void RtpFormatVp8TestHelper::CheckLast(bool last) const {
 
 // Verify the contents of a packet. Check the length versus expected_bytes,
 // the header, payload, and "last" flag.
-void RtpFormatVp8TestHelper::CheckPacket(size_t send_bytes,
-                                         size_t expect_bytes,
+void RtpFormatVp8TestHelper::CheckPacket(size_t expect_bytes,
                                          bool last,
                                          bool frag_start) {
-  EXPECT_EQ(expect_bytes, send_bytes);
+  EXPECT_EQ(expect_bytes, packet_.payload_size());
   CheckHeader(frag_start);
-  CheckPayload(send_bytes);
+  CheckPayload();
   CheckLast(last);
 }
 

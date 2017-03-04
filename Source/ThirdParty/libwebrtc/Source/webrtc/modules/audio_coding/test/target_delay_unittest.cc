@@ -201,7 +201,8 @@ class TargetDelayTest : public ::testing::Test {
   uint8_t payload_[kPayloadLenBytes];
 };
 
-#if defined(WEBRTC_ANDROID)
+// Flaky on iOS: webrtc:7057.
+#if defined(WEBRTC_ANDROID) || defined(WEBRTC_IOS)
 #define MAYBE_OutOfRangeInput DISABLED_OutOfRangeInput
 #else
 #define MAYBE_OutOfRangeInput OutOfRangeInput
@@ -210,7 +211,8 @@ TEST_F(TargetDelayTest, MAYBE_OutOfRangeInput) {
   OutOfRangeInput();
 }
 
-#if defined(WEBRTC_ANDROID)
+// Flaky on iOS: webrtc:7057.
+#if defined(WEBRTC_ANDROID) || defined(WEBRTC_IOS)
 #define MAYBE_NoTargetDelayBufferSizeChanges \
   DISABLED_NoTargetDelayBufferSizeChanges
 #else
@@ -220,7 +222,8 @@ TEST_F(TargetDelayTest, MAYBE_NoTargetDelayBufferSizeChanges) {
   NoTargetDelayBufferSizeChanges();
 }
 
-#if defined(WEBRTC_ANDROID)
+// Flaky on iOS: webrtc:7057.
+#if defined(WEBRTC_ANDROID) || defined(WEBRTC_IOS)
 #define MAYBE_WithTargetDelayBufferNotChanging \
   DISABLED_WithTargetDelayBufferNotChanging
 #else
@@ -230,7 +233,8 @@ TEST_F(TargetDelayTest, MAYBE_WithTargetDelayBufferNotChanging) {
   WithTargetDelayBufferNotChanging();
 }
 
-#if defined(WEBRTC_ANDROID)
+// Flaky on iOS: webrtc:7057.
+#if defined(WEBRTC_ANDROID) || defined(WEBRTC_IOS)
 #define MAYBE_RequiredDelayAtCorrectRange DISABLED_RequiredDelayAtCorrectRange
 #else
 #define MAYBE_RequiredDelayAtCorrectRange RequiredDelayAtCorrectRange
@@ -239,7 +243,8 @@ TEST_F(TargetDelayTest, MAYBE_RequiredDelayAtCorrectRange) {
   RequiredDelayAtCorrectRange();
 }
 
-#if defined(WEBRTC_ANDROID)
+// Flaky on iOS: webrtc:7057.
+#if defined(WEBRTC_ANDROID) || defined(WEBRTC_IOS)
 #define MAYBE_TargetDelayBufferMinMax DISABLED_TargetDelayBufferMinMax
 #else
 #define MAYBE_TargetDelayBufferMinMax TargetDelayBufferMinMax

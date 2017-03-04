@@ -33,6 +33,7 @@ const int kSampleRateHz = 32000;
 const int kNumChannels = 1;
 const int kSamplesPerChannel = kSampleRateHz / 100;
 const int kInitialVolume = 128;
+constexpr int kClippedMin = 165;  // Arbitrary, but different from the default.
 const float kAboveClippedThreshold = 0.2f;
 
 class TestVolumeCallbacks : public VolumeCallbacks {
@@ -50,7 +51,8 @@ class TestVolumeCallbacks : public VolumeCallbacks {
 class AgcManagerDirectTest : public ::testing::Test {
  protected:
   AgcManagerDirectTest()
-      : agc_(new MockAgc), manager_(agc_, &gctrl_, &volume_, kInitialVolume) {
+      : agc_(new MockAgc),
+        manager_(agc_, &gctrl_, &volume_, kInitialVolume, kClippedMin) {
     ExpectInitialize();
     manager_.Initialize();
   }
@@ -505,13 +507,13 @@ TEST_F(AgcManagerDirectTest, ClippingLoweringIsLimited) {
       .WillOnce(Return(kAboveClippedThreshold));
   EXPECT_CALL(*agc_, Reset()).Times(1);
   CallPreProc(1);
-  EXPECT_EQ(170, volume_.GetMicVolume());
+  EXPECT_EQ(kClippedMin, volume_.GetMicVolume());
 
   EXPECT_CALL(*agc_, AnalyzePreproc(_, _))
       .WillRepeatedly(Return(kAboveClippedThreshold));
   EXPECT_CALL(*agc_, Reset()).Times(0);
   CallPreProc(1000);
-  EXPECT_EQ(170, volume_.GetMicVolume());
+  EXPECT_EQ(kClippedMin, volume_.GetMicVolume());
 }
 
 TEST_F(AgcManagerDirectTest, ClippingMaxIsRespectedWhenEqualToLevel) {
@@ -589,7 +591,7 @@ TEST_F(AgcManagerDirectTest, MaxCompressionIsIncreasedAfterClipping) {
       .WillOnce(Return(kAboveClippedThreshold));
   EXPECT_CALL(*agc_, Reset()).Times(1);
   CallPreProc(1);
-  EXPECT_EQ(170, volume_.GetMicVolume());
+  EXPECT_EQ(kClippedMin, volume_.GetMicVolume());
 
   // Current level is now at the minimum, but the maximum allowed level still
   // has more to decrease.

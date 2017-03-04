@@ -26,6 +26,8 @@ constexpr size_t kLookbackFrames = 650;
 // TODO(ivoc): Verify the size of this buffer.
 constexpr size_t kRenderBufferSize = 30;
 constexpr float kAlpha = 0.001f;
+// 10 seconds of data, updated every 10 ms.
+constexpr size_t kAggregationBufferSize = 10 * 100;
 
 }  // namespace
 
@@ -36,7 +38,8 @@ ResidualEchoDetector::ResidualEchoDetector()
       render_power_(kLookbackFrames),
       render_power_mean_(kLookbackFrames),
       render_power_std_dev_(kLookbackFrames),
-      covariances_(kLookbackFrames){};
+      covariances_(kLookbackFrames),
+      recent_likelihood_max_(kAggregationBufferSize) {}
 
 ResidualEchoDetector::~ResidualEchoDetector() = default;
 
@@ -107,6 +110,9 @@ void ResidualEchoDetector::AnalyzeCaptureAudio(
   RTC_HISTOGRAM_COUNTS("WebRTC.Audio.ResidualEchoDetector.EchoLikelihood",
                        echo_percentage, 0, 100, 100 /* number of bins */);
 
+  // Update the buffer of recent likelihood values.
+  recent_likelihood_max_.Update(echo_likelihood_);
+
   // Update the next insertion index.
   ++next_insertion_index_;
   next_insertion_index_ %= kLookbackFrames;
@@ -119,6 +125,7 @@ void ResidualEchoDetector::Initialize() {
   std::fill(render_power_std_dev_.begin(), render_power_std_dev_.end(), 0.f);
   render_statistics_.Clear();
   capture_statistics_.Clear();
+  recent_likelihood_max_.Clear();
   for (auto& cov : covariances_) {
     cov.Clear();
   }
@@ -130,7 +137,7 @@ void ResidualEchoDetector::Initialize() {
 void ResidualEchoDetector::PackRenderAudioBuffer(
     AudioBuffer* audio,
     std::vector<float>* packed_buffer) {
-  RTC_DCHECK_GE(160u, audio->num_frames_per_band());
+  RTC_DCHECK_GE(160, audio->num_frames_per_band());
 
   packed_buffer->clear();
   packed_buffer->insert(packed_buffer->end(),

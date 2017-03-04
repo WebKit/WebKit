@@ -8,10 +8,11 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include <stdint.h>
+
 #include <memory>
 
 #include "webrtc/base/asyncresolverinterface.h"
-#include "webrtc/base/basictypes.h"
 #include "webrtc/base/bind.h"
 #include "webrtc/base/checks.h"
 #include "webrtc/base/gunit.h"

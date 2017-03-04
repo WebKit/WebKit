@@ -12,7 +12,6 @@
 #define WEBRTC_BASE_SOCKETSTREAM_H_
 
 #include "webrtc/base/asyncsocket.h"
-#include "webrtc/base/common.h"
 #include "webrtc/base/constructormagic.h"
 #include "webrtc/base/stream.h"
 

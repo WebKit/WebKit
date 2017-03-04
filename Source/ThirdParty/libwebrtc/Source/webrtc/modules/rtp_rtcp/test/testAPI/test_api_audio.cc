@@ -70,15 +70,12 @@ class VerifyingAudioReceiver : public NullRtpData {
 
 class RTPCallback : public NullRtpFeedback {
  public:
-  int32_t OnInitializeDecoder(const int8_t payloadType,
+  int32_t OnInitializeDecoder(int8_t payloadType,
                               const char payloadName[RTP_PAYLOAD_NAME_SIZE],
-                              const int frequency,
-                              const size_t channels,
-                              const uint32_t rate) override {
-    if (payloadType == kPcmuPayloadType) {
-      EXPECT_EQ(kTestRate, rate) <<
-          "The rate should be 64K for this payloadType";
-    }
+                              int frequency,
+                              size_t channels,
+                              uint32_t rate) override {
+    EXPECT_EQ(0u, rate) << "The rate should be zero";
     return 0;
   }
 };
@@ -101,10 +98,8 @@ class RtpRtcpAudioTest : public ::testing::Test {
     receive_statistics1_.reset(ReceiveStatistics::Create(&fake_clock));
     receive_statistics2_.reset(ReceiveStatistics::Create(&fake_clock));
 
-    rtp_payload_registry1_.reset(new RTPPayloadRegistry(
-        RTPPayloadStrategy::CreateStrategy(true)));
-    rtp_payload_registry2_.reset(new RTPPayloadRegistry(
-        RTPPayloadStrategy::CreateStrategy(true)));
+    rtp_payload_registry1_.reset(new RTPPayloadRegistry());
+    rtp_payload_registry2_.reset(new RTPPayloadRegistry());
 
     RtpRtcp::Configuration configuration;
     configuration.audio = true;
@@ -134,19 +129,9 @@ class RtpRtcpAudioTest : public ::testing::Test {
 
   void RegisterPayload(const CodecInst& codec) {
     EXPECT_EQ(0, module1->RegisterSendPayload(codec));
-    EXPECT_EQ(0, rtp_receiver1_->RegisterReceivePayload(
-        codec.plname,
-        codec.pltype,
-        codec.plfreq,
-        codec.channels,
-        codec.rate));
+    EXPECT_EQ(0, rtp_receiver1_->RegisterReceivePayload(codec));
     EXPECT_EQ(0, module2->RegisterSendPayload(codec));
-    EXPECT_EQ(0, rtp_receiver2_->RegisterReceivePayload(
-        codec.plname,
-        codec.pltype,
-        codec.plfreq,
-        codec.channels,
-        codec.rate));
+    EXPECT_EQ(0, rtp_receiver2_->RegisterReceivePayload(codec));
   }
 
   VerifyingAudioReceiver data_receiver1;
@@ -222,12 +207,7 @@ TEST_F(RtpRtcpAudioTest, DTMF) {
   memcpy(voice_codec.plname, "telephone-event", 16);
 
   EXPECT_EQ(0, module1->RegisterSendPayload(voice_codec));
-  EXPECT_EQ(0, rtp_receiver2_->RegisterReceivePayload(
-        voice_codec.plname,
-        voice_codec.pltype,
-        voice_codec.plfreq,
-        voice_codec.channels,
-        voice_codec.rate));
+  EXPECT_EQ(0, rtp_receiver2_->RegisterReceivePayload(voice_codec));
 
   // Start DTMF test.
   int timeStamp = 160;

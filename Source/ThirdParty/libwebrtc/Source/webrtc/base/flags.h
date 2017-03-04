@@ -24,7 +24,6 @@
 #define WEBRTC_BASE_FLAGS_H__
 
 #include "webrtc/base/checks.h"
-#include "webrtc/base/common.h"
 #include "webrtc/base/constructormagic.h"
 
 namespace rtc {
@@ -190,19 +189,19 @@ class FlagList {
  public:
   FlagList();
 
-  // The NULL-terminated list of all flags. Traverse with Flag::next().
+  // The null-terminated list of all flags. Traverse with Flag::next().
   static Flag* list()  { return list_; }
 
-  // If file != NULL, prints information for all flags defined in file;
-  // otherwise prints information for all flags in all files. The current
-  // flag value is only printed if print_current_value is set.
+  // If file != nullptr, prints information for all flags defined in file;
+  // otherwise prints information for all flags in all files. The current flag
+  // value is only printed if print_current_value is set.
   static void Print(const char* file, bool print_current_value);
 
-  // Lookup a flag by name. Returns the matching flag or NULL.
+  // Lookup a flag by name. Returns the matching flag or null.
   static Flag* Lookup(const char* name);
 
   // Helper function to parse flags: Takes an argument arg and splits it into
-  // a flag name and flag value (or NULL if they are missing). is_bool is set
+  // a flag name and flag value (or null if they are missing). is_bool is set
   // if the arg started with "-no" or "--no". The buffer may be used to NUL-
   // terminate the name, it must be large enough to hold any possible name.
   static void SplitArgument(const char* arg,

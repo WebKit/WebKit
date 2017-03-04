@@ -11,7 +11,6 @@
 
 #include "webrtc/base/atomicops.h"
 #include "webrtc/base/checks.h"
-#include "webrtc/base/common.h"
 #include "webrtc/base/logging.h"
 #include "webrtc/base/messagequeue.h"
 #include "webrtc/base/stringencode.h"
@@ -30,7 +29,7 @@ class SCOPED_LOCKABLE DebugNonReentrantCritScope {
       EXCLUSIVE_LOCK_FUNCTION(cs)
       : cs_(cs), locked_(locked) {
     cs_->Enter();
-    ASSERT(!*locked_);
+    RTC_DCHECK(!*locked_);
     *locked_ = true;
   }
 
@@ -50,7 +49,7 @@ class SCOPED_LOCKABLE DebugNonReentrantCritScope {
 //------------------------------------------------------------------
 // MessageQueueManager
 
-MessageQueueManager* MessageQueueManager::instance_ = NULL;
+MessageQueueManager* MessageQueueManager::instance_ = nullptr;
 
 MessageQueueManager* MessageQueueManager::Instance() {
   // Note: This is not thread safe, but it is first called before threads are
@@ -61,7 +60,7 @@ MessageQueueManager* MessageQueueManager::Instance() {
 }
 
 bool MessageQueueManager::IsInitialized() {
-  return instance_ != NULL;
+  return instance_ != nullptr;
 }
 
 MessageQueueManager::MessageQueueManager() : locked_(false) {}
@@ -100,7 +99,7 @@ void MessageQueueManager::RemoveInternal(MessageQueue *message_queue) {
     destroy = message_queues_.empty();
   }
   if (destroy) {
-    instance_ = NULL;
+    instance_ = nullptr;
     delete this;
   }
 }
@@ -147,9 +146,10 @@ void MessageQueueManager::ProcessAllMessageQueuesInternal() {
   {
     DebugNonReentrantCritScope cs(&crit_, &locked_);
     for (MessageQueue* queue : message_queues_) {
-      if (queue->IsQuitting()) {
-        // If the queue is quitting, it's done processing messages so it can
-        // be ignored. If we tried to post a message to it, it would be dropped.
+      if (!queue->IsProcessingMessages()) {
+        // If the queue is not processing messages, it can
+        // be ignored. If we tried to post a message to it, it would be dropped
+        // or ignored.
         continue;
       }
       queue->PostDelayed(RTC_FROM_HERE, 0, nullptr, MQID_DISPOSE,
@@ -214,11 +214,11 @@ void MessageQueue::DoDestroy() {
   // is going away.
   SignalQueueDestroyed();
   MessageQueueManager::Remove(this);
-  Clear(NULL);
+  Clear(nullptr);
 
   SharedScope ss(&ss_lock_);
   if (ss_) {
-    ss_->SetMessageQueue(NULL);
+    ss_->SetMessageQueue(nullptr);
   }
 }
 
@@ -250,6 +250,10 @@ void MessageQueue::Quit() {
 
 bool MessageQueue::IsQuitting() {
   return AtomicOps::AcquireLoad(&stop_) != 0;
+}
+
+bool MessageQueue::IsProcessingMessages() {
+  return !IsQuitting();
 }
 
 void MessageQueue::Restart() {
@@ -329,7 +333,7 @@ bool MessageQueue::Get(Message *pmsg, int cmsWait, bool process_io) {
       }
       // If this was a dispose message, delete it and skip it.
       if (MQID_DISPOSE == pmsg->message_id) {
-        ASSERT(NULL == pmsg->phandler);
+        RTC_DCHECK(nullptr == pmsg->phandler);
         delete pmsg->pdata;
         *pmsg = Message();
         continue;
@@ -454,7 +458,8 @@ void MessageQueue::DoDelayPost(const Location& posted_from,
     // If this message queue processes 1 message every millisecond for 50 days,
     // we will wrap this number.  Even then, only messages with identical times
     // will be misordered, and then only briefly.  This is probably ok.
-    VERIFY(0 != ++dmsgq_next_num_);
+    ++dmsgq_next_num_;
+    RTC_DCHECK_NE(0, dmsgq_next_num_);
   }
   WakeUpSocketServer();
 }

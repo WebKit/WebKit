@@ -12,7 +12,7 @@
 
 #include <iostream>
 
-#include "webrtc/modules/audio_coding/codecs/builtin_audio_decoder_factory.h"
+#include "webrtc/api/audio_codecs/builtin_audio_decoder_factory.h"
 
 namespace webrtc {
 namespace test {

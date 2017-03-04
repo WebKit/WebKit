@@ -16,10 +16,14 @@
 #include "webrtc/base/buffer.h"
 #include "webrtc/base/checks.h"
 #include "webrtc/base/gunit.h"
+#include "webrtc/test/gmock.h"
 
 namespace rtc {
 
 namespace {
+
+using ::testing::ElementsAre;
+using ::testing::IsEmpty;
 
 template <typename T>
 void Call(ArrayView<T>) {}
@@ -40,15 +44,27 @@ TEST(ArrayViewTest, TestConstructFromPtrAndArray) {
   ArrayView<char> y = arr;
   EXPECT_EQ(6u, y.size());
   EXPECT_EQ(arr, y.data());
+  ArrayView<char, 6> yf = arr;
+  static_assert(yf.size() == 6, "");
+  EXPECT_EQ(arr, yf.data());
   ArrayView<const char> z(arr + 1, 3);
   EXPECT_EQ(3u, z.size());
   EXPECT_EQ(arr + 1, z.data());
+  ArrayView<const char, 3> zf(arr + 1, 3);
+  static_assert(zf.size() == 3, "");
+  EXPECT_EQ(arr + 1, zf.data());
   ArrayView<const char> w(arr, 2);
   EXPECT_EQ(2u, w.size());
   EXPECT_EQ(arr, w.data());
+  ArrayView<const char, 2> wf(arr, 2);
+  static_assert(wf.size() == 2, "");
+  EXPECT_EQ(arr, wf.data());
   ArrayView<char> q(arr, 0);
   EXPECT_EQ(0u, q.size());
   EXPECT_EQ(nullptr, q.data());
+  ArrayView<char, 0> qf(arr, 0);
+  static_assert(qf.size() == 0, "");
+  EXPECT_EQ(nullptr, qf.data());
 #if RTC_DCHECK_IS_ON && GTEST_HAS_DEATH_TEST && !defined(WEBRTC_ANDROID)
   // DCHECK error (nullptr with nonzero size).
   EXPECT_DEATH(ArrayView<int>(static_cast<int*>(nullptr), 5), "");
@@ -58,7 +74,7 @@ TEST(ArrayViewTest, TestConstructFromPtrAndArray) {
   // ArrayView<float> n(arr + 2, 2);
 }
 
-TEST(ArrayViewTest, TestCopyConstructor) {
+TEST(ArrayViewTest, TestCopyConstructorVariable) {
   char arr[] = "Arrr!";
   ArrayView<char> x = arr;
   EXPECT_EQ(6u, x.size());
@@ -75,7 +91,38 @@ TEST(ArrayViewTest, TestCopyConstructor) {
   // ArrayView<char> v = z;  // Compile error, because can't drop const.
 }
 
-TEST(ArrayViewTest, TestCopyAssignment) {
+TEST(ArrayViewTest, TestCopyConstructorFixed) {
+  char arr[] = "Arrr!";
+  ArrayView<char, 6> x = arr;
+  static_assert(x.size() == 6, "");
+  EXPECT_EQ(arr, x.data());
+
+  // Copy fixed -> fixed.
+  ArrayView<char, 6> y = x;  // Copy non-const -> non-const.
+  static_assert(y.size() == 6, "");
+  EXPECT_EQ(arr, y.data());
+  ArrayView<const char, 6> z = x;  // Copy non-const -> const.
+  static_assert(z.size() == 6, "");
+  EXPECT_EQ(arr, z.data());
+  ArrayView<const char, 6> w = z;  // Copy const -> const.
+  static_assert(w.size() == 6, "");
+  EXPECT_EQ(arr, w.data());
+  // ArrayView<char, 6> v = z;  // Compile error, because can't drop const.
+
+  // Copy fixed -> variable.
+  ArrayView<char> yv = x;  // Copy non-const -> non-const.
+  EXPECT_EQ(6u, yv.size());
+  EXPECT_EQ(arr, yv.data());
+  ArrayView<const char> zv = x;  // Copy non-const -> const.
+  EXPECT_EQ(6u, zv.size());
+  EXPECT_EQ(arr, zv.data());
+  ArrayView<const char> wv = z;  // Copy const -> const.
+  EXPECT_EQ(6u, wv.size());
+  EXPECT_EQ(arr, wv.data());
+  // ArrayView<char> vv = z;  // Compile error, because can't drop const.
+}
+
+TEST(ArrayViewTest, TestCopyAssignmentVariable) {
   char arr[] = "Arrr!";
   ArrayView<char> x(arr);
   EXPECT_EQ(6u, x.size());
@@ -92,6 +139,42 @@ TEST(ArrayViewTest, TestCopyAssignment) {
   w = z;  // Copy const -> const.
   EXPECT_EQ(6u, w.size());
   EXPECT_EQ(arr, w.data());
+  // ArrayView<char> v;
+  // v = z;  // Compile error, because can't drop const.
+}
+
+TEST(ArrayViewTest, TestCopyAssignmentFixed) {
+  char arr[] = "Arrr!";
+  char init[] = "Init!";
+  ArrayView<char, 6> x(arr);
+  EXPECT_EQ(arr, x.data());
+
+  // Copy fixed -> fixed.
+  ArrayView<char, 6> y(init);
+  y = x;  // Copy non-const -> non-const.
+  EXPECT_EQ(arr, y.data());
+  ArrayView<const char, 6> z(init);
+  z = x;  // Copy non-const -> const.
+  EXPECT_EQ(arr, z.data());
+  ArrayView<const char, 6> w(init);
+  w = z;  // Copy const -> const.
+  EXPECT_EQ(arr, w.data());
+  // ArrayView<char, 6> v(init);
+  // v = z;  // Compile error, because can't drop const.
+
+  // Copy fixed -> variable.
+  ArrayView<char> yv;
+  yv = x;  // Copy non-const -> non-const.
+  EXPECT_EQ(6u, yv.size());
+  EXPECT_EQ(arr, yv.data());
+  ArrayView<const char> zv;
+  zv = x;  // Copy non-const -> const.
+  EXPECT_EQ(6u, zv.size());
+  EXPECT_EQ(arr, zv.data());
+  ArrayView<const char> wv;
+  wv = z;  // Copy const -> const.
+  EXPECT_EQ(6u, wv.size());
+  EXPECT_EQ(arr, wv.data());
   // ArrayView<char> v;
   // v = z;  // Compile error, because can't drop const.
 }
@@ -142,7 +225,7 @@ TEST(ArrayViewTest, TestRtcBuffer) {
   // ArrayView<uint8_t> w = cb;  // Compile error, because can't drop const.
 }
 
-TEST(ArrayViewTest, TestSwap) {
+TEST(ArrayViewTest, TestSwapVariable) {
   const char arr[] = "Arrr!";
   const char aye[] = "Aye, Cap'n!";
   ArrayView<const char> x(arr);
@@ -161,11 +244,28 @@ TEST(ArrayViewTest, TestSwap) {
   // swap(x, z);  // Compile error, because can't drop const.
 }
 
+TEST(FixArrayViewTest, TestSwapFixed) {
+  const char arr[] = "Arr!";
+  char aye[] = "Aye!";
+  ArrayView<const char, 5> x(arr);
+  EXPECT_EQ(arr, x.data());
+  ArrayView<const char, 5> y(aye);
+  EXPECT_EQ(aye, y.data());
+  using std::swap;
+  swap(x, y);
+  EXPECT_EQ(aye, x.data());
+  EXPECT_EQ(arr, y.data());
+  // ArrayView<char, 5> z(aye);
+  // swap(x, z);  // Compile error, because can't drop const.
+  // ArrayView<const char, 4> w(aye, 4);
+  // swap(x, w);  // Compile error, because different sizes.
+}
+
 TEST(ArrayViewTest, TestIndexing) {
   char arr[] = "abcdefg";
   ArrayView<char> x(arr);
   const ArrayView<char> y(arr);
-  ArrayView<const char> z(arr);
+  ArrayView<const char, 8> z(arr);
   EXPECT_EQ(8u, x.size());
   EXPECT_EQ(8u, y.size());
   EXPECT_EQ(8u, z.size());
@@ -184,18 +284,26 @@ TEST(ArrayViewTest, TestIndexing) {
 }
 
 TEST(ArrayViewTest, TestIterationEmpty) {
+  // Variable-size.
   ArrayView<std::vector<std::vector<std::vector<std::string>>>> av;
-  EXPECT_FALSE(av.begin());
-  EXPECT_FALSE(av.cbegin());
-  EXPECT_FALSE(av.end());
-  EXPECT_FALSE(av.cend());
+  EXPECT_EQ(av.begin(), av.end());
+  EXPECT_EQ(av.cbegin(), av.cend());
   for (auto& e : av) {
+    EXPECT_TRUE(false);
+    EXPECT_EQ(42u, e.size());  // Dummy use of e to prevent unused var warning.
+  }
+
+  // Fixed-size.
+  ArrayView<std::vector<std::vector<std::vector<std::string>>>, 0> af;
+  EXPECT_EQ(af.begin(), af.end());
+  EXPECT_EQ(af.cbegin(), af.cend());
+  for (auto& e : af) {
     EXPECT_TRUE(false);
     EXPECT_EQ(42u, e.size());  // Dummy use of e to prevent unused var warning.
   }
 }
 
-TEST(ArrayViewTest, TestIteration) {
+TEST(ArrayViewTest, TestIterationVariable) {
   char arr[] = "Arrr!";
   ArrayView<char> av(arr);
   EXPECT_EQ('A', *av.begin());
@@ -216,20 +324,88 @@ TEST(ArrayViewTest, TestIteration) {
   }
 }
 
+TEST(ArrayViewTest, TestIterationFixed) {
+  char arr[] = "Arrr!";
+  ArrayView<char, 6> av(arr);
+  EXPECT_EQ('A', *av.begin());
+  EXPECT_EQ('A', *av.cbegin());
+  EXPECT_EQ('\0', *(av.end() - 1));
+  EXPECT_EQ('\0', *(av.cend() - 1));
+  char i = 0;
+  for (auto& e : av) {
+    EXPECT_EQ(arr + i, &e);
+    e = 's' + i;
+    ++i;
+  }
+  i = 0;
+  for (auto& e : ArrayView<const char, 6>(av)) {
+    EXPECT_EQ(arr + i, &e);
+    // e = 'q' + i;  // Compile error, because e is a const char&.
+    ++i;
+  }
+}
+
 TEST(ArrayViewTest, TestEmpty) {
   EXPECT_TRUE(ArrayView<int>().empty());
   const int a[] = {1, 2, 3};
   EXPECT_FALSE(ArrayView<const int>(a).empty());
+
+  static_assert(ArrayView<int, 0>::empty(), "");
+  static_assert(!ArrayView<int, 3>::empty(), "");
 }
 
 TEST(ArrayViewTest, TestCompare) {
   int a[] = {1, 2, 3};
   int b[] = {1, 2, 3};
+
   EXPECT_EQ(ArrayView<int>(a), ArrayView<int>(a));
+  EXPECT_EQ((ArrayView<int, 3>(a)), (ArrayView<int, 3>(a)));
+  EXPECT_EQ(ArrayView<int>(a), (ArrayView<int, 3>(a)));
   EXPECT_EQ(ArrayView<int>(), ArrayView<int>());
+  EXPECT_EQ(ArrayView<int>(), ArrayView<int>(a, 0));
+  EXPECT_EQ(ArrayView<int>(a, 0), ArrayView<int>(b, 0));
+  EXPECT_EQ((ArrayView<int, 0>(a, 0)), ArrayView<int>());
+
   EXPECT_NE(ArrayView<int>(a), ArrayView<int>(b));
+  EXPECT_NE((ArrayView<int, 3>(a)), (ArrayView<int, 3>(b)));
+  EXPECT_NE((ArrayView<int, 3>(a)), ArrayView<int>(b));
   EXPECT_NE(ArrayView<int>(a), ArrayView<int>());
   EXPECT_NE(ArrayView<int>(a), ArrayView<int>(a, 2));
+  EXPECT_NE((ArrayView<int, 3>(a)), (ArrayView<int, 2>(a, 2)));
+}
+
+TEST(ArrayViewTest, TestSubViewVariable) {
+  int a[] = {1, 2, 3};
+  ArrayView<int> av(a);
+
+  EXPECT_EQ(av.subview(0), av);
+
+  EXPECT_THAT(av.subview(1), ElementsAre(2, 3));
+  EXPECT_THAT(av.subview(2), ElementsAre(3));
+  EXPECT_THAT(av.subview(3), IsEmpty());
+  EXPECT_THAT(av.subview(4), IsEmpty());
+
+  EXPECT_THAT(av.subview(1, 0), IsEmpty());
+  EXPECT_THAT(av.subview(1, 1), ElementsAre(2));
+  EXPECT_THAT(av.subview(1, 2), ElementsAre(2, 3));
+  EXPECT_THAT(av.subview(1, 3), ElementsAre(2, 3));
+}
+
+TEST(ArrayViewTest, TestSubViewFixed) {
+  int a[] = {1, 2, 3};
+  ArrayView<int, 3> av(a);
+
+  EXPECT_EQ(av.subview(0), av);
+
+  EXPECT_THAT(av.subview(1), ElementsAre(2, 3));
+  EXPECT_THAT(av.subview(2), ElementsAre(3));
+  EXPECT_THAT(av.subview(3), IsEmpty());
+  EXPECT_THAT(av.subview(4), IsEmpty());
+
+  EXPECT_THAT(av.subview(1, 0), IsEmpty());
+  EXPECT_THAT(av.subview(1, 1), ElementsAre(2));
+  EXPECT_THAT(av.subview(1, 2), ElementsAre(2, 3));
+  EXPECT_THAT(av.subview(1, 3), ElementsAre(2, 3));
 }
 
 }  // namespace rtc

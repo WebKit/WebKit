@@ -19,6 +19,7 @@
 namespace cricket {
 struct StreamParams;
 
+// TODO(sprang): Remove this, as we're moving away from temporal layer mode.
 // Config for use with screen cast when temporal layers are enabled.
 struct ScreenshareLayerConfig {
  public:
@@ -45,12 +46,16 @@ int GetTotalMaxBitrateBps(const std::vector<webrtc::VideoStream>& streams);
 void GetSimulcastSsrcs(const StreamParams& sp, std::vector<uint32_t>* ssrcs);
 
 // Get simulcast settings.
+// TODO(sprang): Remove default parameter when it's not longer referenced.
 std::vector<webrtc::VideoStream> GetSimulcastConfig(size_t max_streams,
                                                     int width,
                                                     int height,
                                                     int max_bitrate_bps,
                                                     int max_qp,
-                                                    int max_framerate);
+                                                    int max_framerate,
+                                                    bool is_screencast = false);
+
+bool UseSimulcastScreenshare();
 
 }  // namespace cricket
 

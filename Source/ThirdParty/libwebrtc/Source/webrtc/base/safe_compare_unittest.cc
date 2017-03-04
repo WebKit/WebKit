@@ -376,4 +376,19 @@ TEST(SafeCmpTest, Ge) {
   EXPECT_TRUE(safe_cmp::Ge(p2, p2));
 }
 
+TEST(SafeCmpTest, Enum) {
+  enum E1 { e1 = 13 };
+  enum { e2 = 13 };
+  enum E3 : unsigned { e3 = 13 };
+  enum : unsigned { e4 = 13 };
+  EXPECT_TRUE(safe_cmp::Eq(13, e1));
+  EXPECT_TRUE(safe_cmp::Eq(13u, e1));
+  EXPECT_TRUE(safe_cmp::Eq(13, e2));
+  EXPECT_TRUE(safe_cmp::Eq(13u, e2));
+  EXPECT_TRUE(safe_cmp::Eq(13, e3));
+  EXPECT_TRUE(safe_cmp::Eq(13u, e3));
+  EXPECT_TRUE(safe_cmp::Eq(13, e4));
+  EXPECT_TRUE(safe_cmp::Eq(13u, e4));
+}
+
 }  // namespace rtc

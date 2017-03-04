@@ -76,7 +76,7 @@ TestClient::Packet* TestClient::NextPacket(int timeout_ms) {
   }
 
   // Return the first packet placed in the queue.
-  Packet* packet = NULL;
+  Packet* packet = nullptr;
   CritScope cs(&crit_);
   if (packets_->size() > 0) {
     packet = packets_->front();
@@ -117,7 +117,7 @@ bool TestClient::CheckTimestamp(int64_t packet_timestamp) {
 bool TestClient::CheckNoPacket() {
   bool res;
   Packet* packet = NextPacket(kNoPacketTimeoutMs);
-  res = (packet == NULL);
+  res = (packet == nullptr);
   delete packet;
   return res;
 }

@@ -38,7 +38,6 @@ MediaOptimization::MediaOptimization(Clock* clock)
       codec_height_(0),
       user_frame_rate_(0),
       frame_dropper_(new FrameDropper),
-      fraction_lost_(0),
       send_statistics_zero_encode_(0),
       max_payload_size_(1460),
       video_target_bitrate_(0),
@@ -105,20 +104,8 @@ void MediaOptimization::SetEncodingDataInternal(int32_t max_bit_rate,
   max_payload_size_ = mtu;
 }
 
-uint32_t MediaOptimization::SetTargetRates(uint32_t target_bitrate,
-                                           uint8_t fraction_lost,
-                                           int64_t round_trip_time_ms) {
+uint32_t MediaOptimization::SetTargetRates(uint32_t target_bitrate) {
   CriticalSectionScoped lock(crit_sect_.get());
-
-  // Get frame rate for encoder: this is the actual/sent frame rate.
-  float actual_frame_rate = SentFrameRateInternal();
-
-  // Sanity check.
-  if (actual_frame_rate < 1.0) {
-    actual_frame_rate = 1.0;
-  }
-
-  fraction_lost_ = fraction_lost;
 
   video_target_bitrate_ = target_bitrate;
 

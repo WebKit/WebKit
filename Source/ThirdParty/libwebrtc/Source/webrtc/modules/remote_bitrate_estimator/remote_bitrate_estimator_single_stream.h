@@ -52,6 +52,10 @@ class RemoteBitrateEstimatorSingleStream : public RemoteBitrateEstimator {
   void GetSsrcs(std::vector<uint32_t>* ssrcs) const
       SHARED_LOCKS_REQUIRED(crit_sect_.get());
 
+  // Returns |remote_rate_| if the pointed to object exists,
+  // otherwise creates it.
+  AimdRateControl* GetRemoteRate() EXCLUSIVE_LOCKS_REQUIRED(crit_sect_.get());
+
   Clock* clock_;
   SsrcOveruseEstimatorMap overuse_detectors_ GUARDED_BY(crit_sect_.get());
   RateStatistics incoming_bitrate_ GUARDED_BY(crit_sect_.get());

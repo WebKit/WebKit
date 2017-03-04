@@ -16,7 +16,7 @@
 #import <Foundation/NSProcessInfo.h>
 #include <string.h>
 
-#include "webrtc/base/common.h"
+#include "webrtc/base/checks.h"
 #include "webrtc/base/pathutils.h"
 
 // Return a new[]'d |char*| copy of the UTF8 representation of |s|.
@@ -36,7 +36,7 @@ static char* copyString(NSString* s) {
 char* AppleDataDirectory() {
   NSArray* paths = NSSearchPathForDirectoriesInDomains(
       NSApplicationSupportDirectory, NSUserDomainMask, YES);
-  ASSERT([paths count] == 1);
+  RTC_DCHECK([paths count] == 1);
   return copyString([paths objectAtIndex:0]);
 }
 

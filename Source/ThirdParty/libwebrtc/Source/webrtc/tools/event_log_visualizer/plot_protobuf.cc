@@ -38,6 +38,8 @@ void ProtobufPlot::ExportProtobuf(webrtc::analytics::Chart* chart) {
     } else if (series_list_[i].style == LINE_DOT_GRAPH) {
       data_set->set_style(webrtc::analytics::ChartStyle::LINE_CHART);
       data_set->set_highlight_points(true);
+    } else if (series_list_[i].style == LINE_STEP_GRAPH) {
+      data_set->set_style(webrtc::analytics::ChartStyle::LINE_STEP_CHART);
     } else {
       data_set->set_style(webrtc::analytics::ChartStyle::UNDEFINED);
     }

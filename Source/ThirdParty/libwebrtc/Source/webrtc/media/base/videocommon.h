@@ -13,9 +13,10 @@
 #ifndef WEBRTC_MEDIA_BASE_VIDEOCOMMON_H_  // NOLINT
 #define WEBRTC_MEDIA_BASE_VIDEOCOMMON_H_
 
+#include <stdint.h>
+
 #include <string>
 
-#include "webrtc/base/basictypes.h"
 #include "webrtc/base/timeutils.h"
 
 namespace cricket {

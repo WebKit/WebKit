@@ -17,11 +17,13 @@
 #include "webrtc/base/array_view.h"
 #include "webrtc/base/buffer.h"
 #include "webrtc/base/deprecation.h"
+#include "webrtc/base/optional.h"
 #include "webrtc/typedefs.h"
 
 namespace webrtc {
 
 class Clock;
+class RtcEventLog;
 
 // This is the interface class for encoders in AudioCoding module. Each codec
 // type must have an implementation of this class.
@@ -144,16 +146,12 @@ class AudioEncoder {
   // implementation does nothing.
   virtual void SetMaxPlaybackRate(int frequency_hz);
 
-  // Tells the encoder what the projected packet loss rate is. The rate is in
-  // the range [0.0, 1.0]. The encoder would typically use this information to
-  // adjust channel coding efforts, such as FEC. The default implementation
-  // does nothing.
-  virtual void SetProjectedPacketLossRate(double fraction);
-
+  // This is to be deprecated. Please use |OnReceivedTargetAudioBitrate|
+  // instead.
   // Tells the encoder what average bitrate we'd like it to produce. The
   // encoder is free to adjust or disregard the given bitrate (the default
   // implementation does the latter).
-  virtual void SetTargetBitrate(int target_bps);
+  RTC_DEPRECATED virtual void SetTargetBitrate(int target_bps);
 
   // Causes this encoder to let go of any other encoders it contains, and
   // returns a pointer to an array where they are stored (which is required to
@@ -166,23 +164,32 @@ class AudioEncoder {
 
   // Enables audio network adaptor. Returns true if successful.
   virtual bool EnableAudioNetworkAdaptor(const std::string& config_string,
+                                         RtcEventLog* event_log,
                                          const Clock* clock);
 
   // Disables audio network adaptor.
   virtual void DisableAudioNetworkAdaptor();
 
-  // Provides uplink bandwidth to this encoder to allow it to adapt.
-  virtual void OnReceivedUplinkBandwidth(int uplink_bandwidth_bps);
-
   // Provides uplink packet loss fraction to this encoder to allow it to adapt.
+  // |uplink_packet_loss_fraction| is in the range [0.0, 1.0].
   virtual void OnReceivedUplinkPacketLossFraction(
       float uplink_packet_loss_fraction);
 
   // Provides target audio bitrate to this encoder to allow it to adapt.
-  virtual void OnReceivedTargetAudioBitrate(int target_audio_bitrate_bps);
+  virtual void OnReceivedTargetAudioBitrate(int target_bps);
+
+  // Provides target audio bitrate and corresponding probing interval of
+  // the bandwidth estimator to this encoder to allow it to adapt.
+  virtual void OnReceivedUplinkBandwidth(
+      int target_audio_bitrate_bps,
+      rtc::Optional<int64_t> probing_interval_ms);
 
   // Provides RTT to this encoder to allow it to adapt.
   virtual void OnReceivedRtt(int rtt_ms);
+
+  // Provides overhead to this encoder to adapt. The overhead is the number of
+  // bytes that will be added to each packet the encoder generates.
+  virtual void OnReceivedOverhead(size_t overhead_bytes_per_packet);
 
   // To allow encoder to adapt its frame length, it must be provided the frame
   // length range that receivers can accept.

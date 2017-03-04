@@ -27,10 +27,9 @@ namespace rtc {
 #if defined(WEBRTC_WIN)
 
 Event::Event(bool manual_reset, bool initially_signaled) {
-  event_handle_ = ::CreateEvent(NULL,                 // Security attributes.
-                                manual_reset,
-                                initially_signaled,
-                                NULL);                // Name.
+  event_handle_ = ::CreateEvent(nullptr,  // Security attributes.
+                                manual_reset, initially_signaled,
+                                nullptr);  // Name.
   RTC_CHECK(event_handle_);
 }
 
@@ -56,8 +55,8 @@ bool Event::Wait(int milliseconds) {
 Event::Event(bool manual_reset, bool initially_signaled)
     : is_manual_reset_(manual_reset),
       event_status_(initially_signaled) {
-  RTC_CHECK(pthread_mutex_init(&event_mutex_, NULL) == 0);
-  RTC_CHECK(pthread_cond_init(&event_cond_, NULL) == 0);
+  RTC_CHECK(pthread_mutex_init(&event_mutex_, nullptr) == 0);
+  RTC_CHECK(pthread_cond_init(&event_cond_, nullptr) == 0);
 }
 
 Event::~Event() {
@@ -93,7 +92,7 @@ bool Event::Wait(int milliseconds) {
     ts.tv_nsec = (milliseconds % 1000) * 1000000;
 #else
     struct timeval tv;
-    gettimeofday(&tv, NULL);
+    gettimeofday(&tv, nullptr);
 
     ts.tv_sec = tv.tv_sec + (milliseconds / 1000);
     ts.tv_nsec = tv.tv_usec * 1000 + (milliseconds % 1000) * 1000000;

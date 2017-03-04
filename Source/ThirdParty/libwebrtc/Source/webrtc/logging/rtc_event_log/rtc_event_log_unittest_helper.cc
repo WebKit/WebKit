@@ -16,7 +16,6 @@
 
 #include "webrtc/base/checks.h"
 #include "webrtc/test/gtest.h"
-#include "webrtc/test/test_suite.h"
 #include "webrtc/test/testsupport/fileutils.h"
 
 // Files generated at build-time by the protobuf compiler.
@@ -43,6 +42,34 @@ MediaType GetRuntimeMediaType(rtclog::MediaType media_type) {
   RTC_NOTREACHED();
   return MediaType::ANY;
 }
+
+BandwidthUsage GetRuntimeDetectorState(
+    rtclog::DelayBasedBweUpdate::DetectorState detector_state) {
+  switch (detector_state) {
+    case rtclog::DelayBasedBweUpdate::BWE_NORMAL:
+      return kBwNormal;
+    case rtclog::DelayBasedBweUpdate::BWE_UNDERUSING:
+      return kBwUnderusing;
+    case rtclog::DelayBasedBweUpdate::BWE_OVERUSING:
+      return kBwOverusing;
+  }
+  RTC_NOTREACHED();
+  return kBwNormal;
+}
+
+rtclog::BweProbeResult::ResultType GetProbeResultType(
+    ProbeFailureReason failure_reason) {
+  switch (failure_reason) {
+    case kInvalidSendReceiveInterval:
+      return rtclog::BweProbeResult::INVALID_SEND_RECEIVE_INTERVAL;
+    case kInvalidSendReceiveRatio:
+      return rtclog::BweProbeResult::INVALID_SEND_RECEIVE_RATIO;
+    case kTimeout:
+      return rtclog::BweProbeResult::TIMEOUT;
+  }
+  RTC_NOTREACHED();
+  return rtclog::BweProbeResult::SUCCESS;
+}
 }  // namespace
 
 // Checks that the event has a timestamp, a type and exactly the data field
@@ -64,6 +91,19 @@ MediaType GetRuntimeMediaType(rtclog::MediaType media_type) {
     return ::testing::AssertionFailure()
            << "Event of type " << type << " has "
            << (event.has_rtcp_packet() ? "" : "no ") << "RTCP packet";
+  }
+  if ((type == rtclog::Event::LOSS_BASED_BWE_UPDATE) !=
+      event.has_loss_based_bwe_update()) {
+    return ::testing::AssertionFailure()
+           << "Event of type " << type << " has "
+           << (event.has_loss_based_bwe_update() ? "" : "no ") << "loss update";
+  }
+  if ((type == rtclog::Event::DELAY_BASED_BWE_UPDATE) !=
+      event.has_delay_based_bwe_update()) {
+    return ::testing::AssertionFailure()
+           << "Event of type " << type << " has "
+           << (event.has_delay_based_bwe_update() ? "" : "no ")
+           << "delay update";
   }
   if ((type == rtclog::Event::AUDIO_PLAYOUT_EVENT) !=
       event.has_audio_playout_event()) {
@@ -99,6 +139,25 @@ MediaType GetRuntimeMediaType(rtclog::MediaType media_type) {
            << (event.has_audio_sender_config() ? "" : "no ")
            << "audio sender config";
   }
+  if ((type == rtclog::Event::AUDIO_NETWORK_ADAPTATION_EVENT) !=
+      event.has_audio_network_adaptation()) {
+    return ::testing::AssertionFailure()
+           << "Event of type " << type << " has "
+           << (event.has_audio_network_adaptation() ? "" : "no ")
+           << "audio network adaptation";
+  }
+  if ((type == rtclog::Event::BWE_PROBE_CLUSTER_CREATED_EVENT) !=
+      event.has_probe_cluster()) {
+    return ::testing::AssertionFailure()
+           << "Event of type " << type << " has "
+           << (event.has_probe_cluster() ? "" : "no ") << "bwe probe cluster";
+  }
+  if ((type == rtclog::Event::BWE_PROBE_RESULT_EVENT) !=
+      event.has_probe_result()) {
+    return ::testing::AssertionFailure()
+           << "Event of type " << type << " has "
+           << (event.has_probe_result() ? "" : "no ") << "bwe probe result";
+  }
   return ::testing::AssertionSuccess();
 }
 
@@ -128,19 +187,18 @@ void RtcEventLogTestHelper::VerifyVideoReceiveStreamConfig(
   ASSERT_TRUE(receiver_config.has_remb());
   EXPECT_EQ(config.rtp.remb, receiver_config.remb());
   // Check RTX map.
-  ASSERT_EQ(static_cast<int>(config.rtp.rtx.size()),
+  ASSERT_EQ(static_cast<int>(config.rtp.rtx_payload_types.size()),
             receiver_config.rtx_map_size());
   for (const rtclog::RtxMap& rtx_map : receiver_config.rtx_map()) {
     ASSERT_TRUE(rtx_map.has_payload_type());
     ASSERT_TRUE(rtx_map.has_config());
-    EXPECT_EQ(1u, config.rtp.rtx.count(rtx_map.payload_type()));
+    EXPECT_EQ(1u, config.rtp.rtx_payload_types.count(rtx_map.payload_type()));
     const rtclog::RtxConfig& rtx_config = rtx_map.config();
-    const VideoReceiveStream::Config::Rtp::Rtx& rtx =
-        config.rtp.rtx.at(rtx_map.payload_type());
     ASSERT_TRUE(rtx_config.has_rtx_ssrc());
     ASSERT_TRUE(rtx_config.has_rtx_payload_type());
-    EXPECT_EQ(rtx.ssrc, rtx_config.rtx_ssrc());
-    EXPECT_EQ(rtx.payload_type, rtx_config.rtx_payload_type());
+    EXPECT_EQ(config.rtp.rtx_ssrc, rtx_config.rtx_ssrc());
+    EXPECT_EQ(config.rtp.rtx_payload_types.at(rtx_map.payload_type()),
+              rtx_config.rtx_payload_type());
   }
   // Check header extensions.
   ASSERT_EQ(static_cast<int>(config.rtp.extensions.size()),
@@ -174,12 +232,13 @@ void RtcEventLogTestHelper::VerifyVideoReceiveStreamConfig(
   EXPECT_EQ(config.rtp.rtcp_mode, parsed_config.rtp.rtcp_mode);
   EXPECT_EQ(config.rtp.remb, parsed_config.rtp.remb);
   // Check RTX map.
-  EXPECT_EQ(config.rtp.rtx.size(), parsed_config.rtp.rtx.size());
-  for (const auto& kv : config.rtp.rtx) {
-    auto parsed_kv = parsed_config.rtp.rtx.find(kv.first);
+  EXPECT_EQ(config.rtp.rtx_ssrc, parsed_config.rtp.rtx_ssrc);
+  EXPECT_EQ(config.rtp.rtx_payload_types.size(),
+            parsed_config.rtp.rtx_payload_types.size());
+  for (const auto& kv : config.rtp.rtx_payload_types) {
+    auto parsed_kv = parsed_config.rtp.rtx_payload_types.find(kv.first);
     EXPECT_EQ(kv.first, parsed_kv->first);
-    EXPECT_EQ(kv.second.ssrc, parsed_kv->second.ssrc);
-    EXPECT_EQ(kv.second.payload_type, parsed_kv->second.payload_type);
+    EXPECT_EQ(kv.second, parsed_kv->second);
   }
   // Check header extensions.
   EXPECT_EQ(config.rtp.extensions.size(), parsed_config.rtp.extensions.size());
@@ -442,10 +501,10 @@ void RtcEventLogTestHelper::VerifyBweLossEvent(
     int32_t total_packets) {
   const rtclog::Event& event = parsed_log.events_[index];
   ASSERT_TRUE(IsValidBasicEvent(event));
-  ASSERT_EQ(rtclog::Event::BWE_PACKET_LOSS_EVENT, event.type());
-  const rtclog::BwePacketLossEvent& bwe_event = event.bwe_packet_loss_event();
-  ASSERT_TRUE(bwe_event.has_bitrate());
-  EXPECT_EQ(bitrate, bwe_event.bitrate());
+  ASSERT_EQ(rtclog::Event::LOSS_BASED_BWE_UPDATE, event.type());
+  const rtclog::LossBasedBweUpdate& bwe_event = event.loss_based_bwe_update();
+  ASSERT_TRUE(bwe_event.has_bitrate_bps());
+  EXPECT_EQ(bitrate, bwe_event.bitrate_bps());
   ASSERT_TRUE(bwe_event.has_fraction_loss());
   EXPECT_EQ(fraction_loss, bwe_event.fraction_loss());
   ASSERT_TRUE(bwe_event.has_total_packets());
@@ -455,11 +514,50 @@ void RtcEventLogTestHelper::VerifyBweLossEvent(
   int32_t parsed_bitrate;
   uint8_t parsed_fraction_loss;
   int32_t parsed_total_packets;
-  parsed_log.GetBwePacketLossEvent(
+  parsed_log.GetLossBasedBweUpdate(
       index, &parsed_bitrate, &parsed_fraction_loss, &parsed_total_packets);
   EXPECT_EQ(bitrate, parsed_bitrate);
   EXPECT_EQ(fraction_loss, parsed_fraction_loss);
   EXPECT_EQ(total_packets, parsed_total_packets);
+}
+
+void RtcEventLogTestHelper::VerifyBweDelayEvent(
+    const ParsedRtcEventLog& parsed_log,
+    size_t index,
+    int32_t bitrate,
+    BandwidthUsage detector_state) {
+  const rtclog::Event& event = parsed_log.events_[index];
+  ASSERT_TRUE(IsValidBasicEvent(event));
+  ASSERT_EQ(rtclog::Event::DELAY_BASED_BWE_UPDATE, event.type());
+  const rtclog::DelayBasedBweUpdate& bwe_event = event.delay_based_bwe_update();
+  ASSERT_TRUE(bwe_event.has_bitrate_bps());
+  EXPECT_EQ(bitrate, bwe_event.bitrate_bps());
+  ASSERT_TRUE(bwe_event.has_detector_state());
+  EXPECT_EQ(detector_state,
+            GetRuntimeDetectorState(bwe_event.detector_state()));
+
+  // Check consistency of the parser.
+  int32_t parsed_bitrate;
+  BandwidthUsage parsed_detector_state;
+  parsed_log.GetDelayBasedBweUpdate(index, &parsed_bitrate,
+                                    &parsed_detector_state);
+  EXPECT_EQ(bitrate, parsed_bitrate);
+  EXPECT_EQ(detector_state, parsed_detector_state);
+}
+
+void RtcEventLogTestHelper::VerifyAudioNetworkAdaptation(
+    const ParsedRtcEventLog& parsed_log,
+    size_t index,
+    const AudioNetworkAdaptor::EncoderRuntimeConfig& config) {
+  AudioNetworkAdaptor::EncoderRuntimeConfig parsed_config;
+  parsed_log.GetAudioNetworkAdaptation(index, &parsed_config);
+  EXPECT_EQ(config.bitrate_bps, parsed_config.bitrate_bps);
+  EXPECT_EQ(config.enable_dtx, parsed_config.enable_dtx);
+  EXPECT_EQ(config.enable_fec, parsed_config.enable_fec);
+  EXPECT_EQ(config.frame_length_ms, parsed_config.frame_length_ms);
+  EXPECT_EQ(config.num_channels, parsed_config.num_channels);
+  EXPECT_EQ(config.uplink_packet_loss_fraction,
+            parsed_config.uplink_packet_loss_fraction);
 }
 
 void RtcEventLogTestHelper::VerifyLogStartEvent(
@@ -476,6 +574,69 @@ void RtcEventLogTestHelper::VerifyLogEndEvent(
   const rtclog::Event& event = parsed_log.events_[index];
   ASSERT_TRUE(IsValidBasicEvent(event));
   EXPECT_EQ(rtclog::Event::LOG_END, event.type());
+}
+
+void RtcEventLogTestHelper::VerifyBweProbeCluster(
+    const ParsedRtcEventLog& parsed_log,
+    size_t index,
+    uint32_t id,
+    uint32_t bitrate_bps,
+    uint32_t min_probes,
+    uint32_t min_bytes) {
+  const rtclog::Event& event = parsed_log.events_[index];
+  ASSERT_TRUE(IsValidBasicEvent(event));
+  EXPECT_EQ(rtclog::Event::BWE_PROBE_CLUSTER_CREATED_EVENT, event.type());
+
+  const rtclog::BweProbeCluster& bwe_event = event.probe_cluster();
+  ASSERT_TRUE(bwe_event.has_id());
+  EXPECT_EQ(id, bwe_event.id());
+  ASSERT_TRUE(bwe_event.has_bitrate_bps());
+  EXPECT_EQ(bitrate_bps, bwe_event.bitrate_bps());
+  ASSERT_TRUE(bwe_event.has_min_packets());
+  EXPECT_EQ(min_probes, bwe_event.min_packets());
+  ASSERT_TRUE(bwe_event.has_min_bytes());
+  EXPECT_EQ(min_bytes, bwe_event.min_bytes());
+
+  // TODO(philipel): Verify the parser when parsing has been implemented.
+}
+
+void RtcEventLogTestHelper::VerifyProbeResultSuccess(
+    const ParsedRtcEventLog& parsed_log,
+    size_t index,
+    uint32_t id,
+    uint32_t bitrate_bps) {
+  const rtclog::Event& event = parsed_log.events_[index];
+  ASSERT_TRUE(IsValidBasicEvent(event));
+  EXPECT_EQ(rtclog::Event::BWE_PROBE_RESULT_EVENT, event.type());
+
+  const rtclog::BweProbeResult& bwe_event = event.probe_result();
+  ASSERT_TRUE(bwe_event.has_id());
+  EXPECT_EQ(id, bwe_event.id());
+  ASSERT_TRUE(bwe_event.has_bitrate_bps());
+  EXPECT_EQ(bitrate_bps, bwe_event.bitrate_bps());
+  ASSERT_TRUE(bwe_event.has_result());
+  EXPECT_EQ(rtclog::BweProbeResult::SUCCESS, bwe_event.result());
+
+  // TODO(philipel): Verify the parser when parsing has been implemented.
+}
+
+void RtcEventLogTestHelper::VerifyProbeResultFailure(
+    const ParsedRtcEventLog& parsed_log,
+    size_t index,
+    uint32_t id,
+    ProbeFailureReason failure_reason) {
+  const rtclog::Event& event = parsed_log.events_[index];
+  ASSERT_TRUE(IsValidBasicEvent(event));
+  EXPECT_EQ(rtclog::Event::BWE_PROBE_RESULT_EVENT, event.type());
+
+  const rtclog::BweProbeResult& bwe_event = event.probe_result();
+  ASSERT_TRUE(bwe_event.has_id());
+  EXPECT_EQ(id, bwe_event.id());
+  ASSERT_TRUE(bwe_event.has_result());
+  EXPECT_EQ(GetProbeResultType(failure_reason), bwe_event.result());
+  ASSERT_FALSE(bwe_event.has_bitrate_bps());
+
+  // TODO(philipel): Verify the parser when parsing has been implemented.
 }
 
 }  // namespace webrtc

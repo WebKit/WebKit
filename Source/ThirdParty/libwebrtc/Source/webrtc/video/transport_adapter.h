@@ -10,9 +10,9 @@
 #ifndef WEBRTC_VIDEO_TRANSPORT_ADAPTER_H_
 #define WEBRTC_VIDEO_TRANSPORT_ADAPTER_H_
 
+#include "webrtc/api/call/transport.h"
 #include "webrtc/common_types.h"
 #include "webrtc/system_wrappers/include/atomic32.h"
-#include "webrtc/transport.h"
 
 namespace webrtc {
 namespace internal {

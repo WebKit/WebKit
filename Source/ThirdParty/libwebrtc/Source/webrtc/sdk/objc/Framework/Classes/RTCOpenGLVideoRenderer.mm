@@ -13,7 +13,12 @@
 #import "RTCShader+Private.h"
 #import "WebRTC/RTCVideoFrame.h"
 
-@implementation RTCOpenGLVideoRenderer
+@implementation RTCOpenGLVideoRenderer {
+  GlContextType *_context;
+  BOOL _isInitialized;
+  id<RTCShader> _i420Shader;
+  id<RTCShader> _nv12Shader;
+}
 
 @synthesize lastDrawnFrame = _lastDrawnFrame;
 
@@ -43,16 +48,20 @@
       _nv12Shader = [[RTCNativeNV12Shader alloc] initWithContext:_context];
     }
     shader = _nv12Shader;
-#else
-  // Rendering native CVPixelBuffer is not supported on OS X.
-  if (false) {
-#endif
   } else {
     if (!_i420Shader) {
       _i420Shader = [[RTCI420Shader alloc] initWithContext:_context];
     }
     shader = _i420Shader;
   }
+#else
+  // Rendering native CVPixelBuffer is not supported on OS X.
+  frame = [frame newI420VideoFrame];
+  if (!_i420Shader) {
+    _i420Shader = [[RTCI420Shader alloc] initWithContext:_context];
+  }
+  shader = _i420Shader;
+#endif
   if (!shader || ![shader drawFrame:frame]) {
     return NO;
   }

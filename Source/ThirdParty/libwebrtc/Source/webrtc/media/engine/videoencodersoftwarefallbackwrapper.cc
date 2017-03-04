@@ -11,26 +11,33 @@
 #include "webrtc/media/engine/videoencodersoftwarefallbackwrapper.h"
 
 #include "webrtc/base/logging.h"
+#include "webrtc/media/engine/internalencoderfactory.h"
 #include "webrtc/modules/video_coding/include/video_error_codes.h"
 
 namespace webrtc {
 
 VideoEncoderSoftwareFallbackWrapper::VideoEncoderSoftwareFallbackWrapper(
-    VideoCodecType codec_type,
+    const cricket::VideoCodec& codec,
     webrtc::VideoEncoder* encoder)
-    : rates_set_(false),
+    : number_of_cores_(0),
+      max_payload_size_(0),
+      rates_set_(false),
+      framerate_(0),
       channel_parameters_set_(false),
-      encoder_type_(CodecToEncoderType(codec_type)),
+      packet_loss_(0),
+      rtt_(0),
+      codec_(codec),
       encoder_(encoder),
       callback_(nullptr) {}
 
 bool VideoEncoderSoftwareFallbackWrapper::InitFallbackEncoder() {
-  if (!VideoEncoder::IsSupportedSoftware(encoder_type_)) {
+  cricket::InternalEncoderFactory internal_factory;
+  if (!FindMatchingCodec(internal_factory.supported_codecs(), codec_)) {
     LOG(LS_WARNING)
         << "Encoder requesting fallback to codec not supported in software.";
     return false;
   }
-  fallback_encoder_.reset(VideoEncoder::Create(encoder_type_));
+  fallback_encoder_.reset(internal_factory.CreateVideoEncoder(codec_));
   if (fallback_encoder_->InitEncode(&codec_settings_, number_of_cores_,
                                     max_payload_size_) !=
       WEBRTC_VIDEO_CODEC_OK) {
@@ -43,7 +50,7 @@ bool VideoEncoderSoftwareFallbackWrapper::InitFallbackEncoder() {
   if (callback_)
     fallback_encoder_->RegisterEncodeCompleteCallback(callback_);
   if (rates_set_)
-    fallback_encoder_->SetRates(bitrate_, framerate_);
+    fallback_encoder_->SetRateAllocation(bitrate_allocation_, framerate_);
   if (channel_parameters_set_)
     fallback_encoder_->SetChannelParameters(packet_loss_, rtt_);
 
@@ -72,7 +79,7 @@ int32_t VideoEncoderSoftwareFallbackWrapper::InitEncode(
 
   int32_t ret =
       encoder_->InitEncode(codec_settings, number_of_cores, max_payload_size);
-  if (ret == WEBRTC_VIDEO_CODEC_OK || encoder_type_ == kUnsupportedCodec) {
+  if (ret == WEBRTC_VIDEO_CODEC_OK || codec_.name.empty()) {
     if (fallback_encoder_)
       fallback_encoder_->Release();
     fallback_encoder_.reset();
@@ -140,27 +147,33 @@ int32_t VideoEncoderSoftwareFallbackWrapper::SetChannelParameters(
   return ret;
 }
 
-int32_t VideoEncoderSoftwareFallbackWrapper::SetRates(uint32_t bitrate,
-                                                      uint32_t framerate) {
+int32_t VideoEncoderSoftwareFallbackWrapper::SetRateAllocation(
+    const BitrateAllocation& bitrate_allocation,
+    uint32_t framerate) {
   rates_set_ = true;
-  bitrate_ = bitrate;
+  bitrate_allocation_ = bitrate_allocation;
   framerate_ = framerate;
-  int32_t ret = encoder_->SetRates(bitrate, framerate);
+  int32_t ret = encoder_->SetRateAllocation(bitrate_allocation_, framerate);
   if (fallback_encoder_)
-    return fallback_encoder_->SetRates(bitrate, framerate);
+    return fallback_encoder_->SetRateAllocation(bitrate_allocation_, framerate);
   return ret;
-}
-
-void VideoEncoderSoftwareFallbackWrapper::OnDroppedFrame() {
-  if (fallback_encoder_)
-    return fallback_encoder_->OnDroppedFrame();
-  return encoder_->OnDroppedFrame();
 }
 
 bool VideoEncoderSoftwareFallbackWrapper::SupportsNativeHandle() const {
   if (fallback_encoder_)
     return fallback_encoder_->SupportsNativeHandle();
   return encoder_->SupportsNativeHandle();
+}
+
+VideoEncoder::ScalingSettings
+VideoEncoderSoftwareFallbackWrapper::GetScalingSettings() const {
+  return encoder_->GetScalingSettings();
+}
+
+const char *VideoEncoderSoftwareFallbackWrapper::ImplementationName() const {
+  if (fallback_encoder_)
+    return fallback_encoder_->ImplementationName();
+  return encoder_->ImplementationName();
 }
 
 }  // namespace webrtc

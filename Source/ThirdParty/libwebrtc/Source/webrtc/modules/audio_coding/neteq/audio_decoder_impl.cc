@@ -21,12 +21,12 @@
 #include "webrtc/modules/audio_coding/codecs/ilbc/audio_decoder_ilbc.h"
 #endif
 #ifdef WEBRTC_CODEC_ISACFX
-#include "webrtc/modules/audio_coding/codecs/isac/fix/include/audio_decoder_isacfix.h"
-#include "webrtc/modules/audio_coding/codecs/isac/fix/include/audio_encoder_isacfix.h"
+#include "webrtc/modules/audio_coding/codecs/isac/fix/include/audio_decoder_isacfix.h"  // nogncheck
+#include "webrtc/modules/audio_coding/codecs/isac/fix/include/audio_encoder_isacfix.h"  // nogncheck
 #endif
 #ifdef WEBRTC_CODEC_ISAC
-#include "webrtc/modules/audio_coding/codecs/isac/main/include/audio_decoder_isac.h"
-#include "webrtc/modules/audio_coding/codecs/isac/main/include/audio_encoder_isac.h"
+#include "webrtc/modules/audio_coding/codecs/isac/main/include/audio_decoder_isac.h"  // nogncheck
+#include "webrtc/modules/audio_coding/codecs/isac/main/include/audio_encoder_isac.h"  // nogncheck
 #endif
 #ifdef WEBRTC_CODEC_OPUS
 #include "webrtc/modules/audio_coding/codecs/opus/audio_decoder_opus.h"
@@ -69,6 +69,9 @@ bool CodecSupported(NetEqDecoder codec_type) {
 #endif
     case NetEqDecoder::kDecoderRED:
     case NetEqDecoder::kDecoderAVT:
+    case NetEqDecoder::kDecoderAVT16kHz:
+    case NetEqDecoder::kDecoderAVT32kHz:
+    case NetEqDecoder::kDecoderAVT48kHz:
     case NetEqDecoder::kDecoderCNGnb:
     case NetEqDecoder::kDecoderCNGwb:
     case NetEqDecoder::kDecoderCNGswb32kHz:

@@ -10,6 +10,8 @@
 
 #include "webrtc/test/fake_decoder.h"
 
+#include "webrtc/api/video/i420_buffer.h"
+#include "webrtc/base/timeutils.h"
 #include "webrtc/test/gtest.h"
 
 namespace webrtc {

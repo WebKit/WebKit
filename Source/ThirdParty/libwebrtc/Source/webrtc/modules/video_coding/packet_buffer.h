@@ -48,9 +48,10 @@ class PacketBuffer {
 
   virtual ~PacketBuffer();
 
-  // Returns true if |packet| is inserted into the packet buffer,
-  // false otherwise. Made virtual for testing.
-  virtual bool InsertPacket(const VCMPacket& packet);
+  // Returns true if |packet| is inserted into the packet buffer, false
+  // otherwise. The PacketBuffer will always take ownership of the
+  // |packet.dataPtr| when this function is called. Made virtual for testing.
+  virtual bool InsertPacket(VCMPacket* packet);
   void ClearTo(uint16_t seq_num);
   void Clear();
 
@@ -124,9 +125,6 @@ class PacketBuffer {
 
   // The fist sequence number currently in the buffer.
   uint16_t first_seq_num_ GUARDED_BY(crit_);
-
-  // The last sequence number currently in the buffer.
-  uint16_t last_seq_num_ GUARDED_BY(crit_);
 
   // If the packet buffer has received its first packet.
   bool first_packet_received_ GUARDED_BY(crit_);

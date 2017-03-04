@@ -26,10 +26,10 @@ const PlatformFile kInvalidPlatformFileValue = INVALID_HANDLE_VALUE;
 
 FILE* FdopenPlatformFileForWriting(PlatformFile file) {
   if (file == kInvalidPlatformFileValue)
-    return NULL;
+    return nullptr;
   int fd = _open_osfhandle(reinterpret_cast<intptr_t>(file), 0);
   if (fd < 0)
-    return NULL;
+    return nullptr;
 
   return _fdopen(fd, "w");
 }

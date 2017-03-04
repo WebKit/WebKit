@@ -59,12 +59,12 @@ class TestPacketBuffer : public ::testing::Test,
     packet.codec = kVideoCodecGeneric;
     packet.seqNum = seq_num;
     packet.frameType = keyframe ? kVideoFrameKey : kVideoFrameDelta;
-    packet.isFirstPacket = first == kFirst;
+    packet.is_first_packet_in_frame = first == kFirst;
     packet.markerBit = last == kLast;
     packet.sizeBytes = data_size;
     packet.dataPtr = data;
 
-    return packet_buffer_->InsertPacket(packet);
+    return packet_buffer_->InsertPacket(&packet);
   }
 
   void CheckFrame(uint16_t first_seq_num) {
@@ -102,11 +102,19 @@ TEST_F(TestPacketBuffer, InsertDuplicatePacket) {
   EXPECT_TRUE(Insert(seq_num, kKeyFrame, kFirst, kLast));
 }
 
-TEST_F(TestPacketBuffer, SeqNumWrap) {
+TEST_F(TestPacketBuffer, SeqNumWrapOneFrame) {
+  EXPECT_TRUE(Insert(0xFFFF, kKeyFrame, kFirst, kNotLast));
+  EXPECT_TRUE(Insert(0x0, kKeyFrame, kNotFirst, kLast));
+
+  CheckFrame(0xFFFF);
+}
+
+TEST_F(TestPacketBuffer, SeqNumWrapTwoFrames) {
   EXPECT_TRUE(Insert(0xFFFF, kKeyFrame, kFirst, kLast));
   EXPECT_TRUE(Insert(0x0, kKeyFrame, kFirst, kLast));
 
   CheckFrame(0xFFFF);
+  CheckFrame(0x0);
 }
 
 TEST_F(TestPacketBuffer, InsertOldPackets) {
@@ -138,25 +146,25 @@ TEST_F(TestPacketBuffer, NackCount) {
   packet.codec = kVideoCodecGeneric;
   packet.seqNum = seq_num;
   packet.frameType = kVideoFrameKey;
-  packet.isFirstPacket = true;
+  packet.is_first_packet_in_frame = true;
   packet.markerBit = false;
   packet.timesNacked = 0;
 
-  packet_buffer_->InsertPacket(packet);
+  packet_buffer_->InsertPacket(&packet);
 
   packet.seqNum++;
-  packet.isFirstPacket = false;
+  packet.is_first_packet_in_frame = false;
   packet.timesNacked = 1;
-  packet_buffer_->InsertPacket(packet);
+  packet_buffer_->InsertPacket(&packet);
 
   packet.seqNum++;
   packet.timesNacked = 3;
-  packet_buffer_->InsertPacket(packet);
+  packet_buffer_->InsertPacket(&packet);
 
   packet.seqNum++;
   packet.markerBit = true;
   packet.timesNacked = 1;
-  packet_buffer_->InsertPacket(packet);
+  packet_buffer_->InsertPacket(&packet);
 
   ASSERT_EQ(1UL, frames_from_callback_.size());
   RtpFrameObject* frame = frames_from_callback_.begin()->second.get();
@@ -363,9 +371,9 @@ TEST_F(TestPacketBuffer, GetBitstreamH264BufferPadding) {
   packet.video_header.codecHeader.H264.packetization_type = kH264SingleNalu;
   packet.dataPtr = data;
   packet.sizeBytes = sizeof(data_data);
-  packet.isFirstPacket = true;
+  packet.is_first_packet_in_frame = true;
   packet.markerBit = true;
-  packet_buffer_->InsertPacket(packet);
+  packet_buffer_->InsertPacket(&packet);
 
   ASSERT_EQ(1UL, frames_from_callback_.size());
   EXPECT_EQ(frames_from_callback_[seq_num]->EncodedImage()._length,
@@ -423,6 +431,50 @@ TEST_F(TestPacketBuffer, InvalidateFrameByClearing) {
 
   packet_buffer_->Clear();
   EXPECT_FALSE(frames_from_callback_.begin()->second->GetBitstream(nullptr));
+}
+
+TEST_F(TestPacketBuffer, FramesAfterClear) {
+  Insert(9025, kDeltaFrame, kFirst, kLast);
+  Insert(9024, kKeyFrame, kFirst, kLast);
+  packet_buffer_->ClearTo(9025);
+  Insert(9057, kDeltaFrame, kFirst, kLast);
+  Insert(9026, kDeltaFrame, kFirst, kLast);
+
+  CheckFrame(9024);
+  CheckFrame(9025);
+  CheckFrame(9026);
+  CheckFrame(9057);
+}
+
+TEST_F(TestPacketBuffer, DontLeakPayloadData) {
+  // NOTE! Any eventual leak is suppose to be detected by valgrind
+  //       or any other similar tool.
+  uint8_t* data1 = new uint8_t[5];
+  uint8_t* data2 = new uint8_t[5];
+  uint8_t* data3 = new uint8_t[5];
+  uint8_t* data4 = new uint8_t[5];
+
+  // Expected to free data1 upon PacketBuffer destruction.
+  EXPECT_TRUE(Insert(2, kKeyFrame, kFirst, kNotLast, 5, data1));
+
+  // Expect to free data2 upon insertion.
+  EXPECT_TRUE(Insert(2, kKeyFrame, kFirst, kNotLast, 5, data2));
+
+  // Expect to free data3 upon insertion (old packet).
+  packet_buffer_->ClearTo(1);
+  EXPECT_FALSE(Insert(1, kKeyFrame, kFirst, kNotLast, 5, data3));
+
+  // Expect to free data4 upon insertion (packet buffer is full).
+  EXPECT_FALSE(Insert(2 + kMaxSize, kKeyFrame, kFirst, kNotLast, 5, data4));
+}
+
+TEST_F(TestPacketBuffer, ContinuousSeqNumDoubleMarkerBit) {
+  Insert(2, kKeyFrame, kNotFirst, kNotLast);
+  Insert(1, kKeyFrame, kFirst, kLast);
+  frames_from_callback_.clear();
+  Insert(3, kKeyFrame, kNotFirst, kLast);
+
+  EXPECT_EQ(0UL, frames_from_callback_.size());
 }
 
 }  // namespace video_coding

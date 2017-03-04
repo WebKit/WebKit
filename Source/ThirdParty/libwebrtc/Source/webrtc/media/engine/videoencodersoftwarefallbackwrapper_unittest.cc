@@ -12,8 +12,12 @@
 
 #include <utility>
 
+#include "webrtc/api/video/i420_buffer.h"
+#include "webrtc/base/checks.h"
+#include "webrtc/modules/video_coding/codecs/vp8/temporal_layers.h"
 #include "webrtc/modules/video_coding/include/video_codec_interface.h"
 #include "webrtc/modules/video_coding/include/video_error_codes.h"
+#include "webrtc/modules/video_coding/utility/simulcast_rate_allocator.h"
 #include "webrtc/test/gtest.h"
 
 namespace webrtc {
@@ -25,7 +29,7 @@ const size_t kMaxPayloadSize = 800;
 class VideoEncoderSoftwareFallbackWrapperTest : public ::testing::Test {
  protected:
   VideoEncoderSoftwareFallbackWrapperTest()
-      : fallback_wrapper_(kVideoCodecVP8, &fake_encoder_) {}
+      : fallback_wrapper_(cricket::VideoCodec("VP8"), &fake_encoder_) {}
 
   class CountingFakeEncoder : public VideoEncoder {
    public:
@@ -65,12 +69,11 @@ class VideoEncoderSoftwareFallbackWrapperTest : public ::testing::Test {
       return WEBRTC_VIDEO_CODEC_OK;
     }
 
-    int32_t SetRates(uint32_t bitrate, uint32_t framerate) override {
+    int32_t SetRateAllocation(const BitrateAllocation& bitrate_allocation,
+                              uint32_t framerate) override {
       ++set_rates_count_;
       return WEBRTC_VIDEO_CODEC_OK;
     }
-
-    void OnDroppedFrame() override { ++on_dropped_frame_count_; }
 
     bool SupportsNativeHandle() const override {
       ++supports_native_handle_count_;
@@ -89,7 +92,6 @@ class VideoEncoderSoftwareFallbackWrapperTest : public ::testing::Test {
     int release_count_ = 0;
     int set_channel_parameters_count_ = 0;
     int set_rates_count_ = 0;
-    int on_dropped_frame_count_ = 0;
     mutable int supports_native_handle_count_ = 0;
   };
 
@@ -119,12 +121,13 @@ class VideoEncoderSoftwareFallbackWrapperTest : public ::testing::Test {
   VideoEncoderSoftwareFallbackWrapper fallback_wrapper_;
   VideoCodec codec_ = {};
   std::unique_ptr<VideoFrame> frame_;
+  std::unique_ptr<SimulcastRateAllocator> rate_allocator_;
 };
 
 void VideoEncoderSoftwareFallbackWrapperTest::EncodeFrame() {
   rtc::scoped_refptr<I420Buffer> buffer = I420Buffer::Create(
       kWidth, kHeight, kWidth, (kWidth + 1) / 2, (kWidth + 1) / 2);
-  buffer->SetToBlack();
+  I420Buffer::SetBlack(buffer);
   std::vector<FrameType> types(1, kVideoFrameKey);
 
   frame_.reset(new VideoFrame(buffer, 0, 0, webrtc::kVideoRotation_0));
@@ -141,10 +144,19 @@ void VideoEncoderSoftwareFallbackWrapperTest::UtilizeFallbackEncoder() {
   codec_.maxFramerate = 30;
   codec_.width = kWidth;
   codec_.height = kHeight;
+  codec_.VP8()->numberOfTemporalLayers = 1;
+  std::unique_ptr<TemporalLayersFactory> tl_factory(
+      new TemporalLayersFactory());
+  codec_.VP8()->tl_factory = tl_factory.get();
+  rate_allocator_.reset(
+      new SimulcastRateAllocator(codec_, std::move(tl_factory)));
+
   fake_encoder_.init_encode_return_code_ = WEBRTC_VIDEO_CODEC_ERROR;
   EXPECT_EQ(WEBRTC_VIDEO_CODEC_OK,
             fallback_wrapper_.InitEncode(&codec_, 2, kMaxPayloadSize));
-  EXPECT_EQ(WEBRTC_VIDEO_CODEC_OK, fallback_wrapper_.SetRates(300, 30));
+  EXPECT_EQ(WEBRTC_VIDEO_CODEC_OK,
+            fallback_wrapper_.SetRateAllocation(
+                rate_allocator_->GetAllocation(300000, 30), 30));
 
   int callback_count = callback_.callback_count_;
   int encode_count = fake_encoder_.encode_count_;
@@ -159,8 +171,16 @@ void VideoEncoderSoftwareFallbackWrapperTest::FallbackFromEncodeRequest() {
   codec_.maxFramerate = 30;
   codec_.width = kWidth;
   codec_.height = kHeight;
+  codec_.VP8()->numberOfTemporalLayers = 1;
+  std::unique_ptr<TemporalLayersFactory> tl_factory(
+      new TemporalLayersFactory());
+  codec_.VP8()->tl_factory = tl_factory.get();
+  rate_allocator_.reset(
+      new SimulcastRateAllocator(codec_, std::move(tl_factory)));
   fallback_wrapper_.InitEncode(&codec_, 2, kMaxPayloadSize);
-  EXPECT_EQ(WEBRTC_VIDEO_CODEC_OK, fallback_wrapper_.SetRates(300, 30));
+  EXPECT_EQ(WEBRTC_VIDEO_CODEC_OK,
+            fallback_wrapper_.SetRateAllocation(
+                rate_allocator_->GetAllocation(300000, 30), 30));
   EXPECT_EQ(1, fake_encoder_.init_encode_count_);
 
   // Have the non-fallback encoder request a software fallback.
@@ -243,22 +263,8 @@ TEST_F(VideoEncoderSoftwareFallbackWrapperTest,
        SetRatesForwardedDuringFallback) {
   UtilizeFallbackEncoder();
   EXPECT_EQ(1, fake_encoder_.set_rates_count_);
-  fallback_wrapper_.SetRates(1, 1);
+  fallback_wrapper_.SetRateAllocation(BitrateAllocation(), 1);
   EXPECT_EQ(2, fake_encoder_.set_rates_count_);
-  EXPECT_EQ(WEBRTC_VIDEO_CODEC_OK, fallback_wrapper_.Release());
-}
-
-TEST_F(VideoEncoderSoftwareFallbackWrapperTest,
-       OnDroppedFrameForwardedWithoutFallback) {
-  fallback_wrapper_.OnDroppedFrame();
-  EXPECT_EQ(1, fake_encoder_.on_dropped_frame_count_);
-}
-
-TEST_F(VideoEncoderSoftwareFallbackWrapperTest,
-       OnDroppedFrameNotForwardedDuringFallback) {
-  UtilizeFallbackEncoder();
-  fallback_wrapper_.OnDroppedFrame();
-  EXPECT_EQ(0, fake_encoder_.on_dropped_frame_count_);
   EXPECT_EQ(WEBRTC_VIDEO_CODEC_OK, fallback_wrapper_.Release());
 }
 

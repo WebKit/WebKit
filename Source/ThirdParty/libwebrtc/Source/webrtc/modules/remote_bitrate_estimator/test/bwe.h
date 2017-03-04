@@ -110,7 +110,7 @@ class LinkedSet {
 };
 
 const int kMinBitrateKbps = 10;
-const int kMaxBitrateKbps = 2500;
+const int kMaxBitrateKbps = 25000;
 
 class BweSender : public Module {
  public:

@@ -13,6 +13,7 @@
 
 #include "webrtc/base/constructormagic.h"
 #include "webrtc/base/proxyinfo.h"
+#include "webrtc/base/socketaddress.h"
 
 namespace rtc {
 
@@ -22,9 +23,15 @@ class AsyncResolverInterface;
 class PacketSocketFactory {
  public:
   enum Options {
-    OPT_SSLTCP = 0x01,  // Pseudo-TLS.
-    OPT_TLS = 0x02,
     OPT_STUN = 0x04,
+
+    // The TLS options below are mutually exclusive.
+    OPT_TLS = 0x02,           // Real and secure TLS.
+    OPT_TLS_FAKE = 0x01,      // Fake TLS with a dummy SSL handshake.
+    OPT_TLS_INSECURE = 0x08,  // Insecure TLS without certificate validation.
+
+    // Deprecated, use OPT_TLS_FAKE.
+    OPT_SSLTCP = OPT_TLS_FAKE,
   };
 
   PacketSocketFactory() { }

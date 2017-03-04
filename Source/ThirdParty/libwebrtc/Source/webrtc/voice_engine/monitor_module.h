@@ -11,47 +11,30 @@
 #ifndef WEBRTC_VOICE_ENGINE_MONITOR_MODULE_H
 #define WEBRTC_VOICE_ENGINE_MONITOR_MODULE_H
 
-#include "webrtc/base/criticalsection.h"
-#include "webrtc/base/thread_annotations.h"
 #include "webrtc/modules/include/module.h"
-#include "webrtc/typedefs.h"
-#include "webrtc/voice_engine/voice_engine_defines.h"
-
-class MonitorObserver
-{
-public:
-    virtual void OnPeriodicProcess() = 0;
-protected:
-    virtual ~MonitorObserver() {}
-};
-
 
 namespace webrtc {
 namespace voe {
 
-class MonitorModule : public Module
-{
-public:
-    int32_t RegisterObserver(MonitorObserver& observer);
+// When associated with a ProcessThread, calls a callback method
+// |OnPeriodicProcess()| implemented by the |Observer|.
+// TODO(tommi): This could be replaced with PostDelayedTask().
+// Better yet, delete it and delete code related to |_saturationWarning|
+// in TransmitMixer (and the OnPeriodicProcess callback).
+template <typename Observer>
+class MonitorModule : public Module {
+ public:
+  explicit MonitorModule(Observer* observer) : observer_(observer) {}
+  ~MonitorModule() override {}
 
-    int32_t DeRegisterObserver();
+ private:
+  int64_t TimeUntilNextProcess() override { return 1000; }
+  void Process() override { observer_->OnPeriodicProcess(); }
 
-    MonitorModule();
-
-    virtual ~MonitorModule();
-public:	// module
- int64_t TimeUntilNextProcess() override;
-
- void Process() override;
-
-private:
-    rtc::CriticalSection _callbackCritSect;
-    MonitorObserver* _observerPtr GUARDED_BY(_callbackCritSect);
-    int64_t _lastProcessTime;
+  Observer* const observer_;
 };
 
 }  // namespace voe
-
 }  // namespace webrtc
 
-#endif // VOICE_ENGINE_MONITOR_MODULE
+#endif  // VOICE_ENGINE_MONITOR_MODULE

@@ -9,16 +9,17 @@
  */
 
 #include "webrtc/media/engine/webrtcmediaengine.h"
-#include "webrtc/modules/audio_coding/codecs/builtin_audio_decoder_factory.h"
 
 #include <algorithm>
+
+#include "webrtc/api/audio_codecs/builtin_audio_decoder_factory.h"
+#include "webrtc/media/engine/webrtcvoiceengine.h"
 
 #ifdef HAVE_WEBRTC_VIDEO
 #include "webrtc/media/engine/webrtcvideoengine2.h"
 #else
 #include "webrtc/media/engine/nullwebrtcvideoengine.h"
 #endif
-#include "webrtc/media/engine/webrtcvoiceengine.h"
 
 namespace cricket {
 
@@ -33,15 +34,20 @@ class WebRtcMediaEngine2
                      const rtc::scoped_refptr<webrtc::AudioDecoderFactory>&
                          audio_decoder_factory,
                      WebRtcVideoEncoderFactory* video_encoder_factory,
-                     WebRtcVideoDecoderFactory* video_decoder_factory)
+                     WebRtcVideoDecoderFactory* video_decoder_factory,
+                     rtc::scoped_refptr<webrtc::AudioMixer> audio_mixer)
 #ifdef HAVE_WEBRTC_VIDEO
       : CompositeMediaEngine<WebRtcVoiceEngine, WebRtcVideoEngine2>(
-            adm, audio_decoder_factory){
+            adm,
+            audio_decoder_factory,
+            audio_mixer){
 #else
       : CompositeMediaEngine<WebRtcVoiceEngine, NullWebRtcVideoEngine>(
-            adm, audio_decoder_factory) {
+            adm,
+            audio_decoder_factory,
+            audio_mixer) {
 #endif
-    video_.SetExternalDecoderFactory(video_decoder_factory);
+            video_.SetExternalDecoderFactory(video_decoder_factory);
     video_.SetExternalEncoderFactory(video_encoder_factory);
   }
 };
@@ -53,9 +59,11 @@ cricket::MediaEngineInterface* CreateWebRtcMediaEngine(
     const rtc::scoped_refptr<webrtc::AudioDecoderFactory>&
         audio_decoder_factory,
     cricket::WebRtcVideoEncoderFactory* video_encoder_factory,
-    cricket::WebRtcVideoDecoderFactory* video_decoder_factory) {
-  return new cricket::WebRtcMediaEngine2(
-      adm, audio_decoder_factory, video_encoder_factory, video_decoder_factory);
+    cricket::WebRtcVideoDecoderFactory* video_decoder_factory,
+    rtc::scoped_refptr<webrtc::AudioMixer> audio_mixer) {
+  return new cricket::WebRtcMediaEngine2(adm, audio_decoder_factory,
+                                         video_encoder_factory,
+                                         video_decoder_factory, audio_mixer);
 }
 
 void DestroyWebRtcMediaEngine(cricket::MediaEngineInterface* media_engine) {
@@ -71,9 +79,20 @@ MediaEngineInterface* WebRtcMediaEngineFactory::Create(
     webrtc::AudioDeviceModule* adm,
     WebRtcVideoEncoderFactory* video_encoder_factory,
     WebRtcVideoDecoderFactory* video_decoder_factory) {
-  return CreateWebRtcMediaEngine(adm,
-                                 webrtc::CreateBuiltinAudioDecoderFactory(),
-                                 video_encoder_factory, video_decoder_factory);
+  return CreateWebRtcMediaEngine(
+      adm, webrtc::CreateBuiltinAudioDecoderFactory(), video_encoder_factory,
+      video_decoder_factory, nullptr);
+}
+
+MediaEngineInterface* WebRtcMediaEngineFactory::Create(
+    webrtc::AudioDeviceModule* adm,
+    const rtc::scoped_refptr<webrtc::AudioDecoderFactory>&
+        audio_decoder_factory,
+    WebRtcVideoEncoderFactory* video_encoder_factory,
+    WebRtcVideoDecoderFactory* video_decoder_factory) {
+  return CreateWebRtcMediaEngine(adm, audio_decoder_factory,
+                                 video_encoder_factory, video_decoder_factory,
+                                 nullptr);
 }
 
 // Used by PeerConnectionFactory to create a media engine passed into
@@ -83,9 +102,11 @@ MediaEngineInterface* WebRtcMediaEngineFactory::Create(
     const rtc::scoped_refptr<webrtc::AudioDecoderFactory>&
         audio_decoder_factory,
     WebRtcVideoEncoderFactory* video_encoder_factory,
-    WebRtcVideoDecoderFactory* video_decoder_factory) {
+    WebRtcVideoDecoderFactory* video_decoder_factory,
+    rtc::scoped_refptr<webrtc::AudioMixer> audio_mixer) {
   return CreateWebRtcMediaEngine(adm, audio_decoder_factory,
-                                 video_encoder_factory, video_decoder_factory);
+                                 video_encoder_factory, video_decoder_factory,
+                                 audio_mixer);
 }
 
 namespace {
@@ -167,5 +188,31 @@ std::vector<webrtc::RtpExtension> FilterRtpExtensions(
   }
 
   return result;
+}
+
+webrtc::Call::Config::BitrateConfig GetBitrateConfigForCodec(
+    const Codec& codec) {
+  webrtc::Call::Config::BitrateConfig config;
+  int bitrate_kbps = 0;
+  if (codec.GetParam(kCodecParamMinBitrate, &bitrate_kbps) &&
+      bitrate_kbps > 0) {
+    config.min_bitrate_bps = bitrate_kbps * 1000;
+  } else {
+    config.min_bitrate_bps = 0;
+  }
+  if (codec.GetParam(kCodecParamStartBitrate, &bitrate_kbps) &&
+      bitrate_kbps > 0) {
+    config.start_bitrate_bps = bitrate_kbps * 1000;
+  } else {
+    // Do not reconfigure start bitrate unless it's specified and positive.
+    config.start_bitrate_bps = -1;
+  }
+  if (codec.GetParam(kCodecParamMaxBitrate, &bitrate_kbps) &&
+      bitrate_kbps > 0) {
+    config.max_bitrate_bps = bitrate_kbps * 1000;
+  } else {
+    config.max_bitrate_bps = -1;
+  }
+  return config;
 }
 }  // namespace cricket

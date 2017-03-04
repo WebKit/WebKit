@@ -35,10 +35,7 @@ static LPCTSTR kMagnifierWindowName = L"MagnifierWindow";
 
 Atomic32 ScreenCapturerWinMagnifier::tls_index_(TLS_OUT_OF_INDEXES);
 
-ScreenCapturerWinMagnifier::ScreenCapturerWinMagnifier(
-    std::unique_ptr<DesktopCapturer> fallback_capturer)
-    : fallback_capturer_(std::move(fallback_capturer)) {}
-
+ScreenCapturerWinMagnifier::ScreenCapturerWinMagnifier() = default;
 ScreenCapturerWinMagnifier::~ScreenCapturerWinMagnifier() {
   // DestroyWindow must be called before MagUninitialize. magnifier_window_ is
   // destroyed automatically when host_window_ is destroyed.
@@ -61,9 +58,7 @@ void ScreenCapturerWinMagnifier::Start(Callback* callback) {
   callback_ = callback;
 
   if (!InitializeMagnifier()) {
-    LOG_F(LS_WARNING) << "Switching to fallback screen capturer becuase "
-                         "magnifier initialization failed.";
-    StartFallbackCapturer();
+    LOG_F(LS_WARNING) << "Magnifier initialization failed.";
   }
 }
 
@@ -73,16 +68,10 @@ void ScreenCapturerWinMagnifier::SetSharedMemoryFactory(
 }
 
 void ScreenCapturerWinMagnifier::CaptureFrame() {
-  if (!magnifier_initialized_ ||
-      !magnifier_capture_succeeded_ ||
-      GetSystemMetrics(SM_CMONITORS) != 1) {
-    // Do not try to use the magnifier if it failed before and in multi-screen
-    // setup (where the API crashes sometimes).
-    LOG_F(LS_WARNING) << "Switching to the fallback screen capturer because "
-                         "initialization or last capture attempt failed, or "
-                         "execute on multi-screen system.";
-    StartFallbackCapturer();
-    fallback_capturer_->CaptureFrame();
+  RTC_DCHECK(callback_);
+  if (!magnifier_initialized_) {
+    LOG_F(LS_WARNING) << "Magnifier initialization failed.";
+    callback_->OnCaptureResult(Result::ERROR_PERMANENT, nullptr);
     return;
   }
 
@@ -108,10 +97,8 @@ void ScreenCapturerWinMagnifier::CaptureFrame() {
   // CaptureImage may fail in some situations, e.g. windows8 metro mode. So
   // defer to the fallback capturer if magnifier capturer did not work.
   if (!CaptureImage(rect)) {
-    LOG_F(LS_WARNING) << "Switching to the fallback screen capturer because "
-                         "last capture attempt failed.";
-    StartFallbackCapturer();
-    fallback_capturer_->CaptureFrame();
+    LOG_F(LS_WARNING) << "Magnifier capturer failed to capture a frame.";
+    callback_->OnCaptureResult(Result::ERROR_PERMANENT, nullptr);
     return;
   }
 
@@ -131,17 +118,12 @@ bool ScreenCapturerWinMagnifier::GetSourceList(SourceList* sources) {
 }
 
 bool ScreenCapturerWinMagnifier::SelectSource(SourceId id) {
-  bool valid = IsScreenValid(id, &current_device_key_);
-
-  // Set current_screen_id_ even if the fallback capturer is being used, so we
-  // can switch back to the magnifier when possible.
-  if (valid)
+  if (IsScreenValid(id, &current_device_key_)) {
     current_screen_id_ = id;
+    return true;
+  }
 
-  if (fallback_capturer_started_)
-    fallback_capturer_->SelectSource(id);
-
-  return valid;
+  return false;
 }
 
 void ScreenCapturerWinMagnifier::SetExcludedWindow(WindowId excluded_window) {
@@ -210,6 +192,15 @@ BOOL ScreenCapturerWinMagnifier::OnMagImageScalingCallback(
 // include and function calls instead of a dynamical loaded library.
 bool ScreenCapturerWinMagnifier::InitializeMagnifier() {
   RTC_DCHECK(!magnifier_initialized_);
+
+  if (GetSystemMetrics(SM_CMONITORS) != 1) {
+    // Do not try to use the magnifier in multi-screen setup (where the API
+    // crashes sometimes).
+    LOG_F(LS_WARNING) << "Magnifier capturer cannot work on multi-screen "
+                         "system.";
+    return false;
+  }
+
   desktop_dc_ = GetDC(nullptr);
 
   mag_lib_handle_ = LoadLibrary(L"Magnification.dll");
@@ -373,16 +364,6 @@ void ScreenCapturerWinMagnifier::CreateCurrentFrameIfNecessary(
                                                shared_memory_factory_.get())
             : std::unique_ptr<DesktopFrame>(new BasicDesktopFrame(size));
     queue_.ReplaceCurrentFrame(SharedDesktopFrame::Wrap(std::move(frame)));
-  }
-}
-
-void ScreenCapturerWinMagnifier::StartFallbackCapturer() {
-  RTC_DCHECK(fallback_capturer_);
-  if (!fallback_capturer_started_) {
-    fallback_capturer_started_ = true;
-
-    fallback_capturer_->Start(callback_);
-    fallback_capturer_->SelectSource(current_screen_id_);
   }
 }
 

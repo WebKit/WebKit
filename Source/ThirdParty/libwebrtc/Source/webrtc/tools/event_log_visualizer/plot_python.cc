@@ -65,6 +65,16 @@ void PythonPlot::Draw() {
             "plt.plot(x%zu, y%zu, color=rgb_colors[%zu], label=\'%s\', "
             "marker='.')\n",
             i, i, i, series_list_[i].label.c_str());
+      } else if (series_list_[i].style == LINE_STEP_GRAPH) {
+        // Draw lines from (x[0],y[0]) to (x[1],y[0]) to (x[1],y[1]) and so on
+        // to illustrate the "steps". This can be expressed by duplicating all
+        // elements except the first in x and the last in y.
+        printf("x%zu = [v for dup in x%zu for v in [dup, dup]]\n", i, i);
+        printf("y%zu = [v for dup in y%zu for v in [dup, dup]]\n", i, i);
+        printf(
+            "plt.plot(x%zu[1:], y%zu[:-1], color=rgb_colors[%zu], "
+            "label=\'%s\')\n",
+            i, i, i, series_list_[i].label.c_str());
       } else {
         printf("raise Exception(\"Unknown graph type\")\n");
       }

@@ -11,7 +11,6 @@
 #include "webrtc/base/arraysize.h"
 #include "webrtc/base/bitbuffer.h"
 #include "webrtc/base/bytebuffer.h"
-#include "webrtc/base/common.h"
 #include "webrtc/base/gunit.h"
 
 namespace rtc {
@@ -170,8 +169,8 @@ TEST(BitBufferTest, SetOffsetValues) {
   // nicely.
 #if GTEST_HAS_DEATH_TEST
 #if !defined(WEBRTC_ANDROID)
-  // Passing a NULL out parameter is death.
-  EXPECT_DEATH(buffer.GetCurrentOffset(&byte_offset, NULL), "");
+  // Passing a null out parameter is death.
+  EXPECT_DEATH(buffer.GetCurrentOffset(&byte_offset, nullptr), "");
 #endif
 #endif
 }

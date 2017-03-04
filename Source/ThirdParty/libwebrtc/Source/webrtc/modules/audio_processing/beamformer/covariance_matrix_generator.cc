@@ -27,7 +27,7 @@ float BesselJ0(float x) {
 
 // Calculates the Euclidean norm for a row vector.
 float Norm(const ComplexMatrix<float>& x) {
-  RTC_CHECK_EQ(1u, x.num_rows());
+  RTC_CHECK_EQ(1, x.num_rows());
   const size_t length = x.num_columns();
   const complex<float>* elems = x.elements()[0];
   float result = 0.f;
@@ -94,7 +94,7 @@ void CovarianceMatrixGenerator::PhaseAlignmentMasks(
     const std::vector<Point>& geometry,
     float angle,
     ComplexMatrix<float>* mat) {
-  RTC_CHECK_EQ(1u, mat->num_rows());
+  RTC_CHECK_EQ(1, mat->num_rows());
   RTC_CHECK_EQ(geometry.size(), mat->num_columns());
 
   float freq_in_hertz =

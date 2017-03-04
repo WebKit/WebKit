@@ -15,6 +15,11 @@
 #include <memory>
 #include <utility>
 
+#ifdef UNIT_TEST
+#include <iomanip>
+#include <ostream>
+#endif  // UNIT_TEST
+
 #include "webrtc/base/array_view.h"
 #include "webrtc/base/checks.h"
 #include "webrtc/base/sanitizer.h"
@@ -25,7 +30,9 @@ namespace optional_internal {
 
 #if RTC_HAS_ASAN
 
-// This is a non-inlined function. The optimizer can't see inside it.
+// This is a non-inlined function. The optimizer can't see inside it.  It
+// prevents the compiler from generating optimized code that reads value_ even
+// if it is unset. Although safe, this causes memory sanitizers to complain.
 void* FunctionThatDoesNothingImpl(void*);
 
 template <typename T>
@@ -76,6 +83,12 @@ inline T* FunctionThatDoesNothing(T* x) { return x; }
 //   Optional<double> when parsing a single number as in the example above
 //   might make sense, but any larger parse job is probably going to need to
 //   tell the caller what the problem was, not just that there was one.
+//
+// - As a non-mutable function argument. When you want to pass a value of a
+//   type T that can fail to be there, const T* is almost always both fastest
+//   and cleanest. (If you're *sure* that the the caller will always already
+//   have an Optional<T>, const Optional<T>& is slightly faster than const T*,
+//   but this is a micro-optimization. In general, stick to const T*.)
 //
 // TODO(kwiberg): Get rid of this class when the standard library has
 // std::optional (and we're allowed to use it).
@@ -233,6 +246,12 @@ class Optional final {
                       : default_val;
   }
 
+  // Dereference and move value.
+  T MoveValue() {
+    RTC_DCHECK(has_value_);
+    return std::move(value_);
+  }
+
   // Equality tests. Two Optionals are equal if they contain equivalent values,
   // or if they're both empty.
   friend bool operator==(const Optional& m1, const Optional& m2) {
@@ -283,6 +302,98 @@ class Optional final {
     T value_;
   };
 };
+
+#ifdef UNIT_TEST
+namespace optional_internal {
+
+// Checks if there's a valid PrintTo(const T&, std::ostream*) call for T.
+template <typename T>
+struct HasPrintTo {
+ private:
+  struct No {};
+
+  template <typename T2>
+  static auto Test(const T2& obj)
+      -> decltype(PrintTo(obj, std::declval<std::ostream*>()));
+
+  template <typename>
+  static No Test(...);
+
+ public:
+  static constexpr bool value =
+      !std::is_same<decltype(Test<T>(std::declval<const T&>())), No>::value;
+};
+
+// Checks if there's a valid operator<<(std::ostream&, const T&) call for T.
+template <typename T>
+struct HasOstreamOperator {
+ private:
+  struct No {};
+
+  template <typename T2>
+  static auto Test(const T2& obj)
+      -> decltype(std::declval<std::ostream&>() << obj);
+
+  template <typename>
+  static No Test(...);
+
+ public:
+  static constexpr bool value =
+      !std::is_same<decltype(Test<T>(std::declval<const T&>())), No>::value;
+};
+
+// Prefer using PrintTo to print the object.
+template <typename T>
+typename std::enable_if<HasPrintTo<T>::value, void>::type OptionalPrintToHelper(
+    const T& value,
+    std::ostream* os) {
+  PrintTo(value, os);
+}
+
+// Fall back to operator<<(std::ostream&, ...) if it exists.
+template <typename T>
+typename std::enable_if<HasOstreamOperator<T>::value && !HasPrintTo<T>::value,
+                        void>::type
+OptionalPrintToHelper(const T& value, std::ostream* os) {
+  *os << value;
+}
+
+inline void OptionalPrintObjectBytes(const unsigned char* bytes,
+                                     size_t size,
+                                     std::ostream* os) {
+  *os << "<optional with " << size << "-byte object [";
+  for (size_t i = 0; i != size; ++i) {
+    *os << (i == 0 ? "" : ((i & 1) ? "-" : " "));
+    *os << std::hex << std::setw(2) << std::setfill('0')
+        << static_cast<int>(bytes[i]);
+  }
+  *os << "]>";
+}
+
+// As a final back-up, just print the contents of the objcets byte-wise.
+template <typename T>
+typename std::enable_if<!HasOstreamOperator<T>::value && !HasPrintTo<T>::value,
+                        void>::type
+OptionalPrintToHelper(const T& value, std::ostream* os) {
+  OptionalPrintObjectBytes(reinterpret_cast<const unsigned char*>(&value),
+                           sizeof(value), os);
+}
+
+}  // namespace optional_internal
+
+// PrintTo is used by gtest to print out the results of tests. We want to ensure
+// the object contained in an Optional can be printed out if it's set, while
+// avoiding touching the object's storage if it is undefined.
+template <typename T>
+void PrintTo(const rtc::Optional<T>& opt, std::ostream* os) {
+  if (opt) {
+    optional_internal::OptionalPrintToHelper(*opt, os);
+  } else {
+    *os << "<empty optional>";
+  }
+}
+
+#endif  // UNIT_TEST
 
 }  // namespace rtc
 

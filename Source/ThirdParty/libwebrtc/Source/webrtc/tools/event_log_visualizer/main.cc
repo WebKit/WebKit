@@ -59,6 +59,24 @@ DEFINE_bool(plot_fraction_loss,
             false,
             "Plot packet loss in percent for outgoing packets (as perceived by "
             "the send-side bandwidth estimator).");
+DEFINE_bool(plot_timestamps,
+            false,
+            "Plot the rtp timestamps of all rtp and rtcp packets over time.");
+DEFINE_bool(audio_encoder_bitrate_bps,
+            false,
+            "Plot the audio encoder target bitrate.");
+DEFINE_bool(audio_encoder_frame_length_ms,
+            false,
+            "Plot the audio encoder frame length.");
+DEFINE_bool(
+    audio_encoder_uplink_packet_loss_fraction,
+    false,
+    "Plot the uplink packet loss fraction which is send to the audio encoder.");
+DEFINE_bool(audio_encoder_fec, false, "Plot the audio encoder FEC.");
+DEFINE_bool(audio_encoder_dtx, false, "Plot the audio encoder DTX.");
+DEFINE_bool(audio_encoder_num_channels,
+            false,
+            "Plot the audio encoder number of channels.");
 DEFINE_string(
     force_fieldtrials,
     "",
@@ -178,6 +196,35 @@ int main(int argc, char* argv[]) {
 
   if (FLAGS_plot_all || FLAGS_plot_network_delay_feedback) {
     analyzer.CreateNetworkDelayFeedbackGraph(collection->AppendNewPlot());
+  }
+
+  if (FLAGS_plot_all || FLAGS_plot_timestamps) {
+    analyzer.CreateTimestampGraph(collection->AppendNewPlot());
+  }
+
+  if (FLAGS_plot_all || FLAGS_audio_encoder_bitrate_bps) {
+    analyzer.CreateAudioEncoderTargetBitrateGraph(collection->AppendNewPlot());
+  }
+
+  if (FLAGS_plot_all || FLAGS_audio_encoder_frame_length_ms) {
+    analyzer.CreateAudioEncoderFrameLengthGraph(collection->AppendNewPlot());
+  }
+
+  if (FLAGS_plot_all || FLAGS_audio_encoder_uplink_packet_loss_fraction) {
+    analyzer.CreateAudioEncoderUplinkPacketLossFractionGraph(
+        collection->AppendNewPlot());
+  }
+
+  if (FLAGS_plot_all || FLAGS_audio_encoder_fec) {
+    analyzer.CreateAudioEncoderEnableFecGraph(collection->AppendNewPlot());
+  }
+
+  if (FLAGS_plot_all || FLAGS_audio_encoder_dtx) {
+    analyzer.CreateAudioEncoderEnableDtxGraph(collection->AppendNewPlot());
+  }
+
+  if (FLAGS_plot_all || FLAGS_audio_encoder_num_channels) {
+    analyzer.CreateAudioEncoderNumChannelsGraph(collection->AppendNewPlot());
   }
 
   collection->Draw();

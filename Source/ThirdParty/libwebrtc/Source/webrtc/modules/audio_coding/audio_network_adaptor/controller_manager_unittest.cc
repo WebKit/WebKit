@@ -270,6 +270,7 @@ constexpr size_t kIntialChannelsToEncode = 1;
 constexpr bool kInitialDtxEnabled = true;
 constexpr bool kInitialFecEnabled = true;
 constexpr int kInitialFrameLengthMs = 60;
+constexpr int kMinBitrateBps = 6000;
 
 ControllerManagerStates CreateControllerManager(
     const std::string& config_string) {
@@ -279,8 +280,9 @@ ControllerManagerStates CreateControllerManager(
   const std::vector<int> encoder_frame_lengths_ms = {20, 60};
   states.controller_manager = ControllerManagerImpl::Create(
       config_string, kNumEncoderChannels, encoder_frame_lengths_ms,
-      kIntialChannelsToEncode, kInitialFrameLengthMs, kInitialBitrateBps,
-      kInitialFecEnabled, kInitialDtxEnabled, states.simulated_clock.get());
+      kMinBitrateBps, kIntialChannelsToEncode, kInitialFrameLengthMs,
+      kInitialBitrateBps, kInitialFecEnabled, kInitialDtxEnabled,
+      states.simulated_clock.get());
   return states;
 }
 
@@ -299,14 +301,13 @@ void CheckControllersOrder(const std::vector<Controller*>& controllers,
   // We also check that the controllers follow the initial settings.
   AudioNetworkAdaptor::EncoderRuntimeConfig encoder_config;
 
-  // We do not check the internal logic of controllers. We only check that
-  // when no network metrics are known, controllers provide the initial values.
-  Controller::NetworkMetrics metrics;
-
   for (size_t i = 0; i < controllers.size(); ++i) {
     AudioNetworkAdaptor::EncoderRuntimeConfig encoder_config;
     // We check the order of |controllers| by judging their decisions.
-    controllers[i]->MakeDecision(metrics, &encoder_config);
+    controllers[i]->MakeDecision(&encoder_config);
+
+    // Since controllers are not provided with network metrics, they give the
+    // initial values.
     switch (expected_types[i]) {
       case ControllerType::FEC:
         EXPECT_EQ(rtc::Optional<bool>(kInitialFecEnabled),

@@ -52,7 +52,7 @@ dictionary RTCStats {
 };
 
 dictionary RTCRTPStreamStats : RTCStats {
-    DOMString ssrc;
+    unsigned long ssrc;
     DOMString associateStatsId;
     boolean isRemote = false;
     DOMString mediaType;
@@ -91,6 +91,5 @@ dictionary RTCOutboundRTPStreamStats : RTCRTPStreamStats {
     unsigned long packetsSent;
     unsigned long long bytesSent;
     double targetBitrate;
-    double roundTripTime;
     unsigned long framesEncoded;
 };

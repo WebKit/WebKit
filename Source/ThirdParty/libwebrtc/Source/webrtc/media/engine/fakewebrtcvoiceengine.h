@@ -11,19 +11,27 @@
 #ifndef WEBRTC_MEDIA_ENGINE_FAKEWEBRTCVOICEENGINE_H_
 #define WEBRTC_MEDIA_ENGINE_FAKEWEBRTCVOICEENGINE_H_
 
+#include <stddef.h>
+
 #include <list>
 #include <map>
 #include <vector>
 
-#include "webrtc/base/basictypes.h"
 #include "webrtc/base/checks.h"
 #include "webrtc/base/stringutils.h"
+#include "webrtc/base/checks.h"
 #include "webrtc/config.h"
 #include "webrtc/media/base/codec.h"
 #include "webrtc/media/base/rtputils.h"
 #include "webrtc/media/engine/webrtcvoe.h"
 #include "webrtc/modules/audio_coding/acm2/rent_a_codec.h"
 #include "webrtc/modules/audio_processing/include/audio_processing.h"
+
+namespace webrtc {
+namespace voe {
+class TransmitMixer;
+}  // namespace voe
+}  // namespace webrtc
 
 namespace cricket {
 
@@ -51,10 +59,8 @@ static const int kOpusBandwidthFb = 20000;
 #define WEBRTC_FUNC(method, args) int method args override
 
 class FakeWebRtcVoiceEngine
-    : public webrtc::VoEAudioProcessing,
-      public webrtc::VoEBase, public webrtc::VoECodec,
-      public webrtc::VoEHardware,
-      public webrtc::VoEVolumeControl {
+    : public webrtc::VoEBase, public webrtc::VoECodec,
+      public webrtc::VoEHardware {
  public:
   struct Channel {
     std::vector<webrtc::CodecInst> recv_codecs;
@@ -62,14 +68,13 @@ class FakeWebRtcVoiceEngine
     bool neteq_fast_accelerate = false;
   };
 
-  explicit FakeWebRtcVoiceEngine(webrtc::AudioProcessing* apm) : apm_(apm) {
-    memset(&agc_config_, 0, sizeof(agc_config_));
+  explicit FakeWebRtcVoiceEngine(webrtc::AudioProcessing* apm,
+                                 webrtc::voe::TransmitMixer* transmit_mixer)
+      : apm_(apm), transmit_mixer_(transmit_mixer) {
   }
   ~FakeWebRtcVoiceEngine() override {
     RTC_CHECK(channels_.empty());
   }
-
-  bool ec_metrics_enabled() const { return ec_metrics_enabled_; }
 
   bool IsInited() const { return inited_; }
   int GetLastChannel() const { return last_channel_; }
@@ -101,6 +106,9 @@ class FakeWebRtcVoiceEngine
   }
   webrtc::AudioDeviceModule* audio_device_module() override {
     return nullptr;
+  }
+  webrtc::voe::TransmitMixer* transmit_mixer() override {
+    return transmit_mixer_;
   }
   WEBRTC_FUNC(CreateChannel, ()) {
     return CreateChannel(webrtc::VoEBase::ChannelConfig());
@@ -215,122 +223,14 @@ class FakeWebRtcVoiceEngine
   WEBRTC_STUB(EnableBuiltInNS, (bool enable));
   bool BuiltInNSIsAvailable() const override { return false; }
 
-  // webrtc::VoEVolumeControl
-  WEBRTC_STUB(SetSpeakerVolume, (unsigned int));
-  WEBRTC_STUB(GetSpeakerVolume, (unsigned int&));
-  WEBRTC_STUB(SetMicVolume, (unsigned int));
-  WEBRTC_STUB(GetMicVolume, (unsigned int&));
-  WEBRTC_STUB(SetInputMute, (int, bool));
-  WEBRTC_STUB(GetInputMute, (int, bool&));
-  WEBRTC_STUB(GetSpeechInputLevel, (unsigned int&));
-  WEBRTC_STUB(GetSpeechOutputLevel, (int, unsigned int&));
-  WEBRTC_STUB(GetSpeechInputLevelFullRange, (unsigned int&));
-  WEBRTC_STUB(GetSpeechOutputLevelFullRange, (int, unsigned int&));
-  WEBRTC_STUB(SetChannelOutputVolumeScaling, (int channel, float scale));
-  WEBRTC_STUB(GetChannelOutputVolumeScaling, (int channel, float& scale));
-  WEBRTC_STUB(SetOutputVolumePan, (int channel, float left, float right));
-  WEBRTC_STUB(GetOutputVolumePan, (int channel, float& left, float& right));
-
-  // webrtc::VoEAudioProcessing
-  WEBRTC_FUNC(SetNsStatus, (bool enable, webrtc::NsModes mode)) {
-    ns_enabled_ = enable;
-    ns_mode_ = mode;
-    return 0;
-  }
-  WEBRTC_FUNC(GetNsStatus, (bool& enabled, webrtc::NsModes& mode)) {
-    enabled = ns_enabled_;
-    mode = ns_mode_;
-    return 0;
-  }
-  WEBRTC_FUNC(SetAgcStatus, (bool enable, webrtc::AgcModes mode)) {
-    agc_enabled_ = enable;
-    agc_mode_ = mode;
-    return 0;
-  }
-  WEBRTC_FUNC(GetAgcStatus, (bool& enabled, webrtc::AgcModes& mode)) {
-    enabled = agc_enabled_;
-    mode = agc_mode_;
-    return 0;
-  }
-  WEBRTC_FUNC(SetAgcConfig, (webrtc::AgcConfig config)) {
-    agc_config_ = config;
-    return 0;
-  }
-  WEBRTC_FUNC(GetAgcConfig, (webrtc::AgcConfig& config)) {
-    config = agc_config_;
-    return 0;
-  }
-  WEBRTC_FUNC(SetEcStatus, (bool enable, webrtc::EcModes mode)) {
-    ec_enabled_ = enable;
-    ec_mode_ = mode;
-    return 0;
-  }
-  WEBRTC_FUNC(GetEcStatus, (bool& enabled, webrtc::EcModes& mode)) {
-    enabled = ec_enabled_;
-    mode = ec_mode_;
-    return 0;
-  }
-  WEBRTC_STUB(EnableDriftCompensation, (bool enable))
-  WEBRTC_BOOL_STUB(DriftCompensationEnabled, ())
-  WEBRTC_VOID_STUB(SetDelayOffsetMs, (int offset))
-  WEBRTC_STUB(DelayOffsetMs, ());
-  WEBRTC_FUNC(SetAecmMode, (webrtc::AecmModes mode, bool enableCNG)) {
-    aecm_mode_ = mode;
-    cng_enabled_ = enableCNG;
-    return 0;
-  }
-  WEBRTC_FUNC(GetAecmMode, (webrtc::AecmModes& mode, bool& enabledCNG)) {
-    mode = aecm_mode_;
-    enabledCNG = cng_enabled_;
-    return 0;
-  }
-  WEBRTC_STUB(VoiceActivityIndicator, (int channel));
-  WEBRTC_FUNC(SetEcMetricsStatus, (bool enable)) {
-    ec_metrics_enabled_ = enable;
-    return 0;
-  }
-  WEBRTC_STUB(GetEcMetricsStatus, (bool& enabled));
-  WEBRTC_STUB(GetEchoMetrics, (int& ERL, int& ERLE, int& RERL, int& A_NLP));
-  WEBRTC_STUB(GetEcDelayMetrics, (int& delay_median, int& delay_std,
-      float& fraction_poor_delays));
-  WEBRTC_STUB(StartDebugRecording, (const char* fileNameUTF8));
-  WEBRTC_STUB(StartDebugRecording, (FILE* handle));
-  WEBRTC_STUB(StopDebugRecording, ());
-  WEBRTC_FUNC(SetTypingDetectionStatus, (bool enable)) {
-    typing_detection_enabled_ = enable;
-    return 0;
-  }
-  WEBRTC_FUNC(GetTypingDetectionStatus, (bool& enabled)) {
-    enabled = typing_detection_enabled_;
-    return 0;
-  }
-  WEBRTC_STUB(TimeSinceLastTyping, (int& seconds));
-  WEBRTC_STUB(SetTypingDetectionParameters, (int timeWindow,
-                                             int costPerTyping,
-                                             int reportingThreshold,
-                                             int penaltyDecay,
-                                             int typeEventDelay));
-  int EnableHighPassFilter(bool enable) override {
-    highpass_filter_enabled_ = enable;
-    return 0;
-  }
-  bool IsHighPassFilterEnabled() override {
-    return highpass_filter_enabled_;
-  }
-  bool IsStereoChannelSwappingEnabled() override {
-    return stereo_swapping_enabled_;
-  }
-  void EnableStereoChannelSwapping(bool enable) override {
-    stereo_swapping_enabled_ = enable;
-  }
   size_t GetNetEqCapacity() const {
     auto ch = channels_.find(last_channel_);
-    ASSERT(ch != channels_.end());
+    RTC_DCHECK(ch != channels_.end());
     return ch->second->neteq_capacity;
   }
   bool GetNetEqFastAccelerate() const {
     auto ch = channels_.find(last_channel_);
-    ASSERT(ch != channels_.end());
+    RTC_CHECK(ch != channels_.end());
     return ch->second->neteq_fast_accelerate;
   }
 
@@ -339,20 +239,8 @@ class FakeWebRtcVoiceEngine
   int last_channel_ = -1;
   std::map<int, Channel*> channels_;
   bool fail_create_channel_ = false;
-  bool ec_enabled_ = false;
-  bool ec_metrics_enabled_ = false;
-  bool cng_enabled_ = false;
-  bool ns_enabled_ = false;
-  bool agc_enabled_ = false;
-  bool highpass_filter_enabled_ = false;
-  bool stereo_swapping_enabled_ = false;
-  bool typing_detection_enabled_ = false;
-  webrtc::EcModes ec_mode_ = webrtc::kEcDefault;
-  webrtc::AecmModes aecm_mode_ = webrtc::kAecmSpeakerphone;
-  webrtc::NsModes ns_mode_ = webrtc::kNsDefault;
-  webrtc::AgcModes agc_mode_ = webrtc::kAgcDefault;
-  webrtc::AgcConfig agc_config_;
   webrtc::AudioProcessing* apm_ = nullptr;
+  webrtc::voe::TransmitMixer* transmit_mixer_ = nullptr;
 
   RTC_DISALLOW_IMPLICIT_CONSTRUCTORS(FakeWebRtcVoiceEngine);
 };

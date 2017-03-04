@@ -21,6 +21,7 @@
 #include "webrtc/base/constructormagic.h"
 #include "webrtc/modules/include/module_common_types.h"
 #include "webrtc/modules/rtp_rtcp/source/rtp_format_vp8.h"
+#include "webrtc/modules/rtp_rtcp/source/rtp_packet_to_send.h"
 #include "webrtc/typedefs.h"
 
 namespace webrtc {
@@ -41,7 +42,10 @@ class RtpFormatVp8TestHelper {
   uint8_t* payload_data() const { return payload_data_; }
   size_t payload_size() const { return payload_size_; }
   RTPFragmentationHeader* fragmentation() const { return fragmentation_; }
-  size_t buffer_size() const { return buffer_size_; }
+  size_t buffer_size() const {
+    static constexpr size_t kVp8PayloadDescriptorMaxSize = 6;
+    return payload_size_ + kVp8PayloadDescriptorMaxSize;
+  }
   void set_sloppy_partitioning(bool value) { sloppy_partitioning_ = value; }
 
  private:
@@ -49,19 +53,17 @@ class RtpFormatVp8TestHelper {
   void CheckPictureID();
   void CheckTl0PicIdx();
   void CheckTIDAndKeyIdx();
-  void CheckPayload(size_t payload_end);
+  void CheckPayload();
   void CheckLast(bool last) const;
-  void CheckPacket(size_t send_bytes, size_t expect_bytes, bool last,
-                   bool frag_start);
+  void CheckPacket(size_t expect_bytes, bool last, bool frag_start);
 
+  RtpPacketToSend packet_;
   uint8_t* payload_data_;
-  uint8_t* buffer_;
   uint8_t* data_ptr_;
   RTPFragmentationHeader* fragmentation_;
   const RTPVideoHeaderVP8* hdr_info_;
   int payload_start_;
   size_t payload_size_;
-  size_t buffer_size_;
   bool sloppy_partitioning_;
   bool inited_;
 

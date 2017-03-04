@@ -7,6 +7,8 @@
  *  in the file PATENTS.  All contributing project authors may
  *  be found in the AUTHORS file in the root of the source tree.
  */
+
+#include "webrtc/base/checks.h"
 #include "webrtc/base/logging.h"
 #include "webrtc/base/platform_thread.h"
 #include "webrtc/modules/audio_device/dummy/file_audio_device.h"
@@ -492,7 +494,7 @@ bool FileAudioDevice::PlayThreadProcess()
         _critSect.Enter();
 
         _playoutFramesLeft = _ptrAudioBuffer->GetPlayoutData(_playoutBuffer);
-        assert(_playoutFramesLeft == _playoutFramesIn10MS);
+        RTC_DCHECK_EQ(_playoutFramesIn10MS, _playoutFramesLeft);
         if (_outputFile.is_open()) {
           _outputFile.Write(_playoutBuffer, kPlayoutBufferSize);
         }

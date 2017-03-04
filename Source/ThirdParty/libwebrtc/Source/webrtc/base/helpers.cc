@@ -13,18 +13,7 @@
 #include <limits>
 #include <memory>
 
-#if defined(FEATURE_ENABLE_SSL)
-#include "webrtc/base/sslconfig.h"
-#if defined(SSL_USE_OPENSSL)
 #include <openssl/rand.h>
-#else
-#if defined(WEBRTC_WIN)
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
-#include <ntsecapi.h>
-#endif  // WEBRTC_WIN
-#endif  // else
-#endif  // FEATURE_ENABLED_SSL
 
 #include "webrtc/base/base64.h"
 #include "webrtc/base/basictypes.h"
@@ -45,7 +34,6 @@ class RandomGenerator {
   virtual bool Generate(void* buf, size_t len) = 0;
 };
 
-#if defined(SSL_USE_OPENSSL)
 // The OpenSSL RNG.
 class SecureRandomGenerator : public RandomGenerator {
  public:
@@ -56,79 +44,6 @@ class SecureRandomGenerator : public RandomGenerator {
     return (RAND_bytes(reinterpret_cast<unsigned char*>(buf), len) > 0);
   }
 };
-
-#else
-#if defined(WEBRTC_WIN)
-class SecureRandomGenerator : public RandomGenerator {
- public:
-  SecureRandomGenerator() : advapi32_(NULL), rtl_gen_random_(NULL) {}
-  ~SecureRandomGenerator() {
-    FreeLibrary(advapi32_);
-  }
-
-  virtual bool Init(const void* seed, size_t seed_len) {
-    // We don't do any additional seeding on Win32, we just use the CryptoAPI
-    // RNG (which is exposed as a hidden function off of ADVAPI32 so that we
-    // don't need to drag in all of CryptoAPI)
-    if (rtl_gen_random_) {
-      return true;
-    }
-
-    advapi32_ = LoadLibrary(L"advapi32.dll");
-    if (!advapi32_) {
-      return false;
-    }
-
-    rtl_gen_random_ = reinterpret_cast<RtlGenRandomProc>(
-        GetProcAddress(advapi32_, "SystemFunction036"));
-    if (!rtl_gen_random_) {
-      FreeLibrary(advapi32_);
-      return false;
-    }
-
-    return true;
-  }
-  virtual bool Generate(void* buf, size_t len) {
-    if (!rtl_gen_random_ && !Init(NULL, 0)) {
-      return false;
-    }
-    return (rtl_gen_random_(buf, static_cast<int>(len)) != FALSE);
-  }
-
- private:
-  typedef BOOL (WINAPI *RtlGenRandomProc)(PVOID, ULONG);
-  HINSTANCE advapi32_;
-  RtlGenRandomProc rtl_gen_random_;
-};
-
-#elif !defined(FEATURE_ENABLE_SSL)
-
-// No SSL implementation -- use rand()
-class SecureRandomGenerator : public RandomGenerator {
- public:
-  virtual bool Init(const void* seed, size_t len) {
-    if (len >= 4) {
-      srand(*reinterpret_cast<const int*>(seed));
-    } else {
-      srand(*reinterpret_cast<const char*>(seed));
-    }
-    return true;
-  }
-  virtual bool Generate(void* buf, size_t len) {
-    char* bytes = reinterpret_cast<char*>(buf);
-    for (size_t i = 0; i < len; ++i) {
-      bytes[i] = static_cast<char>(rand());
-    }
-    return true;
-  }
-};
-
-#else
-
-#error No SSL implementation has been selected!
-
-#endif  // WEBRTC_WIN
-#endif
 
 // A test random generator, for predictable output.
 class TestRandomGenerator : public RandomGenerator {

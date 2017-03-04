@@ -6,23 +6,15 @@
 # in the file PATENTS.  All contributing project authors may
 # be found in the AUTHORS file in the root of the source tree.
 
-import("../../build/webrtc.gni")
+import("../../webrtc.gni")
 
 rtc_static_library("utility") {
   sources = [
     "include/audio_frame_operations.h",
-    "include/file_player.h",
-    "include/file_recorder.h",
     "include/helpers_android.h",
     "include/jvm_android.h",
     "include/process_thread.h",
-    "source/audio_frame_operations.cc",
-    "source/coder.cc",
-    "source/coder.h",
-    "source/file_player.cc",
-    "source/file_recorder.cc",
     "source/helpers_android.cc",
-    "source/helpers_ios.mm",
     "source/jvm_android.cc",
     "source/process_thread_impl.cc",
     "source/process_thread_impl.h",
@@ -39,10 +31,25 @@ rtc_static_library("utility") {
 
   deps = [
     "../..:webrtc_common",
+    "../../audio/utility:audio_frame_operations",
     "../../base:rtc_task_queue",
     "../../common_audio",
     "../../system_wrappers",
-    "../audio_coding",
     "../media_file",
   ]
+}
+
+if (rtc_include_tests) {
+  rtc_source_set("utility_unittests") {
+    testonly = true
+    sources = [
+      "source/process_thread_impl_unittest.cc",
+    ]
+    deps = [
+      ":utility",
+      "../../base:rtc_task_queue",
+      "../../test:test_support",
+      "//testing/gmock",
+    ]
+  }
 }

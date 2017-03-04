@@ -26,6 +26,7 @@
 #include "lpc_tables.h"
 #include "settings.h"
 #include "signal_processing_library.h"
+#include "webrtc/base/checks.h"
 
 /*
  * Eenumerations for arguments to functions WebRtcIsacfix_MatrixProduct1()
@@ -230,8 +231,12 @@ static void CalcInvArSpec(const int16_t *ARCoefQ12,
     CurveQ16[n] = sum;
 
   for (k = 1; k < AR_ORDER; k += 2) {
-    for (n = 0; n < FRAMESAMPLES/8; n++)
-      CurveQ16[n] += (WebRtcIsacfix_kCos[k][n] * CorrQ11[k + 1] + 2) >> 2;
+    for (n = 0; n < FRAMESAMPLES/8; n++) {
+      const int64_t p =
+          (WebRtcIsacfix_kCos[k][n] * (int64_t)CorrQ11[k + 1] + 2) >> 2;
+      RTC_DCHECK_EQ(p, (int32_t)p);  // p fits in 32 bits
+      CurveQ16[n] += (int32_t)p;
+    }
   }
 
   CS_ptrQ9 = WebRtcIsacfix_kCos[0];
@@ -256,8 +261,9 @@ static void CalcInvArSpec(const int16_t *ARCoefQ12,
 
   for (k=0; k<FRAMESAMPLES/8; k++) {
     int32_t diff_q16 = diffQ16[k] * (1 << shftVal);
-    CurveQ16[FRAMESAMPLES / 4 - 1 - k] = CurveQ16[k] - diff_q16;
-    CurveQ16[k] += diff_q16;
+    CurveQ16[FRAMESAMPLES / 4 - 1 - k] =
+        WebRtcSpl_SubSatW32(CurveQ16[k], diff_q16);
+    CurveQ16[k] = WebRtcSpl_AddSatW32(CurveQ16[k], diff_q16);
   }
 }
 
@@ -492,8 +498,10 @@ int WebRtcIsacfix_DecodeSpec(Bitstr_dec *streamdata,
   {
     for (k = 0; k < FRAMESAMPLES; k += 4)
     {
-      gainQ10 = WebRtcSpl_DivW32W16ResW16(30 << 10,
-          (int16_t)((uint32_t)(invARSpec2_Q16[k >> 2] + 2195456) >> 16));
+      gainQ10 = WebRtcSpl_DivW32W16ResW16(
+          30 << 10, (int16_t)((uint32_t)(WebRtcSpl_AddSatW32(
+                                  invARSpec2_Q16[k >> 2], 2195456)) >>
+                              16));
       *frQ7++ = (int16_t)((data[k] * gainQ10 + 512) >> 10);
       *fiQ7++ = (int16_t)((data[k + 1] * gainQ10 + 512) >> 10);
       *frQ7++ = (int16_t)((data[k + 2] * gainQ10 + 512) >> 10);
@@ -504,8 +512,10 @@ int WebRtcIsacfix_DecodeSpec(Bitstr_dec *streamdata,
   {
     for (k = 0; k < FRAMESAMPLES; k += 4)
     {
-      gainQ10 = WebRtcSpl_DivW32W16ResW16(36 << 10,
-          (int16_t)((uint32_t)(invARSpec2_Q16[k >> 2] + 2654208) >> 16));
+      gainQ10 = WebRtcSpl_DivW32W16ResW16(
+          36 << 10, (int16_t)((uint32_t)(WebRtcSpl_AddSatW32(
+                                  invARSpec2_Q16[k >> 2], 2654208)) >>
+                              16));
       *frQ7++ = (int16_t)((data[k] * gainQ10 + 512) >> 10);
       *fiQ7++ = (int16_t)((data[k + 1] * gainQ10 + 512) >> 10);
       *frQ7++ = (int16_t)((data[k + 2] * gainQ10 + 512) >> 10);

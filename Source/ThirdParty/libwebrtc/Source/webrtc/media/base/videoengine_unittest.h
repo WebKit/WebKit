@@ -18,7 +18,7 @@
 #include "webrtc/base/bytebuffer.h"
 #include "webrtc/base/gunit.h"
 #include "webrtc/base/timeutils.h"
-#include "webrtc/call.h"
+#include "webrtc/call/call.h"
 #include "webrtc/logging/rtc_event_log/rtc_event_log.h"
 #include "webrtc/media/base/fakenetworkinterface.h"
 #include "webrtc/media/base/fakevideocapturer.h"
@@ -82,8 +82,15 @@ class VideoMediaChannelTest : public testing::Test,
 
   virtual void SetUp() {
     engine_.Init();
-    channel_.reset(engine_.CreateChannel(call_.get(), cricket::MediaConfig(),
+    cricket::MediaConfig media_config;
+    // Disabling cpu overuse detection actually disables quality scaling too; it
+    // implies DegradationPreference kMaintainResolution. Automatic scaling
+    // needs to be disabled, otherwise, tests which check the size of received
+    // frames become flaky.
+    media_config.video.enable_cpu_overuse_detection = false;
+    channel_.reset(engine_.CreateChannel(call_.get(), media_config,
                                          cricket::VideoOptions()));
+    channel_->OnReadyToSend(true);
     EXPECT_TRUE(channel_.get() != NULL);
     network_interface_.SetDestination(channel_.get());
     channel_->SetInterface(&network_interface_);
@@ -829,14 +836,12 @@ class VideoMediaChannelTest : public testing::Test,
     rtc::Thread::Current()->ProcessMessages(30);
     // Remove the capturer.
     EXPECT_TRUE(channel_->SetVideoSend(kSsrc, true, nullptr, nullptr));
-    // Wait for one black frame for removing the capturer.
-    EXPECT_FRAME_WAIT(2, kVideoWidth, kVideoHeight, kTimeout);
 
     // No capturer was added, so this SetVideoSend shouldn't do anything.
     EXPECT_TRUE(channel_->SetVideoSend(kSsrc, true, nullptr, nullptr));
     rtc::Thread::Current()->ProcessMessages(300);
     // Verify no more frames were sent.
-    EXPECT_EQ(2, renderer_.num_rendered_frames());
+    EXPECT_EQ(1, renderer_.num_rendered_frames());
   }
 
   // Tests that we can add and remove capturer as unique sources.

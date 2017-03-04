@@ -17,14 +17,8 @@
 #include "webrtc/base/base64.h"
 #include "webrtc/base/checks.h"
 #include "webrtc/base/logging.h"
-#include "webrtc/base/sslconfig.h"
-#include "webrtc/base/sslfingerprint.h"
-
-#if SSL_USE_OPENSSL
-
 #include "webrtc/base/opensslidentity.h"
-
-#endif  // SSL_USE_OPENSSL
+#include "webrtc/base/sslfingerprint.h"
 
 namespace rtc {
 
@@ -200,7 +194,7 @@ std::string SSLIdentity::DerToPem(const std::string& pem_type,
 }
 
 SSLCertChain::SSLCertChain(const std::vector<SSLCertificate*>& certs) {
-  ASSERT(!certs.empty());
+  RTC_DCHECK(!certs.empty());
   certs_.resize(certs.size());
   std::transform(certs.begin(), certs.end(), certs_.begin(), DupCert);
 }
@@ -212,8 +206,6 @@ SSLCertChain::SSLCertChain(const SSLCertificate* cert) {
 SSLCertChain::~SSLCertChain() {
   std::for_each(certs_.begin(), certs_.end(), DeleteCert);
 }
-
-#if SSL_USE_OPENSSL
 
 // static
 SSLCertificate* SSLCertificate::FromPEMString(const std::string& pem_string) {
@@ -259,12 +251,6 @@ bool operator==(const SSLIdentity& a, const SSLIdentity& b) {
 bool operator!=(const SSLIdentity& a, const SSLIdentity& b) {
   return !(a == b);
 }
-
-#else  // !SSL_USE_OPENSSL
-
-#error "No SSL implementation"
-
-#endif  // SSL_USE_OPENSSL
 
 // Read |n| bytes from ASN1 number string at *|pp| and return the numeric value.
 // Update *|pp| and *|np| to reflect number of read bytes.

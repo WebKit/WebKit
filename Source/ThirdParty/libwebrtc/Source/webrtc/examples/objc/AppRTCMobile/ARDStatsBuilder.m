@@ -41,6 +41,12 @@
   NSString *_videoSendHeight;
   NSString *_videoSendWidth;
 
+  // QP stats.
+  int _videoQPSum;
+  int _framesEncoded;
+  int _oldVideoQPSum;
+  int _oldFramesEncoded;
+
   // Video receive stats.
   NSString *_videoDecodeMs;
   NSString *_videoDecodedFps;
@@ -77,6 +83,8 @@
     _connRecvBitrateTracker = [[ARDBitrateTracker alloc] init];
     _videoSendBitrateTracker = [[ARDBitrateTracker alloc] init];
     _videoRecvBitrateTracker = [[ARDBitrateTracker alloc] init];
+    _videoQPSum = 0;
+    _framesEncoded = 0;
   }
   return self;
 }
@@ -96,14 +104,18 @@
 
   // Video send stats.
   NSString *videoSendFormat = @"VS (input) %@x%@@%@fps | (sent) %@x%@@%@fps\n"
-                               "VS (enc) %@/%@ | (sent) %@/%@ | %@ms | %@\n";
+                               "VS (enc) %@/%@ | (sent) %@/%@ | %@ms | %@\n"
+                               "AvgQP (past %d encoded frames) = %d\n ";
+  int avgqp = [self calculateAvgQP];
+
   [result appendString:[NSString stringWithFormat:videoSendFormat,
       _videoInputWidth, _videoInputHeight, _videoInputFps,
       _videoSendWidth, _videoSendHeight, _videoSendFps,
       _actualEncBitrate, _targetEncBitrate,
       _videoSendBitrate, _availableSendBw,
       _videoEncodeMs,
-      _videoSendCodec]];
+      _videoSendCodec,
+      _framesEncoded - _oldFramesEncoded, avgqp]];
 
   // Video receive stats.
   NSString *videoReceiveFormat =
@@ -147,6 +159,13 @@
 }
 
 #pragma mark - Private
+
+- (int)calculateAvgQP {
+  int deltaFramesEncoded = _framesEncoded - _oldFramesEncoded;
+  int deltaQPSum = _videoQPSum - _oldVideoQPSum;
+
+  return deltaFramesEncoded != 0 ? deltaQPSum / deltaFramesEncoded : 0;
+}
 
 - (void)parseBweStatsReport:(RTCLegacyStatsReport *)statsReport {
   [statsReport.values enumerateKeysAndObjectsUsingBlock:^(
@@ -241,6 +260,12 @@
       NSInteger byteCount = value.integerValue;
       [_videoSendBitrateTracker updateBitrateWithCurrentByteCount:byteCount];
       _videoSendBitrate = _videoSendBitrateTracker.bitrateString;
+    } else if ([key isEqualToString:@"qpSum"]) {
+      _oldVideoQPSum = _videoQPSum;
+      _videoQPSum = value.integerValue;
+    } else if ([key isEqualToString:@"framesEncoded"]) {
+      _oldFramesEncoded = _framesEncoded;
+      _framesEncoded = value.integerValue;
     }
   }];
 }

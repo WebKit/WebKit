@@ -14,17 +14,20 @@
 #include <sstream>
 
 #include "webrtc/base/arraysize.h"
-#include "webrtc/base/common.h"
 #include "webrtc/modules/include/module_common_types.h"
 #include "webrtc/modules/remote_bitrate_estimator/test/bwe_test_framework.h"
 #include "webrtc/modules/remote_bitrate_estimator/test/metric_recorder.h"
 #include "webrtc/modules/remote_bitrate_estimator/test/packet_receiver.h"
 #include "webrtc/modules/remote_bitrate_estimator/test/packet_sender.h"
 #include "webrtc/system_wrappers/include/clock.h"
+#include "webrtc/system_wrappers/include/field_trial.h"
 #include "webrtc/test/testsupport/perf_test.h"
 
-using std::string;
 using std::vector;
+
+namespace {
+const int kQuickTestTimeoutMs = 500;
+}
 
 namespace webrtc {
 namespace testing {
@@ -114,8 +117,9 @@ BweTest::~BweTest() {
 void BweTest::SetUp() {
   const ::testing::TestInfo* const test_info =
       ::testing::UnitTest::GetInstance()->current_test_info();
-  string test_name =
-      string(test_info->test_case_name()) + "_" + string(test_info->name());
+  std::string test_name =
+      std::string(test_info->test_case_name()) + "_" +
+      std::string(test_info->name());
   BWE_TEST_LOGGING_GLOBAL_CONTEXT(test_name);
   BWE_TEST_LOGGING_GLOBAL_ENABLE(false);
 }
@@ -137,7 +141,7 @@ void Link::AddPacketProcessor(PacketProcessor* processor,
 }
 
 void Link::RemovePacketProcessor(PacketProcessor* processor) {
-  for (vector<PacketProcessorRunner>::iterator it = processors_.begin();
+  for (std::vector<PacketProcessorRunner>::iterator it = processors_.begin();
        it != processors_.end(); ++it) {
     if (it->RunsProcessor(processor)) {
       processors_.erase(it);
@@ -161,6 +165,11 @@ void BweTest::VerboseLogging(bool enable) {
 void BweTest::RunFor(int64_t time_ms) {
   // Set simulation interval from first packet sender.
   // TODO(holmer): Support different feedback intervals for different flows.
+
+  // For quick perf tests ignore passed timeout
+  if (field_trial::IsEnabled("WebRTC-QuickPerfTest")) {
+    time_ms = kQuickTestTimeoutMs;
+  }
   if (!uplink_.senders().empty()) {
     simulation_interval_ms_ = uplink_.senders()[0]->GetFeedbackIntervalMs();
   } else if (!downlink_.senders().empty()) {
@@ -182,10 +191,10 @@ void BweTest::RunFor(int64_t time_ms) {
   }
 }
 
-string BweTest::GetTestName() const {
+std::string BweTest::GetTestName() const {
   const ::testing::TestInfo* const test_info =
       ::testing::UnitTest::GetInstance()->current_test_info();
-  return string(test_info->name());
+  return std::string(test_info->name());
 }
 
 void BweTest::PrintResults(double max_throughput_kbps,
@@ -371,21 +380,23 @@ void BweTest::RunFairnessTest(BandwidthEstimatorType bwe_type,
   PrintResults(capacity_kbps, total_utilization.GetBitrateStats(),
                flow_delay_ms, flow_throughput_kbps);
 
-  for (int i : all_flow_ids) {
-    metric_recorders[i]->PlotThroughputHistogram(
-        title, flow_name, static_cast<int>(num_media_flows), 0);
+  if (!field_trial::IsEnabled("WebRTC-QuickPerfTest")) {
+    for (int i : all_flow_ids) {
+      metric_recorders[i]->PlotThroughputHistogram(
+          title, flow_name, static_cast<int>(num_media_flows), 0);
 
-    metric_recorders[i]->PlotLossHistogram(title, flow_name,
-                                           static_cast<int>(num_media_flows),
-                                           receivers[i]->GlobalPacketLoss());
-  }
+      metric_recorders[i]->PlotLossHistogram(title, flow_name,
+                                             static_cast<int>(num_media_flows),
+                                             receivers[i]->GlobalPacketLoss());
+    }
 
-  // Pointless to show delay histogram for TCP flow.
-  for (int i : media_flow_ids) {
-    metric_recorders[i]->PlotDelayHistogram(title, bwe_names[bwe_type],
-                                            static_cast<int>(num_media_flows),
-                                            one_way_delay_ms);
-    BWE_TEST_LOGGING_BASELINEBAR(5, bwe_names[bwe_type], one_way_delay_ms, i);
+    // Pointless to show delay histogram for TCP flow.
+    for (int i : media_flow_ids) {
+      metric_recorders[i]->PlotDelayHistogram(title, bwe_names[bwe_type],
+                                              static_cast<int>(num_media_flows),
+                                              one_way_delay_ms);
+      BWE_TEST_LOGGING_BASELINEBAR(5, bwe_names[bwe_type], one_way_delay_ms, i);
+    }
   }
 
   for (VideoSource* source : sources)

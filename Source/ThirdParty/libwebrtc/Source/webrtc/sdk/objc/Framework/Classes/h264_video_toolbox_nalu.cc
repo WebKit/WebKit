@@ -56,7 +56,7 @@ bool H264CMSampleBufferToAnnexBBuffer(
     return false;
   }
   RTC_CHECK_EQ(nalu_header_size, kAvccHeaderByteSize);
-  RTC_DCHECK_EQ(param_set_count, 2u);
+  RTC_DCHECK_EQ(param_set_count, 2);
 
   // Truncate any previous data in the buffer without changing its capacity.
   annexb_buffer->SetSize(0);
@@ -250,7 +250,7 @@ bool H264AnnexBBufferToCMSampleBuffer(const uint8_t* annexb_buffer,
 bool H264AnnexBBufferHasVideoFormatDescription(const uint8_t* annexb_buffer,
                                                size_t annexb_buffer_size) {
   RTC_DCHECK(annexb_buffer);
-  RTC_DCHECK_GT(annexb_buffer_size, 4u);
+  RTC_DCHECK_GT(annexb_buffer_size, 4);
 
   // The buffer we receive via RTP has 00 00 00 01 start code artifically
   // embedded by the RTP depacketizer. Extract NALU information.

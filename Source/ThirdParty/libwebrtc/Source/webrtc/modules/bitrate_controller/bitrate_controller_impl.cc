@@ -38,6 +38,9 @@ class BitrateControllerImpl::RtcpBandwidthObserverImpl
   void OnReceivedRtcpReceiverReport(const ReportBlockList& report_blocks,
                                     int64_t rtt,
                                     int64_t now_ms) override {
+    if (report_blocks.empty())
+      return;
+
     int fraction_lost_aggregate = 0;
     int total_number_of_packets = 0;
 
@@ -208,8 +211,6 @@ int64_t BitrateControllerImpl::TimeUntilNextProcess() {
 }
 
 void BitrateControllerImpl::Process() {
-  if (TimeUntilNextProcess() > 0)
-    return;
   {
     rtc::CritScope cs(&critsect_);
     bandwidth_estimation_.UpdateEstimate(clock_->TimeInMilliseconds());

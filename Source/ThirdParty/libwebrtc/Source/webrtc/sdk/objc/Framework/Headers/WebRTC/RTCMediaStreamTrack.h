@@ -12,17 +12,6 @@
 
 #import <WebRTC/RTCMacros.h>
 
-#import "webrtc/base/scoped_ref_ptr.h"
-
-namespace webrtc {
-class MediaStreamTrackInterface;
-}
-
-typedef NS_ENUM(NSInteger, RTCMediaStreamTrackType) {
-  RTCMediaStreamTrackTypeAudio,
-  RTCMediaStreamTrackTypeVideo,
-};
-
 /**
  * Represents the state of the track. This exposes the same states in C++.
  */
@@ -37,10 +26,7 @@ RTC_EXTERN NSString * const kRTCMediaStreamTrackKindAudio;
 RTC_EXTERN NSString * const kRTCMediaStreamTrackKindVideo;
 
 RTC_EXPORT
-@interface RTCMediaStreamTrack : NSObject {
-  rtc::scoped_refptr<webrtc::MediaStreamTrackInterface> _nativeTrack;
-  RTCMediaStreamTrackType _type;
-}
+@interface RTCMediaStreamTrack : NSObject
 
 /**
  * The kind of track. For example, "audio" if this track represents an audio

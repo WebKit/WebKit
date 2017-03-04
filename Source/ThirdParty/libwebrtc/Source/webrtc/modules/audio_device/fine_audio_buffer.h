@@ -13,6 +13,7 @@
 
 #include <memory>
 
+#include "webrtc/base/buffer.h"
 #include "webrtc/typedefs.h"
 
 namespace webrtc {
@@ -41,10 +42,6 @@ class FineAudioBuffer {
                   int sample_rate);
   ~FineAudioBuffer();
 
-  // Returns the required size of |buffer| when calling GetPlayoutData(). If
-  // the buffer is smaller memory trampling will happen.
-  size_t RequiredPlayoutBufferSizeBytes();
-
   // Clears buffers and counters dealing with playour and/or recording.
   void ResetPlayout();
   void ResetRecord();
@@ -59,8 +56,7 @@ class FineAudioBuffer {
   // They can be fixed values on most platforms and they are ignored if an
   // external (hardware/built-in) AEC is used.
   // The size of |buffer| is given by |size_in_bytes| and must be equal to
-  // |desired_frame_size_bytes_|. A RTC_CHECK will be hit if this is not the
-  // case.
+  // |desired_frame_size_bytes_|.
   // Example: buffer size is 5ms => call #1 stores 5ms of data, call #2 stores
   // 5ms of data and sends a total of 10ms to WebRTC and clears the intenal
   // cache. Call #3 restarts the scheme above.
@@ -86,22 +82,10 @@ class FineAudioBuffer {
   const size_t samples_per_10_ms_;
   // Number of audio bytes per 10ms.
   const size_t bytes_per_10_ms_;
-  // Storage for output samples that are not yet asked for.
-  std::unique_ptr<int8_t[]> playout_cache_buffer_;
-  // Location of first unread output sample.
-  size_t playout_cached_buffer_start_;
-  // Number of bytes stored in output (contain samples to be played out) cache.
-  size_t playout_cached_bytes_;
+  rtc::BufferT<int8_t> playout_buffer_;
   // Storage for input samples that are about to be delivered to the WebRTC
   // ADB or remains from the last successful delivery of a 10ms audio buffer.
-  std::unique_ptr<int8_t[]> record_cache_buffer_;
-  // Required (max) size in bytes of the |record_cache_buffer_|.
-  const size_t required_record_buffer_size_bytes_;
-  // Number of bytes in input (contains recorded samples) cache.
-  size_t record_cached_bytes_;
-  // Read and write pointers used in the buffering scheme on the recording side.
-  size_t record_read_pos_;
-  size_t record_write_pos_;
+  rtc::BufferT<int8_t> record_buffer_;
 };
 
 }  // namespace webrtc

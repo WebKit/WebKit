@@ -14,7 +14,6 @@
 #include "webrtc/base/checks.h"
 #include "webrtc/base/pathutils.h"
 #include "webrtc/base/stringutils.h"
-#include "webrtc/base/stream.h"
 
 #if defined(WEBRTC_WIN)
 #include "webrtc/base/win32filesystem.h"
@@ -41,7 +40,8 @@ DirectoryIterator::DirectoryIterator()
 #ifdef WEBRTC_WIN
     : handle_(INVALID_HANDLE_VALUE) {
 #else
-    : dir_(NULL), dirent_(NULL) {
+    : dir_(nullptr),
+      dirent_(nullptr){
 #endif
 }
 
@@ -69,13 +69,13 @@ bool DirectoryIterator::Iterate(const Pathname &dir) {
   if (handle_ == INVALID_HANDLE_VALUE)
     return false;
 #else
-  if (dir_ != NULL)
+  if (dir_ != nullptr)
     closedir(dir_);
   dir_ = ::opendir(directory_.c_str());
-  if (dir_ == NULL)
+  if (dir_ == nullptr)
     return false;
   dirent_ = readdir(dir_);
-  if (dirent_ == NULL)
+  if (dirent_ == nullptr)
     return false;
 
   if (::stat(std::string(directory_ + Name()).c_str(), &stat_) != 0)
@@ -91,7 +91,7 @@ bool DirectoryIterator::Next() {
   return ::FindNextFile(handle_, &data_) == TRUE;
 #else
   dirent_ = ::readdir(dir_);
-  if (dirent_ == NULL)
+  if (dirent_ == nullptr)
     return false;
 
   return ::stat(std::string(directory_ + Name()).c_str(), &stat_) == 0;
@@ -117,7 +117,7 @@ std::string DirectoryIterator::Name() const {
 #endif
 }
 
-FilesystemInterface* Filesystem::default_filesystem_ = NULL;
+FilesystemInterface* Filesystem::default_filesystem_ = nullptr;
 
 FilesystemInterface *Filesystem::EnsureDefaultFilesystem() {
   if (!default_filesystem_) {
@@ -136,7 +136,7 @@ DirectoryIterator* FilesystemInterface::IterateDirectory() {
 
 bool FilesystemInterface::DeleteFolderContents(const Pathname &folder) {
   bool success = true;
-  VERIFY(IsFolder(folder));
+  RTC_CHECK(IsFolder(folder));
   DirectoryIterator *di = IterateDirectory();
   if (!di)
     return false;

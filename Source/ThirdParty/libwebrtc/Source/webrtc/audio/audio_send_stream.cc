@@ -19,14 +19,13 @@
 #include "webrtc/base/event.h"
 #include "webrtc/base/logging.h"
 #include "webrtc/base/task_queue.h"
+#include "webrtc/modules/bitrate_controller/include/bitrate_controller.h"
 #include "webrtc/modules/congestion_controller/include/congestion_controller.h"
 #include "webrtc/modules/pacing/paced_sender.h"
 #include "webrtc/modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "webrtc/voice_engine/channel_proxy.h"
-#include "webrtc/voice_engine/include/voe_audio_processing.h"
-#include "webrtc/voice_engine/include/voe_codec.h"
-#include "webrtc/voice_engine/include/voe_rtp_rtcp.h"
-#include "webrtc/voice_engine/include/voe_volume_control.h"
+#include "webrtc/voice_engine/include/voe_base.h"
+#include "webrtc/voice_engine/transmit_mixer.h"
 #include "webrtc/voice_engine/voice_engine_impl.h"
 
 namespace webrtc {
@@ -36,7 +35,7 @@ namespace {
 constexpr char kOpusCodecName[] = "opus";
 
 bool IsCodec(const webrtc::CodecInst& codec, const char* ref_name) {
-  return (_stricmp(codec.plname, ref_name) == 0);
+  return (STR_CASE_CMP(codec.plname, ref_name) == 0);
 }
 }  // namespace
 
@@ -45,13 +44,16 @@ AudioSendStream::AudioSendStream(
     const webrtc::AudioSendStream::Config& config,
     const rtc::scoped_refptr<webrtc::AudioState>& audio_state,
     rtc::TaskQueue* worker_queue,
+    PacketRouter* packet_router,
     CongestionController* congestion_controller,
     BitrateAllocator* bitrate_allocator,
-    RtcEventLog* event_log)
+    RtcEventLog* event_log,
+    RtcpRttStats* rtcp_rtt_stats)
     : worker_queue_(worker_queue),
       config_(config),
       audio_state_(audio_state),
-      bitrate_allocator_(bitrate_allocator) {
+      bitrate_allocator_(bitrate_allocator),
+      congestion_controller_(congestion_controller) {
   LOG(LS_INFO) << "AudioSendStream: " << config_.ToString();
   RTC_DCHECK_NE(config_.voe_channel_id, -1);
   RTC_DCHECK(audio_state_.get());
@@ -60,10 +62,7 @@ AudioSendStream::AudioSendStream(
   VoiceEngineImpl* voe_impl = static_cast<VoiceEngineImpl*>(voice_engine());
   channel_proxy_ = voe_impl->GetChannelProxy(config_.voe_channel_id);
   channel_proxy_->SetRtcEventLog(event_log);
-  channel_proxy_->RegisterSenderCongestionControlObjects(
-      congestion_controller->pacer(),
-      congestion_controller->GetTransportFeedbackObserver(),
-      congestion_controller->packet_router());
+  channel_proxy_->SetRtcpRttStats(rtcp_rtt_stats);
   channel_proxy_->SetRTCPStatus(true);
   channel_proxy_->SetLocalSSRC(config.rtp.ssrc);
   channel_proxy_->SetRTCP_CNAME(config.rtp.c_name);
@@ -79,13 +78,17 @@ AudioSendStream::AudioSendStream(
       channel_proxy_->SetSendAudioLevelIndicationStatus(true, extension.id);
     } else if (extension.uri == RtpExtension::kTransportSequenceNumberUri) {
       channel_proxy_->EnableSendTransportSequenceNumber(extension.id);
-    } else if (extension.uri == RtpExtension::kAbsSendTimeUri) {
-      LOG(LS_WARNING) << RtpExtension::kAbsSendTimeUri
-                      << " is no longer supported for audio.";
+      congestion_controller->EnablePeriodicAlrProbing(true);
+      bandwidth_observer_.reset(congestion_controller->GetBitrateController()
+                                    ->CreateRtcpBandwidthObserver());
     } else {
       RTC_NOTREACHED() << "Registering unsupported RTP extension.";
     }
   }
+  channel_proxy_->RegisterSenderCongestionControlObjects(
+      congestion_controller->pacer(),
+      congestion_controller->GetTransportFeedbackObserver(), packet_router,
+      bandwidth_observer_.get());
   if (!SetupSendCodec()) {
     LOG(LS_ERROR) << "Failed to set up send codec state.";
   }
@@ -97,6 +100,7 @@ AudioSendStream::~AudioSendStream() {
   channel_proxy_->DeRegisterExternalTransport();
   channel_proxy_->ResetCongestionControlObjects();
   channel_proxy_->SetRtcEventLog(nullptr);
+  channel_proxy_->SetRtcpRttStats(nullptr);
 }
 
 void AudioSendStream::Start() {
@@ -135,10 +139,12 @@ void AudioSendStream::Stop() {
   }
 }
 
-bool AudioSendStream::SendTelephoneEvent(int payload_type, int event,
+bool AudioSendStream::SendTelephoneEvent(int payload_type,
+                                         int payload_frequency, int event,
                                          int duration_ms) {
   RTC_DCHECK(thread_checker_.CalledOnValidThread());
-  return channel_proxy_->SetSendTelephoneEventPayloadType(payload_type) &&
+  return channel_proxy_->SetSendTelephoneEventPayloadType(payload_type,
+                                                          payload_frequency) &&
          channel_proxy_->SendTelephoneEventOutband(event, duration_ms);
 }
 
@@ -151,9 +157,6 @@ webrtc::AudioSendStream::Stats AudioSendStream::GetStats() const {
   RTC_DCHECK(thread_checker_.CalledOnValidThread());
   webrtc::AudioSendStream::Stats stats;
   stats.local_ssrc = config_.rtp.ssrc;
-  ScopedVoEInterface<VoEAudioProcessing> processing(voice_engine());
-  ScopedVoEInterface<VoECodec> codec(voice_engine());
-  ScopedVoEInterface<VoEVolumeControl> volume(voice_engine());
 
   webrtc::CallStatistics call_stats = channel_proxy_->GetRTCPStatistics();
   stats.bytes_sent = call_stats.bytesSent;
@@ -168,9 +171,10 @@ webrtc::AudioSendStream::Stats AudioSendStream::GetStats() const {
   stats.aec_quality_min = -1;
 
   webrtc::CodecInst codec_inst = {0};
-  if (codec->GetSendCodec(config_.voe_channel_id, codec_inst) != -1) {
+  if (channel_proxy_->GetSendCodec(&codec_inst)) {
     RTC_DCHECK_NE(codec_inst.pltype, -1);
     stats.codec_name = codec_inst.plname;
+    stats.codec_payload_type = rtc::Optional<int>(codec_inst.pltype);
 
     // Get data from the last remote RTCP report.
     for (const auto& block : channel_proxy_->GetRemoteRTCPReportBlocks()) {
@@ -189,15 +193,11 @@ webrtc::AudioSendStream::Stats AudioSendStream::GetStats() const {
     }
   }
 
-  // Local speech level.
-  {
-    unsigned int level = 0;
-    int error = volume->GetSpeechInputLevelFullRange(level);
-    RTC_DCHECK_EQ(0, error);
-    stats.audio_level = static_cast<int32_t>(level);
-  }
-
   ScopedVoEInterface<VoEBase> base(voice_engine());
+  RTC_DCHECK(base->transmit_mixer());
+  stats.audio_level = base->transmit_mixer()->AudioLevelFullRange();
+  RTC_DCHECK_LE(0, stats.audio_level);
+
   RTC_DCHECK(base->audio_processing());
   auto audio_processing_stats = base->audio_processing()->GetStatistics();
   stats.echo_delay_median_ms = audio_processing_stats.delay_median;
@@ -207,6 +207,8 @@ webrtc::AudioSendStream::Stats AudioSendStream::GetStats() const {
       audio_processing_stats.echo_return_loss_enhancement.instant();
   stats.residual_echo_likelihood =
       audio_processing_stats.residual_echo_likelihood;
+  stats.residual_echo_likelihood_recent_max =
+      audio_processing_stats.residual_echo_likelihood_recent_max;
 
   internal::AudioState* audio_state =
       static_cast<internal::AudioState*>(audio_state_.get());
@@ -229,7 +231,8 @@ bool AudioSendStream::DeliverRtcp(const uint8_t* packet, size_t length) {
 
 uint32_t AudioSendStream::OnBitrateUpdated(uint32_t bitrate_bps,
                                            uint8_t fraction_loss,
-                                           int64_t rtt) {
+                                           int64_t rtt,
+                                           int64_t probing_interval_ms) {
   RTC_DCHECK_GE(bitrate_bps,
                 static_cast<uint32_t>(config_.min_bitrate_bps));
   // The bitrate allocator might allocate an higher than max configured bitrate
@@ -238,7 +241,7 @@ uint32_t AudioSendStream::OnBitrateUpdated(uint32_t bitrate_bps,
   if (bitrate_bps > max_bitrate_bps)
     bitrate_bps = max_bitrate_bps;
 
-  channel_proxy_->SetBitrate(bitrate_bps);
+  channel_proxy_->SetBitrate(bitrate_bps, probing_interval_ms);
 
   // The amount of audio protection is not exposed by the encoder, hence
   // always returning 0.
@@ -252,6 +255,7 @@ const webrtc::AudioSendStream::Config& AudioSendStream::config() const {
 
 void AudioSendStream::SetTransportOverhead(int transport_overhead_per_packet) {
   RTC_DCHECK(thread_checker_.CalledOnValidThread());
+  congestion_controller_->SetTransportOverhead(transport_overhead_per_packet);
   channel_proxy_->SetTransportOverhead(transport_overhead_per_packet);
 }
 
@@ -265,14 +269,9 @@ VoiceEngine* AudioSendStream::voice_engine() const {
 
 // Apply current codec settings to a single voe::Channel used for sending.
 bool AudioSendStream::SetupSendCodec() {
-  ScopedVoEInterface<VoEBase> base(voice_engine());
-  ScopedVoEInterface<VoECodec> codec(voice_engine());
-
-  const int channel = config_.voe_channel_id;
-
   // Disable VAD and FEC unless we know the other side wants them.
-  codec->SetVADStatus(channel, false);
-  codec->SetFECStatus(channel, false);
+  channel_proxy_->SetVADStatus(false);
+  channel_proxy_->SetCodecFECStatus(false);
 
   // We disable audio network adaptor here. This will on one hand make sure that
   // audio network adaptor is disabled by default, and on the other allow audio
@@ -289,36 +288,35 @@ bool AudioSendStream::SetupSendCodec() {
   // TODO(minyue): check if this check is really needed, or can we move it into
   // |codec->SetSendCodec|.
   webrtc::CodecInst current_codec = {0};
-  if (codec->GetSendCodec(channel, current_codec) != 0 ||
+  if (!channel_proxy_->GetSendCodec(&current_codec) ||
       (send_codec_spec.codec_inst != current_codec)) {
-    if (codec->SetSendCodec(channel, send_codec_spec.codec_inst) == -1) {
-      LOG(LS_WARNING) << "SetSendCodec() failed: " << base->LastError();
+    if (!channel_proxy_->SetSendCodec(send_codec_spec.codec_inst)) {
+      LOG(LS_WARNING) << "SetSendCodec() failed.";
       return false;
     }
   }
 
   // Codec internal FEC. Treat any failure as fatal internal error.
   if (send_codec_spec.enable_codec_fec) {
-    if (codec->SetFECStatus(channel, true) != 0) {
-      LOG(LS_WARNING) << "SetFECStatus() failed: " << base->LastError();
+    if (!channel_proxy_->SetCodecFECStatus(true)) {
+      LOG(LS_WARNING) << "SetCodecFECStatus() failed.";
       return false;
     }
   }
 
   // DTX and maxplaybackrate are only set if current codec is Opus.
   if (IsCodec(send_codec_spec.codec_inst, kOpusCodecName)) {
-    if (codec->SetOpusDtx(channel, send_codec_spec.enable_opus_dtx) != 0) {
-      LOG(LS_WARNING) << "SetOpusDtx() failed: " << base->LastError();
+    if (!channel_proxy_->SetOpusDtx(send_codec_spec.enable_opus_dtx)) {
+      LOG(LS_WARNING) << "SetOpusDtx() failed.";
       return false;
     }
 
     // If opus_max_playback_rate <= 0, the default maximum playback rate
     // (48 kHz) will be used.
     if (send_codec_spec.opus_max_playback_rate > 0) {
-      if (codec->SetOpusMaxPlaybackRate(
-              channel, send_codec_spec.opus_max_playback_rate) != 0) {
-        LOG(LS_WARNING) << "SetOpusMaxPlaybackRate() failed: "
-                        << base->LastError();
+      if (!channel_proxy_->SetOpusMaxPlaybackRate(
+              send_codec_spec.opus_max_playback_rate)) {
+        LOG(LS_WARNING) << "SetOpusMaxPlaybackRate() failed.";
         return false;
       }
     }
@@ -352,10 +350,9 @@ bool AudioSendStream::SetupSendCodec() {
           RTC_NOTREACHED();
           return false;
       }
-      if (codec->SetSendCNPayloadType(channel, send_codec_spec.cng_payload_type,
-                                      cn_freq) != 0) {
-        LOG(LS_WARNING) << "SetSendCNPayloadType() failed: "
-                        << base->LastError();
+      if (!channel_proxy_->SetSendCNPayloadType(
+          send_codec_spec.cng_payload_type, cn_freq)) {
+        LOG(LS_WARNING) << "SetSendCNPayloadType() failed.";
         // TODO(ajm): This failure condition will be removed from VoE.
         // Restore the return here when we update to a new enough webrtc.
         //
@@ -373,8 +370,8 @@ bool AudioSendStream::SetupSendCodec() {
         send_codec_spec.codec_inst.channels == 1) {
       // TODO(minyue): If CN frequency == 48000 Hz is allowed, consider the
       // interaction between VAD and Opus FEC.
-      if (codec->SetVADStatus(channel, true) != 0) {
-        LOG(LS_WARNING) << "SetVADStatus() failed: " << base->LastError();
+      if (!channel_proxy_->SetVADStatus(true)) {
+        LOG(LS_WARNING) << "SetVADStatus() failed.";
         return false;
       }
     }

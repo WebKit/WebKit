@@ -31,16 +31,15 @@ class WebRtcVcmFactoryInterface {
  public:
   virtual ~WebRtcVcmFactoryInterface() {}
   virtual rtc::scoped_refptr<webrtc::VideoCaptureModule> Create(
-      int id,
       const char* device) = 0;
-  virtual webrtc::VideoCaptureModule::DeviceInfo* CreateDeviceInfo(int id) = 0;
+  virtual webrtc::VideoCaptureModule::DeviceInfo* CreateDeviceInfo() = 0;
   virtual void DestroyDeviceInfo(
       webrtc::VideoCaptureModule::DeviceInfo* info) = 0;
 };
 
 // WebRTC-based implementation of VideoCapturer.
 class WebRtcVideoCapturer : public VideoCapturer,
-                            public webrtc::VideoCaptureDataCallback {
+                            public rtc::VideoSinkInterface<webrtc::VideoFrame> {
  public:
   WebRtcVideoCapturer();
   explicit WebRtcVideoCapturer(WebRtcVcmFactoryInterface* factory);
@@ -64,10 +63,7 @@ class WebRtcVideoCapturer : public VideoCapturer,
 
  private:
   // Callback when a frame is captured by camera.
-  void OnIncomingCapturedFrame(const int32_t id,
-                               const webrtc::VideoFrame& frame) override;
-  void OnCaptureDelayChanged(const int32_t id,
-                             const int32_t delay) override;
+  void OnFrame(const webrtc::VideoFrame& frame) override;
 
   // Used to signal captured frames on the same thread as invoked Start().
   // With WebRTC's current VideoCapturer implementations, this will mean a

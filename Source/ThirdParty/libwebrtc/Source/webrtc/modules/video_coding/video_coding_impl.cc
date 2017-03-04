@@ -11,14 +11,19 @@
 #include "webrtc/modules/video_coding/video_coding_impl.h"
 
 #include <algorithm>
+#include <utility>
 
-#include "webrtc/common_types.h"
-#include "webrtc/common_video/libyuv/include/webrtc_libyuv.h"
 #include "webrtc/base/criticalsection.h"
-#include "webrtc/modules/video_coding/include/video_codec_interface.h"
+#include "webrtc/common_types.h"
+#include "webrtc/common_video/include/video_bitrate_allocator.h"
+#include "webrtc/common_video/libyuv/include/webrtc_libyuv.h"
+#include "webrtc/modules/video_coding/codecs/vp8/temporal_layers.h"
 #include "webrtc/modules/video_coding/encoded_frame.h"
+#include "webrtc/modules/video_coding/include/video_codec_initializer.h"
+#include "webrtc/modules/video_coding/include/video_codec_interface.h"
 #include "webrtc/modules/video_coding/jitter_buffer.h"
 #include "webrtc/modules/video_coding/packet.h"
+#include "webrtc/modules/video_coding/timing.h"
 #include "webrtc/system_wrappers/include/clock.h"
 
 namespace webrtc {
@@ -80,9 +85,11 @@ class VideoCodingModuleImpl : public VideoCodingModule {
                         EncodedImageCallback* pre_decode_image_callback)
       : VideoCodingModule(),
         sender_(clock, &post_encode_callback_, nullptr),
+        timing_(new VCMTiming(clock)),
         receiver_(clock,
                   event_factory,
                   pre_decode_image_callback,
+                  timing_.get(),
                   nack_sender,
                   keyframe_request_sender) {}
 
@@ -104,6 +111,23 @@ class VideoCodingModuleImpl : public VideoCodingModule {
   int32_t RegisterSendCodec(const VideoCodec* sendCodec,
                             uint32_t numberOfCores,
                             uint32_t maxPayloadSize) override {
+#if !defined(RTC_DISABLE_VP8)
+    if (sendCodec != nullptr && sendCodec->codecType == kVideoCodecVP8) {
+      // Set up a rate allocator and temporal layers factory for this vp8
+      // instance. The codec impl will have a raw pointer to the TL factory,
+      // and will call it when initializing. Since this can happen
+      // asynchronously keep the instance alive until destruction or until a
+      // new send codec is registered.
+      VideoCodec vp8_codec = *sendCodec;
+      std::unique_ptr<TemporalLayersFactory> tl_factory(
+          new TemporalLayersFactory());
+      vp8_codec.VP8()->tl_factory = tl_factory.get();
+      rate_allocator_ = VideoCodecInitializer::CreateBitrateAllocator(
+          vp8_codec, std::move(tl_factory));
+      return sender_.RegisterSendCodec(&vp8_codec, numberOfCores,
+                                       maxPayloadSize);
+    }
+#endif
     return sender_.RegisterSendCodec(sendCodec, numberOfCores, maxPayloadSize);
   }
 
@@ -126,7 +150,8 @@ class VideoCodingModuleImpl : public VideoCodingModule {
   int32_t SetChannelParameters(uint32_t target_bitrate,  // bits/s.
                                uint8_t lossRate,
                                int64_t rtt) override {
-    return sender_.SetChannelParameters(target_bitrate, lossRate, rtt);
+    return sender_.SetChannelParameters(target_bitrate, lossRate, rtt,
+                                        rate_allocator_.get(), nullptr);
   }
 
   int32_t RegisterProtectionCallback(
@@ -256,6 +281,8 @@ class VideoCodingModuleImpl : public VideoCodingModule {
  private:
   EncodedImageCallbackWrapper post_encode_callback_;
   vcm::VideoSender sender_;
+  std::unique_ptr<VideoBitrateAllocator> rate_allocator_;
+  std::unique_ptr<VCMTiming> timing_;
   vcm::VideoReceiver receiver_;
 };
 }  // namespace

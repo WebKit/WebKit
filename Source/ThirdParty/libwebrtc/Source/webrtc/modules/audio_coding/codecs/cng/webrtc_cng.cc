@@ -12,6 +12,7 @@
 
 #include <algorithm>
 
+#include "webrtc/base/safe_conversions.h"
 #include "webrtc/common_audio/signal_processing/include/signal_processing_library.h"
 
 namespace webrtc {
@@ -118,7 +119,7 @@ bool ComfortNoiseDecoder::Generate(rtc::ArrayView<int16_t> out_data,
   int16_t ReflBetaCompStd = 6553;  /* 0.2 in q15. */
   int16_t ReflBetaNewP = 19661;  /* 0.6 in q15. */
   int16_t ReflBetaCompNewP = 13107;  /* 0.4 in q15. */
-  int16_t Beta, BetaC, tmp1, tmp2, tmp3;
+  int16_t Beta, BetaC;  /* These are in Q15. */
   int32_t targetEnergy;
   int16_t En;
   int16_t temp16;
@@ -137,17 +138,16 @@ bool ComfortNoiseDecoder::Generate(rtc::ArrayView<int16_t> out_data,
     BetaC = ReflBetaCompStd;
   }
 
-  /* Here we use a 0.5 weighting, should possibly be modified to 0.6. */
-  tmp1 = dec_used_scale_factor_ << 2; /* Q13->Q15 */
-  tmp2 = dec_target_scale_factor_ << 2; /* Q13->Q15 */
-  tmp3 = (int16_t) WEBRTC_SPL_MUL_16_16_RSFT(tmp1, Beta, 15);
-  tmp3 += (int16_t) WEBRTC_SPL_MUL_16_16_RSFT(tmp2, BetaC, 15);
-  dec_used_scale_factor_ = tmp3 >> 2; /* Q15->Q13 */
+  /* Calculate new scale factor in Q13 */
+  dec_used_scale_factor_ =
+      rtc::checked_cast<int16_t>(
+          WEBRTC_SPL_MUL_16_16_RSFT(dec_used_scale_factor_, Beta >> 2, 13) +
+          WEBRTC_SPL_MUL_16_16_RSFT(dec_target_scale_factor_, BetaC >> 2, 13));
 
   dec_used_energy_  = dec_used_energy_ >> 1;
   dec_used_energy_ += dec_target_energy_ >> 1;
 
-  /* Do the same for the reflection coeffs. */
+  /* Do the same for the reflection coeffs, albeit in Q15. */
   for (size_t i = 0; i < WEBRTC_CNG_MAX_LPC_ORDER; i++) {
     dec_used_reflCoefs_[i] = (int16_t) WEBRTC_SPL_MUL_16_16_RSFT(
         dec_used_reflCoefs_[i], Beta, 15);
@@ -260,7 +260,7 @@ size_t ComfortNoiseEncoder::Encode(rtc::ArrayView<const int16_t> speech,
   int16_t speechBuf[kCngMaxOutsizeOrder];
 
   const size_t num_samples = speech.size();
-  RTC_CHECK_LE(num_samples, static_cast<size_t>(kCngMaxOutsizeOrder));
+  RTC_CHECK_LE(num_samples, kCngMaxOutsizeOrder);
 
   for (i = 0; i < num_samples; i++) {
     speechBuf[i] = speech[i];

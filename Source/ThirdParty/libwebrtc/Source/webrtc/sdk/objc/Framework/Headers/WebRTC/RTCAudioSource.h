@@ -13,20 +13,19 @@
 #import <WebRTC/RTCMacros.h>
 #import <WebRTC/RTCMediaSource.h>
 
-#import "webrtc/base/scoped_ref_ptr.h"
-
-namespace webrtc {
-class AudioSourceInterface;
-}
-
 NS_ASSUME_NONNULL_BEGIN
 
 RTC_EXPORT
-@interface RTCAudioSource : RTCMediaSource {
-  rtc::scoped_refptr<webrtc::AudioSourceInterface> _nativeAudioSource;
-}
+@interface RTCAudioSource : RTCMediaSource
 
 - (instancetype)init NS_UNAVAILABLE;
+
+// Sets the volume for the RTCMediaSource. |volume] is a gain value in the range
+// [0, 10].
+// Temporary fix to be able to modify volume of remote audio tracks
+// TODO: property stays here temporarily until a proper volume-api is avaialble
+// on the surface exposed by webrtc
+@property(nonatomic, assign) double volume;
 
 @end
 

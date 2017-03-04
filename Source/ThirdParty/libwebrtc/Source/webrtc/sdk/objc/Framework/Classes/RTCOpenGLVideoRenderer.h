@@ -20,27 +20,13 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @class RTCVideoFrame;
-#if TARGET_OS_IPHONE
-@class EAGLContext;
-typedef EAGLContext GlContextType;
-#else
-@class NSOpenGLContext;
-typedef NSOpenGLContext GlContextType;
-#endif
-@protocol RTCShader;
 
 // RTCOpenGLVideoRenderer issues appropriate OpenGL commands to draw a frame to
 // the currently bound framebuffer. Supports OpenGL 3.2 and OpenGLES 2.0. OpenGL
 // framebuffer creation and management should be handled elsewhere using the
 // same context used to initialize this class.
 RTC_EXPORT
-@interface RTCOpenGLVideoRenderer : NSObject {
-  GlContextType *_context;
-  BOOL _isInitialized;
-  id<RTCShader> _i420Shader;
-  id<RTCShader> _nv12Shader;
-  RTCVideoFrame *_lastDrawnFrame;
-}
+@interface RTCOpenGLVideoRenderer : NSObject
 
 // The last successfully drawn frame. Used to avoid drawing frames unnecessarily
 // hence saving battery life by reducing load.

@@ -10,11 +10,49 @@
 
 #include "webrtc/modules/audio_processing/test/wav_based_simulator.h"
 
+#include <stdio.h>
+#include <iostream>
+
 #include "webrtc/base/checks.h"
+#include "webrtc/modules/audio_processing/test/test_utils.h"
 #include "webrtc/test/testsupport/trace_to_stderr.h"
 
 namespace webrtc {
 namespace test {
+
+std::vector<WavBasedSimulator::SimulationEventType>
+WavBasedSimulator::GetCustomEventChain(const std::string& filename) {
+  std::vector<WavBasedSimulator::SimulationEventType> call_chain;
+  FILE* stream = OpenFile(filename.c_str(), "r");
+
+  RTC_CHECK(stream) << "Could not open the custom call order file, reverting "
+                       "to using the default call order";
+
+  char c;
+  size_t num_read = fread(&c, sizeof(char), 1, stream);
+  while (num_read > 0) {
+    switch (c) {
+      case 'r':
+        call_chain.push_back(SimulationEventType::kProcessReverseStream);
+        break;
+      case 'c':
+        call_chain.push_back(SimulationEventType::kProcessStream);
+        break;
+      case '\n':
+        break;
+      default:
+        FATAL() << "Incorrect custom call order file, reverting to using the "
+                   "default call order";
+        fclose(stream);
+        return WavBasedSimulator::GetDefaultEventChain();
+    }
+
+    num_read = fread(&c, sizeof(char), 1, stream);
+  }
+
+  fclose(stream);
+  return call_chain;
+}
 
 WavBasedSimulator::WavBasedSimulator(const SimulationSettings& settings)
       : AudioProcessingSimulator(settings) {}
@@ -22,7 +60,7 @@ WavBasedSimulator::WavBasedSimulator(const SimulationSettings& settings)
 WavBasedSimulator::~WavBasedSimulator() = default;
 
 std::vector<WavBasedSimulator::SimulationEventType>
-WavBasedSimulator::GetDefaultEventChain() const {
+WavBasedSimulator::GetDefaultEventChain() {
   std::vector<WavBasedSimulator::SimulationEventType> call_chain(2);
   call_chain[0] = SimulationEventType::kProcessStream;
   call_chain[1] = SimulationEventType::kProcessReverseStream;
@@ -59,7 +97,12 @@ void WavBasedSimulator::Process() {
     trace_to_stderr.reset(new test::TraceToStderr(true));
   }
 
-  call_chain_ = GetDefaultEventChain();
+  if (settings_.custom_call_order_filename) {
+    call_chain_ = WavBasedSimulator::GetCustomEventChain(
+        *settings_.custom_call_order_filename);
+  } else {
+    call_chain_ = WavBasedSimulator::GetDefaultEventChain();
+  }
   CreateAudioProcessor();
 
   Initialize();

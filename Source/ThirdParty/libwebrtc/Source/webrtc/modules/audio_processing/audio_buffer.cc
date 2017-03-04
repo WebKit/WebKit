@@ -62,11 +62,11 @@ AudioBuffer::AudioBuffer(size_t input_num_frames,
     activity_(AudioFrame::kVadUnknown),
     keyboard_data_(NULL),
     data_(new IFChannelBuffer(proc_num_frames_, num_proc_channels_)) {
-  RTC_DCHECK_GT(input_num_frames_, 0u);
-  RTC_DCHECK_GT(proc_num_frames_, 0u);
-  RTC_DCHECK_GT(output_num_frames_, 0u);
-  RTC_DCHECK_GT(num_input_channels_, 0u);
-  RTC_DCHECK_GT(num_proc_channels_, 0u);
+  RTC_DCHECK_GT(input_num_frames_, 0);
+  RTC_DCHECK_GT(proc_num_frames_, 0);
+  RTC_DCHECK_GT(output_num_frames_, 0);
+  RTC_DCHECK_GT(num_input_channels_, 0);
+  RTC_DCHECK_GT(num_proc_channels_, 0);
   RTC_DCHECK_LE(num_proc_channels_, num_input_channels_);
 
   if (input_num_frames_ != proc_num_frames_ ||

@@ -46,7 +46,8 @@ class VideoQualityTest : public test::CallTest {
       int num_temporal_layers;
       int selected_tl;
       int min_transmit_bps;
-      bool fec;
+      bool ulpfec;
+      bool flexfec;
       std::string encoded_frame_base_path;
       std::string clip_name;
     } video;
@@ -110,7 +111,7 @@ class VideoQualityTest : public test::CallTest {
   // Helper methods for setting up the call.
   void CreateCapturer();
   void SetupVideo(Transport* send_transport, Transport* recv_transport);
-  void SetupScreenshare();
+  void SetupScreenshareOrSVC();
   void SetupAudio(int send_channel_id,
                   int receive_channel_id,
                   Call* call,
@@ -130,6 +131,8 @@ class VideoQualityTest : public test::CallTest {
   int receive_logs_;
   int send_logs_;
 
+  VideoSendStream::DegradationPreference degradation_preference_ =
+      VideoSendStream::DegradationPreference::kBalanced;
   Params params_;
 };
 

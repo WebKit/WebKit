@@ -6,4 +6,5 @@ include_rules = [
   "+webrtc/modules/audio_device",
   "+webrtc/modules/video_capture",
   "+webrtc/p2p",
+  "+webrtc/pc",
 ]

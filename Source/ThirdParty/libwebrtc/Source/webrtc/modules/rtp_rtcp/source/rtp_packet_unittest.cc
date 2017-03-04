@@ -219,8 +219,7 @@ TEST(RtpPacketTest, ParseWithInvalidSizedExtension) {
   EXPECT_FALSE(packet.GetExtension<TransmissionOffset>(&time_offset));
 
   // But shouldn't prevent reading payload.
-  EXPECT_THAT(make_tuple(packet.payload(), packet.payload_size()),
-              ElementsAreArray(kPayload));
+  EXPECT_THAT(packet.payload(), ElementsAreArray(kPayload));
 }
 
 TEST(RtpPacketTest, ParseWithOverSizedExtension) {
@@ -274,8 +273,7 @@ TEST(RtpPacketTest, ParseWithAllFeatures) {
   EXPECT_EQ(kTimestamp, packet.Timestamp());
   EXPECT_EQ(kSsrc, packet.Ssrc());
   EXPECT_THAT(packet.Csrcs(), ElementsAreArray(kCsrcs));
-  EXPECT_THAT(make_tuple(packet.payload(), packet.payload_size()),
-              ElementsAreArray(kPayload));
+  EXPECT_THAT(packet.payload(), ElementsAreArray(kPayload));
   EXPECT_EQ(kPacketPaddingSize, packet.padding_size());
   int32_t time_offset;
   EXPECT_TRUE(packet.GetExtension<TransmissionOffset>(&time_offset));
@@ -295,7 +293,7 @@ TEST(RtpPacketTest, ParseWithExtensionDelayed) {
 
   int32_t time_offset;
   EXPECT_FALSE(packet.GetExtension<TransmissionOffset>(&time_offset));
-  packet.IdentifyExtensions(&extensions);
+  packet.IdentifyExtensions(extensions);
   EXPECT_TRUE(packet.GetExtension<TransmissionOffset>(&time_offset));
   EXPECT_EQ(kTimeOffset, time_offset);
   EXPECT_EQ(0u, packet.payload_size());

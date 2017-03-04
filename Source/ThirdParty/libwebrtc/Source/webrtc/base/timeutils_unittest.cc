@@ -8,7 +8,6 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/base/common.h"
 #include "webrtc/base/event.h"
 #include "webrtc/base/fakeclock.h"
 #include "webrtc/base/gunit.h"
@@ -118,7 +117,7 @@ class TmToSeconds : public testing::Test {
     // Set use of the test RNG to get deterministic expiration timestamp.
     rtc::SetRandomTestMode(true);
   }
-  ~TmToSeconds() {
+  ~TmToSeconds() override {
     // Put it back for the next test.
     rtc::SetRandomTestMode(false);
   }
@@ -303,11 +302,11 @@ TEST(FakeClock, TimeFunctionsUseFakeClock) {
   FakeClock clock;
   SetClockForTesting(&clock);
 
-  clock.SetTimeNanos(987654321u);
+  clock.SetTimeNanos(987654321);
   EXPECT_EQ(987u, Time32());
   EXPECT_EQ(987, TimeMillis());
-  EXPECT_EQ(987654u, TimeMicros());
-  EXPECT_EQ(987654321u, TimeNanos());
+  EXPECT_EQ(987654, TimeMicros());
+  EXPECT_EQ(987654321, TimeNanos());
   EXPECT_EQ(1000u, TimeAfter(13));
 
   SetClockForTesting(nullptr);
@@ -317,27 +316,27 @@ TEST(FakeClock, TimeFunctionsUseFakeClock) {
 
 TEST(FakeClock, InitialTime) {
   FakeClock clock;
-  EXPECT_EQ(0u, clock.TimeNanos());
+  EXPECT_EQ(0, clock.TimeNanos());
 }
 
 TEST(FakeClock, SetTimeNanos) {
   FakeClock clock;
-  clock.SetTimeNanos(123u);
-  EXPECT_EQ(123u, clock.TimeNanos());
-  clock.SetTimeNanos(456u);
-  EXPECT_EQ(456u, clock.TimeNanos());
+  clock.SetTimeNanos(123);
+  EXPECT_EQ(123, clock.TimeNanos());
+  clock.SetTimeNanos(456);
+  EXPECT_EQ(456, clock.TimeNanos());
 }
 
 TEST(FakeClock, AdvanceTime) {
   FakeClock clock;
   clock.AdvanceTime(TimeDelta::FromNanoseconds(1111u));
-  EXPECT_EQ(1111u, clock.TimeNanos());
+  EXPECT_EQ(1111, clock.TimeNanos());
   clock.AdvanceTime(TimeDelta::FromMicroseconds(2222u));
-  EXPECT_EQ(2223111u, clock.TimeNanos());
+  EXPECT_EQ(2223111, clock.TimeNanos());
   clock.AdvanceTime(TimeDelta::FromMilliseconds(3333u));
-  EXPECT_EQ(3335223111u, clock.TimeNanos());
+  EXPECT_EQ(3335223111, clock.TimeNanos());
   clock.AdvanceTime(TimeDelta::FromSeconds(4444u));
-  EXPECT_EQ(4447335223111u, clock.TimeNanos());
+  EXPECT_EQ(4447335223111, clock.TimeNanos());
 }
 
 // When the clock is advanced, threads that are waiting in a socket select

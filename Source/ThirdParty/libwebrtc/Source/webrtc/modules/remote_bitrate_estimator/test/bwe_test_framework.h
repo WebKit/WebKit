@@ -24,7 +24,6 @@
 #include <utility>
 #include <vector>
 
-#include "webrtc/base/common.h"
 #include "webrtc/base/constructormagic.h"
 #include "webrtc/base/random.h"
 #include "webrtc/modules/bitrate_controller/include/bitrate_controller.h"
@@ -251,7 +250,9 @@ class RateCounterFilter : public PacketProcessor {
   Stats<double> packets_per_second_stats_;
   Stats<double> kbps_stats_;
   int64_t start_plotting_time_ms_;
-  int flow_id_;
+#if BWE_TEST_LOGGING_COMPILE_TIME_ENABLE
+  int flow_id_ = 0;
+#endif
   std::string name_;
   // Algorithm name if single flow, Total link utilization if all flows.
   std::string algorithm_name_;

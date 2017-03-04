@@ -44,10 +44,10 @@
 #include "RTCTrackEvent.h"
 #include "RealtimeIncomingAudioSource.h"
 #include "RealtimeIncomingVideoSource.h"
-#include <webrtc/api/peerconnectionfactory.h>
 #include <webrtc/base/physicalsocketserver.h>
 #include <webrtc/p2p/base/basicpacketsocketfactory.h>
 #include <webrtc/p2p/client/basicportallocator.h>
+#include <webrtc/pc/peerconnectionfactory.h>
 #include <wtf/MainThread.h>
 
 #include "CoreMediaSoftLink.h"
@@ -254,15 +254,15 @@ static inline void fillRTCRTPStreamStats(RTCStatsReport::RTCRTPStreamStats& stat
 {
     fillRTCStats(stats, rtcStats);
     if (rtcStats.ssrc.is_defined())
-        stats.ssrc = fromStdString(*rtcStats.ssrc);
+        stats.ssrc = *rtcStats.ssrc;
     if (rtcStats.associate_stats_id.is_defined())
         stats.associateStatsId = fromStdString(*rtcStats.associate_stats_id);
     if (rtcStats.is_remote.is_defined())
         stats.isRemote = *rtcStats.is_remote;
     if (rtcStats.media_type.is_defined())
         stats.mediaType = fromStdString(*rtcStats.media_type);
-    if (rtcStats.media_track_id.is_defined())
-        stats.mediaTrackId = fromStdString(*rtcStats.media_track_id);
+    if (rtcStats.track_id.is_defined())
+        stats.mediaTrackId = fromStdString(*rtcStats.track_id);
     if (rtcStats.transport_id.is_defined())
         stats.transportId = fromStdString(*rtcStats.transport_id);
     if (rtcStats.codec_id.is_defined())
@@ -326,8 +326,6 @@ static inline void fillOutboundRTPStreamStats(RTCStatsReport::OutboundRTPStreamS
         stats.bytesSent = *rtcStats.bytes_sent;
     if (rtcStats.target_bitrate.is_defined())
         stats.targetBitrate = *rtcStats.target_bitrate;
-    if (rtcStats.round_trip_time.is_defined())
-        stats.roundTripTime = *rtcStats.round_trip_time;
     // FIXME: Set framesEncoded
     stats.framesEncoded = 0;
 }

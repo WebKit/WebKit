@@ -1,4 +1,0 @@
-include_rules = [
-  "+webrtc/modules/audio_coding/codecs",
-]
-

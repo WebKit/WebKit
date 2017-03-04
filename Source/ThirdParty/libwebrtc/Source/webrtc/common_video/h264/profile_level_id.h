@@ -15,20 +15,13 @@
 #include <string>
 
 #include "webrtc/base/optional.h"
+#include "webrtc/common_types.h"
 
 namespace webrtc {
 namespace H264 {
 
 // Map containting SDP codec parameters.
 typedef std::map<std::string, std::string> CodecParameterMap;
-
-enum Profile {
-  kProfileConstrainedBaseline,
-  kProfileBaseline,
-  kProfileMain,
-  kProfileConstrainedHigh,
-  kProfileHigh,
-};
 
 // All values are equal to ten times the level number, except level 1b which is
 // special.

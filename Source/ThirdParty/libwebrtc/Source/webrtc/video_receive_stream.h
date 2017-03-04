@@ -16,12 +16,12 @@
 #include <string>
 #include <vector>
 
+#include "webrtc/api/call/transport.h"
 #include "webrtc/base/platform_file.h"
 #include "webrtc/common_types.h"
 #include "webrtc/common_video/include/frame_callback.h"
 #include "webrtc/config.h"
 #include "webrtc/media/base/videosinkinterface.h"
-#include "webrtc/transport.h"
 
 namespace webrtc {
 
@@ -45,7 +45,10 @@ class VideoReceiveStream {
     // used to unpack incoming packets.
     std::string payload_name;
 
-    DecoderSpecificSettings decoder_specific;
+    // This map contains the codec specific parameters from SDP, i.e. the "fmtp"
+    // parameters. It is the same as cricket::CodecParameterMap used in
+    // cricket::VideoCodec.
+    std::map<std::string, std::string> codec_params;
   };
 
   struct Stats {
@@ -54,6 +57,7 @@ class VideoReceiveStream {
     int network_frame_rate = 0;
     int decode_frame_rate = 0;
     int render_frame_rate = 0;
+    uint32_t frames_rendered = 0;
 
     // Decoder stats.
     std::string decoder_implementation_name = "unknown";
@@ -66,6 +70,7 @@ class VideoReceiveStream {
     int min_playout_delay_ms = 0;
     int render_delay_ms = 10;
     uint32_t frames_decoded = 0;
+    rtc::Optional<uint64_t> qp_sum;
 
     int current_payload_type = -1;
 
@@ -113,6 +118,7 @@ class VideoReceiveStream {
 
       // Synchronization source (stream identifier) to be received.
       uint32_t remote_ssrc = 0;
+
       // Sender SSRC used for sending RTCP (such as receiver reports).
       uint32_t local_ssrc = 0;
 
@@ -138,19 +144,12 @@ class VideoReceiveStream {
       // See UlpfecConfig for description.
       UlpfecConfig ulpfec;
 
-      // RTX settings for incoming video payloads that may be received. RTX is
-      // disabled if there's no config present.
-      struct Rtx {
-        // SSRCs to use for the RTX streams.
-        uint32_t ssrc = 0;
+      // SSRC for retransmissions.
+      uint32_t rtx_ssrc = 0;
 
-        // Payload type to use for the RTX stream.
-        int payload_type = 0;
-      };
-
-      // Map from video RTP payload type -> RTX config.
-      typedef std::map<int, Rtx> RtxMap;
-      RtxMap rtx;
+      // Map from video payload type (apt) -> RTX payload type (pt).
+      // For RTX to be enabled, both an SSRC and this mapping are needed.
+      std::map<int, int> rtx_payload_types;
 
       // RTP header extensions used for the received stream.
       std::vector<RtpExtension> extensions;
@@ -180,14 +179,6 @@ class VideoReceiveStream {
     // when
     // saving the stream to a file. 'nullptr' disables the callback.
     EncodedFrameObserver* pre_decode_callback = nullptr;
-
-    // Called for each decoded frame. E.g. used when adding effects to the
-    // decoded
-    // stream. 'nullptr' disables the callback.
-    // TODO(tommi): This seems to be only used by a test or two.  Consider
-    // removing it (and use an appropriate alternative in the tests) as well
-    // as the associated code in VideoStreamDecoder.
-    I420FrameCallback* pre_render_callback = nullptr;
 
     // Target delay in milliseconds. A positive value indicates this stream is
     // used for streaming instead of a real-time call.

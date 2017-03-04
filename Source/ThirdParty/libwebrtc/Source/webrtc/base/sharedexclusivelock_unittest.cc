@@ -10,7 +10,7 @@
 
 #include <memory>
 
-#include "webrtc/base/common.h"
+#include "webrtc/base/checks.h"
 #include "webrtc/base/gunit.h"
 #include "webrtc/base/event.h"
 #include "webrtc/base/messagehandler.h"
@@ -60,9 +60,9 @@ class ReadTask : public SharedExclusiveTask {
 
  private:
   virtual void OnMessage(Message* message) {
-    ASSERT(rtc::Thread::Current() == worker_thread_.get());
-    ASSERT(message != NULL);
-    ASSERT(message->message_id == kMsgRead);
+    RTC_CHECK(rtc::Thread::Current() == worker_thread_.get());
+    RTC_CHECK(message != nullptr);
+    RTC_CHECK(message->message_id == kMsgRead);
 
     TypedMessageData<int*>* message_data =
         static_cast<TypedMessageData<int*>*>(message->pdata);
@@ -73,7 +73,7 @@ class ReadTask : public SharedExclusiveTask {
       done_->Set();
     }
     delete message->pdata;
-    message->pdata = NULL;
+    message->pdata = nullptr;
   }
 };
 
@@ -90,9 +90,9 @@ class WriteTask : public SharedExclusiveTask {
 
  private:
   virtual void OnMessage(Message* message) {
-    ASSERT(rtc::Thread::Current() == worker_thread_.get());
-    ASSERT(message != NULL);
-    ASSERT(message->message_id == kMsgWrite);
+    RTC_CHECK(rtc::Thread::Current() == worker_thread_.get());
+    RTC_CHECK(message != nullptr);
+    RTC_CHECK(message->message_id == kMsgWrite);
 
     TypedMessageData<int>* message_data =
         static_cast<TypedMessageData<int>*>(message->pdata);
@@ -103,7 +103,7 @@ class WriteTask : public SharedExclusiveTask {
       done_->Set();
     }
     delete message->pdata;
-    message->pdata = NULL;
+    message->pdata = nullptr;
   }
 };
 

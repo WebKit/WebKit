@@ -39,10 +39,7 @@ class RTPReceiverVideo : public RTPReceiverStrategy {
 
   bool ShouldReportCsrcChanges(uint8_t payload_type) const override;
 
-  int32_t OnNewPayloadTypeCreated(
-      const char payload_name[RTP_PAYLOAD_NAME_SIZE],
-      int8_t payload_type,
-      uint32_t frequency) override;
+  int32_t OnNewPayloadTypeCreated(const CodecInst& audio_codec) override;
 
   int32_t InvokeOnInitializeDecoder(
       RtpFeedback* callback,

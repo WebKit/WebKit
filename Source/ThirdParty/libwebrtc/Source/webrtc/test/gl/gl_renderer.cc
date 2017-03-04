@@ -12,6 +12,7 @@
 
 #include <string.h>
 
+#include "webrtc/base/checks.h"
 #include "webrtc/common_video/libyuv/include/webrtc_libyuv.h"
 
 namespace webrtc {
@@ -21,7 +22,7 @@ GlRenderer::GlRenderer()
     : is_init_(false), buffer_(NULL), width_(0), height_(0) {}
 
 void GlRenderer::Init() {
-  assert(!is_init_);
+  RTC_DCHECK(!is_init_);
   is_init_ = true;
 
   glGenTextures(1, &texture_);
@@ -52,7 +53,7 @@ void GlRenderer::ResizeViewport(size_t width, size_t height) {
 }
 
 void GlRenderer::ResizeVideo(size_t width, size_t height) {
-  assert(is_init_);
+  RTC_DCHECK(is_init_);
   width_ = width;
   height_ = height;
 
@@ -60,7 +61,7 @@ void GlRenderer::ResizeVideo(size_t width, size_t height) {
 
   delete[] buffer_;
   buffer_ = new uint8_t[buffer_size_];
-  assert(buffer_ != NULL);
+  RTC_DCHECK(buffer_);
   memset(buffer_, 0, buffer_size_);
   glBindTexture(GL_TEXTURE_2D, texture_);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0);
@@ -70,7 +71,7 @@ void GlRenderer::ResizeVideo(size_t width, size_t height) {
 }
 
 void GlRenderer::OnFrame(const webrtc::VideoFrame& frame) {
-  assert(is_init_);
+  RTC_DCHECK(is_init_);
 
   if (static_cast<size_t>(frame.width()) != width_ ||
       static_cast<size_t>(frame.height()) != height_) {

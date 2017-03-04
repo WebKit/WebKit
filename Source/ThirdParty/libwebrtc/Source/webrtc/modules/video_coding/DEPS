@@ -4,6 +4,18 @@ include_rules = [
   "+vpx",
   "+webrtc/base",
   "+webrtc/common_video",
+  "+webrtc/media/base",
   "+webrtc/system_wrappers",
   "+webrtc/tools",
 ]
+
+specific_include_rules = {
+  "android_test_initializer\.cc": [
+    "+base/android",
+    "+webrtc/sdk",
+  ],
+  "(.*test\.cc|.*test\.h)": [
+     "+webrtc/media/engine",
+     "+webrtc/sdk",
+  ],
+}

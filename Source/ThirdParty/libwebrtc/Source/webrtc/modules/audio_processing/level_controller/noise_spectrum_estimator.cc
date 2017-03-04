@@ -34,7 +34,7 @@ void NoiseSpectrumEstimator::Initialize() {
 
 void NoiseSpectrumEstimator::Update(rtc::ArrayView<const float> spectrum,
                                     bool first_update) {
-  RTC_DCHECK_EQ(65u, spectrum.size());
+  RTC_DCHECK_EQ(65, spectrum.size());
 
   if (first_update) {
     // Initialize the noise spectral estimate with the signal spectrum.

@@ -6,14 +6,36 @@
 # in the file PATENTS.  All contributing project authors may
 # be found in the AUTHORS file in the root of the source tree.
 
-import("../build/webrtc.gni")
+import("../webrtc.gni")
+
+rtc_source_set("call_interfaces") {
+  sources = [
+    "audio_receive_stream.h",
+    "audio_send_stream.cc",
+    "audio_send_stream.h",
+    "audio_state.h",
+    "call.h",
+    "flexfec_receive_stream.h",
+    "syncable.cc",
+    "syncable.h",
+  ]
+  deps = [
+    "..:webrtc_common",
+    "../api:audio_mixer_api",
+    "../api:transport_api",
+    "../api/audio_codecs:audio_codecs_api",
+    "../base:rtc_base",
+    "../base:rtc_base_approved",
+    "../modules/audio_coding:audio_encoder_interface",
+  ]
+}
 
 rtc_static_library("call") {
   sources = [
     "bitrate_allocator.cc",
     "call.cc",
-    "flexfec_receive_stream.cc",
-    "flexfec_receive_stream.h",
+    "flexfec_receive_stream_impl.cc",
+    "flexfec_receive_stream_impl.h",
   ]
 
   if (!build_with_chromium && is_clang) {
@@ -21,14 +43,24 @@ rtc_static_library("call") {
     suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
   }
 
-  deps = [
-    "..:webrtc_common",
+  public_deps = [
+    ":call_interfaces",
     "../api:call_api",
+  ]
+
+  deps = [
+    ":call_interfaces",
+    "..:webrtc_common",
+    "../api:transport_api",
     "../audio",
     "../base:rtc_task_queue",
+    "../logging:rtc_event_log_api",
     "../logging:rtc_event_log_impl",
+    "../modules/bitrate_controller",
     "../modules/congestion_controller",
+    "../modules/pacing",
     "../modules/rtp_rtcp",
+    "../modules/utility",
     "../system_wrappers",
     "../video",
   ]
@@ -42,12 +74,55 @@ if (rtc_include_tests) {
       "bitrate_estimator_tests.cc",
       "call_unittest.cc",
       "flexfec_receive_stream_unittest.cc",
-      "packet_injection_tests.cc",
     ]
     deps = [
       ":call",
+      "../base:rtc_base_approved",
+      "../logging:rtc_event_log_api",
+      "../modules/audio_device:mock_audio_device",
+      "../modules/audio_mixer",
+      "../modules/bitrate_controller",
+      "../modules/pacing",
+      "../modules/rtp_rtcp",
+      "../system_wrappers",
+      "../test:direct_transport",
+      "../test:test_common",
+      "../test:test_support",
+      "../test:video_test_common",
       "//testing/gmock",
       "//testing/gtest",
+    ]
+    if (!build_with_chromium && is_clang) {
+      # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
+      suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
+    }
+  }
+
+  rtc_source_set("call_perf_tests") {
+    testonly = true
+    sources = [
+      "call_perf_tests.cc",
+      "rampup_tests.cc",
+      "rampup_tests.h",
+    ]
+    deps = [
+      ":call_interfaces",
+      "..:webrtc_common",
+      "../base:rtc_base_approved",
+      "../logging:rtc_event_log_api",
+      "../modules/audio_coding",
+      "../modules/audio_mixer:audio_mixer_impl",
+      "../modules/rtp_rtcp",
+      "../system_wrappers",
+      "../system_wrappers:metrics_default",
+      "../test:direct_transport",
+      "../test:fake_audio_device",
+      "../test:test_support",
+      "../test:video_test_common",
+      "../video",
+      "../voice_engine",
+      "//testing/gtest",
+      "//webrtc/test:test_common",
     ]
     if (!build_with_chromium && is_clang) {
       # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).

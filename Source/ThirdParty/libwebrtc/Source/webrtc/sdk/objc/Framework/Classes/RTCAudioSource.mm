@@ -12,7 +12,11 @@
 
 #include "webrtc/base/checks.h"
 
-@implementation RTCAudioSource
+@implementation RTCAudioSource {
+  rtc::scoped_refptr<webrtc::AudioSourceInterface> _nativeAudioSource;
+}
+
+@synthesize volume = _volume;
 
 - (instancetype)initWithNativeAudioSource:
     (rtc::scoped_refptr<webrtc::AudioSourceInterface>)nativeAudioSource {
@@ -34,6 +38,11 @@
 - (NSString *)description {
   NSString *stateString = [[self class] stringForState:self.state];
   return [NSString stringWithFormat:@"RTCAudioSource( %p ): %@", self, stateString];
+}
+
+- (void)setVolume:(double)volume {
+  _volume = volume;
+  _nativeAudioSource->SetVolume(volume);
 }
 
 #pragma mark - Private

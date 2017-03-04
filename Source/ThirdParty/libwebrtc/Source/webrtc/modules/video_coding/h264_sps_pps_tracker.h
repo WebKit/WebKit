@@ -14,6 +14,7 @@
 #include <cstdint>
 #include <map>
 #include <memory>
+#include <vector>
 
 #include "webrtc/modules/include/module_common_types.h"
 
@@ -28,6 +29,9 @@ class H264SpsPpsTracker {
   enum PacketAction { kInsert, kDrop, kRequestKeyframe };
 
   PacketAction CopyAndFixBitstream(VCMPacket* packet);
+
+  void InsertSpsPpsNalus(const std::vector<uint8_t>& sps,
+                         const std::vector<uint8_t>& pps);
 
  private:
   struct PpsInfo {

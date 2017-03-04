@@ -12,8 +12,12 @@
 #include "webrtc/base/logging.h"
 #include "webrtc/system_wrappers/include/metrics_default.h"
 #include "webrtc/test/field_trial.h"
+#include "webrtc/test/gmock.h"
 #include "webrtc/test/gtest.h"
 #include "webrtc/test/testsupport/fileutils.h"
+#include "webrtc/test/testsupport/trace_to_stderr.h"
+
+DEFINE_bool(logs, false, "print logs to stderr");
 
 DEFINE_string(force_fieldtrials, "",
     "Field trials control experimental feature code which can be forced. "
@@ -21,7 +25,7 @@ DEFINE_string(force_fieldtrials, "",
     " will assign the group Enable to field trial WebRTC-FooFeature.");
 
 int main(int argc, char* argv[]) {
-  ::testing::InitGoogleTest(&argc, argv);
+  ::testing::InitGoogleMock(&argc, argv);
 
   // Default to LS_INFO, even for release builds to provide better test logging.
   // TODO(pbos): Consider adding a command-line override.
@@ -36,5 +40,11 @@ int main(int argc, char* argv[]) {
   webrtc::test::SetExecutablePath(argv[0]);
   webrtc::test::InitFieldTrialsFromString(FLAGS_force_fieldtrials);
   webrtc::metrics::Enable();
+
+  rtc::LogMessage::SetLogToStderr(FLAGS_logs);
+  std::unique_ptr<webrtc::test::TraceToStderr> trace_to_stderr;
+  if (FLAGS_logs)
+      trace_to_stderr.reset(new webrtc::test::TraceToStderr);
+
   return RUN_ALL_TESTS();
 }

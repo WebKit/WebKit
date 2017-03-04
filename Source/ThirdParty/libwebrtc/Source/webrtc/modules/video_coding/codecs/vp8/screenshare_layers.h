@@ -9,10 +9,9 @@
 #ifndef WEBRTC_MODULES_VIDEO_CODING_CODECS_VP8_SCREENSHARE_LAYERS_H_
 #define WEBRTC_MODULES_VIDEO_CODING_CODECS_VP8_SCREENSHARE_LAYERS_H_
 
-#include <list>
+#include <vector>
 
-#include "vpx/vpx_encoder.h"
-
+#include "webrtc/base/rate_statistics.h"
 #include "webrtc/base/timeutils.h"
 #include "webrtc/modules/video_coding/codecs/vp8/temporal_layers.h"
 #include "webrtc/modules/video_coding/utility/frame_dropper.h"
@@ -41,10 +40,15 @@ class ScreenshareLayers : public TemporalLayers {
   // and/or update the reference buffers.
   int EncodeFlags(uint32_t timestamp) override;
 
-  bool ConfigureBitrates(int bitrate_kbps,
-                         int max_bitrate_kbps,
-                         int framerate,
-                         vpx_codec_enc_cfg_t* cfg) override;
+  // Update state based on new bitrate target and incoming framerate.
+  // Returns the bitrate allocation for the active temporal layers.
+  std::vector<uint32_t> OnRatesUpdated(int bitrate_kbps,
+                                       int max_bitrate_kbps,
+                                       int framerate) override;
+
+  // Update the encoder configuration with target bitrates or other parameters.
+  // Returns true iff the configuration was actually modified.
+  bool UpdateConfiguration(vpx_codec_enc_cfg_t* cfg) override;
 
   void PopulateCodecSpecific(bool base_layer_sync,
                              CodecSpecificInfoVP8* vp8_info,
@@ -54,13 +58,9 @@ class ScreenshareLayers : public TemporalLayers {
 
   int CurrentLayerId() const override;
 
-  // Allows the layers adapter to update the encoder configuration prior to a
-  // frame being encoded. Return true if the configuration should be updated
-  // and false if now change is needed.
-  bool UpdateConfiguration(vpx_codec_enc_cfg_t* cfg) override;
-
  private:
   bool TimeToSync(int64_t timestamp) const;
+  uint32_t GetCodecTargetBitrateKbps() const;
 
   Clock* const clock_;
 
@@ -75,9 +75,16 @@ class ScreenshareLayers : public TemporalLayers {
   int min_qp_;
   int max_qp_;
   uint32_t max_debt_bytes_;
-  int frame_rate_;
 
-  static const int kMaxNumTemporalLayers = 2;
+  // Configured max framerate.
+  rtc::Optional<uint32_t> target_framerate_;
+  // Incoming framerate from capturer.
+  rtc::Optional<uint32_t> capture_framerate_;
+  // Tracks what framerate we actually encode, and drops frames on overshoot.
+  RateStatistics encode_framerate_;
+  bool bitrate_updated_;
+
+  static constexpr int kMaxNumTemporalLayers = 2;
   struct TemporalLayer {
     TemporalLayer()
         : state(State::kNormal),

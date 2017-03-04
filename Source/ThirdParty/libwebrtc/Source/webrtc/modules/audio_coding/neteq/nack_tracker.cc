@@ -196,7 +196,7 @@ void NackTracker::Reset() {
 }
 
 void NackTracker::SetMaxNackListSize(size_t max_nack_list_size) {
-  RTC_CHECK_GT(max_nack_list_size, 0u);
+  RTC_CHECK_GT(max_nack_list_size, 0);
   // Ugly hack to get around the problem of passing static consts by reference.
   const size_t kNackListSizeLimitLocal = NackTracker::kNackListSizeLimit;
   RTC_CHECK_LE(max_nack_list_size, kNackListSizeLimitLocal);

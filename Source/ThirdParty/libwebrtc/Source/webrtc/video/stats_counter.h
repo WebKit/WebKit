@@ -33,6 +33,7 @@ class StatsCounterObserver {
 
 struct AggregatedStats {
   std::string ToString() const;
+  std::string ToStringWithMultiplier(int multiplier) const;
 
   int64_t num_samples = 0;
   int min = -1;
@@ -98,6 +99,13 @@ class StatsCounter {
   // (i.e. empty intervals will be discarded until next sample is added).
   void ProcessAndPause();
 
+  // As above with a minimum pause time. Added samples within this interval will
+  // not resume the stats (i.e. stop the pause).
+  void ProcessAndPauseForDuration(int64_t min_pause_time_ms);
+
+  // Reports metrics for elapsed intervals to AggregatedCounter and stops pause.
+  void ProcessAndStopPause();
+
   // Checks if a sample has been added (i.e. Add or Set called).
   bool HasSample() const;
 
@@ -108,7 +116,8 @@ class StatsCounter {
                StatsCounterObserver* observer);
 
   void Add(int sample);
-  void Set(int sample, uint32_t stream_id);
+  void Set(int64_t sample, uint32_t stream_id);
+  void SetLast(int64_t sample, uint32_t stream_id);
 
   const bool include_empty_intervals_;
   const int64_t process_intervals_ms_;
@@ -120,11 +129,15 @@ class StatsCounter {
   void TryProcess();
   void ReportMetricToAggregatedCounter(int value, int num_values_to_add) const;
   bool IncludeEmptyIntervals() const;
+  void Resume();
+  void ResumeIfMinTimePassed();
 
   Clock* const clock_;
   const std::unique_ptr<StatsCounterObserver> observer_;
   int64_t last_process_time_ms_;
   bool paused_;
+  int64_t pause_time_ms_;
+  int64_t min_pause_time_ms_;
 };
 
 // AvgCounter: average of samples
@@ -249,7 +262,7 @@ class RateCounter : public StatsCounter {
 //           | *      *      *      | *         *         | ...
 //           | Set(5) Set(6) Set(8) | Set(11)   Set(13)   |
 //           |<------ 2 sec ------->|                     |
-// GetMetric | 8 / 2                | (13 - 8) / 2        |
+// GetMetric | (8 - 0) / 2          | (13 - 8) / 2        |
 //
 // |include_empty_intervals|: If set, intervals without samples will be included
 //                            in the stats. The value for an interval is
@@ -262,7 +275,11 @@ class RateAccCounter : public StatsCounter {
                  bool include_empty_intervals);
   ~RateAccCounter() override {}
 
-  void Set(int sample, uint32_t stream_id);
+  void Set(int64_t sample, uint32_t stream_id);
+
+  // Sets the value for previous interval.
+  // To be used if a value other than zero is initially required.
+  void SetLast(int64_t sample, uint32_t stream_id);
 
  private:
   bool GetMetric(int* metric) const override;

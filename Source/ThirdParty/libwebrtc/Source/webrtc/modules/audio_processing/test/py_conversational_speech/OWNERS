@@ -1,0 +1,6 @@
+alessiob@webrtc.org
+henrik.lundin@webrtc.org
+peah@webrtc.org
+
+per-file *.gn=*
+per-file *.gni=*

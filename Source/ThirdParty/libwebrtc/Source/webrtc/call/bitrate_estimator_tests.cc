@@ -16,7 +16,7 @@
 #include "webrtc/base/event.h"
 #include "webrtc/base/logging.h"
 #include "webrtc/base/thread_annotations.h"
-#include "webrtc/call.h"
+#include "webrtc/call/call.h"
 #include "webrtc/system_wrappers/include/critical_section_wrapper.h"
 #include "webrtc/system_wrappers/include/trace.h"
 #include "webrtc/test/call_test.h"
@@ -166,7 +166,7 @@ class BitrateEstimatorTest : public test::CallTest {
       send_stream_ = test_->sender_call_->CreateVideoSendStream(
           test_->video_send_config_.Copy(),
           test_->video_encoder_config_.Copy());
-      RTC_DCHECK_EQ(1u, test_->video_encoder_config_.number_of_streams);
+      RTC_DCHECK_EQ(1, test_->video_encoder_config_.number_of_streams);
       frame_generator_capturer_.reset(test::FrameGeneratorCapturer::Create(
           kDefaultWidth, kDefaultHeight, kDefaultFramerate,
           Clock::GetRealTimeClock()));

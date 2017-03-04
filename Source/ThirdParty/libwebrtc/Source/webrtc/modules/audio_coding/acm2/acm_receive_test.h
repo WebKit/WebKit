@@ -14,9 +14,9 @@
 #include <memory>
 #include <string>
 
+#include "webrtc/api/audio_codecs/audio_decoder_factory.h"
 #include "webrtc/base/constructormagic.h"
 #include "webrtc/base/scoped_ref_ptr.h"
-#include "webrtc/modules/audio_coding/codecs/audio_decoder_factory.h"
 #include "webrtc/system_wrappers/include/clock.h"
 
 namespace webrtc {

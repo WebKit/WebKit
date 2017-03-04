@@ -23,7 +23,6 @@
 #include "webrtc/test/gtest.h"
 #include "webrtc/test/testsupport/fileutils.h"
 #include "webrtc/typedefs.h"
-#include "webrtc/voice_engine_configurations.h"
 
 // Description of the test:
 // In this test we set up a one-way communication channel from a participant

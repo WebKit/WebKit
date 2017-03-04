@@ -10,7 +10,6 @@
 
 #ifndef WEBRTC_EXAMPLES_PEERCONNECTION_CLIENT_FLAGDEFS_H_
 #define WEBRTC_EXAMPLES_PEERCONNECTION_CLIENT_FLAGDEFS_H_
-#pragma once
 
 #include "webrtc/base/flags.h"
 

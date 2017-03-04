@@ -17,6 +17,7 @@
 
 #include "webrtc/base/logging.h"
 #include "webrtc/modules/rtp_rtcp/source/vp8_partition_aggregator.h"
+#include "webrtc/modules/rtp_rtcp/source/rtp_packet_to_send.h"
 
 namespace webrtc {
 namespace {
@@ -197,9 +198,9 @@ void RtpPacketizerVp8::SetPayloadData(
   }
 }
 
-bool RtpPacketizerVp8::NextPacket(uint8_t* buffer,
-                                  size_t* bytes_to_send,
-                                  bool* last_packet) {
+bool RtpPacketizerVp8::NextPacket(RtpPacketToSend* packet, bool* last_packet) {
+  RTC_DCHECK(packet);
+  RTC_DCHECK(last_packet);
   if (!packets_calculated_) {
     int ret = 0;
     if (aggr_mode_ == kAggrPartitions && balance_) {
@@ -217,13 +218,14 @@ bool RtpPacketizerVp8::NextPacket(uint8_t* buffer,
   InfoStruct packet_info = packets_.front();
   packets_.pop();
 
+  uint8_t* buffer = packet->AllocatePayload(max_payload_len_);
   int bytes = WriteHeaderAndPayload(packet_info, buffer, max_payload_len_);
   if (bytes < 0) {
     return false;
   }
-  *bytes_to_send = static_cast<size_t>(bytes);
-
+  packet->SetPayloadSize(bytes);
   *last_packet = packets_.empty();
+  packet->SetMarker(*last_packet);
   return true;
 }
 
@@ -680,7 +682,7 @@ bool RtpDepacketizerVp8::Parse(ParsedPayload* parsed_payload,
 
   parsed_payload->type.Video.width = 0;
   parsed_payload->type.Video.height = 0;
-  parsed_payload->type.Video.isFirstPacket =
+  parsed_payload->type.Video.is_first_packet_in_frame =
       beginning_of_partition && (partition_id == 0);
   parsed_payload->type.Video.simulcastIdx = 0;
   parsed_payload->type.Video.codec = kRtpVideoVp8;

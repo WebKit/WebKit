@@ -88,7 +88,7 @@ bool Tmmbr::Create(uint8_t* packet,
 
   CreateHeader(kFeedbackMessageType, kPacketType, HeaderLength(), packet,
                index);
-  RTC_DCHECK_EQ(0u, Rtpfb::media_ssrc());
+  RTC_DCHECK_EQ(0, Rtpfb::media_ssrc());
   CreateCommonFeedback(packet + *index);
   *index += kCommonFeedbackLength;
   for (const TmmbItem& item : items_) {

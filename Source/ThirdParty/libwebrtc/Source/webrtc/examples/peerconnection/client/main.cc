@@ -12,6 +12,7 @@
 #include "webrtc/examples/peerconnection/client/flagdefs.h"
 #include "webrtc/examples/peerconnection/client/main_wnd.h"
 #include "webrtc/examples/peerconnection/client/peer_connection_client.h"
+#include "webrtc/base/checks.h"
 #include "webrtc/base/ssladapter.h"
 #include "webrtc/base/win32socketinit.h"
 #include "webrtc/base/win32socketserver.h"
@@ -42,7 +43,7 @@ int PASCAL wWinMain(HINSTANCE instance, HINSTANCE prev_instance,
 
   MainWnd wnd(FLAG_server, FLAG_port, FLAG_autoconnect, FLAG_autocall);
   if (!wnd.Create()) {
-    ASSERT(false);
+    RTC_NOTREACHED();
     return -1;
   }
 

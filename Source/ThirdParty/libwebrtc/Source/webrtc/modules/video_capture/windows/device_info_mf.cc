@@ -13,7 +13,7 @@
 namespace webrtc {
 namespace videocapturemodule {
 
-DeviceInfoMF::DeviceInfoMF(const int32_t id) : DeviceInfoImpl(id) {
+DeviceInfoMF::DeviceInfoMF() {
 }
 
 DeviceInfoMF::~DeviceInfoMF() {

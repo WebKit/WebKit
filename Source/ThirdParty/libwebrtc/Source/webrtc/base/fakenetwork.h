@@ -79,7 +79,7 @@ class FakeNetworkManager : public NetworkManagerBase,
   virtual void StopUpdating() { --start_count_; }
 
   // MessageHandler interface.
-  virtual void OnMessage(Message* msg) {
+  virtual void OnMessage(Message*) {
     DoUpdateNetworks();
   }
 

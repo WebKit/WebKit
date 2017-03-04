@@ -17,9 +17,7 @@ namespace videocapturemodule {
 
 class ExternalDeviceInfo : public DeviceInfoImpl {
  public:
-  ExternalDeviceInfo(const int32_t id)
-      : DeviceInfoImpl(id) {
-  }
+  ExternalDeviceInfo() {}
   virtual ~ExternalDeviceInfo() {}
   virtual uint32_t NumberOfDevices() { return 0; }
   virtual int32_t DisplayCaptureSettingsDialogBox(
@@ -43,9 +41,8 @@ class ExternalDeviceInfo : public DeviceInfoImpl {
   virtual int32_t Init() { return 0; }
 };
 
-VideoCaptureModule::DeviceInfo* VideoCaptureImpl::CreateDeviceInfo(
-    const int32_t id) {
-  return new ExternalDeviceInfo(id);
+VideoCaptureModule::DeviceInfo* VideoCaptureImpl::CreateDeviceInfo() {
+  return new ExternalDeviceInfo();
 }
 
 }  // namespace videocapturemodule

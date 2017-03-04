@@ -27,7 +27,6 @@
 #include "webrtc/modules/audio_coding/neteq/include/neteq.h"
 #include "webrtc/modules/include/module_common_types.h"
 #include "webrtc/typedefs.h"
-#include "webrtc/voice_engine_configurations.h"
 
 namespace webrtc {
 

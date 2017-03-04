@@ -213,6 +213,20 @@ TEST_F(StatsCounterTest, TestMetric_RateAccCounter) {
   EXPECT_EQ(94, stats.max);
 }
 
+TEST_F(StatsCounterTest, TestMetric_RateAccCounterWithSetLast) {
+  StatsCounterObserverImpl* observer = new StatsCounterObserverImpl();
+  RateAccCounter counter(&clock_, observer, true);
+  counter.SetLast(98, kStreamId);
+  counter.Set(175, kStreamId);
+  counter.Set(188, kStreamId);
+  clock_.AdvanceTimeMilliseconds(kDefaultProcessIntervalMs);
+  // Trigger process (sample included in next interval).
+  counter.Set(192, kStreamId);
+  // Rate per interval: (188 - 98) / 2 sec = 45 samples/sec
+  EXPECT_EQ(1, observer->num_calls_);
+  EXPECT_EQ(45, observer->last_sample_);
+}
+
 TEST_F(StatsCounterTest, TestMetric_RateAccCounterWithMultipleStreamIds) {
   StatsCounterObserverImpl* observer = new StatsCounterObserverImpl();
   RateAccCounter counter(&clock_, observer, true);
@@ -361,6 +375,123 @@ TEST_F(StatsCounterTest, TestAvgCounter_WithPause) {
   counter.ProcessAndGetStats();
   EXPECT_EQ(6, observer->num_calls_);
   EXPECT_EQ(22, observer->last_sample_);
+}
+
+TEST_F(StatsCounterTest, TestRateAccCounter_AddSampleStopsPause) {
+  // Samples: | 12 | 24 |  // -: paused
+  // Stats:   | 6  | 6  |
+  StatsCounterObserverImpl* observer = new StatsCounterObserverImpl();
+  RateAccCounter counter(&clock_, observer, true);
+  // Add sample and advance 1 intervals.
+  counter.Set(12, kStreamId);
+  clock_.AdvanceTimeMilliseconds(kDefaultProcessIntervalMs);
+  // Trigger process and verify stats: [6:1]
+  counter.ProcessAndPause();
+  EXPECT_EQ(1, observer->num_calls_);
+  EXPECT_EQ(6, observer->last_sample_);
+  // Add sample and advance 1 intervals.
+  counter.Set(24, kStreamId);  // Pause stopped.
+  clock_.AdvanceTimeMilliseconds(kDefaultProcessIntervalMs);
+  counter.ProcessAndGetStats();
+  EXPECT_EQ(2, observer->num_calls_);
+  EXPECT_EQ(6, observer->last_sample_);
+}
+
+TEST_F(StatsCounterTest, TestRateAccCounter_AddSameSampleDoesNotStopPause) {
+  // Samples: | 12 | 12 | 24 |  // -: paused
+  // Stats:   | 6  | -  | 6  |
+  StatsCounterObserverImpl* observer = new StatsCounterObserverImpl();
+  RateAccCounter counter(&clock_, observer, true);
+  // Add sample and advance 1 intervals.
+  counter.Set(12, kStreamId);
+  clock_.AdvanceTimeMilliseconds(kDefaultProcessIntervalMs);
+  // Trigger process and verify stats: [6:1]
+  counter.ProcessAndPause();
+  EXPECT_EQ(1, observer->num_calls_);
+  EXPECT_EQ(6, observer->last_sample_);
+  // Add same sample and advance 1 intervals.
+  counter.Set(12, kStreamId);  // Pause not stopped.
+  clock_.AdvanceTimeMilliseconds(kDefaultProcessIntervalMs);
+  counter.ProcessAndGetStats();
+  EXPECT_EQ(1, observer->num_calls_);
+  EXPECT_EQ(6, observer->last_sample_);
+  // Add new sample and advance 1 intervals.
+  counter.Set(24, kStreamId);  // Pause stopped.
+  clock_.AdvanceTimeMilliseconds(kDefaultProcessIntervalMs);
+  counter.ProcessAndGetStats();
+  EXPECT_EQ(2, observer->num_calls_);
+  EXPECT_EQ(6, observer->last_sample_);
+}
+
+TEST_F(StatsCounterTest, TestRateAccCounter_PauseAndStopPause) {
+  // Samples: | 12 | 12 | 12 |  // -: paused
+  // Stats:   | 6  | -  | 0  |
+  StatsCounterObserverImpl* observer = new StatsCounterObserverImpl();
+  RateAccCounter counter(&clock_, observer, true);
+  // Add sample and advance 1 intervals.
+  counter.Set(12, kStreamId);
+  clock_.AdvanceTimeMilliseconds(kDefaultProcessIntervalMs);
+  // Trigger process and verify stats: [6:1]
+  counter.ProcessAndPause();
+  EXPECT_EQ(1, observer->num_calls_);
+  EXPECT_EQ(6, observer->last_sample_);
+  // Add same sample and advance 1 intervals.
+  counter.Set(12, kStreamId);  // Pause not stopped.
+  clock_.AdvanceTimeMilliseconds(kDefaultProcessIntervalMs);
+  counter.ProcessAndGetStats();
+  EXPECT_EQ(1, observer->num_calls_);
+  EXPECT_EQ(6, observer->last_sample_);
+  // Stop pause, add sample and advance 1 intervals.
+  counter.ProcessAndStopPause();
+  counter.Set(12, kStreamId);
+  clock_.AdvanceTimeMilliseconds(kDefaultProcessIntervalMs);
+  counter.ProcessAndGetStats();
+  EXPECT_EQ(2, observer->num_calls_);
+  EXPECT_EQ(0, observer->last_sample_);
+}
+
+TEST_F(StatsCounterTest, TestAvgCounter_WithoutMinPauseTimePassed) {
+  // Samples: | 6 | 2 | - |  // x: empty interval, -: paused
+  // Stats:   | 6 | 2 | - |  // x -> last value reported
+  StatsCounterObserverImpl* observer = new StatsCounterObserverImpl();
+  AvgCounter counter(&clock_, observer, true);
+  // Add sample and advance 1 intervals.
+  AddSampleAndAdvance(6, kDefaultProcessIntervalMs, &counter);
+  // Process and pause. Verify stats: [6:1].
+  const int64_t kMinMs = 500;
+  counter.ProcessAndPauseForDuration(kMinMs);
+  EXPECT_EQ(1, observer->num_calls_);  // Last value reported.
+  EXPECT_EQ(6, observer->last_sample_);
+  // Min pause time has not pass.
+  clock_.AdvanceTimeMilliseconds(kMinMs - 1);
+  counter.Add(2);  // Pause not stopped.
+  // Make two intervals pass (1 without samples -> ignored while paused).
+  clock_.AdvanceTimeMilliseconds(kDefaultProcessIntervalMs * 2 - (kMinMs - 1));
+  counter.ProcessAndGetStats();
+  EXPECT_EQ(2, observer->num_calls_);
+  EXPECT_EQ(2, observer->last_sample_);
+}
+
+TEST_F(StatsCounterTest, TestAvgCounter_WithMinPauseTimePassed) {
+  // Samples: | 6 | 2 | x |  // x: empty interval, -: paused
+  // Stats:   | 6 | 2 | 2 |  // x -> last value reported
+  StatsCounterObserverImpl* observer = new StatsCounterObserverImpl();
+  AvgCounter counter(&clock_, observer, true);
+  // Add sample and advance 1 intervals.
+  AddSampleAndAdvance(6, kDefaultProcessIntervalMs, &counter);
+  // Process and pause. Verify stats: [6:1].
+  const int64_t kMinMs = 500;
+  counter.ProcessAndPauseForDuration(kMinMs);
+  EXPECT_EQ(1, observer->num_calls_);  // Last value reported.
+  EXPECT_EQ(6, observer->last_sample_);
+  // Make min pause time pass.
+  clock_.AdvanceTimeMilliseconds(kMinMs);
+  counter.Add(2);  // Stop pause.
+  // Make two intervals pass (1 without samples -> last value reported).
+  clock_.AdvanceTimeMilliseconds(kDefaultProcessIntervalMs * 2 - kMinMs);
+  counter.ProcessAndGetStats();
+  EXPECT_EQ(3, observer->num_calls_);
+  EXPECT_EQ(2, observer->last_sample_);
 }
 
 TEST_F(StatsCounterTest, TestRateCounter_IntervalsWithoutSamplesIgnored) {

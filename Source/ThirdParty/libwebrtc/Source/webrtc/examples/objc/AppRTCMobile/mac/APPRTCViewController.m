@@ -242,7 +242,7 @@ static NSUInteger const kBottomViewHeight = 200;
 
   _roomField = [[NSTextField alloc] initWithFrame:NSZeroRect];
   [_roomField setTranslatesAutoresizingMaskIntoConstraints:NO];
-  _roomField.placeholderString = @"Enter AppRTC room id";
+  [[_roomField cell] setPlaceholderString: @"Enter AppRTC room id"];
   [_actionItemsView addSubview:_roomField];
   [_roomField setEditable:YES];
 

@@ -43,6 +43,14 @@ class FakeDesktopCapturer : public DesktopCapturer {
   // does not take the ownership of |generator|.
   void set_frame_generator(DesktopFrameGenerator* generator);
 
+  // Count of DesktopFrame(s) have been returned by this instance. This field
+  // would never be negative.
+  int num_frames_captured() const;
+
+  // Count of CaptureFrame() calls have been made. This field would never be
+  // negative.
+  int num_capture_attempts() const;
+
   // DesktopCapturer interface
   void Start(DesktopCapturer::Callback* callback) override;
   void CaptureFrame() override;
@@ -55,10 +63,12 @@ class FakeDesktopCapturer : public DesktopCapturer {
   static constexpr DesktopCapturer::SourceId kWindowId = 1378277495;
   static constexpr DesktopCapturer::SourceId kScreenId = 1378277496;
 
-  DesktopCapturer::Callback* callback_;
+  DesktopCapturer::Callback* callback_ = nullptr;
   std::unique_ptr<SharedMemoryFactory> shared_memory_factory_;
-  DesktopCapturer::Result result_;
-  DesktopFrameGenerator* generator_;
+  DesktopCapturer::Result result_ = Result::SUCCESS;
+  DesktopFrameGenerator* generator_ = nullptr;
+  int num_frames_captured_ = 0;
+  int num_capture_attempts_ = 0;
 };
 
 }  // namespace webrtc

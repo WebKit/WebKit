@@ -23,7 +23,7 @@
 #import "WebRTC/RTCTracing.h"
 
 #import "ARDAppEngineClient.h"
-#import "ARDCEODTURNClient.h"
+#import "ARDTURNClient+Internal.h"
 #import "ARDJoinResponse.h"
 #import "ARDMessageResponse.h"
 #import "ARDSDPUtils.h"
@@ -33,12 +33,7 @@
 #import "RTCIceCandidate+JSON.h"
 #import "RTCSessionDescription+JSON.h"
 
-static NSString * const kARDDefaultSTUNServerUrl =
-    @"stun:stun.l.google.com:19302";
-// TODO(tkchin): figure out a better username for CEOD statistics.
-static NSString * const kARDTurnRequestUrl =
-    @"https://computeengineondemand.appspot.com"
-    @"/turn?username=iapprtc&key=4080218913";
+static NSString * const kARDIceServerRequestUrl = @"https://appr.tc/params";
 
 static NSString * const kARDAppClientErrorDomain = @"ARDAppClient";
 static NSInteger const kARDAppClientErrorUnknown = -1;
@@ -50,12 +45,14 @@ static NSInteger const kARDAppClientErrorInvalidRoom = -6;
 static NSString * const kARDMediaStreamId = @"ARDAMS";
 static NSString * const kARDAudioTrackId = @"ARDAMSa0";
 static NSString * const kARDVideoTrackId = @"ARDAMSv0";
+static NSString * const kARDVideoTrackKind = @"video";
 
 // TODO(tkchin): Add these as UI options.
 static BOOL const kARDAppClientEnableTracing = NO;
 static BOOL const kARDAppClientEnableRtcEventLog = YES;
 static int64_t const kARDAppClientAecDumpMaxSizeInBytes = 5e6;  // 5 MB.
 static int64_t const kARDAppClientRtcEventLogMaxSizeInBytes = 5e6;  // 5 MB.
+static int const kKbpsMultiplier = 1000;
 
 // We need a proxy to NSTimer because it causes a strong retain cycle. When
 // using the proxy, |invalidate| must be called before it properly deallocs.
@@ -131,21 +128,15 @@ static int64_t const kARDAppClientRtcEventLogMaxSizeInBytes = 5e6;  // 5 MB.
 @synthesize shouldUseLevelControl = _shouldUseLevelControl;
 
 - (instancetype)init {
-  if (self = [super init]) {
-    _roomServerClient = [[ARDAppEngineClient alloc] init];
-    NSURL *turnRequestURL = [NSURL URLWithString:kARDTurnRequestUrl];
-    _turnClient = [[ARDCEODTURNClient alloc] initWithURL:turnRequestURL];
-    [self configure];
-  }
-  return self;
+  return [self initWithDelegate:nil];
 }
 
 - (instancetype)initWithDelegate:(id<ARDAppClientDelegate>)delegate {
   if (self = [super init]) {
     _roomServerClient = [[ARDAppEngineClient alloc] init];
     _delegate = delegate;
-    NSURL *turnRequestURL = [NSURL URLWithString:kARDTurnRequestUrl];
-    _turnClient = [[ARDCEODTURNClient alloc] initWithURL:turnRequestURL];
+    NSURL *turnRequestURL = [NSURL URLWithString:kARDIceServerRequestUrl];
+    _turnClient = [[ARDTURNClient alloc] initWithURL:turnRequestURL];
     [self configure];
   }
   return self;
@@ -174,7 +165,7 @@ static int64_t const kARDAppClientRtcEventLogMaxSizeInBytes = 5e6;  // 5 MB.
 - (void)configure {
   _factory = [[RTCPeerConnectionFactory alloc] init];
   _messageQueue = [NSMutableArray array];
-  _iceServers = [NSMutableArray arrayWithObject:[self defaultSTUNServer]];
+  _iceServers = [NSMutableArray array];
   _fileLogger = [[RTCFileLogger alloc] init];
   [_fileLogger start];
 }
@@ -476,6 +467,7 @@ static int64_t const kARDAppClientRtcEventLogMaxSizeInBytes = 5e6;  // 5 MB.
         [[ARDSessionDescriptionMessage alloc]
             initWithDescription:sdpPreferringH264];
     [self sendSignalingMessage:message];
+    [self setMaxBitrateForPeerConnectionVideoSender];
   });
 }
 
@@ -680,21 +672,35 @@ static int64_t const kARDAppClientRtcEventLogMaxSizeInBytes = 5e6;  // 5 MB.
   RTCRtpSender *sender =
       [_peerConnection senderWithKind:kRTCMediaStreamTrackKindVideo
                              streamId:kARDMediaStreamId];
-
-  [self setMaxBitrate:_maxBitrate forVideoSender:sender];
-
   RTCVideoTrack *track = [self createLocalVideoTrack];
   if (track) {
     sender.track = track;
     [_delegate appClient:self didReceiveLocalVideoTrack:track];
   }
+
   return sender;
 }
 
-- (void)setMaxBitrate:(NSNumber *)maxBitrate forVideoSender:(RTCRtpSender *)sender {
-  for (RTCRtpEncodingParameters *encoding in sender.parameters.encodings) {
-    encoding.maxBitrateBps = maxBitrate;
+- (void)setMaxBitrateForPeerConnectionVideoSender {
+  for (RTCRtpSender *sender in _peerConnection.senders) {
+    if (sender.track != nil) {
+      if ([sender.track.kind isEqualToString:kARDVideoTrackKind]) {
+        [self setMaxBitrate:_maxBitrate forVideoSender:sender];
+      }
+    }
   }
+}
+
+- (void)setMaxBitrate:(NSNumber *)maxBitrate forVideoSender:(RTCRtpSender *)sender {
+  if (maxBitrate.intValue <= 0) {
+    return;
+  }
+
+  RTCRtpParameters *parametersToModify = sender.parameters;
+  for (RTCRtpEncodingParameters *encoding in parametersToModify.encodings) {
+    encoding.maxBitrateBps = @(maxBitrate.intValue * kKbpsMultiplier);
+  }
+  [sender setParameters:parametersToModify];
 }
 
 - (RTCRtpSender *)createAudioSender {
@@ -795,12 +801,6 @@ static int64_t const kARDAppClientRtcEventLogMaxSizeInBytes = 5e6;  // 5 MB.
           initWithMandatoryConstraints:nil
                    optionalConstraints:optionalConstraints];
   return constraints;
-}
-
-- (RTCIceServer *)defaultSTUNServer {
-  return [[RTCIceServer alloc] initWithURLStrings:@[kARDDefaultSTUNServerUrl]
-                                         username:@""
-                                       credential:@""];
 }
 
 #pragma mark - Errors

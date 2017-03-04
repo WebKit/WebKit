@@ -19,7 +19,7 @@
 
 class TestRtpObserver : public webrtc::VoERTPObserver {
  public:
-  TestRtpObserver() : changed_ssrc_event_(voetest::EventWrapper::Create()) {}
+  TestRtpObserver() : changed_ssrc_event_(webrtc::EventWrapper::Create()) {}
   virtual ~TestRtpObserver() {}
   virtual void OnIncomingCSRCChanged(int channel,
                                      unsigned int CSRC,
@@ -28,7 +28,7 @@ class TestRtpObserver : public webrtc::VoERTPObserver {
                                      unsigned int SSRC);
   void WaitForChangedSsrc() {
     // 10 seconds should be enough.
-    EXPECT_EQ(voetest::kEventSignaled, changed_ssrc_event_->Wait(10*1000));
+    EXPECT_EQ(webrtc::kEventSignaled, changed_ssrc_event_->Wait(10*1000));
   }
   void SetIncomingSsrc(unsigned int ssrc) {
     rtc::CritScope lock(&crit_);
@@ -37,7 +37,7 @@ class TestRtpObserver : public webrtc::VoERTPObserver {
  public:
   rtc::CriticalSection crit_;
   unsigned int incoming_ssrc_;
-  std::unique_ptr<voetest::EventWrapper> changed_ssrc_event_;
+  std::unique_ptr<webrtc::EventWrapper> changed_ssrc_event_;
 };
 
 void TestRtpObserver::OnIncomingSSRCChanged(int channel,
@@ -91,9 +91,10 @@ TEST_F(RtpRtcpTest, RemoteRtcpCnameHasPropagatedToRemoteSide) {
     return;
   }
 
-  // We need to sleep a bit here for the name to propagate. For instance,
-  // 200 milliseconds is not enough, so we'll go with one second here.
-  Sleep(1000);
+  // We need to sleep a bit here for the name to propagate. For
+  // instance, 200 milliseconds is not enough, 1 second still flaky,
+  // so we'll go with five seconds here.
+  Sleep(5000);
 
   char char_buffer[256];
   voe_rtp_rtcp_->GetRemoteRTCP_CNAME(channel_, char_buffer);

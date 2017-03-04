@@ -33,8 +33,8 @@ bool RemoteNtpTimeEstimator::UpdateRtcpTimestamp(int64_t rtt,
                                                  uint32_t ntp_frac,
                                                  uint32_t rtcp_timestamp) {
   bool new_rtcp_sr = false;
-  if (!UpdateRtcpList(
-      ntp_secs, ntp_frac, rtcp_timestamp, &rtcp_list_, &new_rtcp_sr)) {
+  if (!rtp_to_ntp_.UpdateMeasurements(ntp_secs, ntp_frac, rtcp_timestamp,
+                                      &new_rtcp_sr)) {
     return false;
   }
   if (!new_rtcp_sr) {
@@ -52,7 +52,7 @@ bool RemoteNtpTimeEstimator::UpdateRtcpTimestamp(int64_t rtt,
 
 int64_t RemoteNtpTimeEstimator::Estimate(uint32_t rtp_timestamp) {
   int64_t sender_capture_ntp_ms = 0;
-  if (!RtpToNtpMs(rtp_timestamp, rtcp_list_, &sender_capture_ntp_ms)) {
+  if (!rtp_to_ntp_.Estimate(rtp_timestamp, &sender_capture_ntp_ms)) {
     return -1;
   }
   uint32_t timestamp = sender_capture_ntp_ms * 90;

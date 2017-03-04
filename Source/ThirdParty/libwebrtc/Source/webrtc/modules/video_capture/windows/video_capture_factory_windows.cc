@@ -17,22 +17,20 @@ namespace webrtc {
 namespace videocapturemodule {
 
 // static
-VideoCaptureModule::DeviceInfo* VideoCaptureImpl::CreateDeviceInfo(
-    const int32_t id) {
+VideoCaptureModule::DeviceInfo* VideoCaptureImpl::CreateDeviceInfo() {
   // TODO(tommi): Use the Media Foundation version on Vista and up.
-  return DeviceInfoDS::Create(id);
+  return DeviceInfoDS::Create();
 }
 
 rtc::scoped_refptr<VideoCaptureModule> VideoCaptureImpl::Create(
-    const int32_t id,
     const char* device_id) {
   if (device_id == nullptr)
     return nullptr;
 
   // TODO(tommi): Use Media Foundation implementation for Vista and up.
   rtc::scoped_refptr<VideoCaptureDS> capture(
-      new rtc::RefCountedObject<VideoCaptureDS>(id));
-  if (capture->Init(id, device_id) != 0) {
+      new rtc::RefCountedObject<VideoCaptureDS>());
+  if (capture->Init(device_id) != 0) {
     return nullptr;
   }
 

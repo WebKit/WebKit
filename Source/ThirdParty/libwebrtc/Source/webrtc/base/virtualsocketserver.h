@@ -213,10 +213,10 @@ class VirtualSocketServer : public SocketServer, public sigslot::has_slots<> {
                             uint32_t samples);
   static double Evaluate(Function* f, double x);
 
-  // NULL out our message queue if it goes away. Necessary in the case where
+  // Null out our message queue if it goes away. Necessary in the case where
   // our lifetime is greater than that of the thread we are using, since we
   // try to send Close messages for all connected sockets when we shutdown.
-  void OnMessageQueueDestroyed() { msg_queue_ = NULL; }
+  void OnMessageQueueDestroyed() { msg_queue_ = nullptr; }
 
   // Determine if two sockets should be able to communicate.
   // We don't (currently) specify an address family for sockets; instead,

@@ -17,6 +17,7 @@
 #include <vector>
 
 #include "webrtc/base/criticalsection.h"
+#include "webrtc/base/function_view.h"
 #include "webrtc/base/gtest_prod_util.h"
 #include "webrtc/base/ignore_wundef.h"
 #include "webrtc/base/swap_queue.h"
@@ -24,6 +25,7 @@
 #include "webrtc/modules/audio_processing/audio_buffer.h"
 #include "webrtc/modules/audio_processing/include/audio_processing.h"
 #include "webrtc/modules/audio_processing/render_queue_item_verifier.h"
+#include "webrtc/modules/audio_processing/rms_level.h"
 #include "webrtc/system_wrappers/include/file_wrapper.h"
 
 #ifdef WEBRTC_AUDIOPROC_DEBUG_DUMP
@@ -126,10 +128,15 @@ class AudioProcessingImpl : public AudioProcessing {
   EchoCancellation* echo_cancellation() const override;
   EchoControlMobile* echo_control_mobile() const override;
   GainControl* gain_control() const override;
+  // TODO(peah): Deprecate this API call.
   HighPassFilter* high_pass_filter() const override;
   LevelEstimator* level_estimator() const override;
   NoiseSuppression* noise_suppression() const override;
   VoiceDetection* voice_detection() const override;
+
+  // TODO(peah): Remove these two methods once the new API allows that.
+  void MutateConfig(rtc::FunctionView<void(AudioProcessing::Config*)> mutator);
+  AudioProcessing::Config GetConfig() const;
 
  protected:
   // Overridden in a mock.
@@ -145,11 +152,14 @@ class AudioProcessingImpl : public AudioProcessing {
   struct ApmPublicSubmodules;
   struct ApmPrivateSubmodules;
 
+  // Submodule interface implementations.
+  std::unique_ptr<HighPassFilter> high_pass_filter_impl_;
+
   class ApmSubmoduleStates {
    public:
     ApmSubmoduleStates();
     // Updates the submodule state and returns true if it has changed.
-    bool Update(bool high_pass_filter_enabled,
+    bool Update(bool low_cut_filter_enabled,
                 bool echo_canceller_enabled,
                 bool mobile_echo_controller_enabled,
                 bool residual_echo_detector_enabled,
@@ -158,6 +168,7 @@ class AudioProcessingImpl : public AudioProcessing {
                 bool beamformer_enabled,
                 bool adaptive_gain_controller_enabled,
                 bool level_controller_enabled,
+                bool echo_canceller3_enabled,
                 bool voice_activity_detector_enabled,
                 bool level_estimator_enabled,
                 bool transient_suppressor_enabled);
@@ -167,7 +178,7 @@ class AudioProcessingImpl : public AudioProcessing {
     bool RenderMultiBandProcessingActive() const;
 
    private:
-    bool high_pass_filter_enabled_ = false;
+    bool low_cut_filter_enabled_ = false;
     bool echo_canceller_enabled_ = false;
     bool mobile_echo_controller_enabled_ = false;
     bool residual_echo_detector_enabled_ = false;
@@ -176,6 +187,7 @@ class AudioProcessingImpl : public AudioProcessing {
     bool beamformer_enabled_ = false;
     bool adaptive_gain_controller_enabled_ = false;
     bool level_controller_enabled_ = false;
+    bool echo_canceller3_enabled_ = false;
     bool level_estimator_enabled_ = false;
     bool voice_activity_detector_enabled_ = false;
     bool transient_suppressor_enabled_ = false;
@@ -240,6 +252,8 @@ class AudioProcessingImpl : public AudioProcessing {
   void InitializeLevelController() EXCLUSIVE_LOCKS_REQUIRED(crit_capture_);
   void InitializeResidualEchoDetector()
       EXCLUSIVE_LOCKS_REQUIRED(crit_render_, crit_capture_);
+  void InitializeLowCutFilter() EXCLUSIVE_LOCKS_REQUIRED(crit_capture_);
+  void InitializeEchoCanceller3() EXCLUSIVE_LOCKS_REQUIRED(crit_capture_);
 
   void EmptyQueuedRenderAudio();
   void AllocateRenderQueue()
@@ -318,11 +332,15 @@ class AudioProcessingImpl : public AudioProcessing {
 
   // APM constants.
   const struct ApmConstants {
-    ApmConstants(int agc_startup_min_volume, bool use_experimental_agc)
+    ApmConstants(int agc_startup_min_volume,
+                 int agc_clipped_level_min,
+                 bool use_experimental_agc)
         :  // Format of processing streams at input/output call sites.
           agc_startup_min_volume(agc_startup_min_volume),
+          agc_clipped_level_min(agc_clipped_level_min),
           use_experimental_agc(use_experimental_agc) {}
     int agc_startup_min_volume;
+    int agc_clipped_level_min;
     bool use_experimental_agc;
   } constants_;
 
@@ -367,6 +385,7 @@ class AudioProcessingImpl : public AudioProcessing {
     bool beamformer_enabled;
     bool intelligibility_enabled;
     bool level_controller_enabled = false;
+    bool echo_canceller3_enabled = false;
   } capture_nonlocked_;
 
   struct ApmRenderState {
@@ -395,6 +414,10 @@ class AudioProcessingImpl : public AudioProcessing {
       GUARDED_BY(crit_capture_) = 0;
   std::vector<float> red_render_queue_buffer_ GUARDED_BY(crit_render_);
   std::vector<float> red_capture_queue_buffer_ GUARDED_BY(crit_capture_);
+
+  RmsLevel capture_input_rms_ GUARDED_BY(crit_capture_);
+  RmsLevel capture_output_rms_ GUARDED_BY(crit_capture_);
+  int capture_rms_interval_counter_ GUARDED_BY(crit_capture_) = 0;
 
   // Lock protection not needed.
   std::unique_ptr<SwapQueue<std::vector<float>, RenderQueueItemVerifier<float>>>

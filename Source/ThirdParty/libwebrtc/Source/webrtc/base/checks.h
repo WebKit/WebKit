@@ -11,7 +11,6 @@
 #ifndef WEBRTC_BASE_CHECKS_H_
 #define WEBRTC_BASE_CHECKS_H_
 
-#include "webrtc/base/export.h"
 #include "webrtc/typedefs.h"
 
 // If you for some reson need to know if DCHECKs are on, test the value of
@@ -38,6 +37,7 @@ NO_RETURN void rtc_FatalMessage(const char* file, int line, const char* msg);
 #include <string>
 
 #include "webrtc/base/safe_compare.h"
+#include "webrtc/base/export.h"
 
 // The macros here print a message to stderr and abort under various
 // conditions. All will accept additional stream messages. For example:
@@ -74,7 +74,7 @@ NO_RETURN void rtc_FatalMessage(const char* file, int line, const char* msg);
 //   messages if the condition doesn't hold. Prefer them to raw RTC_CHECK and
 //   RTC_DCHECK.
 //
-// - FATAL() aborts unconditionally.
+// - RTC_FATAL() aborts unconditionally.
 //
 // TODO(ajm): Ideally, checks.h would be combined with logging.h, but
 // consolidation with system_wrappers/logging.h should happen first.
@@ -142,7 +142,7 @@ std::string* MakeCheckOpString(const t1& v1, const t2& v2, const char* names) {
 extern template std::string* MakeCheckOpString<int, int>(
     const int&, const int&, const char* names);
 extern template
-std::string* MakeCheckOpString<unsigned long, unsigned long>(
+WEBRTC_DYLIB_EXPORT std::string* MakeCheckOpString<unsigned long, unsigned long>(
     const unsigned long&, const unsigned long&, const char* names);
 extern template
 std::string* MakeCheckOpString<unsigned long, unsigned int>(
@@ -164,13 +164,13 @@ std::string* MakeCheckOpString<std::string, std::string>(
   inline std::string* Check##name##Impl(const t1& v1, const t2& v2,          \
                                         const char* names) {                 \
     if (rtc::safe_cmp::name(v1, v2))                                         \
-      return NULL;                                                           \
+      return nullptr;                                                        \
     else                                                                     \
       return rtc::MakeCheckOpString(v1, v2, names);                          \
   }                                                                          \
   inline std::string* Check##name##Impl(int v1, int v2, const char* names) { \
     if (rtc::safe_cmp::name(v1, v2))                                         \
-      return NULL;                                                           \
+      return nullptr;                                                        \
     else                                                                     \
       return rtc::MakeCheckOpString(v1, v2, names);                          \
   }
@@ -222,15 +222,13 @@ class FatalMessageVoidify {
 #define RTC_UNREACHABLE_CODE_HIT false
 #define RTC_NOTREACHED() RTC_DCHECK(RTC_UNREACHABLE_CODE_HIT)
 
-#ifndef FATAL
-#define FATAL() rtc::FatalMessage(__FILE__, __LINE__).stream()
-#endif
+#define RTC_FATAL() rtc::FatalMessage(__FILE__, __LINE__).stream()
 // TODO(ajm): Consider adding RTC_NOTIMPLEMENTED macro when
 // base/logging.h and system_wrappers/logging.h are consolidated such that we
 // can match the Chromium behavior.
 
 // Like a stripped-down LogMessage from logging.h, except that it aborts.
-class WEBRTC_EXPORT FatalMessage {
+class WEBRTC_DYLIB_EXPORT FatalMessage {
  public:
   FatalMessage(const char* file, int line);
   // Used for RTC_CHECK_EQ(), etc. Takes ownership of the given string.
@@ -249,8 +247,7 @@ class WEBRTC_EXPORT FatalMessage {
 // remainder is zero.
 template <typename T>
 inline T CheckedDivExact(T a, T b) {
-  RTC_CHECK_EQ(a % b, static_cast<T>(0)) << a << " is not evenly divisible by "
-                                         << b;
+  RTC_CHECK_EQ(a % b, 0) << a << " is not evenly divisible by " << b;
   return a / b;
 }
 

@@ -10,12 +10,11 @@
 
 #include "webrtc/voice_engine/output_mixer.h"
 
+#include "webrtc/audio/utility/audio_frame_operations.h"
 #include "webrtc/base/format_macros.h"
 #include "webrtc/modules/audio_processing/include/audio_processing.h"
-#include "webrtc/modules/utility/include/audio_frame_operations.h"
 #include "webrtc/system_wrappers/include/file_wrapper.h"
 #include "webrtc/system_wrappers/include/trace.h"
-#include "webrtc/voice_engine/include/voe_external_media.h"
 #include "webrtc/voice_engine/statistics.h"
 #include "webrtc/voice_engine/utility.h"
 
@@ -94,8 +93,6 @@ OutputMixer::OutputMixer(uint32_t instanceId) :
     _mixerModule(*AudioConferenceMixer::Create(instanceId)),
     _audioLevel(),
     _instanceId(instanceId),
-    _externalMediaCallbackPtr(NULL),
-    _externalMedia(false),
     _panLeft(1.0f),
     _panRight(1.0f),
     _mixingFrequencyHz(8000),
@@ -126,10 +123,6 @@ OutputMixer::~OutputMixer()
 {
     WEBRTC_TRACE(kTraceMemory, kTraceVoice, VoEId(_instanceId,-1),
                  "OutputMixer::~OutputMixer() - dtor");
-    if (_externalMedia)
-    {
-        DeRegisterExternalMediaProcessing();
-    }
     {
         rtc::CritScope cs(&_fileCritSect);
         if (output_file_recorder_) {
@@ -157,31 +150,6 @@ OutputMixer::SetAudioProcessingModule(AudioProcessing* audioProcessingModule)
                  "OutputMixer::SetAudioProcessingModule("
                  "audioProcessingModule=0x%x)", audioProcessingModule);
     _audioProcessingModulePtr = audioProcessingModule;
-    return 0;
-}
-
-int OutputMixer::RegisterExternalMediaProcessing(
-    VoEMediaProcess& proccess_object)
-{
-    WEBRTC_TRACE(kTraceInfo, kTraceVoice, VoEId(_instanceId,-1),
-               "OutputMixer::RegisterExternalMediaProcessing()");
-
-    rtc::CritScope cs(&_callbackCritSect);
-    _externalMediaCallbackPtr = &proccess_object;
-    _externalMedia = true;
-
-    return 0;
-}
-
-int OutputMixer::DeRegisterExternalMediaProcessing()
-{
-    WEBRTC_TRACE(kTraceInfo, kTraceVoice, VoEId(_instanceId,-1),
-                 "OutputMixer::DeRegisterExternalMediaProcessing()");
-
-    rtc::CritScope cs(&_callbackCritSect);
-    _externalMedia = false;
-    _externalMediaCallbackPtr = NULL;
-
     return 0;
 }
 
@@ -475,27 +443,8 @@ OutputMixer::DoOperationsOnCombinedSignal(bool feed_data_to_apm)
       if (_audioProcessingModulePtr->ProcessReverseStream(&_audioFrame) != 0) {
         WEBRTC_TRACE(kTraceWarning, kTraceVoice, VoEId(_instanceId, -1),
                      "AudioProcessingModule::ProcessReverseStream() => error");
-        RTC_DCHECK(false);
+        RTC_NOTREACHED();
       }
-    }
-
-    // --- External media processing
-    {
-        rtc::CritScope cs(&_callbackCritSect);
-        if (_externalMedia)
-        {
-            const bool is_stereo = (_audioFrame.num_channels_ == 2);
-            if (_externalMediaCallbackPtr)
-            {
-                _externalMediaCallbackPtr->Process(
-                    -1,
-                    kPlaybackAllChannelsMixed,
-                    (int16_t*)_audioFrame.data_,
-                    _audioFrame.samples_per_channel_,
-                    _audioFrame.sample_rate_hz_,
-                    is_stereo);
-            }
-        }
     }
 
     // --- Measure audio level (0-9) for the combined signal

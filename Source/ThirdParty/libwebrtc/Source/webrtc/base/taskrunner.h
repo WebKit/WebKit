@@ -11,9 +11,11 @@
 #ifndef WEBRTC_BASE_TASKRUNNER_H__
 #define WEBRTC_BASE_TASKRUNNER_H__
 
+#include <stdint.h>
+
 #include <vector>
 
-#include "webrtc/base/basictypes.h"
+#include "webrtc/base/checks.h"
 #include "webrtc/base/sigslot.h"
 #include "webrtc/base/taskparent.h"
 
@@ -44,7 +46,7 @@ class TaskRunner : public TaskParent, public sigslot::has_slots<> {
 
   void UpdateTaskTimeout(Task* task, int64_t previous_task_timeout_time);
 
-#if !defined(NDEBUG)
+#if RTC_DCHECK_IS_ON
   bool is_ok_to_delete(Task* task) {
     return task == deleting_task_;
   }
@@ -85,11 +87,11 @@ class TaskRunner : public TaskParent, public sigslot::has_slots<> {
   void CheckForTimeoutChange(int64_t previous_timeout_time);
 
   std::vector<Task *> tasks_;
-  Task *next_timeout_task_;
-  bool tasks_running_;
-#if !defined(NDEBUG)
-  int abort_count_;
-  Task* deleting_task_;
+  Task *next_timeout_task_ = nullptr;
+  bool tasks_running_ = false;
+#if RTC_DCHECK_IS_ON
+  int abort_count_ = 0;
+  Task* deleting_task_ = nullptr;
 #endif
 
   void RecalcNextTimeout(Task *exclude_task);

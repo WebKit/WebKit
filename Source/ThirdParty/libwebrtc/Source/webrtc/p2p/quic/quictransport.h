@@ -15,7 +15,7 @@
 #include <map>
 #include <memory>
 
-#include "webrtc/p2p/base/transport.h"
+#include "webrtc/p2p/base/jseptransport.h"
 #include "webrtc/p2p/quic/quictransportchannel.h"
 
 namespace cricket {
@@ -23,7 +23,11 @@ namespace cricket {
 class P2PTransportChannel;
 class PortAllocator;
 
-// TODO(mikescarlett): Refactor to avoid code duplication with DtlsTransport.
+// TODO(deadbeef): To get QUIC working with TransportController again, would
+// need to merge this class with Transport (or make separate DTLS/QUIC
+// subclasses). The only difference between the two (as of typing this) is that
+// the QUIC channel *requires* a fingerprint, whereas the DTLS channel can
+// operate in a passthrough mode when SDES is used.
 class QuicTransport : public Transport {
  public:
   QuicTransport(const std::string& name,

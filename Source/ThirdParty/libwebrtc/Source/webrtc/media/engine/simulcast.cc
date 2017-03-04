@@ -11,9 +11,9 @@
 #include <stdio.h>
 
 #include "webrtc/base/arraysize.h"
-#include "webrtc/base/common.h"
 #include "webrtc/base/logging.h"
 #include "webrtc/media/base/streamparams.h"
+#include "webrtc/media/engine/constants.h"
 #include "webrtc/media/engine/simulcast.h"
 #include "webrtc/system_wrappers/include/field_trial.h"
 
@@ -49,6 +49,8 @@ const SimulcastFormat kSimulcastFormats[] = {
   {0, 0, 1, 200, 150, 30}
 };
 
+const int kDefaultScreenshareSimulcastStreams = 2;
+
 // Multiway: Number of temporal layers for each simulcast stream, for maximum
 // possible number of simulcast streams |kMaxSimulcastStreams|. The array
 // goes from lowest resolution at position 0 to highest resolution.
@@ -79,8 +81,8 @@ int FindSimulcastFormatIndex(int width, int height) {
   MaybeExchangeWidthHeight(&width, &height);
 
   for (uint32_t i = 0; i < arraysize(kSimulcastFormats); ++i) {
-    if (width >= kSimulcastFormats[i].width &&
-        height >= kSimulcastFormats[i].height) {
+    if (width * height >=
+        kSimulcastFormats[i].width * kSimulcastFormats[i].height) {
       return i;
     }
   }
@@ -91,8 +93,8 @@ int FindSimulcastFormatIndex(int width, int height, size_t max_layers) {
   MaybeExchangeWidthHeight(&width, &height);
 
   for (uint32_t i = 0; i < arraysize(kSimulcastFormats); ++i) {
-    if (width >= kSimulcastFormats[i].width &&
-        height >= kSimulcastFormats[i].height &&
+    if (width * height >=
+            kSimulcastFormats[i].width * kSimulcastFormats[i].height &&
         max_layers == kSimulcastFormats[i].max_layers) {
       return i;
     }
@@ -118,7 +120,7 @@ size_t FindSimulcastMaxLayers(int width, int height) {
 // TODO(marpan): Investigate if we should return 0 instead of -1 in
 // FindSimulcast[Max/Target/Min]Bitrate functions below, since the
 // codec struct max/min/targeBitrates are unsigned.
-int FindSimulcastMaxBitrateBps(int width, int height, size_t max_layers) {
+int FindSimulcastMaxBitrateBps(int width, int height) {
   const int format_index = FindSimulcastFormatIndex(width, height);
   if (format_index == -1) {
     return -1;
@@ -126,9 +128,7 @@ int FindSimulcastMaxBitrateBps(int width, int height, size_t max_layers) {
   return kSimulcastFormats[format_index].max_bitrate_kbps * 1000;
 }
 
-int FindSimulcastTargetBitrateBps(int width,
-                                  int height,
-                                  size_t max_layers) {
+int FindSimulcastTargetBitrateBps(int width, int height) {
   const int format_index = FindSimulcastFormatIndex(width, height);
   if (format_index == -1) {
     return -1;
@@ -136,7 +136,7 @@ int FindSimulcastTargetBitrateBps(int width,
   return kSimulcastFormats[format_index].target_bitrate_kbps * 1000;
 }
 
-int FindSimulcastMinBitrateBps(int width, int height, size_t max_layers) {
+int FindSimulcastMinBitrateBps(int width, int height) {
   const int format_index = FindSimulcastFormatIndex(width, height);
   if (format_index == -1) {
     return -1;
@@ -167,52 +167,75 @@ int GetTotalMaxBitrateBps(const std::vector<webrtc::VideoStream>& streams) {
   return total_max_bitrate_bps;
 }
 
-std::vector<webrtc::VideoStream> GetSimulcastConfig(
-    size_t max_streams,
-    int width,
-    int height,
-    int max_bitrate_bps,
-    int max_qp,
-    int max_framerate) {
-  size_t simulcast_layers = FindSimulcastMaxLayers(width, height);
-  if (simulcast_layers > max_streams) {
+std::vector<webrtc::VideoStream> GetSimulcastConfig(size_t max_streams,
+                                                    int width,
+                                                    int height,
+                                                    int max_bitrate_bps,
+                                                    int max_qp,
+                                                    int max_framerate,
+                                                    bool is_screencast) {
+  size_t num_simulcast_layers;
+  if (is_screencast) {
+    num_simulcast_layers =
+        UseSimulcastScreenshare() ? kDefaultScreenshareSimulcastStreams : 1;
+  } else {
+    num_simulcast_layers = FindSimulcastMaxLayers(width, height);
+  }
+
+  if (num_simulcast_layers > max_streams) {
     // If the number of SSRCs in the group differs from our target
     // number of simulcast streams for current resolution, switch down
     // to a resolution that matches our number of SSRCs.
     if (!SlotSimulcastMaxResolution(max_streams, &width, &height)) {
       return std::vector<webrtc::VideoStream>();
     }
-    simulcast_layers = max_streams;
+    num_simulcast_layers = max_streams;
   }
   std::vector<webrtc::VideoStream> streams;
-  streams.resize(simulcast_layers);
+  streams.resize(num_simulcast_layers);
 
-  // Format width and height has to be divisible by |2 ^ number_streams - 1|.
-  width = NormalizeSimulcastSize(width, simulcast_layers);
-  height = NormalizeSimulcastSize(height, simulcast_layers);
+  if (!is_screencast) {
+    // Format width and height has to be divisible by |2 ^ number_streams - 1|.
+    width = NormalizeSimulcastSize(width, num_simulcast_layers);
+    height = NormalizeSimulcastSize(height, num_simulcast_layers);
+  }
 
   // Add simulcast sub-streams from lower resolution to higher resolutions.
   // Add simulcast streams, from highest resolution (|s| = number_streams -1)
   // to lowest resolution at |s| = 0.
-  for (size_t s = simulcast_layers - 1;; --s) {
+  for (size_t s = num_simulcast_layers - 1;; --s) {
     streams[s].width = width;
     streams[s].height = height;
     // TODO(pbos): Fill actual temporal-layer bitrate thresholds.
-    streams[s].temporal_layer_thresholds_bps.resize(
-        kDefaultConferenceNumberOfTemporalLayers[s] - 1);
-    streams[s].max_bitrate_bps =
-        FindSimulcastMaxBitrateBps(width, height, simulcast_layers);
-    streams[s].target_bitrate_bps =
-        FindSimulcastTargetBitrateBps(width, height, simulcast_layers);
-    streams[s].min_bitrate_bps =
-        FindSimulcastMinBitrateBps(width, height, simulcast_layers);
     streams[s].max_qp = max_qp;
-    streams[s].max_framerate = max_framerate;
-    width /= 2;
-    height /= 2;
-    if (s == 0) {
-      break;
+    if (is_screencast && s == 0) {
+      ScreenshareLayerConfig config = ScreenshareLayerConfig::GetDefault();
+      // For legacy screenshare in conference mode, tl0 and tl1 bitrates are
+      // piggybacked on the VideoCodec struct as target and max bitrates,
+      // respectively. See eg. webrtc::VP8EncoderImpl::SetRates().
+      streams[s].min_bitrate_bps = kMinVideoBitrateKbps * 1000;
+      streams[s].target_bitrate_bps = config.tl0_bitrate_kbps * 1000;
+      streams[s].max_bitrate_bps = config.tl1_bitrate_kbps * 1000;
+      streams[s].temporal_layer_thresholds_bps.clear();
+      streams[s].temporal_layer_thresholds_bps.push_back(
+          config.tl0_bitrate_kbps * 1000);
+      streams[s].max_framerate = 5;
+    } else {
+      streams[s].temporal_layer_thresholds_bps.resize(
+          kDefaultConferenceNumberOfTemporalLayers[s] - 1);
+      streams[s].max_bitrate_bps = FindSimulcastMaxBitrateBps(width, height);
+      streams[s].target_bitrate_bps =
+          FindSimulcastTargetBitrateBps(width, height);
+      streams[s].min_bitrate_bps = FindSimulcastMinBitrateBps(width, height);
+      streams[s].max_framerate = max_framerate;
     }
+
+    if (!is_screencast) {
+      width /= 2;
+      height /= 2;
+    }
+    if (s == 0)
+      break;
   }
 
   // Spend additional bits to boost the max stream.
@@ -231,6 +254,8 @@ static const int kScreenshareDefaultTl1BitrateKbps = 1000;
 
 static const char* kScreencastLayerFieldTrialName =
     "WebRTC-ScreenshareLayerRates";
+static const char* kSimulcastScreenshareFieldTrialName =
+    "WebRTC-SimulcastScreenshare";
 
 ScreenshareLayerConfig::ScreenshareLayerConfig(int tl0_bitrate, int tl1_bitrate)
     : tl0_bitrate_kbps(tl0_bitrate), tl1_bitrate_kbps(tl1_bitrate) {
@@ -271,6 +296,10 @@ bool ScreenshareLayerConfig::FromFieldTrialGroup(
   config->tl1_bitrate_kbps = tl1_bitrate;
 
   return true;
+}
+
+bool UseSimulcastScreenshare() {
+  return webrtc::field_trial::IsEnabled(kSimulcastScreenshareFieldTrialName);
 }
 
 }  // namespace cricket

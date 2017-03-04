@@ -6,7 +6,7 @@
 # in the file PATENTS.  All contributing project authors may
 # be found in the AUTHORS file in the root of the source tree.
 
-import("../../build/webrtc.gni")
+import("../../webrtc.gni")
 
 rtc_static_library("video_coding") {
   sources = [
@@ -18,7 +18,7 @@ rtc_static_library("video_coding") {
     "decoding_state.h",
     "encoded_frame.cc",
     "encoded_frame.h",
-    "fec_tables_xor.h",
+    "fec_rate_table.h",
     "frame_buffer.cc",
     "frame_buffer.h",
     "frame_buffer2.cc",
@@ -29,10 +29,13 @@ rtc_static_library("video_coding") {
     "generic_decoder.h",
     "generic_encoder.cc",
     "generic_encoder.h",
+    "h264_sprop_parameter_sets.cc",
+    "h264_sprop_parameter_sets.h",
     "h264_sps_pps_tracker.cc",
     "h264_sps_pps_tracker.h",
     "histogram.cc",
     "histogram.h",
+    "include/video_codec_initializer.h",
     "include/video_coding.h",
     "include/video_coding_defines.h",
     "inter_frame_delay.cc",
@@ -54,8 +57,6 @@ rtc_static_library("video_coding") {
     "packet.h",
     "packet_buffer.cc",
     "packet_buffer.h",
-    "percentile_filter.cc",
-    "percentile_filter.h",
     "protection_bitrate_calculator.cc",
     "protection_bitrate_calculator.h",
     "receiver.cc",
@@ -70,6 +71,7 @@ rtc_static_library("video_coding") {
     "timestamp_map.h",
     "timing.cc",
     "timing.h",
+    "video_codec_initializer.cc",
     "video_coding_impl.cc",
     "video_coding_impl.h",
     "video_receiver.cc",
@@ -91,13 +93,25 @@ rtc_static_library("video_coding") {
     ":webrtc_vp8",
     ":webrtc_vp9",
     "../..:webrtc_common",
+    "../../base:rtc_base",
+    "../../base:rtc_base_approved",
+    "../../base:rtc_numerics",
+    "../../base:rtc_task_queue",
     "../../common_video",
     "../../system_wrappers",
+    "../rtp_rtcp:rtp_rtcp",
+    "../utility:utility",
   ]
 }
 
 rtc_static_library("video_coding_utility") {
+  # TODO(ehmaldonado): Remove (bugs.webrtc.org/6828)
+  # Errors on cyclic dependency with :video_coding if enabled.
+  check_includes = false
+
   sources = [
+    "utility/default_video_bitrate_allocator.cc",
+    "utility/default_video_bitrate_allocator.h",
     "utility/frame_dropper.cc",
     "utility/frame_dropper.h",
     "utility/ivf_file_writer.cc",
@@ -120,6 +134,9 @@ rtc_static_library("video_coding_utility") {
   }
 
   deps = [
+    "../..:webrtc_common",
+    "../../base:rtc_base_approved",
+    "../../base:rtc_numerics",
     "../../common_video",
     "../../system_wrappers",
   ]
@@ -138,6 +155,9 @@ rtc_static_library("webrtc_h264") {
 
   defines = []
   deps = [
+    ":video_coding_utility",
+    "../../base:rtc_base_approved",
+    "../../media:rtc_media_base",
     "../../system_wrappers",
   ]
 
@@ -154,6 +174,7 @@ rtc_static_library("webrtc_h264") {
     ]
     deps += [
       "../../common_video",
+      "../../media:rtc_media_base",
       "//third_party/ffmpeg:ffmpeg",
       "//third_party/openh264:encoder",
     ]
@@ -172,6 +193,9 @@ rtc_static_library("webrtc_i420") {
   }
 
   deps = [
+    "../..:webrtc_common",
+    "../../base:rtc_base_approved",
+    "../../common_video:common_video",
     "../../system_wrappers",
   ]
 }
@@ -205,6 +229,7 @@ rtc_static_library("webrtc_vp8") {
   deps = [
     ":video_coding_utility",
     "../..:webrtc_common",
+    "../../base:rtc_base_approved",
     "../../common_video",
     "../../system_wrappers",
   ]
@@ -237,6 +262,7 @@ rtc_static_library("webrtc_vp9") {
 
   deps = [
     ":video_coding_utility",
+    "../../base:rtc_base_approved",
     "../../common_video",
     "../../system_wrappers",
   ]
@@ -246,6 +272,35 @@ rtc_static_library("webrtc_vp9") {
 }
 
 if (rtc_include_tests) {
+  rtc_executable("video_quality_measurement") {
+    testonly = true
+
+    sources = [
+      "codecs/tools/video_quality_measurement.cc",
+    ]
+
+    if (!build_with_chromium && is_clang) {
+      # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
+      suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
+    }
+
+    deps = [
+      ":video_codecs_test_framework",
+      ":video_coding",
+      ":webrtc_vp8",
+      "../..:webrtc_common",
+      "../../base:rtc_base_approved",
+      "../../system_wrappers:field_trial_default",
+      "../../system_wrappers:metrics_default",
+      "../../system_wrappers:system_wrappers",
+      "../../test:test_support",
+      "../../test:video_test_common",
+      "../../test:video_test_support",
+      "../video_capture",
+      "//third_party/gflags",
+    ]
+  }  # video_quality_measurement
+
   rtc_source_set("video_codecs_test_framework") {
     testonly = true
     sources = [
@@ -266,7 +321,241 @@ if (rtc_include_tests) {
     }
 
     deps = [
+      ":video_coding",
+      ":video_coding_utility",
+      "../..:webrtc_common",
+      "../../base:rtc_base_approved",
+      "../../common_video:common_video",
+      "../../system_wrappers:system_wrappers",
       "../../test:test_support",
+      "../../test:video_test_support",
     ]
+  }
+
+  rtc_source_set("video_coding_videoprocessor_integration_test") {
+    testonly = true
+
+    sources = [
+      "codecs/test/videoprocessor_integrationtest.h",
+    ]
+
+    deps = [
+      ":video_codecs_test_framework",
+      ":video_coding",
+      ":video_coding_utility",
+      ":webrtc_h264",
+      ":webrtc_vp8",
+      ":webrtc_vp9",
+      "../..:webrtc_common",
+      "../../base:rtc_base_approved",
+      "../../media:rtc_media",
+      "../../test:test_support",
+      "../../test:video_test_support",
+    ]
+
+    if (is_android) {
+      sources += [
+        "codecs/test/android_test_initializer.cc",
+        "codecs/test/android_test_initializer.h",
+      ]
+
+      deps += [
+        "../../base:rtc_base_approved",
+        "../../sdk/android:libjingle_peerconnection_jni",
+        "//base",
+      ]
+    }
+
+    if (is_ios || is_mac) {
+      deps += [
+        "../../media:rtc_media_base",
+        "../../sdk:webrtc_h264_video_toolbox",
+      ]
+    }
+  }
+
+  rtc_source_set("video_coding_modules_tests") {
+    testonly = true
+
+    sources = [
+      "codecs/test/videoprocessor_integrationtest.cc",
+      "codecs/vp8/test/vp8_impl_unittest.cc",
+      "codecs/vp9/test/vp9_impl_unittest.cc",
+    ]
+
+    deps = [
+      ":video_coding_videoprocessor_integration_test",
+      ":webrtc_vp8",
+      ":webrtc_vp9",
+      "../../api:video_frame_api",
+      "../../base:rtc_base_approved",
+      "../../common_video:common_video",
+      "../../test:test_support",
+      "../../test:video_test_common",
+      "../video_capture",
+    ]
+
+    if (rtc_use_h264) {
+      defines = [ "WEBRTC_VIDEOPROCESSOR_H264_TESTS" ]
+    }
+
+    if (!build_with_chromium && is_clang) {
+      # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
+      suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
+    }
+  }
+
+  plot_videoprocessor_integrationtest_resources = [
+    "//resources/foreman_128x96.yuv",
+    "//resources/foreman_160x120.yuv",
+    "//resources/foreman_176x144.yuv",
+    "//resources/foreman_320x240.yuv",
+    "//resources/foreman_cif.yuv",
+  ]
+
+  if (is_ios || is_mac) {
+    bundle_data("plot_videoprocessor_integrationtest_bundle_data") {
+      testonly = true
+      sources = plot_videoprocessor_integrationtest_resources
+      outputs = [
+        "{{bundle_resources_dir}}/{{source_file_part}}",
+      ]
+    }
+  }
+
+  # This executable is meant for local codec perf testing and should not be run
+  # on the trybots/buildbots, hence the existence of this special build target.
+  rtc_test("plot_videoprocessor_integrationtest") {
+    testonly = true
+
+    sources = [
+      "codecs/test/plot_videoprocessor_integrationtest.cc",
+    ]
+
+    deps = [
+      ":video_coding_videoprocessor_integration_test",
+      "../../test:test_main",
+      "../../test:video_test_common",
+      "../video_capture",
+    ]
+
+    data = plot_videoprocessor_integrationtest_resources
+
+    if (is_android) {
+      deps += [
+        "../../base:rtc_base_approved",
+
+        # TODO(brandtr): Figure out if the java dep below could be moved into
+        # :video_coding_videoprocessor_integration_test, where it belongs.
+        # When that is done, support for Android HW codecs can be added to the
+        # modules_tests target as well.
+        "../../sdk/android:libjingle_peerconnection_java",
+        "../../sdk/android:libjingle_peerconnection_jni",
+        "//base",
+        "//testing/android/native_test:native_test_support",
+      ]
+
+      shard_timeout = 900
+    }
+
+    if (is_ios || is_mac) {
+      deps += [ ":plot_videoprocessor_integrationtest_bundle_data" ]
+    }
+
+    # TODO(brandtr): Remove this define when the modules_tests target properly
+    # loads the Java classes mentioned above.
+    defines = [ "WEBRTC_VIDEOPROCESSOR_INTEGRATIONTEST_HW_CODECS_ENABLED" ]
+
+    if (!build_with_chromium && is_clang) {
+      # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
+      suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
+    }
+  }
+
+  rtc_source_set("video_coding_unittests") {
+    testonly = true
+    sources = [
+      "codecs/test/packet_manipulator_unittest.cc",
+      "codecs/test/stats_unittest.cc",
+      "codecs/test/videoprocessor_unittest.cc",
+      "codecs/vp8/default_temporal_layers_unittest.cc",
+      "codecs/vp8/reference_picture_selection_unittest.cc",
+      "codecs/vp8/screenshare_layers_unittest.cc",
+      "codecs/vp8/simulcast_encoder_adapter_unittest.cc",
+      "codecs/vp8/simulcast_unittest.cc",
+      "codecs/vp8/simulcast_unittest.h",
+      "decoding_state_unittest.cc",
+      "frame_buffer2_unittest.cc",
+      "h264_sprop_parameter_sets_unittest.cc",
+      "h264_sps_pps_tracker_unittest.cc",
+      "histogram_unittest.cc",
+      "include/mock/mock_vcm_callbacks.h",
+      "jitter_buffer_unittest.cc",
+      "jitter_estimator_tests.cc",
+      "nack_module_unittest.cc",
+      "protection_bitrate_calculator_unittest.cc",
+      "receiver_unittest.cc",
+      "rtp_frame_reference_finder_unittest.cc",
+      "sequence_number_util_unittest.cc",
+      "session_info_unittest.cc",
+      "test/stream_generator.cc",
+      "test/stream_generator.h",
+      "timing_unittest.cc",
+      "utility/default_video_bitrate_allocator_unittest.cc",
+      "utility/frame_dropper_unittest.cc",
+      "utility/ivf_file_writer_unittest.cc",
+      "utility/moving_average_unittest.cc",
+      "utility/quality_scaler_unittest.cc",
+      "utility/simulcast_rate_allocator_unittest.cc",
+      "video_codec_initializer_unittest.cc",
+      "video_coding_robustness_unittest.cc",
+      "video_packet_buffer_unittest.cc",
+      "video_receiver_unittest.cc",
+      "video_sender_unittest.cc",
+    ]
+    if (rtc_libvpx_build_vp9) {
+      sources += [ "codecs/vp9/vp9_screenshare_layers_unittest.cc" ]
+    }
+    if (rtc_use_h264) {
+      sources += [ "codecs/h264/h264_encoder_impl_unittest.cc" ]
+    }
+    deps = [
+      ":video_codecs_test_framework",
+      ":video_coding",
+      ":video_coding_utility",
+      ":webrtc_h264",
+      ":webrtc_vp8",
+      ":webrtc_vp9",
+      "../..:webrtc_common",
+      "../../api:video_frame_api",
+      "../../base:rtc_base",
+      "../../base:rtc_base_approved",
+      "../../base:rtc_task_queue",
+      "../../common_video:common_video",
+      "../../system_wrappers:metrics_default",
+      "../../system_wrappers:system_wrappers",
+      "../../test:field_trial",
+      "../../test:test_support",
+      "../../test:video_test_common",
+      "../../test:video_test_support",
+      "../rtp_rtcp:rtp_rtcp",
+      "//testing/gmock",
+    ]
+    if (rtc_build_libvpx) {
+      deps += [ rtc_libvpx_dir ]
+    }
+    if (is_win) {
+      cflags = [
+        # TODO(kjellander): bugs.webrtc.org/261: Fix this warning.
+        "/wd4373",  # virtual function override.
+      ]
+    }
+
+    # TODO(jschuh): bugs.webrtc.org/1348: fix this warning.
+    configs += [ "//build/config/compiler:no_size_t_to_int_warning" ]
+    if (!build_with_chromium && is_clang) {
+      # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
+      suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
+    }
   }
 }

@@ -15,6 +15,7 @@
 
 #include "webrtc/test/gmock.h"
 #include "webrtc/voice_engine/channel_proxy.h"
+#include "webrtc/modules/rtp_rtcp/source/rtp_packet_received.h"
 
 namespace webrtc {
 namespace test {
@@ -29,10 +30,11 @@ class MockVoEChannelProxy : public voe::ChannelProxy {
   MOCK_METHOD2(SetReceiveAudioLevelIndicationStatus, void(bool enable, int id));
   MOCK_METHOD1(EnableSendTransportSequenceNumber, void(int id));
   MOCK_METHOD1(EnableReceiveTransportSequenceNumber, void(int id));
-  MOCK_METHOD3(RegisterSenderCongestionControlObjects,
+  MOCK_METHOD4(RegisterSenderCongestionControlObjects,
                void(RtpPacketSender* rtp_packet_sender,
                     TransportFeedbackObserver* transport_feedback_observer,
-                    PacketRouter* packet_router));
+                    PacketRouter* packet_router,
+                    RtcpBandwidthObserver* bandwidth_observer));
   MOCK_METHOD1(RegisterReceiverCongestionControlObjects,
                void(PacketRouter* packet_router));
   MOCK_METHOD0(ResetCongestionControlObjects, void());
@@ -40,24 +42,25 @@ class MockVoEChannelProxy : public voe::ChannelProxy {
   MOCK_CONST_METHOD0(GetRemoteRTCPReportBlocks, std::vector<ReportBlock>());
   MOCK_CONST_METHOD0(GetNetworkStatistics, NetworkStatistics());
   MOCK_CONST_METHOD0(GetDecodingCallStatistics, AudioDecodingCallStats());
+  MOCK_CONST_METHOD0(GetSpeechOutputLevel, int32_t());
   MOCK_CONST_METHOD0(GetSpeechOutputLevelFullRange, int32_t());
   MOCK_CONST_METHOD0(GetDelayEstimate, uint32_t());
-  MOCK_METHOD1(SetSendTelephoneEventPayloadType, bool(int payload_type));
+  MOCK_METHOD2(SetSendTelephoneEventPayloadType, bool(int payload_type,
+                                                      int payload_frequency));
   MOCK_METHOD2(SendTelephoneEventOutband, bool(int event, int duration_ms));
-  MOCK_METHOD1(SetBitrate, void(int bitrate_bps));
+  MOCK_METHOD2(SetBitrate, void(int bitrate_bps, int64_t probing_interval_ms));
   // TODO(solenberg): Talk the compiler into accepting this mock method:
   // MOCK_METHOD1(SetSink, void(std::unique_ptr<AudioSinkInterface> sink));
   MOCK_METHOD1(SetInputMute, void(bool muted));
   MOCK_METHOD1(RegisterExternalTransport, void(Transport* transport));
   MOCK_METHOD0(DeRegisterExternalTransport, void());
-  MOCK_METHOD3(ReceivedRTPPacket, bool(const uint8_t* packet,
-                                       size_t length,
-                                       const PacketTime& packet_time));
+  MOCK_METHOD1(OnRtpPacket, void(const RtpPacketReceived& packet));
   MOCK_METHOD2(ReceivedRTCPPacket, bool(const uint8_t* packet, size_t length));
   MOCK_CONST_METHOD0(GetAudioDecoderFactory,
                      const rtc::scoped_refptr<AudioDecoderFactory>&());
   MOCK_METHOD1(SetChannelOutputVolumeScaling, void(float scaling));
   MOCK_METHOD1(SetRtcEventLog, void(RtcEventLog* event_log));
+  MOCK_METHOD1(SetRtcpRttStats, void(RtcpRttStats* rtcp_rtt_stats));
   MOCK_METHOD1(EnableAudioNetworkAdaptor,
                void(const std::string& config_string));
   MOCK_METHOD0(DisableAudioNetworkAdaptor, void());
@@ -71,6 +74,19 @@ class MockVoEChannelProxy : public voe::ChannelProxy {
   MOCK_METHOD1(AssociateSendChannel,
                void(const ChannelProxy& send_channel_proxy));
   MOCK_METHOD0(DisassociateSendChannel, void());
+  MOCK_CONST_METHOD2(GetRtpRtcp, void(RtpRtcp** rtp_rtcp,
+                                      RtpReceiver** rtp_receiver));
+  MOCK_CONST_METHOD0(GetPlayoutTimestamp, uint32_t());
+  MOCK_METHOD1(SetMinimumPlayoutDelay, void(int delay_ms));
+  MOCK_CONST_METHOD1(GetRecCodec, bool(CodecInst* codec_inst));
+  MOCK_CONST_METHOD1(GetSendCodec, bool(CodecInst* codec_inst));
+  MOCK_METHOD1(SetVADStatus, bool(bool enable));
+  MOCK_METHOD1(SetCodecFECStatus, bool(bool enable));
+  MOCK_METHOD1(SetOpusDtx, bool(bool enable));
+  MOCK_METHOD1(SetOpusMaxPlaybackRate, bool(int frequency_hz));
+  MOCK_METHOD1(SetSendCodec, bool(const CodecInst& codec_inst));
+  MOCK_METHOD2(SetSendCNPayloadType,
+               bool(int type, PayloadFrequencies frequency));
 };
 }  // namespace test
 }  // namespace webrtc

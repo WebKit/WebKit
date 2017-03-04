@@ -83,7 +83,7 @@ ScreenDrawerLinux::ScreenDrawerLinux() {
   if (!XGetWindowAttributes(display_->display(),
                             RootWindow(display_->display(), screen_num_),
                             &root_attributes)) {
-    RTC_DCHECK(false) << "Failed to get root window size.";
+    RTC_NOTREACHED() << "Failed to get root window size.";
   }
   window_ = XCreateSimpleWindow(
       display_->display(), RootWindow(display_->display(), screen_num_), 0, 0,
@@ -105,7 +105,7 @@ ScreenDrawerLinux::ScreenDrawerLinux() {
   if (!XTranslateCoordinates(display_->display(), window_,
                              RootWindow(display_->display(), screen_num_), 0, 0,
                              &x, &y, &child)) {
-    RTC_DCHECK(false) << "Failed to get window position.";
+    RTC_NOTREACHED() << "Failed to get window position.";
   }
   // Some window manager does not allow a window to cover two or more monitors.
   // So if the window is on the first monitor of a two-monitor system, the

@@ -29,11 +29,11 @@ static NSArray<NSString *> *videoResolutionsStaticValues() {
 }
 
 - (NSString *)currentVideoResoultionConstraintFromStore {
-  NSString *constraint = [[self settingsStore] videoResolutionConstraintsSetting];
+  NSString *constraint = [[self settingsStore] videoResolutionConstraints];
   if (!constraint) {
     constraint = [self defaultVideoResolutionMediaConstraint];
     // To ensure consistency add the default to the store.
-    [[self settingsStore] setVideoResolutionConstraintsSetting:constraint];
+    [[self settingsStore] setVideoResolutionConstraints:constraint];
   }
   return constraint;
 }
@@ -42,8 +42,16 @@ static NSArray<NSString *> *videoResolutionsStaticValues() {
   if (![[self availableVideoResoultionsMediaConstraints] containsObject:constraint]) {
     return NO;
   }
-  [[self settingsStore] setVideoResolutionConstraintsSetting:constraint];
+  [[self settingsStore] setVideoResolutionConstraints:constraint];
   return YES;
+}
+
+- (nullable NSNumber *)currentMaxBitrateSettingFromStore {
+  return [[self settingsStore] maxBitrate];
+}
+
+- (void)storeMaxBitrateSetting:(nullable NSNumber *)bitrate {
+  [[self settingsStore] setMaxBitrate:bitrate];
 }
 
 #pragma mark - Testable

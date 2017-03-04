@@ -11,10 +11,10 @@
 #ifndef WEBRTC_BASE_STREAM_H_
 #define WEBRTC_BASE_STREAM_H_
 
-#include <memory>
 #include <stdio.h>
 
-#include "webrtc/base/basictypes.h"
+#include <memory>
+
 #include "webrtc/base/buffer.h"
 #include "webrtc/base/constructormagic.h"
 #include "webrtc/base/criticalsection.h"
@@ -125,7 +125,7 @@ class StreamInterface : public MessageHandler {
   // The following four methods are used to avoid copying data multiple times.
 
   // GetReadData returns a pointer to a buffer which is owned by the stream.
-  // The buffer contains data_len bytes.  NULL is returned if no data is
+  // The buffer contains data_len bytes.  null is returned if no data is
   // available, or if the method fails.  If the caller processes the data, it
   // must call ConsumeReadData with the number of processed bytes.  GetReadData
   // does not require a matching call to ConsumeReadData if the data is not
@@ -135,14 +135,14 @@ class StreamInterface : public MessageHandler {
   virtual void ConsumeReadData(size_t) {}
 
   // GetWriteBuffer returns a pointer to a buffer which is owned by the stream.
-  // The buffer has a capacity of buf_len bytes.  NULL is returned if there is
+  // The buffer has a capacity of buf_len bytes.  null is returned if there is
   // no buffer available, or if the method fails.  The call may write data to
   // the buffer, and then call ConsumeWriteBuffer with the number of bytes
   // written.  GetWriteBuffer does not require a matching call to
   // ConsumeWriteData if no data is written.  Write, ForceWrite, and
   // ConsumeWriteData invalidate the buffer returned by GetWriteBuffer.
   // TODO: Allow the caller to specify a minimum buffer size.  If the specified
-  // amount of buffer is not yet available, return NULL and Signal SE_WRITE
+  // amount of buffer is not yet available, return null and Signal SE_WRITE
   // when it is available.  If the requested amount is too large, return an
   // error.
   virtual void* GetWriteBuffer(size_t* buf_len);
@@ -703,8 +703,10 @@ class StreamReference : public StreamAdapterInterface {
 // this is the data that read from source but can't move to destination.
 // as a pass in parameter, it indicates data in buffer that should move to sink
 StreamResult Flow(StreamInterface* source,
-                  char* buffer, size_t buffer_len,
-                  StreamInterface* sink, size_t* data_len = NULL);
+                  char* buffer,
+                  size_t buffer_len,
+                  StreamInterface* sink,
+                  size_t* data_len = nullptr);
 
 ///////////////////////////////////////////////////////////////////////////////
 

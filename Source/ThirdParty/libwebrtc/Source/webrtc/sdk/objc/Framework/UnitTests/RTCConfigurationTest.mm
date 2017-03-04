@@ -40,6 +40,7 @@
   const int timeout = 1;
   const int interval = 2;
   config.audioJitterBufferMaxPackets = maxPackets;
+  config.audioJitterBufferFastAccelerate = YES;
   config.iceConnectionReceivingTimeout = timeout;
   config.iceBackupCandidatePairPingInterval = interval;
   config.continualGatheringPolicy =
@@ -65,6 +66,7 @@
   EXPECT_EQ(webrtc::PeerConnectionInterface::kCandidateNetworkPolicyLowCost,
             nativeConfig->candidate_network_policy);
   EXPECT_EQ(maxPackets, nativeConfig->audio_jitter_buffer_max_packets);
+  EXPECT_EQ(true, nativeConfig->audio_jitter_buffer_fast_accelerate);
   EXPECT_EQ(timeout, nativeConfig->ice_connection_receiving_timeout);
   EXPECT_EQ(interval, nativeConfig->ice_backup_candidate_pair_ping_interval);
   EXPECT_EQ(webrtc::PeerConnectionInterface::GATHER_CONTINUALLY,

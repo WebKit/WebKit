@@ -29,7 +29,7 @@ void FuzzOneInput(const uint8_t* data, size_t size) {
   SimulatedClock clock(1234);
 
   RTCPReceiver receiver(&clock, false, nullptr, nullptr, nullptr, nullptr,
-                        &rtp_rtcp_module);
+                        nullptr, &rtp_rtcp_module);
 
   receiver.IncomingPacket(data, size);
 }

@@ -187,11 +187,22 @@ TEST_F(UlpfecReceiverTest, TwoMediaOneFec) {
   std::list<ForwardErrorCorrection::Packet*> fec_packets;
   EncodeFec(media_packets, kNumFecPackets, &fec_packets);
 
+  FecPacketCounter counter = receiver_fec_->GetPacketCounter();
+  EXPECT_EQ(0u, counter.num_packets);
+  EXPECT_EQ(-1, counter.first_packet_time_ms);
+
   // Recovery
   auto it = augmented_media_packets.begin();
   BuildAndAddRedMediaPacket(*it);
   VerifyReconstructedMediaPacket(**it, 1);
   EXPECT_EQ(0, receiver_fec_->ProcessReceivedFec());
+  counter = receiver_fec_->GetPacketCounter();
+  EXPECT_EQ(1u, counter.num_packets);
+  EXPECT_EQ(0u, counter.num_fec_packets);
+  EXPECT_EQ(0u, counter.num_recovered_packets);
+  const int64_t first_packet_time_ms = counter.first_packet_time_ms;
+  EXPECT_NE(-1, first_packet_time_ms);
+
   // Drop one media packet.
   auto fec_it = fec_packets.begin();
   BuildAndAddRedFecPacket(*fec_it);
@@ -199,10 +210,11 @@ TEST_F(UlpfecReceiverTest, TwoMediaOneFec) {
   VerifyReconstructedMediaPacket(**it, 1);
   EXPECT_EQ(0, receiver_fec_->ProcessReceivedFec());
 
-  FecPacketCounter counter = receiver_fec_->GetPacketCounter();
+  counter = receiver_fec_->GetPacketCounter();
   EXPECT_EQ(2u, counter.num_packets);
   EXPECT_EQ(1u, counter.num_fec_packets);
   EXPECT_EQ(1u, counter.num_recovered_packets);
+  EXPECT_EQ(first_packet_time_ms, counter.first_packet_time_ms);
 }
 
 TEST_F(UlpfecReceiverTest, InjectGarbageFecHeaderLengthRecovery) {

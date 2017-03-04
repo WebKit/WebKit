@@ -22,6 +22,7 @@ class AgcConfigTest : public AfterStreamingFixture {
   webrtc::AgcConfig default_agc_config_;
 };
 
+// Duplicated in apm_helpers_unittest.cc.
 TEST_F(AgcConfigTest, HasCorrectDefaultConfiguration) {
   webrtc::AgcConfig agc_config;
 
@@ -33,6 +34,7 @@ TEST_F(AgcConfigTest, HasCorrectDefaultConfiguration) {
   EXPECT_EQ(default_agc_config_.limiterEnable, agc_config.limiterEnable);
 }
 
+// Not needed anymore - we're not returning errors anymore, just logging.
 TEST_F(AgcConfigTest, DealsWithInvalidParameters) {
   webrtc::AgcConfig agc_config = default_agc_config_;
   agc_config.digitalCompressionGaindB = 91;
@@ -47,6 +49,7 @@ TEST_F(AgcConfigTest, DealsWithInvalidParameters) {
   EXPECT_EQ(VE_APM_ERROR, voe_base_->LastError());
 }
 
+// Duplicated in apm_helpers_unittest.cc.
 TEST_F(AgcConfigTest, CanGetAndSetAgcStatus) {
   webrtc::AgcConfig agc_config;
   agc_config.digitalCompressionGaindB = 17;

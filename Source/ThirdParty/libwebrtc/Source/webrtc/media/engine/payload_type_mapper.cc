@@ -10,10 +10,15 @@
 
 #include "webrtc/media/engine/payload_type_mapper.h"
 
+#include "webrtc/api/audio_codecs/audio_format.h"
 #include "webrtc/common_types.h"
 #include "webrtc/media/base/mediaconstants.h"
 
 namespace cricket {
+
+webrtc::SdpAudioFormat AudioCodecToSdpAudioFormat(const AudioCodec& ac) {
+  return webrtc::SdpAudioFormat(ac.name, ac.clockrate, ac.channels, ac.params);
+}
 
 PayloadTypeMapper::PayloadTypeMapper()
     // RFC 3551 reserves payload type numbers in the range 96-127 exclusively
@@ -53,38 +58,23 @@ PayloadTypeMapper::PayloadTypeMapper()
           {{"G729",   8000, 1}, 18},
 
           // Payload type assignments currently used by WebRTC.
-          // Includes video, to reduce collisions (and thus reassignments)
+          // Includes data to reduce collisions (and thus reassignments)
           // RTX codecs mapping to specific video payload types
-          {{kRtxCodecName,    90000, 0,
-              {{kCodecParamAssociatedPayloadType,
-                      std::to_string(kDefaultVp8PlType)}}},
-                kDefaultRtxVp8PlType},
-          {{kRtxCodecName,    90000, 0,
-              {{kCodecParamAssociatedPayloadType,
-                      std::to_string(kDefaultVp9PlType)}}},
-                kDefaultRtxVp9PlType},
-          {{kRtxCodecName,    90000, 0,
-              {{kCodecParamAssociatedPayloadType,
-                      std::to_string(kDefaultRedPlType)}}},
-                kDefaultRtxRedPlType},
-          {{kRtxCodecName,    90000, 0,
-              {{kCodecParamAssociatedPayloadType,
-                      std::to_string(kDefaultH264PlType)}}},
-                kDefaultRtxH264ConstrainedBaselinePlType},
           // Other codecs
-          {{kVp8CodecName,    90000, 0}, kDefaultVp8PlType},
-          {{kVp9CodecName,    90000, 0}, kDefaultVp9PlType},
+          {{kGoogleRtpDataCodecName, 0, 0}, kGoogleRtpDataCodecPlType},
           {{kIlbcCodecName,    8000, 1}, 102},
           {{kIsacCodecName,   16000, 1}, 103},
           {{kIsacCodecName,   32000, 1}, 104},
           {{kCnCodecName,     16000, 1}, 105},
           {{kCnCodecName,     32000, 1}, 106},
-          {{kH264CodecName,   90000, 0}, kDefaultH264PlType},
+          {{kGoogleSctpDataCodecName, 0, 0}, kGoogleSctpDataCodecPlType},
           {{kOpusCodecName,   48000, 2,
               {{"minptime", "10"}, {"useinbandfec", "1"}}}, 111},
-          {{kRedCodecName,    90000, 0}, kDefaultRedPlType},
-          {{kUlpfecCodecName, 90000, 0}, kDefaultUlpfecType},
-          {{kFlexfecCodecName, 90000, 0}, kDefaultFlexfecPlType},
+          // TODO(solenberg): Remove the hard coded 16k,32k,48k DTMF once we
+          // assign payload types dynamically for send side as well.
+          {{kDtmfCodecName,   48000, 1}, 110},
+          {{kDtmfCodecName,   32000, 1}, 112},
+          {{kDtmfCodecName,   16000, 1}, 113},
           {{kDtmfCodecName,    8000, 1}, 126}}) {
   // TODO(ossu): Try to keep this as change-proof as possible until we're able
   // to remove the payload type constants from everywhere in the code.

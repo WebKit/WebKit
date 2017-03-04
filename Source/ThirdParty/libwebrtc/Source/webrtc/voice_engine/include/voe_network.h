@@ -34,8 +34,8 @@
 #ifndef WEBRTC_VOICE_ENGINE_VOE_NETWORK_H
 #define WEBRTC_VOICE_ENGINE_VOE_NETWORK_H
 
+#include "webrtc/api/call/transport.h"
 #include "webrtc/common_types.h"
-#include "webrtc/transport.h"
 
 namespace webrtc {
 

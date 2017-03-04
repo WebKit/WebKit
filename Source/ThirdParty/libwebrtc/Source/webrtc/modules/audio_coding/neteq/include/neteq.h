@@ -76,7 +76,6 @@ class NetEq {
   struct Config {
     Config()
         : sample_rate_hz(16000),
-          enable_audio_classifier(false),
           enable_post_decode_vad(false),
           max_packets_in_buffer(50),
           // |max_delay_ms| has the same effect as calling SetMaximumDelay().
@@ -88,7 +87,6 @@ class NetEq {
     std::string ToString() const;
 
     int sample_rate_hz;  // Initial value. Will change with input data.
-    bool enable_audio_classifier;
     bool enable_post_decode_vad;
     size_t max_packets_in_buffer;
     int max_delay_ms;

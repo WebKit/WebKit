@@ -17,9 +17,14 @@
 #include <algorithm>
 #include <limits>
 
+#include "webrtc/api/video/video_rotation.h"
 #include "webrtc/base/constructormagic.h"
+#include "webrtc/base/deprecation.h"
+#include "webrtc/base/safe_conversions.h"
 #include "webrtc/common_types.h"
-#include "webrtc/common_video/rotation.h"
+#include "webrtc/modules/video_coding/codecs/vp8/include/vp8_globals.h"
+#include "webrtc/modules/video_coding/codecs/vp9/include/vp9_globals.h"
+#include "webrtc/modules/video_coding/codecs/h264/include/h264_globals.h"
 #include "webrtc/typedefs.h"
 
 namespace webrtc {
@@ -29,258 +34,6 @@ struct RTPAudioHeader {
   uint8_t arrOfEnergy[kRtpCsrcSize];  // one energy byte (0-9) per channel
   bool isCNG;                         // is this CNG
   size_t channel;                     // number of channels 2 = stereo
-};
-
-const int16_t kNoPictureId = -1;
-const int16_t kMaxOneBytePictureId = 0x7F;    // 7 bits
-const int16_t kMaxTwoBytePictureId = 0x7FFF;  // 15 bits
-const int16_t kNoTl0PicIdx = -1;
-const uint8_t kNoTemporalIdx = 0xFF;
-const uint8_t kNoSpatialIdx = 0xFF;
-const uint8_t kNoGofIdx = 0xFF;
-const uint8_t kNumVp9Buffers = 8;
-const size_t kMaxVp9RefPics = 3;
-const size_t kMaxVp9FramesInGof = 0xFF;  // 8 bits
-const size_t kMaxVp9NumberOfSpatialLayers = 8;
-const int kNoKeyIdx = -1;
-
-struct RTPVideoHeaderVP8 {
-  void InitRTPVideoHeaderVP8() {
-    nonReference = false;
-    pictureId = kNoPictureId;
-    tl0PicIdx = kNoTl0PicIdx;
-    temporalIdx = kNoTemporalIdx;
-    layerSync = false;
-    keyIdx = kNoKeyIdx;
-    partitionId = 0;
-    beginningOfPartition = false;
-  }
-
-  bool nonReference;          // Frame is discardable.
-  int16_t pictureId;          // Picture ID index, 15 bits;
-                              // kNoPictureId if PictureID does not exist.
-  int16_t tl0PicIdx;          // TL0PIC_IDX, 8 bits;
-                              // kNoTl0PicIdx means no value provided.
-  uint8_t temporalIdx;        // Temporal layer index, or kNoTemporalIdx.
-  bool layerSync;             // This frame is a layer sync frame.
-                              // Disabled if temporalIdx == kNoTemporalIdx.
-  int keyIdx;                 // 5 bits; kNoKeyIdx means not used.
-  int partitionId;            // VP8 partition ID
-  bool beginningOfPartition;  // True if this packet is the first
-                              // in a VP8 partition. Otherwise false
-};
-
-enum TemporalStructureMode {
-  kTemporalStructureMode1,  // 1 temporal layer structure - i.e., IPPP...
-  kTemporalStructureMode2,  // 2 temporal layers 01...
-  kTemporalStructureMode3,  // 3 temporal layers 0212...
-  kTemporalStructureMode4   // 3 temporal layers 02120212...
-};
-
-struct GofInfoVP9 {
-  void SetGofInfoVP9(TemporalStructureMode tm) {
-    switch (tm) {
-      case kTemporalStructureMode1:
-        num_frames_in_gof = 1;
-        temporal_idx[0] = 0;
-        temporal_up_switch[0] = false;
-        num_ref_pics[0] = 1;
-        pid_diff[0][0] = 1;
-        break;
-      case kTemporalStructureMode2:
-        num_frames_in_gof = 2;
-        temporal_idx[0] = 0;
-        temporal_up_switch[0] = false;
-        num_ref_pics[0] = 1;
-        pid_diff[0][0] = 2;
-
-        temporal_idx[1] = 1;
-        temporal_up_switch[1] = true;
-        num_ref_pics[1] = 1;
-        pid_diff[1][0] = 1;
-        break;
-      case kTemporalStructureMode3:
-        num_frames_in_gof = 4;
-        temporal_idx[0] = 0;
-        temporal_up_switch[0] = false;
-        num_ref_pics[0] = 1;
-        pid_diff[0][0] = 4;
-
-        temporal_idx[1] = 2;
-        temporal_up_switch[1] = true;
-        num_ref_pics[1] = 1;
-        pid_diff[1][0] = 1;
-
-        temporal_idx[2] = 1;
-        temporal_up_switch[2] = true;
-        num_ref_pics[2] = 1;
-        pid_diff[2][0] = 2;
-
-        temporal_idx[3] = 2;
-        temporal_up_switch[3] = false;
-        num_ref_pics[3] = 2;
-        pid_diff[3][0] = 1;
-        pid_diff[3][1] = 2;
-        break;
-      case kTemporalStructureMode4:
-        num_frames_in_gof = 8;
-        temporal_idx[0] = 0;
-        temporal_up_switch[0] = false;
-        num_ref_pics[0] = 1;
-        pid_diff[0][0] = 4;
-
-        temporal_idx[1] = 2;
-        temporal_up_switch[1] = true;
-        num_ref_pics[1] = 1;
-        pid_diff[1][0] = 1;
-
-        temporal_idx[2] = 1;
-        temporal_up_switch[2] = true;
-        num_ref_pics[2] = 1;
-        pid_diff[2][0] = 2;
-
-        temporal_idx[3] = 2;
-        temporal_up_switch[3] = false;
-        num_ref_pics[3] = 2;
-        pid_diff[3][0] = 1;
-        pid_diff[3][1] = 2;
-
-        temporal_idx[4] = 0;
-        temporal_up_switch[0] = false;
-        num_ref_pics[4] = 1;
-        pid_diff[4][0] = 4;
-
-        temporal_idx[5] = 2;
-        temporal_up_switch[1] = false;
-        num_ref_pics[5] = 2;
-        pid_diff[5][0] = 1;
-        pid_diff[5][1] = 2;
-
-        temporal_idx[6] = 1;
-        temporal_up_switch[2] = false;
-        num_ref_pics[6] = 2;
-        pid_diff[6][0] = 2;
-        pid_diff[6][1] = 4;
-
-        temporal_idx[7] = 2;
-        temporal_up_switch[3] = false;
-        num_ref_pics[7] = 2;
-        pid_diff[7][0] = 1;
-        pid_diff[7][1] = 2;
-        break;
-      default:
-        assert(false);
-    }
-  }
-
-  void CopyGofInfoVP9(const GofInfoVP9& src) {
-    num_frames_in_gof = src.num_frames_in_gof;
-    for (size_t i = 0; i < num_frames_in_gof; ++i) {
-      temporal_idx[i] = src.temporal_idx[i];
-      temporal_up_switch[i] = src.temporal_up_switch[i];
-      num_ref_pics[i] = src.num_ref_pics[i];
-      for (uint8_t r = 0; r < num_ref_pics[i]; ++r) {
-        pid_diff[i][r] = src.pid_diff[i][r];
-      }
-    }
-  }
-
-  size_t num_frames_in_gof;
-  uint8_t temporal_idx[kMaxVp9FramesInGof];
-  bool temporal_up_switch[kMaxVp9FramesInGof];
-  uint8_t num_ref_pics[kMaxVp9FramesInGof];
-  uint8_t pid_diff[kMaxVp9FramesInGof][kMaxVp9RefPics];
-  uint16_t pid_start;
-};
-
-struct RTPVideoHeaderVP9 {
-  void InitRTPVideoHeaderVP9() {
-    inter_pic_predicted = false;
-    flexible_mode = false;
-    beginning_of_frame = false;
-    end_of_frame = false;
-    ss_data_available = false;
-    picture_id = kNoPictureId;
-    max_picture_id = kMaxTwoBytePictureId;
-    tl0_pic_idx = kNoTl0PicIdx;
-    temporal_idx = kNoTemporalIdx;
-    spatial_idx = kNoSpatialIdx;
-    temporal_up_switch = false;
-    inter_layer_predicted = false;
-    gof_idx = kNoGofIdx;
-    num_ref_pics = 0;
-    num_spatial_layers = 1;
-  }
-
-  bool inter_pic_predicted;  // This layer frame is dependent on previously
-                             // coded frame(s).
-  bool flexible_mode;        // This frame is in flexible mode.
-  bool beginning_of_frame;   // True if this packet is the first in a VP9 layer
-                             // frame.
-  bool end_of_frame;  // True if this packet is the last in a VP9 layer frame.
-  bool ss_data_available;  // True if SS data is available in this payload
-                           // descriptor.
-  int16_t picture_id;      // PictureID index, 15 bits;
-                           // kNoPictureId if PictureID does not exist.
-  int16_t max_picture_id;  // Maximum picture ID index; either 0x7F or 0x7FFF;
-  int16_t tl0_pic_idx;     // TL0PIC_IDX, 8 bits;
-                           // kNoTl0PicIdx means no value provided.
-  uint8_t temporal_idx;    // Temporal layer index, or kNoTemporalIdx.
-  uint8_t spatial_idx;     // Spatial layer index, or kNoSpatialIdx.
-  bool temporal_up_switch;  // True if upswitch to higher frame rate is possible
-                            // starting from this frame.
-  bool inter_layer_predicted;  // Frame is dependent on directly lower spatial
-                               // layer frame.
-
-  uint8_t gof_idx;  // Index to predefined temporal frame info in SS data.
-
-  uint8_t num_ref_pics;  // Number of reference pictures used by this layer
-                         // frame.
-  uint8_t pid_diff[kMaxVp9RefPics];  // P_DIFF signaled to derive the PictureID
-                                     // of the reference pictures.
-  int16_t ref_picture_id[kMaxVp9RefPics];  // PictureID of reference pictures.
-
-  // SS data.
-  size_t num_spatial_layers;  // Always populated.
-  bool spatial_layer_resolution_present;
-  uint16_t width[kMaxVp9NumberOfSpatialLayers];
-  uint16_t height[kMaxVp9NumberOfSpatialLayers];
-  GofInfoVP9 gof;
-};
-
-// The packetization types that we support: single, aggregated, and fragmented.
-enum H264PacketizationTypes {
-  kH264SingleNalu,  // This packet contains a single NAL unit.
-  kH264StapA,       // This packet contains STAP-A (single time
-                    // aggregation) packets. If this packet has an
-                    // associated NAL unit type, it'll be for the
-                    // first such aggregated packet.
-  kH264FuA,         // This packet contains a FU-A (fragmentation
-                    // unit) packet, meaning it is a part of a frame
-                    // that was too large to fit into a single packet.
-};
-
-struct NaluInfo {
-  uint8_t type;
-  int sps_id;
-  int pps_id;
-
-  // Offset and size are only valid for non-FuA packets.
-  size_t offset;
-  size_t size;
-};
-
-const size_t kMaxNalusPerPacket = 10;
-
-struct RTPVideoHeaderH264 {
-  uint8_t nalu_type;  // The NAL unit type. If this is a header for a
-                      // fragmented packet, it's the NAL unit type of
-                      // the original data. If this is the header for an
-                      // aggregated packet, it's the NAL unit type of
-                      // the first NAL unit in the packet.
-  H264PacketizationTypes packetization_type;
-  NaluInfo nalus[kMaxNalusPerPacket];
-  size_t nalus_length;
 };
 
 union RTPVideoTypeHeader {
@@ -305,7 +58,10 @@ struct RTPVideoHeader {
 
   PlayoutDelay playout_delay;
 
-  bool isFirstPacket;    // first packet in frame
+  union {
+    bool is_first_packet_in_frame;
+    RTC_DEPRECATED bool isFirstPacket;  // first packet in frame
+  };
   uint8_t simulcastIdx;  // Index if the simulcast encoder creating
                          // this frame, 0 if not using simulcast.
   RtpVideoCodecTypes codec;
@@ -520,8 +276,6 @@ class CallStatsObserver {
  *
  * - Stereo data is interleaved starting with the left channel.
  *
- * - The +operator assume that you would never add exactly opposite frames when
- *   deciding the resulting state. To do this use the -operator.
  */
 class AudioFrame {
  public:
@@ -556,26 +310,29 @@ class AudioFrame {
 
   void CopyFrom(const AudioFrame& src);
 
-  void Mute();
-
-  AudioFrame& operator>>=(const int rhs);
-  AudioFrame& operator+=(const AudioFrame& rhs);
+  // These methods are deprecated. Use the functions in
+  // webrtc/audio/utility instead. These methods will exists for a
+  // short period of time until webrtc clients have updated. See
+  // webrtc:6548 for details.
+  RTC_DEPRECATED void Mute();
+  RTC_DEPRECATED AudioFrame& operator>>=(const int rhs);
+  RTC_DEPRECATED AudioFrame& operator+=(const AudioFrame& rhs);
 
   int id_;
   // RTP timestamp of the first sample in the AudioFrame.
-  uint32_t timestamp_;
+  uint32_t timestamp_ = 0;
   // Time since the first frame in milliseconds.
   // -1 represents an uninitialized value.
-  int64_t elapsed_time_ms_;
+  int64_t elapsed_time_ms_ = -1;
   // NTP time of the estimated capture time in local timebase in milliseconds.
   // -1 represents an uninitialized value.
-  int64_t ntp_time_ms_;
+  int64_t ntp_time_ms_ = -1;
   int16_t data_[kMaxDataSizeSamples];
-  size_t samples_per_channel_;
-  int sample_rate_hz_;
-  size_t num_channels_;
-  SpeechType speech_type_;
-  VADActivity vad_activity_;
+  size_t samples_per_channel_ = 0;
+  int sample_rate_hz_ = 0;
+  size_t num_channels_ = 0;
+  SpeechType speech_type_ = kUndefined;
+  VADActivity vad_activity_ = kVadUnknown;
 
  private:
   RTC_DISALLOW_COPY_AND_ASSIGN(AudioFrame);
@@ -585,7 +342,6 @@ class AudioFrame {
 // See https://bugs.chromium.org/p/webrtc/issues/detail?id=5647.
 inline AudioFrame::AudioFrame()
     : data_() {
-  Reset();
 }
 
 inline void AudioFrame::Reset() {
@@ -659,18 +415,6 @@ inline AudioFrame& AudioFrame::operator>>=(const int rhs) {
   return *this;
 }
 
-namespace {
-inline int16_t ClampToInt16(int32_t input) {
-  if (input < -0x00008000) {
-    return -0x8000;
-  } else if (input > 0x00007FFF) {
-    return 0x7FFF;
-  } else {
-    return static_cast<int16_t>(input);
-  }
-}
-}
-
 inline AudioFrame& AudioFrame::operator+=(const AudioFrame& rhs) {
   // Sanity check
   assert((num_channels_ > 0) && (num_channels_ < 3));
@@ -704,7 +448,7 @@ inline AudioFrame& AudioFrame::operator+=(const AudioFrame& rhs) {
     for (size_t i = 0; i < samples_per_channel_ * num_channels_; i++) {
       int32_t wrap_guard =
           static_cast<int32_t>(data_[i]) + static_cast<int32_t>(rhs.data_[i]);
-      data_[i] = ClampToInt16(wrap_guard);
+      data_[i] = rtc::saturated_cast<int16_t>(wrap_guard);
     }
   }
   return *this;
@@ -783,6 +527,29 @@ class SequenceNumberUnwrapper {
 
  private:
   int64_t last_seq_;
+};
+
+struct PacedPacketInfo {
+  PacedPacketInfo() {}
+  PacedPacketInfo(int probe_cluster_id,
+                  int probe_cluster_min_probes,
+                  int probe_cluster_min_bytes)
+      : probe_cluster_id(probe_cluster_id),
+        probe_cluster_min_probes(probe_cluster_min_probes),
+        probe_cluster_min_bytes(probe_cluster_min_bytes) {}
+
+  bool operator==(const PacedPacketInfo& rhs) const {
+    return send_bitrate_bps == rhs.send_bitrate_bps &&
+           probe_cluster_id == rhs.probe_cluster_id &&
+           probe_cluster_min_probes == rhs.probe_cluster_min_probes &&
+           probe_cluster_min_bytes == rhs.probe_cluster_min_bytes;
+  }
+
+  static constexpr int kNotAProbe = -1;
+  int send_bitrate_bps = -1;
+  int probe_cluster_id = kNotAProbe;
+  int probe_cluster_min_probes = -1;
+  int probe_cluster_min_bytes = -1;
 };
 
 }  // namespace webrtc

@@ -27,7 +27,7 @@ class RtpDataEngine : public DataEngineInterface {
  public:
   RtpDataEngine();
 
-  virtual DataMediaChannel* CreateChannel(DataChannelType data_channel_type);
+  virtual DataMediaChannel* CreateChannel(const MediaConfig& config);
 
   virtual const std::vector<DataCodec>& data_codecs() {
     return data_codecs_;
@@ -61,7 +61,7 @@ class RtpClock {
 
 class RtpDataMediaChannel : public DataMediaChannel {
  public:
-  RtpDataMediaChannel();
+  RtpDataMediaChannel(const MediaConfig& config);
   virtual ~RtpDataMediaChannel();
 
   virtual bool SetSendParameters(const DataSendParameters& params);
@@ -88,6 +88,7 @@ class RtpDataMediaChannel : public DataMediaChannel {
     const SendDataParams& params,
     const rtc::CopyOnWriteBuffer& payload,
     SendDataResult* result);
+  virtual rtc::DiffServCodePoint PreferredDscp() const;
 
  private:
   void Construct();

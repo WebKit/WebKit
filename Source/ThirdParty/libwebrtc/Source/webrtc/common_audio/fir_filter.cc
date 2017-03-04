@@ -10,11 +10,11 @@
 
 #include "webrtc/common_audio/fir_filter.h"
 
-#include <assert.h>
 #include <string.h>
 
 #include <memory>
 
+#include "webrtc/base/checks.h"
 #include "webrtc/common_audio/fir_filter_neon.h"
 #include "webrtc/common_audio/fir_filter_sse.h"
 #include "webrtc/system_wrappers/include/cpu_features_wrapper.h"
@@ -39,11 +39,11 @@ FIRFilter* FIRFilter::Create(const float* coefficients,
                              size_t coefficients_length,
                              size_t max_input_length) {
   if (!coefficients || coefficients_length <= 0 || max_input_length <= 0) {
-    assert(false);
-    return NULL;
+    RTC_NOTREACHED();
+    return nullptr;
   }
 
-  FIRFilter* filter = NULL;
+  FIRFilter* filter = nullptr;
 // If we know the minimum architecture at compile time, avoid CPU detection.
 #if defined(WEBRTC_ARCH_X86_FAMILY)
 #if defined(__SSE2__)
@@ -80,7 +80,7 @@ FIRFilterC::FIRFilterC(const float* coefficients, size_t coefficients_length)
 }
 
 void FIRFilterC::Filter(const float* in, size_t length, float* out) {
-  assert(length > 0);
+  RTC_DCHECK_GT(length, 0);
 
   // Convolves the input signal |in| with the filter kernel |coefficients_|
   // taking into account the previous state.

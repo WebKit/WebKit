@@ -41,10 +41,10 @@ class PacketRouter;
 class ProcessThread;
 class ReceiveStatistics;
 class ReceiveStatisticsProxy;
-class RemoteBitrateEstimator;
 class RemoteNtpTimeEstimator;
 class RtcpRttStats;
 class RtpHeaderParser;
+class RtpPacketReceived;
 class RTPPayloadRegistry;
 class RtpReceiver;
 class Transport;
@@ -65,25 +65,21 @@ class RtpStreamReceiver : public RtpData,
                           public CallStatsObserver {
  public:
   RtpStreamReceiver(
-      vcm::VideoReceiver* video_receiver,
-      RemoteBitrateEstimator* remote_bitrate_estimator,
       Transport* transport,
       RtcpRttStats* rtt_stats,
-      PacedSender* paced_sender,
       PacketRouter* packet_router,
       VieRemb* remb,
       const VideoReceiveStream::Config* config,
       ReceiveStatisticsProxy* receive_stats_proxy,
       ProcessThread* process_thread,
-      RateLimiter* retransmission_rate_limiter,
       NackSender* nack_sender,
       KeyFrameRequestSender* keyframe_request_sender,
       video_coding::OnCompleteFrameCallback* complete_frame_callback,
       VCMTiming* timing);
   ~RtpStreamReceiver();
 
-  bool SetReceiveCodec(const VideoCodec& video_codec);
-
+  bool AddReceiveCodec(const VideoCodec& video_codec,
+                       const std::map<std::string, std::string>& codec_params);
   uint32_t GetRemoteSsrc() const;
   int GetCsrcs(uint32_t* csrcs) const;
 
@@ -93,9 +89,6 @@ class RtpStreamReceiver : public RtpData,
   void StartReceive();
   void StopReceive();
 
-  bool DeliverRtp(const uint8_t* rtp_packet,
-                  size_t rtp_packet_length,
-                  const PacketTime& packet_time);
   bool DeliverRtcp(const uint8_t* rtcp_packet, size_t rtcp_packet_length);
 
   void FrameContinuous(uint16_t seq_num);
@@ -103,6 +96,9 @@ class RtpStreamReceiver : public RtpData,
   void FrameDecoded(uint16_t seq_num);
 
   void SignalNetworkState(NetworkState state);
+
+  // TODO(nisse): Intended to be part of an RtpPacketReceiver interface.
+  void OnRtpPacket(const RtpPacketReceived& packet);
 
   // Implements RtpData.
   int32_t OnReceivedPayloadData(const uint8_t* payload_data,
@@ -123,7 +119,7 @@ class RtpStreamReceiver : public RtpData,
   int32_t RequestKeyFrame() override;
   int32_t SliceLossIndicationRequest(const uint64_t picture_id) override;
 
-  bool IsFecEnabled() const;
+  bool IsUlpfecEnabled() const;
   bool IsRetransmissionsEnabled() const;
   // Don't use, still experimental.
   void RequestPacketRetransmit(const std::vector<uint16_t>& sequence_numbers);
@@ -143,6 +139,7 @@ class RtpStreamReceiver : public RtpData,
   void OnRttUpdate(int64_t avg_rtt_ms, int64_t max_rtt_ms) override;
 
  private:
+  bool AddReceiveCodec(const VideoCodec& video_codec);
   bool ReceivePacket(const uint8_t* packet,
                      size_t packet_length,
                      const RTPHeader& header,
@@ -158,12 +155,11 @@ class RtpStreamReceiver : public RtpData,
   void UpdateHistograms();
   void EnableReceiveRtpHeaderExtension(const std::string& extension, int id);
   bool IsRedEnabled() const;
+  void InsertSpsPpsIntoTracker(uint8_t payload_type);
 
   Clock* const clock_;
   // Ownership of this object lies with VideoReceiveStream, which owns |this|.
   const VideoReceiveStream::Config& config_;
-  vcm::VideoReceiver* const video_receiver_;
-  RemoteBitrateEstimator* const remote_bitrate_estimator_;
   PacketRouter* const packet_router_;
   VieRemb* const remb_;
   ProcessThread* const process_thread_;
@@ -185,7 +181,6 @@ class RtpStreamReceiver : public RtpData,
   const std::unique_ptr<RtpRtcp> rtp_rtcp_;
 
   // Members for the new jitter buffer experiment.
-  bool jitter_buffer_experiment_;
   video_coding::OnCompleteFrameCallback* complete_frame_callback_;
   KeyFrameRequestSender* keyframe_request_sender_;
   VCMTiming* timing_;
@@ -196,6 +191,11 @@ class RtpStreamReceiver : public RtpData,
   std::map<uint16_t, uint16_t, DescendingSeqNumComp<uint16_t>>
       last_seq_num_for_pic_id_ GUARDED_BY(last_seq_num_cs_);
   video_coding::H264SpsPpsTracker tracker_;
+  // TODO(johan): Remove pt_codec_params_ once
+  // https://bugs.chromium.org/p/webrtc/issues/detail?id=6883 is resolved.
+  // Maps a payload type to a map of out-of-band supplied codec parameters.
+  std::map<uint8_t, std::map<std::string, std::string>> pt_codec_params_;
+  int16_t last_payload_type_ = -1;
 };
 
 }  // namespace webrtc

@@ -6,13 +6,8 @@
 # in the file PATENTS.  All contributing project authors may
 # be found in the AUTHORS file in the root of the source tree.
 
-import("../build/webrtc.gni")
+import("../webrtc.gni")
 import("audio_coding/audio_coding.gni")
-
-declare_args() {
-  # Desktop capturer is supported only on Windows, OSX and Linux.
-  rtc_desktop_capture_supported = is_win || is_mac || is_linux
-}
 
 group("modules") {
   public_deps = [
@@ -29,7 +24,6 @@ group("modules") {
     "remote_bitrate_estimator",
     "rtp_rtcp",
     "utility",
-    "video_capture",
     "video_coding",
     "video_processing",
   ]
@@ -56,61 +50,16 @@ if (rtc_include_tests) {
   rtc_test("modules_tests") {
     testonly = true
 
-    videoprocessor_defines = []
-    if (rtc_use_h264) {
-      videoprocessor_defines += [ "WEBRTC_VIDEOPROCESSOR_H264_TESTS" ]
-    }
-
-    defines = audio_coding_defines + videoprocessor_defines
-
     deps = [
-      "..:webrtc_common",
-      "../common_video",
-      "../modules/audio_coding",
-      "../modules/audio_coding:audio_format_conversion",
-      "../modules/rtp_rtcp",
-      "../modules/utility",
-      "../modules/video_coding",
-      "../modules/video_coding:video_codecs_test_framework",
-      "../system_wrappers",
-      "../test:test_support",
-      "../test:test_support_main",
+      "../test:test_main",
+      "../test:video_test_common",
+      "audio_coding:audio_coding_modules_tests",
+      "desktop_capture:desktop_capture_modules_tests",
+      "rtp_rtcp:rtp_rtcp_modules_tests",
+      "video_coding:video_coding_modules_tests",
       "//testing/gmock",
       "//testing/gtest",
     ]
-
-    sources = [
-      "audio_coding/test/APITest.cc",
-      "audio_coding/test/Channel.cc",
-      "audio_coding/test/EncodeDecodeTest.cc",
-      "audio_coding/test/PCMFile.cc",
-      "audio_coding/test/PacketLossTest.cc",
-      "audio_coding/test/RTPFile.cc",
-      "audio_coding/test/TestAllCodecs.cc",
-      "audio_coding/test/TestRedFec.cc",
-      "audio_coding/test/TestStereo.cc",
-      "audio_coding/test/TestVADDTX.cc",
-      "audio_coding/test/Tester.cc",
-      "audio_coding/test/TwoWayCommunication.cc",
-      "audio_coding/test/iSACTest.cc",
-      "audio_coding/test/opus_test.cc",
-      "audio_coding/test/target_delay_unittest.cc",
-      "audio_coding/test/utility.cc",
-      "rtp_rtcp/test/testFec/test_fec.cc",
-      "video_coding/codecs/test/videoprocessor_integrationtest.cc",
-      "video_coding/codecs/vp8/test/vp8_impl_unittest.cc",
-    ]
-
-    if (rtc_desktop_capture_supported) {
-      deps += [
-        "desktop_capture:desktop_capture_mock",
-        "desktop_capture:screen_drawer",
-      ]
-      sources += [
-        "desktop_capture/screen_capturer_integration_test.cc",
-        "desktop_capture/screen_drawer_unittest.cc",
-      ]
-    }
 
     data = modules_tests_resources
 
@@ -138,10 +87,6 @@ if (rtc_include_tests) {
   }
 
   modules_unittests_resources = [
-    "//data/audio_processing/output_data_fixed.pb",
-    "//data/audio_processing/output_data_float.pb",
-    "//data/audio_processing/output_data_mac.pb",
-    "//data/voice_engine/audio_tiny48.wav",
     "//resources/att-downlink.rx",
     "//resources/att-uplink.rx",
     "//resources/audio_coding/neteq_opus.rtp",
@@ -161,6 +106,9 @@ if (rtc_include_tests) {
     "//resources/audio_processing/agc/agc_vad.dat",
     "//resources/audio_processing/agc/agc_voicing_prob.dat",
     "//resources/audio_processing/agc/agc_with_circular_buffer.dat",
+    "//resources/audio_processing/output_data_fixed.pb",
+    "//resources/audio_processing/output_data_float.pb",
+    "//resources/audio_processing/output_data_mac.pb",
     "//resources/audio_processing/transient/ajm-macbook-1-spke16m.pcm",
     "//resources/audio_processing/transient/audio16kHz.pcm",
     "//resources/audio_processing/transient/audio32kHz.pcm",
@@ -232,12 +180,11 @@ if (rtc_include_tests) {
     "//resources/synthetic-trace.rx",
     "//resources/tmobile-downlink.rx",
     "//resources/tmobile-uplink.rx",
-    "//resources/utility/encapsulated_pcm16b_8khz.wav",
-    "//resources/utility/encapsulated_pcmu_8khz.wav",
     "//resources/verizon3g-downlink.rx",
     "//resources/verizon3g-uplink.rx",
     "//resources/verizon4g-downlink.rx",
     "//resources/verizon4g-uplink.rx",
+    "//resources/voice_engine/audio_tiny48.wav",
   ]
 
   if (is_ios) {
@@ -250,431 +197,38 @@ if (rtc_include_tests) {
     }
   }
 
-  rtc_source_set("audio_network_adaptor_unittests") {
-    # Put sources for unittests of audio network adaptor in a separate
-    # rtc_source_set to solve name collision on bitrate_controller_unittest.cc.
-    testonly = true
-    sources = [
-      "audio_coding/audio_network_adaptor/audio_network_adaptor_impl_unittest.cc",
-      "audio_coding/audio_network_adaptor/bitrate_controller_unittest.cc",
-      "audio_coding/audio_network_adaptor/channel_controller_unittest.cc",
-      "audio_coding/audio_network_adaptor/controller_manager_unittest.cc",
-      "audio_coding/audio_network_adaptor/dtx_controller_unittest.cc",
-      "audio_coding/audio_network_adaptor/fec_controller_unittest.cc",
-      "audio_coding/audio_network_adaptor/frame_length_controller_unittest.cc",
-      "audio_coding/audio_network_adaptor/mock/mock_controller.h",
-      "audio_coding/audio_network_adaptor/mock/mock_controller_manager.h",
-      "audio_coding/audio_network_adaptor/smoothing_filter_unittest.cc",
-    ]
-    deps = [
-      "audio_coding:audio_network_adaptor",
-      "//testing/gmock",
-      "//testing/gtest",
-    ]
-    if (rtc_enable_protobuf) {
-      deps += [ "audio_coding:ana_config_proto" ]
-      defines = [ "WEBRTC_AUDIO_NETWORK_ADAPTOR_DEBUG_DUMP" ]
-    }
-    if (!build_with_chromium && is_clang) {
-      # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
-      suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
-    }
-  }
-
   rtc_test("modules_unittests") {
     testonly = true
 
-    defines = audio_coding_defines
     deps = []
+    defines = []
     sources = [
-      "audio_coding/acm2/acm_receiver_unittest.cc",
-      "audio_coding/acm2/audio_coding_module_unittest.cc",
-      "audio_coding/acm2/call_statistics_unittest.cc",
-      "audio_coding/acm2/codec_manager_unittest.cc",
-      "audio_coding/acm2/rent_a_codec_unittest.cc",
-      "audio_coding/codecs/audio_decoder_factory_unittest.cc",
-      "audio_coding/codecs/cng/audio_encoder_cng_unittest.cc",
-      "audio_coding/codecs/cng/cng_unittest.cc",
-      "audio_coding/codecs/ilbc/ilbc_unittest.cc",
-      "audio_coding/codecs/isac/fix/source/filterbanks_unittest.cc",
-      "audio_coding/codecs/isac/fix/source/filters_unittest.cc",
-      "audio_coding/codecs/isac/fix/source/lpc_masking_model_unittest.cc",
-      "audio_coding/codecs/isac/fix/source/transform_unittest.cc",
-      "audio_coding/codecs/isac/main/source/audio_encoder_isac_unittest.cc",
-      "audio_coding/codecs/isac/main/source/isac_unittest.cc",
-      "audio_coding/codecs/isac/unittest.cc",
-      "audio_coding/codecs/legacy_encoded_audio_frame_unittest.cc",
-      "audio_coding/codecs/mock/mock_audio_encoder.cc",
-      "audio_coding/codecs/opus/audio_encoder_opus_unittest.cc",
-      "audio_coding/codecs/opus/opus_unittest.cc",
-      "audio_coding/codecs/red/audio_encoder_copy_red_unittest.cc",
-      "audio_coding/neteq/audio_classifier_unittest.cc",
-      "audio_coding/neteq/audio_multi_vector_unittest.cc",
-      "audio_coding/neteq/audio_vector_unittest.cc",
-      "audio_coding/neteq/background_noise_unittest.cc",
-      "audio_coding/neteq/buffer_level_filter_unittest.cc",
-      "audio_coding/neteq/comfort_noise_unittest.cc",
-      "audio_coding/neteq/decision_logic_unittest.cc",
-      "audio_coding/neteq/decoder_database_unittest.cc",
-      "audio_coding/neteq/delay_manager_unittest.cc",
-      "audio_coding/neteq/delay_peak_detector_unittest.cc",
-      "audio_coding/neteq/dsp_helper_unittest.cc",
-      "audio_coding/neteq/dtmf_buffer_unittest.cc",
-      "audio_coding/neteq/dtmf_tone_generator_unittest.cc",
-      "audio_coding/neteq/expand_unittest.cc",
-      "audio_coding/neteq/merge_unittest.cc",
-      "audio_coding/neteq/mock/mock_audio_decoder.h",
-      "audio_coding/neteq/mock/mock_buffer_level_filter.h",
-      "audio_coding/neteq/mock/mock_decoder_database.h",
-      "audio_coding/neteq/mock/mock_delay_manager.h",
-      "audio_coding/neteq/mock/mock_delay_peak_detector.h",
-      "audio_coding/neteq/mock/mock_dtmf_buffer.h",
-      "audio_coding/neteq/mock/mock_dtmf_tone_generator.h",
-      "audio_coding/neteq/mock/mock_expand.h",
-      "audio_coding/neteq/mock/mock_external_decoder_pcm16b.h",
-      "audio_coding/neteq/mock/mock_packet_buffer.h",
-      "audio_coding/neteq/mock/mock_red_payload_splitter.h",
-      "audio_coding/neteq/nack_tracker_unittest.cc",
-      "audio_coding/neteq/neteq_external_decoder_unittest.cc",
-      "audio_coding/neteq/neteq_impl_unittest.cc",
-      "audio_coding/neteq/neteq_network_stats_unittest.cc",
-      "audio_coding/neteq/neteq_stereo_unittest.cc",
-      "audio_coding/neteq/neteq_unittest.cc",
-      "audio_coding/neteq/normal_unittest.cc",
-      "audio_coding/neteq/packet_buffer_unittest.cc",
-      "audio_coding/neteq/post_decode_vad_unittest.cc",
-      "audio_coding/neteq/random_vector_unittest.cc",
-      "audio_coding/neteq/red_payload_splitter_unittest.cc",
-      "audio_coding/neteq/sync_buffer_unittest.cc",
-      "audio_coding/neteq/tick_timer_unittest.cc",
-      "audio_coding/neteq/time_stretch_unittest.cc",
-      "audio_coding/neteq/timestamp_scaler_unittest.cc",
-      "audio_coding/neteq/tools/input_audio_file_unittest.cc",
-      "audio_coding/neteq/tools/packet_unittest.cc",
-      "audio_conference_mixer/test/audio_conference_mixer_unittest.cc",
-      "audio_device/fine_audio_buffer_unittest.cc",
-      "audio_mixer/audio_frame_manipulator_unittest.cc",
-      "audio_mixer/audio_mixer_impl_unittest.cc",
-      "audio_processing/aec/echo_cancellation_unittest.cc",
-      "audio_processing/aec/system_delay_unittest.cc",
-      "audio_processing/agc/agc_manager_direct_unittest.cc",
-      "audio_processing/agc/loudness_histogram_unittest.cc",
-      "audio_processing/agc/mock_agc.h",
-      "audio_processing/audio_buffer_unittest.cc",
-      "audio_processing/beamformer/array_util_unittest.cc",
-      "audio_processing/beamformer/complex_matrix_unittest.cc",
-      "audio_processing/beamformer/covariance_matrix_generator_unittest.cc",
-      "audio_processing/beamformer/matrix_unittest.cc",
-      "audio_processing/beamformer/mock_nonlinear_beamformer.h",
-      "audio_processing/beamformer/nonlinear_beamformer_unittest.cc",
-      "audio_processing/config_unittest.cc",
-      "audio_processing/echo_cancellation_impl_unittest.cc",
-      "audio_processing/splitting_filter_unittest.cc",
-      "audio_processing/transient/dyadic_decimator_unittest.cc",
-      "audio_processing/transient/file_utils.cc",
-      "audio_processing/transient/file_utils.h",
-      "audio_processing/transient/file_utils_unittest.cc",
-      "audio_processing/transient/moving_moments_unittest.cc",
-      "audio_processing/transient/transient_detector_unittest.cc",
-      "audio_processing/transient/transient_suppressor_unittest.cc",
-      "audio_processing/transient/wpd_node_unittest.cc",
-      "audio_processing/transient/wpd_tree_unittest.cc",
-      "audio_processing/utility/block_mean_calculator_unittest.cc",
-      "audio_processing/utility/delay_estimator_unittest.cc",
-      "audio_processing/vad/gmm_unittest.cc",
-      "audio_processing/vad/pitch_based_vad_unittest.cc",
-      "audio_processing/vad/pitch_internal_unittest.cc",
-      "audio_processing/vad/pole_zero_filter_unittest.cc",
-      "audio_processing/vad/standalone_vad_unittest.cc",
-      "audio_processing/vad/vad_audio_proc_unittest.cc",
-      "audio_processing/vad/vad_circular_buffer_unittest.cc",
-      "audio_processing/vad/voice_activity_detector_unittest.cc",
-      "bitrate_controller/bitrate_controller_unittest.cc",
-      "bitrate_controller/send_side_bandwidth_estimation_unittest.cc",
-      "congestion_controller/congestion_controller_unittest.cc",
-      "congestion_controller/delay_based_bwe_unittest.cc",
-      "congestion_controller/delay_based_bwe_unittest_helper.cc",
-      "congestion_controller/delay_based_bwe_unittest_helper.h",
-      "congestion_controller/probe_bitrate_estimator_unittest.cc",
-      "congestion_controller/probe_controller_unittest.cc",
-      "congestion_controller/transport_feedback_adapter_unittest.cc",
-      "media_file/media_file_unittest.cc",
       "module_common_types_unittest.cc",
-      "pacing/alr_detector_unittest.cc",
-      "pacing/bitrate_prober_unittest.cc",
-      "pacing/paced_sender_unittest.cc",
-      "pacing/packet_router_unittest.cc",
-      "remote_bitrate_estimator/include/mock/mock_remote_bitrate_estimator.h",
-      "remote_bitrate_estimator/include/mock/mock_remote_bitrate_observer.h",
-      "remote_bitrate_estimator/inter_arrival_unittest.cc",
-      "remote_bitrate_estimator/overuse_detector_unittest.cc",
-      "remote_bitrate_estimator/remote_bitrate_estimator_abs_send_time_unittest.cc",
-      "remote_bitrate_estimator/remote_bitrate_estimator_single_stream_unittest.cc",
-      "remote_bitrate_estimator/remote_bitrate_estimator_unittest_helper.cc",
-      "remote_bitrate_estimator/remote_bitrate_estimator_unittest_helper.h",
-      "remote_bitrate_estimator/remote_estimator_proxy_unittest.cc",
-      "remote_bitrate_estimator/send_time_history_unittest.cc",
-      "remote_bitrate_estimator/test/bwe_test_framework_unittest.cc",
-      "remote_bitrate_estimator/test/bwe_unittest.cc",
-      "remote_bitrate_estimator/test/estimators/nada_unittest.cc",
-      "remote_bitrate_estimator/test/metric_recorder_unittest.cc",
-      "rtp_rtcp/source/byte_io_unittest.cc",
-      "rtp_rtcp/source/fec_test_helper.cc",
-      "rtp_rtcp/source/fec_test_helper.h",
-      "rtp_rtcp/source/flexfec_header_reader_writer_unittest.cc",
-      "rtp_rtcp/source/flexfec_receiver_unittest.cc",
-      "rtp_rtcp/source/flexfec_sender_unittest.cc",
-      "rtp_rtcp/source/mock/mock_rtp_payload_strategy.h",
-      "rtp_rtcp/source/nack_rtx_unittest.cc",
-      "rtp_rtcp/source/packet_loss_stats_unittest.cc",
-      "rtp_rtcp/source/playout_delay_oracle_unittest.cc",
-      "rtp_rtcp/source/receive_statistics_unittest.cc",
-      "rtp_rtcp/source/remote_ntp_time_estimator_unittest.cc",
-      "rtp_rtcp/source/rtcp_packet/app_unittest.cc",
-      "rtp_rtcp/source/rtcp_packet/bye_unittest.cc",
-      "rtp_rtcp/source/rtcp_packet/common_header_unittest.cc",
-      "rtp_rtcp/source/rtcp_packet/compound_packet_unittest.cc",
-      "rtp_rtcp/source/rtcp_packet/dlrr_unittest.cc",
-      "rtp_rtcp/source/rtcp_packet/extended_jitter_report_unittest.cc",
-      "rtp_rtcp/source/rtcp_packet/extended_reports_unittest.cc",
-      "rtp_rtcp/source/rtcp_packet/fir_unittest.cc",
-      "rtp_rtcp/source/rtcp_packet/nack_unittest.cc",
-      "rtp_rtcp/source/rtcp_packet/pli_unittest.cc",
-      "rtp_rtcp/source/rtcp_packet/rapid_resync_request_unittest.cc",
-      "rtp_rtcp/source/rtcp_packet/receiver_report_unittest.cc",
-      "rtp_rtcp/source/rtcp_packet/remb_unittest.cc",
-      "rtp_rtcp/source/rtcp_packet/report_block_unittest.cc",
-      "rtp_rtcp/source/rtcp_packet/rpsi_unittest.cc",
-      "rtp_rtcp/source/rtcp_packet/rrtr_unittest.cc",
-      "rtp_rtcp/source/rtcp_packet/sdes_unittest.cc",
-      "rtp_rtcp/source/rtcp_packet/sender_report_unittest.cc",
-      "rtp_rtcp/source/rtcp_packet/sli_unittest.cc",
-      "rtp_rtcp/source/rtcp_packet/target_bitrate_unittest.cc",
-      "rtp_rtcp/source/rtcp_packet/tmmbn_unittest.cc",
-      "rtp_rtcp/source/rtcp_packet/tmmbr_unittest.cc",
-      "rtp_rtcp/source/rtcp_packet/transport_feedback_unittest.cc",
-      "rtp_rtcp/source/rtcp_packet/voip_metric_unittest.cc",
-      "rtp_rtcp/source/rtcp_packet_unittest.cc",
-      "rtp_rtcp/source/rtcp_receiver_unittest.cc",
-      "rtp_rtcp/source/rtcp_sender_unittest.cc",
-      "rtp_rtcp/source/rtcp_utility_unittest.cc",
-      "rtp_rtcp/source/rtp_fec_unittest.cc",
-      "rtp_rtcp/source/rtp_format_h264_unittest.cc",
-      "rtp_rtcp/source/rtp_format_vp8_test_helper.cc",
-      "rtp_rtcp/source/rtp_format_vp8_test_helper.h",
-      "rtp_rtcp/source/rtp_format_vp8_unittest.cc",
-      "rtp_rtcp/source/rtp_format_vp9_unittest.cc",
-      "rtp_rtcp/source/rtp_header_extension_unittest.cc",
-      "rtp_rtcp/source/rtp_packet_history_unittest.cc",
-      "rtp_rtcp/source/rtp_packet_unittest.cc",
-      "rtp_rtcp/source/rtp_payload_registry_unittest.cc",
-      "rtp_rtcp/source/rtp_rtcp_impl_unittest.cc",
-      "rtp_rtcp/source/rtp_sender_unittest.cc",
-      "rtp_rtcp/source/time_util_unittest.cc",
-      "rtp_rtcp/source/ulpfec_generator_unittest.cc",
-      "rtp_rtcp/source/ulpfec_header_reader_writer_unittest.cc",
-      "rtp_rtcp/source/ulpfec_receiver_unittest.cc",
-      "rtp_rtcp/source/vp8_partition_aggregator_unittest.cc",
-      "rtp_rtcp/test/testAPI/test_api.cc",
-      "rtp_rtcp/test/testAPI/test_api.h",
-      "rtp_rtcp/test/testAPI/test_api_audio.cc",
-      "rtp_rtcp/test/testAPI/test_api_rtcp.cc",
-      "rtp_rtcp/test/testAPI/test_api_video.cc",
-      "utility/source/audio_frame_operations_unittest.cc",
-      "utility/source/file_player_unittests.cc",
-      "utility/source/process_thread_impl_unittest.cc",
-      "video_coding/codecs/test/packet_manipulator_unittest.cc",
-      "video_coding/codecs/test/stats_unittest.cc",
-      "video_coding/codecs/test/videoprocessor_unittest.cc",
-      "video_coding/codecs/vp8/default_temporal_layers_unittest.cc",
-      "video_coding/codecs/vp8/reference_picture_selection_unittest.cc",
-      "video_coding/codecs/vp8/screenshare_layers_unittest.cc",
-      "video_coding/codecs/vp8/simulcast_encoder_adapter_unittest.cc",
-      "video_coding/codecs/vp8/simulcast_unittest.cc",
-      "video_coding/codecs/vp8/simulcast_unittest.h",
-      "video_coding/decoding_state_unittest.cc",
-      "video_coding/frame_buffer2_unittest.cc",
-      "video_coding/h264_sps_pps_tracker_unittest.cc",
-      "video_coding/histogram_unittest.cc",
-      "video_coding/include/mock/mock_vcm_callbacks.h",
-      "video_coding/jitter_buffer_unittest.cc",
-      "video_coding/jitter_estimator_tests.cc",
-      "video_coding/nack_module_unittest.cc",
-      "video_coding/percentile_filter_unittest.cc",
-      "video_coding/protection_bitrate_calculator_unittest.cc",
-      "video_coding/receiver_unittest.cc",
-      "video_coding/rtp_frame_reference_finder_unittest.cc",
-      "video_coding/sequence_number_util_unittest.cc",
-      "video_coding/session_info_unittest.cc",
-      "video_coding/test/stream_generator.cc",
-      "video_coding/test/stream_generator.h",
-      "video_coding/timing_unittest.cc",
-      "video_coding/utility/frame_dropper_unittest.cc",
-      "video_coding/utility/ivf_file_writer_unittest.cc",
-      "video_coding/utility/moving_average_unittest.cc",
-      "video_coding/utility/quality_scaler_unittest.cc",
-      "video_coding/utility/simulcast_rate_allocator_unittest.cc",
-      "video_coding/video_coding_robustness_unittest.cc",
-      "video_coding/video_packet_buffer_unittest.cc",
-      "video_coding/video_receiver_unittest.cc",
-      "video_coding/video_sender_unittest.cc",
-      "video_processing/test/denoiser_test.cc",
-      "video_processing/test/video_processing_unittest.cc",
-      "video_processing/test/video_processing_unittest.h",
     ]
-
-    if (apm_debug_dump) {
-      defines += [ "WEBRTC_APM_DEBUG_DUMP=1" ]
-    } else {
-      defines += [ "WEBRTC_APM_DEBUG_DUMP=0" ]
-    }
-
-    if (rtc_enable_intelligibility_enhancer) {
-      defines += [ "WEBRTC_INTELLIGIBILITY_ENHANCER=1" ]
-      sources += [
-        "audio_processing/intelligibility/intelligibility_enhancer_unittest.cc",
-        "audio_processing/intelligibility/intelligibility_utils_unittest.cc",
-      ]
-    } else {
-      defines += [ "WEBRTC_INTELLIGIBILITY_ENHANCER=0" ]
-    }
-
-    if (rtc_libvpx_build_vp9) {
-      sources +=
-          [ "video_coding/codecs/vp9/vp9_screenshare_layers_unittest.cc" ]
-    }
-
-    if (rtc_desktop_capture_supported || is_android) {
-      deps += [ "desktop_capture" ]
-      sources += [
-        "desktop_capture/desktop_region_unittest.cc",
-        "desktop_capture/differ_block_unittest.cc",
-      ]
-    }
-
-    if (rtc_desktop_capture_supported) {
-      deps += [ "desktop_capture:desktop_capture_mock" ]
-      sources += [
-        "desktop_capture/desktop_and_cursor_composer_unittest.cc",
-        "desktop_capture/desktop_capturer_differ_wrapper_unittest.cc",
-        "desktop_capture/mouse_cursor_monitor_unittest.cc",
-        "desktop_capture/rgba_color_unittest.cc",
-        "desktop_capture/screen_capturer_helper_unittest.cc",
-        "desktop_capture/screen_capturer_mac_unittest.cc",
-        "desktop_capture/screen_capturer_mock_objects.h",
-        "desktop_capture/screen_capturer_unittest.cc",
-        "desktop_capture/win/cursor_unittest.cc",
-        "desktop_capture/win/cursor_unittest_resources.h",
-        "desktop_capture/win/cursor_unittest_resources.rc",
-        "desktop_capture/window_capturer_unittest.cc",
-      ]
-    }
-
-    if (rtc_prefer_fixed_point) {
-      defines += [ "WEBRTC_AUDIOPROC_FIXED_PROFILE" ]
-    } else {
-      defines += [ "WEBRTC_AUDIOPROC_FLOAT_PROFILE" ]
-    }
-
-    if (rtc_enable_protobuf) {
-      defines += [
-        "WEBRTC_AUDIOPROC_DEBUG_DUMP",
-        "WEBRTC_NETEQ_UNITTEST_BITEXACT",
-      ]
-      deps += [
-        "audio_coding:neteq_unittest_proto",
-        "audio_processing:audioproc_protobuf_utils",
-        "audio_processing:audioproc_unittest_proto",
-      ]
-      sources += [
-        "audio_processing/audio_processing_impl_locking_unittest.cc",
-        "audio_processing/audio_processing_impl_unittest.cc",
-        "audio_processing/audio_processing_unittest.cc",
-        "audio_processing/echo_cancellation_bit_exact_unittest.cc",
-        "audio_processing/echo_control_mobile_unittest.cc",
-        "audio_processing/echo_detector/circular_buffer_unittest.cc",
-        "audio_processing/echo_detector/mean_variance_estimator_unittest.cc",
-        "audio_processing/echo_detector/normalized_covariance_estimator_unittest.cc",
-        "audio_processing/gain_control_unittest.cc",
-        "audio_processing/high_pass_filter_unittest.cc",
-        "audio_processing/level_controller/level_controller_unittest.cc",
-        "audio_processing/level_estimator_unittest.cc",
-        "audio_processing/noise_suppression_unittest.cc",
-        "audio_processing/residual_echo_detector_unittest.cc",
-        "audio_processing/test/bitexactness_tools.cc",
-        "audio_processing/test/bitexactness_tools.h",
-        "audio_processing/test/debug_dump_replayer.cc",
-        "audio_processing/test/debug_dump_replayer.h",
-        "audio_processing/test/debug_dump_test.cc",
-        "audio_processing/test/test_utils.h",
-        "audio_processing/voice_detection_unittest.cc",
-      ]
-    }
-
-    if (rtc_build_libvpx) {
-      deps += [ rtc_libvpx_dir ]
-    }
-
-    # TODO(jschuh): bugs.webrtc.org/1348: fix this warning.
-    configs += [ "//build/config/compiler:no_size_t_to_int_warning" ]
 
     if (!build_with_chromium && is_clang) {
       # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
       suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
     }
 
-    if (is_win) {
-      cflags = [
-        # TODO(kjellander): bugs.webrtc.org/261: Fix this warning.
-        "/wd4373",  # virtual function override.
-      ]
-    }
-
     deps += [
-      ":audio_network_adaptor_unittests",
-      "..:webrtc_common",
-      "../base:rtc_base",  # TODO(kjellander): Cleanup in bugs.webrtc.org/3806.
-      "../common_audio",
-      "../common_video",
-      "../system_wrappers",
-      "../test:rtp_test_utils",
-      "../test:test_common",
-      "../test:test_support",
-      "../test:test_support_main",
-      "../test:video_test_common",
-      "audio_coding",
-      "audio_coding:acm_receive_test",
-      "audio_coding:acm_send_test",
-      "audio_coding:builtin_audio_decoder_factory",
-      "audio_coding:cng",
-      "audio_coding:isac_fix",
-      "audio_coding:neteq",
-      "audio_coding:neteq_test_support",
-      "audio_coding:neteq_unittest_tools",
-      "audio_coding:pcm16b",
-      "audio_coding:red",
-      "audio_coding:webrtc_opus",
-      "audio_conference_mixer",
-      "audio_device",
-      "audio_mixer",
-      "audio_processing",
-      "audio_processing:audioproc_test_utils",
-      "bitrate_controller",
-      "media_file",
-      "pacing",
-      "remote_bitrate_estimator",
-      "remote_bitrate_estimator:bwe_simulator_lib",
-      "rtp_rtcp",
-      "utility",
+      "../test:test_main",
+      "audio_coding:audio_coding_unittests",
+      "audio_conference_mixer:audio_conference_mixer_unittests",
+      "audio_device:audio_device_unittests",
+      "audio_mixer:audio_mixer_unittests",
+      "audio_processing:audio_processing_unittests",
+      "bitrate_controller:bitrate_controller_unittests",
+      "congestion_controller:congestion_controller_unittests",
+      "desktop_capture:desktop_capture_unittests",
+      "media_file:media_file_unittests",
+      "pacing:pacing_unittests",
+      "remote_bitrate_estimator:remote_bitrate_estimator_unittests",
+      "rtp_rtcp:rtp_rtcp_unittests",
+      "utility:utility_unittests",
       "video_capture",
-      "video_coding",
-      "video_coding:video_codecs_test_framework",
-      "video_coding:webrtc_vp8",
-      "video_coding:webrtc_vp9",
-      "video_processing",
-      "//testing/gmock",
-      "//testing/gtest",
-      "//third_party/gflags",
+      "video_coding:video_coding_unittests",
+      "video_processing:video_processing_unittests",
     ]
 
     data = modules_unittests_resources
@@ -682,70 +236,15 @@ if (rtc_include_tests) {
     if (is_android) {
       deps += [
         "//testing/android/native_test:native_test_support",
-        "//webrtc/api:libjingle_peerconnection_java",
-      ]
-
-      # Need to disable error due to the line in
-      # base/android/jni_android.h triggering it:
-      # const BASE_EXPORT jobject GetApplicationContext()
-      # error: type qualifiers ignored on function return type
-      cflags = [ "-Wno-ignored-qualifiers" ]
-      sources += [
-        "audio_device/android/audio_device_unittest.cc",
-        "audio_device/android/audio_manager_unittest.cc",
-        "audio_device/android/ensure_initialized.cc",
-        "audio_device/android/ensure_initialized.h",
+        "//webrtc/sdk/android:libjingle_peerconnection_java",
       ]
       shard_timeout = 900
     }
     if (is_ios) {
       info_plist = "//webrtc/test/ios/Info.plist"
       deps += [ ":modules_unittests_bundle_data" ]
-      configs += [
-        "..:common_objc",
-        "//build/config/compiler:enable_arc",
-      ]
-
-      sources += [ "audio_device/ios/objc/RTCAudioSessionTest.mm" ]
-
-      if (target_cpu != "x64") {
-        sources += [ "audio_device/ios/audio_device_unittest_ios.cc" ]
-      }
-
+      configs += [ "..:common_objc" ]
       ldflags = [ "-ObjC" ]
     }
-  }
-
-  rtc_test("bwe_simulator") {
-    testonly = true
-
-    deps = []
-    sources = [
-      "remote_bitrate_estimator/bwe_simulations.cc",
-    ]
-
-    if (!build_with_chromium && is_clang) {
-      # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
-      suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
-    }
-
-    if (is_win) {
-      cflags = [
-        # TODO(kjellander): bugs.webrtc.org/261: Fix this warning.
-        "/wd4373",  # virtual function override.
-      ]
-    }
-
-    deps += [
-      "..:webrtc_common",
-      "../base:rtc_base_approved",
-      "../test:test_common",
-      "../test:test_support_main",
-      "remote_bitrate_estimator:bwe_simulator_lib",
-      "video_capture",
-      "//testing/gmock",
-      "//testing/gtest",
-      "//third_party/gflags",
-    ]
   }
 }

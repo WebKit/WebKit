@@ -39,7 +39,7 @@ ClockInterface* SetClockForTesting(ClockInterface* clock) {
   return prev;
 }
 
-uint64_t SystemTimeNanos() {
+int64_t SystemTimeNanos() {
   int64_t ticks;
 #if defined(WEBRTC_MAC)
   static mach_timebase_info_data_t timebase;
@@ -47,7 +47,7 @@ uint64_t SystemTimeNanos() {
     // Get the timebase if this is the first time we run.
     // Recommended by Apple's QA1398.
     if (mach_timebase_info(&timebase) != KERN_SUCCESS) {
-      RTC_DCHECK(false);
+      RTC_NOTREACHED();
     }
   }
   // Use timebase to convert absolute time tick units into nanoseconds.
@@ -88,7 +88,7 @@ int64_t SystemTimeMillis() {
   return static_cast<int64_t>(SystemTimeNanos() / kNumNanosecsPerMillisec);
 }
 
-uint64_t TimeNanos() {
+int64_t TimeNanos() {
   if (g_clock) {
     return g_clock->TimeNanos();
   }
@@ -100,11 +100,11 @@ uint32_t Time32() {
 }
 
 int64_t TimeMillis() {
-  return static_cast<int64_t>(TimeNanos() / kNumNanosecsPerMillisec);
+  return TimeNanos() / kNumNanosecsPerMillisec;
 }
 
-uint64_t TimeMicros() {
-  return static_cast<uint64_t>(TimeNanos() / kNumNanosecsPerMicrosec);
+int64_t TimeMicros() {
+  return TimeNanos() / kNumNanosecsPerMicrosec;
 }
 
 int64_t TimeAfter(int64_t elapsed) {
@@ -189,7 +189,7 @@ int64_t TmToSeconds(const std::tm& tm) {
 int64_t TimeUTCMicros() {
 #if defined(WEBRTC_POSIX)
   struct timeval time;
-  gettimeofday(&time, NULL);
+  gettimeofday(&time, nullptr);
   // Convert from second (1.0) and microsecond (1e-6).
   return (static_cast<int64_t>(time.tv_sec) * rtc::kNumMicrosecsPerSec +
           time.tv_usec);

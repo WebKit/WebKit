@@ -22,7 +22,6 @@
 
 #if defined(WEBRTC_MAC)
 
-#include "webrtc/base/common.h"
 #include "webrtc/base/constructormagic.h"
 
 // This header may be included from Obj-C files or C++ files.
@@ -44,9 +43,9 @@ class ScopedAutoreleasePool {
   // as a stack object" discipline.
   //
   // Note: new is declared as "throw()" to get around a gcc warning about new
-  // returning NULL, but this method will never get called and therefore will
+  // returning null, but this method will never get called and therefore will
   // never actually throw any exception.
-  void* operator new(size_t size) throw() { return NULL; }
+  void* operator new(size_t size) throw() { return nullptr; }
   void operator delete (void* ptr) {}
 
   NSAutoreleasePool* pool_;

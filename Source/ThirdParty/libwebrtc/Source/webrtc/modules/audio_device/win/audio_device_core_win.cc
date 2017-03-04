@@ -524,6 +524,7 @@ AudioDeviceWindowsCore::AudioDeviceWindowsCore(const int32_t id) :
     // list of number of channels to use on recording side
     _recChannelsPrioList[0] = 2;    // stereo is prio 1
     _recChannelsPrioList[1] = 1;    // mono is prio 2
+    _recChannelsPrioList[2] = 4;    // quad is prio 3
 
     // list of number of channels to use on playout side
     _playChannelsPrioList[0] = 2;    // stereo is prio 1
@@ -2531,7 +2532,7 @@ int32_t AudioDeviceWindowsCore::InitRecording()
 
     HRESULT hr = S_OK;
     WAVEFORMATEX* pWfxIn = NULL;
-    WAVEFORMATEX Wfx = WAVEFORMATEX();
+    WAVEFORMATEXTENSIBLE Wfx = WAVEFORMATEXTENSIBLE();
     WAVEFORMATEX* pWfxClosestMatch = NULL;
 
     // Create COM object with IAudioClient interface.
@@ -2565,9 +2566,12 @@ int32_t AudioDeviceWindowsCore::InitRecording()
     }
 
     // Set wave format
-    Wfx.wFormatTag = WAVE_FORMAT_PCM;
-    Wfx.wBitsPerSample = 16;
-    Wfx.cbSize = 0;
+    Wfx.Format.wFormatTag = WAVE_FORMAT_EXTENSIBLE;
+    Wfx.Format.wBitsPerSample = 16;
+    Wfx.Format.cbSize = 22;
+    Wfx.dwChannelMask = 0;
+    Wfx.Samples.wValidBitsPerSample = Wfx.Format.wBitsPerSample;
+    Wfx.SubFormat = KSDATAFORMAT_SUBTYPE_PCM;
 
     const int freqs[6] = {48000, 44100, 16000, 96000, 32000, 8000};
     hr = S_FALSE;
@@ -2577,16 +2581,18 @@ int32_t AudioDeviceWindowsCore::InitRecording()
     {
         for (unsigned int chan = 0; chan < sizeof(_recChannelsPrioList)/sizeof(_recChannelsPrioList[0]); chan++)
         {
-            Wfx.nChannels = _recChannelsPrioList[chan];
-            Wfx.nSamplesPerSec = freqs[freq];
-            Wfx.nBlockAlign = Wfx.nChannels * Wfx.wBitsPerSample / 8;
-            Wfx.nAvgBytesPerSec = Wfx.nSamplesPerSec * Wfx.nBlockAlign;
+            Wfx.Format.nChannels = _recChannelsPrioList[chan];
+            Wfx.Format.nSamplesPerSec = freqs[freq];
+            Wfx.Format.nBlockAlign = Wfx.Format.nChannels *
+                                     Wfx.Format.wBitsPerSample / 8;
+            Wfx.Format.nAvgBytesPerSec = Wfx.Format.nSamplesPerSec *
+                                         Wfx.Format.nBlockAlign;
             // If the method succeeds and the audio endpoint device supports the specified stream format,
             // it returns S_OK. If the method succeeds and provides a closest match to the specified format,
             // it returns S_FALSE.
             hr = _ptrClientIn->IsFormatSupported(
                                   AUDCLNT_SHAREMODE_SHARED,
-                                  &Wfx,
+                                  (WAVEFORMATEX*)&Wfx,
                                   &pWfxClosestMatch);
             if (hr == S_OK)
             {
@@ -2595,7 +2601,7 @@ int32_t AudioDeviceWindowsCore::InitRecording()
             else
             {
                 WEBRTC_TRACE(kTraceInfo, kTraceAudioDevice, _id, "nChannels=%d, nSamplesPerSec=%d is not supported",
-                    Wfx.nChannels, Wfx.nSamplesPerSec);
+                    Wfx.Format.nChannels, Wfx.Format.nSamplesPerSec);
             }
         }
         if (hr == S_OK)
@@ -2604,19 +2610,20 @@ int32_t AudioDeviceWindowsCore::InitRecording()
 
     if (hr == S_OK)
     {
-        _recAudioFrameSize = Wfx.nBlockAlign;
-        _recSampleRate = Wfx.nSamplesPerSec;
-        _recBlockSize = Wfx.nSamplesPerSec/100;
-        _recChannels = Wfx.nChannels;
+        _recAudioFrameSize = Wfx.Format.nBlockAlign;
+        _recSampleRate = Wfx.Format.nSamplesPerSec;
+        _recBlockSize = Wfx.Format.nSamplesPerSec/100;
+        _recChannels = Wfx.Format.nChannels;
 
         WEBRTC_TRACE(kTraceInfo, kTraceAudioDevice, _id, "VoE selected this capturing format:");
-        WEBRTC_TRACE(kTraceInfo, kTraceAudioDevice, _id, "wFormatTag        : 0x%X (%u)", Wfx.wFormatTag, Wfx.wFormatTag);
-        WEBRTC_TRACE(kTraceInfo, kTraceAudioDevice, _id, "nChannels         : %d", Wfx.nChannels);
-        WEBRTC_TRACE(kTraceInfo, kTraceAudioDevice, _id, "nSamplesPerSec    : %d", Wfx.nSamplesPerSec);
-        WEBRTC_TRACE(kTraceInfo, kTraceAudioDevice, _id, "nAvgBytesPerSec   : %d", Wfx.nAvgBytesPerSec);
-        WEBRTC_TRACE(kTraceInfo, kTraceAudioDevice, _id, "nBlockAlign       : %d", Wfx.nBlockAlign);
-        WEBRTC_TRACE(kTraceInfo, kTraceAudioDevice, _id, "wBitsPerSample    : %d", Wfx.wBitsPerSample);
-        WEBRTC_TRACE(kTraceInfo, kTraceAudioDevice, _id, "cbSize            : %d", Wfx.cbSize);
+        WEBRTC_TRACE(kTraceInfo, kTraceAudioDevice, _id, "wFormatTag        : 0x%X (%u)", Wfx.Format.wFormatTag,
+                                                                                          Wfx.Format.wFormatTag);
+        WEBRTC_TRACE(kTraceInfo, kTraceAudioDevice, _id, "nChannels         : %d", Wfx.Format.nChannels);
+        WEBRTC_TRACE(kTraceInfo, kTraceAudioDevice, _id, "nSamplesPerSec    : %d", Wfx.Format.nSamplesPerSec);
+        WEBRTC_TRACE(kTraceInfo, kTraceAudioDevice, _id, "nAvgBytesPerSec   : %d", Wfx.Format.nAvgBytesPerSec);
+        WEBRTC_TRACE(kTraceInfo, kTraceAudioDevice, _id, "nBlockAlign       : %d", Wfx.Format.nBlockAlign);
+        WEBRTC_TRACE(kTraceInfo, kTraceAudioDevice, _id, "wBitsPerSample    : %d", Wfx.Format.wBitsPerSample);
+        WEBRTC_TRACE(kTraceInfo, kTraceAudioDevice, _id, "cbSize            : %d", Wfx.Format.cbSize);
         WEBRTC_TRACE(kTraceInfo, kTraceAudioDevice, _id, "Additional settings:");
         WEBRTC_TRACE(kTraceInfo, kTraceAudioDevice, _id, "_recAudioFrameSize: %d", _recAudioFrameSize);
         WEBRTC_TRACE(kTraceInfo, kTraceAudioDevice, _id, "_recBlockSize     : %d", _recBlockSize);
@@ -2630,7 +2637,7 @@ int32_t AudioDeviceWindowsCore::InitRecording()
                           AUDCLNT_STREAMFLAGS_NOPERSIST,        // volume and mute settings for an audio session will not persist across system restarts
                           0,                                    // required for event-driven shared mode
                           0,                                    // periodicity
-                          &Wfx,                                 // selected wave format
+                          (WAVEFORMATEX*)&Wfx,                  // selected wave format
                           NULL);                                // session GUID
 
 

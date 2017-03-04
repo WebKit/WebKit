@@ -36,7 +36,7 @@ class SignalThreadTest : public testing::Test, public sigslot::has_slots<> {
 
    protected:
     virtual void OnWorkStart() {
-      ASSERT_TRUE(harness_ != NULL);
+      ASSERT_TRUE(harness_ != nullptr);
       ++harness_->thread_started_;
       EXPECT_EQ(harness_->main_thread_, Thread::Current());
       EXPECT_FALSE(worker()->RunningForTest());  // not started yet

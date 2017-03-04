@@ -15,6 +15,7 @@
 
 #include "webrtc/base/checks.h"
 #include "webrtc/base/logging.h"
+#include "webrtc/base/trace_event.h"
 #include "webrtc/modules/video_coding/packet.h"
 
 namespace webrtc {
@@ -71,6 +72,7 @@ std::vector<NaluInfo> VCMFrameBuffer::GetNaluInfos() const {
 }
 
 void VCMFrameBuffer::SetGofInfo(const GofInfoVP9& gof_info, size_t idx) {
+  TRACE_EVENT0("webrtc", "VCMFrameBuffer::SetGofInfo");
   _sessionInfo.SetGofInfo(gof_info, idx);
   // TODO(asapersson): Consider adding hdr->VP9.ref_picture_id for testing.
   _codecSpecificInfo.codecSpecific.VP9.temporal_idx =
@@ -80,6 +82,7 @@ void VCMFrameBuffer::SetGofInfo(const GofInfoVP9& gof_info, size_t idx) {
 }
 
 bool VCMFrameBuffer::IsSessionComplete() const {
+  TRACE_EVENT0("webrtc", "VCMFrameBuffer::IsSessionComplete");
   return _sessionInfo.complete();
 }
 
@@ -89,6 +92,7 @@ VCMFrameBufferEnum VCMFrameBuffer::InsertPacket(
     int64_t timeInMs,
     VCMDecodeErrorMode decode_error_mode,
     const FrameData& frame_data) {
+  TRACE_EVENT0("webrtc", "VCMFrameBuffer::InsertPacket");
   assert(!(NULL == packet.dataPtr && packet.sizeBytes > 0));
   if (packet.dataPtr != NULL) {
     _payloadType = packet.payloadType;
@@ -161,7 +165,7 @@ VCMFrameBufferEnum VCMFrameBuffer::InsertPacket(
     _rotation_set = true;
   }
 
-  if (packet.isFirstPacket) {
+  if (packet.is_first_packet_in_frame) {
     playout_delay_ = packet.video_header.playout_delay;
   }
 
@@ -176,30 +180,37 @@ VCMFrameBufferEnum VCMFrameBuffer::InsertPacket(
 }
 
 int64_t VCMFrameBuffer::LatestPacketTimeMs() const {
+  TRACE_EVENT0("webrtc", "VCMFrameBuffer::LatestPacketTimeMs");
   return _latestPacketTimeMs;
 }
 
 void VCMFrameBuffer::IncrementNackCount() {
+  TRACE_EVENT0("webrtc", "VCMFrameBuffer::IncrementNackCount");
   _nackCount++;
 }
 
 int16_t VCMFrameBuffer::GetNackCount() const {
+  TRACE_EVENT0("webrtc", "VCMFrameBuffer::GetNackCount");
   return _nackCount;
 }
 
 bool VCMFrameBuffer::HaveFirstPacket() const {
+  TRACE_EVENT0("webrtc", "VCMFrameBuffer::HaveFirstPacket");
   return _sessionInfo.HaveFirstPacket();
 }
 
 bool VCMFrameBuffer::HaveLastPacket() const {
+  TRACE_EVENT0("webrtc", "VCMFrameBuffer::HaveLastPacket");
   return _sessionInfo.HaveLastPacket();
 }
 
 int VCMFrameBuffer::NumPackets() const {
+  TRACE_EVENT0("webrtc", "VCMFrameBuffer::NumPackets");
   return _sessionInfo.NumPackets();
 }
 
 void VCMFrameBuffer::Reset() {
+  TRACE_EVENT0("webrtc", "VCMFrameBuffer::Reset");
   _length = 0;
   _timeStamp = 0;
   _sessionInfo.Reset();
@@ -212,6 +223,7 @@ void VCMFrameBuffer::Reset() {
 
 // Set state of frame
 void VCMFrameBuffer::SetState(VCMFrameBufferStateEnum state) {
+  TRACE_EVENT0("webrtc", "VCMFrameBuffer::SetState");
   if (_state == state) {
     return;
   }
@@ -248,6 +260,7 @@ VCMFrameBufferStateEnum VCMFrameBuffer::GetState() const {
 
 // Get current state of frame
 VCMFrameBufferStateEnum VCMFrameBuffer::GetState(uint32_t& timeStamp) const {
+  TRACE_EVENT0("webrtc", "VCMFrameBuffer::GetState");
   timeStamp = TimeStamp();
   return GetState();
 }
@@ -257,6 +270,7 @@ bool VCMFrameBuffer::IsRetransmitted() const {
 }
 
 void VCMFrameBuffer::PrepareForDecode(bool continuous) {
+  TRACE_EVENT0("webrtc", "VCMFrameBuffer::PrepareForDecode");
   size_t bytes_removed = _sessionInfo.MakeDecodable();
   _length -= bytes_removed;
   // Transfer frame information to EncodedFrame and create any codec

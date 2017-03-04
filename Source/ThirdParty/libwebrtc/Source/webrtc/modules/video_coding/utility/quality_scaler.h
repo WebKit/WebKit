@@ -11,61 +11,77 @@
 #ifndef WEBRTC_MODULES_VIDEO_CODING_UTILITY_QUALITY_SCALER_H_
 #define WEBRTC_MODULES_VIDEO_CODING_UTILITY_QUALITY_SCALER_H_
 
+#include <utility>
+
 #include "webrtc/common_types.h"
-#include "webrtc/common_video/include/i420_buffer_pool.h"
+#include "webrtc/video_encoder.h"
+#include "webrtc/base/optional.h"
+#include "webrtc/base/sequenced_task_checker.h"
 #include "webrtc/modules/video_coding/utility/moving_average.h"
 
 namespace webrtc {
-class QualityScaler {
+
+// An interface for signaling requests to limit or increase the resolution or
+// framerate of the captured video stream.
+class AdaptationObserverInterface {
  public:
-  struct Resolution {
-    int width;
-    int height;
-  };
+  // Indicates if the adaptation is due to overuse of the CPU resources, or if
+  // the quality of the encoded frames have dropped too low.
+  enum AdaptReason : size_t { kQuality = 0, kCpu = 1 };
+  static const size_t kScaleReasonSize = 2;
+  // Called to signal that we can handle larger or more frequent frames.
+  virtual void AdaptUp(AdaptReason reason) = 0;
+  // Called to signal that the source should reduce the resolution or framerate.
+  virtual void AdaptDown(AdaptReason reason) = 0;
 
-  QualityScaler();
-  void Init(VideoCodecType codec_type,
-            int initial_bitrate_kbps,
-            int width,
-            int height,
-            int fps);
-  void Init(int low_qp_threshold,
-            int high_qp_threshold,
-            int initial_bitrate_kbps,
-            int width,
-            int height,
-            int fps);
-  void ReportFramerate(int framerate);
-  void ReportQP(int qp);
-  void ReportDroppedFrame();
-  void OnEncodeFrame(int width, int height);
-  Resolution GetScaledResolution() const;
-  rtc::scoped_refptr<VideoFrameBuffer> GetScaledBuffer(
-      const rtc::scoped_refptr<VideoFrameBuffer>& frame);
-  int downscale_shift() const { return downscale_shift_; }
-
- private:
-  void ClearSamples();
-  void ScaleUp();
-  void ScaleDown();
-  void UpdateTargetResolution(int width, int height);
-
-  I420BufferPool pool_;
-
-  size_t num_samples_downscale_;
-  size_t num_samples_upscale_;
-  bool fast_rampup_;
-  MovingAverage average_qp_;
-  MovingAverage framedrop_percent_;
-
-  int low_qp_threshold_;
-  int high_qp_threshold_;
-  Resolution target_res_;
-
-  int downscale_shift_;
-  int maximum_shift_;
+ protected:
+  virtual ~AdaptationObserverInterface() {}
 };
 
+// QualityScaler runs asynchronously and monitors QP values of encoded frames.
+// It holds a reference to a ScalingObserverInterface implementation to signal
+// an intent to scale up or down.
+class QualityScaler {
+ public:
+  // Construct a QualityScaler with a given |observer|.
+  // This starts the quality scaler periodically checking what the average QP
+  // has been recently.
+  QualityScaler(AdaptationObserverInterface* observer,
+                VideoCodecType codec_type);
+  // If specific thresholds are desired these can be supplied as |thresholds|.
+  QualityScaler(AdaptationObserverInterface* observer,
+                VideoEncoder::QpThresholds thresholds);
+  virtual ~QualityScaler();
+  // Should be called each time the encoder drops a frame
+  void ReportDroppedFrame();
+  // Inform the QualityScaler of the last seen QP.
+  void ReportQP(int qp);
+
+  // The following members declared protected for testing purposes
+ protected:
+  QualityScaler(AdaptationObserverInterface* observer,
+                VideoEncoder::QpThresholds thresholds,
+                int64_t sampling_period);
+
+ private:
+  class CheckQPTask;
+  void CheckQP();
+  void ClearSamples();
+  void ReportQPLow();
+  void ReportQPHigh();
+  int64_t GetSamplingPeriodMs() const;
+
+  CheckQPTask* check_qp_task_ GUARDED_BY(&task_checker_);
+  AdaptationObserverInterface* const observer_ GUARDED_BY(&task_checker_);
+  rtc::SequencedTaskChecker task_checker_;
+
+  const int64_t sampling_period_ms_;
+  bool fast_rampup_ GUARDED_BY(&task_checker_);
+  MovingAverage average_qp_ GUARDED_BY(&task_checker_);
+  MovingAverage framedrop_percent_ GUARDED_BY(&task_checker_);
+
+  VideoEncoder::QpThresholds thresholds_ GUARDED_BY(&task_checker_);
+};
 }  // namespace webrtc
 
 #endif  // WEBRTC_MODULES_VIDEO_CODING_UTILITY_QUALITY_SCALER_H_

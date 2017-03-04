@@ -20,7 +20,7 @@ namespace webrtc {
 namespace videocapturemodule {
 class DeviceInfoIos : public DeviceInfoImpl {
  public:
-  explicit DeviceInfoIos(const int32_t device_id);
+  DeviceInfoIos();
   virtual ~DeviceInfoIos();
 
   // Implementation of DeviceInfoImpl.

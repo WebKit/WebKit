@@ -20,6 +20,7 @@
 @synthesize sdpMid = _sdpMid;
 @synthesize sdpMLineIndex = _sdpMLineIndex;
 @synthesize sdp = _sdp;
+@synthesize serverUrl = _serverUrl;
 
 - (instancetype)initWithSdp:(NSString *)sdp
               sdpMLineIndex:(int)sdpMLineIndex
@@ -34,10 +35,11 @@
 }
 
 - (NSString *)description {
-  return [NSString stringWithFormat:@"RTCIceCandidate:\n%@\n%d\n%@",
+  return [NSString stringWithFormat:@"RTCIceCandidate:\n%@\n%d\n%@\n%@",
                                     _sdpMid,
                                     _sdpMLineIndex,
-                                    _sdp];
+                                    _sdp,
+                                    _serverUrl];
 }
 
 #pragma mark - Private
@@ -48,9 +50,12 @@
   std::string sdp;
   candidate->ToString(&sdp);
 
-  return [self initWithSdp:[NSString stringForStdString:sdp]
-             sdpMLineIndex:candidate->sdp_mline_index()
-                    sdpMid:[NSString stringForStdString:candidate->sdp_mid()]];
+  RTCIceCandidate *rtcCandidate =
+      [self initWithSdp:[NSString stringForStdString:sdp]
+          sdpMLineIndex:candidate->sdp_mline_index()
+                 sdpMid:[NSString stringForStdString:candidate->sdp_mid()]];
+  rtcCandidate->_serverUrl = [NSString stringForStdString:candidate->server_url()];
+  return rtcCandidate;
 }
 
 - (std::unique_ptr<webrtc::IceCandidateInterface>)nativeCandidate {

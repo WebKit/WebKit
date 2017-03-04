@@ -144,4 +144,17 @@ DesktopRect DxgiAdapterDuplicator::ScreenRect(int id) const {
   return duplicators_[id].desktop_rect();
 }
 
+int DxgiAdapterDuplicator::screen_count() const {
+  return static_cast<int>(duplicators_.size());
+}
+
+int64_t DxgiAdapterDuplicator::GetNumFramesCaptured() const {
+  int64_t min = INT64_MAX;
+  for (const auto& duplicator : duplicators_) {
+    min = std::min(min, duplicator.num_frames_captured());
+  }
+
+  return min;
+}
+
 }  // namespace webrtc

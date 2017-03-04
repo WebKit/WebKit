@@ -42,7 +42,4 @@ TEST(Pathname, ReturnsDotForEmptyPathname) {
   EXPECT_TRUE (path.filename().empty());
   EXPECT_FALSE(path.pathname().empty());
   EXPECT_EQ(kCWD, path.pathname());
-
-  rtc::Pathname path2("c:/foo bar.txt");
-  EXPECT_EQ(path2.url(), std::string("file:///c:/foo%20bar.txt"));
 }

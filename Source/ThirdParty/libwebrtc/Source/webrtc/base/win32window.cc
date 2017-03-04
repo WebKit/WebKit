@@ -8,7 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/base/common.h"
+#include "webrtc/base/checks.h"
 #include "webrtc/base/logging.h"
 #include "webrtc/base/win32window.h"
 
@@ -19,14 +19,13 @@ namespace rtc {
 ///////////////////////////////////////////////////////////////////////////////
 
 static const wchar_t kWindowBaseClassName[] = L"WindowBaseClass";
-HINSTANCE Win32Window::instance_ = NULL;
+HINSTANCE Win32Window::instance_ = nullptr;
 ATOM Win32Window::window_class_ = 0;
 
-Win32Window::Win32Window() : wnd_(NULL) {
-}
+Win32Window::Win32Window() : wnd_(nullptr) {}
 
 Win32Window::~Win32Window() {
-  ASSERT(NULL == wnd_);
+  RTC_DCHECK(nullptr == wnd_);
 }
 
 bool Win32Window::Create(HWND parent, const wchar_t* title, DWORD style,
@@ -58,13 +57,14 @@ bool Win32Window::Create(HWND parent, const wchar_t* title, DWORD style,
       return false;
     }
   }
-  wnd_ = ::CreateWindowEx(exstyle, kWindowBaseClassName, title, style,
-                          x, y, cx, cy, parent, NULL, instance_, this);
-  return (NULL != wnd_);
+  wnd_ = ::CreateWindowEx(exstyle, kWindowBaseClassName, title, style, x, y, cx,
+                          cy, parent, nullptr, instance_, this);
+  return (nullptr != wnd_);
 }
 
 void Win32Window::Destroy() {
-  VERIFY(::DestroyWindow(wnd_) != FALSE);
+  const bool success = ::DestroyWindow(wnd_);
+  RTC_DCHECK(success);
 }
 
 void Win32Window::Shutdown() {
@@ -108,7 +108,7 @@ LRESULT Win32Window::WndProc(HWND hwnd, UINT uMsg,
     }
     if (WM_NCDESTROY == uMsg) {
       ::SetWindowLongPtr(hwnd, GWLP_USERDATA, NULL);
-      that->wnd_ = NULL;
+      that->wnd_ = nullptr;
       that->OnNcDestroy();
     }
     if (handled) {

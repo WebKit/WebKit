@@ -113,7 +113,7 @@ struct RangeCheckImpl {};
 // Dst range always contains the result: nothing to check.
 template <typename Dst, typename Src, DstSign IsDstSigned, SrcSign IsSrcSigned>
 struct RangeCheckImpl<Dst, Src, IsDstSigned, IsSrcSigned, CONTAINS_RANGE> {
-  static RangeCheckResult Check(Src value) {
+  static RangeCheckResult Check(Src) {
     return TYPE_VALID;
   }
 };

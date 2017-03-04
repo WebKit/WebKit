@@ -14,7 +14,7 @@
 #include "webrtc/base/format_macros.h"
 #include "webrtc/modules/audio_coding/acm2/rent_a_codec.h"
 #include "webrtc/system_wrappers/include/trace.h"
-#include "webrtc/voice_engine_configurations.h"
+#include "webrtc/typedefs.h"
 
 namespace webrtc {
 namespace acm2 {
@@ -211,7 +211,7 @@ bool CodecManager::MakeEncoder(RentACodec* rac, AudioCodingModule* acm) {
         if (sub_enc.empty()) {
           break;
         }
-        RTC_CHECK_EQ(1u, sub_enc.size());
+        RTC_CHECK_EQ(1, sub_enc.size());
 
         // Replace enc with its sub encoder. We need to put the sub encoder in
         // a temporary first, since otherwise the old value of enc would be

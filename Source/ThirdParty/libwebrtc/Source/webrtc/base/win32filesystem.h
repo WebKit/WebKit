@@ -17,8 +17,8 @@ namespace rtc {
 
 class Win32Filesystem : public FilesystemInterface {
  public:
-  // Opens a file. Returns an open StreamInterface if function succeeds. Otherwise,
-  // returns NULL.
+  // Opens a file. Returns an open StreamInterface if function succeeds.
+  // Otherwise, returns null.
   virtual FileStream *OpenFile(const Pathname &filename, 
                                const std::string &mode);
 
@@ -61,7 +61,7 @@ class Win32Filesystem : public FilesystemInterface {
   // All of the following functions set pathname and return true if successful.
   // Returned paths always include a trailing backslash.
   // If create is true, the path will be recursively created.
-  // If append is non-NULL, it will be appended (and possibly created).
+  // If append is non-null, it will be appended (and possibly created).
 
   virtual std::string TempFilename(const Pathname &dir, const std::string &prefix);
 
@@ -74,12 +74,8 @@ class Win32Filesystem : public FilesystemInterface {
   virtual bool GetTemporaryFolder(Pathname &path, bool create,
                                  const std::string *append);
 
-  virtual bool GetAppDataFolder(Pathname* path, bool per_user);
-
   // Get a temporary folder that is unique to the current user and application.
   virtual bool GetAppTempFolder(Pathname* path);
-
-  virtual bool GetDiskFreeSpace(const Pathname& path, int64_t* free_bytes);
 
  private:
   // Returns the path to the running application.

@@ -49,14 +49,8 @@ class MediaOptimization {
                        int32_t mtu);
 
   // Sets target rates for the encoder given the channel parameters.
-  // Inputs:  target bitrate - the encoder target bitrate in bits/s.
-  //          fraction_lost - packet loss rate in % in the network.
-  //          round_trip_time_ms - round trip time in milliseconds.
-  //          min_bit_rate - the bit rate of the end-point with lowest rate.
-  //          max_bit_rate - the bit rate of the end-point with highest rate.
-  uint32_t SetTargetRates(uint32_t target_bitrate,
-                          uint8_t fraction_lost,
-                          int64_t round_trip_time_ms);
+  // Input:  target bitrate - the encoder target bitrate in bits/s.
+  uint32_t SetTargetRates(uint32_t target_bitrate);
 
   void EnableFrameDropper(bool enable);
   bool DropFrame();
@@ -115,7 +109,6 @@ class MediaOptimization {
   uint16_t codec_height_ GUARDED_BY(crit_sect_);
   float user_frame_rate_ GUARDED_BY(crit_sect_);
   std::unique_ptr<FrameDropper> frame_dropper_ GUARDED_BY(crit_sect_);
-  uint8_t fraction_lost_ GUARDED_BY(crit_sect_);
   uint32_t send_statistics_[4] GUARDED_BY(crit_sect_);
   uint32_t send_statistics_zero_encode_ GUARDED_BY(crit_sect_);
   int32_t max_payload_size_ GUARDED_BY(crit_sect_);

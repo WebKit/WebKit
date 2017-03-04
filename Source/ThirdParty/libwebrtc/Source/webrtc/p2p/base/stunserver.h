@@ -25,7 +25,7 @@ class StunServer : public sigslot::has_slots<> {
   // Creates a STUN server, which will listen on the given socket.
   explicit StunServer(rtc::AsyncUDPSocket* socket);
   // Removes the STUN server from the socket and deletes the socket.
-  ~StunServer();
+  ~StunServer() override;
 
  protected:
   // Slot for AsyncSocket.PacketRead:

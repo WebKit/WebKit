@@ -36,15 +36,11 @@ class RtpPacketizerGeneric : public RtpPacketizer {
                       const RTPFragmentationHeader* fragmentation) override;
 
   // Get the next payload with generic payload header.
-  // buffer is a pointer to where the output will be written.
-  // bytes_to_send is an output variable that will contain number of bytes
-  // written to buffer. The parameter last_packet is true for the last packet of
-  // the frame, false otherwise (i.e., call the function again to get the
-  // next packet).
-  // Returns true on success or false if there was no payload to packetize.
-  bool NextPacket(uint8_t* buffer,
-                  size_t* bytes_to_send,
-                  bool* last_packet) override;
+  // Write payload and set marker bit of the |packet|.
+  // The parameter |last_packet| is true for the last packet of the frame, false
+  // otherwise (i.e., call the function again to get the next packet).
+  // Returns true on success, false otherwise.
+  bool NextPacket(RtpPacketToSend* packet, bool* last_packet) override;
 
   ProtectionType GetProtectionType() override;
 

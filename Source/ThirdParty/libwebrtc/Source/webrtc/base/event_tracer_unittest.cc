@@ -32,7 +32,7 @@ class TestStatistics {
   int Count() const { return events_logged_; }
 
   static TestStatistics* Get() {
-    static TestStatistics* test_stats = NULL;
+    static TestStatistics* test_stats = nullptr;
     if (!test_stats)
       test_stats = new TestStatistics();
     return test_stats;

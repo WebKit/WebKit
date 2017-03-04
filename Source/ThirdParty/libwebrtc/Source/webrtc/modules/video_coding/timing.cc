@@ -288,7 +288,7 @@ int VCMTiming::TargetDelayInternal() const {
                   jitter_delay_ms_ + RequiredDecodeTimeMs() + render_delay_ms_);
 }
 
-void VCMTiming::GetTimings(int* decode_ms,
+bool VCMTiming::GetTimings(int* decode_ms,
                            int* max_decode_ms,
                            int* current_delay_ms,
                            int* target_delay_ms,
@@ -303,6 +303,7 @@ void VCMTiming::GetTimings(int* decode_ms,
   *jitter_buffer_ms = jitter_delay_ms_;
   *min_playout_delay_ms = min_playout_delay_ms_;
   *render_delay_ms = render_delay_ms_;
+  return (num_decoded_frames_ > 0);
 }
 
 }  // namespace webrtc

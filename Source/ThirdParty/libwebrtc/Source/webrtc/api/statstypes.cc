@@ -57,7 +57,7 @@ const char* InternalTypeToString(StatsReport::StatsType type) {
     case StatsReport::kStatsReportTypeDataChannel:
       return "datachannel";
   }
-  RTC_DCHECK(false);
+  RTC_NOTREACHED();
   return nullptr;
 }
 
@@ -576,6 +576,8 @@ const char* StatsReport::Value::display_name() const {
       return "remoteCertificateId";
     case kStatsValueNameResidualEchoLikelihood:
       return "googResidualEchoLikelihood";
+    case kStatsValueNameResidualEchoLikelihoodRecentMax:
+      return "googResidualEchoLikelihoodRecentMax";
     case kStatsValueNameRetransmitBitrate:
       return "googRetransmitBitrate";
     case kStatsValueNameRtt:
@@ -598,8 +600,6 @@ const char* StatsReport::Value::display_name() const {
       return "googTrackId";
     case kStatsValueNameTypingNoiseState:
       return "googTypingNoiseState";
-    case kStatsValueNameViewLimitedResolution:
-      return "googViewLimitedResolution";
     case kStatsValueNameWritable:
       return "googWritable";
   }
@@ -631,6 +631,8 @@ std::string StatsReport::Value::ToString() const {
 StatsReport::StatsReport(const Id& id) : id_(id), timestamp_(0.0) {
   RTC_DCHECK(id_.get());
 }
+
+StatsReport::~StatsReport() = default;
 
 // static
 StatsReport::Id StatsReport::NewBandwidthEstimationId() {
@@ -777,7 +779,7 @@ StatsReport* StatsCollection::ReplaceOrAddNew(const StatsReport::Id& id) {
   return InsertNew(id);
 }
 
-// Looks for a report with the given |id|.  If one is not found, NULL
+// Looks for a report with the given |id|.  If one is not found, null
 // will be returned.
 StatsReport* StatsCollection::Find(const StatsReport::Id& id) {
   RTC_DCHECK(thread_checker_.CalledOnValidThread());

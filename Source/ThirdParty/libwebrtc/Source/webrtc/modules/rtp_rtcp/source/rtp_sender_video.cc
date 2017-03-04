@@ -39,8 +39,10 @@ void BuildRedPayload(const RtpPacketToSend& media_packet,
       kRedForFecHeaderLength + media_packet.payload_size());
   RTC_DCHECK(red_payload);
   red_payload[0] = media_packet.PayloadType();
-  memcpy(&red_payload[kRedForFecHeaderLength], media_packet.payload(),
-         media_packet.payload_size());
+
+  auto media_payload = media_packet.payload();
+  memcpy(&red_payload[kRedForFecHeaderLength], media_payload.data(),
+         media_payload.size());
 }
 }  // namespace
 
@@ -196,11 +198,13 @@ void RTPSenderVideo::SendVideoPacketWithFlexfec(
     std::vector<std::unique_ptr<RtpPacketToSend>> fec_packets =
         flexfec_sender_->GetFecPackets();
     for (auto& fec_packet : fec_packets) {
+      size_t packet_length = fec_packet->size();
       uint32_t timestamp = fec_packet->Timestamp();
       uint16_t seq_num = fec_packet->SequenceNumber();
       if (rtp_sender_->SendToNetwork(std::move(fec_packet), kDontRetransmit,
                                      RtpPacketSender::kLowPriority)) {
-        // TODO(brandtr): Wire up stats here.
+        rtc::CritScope cs(&stats_crit_);
+        fec_bitrate_.Update(packet_length, clock_->TimeInMilliseconds());
         TRACE_EVENT_INSTANT2(TRACE_DISABLED_BY_DEFAULT("webrtc_rtp"),
                              "Video::PacketFlexfec", "timestamp", timestamp,
                              "seqnum", seq_num);
@@ -335,7 +339,7 @@ bool RTPSenderVideo::SendVideo(RtpVideoCodecTypes video_type,
     retransmission_settings = retransmission_settings_;
   }
 
-  size_t packet_capacity = rtp_sender_->MaxPayloadLength() -
+  size_t packet_capacity = rtp_sender_->MaxRtpPacketSize() -
                            fec_packet_overhead -
                            (rtp_sender_->RtxStatus() ? kRtxHeaderSize : 0);
   RTC_DCHECK_LE(packet_capacity, rtp_header->capacity());
@@ -360,15 +364,11 @@ bool RTPSenderVideo::SendVideo(RtpVideoCodecTypes video_type,
   bool last = false;
   while (!last) {
     std::unique_ptr<RtpPacketToSend> packet(new RtpPacketToSend(*rtp_header));
-    uint8_t* payload = packet->AllocatePayload(max_data_payload_length);
-    RTC_DCHECK(payload);
 
-    size_t payload_bytes_in_packet = 0;
-    if (!packetizer->NextPacket(payload, &payload_bytes_in_packet, &last))
+    if (!packetizer->NextPacket(packet.get(), &last))
       return false;
+    RTC_DCHECK_LE(packet->payload_size(), max_data_payload_length);
 
-    packet->SetPayloadSize(payload_bytes_in_packet);
-    packet->SetMarker(last);
     if (!rtp_sender_->AssignSequenceNumber(packet.get()))
       return false;
 

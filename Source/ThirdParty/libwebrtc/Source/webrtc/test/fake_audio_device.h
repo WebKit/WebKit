@@ -12,58 +12,65 @@
 
 #include <memory>
 #include <string>
+#include <vector>
 
 #include "webrtc/base/criticalsection.h"
 #include "webrtc/base/platform_thread.h"
 #include "webrtc/modules/audio_device/include/fake_audio_device.h"
-#include "webrtc/test/drifting_clock.h"
 #include "webrtc/typedefs.h"
 
 namespace webrtc {
 
-class Clock;
 class EventTimerWrapper;
-class FileWrapper;
-class ModuleFileUtility;
 
 namespace test {
 
+// FakeAudioDevice implements an AudioDevice module that can act both as a
+// capturer and a renderer. It will use 10ms audio frames.
 class FakeAudioDevice : public FakeAudioDeviceModule {
  public:
-  FakeAudioDevice(Clock* clock, const std::string& filename, float speed);
+  // Creates a new FakeAudioDevice. When capturing or playing, 10 ms audio
+  // frames will be processed every 100ms / |speed|.
+  // |sampling_frequency_in_hz| can be 8, 16, 32, 44.1 or 48kHz.
+  // When recording is started, it will generates a signal where every second
+  // frame is zero and every second frame is evenly distributed random noise
+  // with max amplitude |max_amplitude|.
+  FakeAudioDevice(float speed,
+                  int sampling_frequency_in_hz,
+                  int16_t max_amplitude);
+  ~FakeAudioDevice() override;
 
-  virtual ~FakeAudioDevice();
-
+ private:
   int32_t Init() override;
   int32_t RegisterAudioCallback(AudioTransport* callback) override;
 
+  int32_t StartPlayout() override;
+  int32_t StopPlayout() override;
+  int32_t StartRecording() override;
+  int32_t StopRecording() override;
+
   bool Playing() const override;
-  int32_t PlayoutDelay(uint16_t* delay_ms) const override;
   bool Recording() const override;
 
-  void Start();
-  void Stop();
-
- private:
   static bool Run(void* obj);
-  void CaptureAudio();
+  void ProcessAudio();
 
-  static const uint32_t kFrequencyHz = 16000;
-  static const size_t kBufferSizeBytes = 2 * kFrequencyHz;
-
-  AudioTransport* audio_callback_;
-  bool capturing_;
-  int8_t captured_audio_[kBufferSizeBytes];
-  int8_t playout_buffer_[kBufferSizeBytes];
+  const int sampling_frequency_in_hz_;
+  const size_t num_samples_per_frame_;
   const float speed_;
-  int64_t last_playout_ms_;
 
-  DriftingClock clock_;
-  std::unique_ptr<EventTimerWrapper> tick_;
   rtc::CriticalSection lock_;
+  AudioTransport* audio_callback_ GUARDED_BY(lock_);
+  bool rendering_ GUARDED_BY(lock_);
+  bool capturing_ GUARDED_BY(lock_);
+
+  class PulsedNoiseCapturer;
+  const std::unique_ptr<PulsedNoiseCapturer> capturer_ GUARDED_BY(lock_);
+
+  std::vector<int16_t> playout_buffer_ GUARDED_BY(lock_);
+
+  std::unique_ptr<EventTimerWrapper> tick_;
   rtc::PlatformThread thread_;
-  std::unique_ptr<ModuleFileUtility> file_utility_;
-  std::unique_ptr<FileWrapper> input_stream_;
 };
 }  // namespace test
 }  // namespace webrtc

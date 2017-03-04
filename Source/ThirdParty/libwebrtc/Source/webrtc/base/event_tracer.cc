@@ -80,7 +80,7 @@ namespace rtc {
 namespace tracing {
 namespace {
 
-static bool EventTracingThreadFunc(void* params);
+static void EventTracingThreadFunc(void* params);
 
 // Atomic-int fast path for avoiding logging when disabled.
 static volatile int g_event_logging_active = 0;
@@ -89,7 +89,10 @@ static volatile int g_event_logging_active = 0;
 class EventLogger final {
  public:
   EventLogger()
-      : logging_thread_(EventTracingThreadFunc, this, "EventTracingThread"),
+      : logging_thread_(EventTracingThreadFunc,
+                        this,
+                        "EventTracingThread",
+                        kLowPriority),
         shutdown_event_(false, false) {}
   ~EventLogger() { RTC_DCHECK(thread_checker_.CalledOnValidThread()); }
 
@@ -210,7 +213,6 @@ class EventLogger final {
     // Finally start, everything should be set up now.
     logging_thread_.Start();
     TRACE_EVENT_INSTANT0("webrtc", "EventLogger::Start");
-    logging_thread_.SetPriority(kLowPriority);
   }
 
   void Stop() {
@@ -326,11 +328,8 @@ class EventLogger final {
   bool output_file_owned_ = false;
 };
 
-static bool EventTracingThreadFunc(void* params) {
+static void EventTracingThreadFunc(void* params) {
   static_cast<EventLogger*>(params)->Log();
-  // False indicates that the thread function has done its job and doesn't need
-  // to be restarted again. Log() runs its own internal loop.
-  return false;
 }
 
 static EventLogger* volatile g_event_logger = nullptr;

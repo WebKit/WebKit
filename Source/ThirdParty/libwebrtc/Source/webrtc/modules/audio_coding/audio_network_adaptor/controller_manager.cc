@@ -69,24 +69,41 @@ std::unique_ptr<FecController> CreateFecController(
           fec_disabling_threshold.low_bandwidth_packet_loss(),
           fec_disabling_threshold.high_bandwidth_bps(),
           fec_disabling_threshold.high_bandwidth_packet_loss()),
-      config.has_time_constant_ms(), clock)));
+      config.time_constant_ms(), clock)));
 }
 
 std::unique_ptr<FrameLengthController> CreateFrameLengthController(
     const audio_network_adaptor::config::FrameLengthController& config,
     rtc::ArrayView<const int> encoder_frame_lengths_ms,
-    int initial_frame_length_ms) {
+    int initial_frame_length_ms,
+    int min_encoder_bitrate_bps) {
   RTC_CHECK(config.has_fl_increasing_packet_loss_fraction());
   RTC_CHECK(config.has_fl_decreasing_packet_loss_fraction());
   RTC_CHECK(config.has_fl_20ms_to_60ms_bandwidth_bps());
   RTC_CHECK(config.has_fl_60ms_to_20ms_bandwidth_bps());
 
+  std::map<FrameLengthController::Config::FrameLengthChange, int>
+      fl_changing_bandwidths_bps = {
+          {FrameLengthController::Config::FrameLengthChange(20, 60),
+           config.fl_20ms_to_60ms_bandwidth_bps()},
+          {FrameLengthController::Config::FrameLengthChange(60, 20),
+           config.fl_60ms_to_20ms_bandwidth_bps()}};
+
+  if (config.has_fl_60ms_to_120ms_bandwidth_bps() &&
+      config.has_fl_120ms_to_60ms_bandwidth_bps()) {
+    fl_changing_bandwidths_bps.insert(std::make_pair(
+        FrameLengthController::Config::FrameLengthChange(60, 120),
+        config.fl_60ms_to_120ms_bandwidth_bps()));
+    fl_changing_bandwidths_bps.insert(std::make_pair(
+        FrameLengthController::Config::FrameLengthChange(120, 60),
+        config.fl_120ms_to_60ms_bandwidth_bps()));
+  }
+
   FrameLengthController::Config ctor_config(
-      std::vector<int>(), initial_frame_length_ms,
+      std::vector<int>(), initial_frame_length_ms, min_encoder_bitrate_bps,
       config.fl_increasing_packet_loss_fraction(),
       config.fl_decreasing_packet_loss_fraction(),
-      config.fl_20ms_to_60ms_bandwidth_bps(),
-      config.fl_60ms_to_20ms_bandwidth_bps());
+      std::move(fl_changing_bandwidths_bps));
 
   for (auto frame_length : encoder_frame_lengths_ms)
     ctor_config.encoder_frame_lengths_ms.push_back(frame_length);
@@ -143,6 +160,7 @@ std::unique_ptr<ControllerManager> ControllerManagerImpl::Create(
     const std::string& config_string,
     size_t num_encoder_channels,
     rtc::ArrayView<const int> encoder_frame_lengths_ms,
+    int min_encoder_bitrate_bps,
     size_t intial_channels_to_encode,
     int initial_frame_length_ms,
     int initial_bitrate_bps,
@@ -167,7 +185,8 @@ std::unique_ptr<ControllerManager> ControllerManagerImpl::Create(
       case audio_network_adaptor::config::Controller::kFrameLengthController:
         controller = CreateFrameLengthController(
             controller_config.frame_length_controller(),
-            encoder_frame_lengths_ms, initial_frame_length_ms);
+            encoder_frame_lengths_ms, initial_frame_length_ms,
+            min_encoder_bitrate_bps);
         break;
       case audio_network_adaptor::config::Controller::kChannelController:
         controller = CreateChannelController(

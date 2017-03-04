@@ -34,7 +34,7 @@ class SSLAdapter : public AsyncSocketAdapter {
   // negotiation will begin as soon as the socket connects.
   virtual int StartSSL(const char* hostname, bool restartable) = 0;
 
-  // Create the default SSL adapter for this platform. On failure, returns NULL
+  // Create the default SSL adapter for this platform. On failure, returns null
   // and deletes |socket|. Otherwise, the returned SSLAdapter takes ownership
   // of |socket|.
   static SSLAdapter* Create(AsyncSocket* socket);
@@ -50,7 +50,7 @@ typedef bool (*VerificationCallback)(void* cert);
 
 // Call this on the main thread, before using SSL.
 // Call CleanupSSLThread when finished with SSL.
-bool InitializeSSL(VerificationCallback callback = NULL);
+bool InitializeSSL(VerificationCallback callback = nullptr);
 
 // Call to initialize additional threads.
 bool InitializeSSLThread();

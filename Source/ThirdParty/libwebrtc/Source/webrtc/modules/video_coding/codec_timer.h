@@ -13,8 +13,8 @@
 
 #include <queue>
 
+#include "webrtc/base/numerics/percentile_filter.h"
 #include "webrtc/modules/include/module_common_types.h"
-#include "webrtc/modules/video_coding/percentile_filter.h"
 #include "webrtc/typedefs.h"
 
 namespace webrtc {
@@ -43,7 +43,7 @@ class VCMCodecTimer {
   std::queue<Sample> history_;
   // |filter_| contains the same values as |history_|, but in a data structure
   // that allows efficient retrieval of the percentile value.
-  PercentileFilter filter_;
+  PercentileFilter<int64_t> filter_;
 };
 
 }  // namespace webrtc

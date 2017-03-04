@@ -17,6 +17,7 @@
 #include "webrtc/modules/remote_bitrate_estimator/test/bwe_test_logging.h"
 #include "webrtc/modules/rtp_rtcp/source/rtp_rtcp_config.h"
 #include "webrtc/modules/rtp_rtcp/source/time_util.h"
+#include "webrtc/system_wrappers/include/clock.h"
 
 namespace webrtc {
 
@@ -78,7 +79,7 @@ void StreamStatisticianImpl::UpdateCounters(const RTPHeader& header,
   // are received, 4 will be ignored.
   if (in_order) {
     // Current time in samples.
-    NtpTime receive_time(*clock_);
+    NtpTime receive_time = clock_->CurrentNtpTime();
 
     // Wrong if we use RetransmitOfOldPacket.
     if (receive_counters_.transmitted.packets > 1 &&

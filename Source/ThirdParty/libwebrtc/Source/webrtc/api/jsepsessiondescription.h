@@ -8,7 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-// Implements the SessionDescriptionInterface.
+// TODO(deadbeef): Move this out of api/; it's an implementation detail and
+// shouldn't be used externally.
 
 #ifndef WEBRTC_API_JSEPSESSIONDESCRIPTION_H_
 #define WEBRTC_API_JSEPSESSIONDESCRIPTION_H_
@@ -28,15 +29,18 @@ class SessionDescription;
 
 namespace webrtc {
 
+// Implementation of SessionDescriptionInterface.
 class JsepSessionDescription : public SessionDescriptionInterface {
  public:
   explicit JsepSessionDescription(const std::string& type);
   virtual ~JsepSessionDescription();
 
-  // |error| can be NULL if don't care about the failure reason.
+  // |error| may be null.
   bool Initialize(const std::string& sdp, SdpParseError* error);
 
   // Takes ownership of |description|.
+  // TODO(deadbeef): Make this use an std::unique_ptr<>, so ownership logic is
+  // more clear.
   bool Initialize(cricket::SessionDescription* description,
       const std::string& session_id,
       const std::string& session_version);
@@ -56,7 +60,7 @@ class JsepSessionDescription : public SessionDescriptionInterface {
   virtual std::string type() const {
     return type_;
   }
-  // Allow changing the type. Used for testing.
+  // Allows changing the type. Used for testing.
   void set_type(const std::string& type) { type_ = type; }
   virtual bool AddCandidate(const IceCandidateInterface* candidate);
   virtual size_t RemoveCandidates(

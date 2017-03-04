@@ -11,6 +11,8 @@
 #ifndef WEBRTC_MEDIA_BASE_VIDEOCAPTURERFACTORY_H_
 #define WEBRTC_MEDIA_BASE_VIDEOCAPTURERFACTORY_H_
 
+#include <memory>
+
 #include "webrtc/media/base/device.h"
 
 namespace cricket {
@@ -22,7 +24,7 @@ class VideoDeviceCapturerFactory {
   VideoDeviceCapturerFactory() {}
   virtual ~VideoDeviceCapturerFactory() {}
 
-  virtual VideoCapturer* Create(const Device& device) = 0;
+  virtual std::unique_ptr<VideoCapturer> Create(const Device& device) = 0;
 };
 
 }  // namespace cricket

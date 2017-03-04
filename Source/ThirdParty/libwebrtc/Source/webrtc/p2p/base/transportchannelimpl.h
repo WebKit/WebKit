@@ -14,9 +14,8 @@
 #include <string>
 
 #include "webrtc/base/constructormagic.h"
+#include "webrtc/p2p/base/icetransportinternal.h"
 #include "webrtc/p2p/base/transportchannel.h"
-
-namespace buzz { class XmlElement; }
 
 namespace webrtc {
 class MetricsObserverInterface;
@@ -25,12 +24,6 @@ class MetricsObserverInterface;
 namespace cricket {
 
 class Candidate;
-
-// TODO(pthatcher): Remove this once it's no longer used in
-// remoting/protocol/libjingle_transport_factory.cc
-enum IceProtocolType {
-  ICEPROTO_RFC5245  // Standard RFC 5245 version of ICE.
-};
 
 // Base class for real implementations of TransportChannel.  This includes some
 // methods called only by Transport, which do not need to be exposed to the
@@ -47,7 +40,7 @@ class TransportChannelImpl : public TransportChannel {
   virtual void SetIceTiebreaker(uint64_t tiebreaker) = 0;
   // TODO(pthatcher): Remove this once it's no longer called in
   // remoting/protocol/libjingle_transport_factory.cc
-  virtual void SetIceProtocolType(IceProtocolType type) {}
+  virtual void SetIceProtocolType(IceProtocolType) {}
   // TODO(honghaiz): Remove this once the call in chromoting is removed.
   virtual void SetIceCredentials(const std::string& ice_ufrag,
                                  const std::string& ice_pwd) {

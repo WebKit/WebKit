@@ -21,6 +21,7 @@
 #include "webrtc/common_types.h"
 #include "webrtc/common_video/include/frame_callback.h"
 #include "webrtc/modules/video_coding/include/video_coding_defines.h"
+#include "webrtc/video/quality_threshold.h"
 #include "webrtc/video/report_block_stats.h"
 #include "webrtc/video/stats_counter.h"
 #include "webrtc/video/video_stream_decoder.h"
@@ -36,7 +37,8 @@ struct CodecSpecificInfo;
 class ReceiveStatisticsProxy : public VCMReceiveStatisticsCallback,
                                public RtcpStatisticsCallback,
                                public RtcpPacketTypeCounterObserver,
-                               public StreamDataCountersCallback {
+                               public StreamDataCountersCallback,
+                               public CallStatsObserver {
  public:
   ReceiveStatisticsProxy(const VideoReceiveStream::Config* config,
                          Clock* clock);
@@ -44,20 +46,12 @@ class ReceiveStatisticsProxy : public VCMReceiveStatisticsCallback,
 
   VideoReceiveStream::Stats GetStats() const;
 
-  void OnDecodedFrame();
+  void OnDecodedFrame(rtc::Optional<uint8_t> qp);
   void OnSyncOffsetUpdated(int64_t sync_offset_ms, double estimated_freq_khz);
   void OnRenderedFrame(const VideoFrame& frame);
   void OnIncomingPayloadType(int payload_type);
   void OnDecoderImplementationName(const char* implementation_name);
   void OnIncomingRate(unsigned int framerate, unsigned int bitrate_bps);
-  void OnDecoderTiming(int decode_ms,
-                       int max_decode_ms,
-                       int current_delay_ms,
-                       int target_delay_ms,
-                       int jitter_buffer_ms,
-                       int min_playout_delay_ms,
-                       int render_delay_ms,
-                       int64_t rtt_ms);
 
   void OnPreDecode(const EncodedImage& encoded_image,
                    const CodecSpecificInfo* codec_specific_info);
@@ -66,6 +60,14 @@ class ReceiveStatisticsProxy : public VCMReceiveStatisticsCallback,
   void OnReceiveRatesUpdated(uint32_t bitRate, uint32_t frameRate) override;
   void OnFrameCountsUpdated(const FrameCounts& frame_counts) override;
   void OnDiscardedPacketsUpdated(int discarded_packets) override;
+  void OnCompleteFrame(bool is_keyframe, size_t size_bytes) override;
+  void OnFrameBufferTimingsUpdated(int decode_ms,
+                                   int max_decode_ms,
+                                   int current_delay_ms,
+                                   int target_delay_ms,
+                                   int jitter_buffer_ms,
+                                   int min_playout_delay_ms,
+                                   int render_delay_ms) override;
 
   // Overrides RtcpStatisticsCallback.
   void StatisticsUpdated(const webrtc::RtcpStatistics& statistics,
@@ -80,21 +82,31 @@ class ReceiveStatisticsProxy : public VCMReceiveStatisticsCallback,
   void DataCountersUpdated(const webrtc::StreamDataCounters& counters,
                            uint32_t ssrc) override;
 
+  // Implements CallStatsObserver.
+  void OnRttUpdate(int64_t avg_rtt_ms, int64_t max_rtt_ms) override;
+
  private:
   struct SampleCounter {
     SampleCounter() : sum(0), num_samples(0) {}
     void Add(int sample);
-    int Avg(int min_required_samples) const;
+    int Avg(int64_t min_required_samples) const;
+    void Reset();
 
    private:
-    int sum;
-    int num_samples;
+    int64_t sum;
+    int64_t num_samples;
   };
   struct QpCounters {
     SampleCounter vp8;
   };
 
   void UpdateHistograms() EXCLUSIVE_LOCKS_REQUIRED(crit_);
+
+  void QualitySample() EXCLUSIVE_LOCKS_REQUIRED(crit_);
+
+  // Removes info about old frames and then updates the framerate/bitrate.
+  void UpdateFrameAndBitrate(int64_t now_ms) const
+      EXCLUSIVE_LOCKS_REQUIRED(crit_);
 
   Clock* const clock_;
   // Ownership of this object lies with the owner of the ReceiveStatisticsProxy
@@ -108,7 +120,14 @@ class ReceiveStatisticsProxy : public VCMReceiveStatisticsCallback,
   const int64_t start_ms_;
 
   rtc::CriticalSection crit_;
-  VideoReceiveStream::Stats stats_ GUARDED_BY(crit_);
+  int64_t last_sample_time_ GUARDED_BY(crit_);
+  QualityThreshold fps_threshold_ GUARDED_BY(crit_);
+  QualityThreshold qp_threshold_ GUARDED_BY(crit_);
+  QualityThreshold variance_threshold_ GUARDED_BY(crit_);
+  SampleCounter qp_sample_ GUARDED_BY(crit_);
+  int num_bad_states_ GUARDED_BY(crit_);
+  int num_certain_states_ GUARDED_BY(crit_);
+  mutable VideoReceiveStream::Stats stats_ GUARDED_BY(crit_);
   RateStatistics decode_fps_estimator_ GUARDED_BY(crit_);
   RateStatistics renders_fps_estimator_ GUARDED_BY(crit_);
   rtc::RateTracker render_fps_tracker_ GUARDED_BY(crit_);
@@ -123,9 +142,13 @@ class ReceiveStatisticsProxy : public VCMReceiveStatisticsCallback,
   SampleCounter delay_counter_ GUARDED_BY(crit_);
   SampleCounter e2e_delay_counter_ GUARDED_BY(crit_);
   MaxCounter freq_offset_counter_ GUARDED_BY(crit_);
+  int64_t first_report_block_time_ms_ GUARDED_BY(crit_);
   ReportBlockStats report_block_stats_ GUARDED_BY(crit_);
   QpCounters qp_counters_;  // Only accessed on the decoding thread.
   std::map<uint32_t, StreamDataCounters> rtx_stats_ GUARDED_BY(crit_);
+  int64_t avg_rtt_ms_ GUARDED_BY(crit_);
+  mutable std::map<int64_t, size_t> frame_window_ GUARDED_BY(&crit_);
+  mutable size_t frame_window_accumulated_bytes_ GUARDED_BY(&crit_);
 };
 
 }  // namespace webrtc

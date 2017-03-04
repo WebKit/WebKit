@@ -35,6 +35,7 @@ class BitrateAllocator;
 class CallStats;
 class CongestionController;
 class IvfFileWriter;
+class PacketRouter;
 class ProcessThread;
 class RtpRtcp;
 class VieRemb;
@@ -54,6 +55,7 @@ class VideoSendStream : public webrtc::VideoSendStream {
                   rtc::TaskQueue* worker_queue,
                   CallStats* call_stats,
                   CongestionController* congestion_controller,
+                  PacketRouter* packet_router,
                   BitrateAllocator* bitrate_allocator,
                   SendDelayStats* send_delay_stats,
                   VieRemb* remb,
@@ -90,7 +92,7 @@ class VideoSendStream : public webrtc::VideoSendStream {
 
   RtpStateMap StopPermanentlyAndGetRtpStates();
 
-  void SetTransportOverhead(int transport_overhead_per_packet);
+  void SetTransportOverhead(size_t transport_overhead_per_packet);
 
  private:
   class ConstructionTask;
@@ -102,6 +104,7 @@ class VideoSendStream : public webrtc::VideoSendStream {
 
   SendStatisticsProxy stats_proxy_;
   const VideoSendStream::Config config_;
+  const VideoEncoderConfig::ContentType content_type_;
   std::unique_ptr<VideoSendStreamImpl> send_stream_;
   std::unique_ptr<ViEEncoder> vie_encoder_;
 };

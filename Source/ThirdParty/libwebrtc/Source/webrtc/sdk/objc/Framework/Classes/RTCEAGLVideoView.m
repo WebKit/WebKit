@@ -215,12 +215,6 @@
 }
 
 - (void)renderFrame:(RTCVideoFrame *)frame {
-#if !TARGET_OS_IPHONE
-  // Generate the i420 frame on video send thread instead of main thread.
-  // TODO(tkchin): Remove this once RTCEAGLVideoView supports uploading
-  // CVPixelBuffer textures on OSX.
-  [frame convertBufferIfNeeded];
-#endif
   self.videoFrame = frame;
 }
 

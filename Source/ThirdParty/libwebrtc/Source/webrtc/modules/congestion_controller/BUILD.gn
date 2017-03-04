@@ -6,7 +6,7 @@
 # in the file PATENTS.  All contributing project authors may
 # be found in the AUTHORS file in the root of the source tree.
 
-import("../../build/webrtc.gni")
+import("../../webrtc.gni")
 
 rtc_static_library("congestion_controller") {
   sources = [
@@ -14,13 +14,25 @@ rtc_static_library("congestion_controller") {
     "delay_based_bwe.cc",
     "delay_based_bwe.h",
     "include/congestion_controller.h",
+    "median_slope_estimator.cc",
+    "median_slope_estimator.h",
     "probe_bitrate_estimator.cc",
     "probe_bitrate_estimator.h",
     "probe_controller.cc",
     "probe_controller.h",
+    "probing_interval_estimator.cc",
+    "probing_interval_estimator.h",
     "transport_feedback_adapter.cc",
     "transport_feedback_adapter.h",
+    "trendline_estimator.cc",
+    "trendline_estimator.h",
   ]
+
+  if (rtc_enable_bwe_test_logging) {
+    defines = [ "BWE_TEST_LOGGING_COMPILE_TIME_ENABLE=1" ]
+  } else {
+    defines = [ "BWE_TEST_LOGGING_COMPILE_TIME_ENABLE=0" ]
+  }
 
   # TODO(jschuh): Bug 1348: fix this warning.
   configs += [ "//build/config/compiler:no_size_t_to_int_warning" ]
@@ -31,7 +43,51 @@ rtc_static_library("congestion_controller") {
   }
 
   deps = [
+    "../..:webrtc_common",
+    "../../base:rtc_base",
+    "../../base:rtc_base_approved",
+    "../../base:rtc_numerics",
+    "../../logging:rtc_event_log_api",
+    "../../system_wrappers",
     "../bitrate_controller",
     "../pacing",
+    "../remote_bitrate_estimator",
+    "../rtp_rtcp",
+    "../utility",
   ]
+}
+
+if (rtc_include_tests) {
+  rtc_source_set("congestion_controller_unittests") {
+    testonly = true
+    sources = [
+      "congestion_controller_unittest.cc",
+      "delay_based_bwe_unittest.cc",
+      "delay_based_bwe_unittest_helper.cc",
+      "delay_based_bwe_unittest_helper.h",
+      "median_slope_estimator_unittest.cc",
+      "probe_bitrate_estimator_unittest.cc",
+      "probe_controller_unittest.cc",
+      "probing_interval_estimator_unittest.cc",
+      "transport_feedback_adapter_unittest.cc",
+      "trendline_estimator_unittest.cc",
+    ]
+    deps = [
+      ":congestion_controller",
+      "../../base:rtc_base_approved",
+      "../../system_wrappers:system_wrappers",
+      "../../test:field_trial",
+      "../../test:test_support",
+      "../bitrate_controller:bitrate_controller",
+      "../pacing:pacing",
+      "../remote_bitrate_estimator:remote_bitrate_estimator",
+      "../remote_bitrate_estimator:remote_bitrate_estimator_unittests",
+      "../rtp_rtcp:rtp_rtcp",
+      "//testing/gmock",
+    ]
+    if (!build_with_chromium && is_clang) {
+      # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
+      suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
+    }
+  }
 }

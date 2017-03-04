@@ -10,9 +10,11 @@
 
 #include "webrtc/base/socketstream.h"
 
+#include "webrtc/base/checks.h"
+
 namespace rtc {
 
-SocketStream::SocketStream(AsyncSocket* socket) : socket_(NULL) {
+SocketStream::SocketStream(AsyncSocket* socket) : socket_(nullptr) {
   Attach(socket);
 }
 
@@ -39,13 +41,13 @@ AsyncSocket* SocketStream::Detach() {
     socket_->SignalReadEvent.disconnect(this);
     socket_->SignalWriteEvent.disconnect(this);
     socket_->SignalCloseEvent.disconnect(this);
-    socket_ = NULL;
+    socket_ = nullptr;
   }
   return socket;
 }
 
 StreamState SocketStream::GetState() const {
-  ASSERT(socket_ != NULL);
+  RTC_DCHECK(socket_ != nullptr);
   switch (socket_->GetState()) {
     case Socket::CS_CONNECTED:
       return SS_OPEN;
@@ -59,7 +61,7 @@ StreamState SocketStream::GetState() const {
 
 StreamResult SocketStream::Read(void* buffer, size_t buffer_len,
                                 size_t* read, int* error) {
-  ASSERT(socket_ != NULL);
+  RTC_DCHECK(socket_ != nullptr);
   int result = socket_->Recv(buffer, buffer_len, nullptr);
   if (result < 0) {
     if (socket_->IsBlocking())
@@ -78,7 +80,7 @@ StreamResult SocketStream::Read(void* buffer, size_t buffer_len,
 
 StreamResult SocketStream::Write(const void* data, size_t data_len,
                                  size_t* written, int* error) {
-  ASSERT(socket_ != NULL);
+  RTC_DCHECK(socket_ != nullptr);
   int result = socket_->Send(data, data_len);
   if (result < 0) {
     if (socket_->IsBlocking())
@@ -93,27 +95,27 @@ StreamResult SocketStream::Write(const void* data, size_t data_len,
 }
 
 void SocketStream::Close() {
-  ASSERT(socket_ != NULL);
+  RTC_DCHECK(socket_ != nullptr);
   socket_->Close();
 }
 
 void SocketStream::OnConnectEvent(AsyncSocket* socket) {
-  ASSERT(socket == socket_);
+  RTC_DCHECK(socket == socket_);
   SignalEvent(this, SE_OPEN | SE_READ | SE_WRITE, 0);
 }
 
 void SocketStream::OnReadEvent(AsyncSocket* socket) {
-  ASSERT(socket == socket_);
+  RTC_DCHECK(socket == socket_);
   SignalEvent(this, SE_READ, 0);
 }
 
 void SocketStream::OnWriteEvent(AsyncSocket* socket) {
-  ASSERT(socket == socket_);
+  RTC_DCHECK(socket == socket_);
   SignalEvent(this, SE_WRITE, 0);
 }
 
 void SocketStream::OnCloseEvent(AsyncSocket* socket, int err) {
-  ASSERT(socket == socket_);
+  RTC_DCHECK(socket == socket_);
   SignalEvent(this, SE_CLOSE, err);
 }
 

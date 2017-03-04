@@ -49,15 +49,11 @@ class RtpPacketizerVp9 : public RtpPacketizer {
                       const RTPFragmentationHeader* fragmentation) override;
 
   // Gets the next payload with VP9 payload header.
-  // |buffer| is a pointer to where the output will be written.
-  // |bytes_to_send| is an output variable that will contain number of bytes
-  // written to buffer.
-  // |last_packet| is true for the last packet of the frame, false otherwise
-  // (i.e. call the function again to get the next packet).
+  // Write payload and set marker bit of the |packet|.
+  // The parameter |last_packet| is true for the last packet of the frame, false
+  // otherwise (i.e., call the function again to get the next packet).
   // Returns true on success, false otherwise.
-  bool NextPacket(uint8_t* buffer,
-                  size_t* bytes_to_send,
-                  bool* last_packet) override;
+  bool NextPacket(RtpPacketToSend* packet, bool* last_packet) override;
 
   typedef struct {
     size_t payload_start_pos;
@@ -76,8 +72,7 @@ class RtpPacketizerVp9 : public RtpPacketizer {
   // |bytes_to_send| contains the number of written bytes to the buffer.
   // Returns true on success, false otherwise.
   bool WriteHeaderAndPayload(const PacketInfo& packet_info,
-                             uint8_t* buffer,
-                             size_t* bytes_to_send) const;
+                             RtpPacketToSend* packet) const;
 
   // Writes payload descriptor header to |buffer|.
   // Returns true on success, false otherwise.

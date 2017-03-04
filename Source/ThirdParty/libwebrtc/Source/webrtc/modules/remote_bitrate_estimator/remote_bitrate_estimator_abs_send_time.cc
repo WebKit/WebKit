@@ -86,7 +86,7 @@ bool RemoteBitrateEstimatorAbsSendTime::IsWithinClusterBounds(
         observer_(observer),
         inter_arrival_(),
         estimator_(),
-        detector_(OverUseDetectorOptions()),
+        detector_(),
         incoming_bitrate_(kBitrateWindowMs, 8000),
         incoming_bitrate_initialized_(false),
         total_probes_received_(0),
@@ -286,7 +286,8 @@ void RemoteBitrateEstimatorAbsSendTime::IncomingPacketInfo(
     // For now only try to detect probes while we don't have a valid estimate.
     // We currently assume that only packets larger than 200 bytes are paced by
     // the sender.
-    if (payload_size > PacedSender::kMinProbePacketSize &&
+    const size_t kMinProbePacketSize = 200;
+    if (payload_size > kMinProbePacketSize &&
         (!remote_rate_.ValidEstimate() ||
          now_ms - first_packet_time_ms_ < kInitialProbingIntervalMs)) {
       // TODO(holmer): Use a map instead to get correct order?

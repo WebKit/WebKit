@@ -30,7 +30,7 @@ int16_t MapSetting(GainControl::Mode mode) {
     case GainControl::kFixedDigital:
       return kAgcModeFixedDigital;
   }
-  RTC_DCHECK(false);
+  RTC_NOTREACHED();
   return -1;
 }
 
@@ -123,7 +123,7 @@ void GainControlImpl::ProcessRenderAudio(
 void GainControlImpl::PackRenderAudioBuffer(
     AudioBuffer* audio,
     std::vector<int16_t>* packed_buffer) {
-  RTC_DCHECK_GE(160u, audio->num_frames_per_band());
+  RTC_DCHECK_GE(160, audio->num_frames_per_band());
 
   packed_buffer->clear();
   packed_buffer->insert(
@@ -139,7 +139,7 @@ int GainControlImpl::AnalyzeCaptureAudio(AudioBuffer* audio) {
   }
 
   RTC_DCHECK(num_proc_channels_);
-  RTC_DCHECK_GE(160u, audio->num_frames_per_band());
+  RTC_DCHECK_GE(160, audio->num_frames_per_band());
   RTC_DCHECK_EQ(audio->num_channels(), *num_proc_channels_);
   RTC_DCHECK_LE(*num_proc_channels_, gain_controllers_.size());
 
@@ -190,7 +190,7 @@ int GainControlImpl::ProcessCaptureAudio(AudioBuffer* audio,
   }
 
   RTC_DCHECK(num_proc_channels_);
-  RTC_DCHECK_GE(160u, audio->num_frames_per_band());
+  RTC_DCHECK_GE(160, audio->num_frames_per_band());
   RTC_DCHECK_EQ(audio->num_channels(), *num_proc_channels_);
 
   stream_is_saturated_ = false;

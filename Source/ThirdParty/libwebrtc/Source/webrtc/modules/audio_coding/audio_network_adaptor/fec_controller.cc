@@ -37,11 +37,11 @@ FecController::Config::Config(bool initial_fec_enabled,
       time_constant_ms(time_constant_ms),
       clock(clock) {}
 
-FecController::FecController(const Config& config)
+FecController::FecController(const Config& config,
+                             std::unique_ptr<SmoothingFilter> smoothing_filter)
     : config_(config),
       fec_enabled_(config.initial_fec_enabled),
-      packet_loss_smoothed_(
-          new SmoothingFilterImpl(config_.time_constant_ms, config_.clock)),
+      packet_loss_smoother_(std::move(smoothing_filter)),
       fec_enabling_threshold_info_(config_.fec_enabling_threshold),
       fec_disabling_threshold_info_(config_.fec_disabling_threshold) {
   RTC_DCHECK_LE(fec_enabling_threshold_info_.slope, 0);
@@ -58,31 +58,39 @@ FecController::FecController(const Config& config)
       config_.fec_enabling_threshold.high_bandwidth_packet_loss);
 }
 
-FecController::FecController(const Config& config,
-                             std::unique_ptr<SmoothingFilter> smoothing_filter)
-    : FecController(config) {
-  packet_loss_smoothed_ = std::move(smoothing_filter);
+FecController::FecController(const Config& config)
+    : FecController(
+          config,
+          std::unique_ptr<SmoothingFilter>(
+              new SmoothingFilterImpl(config.time_constant_ms, config.clock))) {
 }
 
 FecController::~FecController() = default;
 
+void FecController::UpdateNetworkMetrics(
+    const NetworkMetrics& network_metrics) {
+  if (network_metrics.uplink_bandwidth_bps)
+    uplink_bandwidth_bps_ = network_metrics.uplink_bandwidth_bps;
+  if (network_metrics.uplink_packet_loss_fraction) {
+    packet_loss_smoother_->AddSample(
+        *network_metrics.uplink_packet_loss_fraction);
+  }
+}
+
 void FecController::MakeDecision(
-    const NetworkMetrics& metrics,
     AudioNetworkAdaptor::EncoderRuntimeConfig* config) {
   RTC_DCHECK(!config->enable_fec);
   RTC_DCHECK(!config->uplink_packet_loss_fraction);
 
-  if (metrics.uplink_packet_loss_fraction)
-    packet_loss_smoothed_->AddSample(*metrics.uplink_packet_loss_fraction);
+  const auto& packet_loss = packet_loss_smoother_->GetAverage();
 
-  fec_enabled_ = fec_enabled_ ? !FecDisablingDecision(metrics)
-                              : FecEnablingDecision(metrics);
+  fec_enabled_ = fec_enabled_ ? !FecDisablingDecision(packet_loss)
+                              : FecEnablingDecision(packet_loss);
 
   config->enable_fec = rtc::Optional<bool>(fec_enabled_);
 
-  auto packet_loss_fraction = packet_loss_smoothed_->GetAverage();
-  config->uplink_packet_loss_fraction = rtc::Optional<float>(
-      packet_loss_fraction ? *packet_loss_fraction : 0.0);
+  config->uplink_packet_loss_fraction =
+      rtc::Optional<float>(packet_loss ? *packet_loss : 0.0);
 }
 
 FecController::ThresholdInfo::ThresholdInfo(
@@ -107,28 +115,24 @@ float FecController::GetPacketLossThreshold(
   return threshold_info.offset + threshold_info.slope * bandwidth_bps;
 }
 
-bool FecController::FecEnablingDecision(const NetworkMetrics& metrics) const {
-  if (!metrics.uplink_bandwidth_bps)
+bool FecController::FecEnablingDecision(
+    const rtc::Optional<float>& packet_loss) const {
+  if (!uplink_bandwidth_bps_)
     return false;
-
-  auto packet_loss = packet_loss_smoothed_->GetAverage();
   if (!packet_loss)
     return false;
-
-  return *packet_loss >= GetPacketLossThreshold(*metrics.uplink_bandwidth_bps,
+  return *packet_loss >= GetPacketLossThreshold(*uplink_bandwidth_bps_,
                                                 config_.fec_enabling_threshold,
                                                 fec_enabling_threshold_info_);
 }
 
-bool FecController::FecDisablingDecision(const NetworkMetrics& metrics) const {
-  if (!metrics.uplink_bandwidth_bps)
+bool FecController::FecDisablingDecision(
+    const rtc::Optional<float>& packet_loss) const {
+  if (!uplink_bandwidth_bps_)
     return false;
-
-  auto packet_loss = packet_loss_smoothed_->GetAverage();
   if (!packet_loss)
     return false;
-
-  return *packet_loss <= GetPacketLossThreshold(*metrics.uplink_bandwidth_bps,
+  return *packet_loss <= GetPacketLossThreshold(*uplink_bandwidth_bps_,
                                                 config_.fec_disabling_threshold,
                                                 fec_disabling_threshold_info_);
 }

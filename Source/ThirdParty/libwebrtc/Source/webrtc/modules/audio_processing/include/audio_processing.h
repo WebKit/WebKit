@@ -68,17 +68,6 @@ struct ExtendedFilter {
   bool enabled;
 };
 
-// Enables the next generation AEC functionality. This feature replaces the
-// standard methods for echo removal in the AEC. This configuration only applies
-// to EchoCancellation and not EchoControlMobile. It can be set in the
-// constructor or using AudioProcessing::SetExtraOptions().
-struct EchoCanceller3 {
-  EchoCanceller3() : enabled(false) {}
-  explicit EchoCanceller3(bool enabled) : enabled(enabled) {}
-  static const ConfigOptionID identifier = ConfigOptionID::kEchoCanceller3;
-  bool enabled;
-};
-
 // Enables the refined linear filter adaptation in the echo canceller.
 // This configuration only applies to EchoCancellation and not
 // EchoControlMobile. It can be set in the constructor
@@ -114,15 +103,21 @@ static const int kAgcStartupMinVolume = 85;
 #else
 static const int kAgcStartupMinVolume = 0;
 #endif  // defined(WEBRTC_CHROMIUM_BUILD)
+static constexpr int kClippedLevelMin = 170;
 struct ExperimentalAgc {
-  ExperimentalAgc() : enabled(true), startup_min_volume(kAgcStartupMinVolume) {}
-  explicit ExperimentalAgc(bool enabled)
-      : enabled(enabled), startup_min_volume(kAgcStartupMinVolume) {}
+  ExperimentalAgc() = default;
+  explicit ExperimentalAgc(bool enabled) : enabled(enabled) {}
   ExperimentalAgc(bool enabled, int startup_min_volume)
       : enabled(enabled), startup_min_volume(startup_min_volume) {}
+  ExperimentalAgc(bool enabled, int startup_min_volume, int clipped_level_min)
+      : enabled(enabled),
+        startup_min_volume(startup_min_volume),
+        clipped_level_min(clipped_level_min) {}
   static const ConfigOptionID identifier = ConfigOptionID::kExperimentalAgc;
-  bool enabled;
-  int startup_min_volume;
+  bool enabled = true;
+  int startup_min_volume = kAgcStartupMinVolume;
+  // Lowest microphone level that will be applied in response to clipping.
+  int clipped_level_min = kClippedLevelMin;
 };
 
 // Use to enable experimental noise suppression. It can be set in the
@@ -199,9 +194,8 @@ struct Intelligibility {
 //
 // AudioProcessing::Config config;
 // config.level_controller.enabled = true;
+// config.high_pass_filter.enabled = true;
 // apm->ApplyConfig(config)
-//
-// apm->high_pass_filter()->Enable(true);
 //
 // apm->echo_cancellation()->enable_drift_compensation(false);
 // apm->echo_cancellation()->Enable(true);
@@ -259,12 +253,20 @@ class AudioProcessing {
       float initial_peak_level_dbfs = -6.0206f;
     } level_controller;
     struct ResidualEchoDetector {
-#if defined(WEBRTC_ANDROID) || defined(WEBRTC_IOS)
-      bool enabled = false;
-#else
       bool enabled = true;
-#endif
     } residual_echo_detector;
+
+    struct HighPassFilter {
+      bool enabled = false;
+    } high_pass_filter;
+
+    // Enables the next generation AEC functionality. This feature replaces the
+    // standard methods for echo removal in the AEC.
+    // The functionality is not yet activated in the code and turning this on
+    // does not yet have the desired behavior.
+    struct EchoCanceller3 {
+      bool enabled = false;
+    } echo_canceller3;
   };
 
   // TODO(mgraczyk): Remove once all methods that use ChannelLayout are gone.
@@ -508,12 +510,9 @@ class AudioProcessing {
   };
 
   struct AudioProcessingStatistics {
-    AudioProcessingStatistics() {
-      residual_echo_return_loss.Set(-100.0f, -100.0f, -100.0f, -100.0f);
-      echo_return_loss.Set(-100.0f, -100.0f, -100.0f, -100.0f);
-      echo_return_loss_enhancement.Set(-100.0f, -100.0f, -100.0f, -100.0f);
-      a_nlp.Set(-100.0f, -100.0f, -100.0f, -100.0f);
-    }
+    AudioProcessingStatistics();
+    AudioProcessingStatistics(const AudioProcessingStatistics& other);
+    ~AudioProcessingStatistics();
 
     // AEC Statistics.
     // RERL = ERL + ERLE
@@ -539,10 +538,10 @@ class AudioProcessing {
     int delay_standard_deviation = -1;
     float fraction_poor_delays = -1.0f;
 
-    // Residual echo detector likelihood. This value is not yet calculated and
-    // is currently always set to zero.
-    // TODO(ivoc): Implement this stat.
+    // Residual echo detector likelihood.
     float residual_echo_likelihood = -1.0f;
+    // Maximum residual echo likelihood from the last time period.
+    float residual_echo_likelihood_recent_max = -1.0f;
   };
 
   // TODO(ivoc): Make this pure virtual when all subclasses have been updated.
@@ -554,6 +553,7 @@ class AudioProcessing {
   virtual EchoCancellation* echo_cancellation() const = 0;
   virtual EchoControlMobile* echo_control_mobile() const = 0;
   virtual GainControl* gain_control() const = 0;
+  // TODO(peah): Deprecate this API call.
   virtual HighPassFilter* high_pass_filter() const = 0;
   virtual LevelEstimator* level_estimator() const = 0;
   virtual NoiseSuppression* noise_suppression() const = 0;
@@ -960,7 +960,7 @@ class GainControl {
  protected:
   virtual ~GainControl() {}
 };
-
+// TODO(peah): Remove this interface.
 // A filtering component which removes DC offset and low-frequency noise.
 // Recommended to be enabled on the client-side.
 class HighPassFilter {
@@ -968,7 +968,6 @@ class HighPassFilter {
   virtual int Enable(bool enable) = 0;
   virtual bool is_enabled() const = 0;
 
- protected:
   virtual ~HighPassFilter() {}
 };
 

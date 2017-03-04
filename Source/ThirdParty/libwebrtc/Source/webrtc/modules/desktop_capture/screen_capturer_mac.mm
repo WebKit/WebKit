@@ -991,8 +991,10 @@ void ScreenCapturerMac::ScreenRefresh(CGRectCount count,
 
   DesktopRegion region;
   for (CGRectCount i = 0; i < count; ++i) {
-    // Convert from Density-Independent Pixel to physical pixel coordinates.
-    DesktopRect rect = ScaleAndRoundCGRect(rect_array[i], dip_to_pixel_scale_);
+    // All rects are already in physical pixel coordinates.
+    DesktopRect rect = DesktopRect::MakeXYWH(
+        rect_array[i].origin.x, rect_array[i].origin.y,
+        rect_array[i].size.width, rect_array[i].size.height);
     region.AddRect(rect);
   }
 
@@ -1021,7 +1023,7 @@ std::unique_ptr<DesktopCapturer> DesktopCapturer::CreateRawScreenCapturer(
     return nullptr;
   }
 
-  return std::move(capturer);
+  return capturer;
 }
 
 }  // namespace webrtc

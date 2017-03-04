@@ -12,43 +12,23 @@
 #include "webrtc/base/logging.h"
 #include "webrtc/common_video/h264/profile_level_id.h"
 #include "webrtc/media/base/codec.h"
-#include "webrtc/sdk/objc/Framework/Classes/h264_video_toolbox_encoder.h"
 #include "webrtc/sdk/objc/Framework/Classes/h264_video_toolbox_decoder.h"
-
-// TODO(kthelgason): delete this when CreateVideoDecoder takes
-// a cricket::VideoCodec instead of webrtc::VideoCodecType.
-static const char* NameFromCodecType(webrtc::VideoCodecType type) {
-  switch (type) {
-    case webrtc::kVideoCodecVP8:
-      return cricket::kVp8CodecName;
-    case webrtc::kVideoCodecVP9:
-      return cricket::kVp9CodecName;
-    case webrtc::kVideoCodecH264:
-      return cricket::kH264CodecName;
-    default:
-      return "Unknown codec";
-  }
-}
+#include "webrtc/sdk/objc/Framework/Classes/h264_video_toolbox_encoder.h"
+#include "webrtc/system_wrappers/include/field_trial.h"
 
 namespace webrtc {
+
+namespace {
+const char kHighProfileExperiment[] = "WebRTC-H264HighProfile";
+
+bool IsHighProfileEnabled() {
+  return field_trial::IsEnabled(kHighProfileExperiment);
+}
+}
 
 // VideoToolboxVideoEncoderFactory
 
 VideoToolboxVideoEncoderFactory::VideoToolboxVideoEncoderFactory() {
-// Hardware H264 encoding only supported on iOS for now.
-  // TODO(magjed): Push Constrained High profile as well when negotiation is
-  // ready, http://crbug/webrtc/6337.
-  cricket::VideoCodec constrained_baseline(cricket::kH264CodecName);
-  // TODO(magjed): Enumerate actual level instead of using hardcoded level 3.1.
-  // Level 3.1 is 1280x720@30fps which is enough for now.
-  const H264::ProfileLevelId constrained_baseline_profile(
-      H264::kProfileConstrainedBaseline, H264::kLevel3_1);
-  constrained_baseline.SetParam(
-      cricket::kH264FmtpProfileLevelId,
-      *H264::ProfileLevelIdToString(constrained_baseline_profile));
-  constrained_baseline.SetParam(cricket::kH264FmtpLevelAsymmetryAllowed, "1");
-  constrained_baseline.SetParam(cricket::kH264FmtpPacketizationMode, "1");
-  supported_codecs_.push_back(constrained_baseline);
 }
 
 VideoToolboxVideoEncoderFactory::~VideoToolboxVideoEncoderFactory() {}
@@ -71,6 +51,34 @@ void VideoToolboxVideoEncoderFactory::DestroyVideoEncoder(
 
 const std::vector<cricket::VideoCodec>&
 VideoToolboxVideoEncoderFactory::supported_codecs() const {
+  supported_codecs_.clear();
+
+  // TODO(magjed): Enumerate actual level instead of using hardcoded level 3.1.
+  // Level 3.1 is 1280x720@30fps which is enough for now.
+  const H264::Level level = H264::kLevel3_1;
+
+  if (IsHighProfileEnabled()) {
+    cricket::VideoCodec constrained_high(cricket::kH264CodecName);
+    const H264::ProfileLevelId constrained_high_profile(
+        H264::kProfileConstrainedHigh, level);
+    constrained_high.SetParam(
+        cricket::kH264FmtpProfileLevelId,
+        *H264::ProfileLevelIdToString(constrained_high_profile));
+    constrained_high.SetParam(cricket::kH264FmtpLevelAsymmetryAllowed, "1");
+    constrained_high.SetParam(cricket::kH264FmtpPacketizationMode, "1");
+    supported_codecs_.push_back(constrained_high);
+  }
+
+  cricket::VideoCodec constrained_baseline(cricket::kH264CodecName);
+  const H264::ProfileLevelId constrained_baseline_profile(
+      H264::kProfileConstrainedBaseline, level);
+  constrained_baseline.SetParam(
+      cricket::kH264FmtpProfileLevelId,
+      *H264::ProfileLevelIdToString(constrained_baseline_profile));
+  constrained_baseline.SetParam(cricket::kH264FmtpLevelAsymmetryAllowed, "1");
+  constrained_baseline.SetParam(cricket::kH264FmtpPacketizationMode, "1");
+  supported_codecs_.push_back(constrained_baseline);
+
   return supported_codecs_;
 }
 
@@ -84,7 +92,12 @@ VideoToolboxVideoDecoderFactory::~VideoToolboxVideoDecoderFactory() {}
 
 VideoDecoder* VideoToolboxVideoDecoderFactory::CreateVideoDecoder(
     VideoCodecType type) {
-  const auto codec = cricket::VideoCodec(NameFromCodecType(type));
+  const rtc::Optional<const char*> codec_name = CodecTypeToPayloadName(type);
+  if (!codec_name) {
+    LOG(LS_ERROR) << "Invalid codec type: " << type;
+    return nullptr;
+  }
+  const cricket::VideoCodec codec(*codec_name);
   if (FindMatchingCodec(supported_codecs_, codec)) {
     LOG(LS_INFO) << "Creating HW decoder for " << codec.name;
     return new H264VideoToolboxDecoder();

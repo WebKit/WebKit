@@ -12,7 +12,6 @@
 
 #include <vector>
 
-#include "webrtc/base/common.h"
 #include "webrtc/modules/include/module_common_types.h"
 #include "webrtc/modules/remote_bitrate_estimator/test/bwe.h"
 #include "webrtc/modules/remote_bitrate_estimator/test/bwe_test_framework.h"

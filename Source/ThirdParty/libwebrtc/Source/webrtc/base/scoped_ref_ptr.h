@@ -30,7 +30,7 @@
 //   void some_other_function() {
 //     scoped_refptr<MyFoo> foo = new MyFoo();
 //     ...
-//     foo = NULL;  // explicitly releases |foo|
+//     foo = nullptr;  // explicitly releases |foo|
 //     ...
 //     if (foo)
 //       foo->Method(param);
@@ -45,7 +45,7 @@
 //     scoped_refptr<MyFoo> b;
 //
 //     b.swap(a);
-//     // now, |b| references the MyFoo object, and |a| references NULL.
+//     // now, |b| references the MyFoo object, and |a| references null.
 //   }
 //
 // To make both |a| and |b| in the above example reference the same MyFoo
@@ -70,8 +70,7 @@ namespace rtc {
 template <class T>
 class scoped_refptr {
  public:
-  scoped_refptr() : ptr_(NULL) {
-  }
+  scoped_refptr() : ptr_(nullptr) {}
 
   scoped_refptr(T* p) : ptr_(p) {
     if (ptr_)
@@ -106,12 +105,12 @@ class scoped_refptr {
 
   // Release a pointer.
   // The return value is the current pointer held by this object.
-  // If this object holds a NULL pointer, the return value is NULL.
-  // After this operation, this object will hold a NULL pointer,
+  // If this object holds a null pointer, the return value is null.
+  // After this operation, this object will hold a null pointer,
   // and will not own the object any more.
   T* release() {
     T* retVal = ptr_;
-    ptr_ = NULL;
+    ptr_ = nullptr;
     return retVal;
   }
 

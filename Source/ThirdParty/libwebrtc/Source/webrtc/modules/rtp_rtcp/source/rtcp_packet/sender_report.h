@@ -13,7 +13,6 @@
 
 #include <vector>
 
-#include "webrtc/base/constructormagic.h"
 #include "webrtc/modules/rtp_rtcp/source/rtcp_packet.h"
 #include "webrtc/modules/rtp_rtcp/source/rtcp_packet/report_block.h"
 #include "webrtc/system_wrappers/include/ntp_time.h"
@@ -77,8 +76,6 @@ class SenderReport : public RtcpPacket {
   uint32_t sender_packet_count_;
   uint32_t sender_octet_count_;
   std::vector<ReportBlock> report_blocks_;
-
-  RTC_DISALLOW_COPY_AND_ASSIGN(SenderReport);
 };
 
 }  // namespace rtcp

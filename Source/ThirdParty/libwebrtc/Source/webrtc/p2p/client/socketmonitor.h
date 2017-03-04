@@ -16,7 +16,7 @@
 #include "webrtc/base/criticalsection.h"
 #include "webrtc/base/sigslot.h"
 #include "webrtc/base/thread.h"
-#include "webrtc/p2p/base/transport.h"  // for ConnectionInfos
+#include "webrtc/p2p/base/jseptransport.h"  // for ConnectionInfos
 
 // TODO(pthatcher): Move these to connectionmonitor.h and
 // connectionmonitor.cc, or just move them into channel.cc

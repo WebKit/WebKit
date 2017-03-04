@@ -17,7 +17,30 @@
 
 #include "webrtc/api/mediastreaminterface.h"
 
-@implementation RTCRtpReceiver
+namespace webrtc {
+
+RtpReceiverDelegateAdapter::RtpReceiverDelegateAdapter(
+    RTCRtpReceiver *receiver) {
+  RTC_CHECK(receiver);
+  receiver_ = receiver;
+}
+
+void RtpReceiverDelegateAdapter::OnFirstPacketReceived(
+    cricket::MediaType media_type) {
+  RTCRtpMediaType packet_media_type =
+      [RTCRtpReceiver mediaTypeForNativeMediaType:media_type];
+  RTCRtpReceiver *receiver = receiver_;
+  [receiver.delegate rtpReceiver:receiver didReceiveFirstPacketForMediaType:packet_media_type];
+}
+
+}  // namespace webrtc
+
+@implementation RTCRtpReceiver {
+  rtc::scoped_refptr<webrtc::RtpReceiverInterface> _nativeRtpReceiver;
+  std::unique_ptr<webrtc::RtpReceiverDelegateAdapter> _observer;
+}
+
+@synthesize delegate = _delegate;
 
 - (NSString *)receiverId {
   return [NSString stringForStdString:_nativeRtpReceiver->id()];
@@ -79,8 +102,22 @@
     _nativeRtpReceiver = nativeRtpReceiver;
     RTCLogInfo(
         @"RTCRtpReceiver(%p): created receiver: %@", self, self.description);
+    _observer.reset(new webrtc::RtpReceiverDelegateAdapter(self));
+    _nativeRtpReceiver->SetObserver(_observer.get());
   }
   return self;
+}
+
++ (RTCRtpMediaType)mediaTypeForNativeMediaType:
+    (cricket::MediaType)nativeMediaType {
+  switch (nativeMediaType) {
+    case cricket::MEDIA_TYPE_AUDIO:
+      return RTCRtpMediaTypeAudio;
+    case cricket::MEDIA_TYPE_VIDEO:
+      return RTCRtpMediaTypeVideo;
+    case cricket::MEDIA_TYPE_DATA:
+      return RTCRtpMediaTypeData;
+  }
 }
 
 @end

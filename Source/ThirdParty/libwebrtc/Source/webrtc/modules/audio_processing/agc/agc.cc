@@ -39,7 +39,7 @@ Agc::Agc()
 Agc::~Agc() {}
 
 float Agc::AnalyzePreproc(const int16_t* audio, size_t length) {
-  RTC_DCHECK_GT(length, 0u);
+  RTC_DCHECK_GT(length, 0);
   size_t num_clipped = 0;
   for (size_t i = 0; i < length; ++i) {
     if (audio[i] == 32767 || audio[i] == -32768)

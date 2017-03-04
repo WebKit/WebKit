@@ -17,13 +17,13 @@
 #include <vector>
 #include <utility>
 
+#include "webrtc/api/call/transport.h"
 #include "webrtc/base/platform_file.h"
 #include "webrtc/common_types.h"
 #include "webrtc/common_video/include/frame_callback.h"
 #include "webrtc/config.h"
 #include "webrtc/media/base/videosinkinterface.h"
 #include "webrtc/media/base/videosourceinterface.h"
-#include "webrtc/transport.h"
 
 namespace webrtc {
 
@@ -36,6 +36,7 @@ class VideoSendStream {
 
     FrameCounts frame_counts;
     bool is_rtx = false;
+    bool is_flexfec = false;
     int width = 0;
     int height = 0;
     // TODO(holmer): Move bitrate_bps out to the webrtc::Call layer.
@@ -137,10 +138,21 @@ class VideoSendStream {
       // See UlpfecConfig for description.
       UlpfecConfig ulpfec;
 
-      // See FlexfecConfig for description.
-      // TODO(brandtr): Move this config to a new class FlexfecSendStream
-      // when we support multistream protection.
-      FlexfecConfig flexfec;
+      struct Flexfec {
+        // Payload type of FlexFEC. Set to -1 to disable sending FlexFEC.
+        int payload_type = -1;
+
+        // SSRC of FlexFEC stream.
+        uint32_t ssrc = 0;
+
+        // Vector containing a single element, corresponding to the SSRC of the
+        // media stream being protected by this FlexFEC stream.
+        // The vector MUST have size 1.
+        //
+        // TODO(brandtr): Update comment above when we support
+        // multistream protection.
+        std::vector<uint32_t> protected_media_ssrcs;
+      } flexfec;
 
       // Settings for RTP retransmission payload format, see RFC 4588 for
       // details.
@@ -183,6 +195,9 @@ class VideoSendStream {
     // below the minimum configured bitrate. If this variable is false, the
     // stream may send at a rate higher than the estimated available bitrate.
     bool suspend_below_min_bitrate = false;
+
+    // Enables periodic bandwidth probing in application-limited region.
+    bool periodic_alr_bandwidth_probing = false;
 
    private:
     // Access to the copy constructor is private to force use of the Copy()

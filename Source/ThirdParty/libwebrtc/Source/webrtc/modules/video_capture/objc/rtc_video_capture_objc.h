@@ -30,8 +30,7 @@
 // custom initializer. Instance of VideoCaptureIos is needed
 // for callback purposes.
 // default init methods have been overridden to return nil.
-- (id)initWithOwner:(webrtc::videocapturemodule::VideoCaptureIos*)owner
-          captureId:(int)captureId;
+- (id)initWithOwner:(webrtc::videocapturemodule::VideoCaptureIos*)owner;
 - (BOOL)setCaptureDeviceByUniqueId:(NSString*)uniqueId;
 - (BOOL)startCaptureWithCapability:
     (const webrtc::VideoCaptureCapability&)capability;

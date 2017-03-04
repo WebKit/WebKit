@@ -275,7 +275,7 @@ bool PacedVideoSender::TimeToSendPacket(uint32_t ssrc,
                                         uint16_t sequence_number,
                                         int64_t capture_time_ms,
                                         bool retransmission,
-                                        int probe_cluster_id) {
+                                        const PacedPacketInfo& pacing_info) {
   for (Packets::iterator it = pacer_queue_.begin(); it != pacer_queue_.end();
        ++it) {
     MediaPacket* media_packet = static_cast<MediaPacket*>(*it);
@@ -297,7 +297,8 @@ bool PacedVideoSender::TimeToSendPacket(uint32_t ssrc,
   return false;
 }
 
-size_t PacedVideoSender::TimeToSendPadding(size_t bytes, int probe_cluster_id) {
+size_t PacedVideoSender::TimeToSendPadding(size_t bytes,
+                                           const PacedPacketInfo& pacing_info) {
   return 0;
 }
 

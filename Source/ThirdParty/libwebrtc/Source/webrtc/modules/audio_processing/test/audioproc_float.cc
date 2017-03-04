@@ -40,6 +40,7 @@ DEFINE_string(i, "", "Forward stream input wav filename");
 DEFINE_string(o, "", "Forward stream output wav filename");
 DEFINE_string(ri, "", "Reverse stream input wav filename");
 DEFINE_string(ro, "", "Reverse stream output wav filename");
+DEFINE_string(artificial_nearend, "", "Artificial nearend wav filename");
 DEFINE_int32(output_num_channels,
              kParameterNotSpecifiedValue,
              "Number of forward stream output channels");
@@ -70,10 +71,10 @@ DEFINE_int32(aec,
 DEFINE_int32(aecm,
              kParameterNotSpecifiedValue,
              "Activate (1) or deactivate(0) the mobile echo controller");
-DEFINE_int32(red,
+DEFINE_int32(ed,
              kParameterNotSpecifiedValue,
              "Activate (1) or deactivate (0) the residual echo detector");
-DEFINE_string(red_graph, "", "Output filename for graph of echo likelihood");
+DEFINE_string(ed_graph, "", "Output filename for graph of echo likelihood");
 DEFINE_int32(agc,
              kParameterNotSpecifiedValue,
              "Activate (1) or deactivate(0) the AGC");
@@ -120,6 +121,9 @@ DEFINE_int32(aec3,
 DEFINE_int32(lc,
              kParameterNotSpecifiedValue,
              "Activate (1) or deactivate(0) the level control");
+DEFINE_int32(experimental_agc,
+             kParameterNotSpecifiedValue,
+             "Activate (1) or deactivate(0) the experimental AGC");
 DEFINE_int32(
     refined_adaptive_filter,
     kParameterNotSpecifiedValue,
@@ -165,6 +169,7 @@ DEFINE_bool(discard_settings_in_aecdump,
 DEFINE_bool(store_intermediate_output,
             false,
             "Creates new output files after each init");
+DEFINE_string(custom_call_order_file, "", "Custom process API call order file");
 
 void SetSettingIfSpecified(const std::string value,
                            rtc::Optional<std::string>* parameter) {
@@ -200,7 +205,7 @@ SimulationSettings CreateSettings() {
     settings.use_agc = rtc::Optional<bool>(true);
     settings.use_aec = rtc::Optional<bool>(true);
     settings.use_aecm = rtc::Optional<bool>(false);
-    settings.use_red = rtc::Optional<bool>(false);
+    settings.use_ed = rtc::Optional<bool>(false);
   }
   SetSettingIfSpecified(FLAGS_dump_input, &settings.aec_dump_input_filename);
   SetSettingIfSpecified(FLAGS_dump_output, &settings.aec_dump_output_filename);
@@ -208,6 +213,8 @@ SimulationSettings CreateSettings() {
   SetSettingIfSpecified(FLAGS_o, &settings.output_filename);
   SetSettingIfSpecified(FLAGS_ri, &settings.reverse_input_filename);
   SetSettingIfSpecified(FLAGS_ro, &settings.reverse_output_filename);
+  SetSettingIfSpecified(FLAGS_artificial_nearend,
+                        &settings.artificial_nearend_filename);
   SetSettingIfSpecified(FLAGS_output_num_channels,
                         &settings.output_num_channels);
   SetSettingIfSpecified(FLAGS_reverse_output_num_channels,
@@ -220,8 +227,8 @@ SimulationSettings CreateSettings() {
   settings.target_angle_degrees = FLAGS_target_angle_degrees;
   SetSettingIfFlagSet(FLAGS_aec, &settings.use_aec);
   SetSettingIfFlagSet(FLAGS_aecm, &settings.use_aecm);
-  SetSettingIfFlagSet(FLAGS_red, &settings.use_red);
-  SetSettingIfSpecified(FLAGS_red_graph, &settings.red_graph_output_filename);
+  SetSettingIfFlagSet(FLAGS_ed, &settings.use_ed);
+  SetSettingIfSpecified(FLAGS_ed_graph, &settings.ed_graph_output_filename);
   SetSettingIfFlagSet(FLAGS_agc, &settings.use_agc);
   SetSettingIfFlagSet(FLAGS_hpf, &settings.use_hpf);
   SetSettingIfFlagSet(FLAGS_ns, &settings.use_ns);
@@ -241,6 +248,7 @@ SimulationSettings CreateSettings() {
 
   SetSettingIfFlagSet(FLAGS_aec3, &settings.use_aec3);
   SetSettingIfFlagSet(FLAGS_lc, &settings.use_lc);
+  SetSettingIfFlagSet(FLAGS_experimental_agc, &settings.use_experimental_agc);
   SetSettingIfSpecified(FLAGS_aecm_routing_mode, &settings.aecm_routing_mode);
   SetSettingIfFlagSet(FLAGS_aecm_comfort_noise,
                       &settings.use_aecm_comfort_noise);
@@ -254,6 +262,8 @@ SimulationSettings CreateSettings() {
   SetSettingIfSpecified(FLAGS_stream_delay, &settings.stream_delay);
   SetSettingIfSpecified(FLAGS_stream_drift_samples,
                         &settings.stream_drift_samples);
+  SetSettingIfSpecified(FLAGS_custom_call_order_file,
+                        &settings.custom_call_order_filename);
   settings.report_performance = FLAGS_performance_report;
   settings.use_verbose_logging = FLAGS_verbose;
   settings.report_bitexactness = FLAGS_bitexactness_report;
@@ -276,6 +286,10 @@ void PerformBasicParameterSanityChecks(const SimulationSettings& settings) {
     ReportConditionalErrorAndExit(!!settings.aec_dump_input_filename,
                                   "Error: The aec dump cannot be specified "
                                   "together with input wav files!\n");
+
+    ReportConditionalErrorAndExit(!!settings.artificial_nearend_filename,
+                                  "Error: The artificial nearend cannot be "
+                                  "specified together with input wav files!\n");
 
     ReportConditionalErrorAndExit(!settings.input_filename,
                                   "Error: When operating at wav files, the "
@@ -361,6 +375,11 @@ void PerformBasicParameterSanityChecks(const SimulationSettings& settings) {
       "Error: --bitexactness_report can only be used when operating on an "
       "aecdump\n");
 
+  ReportConditionalErrorAndExit(
+      settings.custom_call_order_filename && settings.aec_dump_input_filename,
+      "Error: --custom_call_order_file cannot be used when operating on an "
+      "aecdump\n");
+
   auto valid_wav_name = [](const std::string& wav_file_name) {
     if (wav_file_name.size() < 5) {
       return false;
@@ -389,6 +408,11 @@ void PerformBasicParameterSanityChecks(const SimulationSettings& settings) {
       settings.reverse_output_filename &&
           (!valid_wav_name(*settings.reverse_output_filename)),
       "Error: --ro must be a valid .wav file name.\n");
+
+  ReportConditionalErrorAndExit(
+      settings.artificial_nearend_filename &&
+          !valid_wav_name(*settings.artificial_nearend_filename),
+      "Error: --artifical_nearend must be a valid .wav file name.\n");
 }
 
 }  // namespace

@@ -6,7 +6,7 @@
 # in the file PATENTS.  All contributing project authors may
 # be found in the AUTHORS file in the root of the source tree.
 
-import("../../build/webrtc.gni")
+import("../../webrtc.gni")
 
 # Note this target is missing an implementation for the video capture.
 # Targets must link with either 'video_capture' or
@@ -19,7 +19,6 @@ rtc_static_library("video_capture_module") {
     "video_capture.h",
     "video_capture_config.h",
     "video_capture_defines.h",
-    "video_capture_delay.h",
     "video_capture_factory.cc",
     "video_capture_factory.h",
     "video_capture_impl.cc",
@@ -28,9 +27,9 @@ rtc_static_library("video_capture_module") {
 
   deps = [
     "../..:webrtc_common",
+    "../../base:rtc_base_approved",
     "../../common_video",
     "../../system_wrappers",
-    "../utility",
   ]
 
   if (!build_with_chromium && is_clang) {
@@ -47,6 +46,7 @@ rtc_static_library("video_capture") {
 
   deps = [
     ":video_capture_module",
+    "../../base:rtc_base_approved",
     "../../system_wrappers",
   ]
 
@@ -90,6 +90,7 @@ if (!build_with_chromium) {
 
     deps = [
       ":video_capture_module",
+      "../../base:rtc_base_approved",
       "../../system_wrappers",
     ]
 
@@ -182,12 +183,15 @@ if (!build_with_chromium) {
       deps = [
         ":video_capture_internal_impl",
         ":video_capture_module",
+        "../../base:rtc_base_approved",
+        "../../common_video:common_video",
+        "../../system_wrappers:system_wrappers",
         "../../system_wrappers:system_wrappers_default",
         "../../test:video_test_common",
         "../utility",
         "//testing/gtest",
       ]
-      deps += [ "//webrtc/test:test_support_main" ]
+      deps += [ "//webrtc/test:test_main" ]
 
       if (!build_with_chromium && is_clang) {
         # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).

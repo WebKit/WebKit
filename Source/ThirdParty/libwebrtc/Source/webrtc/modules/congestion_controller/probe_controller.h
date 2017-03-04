@@ -28,15 +28,18 @@ class ProbeController {
  public:
   ProbeController(PacedSender* pacer, Clock* clock);
 
-  void SetBitrates(int min_bitrate_bps,
-                   int start_bitrate_bps,
-                   int max_bitrate_bps);
-  void SetEstimatedBitrate(int bitrate_bps);
+  void SetBitrates(int64_t min_bitrate_bps,
+                   int64_t start_bitrate_bps,
+                   int64_t max_bitrate_bps);
+
+  void OnNetworkStateChanged(NetworkState state);
+
+  void SetEstimatedBitrate(int64_t bitrate_bps);
+
+  void EnablePeriodicAlrProbing(bool enable);
+  void Process();
 
  private:
-  void InitiateProbing(std::initializer_list<int> bitrates_to_probe,
-                       int min_bitrate_to_probe_further_bps)
-      EXCLUSIVE_LOCKS_REQUIRED(critsect_);
   enum class State {
     // Initial state where no probing has been triggered yet.
     kInit,
@@ -45,15 +48,29 @@ class ProbeController {
     // Probing is complete.
     kProbingComplete,
   };
+
+  void InitiateExponentialProbing() EXCLUSIVE_LOCKS_REQUIRED(critsect_);
+  void InitiateProbing(int64_t now_ms,
+                       std::initializer_list<int64_t> bitrates_to_probe,
+                       bool probe_further) EXCLUSIVE_LOCKS_REQUIRED(critsect_);
+
   rtc::CriticalSection critsect_;
   PacedSender* const pacer_;
   Clock* const clock_;
+  NetworkState network_state_ GUARDED_BY(critsect_);
   State state_ GUARDED_BY(critsect_);
-  int min_bitrate_to_probe_further_bps_ GUARDED_BY(critsect_);
+  int64_t min_bitrate_to_probe_further_bps_ GUARDED_BY(critsect_);
   int64_t time_last_probing_initiated_ms_ GUARDED_BY(critsect_);
-  int estimated_bitrate_bps_ GUARDED_BY(critsect_);
-  int max_bitrate_bps_ GUARDED_BY(critsect_);
+  int64_t estimated_bitrate_bps_ GUARDED_BY(critsect_);
+  int64_t start_bitrate_bps_ GUARDED_BY(critsect_);
+  int64_t max_bitrate_bps_ GUARDED_BY(critsect_);
   int64_t last_alr_probing_time_ GUARDED_BY(critsect_);
+  bool enable_periodic_alr_probing_ GUARDED_BY(critsect_);
+
+  // For WebRTC.BWE.MidCallProbing.* metric.
+  bool mid_call_probing_waiting_for_result_ GUARDED_BY(&critsect_);
+  int64_t mid_call_probing_bitrate_bps_ GUARDED_BY(&critsect_);
+  int64_t mid_call_probing_succcess_threshold_ GUARDED_BY(&critsect_);
 
   RTC_DISALLOW_IMPLICIT_CONSTRUCTORS(ProbeController);
 };

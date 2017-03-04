@@ -469,7 +469,7 @@ TEST_F(AudioDecoderPcmUTest, EncodeDecode) {
 
 namespace {
 int SetAndGetTargetBitrate(AudioEncoder* audio_encoder, int rate) {
-  audio_encoder->SetTargetBitrate(rate);
+  audio_encoder->OnReceivedUplinkBandwidth(rate, rtc::Optional<int64_t>());
   return audio_encoder->GetTargetBitrate();
 }
 void TestSetAndGetTargetBitratesWithFixedCodec(AudioEncoder* audio_encoder,
@@ -608,8 +608,8 @@ TEST_F(AudioDecoderOpusTest, EncodeDecode) {
 
 namespace {
 void TestOpusSetTargetBitrates(AudioEncoder* audio_encoder) {
-  EXPECT_EQ(500, SetAndGetTargetBitrate(audio_encoder, 499));
-  EXPECT_EQ(500, SetAndGetTargetBitrate(audio_encoder, 500));
+  EXPECT_EQ(6000, SetAndGetTargetBitrate(audio_encoder, 5999));
+  EXPECT_EQ(6000, SetAndGetTargetBitrate(audio_encoder, 6000));
   EXPECT_EQ(32000, SetAndGetTargetBitrate(audio_encoder, 32000));
   EXPECT_EQ(512000, SetAndGetTargetBitrate(audio_encoder, 512000));
   EXPECT_EQ(512000, SetAndGetTargetBitrate(audio_encoder, 513000));
@@ -683,6 +683,9 @@ TEST(AudioDecoder, CodecSupported) {
   EXPECT_EQ(has_g722, CodecSupported(NetEqDecoder::kDecoderG722_2ch));
   EXPECT_TRUE(CodecSupported(NetEqDecoder::kDecoderRED));
   EXPECT_TRUE(CodecSupported(NetEqDecoder::kDecoderAVT));
+  EXPECT_TRUE(CodecSupported(NetEqDecoder::kDecoderAVT16kHz));
+  EXPECT_TRUE(CodecSupported(NetEqDecoder::kDecoderAVT32kHz));
+  EXPECT_TRUE(CodecSupported(NetEqDecoder::kDecoderAVT48kHz));
   EXPECT_TRUE(CodecSupported(NetEqDecoder::kDecoderCNGnb));
   EXPECT_TRUE(CodecSupported(NetEqDecoder::kDecoderCNGwb));
   EXPECT_TRUE(CodecSupported(NetEqDecoder::kDecoderCNGswb32kHz));

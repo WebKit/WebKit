@@ -21,12 +21,12 @@
 namespace webrtc {
 namespace test {
 
-FrameGeneratorCapturer* FrameGeneratorCapturer::Create(size_t width,
-                                                       size_t height,
+FrameGeneratorCapturer* FrameGeneratorCapturer::Create(int width,
+                                                       int height,
                                                        int target_fps,
                                                        Clock* clock) {
   FrameGeneratorCapturer* capturer = new FrameGeneratorCapturer(
-      clock, FrameGenerator::CreateChromaGenerator(width, height), target_fps);
+      clock, FrameGenerator::CreateSquareGenerator(width, height), target_fps);
   if (!capturer->Init()) {
     delete capturer;
     return NULL;
@@ -53,19 +53,20 @@ FrameGeneratorCapturer* FrameGeneratorCapturer::CreateFromYuvFile(
   return capturer;
 }
 
-FrameGeneratorCapturer::FrameGeneratorCapturer(Clock* clock,
-                                               FrameGenerator* frame_generator,
-                                               int target_fps)
+FrameGeneratorCapturer::FrameGeneratorCapturer(
+    Clock* clock,
+    std::unique_ptr<FrameGenerator> frame_generator,
+    int target_fps)
     : clock_(clock),
       sending_(false),
       sink_(nullptr),
       sink_wants_observer_(nullptr),
       tick_(EventTimerWrapper::Create()),
       thread_(FrameGeneratorCapturer::Run, this, "FrameGeneratorCapturer"),
-      frame_generator_(frame_generator),
+      frame_generator_(std::move(frame_generator)),
       target_fps_(target_fps),
       first_frame_capture_time_(-1) {
-  RTC_DCHECK(frame_generator);
+  RTC_DCHECK(frame_generator_);
   RTC_DCHECK_GT(target_fps, 0);
 }
 

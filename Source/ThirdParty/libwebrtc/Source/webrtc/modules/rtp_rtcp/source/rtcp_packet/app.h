@@ -12,7 +12,6 @@
 #define WEBRTC_MODULES_RTP_RTCP_SOURCE_RTCP_PACKET_APP_H_
 
 #include "webrtc/base/buffer.h"
-#include "webrtc/base/constructormagic.h"
 #include "webrtc/modules/rtp_rtcp/source/rtcp_packet.h"
 
 namespace webrtc {
@@ -56,8 +55,6 @@ class App : public RtcpPacket {
   uint32_t ssrc_;
   uint32_t name_;
   rtc::Buffer data_;
-
-  RTC_DISALLOW_COPY_AND_ASSIGN(App);
 };
 
 }  // namespace rtcp

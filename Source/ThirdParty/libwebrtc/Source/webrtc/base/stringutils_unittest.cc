@@ -10,7 +10,6 @@
 
 #include "webrtc/base/gunit.h"
 #include "webrtc/base/stringutils.h"
-#include "webrtc/base/common.h"
 
 namespace rtc {
 
@@ -34,13 +33,13 @@ TEST(string_matchTest, Matches) {
 
 // Tests for ascii_string_compare().
 
-// Tests NULL input.
+// Tests null input.
 TEST(ascii_string_compareTest, NullInput) {
   // The following results in an access violation in
   // ascii_string_compare.  Is this a bug or by design?  stringutils.h
   // should document the expected behavior in this case.
 
-  // EXPECT_EQ(0, ascii_string_compare(NULL, NULL, 1, identity));
+  // EXPECT_EQ(0, ascii_string_compare(nullptr, nullptr, 1, identity));
 }
 
 // Tests comparing two strings of different lengths.

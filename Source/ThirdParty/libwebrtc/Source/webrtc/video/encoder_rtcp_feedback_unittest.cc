@@ -13,6 +13,7 @@
 #include "webrtc/modules/utility/include/mock/mock_process_thread.h"
 #include "webrtc/test/gmock.h"
 #include "webrtc/test/gtest.h"
+#include "webrtc/video/send_statistics_proxy.h"
 #include "webrtc/video/vie_encoder.h"
 
 using ::testing::NiceMock;
@@ -21,9 +22,9 @@ namespace webrtc {
 
 class MockVieEncoder : public ViEEncoder {
  public:
-  MockVieEncoder()
+  explicit MockVieEncoder(SendStatisticsProxy* send_stats_proxy)
       : ViEEncoder(1,
-                   nullptr,
+                   send_stats_proxy,
                    VideoSendStream::Config::EncoderSettings("fake", 0, nullptr),
                    nullptr,
                    nullptr) {}
@@ -38,6 +39,10 @@ class VieKeyRequestTest : public ::testing::Test {
  public:
   VieKeyRequestTest()
       : simulated_clock_(123456789),
+        send_stats_proxy_(&simulated_clock_,
+                          VideoSendStream::Config(nullptr),
+                          VideoEncoderConfig::ContentType::kRealtimeVideo),
+        encoder_(&send_stats_proxy_),
         encoder_rtcp_feedback_(
             &simulated_clock_,
             std::vector<uint32_t>(1, VieKeyRequestTest::kSsrc),
@@ -45,8 +50,10 @@ class VieKeyRequestTest : public ::testing::Test {
 
  protected:
   const uint32_t kSsrc = 1234;
-  MockVieEncoder encoder_;
+
   SimulatedClock simulated_clock_;
+  SendStatisticsProxy send_stats_proxy_;
+  MockVieEncoder encoder_;
   EncoderRtcpFeedback encoder_rtcp_feedback_;
 };
 

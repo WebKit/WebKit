@@ -48,17 +48,17 @@ template <class T> struct is_non_const_reference<const T&> : false_type {};
 template <class T> struct is_void : false_type {};
 template <> struct is_void<void> : true_type {};
 
-template <class T>
-struct remove_reference {
-  typedef T type;
-};
-template <class T>
-struct remove_reference<T&> {
-  typedef T type;
-};
-template <class T>
-struct remove_reference<T&&> {
-  typedef T type;
+// Helper useful for converting a tuple to variadic template function
+// arguments.
+//
+// sequence_generator<3>::type will be sequence<0, 1, 2>.
+template <int...>
+struct sequence {};
+template <int N, int... S>
+struct sequence_generator : sequence_generator<N - 1, N - 1, S...> {};
+template <int... S>
+struct sequence_generator<0, S...> {
+  typedef sequence<S...> type;
 };
 
 namespace internal {

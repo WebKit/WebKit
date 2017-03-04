@@ -17,8 +17,8 @@
 namespace webrtc {
 namespace video_coding {
 Histogram::Histogram(size_t num_buckets, size_t max_num_values) {
-  RTC_DCHECK_GT(num_buckets, 0u);
-  RTC_DCHECK_GT(max_num_values, 0u);
+  RTC_DCHECK_GT(num_buckets, 0);
+  RTC_DCHECK_GT(max_num_values, 0);
   buckets_.resize(num_buckets);
   values_.reserve(max_num_values);
   index_ = 0;

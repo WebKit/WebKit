@@ -42,7 +42,7 @@ class OveruseDetectorTest : public ::testing::Test {
 
  protected:
   void SetUp() override {
-    overuse_detector_.reset(new OveruseDetector(options_));
+    overuse_detector_.reset(new OveruseDetector());
   }
 
   int Run100000Samples(int packets_per_frame, size_t packet_size, int mean_ms,
@@ -649,7 +649,7 @@ class OveruseDetectorExperimentTest : public OveruseDetectorTest {
 
  protected:
   void SetUp() override {
-    overuse_detector_.reset(new OveruseDetector(options_));
+    overuse_detector_.reset(new OveruseDetector());
   }
 
   test::ScopedFieldTrials override_field_trials_;

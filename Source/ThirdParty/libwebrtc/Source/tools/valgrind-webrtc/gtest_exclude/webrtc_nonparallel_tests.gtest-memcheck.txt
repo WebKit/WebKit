@@ -1,5 +1,0 @@
-# Fails when run under memcheck
-# https://code.google.com/p/webrtc/issues/detail?id=4958
-PhysicalSocketTest.TestUdpReadyToSendIPv4
-PhysicalSocketTest.TestUdpIPv4
-PhysicalSocketTest.TestSocketRecvTimestampIPv4

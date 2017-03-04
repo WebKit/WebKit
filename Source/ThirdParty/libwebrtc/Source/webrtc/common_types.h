@@ -11,14 +11,16 @@
 #ifndef WEBRTC_COMMON_TYPES_H_
 #define WEBRTC_COMMON_TYPES_H_
 
-#include <assert.h>
 #include <stddef.h>
 #include <string.h>
 
+#include <ostream>
 #include <string>
 #include <vector>
 
-#include "webrtc/common_video/rotation.h"
+#include "webrtc/api/video/video_rotation.h"
+#include "webrtc/base/checks.h"
+#include "webrtc/base/optional.h"
 #include "webrtc/typedefs.h"
 
 #if defined(_MSC_VER)
@@ -27,12 +29,10 @@
 #pragma warning(disable : 4351)
 #endif
 
-#ifdef WIN32
 #if defined(WEBRTC_EXPORT)
 #define WEBRTC_DLLEXPORT _declspec(dllexport)
 #elif defined(WEBRTC_DLL)
 #define WEBRTC_DLLEXPORT _declspec(dllimport)
-#endif
 #else
 #define WEBRTC_DLLEXPORT
 #endif
@@ -140,14 +140,6 @@ enum FileFormats {
   kFileFormatPcm16kHzFile = 7,
   kFileFormatPcm8kHzFile = 8,
   kFileFormatPcm32kHzFile = 9
-};
-
-enum ProcessingTypes {
-  kPlaybackPerChannel = 0,
-  kPlaybackAllChannelsMixed,
-  kRecordingPerChannel,
-  kRecordingAllChannelsMixed,
-  kRecordingPreprocessing
 };
 
 enum FrameType {
@@ -300,6 +292,14 @@ class SendPacketObserver {
                             uint32_t ssrc) = 0;
 };
 
+// Callback, used to notify an observer when the overhead per packet
+// has changed.
+class OverheadObserver {
+ public:
+  virtual ~OverheadObserver() = default;
+  virtual void OnOverheadChanged(size_t overhead_bytes_per_packet) = 0;
+};
+
 // ==================================================================
 // Voice specific types
 // ==================================================================
@@ -321,6 +321,16 @@ struct CodecInst {
   }
 
   bool operator!=(const CodecInst& other) const { return !(*this == other); }
+
+  friend std::ostream& operator<<(std::ostream& os, const CodecInst& ci) {
+    os << "{pltype: " << ci.pltype;
+    os << ", plname: " << ci.plname;
+    os << ", plfreq: " << ci.plfreq;
+    os << ", pacsize: " << ci.pacsize;
+    os << ", channels: " << ci.channels;
+    os << ", rate: " << ci.rate << "}";
+    return os;
+  }
 };
 
 // RTP
@@ -457,7 +467,6 @@ enum StereoChannel { kStereoLeft = 0, kStereoRight, kStereoBoth };
 // Audio device layers
 enum AudioLayers {
   kAudioPlatformDefault = 0,
-  kAudioWindowsWave = 1,
   kAudioWindowsCore = 2,
   kAudioLinuxAlsa = 3,
   kAudioLinuxPulse = 4
@@ -524,7 +533,7 @@ struct VideoCodecVP8 {
   bool automaticResizeOn;
   bool frameDroppingOn;
   int keyFrameInterval;
-  const TemporalLayersFactory* tl_factory;
+  TemporalLayersFactory* tl_factory;
 };
 
 // VP9 specific.
@@ -541,6 +550,19 @@ struct VideoCodecVP9 {
   bool flexibleMode;
 };
 
+// TODO(magjed): Move this and other H264 related classes out to their own file.
+namespace H264 {
+
+enum Profile {
+  kProfileConstrainedBaseline,
+  kProfileBaseline,
+  kProfileMain,
+  kProfileConstrainedHigh,
+  kProfileHigh,
+};
+
+}  // namespace H264
+
 // H264 specific.
 struct VideoCodecH264 {
   bool frameDroppingOn;
@@ -550,6 +572,7 @@ struct VideoCodecH264 {
   size_t spsLen;
   const uint8_t* ppsData;
   size_t ppsLen;
+  H264::Profile profile;
 };
 
 // Video codec types
@@ -564,6 +587,10 @@ enum VideoCodecType {
   kVideoCodecGeneric,
   kVideoCodecUnknown
 };
+
+// Translates from name of codec to codec type and vice versa.
+rtc::Optional<const char*> CodecTypeToPayloadName(VideoCodecType type);
+rtc::Optional<VideoCodecType> PayloadNameToCodecType(const std::string& name);
 
 union VideoCodecUnion {
   VideoCodecVP8 VP8;
@@ -634,16 +661,47 @@ class VideoCodec {
   VideoCodecH264* H264();
   const VideoCodecH264& H264() const;
 
-  // This variable will be declared private and renamed to codec_specific_
-  // once Chromium is not accessing it.
+ private:
   // TODO(hta): Consider replacing the union with a pointer type.
   // This will allow removing the VideoCodec* types from this file.
-  VideoCodecUnion codecSpecific;
+  VideoCodecUnion codec_specific_;
+};
+
+class BitrateAllocation {
+ public:
+  static const uint32_t kMaxBitrateBps;
+  BitrateAllocation();
+
+  bool SetBitrate(size_t spatial_index,
+                  size_t temporal_index,
+                  uint32_t bitrate_bps);
+
+  uint32_t GetBitrate(size_t spatial_index, size_t temporal_index) const;
+
+  // Get the sum of all the temporal layer for a specific spatial layer.
+  uint32_t GetSpatialLayerSum(size_t spatial_index) const;
+
+  uint32_t get_sum_bps() const { return sum_; }  // Sum of all bitrates.
+  uint32_t get_sum_kbps() const { return (sum_ + 500) / 1000; }
+
+  inline bool operator==(const BitrateAllocation& other) const {
+    return memcmp(bitrates_, other.bitrates_, sizeof(bitrates_)) == 0;
+  }
+  inline bool operator!=(const BitrateAllocation& other) const {
+    return !(*this == other);
+  }
+
+ private:
+  uint32_t sum_;
+  uint32_t bitrates_[kMaxSpatialLayers][kMaxTemporalStreams];
 };
 
 // Bandwidth over-use detector options.  These are used to drive
 // experimentation with bandwidth estimation parameters.
 // See modules/remote_bitrate_estimator/overuse_detector.h
+// TODO(terelius): This is only used in overuse_estimator.cc, and only in the
+// default constructed state. Can we move the relevant variables into that
+// class and delete this? See also disabled warning at line 27
 struct OverUseDetectorOptions {
   OverUseDetectorOptions()
       : initial_slope(8.0 / 512.0),
@@ -752,13 +810,13 @@ struct RtpPacketCounter {
   }
 
   void Subtract(const RtpPacketCounter& other) {
-    assert(header_bytes >= other.header_bytes);
+    RTC_DCHECK_GE(header_bytes, other.header_bytes);
     header_bytes -= other.header_bytes;
-    assert(payload_bytes >= other.payload_bytes);
+    RTC_DCHECK_GE(payload_bytes, other.payload_bytes);
     payload_bytes -= other.payload_bytes;
-    assert(padding_bytes >= other.padding_bytes);
+    RTC_DCHECK_GE(padding_bytes, other.padding_bytes);
     padding_bytes -= other.padding_bytes;
-    assert(packets >= other.packets);
+    RTC_DCHECK_GE(packets, other.packets);
     packets -= other.packets;
   }
 

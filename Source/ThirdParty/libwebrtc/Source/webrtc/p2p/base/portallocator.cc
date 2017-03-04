@@ -29,7 +29,7 @@ PortAllocatorSession::PortAllocatorSession(const std::string& content_name,
   RTC_DCHECK(ice_ufrag.empty() == ice_pwd.empty());
 }
 
-void PortAllocator::SetConfiguration(
+bool PortAllocator::SetConfiguration(
     const ServerAddresses& stun_servers,
     const std::vector<RelayServerConfig>& turn_servers,
     int candidate_pool_size,
@@ -40,31 +40,48 @@ void PortAllocator::SetConfiguration(
   turn_servers_ = turn_servers;
   prune_turn_ports_ = prune_turn_ports;
 
+  bool candidate_pool_drain_began =
+      static_cast<int>(pooled_sessions_.size()) != candidate_pool_size_;
+  if (candidate_pool_drain_began &&
+      candidate_pool_size != candidate_pool_size_) {
+    LOG(LS_ERROR) << "Trying to change candidate pool size after pool started "
+                     "to be drained.";
+    return false;
+  }
+  if (candidate_pool_size < 0) {
+    LOG(LS_ERROR) << "Can't set negative pool size.";
+    return false;
+  }
+  candidate_pool_size_ = candidate_pool_size;
+
+  // If sessions need to be recreated, only recreate as many as the current
+  // pool size if the pool has begun to be drained.
+  int sessions_needed = candidate_pool_drain_began
+                            ? static_cast<int>(pooled_sessions_.size())
+                            : candidate_pool_size_;
+
   // If ICE servers changed, throw away any existing pooled sessions and create
   // new ones.
   if (ice_servers_changed) {
     pooled_sessions_.clear();
-    allocated_pooled_session_count_ = 0;
   }
 
-  // If |size| is less than the number of allocated sessions, get rid of the
-  // extras.
-  while (allocated_pooled_session_count_ > candidate_pool_size &&
-         !pooled_sessions_.empty()) {
+  // If |sessions_needed| is less than the number of pooled sessions, get rid
+  // of the extras.
+  while (sessions_needed < static_cast<int>(pooled_sessions_.size())) {
     pooled_sessions_.front().reset(nullptr);
     pooled_sessions_.pop_front();
-    --allocated_pooled_session_count_;
   }
-  // If |size| is greater than the number of allocated sessions, create new
-  // sessions.
-  while (allocated_pooled_session_count_ < candidate_pool_size) {
+
+  // If |sessions_needed| is greater than the number of pooled sessions,
+  // create new sessions.
+  while (static_cast<int>(pooled_sessions_.size()) < sessions_needed) {
     PortAllocatorSession* pooled_session = CreateSessionInternal("", 0, "", "");
     pooled_session->StartGettingPorts();
     pooled_sessions_.push_back(
         std::unique_ptr<PortAllocatorSession>(pooled_session));
-    ++allocated_pooled_session_count_;
   }
-  target_pooled_session_count_ = candidate_pool_size;
+  return true;
 }
 
 std::unique_ptr<PortAllocatorSession> PortAllocator::CreateSession(

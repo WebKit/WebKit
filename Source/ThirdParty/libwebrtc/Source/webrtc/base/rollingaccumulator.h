@@ -14,7 +14,7 @@
 #include <algorithm>
 #include <vector>
 
-#include "webrtc/base/common.h"
+#include "webrtc/base/checks.h"
 #include "webrtc/base/constructormagic.h"
 
 namespace rtc {
@@ -97,8 +97,8 @@ class RollingAccumulator {
 
   T ComputeMax() const {
     if (max_stale_) {
-      ASSERT(count_ > 0 &&
-          "It shouldn't be possible for max_stale_ && count_ == 0");
+      RTC_DCHECK(count_ > 0) <<
+                 "It shouldn't be possible for max_stale_ && count_ == 0";
       max_ = samples_[next_index_];
       for (size_t i = 1u; i < count_; i++) {
         max_ = std::max(max_, samples_[(next_index_ + i) % max_count()]);
@@ -110,8 +110,8 @@ class RollingAccumulator {
 
   T ComputeMin() const {
     if (min_stale_) {
-      ASSERT(count_ > 0 &&
-          "It shouldn't be possible for min_stale_ && count_ == 0");
+      RTC_DCHECK(count_ > 0) <<
+                 "It shouldn't be possible for min_stale_ && count_ == 0";
       min_ = samples_[next_index_];
       for (size_t i = 1u; i < count_; i++) {
         min_ = std::min(min_, samples_[(next_index_ + i) % max_count()]);

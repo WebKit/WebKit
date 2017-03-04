@@ -6,7 +6,11 @@
 # in the file PATENTS.  All contributing project authors may
 # be found in the AUTHORS file in the root of the source tree.
 
-import("../build/webrtc.gni")
+import("../webrtc.gni")
+if (is_android) {
+  import("//build/config/android/config.gni")
+  import("//build/config/android/rules.gni")
+}
 
 group("pc") {
   public_deps = [
@@ -15,10 +19,10 @@ group("pc") {
 }
 
 config("rtc_pc_config") {
-  defines = [
-    "HAVE_SCTP",
-    "HAVE_SRTP",
-  ]
+  defines = [ "HAVE_SRTP" ]
+  if (rtc_enable_sctp) {
+    defines += [ "HAVE_SCTP" ]
+  }
 }
 
 rtc_static_library("rtc_pc") {
@@ -51,7 +55,7 @@ rtc_static_library("rtc_pc") {
     "../media",
   ]
 
-  if (build_with_chromium) {
+  if (rtc_enable_external_auth) {
     sources += [
       "externalhmac.cc",
       "externalhmac.h",
@@ -66,6 +70,103 @@ rtc_static_library("rtc_pc") {
   if (!build_with_chromium && is_clang) {
     # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
     suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
+  }
+}
+
+config("libjingle_peerconnection_warnings_config") {
+  # GN orders flags on a target before flags from configs. The default config
+  # adds these flags so to cancel them out they need to come from a config and
+  # cannot be on the target directly.
+  if (!is_win && !is_clang) {
+    cflags = [ "-Wno-maybe-uninitialized" ]  # Only exists for GCC.
+  }
+}
+
+rtc_static_library("libjingle_peerconnection") {
+  check_includes = false  # TODO(kjellander): Remove (bugs.webrtc.org/6828)
+  cflags = []
+  sources = [
+    "audiotrack.cc",
+    "audiotrack.h",
+    "datachannel.cc",
+    "datachannel.h",
+    "dtmfsender.cc",
+    "dtmfsender.h",
+    "jsepicecandidate.cc",
+    "jsepsessiondescription.cc",
+    "localaudiosource.cc",
+    "localaudiosource.h",
+    "mediacontroller.cc",
+    "mediacontroller.h",
+    "mediastream.cc",
+    "mediastream.h",
+    "mediastreamobserver.cc",
+    "mediastreamobserver.h",
+    "mediastreamtrack.h",
+    "peerconnection.cc",
+    "peerconnection.h",
+    "peerconnectionfactory.cc",
+    "peerconnectionfactory.h",
+    "remoteaudiosource.cc",
+    "remoteaudiosource.h",
+    "rtcstatscollector.cc",
+    "rtcstatscollector.h",
+    "rtpreceiver.cc",
+    "rtpreceiver.h",
+    "rtpsender.cc",
+    "rtpsender.h",
+    "sctputils.cc",
+    "sctputils.h",
+    "statscollector.cc",
+    "statscollector.h",
+    "streamcollection.h",
+    "trackmediainfomap.cc",
+    "trackmediainfomap.h",
+    "videocapturertracksource.cc",
+    "videocapturertracksource.h",
+    "videotrack.cc",
+    "videotrack.h",
+    "videotracksource.cc",
+    "videotracksource.h",
+    "webrtcsdp.cc",
+    "webrtcsdp.h",
+    "webrtcsession.cc",
+    "webrtcsession.h",
+    "webrtcsessiondescriptionfactory.cc",
+    "webrtcsessiondescriptionfactory.h",
+  ]
+
+  configs += [ ":libjingle_peerconnection_warnings_config" ]
+
+  if (!build_with_chromium && is_clang) {
+    # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
+    suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
+  }
+
+  deps = [
+    ":rtc_pc",
+    "../api:call_api",
+    "../api:rtc_stats_api",
+    "../call",
+    "../media",
+    "../stats",
+  ]
+
+  public_deps = [
+    "../api:libjingle_peerconnection_api",
+  ]
+
+  if (rtc_use_quic) {
+    sources += [
+      "quicdatachannel.cc",
+      "quicdatachannel.h",
+      "quicdatatransport.cc",
+      "quicdatatransport.h",
+    ]
+    deps += [ "//third_party/libquic" ]
+    public_deps = [
+      "//third_party/libquic",
+    ]
   }
 }
 
@@ -106,8 +207,8 @@ if (rtc_include_tests) {
     }
 
     deps = [
+      ":libjingle_peerconnection",
       ":rtc_pc",
-      "../api:libjingle_peerconnection",
       "../base:rtc_base_tests_utils",
       "../media:rtc_unittest_main",
       "../system_wrappers:metrics_default",
@@ -119,6 +220,151 @@ if (rtc_include_tests) {
 
     if (is_android) {
       deps += [ "//testing/android/native_test:native_test_support" ]
+    }
+  }
+
+  rtc_source_set("pc_test_utils") {
+    testonly = true
+    sources = [
+      "test/fakeaudiocapturemodule.cc",
+      "test/fakeaudiocapturemodule.h",
+      "test/fakedatachannelprovider.h",
+      "test/fakeperiodicvideocapturer.h",
+      "test/fakertccertificategenerator.h",
+      "test/fakevideotrackrenderer.h",
+      "test/fakevideotracksource.h",
+      "test/mock_datachannel.h",
+      "test/mock_peerconnection.h",
+      "test/mock_webrtcsession.h",
+      "test/mockpeerconnectionobservers.h",
+      "test/peerconnectiontestwrapper.cc",
+      "test/peerconnectiontestwrapper.h",
+      "test/rtcstatsobtainer.h",
+      "test/testsdpstrings.h",
+    ]
+
+    deps = [
+      ":libjingle_peerconnection",
+      "../base:rtc_base_tests_utils",
+      "//testing/gmock",
+    ]
+
+    if (!build_with_chromium && is_clang) {
+      # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
+      suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
+    }
+  }
+
+  config("peerconnection_unittests_config") {
+    # The warnings below are enabled by default. Since GN orders compiler flags
+    # for a target before flags from configs, the only way to disable such
+    # warnings is by having them in a separate config, loaded from the target.
+    # TODO(kjellander): Make the code compile without disabling these flags.
+    # See https://bugs.webrtc.org/3307.
+    if (is_clang && is_win) {
+      cflags = [
+        # See https://bugs.chromium.org/p/webrtc/issues/detail?id=6267
+        # for -Wno-sign-compare
+        "-Wno-sign-compare",
+        "-Wno-unused-function",
+      ]
+    }
+
+    if (!is_win) {
+      cflags = [ "-Wno-sign-compare" ]
+    }
+  }
+
+  rtc_test("peerconnection_unittests") {
+    check_includes = false  # TODO(kjellander): Remove (bugs.webrtc.org/6828)
+    testonly = true
+    sources = [
+      "datachannel_unittest.cc",
+      "dtmfsender_unittest.cc",
+      "fakemediacontroller.h",
+      "jsepsessiondescription_unittest.cc",
+      "localaudiosource_unittest.cc",
+      "mediaconstraintsinterface_unittest.cc",
+      "mediastream_unittest.cc",
+      "peerconnection_unittest.cc",
+      "peerconnectionendtoend_unittest.cc",
+      "peerconnectionfactory_unittest.cc",
+      "peerconnectioninterface_unittest.cc",
+      "proxy_unittest.cc",
+      "rtcstats_integrationtest.cc",
+      "rtcstatscollector_unittest.cc",
+      "rtpsenderreceiver_unittest.cc",
+      "sctputils_unittest.cc",
+      "statscollector_unittest.cc",
+      "test/fakeaudiocapturemodule_unittest.cc",
+      "test/testsdpstrings.h",
+      "trackmediainfomap_unittest.cc",
+      "videocapturertracksource_unittest.cc",
+      "videotrack_unittest.cc",
+      "webrtcsdp_unittest.cc",
+      "webrtcsession_unittest.cc",
+    ]
+
+    if (rtc_enable_sctp) {
+      defines = [ "HAVE_SCTP" ]
+    }
+
+    configs += [ ":peerconnection_unittests_config" ]
+
+    if (!build_with_chromium && is_clang) {
+      # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
+      suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
+    }
+
+    # TODO(jschuh): Bug 1348: fix this warning.
+    configs += [ "//build/config/compiler:no_size_t_to_int_warning" ]
+
+    if (is_win) {
+      cflags = [
+        "/wd4245",  # conversion from int to size_t, signed/unsigned mismatch.
+        "/wd4389",  # signed/unsigned mismatch.
+      ]
+    }
+
+    if (rtc_use_quic) {
+      public_deps = [
+        "//third_party/libquic",
+      ]
+      sources += [
+        "quicdatachannel_unittest.cc",
+        "quicdatatransport_unittest.cc",
+      ]
+    }
+
+    deps = []
+    if (is_android) {
+      sources += [
+        "test/androidtestinitializer.cc",
+        "test/androidtestinitializer.h",
+      ]
+      deps += [
+        "//testing/android/native_test:native_test_support",
+        "//webrtc/sdk/android:libjingle_peerconnection_java",
+        "//webrtc/sdk/android:libjingle_peerconnection_jni",
+      ]
+    }
+
+    deps += [
+      ":libjingle_peerconnection",
+      ":pc_test_utils",
+      "..:webrtc_common",
+      "../api:fakemetricsobserver",
+      "../base:rtc_base_tests_utils",
+      "../media:rtc_unittest_main",
+      "../pc:rtc_pc",
+      "../system_wrappers:metrics_default",
+      "//testing/gmock",
+    ]
+
+    if (is_android) {
+      deps += [ "//testing/android/native_test:native_test_support" ]
+
+      shard_timeout = 900
     }
   }
 }

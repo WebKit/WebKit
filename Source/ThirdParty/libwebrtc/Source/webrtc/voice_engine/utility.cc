@@ -10,13 +10,13 @@
 
 #include "webrtc/voice_engine/utility.h"
 
+#include "webrtc/audio/utility/audio_frame_operations.h"
 #include "webrtc/base/checks.h"
 #include "webrtc/base/logging.h"
 #include "webrtc/common_audio/resampler/include/push_resampler.h"
 #include "webrtc/common_audio/signal_processing/include/signal_processing_library.h"
 #include "webrtc/common_types.h"
 #include "webrtc/modules/include/module_common_types.h"
-#include "webrtc/modules/utility/include/audio_frame_operations.h"
 #include "webrtc/voice_engine/voice_engine_defines.h"
 
 namespace webrtc {
@@ -41,19 +41,25 @@ void RemixAndResample(const int16_t* src_data,
                       AudioFrame* dst_frame) {
   const int16_t* audio_ptr = src_data;
   size_t audio_ptr_num_channels = num_channels;
-  int16_t mono_audio[AudioFrame::kMaxDataSizeSamples];
+  int16_t downsmixed_audio[AudioFrame::kMaxDataSizeSamples];
 
   // Downmix before resampling.
-  if (num_channels == 2 && dst_frame->num_channels_ == 1) {
-    AudioFrameOperations::StereoToMono(src_data, samples_per_channel,
-                                       mono_audio);
-    audio_ptr = mono_audio;
-    audio_ptr_num_channels = 1;
+  if (num_channels > dst_frame->num_channels_) {
+    RTC_DCHECK(num_channels == 2 || num_channels == 4)
+        << "num_channels: " << num_channels;
+    RTC_DCHECK(dst_frame->num_channels_ == 1 || dst_frame->num_channels_ == 2)
+        << "dst_frame->num_channels_: " << dst_frame->num_channels_;
+
+    AudioFrameOperations::DownmixChannels(
+        src_data, num_channels, samples_per_channel, dst_frame->num_channels_,
+        downsmixed_audio);
+    audio_ptr = downsmixed_audio;
+    audio_ptr_num_channels = dst_frame->num_channels_;
   }
 
   if (resampler->InitializeIfNeeded(sample_rate_hz, dst_frame->sample_rate_hz_,
                                     audio_ptr_num_channels) == -1) {
-    FATAL() << "InitializeIfNeeded failed: sample_rate_hz = " << sample_rate_hz
+    RTC_FATAL() << "InitializeIfNeeded failed: sample_rate_hz = " << sample_rate_hz
             << ", dst_frame->sample_rate_hz_ = " << dst_frame->sample_rate_hz_
             << ", audio_ptr_num_channels = " << audio_ptr_num_channels;
   }
@@ -62,7 +68,7 @@ void RemixAndResample(const int16_t* src_data,
   int out_length = resampler->Resample(audio_ptr, src_length, dst_frame->data_,
                                        AudioFrame::kMaxDataSizeSamples);
   if (out_length == -1) {
-    FATAL() << "Resample failed: audio_ptr = " << audio_ptr
+    RTC_FATAL() << "Resample failed: audio_ptr = " << audio_ptr
             << ", src_length = " << src_length
             << ", dst_frame->data_ = " << dst_frame->data_;
   }
@@ -82,10 +88,10 @@ void MixWithSat(int16_t target[],
                 const int16_t source[],
                 size_t source_channel,
                 size_t source_len) {
-  RTC_DCHECK_GE(target_channel, 1u);
-  RTC_DCHECK_LE(target_channel, 2u);
-  RTC_DCHECK_GE(source_channel, 1u);
-  RTC_DCHECK_LE(source_channel, 2u);
+  RTC_DCHECK_GE(target_channel, 1);
+  RTC_DCHECK_LE(target_channel, 2);
+  RTC_DCHECK_GE(source_channel, 1);
+  RTC_DCHECK_LE(source_channel, 2);
 
   if (target_channel == 2 && source_channel == 1) {
     // Convert source from mono to stereo.

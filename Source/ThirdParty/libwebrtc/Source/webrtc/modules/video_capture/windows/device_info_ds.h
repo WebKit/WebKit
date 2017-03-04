@@ -35,9 +35,9 @@ class DeviceInfoDS: public DeviceInfoImpl
 {
 public:
     // Factory function.
-    static DeviceInfoDS* Create(const int32_t id);
+    static DeviceInfoDS* Create();
 
-    DeviceInfoDS(const int32_t id);
+    DeviceInfoDS();
     virtual ~DeviceInfoDS();
 
     int32_t Init();

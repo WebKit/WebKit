@@ -199,6 +199,8 @@ void DebugDumpReplayer::MaybeRecreateApm(const audioproc::Config& msg) {
 }
 
 void DebugDumpReplayer::ConfigureApm(const audioproc::Config& msg) {
+  AudioProcessing::Config apm_config;
+
   // AEC configs.
   RTC_CHECK(msg.has_aec_enabled());
   RTC_CHECK_EQ(AudioProcessing::kNoError,
@@ -247,8 +249,7 @@ void DebugDumpReplayer::ConfigureApm(const audioproc::Config& msg) {
 
   // HPF configs.
   RTC_CHECK(msg.has_hpf_enabled());
-  RTC_CHECK_EQ(AudioProcessing::kNoError,
-               apm_->high_pass_filter()->Enable(msg.hpf_enabled()));
+  apm_config.high_pass_filter.enabled = msg.hpf_enabled();
 
   // NS configs.
   RTC_CHECK(msg.has_ns_enabled());
@@ -259,6 +260,8 @@ void DebugDumpReplayer::ConfigureApm(const audioproc::Config& msg) {
   RTC_CHECK_EQ(AudioProcessing::kNoError,
                apm_->noise_suppression()->set_level(
                    static_cast<NoiseSuppression::Level>(msg.ns_level())));
+
+  apm_->ApplyConfig(apm_config);
 }
 
 void DebugDumpReplayer::LoadNextMessage() {

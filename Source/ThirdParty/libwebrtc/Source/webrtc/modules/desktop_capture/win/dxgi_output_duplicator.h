@@ -23,6 +23,7 @@
 #include "webrtc/base/thread_annotations.h"
 #include "webrtc/modules/desktop_capture/desktop_geometry.h"
 #include "webrtc/modules/desktop_capture/desktop_region.h"
+#include "webrtc/modules/desktop_capture/desktop_frame_rotation.h"
 #include "webrtc/modules/desktop_capture/shared_desktop_frame.h"
 #include "webrtc/modules/desktop_capture/win/d3d_device.h"
 #include "webrtc/modules/desktop_capture/win/dxgi_texture.h"
@@ -31,7 +32,6 @@ namespace webrtc {
 
 // Duplicates the content on one IDXGIOutput, i.e. one monitor attached to one
 // video card. None of functions in this class is thread-safe.
-// TODO(zijiehe): Understand the meaning of rotation.
 class DxgiOutputDuplicator {
  public:
   struct Context {
@@ -72,9 +72,14 @@ class DxgiOutputDuplicator {
   // Returns the desktop rect covered by this DxgiOutputDuplicator.
   DesktopRect desktop_rect() const { return desktop_rect_; }
 
- private:
-  friend class DxgiAdapterDuplicator;
+  void Setup(Context* context);
 
+  void Unregister(const Context* const context);
+
+  // How many frames have been captured by this DxigOutputDuplicator.
+  int64_t num_frames_captured() const;
+
+ private:
   // Detects updated region translated by offset from IDXGIOutput1. This
   // function will set the |updated_region| as entire DesktopRect starts from
   // offset if it failed to execute Windows APIs.
@@ -97,24 +102,19 @@ class DxgiOutputDuplicator {
   // by offset.
   DesktopRect TranslatedDesktopRect(DesktopVector offset);
 
-  void Setup(Context* context);
-
-  void Unregister(const Context* const context);
-
   // Spreads changes from |context| to other registered Context(s) in
   // contexts_.
   void SpreadContextChange(const Context* const context);
-
-  // Returns a DesktopRect in the coordinate of |texture_|->AsDesktopFrame().
-  DesktopRect SourceRect(DesktopRect rect);
 
   const D3dDevice device_;
   const Microsoft::WRL::ComPtr<IDXGIOutput1> output_;
   const DesktopRect desktop_rect_;
   Microsoft::WRL::ComPtr<IDXGIOutputDuplication> duplication_;
   DXGI_OUTDUPL_DESC desc_;
-  std::vector<uint8_t> metadata;
+  std::vector<uint8_t> metadata_;
   std::unique_ptr<DxgiTexture> texture_;
+  Rotation rotation_;
+  DesktopSize unrotated_size_;
 
   // After each AcquireNextFrame() function call, updated_region_(s) of all
   // active Context(s) need to be updated. Since they have missed the
@@ -127,6 +127,8 @@ class DxgiOutputDuplicator {
   // |last_frame_|.
   std::unique_ptr<SharedDesktopFrame> last_frame_;
   DesktopVector last_frame_offset_;
+
+  int64_t num_frames_captured_;
 };
 
 }  // namespace webrtc

@@ -11,13 +11,14 @@
 #ifndef WEBRTC_MODULES_VIDEO_CAPTURE_VIDEO_CAPTURE_H_
 #define WEBRTC_MODULES_VIDEO_CAPTURE_VIDEO_CAPTURE_H_
 
-#include "webrtc/common_video/rotation.h"
+#include "webrtc/api/video/video_rotation.h"
+#include "webrtc/media/base/videosinkinterface.h"
 #include "webrtc/modules/include/module.h"
 #include "webrtc/modules/video_capture/video_capture_defines.h"
 
 namespace webrtc {
 
-class VideoCaptureModule: public RefCountedModule {
+class VideoCaptureModule: public rtc::RefCountInterface {
  public:
   // Interface for receiving information about available camera devices.
   class DeviceInfo {
@@ -75,39 +76,12 @@ class VideoCaptureModule: public RefCountedModule {
     virtual ~DeviceInfo() {}
   };
 
-  class VideoCaptureEncodeInterface {
-   public:
-    virtual int32_t ConfigureEncoder(const VideoCodec& codec,
-                                     uint32_t maxPayloadSize) = 0;
-    // Inform the encoder about the new target bit rate.
-    //  - newBitRate       : New target bit rate in Kbit/s.
-    //  - frameRate        : The target frame rate.
-    virtual int32_t SetRates(int32_t newBitRate, int32_t frameRate) = 0;
-    // Inform the encoder about the packet loss and the round-trip time.
-    //   - packetLoss   : Fraction lost
-    //                    (loss rate in percent = 100 * packetLoss / 255).
-    //   - rtt          : Round-trip time in milliseconds.
-    virtual int32_t SetChannelParameters(uint32_t packetLoss, int64_t rtt) = 0;
-
-    // Encode the next frame as key frame.
-    virtual int32_t EncodeFrameType(const FrameType type) = 0;
-  protected:
-    virtual ~VideoCaptureEncodeInterface() {
-    }
-  };
-
   //   Register capture data callback
   virtual void RegisterCaptureDataCallback(
-      VideoCaptureDataCallback& dataCallback) = 0;
+      rtc::VideoSinkInterface<VideoFrame> *dataCallback) = 0;
 
   //  Remove capture data callback
   virtual void DeRegisterCaptureDataCallback() = 0;
-
-  // Register capture callback.
-  virtual void RegisterCaptureCallback(VideoCaptureFeedBack& callBack) = 0;
-
-  //  Remove capture callback.
-  virtual void DeRegisterCaptureCallback() = 0;
 
   // Start capture device
   virtual int32_t StartCapture(
@@ -124,11 +98,6 @@ class VideoCaptureModule: public RefCountedModule {
   // Gets the current configuration.
   virtual int32_t CaptureSettings(VideoCaptureCapability& settings) = 0;
 
-  virtual void SetCaptureDelay(int32_t delayMS) = 0;
-
-  // Returns the current CaptureDelay. Only valid when the camera is running.
-  virtual int32_t CaptureDelay() = 0;
-
   // Set the rotation of the captured frames.
   // If the rotation is set to the same as returned by
   // DeviceInfo::GetOrientation the captured frames are
@@ -143,14 +112,6 @@ class VideoCaptureModule: public RefCountedModule {
 
   // Return whether the rotation is applied or left pending.
   virtual bool GetApplyRotation() = 0;
-
-  // Gets a pointer to an encode interface if the capture device supports the
-  // requested type and size.  NULL otherwise.
-  virtual VideoCaptureEncodeInterface* GetEncodeInterface(
-      const VideoCodec& codec) = 0;
-
-  virtual void EnableFrameRateCallback(const bool enable) = 0;
-  virtual void EnableNoPictureAlarm(const bool enable) = 0;
 
 protected:
   virtual ~VideoCaptureModule() {};

@@ -26,6 +26,18 @@ using testing::Return;
 using testing::SaveArg;
 using testing::StrictMock;
 
+namespace {
+
+// Helper to convert some time format to resolution used in absolute send time
+// header extension, rounded upwards. |t| is the time to convert, in some
+// resolution. |denom| is the value to divide |t| by to get whole seconds,
+// e.g. |denom| = 1000 if |t| is in milliseconds.
+uint32_t AbsSendTime(int64_t t, int64_t denom) {
+  return (((t << 18) + (denom >> 1)) / denom) & 0x00fffffful;
+}
+
+}  // namespace
+
 namespace webrtc {
 namespace test {
 
@@ -37,16 +49,15 @@ class CongestionControllerTest : public ::testing::Test {
   void SetUp() override {
     pacer_ = new NiceMock<MockPacedSender>();
     std::unique_ptr<PacedSender> pacer(pacer_);  // Passes ownership.
-    std::unique_ptr<PacketRouter> packet_router(new PacketRouter());
     controller_.reset(new CongestionController(
         &clock_, &observer_, &remote_bitrate_observer_, &event_log_,
-        std::move(packet_router), std::move(pacer)));
+        &packet_router_, std::move(pacer)));
     bandwidth_observer_.reset(
         controller_->GetBitrateController()->CreateRtcpBandwidthObserver());
 
     // Set the initial bitrate estimate and expect the |observer| and |pacer_|
     // to be updated.
-    EXPECT_CALL(observer_, OnNetworkChanged(kInitialBitrateBps, _, _));
+    EXPECT_CALL(observer_, OnNetworkChanged(kInitialBitrateBps, _, _, _));
     EXPECT_CALL(*pacer_, SetEstimatedBitrate(kInitialBitrateBps));
     controller_->SetBweBitrates(0, kInitialBitrateBps, 5 * kInitialBitrateBps);
   }
@@ -57,6 +68,7 @@ class CongestionControllerTest : public ::testing::Test {
   NiceMock<MockRemoteBitrateObserver> remote_bitrate_observer_;
   NiceMock<MockRtcEventLog> event_log_;
   std::unique_ptr<RtcpBandwidthObserver> bandwidth_observer_;
+  PacketRouter packet_router_;
   std::unique_ptr<CongestionController> controller_;
   const uint32_t kInitialBitrateBps = 60000;
 };
@@ -66,13 +78,13 @@ TEST_F(CongestionControllerTest, OnNetworkChanged) {
   clock_.AdvanceTimeMilliseconds(25);
   controller_->Process();
 
-  EXPECT_CALL(observer_, OnNetworkChanged(kInitialBitrateBps * 2, _, _));
+  EXPECT_CALL(observer_, OnNetworkChanged(kInitialBitrateBps * 2, _, _, _));
   EXPECT_CALL(*pacer_, SetEstimatedBitrate(kInitialBitrateBps * 2));
   bandwidth_observer_->OnReceivedEstimatedBitrate(kInitialBitrateBps * 2);
   clock_.AdvanceTimeMilliseconds(25);
   controller_->Process();
 
-  EXPECT_CALL(observer_, OnNetworkChanged(kInitialBitrateBps, _, _));
+  EXPECT_CALL(observer_, OnNetworkChanged(kInitialBitrateBps, _, _, _));
   EXPECT_CALL(*pacer_, SetEstimatedBitrate(kInitialBitrateBps));
   bandwidth_observer_->OnReceivedEstimatedBitrate(kInitialBitrateBps);
   clock_.AdvanceTimeMilliseconds(25);
@@ -83,21 +95,21 @@ TEST_F(CongestionControllerTest, OnSendQueueFull) {
   EXPECT_CALL(*pacer_, ExpectedQueueTimeMs())
       .WillOnce(Return(PacedSender::kMaxQueueLengthMs + 1));
 
-  EXPECT_CALL(observer_, OnNetworkChanged(0, _, _));
+  EXPECT_CALL(observer_, OnNetworkChanged(0, _, _, _));
   controller_->Process();
 
   // Let the pacer not be full next time the controller checks.
   EXPECT_CALL(*pacer_, ExpectedQueueTimeMs())
       .WillOnce(Return(PacedSender::kMaxQueueLengthMs - 1));
 
-  EXPECT_CALL(observer_, OnNetworkChanged(kInitialBitrateBps, _, _));
+  EXPECT_CALL(observer_, OnNetworkChanged(kInitialBitrateBps, _, _, _));
   controller_->Process();
 }
 
 TEST_F(CongestionControllerTest, OnSendQueueFullAndEstimateChange) {
   EXPECT_CALL(*pacer_, ExpectedQueueTimeMs())
       .WillOnce(Return(PacedSender::kMaxQueueLengthMs + 1));
-  EXPECT_CALL(observer_, OnNetworkChanged(0, _, _));
+  EXPECT_CALL(observer_, OnNetworkChanged(0, _, _, _));
   controller_->Process();
 
   // Receive new estimate but let the queue still be full.
@@ -113,32 +125,33 @@ TEST_F(CongestionControllerTest, OnSendQueueFullAndEstimateChange) {
   // |OnNetworkChanged| should be called with the new estimate.
   EXPECT_CALL(*pacer_, ExpectedQueueTimeMs())
       .WillOnce(Return(PacedSender::kMaxQueueLengthMs - 1));
-  EXPECT_CALL(observer_, OnNetworkChanged(kInitialBitrateBps * 2, _, _));
+  EXPECT_CALL(observer_, OnNetworkChanged(kInitialBitrateBps * 2, _, _, _));
   clock_.AdvanceTimeMilliseconds(25);
   controller_->Process();
 }
 
 TEST_F(CongestionControllerTest, SignalNetworkState) {
-  EXPECT_CALL(observer_, OnNetworkChanged(0, _, _));
+  EXPECT_CALL(observer_, OnNetworkChanged(0, _, _, _));
   controller_->SignalNetworkState(kNetworkDown);
 
-  EXPECT_CALL(observer_, OnNetworkChanged(kInitialBitrateBps, _, _));
+  EXPECT_CALL(observer_, OnNetworkChanged(kInitialBitrateBps, _, _, _));
   controller_->SignalNetworkState(kNetworkUp);
 
-  EXPECT_CALL(observer_, OnNetworkChanged(0, _, _));
+  EXPECT_CALL(observer_, OnNetworkChanged(0, _, _, _));
   controller_->SignalNetworkState(kNetworkDown);
 }
 
 TEST_F(CongestionControllerTest, ResetBweAndBitrates) {
   int new_bitrate = 200000;
-  EXPECT_CALL(observer_, OnNetworkChanged(new_bitrate, _, _));
+  EXPECT_CALL(observer_, OnNetworkChanged(new_bitrate, _, _, _));
   EXPECT_CALL(*pacer_, SetEstimatedBitrate(new_bitrate));
   controller_->ResetBweAndBitrates(new_bitrate, -1, -1);
 
   // If the bitrate is reset to -1, the new starting bitrate will be
   // the minimum default bitrate kMinBitrateBps.
-  EXPECT_CALL(observer_, OnNetworkChanged(
-                             congestion_controller::GetMinBitrateBps(), _, _));
+  EXPECT_CALL(
+      observer_,
+      OnNetworkChanged(congestion_controller::GetMinBitrateBps(), _, _, _));
   EXPECT_CALL(*pacer_,
               SetEstimatedBitrate(congestion_controller::GetMinBitrateBps()));
   controller_->ResetBweAndBitrates(-1, -1, -1);
@@ -149,7 +162,7 @@ TEST_F(CongestionControllerTest,
   // Send queue is full
   EXPECT_CALL(*pacer_, ExpectedQueueTimeMs())
       .WillRepeatedly(Return(PacedSender::kMaxQueueLengthMs + 1));
-  EXPECT_CALL(observer_, OnNetworkChanged(0, _, _));
+  EXPECT_CALL(observer_, OnNetworkChanged(0, _, _, _));
   controller_->Process();
 
   // Queue is full and network is down. Expect no bitrate change.
@@ -169,12 +182,12 @@ TEST_F(CongestionControllerTest,
   // Let the pacer not be full next time the controller checks.
   EXPECT_CALL(*pacer_, ExpectedQueueTimeMs())
       .WillOnce(Return(PacedSender::kMaxQueueLengthMs - 1));
-  EXPECT_CALL(observer_, OnNetworkChanged(kInitialBitrateBps * 2, _, _));
+  EXPECT_CALL(observer_, OnNetworkChanged(kInitialBitrateBps * 2, _, _, _));
   controller_->Process();
 }
 
 TEST_F(CongestionControllerTest, GetPacerQueuingDelayMs) {
-  EXPECT_CALL(observer_, OnNetworkChanged(_, _, _)).Times(AtLeast(1));
+  EXPECT_CALL(observer_, OnNetworkChanged(_, _, _, _)).Times(AtLeast(1));
 
   const int64_t kQueueTimeMs = 123;
   EXPECT_CALL(*pacer_, QueueInMs()).WillRepeatedly(Return(kQueueTimeMs));
@@ -189,5 +202,43 @@ TEST_F(CongestionControllerTest, GetPacerQueuingDelayMs) {
   EXPECT_EQ(kQueueTimeMs, controller_->GetPacerQueuingDelayMs());
 }
 
+TEST_F(CongestionControllerTest, GetProbingInterval) {
+  clock_.AdvanceTimeMilliseconds(25);
+  controller_->Process();
+
+  EXPECT_CALL(observer_, OnNetworkChanged(_, _, _, testing::Ne(0)));
+  EXPECT_CALL(*pacer_, SetEstimatedBitrate(_));
+  bandwidth_observer_->OnReceivedEstimatedBitrate(kInitialBitrateBps * 2);
+  clock_.AdvanceTimeMilliseconds(25);
+  controller_->Process();
+}
+
+TEST_F(CongestionControllerTest, OnReceivedPacketWithAbsSendTime) {
+  NiceMock<MockCongestionObserver> observer;
+  StrictMock<MockRemoteBitrateObserver> remote_bitrate_observer;
+  std::unique_ptr<PacedSender> pacer(new NiceMock<MockPacedSender>());
+  controller_.reset(
+      new CongestionController(&clock_, &observer, &remote_bitrate_observer,
+                               &event_log_, &packet_router_, std::move(pacer)));
+
+  size_t payload_size = 1000;
+  RTPHeader header;
+  header.ssrc = 0x11eb21c;
+  header.extension.hasAbsoluteSendTime = true;
+
+  std::vector<unsigned int> ssrcs;
+  EXPECT_CALL(remote_bitrate_observer, OnReceiveBitrateChanged(_, _))
+      .WillRepeatedly(SaveArg<0>(&ssrcs));
+
+  for (int i = 0; i < 10; ++i) {
+    clock_.AdvanceTimeMilliseconds((1000 * payload_size) / kInitialBitrateBps);
+    int64_t now_ms = clock_.TimeInMilliseconds();
+    header.extension.absoluteSendTime = AbsSendTime(now_ms, 1000);
+    controller_->OnReceivedPacket(now_ms, payload_size, header);
+  }
+
+  ASSERT_EQ(1u, ssrcs.size());
+  EXPECT_EQ(header.ssrc, ssrcs[0]);
+}
 }  // namespace test
 }  // namespace webrtc

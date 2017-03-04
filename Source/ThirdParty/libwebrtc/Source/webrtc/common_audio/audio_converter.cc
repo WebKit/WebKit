@@ -109,7 +109,7 @@ class CompositionConverter : public AudioConverter {
  public:
   CompositionConverter(std::vector<std::unique_ptr<AudioConverter>> converters)
       : converters_(std::move(converters)) {
-    RTC_CHECK_GE(converters_.size(), 2u);
+    RTC_CHECK_GE(converters_.size(), 2);
     // We need an intermediate buffer after every converter.
     for (auto it = converters_.begin(); it != converters_.end() - 1; ++it)
       buffers_.push_back(

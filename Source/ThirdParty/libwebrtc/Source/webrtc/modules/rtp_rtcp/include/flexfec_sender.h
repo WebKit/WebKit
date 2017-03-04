@@ -29,6 +29,9 @@ namespace webrtc {
 
 class RtpPacketToSend;
 
+// Note that this class is not thread safe, and thus requires external
+// synchronization.
+
 class FlexfecSender {
  public:
   FlexfecSender(int payload_type,
@@ -62,9 +65,8 @@ class FlexfecSender {
  private:
   // Utility.
   Clock* const clock_;
-  Random random_ GUARDED_BY(sequence_checker_);
-  int64_t last_generated_packet_ms_ GUARDED_BY(sequence_checker_);
-  rtc::SequencedTaskChecker sequence_checker_;
+  Random random_;
+  int64_t last_generated_packet_ms_;
 
   // Config.
   const int payload_type_;
@@ -72,10 +74,10 @@ class FlexfecSender {
   const uint32_t ssrc_;
   const uint32_t protected_media_ssrc_;
   // Sequence number of next packet to generate.
-  uint16_t seq_num_ GUARDED_BY(sequence_checker_);
+  uint16_t seq_num_;
 
   // Implementation.
-  UlpfecGenerator ulpfec_generator_ GUARDED_BY(sequence_checker_);
+  UlpfecGenerator ulpfec_generator_;
   const RtpHeaderExtensionMap rtp_header_extension_map_;
 };
 

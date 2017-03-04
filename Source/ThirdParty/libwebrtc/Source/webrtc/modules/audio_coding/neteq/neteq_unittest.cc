@@ -21,10 +21,10 @@
 #include <vector>
 
 #include "gflags/gflags.h"
+#include "webrtc/api/audio_codecs/builtin_audio_decoder_factory.h"
 #include "webrtc/base/ignore_wundef.h"
 #include "webrtc/base/sha1digest.h"
 #include "webrtc/base/stringencode.h"
-#include "webrtc/modules/audio_coding/codecs/builtin_audio_decoder_factory.h"
 #include "webrtc/modules/audio_coding/codecs/pcm16b/pcm16b.h"
 #include "webrtc/modules/audio_coding/neteq/tools/audio_loop.h"
 #include "webrtc/modules/audio_coding/neteq/tools/rtp_file_source.h"
@@ -38,7 +38,7 @@ RTC_PUSH_IGNORING_WUNDEF()
 #ifdef WEBRTC_ANDROID_PLATFORM_BUILD
 #include "external/webrtc/webrtc/modules/audio_coding/neteq/neteq_unittest.pb.h"
 #else
-#include "webrtc/audio_coding/neteq/neteq_unittest.pb.h"
+#include "webrtc/modules/audio_coding/neteq/neteq_unittest.pb.h"
 #endif
 RTC_POP_IGNORING_WUNDEF()
 #endif
@@ -442,10 +442,10 @@ TEST_F(NetEqDecodingTest, MAYBE_TestBitExactness) {
       webrtc::test::ResourcePath("audio_coding/neteq_universal_new", "rtp");
 
   const std::string output_checksum = PlatformChecksum(
-      "acd33f5c73625c1529c412ad59b5565132826f1b",
-      "1a2e82a0410421c1d1d3eb0615334db5e2c63784",
-      "acd33f5c73625c1529c412ad59b5565132826f1b",
-      "52797b781758a1d2303140b80b9c5030c9093d6b");
+      "5a8184bc60c0d7dddb50af8966360675476a8d8b",
+      "be982d2c5685dd1ca4ea5d352283df50e8e5b46d",
+      "5a8184bc60c0d7dddb50af8966360675476a8d8b",
+      "c86aec95439748f4949de95b50c94be291118615");
 
   const std::string network_stats_checksum = PlatformChecksum(
       "f59b3dfdb9b1b8bbb61abedd7c8cf3fc47c21f5f",

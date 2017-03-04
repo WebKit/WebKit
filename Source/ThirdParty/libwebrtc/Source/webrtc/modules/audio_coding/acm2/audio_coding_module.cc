@@ -10,13 +10,13 @@
 
 #include "webrtc/modules/audio_coding/include/audio_coding_module.h"
 
+#include "webrtc/api/audio_codecs/builtin_audio_decoder_factory.h"
 #include "webrtc/base/checks.h"
 #include "webrtc/base/safe_conversions.h"
 #include "webrtc/modules/audio_coding/acm2/acm_receiver.h"
 #include "webrtc/modules/audio_coding/acm2/acm_resampler.h"
 #include "webrtc/modules/audio_coding/acm2/codec_manager.h"
 #include "webrtc/modules/audio_coding/acm2/rent_a_codec.h"
-#include "webrtc/modules/audio_coding/codecs/builtin_audio_decoder_factory.h"
 #include "webrtc/system_wrappers/include/metrics.h"
 #include "webrtc/system_wrappers/include/trace.h"
 
@@ -370,7 +370,7 @@ void ConvertEncodedInfoToFragmentationHeader(
     frag->fragmentationOffset[i] = offset;
     offset += info.redundant[i].encoded_bytes;
     frag->fragmentationLength[i] = info.redundant[i].encoded_bytes;
-    frag->fragmentationTimeDiff[i] = rtc::checked_cast<uint16_t>(
+    frag->fragmentationTimeDiff[i] = rtc::dchecked_cast<uint16_t>(
         info.encoded_timestamp - info.redundant[i].encoded_timestamp);
     frag->fragmentationPlType[i] = info.redundant[i].payload_type;
   }
@@ -406,12 +406,6 @@ class RawAudioEncoderWrapper final : public AudioEncoder {
   }
   void SetMaxPlaybackRate(int frequency_hz) override {
     return enc_->SetMaxPlaybackRate(frequency_hz);
-  }
-  void SetProjectedPacketLossRate(double fraction) override {
-    return enc_->SetProjectedPacketLossRate(fraction);
-  }
-  void SetTargetBitrate(int target_bps) override {
-    return enc_->SetTargetBitrate(target_bps);
   }
 
  private:
@@ -536,7 +530,7 @@ int32_t AudioCodingModuleImpl::Encode(const InputData& input_data) {
     frame_type = kEmptyFrame;
     encoded_info.payload_type = previous_pltype;
   } else {
-    RTC_DCHECK_GT(encode_buffer_.size(), 0u);
+    RTC_DCHECK_GT(encode_buffer_.size(), 0);
     frame_type = encoded_info.speech ? kAudioFrameSpeech : kAudioFrameCN;
   }
 
@@ -654,7 +648,8 @@ int AudioCodingModuleImpl::SendFrequency() const {
 void AudioCodingModuleImpl::SetBitRate(int bitrate_bps) {
   rtc::CritScope lock(&acm_crit_sect_);
   if (encoder_stack_) {
-    encoder_stack_->SetTargetBitrate(bitrate_bps);
+    encoder_stack_->OnReceivedUplinkBandwidth(bitrate_bps,
+                                              rtc::Optional<int64_t>());
   }
 }
 
@@ -906,7 +901,7 @@ int AudioCodingModuleImpl::SetCodecFEC(bool enable_codec_fec) {
 int AudioCodingModuleImpl::SetPacketLossRate(int loss_rate) {
   rtc::CritScope lock(&acm_crit_sect_);
   if (HaveValidEncoder("SetPacketLossRate")) {
-    encoder_stack_->SetProjectedPacketLossRate(loss_rate / 100.0);
+    encoder_stack_->OnReceivedUplinkPacketLossFraction(loss_rate / 100.0);
   }
   return 0;
 }
@@ -1207,7 +1202,7 @@ int AudioCodingModuleImpl::SetOpusApplication(OpusApplicationMode application) {
       app = AudioEncoder::Application::kAudio;
       break;
     default:
-      FATAL();
+      RTC_FATAL();
       return 0;
   }
   return encoder_stack_->SetApplication(app) ? 0 : -1;

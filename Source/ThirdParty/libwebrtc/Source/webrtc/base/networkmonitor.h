@@ -19,13 +19,12 @@ namespace rtc {
 
 class IPAddress;
 
-// Error values are negative.
-enum NetworkBindingResults {
-  NETWORK_BIND_SUCCESS = 0,   // No error
-  NETWORK_BIND_FAILURE = -1,  // Generic error
-  NETWORK_BIND_NOT_IMPLEMENTED = -2,
-  NETWORK_BIND_ADDRESS_NOT_FOUND = -3,
-  NETWORK_BIND_NETWORK_CHANGED = -4
+enum class NetworkBindingResult {
+  SUCCESS = 0,   // No error
+  FAILURE = -1,  // Generic error
+  NOT_IMPLEMENTED = -2,
+  ADDRESS_NOT_FOUND = -3,
+  NETWORK_CHANGED = -4
 };
 
 enum AdapterType {
@@ -44,7 +43,9 @@ class NetworkBinderInterface {
   // packets on the socket |socket_fd| will be sent via that network.
   // This is needed because some operating systems (like Android) require a
   // special bind call to put packets on a non-default network interface.
-  virtual int BindSocketToNetwork(int socket_fd, const IPAddress& address) = 0;
+  virtual NetworkBindingResult BindSocketToNetwork(
+      int socket_fd,
+      const IPAddress& address) = 0;
   virtual ~NetworkBinderInterface() {}
 };
 

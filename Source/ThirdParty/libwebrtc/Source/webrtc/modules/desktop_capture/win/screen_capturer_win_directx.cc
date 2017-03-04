@@ -10,12 +10,14 @@
 
 #include "webrtc/modules/desktop_capture/win/screen_capturer_win_directx.h"
 
+#include <string>
 #include <utility>
 
 #include "webrtc/base/checks.h"
 #include "webrtc/base/logging.h"
 #include "webrtc/base/timeutils.h"
 #include "webrtc/modules/desktop_capture/desktop_frame.h"
+#include "webrtc/modules/desktop_capture/win/screen_capture_utils.h"
 
 namespace webrtc {
 
@@ -66,6 +68,26 @@ void ScreenCapturerWinDirectx::CaptureFrame() {
 
   int64_t capture_start_time_nanos = rtc::TimeNanos();
 
+  // The dxgi components and APIs do not update the screen resolution without
+  // a reinitialization. So we use the GetDC() function to retrieve the screen
+  // resolution to decide whether dxgi components need to be reinitialized.
+  // If the screen resolution changed, it's very likely the next Duplicate()
+  // function call will fail because of a missing monitor or the frame size is
+  // not enough to store the output. So we reinitialize dxgi components in-place
+  // to avoid a capture failure.
+  // But there is no guarantee GetDC() function returns the same resolution as
+  // dxgi APIs, we still rely on dxgi components to return the output frame
+  // size.
+  // TODO(zijiehe): Confirm whether IDXGIOutput::GetDesc() and
+  // IDXGIOutputDuplication::GetDesc() can detect the resolution change without
+  // reinitialization.
+  if (resolution_change_detector_.IsChanged(
+          GetScreenRect(kFullDesktopScreenId, std::wstring()).size())) {
+    frames_.Reset();
+    DxgiDuplicatorController::Instance()->Reset();
+    resolution_change_detector_.Reset();
+  }
+
   frames_.MoveToNextFrame();
   if (!frames_.current_frame()) {
     std::unique_ptr<DesktopFrame> new_frame;
@@ -90,6 +112,7 @@ void ScreenCapturerWinDirectx::CaptureFrame() {
             &context_, frames_.current_frame())) {
       // Screen size may be changed, so we need to reset the frames.
       frames_.Reset();
+      resolution_change_detector_.Reset();
       callback_->OnCaptureResult(Result::ERROR_TEMPORARY, nullptr);
       return;
     }
@@ -98,6 +121,7 @@ void ScreenCapturerWinDirectx::CaptureFrame() {
             &context_, current_screen_id_, frames_.current_frame())) {
       // Screen size may be changed, so we need to reset the frames.
       frames_.Reset();
+      resolution_change_detector_.Reset();
       if (current_screen_id_ >=
           DxgiDuplicatorController::Instance()->ScreenCount()) {
         // Current monitor has been removed from the system.
@@ -133,12 +157,14 @@ bool ScreenCapturerWinDirectx::SelectSource(SourceId id) {
   // frames only when a Duplicate() function call returns false.
   if (id == kFullDesktopScreenId) {
     current_screen_id_ = id;
+    context_.Reset();
     return true;
   }
 
   int screen_count = DxgiDuplicatorController::Instance()->ScreenCount();
   if (id >= 0 && id < screen_count) {
     current_screen_id_ = id;
+    context_.Reset();
     return true;
   }
   return false;

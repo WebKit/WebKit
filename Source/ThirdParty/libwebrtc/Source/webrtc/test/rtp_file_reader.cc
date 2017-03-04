@@ -19,6 +19,7 @@
 #include "webrtc/base/checks.h"
 #include "webrtc/base/constructormagic.h"
 #include "webrtc/base/format_macros.h"
+#include "webrtc/base/logging.h"
 #include "webrtc/modules/rtp_rtcp/source/rtp_utility.h"
 
 namespace webrtc {
@@ -27,18 +28,10 @@ namespace test {
 static const size_t kFirstLineLength = 40;
 static uint16_t kPacketHeaderSize = 8;
 
-#if 1
-# define DEBUG_LOG(text)
-# define DEBUG_LOG1(text, arg)
-#else
-# define DEBUG_LOG(text) (printf(text "\n"))
-# define DEBUG_LOG1(text, arg) (printf(text "\n", arg))
-#endif
-
 #define TRY(expr)                                      \
   do {                                                 \
     if (!(expr)) {                                     \
-      DEBUG_LOG1("FAIL at " __FILE__ ":%d", __LINE__); \
+      LOG(LS_INFO) << "Failed to read";                \
       return false;                                    \
     }                                                  \
   } while (0)
@@ -139,21 +132,21 @@ class RtpDumpReader : public RtpFileReaderImpl {
 
     char firstline[kFirstLineLength + 1] = {0};
     if (fgets(firstline, kFirstLineLength, file_) == NULL) {
-      DEBUG_LOG("ERROR: Can't read from file\n");
+      LOG(LS_INFO) << "Can't read from file";
       return false;
     }
     if (strncmp(firstline, "#!rtpplay", 9) == 0) {
       if (strncmp(firstline, "#!rtpplay1.0", 12) != 0) {
-        DEBUG_LOG("ERROR: wrong rtpplay version, must be 1.0\n");
+        LOG(LS_INFO) <<  "Wrong rtpplay version, must be 1.0";
         return false;
       }
     } else if (strncmp(firstline, "#!RTPencode", 11) == 0) {
       if (strncmp(firstline, "#!RTPencode1.0", 14) != 0) {
-        DEBUG_LOG("ERROR: wrong RTPencode version, must be 1.0\n");
+        LOG(LS_INFO) << "Wrong RTPencode version, must be 1.0";
         return false;
       }
     } else {
-      DEBUG_LOG("ERROR: wrong file format of input file\n");
+      LOG(LS_INFO) << "Wrong file format of input file";
       return false;
     }
 
@@ -236,7 +229,7 @@ const uint32_t kPcapBOMNoSwapOrder = 0xa1b2c3d4UL;
   do {                                                 \
     int r = (expr);                                    \
     if (r == kResultFail) {                            \
-      DEBUG_LOG1("FAIL at " __FILE__ ":%d", __LINE__); \
+      LOG(LS_INFO) << "FAIL at " << __FILE__  << ":" << __LINE__; \
       return kResultFail;                              \
     } else if (r == kResultSkip) {                     \
       return kResultSkip;                              \
@@ -459,7 +452,7 @@ class PcapReader : public RtpFileReaderImpl {
       packets_.push_back(marker);
     } else {
       if (!rtp_parser.Parse(&marker.rtp_header, nullptr)) {
-        DEBUG_LOG("Not recognized as RTP/RTCP");
+        LOG(LS_INFO) << "Not recognized as RTP/RTCP";
         return kResultSkip;
       }
 
@@ -487,7 +480,7 @@ class PcapReader : public RtpFileReaderImpl {
     TRY_PCAP(Read(&protocol, true));
     if (protocol == kBsdNullLoopback1 || protocol == kBsdNullLoopback2) {
       int result = ReadXxpIpHeader(marker);
-      DEBUG_LOG("Recognized loopback frame");
+      LOG(LS_INFO) << "Recognized loopback frame";
       if (result != kResultSkip) {
         return result;
       }
@@ -501,7 +494,7 @@ class PcapReader : public RtpFileReaderImpl {
     TRY_PCAP(Read(&type, true));
     if (type == kEthertypeIp) {
       int result = ReadXxpIpHeader(marker);
-      DEBUG_LOG("Recognized ethernet 2 frame");
+      LOG(LS_INFO) << "Recognized ethernet 2 frame";
       if (result != kResultSkip) {
         return result;
       }
@@ -541,13 +534,13 @@ class PcapReader : public RtpFileReaderImpl {
     TRY_PCAP(Read(&marker->dest_ip, true));
 
     if (((version >> 12) & 0x000f) != kIpVersion4) {
-      DEBUG_LOG("IP header is not IPv4");
+      LOG(LS_INFO) << "IP header is not IPv4";
       return kResultSkip;
     }
 
     if (fragment != kFragmentOffsetClear &&
         fragment != kFragmentOffsetDoNotFragment) {
-      DEBUG_LOG("IP fragments cannot be handled");
+      LOG(LS_INFO) << "IP fragments cannot be handled";
       return kResultSkip;
     }
 
@@ -558,7 +551,7 @@ class PcapReader : public RtpFileReaderImpl {
 
     protocol = protocol & 0x00ff;
     if (protocol == kProtocolTcp) {
-      DEBUG_LOG("TCP packets are not handled");
+      LOG(LS_INFO) << "TCP packets are not handled";
       return kResultSkip;
     } else if (protocol == kProtocolUdp) {
       uint16_t length;
@@ -569,7 +562,7 @@ class PcapReader : public RtpFileReaderImpl {
       TRY_PCAP(Read(&checksum, true));
       marker->payload_length = length - kUdpHeaderLength;
     } else {
-      DEBUG_LOG("Unknown transport (expected UDP or TCP)");
+      LOG(LS_INFO) << "Unknown transport (expected UDP or TCP)";
       return kResultSkip;
     }
 

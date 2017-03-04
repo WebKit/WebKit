@@ -31,12 +31,16 @@ class DtxController final : public Controller {
 
   explicit DtxController(const Config& config);
 
-  void MakeDecision(const NetworkMetrics& metrics,
-                    AudioNetworkAdaptor::EncoderRuntimeConfig* config) override;
+  ~DtxController() override;
+
+  void UpdateNetworkMetrics(const NetworkMetrics& network_metrics) override;
+
+  void MakeDecision(AudioNetworkAdaptor::EncoderRuntimeConfig* config) override;
 
  private:
   const Config config_;
   bool dtx_enabled_;
+  rtc::Optional<int> uplink_bandwidth_bps_;
   RTC_DISALLOW_COPY_AND_ASSIGN(DtxController);
 };
 

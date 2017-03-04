@@ -35,7 +35,7 @@ class UnixFilesystem : public FilesystemInterface {
 #endif
 
   // Opens a file. Returns an open StreamInterface if function succeeds.
-  // Otherwise, returns NULL.
+  // Otherwise, returns null.
   FileStream* OpenFile(const Pathname& filename,
                        const std::string& mode) override;
 
@@ -44,7 +44,7 @@ class UnixFilesystem : public FilesystemInterface {
   bool DeleteFile(const Pathname& filename) override;
 
   // This will attempt to delete the folder located at 'folder'
-  // It ASSERTs and returns false if you pass it a non-existant folder or a
+  // It DCHECKs and returns false if you pass it a non-existant folder or a
   // plain file.
   bool DeleteEmptyFolder(const Pathname& folder) override;
 
@@ -94,12 +94,8 @@ class UnixFilesystem : public FilesystemInterface {
                    FileTimeType which,
                    time_t* time) override;
 
-  bool GetAppDataFolder(Pathname* path, bool per_user) override;
-
   // Get a temporary folder that is unique to the current user and application.
   bool GetAppTempFolder(Pathname* path) override;
-
-  bool GetDiskFreeSpace(const Pathname& path, int64_t* freebytes) override;
 
  private:
 #if defined(WEBRTC_ANDROID) || defined(WEBRTC_MAC)

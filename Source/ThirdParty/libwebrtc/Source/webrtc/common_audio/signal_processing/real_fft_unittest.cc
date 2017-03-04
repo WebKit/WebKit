@@ -42,9 +42,9 @@ class RealFFTTest : public ::testing::Test {
 
 TEST_F(RealFFTTest, CreateFailsOnBadInput) {
   RealFFT* fft = WebRtcSpl_CreateRealFFT(11);
-  EXPECT_TRUE(fft == NULL);
+  EXPECT_TRUE(fft == nullptr);
   fft = WebRtcSpl_CreateRealFFT(-1);
-  EXPECT_TRUE(fft == NULL);
+  EXPECT_TRUE(fft == nullptr);
 }
 
 TEST_F(RealFFTTest, RealAndComplexMatch) {
@@ -64,7 +64,7 @@ TEST_F(RealFFTTest, RealAndComplexMatch) {
 
   // Create and run real forward FFT.
   RealFFT* fft = WebRtcSpl_CreateRealFFT(kOrder);
-  EXPECT_TRUE(fft != NULL);
+  EXPECT_TRUE(fft != nullptr);
   EXPECT_EQ(0, WebRtcSpl_RealForwardFFT(fft, real_fft_time, real_fft_freq));
 
   // Run complex forward FFT.

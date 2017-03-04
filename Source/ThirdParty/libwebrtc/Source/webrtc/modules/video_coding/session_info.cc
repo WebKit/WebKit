@@ -455,7 +455,7 @@ int VCMSessionInfo::InsertPacket(const VCMPacket& packet,
 
   if (packet.codec == kVideoCodecH264) {
     frame_type_ = packet.frameType;
-    if (packet.isFirstPacket &&
+    if (packet.is_first_packet_in_frame &&
         (first_packet_seq_num_ == -1 ||
          IsNewerSequenceNumber(first_packet_seq_num_, packet.seqNum))) {
       first_packet_seq_num_ = packet.seqNum;
@@ -471,7 +471,7 @@ int VCMSessionInfo::InsertPacket(const VCMPacket& packet,
     // Placing check here, as to properly account for duplicate packets.
     // Check if this is first packet (only valid for some codecs)
     // Should only be set for one packet per session.
-    if (packet.isFirstPacket && first_packet_seq_num_ == -1) {
+    if (packet.is_first_packet_in_frame && first_packet_seq_num_ == -1) {
       // The first packet in a frame signals the frame type.
       frame_type_ = packet.frameType;
       // Store the sequence number for the first packet.

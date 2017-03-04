@@ -13,9 +13,9 @@
 
 #include <vector>
 
+#include "webrtc/api/video/video_frame.h"
 #include "webrtc/base/thread_checker.h"
 #include "webrtc/media/base/videosourceinterface.h"
-#include "webrtc/video_frame.h"
 
 namespace rtc {
 

@@ -19,6 +19,12 @@
 #include "webrtc/common_video/h264/h264_common.h"
 #include "webrtc/base/logging.h"
 
+namespace {
+const int kMaxAbsQpDeltaValue = 51;
+const int kMinQpValue = 0;
+const int kMaxQpValue = 51;
+}
+
 namespace webrtc {
 
 #define RETURN_ON_FAIL(x, res)        \
@@ -242,12 +248,21 @@ H264BitstreamParser::Result H264BitstreamParser::ParseNonParameterSetNalu(
       }
     }
   }
-  // cabac not supported: entropy_coding_mode_flag == 0 asserted above.
-  // if (entropy_coding_mode_flag && slice_type != I && slice_type != SI)
-  //   cabac_init_idc
+  if (pps_->entropy_coding_mode_flag &&
+      slice_type != H264::SliceType::kI && slice_type != H264::SliceType::kSi) {
+    // cabac_init_idc: ue(v)
+    RETURN_INV_ON_FAIL(slice_reader.ReadExponentialGolomb(&golomb_tmp));
+  }
+
   int32_t last_slice_qp_delta;
   RETURN_INV_ON_FAIL(
       slice_reader.ReadSignedExponentialGolomb(&last_slice_qp_delta));
+  if (abs(last_slice_qp_delta) > kMaxAbsQpDeltaValue) {
+    // Something has gone wrong, and the parsed value is invalid.
+    LOG(LS_WARNING) << "Parsed QP value out of range.";
+    return kInvalidStream;
+  }
+
   last_slice_qp_delta_ = rtc::Optional<int32_t>(last_slice_qp_delta);
   return kOk;
 }
@@ -288,7 +303,12 @@ void H264BitstreamParser::ParseBitstream(const uint8_t* bitstream,
 bool H264BitstreamParser::GetLastSliceQp(int* qp) const {
   if (!last_slice_qp_delta_ || !pps_)
     return false;
-  *qp = 26 + pps_->pic_init_qp_minus26 + *last_slice_qp_delta_;
+  const int parsed_qp = 26 + pps_->pic_init_qp_minus26 + *last_slice_qp_delta_;
+  if (parsed_qp < kMinQpValue || parsed_qp > kMaxQpValue) {
+    LOG(LS_ERROR) << "Parsed invalid QP from bitstream.";
+    return false;
+  }
+  *qp = parsed_qp;
   return true;
 }
 

@@ -28,7 +28,7 @@
 #include <sstream>
 
 #include "webrtc/base/byteorder.h"
-#include "webrtc/base/common.h"
+#include "webrtc/base/checks.h"
 #include "webrtc/base/logging.h"
 #include "webrtc/base/nethelpers.h"
 
@@ -120,7 +120,7 @@ void SocketAddress::SetResolvedIP(const IPAddress& ip) {
 }
 
 void SocketAddress::SetPort(int port) {
-  ASSERT((0 <= port) && (port < 65536));
+  RTC_DCHECK((0 <= port) && (port < 65536));
   port_ = static_cast<uint16_t>(port);
 }
 
@@ -184,7 +184,7 @@ bool SocketAddress::FromString(const std::string& str) {
     if (closebracket != std::string::npos) {
       std::string::size_type colon = str.find(':', closebracket);
       if (colon != std::string::npos && colon > closebracket) {
-        SetPort(strtoul(str.substr(colon + 1).c_str(), NULL, 10));
+        SetPort(strtoul(str.substr(colon + 1).c_str(), nullptr, 10));
         SetIP(str.substr(1, closebracket - 1));
       } else {
         return false;
@@ -194,7 +194,7 @@ bool SocketAddress::FromString(const std::string& str) {
     std::string::size_type pos = str.find(':');
     if (std::string::npos == pos)
       return false;
-    SetPort(strtoul(str.substr(pos + 1).c_str(), NULL, 10));
+    SetPort(strtoul(str.substr(pos + 1).c_str(), nullptr, 10));
     SetIP(str.substr(0, pos));
   }
   return true;

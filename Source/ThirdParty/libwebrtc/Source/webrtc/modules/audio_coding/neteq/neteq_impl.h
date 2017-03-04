@@ -26,6 +26,7 @@
 #include "webrtc/modules/audio_coding/neteq/rtcp.h"
 #include "webrtc/modules/audio_coding/neteq/statistics_calculator.h"
 #include "webrtc/modules/audio_coding/neteq/tick_timer.h"
+#include "webrtc/modules/include/module_common_types.h"
 #include "webrtc/typedefs.h"
 
 namespace webrtc {

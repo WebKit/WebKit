@@ -16,7 +16,6 @@
 #include <string.h>
 
 #include "webrtc/common_types.h"
-#include "webrtc/modules/audio_coding/acm2/acm_common_defs.h"
 #include "webrtc/modules/audio_coding/include/audio_coding_module.h"
 #include "webrtc/test/gtest.h"
 
@@ -135,6 +134,8 @@ void PrintCodecs() {
   }
 
 }
+
+namespace test {
 
 CircularBuffer::CircularBuffer(uint32_t len)
     : _buff(NULL),
@@ -264,6 +265,8 @@ int16_t CircularBuffer::Variance(double& var) {
     }
   }
 }
+
+}  // namespace test
 
 bool FixedPayloadTypeCodec(const char* payloadName) {
   char fixPayloadTypeCodecs[NUM_CODECS_WITH_FIXED_PAYLOAD_TYPE][32] = { "PCMU",

@@ -18,7 +18,6 @@
 #include "webrtc/base/logging.h"
 #include "webrtc/common_video/include/frame_callback.h"
 #include "webrtc/modules/video_coding/video_coding_impl.h"
-#include "webrtc/modules/video_processing/include/video_processing.h"
 #include "webrtc/system_wrappers/include/metrics.h"
 #include "webrtc/video/call_stats.h"
 #include "webrtc/video/payload_router.h"
@@ -33,12 +32,10 @@ VideoStreamDecoder::VideoStreamDecoder(
     bool enable_nack,
     bool enable_fec,
     ReceiveStatisticsProxy* receive_statistics_proxy,
-    rtc::VideoSinkInterface<VideoFrame>* incoming_video_stream,
-    I420FrameCallback* pre_render_callback)
+    rtc::VideoSinkInterface<VideoFrame>* incoming_video_stream)
     : video_receiver_(video_receiver),
       receive_stats_callback_(receive_statistics_proxy),
       incoming_video_stream_(incoming_video_stream),
-      pre_render_callback_(pre_render_callback),
       last_rtt_ms_(0) {
   RTC_DCHECK(video_receiver_);
 
@@ -76,14 +73,9 @@ VideoStreamDecoder::~VideoStreamDecoder() {
 // callback won't necessarily be called from the decoding thread. The decoding
 // thread may have held the lock when calling VideoDecoder::Decode, Reset, or
 // Release. Acquiring the same lock in the path of decode callback can deadlock.
-int32_t VideoStreamDecoder::FrameToRender(VideoFrame& video_frame) {  // NOLINT
-  if (pre_render_callback_) {
-    // Post processing is not supported if the frame is backed by a texture.
-    if (!video_frame.video_frame_buffer()->native_handle()) {
-      pre_render_callback_->FrameCallback(&video_frame);
-    }
-  }
-
+int32_t VideoStreamDecoder::FrameToRender(VideoFrame& video_frame,
+                                          rtc::Optional<uint8_t> qp) {
+  receive_stats_callback_->OnDecodedFrame(qp);
   incoming_video_stream_->OnFrame(video_frame);
 
   return 0;
@@ -123,17 +115,17 @@ void VideoStreamDecoder::OnDecoderTiming(int decode_ms,
                                          int target_delay_ms,
                                          int jitter_buffer_ms,
                                          int min_playout_delay_ms,
-                                         int render_delay_ms) {
-  int last_rtt = -1;
-  {
-    rtc::CritScope lock(&crit_);
-    last_rtt = last_rtt_ms_;
-  }
+                                         int render_delay_ms) {}
 
-  receive_stats_callback_->OnDecoderTiming(
-      decode_ms, max_decode_ms, current_delay_ms, target_delay_ms,
-      jitter_buffer_ms, min_playout_delay_ms, render_delay_ms, last_rtt);
-}
+void VideoStreamDecoder::OnFrameBufferTimingsUpdated(int decode_ms,
+                                                     int max_decode_ms,
+                                                     int current_delay_ms,
+                                                     int target_delay_ms,
+                                                     int jitter_buffer_ms,
+                                                     int min_playout_delay_ms,
+                                                     int render_delay_ms) {}
+
+void VideoStreamDecoder::OnCompleteFrame(bool is_keyframe, size_t size_bytes) {}
 
 void VideoStreamDecoder::OnRttUpdate(int64_t avg_rtt_ms, int64_t max_rtt_ms) {
   video_receiver_->SetReceiveChannelParameters(max_rtt_ms);

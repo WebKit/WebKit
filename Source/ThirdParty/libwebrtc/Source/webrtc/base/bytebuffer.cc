@@ -23,12 +23,12 @@ static const int DEFAULT_SIZE = 4096;
 
 ByteBufferWriter::ByteBufferWriter()
     : ByteBuffer(ORDER_NETWORK) {
-  Construct(NULL, DEFAULT_SIZE);
+  Construct(nullptr, DEFAULT_SIZE);
 }
 
 ByteBufferWriter::ByteBufferWriter(ByteOrder byte_order)
     : ByteBuffer(byte_order) {
-  Construct(NULL, DEFAULT_SIZE);
+  Construct(nullptr, DEFAULT_SIZE);
 }
 
 ByteBufferWriter::ByteBufferWriter(const char* bytes, size_t len)

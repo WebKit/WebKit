@@ -28,7 +28,7 @@
 #include <vector>
 #include "webrtc/base/arraysize.h"
 #include "webrtc/base/asyncsocket.h"
-#include "webrtc/base/common.h"
+#include "webrtc/base/checks.h"
 #include "webrtc/base/gunit.h"
 #include "webrtc/base/nethelpers.h"
 #include "webrtc/base/pathutils.h"
@@ -177,7 +177,7 @@ public:
     va_start(args, format);
     char buffer[1024];
     size_t len = vsprintfn(buffer, sizeof(buffer), format, args);
-    ASSERT(len < sizeof(buffer) - 1);
+    RTC_CHECK(len < sizeof(buffer) - 1);
     va_end(args);
     QueueData(buffer, len);
   }
@@ -276,14 +276,12 @@ private:
 
 class SocketTestClient : public sigslot::has_slots<> {
 public:
-  SocketTestClient() {
-    Init(NULL, AF_INET);
-  }
-  SocketTestClient(AsyncSocket* socket) {
-    Init(socket, socket->GetLocalAddress().family());
+ SocketTestClient() { Init(nullptr, AF_INET); }
+ SocketTestClient(AsyncSocket* socket) {
+   Init(socket, socket->GetLocalAddress().family());
   }
   SocketTestClient(const SocketAddress& address) {
-    Init(NULL, address.family());
+    Init(nullptr, address.family());
     socket_->Connect(address);
   }
 
@@ -297,7 +295,7 @@ public:
     va_start(args, format);
     char buffer[1024];
     size_t len = vsprintfn(buffer, sizeof(buffer), format, args);
-    ASSERT(len < sizeof(buffer) - 1);
+    RTC_CHECK(len < sizeof(buffer) - 1);
     va_end(args);
     QueueData(buffer, len);
   }
@@ -408,8 +406,7 @@ class SocketTestServer : public sigslot::has_slots<> {
 
  private:
   void OnReadEvent(AsyncSocket* socket) {
-    AsyncSocket* accepted =
-      static_cast<AsyncSocket*>(socket_->Accept(NULL));
+    AsyncSocket* accepted = static_cast<AsyncSocket*>(socket_->Accept(nullptr));
     if (!accepted)
       return;
     clients_.push_back(new SocketTestClient(accepted));
@@ -530,9 +527,9 @@ inline AssertionResult CmpHelperMemEq(const char* expected_expression,
 
 #if defined(WEBRTC_LINUX) && !defined(WEBRTC_ANDROID)
 struct XDisplay {
-  XDisplay() : display_(XOpenDisplay(NULL)) { }
+  XDisplay() : display_(XOpenDisplay(nullptr)) {}
   ~XDisplay() { if (display_) XCloseDisplay(display_); }
-  bool IsValid() const { return display_ != NULL; }
+  bool IsValid() const { return display_ != nullptr; }
   operator Display*() { return display_; }
  private:
   Display* display_;

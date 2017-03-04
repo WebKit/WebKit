@@ -146,6 +146,8 @@ class FakeNetworkPipe {
 
   int64_t next_process_time_;
 
+  int64_t last_log_time_;
+
   RTC_DISALLOW_COPY_AND_ASSIGN(FakeNetworkPipe);
 };
 

@@ -8,6 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include "webrtc/api/video/i420_buffer.h"
 #include "webrtc/modules/video_coding/codecs/test/mock/mock_packet_manipulator.h"
 #include "webrtc/modules/video_coding/codecs/test/videoprocessor.h"
 #include "webrtc/modules/video_coding/include/mock/mock_video_codec_interface.h"
@@ -68,7 +69,9 @@ TEST_F(VideoProcessorTest, Init) {
   ExpectInit();
   VideoProcessorImpl video_processor(
       &encoder_mock_, &decoder_mock_, &frame_reader_mock_, &frame_writer_mock_,
-      &packet_manipulator_mock_, config_, &stats_);
+      &packet_manipulator_mock_, config_, &stats_,
+      nullptr /* source_frame_writer */, nullptr /* encoded_frame_writer */,
+      nullptr /* decoded_frame_writer */);
   ASSERT_TRUE(video_processor.Init());
 }
 
@@ -81,7 +84,9 @@ TEST_F(VideoProcessorTest, ProcessFrame) {
   // be more than initialized...
   VideoProcessorImpl video_processor(
       &encoder_mock_, &decoder_mock_, &frame_reader_mock_, &frame_writer_mock_,
-      &packet_manipulator_mock_, config_, &stats_);
+      &packet_manipulator_mock_, config_, &stats_,
+      nullptr /* source_frame_writer */, nullptr /* encoded_frame_writer */,
+      nullptr /* decoded_frame_writer */);
   ASSERT_TRUE(video_processor.Init());
   video_processor.ProcessFrame(0);
 }

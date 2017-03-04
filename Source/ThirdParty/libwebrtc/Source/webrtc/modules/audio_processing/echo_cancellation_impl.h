@@ -44,7 +44,6 @@ class EchoCancellationImpl : public EchoCancellation {
   void SetExtraOptions(const webrtc::Config& config);
   bool is_delay_agnostic_enabled() const;
   bool is_extended_filter_enabled() const;
-  bool is_aec3_enabled() const;
   std::string GetExperimentsDescription();
   bool is_refined_adaptive_filter_enabled() const;
 
@@ -104,7 +103,6 @@ class EchoCancellationImpl : public EchoCancellation {
   bool delay_logging_enabled_ GUARDED_BY(crit_capture_);
   bool extended_filter_enabled_ GUARDED_BY(crit_capture_);
   bool delay_agnostic_enabled_ GUARDED_BY(crit_capture_);
-  bool aec3_enabled_ GUARDED_BY(crit_capture_);
   bool refined_adaptive_filter_enabled_ GUARDED_BY(crit_capture_) = false;
 
   std::vector<std::unique_ptr<Canceller>> cancellers_;

@@ -17,16 +17,20 @@
 #include "webrtc/modules/audio_coding/audio_network_adaptor/controller.h"
 #include "webrtc/modules/audio_coding/audio_network_adaptor/controller_manager.h"
 #include "webrtc/modules/audio_coding/audio_network_adaptor/debug_dump_writer.h"
+#include "webrtc/modules/audio_coding/audio_network_adaptor/event_log_writer.h"
 #include "webrtc/modules/audio_coding/audio_network_adaptor/include/audio_network_adaptor.h"
 #include "webrtc/system_wrappers/include/clock.h"
 
 namespace webrtc {
+
+class RtcEventLog;
 
 class AudioNetworkAdaptorImpl final : public AudioNetworkAdaptor {
  public:
   struct Config {
     Config();
     ~Config();
+    RtcEventLog* event_log;
     const Clock* clock;
   };
 
@@ -45,6 +49,8 @@ class AudioNetworkAdaptorImpl final : public AudioNetworkAdaptor {
 
   void SetTargetAudioBitrate(int target_audio_bitrate_bps) override;
 
+  void SetOverhead(size_t overhead_bytes_per_packet) override;
+
   EncoderRuntimeConfig GetEncoderRuntimeConfig() override;
 
   void StartDebugDump(FILE* file_handle) override;
@@ -54,11 +60,15 @@ class AudioNetworkAdaptorImpl final : public AudioNetworkAdaptor {
  private:
   void DumpNetworkMetrics();
 
+  void UpdateNetworkMetrics(const Controller::NetworkMetrics& network_metrics);
+
   const Config config_;
 
   std::unique_ptr<ControllerManager> controller_manager_;
 
   std::unique_ptr<DebugDumpWriter> debug_dump_writer_;
+
+  const std::unique_ptr<EventLogWriter> event_log_writer_;
 
   Controller::NetworkMetrics last_metrics_;
 

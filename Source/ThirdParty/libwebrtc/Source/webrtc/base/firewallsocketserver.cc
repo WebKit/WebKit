@@ -121,7 +121,7 @@ FirewallSocketServer::~FirewallSocketServer() {
 
   if (server_ && should_delete_server_) {
     delete server_;
-    server_ = NULL;
+    server_ = nullptr;
   }
 }
 
@@ -210,7 +210,7 @@ AsyncSocket* FirewallSocketServer::WrapSocket(AsyncSocket* sock, int type) {
       (type == SOCK_DGRAM && !udp_sockets_enabled_)) {
     LOG(LS_VERBOSE) << "FirewallSocketServer socket creation denied";
     delete sock;
-    return NULL;
+    return nullptr;
   }
   return new FirewallSocket(this, sock, type);
 }

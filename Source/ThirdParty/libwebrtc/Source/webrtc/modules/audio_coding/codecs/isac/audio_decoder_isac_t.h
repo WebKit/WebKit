@@ -13,10 +13,10 @@
 
 #include <vector>
 
+#include "webrtc/api/audio_codecs/audio_decoder.h"
 #include "webrtc/base/constructormagic.h"
 #include "webrtc/base/optional.h"
 #include "webrtc/base/scoped_ref_ptr.h"
-#include "webrtc/modules/audio_coding/codecs/audio_decoder.h"
 #include "webrtc/modules/audio_coding/codecs/isac/locked_bandwidth_info.h"
 
 namespace webrtc {

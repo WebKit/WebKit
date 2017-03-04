@@ -52,11 +52,11 @@ bool VerifyBuffer(uint8_t* buffer, size_t length, uint8_t start_value) {
 class FileTest : public ::testing::Test {
  protected:
   std::string path_;
-  void SetUp() {
+  void SetUp() override {
     path_ = webrtc::test::TempFilename(webrtc::test::OutputPath(), "test_file");
     ASSERT_FALSE(path_.empty());
   }
-  void TearDown() { RemoveFile(path_); }
+  void TearDown() override { RemoveFile(path_); }
 };
 
 TEST_F(FileTest, DefaultConstructor) {
@@ -161,6 +161,41 @@ TEST_F(FileTest, RandomAccessReadWrite) {
   EXPECT_EQ(2u, file.WriteAt(data, 2, 8));
   EXPECT_EQ(2u, file.ReadAt(out, 2, 8));
   EXPECT_TRUE(VerifyBuffer(out, 2, 0));
+}
+
+TEST_F(FileTest, OpenFromPathname) {
+  {
+    File file = File::Open(Pathname(path_));
+    ASSERT_TRUE(file.IsOpen()) << "Error: " << LastError();
+  }
+
+  {
+    Pathname path(path_);
+    File file = File::Open(path);
+    ASSERT_TRUE(file.IsOpen()) << "Error: " << LastError();
+  }
+}
+
+TEST_F(FileTest, CreateFromPathname) {
+  {
+    File file = File::Create(Pathname(path_));
+    ASSERT_TRUE(file.IsOpen()) << "Error: " << LastError();
+  }
+
+  {
+    Pathname path(path_);
+    File file = File::Create(path);
+    ASSERT_TRUE(file.IsOpen()) << "Error: " << LastError();
+  }
+}
+
+TEST_F(FileTest, ShouldBeAbleToRemoveFile) {
+  {
+    File file = File::Open(Pathname(path_));
+    ASSERT_TRUE(file.IsOpen()) << "Error: " << LastError();
+  }
+
+  ASSERT_TRUE(File::Remove(Pathname(path_))) << "Error: " << LastError();
 }
 
 }  // namespace rtc

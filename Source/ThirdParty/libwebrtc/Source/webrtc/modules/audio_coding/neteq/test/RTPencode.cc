@@ -1724,7 +1724,7 @@ size_t NetEQTest_encode(webrtc::NetEqDecoder coder,
 #ifdef CODEC_OPUS
     cdlen = WebRtcOpus_Encode(opus_inst[k], indata, frameLen, kRtpDataSize - 12,
                               encoded);
-    RTC_CHECK_GT(cdlen, 0u);
+    RTC_CHECK_GT(cdlen, 0);
 #endif
     indata += frameLen;
     encoded += cdlen;

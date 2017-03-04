@@ -19,6 +19,7 @@
 #include "webrtc/base/logging.h"
 #include "webrtc/modules/include/module_common_types.h"
 #include "webrtc/modules/rtp_rtcp/source/byte_io.h"
+#include "webrtc/modules/rtp_rtcp/source/rtp_packet_to_send.h"
 #include "webrtc/common_video/h264/sps_vui_rewriter.h"
 #include "webrtc/common_video/h264/h264_common.h"
 #include "webrtc/common_video/h264/pps_parser.h"
@@ -77,9 +78,14 @@ bool ParseStapAStartOffsets(const uint8_t* nalu_ptr,
 
 }  // namespace
 
-RtpPacketizerH264::RtpPacketizerH264(FrameType frame_type,
-                                     size_t max_payload_len)
-    : max_payload_len_(max_payload_len) {}
+RtpPacketizerH264::RtpPacketizerH264(size_t max_payload_len,
+                                     H264PacketizationMode packetization_mode)
+    : max_payload_len_(max_payload_len),
+      packetization_mode_(packetization_mode) {
+  // Guard against uninitialized memory in packetization_mode.
+  RTC_CHECK(packetization_mode == H264PacketizationMode::NonInterleaved ||
+            packetization_mode == H264PacketizationMode::SingleNalUnit);
+}
 
 RtpPacketizerH264::~RtpPacketizerH264() {
 }
@@ -162,11 +168,19 @@ void RtpPacketizerH264::SetPayloadData(
 
 void RtpPacketizerH264::GeneratePackets() {
   for (size_t i = 0; i < input_fragments_.size();) {
-    if (input_fragments_[i].length > max_payload_len_) {
-      PacketizeFuA(i);
-      ++i;
-    } else {
-      i = PacketizeStapA(i);
+    switch (packetization_mode_) {
+      case H264PacketizationMode::SingleNalUnit:
+        PacketizeSingleNalu(i);
+        ++i;
+        break;
+      case H264PacketizationMode::NonInterleaved:
+        if (input_fragments_[i].length > max_payload_len_) {
+          PacketizeFuA(i);
+          ++i;
+        } else {
+          i = PacketizeStapA(i);
+        }
+        break;
     }
   }
 }
@@ -194,7 +208,7 @@ void RtpPacketizerH264::PacketizeFuA(size_t fragment_index) {
     offset += packet_length;
     fragment_length -= packet_length;
   }
-  RTC_CHECK_EQ(0u, fragment_length);
+  RTC_CHECK_EQ(0, fragment_length);
 }
 
 size_t RtpPacketizerH264::PacketizeStapA(size_t fragment_index) {
@@ -205,7 +219,7 @@ size_t RtpPacketizerH264::PacketizeStapA(size_t fragment_index) {
   const Fragment* fragment = &input_fragments_[fragment_index];
   RTC_CHECK_GE(payload_size_left, fragment->length);
   while (payload_size_left >= fragment->length + fragment_headers_length) {
-    RTC_CHECK_GT(fragment->length, 0u);
+    RTC_CHECK_GT(fragment->length, 0);
     packets_.push(PacketUnit(*fragment, aggregated_fragments == 0, false, true,
                              fragment->buffer[0]));
     payload_size_left -= fragment->length;
@@ -229,65 +243,77 @@ size_t RtpPacketizerH264::PacketizeStapA(size_t fragment_index) {
   return fragment_index;
 }
 
-bool RtpPacketizerH264::NextPacket(uint8_t* buffer,
-                                   size_t* bytes_to_send,
+void RtpPacketizerH264::PacketizeSingleNalu(size_t fragment_index) {
+  // Add a single NALU to the queue, no aggregation.
+  size_t payload_size_left = max_payload_len_;
+  const Fragment* fragment = &input_fragments_[fragment_index];
+  RTC_CHECK_GE(payload_size_left, fragment->length)
+      << "Payload size left " << payload_size_left << ", fragment length "
+      << fragment->length << ", packetization mode " << packetization_mode_;
+  RTC_CHECK_GT(fragment->length, 0u);
+  packets_.push(PacketUnit(*fragment, true /* first */, true /* last */,
+                           false /* aggregated */, fragment->buffer[0]));
+}
+
+bool RtpPacketizerH264::NextPacket(RtpPacketToSend* rtp_packet,
                                    bool* last_packet) {
-  *bytes_to_send = 0;
+  RTC_DCHECK(rtp_packet);
+  RTC_DCHECK(last_packet);
   if (packets_.empty()) {
-    *bytes_to_send = 0;
     *last_packet = true;
     return false;
   }
 
   PacketUnit packet = packets_.front();
-
   if (packet.first_fragment && packet.last_fragment) {
     // Single NAL unit packet.
-    *bytes_to_send = packet.source_fragment.length;
-    memcpy(buffer, packet.source_fragment.buffer, *bytes_to_send);
+    size_t bytes_to_send = packet.source_fragment.length;
+    uint8_t* buffer = rtp_packet->AllocatePayload(bytes_to_send);
+    memcpy(buffer, packet.source_fragment.buffer, bytes_to_send);
     packets_.pop();
     input_fragments_.pop_front();
-    RTC_CHECK_LE(*bytes_to_send, max_payload_len_);
   } else if (packet.aggregated) {
-    NextAggregatePacket(buffer, bytes_to_send);
-    RTC_CHECK_LE(*bytes_to_send, max_payload_len_);
+    RTC_CHECK_EQ(H264PacketizationMode::NonInterleaved, packetization_mode_);
+    NextAggregatePacket(rtp_packet);
   } else {
-    NextFragmentPacket(buffer, bytes_to_send);
-    RTC_CHECK_LE(*bytes_to_send, max_payload_len_);
+    RTC_CHECK_EQ(H264PacketizationMode::NonInterleaved, packetization_mode_);
+    NextFragmentPacket(rtp_packet);
   }
+  RTC_DCHECK_LE(rtp_packet->payload_size(), max_payload_len_);
   *last_packet = packets_.empty();
+  rtp_packet->SetMarker(*last_packet);
   return true;
 }
 
-void RtpPacketizerH264::NextAggregatePacket(uint8_t* buffer,
-                                            size_t* bytes_to_send) {
+void RtpPacketizerH264::NextAggregatePacket(RtpPacketToSend* rtp_packet) {
+  uint8_t* buffer = rtp_packet->AllocatePayload(max_payload_len_);
+  RTC_DCHECK(buffer);
   PacketUnit* packet = &packets_.front();
   RTC_CHECK(packet->first_fragment);
   // STAP-A NALU header.
   buffer[0] = (packet->header & (kFBit | kNriMask)) | H264::NaluType::kStapA;
-  int index = kNalHeaderSize;
-  *bytes_to_send += kNalHeaderSize;
+  size_t index = kNalHeaderSize;
+  bool is_last_fragment = packet->last_fragment;
   while (packet->aggregated) {
     const Fragment& fragment = packet->source_fragment;
     // Add NAL unit length field.
     ByteWriter<uint16_t>::WriteBigEndian(&buffer[index], fragment.length);
     index += kLengthFieldSize;
-    *bytes_to_send += kLengthFieldSize;
     // Add NAL unit.
     memcpy(&buffer[index], fragment.buffer, fragment.length);
     index += fragment.length;
-    *bytes_to_send += fragment.length;
     packets_.pop();
     input_fragments_.pop_front();
-    if (packet->last_fragment)
+    if (is_last_fragment)
       break;
     packet = &packets_.front();
+    is_last_fragment = packet->last_fragment;
   }
-  RTC_CHECK(packet->last_fragment);
+  RTC_CHECK(is_last_fragment);
+  rtp_packet->SetPayloadSize(index);
 }
 
-void RtpPacketizerH264::NextFragmentPacket(uint8_t* buffer,
-                                           size_t* bytes_to_send) {
+void RtpPacketizerH264::NextFragmentPacket(RtpPacketToSend* rtp_packet) {
   PacketUnit* packet = &packets_.front();
   // NAL unit fragmented over multiple packets (FU-A).
   // We do not send original NALU header, so it will be replaced by the
@@ -301,11 +327,11 @@ void RtpPacketizerH264::NextFragmentPacket(uint8_t* buffer,
   fu_header |= (packet->last_fragment ? kEBit : 0);
   uint8_t type = packet->header & kTypeMask;
   fu_header |= type;
+  const Fragment& fragment = packet->source_fragment;
+  uint8_t* buffer =
+      rtp_packet->AllocatePayload(kFuAHeaderSize + fragment.length);
   buffer[0] = fu_indicator;
   buffer[1] = fu_header;
-
-  const Fragment& fragment = packet->source_fragment;
-  *bytes_to_send = fragment.length + kFuAHeaderSize;
   memcpy(buffer + kFuAHeaderSize, fragment.buffer, fragment.length);
   if (packet->last_fragment)
     input_fragments_.pop_front();
@@ -369,7 +395,7 @@ bool RtpDepacketizerH264::ProcessStapAOrSingleNalu(
   parsed_payload->type.Video.width = 0;
   parsed_payload->type.Video.height = 0;
   parsed_payload->type.Video.codec = kRtpVideoH264;
-  parsed_payload->type.Video.isFirstPacket = true;
+  parsed_payload->type.Video.is_first_packet_in_frame = true;
   RTPVideoHeaderH264* h264_header =
       &parsed_payload->type.Video.codecHeader.H264;
 
@@ -590,7 +616,7 @@ bool RtpDepacketizerH264::ParseFuaNalu(
   parsed_payload->type.Video.width = 0;
   parsed_payload->type.Video.height = 0;
   parsed_payload->type.Video.codec = kRtpVideoH264;
-  parsed_payload->type.Video.isFirstPacket = first_fragment;
+  parsed_payload->type.Video.is_first_packet_in_frame = first_fragment;
   RTPVideoHeaderH264* h264 = &parsed_payload->type.Video.codecHeader.H264;
   h264->packetization_type = kH264FuA;
   h264->nalu_type = original_nal_type;

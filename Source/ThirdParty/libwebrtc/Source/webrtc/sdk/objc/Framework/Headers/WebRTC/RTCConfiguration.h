@@ -65,22 +65,7 @@ typedef NS_ENUM(NSInteger, RTCEncryptionKeyType) {
 NS_ASSUME_NONNULL_BEGIN
 
 RTC_EXPORT
-@interface RTCConfiguration : NSObject {
-    NSArray<RTCIceServer *> *_iceServers;
-    RTCIceTransportPolicy _iceTransportPolicy;
-    RTCBundlePolicy _bundlePolicy;
-    RTCRtcpMuxPolicy _rtcpMuxPolicy;
-    RTCTcpCandidatePolicy _tcpCandidatePolicy;
-    RTCCandidateNetworkPolicy _candidateNetworkPolicy;
-    RTCContinualGatheringPolicy _continualGatheringPolicy;
-    int _audioJitterBufferMaxPackets;
-    int _iceConnectionReceivingTimeout;
-    int _iceBackupCandidatePairPingInterval;
-    RTCEncryptionKeyType _keyType;
-    int _iceCandidatePoolSize;
-    BOOL _shouldPruneTurnPorts;
-    BOOL _shouldPresumeWritableWhenFullyRelayed;
-}
+@interface RTCConfiguration : NSObject
 
 /** An array of Ice Servers available to be used by ICE. */
 @property(nonatomic, copy) NSArray<RTCIceServer *> *iceServers;
@@ -99,6 +84,7 @@ RTC_EXPORT
 @property(nonatomic, assign)
     RTCContinualGatheringPolicy continualGatheringPolicy;
 @property(nonatomic, assign) int audioJitterBufferMaxPackets;
+@property(nonatomic, assign) BOOL audioJitterBufferFastAccelerate;
 @property(nonatomic, assign) int iceConnectionReceivingTimeout;
 @property(nonatomic, assign) int iceBackupCandidatePairPingInterval;
 
@@ -117,6 +103,11 @@ RTC_EXPORT
  *  candidate pairs will succeed, even before a binding response is received.
  */
 @property(nonatomic, assign) BOOL shouldPresumeWritableWhenFullyRelayed;
+
+/** If set to non-nil, controls the minimal interval between consecutive ICE
+ *  check packets.
+ */
+@property(nonatomic, copy, nullable) NSNumber *iceCheckMinInterval;
 
 - (instancetype)init NS_DESIGNATED_INITIALIZER;
 

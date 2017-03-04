@@ -14,12 +14,14 @@
 #include <memory>
 
 #include "webrtc/modules/rtp_rtcp/source/byte_io.h"
+#include "webrtc/test/gmock.h"
 #include "webrtc/test/gtest.h"
-
-using webrtc::rtcp::TransportFeedback;
 
 namespace webrtc {
 namespace {
+
+using ::testing::ElementsAreArray;
+using rtcp::TransportFeedback;
 
 static const int kHeaderSize = 20;
 static const int kStatusChunkSize = 2;
@@ -53,8 +55,9 @@ class FeedbackTester {
     expected_seq_.clear();
     expected_deltas_.clear();
     feedback_.reset(new TransportFeedback());
-
     feedback_->SetBase(received_seq[0], received_ts[0]);
+    ASSERT_TRUE(feedback_->IsConsistent());
+
     int64_t last_time = feedback_->GetBaseTimeUs();
     for (int i = 0; i < length; ++i) {
       int64_t time = received_ts[i];
@@ -66,15 +69,18 @@ class FeedbackTester {
       }
       last_time = time;
     }
+    ASSERT_TRUE(feedback_->IsConsistent());
     expected_seq_.insert(expected_seq_.begin(), &received_seq[0],
                          &received_seq[length]);
   }
 
   void VerifyPacket() {
+    ASSERT_TRUE(feedback_->IsConsistent());
     serialized_ = feedback_->Build();
     VerifyInternal();
     feedback_ = TransportFeedback::ParseFrom(serialized_.data(),
                                              serialized_.size());
+    ASSERT_TRUE(feedback_->IsConsistent());
     ASSERT_NE(nullptr, feedback_.get());
     VerifyInternal();
   }
@@ -90,31 +96,14 @@ class FeedbackTester {
       EXPECT_EQ(expected_size_bytes, serialized_.size());
     }
 
-    std::vector<TransportFeedback::StatusSymbol> symbols =
-        feedback_->GetStatusVector();
-    uint16_t seq = feedback_->GetBaseSequence();
-    auto seq_it = expected_seq_.begin();
-    for (TransportFeedback::StatusSymbol symbol : symbols) {
-      bool received =
-          (symbol == TransportFeedback::StatusSymbol::kReceivedSmallDelta ||
-           symbol == TransportFeedback::StatusSymbol::kReceivedLargeDelta);
-      if (seq_it != expected_seq_.end()) {
-        if (seq == *seq_it) {
-          ASSERT_NE(expected_seq_.end(), seq_it);
-          ASSERT_TRUE(received) << "Expected received packet @ " << seq;
-          ++seq_it;
-        } else {
-          ASSERT_FALSE(received) << "Did not expect received packet @ " << seq;
-        }
-      }
-      ++seq;
+    std::vector<uint16_t> actual_seq_nos;
+    std::vector<int64_t> actual_deltas_us;
+    for (const auto& packet : feedback_->GetReceivedPackets()) {
+      actual_seq_nos.push_back(packet.sequence_number());
+      actual_deltas_us.push_back(packet.delta_us());
     }
-    ASSERT_EQ(expected_seq_.end(), seq_it);
-
-    std::vector<int64_t> deltas = feedback_->GetReceiveDeltasUs();
-    ASSERT_EQ(expected_deltas_.size(), deltas.size());
-    for (size_t i = 0; i < expected_deltas_.size(); ++i)
-      EXPECT_EQ(expected_deltas_[i], deltas[i]) << "Delta mismatch @ " << i;
+    EXPECT_THAT(actual_seq_nos, ElementsAreArray(expected_seq_));
+    EXPECT_THAT(actual_deltas_us, ElementsAreArray(expected_deltas_));
   }
 
   void GenerateDeltas(const uint16_t seq[],
@@ -340,12 +329,11 @@ TEST(RtcpPacketTest, TransportFeedback_Aliasing) {
     feedback.AddReceivedPacket(i, i * kTooSmallDelta);
 
   feedback.Build();
-  std::vector<int64_t> deltas = feedback.GetReceiveDeltasUs();
 
   int64_t accumulated_delta = 0;
   int num_samples = 0;
-  for (int64_t delta : deltas) {
-    accumulated_delta += delta;
+  for (const auto& packet : feedback.GetReceivedPackets()) {
+    accumulated_delta += packet.delta_us();
     int64_t expected_time = num_samples * kTooSmallDelta;
     ++num_samples;
 
@@ -371,8 +359,8 @@ TEST(RtcpPacketTest, TransportFeedback_Limits) {
   packet->SetBase(0, 0);
   EXPECT_TRUE(packet->AddReceivedPacket(0x0, 0));
   EXPECT_TRUE(packet->AddReceivedPacket(0x8000, 1000));
-  EXPECT_TRUE(packet->AddReceivedPacket(0xFFFF, 2000));
-  EXPECT_FALSE(packet->AddReceivedPacket(0, 3000));
+  EXPECT_TRUE(packet->AddReceivedPacket(0xFFFE, 2000));
+  EXPECT_FALSE(packet->AddReceivedPacket(0xFFFF, 3000));
 
   // Too large delta.
   packet.reset(new TransportFeedback());
@@ -398,7 +386,7 @@ TEST(RtcpPacketTest, TransportFeedback_Limits) {
       ((1L << 23) - 1);
   packet.reset(new TransportFeedback());
   packet->SetBase(0, kMaxBaseTime);
-  packet->AddReceivedPacket(0, kMaxBaseTime);
+  EXPECT_TRUE(packet->AddReceivedPacket(0, kMaxBaseTime));
   // Serialize and de-serialize (verify 24bit parsing).
   rtc::Buffer raw_packet = packet->Build();
   packet = TransportFeedback::ParseFrom(raw_packet.data(), raw_packet.size());

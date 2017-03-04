@@ -14,9 +14,9 @@
 
 #include <algorithm>  // min
 
+#include "webrtc/api/audio_codecs/audio_decoder.h"
 #include "webrtc/base/checks.h"
 #include "webrtc/common_audio/signal_processing/include/signal_processing_library.h"
-#include "webrtc/modules/audio_coding/codecs/audio_decoder.h"
 #include "webrtc/modules/audio_coding/neteq/audio_multi_vector.h"
 #include "webrtc/modules/audio_coding/neteq/background_noise.h"
 #include "webrtc/modules/audio_coding/neteq/decoder_database.h"
@@ -98,8 +98,8 @@ int Normal::Process(const int16_t* input,
         // Normalize new frame energy to 15 bits.
         scaling = WebRtcSpl_NormW32(energy) - 16;
         // We want background_noise_.energy() / energy in Q14.
-        int32_t bgn_energy =
-            background_noise_.Energy(channel_ix) << (scaling+14);
+        int32_t bgn_energy = WEBRTC_SPL_SHIFT_W32(
+            background_noise_.Energy(channel_ix), scaling + 14);
         int16_t energy_scaled =
             static_cast<int16_t>(WEBRTC_SPL_SHIFT_W32(energy, scaling));
         int32_t ratio = WebRtcSpl_DivW32W16(bgn_energy, energy_scaled);
@@ -152,7 +152,7 @@ int Normal::Process(const int16_t* input,
   } else if (last_mode == kModeRfc3389Cng) {
     RTC_DCHECK_EQ(output->Channels(), 1);  // Not adapted for multi-channel yet.
     static const size_t kCngLength = 48;
-    RTC_DCHECK_LE(static_cast<size_t>(8 * fs_mult), kCngLength);
+    RTC_DCHECK_LE(8 * fs_mult, kCngLength);
     int16_t cng_output[kCngLength];
     // Reset mute factor and start up fresh.
     external_mute_factor_array[0] = 16384;

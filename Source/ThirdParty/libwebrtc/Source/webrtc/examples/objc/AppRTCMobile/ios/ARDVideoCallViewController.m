@@ -51,6 +51,7 @@
         initWithMandatoryConstraints:nil
                  optionalConstraints:[settingsModel
                                          currentMediaConstraintFromStoreAsRTCDictionary]];
+    [_client setMaxBitrate:[settingsModel currentMaxBitrateSettingFromStore]];
     [_client setCameraConstraints:cameraConstraints];
     [_client connectToRoomWithId:room
                       isLoopback:isLoopback

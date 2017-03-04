@@ -13,6 +13,7 @@
 #include "webrtc/base/logging.h"
 #include "webrtc/modules/include/module_common_types.h"
 #include "webrtc/modules/rtp_rtcp/source/rtp_format_video_generic.h"
+#include "webrtc/modules/rtp_rtcp/source/rtp_packet_to_send.h"
 
 namespace webrtc {
 
@@ -45,32 +46,33 @@ void RtpPacketizerGeneric::SetPayloadData(
   generic_header_ = RtpFormatVideoGeneric::kFirstPacketBit;
 }
 
-bool RtpPacketizerGeneric::NextPacket(uint8_t* buffer,
-                                      size_t* bytes_to_send,
+bool RtpPacketizerGeneric::NextPacket(RtpPacketToSend* packet,
                                       bool* last_packet) {
+  RTC_DCHECK(packet);
+  RTC_DCHECK(last_packet);
   if (payload_size_ < payload_length_) {
     payload_length_ = payload_size_;
   }
 
   payload_size_ -= payload_length_;
-  *bytes_to_send = payload_length_ + kGenericHeaderLength;
-  assert(payload_length_ <= max_payload_len_);
+  RTC_DCHECK_LE(payload_length_, max_payload_len_);
 
-  uint8_t* out_ptr = buffer;
+  uint8_t* out_ptr =
+      packet->AllocatePayload(kGenericHeaderLength + payload_length_);
   // Put generic header in packet
   if (frame_type_ == kVideoFrameKey) {
     generic_header_ |= RtpFormatVideoGeneric::kKeyFrameBit;
   }
-  *out_ptr++ = generic_header_;
+  out_ptr[0] = generic_header_;
   // Remove first-packet bit, following packets are intermediate
   generic_header_ &= ~RtpFormatVideoGeneric::kFirstPacketBit;
 
   // Put payload in packet
-  memcpy(out_ptr, payload_data_, payload_length_);
+  memcpy(out_ptr + kGenericHeaderLength, payload_data_, payload_length_);
   payload_data_ += payload_length_;
 
   *last_packet = payload_size_ <= 0;
-
+  packet->SetMarker(*last_packet);
   return true;
 }
 
@@ -103,7 +105,7 @@ bool RtpDepacketizerGeneric::Parse(ParsedPayload* parsed_payload,
       ((generic_header & RtpFormatVideoGeneric::kKeyFrameBit) != 0)
           ? kVideoFrameKey
           : kVideoFrameDelta;
-  parsed_payload->type.Video.isFirstPacket =
+  parsed_payload->type.Video.is_first_packet_in_frame =
       (generic_header & RtpFormatVideoGeneric::kFirstPacketBit) != 0;
   parsed_payload->type.Video.codec = kRtpVideoGeneric;
   parsed_payload->type.Video.width = 0;

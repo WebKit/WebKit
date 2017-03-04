@@ -29,14 +29,11 @@ class CaptureSinkFilter;
 class CaptureInputPin: public CBaseInputPin
 {
 public:
-    int32_t _moduleId;
-
     VideoCaptureCapability _requestedCapability;
     VideoCaptureCapability _resultingCapability;
     HANDLE _threadHandle;
 
-    CaptureInputPin(int32_t moduleId,
-                    IN TCHAR* szName,
+    CaptureInputPin(IN TCHAR* szName,
                     IN CaptureSinkFilter* pFilter,
                     IN CCritSec * pLock,
                     OUT HRESULT * pHr,
@@ -56,8 +53,7 @@ public:
     CaptureSinkFilter(IN TCHAR * tszName,
                       IN LPUNKNOWN punk,
                       OUT HRESULT * phr,
-                      VideoCaptureExternal& captureObserver,
-                      int32_t moduleId);
+                      VideoCaptureExternal& captureObserver);
     virtual ~CaptureSinkFilter();
 
     //  --------------------------------------------------------------------
@@ -93,7 +89,6 @@ private:
     CCritSec m_crtRecv;  //  receiver lock; always acquire before filter lock
     CaptureInputPin * m_pInput;
     VideoCaptureExternal& _captureObserver;
-    int32_t _moduleId;
 };
 }  // namespace videocapturemodule
 }  // namespace webrtc

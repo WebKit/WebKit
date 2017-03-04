@@ -10,6 +10,7 @@
 
 #include "webrtc/voice_engine/channel_manager.h"
 
+#include "webrtc/base/timeutils.h"
 #include "webrtc/voice_engine/channel.h"
 
 namespace webrtc {
@@ -45,12 +46,18 @@ ChannelOwner::ChannelRef::ChannelRef(class Channel* channel)
     : channel(channel), ref_count(1) {}
 
 ChannelManager::ChannelManager(uint32_t instance_id)
-    : instance_id_(instance_id), last_channel_id_(-1) {}
+    : instance_id_(instance_id),
+      last_channel_id_(-1),
+      random_(rtc::TimeNanos()) {}
 
 ChannelOwner ChannelManager::CreateChannel(
     const VoEBase::ChannelConfig& config) {
   Channel* channel;
   Channel::CreateChannel(channel, ++last_channel_id_, instance_id_, config);
+  // TODO(solenberg): Delete this, users should configure ssrc
+  // explicitly.
+  channel->SetLocalSSRC(random_.Rand<uint32_t>());
+
   ChannelOwner channel_owner(channel);
 
   rtc::CritScope crit(&lock_);

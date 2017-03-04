@@ -48,7 +48,7 @@ enum IPv6AddressFlag {
 };
 
 // Version-agnostic IP address class, wraps a union of in_addr and in6_addr.
-class WEBRTC_EXPORT IPAddress {
+class IPAddress {
  public:
   IPAddress() : family_(AF_UNSPEC) {
     ::memset(&u_, 0, sizeof(u_));
@@ -87,8 +87,8 @@ class WEBRTC_EXPORT IPAddress {
   friend std::ostream& operator<<(std::ostream& os, const IPAddress& addr);
 
   int family() const { return family_; }
-  in_addr ipv4_address() const;
-  in6_addr ipv6_address() const;
+  WEBRTC_DYLIB_EXPORT in_addr ipv4_address() const;
+  WEBRTC_DYLIB_EXPORT in6_addr ipv6_address() const;
 
   // Returns the number of bytes needed to store the raw address.
   size_t Size() const;

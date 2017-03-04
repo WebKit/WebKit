@@ -27,122 +27,64 @@ FineAudioBuffer::FineAudioBuffer(AudioDeviceBuffer* device_buffer,
       desired_frame_size_bytes_(desired_frame_size_bytes),
       sample_rate_(sample_rate),
       samples_per_10_ms_(static_cast<size_t>(sample_rate_ * 10 / 1000)),
-      bytes_per_10_ms_(samples_per_10_ms_ * sizeof(int16_t)),
-      playout_cached_buffer_start_(0),
-      playout_cached_bytes_(0),
-      // Allocate extra space on the recording side to reduce the number of
-      // memmove() calls.
-      required_record_buffer_size_bytes_(
-          5 * (desired_frame_size_bytes + bytes_per_10_ms_)),
-      record_cached_bytes_(0),
-      record_read_pos_(0),
-      record_write_pos_(0) {
-  playout_cache_buffer_.reset(new int8_t[bytes_per_10_ms_]);
-  record_cache_buffer_.reset(new int8_t[required_record_buffer_size_bytes_]);
-  memset(record_cache_buffer_.get(), 0, required_record_buffer_size_bytes_);
+      bytes_per_10_ms_(samples_per_10_ms_ * sizeof(int16_t)) {
+  LOG(INFO) << "desired_frame_size_bytes:" << desired_frame_size_bytes;
 }
 
 FineAudioBuffer::~FineAudioBuffer() {}
 
-size_t FineAudioBuffer::RequiredPlayoutBufferSizeBytes() {
-  // It is possible that we store the desired frame size - 1 samples. Since new
-  // audio frames are pulled in chunks of 10ms we will need a buffer that can
-  // hold desired_frame_size - 1 + 10ms of data. We omit the - 1.
-  return desired_frame_size_bytes_ + bytes_per_10_ms_;
-}
-
 void FineAudioBuffer::ResetPlayout() {
-  playout_cached_buffer_start_ = 0;
-  playout_cached_bytes_ = 0;
-  memset(playout_cache_buffer_.get(), 0, bytes_per_10_ms_);
+  playout_buffer_.Clear();
 }
 
 void FineAudioBuffer::ResetRecord() {
-  record_cached_bytes_ = 0;
-  record_read_pos_ = 0;
-  record_write_pos_ = 0;
-  memset(record_cache_buffer_.get(), 0, required_record_buffer_size_bytes_);
+  record_buffer_.Clear();
 }
 
 void FineAudioBuffer::GetPlayoutData(int8_t* buffer) {
-  if (desired_frame_size_bytes_ <= playout_cached_bytes_) {
-    memcpy(buffer, &playout_cache_buffer_.get()[playout_cached_buffer_start_],
-           desired_frame_size_bytes_);
-    playout_cached_buffer_start_ += desired_frame_size_bytes_;
-    playout_cached_bytes_ -= desired_frame_size_bytes_;
-    RTC_CHECK_LT(playout_cached_buffer_start_ + playout_cached_bytes_,
-                 bytes_per_10_ms_);
-    return;
-  }
-  memcpy(buffer, &playout_cache_buffer_.get()[playout_cached_buffer_start_],
-         playout_cached_bytes_);
-  // Push another n*10ms of audio to |buffer|. n > 1 if
-  // |desired_frame_size_bytes_| is greater than 10ms of audio. Note that we
-  // write the audio after the cached bytes copied earlier.
-  int8_t* unwritten_buffer = &buffer[playout_cached_bytes_];
-  int bytes_left =
-      static_cast<int>(desired_frame_size_bytes_ - playout_cached_bytes_);
-  // Ceiling of integer division: 1 + ((x - 1) / y)
-  size_t number_of_requests = 1 + (bytes_left - 1) / (bytes_per_10_ms_);
-  for (size_t i = 0; i < number_of_requests; ++i) {
+  const size_t num_bytes = desired_frame_size_bytes_;
+  // Ask WebRTC for new data in chunks of 10ms until we have enough to
+  // fulfill the request. It is possible that the buffer already contains
+  // enough samples from the last round.
+  while (playout_buffer_.size() < num_bytes) {
+    // Get 10ms decoded audio from WebRTC.
     device_buffer_->RequestPlayoutData(samples_per_10_ms_);
-    int num_out = device_buffer_->GetPlayoutData(unwritten_buffer);
-    if (static_cast<size_t>(num_out) != samples_per_10_ms_) {
-      RTC_CHECK_EQ(num_out, 0);
-      playout_cached_bytes_ = 0;
-      return;
-    }
-    unwritten_buffer += bytes_per_10_ms_;
-    RTC_CHECK_GE(bytes_left, 0);
-    bytes_left -= static_cast<int>(bytes_per_10_ms_);
+    // Append |bytes_per_10_ms_| elements to the end of the buffer.
+    const size_t bytes_written = playout_buffer_.AppendData(
+        bytes_per_10_ms_, [&](rtc::ArrayView<int8_t> buf) {
+          const size_t samples_per_channel =
+              device_buffer_->GetPlayoutData(buf.data());
+          // TODO(henrika): this class is only used on mobile devices and is
+          // currently limited to mono. Modifications are needed for stereo.
+          return sizeof(int16_t) * samples_per_channel;
+        });
+    RTC_DCHECK_EQ(bytes_per_10_ms_, bytes_written);
   }
-  RTC_CHECK_LE(bytes_left, 0);
-  // Put the samples that were written to |buffer| but are not used in the
-  // cache.
-  size_t cache_location = desired_frame_size_bytes_;
-  int8_t* cache_ptr = &buffer[cache_location];
-  playout_cached_bytes_ = number_of_requests * bytes_per_10_ms_ -
-                          (desired_frame_size_bytes_ - playout_cached_bytes_);
-  // If playout_cached_bytes_ is larger than the cache buffer, uninitialized
-  // memory will be read.
-  RTC_CHECK_LE(playout_cached_bytes_, bytes_per_10_ms_);
-  RTC_CHECK_EQ(static_cast<size_t>(-bytes_left), playout_cached_bytes_);
-  playout_cached_buffer_start_ = 0;
-  memcpy(playout_cache_buffer_.get(), cache_ptr, playout_cached_bytes_);
+  // Provide the requested number of bytes to the consumer.
+  memcpy(buffer, playout_buffer_.data(), num_bytes);
+  // Move remaining samples to start of buffer to prepare for next round.
+  memmove(playout_buffer_.data(), playout_buffer_.data() + num_bytes,
+          playout_buffer_.size() - num_bytes);
+  playout_buffer_.SetSize(playout_buffer_.size() - num_bytes);
 }
 
 void FineAudioBuffer::DeliverRecordedData(const int8_t* buffer,
                                           size_t size_in_bytes,
                                           int playout_delay_ms,
                                           int record_delay_ms) {
-  // Check if the temporary buffer can store the incoming buffer. If not,
-  // move the remaining (old) bytes to the beginning of the temporary buffer
-  // and start adding new samples after the old samples.
-  if (record_write_pos_ + size_in_bytes > required_record_buffer_size_bytes_) {
-    if (record_cached_bytes_ > 0) {
-      memmove(record_cache_buffer_.get(),
-              record_cache_buffer_.get() + record_read_pos_,
-              record_cached_bytes_);
-    }
-    record_write_pos_ = record_cached_bytes_;
-    record_read_pos_ = 0;
-  }
-  // Add recorded samples to a temporary buffer.
-  memcpy(record_cache_buffer_.get() + record_write_pos_, buffer, size_in_bytes);
-  record_write_pos_ += size_in_bytes;
-  record_cached_bytes_ += size_in_bytes;
-  // Consume samples in temporary buffer in chunks of 10ms until there is not
+  // Always append new data and grow the buffer if needed.
+  record_buffer_.AppendData(buffer, size_in_bytes);
+  // Consume samples from buffer in chunks of 10ms until there is not
   // enough data left. The number of remaining bytes in the cache is given by
-  // |record_cached_bytes_| after this while loop is done.
-  while (record_cached_bytes_ >= bytes_per_10_ms_) {
-    device_buffer_->SetRecordedBuffer(
-        record_cache_buffer_.get() + record_read_pos_, samples_per_10_ms_);
+  // the new size of the buffer.
+  while (record_buffer_.size() >= bytes_per_10_ms_) {
+    device_buffer_->SetRecordedBuffer(record_buffer_.data(),
+                                      samples_per_10_ms_);
     device_buffer_->SetVQEData(playout_delay_ms, record_delay_ms, 0);
     device_buffer_->DeliverRecordedData();
-    // Read next chunk of 10ms data.
-    record_read_pos_ += bytes_per_10_ms_;
-    // Reduce number of cached bytes with the consumed amount.
-    record_cached_bytes_ -= bytes_per_10_ms_;
+    memmove(record_buffer_.data(), record_buffer_.data() + bytes_per_10_ms_,
+            record_buffer_.size() - bytes_per_10_ms_);
+    record_buffer_.SetSize(record_buffer_.size() - bytes_per_10_ms_);
   }
 }
 

@@ -19,19 +19,13 @@
 namespace webrtc {
 
 VoEHardware* VoEHardware::GetInterface(VoiceEngine* voiceEngine) {
-#ifndef WEBRTC_VOICE_ENGINE_HARDWARE_API
-  return NULL;
-#else
   if (NULL == voiceEngine) {
     return NULL;
   }
   VoiceEngineImpl* s = static_cast<VoiceEngineImpl*>(voiceEngine);
   s->AddRef();
   return s;
-#endif
 }
-
-#ifdef WEBRTC_VOICE_ENGINE_HARDWARE_API
 
 VoEHardwareImpl::VoEHardwareImpl(voe::SharedData* shared) : _shared(shared) {
   WEBRTC_TRACE(kTraceMemory, kTraceVoice, VoEId(_shared->instance_id(), -1),
@@ -62,9 +56,6 @@ int VoEHardwareImpl::SetAudioDeviceLayer(AudioLayers audioLayer) {
       break;
     case kAudioWindowsCore:
       wantedLayer = AudioDeviceModule::kWindowsCoreAudio;
-      break;
-    case kAudioWindowsWave:
-      wantedLayer = AudioDeviceModule::kWindowsWaveAudio;
       break;
     case kAudioLinuxAlsa:
       wantedLayer = AudioDeviceModule::kLinuxAlsaAudio;
@@ -105,9 +96,6 @@ int VoEHardwareImpl::GetAudioDeviceLayer(AudioLayers& audioLayer) {
       break;
     case AudioDeviceModule::kWindowsCoreAudio:
       audioLayer = kAudioWindowsCore;
-      break;
-    case AudioDeviceModule::kWindowsWaveAudio:
-      audioLayer = kAudioWindowsWave;
       break;
     case AudioDeviceModule::kLinuxAlsaAudio:
       audioLayer = kAudioLinuxAlsa;
@@ -510,7 +498,5 @@ int VoEHardwareImpl::EnableBuiltInNS(bool enable) {
   }
   return _shared->audio_device()->EnableBuiltInNS(enable);
 }
-
-#endif  // WEBRTC_VOICE_ENGINE_HARDWARE_API
 
 }  // namespace webrtc

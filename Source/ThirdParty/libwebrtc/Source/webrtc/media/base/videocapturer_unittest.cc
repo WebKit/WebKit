@@ -275,7 +275,7 @@ TEST_F(VideoCapturerTest, SinkWantsMaxPixelAndMaxPixelCountStepUp) {
 
   // Request a lower resolution.
   wants.max_pixel_count =
-      rtc::Optional<int>(renderer_.width() * renderer_.height() * 3 / 5);
+      rtc::Optional<int>((renderer_.width() * renderer_.height() * 3) / 5);
   capturer_->AddOrUpdateSink(&renderer_, wants);
   EXPECT_TRUE(capturer_->CaptureFrame());
   EXPECT_EQ(3, renderer_.num_rendered_frames());
@@ -294,8 +294,8 @@ TEST_F(VideoCapturerTest, SinkWantsMaxPixelAndMaxPixelCountStepUp) {
   EXPECT_EQ(360, renderer2.height());
 
   // Request higher resolution.
-  wants.max_pixel_count_step_up = wants.max_pixel_count;
-  wants.max_pixel_count = rtc::Optional<int>();
+  wants.target_pixel_count.emplace((*wants.max_pixel_count * 5) / 3);
+  wants.max_pixel_count.emplace(*wants.max_pixel_count * 4);
   capturer_->AddOrUpdateSink(&renderer_, wants);
   EXPECT_TRUE(capturer_->CaptureFrame());
   EXPECT_EQ(5, renderer_.num_rendered_frames());

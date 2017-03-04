@@ -42,26 +42,44 @@ class FrameWriter {
   virtual size_t FrameLength() = 0;
 };
 
-class FrameWriterImpl : public FrameWriter {
+// Writes raw I420 frames in sequence.
+class YuvFrameWriterImpl : public FrameWriter {
  public:
   // Creates a file handler. The input file is assumed to exist and be readable
   // and the output file must be writable.
   // Parameters:
   //   output_filename         The file to write. Will be overwritten if already
   //                           existing.
-  //   frame_length_in_bytes   The size of each frame.
-  //                           For YUV: 3*width*height/2
-  FrameWriterImpl(std::string output_filename, size_t frame_length_in_bytes);
-  ~FrameWriterImpl() override;
+  //   width, height           Size of each frame to read.
+  YuvFrameWriterImpl(std::string output_filename, int width, int height);
+  ~YuvFrameWriterImpl() override;
   bool Init() override;
   bool WriteFrame(uint8_t* frame_buffer) override;
   void Close() override;
   size_t FrameLength() override;
 
- private:
-  std::string output_filename_;
+ protected:
+  const std::string output_filename_;
   size_t frame_length_in_bytes_;
+  const int width_;
+  const int height_;
   FILE* output_file_;
+};
+
+// Writes raw I420 frames in sequence, but with Y4M file and frame headers for
+// more convenient playback in external media players.
+class Y4mFrameWriterImpl : public YuvFrameWriterImpl {
+ public:
+  Y4mFrameWriterImpl(std::string output_filename,
+                     int width,
+                     int height,
+                     int frame_rate);
+  ~Y4mFrameWriterImpl() override;
+  bool Init() override;
+  bool WriteFrame(uint8_t* frame_buffer) override;
+
+ private:
+  const int frame_rate_;
 };
 
 }  // namespace test

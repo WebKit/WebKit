@@ -69,12 +69,11 @@ void DownSampler::Initialize(int sample_rate_hz) {
 void DownSampler::DownSample(rtc::ArrayView<const float> in,
                              rtc::ArrayView<float> out) {
   data_dumper_->DumpWav("lc_down_sampler_input", in, sample_rate_hz_, 1);
-  RTC_DCHECK_EQ(static_cast<size_t>(sample_rate_hz_ *
-                                    AudioProcessing::kChunkSizeMs / 1000),
+  RTC_DCHECK_EQ(sample_rate_hz_ * AudioProcessing::kChunkSizeMs / 1000,
                 in.size());
-  RTC_DCHECK_EQ(static_cast<size_t>(AudioProcessing::kSampleRate8kHz *
-                                    AudioProcessing::kChunkSizeMs / 1000),
-                out.size());
+  RTC_DCHECK_EQ(
+      AudioProcessing::kSampleRate8kHz * AudioProcessing::kChunkSizeMs / 1000,
+      out.size());
   const size_t kMaxNumFrames =
       AudioProcessing::kSampleRate48kHz * AudioProcessing::kChunkSizeMs / 1000;
   float x[kMaxNumFrames];

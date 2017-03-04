@@ -222,7 +222,7 @@ int Expand::Process(AudioMultiVector* output) {
     //   >= 64 * fs_mult            => go from 1 to 0 in about 32 ms.
     // temp_shift = getbits(max_lag_) - 5.
     int temp_shift =
-        (31 - WebRtcSpl_NormW32(rtc::checked_cast<int32_t>(max_lag_))) - 5;
+        (31 - WebRtcSpl_NormW32(rtc::dchecked_cast<int32_t>(max_lag_))) - 5;
     int16_t mix_factor_increment = 256 >> temp_shift;
     if (stop_muting_) {
       mix_factor_increment = 0;
@@ -315,8 +315,8 @@ int Expand::Process(AudioMultiVector* output) {
       kMaxConsecutiveExpands : consecutive_expands_ + 1;
   expand_duration_samples_ += output->Size();
   // Clamp the duration counter at 2 seconds.
-  expand_duration_samples_ =
-      std::min(expand_duration_samples_, rtc::checked_cast<size_t>(fs_hz_ * 2));
+  expand_duration_samples_ = std::min(expand_duration_samples_,
+                                      rtc::dchecked_cast<size_t>(fs_hz_ * 2));
   return 0;
 }
 
@@ -325,7 +325,7 @@ void Expand::SetParametersForNormalAfterExpand() {
   lag_index_direction_ = 0;
   stop_muting_ = true;  // Do not mute signal any more.
   statistics_->LogDelayedPacketOutageEvent(
-      rtc::checked_cast<int>(expand_duration_samples_) / (fs_hz_ / 1000));
+      rtc::dchecked_cast<int>(expand_duration_samples_) / (fs_hz_ / 1000));
 }
 
 void Expand::SetParametersForMergeAfterExpand() {
@@ -441,7 +441,7 @@ void Expand::AnalyzeSignal(int16_t* random_vector) {
   for (size_t i = 0; i < kNumCorrelationCandidates; ++i) {
     int32_t ratio;
     if (best_distortion[i] > 0) {
-      ratio = (best_correlation[i] << 16) / best_distortion[i];
+      ratio = (best_correlation[i] * (1 << 16)) / best_distortion[i];
     } else if (best_correlation[i] == 0) {
       ratio = 0;  // No correlation set result to zero.
     } else {
@@ -675,12 +675,20 @@ void Expand::AnalyzeSignal(int16_t* random_vector) {
                               parameters.ar_filter,
                               kUnvoicedLpcOrder + 1,
                               128);
-    int16_t unvoiced_prescale;
-    if (WebRtcSpl_MaxAbsValueW16(unvoiced_vector, 128) > 4000) {
-      unvoiced_prescale = 4;
-    } else {
-      unvoiced_prescale = 0;
-    }
+    const int unvoiced_max_abs = [&] {
+      const int16_t max_abs = WebRtcSpl_MaxAbsValueW16(unvoiced_vector, 128);
+      // Since WebRtcSpl_MaxAbsValueW16 returns 2^15 - 1 when the input contains
+      // -2^15, we have to conservatively bump the return value by 1
+      // if it is 2^15 - 1.
+      return max_abs == WEBRTC_SPL_WORD16_MAX ? max_abs + 1 : max_abs;
+    }();
+    // Pick the smallest n such that 2^n > unvoiced_max_abs; then the maximum
+    // value of the dot product is less than 2^7 * 2^(2*n) = 2^(2*n + 7), so to
+    // prevent overflows we want 2n + 7 <= 31, which means we should shift by
+    // 2n + 7 - 31 bits, if this value is greater than zero.
+    int unvoiced_prescale =
+        std::max(0, 2 * WebRtcSpl_GetSizeInBits(unvoiced_max_abs) - 24);
+
     int32_t unvoiced_energy = WebRtcSpl_DotProductWithScale(unvoiced_vector,
                                                             unvoiced_vector,
                                                             128,

@@ -12,22 +12,14 @@
 
 #include "webrtc/base/taskrunner.h"
 
-#include "webrtc/base/common.h"
+#include "webrtc/base/checks.h"
 #include "webrtc/base/task.h"
 #include "webrtc/base/logging.h"
 
 namespace rtc {
 
 TaskRunner::TaskRunner()
-  : TaskParent(this),
-    next_timeout_task_(NULL),
-    tasks_running_(false)
-#if !defined(NDEBUG)
-    , abort_count_(0),
-    deleting_task_(NULL)
-#endif
-{
-}
+    : TaskParent(this) {}
 
 TaskRunner::~TaskRunner() {
   // this kills and deletes children silently!
@@ -54,8 +46,10 @@ void TaskRunner::InternalRunTasks(bool in_destructor) {
   // If that occurs, then tasks may be deleted in this method,
   // but pointers to them will still be in the
   // "ChildSet copy" in TaskParent::AbortAllChildren.
-  // Subsequent use of those task may cause data corruption or crashes.  
-  ASSERT(!abort_count_);
+  // Subsequent use of those task may cause data corruption or crashes.
+#if RTC_DCHECK_IS_ON
+  RTC_DCHECK(!abort_count_);
+#endif
   // Running continues until all tasks are Blocked (ok for a small # of tasks)
   if (tasks_running_) {
     return;  // don't reenter
@@ -83,30 +77,28 @@ void TaskRunner::InternalRunTasks(bool in_destructor) {
       Task* task = tasks_[i];
       if (next_timeout_task_ &&
           task->unique_id() == next_timeout_task_->unique_id()) {
-        next_timeout_task_ = NULL;
+        next_timeout_task_ = nullptr;
         need_timeout_recalc = true;
       }
 
-#if !defined(NDEBUG)
+#if RTC_DCHECK_IS_ON
       deleting_task_ = task;
 #endif
       delete task;
-#if !defined(NDEBUG)
-      deleting_task_ = NULL;
+#if RTC_DCHECK_IS_ON
+      deleting_task_ = nullptr;
 #endif
-      tasks_[i] = NULL;
+      tasks_[i] = nullptr;
     }
   }
-  // Finally, remove nulls
+  // Finally, remove nulls.
   std::vector<Task *>::iterator it;
-  it = std::remove(tasks_.begin(),
-                   tasks_.end(),
-                   reinterpret_cast<Task *>(NULL));
+  it = std::remove(tasks_.begin(), tasks_.end(), nullptr);
 
   tasks_.erase(it, tasks_.end());
 
   if (need_timeout_recalc)
-    RecalcNextTimeout(NULL);
+    RecalcNextTimeout(nullptr);
 
   // Make sure that adjustments are done to account
   // for any timeout changes (but don't call this
@@ -124,7 +116,7 @@ void TaskRunner::PollTasks() {
   // TODO: We need to guard against WakeTasks not updating
   // next_timeout_task_. Maybe also add documentation in the header file once
   // we understand this code better.
-  Task* old_timeout_task = NULL;
+  Task* old_timeout_task = nullptr;
   while (next_timeout_task_ &&
       old_timeout_task != next_timeout_task_ &&
       next_timeout_task_->TimedOut()) {
@@ -150,9 +142,10 @@ int64_t TaskRunner::next_task_timeout() const {
 
 void TaskRunner::UpdateTaskTimeout(Task* task,
                                    int64_t previous_task_timeout_time) {
-  ASSERT(task != NULL);
+  RTC_DCHECK(task != nullptr);
   int64_t previous_timeout_time = next_task_timeout();
-  bool task_is_timeout_task = next_timeout_task_ != NULL &&
+  bool task_is_timeout_task =
+      next_timeout_task_ != nullptr &&
       task->unique_id() == next_timeout_task_->unique_id();
   if (task_is_timeout_task) {
     previous_timeout_time = previous_task_timeout_time;
@@ -162,7 +155,7 @@ void TaskRunner::UpdateTaskTimeout(Task* task,
   // check to see if it's closer than the current
   // "about to timeout" task
   if (task->timeout_time()) {
-    if (next_timeout_task_ == NULL ||
+    if (next_timeout_task_ == nullptr ||
         (task->timeout_time() <= next_timeout_task_->timeout_time())) {
       next_timeout_task_ = task;
     }
@@ -190,14 +183,14 @@ void TaskRunner::RecalcNextTimeout(Task *exclude_task) {
   //   it has the closest timeout time
 
   int64_t next_timeout_time = 0;
-  next_timeout_task_ = NULL;
+  next_timeout_task_ = nullptr;
 
   for (size_t i = 0; i < tasks_.size(); ++i) {
     Task *task = tasks_[i];
     // if the task isn't complete, and it actually has a timeout time
     if (!task->IsDone() && (task->timeout_time() > 0))
       // if it doesn't match our "exclude" task
-      if (exclude_task == NULL ||
+      if (exclude_task == nullptr ||
           exclude_task->unique_id() != task->unique_id())
         // if its timeout time is sooner than our current timeout time
         if (next_timeout_time == 0 ||

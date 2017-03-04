@@ -336,7 +336,7 @@ class NatTcpTest : public testing::Test, public sigslot::has_slots<> {
   }
 
   void OnAcceptEvent(AsyncSocket* socket) {
-    accepted_.reset(server_->Accept(NULL));
+    accepted_.reset(server_->Accept(nullptr));
   }
 
   void OnCloseEvent(AsyncSocket* socket, int error) {

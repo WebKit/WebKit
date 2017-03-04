@@ -29,7 +29,7 @@
 #if USE(LIBWEBRTC)
 
 #include "WebProcess.h"
-#include <webrtc/api/peerconnectionfactory.h>
+#include <webrtc/pc/peerconnectionfactory.h>
 
 namespace WebKit {
 

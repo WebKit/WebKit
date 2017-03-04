@@ -14,7 +14,7 @@
 #include <memory>
 
 #include "webrtc/base/constructormagic.h"
-#include "webrtc/system_wrappers/include/rtp_to_ntp.h"
+#include "webrtc/system_wrappers/include/rtp_to_ntp_estimator.h"
 
 namespace webrtc {
 
@@ -43,7 +43,7 @@ class RemoteNtpTimeEstimator {
  private:
   Clock* clock_;
   std::unique_ptr<TimestampExtrapolator> ts_extrapolator_;
-  RtcpMeasurements rtcp_list_;
+  RtpToNtpEstimator rtp_to_ntp_;
   int64_t last_timing_log_ms_;
   RTC_DISALLOW_COPY_AND_ASSIGN(RemoteNtpTimeEstimator);
 };

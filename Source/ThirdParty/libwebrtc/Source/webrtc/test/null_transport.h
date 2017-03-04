@@ -10,7 +10,7 @@
 #ifndef WEBRTC_TEST_NULL_TRANSPORT_H_
 #define WEBRTC_TEST_NULL_TRANSPORT_H_
 
-#include "webrtc/transport.h"
+#include "webrtc/api/call/transport.h"
 
 namespace webrtc {
 

@@ -18,7 +18,7 @@
 #include "webrtc/modules/video_coding/codecs/vp9/include/vp9.h"
 #include "webrtc/modules/video_coding/codecs/vp9/vp9_frame_buffer_pool.h"
 
-#include "vpx/svc_context.h"
+#include "vpx/vp8cx.h"
 #include "vpx/vpx_decoder.h"
 #include "vpx/vpx_encoder.h"
 
@@ -46,9 +46,8 @@ class VP9EncoderImpl : public VP9Encoder {
 
   int SetChannelParameters(uint32_t packet_loss, int64_t rtt) override;
 
-  int SetRates(uint32_t new_bitrate_kbit, uint32_t frame_rate) override;
-
-  void OnDroppedFrame() override {}
+  int SetRateAllocation(const BitrateAllocation& bitrate_allocation,
+                        uint32_t frame_rate) override;
 
   const char* ImplementationName() const override;
 
@@ -114,7 +113,7 @@ class VP9EncoderImpl : public VP9Encoder {
   vpx_codec_ctx_t* encoder_;
   vpx_codec_enc_cfg_t* config_;
   vpx_image_t* raw_;
-  SvcInternal_t svc_internal_;
+  vpx_svc_extra_cfg_t svc_params_;
   const VideoFrame* input_image_;
   GofInfoVP9 gof_;       // Contains each frame's temporal information for
                          // non-flexible mode.
@@ -155,7 +154,8 @@ class VP9DecoderImpl : public VP9Decoder {
  private:
   int ReturnFrame(const vpx_image_t* img,
                   uint32_t timestamp,
-                  int64_t ntp_time_ms);
+                  int64_t ntp_time_ms,
+                  int qp);
 
   // Memory pool used to share buffers between libvpx and webrtc.
   Vp9FrameBufferPool frame_buffer_pool_;

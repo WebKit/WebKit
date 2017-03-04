@@ -24,8 +24,6 @@
 #include "webrtc/modules/remote_bitrate_estimator/test/packet_sender.h"
 #include "webrtc/test/testsupport/fileutils.h"
 
-using std::string;
-
 namespace webrtc {
 namespace testing {
 namespace bwe {

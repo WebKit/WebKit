@@ -29,7 +29,7 @@ SendSideBweSender::SendSideBweSender(int kbps,
           BitrateController::CreateBitrateController(clock,
                                                      observer,
                                                      &event_log_)),
-      bwe_(new DelayBasedBwe(clock)),
+      bwe_(new DelayBasedBwe(nullptr, clock)),
       feedback_observer_(bitrate_controller_->CreateRtcpBandwidthObserver()),
       clock_(clock),
       send_time_history_(clock_, 10000),
@@ -112,7 +112,7 @@ void SendSideBweSender::OnPacketsSent(const Packets& packets) {
       //                 to create tests for probing using cluster ids.
       send_time_history_.AddAndRemoveOld(media_packet->header().sequenceNumber,
                                          media_packet->payload_size(),
-                                         PacketInfo::kNotAProbe);
+                                         PacedPacketInfo());
       send_time_history_.OnSentPacket(media_packet->header().sequenceNumber,
                                       media_packet->sender_timestamp_ms());
     }
@@ -142,9 +142,10 @@ SendSideBweReceiver::~SendSideBweReceiver() {
 
 void SendSideBweReceiver::ReceivePacket(int64_t arrival_time_ms,
                                         const MediaPacket& media_packet) {
-  packet_feedback_vector_.push_back(PacketInfo(
-      -1, arrival_time_ms, media_packet.sender_timestamp_ms(),
-      media_packet.header().sequenceNumber, media_packet.payload_size(), true));
+  packet_feedback_vector_.push_back(
+      PacketInfo(-1, arrival_time_ms, media_packet.sender_timestamp_ms(),
+                 media_packet.header().sequenceNumber,
+                 media_packet.payload_size(), PacedPacketInfo()));
 
   // Log received packet information.
   BweReceiver::ReceivePacket(arrival_time_ms, media_packet);

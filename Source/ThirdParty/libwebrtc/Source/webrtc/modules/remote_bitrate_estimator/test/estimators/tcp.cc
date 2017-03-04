@@ -12,7 +12,6 @@
 
 #include "webrtc/modules/remote_bitrate_estimator/test/estimators/tcp.h"
 
-#include "webrtc/base/common.h"
 #include "webrtc/modules/bitrate_controller/include/bitrate_controller.h"
 #include "webrtc/modules/remote_bitrate_estimator/test/bwe_test_logging.h"
 #include "webrtc/modules/rtp_rtcp/include/receive_statistics.h"

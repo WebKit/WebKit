@@ -47,21 +47,20 @@ static kVideoFourCCEntry kSupportedFourCCs[] = {
 class WebRtcVcmFactory : public WebRtcVcmFactoryInterface {
  public:
   virtual rtc::scoped_refptr<webrtc::VideoCaptureModule> Create(
-      int id,
       const char* device) {
 #if RTC_HAS_ASAN
     // FIXME: this shouldn't be necessary.
     return nullptr;
 #else
-    return webrtc::VideoCaptureFactory::Create(id, device);
+    return webrtc::VideoCaptureFactory::Create(device);
 #endif
   }
-  virtual webrtc::VideoCaptureModule::DeviceInfo* CreateDeviceInfo(int id) {
+  virtual webrtc::VideoCaptureModule::DeviceInfo* CreateDeviceInfo() {
 #if RTC_HAS_ASAN
     // FIXME: this shouldn't be necessary.
     return nullptr;
 #else
-    return webrtc::VideoCaptureFactory::CreateDeviceInfo(id);
+    return webrtc::VideoCaptureFactory::CreateDeviceInfo();
 #endif
   }
   virtual void DestroyDeviceInfo(webrtc::VideoCaptureModule::DeviceInfo* info) {
@@ -105,9 +104,7 @@ static bool FormatToCapability(const VideoFormat& format,
   cap->width = format.width;
   cap->height = format.height;
   cap->maxFPS = VideoFormat::IntervalToFps(format.interval);
-  cap->expectedCaptureDelay = 0;
   cap->rawType = webrtc_type;
-  cap->codecType = webrtc::kVideoCodecUnknown;
   cap->interlaced = false;
   return true;
 }
@@ -139,7 +136,7 @@ bool WebRtcVideoCapturer::Init(const Device& device) {
     return false;
   }
 
-  webrtc::VideoCaptureModule::DeviceInfo* info = factory_->CreateDeviceInfo(0);
+  webrtc::VideoCaptureModule::DeviceInfo* info = factory_->CreateDeviceInfo();
   if (!info) {
     return false;
   }
@@ -189,7 +186,7 @@ bool WebRtcVideoCapturer::Init(const Device& device) {
     return false;
   }
 
-  module_ = factory_->Create(0, vcm_id);
+  module_ = factory_->Create(vcm_id);
   if (!module_) {
     LOG(LS_ERROR) << "Failed to create capturer for id: " << device.id;
     return false;
@@ -243,12 +240,8 @@ void WebRtcVideoCapturer::OnSinkWantsChanged(const rtc::VideoSinkWants& wants) {
   // calls, can't take lock.
   RTC_DCHECK(module_);
 
-  const std::string group_name =
-      webrtc::field_trial::FindFullName("WebRTC-CVO");
-
-  if (group_name == "Disabled") {
+  if (webrtc::field_trial::FindFullName("WebRTC-CVO").find("Disabled") == 0)
     return;
-  }
 
   VideoCapturer::OnSinkWantsChanged(wants);
   bool result = module_->SetApplyRotation(wants.rotation_applied);
@@ -283,7 +276,7 @@ CaptureState WebRtcVideoCapturer::Start(const VideoFormat& capture_format) {
   }
 
   int64_t start = rtc::TimeMillis();
-  module_->RegisterCaptureDataCallback(*this);
+  module_->RegisterCaptureDataCallback(this);
   if (module_->StartCapture(cap) != 0) {
     LOG(LS_ERROR) << "Camera '" << GetId() << "' failed to start";
     module_->DeRegisterCaptureDataCallback();
@@ -347,8 +340,7 @@ bool WebRtcVideoCapturer::GetPreferredFourccs(std::vector<uint32_t>* fourccs) {
   return true;
 }
 
-void WebRtcVideoCapturer::OnIncomingCapturedFrame(
-    const int32_t id,
+void WebRtcVideoCapturer::OnFrame(
     const webrtc::VideoFrame& sample) {
   // This can only happen between Start() and Stop().
   RTC_DCHECK(start_thread_);
@@ -362,12 +354,7 @@ void WebRtcVideoCapturer::OnIncomingCapturedFrame(
                  << ". Expected format " << GetCaptureFormat()->ToString();
   }
 
-  OnFrame(sample, sample.width(), sample.height());
-}
-
-void WebRtcVideoCapturer::OnCaptureDelayChanged(const int32_t id,
-                                                const int32_t delay) {
-  LOG(LS_INFO) << "Capture delay changed to " << delay << " ms";
+  VideoCapturer::OnFrame(sample, sample.width(), sample.height());
 }
 
 }  // namespace cricket

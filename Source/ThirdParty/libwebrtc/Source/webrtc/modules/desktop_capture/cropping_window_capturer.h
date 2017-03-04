@@ -24,8 +24,6 @@ namespace webrtc {
 class CroppingWindowCapturer : public DesktopCapturer,
                                public DesktopCapturer::Callback {
  public:
-  // Deprecated, use CreateCapturer()
-  static DesktopCapturer* Create(const DesktopCaptureOptions& options);
   static std::unique_ptr<DesktopCapturer> CreateCapturer(
       const DesktopCaptureOptions& options);
 

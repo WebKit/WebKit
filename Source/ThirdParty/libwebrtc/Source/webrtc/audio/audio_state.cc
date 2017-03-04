@@ -13,16 +13,30 @@
 #include "webrtc/base/atomicops.h"
 #include "webrtc/base/checks.h"
 #include "webrtc/base/logging.h"
+#include "webrtc/modules/audio_device/include/audio_device.h"
 #include "webrtc/voice_engine/include/voe_errors.h"
 
 namespace webrtc {
 namespace internal {
 
 AudioState::AudioState(const AudioState::Config& config)
-    : config_(config), voe_base_(config.voice_engine) {
+    : config_(config),
+      voe_base_(config.voice_engine),
+      audio_transport_proxy_(voe_base_->audio_transport(),
+                             voe_base_->audio_processing(),
+                             config_.audio_mixer) {
   process_thread_checker_.DetachFromThread();
+  RTC_DCHECK(config_.audio_mixer);
+
   // Only one AudioState should be created per VoiceEngine.
   RTC_CHECK(voe_base_->RegisterVoiceEngineObserver(*this) != -1);
+
+  auto* const device = voe_base_->audio_device_module();
+  RTC_DCHECK(device);
+
+  // This is needed for the Chrome implementation of RegisterAudioCallback.
+  device->RegisterAudioCallback(nullptr);
+  device->RegisterAudioCallback(&audio_transport_proxy_);
 }
 
 AudioState::~AudioState() {
@@ -33,6 +47,11 @@ AudioState::~AudioState() {
 VoiceEngine* AudioState::voice_engine() {
   RTC_DCHECK(thread_checker_.CalledOnValidThread());
   return config_.voice_engine;
+}
+
+rtc::scoped_refptr<AudioMixer> AudioState::mixer() {
+  RTC_DCHECK(thread_checker_.CalledOnValidThread());
+  return config_.audio_mixer;
 }
 
 bool AudioState::typing_noise_detected() const {

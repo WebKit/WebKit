@@ -10,8 +10,8 @@
 
 #import <UIKit/UIKit.h>
 
-#import "WebRTC/RTCCameraPreviewView.h"
-#import "WebRTC/RTCEAGLVideoView.h"
+#import <WebRTC/RTCCameraPreviewView.h>
+#import <WebRTC/RTCVideoRenderer.h>
 
 #import "ARDStatsView.h"
 
@@ -38,7 +38,7 @@
 
 @property(nonatomic, readonly) UILabel *statusLabel;
 @property(nonatomic, readonly) RTCCameraPreviewView *localVideoView;
-@property(nonatomic, readonly) RTCEAGLVideoView *remoteVideoView;
+@property(nonatomic, readonly) __kindof UIView<RTCVideoRenderer> *remoteVideoView;
 @property(nonatomic, readonly) ARDStatsView *statsView;
 @property(nonatomic, weak) id<ARDVideoCallViewDelegate> delegate;
 

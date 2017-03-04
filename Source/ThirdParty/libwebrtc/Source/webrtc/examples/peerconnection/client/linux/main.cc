@@ -54,7 +54,11 @@ class CustomSocketServer : public rtc::PhysicalSocketServer {
 
 int main(int argc, char* argv[]) {
   gtk_init(&argc, &argv);
-  g_type_init();
+  // g_type_init API is deprecated (and does nothing) since glib 2.35.0, see:
+  // https://mail.gnome.org/archives/commits-list/2012-November/msg07809.html
+#if !GLIB_CHECK_VERSION(2, 35, 0)
+    g_type_init();
+#endif
   // g_thread_init API is deprecated since glib 2.31.0, see release note:
   // http://mail.gnome.org/archives/gnome-announce-list/2011-October/msg00041.html
 #if !GLIB_CHECK_VERSION(2, 31, 0)

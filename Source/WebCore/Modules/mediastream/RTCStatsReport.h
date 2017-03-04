@@ -59,7 +59,7 @@ public:
     };
 
     struct RTCRTPStreamStats : Stats {
-        String ssrc;
+        uint32_t ssrc;
         String associateStatsId;
         bool isRemote { false };
         String mediaType;
@@ -77,7 +77,7 @@ public:
     struct InboundRTPStreamStats : RTCRTPStreamStats {
         InboundRTPStreamStats() { type = RTCStatsReport::Type::InboundRtp; }
 
-        String ssrc;
+        uint32_t ssrc;
         String associateStatsId;
         bool isRemote { false };
         String mediaType;
@@ -113,7 +113,6 @@ public:
         unsigned long packetsSent { 0 };
         unsigned long long bytesSent { 0 };
         double targetBitrate { 0 };
-        double roundTripTime { 0 };
         unsigned long framesEncoded { 0 };
     };
 

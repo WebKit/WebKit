@@ -83,6 +83,9 @@ class ACMTestTimer {
   unsigned long _hour;
 };
 
+// To avoid clashes with CircularBuffer in APM.
+namespace test {
+
 class CircularBuffer {
  public:
   CircularBuffer(uint32_t len);
@@ -108,6 +111,8 @@ class CircularBuffer {
   double _sum;
   double _sumSqr;
 };
+
+}  // namespace test
 
 int16_t ChooseCodec(CodecInst& codecInst);
 

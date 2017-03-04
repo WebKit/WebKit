@@ -14,10 +14,6 @@
 #import <WebRTC/RTCMediaStreamTrack.h>
 #import <WebRTC/RTCRtpParameters.h>
 
-namespace webrtc {
-class RtpSenderInterface;
-}
-
 NS_ASSUME_NONNULL_BEGIN
 
 RTC_EXPORT
@@ -41,9 +37,7 @@ RTC_EXPORT
 @end
 
 RTC_EXPORT
-@interface RTCRtpSender : NSObject <RTCRtpSender> {
-  rtc::scoped_refptr<webrtc::RtpSenderInterface> _nativeRtpSender;
-}
+@interface RTCRtpSender : NSObject <RTCRtpSender>
 
 - (instancetype)init NS_UNAVAILABLE;
 

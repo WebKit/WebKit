@@ -22,7 +22,7 @@
 
 namespace rtc {
 
-class WEBRTC_EXPORT CopyOnWriteBuffer {
+class WEBRTC_DYLIB_EXPORT CopyOnWriteBuffer {
  public:
   // An empty buffer.
   CopyOnWriteBuffer();

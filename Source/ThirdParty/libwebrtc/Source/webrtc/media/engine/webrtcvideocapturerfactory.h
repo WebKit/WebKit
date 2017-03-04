@@ -19,7 +19,7 @@ namespace cricket {
 // Creates instances of cricket::WebRtcVideoCapturer.
 class WebRtcVideoDeviceCapturerFactory : public VideoDeviceCapturerFactory {
  public:
-  virtual VideoCapturer* Create(const Device& device);
+  std::unique_ptr<VideoCapturer> Create(const Device& device) override;
 };
 
 }  // namespace cricket

@@ -15,7 +15,6 @@
 #include <numeric>
 
 #include "webrtc/base/arraysize.h"
-#include "webrtc/base/common.h"
 #include "webrtc/base/constructormagic.h"
 #include "webrtc/modules/remote_bitrate_estimator/test/bwe_test_framework.h"
 #include "webrtc/modules/remote_bitrate_estimator/test/packet.h"
@@ -228,7 +227,7 @@ TEST_F(NadaSenderSideTest, GradualRateUpdate) {
   const int64_t kDeltaSMs = 20;
   const int64_t kRefSignalMs = 20;
   const int64_t kOneWayDelayMs = 50;
-  int original_bitrate = 2 * NadaBweSender::kMinNadaBitrateKbps;
+  int original_bitrate = 5 * NadaBweSender::kMinNadaBitrateKbps;
   size_t receiving_rate = static_cast<size_t>(original_bitrate);
   int64_t send_time_ms = nada_sender_.NowMs() - kOneWayDelayMs;
 

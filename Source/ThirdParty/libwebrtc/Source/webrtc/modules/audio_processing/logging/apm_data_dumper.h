@@ -57,7 +57,34 @@ class ApmDataDumper {
 
   // Methods for performing dumping of data of various types into
   // various formats.
-  void DumpRaw(const char* name, int v_length, const float* v) {
+  void DumpRaw(const char* name, double v) {
+#if WEBRTC_APM_DEBUG_DUMP == 1
+    FILE* file = GetRawFile(name);
+    fwrite(&v, sizeof(v), 1, file);
+#endif
+  }
+
+  void DumpRaw(const char* name, size_t v_length, const double* v) {
+#if WEBRTC_APM_DEBUG_DUMP == 1
+    FILE* file = GetRawFile(name);
+    fwrite(v, sizeof(v[0]), v_length, file);
+#endif
+  }
+
+  void DumpRaw(const char* name, rtc::ArrayView<const double> v) {
+#if WEBRTC_APM_DEBUG_DUMP == 1
+    DumpRaw(name, v.size(), v.data());
+#endif
+  }
+
+  void DumpRaw(const char* name, float v) {
+#if WEBRTC_APM_DEBUG_DUMP == 1
+    FILE* file = GetRawFile(name);
+    fwrite(&v, sizeof(v), 1, file);
+#endif
+  }
+
+  void DumpRaw(const char* name, size_t v_length, const float* v) {
 #if WEBRTC_APM_DEBUG_DUMP == 1
     FILE* file = GetRawFile(name);
     fwrite(v, sizeof(v[0]), v_length, file);
@@ -70,10 +97,16 @@ class ApmDataDumper {
 #endif
   }
 
-  void DumpRaw(const char* name, int v_length, const bool* v) {
+  void DumpRaw(const char* name, bool v) {
+#if WEBRTC_APM_DEBUG_DUMP == 1
+    DumpRaw(name, static_cast<int16_t>(v));
+#endif
+  }
+
+  void DumpRaw(const char* name, size_t v_length, const bool* v) {
 #if WEBRTC_APM_DEBUG_DUMP == 1
     FILE* file = GetRawFile(name);
-    for (int k = 0; k < v_length; ++k) {
+    for (size_t k = 0; k < v_length; ++k) {
       int16_t value = static_cast<int16_t>(v[k]);
       fwrite(&value, sizeof(value), 1, file);
     }
@@ -86,7 +119,14 @@ class ApmDataDumper {
 #endif
   }
 
-  void DumpRaw(const char* name, int v_length, const int16_t* v) {
+  void DumpRaw(const char* name, int16_t v) {
+#if WEBRTC_APM_DEBUG_DUMP == 1
+    FILE* file = GetRawFile(name);
+    fwrite(&v, sizeof(v), 1, file);
+#endif
+  }
+
+  void DumpRaw(const char* name, size_t v_length, const int16_t* v) {
 #if WEBRTC_APM_DEBUG_DUMP == 1
     FILE* file = GetRawFile(name);
     fwrite(v, sizeof(v[0]), v_length, file);
@@ -99,7 +139,28 @@ class ApmDataDumper {
 #endif
   }
 
-  void DumpRaw(const char* name, int v_length, const int32_t* v) {
+  void DumpRaw(const char* name, int32_t v) {
+#if WEBRTC_APM_DEBUG_DUMP == 1
+    FILE* file = GetRawFile(name);
+    fwrite(&v, sizeof(v), 1, file);
+#endif
+  }
+
+  void DumpRaw(const char* name, size_t v_length, const int32_t* v) {
+#if WEBRTC_APM_DEBUG_DUMP == 1
+    FILE* file = GetRawFile(name);
+    fwrite(v, sizeof(v[0]), v_length, file);
+#endif
+  }
+
+  void DumpRaw(const char* name, size_t v) {
+#if WEBRTC_APM_DEBUG_DUMP == 1
+    FILE* file = GetRawFile(name);
+    fwrite(&v, sizeof(v), 1, file);
+#endif
+  }
+
+  void DumpRaw(const char* name, size_t v_length, const size_t* v) {
 #if WEBRTC_APM_DEBUG_DUMP == 1
     FILE* file = GetRawFile(name);
     fwrite(v, sizeof(v[0]), v_length, file);
@@ -113,7 +174,7 @@ class ApmDataDumper {
   }
 
   void DumpWav(const char* name,
-               int v_length,
+               size_t v_length,
                const float* v,
                int sample_rate_hz,
                int num_channels) {

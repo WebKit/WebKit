@@ -13,7 +13,7 @@
 #include <string.h>
 
 #include "webrtc/p2p/base/stun.h"
-#include "webrtc/base/common.h"
+#include "webrtc/base/checks.h"
 #include "webrtc/base/logging.h"
 
 namespace cricket {
@@ -68,7 +68,7 @@ int AsyncStunTCPSocket::Send(const void *pv, size_t cb,
 
   AppendToOutBuffer(pv, cb);
 
-  ASSERT(pad_bytes < 4);
+  RTC_DCHECK(pad_bytes < 4);
   char padding[4] = {0};
   AppendToOutBuffer(padding, pad_bytes);
 

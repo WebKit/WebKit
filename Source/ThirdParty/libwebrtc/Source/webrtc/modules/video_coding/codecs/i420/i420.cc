@@ -13,6 +13,7 @@
 #include <limits>
 #include <string>
 
+#include "webrtc/api/video/i420_buffer.h"
 #include "webrtc/common_video/libyuv/include/webrtc_libyuv.h"
 
 namespace {

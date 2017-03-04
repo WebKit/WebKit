@@ -68,10 +68,9 @@ public:
   }
 };
 
-bool LockUnlockThenStopRunFunction(void* obj) {
+void LockUnlockThenStopRunFunction(void* obj) {
   ProtectedCount* the_count = static_cast<ProtectedCount*>(obj);
   the_count->Increment();
-  return false;
 }
 
 TEST_F(CritSectTest, ThreadWakesOnce) NO_THREAD_SAFETY_ANALYSIS {

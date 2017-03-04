@@ -196,7 +196,9 @@ DEFINE_bool(send_side_bwe, true, "Use send-side bandwidth estimation");
 
 DEFINE_bool(allow_reordering, false, "Allow packet reordering to occur");
 
-DEFINE_bool(use_fec, false, "Use forward error correction.");
+DEFINE_bool(use_ulpfec, false, "Use RED+ULPFEC forward error correction.");
+
+DEFINE_bool(use_flexfec, false, "Use FlexFEC forward error correction.");
 
 DEFINE_bool(audio, false, "Add audio stream");
 
@@ -252,7 +254,8 @@ void Loopback() {
                   flags::NumTemporalLayers(),
                   flags::SelectedTL(),
                   0,  // No min transmit bitrate.
-                  flags::FLAGS_use_fec,
+                  flags::FLAGS_use_ulpfec,
+                  flags::FLAGS_use_flexfec,
                   flags::EncodedFramePath(),
                   flags::Clip()};
   params.audio = {flags::FLAGS_audio, flags::FLAGS_audio_video_sync};

@@ -98,7 +98,7 @@ AudioEncoder::EncodedInfo AudioEncoderCng::EncodeImpl(
   if (rtp_timestamps_.size() < frames_to_encode) {
     return EncodedInfo();
   }
-  RTC_CHECK_LE(static_cast<int>(frames_to_encode * 10), kMaxFrameSizeMs)
+  RTC_CHECK_LE(frames_to_encode * 10, kMaxFrameSizeMs)
       << "Frame size cannot be larger than " << kMaxFrameSizeMs
       << " ms when using VAD/CNG.";
 
@@ -139,7 +139,7 @@ AudioEncoder::EncodedInfo AudioEncoderCng::EncodeImpl(
       break;
     }
     case Vad::kError: {
-      FATAL();  // Fails only if fed invalid data.
+      RTC_FATAL();  // Fails only if fed invalid data.
       break;
     }
   }
@@ -179,17 +179,22 @@ void AudioEncoderCng::SetMaxPlaybackRate(int frequency_hz) {
   speech_encoder_->SetMaxPlaybackRate(frequency_hz);
 }
 
-void AudioEncoderCng::SetProjectedPacketLossRate(double fraction) {
-  speech_encoder_->SetProjectedPacketLossRate(fraction);
-}
-
-void AudioEncoderCng::SetTargetBitrate(int bits_per_second) {
-  speech_encoder_->SetTargetBitrate(bits_per_second);
-}
-
 rtc::ArrayView<std::unique_ptr<AudioEncoder>>
 AudioEncoderCng::ReclaimContainedEncoders() {
   return rtc::ArrayView<std::unique_ptr<AudioEncoder>>(&speech_encoder_, 1);
+}
+
+void AudioEncoderCng::OnReceivedUplinkPacketLossFraction(
+    float uplink_packet_loss_fraction) {
+  speech_encoder_->OnReceivedUplinkPacketLossFraction(
+      uplink_packet_loss_fraction);
+}
+
+void AudioEncoderCng::OnReceivedUplinkBandwidth(
+    int target_audio_bitrate_bps,
+    rtc::Optional<int64_t> probing_interval_ms) {
+  speech_encoder_->OnReceivedUplinkBandwidth(target_audio_bitrate_bps,
+                                             probing_interval_ms);
 }
 
 AudioEncoder::EncodedInfo AudioEncoderCng::EncodePassive(
@@ -240,9 +245,9 @@ AudioEncoder::EncodedInfo AudioEncoderCng::EncodeActive(
                                     samples_per_10ms_frame),
                                 encoded);
     if (i + 1 == frames_to_encode) {
-      RTC_CHECK_GT(info.encoded_bytes, 0u) << "Encoder didn't deliver data.";
+      RTC_CHECK_GT(info.encoded_bytes, 0) << "Encoder didn't deliver data.";
     } else {
-      RTC_CHECK_EQ(info.encoded_bytes, 0u)
+      RTC_CHECK_EQ(info.encoded_bytes, 0)
           << "Encoder delivered data too early.";
     }
   }

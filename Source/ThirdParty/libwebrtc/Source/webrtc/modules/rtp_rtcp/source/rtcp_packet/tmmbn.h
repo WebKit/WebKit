@@ -14,7 +14,6 @@
 #include <vector>
 
 #include "webrtc/base/basictypes.h"
-#include "webrtc/base/constructormagic.h"
 #include "webrtc/modules/rtp_rtcp/source/rtcp_packet/rtpfb.h"
 #include "webrtc/modules/rtp_rtcp/source/rtcp_packet/tmmb_item.h"
 
@@ -55,8 +54,6 @@ class Tmmbn : public Rtpfb {
   uint32_t media_ssrc() const;
 
   std::vector<TmmbItem> items_;
-
-  RTC_DISALLOW_COPY_AND_ASSIGN(Tmmbn);
 };
 }  // namespace rtcp
 }  // namespace webrtc

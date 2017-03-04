@@ -16,7 +16,6 @@
 #include <string>
 #include <vector>
 
-#include "webrtc/base/common.h"
 #include "webrtc/base/gtest_prod_util.h"
 
 namespace webrtc {

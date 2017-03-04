@@ -18,7 +18,7 @@
 #include "webrtc/common_types.h"
 #include "webrtc/modules/audio_conference_mixer/include/audio_conference_mixer.h"
 #include "webrtc/modules/audio_conference_mixer/include/audio_conference_mixer_defines.h"
-#include "webrtc/modules/utility/include/file_recorder.h"
+#include "webrtc/voice_engine/file_recorder.h"
 #include "webrtc/voice_engine/level_indicator.h"
 #include "webrtc/voice_engine/voice_engine_defines.h"
 
@@ -26,7 +26,6 @@ namespace webrtc {
 
 class AudioProcessing;
 class FileWrapper;
-class VoEMediaProcess;
 
 namespace voe {
 
@@ -44,12 +43,6 @@ public:
 
     int32_t SetAudioProcessingModule(
         AudioProcessing* audioProcessingModule);
-
-    // VoEExternalMedia
-    int RegisterExternalMediaProcessing(
-        VoEMediaProcess& proccess_object);
-
-    int DeRegisterExternalMediaProcessing();
 
     int32_t MixActiveChannels();
 
@@ -105,7 +98,6 @@ private:
     Statistics* _engineStatisticsPtr;
     AudioProcessing* _audioProcessingModulePtr;
 
-    rtc::CriticalSection _callbackCritSect;
     // Protects output_file_recorder_ and _outputFileRecording.
     rtc::CriticalSection _fileCritSect;
     AudioConferenceMixer& _mixerModule;
@@ -116,8 +108,6 @@ private:
     PushResampler<int16_t> audioproc_resampler_;
     AudioLevel _audioLevel;    // measures audio level for the combined signal
     int _instanceId;
-    VoEMediaProcess* _externalMediaCallbackPtr;
-    bool _externalMedia;
     float _panLeft;
     float _panRight;
     int _mixingFrequencyHz;

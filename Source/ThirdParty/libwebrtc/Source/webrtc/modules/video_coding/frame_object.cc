@@ -8,6 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include "webrtc/base/checks.h"
 #include "webrtc/modules/video_coding/frame_object.h"
 #include "webrtc/modules/video_coding/packet_buffer.h"
 
@@ -32,39 +33,52 @@ RtpFrameObject::RtpFrameObject(PacketBuffer* packet_buffer,
       last_seq_num_(last_seq_num),
       received_time_(received_time),
       times_nacked_(times_nacked) {
-  VCMPacket* packet = packet_buffer_->GetPacket(first_seq_num);
-  if (packet) {
-    // RtpFrameObject members
-    frame_type_ = packet->frameType;
-    codec_type_ = packet->codec;
+  VCMPacket* first_packet = packet_buffer_->GetPacket(first_seq_num);
+  RTC_DCHECK(first_packet);
 
-    // TODO(philipel): Remove when encoded image is replaced by FrameObject.
-    // VCMEncodedFrame members
-    CopyCodecSpecific(&packet->video_header);
-    _completeFrame = true;
-    _payloadType = packet->payloadType;
-    _timeStamp = packet->timestamp;
-    ntp_time_ms_ = packet->ntp_time_ms_;
+  // RtpFrameObject members
+  frame_type_ = first_packet->frameType;
+  codec_type_ = first_packet->codec;
 
-    // Since FFmpeg use an optimized bitstream reader that reads in chunks of
-    // 32/64 bits we have to add at least that much padding to the buffer
-    // to make sure the decoder doesn't read out of bounds.
-    // NOTE! EncodedImage::_size is the size of the buffer (think capacity of
-    //       an std::vector) and EncodedImage::_length is the actual size of
-    //       the bitstream (think size of an std::vector).
-    if (codec_type_ == kVideoCodecH264)
-      _size = frame_size + EncodedImage::kBufferPaddingBytesH264;
-    else
-      _size = frame_size;
+  // TODO(philipel): Remove when encoded image is replaced by FrameObject.
+  // VCMEncodedFrame members
+  CopyCodecSpecific(&first_packet->video_header);
+  _completeFrame = true;
+  _payloadType = first_packet->payloadType;
+  _timeStamp = first_packet->timestamp;
+  ntp_time_ms_ = first_packet->ntp_time_ms_;
 
-    _buffer = new uint8_t[_size];
-    _length = frame_size;
-    _frameType = packet->frameType;
-    GetBitstream(_buffer);
+  // Since FFmpeg use an optimized bitstream reader that reads in chunks of
+  // 32/64 bits we have to add at least that much padding to the buffer
+  // to make sure the decoder doesn't read out of bounds.
+  // NOTE! EncodedImage::_size is the size of the buffer (think capacity of
+  //       an std::vector) and EncodedImage::_length is the actual size of
+  //       the bitstream (think size of an std::vector).
+  if (codec_type_ == kVideoCodecH264)
+    _size = frame_size + EncodedImage::kBufferPaddingBytesH264;
+  else
+    _size = frame_size;
 
-    // FrameObject members
-    timestamp = packet->timestamp;
-  }
+  _buffer = new uint8_t[_size];
+  _length = frame_size;
+  _frameType = first_packet->frameType;
+  GetBitstream(_buffer);
+  _encodedWidth = first_packet->width;
+  _encodedHeight = first_packet->height;
+
+  // FrameObject members
+  timestamp = first_packet->timestamp;
+
+  VCMPacket* last_packet = packet_buffer_->GetPacket(last_seq_num);
+  RTC_DCHECK(last_packet && last_packet->markerBit);
+  // http://www.etsi.org/deliver/etsi_ts/126100_126199/126114/12.07.00_60/
+  // ts_126114v120700p.pdf Section 7.4.5.
+  // The MTSI client shall add the payload bytes as defined in this clause
+  // onto the last RTP packet in each group of packets which make up a key
+  // frame (I-frame or IDR frame in H.264 (AVC), or an IRAP picture in H.265
+  // (HEVC)).
+  rotation_ = last_packet->video_header.rotation;
+  _rotation_set = true;
 }
 
 RtpFrameObject::~RtpFrameObject() {
@@ -105,6 +119,10 @@ int64_t RtpFrameObject::ReceivedTime() const {
 
 int64_t RtpFrameObject::RenderTime() const {
   return _renderTimeMs;
+}
+
+bool RtpFrameObject::delayed_by_retransmission() const {
+  return times_nacked() > 0;
 }
 
 rtc::Optional<RTPVideoTypeHeader> RtpFrameObject::GetCodecHeader() const {

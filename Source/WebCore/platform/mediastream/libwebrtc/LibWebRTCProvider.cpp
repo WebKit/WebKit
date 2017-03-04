@@ -30,10 +30,10 @@
 #include "LibWebRTCAudioModule.h"
 #include "Logging.h"
 #include <dlfcn.h>
-#include <webrtc/api/peerconnectionfactory.h>
 #include <webrtc/api/peerconnectionfactoryproxy.h>
 #include <webrtc/base/physicalsocketserver.h>
 #include <webrtc/p2p/client/basicportallocator.h>
+#include <webrtc/pc/peerconnectionfactory.h>
 #include <webrtc/sdk/objc/Framework/Classes/videotoolboxvideocodecfactory.h>
 #include <wtf/Function.h>
 #include <wtf/NeverDestroyed.h>

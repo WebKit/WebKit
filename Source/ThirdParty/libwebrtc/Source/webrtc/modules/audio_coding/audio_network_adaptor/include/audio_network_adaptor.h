@@ -47,6 +47,8 @@ class AudioNetworkAdaptor {
 
   virtual void SetTargetAudioBitrate(int target_audio_bitrate_bps) = 0;
 
+  virtual void SetOverhead(size_t overhead_bytes_per_packet) = 0;
+
   virtual EncoderRuntimeConfig GetEncoderRuntimeConfig() = 0;
 
   virtual void StartDebugDump(FILE* file_handle) = 0;

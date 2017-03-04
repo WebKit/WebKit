@@ -10,6 +10,7 @@
 
 #include <memory>
 
+#include "webrtc/base/checks.h"
 #include "webrtc/base/fileutils.h"
 #include "webrtc/base/gunit.h"
 #include "webrtc/base/optionsfile.h"
@@ -46,7 +47,7 @@ class MAYBE_OptionsFileTest : public testing::Test {
  public:
   MAYBE_OptionsFileTest() {
     Pathname dir;
-    ASSERT(Filesystem::GetTemporaryFolder(dir, true, NULL));
+    RTC_CHECK(Filesystem::GetTemporaryFolder(dir, true, nullptr));
     test_file_ = Filesystem::TempFilename(dir, ".testfile");
     OpenStore();
   }

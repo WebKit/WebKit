@@ -14,11 +14,9 @@
 
 #include <algorithm>
 
-#include "libyuv/scale_argb.h"
-#include "webrtc/base/common.h"
+#include "webrtc/api/video/i420_buffer.h"
+#include "webrtc/api/video/video_frame.h"
 #include "webrtc/base/logging.h"
-#include "webrtc/base/systeminfo.h"
-#include "webrtc/video_frame.h"
 
 namespace cricket {
 
@@ -151,8 +149,8 @@ void VideoCapturer::OnSinkWantsChanged(const rtc::VideoSinkWants& wants) {
   apply_rotation_ = wants.rotation_applied;
 
   if (video_adapter()) {
-    video_adapter()->OnResolutionRequest(wants.max_pixel_count,
-                                         wants.max_pixel_count_step_up);
+    video_adapter()->OnResolutionRequest(wants.target_pixel_count,
+                                         wants.max_pixel_count);
   }
 }
 
@@ -216,7 +214,7 @@ void VideoCapturer::OnFrame(const webrtc::VideoFrame& frame,
       return;
     }
     broadcaster_.OnFrame(webrtc::VideoFrame(
-        webrtc::I420Buffer::Rotate(buffer, frame.rotation()),
+        webrtc::I420Buffer::Rotate(*buffer, frame.rotation()),
         webrtc::kVideoRotation_0, frame.timestamp_us()));
   } else {
     broadcaster_.OnFrame(frame);

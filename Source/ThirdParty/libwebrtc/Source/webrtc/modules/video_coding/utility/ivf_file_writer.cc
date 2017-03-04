@@ -122,20 +122,8 @@ bool IvfFileWriter::InitFromFirstFrame(const EncodedImage& encoded_image,
   if (!WriteHeader())
     return false;
 
-  std::string codec_name;
-  switch (codec_type_) {
-    case kVideoCodecVP8:
-      codec_name = "VP8";
-      break;
-    case kVideoCodecVP9:
-      codec_name = "VP9";
-      break;
-    case kVideoCodecH264:
-      codec_name = "H264";
-      break;
-    default:
-      codec_name = "Unknown";
-  }
+  const char* codec_name =
+      CodecTypeToPayloadName(codec_type_).value_or("Unknown");
   LOG(LS_WARNING) << "Created IVF file for codec data of type " << codec_name
                   << " at resolution " << width_ << " x " << height_
                   << ", using " << (using_capture_timestamps_ ? "1" : "90")

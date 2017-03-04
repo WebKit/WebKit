@@ -21,7 +21,7 @@ namespace videocapturemodule
 class DeviceInfoLinux: public DeviceInfoImpl
 {
 public:
-    DeviceInfoLinux(const int32_t id);
+    DeviceInfoLinux();
     virtual ~DeviceInfoLinux();
     virtual uint32_t NumberOfDevices();
     virtual int32_t GetDeviceName(

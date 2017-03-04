@@ -14,6 +14,7 @@
 
 #include "webrtc/base/gunit.h"
 #include "webrtc/base/logging.h"
+#include "webrtc/base/networkmonitor.h"
 #include "webrtc/base/physicalsocketserver.h"
 #include "webrtc/base/socket_unittest.h"
 #include "webrtc/base/testutils.h"
@@ -83,6 +84,22 @@ class FakePhysicalSocketServer : public PhysicalSocketServer {
 
  private:
   PhysicalSocketTest* test_;
+};
+
+class FakeNetworkBinder : public NetworkBinderInterface {
+ public:
+  NetworkBindingResult BindSocketToNetwork(int, const IPAddress&) override {
+    ++num_binds_;
+    return result_;
+  }
+
+  void set_result(NetworkBindingResult result) { result_ = result; }
+
+  int num_binds() { return num_binds_; }
+
+ private:
+  NetworkBindingResult result_ = NetworkBindingResult::SUCCESS;
+  int num_binds_ = 0;
 };
 
 class PhysicalSocketTest : public SocketTest {
@@ -415,6 +432,44 @@ TEST_F(PhysicalSocketTest, TestSocketRecvTimestampIPv6) {
 }
 #endif
 
+// Verify that if the socket was unable to be bound to a real network interface
+// (not loopback), Bind will return an error.
+TEST_F(PhysicalSocketTest,
+       BindFailsIfNetworkBinderFailsForNonLoopbackInterface) {
+  FakeNetworkBinder fake_network_binder;
+  server_->set_network_binder(&fake_network_binder);
+  std::unique_ptr<AsyncSocket> socket(
+      server_->CreateAsyncSocket(AF_INET, SOCK_DGRAM));
+  fake_network_binder.set_result(NetworkBindingResult::FAILURE);
+  EXPECT_EQ(-1, socket->Bind(SocketAddress("192.168.0.1", 0)));
+  server_->set_network_binder(nullptr);
+}
+
+// Network binder shouldn't be used if the socket is bound to the "any" IP.
+TEST_F(PhysicalSocketTest,
+       NetworkBinderIsNotUsedForAnyIp) {
+  FakeNetworkBinder fake_network_binder;
+  server_->set_network_binder(&fake_network_binder);
+  std::unique_ptr<AsyncSocket> socket(
+      server_->CreateAsyncSocket(AF_INET, SOCK_DGRAM));
+  EXPECT_EQ(0, socket->Bind(SocketAddress("0.0.0.0", 0)));
+  EXPECT_EQ(0, fake_network_binder.num_binds());
+  server_->set_network_binder(nullptr);
+}
+
+// For a loopback interface, failures to bind to the interface should be
+// tolerated.
+TEST_F(PhysicalSocketTest,
+       BindSucceedsIfNetworkBinderFailsForLoopbackInterface) {
+  FakeNetworkBinder fake_network_binder;
+  server_->set_network_binder(&fake_network_binder);
+  std::unique_ptr<AsyncSocket> socket(
+      server_->CreateAsyncSocket(AF_INET, SOCK_DGRAM));
+  fake_network_binder.set_result(NetworkBindingResult::FAILURE);
+  EXPECT_EQ(0, socket->Bind(SocketAddress(kIPv4Loopback, 0)));
+  server_->set_network_binder(nullptr);
+}
+
 class PosixSignalDeliveryTest : public testing::Test {
  public:
   static void RecordSignal(int signum) {
@@ -428,9 +483,9 @@ class PosixSignalDeliveryTest : public testing::Test {
   }
 
   void TearDown() {
-    ss_.reset(NULL);
+    ss_.reset(nullptr);
     signals_received_.clear();
-    signaled_thread_ = NULL;
+    signaled_thread_ = nullptr;
   }
 
   bool ExpectSignal(int signum) {
@@ -463,7 +518,7 @@ class PosixSignalDeliveryTest : public testing::Test {
 };
 
 std::vector<int> PosixSignalDeliveryTest::signals_received_;
-Thread *PosixSignalDeliveryTest::signaled_thread_ = NULL;
+Thread* PosixSignalDeliveryTest::signaled_thread_ = nullptr;
 
 // Test receiving a synchronous signal while not in Wait() and then entering
 // Wait() afterwards.
@@ -508,7 +563,7 @@ class RaiseSigTermRunnable : public Runnable {
     // be delivered to us.
     sigset_t mask;
     sigemptyset(&mask);
-    pthread_sigmask(SIG_SETMASK, &mask, NULL);
+    pthread_sigmask(SIG_SETMASK, &mask, nullptr);
 
     // Raise it.
     raise(SIGTERM);
@@ -523,7 +578,7 @@ TEST_F(PosixSignalDeliveryTest, SignalOnDifferentThread) {
   sigset_t mask;
   sigemptyset(&mask);
   sigaddset(&mask, SIGTERM);
-  EXPECT_EQ(0, pthread_sigmask(SIG_SETMASK, &mask, NULL));
+  EXPECT_EQ(0, pthread_sigmask(SIG_SETMASK, &mask, nullptr));
   // Start a new thread that raises it. It will have to be delivered to that
   // thread. Our implementation should safely handle it and dispatch
   // RecordSignal() on this thread.

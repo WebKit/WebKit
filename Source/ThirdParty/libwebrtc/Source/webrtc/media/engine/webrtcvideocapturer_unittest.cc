@@ -75,7 +75,7 @@ TEST_F(WebRtcVideoCapturerTest, TestInit) {
 }
 
 TEST_F(WebRtcVideoCapturerTest, TestInitVcm) {
-  EXPECT_TRUE(capturer_->Init(factory_->Create(0,
+  EXPECT_TRUE(capturer_->Init(factory_->Create(
       reinterpret_cast<const char*>(kTestDeviceId.c_str()))));
 }
 
@@ -101,7 +101,7 @@ TEST_F(WebRtcVideoCapturerTest, TestCapture) {
 }
 
 TEST_F(WebRtcVideoCapturerTest, TestCaptureVcm) {
-  EXPECT_TRUE(capturer_->Init(factory_->Create(0,
+  EXPECT_TRUE(capturer_->Init(factory_->Create(
       reinterpret_cast<const char*>(kTestDeviceId.c_str()))));
   cricket::VideoCapturerListener listener(capturer_.get());
   EXPECT_TRUE(capturer_->GetSupportedFormats()->empty());

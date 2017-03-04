@@ -114,6 +114,13 @@ class SrtpFilter {
   // Returns srtp overhead for rtp packets.
   bool GetSrtpOverhead(int* srtp_overhead) const;
 
+#if defined(ENABLE_EXTERNAL_AUTH)
+  // A SRTP filter supports external creation of the auth tag if a non-GCM
+  // cipher is used. This method is only valid after the RTP params have
+  // been set.
+  bool IsExternalAuthActive() const;
+#endif
+
   // Update the silent threshold (in ms) for signaling errors.
   void set_signal_silent_time(int signal_silent_time_in_ms);
 
@@ -206,6 +213,13 @@ class SrtpSession {
 
   int GetSrtpOverhead() const;
 
+#if defined(ENABLE_EXTERNAL_AUTH)
+  // A SRTP session supports external creation of the auth tag if a non-GCM
+  // cipher is used. This method is only valid after the RTP params have
+  // been set.
+  bool IsExternalAuthActive() const;
+#endif
+
   // Update the silent threshold (in ms) for signaling errors.
   void set_signal_silent_time(int signal_silent_time_in_ms);
 
@@ -225,13 +239,16 @@ class SrtpSession {
   static void HandleEventThunk(srtp_event_data_t* ev);
 
   rtc::ThreadChecker thread_checker_;
-  srtp_ctx_t_* session_;
-  int rtp_auth_tag_len_;
-  int rtcp_auth_tag_len_;
+  srtp_ctx_t_* session_ = nullptr;
+  int rtp_auth_tag_len_ = 0;
+  int rtcp_auth_tag_len_ = 0;
   std::unique_ptr<SrtpStat> srtp_stat_;
   static bool inited_;
   static rtc::GlobalLockPod lock_;
-  int last_send_seq_num_;
+  int last_send_seq_num_ = -1;
+#if defined(ENABLE_EXTERNAL_AUTH)
+  bool external_auth_active_ = false;
+#endif
   RTC_DISALLOW_COPY_AND_ASSIGN(SrtpSession);
 };
 

@@ -12,9 +12,9 @@
 
 #include <utility>  // pair
 
+#include "webrtc/api/audio_codecs/audio_decoder.h"
 #include "webrtc/base/checks.h"
 #include "webrtc/base/logging.h"
-#include "webrtc/modules/audio_coding/codecs/audio_decoder.h"
 
 namespace webrtc {
 
@@ -42,8 +42,7 @@ DecoderDatabase::DecoderInfo::DecoderInfo(const SdpAudioFormat& audio_format,
 
 DecoderDatabase::DecoderInfo::DecoderInfo(NetEqDecoder ct,
                                           AudioDecoderFactory* factory)
-    : DecoderInfo(*acm2::RentACodec::NetEqDecoderToSdpAudioFormat(ct),
-                  factory) {}
+    : DecoderInfo(*NetEqDecoderToSdpAudioFormat(ct), factory) {}
 
 DecoderDatabase::DecoderInfo::DecoderInfo(const SdpAudioFormat& audio_format,
                                           AudioDecoder* ext_dec,
@@ -135,8 +134,7 @@ int DecoderDatabase::RegisterPayload(uint8_t rtp_payload_type,
       !CodecSupported(codec_type)) {
     return kCodecNotSupported;
   }
-  const auto opt_format =
-      acm2::RentACodec::NetEqDecoderToSdpAudioFormat(codec_type);
+  const auto opt_format = NetEqDecoderToSdpAudioFormat(codec_type);
   if (!opt_format) {
     return kCodecNotSupported;
   }
@@ -175,8 +173,7 @@ int DecoderDatabase::InsertExternal(uint8_t rtp_payload_type,
     return kInvalidPointer;
   }
 
-  const auto opt_db_format =
-      acm2::RentACodec::NetEqDecoderToSdpAudioFormat(codec_type);
+  const auto opt_db_format = NetEqDecoderToSdpAudioFormat(codec_type);
   const SdpAudioFormat format = opt_db_format.value_or({"arbitrary", 0, 0});
 
   std::pair<DecoderMap::iterator, bool> ret;

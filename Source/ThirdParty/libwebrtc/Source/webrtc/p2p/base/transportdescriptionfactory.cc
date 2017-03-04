@@ -56,6 +56,7 @@ TransportDescription* TransportDescriptionFactory::CreateOffer(
 TransportDescription* TransportDescriptionFactory::CreateAnswer(
     const TransportDescription* offer,
     const TransportOptions& options,
+    bool require_transport_attributes,
     const TransportDescription* current_description) const {
   // TODO(juberti): Figure out why we get NULL offers, and fix this upstream.
   if (!offer) {
@@ -91,7 +92,7 @@ TransportDescription* TransportDescriptionFactory::CreateAnswer(
         return NULL;
       }
     }
-  } else if (secure_ == SEC_REQUIRED) {
+  } else if (require_transport_attributes && secure_ == SEC_REQUIRED) {
     // We require DTLS, but the other side didn't offer it. Fail.
     LOG(LS_WARNING) << "Failed to create TransportDescription answer "
                        "because of incompatible security settings";
@@ -110,7 +111,12 @@ bool TransportDescriptionFactory::SetSecurityInfo(
 
   // This digest algorithm is used to produce the a=fingerprint lines in SDP.
   // RFC 4572 Section 5 requires that those lines use the same hash function as
-  // the certificate's signature.
+  // the certificate's signature, which is what CreateFromCertificate does.
+  desc->identity_fingerprint.reset(
+      rtc::SSLFingerprint::CreateFromCertificate(certificate_));
+  if (!desc->identity_fingerprint) {
+    return false;
+  }
   std::string digest_alg;
   if (!certificate_->ssl_certificate().GetSignatureDigestAlgorithm(
           &digest_alg)) {

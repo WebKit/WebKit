@@ -66,7 +66,7 @@ class VCMRobustnessTest : public ::testing::Test {
     rtp_info.header.payloadType = video_codec_.plType;
     rtp_info.type.Video.codec = kRtpVideoVp8;
     rtp_info.type.Video.codecHeader.VP8.InitRTPVideoHeaderVP8();
-    rtp_info.type.Video.isFirstPacket = first;
+    rtp_info.type.Video.is_first_packet_in_frame = first;
 
     ASSERT_EQ(VCM_OK, vcm_->IncomingPacket(payload, kPayloadLen, rtp_info));
   }

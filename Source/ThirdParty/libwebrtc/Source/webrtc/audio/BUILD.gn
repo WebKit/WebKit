@@ -6,7 +6,7 @@
 # in the file PATENTS.  All contributing project authors may
 # be found in the AUTHORS file in the root of the source tree.
 
-import("../build/webrtc.gni")
+import("../webrtc.gni")
 
 rtc_static_library("audio") {
   sources = [
@@ -16,6 +16,8 @@ rtc_static_library("audio") {
     "audio_send_stream.h",
     "audio_state.cc",
     "audio_state.h",
+    "audio_transport_proxy.cc",
+    "audio_transport_proxy.h",
     "conversion.h",
     "scoped_voe_interface.h",
   ]
@@ -29,6 +31,17 @@ rtc_static_library("audio") {
     "..:webrtc_common",
     "../api:audio_mixer_api",
     "../api:call_api",
+    "../base:rtc_base_approved",
+    "../base:rtc_task_queue",
+    "../call:call_interfaces",
+    "../common_audio",
+    "../modules/audio_device",
+    "../modules/audio_processing",
+    "../modules/bitrate_controller:bitrate_controller",
+    "../modules/congestion_controller:congestion_controller",
+    "../modules/pacing:pacing",
+    "../modules/remote_bitrate_estimator:remote_bitrate_estimator",
+    "../modules/rtp_rtcp:rtp_rtcp",
     "../system_wrappers",
     "../voice_engine",
   ]
@@ -36,6 +49,11 @@ rtc_static_library("audio") {
 if (rtc_include_tests) {
   rtc_source_set("audio_tests") {
     testonly = true
+
+    # TODO(kjellander): Remove (bugs.webrtc.org/6828)
+    # This needs remote_bitrate_estimator to be moved to webrtc/api first.
+    check_includes = false
+
     sources = [
       "audio_receive_stream_unittest.cc",
       "audio_send_stream_unittest.cc",
@@ -43,6 +61,16 @@ if (rtc_include_tests) {
     ]
     deps = [
       ":audio",
+      "../api:mock_audio_mixer",
+      "../base:rtc_base_approved",
+      "../base:rtc_task_queue",
+      "../modules/audio_device:mock_audio_device",
+      "../modules/audio_mixer:audio_mixer_impl",
+      "../modules/congestion_controller:congestion_controller",
+      "../modules/pacing:pacing",
+      "../test:test_common",
+      "../test:test_support",
+      "utility:utility_tests",
       "//testing/gmock",
       "//testing/gtest",
     ]

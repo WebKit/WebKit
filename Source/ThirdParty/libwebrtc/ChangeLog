@@ -1,3 +1,16 @@
+2017-03-03  Youenn Fablet  <youenn@apple.com>
+
+        [WebRTC] Update libwebrtc source code
+        https://bugs.webkit.org/show_bug.cgi?id=168599
+
+        Reviewed by Alex Christensen.
+
+        Very long list of file changes omitted.
+
+        We updated to git commit 716e726ef0b322e8317b749613691da043bfc61c
+        of https://chromium.googlesource.com/external/webrtc and applied
+        the changes that are now in WebKit/patch-libwebrtc
+
 2017-03-03  Alex Christensen  <achristensen@webkit.org>
 
         Remove empty build directories.

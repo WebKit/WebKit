@@ -30,17 +30,15 @@ static NSArray* camera_presets = @[
 ];
 
 #define IOS_UNSUPPORTED()                                                 \
-  WEBRTC_TRACE(kTraceError, kTraceVideoCapture, _id,                      \
+  WEBRTC_TRACE(kTraceError, kTraceVideoCapture, 0,                      \
                "%s is not supported on the iOS platform.", __FUNCTION__); \
   return -1;
 
-VideoCaptureModule::DeviceInfo* VideoCaptureImpl::CreateDeviceInfo(
-    const int32_t device_id) {
-  return new DeviceInfoIos(device_id);
+VideoCaptureModule::DeviceInfo* VideoCaptureImpl::CreateDeviceInfo() {
+  return new DeviceInfoIos();
 }
 
-DeviceInfoIos::DeviceInfoIos(const int32_t device_id)
-    : DeviceInfoImpl(device_id) {
+DeviceInfoIos::DeviceInfoIos() {
   this->Init();
 }
 

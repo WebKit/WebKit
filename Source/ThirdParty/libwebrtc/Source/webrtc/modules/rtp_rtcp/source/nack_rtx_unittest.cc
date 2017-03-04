@@ -14,6 +14,7 @@
 #include <memory>
 #include <set>
 
+#include "webrtc/api/call/transport.h"
 #include "webrtc/base/rate_limiter.h"
 #include "webrtc/common_types.h"
 #include "webrtc/modules/rtp_rtcp/include/receive_statistics.h"
@@ -23,7 +24,6 @@
 #include "webrtc/modules/rtp_rtcp/include/rtp_rtcp.h"
 #include "webrtc/modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "webrtc/test/gtest.h"
-#include "webrtc/transport.h"
 
 namespace webrtc {
 
@@ -58,7 +58,7 @@ class TestRtpFeedback : public NullRtpFeedback {
   explicit TestRtpFeedback(RtpRtcp* rtp_rtcp) : rtp_rtcp_(rtp_rtcp) {}
   virtual ~TestRtpFeedback() {}
 
-  void OnIncomingSSRCChanged(const uint32_t ssrc) override {
+  void OnIncomingSSRCChanged(uint32_t ssrc) override {
     rtp_rtcp_->SetRemoteSSRC(ssrc);
   }
 
@@ -169,8 +169,7 @@ class RtxLoopBackTransport : public webrtc::Transport {
 class RtpRtcpRtxNackTest : public ::testing::Test {
  protected:
   RtpRtcpRtxNackTest()
-      : rtp_payload_registry_(RTPPayloadStrategy::CreateStrategy(false)),
-        rtp_rtcp_module_(nullptr),
+      : rtp_rtcp_module_(nullptr),
         transport_(kTestSsrc + 1),
         receiver_(),
         payload_data_length(sizeof(payload_data)),
@@ -210,9 +209,7 @@ class RtpRtcpRtxNackTest : public ::testing::Test {
 
     EXPECT_EQ(0, rtp_rtcp_module_->RegisterSendPayload(video_codec));
     rtp_rtcp_module_->SetRtxSendPayloadType(kRtxPayloadType, kPayloadType);
-    EXPECT_EQ(0, rtp_receiver_->RegisterReceivePayload(
-                     video_codec.plName, video_codec.plType, 90000, 0,
-                     video_codec.maxBitrate));
+    EXPECT_EQ(0, rtp_payload_registry_.RegisterReceivePayload(video_codec));
     rtp_payload_registry_.SetRtxPayloadType(kRtxPayloadType, kPayloadType);
 
     for (size_t n = 0; n < payload_data_length; n++) {

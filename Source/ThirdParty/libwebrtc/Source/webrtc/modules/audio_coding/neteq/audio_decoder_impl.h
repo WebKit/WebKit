@@ -13,18 +13,16 @@
 
 #include <assert.h>
 
+#include "webrtc/api/audio_codecs/audio_decoder.h"
 #include "webrtc/base/constructormagic.h"
-#include "webrtc/modules/audio_coding/codecs/audio_decoder.h"
+#include "webrtc/modules/audio_coding/neteq/neteq_decoder_enum.h"
+#include "webrtc/typedefs.h"
+
 #ifdef WEBRTC_CODEC_G722
 #include "webrtc/modules/audio_coding/codecs/g722/g722_interface.h"
 #endif
-#include "webrtc/modules/audio_coding/acm2/rent_a_codec.h"
-#include "webrtc/typedefs.h"
-#include "webrtc/voice_engine_configurations.h"
 
 namespace webrtc {
-
-using NetEqDecoder = acm2::RentACodec::NetEqDecoder;
 
 // Returns true if |codec_type| is supported.
 bool CodecSupported(NetEqDecoder codec_type);

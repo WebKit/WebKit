@@ -16,12 +16,12 @@
 
 #include <string>
 
+#include "webrtc/api/mediatypes.h"
 #include "webrtc/api/mediastreaminterface.h"
 #include "webrtc/api/proxy.h"
 #include "webrtc/api/rtpparameters.h"
 #include "webrtc/base/refcount.h"
 #include "webrtc/base/scoped_ref_ptr.h"
-#include "webrtc/pc/mediasession.h"
 
 namespace webrtc {
 
@@ -54,6 +54,7 @@ class RtpReceiverInterface : public rtc::RefCountInterface {
   // but this API also applies them to receivers, similar to ORTC:
   // http://ortc.org/wp-content/uploads/2016/03/ortc.html#rtcrtpparameters*.
   virtual RtpParameters GetParameters() const = 0;
+  // Currently, doesn't support changing any parameters, but may in the future.
   virtual bool SetParameters(const RtpParameters& parameters) = 0;
 
   // Does not take ownership of observer.
@@ -65,14 +66,17 @@ class RtpReceiverInterface : public rtc::RefCountInterface {
 };
 
 // Define proxy for RtpReceiverInterface.
+// TODO(deadbeef): Move this to .cc file and out of api/. What threads methods
+// are called on is an implementation detail.
 BEGIN_SIGNALING_PROXY_MAP(RtpReceiver)
-PROXY_CONSTMETHOD0(rtc::scoped_refptr<MediaStreamTrackInterface>, track)
-PROXY_CONSTMETHOD0(cricket::MediaType, media_type)
-PROXY_CONSTMETHOD0(std::string, id)
-PROXY_CONSTMETHOD0(RtpParameters, GetParameters);
-PROXY_METHOD1(bool, SetParameters, const RtpParameters&)
-PROXY_METHOD1(void, SetObserver, RtpReceiverObserverInterface*);
-END_SIGNALING_PROXY()
+  PROXY_SIGNALING_THREAD_DESTRUCTOR()
+  PROXY_CONSTMETHOD0(rtc::scoped_refptr<MediaStreamTrackInterface>, track)
+  PROXY_CONSTMETHOD0(cricket::MediaType, media_type)
+  PROXY_CONSTMETHOD0(std::string, id)
+  PROXY_CONSTMETHOD0(RtpParameters, GetParameters);
+  PROXY_METHOD1(bool, SetParameters, const RtpParameters&)
+  PROXY_METHOD1(void, SetObserver, RtpReceiverObserverInterface*);
+END_PROXY_MAP()
 
 }  // namespace webrtc
 

@@ -22,6 +22,11 @@
     return rtc::Optional<PpsParser::PpsState>(); \
   }
 
+namespace {
+const int kMaxPicInitQpDeltaValue = 25;
+const int kMinPicInitQpDeltaValue = -26;
+}
+
 namespace webrtc {
 
 // General note: this is based off the 02/2014 version of the H.264 standard.
@@ -162,6 +167,11 @@ rtc::Optional<PpsParser::PpsState> PpsParser::ParseInternal(
   // pic_init_qp_minus26: se(v)
   RETURN_EMPTY_ON_FAIL(
       bit_buffer->ReadSignedExponentialGolomb(&pps.pic_init_qp_minus26));
+  // Sanity-check parsed value
+  if (pps.pic_init_qp_minus26 > kMaxPicInitQpDeltaValue ||
+      pps.pic_init_qp_minus26 < kMinPicInitQpDeltaValue) {
+    RETURN_EMPTY_ON_FAIL(false);
+  }
   // pic_init_qs_minus26: se(v)
   RETURN_EMPTY_ON_FAIL(bit_buffer->ReadExponentialGolomb(&golomb_ignored));
   // chroma_qp_index_offset: se(v)

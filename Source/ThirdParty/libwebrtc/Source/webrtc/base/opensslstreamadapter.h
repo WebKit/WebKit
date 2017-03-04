@@ -76,6 +76,7 @@ class OpenSSLStreamAdapter : public SSLStreamAdapter {
   int StartSSL() override;
   void SetMode(SSLMode mode) override;
   void SetMaxProtocolVersion(SSLProtocolVersion version) override;
+  void SetInitialRetransmissionTimeout(int timeout_ms) override;
 
   StreamResult Read(void* data,
                     size_t data_len,
@@ -109,14 +110,15 @@ class OpenSSLStreamAdapter : public SSLStreamAdapter {
 
   bool IsTlsConnected() override;
 
-  // Capabilities interfaces
-  static bool HaveDtls();
-  static bool HaveDtlsSrtp();
-  static bool HaveExporter();
+  // Capabilities interfaces.
   static bool IsBoringSsl();
 
   static bool IsAcceptableCipher(int cipher, KeyType key_type);
   static bool IsAcceptableCipher(const std::string& cipher, KeyType key_type);
+
+  // Use our timeutils.h source of timing in BoringSSL, allowing us to test
+  // using a fake clock.
+  static void enable_time_callback_for_testing();
 
  protected:
   void OnEvent(StreamInterface* stream, int events, int err) override;
@@ -211,6 +213,10 @@ class OpenSSLStreamAdapter : public SSLStreamAdapter {
 
   // Max. allowed protocol version
   SSLProtocolVersion ssl_max_version_;
+
+  // A 50-ms initial timeout ensures rapid setup on fast connections, but may
+  // be too aggressive for low bandwidth links.
+  int dtls_handshake_timeout_ms_ = 50;
 };
 
 /////////////////////////////////////////////////////////////////////////////

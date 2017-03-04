@@ -11,45 +11,8 @@
 #ifndef WEBRTC_API_VIDEOTRACKSOURCE_H_
 #define WEBRTC_API_VIDEOTRACKSOURCE_H_
 
-#include "webrtc/api/mediastreaminterface.h"
-#include "webrtc/api/notifier.h"
-#include "webrtc/base/thread_checker.h"
-#include "webrtc/media/base/mediachannel.h"
-#include "webrtc/media/base/videosinkinterface.h"
-
-// VideoTrackSource implements VideoTrackSourceInterface.
-namespace webrtc {
-
-class VideoTrackSource : public Notifier<VideoTrackSourceInterface> {
- public:
-  VideoTrackSource(rtc::VideoSourceInterface<VideoFrame>* source, bool remote);
-  void SetState(SourceState new_state);
-  // OnSourceDestroyed clears this instance pointer to |source_|. It is useful
-  // when the underlying rtc::VideoSourceInterface is destroyed before the
-  // reference counted VideoTrackSource.
-  void OnSourceDestroyed();
-
-  SourceState state() const override { return state_; }
-  bool remote() const override { return remote_; }
-
-  bool is_screencast() const override { return false; }
-  rtc::Optional<bool> needs_denoising() const override {
-    return rtc::Optional<bool>(); }
-
-  bool GetStats(Stats* stats) override { return false; }
-
-  void AddOrUpdateSink(rtc::VideoSinkInterface<VideoFrame>* sink,
-                       const rtc::VideoSinkWants& wants) override;
-  void RemoveSink(rtc::VideoSinkInterface<VideoFrame>* sink) override;
-
- private:
-  rtc::ThreadChecker worker_thread_checker_;
-  rtc::VideoSourceInterface<VideoFrame>* source_;
-  cricket::VideoOptions options_;
-  SourceState state_;
-  const bool remote_;
-};
-
-}  // namespace webrtc
+// Including this file is deprecated. It is no longer part of the public API.
+// This only includes the file in its new location for backwards compatibility.
+#include "webrtc/pc/videotracksource.h"
 
 #endif  //  WEBRTC_API_VIDEOTRACKSOURCE_H_

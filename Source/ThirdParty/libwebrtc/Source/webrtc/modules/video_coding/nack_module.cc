@@ -46,7 +46,6 @@ NackModule::NackModule(Clock* clock,
       nack_sender_(nack_sender),
       keyframe_request_sender_(keyframe_request_sender),
       reordering_histogram_(kNumReorderingBuckets, kMaxReorderedPackets),
-      running_(true),
       initialized_(false),
       rtt_ms_(kDefaultRttMs),
       newest_seq_num_(0),
@@ -58,15 +57,14 @@ NackModule::NackModule(Clock* clock,
 
 int NackModule::OnReceivedPacket(const VCMPacket& packet) {
   rtc::CritScope lock(&crit_);
-  if (!running_)
-    return -1;
   uint16_t seq_num = packet.seqNum;
   // TODO(philipel): When the packet includes information whether it is
   //                 retransmitted or not, use that value instead. For
   //                 now set it to true, which will cause the reordering
   //                 statistics to never be updated.
   bool is_retransmitted = true;
-  bool is_keyframe = packet.isFirstPacket && packet.frameType == kVideoFrameKey;
+  bool is_keyframe =
+      packet.is_first_packet_in_frame && packet.frameType == kVideoFrameKey;
 
   if (!initialized_) {
     newest_seq_num_ = seq_num;
@@ -131,21 +129,22 @@ void NackModule::Clear() {
   keyframe_list_.clear();
 }
 
-void NackModule::Stop() {
-  rtc::CritScope lock(&crit_);
-  running_ = false;
-}
-
 int64_t NackModule::TimeUntilNextProcess() {
-  rtc::CritScope lock(&crit_);
   return std::max<int64_t>(next_process_time_ms_ - clock_->TimeInMilliseconds(),
                            0);
 }
 
 void NackModule::Process() {
-  rtc::CritScope lock(&crit_);
-  if (!running_)
-    return;
+  if (nack_sender_) {
+    std::vector<uint16_t> nack_batch;
+    {
+      rtc::CritScope lock(&crit_);
+      nack_batch = GetNackBatch(kTimeOnly);
+    }
+
+    if (!nack_batch.empty())
+      nack_sender_->SendNack(nack_batch);
+  }
 
   // Update the next_process_time_ms_ in intervals to achieve
   // the targeted frequency over time. Also add multiple intervals
@@ -159,10 +158,6 @@ void NackModule::Process() {
                             (now_ms - next_process_time_ms_) /
                                 kProcessIntervalMs * kProcessIntervalMs;
   }
-
-  std::vector<uint16_t> nack_batch = GetNackBatch(kTimeOnly);
-  if (!nack_batch.empty() && nack_sender_ != nullptr)
-    nack_sender_->SendNack(nack_batch);
 }
 
 bool NackModule::RemovePacketsUntilKeyFrame() {

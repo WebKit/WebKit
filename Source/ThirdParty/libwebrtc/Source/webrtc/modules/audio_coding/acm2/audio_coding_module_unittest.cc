@@ -13,13 +13,13 @@
 #include <memory>
 #include <vector>
 
+#include "webrtc/api/audio_codecs/builtin_audio_decoder_factory.h"
 #include "webrtc/base/criticalsection.h"
 #include "webrtc/base/md5digest.h"
 #include "webrtc/base/platform_thread.h"
 #include "webrtc/base/thread_annotations.h"
 #include "webrtc/modules/audio_coding/acm2/acm_receive_test.h"
 #include "webrtc/modules/audio_coding/acm2/acm_send_test.h"
-#include "webrtc/modules/audio_coding/codecs/builtin_audio_decoder_factory.h"
 #include "webrtc/modules/audio_coding/codecs/audio_encoder.h"
 #include "webrtc/modules/audio_coding/codecs/audio_format_conversion.h"
 #include "webrtc/modules/audio_coding/codecs/g711/audio_decoder_pcm.h"
@@ -977,31 +977,31 @@ class AcmReceiverBitExactnessOldApi : public ::testing::Test {
 #if (defined(WEBRTC_CODEC_ISAC) || defined(WEBRTC_CODEC_ISACFX)) && \
     defined(WEBRTC_CODEC_ILBC) && defined(WEBRTC_CODEC_G722)
 TEST_F(AcmReceiverBitExactnessOldApi, 8kHzOutput) {
-  Run(8000, PlatformChecksum("dce4890259e9ded50f472455aa470a6f",
-                             "1c4ada78b12612147f3026920f8dcc14",
-                             "d804791edf2d00be2bc31c81a47368d4",
-                             "b2611f7323ab1209d5056399d0babbf5"));
+  Run(8000, PlatformChecksum("25cda36a1b967e75c0eb580924247681",
+                             "bbfe6a07f8bca872b5370885825ee061",
+                             "d5b9ae44d03dbd7c921dd9c228e03cc5",
+                             "4d851d1f2e4b8a2f1727fac8fba4b1e1"));
 }
 
 TEST_F(AcmReceiverBitExactnessOldApi, 16kHzOutput) {
-  Run(16000, PlatformChecksum("27356bddffaa42b5c841b49aa3a070c5",
-                              "5667d1872fc351244092ae995e5a5b32",
-                              "53f5dc8088148479ca112c4c6d0e91cb",
-                              "4061a876d64d6cec5a38450acf4f245d"));
+  Run(16000, PlatformChecksum("9c7b6f586c4b9d6d0195372660991353",
+                              "1ab45baa674e681ec394e0d3824d8605",
+                              "dd4e7f2521b5f47c0016b12f06c08695",
+                              "5401b64b6dbe7f090f846e89b0d858ce"));
 }
 
 TEST_F(AcmReceiverBitExactnessOldApi, 32kHzOutput) {
-  Run(32000, PlatformChecksum("eb326547e83292305423b0a7ea57fea1",
-                              "be7fc3140e6b5188c2e5fae0a394543b",
-                              "eab9a0bff17320d6457d04f4c56563c6",
-                              "b60241ef0bac4a75f66eead04e71bb12"));
+  Run(32000, PlatformChecksum("599b9484ca89615641ebd767cccb149f",
+                              "9f7d51569647eff38026dd815d43ca91",
+                              "78d00d2a3f8f307fc3835ca588a18f3a",
+                              "d335eebc72f4d087aa397a9cf8f4967b"));
 }
 
 TEST_F(AcmReceiverBitExactnessOldApi, 48kHzOutput) {
-  Run(48000, PlatformChecksum("7eb79ea39b68472a5b04cf9a56e49cda",
-                              "f8cdd6e018688b2fff25c9b865bebdbb",
-                              "2d18f0f06e7e2fc63b74d06e3c58067f",
-                              "81c3e4d24ebec23ca48f42fbaec4aba0"));
+  Run(48000, PlatformChecksum("5d3b4357c9044264bb4a601b6548bd55",
+                              "8607778183d7ad02b8ce37eeeba4f37c",
+                              "fd71398d336b88cbd4fb5002846e91c6",
+                              "8ce7e0e1c381d920ee7b57751b257de8"));
 }
 
 TEST_F(AcmReceiverBitExactnessOldApi, 48kHzOutputExternalDecoder) {
@@ -1041,6 +1041,10 @@ TEST_F(AcmReceiverBitExactnessOldApi, 48kHzOutputExternalDecoder) {
     std::vector<AudioCodecSpec> GetSupportedDecoders() override {
       return fact_->GetSupportedDecoders();
     }
+    bool IsSupportedDecoder(const SdpAudioFormat& format) override {
+      return format.name == "MockPCMu" ? true
+                                       : fact_->IsSupportedDecoder(format);
+    }
     std::unique_ptr<AudioDecoder> MakeAudioDecoder(
         const SdpAudioFormat& format) override {
       return format.name == "MockPCMu" ? std::move(mock_decoder_)
@@ -1077,10 +1081,10 @@ TEST_F(AcmReceiverBitExactnessOldApi, 48kHzOutputExternalDecoder) {
 
   rtc::scoped_refptr<rtc::RefCountedObject<ADFactory>> factory(
       new rtc::RefCountedObject<ADFactory>);
-  Run(48000, PlatformChecksum("7eb79ea39b68472a5b04cf9a56e49cda",
-                              "f8cdd6e018688b2fff25c9b865bebdbb",
-                              "2d18f0f06e7e2fc63b74d06e3c58067f",
-                              "81c3e4d24ebec23ca48f42fbaec4aba0"),
+  Run(48000, PlatformChecksum("5d3b4357c9044264bb4a601b6548bd55",
+                              "8607778183d7ad02b8ce37eeeba4f37c",
+                              "fd71398d336b88cbd4fb5002846e91c6",
+                              "8ce7e0e1c381d920ee7b57751b257de8"),
       factory, [](AudioCodingModule* acm) {
         acm->RegisterReceiveCodec(0, {"MockPCMu", 8000, 1});
       });

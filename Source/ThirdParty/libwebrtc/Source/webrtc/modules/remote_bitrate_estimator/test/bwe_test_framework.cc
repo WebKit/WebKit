@@ -222,12 +222,11 @@ RateCounterFilter::RateCounterFilter(PacketProcessorListener* listener,
       packets_per_second_stats_(),
       kbps_stats_(),
       start_plotting_time_ms_(0),
+#if BWE_TEST_LOGGING_COMPILE_TIME_ENABLE
       flow_id_(flow_id),
+#endif
       name_(name),
-      algorithm_name_(algorithm_name) {
-          // Only used when compiling with BWE test logging enabled.
-          RTC_UNUSED(flow_id_);
-      }
+      algorithm_name_(algorithm_name) {}
 
 RateCounterFilter::RateCounterFilter(PacketProcessorListener* listener,
                                      const FlowIds& flow_ids,
@@ -237,7 +236,6 @@ RateCounterFilter::RateCounterFilter(PacketProcessorListener* listener,
       packets_per_second_stats_(),
       kbps_stats_(),
       start_plotting_time_ms_(0),
-      flow_id_(0),
       name_(name),
       algorithm_name_(algorithm_name) {
   // TODO(terelius): Appending the flow IDs to the algorithm name is a hack to
@@ -277,6 +275,9 @@ Stats<double> RateCounterFilter::GetBitrateStats() const {
 }
 
 void RateCounterFilter::Plot(int64_t timestamp_ms) {
+  // TODO(stefan): Reorganize logging configuration to reduce amount
+  // of preprocessor conditionals in the code.
+#if BWE_TEST_LOGGING_COMPILE_TIME_ENABLE
   uint32_t plot_kbps = 0;
   if (timestamp_ms >= start_plotting_time_ms_) {
     plot_kbps = rate_counter_.bits_per_second() / 1000.0;
@@ -290,8 +291,7 @@ void RateCounterFilter::Plot(int64_t timestamp_ms) {
                                              timestamp_ms, plot_kbps, flow_id_,
                                              algorithm_name_);
   }
-
-  RTC_UNUSED(plot_kbps);
+#endif
 }
 
 void RateCounterFilter::RunFor(int64_t /*time_ms*/, Packets* in_out) {
@@ -765,7 +765,7 @@ AdaptiveVideoSource::AdaptiveVideoSource(int flow_id,
 }
 
 void AdaptiveVideoSource::SetBitrateBps(int bitrate_bps) {
-  bits_per_second_ = std::min(bitrate_bps, 2500000);
+  bits_per_second_ = bitrate_bps;
   frame_size_bytes_ = (bits_per_second_ / 8 * frame_period_ms_ + 500) / 1000;
 }
 

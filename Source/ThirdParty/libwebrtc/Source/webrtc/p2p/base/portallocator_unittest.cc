@@ -32,9 +32,15 @@ class PortAllocatorTest : public testing::Test, public sigslot::has_slots<> {
 
  protected:
   void SetConfigurationWithPoolSize(int candidate_pool_size) {
-    allocator_->SetConfiguration(cricket::ServerAddresses(),
-                                 std::vector<cricket::RelayServerConfig>(),
-                                 candidate_pool_size, false);
+    EXPECT_TRUE(allocator_->SetConfiguration(
+        cricket::ServerAddresses(), std::vector<cricket::RelayServerConfig>(),
+        candidate_pool_size, false));
+  }
+
+  void SetConfigurationWithPoolSizeExpectFailure(int candidate_pool_size) {
+    EXPECT_FALSE(allocator_->SetConfiguration(
+        cricket::ServerAddresses(), std::vector<cricket::RelayServerConfig>(),
+        candidate_pool_size, false));
   }
 
   std::unique_ptr<cricket::FakePortAllocatorSession> CreateSession(
@@ -104,14 +110,16 @@ TEST_F(PortAllocatorTest, CreateSession) {
 TEST_F(PortAllocatorTest, SetConfigurationUpdatesIceServers) {
   cricket::ServerAddresses stun_servers_1 = {stun_server_1};
   std::vector<cricket::RelayServerConfig> turn_servers_1 = {turn_server_1};
-  allocator_->SetConfiguration(stun_servers_1, turn_servers_1, 0, false);
+  EXPECT_TRUE(
+      allocator_->SetConfiguration(stun_servers_1, turn_servers_1, 0, false));
   EXPECT_EQ(stun_servers_1, allocator_->stun_servers());
   EXPECT_EQ(turn_servers_1, allocator_->turn_servers());
 
   // Update with a different set of servers.
   cricket::ServerAddresses stun_servers_2 = {stun_server_2};
   std::vector<cricket::RelayServerConfig> turn_servers_2 = {turn_server_2};
-  allocator_->SetConfiguration(stun_servers_2, turn_servers_2, 0, false);
+  EXPECT_TRUE(
+      allocator_->SetConfiguration(stun_servers_2, turn_servers_2, 0, false));
   EXPECT_EQ(stun_servers_2, allocator_->stun_servers());
   EXPECT_EQ(turn_servers_2, allocator_->turn_servers());
 }
@@ -128,9 +136,8 @@ TEST_F(PortAllocatorTest, SetConfigurationUpdatesCandidatePoolSize) {
 }
 
 // A negative pool size should just be treated as zero.
-TEST_F(PortAllocatorTest, SetConfigurationWithNegativePoolSizeDoesntCrash) {
-  SetConfigurationWithPoolSize(-1);
-  // No asserts; we're just testing that this doesn't crash.
+TEST_F(PortAllocatorTest, SetConfigurationWithNegativePoolSizeFails) {
+  SetConfigurationWithPoolSizeExpectFailure(-1);
 }
 
 // Test that if the candidate pool size is nonzero, pooled sessions are
@@ -162,18 +169,16 @@ TEST_F(PortAllocatorTest, SetConfigurationDestroysPooledSessions) {
   EXPECT_EQ(1, GetAllPooledSessionsReturnCount());
 }
 
-// Test that if the candidate pool size is reduced and increased, but reducing
-// didn't actually destroy any sessions (because they were already given away),
-// increasing the size to its initial value doesn't create a new session.
-TEST_F(PortAllocatorTest, SetConfigurationDoesntCreateExtraSessions) {
+// Test that after the pool starts to be drained, changing the pool size is not
+// allowed.
+TEST_F(PortAllocatorTest, CantChangePoolSizeAfterTakePooledSession) {
   SetConfigurationWithPoolSize(1);
   TakePooledSession();
-  SetConfigurationWithPoolSize(0);
-  SetConfigurationWithPoolSize(1);
-  EXPECT_EQ(0, GetAllPooledSessionsReturnCount());
+  SetConfigurationWithPoolSizeExpectFailure(2);
+  SetConfigurationWithPoolSizeExpectFailure(0);
 }
 
-// According to JSEP, exising pooled sessions should be destroyed and new
+// According to JSEP, existing pooled sessions should be destroyed and new
 // ones created when the ICE servers change.
 TEST_F(PortAllocatorTest,
        SetConfigurationRecreatesPooledSessionsWhenIceServersChange) {

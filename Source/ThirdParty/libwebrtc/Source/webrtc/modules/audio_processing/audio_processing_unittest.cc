@@ -41,7 +41,7 @@ RTC_PUSH_IGNORING_WUNDEF()
 #ifdef WEBRTC_ANDROID_PLATFORM_BUILD
 #include "external/webrtc/webrtc/modules/audio_processing/test/unittest.pb.h"
 #else
-#include "webrtc/modules/audio_processing/unittest.pb.h"
+#include "webrtc/modules/audio_processing/test/unittest.pb.h"
 #endif
 RTC_POP_IGNORING_WUNDEF()
 
@@ -185,7 +185,10 @@ void EnableAllAPComponents(AudioProcessing* ap) {
   EXPECT_NOERR(ap->gain_control()->Enable(true));
 #endif
 
-  EXPECT_NOERR(ap->high_pass_filter()->Enable(true));
+  AudioProcessing::Config apm_config;
+  apm_config.high_pass_filter.enabled = true;
+  ap->ApplyConfig(apm_config);
+
   EXPECT_NOERR(ap->level_estimator()->Enable(true));
   EXPECT_NOERR(ap->noise_suppression()->Enable(true));
 
@@ -391,7 +394,6 @@ class ApmTest : public ::testing::Test {
   void VerifyDebugDumpTest(Format format);
 
   const std::string output_path_;
-  const std::string ref_path_;
   const std::string ref_filename_;
   std::unique_ptr<AudioProcessing> apm_;
   AudioFrame* frame_;
@@ -407,21 +409,18 @@ class ApmTest : public ::testing::Test {
 
 ApmTest::ApmTest()
     : output_path_(test::OutputPath()),
-#ifndef WEBRTC_IOS
-      ref_path_(test::ProjectRootPath() + "data/audio_processing/"),
-#else
-      // On iOS test data is flat in the project root dir
-      ref_path_(test::ProjectRootPath()),
-#endif
 #if defined(WEBRTC_AUDIOPROC_FIXED_PROFILE)
-      ref_filename_(ref_path_ + "output_data_fixed.pb"),
+      ref_filename_(test::ResourcePath("audio_processing/output_data_fixed",
+                                       "pb")),
 #elif defined(WEBRTC_AUDIOPROC_FLOAT_PROFILE)
 #if defined(WEBRTC_MAC)
       // A different file for Mac is needed because on this platform the AEC
       // constant |kFixedDelayMs| value is 20 and not 50 as it is on the rest.
-      ref_filename_(ref_path_ + "output_data_mac.pb"),
+      ref_filename_(test::ResourcePath("audio_processing/output_data_mac",
+                                       "pb")),
 #else
-      ref_filename_(ref_path_ + "output_data_float.pb"),
+      ref_filename_(test::ResourcePath("audio_processing/output_data_float",
+                                       "pb")),
 #endif
 #endif
       frame_(NULL),
@@ -1395,10 +1394,11 @@ TEST_F(ApmTest, NoiseSuppression) {
 
 TEST_F(ApmTest, HighPassFilter) {
   // Turn HP filter on/off
-  EXPECT_EQ(apm_->kNoError, apm_->high_pass_filter()->Enable(true));
-  EXPECT_TRUE(apm_->high_pass_filter()->is_enabled());
-  EXPECT_EQ(apm_->kNoError, apm_->high_pass_filter()->Enable(false));
-  EXPECT_FALSE(apm_->high_pass_filter()->is_enabled());
+  AudioProcessing::Config apm_config;
+  apm_config.high_pass_filter.enabled = true;
+  apm_->ApplyConfig(apm_config);
+  apm_config.high_pass_filter.enabled = false;
+  apm_->ApplyConfig(apm_config);
 }
 
 TEST_F(ApmTest, LevelEstimator) {

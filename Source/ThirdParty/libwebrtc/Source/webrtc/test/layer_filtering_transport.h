@@ -10,7 +10,7 @@
 #ifndef WEBRTC_TEST_LAYER_FILTERING_TRANSPORT_H_
 #define WEBRTC_TEST_LAYER_FILTERING_TRANSPORT_H_
 
-#include "webrtc/call.h"
+#include "webrtc/call/call.h"
 #include "webrtc/test/direct_transport.h"
 #include "webrtc/test/fake_network_pipe.h"
 

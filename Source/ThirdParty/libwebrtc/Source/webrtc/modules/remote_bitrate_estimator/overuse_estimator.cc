@@ -129,9 +129,8 @@ double OveruseEstimator::UpdateMinFramePeriod(double ts_delta) {
   if (ts_delta_hist_.size() >= kMinFramePeriodHistoryLength) {
     ts_delta_hist_.pop_front();
   }
-  std::list<double>::iterator it = ts_delta_hist_.begin();
-  for (; it != ts_delta_hist_.end(); it++) {
-    min_frame_period = std::min(*it, min_frame_period);
+  for (const double old_ts_delta : ts_delta_hist_) {
+    min_frame_period = std::min(old_ts_delta, min_frame_period);
   }
   ts_delta_hist_.push_back(ts_delta);
   return min_frame_period;

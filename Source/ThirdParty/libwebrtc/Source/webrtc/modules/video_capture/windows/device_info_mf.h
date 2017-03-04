@@ -19,7 +19,7 @@ namespace videocapturemodule {
 // Provides video capture device information using the Media Foundation API.
 class DeviceInfoMF : public DeviceInfoImpl {
  public:
-  explicit DeviceInfoMF(const int32_t id);
+  DeviceInfoMF();
   virtual ~DeviceInfoMF();
 
   int32_t Init();

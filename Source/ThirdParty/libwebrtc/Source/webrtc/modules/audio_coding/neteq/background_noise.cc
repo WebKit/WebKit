@@ -101,10 +101,10 @@ void BackgroundNoise::Update(const AudioMultiVector& input,
       // Check spectral flatness.
       // Comparing the residual variance with the input signal variance tells
       // if the spectrum is flat or not.
-      // If 20 * residual_energy >= sample_energy << 6, the spectrum is flat
+      // If 5 * residual_energy >= 16 * sample_energy, the spectrum is flat
       // enough.  Also ensure that the energy is non-zero.
-      if ((residual_energy * 20 >= (sample_energy << 6)) &&
-          (sample_energy > 0)) {
+      if ((sample_energy > 0) &&
+          (int64_t{5} * residual_energy >= int64_t{16} * sample_energy)) {
         // Spectrum is flat enough; save filter parameters.
         // |temp_signal| + |kVecLen| - |kMaxLpcOrder| points at the first of the
         // |kMaxLpcOrder| samples in the residual signal, which will form the

@@ -51,9 +51,9 @@ struct SSLCertificateStats {
 class SSLCertificate {
  public:
   // Parses and builds a certificate from a PEM encoded string.
-  // Returns NULL on failure.
+  // Returns null on failure.
   // The length of the string representation of the certificate is
-  // stored in *pem_length if it is non-NULL, and only if
+  // stored in *pem_length if it is non-null, and only if
   // parsing was successful.
   // Caller is responsible for freeing the returned object.
   static SSLCertificate* FromPEMString(const std::string& pem_string);
@@ -216,7 +216,7 @@ class SSLIdentity {
   // parameters are defined in |key_param|. The certificate's lifetime in
   // seconds from the current time is defined in |certificate_lifetime|; it
   // should be a non-negative number.
-  // Returns NULL on failure.
+  // Returns null on failure.
   // Caller is responsible for freeing the returned object.
   static SSLIdentity* GenerateWithExpiration(const std::string& common_name,
                                              const KeyParams& key_param,

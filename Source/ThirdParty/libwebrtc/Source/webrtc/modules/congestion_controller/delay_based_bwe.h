@@ -19,7 +19,10 @@
 #include "webrtc/base/constructormagic.h"
 #include "webrtc/base/rate_statistics.h"
 #include "webrtc/base/thread_checker.h"
+#include "webrtc/modules/congestion_controller/median_slope_estimator.h"
 #include "webrtc/modules/congestion_controller/probe_bitrate_estimator.h"
+#include "webrtc/modules/congestion_controller/probing_interval_estimator.h"
+#include "webrtc/modules/congestion_controller/trendline_estimator.h"
 #include "webrtc/modules/remote_bitrate_estimator/aimd_rate_control.h"
 #include "webrtc/modules/remote_bitrate_estimator/include/remote_bitrate_estimator.h"
 #include "webrtc/modules/remote_bitrate_estimator/inter_arrival.h"
@@ -27,6 +30,8 @@
 #include "webrtc/modules/remote_bitrate_estimator/overuse_estimator.h"
 
 namespace webrtc {
+
+class RtcEventLog;
 
 class DelayBasedBwe {
  public:
@@ -41,7 +46,7 @@ class DelayBasedBwe {
     uint32_t target_bitrate_bps;
   };
 
-  explicit DelayBasedBwe(Clock* clock);
+  DelayBasedBwe(RtcEventLog* event_log, Clock* clock);
   virtual ~DelayBasedBwe() {}
 
   Result IncomingPacketFeedbackVector(
@@ -49,7 +54,9 @@ class DelayBasedBwe {
   void OnRttUpdate(int64_t avg_rtt_ms, int64_t max_rtt_ms);
   bool LatestEstimate(std::vector<uint32_t>* ssrcs,
                       uint32_t* bitrate_bps) const;
+  void SetStartBitrate(int start_bitrate_bps);
   void SetMinBitrate(int min_bitrate_bps);
+  int64_t GetProbingIntervalMs() const;
 
  private:
   // Computes a bayesian estimate of the throughput given acks containing
@@ -75,17 +82,23 @@ class DelayBasedBwe {
   };
 
   Result IncomingPacketInfo(const PacketInfo& info);
+  Result OnLongFeedbackDelay(int64_t arrival_time_ms);
   // Updates the current remote rate estimate and returns true if a valid
   // estimate exists.
   bool UpdateEstimate(int64_t packet_arrival_time_ms,
                       int64_t now_ms,
                       rtc::Optional<uint32_t> acked_bitrate_bps,
                       uint32_t* target_bitrate_bps);
+  const bool in_trendline_experiment_;
+  const bool in_median_slope_experiment_;
 
   rtc::ThreadChecker network_thread_;
+  RtcEventLog* const event_log_;
   Clock* const clock_;
   std::unique_ptr<InterArrival> inter_arrival_;
-  std::unique_ptr<OveruseEstimator> estimator_;
+  std::unique_ptr<OveruseEstimator> kalman_estimator_;
+  std::unique_ptr<TrendlineEstimator> trendline_estimator_;
+  std::unique_ptr<MedianSlopeEstimator> median_slope_estimator_;
   OveruseDetector detector_;
   BitrateEstimator receiver_incoming_bitrate_;
   int64_t last_update_ms_;
@@ -93,6 +106,15 @@ class DelayBasedBwe {
   bool uma_recorded_;
   AimdRateControl rate_control_;
   ProbeBitrateEstimator probe_bitrate_estimator_;
+  size_t trendline_window_size_;
+  double trendline_smoothing_coeff_;
+  double trendline_threshold_gain_;
+  ProbingIntervalEstimator probing_interval_estimator_;
+  size_t median_slope_window_size_;
+  double median_slope_threshold_gain_;
+  int consecutive_delayed_feedbacks_;
+  uint32_t last_logged_bitrate_;
+  BandwidthUsage last_logged_state_;
 
   RTC_DISALLOW_IMPLICIT_CONSTRUCTORS(DelayBasedBwe);
 };

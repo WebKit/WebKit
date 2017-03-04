@@ -2875,6 +2875,10 @@ bool UdpTransport::IsIpAddressValid(const char* ipadr, const bool ipV6)
         {
             return false;
         }
+        if(nColons < 7 && nDubbleColons == 0)
+        {
+          return false;
+        }
         if(!(nDots == 3 || nDots == 0))
         {
             return false;

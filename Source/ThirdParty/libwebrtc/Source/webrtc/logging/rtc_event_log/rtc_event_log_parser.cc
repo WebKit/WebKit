@@ -10,18 +10,19 @@
 
 #include "webrtc/logging/rtc_event_log/rtc_event_log_parser.h"
 
+#include <stdint.h>
 #include <string.h>
 
+#include <algorithm>
 #include <fstream>
 #include <istream>
 #include <utility>
 
 #include "webrtc/base/checks.h"
 #include "webrtc/base/logging.h"
-#include "webrtc/call.h"
+#include "webrtc/call/call.h"
 #include "webrtc/logging/rtc_event_log/rtc_event_log.h"
 #include "webrtc/modules/rtp_rtcp/include/rtp_rtcp_defines.h"
-#include "webrtc/system_wrappers/include/file_wrapper.h"
 
 namespace webrtc {
 
@@ -67,10 +68,10 @@ ParsedRtcEventLog::EventType GetRuntimeEventType(
       return ParsedRtcEventLog::EventType::RTCP_EVENT;
     case rtclog::Event::AUDIO_PLAYOUT_EVENT:
       return ParsedRtcEventLog::EventType::AUDIO_PLAYOUT_EVENT;
-    case rtclog::Event::BWE_PACKET_LOSS_EVENT:
-      return ParsedRtcEventLog::EventType::BWE_PACKET_LOSS_EVENT;
-    case rtclog::Event::BWE_PACKET_DELAY_EVENT:
-      return ParsedRtcEventLog::EventType::BWE_PACKET_DELAY_EVENT;
+    case rtclog::Event::LOSS_BASED_BWE_UPDATE:
+      return ParsedRtcEventLog::EventType::LOSS_BASED_BWE_UPDATE;
+    case rtclog::Event::DELAY_BASED_BWE_UPDATE:
+      return ParsedRtcEventLog::EventType::DELAY_BASED_BWE_UPDATE;
     case rtclog::Event::VIDEO_RECEIVER_CONFIG_EVENT:
       return ParsedRtcEventLog::EventType::VIDEO_RECEIVER_CONFIG_EVENT;
     case rtclog::Event::VIDEO_SENDER_CONFIG_EVENT:
@@ -79,9 +80,29 @@ ParsedRtcEventLog::EventType GetRuntimeEventType(
       return ParsedRtcEventLog::EventType::AUDIO_RECEIVER_CONFIG_EVENT;
     case rtclog::Event::AUDIO_SENDER_CONFIG_EVENT:
       return ParsedRtcEventLog::EventType::AUDIO_SENDER_CONFIG_EVENT;
+    case rtclog::Event::AUDIO_NETWORK_ADAPTATION_EVENT:
+      return ParsedRtcEventLog::EventType::AUDIO_NETWORK_ADAPTATION_EVENT;
+    case rtclog::Event::BWE_PROBE_CLUSTER_CREATED_EVENT:
+      return ParsedRtcEventLog::EventType::BWE_PROBE_CLUSTER_CREATED_EVENT;
+    case rtclog::Event::BWE_PROBE_RESULT_EVENT:
+      return ParsedRtcEventLog::EventType::BWE_PROBE_RESULT_EVENT;
   }
   RTC_NOTREACHED();
   return ParsedRtcEventLog::EventType::UNKNOWN_EVENT;
+}
+
+BandwidthUsage GetRuntimeDetectorState(
+    rtclog::DelayBasedBweUpdate::DetectorState detector_state) {
+  switch (detector_state) {
+    case rtclog::DelayBasedBweUpdate::BWE_NORMAL:
+      return kBwNormal;
+    case rtclog::DelayBasedBweUpdate::BWE_UNDERUSING:
+      return kBwUnderusing;
+    case rtclog::DelayBasedBweUpdate::BWE_OVERUSING:
+      return kBwOverusing;
+  }
+  RTC_NOTREACHED();
+  return kBwNormal;
 }
 
 std::pair<uint64_t, bool> ParseVarInt(std::istream& stream) {
@@ -312,17 +333,30 @@ void ParsedRtcEventLog::GetVideoReceiveConfig(
   RTC_CHECK(receiver_config.has_remb());
   config->rtp.remb = receiver_config.remb();
   // Get RTX map.
-  config->rtp.rtx.clear();
+  std::vector<uint32_t> rtx_ssrcs(receiver_config.rtx_map_size());
+  config->rtp.rtx_payload_types.clear();
   for (int i = 0; i < receiver_config.rtx_map_size(); i++) {
     const rtclog::RtxMap& map = receiver_config.rtx_map(i);
     RTC_CHECK(map.has_payload_type());
     RTC_CHECK(map.has_config());
     RTC_CHECK(map.config().has_rtx_ssrc());
+    rtx_ssrcs[i] = map.config().rtx_ssrc();
     RTC_CHECK(map.config().has_rtx_payload_type());
-    webrtc::VideoReceiveStream::Config::Rtp::Rtx rtx_pair;
-    rtx_pair.ssrc = map.config().rtx_ssrc();
-    rtx_pair.payload_type = map.config().rtx_payload_type();
-    config->rtp.rtx.insert(std::make_pair(map.payload_type(), rtx_pair));
+    config->rtp.rtx_payload_types.insert(
+        std::make_pair(map.payload_type(), map.config().rtx_payload_type()));
+  }
+  if (!rtx_ssrcs.empty()) {
+    config->rtp.rtx_ssrc = rtx_ssrcs[0];
+
+    auto pred = [&config](uint32_t ssrc) {
+      return ssrc == config->rtp.rtx_ssrc;
+    };
+    if (!std::all_of(rtx_ssrcs.cbegin(), rtx_ssrcs.cend(), pred)) {
+      LOG(LS_WARNING) << "RtcEventLog protobuf contained different SSRCs for "
+                         "different received RTX payload types. Will only use "
+                         "rtx_ssrc = "
+                      << config->rtp.rtx_ssrc << ".";
+    }
   }
   // Get header extensions.
   GetHeaderExtensions(&config->rtp.extensions,
@@ -430,19 +464,19 @@ void ParsedRtcEventLog::GetAudioPlayout(size_t index, uint32_t* ssrc) const {
   }
 }
 
-void ParsedRtcEventLog::GetBwePacketLossEvent(size_t index,
-                                              int32_t* bitrate,
+void ParsedRtcEventLog::GetLossBasedBweUpdate(size_t index,
+                                              int32_t* bitrate_bps,
                                               uint8_t* fraction_loss,
                                               int32_t* total_packets) const {
   RTC_CHECK_LT(index, GetNumberOfEvents());
   const rtclog::Event& event = events_[index];
   RTC_CHECK(event.has_type());
-  RTC_CHECK_EQ(event.type(), rtclog::Event::BWE_PACKET_LOSS_EVENT);
-  RTC_CHECK(event.has_bwe_packet_loss_event());
-  const rtclog::BwePacketLossEvent& loss_event = event.bwe_packet_loss_event();
-  RTC_CHECK(loss_event.has_bitrate());
-  if (bitrate != nullptr) {
-    *bitrate = loss_event.bitrate();
+  RTC_CHECK_EQ(event.type(), rtclog::Event::LOSS_BASED_BWE_UPDATE);
+  RTC_CHECK(event.has_loss_based_bwe_update());
+  const rtclog::LossBasedBweUpdate& loss_event = event.loss_based_bwe_update();
+  RTC_CHECK(loss_event.has_bitrate_bps());
+  if (bitrate_bps != nullptr) {
+    *bitrate_bps = loss_event.bitrate_bps();
   }
   RTC_CHECK(loss_event.has_fraction_loss());
   if (fraction_loss != nullptr) {
@@ -452,6 +486,52 @@ void ParsedRtcEventLog::GetBwePacketLossEvent(size_t index,
   if (total_packets != nullptr) {
     *total_packets = loss_event.total_packets();
   }
+}
+
+void ParsedRtcEventLog::GetDelayBasedBweUpdate(
+    size_t index,
+    int32_t* bitrate_bps,
+    BandwidthUsage* detector_state) const {
+  RTC_CHECK_LT(index, GetNumberOfEvents());
+  const rtclog::Event& event = events_[index];
+  RTC_CHECK(event.has_type());
+  RTC_CHECK_EQ(event.type(), rtclog::Event::DELAY_BASED_BWE_UPDATE);
+  RTC_CHECK(event.has_delay_based_bwe_update());
+  const rtclog::DelayBasedBweUpdate& delay_event =
+      event.delay_based_bwe_update();
+  RTC_CHECK(delay_event.has_bitrate_bps());
+  if (bitrate_bps != nullptr) {
+    *bitrate_bps = delay_event.bitrate_bps();
+  }
+  RTC_CHECK(delay_event.has_detector_state());
+  if (detector_state != nullptr) {
+    *detector_state = GetRuntimeDetectorState(delay_event.detector_state());
+  }
+}
+
+void ParsedRtcEventLog::GetAudioNetworkAdaptation(
+    size_t index,
+    AudioNetworkAdaptor::EncoderRuntimeConfig* config) const {
+  RTC_CHECK_LT(index, GetNumberOfEvents());
+  const rtclog::Event& event = events_[index];
+  RTC_CHECK(event.has_type());
+  RTC_CHECK_EQ(event.type(), rtclog::Event::AUDIO_NETWORK_ADAPTATION_EVENT);
+  RTC_CHECK(event.has_audio_network_adaptation());
+  const rtclog::AudioNetworkAdaptation& ana_event =
+      event.audio_network_adaptation();
+  if (ana_event.has_bitrate_bps())
+    config->bitrate_bps = rtc::Optional<int>(ana_event.bitrate_bps());
+  if (ana_event.has_enable_fec())
+    config->enable_fec = rtc::Optional<bool>(ana_event.enable_fec());
+  if (ana_event.has_enable_dtx())
+    config->enable_dtx = rtc::Optional<bool>(ana_event.enable_dtx());
+  if (ana_event.has_frame_length_ms())
+    config->frame_length_ms = rtc::Optional<int>(ana_event.frame_length_ms());
+  if (ana_event.has_num_channels())
+    config->num_channels = rtc::Optional<size_t>(ana_event.num_channels());
+  if (ana_event.has_uplink_packet_loss_fraction())
+    config->uplink_packet_loss_fraction =
+        rtc::Optional<float>(ana_event.uplink_packet_loss_fraction());
 }
 
 }  // namespace webrtc

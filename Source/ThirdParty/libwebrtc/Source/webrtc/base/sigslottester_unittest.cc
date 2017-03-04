@@ -68,9 +68,9 @@ TEST(SigslotTester, TestSignalWithPointerToConstArgs) {
   SigslotTester1<const std::string*, const std::string*> slot1(&source1,
                                                                &capture1);
   EXPECT_EQ(0, slot1.callback_count());
-  source1.emit(NULL);
+  source1.emit(nullptr);
   EXPECT_EQ(1, slot1.callback_count());
-  EXPECT_EQ(NULL, capture1);
+  EXPECT_EQ(nullptr, capture1);
 }
 
 TEST(SigslotTester, TestSignalWithConstPointerArgs) {
@@ -78,9 +78,9 @@ TEST(SigslotTester, TestSignalWithConstPointerArgs) {
   std::string* capture1;
   SigslotTester1<std::string* const, std::string*> slot1(&source1, &capture1);
   EXPECT_EQ(0, slot1.callback_count());
-  source1.emit(NULL);
+  source1.emit(nullptr);
   EXPECT_EQ(1, slot1.callback_count());
-  EXPECT_EQ(NULL, capture1);
+  EXPECT_EQ(nullptr, capture1);
 }
 
 }  // namespace rtc

@@ -22,13 +22,24 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Returns current video resolution media constraint string stored in the store.
  */
-- (nullable NSString *)videoResolutionConstraintsSetting;
+- (nullable NSString *)videoResolutionConstraints;
 
 /**
  * Stores the provided value as video resolution media constraint.
  * @param value the string to be stored
  */
-- (void)setVideoResolutionConstraintsSetting:(NSString *)value;
+- (void)setVideoResolutionConstraints:(NSString *)value;
+
+/**
+ * Returns current max bitrate number stored in the store.
+ */
+- (nullable NSNumber *)maxBitrate;
+
+/**
+ * Stores the provided value as maximum bitrate setting.
+ * @param value the number to be stored
+ */
+- (void)setMaxBitrate:(nullable NSNumber *)value;
 
 @end
 NS_ASSUME_NONNULL_END

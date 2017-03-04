@@ -10,7 +10,6 @@
 
 #include "webrtc/voice_engine/voe_file_impl.h"
 
-#include "webrtc/modules/media_file/media_file.h"
 #include "webrtc/system_wrappers/include/file_wrapper.h"
 #include "webrtc/system_wrappers/include/trace.h"
 #include "webrtc/voice_engine/channel.h"
@@ -22,19 +21,13 @@
 namespace webrtc {
 
 VoEFile* VoEFile::GetInterface(VoiceEngine* voiceEngine) {
-#ifndef WEBRTC_VOICE_ENGINE_FILE_API
-  return NULL;
-#else
   if (NULL == voiceEngine) {
     return NULL;
   }
   VoiceEngineImpl* s = static_cast<VoiceEngineImpl*>(voiceEngine);
   s->AddRef();
   return s;
-#endif
 }
-
-#ifdef WEBRTC_VOICE_ENGINE_FILE_API
 
 VoEFileImpl::VoEFileImpl(voe::SharedData* shared) : _shared(shared) {
   WEBRTC_TRACE(kTraceMemory, kTraceVoice, VoEId(_shared->instance_id(), -1),
@@ -469,7 +462,5 @@ int VoEFileImpl::StopRecordingMicrophone() {
 
   return err;
 }
-
-#endif  // #ifdef WEBRTC_VOICE_ENGINE_FILE_API
 
 }  // namespace webrtc

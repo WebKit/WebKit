@@ -19,7 +19,6 @@
 #include <vector>
 
 #include "webrtc/base/arraysize.h"
-#include "webrtc/base/common.h"
 #include "webrtc/modules/remote_bitrate_estimator/test/estimators/nada.h"
 #include "webrtc/modules/remote_bitrate_estimator/test/bwe_test_logging.h"
 #include "webrtc/modules/rtp_rtcp/include/receive_statistics.h"

@@ -1,15 +1,35 @@
 include_rules = [
+  "+third_party/libsrtp"
   "+webrtc/api",
   "+webrtc/base",
+  "+webrtc/call",
   "+webrtc/common_video/h264",
   "+webrtc/logging/rtc_event_log",
+  "+webrtc/logging/rtc_event_log",
   "+webrtc/media",
+  "+webrtc/modules/audio_device",
+  "+webrtc/modules/rtp_rtcp",
+  "+webrtc/modules/video_coding",
+  "+webrtc/modules/video_render",
   "+webrtc/p2p",
-  "+third_party/libsrtp"
+  "+webrtc/system_wrappers",
 ]
 
 specific_include_rules = {
+  "androidtestinitializer\.cc": [
+    "+base/android",  # Allowed only for Android tests.
+    "+webrtc/voice_engine",
+  ],
   "srtpfilter_unittest\.cc": [
     "+crypto",
+  ],
+
+  # TODO(kwiberg): Remove these exceptions when audio_decoder_factory.h
+  # has moved to api/.
+  "peerconnectionfactory\.cc": [
+    "+webrtc/modules/audio_coding/codecs/builtin_audio_decoder_factory.h",
+  ],
+  "peerconnectioninterface_unittest\.cc": [
+    "+webrtc/modules/audio_coding/codecs/builtin_audio_decoder_factory.h",
   ],
 }

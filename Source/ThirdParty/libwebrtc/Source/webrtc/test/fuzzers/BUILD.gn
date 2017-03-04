@@ -6,7 +6,7 @@
 # in the file PATENTS.  All contributing project authors may
 # be found in the AUTHORS file in the root of the source tree.
 
-import("../../build/webrtc.gni")
+import("../../webrtc.gni")
 import("//build/config/features.gni")
 import("//testing/libfuzzer/fuzzer_test.gni")
 
@@ -120,6 +120,16 @@ webrtc_fuzzer_test("flexfec_receiver_fuzzer") {
   ]
   deps = [
     "../../modules/rtp_rtcp/",
+  ]
+  libfuzzer_options = [ "max_len=2000" ]
+}
+
+webrtc_fuzzer_test("packet_buffer_fuzzer") {
+  sources = [
+    "packet_buffer_fuzzer.cc",
+  ]
+  deps = [
+    "../../modules/video_coding/",
   ]
   libfuzzer_options = [ "max_len=2000" ]
 }
@@ -256,7 +266,7 @@ webrtc_fuzzer_test("sdp_parser_fuzzer") {
     "sdp_parser_fuzzer.cc",
   ]
   deps = [
-    "../../api:libjingle_peerconnection",
+    "../../pc:libjingle_peerconnection",
   ]
   seed_corpus = "corpora/sdp-corpus"
 }
@@ -289,5 +299,15 @@ webrtc_fuzzer_test("pseudotcp_parser_fuzzer") {
   ]
   deps = [
     "../../p2p:rtc_p2p",
+  ]
+}
+
+webrtc_fuzzer_test("transport_feedback_packet_loss_tracker_fuzzer") {
+  sources = [
+    "transport_feedback_packet_loss_tracker_fuzzer.cc",
+  ]
+  deps = [
+    "../../modules/rtp_rtcp",
+    "../../voice_engine",
   ]
 }

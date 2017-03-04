@@ -14,8 +14,6 @@
 
 namespace webrtc {
 
-using NetEqDecoder = acm2::RentACodec::NetEqDecoder;
-
 class SplitBySamplesTest : public ::testing::TestWithParam<NetEqDecoder> {
  protected:
   virtual void SetUp() {

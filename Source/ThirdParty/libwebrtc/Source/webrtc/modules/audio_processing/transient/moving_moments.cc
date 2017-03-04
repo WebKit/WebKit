@@ -22,7 +22,7 @@ MovingMoments::MovingMoments(size_t length)
       queue_(),
       sum_(0.0),
       sum_of_squares_(0.0) {
-  RTC_DCHECK_GT(length, 0u);
+  RTC_DCHECK_GT(length, 0);
   for (size_t i = 0; i < length; ++i) {
     queue_.push(0.0);
   }

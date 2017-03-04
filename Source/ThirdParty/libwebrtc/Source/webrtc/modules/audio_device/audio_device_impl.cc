@@ -23,7 +23,6 @@
 #include <string.h>
 
 #if defined(_WIN32)
-#include "audio_device_wave_win.h"
 #if defined(WEBRTC_WINDOWS_CORE_AUDIO_BUILD)
 #include "audio_device_core_win.h"
 #endif
@@ -200,17 +199,6 @@ int32_t AudioDeviceModuleImpl::CreatePlatformSpecificObjects() {
 
 // Create the *Windows* implementation of the Audio Device
 //
-#if defined(_WIN32)
-  if ((audioLayer == kWindowsWaveAudio)
-#if !defined(WEBRTC_WINDOWS_CORE_AUDIO_BUILD)
-      // Wave audio is default if Core audio is not supported in this build
-      || (audioLayer == kPlatformDefaultAudio)
-#endif
-          ) {
-    // create *Windows Wave Audio* implementation
-    ptrAudioDevice = new AudioDeviceWindowsWave(Id());
-    LOG(INFO) << "Windows Wave APIs will be utilized";
-  }
 #if defined(WEBRTC_WINDOWS_CORE_AUDIO_BUILD)
   if ((audioLayer == kWindowsCoreAudio) ||
       (audioLayer == kPlatformDefaultAudio)) {
@@ -220,20 +208,9 @@ int32_t AudioDeviceModuleImpl::CreatePlatformSpecificObjects() {
       // create *Windows Core Audio* implementation
       ptrAudioDevice = new AudioDeviceWindowsCore(Id());
       LOG(INFO) << "Windows Core Audio APIs will be utilized";
-    } else {
-      // create *Windows Wave Audio* implementation
-      ptrAudioDevice = new AudioDeviceWindowsWave(Id());
-      if (ptrAudioDevice != NULL) {
-        // Core Audio was not supported => revert to Windows Wave instead
-        _platformAudioLayer =
-            kWindowsWaveAudio;  // modify the state set at construction
-        LOG(WARNING) << "Windows Core Audio is *not* supported => Wave APIs "
-                        "will be utilized instead";
-      }
     }
   }
 #endif  // defined(WEBRTC_WINDOWS_CORE_AUDIO_BUILD)
-#endif  // #if defined(_WIN32)
 
 #if defined(WEBRTC_ANDROID)
   // Create an Android audio manager.
@@ -1754,7 +1731,7 @@ int32_t AudioDeviceModuleImpl::PlayoutSampleRate(
 
 int32_t AudioDeviceModuleImpl::ResetAudioDevice() {
   LOG(INFO) << __FUNCTION__;
-  FATAL() << "Should never be called";
+  RTC_FATAL() << "Should never be called";
   return -1;
 }
 

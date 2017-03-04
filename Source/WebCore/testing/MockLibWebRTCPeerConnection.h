@@ -188,6 +188,10 @@ private:
     uint64_t buffered_amount() const final { return 0; }
     void Close() final { }
     bool Send(const webrtc::DataBuffer&) final { return true; }
+    uint32_t messages_sent() const final { return 0; }
+    uint64_t bytes_sent() const final { return 0; }
+    uint32_t messages_received() const final { return 0; }
+    uint64_t bytes_received() const final { return 0; }
 
     std::string m_label;
     bool m_ordered { true };

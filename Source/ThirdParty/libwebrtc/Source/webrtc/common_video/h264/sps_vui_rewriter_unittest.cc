@@ -15,7 +15,6 @@
 #include "webrtc/base/fileutils.h"
 #include "webrtc/base/logging.h"
 #include "webrtc/base/pathutils.h"
-#include "webrtc/base/stream.h"
 #include "webrtc/common_video/h264/h264_common.h"
 #include "webrtc/common_video/h264/sps_vui_rewriter.h"
 #include "webrtc/test/gtest.h"

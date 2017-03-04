@@ -16,6 +16,7 @@
 
 #include "webrtc/base/constructormagic.h"
 #include "webrtc/base/criticalsection.h"
+#include "webrtc/base/random.h"
 #include "webrtc/base/scoped_ref_ptr.h"
 #include "webrtc/system_wrappers/include/atomic32.h"
 #include "webrtc/typedefs.h"
@@ -115,6 +116,9 @@ class ChannelManager {
 
   rtc::CriticalSection lock_;
   std::vector<ChannelOwner> channels_;
+
+  // For generation of random ssrc:s.
+  webrtc::Random random_;
 
   RTC_DISALLOW_COPY_AND_ASSIGN(ChannelManager);
 };

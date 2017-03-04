@@ -33,11 +33,8 @@ class RtpReceiverImpl : public RtpReceiver {
 
   virtual ~RtpReceiverImpl();
 
-  int32_t RegisterReceivePayload(const char payload_name[RTP_PAYLOAD_NAME_SIZE],
-                                 const int8_t payload_type,
-                                 const uint32_t frequency,
-                                 const size_t channels,
-                                 const uint32_t rate) override;
+  int32_t RegisterReceivePayload(const CodecInst& audio_codec) override;
+  int32_t RegisterReceivePayload(const VideoCodec& video_codec) override;
 
   int32_t DeRegisterReceivePayload(const int8_t payload_type) override;
 

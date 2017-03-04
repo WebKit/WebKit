@@ -80,10 +80,6 @@ FlexfecSender::FlexfecSender(
   // This object should not have been instantiated if FlexFEC is disabled.
   RTC_DCHECK_GE(payload_type, 0);
   RTC_DCHECK_LE(payload_type, 127);
-
-  // It's OK to create this object on a different thread/task queue than
-  // the one used during main operation.
-  sequence_checker_.Detach();
 }
 
 FlexfecSender::~FlexfecSender() = default;
@@ -91,13 +87,10 @@ FlexfecSender::~FlexfecSender() = default;
 // We are reusing the implementation from UlpfecGenerator for SetFecParameters,
 // AddRtpPacketAndGenerateFec, and FecAvailable.
 void FlexfecSender::SetFecParameters(const FecProtectionParams& params) {
-  RTC_DCHECK_CALLED_SEQUENTIALLY(&sequence_checker_);
   ulpfec_generator_.SetFecParameters(params);
 }
 
-bool FlexfecSender::AddRtpPacketAndGenerateFec(
-    const RtpPacketToSend& packet) {
-  RTC_DCHECK_CALLED_SEQUENTIALLY(&sequence_checker_);
+bool FlexfecSender::AddRtpPacketAndGenerateFec(const RtpPacketToSend& packet) {
   // TODO(brandtr): Generalize this SSRC check when we support multistream
   // protection.
   RTC_DCHECK_EQ(packet.Ssrc(), protected_media_ssrc_);
@@ -106,14 +99,10 @@ bool FlexfecSender::AddRtpPacketAndGenerateFec(
 }
 
 bool FlexfecSender::FecAvailable() const {
-  RTC_DCHECK_CALLED_SEQUENTIALLY(&sequence_checker_);
   return ulpfec_generator_.FecAvailable();
 }
 
-std::vector<std::unique_ptr<RtpPacketToSend>>
-FlexfecSender::GetFecPackets() {
-  RTC_DCHECK_CALLED_SEQUENTIALLY(&sequence_checker_);
-
+std::vector<std::unique_ptr<RtpPacketToSend>> FlexfecSender::GetFecPackets() {
   std::vector<std::unique_ptr<RtpPacketToSend>> fec_packets_to_send;
   fec_packets_to_send.reserve(ulpfec_generator_.generated_fec_packets_.size());
   for (const auto& fec_packet : ulpfec_generator_.generated_fec_packets_) {
@@ -145,14 +134,12 @@ FlexfecSender::GetFecPackets() {
   }
   ulpfec_generator_.ResetState();
 
-  // TODO(brandtr): Remove this log output when the FlexFEC subsystem is
-  // properly wired up in a robust way.
   int64_t now_ms = clock_->TimeInMilliseconds();
   if (!fec_packets_to_send.empty() &&
       now_ms - last_generated_packet_ms_ > kPacketLogIntervalMs) {
-    LOG(LS_INFO) << "Generated " << fec_packets_to_send.size()
-                 << " FlexFEC packets with payload type: " << payload_type_
-                 << " and SSRC: " << ssrc_ << ".";
+    LOG(LS_VERBOSE) << "Generated " << fec_packets_to_send.size()
+                    << " FlexFEC packets with payload type: " << payload_type_
+                    << " and SSRC: " << ssrc_ << ".";
     last_generated_packet_ms_ = now_ms;
   }
 

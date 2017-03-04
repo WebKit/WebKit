@@ -18,7 +18,7 @@
 namespace webrtc {
 namespace plotting {
 
-enum PlotStyle { LINE_GRAPH, LINE_DOT_GRAPH, BAR_GRAPH };
+enum PlotStyle { LINE_GRAPH, LINE_DOT_GRAPH, BAR_GRAPH, LINE_STEP_GRAPH };
 
 struct TimeSeriesPoint {
   TimeSeriesPoint(float x, float y) : x(x), y(y) {}

@@ -31,7 +31,7 @@ class SendTimeHistory {
   // Cleanup old entries, then add new packet info with provided parameters.
   void AddAndRemoveOld(uint16_t sequence_number,
                        size_t payload_size,
-                       int probe_cluster_id);
+                       const PacedPacketInfo& pacing_info);
 
   // Updates packet info identified by |sequence_number| with |send_time_ms|.
   // Return false if not found.

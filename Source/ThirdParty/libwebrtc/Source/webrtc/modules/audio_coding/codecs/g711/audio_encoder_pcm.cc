@@ -104,8 +104,6 @@ void AudioEncoderPcm::Reset() {
   speech_buffer_.clear();
 }
 
-#ifdef WEBRTC_CODEC_G711
-
 AudioEncoderPcmA::AudioEncoderPcmA(const CodecInst& codec_inst)
     : AudioEncoderPcmA(CreateConfig<AudioEncoderPcmA>(codec_inst)) {}
 
@@ -140,5 +138,4 @@ AudioEncoder::CodecType AudioEncoderPcmU::GetCodecType() const {
   return AudioEncoder::CodecType::kPcmU;
 }
 
-#endif
 }  // namespace webrtc

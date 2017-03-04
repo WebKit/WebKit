@@ -65,19 +65,11 @@ class RtpPacketizerVp8 : public RtpPacketizer {
                       const RTPFragmentationHeader* fragmentation) override;
 
   // Get the next payload with VP8 payload header.
-  // max_payload_len limits the sum length of payload and VP8 payload header.
-  // buffer is a pointer to where the output will be written.
-  // bytes_to_send is an output variable that will contain number of bytes
-  // written to buffer. Parameter last_packet is true for the last packet of
-  // the frame, false otherwise (i.e., call the function again to get the
-  // next packet).
-  // For the kStrict and kAggregate mode: returns the partition index from which
-  // the first payload byte in the packet is taken, with the first partition
-  // having index 0; returns negative on error.
-  // For the kEqualSize mode: returns 0 on success, return negative on error.
-  bool NextPacket(uint8_t* buffer,
-                  size_t* bytes_to_send,
-                  bool* last_packet) override;
+  // Write payload and set marker bit of the |packet|.
+  // The parameter |last_packet| is true for the last packet of the frame, false
+  // otherwise (i.e., call the function again to get the next packet).
+  // Returns true on success, false otherwise.
+  bool NextPacket(RtpPacketToSend* packet, bool* last_packet) override;
 
   ProtectionType GetProtectionType() override;
 

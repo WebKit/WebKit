@@ -10,18 +10,17 @@
 
 #ifndef WEBRTC_EXAMPLES_PEERCONNECTION_CLIENT_MAIN_WND_H_
 #define WEBRTC_EXAMPLES_PEERCONNECTION_CLIENT_MAIN_WND_H_
-#pragma once
 
 #include <map>
 #include <memory>
 #include <string>
 
 #include "webrtc/api/mediastreaminterface.h"
+#include "webrtc/api/video/video_frame.h"
 #include "webrtc/base/win32.h"
 #include "webrtc/examples/peerconnection/client/peer_connection_client.h"
 #include "webrtc/media/base/mediachannel.h"
 #include "webrtc/media/base/videocommon.h"
-#include "webrtc/video_frame.h"
 
 class MainWndCallback {
  public:

@@ -18,7 +18,6 @@
 
 using google::RegisterFlagValidator;
 using google::ParseCommandLineFlags;
-using std::string;
 using testing::InitGoogleTest;
 
 namespace webrtc {

@@ -29,7 +29,6 @@ namespace webrtc {
 class CallStatsObserver;
 class ChannelStatsObserver;
 class EncodedImageCallback;
-class I420FrameCallback;
 class ReceiveStatisticsProxy;
 class VideoRenderCallback;
 
@@ -49,18 +48,19 @@ class VideoStreamDecoder : public VCMReceiveCallback,
  public:
   friend class ChannelStatsObserver;
 
-  VideoStreamDecoder(vcm::VideoReceiver* video_receiver,
-                     VCMFrameTypeCallback* vcm_frame_type_callback,
-                     VCMPacketRequestCallback* vcm_packet_request_callback,
-                     bool enable_nack,
-                     bool enable_fec,
-                     ReceiveStatisticsProxy* receive_statistics_proxy,
-                     rtc::VideoSinkInterface<VideoFrame>* incoming_video_stream,
-                     I420FrameCallback* pre_render_callback);
+  VideoStreamDecoder(
+      vcm::VideoReceiver* video_receiver,
+      VCMFrameTypeCallback* vcm_frame_type_callback,
+      VCMPacketRequestCallback* vcm_packet_request_callback,
+      bool enable_nack,
+      bool enable_fec,
+      ReceiveStatisticsProxy* receive_statistics_proxy,
+      rtc::VideoSinkInterface<VideoFrame>* incoming_video_stream);
   ~VideoStreamDecoder();
 
   // Implements VCMReceiveCallback.
-  int32_t FrameToRender(VideoFrame& video_frame) override;  // NOLINT
+  int32_t FrameToRender(VideoFrame& video_frame,
+                        rtc::Optional<uint8_t> qp) override;
   int32_t ReceivedDecodedReferenceFrame(const uint64_t picture_id) override;
   void OnIncomingPayloadType(int payload_type) override;
   void OnDecoderImplementationName(const char* implementation_name) override;
@@ -69,6 +69,14 @@ class VideoStreamDecoder : public VCMReceiveCallback,
   void OnReceiveRatesUpdated(uint32_t bit_rate, uint32_t frame_rate) override;
   void OnDiscardedPacketsUpdated(int discarded_packets) override;
   void OnFrameCountsUpdated(const FrameCounts& frame_counts) override;
+  void OnCompleteFrame(bool is_keyframe, size_t size_bytes) override;
+  void OnFrameBufferTimingsUpdated(int decode_ms,
+                                   int max_decode_ms,
+                                   int current_delay_ms,
+                                   int target_delay_ms,
+                                   int jitter_buffer_ms,
+                                   int min_playout_delay_ms,
+                                   int render_delay_ms) override;
 
   // Implements VCMDecoderTimingCallback.
   void OnDecoderTiming(int decode_ms,
@@ -93,10 +101,6 @@ class VideoStreamDecoder : public VCMReceiveCallback,
 
   ReceiveStatisticsProxy* const receive_stats_callback_;
   rtc::VideoSinkInterface<VideoFrame>* const incoming_video_stream_;
-
-  // TODO(tommi): This callback is basically the same thing as the one above.
-  // We shouldn't need to support both.
-  I420FrameCallback* const pre_render_callback_;
 
   int64_t last_rtt_ms_ GUARDED_BY(crit_);
 };

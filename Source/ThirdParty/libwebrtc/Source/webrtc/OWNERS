@@ -13,3 +13,4 @@ per-file *.gn=*
 per-file *.gni=*
 
 per-file *video*.h=pbos@webrtc.org
+per-file DEPS=kjellander@webrtc.org

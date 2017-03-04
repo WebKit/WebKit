@@ -12,7 +12,7 @@
 
 #include <string.h>
 
-#include "webrtc/base/common.h"
+#include "webrtc/base/checks.h"
 
 namespace rtc {
 
@@ -66,7 +66,7 @@ TransformAdapter::Read(void * buffer, size_t buffer_len,
     StreamResult result = transform_->Transform(buffer_, &in_len,
                                                 buffer, &out_len,
                                                 (state_ == ST_FLUSHING));
-    ASSERT(result != SR_BLOCK);
+    RTC_DCHECK(result != SR_BLOCK);
     if (result == SR_EOS) {
       // Note: Don't signal SR_EOS this iteration, unless out_len is zero
       state_ = ST_COMPLETE;
@@ -117,12 +117,12 @@ TransformAdapter::Write(const void * data, size_t data_len,
                                                   buffer_ + len_, &out_len,
                                                   (state_ == ST_FLUSHING));
 
-      ASSERT(result != SR_BLOCK);
+      RTC_DCHECK(result != SR_BLOCK);
       if (result == SR_EOS) {
         // Note: Don't signal SR_EOS this iteration, unless no data written
         state_ = ST_COMPLETE;
       } else if (result == SR_ERROR) {
-        ASSERT(false); // When this happens, think about what should be done
+        RTC_NOTREACHED();  // When this happens, think about what should be done
         state_ = ST_ERROR;
         error_ = -1; // TODO: propagate error
         break;
@@ -140,7 +140,7 @@ TransformAdapter::Write(const void * data, size_t data_len,
                                                           &subwritten,
                                                           &error_);
       if (result == SR_BLOCK) {
-        ASSERT(false); // TODO: we should handle this
+        RTC_NOTREACHED();  // We should handle this
         return SR_BLOCK;
       } else if (result == SR_ERROR) {
         state_ = ST_ERROR;
@@ -175,7 +175,7 @@ TransformAdapter::Close() {
   if (!direction_read_ && (state_ == ST_PROCESSING)) {
     state_ = ST_FLUSHING;
     do {
-      Write(0, 0, NULL, NULL);
+      Write(0, 0, nullptr, nullptr);
     } while (state_ == ST_FLUSHING);
   }
   state_ = ST_COMPLETE;

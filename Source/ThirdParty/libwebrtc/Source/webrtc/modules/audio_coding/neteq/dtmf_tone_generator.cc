@@ -138,14 +138,14 @@ int DtmfToneGenerator::Init(int fs, int event, int attenuation) {
   RTC_DCHECK_GT(arraysize(kCoeff1), fs_index);
   RTC_DCHECK_GT(arraysize(kCoeff2), fs_index);
   RTC_DCHECK_LE(0, event);
-  RTC_DCHECK_GT(arraysize(kCoeff1[fs_index]), static_cast<size_t>(event));
-  RTC_DCHECK_GT(arraysize(kCoeff2[fs_index]), static_cast<size_t>(event));
+  RTC_DCHECK_GT(arraysize(kCoeff1[fs_index]), event);
+  RTC_DCHECK_GT(arraysize(kCoeff2[fs_index]), event);
   coeff1_ = kCoeff1[fs_index][event];
   coeff2_ = kCoeff2[fs_index][event];
 
   // Look up amplitude multiplier.
   RTC_DCHECK_LE(0, attenuation);
-  RTC_DCHECK_GT(arraysize(kAmplitude), static_cast<size_t>(attenuation));
+  RTC_DCHECK_GT(arraysize(kAmplitude), attenuation);
   amplitude_ = kAmplitude[attenuation];
 
   // Initialize sample history.
@@ -153,8 +153,8 @@ int DtmfToneGenerator::Init(int fs, int event, int attenuation) {
   RTC_DCHECK_GT(arraysize(kInitValue1), fs_index);
   RTC_DCHECK_GT(arraysize(kInitValue2), fs_index);
   RTC_DCHECK_LE(0, event);
-  RTC_DCHECK_GT(arraysize(kInitValue1[fs_index]), static_cast<size_t>(event));
-  RTC_DCHECK_GT(arraysize(kInitValue2[fs_index]), static_cast<size_t>(event));
+  RTC_DCHECK_GT(arraysize(kInitValue1[fs_index]), event);
+  RTC_DCHECK_GT(arraysize(kInitValue2[fs_index]), event);
   sample_history1_[0] = kInitValue1[fs_index][event];
   sample_history1_[1] = 0;
   sample_history2_[0] = kInitValue2[fs_index][event];

@@ -34,16 +34,19 @@
 #ifndef WEBRTC_VOICE_ENGINE_VOE_BASE_H
 #define WEBRTC_VOICE_ENGINE_VOE_BASE_H
 
+#include "webrtc/api/audio_codecs/audio_decoder_factory.h"
 #include "webrtc/base/scoped_ref_ptr.h"
-#include "webrtc/modules/audio_coding/codecs/audio_decoder_factory.h"
-#include "webrtc/modules/audio_coding/include/audio_coding_module.h"
 #include "webrtc/common_types.h"
+#include "webrtc/modules/audio_coding/include/audio_coding_module.h"
 
 namespace webrtc {
 
 class AudioDeviceModule;
 class AudioProcessing;
 class AudioTransport;
+namespace voe {
+class TransmitMixer;
+}  // namespace voe
 
 // VoiceEngineObserver
 class WEBRTC_DLLEXPORT VoiceEngineObserver {
@@ -142,6 +145,10 @@ class WEBRTC_DLLEXPORT VoEBase {
   // This method is WIP - DO NOT USE!
   // Returns NULL before Init() is called.
   virtual AudioDeviceModule* audio_device_module() = 0;
+
+  // This method is WIP - DO NOT USE!
+  // Returns NULL before Init() is called.
+  virtual voe::TransmitMixer* transmit_mixer() = 0;
 
   // Terminates all VoiceEngine functions and releases allocated resources.
   // Returns 0.

@@ -33,8 +33,6 @@
 // Then:
 //   STRINGIZE(A) produces "FOO"
 //   STRINGIZE(B(y)) produces "myobj->FunctionCall(y)"
-#ifndef STRINGIZE
-#define STRINGIZE(x) STRINGIZE_NO_EXPANSION(x)
-#endif
+#define RTC_STRINGIZE(x) STRINGIZE_NO_EXPANSION(x)
 
 #endif  // WEBRTC_SYSTEM_WRAPPERS_INCLUDE_STRINGIZE_MACROS_H_

@@ -14,9 +14,9 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class WebRTCAudioSessionConfiguration;
+@class RTCAudioSessionConfiguration;
 
-@interface WebRTCAudioSession ()
+@interface RTCAudioSession ()
 
 /** Number of times setActive:YES has succeeded without a balanced call to
  *  setActive:NO.
@@ -42,16 +42,16 @@ NS_ASSUME_NONNULL_BEGIN
  *  the list. This delegate will be notified before other delegates of
  *  audio events.
  */
-- (void)pushDelegate:(id<WebRTCAudioSessionDelegate>)delegate;
+- (void)pushDelegate:(id<RTCAudioSessionDelegate>)delegate;
 
-/** Signals WebRTCAudioSession that a WebRTC session is about to begin and
+/** Signals RTCAudioSession that a WebRTC session is about to begin and
  *  audio configuration is needed. Will configure the audio session for WebRTC
  *  if not already configured and if configuration is not delayed.
  *  Successful calls must be balanced by a call to endWebRTCSession.
  */
 - (BOOL)beginWebRTCSession:(NSError **)outError;
 
-/** Signals WebRTCAudioSession that a WebRTC session is about to end and audio
+/** Signals RTCAudioSession that a WebRTC session is about to end and audio
  *  unconfiguration is needed. Will unconfigure the audio session for WebRTC
  *  if this is the last unmatched call and if configuration is not delayed.
  */
@@ -78,7 +78,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 // Properties and methods for tests.
 @property(nonatomic, readonly)
-    std::vector<__weak id<WebRTCAudioSessionDelegate> > delegates;
+    std::vector<__weak id<RTCAudioSessionDelegate> > delegates;
 
 - (void)notifyDidBeginInterruption;
 - (void)notifyDidEndInterruptionWithShouldResumeSession:

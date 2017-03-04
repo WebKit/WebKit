@@ -6,17 +6,13 @@
 # in the file PATENTS.  All contributing project authors may
 # be found in the AUTHORS file in the root of the source tree.
 
-import("../build/webrtc.gni")
-if (is_mac) {
-  import("//build/config/mac/mac_sdk.gni")
-  import("//build/config/mac/rules.gni")
-}
+import("../webrtc.gni")
 if (is_ios) {
   import("//build/config/ios/rules.gni")
 }
 
 group("sdk") {
-  if (is_ios || is_mac) {
+  if (is_ios) {
     public_deps = [
       ":rtc_sdk_framework_objc",
     ]
@@ -29,14 +25,6 @@ if (is_ios || is_mac) {
       "objc/Framework/Classes",
       "objc/Framework/Headers",
     ]
-  }
-  config("webrtc_h264_video_toolbox_warnings_config") {
-    if (is_clang) {
-      # TODO(tkchin): Make webrtc_h264_video_toolbox compile with the standard set
-      # of warnings.
-      # See https://bugs.chromium.org/p/webrtc/issues/detail?id=6307
-      cflags = [ "-Wno-thread-safety-analysis" ]
-    }
   }
 
   rtc_static_library("rtc_sdk_common_objc") {
@@ -59,6 +47,8 @@ if (is_ios || is_mac) {
       "objc/Framework/Classes/RTCMetricsSampleInfo.mm",
       "objc/Framework/Classes/RTCSSLAdapter.mm",
       "objc/Framework/Classes/RTCTracing.mm",
+      "objc/Framework/Classes/helpers.h",
+      "objc/Framework/Classes/helpers.mm",
       "objc/Framework/Headers/WebRTC/RTCDispatcher.h",
       "objc/Framework/Headers/WebRTC/RTCFieldTrials.h",
       "objc/Framework/Headers/WebRTC/RTCLogging.h",
@@ -77,7 +67,22 @@ if (is_ios || is_mac) {
         "objc/Framework/Headers/WebRTC/RTCCameraPreviewView.h",
         "objc/Framework/Headers/WebRTC/UIDevice+RTCDevice.h",
       ]
+      if (current_cpu == "arm64") {
+        sources += [
+          "objc/Framework/Classes/Metal/RTCMTLNV12Renderer.h",
+          "objc/Framework/Classes/Metal/RTCMTLNV12Renderer.mm",
+          "objc/Framework/Classes/Metal/RTCMTLVideoView.m",
+        ]
+      }
+
       libs = [ "AVFoundation.framework" ]
+      if (current_cpu == "arm64") {
+        libs += [
+          "CoreVideo.framework",
+          "Metal.framework",
+          "MetalKit.framework",
+        ]
+      }
     }
     if (!build_with_chromium) {
       sources += [
@@ -89,6 +94,9 @@ if (is_ios || is_mac) {
 
   rtc_static_library("rtc_sdk_peerconnection_objc") {
     sources = [
+      "objc/Framework/Classes/Metal/RTCMTLNV12Renderer.h",
+      "objc/Framework/Classes/RTCAVFoundationVideoCapturerInternal.h",
+      "objc/Framework/Classes/RTCAVFoundationVideoCapturerInternal.mm",
       "objc/Framework/Classes/RTCAVFoundationVideoSource+Private.h",
       "objc/Framework/Classes/RTCAVFoundationVideoSource.mm",
       "objc/Framework/Classes/RTCAudioSource+Private.h",
@@ -149,6 +157,8 @@ if (is_ios || is_mac) {
       "objc/Framework/Classes/RTCVideoSource.mm",
       "objc/Framework/Classes/RTCVideoTrack+Private.h",
       "objc/Framework/Classes/RTCVideoTrack.mm",
+      "objc/Framework/Classes/avfoundationformatmapper.h",
+      "objc/Framework/Classes/avfoundationformatmapper.mm",
       "objc/Framework/Classes/avfoundationvideocapturer.h",
       "objc/Framework/Classes/avfoundationvideocapturer.mm",
       "objc/Framework/Classes/videotoolboxvideocodecfactory.cc",
@@ -180,6 +190,10 @@ if (is_ios || is_mac) {
       "objc/Framework/Headers/WebRTC/RTCVideoTrack.h",
     ]
 
+    deps = [
+      ":webrtc_h264_video_toolbox",
+    ]
+
     if (is_ios) {
       sources += [
         "objc/Framework/Classes/RTCEAGLVideoView.m",
@@ -192,9 +206,6 @@ if (is_ios || is_mac) {
         "OpenGLES.framework",
         "QuartzCore.framework",
       ]
-      deps = [
-        ":webrtc_h264_video_toolbox",
-      ]
     }
 
     if (is_mac) {
@@ -206,7 +217,6 @@ if (is_ios || is_mac) {
         "CoreMedia.framework",
         "OpenGL.framework",
       ]
-      deps = []
     }
 
     configs += [
@@ -225,7 +235,7 @@ if (is_ios || is_mac) {
 
     deps += [
       ":rtc_sdk_common_objc",
-      "../api:libjingle_peerconnection",
+      "../pc:libjingle_peerconnection",
     ]
 
     if (rtc_build_libyuv) {
@@ -235,92 +245,92 @@ if (is_ios || is_mac) {
       ]
     }
   }
-  common_objc_headers = [
-    "objc/Framework/Headers/WebRTC/RTCAVFoundationVideoSource.h",
-    "objc/Framework/Headers/WebRTC/RTCAudioSource.h",
-    "objc/Framework/Headers/WebRTC/RTCAudioTrack.h",
-    "objc/Framework/Headers/WebRTC/RTCCameraPreviewView.h",
-    "objc/Framework/Headers/WebRTC/RTCConfiguration.h",
-    "objc/Framework/Headers/WebRTC/RTCDataChannel.h",
-    "objc/Framework/Headers/WebRTC/RTCDataChannelConfiguration.h",
-    "objc/Framework/Headers/WebRTC/RTCDispatcher.h",
-    "objc/Framework/Headers/WebRTC/RTCEAGLVideoView.h",
-    "objc/Framework/Headers/WebRTC/RTCFieldTrials.h",
-    "objc/Framework/Headers/WebRTC/RTCIceCandidate.h",
-    "objc/Framework/Headers/WebRTC/RTCIceServer.h",
-    "objc/Framework/Headers/WebRTC/RTCLegacyStatsReport.h",
-    "objc/Framework/Headers/WebRTC/RTCLogging.h",
-    "objc/Framework/Headers/WebRTC/RTCMacros.h",
-    "objc/Framework/Headers/WebRTC/RTCMediaConstraints.h",
-    "objc/Framework/Headers/WebRTC/RTCMediaSource.h",
-    "objc/Framework/Headers/WebRTC/RTCMediaStream.h",
-    "objc/Framework/Headers/WebRTC/RTCMediaStreamTrack.h",
-    "objc/Framework/Headers/WebRTC/RTCMetrics.h",
-    "objc/Framework/Headers/WebRTC/RTCMetricsSampleInfo.h",
-    "objc/Framework/Headers/WebRTC/RTCPeerConnection.h",
-    "objc/Framework/Headers/WebRTC/RTCPeerConnectionFactory.h",
-    "objc/Framework/Headers/WebRTC/RTCRtpCodecParameters.h",
-    "objc/Framework/Headers/WebRTC/RTCRtpEncodingParameters.h",
-    "objc/Framework/Headers/WebRTC/RTCRtpParameters.h",
-    "objc/Framework/Headers/WebRTC/RTCRtpReceiver.h",
-    "objc/Framework/Headers/WebRTC/RTCRtpSender.h",
-    "objc/Framework/Headers/WebRTC/RTCSSLAdapter.h",
-    "objc/Framework/Headers/WebRTC/RTCSessionDescription.h",
-    "objc/Framework/Headers/WebRTC/RTCTracing.h",
-    "objc/Framework/Headers/WebRTC/RTCVideoFrame.h",
-    "objc/Framework/Headers/WebRTC/RTCVideoRenderer.h",
-    "objc/Framework/Headers/WebRTC/RTCVideoSource.h",
-    "objc/Framework/Headers/WebRTC/RTCVideoTrack.h",
-    "objc/Framework/Headers/WebRTC/UIDevice+RTCDevice.h",
-    "objc/Framework/Headers/WebRTC/WebRTC.h",
-  ]
 
-  if (is_mac) {
-    mac_framework_bundle("rtc_sdk_framework_objc") {
-      info_plist = "objc/Framework/Info.plist"
-      output_name = "WebRTC"
-
-      sources = common_objc_headers +
-                [ "objc/Framework/Headers/WebRTC/RTCNSGLVideoView.h" ]
-
-      if (!build_with_chromium) {
-        sources += [ "objc/Framework/Headers/WebRTC/RTCFileLogger.h" ]
+  if (rtc_include_tests) {
+    rtc_source_set("rtc_sdk_peerconnection_objc_unittests") {
+      testonly = true
+      sources = [
+        "objc/Framework/UnitTests/RTCConfigurationTest.mm",
+        "objc/Framework/UnitTests/RTCDataChannelConfigurationTest.mm",
+        "objc/Framework/UnitTests/RTCIceCandidateTest.mm",
+        "objc/Framework/UnitTests/RTCIceServerTest.mm",
+        "objc/Framework/UnitTests/RTCMediaConstraintsTest.mm",
+        "objc/Framework/UnitTests/RTCSessionDescriptionTest.mm",
+        "objc/Framework/UnitTests/avformatmappertests.mm",
+      ]
+      if (is_ios) {
+        sources += [ "objc/Framework/UnitTests/RTCMTLVideoViewTests.mm" ]
+        if (current_cpu != "arm64") {
+          sources += [ "objc/Framework/Classes/Metal/RTCMTLVideoView.m" ]
+        }
       }
-
       deps = [
         ":rtc_sdk_peerconnection_objc",
-        "../system_wrappers:field_trial_default",
-        "../system_wrappers:metrics_default",
+        "//third_party/ocmock",
+        "//webrtc/system_wrappers:system_wrappers_default",
       ]
 
-      libs = [
-        "AVFoundation.framework",
-        "AudioToolbox.framework",
-        "CoreGraphics.framework",
-        "CoreMedia.framework",
-        "GLKit.framework",
-        "VideoToolbox.framework",
-      ]
+      # TODO(tkchin): Cleanup this warning.
+      cflags = [ "-Wno-objc-property-no-attribute" ]
 
-      ldflags = [ "-all_load" ]
+      # |-ObjC| flag needed to make sure category method implementations
+      # are included:
+      # https://developer.apple.com/library/mac/qa/qa1490/_index.html
+      ldflags = [ "-ObjC" ]
 
-      configs += [
-        "..:common_objc",
-        "//build/config/compiler:enable_arc",
-      ]
-
-      public_configs = [ ":rtc_sdk_common_objc_config" ]
-
+      defines = [ "GTEST_RELATIVE_PATH" ]
       if (!build_with_chromium && is_clang) {
-        # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163)
-        configs -= [ "//build/config/clang:find_bad_constructs" ]
+        # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
+        suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
       }
     }
   }
+
   if (is_ios) {
     ios_framework_bundle("rtc_sdk_framework_objc") {
       info_plist = "objc/Framework/Info.plist"
       output_name = "WebRTC"
+
+      common_objc_headers = [
+        "objc/Framework/Headers/WebRTC/RTCAVFoundationVideoSource.h",
+        "objc/Framework/Headers/WebRTC/RTCAudioSource.h",
+        "objc/Framework/Headers/WebRTC/RTCAudioTrack.h",
+        "objc/Framework/Headers/WebRTC/RTCCameraPreviewView.h",
+        "objc/Framework/Headers/WebRTC/RTCConfiguration.h",
+        "objc/Framework/Headers/WebRTC/RTCDataChannel.h",
+        "objc/Framework/Headers/WebRTC/RTCDataChannelConfiguration.h",
+        "objc/Framework/Headers/WebRTC/RTCDispatcher.h",
+        "objc/Framework/Headers/WebRTC/RTCEAGLVideoView.h",
+        "objc/Framework/Headers/WebRTC/RTCFieldTrials.h",
+        "objc/Framework/Headers/WebRTC/RTCIceCandidate.h",
+        "objc/Framework/Headers/WebRTC/RTCIceServer.h",
+        "objc/Framework/Headers/WebRTC/RTCLegacyStatsReport.h",
+        "objc/Framework/Headers/WebRTC/RTCLogging.h",
+        "objc/Framework/Headers/WebRTC/RTCMacros.h",
+        "objc/Framework/Headers/WebRTC/RTCMediaConstraints.h",
+        "objc/Framework/Headers/WebRTC/RTCMediaSource.h",
+        "objc/Framework/Headers/WebRTC/RTCMediaStream.h",
+        "objc/Framework/Headers/WebRTC/RTCMediaStreamTrack.h",
+        "objc/Framework/Headers/WebRTC/RTCMetrics.h",
+        "objc/Framework/Headers/WebRTC/RTCMetricsSampleInfo.h",
+        "objc/Framework/Headers/WebRTC/RTCMTLVideoView.h",
+        "objc/Framework/Headers/WebRTC/RTCPeerConnection.h",
+        "objc/Framework/Headers/WebRTC/RTCPeerConnectionFactory.h",
+        "objc/Framework/Headers/WebRTC/RTCRtpCodecParameters.h",
+        "objc/Framework/Headers/WebRTC/RTCRtpEncodingParameters.h",
+        "objc/Framework/Headers/WebRTC/RTCRtpParameters.h",
+        "objc/Framework/Headers/WebRTC/RTCRtpReceiver.h",
+        "objc/Framework/Headers/WebRTC/RTCRtpSender.h",
+        "objc/Framework/Headers/WebRTC/RTCSSLAdapter.h",
+        "objc/Framework/Headers/WebRTC/RTCSessionDescription.h",
+        "objc/Framework/Headers/WebRTC/RTCTracing.h",
+        "objc/Framework/Headers/WebRTC/RTCVideoFrame.h",
+        "objc/Framework/Headers/WebRTC/RTCVideoRenderer.h",
+        "objc/Framework/Headers/WebRTC/RTCVideoSource.h",
+        "objc/Framework/Headers/WebRTC/RTCVideoTrack.h",
+        "objc/Framework/Headers/WebRTC/UIDevice+RTCDevice.h",
+        "objc/Framework/Headers/WebRTC/WebRTC.h",
+      ]
 
       sources = common_objc_headers
       public_headers = common_objc_headers
@@ -330,7 +340,11 @@ if (is_ios || is_mac) {
         public_headers += [ "objc/Framework/Headers/WebRTC/RTCFileLogger.h" ]
       }
 
-      ldflags = [ "-all_load" ]
+      ldflags = [
+        "-all_load",
+        "-install_name",
+        "@rpath/$output_name.framework/$output_name",
+      ]
 
       deps = [
         ":rtc_sdk_peerconnection_objc",
@@ -381,7 +395,6 @@ if (is_ios || is_mac) {
     ]
 
     configs += [
-      ":webrtc_h264_video_toolbox_warnings_config",
       "//webrtc:common_objc",
       "//build/config/compiler:enable_arc",
     ]

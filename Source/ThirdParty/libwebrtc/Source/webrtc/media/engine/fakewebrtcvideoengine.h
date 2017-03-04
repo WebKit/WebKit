@@ -28,16 +28,6 @@
 #include "webrtc/video_encoder.h"
 
 namespace cricket {
-
-static const int kMinVideoBitrate = 100;
-static const int kStartVideoBitrate = 300;
-static const int kMaxVideoBitrate = 1000;
-
-// WebRtc channel id and capture id share the same number space.
-// This is how AddRenderer(renderId, ...) is able to tell if it is adding a
-// renderer for a channel or it is adding a renderer for a capturer.
-static const int kViEChannelIdBase = 0;
-static const int kViEChannelIdMax = 1000;
 static const int kEventTimeoutMs = 10000;
 
 // Fake class for mocking out webrtc::VideoDecoder
@@ -132,9 +122,9 @@ class FakeWebRtcVideoEncoder : public webrtc::VideoEncoder {
   FakeWebRtcVideoEncoder()
       : init_encode_event_(false, false), num_frames_encoded_(0) {}
 
-  virtual int32_t InitEncode(const webrtc::VideoCodec* codecSettings,
-                             int32_t numberOfCores,
-                             size_t maxPayloadSize) {
+  int32_t InitEncode(const webrtc::VideoCodec* codecSettings,
+                     int32_t numberOfCores,
+                     size_t maxPayloadSize) override {
     rtc::CritScope lock(&crit_);
     codec_settings_ = *codecSettings;
     init_encode_event_.Set();
@@ -148,27 +138,28 @@ class FakeWebRtcVideoEncoder : public webrtc::VideoEncoder {
     return codec_settings_;
   }
 
-  virtual int32_t Encode(const webrtc::VideoFrame& inputImage,
-                         const webrtc::CodecSpecificInfo* codecSpecificInfo,
-                         const std::vector<webrtc::FrameType>* frame_types) {
+  int32_t Encode(const webrtc::VideoFrame& inputImage,
+                 const webrtc::CodecSpecificInfo* codecSpecificInfo,
+                 const std::vector<webrtc::FrameType>* frame_types) override {
     rtc::CritScope lock(&crit_);
     ++num_frames_encoded_;
     init_encode_event_.Set();
     return WEBRTC_VIDEO_CODEC_OK;
   }
 
-  virtual int32_t RegisterEncodeCompleteCallback(
-      webrtc::EncodedImageCallback* callback) {
+  int32_t RegisterEncodeCompleteCallback(
+      webrtc::EncodedImageCallback* callback) override {
     return WEBRTC_VIDEO_CODEC_OK;
   }
 
-  virtual int32_t Release() { return WEBRTC_VIDEO_CODEC_OK; }
+  int32_t Release() override { return WEBRTC_VIDEO_CODEC_OK; }
 
-  virtual int32_t SetChannelParameters(uint32_t packetLoss, int64_t rtt) {
+  int32_t SetChannelParameters(uint32_t packetLoss, int64_t rtt) override {
     return WEBRTC_VIDEO_CODEC_OK;
   }
 
-  virtual int32_t SetRates(uint32_t newBitRate, uint32_t frameRate) {
+  int32_t SetRateAllocation(const webrtc::BitrateAllocation& allocation,
+                            uint32_t framerate) override {
     return WEBRTC_VIDEO_CODEC_OK;
   }
 
@@ -205,10 +196,13 @@ class FakeWebRtcVideoEncoderFactory : public WebRtcVideoEncoderFactory {
   }
 
   bool WaitForCreatedVideoEncoders(int num_encoders) {
-    while (created_video_encoder_event_.Wait(kEventTimeoutMs)) {
+    int64_t start_offset_ms = rtc::TimeMillis();
+    int64_t wait_time = kEventTimeoutMs;
+    do {
       if (GetNumCreatedEncoders() >= num_encoders)
         return true;
-    }
+      wait_time = kEventTimeoutMs - (rtc::TimeMillis() - start_offset_ms);
+    } while (wait_time > 0 && created_video_encoder_event_.Wait(wait_time));
     return false;
   }
 

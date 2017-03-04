@@ -13,7 +13,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "webrtc/base/basictypes.h"
 #include "webrtc/base/checks.h"
 #include "webrtc/base/stringutils.h"
 
@@ -120,7 +119,7 @@ const char* unsafe_filename_characters() {
   return "\\/:*?\"<>|";
 #else  // !WEBRTC_WIN
   // TODO(grunell): Should this never be reached?
-  RTC_DCHECK(false);
+  RTC_NOTREACHED();
   return "";
 #endif  // !WEBRTC_WIN
 }
@@ -142,7 +141,7 @@ const unsigned char ASCII_CLASS[128] = {
 
 size_t url_encode(char * buffer, size_t buflen,
                   const char * source, size_t srclen) {
-  if (NULL == buffer)
+  if (nullptr == buffer)
     return srclen * 3 + 1;
   if (buflen <= 0)
     return 0;
@@ -168,7 +167,7 @@ size_t url_encode(char * buffer, size_t buflen,
 
 size_t url_decode(char * buffer, size_t buflen,
                   const char * source, size_t srclen) {
-  if (NULL == buffer)
+  if (nullptr == buffer)
     return srclen + 1;
   if (buflen <= 0)
     return 0;
@@ -275,7 +274,7 @@ size_t html_encode(char * buffer, size_t buflen,
           case '\'': escseq = "&#39;";  esclen = 5; break;
           case '\"': escseq = "&quot;"; esclen = 6; break;
           case '&':  escseq = "&amp;";  esclen = 5; break;
-          default: RTC_DCHECK(false);
+          default: RTC_NOTREACHED();
         }
         if (bufpos + esclen >= buflen) {
           break;
@@ -332,7 +331,7 @@ size_t xml_encode(char * buffer, size_t buflen,
         case '\'': escseq = "&apos;"; esclen = 6; break;
         case '\"': escseq = "&quot;"; esclen = 6; break;
         case '&':  escseq = "&amp;";  esclen = 5; break;
-        default: RTC_DCHECK(false);
+        default: RTC_NOTREACHED();
       }
       if (bufpos + esclen >= buflen) {
         break;
@@ -547,7 +546,7 @@ size_t transform(std::string& value, size_t maxlen, const std::string& source,
 
 std::string s_transform(const std::string& source, Transform t) {
   // Ask transformation function to approximate the destination size (returns upper bound)
-  size_t maxlen = t(NULL, 0, source.data(), source.length());
+  size_t maxlen = t(nullptr, 0, source.data(), source.length());
   char * buffer = STACK_ARRAY(char, maxlen);
   size_t len = t(buffer, maxlen, source.data(), source.length());
   std::string result(buffer, len);

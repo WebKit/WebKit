@@ -57,7 +57,7 @@ int ascii_string_compare(const wchar_t* s1, const char* s2, size_t n,
     if (n-- == 0) return 0;
     c1 = transformation(*s1);
     // Double check that characters are not UTF-8
-    RTC_DCHECK_LT(static_cast<unsigned char>(*s2), 128);
+    RTC_DCHECK_LT(*s2, 128);
     // Note: *s2 gets implicitly promoted to wchar_t
     c2 = transformation(*s2);
     if (c1 != c2) return (c1 < c2) ? -1 : 1;
@@ -80,7 +80,7 @@ size_t asccpyn(wchar_t* buffer, size_t buflen,
 #if RTC_DCHECK_IS_ON
   // Double check that characters are not UTF-8
   for (size_t pos = 0; pos < srclen; ++pos)
-    RTC_DCHECK_LT(static_cast<unsigned char>(source[pos]), 128);
+    RTC_DCHECK_LT(source[pos], 128);
 #endif
   std::copy(source, source + srclen, buffer);
   buffer[srclen] = 0;

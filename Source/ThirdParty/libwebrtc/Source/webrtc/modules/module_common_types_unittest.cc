@@ -112,15 +112,6 @@ TEST(LatestTimestamp, Wrap) {
   EXPECT_EQ(0x0000FFFFu, LatestTimestamp(0xFFFF0000, 0x0000FFFF));
 }
 
-TEST(ClampToInt16, TestCases) {
-  EXPECT_EQ(0x0000, ClampToInt16(0x00000000));
-  EXPECT_EQ(0x0001, ClampToInt16(0x00000001));
-  EXPECT_EQ(0x7FFF, ClampToInt16(0x00007FFF));
-  EXPECT_EQ(0x7FFF, ClampToInt16(0x7FFFFFFF));
-  EXPECT_EQ(-0x0001, ClampToInt16(-0x00000001));
-  EXPECT_EQ(-0x8000, ClampToInt16(-0x8000));
-  EXPECT_EQ(-0x8000, ClampToInt16(-0x7FFFFFFF));
-}
 
 TEST(SequenceNumberUnwrapper, Limits) {
   SequenceNumberUnwrapper unwrapper;

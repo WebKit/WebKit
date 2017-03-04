@@ -10,15 +10,14 @@
 
 #include <math.h>
 #include <stdio.h>
+
+#include "webrtc/api/audio_codecs/builtin_audio_decoder_factory.h"
 #include "webrtc/base/checks.h"
-#include "webrtc/modules/audio_coding/codecs/builtin_audio_decoder_factory.h"
 #include "webrtc/modules/audio_coding/neteq/tools/neteq_quality_test.h"
 #include "webrtc/modules/audio_coding/neteq/tools/output_audio_file.h"
 #include "webrtc/modules/audio_coding/neteq/tools/output_wav_file.h"
 #include "webrtc/modules/audio_coding/neteq/tools/resample_input_audio_file.h"
 #include "webrtc/test/testsupport/fileutils.h"
-
-using std::string;
 
 namespace webrtc {
 namespace test {
@@ -29,7 +28,7 @@ const int kInitSeed = 0x12345678;
 const int kPacketLossTimeUnitMs = 10;
 
 // Common validator for file names.
-static bool ValidateFilename(const string& value, bool write) {
+static bool ValidateFilename(const std::string& value, bool write) {
   FILE* fid = write ? fopen(value.c_str(), "wb") : fopen(value.c_str(), "rb");
   if (fid == nullptr)
     return false;
@@ -38,7 +37,7 @@ static bool ValidateFilename(const string& value, bool write) {
 }
 
 // Define switch for input file name.
-static bool ValidateInFilename(const char* flagname, const string& value) {
+static bool ValidateInFilename(const char* flagname, const std::string& value) {
   if (!ValidateFilename(value, false)) {
     printf("Invalid input filename.");
     return false;
@@ -82,7 +81,8 @@ static const bool channels_dummy =
     RegisterFlagValidator(&FLAGS_channels, &ValidateChannels);
 
 // Define switch for output file name.
-static bool ValidateOutFilename(const char* flagname, const string& value) {
+static bool ValidateOutFilename(const char* flagname,
+                                const std::string& value) {
   if (!ValidateFilename(value, true)) {
     printf("Invalid output filename.");
     return false;

@@ -10,9 +10,13 @@
 
 #include "webrtc/test/fake_encoder.h"
 
+#include <string.h>
+
 #include <algorithm>
+#include <memory>
 
 #include "webrtc/base/checks.h"
+#include "webrtc/common_types.h"
 #include "webrtc/modules/video_coding/include/video_codec_interface.h"
 #include "webrtc/system_wrappers/include/sleep.h"
 #include "webrtc/test/gtest.h"
@@ -22,8 +26,7 @@ namespace test {
 
 FakeEncoder::FakeEncoder(Clock* clock)
     : clock_(clock),
-      callback_(NULL),
-      target_bitrate_kbps_(0),
+      callback_(nullptr),
       max_target_bitrate_kbps_(-1),
       last_encode_time_ms_(0) {
   // Generate some arbitrary not-all-zero data
@@ -32,61 +35,88 @@ FakeEncoder::FakeEncoder(Clock* clock)
   }
 }
 
-FakeEncoder::~FakeEncoder() {}
-
 void FakeEncoder::SetMaxBitrate(int max_kbps) {
   RTC_DCHECK_GE(max_kbps, -1);  // max_kbps == -1 disables it.
+  rtc::CritScope cs(&crit_sect_);
   max_target_bitrate_kbps_ = max_kbps;
 }
 
 int32_t FakeEncoder::InitEncode(const VideoCodec* config,
                                 int32_t number_of_cores,
                                 size_t max_payload_size) {
+  rtc::CritScope cs(&crit_sect_);
   config_ = *config;
-  target_bitrate_kbps_ = config_.startBitrate;
+  target_bitrate_.SetBitrate(0, 0, config_.startBitrate * 1000);
   return 0;
 }
 
 int32_t FakeEncoder::Encode(const VideoFrame& input_image,
                             const CodecSpecificInfo* codec_specific_info,
                             const std::vector<FrameType>* frame_types) {
-  RTC_DCHECK_GT(config_.maxFramerate, 0);
-  int64_t time_since_last_encode_ms = 1000 / config_.maxFramerate;
+  unsigned char max_framerate;
+  unsigned char num_simulcast_streams;
+  SimulcastStream simulcast_streams[kMaxSimulcastStreams];
+  EncodedImageCallback* callback;
+  uint32_t target_bitrate_sum_kbps;
+  int max_target_bitrate_kbps;
+  int64_t last_encode_time_ms;
+  size_t num_encoded_bytes;
+  {
+    rtc::CritScope cs(&crit_sect_);
+    max_framerate = config_.maxFramerate;
+    num_simulcast_streams = config_.numberOfSimulcastStreams;
+    for (int i = 0; i < num_simulcast_streams; ++i) {
+      simulcast_streams[i] = config_.simulcastStream[i];
+    }
+    callback = callback_;
+    target_bitrate_sum_kbps = target_bitrate_.get_sum_kbps();
+    max_target_bitrate_kbps = max_target_bitrate_kbps_;
+    last_encode_time_ms = last_encode_time_ms_;
+    num_encoded_bytes = sizeof(encoded_buffer_);
+  }
+
   int64_t time_now_ms = clock_->TimeInMilliseconds();
-  const bool first_encode = last_encode_time_ms_ == 0;
+  const bool first_encode = (last_encode_time_ms == 0);
+  RTC_DCHECK_GT(max_framerate, 0);
+  int64_t time_since_last_encode_ms = 1000 / max_framerate;
   if (!first_encode) {
     // For all frames but the first we can estimate the display time by looking
     // at the display time of the previous frame.
-    time_since_last_encode_ms = time_now_ms - last_encode_time_ms_;
+    time_since_last_encode_ms = time_now_ms - last_encode_time_ms;
   }
-  if (time_since_last_encode_ms > 3 * 1000 / config_.maxFramerate) {
+  if (time_since_last_encode_ms > 3 * 1000 / max_framerate) {
     // Rudimentary check to make sure we don't widely overshoot bitrate target
     // when resuming encoding after a suspension.
-    time_since_last_encode_ms = 3 * 1000 / config_.maxFramerate;
+    time_since_last_encode_ms = 3 * 1000 / max_framerate;
   }
 
   size_t bits_available =
-      static_cast<size_t>(target_bitrate_kbps_ * time_since_last_encode_ms);
-  size_t min_bits = static_cast<size_t>(
-      config_.simulcastStream[0].minBitrate * time_since_last_encode_ms);
+      static_cast<size_t>(target_bitrate_sum_kbps * time_since_last_encode_ms);
+  size_t min_bits = static_cast<size_t>(simulcast_streams[0].minBitrate *
+                                        time_since_last_encode_ms);
+
   if (bits_available < min_bits)
     bits_available = min_bits;
   size_t max_bits =
-      static_cast<size_t>(max_target_bitrate_kbps_ * time_since_last_encode_ms);
+      static_cast<size_t>(max_target_bitrate_kbps * time_since_last_encode_ms);
   if (max_bits > 0 && max_bits < bits_available)
     bits_available = max_bits;
-  last_encode_time_ms_ = time_now_ms;
 
-  RTC_DCHECK_GT(config_.numberOfSimulcastStreams, 0);
-  for (unsigned char i = 0; i < config_.numberOfSimulcastStreams; ++i) {
+  {
+    rtc::CritScope cs(&crit_sect_);
+    last_encode_time_ms_ = time_now_ms;
+  }
+
+  RTC_DCHECK_GT(num_simulcast_streams, 0);
+  for (unsigned char i = 0; i < num_simulcast_streams; ++i) {
     CodecSpecificInfo specifics;
     memset(&specifics, 0, sizeof(specifics));
     specifics.codecType = kVideoCodecGeneric;
     specifics.codecSpecific.generic.simulcast_idx = i;
     size_t min_stream_bits = static_cast<size_t>(
-        config_.simulcastStream[i].minBitrate * time_since_last_encode_ms);
+        simulcast_streams[i].minBitrate * time_since_last_encode_ms);
     size_t max_stream_bits = static_cast<size_t>(
-        config_.simulcastStream[i].maxBitrate * time_since_last_encode_ms);
+        simulcast_streams[i].maxBitrate * time_since_last_encode_ms);
     size_t stream_bits = (bits_available > max_stream_bits) ? max_stream_bits :
         bits_available;
     size_t stream_bytes = (stream_bits + 7) / 8;
@@ -96,23 +126,25 @@ int32_t FakeEncoder::Encode(const VideoFrame& input_image,
       // encodes so that it can compensate for oversized frames.
       stream_bytes *= 10;
     }
-    if (stream_bytes > sizeof(encoded_buffer_))
-      stream_bytes = sizeof(encoded_buffer_);
+    if (stream_bytes > num_encoded_bytes)
+      stream_bytes = num_encoded_bytes;
 
     // Always encode something on the first frame.
     if (min_stream_bits > bits_available && i > 0)
       continue;
-    EncodedImage encoded(
-        encoded_buffer_, stream_bytes, sizeof(encoded_buffer_));
+
+    std::unique_ptr<uint8_t[]> encoded_buffer(new uint8_t[num_encoded_bytes]);
+    memcpy(encoded_buffer.get(), encoded_buffer_, num_encoded_bytes);
+    EncodedImage encoded(encoded_buffer.get(), stream_bytes, num_encoded_bytes);
     encoded._timeStamp = input_image.timestamp();
     encoded.capture_time_ms_ = input_image.render_time_ms();
     encoded._frameType = (*frame_types)[i];
-    encoded._encodedWidth = config_.simulcastStream[i].width;
-    encoded._encodedHeight = config_.simulcastStream[i].height;
+    encoded._encodedWidth = simulcast_streams[i].width;
+    encoded._encodedHeight = simulcast_streams[i].height;
     encoded.rotation_ = input_image.rotation();
-    RTC_DCHECK(callback_ != NULL);
     specifics.codec_name = ImplementationName();
-    if (callback_->OnEncodedImage(encoded, &specifics, NULL).error !=
+    RTC_DCHECK(callback);
+    if (callback->OnEncodedImage(encoded, &specifics, nullptr).error !=
         EncodedImageCallback::Result::OK) {
       return -1;
     }
@@ -123,6 +155,7 @@ int32_t FakeEncoder::Encode(const VideoFrame& input_image,
 
 int32_t FakeEncoder::RegisterEncodeCompleteCallback(
     EncodedImageCallback* callback) {
+  rtc::CritScope cs(&crit_sect_);
   callback_ = callback;
   return 0;
 }
@@ -133,8 +166,10 @@ int32_t FakeEncoder::SetChannelParameters(uint32_t packet_loss, int64_t rtt) {
   return 0;
 }
 
-int32_t FakeEncoder::SetRates(uint32_t new_target_bitrate, uint32_t framerate) {
-  target_bitrate_kbps_ = new_target_bitrate;
+int32_t FakeEncoder::SetRateAllocation(const BitrateAllocation& rate_allocation,
+                                       uint32_t framerate) {
+  rtc::CritScope cs(&crit_sect_);
+  target_bitrate_ = rate_allocation;
   return 0;
 }
 
@@ -144,12 +179,13 @@ const char* FakeEncoder::ImplementationName() const {
 }
 
 FakeH264Encoder::FakeH264Encoder(Clock* clock)
-    : FakeEncoder(clock), callback_(NULL), idr_counter_(0) {
+    : FakeEncoder(clock), callback_(nullptr), idr_counter_(0) {
   FakeEncoder::RegisterEncodeCompleteCallback(this);
 }
 
 int32_t FakeH264Encoder::RegisterEncodeCompleteCallback(
     EncodedImageCallback* callback) {
+  rtc::CritScope cs(&local_crit_sect_);
   callback_ = callback;
   return 0;
 }
@@ -161,8 +197,16 @@ EncodedImageCallback::Result FakeH264Encoder::OnEncodedImage(
   const size_t kSpsSize = 8;
   const size_t kPpsSize = 11;
   const int kIdrFrequency = 10;
+  EncodedImageCallback* callback;
+  int current_idr_counter;
+  {
+    rtc::CritScope cs(&local_crit_sect_);
+    callback = callback_;
+    current_idr_counter = idr_counter_;
+    ++idr_counter_;
+  }
   RTPFragmentationHeader fragmentation;
-  if (idr_counter_++ % kIdrFrequency == 0 &&
+  if (current_idr_counter % kIdrFrequency == 0 &&
       encoded_image._length > kSpsSize + kPpsSize + 1) {
     const size_t kNumSlices = 3;
     fragmentation.VerifyAndAllocateFragmentationHeader(kNumSlices);
@@ -200,28 +244,116 @@ EncodedImageCallback::Result FakeH264Encoder::OnEncodedImage(
   CodecSpecificInfo specifics;
   memset(&specifics, 0, sizeof(specifics));
   specifics.codecType = kVideoCodecH264;
-  return callback_->OnEncodedImage(encoded_image, &specifics, &fragmentation);
+  specifics.codecSpecific.H264.packetization_mode =
+      H264PacketizationMode::NonInterleaved;
+  RTC_DCHECK(callback);
+  return callback->OnEncodedImage(encoded_image, &specifics, &fragmentation);
 }
 
 DelayedEncoder::DelayedEncoder(Clock* clock, int delay_ms)
-    : test::FakeEncoder(clock),
-      delay_ms_(delay_ms) {}
+    : test::FakeEncoder(clock), delay_ms_(delay_ms) {
+  // The encoder could be created on a different thread than
+  // it is being used on.
+  sequence_checker_.Detach();
+}
 
 void DelayedEncoder::SetDelay(int delay_ms) {
-  rtc::CritScope lock(&lock_);
+  RTC_DCHECK_CALLED_SEQUENTIALLY(&sequence_checker_);
   delay_ms_ = delay_ms;
 }
 
 int32_t DelayedEncoder::Encode(const VideoFrame& input_image,
                                const CodecSpecificInfo* codec_specific_info,
                                const std::vector<FrameType>* frame_types) {
-  int delay_ms = 0;
-  {
-    rtc::CritScope lock(&lock_);
-    delay_ms = delay_ms_;
-  }
-  SleepMs(delay_ms);
+  RTC_DCHECK_CALLED_SEQUENTIALLY(&sequence_checker_);
+
+  SleepMs(delay_ms_);
+
   return FakeEncoder::Encode(input_image, codec_specific_info, frame_types);
 }
+
+MultithreadedFakeH264Encoder::MultithreadedFakeH264Encoder(Clock* clock)
+    : test::FakeH264Encoder(clock),
+      current_queue_(0),
+      queue1_(nullptr),
+      queue2_(nullptr) {
+  // The encoder could be created on a different thread than
+  // it is being used on.
+  sequence_checker_.Detach();
+}
+
+int32_t MultithreadedFakeH264Encoder::InitEncode(const VideoCodec* config,
+                                                 int32_t number_of_cores,
+                                                 size_t max_payload_size) {
+  RTC_DCHECK_CALLED_SEQUENTIALLY(&sequence_checker_);
+
+  queue1_.reset(new rtc::TaskQueue("Queue 1"));
+  queue2_.reset(new rtc::TaskQueue("Queue 2"));
+
+  return FakeH264Encoder::InitEncode(config, number_of_cores, max_payload_size);
+}
+
+class MultithreadedFakeH264Encoder::EncodeTask : public rtc::QueuedTask {
+ public:
+  EncodeTask(MultithreadedFakeH264Encoder* encoder,
+             const VideoFrame& input_image,
+             const CodecSpecificInfo* codec_specific_info,
+             const std::vector<FrameType>* frame_types)
+      : encoder_(encoder),
+        input_image_(input_image),
+        codec_specific_info_(),
+        frame_types_(*frame_types) {
+    if (codec_specific_info)
+      codec_specific_info_ = *codec_specific_info;
+  }
+
+ private:
+  bool Run() override {
+    encoder_->EncodeCallback(input_image_, &codec_specific_info_,
+                             &frame_types_);
+    return true;
+  }
+
+  MultithreadedFakeH264Encoder* const encoder_;
+  VideoFrame input_image_;
+  CodecSpecificInfo codec_specific_info_;
+  std::vector<FrameType> frame_types_;
+};
+
+int32_t MultithreadedFakeH264Encoder::Encode(
+    const VideoFrame& input_image,
+    const CodecSpecificInfo* codec_specific_info,
+    const std::vector<FrameType>* frame_types) {
+  RTC_DCHECK_CALLED_SEQUENTIALLY(&sequence_checker_);
+
+  std::unique_ptr<rtc::TaskQueue>& queue =
+      (current_queue_++ % 2 == 0) ? queue1_ : queue2_;
+
+  if (!queue) {
+    return WEBRTC_VIDEO_CODEC_UNINITIALIZED;
+  }
+
+  queue->PostTask(std::unique_ptr<rtc::QueuedTask>(
+      new EncodeTask(this, input_image, codec_specific_info, frame_types)));
+
+  return WEBRTC_VIDEO_CODEC_OK;
+}
+
+int32_t MultithreadedFakeH264Encoder::EncodeCallback(
+    const VideoFrame& input_image,
+    const CodecSpecificInfo* codec_specific_info,
+    const std::vector<FrameType>* frame_types) {
+  return FakeH264Encoder::Encode(input_image, codec_specific_info, frame_types);
+}
+
+int32_t MultithreadedFakeH264Encoder::Release() {
+  RTC_DCHECK_CALLED_SEQUENTIALLY(&sequence_checker_);
+
+  queue1_.reset();
+  queue2_.reset();
+
+  return FakeH264Encoder::Release();
+}
+
 }  // namespace test
 }  // namespace webrtc

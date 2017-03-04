@@ -25,7 +25,7 @@ namespace videocapturemodule
 class VideoCaptureModuleV4L2: public VideoCaptureImpl
 {
 public:
-    VideoCaptureModuleV4L2(int32_t id);
+    VideoCaptureModuleV4L2();
     virtual ~VideoCaptureModuleV4L2();
     virtual int32_t Init(const char* deviceUniqueId);
     virtual int32_t StartCapture(const VideoCaptureCapability& capability);

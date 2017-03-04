@@ -23,7 +23,6 @@
 #include "webrtc/base/platform_thread.h"
 #include "webrtc/base/swap_queue.h"
 #include "webrtc/logging/rtc_event_log/ringbuffer.h"
-#include "webrtc/system_wrappers/include/clock.h"
 #include "webrtc/system_wrappers/include/file_wrapper.h"
 
 #ifdef ENABLE_RTC_EVENT_LOG
@@ -69,8 +68,7 @@ class RtcEventLogHelperThread final {
 
   RtcEventLogHelperThread(
       SwapQueue<ControlMessage>* message_queue,
-      SwapQueue<std::unique_ptr<rtclog::Event>>* event_queue,
-      const Clock* const clock);
+      SwapQueue<std::unique_ptr<rtclog::Event>>* event_queue);
   ~RtcEventLogHelperThread();
 
   // This function MUST be called once a STOP_FILE message is added to the
@@ -83,7 +81,7 @@ class RtcEventLogHelperThread final {
   void SignalNewEvent();
 
  private:
-  static bool ThreadOutputFunction(void* obj);
+  static void ThreadOutputFunction(void* obj);
 
   bool AppendEventToString(rtclog::Event* event);
   bool LogToMemory();
@@ -119,8 +117,6 @@ class RtcEventLogHelperThread final {
   rtc::Event wake_periodically_;
   rtc::Event wake_from_hibernation_;
   rtc::Event file_finished_;
-
-  const Clock* const clock_;
 
   RTC_DISALLOW_IMPLICIT_CONSTRUCTORS(RtcEventLogHelperThread);
 };

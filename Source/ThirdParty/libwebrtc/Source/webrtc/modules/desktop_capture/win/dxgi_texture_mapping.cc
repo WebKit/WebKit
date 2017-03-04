@@ -19,22 +19,21 @@
 
 namespace webrtc {
 
-DxgiTextureMapping::DxgiTextureMapping(const DesktopRect& desktop_rect,
-                                       IDXGIOutputDuplication* duplication)
-    : DxgiTexture(desktop_rect), duplication_(duplication) {
+DxgiTextureMapping::DxgiTextureMapping(IDXGIOutputDuplication* duplication)
+    : duplication_(duplication) {
   RTC_DCHECK(duplication_);
 }
 
 DxgiTextureMapping::~DxgiTextureMapping() = default;
 
-bool DxgiTextureMapping::CopyFrom(const DXGI_OUTDUPL_FRAME_INFO& frame_info,
-                                  IDXGIResource* resource,
-                                  const DesktopRegion& region) {
-  RTC_DCHECK(resource && frame_info.AccumulatedFrames > 0);
-  rect_ = {0};
-  _com_error error = duplication_->MapDesktopSurface(&rect_);
+bool DxgiTextureMapping::CopyFromTexture(
+    const DXGI_OUTDUPL_FRAME_INFO& frame_info,
+    ID3D11Texture2D* texture) {
+  RTC_DCHECK(texture && frame_info.AccumulatedFrames > 0);
+  *rect() = {0};
+  _com_error error = duplication_->MapDesktopSurface(rect());
   if (error.Error() != S_OK) {
-    rect_ = {0};
+    *rect() = {0};
     LOG(LS_ERROR) << "Failed to map the IDXGIOutputDuplication to a bitmap, "
                      "error "
                   << error.ErrorMessage() << ", code " << error.Error();

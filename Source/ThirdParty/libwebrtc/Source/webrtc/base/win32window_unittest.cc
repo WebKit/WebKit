@@ -9,7 +9,6 @@
  */
 
 #include "webrtc/base/gunit.h"
-#include "webrtc/base/common.h"
 #include "webrtc/base/win32window.h"
 #include "webrtc/base/logging.h"
 
@@ -40,16 +39,16 @@ class TestWindow : public rtc::Win32Window {
 
 TEST(Win32WindowTest, Basics) {
   TestWindow wnd;
-  EXPECT_TRUE(wnd.handle() == NULL);
+  EXPECT_TRUE(wnd.handle() == nullptr);
   EXPECT_FALSE(wnd.destroyed());
   EXPECT_TRUE(wnd.Create(0, L"Test", 0, 0, 0, 0, 100, 100));
-  EXPECT_TRUE(wnd.handle() != NULL);
+  EXPECT_TRUE(wnd.handle() != nullptr);
   EXPECT_EQ(kDummyResult, ::SendMessage(wnd.handle(), WM_USER, 1, 2));
-  EXPECT_EQ(WM_USER, wnd.msg().message);
-  EXPECT_EQ(1, wnd.msg().wParam);
-  EXPECT_EQ(2, wnd.msg().lParam);
+  EXPECT_EQ(static_cast<UINT>(WM_USER), wnd.msg().message);
+  EXPECT_EQ(1u, wnd.msg().wParam);
+  EXPECT_EQ(2l, wnd.msg().lParam);
   wnd.Destroy();
-  EXPECT_TRUE(wnd.handle() == NULL);
+  EXPECT_TRUE(wnd.handle() == nullptr);
   EXPECT_TRUE(wnd.destroyed());
 }
 
@@ -57,10 +56,10 @@ TEST(Win32WindowTest, MultipleWindows) {
   TestWindow wnd1, wnd2;
   EXPECT_TRUE(wnd1.Create(0, L"Test", 0, 0, 0, 0, 100, 100));
   EXPECT_TRUE(wnd2.Create(0, L"Test", 0, 0, 0, 0, 100, 100));
-  EXPECT_TRUE(wnd1.handle() != NULL);
-  EXPECT_TRUE(wnd2.handle() != NULL);
+  EXPECT_TRUE(wnd1.handle() != nullptr);
+  EXPECT_TRUE(wnd2.handle() != nullptr);
   wnd1.Destroy();
   wnd2.Destroy();
-  EXPECT_TRUE(wnd2.handle() == NULL);
-  EXPECT_TRUE(wnd1.handle() == NULL);
+  EXPECT_TRUE(wnd2.handle() == nullptr);
+  EXPECT_TRUE(wnd1.handle() == nullptr);
 }

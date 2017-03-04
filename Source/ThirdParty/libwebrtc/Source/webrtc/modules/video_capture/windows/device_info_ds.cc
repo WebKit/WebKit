@@ -11,7 +11,6 @@
 #include "webrtc/modules/video_capture/windows/device_info_ds.h"
 
 #include "webrtc/modules/video_capture/video_capture_config.h"
-#include "webrtc/modules/video_capture/video_capture_delay.h"
 #include "webrtc/modules/video_capture/windows/help_functions_ds.h"
 #include "webrtc/system_wrappers/include/trace.h"
 
@@ -22,29 +21,11 @@ namespace webrtc
 {
 namespace videocapturemodule
 {
-const int32_t NoWindowsCaptureDelays = 1;
-const DelayValues WindowsCaptureDelays[NoWindowsCaptureDelays] = {
-  "Microsoft LifeCam Cinema",
-  "usb#vid_045e&pid_075d",
-  {
-    {640,480,125},
-    {640,360,117},
-    {424,240,111},
-    {352,288,111},
-    {320,240,116},
-    {176,144,101},
-    {160,120,109},
-    {1280,720,166},
-    {960,544,126},
-    {800,448,120},
-    {800,600,127}
-  },
-};
 
 // static
-DeviceInfoDS* DeviceInfoDS::Create(const int32_t id)
+DeviceInfoDS* DeviceInfoDS::Create()
 {
-    DeviceInfoDS* dsInfo = new DeviceInfoDS(id);
+    DeviceInfoDS* dsInfo = new DeviceInfoDS();
     if (!dsInfo || dsInfo->Init() != 0)
     {
         delete dsInfo;
@@ -53,8 +34,8 @@ DeviceInfoDS* DeviceInfoDS::Create(const int32_t id)
     return dsInfo;
 }
 
-DeviceInfoDS::DeviceInfoDS(const int32_t id)
-    : DeviceInfoImpl(id), _dsDevEnum(NULL), _dsMonikerDevEnum(NULL),
+DeviceInfoDS::DeviceInfoDS()
+    : _dsDevEnum(NULL), _dsMonikerDevEnum(NULL),
       _CoUninitializeIsRequired(true)
 {
     // 1) Initialize the COM library (make Windows load the DLLs).
@@ -88,7 +69,7 @@ DeviceInfoDS::DeviceInfoDS(const int32_t id)
             // apartment (STA). We are then prevented from using STA.
             // Details: hr = 0x80010106 <=> "Cannot change thread mode after it is set".
             //
-            WEBRTC_TRACE(webrtc::kTraceWarning, webrtc::kTraceVideoCapture, _id,
+            WEBRTC_TRACE(webrtc::kTraceWarning, webrtc::kTraceVideoCapture, 0,
                          "VideoCaptureWindowsDSInfo::VideoCaptureWindowsDSInfo "
                          "CoInitializeEx(NULL, COINIT_APARTMENTTHREADED) => "
                          "RPC_E_CHANGED_MODE, error 0x%x",
@@ -113,7 +94,7 @@ int32_t DeviceInfoDS::Init()
                                   IID_ICreateDevEnum, (void **) &_dsDevEnum);
     if (hr != NOERROR)
     {
-        WEBRTC_TRACE(webrtc::kTraceError, webrtc::kTraceVideoCapture, _id,
+        WEBRTC_TRACE(webrtc::kTraceError, webrtc::kTraceVideoCapture, 0,
                      "Failed to create CLSID_SystemDeviceEnum, error 0x%x", hr);
         return -1;
     }
@@ -162,7 +143,7 @@ int32_t DeviceInfoDS::GetDeviceInfo(
                                           &_dsMonikerDevEnum, 0);
     if (hr != NOERROR)
     {
-        WEBRTC_TRACE(webrtc::kTraceError, webrtc::kTraceVideoCapture, _id,
+        WEBRTC_TRACE(webrtc::kTraceError, webrtc::kTraceVideoCapture, 0,
                      "Failed to enumerate CLSID_SystemDeviceEnum, error 0x%x."
                      " No webcam exist?", hr);
         return 0;
@@ -207,7 +188,7 @@ int32_t DeviceInfoDS::GetDeviceInfo(
                             if (convResult == 0)
                             {
                                 WEBRTC_TRACE(webrtc::kTraceError,
-                                             webrtc::kTraceVideoCapture, _id,
+                                             webrtc::kTraceVideoCapture, 0,
                                              "Failed to convert device name to UTF8. %d",
                                              GetLastError());
                                 return -1;
@@ -222,7 +203,7 @@ int32_t DeviceInfoDS::GetDeviceInfo(
                                           deviceUniqueIdUTF8Length,
                                           (char *) deviceNameUTF8, convResult);
                                 WEBRTC_TRACE(webrtc::kTraceError,
-                                             webrtc::kTraceVideoCapture, _id,
+                                             webrtc::kTraceVideoCapture, 0,
                                              "Failed to get deviceUniqueIdUTF8 using deviceNameUTF8");
                             }
                             else
@@ -238,7 +219,7 @@ int32_t DeviceInfoDS::GetDeviceInfo(
                                 if (convResult == 0)
                                 {
                                     WEBRTC_TRACE(webrtc::kTraceError,
-                                                 webrtc::kTraceVideoCapture, _id,
+                                                 webrtc::kTraceVideoCapture, 0,
                                                  "Failed to convert device name to UTF8. %d",
                                                  GetLastError());
                                     return -1;
@@ -265,7 +246,8 @@ int32_t DeviceInfoDS::GetDeviceInfo(
     }
     if (deviceNameLength)
     {
-        WEBRTC_TRACE(webrtc::kTraceDebug, webrtc::kTraceVideoCapture, _id, "%s %s",
+        WEBRTC_TRACE(webrtc::kTraceDebug,
+                     webrtc::kTraceVideoCapture, 0, "%s %s",
                      __FUNCTION__, deviceNameUTF8);
     }
     return index;
@@ -281,7 +263,7 @@ IBaseFilter * DeviceInfoDS::GetDeviceFilter(
         (int32_t) strlen((char*) deviceUniqueIdUTF8); // UTF8 is also NULL terminated
     if (deviceUniqueIdUTF8Length > kVideoCaptureUniqueNameLength)
     {
-        WEBRTC_TRACE(webrtc::kTraceError, webrtc::kTraceVideoCapture, _id,
+        WEBRTC_TRACE(webrtc::kTraceError, webrtc::kTraceVideoCapture, 0,
                      "Device name too long");
         return NULL;
     }
@@ -292,7 +274,7 @@ IBaseFilter * DeviceInfoDS::GetDeviceFilter(
                                                    &_dsMonikerDevEnum, 0);
     if (hr != NOERROR)
     {
-        WEBRTC_TRACE(webrtc::kTraceError, webrtc::kTraceVideoCapture, _id,
+        WEBRTC_TRACE(webrtc::kTraceError, webrtc::kTraceVideoCapture, 0,
                      "Failed to enumerate CLSID_SystemDeviceEnum, error 0x%x."
                      " No webcam exist?", hr);
         return 0;
@@ -341,8 +323,10 @@ IBaseFilter * DeviceInfoDS::GetDeviceFilter(
                                               (void**) &captureFilter);
                         if FAILED(hr)
                         {
-                            WEBRTC_TRACE(webrtc::kTraceError, webrtc::kTraceVideoCapture,
-                                         _id, "Failed to bind to the selected capture device %d",hr);
+                            WEBRTC_TRACE(
+                                webrtc::kTraceError, webrtc::kTraceVideoCapture,
+                                0, "Failed to bind to the selected capture "
+                                "device %d",hr);
                         }
 
                         if (productUniqueIdUTF8
@@ -390,11 +374,11 @@ int32_t DeviceInfoDS::CreateCapabilityMap(
         (int32_t) strlen((char*) deviceUniqueIdUTF8);
     if (deviceUniqueIdUTF8Length > kVideoCaptureUniqueNameLength)
     {
-        WEBRTC_TRACE(webrtc::kTraceError, webrtc::kTraceVideoCapture, _id,
+        WEBRTC_TRACE(webrtc::kTraceError, webrtc::kTraceVideoCapture, 0,
                      "Device name too long");
         return -1;
     }
-    WEBRTC_TRACE(webrtc::kTraceInfo, webrtc::kTraceVideoCapture, _id,
+    WEBRTC_TRACE(webrtc::kTraceInfo, webrtc::kTraceVideoCapture, 0,
                  "CreateCapabilityMap called for device %s", deviceUniqueIdUTF8);
 
 
@@ -408,7 +392,7 @@ int32_t DeviceInfoDS::CreateCapabilityMap(
     IPin* outputCapturePin = GetOutputPin(captureDevice, GUID_NULL);
     if (!outputCapturePin)
     {
-        WEBRTC_TRACE(webrtc::kTraceError, webrtc::kTraceVideoCapture, _id,
+        WEBRTC_TRACE(webrtc::kTraceError, webrtc::kTraceVideoCapture, 0,
                      "Failed to get capture device output pin");
         RELEASE_AND_CLEAR(captureDevice);
         return -1;
@@ -418,7 +402,7 @@ int32_t DeviceInfoDS::CreateCapabilityMap(
                                                (void **) &extDevice);
     if (SUCCEEDED(hr) && extDevice)
     {
-        WEBRTC_TRACE(webrtc::kTraceInfo, webrtc::kTraceVideoCapture, _id,
+        WEBRTC_TRACE(webrtc::kTraceInfo, webrtc::kTraceVideoCapture, 0,
                      "This is an external device");
         extDevice->Release();
     }
@@ -428,7 +412,7 @@ int32_t DeviceInfoDS::CreateCapabilityMap(
                                           (void**) &streamConfig);
     if (FAILED(hr))
     {
-        WEBRTC_TRACE(webrtc::kTraceError, webrtc::kTraceVideoCapture, _id,
+        WEBRTC_TRACE(webrtc::kTraceError, webrtc::kTraceVideoCapture, 0,
                      "Failed to get IID_IAMStreamConfig interface from capture device");
         return -1;
     }
@@ -439,7 +423,7 @@ int32_t DeviceInfoDS::CreateCapabilityMap(
                                       (void**) &videoControlConfig);
     if (FAILED(hrVC))
     {
-        WEBRTC_TRACE(webrtc::kTraceWarning, webrtc::kTraceVideoCapture, _id,
+        WEBRTC_TRACE(webrtc::kTraceWarning, webrtc::kTraceVideoCapture, 0,
                      "IID_IAMVideoControl Interface NOT SUPPORTED");
     }
 
@@ -450,7 +434,7 @@ int32_t DeviceInfoDS::CreateCapabilityMap(
     hr = streamConfig->GetNumberOfCapabilities(&count, &size);
     if (FAILED(hr))
     {
-        WEBRTC_TRACE(webrtc::kTraceError, webrtc::kTraceVideoCapture, _id,
+        WEBRTC_TRACE(webrtc::kTraceError, webrtc::kTraceVideoCapture, 0,
                      "Failed to GetNumberOfCapabilities");
         RELEASE_AND_CLEAR(videoControlConfig);
         RELEASE_AND_CLEAR(streamConfig);
@@ -475,7 +459,7 @@ int32_t DeviceInfoDS::CreateCapabilityMap(
             if (pmt->majortype == MEDIATYPE_Video
                 && pmt->formattype == FORMAT_VideoInfo2)
             {
-                WEBRTC_TRACE(webrtc::kTraceDebug, webrtc::kTraceVideoCapture, _id,
+                WEBRTC_TRACE(webrtc::kTraceDebug, webrtc::kTraceVideoCapture, 0,
                              " Device support FORMAT_VideoInfo2");
                 supportFORMAT_VideoInfo2 = true;
                 VIDEOINFOHEADER2* h =
@@ -488,7 +472,7 @@ int32_t DeviceInfoDS::CreateCapabilityMap(
             if (pmt->majortype == MEDIATYPE_Video
                 && pmt->formattype == FORMAT_VideoInfo)
             {
-                WEBRTC_TRACE(webrtc::kTraceDebug, webrtc::kTraceVideoCapture, _id,
+                WEBRTC_TRACE(webrtc::kTraceDebug, webrtc::kTraceVideoCapture, 0,
                              " Device support FORMAT_VideoInfo2");
                 supportFORMAT_VideoInfo = true;
             }
@@ -512,7 +496,7 @@ int32_t DeviceInfoDS::CreateCapabilityMap(
                                          reinterpret_cast<BYTE*> (&caps));
         if (FAILED(hr))
         {
-            WEBRTC_TRACE(webrtc::kTraceError, webrtc::kTraceVideoCapture, _id,
+            WEBRTC_TRACE(webrtc::kTraceError, webrtc::kTraceVideoCapture, 0,
                          "Failed to GetStreamCaps");
             RELEASE_AND_CLEAR(videoControlConfig);
             RELEASE_AND_CLEAR(streamConfig);
@@ -584,7 +568,7 @@ int32_t DeviceInfoDS::CreateCapabilityMap(
                 else // use existing method
                 {
                     WEBRTC_TRACE(webrtc::kTraceError, webrtc::kTraceVideoCapture,
-                                 _id,
+                                 0,
                                  "GetMaxAvailableFrameRate NOT SUPPORTED");
                     if (avgTimePerFrame > 0)
                         capability.maxFPS = static_cast<int> (10000000
@@ -639,7 +623,8 @@ int32_t DeviceInfoDS::CreateCapabilityMap(
             }
             else if (pmt->subtype == MEDIASUBTYPE_HDYC) // Seen used by Declink capture cards. Uses BT. 709 color. Not entiry correct to use UYVY. http://en.wikipedia.org/wiki/YCbCr
             {
-                WEBRTC_TRACE(webrtc::kTraceWarning, webrtc::kTraceVideoCapture, _id,
+                WEBRTC_TRACE(webrtc::kTraceWarning,
+                             webrtc::kTraceVideoCapture, 0,
                              "Device support HDYC.");
                 capability.rawType = kVideoUYVY;
             }
@@ -648,22 +633,15 @@ int32_t DeviceInfoDS::CreateCapabilityMap(
                 WCHAR strGuid[39];
                 StringFromGUID2(pmt->subtype, strGuid, 39);
                 WEBRTC_TRACE( webrtc::kTraceWarning,
-                             webrtc::kTraceVideoCapture, _id,
+                             webrtc::kTraceVideoCapture, 0,
                              "Device support unknown media type %ls, width %d, height %d",
                              strGuid);
                 continue;
             }
 
-            // Get the expected capture delay from the static list
-            capability.expectedCaptureDelay
-                            = GetExpectedCaptureDelay(WindowsCaptureDelays,
-                                                      NoWindowsCaptureDelays,
-                                                      productId,
-                                                      capability.width,
-                                                      capability.height);
             _captureCapabilities.push_back(capability);
             _captureCapabilitiesWindows.push_back(capability);
-            WEBRTC_TRACE( webrtc::kTraceInfo, webrtc::kTraceVideoCapture, _id,
+            WEBRTC_TRACE( webrtc::kTraceInfo, webrtc::kTraceVideoCapture, 0,
                          "Camera capability, width:%d height:%d type:%d fps:%d",
                          capability.width, capability.height,
                          capability.rawType, capability.maxFPS);
@@ -682,7 +660,7 @@ int32_t DeviceInfoDS::CreateCapabilityMap(
                                                    _lastUsedDeviceNameLength
                                                        + 1);
     memcpy(_lastUsedDeviceName, deviceUniqueIdUTF8, _lastUsedDeviceNameLength+ 1);
-    WEBRTC_TRACE(webrtc::kTraceInfo, webrtc::kTraceVideoCapture, _id,
+    WEBRTC_TRACE(webrtc::kTraceInfo, webrtc::kTraceVideoCapture, 0,
                  "CreateCapabilityMap %d", _captureCapabilities.size());
 
     return static_cast<int32_t>(_captureCapabilities.size());

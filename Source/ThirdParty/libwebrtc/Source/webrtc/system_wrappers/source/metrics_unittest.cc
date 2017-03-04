@@ -58,6 +58,14 @@ TEST_F(MetricsTest, RtcHistogramEnumeration_AddSample) {
   EXPECT_EQ(1, metrics::NumEvents(kName, kSample));
 }
 
+TEST_F(MetricsTest, RtcHistogramBoolean_AddSample) {
+  const std::string kName = "Boolean";
+  const int kSample = 0;
+  RTC_HISTOGRAM_BOOLEAN(kName, kSample);
+  EXPECT_EQ(1, metrics::NumSamples(kName));
+  EXPECT_EQ(1, metrics::NumEvents(kName, kSample));
+}
+
 TEST_F(MetricsTest, RtcHistogramCountsSparse_AddSample) {
   const std::string kName = "CountsSparse100";
   RTC_HISTOGRAM_COUNTS_SPARSE_100(kName, kSample);

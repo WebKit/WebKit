@@ -14,11 +14,36 @@
 #import <WebRTC/RTCMediaStreamTrack.h>
 #import <WebRTC/RTCRtpParameters.h>
 
-namespace webrtc {
-class RtpReceiverInterface;
-}
-
 NS_ASSUME_NONNULL_BEGIN
+
+/** Represents the media type of the RtpReceiver. */
+typedef NS_ENUM(NSInteger, RTCRtpMediaType) {
+  RTCRtpMediaTypeAudio,
+  RTCRtpMediaTypeVideo,
+  RTCRtpMediaTypeData,
+};
+
+@class RTCRtpReceiver;
+
+RTC_EXPORT
+@protocol RTCRtpReceiverDelegate <NSObject>
+
+/** Called when the first RTP packet is received.
+ *
+ *  Note: Currently if there are multiple RtpReceivers of the same media type,
+ *  they will all call OnFirstPacketReceived at once.
+ *
+ *  For example, if we create three audio receivers, A/B/C, they will listen to
+ *  the same signal from the underneath network layer. Whenever the first audio packet
+ *  is received, the underneath signal will be fired. All the receivers A/B/C will be
+ *  notified and the callback of the receiver's delegate will be called.
+ *
+ *  The process is the same for video receivers.
+ */
+- (void)rtpReceiver:(RTCRtpReceiver *)rtpReceiver
+    didReceiveFirstPacketForMediaType:(RTCRtpMediaType)mediaType;
+
+@end
 
 RTC_EXPORT
 @protocol RTCRtpReceiver <NSObject>
@@ -42,12 +67,13 @@ RTC_EXPORT
  */
 @property(nonatomic, readonly) RTCMediaStreamTrack *track;
 
+/** The delegate for this RtpReceiver. */
+@property(nonatomic, weak) id<RTCRtpReceiverDelegate> delegate;
+
 @end
 
 RTC_EXPORT
-@interface RTCRtpReceiver : NSObject <RTCRtpReceiver> {
-  rtc::scoped_refptr<webrtc::RtpReceiverInterface> _nativeRtpReceiver;
-}
+@interface RTCRtpReceiver : NSObject <RTCRtpReceiver>
 
 - (instancetype)init NS_UNAVAILABLE;
 

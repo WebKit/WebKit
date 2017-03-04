@@ -25,12 +25,14 @@ class TestProbeBitrateEstimator : public ::testing::Test {
  public:
   TestProbeBitrateEstimator() : probe_bitrate_estimator_() {}
 
+  // TODO(philipel): Use PacedPacketInfo when ProbeBitrateEstimator is rewritten
+  //                 to use that information.
   void AddPacketFeedback(int probe_cluster_id,
                          size_t size_bytes,
                          int64_t send_time_ms,
                          int64_t arrival_time_ms) {
     PacketInfo info(arrival_time_ms, send_time_ms, 0, size_bytes,
-                    probe_cluster_id);
+                    PacedPacketInfo(probe_cluster_id, -1, -1));
     measured_bps_ =
         probe_bitrate_estimator_.HandleProbeAndEstimateBitrate(info);
   }

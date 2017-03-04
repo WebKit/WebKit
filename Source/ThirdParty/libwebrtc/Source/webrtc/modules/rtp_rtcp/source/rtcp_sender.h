@@ -18,26 +18,26 @@
 #include <string>
 #include <vector>
 
+#include "webrtc/api/call/transport.h"
 #include "webrtc/base/constructormagic.h"
 #include "webrtc/base/criticalsection.h"
+#include "webrtc/base/optional.h"
 #include "webrtc/base/random.h"
 #include "webrtc/base/thread_annotations.h"
 #include "webrtc/modules/remote_bitrate_estimator/include/bwe_defines.h"
 #include "webrtc/modules/remote_bitrate_estimator/include/remote_bitrate_estimator.h"
 #include "webrtc/modules/rtp_rtcp/include/receive_statistics.h"
 #include "webrtc/modules/rtp_rtcp/include/rtp_rtcp_defines.h"
+#include "webrtc/modules/rtp_rtcp/source/rtcp_nack_stats.h"
 #include "webrtc/modules/rtp_rtcp/source/rtcp_packet.h"
 #include "webrtc/modules/rtp_rtcp/source/rtcp_packet/dlrr.h"
 #include "webrtc/modules/rtp_rtcp/source/rtcp_packet/report_block.h"
 #include "webrtc/modules/rtp_rtcp/source/rtcp_packet/tmmb_item.h"
-#include "webrtc/modules/rtp_rtcp/source/rtcp_utility.h"
-#include "webrtc/transport.h"
 #include "webrtc/typedefs.h"
 
 namespace webrtc {
 
 class ModuleRtpRtcpImpl;
-class RTCPReceiver;
 class RtcEventLog;
 
 class NACKStringBuilder {
@@ -113,14 +113,12 @@ class RTCPSender {
                    RTCPPacketType packetType,
                    int32_t nackSize = 0,
                    const uint16_t* nackList = 0,
-                   bool repeat = false,
                    uint64_t pictureID = 0);
 
   int32_t SendCompoundRTCP(const FeedbackState& feedback_state,
                            const std::set<RTCPPacketType>& packetTypes,
                            int32_t nackSize = 0,
                            const uint16_t* nackList = 0,
-                           bool repeat = false,
                            uint64_t pictureID = 0);
 
   bool REMB() const;
@@ -133,7 +131,7 @@ class RTCPSender {
 
   void SetTMMBRStatus(bool enable);
 
-  void SetMaxPayloadLength(size_t max_payload_length);
+  void SetMaxRtpPacketSize(size_t max_packet_size);
 
   void SetTmmbn(std::vector<rtcp::TmmbItem> bounding_set);
 
@@ -150,6 +148,7 @@ class RTCPSender {
   void SetCsrcs(const std::vector<uint32_t>& csrcs);
 
   void SetTargetBitrate(unsigned int target_bitrate);
+  void SetVideoBitrateAllocation(const BitrateAllocation& bitrate);
   bool SendFeedbackPacket(const rtcp::TransportFeedback& packet);
 
  private:
@@ -180,7 +179,8 @@ class RTCPSender {
       EXCLUSIVE_LOCKS_REQUIRED(critical_section_rtcp_sender_);
   std::unique_ptr<rtcp::RtcpPacket> BuildAPP(const RtcpContext& context)
       EXCLUSIVE_LOCKS_REQUIRED(critical_section_rtcp_sender_);
-  std::unique_ptr<rtcp::RtcpPacket> BuildVoIPMetric(const RtcpContext& context)
+  std::unique_ptr<rtcp::RtcpPacket> BuildExtendedReports(
+      const RtcpContext& context)
       EXCLUSIVE_LOCKS_REQUIRED(critical_section_rtcp_sender_);
   std::unique_ptr<rtcp::RtcpPacket> BuildBYE(const RtcpContext& context)
       EXCLUSIVE_LOCKS_REQUIRED(critical_section_rtcp_sender_);
@@ -191,11 +191,6 @@ class RTCPSender {
   std::unique_ptr<rtcp::RtcpPacket> BuildRPSI(const RtcpContext& context)
       EXCLUSIVE_LOCKS_REQUIRED(critical_section_rtcp_sender_);
   std::unique_ptr<rtcp::RtcpPacket> BuildNACK(const RtcpContext& context)
-      EXCLUSIVE_LOCKS_REQUIRED(critical_section_rtcp_sender_);
-  std::unique_ptr<rtcp::RtcpPacket> BuildReceiverReferenceTime(
-      const RtcpContext& context)
-      EXCLUSIVE_LOCKS_REQUIRED(critical_section_rtcp_sender_);
-  std::unique_ptr<rtcp::RtcpPacket> BuildDlrr(const RtcpContext& context)
       EXCLUSIVE_LOCKS_REQUIRED(critical_section_rtcp_sender_);
 
  private:
@@ -243,7 +238,7 @@ class RTCPSender {
       GUARDED_BY(critical_section_rtcp_sender_);
   uint32_t tmmbr_send_bps_ GUARDED_BY(critical_section_rtcp_sender_);
   uint32_t packet_oh_send_ GUARDED_BY(critical_section_rtcp_sender_);
-  size_t max_payload_length_;
+  size_t max_packet_size_ GUARDED_BY(critical_section_rtcp_sender_);
 
   // APP
   uint8_t app_sub_type_ GUARDED_BY(critical_section_rtcp_sender_);
@@ -257,30 +252,34 @@ class RTCPSender {
       GUARDED_BY(critical_section_rtcp_sender_);
 
   // XR VoIP metric
-  RTCPVoIPMetric xr_voip_metric_ GUARDED_BY(critical_section_rtcp_sender_);
+  rtc::Optional<RTCPVoIPMetric> xr_voip_metric_
+      GUARDED_BY(critical_section_rtcp_sender_);
 
   RtcpPacketTypeCounterObserver* const packet_type_counter_observer_;
   RtcpPacketTypeCounter packet_type_counter_
       GUARDED_BY(critical_section_rtcp_sender_);
 
-  RTCPUtility::NackStats nack_stats_ GUARDED_BY(critical_section_rtcp_sender_);
+  RtcpNackStats nack_stats_ GUARDED_BY(critical_section_rtcp_sender_);
 
-  void SetFlag(RTCPPacketType type, bool is_volatile)
+  rtc::Optional<BitrateAllocation> video_bitrate_allocation_
+      GUARDED_BY(critical_section_rtcp_sender_);
+
+  void SetFlag(uint32_t type, bool is_volatile)
       EXCLUSIVE_LOCKS_REQUIRED(critical_section_rtcp_sender_);
   void SetFlags(const std::set<RTCPPacketType>& types, bool is_volatile)
       EXCLUSIVE_LOCKS_REQUIRED(critical_section_rtcp_sender_);
-  bool IsFlagPresent(RTCPPacketType type) const
+  bool IsFlagPresent(uint32_t type) const
       EXCLUSIVE_LOCKS_REQUIRED(critical_section_rtcp_sender_);
-  bool ConsumeFlag(RTCPPacketType type, bool forced = false)
+  bool ConsumeFlag(uint32_t type, bool forced = false)
       EXCLUSIVE_LOCKS_REQUIRED(critical_section_rtcp_sender_);
   bool AllVolatileFlagsConsumed() const
       EXCLUSIVE_LOCKS_REQUIRED(critical_section_rtcp_sender_);
   struct ReportFlag {
-    ReportFlag(RTCPPacketType type, bool is_volatile)
+    ReportFlag(uint32_t type, bool is_volatile)
         : type(type), is_volatile(is_volatile) {}
     bool operator<(const ReportFlag& flag) const { return type < flag.type; }
     bool operator==(const ReportFlag& flag) const { return type == flag.type; }
-    const RTCPPacketType type;
+    const uint32_t type;
     const bool is_volatile;
   };
 
@@ -288,7 +287,8 @@ class RTCPSender {
 
   typedef std::unique_ptr<rtcp::RtcpPacket> (RTCPSender::*BuilderFunc)(
       const RtcpContext&);
-  std::map<RTCPPacketType, BuilderFunc> builders_;
+  // Map from RTCPPacketType to builder.
+  std::map<uint32_t, BuilderFunc> builders_;
 
   RTC_DISALLOW_IMPLICIT_CONSTRUCTORS(RTCPSender);
 };

@@ -81,7 +81,7 @@ int AudioEncoderIlbc::GetTargetBitrate() const {
       // 50 bytes per frame of 30 ms => (approx) 13333 bits/s.
       return 13333;
     default:
-      FATAL();
+      RTC_FATAL();
   }
 }
 
@@ -149,7 +149,7 @@ size_t AudioEncoderIlbc::RequiredOutputSizeBytes() const {
     case 3:   return 50;
     case 4:   return 2 * 38;
     case 6:   return 2 * 50;
-    default:  FATAL();
+    default:  RTC_FATAL();
   }
 }
 

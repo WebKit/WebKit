@@ -20,7 +20,7 @@
 // this file can be deleted.
 #include "webrtc/base/logging.h"
 
-#include "webrtc/video_frame.h"
+#include "webrtc/api/video/video_frame.h"
 
 // TODO(nisse): Similarly, some applications expect that including this file
 // implies a forward declaration of rtc::Thread.

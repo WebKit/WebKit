@@ -15,10 +15,10 @@
 
 #include "webrtc/base/basictypes.h"
 #include "webrtc/base/sequenced_task_checker.h"
-#include "webrtc/call.h"
-#include "webrtc/modules/rtp_rtcp/include/flexfec_receiver.h"
+#include "webrtc/call/call.h"
 #include "webrtc/modules/rtp_rtcp/include/ulpfec_receiver.h"
 #include "webrtc/modules/rtp_rtcp/source/forward_error_correction.h"
+#include "webrtc/modules/rtp_rtcp/source/rtp_packet_received.h"
 #include "webrtc/system_wrappers/include/clock.h"
 
 namespace webrtc {
@@ -37,35 +37,40 @@ class FlexfecReceiver {
  public:
   FlexfecReceiver(uint32_t ssrc,
                   uint32_t protected_media_ssrc,
-                  RecoveredPacketReceiver* callback);
+                  RecoveredPacketReceiver* recovered_packet_receiver);
   ~FlexfecReceiver();
 
   // Inserts a received packet (can be either media or FlexFEC) into the
   // internal buffer, and sends the received packets to the erasure code.
   // All newly recovered packets are sent back through the callback.
-  bool AddAndProcessReceivedPacket(const uint8_t* packet, size_t packet_length);
+  void OnRtpPacket(const RtpPacketReceived& packet);
 
   // Returns a counter describing the added and recovered packets.
   FecPacketCounter GetPacketCounter() const;
 
- private:
-  bool AddReceivedPacket(const uint8_t* packet, size_t packet_length);
+  // Protected to aid testing.
+ protected:
+  bool AddReceivedPacket(const RtpPacketReceived& packet);
   bool ProcessReceivedPackets();
 
+ private:
   // Config.
   const uint32_t ssrc_;
   const uint32_t protected_media_ssrc_;
 
   // Erasure code interfacing and callback.
-  std::unique_ptr<ForwardErrorCorrection> erasure_code_;
-  ForwardErrorCorrection::ReceivedPacketList received_packets_;
-  ForwardErrorCorrection::RecoveredPacketList recovered_packets_;
-  RecoveredPacketReceiver* const callback_;
+  std::unique_ptr<ForwardErrorCorrection> erasure_code_
+      GUARDED_BY(sequence_checker_);
+  ForwardErrorCorrection::ReceivedPacketList received_packets_
+      GUARDED_BY(sequence_checker_);
+  ForwardErrorCorrection::RecoveredPacketList recovered_packets_
+      GUARDED_BY(sequence_checker_);
+  RecoveredPacketReceiver* const recovered_packet_receiver_;
 
   // Logging and stats.
   Clock* const clock_;
-  int64_t last_recovered_packet_ms_;
-  FecPacketCounter packet_counter_;
+  int64_t last_recovered_packet_ms_ GUARDED_BY(sequence_checker_);
+  FecPacketCounter packet_counter_ GUARDED_BY(sequence_checker_);
 
   rtc::SequencedTaskChecker sequence_checker_;
 };

@@ -54,7 +54,7 @@ static void RandomStressTest(int** data_ptr) {
   const int kNumOps = 1000;
   const int kMaxBufferSize = 1000;
 
-  unsigned int seed = time(NULL);
+  unsigned int seed = time(nullptr);
   printf("seed=%u\n", seed);
   srand(seed);
   for (int i = 0; i < kNumTests; i++) {
@@ -62,7 +62,7 @@ static void RandomStressTest(int** data_ptr) {
     std::unique_ptr<int[]> write_data(new int[buffer_size]);
     std::unique_ptr<int[]> read_data(new int[buffer_size]);
     scoped_ring_buffer buffer(WebRtc_CreateBuffer(buffer_size, sizeof(int)));
-    ASSERT_TRUE(buffer.get() != NULL);
+    ASSERT_TRUE(buffer.get() != nullptr);
     WebRtc_InitBuffer(buffer.get());
     int buffer_consumed = 0;
     int write_element = 0;
@@ -105,12 +105,12 @@ static void RandomStressTest(int** data_ptr) {
 }
 
 TEST(RingBufferTest, RandomStressTest) {
-  int* data_ptr = NULL;
+  int* data_ptr = nullptr;
   RandomStressTest(&data_ptr);
 }
 
 TEST(RingBufferTest, RandomStressTestWithNullPtr) {
-  RandomStressTest(NULL);
+  RandomStressTest(nullptr);
 }
 
 TEST(RingBufferTest, PassingNulltoReadBufferForcesMemcpy) {
@@ -120,7 +120,7 @@ TEST(RingBufferTest, PassingNulltoReadBufferForcesMemcpy) {
   int* data_ptr;
 
   scoped_ring_buffer buffer(WebRtc_CreateBuffer(kDataSize, sizeof(int)));
-  ASSERT_TRUE(buffer.get() != NULL);
+  ASSERT_TRUE(buffer.get() != nullptr);
   WebRtc_InitBuffer(buffer.get());
 
   SetIncrementingData(write_data, kDataSize, 0);
@@ -133,17 +133,17 @@ TEST(RingBufferTest, PassingNulltoReadBufferForcesMemcpy) {
   CheckIncrementingData(read_data, kDataSize, kDataSize);
 
   EXPECT_EQ(kDataSize, WebRtc_WriteBuffer(buffer.get(), write_data, kDataSize));
-  EXPECT_EQ(kDataSize, WebRtc_ReadBuffer(buffer.get(), NULL, read_data,
-                                         kDataSize));
-  // Passing NULL forces a memcpy, so |read_data| is now updated.
+  EXPECT_EQ(kDataSize,
+            WebRtc_ReadBuffer(buffer.get(), nullptr, read_data, kDataSize));
+  // Passing null forces a memcpy, so |read_data| is now updated.
   CheckIncrementingData(read_data, kDataSize, 0);
 }
 
 TEST(RingBufferTest, CreateHandlesErrors) {
-  EXPECT_TRUE(WebRtc_CreateBuffer(0, 1) == NULL);
-  EXPECT_TRUE(WebRtc_CreateBuffer(1, 0) == NULL);
+  EXPECT_TRUE(WebRtc_CreateBuffer(0, 1) == nullptr);
+  EXPECT_TRUE(WebRtc_CreateBuffer(1, 0) == nullptr);
   RingBuffer* buffer = WebRtc_CreateBuffer(1, 1);
-  EXPECT_TRUE(buffer != NULL);
+  EXPECT_TRUE(buffer != nullptr);
   WebRtc_FreeBuffer(buffer);
 }
 

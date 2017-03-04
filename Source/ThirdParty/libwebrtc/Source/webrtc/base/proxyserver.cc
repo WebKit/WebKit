@@ -11,6 +11,8 @@
 #include "webrtc/base/proxyserver.h"
 
 #include <algorithm>
+
+#include "webrtc/base/checks.h"
 #include "webrtc/base/socketfactory.h"
 
 namespace rtc {
@@ -22,8 +24,8 @@ ProxyServer::ProxyServer(
     : ext_factory_(ext_factory), ext_ip_(ext_ip.ipaddr(), 0),  // strip off port
       server_socket_(int_factory->CreateAsyncSocket(int_addr.family(),
                                                     SOCK_STREAM)) {
-  ASSERT(server_socket_.get() != NULL);
-  ASSERT(int_addr.family() == AF_INET || int_addr.family() == AF_INET6);
+  RTC_DCHECK(server_socket_.get() != nullptr);
+  RTC_DCHECK(int_addr.family() == AF_INET || int_addr.family() == AF_INET6);
   server_socket_->Bind(int_addr);
   server_socket_->Listen(5);
   server_socket_->SignalReadEvent.connect(this, &ProxyServer::OnAcceptEvent);
@@ -41,8 +43,8 @@ SocketAddress ProxyServer::GetServerAddress() {
 }
 
 void ProxyServer::OnAcceptEvent(AsyncSocket* socket) {
-  ASSERT(socket != NULL && socket == server_socket_.get());
-  AsyncSocket* int_socket = socket->Accept(NULL);
+  RTC_DCHECK(socket != nullptr && socket == server_socket_.get());
+  AsyncSocket* int_socket = socket->Accept(nullptr);
   AsyncProxyServerSocket* wrapped_socket = WrapSocket(int_socket);
   AsyncSocket* ext_socket = ext_factory_->CreateAsyncSocket(ext_ip_.family(),
                                                             SOCK_STREAM);
@@ -82,7 +84,7 @@ ProxyBinding::~ProxyBinding() = default;
 
 void ProxyBinding::OnConnectRequest(AsyncProxyServerSocket* socket,
                                    const SocketAddress& addr) {
-  ASSERT(!connected_ && ext_socket_.get() != NULL);
+  RTC_DCHECK(!connected_ && ext_socket_.get() != nullptr);
   ext_socket_->Connect(addr);
   // TODO: handle errors here
 }
@@ -101,7 +103,7 @@ void ProxyBinding::OnInternalClose(AsyncSocket* socket, int err) {
 }
 
 void ProxyBinding::OnExternalConnect(AsyncSocket* socket) {
-  ASSERT(socket != NULL);
+  RTC_DCHECK(socket != nullptr);
   connected_ = true;
   int_socket_->SendConnectResult(0, socket->GetRemoteAddress());
 }
@@ -124,7 +126,7 @@ void ProxyBinding::OnExternalClose(AsyncSocket* socket, int err) {
 
 void ProxyBinding::Read(AsyncSocket* socket, FifoBuffer* buffer) {
   // Only read if the buffer is empty.
-  ASSERT(socket != NULL);
+  RTC_DCHECK(socket != nullptr);
   size_t size;
   int read;
   if (buffer->GetBuffered(&size) && size == 0) {
@@ -135,7 +137,7 @@ void ProxyBinding::Read(AsyncSocket* socket, FifoBuffer* buffer) {
 }
 
 void ProxyBinding::Write(AsyncSocket* socket, FifoBuffer* buffer) {
-  ASSERT(socket != NULL);
+  RTC_DCHECK(socket != nullptr);
   size_t size;
   int written;
   const void* p = buffer->GetReadData(&size);
@@ -145,10 +147,6 @@ void ProxyBinding::Write(AsyncSocket* socket, FifoBuffer* buffer) {
 
 void ProxyBinding::Destroy() {
   SignalDestroyed(this);
-}
-
-AsyncProxyServerSocket* SocksProxyServer::WrapSocket(AsyncSocket* socket) {
-  return new AsyncSocksProxyServerSocket(socket);
 }
 
 }  // namespace rtc

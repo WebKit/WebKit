@@ -11,37 +11,40 @@
 #ifndef WEBRTC_BASE_ASYNCINVOKER_INL_H_
 #define WEBRTC_BASE_ASYNCINVOKER_INL_H_
 
+#include "webrtc/base/atomicops.h"
 #include "webrtc/base/bind.h"
 #include "webrtc/base/callback.h"
 #include "webrtc/base/criticalsection.h"
 #include "webrtc/base/messagehandler.h"
-#include "webrtc/base/refcount.h"
-#include "webrtc/base/scoped_ref_ptr.h"
 #include "webrtc/base/sigslot.h"
 #include "webrtc/base/thread.h"
+#include "webrtc/base/thread_annotations.h"
 
 namespace rtc {
 
 class AsyncInvoker;
 
 // Helper class for AsyncInvoker. Runs a task and triggers a callback
-// on the calling thread if necessary. Instances are ref-counted so their
-// lifetime can be independent of AsyncInvoker.
-class AsyncClosure : public RefCountInterface {
+// on the calling thread if necessary.
+class AsyncClosure {
  public:
+  explicit AsyncClosure(AsyncInvoker* invoker) : invoker_(invoker) {}
+  virtual ~AsyncClosure();
   // Runs the asynchronous task, and triggers a callback to the calling
   // thread if needed. Should be called from the target thread.
   virtual void Execute() = 0;
+
  protected:
-  ~AsyncClosure() override {}
+  AsyncInvoker* invoker_;
 };
 
 // Simple closure that doesn't trigger a callback for the calling thread.
 template <class FunctorT>
 class FireAndForgetAsyncClosure : public AsyncClosure {
  public:
-  explicit FireAndForgetAsyncClosure(const FunctorT& functor)
-      : functor_(functor) {}
+  explicit FireAndForgetAsyncClosure(AsyncInvoker* invoker,
+                                     const FunctorT& functor)
+      : AsyncClosure(invoker), functor_(functor) {}
   virtual void Execute() {
     functor_();
   }
@@ -66,14 +69,16 @@ class NotifyingAsyncClosureBase : public AsyncClosure,
     CritScope cs(&crit_);
     callback_ = callback;
   }
-  bool CallbackCanceled() const { return calling_thread_ == NULL; }
+  bool CallbackCanceled() const {
+    CritScope cs(&crit_);
+    return calling_thread_ == nullptr;
+  }
 
  private:
-  AsyncInvoker* invoker_;
   Location callback_posted_from_;
-  Callback0<void> callback_;
   CriticalSection crit_;
-  Thread* calling_thread_;
+  Callback0<void> callback_ GUARDED_BY(crit_);
+  Thread* calling_thread_ GUARDED_BY(crit_);
 
   void CancelCallback();
 };

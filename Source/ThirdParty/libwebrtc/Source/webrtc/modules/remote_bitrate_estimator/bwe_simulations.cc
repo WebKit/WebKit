@@ -178,6 +178,36 @@ TEST_P(BweSimulation, Choke200kbps30kbps200kbps) {
   RunFor(60 * 1000);
 }
 
+TEST_P(BweSimulation, PacerChoke50kbps15kbps50kbps) {
+  AdaptiveVideoSource source(0, 30, 300, 0, 0);
+  PacedVideoSender sender(&uplink_, &source, GetParam());
+  ChokeFilter filter(&uplink_, 0);
+  RateCounterFilter counter(&uplink_, 0, "Receiver", bwe_names[GetParam()]);
+  PacketReceiver receiver(&uplink_, 0, GetParam(), true, true);
+  filter.set_capacity_kbps(50);
+  filter.set_max_delay_ms(500);
+  RunFor(60 * 1000);
+  filter.set_capacity_kbps(15);
+  RunFor(60 * 1000);
+  filter.set_capacity_kbps(50);
+  RunFor(60 * 1000);
+}
+
+TEST_P(BweSimulation, Choke50kbps15kbps50kbps) {
+  AdaptiveVideoSource source(0, 30, 300, 0, 0);
+  VideoSender sender(&uplink_, &source, GetParam());
+  ChokeFilter filter(&uplink_, 0);
+  RateCounterFilter counter(&uplink_, 0, "Receiver", bwe_names[GetParam()]);
+  PacketReceiver receiver(&uplink_, 0, GetParam(), true, true);
+  filter.set_capacity_kbps(50);
+  filter.set_max_delay_ms(500);
+  RunFor(60 * 1000);
+  filter.set_capacity_kbps(15);
+  RunFor(60 * 1000);
+  filter.set_capacity_kbps(50);
+  RunFor(60 * 1000);
+}
+
 TEST_P(BweSimulation, GoogleWifiTrace3Mbps) {
   AdaptiveVideoSource source(0, 30, 300, 0, 0);
   VideoSender sender(&uplink_, &source, GetParam());
@@ -231,6 +261,19 @@ TEST_P(BweSimulation, LinearDecreasingCapacity) {
 
 TEST_P(BweSimulation, PacerGoogleWifiTrace3Mbps) {
   PeriodicKeyFrameSource source(0, 30, 300, 0, 0, 1000);
+  PacedVideoSender sender(&uplink_, &source, GetParam());
+  RateCounterFilter counter1(&uplink_, 0, "sender_output",
+                             bwe_names[GetParam()]);
+  TraceBasedDeliveryFilter filter(&uplink_, 0, "link_capacity");
+  filter.set_max_delay_ms(500);
+  RateCounterFilter counter2(&uplink_, 0, "Receiver", bwe_names[GetParam()]);
+  PacketReceiver receiver(&uplink_, 0, GetParam(), true, true);
+  ASSERT_TRUE(filter.Init(test::ResourcePath("google-wifi-3mbps", "rx")));
+  RunFor(300 * 1000);
+}
+
+TEST_P(BweSimulation, PacerGoogleWifiTrace3MbpsLowFramerate) {
+  PeriodicKeyFrameSource source(0, 5, 300, 0, 0, 1000);
   PacedVideoSender sender(&uplink_, &source, GetParam());
   RateCounterFilter counter1(&uplink_, 0, "sender_output",
                              bwe_names[GetParam()]);

@@ -8,11 +8,11 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include "webrtc/audio/utility/audio_frame_operations.h"
 #include "webrtc/modules/audio_conference_mixer/include/audio_conference_mixer_defines.h"
 #include "webrtc/modules/audio_conference_mixer/source/audio_conference_mixer_impl.h"
 #include "webrtc/modules/audio_conference_mixer/source/audio_frame_manipulator.h"
 #include "webrtc/modules/audio_processing/include/audio_processing.h"
-#include "webrtc/modules/utility/include/audio_frame_operations.h"
 #include "webrtc/system_wrappers/include/critical_section_wrapper.h"
 #include "webrtc/system_wrappers/include/trace.h"
 
@@ -38,9 +38,9 @@ typedef std::list<ParticipantFrameStruct*> ParticipantFrameStructList;
 void MixFrames(AudioFrame* mixed_frame, AudioFrame* frame, bool use_limiter) {
   assert(mixed_frame->num_channels_ >= frame->num_channels_);
   if (use_limiter) {
-    // Divide by two to avoid saturation in the mixing.
-    // This is only meaningful if the limiter will be used.
-    *frame >>= 1;
+    // This is to avoid saturation in the mixing. It is only
+    // meaningful if the limiter will be used.
+    AudioFrameOperations::ApplyHalfGain(frame);
   }
   if (mixed_frame->num_channels_ > frame->num_channels_) {
     // We only support mono-to-stereo.
@@ -49,7 +49,7 @@ void MixFrames(AudioFrame* mixed_frame, AudioFrame* frame, bool use_limiter) {
     AudioFrameOperations::MonoToStereo(frame);
   }
 
-  *mixed_frame += *frame;
+  AudioFrameOperations::Add(*frame, mixed_frame);
 }
 
 // Return the max number of channels from a |list| composed of AudioFrames.
@@ -303,7 +303,7 @@ void AudioConferenceMixerImpl::Process() {
         if(mixedAudio->samples_per_channel_ == 0) {
             // Nothing was mixed, set the audio samples to silence.
             mixedAudio->samples_per_channel_ = _sampleSize;
-            mixedAudio->Mute();
+            AudioFrameOperations::Mute(mixedAudio);
         } else {
             // Only call the limiter if we have something to mix.
             LimitMixedAudio(mixedAudio);
@@ -922,7 +922,7 @@ bool AudioConferenceMixerImpl::LimitMixedAudio(AudioFrame* mixedAudio) const {
     //
     // Instead we double the frame (with addition since left-shifting a
     // negative value is undefined).
-    *mixedAudio += *mixedAudio;
+    AudioFrameOperations::Add(*mixedAudio, mixedAudio);
 
     if(error != _limiter->kNoError) {
         WEBRTC_TRACE(kTraceError, kTraceAudioMixerServer, _id,

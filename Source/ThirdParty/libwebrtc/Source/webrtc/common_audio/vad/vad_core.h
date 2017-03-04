@@ -60,7 +60,7 @@ typedef struct VadInstT_
 //
 // - self [i/o] : Instance that should be initialized
 //
-// returns      : 0 (OK), -1 (NULL pointer in or if the default mode can't be
+// returns      : 0 (OK), -1 (null pointer in or if the default mode can't be
 //                set)
 int WebRtcVad_InitCore(VadInstT* self);
 

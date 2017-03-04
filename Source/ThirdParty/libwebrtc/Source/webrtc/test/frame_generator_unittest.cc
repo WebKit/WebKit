@@ -75,7 +75,7 @@ class FrameGeneratorTest : public ::testing::Test {
 
     // Mutate to something arbitrary non-zero.
     frame->set_ntp_time_ms(11);
-    frame->set_render_time_ms(12);
+    frame->set_timestamp_us(12);
     frame->set_timestamp(13);
   }
 

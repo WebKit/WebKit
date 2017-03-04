@@ -10,7 +10,7 @@
 
 import("//build/config/linux/pkg_config.gni")
 import("//build/config/sanitizers/sanitizers.gni")
-import("build/webrtc.gni")
+import("webrtc.gni")
 import("//third_party/protobuf/proto_library.gni")
 if (is_android) {
   import("//build/config/android/config.gni")
@@ -30,7 +30,6 @@ config("common_inherited_config") {
     defines = [
       # TODO(kjellander): Cleanup unused ones and move defines closer to
       # the source when webrtc:4256 is completed.
-      "FEATURE_ENABLE_SSL",
       "FEATURE_ENABLE_VOICEMAIL",
       "EXPAT_RELATIVE_PATH",
       "GTEST_RELATIVE_PATH",
@@ -97,12 +96,6 @@ config("common_inherited_config") {
   # }
 }
 
-if (rtc_have_dbus_glib) {
-  pkg_config("dbus-glib") {
-    packages = [ "dbus-glib-1" ]
-  }
-}
-
 config("common_config") {
   cflags = []
   cflags_cc = []
@@ -116,16 +109,6 @@ config("common_config") {
     defines += [ "WEBRTC_INCLUDE_INTERNAL_AUDIO_DEVICE" ]
   }
 
-  if (rtc_have_dbus_glib) {
-    defines += [ "HAVE_DBUS_GLIB" ]
-
-    # TODO(kjellander): Investigate this, it seems like include <dbus/dbus.h>
-    # is still not found even if the execution of
-    # build/config/linux/pkg-config.py dbus-glib-1 returns correct include
-    # dirs on Linux.
-    all_dependent_configs = [ "dbus-glib" ]
-  }
-
   if (rtc_relative_path) {
     defines += [ "EXPAT_RELATIVE_PATH" ]
   }
@@ -134,20 +117,24 @@ config("common_config") {
     defines += [ "RTC_DISABLE_VP9" ]
   }
 
+  if (rtc_enable_sctp) {
+    defines += [ "HAVE_SCTP" ]
+  }
+
+  if (rtc_enable_external_auth) {
+    defines += [ "ENABLE_EXTERNAL_AUTH" ]
+  }
+
   if (build_with_chromium) {
     defines += [
       # NOTICE: Since common_inherited_config is used in public_configs for our
       # targets, there's no point including the defines in that config here.
       # TODO(kjellander): Cleanup unused ones and move defines closer to the
       # source when webrtc:4256 is completed.
-      "ENABLE_EXTERNAL_AUTH",
-      "HAVE_OPENSSL_SSL_H",
-      "HAVE_SCTP",
       "HAVE_SRTP",
       "HAVE_WEBRTC_VIDEO",
       "HAVE_WEBRTC_VOICE",
       "LOGGING_INSIDE_WEBRTC",
-      "SSL_USE_OPENSSL",
       "USE_WEBRTC_DEV_BRANCH",
     ]
   } else {
@@ -231,8 +218,6 @@ config("common_config") {
 
 config("common_objc") {
   libs = [ "Foundation.framework" ]
-  precompiled_header = "sdk/objc/WebRTC-Prefix.pch"
-  precompiled_source = "sdk/objc/WebRTC-Prefix.pch"
 }
 
 if (!build_with_chromium) {
@@ -242,30 +227,38 @@ if (!build_with_chromium) {
     visibility = [ "//:default" ]
 
     sources = [
-      # TODO(kjellander): Remove this whenever possible. GN's static_library
-      # target type requires at least one object to avoid errors linking.
-      "build/no_op_function.cc",
+      # TODO(ossu): Keep this here until donwstream projects have updated.
+      # http://bugs.webrtc.org/6716
       "call.h",
       "config.h",
-      "transport.h",
     ]
+
+    # complete_static_lib doesn't work on Mac since libtool cannot support
+    # multiple objects with the same filenames (https://bugs.webrtc.org/6418).
+    if (is_win || is_linux || is_android) {
+      complete_static_lib = true
+    } else {
+      # TODO(kjellander): Remove this whenever possible. GN's static_library
+      # target type requires at least one object to avoid errors linking.
+      sources += [ "no_op_function.cc" ]
+    }
 
     defines = []
 
     deps = [
       ":webrtc_common",
       "api",
+      "api:transport_api",
       "audio",
       "base",
       "call",
       "common_audio",
       "common_video",
-      "libjingle/xmllite",
-      "libjingle/xmpp",
       "logging",
       "media",
       "modules",
       "modules/video_capture:video_capture_internal_impl",
+      "ortc",
       "p2p",
       "pc",
       "sdk",
@@ -295,10 +288,10 @@ if (!build_with_chromium) {
         ":video_engine_tests",
         ":webrtc_nonparallel_tests",
         ":webrtc_perf_tests",
-        "api:peerconnection_unittests",
+        "api:rtc_api_unittests",
+        "base:rtc_base_tests_utils",
         "common_audio:common_audio_unittests",
         "common_video:common_video_unittests",
-        "libjingle:xmllite_xmpp_unittests",
         "media:rtc_media_unittests",
         "modules:modules_tests",
         "modules:modules_unittests",
@@ -306,6 +299,9 @@ if (!build_with_chromium) {
         "modules/audio_processing:audio_processing_tests",
         "modules/rtp_rtcp:test_packet_masks_metrics",
         "modules/video_capture:video_capture_internal_impl",
+        "modules/video_coding:plot_videoprocessor_integrationtest",
+        "ortc:ortc_unittests",
+        "pc:peerconnection_unittests",
         "pc:rtc_pc_unittests",
         "stats:rtc_stats_unittests",
         "system_wrappers:system_wrappers_unittests",
@@ -319,7 +315,7 @@ if (!build_with_chromium) {
       if (is_android) {
         deps += [
           ":android_junit_tests",
-          "api:libjingle_peerconnection_android_unittest",
+          "//webrtc/sdk/android:libjingle_peerconnection_android_unittest",
         ]
       } else {
         deps += [ "modules/video_capture:video_capture_tests" ]
@@ -329,6 +325,9 @@ if (!build_with_chromium) {
           "modules/audio_device:audio_device_tests",
           "voice_engine:voe_auto_test",
         ]
+      }
+      if (rtc_enable_protobuf) {
+        deps += [ "logging:rtc_event_log2rtp_dump" ]
       }
     }
   }
@@ -341,7 +340,6 @@ rtc_static_library("webrtc_common") {
     "config.cc",
     "config.h",
     "typedefs.h",
-    "voice_engine_configurations.h",
   ]
 
   if (!build_with_chromium && is_clang) {
@@ -368,7 +366,6 @@ if (rtc_include_tests) {
     # come from a config and can"t be on the target directly.
     if (is_clang) {
       cflags = [
-        "-Wno-missing-braces",
         "-Wno-sign-compare",
         "-Wno-unused-const-variable",
       ]
@@ -377,170 +374,15 @@ if (rtc_include_tests) {
 
   rtc_test("rtc_unittests") {
     testonly = true
-    sources = [
-      "api/fakemetricsobserver.cc",
-      "base/array_view_unittest.cc",
-      "base/atomicops_unittest.cc",
-      "base/autodetectproxy_unittest.cc",
-      "base/base64_unittest.cc",
-      "base/basictypes_unittest.cc",
-      "base/bind_unittest.cc",
-      "base/bitbuffer_unittest.cc",
-      "base/buffer_unittest.cc",
-      "base/bufferqueue_unittest.cc",
-      "base/bytebuffer_unittest.cc",
-      "base/byteorder_unittest.cc",
-      "base/callback_unittest.cc",
-      "base/copyonwritebuffer_unittest.cc",
-      "base/crc32_unittest.cc",
-      "base/criticalsection_unittest.cc",
-      "base/event_tracer_unittest.cc",
-      "base/event_unittest.cc",
-      "base/exp_filter_unittest.cc",
-      "base/file_unittest.cc",
-      "base/filerotatingstream_unittest.cc",
-      "base/fileutils_unittest.cc",
-      "base/function_view_unittest.cc",
-      "base/helpers_unittest.cc",
-      "base/httpbase_unittest.cc",
-      "base/httpcommon_unittest.cc",
-      "base/httpserver_unittest.cc",
-      "base/ipaddress_unittest.cc",
-      "base/logging_unittest.cc",
-      "base/md5digest_unittest.cc",
-      "base/messagedigest_unittest.cc",
-      "base/messagequeue_unittest.cc",
-      "base/mod_ops_unittest.cc",
-      "base/nat_unittest.cc",
-      "base/network_unittest.cc",
-      "base/onetimeevent_unittest.cc",
-      "base/optional_unittest.cc",
-      "base/optionsfile_unittest.cc",
-      "base/pathutils_unittest.cc",
-      "base/platform_thread_unittest.cc",
-      "base/proxy_unittest.cc",
-      "base/proxydetect_unittest.cc",
-      "base/random_unittest.cc",
-      "base/rate_limiter_unittest.cc",
-      "base/rate_statistics_unittest.cc",
-      "base/ratelimiter_unittest.cc",
-      "base/ratetracker_unittest.cc",
-      "base/refcountedobject_unittest.cc",
-      "base/rollingaccumulator_unittest.cc",
-      "base/rtccertificate_unittest.cc",
-      "base/rtccertificategenerator_unittest.cc",
-      "base/safe_compare_unittest.cc",
-      "base/scopedptrcollection_unittest.cc",
-      "base/sequenced_task_checker_unittest.cc",
-      "base/sha1digest_unittest.cc",
-      "base/sharedexclusivelock_unittest.cc",
-      "base/signalthread_unittest.cc",
-      "base/sigslot_unittest.cc",
-      "base/sigslottester.h",
-      "base/sigslottester.h.pump",
-      "base/stream_unittest.cc",
-      "base/stringencode_unittest.cc",
-      "base/stringutils_unittest.cc",
-      "base/swap_queue_unittest.cc",
-
-      # TODO(ronghuawu): Reenable this test.
-      # "systeminfo_unittest.cc",
-      "base/task_queue_unittest.cc",
-      "base/task_unittest.cc",
-      "base/testclient_unittest.cc",
-      "base/thread_annotations_unittest.cc",
-      "base/thread_checker_unittest.cc",
-      "base/thread_unittest.cc",
-      "base/timestampaligner_unittest.cc",
-      "base/timeutils_unittest.cc",
-      "base/urlencode_unittest.cc",
-      "base/weak_ptr_unittest.cc",
-
-      # TODO(ronghuawu): Reenable this test.
-      # "windowpicker_unittest.cc",
-      "p2p/base/asyncstuntcpsocket_unittest.cc",
-      "p2p/base/dtlstransportchannel_unittest.cc",
-      "p2p/base/fakeportallocator.h",
-      "p2p/base/faketransportcontroller.h",
-      "p2p/base/p2ptransportchannel_unittest.cc",
-      "p2p/base/port_unittest.cc",
-      "p2p/base/portallocator_unittest.cc",
-      "p2p/base/pseudotcp_unittest.cc",
-      "p2p/base/relayport_unittest.cc",
-      "p2p/base/relayserver_unittest.cc",
-      "p2p/base/stun_unittest.cc",
-      "p2p/base/stunport_unittest.cc",
-      "p2p/base/stunrequest_unittest.cc",
-      "p2p/base/stunserver_unittest.cc",
-      "p2p/base/tcpport_unittest.cc",
-      "p2p/base/testrelayserver.h",
-      "p2p/base/teststunserver.h",
-      "p2p/base/testturnserver.h",
-      "p2p/base/transport_unittest.cc",
-      "p2p/base/transportcontroller_unittest.cc",
-      "p2p/base/transportdescriptionfactory_unittest.cc",
-      "p2p/base/turnport_unittest.cc",
-      "p2p/base/turnserver_unittest.cc",
-      "p2p/base/udptransportchannel_unittest.cc",
-      "p2p/client/basicportallocator_unittest.cc",
-      "p2p/stunprober/stunprober_unittest.cc",
-    ]
-
-    if (is_linux) {
-      sources += [
-        "base/latebindingsymboltable_unittest.cc",
-
-        # TODO(ronghuawu): Reenable this test.
-        # "linux_unittest.cc",
-        "base/linuxfdwalk_unittest.cc",
-      ]
-    }
-
-    if (is_win) {
-      sources += [
-        "base/win32_unittest.cc",
-        "base/win32regkey_unittest.cc",
-        "base/win32window_unittest.cc",
-        "base/win32windowpicker_unittest.cc",
-      ]
-    }
-
-    if (is_mac) {
-      sources += [ "base/macutils_unittest.cc" ]
-    }
-
-    if (is_posix) {
-      sources += [
-        "base/ssladapter_unittest.cc",
-        "base/sslidentity_unittest.cc",
-        "base/sslstreamadapter_unittest.cc",
-      ]
-    }
-    if (rtc_use_quic) {
-      sources += [
-        "p2p/quic/quicconnectionhelper_unittest.cc",
-        "p2p/quic/quicsession_unittest.cc",
-        "p2p/quic/quictransport_unittest.cc",
-        "p2p/quic/quictransportchannel_unittest.cc",
-        "p2p/quic/reliablequicstream_unittest.cc",
-      ]
-    }
-
-    configs += [ ":rtc_unittests_config" ]
-
-    if (!build_with_chromium && is_clang) {
-      # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
-      suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
-    }
-
     deps = [
-      "base:rtc_base",
-      "base:rtc_base_tests_utils",
-      "base:rtc_task_queue",
-      "p2p:libstunprober",
-      "p2p:rtc_p2p",
-      "//testing/gmock",
-      "//testing/gtest",
+      "api:rtc_api_unittests",
+      "base:rtc_base_approved_unittests",
+      "base:rtc_base_unittests",
+      "base:rtc_numerics_unittests",
+      "base:rtc_task_queue_unittests",
+      "p2p:libstunprober_unittests",
+      "p2p:rtc_p2p_unittests",
+      "system_wrappers:metrics_default",
     ]
 
     if (rtc_enable_protobuf) {
@@ -553,26 +395,7 @@ if (rtc_include_tests) {
     }
 
     if (is_ios || is_mac) {
-      deps += [
-        "sdk:rtc_sdk_peerconnection_objc",
-        "system_wrappers:system_wrappers_default",
-      ]
-      sources += [
-        "sdk/objc/Framework/UnitTests/RTCConfigurationTest.mm",
-        "sdk/objc/Framework/UnitTests/RTCDataChannelConfigurationTest.mm",
-        "sdk/objc/Framework/UnitTests/RTCIceCandidateTest.mm",
-        "sdk/objc/Framework/UnitTests/RTCIceServerTest.mm",
-        "sdk/objc/Framework/UnitTests/RTCMediaConstraintsTest.mm",
-        "sdk/objc/Framework/UnitTests/RTCSessionDescriptionTest.mm",
-      ]
-
-      # TODO(tkchin): Cleanup this warning.
-      cflags = [ "-Wno-objc-property-no-attribute" ]
-
-      # |-ObjC| flag needed to make sure category method implementations
-      # are included:
-      # https://developer.apple.com/library/mac/qa/qa1490/_index.html
-      ldflags = [ "-ObjC" ]
+      deps += [ "sdk:rtc_sdk_peerconnection_objc_unittests" ]
     }
   }
 
@@ -596,10 +419,12 @@ if (rtc_include_tests) {
     testonly = true
     deps = [
       "audio:audio_tests",
+      "base:rtc_base_tests_utils",
       "call:call_tests",
       "modules/video_capture",
       "test:test_common",
       "test:test_main",
+      "test:video_test_common",
       "video:video_tests",
     ]
     data = video_engine_tests_resources
@@ -611,7 +436,6 @@ if (rtc_include_tests) {
       deps += [ "//testing/android/native_test:native_test_native_code" ]
       shard_timeout = 900
     }
-
     if (is_ios) {
       deps += [ ":video_engine_tests_bundle_data" ]
     }
@@ -619,6 +443,7 @@ if (rtc_include_tests) {
 
   webrtc_perf_tests_resources = [
     "//resources/audio_coding/speech_mono_16kHz.pcm",
+    "//resources/audio_coding/speech_mono_32_48kHz.pcm",
     "//resources/audio_coding/testfile32kHz.pcm",
     "//resources/ConferenceMotion_1280_720_50.yuv",
     "//resources/difficult_photo_1850_1110.yuv",
@@ -646,36 +471,15 @@ if (rtc_include_tests) {
     testonly = true
     configs += [ ":rtc_unittests_config" ]
 
-    sources = [
-      "call/call_perf_tests.cc",
-      "call/rampup_tests.cc",
-      "call/rampup_tests.h",
-      "modules/audio_coding/neteq/test/neteq_performance_unittest.cc",
-      "modules/audio_processing/audio_processing_performance_unittest.cc",
-      "modules/audio_processing/level_controller/level_controller_complexity_unittest.cc",
-      "modules/remote_bitrate_estimator/remote_bitrate_estimators_test.cc",
-      "video/full_stack.cc",
-    ]
     deps = [
-      "modules/audio_coding:neteq_test_support",
-      "modules/audio_processing",
-      "modules/audio_processing:audioproc_test_utils",
-      "modules/remote_bitrate_estimator:bwe_simulator_lib",
-      "modules/rtp_rtcp",
-      "test:test_common",
+      "call:call_perf_tests",
+      "modules/audio_coding:audio_coding_perf_tests",
+      "modules/audio_processing:audio_processing_perf_tests",
+      "modules/remote_bitrate_estimator:remote_bitrate_estimator_perf_tests",
       "test:test_main",
-      "test:test_renderer",
+      "video:video_full_stack_tests",
       "video:video_quality_test",
-      "voice_engine",
-      "//testing/gmock",
-      "//testing/gtest",
     ]
-
-    if (rtc_enable_intelligibility_enhancer) {
-      defines = [ "WEBRTC_INTELLIGIBILITY_ENHANCER=1" ]
-    } else {
-      defines = [ "WEBRTC_INTELLIGIBILITY_ENHANCER=0" ]
-    }
 
     data = webrtc_perf_tests_resources
     if (is_android) {
@@ -685,55 +489,32 @@ if (rtc_include_tests) {
     if (is_ios) {
       deps += [ ":webrtc_perf_tests_bundle_data" ]
     }
-    if (!build_with_chromium && is_clang) {
-      # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
-      suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
-    }
   }
 
   rtc_test("webrtc_nonparallel_tests") {
     testonly = true
-    configs += [ ":rtc_unittests_config" ]
-    sources = [
-      "base/nullsocketserver_unittest.cc",
-      "base/physicalsocketserver_unittest.cc",
-      "base/socket_unittest.cc",
-      "base/socket_unittest.h",
-      "base/socketaddress_unittest.cc",
-      "base/virtualsocket_unittest.cc",
-    ]
     deps = [
-      "base:rtc_base",
-      "base:rtc_base_tests_utils",
-      "//testing/gtest",
+      "base:rtc_base_nonparallel_tests",
     ]
-    if (is_win) {
-      sources += [ "base/win32socketserver_unittest.cc" ]
-    }
     if (is_android) {
       deps += [ "//testing/android/native_test:native_test_support" ]
       shard_timeout = 900
-    }
-
-    if (!build_with_chromium && is_clang) {
-      # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
-      suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
     }
   }
 
   if (is_android) {
     junit_binary("android_junit_tests") {
       java_files = [
-        "androidjunit/src/org/webrtc/CameraEnumerationTest.java",
+        "examples/androidjunit/src/org/appspot/apprtc/BluetoothManagerTest.java",
         "examples/androidjunit/src/org/appspot/apprtc/DirectRTCClientTest.java",
         "examples/androidjunit/src/org/appspot/apprtc/TCPChannelClientTest.java",
+        "sdk/android/tests/src/org/webrtc/CameraEnumerationTest.java",
       ]
 
       deps = [
         "//base:base_java_test_support",
-        "//webrtc/api:libjingle_peerconnection_java",
-        "//webrtc/api:libjingle_peerconnection_jni",
         "//webrtc/examples:AppRTCMobile_javalib",
+        "//webrtc/sdk/android:libjingle_peerconnection_java",
       ]
     }
   }

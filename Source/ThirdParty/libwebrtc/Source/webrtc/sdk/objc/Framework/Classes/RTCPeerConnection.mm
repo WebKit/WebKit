@@ -207,6 +207,7 @@ void PeerConnectionDelegateAdapter::OnIceCandidatesRemoved(
   NSMutableArray<RTCMediaStream *> *_localStreams;
   std::unique_ptr<webrtc::PeerConnectionDelegateAdapter> _observer;
   rtc::scoped_refptr<webrtc::PeerConnectionInterface> _peerConnection;
+  std::unique_ptr<webrtc::MediaConstraints> _nativeConstraints;
   BOOL _hasStartedRtcEventLog;
 }
 
@@ -224,11 +225,11 @@ void PeerConnectionDelegateAdapter::OnIceCandidatesRemoved(
   }
   if (self = [super init]) {
     _observer.reset(new webrtc::PeerConnectionDelegateAdapter(self));
-    std::unique_ptr<webrtc::MediaConstraints> nativeConstraints =
-        constraints.nativeConstraints;
+    _nativeConstraints = constraints.nativeConstraints;
+    CopyConstraintsIntoRtcConfiguration(_nativeConstraints.get(),
+                                        config.get());
     _peerConnection =
         factory.nativeFactory->CreatePeerConnection(*config,
-                                                    nativeConstraints.get(),
                                                     nullptr,
                                                     nullptr,
                                                     _observer.get());
@@ -282,6 +283,8 @@ void PeerConnectionDelegateAdapter::OnIceCandidatesRemoved(
   if (!config) {
     return NO;
   }
+  CopyConstraintsIntoRtcConfiguration(_nativeConstraints.get(),
+                                      config.get());
   return _peerConnection->SetConfiguration(*config);
 }
 

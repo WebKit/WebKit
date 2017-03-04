@@ -10,19 +10,41 @@
 
 #import "ARDSettingsStore.h"
 
-static NSString *const kUserDefaultsMediaConstraintsKey =
-    @"rtc_video_resolution_media_constraints_key";
+static NSString *const kMediaConstraintsKey = @"rtc_video_resolution_media_constraints_key";
+static NSString *const kBitrateKey = @"rtc_max_bitrate_key";
 
 NS_ASSUME_NONNULL_BEGIN
+@interface ARDSettingsStore () {
+  NSUserDefaults *_storage;
+}
+@property(nonatomic, strong) NSUserDefaults *storage;
+@end
+
 @implementation ARDSettingsStore
 
-- (nullable NSString *)videoResolutionConstraintsSetting {
-  return [[NSUserDefaults standardUserDefaults] objectForKey:kUserDefaultsMediaConstraintsKey];
+- (NSUserDefaults *)storage {
+  if (!_storage) {
+    _storage = [NSUserDefaults standardUserDefaults];
+  }
+  return _storage;
 }
 
-- (void)setVideoResolutionConstraintsSetting:(NSString *)constraintsString {
-  [[NSUserDefaults standardUserDefaults] setObject:constraintsString
-                                            forKey:kUserDefaultsMediaConstraintsKey];
+- (nullable NSString *)videoResolutionConstraints {
+  return [self.storage objectForKey:kMediaConstraintsKey];
+}
+
+- (void)setVideoResolutionConstraints:(NSString *)constraintsString {
+  [self.storage setObject:constraintsString forKey:kMediaConstraintsKey];
+  [self.storage synchronize];
+}
+
+- (nullable NSNumber *)maxBitrate {
+  return [self.storage objectForKey:kBitrateKey];
+}
+
+- (void)setMaxBitrate:(nullable NSNumber *)value {
+  [self.storage setObject:value forKey:kBitrateKey];
+  [self.storage synchronize];
 }
 
 @end

@@ -45,6 +45,9 @@ class MockVideoEncoder : public VideoEncoder {
   MOCK_METHOD0(Reset, int32_t());
   MOCK_METHOD2(SetChannelParameters, int32_t(uint32_t packetLoss, int64_t rtt));
   MOCK_METHOD2(SetRates, int32_t(uint32_t newBitRate, uint32_t frameRate));
+  MOCK_METHOD2(SetRateAllocation,
+               int32_t(const BitrateAllocation& newBitRate,
+                       uint32_t frameRate));
   MOCK_METHOD1(SetPeriodicKeyFrames, int32_t(bool enable));
 };
 
@@ -54,6 +57,10 @@ class MockDecodedImageCallback : public DecodedImageCallback {
   MOCK_METHOD2(Decoded,
                int32_t(VideoFrame& decodedImage,  // NOLINT
                        int64_t decode_time_ms));
+  MOCK_METHOD3(Decoded,
+               void(VideoFrame& decodedImage,  // NOLINT
+                    rtc::Optional<int32_t> decode_time_ms,
+                    rtc::Optional<uint8_t> qp));
   MOCK_METHOD1(ReceivedDecodedReferenceFrame,
                int32_t(const uint64_t pictureId));
   MOCK_METHOD1(ReceivedDecodedFrame, int32_t(const uint64_t pictureId));

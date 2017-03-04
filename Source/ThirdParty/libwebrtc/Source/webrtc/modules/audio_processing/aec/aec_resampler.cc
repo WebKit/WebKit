@@ -74,7 +74,7 @@ void WebRtcAec_ResampleLinear(void* resampInst,
   float be, tnew;
   size_t tn, mm;
 
-  RTC_DCHECK_LE(size, 2u * FRAME_LEN);
+  RTC_DCHECK_LE(size, 2 * FRAME_LEN);
   RTC_DCHECK(resampInst);
   RTC_DCHECK(inspeech);
   RTC_DCHECK(outspeech);

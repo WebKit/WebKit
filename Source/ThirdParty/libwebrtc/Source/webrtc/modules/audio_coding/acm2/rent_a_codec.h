@@ -15,14 +15,14 @@
 #include <map>
 #include <memory>
 
+#include "webrtc/api/audio_codecs/audio_decoder.h"
 #include "webrtc/base/array_view.h"
 #include "webrtc/base/constructormagic.h"
 #include "webrtc/base/optional.h"
 #include "webrtc/base/scoped_ref_ptr.h"
-#include "webrtc/modules/audio_coding/codecs/audio_decoder.h"
-#include "webrtc/modules/audio_coding/codecs/audio_format.h"
 #include "webrtc/modules/audio_coding/codecs/audio_encoder.h"
 #include "webrtc/modules/audio_coding/include/audio_coding_module_typedefs.h"
+#include "webrtc/modules/audio_coding/neteq/neteq_decoder_enum.h"
 #include "webrtc/typedefs.h"
 
 namespace webrtc {
@@ -72,6 +72,9 @@ class RentACodec {
     kCNFB,
 #endif
     kAVT,
+    kAVT16kHz,
+    kAVT32kHz,
+    kAVT48kHz,
 #ifdef WEBRTC_CODEC_RED
     kRED,
 #endif
@@ -105,39 +108,6 @@ class RentACodec {
 
     kNone = -1
   };
-
-  enum class NetEqDecoder {
-    kDecoderPCMu,
-    kDecoderPCMa,
-    kDecoderPCMu_2ch,
-    kDecoderPCMa_2ch,
-    kDecoderILBC,
-    kDecoderISAC,
-    kDecoderISACswb,
-    kDecoderPCM16B,
-    kDecoderPCM16Bwb,
-    kDecoderPCM16Bswb32kHz,
-    kDecoderPCM16Bswb48kHz,
-    kDecoderPCM16B_2ch,
-    kDecoderPCM16Bwb_2ch,
-    kDecoderPCM16Bswb32kHz_2ch,
-    kDecoderPCM16Bswb48kHz_2ch,
-    kDecoderPCM16B_5ch,
-    kDecoderG722,
-    kDecoderG722_2ch,
-    kDecoderRED,
-    kDecoderAVT,
-    kDecoderCNGnb,
-    kDecoderCNGwb,
-    kDecoderCNGswb32kHz,
-    kDecoderCNGswb48kHz,
-    kDecoderArbitrary,
-    kDecoderOpus,
-    kDecoderOpus_2ch,
-  };
-
-  static rtc::Optional<SdpAudioFormat> NetEqDecoderToSdpAudioFormat(
-      NetEqDecoder nd);
 
   static inline size_t NumberOfCodecs() {
     return static_cast<size_t>(CodecId::kNumCodecs);

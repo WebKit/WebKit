@@ -124,15 +124,6 @@ class WEBRTC_DLLEXPORT VoERTP_RTCP {
                                                 bool enable,
                                                 unsigned char id = 1) = 0;
 
-  // Sets the status of receiving rtp-audio-level-indication on a specific
-  // |channel|.
-  virtual int SetReceiveAudioLevelIndicationStatus(int channel,
-                                                   bool enable,
-                                                   unsigned char id = 1) {
-    // TODO(wu): Remove default implementation once talk is updated.
-    return 0;
-  }
-
   // Sets the RTCP status on a specific |channel|.
   virtual int SetRTCPStatus(int channel, bool enable) = 0;
 
@@ -143,45 +134,12 @@ class WEBRTC_DLLEXPORT VoERTP_RTCP {
   // specific |channel|.
   virtual int SetRTCP_CNAME(int channel, const char cName[256]) = 0;
 
-  // TODO(holmer): Remove this API once it has been removed from
-  // fakewebrtcvoiceengine.h.
-  virtual int GetRTCP_CNAME(int channel, char cName[256]) { return -1; }
-
   // Gets the canonical name (CNAME) parameter for incoming RTCP reports
   // on a specific channel.
   virtual int GetRemoteRTCP_CNAME(int channel, char cName[256]) = 0;
 
-  // Gets RTCP data from incoming RTCP Sender Reports.
-  virtual int GetRemoteRTCPData(int channel,
-                                unsigned int& NTPHigh,
-                                unsigned int& NTPLow,
-                                unsigned int& timestamp,
-                                unsigned int& playoutTimestamp,
-                                unsigned int* jitter = NULL,
-                                unsigned short* fractionLost = NULL) = 0;
-
-  // Gets RTP statistics for a specific |channel|.
-  virtual int GetRTPStatistics(int channel,
-                               unsigned int& averageJitterMs,
-                               unsigned int& maxJitterMs,
-                               unsigned int& discardedPackets) = 0;
-
   // Gets RTCP statistics for a specific |channel|.
   virtual int GetRTCPStatistics(int channel, CallStatistics& stats) = 0;
-
-  // Gets the report block parts of the last received RTCP Sender Report (SR),
-  // or RTCP Receiver Report (RR) on a specified |channel|. Each vector
-  // element also contains the SSRC of the sender in addition to a report
-  // block.
-  virtual int GetRemoteRTCPReportBlocks(
-      int channel,
-      std::vector<ReportBlock>* receive_blocks) = 0;
-
-  // This function enables Negative Acknowledgment (NACK) using RTCP,
-  // implemented based on RFC 4585. NACK retransmits RTP packets if lost on
-  // the network. This creates a lossless transport at the expense of delay.
-  // If using NACK, NACK should be enabled on both endpoints in a call.
-  virtual int SetNACKStatus(int channel, bool enable, int maxNoPackets) = 0;
 
  protected:
   VoERTP_RTCP() {}

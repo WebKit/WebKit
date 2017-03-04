@@ -15,13 +15,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 RTC_EXPORT
-@interface RTCMetricsSampleInfo : NSObject {
-    NSString *_name;
-    int _min;
-    int _max;
-    int _bucketCount;
-    NSDictionary<NSNumber *,NSNumber *> *_samples;
-}
+@interface RTCMetricsSampleInfo : NSObject
 
 /**
  * Example of RTCMetricsSampleInfo:

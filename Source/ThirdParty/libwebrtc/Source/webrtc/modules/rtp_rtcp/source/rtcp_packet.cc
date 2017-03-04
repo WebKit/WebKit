@@ -50,8 +50,8 @@ bool RtcpPacket::OnBufferFull(uint8_t* packet,
 
 size_t RtcpPacket::HeaderLength() const {
   size_t length_in_bytes = BlockLength();
-  RTC_DCHECK_GT(length_in_bytes, 0u);
-  RTC_DCHECK_EQ(length_in_bytes % 4, 0u) << "Padding not supported";
+  RTC_DCHECK_GT(length_in_bytes, 0);
+  RTC_DCHECK_EQ(length_in_bytes % 4, 0) << "Padding not supported";
   // Length in 32-bit words without common header.
   return (length_in_bytes - kHeaderLength) / 4;
 }

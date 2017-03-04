@@ -15,6 +15,7 @@
 #include <memory>
 #include <set>
 
+#include "webrtc/base/optional.h"
 #include "webrtc/base/thread_annotations.h"
 #include "webrtc/modules/include/module.h"
 #include "webrtc/modules/rtp_rtcp/include/rtp_rtcp_defines.h"
@@ -25,6 +26,7 @@ class AlrDetector;
 class BitrateProber;
 class Clock;
 class CriticalSectionWrapper;
+class ProbeClusterCreatedObserver;
 
 namespace paced_sender {
 class IntervalBudget;
@@ -44,10 +46,11 @@ class PacedSender : public Module, public RtpPacketSender {
                                   uint16_t sequence_number,
                                   int64_t capture_time_ms,
                                   bool retransmission,
-                                  int probe_cluster_id) = 0;
+                                  const PacedPacketInfo& cluster_info) = 0;
     // Called when it's a good time to send a padding data.
     // Returns the number of bytes sent.
-    virtual size_t TimeToSendPadding(size_t bytes, int probe_cluster_id) = 0;
+    virtual size_t TimeToSendPadding(size_t bytes,
+                                     const PacedPacketInfo& cluster_info) = 0;
 
    protected:
     virtual ~PacketSender() {}
@@ -65,14 +68,11 @@ class PacedSender : public Module, public RtpPacketSender {
   // overshoots from the encoder.
   static const float kDefaultPaceMultiplier;
 
-  static const size_t kMinProbePacketSize = 200;
-
-  PacedSender(Clock* clock,
-              PacketSender* packet_sender);
+  PacedSender(Clock* clock, PacketSender* packet_sender);
 
   virtual ~PacedSender();
 
-  virtual void CreateProbeCluster(int bitrate_bps, int num_packets);
+  virtual void CreateProbeCluster(int bitrate_bps);
 
   // Temporarily pause all sending.
   void Pause();
@@ -120,12 +120,13 @@ class PacedSender : public Module, public RtpPacketSender {
   // packets in the queue, given the current size and bitrate, ignoring prio.
   virtual int64_t ExpectedQueueTimeMs() const;
 
-  // Application Limited Region refers to operating in a state where the
+  // Returns time in milliseconds when the current application-limited region
+  // started or empty result if the sender is currently not application-limited.
+  //
+  // Application Limited Region (ALR) refers to operating in a state where the
   // traffic on network is limited due to application not having enough
   // traffic to meet the current channel capacity.
-  //
-  // Returns true if network is currently application-limited.
-  bool InApplicationLimitedRegion() const;
+  virtual rtc::Optional<int64_t> GetApplicationLimitedRegionStartTime() const;
 
   // Returns the average time since being enqueued, in milliseconds, for all
   // packets currently in the pacer queue, or 0 if queue is empty.
@@ -145,9 +146,10 @@ class PacedSender : public Module, public RtpPacketSender {
   void UpdateBudgetWithBytesSent(size_t bytes)
       EXCLUSIVE_LOCKS_REQUIRED(critsect_);
 
-  bool SendPacket(const paced_sender::Packet& packet, int probe_cluster_id)
+  bool SendPacket(const paced_sender::Packet& packet,
+                  const PacedPacketInfo& cluster_info)
       EXCLUSIVE_LOCKS_REQUIRED(critsect_);
-  size_t SendPadding(size_t padding_needed, int probe_cluster_id)
+  size_t SendPadding(size_t padding_needed, const PacedPacketInfo& cluster_info)
       EXCLUSIVE_LOCKS_REQUIRED(critsect_);
 
   Clock* const clock_;
@@ -167,6 +169,7 @@ class PacedSender : public Module, public RtpPacketSender {
       GUARDED_BY(critsect_);
 
   std::unique_ptr<BitrateProber> prober_ GUARDED_BY(critsect_);
+  bool probing_send_failure_;
   // Actual configured bitrates (media_budget_ may temporarily be higher in
   // order to meet pace time constraint).
   uint32_t estimated_bitrate_bps_ GUARDED_BY(critsect_);

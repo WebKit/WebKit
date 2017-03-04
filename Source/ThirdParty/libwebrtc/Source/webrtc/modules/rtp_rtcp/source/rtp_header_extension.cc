@@ -96,6 +96,7 @@ bool RtpHeaderExtensionMap::RegisterByUri(uint8_t id, const std::string& uri) {
 }
 
 size_t RtpHeaderExtensionMap::GetTotalLengthInBytes() const {
+  static constexpr size_t kRtpOneByteHeaderLength = 4;
   if (total_values_size_bytes_ == 0)
     return 0;
   return Word32Align(kRtpOneByteHeaderLength + total_values_size_bytes_);

@@ -37,7 +37,7 @@ class LogSinkImpl
 // Test basic logging operation. We should get the INFO log but not the VERBOSE.
 // We should restore the correct global state at the end.
 TEST(LogTest, SingleStream) {
-  int sev = LogMessage::GetLogToStream(NULL);
+  int sev = LogMessage::GetLogToStream(nullptr);
 
   std::string str;
   LogSinkImpl<StringStream> stream(&str);
@@ -52,14 +52,14 @@ TEST(LogTest, SingleStream) {
   LogMessage::RemoveLogToStream(&stream);
   EXPECT_EQ(LS_NONE, LogMessage::GetLogToStream(&stream));
 
-  EXPECT_EQ(sev, LogMessage::GetLogToStream(NULL));
+  EXPECT_EQ(sev, LogMessage::GetLogToStream(nullptr));
 }
 
 // Test using multiple log streams. The INFO stream should get the INFO message,
 // the VERBOSE stream should get the INFO and the VERBOSE.
 // We should restore the correct global state at the end.
 TEST(LogTest, MultipleStreams) {
-  int sev = LogMessage::GetLogToStream(NULL);
+  int sev = LogMessage::GetLogToStream(nullptr);
 
   std::string str1, str2;
   LogSinkImpl<StringStream> stream1(&str1), stream2(&str2);
@@ -81,26 +81,26 @@ TEST(LogTest, MultipleStreams) {
   EXPECT_EQ(LS_NONE, LogMessage::GetLogToStream(&stream2));
   EXPECT_EQ(LS_NONE, LogMessage::GetLogToStream(&stream1));
 
-  EXPECT_EQ(sev, LogMessage::GetLogToStream(NULL));
+  EXPECT_EQ(sev, LogMessage::GetLogToStream(nullptr));
 }
 
 // Ensure we don't crash when adding/removing streams while threads are going.
 // We should restore the correct global state at the end.
 class LogThread : public Thread {
  public:
-  virtual ~LogThread() {
+  ~LogThread() override {
     Stop();
   }
 
  private:
-  void Run() {
+  void Run() override {
     // LS_SENSITIVE to avoid cluttering up any real logging going on
     LOG(LS_SENSITIVE) << "LOG";
   }
 };
 
 TEST(LogTest, MultipleThreads) {
-  int sev = LogMessage::GetLogToStream(NULL);
+  int sev = LogMessage::GetLogToStream(nullptr);
 
   LogThread thread1, thread2, thread3;
   thread1.Start();
@@ -117,7 +117,7 @@ TEST(LogTest, MultipleThreads) {
     LogMessage::RemoveLogToStream(&stream3);
   }
 
-  EXPECT_EQ(sev, LogMessage::GetLogToStream(NULL));
+  EXPECT_EQ(sev, LogMessage::GetLogToStream(nullptr));
 }
 
 
@@ -137,11 +137,11 @@ TEST(LogTest, WallClockStartTime) {
 
 TEST(LogTest, MAYBE_Perf) {
   Pathname path;
-  EXPECT_TRUE(Filesystem::GetTemporaryFolder(path, true, NULL));
+  EXPECT_TRUE(Filesystem::GetTemporaryFolder(path, true, nullptr));
   path.SetPathname(Filesystem::TempFilename(path, "ut"));
 
   LogSinkImpl<FileStream> stream;
-  EXPECT_TRUE(stream.Open(path.pathname(), "wb", NULL));
+  EXPECT_TRUE(stream.Open(path.pathname(), "wb", nullptr));
   stream.DisableBuffering();
   LogMessage::AddLogToStream(&stream, LS_SENSITIVE);
 

@@ -60,7 +60,6 @@ int64_t RtpStream::GenerateFrame(int64_t time_now_us,
     PacketInfo packet(-1, sequence_number_++);
     packet.send_time_ms = (time_now_us + kSendSideOffsetUs) / 1000;
     packet.payload_size = payload_size;
-    packet.probe_cluster_id = PacketInfo::kNotAProbe;
     packets->push_back(packet);
   }
   next_rtp_time_ = time_now_us + (1000000 + fps_ / 2) / fps_;
@@ -150,7 +149,7 @@ int64_t StreamGenerator::GenerateFrame(std::vector<PacketInfo>* packets,
 
 DelayBasedBweTest::DelayBasedBweTest()
     : clock_(100000000),
-      bitrate_estimator_(new DelayBasedBwe(&clock_)),
+      bitrate_estimator_(new DelayBasedBwe(nullptr, &clock_)),
       stream_generator_(new test::StreamGenerator(1e6,  // Capacity.
                                                   clock_.TimeInMicroseconds())),
       arrival_time_offset_ms_(0),
@@ -169,17 +168,17 @@ void DelayBasedBweTest::IncomingFeedback(int64_t arrival_time_ms,
                                          uint16_t sequence_number,
                                          size_t payload_size) {
   IncomingFeedback(arrival_time_ms, send_time_ms, sequence_number, payload_size,
-                   PacketInfo::kNotAProbe);
+                   PacedPacketInfo());
 }
 
 void DelayBasedBweTest::IncomingFeedback(int64_t arrival_time_ms,
                                          int64_t send_time_ms,
                                          uint16_t sequence_number,
                                          size_t payload_size,
-                                         int probe_cluster_id) {
+                                         const PacedPacketInfo& pacing_info) {
   RTC_CHECK_GE(arrival_time_ms + arrival_time_offset_ms_, 0);
   PacketInfo packet(arrival_time_ms + arrival_time_offset_ms_, send_time_ms,
-                    sequence_number, payload_size, probe_cluster_id);
+                    sequence_number, payload_size, pacing_info);
   std::vector<PacketInfo> packets;
   packets.push_back(packet);
   DelayBasedBwe::Result result =
@@ -265,6 +264,7 @@ void DelayBasedBweTest::InitialBehaviorTestHelper(
     uint32_t expected_converge_bitrate) {
   const int kFramerate = 50;  // 50 fps to avoid rounding errors.
   const int kFrameIntervalMs = 1000 / kFramerate;
+  const PacedPacketInfo kPacingInfo(0, 1, 100);
   uint32_t bitrate_bps = 0;
   int64_t send_time_ms = 0;
   uint16_t sequence_number = 0;
@@ -280,7 +280,8 @@ void DelayBasedBweTest::InitialBehaviorTestHelper(
   for (int i = 0; i < 5 * kFramerate + 1 + kNumInitialPackets; ++i) {
     // NOTE!!! If the following line is moved under the if case then this test
     //         wont work on windows realease bots.
-    int cluster_id = i < kInitialProbingPackets ? 0 : PacketInfo::kNotAProbe;
+    PacedPacketInfo pacing_info =
+        i < kInitialProbingPackets ? kPacingInfo : PacedPacketInfo();
 
     if (i == kNumInitialPackets) {
       EXPECT_FALSE(bitrate_estimator_->LatestEstimate(&ssrcs, &bitrate_bps));
@@ -289,7 +290,7 @@ void DelayBasedBweTest::InitialBehaviorTestHelper(
       bitrate_observer_.Reset();
     }
     IncomingFeedback(clock_.TimeInMilliseconds(), send_time_ms,
-                     sequence_number++, kMtu, cluster_id);
+                     sequence_number++, kMtu, pacing_info);
     clock_.AdvanceTimeMilliseconds(1000 / kFramerate);
     send_time_ms += kFrameIntervalMs;
   }
@@ -306,13 +307,15 @@ void DelayBasedBweTest::RateIncreaseReorderingTestHelper(
     uint32_t expected_bitrate_bps) {
   const int kFramerate = 50;  // 50 fps to avoid rounding errors.
   const int kFrameIntervalMs = 1000 / kFramerate;
+  const PacedPacketInfo kPacingInfo(0, 1, 100);
   int64_t send_time_ms = 0;
   uint16_t sequence_number = 0;
   // Inserting packets for five seconds to get a valid estimate.
   for (int i = 0; i < 5 * kFramerate + 1 + kNumInitialPackets; ++i) {
     // NOTE!!! If the following line is moved under the if case then this test
     //         wont work on windows realease bots.
-    int cluster_id = i < kInitialProbingPackets ? 0 : PacketInfo::kNotAProbe;
+    PacedPacketInfo pacing_info =
+        i < kInitialProbingPackets ? kPacingInfo : PacedPacketInfo();
 
     // TODO(sprang): Remove this hack once the single stream estimator is gone,
     // as it doesn't do anything in Process().
@@ -322,7 +325,7 @@ void DelayBasedBweTest::RateIncreaseReorderingTestHelper(
       EXPECT_FALSE(bitrate_observer_.updated());  // No valid estimate.
     }
     IncomingFeedback(clock_.TimeInMilliseconds(), send_time_ms,
-                     sequence_number++, kMtu, cluster_id);
+                     sequence_number++, kMtu, pacing_info);
     clock_.AdvanceTimeMilliseconds(kFrameIntervalMs);
     send_time_ms += kFrameIntervalMs;
   }

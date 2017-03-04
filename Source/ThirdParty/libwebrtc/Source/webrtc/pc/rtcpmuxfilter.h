@@ -11,7 +11,6 @@
 #ifndef WEBRTC_PC_RTCPMUXFILTER_H_
 #define WEBRTC_PC_RTCPMUXFILTER_H_
 
-#include "webrtc/base/basictypes.h"
 #include "webrtc/p2p/base/sessiondescription.h"
 
 namespace cricket {

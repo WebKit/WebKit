@@ -23,7 +23,7 @@ namespace rtc {
 class AsyncUDPSocket : public AsyncPacketSocket {
  public:
   // Binds |socket| and creates AsyncUDPSocket for it. Takes ownership
-  // of |socket|. Returns NULL if bind() fails (|socket| is destroyed
+  // of |socket|. Returns null if bind() fails (|socket| is destroyed
   // in that case).
   static AsyncUDPSocket* Create(AsyncSocket* socket,
                                 const SocketAddress& bind_address);

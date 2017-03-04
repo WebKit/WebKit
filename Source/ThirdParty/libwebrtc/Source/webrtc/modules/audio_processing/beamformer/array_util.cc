@@ -23,7 +23,7 @@ const float kMaxDotProduct = 1e-6f;
 }  // namespace
 
 float GetMinimumSpacing(const std::vector<Point>& array_geometry) {
-  RTC_CHECK_GT(array_geometry.size(), 1u);
+  RTC_CHECK_GT(array_geometry.size(), 1);
   float mic_spacing = std::numeric_limits<float>::max();
   for (size_t i = 0; i < (array_geometry.size() - 1); ++i) {
     for (size_t j = i + 1; j < array_geometry.size(); ++j) {
@@ -58,7 +58,7 @@ bool ArePerpendicular(const Point& a, const Point& b) {
 
 rtc::Optional<Point> GetDirectionIfLinear(
     const std::vector<Point>& array_geometry) {
-  RTC_DCHECK_GT(array_geometry.size(), 1u);
+  RTC_DCHECK_GT(array_geometry.size(), 1);
   const Point first_pair_direction =
       PairDirection(array_geometry[0], array_geometry[1]);
   for (size_t i = 2u; i < array_geometry.size(); ++i) {
@@ -73,7 +73,7 @@ rtc::Optional<Point> GetDirectionIfLinear(
 
 rtc::Optional<Point> GetNormalIfPlanar(
     const std::vector<Point>& array_geometry) {
-  RTC_DCHECK_GT(array_geometry.size(), 1u);
+  RTC_DCHECK_GT(array_geometry.size(), 1);
   const Point first_pair_direction =
       PairDirection(array_geometry[0], array_geometry[1]);
   Point pair_direction(0.f, 0.f, 0.f);

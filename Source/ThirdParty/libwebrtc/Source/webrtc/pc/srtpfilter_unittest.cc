@@ -11,6 +11,7 @@
 #include "webrtc/pc/srtpfilter.h"
 
 #include "third_party/libsrtp/include/srtp.h"
+#include "webrtc/base/buffer.h"
 #include "webrtc/base/byteorder.h"
 #include "webrtc/base/constructormagic.h"
 #include "webrtc/base/gunit.h"
@@ -30,6 +31,14 @@ using cricket::CS_REMOTE;
 static const uint8_t kTestKey1[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234";
 static const uint8_t kTestKey2[] = "4321ZYXWVUTSRQPONMLKJIHGFEDCBA";
 static const int kTestKeyLen = 30;
+static const uint8_t kTestKeyGcm128_1[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ12";
+static const uint8_t kTestKeyGcm128_2[] = "21ZYXWVUTSRQPONMLKJIHGFEDCBA";
+static const int kTestKeyGcm128Len = 28;  // 128 bits key + 96 bits salt.
+static const uint8_t kTestKeyGcm256_1[] =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqr";
+static const uint8_t kTestKeyGcm256_2[] =
+    "rqponmlkjihgfedcbaZYXWVUTSRQPONMLKJIHGFEDCBA";
+static const int kTestKeyGcm256Len = 44;  // 256 bits key + 96 bits salt.
 static const std::string kTestKeyParams1 =
     "inline:WVNfX19zZW1jdGwgKCkgewkyMjA7fQp9CnVubGVz";
 static const std::string kTestKeyParams2 =
@@ -60,10 +69,20 @@ static const cricket::CryptoParams kTestCryptoParamsGcm4(
     1, "AEAD_AES_128_GCM", kTestKeyParamsGcm4, "");
 
 static int rtp_auth_tag_len(const std::string& cs) {
-  return (cs == CS_AES_CM_128_HMAC_SHA1_32) ? 4 : 10;
+  if (cs == CS_AES_CM_128_HMAC_SHA1_32) {
+    return 4;
+  } else if (cs == CS_AEAD_AES_128_GCM || cs == CS_AEAD_AES_256_GCM) {
+    return 16;
+  } else {
+    return 10;
+  }
 }
 static int rtcp_auth_tag_len(const std::string& cs) {
-  return 10;
+  if (cs == CS_AEAD_AES_128_GCM || cs == CS_AEAD_AES_256_GCM) {
+    return 16;
+  } else {
+    return 10;
+  }
 }
 
 class SrtpFilterTest : public testing::Test {
@@ -89,9 +108,11 @@ class SrtpFilterTest : public testing::Test {
     EXPECT_TRUE(f2_.IsActive());
   }
   void TestProtectUnprotect(const std::string& cs1, const std::string& cs2) {
-    char rtp_packet[sizeof(kPcmuFrame) + 10];
+    rtc::Buffer rtp_buffer(sizeof(kPcmuFrame) + rtp_auth_tag_len(cs1));
+    char* rtp_packet = rtp_buffer.data<char>();
     char original_rtp_packet[sizeof(kPcmuFrame)];
-    char rtcp_packet[sizeof(kRtcpReport) + 4 + 10];
+    rtc::Buffer rtcp_buffer(sizeof(kRtcpReport) + 4 + rtcp_auth_tag_len(cs2));
+    char* rtcp_packet = rtcp_buffer.data<char>();
     int rtp_len = sizeof(kPcmuFrame), rtcp_len = sizeof(kRtcpReport), out_len;
     memcpy(rtp_packet, kPcmuFrame, rtp_len);
     // In order to be able to run this test function multiple times we can not
@@ -102,7 +123,8 @@ class SrtpFilterTest : public testing::Test {
     memcpy(rtcp_packet, kRtcpReport, rtcp_len);
 
     EXPECT_TRUE(f1_.ProtectRtp(rtp_packet, rtp_len,
-                               sizeof(rtp_packet), &out_len));
+                               static_cast<int>(rtp_buffer.size()),
+                               &out_len));
     EXPECT_EQ(out_len, rtp_len + rtp_auth_tag_len(cs1));
     EXPECT_NE(0, memcmp(rtp_packet, original_rtp_packet, rtp_len));
     EXPECT_TRUE(f2_.UnprotectRtp(rtp_packet, out_len, &out_len));
@@ -110,7 +132,8 @@ class SrtpFilterTest : public testing::Test {
     EXPECT_EQ(0, memcmp(rtp_packet, original_rtp_packet, rtp_len));
 
     EXPECT_TRUE(f2_.ProtectRtp(rtp_packet, rtp_len,
-                               sizeof(rtp_packet), &out_len));
+                               static_cast<int>(rtp_buffer.size()),
+                               &out_len));
     EXPECT_EQ(out_len, rtp_len + rtp_auth_tag_len(cs2));
     EXPECT_NE(0, memcmp(rtp_packet, original_rtp_packet, rtp_len));
     EXPECT_TRUE(f1_.UnprotectRtp(rtp_packet, out_len, &out_len));
@@ -118,7 +141,8 @@ class SrtpFilterTest : public testing::Test {
     EXPECT_EQ(0, memcmp(rtp_packet, original_rtp_packet, rtp_len));
 
     EXPECT_TRUE(f1_.ProtectRtcp(rtcp_packet, rtcp_len,
-                                sizeof(rtcp_packet), &out_len));
+                                static_cast<int>(rtcp_buffer.size()),
+                                &out_len));
     EXPECT_EQ(out_len, rtcp_len + 4 + rtcp_auth_tag_len(cs1));  // NOLINT
     EXPECT_NE(0, memcmp(rtcp_packet, kRtcpReport, rtcp_len));
     EXPECT_TRUE(f2_.UnprotectRtcp(rtcp_packet, out_len, &out_len));
@@ -126,7 +150,8 @@ class SrtpFilterTest : public testing::Test {
     EXPECT_EQ(0, memcmp(rtcp_packet, kRtcpReport, rtcp_len));
 
     EXPECT_TRUE(f2_.ProtectRtcp(rtcp_packet, rtcp_len,
-                                sizeof(rtcp_packet), &out_len));
+                                static_cast<int>(rtcp_buffer.size()),
+                                &out_len));
     EXPECT_EQ(out_len, rtcp_len + 4 + rtcp_auth_tag_len(cs2));  // NOLINT
     EXPECT_NE(0, memcmp(rtcp_packet, kRtcpReport, rtcp_len));
     EXPECT_TRUE(f1_.UnprotectRtcp(rtcp_packet, out_len, &out_len));
@@ -522,7 +547,7 @@ TEST_F(SrtpFilterTest, TestDisableEncryption) {
   EXPECT_FALSE(f2_.IsActive());
 }
 
-// Test directly setting the params with AES_CM_128_HMAC_SHA1_80
+// Test directly setting the params with AES_CM_128_HMAC_SHA1_80.
 TEST_F(SrtpFilterTest, TestProtect_SetParamsDirect_AES_CM_128_HMAC_SHA1_80) {
   EXPECT_TRUE(f1_.SetRtpParams(rtc::SRTP_AES128_CM_SHA1_80, kTestKey1,
                                kTestKeyLen, rtc::SRTP_AES128_CM_SHA1_80,
@@ -538,10 +563,14 @@ TEST_F(SrtpFilterTest, TestProtect_SetParamsDirect_AES_CM_128_HMAC_SHA1_80) {
                                 kTestKey1, kTestKeyLen));
   EXPECT_TRUE(f1_.IsActive());
   EXPECT_TRUE(f2_.IsActive());
+#if defined(ENABLE_EXTERNAL_AUTH)
+  EXPECT_TRUE(f1_.IsExternalAuthActive());
+  EXPECT_TRUE(f2_.IsExternalAuthActive());
+#endif
   TestProtectUnprotect(CS_AES_CM_128_HMAC_SHA1_80, CS_AES_CM_128_HMAC_SHA1_80);
 }
 
-// Test directly setting the params with AES_CM_128_HMAC_SHA1_32
+// Test directly setting the params with AES_CM_128_HMAC_SHA1_32.
 TEST_F(SrtpFilterTest, TestProtect_SetParamsDirect_AES_CM_128_HMAC_SHA1_32) {
   EXPECT_TRUE(f1_.SetRtpParams(rtc::SRTP_AES128_CM_SHA1_32, kTestKey1,
                                kTestKeyLen, rtc::SRTP_AES128_CM_SHA1_32,
@@ -557,10 +586,60 @@ TEST_F(SrtpFilterTest, TestProtect_SetParamsDirect_AES_CM_128_HMAC_SHA1_32) {
                                 kTestKey1, kTestKeyLen));
   EXPECT_TRUE(f1_.IsActive());
   EXPECT_TRUE(f2_.IsActive());
+#if defined(ENABLE_EXTERNAL_AUTH)
+  EXPECT_TRUE(f1_.IsExternalAuthActive());
+  EXPECT_TRUE(f2_.IsExternalAuthActive());
+#endif
   TestProtectUnprotect(CS_AES_CM_128_HMAC_SHA1_32, CS_AES_CM_128_HMAC_SHA1_32);
 }
 
-// Test directly setting the params with bogus keys
+// Test directly setting the params with SRTP_AEAD_AES_128_GCM.
+TEST_F(SrtpFilterTest, TestProtect_SetParamsDirect_SRTP_AEAD_AES_128_GCM) {
+  EXPECT_TRUE(f1_.SetRtpParams(rtc::SRTP_AEAD_AES_128_GCM, kTestKeyGcm128_1,
+                               kTestKeyGcm128Len, rtc::SRTP_AEAD_AES_128_GCM,
+                               kTestKeyGcm128_2, kTestKeyGcm128Len));
+  EXPECT_TRUE(f2_.SetRtpParams(rtc::SRTP_AEAD_AES_128_GCM, kTestKeyGcm128_2,
+                               kTestKeyGcm128Len, rtc::SRTP_AEAD_AES_128_GCM,
+                               kTestKeyGcm128_1, kTestKeyGcm128Len));
+  EXPECT_TRUE(f1_.SetRtcpParams(rtc::SRTP_AEAD_AES_128_GCM, kTestKeyGcm128_1,
+                                kTestKeyGcm128Len, rtc::SRTP_AEAD_AES_128_GCM,
+                                kTestKeyGcm128_2, kTestKeyGcm128Len));
+  EXPECT_TRUE(f2_.SetRtcpParams(rtc::SRTP_AEAD_AES_128_GCM, kTestKeyGcm128_2,
+                                kTestKeyGcm128Len, rtc::SRTP_AEAD_AES_128_GCM,
+                                kTestKeyGcm128_1, kTestKeyGcm128Len));
+  EXPECT_TRUE(f1_.IsActive());
+  EXPECT_TRUE(f2_.IsActive());
+#if defined(ENABLE_EXTERNAL_AUTH)
+  EXPECT_FALSE(f1_.IsExternalAuthActive());
+  EXPECT_FALSE(f2_.IsExternalAuthActive());
+#endif
+  TestProtectUnprotect(CS_AEAD_AES_128_GCM, CS_AEAD_AES_128_GCM);
+}
+
+// Test directly setting the params with SRTP_AEAD_AES_256_GCM.
+TEST_F(SrtpFilterTest, TestProtect_SetParamsDirect_SRTP_AEAD_AES_256_GCM) {
+  EXPECT_TRUE(f1_.SetRtpParams(rtc::SRTP_AEAD_AES_256_GCM, kTestKeyGcm256_1,
+                               kTestKeyGcm256Len, rtc::SRTP_AEAD_AES_256_GCM,
+                               kTestKeyGcm256_2, kTestKeyGcm256Len));
+  EXPECT_TRUE(f2_.SetRtpParams(rtc::SRTP_AEAD_AES_256_GCM, kTestKeyGcm256_2,
+                               kTestKeyGcm256Len, rtc::SRTP_AEAD_AES_256_GCM,
+                               kTestKeyGcm256_1, kTestKeyGcm256Len));
+  EXPECT_TRUE(f1_.SetRtcpParams(rtc::SRTP_AEAD_AES_256_GCM, kTestKeyGcm256_1,
+                                kTestKeyGcm256Len, rtc::SRTP_AEAD_AES_256_GCM,
+                                kTestKeyGcm256_2, kTestKeyGcm256Len));
+  EXPECT_TRUE(f2_.SetRtcpParams(rtc::SRTP_AEAD_AES_256_GCM, kTestKeyGcm256_2,
+                                kTestKeyGcm256Len, rtc::SRTP_AEAD_AES_256_GCM,
+                                kTestKeyGcm256_1, kTestKeyGcm256Len));
+  EXPECT_TRUE(f1_.IsActive());
+  EXPECT_TRUE(f2_.IsActive());
+#if defined(ENABLE_EXTERNAL_AUTH)
+  EXPECT_FALSE(f1_.IsExternalAuthActive());
+  EXPECT_FALSE(f2_.IsExternalAuthActive());
+#endif
+  TestProtectUnprotect(CS_AEAD_AES_256_GCM, CS_AEAD_AES_256_GCM);
+}
+
+// Test directly setting the params with bogus keys.
 TEST_F(SrtpFilterTest, TestSetParamsKeyTooShort) {
   EXPECT_FALSE(f1_.SetRtpParams(rtc::SRTP_AES128_CM_SHA1_80, kTestKey1,
                                 kTestKeyLen - 1, rtc::SRTP_AES128_CM_SHA1_80,
@@ -578,6 +657,8 @@ TEST_F(SrtpFilterTest, TestGetSendAuthParams) {
   EXPECT_TRUE(f1_.SetRtcpParams(rtc::SRTP_AES128_CM_SHA1_32, kTestKey1,
                                 kTestKeyLen, rtc::SRTP_AES128_CM_SHA1_32,
                                 kTestKey2, kTestKeyLen));
+  // Non-GCM ciphers support external auth.
+  EXPECT_TRUE(f1_.IsExternalAuthActive());
   uint8_t* auth_key = NULL;
   int auth_key_len = 0, auth_tag_len = 0;
   EXPECT_TRUE(f1_.GetRtpAuthParams(&auth_key, &auth_key_len, &auth_tag_len));

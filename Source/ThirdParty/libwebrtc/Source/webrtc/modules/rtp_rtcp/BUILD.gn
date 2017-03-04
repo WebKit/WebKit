@@ -6,7 +6,7 @@
 # in the file PATENTS.  All contributing project authors may
 # be found in the AUTHORS file in the root of the source tree.
 
-import("../../build/webrtc.gni")
+import("../../webrtc.gni")
 
 rtc_static_library("rtp_rtcp") {
   sources = [
@@ -20,7 +20,6 @@ rtc_static_library("rtp_rtcp") {
     "include/rtp_rtcp.h",
     "include/rtp_rtcp_defines.h",
     "include/ulpfec_receiver.h",
-    "mocks/mock_rtp_rtcp.h",
     "source/byte_io.h",
     "source/dtmf_queue.cc",
     "source/dtmf_queue.h",
@@ -34,7 +33,6 @@ rtc_static_library("rtp_rtcp") {
     "source/forward_error_correction.h",
     "source/forward_error_correction_internal.cc",
     "source/forward_error_correction_internal.h",
-    "source/mock/mock_rtp_payload_strategy.h",
     "source/packet_loss_stats.cc",
     "source/packet_loss_stats.h",
     "source/playout_delay_oracle.cc",
@@ -42,6 +40,8 @@ rtc_static_library("rtp_rtcp") {
     "source/receive_statistics_impl.cc",
     "source/receive_statistics_impl.h",
     "source/remote_ntp_time_estimator.cc",
+    "source/rtcp_nack_stats.cc",
+    "source/rtcp_nack_stats.h",
     "source/rtcp_packet.cc",
     "source/rtcp_packet.h",
     "source/rtcp_packet/app.cc",
@@ -102,8 +102,6 @@ rtc_static_library("rtp_rtcp") {
     "source/rtcp_receiver.h",
     "source/rtcp_sender.cc",
     "source/rtcp_sender.h",
-    "source/rtcp_utility.cc",
-    "source/rtcp_utility.h",
     "source/rtp_format.cc",
     "source/rtp_format.h",
     "source/rtp_format_h264.cc",
@@ -145,8 +143,6 @@ rtc_static_library("rtp_rtcp") {
     "source/rtp_sender_video.h",
     "source/rtp_utility.cc",
     "source/rtp_utility.h",
-    "source/ssrc_database.cc",
-    "source/ssrc_database.h",
     "source/time_util.cc",
     "source/time_util.h",
     "source/tmmbr_help.cc",
@@ -175,7 +171,13 @@ rtc_static_library("rtp_rtcp") {
 
   deps = [
     "../..:webrtc_common",
+    "../../api:transport_api",
+    "../../base:gtest_prod",
+    "../../base:rtc_base_approved",
+    "../../base:rtc_task_queue",
+    "../../call:call_interfaces",
     "../../common_video",
+    "../../logging:rtc_event_log_api",
     "../../system_wrappers",
     "../remote_bitrate_estimator",
   ]
@@ -203,7 +205,112 @@ if (rtc_include_tests) {
     deps = [
       ":rtp_rtcp",
       "//testing/gtest",
-      "//webrtc/test:test_support_main",
+      "//webrtc/test:test_main",
     ]
   }  # test_packet_masks_metrics
+
+  rtc_source_set("rtp_rtcp_modules_tests") {
+    testonly = true
+    sources = [
+      "test/testFec/test_fec.cc",
+    ]
+    deps = [
+      ":rtp_rtcp",
+      "../../base:rtc_base_approved",
+      "../../test:test_support",
+    ]
+    if (!build_with_chromium && is_clang) {
+      # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
+      suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
+    }
+  }
+
+  rtc_source_set("rtp_rtcp_unittests") {
+    testonly = true
+    sources = [
+      "mocks/mock_rtp_rtcp.h",
+      "source/byte_io_unittest.cc",
+      "source/fec_test_helper.cc",
+      "source/fec_test_helper.h",
+      "source/flexfec_header_reader_writer_unittest.cc",
+      "source/flexfec_receiver_unittest.cc",
+      "source/flexfec_sender_unittest.cc",
+      "source/nack_rtx_unittest.cc",
+      "source/packet_loss_stats_unittest.cc",
+      "source/playout_delay_oracle_unittest.cc",
+      "source/receive_statistics_unittest.cc",
+      "source/remote_ntp_time_estimator_unittest.cc",
+      "source/rtcp_nack_stats_unittest.cc",
+      "source/rtcp_packet/app_unittest.cc",
+      "source/rtcp_packet/bye_unittest.cc",
+      "source/rtcp_packet/common_header_unittest.cc",
+      "source/rtcp_packet/compound_packet_unittest.cc",
+      "source/rtcp_packet/dlrr_unittest.cc",
+      "source/rtcp_packet/extended_jitter_report_unittest.cc",
+      "source/rtcp_packet/extended_reports_unittest.cc",
+      "source/rtcp_packet/fir_unittest.cc",
+      "source/rtcp_packet/nack_unittest.cc",
+      "source/rtcp_packet/pli_unittest.cc",
+      "source/rtcp_packet/rapid_resync_request_unittest.cc",
+      "source/rtcp_packet/receiver_report_unittest.cc",
+      "source/rtcp_packet/remb_unittest.cc",
+      "source/rtcp_packet/report_block_unittest.cc",
+      "source/rtcp_packet/rpsi_unittest.cc",
+      "source/rtcp_packet/rrtr_unittest.cc",
+      "source/rtcp_packet/sdes_unittest.cc",
+      "source/rtcp_packet/sender_report_unittest.cc",
+      "source/rtcp_packet/sli_unittest.cc",
+      "source/rtcp_packet/target_bitrate_unittest.cc",
+      "source/rtcp_packet/tmmbn_unittest.cc",
+      "source/rtcp_packet/tmmbr_unittest.cc",
+      "source/rtcp_packet/transport_feedback_unittest.cc",
+      "source/rtcp_packet/voip_metric_unittest.cc",
+      "source/rtcp_packet_unittest.cc",
+      "source/rtcp_receiver_unittest.cc",
+      "source/rtcp_sender_unittest.cc",
+      "source/rtp_fec_unittest.cc",
+      "source/rtp_format_h264_unittest.cc",
+      "source/rtp_format_vp8_test_helper.cc",
+      "source/rtp_format_vp8_test_helper.h",
+      "source/rtp_format_vp8_unittest.cc",
+      "source/rtp_format_vp9_unittest.cc",
+      "source/rtp_header_extension_unittest.cc",
+      "source/rtp_packet_history_unittest.cc",
+      "source/rtp_packet_unittest.cc",
+      "source/rtp_payload_registry_unittest.cc",
+      "source/rtp_rtcp_impl_unittest.cc",
+      "source/rtp_sender_unittest.cc",
+      "source/rtp_utility_unittest.cc",
+      "source/time_util_unittest.cc",
+      "source/ulpfec_generator_unittest.cc",
+      "source/ulpfec_header_reader_writer_unittest.cc",
+      "source/ulpfec_receiver_unittest.cc",
+      "source/vp8_partition_aggregator_unittest.cc",
+      "test/testAPI/test_api.cc",
+      "test/testAPI/test_api.h",
+      "test/testAPI/test_api_audio.cc",
+      "test/testAPI/test_api_rtcp.cc",
+      "test/testAPI/test_api_video.cc",
+    ]
+    deps = [
+      ":rtp_rtcp",
+      "../..:webrtc_common",
+      "../../api:transport_api",
+      "../../base:rtc_base_approved",
+      "../../common_video:common_video",
+      "../../system_wrappers:system_wrappers",
+      "../../test:field_trial",
+      "../../test:rtp_test_utils",
+      "../../test:test_common",
+      "../../test:test_support",
+      "//testing/gmock",
+    ]
+
+    # TODO(jschuh): bugs.webrtc.org/1348: fix this warning.
+    configs += [ "//build/config/compiler:no_size_t_to_int_warning" ]
+    if (!build_with_chromium && is_clang) {
+      # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
+      suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
+    }
+  }
 }

@@ -31,7 +31,7 @@ typedef struct RingBuffer {
   char* data;
 } RingBuffer;
 
-// Creates and initializes the buffer. Returns NULL on failure.
+// Creates and initializes the buffer. Returns null on failure.
 RingBuffer* WebRtc_CreateBuffer(size_t element_count, size_t element_size);
 void WebRtc_InitBuffer(RingBuffer* handle);
 void WebRtc_FreeBuffer(void* handle);
@@ -43,7 +43,7 @@ void WebRtc_FreeBuffer(void* handle);
 // user) and |data_ptr| points to the address of |data|. |data_ptr| is only
 // guaranteed to be valid until the next call to WebRtc_WriteBuffer().
 //
-// To force a copying to |data|, pass a NULL |data_ptr|.
+// To force a copying to |data|, pass a null |data_ptr|.
 //
 // Returns number of elements read.
 size_t WebRtc_ReadBuffer(RingBuffer* handle,

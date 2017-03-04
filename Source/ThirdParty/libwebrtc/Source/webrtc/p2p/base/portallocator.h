@@ -19,7 +19,6 @@
 #include "webrtc/p2p/base/port.h"
 #include "webrtc/p2p/base/portinterface.h"
 #include "webrtc/base/helpers.h"
-#include "webrtc/base/proxyinfo.h"
 #include "webrtc/base/sigslot.h"
 #include "webrtc/base/thread.h"
 
@@ -95,6 +94,17 @@ enum {
   CF_ALL = 0x7,
 };
 
+// TLS certificate policy.
+enum class TlsCertPolicy {
+  // For TLS based protocols, ensure the connection is secure by not
+  // circumventing certificate validation.
+  TLS_CERT_POLICY_SECURE,
+  // For TLS based protocols, disregard security completely by skipping
+  // certificate validation. This is insecure and should never be used unless
+  // security is irrelevant in that particular context.
+  TLS_CERT_POLICY_INSECURE_NO_CHECK,
+};
+
 // TODO(deadbeef): Rename to TurnCredentials (and username to ufrag).
 struct RelayCredentials {
   RelayCredentials() {}
@@ -119,12 +129,23 @@ struct RelayServerConfig {
                     int port,
                     const std::string& username,
                     const std::string& password,
+                    ProtocolType proto)
+      : type(RELAY_TURN), credentials(username, password) {
+    ports.push_back(ProtocolAddress(rtc::SocketAddress(address, port), proto));
+  }
+
+  // Legacy constructor where "secure" and PROTO_TCP implies PROTO_TLS.
+  RelayServerConfig(const std::string& address,
+                    int port,
+                    const std::string& username,
+                    const std::string& password,
                     ProtocolType proto,
                     bool secure)
-      : type(RELAY_TURN), credentials(username, password) {
-    ports.push_back(
-        ProtocolAddress(rtc::SocketAddress(address, port), proto, secure));
-  }
+      : RelayServerConfig(address,
+                          port,
+                          username,
+                          password,
+                          (proto == PROTO_TCP && secure ? PROTO_TLS : proto)) {}
 
   bool operator==(const RelayServerConfig& o) const {
     return type == o.type && ports == o.ports && credentials == o.credentials &&
@@ -136,6 +157,7 @@ struct RelayServerConfig {
   PortList ports;
   RelayCredentials credentials;
   int priority = 0;
+  TlsCertPolicy tls_cert_policy = TlsCertPolicy::TLS_CERT_POLICY_SECURE;
 };
 
 class PortAllocatorSession : public sigslot::has_slots<> {
@@ -298,7 +320,9 @@ class PortAllocator : public sigslot::has_slots<> {
   //
   // If the servers are not changing but the candidate pool size is,
   // pooled sessions will be either created or destroyed as necessary.
-  void SetConfiguration(const ServerAddresses& stun_servers,
+  //
+  // Returns true if the configuration could successfully be changed.
+  bool SetConfiguration(const ServerAddresses& stun_servers,
                         const std::vector<RelayServerConfig>& turn_servers,
                         int candidate_pool_size,
                         bool prune_turn_ports);
@@ -309,7 +333,7 @@ class PortAllocator : public sigslot::has_slots<> {
     return turn_servers_;
   }
 
-  int candidate_pool_size() const { return target_pooled_session_count_; }
+  int candidate_pool_size() const { return candidate_pool_size_; }
 
   // Sets the network types to ignore.
   // Values are defined by the AdapterType enum.
@@ -340,13 +364,6 @@ class PortAllocator : public sigslot::has_slots<> {
 
   uint32_t flags() const { return flags_; }
   void set_flags(uint32_t flags) { flags_ = flags; }
-
-  const std::string& user_agent() const { return agent_; }
-  const rtc::ProxyInfo& proxy() const { return proxy_; }
-  void set_proxy(const std::string& agent, const rtc::ProxyInfo& proxy) {
-    agent_ = agent;
-    proxy_ = proxy;
-  }
 
   // Gets/Sets the port range to use when choosing client ports.
   int min_port() const { return min_port_; }
@@ -400,8 +417,6 @@ class PortAllocator : public sigslot::has_slots<> {
   }
 
   uint32_t flags_;
-  std::string agent_;
-  rtc::ProxyInfo proxy_;
   int min_port_;
   int max_port_;
   uint32_t step_delay_;
@@ -412,11 +427,7 @@ class PortAllocator : public sigslot::has_slots<> {
  private:
   ServerAddresses stun_servers_;
   std::vector<RelayServerConfig> turn_servers_;
-  // The last size passed into SetConfiguration.
-  int target_pooled_session_count_ = 0;
-  // This variable represents the total number of pooled sessions
-  // both owned by this class and taken by TakePooledSession.
-  int allocated_pooled_session_count_ = 0;
+  int candidate_pool_size_ = 0;  // Last value passed into SetConfiguration.
   std::deque<std::unique_ptr<PortAllocatorSession>> pooled_sessions_;
   bool prune_turn_ports_ = false;
 

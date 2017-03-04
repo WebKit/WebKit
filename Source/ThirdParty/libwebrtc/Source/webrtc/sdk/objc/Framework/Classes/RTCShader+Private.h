@@ -11,6 +11,7 @@
 #import "RTCShader.h"
 
 #import "WebRTC/RTCMacros.h"
+#import "WebRTC/RTCVideoFrame.h"
 
 #if TARGET_OS_IPHONE
 #import <OpenGLES/ES3/gl.h>
@@ -18,7 +19,7 @@
 #import <OpenGL/gl3.h>
 #endif
 
-#include "webrtc/common_video/rotation.h"
+#include "webrtc/api/video/video_rotation.h"
 
 RTC_EXTERN const char kRTCVertexShaderSource[];
 
@@ -27,4 +28,4 @@ RTC_EXTERN GLuint RTCCreateProgram(GLuint vertexShader, GLuint fragmentShader);
 RTC_EXTERN GLuint RTCCreateProgramFromFragmentSource(const char fragmentShaderSource[]);
 RTC_EXTERN BOOL RTCSetupVerticesForProgram(
     GLuint program, GLuint* vertexBuffer, GLuint* vertexArray);
-RTC_EXTERN void RTCSetVertexData(webrtc::VideoRotation rotation);
+RTC_EXTERN void RTCSetVertexData(RTCVideoRotation rotation);

@@ -53,21 +53,10 @@ AudioDeviceBuffer::AudioDeviceBuffer()
       rec_delay_ms_(0),
       clock_drift_(0),
       num_stat_reports_(0),
-      rec_callbacks_(0),
-      last_rec_callbacks_(0),
-      play_callbacks_(0),
-      last_play_callbacks_(0),
-      rec_samples_(0),
-      last_rec_samples_(0),
-      play_samples_(0),
-      last_play_samples_(0),
-      max_rec_level_(0),
-      max_play_level_(0),
       last_timer_task_time_(0),
       rec_stat_count_(0),
       play_stat_count_(0),
       play_start_time_(0),
-      rec_start_time_(0),
       only_silence_recorded_(true),
       log_stats_(false) {
   LOG(INFO) << "AudioDeviceBuffer::ctor";
@@ -111,7 +100,7 @@ void AudioDeviceBuffer::StartPlayout() {
   if (!recording_) {
     StartPeriodicLogging();
   }
-  const uint64_t now_time = rtc::TimeMillis();
+  const int64_t now_time = rtc::TimeMillis();
   // Clear members that are only touched on the main (creating) thread.
   play_start_time_ = now_time;
   playing_ = true;
@@ -326,13 +315,9 @@ int32_t AudioDeviceBuffer::SetRecordedBuffer(const void* audio_buffer,
       only_silence_recorded_ = false;
     }
   }
-  // Update some stats but do it on the task queue to ensure that the members
-  // are modified and read on the same thread. Note that |max_abs| will be
-  // zero in most calls and then have no effect of the stats. It is only updated
-  // approximately two times per second and can then change the stats.
-  task_queue_.PostTask([this, max_abs, samples_per_channel] {
-    UpdateRecStats(max_abs, samples_per_channel);
-  });
+  // Update recording stats which is used as base for periodic logging of the
+  // audio input state.
+  UpdateRecStats(max_abs, samples_per_channel);
   return 0;
 }
 
@@ -397,19 +382,15 @@ int32_t AudioDeviceBuffer::RequestPlayoutData(size_t samples_per_channel) {
         WebRtcSpl_MaxAbsValueW16(play_buffer_.data(), play_buffer_.size());
     play_stat_count_ = 0;
   }
-  // Update some stats but do it on the task queue to ensure that the members
-  // are modified and read on the same thread. Note that |max_abs| will be
-  // zero in most calls and then have no effect of the stats. It is only updated
-  // approximately two times per second and can then change the stats.
-  task_queue_.PostTask([this, max_abs, num_samples_out] {
-    UpdatePlayStats(max_abs, num_samples_out);
-  });
+  // Update playout stats which is used as base for periodic logging of the
+  // audio output state.
+  UpdatePlayStats(max_abs, num_samples_out);
   return static_cast<int32_t>(num_samples_out);
 }
 
 int32_t AudioDeviceBuffer::GetPlayoutData(void* audio_buffer) {
   RTC_DCHECK_RUN_ON(&playout_thread_checker_);
-  RTC_DCHECK_GT(play_buffer_.size(), 0u);
+  RTC_DCHECK_GT(play_buffer_.size(), 0);
   const size_t bytes_per_sample = sizeof(int16_t);
   memcpy(audio_buffer, play_buffer_.data(),
          play_buffer_.size() * bytes_per_sample);
@@ -453,36 +434,36 @@ void AudioDeviceBuffer::LogStats(LogState state) {
   int64_t time_since_last = rtc::TimeDiff(now_time, last_timer_task_time_);
   last_timer_task_time_ = now_time;
 
+  Stats stats;
+  {
+    rtc::CritScope cs(&lock_);
+    stats = stats_;
+    stats_.max_rec_level = 0;
+    stats_.max_play_level = 0;
+  }
+
   // Log the latest statistics but skip the first round just after state was
   // set to LOG_START. Hence, first printed log will be after ~10 seconds.
   if (++num_stat_reports_ > 1 && time_since_last > 0) {
-    uint32_t diff_samples = rec_samples_ - last_rec_samples_;
+    uint32_t diff_samples = stats.rec_samples - last_stats_.rec_samples;
     float rate = diff_samples / (static_cast<float>(time_since_last) / 1000.0);
     LOG(INFO) << "[REC : " << time_since_last << "msec, "
-              << rec_sample_rate_ / 1000
-              << "kHz] callbacks: " << rec_callbacks_ - last_rec_callbacks_
-              << ", "
+              << rec_sample_rate_ / 1000 << "kHz] callbacks: "
+              << stats.rec_callbacks - last_stats_.rec_callbacks << ", "
               << "samples: " << diff_samples << ", "
               << "rate: " << static_cast<int>(rate + 0.5) << ", "
-              << "level: " << max_rec_level_;
+              << "level: " << stats.max_rec_level;
 
-    diff_samples = play_samples_ - last_play_samples_;
+    diff_samples = stats.play_samples - last_stats_.play_samples;
     rate = diff_samples / (static_cast<float>(time_since_last) / 1000.0);
     LOG(INFO) << "[PLAY: " << time_since_last << "msec, "
-              << play_sample_rate_ / 1000
-              << "kHz] callbacks: " << play_callbacks_ - last_play_callbacks_
-              << ", "
+              << play_sample_rate_ / 1000 << "kHz] callbacks: "
+              << stats.play_callbacks - last_stats_.play_callbacks << ", "
               << "samples: " << diff_samples << ", "
               << "rate: " << static_cast<int>(rate + 0.5) << ", "
-              << "level: " << max_play_level_;
+              << "level: " << stats.max_play_level;
+    last_stats_ = stats;
   }
-
-  last_rec_callbacks_ = rec_callbacks_;
-  last_play_callbacks_ = play_callbacks_;
-  last_rec_samples_ = rec_samples_;
-  last_play_samples_ = play_samples_;
-  max_rec_level_ = 0;
-  max_play_level_ = 0;
 
   int64_t time_to_wait_ms = next_callback_time - rtc::TimeMillis();
   RTC_DCHECK_GT(time_to_wait_ms, 0) << "Invalid timer interval";
@@ -495,39 +476,37 @@ void AudioDeviceBuffer::LogStats(LogState state) {
 
 void AudioDeviceBuffer::ResetRecStats() {
   RTC_DCHECK_RUN_ON(&task_queue_);
-  rec_callbacks_ = 0;
-  last_rec_callbacks_ = 0;
-  rec_samples_ = 0;
-  last_rec_samples_ = 0;
-  max_rec_level_ = 0;
+  last_stats_.ResetRecStats();
+  rtc::CritScope cs(&lock_);
+  stats_.ResetRecStats();
 }
 
 void AudioDeviceBuffer::ResetPlayStats() {
   RTC_DCHECK_RUN_ON(&task_queue_);
-  play_callbacks_ = 0;
-  last_play_callbacks_ = 0;
-  play_samples_ = 0;
-  last_play_samples_ = 0;
-  max_play_level_ = 0;
+  last_stats_.ResetPlayStats();
+  rtc::CritScope cs(&lock_);
+  stats_.ResetPlayStats();
 }
 
 void AudioDeviceBuffer::UpdateRecStats(int16_t max_abs,
                                        size_t samples_per_channel) {
-  RTC_DCHECK_RUN_ON(&task_queue_);
-  ++rec_callbacks_;
-  rec_samples_ += samples_per_channel;
-  if (max_abs > max_rec_level_) {
-    max_rec_level_ = max_abs;
+  RTC_DCHECK_RUN_ON(&recording_thread_checker_);
+  rtc::CritScope cs(&lock_);
+  ++stats_.rec_callbacks;
+  stats_.rec_samples += samples_per_channel;
+  if (max_abs > stats_.max_rec_level) {
+    stats_.max_rec_level = max_abs;
   }
 }
 
 void AudioDeviceBuffer::UpdatePlayStats(int16_t max_abs,
                                         size_t samples_per_channel) {
-  RTC_DCHECK_RUN_ON(&task_queue_);
-  ++play_callbacks_;
-  play_samples_ += samples_per_channel;
-  if (max_abs > max_play_level_) {
-    max_play_level_ = max_abs;
+  RTC_DCHECK_RUN_ON(&playout_thread_checker_);
+  rtc::CritScope cs(&lock_);
+  ++stats_.play_callbacks;
+  stats_.play_samples += samples_per_channel;
+  if (max_abs > stats_.max_play_level) {
+    stats_.max_play_level = max_abs;
   }
 }
 

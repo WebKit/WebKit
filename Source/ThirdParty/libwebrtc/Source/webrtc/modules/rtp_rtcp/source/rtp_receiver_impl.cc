@@ -16,6 +16,7 @@
 #include <string.h>
 
 #include "webrtc/base/logging.h"
+#include "webrtc/common_types.h"
 #include "webrtc/modules/rtp_rtcp/include/rtp_payload_registry.h"
 #include "webrtc/modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "webrtc/modules/rtp_rtcp/source/rtp_receiver_strategy.h"
@@ -80,12 +81,7 @@ RtpReceiverImpl::~RtpReceiverImpl() {
   }
 }
 
-int32_t RtpReceiverImpl::RegisterReceivePayload(
-    const char payload_name[RTP_PAYLOAD_NAME_SIZE],
-    const int8_t payload_type,
-    const uint32_t frequency,
-    const size_t channels,
-    const uint32_t rate) {
+int32_t RtpReceiverImpl::RegisterReceivePayload(const CodecInst& audio_codec) {
   rtc::CritScope lock(&critical_section_rtp_receiver_);
 
   // TODO(phoglund): Try to streamline handling of the RED codec and some other
@@ -93,17 +89,20 @@ int32_t RtpReceiverImpl::RegisterReceivePayload(
   // payload or not.
   bool created_new_payload = false;
   int32_t result = rtp_payload_registry_->RegisterReceivePayload(
-      payload_name, payload_type, frequency, channels, rate,
-      &created_new_payload);
+      audio_codec, &created_new_payload);
   if (created_new_payload) {
-    if (rtp_media_receiver_->OnNewPayloadTypeCreated(payload_name, payload_type,
-                                                     frequency) != 0) {
-      LOG(LS_ERROR) << "Failed to register payload: " << payload_name << "/"
-                    << static_cast<int>(payload_type);
+    if (rtp_media_receiver_->OnNewPayloadTypeCreated(audio_codec) != 0) {
+      LOG(LS_ERROR) << "Failed to register payload: " << audio_codec.plname
+                    << "/" << static_cast<int>(audio_codec.pltype);
       return -1;
     }
   }
   return result;
+}
+
+int32_t RtpReceiverImpl::RegisterReceivePayload(const VideoCodec& video_codec) {
+  rtc::CritScope lock(&critical_section_rtp_receiver_);
+  return rtp_payload_registry_->RegisterReceivePayload(video_codec);
 }
 
 int32_t RtpReceiverImpl::DeRegisterReceivePayload(

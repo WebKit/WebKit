@@ -79,7 +79,7 @@ const float kCompensationGain = 2.f;
 // The returned norm is clamped to be non-negative.
 float Norm(const ComplexMatrix<float>& mat,
            const ComplexMatrix<float>& norm_mat) {
-  RTC_CHECK_EQ(1u, norm_mat.num_rows());
+  RTC_CHECK_EQ(1, norm_mat.num_rows());
   RTC_CHECK_EQ(norm_mat.num_columns(), mat.num_rows());
   RTC_CHECK_EQ(norm_mat.num_columns(), mat.num_columns());
 
@@ -102,8 +102,8 @@ float Norm(const ComplexMatrix<float>& mat,
 // Does conjugate(|lhs|) * |rhs| for row vectors |lhs| and |rhs|.
 complex<float> ConjugateDotProduct(const ComplexMatrix<float>& lhs,
                                    const ComplexMatrix<float>& rhs) {
-  RTC_CHECK_EQ(1u, lhs.num_rows());
-  RTC_CHECK_EQ(1u, rhs.num_rows());
+  RTC_CHECK_EQ(1, lhs.num_rows());
+  RTC_CHECK_EQ(1, rhs.num_rows());
   RTC_CHECK_EQ(lhs.num_columns(), rhs.num_columns());
 
   const complex<float>* const* lhs_elements = lhs.elements();
@@ -138,7 +138,7 @@ float SumSquares(const ComplexMatrix<float>& mat) {
 // Does |out| = |in|.' * conj(|in|) for row vector |in|.
 void TransposedConjugatedProduct(const ComplexMatrix<float>& in,
                                  ComplexMatrix<float>* out) {
-  RTC_CHECK_EQ(1u, in.num_rows());
+  RTC_CHECK_EQ(1, in.num_rows());
   RTC_CHECK_EQ(out->num_rows(), in.num_columns());
   RTC_CHECK_EQ(out->num_columns(), in.num_columns());
   const complex<float>* in_elements = in.elements()[0];
@@ -449,7 +449,7 @@ void NonlinearBeamformer::ProcessAudioBlock(const complex_f* const* input,
                                             complex_f* const* output) {
   RTC_CHECK_EQ(kNumFreqBins, num_freq_bins);
   RTC_CHECK_EQ(num_input_channels_, num_input_channels);
-  RTC_CHECK_EQ(0u, num_output_channels);
+  RTC_CHECK_EQ(0, num_output_channels);
 
   // Calculating the post-filter masks. Note that we need two for each
   // frequency bin to account for the positive and negative interferer

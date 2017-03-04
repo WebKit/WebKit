@@ -332,7 +332,7 @@ private:  // WASAPI
     UINT64                                  _readSamples;
     uint32_t                          _sndCardRecDelay;
 
-    uint16_t                          _recChannelsPrioList[2];
+    uint16_t                          _recChannelsPrioList[3];
     uint16_t                          _playChannelsPrioList[2];
 
     LARGE_INTEGER                           _perfCounterFreq;

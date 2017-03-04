@@ -21,7 +21,6 @@
 #endif  // WEBRTC_WIN
 
 #include "webrtc/base/arraysize.h"
-#include "webrtc/base/common.h"
 #include "webrtc/base/constructormagic.h"
 #include "webrtc/base/gunit.h"
 #include "webrtc/base/logging.h"
@@ -217,7 +216,7 @@ class TaskTest : public sigslot::has_slots<> {
     for (i = 0; i < STUCK_TASK_COUNT; ++i) {
       if (stuck_[i].xlat_ == id) {
         stuck_[i].timed_out_ = true;
-        stuck_[i].task_ = NULL;
+        stuck_[i].task_ = nullptr;
         break;
       }
     }
@@ -232,7 +231,7 @@ class TaskTest : public sigslot::has_slots<> {
     for (i = 0; i < HAPPY_TASK_COUNT; ++i) {
       if (happy_[i].xlat_ == id) {
         happy_[i].timed_out_ = true;
-        happy_[i].task_ = NULL;
+        happy_[i].task_ = nullptr;
         break;
       }
     }
@@ -246,7 +245,7 @@ class TaskTest : public sigslot::has_slots<> {
     int i;
     for (i = 0; i < HAPPY_TASK_COUNT; ++i) {
       if (happy_[i].xlat_ == id) {
-        happy_[i].task_ = NULL;
+        happy_[i].task_ = nullptr;
         break;
       }
     }
@@ -348,7 +347,7 @@ class SetBoolOnDeleteTask : public Task {
   SetBoolOnDeleteTask(TaskParent *parent, bool *set_when_deleted)
     : Task(parent),
       set_when_deleted_(set_when_deleted) {
-    EXPECT_TRUE(NULL != set_when_deleted);
+    EXPECT_TRUE(nullptr != set_when_deleted);
     EXPECT_FALSE(*set_when_deleted);
   }
 
@@ -467,7 +466,7 @@ class TimeoutChangeTest : public sigslot::has_slots<> {
     for (size_t i = 0; i < arraysize(stuck_tasks_); ++i) {
       if (stuck_tasks_[i] && stuck_tasks_[i]->unique_id() == id) {
         task_count_--;
-        stuck_tasks_[i] = NULL;
+        stuck_tasks_[i] = nullptr;
         break;
       }
     }

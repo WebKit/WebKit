@@ -21,6 +21,8 @@ class FakeAudioDeviceModule : public AudioDeviceModule {
   virtual ~FakeAudioDeviceModule() {}
   virtual int32_t AddRef() const { return 0; }
   virtual int32_t Release() const { return 0; }
+
+ private:
   virtual int32_t RegisterEventObserver(AudioDeviceObserver* eventCallback) {
     return 0;
   }
@@ -39,8 +41,20 @@ class FakeAudioDeviceModule : public AudioDeviceModule {
   virtual int32_t SetStereoRecording(bool enable) { return 0; }
   virtual int32_t SetAGC(bool enable) { return 0; }
   virtual int32_t StopRecording() { return 0; }
-  virtual int64_t TimeUntilNextProcess() { return 0; }
-  virtual void Process() {}
+
+  // If the subclass doesn't override the ProcessThread implementation,
+  // we'll fall back on an implementation that doesn't eat too much CPU.
+  virtual int64_t TimeUntilNextProcess() {
+    if (turn_off_module_callbacks_)
+      return 7 * 24 * 60 * 60 * 1000;  // call me next week.
+    uses_default_module_implementation_ = true;
+    return 10;
+  }
+
+  virtual void Process() {
+    turn_off_module_callbacks_ = uses_default_module_implementation_;
+  }
+
   virtual int32_t Terminate() { return 0; }
 
   virtual int32_t ActiveAudioLayer(AudioLayer* audioLayer) const { return 0; }
@@ -121,7 +135,10 @@ class FakeAudioDeviceModule : public AudioDeviceModule {
   virtual int32_t PlayoutBuffer(BufferType* type, uint16_t* sizeMS) const {
     return 0;
   }
-  virtual int32_t PlayoutDelay(uint16_t* delayMS) const { return 0; }
+  virtual int32_t PlayoutDelay(uint16_t* delayMS) const {
+    *delayMS = 0;
+    return 0;
+  }
   virtual int32_t RecordingDelay(uint16_t* delayMS) const { return 0; }
   virtual int32_t CPULoad(uint16_t* load) const { return 0; }
   virtual int32_t StartRawOutputFileRecording(
@@ -162,6 +179,10 @@ class FakeAudioDeviceModule : public AudioDeviceModule {
     return -1;
   }
 #endif  // WEBRTC_IOS
+
+ private:
+  bool uses_default_module_implementation_ = false;
+  bool turn_off_module_callbacks_ = false;
 };
 
 }  // namespace webrtc

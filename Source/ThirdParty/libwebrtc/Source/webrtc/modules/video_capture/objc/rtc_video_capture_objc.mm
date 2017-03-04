@@ -33,7 +33,6 @@ using namespace webrtc::videocapturemodule;
   webrtc::videocapturemodule::VideoCaptureIos* _owner;
   webrtc::VideoCaptureCapability _capability;
   AVCaptureSession* _captureSession;
-  int _captureId;
   BOOL _orientationHasChanged;
   AVCaptureConnection* _connection;
   BOOL _captureChanging;  // Guarded by _captureChangingCondition.
@@ -42,10 +41,9 @@ using namespace webrtc::videocapturemodule;
 
 @synthesize frameRotation = _framRotation;
 
-- (id)initWithOwner:(VideoCaptureIos*)owner captureId:(int)captureId {
+- (id)initWithOwner:(VideoCaptureIos*)owner {
   if (self == [super init]) {
     _owner = owner;
-    _captureId = captureId;
     _captureSession = [[AVCaptureSession alloc] init];
 #if defined(WEBRTC_IOS)
     _captureSession.usesApplicationAudioSession = NO;
@@ -72,7 +70,7 @@ using namespace webrtc::videocapturemodule;
     if ([_captureSession canAddOutput:captureOutput]) {
       [_captureSession addOutput:captureOutput];
     } else {
-      WEBRTC_TRACE(kTraceError, kTraceVideoCapture, _captureId,
+      WEBRTC_TRACE(kTraceError, kTraceVideoCapture, 0,
                    "%s:%s:%d Could not add output to AVCaptureSession ",
                    __FILE__, __FUNCTION__, __LINE__);
     }
@@ -245,7 +243,7 @@ using namespace webrtc::videocapturemodule;
 - (void)onVideoError:(NSNotification*)notification {
   NSLog(@"onVideoError: %@", notification);
   // TODO(sjlee): make the specific error handling with this notification.
-  WEBRTC_TRACE(kTraceError, kTraceVideoCapture, _captureId,
+  WEBRTC_TRACE(kTraceError, kTraceVideoCapture, 0,
                "%s:%s:%d [AVCaptureSession startRunning] error.", __FILE__,
                __FUNCTION__, __LINE__);
 }
@@ -309,7 +307,7 @@ using namespace webrtc::videocapturemodule;
   if (!newCaptureInput) {
     const char* errorMessage = [[deviceError localizedDescription] UTF8String];
 
-    WEBRTC_TRACE(kTraceError, kTraceVideoCapture, _captureId,
+    WEBRTC_TRACE(kTraceError, kTraceVideoCapture, 0,
                  "%s:%s:%d deviceInputWithDevice error:%s", __FILE__,
                  __FUNCTION__, __LINE__, errorMessage);
 

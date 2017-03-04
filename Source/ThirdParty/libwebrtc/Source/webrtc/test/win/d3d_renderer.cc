@@ -9,6 +9,7 @@
  */
 #include "webrtc/test/win/d3d_renderer.h"
 
+#include "webrtc/base/checks.h"
 #include "webrtc/common_video/libyuv/include/webrtc_libyuv.h"
 
 namespace webrtc {
@@ -37,8 +38,8 @@ D3dRenderer::D3dRenderer(size_t width, size_t height)
       d3d_device_(NULL),
       texture_(NULL),
       vertex_buffer_(NULL) {
-  assert(width > 0);
-  assert(height > 0);
+  RTC_DCHECK_GT(width, 0);
+  RTC_DCHECK_GT(height, 0);
 }
 
 D3dRenderer::~D3dRenderer() { Destroy(); }
@@ -61,7 +62,7 @@ void D3dRenderer::Destroy() {
 
   if (hwnd_ != NULL) {
     DestroyWindow(hwnd_);
-    assert(!IsWindow(hwnd_));
+    RTC_DCHECK(!IsWindow(hwnd_));
     hwnd_ = NULL;
   }
 }

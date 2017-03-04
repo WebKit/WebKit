@@ -14,9 +14,11 @@
 #include <memory>
 #include <string>
 
-#include "webrtc/api/call/audio_receive_stream.h"
-#include "webrtc/api/call/audio_send_stream.h"
 #include "webrtc/base/platform_file.h"
+#include "webrtc/call/audio_receive_stream.h"
+#include "webrtc/call/audio_send_stream.h"
+#include "webrtc/modules/audio_coding/audio_network_adaptor/include/audio_network_adaptor.h"
+#include "webrtc/modules/remote_bitrate_estimator/include/bwe_defines.h"
 #include "webrtc/video_receive_stream.h"
 #include "webrtc/video_send_stream.h"
 
@@ -34,13 +36,24 @@ class RtcEventLogImpl;
 enum class MediaType;
 
 enum PacketDirection { kIncomingPacket = 0, kOutgoingPacket };
+enum ProbeFailureReason {
+  kInvalidSendReceiveInterval,
+  kInvalidSendReceiveRatio,
+  kTimeout
+};
 
 class RtcEventLog {
  public:
   virtual ~RtcEventLog() {}
 
   // Factory method to create an RtcEventLog object.
-  static std::unique_ptr<RtcEventLog> Create(const Clock* clock);
+  static std::unique_ptr<RtcEventLog> Create();
+  // TODO(nisse): webrtc::Clock is deprecated. Delete this method and
+  // above forward declaration of Clock when
+  // webrtc/system_wrappers/include/clock.h is deleted.
+  static std::unique_ptr<RtcEventLog> Create(const Clock* clock) {
+    return Create();
+  }
 
   // Create an RtcEventLog object that does nothing.
   static std::unique_ptr<RtcEventLog> CreateNull();
@@ -94,6 +107,14 @@ class RtcEventLog {
                             const uint8_t* header,
                             size_t packet_length) = 0;
 
+  // Same as above but used on the sender side to log packets that are part of
+  // a probe cluster.
+  virtual void LogRtpHeader(PacketDirection direction,
+                            MediaType media_type,
+                            const uint8_t* header,
+                            size_t packet_length,
+                            int probe_cluster_id) = 0;
+
   // Logs an incoming or outgoing RTCP packet.
   virtual void LogRtcpPacket(PacketDirection direction,
                              MediaType media_type,
@@ -104,9 +125,30 @@ class RtcEventLog {
   virtual void LogAudioPlayout(uint32_t ssrc) = 0;
 
   // Logs a bitrate update from the bandwidth estimator based on packet loss.
-  virtual void LogBwePacketLossEvent(int32_t bitrate,
+  virtual void LogLossBasedBweUpdate(int32_t bitrate_bps,
                                      uint8_t fraction_loss,
                                      int32_t total_packets) = 0;
+
+  // Logs a bitrate update from the bandwidth estimator based on delay changes.
+  virtual void LogDelayBasedBweUpdate(int32_t bitrate_bps,
+                                      BandwidthUsage detector_state) = 0;
+
+  // Logs audio encoder re-configuration driven by audio network adaptor.
+  virtual void LogAudioNetworkAdaptation(
+      const AudioNetworkAdaptor::EncoderRuntimeConfig& config) = 0;
+
+  // Logs when a probe cluster is created.
+  virtual void LogProbeClusterCreated(int id,
+                                      int bitrate_bps,
+                                      int min_probes,
+                                      int min_bytes) = 0;
+
+  // Logs the result of a successful probing attempt.
+  virtual void LogProbeResultSuccess(int id, int bitrate_bps) = 0;
+
+  // Logs the result of an unsuccessful probing attempt.
+  virtual void LogProbeResultFailure(int id,
+                                     ProbeFailureReason failure_reason) = 0;
 
   // Reads an RtcEventLog file and returns true when reading was successful.
   // The result is stored in the given EventStream object.
@@ -141,14 +183,30 @@ class RtcEventLogNullImpl final : public RtcEventLog {
                     MediaType media_type,
                     const uint8_t* header,
                     size_t packet_length) override {}
+  void LogRtpHeader(PacketDirection direction,
+                    MediaType media_type,
+                    const uint8_t* header,
+                    size_t packet_length,
+                    int probe_cluster_id) override {}
   void LogRtcpPacket(PacketDirection direction,
                      MediaType media_type,
                      const uint8_t* packet,
                      size_t length) override {}
   void LogAudioPlayout(uint32_t ssrc) override {}
-  void LogBwePacketLossEvent(int32_t bitrate,
+  void LogLossBasedBweUpdate(int32_t bitrate_bps,
                              uint8_t fraction_loss,
                              int32_t total_packets) override {}
+  void LogDelayBasedBweUpdate(int32_t bitrate_bps,
+                              BandwidthUsage detector_state) override {}
+  void LogAudioNetworkAdaptation(
+      const AudioNetworkAdaptor::EncoderRuntimeConfig& config) override {}
+  void LogProbeClusterCreated(int id,
+                              int bitrate_bps,
+                              int min_probes,
+                              int min_bytes) override{};
+  void LogProbeResultSuccess(int id, int bitrate_bps) override{};
+  void LogProbeResultFailure(int id,
+                             ProbeFailureReason failure_reason) override{};
 };
 
 }  // namespace webrtc

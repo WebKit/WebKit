@@ -15,13 +15,7 @@
 #include <string.h>
 
 #include "webrtc/base/basictypes.h"
-#include "webrtc/base/sslconfig.h"
-#if SSL_USE_OPENSSL
 #include "webrtc/base/openssldigest.h"
-#else
-#include "webrtc/base/md5digest.h"
-#include "webrtc/base/sha1digest.h"
-#endif
 #include "webrtc/base/stringencode.h"
 
 namespace rtc {
@@ -37,22 +31,12 @@ const char DIGEST_SHA_512[] = "sha-512";
 static const size_t kBlockSize = 64;  // valid for SHA-256 and down
 
 MessageDigest* MessageDigestFactory::Create(const std::string& alg) {
-#if SSL_USE_OPENSSL
   MessageDigest* digest = new OpenSSLDigest(alg);
   if (digest->Size() == 0) {  // invalid algorithm
     delete digest;
-    digest = NULL;
+    digest = nullptr;
   }
   return digest;
-#else
-  MessageDigest* digest = NULL;
-  if (alg == DIGEST_MD5) {
-    digest = new Md5Digest();
-  } else if (alg == DIGEST_SHA_1) {
-    digest = new Sha1Digest();
-  }
-  return digest;
-#endif
 }
 
 bool IsFips180DigestAlgorithm(const std::string& alg) {

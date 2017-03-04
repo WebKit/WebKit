@@ -101,37 +101,37 @@ int Resampler::Reset(int inFreq, int outFreq, size_t num_channels)
     if (state1_)
     {
         free(state1_);
-        state1_ = NULL;
+        state1_ = nullptr;
     }
     if (state2_)
     {
         free(state2_);
-        state2_ = NULL;
+        state2_ = nullptr;
     }
     if (state3_)
     {
         free(state3_);
-        state3_ = NULL;
+        state3_ = nullptr;
     }
     if (in_buffer_)
     {
         free(in_buffer_);
-        in_buffer_ = NULL;
+        in_buffer_ = nullptr;
     }
     if (out_buffer_)
     {
         free(out_buffer_);
-        out_buffer_ = NULL;
+        out_buffer_ = nullptr;
     }
     if (slave_left_)
     {
         delete slave_left_;
-        slave_left_ = NULL;
+        slave_left_ = nullptr;
     }
     if (slave_right_)
     {
         delete slave_right_;
-        slave_right_ = NULL;
+        slave_right_ = nullptr;
     }
 
     in_buffer_size_ = 0;

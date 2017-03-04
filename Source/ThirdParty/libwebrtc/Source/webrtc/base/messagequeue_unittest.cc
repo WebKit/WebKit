@@ -57,13 +57,13 @@ struct DeletedLockChecker {
 
 static void DelayedPostsWithIdenticalTimesAreProcessedInFifoOrder(
     MessageQueue* q) {
-  EXPECT_TRUE(q != NULL);
+  EXPECT_TRUE(q != nullptr);
   int64_t now = TimeMillis();
-  q->PostAt(RTC_FROM_HERE, now, NULL, 3);
-  q->PostAt(RTC_FROM_HERE, now - 2, NULL, 0);
-  q->PostAt(RTC_FROM_HERE, now - 1, NULL, 1);
-  q->PostAt(RTC_FROM_HERE, now, NULL, 4);
-  q->PostAt(RTC_FROM_HERE, now - 1, NULL, 2);
+  q->PostAt(RTC_FROM_HERE, now, nullptr, 3);
+  q->PostAt(RTC_FROM_HERE, now - 2, nullptr, 0);
+  q->PostAt(RTC_FROM_HERE, now - 1, nullptr, 1);
+  q->PostAt(RTC_FROM_HERE, now, nullptr, 4);
+  q->PostAt(RTC_FROM_HERE, now - 1, nullptr, 2);
 
   Message msg;
   for (size_t i=0; i<5; ++i) {
@@ -120,7 +120,7 @@ TEST_F(MessageQueueTest, DiposeHandlerWithPostedMessagePending) {
 }
 
 struct UnwrapMainThreadScope {
-  UnwrapMainThreadScope() : rewrap_(Thread::Current() != NULL) {
+  UnwrapMainThreadScope() : rewrap_(Thread::Current() != nullptr) {
     if (rewrap_) ThreadManager::Instance()->UnwrapCurrentThread();
   }
   ~UnwrapMainThreadScope() {

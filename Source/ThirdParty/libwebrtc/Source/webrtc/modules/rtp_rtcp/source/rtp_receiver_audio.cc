@@ -14,6 +14,7 @@
 #include <math.h>   // pow()
 #include <string.h>  // memcpy()
 
+#include "webrtc/common_types.h"
 #include "webrtc/base/logging.h"
 #include "webrtc/base/trace_event.h"
 
@@ -103,24 +104,22 @@ bool RTPReceiverAudio::ShouldReportCsrcChanges(uint8_t payload_type) const {
 // -
 // -   G7221     frame         N/A
 int32_t RTPReceiverAudio::OnNewPayloadTypeCreated(
-    const char payload_name[RTP_PAYLOAD_NAME_SIZE],
-    int8_t payload_type,
-    uint32_t frequency) {
+    const CodecInst& audio_codec) {
   rtc::CritScope lock(&crit_sect_);
 
-  if (RtpUtility::StringCompare(payload_name, "telephone-event", 15)) {
-    telephone_event_payload_type_ = payload_type;
+  if (RtpUtility::StringCompare(audio_codec.plname, "telephone-event", 15)) {
+    telephone_event_payload_type_ = audio_codec.pltype;
   }
-  if (RtpUtility::StringCompare(payload_name, "cn", 2)) {
+  if (RtpUtility::StringCompare(audio_codec.plname, "cn", 2)) {
     // We support comfort noise at four different frequencies.
-    if (frequency == 8000) {
-      cng_nb_payload_type_ = payload_type;
-    } else if (frequency == 16000) {
-      cng_wb_payload_type_ = payload_type;
-    } else if (frequency == 32000) {
-      cng_swb_payload_type_ = payload_type;
-    } else if (frequency == 48000) {
-      cng_fb_payload_type_ = payload_type;
+    if (audio_codec.plfreq == 8000) {
+      cng_nb_payload_type_ = audio_codec.pltype;
+    } else if (audio_codec.plfreq == 16000) {
+      cng_wb_payload_type_ = audio_codec.pltype;
+    } else if (audio_codec.plfreq == 32000) {
+      cng_swb_payload_type_ = audio_codec.pltype;
+    } else if (audio_codec.plfreq == 48000) {
+      cng_fb_payload_type_ = audio_codec.pltype;
     } else {
       assert(false);
       return -1;

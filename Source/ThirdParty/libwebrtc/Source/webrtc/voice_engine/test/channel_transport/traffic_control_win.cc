@@ -243,8 +243,8 @@ ULONG TrafficControlWindows::TcDeleteFilter(HANDLE FilterHandle)
     return tcDeleteFilter(FilterHandle);
 }
 
-void MyClNotifyHandler(HANDLE ClRegCtx, HANDLE ClIfcCtx, ULONG Event,
-                       HANDLE SubCode, ULONG BufSize, PVOID Buffer)
+void CALLBACK MyClNotifyHandler(HANDLE ClRegCtx, HANDLE ClIfcCtx, ULONG Event,
+                                HANDLE SubCode, ULONG BufSize, PVOID Buffer)
 {
 }
 

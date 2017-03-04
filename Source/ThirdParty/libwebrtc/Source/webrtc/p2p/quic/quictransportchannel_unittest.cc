@@ -15,7 +15,6 @@
 #include <string>
 #include <vector>
 
-#include "webrtc/base/common.h"
 #include "webrtc/base/gunit.h"
 #include "webrtc/base/sslidentity.h"
 #include "webrtc/p2p/base/faketransportcontroller.h"

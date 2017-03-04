@@ -27,9 +27,9 @@ class CaptureSinkFilter;
 class VideoCaptureDS: public VideoCaptureImpl
 {
 public:
-    VideoCaptureDS(const int32_t id);
+    VideoCaptureDS();
 
-    virtual int32_t Init(const int32_t id, const char* deviceUniqueIdUTF8);
+    virtual int32_t Init(const char* deviceUniqueIdUTF8);
 
     /*************************************************************************
      *

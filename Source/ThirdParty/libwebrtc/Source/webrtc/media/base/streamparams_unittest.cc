@@ -128,7 +128,7 @@ TEST(StreamParams, FidFunctions) {
   EXPECT_FALSE(sp.GetFidSsrc(15, &fid_ssrc));
 
   sp.add_ssrc(20);
-  sp.AddFidSsrc(20, 30);
+  EXPECT_TRUE(sp.AddFidSsrc(20, 30));
   EXPECT_TRUE(sp.GetFidSsrc(20, &fid_ssrc));
   EXPECT_EQ(30u, fid_ssrc);
 
@@ -177,13 +177,40 @@ TEST(StreamParams, GetPrimaryAndFidSsrcs) {
   EXPECT_EQ(20u, fid_ssrcs[1]);
 }
 
+TEST(StreamParams, FecFrFunctions) {
+  uint32_t fecfr_ssrc;
+
+  cricket::StreamParams sp = cricket::StreamParams::CreateLegacy(1);
+  EXPECT_FALSE(sp.AddFecFrSsrc(10, 20));
+  EXPECT_TRUE(sp.AddFecFrSsrc(1, 2));
+  EXPECT_TRUE(sp.GetFecFrSsrc(1, &fecfr_ssrc));
+  EXPECT_EQ(2u, fecfr_ssrc);
+  EXPECT_FALSE(sp.GetFecFrSsrc(15, &fecfr_ssrc));
+
+  sp.add_ssrc(20);
+  EXPECT_TRUE(sp.AddFecFrSsrc(20, 30));
+  EXPECT_TRUE(sp.GetFecFrSsrc(20, &fecfr_ssrc));
+  EXPECT_EQ(30u, fecfr_ssrc);
+
+  // Manually create SsrcGroup to test bounds-checking
+  // in GetSecondarySsrc. We construct an invalid StreamParams
+  // for this.
+  std::vector<uint32_t> fecfr_vector;
+  fecfr_vector.push_back(13);
+  cricket::SsrcGroup invalid_fecfr_group(cricket::kFecFrSsrcGroupSemantics,
+                                         fecfr_vector);
+  cricket::StreamParams sp_invalid;
+  sp_invalid.add_ssrc(13);
+  sp_invalid.ssrc_groups.push_back(invalid_fecfr_group);
+  EXPECT_FALSE(sp_invalid.GetFecFrSsrc(13, &fecfr_ssrc));
+}
+
 TEST(StreamParams, ToString) {
   cricket::StreamParams sp =
       CreateStreamParamsWithSsrcGroup("XYZ", kSsrcs2, arraysize(kSsrcs2));
   EXPECT_STREQ("{ssrcs:[1,2];ssrc_groups:{semantics:XYZ;ssrcs:[1,2]};}",
                sp.ToString().c_str());
 }
-
 
 TEST(StreamParams, TestIsOneSsrcStream_LegacyStream) {
   EXPECT_TRUE(
@@ -194,6 +221,21 @@ TEST(StreamParams, TestIsOneSsrcStream_SingleRtxStream) {
   cricket::StreamParams stream;
   stream.add_ssrc(13);
   EXPECT_TRUE(stream.AddFidSsrc(13, 14));
+  EXPECT_TRUE(cricket::IsOneSsrcStream(stream));
+}
+
+TEST(StreamParams, TestIsOneSsrcStream_SingleFlexfecStream) {
+  cricket::StreamParams stream;
+  stream.add_ssrc(13);
+  EXPECT_TRUE(stream.AddFecFrSsrc(13, 14));
+  EXPECT_TRUE(cricket::IsOneSsrcStream(stream));
+}
+
+TEST(StreamParams, TestIsOneSsrcStream_SingleFlexfecAndRtxStream) {
+  cricket::StreamParams stream;
+  stream.add_ssrc(13);
+  EXPECT_TRUE(stream.AddFecFrSsrc(13, 14));
+  EXPECT_TRUE(stream.AddFidSsrc(13, 15));
   EXPECT_TRUE(cricket::IsOneSsrcStream(stream));
 }
 

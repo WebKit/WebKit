@@ -14,48 +14,54 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-RTC_EXTERN const NSString * const kRTCRtxCodecMimeType;
-RTC_EXTERN const NSString * const kRTCRedCodecMimeType;
-RTC_EXTERN const NSString * const kRTCUlpfecCodecMimeType;
-RTC_EXTERN const NSString * const kRTCFlexfecCodecMimeType;
-RTC_EXTERN const NSString * const kRTCOpusCodecMimeType;
-RTC_EXTERN const NSString * const kRTCIsacCodecMimeType;
-RTC_EXTERN const NSString * const kRTCL16CodecMimeType;
-RTC_EXTERN const NSString * const kRTCG722CodecMimeType;
-RTC_EXTERN const NSString * const kRTCIlbcCodecMimeType;
-RTC_EXTERN const NSString * const kRTCPcmuCodecMimeType;
-RTC_EXTERN const NSString * const kRTCPcmaCodecMimeType;
-RTC_EXTERN const NSString * const kRTCDtmfCodecMimeType;
-RTC_EXTERN const NSString * const kRTCComfortNoiseCodecMimeType;
-RTC_EXTERN const NSString * const kRTCVp8CodecMimeType;
-RTC_EXTERN const NSString * const kRTCVp9CodecMimeType;
-RTC_EXTERN const NSString * const kRTCH264CodecMimeType;
+RTC_EXTERN const NSString * const kRTCRtxCodecName;
+RTC_EXTERN const NSString * const kRTCRedCodecName;
+RTC_EXTERN const NSString * const kRTCUlpfecCodecName;
+RTC_EXTERN const NSString * const kRTCFlexfecCodecName;
+RTC_EXTERN const NSString * const kRTCOpusCodecName;
+RTC_EXTERN const NSString * const kRTCIsacCodecName;
+RTC_EXTERN const NSString * const kRTCL16CodecName;
+RTC_EXTERN const NSString * const kRTCG722CodecName;
+RTC_EXTERN const NSString * const kRTCIlbcCodecName;
+RTC_EXTERN const NSString * const kRTCPcmuCodecName;
+RTC_EXTERN const NSString * const kRTCPcmaCodecName;
+RTC_EXTERN const NSString * const kRTCDtmfCodecName;
+RTC_EXTERN const NSString * const kRTCComfortNoiseCodecName;
+RTC_EXTERN const NSString * const kRTCVp8CodecName;
+RTC_EXTERN const NSString * const kRTCVp9CodecName;
+RTC_EXTERN const NSString * const kRTCH264CodecName;
 
 /** Defined in http://w3c.github.io/webrtc-pc/#idl-def-RTCRtpCodecParameters */
 RTC_EXPORT
-@interface RTCRtpCodecParameters : NSObject {
-    int _payloadType;
-    NSString *_mimeType;
-    int _clockRate;
-    int _channels;
-}
+@interface RTCRtpCodecParameters : NSObject
 
 /** The RTP payload type. */
 @property(nonatomic, assign) int payloadType;
 
 /**
- * The codec MIME type. Valid types are listed in:
+ * The codec MIME subtype. Valid types are listed in:
  * http://www.iana.org/assignments/rtp-parameters/rtp-parameters.xhtml#rtp-parameters-2
  *
  * Several supported types are represented by the constants above.
  */
-@property(nonatomic, nonnull) NSString *mimeType;
+@property(nonatomic, readonly, nonnull) NSString *name;
+
+/**
+ * The media type of this codec. Equivalent to MIME top-level type.
+ *
+ * Valid values are kRTCMediaStreamTrackKindAudio and
+ * kRTCMediaStreamTrackKindVideo.
+ */
+@property(nonatomic, readonly, nonnull) NSString *kind;
 
 /** The codec clock rate expressed in Hertz. */
-@property(nonatomic, assign) int clockRate;
+@property(nonatomic, readonly, nullable) NSNumber *clockRate;
 
-/** The number of channels (mono=1, stereo=2). */
-@property(nonatomic, assign) int channels;
+/**
+ * The number of channels (mono=1, stereo=2).
+ * Set to null for video codecs.
+ **/
+@property(nonatomic, readonly, nullable) NSNumber *numChannels;
 
 - (instancetype)init NS_DESIGNATED_INITIALIZER;
 

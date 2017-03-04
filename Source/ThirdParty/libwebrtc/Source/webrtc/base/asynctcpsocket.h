@@ -51,7 +51,7 @@ class AsyncTCPSocketBase : public AsyncPacketSocket {
 
  protected:
   // Binds and connects |socket| and creates AsyncTCPSocket for
-  // it. Takes ownership of |socket|. Returns NULL if bind() or
+  // it. Takes ownership of |socket|. Returns null if bind() or
   // connect() fail (|socket| is destroyed in that case).
   static AsyncSocket* ConnectSocket(AsyncSocket* socket,
                                     const SocketAddress& bind_address,
@@ -85,7 +85,7 @@ class AsyncTCPSocketBase : public AsyncPacketSocket {
 class AsyncTCPSocket : public AsyncTCPSocketBase {
  public:
   // Binds and connects |socket| and creates AsyncTCPSocket for
-  // it. Takes ownership of |socket|. Returns NULL if bind() or
+  // it. Takes ownership of |socket|. Returns null if bind() or
   // connect() fail (|socket| is destroyed in that case).
   static AsyncTCPSocket* Create(AsyncSocket* socket,
                                 const SocketAddress& bind_address,

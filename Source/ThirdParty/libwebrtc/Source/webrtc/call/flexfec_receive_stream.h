@@ -11,42 +11,80 @@
 #ifndef WEBRTC_CALL_FLEXFEC_RECEIVE_STREAM_H_
 #define WEBRTC_CALL_FLEXFEC_RECEIVE_STREAM_H_
 
-#include <memory>
-#include <string>
+#include <stdint.h>
 
-#include "webrtc/api/call/flexfec_receive_stream.h"
-#include "webrtc/base/basictypes.h"
-#include "webrtc/base/criticalsection.h"
-#include "webrtc/modules/rtp_rtcp/include/flexfec_receiver.h"
+#include <string>
+#include <vector>
+
+#include "webrtc/api/call/transport.h"
+#include "webrtc/config.h"
 
 namespace webrtc {
 
-namespace internal {
-
-class FlexfecReceiveStream : public webrtc::FlexfecReceiveStream {
+class FlexfecReceiveStream {
  public:
-  FlexfecReceiveStream(Config configuration,
-                       RecoveredPacketReceiver* recovered_packet_callback);
-  ~FlexfecReceiveStream();
+  struct Stats {
+    std::string ToString(int64_t time_ms) const;
 
-  const Config& config() const { return config_; }
+    // TODO(brandtr): Add appropriate stats here.
+    int flexfec_bitrate_bps;
+  };
 
-  bool AddAndProcessReceivedPacket(const uint8_t* packet, size_t length);
+  struct Config {
+    explicit Config(Transport* rtcp_send_transport)
+        : rtcp_send_transport(rtcp_send_transport) {
+      RTC_DCHECK(rtcp_send_transport);
+    }
 
-  // Implements webrtc::FlexfecReceiveStream.
-  void Start() override;
-  void Stop() override;
-  Stats GetStats() const override;
+    std::string ToString() const;
 
- private:
-  rtc::CriticalSection crit_;
-  bool started_ GUARDED_BY(crit_);
+    // Returns true if all RTP information is available in order to
+    // enable receiving FlexFEC.
+    bool IsCompleteAndEnabled() const;
 
-  const Config config_;
-  const std::unique_ptr<FlexfecReceiver> receiver_;
+    // Payload type for FlexFEC.
+    int payload_type = -1;
+
+    // SSRC for FlexFEC stream to be received.
+    uint32_t remote_ssrc = 0;
+
+    // Vector containing a single element, corresponding to the SSRC of the
+    // media stream being protected by this FlexFEC stream. The vector MUST have
+    // size 1.
+    //
+    // TODO(brandtr): Update comment above when we support multistream
+    // protection.
+    std::vector<uint32_t> protected_media_ssrcs;
+
+    // SSRC for RTCP reports to be sent.
+    uint32_t local_ssrc = 0;
+
+    // What RTCP mode to use in the reports.
+    RtcpMode rtcp_mode = RtcpMode::kCompound;
+
+    // Transport for outgoing RTCP packets.
+    Transport* rtcp_send_transport = nullptr;
+
+    // |transport_cc| is true whenever the send-side BWE RTCP feedback message
+    // has been negotiated. This is a prerequisite for enabling send-side BWE.
+    bool transport_cc = false;
+
+    // RTP header extensions that have been negotiated for this track.
+    std::vector<RtpExtension> rtp_header_extensions;
+  };
+
+  // Starts stream activity.
+  // When a stream is active, it can receive and process packets.
+  virtual void Start() = 0;
+  // Stops stream activity.
+  // When a stream is stopped, it can't receive nor process packets.
+  virtual void Stop() = 0;
+
+  virtual Stats GetStats() const = 0;
+
+ protected:
+  virtual ~FlexfecReceiveStream() = default;
 };
-
-}  // namespace internal
 
 }  // namespace webrtc
 

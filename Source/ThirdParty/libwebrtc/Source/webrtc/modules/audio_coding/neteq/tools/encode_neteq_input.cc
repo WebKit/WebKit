@@ -59,7 +59,7 @@ void EncodeNetEqInput::CreatePacket() {
   // Create a new PacketData object.
   RTC_DCHECK(!packet_data_);
   packet_data_.reset(new NetEqInput::PacketData);
-  RTC_DCHECK_EQ(packet_data_->payload.size(), 0u);
+  RTC_DCHECK_EQ(packet_data_->payload.size(), 0);
 
   // Loop until we get a packet.
   AudioEncoder::EncodedInfo info;
@@ -72,7 +72,7 @@ void EncodeNetEqInput::CreatePacket() {
     info = encoder_->Encode(rtp_timestamp_, generator_->Generate(num_samples),
                             &packet_data_->payload);
 
-    rtp_timestamp_ += rtc::checked_cast<uint32_t>(
+    rtp_timestamp_ += rtc::dchecked_cast<uint32_t>(
         num_samples * encoder_->RtpTimestampRateHz() /
         encoder_->SampleRateHz());
     ++num_blocks;

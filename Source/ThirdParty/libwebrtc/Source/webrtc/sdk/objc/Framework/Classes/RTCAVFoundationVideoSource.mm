@@ -14,7 +14,9 @@
 #import "RTCPeerConnectionFactory+Private.h"
 #import "RTCVideoSource+Private.h"
 
-@implementation RTCAVFoundationVideoSource
+@implementation RTCAVFoundationVideoSource {
+  webrtc::AVFoundationVideoCapturer *_capturer;
+}
 
 - (instancetype)initWithFactory:(RTCPeerConnectionFactory *)factory
                     constraints:(RTCMediaConstraints *)constraints {
@@ -25,9 +27,16 @@
   _capturer = new webrtc::AVFoundationVideoCapturer();
   rtc::scoped_refptr<webrtc::VideoTrackSourceInterface> source =
       factory.nativeFactory->CreateVideoSource(
-          _capturer, constraints.nativeConstraints.get());
+          std::unique_ptr<cricket::VideoCapturer>(_capturer),
+          constraints.nativeConstraints.get());
 
   return [super initWithNativeVideoSource:source];
+}
+
+- (void)adaptOutputFormatToWidth:(int)width
+                          height:(int)height
+                             fps:(int)fps {
+  self.capturer->AdaptOutputFormat(width, height, fps);
 }
 
 - (BOOL)canUseBackCamera {

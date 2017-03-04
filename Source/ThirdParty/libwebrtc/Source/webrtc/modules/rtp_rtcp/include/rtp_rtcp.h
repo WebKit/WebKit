@@ -22,17 +22,18 @@
 #include "webrtc/modules/include/module.h"
 #include "webrtc/modules/rtp_rtcp/include/flexfec_sender.h"
 #include "webrtc/modules/rtp_rtcp/include/rtp_rtcp_defines.h"
-#include "webrtc/modules/video_coding/include/video_coding_defines.h"
 
 namespace webrtc {
 
 // Forward declarations.
+class OverheadObserver;
 class RateLimiter;
 class ReceiveStatistics;
 class RemoteBitrateEstimator;
 class RtcEventLog;
 class RtpReceiver;
 class Transport;
+class VideoBitrateAllocationObserver;
 
 RTPExtensionType StringToRtpExtensionType(const std::string& extension);
 
@@ -67,6 +68,7 @@ class RtpRtcp : public Module {
     RtcpBandwidthObserver* bandwidth_callback = nullptr;
 
     TransportFeedbackObserver* transport_feedback_callback = nullptr;
+    VideoBitrateAllocationObserver* bitrate_allocation_observer = nullptr;
     RtcpRttStats* rtt_stats = nullptr;
     RtcpPacketTypeCounterObserver* rtcp_packet_type_counter_observer = nullptr;
 
@@ -89,6 +91,7 @@ class RtpRtcp : public Module {
     RtcEventLog* event_log = nullptr;
     SendPacketObserver* send_packet_observer = nullptr;
     RateLimiter* retransmission_rate_limiter = nullptr;
+    OverheadObserver* overhead_observer = nullptr;
 
    private:
     RTC_DISALLOW_COPY_AND_ASSIGN(Configuration);
@@ -111,36 +114,25 @@ class RtpRtcp : public Module {
   // Sender
   // **************************************************************************
 
-  // Sets MTU.
-  // |size| - Max transfer unit in bytes, default is 1500.
-  // Returns -1 on failure else 0.
-  virtual int32_t SetMaxTransferUnit(uint16_t size) = 0;
+  // TODO(nisse): Deprecated. Kept temporarily, as an alias for the
+  // new function which has slighly different semantics. Delete as
+  // soon as known applications are updated.
+  virtual int32_t SetMaxTransferUnit(uint16_t size) {
+    SetMaxRtpPacketSize(size);
+    return 0;
+  }
 
-  // Sets transtport overhead. Default is IPv4 and UDP with no encryption.
-  // |tcp| - true for TCP false UDP.
-  // |ipv6| - true for IP version 6 false for version 4.
-  // |authentication_overhead| - number of bytes to leave for an authentication
-  // header.
-  // Returns -1 on failure else 0
-  // TODO(michaelt): deprecate the function.
-  virtual int32_t SetTransportOverhead(bool tcp,
-                                       bool ipv6,
-                                       uint8_t authentication_overhead = 0) = 0;
+  // Sets the maximum size of an RTP packet, including RTP headers.
+  virtual void SetMaxRtpPacketSize(size_t size) = 0;
 
-  // Sets transtport overhead per packet.
-  virtual void SetTransportOverhead(int transport_overhead_per_packet) = 0;
-
-  // Returns max payload length, which is a combination of the configuration
-  // MaxTransferUnit and TransportOverhead.
+  // Returns max payload length.
   // Does not account for RTP headers and FEC/ULP/RED overhead (when FEC is
   // enabled).
-  virtual uint16_t MaxPayloadLength() const = 0;
+  virtual size_t MaxPayloadSize() const = 0;
 
-  // Returns max data payload length, which is a combination of the
-  // configuration MaxTransferUnit, headers and TransportOverhead.
-  // Takes into account RTP headers and FEC/ULP/RED overhead (when FEC is
-  // enabled).
-  virtual uint16_t MaxDataPayloadLength() const = 0;
+  // Returns max RTP packet size. Takes into account RTP headers and
+  // FEC/ULP/RED overhead (when FEC is enabled).
+  virtual size_t MaxRtpPacketSize() const = 0;
 
   // Sets codec name and payload type. Returns -1 on failure else 0.
   virtual int32_t RegisterSendPayload(const CodecInst& voice_codec) = 0;
@@ -162,6 +154,8 @@ class RtpRtcp : public Module {
                                                  uint8_t id) = 0;
 
   virtual int32_t DeregisterSendRtpHeaderExtension(RTPExtensionType type) = 0;
+
+  virtual bool HasBweExtensions() const = 0;
 
   // Returns start timestamp.
   virtual uint32_t StartTimestamp() const = 0;
@@ -255,9 +249,10 @@ class RtpRtcp : public Module {
                                 uint16_t sequence_number,
                                 int64_t capture_time_ms,
                                 bool retransmission,
-                                int probe_cluster_id) = 0;
+                                const PacedPacketInfo& pacing_info) = 0;
 
-  virtual size_t TimeToSendPadding(size_t bytes, int probe_cluster_id) = 0;
+  virtual size_t TimeToSendPadding(size_t bytes,
+                                   const PacedPacketInfo& pacing_info) = 0;
 
   // Called on generation of new statistics after an RTP send.
   virtual void RegisterSendChannelRtpStatisticsCallback(
@@ -422,14 +417,17 @@ class RtpRtcp : public Module {
   // BWE feedback packets.
   virtual bool SendFeedbackPacket(const rtcp::TransportFeedback& packet) = 0;
 
+  virtual void SetVideoBitrateAllocation(const BitrateAllocation& bitrate) = 0;
+
   // **************************************************************************
   // Audio
   // **************************************************************************
 
-  // Sets audio packet size, used to determine when it's time to send a DTMF
-  // packet in silence (CNG).
+  // This function is deprecated. It was previously used to determine when it
+  // was time to send a DTMF packet in silence (CNG).
   // Returns -1 on failure else 0.
-  virtual int32_t SetAudioPacketSize(uint16_t packet_size_samples) = 0;
+  RTC_DEPRECATED virtual int32_t SetAudioPacketSize(
+      uint16_t packet_size_samples) = 0;
 
   // Sends a TelephoneEvent tone using RFC 2833 (4733).
   // Returns -1 on failure else 0.

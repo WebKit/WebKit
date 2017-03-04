@@ -13,14 +13,10 @@
 
 #import <WebRTC/RTCMacros.h>
 
-#import "webrtc/api/datachannelinterface.h"
-
 NS_ASSUME_NONNULL_BEGIN
 
 RTC_EXPORT
-@interface RTCDataChannelConfiguration : NSObject {
- webrtc::DataChannelInit _nativeDataChannelInit;
-}
+@interface RTCDataChannelConfiguration : NSObject
 
 /** Set to YES if ordered delivery is required. */
 @property(nonatomic, assign) BOOL isOrdered;

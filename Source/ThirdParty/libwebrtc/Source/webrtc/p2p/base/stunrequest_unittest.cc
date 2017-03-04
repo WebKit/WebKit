@@ -55,14 +55,9 @@ class StunRequestTest : public testing::Test,
     return msg;
   }
   static int TotalDelay(int sends) {
-    int total = 0;
-    for (int i = 0; i < sends; i++) {
-      if (i < 4)
-        total += 100 << i;
-      else
-        total += 1600;
-    }
-    return total;
+    std::vector<int> delays = {0,    250,   750,   1750,  3750,
+                               7750, 15750, 23750, 31750, 39750};
+    return delays[sends];
   }
 
   StunRequestManager manager_;
@@ -142,10 +137,8 @@ TEST_F(StunRequestTest, TestUnexpected) {
   delete res;
 }
 
-// Test that requests are sent at the right times, and that the 9th request
-// (sent at 7900 ms) can be properly replied to.
+// Test that requests are sent at the right times.
 TEST_F(StunRequestTest, TestBackoff) {
-  const int MAX_TIMEOUT_MS = 10000;
   rtc::ScopedFakeClock fake_clock;
   StunMessage* req = CreateStunMessage(STUN_BINDING_REQUEST, NULL);
 
@@ -153,7 +146,8 @@ TEST_F(StunRequestTest, TestBackoff) {
   manager_.Send(new StunRequestThunker(req, this));
   StunMessage* res = CreateStunMessage(STUN_BINDING_RESPONSE, req);
   for (int i = 0; i < 9; ++i) {
-    EXPECT_TRUE_SIMULATED_WAIT(request_count_ != i, MAX_TIMEOUT_MS, fake_clock);
+    EXPECT_TRUE_SIMULATED_WAIT(request_count_ != i, STUN_TOTAL_TIMEOUT,
+                               fake_clock);
     int64_t elapsed = rtc::TimeMillis() - start;
     LOG(LS_INFO) << "STUN request #" << (i + 1)
                  << " sent at " << elapsed << " ms";
@@ -168,15 +162,14 @@ TEST_F(StunRequestTest, TestBackoff) {
   delete res;
 }
 
-// Test that we timeout properly if no response is received in 9500 ms.
+// Test that we timeout properly if no response is received.
 TEST_F(StunRequestTest, TestTimeout) {
   rtc::ScopedFakeClock fake_clock;
   StunMessage* req = CreateStunMessage(STUN_BINDING_REQUEST, NULL);
   StunMessage* res = CreateStunMessage(STUN_BINDING_RESPONSE, req);
 
   manager_.Send(new StunRequestThunker(req, this));
-  // Simulate the 9500 ms STUN timeout
-  SIMULATED_WAIT(false, 9500, fake_clock);
+  SIMULATED_WAIT(false, cricket::STUN_TOTAL_TIMEOUT, fake_clock);
 
   EXPECT_FALSE(manager_.CheckResponse(res));
   EXPECT_TRUE(response_ == NULL);

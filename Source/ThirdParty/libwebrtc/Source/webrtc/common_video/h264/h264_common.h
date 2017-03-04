@@ -14,7 +14,6 @@
 #include <memory>
 #include <vector>
 
-#include "webrtc/base/common.h"
 #include "webrtc/base/buffer.h"
 
 namespace webrtc {

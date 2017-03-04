@@ -27,7 +27,7 @@ void SendTimeHistory::Clear() {
 
 void SendTimeHistory::AddAndRemoveOld(uint16_t sequence_number,
                                       size_t payload_size,
-                                      int probe_cluster_id) {
+                                      const PacedPacketInfo& pacing_info) {
   int64_t now_ms = clock_->TimeInMilliseconds();
   // Remove old.
   while (!history_.empty() &&
@@ -45,7 +45,7 @@ void SendTimeHistory::AddAndRemoveOld(uint16_t sequence_number,
   history_.insert(std::make_pair(
       unwrapped_seq_num,
       PacketInfo(creation_time_ms, kNoArrivalTimeMs, kNoSendTimeMs,
-                 sequence_number, payload_size, probe_cluster_id)));
+                 sequence_number, payload_size, pacing_info)));
 }
 
 bool SendTimeHistory::OnSentPacket(uint16_t sequence_number,

@@ -1545,7 +1545,7 @@ void WebRtcNsx_ProcessCore(NoiseSuppressionFixedC* inst,
 #ifdef NS_FILEDEBUG
   if (fwrite(spframe, sizeof(short),
              inst->blockLen10ms, inst->infile) != inst->blockLen10ms) {
-    RTC_DCHECK(false);
+    RTC_NOTREACHED();
   }
 #endif
 
@@ -2025,7 +2025,7 @@ void WebRtcNsx_ProcessCore(NoiseSuppressionFixedC* inst,
 #ifdef NS_FILEDEBUG
   if (fwrite(outframe, sizeof(short),
              inst->blockLen10ms, inst->outfile) != inst->blockLen10ms) {
-    RTC_DCHECK(false);
+    RTC_NOTREACHED();
   }
 #endif
 

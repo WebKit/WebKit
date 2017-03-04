@@ -21,6 +21,22 @@
 #include "webrtc/base/task_queue_posix.h"
 
 namespace rtc {
+namespace {
+
+using Priority = TaskQueue::Priority;
+
+int TaskQueuePriorityToGCD(Priority priority) {
+  switch (priority) {
+    case Priority::NORMAL:
+      return DISPATCH_QUEUE_PRIORITY_DEFAULT;
+    case Priority::HIGH:
+      return DISPATCH_QUEUE_PRIORITY_HIGH;
+    case Priority::LOW:
+      return DISPATCH_QUEUE_PRIORITY_LOW;
+  }
+}
+}
+
 using internal::GetQueuePtrTls;
 using internal::AutoSetCurrentQueuePtr;
 
@@ -69,14 +85,13 @@ struct TaskQueue::PostTaskAndReplyContext : public TaskQueue::TaskContext {
                                    std::unique_ptr<QueuedTask> second_task)
       : TaskContext(second_queue_ctx, std::move(second_task)),
         first_queue_ctx(first_queue_ctx),
-        first_task(std::move(first_task)) {
+        first_task(std::move(first_task)),
+        reply_queue_(second_queue_ctx->queue->queue_) {
     // Retain the reply queue for as long as this object lives.
     // If we don't, we may have memory leaks and/or failures.
-    dispatch_retain(first_queue_ctx->queue->queue_);
+    dispatch_retain(reply_queue_);
   }
-  ~PostTaskAndReplyContext() override {
-    dispatch_release(first_queue_ctx->queue->queue_);
-  }
+  ~PostTaskAndReplyContext() override { dispatch_release(reply_queue_); }
 
   static void RunTask(void* context) {
     auto* rc = static_cast<PostTaskAndReplyContext*>(context);
@@ -87,14 +102,15 @@ struct TaskQueue::PostTaskAndReplyContext : public TaskQueue::TaskContext {
     }
     // Post the reply task.  This hands the work over to the parent struct.
     // This task will eventually delete |this|.
-    dispatch_async_f(rc->queue_ctx->queue->queue_, rc, &TaskContext::RunTask);
+    dispatch_async_f(rc->reply_queue_, rc, &TaskContext::RunTask);
   }
 
   QueueContext* const first_queue_ctx;
   std::unique_ptr<QueuedTask> first_task;
+  dispatch_queue_t reply_queue_;
 };
 
-TaskQueue::TaskQueue(const char* queue_name)
+TaskQueue::TaskQueue(const char* queue_name, Priority priority /*= NORMAL*/)
     : queue_(dispatch_queue_create(queue_name, DISPATCH_QUEUE_SERIAL)),
       context_(new QueueContext(this)) {
   RTC_DCHECK(queue_name);
@@ -104,6 +120,9 @@ TaskQueue::TaskQueue(const char* queue_name)
   // to the queue is released.  This may run after the TaskQueue object has
   // been deleted.
   dispatch_set_finalizer_f(queue_, &QueueContext::DeleteContext);
+
+  dispatch_set_target_queue(
+      queue_, dispatch_get_global_queue(TaskQueuePriorityToGCD(priority), 0));
 }
 
 TaskQueue::~TaskQueue() {

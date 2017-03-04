@@ -17,10 +17,15 @@
 #include <algorithm>
 #include <cmath>
 
-#include "webrtc/call.h"
+#include "webrtc/base/logging.h"
+#include "webrtc/call/call.h"
 #include "webrtc/system_wrappers/include/clock.h"
 
 namespace webrtc {
+
+namespace {
+constexpr int64_t kDefaultProcessIntervalMs = 5;
+}
 
 FakeNetworkPipe::FakeNetworkPipe(Clock* clock,
                                  const FakeNetworkPipe::Config& config)
@@ -32,30 +37,14 @@ FakeNetworkPipe::FakeNetworkPipe(Clock* clock,
     : clock_(clock),
       packet_receiver_(NULL),
       random_(seed),
-      config_(config),
+      config_(),
       dropped_packets_(0),
       sent_packets_(0),
       total_packet_delay_(0),
       bursting_(false),
-      next_process_time_(clock_->TimeInMilliseconds()) {
-  double prob_loss = config.loss_percent / 100.0;
-  if (config_.avg_burst_loss_length == -1) {
-    // Uniform loss
-    prob_loss_bursting_ = prob_loss;
-    prob_start_bursting_ = prob_loss;
-  } else {
-    // Lose packets according to a gilbert-elliot model.
-    int avg_burst_loss_length = config.avg_burst_loss_length;
-    int min_avg_burst_loss_length = std::ceil(prob_loss / (1 - prob_loss));
-
-    RTC_CHECK_GT(avg_burst_loss_length, min_avg_burst_loss_length)
-        << "For a total packet loss of " << config.loss_percent << "%% then"
-        << " avg_burst_loss_length must be " << min_avg_burst_loss_length + 1
-        << " or higher.";
-
-    prob_loss_bursting_ = (1.0 - 1.0 / avg_burst_loss_length);
-    prob_start_bursting_ = prob_loss / (1 - prob_loss) / avg_burst_loss_length;
-  }
+      next_process_time_(clock_->TimeInMilliseconds()),
+      last_log_time_(clock_->TimeInMilliseconds()) {
+  SetConfig(config);
 }
 
 FakeNetworkPipe::~FakeNetworkPipe() {
@@ -76,6 +65,24 @@ void FakeNetworkPipe::SetReceiver(PacketReceiver* receiver) {
 void FakeNetworkPipe::SetConfig(const FakeNetworkPipe::Config& config) {
   rtc::CritScope crit(&lock_);
   config_ = config;  // Shallow copy of the struct.
+  double prob_loss = config.loss_percent / 100.0;
+  if (config_.avg_burst_loss_length == -1) {
+    // Uniform loss
+    prob_loss_bursting_ = prob_loss;
+    prob_start_bursting_ = prob_loss;
+  } else {
+    // Lose packets according to a gilbert-elliot model.
+    int avg_burst_loss_length = config.avg_burst_loss_length;
+    int min_avg_burst_loss_length = std::ceil(prob_loss / (1 - prob_loss));
+
+    RTC_CHECK_GT(avg_burst_loss_length, min_avg_burst_loss_length)
+        << "For a total packet loss of " << config.loss_percent << "%% then"
+        << " avg_burst_loss_length must be " << min_avg_burst_loss_length + 1
+        << " or higher.";
+
+    prob_loss_bursting_ = (1.0 - 1.0 / avg_burst_loss_length);
+    prob_start_bursting_ = prob_loss / (1 - prob_loss) / avg_burst_loss_length;
+  }
 }
 
 void FakeNetworkPipe::SendPacket(const uint8_t* data, size_t data_length) {
@@ -134,6 +141,14 @@ void FakeNetworkPipe::Process() {
   std::queue<NetworkPacket*> packets_to_deliver;
   {
     rtc::CritScope crit(&lock_);
+    if (time_now - last_log_time_ > 5000) {
+      int64_t queueing_delay_ms = 0;
+      if (!capacity_link_.empty()) {
+        queueing_delay_ms = time_now - capacity_link_.front()->send_time();
+      }
+      LOG(LS_INFO) << "Network queue: " << queueing_delay_ms << " ms.";
+      last_log_time_ = time_now;
+    }
     // Check the capacity link first.
     while (!capacity_link_.empty() &&
            time_now >= capacity_link_.front()->arrival_time()) {
@@ -164,8 +179,6 @@ void FakeNetworkPipe::Process() {
             (*delay_link_.rbegin())->arrival_time() - packet->arrival_time();
       }
       packet->IncrementArrivalTime(arrival_time_jitter);
-      if (packet->arrival_time() < next_process_time_)
-        next_process_time_ = packet->arrival_time();
       delay_link_.insert(packet);
     }
 
@@ -190,13 +203,14 @@ void FakeNetworkPipe::Process() {
                                     packet->data_length(), PacketTime());
     delete packet;
   }
+
+  next_process_time_ = !delay_link_.empty()
+                           ? (*delay_link_.begin())->arrival_time()
+                           : time_now + kDefaultProcessIntervalMs;
 }
 
 int64_t FakeNetworkPipe::TimeUntilNextProcess() const {
   rtc::CritScope crit(&lock_);
-  const int64_t kDefaultProcessIntervalMs = 5;
-  if (capacity_link_.empty() || delay_link_.empty())
-    return kDefaultProcessIntervalMs;
   return std::max<int64_t>(next_process_time_ - clock_->TimeInMilliseconds(),
                            0);
 }

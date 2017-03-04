@@ -38,6 +38,9 @@ class VoEBaseImpl : public VoEBase,
   AudioDeviceModule* audio_device_module() override {
     return shared_->audio_device();
   }
+  voe::TransmitMixer* transmit_mixer() override {
+    return shared_->transmit_mixer();
+  }
   int Terminate() override;
 
   int CreateChannel() override;

@@ -27,8 +27,8 @@
 
 namespace webrtc {
 namespace test {
-void MyClNotifyHandler(HANDLE ClRegCtx, HANDLE ClIfcCtx, ULONG Event,
-                       HANDLE SubCode, ULONG BufSize, PVOID Buffer);
+void CALLBACK MyClNotifyHandler(HANDLE ClRegCtx, HANDLE ClIfcCtx, ULONG Event,
+                                HANDLE SubCode, ULONG BufSize, PVOID Buffer);
 
 
 typedef ULONG (WINAPI *registerFn)(ULONG, HANDLE, PTCI_CLIENT_FUNC_LIST,

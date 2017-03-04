@@ -19,6 +19,8 @@
 
 namespace webrtc {
 
+struct CodecInst;
+
 class TelephoneEventHandler;
 
 // This strategy deals with media-specific RTP packet processing.
@@ -54,12 +56,9 @@ class RTPReceiverStrategy {
   // TODO(phoglund): should move out of here along with other payload stuff.
   virtual bool ShouldReportCsrcChanges(uint8_t payload_type) const = 0;
 
-  // Notifies the strategy that we have created a new non-RED payload type in
-  // the payload registry.
-  virtual int32_t OnNewPayloadTypeCreated(
-      const char payloadName[RTP_PAYLOAD_NAME_SIZE],
-      int8_t payloadType,
-      uint32_t frequency) = 0;
+  // Notifies the strategy that we have created a new non-RED audio payload type
+  // in the payload registry.
+  virtual int32_t OnNewPayloadTypeCreated(const CodecInst& audio_codec) = 0;
 
   // Invokes the OnInitializeDecoder callback in a media-specific way.
   virtual int32_t InvokeOnInitializeDecoder(

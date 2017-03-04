@@ -14,7 +14,6 @@
 #include <vector>
 
 #include "webrtc/base/basictypes.h"
-#include "webrtc/base/constructormagic.h"
 #include "webrtc/modules/rtp_rtcp/source/rtcp_packet/psfb.h"
 
 namespace webrtc {
@@ -73,8 +72,6 @@ class Sli : public Psfb {
   }
 
   std::vector<Macroblocks> items_;
-
-  RTC_DISALLOW_COPY_AND_ASSIGN(Sli);
 };
 
 }  // namespace rtcp

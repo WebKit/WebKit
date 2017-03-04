@@ -237,7 +237,7 @@ TEST(SocketAddressTest, TestToFromSockAddrStorage) {
   EXPECT_FALSE(SocketAddressFromSockAddrStorage(addr_storage, &addr));
   EXPECT_EQ(from, addr);
 
-  EXPECT_FALSE(SocketAddressFromSockAddrStorage(addr_storage, NULL));
+  EXPECT_FALSE(SocketAddressFromSockAddrStorage(addr_storage, nullptr));
 }
 
 bool AreEqual(const SocketAddress& addr1,

@@ -44,9 +44,10 @@ class PacketRouter : public PacedSender::PacketSender,
                         uint16_t sequence_number,
                         int64_t capture_timestamp,
                         bool retransmission,
-                        int probe_cluster_id) override;
+                        const PacedPacketInfo& packet_info) override;
 
-  size_t TimeToSendPadding(size_t bytes, int probe_cluster_id) override;
+  size_t TimeToSendPadding(size_t bytes,
+                           const PacedPacketInfo& packet_info) override;
 
   void SetTransportWideSequenceNumber(uint16_t sequence_number);
   uint16_t AllocateSequenceNumber() override;

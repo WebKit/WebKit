@@ -65,7 +65,7 @@ bool ReportBlock::Parse(const uint8_t* buffer, size_t length) {
 
 void ReportBlock::Create(uint8_t* buffer) const {
   // Runtime check should be done while setting cumulative_lost.
-  RTC_DCHECK_LT(cumulative_lost(), (1u << 24));  // Have only 3 bytes for it.
+  RTC_DCHECK_LT(cumulative_lost(), (1 << 24));  // Have only 3 bytes for it.
 
   ByteWriter<uint32_t>::WriteBigEndian(&buffer[0], source_ssrc());
   ByteWriter<uint8_t>::WriteBigEndian(&buffer[4], fraction_lost());

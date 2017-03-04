@@ -15,7 +15,7 @@
 
 #include <string>
 
-#include "webrtc/modules/audio_coding/codecs/builtin_audio_decoder_factory.h"
+#include "webrtc/api/audio_codecs/builtin_audio_decoder_factory.h"
 #include "webrtc/modules/audio_coding/codecs/mock/mock_audio_decoder_factory.h"
 #include "webrtc/modules/audio_coding/neteq/mock/mock_audio_decoder.h"
 #include "webrtc/test/gmock.h"

@@ -96,7 +96,8 @@ TEST(AudioCodingModuleTest, TwoWayCommunication) {
 }
 #endif
 
-#if defined(WEBRTC_ANDROID)
+// Disabled on ios as flaky, see https://crbug.com/webrtc/7057
+#if defined(WEBRTC_ANDROID) || defined(WEBRTC_IOS)
 TEST(AudioCodingModuleTest, DISABLED_TestStereo) {
 #else
 TEST(AudioCodingModuleTest, TestStereo) {
@@ -108,7 +109,8 @@ TEST(AudioCodingModuleTest, TestStereo) {
   Trace::ReturnTrace();
 }
 
-#if defined(WEBRTC_ANDROID)
+// Disabled on ios as flaky, see https://crbug.com/webrtc/7057
+#if defined(WEBRTC_ANDROID) || defined(WEBRTC_IOS)
 TEST(AudioCodingModuleTest, DISABLED_TestWebRtcVadDtx) {
 #else
 TEST(AudioCodingModuleTest, TestWebRtcVadDtx) {
@@ -128,7 +130,12 @@ TEST(AudioCodingModuleTest, TestOpusDtx) {
   Trace::ReturnTrace();
 }
 
+// Disabled on ios as flaky, see https://crbug.com/webrtc/7057
+#if defined(WEBRTC_IOS)
+TEST(AudioCodingModuleTest, DISABLED_TestOpus) {
+#else
 TEST(AudioCodingModuleTest, TestOpus) {
+#endif
   Trace::CreateTrace();
   Trace::SetTraceFile((webrtc::test::OutputPath() +
       "acm_opus_trace.txt").c_str());
@@ -160,7 +167,12 @@ TEST(AudioCodingModuleTest, TestPacketLossStereo) {
   Trace::ReturnTrace();
 }
 
+// Disabled on ios as flake, see https://crbug.com/webrtc/7057
+#if defined(WEBRTC_IOS)
+TEST(AudioCodingModuleTest, DISABLED_TestPacketLossStereoBurst) {
+#else
 TEST(AudioCodingModuleTest, TestPacketLossStereoBurst) {
+#endif
   Trace::CreateTrace();
   Trace::SetTraceFile((webrtc::test::OutputPath() +
       "acm_packetloss_burst_trace.txt").c_str());
