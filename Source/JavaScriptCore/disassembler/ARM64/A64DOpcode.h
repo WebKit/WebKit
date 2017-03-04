@@ -585,6 +585,33 @@ protected:
     bool is64BitRT() { return ((opNumber() & 0x17) == 0x02) || ((opNumber() & 0x1e) == 0x18); }
 };
 
+class A64DOpcodeLoadStoreExclusive : public A64DOpcodeLoadStore {
+private:
+    static const char* const s_opNames[64];
+
+public:
+    static const uint32_t mask = 0x3f000000;
+    static const uint32_t pattern = 0x08000000;
+
+    DEFINE_STATIC_FORMAT(A64DOpcodeLoadStoreExclusive, thisObj);
+
+    const char* format();
+
+    const char* opName()
+    {
+        return s_opNames[opNumber()];
+    }
+
+    unsigned rs() { return rm(); }
+    unsigned rt2() { return (m_opcode >> 10) & 0x1f; }
+    unsigned o0() { return (m_opcode >> 15) & 0x1; }
+    unsigned o1() { return (m_opcode >> 21) & 0x1; }
+    unsigned o2() { return (m_opcode >> 23) & 0x1; }
+    unsigned loadBit() { return (m_opcode >> 22) & 0x1; }
+    unsigned opNumber() { return (size() << 4 ) | (o2() << 3) | (loadBit() << 2) | (o1() << 1) | o0(); }
+    bool isPairOp() { return (size() & 0x10) && o1(); }
+};
+
 class A64DOpcodeLoadStoreImmediate : public A64DOpcodeLoadStore {
 private:
     static const char* const s_unprivilegedOpNames[32];

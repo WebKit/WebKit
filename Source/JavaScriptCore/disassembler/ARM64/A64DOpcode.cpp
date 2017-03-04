@@ -66,6 +66,7 @@ struct OpcodeGroupInitializer {
 
 static OpcodeGroupInitializer opcodeGroupList[] = {
     OPCODE_GROUP_ENTRY(0x08, A64DOpcodeLoadStoreRegisterPair),
+    OPCODE_GROUP_ENTRY(0x08, A64DOpcodeLoadStoreExclusive),
     OPCODE_GROUP_ENTRY(0x09, A64DOpcodeLoadStoreRegisterPair),
     OPCODE_GROUP_ENTRY(0x0a, A64DOpcodeLogicalShiftedRegister),
     OPCODE_GROUP_ENTRY(0x0b, A64DOpcodeAddSubtractExtendedRegister),
@@ -906,6 +907,59 @@ const char* A64DOpcodeDmb::format()
         appendString(thisOption);
     else
         appendUnsignedImmediate(crM());
+
+    return m_formatBuffer;
+}
+
+const char* const A64DOpcodeLoadStoreExclusive::s_opNames[64] = {
+    "stxrb", "stlxrb", 0, 0, "ldxrb", "ldaxrb", 0, 0,
+    0, "stlrb", 0, 0, 0, "ldarb", 0, 0,
+    "stxrh", "stlxrh", 0, 0, "ldxrh", "ldaxrh", 0, 0,
+    0, "stlrh", 0, 0, 0, "ldarh", 0, 0,
+    "stxr", "stlxr", "stxp", "stlxp", "ldxr", "ldaxr", "ldxp", "ldaxp",
+    0, "stlr", 0, 0, 0, "ldar", 0, 0,
+    "stxr", "stlxr", "stxp", "stlxp", "ldxr", "ldaxr", "ldxp", "ldaxp",
+    0, "stlr", 0, 0, 0, "ldar", 0, 0
+};
+
+const char* A64DOpcodeLoadStoreExclusive::format()
+{
+    if (o2() && !o1() && !o0())
+        return A64DOpcode::format();
+
+    if (o2() && o1())
+        return A64DOpcode::format();
+
+    if ((size() < 2) && o1())
+        return A64DOpcode::format();
+
+    if (loadBit() && (rs() != 0x1f))
+        return A64DOpcode::format();
+
+    if (!isPairOp() && (rt2() != 0x1f))
+        return A64DOpcode::format();
+
+    const char* thisOpName = opName();
+
+    if (!thisOpName)
+        return A64DOpcode::format();
+
+    appendInstructionName(thisOpName);
+
+    if (!loadBit()) {
+        appendZROrRegisterName(rs(), size() == 0x3);
+        appendSeparator();
+    }
+
+    appendZROrRegisterName(rt(), size() == 0x3);
+    appendSeparator();
+    if (isPairOp()) {
+        appendZROrRegisterName(rt2(), size() == 0x3);
+        appendSeparator();
+    }
+    appendCharacter('[');
+    appendSPOrRegisterName(rn());
+    appendCharacter(']');
 
     return m_formatBuffer;
 }
