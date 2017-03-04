@@ -1,3 +1,13 @@
+2017-03-04  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Remove duplicate initialization guard in WebKit2 logging initialization
+        https://bugs.webkit.org/show_bug.cgi?id=169164
+
+        Reviewed by Dan Bernstein.
+
+        * Platform/Logging.cpp:
+        (WebKit::initializeLogChannelsIfNecessary):
+
 2017-03-03  Youenn Fablet  <youenn@apple.com>
 
         [WebRTC] Update libwebrtc source code
