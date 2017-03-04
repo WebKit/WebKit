@@ -1,0 +1,12 @@
+Testing the size of the media element in a video media document on iOS.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS getComputedStyle(media).height became "240px"
+PASS getComputedStyle(media).width is "320px"
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

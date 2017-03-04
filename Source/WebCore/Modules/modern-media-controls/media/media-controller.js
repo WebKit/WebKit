@@ -41,6 +41,8 @@ class MediaController
         if (host) {
             host.controlsDependOnPageScaleFactor = this.layoutTraits & LayoutTraits.iOS;
             this.container.appendChild(host.textTrackContainer);
+            if (host.isInMediaDocument)
+                this.mediaDocumentController = new MediaDocumentController(this);
         }
 
         this._updateControlsIfNeeded();
@@ -60,7 +62,15 @@ class MediaController
 
     get isAudio()
     {
-        return this.media instanceof HTMLAudioElement || (this.media.readyState >= HTMLMediaElement.HAVE_METADATA && this.media.videoWidth === 0);
+        if (this.media instanceof HTMLAudioElement)
+            return true;
+
+        if (this.media.readyState < HTMLMediaElement.HAVE_METADATA)
+            return false;
+
+        const isLiveBroadcast = this.media.duration === Number.POSITIVE_INFINITY;
+        const hasVideoTracks = this.media.videoWidth != 0;
+        return !isLiveBroadcast && !hasVideoTracks;
     }
 
     get layoutTraits()

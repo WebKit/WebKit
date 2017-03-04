@@ -56,7 +56,7 @@ class PiPSupport extends MediaControllerSupport
     {
         const media = this.mediaController.media;
         if (media.webkitSupportsPresentationMode)
-            this.control.enabled = media instanceof HTMLVideoElement && media.webkitSupportsPresentationMode(PiPMode) && !media.webkitCurrentPlaybackTargetIsWireless;
+            this.control.enabled = !this.mediaController.isAudio && media.webkitSupportsPresentationMode(PiPMode) && !media.webkitCurrentPlaybackTargetIsWireless;
         else
             this.control.enabled = false;
     }
