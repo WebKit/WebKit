@@ -28,6 +28,14 @@ import os
 
 from webkitpy.common.system.systemhost import SystemHost
 
+FEATURE_DEFINE_FILES = [
+    "Source/JavaScriptCore/Configurations/FeatureDefines.xcconfig",
+    "Source/WebCore/Configurations/FeatureDefines.xcconfig",
+    "Source/WebCore/PAL/Configurations/FeatureDefines.xcconfig",
+    "Source/WebKit/mac/Configurations/FeatureDefines.xcconfig",
+    "Source/WebKit2/Configurations/FeatureDefines.xcconfig",
+    "Tools/TestWebKitAPI/Configurations/FeatureDefines.xcconfig",
+]
 
 class FeatureDefinesChecker(object):
     categories = set(['featuredefines/new', 'featuredefines/equality'])
@@ -40,27 +48,18 @@ class FeatureDefinesChecker(object):
         self._fs = self._host.filesystem
 
     def check(self, inline=None):
-        feature_defines_files = [
-            "Source/JavaScriptCore/Configurations/FeatureDefines.xcconfig",
-            "Source/WebCore/Configurations/FeatureDefines.xcconfig",
-            "Source/WebCore/PAL/Configurations/FeatureDefines.xcconfig",
-            "Source/WebKit/mac/Configurations/FeatureDefines.xcconfig",
-            "Source/WebKit2/Configurations/FeatureDefines.xcconfig",
-            "Tools/TestWebKitAPI/Configurations/FeatureDefines.xcconfig",
-        ]
-
-        if self._file_path not in feature_defines_files:
+        if self._file_path not in FEATURE_DEFINE_FILES:
             self._handle_style_error(0, 'featuredefines/new', 5, "Patch introduces a new FeatureDefines.xcconfig, which check-webkit-style doesn't know about. Please add it to the list in featuredefines.py.")
             return
 
         with self._fs.open_binary_file_for_reading(self._file_path) as filehandle:
             baseline_content = filehandle.read()
 
-        other_feature_defines_files = feature_defines_files
+        other_feature_defines_files = FEATURE_DEFINE_FILES
         other_feature_defines_files.remove(self._file_path)
 
         for path in other_feature_defines_files:
             with self._fs.open_binary_file_for_reading(path) as filehandle:
                 test_content = filehandle.read()
                 if baseline_content != test_content:
-                    self._handle_style_error(0, 'featuredefines/equality', 5, "Any changes made to FeatureDefines should be made to all of them (changed file does not match {0}).".format(path))
+                    self._handle_style_error(0, 'featuredefines/equality', 5, "Any changes made to FeatureDefines should be made to all of them (changed file does not match {0}). Use sync-feature-defines if possible.".format(path))

@@ -1,3 +1,21 @@
+2017-03-03  Dean Jackson  <dino@apple.com>
+
+        Add a script to synchronize FeatureDefines.xcconfig files
+        https://bugs.webkit.org/show_bug.cgi?id=169151
+        <rdar://problem/30841856>
+
+        Reviewed by Simon Fraser.
+
+        I got sick of manually copying the FeatureDefines.xcconfig
+        files, so I added a script to do it. As long as you
+        run this after you've edited one, it will take the most
+        recently updated and copy it to all the others.
+
+        * Scripts/sync-feature-defines: Added.
+        * Scripts/webkitpy/style/checkers/featuredefines.py:
+        (FeatureDefinesChecker.check): Export the list of files,
+        and give a suggestion to use the sync script.
+
 2017-03-03  Alex Christensen  <achristensen@webkit.org>
 
         [URLParser] Fix file: as a relative file URL
