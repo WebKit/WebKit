@@ -100,7 +100,7 @@ Tools/Scripts/update-webkitgtk-libs
 Run the following command to build WebKit with debugging symbols for GTK+ port:
 
 ```
-Tools/Scripts/build-webkit --debug --gtk.
+Tools/Scripts/build-webkit --debug --gtk
 ```
 
 Note that the procedure for building a release tarball is different.

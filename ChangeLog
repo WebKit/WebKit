@@ -1,3 +1,9 @@
+2017-03-04  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed, remove stray period from readme
+
+        * ReadMe.md:
+
 2017-03-03  Dean Jackson  <dino@apple.com>
 
         Add WebGPU compile flag and experimental feature flag
