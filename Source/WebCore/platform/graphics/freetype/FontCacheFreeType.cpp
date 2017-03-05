@@ -138,7 +138,7 @@ Ref<Font> FontCache::lastResortFallbackFont(const FontDescription& fontDescripti
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-Vector<FontTraitsMask> FontCache::getTraitsInFamily(const AtomicString&)
+auto FontCache::getTraitsAndStretchInFamily(const AtomicString& familyName) -> Vector<TraitsAndStretch>
 {
     return { };
 }

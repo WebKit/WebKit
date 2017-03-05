@@ -203,7 +203,11 @@ public:
 
     // This function exists so CSSFontSelector can have a unified notion of preinstalled fonts and @font-face.
     // It comes into play when you create an @font-face which shares a family name as a preinstalled font.
-    Vector<FontTraitsMask> getTraitsInFamily(const AtomicString&);
+    struct TraitsAndStretch {
+        FontTraitsMask traits;
+        FontSelectionRange stretch;
+    };
+    Vector<TraitsAndStretch> getTraitsAndStretchInFamily(const AtomicString&);
 
     WEBCORE_EXPORT RefPtr<Font> fontForFamily(const FontDescription&, const AtomicString&, const FontFeatureSettings* fontFaceFeatures = nullptr, const FontVariantSettings* fontFaceVariantSettings = nullptr, bool checkingAlternateName = false);
     WEBCORE_EXPORT Ref<Font> lastResortFallbackFont(const FontDescription&);

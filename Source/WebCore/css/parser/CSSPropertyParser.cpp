@@ -4185,9 +4185,7 @@ bool CSSPropertyParser::parseFontFaceDescriptor(CSSPropertyID propId)
         parsedValue = consumeFontFaceUnicodeRange(m_range);
         break;
     case CSSPropertyFontStretch:
-        // FIXME: Implement this.
-        m_range.consumeIncludingWhitespace();
-        parsedValue = CSSValuePool::singleton().createIdentifierValue(CSSValueNormal);
+        parsedValue = consumeFontStretch(m_range);
         break;
     case CSSPropertyFontStyle: {
         CSSValueID id = m_range.consumeIncludingWhitespace().id();

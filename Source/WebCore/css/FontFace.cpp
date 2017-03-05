@@ -184,9 +184,16 @@ ExceptionOr<void> FontFace::setWeight(const String& weight)
     return { };
 }
 
-ExceptionOr<void> FontFace::setStretch(const String&)
+ExceptionOr<void> FontFace::setStretch(const String& stretch)
 {
-    // We don't support font-stretch. Swallow the call.
+    if (stretch.isEmpty())
+        return Exception { SYNTAX_ERR };
+
+    bool success = false;
+    if (auto value = parseString(stretch, CSSPropertyFontStretch))
+        success = m_backing->setStretch(*value);
+    if (!success)
+        return Exception { SYNTAX_ERR };
     return { };
 }
 
@@ -318,7 +325,33 @@ String FontFace::weight() const
 
 String FontFace::stretch() const
 {
-    return ASCIILiteral("normal");
+    m_backing->updateStyleIfNeeded();
+    auto stretch = m_backing->stretch();
+
+    auto rangeIsSingleValue = [](FontSelectionRange range, FontSelectionValue value) -> bool {
+        return range.minimum == value && range.maximum == value;
+    };
+
+    if (rangeIsSingleValue(stretch, FontSelectionValue(50)))
+        return ASCIILiteral("ultra-condensed");
+    if (rangeIsSingleValue(stretch, FontSelectionValue(62.5f)))
+        return ASCIILiteral("extra-condensed");
+    if (rangeIsSingleValue(stretch, FontSelectionValue(75)))
+        return ASCIILiteral("condensed");
+    if (rangeIsSingleValue(stretch, FontSelectionValue(87.5f)))
+        return ASCIILiteral("semi-condensed");
+    if (rangeIsSingleValue(stretch, FontSelectionValue(100)))
+        return ASCIILiteral("normal");
+    if (rangeIsSingleValue(stretch, FontSelectionValue(112.5f)))
+        return ASCIILiteral("semi-expanded");
+    if (rangeIsSingleValue(stretch, FontSelectionValue(125)))
+        return ASCIILiteral("expanded");
+    if (rangeIsSingleValue(stretch, FontSelectionValue(150)))
+        return ASCIILiteral("extra-expanded");
+    if (rangeIsSingleValue(stretch, FontSelectionValue(200)))
+        return ASCIILiteral("ultra-expanded");
+
+    return String::format("%f-%f", static_cast<float>(stretch.minimum), static_cast<float>(stretch.maximum));
 }
 
 String FontFace::unicodeRange() const

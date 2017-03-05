@@ -1,3 +1,15 @@
+2017-03-04  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Update CSSFontSelector's matching algorithm to understand ranges
+        https://bugs.webkit.org/show_bug.cgi?id=168892
+
+        Reviewed by Jon Lee.
+
+        Update CSS Font Loading API test to accept font-stretch values.
+
+        * fast/text/font-face-javascript-expected.txt:
+        * fast/text/font-face-javascript.html:
+
 2017-03-05  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Two file reset tests are failing in the bots since they were added in r213042

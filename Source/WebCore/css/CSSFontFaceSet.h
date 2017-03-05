@@ -67,7 +67,7 @@ public:
 
     ExceptionOr<bool> check(const String& font, const String& text);
 
-    CSSSegmentedFontFace* fontFace(FontTraitsMask, const AtomicString& family);
+    CSSSegmentedFontFace* fontFace(FontTraitsMask, FontSelectionValue stretch, const AtomicString& family);
 
     enum class Status { Loading, Loaded };
     Status status() const { return m_status; }

@@ -145,6 +145,7 @@ void CSSFontSelector::addFontFaceRule(StyleRuleFontFace& fontFaceRule, bool isIn
     RefPtr<CSSValue> fontFamily = style.getPropertyCSSValue(CSSPropertyFontFamily);
     RefPtr<CSSValue> fontStyle = style.getPropertyCSSValue(CSSPropertyFontStyle);
     RefPtr<CSSValue> fontWeight = style.getPropertyCSSValue(CSSPropertyFontWeight);
+    RefPtr<CSSValue> fontStretch = style.getPropertyCSSValue(CSSPropertyFontStretch);
     RefPtr<CSSValue> src = style.getPropertyCSSValue(CSSPropertySrc);
     RefPtr<CSSValue> unicodeRange = style.getPropertyCSSValue(CSSPropertyUnicodeRange);
     RefPtr<CSSValue> featureSettings = style.getPropertyCSSValue(CSSPropertyFontFeatureSettings);
@@ -167,6 +168,9 @@ void CSSFontSelector::addFontFaceRule(StyleRuleFontFace& fontFaceRule, bool isIn
     if (!fontWeight)
         fontWeight = CSSValuePool::singleton().createIdentifierValue(CSSValueNormal);
 
+    if (!fontStretch)
+        fontStretch = CSSValuePool::singleton().createIdentifierValue(CSSValueNormal);
+
     CSSValueList* rangeList = downcast<CSSValueList>(unicodeRange.get());
 
     CSSValueList& srcList = downcast<CSSValueList>(*src);
@@ -181,6 +185,8 @@ void CSSFontSelector::addFontFaceRule(StyleRuleFontFace& fontFaceRule, bool isIn
     if (!fontFace->setStyle(*fontStyle))
         return;
     if (!fontFace->setWeight(*fontWeight))
+        return;
+    if (!fontFace->setStretch(*fontStretch))
         return;
     if (rangeList && !fontFace->setUnicodeRange(*rangeList))
         return;
@@ -295,7 +301,7 @@ FontRanges CSSFontSelector::fontRangesForFamily(const FontDescription& fontDescr
     bool resolveGenericFamilyFirst = familyName == standardFamily;
 
     AtomicString familyForLookup = resolveGenericFamilyFirst ? resolveGenericFamily(m_document, fontDescription, familyName) : familyName;
-    auto* face = m_cssFontFaceSet->fontFace(fontDescription.traitsMask(), familyForLookup);
+    auto* face = m_cssFontFaceSet->fontFace(fontDescription.traitsMask(), fontDescription.stretch(), familyForLookup);
     if (!face) {
         if (!resolveGenericFamilyFirst)
             familyForLookup = resolveGenericFamily(m_document, fontDescription, familyName);

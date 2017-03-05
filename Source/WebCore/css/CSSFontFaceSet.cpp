@@ -101,18 +101,19 @@ void CSSFontFaceSet::ensureLocalFontFacesForFamilyRegistered(const String& famil
     if (m_locallyInstalledFacesLookupTable.contains(familyName))
         return;
 
-    Vector<FontTraitsMask> traitsMasks = FontCache::singleton().getTraitsInFamily(familyName);
-    if (traitsMasks.isEmpty())
+    Vector<FontCache::TraitsAndStretch> traitsAndStretch = FontCache::singleton().getTraitsAndStretchInFamily(familyName);
+    if (traitsAndStretch.isEmpty())
         return;
 
     Vector<Ref<CSSFontFace>> faces;
-    for (auto mask : traitsMasks) {
+    for (auto item : traitsAndStretch) {
         Ref<CSSFontFace> face = CSSFontFace::create(nullptr, nullptr, nullptr, true);
         
         Ref<CSSValueList> familyList = CSSValueList::createCommaSeparated();
         familyList->append(CSSValuePool::singleton().createFontFamilyValue(familyName));
         face->setFamilies(familyList.get());
-        face->setTraitsMask(mask);
+        face->setTraitsMask(item.traits);
+        face->setStretch(item.stretch);
         face->adoptSource(std::make_unique<CSSFontFaceSource>(face.get(), familyName));
         ASSERT(!face->allSourcesFailed());
         faces.append(WTFMove(face));
@@ -311,6 +312,17 @@ static std::optional<FontTraitsMask> computeFontTraitsMask(MutableStylePropertie
     return static_cast<FontTraitsMask>(static_cast<unsigned>(styleMask) | static_cast<unsigned>(weightMask));
 }
 
+static std::optional<FontSelectionValue> computeFontStretch(MutableStyleProperties& style)
+{
+    RefPtr<CSSValue> stretchValue = style.getPropertyCSSValue(CSSPropertyFontStretch).get();
+    if (!stretchValue)
+        stretchValue = CSSValuePool::singleton().createIdentifierValue(CSSValueNormal).ptr();
+
+    if (auto stretchOptional = CSSFontFace::calculateStretch(*stretchValue))
+        return stretchOptional.value();
+    return std::nullopt;
+}
+
 static HashSet<UChar32> codePointsFromString(StringView stringView)
 {
     HashSet<UChar32> result;
@@ -340,6 +352,12 @@ ExceptionOr<Vector<std::reference_wrapper<CSSFontFace>>> CSSFontFaceSet::matchin
     else
         return Exception { SYNTAX_ERR };
 
+    FontSelectionValue stretch;
+    if (auto stretchOptional = computeFontStretch(style.get()))
+        stretch = stretchOptional.value();
+    else
+        return Exception { SYNTAX_ERR };
+
     auto family = style->getPropertyCSSValue(CSSPropertyFontFamily);
     if (!is<CSSValueList>(family.get()))
         return Exception { SYNTAX_ERR };
@@ -359,7 +377,7 @@ ExceptionOr<Vector<std::reference_wrapper<CSSFontFace>>> CSSFontFaceSet::matchin
     for (auto codePoint : codePointsFromString(string)) {
         bool found = false;
         for (auto& family : familyOrder) {
-            auto* faces = fontFace(fontTraitsMask, family);
+            auto* faces = fontFace(fontTraitsMask, stretch, family);
             if (!faces)
                 continue;
             for (auto& constituentFace : faces->constituentFaces()) {
@@ -394,66 +412,7 @@ ExceptionOr<bool> CSSFontFaceSet::check(const String& font, const String& text)
     return true;
 }
 
-static bool fontFaceComparator(FontTraitsMask desiredTraitsMaskForComparison, const CSSFontFace& first, const CSSFontFace& second)
-{
-    FontTraitsMask firstTraitsMask = first.traitsMask();
-    FontTraitsMask secondTraitsMask = second.traitsMask();
-
-    bool firstHasDesiredStyle = firstTraitsMask & desiredTraitsMaskForComparison & FontStyleMask;
-    bool secondHasDesiredStyle = secondTraitsMask & desiredTraitsMaskForComparison & FontStyleMask;
-
-    if (firstHasDesiredStyle != secondHasDesiredStyle)
-        return firstHasDesiredStyle;
-
-    if ((desiredTraitsMaskForComparison & FontStyleItalicMask) && !first.isLocalFallback() && !second.isLocalFallback()) {
-        // Prefer a font that has indicated that it can only support italics to a font that claims to support
-        // all styles. The specialized font is more likely to be the one the author wants used.
-        bool firstRequiresItalics = (firstTraitsMask & FontStyleItalicMask) && !(firstTraitsMask & FontStyleNormalMask);
-        bool secondRequiresItalics = (secondTraitsMask & FontStyleItalicMask) && !(secondTraitsMask & FontStyleNormalMask);
-        if (firstRequiresItalics != secondRequiresItalics)
-            return firstRequiresItalics;
-    }
-
-    if (secondTraitsMask & desiredTraitsMaskForComparison & FontWeightMask)
-        return false;
-    if (firstTraitsMask & desiredTraitsMaskForComparison & FontWeightMask)
-        return true;
-
-    // http://www.w3.org/TR/2011/WD-css3-fonts-20111004/#font-matching-algorithm says :
-    //   - If the desired weight is less than 400, weights below the desired weight are checked in descending order followed by weights above the desired weight in ascending order until a match is found.
-    //   - If the desired weight is greater than 500, weights above the desired weight are checked in ascending order followed by weights below the desired weight in descending order until a match is found.
-    //   - If the desired weight is 400, 500 is checked first and then the rule for desired weights less than 400 is used.
-    //   - If the desired weight is 500, 400 is checked first and then the rule for desired weights less than 400 is used.
-
-    static const unsigned fallbackRuleSets = 9;
-    static const unsigned rulesPerSet = 8;
-    static const FontTraitsMask weightFallbackRuleSets[fallbackRuleSets][rulesPerSet] = {
-        { FontWeight200Mask, FontWeight300Mask, FontWeight400Mask, FontWeight500Mask, FontWeight600Mask, FontWeight700Mask, FontWeight800Mask, FontWeight900Mask },
-        { FontWeight100Mask, FontWeight300Mask, FontWeight400Mask, FontWeight500Mask, FontWeight600Mask, FontWeight700Mask, FontWeight800Mask, FontWeight900Mask },
-        { FontWeight200Mask, FontWeight100Mask, FontWeight400Mask, FontWeight500Mask, FontWeight600Mask, FontWeight700Mask, FontWeight800Mask, FontWeight900Mask },
-        { FontWeight500Mask, FontWeight300Mask, FontWeight200Mask, FontWeight100Mask, FontWeight600Mask, FontWeight700Mask, FontWeight800Mask, FontWeight900Mask },
-        { FontWeight400Mask, FontWeight300Mask, FontWeight200Mask, FontWeight100Mask, FontWeight600Mask, FontWeight700Mask, FontWeight800Mask, FontWeight900Mask },
-        { FontWeight700Mask, FontWeight800Mask, FontWeight900Mask, FontWeight500Mask, FontWeight400Mask, FontWeight300Mask, FontWeight200Mask, FontWeight100Mask },
-        { FontWeight800Mask, FontWeight900Mask, FontWeight600Mask, FontWeight500Mask, FontWeight400Mask, FontWeight300Mask, FontWeight200Mask, FontWeight100Mask },
-        { FontWeight900Mask, FontWeight700Mask, FontWeight600Mask, FontWeight500Mask, FontWeight400Mask, FontWeight300Mask, FontWeight200Mask, FontWeight100Mask },
-        { FontWeight800Mask, FontWeight700Mask, FontWeight600Mask, FontWeight500Mask, FontWeight400Mask, FontWeight300Mask, FontWeight200Mask, FontWeight100Mask }
-    };
-
-    unsigned ruleSetIndex = 0;
-    for (; !(desiredTraitsMaskForComparison & (1 << (FontWeight100Bit + ruleSetIndex))); ruleSetIndex++) { }
-
-    const FontTraitsMask* weightFallbackRule = weightFallbackRuleSets[ruleSetIndex];
-    for (unsigned i = 0; i < rulesPerSet; ++i) {
-        if (secondTraitsMask & weightFallbackRule[i])
-            return false;
-        if (firstTraitsMask & weightFallbackRule[i])
-            return true;
-    }
-
-    return false;
-}
-
-CSSSegmentedFontFace* CSSFontFaceSet::fontFace(FontTraitsMask traitsMask, const AtomicString& family)
+CSSSegmentedFontFace* CSSFontFaceSet::fontFace(FontTraitsMask traitsMask, FontSelectionValue stretch, const AtomicString& family)
 {
     auto iterator = m_facesLookupTable.find(family);
     if (iterator == m_facesLookupTable.end())
@@ -487,11 +446,39 @@ CSSSegmentedFontFace* CSSFontFaceSet::fontFace(FontTraitsMask traitsMask, const 
         }
     }
 
-    std::stable_sort(candidateFontFaces.begin(), candidateFontFaces.end(), [traitsMask](const CSSFontFace& first, const CSSFontFace& second) {
-        return fontFaceComparator(traitsMask, first, second);
-    });
-    for (auto& candidate : candidateFontFaces)
-        face->appendFontFace(candidate.get());
+    if (!candidateFontFaces.isEmpty()) {
+        Vector<FontSelectionCapabilities> capabilities;
+        capabilities.reserveInitialCapacity(candidateFontFaces.size());
+        for (auto& face : candidateFontFaces)
+            capabilities.uncheckedAppend(face.get().fontSelectionCapabilities());
+        FontSelectionAlgorithm fontSelectionAlgorithm(fontSelectionRequestForTraitsMask(traitsMask, stretch), capabilities);
+        std::stable_sort(candidateFontFaces.begin(), candidateFontFaces.end(), [&fontSelectionAlgorithm](const CSSFontFace& first, const CSSFontFace& second) {
+            auto firstCapabilities = first.fontSelectionCapabilities();
+            auto secondCapabilities = second.fontSelectionCapabilities();
+
+            auto stretchDistanceFirst = fontSelectionAlgorithm.stretchDistance(firstCapabilities).distance;
+            auto stretchDistanceSecond = fontSelectionAlgorithm.stretchDistance(secondCapabilities).distance;
+            if (stretchDistanceFirst < stretchDistanceSecond)
+                return true;
+            if (stretchDistanceFirst > stretchDistanceSecond)
+                return false;
+
+            auto styleDistanceFirst = fontSelectionAlgorithm.styleDistance(firstCapabilities).distance;
+            auto styleDistanceSecond = fontSelectionAlgorithm.styleDistance(secondCapabilities).distance;
+            if (styleDistanceFirst < styleDistanceSecond)
+                return true;
+            if (styleDistanceFirst > styleDistanceSecond)
+                return false;
+
+            auto weightDistanceFirst = fontSelectionAlgorithm.weightDistance(firstCapabilities).distance;
+            auto weightDistanceSecond = fontSelectionAlgorithm.weightDistance(secondCapabilities).distance;
+            if (weightDistanceFirst < weightDistanceSecond)
+                return true;
+            return false;
+        });
+        for (auto& candidate : candidateFontFaces)
+            face->appendFontFace(candidate.get());
+    }
 
     return face.get();
 }

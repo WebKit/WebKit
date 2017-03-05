@@ -194,6 +194,46 @@ std::optional<FontTraitsMask> CSSFontFace::calculateWeightMask(CSSValue& weight)
     return FontWeight400Mask;
 }
 
+std::optional<FontSelectionValue> CSSFontFace::calculateStretch(CSSValue& stretch)
+{
+    if (!is<CSSPrimitiveValue>(stretch))
+        return std::nullopt;
+
+    const auto& primitiveValue = downcast<CSSPrimitiveValue>(stretch);
+    if (primitiveValue.isPercentage() || primitiveValue.isNumber()) {
+        auto value = primitiveValue.floatValue();
+        if (value < static_cast<float>(FontSelectionValue::minimumValue()))
+            return FontSelectionValue::minimumValue();
+        if (value > static_cast<float>(FontSelectionValue::maximumValue()))
+            return FontSelectionValue::maximumValue();
+        return FontSelectionValue(value);
+    }
+
+    switch (primitiveValue.valueID()) {
+    case CSSValueUltraCondensed:
+        return FontSelectionValue(50);
+    case CSSValueExtraCondensed:
+        return FontSelectionValue(62.5f);
+    case CSSValueCondensed:
+        return FontSelectionValue(75);
+    case CSSValueSemiCondensed:
+        return FontSelectionValue(87.5f);
+    case CSSValueNormal:
+        return FontSelectionValue(100);
+    case CSSValueSemiExpanded:
+        return FontSelectionValue(112.5f);
+    case CSSValueExpanded:
+        return FontSelectionValue(125);
+    case CSSValueExtraExpanded:
+        return FontSelectionValue(150);
+    case CSSValueUltraExpanded:
+        return FontSelectionValue(200);
+    default:
+        ASSERT_NOT_REACHED();
+        return std::nullopt;
+    }
+}
+
 bool CSSFontFace::setWeight(CSSValue& weight)
 {
     if (auto mask = calculateWeightMask(weight)) {
@@ -201,6 +241,24 @@ bool CSSFontFace::setWeight(CSSValue& weight)
 
         if (m_cssConnection)
             m_cssConnection->mutableProperties().setProperty(CSSPropertyFontWeight, &weight);
+
+        iterateClients(m_clients, [&](Client& client) {
+            client.fontPropertyChanged(*this);
+        });
+
+        return true;
+    }
+
+    return false;
+}
+
+bool CSSFontFace::setStretch(CSSValue& stretch)
+{
+    if (auto parsedStretch = calculateStretch(stretch)) {
+        m_stretch = FontSelectionRange(parsedStretch.value(), parsedStretch.value());
+
+        if (m_cssConnection)
+            m_cssConnection->mutableProperties().setProperty(CSSPropertyFontStretch, &stretch);
 
         iterateClients(m_clients, [&](Client& client) {
             client.fontPropertyChanged(*this);

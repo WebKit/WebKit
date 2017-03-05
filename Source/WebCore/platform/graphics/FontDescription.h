@@ -26,6 +26,7 @@
 #define FontDescription_h
 
 #include "CSSValueKeywords.h"
+#include "FontSelectionAlgorithm.h"
 #include "FontTaggedSettings.h"
 #include "TextFlags.h"
 #include "WebKitFontFamilyNames.h"

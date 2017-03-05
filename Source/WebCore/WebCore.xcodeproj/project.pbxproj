@@ -5747,6 +5747,8 @@
 		C280833F1C6DC26F001451B6 /* JSFontFace.h in Headers */ = {isa = PBXBuildFile; fileRef = C280833E1C6DC22C001451B6 /* JSFontFace.h */; };
 		C28083401C6DC275001451B6 /* JSFontFace.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C280833D1C6DC22C001451B6 /* JSFontFace.cpp */; };
 		C28083421C6DC96A001451B6 /* JSFontFaceCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C28083411C6DC96A001451B6 /* JSFontFaceCustom.cpp */; };
+		C2AB0AF61E6B3C6C001348C5 /* FontSelectionAlgorithm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C2AB0AF41E6B3C6C001348C5 /* FontSelectionAlgorithm.cpp */; };
+		C2AB0AF71E6B3C6C001348C5 /* FontSelectionAlgorithm.h in Headers */ = {isa = PBXBuildFile; fileRef = C2AB0AF51E6B3C6C001348C5 /* FontSelectionAlgorithm.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C2E1F43F1D6254E10094625C /* BreakLines.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEA4816097D93020094C9E4 /* BreakLines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C2F4E78A1E45BEA1006D7105 /* ComplexTextController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C2F4E7881E45AEDF006D7105 /* ComplexTextController.cpp */; };
 		C2F4E78C1E45C3EF006D7105 /* ComplexTextController.h in Headers */ = {isa = PBXBuildFile; fileRef = C2F4E7891E45AEDF006D7105 /* ComplexTextController.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -13873,6 +13875,8 @@
 		C280833D1C6DC22C001451B6 /* JSFontFace.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSFontFace.cpp; sourceTree = "<group>"; };
 		C280833E1C6DC22C001451B6 /* JSFontFace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSFontFace.h; sourceTree = "<group>"; };
 		C28083411C6DC96A001451B6 /* JSFontFaceCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSFontFaceCustom.cpp; sourceTree = "<group>"; };
+		C2AB0AF41E6B3C6C001348C5 /* FontSelectionAlgorithm.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FontSelectionAlgorithm.cpp; sourceTree = "<group>"; };
+		C2AB0AF51E6B3C6C001348C5 /* FontSelectionAlgorithm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FontSelectionAlgorithm.h; sourceTree = "<group>"; };
 		C2F4E7881E45AEDF006D7105 /* ComplexTextController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ComplexTextController.cpp; sourceTree = "<group>"; };
 		C2F4E7891E45AEDF006D7105 /* ComplexTextController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ComplexTextController.h; sourceTree = "<group>"; };
 		C330A22113EC196B0000B45B /* ColorChooser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ColorChooser.h; sourceTree = "<group>"; };
@@ -22369,6 +22373,8 @@
 				501BAAA813950E2C00F7ACEB /* WindRule.h */,
 				379919941200DDF400EA041C /* WOFFFileFormat.cpp */,
 				379919951200DDF400EA041C /* WOFFFileFormat.h */,
+				C2AB0AF41E6B3C6C001348C5 /* FontSelectionAlgorithm.cpp */,
+				C2AB0AF51E6B3C6C001348C5 /* FontSelectionAlgorithm.h */,
 			);
 			path = graphics;
 			sourceTree = "<group>";
@@ -27639,6 +27645,7 @@
 				854FE7350A2297BE0058D7AD /* NodeIterator.h in Headers */,
 				A818721B0977D3C0005826D9 /* NodeList.h in Headers */,
 				63189AE30E83A33300012E41 /* NodeRareData.h in Headers */,
+				C2AB0AF71E6B3C6C001348C5 /* FontSelectionAlgorithm.h in Headers */,
 				63D7B32D0E78CD3F00F7617C /* NodeRenderStyle.h in Headers */,
 				E43105BB16750F1600DB2FB8 /* NodeTraversal.h in Headers */,
 				9382AAB40D8C386100F357A6 /* NodeWithIndex.h in Headers */,
@@ -29506,6 +29513,7 @@
 				1A8A645B1D19FCFC00D0E00F /* ApplePayShippingContactSelectedEvent.cpp in Sources */,
 				1A8A645F1D19FCFC00D0E00F /* ApplePayShippingMethodSelectedEvent.cpp in Sources */,
 				1A8A64621D19FCFC00D0E00F /* ApplePayValidateMerchantEvent.cpp in Sources */,
+				C2AB0AF61E6B3C6C001348C5 /* FontSelectionAlgorithm.cpp in Sources */,
 				1A8F6BBC0DB55CDC001DB794 /* ApplicationCache.cpp in Sources */,
 				1A8F6BBE0DB55CDC001DB794 /* ApplicationCacheGroup.cpp in Sources */,
 				24F54EAC101FE914000AE741 /* ApplicationCacheHost.cpp in Sources */,
