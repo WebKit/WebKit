@@ -1,3 +1,9 @@
+2017-03-04  Chris Dumez  <cdumez@apple.com>
+
+        Rebaseline W3C test after r213412.
+
+        * web-platform-tests/html/dom/interfaces-expected.txt:
+
 2017-03-03  Andy Estes  <aestes@apple.com>
 
         Add support for canvas.toBlob

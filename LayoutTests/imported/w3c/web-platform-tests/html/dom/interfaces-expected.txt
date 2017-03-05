@@ -5,7 +5,6 @@ CONSOLE MESSAGE: line 251: callback not yet supported
 CONSOLE MESSAGE: line 251: callback not yet supported
 CONSOLE MESSAGE: line 251: callback not yet supported
 CONSOLE MESSAGE: line 251: callback not yet supported
-CONSOLE MESSAGE: WebSocket network error: The operation couldn’t be completed. Network is down
 HTML IDL tests
 
 
@@ -4601,7 +4600,7 @@ PASS HTMLCanvasElement interface: attribute width
 PASS HTMLCanvasElement interface: attribute height 
 PASS HTMLCanvasElement interface: operation getContext(DOMString,any) 
 PASS HTMLCanvasElement interface: operation toDataURL(DOMString,any) 
-FAIL HTMLCanvasElement interface: operation toBlob(BlobCallback,DOMString,any) assert_own_property: interface prototype object missing non-static operation expected property "toBlob" missing
+PASS HTMLCanvasElement interface: operation toBlob(BlobCallback,DOMString,any) 
 PASS HTMLCanvasElement must be primary interface of document.createElement("canvas") 
 PASS Stringification of document.createElement("canvas") 
 PASS HTMLCanvasElement interface: document.createElement("canvas") must inherit property "width" with the proper type (0) 
@@ -4610,8 +4609,8 @@ PASS HTMLCanvasElement interface: document.createElement("canvas") must inherit 
 PASS HTMLCanvasElement interface: calling getContext(DOMString,any) on document.createElement("canvas") with too few arguments must throw TypeError 
 PASS HTMLCanvasElement interface: document.createElement("canvas") must inherit property "toDataURL" with the proper type (3) 
 PASS HTMLCanvasElement interface: calling toDataURL(DOMString,any) on document.createElement("canvas") with too few arguments must throw TypeError 
-FAIL HTMLCanvasElement interface: document.createElement("canvas") must inherit property "toBlob" with the proper type (4) assert_inherits: property "toBlob" not found in prototype chain
-FAIL HTMLCanvasElement interface: calling toBlob(BlobCallback,DOMString,any) on document.createElement("canvas") with too few arguments must throw TypeError assert_inherits: property "toBlob" not found in prototype chain
+PASS HTMLCanvasElement interface: document.createElement("canvas") must inherit property "toBlob" with the proper type (4) 
+PASS HTMLCanvasElement interface: calling toBlob(BlobCallback,DOMString,any) on document.createElement("canvas") with too few arguments must throw TypeError 
 PASS CanvasRenderingContext2D interface: existence and properties of interface object 
 PASS CanvasRenderingContext2D interface object length 
 PASS CanvasRenderingContext2D interface object name 
