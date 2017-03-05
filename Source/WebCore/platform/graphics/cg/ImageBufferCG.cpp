@@ -610,8 +610,7 @@ static RetainPtr<CGImageRef> cgImage(const ImageData& source, const String& mime
     if (!dataProvider)
         return nullptr;
 
-    auto image = adoptCF(CGImageCreate(source.width(), source.height(), 8, 32, 4 * source.width(), sRGBColorSpaceRef(), kCGBitmapByteOrderDefault | dataAlphaInfo, dataProvider.get(), 0, false, kCGRenderingIntentDefault));
-    return image;
+    return adoptCF(CGImageCreate(source.width(), source.height(), 8, 32, 4 * source.width(), sRGBColorSpaceRef(), kCGBitmapByteOrderDefault | dataAlphaInfo, dataProvider.get(), 0, false, kCGRenderingIntentDefault));
 }
 
 String dataURL(const ImageData& source, const String& mimeType, std::optional<double> quality)

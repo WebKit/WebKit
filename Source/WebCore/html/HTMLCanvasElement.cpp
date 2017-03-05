@@ -504,16 +504,22 @@ ExceptionOr<void> HTMLCanvasElement::toBlob(ScriptExecutionContext& context, Ref
 
 #if USE(CG)
     if (auto imageData = getImageData()) {
+        RefPtr<Blob> blob;
         Vector<uint8_t> blobData = data(*imageData, encodingMIMEType, quality);
-        callback->scheduleCallback(context, Blob::create(WTFMove(blobData), encodingMIMEType));
+        if (!blobData.isEmpty())
+            blob = Blob::create(WTFMove(blobData), encodingMIMEType);
+        callback->scheduleCallback(context, WTFMove(blob));
         return { };
     }
 #endif
 
     makeRenderingResultsAvailable();
 
+    RefPtr<Blob> blob;
     Vector<uint8_t> blobData = buffer()->toData(encodingMIMEType, quality);
-    callback->scheduleCallback(context, Blob::create(WTFMove(blobData), encodingMIMEType));
+    if (!blobData.isEmpty())
+        blob = Blob::create(WTFMove(blobData), encodingMIMEType);
+    callback->scheduleCallback(context, WTFMove(blob));
     return { };
 }
 
