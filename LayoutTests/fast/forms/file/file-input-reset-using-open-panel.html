@@ -23,12 +23,15 @@ if (testRunner && eventSender) {
 
     file.addEventListener("change", function() {
         document.getElementById("console").innerHTML = file.value + " is selected.";
-        UIHelper.activateAt(reset.offsetLeft + reset.offsetWidth / 2, reset.offsetTop + reset.offsetHeight / 2).then(function() {
-            // Move a cursor out of the reset button.
-            UIHelper.activateAt(reset.offsetLeft + reset.offsetWidth + 10, reset.offsetTop + reset.offsetHeight + 10).then(function() {
-                testRunner.notifyDone();
+        // The change event can be fired before the mouse up, so use a timeout here to ensure the next mouse down happens after the pending mouse up.
+        window.setTimeout(function() {
+            UIHelper.activateAt(reset.offsetLeft + reset.offsetWidth / 2, reset.offsetTop + reset.offsetHeight / 2).then(function() {
+                // Move a cursor out of the reset button.
+                UIHelper.activateAt(reset.offsetLeft + reset.offsetWidth + 10, reset.offsetTop + reset.offsetHeight + 10).then(function() {
+                    testRunner.notifyDone();
+                });
             });
-        });
+        }, 0);
     });
 
     openFilesInElement(file, ["foo.txt"]);

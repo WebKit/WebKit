@@ -1,3 +1,20 @@
+2017-03-05  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Two file reset tests are failing in the bots since they were added in r213042
+        https://bugs.webkit.org/show_bug.cgi?id=169126
+
+        Reviewed by Michael Catanzaro.
+
+        They are failing because the GTK+ event sender is not firing the second UIHelper.activateAt() after the change
+        event. In one case this causes that the reset button is not clicked, and in the other one the file input is not
+        unfocused. This is because the change event is emitted before the mouse up, and the GTK+ event sender ignores
+        mouse down events when the button is already down to not confuse Xvfb. So, we can easily fix theses tests by
+        using a timeout to ensure the next UIHelper.activateAt() happens in a different run loop iteration, after the
+        mouse up.
+
+        * fast/forms/file/file-input-reset-using-open-panel.html:
+        * fast/forms/file/file-reset-in-change-using-open-panel.html:
+
 2017-03-04  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r213379.

@@ -15,9 +15,12 @@ function openFilesInElement(element, files) {
 
 function handleChange() {
     file1.value = '';
-    UIHelper.activateAt(1, 1).then(function() {
-        testRunner.notifyDone();
-    });
+    // The change event can be fired before the mouse up, so use a timeout here to ensure the next mouse down happens after the pending mouse up.
+    window.setTimeout(function() {
+        UIHelper.activateAt(1, 1).then(function() {
+            testRunner.notifyDone();
+        });
+    }, 0);
 }
 
 if (window.testRunner)
