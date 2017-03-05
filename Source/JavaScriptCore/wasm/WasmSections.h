@@ -27,6 +27,11 @@
 
 #if ENABLE(WEBASSEMBLY)
 
+#if COMPILER(GCC) && ASSERT_DISABLED
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wreturn-type"
+#endif // COMPILER(GCC) && ASSERT_DISABLED
+
 namespace JSC { namespace Wasm {
 
 #define FOR_EACH_WASM_SECTION(macro) \
@@ -80,5 +85,9 @@ static inline const char* makeString(Section section)
 }
 
 } } // namespace JSC::Wasm
+
+#if COMPILER(GCC) && ASSERT_DISABLED
+#pragma GCC diagnostic pop
+#endif // COMPILER(GCC) && ASSERT_DISABLED
 
 #endif // ENABLE(WEBASSEMBLY)
