@@ -1,3 +1,5 @@
+#include "Version.xcconfig"
+
 PRODUCT_NAME = libwebrtc;
 
 INSTALL_PATH = $(NORMAL_WEBCORE_FRAMEWORKS_DIR)/WebCore.framework/Frameworks;
