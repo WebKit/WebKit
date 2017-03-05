@@ -329,6 +329,7 @@ private:
     void resetContentsRect();
 
     bool isPaintDestinationForDescendantLayers() const;
+    bool hasVisibleNonCompositedDescendants() const;
 
     bool shouldClipCompositedBounds() const;
 
