@@ -1,3 +1,11 @@
+2017-03-06  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] Mark fast/parser/adoption-agency-unload-iframe-4.html as timing out on platform GTK.
+
+        Unreviewed test gardening.
+
+        * platform/gtk/TestExpectations:
+
 2017-03-06  Chris Dumez  <cdumez@apple.com>
 
         [iOS] Disable autoplay of silent videos in low power mode
