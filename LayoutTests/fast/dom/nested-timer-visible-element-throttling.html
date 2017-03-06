@@ -34,12 +34,12 @@ function timerCallback()
 
   // 5 iterations should suffice to throttle the timer.
   if (iterationCount >= 5)
-    setTimeout(checkTimerThrottlingState, 0);
+    setTimeout(checkTimerThrottlingState, 10);
 
-  timeoutId = setTimeout(timerCallback, 0);
+  timeoutId = setTimeout(timerCallback, 10);
 }
 
-timeoutId = setTimeout(timerCallback, 0);
+timeoutId = setTimeout(timerCallback, 10);
 debug("The timer should initially not be throttled.");
 shouldBeFalse("internals.isTimerThrottled(timeoutId)");
 </script>

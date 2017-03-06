@@ -20,7 +20,7 @@
     document.body.offsetHeight;
   
     if (++resizeCounter < 100) {
-      currentTimerID = setTimeout('resizeMe();', 0);
+      currentTimerID = setTimeout('resizeMe();', 10);
       if (window.performance)
           timerScheduleTimes.push(performance.now());
       if (window.internals && internals.isTimerThrottled(currentTimerID))

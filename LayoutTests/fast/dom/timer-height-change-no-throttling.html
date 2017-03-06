@@ -31,7 +31,7 @@ function timerCallback()
   }
 }
 
-timeoutId = setInterval(timerCallback, 0);
+timeoutId = setInterval(timerCallback, 10);
 shouldBeFalse("internals.isTimerThrottled(timeoutId)");
 </script>
 <script src="../../resources/js-test-post.js"></script>

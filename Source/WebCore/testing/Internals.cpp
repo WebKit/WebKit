@@ -1029,10 +1029,14 @@ unsigned Internals::deferredKeyframesRulesCount(StyleSheet& styleSheet)
 
 ExceptionOr<bool> Internals::isTimerThrottled(int timeoutId)
 {
-    DOMTimer* timer = scriptExecutionContext()->findTimeout(timeoutId);
+    auto* timer = scriptExecutionContext()->findTimeout(timeoutId);
     if (!timer)
         return Exception { NOT_FOUND_ERR };
-    return timer->m_throttleState == DOMTimer::ShouldThrottle;
+
+    if (timer->intervalClampedToMinimum() > timer->m_originalInterval)
+        return true;
+
+    return !!timer->alignedFireTime(0ms);
 }
 
 bool Internals::isRequestAnimationFrameThrottled() const

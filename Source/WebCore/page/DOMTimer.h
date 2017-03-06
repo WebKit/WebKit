@@ -63,7 +63,7 @@ private:
     DOMTimer(ScriptExecutionContext&, std::unique_ptr<ScheduledAction>, std::chrono::milliseconds interval, bool singleShot);
     friend class Internals;
 
-    std::chrono::milliseconds intervalClampedToMinimum() const;
+    WEBCORE_EXPORT std::chrono::milliseconds intervalClampedToMinimum() const;
 
     bool isDOMTimersThrottlingEnabled(Document&) const;
     void updateThrottlingStateIfNecessary(const DOMTimerFireState&);
@@ -71,7 +71,7 @@ private:
     // SuspendableTimer
     void fired() override;
     void didStop() override;
-    std::optional<std::chrono::milliseconds> alignedFireTime(std::chrono::milliseconds) const override;
+    WEBCORE_EXPORT std::optional<std::chrono::milliseconds> alignedFireTime(std::chrono::milliseconds) const override;
 
     // ActiveDOMObject API.
     const char* activeDOMObjectName() const override;

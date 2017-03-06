@@ -1543,8 +1543,6 @@ webkit.org/b/168503 editing/pasteboard/drag-drop-copy-content.html [ Failure ]
 
 webkit.org/b/168936 imported/w3c/web-platform-tests/IndexedDB/idbdatabase-deleteObjectStore-exception-order.htm [ Pass Failure ]
 
-webkit.org/b/168927 fast/dom/timer-throttling-hidden-page.html [ Pass Failure ]
-
 # Skipped because Mac doesn't have a key to show the context menu
 fast/events/context-activated-by-key-event.html [ Skip ]
 

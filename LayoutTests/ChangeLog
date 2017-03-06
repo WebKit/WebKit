@@ -1,3 +1,32 @@
+2017-03-06  Chris Dumez  <cdumez@apple.com>
+
+        LayoutTest fast/dom/timer-throttling-hidden-page.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=168927
+
+        Reviewed by Simon Fraser.
+
+        * fast/dom/nested-timer-visible-element-throttling.html:
+        * fast/dom/repeating-timer-element-overflow-throttling.html:
+        * fast/dom/repeating-timer-element-overflowing-child-own-layer-throttling.html:
+        * fast/dom/repeating-timer-mixed-visible-display-none-elements-throttling.html:
+        * fast/dom/repeating-timer-visible-element-throttling.html:
+        * fast/dom/timer-height-change-no-throttling.html:
+        * fast/frames/flattening/resources/iframe-to-resize.html:
+        Use 10 milliseconds interval for tests relying on internals.isTimerThrottled().
+        Using 0 is problematic because we always internally cap to 1ms and 4ms after
+        reaching the max nesting level. Therefore, a 0 delay timer is always considered
+        to be throttled.
+
+        * fast/dom/timer-throttling-hidden-page-expected.txt:
+        * fast/dom/timer-throttling-hidden-page-non-nested-expected.txt:
+        * fast/dom/timer-throttling-hidden-page-non-nested.html:
+        * fast/dom/timer-throttling-hidden-page.html:
+        Rewrite tests to stop measuring timer intervals as this is inherently
+        flaky and rely on internals.isTimerThrottled() instead.
+
+        * platform/mac/TestExpectations:
+        Unskip test that used to be flaky.
+
 2017-03-06  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-grid] Import W3C Test Suite

@@ -37,7 +37,7 @@ function timerCallback()
 
 shouldBe("testElement.offsetHeight", "0");
 
-timeoutId = setInterval(timerCallback, 0);
+timeoutId = setInterval(timerCallback, 10);
 debug("The timer should initially not be throttled.");
 shouldBeFalse("internals.isTimerThrottled(timeoutId)");
 </script>
