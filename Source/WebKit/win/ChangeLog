@@ -1,3 +1,15 @@
+2017-03-06  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Expand font-weight and font-stretch to take any number
+        https://bugs.webkit.org/show_bug.cgi?id=168889
+
+        Reviewed by Simon Fraser.
+
+        Migrate off old enum types.
+
+        * WebKitGraphics.cpp:
+        (makeFont):
+
 2017-03-02  Sam Weinig  <sam@webkit.org>
 
         Rename htmlediting.h/cpp to Editing.h/cpp

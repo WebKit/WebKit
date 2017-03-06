@@ -1294,7 +1294,7 @@ HRESULT DOMElement::font(_Out_ WebFontDescription* webFontDescription)
     webFontDescription->family = familyCharactersBuffer;
     webFontDescription->familyLength = family.length();
     webFontDescription->size = fontDescription.computedSize();
-    webFontDescription->bold = fontDescription.weight() >= WebCore::FontWeight600;
+    webFontDescription->bold = isFontWeightBold(fontDescription.weight());
     webFontDescription->italic = fontDescription.italic();
 
     return S_OK;

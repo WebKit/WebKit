@@ -1,3 +1,19 @@
+2017-03-06  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Expand font-weight and font-stretch to take any number
+        https://bugs.webkit.org/show_bug.cgi?id=168889
+
+        Reviewed by Simon Fraser.
+
+        Migrate off old enum types.
+
+        * WebCoreSupport/PopupMenuMac.mm:
+        (PopupMenuMac::populate):
+        * WebView/WebHTMLView.mm:
+        (fontNameForDescription):
+        * WebView/WebView.mm:
+        (-[WebView updateTextTouchBar]):
+
 2017-03-03  Dean Jackson  <dino@apple.com>
 
         Add WebGPU compile flag and experimental feature flag

@@ -297,7 +297,8 @@
             "codegen-properties": {
                 "name-for-methods": "Italic",
                 "font-property": true,
-                "high-priority": true
+                "high-priority": true,
+                "converter": "FontStyle"
             },
             "specification": {
                 "category": "css-fonts",
@@ -307,8 +308,10 @@
         "font-weight": {
             "inherited": true,
             "codegen-properties": {
-                "custom": "All",
-                "high-priority": true
+                "name-for-methods": "Weight",
+                "font-property": true,
+                "high-priority": true,
+                "converter": "FontWeight"
             },
             "specification": {
                 "category": "css-fonts",

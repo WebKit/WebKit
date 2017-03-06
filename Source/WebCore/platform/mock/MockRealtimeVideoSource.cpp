@@ -149,7 +149,7 @@ bool MockRealtimeVideoSource::applySize(const IntSize& size)
     fontDescription.setOneFamily("Courier");
     fontDescription.setSpecifiedSize(m_baseFontSize);
     fontDescription.setComputedSize(m_baseFontSize);
-    fontDescription.setWeight(FontWeight500);
+    fontDescription.setWeight(FontSelectionValue(500));
 
     m_timeFont = FontCascade(fontDescription, 0, 0);
     m_timeFont.update(nullptr);

@@ -864,17 +864,28 @@ static RefPtr<CSSPrimitiveValue> consumeFontVariantCSS21(CSSParserTokenRange& ra
     return consumeIdent<CSSValueNormal, CSSValueSmallCaps>(range);
 }
 
-static RefPtr<CSSPrimitiveValue> consumeFontWeight(CSSParserTokenRange& range)
+static RefPtr<CSSPrimitiveValue> consumeFontWeightKeywordValue(CSSParserTokenRange& range)
 {
-    const CSSParserToken& token = range.peek();
-    if (token.id() >= CSSValueNormal && token.id() <= CSSValueLighter)
-        return consumeIdent(range);
+    return consumeIdent<CSSValueNormal, CSSValueBold, CSSValueBolder, CSSValueLighter>(range);
+}
+
+static RefPtr<CSSPrimitiveValue> consumeFontWeightCSS21(CSSParserTokenRange& range)
+{
+    if (auto result = consumeFontWeightKeywordValue(range))
+        return result;
     int weight;
     if (!consumePositiveIntegerRaw(range, weight))
         return nullptr;
-    if ((weight % 100) || weight < 100 || weight > 900)
+    if (!isCSS21Weight(weight))
         return nullptr;
-    return CSSValuePool::singleton().createIdentifierValue(static_cast<CSSValueID>(CSSValue100 + weight / 100 - 1));
+    return CSSValuePool::singleton().createValue(weight, CSSPrimitiveValue::CSS_NUMBER);
+}
+
+static RefPtr<CSSPrimitiveValue> consumeFontWeight(CSSParserTokenRange& range)
+{
+    if (auto result = consumeFontWeightKeywordValue(range))
+        return result;
+    return consumeNumber(range, ValueRangeAll);
 }
 
 static RefPtr<CSSPrimitiveValue> consumeFontStretchKeywordValue(CSSParserTokenRange& range)
@@ -889,6 +900,28 @@ static RefPtr<CSSPrimitiveValue> consumeFontStretch(CSSParserTokenRange& range)
     if (auto percent = consumePercent(range, ValueRangeAll))
         return percent;
     return consumeNumber(range, ValueRangeAll);
+}
+
+static RefPtr<CSSPrimitiveValue> consumeFontStyleKeywordValue(CSSParserTokenRange& range)
+{
+    return consumeIdent<CSSValueNormal, CSSValueItalic, CSSValueOblique>(range);
+}
+
+static RefPtr<CSSPrimitiveValue> consumeFontStyle(CSSParserTokenRange& range, CSSParserMode cssParserMode)
+{
+    if (auto result = consumeFontStyleKeywordValue(range)) {
+        if (result->valueID() == CSSValueOblique) {
+            if (range.atEnd())
+                return result;
+            if (auto angle = consumeAngle(range, cssParserMode))
+                return angle;
+            if (auto number = consumeNumber(range, ValueRangeAll))
+                return number;
+            return nullptr;
+        }
+        return result;
+    }
+    return nullptr;
 }
 
 static String concatenateFamilyName(CSSParserTokenRange& range)
@@ -3666,6 +3699,8 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
         return consumeFontWeight(m_range);
     case CSSPropertyFontStretch:
         return consumeFontStretch(m_range);
+    case CSSPropertyFontStyle:
+        return consumeFontStyle(m_range, m_context.mode);
     case CSSPropertyFontSynthesis:
         return consumeFontSynthesis(m_range);
 #if ENABLE(VARIATION_FONTS)
@@ -4184,16 +4219,18 @@ bool CSSPropertyParser::parseFontFaceDescriptor(CSSPropertyID propId)
     case CSSPropertyUnicodeRange:
         parsedValue = consumeFontFaceUnicodeRange(m_range);
         break;
+    case CSSPropertyFontWeight:
+        // FIXME: Parse range-based values.
+        parsedValue = consumeFontWeight(m_range);
+        break;
     case CSSPropertyFontStretch:
+        // FIXME: Parse range-based values.
         parsedValue = consumeFontStretch(m_range);
         break;
-    case CSSPropertyFontStyle: {
-        CSSValueID id = m_range.consumeIncludingWhitespace().id();
-        if (!CSSParserFastPaths::isValidKeywordPropertyAndValue(propId, id, m_context.mode))
-            return false;
-        parsedValue = CSSValuePool::singleton().createIdentifierValue(id);
+    case CSSPropertyFontStyle:
+        // FIXME: Parse range-based values.
+        parsedValue = consumeFontStyle(m_range, m_context.mode);
         break;
-    }
     case CSSPropertyFontVariantCaps:
         parsedValue = consumeFontVariantCaps(m_range);
         break;
@@ -4214,9 +4251,6 @@ bool CSSPropertyParser::parseFontFaceDescriptor(CSSPropertyID propId)
         break;
     case CSSPropertyFontVariant:
         return consumeFontVariantShorthand(false);
-    case CSSPropertyFontWeight:
-        parsedValue = consumeFontWeight(m_range);
-        break;
     case CSSPropertyFontFeatureSettings:
         parsedValue = consumeFontFeatureSettings(m_range);
         break;
@@ -4243,8 +4277,8 @@ bool CSSPropertyParser::consumeSystemFont(bool important)
     if (!fontDescription.isAbsoluteSize())
         return false;
     
-    addProperty(CSSPropertyFontStyle, CSSPropertyFont, CSSValuePool::singleton().createIdentifierValue(fontDescription.italic() == FontItalicOn ? CSSValueItalic : CSSValueNormal), important);
-    addProperty(CSSPropertyFontWeight, CSSPropertyFont, CSSValuePool::singleton().createValue(fontDescription.weight()), important);
+    addProperty(CSSPropertyFontStyle, CSSPropertyFont, CSSValuePool::singleton().createIdentifierValue(isItalic(fontDescription.italic()) ? CSSValueItalic : CSSValueNormal), important);
+    addProperty(CSSPropertyFontWeight, CSSPropertyFont, CSSValuePool::singleton().createValue(static_cast<float>(fontDescription.weight())), important);
     addProperty(CSSPropertyFontSize, CSSPropertyFont, CSSValuePool::singleton().createValue(fontDescription.specifiedSize(), CSSPrimitiveValue::CSS_PX), important);
     Ref<CSSValueList> fontFamilyList = CSSValueList::createCommaSeparated();
     fontFamilyList->append(CSSValuePool::singleton().createFontFamilyValue(fontDescription.familyAt(0), FromSystemFontID::Yes));
@@ -4274,9 +4308,10 @@ bool CSSPropertyParser::consumeFont(bool important)
 
     while (!m_range.atEnd()) {
         CSSValueID id = m_range.peek().id();
-        if (!fontStyle && CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyFontStyle, id, m_context.mode)) {
-            fontStyle = consumeIdent(m_range);
-            continue;
+        if (!fontStyle) {
+            fontStyle = consumeFontStyleKeywordValue(m_range);
+            if (fontStyle)
+                continue;
         }
         if (!fontVariantCaps && (id == CSSValueNormal || id == CSSValueSmallCaps)) {
             // Font variant in the shorthand is particular, it only accepts normal or small-caps.
@@ -4286,7 +4321,7 @@ bool CSSPropertyParser::consumeFont(bool important)
                 continue;
         }
         if (!fontWeight) {
-            fontWeight = consumeFontWeight(m_range);
+            fontWeight = consumeFontWeightCSS21(m_range);
             if (fontWeight)
                 continue;
         }

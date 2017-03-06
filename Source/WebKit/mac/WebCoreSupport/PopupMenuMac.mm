@@ -84,7 +84,7 @@ void PopupMenuMac::populate()
             RetainPtr<CTFontRef> font = style.font().primaryFont().getCTFont();
             if (!font) {
                 CGFloat size = style.font().primaryFont().platformData().size();
-                font = adoptCF(CTFontCreateUIFontForLanguage(style.font().weight() < FontWeightBold ? kCTFontUIFontSystem : kCTFontUIFontEmphasizedSystem, size, nullptr));
+                font = adoptCF(CTFontCreateUIFontForLanguage(isFontWeightBold(style.font().weight()) ? kCTFontUIFontEmphasizedSystem : kCTFontUIFontSystem, size, nullptr));
             }
             [attributes setObject:toNSFont(font.get()) forKey:NSFontAttributeName];
         }

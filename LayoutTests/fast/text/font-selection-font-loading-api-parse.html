@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+function setFontFaceWeight(fontFace, weight) {
+    fontFace.weight = weight;
+    return fontFace.weight;
+}
+
+function setFontFaceStretch(fontFace, stretch) {
+    fontFace.stretch = stretch;
+    return fontFace.stretch;
+}
+
+function setFontFaceStyle(fontFace, style) {
+    fontFace.style = style;
+    return fontFace.style;
+}
+
+var fontFace = new FontFace("asdf", "url('notreal')");
+shouldBeEqualToString("setFontFaceWeight(fontFace, '1')", "1");
+shouldBeEqualToString("setFontFaceWeight(fontFace, '100')", "100");
+shouldBeEqualToString("setFontFaceWeight(fontFace, '200')", "200");
+shouldBeEqualToString("setFontFaceWeight(fontFace, '300')", "300");
+shouldBeEqualToString("setFontFaceWeight(fontFace, '400')", "normal");
+shouldBeEqualToString("setFontFaceWeight(fontFace, 'normal')", "normal");
+shouldBeEqualToString("setFontFaceWeight(fontFace, '500')", "500");
+shouldBeEqualToString("setFontFaceWeight(fontFace, '600')", "600");
+shouldBeEqualToString("setFontFaceWeight(fontFace, '700')", "bold");
+shouldBeEqualToString("setFontFaceWeight(fontFace, 'bold')", "bold");
+shouldBeEqualToString("setFontFaceWeight(fontFace, '800')", "800");
+shouldBeEqualToString("setFontFaceWeight(fontFace, '900')", "900");
+shouldThrow("setFontFaceWeight(fontFace, 'garbage')");
+shouldThrow("setFontFaceWeight(fontFace, 'initial')");
+shouldBeEqualToString("setFontFaceWeight(fontFace, 'calc(3 + 4)')", "7");
+shouldBeEqualToString("setFontFaceWeight(fontFace, 'calc(100 + 200)')", "300");
+shouldBeEqualToString("setFontFaceWeight(fontFace, 'calc(150 + 50)')", "200");
+
+shouldBeEqualToString("setFontFaceStretch(fontFace, '1%')", "1%");
+shouldBeEqualToString("setFontFaceStretch(fontFace, '2')", "2%");
+shouldBeEqualToString("setFontFaceStretch(fontFace, 'ultra-condensed')", "ultra-condensed");
+shouldBeEqualToString("setFontFaceStretch(fontFace, 'extra-condensed')", "extra-condensed");
+shouldBeEqualToString("setFontFaceStretch(fontFace, 'condensed')", "condensed");
+shouldBeEqualToString("setFontFaceStretch(fontFace, 'semi-condensed')", "semi-condensed");
+shouldBeEqualToString("setFontFaceStretch(fontFace, 'normal')", "normal");
+shouldBeEqualToString("setFontFaceStretch(fontFace, 'semi-expanded')", "semi-expanded");
+shouldBeEqualToString("setFontFaceStretch(fontFace, 'expanded')", "expanded");
+shouldBeEqualToString("setFontFaceStretch(fontFace, 'extra-expanded')", "extra-expanded");
+shouldBeEqualToString("setFontFaceStretch(fontFace, 'ultra-expanded')", "ultra-expanded");
+shouldThrow("setFontFaceStretch(fontFace, 'garbage')");
+shouldThrow("setFontFaceStretch(fontFace, 'initial')");
+shouldBeEqualToString("setFontFaceStretch(fontFace, 'calc(3 + 4)')", "7%");
+
+shouldBeEqualToString("setFontFaceStyle(fontFace, 'oblique 1deg')", "oblique 1deg");
+shouldBeEqualToString("setFontFaceStyle(fontFace, 'oblique 200grad')", "oblique 180deg");
+shouldBeEqualToString("setFontFaceStyle(fontFace, 'oblique 6.28318rad')", "oblique 359.750000deg");
+shouldBeEqualToString("setFontFaceStyle(fontFace, 'oblique 4turn')", "oblique 1440deg");
+shouldBeEqualToString("setFontFaceStyle(fontFace, 'oblique 5')", "oblique 5deg");
+shouldBeEqualToString("setFontFaceStyle(fontFace, 'oblique 20')", "italic");
+shouldBeEqualToString("setFontFaceStyle(fontFace, 'italic')", "italic");
+shouldBeEqualToString("setFontFaceStyle(fontFace, 'oblique')", "italic");
+shouldBeEqualToString("setFontFaceStyle(fontFace, 'normal')", "normal");
+shouldThrow("setFontFaceStyle(fontFace, 'garbage')");
+shouldThrow("setFontFaceStyle(fontFace, 'initial')");
+shouldBeEqualToString("setFontFaceStyle(fontFace, 'oblique calc(3 + 4)')", "oblique 7deg");
+shouldBeEqualToString("setFontFaceStyle(fontFace, 'oblique calc(4turn + 1deg)')", "oblique 1441deg");
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

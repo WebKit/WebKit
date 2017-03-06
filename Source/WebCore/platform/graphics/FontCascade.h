@@ -164,8 +164,8 @@ public:
     unsigned familyCount() const { return m_fontDescription.familyCount(); }
     const AtomicString& familyAt(unsigned i) const { return m_fontDescription.familyAt(i); }
 
-    FontItalic italic() const { return m_fontDescription.italic(); }
-    FontWeight weight() const { return m_fontDescription.weight(); }
+    FontSelectionValue italic() const { return m_fontDescription.italic(); }
+    FontSelectionValue weight() const { return m_fontDescription.weight(); }
     FontWidthVariant widthVariant() const { return m_fontDescription.widthVariant(); }
 
     bool isPlatformFont() const { return m_fonts->isForPlatformFont(); }

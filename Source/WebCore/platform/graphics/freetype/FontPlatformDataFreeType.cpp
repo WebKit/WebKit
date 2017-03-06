@@ -149,7 +149,7 @@ FontPlatformData::FontPlatformData(FcPattern* pattern, const FontDescription& fo
         m_fixedWidth = true;
 
     bool descriptionAllowsSyntheticBold = fontDescription.fontSynthesis() & FontSynthesisWeight;
-    if (descriptionAllowsSyntheticBold && fontDescription.weight() >= FontWeightBold) {
+    if (descriptionAllowsSyntheticBold && isFontWeightBold(fontDescription.weight())) {
         // The FC_EMBOLDEN property instructs us to fake the boldness of the font.
         FcBool fontConfigEmbolden = FcFalse;
         if (FcPatternGetBool(pattern, FC_EMBOLDEN, 0, &fontConfigEmbolden) == FcResultMatch)

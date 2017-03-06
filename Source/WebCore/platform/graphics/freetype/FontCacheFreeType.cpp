@@ -138,7 +138,7 @@ Ref<Font> FontCache::lastResortFallbackFont(const FontDescription& fontDescripti
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-auto FontCache::getTraitsAndStretchInFamily(const AtomicString& familyName) -> Vector<TraitsAndStretch>
+Vector<FontSelectionCapabilities> FontCache::getFontSelectionCapabilitiesInFamily(const AtomicString& familyName)
 {
     return { };
 }
@@ -163,31 +163,25 @@ static String getFamilyNameStringFromFamily(const AtomicString& family)
     return "";
 }
 
-static int fontWeightToFontconfigWeight(FontWeight weight)
+static int fontWeightToFontconfigWeight(FontSelectionValue weight)
 {
-    switch (weight) {
-    case FontWeight100:
+    if (weight < FontSelectionValue(150))
         return FC_WEIGHT_THIN;
-    case FontWeight200:
+    if (weight < FontSelectionValue(250))
         return FC_WEIGHT_ULTRALIGHT;
-    case FontWeight300:
+    if (weight < FontSelectionValue(350))
         return FC_WEIGHT_LIGHT;
-    case FontWeight400:
+    if (weight < FontSelectionValue(450))
         return FC_WEIGHT_REGULAR;
-    case FontWeight500:
+    if (weight < FontSelectionValue(550))
         return FC_WEIGHT_MEDIUM;
-    case FontWeight600:
+    if (weight < FontSelectionValue(650))
         return FC_WEIGHT_SEMIBOLD;
-    case FontWeight700:
+    if (weight < FontSelectionValue(750))
         return FC_WEIGHT_BOLD;
-    case FontWeight800:
+    if (weight < FontSelectionValue(850))
         return FC_WEIGHT_EXTRABOLD;
-    case FontWeight900:
-        return FC_WEIGHT_ULTRABLACK;
-    default:
-        ASSERT_NOT_REACHED();
-        return FC_WEIGHT_REGULAR;
-    }
+    return FC_WEIGHT_ULTRABLACK;
 }
 
 // This is based on Chromium BSD code from Skia (src/ports/SkFontMgr_fontconfig.cpp). It is a

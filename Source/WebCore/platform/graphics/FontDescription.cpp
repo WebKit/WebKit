@@ -42,7 +42,8 @@ struct SameSizeAsFontCascadeDescription {
     char c;
 #endif
     AtomicString string;
-    float size[2];
+    int16_t fontSelectionRequest[3];
+    float size;
     unsigned bitfields1;
     unsigned bitfields2 : 22;
     void* array;
@@ -53,11 +54,10 @@ struct SameSizeAsFontCascadeDescription {
 COMPILE_ASSERT(sizeof(FontCascadeDescription) == sizeof(SameSizeAsFontCascadeDescription), FontCascadeDescription_should_stay_small);
 
 FontDescription::FontDescription()
-    : m_orientation(Horizontal)
+    : m_fontSelectionRequest(FontCascadeDescription::initialWeight(), FontCascadeDescription::initialStretch(), FontCascadeDescription::initialItalic())
+    , m_orientation(Horizontal)
     , m_nonCJKGlyphOrientation(static_cast<unsigned>(NonCJKGlyphOrientation::Mixed))
     , m_widthVariant(RegularWidth)
-    , m_italic(FontItalicOff)
-    , m_weight(FontWeightNormal)
     , m_renderingMode(static_cast<unsigned>(FontRenderingMode::Normal))
     , m_textRendering(AutoTextRendering)
     , m_script(USCRIPT_COMMON)
@@ -80,13 +80,6 @@ FontDescription::FontDescription()
 {
 }
 
-FontTraitsMask FontDescription::traitsMask() const
-{
-    return static_cast<FontTraitsMask>((m_italic ? FontStyleItalicMask : FontStyleNormalMask)
-        | (FontWeight100Mask << (m_weight - FontWeight100)));
-    
-}
-
 void FontDescription::setLocale(const AtomicString& locale)
 {
     m_locale = locale;
@@ -102,48 +95,26 @@ FontCascadeDescription::FontCascadeDescription()
 {
 }
 
-FontWeight FontCascadeDescription::lighterWeight(void) const
+FontSelectionValue FontCascadeDescription::lighterWeight(FontSelectionValue weight)
 {
-    switch (weight()) {
-    case FontWeight100:
-    case FontWeight200:
-    case FontWeight300:
-    case FontWeight400:
-    case FontWeight500:
-        return FontWeight100;
-
-    case FontWeight600:
-    case FontWeight700:
-        return FontWeight400;
-
-    case FontWeight800:
-    case FontWeight900:
-        return FontWeight700;
-    }
-    ASSERT_NOT_REACHED();
-    return FontWeightNormal;
+    if (weight < FontSelectionValue(100))
+        return weight;
+    if (weight < FontSelectionValue(550))
+        return FontSelectionValue(100);
+    if (weight < FontSelectionValue(750))
+        return FontSelectionValue(400);
+    return FontSelectionValue(700);
 }
 
-FontWeight FontCascadeDescription::bolderWeight(void) const
+FontSelectionValue FontCascadeDescription::bolderWeight(FontSelectionValue weight)
 {
-    switch (weight()) {
-    case FontWeight100:
-    case FontWeight200:
-    case FontWeight300:
-        return FontWeight400;
-
-    case FontWeight400:
-    case FontWeight500:
-        return FontWeight700;
-
-    case FontWeight600:
-    case FontWeight700:
-    case FontWeight800:
-    case FontWeight900:
-        return FontWeight900;
-    }
-    ASSERT_NOT_REACHED();
-    return FontWeightNormal;
+    if (weight < FontSelectionValue(350))
+        return FontSelectionValue(400);
+    if (weight < FontSelectionValue(550))
+        return FontSelectionValue(700);
+    if (weight < FontSelectionValue(900))
+        return FontSelectionValue(900);
+    return weight;
 }
 
 #if ENABLE(TEXT_AUTOSIZING)

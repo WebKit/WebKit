@@ -79,26 +79,15 @@ Ref<Font> FontCache::lastResortFallbackFont(const FontDescription& fontDescripti
     return *fontForFamily(fontDescription, AtomicString(".PhoneFallback", AtomicString::ConstructFromLiteral));
 }
 
-float FontCache::weightOfCTFont(CTFontRef font)
-{
-    RetainPtr<CFDictionaryRef> traits = adoptCF(CTFontCopyTraits(font));
-
-    CFNumberRef resultRef = (CFNumberRef)CFDictionaryGetValue(traits.get(), kCTFontWeightTrait);
-    float result = 0;
-    CFNumberGetValue(resultRef, kCFNumberFloatType, &result);
-
-    return result;
-}
-
-static RetainPtr<CTFontDescriptorRef> baseSystemFontDescriptor(FontWeight weight, bool bold, float size)
+static RetainPtr<CTFontDescriptorRef> baseSystemFontDescriptor(FontSelectionValue weight, bool bold, float size)
 {
     CTFontUIFontType fontType = kCTFontUIFontSystem;
-    if (weight > FontWeight300) {
+    if (weight >= FontSelectionValue(350)) {
         if (bold)
             fontType = kCTFontUIFontEmphasizedSystem;
-    } else if (weight > FontWeight200)
+    } else if (weight >= FontSelectionValue(250))
         fontType = static_cast<CTFontUIFontType>(kCTFontUIFontSystemLight);
-    else if (weight > FontWeight100)
+    else if (weight >= FontSelectionValue(150))
         fontType = static_cast<CTFontUIFontType>(kCTFontUIFontSystemThin);
     else
         fontType = static_cast<CTFontUIFontType>(kCTFontUIFontSystemUltraLight);
@@ -106,23 +95,30 @@ static RetainPtr<CTFontDescriptorRef> baseSystemFontDescriptor(FontWeight weight
 }
 
 #if __IPHONE_OS_VERSION_MIN_REQUIRED >= 100000
-static RetainPtr<NSDictionary> systemFontModificationAttributes(FontWeight weight, bool italic)
+static RetainPtr<NSDictionary> systemFontModificationAttributes(FontSelectionValue weight, bool italic)
 {
     RetainPtr<NSMutableDictionary> traitsDictionary = adoptNS([[NSMutableDictionary alloc] init]);
 
-    ASSERT(weight >= FontWeight100 && weight <= FontWeight900);
-    float ctWeights[] = {
-        static_cast<float>(kCTFontWeightUltraLight),
-        static_cast<float>(kCTFontWeightThin),
-        static_cast<float>(kCTFontWeightLight),
-        static_cast<float>(kCTFontWeightRegular),
-        static_cast<float>(kCTFontWeightMedium),
-        static_cast<float>(kCTFontWeightSemibold),
-        static_cast<float>(kCTFontWeightBold),
-        static_cast<float>(kCTFontWeightHeavy),
-        static_cast<float>(kCTFontWeightBlack)
-    };
-    [traitsDictionary setObject:[NSNumber numberWithFloat:ctWeights[weight]] forKey:static_cast<NSString *>(kCTFontWeightTrait)];
+    float ctWeight = kCTFontWeightRegular;
+    if (weight < FontSelectionValue(150))
+        ctWeight = kCTFontWeightUltraLight;
+    else if (weight < FontSelectionValue(250))
+        ctWeight = kCTFontWeightThin;
+    else if (weight < FontSelectionValue(350))
+        ctWeight = kCTFontWeightLight;
+    else if (weight < FontSelectionValue(450))
+        ctWeight = kCTFontWeightRegular;
+    else if (weight < FontSelectionValue(550))
+        ctWeight = kCTFontWeightMedium;
+    else if (weight < FontSelectionValue(650))
+        ctWeight = kCTFontWeightSemibold;
+    else if (weight < FontSelectionValue(750))
+        ctWeight = kCTFontWeightBold;
+    else if (weight < FontSelectionValue(850))
+        ctWeight = kCTFontWeightHeavy;
+    else
+        ctWeight = kCTFontWeightBlack;
+    [traitsDictionary setObject:[NSNumber numberWithFloat:ctWeight] forKey:static_cast<NSString *>(kCTFontWeightTrait)];
 
     [traitsDictionary setObject:@YES forKey:static_cast<NSString *>(kCTFontUIFontDesignTrait)];
 
@@ -133,7 +129,7 @@ static RetainPtr<NSDictionary> systemFontModificationAttributes(FontWeight weigh
 }
 #endif
 
-static RetainPtr<CTFontDescriptorRef> systemFontDescriptor(FontWeight weight, bool bold, bool italic, float size)
+static RetainPtr<CTFontDescriptorRef> systemFontDescriptor(FontSelectionValue weight, bool bold, bool italic, float size)
 {
     RetainPtr<CTFontDescriptorRef> fontDescriptor = baseSystemFontDescriptor(weight, bold, size);
 #if __IPHONE_OS_VERSION_MIN_REQUIRED >= 100000
@@ -146,10 +142,10 @@ static RetainPtr<CTFontDescriptorRef> systemFontDescriptor(FontWeight weight, bo
 #endif
 }
 
-RetainPtr<CTFontRef> platformFontWithFamilySpecialCase(const AtomicString& family, FontWeight weight, CTFontSymbolicTraits traits, float size)
+RetainPtr<CTFontRef> platformFontWithFamilySpecialCase(const AtomicString& family, FontSelectionRequest request, float size)
 {
     if (family.startsWith("UICTFontTextStyle")) {
-        traits &= (kCTFontBoldTrait | kCTFontItalicTrait);
+        CTFontSymbolicTraits traits = (isFontWeightBold(request.weight) ? kCTFontTraitBold : 0) | (isItalic(request.slope) ? kCTFontTraitItalic : 0);
         RetainPtr<CFStringRef> familyNameStr = family.string().createCFString();
         RetainPtr<CTFontDescriptorRef> fontDescriptor = adoptCF(CTFontDescriptorCreateWithTextStyle(familyNameStr.get(), RenderThemeIOS::contentSizeCategory(), nullptr));
         if (traits)
@@ -159,7 +155,7 @@ RetainPtr<CTFontRef> platformFontWithFamilySpecialCase(const AtomicString& famil
     }
 
     if (equalLettersIgnoringASCIICase(family, "-webkit-system-font") || equalLettersIgnoringASCIICase(family, "-apple-system") || equalLettersIgnoringASCIICase(family, "-apple-system-font") || equalLettersIgnoringASCIICase(family, "system-ui")) {
-        return adoptCF(CTFontCreateWithFontDescriptor(systemFontDescriptor(weight, traits & kCTFontTraitBold, traits & kCTFontTraitItalic, size).get(), size, nullptr));
+        return adoptCF(CTFontCreateWithFontDescriptor(systemFontDescriptor(request.weight, isFontWeightBold(request.weight), isItalic(request.slope), size).get(), size, nullptr));
     }
 
     if (equalLettersIgnoringASCIICase(family, "-apple-system-monospaced-numbers")) {

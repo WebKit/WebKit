@@ -1,3 +1,21 @@
+2017-03-06  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Expand font-weight and font-stretch to take any number
+        https://bugs.webkit.org/show_bug.cgi?id=168889
+
+        Reviewed by Simon Fraser.
+
+        * fast/text/font-selection-font-face-parse-expected.txt: Added.
+        * fast/text/font-selection-font-face-parse.html: Added.
+        * fast/text/font-selection-font-loading-api-parse-expected.txt: Added.
+        * fast/text/font-selection-font-loading-api-parse.html: Added.
+        * fast/text/font-stretch-parse-expected.txt:
+        * fast/text/font-stretch-parse.html:
+        * fast/text/font-style-parse-expected.txt: Copied from LayoutTests/fast/text/font-stretch-parse-expected.txt.
+        * fast/text/font-style-parse.html: Added.
+        * fast/text/font-weight-parse-expected.txt: Copied from LayoutTests/fast/text/font-stretch-parse-expected.txt.
+        * fast/text/font-weight-parse.html: Added.
+
 2017-03-06  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] Mark fast/parser/adoption-agency-unload-iframe-4.html as timing out on platform GTK.

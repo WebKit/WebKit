@@ -88,6 +88,15 @@ public:
         return result.get();
     }
 
+    static FontSelectionValue clampFloat(float value)
+    {
+        if (value < static_cast<float>(FontSelectionValue::minimumValue()))
+            return FontSelectionValue::minimumValue();
+        if (value > static_cast<float>(FontSelectionValue::maximumValue()))
+            return FontSelectionValue::maximumValue();
+        return FontSelectionValue(value);
+    }
+
 private:
     enum class RawTag { RawTag };
 
@@ -161,15 +170,109 @@ static inline FontSelectionValue italicThreshold()
     return result.get();
 }
 
+static inline bool isItalic(FontSelectionValue fontWeight)
+{
+    return fontWeight >= italicThreshold();
+}
+
+static inline FontSelectionValue normalItalicValue()
+{
+    static NeverDestroyed<FontSelectionValue> result = FontSelectionValue();
+    return result.get();
+}
+
+static inline FontSelectionValue italicValue()
+{
+    static NeverDestroyed<FontSelectionValue> result = FontSelectionValue(20);
+    return result.get();
+}
+
 static inline FontSelectionValue boldThreshold()
 {
     static NeverDestroyed<FontSelectionValue> result = FontSelectionValue(600);
     return result.get();
 }
 
+static inline FontSelectionValue boldWeightValue()
+{
+    static NeverDestroyed<FontSelectionValue> result = FontSelectionValue(700);
+    return result.get();
+}
+
+static inline FontSelectionValue normalWeightValue()
+{
+    static NeverDestroyed<FontSelectionValue> result = FontSelectionValue(400);
+    return result.get();
+}
+
+static inline FontSelectionValue lightWeightValue()
+{
+    static NeverDestroyed<FontSelectionValue> result = FontSelectionValue(200);
+    return result.get();
+}
+
+static inline bool isFontWeightBold(FontSelectionValue fontWeight)
+{
+    return fontWeight >= boldThreshold();
+}
+
 static inline FontSelectionValue weightSearchThreshold()
 {
     static NeverDestroyed<FontSelectionValue> result = FontSelectionValue(500);
+    return result.get();
+}
+
+static inline FontSelectionValue ultraCondensedStretchValue()
+{
+    static NeverDestroyed<FontSelectionValue> result = FontSelectionValue(50);
+    return result.get();
+}
+
+static inline FontSelectionValue extraCondensedStretchValue()
+{
+    static NeverDestroyed<FontSelectionValue> result = FontSelectionValue(62.5f);
+    return result.get();
+}
+
+static inline FontSelectionValue condensedStretchValue()
+{
+    static NeverDestroyed<FontSelectionValue> result = FontSelectionValue(75);
+    return result.get();
+}
+
+static inline FontSelectionValue semiCondensedStretchValue()
+{
+    static NeverDestroyed<FontSelectionValue> result = FontSelectionValue(87.5f);
+    return result.get();
+}
+
+static inline FontSelectionValue normalStretchValue()
+{
+    static NeverDestroyed<FontSelectionValue> result = FontSelectionValue(100);
+    return result.get();
+}
+
+static inline FontSelectionValue semiExpandedStretchValue()
+{
+    static NeverDestroyed<FontSelectionValue> result = FontSelectionValue(112.5f);
+    return result.get();
+}
+
+static inline FontSelectionValue expandedStretchValue()
+{
+    static NeverDestroyed<FontSelectionValue> result = FontSelectionValue(125);
+    return result.get();
+}
+
+static inline FontSelectionValue extraExpandedStretchValue()
+{
+    static NeverDestroyed<FontSelectionValue> result = FontSelectionValue(150);
+    return result.get();
+}
+
+static inline FontSelectionValue ultraExpandedStretchValue()
+{
+    static NeverDestroyed<FontSelectionValue> result = FontSelectionValue(200);
     return result.get();
 }
 
@@ -214,6 +317,15 @@ struct FontSelectionRange {
 };
 
 struct FontSelectionRequest {
+    FontSelectionRequest() = default;
+
+    FontSelectionRequest(FontSelectionValue weight, FontSelectionValue width, FontSelectionValue slope)
+        : weight(weight)
+        , width(width)
+        , slope(slope)
+    {
+    }
+
     bool operator==(const FontSelectionRequest& other) const
     {
         return weight == other.weight
@@ -289,9 +401,9 @@ struct FontSelectionCapabilities {
         slope.expand(capabilities.slope);
     }
 
-    FontSelectionRange weight { FontSelectionValue(400), FontSelectionValue(400) };
-    FontSelectionRange width { FontSelectionValue(100), FontSelectionValue(100) };
-    FontSelectionRange slope { FontSelectionValue(), FontSelectionValue() };
+    FontSelectionRange weight { normalWeightValue(), normalWeightValue() };
+    FontSelectionRange width { normalStretchValue(), normalStretchValue() };
+    FontSelectionRange slope { normalItalicValue(), normalItalicValue() };
 };
 
 class FontSelectionAlgorithm {
@@ -357,9 +469,5 @@ private:
     const Vector<FontSelectionCapabilities>& m_capabilities;
     std::unique_ptr<bool[]> m_filter;
 };
-
-FontSelectionRequest fontSelectionRequestForTraitsMask(FontTraitsMask, FontSelectionValue stretch);
-FontSelectionCapabilities fontSelectionCapabilitiesForTraitsMask(FontTraitsMask, FontSelectionValue stretch);
-FontSelectionCapabilities fontSelectionCapabilitiesForTraitsMask(FontTraitsMask, FontSelectionRange stretch);
 
 }

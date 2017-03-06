@@ -324,7 +324,7 @@ static void fillFontDescription(FontCascadeDescription& fontDescription, LOGFONT
     fontDescription.setIsAbsoluteSize(true);
     fontDescription.setOneFamily(String(logFont.lfFaceName));
     fontDescription.setSpecifiedSize(fontSize);
-    fontDescription.setWeight(logFont.lfWeight >= 700 ? FontWeightBold : FontWeightNormal); // FIXME: Use real weight.
+    fontDescription.setWeight(logFont.lfWeight >= 700 ? boldWeightValue() : normalWeightValue()); // FIXME: Use real weight.
     fontDescription.setIsItalic(logFont.lfItalic);
 }
 

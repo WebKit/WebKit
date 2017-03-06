@@ -1738,28 +1738,18 @@ static bool fontWeightIsBold(CSSValue& fontWeight)
     if (!is<CSSPrimitiveValue>(fontWeight))
         return false;
 
-    // Because b tag can only bold text, there are only two states in plain html: bold and not bold.
-    // Collapse all other values to either one of these two states for editing purposes.
-    switch (downcast<CSSPrimitiveValue>(fontWeight).valueID()) {
-        case CSSValue100:
-        case CSSValue200:
-        case CSSValue300:
-        case CSSValue400:
-        case CSSValue500:
+    auto& primitiveValue = downcast<CSSPrimitiveValue>(fontWeight);
+    switch (primitiveValue.valueID()) {
         case CSSValueNormal:
             return false;
         case CSSValueBold:
-        case CSSValue600:
-        case CSSValue700:
-        case CSSValue800:
-        case CSSValue900:
             return true;
         default:
             break;
     }
 
-    ASSERT_NOT_REACHED(); // For CSSValueBolder and CSSValueLighter
-    return false;
+    ASSERT(primitiveValue.isNumber());
+    return primitiveValue.floatValue() >= static_cast<float>(boldThreshold());
 }
 
 template<typename T>

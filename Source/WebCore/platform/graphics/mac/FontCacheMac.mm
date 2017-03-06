@@ -52,28 +52,35 @@ namespace WebCore {
 
 #if PLATFORM(MAC)
 
-static CGFloat toNSFontWeight(FontWeight fontWeight)
+static CGFloat toNSFontWeight(FontSelectionValue fontWeight)
 {
-    static const CGFloat nsFontWeights[] = {
-        NSFontWeightUltraLight,
-        NSFontWeightThin,
-        NSFontWeightLight,
-        NSFontWeightRegular,
-        NSFontWeightMedium,
-        NSFontWeightSemibold,
-        NSFontWeightBold,
-        NSFontWeightHeavy,
-        NSFontWeightBlack
-    };
-    ASSERT(fontWeight >= 0 && fontWeight <= 8);
-    return nsFontWeights[fontWeight];
+    if (fontWeight < FontSelectionValue(150))
+        return NSFontWeightUltraLight;
+    if (fontWeight < FontSelectionValue(250))
+        return NSFontWeightThin;
+    if (fontWeight < FontSelectionValue(350))
+        return NSFontWeightLight;
+    if (fontWeight < FontSelectionValue(450))
+        return NSFontWeightRegular;
+    if (fontWeight < FontSelectionValue(550))
+        return NSFontWeightMedium;
+    if (fontWeight < FontSelectionValue(650))
+        return NSFontWeightSemibold;
+    if (fontWeight < FontSelectionValue(750))
+        return NSFontWeightBold;
+    if (fontWeight < FontSelectionValue(850))
+        return NSFontWeightHeavy;
+    return NSFontWeightBlack;
 }
 
-RetainPtr<CTFontRef> platformFontWithFamilySpecialCase(const AtomicString& family, FontWeight weight, CTFontSymbolicTraits desiredTraits, float size)
+RetainPtr<CTFontRef> platformFontWithFamilySpecialCase(const AtomicString& family, FontSelectionRequest request, float size)
 {
     if (equalLettersIgnoringASCIICase(family, "-webkit-system-font") || equalLettersIgnoringASCIICase(family, "-apple-system") || equalLettersIgnoringASCIICase(family, "-apple-system-font") || equalLettersIgnoringASCIICase(family, "system-ui")) {
-        RetainPtr<CTFontRef> result = toCTFont([NSFont systemFontOfSize:size weight:toNSFontWeight(weight)]);
-        if (desiredTraits & kCTFontItalicTrait) {
+        RetainPtr<CTFontRef> result = toCTFont([NSFont systemFontOfSize:size weight:toNSFontWeight(request.weight)]);
+        if (isItalic(request.slope)) {
+            CTFontSymbolicTraits desiredTraits = kCTFontItalicTrait;
+            if (isFontWeightBold(request.weight))
+                desiredTraits |= kCTFontBoldTrait;
             if (auto italicizedFont = adoptCF(CTFontCreateCopyWithSymbolicTraits(result.get(), size, nullptr, desiredTraits, desiredTraits)))
                 result = italicizedFont;
         }

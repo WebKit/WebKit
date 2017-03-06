@@ -110,8 +110,8 @@ void RenderThemeGtk::updateCachedSystemFontDescription(CSSValueID, FontCascadeDe
 
     fontDescription.setSpecifiedSize(size);
     fontDescription.setIsAbsoluteSize(true);
-    fontDescription.setWeight(FontWeightNormal);
-    fontDescription.setItalic(FontItalicOff);
+    fontDescription.setWeight(normalWeightValue());
+    fontDescription.setItalic(FontSelectionValue());
     pango_font_description_free(pangoDescription);
 }
 

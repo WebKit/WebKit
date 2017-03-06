@@ -57,7 +57,7 @@ static FontCascade makeFont(const WebFontDescription& description)
     f.setSpecifiedSize(description.size);
     f.setComputedSize(description.size);
     f.setIsItalic(description.italic);
-    f.setWeight(description.bold ? FontWeightBold : FontWeightNormal);
+    f.setWeight(description.bold ? boldWeightValue() : normalWeightValue());
     f.setIsAbsoluteSize(true);
 
     FontSmoothingType smoothingType;

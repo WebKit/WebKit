@@ -121,7 +121,7 @@ FontCascade::FontCascade(const FontPlatformData& fontData, FontSmoothingMode fon
     m_fontDescription.setSpecifiedSize(CTFontGetSize(fontData.font()));
     m_fontDescription.setComputedSize(CTFontGetSize(fontData.font()));
     m_fontDescription.setIsItalic(CTFontGetSymbolicTraits(fontData.font()) & kCTFontTraitItalic);
-    m_fontDescription.setWeight((CTFontGetSymbolicTraits(fontData.font()) & kCTFontTraitBold) ? FontWeightBold : FontWeightNormal);
+    m_fontDescription.setWeight((CTFontGetSymbolicTraits(fontData.font()) & kCTFontTraitBold) ? boldWeightValue() : normalWeightValue());
 #endif
 }
 

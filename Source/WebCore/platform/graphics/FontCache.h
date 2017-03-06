@@ -188,9 +188,6 @@ public:
     Vector<String> systemFontFamilies();
     void platformInit();
 
-#if PLATFORM(IOS)
-    static float weightOfCTFont(CTFontRef);
-#endif
 #if PLATFORM(COCOA)
     WEBCORE_EXPORT static void setFontWhitelist(const Vector<String>&);
 #endif
@@ -203,11 +200,7 @@ public:
 
     // This function exists so CSSFontSelector can have a unified notion of preinstalled fonts and @font-face.
     // It comes into play when you create an @font-face which shares a family name as a preinstalled font.
-    struct TraitsAndStretch {
-        FontTraitsMask traits;
-        FontSelectionRange stretch;
-    };
-    Vector<TraitsAndStretch> getTraitsAndStretchInFamily(const AtomicString&);
+    Vector<FontSelectionCapabilities> getFontSelectionCapabilitiesInFamily(const AtomicString&);
 
     WEBCORE_EXPORT RefPtr<Font> fontForFamily(const FontDescription&, const AtomicString&, const FontFeatureSettings* fontFaceFeatures = nullptr, const FontVariantSettings* fontFaceVariantSettings = nullptr, bool checkingAlternateName = false);
     WEBCORE_EXPORT Ref<Font> lastResortFallbackFont(const FontDescription&);
@@ -286,13 +279,11 @@ struct SynthesisPair {
 };
 
 RetainPtr<CTFontRef> preparePlatformFont(CTFontRef, TextRenderingMode, const FontFeatureSettings* fontFaceFeatures, const FontVariantSettings* fontFaceVariantSettings, const FontFeatureSettings& features, const FontVariantSettings&, const FontVariationSettings&);
-FontWeight fontWeightFromCoreText(CGFloat weight);
-uint16_t toCoreTextFontWeight(FontWeight);
-bool isFontWeightBold(FontWeight);
 SynthesisPair computeNecessarySynthesis(CTFontRef, const FontDescription&, bool isPlatformFont = false);
-RetainPtr<CTFontRef> platformFontWithFamilySpecialCase(const AtomicString& family, FontWeight, CTFontSymbolicTraits, float size);
-RetainPtr<CTFontRef> platformFontWithFamily(const AtomicString& family, CTFontSymbolicTraits, FontWeight, TextRenderingMode, float size);
+RetainPtr<CTFontRef> platformFontWithFamilySpecialCase(const AtomicString& family, FontSelectionRequest, float size);
+RetainPtr<CTFontRef> platformFontWithFamily(const AtomicString& family, FontSelectionRequest, TextRenderingMode, float size);
 bool requiresCustomFallbackFont(UChar32 character);
+FontSelectionCapabilities capabilitiesForFontDescriptor(CTFontDescriptorRef);
 
 #else
 

@@ -13873,6 +13873,8 @@
 		C28083411C6DC96A001451B6 /* JSFontFaceCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSFontFaceCustom.cpp; sourceTree = "<group>"; };
 		C2AB0AF41E6B3C6C001348C5 /* FontSelectionAlgorithm.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FontSelectionAlgorithm.cpp; sourceTree = "<group>"; };
 		C2AB0AF51E6B3C6C001348C5 /* FontSelectionAlgorithm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FontSelectionAlgorithm.h; sourceTree = "<group>"; };
+		C2AB0B021E6DE32B001348C5 /* FontSelectionKeywordValues.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FontSelectionKeywordValues.h; sourceTree = "<group>"; };
+		C2AB0B031E6DE92C001348C5 /* FontSelectionValueInlines.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FontSelectionValueInlines.h; sourceTree = "<group>"; };
 		C2F4E7881E45AEDF006D7105 /* ComplexTextController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ComplexTextController.cpp; sourceTree = "<group>"; };
 		C2F4E7891E45AEDF006D7105 /* ComplexTextController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ComplexTextController.h; sourceTree = "<group>"; };
 		C330A22113EC196B0000B45B /* ColorChooser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ColorChooser.h; sourceTree = "<group>"; };
@@ -22371,6 +22373,7 @@
 				379919951200DDF400EA041C /* WOFFFileFormat.h */,
 				C2AB0AF41E6B3C6C001348C5 /* FontSelectionAlgorithm.cpp */,
 				C2AB0AF51E6B3C6C001348C5 /* FontSelectionAlgorithm.h */,
+				C2AB0B021E6DE32B001348C5 /* FontSelectionKeywordValues.h */,
 			);
 			path = graphics;
 			sourceTree = "<group>";
@@ -24217,6 +24220,7 @@
 				3FFFF9A7159D9A550020BBD5 /* WebKitCSSViewportRule.h */,
 				3F2B33E3165ABD3500E3987C /* WebKitCSSViewportRule.idl */,
 				31055BB81E4FE18900EB604E /* WebKitFontFamilyNames.in */,
+				C2AB0B031E6DE92C001348C5 /* FontSelectionValueInlines.h */,
 			);
 			path = css;
 			sourceTree = "<group>";

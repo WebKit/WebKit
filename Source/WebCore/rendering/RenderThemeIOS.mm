@@ -1273,12 +1273,12 @@ void RenderThemeIOS::updateCachedSystemFontDescription(CSSValueID valueID, FontC
 
     ASSERT(fontDescriptor);
     RetainPtr<CTFontRef> font = adoptCF(CTFontCreateWithFontDescriptor(fontDescriptor.get(), 0, nullptr));
-    font = preparePlatformFont(font.get(), fontDescription.textRenderingMode(), nullptr, nullptr, fontDescription.featureSettings(), fontDescription.variantSettings(), fontDescription.variationSettings());
     fontDescription.setIsAbsoluteSize(true);
     fontDescription.setOneFamily(textStyle);
     fontDescription.setSpecifiedSize(CTFontGetSize(font.get()));
-    fontDescription.setWeight(fontWeightFromCoreText(FontCache::weightOfCTFont(font.get())));
-    fontDescription.setItalic(FontItalicOff);
+    auto capabilities = capabilitiesForFontDescriptor(adoptCF(CTFontCopyFontDescriptor(font.get())).get());
+    fontDescription.setWeight(capabilities.weight.minimum);
+    fontDescription.setItalic(normalItalicValue());
 }
 
 #if ENABLE(VIDEO)

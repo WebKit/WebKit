@@ -3500,7 +3500,7 @@ bool AccessibilityRenderObject::hasBoldFont() const
     if (!m_renderer)
         return false;
     
-    return m_renderer->style().fontDescription().weight() >= FontWeightBold;
+    return isFontWeightBold(m_renderer->style().fontDescription().weight());
 }
 
 bool AccessibilityRenderObject::hasItalicFont() const
@@ -3508,7 +3508,7 @@ bool AccessibilityRenderObject::hasItalicFont() const
     if (!m_renderer)
         return false;
     
-    return m_renderer->style().fontDescription().italic() == FontItalicOn;
+    return isItalic(m_renderer->style().fontDescription().italic());
 }
 
 bool AccessibilityRenderObject::hasPlainText() const
@@ -3518,8 +3518,8 @@ bool AccessibilityRenderObject::hasPlainText() const
     
     const RenderStyle& style = m_renderer->style();
     
-    return style.fontDescription().weight() == FontWeightNormal
-        && style.fontDescription().italic() == FontItalicOff
+    return style.fontDescription().weight() == normalWeightValue()
+        && style.fontDescription().italic() == normalItalicValue()
         && style.textDecorationsInEffect() == TextDecorationNone;
 }
 

@@ -163,12 +163,11 @@ ExceptionOr<void> FontFace::setStyle(const String& style)
     if (style.isEmpty())
         return Exception { SYNTAX_ERR };
 
-    bool success = false;
-    if (auto value = parseString(style, CSSPropertyFontStyle))
-        success = m_backing->setStyle(*value);
-    if (!success)
-        return Exception { SYNTAX_ERR };
-    return { };
+    if (auto value = parseString(style, CSSPropertyFontStyle)) {
+        m_backing->setStyle(*value);
+        return { };
+    }
+    return Exception { SYNTAX_ERR };
 }
 
 ExceptionOr<void> FontFace::setWeight(const String& weight)
@@ -176,12 +175,11 @@ ExceptionOr<void> FontFace::setWeight(const String& weight)
     if (weight.isEmpty())
         return Exception { SYNTAX_ERR };
 
-    bool success = false;
-    if (auto value = parseString(weight, CSSPropertyFontWeight))
-        success = m_backing->setWeight(*value);
-    if (!success)
-        return Exception { SYNTAX_ERR };
-    return { };
+    if (auto value = parseString(weight, CSSPropertyFontWeight)) {
+        m_backing->setWeight(*value);
+        return { };
+    }
+    return Exception { SYNTAX_ERR };
 }
 
 ExceptionOr<void> FontFace::setStretch(const String& stretch)
@@ -189,12 +187,11 @@ ExceptionOr<void> FontFace::setStretch(const String& stretch)
     if (stretch.isEmpty())
         return Exception { SYNTAX_ERR };
 
-    bool success = false;
-    if (auto value = parseString(stretch, CSSPropertyFontStretch))
-        success = m_backing->setStretch(*value);
-    if (!success)
-        return Exception { SYNTAX_ERR };
-    return { };
+    if (auto value = parseString(stretch, CSSPropertyFontStretch)) {
+        m_backing->setStretch(*value);
+        return { };
+    }
+    return Exception { SYNTAX_ERR };
 }
 
 ExceptionOr<void> FontFace::setUnicodeRange(const String& unicodeRange)
@@ -283,44 +280,55 @@ String FontFace::family() const
     return m_backing->families()->cssText();
 }
 
+static inline bool rangeIsSingleValue(FontSelectionRange range, FontSelectionValue value)
+{
+    return range.minimum == value && range.maximum == value;
+};
+
 String FontFace::style() const
 {
     m_backing->updateStyleIfNeeded();
-    switch (m_backing->traitsMask() & FontStyleMask) {
-    case FontStyleNormalMask:
-        return String("normal", String::ConstructFromLiteral);
-    case FontStyleItalicMask:
-        return String("italic", String::ConstructFromLiteral);
+    auto style = m_backing->italic();
+
+    if (rangeIsSingleValue(style, italicValue()))
+        return ASCIILiteral("italic");
+    if (rangeIsSingleValue(style, normalItalicValue()))
+        return ASCIILiteral("normal");
+
+    if (style.minimum == style.maximum) {
+        auto value = static_cast<float>(style.minimum);
+        if (value >= 0) {
+            auto floored = std::floor(value);
+            if (floored == value)
+                return String::format("oblique %ddeg", static_cast<int>(floored));
+        }
+        return String::format("oblique %fdeg", static_cast<float>(style.minimum));
     }
-    ASSERT_NOT_REACHED();
-    return String("normal", String::ConstructFromLiteral);
+
+    return String::format("oblique %fdeg-%fdeg", static_cast<float>(style.minimum), static_cast<float>(style.maximum));
 }
 
 String FontFace::weight() const
 {
     m_backing->updateStyleIfNeeded();
-    switch (m_backing->traitsMask() & FontWeightMask) {
-    case FontWeight100Mask:
-        return String("100", String::ConstructFromLiteral);
-    case FontWeight200Mask:
-        return String("200", String::ConstructFromLiteral);
-    case FontWeight300Mask:
-        return String("300", String::ConstructFromLiteral);
-    case FontWeight400Mask:
-        return String("normal", String::ConstructFromLiteral);
-    case FontWeight500Mask:
-        return String("500", String::ConstructFromLiteral);
-    case FontWeight600Mask:
-        return String("600", String::ConstructFromLiteral);
-    case FontWeight700Mask:
-        return String("bold", String::ConstructFromLiteral);
-    case FontWeight800Mask:
-        return String("800", String::ConstructFromLiteral);
-    case FontWeight900Mask:
-        return String("900", String::ConstructFromLiteral);
+    auto weight = m_backing->weight();
+
+    if (rangeIsSingleValue(weight, normalWeightValue()))
+        return ASCIILiteral("normal");
+    if (rangeIsSingleValue(weight, boldWeightValue()))
+        return ASCIILiteral("bold");
+
+    if (weight.minimum == weight.maximum) {
+        auto value = static_cast<float>(weight.minimum);
+        if (value >= 0) {
+            auto floored = std::floor(value);
+            if (floored == value)
+                return String::format("%d", static_cast<int>(floored));
+        }
+        return String::format("%f", static_cast<float>(weight.minimum));
     }
-    ASSERT_NOT_REACHED();
-    return String("normal", String::ConstructFromLiteral);
+
+    return String::format("%f-%f", static_cast<float>(weight.minimum), static_cast<float>(weight.maximum));
 }
 
 String FontFace::stretch() const
@@ -328,30 +336,36 @@ String FontFace::stretch() const
     m_backing->updateStyleIfNeeded();
     auto stretch = m_backing->stretch();
 
-    auto rangeIsSingleValue = [](FontSelectionRange range, FontSelectionValue value) -> bool {
-        return range.minimum == value && range.maximum == value;
-    };
-
-    if (rangeIsSingleValue(stretch, FontSelectionValue(50)))
+    if (rangeIsSingleValue(stretch, ultraCondensedStretchValue()))
         return ASCIILiteral("ultra-condensed");
-    if (rangeIsSingleValue(stretch, FontSelectionValue(62.5f)))
+    if (rangeIsSingleValue(stretch, extraCondensedStretchValue()))
         return ASCIILiteral("extra-condensed");
-    if (rangeIsSingleValue(stretch, FontSelectionValue(75)))
+    if (rangeIsSingleValue(stretch, condensedStretchValue()))
         return ASCIILiteral("condensed");
-    if (rangeIsSingleValue(stretch, FontSelectionValue(87.5f)))
+    if (rangeIsSingleValue(stretch, semiCondensedStretchValue()))
         return ASCIILiteral("semi-condensed");
-    if (rangeIsSingleValue(stretch, FontSelectionValue(100)))
+    if (rangeIsSingleValue(stretch, normalStretchValue()))
         return ASCIILiteral("normal");
-    if (rangeIsSingleValue(stretch, FontSelectionValue(112.5f)))
+    if (rangeIsSingleValue(stretch, semiExpandedStretchValue()))
         return ASCIILiteral("semi-expanded");
-    if (rangeIsSingleValue(stretch, FontSelectionValue(125)))
+    if (rangeIsSingleValue(stretch, expandedStretchValue()))
         return ASCIILiteral("expanded");
-    if (rangeIsSingleValue(stretch, FontSelectionValue(150)))
+    if (rangeIsSingleValue(stretch, extraExpandedStretchValue()))
         return ASCIILiteral("extra-expanded");
-    if (rangeIsSingleValue(stretch, FontSelectionValue(200)))
+    if (rangeIsSingleValue(stretch, ultraExpandedStretchValue()))
         return ASCIILiteral("ultra-expanded");
 
-    return String::format("%f-%f", static_cast<float>(stretch.minimum), static_cast<float>(stretch.maximum));
+    if (stretch.minimum == stretch.maximum) {
+        auto value = static_cast<float>(stretch.minimum);
+        if (value >= 0) {
+            auto floored = std::floor(value);
+            if (floored == value)
+                return String::format("%d%%", static_cast<int>(floored));
+        }
+        return String::format("%f%%", static_cast<float>(stretch.minimum));
+    }
+
+    return String::format("%f%%-%f%%", static_cast<float>(stretch.minimum), static_cast<float>(stretch.maximum));
 }
 
 String FontFace::unicodeRange() const

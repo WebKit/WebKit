@@ -136,35 +136,7 @@ static AtkAttributeSet* getAttributeSetForAccessibilityObject(const Accessibilit
 
     result = addToAtkAttributeSet(result, atk_text_attribute_get_name(ATK_TEXT_ATTR_FAMILY_NAME), fontFamilyName.utf8().data());
 
-    int fontWeight = -1;
-    switch (style->fontCascade().weight()) {
-    case FontWeight100:
-        fontWeight = 100;
-        break;
-    case FontWeight200:
-        fontWeight = 200;
-        break;
-    case FontWeight300:
-        fontWeight = 300;
-        break;
-    case FontWeight400:
-        fontWeight = 400;
-        break;
-    case FontWeight500:
-        fontWeight = 500;
-        break;
-    case FontWeight600:
-        fontWeight = 600;
-        break;
-    case FontWeight700:
-        fontWeight = 700;
-        break;
-    case FontWeight800:
-        fontWeight = 800;
-        break;
-    case FontWeight900:
-        fontWeight = 900;
-    }
+    int fontWeight = static_cast<float>(style->fontCascade().weight());
     if (fontWeight > 0) {
         buffer.reset(g_strdup_printf("%i", fontWeight));
         result = addToAtkAttributeSet(result, atk_text_attribute_get_name(ATK_TEXT_ATTR_WEIGHT), buffer.get());

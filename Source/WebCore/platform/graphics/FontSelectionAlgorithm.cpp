@@ -35,7 +35,7 @@ auto FontSelectionAlgorithm::stretchDistance(FontSelectionCapabilities capabilit
     if (width.includes(m_request.width))
         return { FontSelectionValue(), m_request.width };
 
-    if (m_request.width >= FontSelectionValue(100)) {
+    if (m_request.width >= normalStretchValue()) {
         if (width.minimum > m_request.width)
             return { width.minimum - m_request.width, width.minimum };
         ASSERT(width.maximum < m_request.width);
@@ -150,90 +150,6 @@ size_t FontSelectionAlgorithm::indexOfBestCapabilities()
     });
     ASSERT(result);
     return result.value_or(0);
-}
-
-FontSelectionRequest fontSelectionRequestForTraitsMask(FontTraitsMask traitsMask, FontSelectionValue stretch)
-{
-    FontSelectionRequest result;
-    if (traitsMask & FontWeight100Mask)
-        result.weight = FontSelectionValue(100);
-    else if (traitsMask & FontWeight200Mask)
-        result.weight = FontSelectionValue(200);
-    else if (traitsMask & FontWeight300Mask)
-        result.weight = FontSelectionValue(300);
-    else if (traitsMask & FontWeight400Mask)
-        result.weight = FontSelectionValue(400);
-    else if (traitsMask & FontWeight500Mask)
-        result.weight = FontSelectionValue(500);
-    else if (traitsMask & FontWeight600Mask)
-        result.weight = FontSelectionValue(600);
-    else if (traitsMask & FontWeight700Mask)
-        result.weight = FontSelectionValue(700);
-    else if (traitsMask & FontWeight800Mask)
-        result.weight = FontSelectionValue(800);
-    else {
-        ASSERT(traitsMask & FontWeight900Mask);
-        result.weight = FontSelectionValue(900);
-    }
-
-    result.width = stretch;
-
-    if (traitsMask & FontStyleNormalMask)
-        result.slope = FontSelectionValue();
-    else {
-        ASSERT(traitsMask & FontStyleItalicMask);
-        result.slope = italicThreshold();
-    }
-
-    return result;
-}
-
-static FontSelectionCapabilities initialFontSelectionCapabilitiesForTraitsMask(FontTraitsMask traitsMask)
-{
-    FontSelectionCapabilities result;
-    if (traitsMask & FontWeight100Mask)
-        result.weight = { FontSelectionValue(100), FontSelectionValue(100) };
-    else if (traitsMask & FontWeight200Mask)
-        result.weight = { FontSelectionValue(200), FontSelectionValue(200) };
-    else if (traitsMask & FontWeight300Mask)
-        result.weight = { FontSelectionValue(300), FontSelectionValue(300) };
-    else if (traitsMask & FontWeight400Mask)
-        result.weight = { FontSelectionValue(400), FontSelectionValue(400) };
-    else if (traitsMask & FontWeight500Mask)
-        result.weight = { FontSelectionValue(500), FontSelectionValue(500) };
-    else if (traitsMask & FontWeight600Mask)
-        result.weight = { FontSelectionValue(600), FontSelectionValue(600) };
-    else if (traitsMask & FontWeight700Mask)
-        result.weight = { FontSelectionValue(700), FontSelectionValue(700) };
-    else if (traitsMask & FontWeight800Mask)
-        result.weight = { FontSelectionValue(800), FontSelectionValue(800) };
-    else {
-        ASSERT(traitsMask & FontWeight900Mask);
-        result.weight = { FontSelectionValue(900), FontSelectionValue(900) };
-    }
-
-    if (traitsMask & FontStyleNormalMask)
-        result.slope = { FontSelectionValue(), FontSelectionValue() };
-    else {
-        ASSERT(traitsMask & FontStyleItalicMask);
-        result.slope = { italicThreshold(), italicThreshold() };
-    }
-
-    return result;
-}
-
-FontSelectionCapabilities fontSelectionCapabilitiesForTraitsMask(FontTraitsMask traitsMask, FontSelectionValue stretch)
-{
-    FontSelectionCapabilities result = initialFontSelectionCapabilitiesForTraitsMask(traitsMask);
-    result.width = { stretch, stretch };
-    return result;
-}
-
-FontSelectionCapabilities fontSelectionCapabilitiesForTraitsMask(FontTraitsMask traitsMask, FontSelectionRange stretch)
-{
-    FontSelectionCapabilities result = initialFontSelectionCapabilitiesForTraitsMask(traitsMask);
-    result.width = stretch;
-    return result;
 }
 
 }

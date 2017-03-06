@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<style id="weightTest">
+@font-face {
+    font-weight: 1;
+}
+@font-face {
+    font-weight: 100;
+}
+@font-face {
+    font-weight: 200;
+}
+@font-face {
+    font-weight: 300;
+}
+@font-face {
+    font-weight: 400;
+}
+@font-face {
+    font-weight: normal;
+}
+@font-face {
+    font-weight: 500;
+}
+@font-face {
+    font-weight: 600;
+}
+@font-face {
+    font-weight: 700;
+}
+@font-face {
+    font-weight: bold;
+}
+@font-face {
+    font-weight: 800;
+}
+@font-face {
+    font-weight: 900;
+}
+@font-face {
+    font-weight: garbage;
+}
+@font-face {
+    font-weight: initial;
+}
+@font-face {
+}
+@font-face {
+    font-weight: calc(3 + 4);
+}
+@font-face {
+    font-weight: calc(100 + 200);
+}
+@font-face {
+    font-weight: calc(150 + 50);
+}
+</style>
+
+<style id="stretchTest">
+@font-face {
+    font-stretch: 1%;
+}
+@font-face {
+    font-stretch: 2;
+}
+@font-face {
+    font-stretch: ultra-condensed;
+}
+@font-face {
+    font-stretch: extra-condensed;
+}
+@font-face {
+    font-stretch: condensed;
+}
+@font-face {
+    font-stretch: semi-condensed;
+}
+@font-face {
+    font-stretch: normal;
+}
+@font-face {
+    font-stretch: semi-expanded;
+}
+@font-face {
+    font-stretch: expanded;
+}
+@font-face {
+    font-stretch: extra-expanded;
+}
+@font-face {
+    font-stretch: ultra-expanded;
+}
+@font-face {
+    font-stretch: garbage;
+}
+@font-face {
+    font-stretch: initial;
+}
+@font-face {
+    font-stretch: calc(3 + 4);
+}
+</style>
+
+<style id="styleTest">
+@font-face {
+    font-style: oblique 1deg;
+}
+@font-face {
+    font-style: oblique 200grad;
+}
+@font-face {
+    font-style: oblique 6.28318rad;
+}
+@font-face {
+    font-style: oblique 4turn;
+}
+@font-face {
+    font-style: oblique 5;
+}
+@font-face {
+    font-style: oblique 20;
+}
+@font-face {
+    font-style: italic;
+}
+@font-face {
+    font-style: oblique;
+}
+@font-face {
+    font-style: normal;
+}
+@font-face {
+    font-style: garbage;
+}
+@font-face {
+    font-style: initial;
+}
+@font-face {
+    font-style: oblique calc(3 + 4);
+}
+@font-face {
+    font-style: oblique calc(4turn + 1deg);
+}
+</style>
+</head>
+<body>
+<script>
+var weightTestSheet = document.getElementById("weightTest").sheet;
+shouldBeEqualToString("weightTestSheet.cssRules[0].style.fontWeight", "1");
+shouldBeEqualToString("weightTestSheet.cssRules[1].style.fontWeight", "100");
+shouldBeEqualToString("weightTestSheet.cssRules[2].style.fontWeight", "200");
+shouldBeEqualToString("weightTestSheet.cssRules[3].style.fontWeight", "300");
+shouldBeEqualToString("weightTestSheet.cssRules[4].style.fontWeight", "400");
+shouldBeEqualToString("weightTestSheet.cssRules[5].style.fontWeight", "normal");
+shouldBeEqualToString("weightTestSheet.cssRules[6].style.fontWeight", "500");
+shouldBeEqualToString("weightTestSheet.cssRules[7].style.fontWeight", "600");
+shouldBeEqualToString("weightTestSheet.cssRules[8].style.fontWeight", "700");
+shouldBeEqualToString("weightTestSheet.cssRules[9].style.fontWeight", "bold");
+shouldBeEqualToString("weightTestSheet.cssRules[10].style.fontWeight", "800");
+shouldBeEqualToString("weightTestSheet.cssRules[11].style.fontWeight", "900");
+shouldBeEqualToString("weightTestSheet.cssRules[12].style.fontWeight", "");
+shouldBeEqualToString("weightTestSheet.cssRules[13].style.fontWeight", "");
+shouldBeEqualToString("weightTestSheet.cssRules[14].style.fontWeight", "");
+shouldBeEqualToString("weightTestSheet.cssRules[15].style.fontWeight", "7");
+shouldBeEqualToString("weightTestSheet.cssRules[16].style.fontWeight", "300");
+shouldBeEqualToString("weightTestSheet.cssRules[17].style.fontWeight", "200");
+
+var stretchTestSheet = document.getElementById("stretchTest").sheet;
+shouldBeEqualToString("stretchTestSheet.cssRules[0].style.fontStretch", "1%");
+shouldBeEqualToString("stretchTestSheet.cssRules[1].style.fontStretch", "2");
+shouldBeEqualToString("stretchTestSheet.cssRules[2].style.fontStretch", "ultra-condensed");
+shouldBeEqualToString("stretchTestSheet.cssRules[3].style.fontStretch", "extra-condensed");
+shouldBeEqualToString("stretchTestSheet.cssRules[4].style.fontStretch", "condensed");
+shouldBeEqualToString("stretchTestSheet.cssRules[5].style.fontStretch", "semi-condensed");
+shouldBeEqualToString("stretchTestSheet.cssRules[6].style.fontStretch", "normal");
+shouldBeEqualToString("stretchTestSheet.cssRules[7].style.fontStretch", "semi-expanded");
+shouldBeEqualToString("stretchTestSheet.cssRules[8].style.fontStretch", "expanded");
+shouldBeEqualToString("stretchTestSheet.cssRules[9].style.fontStretch", "extra-expanded");
+shouldBeEqualToString("stretchTestSheet.cssRules[10].style.fontStretch", "ultra-expanded");
+shouldBeEqualToString("stretchTestSheet.cssRules[11].style.fontStretch", "");
+shouldBeEqualToString("stretchTestSheet.cssRules[12].style.fontStretch", "");
+shouldBeEqualToString("stretchTestSheet.cssRules[13].style.fontStretch", "7");
+
+var styleTestSheet = document.getElementById("styleTest").sheet;
+shouldBeEqualToString("styleTestSheet.cssRules[0].style.fontStyle", "1deg");
+shouldBeEqualToString("styleTestSheet.cssRules[1].style.fontStyle", "200grad");
+shouldBeEqualToString("styleTestSheet.cssRules[2].style.fontStyle", "6.28318rad");
+shouldBeEqualToString("styleTestSheet.cssRules[3].style.fontStyle", "4turn");
+shouldBeEqualToString("styleTestSheet.cssRules[4].style.fontStyle", "5");
+shouldBeEqualToString("styleTestSheet.cssRules[5].style.fontStyle", "20");
+shouldBeEqualToString("styleTestSheet.cssRules[6].style.fontStyle", "italic");
+shouldBeEqualToString("styleTestSheet.cssRules[7].style.fontStyle", "oblique");
+shouldBeEqualToString("styleTestSheet.cssRules[8].style.fontStyle", "normal");
+shouldBeEqualToString("styleTestSheet.cssRules[9].style.fontStyle", "");
+shouldBeEqualToString("styleTestSheet.cssRules[10].style.fontStyle", "");
+shouldBeEqualToString("styleTestSheet.cssRules[11].style.fontStyle", "7");
+shouldBeEqualToString("styleTestSheet.cssRules[12].style.fontStyle", "calc(1441deg)");
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

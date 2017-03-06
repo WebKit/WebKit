@@ -9618,8 +9618,8 @@ static NSTextAlignment nsTextAlignmentFromRenderStyle(const RenderStyle* style)
         if (!selection.isNone()) {
             Node* nodeToRemove;
             if (auto* style = Editor::styleForSelectionStart(coreFrame, nodeToRemove)) {
-                [_private->_textTouchBarItemController setTextIsBold:(style->fontCascade().weight() >= FontWeightBold)];
-                [_private->_textTouchBarItemController setTextIsItalic:(style->fontCascade().italic() == FontItalicOn)];
+                [_private->_textTouchBarItemController setTextIsBold:isFontWeightBold(style->fontCascade().weight())];
+                [_private->_textTouchBarItemController setTextIsItalic:isItalic(style->fontCascade().italic())];
 
                 RefPtr<EditingStyle> typingStyle = coreFrame->selection().typingStyle();
                 if (typingStyle && typingStyle->style()) {

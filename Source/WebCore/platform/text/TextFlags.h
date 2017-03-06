@@ -340,60 +340,9 @@ const unsigned FontWidthVariantWidth = 2;
 
 COMPILE_ASSERT(!(LastFontWidthVariant >> FontWidthVariantWidth), FontWidthVariantWidth_is_correct);
 
-enum FontWeight {
-    FontWeight100,
-    FontWeight200,
-    FontWeight300,
-    FontWeight400,
-    FontWeight500,
-    FontWeight600,
-    FontWeight700,
-    FontWeight800,
-    FontWeight900,
-    FontWeightNormal = FontWeight400,
-    FontWeightBold = FontWeight700
-};
-
-enum FontItalic {
-    FontItalicOff = 0,
-    FontItalicOn = 1
-};
-
 enum FontSmallCaps {
     FontSmallCapsOff = 0,
     FontSmallCapsOn = 1
-};
-
-enum {
-    FontStyleNormalBit = 0,
-    FontStyleItalicBit,
-    FontWeight100Bit,
-    FontWeight200Bit,
-    FontWeight300Bit,
-    FontWeight400Bit,
-    FontWeight500Bit,
-    FontWeight600Bit,
-    FontWeight700Bit,
-    FontWeight800Bit,
-    FontWeight900Bit,
-    FontTraitsMaskWidth
-};
-
-enum FontTraitsMask {
-    FontStyleNormalMask = 1 << FontStyleNormalBit,
-    FontStyleItalicMask = 1 << FontStyleItalicBit,
-    FontStyleMask = FontStyleNormalMask | FontStyleItalicMask,
-
-    FontWeight100Mask = 1 << FontWeight100Bit,
-    FontWeight200Mask = 1 << FontWeight200Bit,
-    FontWeight300Mask = 1 << FontWeight300Bit,
-    FontWeight400Mask = 1 << FontWeight400Bit,
-    FontWeight500Mask = 1 << FontWeight500Bit,
-    FontWeight600Mask = 1 << FontWeight600Bit,
-    FontWeight700Mask = 1 << FontWeight700Bit,
-    FontWeight800Mask = 1 << FontWeight800Bit,
-    FontWeight900Mask = 1 << FontWeight900Bit,
-    FontWeightMask = FontWeight100Mask | FontWeight200Mask | FontWeight300Mask | FontWeight400Mask | FontWeight500Mask | FontWeight600Mask | FontWeight700Mask | FontWeight800Mask | FontWeight900Mask
 };
 
 enum class Kerning {

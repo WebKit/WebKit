@@ -357,7 +357,7 @@ Color RenderThemeMac::platformInactiveListBoxSelectionBackgroundColor() const
     return platformInactiveSelectionBackgroundColor();
 }
 
-static FontWeight toFontWeight(NSInteger appKitFontWeight)
+static FontSelectionValue toFontWeight(NSInteger appKitFontWeight)
 {
     ASSERT(appKitFontWeight > 0 && appKitFontWeight < 15);
     if (appKitFontWeight > 14)
@@ -365,21 +365,21 @@ static FontWeight toFontWeight(NSInteger appKitFontWeight)
     else if (appKitFontWeight < 1)
         appKitFontWeight = 1;
 
-    static const FontWeight fontWeights[] = {
-        FontWeight100,
-        FontWeight100,
-        FontWeight200,
-        FontWeight300,
-        FontWeight400,
-        FontWeight500,
-        FontWeight600,
-        FontWeight600,
-        FontWeight700,
-        FontWeight800,
-        FontWeight800,
-        FontWeight900,
-        FontWeight900,
-        FontWeight900
+    static const FontSelectionValue fontWeights[] = {
+        FontSelectionValue(100),
+        FontSelectionValue(100),
+        FontSelectionValue(200),
+        FontSelectionValue(300),
+        FontSelectionValue(400),
+        FontSelectionValue(500),
+        FontSelectionValue(600),
+        FontSelectionValue(600),
+        FontSelectionValue(700),
+        FontSelectionValue(800),
+        FontSelectionValue(800),
+        FontSelectionValue(900),
+        FontSelectionValue(900),
+        FontSelectionValue(900)
     };
     return fontWeights[appKitFontWeight - 1];
 }

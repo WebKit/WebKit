@@ -831,9 +831,9 @@ EditorState WebPage::editorState(IncludePostLayoutDataHint shouldIncludePostLayo
         if (!selection.isNone()) {
             Node* nodeToRemove;
             if (auto* style = Editor::styleForSelectionStart(&frame, nodeToRemove)) {
-                if (style->fontCascade().weight() >= FontWeightBold)
+                if (isFontWeightBold(style->fontCascade().weight()))
                     postLayoutData.typingAttributes |= AttributeBold;
-                if (style->fontCascade().italic() == FontItalicOn)
+                if (isItalic(style->fontCascade().italic()))
                     postLayoutData.typingAttributes |= AttributeItalics;
 
                 RefPtr<EditingStyle> typingStyle = frame.selection().typingStyle();

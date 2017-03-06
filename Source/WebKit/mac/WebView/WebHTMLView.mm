@@ -5629,7 +5629,7 @@ static RetainPtr<CFStringRef> fontNameForDescription(NSString *familyName, BOOL 
     // Find the font the same way the rendering code would later if it encountered this CSS.
     FontDescription fontDescription;
     fontDescription.setIsItalic(italic);
-    fontDescription.setWeight(bold ? FontWeight900 : FontWeight500);
+    fontDescription.setWeight(bold ? FontSelectionValue(900) : FontSelectionValue(500));
     RefPtr<Font> font = FontCache::singleton().fontForFamily(fontDescription, familyName);
     return adoptCF(CTFontCopyPostScriptName(font->getCTFont()));
 }

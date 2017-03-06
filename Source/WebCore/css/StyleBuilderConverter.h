@@ -40,6 +40,7 @@
 #include "CSSImageValue.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSReflectValue.h"
+#include "FontSelectionValueInlines.h"
 #include "Frame.h"
 #include "LayoutUnit.h"
 #include "Length.h"
@@ -114,7 +115,9 @@ public:
     static bool convertOverflowScrolling(StyleResolver&, const CSSValue&);
 #endif
     static FontFeatureSettings convertFontFeatureSettings(StyleResolver&, const CSSValue&);
+    static FontSelectionValue convertFontWeight(StyleResolver&, const CSSValue&);
     static FontSelectionValue convertFontStretch(StyleResolver&, const CSSValue&);
+    static FontSelectionValue convertFontStyle(StyleResolver&, const CSSValue&);
 #if ENABLE(VARIATION_FONTS)
     static FontVariationSettings convertFontVariationSettings(StyleResolver&, const CSSValue&);
 #endif
@@ -1154,44 +1157,58 @@ inline FontFeatureSettings StyleBuilderConverter::convertFontFeatureSettings(Sty
     return settings;
 }
 
+inline FontSelectionValue StyleBuilderConverter::convertFontWeight(StyleResolver& styleResolver, const CSSValue& value)
+{
+    ASSERT(is<CSSPrimitiveValue>(value));
+    auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
+
+    if (primitiveValue.isNumber())
+        return FontSelectionValue::clampFloat(primitiveValue.floatValue());
+
+    ASSERT(primitiveValue.isValueID());
+    switch (primitiveValue.valueID()) {
+    case CSSValueNormal:
+        return normalWeightValue();
+    case CSSValueBold:
+        return boldWeightValue();
+    case CSSValueBolder:
+        return FontCascadeDescription::bolderWeight(styleResolver.parentStyle()->fontDescription().weight());
+    case CSSValueLighter:
+        return FontCascadeDescription::lighterWeight(styleResolver.parentStyle()->fontDescription().weight());
+    default:
+        ASSERT_NOT_REACHED();
+        return normalWeightValue();
+    }
+}
+
 inline FontSelectionValue StyleBuilderConverter::convertFontStretch(StyleResolver&, const CSSValue& value)
 {
     ASSERT(is<CSSPrimitiveValue>(value));
     const auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
-    if (primitiveValue.isPercentage() || primitiveValue.isNumber()) {
-        auto value = primitiveValue.floatValue();
-        if (value <= static_cast<float>(FontSelectionValue::maximumValue())
-            && value >= static_cast<float>(FontSelectionValue::minimumValue()))
-            return FontSelectionValue(value);
-        if (value < static_cast<float>(FontSelectionValue::minimumValue()))
-            return FontSelectionValue::minimumValue();
-        ASSERT(value > static_cast<float>(FontSelectionValue::maximumValue()));
-        return FontSelectionValue::maximumValue();
-    }
 
-    switch (primitiveValue.valueID()) {
-    case CSSValueUltraCondensed:
-        return FontSelectionValue(50);
-    case CSSValueExtraCondensed:
-        return FontSelectionValue(62.5f);
-    case CSSValueCondensed:
-        return FontSelectionValue(75);
-    case CSSValueSemiCondensed:
-        return FontSelectionValue(87.5f);
-    case CSSValueNormal:
-        return FontSelectionValue(100);
-    case CSSValueSemiExpanded:
-        return FontSelectionValue(112.5f);
-    case CSSValueExpanded:
-        return FontSelectionValue(125);
-    case CSSValueExtraExpanded:
-        return FontSelectionValue(150);
-    case CSSValueUltraExpanded:
-        return FontSelectionValue(200);
-    default:
-        ASSERT_NOT_REACHED();
-        return FontSelectionValue(100);
-    }
+    if (primitiveValue.isPercentage() || primitiveValue.isNumber())
+        return FontSelectionValue::clampFloat(primitiveValue.floatValue());
+
+    ASSERT(primitiveValue.isValueID());
+    if (auto value = fontStretchValue(primitiveValue.valueID()))
+        return value.value();
+    ASSERT_NOT_REACHED();
+    return normalStretchValue();
+}
+
+inline FontSelectionValue StyleBuilderConverter::convertFontStyle(StyleResolver&, const CSSValue& value)
+{
+    ASSERT(is<CSSPrimitiveValue>(value));
+    const auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
+
+    if (primitiveValue.isAngle() || primitiveValue.isNumber() || primitiveValue.isCalculated())
+        return FontSelectionValue::clampFloat(primitiveValue.floatValue(CSSPrimitiveValue::CSS_DEG));
+
+    ASSERT(primitiveValue.isValueID());
+    if (auto value = fontStyleValue(primitiveValue.valueID()))
+        return value.value();
+    ASSERT_NOT_REACHED();
+    return normalItalicValue();
 }
 
 #if ENABLE(VARIATION_FONTS)

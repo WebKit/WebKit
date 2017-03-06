@@ -182,12 +182,9 @@ void CSSFontSelector::addFontFaceRule(StyleRuleFontFace& fontFaceRule, bool isIn
 
     if (!fontFace->setFamilies(*fontFamily))
         return;
-    if (!fontFace->setStyle(*fontStyle))
-        return;
-    if (!fontFace->setWeight(*fontWeight))
-        return;
-    if (!fontFace->setStretch(*fontStretch))
-        return;
+    fontFace->setStyle(*fontStyle);
+    fontFace->setWeight(*fontWeight);
+    fontFace->setStretch(*fontStretch);
     if (rangeList && !fontFace->setUnicodeRange(*rangeList))
         return;
     if (variantLigatures && !fontFace->setVariantLigatures(*variantLigatures))
@@ -301,7 +298,7 @@ FontRanges CSSFontSelector::fontRangesForFamily(const FontDescription& fontDescr
     bool resolveGenericFamilyFirst = familyName == standardFamily;
 
     AtomicString familyForLookup = resolveGenericFamilyFirst ? resolveGenericFamily(m_document, fontDescription, familyName) : familyName;
-    auto* face = m_cssFontFaceSet->fontFace(fontDescription.traitsMask(), fontDescription.stretch(), familyForLookup);
+    auto* face = m_cssFontFaceSet->fontFace(fontDescription.fontSelectionRequest(), familyForLookup);
     if (!face) {
         if (!resolveGenericFamilyFirst)
             familyForLookup = resolveGenericFamily(m_document, fontDescription, familyName);
