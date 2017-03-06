@@ -6,8 +6,11 @@ class TracksPanel extends LayoutNode
     {
         super(`<div class="tracks-panel"></div>`);
         this._backgroundTint = new BackgroundTint;
+        this._scrollableContainer = new LayoutNode(`<div class="scrollable-container"></div>`);
         this._rightX = 0;
         this._bottomY = 0;
+        
+        this.children = [this._backgroundTint, this._scrollableContainer];
     }
 
     // Public
@@ -22,7 +25,7 @@ class TracksPanel extends LayoutNode
         if (this.parent === node)
             return;
 
-        this.children = this._childrenFromDataSource();
+        this._scrollableContainer.children = this._childrenFromDataSource();
 
         node.addChild(this);
 
@@ -47,6 +50,20 @@ class TracksPanel extends LayoutNode
 
         // Ensure a transition will indeed happen by starting it only on the next frame.
         window.requestAnimationFrame(() => { this.element.classList.add("fade-out"); });
+    }
+
+    get maxHeight()
+    {
+        return this._maxHeight;
+    }
+
+    set maxHeight(height)
+    {
+        if (this._maxHeight === height)
+            return;
+
+        this._maxHeight = height;
+        this.markDirtyProperty("maxHeight")
     }
 
     get bottomY()
@@ -102,7 +119,10 @@ class TracksPanel extends LayoutNode
             this.element.style.right = `${this._rightX}px`;
         else if (propertyName === "bottomY")
             this.element.style.bottom = `${this._bottomY}px`;
-        else
+        else if (propertyName === "maxHeight") {
+            this.element.style.maxHeight = `${this._maxHeight}px`;
+            this._scrollableContainer.element.style.maxHeight = `${this._maxHeight}px`;
+        } else
             super.commitProperty(propertyName);
     }
 
@@ -133,7 +153,7 @@ class TracksPanel extends LayoutNode
 
     _childrenFromDataSource()
     {
-        const children = [this._backgroundTint];
+        const children = [];
 
         this._trackNodes = [];
 

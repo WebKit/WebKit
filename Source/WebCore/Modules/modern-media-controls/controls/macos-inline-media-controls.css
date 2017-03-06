@@ -110,9 +110,3 @@
     left: 11px;
     top: 10px;
 }
-
-/* Tracks Panel */
-
-.media-controls.mac.inline .tracks-panel {
-    bottom: 51px;
-}

@@ -62,11 +62,10 @@ document.body.appendChild(mediaControls.element);
 
 let trackElement;
 
-debug("mediaControls.showTracksPanel()");
-mediaControls.showTracksPanel();
+shouldBecomeDifferent("mediaControls.tracksButton.element.getBoundingClientRect().right", "0", () => {
+    debug("mediaControls.showTracksPanel()");
+    mediaControls.showTracksPanel();
 
-scheduler.frameDidFire = function()
-{
     window.requestAnimationFrame(() => {
         debug("");
         debug("Mousing over the second track in the panel");
@@ -84,8 +83,7 @@ scheduler.frameDidFire = function()
         const bounds = trackElement.getBoundingClientRect();
         eventSender.mouseMoveTo(bounds.left + 1, bounds.top + 1);
     });
-    scheduler.frameDidFire = null;
-}
+});
 
 </script>
 <script src="../../../resources/js-test-post.js"></script>

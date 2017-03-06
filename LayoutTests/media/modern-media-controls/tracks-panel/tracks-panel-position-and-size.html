@@ -1,0 +1,67 @@
+<script src="../../../resources/js-test-pre.js"></script>
+<script src="../resources/media-controls-loader.js" type="text/javascript"></script>
+<body>
+<style type="text/css" media="screen">
+    
+    .media-controls {
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+    
+</style>
+<script type="text/javascript">
+
+window.jsTestIsAsync = true;
+
+description("Testing positioning and sizing of the tracks panel.");
+
+const mediaControls = new MacOSInlineMediaControls({ width: 680, height: 300 });
+
+mediaControls.tracksPanel.dataSource = {
+    tracksPanelNumberOfSections: function()
+    {
+        return 1;
+    },
+
+    tracksPanelTitleForSection: function(sectionIndex)
+    {
+        return `Title`;
+    },
+
+    tracksPanelNumberOfTracksInSection: function(sectionIndex)
+    {
+        return 20;
+    },
+
+    tracksPanelTitleForTrackInSection: function(trackIndex, sectionIndex)
+    {
+        return `Track`;
+    },
+
+    tracksPanelIsTrackInSectionSelected: function(trackIndex, sectionIndex)
+    {
+        return false;
+    }
+};
+
+document.body.appendChild(mediaControls.element);
+
+shouldBecomeDifferent("mediaControls.tracksButton.element.getBoundingClientRect().right", "0", () => {
+    debug("mediaControls.showTracksPanel()");
+    mediaControls.showTracksPanel();
+    window.requestAnimationFrame(() => {
+        shouldBeEqualToString("mediaControls.tracksPanel.element.style.right", "69px");
+        shouldBeEqualToString("mediaControls.tracksPanel.element.style.bottom", "51px");
+        shouldBeEqualToString("getComputedStyle(mediaControls.tracksPanel.element).height", "239px");
+        shouldBeEqualToString("getComputedStyle(mediaControls.tracksPanel.element.lastElementChild).height", "239px");
+        shouldBeEqualToString("getComputedStyle(mediaControls.tracksPanel.element.lastElementChild).overflowY", "scroll");
+        debug("");
+        mediaControls.element.remove();
+        finishJSTest();
+    });
+});
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>

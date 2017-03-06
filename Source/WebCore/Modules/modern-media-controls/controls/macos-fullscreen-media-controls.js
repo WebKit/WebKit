@@ -76,17 +76,6 @@ class MacOSFullscreenMediaControls extends MacOSMediaControls
         this.controlsBar.element.addEventListener("mousedown", this);
     }
 
-    // Public
-
-    showTracksPanel()
-    {
-        super.showTracksPanel();
-
-        const tracksButtonBounds = this.tracksButton.element.getBoundingClientRect();
-        this.tracksPanel.rightX = window.innerWidth - tracksButtonBounds.right;
-        this.tracksPanel.bottomY = window.innerHeight - tracksButtonBounds.top + 1;
-    }
-
     // Protected
 
     handleEvent(event)

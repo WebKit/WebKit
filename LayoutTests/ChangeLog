@@ -1,3 +1,25 @@
+2017-03-06  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] Tracks panel should clip and scroll content when numerous tracks are available
+        https://bugs.webkit.org/show_bug.cgi?id=169201
+        <rdar://problem/30867979>
+
+        Reviewed by Eric Carlson.
+
+        Rebaseline a couple of existing tests to account for the DOM structure change in
+        the tracks panel and the fact that positioning is now dependent on the bounds of
+        the tracks button.
+
+        We also add a new test that checks that the tracks panel is positioned and sized
+        correctly to ensure that it can be scrolled when it has too many tracks to fit.
+
+        * media/modern-media-controls/tracks-panel/tracks-panel-population-expected.txt:
+        * media/modern-media-controls/tracks-panel/tracks-panel-population.html:
+        * media/modern-media-controls/tracks-panel/tracks-panel-position-and-size-expected.txt: Added.
+        * media/modern-media-controls/tracks-panel/tracks-panel-position-and-size.html: Added.
+        * media/modern-media-controls/tracks-panel/tracks-panel-select-track-with-mouse-expected.txt:
+        * media/modern-media-controls/tracks-panel/tracks-panel-select-track-with-mouse.html:
+
 2017-03-06  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-grid] Stretch should grow and shrink items to fit its grid area

@@ -1,0 +1,17 @@
+Testing positioning and sizing of the tracks panel.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS mediaControls.tracksButton.element.getBoundingClientRect().right became different from 0
+mediaControls.showTracksPanel()
+PASS mediaControls.tracksPanel.element.style.right is "69px"
+PASS mediaControls.tracksPanel.element.style.bottom is "51px"
+PASS getComputedStyle(mediaControls.tracksPanel.element).height is "239px"
+PASS getComputedStyle(mediaControls.tracksPanel.element.lastElementChild).height is "239px"
+PASS getComputedStyle(mediaControls.tracksPanel.element.lastElementChild).overflowY is "scroll"
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
