@@ -10,7 +10,6 @@
           (position 8.00 8.00)
           (bounds 100.00 100.00)
           (contentsOpaque 1)
-          (drawsContent 1)
           (children 1
             (GraphicsLayer
               (bounds 100.00 100.00)
