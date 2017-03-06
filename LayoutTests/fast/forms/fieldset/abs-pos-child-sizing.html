@@ -1,0 +1,64 @@
+<!DOCTYPE HTML>
+<html><head>
+    <meta charset="utf-8">
+        <style type="text/css">
+            html,body {
+                color:black; background-color:white; font-size:16px; padding:0; margin:0;
+            }
+        
+        div {
+            position: absolute;
+            background: rgba(0,255,0,0.5);
+            top:0; bottom:0;
+            left:0; right:0;
+            z-index: 0;
+        }
+        c {
+            display: block;
+            background: blue;
+            height:100%;
+        }
+        
+        legend { height: 24px; }
+        
+        fieldset {
+            position: absolute;
+            border: 2px green solid;
+            width: 100px;
+            height: 100px;
+            margin-bottom:40px;
+        }
+        
+        #t1,#t3 { padding: 3px 5px 7px 11px; }
+        #t2,#t4 { padding: 0; }
+        
+        #t2 { top: 120px; }
+        #t3 { top: 240px; }
+        #t4 { top: 360px; }
+            </style>
+</head>
+<body>
+    
+    
+    <fieldset id="t1">
+        <legend>legend</legend>
+        <div></div><c></c>
+    </fieldset>
+    
+    <fieldset id="t2">
+        <legend>legend</legend>
+        <div></div>
+    </fieldset>
+    
+    <fieldset id="t3">
+        <div></div><c></c>
+    </fieldset>
+    
+    <fieldset id="t4">
+        <div></div>
+    </fieldset>
+    
+    
+</body>
+</html>
+

@@ -319,7 +319,7 @@ bool RenderMultiColumnSet::requiresBalancing() const
         return false;
 
     if (RenderBox* next = RenderMultiColumnFlowThread::nextColumnSetOrSpannerSiblingOf(this)) {
-        if (!next->isRenderMultiColumnSet()) {
+        if (!next->isRenderMultiColumnSet() && !next->isLegend()) {
             // If we're followed by a spanner, we need to balance.
             ASSERT(multiColumnFlowThread()->findColumnSpannerPlaceholder(next));
             return true;

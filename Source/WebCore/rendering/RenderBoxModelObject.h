@@ -236,6 +236,8 @@ public:
 
     RenderBoxModelObject* continuation() const;
 
+    virtual LayoutRect paintRectToClipOutFromBorder(const LayoutRect&) { return LayoutRect(); };
+    
 protected:
     RenderBoxModelObject(Element&, RenderStyle&&, BaseTypeFlags);
     RenderBoxModelObject(Document&, RenderStyle&&, BaseTypeFlags);

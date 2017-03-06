@@ -158,6 +158,12 @@ bool RenderObject::isLegend() const
     return node() && node()->hasTagName(legendTag);
 }
 
+    
+bool RenderObject::isFieldset() const
+{
+    return node() && node()->hasTagName(fieldsetTag);
+}
+
 bool RenderObject::isHTMLMarquee() const
 {
     return node() && node()->renderer() == this && node()->hasTagName(marqueeTag);

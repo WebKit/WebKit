@@ -197,19 +197,22 @@ void RenderTextControl::addFocusRingRects(Vector<LayoutRect>& rects, const Layou
         rects.append(LayoutRect(additionalOffset, size()));
 }
 
-RenderObject* RenderTextControl::layoutSpecialExcludedChild(bool relayoutChildren)
+void RenderTextControl::layoutExcludedChildren(bool relayoutChildren)
 {
+    RenderBlockFlow::layoutExcludedChildren(relayoutChildren);
+
     HTMLElement* placeholder = textFormControlElement().placeholderElement();
     RenderElement* placeholderRenderer = placeholder ? placeholder->renderer() : 0;
     if (!placeholderRenderer)
-        return 0;
+        return;
+    placeholderRenderer->setIsExcludedFromNormalLayout(true);
+
     if (relayoutChildren) {
         // The markParents arguments should be false because this function is
         // called from layout() of the parent and the placeholder layout doesn't
         // affect the parent layout.
         placeholderRenderer->setChildNeedsLayout(MarkOnlyThis);
     }
-    return placeholderRenderer;
 }
 
 #if PLATFORM(IOS)

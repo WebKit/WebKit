@@ -328,9 +328,11 @@ public:
     LayoutSize offsetFromContainer(RenderElement&, const LayoutPoint&, bool* offsetDependsOnPoint = nullptr) const override;
     
     LayoutUnit adjustBorderBoxLogicalWidthForBoxSizing(LayoutUnit width) const;
-    LayoutUnit adjustBorderBoxLogicalHeightForBoxSizing(LayoutUnit height) const;
     LayoutUnit adjustContentBoxLogicalWidthForBoxSizing(LayoutUnit width) const;
-    LayoutUnit adjustContentBoxLogicalHeightForBoxSizing(std::optional<LayoutUnit> height) const;
+
+    // Overridden by fieldsets to subtract out the intrinsic border.
+    virtual LayoutUnit adjustBorderBoxLogicalHeightForBoxSizing(LayoutUnit height) const;
+    virtual LayoutUnit adjustContentBoxLogicalHeightForBoxSizing(std::optional<LayoutUnit> height) const;
 
     struct ComputedMarginValues {
         LayoutUnit m_before;
@@ -618,8 +620,10 @@ public:
 
     const RenderBox* findEnclosingScrollableContainer() const;
     
-    bool isGridItem() const { return parent() && parent()->isRenderGrid(); }
-    bool isFlexItem() const { return parent() && parent()->isFlexibleBox(); }
+    bool isGridItem() const { return parent() && parent()->isRenderGrid() && !isExcludedFromNormalLayout(); }
+    bool isFlexItem() const { return parent() && parent()->isFlexibleBox() && !isExcludedFromNormalLayout(); }
+
+    virtual void adjustBorderBoxRectForPainting(LayoutRect&) { };
 
 protected:
     RenderBox(Element&, RenderStyle&&, BaseTypeFlags);

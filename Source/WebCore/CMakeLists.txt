@@ -2422,7 +2422,6 @@ set(WebCore_SOURCES
     rendering/RenderDetailsMarker.cpp
     rendering/RenderElement.cpp
     rendering/RenderEmbeddedObject.cpp
-    rendering/RenderFieldset.cpp
     rendering/RenderFileUploadControl.cpp
     rendering/RenderFlexibleBox.cpp
     rendering/RenderFlowThread.cpp

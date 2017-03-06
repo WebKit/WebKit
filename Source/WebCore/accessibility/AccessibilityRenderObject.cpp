@@ -68,7 +68,6 @@
 #include "Page.h"
 #include "ProgressTracker.h"
 #include "RenderButton.h"
-#include "RenderFieldset.h"
 #include "RenderFileUploadControl.h"
 #include "RenderHTMLCanvas.h"
 #include "RenderImage.h"
@@ -1081,7 +1080,7 @@ AccessibilityObject* AccessibilityRenderObject::titleUIElement() const
     
     // if isFieldset is true, the renderer is guaranteed to be a RenderFieldset
     if (isFieldset())
-        return axObjectCache()->getOrCreate(downcast<RenderFieldset>(*m_renderer).findLegend(RenderFieldset::IncludeFloatingOrOutOfFlow));
+        return axObjectCache()->getOrCreate(downcast<RenderBlock>(*m_renderer).findFieldsetLegend(RenderBlock::FieldsetIncludeFloatingOrOutOfFlow));
     
     if (isFigure())
         return captionForFigure();

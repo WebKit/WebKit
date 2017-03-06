@@ -79,12 +79,16 @@ const char* RenderFlexibleBox::renderName() const
 
 void RenderFlexibleBox::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const
 {
+    LayoutUnit childMinWidth;
+    LayoutUnit childMaxWidth;
+    bool hadExcludedChildren = computePreferredWidthsForExcludedChildren(childMinWidth, childMaxWidth);
+
     // FIXME: We're ignoring flex-basis here and we shouldn't. We can't start
     // honoring it though until the flex shorthand stops setting it to 0. See
     // https://bugs.webkit.org/show_bug.cgi?id=116117 and
     // https://crbug.com/240765.
     for (RenderBox* child = firstChildBox(); child; child = child->nextSiblingBox()) {
-        if (child->isOutOfFlowPositioned())
+        if (child->isOutOfFlowPositioned() || child->isExcludedFromNormalLayout())
             continue;
         
         LayoutUnit margin = marginIntrinsicLogicalWidthForChild(*child);
@@ -117,6 +121,11 @@ void RenderFlexibleBox::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidt
     minLogicalWidth = std::max(LayoutUnit(), minLogicalWidth);
     maxLogicalWidth = std::max(LayoutUnit(), maxLogicalWidth);
     
+    if (hadExcludedChildren) {
+        minLogicalWidth = std::max(minLogicalWidth, childMinWidth);
+        maxLogicalWidth = std::max(maxLogicalWidth, childMaxWidth);
+    }
+
     LayoutUnit scrollbarWidth(scrollbarLogicalWidth());
     maxLogicalWidth += scrollbarWidth;
     minLogicalWidth += scrollbarWidth;
@@ -174,7 +183,7 @@ std::optional<int> RenderFlexibleBox::firstLineBaseline() const
     RenderBox* baselineChild = nullptr;
     int childNumber = 0;
     for (RenderBox* child = m_orderIterator.first(); child; child = m_orderIterator.next()) {
-        if (child->isOutOfFlowPositioned())
+        if (m_orderIterator.shouldSkipChild(*child))
             continue;
         if (alignmentForChild(*child) == ItemPositionBaseline && !hasAutoMarginsInCrossAxis(*child)) {
             baselineChild = child;
@@ -275,8 +284,14 @@ void RenderFlexibleBox::layoutBlock(bool relayoutChildren, LayoutUnit)
 
     prepareOrderIteratorAndMargins();
 
+    // Fieldsets need to find their legend and position it inside the border of the object.
+    // The legend then gets skipped during normal layout. The same is true for ruby text.
+    // It doesn't get included in the normal layout process but is instead skipped.
+    layoutExcludedChildren(relayoutChildren);
+
     ChildFrameRects oldChildRects;
     appendChildFrameRects(oldChildRects);
+
     layoutFlexItems(relayoutChildren);
 
     endAndCommitUpdateScrollInfoAfterLayoutTransaction();
@@ -501,8 +516,6 @@ LayoutUnit RenderFlexibleBox::mainAxisContentExtent(LayoutUnit contentLogicalHei
     }
     return contentLogicalWidth();
 }
-
-// MERGEPOINT
 
 std::optional<LayoutUnit> RenderFlexibleBox::computeMainAxisExtentForChild(const RenderBox& child, SizeType sizeType, const Length& size)
 {
@@ -846,9 +859,10 @@ void RenderFlexibleBox::layoutFlexItems(bool relayoutChildren)
     Vector<FlexItem> allItems;
     m_orderIterator.first();
     for (RenderBox* child = m_orderIterator.currentChild(); child; child = m_orderIterator.next()) {
-        if (child->isOutOfFlowPositioned()) {
+        if (m_orderIterator.shouldSkipChild(*child)) {
             // Out-of-flow children are not flex items, so we skip them here.
-            prepareChildForPositionedLayout(*child);
+            if (child->isOutOfFlowPositioned())
+                prepareChildForPositionedLayout(*child);
             continue;
         }
         allItems.append(constructFlexItem(*child, relayoutChildren));
@@ -1039,9 +1053,7 @@ void RenderFlexibleBox::prepareOrderIteratorAndMargins()
     OrderIteratorPopulator populator(m_orderIterator);
 
     for (RenderBox* child = firstChildBox(); child; child = child->nextSiblingBox()) {
-        populator.collectChild(*child);
-
-        if (child->isOutOfFlowPositioned())
+        if (!populator.collectChild(*child))
             continue;
 
         // Before running the flex algorithm, 'auto' has a margin of 0.
