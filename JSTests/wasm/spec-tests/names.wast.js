@@ -102,8 +102,7 @@ assert_return(() => $$.exports["malloc"](), f32(6.28125));
 assert_return(() => $$.exports["_malloc"](), f32(6.296875));
 assert_return(() => $$.exports["__malloc"](), f32(6.3125));
 assert_return(() => $$.exports["~!@#$%^&*()_+`-={}|[]\x5c:\x22;'<>?,./ "](), f32(6.34375));
-// FIXME exporting a property with a name that's a number doesn't work https://bugs.webkit.org/show_bug.cgi?id=168857
-//assert_return(() => $$.exports["0"](), f32(6.359375));
+assert_return(() => $$.exports["0"](), f32(6.359375));
 assert_return(() => $$.exports["_"](), f32(6.375));
 assert_return(() => $$.exports["$"](), f32(6.390625));
 assert_return(() => $$.exports["@"](), f32(8.0));
