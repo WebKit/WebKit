@@ -63,7 +63,8 @@ class ControlsVisibilitySupport extends MediaControllerSupport
     _updateControls()
     {
         const media = this.mediaController.media;
-        const shouldShowControls = !!media.controls;
+        const host = this.mediaController.host;
+        const shouldShowControls = !!(media.controls || (host && host.shouldForceControlsDisplay));
         const isVideo = media instanceof HTMLVideoElement && media.videoTracks.length > 0;
 
         const controls = this.mediaController.controls;

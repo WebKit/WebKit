@@ -174,6 +174,11 @@ SuccessOr<MediaPlaybackDenialReason> MediaElementSession::playbackPermitted(cons
         return MediaPlaybackDenialReason::UserGestureRequired;
     }
 
+    if (m_restrictions & RequireUserGestureForVideoDueToLowPowerMode && element.isVideo() && !ScriptController::processingUserGestureForMedia()) {
+        LOG(Media, "MediaElementSession::playbackPermitted - returning FALSE because of video low power mode restriction");
+        return MediaPlaybackDenialReason::UserGestureRequired;
+    }
+
     return SuccessOr<MediaPlaybackDenialReason>();
 }
 

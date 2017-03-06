@@ -1,3 +1,16 @@
+2017-03-06  Chris Dumez  <cdumez@apple.com>
+
+        [iOS] Disable autoplay of silent videos in low power mode
+        https://bugs.webkit.org/show_bug.cgi?id=168985
+        <rdar://problem/30739051>
+
+        Reviewed by Jer Noble.
+
+        Add layout test coverage.
+
+        * media/modern-media-controls/start-support/start-support-lowPowerMode-expected.txt: Added.
+        * media/modern-media-controls/start-support/start-support-lowPowerMode.html: Added.
+
 2017-03-06  Ryan Haddad  <ryanhaddad@apple.com>
 
         Mark media/modern-media-controls/icon-button/icon-button-active-state.html as flaky.

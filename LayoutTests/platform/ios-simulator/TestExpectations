@@ -2827,6 +2827,7 @@ media/modern-media-controls/pip-support/ipad/pip-support-tap.html [ Skip ]
 media/modern-media-controls/playback-support/playback-support-button-click.html [ Skip ]
 media/modern-media-controls/fullscreen-support/ipad/fullscreen-support-tap.html [ Skip ]
 media/modern-media-controls/start-support/start-support-click-to-start.html [ Skip ]
+media/modern-media-controls/start-support/start-support-lowPowerMode.html [ Skip ]
 media/modern-media-controls/button/button.html [ Skip ]
 
 # AirPlay cannot be tested on iOS

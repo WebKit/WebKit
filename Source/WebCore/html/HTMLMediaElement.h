@@ -290,6 +290,8 @@ public:
 
     double percentLoaded() const;
 
+    bool shouldForceControlsDisplay() const;
+
 #if ENABLE(VIDEO_TRACK)
     ExceptionOr<TextTrack&> addTextTrack(const String& kind, const String& label, const String& language);
 

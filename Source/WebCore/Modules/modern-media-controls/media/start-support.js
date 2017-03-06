@@ -61,6 +61,10 @@ class StartSupport extends MediaControllerSupport
     _shouldShowStartButton()
     {
         const media = this.mediaController.media;
+        const host = this.mediaController.host;
+
+        if (host && host.shouldForceControlsDisplay)
+            return true;
 
         if (this._hasPlayed || media.played.length)
             return false;
@@ -80,7 +84,6 @@ class StartSupport extends MediaControllerSupport
         if (media.error)
             return false;
 
-        const host = this.mediaController.host;
         if (!media.controls && host && host.allowsInlineMediaPlayback)
             return false;
 

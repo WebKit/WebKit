@@ -70,6 +70,7 @@ public:
     bool isVideoLayerInline() const;
     bool isInMediaDocument() const;
     bool userGestureRequired() const;
+    bool shouldForceControlsDisplay() const;
     void setPreparedToReturnVideoLayerToInline(bool);
 
     void updateCaptionDisplaySizes();

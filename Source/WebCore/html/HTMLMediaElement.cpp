@@ -456,6 +456,8 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& docum
     m_sendProgressEvents = false;
 #endif
 
+    auto* page = document.page();
+
     if (document.settings().invisibleAutoplayNotPermitted())
         m_mediaSession->addBehaviorRestriction(MediaElementSession::InvisibleAutoplayNotPermitted);
 
@@ -469,6 +471,9 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& docum
             if (document.settings().requiresUserGestureToLoadVideo())
                 m_mediaSession->addBehaviorRestriction(MediaElementSession::RequireUserGestureForLoad);
         }
+
+        if (page && page->isLowPowerModeEnabled())
+            m_mediaSession->addBehaviorRestriction(MediaElementSession::RequireUserGestureForVideoDueToLowPowerMode);
 
         if (shouldAudioPlaybackRequireUserGesture)
             m_mediaSession->addBehaviorRestriction(MediaElementSession::RequireUserGestureForAudioRateChange);
@@ -493,8 +498,8 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& docum
 #endif
 
 #if ENABLE(VIDEO_TRACK)
-    if (document.page())
-        m_captionDisplayMode = document.page()->group().captionPreferences().captionDisplayMode();
+    if (page)
+        m_captionDisplayMode = page->group().captionPreferences().captionDisplayMode();
 #endif
 
 #if ENABLE(MEDIA_SESSION)
@@ -5931,12 +5936,21 @@ bool HTMLMediaElement::createMediaControls()
 #endif
 }
 
+bool HTMLMediaElement::shouldForceControlsDisplay() const
+{
+    // Always create controls for autoplay video that requires user gesture due to being in low power mode.
+    return isVideo() && autoplay() && m_mediaSession->hasBehaviorRestriction(MediaElementSession::RequireUserGestureForVideoDueToLowPowerMode);
+}
+
 void HTMLMediaElement::configureMediaControls()
 {
     bool requireControls = controls();
 
     // Always create controls for video when fullscreen playback is required.
     if (isVideo() && m_mediaSession->requiresFullscreenForVideoPlayback(*this))
+        requireControls = true;
+
+    if (shouldForceControlsDisplay())
         requireControls = true;
 
     // Always create controls when in full screen mode.
@@ -6572,6 +6586,7 @@ void HTMLMediaElement::removeBehaviorsRestrictionsAfterFirstUserGesture(MediaEle
         | MediaElementSession::RequireUserGestureForVideoRateChange
         | MediaElementSession::RequireUserGestureForAudioRateChange
         | MediaElementSession::RequireUserGestureForFullscreen
+        | MediaElementSession::RequireUserGestureForVideoDueToLowPowerMode
         | MediaElementSession::InvisibleAutoplayNotPermitted
         | MediaElementSession::RequireUserGestureToControlControlsManager);
 
