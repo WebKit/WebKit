@@ -476,10 +476,14 @@ void HTMLConstructionSite::insertHTMLBodyElement(AtomicHTMLToken&& token)
 void HTMLConstructionSite::insertHTMLFormElement(AtomicHTMLToken&& token, bool isDemoted)
 {
     auto element = createHTMLElement(token);
-    m_form = &downcast<HTMLFormElement>(element.get());
-    m_form->setDemoted(isDemoted);
-    attachLater(currentNode(), *m_form);
-    m_openElements.push(HTMLStackItem::create(*m_form, WTFMove(token)));
+    auto& formElement = downcast<HTMLFormElement>(element.get());
+    // If there is no template element on the stack of open elements, set the
+    // form element pointer to point to the element created.
+    if (!openElements().hasTemplateInHTMLScope())
+        m_form = &formElement;
+    formElement.setDemoted(isDemoted);
+    attachLater(currentNode(), formElement);
+    m_openElements.push(HTMLStackItem::create(formElement, WTFMove(token)));
 }
 
 void HTMLConstructionSite::insertHTMLElement(AtomicHTMLToken&& token)
