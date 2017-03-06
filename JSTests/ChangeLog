@@ -1,3 +1,21 @@
+2017-03-06  Saam Barati  <sbarati@apple.com>
+
+        WebAssembly: implement init_expr for Element
+        https://bugs.webkit.org/show_bug.cgi?id=165888
+        <rdar://problem/29760199>
+
+        Reviewed by Keith Miller.
+
+        * wasm/Builder_WebAssemblyBinary.js:
+        (const.emitters.Element):
+        * wasm/assert.js:
+        * wasm/js-api/element.js:
+        (assert.throws):
+        (badInstantiation.makeModule):
+        (badInstantiation.test):
+        (badInstantiation):
+        * wasm/js-api/global-error.js:
+
 2017-03-06  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [JSC] [Linux] Test stress/spread-forward-call-varargs-stack-overflow.js fails

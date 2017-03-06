@@ -112,7 +112,7 @@ export const le = (lhs, rhs, msg) => {
 };
 
 // Ignore source information at the end of the error message if the expected message didn't specify that information. Sometimes it changes, or it's tricky to get just right.
-const _sourceRe = new RegExp(/ \(evaluating '.*'\)/);
+const _sourceRe = new RegExp(/( \(evaluating '.*'\))|( \(In .*\))/);
 
 const _throws = (func, type, message, ...args) => {
     try {

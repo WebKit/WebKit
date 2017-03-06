@@ -189,7 +189,11 @@ struct Segment {
 };
 
 struct Element {
-    uint32_t offset;
+    Element(I32InitExpr offset)
+        : offset(offset)
+    { }
+
+    I32InitExpr offset;
     Vector<uint32_t> functionIndices;
 };
 

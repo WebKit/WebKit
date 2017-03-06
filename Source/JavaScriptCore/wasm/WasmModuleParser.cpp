@@ -431,35 +431,22 @@ auto ModuleParser::parseElement() -> PartialResult
     WASM_PARSER_FAIL_IF(!m_result.module->elements.tryReserveCapacity(elementCount), "can't allocate memory for ", elementCount, " Elements");
     for (unsigned elementNum = 0; elementNum < elementCount; ++elementNum) {
         uint32_t tableIndex;
-        uint64_t offset;
+        uint64_t initExprBits;
         uint8_t initOpcode;
         uint32_t indexCount;
 
         WASM_PARSER_FAIL_IF(!parseVarUInt32(tableIndex), "can't get ", elementNum, "th Element table index");
         WASM_PARSER_FAIL_IF(tableIndex, "Element section can only have one Table for now");
         Type initExprType;
-        WASM_FAIL_IF_HELPER_FAILS(parseInitExpr(initOpcode, offset, initExprType));
-        WASM_PARSER_FAIL_IF(initOpcode != OpType::I32Const, "Element section doesn't support non-i32 init_expr opcode for now, got ", initOpcode);
+        WASM_FAIL_IF_HELPER_FAILS(parseInitExpr(initOpcode, initExprBits, initExprType));
+        WASM_PARSER_FAIL_IF(initExprType != I32, "Element init_expr must produce an i32");
         WASM_PARSER_FAIL_IF(!parseVarUInt32(indexCount), "can't get ", elementNum, "th index count for Element section");
         WASM_PARSER_FAIL_IF(indexCount == std::numeric_limits<uint32_t>::max(), "Element section's ", elementNum, "th index count is too big ", indexCount);
 
         ASSERT(!!m_result.module->tableInformation);
-        if (std::optional<uint32_t> maximum = m_result.module->tableInformation.maximum()) {
-            // FIXME: should indexCount being zero be a validation error?
-            // https://bugs.webkit.org/show_bug.cgi?id=165826
-            if (indexCount) {
-                // FIXME: right now, provably out of bounds writes are validation errors.
-                // Should they be though?
-                // https://bugs.webkit.org/show_bug.cgi?id=165827
-                uint64_t lastWrittenIndex = static_cast<uint64_t>(indexCount) + static_cast<uint64_t>(offset) - 1;
-                WASM_PARSER_FAIL_IF(lastWrittenIndex >= static_cast<uint64_t>(*maximum), "Element section's ", elementNum, "th element writes to index ", lastWrittenIndex, " which exceeds the maximum ", *maximum);
-            }
-        }
 
-        Element element;
+        Element element(makeI32InitExpr(initOpcode, initExprBits));
         WASM_PARSER_FAIL_IF(!element.functionIndices.tryReserveCapacity(indexCount), "can't allocate memory for ", indexCount, " Element indices");
-
-        element.offset = offset;
 
         for (unsigned index = 0; index < indexCount; ++index) {
             uint32_t functionIndex;
@@ -536,12 +523,11 @@ auto ModuleParser::parseInitExpr(uint8_t& opcode, uint64_t& bitsOrImportNumber, 
     case GetGlobal: {
         uint32_t index;
         WASM_PARSER_FAIL_IF(!parseVarUInt32(index), "can't get get_global's index");
-        WASM_PARSER_FAIL_IF(index >= m_result.module->imports.size(), "get_global's index ", index, " exceeds the number of imports ", m_result.module->imports.size());
-        const Import& import = m_result.module->imports[index];
-        WASM_PARSER_FAIL_IF(m_result.module->imports[index].kind != ExternalKind::Global, "get_global's import kind is ", m_result.module->imports[index].kind, " should be global");
-        WASM_PARSER_FAIL_IF(import.kindIndex >= m_result.module->firstInternalGlobal, "get_global import kind index ", import.kindIndex, " exceeds the first internal global ", m_result.module->firstInternalGlobal);
 
-        ASSERT(m_result.module->globals[import.kindIndex].mutability == Global::Immutable);
+        WASM_PARSER_FAIL_IF(index >= m_result.module->globals.size(), "get_global's index ", index, " exceeds the number of globals ", m_result.module->globals.size());
+        WASM_PARSER_FAIL_IF(index >= m_result.module->firstInternalGlobal, "get_global import kind index ", index, " exceeds the first internal global ", m_result.module->firstInternalGlobal);
+
+        ASSERT(m_result.module->globals[index].mutability == Global::Immutable);
         resultType = m_result.module->globals[index].type;
         bitsOrImportNumber = index;
         break;

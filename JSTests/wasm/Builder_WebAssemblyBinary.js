@@ -195,11 +195,12 @@ const emitters = {
         for (const {tableIndex, offset, functionIndices} of data) {
             put(bin, "varuint32", tableIndex);
 
-            // FIXME allow complex init_expr here. https://bugs.webkit.org/show_bug.cgi?id=165700
-            // For now we only handle i32.const as offset.
-            put(bin, "uint8", WASM.description.opcode["i32.const"].value);
-            put(bin, WASM.description.opcode["i32.const"].immediate[0].type, offset);
-            put(bin, "uint8", WASM.description.opcode["end"].value);
+            let initExpr;
+            if (typeof offset === "number")
+                initExpr = {op: "i32.const", initValue: offset};
+            else
+                initExpr = offset;
+            putInitExpr(bin, initExpr);
 
             put(bin, "varuint32", functionIndices.length);
             for (const functionIndex of functionIndices)

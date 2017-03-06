@@ -53,7 +53,7 @@ import * as assert from '../assert.js';
             .Table({element: "anyfunc", initial: 20, maximum: 20})
         .End()
         .Element()
-            .Element({offset: 19, functionIndices: [0, 1]})
+            .Element({offset: 19, functionIndices: [0, 0]})
         .End()
         .Code()
             .Function("foo", {params: ["i32"], ret: "i32"})
@@ -64,7 +64,8 @@ import * as assert from '../assert.js';
             .End()
         .End();
 
-    assert.throws(() => new WebAssembly.Module(builder.WebAssembly().get()), WebAssembly.CompileError, "WebAssembly.Module doesn't parse at byte 35 / 49: Element section's 0th element writes to index 20 which exceeds the maximum 20 (evaluating 'new WebAssembly.Module(builder.WebAssembly().get())')");
+    const module = new WebAssembly.Module(builder.WebAssembly().get());
+    assert.throws(() => new WebAssembly.Instance(module), WebAssembly.LinkError, "Element is trying to set an out of bounds table index");
 }
 
 {
@@ -87,7 +88,8 @@ import * as assert from '../assert.js';
             .End()
         .End();
 
-    assert.throws(() => new WebAssembly.Module(builder.WebAssembly().get()), WebAssembly.CompileError, "WebAssembly.Module doesn't parse at byte 35 / 48: Element section's 0th element writes to index 20 which exceeds the maximum 20 (evaluating 'new WebAssembly.Module(builder.WebAssembly().get())')");
+    const module = new WebAssembly.Module(builder.WebAssembly().get());
+    assert.throws(() => new WebAssembly.Instance(module), WebAssembly.LinkError, "Element is trying to set an out of bounds table index");
 }
 
 {
@@ -143,4 +145,75 @@ import * as assert from '../assert.js';
         const table = new WebAssembly.Table({element: "anyfunc", initial: i});
         badInstantiation(table, WebAssembly.LinkError, "Element is trying to set an out of bounds table index (evaluating 'new WebAssembly.Instance(module, {imp: {table: actualTable}})')");
     }
+}
+
+{
+    function makeModule() {
+        const builder = new Builder()
+            .Type().End()
+            .Import()
+                .Table("imp", "table", {element: "anyfunc", initial: 19}) // unspecified maximum.
+                .Global().I32("imp", "global", "immutable").End()
+            .End()
+            .Function().End()
+            .Element()
+                .Element({offset: {op: "get_global", initValue: 0}, functionIndices: [0]})
+            .End()
+            .Code()
+                .Function("foo", {params: ["i32"], ret: "i32"})
+                    .GetLocal(0)
+                    .I32Const(42)
+                    .I32Add()
+                    .Return()
+                .End()
+            .End();
+
+        const bin = builder.WebAssembly().get();
+        return new WebAssembly.Module(bin);
+    }
+
+    function test(i) {
+        const table = new WebAssembly.Table({element: "anyfunc", initial: 19});
+        const global = i;
+        const module = makeModule();
+        const instance = new WebAssembly.Instance(module, {imp: {table, global}});
+        for (let j = 0; j < 19; j++) {
+            if (j === i)
+                assert.eq(table.get(j)(i*2), i*2 + 42);
+            else
+                assert.throws(() => table.get(j)(i*2), TypeError, "table.get(j) is not a function.");
+        }
+    }
+    for (let i = 0; i < 19; i++)
+        test(i);
+
+    assert.throws(() => test(19), Error, "Element is trying to set an out of bounds table index");
+}
+
+{
+    function badModule() {
+        const builder = new Builder()
+            .Type().End()
+            .Import()
+                .Table("imp", "table", {element: "anyfunc", initial: 19}) // unspecified maximum.
+                .Global().F32("imp", "global", "immutable").End()
+            .End()
+            .Function().End()
+            .Element()
+                .Element({offset: {op: "get_global", initValue: 0}, functionIndices: [0]})
+            .End()
+            .Code()
+                .Function("foo", {params: ["i32"], ret: "i32"})
+                    .GetLocal(0)
+                    .I32Const(42)
+                    .I32Add()
+                    .Return()
+                .End()
+            .End();
+
+        const bin = builder.WebAssembly().get();
+        return new WebAssembly.Module(bin);
+    }
+
+    assert.throws(() => badModule(), WebAssembly.CompileError, "WebAssembly.Module doesn't parse at byte 58 / 72: 0th Element init_expr must produce an i32");
 }

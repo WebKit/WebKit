@@ -224,7 +224,13 @@ JSValue WebAssemblyModuleRecord::evaluate(ExecState* state)
             if (!element.functionIndices.size())
                 continue;
 
-            uint32_t tableIndex = element.offset;
+            uint32_t tableIndex;
+
+            if (element.offset.isGlobalImport())
+                tableIndex = static_cast<uint32_t>(m_instance->loadI32Global(element.offset.globalImportIndex()));
+            else
+                tableIndex = element.offset.constValue();
+
             uint64_t lastWrittenIndex = static_cast<uint64_t>(tableIndex) + static_cast<uint64_t>(element.functionIndices.size()) - 1;
             if (lastWrittenIndex >= table->size())
                 return throwException(state, scope, createJSWebAssemblyLinkError(state, vm, ASCIILiteral("Element is trying to set an out of bounds table index")));

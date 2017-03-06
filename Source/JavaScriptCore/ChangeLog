@@ -1,3 +1,31 @@
+2017-03-06  Saam Barati  <sbarati@apple.com>
+
+        WebAssembly: implement init_expr for Element
+        https://bugs.webkit.org/show_bug.cgi?id=165888
+        <rdar://problem/29760199>
+
+        Reviewed by Keith Miller.
+
+        This patch fixes a few bugs. The main change is allowing init_expr
+        for the Element's offset. To do this, I had to fix a couple of
+        other bugs:
+        
+        - I removed our invalid early module-parse-time invalidation
+        of out of bound Element sections. This is not in the spec because
+        it can't be validated in the general case when the offset is a
+        get_global.
+        
+        - Our get_global validation inside our init_expr parsing code was simply wrong.
+        It thought that the index operand to get_global went into the pool of imports,
+        but it does not. It indexes into the pool of globals. I changed the code to
+        refer to the global pool instead.
+
+        * wasm/WasmFormat.h:
+        (JSC::Wasm::Element::Element):
+        * wasm/WasmModuleParser.cpp:
+        * wasm/js/WebAssemblyModuleRecord.cpp:
+        (JSC::WebAssemblyModuleRecord::evaluate):
+
 2017-03-06  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Allow indexed module namespace object fields
