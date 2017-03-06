@@ -1,3 +1,9 @@
+2017-03-05  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed GTK+ gardening. Rebaseline fast/css/css2-system-fonts.html after r213267.
+
+        * platform/gtk/fast/css/css2-system-fonts-expected.txt:
+
 2017-03-05  Simon Fraser  <simon.fraser@apple.com>
 
         Avoid backing store for layers with empty text nodes in a few more cases
