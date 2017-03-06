@@ -1,0 +1,39 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the W3C CSS or WPT github:
+	https://github.com/w3c/csswg-test
+	https://github.com/w3c/web-platform-tests
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-definition/fr-unit-expected.html
+/LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-definition/fr-unit-with-percentage-expected.html
+/LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-definition/fr-unit-with-percentage.html
+/LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-definition/fr-unit.html
+/LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-definition/grid-inline-support-flexible-lengths-001.xht
+/LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-definition/grid-inline-support-grid-template-areas-001.xht
+/LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-definition/grid-inline-support-grid-template-columns-rows-001.xht
+/LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-definition/grid-inline-support-named-grid-lines-001.xht
+/LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-definition/grid-inline-support-repeat-001.xht
+/LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-definition/grid-inline-template-columns-rows-resolved-values-001.xht
+/LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-definition/grid-layout-auto-tracks-expected.html
+/LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-definition/grid-layout-auto-tracks.html
+/LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-definition/grid-layout-basic-expected.html
+/LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-definition/grid-layout-basic.html
+/LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-definition/grid-layout-repeat-notation-expected.html
+/LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-definition/grid-layout-repeat-notation.html
+/LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-definition/grid-support-flexible-lengths-001.xht
+/LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-definition/grid-support-grid-template-areas-001.xht
+/LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-definition/grid-support-grid-template-columns-rows-001.xht
+/LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-definition/grid-support-named-grid-lines-001.xht
+/LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-definition/grid-support-repeat-001.xht
+/LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-definition/grid-template-columns-rows-resolved-values-001.xht

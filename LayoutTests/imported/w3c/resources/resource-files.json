@@ -12,6 +12,8 @@
         "web-platform-tests/tools"
     ],
     "files": [
+        "csswg-test/css-grid-1/grid-items/ref-filled-green-100px-square-image.html",
+        "csswg-test/css-grid-1/test-plan/index.html",
         "web-platform-tests/XMLHttpRequest/xmlhttprequest-sync-block-defer-scripts-subframe.html",
         "web-platform-tests/XMLHttpRequest/xmlhttprequest-sync-not-hang-scriptloader-subframe.html",
         "web-platform-tests/dom/events/EventListener-incumbent-global-subframe-1.sub.html",

@@ -14,7 +14,7 @@
 ["csswg-test/css-flexbox-1", "skip"],
 ["csswg-test/css-fonts-3", "skip"],
 ["csswg-test/css-gcpm-3", "skip"],
-["csswg-test/css-grid-1", "skip"],
+["csswg-test/css-grid-1", "import"],
 ["csswg-test/css-images-3", "skip"],
 ["csswg-test/css-lists-3", "skip"],
 ["csswg-test/css-masking-1", "skip"],

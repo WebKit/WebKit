@@ -1,0 +1,71 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the W3C CSS or WPT github:
+	https://github.com/w3c/csswg-test
+	https://github.com/w3c/web-platform-tests
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-model/display-grid-expected.html
+/LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-model/display-grid.html
+/LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-model/display-inline-grid-expected.html
+/LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-model/display-inline-grid.html
+/LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-model/grid-computed-value-display-floated-items-001.xht
+/LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-model/grid-display-grid-001-expected.xht
+/LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-model/grid-display-grid-001.xht
+/LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-model/grid-display-inline-grid-001-expected.xht
+/LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-model/grid-display-inline-grid-001.xht
+/LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-model/grid-first-letter-001-expected.xht
+/LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-model/grid-first-letter-001.xht
+/LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-model/grid-first-letter-002-expected.xht
+/LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-model/grid-first-letter-002.xht
+/LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-model/grid-first-letter-003-expected.xht
+/LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-model/grid-first-letter-003.xht
+/LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-model/grid-first-line-001-expected.xht
+/LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-model/grid-first-line-001.xht
+/LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-model/grid-first-line-002-expected.xht
+/LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-model/grid-first-line-002.xht
+/LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-model/grid-first-line-003-expected.xht
+/LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-model/grid-first-line-003.xht
+/LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-model/grid-float-001-expected.xht
+/LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-model/grid-float-001.xht
+/LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-model/grid-floats-no-intrude-001-expected.xht
+/LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-model/grid-floats-no-intrude-001.xht
+/LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-model/grid-inline-first-letter-001-expected.xht
+/LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-model/grid-inline-first-letter-001.xht
+/LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-model/grid-inline-first-letter-002-expected.xht
+/LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-model/grid-inline-first-letter-002.xht
+/LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-model/grid-inline-first-letter-003-expected.xht
+/LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-model/grid-inline-first-letter-003.xht
+/LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-model/grid-inline-first-line-001-expected.xht
+/LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-model/grid-inline-first-line-001.xht
+/LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-model/grid-inline-first-line-002-expected.xht
+/LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-model/grid-inline-first-line-002.xht
+/LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-model/grid-inline-first-line-003-expected.xht
+/LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-model/grid-inline-first-line-003.xht
+/LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-model/grid-inline-float-001-expected.xht
+/LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-model/grid-inline-float-001.xht
+/LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-model/grid-inline-floats-no-intrude-001-expected.xht
+/LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-model/grid-inline-floats-no-intrude-001.xht
+/LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-model/grid-inline-margins-no-collapse-001-expected.xht
+/LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-model/grid-inline-margins-no-collapse-001.xht
+/LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-model/grid-inline-multicol-001-expected.xht
+/LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-model/grid-inline-multicol-001.xht
+/LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-model/grid-inline-vertical-align-001-expected.xht
+/LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-model/grid-inline-vertical-align-001.xht
+/LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-model/grid-margins-no-collapse-001-expected.xht
+/LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-model/grid-margins-no-collapse-001.xht
+/LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-model/grid-multicol-001-expected.xht
+/LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-model/grid-multicol-001.xht
+/LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-model/grid-support-display-001.xht
+/LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-model/grid-vertical-align-001-expected.xht
+/LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-model/grid-vertical-align-001.xht

@@ -1,3 +1,15 @@
+2017-03-06  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [css-grid] Import W3C Test Suite
+        https://bugs.webkit.org/show_bug.cgi?id=169196
+
+        Reviewed by Youenn Fablet.
+
+        A few tests are not passing yet, so the TextExpectations file
+        has been updated accordingly linking the different bugs.
+
+        * TestExpectations:
+
 2017-03-06  Dave Hyatt  <hyatt@apple.com>
 
         Enable fieldsets to be flexboxes, grids and multicolumn.
