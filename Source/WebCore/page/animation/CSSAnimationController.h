@@ -72,6 +72,9 @@ public:
     WEBCORE_EXPORT void resumeAnimations();
     void serviceAnimations();
 
+    void updateThrottlingState();
+    WEBCORE_EXPORT Seconds animationInterval() const;
+
     WEBCORE_EXPORT void suspendAnimationsForDocument(Document*);
     WEBCORE_EXPORT void resumeAnimationsForDocument(Document*);
     WEBCORE_EXPORT bool animationsAreSuspendedForDocument(Document*);

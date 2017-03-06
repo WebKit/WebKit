@@ -49,8 +49,9 @@
 namespace WebCore {
 
 // Allow a little more than 60fps to make sure we can at least hit that frame rate.
-static const double cAnimationTimerDelay = 0.015;
-static const double cBeginAnimationUpdateTimeNotSet = -1;
+static const Seconds animationTimerDelay { 0.015 };
+// Allow a little more than 30fps to make sure we can at least hit that frame rate.
+static const Seconds animationTimerThrottledDelay { 0.030 };
 
 class AnimationPrivateUpdateBlock {
 public:
@@ -72,10 +73,8 @@ CSSAnimationControllerPrivate::CSSAnimationControllerPrivate(Frame& frame)
     : m_animationTimer(*this, &CSSAnimationControllerPrivate::animationTimerFired)
     , m_updateStyleIfNeededDispatcher(*this, &CSSAnimationControllerPrivate::updateStyleIfNeededDispatcherFired)
     , m_frame(frame)
-    , m_beginAnimationUpdateTime(cBeginAnimationUpdateTimeNotSet)
     , m_beginAnimationUpdateCount(0)
     , m_waitingForAsyncStartNotification(false)
-    , m_isSuspended(false)
     , m_allowsNewAnimationsWhileSuspended(false)
 {
 }
@@ -176,8 +175,12 @@ void CSSAnimationControllerPrivate::updateAnimationTimer(SetChanged callSetChang
 
     // If we want service immediately, we start a repeating timer to reduce the overhead of starting
     if (!timeToNextService) {
-        if (!m_animationTimer.isActive() || !m_animationTimer.repeatInterval())
-            m_animationTimer.startRepeating(cAnimationTimerDelay);
+        auto* page = m_frame.page();
+        bool shouldThrottle = page && page->isLowPowerModeEnabled();
+        Seconds delay = shouldThrottle ? animationTimerThrottledDelay : animationTimerDelay;
+
+        if (!m_animationTimer.isActive() || m_animationTimer.repeatInterval() != delay.value())
+            m_animationTimer.startRepeating(delay);
         return;
     }
 
@@ -282,6 +285,22 @@ bool CSSAnimationControllerPrivate::isRunningAcceleratedAnimationOnRenderer(Rend
     ASSERT(m_compositeAnimations.contains(&renderer));
     const CompositeAnimation& animation = *m_compositeAnimations.get(&renderer);
     return animation.isAnimatingProperty(property, true, runningState);
+}
+
+void CSSAnimationControllerPrivate::updateThrottlingState()
+{
+    updateAnimationTimer();
+
+    for (auto* childFrame = m_frame.tree().firstChild(); childFrame; childFrame = childFrame->tree().nextSibling())
+        childFrame->animation().updateThrottlingState();
+}
+
+Seconds CSSAnimationControllerPrivate::animationInterval() const
+{
+    if (!m_animationTimer.isActive())
+        return Seconds { INFINITY };
+
+    return Seconds { m_animationTimer.repeatInterval() };
 }
 
 void CSSAnimationControllerPrivate::suspendAnimations()
@@ -400,16 +419,16 @@ bool CSSAnimationControllerPrivate::pauseTransitionAtTime(RenderElement* rendere
 double CSSAnimationControllerPrivate::beginAnimationUpdateTime()
 {
     ASSERT(m_beginAnimationUpdateCount);
-    if (m_beginAnimationUpdateTime == cBeginAnimationUpdateTimeNotSet)
+    if (!m_beginAnimationUpdateTime)
         m_beginAnimationUpdateTime = monotonicallyIncreasingTime();
 
-    return m_beginAnimationUpdateTime;
+    return m_beginAnimationUpdateTime.value();
 }
 
 void CSSAnimationControllerPrivate::beginAnimationUpdate()
 {
     if (!m_beginAnimationUpdateCount)
-        setBeginAnimationUpdateTime(cBeginAnimationUpdateTimeNotSet);
+        m_beginAnimationUpdateTime = std::nullopt;
     ++m_beginAnimationUpdateCount;
 }
 
@@ -723,6 +742,16 @@ void CSSAnimationController::setAllowsNewAnimationsWhileSuspended(bool allowed)
 void CSSAnimationController::serviceAnimations()
 {
     m_data->animationFrameCallbackFired();
+}
+
+void CSSAnimationController::updateThrottlingState()
+{
+    m_data->updateThrottlingState();
+}
+
+Seconds CSSAnimationController::animationInterval() const
+{
+    return m_data->animationInterval();
 }
 
 bool CSSAnimationController::animationsAreSuspendedForDocument(Document* document)

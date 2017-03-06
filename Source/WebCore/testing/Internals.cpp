@@ -796,6 +796,15 @@ ExceptionOr<bool> Internals::animationsAreSuspended() const
     return document->frame()->animation().animationsAreSuspendedForDocument(document);
 }
 
+double Internals::animationsInterval() const
+{
+    Document* document = contextDocument();
+    if (!document || !document->frame())
+        return INFINITY;
+
+    return document->frame()->animation().animationInterval().value();
+}
+
 ExceptionOr<void> Internals::suspendAnimations() const
 {
     Document* document = contextDocument();

@@ -1137,6 +1137,7 @@ void Page::setIsVisuallyIdleInternal(bool isVisuallyIdle)
 void Page::handleLowModePowerChange(bool isLowPowerModeEnabled)
 {
     updateScriptedAnimationsThrottlingReason(*this, isLowPowerModeEnabled ? ThrottlingReasonOperation::Add : ThrottlingReasonOperation::Remove, ScriptedAnimationController::ThrottlingReason::LowPowerMode);
+    mainFrame().animation().updateThrottlingState();
 }
 
 void Page::userStyleSheetLocationChanged()

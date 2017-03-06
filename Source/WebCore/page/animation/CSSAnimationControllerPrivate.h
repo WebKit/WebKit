@@ -67,6 +67,9 @@ public:
     void resumeAnimations();
     void animationFrameCallbackFired();
 
+    void updateThrottlingState();
+    Seconds animationInterval() const;
+
     void suspendAnimationsForDocument(Document*);
     void resumeAnimationsForDocument(Document*);
     bool animationsAreSuspendedForDocument(Document*);
@@ -85,7 +88,6 @@ public:
     bool computeExtentOfAnimation(RenderElement&, LayoutRect&) const;
 
     double beginAnimationUpdateTime();
-    void setBeginAnimationUpdateTime(double t) { m_beginAnimationUpdateTime = t; }
     
     void beginAnimationUpdate();
     void endAnimationUpdate();
@@ -135,7 +137,7 @@ private:
     Vector<Ref<Element>> m_elementChangesToDispatch;
     HashSet<Document*> m_suspendedDocuments;
 
-    double m_beginAnimationUpdateTime;
+    std::optional<double> m_beginAnimationUpdateTime;
 
     using AnimationsSet = HashSet<RefPtr<AnimationBase>>;
     AnimationsSet m_animationsWaitingForStyle;
@@ -144,7 +146,7 @@ private:
     int m_beginAnimationUpdateCount;
 
     bool m_waitingForAsyncStartNotification;
-    bool m_isSuspended;
+    bool m_isSuspended { false };
 
     // Used to flag whether we should revert to previous buggy
     // behavior of allowing new transitions and animations to

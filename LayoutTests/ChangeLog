@@ -1,3 +1,16 @@
+2017-03-06  Chris Dumez  <cdumez@apple.com>
+
+        [iOS] Throttle CSS animations to 30fps in low power mode
+        https://bugs.webkit.org/show_bug.cgi?id=169138
+        <rdar://problem/30837805>
+
+        Reviewed by Said Abou-Hallawa.
+
+        Add layout test coverage.
+
+        * fast/animation/css-animation-throttling-lowPowerMode-expected.txt: Added.
+        * fast/animation/css-animation-throttling-lowPowerMode.html: Added.
+
 2017-03-06  Alex Christensen  <achristensen@webkit.org>
 
         Fix URLs relative to file URLs with paths beginning with Windows drive letters
