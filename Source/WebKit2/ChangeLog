@@ -1,3 +1,12 @@
+2017-03-03  Matt Rajca  <mrajca@apple.com>
+
+        Media: notify clients when the user never plays a media element that was prevented from auto-playing
+        https://bugs.webkit.org/show_bug.cgi?id=169150
+
+        Reviewed by Alex Christensen.
+
+        * UIProcess/API/C/WKPageUIClient.h:
+
 2017-03-06  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Expand font-weight and font-stretch to take any number

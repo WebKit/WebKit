@@ -5189,9 +5189,17 @@ void HTMLMediaElement::stopWithoutDestroyingMediaPlayer()
     setPausedInternal(true);
     m_mediaSession->clientWillPausePlayback();
 
-    if (m_playbackWithoutUserGesture == PlaybackWithoutUserGesture::Started) {
-        if (Page* page = document().page())
+    if (Page* page = document().page()) {
+        switch (m_playbackWithoutUserGesture) {
+        case PlaybackWithoutUserGesture::Started:
             page->chrome().client().handleAutoplayEvent(AutoplayEvent::DidEndMediaPlaybackWithoutUserInterference);
+            break;
+        case PlaybackWithoutUserGesture::Prevented:
+            page->chrome().client().handleAutoplayEvent(AutoplayEvent::UserNeverPlayedMediaPreventedFromPlaying);
+            break;
+        case PlaybackWithoutUserGesture::None:
+            break;
+        }
     }
     m_playbackWithoutUserGesture = PlaybackWithoutUserGesture::None;
 
