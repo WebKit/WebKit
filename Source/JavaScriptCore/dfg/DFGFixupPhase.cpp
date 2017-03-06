@@ -1250,6 +1250,14 @@ private:
                 fixEdge<CellUse>(node->child1());
             break;
         }
+        
+        case GetByIdWithThis: {
+            if (node->child1()->shouldSpeculateCell() && node->child2()->shouldSpeculateCell()) {
+                fixEdge<CellUse>(node->child1());
+                fixEdge<CellUse>(node->child2());
+            }
+            break;
+        }
 
         case PutById:
         case PutByIdFlush:
@@ -1877,7 +1885,6 @@ private:
         case ExitOK:
         case BottomValue:
         case TypeOf:
-        case GetByIdWithThis:
         case PutByIdWithThis:
         case PutByValWithThis:
         case GetByValWithThis:

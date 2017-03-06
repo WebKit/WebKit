@@ -62,9 +62,11 @@ JITByIdGenerator::JITByIdGenerator(
     
     m_stubInfo->patch.baseGPR = static_cast<int8_t>(base.payloadGPR());
     m_stubInfo->patch.valueGPR = static_cast<int8_t>(value.payloadGPR());
+    m_stubInfo->patch.thisGPR = static_cast<int8_t>(InvalidGPRReg);
 #if USE(JSVALUE32_64)
     m_stubInfo->patch.baseTagGPR = static_cast<int8_t>(base.tagGPR());
     m_stubInfo->patch.valueTagGPR = static_cast<int8_t>(value.tagGPR());
+    m_stubInfo->patch.thisTagGPR = static_cast<int8_t>(InvalidGPRReg);
 #endif
 }
 
@@ -114,6 +116,24 @@ JITGetByIdGenerator::JITGetByIdGenerator(
 void JITGetByIdGenerator::generateFastPath(MacroAssembler& jit)
 {
     generateFastCommon(jit, m_isLengthAccess ? InlineAccess::sizeForLengthAccess() : InlineAccess::sizeForPropertyAccess());
+}
+
+JITGetByIdWithThisGenerator::JITGetByIdWithThisGenerator(
+    CodeBlock* codeBlock, CodeOrigin codeOrigin, CallSiteIndex callSite, const RegisterSet& usedRegisters,
+    UniquedStringImpl*, JSValueRegs value, JSValueRegs base, JSValueRegs thisRegs, AccessType accessType)
+    : JITByIdGenerator(codeBlock, codeOrigin, callSite, accessType, usedRegisters, base, value)
+{
+    RELEASE_ASSERT(thisRegs.payloadGPR() != thisRegs.tagGPR());
+
+    m_stubInfo->patch.thisGPR = static_cast<int8_t>(thisRegs.payloadGPR());
+#if USE(JSVALUE32_64)
+    m_stubInfo->patch.thisTagGPR = static_cast<int8_t>(thisRegs.tagGPR());
+#endif
+}
+
+void JITGetByIdWithThisGenerator::generateFastPath(MacroAssembler& jit)
+{
+    generateFastCommon(jit, InlineAccess::sizeForPropertyAccess());
 }
 
 JITPutByIdGenerator::JITPutByIdGenerator(

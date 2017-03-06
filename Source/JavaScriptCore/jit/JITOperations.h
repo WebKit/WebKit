@@ -170,6 +170,7 @@ typedef EncodedJSValue (JIT_OPERATION *J_JITOperation_EReoJss)(ExecState*, RegEx
 typedef EncodedJSValue (JIT_OPERATION *J_JITOperation_ESS)(ExecState*, size_t, size_t);
 typedef EncodedJSValue (JIT_OPERATION *J_JITOperation_ESsiCI)(ExecState*, StructureStubInfo*, JSCell*, UniquedStringImpl*);
 typedef EncodedJSValue (JIT_OPERATION *J_JITOperation_ESsiJI)(ExecState*, StructureStubInfo*, EncodedJSValue, UniquedStringImpl*);
+typedef EncodedJSValue (JIT_OPERATION *J_JITOperation_ESsiJJI)(ExecState*, StructureStubInfo*, EncodedJSValue, EncodedJSValue, UniquedStringImpl*);
 typedef EncodedJSValue (JIT_OPERATION *J_JITOperation_EZ)(ExecState*, int32_t);
 typedef EncodedJSValue (JIT_OPERATION *J_JITOperation_EZIcfZ)(ExecState*, int32_t, InlineCallFrame*, int32_t);
 typedef EncodedJSValue (JIT_OPERATION *J_JITOperation_EZZ)(ExecState*, int32_t, int32_t);
@@ -337,6 +338,8 @@ EncodedJSValue JIT_OPERATION operationTryGetByIdOptimize(ExecState*, StructureSt
 EncodedJSValue JIT_OPERATION operationGetById(ExecState*, StructureStubInfo*, EncodedJSValue, UniquedStringImpl*) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationGetByIdGeneric(ExecState*, EncodedJSValue, UniquedStringImpl*) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationGetByIdOptimize(ExecState*, StructureStubInfo*, EncodedJSValue, UniquedStringImpl*) WTF_INTERNAL;
+EncodedJSValue JIT_OPERATION operationGetByIdWithThisGeneric(ExecState*, StructureStubInfo*, EncodedJSValue, EncodedJSValue, UniquedStringImpl*) WTF_INTERNAL;
+EncodedJSValue JIT_OPERATION operationGetByIdWithThisOptimize(ExecState*, StructureStubInfo*, EncodedJSValue, EncodedJSValue, UniquedStringImpl*) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationInOptimize(ExecState*, StructureStubInfo*, JSCell*, UniquedStringImpl*) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationIn(ExecState*, StructureStubInfo*, JSCell*, UniquedStringImpl*) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationGenericIn(ExecState*, JSCell*, EncodedJSValue) WTF_INTERNAL;

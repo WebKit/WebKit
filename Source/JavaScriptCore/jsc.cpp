@@ -371,6 +371,12 @@ public:
             slot.setCacheableCustom(thisObject, DontDelete | ReadOnly | DontEnum, thisObject->customGetter);
             return true;
         }
+        
+        if (propertyName == PropertyName(Identifier::fromString(exec, "customGetterAccessor"))) {
+            slot.setCacheableCustom(thisObject, DontDelete | ReadOnly | DontEnum | CustomAccessor, thisObject->customGetterAcessor);
+            return true;
+        }
+        
         return JSObject::getOwnPropertySlot(thisObject, exec, propertyName, slot);
     }
 
@@ -381,6 +387,20 @@ private:
         auto scope = DECLARE_THROW_SCOPE(vm);
 
         CustomGetter* thisObject = jsDynamicCast<CustomGetter*>(vm, JSValue::decode(thisValue));
+        if (!thisObject)
+            return throwVMTypeError(exec, scope);
+        bool shouldThrow = thisObject->get(exec, PropertyName(Identifier::fromString(exec, "shouldThrow"))).toBoolean(exec);
+        if (shouldThrow)
+            return throwVMTypeError(exec, scope);
+        return JSValue::encode(jsNumber(100));
+    }
+    
+    static EncodedJSValue customGetterAcessor(ExecState* exec, EncodedJSValue thisValue, PropertyName)
+    {
+        VM& vm = exec->vm();
+        auto scope = DECLARE_THROW_SCOPE(vm);
+        
+        JSObject* thisObject = jsDynamicCast<JSObject*>(vm, JSValue::decode(thisValue));
         if (!thisObject)
             return throwVMTypeError(exec, scope);
         bool shouldThrow = thisObject->get(exec, PropertyName(Identifier::fromString(exec, "shouldThrow"))).toBoolean(exec);

@@ -518,6 +518,12 @@ ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(JIT::WithProfileTag, J_JIT
     return appendCallWithExceptionCheckSetJSValueResultWithProfile(operation, dst);
 }
 
+ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(JIT::WithProfileTag, J_JITOperation_ESsiJJI operation, int dst, StructureStubInfo* stubInfo, GPRReg arg1, GPRReg arg2, UniquedStringImpl* uid)
+{
+    setupArgumentsWithExecState(TrustedImmPtr(stubInfo), arg1, arg2, TrustedImmPtr(uid));
+    return appendCallWithExceptionCheckSetJSValueResultWithProfile(operation, dst);
+}
+
 ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(JIT::WithProfileTag, J_JITOperation_EJJ operation, int dst, GPRReg arg1, GPRReg arg2)
 {
     setupArgumentsWithExecState(arg1, arg2);
@@ -702,6 +708,12 @@ ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(J_JITOperation_EJI operati
 {
     setupArgumentsWithExecState(EABI_32BIT_DUMMY_ARG arg1Payload, arg1Tag, TrustedImmPtr(arg2));
     return appendCallWithExceptionCheckSetJSValueResult(operation, dst);
+}
+
+ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(JIT::WithProfileTag, J_JITOperation_ESsiJJI operation, int dst, StructureStubInfo* stubInfo, GPRReg arg1Tag, GPRReg arg1Payload, GPRReg arg2Tag, GPRReg arg2Payload, UniquedStringImpl* uid)
+{
+    setupArgumentsWithExecState(TrustedImmPtr(stubInfo), arg1Payload, arg1Tag, arg2Payload, arg2Tag, TrustedImmPtr(uid));
+    return appendCallWithExceptionCheckSetJSValueResultWithProfile(operation, dst);
 }
 
 ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(J_JITOperation_EJJ operation, int dst, GPRReg arg1Tag, GPRReg arg1Payload, GPRReg arg2Tag, GPRReg arg2Payload)

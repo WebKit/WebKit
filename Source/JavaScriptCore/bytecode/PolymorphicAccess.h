@@ -192,6 +192,7 @@ struct AccessGenerationState {
     MacroAssembler::JumpList failAndRepatch;
     MacroAssembler::JumpList failAndIgnore;
     GPRReg baseGPR { InvalidGPRReg };
+    GPRReg thisGPR { InvalidGPRReg };
     JSValueRegs valueRegs;
     GPRReg scratchGPR { InvalidGPRReg };
     const Identifier* ident;
