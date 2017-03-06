@@ -129,12 +129,17 @@ void ProcessingInstruction::checkStyleSheet()
                 m_cachedSheet = nullptr;
             }
 
+            if (m_loading) {
+                m_loading = false;
+                document().styleScope().removePendingSheet(*this);
+            }
+
             String url = document().completeURL(href).string();
             if (!dispatchBeforeLoadEvent(url))
                 return;
 
             m_loading = true;
-            document().styleScope().addPendingSheet();
+            document().styleScope().addPendingSheet(*this);
 
 #if ENABLE(XSLT)
             if (m_isXSL) {
@@ -154,7 +159,7 @@ void ProcessingInstruction::checkStyleSheet()
             else {
                 // The request may have been denied if (for example) the stylesheet is local and the document is remote.
                 m_loading = false;
-                document().styleScope().removePendingSheet();
+                document().styleScope().removePendingSheet(*this);
 #if ENABLE(XSLT)
                 if (m_isXSL)
                     document().styleScope().flushPendingUpdate();
@@ -176,7 +181,7 @@ bool ProcessingInstruction::isLoading() const
 bool ProcessingInstruction::sheetLoaded()
 {
     if (!isLoading()) {
-        document().styleScope().removePendingSheet();
+        document().styleScope().removePendingSheet(*this);
 #if ENABLE(XSLT)
         if (m_isXSL)
             document().styleScope().flushPendingUpdate();
@@ -276,7 +281,7 @@ void ProcessingInstruction::removedFrom(ContainerNode& insertionPoint)
 
     if (m_loading) {
         m_loading = false;
-        document().styleScope().removePendingSheet();
+        document().styleScope().removePendingSheet(*this);
     }
 
     document().styleScope().didChangeActiveStyleSheetCandidates();

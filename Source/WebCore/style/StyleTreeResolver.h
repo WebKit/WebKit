@@ -102,6 +102,7 @@ private:
 
     Vector<Ref<Scope>, 4> m_scopeStack;
     Vector<Parent, 32> m_parentStack;
+    bool m_didSeePendingStylesheet { false };
 
     std::unique_ptr<Update> m_update;
 };

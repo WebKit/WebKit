@@ -551,7 +551,7 @@ void HTMLLinkElement::addPendingSheet(PendingSheetType type)
     if (m_pendingSheetType == InactiveSheet)
         return;
     ASSERT(m_styleScope);
-    m_styleScope->addPendingSheet();
+    m_styleScope->addPendingSheet(*this);
 }
 
 void HTMLLinkElement::removePendingSheet()
@@ -569,7 +569,7 @@ void HTMLLinkElement::removePendingSheet()
         return;
     }
 
-    m_styleScope->removePendingSheet();
+    m_styleScope->removePendingSheet(*this);
 }
 
 } // namespace WebCore

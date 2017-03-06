@@ -72,6 +72,7 @@ Scope::Scope(ShadowRoot& shadowRoot)
 
 Scope::~Scope()
 {
+    ASSERT(m_nodesWithPendingSheets.isEmpty());
 }
 
 bool Scope::shouldUseSharedUserAgentShadowTreeStyleResolver() const
@@ -171,20 +172,41 @@ void Scope::setSelectedStylesheetSetName(const String& name)
     didChangeActiveStyleSheetCandidates();
 }
 
-// This method is called whenever a top-level stylesheet has finished loading.
-void Scope::removePendingSheet()
+void Scope::addPendingSheet(const Node& node)
 {
-    // Make sure we knew this sheet was pending, and that our count isn't out of sync.
-    ASSERT(m_pendingStyleSheetCount > 0);
+    ASSERT(!m_nodesWithPendingSheets.contains(&node));
 
-    m_pendingStyleSheetCount--;
-    if (m_pendingStyleSheetCount)
+    m_nodesWithPendingSheets.add(&node);
+}
+
+// This method is called whenever a top-level stylesheet has finished loading.
+void Scope::removePendingSheet(const Node& node)
+{
+    ASSERT(m_nodesWithPendingSheets.contains(&node));
+
+    m_nodesWithPendingSheets.remove(&node);
+    if (!m_nodesWithPendingSheets.isEmpty())
         return;
 
     didChangeActiveStyleSheetCandidates();
 
     if (!m_shadowRoot)
         m_document.didRemoveAllPendingStylesheet();
+}
+
+bool Scope::hasProcessingInstructionWithPendingSheet()
+{
+    ASSERT(!m_shadowRoot);
+
+    for (auto* child = m_document.firstChild(); child; child = child->nextSibling()) {
+        if (is<Element>(*child))
+            return false;
+        if (m_nodesWithPendingSheets.contains(child)) {
+            ASSERT(is<ProcessingInstruction>(*child));
+            return true;
+        }
+    }
+    return false;
 }
 
 void Scope::addStyleSheetCandidateNode(Node& node, bool createdByParser)
@@ -394,7 +416,7 @@ void Scope::updateActiveStyleSheets(UpdateType updateType)
 
     // Don't bother updating, since we haven't loaded all our style info yet
     // and haven't calculated the style resolver for the first time.
-    if (!m_shadowRoot && !m_didUpdateActiveStyleSheets && m_pendingStyleSheetCount) {
+    if (!m_shadowRoot && !m_didUpdateActiveStyleSheets && hasPendingSheets()) {
         clearResolver();
         return;
     }

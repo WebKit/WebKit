@@ -276,6 +276,9 @@ dynamicSheet.innerHTML = "[myattr3] target { color:rgb(12, 0, 0); }"
 debug("Inserting stylesheet '" + dynamicSheet.innerHTML + "'");
 document.head.appendChild(dynamicSheet);
 
+testStyleInvalidation("NoStyleChange");
+checkStyle(11);
+
 setAttribute('myattr3', '');
 testStyleInvalidation("InlineStyleChange");
 checkStyle(12);

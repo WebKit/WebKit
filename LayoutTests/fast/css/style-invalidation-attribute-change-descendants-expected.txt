@@ -170,6 +170,10 @@ PASS testStyleChangeType("target", "NoStyleChange") is true
 PASS testStyleChangeType("inert", "NoStyleChange") is true
 PASS hasExpectedStyle is true
 Inserting stylesheet '[myattr3] target { color:rgb(12, 0, 0); }'
+PASS testStyleChangeType("root", "NoStyleChange") || testStyleChangeType("root", "InlineStyleChange") is true
+PASS testStyleChangeType("target", "NoStyleChange") is true
+PASS testStyleChangeType("inert", "NoStyleChange") is true
+PASS hasExpectedStyle is true
 Setting attribute 'myattr3' value ''
 PASS testStyleChangeType("root", "NoStyleChange") || testStyleChangeType("root", "InlineStyleChange") is true
 PASS testStyleChangeType("target", "InlineStyleChange") is true

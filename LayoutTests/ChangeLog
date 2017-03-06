@@ -1,3 +1,20 @@
+2017-03-06  Antti Koivisto  <antti@apple.com>
+
+        Allow render tree building before loading stylesheet elements
+        https://bugs.webkit.org/show_bug.cgi?id=169079
+
+        Reviewed by Andreas Kling.
+
+        Ensure that style is synchronized after adding a stylesheet dynamically by doing an additional test.
+        Otherwise the class/attr invalidation test may as we don't know about the new stylesheet yet.
+        This is functionally fine (future synchronization would invalidate the style) but messes up the test
+        trying to verify class/attr change invalidation specifically.
+
+        * fast/css/style-invalidation-attribute-change-descendants-expected.txt:
+        * fast/css/style-invalidation-attribute-change-descendants.html:
+        * fast/css/style-invalidation-class-change-descendants-expected.txt:
+        * fast/css/style-invalidation-class-change-descendants.html:
+
 2017-03-05  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed GTK+ gardening. Rebaseline fast/css/css2-system-fonts.html after r213267.

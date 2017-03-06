@@ -167,12 +167,15 @@ checkStyle(0);
 
 removeClass('dynamicStyle');
 testStyleInvalidation("NoStyleChange");
-checkStyle(0)
+checkStyle(0);
 
 var dynamicSheet = document.createElement("style");
 dynamicSheet.innerHTML = "root.dynamicStyle target { color:rgb(6, 6, 6); }"
 debug("Inserting stylesheet '" + dynamicSheet.innerHTML + "'");
 document.head.appendChild(dynamicSheet);
+
+testStyleInvalidation("NoStyleChange");
+checkStyle(0);
 
 addClass('dynamicStyle');
 testStyleInvalidation("InlineStyleChange");

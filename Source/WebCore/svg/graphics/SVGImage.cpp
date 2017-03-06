@@ -451,6 +451,8 @@ bool SVGImage::dataChanged(bool allDataReceived)
         loader.activeDocumentLoader()->writer().addData(data()->data(), data()->size());
         loader.activeDocumentLoader()->writer().end();
 
+        frame.document()->updateLayoutIgnorePendingStylesheets();
+
         // Set the intrinsic size before a container size is available.
         m_intrinsicSize = containerSize();
         reportApproximateMemoryCost();

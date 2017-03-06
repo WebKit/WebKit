@@ -73,6 +73,10 @@ PASS testStyleChangeType("target", "NoStyleChange") is true
 PASS testStyleChangeType("inert", "NoStyleChange") is true
 PASS hasExpectedStyle is true
 Inserting stylesheet 'root.dynamicStyle target { color:rgb(6, 6, 6); }'
+PASS testStyleChangeType("root", "NoStyleChange") || testStyleChangeType("root", "InlineStyleChange") is true
+PASS testStyleChangeType("target", "NoStyleChange") is true
+PASS testStyleChangeType("inert", "NoStyleChange") is true
+PASS hasExpectedStyle is true
 Adding class dynamicStyle
 PASS testStyleChangeType("root", "NoStyleChange") || testStyleChangeType("root", "InlineStyleChange") is true
 PASS testStyleChangeType("target", "InlineStyleChange") is true

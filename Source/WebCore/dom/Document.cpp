@@ -1854,7 +1854,20 @@ bool Document::needsStyleRecalc() const
     if (pageCacheState() != NotInPageCache)
         return false;
 
-    return m_pendingStyleRecalcShouldForce || childNeedsStyleRecalc() || styleScope().hasPendingUpdate();
+    if (m_pendingStyleRecalcShouldForce)
+        return true;
+
+    if (childNeedsStyleRecalc())
+        return true;
+
+    if (styleScope().hasPendingUpdate())
+        return true;
+
+    // Ensure this happens eventually as it is currently in resolveStyle. This can be removed if the code moves.
+    if (m_gotoAnchorNeededAfterStylesheetsLoad && !styleScope().hasPendingSheets())
+        return true;
+
+    return false;
 }
 
 void Document::updateStyleIfNeeded()

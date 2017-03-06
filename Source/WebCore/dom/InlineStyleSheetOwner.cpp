@@ -157,7 +157,7 @@ void InlineStyleSheetOwner::createSheet(Element& element, const String& text)
     Document& document = element.document();
     if (m_sheet) {
         if (m_sheet->isLoading() && m_styleScope)
-            m_styleScope->removePendingSheet();
+            m_styleScope->removePendingSheet(element);
         clearSheet();
     }
 
@@ -178,7 +178,7 @@ void InlineStyleSheetOwner::createSheet(Element& element, const String& text)
         return;
 
     if (m_styleScope)
-        m_styleScope->addPendingSheet();
+        m_styleScope->addPendingSheet(element);
 
     auto cacheKey = makeInlineStyleSheetCacheKey(text, element);
     if (cacheKey) {
@@ -228,21 +228,21 @@ bool InlineStyleSheetOwner::isLoading() const
     return m_sheet && m_sheet->isLoading();
 }
 
-bool InlineStyleSheetOwner::sheetLoaded(Element&)
+bool InlineStyleSheetOwner::sheetLoaded(Element& element)
 {
     if (isLoading())
         return false;
 
     if (m_styleScope)
-        m_styleScope->removePendingSheet();
+        m_styleScope->removePendingSheet(element);
 
     return true;
 }
 
-void InlineStyleSheetOwner::startLoadingDynamicSheet(Element&)
+void InlineStyleSheetOwner::startLoadingDynamicSheet(Element& element)
 {
     if (m_styleScope)
-        m_styleScope->addPendingSheet();
+        m_styleScope->addPendingSheet(element);
 }
 
 void InlineStyleSheetOwner::clearCache()

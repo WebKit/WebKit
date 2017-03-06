@@ -126,7 +126,7 @@ void TreeResolver::popScope()
 
 std::unique_ptr<RenderStyle> TreeResolver::styleForElement(Element& element, const RenderStyle& inheritedStyle)
 {
-    if (!m_document.haveStylesheetsLoaded() && !element.renderer()) {
+    if (m_didSeePendingStylesheet && !element.renderer() && !m_document.isIgnoringPendingStylesheets()) {
         m_document.setHasNodesWithPlaceholderStyle();
         return makePlaceholderStyle(m_document);
     }
@@ -359,6 +359,21 @@ static void clearNeedsStyleResolution(Element& element)
         after->setHasValidStyle();
 }
 
+static bool hasLoadingStylesheet(const Style::Scope& styleScope, const Element& element, bool checkDescendants)
+{
+    if (!styleScope.hasPendingSheets())
+        return false;
+    if (styleScope.hasPendingSheet(element))
+        return true;
+    if (!checkDescendants)
+        return false;
+    for (auto& descendant : descendantsOfType<Element>(element)) {
+        if (styleScope.hasPendingSheet(descendant))
+            return true;
+    };
+    return false;
+}
+
 void TreeResolver::resolveComposedTree()
 {
     ASSERT(m_parentStack.size() == 1);
@@ -438,6 +453,10 @@ void TreeResolver::resolveComposedTree()
         }
 
         bool shouldIterateChildren = style && (element.childNeedsStyleRecalc() || change != NoChange);
+
+        if (!m_didSeePendingStylesheet)
+            m_didSeePendingStylesheet = hasLoadingStylesheet(m_document.styleScope(), element, !shouldIterateChildren);
+
         if (!shouldIterateChildren) {
             it.traverseNextSkippingChildren();
             continue;
@@ -462,6 +481,8 @@ std::unique_ptr<Update> TreeResolver::resolve()
     }
     if (!documentElement->childNeedsStyleRecalc() && !documentElement->needsStyleRecalc())
         return nullptr;
+
+    m_didSeePendingStylesheet = m_document.styleScope().hasProcessingInstructionWithPendingSheet();
 
     m_update = std::make_unique<Update>(m_document);
     m_scopeStack.append(adoptRef(*new Scope(m_document)));
