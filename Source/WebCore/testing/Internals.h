@@ -176,6 +176,8 @@ public:
     ExceptionOr<void> setMarkedTextMatchesAreHighlighted(bool);
 
     void invalidateFontCache();
+    void setFontSmoothingEnabled(bool);
+    
     ExceptionOr<void> setLowPowerModeEnabled(bool);
 
     ExceptionOr<void> setScrollViewPosition(int x, int y);

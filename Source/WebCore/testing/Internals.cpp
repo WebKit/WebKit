@@ -1348,6 +1348,11 @@ void Internals::invalidateFontCache()
     FontCache::singleton().invalidate();
 }
 
+void Internals::setFontSmoothingEnabled(bool enabled)
+{
+    WebCore::FontCascade::setShouldUseSmoothing(enabled);
+}
+
 ExceptionOr<void> Internals::setLowPowerModeEnabled(bool isEnabled)
 {
     auto* document = contextDocument();

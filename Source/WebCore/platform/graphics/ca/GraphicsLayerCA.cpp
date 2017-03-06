@@ -317,6 +317,15 @@ bool GraphicsLayer::supportsBackgroundColorContent()
     return true;
 }
 
+bool GraphicsLayer::supportsSubpixelAntialiasedLayerText()
+{
+#if PLATFORM(MAC)
+    return true;
+#else
+    return false;
+#endif
+}
+
 std::unique_ptr<GraphicsLayer> GraphicsLayer::create(GraphicsLayerFactory* factory, GraphicsLayerClient& client, Type layerType)
 {
     std::unique_ptr<GraphicsLayer> graphicsLayer;
@@ -3616,6 +3625,7 @@ void GraphicsLayerCA::changeLayerTypeTo(PlatformCALayer::LayerType newLayerType)
         | BackgroundColorChanged
         | ContentsScaleChanged
         | AcceleratesDrawingChanged
+        | SupportsSubpixelAntialiasedTextChanged
         | FiltersChanged
         | BackdropFiltersChanged
         | MaskLayerChanged

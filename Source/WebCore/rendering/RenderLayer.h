@@ -109,6 +109,14 @@ enum LayerScrollCoordinationRole {
 };
 typedef unsigned LayerScrollCoordinationRoles;
 
+enum class RequestState {
+    Unknown,
+    DontCare,
+    False,
+    True,
+    Undetermined
+};
+
 class RenderLayer final : public ScrollableArea {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -388,10 +396,36 @@ public:
 
     bool hasVisibleBoxDecorationsOrBackground() const;
     bool hasVisibleBoxDecorations() const;
+
+    struct PaintedContentRequest {
+        void makeStatesUndetermined()
+        {
+            if (hasPaintedContent == RequestState::Unknown)
+                hasPaintedContent = RequestState::Undetermined;
+
+            if (hasSubpixelAntialiasedText == RequestState::Unknown)
+                hasSubpixelAntialiasedText = RequestState::Undetermined;
+        }
+
+        void setHasPaintedContent() { hasPaintedContent = RequestState::True; }
+        void setHasSubpixelAntialiasedText() { hasSubpixelAntialiasedText = RequestState::True; }
+
+        bool needToDeterminePaintedContentState() const { return hasPaintedContent == RequestState::Unknown; }
+        bool needToDetermineSubpixelAntialiasedTextState() const { return hasSubpixelAntialiasedText == RequestState::Unknown; }
+
+        bool probablyHasPaintedContent() const { return hasPaintedContent == RequestState::True || hasPaintedContent == RequestState::Undetermined; }
+        bool probablyHasSubpixelAntialiasedText() const { return hasSubpixelAntialiasedText == RequestState::True || hasSubpixelAntialiasedText == RequestState::Undetermined; }
+        
+        bool isSatisfied() const { return hasPaintedContent != RequestState::Unknown && hasSubpixelAntialiasedText != RequestState::Unknown; }
+
+        RequestState hasPaintedContent { RequestState::Unknown };
+        RequestState hasSubpixelAntialiasedText { RequestState::DontCare };
+    };
+
     // Returns true if this layer has visible content (ignoring any child layers).
-    bool isVisuallyNonEmpty() const;
+    bool isVisuallyNonEmpty(PaintedContentRequest* = nullptr) const;
     // True if this layer container renderers that paint.
-    bool hasNonEmptyChildRenderers() const;
+    bool hasNonEmptyChildRenderers(PaintedContentRequest&) const;
 
     // FIXME: We should ASSERT(!m_hasSelfPaintingLayerDescendantDirty); here but we hit the same bugs as visible content above.
     // Part of the issue is with subtree relayout: we don't check if our ancestors have some descendant flags dirty, missing some updates.

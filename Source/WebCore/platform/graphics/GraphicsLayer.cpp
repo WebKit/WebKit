@@ -95,6 +95,11 @@ bool GraphicsLayer::supportsBackgroundColorContent()
     return false;
 #endif
 }
+
+bool GraphicsLayer::supportsSubpixelAntialiasedLayerText()
+{
+    return false;
+}
 #endif
 
 #if !USE(COORDINATED_GRAPHICS)

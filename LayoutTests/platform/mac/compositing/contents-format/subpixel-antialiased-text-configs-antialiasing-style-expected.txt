@@ -1,0 +1,127 @@
+     
+Text here
+
+Antialiased text
+
+Smoothed text
+
+Antialised text
+Smoothed text
+
+Child composited layer
+
+Smoothed text
+
+Antialiased text
+
+Antialiased text
+
+Smoothed text
+
+Exceeds depth test antialiased
+
+Exceeds depth test smoothed
+
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 800.00 600.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 600.00)
+      (contentsOpaque 1)
+      (children 12
+        (GraphicsLayer
+          (position 12.00 17.00)
+          (bounds 162.00 162.00)
+          (drawsContent 1)
+        )
+        (GraphicsLayer
+          (position 182.00 17.00)
+          (bounds 162.00 162.00)
+          (drawsContent 1)
+        )
+        (GraphicsLayer
+          (position 352.00 17.00)
+          (bounds 162.00 162.00)
+          (supports subpixel antialiased text 1)
+          (drawsContent 1)
+        )
+        (GraphicsLayer
+          (position 522.00 17.00)
+          (bounds 162.00 162.00)
+          (supports subpixel antialiased text 1)
+          (drawsContent 1)
+        )
+        (GraphicsLayer
+          (position 12.00 187.00)
+          (bounds 162.00 162.00)
+          (drawsContent 1)
+        )
+        (GraphicsLayer
+          (position 182.00 187.00)
+          (bounds 162.00 162.00)
+          (supports subpixel antialiased text 1)
+          (drawsContent 1)
+        )
+        (GraphicsLayer
+          (position 352.00 187.00)
+          (bounds 162.00 162.00)
+          (supports subpixel antialiased text 1)
+          (drawsContent 1)
+        )
+        (GraphicsLayer
+          (position 522.00 187.00)
+          (bounds 162.00 162.00)
+          (drawsContent 1)
+          (children 1
+            (GraphicsLayer
+              (position 27.00 43.00)
+              (bounds 108.00 60.00)
+              (supports subpixel antialiased text 1)
+              (drawsContent 1)
+            )
+          )
+        )
+        (GraphicsLayer
+          (position 12.00 357.00)
+          (bounds 162.00 162.00)
+          (drawsContent 1)
+          (children 1
+            (GraphicsLayer
+              (position 27.00 43.00)
+              (bounds 108.00 20.00)
+              (supports subpixel antialiased text 1)
+              (drawsContent 1)
+            )
+          )
+        )
+        (GraphicsLayer
+          (position 182.00 357.00)
+          (bounds 162.00 162.00)
+          (supports subpixel antialiased text 1)
+          (drawsContent 1)
+          (children 1
+            (GraphicsLayer
+              (position 27.00 43.00)
+              (bounds 108.00 20.00)
+              (drawsContent 1)
+            )
+          )
+        )
+        (GraphicsLayer
+          (position 352.00 357.00)
+          (bounds 162.00 162.00)
+          (supports subpixel antialiased text 1)
+          (drawsContent 1)
+        )
+        (GraphicsLayer
+          (position 522.00 357.00)
+          (bounds 162.00 162.00)
+          (supports subpixel antialiased text 1)
+          (drawsContent 1)
+        )
+      )
+    )
+  )
+)
+

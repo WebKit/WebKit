@@ -160,6 +160,7 @@ enum EventThrottlingBehavior {
     [MayThrowException] void setMarkedTextMatchesAreHighlighted(boolean flag);
 
     void invalidateFontCache();
+    void setFontSmoothingEnabled(boolean enabled);
 
     [MayThrowException] void setScrollViewPosition(long x, long y);
 

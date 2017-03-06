@@ -349,6 +349,25 @@ void RenderImage::notifyFinished(CachedResource& newImage)
     }
 }
 
+bool RenderImage::isShowingMissingOrImageError() const
+{
+    return !imageResource().hasImage() || imageResource().errorOccurred();
+}
+
+bool RenderImage::isShowingAltText() const
+{
+    return isShowingMissingOrImageError() && !m_altText.isEmpty();
+}
+
+bool RenderImage::hasNonBitmapImage() const
+{
+    if (!imageResource().hasImage())
+        return false;
+
+    Image* image = cachedImage()->imageForRenderer(this);
+    return image && !is<BitmapImage>(image);
+}
+
 void RenderImage::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
     LayoutSize contentSize = this->contentSize();

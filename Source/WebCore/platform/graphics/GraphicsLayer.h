@@ -554,6 +554,7 @@ public:
     static bool supportsBackgroundColorContent();
     static bool supportsLayerType(Type);
     static bool supportsContentsTiling();
+    static bool supportsSubpixelAntialiasedLayerText();
 
     void updateDebugIndicators();
 

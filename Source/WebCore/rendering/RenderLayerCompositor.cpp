@@ -841,6 +841,12 @@ void RenderLayerCompositor::logLayerInfo(const RenderLayer& layer, int depth)
             else
                 logString.appendLiteral("background");
         }
+        
+        if (backing->paintsSubpixelAntialiasedText()) {
+            if (prependSpace)
+                logString.appendLiteral(", ");
+            logString.appendLiteral("texty");
+        }
 
         logString.appendLiteral("] ");
     }

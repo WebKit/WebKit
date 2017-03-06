@@ -69,6 +69,11 @@ public:
     float imageDevicePixelRatio() const { return m_imageDevicePixelRatio; }
 
     void setHasShadowControls(bool hasShadowControls) { m_hasShadowControls = hasShadowControls; }
+    
+    bool isShowingMissingOrImageError() const;
+    bool isShowingAltText() const;
+
+    bool hasNonBitmapImage() const;
 
 protected:
     bool needsPreferredWidthsRecalculation() const final;
