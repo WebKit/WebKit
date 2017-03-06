@@ -39,7 +39,12 @@ function loadMediaData(url) {
 }
 
 function runTest() {   
-    video =  document.createElement('video');
+    video = document.createElement('video');
+
+    if (navigator.userAgent.match(/iPod|iPhone|iPad/) && !window.MSStream) {
+        video.setAttribute('muted', 'true');
+        video.setAttribute('autoplay', 'allowed');
+    }
 
     var startTime = PerfTestRunner.now();
     video.src = url;

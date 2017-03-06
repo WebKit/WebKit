@@ -1,3 +1,15 @@
+2017-03-06  Jeremy Jones  <jeremyj@apple.com>
+
+        StandardCanPlayThrough.html does not work on iOS.
+        https://bugs.webkit.org/show_bug.cgi?id=169207
+
+        Reviewed by Jer Noble.
+
+        On iOS only, add muted=true and autoplay=allowed. The loading policy on iOS requires these attributes to load enough
+        data to trigger canPlayThrough.
+
+        * Media/StandardCanPlayThrough.html:
+
 2017-02-13  Zalan Bujtas <zalan@apple.com>
 
         Simple line layout: Add performance test with text-rendering: optimizeSpeed
