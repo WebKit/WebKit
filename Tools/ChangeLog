@@ -1,3 +1,16 @@
+2017-03-06  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [GTK][JSCOnly] Enable WebAssembly on Linux environment
+        https://bugs.webkit.org/show_bug.cgi?id=164032
+
+        Reviewed by Michael Catanzaro.
+
+        * Scripts/run-jsc-stress-tests:
+        Enable WASM tests.
+
+        * Scripts/webkitperl/FeatureList.pm:
+        Enable WebAssembly.
+
 2017-03-04  Lucas Forschler  <lforschler@apple.com>
 
         Test commit against svn.webkit.org after SHA-1 cleanup.

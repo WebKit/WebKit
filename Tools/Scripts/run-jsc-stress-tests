@@ -1176,10 +1176,6 @@ end
 def runWebAssembly
     return if !$jitTests
     return if !$isFTLPlatform
-    # FIXME: The current WebAssembly implementation includes Darwin specific things.
-    # Once WebAssembly becomes ready to be ported, we will enable it on the other OSes (like Linux) and drop this workaround.
-    # https://bugs.webkit.org/show_bug.cgi?id=164032
-    return if $hostOS != "darwin"
     modules = Dir[WASMTESTS_PATH + "*.js"].map { |f| File.basename(f) }
     prepareExtraAbsoluteFiles(WASMTESTS_PATH, ["wasm.json"])
     prepareExtraRelativeFiles(modules.map { |f| "../" + f }, $collection)
@@ -1194,10 +1190,6 @@ def runWebAssemblySpecTest(mode)
 
     return if !$jitTests
     return if !$isFTLPlatform
-    # FIXME: The current WebAssembly implementation includes Darwin specific things.
-    # Once WebAssembly becomes ready to be ported, we will enable it on the other OSes (like Linux) and drop this workaround.
-    # https://bugs.webkit.org/show_bug.cgi?id=164032
-    return if $hostOS != "darwin"
     modules = Dir[WASMTESTS_PATH + "*.js"].map { |f| File.basename(f) }
     prepareExtraAbsoluteFiles(WASMTESTS_PATH, ["wasm.json"])
     prepareExtraRelativeFiles(modules.map { |f| "../../" + f }, $collection)

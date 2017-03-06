@@ -1,3 +1,22 @@
+2017-03-06  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [GTK][JSCOnly] Enable WebAssembly on Linux environment
+        https://bugs.webkit.org/show_bug.cgi?id=164032
+
+        Reviewed by Michael Catanzaro.
+
+        This patch enables WebAssembly on JSCOnly and GTK ports.
+        Basically, almost all the WASM code is portable to Linux.
+        One platform-dependent part is faster memory load using SIGBUS
+        signal handler. This patch ports this part to Linux.
+
+        * CMakeLists.txt:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * wasm/WasmFaultSignalHandler.cpp:
+        (JSC::Wasm::trapHandler):
+        (JSC::Wasm::enableFastMemory):
+
 2017-03-06  Daniel Ehrenberg  <littledan@igalia.com>
 
         Currency digits calculation in Intl.NumberFormat should call out to ICU

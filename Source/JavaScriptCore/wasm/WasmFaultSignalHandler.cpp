@@ -32,6 +32,7 @@
 #include "VM.h"
 #include "WasmExceptionType.h"
 
+#include <signal.h>
 #include <wtf/Lock.h>
 #include <wtf/NeverDestroyed.h>
 
@@ -43,21 +44,44 @@ static const bool verbose = false;
 }
 
 static struct sigaction oldSigBusHandler;
+static struct sigaction oldSigSegvHandler;
 static bool fastHandlerInstalled { false };
 static StaticLock codeLocationsLock;
 static LazyNeverDestroyed<HashSet<std::tuple<VM*, void*, void*>>> codeLocations; // (vm, start, end)
 
+// FIXME: Clean up mcontext_t handling code since it is scattered in heap/, tools/ and wasm/.
+// https://bugs.webkit.org/show_bug.cgi?id=169180
 #if CPU(X86_64)
+
+#if OS(DARWIN)
 #define InstructionPointerGPR context->__ss.__rip
 #define FirstArgumentGPR context->__ss.__rsi
+#elif OS(FREEBSD)
+#define InstructionPointerGPR context.mc_rip
+#define FirstArgumentGPR context.mc_rsi
+#elif defined(__GLIBC__)
+#define InstructionPointerGPR context.gregs[REG_RIP]
+#define FirstArgumentGPR context.gregs[REG_RSI]
+#endif
+
 #else
+
+#if OS(DARWIN)
 #define InstructionPointerGPR context->__ss.__pc
 #define FirstArgumentGPR context->__ss.__x[1]
+#elif OS(FREEBSD)
+#define InstructionPointerGPR context.mc_gpregs.gp_elr
+#define FirstArgumentGPR context.mc_gpregs.gp_x[1]
+#elif defined(__GLIBC__)
+#define InstructionPointerGPR context.pc
+#define FirstArgumentGPR context.regs[1]
+#endif
+
 #endif
 
 static void trapHandler(int signal, siginfo_t*, void* ucontext)
 {
-    mcontext_t context = static_cast<ucontext_t*>(ucontext)->uc_mcontext;
+    mcontext_t& context = static_cast<ucontext_t*>(ucontext)->uc_mcontext;
     void* faultingInstruction = reinterpret_cast<void*>(InstructionPointerGPR);
     dataLogLnIf(verbose, "starting handler for fault at: ", RawPointer(faultingInstruction));
 
@@ -89,7 +113,10 @@ static void trapHandler(int signal, siginfo_t*, void* ucontext)
     }
 
     // Since we only use fast memory in processes we control, if we restore we will just fall back to the default handler.
-    sigaction(signal, &oldSigBusHandler, nullptr);
+    if (signal == SIGBUS)
+        sigaction(signal, &oldSigBusHandler, nullptr);
+    else
+        sigaction(signal, &oldSigSegvHandler, nullptr);
 }
 
 void registerCode(VM& vm, void* start, void* end)
@@ -126,11 +153,19 @@ void enableFastMemory()
         sigfillset(&action.sa_mask);
         action.sa_flags = SA_SIGINFO;
         
-        if (!sigaction(SIGBUS, &action, &oldSigBusHandler)) {
-            fastHandlerInstalled = true;
-            codeLocations.construct();
-        }
+        // Installing signal handlers fails when
+        // 1. specificied sig is incorrect (invalid values or signal numbers which cannot be handled), or
+        // 2. second or third parameter points incorrect pointers.
+        // Thus, we must not fail in the following attempts.
+        int ret = 0;
+        ret = sigaction(SIGBUS, &action, &oldSigBusHandler);
+        ASSERT_UNUSED(ret, !ret);
 
+        ret = sigaction(SIGSEGV, &action, &oldSigSegvHandler);
+        ASSERT_UNUSED(ret, !ret);
+
+        codeLocations.construct();
+        fastHandlerInstalled = true;
     });
 }
     

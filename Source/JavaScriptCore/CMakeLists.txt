@@ -928,6 +928,7 @@ set(JavaScriptCore_SOURCES
     wasm/WasmB3IRGenerator.cpp
     wasm/WasmBinding.cpp
     wasm/WasmCallingConvention.cpp
+    wasm/WasmFaultSignalHandler.cpp
     wasm/WasmFormat.cpp
     wasm/WasmMemory.cpp
     wasm/WasmMemoryInformation.cpp
@@ -938,6 +939,7 @@ set(JavaScriptCore_SOURCES
     wasm/WasmValidate.cpp
 
     wasm/js/JSWebAssemblyCallee.cpp
+    wasm/js/JSWebAssemblyCodeBlock.cpp
     wasm/js/JSWebAssemblyCompileError.cpp
     wasm/js/JSWebAssemblyInstance.cpp
     wasm/js/JSWebAssemblyLinkError.cpp
