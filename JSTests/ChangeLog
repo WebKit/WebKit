@@ -1,3 +1,12 @@
+2017-03-06  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [JSC] [Linux] Test stress/spread-forward-call-varargs-stack-overflow.js fails
+        https://bugs.webkit.org/show_bug.cgi?id=169206
+
+        Unreviewed test gardening.
+
+        * stress/spread-forward-call-varargs-stack-overflow.js: Skip on Linux platforms.
+
 2017-03-06  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Allow indexed module namespace object fields
