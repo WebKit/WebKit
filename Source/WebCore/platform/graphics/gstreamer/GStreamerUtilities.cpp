@@ -152,7 +152,7 @@ bool initializeGStreamer()
 
     GUniqueOutPtr<GError> error;
     // FIXME: We should probably pass the arguments from the command line.
-    bool gstInitialized = gst_init_check(0, 0, &error.outPtr());
+    bool gstInitialized = gst_init_check(nullptr, nullptr, &error.outPtr());
     ASSERT_WITH_MESSAGE(gstInitialized, "GStreamer initialization failed: %s", error ? error->message : "unknown error occurred");
 
 #if ENABLE(VIDEO_TRACK) && USE(GSTREAMER_MPEGTS)

@@ -183,7 +183,7 @@ G_DEFINE_TYPE_WITH_CODE(WebKitVideoSink, webkit_video_sink, GST_TYPE_VIDEO_SINK,
 static void webkit_video_sink_init(WebKitVideoSink* sink)
 {
     sink->priv = G_TYPE_INSTANCE_GET_PRIVATE(sink, WEBKIT_TYPE_VIDEO_SINK, WebKitVideoSinkPrivate);
-    g_object_set(GST_BASE_SINK(sink), "enable-last-sample", FALSE, NULL);
+    g_object_set(GST_BASE_SINK(sink), "enable-last-sample", FALSE, nullptr);
     new (sink->priv) WebKitVideoSinkPrivate();
 }
 
@@ -341,7 +341,7 @@ static gboolean webkitVideoSinkSetCaps(GstBaseSink* baseSink, GstCaps* caps)
 static gboolean webkitVideoSinkProposeAllocation(GstBaseSink* baseSink, GstQuery* query)
 {
     GstCaps* caps;
-    gst_query_parse_allocation(query, &caps, 0);
+    gst_query_parse_allocation(query, &caps, nullptr);
     if (!caps)
         return FALSE;
 
@@ -349,9 +349,9 @@ static gboolean webkitVideoSinkProposeAllocation(GstBaseSink* baseSink, GstQuery
     if (!gst_video_info_from_caps(&sink->priv->info, caps))
         return FALSE;
 
-    gst_query_add_allocation_meta(query, GST_VIDEO_META_API_TYPE, 0);
-    gst_query_add_allocation_meta(query, GST_VIDEO_CROP_META_API_TYPE, 0);
-    gst_query_add_allocation_meta(query, GST_VIDEO_GL_TEXTURE_UPLOAD_META_API_TYPE, 0);
+    gst_query_add_allocation_meta(query, GST_VIDEO_META_API_TYPE, nullptr);
+    gst_query_add_allocation_meta(query, GST_VIDEO_CROP_META_API_TYPE, nullptr);
+    gst_query_add_allocation_meta(query, GST_VIDEO_GL_TEXTURE_UPLOAD_META_API_TYPE, nullptr);
     return TRUE;
 }
 
@@ -408,7 +408,7 @@ static void webkit_video_sink_class_init(WebKitVideoSinkClass* klass)
 
 GstElement* webkitVideoSinkNew()
 {
-    return GST_ELEMENT(g_object_new(WEBKIT_TYPE_VIDEO_SINK, 0));
+    return GST_ELEMENT(g_object_new(WEBKIT_TYPE_VIDEO_SINK, nullptr));
 }
 
 #endif // ENABLE(VIDEO) && USE(GSTREAMER)

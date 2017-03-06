@@ -95,7 +95,7 @@ static void webkit_text_sink_class_init(WebKitTextSinkClass* klass)
 
 GstElement* webkitTextSinkNew()
 {
-    return GST_ELEMENT(g_object_new(WEBKIT_TYPE_TEXT_SINK, 0));
+    return GST_ELEMENT(g_object_new(WEBKIT_TYPE_TEXT_SINK, nullptr));
 }
 
 #endif // ENABLE(VIDEO) && USE(GSTREAMER) && ENABLE(VIDEO_TRACK)

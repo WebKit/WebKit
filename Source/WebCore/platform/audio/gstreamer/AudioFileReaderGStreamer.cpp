@@ -213,8 +213,8 @@ void AudioFileReader::handleNewDeinterleavePad(GstPad* pad)
     // in an appsink so we can pull the data from each
     // channel. Pipeline looks like:
     // ... deinterleave ! queue ! appsink.
-    GstElement* queue = gst_element_factory_make("queue", 0);
-    GstElement* sink = gst_element_factory_make("appsink", 0);
+    GstElement* queue = gst_element_factory_make("queue", nullptr);
+    GstElement* sink = gst_element_factory_make("appsink", nullptr);
 
     static GstAppSinkCallbacks callbacks = {
         nullptr, // eos
@@ -225,9 +225,9 @@ void AudioFileReader::handleNewDeinterleavePad(GstPad* pad)
         },
         { nullptr }
     };
-    gst_app_sink_set_callbacks(GST_APP_SINK(sink), &callbacks, this, 0);
+    gst_app_sink_set_callbacks(GST_APP_SINK(sink), &callbacks, this, nullptr);
 
-    g_object_set(sink, "sync", FALSE, NULL);
+    g_object_set(sink, "sync", FALSE, nullptr);
 
     gst_bin_add_many(GST_BIN(m_pipeline.get()), queue, sink, nullptr);
 
@@ -256,12 +256,12 @@ void AudioFileReader::plugDeinterleave(GstPad* pad)
     // A decodebin pad was added, plug in a deinterleave element to
     // separate each planar channel. Sub pipeline looks like
     // ... decodebin2 ! audioconvert ! audioresample ! capsfilter ! deinterleave.
-    GstElement* audioConvert  = gst_element_factory_make("audioconvert", 0);
-    GstElement* audioResample = gst_element_factory_make("audioresample", 0);
-    GstElement* capsFilter = gst_element_factory_make("capsfilter", 0);
+    GstElement* audioConvert  = gst_element_factory_make("audioconvert", nullptr);
+    GstElement* audioResample = gst_element_factory_make("audioresample", nullptr);
+    GstElement* capsFilter = gst_element_factory_make("capsfilter", nullptr);
     m_deInterleave = gst_element_factory_make("deinterleave", "deinterleave");
 
-    g_object_set(m_deInterleave.get(), "keep-positions", TRUE, NULL);
+    g_object_set(m_deInterleave.get(), "keep-positions", TRUE, nullptr);
     g_signal_connect_swapped(m_deInterleave.get(), "pad-added", G_CALLBACK(deinterleavePadAddedCallback), this);
     g_signal_connect_swapped(m_deInterleave.get(), "no-more-pads", G_CALLBACK(deinterleaveReadyCallback), this);
 
@@ -316,18 +316,18 @@ void AudioFileReader::decodeAudioForBusCreation()
     GstElement* source;
     if (m_data) {
         ASSERT(m_dataSize);
-        source = gst_element_factory_make("giostreamsrc", 0);
-        GRefPtr<GInputStream> memoryStream = adoptGRef(g_memory_input_stream_new_from_data(m_data, m_dataSize, 0));
-        g_object_set(source, "stream", memoryStream.get(), NULL);
+        source = gst_element_factory_make("giostreamsrc", nullptr);
+        GRefPtr<GInputStream> memoryStream = adoptGRef(g_memory_input_stream_new_from_data(m_data, m_dataSize, nullptr));
+        g_object_set(source, "stream", memoryStream.get(), nullptr);
     } else {
-        source = gst_element_factory_make("filesrc", 0);
-        g_object_set(source, "location", m_filePath, NULL);
+        source = gst_element_factory_make("filesrc", nullptr);
+        g_object_set(source, "location", m_filePath, nullptr);
     }
 
     m_decodebin = gst_element_factory_make("decodebin", "decodebin");
     g_signal_connect_swapped(m_decodebin.get(), "pad-added", G_CALLBACK(decodebinPadAddedCallback), this);
 
-    gst_bin_add_many(GST_BIN(m_pipeline.get()), source, m_decodebin.get(), NULL);
+    gst_bin_add_many(GST_BIN(m_pipeline.get()), source, m_decodebin.get(), nullptr);
     gst_element_link_pads_full(source, "src", m_decodebin.get(), "sink", GST_PAD_LINK_CHECK_NOTHING);
 
     // Catch errors here immediately, there might not be an error message if we're unlucky.

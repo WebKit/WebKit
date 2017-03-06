@@ -161,7 +161,7 @@ private:
 #endif
 #if ENABLE(VIDEO_TRACK)
     void processTableOfContents(GstMessage*);
-    void processTableOfContentsEntry(GstTocEntry*, GstTocEntry* parent);
+    void processTableOfContentsEntry(GstTocEntry*);
 #endif
     virtual bool doSeek(gint64 position, float rate, GstSeekFlags seekType);
     virtual void updatePlaybackRate();

@@ -89,7 +89,7 @@ void TrackPrivateBaseGStreamer::tagsChanged()
 {
     GRefPtr<GstTagList> tags;
     if (g_object_class_find_property(G_OBJECT_GET_CLASS(m_pad.get()), "tags"))
-        g_object_get(m_pad.get(), "tags", &tags.outPtr(), NULL);
+        g_object_get(m_pad.get(), "tags", &tags.outPtr(), nullptr);
     else
         tags = adoptGRef(gst_tag_list_new_empty());
 
@@ -108,7 +108,7 @@ void TrackPrivateBaseGStreamer::notifyTrackOfActiveChanged()
 
     gboolean active = false;
     if (m_pad && g_object_class_find_property(G_OBJECT_GET_CLASS(m_pad.get()), "active"))
-        g_object_get(m_pad.get(), "active", &active, NULL);
+        g_object_get(m_pad.get(), "active", &active, nullptr);
 
     setActive(active);
 }
