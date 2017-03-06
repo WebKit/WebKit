@@ -29,7 +29,7 @@
 
 namespace JSC {
 
-#if !OS(WINDOWS)
+#if !OS(WINDOWS) && !(OS(LINUX) && CPU(ARM64))
 
 // ALLOCATE_AND_GET_REGISTER_STATE has to ensure that the GC sees callee-saves. It achieves this by
 // ensuring that the callee-saves are either spilled to the stack or saved in the RegisterState. The code

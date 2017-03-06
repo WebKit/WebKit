@@ -1,3 +1,12 @@
+2017-03-06  Csaba Osztrogonác  <ossy@webkit.org>
+
+        REGRESSION(r212778): It made 400 tests crash on AArch64 Linux
+        https://bugs.webkit.org/show_bug.cgi?id=168502
+
+        Reviewed by Filip Pizlo.
+
+        * heap/RegisterState.h: Use setjmp code path on AArch64 Linux too to fix crashes.
+
 2017-03-06  Caio Lima  <ticaiolima@gmail.com>
 
         op_get_by_id_with_this should use inline caching
