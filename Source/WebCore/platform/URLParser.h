@@ -104,6 +104,7 @@ private:
     void appendToASCIIBuffer(const LChar* characters, size_t size) { appendToASCIIBuffer(reinterpret_cast<const char*>(characters), size); }
     template<typename CharacterType> void encodeQuery(const Vector<UChar>& source, const TextEncoding&, CodePointIterator<CharacterType>);
     void copyASCIIStringUntil(const String&, size_t length);
+    bool copyBaseWindowsDriveLetter(const URL&);
     StringView parsedDataView(size_t start, size_t length);
     UChar parsedDataView(size_t position);
 

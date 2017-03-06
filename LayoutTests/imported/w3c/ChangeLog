@@ -1,3 +1,14 @@
+2017-03-06  Alex Christensen  <achristensen@webkit.org>
+
+        Fix URLs relative to file URLs with paths beginning with Windows drive letters
+        https://bugs.webkit.org/show_bug.cgi?id=169178
+
+        Reviewed by Tim Horton.
+
+        * web-platform-tests/url/a-element-expected.txt:
+        * web-platform-tests/url/a-element-xhtml-expected.txt:
+        * web-platform-tests/url/url-constructor-expected.txt:
+
 2017-03-06  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-grid] Import W3C Test Suite
