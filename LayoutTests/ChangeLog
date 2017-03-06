@@ -1,3 +1,16 @@
+2017-03-06  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [css-grid] Stretch should grow and shrink items to fit its grid area
+        https://bugs.webkit.org/show_bug.cgi?id=163200
+
+        Reviewed by Darin Adler.
+
+        The tests have been updated according to the new expected behavior.
+
+        * fast/css-grid-layout/grid-container-percentage-columns.html:
+        * fast/css-grid-layout/min-width-height-auto-and-margins.html:
+        * fast/css-grid-layout/min-width-height-auto.html:
+
 2017-03-06  Antti Koivisto  <antti@apple.com>
 
         Allow render tree building before loading stylesheet elements
