@@ -124,6 +124,7 @@ void MemoryPressureHandler::measurementTimerFired()
         RELEASE_LOG(MemoryPressure, "Memory usage policy changed: %s -> %s", toString(m_memoryUsagePolicy), toString(newPolicy));
 
     m_memoryUsagePolicy = newPolicy;
+    memoryPressureStatusChanged();
 
     if (newPolicy == MemoryUsagePolicy::Unrestricted)
         return;
@@ -159,6 +160,7 @@ void MemoryPressureHandler::measurementTimerFired()
     if (footprint.value() < thresholdForPolicy(MemoryUsagePolicy::Panic)) {
         m_memoryUsagePolicy = policyForFootprint(footprint.value());
         RELEASE_LOG(MemoryPressure, "Pressure reduced below panic threshold. New memory usage policy: %s", toString(m_memoryUsagePolicy));
+        memoryPressureStatusChanged();
         return;
     }
 
@@ -168,13 +170,19 @@ void MemoryPressureHandler::measurementTimerFired()
 
 void MemoryPressureHandler::beginSimulatedMemoryPressure()
 {
+    if (m_isSimulatingMemoryPressure)
+        return;
     m_isSimulatingMemoryPressure = true;
+    memoryPressureStatusChanged();
     respondToMemoryPressure(Critical::Yes, Synchronous::Yes);
 }
 
 void MemoryPressureHandler::endSimulatedMemoryPressure()
 {
+    if (!m_isSimulatingMemoryPressure)
+        return;
     m_isSimulatingMemoryPressure = false;
+    memoryPressureStatusChanged();
 }
 
 void MemoryPressureHandler::releaseMemory(Critical critical, Synchronous synchronous)
@@ -185,6 +193,20 @@ void MemoryPressureHandler::releaseMemory(Critical critical, Synchronous synchro
     ReliefLogger log("Total");
     m_lowMemoryHandler(critical, synchronous);
     platformReleaseMemory(critical);
+}
+
+void MemoryPressureHandler::setUnderMemoryPressure(bool underMemoryPressure)
+{
+    if (m_underMemoryPressure == underMemoryPressure)
+        return;
+    m_underMemoryPressure = underMemoryPressure;
+    memoryPressureStatusChanged();
+}
+
+void MemoryPressureHandler::memoryPressureStatusChanged()
+{
+    if (m_memoryPressureStatusChangedCallback)
+        m_memoryPressureStatusChangedCallback(isUnderMemoryPressure());
 }
 
 void MemoryPressureHandler::ReliefLogger::logMemoryUsageChange()

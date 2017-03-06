@@ -49,4 +49,6 @@ messages -> WebProcessProxy LegacyReceiver {
     ReleaseIconForPageURL(String pageURL)
 
     DidReceiveMainThreadPing()
+
+    MemoryPressureStatusChanged(bool isUnderMemoryPressure)
 }

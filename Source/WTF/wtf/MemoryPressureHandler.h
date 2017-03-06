@@ -68,6 +68,7 @@ public:
 
     void setMemoryKillCallback(WTF::Function<void()> function) { m_memoryKillCallback = WTFMove(function); }
     void setProcessIsEligibleForMemoryKillCallback(WTF::Function<bool()> function) { m_processIsEligibleForMemoryKillCallback = WTFMove(function); }
+    void setMemoryPressureStatusChangedCallback(WTF::Function<void(bool)> function) { m_memoryPressureStatusChangedCallback = WTFMove(function); }
 
     void setLowMemoryHandler(LowMemoryHandler&& handler)
     {
@@ -82,7 +83,7 @@ public:
 #endif
             || m_isSimulatingMemoryPressure;
     }
-    void setUnderMemoryPressure(bool b) { m_underMemoryPressure = b; }
+    void setUnderMemoryPressure(bool);
 
 #if OS(LINUX)
     void setMemoryPressureMonitorHandle(int fd);
@@ -140,6 +141,8 @@ public:
     WTF_EXPORT_PRIVATE void endSimulatedMemoryPressure();
 
 private:
+    void memoryPressureStatusChanged();
+
     void uninstall();
 
     void holdOff(unsigned);
@@ -184,9 +187,8 @@ private:
     MemoryUsagePolicy m_memoryUsagePolicy { MemoryUsagePolicy::Unrestricted };
     WTF::Function<void()> m_memoryKillCallback;
     WTF::Function<bool()> m_processIsEligibleForMemoryKillCallback;
+    WTF::Function<void(bool)> m_memoryPressureStatusChangedCallback;
 
-    WTFLogChannel m_logChannel;
-    
 #if OS(WINDOWS)
     void windowsMeasurementTimerFired();
     RunLoop::Timer<MemoryPressureHandler> m_windowsMeasurementTimer;

@@ -270,6 +270,10 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
             return WebCore::processIsEligibleForMemoryKill();
         });
 #endif
+        memoryPressureHandler.setMemoryPressureStatusChangedCallback([this](bool isUnderMemoryPressure) {
+            if (parentProcessConnection())
+                parentProcessConnection()->send(Messages::WebProcessProxy::MemoryPressureStatusChanged(isUnderMemoryPressure), 0);
+        });
         memoryPressureHandler.install();
     }
 

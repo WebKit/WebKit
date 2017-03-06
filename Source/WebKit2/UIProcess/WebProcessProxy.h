@@ -158,6 +158,9 @@ public:
     void isResponsive(std::function<void(bool isWebProcessResponsive)>);
     void didReceiveMainThreadPing();
 
+    void memoryPressureStatusChanged(bool isUnderMemoryPressure) { m_isUnderMemoryPressure = isUnderMemoryPressure; }
+    bool isUnderMemoryPressure() const { return m_isUnderMemoryPressure; }
+
 private:
     explicit WebProcessProxy(WebProcessPool&, WebsiteDataStore*);
 
@@ -263,6 +266,8 @@ private:
 
     // FIXME: WebsiteDataStores should be made per-WebPageProxy throughout WebKit2. Get rid of this member.
     RefPtr<WebsiteDataStore> m_websiteDataStore;
+
+    bool m_isUnderMemoryPressure { false };
 };
 
 } // namespace WebKit

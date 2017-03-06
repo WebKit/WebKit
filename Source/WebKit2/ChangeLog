@@ -1,3 +1,24 @@
+2017-03-06  Andreas Kling  <akling@apple.com>
+
+        [iOS] Report domains crashing under memory pressure via enhanced privacy logging.
+        <https://webkit.org/b/169133>
+        <rdar://problem/29964017>
+
+        Reviewed by Antti Koivisto.
+
+        Notify the UI process when the memory pressure status changes.
+        If a web process crashes while under memory pressure, log the domain of the last open page
+        using enhanced privacy logging.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::processDidCrash):
+        * UIProcess/WebProcessProxy.h:
+        (WebKit::WebProcessProxy::memoryPressureStatusChanged):
+        (WebKit::WebProcessProxy::isUnderMemoryPressure):
+        * UIProcess/WebProcessProxy.messages.in:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeWebProcess):
+
 2017-03-05  Brady Eidson  <beidson@apple.com>
 
         Remove new files accidentally added in r213441

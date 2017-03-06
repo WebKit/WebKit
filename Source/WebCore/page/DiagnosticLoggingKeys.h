@@ -51,7 +51,7 @@ public:
     static String diskCacheAfterValidationKey();
     static String documentLoaderStoppingKey();
     static String domainCausingEnergyDrainKey();
-    static String domainCausingJetsamKey();
+    WEBCORE_EXPORT static String domainCausingJetsamKey();
     static String domainVisitedKey();
     static String engineFailedToLoadKey();
     WEBCORE_EXPORT static String entryRightlyNotWarmedUpKey();

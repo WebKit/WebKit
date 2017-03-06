@@ -1,3 +1,23 @@
+2017-03-06  Andreas Kling  <akling@apple.com>
+
+        [iOS] Report domains crashing under memory pressure via enhanced privacy logging.
+        <https://webkit.org/b/169133>
+        <rdar://problem/29964017>
+
+        Reviewed by Antti Koivisto.
+
+        Add a mechanism for getting a callback when the memory pressure status changes.
+
+        * wtf/MemoryPressureHandler.cpp:
+        (WTF::MemoryPressureHandler::measurementTimerFired):
+        (WTF::MemoryPressureHandler::beginSimulatedMemoryPressure):
+        (WTF::MemoryPressureHandler::endSimulatedMemoryPressure):
+        (WTF::MemoryPressureHandler::setUnderMemoryPressure):
+        (WTF::MemoryPressureHandler::memoryPressureStatusChanged):
+        * wtf/MemoryPressureHandler.h:
+        (WTF::MemoryPressureHandler::setMemoryPressureStatusChangedCallback):
+        (WTF::MemoryPressureHandler::setUnderMemoryPressure): Deleted.
+
 2017-03-03  Jer Noble  <jer.noble@apple.com>
 
         [Win64] '__int128_t': undeclared identifier in MediaTime.cpp
