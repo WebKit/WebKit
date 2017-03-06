@@ -92,14 +92,14 @@ function newRegistryEntry(key)
     return {
         key: key,
         state: @ModuleFetch,
-        metadata: @undefined,
         fetch: @undefined,
         instantiate: @undefined,
         satisfy: @undefined,
         dependencies: [], // To keep the module order, we store the module keys in the array.
         dependenciesMap: @undefined,
         module: @undefined, // JSModuleRecord
-        error: @undefined,
+        linkError: @undefined,
+        linkSucceeded: true,
     };
 }
 
@@ -350,24 +350,28 @@ function link(entry, fetcher)
 
     "use strict";
 
-    // FIXME: Current implementation does not support optionalInstance.
-    // So Link's step 3 is skipped.
-    // https://bugs.webkit.org/show_bug.cgi?id=148171
-
+    if (!entry.linkSucceeded)
+        throw entry.linkError;
     if (entry.state === @ModuleReady)
         return;
     @setStateToMax(entry, @ModuleReady);
 
-    // Since we already have the "dependencies" field,
-    // we can call moduleDeclarationInstantiation with the correct order
-    // without constructing the dependency graph by calling dependencyGraph.
-    var dependencies = entry.dependencies;
-    for (var i = 0, length = dependencies.length; i < length; ++i) {
-        var pair = dependencies[i];
-        this.link(pair.value.registryEntry, fetcher);
-    }
+    try {
+        // Since we already have the "dependencies" field,
+        // we can call moduleDeclarationInstantiation with the correct order
+        // without constructing the dependency graph by calling dependencyGraph.
+        var dependencies = entry.dependencies;
+        for (var i = 0, length = dependencies.length; i < length; ++i) {
+            var pair = dependencies[i];
+            this.link(pair.value.registryEntry, fetcher);
+        }
 
-    this.moduleDeclarationInstantiation(entry.module, fetcher);
+        this.moduleDeclarationInstantiation(entry.module, fetcher);
+    } catch (error) {
+        entry.linkSucceeded = false;
+        entry.linkError = error;
+        throw error;
+    }
 }
 
 // Module semantics.

@@ -86,8 +86,9 @@ void JSModuleRecord::link(ExecState* exec)
         throwSyntaxError(exec, scope);
         return;
     }
-    m_moduleProgramExecutable.set(vm, this, executable);
     instantiateDeclarations(exec, executable);
+    RETURN_IF_EXCEPTION(scope, void());
+    m_moduleProgramExecutable.set(vm, this, executable);
 }
 
 void JSModuleRecord::instantiateDeclarations(ExecState* exec, ModuleProgramExecutable* moduleProgramExecutable)
