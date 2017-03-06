@@ -59,13 +59,13 @@ static bool containsOnlyASCIIWithNoUppercase(const String& domain)
     return true;
 }
     
-static Expected<Vector<String>, std::error_code> getDomainList(ExecState& exec, const JSObject* arrayObject)
+static Expected<Vector<String>, std::error_code> getStringList(ExecState& exec, const JSObject* arrayObject, ContentExtensionError error)
 {
     VM& vm = exec.vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (!arrayObject || !isJSArray(arrayObject))
-        return makeUnexpected(ContentExtensionError::JSONInvalidDomainList);
+        return makeUnexpected(error);
     const JSArray* array = jsCast<const JSArray*>(arrayObject);
     
     Vector<String> domains;
@@ -73,17 +73,27 @@ static Expected<Vector<String>, std::error_code> getDomainList(ExecState& exec, 
     for (unsigned i = 0; i < length; ++i) {
         const JSValue value = array->getIndex(&exec, i);
         if (scope.exception() || !value.isString())
-            return makeUnexpected(ContentExtensionError::JSONInvalidDomainList);
+            return makeUnexpected(error);
         
-        // Domains should be punycode encoded lower case.
         const String& domain = asString(value)->value(&exec);
         if (domain.isEmpty())
-            return makeUnexpected(ContentExtensionError::JSONInvalidDomainList);
-        if (!containsOnlyASCIIWithNoUppercase(domain))
-            return makeUnexpected(ContentExtensionError::JSONDomainNotLowerCaseASCII);
+            return makeUnexpected(error);
         domains.append(domain);
     }
     return WTFMove(domains);
+}
+
+static Expected<Vector<String>, std::error_code> getDomainList(ExecState& exec, const JSObject* arrayObject)
+{
+    auto strings = getStringList(exec, arrayObject, ContentExtensionError::JSONInvalidDomainList);
+    if (!strings.hasValue())
+        return strings;
+    for (auto& domain : strings.value()) {
+        // Domains should be punycode encoded lower case.
+        if (!containsOnlyASCIIWithNoUppercase(domain))
+            return makeUnexpected(ContentExtensionError::JSONDomainNotLowerCaseASCII);
+    }
+    return strings;
 }
 
 static std::error_code getTypeFlags(ExecState& exec, const JSValue& typeValue, ResourceFlags& flags, uint16_t (*stringToType)(const String&))
