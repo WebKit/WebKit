@@ -1,5 +1,14 @@
 2017-03-06  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Mark inspector/worker/console-basic.html as flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=169228
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
+2017-03-06  Ryan Haddad  <ryanhaddad@apple.com>
+
         Mark scrollingcoordinator/ios/non-stable-viewport-scroll.html as flaky on ios-simulator.
         https://bugs.webkit.org/show_bug.cgi?id=168924
 
