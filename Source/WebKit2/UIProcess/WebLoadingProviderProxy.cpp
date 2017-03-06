@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Igalia S.L.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,28 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
-#include <wtf/Forward.h>
+#include "config.h"
+#include "WebLoadingProviderProxy.h"
 
 namespace WebKit {
-class LegacyCustomProtocolManagerProxy;
-}
 
-namespace WebCore {
-class ResourceRequest;
-}
 
-namespace API {
-
-class CustomProtocolManagerClient {
-public:
-    virtual ~CustomProtocolManagerClient() { }
-
-    virtual void startLoading(WebKit::LegacyCustomProtocolManagerProxy&, uint64_t /* customProtocolID */, const WebCore::ResourceRequest&) { }
-    virtual void stopLoading(WebKit::LegacyCustomProtocolManagerProxy&, uint64_t /* customProtocolID */) { }
-
-    virtual void invalidate(WebKit::LegacyCustomProtocolManagerProxy&) { }
-};
-
-} // namespace API
+} // namespace WebKit

@@ -38,12 +38,12 @@ class NetworkStorageSession;
 
 namespace WebKit {
 
-class CustomProtocolManager;
+class LegacyCustomProtocolManager;
 class NetworkDataTask;
 
 class NetworkSession : public RefCounted<NetworkSession> {
 public:
-    static Ref<NetworkSession> create(WebCore::SessionID, CustomProtocolManager* = nullptr);
+    static Ref<NetworkSession> create(WebCore::SessionID, LegacyCustomProtocolManager* = nullptr);
     static NetworkSession& defaultSession();
     virtual ~NetworkSession();
 

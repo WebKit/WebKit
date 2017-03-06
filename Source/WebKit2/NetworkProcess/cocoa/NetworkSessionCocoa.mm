@@ -29,9 +29,9 @@
 #if USE(NETWORK_SESSION)
 
 #import "AuthenticationManager.h"
-#import "CustomProtocolManager.h"
 #import "DataReference.h"
 #import "Download.h"
+#import "LegacyCustomProtocolManager.h"
 #import "Logging.h"
 #import "NetworkCache.h"
 #import "NetworkLoad.h"
@@ -407,9 +407,9 @@ static NSURLSessionConfiguration *configurationForSessionID(const WebCore::Sessi
     return [NSURLSessionConfiguration defaultSessionConfiguration];
 }
 
-static CustomProtocolManager*& globalCustomProtocolManager()
+static LegacyCustomProtocolManager*& globalLegacyCustomProtocolManager()
 {
-    static CustomProtocolManager* customProtocolManager { nullptr };
+    static LegacyCustomProtocolManager* customProtocolManager { nullptr };
     return customProtocolManager;
 }
 
@@ -443,10 +443,10 @@ static String& globalCTDataConnectionServiceType()
 static bool sessionsCreated = false;
 #endif
 
-void NetworkSessionCocoa::setCustomProtocolManager(CustomProtocolManager* customProtocolManager)
+void NetworkSessionCocoa::setLegacyCustomProtocolManager(LegacyCustomProtocolManager* customProtocolManager)
 {
     ASSERT(!sessionsCreated);
-    globalCustomProtocolManager() = customProtocolManager;
+    globalLegacyCustomProtocolManager() = customProtocolManager;
 }
     
 void NetworkSessionCocoa::setSourceApplicationAuditTokenData(RetainPtr<CFDataRef>&& data)
@@ -475,7 +475,7 @@ void NetworkSessionCocoa::setCTDataConnectionServiceType(const String& type)
 }
 #endif
 
-Ref<NetworkSession> NetworkSessionCocoa::create(WebCore::SessionID sessionID, CustomProtocolManager* customProtocolManager)
+Ref<NetworkSession> NetworkSessionCocoa::create(WebCore::SessionID sessionID, LegacyCustomProtocolManager* customProtocolManager)
 {
     return adoptRef(*new NetworkSessionCocoa(sessionID, customProtocolManager));
 }
@@ -483,11 +483,11 @@ Ref<NetworkSession> NetworkSessionCocoa::create(WebCore::SessionID sessionID, Cu
 NetworkSession& NetworkSessionCocoa::defaultSession()
 {
     ASSERT(isMainThread());
-    static NetworkSession* session = &NetworkSessionCocoa::create(WebCore::SessionID::defaultSessionID(), globalCustomProtocolManager()).leakRef();
+    static NetworkSession* session = &NetworkSessionCocoa::create(WebCore::SessionID::defaultSessionID(), globalLegacyCustomProtocolManager()).leakRef();
     return *session;
 }
 
-NetworkSessionCocoa::NetworkSessionCocoa(WebCore::SessionID sessionID, CustomProtocolManager* customProtocolManager)
+NetworkSessionCocoa::NetworkSessionCocoa(WebCore::SessionID sessionID, LegacyCustomProtocolManager* customProtocolManager)
     : NetworkSession(sessionID)
 {
     relaxAdoptionRequirement();

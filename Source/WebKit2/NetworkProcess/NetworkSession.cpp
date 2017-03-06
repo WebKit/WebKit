@@ -44,7 +44,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-Ref<NetworkSession> NetworkSession::create(SessionID sessionID, CustomProtocolManager* customProtocolManager)
+Ref<NetworkSession> NetworkSession::create(SessionID sessionID, LegacyCustomProtocolManager* customProtocolManager)
 {
 #if PLATFORM(COCOA)
     return NetworkSessionCocoa::create(sessionID, customProtocolManager);

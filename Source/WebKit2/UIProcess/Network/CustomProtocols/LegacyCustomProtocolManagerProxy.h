@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Igalia S.L.
+ * Copyright (C) 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,28 +25,56 @@
 
 #pragma once
 
-#import "APICustomProtocolManagerClient.h"
-#import <wtf/HashMap.h>
-#import <wtf/RetainPtr.h>
+#include "MessageReceiver.h"
 
+#if PLATFORM(COCOA)
+#include <wtf/HashMap.h>
+#include <wtf/RetainPtr.h>
 OBJC_CLASS WKCustomProtocolLoader;
+#endif
+
+namespace IPC {
+class DataReference;
+}
 
 namespace WebCore {
+class ResourceError;
 class ResourceRequest;
-}
+class ResourceResponse;
+} // namespace WebCore
 
 namespace WebKit {
 
-class CustomProtocolManagerProxy;
+class ChildProcessProxy;
+class WebProcessPool;
 
-class CustomProtocolManagerClient final : public API::CustomProtocolManagerClient {
+class LegacyCustomProtocolManagerProxy : public IPC::MessageReceiver {
+public:
+    LegacyCustomProtocolManagerProxy(ChildProcessProxy*, WebProcessPool&);
+    ~LegacyCustomProtocolManagerProxy();
+
+    void startLoading(uint64_t customProtocolID, const WebCore::ResourceRequest&);
+    void stopLoading(uint64_t customProtocolID);
+
+    void processDidClose();
+
+    void wasRedirectedToRequest(uint64_t customProtocolID, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
+    void didReceiveResponse(uint64_t customProtocolID, const WebCore::ResourceResponse&, uint32_t cacheStoragePolicy);
+    void didLoadData(uint64_t customProtocolID, const IPC::DataReference&);
+    void didFailWithError(uint64_t customProtocolID, const WebCore::ResourceError&);
+    void didFinishLoading(uint64_t customProtocolID);
+
 private:
-    void startLoading(CustomProtocolManagerProxy&, uint64_t /*customProtocolID*/, const WebCore::ResourceRequest&) final;
-    void stopLoading(CustomProtocolManagerProxy&, uint64_t /*customProtocolID*/) final;
-    void invalidate(CustomProtocolManagerProxy&) final;
+    // IPC::MessageReceiver
+    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
-    HashMap<uint64_t, RetainPtr<WKCustomProtocolLoader>> m_loaderMap;
+    ChildProcessProxy* m_childProcessProxy;
+    WebProcessPool& m_processPool;
+
+#if PLATFORM(COCOA)
+    typedef HashMap<uint64_t, RetainPtr<WKCustomProtocolLoader>> LoaderMap;
+    LoaderMap m_loaderMap;
+#endif
 };
 
 } // namespace WebKit
-

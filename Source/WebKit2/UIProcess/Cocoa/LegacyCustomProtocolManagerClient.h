@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Igalia S.L.
+ * Copyright (C) 2017 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,26 +25,28 @@
 
 #pragma once
 
-#include <wtf/Forward.h>
+#import "APICustomProtocolManagerClient.h"
+#import <wtf/HashMap.h>
+#import <wtf/RetainPtr.h>
 
-namespace WebKit {
-class LegacyCustomProtocolManagerProxy;
-}
+OBJC_CLASS WKCustomProtocolLoader;
 
 namespace WebCore {
 class ResourceRequest;
 }
 
-namespace API {
+namespace WebKit {
 
-class CustomProtocolManagerClient {
-public:
-    virtual ~CustomProtocolManagerClient() { }
+class LegacyCustomProtocolManagerProxy;
 
-    virtual void startLoading(WebKit::LegacyCustomProtocolManagerProxy&, uint64_t /* customProtocolID */, const WebCore::ResourceRequest&) { }
-    virtual void stopLoading(WebKit::LegacyCustomProtocolManagerProxy&, uint64_t /* customProtocolID */) { }
+class LegacyCustomProtocolManagerClient final : public API::CustomProtocolManagerClient {
+private:
+    void startLoading(LegacyCustomProtocolManagerProxy&, uint64_t /*customProtocolID*/, const WebCore::ResourceRequest&) final;
+    void stopLoading(LegacyCustomProtocolManagerProxy&, uint64_t /*customProtocolID*/) final;
+    void invalidate(LegacyCustomProtocolManagerProxy&) final;
 
-    virtual void invalidate(WebKit::LegacyCustomProtocolManagerProxy&) { }
+    HashMap<uint64_t, RetainPtr<WKCustomProtocolLoader>> m_loaderMap;
 };
 
-} // namespace API
+} // namespace WebKit
+

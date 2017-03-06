@@ -55,7 +55,7 @@ static const unsigned int gReadBufferSize = 8192;
 
 struct _WebKitURISchemeRequestPrivate {
     WebKitWebContext* webContext;
-    CustomProtocolManagerProxy* manager;
+    LegacyCustomProtocolManagerProxy* manager;
     RefPtr<WebPageProxy> initiatingPage;
     uint64_t requestID;
     CString uri;
@@ -75,7 +75,7 @@ static void webkit_uri_scheme_request_class_init(WebKitURISchemeRequestClass*)
 {
 }
 
-WebKitURISchemeRequest* webkitURISchemeRequestCreate(uint64_t requestID, WebKitWebContext* webContext, const ResourceRequest& resourceRequest, CustomProtocolManagerProxy& manager)
+WebKitURISchemeRequest* webkitURISchemeRequestCreate(uint64_t requestID, WebKitWebContext* webContext, const ResourceRequest& resourceRequest, LegacyCustomProtocolManagerProxy& manager)
 {
     WebKitURISchemeRequest* request = WEBKIT_URI_SCHEME_REQUEST(g_object_new(WEBKIT_TYPE_URI_SCHEME_REQUEST, nullptr));
     request->priv->webContext = webContext;
@@ -91,7 +91,7 @@ void webkitURISchemeRequestCancel(WebKitURISchemeRequest* request)
     g_cancellable_cancel(request->priv->cancellable.get());
 }
 
-CustomProtocolManagerProxy* webkitURISchemeRequestGetManager(WebKitURISchemeRequest* request)
+LegacyCustomProtocolManagerProxy* webkitURISchemeRequestGetManager(WebKitURISchemeRequest* request)
 {
     return request->priv->manager;
 }

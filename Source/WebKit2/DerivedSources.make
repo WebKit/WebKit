@@ -88,8 +88,6 @@ endif
 MESSAGE_RECEIVERS = \
     AuthenticationManager \
     ChildProcess \
-    CustomProtocolManager \
-    CustomProtocolManagerProxy \
     DatabaseProcess \
     DatabaseProcessProxy \
     DatabaseToWebProcessConnection \
@@ -97,6 +95,8 @@ MESSAGE_RECEIVERS = \
     DrawingArea \
     DrawingAreaProxy \
     EventDispatcher \
+    LegacyCustomProtocolManager \
+    LegacyCustomProtocolManagerProxy \
     NPObjectMessageReceiver \
     NetworkConnectionToWebProcess \
     NetworkProcess \

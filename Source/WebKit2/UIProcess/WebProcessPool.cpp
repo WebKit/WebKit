@@ -33,11 +33,11 @@
 #include "APILegacyContextHistoryClient.h"
 #include "APIPageConfiguration.h"
 #include "APIProcessPoolConfiguration.h"
-#include "CustomProtocolManagerMessages.h"
 #include "DownloadProxy.h"
 #include "DownloadProxyMessages.h"
 #include "GamepadData.h"
 #include "HighPerformanceGraphicsUsageSampler.h"
+#include "LegacyCustomProtocolManagerMessages.h"
 #include "LogInitialization.h"
 #include "NetworkProcessCreationParameters.h"
 #include "NetworkProcessMessages.h"
@@ -304,7 +304,7 @@ void WebProcessPool::setAutomationClient(std::unique_ptr<API::AutomationClient> 
         m_automationClient = WTFMove(automationClient);
 }
 
-void WebProcessPool::setCustomProtocolManagerClient(std::unique_ptr<API::CustomProtocolManagerClient>&& customProtocolManagerClient)
+void WebProcessPool::setLegacyCustomProtocolManagerClient(std::unique_ptr<API::CustomProtocolManagerClient>&& customProtocolManagerClient)
 {
     if (!customProtocolManagerClient)
         m_customProtocolManagerClient = std::make_unique<API::CustomProtocolManagerClient>();
@@ -1406,13 +1406,13 @@ void WebProcessPool::registerSchemeForCustomProtocol(const String& scheme)
 {
     if (!globalURLSchemesWithCustomProtocolHandlers().contains(scheme))
         m_urlSchemesRegisteredForCustomProtocols.add(scheme);
-    sendToNetworkingProcess(Messages::CustomProtocolManager::RegisterScheme(scheme));
+    sendToNetworkingProcess(Messages::LegacyCustomProtocolManager::RegisterScheme(scheme));
 }
 
 void WebProcessPool::unregisterSchemeForCustomProtocol(const String& scheme)
 {
     m_urlSchemesRegisteredForCustomProtocols.remove(scheme);
-    sendToNetworkingProcess(Messages::CustomProtocolManager::UnregisterScheme(scheme));
+    sendToNetworkingProcess(Messages::LegacyCustomProtocolManager::UnregisterScheme(scheme));
 }
 
 #if ENABLE(NETSCAPE_PLUGIN_API)

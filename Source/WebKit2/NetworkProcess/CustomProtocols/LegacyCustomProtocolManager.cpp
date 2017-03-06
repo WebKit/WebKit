@@ -25,11 +25,11 @@
  */
 
 #include "config.h"
-#include "CustomProtocolManager.h"
+#include "LegacyCustomProtocolManager.h"
 
 #include "ChildProcess.h"
-#include "CustomProtocolManagerMessages.h"
-#include "CustomProtocolManagerProxyMessages.h"
+#include "LegacyCustomProtocolManagerMessages.h"
+#include "LegacyCustomProtocolManagerProxyMessages.h"
 #include "NetworkProcessCreationParameters.h"
 #include "WebCoreArgumentCoders.h"
 #include <WebCore/ResourceRequest.h>
@@ -42,18 +42,18 @@ static uint64_t generateCustomProtocolID()
     return ++uniqueCustomProtocolID;
 }
 
-const char* CustomProtocolManager::supplementName()
+const char* LegacyCustomProtocolManager::supplementName()
 {
-    return "CustomProtocolManager";
+    return "LegacyCustomProtocolManager";
 }
 
-CustomProtocolManager::CustomProtocolManager(ChildProcess* childProcess)
+LegacyCustomProtocolManager::LegacyCustomProtocolManager(ChildProcess* childProcess)
     : m_childProcess(childProcess)
 {
-    m_childProcess->addMessageReceiver(Messages::CustomProtocolManager::messageReceiverName(), *this);
+    m_childProcess->addMessageReceiver(Messages::LegacyCustomProtocolManager::messageReceiverName(), *this);
 }
 
-void CustomProtocolManager::initialize(const NetworkProcessCreationParameters& parameters)
+void LegacyCustomProtocolManager::initialize(const NetworkProcessCreationParameters& parameters)
 {
     registerProtocolClass();
 
@@ -61,7 +61,7 @@ void CustomProtocolManager::initialize(const NetworkProcessCreationParameters& p
         registerScheme(scheme);
 }
 
-uint64_t CustomProtocolManager::addCustomProtocol(CustomProtocol&& customProtocol)
+uint64_t LegacyCustomProtocolManager::addCustomProtocol(CustomProtocol&& customProtocol)
 {
     LockHolder locker(m_customProtocolMapMutex);
     auto customProtocolID = generateCustomProtocolID();
@@ -69,20 +69,20 @@ uint64_t CustomProtocolManager::addCustomProtocol(CustomProtocol&& customProtoco
     return customProtocolID;
 }
 
-void CustomProtocolManager::removeCustomProtocol(uint64_t customProtocolID)
+void LegacyCustomProtocolManager::removeCustomProtocol(uint64_t customProtocolID)
 {
     LockHolder locker(m_customProtocolMapMutex);
     m_customProtocolMap.remove(customProtocolID);
 }
 
-void CustomProtocolManager::startLoading(uint64_t customProtocolID, const WebCore::ResourceRequest& request)
+void LegacyCustomProtocolManager::startLoading(uint64_t customProtocolID, const WebCore::ResourceRequest& request)
 {
-    m_childProcess->send(Messages::CustomProtocolManagerProxy::StartLoading(customProtocolID, request));
+    m_childProcess->send(Messages::LegacyCustomProtocolManagerProxy::StartLoading(customProtocolID, request));
 }
 
-void CustomProtocolManager::stopLoading(uint64_t customProtocolID)
+void LegacyCustomProtocolManager::stopLoading(uint64_t customProtocolID)
 {
-    m_childProcess->send(Messages::CustomProtocolManagerProxy::StopLoading(customProtocolID), 0);
+    m_childProcess->send(Messages::LegacyCustomProtocolManagerProxy::StopLoading(customProtocolID), 0);
 }
 
 } // namespace WebKit

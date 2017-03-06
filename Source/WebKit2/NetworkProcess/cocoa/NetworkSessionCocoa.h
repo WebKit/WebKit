@@ -42,12 +42,12 @@ namespace WebKit {
 class NetworkSessionCocoa final : public NetworkSession {
     friend class NetworkDataTaskCocoa;
 public:
-    static Ref<NetworkSession> create(WebCore::SessionID, CustomProtocolManager*);
+    static Ref<NetworkSession> create(WebCore::SessionID, LegacyCustomProtocolManager*);
     static NetworkSession& defaultSession();
     ~NetworkSessionCocoa();
 
     // Must be called before any NetworkSession has been created.
-    static void setCustomProtocolManager(CustomProtocolManager*);
+    static void setLegacyCustomProtocolManager(LegacyCustomProtocolManager*);
     static void setSourceApplicationAuditTokenData(RetainPtr<CFDataRef>&&);
     static void setSourceApplicationBundleIdentifier(const String&);
     static void setSourceApplicationSecondaryIdentifier(const String&);
@@ -62,7 +62,7 @@ public:
     DownloadID takeDownloadID(NetworkDataTaskCocoa::TaskIdentifier);
 
 private:
-    NetworkSessionCocoa(WebCore::SessionID, CustomProtocolManager*);
+    NetworkSessionCocoa(WebCore::SessionID, LegacyCustomProtocolManager*);
 
     void invalidateAndCancel() override;
     void clearCredentials() override;

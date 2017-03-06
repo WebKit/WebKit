@@ -297,7 +297,7 @@ static void webkitWebContextDispose(GObject* object)
         priv->clientsDetached = true;
         priv->processPool->initializeInjectedBundleClient(nullptr);
         priv->processPool->setDownloadClient(nullptr);
-        priv->processPool->setCustomProtocolManagerClient(nullptr);
+        priv->processPool->setLegacyCustomProtocolManagerClient(nullptr);
     }
 
     if (priv->websiteDataManager) {
@@ -1440,7 +1440,7 @@ WebProcessPool& webkitWebContextGetProcessPool(WebKitWebContext* context)
     return *context->priv->processPool;
 }
 
-void webkitWebContextStartLoadingCustomProtocol(WebKitWebContext* context, uint64_t customProtocolID, const WebCore::ResourceRequest& resourceRequest, CustomProtocolManagerProxy& manager)
+void webkitWebContextStartLoadingCustomProtocol(WebKitWebContext* context, uint64_t customProtocolID, const WebCore::ResourceRequest& resourceRequest, LegacyCustomProtocolManagerProxy& manager)
 {
     GRefPtr<WebKitURISchemeRequest> request = adoptGRef(webkitURISchemeRequestCreate(customProtocolID, context, resourceRequest, manager));
     String scheme(String::fromUTF8(webkit_uri_scheme_request_get_scheme(request.get())));
@@ -1461,7 +1461,7 @@ void webkitWebContextStopLoadingCustomProtocol(WebKitWebContext* context, uint64
     webkitURISchemeRequestCancel(request.get());
 }
 
-void webkitWebContextInvalidateCustomProtocolRequests(WebKitWebContext* context, CustomProtocolManagerProxy& manager)
+void webkitWebContextInvalidateCustomProtocolRequests(WebKitWebContext* context, LegacyCustomProtocolManagerProxy& manager)
 {
     Vector<GRefPtr<WebKitURISchemeRequest>> requests;
     copyValuesToVector(context->priv->uriSchemeRequests, requests);

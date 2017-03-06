@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WebProcessPool.h"
 
-#import "CustomProtocolManagerClient.h"
+#import "LegacyCustomProtocolManagerClient.h"
 #import "NetworkProcessCreationParameters.h"
 #import "NetworkProcessMessages.h"
 #import "NetworkProcessProxy.h"
@@ -147,7 +147,7 @@ void WebProcessPool::platformInitialize()
     WebKit::WebMemoryPressureHandler::singleton();
 #endif
 
-    setCustomProtocolManagerClient(std::make_unique<CustomProtocolManagerClient>());
+    setLegacyCustomProtocolManagerClient(std::make_unique<LegacyCustomProtocolManagerClient>());
 
     if (m_websiteDataStore)
         m_websiteDataStore->registerSharedResourceLoadObserver();

@@ -1,3 +1,136 @@
+2017-03-05  Brady Eidson  <beidson@apple.com>
+
+        Rename CustomProtocolFoo to LegacyCustomProtocolFoo.
+        https://bugs.webkit.org/show_bug.cgi?id=169188
+
+        Reviewed by Andy Estes.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+
+        * NetworkProcess/CustomProtocols/Cocoa/LegacyCustomProtocolManagerCocoa.mm: Renamed from Source/WebKit2/NetworkProcess/CustomProtocols/Cocoa/CustomProtocolManagerCocoa.mm.
+        (+[WKCustomProtocol canInitWithRequest:]):
+        (+[WKCustomProtocol canonicalRequestForRequest:]):
+        (+[WKCustomProtocol requestIsCacheEquivalent:toRequest:]):
+        (-[WKCustomProtocol initWithRequest:cachedResponse:client:]):
+        (-[WKCustomProtocol initializationRunLoop]):
+        (-[WKCustomProtocol startLoading]):
+        (-[WKCustomProtocol stopLoading]):
+        (WebKit::LegacyCustomProtocolManager::registerProtocolClass):
+        (WebKit::LegacyCustomProtocolManager::registerScheme):
+        (WebKit::LegacyCustomProtocolManager::unregisterScheme):
+        (WebKit::LegacyCustomProtocolManager::supportsScheme):
+        (WebKit::dispatchOnInitializationRunLoop):
+        (WebKit::LegacyCustomProtocolManager::didFailWithError):
+        (WebKit::LegacyCustomProtocolManager::didLoadData):
+        (WebKit::LegacyCustomProtocolManager::didReceiveResponse):
+        (WebKit::LegacyCustomProtocolManager::didFinishLoading):
+        (WebKit::LegacyCustomProtocolManager::wasRedirectedToRequest):
+        (WebKit::LegacyCustomProtocolManager::protocolForID):
+
+        * NetworkProcess/CustomProtocols/LegacyCustomProtocolManager.cpp: Renamed from Source/WebKit2/NetworkProcess/CustomProtocols/CustomProtocolManager.cpp.
+        (WebKit::generateCustomProtocolID):
+        (WebKit::LegacyCustomProtocolManager::supplementName):
+        (WebKit::LegacyCustomProtocolManager::LegacyCustomProtocolManager):
+        (WebKit::LegacyCustomProtocolManager::initialize):
+        (WebKit::LegacyCustomProtocolManager::addCustomProtocol):
+        (WebKit::LegacyCustomProtocolManager::removeCustomProtocol):
+        (WebKit::LegacyCustomProtocolManager::startLoading):
+        (WebKit::LegacyCustomProtocolManager::stopLoading):
+        * NetworkProcess/CustomProtocols/LegacyCustomProtocolManager.h: Renamed from Source/WebKit2/NetworkProcess/CustomProtocols/CustomProtocolManager.h.
+        * NetworkProcess/CustomProtocols/LegacyCustomProtocolManager.messages.in: Renamed from Source/WebKit2/NetworkProcess/CustomProtocols/CustomProtocolManager.messages.in.
+
+        * NetworkProcess/CustomProtocols/soup/LegacyCustomProtocolManagerSoup.cpp: Renamed from Source/WebKit2/NetworkProcess/CustomProtocols/soup/CustomProtocolManagerSoup.cpp.
+        (WebKit::CustomProtocolManager::WebSoupRequestAsyncData::WebSoupRequestAsyncData):
+        (WebKit::CustomProtocolManager::WebSoupRequestAsyncData::~WebSoupRequestAsyncData):
+        (WebKit::CustomProtocolManager::registerProtocolClass):
+        (WebKit::CustomProtocolManager::registerScheme):
+        (WebKit::CustomProtocolManager::unregisterScheme):
+        (WebKit::CustomProtocolManager::supportsScheme):
+        (WebKit::CustomProtocolManager::didFailWithError):
+        (WebKit::CustomProtocolManager::didLoadData):
+        (WebKit::CustomProtocolManager::didReceiveResponse):
+        (WebKit::CustomProtocolManager::didFinishLoading):
+        (WebKit::CustomProtocolManager::wasRedirectedToRequest):
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::NetworkProcess):
+
+        * NetworkProcess/NetworkSession.cpp:
+        (WebKit::NetworkSession::create):
+        * NetworkProcess/NetworkSession.h:
+
+        * NetworkProcess/cocoa/NetworkSessionCocoa.h:
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::globalLegacyCustomProtocolManager):
+        (WebKit::NetworkSessionCocoa::setLegacyCustomProtocolManager):
+        (WebKit::NetworkSessionCocoa::create):
+        (WebKit::NetworkSessionCocoa::defaultSession):
+        (WebKit::NetworkSessionCocoa::NetworkSessionCocoa):
+        (WebKit::globalCustomProtocolManager): Deleted.
+        (WebKit::NetworkSessionCocoa::setCustomProtocolManager): Deleted.
+
+        * NetworkProcess/mac/RemoteNetworkingContext.mm:
+        (WebKit::RemoteNetworkingContext::ensurePrivateBrowsingSession):
+
+        * UIProcess/API/APICustomProtocolManagerClient.h:
+        (API::LegacyCustomProtocolManagerClient::~LegacyCustomProtocolManagerClient):
+        (API::LegacyCustomProtocolManagerClient::startLoading):
+        (API::LegacyCustomProtocolManagerClient::stopLoading):
+        (API::LegacyCustomProtocolManagerClient::invalidate):
+        (API::CustomProtocolManagerClient::~CustomProtocolManagerClient): Deleted.
+        (API::CustomProtocolManagerClient::startLoading): Deleted.
+        (API::CustomProtocolManagerClient::stopLoading): Deleted.
+        (API::CustomProtocolManagerClient::invalidate): Deleted.
+
+        * UIProcess/Cocoa/LegacyCustomProtocolManagerClient.h: Renamed from Source/WebKit2/UIProcess/Cocoa/CustomProtocolManagerClient.h.
+        * UIProcess/Cocoa/LegacyCustomProtocolManagerClient.mm: Renamed from Source/WebKit2/UIProcess/Cocoa/CustomProtocolManagerClient.mm.
+        (-[WKCustomProtocolLoader initWithLegacyCustomProtocolManagerProxy:customProtocolID:request:]):
+        (-[WKCustomProtocolLoader dealloc]):
+        (-[WKCustomProtocolLoader customProtocolManagerProxyDestroyed]):
+        (-[WKCustomProtocolLoader connection:didFailWithError:]):
+        (-[WKCustomProtocolLoader connection:willCacheResponse:]):
+        (-[WKCustomProtocolLoader connection:didReceiveResponse:]):
+        (-[WKCustomProtocolLoader connection:didReceiveData:]):
+        (-[WKCustomProtocolLoader connection:willSendRequest:redirectResponse:]):
+        (-[WKCustomProtocolLoader connectionDidFinishLoading:]):
+        (WebKit::LegacyCustomProtocolManagerClient::startLoading):
+        (WebKit::LegacyCustomProtocolManagerClient::stopLoading):
+        (WebKit::LegacyCustomProtocolManagerClient::invalidate):
+
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitialize):
+
+        * UIProcess/Network/CustomProtocols/CustomProtocolManagerProxy.cpp: Removed.
+        * UIProcess/Network/CustomProtocols/LegacyCustomProtocolManagerProxy.cpp: Added.
+        (WebKit::LegacyCustomProtocolManagerProxy::LegacyCustomProtocolManagerProxy):
+        (WebKit::LegacyCustomProtocolManagerProxy::~LegacyCustomProtocolManagerProxy):
+        (WebKit::LegacyCustomProtocolManagerProxy::startLoading):
+        (WebKit::LegacyCustomProtocolManagerProxy::stopLoading):
+        (WebKit::LegacyCustomProtocolManagerProxy::processDidClose):
+        (WebKit::LegacyCustomProtocolManagerProxy::wasRedirectedToRequest):
+        (WebKit::LegacyCustomProtocolManagerProxy::didReceiveResponse):
+        (WebKit::LegacyCustomProtocolManagerProxy::didLoadData):
+        (WebKit::LegacyCustomProtocolManagerProxy::didFailWithError):
+        (WebKit::LegacyCustomProtocolManagerProxy::didFinishLoading):
+        * UIProcess/Network/CustomProtocols/LegacyCustomProtocolManagerProxy.h: Renamed from Source/WebKit2/UIProcess/Network/CustomProtocols/CustomProtocolManagerProxy.h.
+        * UIProcess/Network/CustomProtocols/LegacyCustomProtocolManagerProxy.messages.in: Renamed from Source/WebKit2/UIProcess/Network/CustomProtocols/CustomProtocolManagerProxy.messages.in.
+
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        * UIProcess/Network/NetworkProcessProxy.h:
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::WebProcessPool):
+        (WebKit::WebProcessPool::setLegacyCustomProtocolManagerClient):
+        (WebKit::WebProcessPool::registerSchemeForCustomProtocol):
+        (WebKit::WebProcessPool::unregisterSchemeForCustomProtocol):
+        (WebKit::WebProcessPool::setCustomProtocolManagerClient): Deleted.
+        * UIProcess/WebProcessPool.h:
+
+        * WebKit2.xcodeproj/project.pbxproj:
+
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+
 2017-03-04  Eric Carlson  <eric.carlson@apple.com>
 
         [iOS] The web process should inherit application state from UI process

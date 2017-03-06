@@ -18,10 +18,10 @@
  */
 
 #include "config.h"
-#include "CustomProtocolManager.h"
+#include "LegacyCustomProtocolManager.h"
 
-#include "CustomProtocolManagerMessages.h"
 #include "DataReference.h"
+#include "LegacyCustomProtocolManagerMessages.h"
 #include "NetworkProcess.h"
 #include "WebKitSoupRequestInputStream.h"
 #include <WebCore/NetworkStorageSession.h>
@@ -38,7 +38,7 @@ using namespace WebCore;
 namespace WebKit {
 
 
-CustomProtocolManager::WebSoupRequestAsyncData::WebSoupRequestAsyncData(GRefPtr<GTask>&& requestTask, WebKitSoupRequestGeneric* requestGeneric)
+LegacyCustomProtocolManager::WebSoupRequestAsyncData::WebSoupRequestAsyncData(GRefPtr<GTask>&& requestTask, WebKitSoupRequestGeneric* requestGeneric)
     : task(WTFMove(requestTask))
     , request(requestGeneric)
     , cancellable(g_task_get_cancellable(task.get()))
@@ -47,7 +47,7 @@ CustomProtocolManager::WebSoupRequestAsyncData::WebSoupRequestAsyncData(GRefPtr<
     g_object_add_weak_pointer(G_OBJECT(request), reinterpret_cast<void**>(&request));
 }
 
-CustomProtocolManager::WebSoupRequestAsyncData::~WebSoupRequestAsyncData()
+LegacyCustomProtocolManager::WebSoupRequestAsyncData::~WebSoupRequestAsyncData()
 {
     if (request)
         g_object_remove_weak_pointer(G_OBJECT(request), reinterpret_cast<void**>(&request));
@@ -65,22 +65,22 @@ private:
     void startRequest(GRefPtr<GTask>&& task) override
     {
         WebKitSoupRequestGeneric* request = WEBKIT_SOUP_REQUEST_GENERIC(g_task_get_source_object(task.get()));
-        auto* customProtocolManager = NetworkProcess::singleton().supplement<CustomProtocolManager>();
+        auto* customProtocolManager = NetworkProcess::singleton().supplement<LegacyCustomProtocolManager>();
         if (!customProtocolManager)
             return;
 
-        auto customProtocolID = customProtocolManager->addCustomProtocol(std::make_unique<CustomProtocolManager::WebSoupRequestAsyncData>(WTFMove(task), request));
+        auto customProtocolID = customProtocolManager->addCustomProtocol(std::make_unique<LegacyCustomProtocolManager::WebSoupRequestAsyncData>(WTFMove(task), request));
         customProtocolManager->startLoading(customProtocolID, webkitSoupRequestGenericGetRequest(request));
     }
 };
 
-void CustomProtocolManager::registerProtocolClass()
+void LegacyCustomProtocolManager::registerProtocolClass()
 {
     static_cast<WebKitSoupRequestGenericClass*>(g_type_class_ref(WEBKIT_TYPE_SOUP_REQUEST_GENERIC))->client = &CustomProtocolRequestClient::singleton();
     SoupNetworkSession::setCustomProtocolRequestType(WEBKIT_TYPE_SOUP_REQUEST_GENERIC);
 }
 
-void CustomProtocolManager::registerScheme(const String& scheme)
+void LegacyCustomProtocolManager::registerScheme(const String& scheme)
 {
     if (!m_registeredSchemes)
         m_registeredSchemes = adoptGRef(g_ptr_array_new_with_free_func(g_free));
@@ -99,12 +99,12 @@ void CustomProtocolManager::registerScheme(const String& scheme)
     });
 }
 
-void CustomProtocolManager::unregisterScheme(const String&)
+void LegacyCustomProtocolManager::unregisterScheme(const String&)
 {
     notImplemented();
 }
 
-bool CustomProtocolManager::supportsScheme(const String& scheme)
+bool LegacyCustomProtocolManager::supportsScheme(const String& scheme)
 {
     if (scheme.isNull())
         return false;
@@ -118,7 +118,7 @@ bool CustomProtocolManager::supportsScheme(const String& scheme)
     return false;
 }
 
-void CustomProtocolManager::didFailWithError(uint64_t customProtocolID, const ResourceError& error)
+void LegacyCustomProtocolManager::didFailWithError(uint64_t customProtocolID, const ResourceError& error)
 {
     auto* data = m_customProtocolMap.get(customProtocolID);
     ASSERT(data);
@@ -138,7 +138,7 @@ void CustomProtocolManager::didFailWithError(uint64_t customProtocolID, const Re
     removeCustomProtocol(customProtocolID);
 }
 
-void CustomProtocolManager::didLoadData(uint64_t customProtocolID, const IPC::DataReference& dataReference)
+void LegacyCustomProtocolManager::didLoadData(uint64_t customProtocolID, const IPC::DataReference& dataReference)
 {
     auto* data = m_customProtocolMap.get(customProtocolID);
     // The data might have been removed from the request map if a previous chunk failed
@@ -181,7 +181,7 @@ void CustomProtocolManager::didLoadData(uint64_t customProtocolID, const IPC::Da
     webkitSoupRequestInputStreamAddData(WEBKIT_SOUP_REQUEST_INPUT_STREAM(data->stream.get()), dataReference.data(), dataReference.size());
 }
 
-void CustomProtocolManager::didReceiveResponse(uint64_t customProtocolID, const ResourceResponse& response, uint32_t)
+void LegacyCustomProtocolManager::didReceiveResponse(uint64_t customProtocolID, const ResourceResponse& response, uint32_t)
 {
     auto* data = m_customProtocolMap.get(customProtocolID);
     // The data might have been removed from the request map if an error happened even before this point.
@@ -195,13 +195,13 @@ void CustomProtocolManager::didReceiveResponse(uint64_t customProtocolID, const 
     webkitSoupRequestGenericSetContentType(request, !response.mimeType().isEmpty() ? response.mimeType().utf8().data() : 0);
 }
 
-void CustomProtocolManager::didFinishLoading(uint64_t customProtocolID)
+void LegacyCustomProtocolManager::didFinishLoading(uint64_t customProtocolID)
 {
     ASSERT(m_customProtocolMap.contains(customProtocolID));
     removeCustomProtocol(customProtocolID);
 }
 
-void CustomProtocolManager::wasRedirectedToRequest(uint64_t, const ResourceRequest&, const ResourceResponse&)
+void LegacyCustomProtocolManager::wasRedirectedToRequest(uint64_t, const ResourceRequest&, const ResourceResponse&)
 {
     notImplemented();
 }

@@ -24,10 +24,10 @@
  */
 
 #import "config.h"
-#import "CustomProtocolManagerClient.h"
+#import "LegacyCustomProtocolManagerClient.h"
 
-#import "CustomProtocolManagerProxy.h"
 #import "DataReference.h"
+#import "LegacyCustomProtocolManagerProxy.h"
 #import <WebCore/ResourceError.h>
 #import <WebCore/ResourceRequest.h>
 #import <WebCore/ResourceResponse.h>
@@ -37,18 +37,18 @@ using namespace WebKit;
 
 @interface WKCustomProtocolLoader : NSObject <NSURLConnectionDelegate> {
 @private
-    CustomProtocolManagerProxy* _customProtocolManagerProxy;
+    LegacyCustomProtocolManagerProxy* _customProtocolManagerProxy;
     uint64_t _customProtocolID;
     NSURLCacheStoragePolicy _storagePolicy;
     NSURLConnection *_urlConnection;
 }
-- (id)initWithCustomProtocolManagerProxy:(CustomProtocolManagerProxy*)customProtocolManagerProxy customProtocolID:(uint64_t)customProtocolID request:(NSURLRequest *)request;
+- (id)initWithLegacyCustomProtocolManagerProxy:(LegacyCustomProtocolManagerProxy*)customProtocolManagerProxy customProtocolID:(uint64_t)customProtocolID request:(NSURLRequest *)request;
 - (void)customProtocolManagerProxyDestroyed;
 @end
 
 @implementation WKCustomProtocolLoader
 
-- (id)initWithCustomProtocolManagerProxy:(CustomProtocolManagerProxy*)customProtocolManagerProxy customProtocolID:(uint64_t)customProtocolID request:(NSURLRequest *)request
+- (id)initWithLegacyCustomProtocolManagerProxy:(LegacyCustomProtocolManagerProxy*)customProtocolManagerProxy customProtocolID:(uint64_t)customProtocolID request:(NSURLRequest *)request
 {
     self = [super init];
     if (!self)
@@ -128,25 +128,25 @@ using namespace WebKit;
 
 namespace WebKit {
 
-void CustomProtocolManagerClient::startLoading(CustomProtocolManagerProxy& manager, uint64_t customProtocolID, const ResourceRequest& coreRequest)
+void LegacyCustomProtocolManagerClient::startLoading(LegacyCustomProtocolManagerProxy& manager, uint64_t customProtocolID, const ResourceRequest& coreRequest)
 {
     NSURLRequest *request = coreRequest.nsURLRequest(DoNotUpdateHTTPBody);
     if (!request)
         return;
 
-    WKCustomProtocolLoader *loader = [[WKCustomProtocolLoader alloc] initWithCustomProtocolManagerProxy:&manager customProtocolID:customProtocolID request:request];
+    WKCustomProtocolLoader *loader = [[WKCustomProtocolLoader alloc] initWithLegacyCustomProtocolManagerProxy:&manager customProtocolID:customProtocolID request:request];
     ASSERT(loader);
     ASSERT(!m_loaderMap.contains(customProtocolID));
     m_loaderMap.add(customProtocolID, loader);
     [loader release];
 }
 
-void CustomProtocolManagerClient::stopLoading(CustomProtocolManagerProxy&, uint64_t customProtocolID)
+void LegacyCustomProtocolManagerClient::stopLoading(LegacyCustomProtocolManagerProxy&, uint64_t customProtocolID)
 {
     m_loaderMap.remove(customProtocolID);
 }
 
-void CustomProtocolManagerClient::invalidate(CustomProtocolManagerProxy&)
+void LegacyCustomProtocolManagerClient::invalidate(LegacyCustomProtocolManagerProxy&)
 {
     for (auto& loader : m_loaderMap)
         [loader.value customProtocolManagerProxyDestroyed];

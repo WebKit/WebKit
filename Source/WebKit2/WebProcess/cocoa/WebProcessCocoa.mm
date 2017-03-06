@@ -27,7 +27,7 @@
 #import "WebProcess.h"
 #import "WebProcessCocoa.h"
 
-#import "CustomProtocolManager.h"
+#import "LegacyCustomProtocolManager.h"
 #import "Logging.h"
 #import "ObjCObjectGraph.h"
 #import "SandboxExtension.h"

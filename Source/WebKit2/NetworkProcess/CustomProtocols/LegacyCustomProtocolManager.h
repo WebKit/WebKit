@@ -62,10 +62,10 @@ namespace WebKit {
 class ChildProcess;
 struct NetworkProcessCreationParameters;
 
-class CustomProtocolManager : public NetworkProcessSupplement, public IPC::MessageReceiver {
-    WTF_MAKE_NONCOPYABLE(CustomProtocolManager);
+class LegacyCustomProtocolManager : public NetworkProcessSupplement, public IPC::MessageReceiver {
+    WTF_MAKE_NONCOPYABLE(LegacyCustomProtocolManager);
 public:
-    explicit CustomProtocolManager(ChildProcess*);
+    explicit LegacyCustomProtocolManager(ChildProcess*);
 
     static const char* supplementName();
 

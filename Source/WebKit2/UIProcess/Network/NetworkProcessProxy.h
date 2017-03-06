@@ -27,7 +27,7 @@
 #define NetworkProcessProxy_h
 
 #include "ChildProcessProxy.h"
-#include "CustomProtocolManagerProxy.h"
+#include "LegacyCustomProtocolManagerProxy.h"
 #include "ProcessLauncher.h"
 #include "ProcessThrottler.h"
 #include "ProcessThrottlerClient.h"
@@ -129,7 +129,7 @@ private:
     HashMap<uint64_t, std::function<void ()>> m_pendingDeleteWebsiteDataForOriginsCallbacks;
 
     std::unique_ptr<DownloadProxyMap> m_downloadProxyMap;
-    CustomProtocolManagerProxy m_customProtocolManagerProxy;
+    LegacyCustomProtocolManagerProxy m_customProtocolManagerProxy;
     ProcessThrottler m_throttler;
     ProcessThrottler::BackgroundActivityToken m_tokenForHoldingLockedFiles;
 };

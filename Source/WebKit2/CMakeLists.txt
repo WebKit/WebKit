@@ -95,7 +95,7 @@ if (ENABLE_GRAPHICS_CONTEXT_3D)
 endif ()
 
 set(NetworkProcess_COMMON_SOURCES
-    NetworkProcess/CustomProtocols/CustomProtocolManager.cpp
+    NetworkProcess/CustomProtocols/LegacyCustomProtocolManager.cpp
 
     NetworkProcess/NetworkConnectionToWebProcess.cpp
     NetworkProcess/NetworkDataTask.cpp
@@ -420,7 +420,7 @@ set(WebKit2_SOURCES
 
     UIProcess/Launcher/ProcessLauncher.cpp
 
-    UIProcess/Network/CustomProtocols/CustomProtocolManagerProxy.cpp
+    UIProcess/Network/CustomProtocols/LegacyCustomProtocolManagerProxy.cpp
 
     UIProcess/Network/NetworkProcessProxy.cpp
 
@@ -592,7 +592,7 @@ set(WebKit2_MESSAGES_IN_FILES
 
     DatabaseProcess/IndexedDB/WebIDBConnectionToClient.messages.in
 
-    NetworkProcess/CustomProtocols/CustomProtocolManager.messages.in
+    NetworkProcess/CustomProtocols/LegacyCustomProtocolManager.messages.in
 
     NetworkProcess/NetworkConnectionToWebProcess.messages.in
     NetworkProcess/NetworkProcess.messages.in
@@ -636,7 +636,7 @@ set(WebKit2_MESSAGES_IN_FILES
 
     UIProcess/Network/NetworkProcessProxy.messages.in
 
-    UIProcess/Network/CustomProtocols/CustomProtocolManagerProxy.messages.in
+    UIProcess/Network/CustomProtocols/LegacyCustomProtocolManagerProxy.messages.in
 
     UIProcess/Plugins/PluginProcessProxy.messages.in
 

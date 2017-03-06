@@ -26,7 +26,7 @@
 #import "config.h"
 #import "RemoteNetworkingContext.h"
 
-#import "CustomProtocolManager.h"
+#import "LegacyCustomProtocolManager.h"
 #import "NetworkProcess.h"
 #import "NetworkSession.h"
 #import "SessionTracker.h"
@@ -95,7 +95,7 @@ void RemoteNetworkingContext::ensurePrivateBrowsingSession(SessionID sessionID)
     NetworkStorageSession::ensurePrivateBrowsingSession(sessionID, base + '.' + String::number(sessionID.sessionID()));
 
 #if USE(NETWORK_SESSION)
-    auto networkSession = NetworkSession::create(sessionID, NetworkProcess::singleton().supplement<CustomProtocolManager>());
+    auto networkSession = NetworkSession::create(sessionID, NetworkProcess::singleton().supplement<LegacyCustomProtocolManager>());
     SessionTracker::setSession(sessionID, WTFMove(networkSession));
 #endif
 }

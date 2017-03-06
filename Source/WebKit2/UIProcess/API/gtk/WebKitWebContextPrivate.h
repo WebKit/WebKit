@@ -26,8 +26,8 @@
 #ifndef WebKitWebContextPrivate_h
 #define WebKitWebContextPrivate_h
 
-#include "CustomProtocolManagerProxy.h"
 #include "DownloadProxy.h"
+#include "LegacyCustomProtocolManagerProxy.h"
 #include "WebKitPrivate.h"
 #include "WebKitUserContentManager.h"
 #include "WebKitWebContext.h"
@@ -39,9 +39,9 @@ WebKitDownload* webkitWebContextGetOrCreateDownload(WebKit::DownloadProxy*);
 WebKitDownload* webkitWebContextStartDownload(WebKitWebContext*, const char* uri, WebKit::WebPageProxy*);
 void webkitWebContextRemoveDownload(WebKit::DownloadProxy*);
 void webkitWebContextDownloadStarted(WebKitWebContext*, WebKitDownload*);
-void webkitWebContextStartLoadingCustomProtocol(WebKitWebContext*, uint64_t customProtocolID, const WebCore::ResourceRequest&, WebKit::CustomProtocolManagerProxy&);
+void webkitWebContextStartLoadingCustomProtocol(WebKitWebContext*, uint64_t customProtocolID, const WebCore::ResourceRequest&, WebKit::LegacyCustomProtocolManagerProxy&);
 void webkitWebContextStopLoadingCustomProtocol(WebKitWebContext*, uint64_t customProtocolID);
-void webkitWebContextInvalidateCustomProtocolRequests(WebKitWebContext*, WebKit::CustomProtocolManagerProxy&);
+void webkitWebContextInvalidateCustomProtocolRequests(WebKitWebContext*, WebKit::LegacyCustomProtocolManagerProxy&);
 void webkitWebContextDidFinishLoadingCustomProtocol(WebKitWebContext*, uint64_t customProtocolID);
 bool webkitWebContextIsLoadingCustomProtocol(WebKitWebContext*, uint64_t customProtocolID);
 void webkitWebContextCreatePageForWebView(WebKitWebContext*, WebKitWebView*, WebKitUserContentManager*, WebKitWebView*);
