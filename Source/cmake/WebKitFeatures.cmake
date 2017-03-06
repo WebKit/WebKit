@@ -66,7 +66,11 @@ endmacro()
 macro(WEBKIT_OPTION_BEGIN)
     set(_SETTING_WEBKIT_OPTIONS TRUE)
 
-    set(ENABLE_FTL_DEFAULT ${WTF_CPU_X86_64})
+    if (WTF_CPU_X86_64)
+        set(ENABLE_FTL_DEFAULT ON)
+    else ()
+        set(ENABLE_FTL_DEFAULT OFF)
+    endif ()
 
     WEBKIT_OPTION_DEFINE(ENABLE_3D_TRANSFORMS "Toggle 3D transforms support" PRIVATE OFF)
     WEBKIT_OPTION_DEFINE(ENABLE_ACCELERATED_2D_CANVAS "Toggle accelerated 2D canvas support" PRIVATE OFF)
