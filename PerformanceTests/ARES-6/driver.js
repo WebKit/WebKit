@@ -69,7 +69,7 @@ class Driver {
         for (let [benchmark, results] of this._benchmarks)
             results.reset();
         this._isRunning = true;
-        this._numIterations = numIterations;
+        this._startIterations = this._numIterations = numIterations;
         this._iterator = null;
         this._iterate();
     }
@@ -193,7 +193,9 @@ class Driver {
     
     _updateIterations()
     {
-        if (isInBrowser)
-            this._statusCell.innerHTML = "Running... " + (this._numIterations + 1) + " to go";
+        if (isInBrowser) {
+            this._statusCell.innerHTML = "Running Tests... " + ( this._startIterations - this._numIterations ) + "/" + this._startIterations;
+        }
+        
     }
 }

@@ -1,3 +1,41 @@
+2017-03-06  Jon Davis  <jond@apple.com>
+
+        Refined the ARES-6 experience
+        https://bugs.webkit.org/show_bug.cgi?id=169205
+
+        Reviewed by Saam Barati.
+
+        * ARES-6/about.html: Copied from PerformanceTests/ARES-6/index.html.
+        * ARES-6/driver.js:
+        (Driver.prototype.start):
+        (Driver.prototype._updateIterations):
+        (Driver):
+        * ARES-6/index.html:
+        * ARES-6/stats.js:
+        (Stats.prototype.toString.span.span):
+        * ARES-6/styles.css:
+        (body):
+        (.swoop):
+        (p):
+        (.logo):
+        (.start):
+        (.test):
+        (.test:nth-child(odd)):
+        (.overall):
+        (.about h2):
+        (.button):
+        (.button:hover):
+        (.button.return:before):
+        (@keyframes fade-in):
+        (@keyframes scale-in):
+        (@keyframes flicker-in):
+        (@keyframes wipe-in):
+        (.flip): Deleted.
+        (.testing, .about): Deleted.
+        (.testing): Deleted.
+        (.about): Deleted.
+        (#about:target): Deleted.
+
 2017-03-06  Jeremy Jones  <jeremyj@apple.com>
 
         StandardCanPlayThrough.html does not work on iOS.

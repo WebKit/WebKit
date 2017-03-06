@@ -92,8 +92,8 @@ class Stats {
         
         if (!result.n) {
             if (isInBrowser)
-                return `<span class="value">\&#10074;\&#10074;.\&#10074;\&#10074;</span><span class="units">ms</span>`;
-            return `${this._prefix}--.--ms`;
+                return `<span class="value">\&#8709;</span><span class="units">ms</span>`;
+            return `${this._prefix}\&#x2b14;ms`;
         }
         
         if (result.mean != result.mean)
