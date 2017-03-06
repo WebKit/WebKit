@@ -136,13 +136,13 @@ std::string* MakeCheckOpString(const t1& v1, const t2& v2, const char* names) {
 }
 
 // MSVC doesn't like complex extern templates and DLLs.
-#if !defined(COMPILER_MSVC)
+#if 0
 // Commonly used instantiations of MakeCheckOpString<>. Explicitly instantiated
 // in logging.cc.
 extern template std::string* MakeCheckOpString<int, int>(
     const int&, const int&, const char* names);
 extern template
-WEBRTC_DYLIB_EXPORT std::string* MakeCheckOpString<unsigned long, unsigned long>(
+std::string* MakeCheckOpString<unsigned long, unsigned long>(
     const unsigned long&, const unsigned long&, const char* names);
 extern template
 std::string* MakeCheckOpString<unsigned long, unsigned int>(

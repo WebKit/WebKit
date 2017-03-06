@@ -1,3 +1,17 @@
+2017-03-06  Alex Christensen  <achristensen@webkit.org>
+
+        Fix Production libwebrtc build after r213418
+        https://bugs.webkit.org/show_bug.cgi?id=169217
+        <rdar://problem/30876775>
+
+        Reviewed by Tim Horton.
+
+        * Source/webrtc/base/checks.h:
+        * libwebrtc.xcodeproj/project.pbxproj:
+        MakeCheckOpString was a weak export, and it wasn't needed.
+        There is an internal build that checks for weak exports and fails if there is one.
+        Run the check-for-weak-vtables-and-externals script for libwebrtc.dylib like we do for the other frameworks.
+
 2017-03-04  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] libwebrtc.dylib’s current version is fixed at 1.0.0
