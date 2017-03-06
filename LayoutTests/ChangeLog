@@ -1,5 +1,14 @@
 2017-03-06  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Mark scrollingcoordinator/ios/non-stable-viewport-scroll.html as flaky on ios-simulator.
+        https://bugs.webkit.org/show_bug.cgi?id=168924
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator-wk2/TestExpectations:
+
+2017-03-06  Ryan Haddad  <ryanhaddad@apple.com>
+
         Mark media/modern-media-controls/tracks-support/tracks-support-click-track-in-panel.html as flaky.
         https://bugs.webkit.org/show_bug.cgi?id=169159
 

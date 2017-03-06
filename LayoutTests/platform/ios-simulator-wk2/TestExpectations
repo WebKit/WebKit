@@ -1921,3 +1921,5 @@ webrtc [ Skip ]
 
 # Skipped because there is no key to show the context menu
 fast/events/context-activated-by-key-event.html [ Skip ]
+
+webkit.org/b/168924 scrollingcoordinator/ios/non-stable-viewport-scroll.html [ Pass Failure ]
