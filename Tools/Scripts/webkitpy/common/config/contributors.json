@@ -4448,7 +4448,8 @@
    "Philip Rogers" : {
       "emails" : [
          "pdr@google.com",
-         "pdr@chromium.org"
+         "pdr@chromium.org",
+         "pdr+autocc@chromium.org"
       ],
       "expertise" : "SVG (Scalable Vector Graphics)",
       "nicks" : [

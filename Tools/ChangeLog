@@ -1,3 +1,13 @@
+2017-03-07  Philip Rogers  <pdr@google.com>
+
+        Add pdr to the rendering watchlist
+        https://bugs.webkit.org/show_bug.cgi?id=167298
+
+        Reviewed by Andreas Kling.
+
+        * Scripts/webkitpy/common/config/contributors.json: Switch to pdr+autocc@chromium.org
+        * Scripts/webkitpy/common/config/watchlist: Add pdr to the rendering watchlist.
+
 2017-03-07  Mario Sanchez Prada  <mario@webkit.org>
 
         Unreviewed. Removed myself from the Accessibility watch list
