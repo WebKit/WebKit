@@ -728,7 +728,7 @@ WebInspector.NativePrototypeFunctionParameters = {
     },
 
     CustomEvent: {
-        initCustomEvent: "[typeArg], [canBubbleArg], [cancelableArg], [detailArg]",
+        initCustomEvent: "type, [bubbles], [cancelable], [detail]",
         __proto__: null,
     },
 
@@ -820,7 +820,7 @@ WebInspector.NativePrototypeFunctionParameters = {
     },
 
     Event: {
-        initEvent: "type, canBubble, cancelable",
+        initEvent: "type, [bubbles], [cancelable]",
         __proto__: null,
     },
 
@@ -1119,8 +1119,7 @@ WebInspector.NativePrototypeFunctionParameters = {
     },
 
     MessageEvent: {
-        initMessageEvent: "[typeArg], [canBubbleArg], [cancelableArg], [dataArg], [originArg], [lastEventIdArg], [sourceArg], [messagePorts]",
-        webkitInitMessageEvent: "[typeArg], [canBubbleArg], [cancelableArg], [dataArg], [originArg], [lastEventIdArg], [sourceArg], [transferables]",
+        initMessageEvent: "type, [bubbles], [cancelable], [data], [origin], [lastEventId], [source], [messagePorts]",
         __proto__: null,
     },
 

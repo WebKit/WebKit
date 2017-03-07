@@ -1,3 +1,15 @@
+2017-03-07  Chris Dumez  <cdumez@apple.com>
+
+        Drop non-standard MessageEvent.webkitInitMessageEvent()
+        https://bugs.webkit.org/show_bug.cgi?id=169295
+
+        Reviewed by Joseph Pecoraro.
+
+        Drop MessageEvent.webkitInitMessageEvent and update parameters for various
+        init*Event() operations to match the current implementation.
+
+        * UserInterface/Models/NativeFunctionParameters.js:
+
 2017-03-04  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Show Web Socket connections in Network tab

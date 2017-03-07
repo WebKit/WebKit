@@ -40,9 +40,6 @@
     [CallWith=ScriptState] void initMessageEvent(DOMString type, optional boolean bubbles = false, optional boolean cancelable = false,
         optional any data = null, optional USVString originArg = "", optional DOMString lastEventId = "", optional (DOMWindow or MessagePort)? source = null,
         optional sequence<MessagePort> messagePorts = []);
-    [Custom] void webkitInitMessageEvent(optional DOMString typeArg, optional boolean canBubbleArg, optional boolean cancelableArg,
-        optional any dataArg, optional USVString originArg, optional DOMString lastEventIdArg, optional (DOMWindow or MessagePort)? sourceArg,
-        optional sequence<MessagePort> messagePorts);
 };
 
 dictionary MessageEventInit : EventInit {
