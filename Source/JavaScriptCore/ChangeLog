@@ -1,3 +1,24 @@
+2017-03-06  Michael Saboff  <msaboff@apple.com>
+
+        Take advantage of fast permissions switching of JIT memory for devices that support it
+        https://bugs.webkit.org/show_bug.cgi?id=169155
+
+        Reviewed by Saam Barati.
+
+        Start using the os_thread_self_restrict_rwx_to_XX() SPIs when available to
+        control access to JIT memory.
+
+        Had to update the Xcode config files to handle various build variations of
+        public and internal SDKs.
+
+        * Configurations/Base.xcconfig:
+        * Configurations/FeatureDefines.xcconfig:
+        * jit/ExecutableAllocator.cpp:
+        (JSC::FixedVMPoolExecutableAllocator::FixedVMPoolExecutableAllocator):
+        (JSC::FixedVMPoolExecutableAllocator::initializeSeparatedWXHeaps):
+        * jit/ExecutableAllocator.h:
+        (JSC::performJITMemcpy):
+
 2017-03-06  Csaba Osztrogonác  <ossy@webkit.org>
 
         REGRESSION(r212778): It made 400 tests crash on AArch64 Linux

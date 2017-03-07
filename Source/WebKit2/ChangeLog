@@ -1,3 +1,14 @@
+2017-03-06  Michael Saboff  <msaboff@apple.com>
+
+        Take advantage of fast permissions switching of JIT memory for devices that support it
+        https://bugs.webkit.org/show_bug.cgi?id=169155
+
+        Reviewed by Saam Barati.
+
+        Updated the Xcode config files to match what is in the JavaScriptCore ones.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2017-03-06  Aakash Jain  <aakash_jain@apple.com>
 
         Make WKMenuItemIdentifiersPrivate.h private header

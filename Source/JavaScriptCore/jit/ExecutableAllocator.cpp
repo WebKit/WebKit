@@ -84,8 +84,9 @@ namespace JSC {
 
 JS_EXPORTDATA uintptr_t startOfFixedExecutableMemoryPool;
 JS_EXPORTDATA uintptr_t endOfFixedExecutableMemoryPool;
+JS_EXPORTDATA bool useFastPermisionsJITCopy { false };
 
-JS_EXPORTDATA JITWriteFunction jitWriteFunction;
+JS_EXPORTDATA JITWriteSeparateHeapsFunction jitWriteSeparateHeapsFunction;
 
 #if !USE(EXECUTE_ONLY_JIT_WRITE_FUNCTION) && HAVE(REMAP_JIT)
 static uintptr_t startOfFixedWritableMemoryPool;
@@ -108,6 +109,12 @@ public:
             ASSERT(m_reservation.size() == reservationSize);
             void* reservationBase = m_reservation.base();
 
+#if ENABLE(FAST_JIT_PERMISSIONS)
+            if (os_thread_self_restrict_rwx_is_supported()) {
+                useFastPermisionsJITCopy = true;
+                os_thread_self_restrict_rwx_to_rx();
+            } else
+#endif
             if (Options::useSeparatedWXHeap()) {
                 // First page of our JIT allocation is reserved.
                 ASSERT(reservationSize >= pageSize() * 2);
@@ -202,7 +209,7 @@ private:
         // Zero out writableAddr to avoid leaking the address of the writable mapping.
         memset_s(&writableAddr, sizeof(writableAddr), 0, sizeof(writableAddr));
 
-        jitWriteFunction = reinterpret_cast<JITWriteFunction>(writeThunk.code().executableAddress());
+        jitWriteSeparateHeapsFunction = reinterpret_cast<JITWriteSeparateHeapsFunction>(writeThunk.code().executableAddress());
     }
 
 #if CPU(ARM64) && USE(EXECUTE_ONLY_JIT_WRITE_FUNCTION)
