@@ -210,7 +210,7 @@ class IOSSimulatorPort(IOSPort):
                 _log.warn("Expected simulator of type '" + self.simulator_device_type().name + "' but found simulator of type '" + self._current_device.name + "'")
                 _log.warn('The next block of tests may fail due to device mis-match')
 
-    def setup_test_run(self, device_class=None):
+    def _create_devices(self, device_class):
         mac_os_version = self.host.platform.os_version
 
         self._set_device_class(device_class)

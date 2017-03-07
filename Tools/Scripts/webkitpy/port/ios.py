@@ -76,3 +76,9 @@ class IOSPort(DarwinPort):
         if self.using_multiple_devices():
             return self._testing_device(number)
         return self._current_device
+
+    def _create_devices(self, device_class):
+        raise NotImplementedError
+
+    def setup_test_run(self, device_class=None):
+        self._create_devices(device_class)
