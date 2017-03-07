@@ -1235,10 +1235,10 @@ void WebProcess::deleteWebsiteDataForOrigins(WebCore::SessionID sessionID, Optio
     }
 }
 
-void WebProcess::setHiddenPageTimerThrottlingIncreaseLimit(int milliseconds)
+void WebProcess::setHiddenPageDOMTimerThrottlingIncreaseLimit(int milliseconds)
 {
     for (auto& page : m_pageMap.values())
-        page->setHiddenPageTimerThrottlingIncreaseLimit(std::chrono::milliseconds(milliseconds));
+        page->setHiddenPageDOMTimerThrottlingIncreaseLimit(Seconds::fromMilliseconds(milliseconds));
 }
 
 #if !PLATFORM(COCOA)

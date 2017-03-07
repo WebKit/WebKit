@@ -94,11 +94,11 @@ Ref<InspectorObject> TimelineRecordFactory::createGenericTimerData(int timerId)
     return data;
 }
 
-Ref<InspectorObject> TimelineRecordFactory::createTimerInstallData(int timerId, std::chrono::milliseconds timeout, bool singleShot)
+Ref<InspectorObject> TimelineRecordFactory::createTimerInstallData(int timerId, Seconds timeout, bool singleShot)
 {
     Ref<InspectorObject> data = InspectorObject::create();
     data->setInteger(ASCIILiteral("timerId"), timerId);
-    data->setInteger(ASCIILiteral("timeout"), (int)timeout.count());
+    data->setInteger(ASCIILiteral("timeout"), (int)timeout.milliseconds());
     data->setBoolean(ASCIILiteral("singleShot"), singleShot);
     return data;
 }

@@ -234,8 +234,8 @@ Page::Page(PageConfiguration&& pageConfiguration)
 #if ENABLE(VIEW_MODE_CSS_MEDIA)
     , m_viewMode(ViewModeWindowed)
 #endif // ENABLE(VIEW_MODE_CSS_MEDIA)
-    , m_timerAlignmentInterval(DOMTimer::defaultAlignmentInterval())
-    , m_timerAlignmentIntervalIncreaseTimer(*this, &Page::timerAlignmentIntervalIncreaseTimerFired)
+    , m_domTimerAlignmentInterval(DOMTimer::defaultAlignmentInterval())
+    , m_domTimerAlignmentIntervalIncreaseTimer(*this, &Page::domTimerAlignmentIntervalIncreaseTimerFired)
     , m_isEditable(false)
     , m_isPrerender(false)
     , m_activityState(PageInitialActivityState)
@@ -1320,7 +1320,7 @@ void Page::setTimerThrottlingState(TimerThrottlingState state)
         return;
 
     m_timerThrottlingState = state;
-    m_timerThrottlingStateLastChangedTime = std::chrono::steady_clock::now();
+    m_timerThrottlingStateLastChangedTime = MonotonicTime::now();
 
     updateDOMTimerAlignmentInterval();
 
@@ -1333,12 +1333,12 @@ void Page::setTimerThrottlingState(TimerThrottlingState state)
     }
 }
 
-void Page::setTimerAlignmentIntervalIncreaseLimit(std::chrono::milliseconds limit)
+void Page::setDOMTimerAlignmentIntervalIncreaseLimit(Seconds limit)
 {
-    m_timerAlignmentIntervalIncreaseLimit = limit;
+    m_domTimerAlignmentIntervalIncreaseLimit = limit;
 
-    // If (m_timerAlignmentIntervalIncreaseLimit < m_timerAlignmentInterval) then we need
-    // to update m_timerAlignmentInterval, if greater then need to restart the increase timer.
+    // If (m_domTimerAlignmentIntervalIncreaseLimit < m_domTimerAlignmentInterval) then we need
+    // to update m_domTimerAlignmentInterval, if greater then need to restart the increase timer.
     if (m_timerThrottlingState == TimerThrottlingState::EnabledIncreasing)
         updateDOMTimerAlignmentInterval();
 }
@@ -1349,28 +1349,28 @@ void Page::updateDOMTimerAlignmentInterval()
 
     switch (m_timerThrottlingState) {
     case TimerThrottlingState::Disabled:
-        m_timerAlignmentInterval = DOMTimer::defaultAlignmentInterval();
+        m_domTimerAlignmentInterval = DOMTimer::defaultAlignmentInterval();
         break;
 
     case TimerThrottlingState::Enabled:
-        m_timerAlignmentInterval = DOMTimer::hiddenPageAlignmentInterval();
+        m_domTimerAlignmentInterval = DOMTimer::hiddenPageAlignmentInterval();
         break;
 
     case TimerThrottlingState::EnabledIncreasing:
         // For pages in prerender state maximum throttling kicks in immediately.
         if (m_isPrerender)
-            m_timerAlignmentInterval = m_timerAlignmentIntervalIncreaseLimit;
+            m_domTimerAlignmentInterval = m_domTimerAlignmentIntervalIncreaseLimit;
         else {
-            ASSERT(m_timerThrottlingStateLastChangedTime.time_since_epoch() != std::chrono::steady_clock::duration::zero());
-            m_timerAlignmentInterval = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - m_timerThrottlingStateLastChangedTime);
+            ASSERT(!!m_timerThrottlingStateLastChangedTime);
+            m_domTimerAlignmentInterval = MonotonicTime::now() - m_timerThrottlingStateLastChangedTime;
             // If we're below the limit, set the timer. If above, clamp to limit.
-            if (m_timerAlignmentInterval < m_timerAlignmentIntervalIncreaseLimit)
+            if (m_domTimerAlignmentInterval < m_domTimerAlignmentIntervalIncreaseLimit)
                 needsIncreaseTimer = true;
             else
-                m_timerAlignmentInterval = m_timerAlignmentIntervalIncreaseLimit;
+                m_domTimerAlignmentInterval = m_domTimerAlignmentIntervalIncreaseLimit;
         }
         // Alignment interval should not be less than DOMTimer::hiddenPageAlignmentInterval().
-        m_timerAlignmentInterval = std::max(m_timerAlignmentInterval, DOMTimer::hiddenPageAlignmentInterval());
+        m_domTimerAlignmentInterval = std::max(m_domTimerAlignmentInterval, DOMTimer::hiddenPageAlignmentInterval());
     }
 
     // If throttling is enabled, auto-increasing of throttling is enabled, and the auto-increase
@@ -1378,16 +1378,16 @@ void Page::updateDOMTimerAlignmentInterval()
     // between increases is equal to the current throttle time. Since alinment interval increases
     // exponentially, time between steps is exponential too.
     if (!needsIncreaseTimer)
-        m_timerAlignmentIntervalIncreaseTimer.stop();
-    else if (!m_timerAlignmentIntervalIncreaseTimer.isActive())
-        m_timerAlignmentIntervalIncreaseTimer.startOneShot(m_timerAlignmentInterval);
+        m_domTimerAlignmentIntervalIncreaseTimer.stop();
+    else if (!m_domTimerAlignmentIntervalIncreaseTimer.isActive())
+        m_domTimerAlignmentIntervalIncreaseTimer.startOneShot(m_domTimerAlignmentInterval);
 }
 
-void Page::timerAlignmentIntervalIncreaseTimerFired()
+void Page::domTimerAlignmentIntervalIncreaseTimerFired()
 {
     ASSERT(m_settings->hiddenPageDOMTimerThrottlingAutoIncreases());
     ASSERT(m_timerThrottlingState == TimerThrottlingState::EnabledIncreasing);
-    ASSERT(m_timerAlignmentInterval < m_timerAlignmentIntervalIncreaseLimit);
+    ASSERT(m_domTimerAlignmentInterval < m_domTimerAlignmentIntervalIncreaseLimit);
     
     // Alignment interval is increased to equal the time the page has been throttled, to a limit.
     updateDOMTimerAlignmentInterval();

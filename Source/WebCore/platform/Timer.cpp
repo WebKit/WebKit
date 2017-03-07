@@ -382,8 +382,8 @@ void TimerBase::setNextFireTime(double newTime)
     double oldTime = m_nextFireTime;
     // Don't realign zero-delay timers.
     if (newTime) {
-        if (auto newAlignedTime = alignedFireTime(secondsToMS(newTime)))
-            newTime = msToSeconds(newAlignedTime.value());
+        if (auto newAlignedTime = alignedFireTime(Seconds { newTime }))
+            newTime = newAlignedTime.value().seconds();
     }
 
     if (oldTime != newTime) {

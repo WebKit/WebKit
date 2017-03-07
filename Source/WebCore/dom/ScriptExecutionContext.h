@@ -189,12 +189,11 @@ public:
 
     WEBCORE_EXPORT JSC::VM& vm();
 
-    // Interval is in seconds.
-    void adjustMinimumTimerInterval(std::chrono::milliseconds oldMinimumTimerInterval);
-    virtual std::chrono::milliseconds minimumTimerInterval() const;
+    void adjustMinimumDOMTimerInterval(Seconds oldMinimumTimerInterval);
+    virtual Seconds minimumDOMTimerInterval() const;
 
     void didChangeTimerAlignmentInterval();
-    virtual std::chrono::milliseconds timerAlignmentInterval(bool hasReachedMaxNestingLevel) const;
+    virtual Seconds domTimerAlignmentInterval(bool hasReachedMaxNestingLevel) const;
 
     virtual EventQueue& eventQueue() const = 0;
 

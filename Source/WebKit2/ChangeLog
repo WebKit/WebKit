@@ -1,3 +1,19 @@
+2017-03-07  Chris Dumez  <cdumez@apple.com>
+
+        Port DOMTimer from std::chrono::milliseconds to WTF::Seconds type
+        https://bugs.webkit.org/show_bug.cgi?id=169236
+
+        Reviewed by Simon Fraser.
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::updateHiddenPageThrottlingAutoIncreaseLimit):
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::setHiddenPageDOMTimerThrottlingIncreaseLimit):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::setHiddenPageDOMTimerThrottlingIncreaseLimit):
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+
 2017-03-06  Aakash Jain  <aakash_jain@apple.com>
 
         Enable SUPPORTS_TEXT_BASED_API in WebKit2 for iOS

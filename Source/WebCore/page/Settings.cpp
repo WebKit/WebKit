@@ -449,17 +449,16 @@ void Settings::setNeedsAdobeFrameReloadingQuirk(bool shouldNotReloadIFramesForUn
     m_needsAdobeFrameReloadingQuirk = shouldNotReloadIFramesForUnchangedSRC;
 }
 
-void Settings::setMinimumDOMTimerInterval(std::chrono::milliseconds interval)
+void Settings::setMinimumDOMTimerInterval(Seconds interval)
 {
-    auto oldTimerInterval = m_minimumDOMTimerInterval;
-    m_minimumDOMTimerInterval = interval;
+    auto oldTimerInterval = std::exchange(m_minimumDOMTimerInterval, interval);
 
     if (!m_page)
         return;
 
     for (Frame* frame = &m_page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
         if (frame->document())
-            frame->document()->adjustMinimumTimerInterval(oldTimerInterval);
+            frame->document()->adjustMinimumDOMTimerInterval(oldTimerInterval);
     }
 }
 

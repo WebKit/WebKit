@@ -112,7 +112,7 @@ public:
     void stopFromConsole(JSC::ExecState*, const String& title);
 
     // InspectorInstrumentation
-    void didInstallTimer(int timerId, std::chrono::milliseconds timeout, bool singleShot, Frame*);
+    void didInstallTimer(int timerId, Seconds timeout, bool singleShot, Frame*);
     void didRemoveTimer(int timerId, Frame*);
     void willFireTimer(int timerId, Frame*);
     void didFireTimer();

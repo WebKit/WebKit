@@ -7467,7 +7467,7 @@ HRESULT WebView::defaultMinimumTimerInterval(_Out_ double* interval)
 {
     if (!interval)
         return E_POINTER;
-    *interval = DOMTimer::defaultMinimumInterval().count() / 1000.;
+    *interval = DOMTimer::defaultMinimumInterval().seconds();
     return S_OK;
 }
 
@@ -7476,8 +7476,7 @@ HRESULT WebView::setMinimumTimerInterval(double interval)
     if (!m_page)
         return E_FAIL;
 
-    auto intervalMS = std::chrono::milliseconds((std::chrono::milliseconds::rep)(interval * 1000));
-    page()->settings().setMinimumDOMTimerInterval(intervalMS);
+    page()->settings().setMinimumDOMTimerInterval(Seconds { interval });
     return S_OK;
 }
 

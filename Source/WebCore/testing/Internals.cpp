@@ -1045,7 +1045,7 @@ ExceptionOr<bool> Internals::isTimerThrottled(int timeoutId)
     if (timer->intervalClampedToMinimum() > timer->m_originalInterval)
         return true;
 
-    return !!timer->alignedFireTime(0ms);
+    return !!timer->alignedFireTime(0_s);
 }
 
 bool Internals::isRequestAnimationFrameThrottled() const

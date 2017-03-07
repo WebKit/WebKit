@@ -169,8 +169,8 @@ public:
     WEBCORE_EXPORT void setNeedsAdobeFrameReloadingQuirk(bool);
     bool needsAcrobatFrameReloadingQuirk() const { return m_needsAdobeFrameReloadingQuirk; }
 
-    WEBCORE_EXPORT void setMinimumDOMTimerInterval(std::chrono::milliseconds); // Initialized to DOMTimer::defaultMinimumInterval().
-    std::chrono::milliseconds minimumDOMTimerInterval() const { return m_minimumDOMTimerInterval; }
+    WEBCORE_EXPORT void setMinimumDOMTimerInterval(Seconds); // Initialized to DOMTimer::defaultMinimumInterval().
+    Seconds minimumDOMTimerInterval() const { return m_minimumDOMTimerInterval; }
 
     WEBCORE_EXPORT void setLayoutInterval(Seconds);
     Seconds layoutInterval() const { return m_layoutInterval; }
@@ -338,7 +338,7 @@ private:
     const std::unique_ptr<FontGenericFamilies> m_fontGenericFamilies;
     SecurityOrigin::StorageBlockingPolicy m_storageBlockingPolicy;
     Seconds m_layoutInterval;
-    std::chrono::milliseconds m_minimumDOMTimerInterval;
+    Seconds m_minimumDOMTimerInterval;
 
     SETTINGS_MEMBER_VARIABLES
 

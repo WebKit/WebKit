@@ -195,7 +195,7 @@ public:
 
     void updateActivePages();
 
-    void setHiddenPageTimerThrottlingIncreaseLimit(int milliseconds);
+    void setHiddenPageDOMTimerThrottlingIncreaseLimit(int milliseconds);
 
     void processWillSuspendImminently(bool& handled);
     void prepareToSuspend();

@@ -30,6 +30,7 @@
 #include "UserGestureIndicator.h"
 #include <memory>
 #include <wtf/RefCounted.h>
+#include <wtf/Seconds.h>
 
 namespace WebCore {
 
@@ -44,13 +45,13 @@ class DOMTimer final : public RefCounted<DOMTimer>, public SuspendableTimer {
 public:
     virtual ~DOMTimer();
 
-    static std::chrono::milliseconds defaultMinimumInterval() { return 4ms; }
-    static std::chrono::milliseconds defaultAlignmentInterval() { return 0ms; }
-    static std::chrono::milliseconds hiddenPageAlignmentInterval() { return 1000ms; }
+    static Seconds defaultMinimumInterval() { return 4_ms; }
+    static Seconds defaultAlignmentInterval() { return 0_s; }
+    static Seconds hiddenPageAlignmentInterval() { return 1_s; }
 
     // Creates a new timer owned by specified ScriptExecutionContext, starts it
     // and returns its Id.
-    static int install(ScriptExecutionContext&, std::unique_ptr<ScheduledAction>, std::chrono::milliseconds timeout, bool singleShot);
+    static int install(ScriptExecutionContext&, std::unique_ptr<ScheduledAction>, Seconds timeout, bool singleShot);
     static void removeById(ScriptExecutionContext&, int timeoutId);
 
     // Notify that the interval may need updating (e.g. because the minimum interval
@@ -60,10 +61,10 @@ public:
     static void scriptDidInteractWithPlugin(HTMLPlugInElement&);
 
 private:
-    DOMTimer(ScriptExecutionContext&, std::unique_ptr<ScheduledAction>, std::chrono::milliseconds interval, bool singleShot);
+    DOMTimer(ScriptExecutionContext&, std::unique_ptr<ScheduledAction>, Seconds interval, bool singleShot);
     friend class Internals;
 
-    WEBCORE_EXPORT std::chrono::milliseconds intervalClampedToMinimum() const;
+    WEBCORE_EXPORT Seconds intervalClampedToMinimum() const;
 
     bool isDOMTimersThrottlingEnabled(Document&) const;
     void updateThrottlingStateIfNecessary(const DOMTimerFireState&);
@@ -71,7 +72,7 @@ private:
     // SuspendableTimer
     void fired() override;
     void didStop() override;
-    WEBCORE_EXPORT std::optional<std::chrono::milliseconds> alignedFireTime(std::chrono::milliseconds) const override;
+    WEBCORE_EXPORT std::optional<Seconds> alignedFireTime(Seconds) const override;
 
     // ActiveDOMObject API.
     const char* activeDOMObjectName() const override;
@@ -85,9 +86,9 @@ private:
     int m_timeoutId;
     int m_nestingLevel;
     std::unique_ptr<ScheduledAction> m_action;
-    std::chrono::milliseconds m_originalInterval;
+    Seconds m_originalInterval;
     TimerThrottleState m_throttleState;
-    std::chrono::milliseconds m_currentTimerInterval;
+    Seconds m_currentTimerInterval;
     RefPtr<UserGestureToken> m_userGestureTokenToForward;
 };
 

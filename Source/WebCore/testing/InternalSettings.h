@@ -148,7 +148,7 @@ private:
         bool m_originalUsesOverlayScrollbars;
         bool m_imagesEnabled;
         bool m_preferMIMETypeForImages;
-        std::chrono::milliseconds m_minimumTimerInterval;
+        Seconds m_minimumDOMTimerInterval;
 #if ENABLE(VIDEO_TRACK)
         bool m_shouldDisplaySubtitles;
         bool m_shouldDisplayCaptions;

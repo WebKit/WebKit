@@ -29,6 +29,8 @@
 #include "ActiveDOMObject.h"
 #include "Timer.h"
 
+#include <wtf/Seconds.h>
+
 namespace WebCore {
 
 class SuspendableTimer : private TimerBase, public ActiveDOMObject {
@@ -49,9 +51,20 @@ public:
     void augmentFireInterval(double delta);
     void augmentRepeatInterval(double delta);
 
+    void startRepeating(Seconds repeatInterval) { startRepeating(repeatInterval.value()); }
+    void startOneShot(Seconds interval) { startOneShot(interval.value()); }
+
+    // FIXME: Use the overloads taking Seconds instead and drop these.
     void startRepeating(std::chrono::milliseconds repeatInterval) { startRepeating(msToSeconds(repeatInterval)); }
     void startOneShot(std::chrono::milliseconds interval) { startOneShot(msToSeconds(interval)); }
+
     std::chrono::milliseconds repeatIntervalMS() const { return secondsToMS(repeatInterval()); }
+    Seconds repeatIntervalSeconds() const { return Seconds { repeatInterval() }; }
+
+    void augmentFireInterval(Seconds delta) { augmentFireInterval(delta.value()); }
+    void augmentRepeatInterval(Seconds delta) { augmentRepeatInterval(delta.value()); }
+
+    // FIXME: Use the overloads taking Seconds instead and drop these.
     void augmentFireInterval(std::chrono::milliseconds delta) { augmentFireInterval(msToSeconds(delta)); }
     void augmentRepeatInterval(std::chrono::milliseconds delta) { augmentRepeatInterval(msToSeconds(delta)); }
 

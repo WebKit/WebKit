@@ -1663,7 +1663,7 @@ ExceptionOr<int> DOMWindow::setTimeout(std::unique_ptr<ScheduledAction> action, 
     auto* context = scriptExecutionContext();
     if (!context)
         return Exception { INVALID_ACCESS_ERR };
-    return DOMTimer::install(*context, WTFMove(action), std::chrono::milliseconds(timeout), true);
+    return DOMTimer::install(*context, WTFMove(action), Seconds::fromMilliseconds(timeout), true);
 }
 
 void DOMWindow::clearTimeout(int timeoutId)
@@ -1695,7 +1695,7 @@ ExceptionOr<int> DOMWindow::setInterval(std::unique_ptr<ScheduledAction> action,
     auto* context = scriptExecutionContext();
     if (!context)
         return Exception { INVALID_ACCESS_ERR };
-    return DOMTimer::install(*context, WTFMove(action), std::chrono::milliseconds(timeout), false);
+    return DOMTimer::install(*context, WTFMove(action), Seconds::fromMilliseconds(timeout), false);
 }
 
 void DOMWindow::clearInterval(int timeoutId)

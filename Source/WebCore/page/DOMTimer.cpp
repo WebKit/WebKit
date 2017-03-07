@@ -52,8 +52,8 @@
 
 namespace WebCore {
 
-static const auto maxIntervalForUserGestureForwarding = 1000ms; // One second matches Gecko.
-static const auto minIntervalForNonUserObservableChangeTimers = 1000ms; // Empirically determined to maximize battery life.
+static const Seconds maxIntervalForUserGestureForwarding { 1_s }; // One second matches Gecko.
+static const Seconds minIntervalForNonUserObservableChangeTimers { 1_s }; // Empirically determined to maximize battery life.
 static const int maxTimerNestingLevel = 5;
 
 class DOMTimerFireState {
@@ -161,14 +161,14 @@ private:
 
 bool NestedTimersMap::isTrackingNestedTimers = false;
 
-static inline bool shouldForwardUserGesture(std::chrono::milliseconds interval, int nestingLevel)
+static inline bool shouldForwardUserGesture(Seconds interval, int nestingLevel)
 {
     return UserGestureIndicator::processingUserGesture()
         && interval <= maxIntervalForUserGestureForwarding
         && !nestingLevel; // Gestures should not be forwarded to nested timers.
 }
 
-static inline RefPtr<UserGestureToken> userGestureTokenToForward(std::chrono::milliseconds interval, int nestingLevel)
+static inline RefPtr<UserGestureToken> userGestureTokenToForward(Seconds interval, int nestingLevel)
 {
     if (!shouldForwardUserGesture(interval, nestingLevel))
         return nullptr;
@@ -176,7 +176,7 @@ static inline RefPtr<UserGestureToken> userGestureTokenToForward(std::chrono::mi
     return UserGestureIndicator::currentUserGesture();
 }
 
-DOMTimer::DOMTimer(ScriptExecutionContext& context, std::unique_ptr<ScheduledAction> action, std::chrono::milliseconds interval, bool singleShot)
+DOMTimer::DOMTimer(ScriptExecutionContext& context, std::unique_ptr<ScheduledAction> action, Seconds interval, bool singleShot)
     : SuspendableTimer(context)
     , m_nestingLevel(context.timerNestingLevel())
     , m_action(WTFMove(action))
@@ -202,7 +202,7 @@ DOMTimer::~DOMTimer()
 {
 }
 
-int DOMTimer::install(ScriptExecutionContext& context, std::unique_ptr<ScheduledAction> action, std::chrono::milliseconds timeout, bool singleShot)
+int DOMTimer::install(ScriptExecutionContext& context, std::unique_ptr<ScheduledAction> action, Seconds timeout, bool singleShot)
 {
     // DOMTimer constructor passes ownership of the initial ref on the object to the constructor.
     // This reference will be released automatically when a one-shot timer fires, when the context
@@ -211,7 +211,7 @@ int DOMTimer::install(ScriptExecutionContext& context, std::unique_ptr<Scheduled
 #if PLATFORM(IOS)
     if (is<Document>(context)) {
         bool didDeferTimeout = context.activeDOMObjectsAreSuspended();
-        if (!didDeferTimeout && timeout.count() <= 100 && singleShot) {
+        if (!didDeferTimeout && timeout <= 100_ms && singleShot) {
             WKSetObservedContentChange(WKContentIndeterminateChange);
             WebThreadAddObservedContentModifier(timer); // Will only take affect if not already visibility change.
         }
@@ -400,45 +400,45 @@ void DOMTimer::updateTimerIntervalIfNecessary()
         return;
 
     if (repeatInterval()) {
-        ASSERT(repeatIntervalMS() == previousInterval);
-        LOG(DOMTimers, "%p - Updating DOMTimer's repeat interval from %" PRId64 " ms to %" PRId64 " ms due to throttling.", this, previousInterval.count(), m_currentTimerInterval.count());
+        ASSERT(repeatIntervalSeconds() == previousInterval);
+        LOG(DOMTimers, "%p - Updating DOMTimer's repeat interval from %.2f ms to %.2f ms due to throttling.", this, previousInterval.milliseconds(), m_currentTimerInterval.milliseconds());
         augmentRepeatInterval(m_currentTimerInterval - previousInterval);
     } else {
-        LOG(DOMTimers, "%p - Updating DOMTimer's fire interval from %" PRId64 " ms to %" PRId64 " ms due to throttling.", this, previousInterval.count(), m_currentTimerInterval.count());
+        LOG(DOMTimers, "%p - Updating DOMTimer's fire interval from %.2f ms to %.2f ms due to throttling.", this, previousInterval.milliseconds(), m_currentTimerInterval.milliseconds());
         augmentFireInterval(m_currentTimerInterval - previousInterval);
     }
 }
 
-std::chrono::milliseconds DOMTimer::intervalClampedToMinimum() const
+Seconds DOMTimer::intervalClampedToMinimum() const
 {
     ASSERT(scriptExecutionContext());
     ASSERT(m_nestingLevel <= maxTimerNestingLevel);
 
-    auto interval = std::max(1ms, m_originalInterval);
+    Seconds interval = std::max(1_ms, m_originalInterval);
 
     // Only apply throttling to repeating timers.
     if (m_nestingLevel < maxTimerNestingLevel)
         return interval;
 
     // Apply two throttles - the global (per Page) minimum, and also a per-timer throttle.
-    interval = std::max(interval, scriptExecutionContext()->minimumTimerInterval());
+    interval = std::max(interval, scriptExecutionContext()->minimumDOMTimerInterval());
     if (m_throttleState == ShouldThrottle)
         interval = std::max(interval, minIntervalForNonUserObservableChangeTimers);
     return interval;
 }
 
-std::optional<std::chrono::milliseconds> DOMTimer::alignedFireTime(std::chrono::milliseconds fireTime) const
+std::optional<Seconds> DOMTimer::alignedFireTime(Seconds fireTime) const
 {
-    auto alignmentInterval = scriptExecutionContext()->timerAlignmentInterval(m_nestingLevel >= maxTimerNestingLevel);
-    if (alignmentInterval == 0ms)
+    Seconds alignmentInterval = scriptExecutionContext()->domTimerAlignmentInterval(m_nestingLevel >= maxTimerNestingLevel);
+    if (!alignmentInterval)
         return std::nullopt;
     
     static const double randomizedProportion = randomNumber();
 
     // Force alignment to randomizedAlignment fraction of the way between alignemntIntervals, e.g.
-    // if alignmentInterval is 10 and randomizedAlignment is 0.3 this will align to 3, 13, 23, ...
-    auto randomizedOffset = std::chrono::duration_cast<std::chrono::milliseconds>(alignmentInterval * randomizedProportion);
-    auto adjustedFireTime = fireTime - randomizedOffset;
+    // if alignmentInterval is 10_ms and randomizedAlignment is 0.3 this will align to 3, 13, 23, ...
+    Seconds randomizedOffset = alignmentInterval * randomizedProportion;
+    Seconds adjustedFireTime = fireTime - randomizedOffset;
     return adjustedFireTime - (adjustedFireTime % alignmentInterval) + alignmentInterval + randomizedOffset;
 }
 

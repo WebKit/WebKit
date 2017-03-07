@@ -2843,11 +2843,11 @@ void Document::writeln(const String& text, Document* ownerDocument)
     write(WTFMove(textWithNewline), ownerDocument);
 }
 
-std::chrono::milliseconds Document::minimumTimerInterval() const
+Seconds Document::minimumDOMTimerInterval() const
 {
     auto* page = this->page();
     if (!page)
-        return ScriptExecutionContext::minimumTimerInterval();
+        return ScriptExecutionContext::minimumDOMTimerInterval();
     return page->settings().minimumDOMTimerInterval();
 }
 
@@ -2860,9 +2860,9 @@ void Document::setTimerThrottlingEnabled(bool shouldThrottle)
     didChangeTimerAlignmentInterval();
 }
 
-std::chrono::milliseconds Document::timerAlignmentInterval(bool hasReachedMaxNestingLevel) const
+Seconds Document::domTimerAlignmentInterval(bool hasReachedMaxNestingLevel) const
 {
-    auto alignmentInterval = ScriptExecutionContext::timerAlignmentInterval(hasReachedMaxNestingLevel);
+    auto alignmentInterval = ScriptExecutionContext::domTimerAlignmentInterval(hasReachedMaxNestingLevel);
     if (!hasReachedMaxNestingLevel)
         return alignmentInterval;
 

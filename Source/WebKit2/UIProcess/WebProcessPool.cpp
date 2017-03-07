@@ -1465,7 +1465,7 @@ void WebProcessPool::updateHiddenPageThrottlingAutoIncreaseLimit()
     static int maximumTimerThrottlePerPageInMS = 200 * 100;
 
     int limitInMilliseconds = maximumTimerThrottlePerPageInMS * m_hiddenPageThrottlingAutoIncreasesCounter.value();
-    sendToAllProcesses(Messages::WebProcess::SetHiddenPageTimerThrottlingIncreaseLimit(limitInMilliseconds));
+    sendToAllProcesses(Messages::WebProcess::SetHiddenPageDOMTimerThrottlingIncreaseLimit(limitInMilliseconds));
 }
 
 void WebProcessPool::reportWebContentCPUTime(int64_t cpuTime, uint64_t activityState)

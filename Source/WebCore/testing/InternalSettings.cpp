@@ -62,7 +62,7 @@ InternalSettings::Backup::Backup(Settings& settings)
     , m_originalMockScrollbarsEnabled(settings.mockScrollbarsEnabled())
     , m_imagesEnabled(settings.areImagesEnabled())
     , m_preferMIMETypeForImages(settings.preferMIMETypeForImages())
-    , m_minimumTimerInterval(settings.minimumDOMTimerInterval())
+    , m_minimumDOMTimerInterval(settings.minimumDOMTimerInterval())
 #if ENABLE(VIDEO_TRACK)
     , m_shouldDisplaySubtitles(settings.shouldDisplaySubtitles())
     , m_shouldDisplayCaptions(settings.shouldDisplayCaptions())
@@ -151,7 +151,7 @@ void InternalSettings::Backup::restoreTo(Settings& settings)
     settings.setCanvasUsesAcceleratedDrawing(m_originalCanvasUsesAcceleratedDrawing);
     settings.setImagesEnabled(m_imagesEnabled);
     settings.setPreferMIMETypeForImages(m_preferMIMETypeForImages);
-    settings.setMinimumDOMTimerInterval(m_minimumTimerInterval);
+    settings.setMinimumDOMTimerInterval(m_minimumDOMTimerInterval);
 #if ENABLE(VIDEO_TRACK)
     settings.setShouldDisplaySubtitles(m_shouldDisplaySubtitles);
     settings.setShouldDisplayCaptions(m_shouldDisplayCaptions);
@@ -544,7 +544,7 @@ ExceptionOr<void> InternalSettings::setMinimumTimerInterval(double intervalInSec
 {
     if (!m_page)
         return Exception { INVALID_ACCESS_ERR };
-    settings().setMinimumDOMTimerInterval(std::chrono::milliseconds((std::chrono::milliseconds::rep)(intervalInSeconds * 1000)));
+    settings().setMinimumDOMTimerInterval(Seconds { intervalInSeconds });
     return { };
 }
 

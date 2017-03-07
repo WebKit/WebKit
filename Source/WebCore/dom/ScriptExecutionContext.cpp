@@ -427,15 +427,15 @@ PublicURLManager& ScriptExecutionContext::publicURLManager()
     return *m_publicURLManager;
 }
 
-void ScriptExecutionContext::adjustMinimumTimerInterval(std::chrono::milliseconds oldMinimumTimerInterval)
+void ScriptExecutionContext::adjustMinimumDOMTimerInterval(Seconds oldMinimumTimerInterval)
 {
-    if (minimumTimerInterval() != oldMinimumTimerInterval) {
+    if (minimumDOMTimerInterval() != oldMinimumTimerInterval) {
         for (auto& timer : m_timeouts.values())
             timer->updateTimerIntervalIfNecessary();
     }
 }
 
-std::chrono::milliseconds ScriptExecutionContext::minimumTimerInterval() const
+Seconds ScriptExecutionContext::minimumDOMTimerInterval() const
 {
     // The default implementation returns the DOMTimer's default
     // minimum timer interval. FIXME: to make it work with dedicated
@@ -451,7 +451,7 @@ void ScriptExecutionContext::didChangeTimerAlignmentInterval()
         timer->didChangeAlignmentInterval();
 }
 
-std::chrono::milliseconds ScriptExecutionContext::timerAlignmentInterval(bool) const
+Seconds ScriptExecutionContext::domTimerAlignmentInterval(bool) const
 {
     return DOMTimer::defaultAlignmentInterval();
 }

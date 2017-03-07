@@ -240,7 +240,7 @@ public:
     ProgressTracker& progress() const { return *m_progress; }
     BackForwardController& backForward() const { return *m_backForwardController; }
 
-    std::chrono::milliseconds domTimerAlignmentInterval() const { return m_timerAlignmentInterval; }
+    Seconds domTimerAlignmentInterval() const { return m_domTimerAlignmentInterval; }
 
 #if ENABLE(VIEW_MODE_CSS_MEDIA)
     enum ViewMode {
@@ -552,7 +552,7 @@ public:
     void setShowAllPlugins(bool showAll) { m_showAllPlugins = showAll; }
     bool showAllPlugins() const;
 
-    WEBCORE_EXPORT void setTimerAlignmentIntervalIncreaseLimit(std::chrono::milliseconds);
+    WEBCORE_EXPORT void setDOMTimerAlignmentIntervalIncreaseLimit(Seconds);
 
     bool isControlledByAutomation() const { return m_controlledByAutomation; }
     void setControlledByAutomation(bool controlled) { m_controlledByAutomation = controlled; }
@@ -609,7 +609,7 @@ private:
     void setTimerThrottlingState(TimerThrottlingState);
     void updateTimerThrottlingState();
     void updateDOMTimerAlignmentInterval();
-    void timerAlignmentIntervalIncreaseTimerFired();
+    void domTimerAlignmentIntervalIncreaseTimerFired();
 
     const std::unique_ptr<Chrome> m_chrome;
     const std::unique_ptr<DragCaretController> m_dragCaretController;
@@ -712,10 +712,10 @@ private:
 #endif // ENABLE(VIEW_MODE_CSS_MEDIA)
 
     TimerThrottlingState m_timerThrottlingState { TimerThrottlingState::Disabled };
-    std::chrono::steady_clock::time_point m_timerThrottlingStateLastChangedTime { std::chrono::steady_clock::duration::zero() };
-    std::chrono::milliseconds m_timerAlignmentInterval;
-    Timer m_timerAlignmentIntervalIncreaseTimer;
-    std::chrono::milliseconds m_timerAlignmentIntervalIncreaseLimit { 0 };
+    MonotonicTime m_timerThrottlingStateLastChangedTime;
+    Seconds m_domTimerAlignmentInterval;
+    Timer m_domTimerAlignmentIntervalIncreaseTimer;
+    Seconds m_domTimerAlignmentIntervalIncreaseLimit;
 
     bool m_isEditable;
     bool m_isPrerender;
