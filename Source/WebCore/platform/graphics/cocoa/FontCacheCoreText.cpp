@@ -420,9 +420,7 @@ static VariationDefaultsMap defaultVariationValues(CTFontRef font)
     return result;
 }
 #endif
-
-#define WORKAROUND_CORETEXT_VARIATIONS_UNSPECIFIED_VALUE_BUG ((PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101300) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED < 110000))
-#if ENABLE(VARIATION_FONTS) && (PLATFORM(IOS) || WORKAROUND_CORETEXT_VARIATIONS_UNSPECIFIED_VALUE_BUG)
+#if ENABLE(VARIATION_FONTS)
 static inline bool fontIsSystemFont(CTFontRef font)
 {
     if (CTFontDescriptorIsSystemUIFont(adoptCF(CTFontCopyFontDescriptor(font)).get()))
@@ -505,10 +503,8 @@ RetainPtr<CTFontRef> preparePlatformFont(CTFontRef originalFont, TextRenderingMo
         applyVariationValue(tag, valueToApply, isDefaultValue);
     };
 
-#if PLATFORM(IOS)
     // The system font is somewhat magical. Don't mess with its variations.
     if (!fontIsSystemFont(originalFont))
-#endif
     {
         applyVariation({{'w', 'g', 'h', 't'}}, static_cast<float>(fontSelectionRequest.weight));
         applyVariation({{'w', 'd', 't', 'h'}}, static_cast<float>(fontSelectionRequest.width));
@@ -517,6 +513,7 @@ RetainPtr<CTFontRef> preparePlatformFont(CTFontRef originalFont, TextRenderingMo
     for (auto& newVariation : variations)
         applyVariation(newVariation.tag(), newVariation.value());
 
+#define WORKAROUND_CORETEXT_VARIATIONS_UNSPECIFIED_VALUE_BUG ((PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101300) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED < 110000))
 #if WORKAROUND_CORETEXT_VARIATIONS_UNSPECIFIED_VALUE_BUG
     if (!fontIsSystemFont(originalFont)) {
         for (auto& defaultValue : defaultValues) {
