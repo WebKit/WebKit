@@ -21,8 +21,10 @@ media.addEventListener("play", () => {
     media.audioTracks.addEventListener("change", audioTracksDidChange);
 
     debug("");
-    shouldBecomeDifferent("shadowRoot.lastChild.querySelector('button.tracks').getBoundingClientRect().width", "0", () => {
-        clickOnTracksButton(clickOnSecondAudioTrack);
+    shouldBecomeDifferent("shadowRoot.querySelector('button.tracks')", "null", () => {
+        shouldBecomeDifferent("shadowRoot.querySelector('button.tracks').getBoundingClientRect().width", "0", () => {
+            clickOnTracksButton(clickOnSecondAudioTrack);
+        });
     });
 });
 

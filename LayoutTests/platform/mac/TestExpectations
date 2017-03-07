@@ -1484,7 +1484,6 @@ media/modern-media-controls/media-controller/media-controller-tight-padding.html
 
 webkit.org/b/167266 media/modern-media-controls/media-controller/media-controller-auto-hide-mouse-enter-over-controls-bar.html [ Pass Failure ]
 
-webkit.org/b/169519 media/modern-media-controls/tracks-support/tracks-support-click-track-in-panel.html [ Pass Failure ]
 webkit.org/b/169158 media/modern-media-controls/tracks-support/tracks-support-show-panel-after-dragging-controls.html [ Pass Failure ]
 webkit.org/b/167373 media/modern-media-controls/tracks-support/tracks-support-show-panel-fullscreen.html [ Pass Failure ]
 

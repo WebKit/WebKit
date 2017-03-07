@@ -1,3 +1,16 @@
+2017-03-07  Antoine Quint  <graouts@apple.com>
+
+        Flaky Test: media/modern-media-controls/tracks-support/tracks-support-click-track-in-panel.html
+        https://bugs.webkit.org/show_bug.cgi?id=169159
+
+        Reviewed by Dean Jackson.
+
+        Make this test more defensive to ensure it doesn't fail.
+
+        * media/modern-media-controls/tracks-support/tracks-support-click-track-in-panel-expected.txt:
+        * media/modern-media-controls/tracks-support/tracks-support-click-track-in-panel.html:
+        * platform/mac/TestExpectations:
+
 2017-03-07  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Parsing font descriptors inside @font-face needs to accept ranges
