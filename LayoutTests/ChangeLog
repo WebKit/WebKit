@@ -1,3 +1,14 @@
+2017-03-06  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Update isEmojiGroupCandidate() to the latest version of Unicode
+        https://bugs.webkit.org/show_bug.cgi?id=168198
+
+        Reviewed by Jon Lee.
+
+        * platform/ios-simulator/editing/deleting/delete-emoji-expected.txt:
+        * platform/mac/editing/deleting/delete-emoji-expected.txt:
+        * editing/deleting/delete-emoji.html:
+
 2017-03-06  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebCrypto] Implement ECDH GenerateKey operation
