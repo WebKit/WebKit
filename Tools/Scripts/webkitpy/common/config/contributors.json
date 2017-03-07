@@ -2000,6 +2000,14 @@
       ],
       "status" : "committer"
    },
+   "Fujii Hironori" : {
+      "emails" : [
+         "Hironori.Fujii@sony.com"
+      ],
+      "nicks" : [
+         "fujihiro"
+      ]
+   },
    "Fumitoshi Ukai" : {
       "emails" : [
          "ukai@chromium.org"
