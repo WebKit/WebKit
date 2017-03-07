@@ -1,3 +1,20 @@
+2017-03-07  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [css-grid] Mark a few tests from the W3C suite as pass after r213480
+        https://bugs.webkit.org/show_bug.cgi?id=169270
+
+        Unreviewed test gardening.
+
+        r213480 was porting some Blink patches that makes these tests to pass now.
+        Check the following bugs for more information:
+        - http://webkit.org/b/169197
+        - http://webkit.org/b/169198
+
+        * TestExpectations: Mark grid-minimum-size-grid-items-007.xht and
+        grid-minimum-size-grid-items-009.xht as passing.
+        Keep grid-items-sizing-alignment-001.html as failure but now for a different issue
+        (see http://webkit.org/b/169271).
+
 2017-03-07  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] ECDH tests from imported/w3c/web-platform-tests/WebCryptoAPI/generateKey fail.

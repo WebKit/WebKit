@@ -277,10 +277,7 @@ webkit.org/b/169195 imported/w3c/csswg-test/css-grid-1/grid-definition/grid-supp
 webkit.org/b/169195 imported/w3c/csswg-test/css-grid-1/grid-definition/grid-support-grid-template-columns-rows-001.xht [ Failure ]
 webkit.org/b/169195 imported/w3c/csswg-test/css-grid-1/grid-definition/grid-support-named-grid-lines-001.xht [ Failure ]
 webkit.org/b/169195 imported/w3c/csswg-test/css-grid-1/grid-definition/grid-support-repeat-001.xht [ Failure ]
-webkit.org/b/169198 imported/w3c/csswg-test/css-grid-1/grid-items/grid-items-sizing-alignment-001.html [ ImageOnlyFailure ]
-webkit.org/b/169197 imported/w3c/csswg-test/css-grid-1/grid-items/grid-minimum-size-grid-items-007.xht [ ImageOnlyFailure ]
-webkit.org/b/169197 imported/w3c/csswg-test/css-grid-1/grid-items/grid-minimum-size-grid-items-009.xht [ ImageOnlyFailure ]
-
+webkit.org/b/169271 imported/w3c/csswg-test/css-grid-1/grid-items/grid-items-sizing-alignment-001.html [ ImageOnlyFailure ]
 
 # nth-child tests takes long time and Debug build sometimes timeouts because there are many test cases.
 webkit.org/b/137149 fast/selectors/nth-child-of-basics.html [ Slow ]
