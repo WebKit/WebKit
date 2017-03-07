@@ -422,7 +422,7 @@ static VariationDefaultsMap defaultVariationValues(CTFontRef font)
 #endif
 
 #define WORKAROUND_CORETEXT_VARIATIONS_UNSPECIFIED_VALUE_BUG ((PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101300) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED < 110000))
-#if ENABLE(VARIATION_FONTS) && WORKAROUND_CORETEXT_VARIATIONS_UNSPECIFIED_VALUE_BUG
+#if ENABLE(VARIATION_FONTS) && (PLATFORM(IOS) || WORKAROUND_CORETEXT_VARIATIONS_UNSPECIFIED_VALUE_BUG)
 static inline bool fontIsSystemFont(CTFontRef font)
 {
     if (CTFontDescriptorIsSystemUIFont(adoptCF(CTFontCopyFontDescriptor(font)).get()))
@@ -432,16 +432,16 @@ static inline bool fontIsSystemFont(CTFontRef font)
 }
 #endif
 
-RetainPtr<CTFontRef> preparePlatformFont(CTFontRef originalFont, TextRenderingMode textRenderingMode, const FontFeatureSettings* fontFaceFeatures, const FontVariantSettings* fontFaceVariantSettings, const FontFeatureSettings& features, const FontVariantSettings& variantSettings, const FontVariationSettings& variations)
+RetainPtr<CTFontRef> preparePlatformFont(CTFontRef originalFont, TextRenderingMode textRenderingMode, const FontFeatureSettings* fontFaceFeatures, const FontVariantSettings* fontFaceVariantSettings, const FontFeatureSettings& features, const FontVariantSettings& variantSettings, FontSelectionRequest fontSelectionRequest, const FontVariationSettings& variations)
 {
     bool alwaysAddVariations = false;
 
     // FIXME: Remove when <rdar://problem/29859207> is fixed
 #if ENABLE(VARIATION_FONTS)
     auto defaultValues = defaultVariationValues(originalFont);
-#if WORKAROUND_CORETEXT_VARIATIONS_UNSPECIFIED_VALUE_BUG
     alwaysAddVariations = !defaultValues.isEmpty();
-#endif
+#else
+    UNUSED_PARAM(fontSelectionRequest);
 #endif
 
     if (!originalFont || (!features.size() && (!alwaysAddVariations && variations.isEmpty()) && (textRenderingMode == AutoTextRendering) && variantSettings.isAllNormal()
@@ -496,14 +496,26 @@ RetainPtr<CTFontRef> preparePlatformFont(CTFontRef originalFont, TextRenderingMo
         variationsToBeApplied.set(tag, value);
     };
 
-    for (auto& newVariation : variations) {
-        auto iterator = defaultValues.find(newVariation.tag());
+    auto applyVariation = [&](const FontTag& tag, float value) {
+        auto iterator = defaultValues.find(tag);
         if (iterator == defaultValues.end())
-            continue;
-        float valueToApply = clampTo(newVariation.value(), iterator->value.minimumValue, iterator->value.maximumValue);
+            return;
+        float valueToApply = clampTo(value, iterator->value.minimumValue, iterator->value.maximumValue);
         bool isDefaultValue = valueToApply == iterator->value.defaultValue;
-        applyVariationValue(newVariation.tag(), valueToApply, isDefaultValue);
+        applyVariationValue(tag, valueToApply, isDefaultValue);
+    };
+
+#if PLATFORM(IOS)
+    // The system font is somewhat magical. Don't mess with its variations.
+    if (!fontIsSystemFont(originalFont))
+#endif
+    {
+        applyVariation({{'w', 'g', 'h', 't'}}, static_cast<float>(fontSelectionRequest.weight));
+        applyVariation({{'w', 'd', 't', 'h'}}, static_cast<float>(fontSelectionRequest.width));
+        applyVariation({{'s', 'l', 'n', 't'}}, static_cast<float>(fontSelectionRequest.slope));
     }
+    for (auto& newVariation : variations)
+        applyVariation(newVariation.tag(), newVariation.value());
 
 #if WORKAROUND_CORETEXT_VARIATIONS_UNSPECIFIED_VALUE_BUG
     if (!fontIsSystemFont(originalFont)) {
@@ -951,7 +963,7 @@ static void invalidateFontCache()
     FontCache::singleton().invalidate();
 }
 
-static RetainPtr<CTFontRef> fontWithFamily(const AtomicString& family, FontSelectionRequest request, const FontFeatureSettings& featureSettings, const FontVariantSettings& variantSettings, const FontVariationSettings& variationSettings, const FontFeatureSettings* fontFaceFeatures, const FontVariantSettings* fontFaceVariantSettings, const TextRenderingMode& textRenderingMode, float size)
+static RetainPtr<CTFontRef> fontWithFamily(const AtomicString& family, FontSelectionRequest request, const FontFeatureSettings& featureSettings, const FontVariantSettings& variantSettings, const FontVariationSettings& variationSettings, const FontFeatureSettings* fontFaceFeatures, const FontVariantSettings* fontFaceVariantSettings, const TextRenderingMode& textRenderingMode, FontSelectionRequest fontSelectionRequest, float size)
 {
     if (family.isEmpty())
         return nullptr;
@@ -959,7 +971,7 @@ static RetainPtr<CTFontRef> fontWithFamily(const AtomicString& family, FontSelec
     auto foundFont = platformFontWithFamilySpecialCase(family, request, size);
     if (!foundFont)
         foundFont = platformFontLookupWithFamily(family, request, size);
-    return preparePlatformFont(foundFont.get(), textRenderingMode, fontFaceFeatures, fontFaceVariantSettings, featureSettings, variantSettings, variationSettings);
+    return preparePlatformFont(foundFont.get(), textRenderingMode, fontFaceFeatures, fontFaceVariantSettings, featureSettings, variantSettings, fontSelectionRequest, variationSettings);
 }
 
 #if PLATFORM(MAC)
@@ -998,7 +1010,7 @@ std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDe
 {
     float size = fontDescription.computedPixelSize();
 
-    auto font = fontWithFamily(family, fontDescription.fontSelectionRequest(), fontDescription.featureSettings(), fontDescription.variantSettings(), fontDescription.variationSettings(), fontFaceFeatures, fontFaceVariantSettings, fontDescription.textRenderingMode(), size);
+    auto font = fontWithFamily(family, fontDescription.fontSelectionRequest(), fontDescription.featureSettings(), fontDescription.variantSettings(), fontDescription.variationSettings(), fontFaceFeatures, fontFaceVariantSettings, fontDescription.textRenderingMode(), fontDescription.fontSelectionRequest(), size);
 
 #if PLATFORM(MAC)
     if (!font) {
@@ -1009,7 +1021,7 @@ std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDe
         // Ignore the result because we want to use our own algorithm to actually find the font.
         autoActivateFont(family.string(), size);
 
-        font = fontWithFamily(family, fontDescription.fontSelectionRequest(), fontDescription.featureSettings(), fontDescription.variantSettings(), fontDescription.variationSettings(), fontFaceFeatures, fontFaceVariantSettings, fontDescription.textRenderingMode(), size);
+        font = fontWithFamily(family, fontDescription.fontSelectionRequest(), fontDescription.featureSettings(), fontDescription.variantSettings(), fontDescription.variationSettings(), fontFaceFeatures, fontFaceVariantSettings, fontDescription.textRenderingMode(), fontDescription.fontSelectionRequest(), size);
     }
 #endif
 
@@ -1097,7 +1109,7 @@ RefPtr<Font> FontCache::systemFallbackForCharacters(const FontDescription& descr
 
     const FontPlatformData& platformData = originalFontData->platformData();
     auto result = lookupFallbackFont(platformData.font(), description.weight(), description.locale(), characters, length);
-    result = preparePlatformFont(result.get(), description.textRenderingMode(), nullptr, nullptr, description.featureSettings(), description.variantSettings(), description.variationSettings());
+    result = preparePlatformFont(result.get(), description.textRenderingMode(), nullptr, nullptr, description.featureSettings(), description.variantSettings(), description.fontSelectionRequest(), description.variationSettings());
     if (!result)
         return lastResortFallbackFont(description);
 

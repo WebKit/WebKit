@@ -1,3 +1,13 @@
+2017-03-06  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Apply well-known-axis variation values at the right time in preparePlatformFont()
+        https://bugs.webkit.org/show_bug.cgi?id=168896
+
+        Reviewed by Jon Lee.
+
+        * fast/text/variations/font-selection-properties-expected.html: Added.
+        * fast/text/variations/font-selection-properties.html: Added.
+
 2017-03-06  Brent Fulgham  <bfulgham@apple.com>
 
         Validate DOM after potentially destructive actions during parser insert operations
