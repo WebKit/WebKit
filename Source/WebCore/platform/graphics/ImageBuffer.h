@@ -175,7 +175,7 @@ private:
     WEBCORE_EXPORT ImageBuffer(const FloatSize&, float resolutionScale, ColorSpace, RenderingMode, bool& success);
 #if USE(CG)
     ImageBuffer(const FloatSize&, float resolutionScale, CGColorSpaceRef, RenderingMode, bool& success);
-    RetainPtr<CGImageRef> toCGImage(const String& mimeType) const;
+    RetainPtr<CFDataRef> toCFData(const String& mimeType, std::optional<double> quality) const;
 #elif USE(DIRECT2D)
     ImageBuffer(const FloatSize&, float resolutionScale, ColorSpace, RenderingMode, const GraphicsContext*, bool& success);
 #endif

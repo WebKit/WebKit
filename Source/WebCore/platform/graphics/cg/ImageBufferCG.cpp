@@ -483,50 +483,36 @@ static bool encodeImage(CGImageRef image, CFStringRef uti, std::optional<double>
     return CGImageDestinationFinalize(destination.get());
 }
 
-static String dataURL(CGImageRef image, const String& mimeType, std::optional<double> quality)
+static String dataURL(CFDataRef data, const String& mimeType)
 {
-    auto uti = utiFromMIMEType(mimeType);
-    ASSERT(uti);
-
-    auto data = adoptCF(CFDataCreateMutable(kCFAllocatorDefault, 0));
-    if (!encodeImage(image, uti.get(), quality, data.get()))
-        return ASCIILiteral("data:,");
-
     Vector<char> base64Data;
-    base64Encode(CFDataGetBytePtr(data.get()), CFDataGetLength(data.get()), base64Data);
+    base64Encode(CFDataGetBytePtr(data), CFDataGetLength(data), base64Data);
 
     return "data:" + mimeType + ";base64," + base64Data;
 }
 
-static Vector<uint8_t> data(CGImageRef image, const String& mimeType, std::optional<double> quality)
+static Vector<uint8_t> dataVector(CFDataRef cfData)
 {
-    auto uti = utiFromMIMEType(mimeType);
-    ASSERT(uti);
-
-    auto cfData = adoptCF(CFDataCreateMutable(kCFAllocatorDefault, 0));
-    if (!encodeImage(image, uti.get(), quality, cfData.get()))
-        return { };
-
     Vector<uint8_t> data;
-    data.append(CFDataGetBytePtr(cfData.get()), CFDataGetLength(cfData.get()));
+    data.append(CFDataGetBytePtr(cfData), CFDataGetLength(cfData));
     return data;
 }
 
 String ImageBuffer::toDataURL(const String& mimeType, std::optional<double> quality, CoordinateSystem) const
 {
-    if (auto image = toCGImage(mimeType))
-        return dataURL(image.get(), mimeType, quality);
+    if (auto data = toCFData(mimeType, quality))
+        return dataURL(data.get(), mimeType);
     return ASCIILiteral("data:,");
 }
 
 Vector<uint8_t> ImageBuffer::toData(const String& mimeType, std::optional<double> quality) const
 {
-    if (auto image = toCGImage(mimeType))
-        return data(image.get(), mimeType, quality);
+    if (auto data = toCFData(mimeType, quality))
+        return dataVector(data.get());
     return { };
 }
 
-RetainPtr<CGImageRef> ImageBuffer::toCGImage(const String& mimeType) const
+RetainPtr<CFDataRef> ImageBuffer::toCFData(const String& mimeType, std::optional<double> quality) const
 {
     ASSERT(MIMETypeRegistry::isSupportedImageMIMETypeForEncoding(mimeType));
 
@@ -537,19 +523,16 @@ RetainPtr<CGImageRef> ImageBuffer::toCGImage(const String& mimeType) const
     ASSERT(uti);
 
     RetainPtr<CGImageRef> image;
+    RefPtr<Uint8ClampedArray> premultipliedData;
 
     if (CFEqual(uti.get(), jpegUTI())) {
         // JPEGs don't have an alpha channel, so we have to manually composite on top of black.
-        // premultipliedData is leaked here, then adopted in the releaseData lambda passed to CGDataProviderCreateWithData().
-        Uint8ClampedArray* premultipliedData = getPremultipliedImageData(IntRect(IntPoint(0, 0), logicalSize())).leakRef();
+        premultipliedData = getPremultipliedImageData(IntRect(IntPoint(), logicalSize()));
         if (!premultipliedData)
             return nullptr;
 
         size_t dataSize = 4 * logicalSize().width() * logicalSize().height();
-        auto dataProvider = adoptCF(CGDataProviderCreateWithData(premultipliedData, premultipliedData->data(), dataSize, [](void* info, const void*, size_t) {
-            ASSERT(info);
-            adoptRef(reinterpret_cast<Uint8ClampedArray*>(info));
-        }));
+        auto dataProvider = adoptCF(CGDataProviderCreateWithData(nullptr, premultipliedData->data(), dataSize, nullptr));
         if (!dataProvider)
             return nullptr;
 
@@ -567,10 +550,14 @@ RetainPtr<CGImageRef> ImageBuffer::toCGImage(const String& mimeType) const
         image = adoptCF(CGBitmapContextCreateImage(context.get()));
     }
 
-    return image;
+    auto cfData = adoptCF(CFDataCreateMutable(kCFAllocatorDefault, 0));
+    if (!encodeImage(image.get(), uti.get(), quality, cfData.get()))
+        return nullptr;
+
+    return WTFMove(cfData);
 }
 
-static RetainPtr<CGImageRef> cgImage(const ImageData& source, const String& mimeType)
+static RetainPtr<CFDataRef> cfData(const ImageData& source, const String& mimeType, std::optional<double> quality)
 {
     ASSERT(MIMETypeRegistry::isSupportedImageMIMETypeForEncoding(mimeType));
 
@@ -610,20 +597,26 @@ static RetainPtr<CGImageRef> cgImage(const ImageData& source, const String& mime
     if (!dataProvider)
         return nullptr;
 
-    return adoptCF(CGImageCreate(source.width(), source.height(), 8, 32, 4 * source.width(), sRGBColorSpaceRef(), kCGBitmapByteOrderDefault | dataAlphaInfo, dataProvider.get(), 0, false, kCGRenderingIntentDefault));
+    auto image = adoptCF(CGImageCreate(source.width(), source.height(), 8, 32, 4 * source.width(), sRGBColorSpaceRef(), kCGBitmapByteOrderDefault | dataAlphaInfo, dataProvider.get(), 0, false, kCGRenderingIntentDefault));
+
+    auto cfData = adoptCF(CFDataCreateMutable(kCFAllocatorDefault, 0));
+    if (!encodeImage(image.get(), uti.get(), quality, cfData.get()))
+        return nullptr;
+
+    return WTFMove(cfData);
 }
 
 String dataURL(const ImageData& source, const String& mimeType, std::optional<double> quality)
 {
-    if (auto image = cgImage(source, mimeType))
-        return dataURL(image.get(), mimeType, quality);
+    if (auto data = cfData(source, mimeType, quality))
+        return dataURL(data.get(), mimeType);
     return ASCIILiteral("data:,");
 }
 
 Vector<uint8_t> data(const ImageData& source, const String& mimeType, std::optional<double> quality)
 {
-    if (auto image = cgImage(source, mimeType))
-        return data(image.get(), mimeType, quality);
+    if (auto data = cfData(source, mimeType, quality))
+        return dataVector(data.get());
     return { };
 }
 
