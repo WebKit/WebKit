@@ -76,9 +76,12 @@ class IconButton extends Button
 
     handleEvent(event)
     {
-        if (event.type === "load" && event.target === this._image)
-            this._imageDidLoad();
-        else
+        if (event.target === this._image) {
+            if (event.type === "load")
+                this._imageDidLoad();
+            else if (event.type === "error")
+                console.error(`IconButton failed to load, iconName = ${this._iconName}, layoutTraits = ${this._iconLayoutTraits}, src = ${this._image.src}`);
+        } else
             super.handleEvent(event);
     }
 
@@ -104,8 +107,10 @@ class IconButton extends Button
 
         if (this._image.complete)
             this._updateImage();
-        else
+        else {
             this._image.addEventListener("load", this);
+            this._image.addEventListener("error", this);
+        }
     }
 
     _imageDidLoad()
