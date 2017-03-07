@@ -1,3 +1,13 @@
+2017-03-06  Brent Fulgham  <bfulgham@apple.com>
+
+        [Mac][WK2] Support new CoreMedia routing features
+        https://bugs.webkit.org/show_bug.cgi?id=169241
+        <rdar://problem/30077969>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2017-03-06  Michael Saboff  <msaboff@apple.com>
 
         Take advantage of fast permissions switching of JIT memory for devices that support it

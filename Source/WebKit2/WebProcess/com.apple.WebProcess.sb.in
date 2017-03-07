@@ -367,7 +367,13 @@
     (global-name "com.apple.coremedia.endpoint.xpc")
     (global-name "com.apple.coremedia.endpointstream.xpc")
     (global-name "com.apple.coremedia.endpointplaybacksession.xpc")
-    (global-name "com.apple.coremedia.endpointpicker.xpc"))
+    ; "com.apple.coremedia.endpointpicker.xpc" can be removed when <rdar://problem/30081582> is resolved.
+    (global-name "com.apple.coremedia.endpointpicker.xpc")
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
+    (global-name "com.apple.coremedia.routediscoverer.xpc")
+    (global-name "com.apple.coremedia.routingcontext.xpc")
+#endif
+)
 
 ;; Data Detectors
 (allow file-read* (subpath "/private/var/db/datadetectors/sys"))
