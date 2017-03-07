@@ -1,3 +1,15 @@
+2017-03-07  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Parsing font descriptors inside @font-face needs to accept ranges
+        https://bugs.webkit.org/show_bug.cgi?id=168893
+
+        Reviewed by Dean Jackson.
+
+        * fast/text/font-selection-font-face-parse-expected.txt:
+        * fast/text/font-selection-font-face-parse.html:
+        * platform/mac-elcapitan/fast/text/font-selection-font-face-parse-expected.txt:
+        Variations are off on El Capitan, so this platform needs explicit results.
+
 2017-03-07  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         Move webrtc/descriptionGetters.html to webrtc/libwebrtc/descriptionGetters.html

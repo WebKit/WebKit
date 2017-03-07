@@ -56,6 +56,45 @@
 @font-face {
     font-weight: calc(150 + 50);
 }
+@font-face {
+    font-weight: 100/200;
+}
+@font-face {
+    font-weight: 100 / 200;
+}
+@font-face {
+    font-weight: a 100 / 200;
+}
+@font-face {
+    font-weight: 100 / 200 a;
+}
+@font-face {
+    font-weight: 100 a / 200;
+}
+@font-face {
+    font-weight: 100 a/ 200;
+}
+@font-face {
+    font-weight: 100 /a 200;
+}
+@font-face {
+    font-weight: 100 / a200;
+}
+@font-face {
+    font-weight: 1 / 2;
+}
+@font-face {
+    font-weight: -2 / -1;
+}
+@font-face {
+    font-weight: 2 / 1;
+}
+@font-face {
+    font-weight: calc(3 + 4) / 8;
+}
+@font-face {
+    font-weight: 2 / calc(3 + 4);
+}
 </style>
 
 <style id="stretchTest">
@@ -101,6 +140,84 @@
 @font-face {
     font-stretch: calc(3 + 4);
 }
+@font-face {
+    font-stretch: 100/200;
+}
+@font-face {
+    font-stretch: 100 / 200;
+}
+@font-face {
+    font-stretch: a 100 / 200;
+}
+@font-face {
+    font-stretch: 100 / 200 a;
+}
+@font-face {
+    font-stretch: 100 a / 200;
+}
+@font-face {
+    font-stretch: 100 a/ 200;
+}
+@font-face {
+    font-stretch: 100 /a 200;
+}
+@font-face {
+    font-stretch: 100 / a200;
+}
+@font-face {
+    font-stretch: 1 / 2;
+}
+@font-face {
+    font-stretch: -2 / -1;
+}
+@font-face {
+    font-stretch: 2 / 1;
+}
+@font-face {
+    font-stretch: 100%/200%;
+}
+@font-face {
+    font-stretch: 100% / 200%;
+}
+@font-face {
+    font-stretch: a 100% / 200%;
+}
+@font-face {
+    font-stretch: 100% / 200% a;
+}
+@font-face {
+    font-stretch: 100% a / 200%;
+}
+@font-face {
+    font-stretch: 100% a/ 200%;
+}
+@font-face {
+    font-stretch: 100% /a 200%;
+}
+@font-face {
+    font-stretch: 100% / a200%;
+}
+@font-face {
+    font-stretch: 1% / 2%;
+}
+@font-face {
+    font-stretch: -2% / -1%;
+}
+@font-face {
+    font-stretch: 2% / 1%;
+}
+@font-face {
+    font-stretch: 1 / 2%;
+}
+@font-face {
+    font-stretch: 1% / 2;
+}
+@font-face {
+    font-stretch: calc(3 + 4) / 8;
+}
+@font-face {
+    font-stretch: 2 / calc(3 + 4);
+}
 </style>
 
 <style id="styleTest">
@@ -143,6 +260,87 @@
 @font-face {
     font-style: oblique calc(4turn + 1deg);
 }
+@font-face {
+    font-style: oblique 100/200;
+}
+@font-face {
+    font-style: oblique 100 / 200;
+}
+@font-face {
+    font-style: oblique a 100 / 200;
+}
+@font-face {
+    font-style: oblique 100 / 200 a;
+}
+@font-face {
+    font-style: oblique 100 a / 200;
+}
+@font-face {
+    font-style: oblique 100 a/ 200;
+}
+@font-face {
+    font-style: oblique 100 /a 200;
+}
+@font-face {
+    font-style: oblique 100 / a200;
+}
+@font-face {
+    font-style: oblique 1 / 2;
+}
+@font-face {
+    font-style: oblique -2 / -1;
+}
+@font-face {
+    font-style: oblique 2 / 1;
+}
+@font-face {
+    font-style: oblique 100deg/200deg;
+}
+@font-face {
+    font-style: oblique 100deg / 200deg;
+}
+@font-face {
+    font-style: oblique a 100deg / 200deg;
+}
+@font-face {
+    font-style: oblique 100deg / 200deg a;
+}
+@font-face {
+    font-style: oblique 100deg a / 200deg;
+}
+@font-face {
+    font-style: oblique 100deg a/ 200deg;
+}
+@font-face {
+    font-style: oblique 100deg /a 200deg;
+}
+@font-face {
+    font-style: oblique 100deg / a200deg;
+}
+@font-face {
+    font-style: oblique 1deg / 2deg;
+}
+@font-face {
+    font-style: oblique -2deg / -1deg;
+}
+@font-face {
+    font-style: oblique 2deg / 1deg;
+}
+@font-face {
+    font-style: oblique 1 / 2deg;
+}
+@font-face {
+    font-style: oblique 1deg / 2;
+}
+@font-face {
+    font-style: oblique 2deg / 1turn;
+}
+@font-face {
+    font-style: oblique calc(3 + 4) / 8;
+}
+@font-face {
+    font-style: oblique 2 / calc(3 + 4);
+}
 </style>
 </head>
 <body>
@@ -166,6 +364,19 @@ shouldBeEqualToString("weightTestSheet.cssRules[14].style.fontWeight", "");
 shouldBeEqualToString("weightTestSheet.cssRules[15].style.fontWeight", "7");
 shouldBeEqualToString("weightTestSheet.cssRules[16].style.fontWeight", "300");
 shouldBeEqualToString("weightTestSheet.cssRules[17].style.fontWeight", "200");
+shouldBeEqualToString("weightTestSheet.cssRules[18].style.fontWeight", "100 / 200");
+shouldBeEqualToString("weightTestSheet.cssRules[19].style.fontWeight", "100 / 200");
+shouldBeEqualToString("weightTestSheet.cssRules[20].style.fontWeight", "");
+shouldBeEqualToString("weightTestSheet.cssRules[21].style.fontWeight", "");
+shouldBeEqualToString("weightTestSheet.cssRules[22].style.fontWeight", "");
+shouldBeEqualToString("weightTestSheet.cssRules[23].style.fontWeight", "");
+shouldBeEqualToString("weightTestSheet.cssRules[24].style.fontWeight", "");
+shouldBeEqualToString("weightTestSheet.cssRules[25].style.fontWeight", "");
+shouldBeEqualToString("weightTestSheet.cssRules[26].style.fontWeight", "1 / 2");
+shouldBeEqualToString("weightTestSheet.cssRules[27].style.fontWeight", "-2 / -1");
+shouldBeEqualToString("weightTestSheet.cssRules[28].style.fontWeight", "");
+shouldBeEqualToString("weightTestSheet.cssRules[29].style.fontWeight", "7 / 8");
+shouldBeEqualToString("weightTestSheet.cssRules[30].style.fontWeight", "2 / 7");
 
 var stretchTestSheet = document.getElementById("stretchTest").sheet;
 shouldBeEqualToString("stretchTestSheet.cssRules[0].style.fontStretch", "1%");
@@ -182,6 +393,32 @@ shouldBeEqualToString("stretchTestSheet.cssRules[10].style.fontStretch", "ultra-
 shouldBeEqualToString("stretchTestSheet.cssRules[11].style.fontStretch", "");
 shouldBeEqualToString("stretchTestSheet.cssRules[12].style.fontStretch", "");
 shouldBeEqualToString("stretchTestSheet.cssRules[13].style.fontStretch", "7");
+shouldBeEqualToString("stretchTestSheet.cssRules[14].style.fontStretch", "100 / 200");
+shouldBeEqualToString("stretchTestSheet.cssRules[15].style.fontStretch", "100 / 200");
+shouldBeEqualToString("stretchTestSheet.cssRules[16].style.fontStretch", "");
+shouldBeEqualToString("stretchTestSheet.cssRules[17].style.fontStretch", "");
+shouldBeEqualToString("stretchTestSheet.cssRules[18].style.fontStretch", "");
+shouldBeEqualToString("stretchTestSheet.cssRules[19].style.fontStretch", "");
+shouldBeEqualToString("stretchTestSheet.cssRules[20].style.fontStretch", "");
+shouldBeEqualToString("stretchTestSheet.cssRules[21].style.fontStretch", "");
+shouldBeEqualToString("stretchTestSheet.cssRules[22].style.fontStretch", "1 / 2");
+shouldBeEqualToString("stretchTestSheet.cssRules[23].style.fontStretch", "-2 / -1");
+shouldBeEqualToString("stretchTestSheet.cssRules[24].style.fontStretch", "");
+shouldBeEqualToString("stretchTestSheet.cssRules[25].style.fontStretch", "100% / 200%");
+shouldBeEqualToString("stretchTestSheet.cssRules[26].style.fontStretch", "100% / 200%");
+shouldBeEqualToString("stretchTestSheet.cssRules[27].style.fontStretch", "");
+shouldBeEqualToString("stretchTestSheet.cssRules[28].style.fontStretch", "");
+shouldBeEqualToString("stretchTestSheet.cssRules[29].style.fontStretch", "");
+shouldBeEqualToString("stretchTestSheet.cssRules[30].style.fontStretch", "");
+shouldBeEqualToString("stretchTestSheet.cssRules[31].style.fontStretch", "");
+shouldBeEqualToString("stretchTestSheet.cssRules[32].style.fontStretch", "");
+shouldBeEqualToString("stretchTestSheet.cssRules[33].style.fontStretch", "1% / 2%");
+shouldBeEqualToString("stretchTestSheet.cssRules[34].style.fontStretch", "-2% / -1%");
+shouldBeEqualToString("stretchTestSheet.cssRules[35].style.fontStretch", "");
+shouldBeEqualToString("stretchTestSheet.cssRules[36].style.fontStretch", "");
+shouldBeEqualToString("stretchTestSheet.cssRules[37].style.fontStretch", "");
+shouldBeEqualToString("stretchTestSheet.cssRules[38].style.fontStretch", "7 / 8");
+shouldBeEqualToString("stretchTestSheet.cssRules[39].style.fontStretch", "2 / 7");
 
 var styleTestSheet = document.getElementById("styleTest").sheet;
 shouldBeEqualToString("styleTestSheet.cssRules[0].style.fontStyle", "1deg");
@@ -197,6 +434,34 @@ shouldBeEqualToString("styleTestSheet.cssRules[9].style.fontStyle", "");
 shouldBeEqualToString("styleTestSheet.cssRules[10].style.fontStyle", "");
 shouldBeEqualToString("styleTestSheet.cssRules[11].style.fontStyle", "7");
 shouldBeEqualToString("styleTestSheet.cssRules[12].style.fontStyle", "calc(1441deg)");
+
+shouldBeEqualToString("styleTestSheet.cssRules[13].style.fontStyle", "100 / 200");
+shouldBeEqualToString("styleTestSheet.cssRules[14].style.fontStyle", "100 / 200");
+shouldBeEqualToString("styleTestSheet.cssRules[15].style.fontStyle", "");
+shouldBeEqualToString("styleTestSheet.cssRules[16].style.fontStyle", "");
+shouldBeEqualToString("styleTestSheet.cssRules[17].style.fontStyle", "");
+shouldBeEqualToString("styleTestSheet.cssRules[18].style.fontStyle", "");
+shouldBeEqualToString("styleTestSheet.cssRules[19].style.fontStyle", "");
+shouldBeEqualToString("styleTestSheet.cssRules[20].style.fontStyle", "");
+shouldBeEqualToString("styleTestSheet.cssRules[21].style.fontStyle", "1 / 2");
+shouldBeEqualToString("styleTestSheet.cssRules[22].style.fontStyle", "-2 / -1");
+shouldBeEqualToString("styleTestSheet.cssRules[23].style.fontStyle", "");
+shouldBeEqualToString("styleTestSheet.cssRules[24].style.fontStyle", "100deg / 200deg");
+shouldBeEqualToString("styleTestSheet.cssRules[25].style.fontStyle", "100deg / 200deg");
+shouldBeEqualToString("styleTestSheet.cssRules[26].style.fontStyle", "");
+shouldBeEqualToString("styleTestSheet.cssRules[27].style.fontStyle", "");
+shouldBeEqualToString("styleTestSheet.cssRules[28].style.fontStyle", "");
+shouldBeEqualToString("styleTestSheet.cssRules[29].style.fontStyle", "");
+shouldBeEqualToString("styleTestSheet.cssRules[30].style.fontStyle", "");
+shouldBeEqualToString("styleTestSheet.cssRules[31].style.fontStyle", "");
+shouldBeEqualToString("styleTestSheet.cssRules[32].style.fontStyle", "1deg / 2deg");
+shouldBeEqualToString("styleTestSheet.cssRules[33].style.fontStyle", "-2deg / -1deg");
+shouldBeEqualToString("styleTestSheet.cssRules[34].style.fontStyle", "");
+shouldBeEqualToString("styleTestSheet.cssRules[35].style.fontStyle", "");
+shouldBeEqualToString("styleTestSheet.cssRules[36].style.fontStyle", "");
+shouldBeEqualToString("styleTestSheet.cssRules[37].style.fontStyle", "2deg / 1turn");
+shouldBeEqualToString("styleTestSheet.cssRules[38].style.fontStyle", "7 / 8");
+shouldBeEqualToString("styleTestSheet.cssRules[39].style.fontStyle", "2 / 7");
 </script>
 <script src="../../resources/js-test-post.js"></script>
 </body>

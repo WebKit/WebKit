@@ -888,6 +888,30 @@ static RefPtr<CSSPrimitiveValue> consumeFontWeight(CSSParserTokenRange& range)
     return consumeNumber(range, ValueRangeAll);
 }
 
+#if ENABLE(VARIATION_FONTS)
+static RefPtr<CSSValue> consumeFontWeightRange(CSSParserTokenRange& range)
+{
+    if (auto result = consumeFontWeightKeywordValue(range))
+        return result;
+    auto firstNumber = consumeNumber(range, ValueRangeAll);
+    if (!firstNumber)
+        return nullptr;
+    if (range.atEnd())
+        return firstNumber;
+    if (!consumeSlashIncludingWhitespace(range))
+        return nullptr;
+    auto secondNumber = consumeNumber(range, ValueRangeAll);
+    if (!secondNumber)
+        return nullptr;
+    if (firstNumber->floatValue() > secondNumber->floatValue())
+        return nullptr;
+    auto result = CSSValueList::createSlashSeparated();
+    result->append(firstNumber.releaseNonNull());
+    result->append(secondNumber.releaseNonNull());
+    return RefPtr<CSSValue>(WTFMove(result));
+}
+#endif
+
 static RefPtr<CSSPrimitiveValue> consumeFontStretchKeywordValue(CSSParserTokenRange& range)
 {
     return consumeIdent<CSSValueUltraCondensed, CSSValueExtraCondensed, CSSValueCondensed, CSSValueSemiCondensed, CSSValueNormal, CSSValueSemiExpanded, CSSValueExpanded, CSSValueExtraExpanded, CSSValueUltraExpanded>(range);
@@ -901,6 +925,47 @@ static RefPtr<CSSPrimitiveValue> consumeFontStretch(CSSParserTokenRange& range)
         return percent;
     return consumeNumber(range, ValueRangeAll);
 }
+
+#if ENABLE(VARIATION_FONTS)
+static RefPtr<CSSValue> consumeFontStretchRange(CSSParserTokenRange& range)
+{
+    if (auto result = consumeFontStretchKeywordValue(range))
+        return result;
+    if (auto firstPercent = consumePercent(range, ValueRangeAll)) {
+        if (range.atEnd())
+            return firstPercent;
+        if (!consumeSlashIncludingWhitespace(range))
+            return nullptr;
+        auto secondPercent = consumePercent(range, ValueRangeAll);
+        if (!secondPercent)
+            return nullptr;
+        if (firstPercent->floatValue() > secondPercent->floatValue())
+            return nullptr;
+        auto result = CSSValueList::createSlashSeparated();
+        result->append(firstPercent.releaseNonNull());
+        result->append(secondPercent.releaseNonNull());
+        return RefPtr<CSSValue>(WTFMove(result));
+    }
+
+    if (auto firstNumber = consumeNumber(range, ValueRangeAll)) {
+        if (range.atEnd())
+            return firstNumber;
+        if (!consumeSlashIncludingWhitespace(range))
+            return nullptr;
+        auto secondNumber = consumeNumber(range, ValueRangeAll);
+        if (!secondNumber)
+            return nullptr;
+        if (firstNumber->floatValue() > secondNumber->floatValue())
+            return nullptr;
+        auto result = CSSValueList::createSlashSeparated();
+        result->append(firstNumber.releaseNonNull());
+        result->append(secondNumber.releaseNonNull());
+        return RefPtr<CSSValue>(WTFMove(result));
+    }
+
+    return nullptr;
+}
+#endif
 
 static RefPtr<CSSPrimitiveValue> consumeFontStyleKeywordValue(CSSParserTokenRange& range)
 {
@@ -923,6 +988,54 @@ static RefPtr<CSSPrimitiveValue> consumeFontStyle(CSSParserTokenRange& range, CS
     }
     return nullptr;
 }
+
+#if ENABLE(VARIATION_FONTS)
+static RefPtr<CSSValue> consumeFontStyleRange(CSSParserTokenRange& range, CSSParserMode cssParserMode)
+{
+    if (auto result = consumeFontStyleKeywordValue(range)) {
+        if (result->valueID() == CSSValueOblique) {
+            if (range.atEnd())
+                return result;
+
+            if (auto firstAngle = consumeAngle(range, cssParserMode)) {
+                if (range.atEnd())
+                    return firstAngle;
+                if (!consumeSlashIncludingWhitespace(range))
+                    return nullptr;
+                auto secondAngle = consumeAngle(range, cssParserMode);
+                if (!secondAngle)
+                    return nullptr;
+                if (firstAngle->floatValue(CSSPrimitiveValue::CSS_DEG) > secondAngle->floatValue(CSSPrimitiveValue::CSS_DEG))
+                    return nullptr;
+                auto result = CSSValueList::createSlashSeparated();
+                result->append(firstAngle.releaseNonNull());
+                result->append(secondAngle.releaseNonNull());
+                return RefPtr<CSSValue>(WTFMove(result));
+            }
+
+            if (auto firstNumber = consumeNumber(range, ValueRangeAll)) {
+                if (range.atEnd())
+                    return firstNumber;
+                if (!consumeSlashIncludingWhitespace(range))
+                    return nullptr;
+                auto secondNumber = consumeNumber(range, ValueRangeAll);
+                if (!secondNumber)
+                    return nullptr;
+                if (firstNumber->floatValue() > secondNumber->floatValue())
+                    return nullptr;
+                auto result = CSSValueList::createSlashSeparated();
+                result->append(firstNumber.releaseNonNull());
+                result->append(secondNumber.releaseNonNull());
+                return RefPtr<CSSValue>(WTFMove(result));
+            }
+
+            return nullptr;
+        }
+        return result;
+    }
+    return nullptr;
+}
+#endif
 
 static String concatenateFamilyName(CSSParserTokenRange& range)
 {
@@ -4220,16 +4333,25 @@ bool CSSPropertyParser::parseFontFaceDescriptor(CSSPropertyID propId)
         parsedValue = consumeFontFaceUnicodeRange(m_range);
         break;
     case CSSPropertyFontWeight:
-        // FIXME: Parse range-based values.
+#if ENABLE(VARIATION_FONTS)
+        parsedValue = consumeFontWeightRange(m_range);
+#else
         parsedValue = consumeFontWeight(m_range);
+#endif
         break;
     case CSSPropertyFontStretch:
-        // FIXME: Parse range-based values.
+#if ENABLE(VARIATION_FONTS)
+        parsedValue = consumeFontStretchRange(m_range);
+#else
         parsedValue = consumeFontStretch(m_range);
+#endif
         break;
     case CSSPropertyFontStyle:
-        // FIXME: Parse range-based values.
+#if ENABLE(VARIATION_FONTS)
+        parsedValue = consumeFontStyleRange(m_range, m_context.mode);
+#else
         parsedValue = consumeFontStyle(m_range, m_context.mode);
+#endif
         break;
     case CSSPropertyFontVariantCaps:
         parsedValue = consumeFontVariantCaps(m_range);

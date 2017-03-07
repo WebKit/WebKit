@@ -126,7 +126,20 @@ bool CSSFontFace::setFamilies(CSSValue& family)
 
 static FontSelectionRange calculateWeightRange(CSSValue& value)
 {
-    // FIXME: Parse range-based values.
+    if (value.isValueList()) {
+        auto& valueList = downcast<CSSValueList>(value);
+        ASSERT(valueList.length() == 2);
+        if (valueList.length() != 2)
+            return { normalWeightValue(), normalWeightValue() };
+        ASSERT(valueList.item(0)->isPrimitiveValue());
+        ASSERT(valueList.item(1)->isPrimitiveValue());
+        auto& value0 = downcast<CSSPrimitiveValue>(*valueList.item(0));
+        auto& value1 = downcast<CSSPrimitiveValue>(*valueList.item(1));
+        ASSERT(value0.isNumber());
+        ASSERT(value1.isNumber());
+        return { FontSelectionValue::clampFloat(value0.floatValue()), FontSelectionValue::clampFloat(value1.floatValue()) };
+    }
+
     ASSERT(is<CSSPrimitiveValue>(value));
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
 
@@ -162,7 +175,20 @@ void CSSFontFace::setWeight(CSSValue& weight)
 
 static FontSelectionRange calculateStretchRange(CSSValue& value)
 {
-    // FIXME: Parse range-based values.
+    if (value.isValueList()) {
+        auto& valueList = downcast<CSSValueList>(value);
+        ASSERT(valueList.length() == 2);
+        if (valueList.length() != 2)
+            return { normalStretchValue(), normalStretchValue() };
+        ASSERT(valueList.item(0)->isPrimitiveValue());
+        ASSERT(valueList.item(1)->isPrimitiveValue());
+        auto& value0 = downcast<CSSPrimitiveValue>(*valueList.item(0));
+        auto& value1 = downcast<CSSPrimitiveValue>(*valueList.item(1));
+        ASSERT(value0.isPercentage() || value0.isNumber());
+        ASSERT(value1.isPercentage() || value1.isNumber());
+        return { FontSelectionValue::clampFloat(value0.floatValue()), FontSelectionValue::clampFloat(value1.floatValue()) };
+    }
+
     ASSERT(is<CSSPrimitiveValue>(value));
     const auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
 
@@ -198,7 +224,20 @@ void CSSFontFace::setStretch(CSSValue& style)
 
 static FontSelectionRange calculateItalicRange(CSSValue& value)
 {
-    // FIXME: Parse range-based values.
+    if (value.isValueList()) {
+        auto& valueList = downcast<CSSValueList>(value);
+        ASSERT(valueList.length() == 2);
+        if (valueList.length() != 2)
+            return { normalItalicValue(), normalItalicValue() };
+        ASSERT(valueList.item(0)->isPrimitiveValue());
+        ASSERT(valueList.item(1)->isPrimitiveValue());
+        auto& value0 = downcast<CSSPrimitiveValue>(*valueList.item(0));
+        auto& value1 = downcast<CSSPrimitiveValue>(*valueList.item(1));
+        ASSERT(value0.isAngle() || value0.isNumber() || value0.isCalculated());
+        ASSERT(value1.isAngle() || value1.isNumber() || value1.isCalculated());
+        return { FontSelectionValue::clampFloat(value0.floatValue(CSSPrimitiveValue::CSS_DEG)), FontSelectionValue::clampFloat(value1.floatValue(CSSPrimitiveValue::CSS_DEG)) };
+    }
+
     ASSERT(is<CSSPrimitiveValue>(value));
     const auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
 

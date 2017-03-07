@@ -1,0 +1,115 @@
+PASS weightTestSheet.cssRules[0].style.fontWeight is "1"
+PASS weightTestSheet.cssRules[1].style.fontWeight is "100"
+PASS weightTestSheet.cssRules[2].style.fontWeight is "200"
+PASS weightTestSheet.cssRules[3].style.fontWeight is "300"
+PASS weightTestSheet.cssRules[4].style.fontWeight is "400"
+PASS weightTestSheet.cssRules[5].style.fontWeight is "normal"
+PASS weightTestSheet.cssRules[6].style.fontWeight is "500"
+PASS weightTestSheet.cssRules[7].style.fontWeight is "600"
+PASS weightTestSheet.cssRules[8].style.fontWeight is "700"
+PASS weightTestSheet.cssRules[9].style.fontWeight is "bold"
+PASS weightTestSheet.cssRules[10].style.fontWeight is "800"
+PASS weightTestSheet.cssRules[11].style.fontWeight is "900"
+PASS weightTestSheet.cssRules[12].style.fontWeight is ""
+PASS weightTestSheet.cssRules[13].style.fontWeight is ""
+PASS weightTestSheet.cssRules[14].style.fontWeight is ""
+PASS weightTestSheet.cssRules[15].style.fontWeight is "7"
+PASS weightTestSheet.cssRules[16].style.fontWeight is "300"
+PASS weightTestSheet.cssRules[17].style.fontWeight is "200"
+FAIL weightTestSheet.cssRules[18].style.fontWeight should be 100 / 200. Was .
+FAIL weightTestSheet.cssRules[19].style.fontWeight should be 100 / 200. Was .
+PASS weightTestSheet.cssRules[20].style.fontWeight is ""
+PASS weightTestSheet.cssRules[21].style.fontWeight is ""
+PASS weightTestSheet.cssRules[22].style.fontWeight is ""
+PASS weightTestSheet.cssRules[23].style.fontWeight is ""
+PASS weightTestSheet.cssRules[24].style.fontWeight is ""
+PASS weightTestSheet.cssRules[25].style.fontWeight is ""
+FAIL weightTestSheet.cssRules[26].style.fontWeight should be 1 / 2. Was .
+FAIL weightTestSheet.cssRules[27].style.fontWeight should be -2 / -1. Was .
+PASS weightTestSheet.cssRules[28].style.fontWeight is ""
+FAIL weightTestSheet.cssRules[29].style.fontWeight should be 7 / 8. Was .
+FAIL weightTestSheet.cssRules[30].style.fontWeight should be 2 / 7. Was .
+PASS stretchTestSheet.cssRules[0].style.fontStretch is "1%"
+PASS stretchTestSheet.cssRules[1].style.fontStretch is "2"
+PASS stretchTestSheet.cssRules[2].style.fontStretch is "ultra-condensed"
+PASS stretchTestSheet.cssRules[3].style.fontStretch is "extra-condensed"
+PASS stretchTestSheet.cssRules[4].style.fontStretch is "condensed"
+PASS stretchTestSheet.cssRules[5].style.fontStretch is "semi-condensed"
+PASS stretchTestSheet.cssRules[6].style.fontStretch is "normal"
+PASS stretchTestSheet.cssRules[7].style.fontStretch is "semi-expanded"
+PASS stretchTestSheet.cssRules[8].style.fontStretch is "expanded"
+PASS stretchTestSheet.cssRules[9].style.fontStretch is "extra-expanded"
+PASS stretchTestSheet.cssRules[10].style.fontStretch is "ultra-expanded"
+PASS stretchTestSheet.cssRules[11].style.fontStretch is ""
+PASS stretchTestSheet.cssRules[12].style.fontStretch is ""
+PASS stretchTestSheet.cssRules[13].style.fontStretch is "7"
+FAIL stretchTestSheet.cssRules[14].style.fontStretch should be 100 / 200. Was .
+FAIL stretchTestSheet.cssRules[15].style.fontStretch should be 100 / 200. Was .
+PASS stretchTestSheet.cssRules[16].style.fontStretch is ""
+PASS stretchTestSheet.cssRules[17].style.fontStretch is ""
+PASS stretchTestSheet.cssRules[18].style.fontStretch is ""
+PASS stretchTestSheet.cssRules[19].style.fontStretch is ""
+PASS stretchTestSheet.cssRules[20].style.fontStretch is ""
+PASS stretchTestSheet.cssRules[21].style.fontStretch is ""
+FAIL stretchTestSheet.cssRules[22].style.fontStretch should be 1 / 2. Was .
+FAIL stretchTestSheet.cssRules[23].style.fontStretch should be -2 / -1. Was .
+PASS stretchTestSheet.cssRules[24].style.fontStretch is ""
+FAIL stretchTestSheet.cssRules[25].style.fontStretch should be 100% / 200%. Was .
+FAIL stretchTestSheet.cssRules[26].style.fontStretch should be 100% / 200%. Was .
+PASS stretchTestSheet.cssRules[27].style.fontStretch is ""
+PASS stretchTestSheet.cssRules[28].style.fontStretch is ""
+PASS stretchTestSheet.cssRules[29].style.fontStretch is ""
+PASS stretchTestSheet.cssRules[30].style.fontStretch is ""
+PASS stretchTestSheet.cssRules[31].style.fontStretch is ""
+PASS stretchTestSheet.cssRules[32].style.fontStretch is ""
+FAIL stretchTestSheet.cssRules[33].style.fontStretch should be 1% / 2%. Was .
+FAIL stretchTestSheet.cssRules[34].style.fontStretch should be -2% / -1%. Was .
+PASS stretchTestSheet.cssRules[35].style.fontStretch is ""
+PASS stretchTestSheet.cssRules[36].style.fontStretch is ""
+PASS stretchTestSheet.cssRules[37].style.fontStretch is ""
+FAIL stretchTestSheet.cssRules[38].style.fontStretch should be 7 / 8. Was .
+FAIL stretchTestSheet.cssRules[39].style.fontStretch should be 2 / 7. Was .
+PASS styleTestSheet.cssRules[0].style.fontStyle is "1deg"
+PASS styleTestSheet.cssRules[1].style.fontStyle is "200grad"
+PASS styleTestSheet.cssRules[2].style.fontStyle is "6.28318rad"
+PASS styleTestSheet.cssRules[3].style.fontStyle is "4turn"
+PASS styleTestSheet.cssRules[4].style.fontStyle is "5"
+PASS styleTestSheet.cssRules[5].style.fontStyle is "20"
+PASS styleTestSheet.cssRules[6].style.fontStyle is "italic"
+PASS styleTestSheet.cssRules[7].style.fontStyle is "oblique"
+PASS styleTestSheet.cssRules[8].style.fontStyle is "normal"
+PASS styleTestSheet.cssRules[9].style.fontStyle is ""
+PASS styleTestSheet.cssRules[10].style.fontStyle is ""
+PASS styleTestSheet.cssRules[11].style.fontStyle is "7"
+PASS styleTestSheet.cssRules[12].style.fontStyle is "calc(1441deg)"
+FAIL styleTestSheet.cssRules[13].style.fontStyle should be 100 / 200. Was .
+FAIL styleTestSheet.cssRules[14].style.fontStyle should be 100 / 200. Was .
+PASS styleTestSheet.cssRules[15].style.fontStyle is ""
+PASS styleTestSheet.cssRules[16].style.fontStyle is ""
+PASS styleTestSheet.cssRules[17].style.fontStyle is ""
+PASS styleTestSheet.cssRules[18].style.fontStyle is ""
+PASS styleTestSheet.cssRules[19].style.fontStyle is ""
+PASS styleTestSheet.cssRules[20].style.fontStyle is ""
+FAIL styleTestSheet.cssRules[21].style.fontStyle should be 1 / 2. Was .
+FAIL styleTestSheet.cssRules[22].style.fontStyle should be -2 / -1. Was .
+PASS styleTestSheet.cssRules[23].style.fontStyle is ""
+FAIL styleTestSheet.cssRules[24].style.fontStyle should be 100deg / 200deg. Was .
+FAIL styleTestSheet.cssRules[25].style.fontStyle should be 100deg / 200deg. Was .
+PASS styleTestSheet.cssRules[26].style.fontStyle is ""
+PASS styleTestSheet.cssRules[27].style.fontStyle is ""
+PASS styleTestSheet.cssRules[28].style.fontStyle is ""
+PASS styleTestSheet.cssRules[29].style.fontStyle is ""
+PASS styleTestSheet.cssRules[30].style.fontStyle is ""
+PASS styleTestSheet.cssRules[31].style.fontStyle is ""
+FAIL styleTestSheet.cssRules[32].style.fontStyle should be 1deg / 2deg. Was .
+FAIL styleTestSheet.cssRules[33].style.fontStyle should be -2deg / -1deg. Was .
+PASS styleTestSheet.cssRules[34].style.fontStyle is ""
+PASS styleTestSheet.cssRules[35].style.fontStyle is ""
+PASS styleTestSheet.cssRules[36].style.fontStyle is ""
+FAIL styleTestSheet.cssRules[37].style.fontStyle should be 2deg / 1turn. Was .
+FAIL styleTestSheet.cssRules[38].style.fontStyle should be 7 / 8. Was .
+FAIL styleTestSheet.cssRules[39].style.fontStyle should be 2 / 7. Was .
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -828,50 +828,127 @@ private:
     HashMap<String, InstalledFont> m_postScriptNameToFontDescriptors;
 };
 
+struct VariationCapabilities {
+    std::optional<FontSelectionRange> weight;
+    std::optional<FontSelectionRange> width;
+    std::optional<FontSelectionRange> slope;
+};
+
+#if ENABLE(VARIATION_FONTS)
+static std::optional<FontSelectionRange> extractVariationBounds(CFDictionaryRef axis)
+{
+    CFNumberRef minimumValue = static_cast<CFNumberRef>(CFDictionaryGetValue(axis, kCTFontVariationAxisMinimumValueKey));
+    CFNumberRef maximumValue = static_cast<CFNumberRef>(CFDictionaryGetValue(axis, kCTFontVariationAxisMaximumValueKey));
+    float rawMinimumValue = 0;
+    float rawMaximumValue = 0;
+    CFNumberGetValue(minimumValue, kCFNumberFloatType, &rawMinimumValue);
+    CFNumberGetValue(maximumValue, kCFNumberFloatType, &rawMaximumValue);
+    if (rawMinimumValue < rawMaximumValue)
+        return {{ FontSelectionValue(rawMinimumValue), FontSelectionValue(rawMaximumValue) }};
+    return std::nullopt;
+}
+#endif
+
+static VariationCapabilities variationCapabilitiesForFontDescriptor(CTFontDescriptorRef fontDescriptor)
+{
+    VariationCapabilities result;
+
+#if ENABLE(VARIATION_FONTS)
+    if (!adoptCF(CTFontDescriptorCopyAttribute(fontDescriptor, kCTFontVariationAttribute)))
+        return result;
+
+    auto variations = adoptCF(CTFontCopyVariationAxes(adoptCF(CTFontCreateWithFontDescriptor(fontDescriptor, 0, nullptr)).get()));
+    if (!variations)
+        return result;
+
+    auto axisCount = CFArrayGetCount(variations.get());
+    if (!axisCount)
+        return result;
+
+    for (CFIndex i = 0; i < axisCount; ++i) {
+        CFDictionaryRef axis = static_cast<CFDictionaryRef>(CFArrayGetValueAtIndex(variations.get(), i));
+        CFNumberRef axisIdentifier = static_cast<CFNumberRef>(CFDictionaryGetValue(axis, kCTFontVariationAxisIdentifierKey));
+        uint32_t rawAxisIdentifier = 0;
+        Boolean success = CFNumberGetValue(axisIdentifier, kCFNumberSInt32Type, &rawAxisIdentifier);
+        ASSERT_UNUSED(success, success);
+        if (rawAxisIdentifier == 0x77676874) // 'wght'
+            result.weight = extractVariationBounds(axis);
+        else if (rawAxisIdentifier == 0x77647468) // 'wdth'
+            result.width = extractVariationBounds(axis);
+        else if (rawAxisIdentifier == 0x736C6E74) // 'slnt'
+            result.slope = extractVariationBounds(axis);
+    }
+#else
+    UNUSED_PARAM(fontDescriptor);
+#endif
+
+    return result;
+}
+
 FontSelectionCapabilities capabilitiesForFontDescriptor(CTFontDescriptorRef fontDescriptor)
 {
     if (!fontDescriptor)
         return { };
 
-    auto traits = adoptCF(static_cast<CFDictionaryRef>(CTFontDescriptorCopyAttribute(fontDescriptor, kCTFontTraitsAttribute)));
-    FontSelectionValue width;
-    FontSelectionValue slant;
-    FontSelectionValue weight;
-    if (traits) {
-        width = stretchFromCoreTextTraits(traits.get());
-
-        auto symbolicTraitsNumber = static_cast<CFNumberRef>(CFDictionaryGetValue(traits.get(), kCTFontSymbolicTrait));
-        if (symbolicTraitsNumber) {
-            int32_t symbolicTraits;
-            auto success = CFNumberGetValue(symbolicTraitsNumber, kCFNumberSInt32Type, &symbolicTraits);
-            ASSERT_UNUSED(success, success);
-            slant = symbolicTraits & kCTFontTraitItalic ? italicValue() : normalItalicValue();
-        }
+    VariationCapabilities variationCapabilities = variationCapabilitiesForFontDescriptor(fontDescriptor);
 
 #if SHOULD_USE_CORE_TEXT_FONT_LOOKUP
-        auto weightNumber = static_cast<CFNumberRef>(CFDictionaryGetValue(traits.get(), kCTFontWeightTrait));
-        if (weightNumber) {
-            CGFloat ctWeight;
-            auto success = CFNumberGetValue(weightNumber, kCFNumberCGFloatType, &ctWeight);
-            ASSERT_UNUSED(success, success);
-            weight = fontWeightFromCoreText(ctWeight);
-        }
+    bool weightComesFromTraits = !variationCapabilities.weight;
+#else
+    bool weightComesFromTraits = false;
 #endif
+
+    if (!variationCapabilities.slope || !variationCapabilities.width || weightComesFromTraits) {
+        auto traits = adoptCF(static_cast<CFDictionaryRef>(CTFontDescriptorCopyAttribute(fontDescriptor, kCTFontTraitsAttribute)));
+        if (traits) {
+            if (!variationCapabilities.width) {
+                auto widthValue = stretchFromCoreTextTraits(traits.get());
+                variationCapabilities.width = {{ widthValue, widthValue }};
+            }
+
+            if (!variationCapabilities.slope) {
+                auto symbolicTraitsNumber = static_cast<CFNumberRef>(CFDictionaryGetValue(traits.get(), kCTFontSymbolicTrait));
+                if (symbolicTraitsNumber) {
+                    int32_t symbolicTraits;
+                    auto success = CFNumberGetValue(symbolicTraitsNumber, kCFNumberSInt32Type, &symbolicTraits);
+                    ASSERT_UNUSED(success, success);
+                    auto slopeValue = symbolicTraits & kCTFontTraitItalic ? italicValue() : normalItalicValue();
+                    variationCapabilities.slope = {{ slopeValue, slopeValue }};
+                } else
+                    variationCapabilities.slope = {{ normalItalicValue(), normalItalicValue() }};
+            }
+
+#if SHOULD_USE_CORE_TEXT_FONT_LOOKUP
+            if (!variationCapabilities.weight) {
+                auto weightNumber = static_cast<CFNumberRef>(CFDictionaryGetValue(traits.get(), kCTFontWeightTrait));
+                if (weightNumber) {
+                    CGFloat ctWeight;
+                    auto success = CFNumberGetValue(weightNumber, kCFNumberCGFloatType, &ctWeight);
+                    ASSERT_UNUSED(success, success);
+                    auto weightValue = fontWeightFromCoreText(ctWeight);
+                    variationCapabilities.weight = {{ weightValue, weightValue }};
+                } else
+                    variationCapabilities.weight = {{ normalWeightValue(), normalWeightValue() }};
+            }
+#endif
+        }
     }
 
 #if !SHOULD_USE_CORE_TEXT_FONT_LOOKUP
-    auto weightNumber = adoptCF(static_cast<CFNumberRef>(CTFontDescriptorCopyAttribute(fontDescriptor, kCTFontCSSWeightAttribute)));
-    if (weightNumber) {
-        float cssWeight;
-        auto success = CFNumberGetValue(weightNumber.get(), kCFNumberFloatType, &cssWeight);
-        ASSERT_UNUSED(success, success);
-        weight = FontSelectionValue(cssWeight);
+    if (!variationCapabilities.weight) {
+        auto weightNumber = adoptCF(static_cast<CFNumberRef>(CTFontDescriptorCopyAttribute(fontDescriptor, kCTFontCSSWeightAttribute)));
+        if (weightNumber) {
+            float cssWeight;
+            auto success = CFNumberGetValue(weightNumber.get(), kCFNumberFloatType, &cssWeight);
+            ASSERT_UNUSED(success, success);
+            auto weightValue = FontSelectionValue(cssWeight);
+            variationCapabilities.weight = {{ weightValue, weightValue }};
+        } else
+            variationCapabilities.weight = {{ normalWeightValue(), normalWeightValue() }};
     }
 #endif
 
-    // FIXME: Educate this function about font variations.
-
-    return { { weight, weight }, { width, width }, { slant, slant } };
+    return { variationCapabilities.weight.value(), variationCapabilities.width.value(), variationCapabilities.slope.value() };
 }
 
 #if !SHOULD_USE_CORE_TEXT_FONT_LOOKUP
