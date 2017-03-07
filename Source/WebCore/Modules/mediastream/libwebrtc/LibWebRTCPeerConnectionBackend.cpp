@@ -71,7 +71,7 @@ LibWebRTCPeerConnectionBackend::~LibWebRTCPeerConnectionBackend()
 
 static webrtc::PeerConnectionInterface::RTCConfiguration configurationFromMediaEndpointConfiguration(MediaEndpointConfiguration&& configuration)
 {
-    webrtc::PeerConnectionInterface::RTCConfiguration rtcConfiguration(webrtc::PeerConnectionInterface::RTCConfigurationType::kAggressive);
+    webrtc::PeerConnectionInterface::RTCConfiguration rtcConfiguration;
 
     if (configuration.iceTransportPolicy == PeerConnectionStates::IceTransportPolicy::Relay)
         rtcConfiguration.type = webrtc::PeerConnectionInterface::kRelay;
