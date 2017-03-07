@@ -1,5 +1,13 @@
 2017-03-06  Michael Saboff  <msaboff@apple.com>
 
+        Unreviewed build fix to add
+        -isystem $(SDKROOT)/System/Library/Frameworks/System.framework/PrivateHeaders
+        for objective C++ files.
+
+        * Configurations/WebKitLegacy.xcconfig:
+
+2017-03-06  Michael Saboff  <msaboff@apple.com>
+
         Take advantage of fast permissions switching of JIT memory for devices that support it
         https://bugs.webkit.org/show_bug.cgi?id=169155
 
