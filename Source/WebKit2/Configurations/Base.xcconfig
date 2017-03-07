@@ -113,3 +113,9 @@ FRAMEWORK_CONTENT_DIRECTORY[sdk=macosx*] = Versions/A;
 OTHER_CFLAGS = $(ASAN_OTHER_CFLAGS);
 OTHER_CPLUSPLUSFLAGS = $(ASAN_OTHER_CPLUSPLUSFLAGS) -isystem $(SDKROOT)/System/Library/Frameworks/System.framework/PrivateHeaders;
 OTHER_LDFLAGS = $(ASAN_OTHER_LDFLAGS);
+
+SUPPORTS_TEXT_BASED_API[sdk=iphone*] = $(USE_INTERNAL_SDK);
+SUPPORTS_TEXT_BASED_API[sdk=appletv*] = NO;
+SUPPORTS_TEXT_BASED_API[sdk=watch*] = NO;
+OTHER_TAPI_FLAGS[sdk=iphone*] = -x objective-c++ -std=c++11 -fno-rtti;
+TAPI_VERIFY_MODE[sdk=iphone*] = Pedantic;

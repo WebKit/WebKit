@@ -1,3 +1,14 @@
+2017-03-06  Aakash Jain  <aakash_jain@apple.com>
+
+        Enable SUPPORTS_TEXT_BASED_API in WebKit2 for iOS
+        https://bugs.webkit.org/show_bug.cgi?id=169233
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Configurations/Base.xcconfig: Enable SUPPORTS_TEXT_BASED_API.
+        * Configurations/WebKit.xcconfig: Pass information to TAPI about reexporting WebKitLegacy and few extra headers.
+        * WebKit2.xcodeproj/project.pbxproj: Run scripts which are run for installhdrs phase for installapi phase as well.
+
 2017-03-06  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] Expose API::InjectedBundle::EditorClient::didChange via the Objective-C bundle SPI
