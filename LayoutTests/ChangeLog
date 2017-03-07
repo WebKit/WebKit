@@ -1,3 +1,18 @@
+2017-03-07  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        Move webrtc/descriptionGetters.html to webrtc/libwebrtc/descriptionGetters.html
+        https://bugs.webkit.org/show_bug.cgi?id=169216
+
+        Unreviewed test gardening.
+
+        Move the test webrtc/descriptionGetters.html under the directory webrtc/libwebrtc
+        because its still not testing the spec, but the current libwebrtc based implementation.
+
+        This way the test is skipped on the GTK+ port (The whole directory webrtc/libwebrtc is skipped).
+
+        * webrtc/libwebrtc/descriptionGetters-expected.txt: Renamed from LayoutTests/webrtc/descriptionGetters-expected.txt.
+        * webrtc/libwebrtc/descriptionGetters.html: Renamed from LayoutTests/webrtc/descriptionGetters.html.
+
 2017-03-07  Youenn Fablet  <youenn@apple.com>
 
         Expose WebRTC current/pending description getters
