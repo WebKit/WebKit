@@ -127,6 +127,7 @@ static inline void executeInsertTask(HTMLConstructionSiteTask& task)
 static inline void executeReparentTask(HTMLConstructionSiteTask& task)
 {
     ASSERT(task.operation == HTMLConstructionSiteTask::Reparent);
+    ASSERT(!task.nextChild);
 
     if (auto* parent = task.child->parentNode())
         parent->parserRemoveChild(*task.child);
@@ -147,12 +148,16 @@ static inline void executeInsertAlreadyParsedChildTask(HTMLConstructionSiteTask&
     if (task.child->parentNode())
         return;
 
+    if (task.nextChild && task.nextChild->parentNode() != task.parent)
+        return;
+
     insert(task);
 }
 
 static inline void executeTakeAllChildrenAndReparentTask(HTMLConstructionSiteTask& task)
 {
     ASSERT(task.operation == HTMLConstructionSiteTask::TakeAllChildrenAndReparent);
+    ASSERT(!task.nextChild);
 
     auto* furthestBlock = task.oldParent();
     task.parent->takeAllChildrenFrom(furthestBlock);

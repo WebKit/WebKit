@@ -1,3 +1,17 @@
+2017-03-06  Brent Fulgham  <bfulgham@apple.com>
+
+        Validate DOM after potentially destructive actions during parser insert operations
+        https://bugs.webkit.org/show_bug.cgi?id=169222
+        <rdar://problem/30689729>
+
+        Reviewed by Ryosuke Niwa.
+
+        This change merges a Blink test case from:
+        <https://src.chromium.org/viewvc/blink?view=revision&revision=200690>        
+
+        * fast/parser/scriptexec-during-parserInsertBefore-expected.txt: Added.
+        * fast/parser/scriptexec-during-parserInsertBefore.html: Added.
+
 2017-03-06  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Update isEmojiGroupCandidate() to the latest version of Unicode
