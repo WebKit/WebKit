@@ -8,6 +8,7 @@ CONSOLE MESSAGE: line 251: callback not yet supported
 HTML IDL tests
 
 
+PASS Test driver 
 PASS NodeList must be primary interface of document.getElementsByName("name") 
 PASS Stringification of document.getElementsByName("name") 
 PASS NodeList interface: document.getElementsByName("name") must inherit property "item" with the proper type (0) 
@@ -937,7 +938,6 @@ PASS HTMLElement interface: operation blur()
 PASS HTMLElement interface: attribute accessKey 
 FAIL HTMLElement interface: attribute accessKeyLabel assert_true: The prototype object must have a property "accessKeyLabel" expected true got false
 PASS HTMLElement interface: attribute draggable 
-FAIL HTMLElement interface: attribute dropzone assert_true: The prototype object must have a property "dropzone" expected true got false
 FAIL HTMLElement interface: attribute contextMenu assert_true: The prototype object must have a property "contextMenu" expected true got false
 PASS HTMLElement interface: attribute spellcheck 
 FAIL HTMLElement interface: operation forceSpellCheck() assert_own_property: interface prototype object missing non-static operation expected property "forceSpellCheck" missing
@@ -1023,77 +1023,76 @@ PASS HTMLElement interface: document.createElement("noscript") must inherit prop
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "accessKey" with the proper type (10) 
 FAIL HTMLElement interface: document.createElement("noscript") must inherit property "accessKeyLabel" with the proper type (11) assert_inherits: property "accessKeyLabel" not found in prototype chain
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "draggable" with the proper type (12) 
-FAIL HTMLElement interface: document.createElement("noscript") must inherit property "dropzone" with the proper type (13) assert_inherits: property "dropzone" not found in prototype chain
-FAIL HTMLElement interface: document.createElement("noscript") must inherit property "contextMenu" with the proper type (14) assert_inherits: property "contextMenu" not found in prototype chain
-PASS HTMLElement interface: document.createElement("noscript") must inherit property "spellcheck" with the proper type (15) 
-FAIL HTMLElement interface: document.createElement("noscript") must inherit property "forceSpellCheck" with the proper type (16) assert_inherits: property "forceSpellCheck" not found in prototype chain
-PASS HTMLElement interface: document.createElement("noscript") must inherit property "innerText" with the proper type (17) 
-PASS HTMLElement interface: document.createElement("noscript") must inherit property "onabort" with the proper type (18) 
-FAIL HTMLElement interface: document.createElement("noscript") must inherit property "onauxclick" with the proper type (19) assert_inherits: property "onauxclick" not found in prototype chain
-PASS HTMLElement interface: document.createElement("noscript") must inherit property "onblur" with the proper type (20) 
-FAIL HTMLElement interface: document.createElement("noscript") must inherit property "oncancel" with the proper type (21) assert_inherits: property "oncancel" not found in prototype chain
-PASS HTMLElement interface: document.createElement("noscript") must inherit property "oncanplay" with the proper type (22) 
-PASS HTMLElement interface: document.createElement("noscript") must inherit property "oncanplaythrough" with the proper type (23) 
-PASS HTMLElement interface: document.createElement("noscript") must inherit property "onchange" with the proper type (24) 
-PASS HTMLElement interface: document.createElement("noscript") must inherit property "onclick" with the proper type (25) 
-FAIL HTMLElement interface: document.createElement("noscript") must inherit property "onclose" with the proper type (26) assert_inherits: property "onclose" not found in prototype chain
-PASS HTMLElement interface: document.createElement("noscript") must inherit property "oncontextmenu" with the proper type (27) 
-PASS HTMLElement interface: document.createElement("noscript") must inherit property "oncuechange" with the proper type (28) 
-PASS HTMLElement interface: document.createElement("noscript") must inherit property "ondblclick" with the proper type (29) 
-PASS HTMLElement interface: document.createElement("noscript") must inherit property "ondrag" with the proper type (30) 
-PASS HTMLElement interface: document.createElement("noscript") must inherit property "ondragend" with the proper type (31) 
-PASS HTMLElement interface: document.createElement("noscript") must inherit property "ondragenter" with the proper type (32) 
-FAIL HTMLElement interface: document.createElement("noscript") must inherit property "ondragexit" with the proper type (33) assert_inherits: property "ondragexit" not found in prototype chain
-PASS HTMLElement interface: document.createElement("noscript") must inherit property "ondragleave" with the proper type (34) 
-PASS HTMLElement interface: document.createElement("noscript") must inherit property "ondragover" with the proper type (35) 
-PASS HTMLElement interface: document.createElement("noscript") must inherit property "ondragstart" with the proper type (36) 
-PASS HTMLElement interface: document.createElement("noscript") must inherit property "ondrop" with the proper type (37) 
-PASS HTMLElement interface: document.createElement("noscript") must inherit property "ondurationchange" with the proper type (38) 
-PASS HTMLElement interface: document.createElement("noscript") must inherit property "onemptied" with the proper type (39) 
-PASS HTMLElement interface: document.createElement("noscript") must inherit property "onended" with the proper type (40) 
-PASS HTMLElement interface: document.createElement("noscript") must inherit property "onerror" with the proper type (41) 
-PASS HTMLElement interface: document.createElement("noscript") must inherit property "onfocus" with the proper type (42) 
-PASS HTMLElement interface: document.createElement("noscript") must inherit property "oninput" with the proper type (43) 
-PASS HTMLElement interface: document.createElement("noscript") must inherit property "oninvalid" with the proper type (44) 
-PASS HTMLElement interface: document.createElement("noscript") must inherit property "onkeydown" with the proper type (45) 
-PASS HTMLElement interface: document.createElement("noscript") must inherit property "onkeypress" with the proper type (46) 
-PASS HTMLElement interface: document.createElement("noscript") must inherit property "onkeyup" with the proper type (47) 
-PASS HTMLElement interface: document.createElement("noscript") must inherit property "onload" with the proper type (48) 
-PASS HTMLElement interface: document.createElement("noscript") must inherit property "onloadeddata" with the proper type (49) 
-PASS HTMLElement interface: document.createElement("noscript") must inherit property "onloadedmetadata" with the proper type (50) 
-PASS HTMLElement interface: document.createElement("noscript") must inherit property "onloadstart" with the proper type (51) 
-PASS HTMLElement interface: document.createElement("noscript") must inherit property "onmousedown" with the proper type (52) 
-PASS HTMLElement interface: document.createElement("noscript") must inherit property "onmouseenter" with the proper type (53) 
-PASS HTMLElement interface: document.createElement("noscript") must inherit property "onmouseleave" with the proper type (54) 
-PASS HTMLElement interface: document.createElement("noscript") must inherit property "onmousemove" with the proper type (55) 
-PASS HTMLElement interface: document.createElement("noscript") must inherit property "onmouseout" with the proper type (56) 
-PASS HTMLElement interface: document.createElement("noscript") must inherit property "onmouseover" with the proper type (57) 
-PASS HTMLElement interface: document.createElement("noscript") must inherit property "onmouseup" with the proper type (58) 
-PASS HTMLElement interface: document.createElement("noscript") must inherit property "onmousewheel" with the proper type (59) 
-PASS HTMLElement interface: document.createElement("noscript") must inherit property "onpause" with the proper type (60) 
-PASS HTMLElement interface: document.createElement("noscript") must inherit property "onplay" with the proper type (61) 
-PASS HTMLElement interface: document.createElement("noscript") must inherit property "onplaying" with the proper type (62) 
-PASS HTMLElement interface: document.createElement("noscript") must inherit property "onprogress" with the proper type (63) 
-PASS HTMLElement interface: document.createElement("noscript") must inherit property "onratechange" with the proper type (64) 
-PASS HTMLElement interface: document.createElement("noscript") must inherit property "onreset" with the proper type (65) 
-PASS HTMLElement interface: document.createElement("noscript") must inherit property "onresize" with the proper type (66) 
-PASS HTMLElement interface: document.createElement("noscript") must inherit property "onscroll" with the proper type (67) 
-PASS HTMLElement interface: document.createElement("noscript") must inherit property "onseeked" with the proper type (68) 
-PASS HTMLElement interface: document.createElement("noscript") must inherit property "onseeking" with the proper type (69) 
-PASS HTMLElement interface: document.createElement("noscript") must inherit property "onselect" with the proper type (70) 
-FAIL HTMLElement interface: document.createElement("noscript") must inherit property "onshow" with the proper type (71) assert_inherits: property "onshow" not found in prototype chain
-PASS HTMLElement interface: document.createElement("noscript") must inherit property "onstalled" with the proper type (72) 
-PASS HTMLElement interface: document.createElement("noscript") must inherit property "onsubmit" with the proper type (73) 
-PASS HTMLElement interface: document.createElement("noscript") must inherit property "onsuspend" with the proper type (74) 
-PASS HTMLElement interface: document.createElement("noscript") must inherit property "ontimeupdate" with the proper type (75) 
-PASS HTMLElement interface: document.createElement("noscript") must inherit property "ontoggle" with the proper type (76) 
-PASS HTMLElement interface: document.createElement("noscript") must inherit property "onvolumechange" with the proper type (77) 
-PASS HTMLElement interface: document.createElement("noscript") must inherit property "onwaiting" with the proper type (78) 
-PASS HTMLElement interface: document.createElement("noscript") must inherit property "oncopy" with the proper type (79) 
-PASS HTMLElement interface: document.createElement("noscript") must inherit property "oncut" with the proper type (80) 
-PASS HTMLElement interface: document.createElement("noscript") must inherit property "onpaste" with the proper type (81) 
-PASS HTMLElement interface: document.createElement("noscript") must inherit property "contentEditable" with the proper type (82) 
-PASS HTMLElement interface: document.createElement("noscript") must inherit property "isContentEditable" with the proper type (83) 
+FAIL HTMLElement interface: document.createElement("noscript") must inherit property "contextMenu" with the proper type (13) assert_inherits: property "contextMenu" not found in prototype chain
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "spellcheck" with the proper type (14) 
+FAIL HTMLElement interface: document.createElement("noscript") must inherit property "forceSpellCheck" with the proper type (15) assert_inherits: property "forceSpellCheck" not found in prototype chain
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "innerText" with the proper type (16) 
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "onabort" with the proper type (17) 
+FAIL HTMLElement interface: document.createElement("noscript") must inherit property "onauxclick" with the proper type (18) assert_inherits: property "onauxclick" not found in prototype chain
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "onblur" with the proper type (19) 
+FAIL HTMLElement interface: document.createElement("noscript") must inherit property "oncancel" with the proper type (20) assert_inherits: property "oncancel" not found in prototype chain
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "oncanplay" with the proper type (21) 
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "oncanplaythrough" with the proper type (22) 
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "onchange" with the proper type (23) 
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "onclick" with the proper type (24) 
+FAIL HTMLElement interface: document.createElement("noscript") must inherit property "onclose" with the proper type (25) assert_inherits: property "onclose" not found in prototype chain
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "oncontextmenu" with the proper type (26) 
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "oncuechange" with the proper type (27) 
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "ondblclick" with the proper type (28) 
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "ondrag" with the proper type (29) 
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "ondragend" with the proper type (30) 
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "ondragenter" with the proper type (31) 
+FAIL HTMLElement interface: document.createElement("noscript") must inherit property "ondragexit" with the proper type (32) assert_inherits: property "ondragexit" not found in prototype chain
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "ondragleave" with the proper type (33) 
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "ondragover" with the proper type (34) 
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "ondragstart" with the proper type (35) 
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "ondrop" with the proper type (36) 
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "ondurationchange" with the proper type (37) 
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "onemptied" with the proper type (38) 
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "onended" with the proper type (39) 
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "onerror" with the proper type (40) 
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "onfocus" with the proper type (41) 
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "oninput" with the proper type (42) 
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "oninvalid" with the proper type (43) 
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "onkeydown" with the proper type (44) 
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "onkeypress" with the proper type (45) 
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "onkeyup" with the proper type (46) 
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "onload" with the proper type (47) 
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "onloadeddata" with the proper type (48) 
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "onloadedmetadata" with the proper type (49) 
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "onloadstart" with the proper type (50) 
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "onmousedown" with the proper type (51) 
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "onmouseenter" with the proper type (52) 
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "onmouseleave" with the proper type (53) 
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "onmousemove" with the proper type (54) 
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "onmouseout" with the proper type (55) 
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "onmouseover" with the proper type (56) 
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "onmouseup" with the proper type (57) 
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "onmousewheel" with the proper type (58) 
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "onpause" with the proper type (59) 
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "onplay" with the proper type (60) 
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "onplaying" with the proper type (61) 
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "onprogress" with the proper type (62) 
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "onratechange" with the proper type (63) 
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "onreset" with the proper type (64) 
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "onresize" with the proper type (65) 
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "onscroll" with the proper type (66) 
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "onseeked" with the proper type (67) 
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "onseeking" with the proper type (68) 
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "onselect" with the proper type (69) 
+FAIL HTMLElement interface: document.createElement("noscript") must inherit property "onshow" with the proper type (70) assert_inherits: property "onshow" not found in prototype chain
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "onstalled" with the proper type (71) 
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "onsubmit" with the proper type (72) 
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "onsuspend" with the proper type (73) 
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "ontimeupdate" with the proper type (74) 
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "ontoggle" with the proper type (75) 
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "onvolumechange" with the proper type (76) 
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "onwaiting" with the proper type (77) 
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "oncopy" with the proper type (78) 
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "oncut" with the proper type (79) 
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "onpaste" with the proper type (80) 
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "contentEditable" with the proper type (81) 
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "isContentEditable" with the proper type (82) 
 PASS Element interface: document.createElement("noscript") must inherit property "namespaceURI" with the proper type (0) 
 PASS Element interface: document.createElement("noscript") must inherit property "prefix" with the proper type (1) 
 PASS Element interface: document.createElement("noscript") must inherit property "localName" with the proper type (2) 
@@ -5026,15 +5025,15 @@ PASS Window interface: attribute onpageshow
 PASS Window interface: attribute onpopstate 
 PASS Window interface: attribute onstorage 
 PASS Window interface: attribute onunload 
+FAIL Window interface: attribute origin assert_own_property: The global object must have a property "origin" expected property "origin" missing
 PASS Window interface: operation btoa(DOMString) 
 PASS Window interface: operation atob(DOMString) 
-PASS Window interface: operation setTimeout(Function,long,any) 
-PASS Window interface: operation setTimeout(DOMString,long,any) 
+PASS Window interface: operation setTimeout(TimerHandler,long,any) 
 PASS Window interface: operation clearTimeout(long) 
-PASS Window interface: operation setInterval(Function,long,any) 
-PASS Window interface: operation setInterval(DOMString,long,any) 
+PASS Window interface: operation setInterval(TimerHandler,long,any) 
 PASS Window interface: operation clearInterval(long) 
-FAIL Window interface: operation createImageBitmap(ImageBitmapSource,long,long,long,long) assert_own_property: global object missing non-static operation expected property "createImageBitmap" missing
+FAIL Window interface: operation createImageBitmap(ImageBitmapSource,ImageBitmapOptions) assert_own_property: global object missing non-static operation expected property "createImageBitmap" missing
+FAIL Window interface: operation createImageBitmap(ImageBitmapSource,long,long,long,long,ImageBitmapOptions) assert_own_property: global object missing non-static operation expected property "createImageBitmap" missing
 PASS Window interface: attribute sessionStorage 
 PASS Window interface: attribute localStorage 
 PASS Window must be primary interface of window 
@@ -5154,24 +5153,23 @@ PASS Window interface: window must inherit property "onpageshow" with the proper
 PASS Window interface: window must inherit property "onpopstate" with the proper type (109) 
 PASS Window interface: window must inherit property "onstorage" with the proper type (110) 
 PASS Window interface: window must inherit property "onunload" with the proper type (111) 
-PASS Window interface: window must inherit property "btoa" with the proper type (112) 
+FAIL Window interface: window must inherit property "origin" with the proper type (112) assert_own_property: expected property "origin" missing
+PASS Window interface: window must inherit property "btoa" with the proper type (113) 
 PASS Window interface: calling btoa(DOMString) on window with too few arguments must throw TypeError 
-PASS Window interface: window must inherit property "atob" with the proper type (113) 
+PASS Window interface: window must inherit property "atob" with the proper type (114) 
 PASS Window interface: calling atob(DOMString) on window with too few arguments must throw TypeError 
-PASS Window interface: window must inherit property "setTimeout" with the proper type (114) 
-PASS Window interface: calling setTimeout(Function,long,any) on window with too few arguments must throw TypeError 
 PASS Window interface: window must inherit property "setTimeout" with the proper type (115) 
-PASS Window interface: calling setTimeout(DOMString,long,any) on window with too few arguments must throw TypeError 
+PASS Window interface: calling setTimeout(TimerHandler,long,any) on window with too few arguments must throw TypeError 
 PASS Window interface: window must inherit property "clearTimeout" with the proper type (116) 
 PASS Window interface: calling clearTimeout(long) on window with too few arguments must throw TypeError 
 PASS Window interface: window must inherit property "setInterval" with the proper type (117) 
-PASS Window interface: calling setInterval(Function,long,any) on window with too few arguments must throw TypeError 
-PASS Window interface: window must inherit property "setInterval" with the proper type (118) 
-PASS Window interface: calling setInterval(DOMString,long,any) on window with too few arguments must throw TypeError 
-PASS Window interface: window must inherit property "clearInterval" with the proper type (119) 
+PASS Window interface: calling setInterval(TimerHandler,long,any) on window with too few arguments must throw TypeError 
+PASS Window interface: window must inherit property "clearInterval" with the proper type (118) 
 PASS Window interface: calling clearInterval(long) on window with too few arguments must throw TypeError 
+FAIL Window interface: window must inherit property "createImageBitmap" with the proper type (119) assert_own_property: expected property "createImageBitmap" missing
+FAIL Window interface: calling createImageBitmap(ImageBitmapSource,ImageBitmapOptions) on window with too few arguments must throw TypeError assert_own_property: expected property "createImageBitmap" missing
 FAIL Window interface: window must inherit property "createImageBitmap" with the proper type (120) assert_own_property: expected property "createImageBitmap" missing
-FAIL Window interface: calling createImageBitmap(ImageBitmapSource,long,long,long,long) on window with too few arguments must throw TypeError assert_own_property: expected property "createImageBitmap" missing
+FAIL Window interface: calling createImageBitmap(ImageBitmapSource,long,long,long,long,ImageBitmapOptions) on window with too few arguments must throw TypeError assert_own_property: expected property "createImageBitmap" missing
 PASS Window interface: window must inherit property "sessionStorage" with the proper type (121) 
 PASS Window interface: window must inherit property "localStorage" with the proper type (122) 
 PASS EventTarget interface: window must inherit property "addEventListener" with the proper type (0) 
@@ -5474,7 +5472,36 @@ PASS MessageEvent interface: attribute origin
 PASS MessageEvent interface: attribute lastEventId 
 PASS MessageEvent interface: attribute source 
 PASS MessageEvent interface: attribute ports 
-FAIL MessageEvent interface: operation initMessageEvent(DOMString,boolean,boolean,any,DOMString,DOMString,[object Object],[object Object],[object Object]) assert_equals: property has wrong .length expected 8 but got 0
+PASS MessageEvent interface: operation initMessageEvent(DOMString,boolean,boolean,any,DOMString,DOMString,[object Object],[object Object],[object Object]) 
+PASS MessageEvent must be primary interface of new MessageEvent("message", { data: 5 }) 
+PASS Stringification of new MessageEvent("message", { data: 5 }) 
+PASS MessageEvent interface: new MessageEvent("message", { data: 5 }) must inherit property "data" with the proper type (0) 
+PASS MessageEvent interface: new MessageEvent("message", { data: 5 }) must inherit property "origin" with the proper type (1) 
+PASS MessageEvent interface: new MessageEvent("message", { data: 5 }) must inherit property "lastEventId" with the proper type (2) 
+PASS MessageEvent interface: new MessageEvent("message", { data: 5 }) must inherit property "source" with the proper type (3) 
+FAIL MessageEvent interface: new MessageEvent("message", { data: 5 }) must inherit property "ports" with the proper type (4) Unrecognized type [object Object]
+PASS MessageEvent interface: new MessageEvent("message", { data: 5 }) must inherit property "initMessageEvent" with the proper type (5) 
+PASS MessageEvent interface: calling initMessageEvent(DOMString,boolean,boolean,any,DOMString,DOMString,[object Object],[object Object],[object Object]) on new MessageEvent("message", { data: 5 }) with too few arguments must throw TypeError 
+PASS Event interface: new MessageEvent("message", { data: 5 }) must inherit property "type" with the proper type (0) 
+PASS Event interface: new MessageEvent("message", { data: 5 }) must inherit property "target" with the proper type (1) 
+PASS Event interface: new MessageEvent("message", { data: 5 }) must inherit property "currentTarget" with the proper type (2) 
+PASS Event interface: new MessageEvent("message", { data: 5 }) must inherit property "NONE" with the proper type (3) 
+PASS Event interface: new MessageEvent("message", { data: 5 }) must inherit property "CAPTURING_PHASE" with the proper type (4) 
+PASS Event interface: new MessageEvent("message", { data: 5 }) must inherit property "AT_TARGET" with the proper type (5) 
+PASS Event interface: new MessageEvent("message", { data: 5 }) must inherit property "BUBBLING_PHASE" with the proper type (6) 
+PASS Event interface: new MessageEvent("message", { data: 5 }) must inherit property "eventPhase" with the proper type (7) 
+PASS Event interface: new MessageEvent("message", { data: 5 }) must inherit property "stopPropagation" with the proper type (8) 
+PASS Event interface: new MessageEvent("message", { data: 5 }) must inherit property "stopImmediatePropagation" with the proper type (9) 
+PASS Event interface: new MessageEvent("message", { data: 5 }) must inherit property "bubbles" with the proper type (10) 
+PASS Event interface: new MessageEvent("message", { data: 5 }) must inherit property "cancelable" with the proper type (11) 
+PASS Event interface: new MessageEvent("message", { data: 5 }) must inherit property "preventDefault" with the proper type (12) 
+PASS Event interface: new MessageEvent("message", { data: 5 }) must inherit property "defaultPrevented" with the proper type (13) 
+PASS Event interface: new MessageEvent("message", { data: 5 }) must have own property "isTrusted" 
+PASS Event interface: new MessageEvent("message", { data: 5 }) must inherit property "timeStamp" with the proper type (15) 
+PASS Event interface: new MessageEvent("message", { data: 5 }) must inherit property "initEvent" with the proper type (16) 
+FAIL Event interface: calling initEvent(DOMString,boolean,boolean) on new MessageEvent("message", { data: 5 }) with too few arguments must throw TypeError assert_throws: Called with 1 arguments function "function () {
+            fn.apply(obj, args);
+        }" did not throw
 PASS EventSource interface: existence and properties of interface object 
 PASS EventSource interface object length 
 PASS EventSource interface object name 

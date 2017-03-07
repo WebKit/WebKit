@@ -1,3 +1,5 @@
 
-PASS CustomEvent 
+PASS CustomEvent dispatching. 
+PASS First parameter to initCustomEvent should be mandatory. 
+PASS initCustomEvent's default parameter values. 
 

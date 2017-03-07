@@ -140,11 +140,6 @@ static JSC::JSValue handleInitMessageEvent(JSMessageEvent* jsEvent, JSC::ExecSta
     return jsUndefined();
 }
 
-JSC::JSValue JSMessageEvent::initMessageEvent(JSC::ExecState& state)
-{
-    return handleInitMessageEvent(this, state);
-}
-
 JSC::JSValue JSMessageEvent::webkitInitMessageEvent(JSC::ExecState& state)
 {
     return handleInitMessageEvent(this, state);
