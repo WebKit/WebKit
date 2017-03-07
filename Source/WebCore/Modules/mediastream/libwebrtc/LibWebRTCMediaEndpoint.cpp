@@ -101,9 +101,29 @@ static inline RefPtr<RTCSessionDescription> fromSessionDescription(const webrtc:
     return RTCSessionDescription::create(fromSessionDescriptionType(*description), WTFMove(sdpString));
 }
 
+// FIXME: We might want to create a new object only if the session actually changed for all description getters.
+RefPtr<RTCSessionDescription> LibWebRTCMediaEndpoint::currentLocalDescription() const
+{
+    return fromSessionDescription(m_backend->current_local_description());
+}
+
+RefPtr<RTCSessionDescription> LibWebRTCMediaEndpoint::currentRemoteDescription() const
+{
+    return fromSessionDescription(m_backend->current_remote_description());
+}
+
+RefPtr<RTCSessionDescription> LibWebRTCMediaEndpoint::pendingLocalDescription() const
+{
+    return fromSessionDescription(m_backend->pending_local_description());
+}
+
+RefPtr<RTCSessionDescription> LibWebRTCMediaEndpoint::pendingRemoteDescription() const
+{
+    return fromSessionDescription(m_backend->pending_remote_description());
+}
+
 RefPtr<RTCSessionDescription> LibWebRTCMediaEndpoint::localDescription() const
 {
-    // FIXME: We might want to create a new object only if the session actually changed.
     return fromSessionDescription(m_backend->local_description());
 }
 

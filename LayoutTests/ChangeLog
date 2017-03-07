@@ -1,3 +1,13 @@
+2017-03-07  Youenn Fablet  <youenn@apple.com>
+
+        Expose WebRTC current/pending description getters
+        https://bugs.webkit.org/show_bug.cgi?id=169216
+
+        Reviewed by Alex Christensen.
+
+        * webrtc/descriptionGetters-expected.txt: Added.
+        * webrtc/descriptionGetters.html: Added.
+
 2017-03-07  Chris Dumez  <cdumez@apple.com>
 
         Align initEvent / initCustomEvent / initMessageEvent with the latest specification

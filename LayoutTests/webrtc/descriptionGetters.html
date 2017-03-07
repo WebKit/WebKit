@@ -1,0 +1,84 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Testing basic video exchange from offerer to receiver</title>
+        <script src="../resources/testharness.js"></script>
+        <script src="../resources/testharnessreport.js"></script>
+    </head>
+    <body>
+        <script>
+if (window.testRunner)
+    testRunner.setUserMediaPermission(true);
+
+promise_test((test) => {
+     if (window.internals)
+     internals.useMockRTCPeerConnectionFactory("TwoRealPeerConnections");
+     
+     var localConnection = new RTCPeerConnection();
+     var remoteConnection = new RTCPeerConnection();
+     var currentSDP;
+     return navigator.mediaDevices.getUserMedia({ video: true}).then((stream) => {
+
+        localConnection.addStream(stream);
+        return localConnection.createOffer();
+    }).then((desc) => {
+        currentSDP = desc.sdp;
+
+        assert_equals(localConnection.currentLocalDescription, null);
+        assert_equals(localConnection.pendingLocalDescription, null);
+        assert_equals(localConnection.localDescription, null);
+
+        assert_equals(remoteConnection.currentRemoteDescription, null);
+        assert_equals(remoteConnection.pendingRemoteDescription, null);
+        assert_equals(remoteConnection.remoteDescription, null);
+
+        localDescriptionPromise = localConnection.setLocalDescription(desc);
+        remoteDescriptionPromise = remoteConnection.setRemoteDescription(desc);
+
+        assert_equals(localConnection.currentLocalDescription, null);
+        assert_equals(localConnection.pendingLocalDescription.sdp, currentSDP);
+        assert_equals(localConnection.localDescription.sdp, currentSDP);
+
+        assert_equals(remoteConnection.currentRemoteDescription, null);
+        assert_equals(remoteConnection.pendingRemoteDescription.sdp, currentSDP);
+        assert_equals(remoteConnection.remoteDescription.sdp, currentSDP);
+
+        return Promise.all([localDescriptionPromise, remoteDescriptionPromise]);
+    }).then(() => {
+        return remoteConnection.createAnswer();
+    }).then((desc) => {       
+        assert_equals(localConnection.currentLocalDescription, null);
+        assert_equals(localConnection.pendingLocalDescription.sdp, currentSDP);
+        assert_equals(localConnection.localDescription.sdp, currentSDP);
+
+        localConnection.setRemoteDescription(desc);
+
+        assert_equals(localConnection.currentLocalDescription.sdp, currentSDP);
+        assert_equals(localConnection.pendingLocalDescription, null);
+        assert_equals(localConnection.localDescription.sdp, currentSDP);
+
+        assert_equals(remoteConnection.currentRemoteDescription, null);
+        assert_equals(remoteConnection.pendingRemoteDescription.sdp, currentSDP);
+        assert_equals(remoteConnection.remoteDescription.sdp, currentSDP);
+
+        remoteConnection.setLocalDescription(desc);
+
+        assert_equals(remoteConnection.currentRemoteDescription.sdp, currentSDP);
+        assert_equals(remoteConnection.pendingRemoteDescription, null);
+        assert_equals(remoteConnection.remoteDescription.sdp, currentSDP);
+
+        localConnection.createDataChannel("test");
+
+        assert_equals(localConnection.currentLocalDescription.sdp, currentSDP);
+        assert_equals(localConnection.pendingLocalDescription, null);
+        assert_equals(localConnection.localDescription.sdp, currentSDP);
+
+        assert_equals(remoteConnection.currentRemoteDescription.sdp, currentSDP);
+        assert_equals(remoteConnection.pendingRemoteDescription, null);
+        assert_equals(remoteConnection.remoteDescription.sdp, currentSDP);
+    });
+}, "description getters when changing description from video to video & data channel");
+        </script>
+    </body>
+</html>

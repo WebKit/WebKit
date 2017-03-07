@@ -74,6 +74,10 @@ public:
 
     RefPtr<RTCSessionDescription> localDescription() const;
     RefPtr<RTCSessionDescription> remoteDescription() const;
+    RefPtr<RTCSessionDescription> currentLocalDescription() const;
+    RefPtr<RTCSessionDescription> currentRemoteDescription() const;
+    RefPtr<RTCSessionDescription> pendingLocalDescription() const;
+    RefPtr<RTCSessionDescription> pendingRemoteDescription() const;
 
 private:
     LibWebRTCMediaEndpoint(LibWebRTCPeerConnectionBackend&, LibWebRTCProvider&);
