@@ -661,7 +661,7 @@ SynthesisPair computeNecessarySynthesis(CTFontRef font, const FontDescription& f
     CTFontSymbolicTraits desiredTraits = computeTraits(fontDescription);
 
     CTFontSymbolicTraits actualTraits = 0;
-    if (isFontWeightBold(fontDescription.weight()) || fontDescription.italic())
+    if (isFontWeightBold(fontDescription.weight()) || isItalic(fontDescription.italic()))
         actualTraits = CTFontGetSymbolicTraits(font);
 
     bool needsSyntheticBold = (fontDescription.fontSynthesis() & FontSynthesisWeight) && (desiredTraits & kCTFontTraitBold) && !(actualTraits & kCTFontTraitBold);

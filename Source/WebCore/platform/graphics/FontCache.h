@@ -72,13 +72,12 @@ struct FontDescriptionKey {
 
     FontDescriptionKey(const FontDescription& description)
         : m_size(description.computedPixelSize())
-        , m_weight(description.weight())
+        , m_fontSelectionRequest(description.fontSelectionRequest())
         , m_flags(makeFlagsKey(description))
         , m_featureSettings(description.featureSettings())
 #if ENABLE(VARIATION_FONTS)
         , m_variationSettings(description.variationSettings())
 #endif
-        , m_stretch(description.stretch().rawValue())
     { }
 
     explicit FontDescriptionKey(WTF::HashTableDeletedValueType)
@@ -88,8 +87,7 @@ struct FontDescriptionKey {
     bool operator==(const FontDescriptionKey& other) const
     {
         return m_size == other.m_size
-            && m_weight == other.m_weight
-            && m_stretch == other.m_stretch
+            && m_fontSelectionRequest == other.m_fontSelectionRequest
             && m_flags == other.m_flags
 #if ENABLE(VARIATION_FONTS)
             && m_variationSettings == other.m_variationSettings
@@ -108,8 +106,9 @@ struct FontDescriptionKey {
     {
         IntegerHasher hasher;
         hasher.add(m_size);
-        hasher.add(m_weight);
-        hasher.add(m_stretch);
+        hasher.add(m_fontSelectionRequest.weight);
+        hasher.add(m_fontSelectionRequest.width);
+        hasher.add(m_fontSelectionRequest.slope);
         for (unsigned flagItem : m_flags)
             hasher.add(flagItem);
         hasher.add(m_featureSettings.hash());
@@ -129,7 +128,6 @@ private:
             | static_cast<unsigned>(description.widthVariant()) << 4
             | static_cast<unsigned>(description.nonCJKGlyphOrientation()) << 3
             | static_cast<unsigned>(description.orientation()) << 2
-            | static_cast<unsigned>(description.italic()) << 1
             | static_cast<unsigned>(description.renderingMode());
         unsigned second = static_cast<unsigned>(description.variantEastAsianRuby()) << 27
             | static_cast<unsigned>(description.variantEastAsianWidth()) << 25
@@ -153,13 +151,12 @@ private:
 
     // FontCascade::locale() is explicitly not included in this struct.
     unsigned m_size { 0 };
-    unsigned m_weight { 0 };
+    FontSelectionRequest m_fontSelectionRequest;
     std::array<unsigned, 2> m_flags {{ 0, 0 }};
     FontFeatureSettings m_featureSettings;
 #if ENABLE(VARIATION_FONTS)
     FontVariationSettings m_variationSettings;
 #endif
-    uint16_t m_stretch { 0 };
 };
 
 struct FontDescriptionKeyHash {
