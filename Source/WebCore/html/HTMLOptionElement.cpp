@@ -276,6 +276,14 @@ String HTMLOptionElement::label() const
     return collectOptionInnerText().stripWhiteSpace(isHTMLSpace).simplifyWhiteSpace(isHTMLSpace);
 }
 
+// Same as label() but ignores the label content attribute in quirks mode for compatibility with other browsers.
+String HTMLOptionElement::displayLabel() const
+{
+    if (document().inQuirksMode())
+        return collectOptionInnerText().stripWhiteSpace(isHTMLSpace).simplifyWhiteSpace(isHTMLSpace);
+    return label();
+}
+
 void HTMLOptionElement::setLabel(const String& label)
 {
     setAttributeWithoutSynchronization(labelAttr, label);
@@ -295,8 +303,8 @@ String HTMLOptionElement::textIndentedToRespectGroupLabel() const
 {
     ContainerNode* parent = parentNode();
     if (is<HTMLOptGroupElement>(parent))
-        return "    " + label();
-    return label();
+        return "    " + displayLabel();
+    return displayLabel();
 }
 
 bool HTMLOptionElement::isDisabledFormControl() const

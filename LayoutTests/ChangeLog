@@ -1,3 +1,20 @@
+2017-03-07  Chris Dumez  <cdumez@apple.com>
+
+        Label of an <option> element should not be displayed in quirks mode
+        https://bugs.webkit.org/show_bug.cgi?id=169296
+        <rdar://problem/30900751>
+
+        Reviewed by Simon Fraser.
+
+        Add layout test coverage.
+
+        * fast/dom/HTMLOptionElement/option-label-quirksmode-expected.html: Added.
+        * fast/dom/HTMLOptionElement/option-label-quirksmode.html: Added.
+        * fast/dom/HTMLOptionElement/option-label-quirksmode2-expected.html: Added.
+        * fast/dom/HTMLOptionElement/option-label-quirksmode2.html: Added.
+        * fast/dom/HTMLOptionElement/option-label-strictmode-expected.html: Added.
+        * fast/dom/HTMLOptionElement/option-label-strictmode.html: Added.
+
 2017-03-07  Ryan Haddad  <ryanhaddad@apple.com>
 
         Mark media/modern-media-controls/seek-backward-support/seek-backward-support.html as flaky.
