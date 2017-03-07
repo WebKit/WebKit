@@ -69,10 +69,12 @@ class TestDownloader(object):
             self.paths_to_skip.extend([self._filesystem.join(test_repository['name'], path) for path in test_repository['paths_to_skip']])
             self.paths_to_import.extend([self._filesystem.join(test_repository['name'], path) for path in test_repository['paths_to_import']])
 
+        webkit_finder = WebKitFinder(self._filesystem)
+        self.import_expectations_path = webkit_finder.path_from_webkit_base('LayoutTests', 'imported', 'w3c', 'resources', 'import-expectations.json')
+        if not self._filesystem.isfile(self.import_expectations_path):
+            _log.warning('Unable to read import expectation file: %s' % self.import_expectations_path)
         if not self._options.import_all:
-            webkit_finder = WebKitFinder(self._filesystem)
-            import_expectations_path = webkit_finder.path_from_webkit_base('LayoutTests', 'imported', 'w3c', 'resources', 'import-expectations.json')
-            self._init_paths_from_expectations(import_expectations_path)
+            self._init_paths_from_expectations()
 
     def git(self, test_repository):
         return Git(test_repository, None, executive=self._host.executive, filesystem=self._filesystem)
@@ -91,18 +93,21 @@ class TestDownloader(object):
             checkout_arguments += ['-q']
         git._run_git(checkout_arguments)
 
-    def _init_paths_from_expectations(self, file_path):
-        if not self._filesystem.isfile(file_path):
-            _log.warning('Unable to read import expectation file: %s' % file_path)
-            return
-        import_lines = json.loads(self._filesystem.read_text_file(file_path))
-        for line in import_lines:
-            if line[1] == 'skip':
-                self.paths_to_skip.append(line[0])
-            elif line[1] == 'import':
-                self.paths_to_import.append(line[0])
+    def _init_paths_from_expectations(self):
+        import_lines = json.loads(self._filesystem.read_text_file(self.import_expectations_path))
+        for path, policy in import_lines.iteritems():
+            if policy == 'skip':
+                self.paths_to_skip.append(path)
+            elif policy == 'import':
+                self.paths_to_import.append(path)
             else:
-                _log.warning('Problem reading import lines ' + line[0])
+                _log.warning('Problem reading import lines ' + path)
+
+    def update_import_expectations(self, test_paths):
+        import_lines = json.loads(self._filesystem.read_text_file(self.import_expectations_path))
+        for path in test_paths:
+            import_lines[path] = 'import'
+        self._filesystem.write_text_file(self.import_expectations_path, json.dumps(import_lines, sort_keys=True, indent=4))
 
     def _add_test_suite_paths(self, test_paths, directory, webkit_path):
         for name in self._filesystem.listdir(directory):

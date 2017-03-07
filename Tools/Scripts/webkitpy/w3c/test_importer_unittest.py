@@ -62,7 +62,13 @@ FAKE_REPOSITORY = {
         "import_options": ["generate_git_submodules_description", "generate_gitignore", "generate_init_py"]
     }
 ]
-''' }
+''',
+    '/mock-checkout/LayoutTests/imported/w3c/resources/import-expectations.json': '''
+{
+    "test1": "import",
+    "test2": "skip"
+}'''
+}
 
 
 class TestImporterTest(unittest.TestCase):
@@ -184,11 +190,11 @@ class TestImporterTest(unittest.TestCase):
      }
 ]''',
             '/mock-checkout/LayoutTests/imported/w3c/resources/import-expectations.json': '''
-[
-["web-platform-tests/dir-to-skip", "skip"],
-["web-platform-tests/dir-to-skip/dir-to-import", "import"],
-["web-platform-tests/dir-to-skip/file-to-import.html", "import"]
-]''',
+{
+"web-platform-tests/dir-to-skip": "skip",
+"web-platform-tests/dir-to-skip/dir-to-import": "import",
+"web-platform-tests/dir-to-skip/file-to-import.html": "import"
+}''',
             '/mock-checkout/WebKitBuild/w3c-tests/web-platform-tests/dir-to-skip/test-to-skip.html': 'to be skipped',
             '/mock-checkout/WebKitBuild/w3c-tests/web-platform-tests/dir-to-skip/dir-to-import/test-to-import.html': 'to be imported',
             '/mock-checkout/WebKitBuild/w3c-tests/web-platform-tests/dir-to-skip/dir-to-not-import/test-to-not-import.html': 'to be skipped',

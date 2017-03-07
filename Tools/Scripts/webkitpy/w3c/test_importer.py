@@ -213,11 +213,7 @@ class TestImporter(object):
         if self._importing_downloaded_tests:
             self.generate_git_submodules_description_for_all_repositories()
 
-        self.check_imported_expectations()
-
-    def check_imported_expectations(self):
-        for path in [path for path in self.test_paths if path in self.test_downloader().paths_to_skip]:
-            _log.warn('Please update LayoutTests/imported/w3c/resources/ImportExpectations to automate importing of ' + path)
+        self.test_downloader().update_import_expectations(self.test_paths)
 
     def generate_git_submodules_description_for_all_repositories(self):
         for test_repository in self._test_downloader.test_repositories:

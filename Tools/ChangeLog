@@ -1,3 +1,22 @@
+2017-03-07  Youenn Fablet  <youennf@gmail.com>
+
+        W3C importer should be able to update the import expectations file
+        https://bugs.webkit.org/show_bug.cgi?id=168037
+
+        Reviewed by Ryosuke Niwa.
+
+        Changing import expectations from an array to a map.
+        Marking all test paths as import and updating import expectations file accordingly.
+
+        * Scripts/webkitpy/w3c/test_downloader.py:
+        (TestDownloader.__init__):
+        (TestDownloader._init_paths_from_expectations):
+        (TestDownloader):
+        (TestDownloader.update_import_expectations):
+        * Scripts/webkitpy/w3c/test_importer.py:
+        (TestImporter.do_import):
+        * Scripts/webkitpy/w3c/test_importer_unittest.py:
+
 2017-03-07  Philip Rogers  <pdr@google.com>
 
         Add pdr to the rendering watchlist
