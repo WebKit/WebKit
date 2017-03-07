@@ -1,3 +1,13 @@
+2017-03-06  Youenn Fablet  <youenn@apple.com>
+
+        Bring back WebKit specific changes to disable temporarily libwebrtc video adaptation
+        https://bugs.webkit.org/show_bug.cgi?id=169229
+
+        Reviewed by Alex Christensen.
+
+        * Source/webrtc/modules/video_coding/video_sender.cc: disabling frame dropping.
+        * Source/webrtc/video/vie_encoder.cc: disabling resolution decrease based on CPU overuse.
+
 2017-03-06  Alex Christensen  <achristensen@webkit.org>
 
         Fix Production libwebrtc build after r213418

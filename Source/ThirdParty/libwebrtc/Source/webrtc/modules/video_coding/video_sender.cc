@@ -108,6 +108,11 @@ int32_t VideoSender::RegisterSendCodec(const VideoCodec* sendCodec,
   }
 
   // If we have screensharing and we have layers, we disable frame dropper.
+#if defined(WEBRTC_WEBKIT_BUILD)
+  // WEBKIT change: the frame dropper does not work consistently. We disable it for now.
+  // FIXME: Investigate why and enable it again. See https://bugs.webkit.org/show_bug.cgi?id=168973.
+  _mediaOpt.EnableFrameDropper(false);
+#else
   bool disable_frame_dropper =
       numLayers > 1 && sendCodec->mode == kScreensharing;
   if (disable_frame_dropper) {
@@ -115,6 +120,7 @@ int32_t VideoSender::RegisterSendCodec(const VideoCodec* sendCodec,
   } else if (frame_dropper_enabled_) {
     _mediaOpt.EnableFrameDropper(true);
   }
+#endif
 
   {
     rtc::CritScope cs(&params_crit_);

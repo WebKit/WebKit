@@ -760,11 +760,17 @@ void ViEEncoder::AdaptDown(AdaptReason reason) {
           scale_counter_[reason] + 1);
       break;
     case kCpu:
+#if defined(WEBRTC_WEBKIT_BUILD)
+      // WEBKIT Change: We disable OveruseDetected for now.
+      // FIXME: Investigate using it. See https://bugs.webkit.org/show_bug.cgi?id=168990.
+      return;
+#else
       if (scale_counter_[reason] >= kMaxCpuDowngrades)
         return;
       // Update stats accordingly.
       stats_proxy_->OnCpuRestrictedResolutionChanged(true);
       break;
+#endif
   }
   ++scale_counter_[reason];
   source_proxy_->RequestResolutionLowerThan(current_pixel_count);
