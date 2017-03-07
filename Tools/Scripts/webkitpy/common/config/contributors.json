@@ -1119,15 +1119,6 @@
       ],
       "status" : "committer"
    },
-   "Charles Wei" : {
-      "emails" : [
-         "charles.wei@torchmobile.com.cn"
-      ],
-      "nicks" : [
-         "cswei"
-      ],
-      "status" : "committer"
-   },
    "Chelsea Pugh" : {
       "emails" : [
          "cpugh@apple.com"
@@ -2592,8 +2583,7 @@
    },
    "Jason Liu" : {
       "emails" : [
-         "jasonliuwebkit@gmail.com",
-         "jason.liu@torchmobile.com.cn"
+         "jasonliuwebkit@gmail.com"
       ],
       "nicks" : [
          "jasonliu"
@@ -2973,8 +2963,7 @@
    },
    "Jonathan Dong" : {
       "emails" : [
-         "jonathan.dong.webkit@gmail.com",
-         "jonathan.dong@torchmobile.com.cn"
+         "jonathan.dong.webkit@gmail.com"
       ],
       "expertise" : "The BlackBerry Port",
       "nicks" : [
@@ -3556,8 +3545,7 @@
          "leoyang@rim.com",
          "leoyang@blackberry.com",
          "leoyang@webkit.org",
-         "leoyang.webkit@gmail.com",
-         "leo.yang@torchmobile.com.cn"
+         "leoyang.webkit@gmail.com"
       ],
       "expertise" : "The BlackBerry Port",
       "nicks" : [
@@ -3794,8 +3782,7 @@
    "Mary Wu" : {
       "emails" : [
          "mawu@blackberry.com",
-         "wwendy2007@gmail.com",
-         "mary.wu@torchmobile.com.cn"
+         "wwendy2007@gmail.com"
       ],
       "nicks" : [
          "marywu"

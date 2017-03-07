@@ -1,3 +1,12 @@
+2017-03-06  Lucas Forschler  <lforschler@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=169234
+        torchmobile.com.cn is no longer a registered domain. These email addresses will bounce, so clean them up.
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2017-03-03  Matt Rajca  <mrajca@apple.com>
 
         Media: notify clients when the user never plays a media element that was prevented from auto-playing
