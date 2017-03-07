@@ -1,3 +1,11 @@
+2017-03-07  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] Mark media/video-buffered.html as flaky.
+
+        Unreviewed test gardening.
+
+        * platform/gtk/TestExpectations:
+
 2017-03-07  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-grid] Mark a few tests from the W3C suite as pass after r213480

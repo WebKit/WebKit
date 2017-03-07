@@ -1511,6 +1511,8 @@ webkit.org/b/163532 plugins/js-from-destroy.html [ Failure Pass ]
 
 webkit.org/b/168780 fast/forms/input-first-letter-edit.html [ ImageOnlyFailure Pass ]
 
+webkit.org/b/116277 media/video-buffered.html [ Pass Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
 #////////////////////////////////////////////////////////////////////////////////////////
