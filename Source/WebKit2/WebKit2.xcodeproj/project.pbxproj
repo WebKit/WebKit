@@ -402,7 +402,7 @@
 		1AB31A9616BC688100F6DBC9 /* StorageManagerMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AB31A9416BC688100F6DBC9 /* StorageManagerMessageReceiver.cpp */; };
 		1AB31A9716BC688100F6DBC9 /* StorageManagerMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AB31A9516BC688100F6DBC9 /* StorageManagerMessages.h */; };
 		1AB40EE51BF677E300BA81BE /* WKMenuItemIdentifiers.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AB40EE31BF677E300BA81BE /* WKMenuItemIdentifiers.mm */; };
-		1AB40EE61BF677E300BA81BE /* WKMenuItemIdentifiersPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AB40EE41BF677E300BA81BE /* WKMenuItemIdentifiersPrivate.h */; };
+		1AB40EE61BF677E300BA81BE /* WKMenuItemIdentifiersPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AB40EE41BF677E300BA81BE /* WKMenuItemIdentifiersPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1AB474D8184D43FD0051B622 /* WKBundlePageLoaderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AB474D7184D43FD0051B622 /* WKBundlePageLoaderClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1AB474DA184D44250051B622 /* WKBundlePageResourceLoadClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AB474D9184D44250051B622 /* WKBundlePageResourceLoadClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1AB474DE184D44590051B622 /* WKBundlePageUIClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AB474DD184D44590051B622 /* WKBundlePageUIClient.h */; settings = {ATTRIBUTES = (Private, ); }; };

@@ -1,3 +1,12 @@
+2017-03-06  Aakash Jain  <aakash_jain@apple.com>
+
+        Make WKMenuItemIdentifiersPrivate.h private header
+        https://bugs.webkit.org/show_bug.cgi?id=168981
+
+        Reviewed by Tim Horton.
+
+        * WebKit2.xcodeproj/project.pbxproj: Made WKMenuItemIdentifiersPrivate.h private.
+
 2017-03-06  Alexey Proskuryakov  <ap@apple.com>
 
         Replace -sub_umbrella linker flag with a build setting
