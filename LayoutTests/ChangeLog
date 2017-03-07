@@ -1,3 +1,11 @@
+2017-03-07  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] ECDH tests from imported/w3c/web-platform-tests/WebCryptoAPI/generateKey fail.
+
+        Unreviewed test gardening.
+
+        * platform/gtk/TestExpectations:
+
 2017-03-06  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Apply well-known-axis variation values at the right time in preparePlatformFont()
