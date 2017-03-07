@@ -1,0 +1,13 @@
+Testing the PlacardSupport behavior when we recover from an error.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS mediaController.controls.showsPlacard is true
+PASS mediaController.controls.children.includes(mediaController.controls.invalidPlacard) is true
+PASS mediaController.controls.showsPlacard is false
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
