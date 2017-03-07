@@ -16,9 +16,9 @@
     
         <h2>About the Tests</h2>
         
-        <p>ARES-6 measures the execution time of JavaScript&#8217;s newest features, including symbols, for-of, arrow functions, Map/Set/WeakMap, let/const, classes, proxies, string interpolation, destructuring, default arguments, spread, tail calls, and generators.</p>
+        <p>ARES-6 measures the execution time of JavaScript&#8217;s newest features, including symbols, for-of, arrow functions, Map/Set/WeakMap, let/const, classes, proxies, string interpolation, destructuring, default arguments, spread, tail calls, and generators. ARES-6 comprises two sub-tests: Air and Basic.</p>
 
-        <p>Air is an ES2015 port of the <a href="https://webkit.org/blog/5852/introducing-the-b3-jit-compiler/">WebKit B3 JIT</a>&#8217;s <a href="https://trac.webkit.org/changeset/201783"><code>Air::allocateStack</code> phase</a>. This code is a heavy user of Map, Set, classes, spread, and for-of. The benchmark runs <code>allocateStack</code> on hot function bodies from other popular JavaScript benchmarks: <code>executeIteration</code> from <a href="https://developers.google.com/octane/">Octane</a>/Gameboy, <code>gaussianBlur</code> from <a href="http://krakenbenchmark.mozilla.org">Kraken</a>, and <code>scanIdentifier</code> from Octane/Typescript. Because metacircularity, the benchmark also runs <code>allocateStack</code> on the largest hot function in Air. <a href="https://trac.webkit.org/browser/trunk/PerformanceTests/ARES-6/Air?rev=211697">Browse the source.</a></p>
+        <p>Air is an ES2015 port of the <a href="https://webkit.org/blog/5852/introducing-the-b3-jit-compiler/">WebKit B3 JIT</a>&#8217;s <a href="https://trac.webkit.org/changeset/201783"><code>Air::allocateStack</code> phase</a>. This code is a heavy user of Map, Set, classes, spread, and for-of. The benchmark runs <code>allocateStack</code> on hot function bodies from other popular JavaScript benchmarks: <code>executeIteration</code> from <a href="https://developers.google.com/octane/">Octane</a>/Gameboy, <code>gaussianBlur</code> from <a href="http://krakenbenchmark.mozilla.org">Kraken</a>, and <code>scanIdentifier</code> from Octane/Typescript. Air also runs <code>allocateStack</code> on a hot function from Air itself. <a href="https://trac.webkit.org/browser/trunk/PerformanceTests/ARES-6/Air?rev=211697">Browse the source.</a></p>
 
         <p>Basic is an <a href="https://trac.webkit.org/changeset/202446">ES2015 implementation</a> of the <a href="http://www.ecma-international.org/publications/files/ECMA-ST-WITHDRAWN/ECMA-55,%201st%20Edition,%20January%201978.pdf">ECMA-55 BASIC standard</a>. BASIC was an interactive language from the start, so our implementation uses generator functions for the entire interpreter. When the BASIC program says <code>INPUT</code>, our interpreter says <code>yield</code>. This allows users of the interpreter to easily integrate it into a runloop. Basic also uses classes, Map, and WeakMap. The benchmark runs a handful of simple programs, the most complex of which finds prime numbers. <a href="https://trac.webkit.org/browser/trunk/PerformanceTests/ARES-6/Basic?rev=211697&order=name">Browse the source.</a></p>
         
@@ -26,8 +26,6 @@
         
         <p>Each ARES-6 sample has 200 iterations of Air and 200 iterations of Basic. ARES-6 runs 10 samples, and reports the average with 95% confidence intervals. Each sample runs in a fresh <code>iframe</code> to simulate some of the effects of page navigation.</p>
 
-        <p>We like making JavaScript run faster, but we didn&#8217;t have any ES2015 code to optimize. ARES-6 is a collection of sample ES2015 code written by the WebKit JavaScript team, which we used to bootstrap our ES2015 optimization efforts.</p>
-        
         <p><a href="index.html" class="button return">Return to Testing</a></p>
 
     </main>
