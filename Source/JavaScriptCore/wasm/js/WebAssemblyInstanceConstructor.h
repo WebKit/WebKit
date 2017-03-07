@@ -32,6 +32,7 @@
 
 namespace JSC {
 
+class JSWebAssemblyModule;
 class WebAssemblyInstancePrototype;
 
 class WebAssemblyInstanceConstructor : public InternalFunction {
@@ -43,6 +44,8 @@ public:
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
     DECLARE_INFO;
+
+    static JSWebAssemblyInstance* createInstance(ExecState*, JSWebAssemblyModule*, JSObject* importObject, Structure*);
 
 protected:
     void finishCreation(VM&, WebAssemblyInstancePrototype*);

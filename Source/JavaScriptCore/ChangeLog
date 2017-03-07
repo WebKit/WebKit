@@ -1,3 +1,30 @@
+2017-03-06  Saam Barati  <sbarati@apple.com>
+
+        WebAssembly: Implement the WebAssembly.instantiate API
+        https://bugs.webkit.org/show_bug.cgi?id=165982
+        <rdar://problem/29760110>
+
+        Reviewed by Keith Miller.
+
+        This patch is a straight forward implementation of the WebAssembly.instantiate
+        API: https://github.com/WebAssembly/design/blob/master/JS.md#webassemblyinstantiate
+        
+        I implemented the API in a synchronous manner. We should make it
+        asynchronous: https://bugs.webkit.org/show_bug.cgi?id=169187
+
+        * wasm/JSWebAssembly.cpp:
+        (JSC::webAssemblyCompileFunc):
+        (JSC::webAssemblyInstantiateFunc):
+        (JSC::JSWebAssembly::finishCreation):
+        * wasm/js/WebAssemblyInstanceConstructor.cpp:
+        (JSC::constructJSWebAssemblyInstance):
+        (JSC::WebAssemblyInstanceConstructor::createInstance):
+        * wasm/js/WebAssemblyInstanceConstructor.h:
+        * wasm/js/WebAssemblyModuleConstructor.cpp:
+        (JSC::constructJSWebAssemblyModule):
+        (JSC::WebAssemblyModuleConstructor::createModule):
+        * wasm/js/WebAssemblyModuleConstructor.h:
+
 2017-03-06  Michael Saboff  <msaboff@apple.com>
 
         Take advantage of fast permissions switching of JIT memory for devices that support it

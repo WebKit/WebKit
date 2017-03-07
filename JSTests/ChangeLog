@@ -1,5 +1,19 @@
 2017-03-06  Saam Barati  <sbarati@apple.com>
 
+        WebAssembly: Implement the WebAssembly.instantiate API
+        https://bugs.webkit.org/show_bug.cgi?id=165982
+        <rdar://problem/29760110>
+
+        Reviewed by Keith Miller.
+
+        * wasm/js-api/web-assembly-instantiate.js: Added.
+        (assert.eq.async.test):
+        (assert.eq):
+        (assert.truthy.async.test):
+        (assert.truthy):
+
+2017-03-06  Saam Barati  <sbarati@apple.com>
+
         Unreviewed. Fix test expected error message.
 
         * wasm/js-api/element.js:

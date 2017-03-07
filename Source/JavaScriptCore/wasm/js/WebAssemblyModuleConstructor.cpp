@@ -60,7 +60,7 @@ static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyModule(ExecState* exec
     auto* structure = InternalFunction::createSubclassStructure(exec, exec->newTarget(), exec->lexicalGlobalObject()->WebAssemblyModuleStructure());
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     throwScope.release();
-    return JSValue::encode(WebAssemblyModuleConstructor::createModule(exec, structure));
+    return JSValue::encode(WebAssemblyModuleConstructor::createModule(exec, exec->argument(0), structure));
 }
 
 static EncodedJSValue JSC_HOST_CALL callJSWebAssemblyModule(ExecState* state)
@@ -70,14 +70,14 @@ static EncodedJSValue JSC_HOST_CALL callJSWebAssemblyModule(ExecState* state)
     return JSValue::encode(throwConstructorCannotBeCalledAsFunctionTypeError(state, scope, "WebAssembly.Module"));
 }
 
-JSValue WebAssemblyModuleConstructor::createModule(ExecState* state, Structure* structure)
+JSValue WebAssemblyModuleConstructor::createModule(ExecState* state, JSValue buffer, Structure* structure)
 {
     VM& vm = state->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     size_t byteOffset;
     size_t byteSize;
-    uint8_t* base = getWasmBufferFromValue(state, state->argument(0), byteOffset, byteSize);
+    uint8_t* base = getWasmBufferFromValue(state, buffer, byteOffset, byteSize);
     RETURN_IF_EXCEPTION(scope, { });
 
     scope.release();

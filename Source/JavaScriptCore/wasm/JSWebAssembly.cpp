@@ -33,6 +33,7 @@
 #include "JSCInlines.h"
 #include "JSPromiseDeferred.h"
 #include "JSWebAssemblyHelpers.h"
+#include "ObjectConstructor.h"
 #include "WasmPlan.h"
 #include "WebAssemblyModuleConstructor.h"
 
@@ -42,6 +43,7 @@ STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSWebAssembly);
 
 EncodedJSValue JSC_HOST_CALL webAssemblyValidateFunc(ExecState*);
 EncodedJSValue JSC_HOST_CALL webAssemblyCompileFunc(ExecState*);
+EncodedJSValue JSC_HOST_CALL webAssemblyInstantiateFunc(ExecState*);
 
 EncodedJSValue JSC_HOST_CALL webAssemblyCompileFunc(ExecState* exec)
 {
@@ -53,7 +55,7 @@ EncodedJSValue JSC_HOST_CALL webAssemblyCompileFunc(ExecState* exec)
 
     // FIXME: Make this truly asynchronous:
     // https://bugs.webkit.org/show_bug.cgi?id=166016
-    JSValue module = WebAssemblyModuleConstructor::createModule(exec, exec->lexicalGlobalObject()->WebAssemblyModuleStructure());
+    JSValue module = WebAssemblyModuleConstructor::createModule(exec, exec->argument(0), exec->lexicalGlobalObject()->WebAssemblyModuleStructure());
     if (Exception* exception = catchScope.exception()) {
         catchScope.clearException();
         promise->reject(exec, exception->value());
@@ -61,6 +63,60 @@ EncodedJSValue JSC_HOST_CALL webAssemblyCompileFunc(ExecState* exec)
     }
 
     promise->resolve(exec, module);
+    return JSValue::encode(promise->promise());
+}
+
+EncodedJSValue JSC_HOST_CALL webAssemblyInstantiateFunc(ExecState* exec)
+{
+    VM& vm = exec->vm();
+    auto catchScope = DECLARE_CATCH_SCOPE(vm);
+
+    // FIXME: Make this API truly asynchronous: https://bugs.webkit.org/show_bug.cgi?id=169187
+
+    JSPromiseDeferred* promise = JSPromiseDeferred::create(exec, exec->lexicalGlobalObject());
+    RETURN_IF_EXCEPTION(catchScope, encodedJSValue());
+
+    auto reject = [&] () {
+        Exception* exception = catchScope.exception();
+        ASSERT(exception);
+        catchScope.clearException();
+        promise->reject(exec, exception->value());
+        return JSValue::encode(promise->promise());
+    };
+
+    JSValue importArgument = exec->argument(1);
+    JSObject* importObject = importArgument.getObject();
+    if (!importArgument.isUndefined() && !importObject) {
+        promise->reject(exec, createTypeError(exec,
+            ASCIILiteral("second argument to WebAssembly.instantiate must be undefined or an Object"), defaultSourceAppender, runtimeTypeForValue(importArgument)));
+        return JSValue::encode(promise->promise());
+    }
+
+    JSValue firstArgument = exec->argument(0);
+    JSValue module;
+    bool firstArgumentIsModule = false;
+    if (firstArgument.inherits(vm, JSWebAssemblyModule::info())) {
+        firstArgumentIsModule = true;
+        module = firstArgument;
+    } else {
+        module = WebAssemblyModuleConstructor::createModule(exec, firstArgument, exec->lexicalGlobalObject()->WebAssemblyModuleStructure());
+        if (catchScope.exception())
+            return reject();
+    }
+
+    JSWebAssemblyInstance* instance = WebAssemblyInstanceConstructor::createInstance(exec, jsCast<JSWebAssemblyModule*>(module), importObject, exec->lexicalGlobalObject()->WebAssemblyInstanceStructure());
+    if (catchScope.exception())
+        return reject();
+
+    if (firstArgumentIsModule)
+        promise->resolve(exec, instance);
+    else {
+        JSObject* result = constructEmptyObject(exec);
+        result->putDirect(vm, Identifier::fromString(&vm, ASCIILiteral("module")), module);
+        result->putDirect(vm, Identifier::fromString(&vm, ASCIILiteral("instance")), instance);
+        promise->resolve(exec, result);
+    }
+
     return JSValue::encode(promise->promise());
 }
 
@@ -99,6 +155,7 @@ void JSWebAssembly::finishCreation(VM& vm, JSGlobalObject* globalObject)
     ASSERT(inherits(vm, info()));
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("validate", webAssemblyValidateFunc, DontEnum, 1);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("compile", webAssemblyCompileFunc, DontEnum, 1);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("instantiate", webAssemblyInstantiateFunc, DontEnum, 1);
 }
 
 JSWebAssembly::JSWebAssembly(VM& vm, Structure* structure)
