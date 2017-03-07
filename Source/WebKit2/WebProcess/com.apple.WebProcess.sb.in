@@ -35,6 +35,16 @@
 (allow process-codesigning-status*)
 #endif
 
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
+(deny sysctl*)
+(allow sysctl-read
+    (sysctl-name
+        "hw.availcpu"
+        "hw.ncpu"
+        "hw.model"
+        "kern.memorystatus_level"))
+#endif
+
 ;; Utility functions for home directory relative path filters
 (define (home-regex home-relative-regex)
   (regex (string-append "^" (regex-quote (param "HOME_DIR")) home-relative-regex)))

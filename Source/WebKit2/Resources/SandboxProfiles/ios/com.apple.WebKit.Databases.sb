@@ -29,3 +29,11 @@
 (import "removed-dev-nodes.sb")
 
 (allow file-read* file-write* (extension "com.apple.app-sandbox.read-write"))
+
+(deny sysctl*)
+(allow sysctl-read
+    (sysctl-name
+        "hw.availcpu"
+        "hw.ncpu"
+        "hw.model"
+        "kern.memorystatus_level"))

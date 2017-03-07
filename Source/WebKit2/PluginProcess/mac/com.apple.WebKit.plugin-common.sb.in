@@ -1,4 +1,4 @@
-; Copyright (C) 2013-2016 Apple Inc. All rights reserved.
+; Copyright (C) 2013-2017 Apple Inc. All rights reserved.
 ;
 ; Redistribution and use in source and binary forms, with or without
 ; modification, are permitted provided that the following conditions
@@ -31,6 +31,16 @@
 (deny process-info*)
 (allow process-info-pidinfo)
 (allow process-info-setcontrol (target self))
+
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
+(deny sysctl*)
+(allow sysctl-read
+    (sysctl-name
+        "hw.availcpu"
+        "hw.ncpu"
+        "hw.model"
+        "kern.memorystatus_level"))
+#endif
 
 ;; Utility functions
 (define (home-literal home-relative-literal)

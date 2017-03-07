@@ -34,6 +34,14 @@
 (play-media)
 (media-remote)
 
+(deny sysctl*)
+(allow sysctl-read
+    (sysctl-name
+        "hw.availcpu"
+        "hw.ncpu"
+        "hw.model"
+        "kern.memorystatus_level"))
+
 ;; Read-only preferences and data
 (mobile-preferences-read
     "com.apple.LaunchServices"
