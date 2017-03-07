@@ -63,6 +63,14 @@ public:
     // Required by GridTrackSizingAlgorithm. Keep them under control.
     bool isOrthogonalChild(const RenderBox&) const;
     LayoutUnit guttersSize(const Grid&, GridTrackSizingDirection, unsigned startLine, unsigned span, SizingOperation) const;
+    
+protected:
+    ItemPosition selfAlignmentNormalBehavior(const RenderBox* child = nullptr) const override
+    {
+        ASSERT(child);
+        return child->isRenderReplaced() ? ItemPositionStart : ItemPositionStretch;
+    }
+
 private:
     const char* renderName() const override;
     bool isRenderGrid() const override { return true; }

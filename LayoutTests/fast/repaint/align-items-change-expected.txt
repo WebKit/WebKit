@@ -1,6 +1,8 @@
 Tests invalidation on align-items style change. Passes if there is no red.
 
 (repaint rects
+  (rect 0 52 100 102)
+  (rect 100 52 100 152)
   (rect 0 52 100 300)
   (rect 0 51 100 1)
   (rect 100 52 100 300)

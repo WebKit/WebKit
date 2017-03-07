@@ -2565,9 +2565,10 @@ bool RenderBox::hasStretchedLogicalWidth() const
         // The 'normal' value behaves like 'start' except for Flexbox Items, which obviously should have a container.
         return false;
     }
+    const auto* parentStyle = isAnonymous() ? &containingBlock->style() : nullptr;
     if (containingBlock->isHorizontalWritingMode() != isHorizontalWritingMode())
-        return style.resolvedAlignSelf(&containingBlock->style(), ItemPositionStretch).position() == ItemPositionStretch;
-    return style.resolvedJustifySelf(&containingBlock->style(), ItemPositionStretch).position() == ItemPositionStretch;
+        return style.resolvedAlignSelf(parentStyle, containingBlock->selfAlignmentNormalBehavior(this)).position() == ItemPositionStretch;
+    return style.resolvedJustifySelf(parentStyle, containingBlock->selfAlignmentNormalBehavior(this)).position() == ItemPositionStretch;
 }
 
 bool RenderBox::sizesLogicalWidthToFitContent(SizeType widthType) const

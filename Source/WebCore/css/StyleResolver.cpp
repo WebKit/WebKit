@@ -1028,6 +1028,37 @@ void StyleResolver::adjustRenderStyle(RenderStyle& style, const RenderStyle& par
         if ((element->hasTagName(SVGNames::foreignObjectTag) || element->hasTagName(SVGNames::textTag)) && style.isDisplayInlineType())
             style.setDisplay(BLOCK);
     }
+    
+    adjustStyleForAlignment(style, parentStyle);
+}
+    
+void StyleResolver::adjustStyleForAlignment(RenderStyle& style, const RenderStyle& parentStyle)
+{
+    // To avoid needing to copy the StyleRareNonInheritedData, we repurpose the 'auto'
+    // flag to not just mean 'auto' prior to running adjustRenderStyle but also
+    // mean 'normal' after running it.
+    
+    // If the inherited value of justify-items includes the 'legacy' keyword,
+    // 'auto' computes to the the inherited value. Otherwise, 'auto' computes to
+    // 'normal'.
+    if (style.justifyItems().position() == ItemPositionAuto) {
+        if (parentStyle.justifyItems().positionType() == LegacyPosition)
+            style.setJustifyItems(parentStyle.justifyItems());
+    }
+    
+    // The 'auto' keyword computes the computed value of justify-items on the
+    // parent (minus any legacy keywords), or 'normal' if the box has no parent.
+    if (style.justifySelf().position() == ItemPositionAuto) {
+        if (parentStyle.justifyItems().positionType() == LegacyPosition)
+            style.setJustifySelfPosition(parentStyle.justifyItems().position());
+        else if (parentStyle.justifyItems().position() != ItemPositionAuto)
+            style.setJustifySelf(parentStyle.justifyItems());
+    }
+    
+    // The 'auto' keyword computes the computed value of align-items on the parent
+    // or 'normal' if the box has no parent.
+    if (style.alignSelf().position() == ItemPositionAuto && parentStyle.alignItems().position() != RenderStyle::initialDefaultAlignment().position())
+        style.setAlignSelf(parentStyle.alignItems());
 }
 
 bool StyleResolver::checkRegionStyle(const Element* regionElement)

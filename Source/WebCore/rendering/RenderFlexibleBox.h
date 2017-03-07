@@ -90,8 +90,6 @@ protected:
     void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const override;
     void computePreferredLogicalWidths() override;
 
-    void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
-
 private:
     enum FlexSign {
         PositiveFlexibility,

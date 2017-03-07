@@ -64,8 +64,12 @@ Change determineChange(const RenderStyle& s1, const RenderStyle& s2)
         if (s1.inheritedNotEqual(&s2))
             return Inherit;
 
+        if (s1.alignItems() != s2.alignItems() || s1.justifyItems() != s2.justifyItems())
+            return Inherit;
+
         return NoInherit;
     }
+
     // If the pseudoStyles have changed, we want any StyleChange that is not NoChange
     // because setStyle will do the right thing with anything else.
     if (s1.hasAnyPublicPseudoStyles()) {

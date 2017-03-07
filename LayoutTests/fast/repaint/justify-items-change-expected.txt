@@ -1,7 +1,8 @@
 Tests invalidation on justify-items style change. Passes if there is no red.
 
 (repaint rects
-  (rect 200 52 150 300)
+  (rect 150 52 50 300)
+  (rect 150 52 200 300)
   (rect 0 52 200 300)
 )
 

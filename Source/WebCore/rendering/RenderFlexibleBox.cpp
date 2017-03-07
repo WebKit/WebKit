@@ -235,23 +235,6 @@ static const StyleContentAlignmentData& contentAlignmentNormalBehavior()
     return normalBehavior;
 }
 
-void RenderFlexibleBox::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
-{
-    RenderBlock::styleDidChange(diff, oldStyle);
-
-    if (oldStyle && oldStyle->resolvedAlignItems(selfAlignmentNormalBehavior()).position() == ItemPositionStretch && diff == StyleDifferenceLayout) {
-        // Flex items that were previously stretching need to be relayed out so we can compute new available cross axis space.
-        // This is only necessary for stretching since other alignment values don't change the size of the box.
-        auto& newStyle = style();
-        for (RenderBox* child = firstChildBox(); child; child = child->nextSiblingBox()) {
-            auto& childStyle = child->style();
-            auto previousAlignment = childStyle.resolvedAlignSelf(oldStyle, selfAlignmentNormalBehavior()).position();
-            if (previousAlignment == ItemPositionStretch && previousAlignment != childStyle.resolvedAlignSelf(&newStyle, selfAlignmentNormalBehavior()).position())
-                child->setChildNeedsLayout(MarkOnlyThis);
-        }
-    }
-}
-
 void RenderFlexibleBox::layoutBlock(bool relayoutChildren, LayoutUnit)
 {
     ASSERT(needsLayout());
@@ -1448,7 +1431,7 @@ void RenderFlexibleBox::prepareChildForPositionedLayout(RenderBox& child)
 
 ItemPosition RenderFlexibleBox::alignmentForChild(const RenderBox& child) const
 {
-    ItemPosition align = child.style().resolvedAlignSelf(&style(), selfAlignmentNormalBehavior()).position();
+    ItemPosition align = child.style().resolvedAlignSelf(child.isAnonymous() ? &style() : nullptr, selfAlignmentNormalBehavior()).position();
     ASSERT(align != ItemPositionAuto && align != ItemPositionNormal);
 
     if (align == ItemPositionBaseline && hasOrthogonalFlow(child))

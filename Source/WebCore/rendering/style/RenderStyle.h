@@ -323,7 +323,9 @@ public:
     
     EOverflow overflowX() const { return m_nonInheritedFlags.overflowX(); }
     EOverflow overflowY() const { return m_nonInheritedFlags.overflowY(); }
-
+    EOverflow overflowInlineDirection() const { return isHorizontalWritingMode() ? overflowX() : overflowY(); }
+    EOverflow overflowBlockDirection() const { return isHorizontalWritingMode() ? overflowY() : overflowX(); }
+    
     EVisibility visibility() const { return static_cast<EVisibility>(m_inheritedFlags.visibility); }
     EVerticalAlign verticalAlign() const { return m_nonInheritedFlags.verticalAlign(); }
     const Length& verticalAlignLength() const { return m_boxData->verticalAlign(); }
@@ -1055,6 +1057,7 @@ public:
     void setJustifyContentPosition(ContentPosition position) { m_rareNonInheritedData.access().justifyContent.setPosition(position); }
     void setJustifyItems(const StyleSelfAlignmentData& data) { SET_VAR(m_rareNonInheritedData, justifyItems, data); }
     void setJustifySelf(const StyleSelfAlignmentData& data) { SET_VAR(m_rareNonInheritedData, justifySelf, data); }
+    void setJustifySelfPosition(ItemPosition position) { m_rareNonInheritedData.access().justifySelf.setPosition(position); }
 
 #if ENABLE(CSS_BOX_DECORATION_BREAK)
     void setBoxDecorationBreak(EBoxDecorationBreak b) { SET_VAR(m_boxData, m_boxDecorationBreak, b); }

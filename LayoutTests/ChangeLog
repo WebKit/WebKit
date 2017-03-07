@@ -1,3 +1,21 @@
+2017-03-06  Dave Hyatt  <hyatt@apple.com>
+
+        REGRESSION: Block no longer shrinks to preferred width in this flex box layout
+        https://bugs.webkit.org/show_bug.cgi?id=169203
+        <rdar://problem/30873895>
+
+        Reviewed by Simon Fraser.
+
+        * css3/flexbox/column-inside-normal-block-preferred-width-expected.html: Added.
+        * css3/flexbox/column-inside-normal-block-preferred-width.html: Added.
+        * fast/css-grid-layout/grid-align-stretching-replaced-items-expected.txt:
+        * fast/css-grid-layout/grid-align-stretching-replaced-items.html:
+        * fast/repaint/align-items-change-expected.txt:
+        * fast/repaint/align-items-overflow-change-expected.txt:
+        * fast/repaint/justify-items-change-expected.txt:
+        * fast/repaint/justify-items-legacy-change-expected.txt:
+        * fast/repaint/justify-items-overflow-change-expected.txt:
+
 2017-03-06  Ryan Haddad  <ryanhaddad@apple.com>
 
         Mark inspector/worker/console-basic.html as flaky.

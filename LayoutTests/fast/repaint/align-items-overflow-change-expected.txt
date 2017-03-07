@@ -1,6 +1,8 @@
 Tests invalidation on align-items style change (just overflow). Passes if there is no red.
 
 (repaint rects
+  (rect 0 2 200 200)
+  (rect 0 252 200 100)
   (rect 0 2 200 350)
   (rect 0 52 200 300)
   (rect 0 2 800 14)

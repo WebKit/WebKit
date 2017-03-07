@@ -75,7 +75,7 @@ Ref<TextControlInnerElement> TextControlInnerElement::create(Document& document)
     return adoptRef(*new TextControlInnerElement(document));
 }
 
-std::optional<ElementStyle> TextControlInnerElement::resolveCustomStyle(const RenderStyle&, const RenderStyle* shadowHostStyle)
+std::optional<ElementStyle> TextControlInnerElement::resolveCustomStyle(const RenderStyle& parentStyle, const RenderStyle* shadowHostStyle)
 {
     auto innerContainerStyle = RenderStyle::createPtr();
     innerContainerStyle->inheritFrom(*shadowHostStyle);
@@ -88,6 +88,8 @@ std::optional<ElementStyle> TextControlInnerElement::resolveCustomStyle(const Re
 
     // We don't want the shadow dom to be editable, so we set this block to read-only in case the input itself is editable.
     innerContainerStyle->setUserModify(READ_ONLY);
+
+    StyleResolver::adjustStyleForAlignment(*innerContainerStyle, parentStyle);
 
     return ElementStyle(WTFMove(innerContainerStyle));
 }

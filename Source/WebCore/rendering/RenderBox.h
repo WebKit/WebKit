@@ -637,7 +637,7 @@ protected:
 
     bool createsNewFormattingContext() const;
 
-    virtual ItemPosition selfAlignmentNormalBehavior() const { return ItemPositionStretch; }
+    virtual ItemPosition selfAlignmentNormalBehavior(const RenderBox* = nullptr) const { return ItemPositionStretch; }
 
     // Returns false if it could not cheaply compute the extent (e.g. fixed background), in which case the returned rect may be incorrect.
     bool getBackgroundPaintedExtent(const LayoutPoint& paintOffset, LayoutRect&) const;
