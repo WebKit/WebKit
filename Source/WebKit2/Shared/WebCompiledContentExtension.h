@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebCompiledContentExtension_h
-#define WebCompiledContentExtension_h
+#pragma once
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
@@ -44,15 +43,15 @@ public:
 private:
     WebCompiledContentExtension(WebCompiledContentExtensionData&&);
 
-    const WebCore::ContentExtensions::DFABytecode* filtersWithoutDomainsBytecode() const override;
-    unsigned filtersWithoutDomainsBytecodeLength() const override;
-    const WebCore::ContentExtensions::DFABytecode* filtersWithDomainsBytecode() const override;
-    unsigned filtersWithDomainsBytecodeLength() const override;
-    const WebCore::ContentExtensions::DFABytecode* domainFiltersBytecode() const override;
-    unsigned domainFiltersBytecodeLength() const override;
+    const WebCore::ContentExtensions::DFABytecode* filtersWithoutConditionsBytecode() const final;
+    unsigned filtersWithoutConditionsBytecodeLength() const final;
+    const WebCore::ContentExtensions::DFABytecode* filtersWithConditionsBytecode() const final;
+    unsigned filtersWithConditionsBytecodeLength() const final;
+    const WebCore::ContentExtensions::DFABytecode* conditionedFiltersBytecode() const final;
+    unsigned conditionedFiltersBytecodeLength() const final;
     
-    const WebCore::ContentExtensions::SerializedActionByte* actions() const override;
-    unsigned actionsLength() const override;
+    const WebCore::ContentExtensions::SerializedActionByte* actions() const final;
+    unsigned actionsLength() const final;
     
     WebCompiledContentExtensionData m_data;
 };
@@ -60,4 +59,3 @@ private:
 } // namespace WebKit
 
 #endif // ENABLE(CONTENT_EXTENSIONS)
-#endif // WebCompiledContentExtension_h

@@ -83,17 +83,17 @@ const size_t ContentExtensionFileHeaderSize = sizeof(uint32_t) + 4 * sizeof(uint
 struct ContentExtensionMetaData {
     uint32_t version { UserContentExtensionStore::CurrentContentExtensionFileVersion };
     uint64_t actionsSize { 0 };
-    uint64_t filtersWithoutDomainsBytecodeSize { 0 };
-    uint64_t filtersWithDomainBytecodeSize { 0 };
-    uint64_t domainFiltersBytecodeSize { 0 };
+    uint64_t filtersWithoutConditionsBytecodeSize { 0 };
+    uint64_t filtersWithConditionsBytecodeSize { 0 };
+    uint64_t conditionedFiltersBytecodeSize { 0 };
     
     size_t fileSize() const
     {
         return ContentExtensionFileHeaderSize
             + actionsSize
-            + filtersWithoutDomainsBytecodeSize
-            + filtersWithDomainBytecodeSize
-            + domainFiltersBytecodeSize;
+            + filtersWithoutConditionsBytecodeSize
+            + filtersWithConditionsBytecodeSize
+            + conditionedFiltersBytecodeSize;
     }
 };
 
@@ -103,9 +103,9 @@ static Data encodeContentExtensionMetaData(const ContentExtensionMetaData& metaD
 
     encoder << metaData.version;
     encoder << metaData.actionsSize;
-    encoder << metaData.filtersWithoutDomainsBytecodeSize;
-    encoder << metaData.filtersWithDomainBytecodeSize;
-    encoder << metaData.domainFiltersBytecodeSize;
+    encoder << metaData.filtersWithoutConditionsBytecodeSize;
+    encoder << metaData.filtersWithConditionsBytecodeSize;
+    encoder << metaData.conditionedFiltersBytecodeSize;
 
     ASSERT(encoder.bufferSize() == ContentExtensionFileHeaderSize);
     return Data(encoder.buffer(), encoder.bufferSize());
@@ -125,11 +125,11 @@ static bool decodeContentExtensionMetaData(ContentExtensionMetaData& metaData, c
             return false;
         if (!decoder.decode(metaData.actionsSize))
             return false;
-        if (!decoder.decode(metaData.filtersWithoutDomainsBytecodeSize))
+        if (!decoder.decode(metaData.filtersWithoutConditionsBytecodeSize))
             return false;
-        if (!decoder.decode(metaData.filtersWithDomainBytecodeSize))
+        if (!decoder.decode(metaData.filtersWithConditionsBytecodeSize))
             return false;
-        if (!decoder.decode(metaData.domainFiltersBytecodeSize))
+        if (!decoder.decode(metaData.conditionedFiltersBytecodeSize))
             return false;
         success = true;
         return false;
@@ -174,37 +174,37 @@ static std::error_code compiledToFile(String&& json, const String& finalFilePath
             , m_metaData(metaData)
         {
             ASSERT(!metaData.actionsSize);
-            ASSERT(!metaData.filtersWithoutDomainsBytecodeSize);
-            ASSERT(!metaData.filtersWithDomainBytecodeSize);
-            ASSERT(!metaData.domainFiltersBytecodeSize);
+            ASSERT(!metaData.filtersWithoutConditionsBytecodeSize);
+            ASSERT(!metaData.filtersWithConditionsBytecodeSize);
+            ASSERT(!metaData.conditionedFiltersBytecodeSize);
         }
         
-        void writeFiltersWithoutDomainsBytecode(Vector<DFABytecode>&& bytecode) override
+        void writeFiltersWithoutConditionsBytecode(Vector<DFABytecode>&& bytecode) override
         {
-            ASSERT(!m_filtersWithDomainBytecodeWritten);
-            ASSERT(!m_domainFiltersBytecodeWritten);
-            m_filtersWithoutDomainsBytecodeWritten += bytecode.size();
+            ASSERT(!m_filtersWithConditionBytecodeWritten);
+            ASSERT(!m_conditionFiltersBytecodeWritten);
+            m_filtersWithoutConditionsBytecodeWritten += bytecode.size();
             writeToFile(Data(bytecode.data(), bytecode.size()));
         }
         
-        void writeFiltersWithDomainsBytecode(Vector<DFABytecode>&& bytecode) override
+        void writeFiltersWithConditionsBytecode(Vector<DFABytecode>&& bytecode) override
         {
-            ASSERT(!m_domainFiltersBytecodeWritten);
-            m_filtersWithDomainBytecodeWritten += bytecode.size();
+            ASSERT(!m_conditionFiltersBytecodeWritten);
+            m_filtersWithConditionBytecodeWritten += bytecode.size();
             writeToFile(Data(bytecode.data(), bytecode.size()));
         }
         
-        void writeDomainFiltersBytecode(Vector<DFABytecode>&& bytecode) override
+        void writeConditionedFiltersBytecode(Vector<DFABytecode>&& bytecode) override
         {
-            m_domainFiltersBytecodeWritten += bytecode.size();
+            m_conditionFiltersBytecodeWritten += bytecode.size();
             writeToFile(Data(bytecode.data(), bytecode.size()));
         }
 
         void writeActions(Vector<SerializedActionByte>&& actions) override
         {
-            ASSERT(!m_filtersWithoutDomainsBytecodeWritten);
-            ASSERT(!m_filtersWithDomainBytecodeWritten);
-            ASSERT(!m_domainFiltersBytecodeWritten);
+            ASSERT(!m_filtersWithoutConditionsBytecodeWritten);
+            ASSERT(!m_filtersWithConditionBytecodeWritten);
+            ASSERT(!m_conditionFiltersBytecodeWritten);
             ASSERT(!m_actionsWritten);
             m_actionsWritten += actions.size();
             writeToFile(Data(actions.data(), actions.size()));
@@ -213,9 +213,9 @@ static std::error_code compiledToFile(String&& json, const String& finalFilePath
         void finalize() override
         {
             m_metaData.actionsSize = m_actionsWritten;
-            m_metaData.filtersWithoutDomainsBytecodeSize = m_filtersWithoutDomainsBytecodeWritten;
-            m_metaData.filtersWithDomainBytecodeSize = m_filtersWithDomainBytecodeWritten;
-            m_metaData.domainFiltersBytecodeSize = m_domainFiltersBytecodeWritten;
+            m_metaData.filtersWithoutConditionsBytecodeSize = m_filtersWithoutConditionsBytecodeWritten;
+            m_metaData.filtersWithConditionsBytecodeSize = m_filtersWithConditionBytecodeWritten;
+            m_metaData.conditionedFiltersBytecodeSize = m_conditionFiltersBytecodeWritten;
             
             Data header = encodeContentExtensionMetaData(m_metaData);
             if (!m_fileError && WebCore::seekFile(m_fileHandle, 0ll, WebCore::FileSeekOrigin::SeekFromBeginning) == -1) {
@@ -238,9 +238,9 @@ static std::error_code compiledToFile(String&& json, const String& finalFilePath
         
         WebCore::PlatformFileHandle m_fileHandle;
         ContentExtensionMetaData& m_metaData;
-        size_t m_filtersWithoutDomainsBytecodeWritten { 0 };
-        size_t m_filtersWithDomainBytecodeWritten { 0 };
-        size_t m_domainFiltersBytecodeWritten { 0 };
+        size_t m_filtersWithoutConditionsBytecodeWritten { 0 };
+        size_t m_filtersWithConditionBytecodeWritten { 0 };
+        size_t m_conditionFiltersBytecodeWritten { 0 };
         size_t m_actionsWritten { 0 };
         bool m_fileError { false };
     };
@@ -289,22 +289,22 @@ static RefPtr<API::UserContentExtension> createExtension(const String& identifie
         metaData.actionsSize,
         ContentExtensionFileHeaderSize
             + metaData.actionsSize,
-        metaData.filtersWithoutDomainsBytecodeSize,
+        metaData.filtersWithoutConditionsBytecodeSize,
         ContentExtensionFileHeaderSize
             + metaData.actionsSize
-            + metaData.filtersWithoutDomainsBytecodeSize,
-        metaData.filtersWithDomainBytecodeSize,
+            + metaData.filtersWithoutConditionsBytecodeSize,
+        metaData.filtersWithConditionsBytecodeSize,
         ContentExtensionFileHeaderSize
             + metaData.actionsSize
-            + metaData.filtersWithoutDomainsBytecodeSize
-            + metaData.filtersWithDomainBytecodeSize,
-        metaData.domainFiltersBytecodeSize
+            + metaData.filtersWithoutConditionsBytecodeSize
+            + metaData.filtersWithConditionsBytecodeSize,
+        metaData.conditionedFiltersBytecodeSize
     );
     auto compiledContentExtension = WebKit::WebCompiledContentExtension::create(WTFMove(compiledContentExtensionData));
     return API::UserContentExtension::create(identifier, WTFMove(compiledContentExtension));
 }
 
-void UserContentExtensionStore::lookupContentExtension(const WTF::String& identifier, std::function<void(RefPtr<API::UserContentExtension>, std::error_code)> completionHandler)
+void UserContentExtensionStore::lookupContentExtension(const WTF::String& identifier, Function<void(RefPtr<API::UserContentExtension>, std::error_code)> completionHandler)
 {
     m_readQueue->dispatch([protectedThis = makeRef(*this), identifier = identifier.isolatedCopy(), storePath = m_storePath.isolatedCopy(), completionHandler = WTFMove(completionHandler)]() mutable {
         auto path = constructedPath(storePath, identifier);
@@ -332,7 +332,7 @@ void UserContentExtensionStore::lookupContentExtension(const WTF::String& identi
     });
 }
 
-void UserContentExtensionStore::compileContentExtension(const WTF::String& identifier, WTF::String&& json, std::function<void(RefPtr<API::UserContentExtension>, std::error_code)> completionHandler)
+void UserContentExtensionStore::compileContentExtension(const WTF::String& identifier, WTF::String&& json, Function<void(RefPtr<API::UserContentExtension>, std::error_code)> completionHandler)
 {
     m_compileQueue->dispatch([protectedThis = makeRef(*this), identifier = identifier.isolatedCopy(), json = json.isolatedCopy(), storePath = m_storePath.isolatedCopy(), completionHandler = WTFMove(completionHandler)] () mutable {
         auto path = constructedPath(storePath, identifier);
@@ -354,7 +354,7 @@ void UserContentExtensionStore::compileContentExtension(const WTF::String& ident
     });
 }
 
-void UserContentExtensionStore::removeContentExtension(const WTF::String& identifier, std::function<void(std::error_code)> completionHandler)
+void UserContentExtensionStore::removeContentExtension(const WTF::String& identifier, Function<void(std::error_code)> completionHandler)
 {
     m_removeQueue->dispatch([protectedThis = makeRef(*this), identifier = identifier.isolatedCopy(), storePath = m_storePath.isolatedCopy(), completionHandler = WTFMove(completionHandler)]() mutable {
         auto path = constructedPath(storePath, identifier);

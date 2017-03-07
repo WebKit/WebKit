@@ -40,12 +40,12 @@ void WebCompiledContentExtensionData::encode(IPC::Encoder& encoder) const
 
     encoder << actionsOffset;
     encoder << actionsSize;
-    encoder << filtersWithoutDomainsBytecodeOffset;
-    encoder << filtersWithoutDomainsBytecodeSize;
-    encoder << filtersWithDomainsBytecodeOffset;
-    encoder << filtersWithDomainsBytecodeSize;
-    encoder << domainFiltersBytecodeOffset;
-    encoder << domainFiltersBytecodeSize;
+    encoder << filtersWithoutConditionsBytecodeOffset;
+    encoder << filtersWithoutConditionsBytecodeSize;
+    encoder << filtersWithConditionsBytecodeOffset;
+    encoder << filtersWithConditionsBytecodeSize;
+    encoder << conditionedFiltersBytecodeOffset;
+    encoder << conditionedFiltersBytecodeSize;
 }
 
 bool WebCompiledContentExtensionData::decode(IPC::Decoder& decoder, WebCompiledContentExtensionData& compiledContentExtensionData)
@@ -59,17 +59,17 @@ bool WebCompiledContentExtensionData::decode(IPC::Decoder& decoder, WebCompiledC
         return false;
     if (!decoder.decode(compiledContentExtensionData.actionsSize))
         return false;
-    if (!decoder.decode(compiledContentExtensionData.filtersWithoutDomainsBytecodeOffset))
+    if (!decoder.decode(compiledContentExtensionData.filtersWithoutConditionsBytecodeOffset))
         return false;
-    if (!decoder.decode(compiledContentExtensionData.filtersWithoutDomainsBytecodeSize))
+    if (!decoder.decode(compiledContentExtensionData.filtersWithoutConditionsBytecodeSize))
         return false;
-    if (!decoder.decode(compiledContentExtensionData.filtersWithDomainsBytecodeOffset))
+    if (!decoder.decode(compiledContentExtensionData.filtersWithConditionsBytecodeOffset))
         return false;
-    if (!decoder.decode(compiledContentExtensionData.filtersWithDomainsBytecodeSize))
+    if (!decoder.decode(compiledContentExtensionData.filtersWithConditionsBytecodeSize))
         return false;
-    if (!decoder.decode(compiledContentExtensionData.domainFiltersBytecodeOffset))
+    if (!decoder.decode(compiledContentExtensionData.conditionedFiltersBytecodeOffset))
         return false;
-    if (!decoder.decode(compiledContentExtensionData.domainFiltersBytecodeSize))
+    if (!decoder.decode(compiledContentExtensionData.conditionedFiltersBytecodeSize))
         return false;
 
     return true;

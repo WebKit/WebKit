@@ -83,9 +83,9 @@ public:
 
 struct CompiledContentExtensionData {
     Vector<ContentExtensions::SerializedActionByte> actions;
-    Vector<ContentExtensions::DFABytecode> filtersWithoutDomains;
-    Vector<ContentExtensions::DFABytecode> filtersWithDomains;
-    Vector<ContentExtensions::DFABytecode> domainFilters;
+    Vector<ContentExtensions::DFABytecode> filtersWithoutConditions;
+    Vector<ContentExtensions::DFABytecode> filtersWithConditions;
+    Vector<ContentExtensions::DFABytecode> conditionedFilters;
 };
 
 class InMemoryContentExtensionCompilationClient final : public ContentExtensions::ContentExtensionCompilationClient {
@@ -94,43 +94,43 @@ public:
         : m_data(data)
     {
         EXPECT_EQ(data.actions.size(), 0ull);
-        EXPECT_EQ(data.filtersWithoutDomains.size(), 0ull);
-        EXPECT_EQ(data.filtersWithDomains.size(), 0ull);
-        EXPECT_EQ(data.domainFilters.size(), 0ull);
+        EXPECT_EQ(data.filtersWithoutConditions.size(), 0ull);
+        EXPECT_EQ(data.filtersWithConditions.size(), 0ull);
+        EXPECT_EQ(data.conditionedFilters.size(), 0ull);
     }
 
-    void writeActions(Vector<ContentExtensions::SerializedActionByte>&& actions) override
+    void writeActions(Vector<ContentExtensions::SerializedActionByte>&& actions) final
     {
         EXPECT_FALSE(finalized);
         EXPECT_EQ(m_data.actions.size(), 0ull);
-        EXPECT_EQ(m_data.filtersWithoutDomains.size(), 0ull);
-        EXPECT_EQ(m_data.filtersWithDomains.size(), 0ull);
-        EXPECT_EQ(m_data.domainFilters.size(), 0ull);
+        EXPECT_EQ(m_data.filtersWithoutConditions.size(), 0ull);
+        EXPECT_EQ(m_data.filtersWithConditions.size(), 0ull);
+        EXPECT_EQ(m_data.conditionedFilters.size(), 0ull);
         m_data.actions.appendVector(actions);
     }
     
-    void writeFiltersWithoutDomainsBytecode(Vector<ContentExtensions::DFABytecode>&& bytecode) override
+    void writeFiltersWithoutConditionsBytecode(Vector<ContentExtensions::DFABytecode>&& bytecode) final
     {
         EXPECT_FALSE(finalized);
-        EXPECT_EQ(m_data.filtersWithDomains.size(), 0ull);
-        EXPECT_EQ(m_data.domainFilters.size(), 0ull);
-        m_data.filtersWithoutDomains.appendVector(bytecode);
+        EXPECT_EQ(m_data.filtersWithConditions.size(), 0ull);
+        EXPECT_EQ(m_data.conditionedFilters.size(), 0ull);
+        m_data.filtersWithoutConditions.appendVector(bytecode);
     }
     
-    void writeFiltersWithDomainsBytecode(Vector<ContentExtensions::DFABytecode>&& bytecode) override
+    void writeFiltersWithConditionsBytecode(Vector<ContentExtensions::DFABytecode>&& bytecode) final
     {
         EXPECT_FALSE(finalized);
-        EXPECT_EQ(m_data.domainFilters.size(), 0ull);
-        m_data.filtersWithDomains.appendVector(bytecode);
+        EXPECT_EQ(m_data.conditionedFilters.size(), 0ull);
+        m_data.filtersWithConditions.appendVector(bytecode);
     }
     
-    void writeDomainFiltersBytecode(Vector<ContentExtensions::DFABytecode>&& bytecode) override
+    void writeConditionedFiltersBytecode(Vector<ContentExtensions::DFABytecode>&& bytecode) final
     {
         EXPECT_FALSE(finalized);
-        m_data.domainFilters.appendVector(bytecode);
+        m_data.conditionedFilters.appendVector(bytecode);
     }
     
-    void finalize() override
+    void finalize() final
     {
         finalized = true;
     }
@@ -156,23 +156,23 @@ public:
         return InMemoryCompiledContentExtension::create(WTFMove(extensionData));
     }
 
-    static RefPtr<InMemoryCompiledContentExtension> create(CompiledContentExtensionData&& data)
+    static Ref<InMemoryCompiledContentExtension> create(CompiledContentExtensionData&& data)
     {
-        return adoptRef(new InMemoryCompiledContentExtension(WTFMove(data)));
+        return adoptRef(*new InMemoryCompiledContentExtension(WTFMove(data)));
     }
 
     virtual ~InMemoryCompiledContentExtension()
     {
     }
 
-    const ContentExtensions::SerializedActionByte* actions() const override { return m_data.actions.data(); }
-    unsigned actionsLength() const override { return m_data.actions.size(); }
-    const ContentExtensions::DFABytecode* filtersWithoutDomainsBytecode() const override { return m_data.filtersWithoutDomains.data(); }
-    unsigned filtersWithoutDomainsBytecodeLength() const override { return m_data.filtersWithoutDomains.size(); }
-    const ContentExtensions::DFABytecode* filtersWithDomainsBytecode() const override { return m_data.filtersWithDomains.data(); }
-    unsigned filtersWithDomainsBytecodeLength() const override { return m_data.filtersWithDomains.size(); }
-    const ContentExtensions::DFABytecode* domainFiltersBytecode() const override { return m_data.domainFilters.data(); }
-    unsigned domainFiltersBytecodeLength() const override { return m_data.domainFilters.size(); }
+    const ContentExtensions::SerializedActionByte* actions() const final { return m_data.actions.data(); }
+    unsigned actionsLength() const final { return m_data.actions.size(); }
+    const ContentExtensions::DFABytecode* filtersWithoutConditionsBytecode() const final { return m_data.filtersWithoutConditions.data(); }
+    unsigned filtersWithoutConditionsBytecodeLength() const final { return m_data.filtersWithoutConditions.size(); }
+    const ContentExtensions::DFABytecode* filtersWithConditionsBytecode() const final { return m_data.filtersWithConditions.data(); }
+    unsigned filtersWithConditionsBytecodeLength() const final { return m_data.filtersWithConditions.size(); }
+    const ContentExtensions::DFABytecode* conditionedFiltersBytecode() const final { return m_data.conditionedFilters.data(); }
+    unsigned conditionedFiltersBytecodeLength() const final { return m_data.conditionedFilters.size(); }
 
 private:
     InMemoryCompiledContentExtension(CompiledContentExtensionData&& data)
@@ -1326,34 +1326,30 @@ TEST_F(ContentExtensionTest, InvalidJSON)
     checkCompilerError(rules50000.utf8().data(), { });
     checkCompilerError(rules50001.utf8().data(), ContentExtensions::ContentExtensionError::JSONTooManyRules);
     
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-domain\":{}}}]", ContentExtensions::ContentExtensionError::JSONInvalidDomainList);
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-domain\":[5]}}]", ContentExtensions::ContentExtensionError::JSONInvalidDomainList);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-domain\":{}}}]", ContentExtensions::ContentExtensionError::JSONInvalidConditionList);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-domain\":[5]}}]", ContentExtensions::ContentExtensionError::JSONInvalidConditionList);
     checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-domain\":[\"a\"]}}]", { });
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-domain\":\"a\"}}]", ContentExtensions::ContentExtensionError::JSONInvalidDomainList);
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-domain\":false}}]", ContentExtensions::ContentExtensionError::JSONInvalidDomainList);
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-domain\":null}}]", ContentExtensions::ContentExtensionError::JSONInvalidDomainList);
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"unless-domain\":{}}}]", ContentExtensions::ContentExtensionError::JSONInvalidDomainList);
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"unless-domain\":[5]}}]", ContentExtensions::ContentExtensionError::JSONInvalidDomainList);
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"unless-domain\":[\"\"]}}]", ContentExtensions::ContentExtensionError::JSONInvalidDomainList);
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"unless-domain\":\"a\"}}]", ContentExtensions::ContentExtensionError::JSONInvalidDomainList);
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"unless-domain\":null}}]", ContentExtensions::ContentExtensionError::JSONInvalidDomainList);
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"unless-domain\":false}}]", ContentExtensions::ContentExtensionError::JSONInvalidDomainList);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-domain\":\"a\"}}]", ContentExtensions::ContentExtensionError::JSONInvalidConditionList);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-domain\":false}}]", ContentExtensions::ContentExtensionError::JSONInvalidConditionList);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-domain\":null}}]", ContentExtensions::ContentExtensionError::JSONInvalidConditionList);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"unless-domain\":{}}}]", ContentExtensions::ContentExtensionError::JSONInvalidConditionList);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"unless-domain\":[5]}}]", ContentExtensions::ContentExtensionError::JSONInvalidConditionList);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"unless-domain\":[\"\"]}}]", ContentExtensions::ContentExtensionError::JSONInvalidConditionList);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"unless-domain\":\"a\"}}]", ContentExtensions::ContentExtensionError::JSONInvalidConditionList);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"unless-domain\":null}}]", ContentExtensions::ContentExtensionError::JSONInvalidConditionList);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"unless-domain\":false}}]", ContentExtensions::ContentExtensionError::JSONInvalidConditionList);
     checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"unless-domain\":[\"A\"]}}]", ContentExtensions::ContentExtensionError::JSONDomainNotLowerCaseASCII);
     checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"unless-domain\":[\"\\u00DC\"]}}]", ContentExtensions::ContentExtensionError::JSONDomainNotLowerCaseASCII);
     checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"unless-domain\":[\"0\"]}}]", { });
     checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"unless-domain\":[\"a\"]}}]", { });
 
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-domain\":[],\"unless-domain\":[\"a\"]}}]", ContentExtensions::ContentExtensionError::JSONInvalidDomainList);
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"unless-domain\":[]}}]", ContentExtensions::ContentExtensionError::JSONInvalidDomainList);
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-domain\":5}}]", ContentExtensions::ContentExtensionError::JSONInvalidDomainList);
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"unless-domain\":5}}]", ContentExtensions::ContentExtensionError::JSONInvalidDomainList);
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-domain\":5,\"unless-domain\":5}}]", ContentExtensions::ContentExtensionError::JSONInvalidDomainList);
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-domain\":[]}}]", ContentExtensions::ContentExtensionError::JSONInvalidDomainList);
-    
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-domain\":[\"a\"],\"unless-domain\":[]}}]", ContentExtensions::ContentExtensionError::JSONUnlessAndIfDomain);
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-domain\":[\"a\"],\"unless-domain\":[\"a\"]}}]", ContentExtensions::ContentExtensionError::JSONUnlessAndIfDomain);
-
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\", \"unexpected-identifier-should-be-ignored\":5}}]", { });
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-domain\":[],\"unless-domain\":[\"a\"]}}]", ContentExtensions::ContentExtensionError::JSONInvalidConditionList);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"unless-domain\":[]}}]", ContentExtensions::ContentExtensionError::JSONInvalidConditionList);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-domain\":5}}]", ContentExtensions::ContentExtensionError::JSONInvalidConditionList);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"unless-domain\":5}}]", ContentExtensions::ContentExtensionError::JSONInvalidConditionList);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-domain\":5,\"unless-domain\":5}}]", ContentExtensions::ContentExtensionError::JSONInvalidConditionList);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-domain\":[]}}]", ContentExtensions::ContentExtensionError::JSONInvalidConditionList);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-domain\":[\"a\"],\"unless-domain\":[]}}]", ContentExtensions::ContentExtensionError::JSONMultipleConditions);
 
     checkCompilerError("[{\"action\":5,\"trigger\":{\"url-filter\":\"webkit.org\"}}]",
         ContentExtensions::ContentExtensionError::JSONInvalidAction);

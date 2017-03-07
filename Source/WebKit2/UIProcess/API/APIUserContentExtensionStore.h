@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef APIUserContentExtensionStore_h
-#define APIUserContentExtensionStore_h
+#pragma once
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
@@ -60,9 +59,9 @@ public:
     explicit UserContentExtensionStore(const WTF::String& storePath);
     virtual ~UserContentExtensionStore();
 
-    void compileContentExtension(const WTF::String& identifier, WTF::String&& json, std::function<void(RefPtr<API::UserContentExtension>, std::error_code)>);
-    void lookupContentExtension(const WTF::String& identifier, std::function<void(RefPtr<API::UserContentExtension>, std::error_code)>);
-    void removeContentExtension(const WTF::String& identifier, std::function<void(std::error_code)>);
+    void compileContentExtension(const WTF::String& identifier, WTF::String&& json, Function<void(RefPtr<API::UserContentExtension>, std::error_code)>);
+    void lookupContentExtension(const WTF::String& identifier, Function<void(RefPtr<API::UserContentExtension>, std::error_code)>);
+    void removeContentExtension(const WTF::String& identifier, Function<void(std::error_code)>);
 
     // For testing only.
     void synchronousRemoveAllContentExtensions();
@@ -91,4 +90,3 @@ namespace std {
 }
 
 #endif // ENABLE(CONTENT_EXTENSIONS)
-#endif // APIUserContentExtensionStore_h

@@ -44,34 +44,34 @@ WebCompiledContentExtension::~WebCompiledContentExtension()
 {
 }
 
-const WebCore::ContentExtensions::DFABytecode* WebCompiledContentExtension::filtersWithoutDomainsBytecode() const
+const WebCore::ContentExtensions::DFABytecode* WebCompiledContentExtension::filtersWithoutConditionsBytecode() const
 {
-    return static_cast<const WebCore::ContentExtensions::DFABytecode*>(m_data.data->data()) + m_data.filtersWithoutDomainsBytecodeOffset;
+    return static_cast<const WebCore::ContentExtensions::DFABytecode*>(m_data.data->data()) + m_data.filtersWithoutConditionsBytecodeOffset;
 }
 
-unsigned WebCompiledContentExtension::filtersWithoutDomainsBytecodeLength() const
+unsigned WebCompiledContentExtension::filtersWithoutConditionsBytecodeLength() const
 {
-    return m_data.filtersWithoutDomainsBytecodeSize;
+    return m_data.filtersWithoutConditionsBytecodeSize;
 }
 
-const WebCore::ContentExtensions::DFABytecode* WebCompiledContentExtension::filtersWithDomainsBytecode() const
+const WebCore::ContentExtensions::DFABytecode* WebCompiledContentExtension::filtersWithConditionsBytecode() const
 {
-    return static_cast<const WebCore::ContentExtensions::DFABytecode*>(m_data.data->data()) + m_data.filtersWithDomainsBytecodeOffset;
+    return static_cast<const WebCore::ContentExtensions::DFABytecode*>(m_data.data->data()) + m_data.filtersWithConditionsBytecodeOffset;
 }
 
-unsigned WebCompiledContentExtension::filtersWithDomainsBytecodeLength() const
+unsigned WebCompiledContentExtension::filtersWithConditionsBytecodeLength() const
 {
-    return m_data.filtersWithDomainsBytecodeSize;
+    return m_data.filtersWithConditionsBytecodeSize;
 }
 
-const WebCore::ContentExtensions::DFABytecode* WebCompiledContentExtension::domainFiltersBytecode() const
+const WebCore::ContentExtensions::DFABytecode* WebCompiledContentExtension::conditionedFiltersBytecode() const
 {
-    return static_cast<const WebCore::ContentExtensions::DFABytecode*>(m_data.data->data()) + m_data.domainFiltersBytecodeOffset;
+    return static_cast<const WebCore::ContentExtensions::DFABytecode*>(m_data.data->data()) + m_data.conditionedFiltersBytecodeOffset;
 }
 
-unsigned WebCompiledContentExtension::domainFiltersBytecodeLength() const
+unsigned WebCompiledContentExtension::conditionedFiltersBytecodeLength() const
 {
-    return m_data.domainFiltersBytecodeSize;
+    return m_data.conditionedFiltersBytecodeSize;
 }
 
 const WebCore::ContentExtensions::SerializedActionByte* WebCompiledContentExtension::actions() const

@@ -56,11 +56,13 @@ typedef uint16_t ResourceFlags;
 
 // The first 32 bits of a uint64_t action are used for the action location.
 // The next 16 bits are used for the flags (ResourceType and LoadType).
-// The next bit is used to mark actions that are from a rule with an if-domain condition.
-// The next bit is used to mark actions that in the default stylesheet.
+// The next bit is used to mark actions that are from a rule with an if-domain.
+//     Actions from rules with unless-domain conditions are distinguished from
+//     rules with if-domain conditions by not having this bit set.
+//     Actions from rules with no conditions are put in the DFA without conditions.
 // The values -1 and -2 are used for removed and empty values in HashTables.
 const uint64_t ActionFlagMask = 0x0000FFFF00000000;
-const uint64_t IfDomainFlag = 0x0001000000000000;
+const uint64_t IfConditionFlag = 0x0001000000000000;
 
 ResourceType toResourceType(CachedResource::Type);
 uint16_t readResourceType(const String&);

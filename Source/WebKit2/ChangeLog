@@ -1,3 +1,40 @@
+2017-03-07  Alex Christensen  <achristensen@webkit.org>
+
+        [Content Extensions] Rename "Domain" to "Condition" where appropriate
+        https://bugs.webkit.org/show_bug.cgi?id=169297
+
+        Reviewed by Brady Eidson.
+
+        * Shared/WebCompiledContentExtension.cpp:
+        (WebKit::WebCompiledContentExtension::filtersWithoutConditionsBytecode):
+        (WebKit::WebCompiledContentExtension::filtersWithoutConditionsBytecodeLength):
+        (WebKit::WebCompiledContentExtension::filtersWithConditionsBytecode):
+        (WebKit::WebCompiledContentExtension::filtersWithConditionsBytecodeLength):
+        (WebKit::WebCompiledContentExtension::conditionedFiltersBytecode):
+        (WebKit::WebCompiledContentExtension::conditionedFiltersBytecodeLength):
+        (WebKit::WebCompiledContentExtension::filtersWithoutDomainsBytecode): Deleted.
+        (WebKit::WebCompiledContentExtension::filtersWithoutDomainsBytecodeLength): Deleted.
+        (WebKit::WebCompiledContentExtension::filtersWithDomainsBytecode): Deleted.
+        (WebKit::WebCompiledContentExtension::filtersWithDomainsBytecodeLength): Deleted.
+        (WebKit::WebCompiledContentExtension::domainFiltersBytecode): Deleted.
+        (WebKit::WebCompiledContentExtension::domainFiltersBytecodeLength): Deleted.
+        * Shared/WebCompiledContentExtension.h:
+        * Shared/WebCompiledContentExtensionData.cpp:
+        (WebKit::WebCompiledContentExtensionData::encode):
+        (WebKit::WebCompiledContentExtensionData::decode):
+        * Shared/WebCompiledContentExtensionData.h:
+        (WebKit::WebCompiledContentExtensionData::WebCompiledContentExtensionData):
+        * UIProcess/API/APIUserContentExtensionStore.cpp:
+        (API::ContentExtensionMetaData::fileSize):
+        (API::encodeContentExtensionMetaData):
+        (API::decodeContentExtensionMetaData):
+        (API::compiledToFile):
+        (API::createExtension):
+        (API::UserContentExtensionStore::lookupContentExtension):
+        (API::UserContentExtensionStore::compileContentExtension):
+        (API::UserContentExtensionStore::removeContentExtension):
+        * UIProcess/API/APIUserContentExtensionStore.h:
+
 2017-03-07  Brent Fulgham  <bfulgham@apple.com>
 
         [Mac][WK2] Expand sandbox to support access to audio component registrar

@@ -59,8 +59,9 @@ static bool containsOnlyASCIIWithNoUppercase(const String& domain)
     return true;
 }
     
-static Expected<Vector<String>, std::error_code> getStringList(ExecState& exec, const JSObject* arrayObject, ContentExtensionError error)
+static Expected<Vector<String>, std::error_code> getStringList(ExecState& exec, const JSObject* arrayObject)
 {
+    static const ContentExtensionError error = ContentExtensionError::JSONInvalidConditionList;
     VM& vm = exec.vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
@@ -68,24 +69,24 @@ static Expected<Vector<String>, std::error_code> getStringList(ExecState& exec, 
         return makeUnexpected(error);
     const JSArray* array = jsCast<const JSArray*>(arrayObject);
     
-    Vector<String> domains;
+    Vector<String> strings;
     unsigned length = array->length();
     for (unsigned i = 0; i < length; ++i) {
         const JSValue value = array->getIndex(&exec, i);
         if (scope.exception() || !value.isString())
             return makeUnexpected(error);
         
-        const String& domain = asString(value)->value(&exec);
-        if (domain.isEmpty())
+        const String& string = asString(value)->value(&exec);
+        if (string.isEmpty())
             return makeUnexpected(error);
-        domains.append(domain);
+        strings.append(string);
     }
-    return WTFMove(domains);
+    return WTFMove(strings);
 }
 
 static Expected<Vector<String>, std::error_code> getDomainList(ExecState& exec, const JSObject* arrayObject)
 {
-    auto strings = getStringList(exec, arrayObject, ContentExtensionError::JSONInvalidDomainList);
+    auto strings = getStringList(exec, arrayObject);
     if (!strings.hasValue())
         return strings;
     for (auto& domain : strings.value()) {
@@ -173,27 +174,27 @@ static Expected<Trigger, std::error_code> loadTrigger(ExecState& exec, const JSO
         auto ifDomain = getDomainList(exec, asObject(ifDomainValue));
         if (!ifDomain.hasValue())
             return makeUnexpected(ifDomain.error());
-        trigger.domains = WTFMove(ifDomain.value());
-        if (trigger.domains.isEmpty())
-            return makeUnexpected(ContentExtensionError::JSONInvalidDomainList);
-        ASSERT(trigger.domainCondition == Trigger::DomainCondition::None);
-        trigger.domainCondition = Trigger::DomainCondition::IfDomain;
+        trigger.conditions = WTFMove(ifDomain.value());
+        if (trigger.conditions.isEmpty())
+            return makeUnexpected(ContentExtensionError::JSONInvalidConditionList);
+        ASSERT(trigger.conditionType == Trigger::ConditionType::None);
+        trigger.conditionType = Trigger::ConditionType::IfDomain;
     } else if (!ifDomainValue.isUndefined())
-        return makeUnexpected(ContentExtensionError::JSONInvalidDomainList);
-    
+        return makeUnexpected(ContentExtensionError::JSONInvalidConditionList);
+
     const JSValue unlessDomainValue = triggerObject.get(&exec, Identifier::fromString(&exec, "unless-domain"));
     if (!scope.exception() && unlessDomainValue.isObject()) {
-        if (trigger.domainCondition != Trigger::DomainCondition::None)
-            return makeUnexpected(ContentExtensionError::JSONUnlessAndIfDomain);
+        if (trigger.conditionType != Trigger::ConditionType::None)
+            return makeUnexpected(ContentExtensionError::JSONMultipleConditions);
         auto unlessDomain = getDomainList(exec, asObject(unlessDomainValue));
         if (!unlessDomain.hasValue())
             return makeUnexpected(unlessDomain.error());
-        trigger.domains = WTFMove(unlessDomain.value());
-        if (trigger.domains.isEmpty())
-            return makeUnexpected(ContentExtensionError::JSONInvalidDomainList);
-        trigger.domainCondition = Trigger::DomainCondition::UnlessDomain;
+        trigger.conditions = WTFMove(unlessDomain.value());
+        if (trigger.conditions.isEmpty())
+            return makeUnexpected(ContentExtensionError::JSONInvalidConditionList);
+        trigger.conditionType = Trigger::ConditionType::UnlessDomain;
     } else if (!unlessDomainValue.isUndefined())
-        return makeUnexpected(ContentExtensionError::JSONInvalidDomainList);
+        return makeUnexpected(ContentExtensionError::JSONInvalidConditionList);
 
     return WTFMove(trigger);
 }

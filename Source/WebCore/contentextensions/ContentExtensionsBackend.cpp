@@ -91,29 +91,29 @@ Vector<Action> ContentExtensionsBackend::actionsForResourceLoad(const ResourceLo
         RELEASE_ASSERT(contentExtension);
         const CompiledContentExtension& compiledExtension = contentExtension->compiledExtension();
         
-        DFABytecodeInterpreter withoutDomainsInterpreter(compiledExtension.filtersWithoutDomainsBytecode(), compiledExtension.filtersWithoutDomainsBytecodeLength());
-        DFABytecodeInterpreter::Actions withoutDomainsActions = withoutDomainsInterpreter.interpret(urlCString, flags);
+        DFABytecodeInterpreter withoutConditionsInterpreter(compiledExtension.filtersWithoutConditionsBytecode(), compiledExtension.filtersWithoutConditionsBytecodeLength());
+        DFABytecodeInterpreter::Actions withoutConditionsActions = withoutConditionsInterpreter.interpret(urlCString, flags);
         
-        String domain = resourceLoadInfo.mainDocumentURL.host();
-        DFABytecodeInterpreter withDomainsInterpreter(compiledExtension.filtersWithDomainsBytecode(), compiledExtension.filtersWithDomainsBytecodeLength());
-        DFABytecodeInterpreter::Actions withDomainsActions = withDomainsInterpreter.interpretWithDomains(urlCString, flags, contentExtension->cachedDomainActions(domain));
+        URL topURL = resourceLoadInfo.mainDocumentURL;
+        DFABytecodeInterpreter withConditionsInterpreter(compiledExtension.filtersWithConditionsBytecode(), compiledExtension.filtersWithConditionsBytecodeLength());
+        DFABytecodeInterpreter::Actions withConditionsActions = withConditionsInterpreter.interpretWithConditions(urlCString, flags, contentExtension->cachedConditionedActions(topURL));
         
         const SerializedActionByte* actions = compiledExtension.actions();
         const unsigned actionsLength = compiledExtension.actionsLength();
         
         bool sawIgnorePreviousRules = false;
-        const Vector<uint32_t>& universalWithDomains = contentExtension->universalActionsWithDomains(domain);
-        const Vector<uint32_t>& universalWithoutDomains = contentExtension->universalActionsWithoutDomains();
-        if (!withoutDomainsActions.isEmpty() || !withDomainsActions.isEmpty() || !universalWithDomains.isEmpty() || !universalWithoutDomains.isEmpty()) {
+        const Vector<uint32_t>& universalWithConditions = contentExtension->universalActionsWithConditions(topURL);
+        const Vector<uint32_t>& universalWithoutConditions = contentExtension->universalActionsWithoutConditions();
+        if (!withoutConditionsActions.isEmpty() || !withConditionsActions.isEmpty() || !universalWithConditions.isEmpty() || !universalWithoutConditions.isEmpty()) {
             Vector<uint32_t> actionLocations;
-            actionLocations.reserveInitialCapacity(withoutDomainsActions.size() + withDomainsActions.size() + universalWithoutDomains.size() + universalWithDomains.size());
-            for (uint64_t actionLocation : withoutDomainsActions)
+            actionLocations.reserveInitialCapacity(withoutConditionsActions.size() + withConditionsActions.size() + universalWithoutConditions.size() + universalWithConditions.size());
+            for (uint64_t actionLocation : withoutConditionsActions)
                 actionLocations.uncheckedAppend(static_cast<uint32_t>(actionLocation));
-            for (uint64_t actionLocation : withDomainsActions)
+            for (uint64_t actionLocation : withConditionsActions)
                 actionLocations.uncheckedAppend(static_cast<uint32_t>(actionLocation));
-            for (uint32_t actionLocation : universalWithoutDomains)
+            for (uint32_t actionLocation : universalWithoutConditions)
                 actionLocations.uncheckedAppend(actionLocation);
-            for (uint32_t actionLocation : universalWithDomains)
+            for (uint32_t actionLocation : universalWithConditions)
                 actionLocations.uncheckedAppend(actionLocation);
             std::sort(actionLocations.begin(), actionLocations.end());
 

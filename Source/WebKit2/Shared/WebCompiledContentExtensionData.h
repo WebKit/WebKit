@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebCompiledContentExtensionData_h
-#define WebCompiledContentExtensionData_h
+#pragma once
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
@@ -41,21 +40,19 @@ namespace WebKit {
 
 class WebCompiledContentExtensionData {
 public:
-    WebCompiledContentExtensionData()
-    {
-    }
-    
-    WebCompiledContentExtensionData(RefPtr<SharedMemory>&& data, NetworkCache::Data fileData, unsigned actionsOffset, unsigned actionsSize, unsigned filtersWithoutDomainsBytecodeOffset, unsigned filtersWithoutDomainsBytecodeSize, unsigned filtersWithDomainsBytecodeOffset, unsigned filtersWithDomainsBytecodeSize, unsigned domainFiltersBytecodeOffset, unsigned domainFiltersBytecodeSize)
+    WebCompiledContentExtensionData() = default;
+
+    WebCompiledContentExtensionData(RefPtr<SharedMemory>&& data, NetworkCache::Data fileData, unsigned actionsOffset, unsigned actionsSize, unsigned filtersWithoutConditionsBytecodeOffset, unsigned filtersWithoutConditionsBytecodeSize, unsigned filtersWithConditionsBytecodeOffset, unsigned filtersWithConditionsBytecodeSize, unsigned conditionedFiltersBytecodeOffset, unsigned conditionedFiltersBytecodeSize)
         : data(WTFMove(data))
         , fileData(fileData)
         , actionsOffset(actionsOffset)
         , actionsSize(actionsSize)
-        , filtersWithoutDomainsBytecodeOffset(filtersWithoutDomainsBytecodeOffset)
-        , filtersWithoutDomainsBytecodeSize(filtersWithoutDomainsBytecodeSize)
-        , filtersWithDomainsBytecodeOffset(filtersWithDomainsBytecodeOffset)
-        , filtersWithDomainsBytecodeSize(filtersWithDomainsBytecodeSize)
-        , domainFiltersBytecodeOffset(domainFiltersBytecodeOffset)
-        , domainFiltersBytecodeSize(domainFiltersBytecodeSize)
+        , filtersWithoutConditionsBytecodeOffset(filtersWithoutConditionsBytecodeOffset)
+        , filtersWithoutConditionsBytecodeSize(filtersWithoutConditionsBytecodeSize)
+        , filtersWithConditionsBytecodeOffset(filtersWithConditionsBytecodeOffset)
+        , filtersWithConditionsBytecodeSize(filtersWithConditionsBytecodeSize)
+        , conditionedFiltersBytecodeOffset(conditionedFiltersBytecodeOffset)
+        , conditionedFiltersBytecodeSize(conditionedFiltersBytecodeSize)
     {
     }
 
@@ -66,15 +63,14 @@ public:
     NetworkCache::Data fileData;
     unsigned actionsOffset { 0 };
     unsigned actionsSize { 0 };
-    unsigned filtersWithoutDomainsBytecodeOffset { 0 };
-    unsigned filtersWithoutDomainsBytecodeSize { 0 };
-    unsigned filtersWithDomainsBytecodeOffset { 0 };
-    unsigned filtersWithDomainsBytecodeSize { 0 };
-    unsigned domainFiltersBytecodeOffset { 0 };
-    unsigned domainFiltersBytecodeSize { 0 };
+    unsigned filtersWithoutConditionsBytecodeOffset { 0 };
+    unsigned filtersWithoutConditionsBytecodeSize { 0 };
+    unsigned filtersWithConditionsBytecodeOffset { 0 };
+    unsigned filtersWithConditionsBytecodeSize { 0 };
+    unsigned conditionedFiltersBytecodeOffset { 0 };
+    unsigned conditionedFiltersBytecodeSize { 0 };
 };
 
 }
 
 #endif // ENABLE(CONTENT_EXTENSIONS)
-#endif // WebCompiledContentExtensionData_h

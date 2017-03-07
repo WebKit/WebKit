@@ -38,12 +38,12 @@ class WEBCORE_EXPORT CompiledContentExtension : public ThreadSafeRefCounted<Comp
 public:
     virtual ~CompiledContentExtension();
 
-    virtual const DFABytecode* filtersWithoutDomainsBytecode() const = 0;
-    virtual unsigned filtersWithoutDomainsBytecodeLength() const = 0;
-    virtual const DFABytecode* filtersWithDomainsBytecode() const = 0;
-    virtual unsigned filtersWithDomainsBytecodeLength() const = 0;
-    virtual const DFABytecode* domainFiltersBytecode() const = 0;
-    virtual unsigned domainFiltersBytecodeLength() const = 0;
+    virtual const DFABytecode* filtersWithoutConditionsBytecode() const = 0;
+    virtual unsigned filtersWithoutConditionsBytecodeLength() const = 0;
+    virtual const DFABytecode* filtersWithConditionsBytecode() const = 0;
+    virtual unsigned filtersWithConditionsBytecodeLength() const = 0;
+    virtual const DFABytecode* conditionedFiltersBytecode() const = 0;
+    virtual unsigned conditionedFiltersBytecodeLength() const = 0;
     virtual const SerializedActionByte* actions() const = 0;
     virtual unsigned actionsLength() const = 0;
 };
