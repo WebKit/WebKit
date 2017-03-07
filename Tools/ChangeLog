@@ -1,3 +1,15 @@
+2017-03-07  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Add David Jonathan Ross to contributors.json
+        https://bugs.webkit.org/show_bug.cgi?id=169265
+
+        Unreviewed.
+
+        David Jonathan Ross very kindly offered to create and contribute his Boxis font in r211060,
+        which is used for testing font variations.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2017-03-07  Youenn Fablet  <youennf@gmail.com>
 
         W3C importer should be able to update the import expectations file
