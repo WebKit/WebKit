@@ -1099,7 +1099,7 @@ webkit.org/b/114735 svg/filters/filter-hidden-content.svg [ Failure Pass ]
 webkit.org/b/116960 perf/adding-radio-buttons.html [ Failure Pass ]
 webkit.org/b/116961 perf/show-hide-table-rows.html [ Failure Pass ]
 
-webkit.org/b/116976 media/video-played-collapse.html [ Failure Pass ]
+webkit.org/b/116976 media/video-played-collapse.html [ Failure Pass Crash ]
 
 webkit.org/b/116977 media/event-attributes.html [ Crash Failure Timeout Pass ]
 
