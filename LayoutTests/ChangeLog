@@ -1,5 +1,14 @@
 2017-03-06  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Mark media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-audio-background.html as flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=169117
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
+2017-03-06  Ryan Haddad  <ryanhaddad@apple.com>
+
         Remove Debug flag from flaky test http/tests/cache/disk-cache/memory-cache-revalidation-updates-disk-cache.html.
         https://bugs.webkit.org/show_bug.cgi?id=162975
 
