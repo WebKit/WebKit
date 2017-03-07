@@ -1,3 +1,29 @@
+2017-03-07  Jonathan Bedard  <jbedard@apple.com>
+
+        Standardize device/simulator naming conventions
+        https://bugs.webkit.org/show_bug.cgi?id=169083
+        <rdar://problem/30810466>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Scripts/build-webkit: Document --ios-device and --simulator options.
+        * Scripts/package-root:
+        (usage): Ditto.
+        * Scripts/run-api-tests: Document --simulator option.
+        * Scripts/webkitdirs.pm:
+        (argumentsForConfiguration): Use --ios-device by default rather than --device.
+        (determineXcodeSDK): Parse --ios-device and --simulator options.
+        * Scripts/webkitpy/common/config/ews.json: Change port name from ios to ios-device.
+        * Scripts/webkitpy/common/config/ports.py: Ditto.
+        (DeprecatedPort.port):
+        (IOSPort): Change port name from ios to ios-device. 
+        * Scripts/webkitpy/port/factory.py:
+        (platform_options): Add --simulator option.
+        (PortFactory): Update comment.
+        * Scripts/webkitpy/port/ios_device.py:
+        (IOSDevicePort): Change port name from ios to ios-device.
+        (IOSDevicePort.operating_system): Ditto.
+
 2017-03-07  Dean Jackson  <dino@apple.com>
 
         Add GPUDevice implementation and WebGPULayer

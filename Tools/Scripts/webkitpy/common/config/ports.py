@@ -64,6 +64,8 @@ class DeprecatedPort(object):
     def port(port_name):
         ports = {
             "gtk-wk2": GtkWK2Port,
+            "ios-device": IOSPort,
+            # FIXME: https://bugs.webkit.org/show_bug.cgi?id=169302
             "ios": IOSPort,
             "ios-simulator-wk2": IOSSimulatorWK2Port,
             "mac": MacPort,
@@ -130,7 +132,7 @@ class DeprecatedPort(object):
 
 
 class IOSPort(DeprecatedPort):
-    port_flag_name = "ios"
+    port_flag_name = "ios-device"
 
     def build_webkit_command(self, build_style=None):
         command = super(IOSPort, self).build_webkit_command(build_style=build_style)
