@@ -622,6 +622,14 @@ static inline WKEditorInsertAction toWK(EditorInsertAction action)
             return [m_controller->_editingDelegate.get() _webProcessPlugInBrowserContextController:m_controller shouldChangeSelectedRange:apiFromRange.get() toRange:apiToRange.get() affinity:apiAffinity stillSelecting:stillSelecting];
         }
 
+        void didChange(WebKit::WebPage&, StringImpl*) final
+        {
+            if (!m_delegateMethods.didChange)
+                return;
+
+            [m_controller->_editingDelegate.get() _webProcessPlugInBrowserContextControllerDidChangeByEditing:m_controller];
+        }
+
         void willWriteToPasteboard(WebKit::WebPage&, WebCore::Range* range) final
         {
             if (!m_delegateMethods.willWriteToPasteboard)
@@ -655,6 +663,7 @@ static inline WKEditorInsertAction toWK(EditorInsertAction action)
             DelegateMethods(RetainPtr<id <WKWebProcessPlugInEditingDelegate>> delegate)
                 : shouldInsertText([delegate respondsToSelector:@selector(_webProcessPlugInBrowserContextController:shouldInsertText:replacingRange:givenAction:)])
                 , shouldChangeSelectedRange([delegate respondsToSelector:@selector(_webProcessPlugInBrowserContextController:shouldChangeSelectedRange:toRange:affinity:stillSelecting:)])
+                , didChange([delegate respondsToSelector:@selector(_webProcessPlugInBrowserContextControllerDidChangeByEditing:)])
                 , willWriteToPasteboard([delegate respondsToSelector:@selector(_webProcessPlugInBrowserContextController:willWriteRangeToPasteboard:)])
                 , getPasteboardDataForRange([delegate respondsToSelector:@selector(_webProcessPlugInBrowserContextController:pasteboardDataForRange:)])
                 , didWriteToPasteboard([delegate respondsToSelector:@selector(_webProcessPlugInBrowserContextControllerDidWriteToPasteboard:)])
@@ -663,6 +672,7 @@ static inline WKEditorInsertAction toWK(EditorInsertAction action)
 
             bool shouldInsertText;
             bool shouldChangeSelectedRange;
+            bool didChange;
             bool willWriteToPasteboard;
             bool getPasteboardDataForRange;
             bool didWriteToPasteboard;

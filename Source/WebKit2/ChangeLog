@@ -1,3 +1,16 @@
+2017-03-06  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] Expose API::InjectedBundle::EditorClient::didChange via the Objective-C bundle SPI
+        https://bugs.webkit.org/show_bug.cgi?id=169223
+
+        Reviewed by Tim Horton.
+
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInEditingDelegate.h: Declared new
+          delegate method -_webProcessPlugInBrowserContextControllerDidChangeByEditing:.
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInBrowserContextController.mm:
+        (-[WKWebProcessPlugInBrowserContextController _setEditingDelegate:]): Added an override
+          of API::InjectedBundle::EditorClient::didChange that calls the new delegate method.
+
 2017-03-06  Michael Saboff  <msaboff@apple.com>
 
         Unreviewed build fix after r213492.
