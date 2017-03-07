@@ -78,7 +78,7 @@ LIBWEBRTC_LIBRARY_DIR_USE_OVERRIDE_FRAMEWORKS_DIR_NO = $(WEBCORE_FRAMEWORKS_DIR)
 LIBWEBRTC_LIBRARY_DIR_USE_OVERRIDE_FRAMEWORKS_DIR_YES = $(WK_OVERRIDE_FRAMEWORKS_DIR);
 
 OTHER_LDFLAGS = $(inherited) $(OTHER_LDFLAGS_PLATFORM)
-OTHER_LDFLAGS_BASE = -lsqlite3 -lobjc -lANGLE;
+OTHER_LDFLAGS_BASE = -lsqlite3 -lobjc -lANGLE -framework Metal;
 OTHER_LDFLAGS_BASE_ios = $(OTHER_LDFLAGS_BASE) -framework CFNetwork -framework CoreGraphics -framework CoreText -framework Foundation -framework ImageIO -framework MobileCoreServices -framework OpenGLES -lMobileGestalt $(WK_IOS_BINCOMPAT_LDFLAGS);
 OTHER_LDFLAGS_PLATFORM[sdk=iphoneos*] = $(OTHER_LDFLAGS_BASE_ios) -framework IOSurface -framework GraphicsServices $(LIBWEBRTC_LDFLAGS);
 OTHER_LDFLAGS_PLATFORM[sdk=iphonesimulator*] = $(OTHER_LDFLAGS_BASE_ios) $(LIBWEBRTC_LDFLAGS);

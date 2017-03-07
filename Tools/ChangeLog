@@ -1,3 +1,17 @@
+2017-03-07  Dean Jackson  <dino@apple.com>
+
+        Add GPUDevice implementation and WebGPULayer
+        https://bugs.webkit.org/show_bug.cgi?id=169219
+        <rdar://problem/30879048>
+
+        Reviewed by Sam Weinig.
+
+        Test for WebCore's GPUDevice class.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebCore/mac/GPUDevice.mm: Added.
+        (TestWebKitAPI::TEST):
+
 2017-03-07  Alex Christensen  <achristensen@webkit.org>
 
         [Content Extensions] Rename "Domain" to "Condition" where appropriate

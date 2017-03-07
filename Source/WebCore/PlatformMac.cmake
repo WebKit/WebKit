@@ -107,6 +107,7 @@ list(APPEND WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/graphics/cocoa"
     "${WEBCORE_DIR}/platform/graphics/cg"
     "${WEBCORE_DIR}/platform/graphics/cv"
+    "${WEBCORE_DIR}/platform/graphics/gpu"
     "${WEBCORE_DIR}/platform/graphics/egl"
     "${WEBCORE_DIR}/platform/graphics/opentype"
     "${WEBCORE_DIR}/platform/graphics/opengl"
@@ -414,6 +415,7 @@ list(APPEND WebCore_SOURCES
     platform/graphics/cg/SubimageCacheWithTimer.cpp
     platform/graphics/cg/TransformationMatrixCG.cpp
 
+    platform/graphics/cocoa/GPUDeviceMetal.mm
     platform/graphics/cocoa/FontCacheCoreText.cpp
     platform/graphics/cocoa/FontCascadeCocoa.mm
     platform/graphics/cocoa/FontCocoa.mm
@@ -426,6 +428,8 @@ list(APPEND WebCore_SOURCES
     platform/graphics/cv/PixelBufferConformerCV.cpp
     platform/graphics/cv/TextureCacheCV.mm
     platform/graphics/cv/VideoTextureCopierCV.cpp
+
+    platform/graphics/gpu/GPUDevice.cpp
 
     platform/graphics/mac/ColorMac.mm
     platform/graphics/mac/ComplexTextControllerCoreText.mm

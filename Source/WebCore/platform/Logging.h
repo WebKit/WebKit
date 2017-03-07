@@ -87,6 +87,7 @@ namespace WebCore {
     M(URLParser) \
     M(WebAudio) \
     M(WebGL) \
+    M(WebGPU) \
     M(WebRTC) \
     M(WebReplay) \
     M(WheelEventTestTriggers) \
