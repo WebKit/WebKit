@@ -1,3 +1,13 @@
+2017-03-07  Alex Christensen  <achristensen@webkit.org>
+
+        [URLParser] Fix file URLs that are just file:// and a Windows drive letter
+        https://bugs.webkit.org/show_bug.cgi?id=169242
+
+        Reviewed by Tim Horton.
+
+        * TestWebKitAPI/Tests/WebCore/URLParser.cpp:
+        (TestWebKitAPI::TEST_F):
+
 2017-03-07  Jonathan Bedard  <jbedard@apple.com>
 
         Standardize device/simulator naming conventions
