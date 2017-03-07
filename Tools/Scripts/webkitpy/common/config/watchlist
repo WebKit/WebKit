@@ -358,7 +358,7 @@
         # Note: All email addresses listed must be registered with bugzilla.
         # Specifically, levin@chromium.org and levin+threading@chromium.org are
         # two different accounts as far as bugzilla is concerned.
-        "Accessibility": [ "cfleizach@apple.com", "dmazzoni@google.com", "apinheiro@igalia.com", "jdiggs@igalia.com", "aboxhall@chromium.org", "mario@webkit.org", "samuel_white@apple.com", "jcraig@apple.com" ],
+        "Accessibility": [ "cfleizach@apple.com", "dmazzoni@google.com", "apinheiro@igalia.com", "jdiggs@igalia.com", "aboxhall@chromium.org", "samuel_white@apple.com", "jcraig@apple.com" ],
         "Animation" : [ "simon.fraser@apple.com", "dino@apple.com", "dstockwell@chromium.org" ],
         "MotionMark" : [ "sabouhallawa@apple.com" ],
         "BindingsScripts": [ "cdumez@apple.com" ],

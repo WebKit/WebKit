@@ -1,3 +1,9 @@
+2017-03-07  Mario Sanchez Prada  <mario@webkit.org>
+
+        Unreviewed. Removed myself from the Accessibility watch list
+
+        * Scripts/webkitpy/common/config/watchlist: Removed myself.
+
 2017-03-06  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Add Fujii Hironori to contributor's list
