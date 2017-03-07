@@ -1,3 +1,9 @@
+2017-03-06  Michael Saboff  <msaboff@apple.com>
+
+        Unreviewed build fix after r213483.
+
+        * Configurations/Base.xcconfig:
+
 2017-03-06  Brent Fulgham  <bfulgham@apple.com>
 
         [Mac][WK2] Support new CoreMedia routing features

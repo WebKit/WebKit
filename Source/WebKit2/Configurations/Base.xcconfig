@@ -111,5 +111,5 @@ SUPPORTED_PLATFORMS = iphoneos iphonesimulator macosx appletvos appletvsimulator
 FRAMEWORK_CONTENT_DIRECTORY[sdk=macosx*] = Versions/A;
 
 OTHER_CFLAGS = $(ASAN_OTHER_CFLAGS);
-OTHER_CPLUSPLUSFLAGS = $(ASAN_OTHER_CPLUSPLUSFLAGS);
+OTHER_CPLUSPLUSFLAGS = $(ASAN_OTHER_CPLUSPLUSFLAGS) -isystem $(SDKROOT)/System/Library/Frameworks/System.framework/PrivateHeaders;
 OTHER_LDFLAGS = $(ASAN_OTHER_LDFLAGS);
