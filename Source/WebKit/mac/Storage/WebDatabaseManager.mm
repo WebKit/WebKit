@@ -213,7 +213,7 @@ static bool isFileHidden(NSString *file)
         }
         
         // If we have removed every database file for this origin, delete the folder for this origin.
-        if (databaseFileCount == deletedDatabaseFileCount) {
+        if (databaseFileCount == deletedDatabaseFileCount || ![fileManager contentsOfDirectoryAtPath:path error:nullptr].count) {
             // Use rmdir - we don't want the deletion to happen if the folder is not empty.
             rmdir([path fileSystemRepresentation]);
         }

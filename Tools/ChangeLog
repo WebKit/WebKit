@@ -1,3 +1,19 @@
+2017-03-07  Maureen Daum  <mdaum@apple.com>
+
+        Correctly check for an empty database file.
+        <rdar://problem/30542242> Removing Website Data not working (WebSQL directories being left behind)
+        https://bugs.webkit.org/show_bug.cgi?id=169256
+
+        Reviewed by Brady Eidson.
+
+        Add a test for DatabaseTracker::deleteDatabaseFileIfEmpty that verifies
+        that if we pass in an empty file it actually gets deleted.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        Add TestWebKitAPI/Tests/WebCore/DatabaseTrackerTest.cpp.
+        * TestWebKitAPI/Tests/WebCore/DatabaseTrackerTest.cpp: Added.
+        (TestWebKitAPI::TEST):
+
 2017-03-07  Alex Christensen  <achristensen@webkit.org>
 
         [URLParser] Fix file URLs that are just file:// and a Windows drive letter

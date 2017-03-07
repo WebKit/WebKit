@@ -1,3 +1,21 @@
+2017-03-07  Maureen Daum  <mdaum@apple.com>
+
+        Correctly check for an empty database file.
+        <rdar://problem/30542242> Removing Website Data not working (WebSQL directories being left behind)
+        https://bugs.webkit.org/show_bug.cgi?id=169256
+
+        Reviewed by Brady Eidson.
+
+        Check if the folder for an origin's WebSQL databases is empty after trying to delete
+        all of its files. Currently we check if the deletedDatabaseFileCount matches the number
+        of files that were in the folder. However, when we delete the actual database file in
+        DatabaseTracker::deleteDatabaseFileIfEmpty(), the shm and wal files get deleted along with
+        the database file, but deletedDatabaseFileCount only gets incremented once.
+
+        * Storage/WebDatabaseManager.mm:
+        (+[WebDatabaseManager removeEmptyDatabaseFiles]):
+        Delete the folder if it is empty.
+
 2017-03-06  Michael Saboff  <msaboff@apple.com>
 
         Unreviewed build fix to add

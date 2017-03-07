@@ -1216,7 +1216,7 @@ bool DatabaseTracker::deleteDatabaseFileIfEmpty(const String& path)
     if (!database.open(path))
         return false;
     
-    // Specify that we want the exclusive locking mode, so after the next read,
+    // Specify that we want the exclusive locking mode, so after the next write,
     // we'll be holding the lock to this database file.
     SQLiteStatement lockStatement(database, "PRAGMA locking_mode=EXCLUSIVE;");
     if (lockStatement.prepare() != SQLITE_OK)
@@ -1226,21 +1226,18 @@ bool DatabaseTracker::deleteDatabaseFileIfEmpty(const String& path)
         return false;
     lockStatement.finalize();
 
-    // Every sqlite database has a sqlite_master table that contains the schema for the database.
-    // http://www.sqlite.org/faq.html#q7
-    SQLiteStatement readStatement(database, "SELECT * FROM sqlite_master LIMIT 1;");    
-    if (readStatement.prepare() != SQLITE_OK)
+    if (!database.executeCommand("BEGIN EXCLUSIVE TRANSACTION;"))
         return false;
-    // We shouldn't expect any result.
-    if (readStatement.step() != SQLITE_DONE)
+
+    // At this point, we hold the exclusive lock to this file.
+    // Check that the database doesn't contain any tables.
+    if (!database.executeCommand("SELECT name FROM sqlite_master WHERE type='table';"))
         return false;
-    readStatement.finalize();
-    
-    // At this point, we hold the exclusive lock to this file.  Double-check again to make sure
-    // it's still zero bytes.
-    if (!isZeroByteFile(path))
-        return false;
-    
+
+    database.executeCommand("COMMIT TRANSACTION;");
+
+    database.close();
+
     return SQLiteFileSystem::deleteDatabaseFile(path);
 }
 
