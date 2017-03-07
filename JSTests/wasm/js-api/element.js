@@ -215,5 +215,5 @@ import * as assert from '../assert.js';
         return new WebAssembly.Module(bin);
     }
 
-    assert.throws(() => badModule(), WebAssembly.CompileError, "WebAssembly.Module doesn't parse at byte 58 / 72: 0th Element init_expr must produce an i32");
+    assert.throws(() => badModule(), WebAssembly.CompileError, "WebAssembly.Module doesn't parse at byte 58 / 72: Element init_expr must produce an i32");
 }

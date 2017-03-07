@@ -1,3 +1,10 @@
+2017-03-06  Saam Barati  <sbarati@apple.com>
+
+        Unreviewed. Fix test expected error message.
+
+        * wasm/js-api/element.js:
+        (assert.throws):
+
 2017-03-06  Caio Lima  <ticaiolima@gmail.com>
 
         op_get_by_id_with_this should use inline caching
