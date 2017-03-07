@@ -270,7 +270,10 @@ FcFontSet* FontPlatformData::fallbacks() const
 
     if (m_pattern) {
         FcResult fontConfigResult;
-        m_fallbacks.reset(FcFontSort(nullptr, m_pattern.get(), FcTrue, nullptr, &fontConfigResult));
+        FcUniquePtr<FcFontSet> unpreparedFallbacks(FcFontSort(nullptr, m_pattern.get(), FcTrue, nullptr, &fontConfigResult));
+        m_fallbacks.reset(FcFontSetCreate());
+        for (int i = 0; i < unpreparedFallbacks.get()->nfont; i++)
+            FcFontSetAdd(m_fallbacks.get(), FcFontRenderPrepare(nullptr, m_pattern.get(), unpreparedFallbacks.get()->fonts[i]));
     }
     return m_fallbacks.get();
 }
