@@ -255,16 +255,9 @@ void Frame::setView(RefPtr<FrameView>&& view)
     if (m_eventHandler)
         m_eventHandler->clear();
 
-    bool hadLivingRenderTree = m_doc ? m_doc->hasLivingRenderTree() : false;
-    // Try and catch cases where this might still be happening after r213311.
-    ASSERT_WITH_SECURITY_IMPLICATION(!hadLivingRenderTree);
-    if (hadLivingRenderTree)
-        m_doc->destroyRenderTree();
+    RELEASE_ASSERT(!m_doc || !m_doc->hasLivingRenderTree());
 
     m_view = WTFMove(view);
-
-    if (hadLivingRenderTree && m_view)
-        m_doc->didBecomeCurrentDocumentInView();
     
     // Only one form submission is allowed per view of a part.
     // Since this part may be getting reused as a result of being

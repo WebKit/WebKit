@@ -2195,13 +2195,6 @@ void Document::frameDestroyed()
     FrameDestructionObserver::frameDestroyed();
 }
 
-void Document::didBecomeCurrentDocumentInView()
-{
-    ASSERT(view());
-    if (!hasLivingRenderTree())
-        createRenderTree();
-}
-
 void Document::attachToCachedFrame(CachedFrameBase& cachedFrame)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(cachedFrame.document() == this);

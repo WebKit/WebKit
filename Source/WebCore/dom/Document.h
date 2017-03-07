@@ -553,7 +553,6 @@ public:
     void didBecomeCurrentDocumentInFrame();
     void destroyRenderTree();
     void prepareForDestruction();
-    void didBecomeCurrentDocumentInView();
 
     // Override ScriptExecutionContext methods to do additional work
     bool shouldBypassMainWorldContentSecurityPolicy() const final;
