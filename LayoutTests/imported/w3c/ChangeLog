@@ -1,3 +1,16 @@
+2017-03-06  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebCrypto] Implement ECDH GenerateKey operation
+        https://bugs.webkit.org/show_bug.cgi?id=169093
+        <rdar://problem/23789585>
+
+        Reviewed by Brent Fulgham.
+
+        * web-platform-tests/WebCryptoAPI/generateKey/failures_ECDH.worker-expected.txt:
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_ECDH.worker-expected.txt:
+        * web-platform-tests/WebCryptoAPI/generateKey/test_failures_ECDH-expected.txt:
+        * web-platform-tests/WebCryptoAPI/generateKey/test_successes_ECDH-expected.txt:
+
 2017-03-06  Alex Christensen  <achristensen@webkit.org>
 
         Fix URLs relative to file URLs with paths beginning with Windows drive letters

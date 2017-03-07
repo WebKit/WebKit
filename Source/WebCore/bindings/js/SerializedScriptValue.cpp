@@ -1208,6 +1208,10 @@ private:
             write(key->algorithmIdentifier());
             write(downcast<CryptoKeyAES>(*key).key());
             break;
+        case CryptoKeyClass::EC:
+            // A dummy implementation for now.
+            // FIXME: https://bugs.webkit.org/show_bug.cgi?id=169232
+            break;
         case CryptoKeyClass::RSA:
             write(CryptoKeyClassSubtag::RSA);
             write(key->algorithmIdentifier());

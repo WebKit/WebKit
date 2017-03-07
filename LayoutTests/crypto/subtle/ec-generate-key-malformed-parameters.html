@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../resources/common.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+description("Test generating an EC key pair with malformed-paramters.");
+
+var extractable = true;
+
+// Malformed AlgorithmIdentifiers
+shouldReject('crypto.subtle.generateKey("ecdh", extractable, ["deriveKey", "deriveBits"])');
+shouldReject('crypto.subtle.generateKey({name: "ecdh"}, extractable, ["deriveKey", "deriveBits"])');
+shouldReject('crypto.subtle.generateKey({name: "ecdh", namedCurve: true}, extractable, ["deriveKey", "deriveBits"])');
+shouldReject('crypto.subtle.generateKey({name: "ecdh", namedCurve: null}, extractable, ["deriveKey", "deriveBits"])');
+shouldReject('crypto.subtle.generateKey({name: "ecdh", namedCurve: undefined}, extractable, ["deriveKey", "deriveBits"])');
+shouldReject('crypto.subtle.generateKey({name: "ecdh", namedCurve: Symbol()}, extractable, ["deriveKey", "deriveBits"])');
+shouldReject('crypto.subtle.generateKey({name: "ecdh", namedCurve: { }}, extractable, ["deriveKey", "deriveBits"])');
+shouldReject('crypto.subtle.generateKey({name: "ecdh", namedCurve: 1}, extractable, ["deriveKey", "deriveBits"])');
+// Wrong usages
+shouldReject('crypto.subtle.generateKey({name: "ecdh", namedCurve: "P-256"}, extractable, ["encrypt"])');
+shouldReject('crypto.subtle.generateKey({name: "ecdh", namedCurve: "P-256"}, extractable, ["decrypt"])');
+shouldReject('crypto.subtle.generateKey({name: "ecdh", namedCurve: "P-256"}, extractable, ["sign"])');
+shouldReject('crypto.subtle.generateKey({name: "ecdh", namedCurve: "P-256"}, extractable, ["verify"])');
+shouldReject('crypto.subtle.generateKey({name: "ecdh", namedCurve: "P-256"}, extractable, ["wrapKey"])');
+shouldReject('crypto.subtle.generateKey({name: "ecdh", namedCurve: "P-256"}, extractable, ["unwrapKey"])');
+// Not supported NamedCurve
+shouldReject('crypto.subtle.generateKey({name: "ecdh", namedCurve: "P-521"}, extractable, ["deriveKey"])');
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

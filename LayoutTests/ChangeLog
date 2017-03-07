@@ -1,3 +1,25 @@
+2017-03-06  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebCrypto] Implement ECDH GenerateKey operation
+        https://bugs.webkit.org/show_bug.cgi?id=169093
+        <rdar://problem/23789585>
+
+        Reviewed by Brent Fulgham.
+
+        * crypto/subtle/ec-generate-key-malformed-parameters-expected.txt: Added.
+        * crypto/subtle/ec-generate-key-malformed-parameters.html: Added.
+        * crypto/subtle/ecdh-generate-key-extractable-expected.txt: Added.
+        * crypto/subtle/ecdh-generate-key-extractable.html: Added.
+        * crypto/subtle/ecdh-generate-key-p256-expected.txt: Added.
+        * crypto/subtle/ecdh-generate-key-p256.html: Added.
+        * crypto/subtle/ecdh-generate-key-p384-expected.txt: Added.
+        * crypto/subtle/ecdh-generate-key-p384.html: Added.
+        * crypto/subtle/ecdh-generate-key-single-usage-expected.txt: Added.
+        * crypto/subtle/ecdh-generate-key-single-usage.html: Added.
+        * crypto/workers/subtle/ec-generate-key-expected.txt: Added.
+        * crypto/workers/subtle/ec-generate-key.html: Added.
+        * crypto/workers/subtle/resources/ec-generate-key.js: Added.
+
 2017-03-06  Dave Hyatt  <hyatt@apple.com>
 
         REGRESSION: Block no longer shrinks to preferred width in this flex box layout

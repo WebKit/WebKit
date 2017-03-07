@@ -43,12 +43,14 @@ class CryptoKeyData;
 
 enum class CryptoKeyClass {
     AES,
+    EC,
     HMAC,
     RSA
 };
 
 enum class KeyAlgorithmClass {
     AES,
+    EC,
     HMAC,
     HRSA,
     RSA,

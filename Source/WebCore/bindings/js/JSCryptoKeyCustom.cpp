@@ -29,6 +29,7 @@
 #if ENABLE(SUBTLE_CRYPTO)
 
 #include "CryptoKeyAES.h"
+#include "CryptoKeyEC.h"
 #include "CryptoKeyHMAC.h"
 #include "CryptoKeyRSA.h"
 #include "JSCryptoAlgorithmBuilder.h"
@@ -52,6 +53,12 @@ JSValue JSCryptoKey::algorithm(JSC::ExecState& state) const
         auto& aesAlgorithm = downcast<AesKeyAlgorithm>(*algorithm);
         builder.add("name", aesAlgorithm.name());
         builder.add("length", aesAlgorithm.length());
+        break;
+    }
+    case KeyAlgorithmClass::EC: {
+        auto& ecAlgorithm = downcast<EcKeyAlgorithm>(*algorithm);
+        builder.add("name", ecAlgorithm.name());
+        builder.add("namedCurve", ecAlgorithm.namedCurve());
         break;
     }
     case KeyAlgorithmClass::HMAC: {

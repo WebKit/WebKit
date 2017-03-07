@@ -33,6 +33,7 @@
 
 #if USE(APPLE_INTERNAL_SDK)
 #include <CommonCrypto/CommonCryptorSPI.h>
+#include <CommonCrypto/CommonECCryptor.h>
 #include <CommonCrypto/CommonRSACryptor.h>
 #include <CommonCrypto/CommonRandomSPI.h>
 #endif
@@ -84,6 +85,10 @@ extern "C" CCCryptorStatus CCRSAGetKeyComponents(CCRSACryptorRef rsaKey, uint8_t
 extern "C" CCRSAKeyType CCRSAGetKeyType(CCRSACryptorRef key);
 extern "C" CCCryptorStatus CCRSACryptorImport(const void *keyPackage, size_t keyPackageLen, CCRSACryptorRef *key);
 extern "C" CCCryptorStatus CCRSACryptorExport(CCRSACryptorRef key, void *out, size_t *outLen);
+
+typedef struct _CCECCryptor *CCECCryptorRef;
+extern "C" CCCryptorStatus CCECCryptorGeneratePair(size_t keysize, CCECCryptorRef *publicKey, CCECCryptorRef *privateKey);
+extern "C" void CCECCryptorRelease(CCECCryptorRef key);
 
 #if !USE(APPLE_INTERNAL_SDK)
 extern "C" CCCryptorStatus CCCryptorGCM(CCOperation op, CCAlgorithm alg, const void* key, size_t keyLength, const void* iv, size_t ivLen, const void* aData, size_t aDataLen, const void* dataIn, size_t dataInLength, void* dataOut, void* tag, size_t* tagLength);

@@ -38,6 +38,7 @@
 #include "JSCryptoKeyPair.h"
 #include "JSDOMPromise.h"
 #include "JSDOMWrapper.h"
+#include "JSEcKeyParams.h"
 #include "JSHmacKeyParams.h"
 #include "JSJsonWebKey.h"
 #include "JSRsaHashedImportParams.h"
@@ -197,6 +198,13 @@ static std::unique_ptr<CryptoAlgorithmParameters> normalizeCryptoAlgorithmParame
                 params.hashIdentifier = toHashIdentifier(state, params.hash);
                 RETURN_IF_EXCEPTION(scope, nullptr);
                 result = std::make_unique<CryptoAlgorithmHmacKeyParams>(params);
+                break;
+            }
+            case CryptoAlgorithmIdentifier::ECDSA:
+            case CryptoAlgorithmIdentifier::ECDH: {
+                auto params = convertDictionary<CryptoAlgorithmEcKeyParams>(state, value);
+                RETURN_IF_EXCEPTION(scope, nullptr);
+                result = std::make_unique<CryptoAlgorithmEcKeyParams>(params);
                 break;
             }
             default:
@@ -724,9 +732,9 @@ static void jsSubtleCryptoFunctionGenerateKeyPromise(ExecState& state, Ref<Defer
         rejectWithException(WTFMove(capturedPromise), ec);
     };
 
-    // The 11 December 2014 version of the specification suggests we should perform the following task asynchronously
+    // The 26 January 2017 version of the specification suggests we should perform the following task asynchronously
     // regardless what kind of keys it produces: https://www.w3.org/TR/WebCryptoAPI/#SubtleCrypto-method-generateKey
-    // That's simply not efficient for AES and HMAC keys. Therefore, we perform it as an async task conditionally.
+    // That's simply not efficient for AES, HMAC and EC keys. Therefore, we perform it as an async task only for RSA keys.
     algorithm->generateKey(*params, extractable, keyUsages, WTFMove(callback), WTFMove(exceptionCallback), *scriptExecutionContextFromExecState(&state));
 }
 
