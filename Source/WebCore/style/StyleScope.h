@@ -43,6 +43,7 @@ class CSSStyleSheet;
 class Document;
 class Element;
 class Node;
+class ProcessingInstruction;
 class StyleResolver;
 class StyleSheet;
 class StyleSheetContents;
@@ -82,11 +83,15 @@ public:
     void setPreferredStylesheetSetName(const String&);
     void setSelectedStylesheetSetName(const String&);
 
-    void addPendingSheet(const Node&);
-    void removePendingSheet(const Node&);
-    bool hasPendingSheet(const Node& node) const { return m_nodesWithPendingSheets.contains(&node); }
-    bool hasProcessingInstructionWithPendingSheet();
-    bool hasPendingSheets() const { return !m_nodesWithPendingSheets.isEmpty(); }
+    void addPendingSheet(const Element&);
+    void removePendingSheet(const Element&);
+    void addPendingSheet(const ProcessingInstruction&);
+    void removePendingSheet(const ProcessingInstruction&);
+    bool hasPendingSheets() const;
+    bool hasPendingSheetsBeforeBody() const;
+    bool hasPendingSheetsInBody() const;
+    bool hasPendingSheet(const Element&) const;
+    bool hasPendingSheetInBody(const Element&) const;
 
     bool usesStyleBasedEditability() { return m_usesStyleBasedEditability; }
 
@@ -114,6 +119,8 @@ public:
 
 private:
     bool shouldUseSharedUserAgentShadowTreeStyleResolver() const;
+
+    void didRemovePendingStylesheet();
 
     enum class UpdateType { ActiveSet, ContentsOrInterpretation };
     void updateActiveStyleSheets(UpdateType);
@@ -143,7 +150,6 @@ private:
     Vector<RefPtr<StyleSheet>> m_styleSheetsForStyleSheetList;
     Vector<RefPtr<CSSStyleSheet>> m_activeStyleSheets;
 
-
     Timer m_pendingUpdateTimer;
 
     mutable std::unique_ptr<HashSet<const CSSStyleSheet*>> m_weakCopyOfActiveStyleSheetListForFastLookup;
@@ -152,7 +158,9 @@ private:
     // Sheets loaded using the @import directive are not included in this count.
     // We use this count of pending sheets to detect when we can begin attaching
     // elements and when it is safe to execute scripts.
-    HashSet<const Node*> m_nodesWithPendingSheets;
+    HashSet<const ProcessingInstruction*> m_processingInstructionsWithPendingSheets;
+    HashSet<const Element*> m_elementsInHeadWithPendingSheets;
+    HashSet<const Element*> m_elementsInBodyWithPendingSheets;
 
     bool m_didUpdateActiveStyleSheets { false };
 
@@ -167,6 +175,21 @@ private:
     bool m_usesStyleBasedEditability { false };
     bool m_isUpdatingStyleResolver { false };
 };
+
+inline bool Scope::hasPendingSheets() const
+{
+    return hasPendingSheetsBeforeBody() || !m_elementsInBodyWithPendingSheets.isEmpty();
+}
+
+inline bool Scope::hasPendingSheetsBeforeBody() const
+{
+    return !m_elementsInHeadWithPendingSheets.isEmpty() || !m_processingInstructionsWithPendingSheets.isEmpty();
+}
+
+inline bool Scope::hasPendingSheetsInBody() const
+{
+    return !m_elementsInBodyWithPendingSheets.isEmpty();
+}
 
 inline void Scope::flushPendingUpdate()
 {

@@ -361,14 +361,14 @@ static void clearNeedsStyleResolution(Element& element)
 
 static bool hasLoadingStylesheet(const Style::Scope& styleScope, const Element& element, bool checkDescendants)
 {
-    if (!styleScope.hasPendingSheets())
+    if (!styleScope.hasPendingSheetsInBody())
         return false;
-    if (styleScope.hasPendingSheet(element))
+    if (styleScope.hasPendingSheetInBody(element))
         return true;
     if (!checkDescendants)
         return false;
     for (auto& descendant : descendantsOfType<Element>(element)) {
-        if (styleScope.hasPendingSheet(descendant))
+        if (styleScope.hasPendingSheetInBody(descendant))
             return true;
     };
     return false;
@@ -482,7 +482,7 @@ std::unique_ptr<Update> TreeResolver::resolve()
     if (!documentElement->childNeedsStyleRecalc() && !documentElement->needsStyleRecalc())
         return nullptr;
 
-    m_didSeePendingStylesheet = m_document.styleScope().hasProcessingInstructionWithPendingSheet();
+    m_didSeePendingStylesheet = m_document.styleScope().hasPendingSheetsBeforeBody();
 
     m_update = std::make_unique<Update>(m_document);
     m_scopeStack.append(adoptRef(*new Scope(m_document)));

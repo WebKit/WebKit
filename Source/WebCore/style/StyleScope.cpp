@@ -32,6 +32,7 @@
 #include "Element.h"
 #include "ElementChildIterator.h"
 #include "ExtensionStyleSheets.h"
+#include "HTMLHeadElement.h"
 #include "HTMLIFrameElement.h"
 #include "HTMLLinkElement.h"
 #include "HTMLSlotElement.h"
@@ -72,7 +73,7 @@ Scope::Scope(ShadowRoot& shadowRoot)
 
 Scope::~Scope()
 {
-    ASSERT(m_nodesWithPendingSheets.isEmpty());
+    ASSERT(!hasPendingSheets());
 }
 
 bool Scope::shouldUseSharedUserAgentShadowTreeStyleResolver() const
@@ -172,20 +173,48 @@ void Scope::setSelectedStylesheetSetName(const String& name)
     didChangeActiveStyleSheetCandidates();
 }
 
-void Scope::addPendingSheet(const Node& node)
-{
-    ASSERT(!m_nodesWithPendingSheets.contains(&node));
 
-    m_nodesWithPendingSheets.add(&node);
+void Scope::addPendingSheet(const Element& element)
+{
+    ASSERT(!hasPendingSheet(element));
+
+    bool isInHead = ancestorsOfType<HTMLHeadElement>(element).first();
+    if (isInHead)
+        m_elementsInHeadWithPendingSheets.add(&element);
+    else
+        m_elementsInBodyWithPendingSheets.add(&element);
 }
 
 // This method is called whenever a top-level stylesheet has finished loading.
-void Scope::removePendingSheet(const Node& node)
+void Scope::removePendingSheet(const Element& element)
 {
-    ASSERT(m_nodesWithPendingSheets.contains(&node));
+    ASSERT(hasPendingSheet(element));
 
-    m_nodesWithPendingSheets.remove(&node);
-    if (!m_nodesWithPendingSheets.isEmpty())
+    if (!m_elementsInHeadWithPendingSheets.remove(&element))
+        m_elementsInBodyWithPendingSheets.remove(&element);
+
+    didRemovePendingStylesheet();
+}
+
+void Scope::addPendingSheet(const ProcessingInstruction& processingInstruction)
+{
+    ASSERT(!m_processingInstructionsWithPendingSheets.contains(&processingInstruction));
+
+    m_processingInstructionsWithPendingSheets.add(&processingInstruction);
+}
+
+void Scope::removePendingSheet(const ProcessingInstruction& processingInstruction)
+{
+    ASSERT(m_processingInstructionsWithPendingSheets.contains(&processingInstruction));
+
+    m_processingInstructionsWithPendingSheets.remove(&processingInstruction);
+
+    didRemovePendingStylesheet();
+}
+
+void Scope::didRemovePendingStylesheet()
+{
+    if (hasPendingSheets())
         return;
 
     didChangeActiveStyleSheetCandidates();
@@ -194,19 +223,14 @@ void Scope::removePendingSheet(const Node& node)
         m_document.didRemoveAllPendingStylesheet();
 }
 
-bool Scope::hasProcessingInstructionWithPendingSheet()
+bool Scope::hasPendingSheet(const Element& element) const
 {
-    ASSERT(!m_shadowRoot);
+    return m_elementsInHeadWithPendingSheets.contains(&element) || hasPendingSheetInBody(element);
+}
 
-    for (auto* child = m_document.firstChild(); child; child = child->nextSibling()) {
-        if (is<Element>(*child))
-            return false;
-        if (m_nodesWithPendingSheets.contains(child)) {
-            ASSERT(is<ProcessingInstruction>(*child));
-            return true;
-        }
-    }
-    return false;
+bool Scope::hasPendingSheetInBody(const Element& element) const
+{
+    return m_elementsInBodyWithPendingSheets.contains(&element);
 }
 
 void Scope::addStyleSheetCandidateNode(Node& node, bool createdByParser)
