@@ -1,3 +1,25 @@
+2017-03-07  Anders Carlsson  <andersca@apple.com>
+
+        Rewrite the DRT Pasteboard implementation to use UTIs and WTF types
+        https://bugs.webkit.org/show_bug.cgi?id=169289
+
+        Reviewed by Tim Horton.
+
+        * DumpRenderTree/mac/DumpRenderTreePasteboard.mm:
+        (-[LocalPasteboard initWithName:]):
+        (-[LocalPasteboard name]):
+        (-[LocalPasteboard declareTypes:owner:]):
+        (isUTI):
+        (toUTI):
+        (-[LocalPasteboard addTypes:owner:]):
+        (-[LocalPasteboard changeCount]):
+        (-[LocalPasteboard types]):
+        (-[LocalPasteboard availableTypeFromArray:]):
+        (-[LocalPasteboard setData:forType:]):
+        (-[LocalPasteboard dataForType:]):
+        (-[LocalPasteboard writeObjects:]):
+        (-[LocalPasteboard dealloc]): Deleted.
+
 2017-03-07  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Add David Jonathan Ross to contributors.json

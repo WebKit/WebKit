@@ -37,14 +37,16 @@
 
 #import <WebKit/WebTypesInternal.h>
 #import <wtf/Assertions.h>
+#import <wtf/HashMap.h>
+#import <wtf/ListHashSet.h>
 #import <wtf/RetainPtr.h>
 
 @interface LocalPasteboard : NSPasteboard {
-    NSMutableArray *typesArray;
-    NSMutableSet *typesSet;
-    NSMutableDictionary *dataByType;
-    NSInteger changeCount;
-    NSString *pasteboardName;
+    RetainPtr<NSString> _pasteboardName;
+    NSInteger _changeCount;
+
+    ListHashSet<RetainPtr<NSString>, WTF::RetainPtrObjectHash<NSString>> _types;
+    HashMap<RetainPtr<NSString>, RetainPtr<NSData>, WTF::RetainPtrObjectHash<NSString>, WTF::RetainPtrObjectHashTraits<NSString>> _data;
 }
 
 -(id)initWithName:(NSString *)name;
@@ -98,25 +100,15 @@ static NSMutableDictionary *localPasteboards;
     self = [super init];
     if (!self)
         return nil;
-    typesArray = [[NSMutableArray alloc] init];
-    typesSet = [[NSMutableSet alloc] init];
-    dataByType = [[NSMutableDictionary alloc] init];
-    pasteboardName = [name copy];
-    return self;
-}
 
-- (void)dealloc
-{
-    [typesArray release];
-    [typesSet release];
-    [dataByType release];
-    [pasteboardName release];
-    [super dealloc];
+    _pasteboardName = adoptNS([name copy]);
+
+    return self;
 }
 
 - (NSString *)name
 {
-    return pasteboardName;
+    return _pasteboardName.get();
 }
 
 - (void)releaseGlobally
@@ -125,68 +117,84 @@ static NSMutableDictionary *localPasteboards;
 
 - (NSInteger)declareTypes:(NSArray *)newTypes owner:(id)newOwner
 {
-    [typesArray removeAllObjects];
-    [typesSet removeAllObjects];
-    [dataByType removeAllObjects];
+    _types.clear();
+    _data.clear();
+
     return [self addTypes:newTypes owner:newOwner];
+}
+
+static bool isUTI(NSString *type)
+{
+    return UTTypeIsDynamic((__bridge CFStringRef)type) || UTTypeIsDeclared((__bridge CFStringRef)type);
+}
+
+static RetainPtr<NSString> toUTI(NSString *type)
+{
+    if (isUTI(type)) {
+        // This is already an UTI.
+        return adoptNS([type copy]);
+    }
+
+    return adoptNS((__bridge NSString *)UTTypeCreatePreferredIdentifierForTag(kUTTagClassNSPboardType, (__bridge CFStringRef)type, nullptr));
 }
 
 - (NSInteger)addTypes:(NSArray *)newTypes owner:(id)newOwner
 {
-    unsigned count = [newTypes count];
-    unsigned i;
-    for (i = 0; i < count; ++i) {
-        NSString *type = [newTypes objectAtIndex:i];
-        NSString *setType = [typesSet member:type];
-        if (!setType) {
-            setType = [type copy];
-            [typesArray addObject:setType];
-            [typesSet addObject:setType];
-            [setType release];
-        }
+    for (NSString *type in newTypes) {
+        _types.add(toUTI(type));
+
         if (newOwner && [newOwner respondsToSelector:@selector(pasteboard:provideDataForType:)])
-            [newOwner pasteboard:self provideDataForType:setType];
+            [newOwner pasteboard:self provideDataForType:type];
     }
-    return ++changeCount;
+
+    return ++_changeCount;
 }
 
 - (NSInteger)changeCount
 {
-    return changeCount;
+    return _changeCount;
 }
 
 - (NSArray *)types
 {
-    return typesArray;
+    auto types = adoptNS([[NSMutableArray alloc] init]);
+
+    for (const auto& type : _types) {
+        [types addObject:type.get()];
+
+        // Include the pasteboard type as well.
+        if (auto pasteboardType = adoptNS((__bridge NSString *)UTTypeCopyPreferredTagWithClass((CFStringRef)type.get(), kUTTagClassNSPboardType)))
+            [types addObject:pasteboardType.get()];
+    }
+
+    return types.autorelease();
 }
 
 - (NSString *)availableTypeFromArray:(NSArray *)types
 {
-    unsigned count = [types count];
-    unsigned i;
-    for (i = 0; i < count; ++i) {
-        NSString *type = [types objectAtIndex:i];
-        NSString *setType = [typesSet member:type];
-        if (setType)
-            return setType;
+    for (NSString *type in types) {
+        if (_types.contains(type))
+            return type;
     }
+
     return nil;
 }
 
 - (BOOL)setData:(NSData *)data forType:(NSString *)dataType
 {
-    if (data == nil)
-        data = [NSData data];
-    if (![typesSet containsObject:dataType])
+    auto uti = toUTI(dataType);
+
+    if (!_types.contains(uti))
         return NO;
-    [dataByType setObject:data forKey:dataType];
-    ++changeCount;
+
+    _data.set(WTFMove(uti), data ? data : [NSData data]);
+    ++_changeCount;
     return YES;
 }
 
 - (NSData *)dataForType:(NSString *)dataType
 {
-    return [dataByType objectForKey:dataType];
+    return _data.get(toUTI(dataType)).get();
 }
 
 - (BOOL)setPropertyList:(id)propertyList forType:(NSString *)dataType
@@ -219,18 +227,13 @@ static NSMutableDictionary *localPasteboards;
 {
     for (id <NSPasteboardWriting> object in objects) {
         for (NSString *type in [object writableTypesForPasteboard:self]) {
-            auto pasteboardType = ^{
-                if (UTTypeIsDynamic((__bridge CFStringRef)type))
-                    return adoptNS((__bridge NSString *)UTTypeCopyPreferredTagWithClass((__bridge CFStringRef)type, kUTTagClassNSPboardType));
+            ASSERT(UTTypeIsDeclared((__bridge CFStringRef)type) || UTTypeIsDynamic((__bridge CFStringRef)type));
 
-                return retainPtr(type);
-            }();
-
-            [self addTypes:@[ pasteboardType.get() ] owner:self];
+            [self addTypes:@[ type ] owner:self];
 
             id propertyList = [object pasteboardPropertyListForType:type];
             if ([propertyList isKindOfClass:NSData.class])
-                [self setData:propertyList forType:pasteboardType.get()];
+                [self setData:propertyList forType:type];
             else
                 ASSERT_NOT_REACHED();
         }
