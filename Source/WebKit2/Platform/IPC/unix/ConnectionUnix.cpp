@@ -40,7 +40,7 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/UniStdExtras.h>
 
-#if PLATFORM(GTK)
+#if USE(GLIB)
 #include <gio/gio.h>
 #endif
 
@@ -49,7 +49,7 @@
 #if defined(SOCK_SEQPACKET) && !OS(DARWIN)
 #define SOCKET_TYPE SOCK_SEQPACKET
 #else
-#if PLATFORM(GTK)
+#if USE(GLIB)
 #define SOCKET_TYPE SOCK_STREAM
 #else
 #define SOCKET_TYPE SOCK_DGRAM
@@ -93,7 +93,7 @@ private:
 void Connection::platformInitialize(Identifier identifier)
 {
     m_socketDescriptor = identifier;
-#if PLATFORM(GTK)
+#if USE(GLIB)
     m_socket = adoptGRef(g_socket_new_from_fd(m_socketDescriptor, nullptr));
 #endif
     m_readBuffer.reserveInitialCapacity(messageMaxSize);
@@ -102,8 +102,8 @@ void Connection::platformInitialize(Identifier identifier)
 
 void Connection::platformInvalidate()
 {
-#if PLATFORM(GTK)
-    // In GTK+ platform the socket descriptor is owned by GSocket.
+#if USE(GLIB)
+    // In the GLib platform the socket descriptor is owned by GSocket.
     m_socket = nullptr;
 #else
     if (m_socketDescriptor != -1)
@@ -113,7 +113,7 @@ void Connection::platformInvalidate()
     if (!m_isConnected)
         return;
 
-#if PLATFORM(GTK)
+#if USE(GLIB)
     m_readSocketMonitor.stop();
     m_writeSocketMonitor.stop();
 #endif
@@ -331,7 +331,7 @@ bool Connection::open()
 
     RefPtr<Connection> protectedThis(this);
     m_isConnected = true;
-#if PLATFORM(GTK)
+#if USE(GLIB)
     m_readSocketMonitor.start(m_socket.get(), G_IO_IN, m_connectionQueue->runLoop(), [protectedThis] (GIOCondition condition) -> gboolean {
         if (condition & G_IO_HUP || condition & G_IO_ERR || condition & G_IO_NVAL) {
             protectedThis->connectionDidClose();
@@ -474,7 +474,7 @@ bool Connection::sendOutputMessage(UnixMessage& outputMessage)
         if (errno == EINTR)
             continue;
         if (errno == EAGAIN || errno == EWOULDBLOCK) {
-#if PLATFORM(GTK)
+#if USE(GLIB)
             m_pendingOutputMessage = std::make_unique<UnixMessage>(WTFMove(outputMessage));
             m_writeSocketMonitor.start(m_socket.get(), G_IO_OUT, m_connectionQueue->runLoop(), [this, protectedThis = makeRef(*this)] (GIOCondition condition) -> gboolean {
                 if (condition & G_IO_OUT) {

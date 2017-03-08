@@ -1,3 +1,22 @@
+2017-03-08  Zan Dobersek  <zdobersek@igalia.com>
+
+        [WK2] Guard GLib-specific code in Module, Connection files with USE(GLIB)
+        https://bugs.webkit.org/show_bug.cgi?id=169349
+
+        Reviewed by Carlos Garcia Campos.
+
+        Use the USE(GLIB) build guards for GLib-specific code in Connection and
+        Module header files and the ConnectionUnix implementation file, instead
+        of the PLATFORM(GTK) guard.
+
+        * Platform/IPC/Connection.h:
+        * Platform/IPC/unix/ConnectionUnix.cpp:
+        (IPC::Connection::platformInitialize):
+        (IPC::Connection::platformInvalidate):
+        (IPC::Connection::open):
+        (IPC::Connection::sendOutputMessage):
+        * Platform/Module.h:
+
 2017-03-08  Tim Horton  <timothy_horton@apple.com>
 
         Remove unused WebPageIOS::zoomToRect and plumbing
