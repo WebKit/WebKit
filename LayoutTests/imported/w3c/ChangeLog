@@ -1,3 +1,18 @@
+2017-03-08  Simon Fraser  <simon.fraser@apple.com>
+
+        Add support for history.scrollRestoration
+        https://bugs.webkit.org/show_bug.cgi?id=147782
+        rdar://problem/22614568
+
+        Reviewed by Sam Weinig.
+        
+        New passing baselines.
+
+        * web-platform-tests/html/browsers/browsing-the-web/history-traversal/persisted-user-state-restoration/scroll-restoration-basic-expected.txt:
+        * web-platform-tests/html/browsers/browsing-the-web/history-traversal/persisted-user-state-restoration/scroll-restoration-fragment-scrolling-cross-origin-expected.txt:
+        * web-platform-tests/html/browsers/browsing-the-web/history-traversal/persisted-user-state-restoration/scroll-restoration-navigation-cross-origin-expected.txt:
+        * web-platform-tests/html/browsers/browsing-the-web/history-traversal/persisted-user-state-restoration/scroll-restoration-navigation-samedoc-expected.txt:
+
 2017-03-07  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebCrypto] Implement ECDH ImportKey/ExportKey operations

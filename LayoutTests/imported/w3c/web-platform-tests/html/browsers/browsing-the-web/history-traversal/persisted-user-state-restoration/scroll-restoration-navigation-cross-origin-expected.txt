@@ -1,4 +1,4 @@
 
 
-FAIL Navigating to new page should reset to "auto" and navigating back should restore and respect scroll restoration mode assert_equals: new page loads should set scrollRestoration to "auto" expected (string) "auto" but got (undefined) undefined
+PASS Navigating to new page should reset to "auto" and navigating back should restore and respect scroll restoration mode 
 

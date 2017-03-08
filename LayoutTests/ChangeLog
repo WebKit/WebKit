@@ -1,3 +1,24 @@
+2017-03-08  Simon Fraser  <simon.fraser@apple.com>
+
+        Add support for history.scrollRestoration
+        https://bugs.webkit.org/show_bug.cgi?id=147782
+        rdar://problem/22614568
+
+        Reviewed by Sam Weinig.
+
+        Sadly history-scroll-restoration.html needs to be cloned for iOS and to use uiController.doAfterPresentationUpdate()
+        there, since restoration involves a trip to the UI process, and this same test did not work for Mac WK1 (dispatch_async()
+        doesn't seem to give the right timing in DRT).
+
+        * TestExpectations:
+        * fast/dom/Window/window-appendages-cleared-expected.txt:
+        * fast/history/history-scroll-restoration-attribute-expected.txt: Added.
+        * fast/history/history-scroll-restoration-attribute.html: Added.
+        * fast/history/history-scroll-restoration-expected.txt: Added.
+        * fast/history/history-scroll-restoration.html: Added.
+        * platform/ios-simulator-wk2/TestExpectations:
+        * platform/ios-simulator/TestExpectations:
+
 2017-03-08  Chris Dumez  <cdumez@apple.com>
 
         [iOS] Throttle DOM timers to 30fps in low power mode

@@ -4,6 +4,7 @@ PASS history.go == "LEFTOVER" is false
 PASS history.length == "LEFTOVER" is false
 PASS history.pushState == "LEFTOVER" is false
 PASS history.replaceState == "LEFTOVER" is false
+PASS history.scrollRestoration == "LEFTOVER" is false
 PASS history.state == "LEFTOVER" is false
 PASS location.ancestorOrigins == "LEFTOVER" is false
 PASS location.assign == "LEFTOVER" is false

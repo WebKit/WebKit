@@ -51,6 +51,7 @@ private:
     std::unique_ptr<DrawingAreaProxy> createDrawingAreaProxy() override;
     void setViewNeedsDisplay(const WebCore::Region&) override;
     void requestScroll(const WebCore::FloatPoint& scrollPosition, const WebCore::IntPoint& scrollOrigin, bool isProgrammaticScroll) override;
+    WebCore::FloatPoint viewScrollPosition() override;
     WebCore::IntSize viewSize() override;
     bool isViewWindowActive() override;
     bool isViewFocused() override;
@@ -121,8 +122,8 @@ private:
 
     void dynamicViewportUpdateChangedTarget(double newScale, const WebCore::FloatPoint& newScrollPosition, uint64_t transactionID) override;
     void couldNotRestorePageState() override;
-    void restorePageState(const WebCore::FloatPoint&, const WebCore::FloatPoint&, const WebCore::FloatSize&, double) override;
-    void restorePageCenterAndScale(const WebCore::FloatPoint&, double) override;
+    void restorePageState(std::optional<WebCore::FloatPoint>, const WebCore::FloatPoint&, const WebCore::FloatSize&, double) override;
+    void restorePageCenterAndScale(std::optional<WebCore::FloatPoint>, double) override;
 
     void startAssistingNode(const AssistedNodeInformation&, bool userIsInteracting, bool blurPreviousNode, API::Object* userData) override;
     void stopAssistingNode() override;

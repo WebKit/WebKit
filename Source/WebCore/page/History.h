@@ -41,6 +41,15 @@ public:
     static Ref<History> create(Frame& frame) { return adoptRef(*new History(frame)); }
 
     unsigned length() const;
+    
+    enum class ScrollRestoration {
+        Auto,
+        Manual
+    };
+
+    ExceptionOr<ScrollRestoration> scrollRestoration() const;
+    ExceptionOr<void> setScrollRestoration(ScrollRestoration);
+
     SerializedScriptValue* state();
     void back();
     void forward();

@@ -1226,8 +1226,10 @@ void WebFrameLoaderClient::restoreViewState()
     if (FrameView* view = frame.view()) {
         if (m_frame->isMainFrame())
             m_frame->page()->restorePageState(*currentItem);
-        else if (!view->wasScrolledByUser())
+        else if (!view->wasScrolledByUser()) {
+            WTFLogAlways("WebFrameLoaderClient::restoreViewState restoring scroll position %d,%d", currentItem->scrollPosition().x(), currentItem->scrollPosition().y());
             view->setScrollPosition(currentItem->scrollPosition());
+        }
     }
 #else
     // Inform the UI process of the scale factor.

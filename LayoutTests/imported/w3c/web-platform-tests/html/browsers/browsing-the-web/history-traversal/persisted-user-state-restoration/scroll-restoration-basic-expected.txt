@@ -1,5 +1,5 @@
 
-FAIL Default value is "auto" assert_equals: expected (string) "auto" but got (undefined) undefined
+PASS Default value is "auto" 
 PASS It is writable 
-FAIL Invalid values are ignored assert_equals: setting to invalid value (3.1415) should be ignored expected (string) "auto" but got (number) 3.1415
+PASS Invalid values are ignored 
 

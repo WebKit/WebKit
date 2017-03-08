@@ -137,6 +137,14 @@ void PageClientImpl::requestScroll(const FloatPoint& scrollPosition, const IntPo
     [m_webView _scrollToContentScrollPosition:scrollPosition scrollOrigin:scrollOrigin];
 }
 
+WebCore::FloatPoint PageClientImpl::viewScrollPosition()
+{
+    if (UIScrollView *scroller = [m_contentView _scroller])
+        return scroller.contentOffset;
+
+    return { };
+}
+
 IntSize PageClientImpl::viewSize()
 {
     if (UIScrollView *scroller = [m_contentView _scroller])
@@ -526,12 +534,12 @@ void PageClientImpl::couldNotRestorePageState()
     [m_webView _couldNotRestorePageState];
 }
 
-void PageClientImpl::restorePageState(const WebCore::FloatPoint& scrollPosition, const WebCore::FloatPoint& scrollOrigin, const WebCore::FloatSize& obscuredInsetOnSave, double scale)
+void PageClientImpl::restorePageState(std::optional<WebCore::FloatPoint> scrollPosition, const WebCore::FloatPoint& scrollOrigin, const WebCore::FloatSize& obscuredInsetOnSave, double scale)
 {
     [m_webView _restorePageScrollPosition:scrollPosition scrollOrigin:scrollOrigin previousObscuredInset:obscuredInsetOnSave scale:scale];
 }
 
-void PageClientImpl::restorePageCenterAndScale(const WebCore::FloatPoint& center, double scale)
+void PageClientImpl::restorePageCenterAndScale(std::optional<WebCore::FloatPoint> center, double scale)
 {
     [m_webView _restorePageStateToUnobscuredCenter:center scale:scale];
 }

@@ -1,3 +1,66 @@
+2017-03-08  Simon Fraser  <simon.fraser@apple.com>
+
+        Add support for history.scrollRestoration
+        https://bugs.webkit.org/show_bug.cgi?id=147782
+        rdar://problem/22614568
+
+        Reviewed by Sam Weinig.
+        
+        Need to send shouldRestoreScrollPosition to the UI process in SessionState,
+        WKWebView now stores _unobscuredCenterToRestore and _scrollOffsetToRestore as
+        std::optionals, and they will be nullopt if scroll restoration should not happen.
+
+        ViewGestureControllerIOS also needs knowledge of whether scroll restoration will
+        happen, and compares UI-process scroll position vs. the position at snapshot time
+        to know if the snapshot should be shown (this prevents showing a misleading snapshot
+        when swiping back on a navigation where scroll restoration is disabled).
+
+        * Shared/SessionState.cpp:
+        (WebKit::FrameState::encode):
+        (WebKit::FrameState::decode):
+        * Shared/SessionState.h:
+        * Shared/WebBackForwardListItem.h:
+        (WebKit::WebBackForwardListItem::pageState):
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _processDidExit]):
+        (-[WKWebView _didCommitLayerTree:]):
+        (-[WKWebView _restorePageScrollPosition:scrollOrigin:previousObscuredInset:scale:]):
+        (-[WKWebView _restorePageStateToUnobscuredCenter:scale:]):
+        * UIProcess/API/Cocoa/WKWebViewInternal.h:
+        * UIProcess/API/gtk/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::viewScrollPosition):
+        * UIProcess/API/gtk/PageClientImpl.h:
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::viewScrollPosition):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::viewScrollPosition):
+        (WebKit::PageClientImpl::restorePageState):
+        (WebKit::PageClientImpl::restorePageCenterAndScale):
+        * UIProcess/ios/ViewGestureControllerIOS.mm:
+        (WebKit::ViewGestureController::beginSwipeGesture):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::restorePageState):
+        (WebKit::WebPageProxy::restorePageCenterAndScale):
+        * UIProcess/mac/PageClientImpl.h:
+        * UIProcess/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::viewScrollPosition):
+        * UIProcess/mac/ViewSnapshotStore.h:
+        (WebKit::ViewSnapshot::setViewScrollPosition):
+        (WebKit::ViewSnapshot::viewScrollPosition):
+        * UIProcess/mac/ViewSnapshotStore.mm:
+        (WebKit::ViewSnapshotStore::recordSnapshot):
+        * WebProcess/WebCoreSupport/SessionStateConversion.cpp:
+        (WebKit::toFrameState):
+        (WebKit::applyFrameState):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::restoreViewState):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::restorePageState):
+
 2017-03-08  Matt Rajca  <mrajca@apple.com>
 
         Add support for updating autoplay policies after a page has been loaded.

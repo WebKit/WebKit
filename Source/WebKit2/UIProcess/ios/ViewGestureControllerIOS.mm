@@ -194,7 +194,11 @@ void ViewGestureController::beginSwipeGesture(_UINavigationInteractiveTransition
         float deviceScaleFactor = m_webPageProxy.deviceScaleFactor();
         FloatSize swipeLayerSizeInDeviceCoordinates(liveSwipeViewFrame.size);
         swipeLayerSizeInDeviceCoordinates.scale(deviceScaleFactor);
-        if (snapshot->hasImage() && snapshot->size() == swipeLayerSizeInDeviceCoordinates && deviceScaleFactor == snapshot->deviceScaleFactor())
+        
+        BOOL shouldRestoreScrollPosition = targetItem->pageState().mainFrameState.shouldRestoreScrollPosition;
+        IntPoint currentScrollPosition = roundedIntPoint(m_webPageProxy.viewScrollPosition());
+
+        if (snapshot->hasImage() && snapshot->size() == swipeLayerSizeInDeviceCoordinates && deviceScaleFactor == snapshot->deviceScaleFactor() && (shouldRestoreScrollPosition || (currentScrollPosition == snapshot->viewScrollPosition())))
             [m_snapshotView layer].contents = snapshot->asLayerContents();
         Color coreColor = snapshot->backgroundColor();
         if (coreColor.isValid())

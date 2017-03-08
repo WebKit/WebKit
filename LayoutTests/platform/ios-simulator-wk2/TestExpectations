@@ -6,6 +6,7 @@
 # Platform-specific directories. Skipped globally, then re-enabled here.
 #//////////////////////////////////////////////////////////////////////////////////////////
 
+fast/history/ios [ Pass ]
 fast/scrolling/ios [ Pass ]
 fast/viewport/ios [ Pass ]
 fast/visual-viewport/ios/ [ Pass ]
@@ -783,6 +784,7 @@ fast/history/form-submit-in-frame.html
 fast/history/gesture-before-onload-form-submit.html
 fast/history/gesture-before-onload-location-href.html
 fast/history/history_reload.html
+fast/history/history-scroll-restoration.html [ Skip ]
 fast/history/timed-refresh-in-cached-frame.html
 fast/history/window-open.html
 fast/images/animate-list-item-image-assertion.html

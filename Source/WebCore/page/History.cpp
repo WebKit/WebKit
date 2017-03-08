@@ -59,6 +59,30 @@ unsigned History::length() const
     return page->backForward().count();
 }
 
+ExceptionOr<History::ScrollRestoration> History::scrollRestoration() const
+{
+    if (!m_frame)
+        return Exception { SECURITY_ERR };
+
+    auto* historyItem = m_frame->loader().history().currentItem();
+    if (!historyItem)
+        return ScrollRestoration::Auto;
+    
+    return historyItem->shouldRestoreScrollPosition() ? ScrollRestoration::Auto : ScrollRestoration::Manual;
+}
+
+ExceptionOr<void> History::setScrollRestoration(ScrollRestoration scrollRestoration)
+{
+    if (!m_frame)
+        return Exception { SECURITY_ERR };
+
+    auto* historyItem = m_frame->loader().history().currentItem();
+    if (historyItem)
+        historyItem->setShouldRestoreScrollPosition(scrollRestoration == ScrollRestoration::Auto);
+
+    return { };
+}
+
 SerializedScriptValue* History::state()
 {
     m_lastStateObjectRequested = stateInternal();

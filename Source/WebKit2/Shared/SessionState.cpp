@@ -114,6 +114,7 @@ void FrameState::encode(IPC::Encoder& encoder) const
     encoder << itemSequenceNumber;
 
     encoder << scrollPosition;
+    encoder << shouldRestoreScrollPosition;
     encoder << pageScaleFactor;
 
     encoder << httpBody;
@@ -151,6 +152,8 @@ bool FrameState::decode(IPC::Decoder& decoder, FrameState& result)
         return false;
 
     if (!decoder.decode(result.scrollPosition))
+        return false;
+    if (!decoder.decode(result.shouldRestoreScrollPosition))
         return false;
     if (!decoder.decode(result.pageScaleFactor))
         return false;

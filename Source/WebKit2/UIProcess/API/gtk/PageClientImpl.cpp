@@ -75,6 +75,11 @@ void PageClientImpl::requestScroll(const WebCore::FloatPoint&, const WebCore::In
     notImplemented();
 }
 
+WebCore::FloatPoint PageClientImpl::viewScrollPosition()
+{
+    return { };
+}
+
 WebCore::IntSize PageClientImpl::viewSize()
 {
     auto* drawingArea = static_cast<DrawingAreaProxyImpl*>(webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(m_viewWidget))->drawingArea());

@@ -96,6 +96,7 @@ struct FrameState {
     int64_t itemSequenceNumber;
 
     WebCore::IntPoint scrollPosition;
+    bool shouldRestoreScrollPosition;
     float pageScaleFactor;
 
     std::optional<HTTPBody> httpBody;

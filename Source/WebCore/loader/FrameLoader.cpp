@@ -1055,7 +1055,7 @@ void FrameLoader::loadInSameDocument(const URL& url, SerializedScriptValue* stat
 
     // We need to scroll to the fragment whether or not a hash change occurred, since
     // the user might have scrolled since the previous navigation.
-    scrollToFragmentWithParentBoundary(url);
+    scrollToFragmentWithParentBoundary(url, isNewNavigation);
     
     m_isComplete = false;
     checkCompleted();
@@ -2868,7 +2868,17 @@ bool FrameLoader::shouldPerformFragmentNavigation(bool isFormSubmission, const S
         && !m_frame.document()->isFrameSet();
 }
 
-void FrameLoader::scrollToFragmentWithParentBoundary(const URL& url)
+static bool itemAllowsScrollRestoration(HistoryItem* historyItem)
+{
+    return historyItem && historyItem->shouldRestoreScrollPosition();
+}
+
+static bool isSameDocumentReload(bool isNewNavigation, FrameLoadType loadType)
+{
+    return !isNewNavigation && !isBackForwardLoadType(loadType);
+}
+
+void FrameLoader::scrollToFragmentWithParentBoundary(const URL& url, bool isNewNavigation)
 {
     FrameView* view = m_frame.view();
     if (!view)
@@ -2880,7 +2890,8 @@ void FrameLoader::scrollToFragmentWithParentBoundary(const URL& url)
     if (boundaryFrame)
         boundaryFrame->view()->setSafeToPropagateScrollToParent(false);
 
-    view->scrollToFragment(url);
+    if (isSameDocumentReload(isNewNavigation, m_loadType) || itemAllowsScrollRestoration(history().currentItem()))
+        view->scrollToFragment(url);
 
     if (boundaryFrame)
         boundaryFrame->view()->setSafeToPropagateScrollToParent(true);
@@ -3082,7 +3093,7 @@ void FrameLoader::continueLoadAfterNavigationPolicy(const ResourceRequest& reque
         setPolicyDocumentLoader(nullptr);
 
         // If the navigation request came from the back/forward menu, and we punt on it, we have the 
-        // problem that we have optimistically moved the b/f cursor already, so move it back.  For sanity, 
+        // problem that we have optimistically moved the b/f cursor already, so move it back. For sanity,
         // we only do this when punting a navigation for the target frame or top-level frame.  
         if ((isTargetItem || m_frame.isMainFrame()) && isBackForwardLoadType(policyChecker().loadType())) {
             if (Page* page = m_frame.page()) {

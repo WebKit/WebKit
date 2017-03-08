@@ -251,13 +251,11 @@ WKWebView* fromWebPageProxy(WebKit::WebPageProxy& page)
     std::optional<CGRect> _frozenVisibleContentRect;
     std::optional<CGRect> _frozenUnobscuredContentRect;
 
-    BOOL _needsToRestoreScrollPosition;
     BOOL _commitDidRestoreScrollPosition;
-    WebCore::FloatPoint _scrollOffsetToRestore;
+    std::optional<WebCore::FloatPoint> _scrollOffsetToRestore;
     WebCore::FloatSize _obscuredInsetWhenSaved;
 
-    BOOL _needsToRestoreUnobscuredCenter;
-    WebCore::FloatPoint _unobscuredCenterToRestore;
+    std::optional<WebCore::FloatPoint> _unobscuredCenterToRestore;
     uint64_t _firstTransactionIDAfterPageRestore;
     double _scaleToRestore;
 
@@ -1369,8 +1367,8 @@ static WebCore::Color scrollViewBackgroundColor(WKWebView *webView)
     _needsResetViewStateAfterCommitLoadForMainFrame = NO;
     _dynamicViewportUpdateMode = DynamicViewportUpdateMode::NotResizing;
     [_contentView setHidden:NO];
-    _needsToRestoreScrollPosition = NO;
-    _needsToRestoreUnobscuredCenter = NO;
+    _scrollOffsetToRestore = std::nullopt;
+    _unobscuredCenterToRestore = std::nullopt;
     _scrollViewBackgroundColor = WebCore::Color();
     _delayUpdateVisibleContentRects = NO;
     _hadDelayedUpdateVisibleContentRects = NO;
@@ -1490,43 +1488,40 @@ static inline bool areEssentiallyEqualAsFloat(float a, float b)
         needUpdateVisbleContentRects = YES;
     }
 
-    bool isTransactionAfterPageRestore = layerTreeTransaction.transactionID() >= _firstTransactionIDAfterPageRestore;
+    if (layerTreeTransaction.transactionID() >= _firstTransactionIDAfterPageRestore) {
+        if (_scrollOffsetToRestore) {
+            WebCore::FloatPoint scaledScrollOffset = _scrollOffsetToRestore.value();
+            _scrollOffsetToRestore = std::nullopt;
 
-    if (_needsToRestoreScrollPosition && isTransactionAfterPageRestore) {
-        _needsToRestoreScrollPosition = NO;
+            if (areEssentiallyEqualAsFloat(contentZoomScale(self), _scaleToRestore)) {
+                scaledScrollOffset.scale(_scaleToRestore);
+                WebCore::FloatPoint contentOffsetInScrollViewCoordinates = scaledScrollOffset - _obscuredInsetWhenSaved;
 
-        if (areEssentiallyEqualAsFloat(contentZoomScale(self), _scaleToRestore)) {
-            WebCore::FloatPoint scaledScrollOffset = _scrollOffsetToRestore;
-            scaledScrollOffset.scale(_scaleToRestore);
-            WebCore::FloatPoint contentOffsetInScrollViewCoordinates = scaledScrollOffset - _obscuredInsetWhenSaved;
-
-            changeContentOffsetBoundedInValidRange(_scrollView.get(), contentOffsetInScrollViewCoordinates);
-            _commitDidRestoreScrollPosition = YES;
-
-            if (_gestureController)
-                _gestureController->didRestoreScrollPosition();
+                changeContentOffsetBoundedInValidRange(_scrollView.get(), contentOffsetInScrollViewCoordinates);
+                _commitDidRestoreScrollPosition = YES;
+            }
         }
-        
-        needUpdateVisbleContentRects = YES;
-    }
 
-    if (_needsToRestoreUnobscuredCenter && isTransactionAfterPageRestore) {
-        _needsToRestoreUnobscuredCenter = NO;
+        if (_unobscuredCenterToRestore) {
+            WebCore::FloatPoint unobscuredCenterToRestore = _unobscuredCenterToRestore.value();
+            _unobscuredCenterToRestore = std::nullopt;
 
-        if (areEssentiallyEqualAsFloat(contentZoomScale(self), _scaleToRestore)) {
-            CGRect unobscuredRect = UIEdgeInsetsInsetRect(self.bounds, _obscuredInsets);
-            WebCore::FloatSize unobscuredContentSizeAtNewScale(unobscuredRect.size.width / _scaleToRestore, unobscuredRect.size.height / _scaleToRestore);
-            WebCore::FloatPoint topLeftInDocumentCoordinates(_unobscuredCenterToRestore.x() - unobscuredContentSizeAtNewScale.width() / 2, _unobscuredCenterToRestore.y() - unobscuredContentSizeAtNewScale.height() / 2);
+            if (areEssentiallyEqualAsFloat(contentZoomScale(self), _scaleToRestore)) {
+                CGRect unobscuredRect = UIEdgeInsetsInsetRect(self.bounds, _obscuredInsets);
+                WebCore::FloatSize unobscuredContentSizeAtNewScale(unobscuredRect.size.width / _scaleToRestore, unobscuredRect.size.height / _scaleToRestore);
+                WebCore::FloatPoint topLeftInDocumentCoordinates(unobscuredCenterToRestore.x() - unobscuredContentSizeAtNewScale.width() / 2, unobscuredCenterToRestore.y() - unobscuredContentSizeAtNewScale.height() / 2);
 
-            topLeftInDocumentCoordinates.scale(_scaleToRestore);
-            topLeftInDocumentCoordinates.moveBy(WebCore::FloatPoint(-_obscuredInsets.left, -_obscuredInsets.top));
+                topLeftInDocumentCoordinates.scale(_scaleToRestore);
+                topLeftInDocumentCoordinates.moveBy(WebCore::FloatPoint(-_obscuredInsets.left, -_obscuredInsets.top));
 
-            changeContentOffsetBoundedInValidRange(_scrollView.get(), topLeftInDocumentCoordinates);
-            if (_gestureController)
-                _gestureController->didRestoreScrollPosition();
+                changeContentOffsetBoundedInValidRange(_scrollView.get(), topLeftInDocumentCoordinates);
+            }
         }
 
         needUpdateVisbleContentRects = YES;
+
+        if (_gestureController)
+            _gestureController->didRestoreScrollPosition();
     }
 
     if (needUpdateVisbleContentRects)
@@ -1568,7 +1563,7 @@ static inline bool areEssentiallyEqualAsFloat(float a, float b)
         _gestureController->didRestoreScrollPosition();
 }
 
-- (void)_restorePageScrollPosition:(WebCore::FloatPoint)scrollPosition scrollOrigin:(WebCore::FloatPoint)scrollOrigin previousObscuredInset:(WebCore::FloatSize)obscuredInset scale:(double)scale
+- (void)_restorePageScrollPosition:(std::optional<WebCore::FloatPoint>)scrollPosition scrollOrigin:(WebCore::FloatPoint)scrollOrigin previousObscuredInset:(WebCore::FloatSize)obscuredInset scale:(double)scale
 {
     if (_dynamicViewportUpdateMode != DynamicViewportUpdateMode::NotResizing)
         return;
@@ -1576,16 +1571,17 @@ static inline bool areEssentiallyEqualAsFloat(float a, float b)
     if (![self usesStandardContentView])
         return;
 
-    _needsToRestoreUnobscuredCenter = NO;
-    _needsToRestoreScrollPosition = YES;
     _firstTransactionIDAfterPageRestore = downcast<WebKit::RemoteLayerTreeDrawingAreaProxy>(*_page->drawingArea()).nextLayerTreeTransactionID();
-    
-    _scrollOffsetToRestore = WebCore::ScrollableArea::scrollOffsetFromPosition(WebCore::FloatPoint(scrollPosition), WebCore::toFloatSize(scrollOrigin));
+    if (scrollPosition)
+        _scrollOffsetToRestore = WebCore::ScrollableArea::scrollOffsetFromPosition(WebCore::FloatPoint(scrollPosition.value()), WebCore::toFloatSize(scrollOrigin));
+    else
+        _scrollOffsetToRestore = std::nullopt;
+
     _obscuredInsetWhenSaved = obscuredInset;
     _scaleToRestore = scale;
 }
 
-- (void)_restorePageStateToUnobscuredCenter:(WebCore::FloatPoint)center scale:(double)scale
+- (void)_restorePageStateToUnobscuredCenter:(std::optional<WebCore::FloatPoint>)center scale:(double)scale
 {
     if (_dynamicViewportUpdateMode != DynamicViewportUpdateMode::NotResizing)
         return;
@@ -1593,10 +1589,9 @@ static inline bool areEssentiallyEqualAsFloat(float a, float b)
     if (![self usesStandardContentView])
         return;
 
-    _needsToRestoreScrollPosition = NO;
-    _needsToRestoreUnobscuredCenter = YES;
     _firstTransactionIDAfterPageRestore = downcast<WebKit::RemoteLayerTreeDrawingAreaProxy>(*_page->drawingArea()).nextLayerTreeTransactionID();
-    _unobscuredCenterToRestore = center;
+    _unobscuredCenterToRestore = center.value();
+    
     _scaleToRestore = scale;
 }
 

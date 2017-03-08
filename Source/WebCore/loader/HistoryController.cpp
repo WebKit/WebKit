@@ -158,7 +158,7 @@ void HistoryController::restoreScrollPositionAndViewState()
     // Don't restore scroll point on iOS as FrameLoaderClient::restoreViewState() does that.
     if (view && !view->wasScrolledByUser()) {
         Page* page = m_frame.page();
-        auto desiredScrollPosition = m_currentItem->scrollPosition();
+        auto desiredScrollPosition = m_currentItem->shouldRestoreScrollPosition() ? m_currentItem->scrollPosition() : view->scrollPosition();
         LOG(Scrolling, "HistoryController::restoreScrollPositionAndViewState scrolling to %d,%d", desiredScrollPosition.x(), desiredScrollPosition.y());
         if (page && m_frame.isMainFrame() && m_currentItem->pageScaleFactor())
             page->setPageScaleFactor(m_currentItem->pageScaleFactor() * page->viewScaleFactor(), desiredScrollPosition);
@@ -291,6 +291,8 @@ bool HistoryController::shouldStopLoadingForHistoryItem(HistoryItem& targetItem)
 // This includes recursion to handle loading into framesets properly
 void HistoryController::goToItem(HistoryItem& targetItem, FrameLoadType type)
 {
+    LOG(History, "HistoryController %p goToItem %p type=%d", this, &targetItem, type);
+
     ASSERT(!m_frame.tree().parent());
     
     // shouldGoToHistoryItem is a private delegate method. This is needed to fix:
@@ -853,6 +855,8 @@ void HistoryController::pushState(RefPtr<SerializedScriptValue>&& stateObject, c
     Page* page = m_frame.page();
     ASSERT(page);
 
+    bool shouldRestoreScrollPosition = m_currentItem->shouldRestoreScrollPosition();
+    
     // Get a HistoryItem tree for the current frame tree.
     Ref<HistoryItem> topItem = m_frame.mainFrame().loader().history().createItemTree(m_frame, false);
     
@@ -861,8 +865,9 @@ void HistoryController::pushState(RefPtr<SerializedScriptValue>&& stateObject, c
     m_currentItem->setTitle(title);
     m_currentItem->setStateObject(WTFMove(stateObject));
     m_currentItem->setURLString(urlString);
+    m_currentItem->setShouldRestoreScrollPosition(shouldRestoreScrollPosition);
 
-    LOG(History, "HistoryController %p pushState: Adding top item %p, setting url of current item %p to %s", this, topItem.ptr(), m_currentItem.get(), urlString.ascii().data());
+    LOG(History, "HistoryController %p pushState: Adding top item %p, setting url of current item %p to %s, scrollRestoration is %s", this, topItem.ptr(), m_currentItem.get(), urlString.ascii().data(), topItem->shouldRestoreScrollPosition() ? "auto" : "manual");
 
     page->backForward().addItem(WTFMove(topItem));
 
@@ -878,7 +883,7 @@ void HistoryController::replaceState(RefPtr<SerializedScriptValue>&& stateObject
     if (!m_currentItem)
         return;
 
-    LOG(History, "HistoryController %p replaceState: Setting url of current item %p to %s", this, m_currentItem.get(), urlString.ascii().data());
+    LOG(History, "HistoryController %p replaceState: Setting url of current item %p to %s scrollRestoration %s", this, m_currentItem.get(), urlString.ascii().data(), m_currentItem->shouldRestoreScrollPosition() ? "auto" : "manual");
 
     if (!urlString.isEmpty())
         m_currentItem->setURLString(urlString);

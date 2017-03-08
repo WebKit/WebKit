@@ -334,7 +334,7 @@ private:
     void continueFragmentScrollAfterNavigationPolicy(const ResourceRequest&, bool shouldContinue);
 
     bool shouldPerformFragmentNavigation(bool isFormSubmission, const String& httpMethod, FrameLoadType, const URL&);
-    void scrollToFragmentWithParentBoundary(const URL&);
+    void scrollToFragmentWithParentBoundary(const URL&, bool isNewNavigation = true);
 
     void checkLoadCompleteForThisFrame();
 

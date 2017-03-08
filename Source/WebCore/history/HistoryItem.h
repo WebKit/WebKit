@@ -102,6 +102,9 @@ public:
     WEBCORE_EXPORT const IntPoint& scrollPosition() const;
     WEBCORE_EXPORT void setScrollPosition(const IntPoint&);
     void clearScrollPosition();
+
+    WEBCORE_EXPORT bool shouldRestoreScrollPosition() const;
+    WEBCORE_EXPORT void setShouldRestoreScrollPosition(bool);
     
     WEBCORE_EXPORT float pageScaleFactor() const;
     WEBCORE_EXPORT void setPageScaleFactor(float);
@@ -215,16 +218,17 @@ private:
     String m_displayTitle;
     
     IntPoint m_scrollPosition;
-    float m_pageScaleFactor;
+    float m_pageScaleFactor { 0 }; // 0 indicates "unset".
     Vector<String> m_documentState;
 
     ShouldOpenExternalURLsPolicy m_shouldOpenExternalURLsPolicy { ShouldOpenExternalURLsPolicy::ShouldNotAllow };
     
     Vector<Ref<HistoryItem>> m_children;
     
-    bool m_lastVisitWasFailure;
-    bool m_isTargetItem;
+    bool m_lastVisitWasFailure { false };
+    bool m_isTargetItem { false };
     bool m_wasRestoredFromSession { false };
+    bool m_shouldRestoreScrollPosition { true };
 
     // If two HistoryItems have the same item sequence number, then they are
     // clones of one another.  Traversing history from one such HistoryItem to

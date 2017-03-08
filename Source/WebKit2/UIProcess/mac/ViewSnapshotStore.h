@@ -27,6 +27,7 @@
 #define ViewSnapshotStore_h
 
 #include <WebCore/Color.h>
+#include <WebCore/IntPoint.h>
 #include <WebCore/IntSize.h>
 #include <WebCore/IOSurface.h>
 #include <wtf/ListHashSet.h>
@@ -70,6 +71,9 @@ public:
 
     void setBackgroundColor(WebCore::Color color) { m_backgroundColor = color; }
     WebCore::Color backgroundColor() const { return m_backgroundColor; }
+    
+    void setViewScrollPosition(WebCore::IntPoint scrollPosition) { m_viewScrollPosition = scrollPosition; }
+    WebCore::IntPoint viewScrollPosition() const { return m_viewScrollPosition; }
 
     void setDeviceScaleFactor(float deviceScaleFactor) { m_deviceScaleFactor = deviceScaleFactor; }
     float deviceScaleFactor() const { return m_deviceScaleFactor; }
@@ -104,6 +108,7 @@ private:
     uint64_t m_renderTreeSize;
     float m_deviceScaleFactor;
     WebCore::Color m_backgroundColor;
+    WebCore::IntPoint m_viewScrollPosition; // Scroll position at snapshot time. Integral to make comparison reliable.
 };
 
 class ViewSnapshotStore {

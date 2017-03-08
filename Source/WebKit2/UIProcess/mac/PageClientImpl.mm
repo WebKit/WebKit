@@ -126,6 +126,11 @@ void PageClientImpl::requestScroll(const FloatPoint& scrollPosition, const IntPo
     ASSERT_NOT_REACHED();
 }
 
+WebCore::FloatPoint PageClientImpl::viewScrollPosition()
+{
+    return { };
+}
+
 IntSize PageClientImpl::viewSize()
 {
     return IntSize([m_view bounds].size);
