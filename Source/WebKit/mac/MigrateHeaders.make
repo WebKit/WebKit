@@ -74,7 +74,7 @@ WEBCORE_HEADER_MIGRATE_CMD = sed -E $(WEBCORE_HEADER_REPLACE_RULES) $< > $@
 $(PRIVATE_HEADERS_DIR)/% : % MigrateHeaders.make
 	$(WEBCORE_HEADER_MIGRATE_CMD)
 
-ifneq (,$(findstring iphone,$(PLATFORM_NAME)))
+ifneq ($(PLATFORM_NAME), macosx)
 REEXPORT_FILE = $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKitLegacy/ReexportedWebCoreSymbols_$(CURRENT_ARCH).exp
 
 all : $(REEXPORT_FILE)
