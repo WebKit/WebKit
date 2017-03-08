@@ -1,3 +1,12 @@
+2017-03-08  Megan Gardner  <megan_gardner@apple.com>
+
+        Fix for dependency fix
+        https://bugs.webkit.org/show_bug.cgi?id=169369
+
+        Reviewed by Beth Dakin.
+
+        * WebView/WebViewPrivate.h:
+
 2017-03-07  Megan Gardner  <megan_gardner@apple.com>
 
         Fix Project Dependency

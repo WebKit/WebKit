@@ -55,7 +55,7 @@
 #endif
 #endif
 
-#define WEBKIT_DI_BLOCK
+#define WEBKIT_DI_BLOCK 1
 
 @class UIImage;
 @class NSError;
