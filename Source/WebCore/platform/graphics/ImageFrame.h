@@ -30,6 +30,7 @@
 #include "ImageOrientation.h"
 #include "IntSize.h"
 #include "NativeImage.h"
+#include <wtf/Deque.h>
 
 namespace WebCore {
 
@@ -37,7 +38,6 @@ class Color;
 
 // There are four subsampling levels: 0 = 1x, 1 = 0.5x, 2 = 0.25x, 3 = 0.125x.
 enum class SubsamplingLevel {
-    Undefinded = -1,
     First = 0,
     Default = First,
     Level0 = First,
@@ -73,16 +73,11 @@ enum class GammaAndColorProfileOption {
     Ignored
 };
 
-enum class DecodingMode {
-    OnDemand,
-    Immediate
-};
-
 class ImageFrame {
     friend class ImageFrameCache;
 public:
-    enum class Caching { Empty, Metadata, MetadataAndImage };
-    enum class Decoding { Empty, BeingDecoded, Partial, Complete };
+    enum class Caching { Metadata, MetadataAndImage };
+    enum class Decoding { None, Partial, Complete };
 
     ImageFrame();
     ImageFrame(const ImageFrame& other) { operator=(other); }
@@ -103,8 +98,12 @@ public:
 
     void setDecoding(Decoding decoding) { m_decoding = decoding; }
     Decoding decoding() const { return m_decoding; }
-    bool isEmpty() const { return m_decoding == Decoding::Empty; }
-    bool isBeingDecoded() const { return m_decoding == Decoding::BeingDecoded; }
+    void enqueueSizeForDecoding(const IntSize& sizeForDecoding) { m_sizeForDecoding.append(sizeForDecoding); }
+    void dequeueSizeForDecoding() { m_sizeForDecoding.removeFirst(); }
+    void clearSizeForDecoding() { m_sizeForDecoding.clear(); }
+
+    bool isEmpty() const { return m_decoding == Decoding::None; }
+    bool isBeingDecoded(const std::optional<IntSize>& sizeForDrawing = { }) const;
     bool isPartial() const { return m_decoding == Decoding::Partial; }
     bool isComplete() const { return m_decoding == Decoding::Complete; }
 
@@ -112,6 +111,7 @@ public:
     IntSize sizeRespectingOrientation() const { return !m_orientation.usesWidthAsHeight() ? size() : size().transposedSize(); }
     unsigned frameBytes() const { return hasNativeImage() ? (size().area() * sizeof(RGBA32)).unsafeGet() : 0; }
     SubsamplingLevel subsamplingLevel() const { return m_subsamplingLevel; }
+    std::optional<IntSize> sizeForDrawing() const { return m_sizeForDrawing; }
 
 #if !USE(CG)
     enum class DisposalMethod { Unspecified, DoNotDispose, RestoreToBackground, RestoreToPrevious };
@@ -131,7 +131,8 @@ public:
     bool hasAlpha() const { return !hasMetadata() || m_hasAlpha; }
 
     bool hasNativeImage() const { return m_nativeImage; }
-    bool hasValidNativeImage(SubsamplingLevel subsamplingLevel) const { return hasNativeImage() && subsamplingLevel >= m_subsamplingLevel; }
+    bool hasValidNativeImage(const std::optional<SubsamplingLevel>&, const std::optional<IntSize>& sizeForDrawing) const;
+    bool hasDecodedNativeImage() const { return hasNativeImage() && sizeForDrawing(); }
     bool hasMetadata() const { return !size().isEmpty(); }
 
 #if !USE(CG)
@@ -142,7 +143,7 @@ public:
     Color singlePixelSolidColor() const;
 
 private:
-    Decoding m_decoding { Decoding::Empty };
+    Decoding m_decoding { Decoding::None };
     IntSize m_size;
 
 #if !USE(CG)
@@ -152,6 +153,8 @@ private:
 
     NativeImagePtr m_nativeImage;
     SubsamplingLevel m_subsamplingLevel { SubsamplingLevel::Default };
+    std::optional<IntSize> m_sizeForDrawing;
+    Deque<IntSize, 4> m_sizeForDecoding;
 
     ImageOrientation m_orientation { DefaultImageOrientation };
     float m_duration { 0 };

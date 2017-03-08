@@ -126,6 +126,7 @@ private:
         explicit CachedImageObserver(CachedImage&);
 
         // ImageObserver API
+        URL sourceUrl() const override { return m_cachedImages[0]->url(); }
         bool allowSubsampling() const final { return m_allowSubsampling; }
         bool allowLargeImageAsyncDecoding() const override { return m_allowLargeImageAsyncDecoding; }
         bool allowAnimatedImageAsyncDecoding() const override { return m_allowAnimatedImageAsyncDecoding; }

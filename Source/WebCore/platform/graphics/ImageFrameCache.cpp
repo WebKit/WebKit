@@ -174,7 +174,7 @@ void ImageFrameCache::setNativeImage(NativeImagePtr&& nativeImage)
     frame.m_hasAlpha = nativeImageHasAlpha(frame.m_nativeImage);
 }
 
-void ImageFrameCache::setFrameNativeImageAtIndex(NativeImagePtr&& nativeImage, size_t index, SubsamplingLevel subsamplingLevel)
+void ImageFrameCache::setFrameNativeImageAtIndex(NativeImagePtr&& nativeImage, size_t index, SubsamplingLevel subsamplingLevel, const std::optional<IntSize>& sizeForDrawing)
 {
     ASSERT(index < m_frames.size());
     ImageFrame& frame = m_frames[index];
@@ -182,10 +182,10 @@ void ImageFrameCache::setFrameNativeImageAtIndex(NativeImagePtr&& nativeImage, s
     ASSERT(isDecoderAvailable());
 
     frame.m_nativeImage = WTFMove(nativeImage);
-    setFrameMetadataAtIndex(index, subsamplingLevel);
+    setFrameMetadataAtIndex(index, subsamplingLevel, sizeForDrawing);
 }
 
-void ImageFrameCache::setFrameMetadataAtIndex(size_t index, SubsamplingLevel subsamplingLevel)
+void ImageFrameCache::setFrameMetadataAtIndex(size_t index, SubsamplingLevel subsamplingLevel, const std::optional<IntSize>& sizeForDrawing)
 {
     ASSERT(index < m_frames.size());
     ImageFrame& frame = m_frames[index];
@@ -196,20 +196,29 @@ void ImageFrameCache::setFrameMetadataAtIndex(size_t index, SubsamplingLevel sub
         return;
     
     frame.m_subsamplingLevel = subsamplingLevel;
-    frame.m_size = m_decoder->frameSizeAtIndex(index, subsamplingLevel);
+
+    if (!sizeForDrawing) {
+        frame.m_size = m_decoder->frameSizeAtIndex(index, frame.m_subsamplingLevel);
+        frame.m_sizeForDrawing = { };
+    } else {
+        ASSERT(frame.nativeImage());
+        frame.m_size = nativeImageSize(frame.nativeImage());
+        frame.m_sizeForDrawing = sizeForDrawing;
+    }
+
     frame.m_orientation = m_decoder->frameOrientationAtIndex(index);
     frame.m_hasAlpha = m_decoder->frameHasAlphaAtIndex(index);
-    
+
     if (repetitionCount())
         frame.m_duration = m_decoder->frameDurationAtIndex(index);
 }
 
-void ImageFrameCache::replaceFrameNativeImageAtIndex(NativeImagePtr&& nativeImage, size_t index, SubsamplingLevel subsamplingLevel)
+void ImageFrameCache::replaceFrameNativeImageAtIndex(NativeImagePtr&& nativeImage, size_t index, SubsamplingLevel subsamplingLevel, const std::optional<IntSize>& sizeForDrawing)
 {
     ASSERT(index < m_frames.size());
     ImageFrame& frame = m_frames[index];
 
-    if (!frame.hasValidNativeImage(subsamplingLevel)) {
+    if (!frame.hasValidNativeImage(subsamplingLevel, sizeForDrawing)) {
         // Clear the current image frame and update the observer with this clearance.
         unsigned decodedSize = frame.clear();
         decodedSizeDecreased(decodedSize);
@@ -221,22 +230,23 @@ void ImageFrameCache::replaceFrameNativeImageAtIndex(NativeImagePtr&& nativeImag
         return;
 
     // Copy the new image to the cache.
-    setFrameNativeImageAtIndex(WTFMove(nativeImage), index, subsamplingLevel);
+    setFrameNativeImageAtIndex(WTFMove(nativeImage), index, subsamplingLevel, sizeForDrawing);
 
     // Update the observer with the new image frame bytes.
     decodedSizeIncreased(frame.frameBytes());
 }
 
-void ImageFrameCache::cacheFrameNativeImageAtIndex(NativeImagePtr&& nativeImage, size_t index, SubsamplingLevel subsamplingLevel)
+void ImageFrameCache::cacheFrameNativeImageAtIndex(NativeImagePtr&& nativeImage, size_t index, SubsamplingLevel subsamplingLevel, const IntSize& sizeForDrawing)
 {
     if (!isDecoderAvailable())
         return;
 
     ASSERT(index < m_frames.size());
-    ASSERT(m_frames[index].isBeingDecoded());
+    ASSERT(m_frames[index].isBeingDecoded(sizeForDrawing));
 
     // Clean the old native image and set a new one
-    replaceFrameNativeImageAtIndex(WTFMove(nativeImage), index, subsamplingLevel);
+    replaceFrameNativeImageAtIndex(WTFMove(nativeImage), index, subsamplingLevel, sizeForDrawing);
+    m_frames[index].dequeueSizeForDecoding();
 
     // Notify the image with the readiness of the new frame NativeImage.
     if (m_image)
@@ -267,25 +277,22 @@ void ImageFrameCache::startAsyncDecodingQueue()
 
         while (m_frameRequestQueue.dequeue(frameRequest)) {
             // Get the frame NativeImage on the decoding thread.
-            NativeImagePtr nativeImage = m_decoder->createFrameImageAtIndex(frameRequest.index, frameRequest.subsamplingLevel, DecodingMode::Immediate);
+            NativeImagePtr nativeImage = m_decoder->createFrameImageAtIndex(frameRequest.index, frameRequest.subsamplingLevel, frameRequest.sizeForDrawing);
 
             // Update the cached frames on the main thread to avoid updating the MemoryCache from a different thread.
             callOnMainThread([this, protectedQueue = protectedQueue.copyRef(), nativeImage, frameRequest] () mutable {
                 // The queue may be closed if after we got the frame NativeImage, stopAsyncDecodingQueue() was called
                 if (protectedQueue.ptr() == m_decodingQueue)
-                    cacheFrameNativeImageAtIndex(WTFMove(nativeImage), frameRequest.index, frameRequest.subsamplingLevel);
+                    cacheFrameNativeImageAtIndex(WTFMove(nativeImage), frameRequest.index, frameRequest.subsamplingLevel, frameRequest.sizeForDrawing);
             });
         }
     });
 }
 
-bool ImageFrameCache::requestFrameAsyncDecodingAtIndex(size_t index, SubsamplingLevel subsamplingLevel)
+bool ImageFrameCache::requestFrameAsyncDecodingAtIndex(size_t index, SubsamplingLevel subsamplingLevel, const IntSize& sizeForDrawing)
 {
     if (!isDecoderAvailable())
         return false;
-
-    if (!hasDecodingQueue())
-        startAsyncDecodingQueue();
 
     ASSERT(index < m_frames.size());
     ImageFrame& frame = m_frames[index];
@@ -293,17 +300,17 @@ bool ImageFrameCache::requestFrameAsyncDecodingAtIndex(size_t index, Subsampling
     // We need to coalesce multiple requests for decoding the same ImageFrame while it
     // is still being decoded. This may happen if the image rectangle is repainted
     // multiple times while the ImageFrame has not finished decoding.
-    if (frame.isBeingDecoded())
+    if (frame.isBeingDecoded(sizeForDrawing))
         return true;
 
-    if (subsamplingLevel == SubsamplingLevel::Undefinded)
-        subsamplingLevel = frame.subsamplingLevel();
-
-    if (frame.hasValidNativeImage(subsamplingLevel))
+    if (frame.hasValidNativeImage(subsamplingLevel, sizeForDrawing))
         return false;
 
-    frame.setDecoding(ImageFrame::Decoding::BeingDecoded);
-    m_frameRequestQueue.enqueue({ index, subsamplingLevel });
+    if (!hasDecodingQueue())
+        startAsyncDecodingQueue();
+    
+    frame.enqueueSizeForDecoding(sizeForDrawing);
+    m_frameRequestQueue.enqueue({ index, subsamplingLevel, sizeForDrawing });
     return true;
 }
 
@@ -316,25 +323,39 @@ void ImageFrameCache::stopAsyncDecodingQueue()
     m_decodingQueue = nullptr;
 
     for (ImageFrame& frame : m_frames) {
-        if (frame.isBeingDecoded())
+        if (frame.isBeingDecoded()) {
+            frame.clearSizeForDecoding();
             frame.clear();
+        }
     }
 }
 
-const ImageFrame& ImageFrameCache::frameAtIndex(size_t index, SubsamplingLevel subsamplingLevel, ImageFrame::Caching caching)
+const ImageFrame& ImageFrameCache::frameAtIndexCacheIfNeeded(size_t index, ImageFrame::Caching caching, const std::optional<SubsamplingLevel>& subsamplingLevel, const std::optional<IntSize>& sizeForDrawing)
 {
     ASSERT(index < m_frames.size());
     ImageFrame& frame = m_frames[index];
-    if (!isDecoderAvailable() || frame.isBeingDecoded() || caching == ImageFrame::Caching::Empty)
+    if (!isDecoderAvailable() || frame.isBeingDecoded(sizeForDrawing))
         return frame;
     
-    if (subsamplingLevel == SubsamplingLevel::Undefinded)
-        subsamplingLevel = frame.subsamplingLevel();
+    SubsamplingLevel subsamplingLevelValue = subsamplingLevel ? subsamplingLevel.value() : frame.subsamplingLevel();
 
-    if (!frame.isComplete() && caching == ImageFrame::Caching::Metadata)
-        setFrameMetadataAtIndex(index, subsamplingLevel);
-    else if (!frame.hasValidNativeImage(subsamplingLevel) && caching == ImageFrame::Caching::MetadataAndImage)
-        replaceFrameNativeImageAtIndex(m_decoder->createFrameImageAtIndex(index, subsamplingLevel), index, subsamplingLevel);
+    switch (caching) {
+    case ImageFrame::Caching::Metadata:
+        // Retrieve the metadata from ImageDecoder if the ImageFrame isn't complete.
+        if (frame.isComplete())
+            break;
+        setFrameMetadataAtIndex(index, subsamplingLevelValue, frame.sizeForDrawing());
+        break;
+            
+    case ImageFrame::Caching::MetadataAndImage:
+        // Cache the image and retrieve the metadata from ImageDecoder only if there was not valid image stored.
+        if (frame.hasValidNativeImage(subsamplingLevel, sizeForDrawing))
+            break;
+        // We have to perform synchronous image decoding in this code path regardless of the sizeForDrawing value.
+        // So pass an empty sizeForDrawing to create an ImageFrame with the native size.
+        replaceFrameNativeImageAtIndex(m_decoder->createFrameImageAtIndex(index, subsamplingLevelValue, { }), index, subsamplingLevelValue, { });
+        break;
+    }
 
     return frame;
 }
@@ -362,18 +383,25 @@ T ImageFrameCache::metadata(const T& defaultValue, std::optional<T>* cachedValue
     return cachedValue->value();
 }
 
-template<typename T, T (ImageFrame::*functor)() const>
-T ImageFrameCache::frameMetadataAtIndex(size_t index, SubsamplingLevel subsamplingLevel, ImageFrame::Caching caching, std::optional<T>* cachedValue)
+template<typename T, typename... Args>
+T ImageFrameCache::frameMetadataAtIndex(size_t index, T (ImageFrame::*functor)(Args...) const, Args&&... args)
+{
+    const ImageFrame& frame = index < m_frames.size() ? m_frames[index] : ImageFrame::defaultFrame();
+    return (frame.*functor)(std::forward<Args>(args)...);
+}
+
+template<typename T, typename... Args>
+T ImageFrameCache::frameMetadataAtIndexCacheIfNeeded(size_t index, T (ImageFrame::*functor)() const, std::optional<T>* cachedValue, Args&&... args)
 {
     if (cachedValue && *cachedValue)
         return cachedValue->value();
-    
-    const ImageFrame& frame = index < m_frames.size() ? frameAtIndex(index, subsamplingLevel, caching) : ImageFrame::defaultFrame();
+
+    const ImageFrame& frame = index < m_frames.size() ? frameAtIndexCacheIfNeeded(index, std::forward<Args>(args)...) : ImageFrame::defaultFrame();
 
     // Don't cache any unavailable frame metadata.
     if (!frame.hasMetadata() || !cachedValue)
         return (frame.*functor)();
-    
+
     *cachedValue = (frame.*functor)();
     return cachedValue->value();
 }
@@ -413,72 +441,77 @@ std::optional<IntPoint> ImageFrameCache::hotSpot()
 
 IntSize ImageFrameCache::size()
 {
-    return frameMetadataAtIndex<IntSize, (&ImageFrame::size)>(0, SubsamplingLevel::Default, ImageFrame::Caching::Metadata, &m_size);
+    return frameMetadataAtIndexCacheIfNeeded<IntSize>(0, (&ImageFrame::size), &m_size, ImageFrame::Caching::Metadata, SubsamplingLevel::Default);
 }
 
 IntSize ImageFrameCache::sizeRespectingOrientation()
 {
-    return frameMetadataAtIndex<IntSize, (&ImageFrame::sizeRespectingOrientation)>(0, SubsamplingLevel::Default, ImageFrame::Caching::Metadata, &m_sizeRespectingOrientation);
+    return frameMetadataAtIndexCacheIfNeeded<IntSize>(0, (&ImageFrame::sizeRespectingOrientation), &m_sizeRespectingOrientation, ImageFrame::Caching::Metadata, SubsamplingLevel::Default);
 }
 
 Color ImageFrameCache::singlePixelSolidColor()
 {
-    return frameCount() == 1 ? frameMetadataAtIndex<Color, (&ImageFrame::singlePixelSolidColor)>(0, SubsamplingLevel::Undefinded, ImageFrame::Caching::MetadataAndImage, &m_singlePixelSolidColor) : Color();
+    return frameCount() == 1 ? frameMetadataAtIndexCacheIfNeeded<Color>(0, (&ImageFrame::singlePixelSolidColor), &m_singlePixelSolidColor, ImageFrame::Caching::MetadataAndImage) : Color();
 }
 
-bool ImageFrameCache::frameIsBeingDecodedAtIndex(size_t index)
+bool ImageFrameCache::frameIsBeingDecodedAtIndex(size_t index, const std::optional<IntSize>& sizeForDrawing)
 {
-    return frameMetadataAtIndex<bool, (&ImageFrame::isBeingDecoded)>(index);
+    return frameMetadataAtIndex<bool>(index, (&ImageFrame::isBeingDecoded), sizeForDrawing);
 }
 
 bool ImageFrameCache::frameIsCompleteAtIndex(size_t index)
 {
-    return frameMetadataAtIndex<bool, (&ImageFrame::isComplete)>(index);
+    return frameMetadataAtIndex<bool>(index, (&ImageFrame::isComplete));
 }
 
 bool ImageFrameCache::frameHasAlphaAtIndex(size_t index)
 {
-    return frameMetadataAtIndex<bool, (&ImageFrame::hasAlpha)>(index);
+    return frameMetadataAtIndex<bool>(index, (&ImageFrame::hasAlpha));
 }
 
 bool ImageFrameCache::frameHasImageAtIndex(size_t index)
 {
-    return frameMetadataAtIndex<bool, (&ImageFrame::hasNativeImage)>(index);
+    return frameMetadataAtIndex<bool>(index, (&ImageFrame::hasNativeImage));
 }
 
-bool ImageFrameCache::frameHasValidNativeImageAtIndex(size_t index, SubsamplingLevel subsamplingLevel)
+bool ImageFrameCache::frameHasValidNativeImageAtIndex(size_t index, const std::optional<SubsamplingLevel>& subsamplingLevel, const std::optional<IntSize>& sizeForDrawing)
 {
-    return frameHasImageAtIndex(index) && subsamplingLevel >= frameSubsamplingLevelAtIndex(index);
+    return frameMetadataAtIndex<bool>(index, (&ImageFrame::hasValidNativeImage), subsamplingLevel, sizeForDrawing);
+}
+    
+bool ImageFrameCache::frameHasDecodedNativeImage(size_t index)
+{
+    return frameMetadataAtIndex<bool>(index, (&ImageFrame::hasDecodedNativeImage));
 }
 
 SubsamplingLevel ImageFrameCache::frameSubsamplingLevelAtIndex(size_t index)
 {
-    return frameMetadataAtIndex<SubsamplingLevel, (&ImageFrame::subsamplingLevel)>(index);
+    return frameMetadataAtIndex<SubsamplingLevel>(index, (&ImageFrame::subsamplingLevel));
 }
 
 IntSize ImageFrameCache::frameSizeAtIndex(size_t index, SubsamplingLevel subsamplingLevel)
 {
-    return frameMetadataAtIndex<IntSize, (&ImageFrame::size)>(index, subsamplingLevel, ImageFrame::Caching::Metadata);
+    return frameMetadataAtIndexCacheIfNeeded<IntSize>(index, (&ImageFrame::size), nullptr, ImageFrame::Caching::Metadata, subsamplingLevel);
 }
 
 unsigned ImageFrameCache::frameBytesAtIndex(size_t index, SubsamplingLevel subsamplingLevel)
 {
-    return frameMetadataAtIndex<unsigned, (&ImageFrame::frameBytes)>(index, subsamplingLevel, ImageFrame::Caching::Metadata);
+    return frameMetadataAtIndexCacheIfNeeded<unsigned>(index, (&ImageFrame::frameBytes), nullptr, ImageFrame::Caching::Metadata, subsamplingLevel);
 }
 
 float ImageFrameCache::frameDurationAtIndex(size_t index)
 {
-    return frameMetadataAtIndex<float, (&ImageFrame::duration)>(index, SubsamplingLevel::Undefinded, ImageFrame::Caching::Metadata);
+    return frameMetadataAtIndexCacheIfNeeded<float>(index, (&ImageFrame::duration), nullptr, ImageFrame::Caching::Metadata);
 }
 
 ImageOrientation ImageFrameCache::frameOrientationAtIndex(size_t index)
 {
-    return frameMetadataAtIndex<ImageOrientation, (&ImageFrame::orientation)>(index, SubsamplingLevel::Undefinded, ImageFrame::Caching::Metadata);
+    return frameMetadataAtIndexCacheIfNeeded<ImageOrientation>(index, (&ImageFrame::orientation), nullptr, ImageFrame::Caching::Metadata);
 }
 
-NativeImagePtr ImageFrameCache::frameImageAtIndex(size_t index, SubsamplingLevel subsamplingLevel)
+NativeImagePtr ImageFrameCache::frameImageAtIndex(size_t index, const std::optional<SubsamplingLevel>& subsamplingLevel, const std::optional<IntSize>& sizeForDrawing)
 {
-    return frameMetadataAtIndex<NativeImagePtr, (&ImageFrame::nativeImage)>(index, subsamplingLevel, ImageFrame::Caching::MetadataAndImage);
+    return frameMetadataAtIndexCacheIfNeeded<NativeImagePtr>(index, (&ImageFrame::nativeImage), nullptr, ImageFrame::Caching::MetadataAndImage, subsamplingLevel, sizeForDrawing);
 }
 
 }
