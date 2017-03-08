@@ -113,6 +113,8 @@ public:
     
     String toDataURL(const String& mimeType, std::optional<double> quality = std::nullopt, CoordinateSystem = LogicalCoordinateSystem) const;
     Vector<uint8_t> toData(const String& mimeType, std::optional<double> quality = std::nullopt) const;
+    Vector<uint8_t> toBGRAData() const;
+
 #if !USE(CG)
     AffineTransform baseTransform() const { return AffineTransform(); }
     void transformColorSpace(ColorSpace srcColorSpace, ColorSpace dstColorSpace);

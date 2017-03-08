@@ -28,9 +28,9 @@ enum MediaStreamTrackState { "new", "live", "ended" };
 [
     ActiveDOMObject,
     Conditional=MEDIA_STREAM,
+    CustomToJSObject,
     PrivateIdentifier,
     PublicIdentifier,
-    SkipVTableValidation,
 ] interface MediaStreamTrack : EventTarget {
     readonly attribute DOMString kind;
     readonly attribute DOMString id;

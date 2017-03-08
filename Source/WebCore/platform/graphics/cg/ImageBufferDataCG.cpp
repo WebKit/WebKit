@@ -90,6 +90,52 @@ static void affineWarpBufferData(const vImage_Buffer& src, const vImage_Buffer& 
 #endif // !PLATFORM(IOS_SIMULATOR)
 #endif // USE(ACCELERATE)
 
+static inline void transferData(void* output, void* input, int width, int height, size_t inputBytesPerRow)
+{
+#if USE(ACCELERATE)
+    vImage_Buffer src;
+    src.width = width;
+    src.height = height;
+    src.rowBytes = inputBytesPerRow;
+    src.data = input;
+
+    vImage_Buffer dest;
+    dest.width = width;
+    dest.height = height;
+    dest.rowBytes = width * 4;
+    dest.data = output;
+
+    vImageUnpremultiplyData_BGRA8888(&src, &dest, kvImageNoFlags);
+#else
+    UNUSED_PARAM(output);
+    UNUSED_PARAM(input);
+    UNUSED_PARAM(width);
+    UNUSED_PARAM(height);
+    // FIXME: Add support for not ACCELERATE.
+    ASSERT_NOT_REACHED();
+#endif
+}
+
+Vector<uint8_t> ImageBufferData::toBGRAData(bool accelerateRendering, int width, int height) const
+{
+    Vector<uint8_t> result(4 * width * height);
+
+    if (!accelerateRendering) {
+        transferData(result.data(), data, width, height, 4 * backingStoreSize.width());
+        return result;
+    }
+#if USE(IOSURFACE_CANVAS_BACKING_STORE)
+    IOSurfaceRef surfaceRef = surface->surface();
+    IOSurfaceLock(surfaceRef, kIOSurfaceLockReadOnly, nullptr);
+    transferData(result.data(), IOSurfaceGetBaseAddress(surfaceRef), width, height, IOSurfaceGetBytesPerRow(surfaceRef));
+    IOSurfaceUnlock(surfaceRef, kIOSurfaceLockReadOnly, nullptr);
+#else
+    ASSERT_NOT_REACHED();
+#endif
+    return result;
+}
+
+
 RefPtr<Uint8ClampedArray> ImageBufferData::getData(const IntRect& rect, const IntSize& size, bool accelerateRendering, bool unmultiplied, float resolutionScale) const
 {
     Checked<unsigned, RecordOverflow> area = 4;

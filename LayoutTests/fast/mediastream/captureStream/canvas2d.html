@@ -1,0 +1,56 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+    <head>
+        <canvas id="canvas1" width=100px height=100px></canvas>
+        <video id="video" autoplay width=100px height=100px></video>
+        <canvas id="canvas2" width=100px height=100px></canvas>
+        <script src="../../../resources/testharness.js"></script>
+        <script src="../../../resources/testharnessreport.js"></script>
+        <script>
+
+var canvas1 = document.getElementById("canvas1");
+var canvas2 = document.getElementById("canvas2");
+var video = document.getElementById("video");
+
+function checkCanvas(canvas, stream)
+{
+    return new Promise((resolve, reject) => {
+        video.srcObject = stream;
+        video.onplay = () => {
+            canvas2.getContext("2d").drawImage(video, 0 ,0);
+            try {
+                assert_array_equals(canvas.getContext("2d").getImageData(0 ,0, 100, 100), canvas2.getContext("2d").getImageData(0, 0, 100, 100));
+            } catch(e) {
+                reject(e);
+                return;
+            }
+            resolve();
+        }
+    });
+}
+
+function printLine()
+{
+    var context = canvas1.getContext("2d");
+    context.strokeStyle="green";
+    context.beginPath();
+    context.moveTo(0,0);
+    context.lineTo(100, 100);
+    context.stroke();
+
+    setTimeout(printLine, 500);
+}
+
+promise_test((test) => {
+    var stream = canvas1.captureStream();
+
+    promise = checkCanvas(canvas1, stream);
+
+    printLine();
+
+
+    return promise;
+}, "captureStream with 2d context drawing");
+        </script>
+    </head>
+</html>

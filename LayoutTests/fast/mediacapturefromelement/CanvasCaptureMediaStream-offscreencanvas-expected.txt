@@ -1,0 +1,4 @@
+
+FAIL Untitled canvas.transferControlToOffscreen is not a function. (In 'canvas.transferControlToOffscreen()', 'canvas.transferControlToOffscreen' is undefined)
+FAIL Untitled 1 canvas.transferControlToOffscreen is not a function. (In 'canvas.transferControlToOffscreen()', 'canvas.transferControlToOffscreen' is undefined)
+

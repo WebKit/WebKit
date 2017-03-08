@@ -1,0 +1,5 @@
+
+FAIL check <canvas> captureStream(undefined) assert_equals: expected true but got false
+FAIL check <canvas> captureStream(0) assert_equals: expected true but got false
+FAIL check <canvas> captureStream(30) assert_equals: expected true but got false
+

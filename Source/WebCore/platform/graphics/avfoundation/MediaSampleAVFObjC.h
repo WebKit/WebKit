@@ -28,13 +28,18 @@
 #include "MediaSample.h"
 #include "MediaTimeAVFoundation.h"
 
-namespace WebCore {
+#include <runtime/Uint8ClampedArray.h>
+#include <wtf/Vector.h>
 
+namespace WebCore {
+    
 class MediaSampleAVFObjC final : public MediaSample {
 public:
     static Ref<MediaSampleAVFObjC> create(CMSampleBufferRef sample, int trackID) { return adoptRef(*new MediaSampleAVFObjC(sample, trackID)); }
     static Ref<MediaSampleAVFObjC> create(CMSampleBufferRef sample, AtomicString trackID) { return adoptRef(*new MediaSampleAVFObjC(sample, trackID)); }
     static Ref<MediaSampleAVFObjC> create(CMSampleBufferRef sample) { return adoptRef(*new MediaSampleAVFObjC(sample)); }
+    static RefPtr<MediaSampleAVFObjC> createImageSample(Ref<JSC::Uint8ClampedArray>&&, unsigned long width, unsigned long height);
+    static RefPtr<MediaSampleAVFObjC> createImageSample(Vector<uint8_t>&&, unsigned long width, unsigned long height);
 
 private:
     MediaSampleAVFObjC(CMSampleBufferRef sample)

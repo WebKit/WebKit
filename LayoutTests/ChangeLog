@@ -1,3 +1,33 @@
+2017-03-08  Youenn Fablet  <youenn@apple.com>
+
+        Support canvas captureStream
+        https://bugs.webkit.org/show_bug.cgi?id=169192
+
+        Reviewed by Dean Jackson.
+
+        * fast/mediacapturefromelement/CanvasCaptureMediaStream-2d-events-expected.txt: Added.
+        * fast/mediacapturefromelement/CanvasCaptureMediaStream-2d-events.html: Added.
+        * fast/mediacapturefromelement/CanvasCaptureMediaStream-capture-out-of-DOM-element-expected.txt: Added.
+        * fast/mediacapturefromelement/CanvasCaptureMediaStream-capture-out-of-DOM-element.html: Added.
+        * fast/mediacapturefromelement/CanvasCaptureMediaStream-clone-track-expected.txt: Added.
+        * fast/mediacapturefromelement/CanvasCaptureMediaStream-clone-track.html: Added.
+        * fast/mediacapturefromelement/CanvasCaptureMediaStream-creation-expected.txt: Added.
+        * fast/mediacapturefromelement/CanvasCaptureMediaStream-creation.html: Added.
+        * fast/mediacapturefromelement/CanvasCaptureMediaStream-exceptions-expected.txt: Added.
+        * fast/mediacapturefromelement/CanvasCaptureMediaStream-exceptions.html: Added.
+        * fast/mediacapturefromelement/CanvasCaptureMediaStream-framerate-0-expected.txt: Added.
+        * fast/mediacapturefromelement/CanvasCaptureMediaStream-framerate-0.html: Added.
+        * fast/mediacapturefromelement/CanvasCaptureMediaStream-imagebitmaprenderingcontext-expected.txt: Added.
+        * fast/mediacapturefromelement/CanvasCaptureMediaStream-imagebitmaprenderingcontext.html: Added.
+        * fast/mediacapturefromelement/CanvasCaptureMediaStream-offscreencanvas-expected.txt: Added.
+        * fast/mediacapturefromelement/CanvasCaptureMediaStream-offscreencanvas.html: Added.
+        * fast/mediacapturefromelement/CanvasCaptureMediaStream-request-frame-events-expected.txt: Added.
+        * fast/mediacapturefromelement/CanvasCaptureMediaStream-request-frame-events.html: Added.
+        * fast/mediacapturefromelement/CanvasCaptureMediaStream-webgl-events-expected.txt: Added.
+        * fast/mediacapturefromelement/CanvasCaptureMediaStream-webgl-events.html: Added.
+        * fast/mediacapturefromelement/resources/svg-with-image-with-foreignobject.svg: Added.
+        * fast/mediacapturefromelement/resources/webgl-test.js: Added.
+
 2017-03-08  Antoine Quint  <graouts@apple.com>
 
         [mac-wk1] LayoutTest media/modern-media-controls/airplay-button/airplay-button.html is a flaky timeout

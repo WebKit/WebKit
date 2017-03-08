@@ -38,4 +38,6 @@ typedef (CanvasRenderingContext2D or WebGLRenderingContextBase) RenderingContext
 
     [Custom, MayThrowException] DOMString toDataURL(optional DOMString? type);
     [CallWith=ScriptExecutionContext, MayThrowException] void toBlob(BlobCallback callback, optional DOMString type, optional any quality);
+
+    [Conditional=MEDIA_STREAM, CallWith=ScriptExecutionContext, MayThrowException, NewObject] MediaStream captureStream(optional double frameRequestRate);
 };

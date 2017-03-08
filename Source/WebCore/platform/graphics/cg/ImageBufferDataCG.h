@@ -29,6 +29,7 @@
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/Vector.h>
 
 #if PLATFORM(COCOA) && USE(CA) && !PLATFORM(IOS_SIMULATOR)
 #define USE_IOSURFACE_CANVAS_BACKING_STORE 1
@@ -58,6 +59,7 @@ struct ImageBufferData {
     std::unique_ptr<IOSurface> surface;
 #endif
 
+    Vector<uint8_t> toBGRAData(bool accelerateRendering, int width, int height) const;
     RefPtr<Uint8ClampedArray> getData(const IntRect&, const IntSize&, bool accelerateRendering, bool unmultiplied, float resolutionScale) const;
     void putData(Uint8ClampedArray*& source, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint, const IntSize&, bool accelerateRendering, bool unmultiplied, float resolutionScale);
 };

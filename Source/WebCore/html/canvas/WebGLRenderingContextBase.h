@@ -396,6 +396,7 @@ protected:
 
     void destroyGraphicsContext3D();
     void markContextChanged();
+    void markContextChangedAndNotifyCanvasObserver();
 
     void addActivityStateChangeObserverIfNecessary();
     void removeActivityStateChangeObserver();

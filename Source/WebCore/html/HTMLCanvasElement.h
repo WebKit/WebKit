@@ -47,6 +47,8 @@ class HTMLCanvasElement;
 class Image;
 class ImageBuffer;
 class ImageData;
+class MediaSample;
+class MediaStream;
 
 namespace DisplayList {
 using AsTextFlags = unsigned;
@@ -114,6 +116,11 @@ public:
     GraphicsContext* existingDrawingContext() const;
 
     CanvasRenderingContext* renderingContext() const { return m_context.get(); }
+
+#if ENABLE(MEDIA_STREAM)
+    RefPtr<MediaSample> toMediaSample();
+    ExceptionOr<Ref<MediaStream>> captureStream(ScriptExecutionContext&, std::optional<double>&& frameRequestRate);
+#endif
 
     ImageBuffer* buffer() const;
     Image* copiedImage() const;

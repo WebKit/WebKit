@@ -52,9 +52,20 @@
 #include <wtf/RAMSize.h>
 #include <wtf/text/StringBuilder.h>
 
-#if ENABLE(WEBGL)    
+#if ENABLE(MEDIA_STREAM)
+#include "CanvasCaptureMediaStreamTrack.h"
+#include "MediaStream.h"
+#endif
+
+#if ENABLE(WEBGL)
 #include "WebGLContextAttributes.h"
 #include "WebGLRenderingContextBase.h"
+#endif
+
+#if PLATFORM(COCOA)
+#include "MediaSampleAVFObjC.h"
+
+#include "CoreMediaSoftLink.h"
 #endif
 
 namespace WebCore {
@@ -299,11 +310,10 @@ void HTMLCanvasElement::didDraw(const FloatRect& rect)
             dirtyRect.inflate(1);
         FloatRect r = mapRect(dirtyRect, FloatRect(0, 0, size().width(), size().height()), destRect);
         r.intersect(destRect);
-        if (r.isEmpty() || m_dirtyRect.contains(r))
-            return;
-
-        m_dirtyRect.unite(r);
-        ro->repaintRectangle(enclosingIntRect(m_dirtyRect));
+        if (!r.isEmpty() && !m_dirtyRect.contains(r)) {
+            m_dirtyRect.unite(r);
+            ro->repaintRectangle(enclosingIntRect(m_dirtyRect));
+        }
     }
     notifyObserversCanvasChanged(dirtyRect);
 }
@@ -536,6 +546,37 @@ RefPtr<ImageData> HTMLCanvasElement::getImageData()
     return nullptr;
 #endif
 }
+
+#if ENABLE(MEDIA_STREAM)
+
+RefPtr<MediaSample> HTMLCanvasElement::toMediaSample()
+{
+    auto* imageBuffer = buffer();
+    if (!imageBuffer)
+        return nullptr;
+
+#if PLATFORM(COCOA)
+    makeRenderingResultsAvailable();
+    return MediaSampleAVFObjC::createImageSample(imageBuffer->toBGRAData(), width(), height());
+#else
+    return nullptr;
+#endif
+}
+
+ExceptionOr<Ref<MediaStream>> HTMLCanvasElement::captureStream(ScriptExecutionContext& context, std::optional<double>&& frameRequestRate)
+{
+    if (!originClean())
+        return Exception(SECURITY_ERR, ASCIILiteral("Canvas is tainted"));
+
+    if (frameRequestRate && frameRequestRate.value() < 0)
+        return Exception(NOT_SUPPORTED_ERR, ASCIILiteral("frameRequestRate is negative"));
+    
+    auto track = CanvasCaptureMediaStreamTrack::create(context, *this, WTFMove(frameRequestRate));
+    auto stream =  MediaStream::create(context);
+    stream->addTrack(track);
+    return WTFMove(stream);
+}
+#endif
 
 FloatRect HTMLCanvasElement::convertLogicalToDevice(const FloatRect& logicalRect) const
 {
