@@ -35,6 +35,14 @@ namespace WebCore {
 RefPtr<GPUDevice> GPUDevice::create()
 {
     RefPtr<GPUDevice> device = adoptRef(new GPUDevice());
+
+#if PLATFORM(COCOA)
+    if (!device->platformDevice()) {
+        LOG(WebGPU, "GPUDevice::create() was unable to create the low-level device");
+        return nullptr;
+    }
+#endif
+
     LOG(WebGPU, "GPUDevice::create() device is %p", device.get());
     return device;
 }
@@ -44,7 +52,7 @@ GPUDevice::~GPUDevice()
     LOG(WebGPU, "GPUDevice::~GPUDevice()");
 }
 
-#if !PLATFORM(COCOA) || PLATFORM(IOS_SIMULATOR)
+#if !PLATFORM(COCOA)
 
 GPUDevice::GPUDevice()
 {

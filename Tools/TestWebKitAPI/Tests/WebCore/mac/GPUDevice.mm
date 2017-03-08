@@ -37,6 +37,12 @@ namespace TestWebKitAPI {
 TEST(GPU, Basic)
 {
     auto device = GPUDevice::create();
+    // Not all hardware supports Metal, so it is possible
+    // that we were unable to create the MTLDevice object.
+    // In that case, the device should be null.
+    if (!device)
+        return;
+
     EXPECT_NOT_NULL(device->layer());
     EXPECT_NOT_NULL(device->platformLayer());
 

@@ -1,3 +1,17 @@
+2017-03-07  Dean Jackson  <dino@apple.com>
+
+        Some platforms won't be able to create a GPUDevice
+        https://bugs.webkit.org/show_bug.cgi?id=169314
+        <rdar://problems/30907521>
+
+        Reviewed by Jon Lee.
+
+        Protect for the case where the hardware doesn't support Metal.
+
+        * TestWebKitAPI/Configurations/FeatureDefines.xcconfig:
+        * TestWebKitAPI/Tests/WebCore/mac/GPUDevice.mm:
+        (TestWebKitAPI::TEST):
+
 2017-03-07  Maureen Daum  <mdaum@apple.com>
 
         Correctly check for an empty database file.

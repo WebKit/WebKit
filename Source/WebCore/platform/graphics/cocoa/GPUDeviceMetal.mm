@@ -33,19 +33,20 @@
 #import <runtime/ArrayBuffer.h>
 #import <wtf/BlockObjCExceptions.h>
 
-#if ENABLE(WEBGPU) && !PLATFORM(IOS_SIMULATOR)
+#if ENABLE(WEBGPU)
 
 namespace WebCore {
 
 GPUDevice::GPUDevice()
 {
     m_device = MTLCreateSystemDefaultDevice();
-    LOG(WebGPU, "GPUDevice::GPUDevice Metal device is %p", m_device.get());
 
     if (!m_device) {
-        LOG(WebGPU, "GPUDevice::GPUDevice -- could not create the device");
+        LOG(WebGPU, "GPUDevice::GPUDevice -- could not create the device. This usually means Metal is not available on this hardware.");
         return;
     }
+
+    LOG(WebGPU, "GPUDevice::GPUDevice Metal device is %p", m_device.get());
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     m_layer = [[WebGPULayer alloc] initWithGPUDevice:this];
