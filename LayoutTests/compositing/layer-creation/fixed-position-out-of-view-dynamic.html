@@ -16,7 +16,6 @@
     if (window.testRunner && window.internals) {
       testRunner.dumpAsText();
       internals.settings.setAcceleratedCompositingForFixedPositionEnabled(true);
-      internals.settings.setFixedPositionCreatesStackingContext(true);
 
       addEventListener("load", function() {
         var fixed = document.createElement("div");

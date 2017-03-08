@@ -1681,7 +1681,6 @@ void WebPage::setUseFixedLayout(bool fixed)
 #endif
 #if USE(COORDINATED_GRAPHICS)
     m_page->settings().setAcceleratedCompositingForFixedPositionEnabled(fixed);
-    m_page->settings().setFixedPositionCreatesStackingContext(fixed);
     m_page->settings().setDelegatesPageScaling(fixed);
     m_page->settings().setScrollingCoordinatorEnabled(fixed);
 #endif

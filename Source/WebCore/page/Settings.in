@@ -158,7 +158,6 @@ imageSubsamplingEnabled initial=defaultImageSubsamplingEnabled
 wantsBalancedSetDefersLoadingBehavior initial=false
 requestAnimationFrameEnabled initial=true
 
-fixedPositionCreatesStackingContext initial=defaultFixedPositionCreatesStackingContext
 cookieEnabled initial=true
 mediaEnabled initial=true
 DOMPasteAllowed initial=false

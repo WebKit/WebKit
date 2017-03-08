@@ -29,10 +29,8 @@
       if (window.testRunner) {
         testRunner.waitUntilDone();
         testRunner.dumpAsText();
-        if (window.internals) {
+        if (window.internals)
             window.internals.settings.setAcceleratedCompositingForFixedPositionEnabled(true);
-            window.internals.settings.setFixedPositionCreatesStackingContext(true);
-        }
       }
 
       function doScroll()

@@ -183,7 +183,6 @@ void DrawingAreaImpl::updatePreferences(const WebPreferencesStore& store)
     // Fixed position elements need to be composited and create stacking contexts
     // in order to be scrolled by the ScrollingCoordinator.
     settings.setAcceleratedCompositingForFixedPositionEnabled(settings.acceleratedCompositingEnabled());
-    settings.setFixedPositionCreatesStackingContext(settings.acceleratedCompositingEnabled());
 #endif
 
     m_alwaysUseCompositing = settings.acceleratedCompositingEnabled() && settings.forceCompositingMode();

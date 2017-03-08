@@ -1,3 +1,19 @@
+2017-03-07  Simon Fraser  <simon.fraser@apple.com>
+
+        Have fixedPositionCreatesStackingContext be on by default everywhere
+        https://bugs.webkit.org/show_bug.cgi?id=169334
+
+        Reviewed by Zalan Bujtas.
+
+        It makes no sense to have web-exposed CSS functionality be different based on setting,
+        and other browser are now aligned with having position:fixed create stacking context.
+
+        So remove the fixedPositionCreatesStackingContext setting and have StyleResolver::adjustRenderStyle()
+        always force stacking context for position:fixed.
+
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChanged:]):
+
 2017-03-06  Simon Fraser  <simon.fraser@apple.com>
 
         Initialize the subpixelAntialiasedLayerTextEnabled Setting in WebKit1

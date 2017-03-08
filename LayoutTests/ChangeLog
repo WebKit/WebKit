@@ -1,3 +1,35 @@
+2017-03-07  Simon Fraser  <simon.fraser@apple.com>
+
+        Have fixedPositionCreatesStackingContext be on by default everywhere
+        https://bugs.webkit.org/show_bug.cgi?id=169334
+
+        Reviewed by Zalan Bujtas.
+
+        It makes no sense to have web-exposed CSS functionality be different based on setting,
+        and other browser are now aligned with having position:fixed create stacking context.
+
+        So remove the fixedPositionCreatesStackingContext setting and have StyleResolver::adjustRenderStyle()
+        always force stacking context for position:fixed.
+
+        * compositing/absolute-inside-out-of-view-fixed.html:
+        * compositing/geometry/fixed-position-composited-page-scale-smaller-than-viewport.html:
+        * compositing/layer-creation/fixed-overlap-extent-rtl.html:
+        * compositing/layer-creation/fixed-overlap-extent.html:
+        * compositing/layer-creation/fixed-position-change-out-of-view-in-view.html:
+        * compositing/layer-creation/fixed-position-in-view-dynamic.html:
+        * compositing/layer-creation/fixed-position-out-of-view-dynamic.html:
+        * compositing/layer-creation/fixed-position-out-of-view-scaled-iframe-scroll.html:
+        * compositing/layer-creation/fixed-position-out-of-view-scaled-iframe.html:
+        * compositing/layer-creation/fixed-position-out-of-view-scaled-scroll.html:
+        * compositing/layer-creation/fixed-position-out-of-view-scaled.html:
+        * compositing/layer-creation/fixed-position-transformed-into-view.html:
+        * compositing/layer-creation/fixed-position-transformed-outside-view.html:
+        * compositing/layer-creation/no-compositing-for-fixed-position-under-transform.html:
+        * compositing/repaint/scroll-fixed-layer-no-content.html:
+        * compositing/repaint/scroll-fixed-layer-out-of-view.html:
+        * fast/block/positioning/fixed-position-stacking-context2.html:
+        * fullscreen/full-screen-fixed-pos-parent.html:
+
 2017-03-07  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebCrypto] Implement ECDH ImportKey/ExportKey operations
