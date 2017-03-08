@@ -97,6 +97,7 @@
     (iokit-property "idVendor")
     (iokit-property "iofb_version")
     (iokit-property "startup-timing"))
+(trace "/Users/bfulgham/sandboxing/webprocess-sandbox.sb")
 #endif
 
 ;; Utility functions for home directory relative path filters
@@ -150,25 +151,29 @@
 
 ;; Read-only preferences and data
 (allow file-read*
-       ;; Basic system paths
-       (subpath "/Library/Dictionaries")
-       (subpath "/Library/Fonts")
-       (subpath "/Library/Frameworks")
-       (subpath "/Library/Managed Preferences")
-       (subpath "/Library/Speech/Synthesizers")
-       (regex #"^/private/etc/(hosts|group|passwd)$")
+    ;; Basic system paths
+    (subpath "/Library/Dictionaries")
+    (subpath "/Library/Fonts")
+    (subpath "/Library/Frameworks")
+    (subpath "/Library/Managed Preferences")
+    (subpath "/Library/Speech/Synthesizers")
+    (regex #"^/private/etc/(hosts|group|passwd)$")
 
-       (literal "/Library/Application Support/CrashReporter/SubmitDiagInfo.domains")
+    (literal "/Library/Application Support/CrashReporter/SubmitDiagInfo.domains")
 
-       ;; System and user preferences
-       (home-literal "/.CFUserTextEncoding")
+    ;; System and user preferences
+    (home-literal "/.CFUserTextEncoding")
 
-       ;; FIXME: This should be removed when <rdar://problem/8957845> is fixed.
-       (home-subpath "/Library/Fonts")
+    ;; FIXME: This should be removed when <rdar://problem/8957845> is fixed.
+    (home-subpath "/Library/Fonts")
 
-       (subpath "/Library/Audio/Plug-Ins/HAL")
+    (subpath "/Library/Audio/Plug-Ins/HAL")
 
-       (home-subpath "/Library/Dictionaries"))
+    (home-subpath "/Library/Dictionaries"))
+
+(allow file-read-data
+    ;; Needed for AES3 support
+    (subpath "/Library/Audio/Plug-Ins/Components"))
 
 ;; Preferences support
 (allow user-preference-read
