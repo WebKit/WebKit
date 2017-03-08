@@ -1799,6 +1799,11 @@ static void WebKitInitializeGamepadProviderIfNecessary()
 {
     return _private->textIndicatorData;
 }
+
+#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/WebViewAdditions.mm>)
+#include <WebKitAdditions/WebViewAdditions.mm>
+#endif
+
 #else
 - (BOOL)_requestStartDataInteraction:(CGPoint)clientPosition globalPosition:(CGPoint)globalPosition
 {
@@ -1810,6 +1815,24 @@ static void WebKitInitializeGamepadProviderIfNecessary()
 - (WebUITextIndicatorData *)_getDataInteractionData
 {
     return nil;
+}
+- (uint64_t)_enteredDataInteraction:(id)dataInteraction client:(CGPoint)clientPosition global:(CGPoint)globalPosition operation:(uint64_t)operation
+{
+    return 0;
+}
+
+- (uint64_t)_updatedDataInteraction:(id)dataInteraction client:(CGPoint)clientPosition global:(CGPoint)globalPosition operation:(uint64_t)operation
+{
+    return 0;
+}
+- (void)_exitedDataInteraction:(id)dataInteraction client:(CGPoint)clientPosition global:(CGPoint)globalPosition operation:(uint64_t)operation
+{
+}
+- (void)_performDataInteraction:(id)dataInteraction client:(CGPoint)clientPosition global:(CGPoint)globalPosition operation:(uint64_t)operation
+{
+}
+- (void)_endedDataInteraction:(CGPoint)clientPosition global:(CGPoint)globalPosition
+{
 }
 #endif // ENABLE(DATA_INTERACTION) && defined(__cplusplus)
 
