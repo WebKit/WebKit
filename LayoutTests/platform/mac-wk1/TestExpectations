@@ -325,3 +325,4 @@ webkit.org/b/167857 pageoverlay/overlay-remove-reinsert-view.html [ Skip ]
 
 webkit.org/b/169117 media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-audio-background.html [ Pass Timeout ]
 webkit.org/b/167752 media/modern-media-controls/icon-button/icon-button-active-state.html [ Pass Timeout ]
+webkit.org/b/167477 [ Debug ] media/modern-media-controls/play-pause-button/play-pause-button.html [ Pass Timeout ]
