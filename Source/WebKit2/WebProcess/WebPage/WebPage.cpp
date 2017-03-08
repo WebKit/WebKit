@@ -30,6 +30,7 @@
 
 #include "APIArray.h"
 #include "APIGeometry.h"
+#include "APIWebsitePolicies.h"
 #include "AssistedNodeInformation.h"
 #include "DataReference.h"
 #include "DragControllerAction.h"
@@ -5448,9 +5449,29 @@ void WebPage::reportUsedFeatures()
     m_loaderClient.featuresUsedInPage(this, namedFeatures);
 }
 
-void WebPage::updateWebsitePolicies(const WebsitePolicies&)
+void WebPage::updateWebsitePolicies(const WebsitePolicies& websitePolicies)
 {
-    // FIXME: Update the website policies in m_page.
+    if (!m_page)
+        return;
+
+    auto* documentLoader = m_page->mainFrame().loader().documentLoader();
+    if (!documentLoader)
+        return;
+
+    switch (websitePolicies.autoplayPolicy) {
+    case WebsiteAutoplayPolicy::Default:
+        documentLoader->setAutoplayPolicy(AutoplayPolicy::Default);
+        break;
+    case WebsiteAutoplayPolicy::Allow:
+        documentLoader->setAutoplayPolicy(AutoplayPolicy::Allow);
+        break;
+    case WebsiteAutoplayPolicy::AllowWithoutSound:
+        documentLoader->setAutoplayPolicy(AutoplayPolicy::AllowWithoutSound);
+        break;
+    case WebsiteAutoplayPolicy::Deny:
+        documentLoader->setAutoplayPolicy(AutoplayPolicy::Deny);
+        break;
+    }
 }
 
 unsigned WebPage::extendIncrementalRenderingSuppression()

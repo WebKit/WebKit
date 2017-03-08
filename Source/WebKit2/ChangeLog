@@ -1,3 +1,13 @@
+2017-03-08  Matt Rajca  <mrajca@apple.com>
+
+        Add support for updating autoplay policies after a page has been loaded.
+        https://bugs.webkit.org/show_bug.cgi?id=169360
+
+        Reviewed by Alex Christensen.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updateWebsitePolicies):
+
 2017-03-08  Tim Horton  <timothy_horton@apple.com>
 
         Switching focus from a UITextField to an editable WKWebView causes the keyboard to dance

@@ -217,6 +217,13 @@ TEST(WebKit2, WebsitePoliciesAutoplayEnabled)
     [webView loadRequest:requestWithAudio];
     [webView waitForMessage:@"did-not-play"];
 
+    // Test updating website policies.
+    _WKWebsitePolicies *websitePolicies = [[[_WKWebsitePolicies alloc] init] autorelease];
+    websitePolicies.autoplayPolicy = _WKWebsiteAutoplayPolicyAllow;
+    [webView _updateWebsitePolicies:websitePolicies];
+    [webView stringByEvaluatingJavaScript:@"playVideo()"];
+    [webView waitForMessage:@"autoplayed"];
+
     [webView loadRequest:requestWithoutAudio];
     [webView waitForMessage:@"did-not-play"];
 
