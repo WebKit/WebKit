@@ -97,7 +97,6 @@
     (iokit-property "idVendor")
     (iokit-property "iofb_version")
     (iokit-property "startup-timing"))
-(trace "/Users/bfulgham/sandboxing/webprocess-sandbox.sb")
 #endif
 
 ;; Utility functions for home directory relative path filters

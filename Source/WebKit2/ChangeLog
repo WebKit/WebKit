@@ -1,5 +1,11 @@
 2017-03-08  Brent Fulgham  <bfulgham@apple.com>
 
+        Remove the trace command from the sandbox profile.
+
+        * WebProcess/com.apple.WebProcess.sb.in: Unreviewed.
+
+2017-03-08  Brent Fulgham  <bfulgham@apple.com>
+
         REGRESSION(r212904): [WK2][Mac] Revise sandbox to support AES3
         https://bugs.webkit.org/show_bug.cgi?id=169361
         <rdar://problem/30927476>
