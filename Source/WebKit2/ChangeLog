@@ -1,3 +1,19 @@
+2017-03-07  Brent Fulgham  <bfulgham@apple.com>
+
+        [Mac][WK2] Whitelist iokit-get-properties
+        https://bugs.webkit.org/show_bug.cgi?id=169331
+        <rdar://problem/16363632>
+
+        Reviewed by Alex Christensen.
+
+        Block access to all IOKit properties by default. Turn on only those properties
+        that are actually needed by our engine.
+
+        * DatabaseProcess/mac/com.apple.WebKit.Databases.sb.in:
+        * NetworkProcess/mac/com.apple.WebKit.NetworkProcess.sb.in:
+        * PluginProcess/mac/com.apple.WebKit.plugin-common.sb.in:
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2017-03-07  Simon Fraser  <simon.fraser@apple.com>
 
         Enable SubpixelAntialiasedLayerTextEnabled by default on some versions of macOS

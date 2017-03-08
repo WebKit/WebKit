@@ -40,6 +40,33 @@
         "hw.ncpu"
         "hw.model"
         "kern.memorystatus_level"))
+
+(deny iokit-get-properties)
+(allow iokit-get-properties
+    (iokit-property "AllowDisplaySleep")
+    (iokit-property "DisplayRouting")
+    (iokit-property-regex #"^IOAudioControl(ChannelID|ID|SubType|Usage)")
+    (iokit-property-regex #"^IOAudioDevice(CanBeDefaults|TransportType)")
+    (iokit-property-regex #"^IOAudioEngine(ChannelNames|ClientDescription|CoreAudioPlugIn|Description|Flavor|GlobalUniqueID|OutputChannelLayout|SampleOffset|State)")
+    (iokit-property-regex #"^IOAudioEngineClock(Domain|IsStable)")
+    (iokit-property "IOAudioEngineDisableClockBoundsCheck")
+    (iokit-property-regex #"^IOAudioEngine(Input|Output)Sample(Latency|Offset)")
+    (iokit-property-regex #"^IOAudioEngineNum(ActiveUserClients|SampleFramesPerBuffer)")
+    (iokit-property "IOAudioSampleRate")
+    (iokit-property "IOAudioStreamSampleFormatByteOrder")
+    (iokit-property "IOClassNameOverride")
+    (iokit-property "IOConsoleUsers")
+    (iokit-property "IOFBCurrentPixelClock")
+    (iokit-property-regex #"^IOFBCurrentPixelCount(Real)")
+    (iokit-property "IOGeneralInterest")
+    (iokit-property "IOGLBundleName")
+    (iokit-property "IOScreenRestoreState")
+    (iokit-property "IOVARendererID")
+    (iokit-property-regex #"^MetalPlugin(Name|ClassName)")
+    (iokit-property "SupportAudioAUUC")
+    (iokit-property "board-id")
+    (iokit-property "idProduct")
+    (iokit-property "idVendor"))
 #endif
 
 ;; Utility functions

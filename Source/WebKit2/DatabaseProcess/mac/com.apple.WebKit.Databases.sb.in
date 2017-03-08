@@ -40,6 +40,8 @@
         "hw.ncpu"
         "hw.model"
         "kern.memorystatus_level"))
+
+(deny iokit-get-properties)
 #endif
 
 ;; Utility functions for home directory relative path filters
