@@ -1,5 +1,19 @@
 2017-03-08  Simon Fraser  <simon.fraser@apple.com>
 
+        Support transitions/animations of background-position with right/bottom-relative values
+        https://bugs.webkit.org/show_bug.cgi?id=162048
+
+        Reviewed by Dean Jackson.
+
+        Re-landing r206713.
+
+        * transitions/background-position-transitions-expected.txt: Added.
+        * transitions/background-position-transitions.html: Added.
+        * transitions/resources/transition-test-helpers.js:
+        * transitions/svg-transitions-expected.txt:
+
+2017-03-08  Simon Fraser  <simon.fraser@apple.com>
+
         Change determineNonLayerDescendantsPaintedContent to max out based on renderers traversed
         https://bugs.webkit.org/show_bug.cgi?id=169384
 

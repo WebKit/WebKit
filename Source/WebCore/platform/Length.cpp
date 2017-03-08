@@ -284,6 +284,18 @@ bool Length::isCalculatedEqual(const Length& other) const
     return calculationValue() == other.calculationValue();
 }
 
+Length convertTo100PercentMinusLength(const Length& length)
+{
+    if (length.isPercent())
+        return Length(100 - length.value(), Percent);
+    
+    // Turn this into a calc expression: calc(100% - length)
+    auto lhs = std::make_unique<CalcExpressionLength>(Length(100, Percent));
+    auto rhs = std::make_unique<CalcExpressionLength>(length);
+    auto op = std::make_unique<CalcExpressionBinaryOperation>(WTFMove(lhs), WTFMove(rhs), CalcSubtract);
+    return Length(CalculationValue::create(WTFMove(op), ValueRangeAll));
+}
+
 static Length blendMixedTypes(const Length& from, const Length& to, double progress)
 {
     if (progress <= 0.0)
@@ -370,8 +382,7 @@ TextStream& operator<<(TextStream& ts, Length length)
         ts << TextStream::FormatNumberRespectingIntegers(length.percent()) << "%";
         break;
     case Calculated:
-        // FIXME: dump CalculationValue.
-        ts << "calc(...)";
+        ts << length.calculationValue();
         break;
     }
     

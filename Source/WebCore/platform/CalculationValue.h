@@ -39,6 +39,8 @@
 
 namespace WebCore {
 
+class TextStream;
+
 enum CalcOperator {
     CalcAdd = '+',
     CalcSubtract = '-',
@@ -64,6 +66,7 @@ public:
 
     virtual float evaluate(float maxValue) const = 0;
     virtual bool operator==(const CalcExpressionNode&) const = 0;
+    virtual void dump(TextStream&) const = 0;
 
 private:
     CalcExpressionNodeType m_type;
@@ -78,6 +81,7 @@ public:
 private:
     float evaluate(float) const override;
     bool operator==(const CalcExpressionNode&) const override;
+    void dump(TextStream&) const override;
 
     float m_value;
 };
@@ -91,6 +95,7 @@ public:
 private:
     float evaluate(float maxValue) const override;
     bool operator==(const CalcExpressionNode&) const override;
+    void dump(TextStream&) const override;
 
     Length m_length;
 };
@@ -106,6 +111,7 @@ public:
 private:
     float evaluate(float maxValue) const override;
     bool operator==(const CalcExpressionNode&) const override;
+    void dump(TextStream&) const override;
 
     std::unique_ptr<CalcExpressionNode> m_leftSide;
     std::unique_ptr<CalcExpressionNode> m_rightSide;
@@ -123,6 +129,7 @@ public:
 private:
     float evaluate(float maxValue) const override;
     bool operator==(const CalcExpressionNode&) const override;
+    void dump(TextStream&) const override;
 
     Length m_from;
     Length m_to;
@@ -231,6 +238,10 @@ inline const CalcExpressionBlendLength& toCalcExpressionBlendLength(const CalcEx
     ASSERT_WITH_SECURITY_IMPLICATION(value.type() == CalcExpressionNodeBlendLength);
     return static_cast<const CalcExpressionBlendLength&>(value);
 }
+
+TextStream& operator<<(TextStream&, const CalculationValue&);
+TextStream& operator<<(TextStream&, const CalcExpressionNode&);
+TextStream& operator<<(TextStream&, CalcOperator);
 
 } // namespace WebCore
 

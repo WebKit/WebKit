@@ -110,6 +110,77 @@ function parseClipPath(s)
     return null;
 }
 
+function hasFloatValue(value)
+{
+    switch (value.primitiveType) {
+    case CSSPrimitiveValue.CSS_FR:
+    case CSSPrimitiveValue.CSS_NUMBER:
+    case CSSPrimitiveValue.CSS_PARSER_INTEGER:
+    case CSSPrimitiveValue.CSS_PERCENTAGE:
+    case CSSPrimitiveValue.CSS_EMS:
+    case CSSPrimitiveValue.CSS_EXS:
+    case CSSPrimitiveValue.CSS_CHS:
+    case CSSPrimitiveValue.CSS_REMS:
+    case CSSPrimitiveValue.CSS_PX:
+    case CSSPrimitiveValue.CSS_CM:
+    case CSSPrimitiveValue.CSS_MM:
+    case CSSPrimitiveValue.CSS_IN:
+    case CSSPrimitiveValue.CSS_PT:
+    case CSSPrimitiveValue.CSS_PC:
+    case CSSPrimitiveValue.CSS_DEG:
+    case CSSPrimitiveValue.CSS_RAD:
+    case CSSPrimitiveValue.CSS_GRAD:
+    case CSSPrimitiveValue.CSS_TURN:
+    case CSSPrimitiveValue.CSS_MS:
+    case CSSPrimitiveValue.CSS_S:
+    case CSSPrimitiveValue.CSS_HZ:
+    case CSSPrimitiveValue.CSS_KHZ:
+    case CSSPrimitiveValue.CSS_DIMENSION:
+    case CSSPrimitiveValue.CSS_VW:
+    case CSSPrimitiveValue.CSS_VH:
+    case CSSPrimitiveValue.CSS_VMIN:
+    case CSSPrimitiveValue.CSS_VMAX:
+    case CSSPrimitiveValue.CSS_DPPX:
+    case CSSPrimitiveValue.CSS_DPI:
+    case CSSPrimitiveValue.CSS_DPCM:
+        return true;
+    }
+    return false;
+}
+
+function getNumericValue(cssValue)
+{
+    if (hasFloatValue(cssValue.primitiveType))
+        return cssValue.getFloatValue(cssValue.primitiveType);
+
+    return -1;
+}
+
+function isCalcPrimitiveValue(value)
+{
+    switch (value.primitiveType) {
+    case 113: // CSSPrimitiveValue.CSS_CALC:
+    case 114: // CSSPrimitiveValue.CSS_CALC_PERCENTAGE_WITH_NUMBER:
+    case 115: // CSSPrimitiveValue.CSS_CALC_PERCENTAGE_WITH_LENGTH:
+    return true;
+    }
+    return false;
+}
+
+function extractNumbersFromCalcExpression(value, values)
+{
+    var calcRegexp = /^calc\((.+)\)$/;
+    var result = calcRegexp.exec(value.cssText);
+    var numberMatch = /([^\.\-0-9]*)(-?[\.0-9]+)/;
+    var remainder = result[1];
+    var match;
+    while ((match = numberMatch.exec(remainder)) !== null) {
+        var skipLength = match[1].length + match[2].length;
+        values.push(parseFloat(match[2]))
+        remainder = remainder.substr(skipLength + 1);
+    }
+}
+
 function checkExpectedValue(expected, index)
 {
     var time = expected[index][0];
@@ -194,23 +265,27 @@ function checkExpectedValue(expected, index)
         if (computedStyle.cssValueType == CSSValue.CSS_VALUE_LIST) {
             var values = [];
             for (var i = 0; i < computedStyle.length; ++i) {
-                switch (computedStyle[i].cssValueType) {
+                var styleValue = computedStyle[i];
+                switch (styleValue.cssValueType) {
                   case CSSValue.CSS_PRIMITIVE_VALUE:
-                    values.push(computedStyle[i].getFloatValue(CSSPrimitiveValue.CSS_NUMBER));
+                    if (hasFloatValue(styleValue))
+                        values.push(styleValue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER));
+                    else if (isCalcPrimitiveValue(styleValue))
+                        extractNumbersFromCalcExpression(styleValue, values);
                     break;
                   case CSSValue.CSS_CUSTOM:
                     // arbitrarily pick shadow-x and shadow-y
                     if (isShadow) {
-                      var shadowXY = getShadowXY(computedStyle[i]);
+                      var shadowXY = getShadowXY(styleValue);
                       values.push(shadowXY[0]);
                       values.push(shadowXY[1]);
                     } else
-                      values.push(computedStyle[i].cssText);
+                      values.push(styleValue.cssText);
                     break;
                 }
             }
             computedValue = values.join(',');
-            pass = true;
+            pass = values.length > 0;
             for (var i = 0; i < values.length; ++i)
                 pass &= isCloseEnough(values[i], expectedValue[i], tolerance);
         } else if (computedStyle.cssValueType == CSSValue.CSS_PRIMITIVE_VALUE) {

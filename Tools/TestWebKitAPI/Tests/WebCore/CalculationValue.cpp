@@ -27,6 +27,10 @@
 
 #include <WebCore/CalculationValue.h>
 
+namespace WebCore {
+class TextStream;
+};
+
 namespace TestWebKitAPI {
 
 static unsigned deletionCount;
@@ -40,6 +44,9 @@ public:
 
     float evaluate(float) const override { return 0; }
     bool operator==(const CalcExpressionNode&) const override { ASSERT_NOT_REACHED(); return false; }
+
+private:
+    void dump(WebCore::TextStream&) const override { };
 };
 
 static Ref<WebCore::CalculationValue> createTestValue()

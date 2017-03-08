@@ -1,0 +1,4 @@
+PASS - "background-position" property for "box1" element at 0.5s saw something close to: 45,60
+PASS - "background-position" property for "box2" element at 0.5s saw something close to: 45,60
+PASS - "background-position" property for "box3" element at 0.5s saw something close to: 10,0.5,100,80,0,0.5,20,0.5,100,100,0,0.5
+

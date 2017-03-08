@@ -39,6 +39,7 @@
 #include "CSSPrimitiveValue.h"
 #include "CSSPropertyNames.h"
 #include "CachedImage.h"
+#include "CalculationValue.h"
 #include "ClipPathOperation.h"
 #include "FloatConversion.h"
 #include "FontTaggedSettings.h"
@@ -957,14 +958,23 @@ private:
 class FillLayerAnimationPropertyWrapperBase {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    FillLayerAnimationPropertyWrapperBase()
+    FillLayerAnimationPropertyWrapperBase(CSSPropertyID property)
+        : m_property(property)
     {
     }
+    
+    CSSPropertyID property() const { return m_property; }
 
     virtual ~FillLayerAnimationPropertyWrapperBase() { }
 
     virtual bool equals(const FillLayer*, const FillLayer*) const = 0;
     virtual void blend(const AnimationBase*, FillLayer*, const FillLayer*, const FillLayer*, double) const = 0;
+
+#if !LOG_DISABLED
+    virtual void logBlend(const FillLayer* result, const FillLayer*, const FillLayer*, double) const = 0;
+#endif
+private:
+    CSSPropertyID m_property;
 };
 
 template <typename T>
@@ -972,8 +982,9 @@ class FillLayerPropertyWrapperGetter : public FillLayerAnimationPropertyWrapperB
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(FillLayerPropertyWrapperGetter);
 public:
-    FillLayerPropertyWrapperGetter(T (FillLayer::*getter)() const)
-        : m_getter(getter)
+    FillLayerPropertyWrapperGetter(CSSPropertyID property, T (FillLayer::*getter)() const)
+        : FillLayerAnimationPropertyWrapperBase(property)
+        , m_getter(getter)
     {
     }
 
@@ -986,6 +997,18 @@ public:
         return (a->*m_getter)() == (b->*m_getter)();
     }
 
+    T value(const FillLayer* layer) const
+    {
+        return (layer->*m_getter)();
+    }
+
+#if !LOG_DISABLED
+    void logBlend(const FillLayer* result, const FillLayer* a, const FillLayer* b, double progress) const override
+    {
+        LOG_WITH_STREAM(Animations, stream << "  blending " << getPropertyName(property()) << " from " << value(a) << " to " << value(b) << " at " << TextStream::FormatNumberRespectingIntegers(progress) << " -> " << value(result));
+    }
+#endif
+
 protected:
     T (FillLayer::*m_getter)() const;
 };
@@ -994,8 +1017,8 @@ template <typename T>
 class FillLayerPropertyWrapper : public FillLayerPropertyWrapperGetter<const T&> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    FillLayerPropertyWrapper(const T& (FillLayer::*getter)() const, void (FillLayer::*setter)(T))
-        : FillLayerPropertyWrapperGetter<const T&>(getter)
+    FillLayerPropertyWrapper(CSSPropertyID property, const T& (FillLayer::*getter)() const, void (FillLayer::*setter)(T))
+        : FillLayerPropertyWrapperGetter<const T&>(property, getter)
         , m_setter(setter)
     {
     }
@@ -1005,16 +1028,89 @@ public:
         (dst->*m_setter)(blendFunc(anim, (a->*FillLayerPropertyWrapperGetter<const T&>::m_getter)(), (b->*FillLayerPropertyWrapperGetter<const T&>::m_getter)(), progress));
     }
 
+#if !LOG_DISABLED
+    void logBlend(const FillLayer* result, const FillLayer* a, const FillLayer* b, double progress) const override
+    {
+        LOG_WITH_STREAM(Animations, stream << "  blending " << getPropertyName(FillLayerPropertyWrapperGetter<const T&>::property())
+            << " from " << FillLayerPropertyWrapperGetter<const T&>::value(a)
+            << " to " << FillLayerPropertyWrapperGetter<const T&>::value(b)
+            << " at " << TextStream::FormatNumberRespectingIntegers(progress) << " -> " << FillLayerPropertyWrapperGetter<const T&>::value(result));
+    }
+#endif
+
 protected:
     void (FillLayer::*m_setter)(T);
+};
+
+class FillLayerPositionPropertyWrapper : public FillLayerPropertyWrapperGetter<const Length&> {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    FillLayerPositionPropertyWrapper(CSSPropertyID property, const Length& (FillLayer::*lengthGetter)() const, void (FillLayer::*lengthSetter)(Length), Edge (FillLayer::*originGetter)() const, void (FillLayer::*originSetter)(Edge), Edge farEdge)
+        : FillLayerPropertyWrapperGetter<const Length&>(property, lengthGetter)
+        , m_lengthSetter(lengthSetter)
+        , m_originGetter(originGetter)
+        , m_originSetter(originSetter)
+        , m_farEdge(farEdge)
+    {
+    }
+
+    bool equals(const FillLayer* a, const FillLayer* b) const override
+    {
+        if (a == b)
+            return true;
+        if (!a || !b)
+            return false;
+
+        Length fromLength = (a->*FillLayerPropertyWrapperGetter<const Length&>::m_getter)();
+        Length toLength = (b->*FillLayerPropertyWrapperGetter<const Length&>::m_getter)();
+        
+        Edge fromEdge = (a->*m_originGetter)();
+        Edge toEdge = (b->*m_originGetter)();
+        
+        return fromLength == toLength && fromEdge == toEdge;
+    }
+
+    void blend(const AnimationBase* anim, FillLayer* dst, const FillLayer* a, const FillLayer* b, double progress) const override
+    {
+        Length fromLength = (a->*FillLayerPropertyWrapperGetter<const Length&>::m_getter)();
+        Length toLength = (b->*FillLayerPropertyWrapperGetter<const Length&>::m_getter)();
+        
+        Edge fromEdge = (a->*m_originGetter)();
+        Edge toEdge = (b->*m_originGetter)();
+        
+        if (fromEdge != toEdge) {
+            // Convert the right/bottom into a calc expression,
+            if (fromEdge == m_farEdge)
+                fromLength = convertTo100PercentMinusLength(fromLength);
+            else if (toEdge == m_farEdge) {
+                toLength = convertTo100PercentMinusLength(toLength);
+                (dst->*m_originSetter)(fromEdge); // Now we have a calc(100% - l), it's relative to the left/top edge.
+            }
+        }
+
+        (dst->*m_lengthSetter)(blendFunc(anim, fromLength, toLength, progress));
+    }
+
+#if !LOG_DISABLED
+    void logBlend(const FillLayer* result, const FillLayer* a, const FillLayer* b, double progress) const override
+    {
+        LOG_WITH_STREAM(Animations, stream << "  blending " << getPropertyName(property()) << " from " << value(a) << " to " << value(b) << " at " << TextStream::FormatNumberRespectingIntegers(progress) << " -> " << value(result));
+    }
+#endif
+
+protected:
+    void (FillLayer::*m_lengthSetter)(Length);
+    Edge (FillLayer::*m_originGetter)() const;
+    void (FillLayer::*m_originSetter)(Edge);
+    Edge m_farEdge;
 };
 
 template <typename T>
 class FillLayerRefCountedPropertyWrapper : public FillLayerPropertyWrapperGetter<T*> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    FillLayerRefCountedPropertyWrapper(T* (FillLayer::*getter)() const, void (FillLayer::*setter)(RefPtr<T>&&))
-        : FillLayerPropertyWrapperGetter<T*>(getter)
+    FillLayerRefCountedPropertyWrapper(CSSPropertyID property, T* (FillLayer::*getter)() const, void (FillLayer::*setter)(RefPtr<T>&&))
+        : FillLayerPropertyWrapperGetter<T*>(property, getter)
         , m_setter(setter)
     {
     }
@@ -1024,6 +1120,16 @@ public:
         (dst->*m_setter)(blendFunc(anim, (a->*FillLayerPropertyWrapperGetter<T*>::m_getter)(), (b->*FillLayerPropertyWrapperGetter<T*>::m_getter)(), progress));
     }
 
+#if !LOG_DISABLED
+    void logBlend(const FillLayer* result, const FillLayer* a, const FillLayer* b, double progress) const override
+    {
+        LOG_WITH_STREAM(Animations, stream << "  blending " << getPropertyName(FillLayerPropertyWrapperGetter<T*>::property())
+            << " from " << FillLayerPropertyWrapperGetter<T*>::value(a)
+            << " to " << FillLayerPropertyWrapperGetter<T*>::value(b)
+            << " at " << TextStream::FormatNumberRespectingIntegers(progress) << " -> " << FillLayerPropertyWrapperGetter<T*>::value(result));
+    }
+#endif
+
 protected:
     void (FillLayer::*m_setter)(RefPtr<T>&&);
 };
@@ -1031,8 +1137,8 @@ protected:
 class FillLayerStyleImagePropertyWrapper : public FillLayerRefCountedPropertyWrapper<StyleImage> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    FillLayerStyleImagePropertyWrapper(StyleImage* (FillLayer::*getter)() const, void (FillLayer::*setter)(RefPtr<StyleImage>&&))
-        : FillLayerRefCountedPropertyWrapper<StyleImage>(getter, setter)
+    FillLayerStyleImagePropertyWrapper(CSSPropertyID property, StyleImage* (FillLayer::*getter)() const, void (FillLayer::*setter)(RefPtr<StyleImage>&&))
+        : FillLayerRefCountedPropertyWrapper<StyleImage>(property, getter, setter)
     {
     }
 
@@ -1047,6 +1153,13 @@ public:
         StyleImage* imageB = (b->*m_getter)();
         return arePointingToEqualData(imageA, imageB);
     }
+
+#if !LOG_DISABLED
+    void logBlend(const FillLayer* result, const FillLayer* a, const FillLayer* b, double progress) const override
+    {
+        LOG_WITH_STREAM(Animations, stream << "  blending " << getPropertyName(property()) << " from " << value(a) << " to " << value(b) << " at " << TextStream::FormatNumberRespectingIntegers(progress) << " -> " << value(result));
+    }
+#endif
 };
 
 class FillLayersPropertyWrapper : public AnimationPropertyWrapperBase {
@@ -1055,27 +1168,27 @@ public:
     typedef const FillLayer& (RenderStyle::*LayersGetter)() const;
     typedef FillLayer& (RenderStyle::*LayersAccessor)();
 
-    FillLayersPropertyWrapper(CSSPropertyID prop, LayersGetter getter, LayersAccessor accessor)
-        : AnimationPropertyWrapperBase(prop)
+    FillLayersPropertyWrapper(CSSPropertyID property, LayersGetter getter, LayersAccessor accessor)
+        : AnimationPropertyWrapperBase(property)
         , m_layersGetter(getter)
         , m_layersAccessor(accessor)
     {
-        switch (prop) {
+        switch (property) {
         case CSSPropertyBackgroundPositionX:
         case CSSPropertyWebkitMaskPositionX:
-            m_fillLayerPropertyWrapper = std::make_unique<FillLayerPropertyWrapper<Length>>(&FillLayer::xPosition, &FillLayer::setXPosition);
+            m_fillLayerPropertyWrapper = std::make_unique<FillLayerPositionPropertyWrapper>(property, &FillLayer::xPosition, &FillLayer::setXPosition, &FillLayer::backgroundXOrigin, &FillLayer::setBackgroundXOrigin, Edge::Right);
             break;
         case CSSPropertyBackgroundPositionY:
         case CSSPropertyWebkitMaskPositionY:
-            m_fillLayerPropertyWrapper = std::make_unique<FillLayerPropertyWrapper<Length>>(&FillLayer::yPosition, &FillLayer::setYPosition);
+            m_fillLayerPropertyWrapper = std::make_unique<FillLayerPositionPropertyWrapper>(property, &FillLayer::yPosition, &FillLayer::setYPosition, &FillLayer::backgroundYOrigin, &FillLayer::setBackgroundYOrigin, Edge::Bottom);
             break;
         case CSSPropertyBackgroundSize:
         case CSSPropertyWebkitBackgroundSize:
         case CSSPropertyWebkitMaskSize:
-            m_fillLayerPropertyWrapper = std::make_unique<FillLayerPropertyWrapper<LengthSize>>(&FillLayer::sizeLength, &FillLayer::setSizeLength);
+            m_fillLayerPropertyWrapper = std::make_unique<FillLayerPropertyWrapper<LengthSize>>(property, &FillLayer::sizeLength, &FillLayer::setSizeLength);
             break;
         case CSSPropertyBackgroundImage:
-            m_fillLayerPropertyWrapper = std::make_unique<FillLayerStyleImagePropertyWrapper>(&FillLayer::image, &FillLayer::setImage);
+            m_fillLayerPropertyWrapper = std::make_unique<FillLayerStyleImagePropertyWrapper>(property, &FillLayer::image, &FillLayer::setImage);
             break;
         default:
             break;
@@ -1118,10 +1231,18 @@ public:
     }
 
 #if !LOG_DISABLED
-    void logBlend(const RenderStyle*, const RenderStyle*, const RenderStyle*, double progress) const final
+    void logBlend(const RenderStyle* from, const RenderStyle* to, const RenderStyle* result, double progress) const final
     {
-        // FIXME: better logging.
-        LOG_WITH_STREAM(Animations, stream << "  blending FillLayers at " << TextStream::FormatNumberRespectingIntegers(progress));
+        auto* aLayer = &(from->*m_layersGetter)();
+        auto* bLayer = &(to->*m_layersGetter)();
+        auto* dstLayer = &(result->*m_layersGetter)();
+
+        while (aLayer && bLayer && dstLayer) {
+            m_fillLayerPropertyWrapper->logBlend(dstLayer, aLayer, bLayer, progress);
+            aLayer = aLayer->next();
+            bLayer = bLayer->next();
+            dstLayer = dstLayer->next();
+        }
     }
 #endif
 
@@ -1164,10 +1285,10 @@ public:
     }
 
 #if !LOG_DISABLED
-    void logBlend(const RenderStyle*, const RenderStyle*, const RenderStyle*, double progress) const final
+    void logBlend(const RenderStyle* a, const RenderStyle* b, const RenderStyle* dst, double progress) const final
     {
-        // FIXME: better logging.
-        LOG_WITH_STREAM(Animations, stream << "  blending shorthand property " << getPropertyName(property()) << " at " << TextStream::FormatNumberRespectingIntegers(progress));
+        for (auto& wrapper : m_propertyWrappers)
+            wrapper->logBlend(a, b, dst, progress);
     }
 #endif
 
