@@ -382,6 +382,11 @@
 (allow mach-lookup
        (global-name "com.apple.pbs.fetch_services"))
 
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
+;; CFNetwork
+(allow file-read-data (path "/private/var/db/nsurlstoraged/dafsaData.bin"))
+#endif
+
 ;; FIXME should be removed when <rdar://problem/9347205> + related radar in Safari is fixed
 (allow mach-lookup
        (global-name "org.h5l.kcm")
