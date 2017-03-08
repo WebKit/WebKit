@@ -57,7 +57,7 @@ WebInspector.DOMNode = class DOMNode extends WebInspector.Object
             this.ownerDocument = doc;
 
         this._attributes = [];
-        this._attributesMap = {};
+        this._attributesMap = new Map;
         if (payload.attributes)
             this._setAttributesPayload(payload.attributes);
 
@@ -387,7 +387,7 @@ WebInspector.DOMNode = class DOMNode extends WebInspector.Object
 
     getAttribute(name)
     {
-        var attr = this._attributesMap[name];
+        let attr = this._attributesMap.get(name);
         return attr ? attr.value : undefined;
     }
 
@@ -411,7 +411,7 @@ WebInspector.DOMNode = class DOMNode extends WebInspector.Object
         function mycallback(error, success)
         {
             if (!error) {
-                delete this._attributesMap[name];
+                this._attributesMap.delete(name);
                 for (var i = 0; i < this._attributes.length; ++i) {
                     if (this._attributes[i].name === name) {
                         this._attributes.splice(i, 1);
@@ -669,7 +669,7 @@ WebInspector.DOMNode = class DOMNode extends WebInspector.Object
     _setAttributesPayload(attrs)
     {
         this._attributes = [];
-        this._attributesMap = {};
+        this._attributesMap = new Map;
         for (var i = 0; i < attrs.length; i += 2)
             this._addAttribute(attrs[i], attrs[i + 1]);
     }
@@ -735,14 +735,14 @@ WebInspector.DOMNode = class DOMNode extends WebInspector.Object
 
     _addAttribute(name, value)
     {
-        var attr = {name, value, _node: this};
-        this._attributesMap[name] = attr;
+        let attr = {name, value, _node: this};
+        this._attributesMap.set(name, attr);
         this._attributes.push(attr);
     }
 
     _setAttribute(name, value)
     {
-        var attr = this._attributesMap[name];
+        let attr = this._attributesMap.get(name);
         if (attr)
             attr.value = value;
         else
@@ -751,10 +751,10 @@ WebInspector.DOMNode = class DOMNode extends WebInspector.Object
 
     _removeAttribute(name)
     {
-        var attr = this._attributesMap[name];
+        let attr = this._attributesMap.get(name);
         if (attr) {
             this._attributes.remove(attr);
-            delete this._attributesMap[name];
+            this._attributesMap.delete(name);
         }
     }
 

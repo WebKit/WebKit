@@ -1,3 +1,19 @@
+2017-03-07  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: DOM Tree broken if an element has a "debounce" attribute
+        https://bugs.webkit.org/show_bug.cgi?id=169336
+        <rdar://problem/30899430>
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Models/DOMNode.js:
+        (WebInspector.DOMNode):
+        (WebInspector.DOMNode.prototype.getAttribute):
+        (WebInspector.DOMNode.prototype.removeAttribute.mycallback):
+        (WebInspector.DOMNode.prototype.removeAttribute):
+        Convert the attributes map to an actual Map to avoid name collisions
+        with Object.prototype properties.
+
 2017-03-07  Chris Dumez  <cdumez@apple.com>
 
         Drop non-standard MessageEvent.webkitInitMessageEvent()
