@@ -585,6 +585,16 @@ HTMLMediaElement::~HTMLMediaElement()
     updatePlaybackControlsManager();
 }
 
+static bool needsAutoplayPlayPauseEventsQuirk(const Document& document)
+{
+    auto* page = document.page();
+    if (!page || !page->settings().needsSiteSpecificQuirks())
+        return false;
+
+    String host = document.url().host();
+    return equalLettersIgnoringASCIICase(host, "yahoo.com") || host.endsWithIgnoringASCIICase(".yahoo.com");
+}
+
 static bool needsPlaybackControlsManagerQuirk(Page& page)
 {
     if (!page.settings().needsSiteSpecificQuirks())
@@ -2306,6 +2316,15 @@ SuccessOr<MediaPlaybackDenialReason> HTMLMediaElement::canTransitionFromAutoplay
     return MediaPlaybackDenialReason::PageConsentRequired;
 }
 
+void HTMLMediaElement::dispatchPlayPauseEventsIfNeedsQuirks()
+{
+    if (!needsAutoplayPlayPauseEventsQuirk(document().topDocument()))
+        return;
+
+    scheduleEvent(eventNames().playingEvent);
+    scheduleEvent(eventNames().pauseEvent);
+}
+
 void HTMLMediaElement::setReadyState(MediaPlayer::ReadyState state)
 {
     LOG(Media, "HTMLMediaElement::setReadyState(%p) - new state = %d, current state = %d,", this, static_cast<int>(state), static_cast<int>(m_readyState));
@@ -2427,6 +2446,7 @@ void HTMLMediaElement::setReadyState(MediaPlayer::ReadyState state)
             scheduleNotifyAboutPlaying();
         } else if (success.value() == MediaPlaybackDenialReason::UserGestureRequired) {
             m_playbackWithoutUserGesture = PlaybackWithoutUserGesture::Prevented;
+            dispatchPlayPauseEventsIfNeedsQuirks();
 
             if (Page* page = document().page())
                 page->chrome().client().handleAutoplayEvent(AutoplayEvent::DidPreventMediaFromPlaying);
@@ -3111,6 +3131,7 @@ void HTMLMediaElement::play(DOMPromise<void>&& promise)
     if (!success) {
         if (success.value() == MediaPlaybackDenialReason::UserGestureRequired) {
             m_playbackWithoutUserGesture = PlaybackWithoutUserGesture::Prevented;
+            dispatchPlayPauseEventsIfNeedsQuirks();
 
             if (Page* page = document().page())
                 page->chrome().client().handleAutoplayEvent(AutoplayEvent::DidPreventMediaFromPlaying);
@@ -3143,6 +3164,7 @@ void HTMLMediaElement::play()
     if (!success) {
         if (success.value() == MediaPlaybackDenialReason::UserGestureRequired) {
             m_playbackWithoutUserGesture = PlaybackWithoutUserGesture::Prevented;
+            dispatchPlayPauseEventsIfNeedsQuirks();
 
             if (Page* page = document().page())
                 page->chrome().client().handleAutoplayEvent(AutoplayEvent::DidPreventMediaFromPlaying);

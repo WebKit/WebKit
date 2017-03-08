@@ -730,6 +730,7 @@ private:
     bool stoppedDueToErrors() const;
     bool pausedForUserInteraction() const;
     bool couldPlayIfEnoughData() const;
+    void dispatchPlayPauseEventsIfNeedsQuirks();
     SuccessOr<MediaPlaybackDenialReason> canTransitionFromAutoplayToPlay() const;
 
     MediaTime minTimeSeekable() const;
