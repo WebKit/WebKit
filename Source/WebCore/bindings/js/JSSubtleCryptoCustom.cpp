@@ -243,6 +243,13 @@ static std::unique_ptr<CryptoAlgorithmParameters> normalizeCryptoAlgorithmParame
                 result = std::make_unique<CryptoAlgorithmHmacKeyParams>(params);
                 break;
             }
+            case CryptoAlgorithmIdentifier::ECDSA:
+            case CryptoAlgorithmIdentifier::ECDH: {
+                auto params = convertDictionary<CryptoAlgorithmEcKeyParams>(state, value);
+                RETURN_IF_EXCEPTION(scope, nullptr);
+                result = std::make_unique<CryptoAlgorithmEcKeyParams>(params);
+                break;
+            }
             default:
                 throwNotSupportedError(state, scope);
                 return nullptr;
@@ -415,6 +422,8 @@ static void supportExportKeyThrow(ExecState& state, ThrowScope& scope, CryptoAlg
     case CryptoAlgorithmIdentifier::AES_CFB:
     case CryptoAlgorithmIdentifier::AES_KW:
     case CryptoAlgorithmIdentifier::HMAC:
+    case CryptoAlgorithmIdentifier::ECDSA:
+    case CryptoAlgorithmIdentifier::ECDH:
         return;
     default:
         throwNotSupportedError(state, scope);

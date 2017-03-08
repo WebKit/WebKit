@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../resources/common.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+description("Test exporting an EC key with malformed parameters");
+
+jsTestIsAsync = true;
+
+var algorithmKeyGen = {
+    name: "ECDH",
+    namedCurve: "P-256"
+};
+var extractable = true;
+
+crypto.subtle.generateKey(algorithmKeyGen, extractable, ["deriveKey", "deriveBits"]).then(function(result) {
+    privateKey = result.privateKey;
+
+    // Wrong key and format.
+    return shouldReject('crypto.subtle.exportKey("raw", privateKey)');
+}).then(finishJSTest, finishJSTest);
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

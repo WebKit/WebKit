@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../resources/common.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+description("Test importing a EC key with malformed parameters");
+
+var extractable = true;
+var rawP256Key = hexStringToUint8Array("04dc08d9bf603333eab1ad29cef41a6203ab6ecce03c5a4a9bf5771a3fb9f971d89a09664bfb87c61199b3453220eadec714c49ad1e24bf5d7ec5bddeca6420893");
+var rawP384Key = hexStringToUint8Array("048ba3e0a0ac5c9bb25476323570fa11dff30745a13da751a5eb1dacb5e9b439df0f77979077ee9ac97c02ca1e3cd72677cbbc256a69b99fd83a519ca9a9a26c62d45b51659274b1cea3c9858543abf5c64bfcfcd1948b7075c0409da4494f9060");
+var x = "1FSVWieTvikFkG1NOyhkUCaMbdQhxwH6aCu4Ez-sRtA"; // P-256
+var y = "9jmNTLqM4cjBhdAnHcNI9YQV3O8LFmo-EdZWk8ntAaI"; // P-256
+var d = "ppxBSov3N8_AUcisAuvmLV4yE8e_L_BLE8bZb9Z1Xjg"; // P-256
+var x384 = "1bHwFrsaPRjYq-zFOyLXK8Ugv3EqbVF075ct7ouTl_pwyhjeBu03JHjKTsyVbNWK";
+var y384 = "1bHwFrsaPRjYq-zFOyLXK8Ugv3EqbVF075ct7ouTl_pwyhjeBu03JHjKTsyVbNWK";
+
+// Named curves mismatch raw keys
+shouldReject('crypto.subtle.importKey("raw", rawP256Key, { name: "ECDH", namedCurve: "P-384" }, extractable, [ ])');
+shouldReject('crypto.subtle.importKey("raw", rawP384Key, { name: "ECDH", namedCurve: "P-256" }, extractable, [ ])');
+// Raw: Non-empty usages
+shouldReject('crypto.subtle.importKey("raw", rawP256Key, { name: "ECDH", namedCurve: "P-256" }, extractable, ["deriveBits"])');
+// Raw: Not support named curve
+shouldReject('crypto.subtle.importKey("raw", rawP256Key, { name: "ECDH", namedCurve: "P-521" }, extractable, [ ])');
+// Jwk: Wrong usages
+shouldReject('crypto.subtle.importKey("jwk", {kty: "EC", crv: "P-256", x:x, y:y}, { name: "ECDH", namedCurve: "P-256" }, extractable, ["deriveKey"])');
+shouldReject('crypto.subtle.importKey("jwk", {kty: "EC", crv: "P-256", x:x, y:y, d:d}, { name: "ECDH", namedCurve: "P-256" }, extractable, ["encrypt"])');
+shouldReject('crypto.subtle.importKey("jwk", {kty: "EC", crv: "P-256", x:x, y:y, d:d}, { name: "ECDH", namedCurve: "P-256" }, extractable, ["decrypt"])');
+shouldReject('crypto.subtle.importKey("jwk", {kty: "EC", crv: "P-256", x:x, y:y, d:d}, { name: "ECDH", namedCurve: "P-256" }, extractable, ["sign"])');
+shouldReject('crypto.subtle.importKey("jwk", {kty: "EC", crv: "P-256", x:x, y:y, d:d}, { name: "ECDH", namedCurve: "P-256" }, extractable, ["verify"])');
+shouldReject('crypto.subtle.importKey("jwk", {kty: "EC", crv: "P-256", x:x, y:y, d:d}, { name: "ECDH", namedCurve: "P-256" }, extractable, ["wrapKey"])');
+shouldReject('crypto.subtle.importKey("jwk", {kty: "EC", crv: "P-256", x:x, y:y, d:d}, { name: "ECDH", namedCurve: "P-256" }, extractable, ["unwrapKey"])');
+// Jwk: Wrong use
+shouldReject('crypto.subtle.importKey("jwk", {kty: "EC", crv: "P-256", x:x, y:y, d:d, use: "sig"}, { name: "ECDH", namedCurve: "P-256" }, extractable, ["deriveKey"])');
+// Jwk: Wrong kty
+shouldReject('crypto.subtle.importKey("jwk", {kty: "RSA", crv: "P-256", x:x, y:y}, { name: "ECDH", namedCurve: "P-256" }, extractable, [ ])');
+// Jwk: Wrong key_ops
+shouldReject('crypto.subtle.importKey("jwk", {kty: "EC", crv: "P-256", x:x, y:y, d:d, key_ops: ["sign", "verify"]}, { name: "ECDH", namedCurve: "P-256" }, extractable, ["deriveKey"])');
+// Jwk: Wrong ext
+shouldReject('crypto.subtle.importKey("jwk", {kty: "EC", crv: "P-256", x:x, y:y, ext: false}, { name: "ECDH", namedCurve: "P-256" }, extractable, [ ])');
+// Jwk: Missing crv
+shouldReject('crypto.subtle.importKey("jwk", {kty: "EC", x:x, y:y}, { name: "ECDH", namedCurve: "P-256" }, extractable, [ ])');
+// Jwk: Mismatched crv
+shouldReject('crypto.subtle.importKey("jwk", {kty: "EC", crv: "P-384", x:x, y:y}, { name: "ECDH", namedCurve: "P-256" }, extractable, [ ])');
+// Jwk: Not supported crv
+shouldReject('crypto.subtle.importKey("jwk", {kty: "EC", crv: "P-521", x:x, y:y}, { name: "ECDH", namedCurve: "P-521" }, extractable, [ ])');
+// Jwk: Missing x, y
+shouldReject('crypto.subtle.importKey("jwk", {kty: "EC", crv: "P-256", y:y}, { name: "ECDH", namedCurve: "P-256" }, extractable, [ ])');
+shouldReject('crypto.subtle.importKey("jwk", {kty: "EC", crv: "P-256", x:x}, { name: "ECDH", namedCurve: "P-256" }, extractable, [ ])');
+// Jwk: Mismatched x, y, d
+shouldReject('crypto.subtle.importKey("jwk", {kty: "EC", crv: "P-384", x:x, y:y}, { name: "ECDH", namedCurve: "P-384" }, extractable, [ ])');
+shouldReject('crypto.subtle.importKey("jwk", {kty: "EC", crv: "P-384", x:x384, y:y}, { name: "ECDH", namedCurve: "P-384" }, extractable, [ ])');
+shouldReject('crypto.subtle.importKey("jwk", {kty: "EC", crv: "P-384", x:x, y:y384}, { name: "ECDH", namedCurve: "P-384" }, extractable, [ ])');
+shouldReject('crypto.subtle.importKey("jwk", {kty: "EC", crv: "P-384", x:x384, y:y384, d:d}, { name: "ECDH", namedCurve: "P-384" }, extractable, [ ])');
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

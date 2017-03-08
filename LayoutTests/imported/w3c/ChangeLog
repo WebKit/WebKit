@@ -1,3 +1,14 @@
+2017-03-07  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebCrypto] Implement ECDH ImportKey/ExportKey operations
+        https://bugs.webkit.org/show_bug.cgi?id=169257
+        <rdar://problem/23789585>
+
+        Reviewed by Brent Fulgham.
+
+        * web-platform-tests/WebCryptoAPI/import_export/ec_importKey.worker-expected.txt:
+        * web-platform-tests/WebCryptoAPI/import_export/test_ec_importKey-expected.txt:
+
 2017-03-07  Alex Christensen  <achristensen@webkit.org>
 
         [URLParser] Fix file URLs that are just file:// and a Windows drive letter

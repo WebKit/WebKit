@@ -1,0 +1,10 @@
+Test exporting an EC key with malformed parameters
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS crypto.subtle.exportKey("raw", privateKey) rejected promise  with InvalidAccessError (DOM Exception 15): The requested operation is not valid for the provided key.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

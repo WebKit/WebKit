@@ -44,6 +44,8 @@ typedef PlatformECKeyGnuTLS *PlatformECKey;
 
 namespace WebCore {
 
+struct JsonWebKey;
+
 class EcKeyAlgorithm : public KeyAlgorithm {
 public:
     EcKeyAlgorithm(const String& name, const String& curve)
@@ -74,7 +76,14 @@ public:
     }
     virtual ~CryptoKeyEC();
 
-    static ExceptionOr<CryptoKeyPair> generatePair(CryptoAlgorithmIdentifier, const String&, bool extractable, CryptoKeyUsageBitmap);
+    static ExceptionOr<CryptoKeyPair> generatePair(CryptoAlgorithmIdentifier, const String& curve, bool extractable, CryptoKeyUsageBitmap);
+    static RefPtr<CryptoKeyEC> importRaw(CryptoAlgorithmIdentifier, const String& curve, Vector<uint8_t>&& keyData, bool extractable, CryptoKeyUsageBitmap);
+    static RefPtr<CryptoKeyEC> importJwk(CryptoAlgorithmIdentifier, const String& curve, JsonWebKey&&, bool extractable, CryptoKeyUsageBitmap);
+
+    Vector<uint8_t> exportRaw() const;
+    JsonWebKey exportJwk() const;
+
+    size_t keySizeInBits() const;
 
 private:
     CryptoKeyEC(CryptoAlgorithmIdentifier, NamedCurve, CryptoKeyType, PlatformECKey, bool extractable, CryptoKeyUsageBitmap);
@@ -85,6 +94,10 @@ private:
     std::unique_ptr<CryptoKeyData> exportData() const final;
 
     static std::optional<CryptoKeyPair> platformGeneratePair(CryptoAlgorithmIdentifier, NamedCurve, bool extractable, CryptoKeyUsageBitmap);
+    static RefPtr<CryptoKeyEC> platformImportRaw(CryptoAlgorithmIdentifier, NamedCurve, Vector<uint8_t>&& keyData, bool extractable, CryptoKeyUsageBitmap);
+    static RefPtr<CryptoKeyEC> platformImportJWKPublic(CryptoAlgorithmIdentifier, NamedCurve, Vector<uint8_t>&& x, Vector<uint8_t>&& y, bool extractable, CryptoKeyUsageBitmap);
+    static RefPtr<CryptoKeyEC> platformImportJWKPrivate(CryptoAlgorithmIdentifier, NamedCurve, Vector<uint8_t>&& x, Vector<uint8_t>&& y, Vector<uint8_t>&& d, bool extractable, CryptoKeyUsageBitmap);
+    void platformAddFieldElements(JsonWebKey&) const;
 
     PlatformECKey m_platformKey;
     NamedCurve m_curve;

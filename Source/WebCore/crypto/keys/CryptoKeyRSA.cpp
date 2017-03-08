@@ -38,7 +38,7 @@ RefPtr<CryptoKeyRSA> CryptoKeyRSA::importJwk(CryptoAlgorithmIdentifier algorithm
 {
     if (keyData.kty != "RSA")
         return nullptr;
-    if (keyData.usages && ((keyData.usages & usages) != usages))
+    if (keyData.key_ops && ((keyData.usages & usages) != usages))
         return nullptr;
     if (keyData.ext && !keyData.ext.value() && extractable)
         return nullptr;

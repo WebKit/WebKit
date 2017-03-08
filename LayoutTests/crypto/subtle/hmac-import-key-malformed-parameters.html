@@ -43,6 +43,7 @@ shouldReject('crypto.subtle.importKey("jwk", {kty: "oct", k: k, alg: "HS1", use:
 shouldReject('crypto.subtle.importKey("jwk", {kty: "oct", k: k, alg: "HS1", use: ""}, {name: "hmac", hash: "sha-1"}, extractable, ["sign", "verify"])');
 // Jwk: wrong key_ops
 shouldReject('crypto.subtle.importKey("jwk", {kty: "oct", k: k, alg: "HS1", key_ops: ["sign"]}, {name: "hmac", hash: "sha-1"}, extractable, ["sign", "verify"])');
+shouldReject('crypto.subtle.importKey("jwk", {kty: "oct", k: k, alg: "HS1", key_ops: [ ]}, {name: "hmac", hash: "sha-1"}, extractable, ["sign", "verify"])');
 // Jwk: wrong ext
 shouldReject('crypto.subtle.importKey("jwk", {kty: "oct", k: k, alg: "HS1", ext: false}, {name: "hmac", hash: "sha-1"}, extractable, ["sign", "verify"])');
 </script>

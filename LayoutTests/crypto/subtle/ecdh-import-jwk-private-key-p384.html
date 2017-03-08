@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../resources/common.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+description("Test importing a JWK ECDH private key with P-384");
+
+jsTestIsAsync = true;
+
+var jwkKey = {
+    kty: "EC",
+    use: "enc",
+    ext: false,
+    key_ops: ["deriveKey", "deriveBits"],
+    crv: "P-384",
+    x: "1bHwFrsaPRjYq-zFOyLXK8Ugv3EqbVF075ct7ouTl_pwyhjeBu03JHjKTsyVbNWK",
+    y: "1bHwFrsaPRjYq-zFOyLXK8Ugv3EqbVF075ct7ouTl_pwyhjeBu03JHjKTsyVbNWK",
+    d: "ZV5MWMNl0j2wYmTS0bccCCWdp29-WH3u5-cenSSuv-aHX-GkaPFP4sYSvsrfOlLE",
+};
+var nonExtractable = false;
+
+debug("Importing a key...");
+crypto.subtle.importKey("jwk", jwkKey, { name: "ECDH", namedCurve: "P-384" }, nonExtractable, ["deriveKey", "deriveBits"]).then(function(result) {
+    privateKey = result;
+
+    shouldBe("privateKey.toString()", "'[object CryptoKey]'");
+    shouldBe("privateKey.type", "'private'");
+    shouldBe("privateKey.extractable", "false");
+    shouldBe("privateKey.algorithm.name", "'ECDH'");
+    shouldBe("privateKey.algorithm.namedCurve", "'P-384'");
+    shouldBe("privateKey.usages", "['deriveBits', 'deriveKey']");
+
+    finishJSTest();
+});
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

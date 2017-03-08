@@ -106,7 +106,7 @@ RefPtr<CryptoKeyHMAC> CryptoKeyHMAC::importJwk(size_t lengthBits, CryptoAlgorith
         return nullptr;
     if (usages && !keyData.use.isNull() && keyData.use != "sig")
         return nullptr;
-    if (keyData.usages && ((keyData.usages & usages) != usages))
+    if (keyData.key_ops && ((keyData.usages & usages) != usages))
         return nullptr;
     if (keyData.ext && !keyData.ext.value() && extractable)
         return nullptr;

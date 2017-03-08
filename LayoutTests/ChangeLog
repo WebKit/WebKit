@@ -1,3 +1,68 @@
+2017-03-07  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebCrypto] Implement ECDH ImportKey/ExportKey operations
+        https://bugs.webkit.org/show_bug.cgi?id=169257
+        <rdar://problem/23789585>
+
+        Reviewed by Brent Fulgham.
+
+        * crypto/subtle/ec-export-key-malformed-parameters-expected.txt: Added.
+        * crypto/subtle/ec-export-key-malformed-parameters.html: Added.
+        * crypto/subtle/ec-import-jwk-key-export-jwk-key-private-expected.txt: Added.
+        * crypto/subtle/ec-import-jwk-key-export-jwk-key-private.html: Added.
+        * crypto/subtle/ec-import-jwk-key-export-jwk-key-public-expected.txt: Added.
+        * crypto/subtle/ec-import-jwk-key-export-jwk-key-public.html: Added.
+        * crypto/subtle/ec-import-jwk-key-export-raw-key-expected.txt: Added.
+        * crypto/subtle/ec-import-jwk-key-export-raw-key.html: Added.
+        * crypto/subtle/ec-import-key-malformed-parameters-expected.txt: Added.
+        * crypto/subtle/ec-import-key-malformed-parameters.html: Added.
+        * crypto/subtle/ec-import-raw-key-export-jwk-key-expected.txt: Added.
+        * crypto/subtle/ec-import-raw-key-export-jwk-key.html: Added.
+        * crypto/subtle/ec-import-raw-key-export-raw-key-expected.txt: Added.
+        * crypto/subtle/ec-import-raw-key-export-raw-key.html: Added.
+        * crypto/subtle/ecdh-generate-export-jwk-key-p256-expected.txt: Added.
+        * crypto/subtle/ecdh-generate-export-jwk-key-p256.html: Added.
+        * crypto/subtle/ecdh-generate-export-jwk-key-p384-expected.txt: Added.
+        * crypto/subtle/ecdh-generate-export-jwk-key-p384.html: Added.
+        * crypto/subtle/ecdh-generate-export-key-raw-p256-expected.txt: Added.
+        * crypto/subtle/ecdh-generate-export-key-raw-p256.html: Added.
+        * crypto/subtle/ecdh-generate-export-key-raw-p384-expected.txt: Added.
+        * crypto/subtle/ecdh-generate-export-key-raw-p384.html: Added.
+        * crypto/subtle/ecdh-import-jwk-key-minimum-expected.txt: Added.
+        * crypto/subtle/ecdh-import-jwk-key-minimum.html: Added.
+        * crypto/subtle/ecdh-import-jwk-private-key-p256-expected.txt: Added.
+        * crypto/subtle/ecdh-import-jwk-private-key-p256.html: Added.
+        * crypto/subtle/ecdh-import-jwk-private-key-p384-expected.txt: Added.
+        * crypto/subtle/ecdh-import-jwk-private-key-p384.html: Added.
+        * crypto/subtle/ecdh-import-jwk-public-key-p256-expected.txt: Added.
+        * crypto/subtle/ecdh-import-jwk-public-key-p256.html: Added.
+        * crypto/subtle/ecdh-import-jwk-public-key-p384-expected.txt: Added.
+        * crypto/subtle/ecdh-import-jwk-public-key-p384.html: Added.
+        * crypto/subtle/ecdh-import-raw-key-p256-expected.txt: Added.
+        * crypto/subtle/ecdh-import-raw-key-p256.html: Added.
+        * crypto/subtle/ecdh-import-raw-key-p384-expected.txt: Added.
+        * crypto/subtle/ecdh-import-raw-key-p384.html: Added.
+        * crypto/subtle/hmac-import-key-malformed-parameters-expected.txt:
+        * crypto/subtle/hmac-import-key-malformed-parameters.html:
+        * crypto/subtle/rsa-import-key-malformed-parameters-expected.txt:
+        * crypto/subtle/rsa-import-key-malformed-parameters.html:
+        Fixed some minor bugs.
+        * crypto/workers/subtle/ec-generate-export-jwk-key-expected.txt: Added.
+        * crypto/workers/subtle/ec-generate-export-jwk-key.html: Added.
+        * crypto/workers/subtle/ec-generate-export-raw-key-expected.txt: Added.
+        * crypto/workers/subtle/ec-generate-export-raw-key.html: Added.
+        * crypto/workers/subtle/ec-import-jwk-key-private-expected.txt: Added.
+        * crypto/workers/subtle/ec-import-jwk-key-private.html: Added.
+        * crypto/workers/subtle/ec-import-jwk-key-public-expected.txt: Added.
+        * crypto/workers/subtle/ec-import-jwk-key-public.html: Added.
+        * crypto/workers/subtle/ec-import-raw-key-expected.txt: Added.
+        * crypto/workers/subtle/ec-import-raw-key.html: Added.
+        * crypto/workers/subtle/resources/ec-generate-export-jwk-key.js: Added.
+        * crypto/workers/subtle/resources/ec-generate-export-raw-key.js: Added.
+        * crypto/workers/subtle/resources/ec-import-jwk-key-private.js: Added.
+        * crypto/workers/subtle/resources/ec-import-jwk-key-public.js: Added.
+        * crypto/workers/subtle/resources/ec-import-raw-key.js: Added.
+
 2017-03-07  Ryan Haddad  <ryanhaddad@apple.com>
 
         Add Debug flag to TestExpectation for webrtc/libwebrtc/descriptionGetters.html.

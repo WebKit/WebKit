@@ -86,9 +86,28 @@ extern "C" CCRSAKeyType CCRSAGetKeyType(CCRSACryptorRef key);
 extern "C" CCCryptorStatus CCRSACryptorImport(const void *keyPackage, size_t keyPackageLen, CCRSACryptorRef *key);
 extern "C" CCCryptorStatus CCRSACryptorExport(CCRSACryptorRef key, void *out, size_t *outLen);
 
+#ifndef _CC_ECCRYPTOR_H_
+enum {
+    ccECKeyPublic = 0,
+    ccECKeyPrivate = 1,
+};
+typedef uint32_t CCECKeyType;
+
+enum {
+    kCCImportKeyBinary = 0,
+};
+typedef uint32_t CCECKeyExternalFormat;
+#endif
+
 typedef struct _CCECCryptor *CCECCryptorRef;
 extern "C" CCCryptorStatus CCECCryptorGeneratePair(size_t keysize, CCECCryptorRef *publicKey, CCECCryptorRef *privateKey);
 extern "C" void CCECCryptorRelease(CCECCryptorRef key);
+extern "C" CCCryptorStatus CCECCryptorImportKey(CCECKeyExternalFormat format, void *keyPackage, size_t keyPackageLen, CCECKeyType keyType, CCECCryptorRef *key);
+extern "C" CCCryptorStatus CCECCryptorExportKey(CCECKeyExternalFormat format, void *keyPackage, size_t *keyPackageLen, CCECKeyType keyType, CCECCryptorRef key);
+extern "C" int CCECGetKeySize(CCECCryptorRef key);
+extern "C" CCCryptorStatus CCECCryptorCreateFromData(size_t keySize, uint8_t *qX, size_t qXLength, uint8_t *qY, size_t qYLength, CCECCryptorRef *ref);
+extern "C" CCCryptorStatus CCECCryptorGetKeyComponents(CCECCryptorRef ecKey, size_t *keySize, uint8_t *qX, size_t *qXLength, uint8_t *qY, size_t *qYLength, uint8_t *d, size_t *dLength);
+
 
 #if !USE(APPLE_INTERNAL_SDK)
 extern "C" CCCryptorStatus CCCryptorGCM(CCOperation op, CCAlgorithm alg, const void* key, size_t keyLength, const void* iv, size_t ivLen, const void* aData, size_t aDataLen, const void* dataIn, size_t dataInLength, void* dataOut, void* tag, size_t* tagLength);

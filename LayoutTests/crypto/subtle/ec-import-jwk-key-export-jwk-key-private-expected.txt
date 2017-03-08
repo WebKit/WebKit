@@ -1,0 +1,17 @@
+Test importing a jwk private ECDH key and then export it in jwk format
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Importing a key...
+PASS publicKey.kty is jwkKey.kty
+PASS publicKey.crv is jwkKey.crv
+PASS publicKey.x is jwkKey.x
+PASS publicKey.y is jwkKey.y
+PASS publicKey.d is jwkKey.d
+PASS publicKey.key_ops is jwkKey.key_ops
+PASS publicKey.ext is jwkKey.ext
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

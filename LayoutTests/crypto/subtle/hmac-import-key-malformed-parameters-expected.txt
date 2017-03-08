@@ -23,6 +23,7 @@ PASS crypto.subtle.importKey("jwk", {kty: "oct", k: "", alg: "foo"}, {name: "hma
 PASS crypto.subtle.importKey("jwk", {kty: "oct", k: k, alg: "HS1", use: "enc"}, {name: "hmac", hash: "sha-1"}, extractable, ["sign", "verify"]) rejected promise  with DataError (DOM Exception 30): Data provided to an operation does not meet requirements.
 PASS crypto.subtle.importKey("jwk", {kty: "oct", k: k, alg: "HS1", use: ""}, {name: "hmac", hash: "sha-1"}, extractable, ["sign", "verify"]) rejected promise  with DataError (DOM Exception 30): Data provided to an operation does not meet requirements.
 PASS crypto.subtle.importKey("jwk", {kty: "oct", k: k, alg: "HS1", key_ops: ["sign"]}, {name: "hmac", hash: "sha-1"}, extractable, ["sign", "verify"]) rejected promise  with DataError (DOM Exception 30): Data provided to an operation does not meet requirements.
+PASS crypto.subtle.importKey("jwk", {kty: "oct", k: k, alg: "HS1", key_ops: [ ]}, {name: "hmac", hash: "sha-1"}, extractable, ["sign", "verify"]) rejected promise  with DataError (DOM Exception 30): Data provided to an operation does not meet requirements.
 PASS crypto.subtle.importKey("jwk", {kty: "oct", k: k, alg: "HS1", ext: false}, {name: "hmac", hash: "sha-1"}, extractable, ["sign", "verify"]) rejected promise  with DataError (DOM Exception 30): Data provided to an operation does not meet requirements.
 PASS successfullyParsed is true
 

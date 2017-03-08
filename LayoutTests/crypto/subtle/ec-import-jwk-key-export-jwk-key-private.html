@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../resources/common.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+description("Test importing a jwk private ECDH key and then export it in jwk format");
+
+jsTestIsAsync = true;
+
+var jwkKey = {
+    kty: "EC",
+    ext: true,
+    key_ops: ["deriveBits", "deriveKey"],
+    crv: "P-256",
+    x: "1FSVWieTvikFkG1NOyhkUCaMbdQhxwH6aCu4Ez-sRtA",
+    y: "9jmNTLqM4cjBhdAnHcNI9YQV3O8LFmo-EdZWk8ntAaI",
+    d: "ppxBSov3N8_AUcisAuvmLV4yE8e_L_BLE8bZb9Z1Xjg",
+};
+var extractable = true;
+
+debug("Importing a key...");
+crypto.subtle.importKey("jwk", jwkKey, { name: "ECDH", namedCurve: "P-256" }, extractable, ["deriveKey", "deriveBits"]).then(function(result) {
+    return crypto.subtle.exportKey("jwk", result);
+}).then(function(result) {
+    publicKey = result;
+
+    shouldBe("publicKey.kty", "jwkKey.kty");
+    shouldBe("publicKey.crv", "jwkKey.crv");
+    shouldBe("publicKey.x", "jwkKey.x");
+    shouldBe("publicKey.y", "jwkKey.y");
+    shouldBe("publicKey.d", "jwkKey.d");
+    shouldBe("publicKey.key_ops", "jwkKey.key_ops");
+    shouldBe("publicKey.ext", "jwkKey.ext");
+
+    finishJSTest();
+});
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

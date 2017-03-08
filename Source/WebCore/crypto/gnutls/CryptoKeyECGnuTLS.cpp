@@ -41,11 +41,51 @@ CryptoKeyEC::~CryptoKeyEC()
     notImplemented();
 }
 
+size_t CryptoKeyEC::keySizeInBits() const
+{
+    notImplemented();
+
+    return 0;
+}
+
+Vector<uint8_t> CryptoKeyEC::exportRaw() const
+{
+    notImplemented();
+
+    return { };
+}
+
 std::optional<CryptoKeyPair> CryptoKeyEC::platformGeneratePair(CryptoAlgorithmIdentifier, NamedCurve, bool, CryptoKeyUsageBitmap)
 {
     notImplemented();
 
     return std::nullopt;
+}
+
+RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportRaw(CryptoAlgorithmIdentifier, NamedCurve, Vector<uint8_t>&&, bool, CryptoKeyUsageBitmap)
+{
+    notImplemented();
+
+    return nullptr;
+}
+
+RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportJWKPublic(CryptoAlgorithmIdentifier, NamedCurve, Vector<uint8_t>&&, Vector<uint8_t>&&, bool, CryptoKeyUsageBitmap)
+{
+    notImplemented();
+
+    return nullptr;
+}
+
+RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportJWKPrivate(CryptoAlgorithmIdentifier, NamedCurve, Vector<uint8_t>&&, Vector<uint8_t>&&, Vector<uint8_t>&&, bool, CryptoKeyUsageBitmap)
+{
+    notImplemented();
+
+    return nullptr;
+}
+
+void CryptoKeyEC::platformAddFieldElements(JsonWebKey&) const
+{
+    notImplemented();
 }
 
 } // namespace WebCore

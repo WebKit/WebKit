@@ -65,6 +65,86 @@ void CryptoAlgorithmECDH::generateKey(const CryptoAlgorithmParameters& parameter
     callback(WTFMove(pair));
 }
 
+void CryptoAlgorithmECDH::importKey(SubtleCrypto::KeyFormat format, KeyData&& data, const std::unique_ptr<CryptoAlgorithmParameters>&& parameters, bool extractable, CryptoKeyUsageBitmap usages, KeyCallback&& callback, ExceptionCallback&& exceptionCallback)
+{
+    ASSERT(parameters);
+    const auto& ecParameters = downcast<CryptoAlgorithmEcKeyParams>(*parameters);
+
+    RefPtr<CryptoKeyEC> result;
+    switch (format) {
+    case SubtleCrypto::KeyFormat::Jwk: {
+        JsonWebKey key = WTFMove(WTF::get<JsonWebKey>(data));
+
+        bool isUsagesAllowed = false;
+        if (!key.d.isNull()) {
+            isUsagesAllowed = isUsagesAllowed || !(usages ^ CryptoKeyUsageDeriveKey);
+            isUsagesAllowed = isUsagesAllowed || !(usages ^ CryptoKeyUsageDeriveBits);
+            isUsagesAllowed = isUsagesAllowed || !(usages ^ (CryptoKeyUsageDeriveKey | CryptoKeyUsageDeriveBits));
+        }
+        isUsagesAllowed = isUsagesAllowed || !usages;
+        if (!isUsagesAllowed) {
+            exceptionCallback(SYNTAX_ERR);
+            return;
+        }
+
+        if (usages && !key.use.isNull() && key.use != "enc") {
+            exceptionCallback(DataError);
+            return;
+        }
+
+        result = CryptoKeyEC::importJwk(ecParameters.identifier, ecParameters.namedCurve, WTFMove(key), extractable, usages);
+        break;
+    }
+    case SubtleCrypto::KeyFormat::Raw:
+        if (usages) {
+            exceptionCallback(SYNTAX_ERR);
+            return;
+        }
+        result = CryptoKeyEC::importRaw(ecParameters.identifier, ecParameters.namedCurve, WTFMove(WTF::get<Vector<uint8_t>>(data)), extractable, usages);
+        break;
+    default:
+        exceptionCallback(NOT_SUPPORTED_ERR);
+        return;
+    }
+    if (!result) {
+        exceptionCallback(DataError);
+        return;
+    }
+
+    callback(*result);
+}
+
+void CryptoAlgorithmECDH::exportKey(SubtleCrypto::KeyFormat format, Ref<CryptoKey>&& key, KeyDataCallback&& callback, ExceptionCallback&& exceptionCallback)
+{
+    const auto& ecKey = downcast<CryptoKeyEC>(key.get());
+
+    if (!ecKey.keySizeInBits()) {
+        exceptionCallback(OperationError);
+        return;
+    }
+
+    KeyData result;
+    switch (format) {
+    case SubtleCrypto::KeyFormat::Jwk: {
+        result = ecKey.exportJwk();
+        break;
+    }
+    case SubtleCrypto::KeyFormat::Raw: {
+        if (ecKey.type() != CryptoKey::Type::Public) {
+            exceptionCallback(INVALID_ACCESS_ERR);
+            return;
+        }
+        result = ecKey.exportRaw();
+        break;
+    }
+    default:
+        exceptionCallback(NOT_SUPPORTED_ERR);
+        return;
+    }
+
+    callback(format, WTFMove(result));
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(SUBTLE_CRYPTO)

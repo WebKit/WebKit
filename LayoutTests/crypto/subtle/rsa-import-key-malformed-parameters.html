@@ -76,6 +76,7 @@ shouldReject('crypto.subtle.importKey("jwk", {kty: "RSA", n: n, e: e, alg: ""}, 
 shouldReject('crypto.subtle.importKey("jwk", {kty: "oct", n: n, e: e}, "RSAES-PKCS1-v1_5", extractable, ["encrypt"])');
 // Jwk: Wrong key_ops
 shouldReject('crypto.subtle.importKey("jwk", {kty: "RSA", n: n, e: e, key_ops: ["sign", "verify"]}, "RSAES-PKCS1-v1_5", extractable, ["encrypt"])');
+shouldReject('crypto.subtle.importKey("jwk", {kty: "RSA", n: n, e: e, key_ops: [ ]}, "RSAES-PKCS1-v1_5", extractable, ["encrypt"])');
 // Jwk: Wrong ext
 shouldReject('crypto.subtle.importKey("jwk", {kty: "RSA", n: n, e: e, ext: false}, "RSAES-PKCS1-v1_5", extractable, ["encrypt"])');
 // Jwk: Missing n or e
