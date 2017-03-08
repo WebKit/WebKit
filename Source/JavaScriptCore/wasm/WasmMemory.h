@@ -29,6 +29,7 @@
 
 #include "WasmPageCount.h"
 
+#include <wtf/HashSet.h>
 #include <wtf/Optional.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -92,6 +93,12 @@ private:
     size_t m_mappedCapacity { 0 };
     Mode m_mode { Mode::BoundsChecking };
 };
+
+static_assert(sizeof(uint64_t) == sizeof(size_t), "We rely on allowing the maximum size of Memory we map to be 2^33 which is larger than fits in a 32-bit integer that we'd pass to mprotect if this didn't hold.");
+
+const size_t fastMemoryMappedBytes = (static_cast<size_t>(std::numeric_limits<uint32_t>::max()) + 1) * 2; // pointer max + offset max. This is all we need since a load straddling readable memory will trap.
+extern StaticLock memoryLock;
+const HashSet<void*>& viewActiveFastMemories(const LockHolder&);
 
 } } // namespace JSC::Wasm
 

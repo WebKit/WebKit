@@ -65,16 +65,24 @@ Memory::Mode Memory::lastAllocatedMode()
     return lastAllocatedMemoryMode;
 }
 
-static_assert(sizeof(uint64_t) == sizeof(size_t), "We rely on allowing the maximum size of Memory we map to be 2^33 which is larger than fits in a 32-bit integer that we'd pass to mprotect if this didn't hold.");
-
-static const size_t fastMemoryMappedBytes = (static_cast<size_t>(std::numeric_limits<uint32_t>::max()) + 1) * 2; // pointer max + offset max. This is all we need since a load straddling readable memory will trap.
 static const unsigned maxFastMemories = 4;
 static unsigned allocatedFastMemories { 0 };
-static StaticLock memoryLock;
+StaticLock memoryLock;
 inline Deque<void*, maxFastMemories>& availableFastMemories(const LockHolder&)
 {
     static NeverDestroyed<Deque<void*, maxFastMemories>> availableFastMemories;
     return availableFastMemories;
+}
+
+inline HashSet<void*>& activeFastMemories(const LockHolder&)
+{
+    static NeverDestroyed<HashSet<void*>> activeFastMemories;
+    return activeFastMemories;
+}
+
+const HashSet<void*>& viewActiveFastMemories(const LockHolder& locker)
+{
+    return activeFastMemories(locker);
 }
 
 inline bool tryGetFastMemory(VM& vm, void*& memory, size_t& mappedCapacity, Memory::Mode& mode)
@@ -95,6 +103,8 @@ inline bool tryGetFastMemory(VM& vm, void*& memory, size_t& mappedCapacity, Memo
         LockHolder locker(memoryLock);
         if (!availableFastMemories(locker).isEmpty()) {
             memory = availableFastMemories(locker).takeFirst();
+            auto result = activeFastMemories(locker).add(memory);
+            ASSERT_UNUSED(result, result.isNewEntry);
             mappedCapacity = fastMemoryMappedBytes;
             mode = Memory::Signaling;
             return true;
@@ -117,6 +127,9 @@ inline bool tryGetFastMemory(VM& vm, void*& memory, size_t& mappedCapacity, Memo
         mappedCapacity = fastMemoryMappedBytes;
         mode = Memory::Signaling;
         allocatedFastMemories++;
+        LockHolder locker(memoryLock);
+        auto result = activeFastMemories(locker).add(memory);
+        ASSERT_UNUSED(result, result.isNewEntry);
     }
     return memory;
 }
@@ -134,6 +147,8 @@ inline void releaseFastMemory(void*& memory, size_t writableSize, size_t mappedC
         CRASH();
 
     LockHolder locker(memoryLock);
+    bool result = activeFastMemories(locker).remove(memory);
+    ASSERT_UNUSED(result, result);
     ASSERT(availableFastMemories(locker).size() < allocatedFastMemories);
     availableFastMemories(locker).append(memory);
     memory = nullptr;

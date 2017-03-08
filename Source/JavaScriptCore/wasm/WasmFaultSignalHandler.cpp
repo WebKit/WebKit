@@ -31,6 +31,7 @@
 #include "ExecutableAllocator.h"
 #include "VM.h"
 #include "WasmExceptionType.h"
+#include "WasmMemory.h"
 
 #include <signal.h>
 #include <wtf/Lock.h>
@@ -79,7 +80,7 @@ static LazyNeverDestroyed<HashSet<std::tuple<VM*, void*, void*>>> codeLocations;
 
 #endif
 
-static void trapHandler(int signal, siginfo_t*, void* ucontext)
+static void trapHandler(int signal, siginfo_t* sigInfo, void* ucontext)
 {
     mcontext_t& context = static_cast<ucontext_t*>(ucontext)->uc_mcontext;
     void* faultingInstruction = reinterpret_cast<void*>(InstructionPointerGPR);
@@ -91,23 +92,40 @@ static void trapHandler(int signal, siginfo_t*, void* ucontext)
     if (reinterpret_cast<void*>(startOfFixedExecutableMemoryPool) <= faultingInstruction
         && faultingInstruction < reinterpret_cast<void*>(endOfFixedExecutableMemoryPool)) {
 
-        LockHolder locker(codeLocationsLock);
-        for (auto range : codeLocations.get()) {
-            VM* vm;
-            void* start;
-            void* end;
-            std::tie(vm, start, end) = range;
-            dataLogLnIf(verbose, "function start: ", RawPointer(start), " end: ", RawPointer(end));
-            if (start <= faultingInstruction && faultingInstruction < end) {
-                dataLogLnIf(verbose, "found match");
-                MacroAssemblerCodeRef exceptionStub = vm->jitStubs->existingCTIStub(throwExceptionFromWasmThunkGenerator);
-                // If for whatever reason we don't have a stub then we should just treat this like a regular crash.
-                if (!exceptionStub)
+        bool faultedInActiveFastMemory = false;
+        {
+            void* faultingAddress = sigInfo->si_addr;
+            dataLogLnIf(verbose, "checking faulting address: ", RawPointer(faultingAddress), " is in an active fast memory");
+            LockHolder locker(memoryLock);
+            auto& activeFastMemories = viewActiveFastMemories(locker);
+            for (void* activeMemory : activeFastMemories) {
+                dataLogLnIf(verbose, "checking fast memory at: ", RawPointer(activeMemory));
+                if (activeMemory <= faultingAddress && faultingAddress < static_cast<char*>(activeMemory) + fastMemoryMappedBytes) {
+                    faultedInActiveFastMemory = true;
                     break;
-                dataLogLnIf(verbose, "found stub: ", RawPointer(exceptionStub.code().executableAddress()));
-                FirstArgumentGPR = static_cast<uint64_t>(ExceptionType::OutOfBoundsMemoryAccess);
-                InstructionPointerGPR = reinterpret_cast<uint64_t>(exceptionStub.code().executableAddress());
-                return;
+                }
+            }
+        }
+        if (faultedInActiveFastMemory) {
+            dataLogLnIf(verbose, "found active fast memory for faulting address");
+            LockHolder locker(codeLocationsLock);
+            for (auto range : codeLocations.get()) {
+                VM* vm;
+                void* start;
+                void* end;
+                std::tie(vm, start, end) = range;
+                dataLogLnIf(verbose, "function start: ", RawPointer(start), " end: ", RawPointer(end));
+                if (start <= faultingInstruction && faultingInstruction < end) {
+                    dataLogLnIf(verbose, "found match");
+                    MacroAssemblerCodeRef exceptionStub = vm->jitStubs->existingCTIStub(throwExceptionFromWasmThunkGenerator);
+                    // If for whatever reason we don't have a stub then we should just treat this like a regular crash.
+                    if (!exceptionStub)
+                        break;
+                    dataLogLnIf(verbose, "found stub: ", RawPointer(exceptionStub.code().executableAddress()));
+                    FirstArgumentGPR = static_cast<uint64_t>(ExceptionType::OutOfBoundsMemoryAccess);
+                    InstructionPointerGPR = reinterpret_cast<uint64_t>(exceptionStub.code().executableAddress());
+                    return;
+                }
             }
         }
     }
@@ -159,10 +177,10 @@ void enableFastMemory()
         // Thus, we must not fail in the following attempts.
         int ret = 0;
         ret = sigaction(SIGBUS, &action, &oldSigBusHandler);
-        ASSERT_UNUSED(ret, !ret);
+        RELEASE_ASSERT(!ret);
 
         ret = sigaction(SIGSEGV, &action, &oldSigSegvHandler);
-        ASSERT_UNUSED(ret, !ret);
+        RELEASE_ASSERT(!ret);
 
         codeLocations.construct();
         fastHandlerInstalled = true;
