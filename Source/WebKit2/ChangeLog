@@ -1,3 +1,12 @@
+2017-03-08  Alexey Proskuryakov  <ap@apple.com>
+
+        WebKit should not export dyld install name hints on watchOS and tvOS
+        https://bugs.webkit.org/show_bug.cgi?id=169342
+
+        Reviewed by Dan Bernstein.
+
+        * Shared/API/Cocoa/WebKit.m:
+
 2017-03-07  Simon Fraser  <simon.fraser@apple.com>
 
         Have fixedPositionCreatesStackingContext be on by default everywhere
