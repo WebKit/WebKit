@@ -1,5 +1,15 @@
 2017-03-07  Chris Dumez  <cdumez@apple.com>
 
+        Add test case to check that MessageEvent.data returns the value it was initialized to
+        https://bugs.webkit.org/show_bug.cgi?id=169311
+
+        Reviewed by Sam Weinig.
+
+        * fast/events/constructors/message-event-constructor-data-identity-expected.txt: Added.
+        * fast/events/constructors/message-event-constructor-data-identity.html: Added.
+
+2017-03-07  Chris Dumez  <cdumez@apple.com>
+
         Label of an <option> element should not be displayed in quirks mode
         https://bugs.webkit.org/show_bug.cgi?id=169296
         <rdar://problem/30900751>
