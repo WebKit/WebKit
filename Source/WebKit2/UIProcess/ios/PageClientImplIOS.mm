@@ -648,11 +648,6 @@ void PageClientImpl::didFinishLoadingDataForCustomContentProvider(const String& 
     [m_webView _didFinishLoadingDataForCustomContentProviderWithSuggestedFilename:suggestedFilename data:data.get()];
 }
 
-void PageClientImpl::zoomToRect(FloatRect rect, double minimumScale, double maximumScale)
-{
-    [m_contentView _zoomToRect:rect withOrigin:rect.center() fitEntireRect:YES minimumScale:minimumScale maximumScale:maximumScale minimumScrollDistance:0];
-}
-
 void PageClientImpl::overflowScrollViewWillStartPanGesture()
 {
     [m_contentView scrollViewWillStartPanOrPinchGesture];

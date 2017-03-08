@@ -304,7 +304,6 @@ public:
     virtual void saveImageToLibrary(PassRefPtr<WebCore::SharedBuffer>) = 0;
     virtual void didUpdateBlockSelectionWithTouch(uint32_t touch, uint32_t flags, float growThreshold, float shrinkThreshold) = 0;
     virtual void showPlaybackTargetPicker(bool hasVideo, const WebCore::IntRect& elementRect) = 0;
-    virtual void zoomToRect(WebCore::FloatRect, double minimumScale, double maximumScale) = 0;
     virtual void disableDoubleTapGesturesDuringTapIfNecessary(uint64_t requestID) = 0;
     virtual double minimumZoomScale() const = 0;
     virtual WebCore::FloatRect documentRect() const = 0;

@@ -1028,11 +1028,6 @@ void WebPageProxy::showPlaybackTargetPicker(bool hasVideo, const IntRect& elemen
     m_pageClient.showPlaybackTargetPicker(hasVideo, elementRect);
 }
 
-void WebPageProxy::zoomToRect(FloatRect rect, double minimumScale, double maximumScale)
-{
-    m_pageClient.zoomToRect(rect, minimumScale, maximumScale);
-}
-
 void WebPageProxy::commitPotentialTapFailed()
 {
     m_pageClient.commitPotentialTapFailed();

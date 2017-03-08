@@ -3239,11 +3239,6 @@ WebCore::WebGLLoadPolicy WebPage::resolveWebGLPolicyForURL(WebFrame*, const Stri
 }
 #endif
 
-void WebPage::zoomToRect(FloatRect rect, double minimumScale, double maximumScale)
-{
-    send(Messages::WebPageProxy::ZoomToRect(rect, minimumScale, maximumScale));
-}
-
 #if ENABLE(IOS_TOUCH_EVENTS)
 void WebPage::dispatchAsynchronousTouchEvents(const Vector<WebTouchEvent, 1>& queue)
 {

@@ -148,7 +148,6 @@ private:
     void enableInspectorNodeSearch() override;
     void disableInspectorNodeSearch() override;
 
-    void zoomToRect(WebCore::FloatRect, double minimumScale, double maximumScale) override;
     void overflowScrollViewWillStartPanGesture() override;
     void overflowScrollViewDidScroll() override;
     void overflowScrollWillStartScroll() override;

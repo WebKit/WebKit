@@ -180,7 +180,6 @@ messages -> WebPageProxy {
     SaveImageToLibrary(WebKit::SharedMemory::Handle handle, uint64_t size)
     DidUpdateBlockSelectionWithTouch(uint32_t touch, uint32_t flags, float growThreshold, float shrinkThreshold)
     ShowPlaybackTargetPicker(bool hasVideo, WebCore::IntRect elementRect)
-    ZoomToRect(WebCore::FloatRect rect, double minimumScale, double maximumScale)
     CommitPotentialTapFailed()
     DidNotHandleTapAsClick(WebCore::IntPoint point)
     DisableDoubleTapGesturesDuringTapIfNecessary(uint64_t requestID)

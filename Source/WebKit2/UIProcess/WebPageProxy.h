@@ -545,7 +545,6 @@ public:
     void applicationWillEnterForeground();
     void applicationWillResignActive();
     void applicationDidBecomeActive();
-    void zoomToRect(WebCore::FloatRect, double minimumScale, double maximumScale);
     void commitPotentialTapFailed();
     void didNotHandleTapAsClick(const WebCore::IntPoint&);
     void disableDoubleTapGesturesDuringTapIfNecessary(uint64_t requestID);
