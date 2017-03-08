@@ -39,6 +39,7 @@ typedef struct _GstTagList GstTagList;
 typedef struct _GstEvent GstEvent;
 typedef struct _GstToc GstToc;
 typedef struct _GstMessage GstMessage;
+typedef struct _GstQuery GstQuery;
 typedef struct _WebKitVideoSink WebKitVideoSink;
 typedef struct _WebKitWebSrc WebKitWebSrc;
 
@@ -107,6 +108,10 @@ template<> void derefGPtr<GstToc>(GstToc* ptr);
 template<> GRefPtr<GstMessage> adoptGRef(GstMessage*);
 template<> GstMessage* refGPtr<GstMessage>(GstMessage*);
 template<> void derefGPtr<GstMessage>(GstMessage*);
+
+template<> GRefPtr<GstQuery> adoptGRef(GstQuery* ptr);
+template<> GstQuery* refGPtr<GstQuery>(GstQuery* ptr);
+template<> void derefGPtr<GstQuery>(GstQuery* ptr);
 
 template<> GRefPtr<WebKitVideoSink> adoptGRef(WebKitVideoSink* ptr);
 template<> WebKitVideoSink* refGPtr<WebKitVideoSink>(WebKitVideoSink* ptr);

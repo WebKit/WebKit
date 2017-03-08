@@ -335,6 +335,24 @@ template<> void derefGPtr<GstMessage>(GstMessage* ptr)
         gst_message_unref(ptr);
 }
 
+template <> GRefPtr<GstQuery> adoptGRef(GstQuery* ptr)
+{
+    return GRefPtr<GstQuery>(ptr, GRefPtrAdopt);
+}
+
+template <> GstQuery* refGPtr<GstQuery>(GstQuery* ptr)
+{
+    if (ptr)
+        gst_query_ref(ptr);
+    return ptr;
+}
+
+template <> void derefGPtr<GstQuery>(GstQuery* ptr)
+{
+    if (ptr)
+        gst_query_unref(ptr);
+}
+
 template <> GRefPtr<WebKitVideoSink> adoptGRef(WebKitVideoSink* ptr)
 {
     ASSERT(!ptr || !g_object_is_floating(ptr));

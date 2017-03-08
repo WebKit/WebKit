@@ -178,7 +178,8 @@ void MediaSourceClientGStreamerMSE::flush(AtomicString trackId)
 {
     ASSERT(WTF::isMainThread());
 
-    if (m_playerPrivate)
+    // This is only for on-the-fly reenqueues after appends. When seeking, the seek will do its own flush.
+    if (m_playerPrivate && !m_playerPrivate->m_seeking)
         m_playerPrivate->m_playbackPipeline->flush(trackId);
 }
 
