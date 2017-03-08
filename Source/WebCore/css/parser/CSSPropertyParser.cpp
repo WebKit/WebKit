@@ -1378,7 +1378,7 @@ static RefPtr<CSSPrimitiveValue> consumeLineClamp(CSSParserTokenRange& range)
     return consumePositiveInteger(range);
 }
 
-static RefPtr<CSSValue> consumeLocale(CSSParserTokenRange& range)
+static RefPtr<CSSValue> consumeAutoOrString(CSSParserTokenRange& range)
 {
     if (range.peek().id() == CSSValueAuto)
         return consumeIdent(range);
@@ -3922,7 +3922,7 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
         return consumeLength(m_range, m_context.mode, ValueRangeAll, UnitlessQuirk::Allow);
     case CSSPropertyWebkitHyphenateCharacter:
     case CSSPropertyWebkitLocale:
-        return consumeLocale(m_range);
+        return consumeAutoOrString(m_range);
     case CSSPropertyWebkitHyphenateLimitBefore:
     case CSSPropertyWebkitHyphenateLimitAfter:
         return consumeHyphenateLimit(m_range, CSSValueAuto);
