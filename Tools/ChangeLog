@@ -1,3 +1,14 @@
+2017-03-07  Tim Horton  <timothy_horton@apple.com>
+
+        Fix the TestWebKitAPI build
+
+        Rubber-stamped by Anders Carlsson.
+
+        * TestWebKitAPI/Tests/WTF/MetaAllocator.cpp:
+        (TestWebKitAPI::TEST_F):
+        Fix a new warning about default argument promotion and va_start by
+        making this a enum class.
+
 2017-03-07  Dean Jackson  <dino@apple.com>
 
         Some platforms won't be able to create a GPUDevice

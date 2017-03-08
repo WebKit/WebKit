@@ -392,7 +392,7 @@ public:
         free(thirdHandle);
     }
     
-    enum TestFIFOAllocMode { FillAtEnd, EagerFill };
+    enum class TestFIFOAllocMode { FillAtEnd, EagerFill };
     void testFIFOAlloc(TestFIFOAllocMode mode, ...)
     {
         // This will test the simple case of no-coalesce (freeing the left-most
@@ -426,7 +426,7 @@ public:
         for (unsigned index = 0; index < handles.size(); ++index) {
             sizeSoFar += handles.at(index)->sizeInBytes();
             free(handles.at(index));
-            if (mode == EagerFill) {
+            if (mode == TestFIFOAllocMode::EagerFill) {
                 MetaAllocatorHandle* handle = allocate(sizeSoFar);
                 EXPECT_EQ(handle->start(), reinterpret_cast<void*>(basePage * pageSize()));
                 EXPECT_EQ(handle->sizeInBytes(), sizeSoFar);
@@ -447,7 +447,7 @@ public:
         
         confirm(basePage * pageSize(), (basePage + defaultPagesInHeap) * pageSize(), false);
         
-        if (mode == FillAtEnd) {
+        if (mode == TestFIFOAllocMode::FillAtEnd) {
             MetaAllocatorHandle* finalHandle = allocate(totalSize);
             EXPECT_EQ(finalHandle->start(), reinterpret_cast<void*>(basePage * pageSize()));
             EXPECT_EQ(finalHandle->sizeInBytes(), totalSize);
@@ -791,42 +791,42 @@ TEST_F(MetaAllocatorTest, SimpleFullCoalescePagePlusPageThenTwoPages)
 
 TEST_F(MetaAllocatorTest, FIFOAllocFillAtEnd32Twice)
 {
-    testFIFOAlloc(FillAtEnd, 32, 32, 0);
+    testFIFOAlloc(TestFIFOAllocMode::FillAtEnd, 32, 32, 0);
 }
 
 TEST_F(MetaAllocatorTest, FIFOAllocFillAtEnd32Thrice)
 {
-    testFIFOAlloc(FillAtEnd, 32, 32, 32, 0);
+    testFIFOAlloc(TestFIFOAllocMode::FillAtEnd, 32, 32, 32, 0);
 }
 
 TEST_F(MetaAllocatorTest, FIFOAllocFillAtEnd32FourTimes)
 {
-    testFIFOAlloc(FillAtEnd, 32, 32, 32, 32, 0);
+    testFIFOAlloc(TestFIFOAllocMode::FillAtEnd, 32, 32, 32, 32, 0);
 }
 
 TEST_F(MetaAllocatorTest, FIFOAllocFillAtEndPageLess32Then32ThenPageLess64Then64)
 {
-    testFIFOAlloc(FillAtEnd, static_cast<int>(pageSize() - 32), 32, static_cast<int>(pageSize() - 64), 64, 0);
+    testFIFOAlloc(TestFIFOAllocMode::FillAtEnd, static_cast<int>(pageSize() - 32), 32, static_cast<int>(pageSize() - 64), 64, 0);
 }
 
 TEST_F(MetaAllocatorTest, FIFOAllocEagerFill32Twice)
 {
-    testFIFOAlloc(EagerFill, 32, 32, 0);
+    testFIFOAlloc(TestFIFOAllocMode::EagerFill, 32, 32, 0);
 }
 
 TEST_F(MetaAllocatorTest, FIFOAllocEagerFill32Thrice)
 {
-    testFIFOAlloc(EagerFill, 32, 32, 32, 0);
+    testFIFOAlloc(TestFIFOAllocMode::EagerFill, 32, 32, 32, 0);
 }
 
 TEST_F(MetaAllocatorTest, FIFOAllocEagerFill32FourTimes)
 {
-    testFIFOAlloc(EagerFill, 32, 32, 32, 32, 0);
+    testFIFOAlloc(TestFIFOAllocMode::EagerFill, 32, 32, 32, 32, 0);
 }
 
 TEST_F(MetaAllocatorTest, FIFOAllocEagerFillPageLess32Then32ThenPageLess64Then64)
 {
-    testFIFOAlloc(EagerFill, static_cast<int>(pageSize() - 32), 32, static_cast<int>(pageSize() - 64), 64, 0);
+    testFIFOAlloc(TestFIFOAllocMode::EagerFill, static_cast<int>(pageSize() - 32), 32, static_cast<int>(pageSize() - 64), 64, 0);
 }
 
 TEST_F(MetaAllocatorTest, FillHeap32)
