@@ -846,15 +846,9 @@ bool CSSParserFastPaths::isKeywordPropertyID(CSSPropertyID propertyId)
     case CSSPropertySpeak:
     case CSSPropertyTableLayout:
     case CSSPropertyTextAlign:
-    case CSSPropertyTextLineThroughMode:
-    case CSSPropertyTextLineThroughStyle:
     case CSSPropertyTextOverflow:
-    case CSSPropertyTextOverlineMode:
-    case CSSPropertyTextOverlineStyle:
     case CSSPropertyTextRendering:
     case CSSPropertyTextTransform:
-    case CSSPropertyTextUnderlineMode:
-    case CSSPropertyTextUnderlineStyle:
     case CSSPropertyTransformStyle:
     case CSSPropertyUnicodeBidi:
     case CSSPropertyVisibility:

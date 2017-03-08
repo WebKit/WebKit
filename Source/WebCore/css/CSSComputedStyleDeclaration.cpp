@@ -3870,21 +3870,6 @@ RefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propertyID,
         case CSSPropertyAll:
         case CSSPropertyAnimation:
         case CSSPropertyWebkitTextEmphasis:
-        case CSSPropertyTextLineThrough:
-        case CSSPropertyTextLineThroughColor:
-        case CSSPropertyTextLineThroughMode:
-        case CSSPropertyTextLineThroughStyle:
-        case CSSPropertyTextLineThroughWidth:
-        case CSSPropertyTextOverline:
-        case CSSPropertyTextOverlineColor:
-        case CSSPropertyTextOverlineMode:
-        case CSSPropertyTextOverlineStyle:
-        case CSSPropertyTextOverlineWidth:
-        case CSSPropertyTextUnderline:
-        case CSSPropertyTextUnderlineColor:
-        case CSSPropertyTextUnderlineMode:
-        case CSSPropertyTextUnderlineStyle:
-        case CSSPropertyTextUnderlineWidth:
             break;
 
         /* Directional properties are resolved by resolveDirectionAwareProperty() before the switch. */

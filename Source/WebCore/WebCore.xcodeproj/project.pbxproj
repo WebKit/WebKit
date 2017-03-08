@@ -7663,6 +7663,7 @@
 		0F8B45731DC41DBA00443C3F /* JSIntersectionObserverCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSIntersectionObserverCallback.cpp; sourceTree = "<group>"; };
 		0F8B45741DC41DBA00443C3F /* JSIntersectionObserverCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSIntersectionObserverCallback.h; sourceTree = "<group>"; };
 		0F97A657155DA81E00FADD4C /* DisplayRefreshMonitorIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DisplayRefreshMonitorIOS.mm; sourceTree = "<group>"; };
+		0FA0852B1E6FB55A00975FDD /* CSSProperties.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = CSSProperties.json; sourceTree = "<group>"; };
 		0FA24D77162DF91900A3F4C0 /* GraphicsLayerUpdater.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GraphicsLayerUpdater.cpp; sourceTree = "<group>"; };
 		0FA24D78162DF91900A3F4C0 /* GraphicsLayerUpdater.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GraphicsLayerUpdater.h; sourceTree = "<group>"; };
 		0FA88EBC16A8D1BD00F99984 /* ScrollingStateFrameScrollingNodeMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ScrollingStateFrameScrollingNodeMac.mm; sourceTree = "<group>"; };
@@ -24075,6 +24076,7 @@
 				A80E6CDB0A1989CA007FB8C5 /* CSSPrimitiveValue.cpp */,
 				A80E6CBC0A1989CA007FB8C5 /* CSSPrimitiveValue.h */,
 				E1ED8AC20CC49BE000BFC557 /* CSSPrimitiveValueMappings.h */,
+				0FA0852B1E6FB55A00975FDD /* CSSProperties.json */,
 				A80E6CCD0A1989CA007FB8C5 /* CSSProperty.cpp */,
 				A80E6CD50A1989CA007FB8C5 /* CSSProperty.h */,
 				82E3D8DC122EA0D1003AE5BC /* CSSPropertySourceData.cpp */,

@@ -3148,8 +3148,9 @@
         },
         "text-line-through": {
             "codegen-properties": {
-                "skip-builder": true
+                "skip-codegen": true
             },
+            "status": "removed",
             "specification": {
                 "category": "css3-text",
                 "url": "https://www.w3.org/TR/2003/CR-css3-text-20030514/#text-line-through"
@@ -3157,8 +3158,9 @@
         },
         "text-line-through-color": {
             "codegen-properties": {
-                "skip-builder": true
+                "skip-codegen": true
             },
+            "status": "removed",
             "specification": {
                 "category": "css3-text",
                 "url": "https://www.w3.org/TR/2003/CR-css3-text-20030514/#text-line-through-color"
@@ -3169,8 +3171,9 @@
                 "continuous",
                 "skip-white-space"
             ],
+            "status": "removed",
             "codegen-properties": {
-                "skip-builder": true
+                "skip-codegen": true
             },
             "specification": {
                 "category": "css3-text",
@@ -3187,8 +3190,9 @@
                 "dot-dot-dash",
                 "wave"
             ],
+            "status": "removed",
             "codegen-properties": {
-                "skip-builder": true
+                "skip-codegen": true
             },
             "specification": {
                 "category": "css3-text",
@@ -3197,8 +3201,9 @@
         },
         "text-line-through-width": {
             "codegen-properties": {
-                "skip-builder": true
+                "skip-codegen": true
             },
+            "status": "removed",
             "specification": {
                 "category": "css3-text",
                 "url": "https://www.w3.org/TR/2003/CR-css3-text-20030514/#text-line-through-width"
@@ -3216,8 +3221,9 @@
         },
         "text-overline": {
             "codegen-properties": {
-                "skip-builder": true
+                "skip-codegen": true
             },
+            "status": "removed",
             "specification": {
                 "category": "css3-text",
                 "url": "https://www.w3.org/TR/2003/CR-css3-text-20030514/#text-overline"
@@ -3225,8 +3231,9 @@
         },
         "text-overline-color": {
             "codegen-properties": {
-                "skip-builder": true
+                "skip-codegen": true
             },
+            "status": "removed",
             "specification": {
                 "category": "css3-text",
                 "url": "https://www.w3.org/TR/2003/CR-css3-text-20030514/#text-overline-color"
@@ -3238,8 +3245,9 @@
                 "skip-white-space"
             ],
             "codegen-properties": {
-                "skip-builder": true
+                "skip-codegen": true
             },
+            "status": "removed",
             "specification": {
                 "category": "css3-text",
                 "url": "https://www.w3.org/TR/2003/CR-css3-text-20030514/#text-overline-mode"
@@ -3256,8 +3264,9 @@
                 "wave"
             ],
             "codegen-properties": {
-                "skip-builder": true
+                "skip-codegen": true
             },
+            "status": "removed",
             "specification": {
                 "category": "css3-text",
                 "url": "https://www.w3.org/TR/2003/CR-css3-text-20030514/#text-overline-style"
@@ -3265,8 +3274,9 @@
         },
         "text-overline-width": {
             "codegen-properties": {
-                "skip-builder": true
+                "skip-codegen": true
             },
+            "status": "removed",
             "specification": {
                 "category": "css3-text",
                 "url": "https://www.w3.org/TR/2003/CR-css3-text-20030514/#text-overline-width"
@@ -3302,8 +3312,9 @@
         },
         "text-underline": {
             "codegen-properties": {
-                "skip-builder": true
+                "skip-codegen": true
             },
+            "status": "removed",
             "specification": {
                 "category": "css3-text",
                 "url": "https://www.w3.org/TR/2003/CR-css3-text-20030514/#text-underline"
@@ -3311,8 +3322,9 @@
         },
         "text-underline-color": {
             "codegen-properties": {
-                "skip-builder": true
+                "skip-codegen": true
             },
+            "status": "removed",
             "specification": {
                 "category": "css3-text",
                 "url": "https://www.w3.org/TR/2003/CR-css3-text-20030514/#text-underline-color"
@@ -3324,8 +3336,9 @@
                 "skip-white-space"
             ],
             "codegen-properties": {
-                "skip-builder": true
+                "skip-codegen": true
             },
+            "status": "removed",
             "specification": {
                 "category": "css3-text",
                 "url": "https://www.w3.org/TR/2003/CR-css3-text-20030514/#text-underline-mode"
@@ -3342,8 +3355,9 @@
                 "wave"
             ],
             "codegen-properties": {
-                "skip-builder": true
+                "skip-codegen": true
             },
+            "status": "removed",
             "specification": {
                 "category": "css3-text",
                 "url": "https://www.w3.org/TR/2003/CR-css3-text-20030514/#text-underline-style"
@@ -3351,8 +3365,9 @@
         },
         "text-underline-width": {
             "codegen-properties": {
-                "skip-builder": true
+                "skip-codegen": true
             },
+            "status": "removed",
             "specification": {
                 "category": "css3-text",
                 "url": "https://www.w3.org/TR/2003/CR-css3-text-20030514/#text-underline-width"
