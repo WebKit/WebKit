@@ -91,7 +91,7 @@ public:
 #endif
 
 #if ENABLE(WEB_RTC)
-    bool peerConnectionEnabled() const { return m_isMediaStreamEnabled && m_isPeerConnectionEnabled; }
+    bool peerConnectionEnabled() const { return m_isPeerConnectionEnabled; }
     void setPeerConnectionEnabled(bool isEnabled) { m_isPeerConnectionEnabled = isEnabled; }
 #endif
 
