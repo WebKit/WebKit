@@ -1,3 +1,13 @@
+2017-03-06  Simon Fraser  <simon.fraser@apple.com>
+
+        Initialize the subpixelAntialiasedLayerTextEnabled Setting in WebKit1
+        https://bugs.webkit.org/show_bug.cgi?id=169230
+
+        Reviewed by Tim Horton.
+
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChanged:]):
+
 2017-03-07  Simon Fraser  <simon.fraser@apple.com>
 
         Enable SubpixelAntialiasedLayerTextEnabled by default on some versions of macOS

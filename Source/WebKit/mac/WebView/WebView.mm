@@ -2710,6 +2710,7 @@ static bool needsSelfRetainWhileLoadingQuirk()
     settings.setShowRepaintCounter([preferences showRepaintCounter]);
     settings.setWebGLEnabled([preferences webGLEnabled]);
     settings.setSubpixelCSSOMElementMetricsEnabled([preferences subpixelCSSOMElementMetricsEnabled]);
+    settings.setSubpixelAntialiasedLayerTextEnabled([preferences subpixelAntialiasedLayerTextEnabled]);
 
     settings.setForceSoftwareWebGLRendering([preferences forceSoftwareWebGLRendering]);
     settings.setForceWebGLUsesLowPower([preferences forceLowPowerGPUForWebGL]);
