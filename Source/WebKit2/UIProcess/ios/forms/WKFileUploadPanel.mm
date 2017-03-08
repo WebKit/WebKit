@@ -327,7 +327,9 @@ static UIImage* iconForFile(NSURL *file)
 
 - (void)_cancel
 {
-    _listener->cancel();
+    if (_listener)
+        _listener->cancel();
+    
     [self _dispatchDidDismiss];
 }
 
@@ -386,7 +388,15 @@ static UIImage* iconForFile(NSURL *file)
 
 - (void)dismiss
 {
-    [self _dismissDisplayAnimated:NO];
+    // Dismiss any view controller that is being presented. This works for all types of view controllers, popovers, etc.
+    // If there is any kind of view controller presented on this view, it will be removed. 
+    
+    [[UIViewController _viewControllerForFullScreenPresentationFromView:_view] dismissViewControllerAnimated:NO completion:nil];
+    
+    [_presentationPopover setDelegate:nil];
+    _presentationPopover = nil;
+    _presentationViewController = nil;
+    
     [self _cancel];
 }
 
@@ -496,7 +506,9 @@ static NSArray *UTIsForMIMETypes(NSArray *mimeTypes)
         }
     }
 
-    [self _presentForCurrentInterfaceIdiom:_documentMenuController.get()];
+    [self _presentMenuOptionForCurrentInterfaceIdiom:_documentMenuController.get()];
+    // Clear out the view controller we just presented. Don't save a reference to the UIDocumentMenuViewController as it is self dismissing.
+    _presentationViewController = nil;
 }
 
 #pragma mark - Image Picker
@@ -550,7 +562,7 @@ static NSArray *UTIsForMIMETypes(NSArray *mimeTypes)
 
 #pragma mark - Presenting View Controllers
 
-- (void)_presentForCurrentInterfaceIdiom:(UIViewController *)viewController
+- (void)_presentMenuOptionForCurrentInterfaceIdiom:(UIViewController *)viewController
 {
     if (UICurrentUserInterfaceIdiomIsPad())
         [self _presentPopoverWithContentViewController:viewController animated:YES];

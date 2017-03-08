@@ -1,3 +1,24 @@
+2017-03-08  Brad Wright  <bwright2@apple.com>
+
+        UIViewController with WKWebView presented modally causes the presented UIViewController to be dismissed.
+        https://bugs.webkit.org/show_bug.cgi?id=165225
+        
+        Reviewed by Wenson Hsieh.
+
+        The problem happens on an iPhone with a WKWebView inside a view controller presented modally. If the user selects an HTML file input 
+        tag button, a UIDocumentMenuViewController will appear. Anything the user does next causes the entire modal view controller to get dismissed.
+
+        To fix this problem, I prevent the UIDocumentMenuViewController from being dismissed by not saving a pointer to it. The UIDocumentMenuViewController 
+        always goes away by itself on any user interaction. Trying to dismiss the UIDocumentMenuViewController when it is already dismissed causes the modal view controller
+        to be dismissed.
+
+        * UIProcess/ios/forms/WKFileUploadPanel.mm:
+        (-[WKFileUploadPanel _cancel]):
+        (-[WKFileUploadPanel dismiss]):
+        (-[WKFileUploadPanel _showDocumentPickerMenu]):
+        (-[WKFileUploadPanel _presentMenuOptionForCurrentInterfaceIdiom:]):
+        (-[WKFileUploadPanel _presentForCurrentInterfaceIdiom:]): Deleted.
+
 2017-03-08  Alexey Proskuryakov  <ap@apple.com>
 
         WebKit should not export dyld install name hints on watchOS and tvOS
