@@ -6587,19 +6587,12 @@ static bool styleHasSmoothingTextMode(const RenderStyle& style)
 }
 
 // Constrain the depth and breadth of the search for performance.
-static const int maxDescendentDepth = 3;
-static const int maxSiblingCount = 20;
+static const unsigned maxRendererTraversalCount = 200;
 
-static void determineNonLayerDescendantsPaintedContent(const RenderElement& renderer, int depth, RenderLayer::PaintedContentRequest& request)
+static void determineNonLayerDescendantsPaintedContent(const RenderElement& renderer, unsigned& renderersTraversed, RenderLayer::PaintedContentRequest& request)
 {
-    if (depth > maxDescendentDepth) {
-        request.makeStatesUndetermined();
-        return;
-    }
-    
-    int siblingCount = 0;
     for (const auto& child : childrenOfType<RenderObject>(renderer)) {
-        if (++siblingCount > maxSiblingCount) {
+        if (++renderersTraversed > maxRendererTraversalCount) {
             request.makeStatesUndetermined();
             return;
         }
@@ -6651,7 +6644,7 @@ static void determineNonLayerDescendantsPaintedContent(const RenderElement& rend
                 return;
         }
 
-        determineNonLayerDescendantsPaintedContent(renderElementChild, depth + 1, request);
+        determineNonLayerDescendantsPaintedContent(renderElementChild, renderersTraversed, request);
         if (request.isSatisfied())
             return;
     }
@@ -6659,7 +6652,8 @@ static void determineNonLayerDescendantsPaintedContent(const RenderElement& rend
 
 bool RenderLayer::hasNonEmptyChildRenderers(PaintedContentRequest& request) const
 {
-    determineNonLayerDescendantsPaintedContent(renderer(), 0, request);
+    unsigned renderersTraversed = 0;
+    determineNonLayerDescendantsPaintedContent(renderer(), renderersTraversed, request);
     return request.probablyHasPaintedContent();
 }
 

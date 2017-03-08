@@ -111,7 +111,6 @@ Exceeds depth test smoothed
         (GraphicsLayer
           (position 352.00 357.00)
           (bounds 162.00 162.00)
-          (supports subpixel antialiased text 1)
           (drawsContent 1)
         )
         (GraphicsLayer

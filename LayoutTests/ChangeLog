@@ -1,3 +1,18 @@
+2017-03-08  Simon Fraser  <simon.fraser@apple.com>
+
+        Change determineNonLayerDescendantsPaintedContent to max out based on renderers traversed
+        https://bugs.webkit.org/show_bug.cgi?id=169384
+
+        Reviewed by Zalan Bujtas.
+
+        Rebaseline an existing test which changes behavior, and add a new test that generates divs
+        on both sides of the threshold, in depth and breadth.
+
+        * compositing/contents-format/subpixel-antialiased-text-traversal-expected.txt: Added.
+        * compositing/contents-format/subpixel-antialiased-text-traversal.html: Added.
+        * platform/mac/compositing/contents-format/subpixel-antialiased-text-configs-antialiasing-style-expected.txt:
+        * platform/mac/compositing/contents-format/subpixel-antialiased-text-traversal-expected.txt: Added.
+
 2017-03-08  Youenn Fablet  <youenn@apple.com>
 
         Support canvas captureStream
