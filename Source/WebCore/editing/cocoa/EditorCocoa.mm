@@ -171,6 +171,25 @@ void Editor::writeSelectionToPasteboard(Pasteboard& pasteboard)
     pasteboard.write(content);
 }
 
+void Editor::writeSelection(PasteboardWriterData& pasteboardWriterData)
+{
+    NSAttributedString *attributedString = attributedStringFromRange(*selectedRange());
+
+    PasteboardWriterData::WebContent webContent;
+    webContent.canSmartCopyOrDelete = canSmartCopyOrDelete();
+    webContent.dataInWebArchiveFormat = selectionInWebArchiveFormat();
+    webContent.dataInRTFDFormat = attributedString.containsAttachments ? dataInRTFDFormat(attributedString) : nullptr;
+    webContent.dataInRTFFormat = dataInRTFFormat(attributedString);
+    // FIXME: Why don't we want this on iOS?
+#if PLATFORM(MAC)
+    webContent.dataInHTMLFormat = selectionInHTMLFormat();
+#endif
+    webContent.dataInStringFormat = stringSelectionForPasteboardWithImageAltText();
+    client()->getClientPasteboardDataForRange(selectedRange().get(), webContent.clientTypes, webContent.clientData);
+
+    pasteboardWriterData.setWebContent(WTFMove(webContent));
+}
+
 RefPtr<SharedBuffer> Editor::selectionInWebArchiveFormat()
 {
     RefPtr<LegacyWebArchive> archive = LegacyWebArchive::createFromSelection(&m_frame);

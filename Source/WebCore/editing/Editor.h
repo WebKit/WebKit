@@ -66,6 +66,7 @@ class HitTestResult;
 class KeyboardEvent;
 class KillRing;
 class Pasteboard;
+class PasteboardWriterData;
 class SharedBuffer;
 class Font;
 class SpellCheckRequest;
@@ -469,6 +470,7 @@ public:
 #if PLATFORM(COCOA) || PLATFORM(GTK)
     WEBCORE_EXPORT void writeSelectionToPasteboard(Pasteboard&);
     WEBCORE_EXPORT void writeImageToPasteboard(Pasteboard&, Element& imageElement, const URL&, const String& title);
+    void writeSelection(PasteboardWriterData&);
 #endif
 
 #if ENABLE(TELEPHONE_NUMBER_DETECTION) && !PLATFORM(IOS)

@@ -31,6 +31,8 @@
 
 namespace WebCore {
 
+class SharedBuffer;
+
 class PasteboardWriterData final {
 public:
     PasteboardWriterData();
@@ -41,6 +43,25 @@ public:
     struct PlainText {
         bool canSmartCopyOrDelete;
         String text;
+    };
+
+    struct WebContent {
+        WebContent();
+        ~WebContent();
+
+#if PLATFORM(COCOA)
+        bool canSmartCopyOrDelete;
+        RefPtr<SharedBuffer> dataInWebArchiveFormat;
+        RefPtr<SharedBuffer> dataInRTFDFormat;
+        RefPtr<SharedBuffer> dataInRTFFormat;
+        // FIXME: Why don't we want this on iOS?
+#if PLATFORM(MAC)
+        String dataInHTMLFormat;
+#endif
+        String dataInStringFormat;
+        Vector<String> clientTypes;
+        Vector<RefPtr<SharedBuffer>> clientData;
+#endif
     };
 
     const std::optional<PlainText>& plainText() const { return m_plainText; }
@@ -59,9 +80,13 @@ public:
     const std::optional<URL>& url() const { return m_url; }
     void setURL(URL);
 
+    const std::optional<WebContent>& webContent() const { return m_webContent; }
+    void setWebContent(WebContent);
+
 private:
     std::optional<PlainText> m_plainText;
     std::optional<URL> m_url;
+    std::optional<WebContent> m_webContent;
 };
 
 }

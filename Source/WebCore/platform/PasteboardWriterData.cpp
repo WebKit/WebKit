@@ -26,6 +26,8 @@
 #include "config.h"
 #include "PasteboardWriterData.h"
 
+#include "SharedBuffer.h"
+
 namespace WebCore {
 
 PasteboardWriterData::PasteboardWriterData()
@@ -33,6 +35,14 @@ PasteboardWriterData::PasteboardWriterData()
 }
 
 PasteboardWriterData::~PasteboardWriterData()
+{
+}
+
+PasteboardWriterData::WebContent::WebContent()
+{
+}
+
+PasteboardWriterData::WebContent::~WebContent()
 {
 }
 
@@ -59,6 +69,13 @@ void PasteboardWriterData::setURL(URL url)
     ASSERT(!m_url);
 
     m_url = WTFMove(url);
+}
+
+void PasteboardWriterData::setWebContent(WebContent webContent)
+{
+    ASSERT(!m_webContent);
+
+    m_webContent = webContent;
 }
 
 }

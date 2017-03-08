@@ -30,12 +30,23 @@
 
 #import "NSPasteboardSPI.h"
 #import "PasteboardWriterData.h"
+#import "SharedBuffer.h"
 
 namespace WebCore {
 
 static RetainPtr<NSString> toUTI(NSString *pasteboardType)
 {
     return adoptNS((__bridge NSString *)UTTypeCreatePreferredIdentifierForTag(kUTTagClassNSPboardType, (__bridge CFStringRef)pasteboardType, nullptr));
+}
+
+static RetainPtr<NSString> toUTIUnlessAlreadyUTI(NSString *type)
+{
+    if (UTTypeIsDeclared((__bridge CFStringRef)type) || UTTypeIsDynamic((__bridge CFStringRef)type)) {
+        // This is already a UTI.
+        return type;
+    }
+
+    return toUTI(type);
 }
 
 RetainPtr<id <NSPasteboardWriting>> createPasteboardWriter(const PasteboardWriterData& data)
@@ -46,7 +57,7 @@ RetainPtr<id <NSPasteboardWriting>> createPasteboardWriter(const PasteboardWrite
         [pasteboardItem setString:plainText->text forType:NSPasteboardTypeString];
         if (plainText->canSmartCopyOrDelete) {
             auto smartPasteType = adoptNS((__bridge NSString *)UTTypeCreatePreferredIdentifierForTag(kUTTagClassNSPboardType, (__bridge CFStringRef)_NXSmartPaste, nullptr));
-            [pasteboardItem setData:nil forType:smartPasteType.get()];
+            [pasteboardItem setData:[NSData data] forType:smartPasteType.get()];
         }
     }
 
@@ -81,6 +92,28 @@ RetainPtr<id <NSPasteboardWriting>> createPasteboardWriter(const PasteboardWrite
 
         // NSPasteboardTypeString.
         [pasteboardItem setString:userVisibleString forType:NSPasteboardTypeString];
+    }
+
+    if (auto& webContent = data.webContent()) {
+        if (webContent->canSmartCopyOrDelete) {
+            auto smartPasteType = adoptNS((__bridge NSString *)UTTypeCreatePreferredIdentifierForTag(kUTTagClassNSPboardType, (__bridge CFStringRef)_NXSmartPaste, nullptr));
+            [pasteboardItem setData:[NSData data] forType:smartPasteType.get()];
+        }
+        if (webContent->dataInWebArchiveFormat) {
+            auto webArchiveType = adoptNS((__bridge NSString *)UTTypeCreatePreferredIdentifierForTag(kUTTagClassNSPboardType, (__bridge CFStringRef)@"Apple Web Archive pasteboard type", nullptr));
+            [pasteboardItem setData:webContent->dataInWebArchiveFormat->createNSData().get() forType:webArchiveType.get()];
+        }
+        if (webContent->dataInRTFDFormat)
+            [pasteboardItem setData:webContent->dataInRTFDFormat->createNSData().get() forType:NSPasteboardTypeRTFD];
+        if (webContent->dataInRTFFormat)
+            [pasteboardItem setData:webContent->dataInRTFFormat->createNSData().get() forType:NSPasteboardTypeRTF];
+        if (!webContent->dataInHTMLFormat.isNull())
+            [pasteboardItem setString:webContent->dataInHTMLFormat forType:NSPasteboardTypeHTML];
+        if (!webContent->dataInStringFormat.isNull())
+            [pasteboardItem setString:webContent->dataInStringFormat forType:NSPasteboardTypeString];
+
+        for (unsigned i = 0; i < webContent->clientTypes.size(); ++i)
+            [pasteboardItem setData:webContent->clientData[i]->createNSData().get() forType:toUTIUnlessAlreadyUTI(webContent->clientTypes[i]).get()];
     }
 
     return pasteboardItem;

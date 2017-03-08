@@ -875,14 +875,18 @@ bool DragController::startDrag(Frame& src, const DragState& state, DragOperation
                     pasteboardWriterData.setPlainText(WTFMove(plainText));
                 }
             } else {
-                mustUseLegacyDragClient = true;
-
+                if (mustUseLegacyDragClient) {
 #if PLATFORM(COCOA) || PLATFORM(GTK)
-                src.editor().writeSelectionToPasteboard(dataTransfer.pasteboard());
+                    src.editor().writeSelectionToPasteboard(dataTransfer.pasteboard());
 #else
-                // FIXME: Convert all other platforms to match Mac and delete this.
-                dataTransfer.pasteboard().writeSelection(*selectionRange, src.editor().canSmartCopyOrDelete(), src, IncludeImageAltTextForDataTransfer);
+                    // FIXME: Convert all other platforms to match Mac and delete this.
+                    dataTransfer.pasteboard().writeSelection(*selectionRange, src.editor().canSmartCopyOrDelete(), src, IncludeImageAltTextForDataTransfer);
 #endif
+                } else {
+#if PLATFORM(COCOA)
+                    src.editor().writeSelection(pasteboardWriterData);
+#endif
+                }
             }
 
             src.editor().didWriteSelectionToPasteboard();
