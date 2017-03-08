@@ -83,32 +83,34 @@ void PaymentCoordinator::completeMerchantValidation(const PaymentMerchantSession
     m_client.completeMerchantValidation(paymentMerchantSession);
 }
 
-void PaymentCoordinator::completeShippingMethodSelection(PaymentAuthorizationStatus status, std::optional<PaymentRequest::TotalAndLineItems> newTotalAndItems)
+void PaymentCoordinator::completeShippingMethodSelection(std::optional<ShippingMethodUpdate>&& update)
 {
     ASSERT(m_activeSession);
 
-    m_client.completeShippingMethodSelection(status, WTFMove(newTotalAndItems));
+    m_client.completeShippingMethodSelection(WTFMove(update));
 }
 
-void PaymentCoordinator::completeShippingContactSelection(PaymentAuthorizationStatus status, const Vector<PaymentRequest::ShippingMethod>& newShippingMethods, std::optional<PaymentRequest::TotalAndLineItems> newTotalAndItems)
+void PaymentCoordinator::completeShippingContactSelection(std::optional<ShippingContactUpdate>&& update)
 {
     ASSERT(m_activeSession);
 
-    m_client.completeShippingContactSelection(status, newShippingMethods, WTFMove(newTotalAndItems));
+    m_client.completeShippingContactSelection(WTFMove(update));
 }
 
-void PaymentCoordinator::completePaymentMethodSelection(std::optional<PaymentRequest::TotalAndLineItems> newTotalAndItems)
+void PaymentCoordinator::completePaymentMethodSelection(std::optional<PaymentMethodUpdate>&& update)
 {
     ASSERT(m_activeSession);
 
-    m_client.completePaymentMethodSelection(WTFMove(newTotalAndItems));
+    m_client.completePaymentMethodSelection(WTFMove(update));
 }
 
-void PaymentCoordinator::completePaymentSession(PaymentAuthorizationStatus status)
+void PaymentCoordinator::completePaymentSession(std::optional<PaymentAuthorizationResult>&& result)
 {
     ASSERT(m_activeSession);
 
-    m_client.completePaymentSession(status);
+    auto status = result ? result->status : PaymentAuthorizationStatus::Success;
+
+    m_client.completePaymentSession(WTFMove(result));
 
     if (!isFinalStateStatus(status))
         return;

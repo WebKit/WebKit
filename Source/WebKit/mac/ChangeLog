@@ -1,3 +1,20 @@
+2017-03-08  Anders Carlsson  <andersca@apple.com>
+
+        Simplify the PaymentCoordinator interface
+        https://bugs.webkit.org/show_bug.cgi?id=169382
+        Part of rdar://problem/28880714.
+
+        Reviewed by Tim Horton.
+
+        Update for PaymentCoordinatorClient changes.
+
+        * WebCoreSupport/WebPaymentCoordinatorClient.h:
+        * WebCoreSupport/WebPaymentCoordinatorClient.mm:
+        (WebPaymentCoordinatorClient::completeShippingMethodSelection):
+        (WebPaymentCoordinatorClient::completeShippingContactSelection):
+        (WebPaymentCoordinatorClient::completePaymentMethodSelection):
+        (WebPaymentCoordinatorClient::completePaymentSession):
+
 2017-03-08  Megan Gardner  <megan_gardner@apple.com>
 
         Fix for dependency fix

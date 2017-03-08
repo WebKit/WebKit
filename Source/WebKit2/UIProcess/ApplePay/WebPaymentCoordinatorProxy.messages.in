@@ -31,11 +31,11 @@ messages -> WebPaymentCoordinatorProxy {
     OpenPaymentSetup(String merchantIdentifier, String domainName, uint64_t requestID)
 
     ShowPaymentUI(String originatingURLString, Vector<String> linkIconURLStrings, WebCore::PaymentRequest paymentRequest) -> (bool result)
-    CompleteMerchantValidation(WebCore::PaymentMerchantSession paymentMerchantSession);
-    CompleteShippingMethodSelection(uint32_t opaqueStatus, std::optional<WebCore::PaymentRequest::TotalAndLineItems> newTotalAndItems)
-    CompleteShippingContactSelection(uint32_t opaqueStatus, Vector<WebCore::PaymentRequest::ShippingMethod> newShippingMethods, std::optional<WebCore::PaymentRequest::TotalAndLineItems> newTotalAndItems)
-    CompletePaymentMethodSelection(std::optional<WebCore::PaymentRequest::TotalAndLineItems> newTotalAndItems)
-    CompletePaymentSession(uint32_t opaqueStatus)
+    CompleteMerchantValidation(WebCore::PaymentMerchantSession paymentMerchantSession)
+    CompleteShippingMethodSelection(std::optional<WebCore::ShippingMethodUpdate> update)
+    CompleteShippingContactSelection(std::optional<WebCore::ShippingContactUpdate> update)
+    CompletePaymentMethodSelection(std::optional<WebCore::PaymentMethodUpdate> update)
+    CompletePaymentSession(std::optional<WebCore::PaymentAuthorizationResult> result)
     AbortPaymentSession()
 }
 

@@ -27,6 +27,8 @@
 
 #if ENABLE(APPLE_PAY)
 
+#include <wtf/EnumTraits.h>
+
 namespace WebCore {
 
 enum class PaymentAuthorizationStatus {
@@ -57,6 +59,22 @@ static inline bool isFinalStateStatus(PaymentAuthorizationStatus status)
     }
 }
 
+}
+
+namespace WTF {
+template<> struct EnumTraits<WebCore::PaymentAuthorizationStatus> {
+    using values = EnumValues<
+        WebCore::PaymentAuthorizationStatus,
+        WebCore::PaymentAuthorizationStatus::Success,
+        WebCore::PaymentAuthorizationStatus::Failure,
+        WebCore::PaymentAuthorizationStatus::InvalidBillingPostalAddress,
+        WebCore::PaymentAuthorizationStatus::InvalidShippingPostalAddress,
+        WebCore::PaymentAuthorizationStatus::InvalidShippingContact,
+        WebCore::PaymentAuthorizationStatus::PINRequired,
+        WebCore::PaymentAuthorizationStatus::PINIncorrect,
+        WebCore::PaymentAuthorizationStatus::PINLockout
+    >;
+};
 }
 
 #endif

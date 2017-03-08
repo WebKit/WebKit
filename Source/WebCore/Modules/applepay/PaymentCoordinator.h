@@ -40,6 +40,10 @@ class PaymentMerchantSession;
 class PaymentMethod;
 class URL;
 enum class PaymentAuthorizationStatus;
+struct PaymentAuthorizationResult;
+struct PaymentMethodUpdate;
+struct ShippingContactUpdate;
+struct ShippingMethodUpdate;
 
 class PaymentCoordinator {
 public:
@@ -55,10 +59,10 @@ public:
 
     bool beginPaymentSession(ApplePaySession&, const URL& originatingURL, const Vector<URL>& linkIconURLs, const PaymentRequest&);
     void completeMerchantValidation(const PaymentMerchantSession&);
-    void completeShippingMethodSelection(PaymentAuthorizationStatus, std::optional<PaymentRequest::TotalAndLineItems> newItems);
-    void completeShippingContactSelection(PaymentAuthorizationStatus, const Vector<PaymentRequest::ShippingMethod>& newShippingMethods, std::optional<PaymentRequest::TotalAndLineItems> newItems);
-    void completePaymentMethodSelection(std::optional<PaymentRequest::TotalAndLineItems> newItems);
-    void completePaymentSession(PaymentAuthorizationStatus);
+    void completeShippingMethodSelection(std::optional<ShippingMethodUpdate>&&);
+    void completeShippingContactSelection(std::optional<ShippingContactUpdate>&&);
+    void completePaymentMethodSelection(std::optional<PaymentMethodUpdate>&&);
+    void completePaymentSession(std::optional<PaymentAuthorizationResult>&&);
     void abortPaymentSession();
 
     WEBCORE_EXPORT void validateMerchant(const URL& validationURL);

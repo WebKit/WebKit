@@ -451,10 +451,12 @@ static PKPaymentAuthorizationStatus toPKPaymentAuthorizationStatus(WebCore::Paym
 #pragma clang diagnostic pop
 }
 
-void WebPaymentCoordinatorProxy::platformCompletePaymentSession(WebCore::PaymentAuthorizationStatus status)
+void WebPaymentCoordinatorProxy::platformCompletePaymentSession(const std::optional<WebCore::PaymentAuthorizationResult>& result)
 {
     ASSERT(m_paymentAuthorizationViewController);
     ASSERT(m_paymentAuthorizationViewControllerDelegate);
+
+    auto status = result ? result->status : WebCore::PaymentAuthorizationStatus::Success;
 
     m_paymentAuthorizationViewControllerDelegate->_didReachFinalState = WebCore::isFinalStateStatus(status);
     m_paymentAuthorizationViewControllerDelegate->_paymentAuthorizedCompletion(toPKPaymentAuthorizationStatus(status));
@@ -470,19 +472,21 @@ void WebPaymentCoordinatorProxy::platformCompleteMerchantValidation(const WebCor
     m_paymentAuthorizationViewControllerDelegate->_sessionBlock = nullptr;
 }
 
-void WebPaymentCoordinatorProxy::platformCompleteShippingMethodSelection(WebCore::PaymentAuthorizationStatus status, const std::optional<WebCore::PaymentRequest::TotalAndLineItems>& newTotalAndLineItems)
+void WebPaymentCoordinatorProxy::platformCompleteShippingMethodSelection(const std::optional<WebCore::ShippingMethodUpdate>& update)
 {
     ASSERT(m_paymentAuthorizationViewController);
     ASSERT(m_paymentAuthorizationViewControllerDelegate);
 
-    if (newTotalAndLineItems) {
+    auto status = update ? update->status : WebCore::PaymentAuthorizationStatus::Success;
+
+    if (update) {
         auto paymentSummaryItems = adoptNS([[NSMutableArray alloc] init]);
-        for (auto& lineItem : newTotalAndLineItems->lineItems) {
+        for (auto& lineItem : update->newTotalAndLineItems.lineItems) {
             if (auto summaryItem = toPKPaymentSummaryItem(lineItem))
                 [paymentSummaryItems addObject:summaryItem.get()];
         }
 
-        if (auto totalItem = toPKPaymentSummaryItem(newTotalAndLineItems->total))
+        if (auto totalItem = toPKPaymentSummaryItem(update->newTotalAndLineItems.total))
             [paymentSummaryItems addObject:totalItem.get()];
 
         m_paymentAuthorizationViewControllerDelegate->_paymentSummaryItems = WTFMove(paymentSummaryItems);
@@ -492,25 +496,27 @@ void WebPaymentCoordinatorProxy::platformCompleteShippingMethodSelection(WebCore
     m_paymentAuthorizationViewControllerDelegate->_didSelectShippingMethodCompletion = nullptr;
 }
 
-void WebPaymentCoordinatorProxy::platformCompleteShippingContactSelection(WebCore::PaymentAuthorizationStatus status, const Vector<WebCore::PaymentRequest::ShippingMethod>& newShippingMethods, const std::optional<WebCore::PaymentRequest::TotalAndLineItems>& newTotalAndLineItems)
+void WebPaymentCoordinatorProxy::platformCompleteShippingContactSelection(const std::optional<WebCore::ShippingContactUpdate>& update)
 {
     ASSERT(m_paymentAuthorizationViewController);
     ASSERT(m_paymentAuthorizationViewControllerDelegate);
 
-    if (newTotalAndLineItems) {
+    auto status = update ? update->status : WebCore::PaymentAuthorizationStatus::Success;
+
+    if (update) {
         auto paymentSummaryItems = adoptNS([[NSMutableArray alloc] init]);
-        for (auto& lineItem : newTotalAndLineItems->lineItems) {
+        for (auto& lineItem : update->newTotalAndLineItems.lineItems) {
             if (auto summaryItem = toPKPaymentSummaryItem(lineItem))
                 [paymentSummaryItems addObject:summaryItem.get()];
         }
 
-        if (auto totalItem = toPKPaymentSummaryItem(newTotalAndLineItems->total))
+        if (auto totalItem = toPKPaymentSummaryItem(update->newTotalAndLineItems.total))
             [paymentSummaryItems addObject:totalItem.get()];
 
         m_paymentAuthorizationViewControllerDelegate->_paymentSummaryItems = WTFMove(paymentSummaryItems);
 
         auto shippingMethods = adoptNS([[NSMutableArray alloc] init]);
-        for (auto& shippingMethod : newShippingMethods)
+        for (auto& shippingMethod : update->newShippingMethods)
             [shippingMethods addObject:toPKShippingMethod(shippingMethod).get()];
 
         m_paymentAuthorizationViewControllerDelegate->_shippingMethods = WTFMove(shippingMethods);
@@ -520,19 +526,19 @@ void WebPaymentCoordinatorProxy::platformCompleteShippingContactSelection(WebCor
     m_paymentAuthorizationViewControllerDelegate->_didSelectShippingContactCompletion = nullptr;
 }
 
-void WebPaymentCoordinatorProxy::platformCompletePaymentMethodSelection(const std::optional<WebCore::PaymentRequest::TotalAndLineItems>& newTotalAndLineItems)
+void WebPaymentCoordinatorProxy::platformCompletePaymentMethodSelection(const std::optional<WebCore::PaymentMethodUpdate>& update)
 {
     ASSERT(m_paymentAuthorizationViewController);
     ASSERT(m_paymentAuthorizationViewControllerDelegate);
 
-    if (newTotalAndLineItems) {
+    if (update) {
         auto paymentSummaryItems = adoptNS([[NSMutableArray alloc] init]);
-        for (auto& lineItem : newTotalAndLineItems->lineItems) {
+        for (auto& lineItem : update->newTotalAndLineItems.lineItems) {
             if (auto summaryItem = toPKPaymentSummaryItem(lineItem))
                 [paymentSummaryItems addObject:summaryItem.get()];
         }
 
-        if (auto totalItem = toPKPaymentSummaryItem(newTotalAndLineItems->total))
+        if (auto totalItem = toPKPaymentSummaryItem(update->newTotalAndLineItems.total))
             [paymentSummaryItems addObject:totalItem.get()];
 
         m_paymentAuthorizationViewControllerDelegate->_paymentSummaryItems = WTFMove(paymentSummaryItems);

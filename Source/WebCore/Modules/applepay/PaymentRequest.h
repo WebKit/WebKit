@@ -28,11 +28,14 @@
 #if ENABLE(APPLE_PAY)
 
 #include "PaymentContact.h"
+#include <wtf/EnumTraits.h>
 #include <wtf/Optional.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
+
+enum class PaymentAuthorizationStatus;
 
 class PaymentRequest {
 public:
@@ -145,6 +148,85 @@ private:
     LineItem m_total;
 
     String m_applicationData;
+};
+
+struct PaymentError {
+    enum class Code {
+        Unknown,
+        ShippingContactInvalid,
+        BillingContactInvalid,
+        AddressUnservicable,
+    };
+
+    enum class ContactField {
+        PhoneNumber,
+        EmailAddress,
+        GivenName,
+        FamilyName,
+        AddressLines,
+        Locality,
+        PostalCode,
+        AdministrativeArea,
+        Country,
+        CountryCode,
+    };
+
+    Code code;
+    String message;
+    std::optional<ContactField> contactField;
+};
+
+struct PaymentAuthorizationResult {
+    PaymentAuthorizationStatus status;
+    Vector<PaymentError> errors;
+};
+
+struct PaymentMethodUpdate {
+    PaymentAuthorizationStatus status;
+    PaymentRequest::TotalAndLineItems newTotalAndLineItems;
+};
+
+struct ShippingContactUpdate {
+    PaymentAuthorizationStatus status;
+    Vector<PaymentError> errors;
+
+    Vector<PaymentRequest::ShippingMethod> newShippingMethods;
+    PaymentRequest::TotalAndLineItems newTotalAndLineItems;
+};
+
+struct ShippingMethodUpdate {
+    PaymentAuthorizationStatus status;
+    PaymentRequest::TotalAndLineItems newTotalAndLineItems;
+};
+
+}
+
+namespace WTF {
+
+template<> struct EnumTraits<WebCore::PaymentError::Code> {
+    using values = EnumValues<
+        WebCore::PaymentError::Code,
+        WebCore::PaymentError::Code::Unknown,
+        WebCore::PaymentError::Code::ShippingContactInvalid,
+        WebCore::PaymentError::Code::BillingContactInvalid,
+        WebCore::PaymentError::Code::AddressUnservicable
+    >;
+};
+
+template<> struct EnumTraits<WebCore::PaymentError::ContactField> {
+    using values = EnumValues<
+        WebCore::PaymentError::ContactField,
+        WebCore::PaymentError::ContactField::PhoneNumber,
+        WebCore::PaymentError::ContactField::EmailAddress,
+        WebCore::PaymentError::ContactField::GivenName,
+        WebCore::PaymentError::ContactField::FamilyName,
+        WebCore::PaymentError::ContactField::AddressLines,
+        WebCore::PaymentError::ContactField::Locality,
+        WebCore::PaymentError::ContactField::PostalCode,
+        WebCore::PaymentError::ContactField::AdministrativeArea,
+        WebCore::PaymentError::ContactField::Country,
+        WebCore::PaymentError::ContactField::CountryCode
+    >;
 };
 
 }

@@ -1,3 +1,48 @@
+2017-03-08  Anders Carlsson  <andersca@apple.com>
+
+        Simplify the PaymentCoordinator interface
+        https://bugs.webkit.org/show_bug.cgi?id=169382
+        Part of rdar://problem/28880714.
+
+        Reviewed by Tim Horton.
+
+        Send the new structs over the wire to the UI process and update the various proxy object to take them instead of
+        multiple parameters.
+
+        * Scripts/webkit/messages.py:
+        (headers_for_type):
+        * Shared/Cocoa/WebCoreArgumentCodersCocoa.mm:
+        (IPC::ArgumentCoder<WebCore::PaymentAuthorizationResult>::encode):
+        (IPC::ArgumentCoder<WebCore::PaymentAuthorizationResult>::decode):
+        (IPC::ArgumentCoder<WebCore::PaymentError>::encode):
+        (IPC::ArgumentCoder<WebCore::PaymentError>::decode):
+        (IPC::ArgumentCoder<WebCore::PaymentMethodUpdate>::encode):
+        (IPC::ArgumentCoder<WebCore::PaymentMethodUpdate>::decode):
+        (IPC::ArgumentCoder<WebCore::ShippingContactUpdate>::encode):
+        (IPC::ArgumentCoder<WebCore::ShippingContactUpdate>::decode):
+        (IPC::ArgumentCoder<WebCore::ShippingMethodUpdate>::encode):
+        (IPC::ArgumentCoder<WebCore::ShippingMethodUpdate>::decode):
+        * Shared/WebCoreArgumentCoders.h:
+        * UIProcess/ApplePay/WebPaymentCoordinatorProxy.cpp:
+        (WebKit::WebPaymentCoordinatorProxy::completeShippingMethodSelection):
+        (WebKit::WebPaymentCoordinatorProxy::completeShippingContactSelection):
+        (WebKit::WebPaymentCoordinatorProxy::completePaymentMethodSelection):
+        (WebKit::WebPaymentCoordinatorProxy::completePaymentSession):
+        (WebKit::isValidEnum): Deleted.
+        * UIProcess/ApplePay/WebPaymentCoordinatorProxy.h:
+        * UIProcess/ApplePay/WebPaymentCoordinatorProxy.messages.in:
+        * UIProcess/ApplePay/cocoa/WebPaymentCoordinatorProxyCocoa.mm:
+        (WebKit::WebPaymentCoordinatorProxy::platformCompletePaymentSession):
+        (WebKit::WebPaymentCoordinatorProxy::platformCompleteShippingMethodSelection):
+        (WebKit::WebPaymentCoordinatorProxy::platformCompleteShippingContactSelection):
+        (WebKit::WebPaymentCoordinatorProxy::platformCompletePaymentMethodSelection):
+        * WebProcess/ApplePay/WebPaymentCoordinator.cpp:
+        (WebKit::WebPaymentCoordinator::completeShippingMethodSelection):
+        (WebKit::WebPaymentCoordinator::completeShippingContactSelection):
+        (WebKit::WebPaymentCoordinator::completePaymentMethodSelection):
+        (WebKit::WebPaymentCoordinator::completePaymentSession):
+        * WebProcess/ApplePay/WebPaymentCoordinator.h:
+
 2017-03-08  Brent Fulgham  <bfulgham@apple.com>
 
         Remove the trace command from the sandbox profile.

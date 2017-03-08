@@ -490,10 +490,10 @@ class EmptyPaymentCoordinatorClient final : public PaymentCoordinatorClient {
     void openPaymentSetup(const String&, const String&, std::function<void(bool)> completionHandler) final { callOnMainThread([completionHandler] { completionHandler(false); }); }
     bool showPaymentUI(const URL&, const Vector<URL>&, const PaymentRequest&) final { return false; }
     void completeMerchantValidation(const PaymentMerchantSession&) final { }
-    void completeShippingMethodSelection(PaymentAuthorizationStatus, std::optional<PaymentRequest::TotalAndLineItems>) final { }
-    void completeShippingContactSelection(PaymentAuthorizationStatus, const Vector<PaymentRequest::ShippingMethod>&, std::optional<PaymentRequest::TotalAndLineItems>) final { }
-    void completePaymentMethodSelection(std::optional<WebCore::PaymentRequest::TotalAndLineItems>) final { }
-    void completePaymentSession(PaymentAuthorizationStatus) final { }
+    void completeShippingMethodSelection(std::optional<ShippingMethodUpdate>&&) final { }
+    void completeShippingContactSelection(std::optional<ShippingContactUpdate>&&) final { }
+    void completePaymentMethodSelection(std::optional<PaymentMethodUpdate>&&) final { }
+    void completePaymentSession(std::optional<PaymentAuthorizationResult>&&) final { }
     void abortPaymentSession() final { }
     void paymentCoordinatorDestroyed() final { }
 };
