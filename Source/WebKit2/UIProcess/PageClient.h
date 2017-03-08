@@ -208,6 +208,7 @@ public:
     virtual WebCore::IntPoint accessibilityScreenToRootView(const WebCore::IntPoint&) = 0;
     virtual WebCore::IntRect rootViewToAccessibilityScreen(const WebCore::IntRect&) = 0;
     virtual void didNotHandleTapAsClick(const WebCore::IntPoint&) = 0;
+    virtual void didCompleteSyntheticClick() = 0;
 #endif
     
     virtual void doneWithKeyEvent(const NativeWebKeyboardEvent&, bool wasEventHandled) = 0;

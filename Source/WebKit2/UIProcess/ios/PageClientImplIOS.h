@@ -184,6 +184,7 @@ private:
     void didFailLoadForMainFrame() override;
     void didSameDocumentNavigationForMainFrame(SameDocumentNavigationType) override;
     void didNotHandleTapAsClick(const WebCore::IntPoint&) override;
+    void didCompleteSyntheticClick() override;
 
     void didChangeBackgroundColor() override;
 

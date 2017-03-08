@@ -1,3 +1,54 @@
+2017-03-08  Tim Horton  <timothy_horton@apple.com>
+
+        Switching focus from a UITextField to an editable WKWebView causes the keyboard to dance
+        https://bugs.webkit.org/show_bug.cgi?id=168932
+        <rdar://problem/30193996>
+
+        Reviewed by Beth Dakin.
+
+        When WKWebView first becomes first responder from a tap, we don't have
+        enough information to immediately respond accurately to various questions
+        from UIKit, because we haven't had time to ask the Web Content process
+        what is under the touch. Defer updating input views until we get a
+        response or lose first responder status, so that the keyboard doesn't
+        start transitioning to its new state until we know what that is.
+
+        There is currently no test because TestWebKitAPI has no UIApplication,
+        and thus cannot generate mock events.
+
+        * Platform/spi/ios/UIKitSPI.h:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * UIProcess/ios/InputViewUpdateDeferrer.h: Added.
+        * UIProcess/ios/InputViewUpdateDeferrer.mm: Added.
+        Add an RAII object that defers input view updates while alive.
+
+        * UIProcess/ios/WKContentView.mm:
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView cleanupInteraction]):
+        (-[WKContentView _commitPotentialTapFailed]):
+        (-[WKContentView _didNotHandleTapAsClick:]):
+        (-[WKContentView _didCompleteSyntheticClick]):
+        (-[WKContentView _singleTapCommited:]):
+        (-[WKContentView _attemptClickAtLocation:]):
+        (-[WKContentView _startAssistingNode:userIsInteracting:blurPreviousNode:userObject:]):
+        Create a InputViewUpdateDeferrer just before we become first responder
+        from a tap, and destroy it when we get a response (of any kind) or lose
+        first-responder status (or interaction is torn down).
+
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::didCompleteSyntheticClick):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::didCompleteSyntheticClick):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::completeSyntheticClick):
+        Plumb an indication that the synthetic click completed, regardless of
+        how it was handled.
+
 2017-03-08  Zan Dobersek  <zdobersek@igalia.com>
 
         [WK2] Guard GLib-specific code in Module, Connection files with USE(GLIB)

@@ -182,6 +182,7 @@ messages -> WebPageProxy {
     ShowPlaybackTargetPicker(bool hasVideo, WebCore::IntRect elementRect)
     CommitPotentialTapFailed()
     DidNotHandleTapAsClick(WebCore::IntPoint point)
+    DidCompleteSyntheticClick()
     DisableDoubleTapGesturesDuringTapIfNecessary(uint64_t requestID)
     DrawToPDFCallback(IPC::DataReference pdfData, uint64_t callbackID)
     SelectionRectsCallback(Vector<WebCore::SelectionRect> selectionRects, uint64_t callbackID);

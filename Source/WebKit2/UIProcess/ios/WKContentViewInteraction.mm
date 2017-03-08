@@ -30,6 +30,7 @@
 
 #import "APIUIClient.h"
 #import "EditingRange.h"
+#import "InputViewUpdateDeferrer.h"
 #import "Logging.h"
 #import "ManagedConfigurationSPI.h"
 #import "NativeWebKeyboardEvent.h"
@@ -658,6 +659,8 @@ static UIWebSelectionMode toUIWebSelectionMode(WKSelectionGranularity granularit
         [_fileUploadPanel dismiss];
         _fileUploadPanel = nil;
     }
+    
+    _inputViewUpdateDeferrer = nullptr;
 }
 
 - (void)_removeDefaultGestureRecognizers
@@ -851,6 +854,8 @@ static UIWebSelectionMode toUIWebSelectionMode(WKSelectionGranularity granularit
     [self _cancelInteraction];
     [_webSelectionAssistant resignedFirstResponder];
     [_textSelectionAssistant deactivateSelection];
+    
+    _inputViewUpdateDeferrer = nullptr;
 
     bool superDidResign = [super resignFirstResponder];
 
@@ -1593,10 +1598,14 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
 - (void)_commitPotentialTapFailed
 {
     [self _cancelInteraction];
+    
+    _inputViewUpdateDeferrer = nullptr;
 }
 
 - (void)_didNotHandleTapAsClick:(const WebCore::IntPoint&)point
 {
+    _inputViewUpdateDeferrer = nullptr;
+
     // FIXME: we should also take into account whether or not the UI delegate
     // has handled this notification.
     if (_hasValidPositionInformation && point == _positionInformation.request.point && _positionInformation.isDataDetectorLink) {
@@ -1611,12 +1620,20 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
     _isDoubleTapPending = NO;
 }
 
+- (void)_didCompleteSyntheticClick
+{
+    _inputViewUpdateDeferrer = nullptr;
+}
+
 - (void)_singleTapCommited:(UITapGestureRecognizer *)gestureRecognizer
 {
     ASSERT(gestureRecognizer == _singleTapGestureRecognizer);
 
-    if (![self isFirstResponder])
+    if (![self isFirstResponder]) {
+        if (!_inputViewUpdateDeferrer)
+            _inputViewUpdateDeferrer = std::make_unique<InputViewUpdateDeferrer>();
         [self becomeFirstResponder];
+    }
 
     if (_webSelectionAssistant && ![_webSelectionAssistant shouldHandleSingleTapAtPoint:gestureRecognizer.location]) {
         [self _singleTapDidReset:gestureRecognizer];
@@ -1676,8 +1693,11 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
 
 - (void)_attemptClickAtLocation:(CGPoint)location
 {
-    if (![self isFirstResponder])
+    if (![self isFirstResponder]) {
+        if (!_inputViewUpdateDeferrer)
+            _inputViewUpdateDeferrer = std::make_unique<InputViewUpdateDeferrer>();
         [self becomeFirstResponder];
+    }
 
     [_inputPeripheral endEditing];
     _page->handleTap(location, _layerTreeTransactionIdAtLastTouchStart);
@@ -3734,6 +3754,8 @@ static bool isAssistableInputType(InputType type)
 
 - (void)_startAssistingNode:(const AssistedNodeInformation&)information userIsInteracting:(BOOL)userIsInteracting blurPreviousNode:(BOOL)blurPreviousNode userObject:(NSObject <NSSecureCoding> *)userObject
 {
+    _inputViewUpdateDeferrer = nullptr;
+
     id <_WKInputDelegate> inputDelegate = [_webView _inputDelegate];
     RetainPtr<WKFocusedElementInfo> focusedElementInfo = adoptNS([[WKFocusedElementInfo alloc] initWithAssistedNodeInformation:information isUserInitiated:userIsInteracting]);
     BOOL shouldShowKeyboard;

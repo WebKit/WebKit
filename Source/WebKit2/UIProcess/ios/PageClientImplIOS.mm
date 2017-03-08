@@ -221,6 +221,11 @@ void PageClientImpl::didNotHandleTapAsClick(const WebCore::IntPoint& point)
 {
     [m_contentView _didNotHandleTapAsClick:point];
 }
+    
+void PageClientImpl::didCompleteSyntheticClick()
+{
+    [m_contentView _didCompleteSyntheticClick];
+}
 
 bool PageClientImpl::decidePolicyForGeolocationPermissionRequest(WebFrameProxy& frame, API::SecurityOrigin& origin, GeolocationPermissionRequestProxy& request)
 {

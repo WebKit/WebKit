@@ -1038,6 +1038,11 @@ void WebPageProxy::didNotHandleTapAsClick(const WebCore::IntPoint& point)
     m_pageClient.didNotHandleTapAsClick(point);
     m_uiClient->didNotHandleTapAsClick(point);
 }
+    
+void WebPageProxy::didCompleteSyntheticClick()
+{
+    m_pageClient.didCompleteSyntheticClick();
+}
 
 void WebPageProxy::disableDoubleTapGesturesDuringTapIfNecessary(uint64_t requestID)
 {

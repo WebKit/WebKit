@@ -864,6 +864,11 @@ typedef enum {
 - (CGRect)accessibilityConvertRectToSceneReferenceCoordinates:(CGRect)rect;
 @end
 
+@interface UIPeripheralHost (IPI)
+- (void)_beginIgnoringReloadInputViews;
+- (void)_endIgnoringReloadInputViews;
+@end
+
 @interface UIResponder ()
 - (UIResponder *)firstResponder;
 @end
