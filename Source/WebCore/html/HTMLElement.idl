@@ -32,9 +32,8 @@
     [CEReactions] attribute long tabIndex;
     [CEReactions] attribute boolean draggable;
 
+    // FIXME: We are the only browser to support this now that Blink dropped it (http://crbug.com/688943).
     [CEReactions, Reflect] attribute DOMString webkitdropzone;
-    // FIXME: Support the standard HTML equivalent.
-    // [PutForwards=value] readonly attribute DOMTokenList dropzone;
 
     [CEReactions, Reflect] attribute boolean hidden;
     [CEReactions, Reflect] attribute DOMString accessKey;
