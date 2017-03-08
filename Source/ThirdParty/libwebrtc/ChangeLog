@@ -1,3 +1,12 @@
+2017-03-07  Youenn Fablet  <youenn@apple.com>
+
+        TurnPort::OnSocketConnect is crashing
+        https://bugs.webkit.org/show_bug.cgi?id=169284
+
+        Reviewed by Eric Carlson.
+
+        * Source/webrtc/p2p/base/turnport.cc: Fixing the assertion.
+
 2017-03-06  Youenn Fablet  <youenn@apple.com>
 
         Bring back WebKit specific changes to disable temporarily libwebrtc video adaptation

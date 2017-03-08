@@ -375,7 +375,8 @@ bool TurnPort::CreateTurnClientSocket() {
 }
 
 void TurnPort::OnSocketConnect(rtc::AsyncPacketSocket* socket) {
-  RTC_DCHECK(server_address_.proto == PROTO_TCP);
+  // WEBKIT Change
+  RTC_DCHECK(server_address_.proto == PROTO_TCP || server_address_.proto == PROTO_TLS);
   // Do not use this port if the socket bound to a different address than
   // the one we asked for. This is seen in Chrome, where TCP sockets cannot be
   // given a binding address, and the platform is expected to pick the
