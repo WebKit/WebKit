@@ -1,3 +1,13 @@
+2017-03-08  Youenn Fablet  <youenn@apple.com>
+
+        [mac-wk2 Debug] LayoutTest webrtc/libwebrtc/descriptionGetters.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=169317
+
+        Unreviewed.
+
+        * platform/mac-wk2/TestExpectations: Removing failure expectation.
+        * webrtc/libwebrtc/descriptionGetters.html: Fixing paths.
+
 2017-03-07  Simon Fraser  <simon.fraser@apple.com>
 
         Have fixedPositionCreatesStackingContext be on by default everywhere
