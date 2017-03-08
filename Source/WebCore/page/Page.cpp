@@ -1138,6 +1138,7 @@ void Page::handleLowModePowerChange(bool isLowPowerModeEnabled)
 {
     updateScriptedAnimationsThrottlingReason(*this, isLowPowerModeEnabled ? ThrottlingReasonOperation::Add : ThrottlingReasonOperation::Remove, ScriptedAnimationController::ThrottlingReason::LowPowerMode);
     mainFrame().animation().updateThrottlingState();
+    updateDOMTimerAlignmentInterval();
 }
 
 void Page::userStyleSheetLocationChanged()
@@ -1349,7 +1350,7 @@ void Page::updateDOMTimerAlignmentInterval()
 
     switch (m_timerThrottlingState) {
     case TimerThrottlingState::Disabled:
-        m_domTimerAlignmentInterval = DOMTimer::defaultAlignmentInterval();
+        m_domTimerAlignmentInterval = isLowPowerModeEnabled() ? DOMTimer::defaultAlignmentIntervalInLowPowerMode() : DOMTimer::defaultAlignmentInterval();
         break;
 
     case TimerThrottlingState::Enabled:

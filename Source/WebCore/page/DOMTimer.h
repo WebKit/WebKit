@@ -47,6 +47,7 @@ public:
 
     static Seconds defaultMinimumInterval() { return 4_ms; }
     static Seconds defaultAlignmentInterval() { return 0_s; }
+    static Seconds defaultAlignmentIntervalInLowPowerMode() { return 30_ms; }
     static Seconds hiddenPageAlignmentInterval() { return 1_s; }
 
     // Creates a new timer owned by specified ScriptExecutionContext, starts it

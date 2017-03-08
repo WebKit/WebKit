@@ -1,3 +1,16 @@
+2017-03-08  Chris Dumez  <cdumez@apple.com>
+
+        [iOS] Throttle DOM timers to 30fps in low power mode
+        https://bugs.webkit.org/show_bug.cgi?id=169213
+        <rdar://problem/30876965>
+
+        Reviewed by Simon Fraser.
+
+        Add layout test coverage.
+
+        * fast/dom/timer-throttling-lowPowerMode-expected.txt: Added.
+        * fast/dom/timer-throttling-lowPowerMode.html: Added.
+
 2017-03-08  Ryan Haddad  <ryanhaddad@apple.com>
 
         Mark editing/selection/move-by-word-visually-multi-space.html as flaky on Sierra Debug WK2.
