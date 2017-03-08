@@ -89,6 +89,12 @@
 #define DEFAULT_REQUIRES_USER_GESTURE_FOR_AUDIO_PLAYBACK false
 #endif
 
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
+#define DEFAULT_SUBPIXEL_ANTIALIASED_LAYER_TEXT_ENABLED true
+#else
+#define DEFAULT_SUBPIXEL_ANTIALIASED_LAYER_TEXT_ENABLED false
+#endif
+
 #if PLATFORM(IOS_SIMULATOR)
 #define DEFAULT_ACCELERATED_DRAWING_ENABLED false
 #define DEFAULT_CANVAS_USES_ACCELERATED_DRAWING false
@@ -277,7 +283,7 @@
 
 #define FOR_EACH_WEBKIT_DEBUG_BOOL_PREFERENCE(macro) \
     macro(AcceleratedDrawingEnabled, acceleratedDrawingEnabled, Bool, bool, DEFAULT_ACCELERATED_DRAWING_ENABLED, "", "") \
-    macro(SubpixelAntialiasedLayerTextEnabled, subpixelAntialiasedLayerTextEnabled, Bool, bool, false, "", "") \
+    macro(SubpixelAntialiasedLayerTextEnabled, subpixelAntialiasedLayerTextEnabled, Bool, bool, DEFAULT_SUBPIXEL_ANTIALIASED_LAYER_TEXT_ENABLED, "", "") \
     macro(DisplayListDrawingEnabled, displayListDrawingEnabled, Bool, bool, false, "", "") \
     macro(CompositingBordersVisible, compositingBordersVisible, Bool, bool, false, "", "") \
     macro(CompositingRepaintCountersVisible, compositingRepaintCountersVisible, Bool, bool, false, "", "") \

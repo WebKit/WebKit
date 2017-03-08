@@ -1,3 +1,15 @@
+2017-03-07  Simon Fraser  <simon.fraser@apple.com>
+
+        Enable SubpixelAntialiasedLayerTextEnabled by default on some versions of macOS
+        https://bugs.webkit.org/show_bug.cgi?id=169329
+
+        Reviewed by Tim Horton.
+
+        If the macOS version is > 101300, enable subpixelAntialiasedLayerTextEnabled.
+
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+
 2017-03-07  Megan Gardner  <megan_gardner@apple.com>
 
         Additional DataInteraction Support
