@@ -1,3 +1,13 @@
+2017-03-08  Jon Davis  <jond@apple.com>
+
+        Fixed ARES-6 animations for other browsers
+
+        Rubber stamped by Saam Barati.
+
+        * ARES-6/styles.css:
+        (.swoop):
+        (.logo):
+
 2017-03-07  Filip Pizlo  <fpizlo@apple.com>
 
         Revise the ARES-6 explainer text
