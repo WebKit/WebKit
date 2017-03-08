@@ -268,12 +268,18 @@ class SVN(SCM, SVNRepository):
     def svn_revision(self, path):
         return self.value_from_svn_info(path, 'Revision')
 
+    def native_revision(self, path):
+        return self.svn_revision(path)
+
     def timestamp_of_revision(self, path, revision):
         # We use --xml to get timestamps like 2013-02-08T08:18:04.964409Z
         repository_root = self.value_from_svn_info(self.checkout_root, 'Repository Root')
         info_output = Executive().run_command([self.executable_name, 'log', '-r', revision, '--xml', repository_root], cwd=path).rstrip()
         match = re.search(r"^<date>(?P<value>.+)</date>\r?$", info_output, re.MULTILINE)
         return match.group('value')
+
+    def timestamp_of_native_revision(self, path, revision):
+        return self.timestamp_of_revision(path, revision)
 
     # FIXME: This method should be on Checkout.
     def create_patch(self, git_commit=None, changed_files=None, git_index=None):

@@ -1,3 +1,76 @@
+2017-03-07  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Perf and layout test results should report using correct scm revision.
+        https://bugs.webkit.org/show_bug.cgi?id=169171
+
+        Reviewed by Ryosuke Niwa.
+
+        For accurate record keeping, perf test and layout test results should
+        report using the native scm revision as an identifier.
+        To do so we introduce a new scm functions:
+            `native_revision()` and `timestamp_of_native_revision()`.
+        The former is responsible for returning a git hash if scm.git or an
+        svn revision if scm.svn. The latter is responsible for retrieving the correct timestamp.
+        We also add the corresponding tests and a helper function `_most_recent_log_for_revision`.
+
+        * Scripts/webkitpy/common/checkout/scm/scm.py:
+        (SCM.run):
+        Drive-by indentation fix to adhere to WebKit style conventions.
+        (SCM.svn_revision):
+        Remove superfluous comment.
+        (SCM.native_revision):
+        Add new abstract function `native_revision` and make it a `_subclass_must_implement()`
+        as we want to closely mimic `svn_revision()` function due to their similar behavior.
+        (SCM.timestamp_of_native_revision):
+        Add new abstract function `timestamp_of_native_revision` to closely mimic `timestamp_of_revision`.
+
+        * Scripts/webkitpy/common/checkout/scm/git.py:
+        (Git._most_recent_log_for_revision):
+        New helper function similar to `_most_recent_log_matching` that is git hash friendly.
+        (Git.native_revision):
+        Implement new function `native_revision()`. Get the native_revision by running:
+
+            `git log -1 --pretty=format:%H`
+
+        and thus returning the latest git hash (in long format).
+        (Git.timestamp_of_native_revision):
+        Since perftestrunner and layout_test.controllers.manager use the new native_revision
+        function, we create a new native_revision timestamp retriever.
+        You will notice this uses a far more simplified way to retrieve UTC strict-ISO timestamp
+        than its non-native counterpart: `timestamp_of_revision()`.
+        * Scripts/webkitpy/common/checkout/scm/svn.py:
+        (SVN.native_revision):
+        Implement native_revision for SVN: simply return self.svn_revision()
+        (SVN.timestamp_of_native_revision):
+        Implement timestamp_of_native_revision for SVN: simply return self.timestamp_of_revision()
+
+        * Scripts/webkitpy/common/checkout/scm/scm_unittest.py:
+        (test_native_revision):
+        [SVN] Confirm that svn_revision == native_revision. And that native_revision returns 5.
+        Use '.' as the path parameter instead of svn_checkout_path to avoid violating pylint/E1101
+        and since we are guaranteed by test setUp to be in the correct SVN dir.
+        (GitTest.test_native_revision):
+        [Git] Confirm that `git rev-parse HEAD` is equal to newly implemented native_revision().
+        (GitSVNTest.test_native_revision):
+        [Git] Confirm that `git rev-parse HEAD` is equal to newly implemented native_revision().
+        (test_timestamp_of_native_revision):
+        Test new function `timestamp_of_native_revision`. Very similar fashion to
+        `test_timestamp_of_revision`.
+
+        * Scripts/webkitpy/common/checkout/scm/scm_mock.py:
+        (MockSCM.native_revision):
+        Add MockSCM.native_revision to behave like svn.py (default).
+        (MockSCM.test_native_revision):
+        Add MockSCM.test_native_revision to behave like its non-native counterpart.
+
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager.upload_results):
+        When iterating through a list of projects, make sure we use the project's new native revision.
+        * Scripts/webkitpy/performance_tests/perftestsrunner.py:
+        (_generate_results_dict):
+        As per the FIXME in manager.py, we have duplicate code in perftestsrunner.py.
+        So make the same exact change here.
+
 2017-03-07  Tim Horton  <timothy_horton@apple.com>
 
         Fix the TestWebKitAPI build

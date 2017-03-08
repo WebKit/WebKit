@@ -902,6 +902,10 @@ END
     def test_head_svn_revision(self):
         self._shared_test_head_svn_revision()
 
+    def test_native_revision(self):
+        self.assertEqual(self.scm.head_svn_revision(), self.scm.native_revision('.'))
+        self.assertEqual(self.scm.native_revision('.'), '5')
+
     def test_propset_propget(self):
         filepath = os.path.join(self.svn_checkout_path, "test_file")
         expected_mime_type = "x-application/foo-bar"
@@ -1079,6 +1083,11 @@ class GitTest(SCMTest):
         # If we cloned a git repo tracking an SVN repo, this would give the same result as
         # self._shared_test_head_svn_revision().
         self.assertEqual(scm.head_svn_revision(), '')
+
+    def test_native_revision(self):
+        scm = self.tracking_scm
+        command = ['git', '-C', scm.checkout_root, 'rev-parse', 'HEAD']
+        self.assertEqual(scm.native_revision(scm.checkout_root), run_command(command).strip())
 
     def test_rename_files(self):
         scm = self.tracking_scm
@@ -1591,6 +1600,10 @@ class GitSVNTest(SCMTest):
     def test_head_svn_revision(self):
         self._shared_test_head_svn_revision()
 
+    def test_native_revision(self):
+        command = ['git', '-C', self.git_checkout_path, 'rev-parse', 'HEAD']
+        self.assertEqual(self.scm.native_revision(self.git_checkout_path), run_command(command).strip())
+
     def test_to_object_name(self):
         relpath = 'test_file_commit1'
         fullpath = os.path.realpath(os.path.join(self.git_checkout_path, relpath))
@@ -1672,3 +1685,15 @@ MOCK run_command: ['git', 'log', '-1', '--grep=git-svn-id:', '--date=iso', './MO
 
         scm._run_git = lambda args: 'Date: 2013-02-08 01:55:21 -0800'
         self.assertEqual(scm.timestamp_of_revision('some-path', '12345'), '2013-02-08T09:55:21Z')
+
+    def test_timestamp_of_native_revision(self):
+        scm = self.make_scm()
+        scm.find_checkout_root = lambda path: ''
+        scm._run_git = lambda args: '1360310749'
+        self.assertEqual(scm.timestamp_of_native_revision('some-path', '1a1c3b08814bc2a8c15b0f6db63cdce68f2aaa7a'), '2013-02-08T08:05:49Z')
+
+        scm._run_git = lambda args: '1360279923'
+        self.assertEqual(scm.timestamp_of_native_revision('some-path', '1a1c3b08814bc2a8c15b0f6db63cdce68f2aaa7a'), '2013-02-07T23:32:03Z')
+
+        scm._run_git = lambda args: '1360317321'
+        self.assertEqual(scm.timestamp_of_native_revision('some-path', '1a1c3b08814bc2a8c15b0f6db63cdce68f2aaa7a'), '2013-02-08T09:55:21Z')

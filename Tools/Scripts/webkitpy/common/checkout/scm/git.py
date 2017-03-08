@@ -270,12 +270,18 @@ class Git(SCM, SVNRepository):
         # git 1.7.0.4 (and earlier) didn't support the separate arg.
         return self._run_git(['log', '-1', '--grep=' + grep_str, '--date=iso', self.find_checkout_root(path)])
 
+    def _most_recent_log_for_revision(self, revision, path):
+        return self._run_git(['log', '-1', revision, '--date=iso', self.find_checkout_root(path)])
+
     def svn_revision(self, path):
         git_log = self._most_recent_log_matching('git-svn-id:', path)
         match = re.search("^\s*git-svn-id:.*@(?P<svn_revision>\d+)\ ", git_log, re.MULTILINE)
         if not match:
             return ""
         return str(match.group('svn_revision'))
+
+    def native_revision(self, path):
+        return self._run_git(['log', '-1', '--pretty=format:%H', self.find_checkout_root(path)])
 
     def svn_url(self):
         git_command = ['svn', 'info']
@@ -299,6 +305,11 @@ class Git(SCM, SVNRepository):
         sign = 1 if match.group(7) == '+' else -1
         time_without_timezone = time_with_timezone - datetime.timedelta(hours=sign * int(match.group(8)), minutes=int(match.group(9)))
         return time_without_timezone.strftime('%Y-%m-%dT%H:%M:%SZ')
+
+    def timestamp_of_native_revision(self, path, sha):
+        unix_timestamp = self._run_git(['log', '-1', sha, '--pretty="format:%ct"', self.find_checkout_root(path)]).rstrip()
+        commit_timestamp = datetime.datetime.utcfromtimestamp(float(unix_timestamp))
+        return commit_timestamp.strftime('%Y-%m-%dT%H:%M:%SZ')
 
     def prepend_svn_revision(self, diff):
         revision = self.head_svn_revision()

@@ -84,7 +84,13 @@ class MockSCM(object):
     def svn_revision(self, path):
         return '5678'
 
+    def native_revision(self, path):
+        return self.svn_revision(path)
+
     def timestamp_of_revision(self, path, revision):
+        return '2013-02-01 08:48:05 +0000'
+
+    def timestamp_of_native_revision(self, path, revision):
         return '2013-02-01 08:48:05 +0000'
 
     def create_patch(self, git_commit, changed_files=None):
