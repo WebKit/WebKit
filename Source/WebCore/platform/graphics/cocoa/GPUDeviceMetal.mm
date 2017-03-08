@@ -73,6 +73,11 @@ void GPUDevice::reshape(int width, int height)
     // FIXME: WebGPU - Lots of reshape stuff should go here. See GC3D.
 }
 
+id GPUDevice::platformDevice()
+{
+    return m_device.get();
+}
+
 } // namespace WebCore
 
 #endif

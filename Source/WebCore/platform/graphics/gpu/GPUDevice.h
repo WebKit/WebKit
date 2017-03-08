@@ -56,7 +56,7 @@ public:
 
 #if PLATFORM(COCOA)
     CALayer* platformLayer() const { return reinterpret_cast<CALayer*>(m_layer.get()); }
-    WEBCORE_EXPORT id platformDevice() { return m_device.get(); }
+    WEBCORE_EXPORT id platformDevice();
 #endif
 
     WebGPULayer* layer() { return m_layer.get(); }
