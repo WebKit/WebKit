@@ -1,3 +1,15 @@
+2017-03-08  Jonathan Bedard  <jbedard@apple.com>
+
+        Unreviewed, rolling out r213545.
+
+        iOS EWS broken by this change
+
+        Reverted changeset:
+
+        "Standardize device/simulator naming conventions"
+        https://bugs.webkit.org/show_bug.cgi?id=169083
+        http://trac.webkit.org/changeset/213545
+
 2017-03-07  Kocsen Chung  <kocsen_chung@apple.com>
 
         Perf and layout test results should report using correct scm revision.

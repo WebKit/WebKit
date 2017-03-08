@@ -28,7 +28,7 @@ _log = logging.getLogger(__name__)
 
 
 class IOSDevicePort(IOSPort):
-    port_name = 'ios-device'
+    port_name = 'ios'
 
     ARCHITECTURES = ['armv7', 'armv7s', 'arm64']
     DEFAULT_ARCHITECTURE = 'arm64'
@@ -49,4 +49,4 @@ class IOSDevicePort(IOSPort):
         return ['--sdk', 'iphoneos'] + (['ARCHS=%s' % self.architecture()] if self.architecture() else [])
 
     def operating_system(self):
-        return 'ios-device'
+        return 'ios'

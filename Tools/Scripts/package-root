@@ -46,10 +46,8 @@ sub usage()
       --help                            Show this help message
       --sdk                             Specifies SDK for which the roots are staged
                                         (Default: currently installed Base SDK)
-      --ios-device                      Equivalent to --sdk iphoneos.internal
-      --device                          DEPRECATED alias of --ios-device
+      --device                          Equivalent to --sdk iphoneos.internal
       --ios-simulator                   Equivalent to --sdk iphonesimulator
-      --simulator                       DEPRECATED alias of --ios-simulator
       --debug                           Package roots from Debug-<platform>
       --release                         Package roots from Release-<platform>
 

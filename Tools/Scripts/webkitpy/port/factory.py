@@ -47,9 +47,6 @@ def platform_options(use_globs=False):
         optparse.make_option('--ios-simulator', action='store_const', dest='platform',
             const=('ios-simulator'),
             help=('Alias for --platform=ios-simulator')),
-        optparse.make_option('--simulator', action='store_const', dest='platform',
-            const=('ios-simulator'),
-            help=('DEPRECATED alias for --platform=ios-simulator')),
         optparse.make_option('--efl', action='store_const', dest='platform',
             const=('efl*' if use_globs else 'efl'),
             help=('Alias for --platform=efl*' if use_globs else 'Alias for --platform=efl')),
@@ -83,7 +80,12 @@ def _builder_options(builder_name):
 class PortFactory(object):
     # Order matters.  For port classes that have a port_name with a
     # common prefix, the more specific port class should be listed
-    # first.
+    # first.  For example, 'ios_simulator.IOSSimulatorPort' (port_name='ios-simulator')
+    # should be listed before 'ios_device.IOSDevicePort' (port_name='ios').  If this
+    # rule is not followed, then `webkit-patch --ios-simulator` will try
+    # to use IOSDevicePort instead of IOSSimulatorPort because 'ios'
+    # (IOSDevicePort.port_name) is a prefix of 'ios-simulator' (port_name
+    # derived from '--ios-simulator' command-line switch), for example.
     PORT_CLASSES = (
         'efl.EflPort',
         'gtk.GtkPort',
