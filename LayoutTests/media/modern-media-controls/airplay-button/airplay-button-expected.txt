@@ -7,6 +7,15 @@ PASS airplayButton.element.localName is "button"
 PASS airplayButton.element.classList.contains("icon") is true
 PASS airplayButton.element.classList.contains("airplay") is true
 PASS airplayButton.iconName is "airplay"
+PASS airplayButton.width is 0
+PASS airplayButton.height is 0
+PASS airplayButton._image is iconService.imageForIconNameAndLayoutTraits(Icons.Airplay, LayoutTraits.macOS)
+PASS airplayButton._image.src is not ""
+PASS airplayButton._image.complete is false
+PASS airplayButton.width is not 0
+PASS airplayButton.height is not 0
+PASS airplayButton.needsLayout is true
+PASS scheduler.hasScheduledLayoutCallbacks is true
 PASS airplayButton.element.style.webkitMaskImage.includes("macOS/airplay@") became true
 PASS macOSFullscreenAirplayButton.element.style.webkitMaskImage.includes("macOS/airplay-fullscreen@") became true
 PASS iOSAirplayButton.element.style.webkitMaskImage.includes("iOS/airplay@") became true
