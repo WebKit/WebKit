@@ -4,10 +4,10 @@
         <title>Inline-block as spanner (not allowed)</title>
     </head>
     <body>
-        <p>There should be nothing below.</p>
-        <div style="-webkit-columns:6; columns:6; -webkit-column-gap:0; column-gap:0; width:4em; overflow:hidden;">
-            <div style="display:inline-block; -webkit-column-span:all; column-span:all; margin-left:1em;">
-                FAIL
+        <p>The inline block should be contained in a single column below.</p>
+        <div style="-webkit-columns:2; columns:2; -webkit-column-gap:0; column-gap:0; width:400px; ">
+            <div style="display:inline-block; width:100%; height:100px;-webkit-column-span:all; column-span:all; margin-left:1em;border:5px solid green">
+                
             </div>
             <br><br>
         </div>
