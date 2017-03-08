@@ -1551,3 +1551,5 @@ webkit.org/b/168936 imported/w3c/web-platform-tests/IndexedDB/idbdatabase-delete
 fast/events/context-activated-by-key-event.html [ Skip ]
 
 webkit.org/b/168136 performance-api/performance-observer-periodic.html [ Pass Failure ]
+
+webkit.org/b/169324 media/track/media-element-enqueue-event-crash.html [ Pass Failure ]
