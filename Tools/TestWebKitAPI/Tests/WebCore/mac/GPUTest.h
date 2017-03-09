@@ -23,37 +23,41 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
+#pragma once
 
-#if ENABLE(WEBGPU)
-
-#import "GPUTest.h"
-#import <Metal/Metal.h>
-#import <WebCore/GPUDevice.h>
-
-using namespace WebCore;
+#import "Test.h"
+#import "WTFStringUtilities.h"
+#import <wtf/MainThread.h>
 
 namespace TestWebKitAPI {
 
-TEST_F(GPU, DeviceCreate)
-{
-    auto device = GPUDevice::create();
-    // Not all hardware supports Metal, so it is possible
-    // that we were unable to create the MTLDevice object.
-    // In that case, the device should be null.
-    if (!device)
-        return;
+class GPU : public testing::Test {
+public:
+    void SetUp() final
+    {
+        WTF::initializeMainThread();
 
-    EXPECT_NOT_NULL(device->layer());
-    EXPECT_NOT_NULL(device->platformLayer());
+        m_librarySourceCode = ASCIILiteral("using namespace metal;\n\
+            struct Vertex\n\
+            {\n\
+            float4 position [[position]];\n\
+            float4 color;\n\
+            };\n\
+            vertex Vertex vertex_main(device Vertex *vertices [[buffer(0)]],\n\
+            uint vid [[vertex_id]])\n\
+            {\n\
+            return vertices[vid];\n\
+            }\n\
+            fragment float4 fragment_main(Vertex inVertex [[stage_in]])\n\
+            {\n\
+            return inVertex.color;\n\
+            }");
+    }
 
-    id<MTLDevice> mtlDevice = (id<MTLDevice>)device->platformDevice();
-    EXPECT_NOT_NULL(mtlDevice);
+    const String& librarySourceCode() { return m_librarySourceCode; }
 
-    NSString *deviceName = mtlDevice.name;
-    EXPECT_GT(deviceName.length, static_cast<unsigned long>(0));
+private:
+    String m_librarySourceCode;
+};
+
 }
-
-} // namespace TestWebKitAPI
-
-#endif

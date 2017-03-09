@@ -27,52 +27,43 @@
 
 #if ENABLE(WEBGPU)
 
-#include "PlatformLayer.h"
-#include <runtime/ArrayBufferView.h>
 #include <wtf/RefCounted.h>
-
-#if USE(CA)
-#include "PlatformCALayer.h"
-#endif
+#include <wtf/RefPtr.h>
+#include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
 #if PLATFORM(COCOA)
-typedef struct objc_object* id;
-OBJC_CLASS CALayer;
-OBJC_CLASS WebGPULayer;
-#else
-class WebGPULayer;
-typedef void PlatformGPUDevice;
+OBJC_CLASS MTLLibrary;
 #endif
 
 namespace WebCore {
 
-class GPULibrary;
+class GPUDevice;
+class GPUFunction;
 
-class GPUDevice : public RefCounted<GPUDevice> {
+class GPULibrary : public RefCounted<GPULibrary> {
 public:
-    WEBCORE_EXPORT static RefPtr<GPUDevice> create();
-    WEBCORE_EXPORT ~GPUDevice();
+    static RefPtr<GPULibrary> create(GPUDevice*, const String& sourceCode);
+    WEBCORE_EXPORT ~GPULibrary();
 
-    void reshape(int width, int height);
+    WEBCORE_EXPORT String label() const;
+    WEBCORE_EXPORT void setLabel(const String&);
+
+    WEBCORE_EXPORT Vector<String> functionNames();
+
+    WEBCORE_EXPORT RefPtr<GPUFunction> functionWithName(const String&);
 
 #if PLATFORM(COCOA)
-    CALayer* platformLayer() const { return reinterpret_cast<CALayer*>(m_layer.get()); }
-    WEBCORE_EXPORT id platformDevice();
+    WEBCORE_EXPORT MTLLibrary* platformLibrary();
 #endif
-
-    WebGPULayer* layer() { return m_layer.get(); }
-
-    WEBCORE_EXPORT RefPtr<GPULibrary> createLibrary(const String& sourceCode);
 
 private:
-    GPUDevice();
-
-    RetainPtr<WebGPULayer> m_layer;
+    GPULibrary(GPUDevice*, const String& sourceCode);
+    
 #if PLATFORM(COCOA)
-    RetainPtr<id> m_device;
+    RetainPtr<MTLLibrary> m_library;
 #endif
 };
-
+    
 } // namespace WebCore
-
 #endif

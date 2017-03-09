@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,55 +23,65 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "GPULibrary.h"
 
 #if ENABLE(WEBGPU)
 
-#include "PlatformLayer.h"
-#include <runtime/ArrayBufferView.h>
-#include <wtf/RefCounted.h>
+#import "GPUDevice.h"
+#import "Logging.h"
 
-#if USE(CA)
-#include "PlatformCALayer.h"
-#endif
-
-#if PLATFORM(COCOA)
-typedef struct objc_object* id;
-OBJC_CLASS CALayer;
-OBJC_CLASS WebGPULayer;
-#else
-class WebGPULayer;
-typedef void PlatformGPUDevice;
-#endif
+#import <Metal/Metal.h>
 
 namespace WebCore {
 
-class GPULibrary;
+GPULibrary::GPULibrary(GPUDevice* device, const String& sourceCode)
+{
+    LOG(WebGPU, "GPULibrary::GPULibrary()");
 
-class GPUDevice : public RefCounted<GPUDevice> {
-public:
-    WEBCORE_EXPORT static RefPtr<GPUDevice> create();
-    WEBCORE_EXPORT ~GPUDevice();
+    if (!device || !device->platformDevice())
+        return;
 
-    void reshape(int width, int height);
+    NSError *error = [NSError errorWithDomain:@"com.apple.WebKit.GPU" code:1 userInfo:nil];
+    m_library = (MTLLibrary*)[device->platformDevice() newLibraryWithSource:sourceCode options:nil error:&error];
+    if (!m_library)
+        LOG(WebGPU, "Compilation error: %s", [[error localizedDescription] UTF8String]);
+}
 
-#if PLATFORM(COCOA)
-    CALayer* platformLayer() const { return reinterpret_cast<CALayer*>(m_layer.get()); }
-    WEBCORE_EXPORT id platformDevice();
-#endif
+String GPULibrary::label() const
+{
+    if (!m_library)
+        return emptyString();
 
-    WebGPULayer* layer() { return m_layer.get(); }
+    return [m_library label];
+}
 
-    WEBCORE_EXPORT RefPtr<GPULibrary> createLibrary(const String& sourceCode);
+void GPULibrary::setLabel(const String& label)
+{
+    if (!m_library)
+        return;
 
-private:
-    GPUDevice();
+    [m_library setLabel:label];
+}
 
-    RetainPtr<WebGPULayer> m_layer;
-#if PLATFORM(COCOA)
-    RetainPtr<id> m_device;
-#endif
-};
+Vector<String> GPULibrary::functionNames()
+{
+    if (!m_library)
+        return Vector<String>();
+
+    Vector<String> names;
+
+    NSArray<NSString*> *functionNames = [m_library functionNames];
+    for (NSString *string in functionNames)
+        names.append(string);
+    
+    return names;
+}
+
+MTLLibrary* GPULibrary::platformLibrary()
+{
+    return m_library.get();
+}
 
 } // namespace WebCore
 

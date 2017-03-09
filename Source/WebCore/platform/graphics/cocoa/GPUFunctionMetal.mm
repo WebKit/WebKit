@@ -23,55 +23,39 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "GPUFunction.h"
 
 #if ENABLE(WEBGPU)
 
-#include "PlatformLayer.h"
-#include <runtime/ArrayBufferView.h>
-#include <wtf/RefCounted.h>
-
-#if USE(CA)
-#include "PlatformCALayer.h"
-#endif
-
-#if PLATFORM(COCOA)
-typedef struct objc_object* id;
-OBJC_CLASS CALayer;
-OBJC_CLASS WebGPULayer;
-#else
-class WebGPULayer;
-typedef void PlatformGPUDevice;
-#endif
+#import "GPULibrary.h"
+#import "Logging.h"
+#import <Metal/Metal.h>
 
 namespace WebCore {
 
-class GPULibrary;
+GPUFunction::GPUFunction(GPULibrary* library, const String& name)
+{
+    LOG(WebGPU, "GPUFunction::GPUFunction()");
 
-class GPUDevice : public RefCounted<GPUDevice> {
-public:
-    WEBCORE_EXPORT static RefPtr<GPUDevice> create();
-    WEBCORE_EXPORT ~GPUDevice();
+    if (!library || !library->platformLibrary())
+        return;
 
-    void reshape(int width, int height);
+    m_function = (MTLFunction*)[library->platformLibrary() newFunctionWithName:name];
+}
 
-#if PLATFORM(COCOA)
-    CALayer* platformLayer() const { return reinterpret_cast<CALayer*>(m_layer.get()); }
-    WEBCORE_EXPORT id platformDevice();
-#endif
+String GPUFunction::name() const
+{
+    if (!m_function)
+        return emptyString();
+    
+    return [m_function name];
+}
 
-    WebGPULayer* layer() { return m_layer.get(); }
-
-    WEBCORE_EXPORT RefPtr<GPULibrary> createLibrary(const String& sourceCode);
-
-private:
-    GPUDevice();
-
-    RetainPtr<WebGPULayer> m_layer;
-#if PLATFORM(COCOA)
-    RetainPtr<id> m_device;
-#endif
-};
+MTLFunction* GPUFunction::platformFunction()
+{
+    return m_function.get();
+}
 
 } // namespace WebCore
 

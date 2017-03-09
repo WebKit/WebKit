@@ -23,56 +23,51 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "GPULibrary.h"
 
 #if ENABLE(WEBGPU)
 
-#include "PlatformLayer.h"
-#include <runtime/ArrayBufferView.h>
-#include <wtf/RefCounted.h>
-
-#if USE(CA)
-#include "PlatformCALayer.h"
-#endif
-
-#if PLATFORM(COCOA)
-typedef struct objc_object* id;
-OBJC_CLASS CALayer;
-OBJC_CLASS WebGPULayer;
-#else
-class WebGPULayer;
-typedef void PlatformGPUDevice;
-#endif
+#import "GPUDevice.h"
+#import "GPUFunction.h"
+#import "Logging.h"
 
 namespace WebCore {
 
-class GPULibrary;
+RefPtr<GPULibrary> GPULibrary::create(GPUDevice* device, const String& sourceCode)
+{
+    RefPtr<GPULibrary> library = adoptRef(new GPULibrary(device, sourceCode));
+    return library;
+}
 
-class GPUDevice : public RefCounted<GPUDevice> {
-public:
-    WEBCORE_EXPORT static RefPtr<GPUDevice> create();
-    WEBCORE_EXPORT ~GPUDevice();
+GPULibrary::~GPULibrary()
+{
+    LOG(WebGPU, "GPULibrary::~GPULibrary()");
+}
 
-    void reshape(int width, int height);
+#if !PLATFORM(COCOA)
 
-#if PLATFORM(COCOA)
-    CALayer* platformLayer() const { return reinterpret_cast<CALayer*>(m_layer.get()); }
-    WEBCORE_EXPORT id platformDevice();
+String GPULibrary::label() const
+{
+    return emptyString();
+}
+
+void GPULibrary::setLabel(const String&)
+{
+}
+
+Vector<String> GPULibrary::functionNames()
+{
+    return { };
+}
+
 #endif
 
-    WebGPULayer* layer() { return m_layer.get(); }
-
-    WEBCORE_EXPORT RefPtr<GPULibrary> createLibrary(const String& sourceCode);
-
-private:
-    GPUDevice();
-
-    RetainPtr<WebGPULayer> m_layer;
-#if PLATFORM(COCOA)
-    RetainPtr<id> m_device;
-#endif
-};
-
+RefPtr<GPUFunction> GPULibrary::functionWithName(const String& name)
+{
+    return GPUFunction::create(this, name);
+}
+    
 } // namespace WebCore
 
 #endif

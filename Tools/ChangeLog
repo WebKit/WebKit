@@ -1,3 +1,24 @@
+2017-03-08  Dean Jackson  <dino@apple.com>
+
+        WebGPU: Backend - Library and Functions
+        https://bugs.webkit.org/show_bug.cgi?id=169371
+        <rdar://problem/30928792>
+
+        Reviewed by Tim Horton.
+
+        Add tests for GPULibrary and GPUFunction.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebCore/mac/GPUDevice.mm:
+        (TestWebKitAPI::TEST_F):
+        (TestWebKitAPI::TEST): Deleted.
+        * TestWebKitAPI/Tests/WebCore/mac/GPUFunction.mm: Copied from Tools/TestWebKitAPI/Tests/WebCore/mac/GPUDevice.mm.
+        (TestWebKitAPI::TEST_F):
+        * TestWebKitAPI/Tests/WebCore/mac/GPULibrary.mm: Copied from Tools/TestWebKitAPI/Tests/WebCore/mac/GPUDevice.mm.
+        (TestWebKitAPI::TEST_F):
+        * TestWebKitAPI/Tests/WebCore/mac/GPUTest.h: Copied from Tools/TestWebKitAPI/Tests/WebCore/mac/GPUDevice.mm.
+        (TestWebKitAPI::GPU::librarySourceCode):
+
 2017-03-08  Filip Pizlo  <fpizlo@apple.com>
 
         WTF should make it super easy to do ARM concurrency tricks

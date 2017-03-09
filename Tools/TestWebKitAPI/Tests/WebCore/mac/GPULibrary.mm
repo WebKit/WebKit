@@ -30,12 +30,14 @@
 #import "GPUTest.h"
 #import <Metal/Metal.h>
 #import <WebCore/GPUDevice.h>
+#import <WebCore/GPULibrary.h>
+#import <wtf/MainThread.h>
 
 using namespace WebCore;
 
 namespace TestWebKitAPI {
 
-TEST_F(GPU, DeviceCreate)
+TEST_F(GPU, LibraryCreate)
 {
     auto device = GPUDevice::create();
     // Not all hardware supports Metal, so it is possible
@@ -44,14 +46,39 @@ TEST_F(GPU, DeviceCreate)
     if (!device)
         return;
 
-    EXPECT_NOT_NULL(device->layer());
-    EXPECT_NOT_NULL(device->platformLayer());
-
     id<MTLDevice> mtlDevice = (id<MTLDevice>)device->platformDevice();
     EXPECT_NOT_NULL(mtlDevice);
 
-    NSString *deviceName = mtlDevice.name;
-    EXPECT_GT(deviceName.length, static_cast<unsigned long>(0));
+    auto library = device->createLibrary(librarySourceCode());
+    EXPECT_NOT_NULL(library);
+}
+
+TEST_F(GPU, LibrarySetLabel)
+{
+    auto device = GPUDevice::create();
+    if (!device)
+        return;
+
+    auto library = device->createLibrary(librarySourceCode());
+    EXPECT_NOT_NULL(library);
+
+    library->setLabel("TestLabel");
+    EXPECT_TRUE(library->label() == "TestLabel");
+}
+
+TEST_F(GPU, LibraryFunctionNames)
+{
+    auto device = GPUDevice::create();
+    if (!device)
+        return;
+
+    auto library = device->createLibrary(librarySourceCode());
+    EXPECT_NOT_NULL(library);
+
+    auto functionNames = library->functionNames();
+    EXPECT_EQ(functionNames.size(), static_cast<unsigned long>(2));
+    EXPECT_TRUE(functionNames[0] == "vertex_main");
+    EXPECT_TRUE(functionNames[1] == "fragment_main");
 }
 
 } // namespace TestWebKitAPI

@@ -1359,6 +1359,12 @@
 		316BDB8B1E6E153000DE0D5A /* WebGPULayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 316BDB891E6E153000DE0D5A /* WebGPULayer.mm */; };
 		316BDB8C1E6E153000DE0D5A /* WebGPULayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 316BDB8A1E6E153000DE0D5A /* WebGPULayer.h */; };
 		316BDB8D1E6E189800DE0D5A /* GPUDeviceMetal.mm in Sources */ = {isa = PBXBuildFile; fileRef = 316BDB881E6E141C00DE0D5A /* GPUDeviceMetal.mm */; };
+		316BDB941E70C89700DE0D5A /* GPUFunction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 316BDB921E70C89700DE0D5A /* GPUFunction.cpp */; };
+		316BDB951E70C89700DE0D5A /* GPUFunction.h in Headers */ = {isa = PBXBuildFile; fileRef = 316BDB931E70C89700DE0D5A /* GPUFunction.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		316BDB971E70CA2400DE0D5A /* GPUFunctionMetal.mm in Sources */ = {isa = PBXBuildFile; fileRef = 316BDB961E70CA2400DE0D5A /* GPUFunctionMetal.mm */; };
+		316BDB9A1E70CBBF00DE0D5A /* GPULibrary.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 316BDB981E70CBBF00DE0D5A /* GPULibrary.cpp */; };
+		316BDB9B1E70CBBF00DE0D5A /* GPULibrary.h in Headers */ = {isa = PBXBuildFile; fileRef = 316BDB991E70CBBF00DE0D5A /* GPULibrary.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		316BDB9E1E70CD9000DE0D5A /* GPULibraryMetal.mm in Sources */ = {isa = PBXBuildFile; fileRef = 316BDB9C1E70CD9000DE0D5A /* GPULibraryMetal.mm */; };
 		316FE0710E6CCBEE00BF6088 /* JSCSSKeyframeRule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 316FE06D0E6CCBEE00BF6088 /* JSCSSKeyframeRule.cpp */; };
 		316FE0720E6CCBEE00BF6088 /* JSCSSKeyframeRule.h in Headers */ = {isa = PBXBuildFile; fileRef = 316FE06E0E6CCBEE00BF6088 /* JSCSSKeyframeRule.h */; };
 		316FE0730E6CCBEE00BF6088 /* JSCSSKeyframesRule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 316FE06F0E6CCBEE00BF6088 /* JSCSSKeyframesRule.cpp */; };
@@ -8686,6 +8692,12 @@
 		316BDB881E6E141C00DE0D5A /* GPUDeviceMetal.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GPUDeviceMetal.mm; sourceTree = "<group>"; };
 		316BDB891E6E153000DE0D5A /* WebGPULayer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebGPULayer.mm; sourceTree = "<group>"; };
 		316BDB8A1E6E153000DE0D5A /* WebGPULayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebGPULayer.h; sourceTree = "<group>"; };
+		316BDB921E70C89700DE0D5A /* GPUFunction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GPUFunction.cpp; sourceTree = "<group>"; };
+		316BDB931E70C89700DE0D5A /* GPUFunction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GPUFunction.h; sourceTree = "<group>"; };
+		316BDB961E70CA2400DE0D5A /* GPUFunctionMetal.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GPUFunctionMetal.mm; sourceTree = "<group>"; };
+		316BDB981E70CBBF00DE0D5A /* GPULibrary.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GPULibrary.cpp; sourceTree = "<group>"; };
+		316BDB991E70CBBF00DE0D5A /* GPULibrary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GPULibrary.h; sourceTree = "<group>"; };
+		316BDB9C1E70CD9000DE0D5A /* GPULibraryMetal.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GPULibraryMetal.mm; sourceTree = "<group>"; };
 		316FE06D0E6CCBEE00BF6088 /* JSCSSKeyframeRule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCSSKeyframeRule.cpp; sourceTree = "<group>"; };
 		316FE06E0E6CCBEE00BF6088 /* JSCSSKeyframeRule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCSSKeyframeRule.h; sourceTree = "<group>"; };
 		316FE06F0E6CCBEE00BF6088 /* JSCSSKeyframesRule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCSSKeyframesRule.cpp; sourceTree = "<group>"; };
@@ -17474,6 +17486,10 @@
 			children = (
 				316BDB841E6E0A2100DE0D5A /* GPUDevice.cpp */,
 				316BDB851E6E0A2100DE0D5A /* GPUDevice.h */,
+				316BDB921E70C89700DE0D5A /* GPUFunction.cpp */,
+				316BDB931E70C89700DE0D5A /* GPUFunction.h */,
+				316BDB981E70CBBF00DE0D5A /* GPULibrary.cpp */,
+				316BDB991E70CBBF00DE0D5A /* GPULibrary.h */,
 				498770D71242C535002226BA /* Texture.cpp */,
 				498770D81242C535002226BA /* Texture.h */,
 				498770D91242C535002226BA /* TilingData.cpp */,
@@ -22566,6 +22582,8 @@
 				7C4EDD731A7B607800198C4D /* FontCocoa.mm */,
 				B5320D6A122A24E9002D1440 /* FontPlatformDataCocoa.mm */,
 				316BDB881E6E141C00DE0D5A /* GPUDeviceMetal.mm */,
+				316BDB961E70CA2400DE0D5A /* GPUFunctionMetal.mm */,
+				316BDB9C1E70CD9000DE0D5A /* GPULibraryMetal.mm */,
 				2D0B4AA918DA1CCD00434DE1 /* IOSurface.h */,
 				2D0B4AAA18DA1CCD00434DE1 /* IOSurface.mm */,
 				AD9FF6E01908391D003B61E0 /* IOSurfacePoolCocoa.mm */,
@@ -26204,6 +26222,7 @@
 				93309DE4099E64920056E581 /* EditCommand.h in Headers */,
 				4F1534DE11B532EC0021FD86 /* EditingBehavior.h in Headers */,
 				4F1534E011B533020021FD86 /* EditingBehaviorTypes.h in Headers */,
+				316BDB9B1E70CBBF00DE0D5A /* GPULibrary.h in Headers */,
 				3AC648B2129E146500C3EB25 /* EditingBoundary.h in Headers */,
 				9BAB6C6C12550631001626D4 /* EditingStyle.h in Headers */,
 				4B3043CD0AE0373B00A82647 /* Editor.h in Headers */,
@@ -28005,6 +28024,7 @@
 				BCEA4866097D93020094C9E4 /* RenderButton.h in Headers */,
 				B56579B51824D12A00E79F23 /* RenderChildIterator.h in Headers */,
 				BCE4413412F748E2009B84B8 /* RenderCombineText.h in Headers */,
+				316BDB951E70C89700DE0D5A /* GPUFunction.h in Headers */,
 				9392F1420AD185F400691BD4 /* RenderCounter.h in Headers */,
 				BCEA486E097D93020094C9E4 /* RenderDeprecatedFlexibleBox.h in Headers */,
 				836DAA061CEAB80D00A2B707 /* RenderDescendantIterator.h in Headers */,
@@ -30429,6 +30449,7 @@
 				977B3877122883E900B81FF8 /* HTMLTokenizer.cpp in Sources */,
 				0707568B142262D600414161 /* HTMLTrackElement.cpp in Sources */,
 				977B37251228721700B81FF8 /* HTMLTreeBuilder.cpp in Sources */,
+				316BDB941E70C89700DE0D5A /* GPUFunction.cpp in Sources */,
 				A8EA79F30A1916DF00A8EF5F /* HTMLUListElement.cpp in Sources */,
 				E44613AA0CD6331000FADA75 /* HTMLVideoElement.cpp in Sources */,
 				839AAFEC1A0C0C8D00605F99 /* HTMLWBRElement.cpp in Sources */,
@@ -31948,6 +31969,7 @@
 				078E090917D14CEE00420AA1 /* RTCIceCandidate.cpp in Sources */,
 				073BE34F17D18183002BD431 /* RTCIceCandidateDescriptor.cpp in Sources */,
 				078E090A17D14CEE00420AA1 /* RTCIceCandidateEvent.cpp in Sources */,
+				316BDB9E1E70CD9000DE0D5A /* GPULibraryMetal.mm in Sources */,
 				073794FD19F5864E00E5A045 /* RTCNotifiersMock.cpp in Sources */,
 				078E090B17D14CEE00420AA1 /* RTCPeerConnection.cpp in Sources */,
 				5E2C43621BCEE32B0001E2BC /* RTCRtpReceiver.cpp in Sources */,
@@ -32315,6 +32337,7 @@
 				8476C9EA11DF6A2900555B02 /* SVGPathBuilder.cpp in Sources */,
 				8419D2A8120D92D000141F8F /* SVGPathByteStreamBuilder.cpp in Sources */,
 				8419D2AC120D92FC00141F8F /* SVGPathByteStreamSource.cpp in Sources */,
+				316BDB9A1E70CBBF00DE0D5A /* GPULibrary.cpp in Sources */,
 				B2227A580D00BF220071B782 /* SVGPathElement.cpp in Sources */,
 				8476C9EF11DF6A5800555B02 /* SVGPathParser.cpp in Sources */,
 				7C39C3711DDBB8AE00FEFB29 /* SVGPathSegList.cpp in Sources */,
@@ -32613,6 +32636,7 @@
 				6F995A151A70756200A735F4 /* WebGLSync.cpp in Sources */,
 				49C7B9E51042D32F0009D447 /* WebGLTexture.cpp in Sources */,
 				6F995A231A7078B100A735F4 /* WebGLTransformFeedback.cpp in Sources */,
+				316BDB971E70CA2400DE0D5A /* GPUFunctionMetal.mm in Sources */,
 				0C3F1F5A10C8871200D72CE1 /* WebGLUniformLocation.cpp in Sources */,
 				6F995A251A7078B100A735F4 /* WebGLVertexArrayObject.cpp in Sources */,
 				6F222B761AB52D8A0094651A /* WebGLVertexArrayObjectBase.cpp in Sources */,

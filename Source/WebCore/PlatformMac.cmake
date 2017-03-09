@@ -417,6 +417,8 @@ list(APPEND WebCore_SOURCES
     platform/graphics/cg/TransformationMatrixCG.cpp
 
     platform/graphics/cocoa/GPUDeviceMetal.mm
+    platform/graphics/cocoa/GPUFunctionMetal.mm
+    platform/graphics/cocoa/GPULibraryMetal.mm
     platform/graphics/cocoa/FontCacheCoreText.cpp
     platform/graphics/cocoa/FontCascadeCocoa.mm
     platform/graphics/cocoa/FontCocoa.mm
@@ -431,6 +433,8 @@ list(APPEND WebCore_SOURCES
     platform/graphics/cv/VideoTextureCopierCV.cpp
 
     platform/graphics/gpu/GPUDevice.cpp
+    platform/graphics/gpu/GPUFunction.cpp
+    platform/graphics/gpu/GPULibrary.cpp
 
     platform/graphics/mac/ColorMac.mm
     platform/graphics/mac/ComplexTextControllerCoreText.mm

@@ -23,12 +23,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "GPUDevice.h"
+#include "config.h"
+#include "GPUDevice.h"
 
 #if ENABLE(WEBGPU)
 
-#import "Logging.h"
+#include "GPULibrary.h"
+#include "Logging.h"
 
 namespace WebCore {
 
@@ -50,6 +51,11 @@ RefPtr<GPUDevice> GPUDevice::create()
 GPUDevice::~GPUDevice()
 {
     LOG(WebGPU, "GPUDevice::~GPUDevice()");
+}
+
+RefPtr<GPULibrary> GPUDevice::createLibrary(const String& sourceCode)
+{
+    return GPULibrary::create(this, sourceCode);
 }
 
 #if !PLATFORM(COCOA)
