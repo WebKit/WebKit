@@ -62,9 +62,9 @@ public:
     // Mark a pointer that may be a CodeBlock that belongs to the set of DFG
     // blocks. This is defined in CodeBlock.h.
 private:
-    void mark(const LockHolder&, CodeBlock* candidateCodeBlock);
+    void mark(const AbstractLocker&, CodeBlock* candidateCodeBlock);
 public:
-    void mark(const LockHolder&, void* candidateCodeBlock);
+    void mark(const AbstractLocker&, void* candidateCodeBlock);
     
     // Delete all code blocks that are only referenced by this set (i.e. owned
     // by this set), and that have not been marked.
@@ -86,7 +86,7 @@ public:
     void dump(PrintStream&) const;
 
 private:
-    void promoteYoungCodeBlocks(const LockHolder&);
+    void promoteYoungCodeBlocks(const AbstractLocker&);
 
     HashSet<CodeBlock*> m_oldCodeBlocks;
     HashSet<CodeBlock*> m_newCodeBlocks;

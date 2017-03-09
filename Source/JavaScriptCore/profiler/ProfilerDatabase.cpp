@@ -62,7 +62,7 @@ Bytecodes* Database::ensureBytecodesFor(CodeBlock* codeBlock)
     return ensureBytecodesFor(locker, codeBlock);
 }
 
-Bytecodes* Database::ensureBytecodesFor(const LockHolder&, CodeBlock* codeBlock)
+Bytecodes* Database::ensureBytecodesFor(const AbstractLocker&, CodeBlock* codeBlock)
 {
     codeBlock = codeBlock->baselineAlternative();
     

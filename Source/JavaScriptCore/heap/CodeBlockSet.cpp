@@ -47,7 +47,7 @@ void CodeBlockSet::add(CodeBlock* codeBlock)
     ASSERT_UNUSED(isNewEntry, isNewEntry);
 }
 
-void CodeBlockSet::promoteYoungCodeBlocks(const LockHolder&)
+void CodeBlockSet::promoteYoungCodeBlocks(const AbstractLocker&)
 {
     ASSERT(m_lock.isLocked());
     m_oldCodeBlocks.add(m_newCodeBlocks.begin(), m_newCodeBlocks.end());

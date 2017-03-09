@@ -206,7 +206,7 @@ void RunLoop::stop()
     }
 }
 
-void RunLoop::wakeUp(const LockHolder&)
+void RunLoop::wakeUp(const AbstractLocker&)
 {
     m_pendingTasks = true;
     m_readyToRun.notifyOne();
@@ -218,7 +218,7 @@ void RunLoop::wakeUp()
     wakeUp(locker);
 }
 
-void RunLoop::schedule(const LockHolder&, RefPtr<TimerBase::ScheduledTask>&& task)
+void RunLoop::schedule(const AbstractLocker&, RefPtr<TimerBase::ScheduledTask>&& task)
 {
     m_schedules.append(WTFMove(task));
     std::push_heap(m_schedules.begin(), m_schedules.end(), TimerBase::ScheduledTask::EarliestSchedule());

@@ -142,7 +142,7 @@ private:
     void gatherFromCurrentThread(ConservativeRoots&, JITStubRoutineSet&, CodeBlockSet&, CurrentThreadState&);
 
     void tryCopyOtherThreadStack(Thread*, void*, size_t capacity, size_t*);
-    bool tryCopyOtherThreadStacks(LockHolder&, void*, size_t capacity, size_t*);
+    bool tryCopyOtherThreadStacks(const AbstractLocker&, void*, size_t capacity, size_t*);
 
     static void THREAD_SPECIFIC_CALL removeThread(void*);
 

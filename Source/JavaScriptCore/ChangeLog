@@ -1,3 +1,41 @@
+2017-03-09  Mark Lam  <mark.lam@apple.com>
+
+        Use const AbstractLocker& (instead of const LockHolder&) in more places.
+        https://bugs.webkit.org/show_bug.cgi?id=169424
+
+        Reviewed by Filip Pizlo.
+
+        * heap/CodeBlockSet.cpp:
+        (JSC::CodeBlockSet::promoteYoungCodeBlocks):
+        * heap/CodeBlockSet.h:
+        * heap/CodeBlockSetInlines.h:
+        (JSC::CodeBlockSet::mark):
+        * heap/ConservativeRoots.cpp:
+        (JSC::CompositeMarkHook::CompositeMarkHook):
+        * heap/MachineStackMarker.cpp:
+        (JSC::MachineThreads::tryCopyOtherThreadStacks):
+        * heap/MachineStackMarker.h:
+        * profiler/ProfilerDatabase.cpp:
+        (JSC::Profiler::Database::ensureBytecodesFor):
+        * profiler/ProfilerDatabase.h:
+        * runtime/SamplingProfiler.cpp:
+        (JSC::FrameWalker::FrameWalker):
+        (JSC::CFrameWalker::CFrameWalker):
+        (JSC::SamplingProfiler::createThreadIfNecessary):
+        (JSC::SamplingProfiler::takeSample):
+        (JSC::SamplingProfiler::start):
+        (JSC::SamplingProfiler::pause):
+        (JSC::SamplingProfiler::noticeCurrentThreadAsJSCExecutionThread):
+        (JSC::SamplingProfiler::clearData):
+        (JSC::SamplingProfiler::releaseStackTraces):
+        * runtime/SamplingProfiler.h:
+        (JSC::SamplingProfiler::setStopWatch):
+        * wasm/WasmMemory.cpp:
+        (JSC::Wasm::availableFastMemories):
+        (JSC::Wasm::activeFastMemories):
+        (JSC::Wasm::viewActiveFastMemories):
+        * wasm/WasmMemory.h:
+
 2017-03-09  Saam Barati  <sbarati@apple.com>
 
         WebAssembly: Make the Unity AngryBots demo run

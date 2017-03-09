@@ -166,15 +166,15 @@ public:
     Lock& getLock() { return m_lock; }
     void setTimingInterval(std::chrono::microseconds interval) { m_timingInterval = interval; }
     JS_EXPORT_PRIVATE void start();
-    void start(const LockHolder&);
-    Vector<StackTrace> releaseStackTraces(const LockHolder&);
+    void start(const AbstractLocker&);
+    Vector<StackTrace> releaseStackTraces(const AbstractLocker&);
     JS_EXPORT_PRIVATE String stackTracesAsJSON();
     JS_EXPORT_PRIVATE void noticeCurrentThreadAsJSCExecutionThread();
-    void noticeCurrentThreadAsJSCExecutionThread(const LockHolder&);
+    void noticeCurrentThreadAsJSCExecutionThread(const AbstractLocker&);
     void processUnverifiedStackTraces(); // You should call this only after acquiring the lock.
-    void setStopWatch(const LockHolder&, Ref<Stopwatch>&& stopwatch) { m_stopwatch = WTFMove(stopwatch); }
-    void pause(const LockHolder&);
-    void clearData(const LockHolder&);
+    void setStopWatch(const AbstractLocker&, Ref<Stopwatch>&& stopwatch) { m_stopwatch = WTFMove(stopwatch); }
+    void pause(const AbstractLocker&);
+    void clearData(const AbstractLocker&);
 
     // Used for debugging in the JSC shell/DRT.
     void registerForReportAtExit();
@@ -185,9 +185,9 @@ public:
     JS_EXPORT_PRIVATE void reportTopBytecodes(PrintStream&);
 
 private:
-    void createThreadIfNecessary(const LockHolder&);
+    void createThreadIfNecessary(const AbstractLocker&);
     void timerLoop();
-    void takeSample(const LockHolder&, std::chrono::microseconds& stackTraceProcessingTime);
+    void takeSample(const AbstractLocker&, std::chrono::microseconds& stackTraceProcessingTime);
 
     VM& m_vm;
     RefPtr<Stopwatch> m_stopwatch;

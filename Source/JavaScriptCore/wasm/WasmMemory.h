@@ -98,7 +98,7 @@ static_assert(sizeof(uint64_t) == sizeof(size_t), "We rely on allowing the maxim
 
 const size_t fastMemoryMappedBytes = (static_cast<size_t>(std::numeric_limits<uint32_t>::max()) + 1) * 2; // pointer max + offset max. This is all we need since a load straddling readable memory will trap.
 extern StaticLock memoryLock;
-const HashSet<void*>& viewActiveFastMemories(const LockHolder&);
+const HashSet<void*>& viewActiveFastMemories(const AbstractLocker&);
 
 } } // namespace JSC::Wasm
 

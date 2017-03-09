@@ -117,7 +117,7 @@ void ConservativeRoots::add(void* begin, void* end, JITStubRoutineSet& jitStubRo
 
 class CompositeMarkHook {
 public:
-    CompositeMarkHook(JITStubRoutineSet& stubRoutines, CodeBlockSet& codeBlocks, const LockHolder& locker)
+    CompositeMarkHook(JITStubRoutineSet& stubRoutines, CodeBlockSet& codeBlocks, const AbstractLocker& locker)
         : m_stubRoutines(stubRoutines)
         , m_codeBlocks(codeBlocks)
         , m_codeBlocksLocker(locker)
@@ -133,7 +133,7 @@ public:
 private:
     JITStubRoutineSet& m_stubRoutines;
     CodeBlockSet& m_codeBlocks;
-    const LockHolder& m_codeBlocksLocker;
+    const AbstractLocker& m_codeBlocksLocker;
 };
 
 void ConservativeRoots::add(

@@ -167,8 +167,8 @@ private:
     GRefPtr<GSource> m_source;
 #elif USE(GENERIC_EVENT_LOOP)
     void schedule(RefPtr<TimerBase::ScheduledTask>&&);
-    void schedule(const LockHolder&, RefPtr<TimerBase::ScheduledTask>&&);
-    void wakeUp(const LockHolder&);
+    void schedule(const AbstractLocker&, RefPtr<TimerBase::ScheduledTask>&&);
+    void wakeUp(const AbstractLocker&);
     void scheduleAndWakeUp(RefPtr<TimerBase::ScheduledTask>);
 
     enum class RunMode {

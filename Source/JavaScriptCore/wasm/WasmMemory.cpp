@@ -68,19 +68,19 @@ Memory::Mode Memory::lastAllocatedMode()
 static const unsigned maxFastMemories = 4;
 static unsigned allocatedFastMemories { 0 };
 StaticLock memoryLock;
-inline Deque<void*, maxFastMemories>& availableFastMemories(const LockHolder&)
+inline Deque<void*, maxFastMemories>& availableFastMemories(const AbstractLocker&)
 {
     static NeverDestroyed<Deque<void*, maxFastMemories>> availableFastMemories;
     return availableFastMemories;
 }
 
-inline HashSet<void*>& activeFastMemories(const LockHolder&)
+inline HashSet<void*>& activeFastMemories(const AbstractLocker&)
 {
     static NeverDestroyed<HashSet<void*>> activeFastMemories;
     return activeFastMemories;
 }
 
-const HashSet<void*>& viewActiveFastMemories(const LockHolder& locker)
+const HashSet<void*>& viewActiveFastMemories(const AbstractLocker& locker)
 {
     return activeFastMemories(locker);
 }

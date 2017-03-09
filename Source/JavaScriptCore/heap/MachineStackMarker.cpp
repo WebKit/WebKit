@@ -928,7 +928,7 @@ void MachineThreads::tryCopyOtherThreadStack(Thread* thread, void* buffer, size_
     thread->freeRegisters(registers);
 }
 
-bool MachineThreads::tryCopyOtherThreadStacks(LockHolder&, void* buffer, size_t capacity, size_t* size)
+bool MachineThreads::tryCopyOtherThreadStacks(const AbstractLocker&, void* buffer, size_t capacity, size_t* size)
 {
     // Prevent two VMs from suspending each other's threads at the same time,
     // which can cause deadlock: <rdar://problem/20300842>.

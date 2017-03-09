@@ -72,7 +72,7 @@ public:
     JS_EXPORT_PRIVATE void logEvent(CodeBlock* codeBlock, const char* summary, const CString& detail);
     
 private:
-    Bytecodes* ensureBytecodesFor(const LockHolder&, CodeBlock*);
+    Bytecodes* ensureBytecodesFor(const AbstractLocker&, CodeBlock*);
     
     void addDatabaseToAtExit();
     void removeDatabaseFromAtExit();
