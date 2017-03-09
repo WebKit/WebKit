@@ -94,3 +94,12 @@
 .sidebar > .panel.navigation.debugger .details-section.scripts:not(.collapsed) {
     border-bottom: none;
 }
+
+.sidebar > .panel.navigation.debugger .details-section.dom-breakpoints .item.dom-node .titles {
+    top: 3px;
+    font-family: Menlo, monospace;
+}
+
+.sidebar > .panel.navigation.debugger .details-section.dom-breakpoints .item.dom-node .icon {
+    content: url(../Images/DOMElement.svg);
+}

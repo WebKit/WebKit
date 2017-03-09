@@ -113,6 +113,19 @@ WebInspector.ContentView = class ContentView extends WebInspector.View
             return resultView;
         }
 
+        if (representedObject instanceof WebInspector.DOMNode) {
+            if (representedObject.frame) {
+                let resultView = WebInspector.ContentView.createFromRepresentedObject(representedObject.frame, extraArguments);
+                resultView.restoreFromCookie({nodeToSelect: representedObject});
+                return resultView;
+            }
+        }
+
+        if (representedObject instanceof WebInspector.DOMBreakpoint) {
+            if (representedObject.domNode)
+                return WebInspector.ContentView.createFromRepresentedObject(representedObject.domNode, extraArguments);
+        }
+
         if (representedObject instanceof WebInspector.SourceCodeSearchMatchObject) {
             var resultView;
             if (representedObject.sourceCode instanceof WebInspector.Resource)
@@ -194,6 +207,16 @@ WebInspector.ContentView = class ContentView extends WebInspector.View
         if (representedObject instanceof WebInspector.Breakpoint || representedObject instanceof WebInspector.IssueMessage) {
             if (representedObject.sourceCodeLocation)
                 return representedObject.sourceCodeLocation.displaySourceCode;
+        }
+
+        if (representedObject instanceof WebInspector.DOMBreakpoint) {
+            if (representedObject.domNode)
+                return WebInspector.ContentView.resolvedRepresentedObjectForRepresentedObject(representedObject.domNode);
+        }
+
+        if (representedObject instanceof WebInspector.DOMNode) {
+            if (representedObject.frame)
+                return WebInspector.ContentView.resolvedRepresentedObjectForRepresentedObject(representedObject.frame);
         }
 
         if (representedObject instanceof WebInspector.DOMSearchMatchObject)

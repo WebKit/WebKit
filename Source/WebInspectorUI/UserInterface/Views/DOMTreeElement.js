@@ -41,6 +41,7 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
             this._canAddAttributes = true;
         this._searchQuery = null;
         this._expandedChildrenLimit = WebInspector.DOMTreeElement.InitialChildrenLimit;
+        this._breakpointStatus = WebInspector.DOMTreeElement.BreakpointStatus.None;
 
         this._recentlyModifiedAttributes = [];
         this._boundNodeChangedAnimationEnd = this._nodeChangedAnimationEnd.bind(this);
@@ -63,6 +64,20 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
     }
 
     // Public
+
+    get breakpointStatus()
+    {
+        return this._breakpointStatus;
+    }
+
+    set breakpointStatus(status)
+    {
+        if (this._breakpointStatus === status)
+            return;
+
+        this._breakpointStatus = status;
+        this._updateBreakpointStatus();
+    }
 
     isCloseTag()
     {
@@ -744,6 +759,13 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
             contextMenu.appendSeparator();
             contextMenu.appendItem(WebInspector.UIString("Jump to Definition"), this._showCustomElementDefinition.bind(this));
         }
+
+        if (node.nodeType() === Node.ELEMENT_NODE) {
+            contextMenu.appendSeparator();
+
+            const allowEditing = false;
+            WebInspector.DOMBreakpointTreeController.appendBreakpointContextMenuItems(contextMenu, node, allowEditing);
+        }
     }
 
     _startEditing()
@@ -1146,6 +1168,7 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
         this._selectionElement = null;
         this.updateSelectionArea();
         this._highlightSearchResults();
+        this._updateBreakpointStatus();
     }
 
     _buildAttributeDOM(parentElement, name, value, node)
@@ -1642,6 +1665,39 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
         if (event.type === "dragstart" && this._editing)
             event.preventDefault();
     }
+
+    _updateBreakpointStatus()
+    {
+        let listItemElement = this.listItemElement;
+        if (!listItemElement)
+            return;
+
+        if (this._breakpointStatus === WebInspector.DOMTreeElement.BreakpointStatus.None) {
+            if (this._statusImageElement)
+                this._statusImageElement.remove();
+            return;
+        }
+
+        if (!this._statusImageElement) {
+            this._statusImageElement = useSVGSymbol("Images/DOMBreakpoint.svg", "status-image");
+            this._statusImageElement.classList.add("breakpoint");
+            this._statusImageElement.addEventListener("contextmenu", this._statusImageContextmenu.bind(this));
+            this._statusImageElement.addEventListener("mousedown", (event) => { event.stopPropagation(); });
+        }
+
+        this.listItemElement.insertBefore(this._statusImageElement, this.listItemElement.firstChild);
+
+        let disabled = this._breakpointStatus === WebInspector.DOMTreeElement.BreakpointStatus.DisabledBreakpoint;
+        this._statusImageElement.classList.toggle("disabled", disabled);
+    }
+
+    _statusImageContextmenu(event)
+    {
+        const allowEditing = true;
+
+        let contextMenu = WebInspector.ContextMenu.createFromEvent(event);
+        WebInspector.DOMBreakpointTreeController.appendBreakpointContextMenuItems(contextMenu, this.representedObject, allowEditing);
+    }
 };
 
 WebInspector.DOMTreeElement.InitialChildrenLimit = 500;
@@ -1662,6 +1718,12 @@ WebInspector.DOMTreeElement.EditTagBlacklist = [
 
 WebInspector.DOMTreeElement.ChangeType = {
     Attribute: "dom-tree-element-change-type-attribute"
+};
+
+WebInspector.DOMTreeElement.BreakpointStatus = {
+    None: Symbol("none"),
+    Breakpoint: Symbol("breakpoint"),
+    DisabledBreakpoint: Symbol("disabled-breakpoint"),
 };
 
 WebInspector.DOMTreeElement.SearchHighlightStyleClassName = "search-highlight";

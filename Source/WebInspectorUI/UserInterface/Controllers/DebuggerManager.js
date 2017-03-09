@@ -807,6 +807,8 @@ WebInspector.DebuggerManager = class DebuggerManager extends WebInspector.Object
             return WebInspector.DebuggerManager.PauseReason.Breakpoint;
         case DebuggerAgent.PausedReason.CSPViolation:
             return WebInspector.DebuggerManager.PauseReason.CSPViolation;
+        case DebuggerAgent.PausedReason.DOM:
+            return WebInspector.DebuggerManager.PauseReason.DOM;
         case DebuggerAgent.PausedReason.DebuggerStatement:
             return WebInspector.DebuggerManager.PauseReason.DebuggerStatement;
         case DebuggerAgent.PausedReason.Exception:
@@ -1223,6 +1225,7 @@ WebInspector.DebuggerManager.PauseReason = {
     Breakpoint: "breakpoint",
     CSPViolation: "CSP-violation",
     DebuggerStatement: "debugger-statement",
+    DOM: "DOM",
     Exception: "exception",
     PauseOnNextStatement: "pause-on-next-statement",
     Other: "other",

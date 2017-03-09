@@ -75,6 +75,7 @@ public:
     void willModifyDOMAttr(Element&);
     void willSendXMLHttpRequest(const String& url);
     void pauseOnNativeEventIfNeeded(bool isDOMEvent, const String& eventName, bool synchronous);
+    void mainFrameDOMContentLoaded();
 
     void didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*) override;
     void willDestroyFrontendAndBackend(Inspector::DisconnectReason) override;
@@ -92,8 +93,6 @@ private:
     void discardBindings();
     void setBreakpoint(ErrorString&, const String& eventName);
     void removeBreakpoint(ErrorString&, const String& eventName);
-
-    void clear();
 
     RefPtr<Inspector::DOMDebuggerBackendDispatcher> m_backendDispatcher;
     InspectorDOMAgent* m_domAgent { nullptr };

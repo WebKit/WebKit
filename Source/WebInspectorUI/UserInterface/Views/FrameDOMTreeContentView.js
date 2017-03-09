@@ -69,6 +69,7 @@ WebInspector.FrameDOMTreeContentView = class FrameDOMTreeContentView extends Web
             return;
         }
 
+        this._restoreBreakpointsAfterUpdate();
         this._restoreSelectedNodeAfterUpdate(this._domTree.frame.url, rootDOMNode.body || rootDOMNode.documentElement || rootDOMNode.firstChild);
     }
 

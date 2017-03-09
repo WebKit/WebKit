@@ -1,3 +1,216 @@
+2017-03-08  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Add DOM breakpoints UI for node/subtree modification events
+        https://bugs.webkit.org/show_bug.cgi?id=168101
+
+        Reviewed by Joseph Pecoraro.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        New UI strings.
+
+        * UserInterface/Base/Main.js:
+        (WebInspector.loaded):
+        Add new manager.
+
+        * UserInterface/Controllers/DOMBreakpointTreeController.js: Added.
+        Handles messages from DOMDebuggerManager, and updates an associated
+        tree outline as DOM breakpoints are added and removed.
+        (WebInspector.DOMBreakpointTreeController):
+        (WebInspector.DOMBreakpointTreeController.appendBreakpointContextMenuItems):
+        (WebInspector.DOMBreakpointTreeController.prototype.disconnect):
+        (WebInspector.DOMBreakpointTreeController.prototype._addBreakpointTreeElement):
+        (WebInspector.DOMBreakpointTreeController.prototype._removeBreakpointTreeElement):
+        (WebInspector.DOMBreakpointTreeController.prototype._domBreakpointAdded):
+        (WebInspector.DOMBreakpointTreeController.prototype._domBreakpointRemoved):
+        (WebInspector.DOMBreakpointTreeController.prototype._domBreakpointResolvedStateDidChange):
+        (WebInspector.DOMBreakpointTreeController.prototype._mainResourceDidChange):
+
+        * UserInterface/Controllers/DOMDebuggerManager.js: Added.
+        New frontend manager for the DOMDebugger domain. A DOM breakpoint is
+        described by a location (URL and node path) and type. The manager keeps
+        all known DOM breakpoints in memory, and considers a breakpoint to be
+        "resolved" once its location is pushed to the frontend.
+
+        Breakpoints located within a child frame are still associated with the
+        main frame. Whenever a the main resource of a child frame changes, all
+        unresolved breakpoints associated with the main frame are speculatively
+        resolved.
+
+        (WebInspector.DOMDebuggerManager):
+        (WebInspector.DOMDebuggerManager.prototype.get supported):
+        (WebInspector.DOMDebuggerManager.prototype.get domBreakpoints):
+        (WebInspector.DOMDebuggerManager.prototype.domBreakpointsForNode):
+        (WebInspector.DOMDebuggerManager.prototype.addDOMBreakpoint):
+        (WebInspector.DOMDebuggerManager.prototype.removeDOMBreakpoint):
+        (WebInspector.DOMDebuggerManager.prototype._detachDOMBreakpoint):
+        (WebInspector.DOMDebuggerManager.prototype._detachBreakpointsForFrame):
+        (WebInspector.DOMDebuggerManager.prototype._speculativelyResolveBreakpoints):
+        (WebInspector.DOMDebuggerManager.prototype._resolveDOMBreakpoint):
+        (WebInspector.DOMDebuggerManager.prototype._updateDOMBreakpoint):
+        (WebInspector.DOMDebuggerManager.prototype._saveBreakpoints):
+        (WebInspector.DOMDebuggerManager.prototype._domBreakpointDisabledStateDidChange):
+        (WebInspector.DOMDebuggerManager.prototype._childFrameWasRemoved):
+        (WebInspector.DOMDebuggerManager.prototype._mainFrameDidChange):
+        (WebInspector.DOMDebuggerManager.prototype._mainResourceDidChange):
+        (WebInspector.DOMDebuggerManager.prototype._nodeInserted):
+        (WebInspector.DOMDebuggerManager.prototype._nodeRemoved):
+
+        * UserInterface/Controllers/DebuggerManager.js:
+        (WebInspector.DebuggerManager.prototype._pauseReasonFromPayload):
+        Plumbing for DOM breakpoint pause reason.
+
+        * UserInterface/Images/DOMBreakpoint.svg: Added.
+        New art. Visually very similar to a script breakpoint, with some
+        tweaks to make it suitable for display in the DOM tree gutter.
+
+        * UserInterface/Main.html:
+        New files.
+
+        * UserInterface/Models/DOMBreakpoint.js: Added.
+        New model class. DOM breakpoints are either associated with a DOM node
+        when created, or constructed from a cookie and resolved in the future.
+
+        (WebInspector.DOMBreakpoint):
+        (WebInspector.DOMBreakpoint.prototype.get type):
+        (WebInspector.DOMBreakpoint.prototype.get url):
+        (WebInspector.DOMBreakpoint.prototype.get path):
+        (WebInspector.DOMBreakpoint.prototype.get disabled):
+        (WebInspector.DOMBreakpoint.prototype.set disabled):
+        (WebInspector.DOMBreakpoint.prototype.get domNodeIdentifier):
+        (WebInspector.DOMBreakpoint.prototype.set domNodeIdentifier):
+        (WebInspector.DOMBreakpoint.prototype.get serializableInfo):
+        (WebInspector.DOMBreakpoint.prototype.saveIdentityToCookie):
+
+        * UserInterface/Protocol/Legacy/10.0/InspectorBackendCommands.js:
+        * UserInterface/Protocol/Legacy/10.3/InspectorBackendCommands.js:
+        * UserInterface/Protocol/Legacy/7.0/InspectorBackendCommands.js:
+        * UserInterface/Protocol/Legacy/8.0/InspectorBackendCommands.js:
+        * UserInterface/Protocol/Legacy/9.0/InspectorBackendCommands.js:
+        * UserInterface/Protocol/Legacy/9.3/InspectorBackendCommands.js:
+        The DOMDebugger should not be enabled for legacy backends, since legacy
+        backend support was never tested and may have issues.
+
+        * UserInterface/Test.html:
+        New files.
+
+        * UserInterface/Test/Test.js:
+        (WebInspector.loaded):
+        Add new manager.
+
+        * UserInterface/Views/ContentView.js:
+        (WebInspector.ContentView.createFromRepresentedObject):
+        (WebInspector.ContentView.resolvedRepresentedObjectForRepresentedObject):
+        Plumbing for additional represented object types. DOMNode is included
+        because the Debugger sidebar panel shows DOM breakpoint tree elements
+        as children of a DOM node tree element.
+
+        * UserInterface/Views/DOMBreakpointTreeElement.css: Added.
+        (.item.dom-breakpoint .icon):
+        (.item.dom-breakpoint.breakpoint-paused-icon .icon):
+        (.item.dom-breakpoint .status img):
+        (.item.dom-breakpoint .status > img.disabled):
+        Styles for "Pause Reason" and "DOM Breakpoints" sections.
+
+        * UserInterface/Views/DOMBreakpointTreeElement.js: Added.
+        Tree element class for DOM breakpoints. Includes a breakpoint status
+        element and context menu for delete/disable actions, similar to script
+        breakpoint tree elements.
+
+        (WebInspector.DOMBreakpointTreeElement):
+        (WebInspector.DOMBreakpointTreeElement.displayNameForType):
+        (WebInspector.DOMBreakpointTreeElement.prototype.onattach):
+        (WebInspector.DOMBreakpointTreeElement.prototype.ondetach):
+        (WebInspector.DOMBreakpointTreeElement.prototype.ondelete):
+        (WebInspector.DOMBreakpointTreeElement.prototype.onenter):
+        (WebInspector.DOMBreakpointTreeElement.prototype.onspace):
+        (WebInspector.DOMBreakpointTreeElement.prototype.populateContextMenu):
+        (WebInspector.DOMBreakpointTreeElement.prototype._statusImageElementClicked):
+        (WebInspector.DOMBreakpointTreeElement.prototype._statusImageElementFocused):
+        (WebInspector.DOMBreakpointTreeElement.prototype._statusImageElementMouseDown):
+        (WebInspector.DOMBreakpointTreeElement.prototype._toggleBreakpoint):
+        (WebInspector.DOMBreakpointTreeElement.prototype._updateStatus):
+
+        * UserInterface/Views/DOMNodeTreeElement.js: Added.
+        Tree element class for DOM nodes, which serves as a parent for DOM
+        breakpoint tree elements. Includes context menu for bulk delete/disable
+        of all child breakpoints.
+
+        (WebInspector.DOMNodeTreeElement):
+        (WebInspector.DOMNodeTreeElement.prototype.ondelete):
+        (WebInspector.DOMNodeTreeElement.prototype.populateContextMenu):
+
+        * UserInterface/Views/DOMTreeContentView.css:
+        Styles for DOM breakpoint gutter and breakpoint indicators, including
+        "left pointing" breakpoints for RTL mode.
+
+        (.content-view.dom-tree.show-gutter .tree-outline.dom):
+        (body[dir=ltr] .content-view.dom-tree.show-gutter .tree-outline.dom):
+        (body[dir=rtl] .content-view.dom-tree.show-gutter .tree-outline.dom):
+        (.content-view.dom-tree .tree-outline.dom li .status-image):
+        (body[dir=ltr] .content-view.dom-tree .tree-outline.dom li .status-image):
+        (body[dir=rtl] .content-view.dom-tree .tree-outline.dom li .status-image):
+        (.content-view.dom-tree .tree-outline.dom li .status-image.breakpoint):
+        (body:not(.window-inactive) .content-view.dom-tree .tree-outline.dom:focus li.selected .status-image.breakpoint):
+        (.content-view.dom-tree .tree-outline.dom li .status-image.breakpoint.disabled):
+        (.content-view.dom-tree .tree-outline.dom.breakpoints-disabled li .status-image.breakpoint):
+        (.content-view.dom-tree .tree-outline.dom.breakpoints-disabled li .status-image.breakpoint.disabled):
+
+        * UserInterface/Views/DOMTreeContentView.js:
+        Add support for DOM breakpoint gutter and breakpoint indicators.
+        Breakpoint indicator elements are part of the DOM tree element, and are
+        updated whenever there a breakpoint's disabled or resolved state changes.
+
+        (WebInspector.DOMTreeContentView):
+        (WebInspector.DOMTreeContentView.prototype.get breakpointGutterEnabled):
+        (WebInspector.DOMTreeContentView.prototype.set breakpointGutterEnabled):
+        (WebInspector.DOMTreeContentView.prototype.shown):
+        (WebInspector.DOMTreeContentView.prototype.closed):
+        (WebInspector.DOMTreeContentView.prototype._domTreeElementAdded):
+        (WebInspector.DOMTreeContentView.prototype._domBreakpointAddedOrRemoved):
+        (WebInspector.DOMTreeContentView.prototype._domBreakpointDisabledStateDidChange):
+        (WebInspector.DOMTreeContentView.prototype._domBreakpointResolvedStateDidChange):
+        (WebInspector.DOMTreeContentView.prototype._updateBreakpointStatus):
+        (WebInspector.DOMTreeContentView.prototype._restoreBreakpointsAfterUpdate):
+        (WebInspector.DOMTreeContentView.prototype._breakpointsEnabledDidChange):
+
+        * UserInterface/Views/DOMTreeElement.js:
+        Add support for breakpoint status element and content menu.
+        (WebInspector.DOMTreeElement):
+        (WebInspector.DOMTreeElement.prototype.get breakpointStatus):
+        (WebInspector.DOMTreeElement.prototype.set breakpointStatus):
+        (WebInspector.DOMTreeElement.prototype._populateNodeContextMenu):
+        (WebInspector.DOMTreeElement.prototype.updateTitle):
+        (WebInspector.DOMTreeElement.prototype._updateBreakpointStatus):
+        (WebInspector.DOMTreeElement.prototype._statusImageContextmenu):
+
+        * UserInterface/Views/DebuggerSidebarPanel.css:
+        (.sidebar > .panel.navigation.debugger .details-section.dom-breakpoints .item.dom-node .titles):
+        (.sidebar > .panel.navigation.debugger .details-section.dom-breakpoints .item.dom-node .icon):
+        Styles for DOM node tree elements.
+
+        * UserInterface/Views/DebuggerSidebarPanel.js:
+        Add new DOM Breakpoints section, and support for the "DOM" pause reason.
+
+        (WebInspector.DebuggerSidebarPanel):
+        (WebInspector.DebuggerSidebarPanel.prototype.closed):
+        (WebInspector.DebuggerSidebarPanel.prototype._updatePauseReasonSection):
+        (WebInspector.DebuggerSidebarPanel.prototype._domBreakpointAddedOrRemoved):
+
+        * UserInterface/Views/FrameDOMTreeContentView.js:
+        (WebInspector.FrameDOMTreeContentView.prototype._rootDOMNodeAvailable):
+        Restore DOM breakpoints once the root node is available.
+
+        * UserInterface/Views/Variables.css:
+        (:root):
+        Fill and stroke colors for resolved, unresolved, and disabled breakpoints.
+
+        * Versions/Inspector-iOS-10.0.json:
+        * Versions/Inspector-iOS-10.3.json:
+        * Versions/Inspector-iOS-7.0.json:
+        * Versions/Inspector-iOS-8.0.json:
+        * Versions/Inspector-iOS-9.0.json:
+        * Versions/Inspector-iOS-9.3.json:
+
 2017-03-08  Devin Rousso  <dcrousso+webkit@gmail.com>
 
         Web Inspector: RTL: table header columns and cells don't line up, dragging seems backwards

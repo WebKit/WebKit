@@ -225,9 +225,6 @@ private:
     int pushNodePathToFrontend(Node*);
     void pushChildNodesToFrontend(int nodeId, int depth = 1);
 
-    bool hasBreakpoint(Node*, int type);
-    void updateSubtreeBreakpoints(Node* root, uint32_t rootMask, bool value);
-
     Ref<Inspector::Protocol::DOM::Node> buildObjectForNode(Node*, int depth, NodeToIdMap*);
     Ref<Inspector::Protocol::Array<String>> buildArrayForElementAttributes(Element*);
     Ref<Inspector::Protocol::Array<Inspector::Protocol::DOM::Node>> buildArrayForContainerChildren(Node* container, int depth, NodeToIdMap* nodesMap);

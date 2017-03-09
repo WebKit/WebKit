@@ -1,0 +1,81 @@
+Tests for DOM breakpoints.
+
+
+== Running test suite: DOMBreakpoints
+-- Running test case: BasicBreakpoint
+PASS: Breakpoint added.
+PASS: Breakpoint should not be disabled.
+PASS: Breakpoint should have node identifier.
+PASS: Breakpoint URL should match document URL.
+-- Running test teardown.
+
+-- Running test case: BreakOnSubtreeModified
+PASS: Breakpoint added.
+PASS: Breakpoint should have expected type.
+Call DOM operation.
+PAUSED:
+PASS: Pause reason should be DOM.
+CALL STACK:
+0: [F] subtreeModifiedTest
+1: [P] Global Code
+-- Running test teardown.
+
+-- Running test case: BreakOnAttributeModified
+PASS: Breakpoint added.
+PASS: Breakpoint should have expected type.
+Call DOM operation.
+PAUSED:
+PASS: Pause reason should be DOM.
+CALL STACK:
+0: [F] attributeModifiedTest
+1: [P] Global Code
+-- Running test teardown.
+
+-- Running test case: BreakOnNodeRemoved
+PASS: Breakpoint added.
+PASS: Breakpoint should have expected type.
+Call DOM operation.
+PAUSED:
+PASS: Pause reason should be DOM.
+CALL STACK:
+0: [F] nodeRemovedTest
+1: [P] Global Code
+-- Running test teardown.
+
+-- Running test case: ShouldNotPauseOnDisabledBreakpoint
+PASS: Breakpoint added.
+Wait for evaluate in page to return.
+PASS: Should not pause for disabled breakpoint.
+-- Running test teardown.
+
+-- Running test case: RemoveBreakpoint
+PASS: Breakpoint added.
+Remove breakpoint.
+Wait for evaluate in page to return.
+PASS: Should not pause for removed breakpoint.
+-- Running test teardown.
+
+-- Running test case: SetBreakpointWithInvalidNodeId
+Attempting to set breakpoint.
+Protocol result: Could not find node with given id
+PASS: Protocol should return an error.
+-- Running test teardown.
+
+-- Running test case: SetBreakpointWithInvalidType
+Attempting to set breakpoint.
+Protocol result: Unknown DOM breakpoint type: custom-breakpoint-type
+PASS: Protocol should return an error.
+-- Running test teardown.
+
+-- Running test case: RemoveBreakpointWithInvalidNodeId
+Attempting to remove breakpoint.
+Protocol result: Could not find node with given id
+PASS: Protocol should return an error.
+-- Running test teardown.
+
+-- Running test case: RemoveBreakpointWithInvalidType
+Attempting to remove breakpoint.
+Protocol result: Unknown DOM breakpoint type: custom-breakpoint-type
+PASS: Protocol should return an error.
+-- Running test teardown.
+

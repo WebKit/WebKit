@@ -1,0 +1,290 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/log-active-stack-trace.js"></script>
+<script>
+function subtreeModifiedTest() {
+    document.getElementById("subtree-modified-test").append(document.createElement("p"));
+}
+
+function attributeModifiedTest() {
+    document.getElementById("attribute-modified-test").setAttribute("display", "none");
+}
+
+function nodeRemovedTest() {
+    let node = document.getElementById("node-removed-test");
+    let parent = node.parentNode;
+    node.remove();
+    parent.append(node);
+}
+
+function test()
+{
+    const subtreeModifiedTestId = "subtree-modified-test";
+    const attributeModifiedTestId = "attribute-modified-test";
+    const nodeRemovedTestId = "node-removed-test";
+
+    let suite = InspectorTest.createAsyncSuite("DOMBreakpoints");
+
+    function teardown(resolve) {
+        let breakpoints = WebInspector.domDebuggerManager.domBreakpoints;
+        for (let breakpoint of breakpoints)
+            WebInspector.domDebuggerManager.removeDOMBreakpoint(breakpoint);
+
+        resolve();
+    }
+
+    function awaitEvaluateInPage(expression) {
+        return new Promise((resolve, reject) => {
+            InspectorTest.log("Wait for evaluate in page to return.");
+            InspectorTest.evaluateInPage(expression, (error) => {
+                if (error)
+                    reject(error);
+
+                resolve();
+            });
+        });
+    }
+
+    function rejectOnPause() {
+        return new Promise((resolve, reject) => {
+            WebInspector.debuggerManager.awaitEvent(WebInspector.DebuggerManager.Event.Paused)
+            .then((event) => {
+                WebInspector.debuggerManager.resume();
+                InspectorTest.fail("Should not pause.");
+                reject();
+            });
+        });
+    }
+
+    function awaitQuerySelector(selector) {
+        return new Promise((resolve, reject) => {
+            WebInspector.domTreeManager.requestDocument((documentNode) => {
+                if (!documentNode) {
+                    reject();
+                    return;
+                }
+
+                WebInspector.domTreeManager.querySelector(documentNode.id, selector, (nodeId) => {
+                    if (!nodeId) {
+                        InspectorTest.fail("Selector returned no nodes.", selector);
+                        reject();
+                        return;
+                    }
+
+                    let node = WebInspector.domTreeManager.nodeForId(nodeId);
+                    InspectorTest.assert(node, "Missing node for id.", nodeId);
+                    if (!node) {
+                        reject();
+                        return;
+                    }
+
+                    resolve(node);
+                });
+            });
+        });
+    }
+
+    function addBreakpointForElementIdentifier(elementIdentifier, type, disabled) {
+        return new Promise((resolve, reject) => {
+            awaitQuerySelector("#" + elementIdentifier)
+            .then((node) => {
+                WebInspector.domDebuggerManager.awaitEvent(WebInspector.DOMDebuggerManager.Event.DOMBreakpointAdded)
+                .then((event) => {
+                    let breakpoint = event.data.breakpoint;
+                    InspectorTest.pass("Breakpoint added.");
+                    resolve(event);
+                });
+
+                WebInspector.domDebuggerManager.addDOMBreakpoint(new WebInspector.DOMBreakpoint(node, type, disabled));
+            });
+        });
+    }
+
+    function addSimpleTestCase({name, elementIdentifier, type, expression}) {
+        suite.addTestCase({
+            name: `BreakOn${name}`,
+            description: "Check that debugger pauses for breakpoint type.",
+            teardown,
+            test(resolve, reject) {
+                addBreakpointForElementIdentifier(elementIdentifier, type)
+                .then((event) => {
+                    let breakpoint = event.data.breakpoint;
+                    InspectorTest.expectEqual(breakpoint.type, type, "Breakpoint should have expected type.");
+
+                    InspectorTest.log("Call DOM operation.");
+                    InspectorTest.evaluateInPage(expression);
+                    return WebInspector.debuggerManager.awaitEvent(WebInspector.DebuggerManager.Event.Paused);
+                })
+                .then(() => {
+                    let targetData = WebInspector.debuggerManager.dataForTarget(WebInspector.debuggerManager.activeCallFrame.target);
+                    InspectorTest.log("PAUSED:");
+                    InspectorTest.expectEqual(targetData.pauseReason, WebInspector.DebuggerManager.PauseReason.DOM, "Pause reason should be DOM.");
+                    logActiveStackTrace();
+
+                    return WebInspector.debuggerManager.resume();
+                })
+                .then(resolve, reject);
+            }
+        });
+    }
+
+    suite.addTestCase({
+        name: "BasicBreakpoint",
+        description: "Check that breakpoint is in a valid initial state.",
+        teardown,
+        test(resolve, reject) {
+            addBreakpointForElementIdentifier(subtreeModifiedTestId, WebInspector.DOMBreakpoint.Type.SubtreeModified)
+            .then((event) => {
+                let breakpoint = event.data.breakpoint;
+                InspectorTest.expectFalse(breakpoint.disabled, "Breakpoint should not be disabled.");
+                InspectorTest.expectThat(breakpoint.domNodeIdentifier, "Breakpoint should have node identifier.");
+
+                InspectorTest.assert(WebInspector.frameResourceManager.mainFrame, "Missing main frame.");
+                let documentURL = WebInspector.frameResourceManager.mainFrame.url;
+                InspectorTest.expectEqual(breakpoint.url, documentURL, "Breakpoint URL should match document URL.");
+            })
+            .then(resolve, reject);
+        }
+    });
+
+    addSimpleTestCase({
+        name: "SubtreeModified",
+        elementIdentifier: subtreeModifiedTestId,
+        type: WebInspector.DOMBreakpoint.Type.SubtreeModified,
+        expression: "subtreeModifiedTest()",
+    });
+
+    addSimpleTestCase({
+        name: "AttributeModified",
+        elementIdentifier: attributeModifiedTestId,
+        type: WebInspector.DOMBreakpoint.Type.AttributeModified,
+        expression: "attributeModifiedTest()",
+    });
+
+    addSimpleTestCase({
+        name: "NodeRemoved",
+        elementIdentifier: nodeRemovedTestId,
+        type: WebInspector.DOMBreakpoint.Type.NodeRemoved,
+        expression: "nodeRemovedTest()",
+    });
+
+    suite.addTestCase({
+        name: "ShouldNotPauseOnDisabledBreakpoint",
+        description: "Check that debugger does not pause for disabled breakpoint.",
+        teardown,
+        test(resolve, reject) {
+            const disabled = true;
+            addBreakpointForElementIdentifier(subtreeModifiedTestId, WebInspector.DOMBreakpoint.Type.SubtreeModified, disabled)
+            .then(() => Promise.race([awaitEvaluateInPage("modifySubtreeTest()"), rejectOnPause()]))
+            .then(() => {
+                InspectorTest.pass("Should not pause for disabled breakpoint.");
+                resolve();
+            })
+            .catch(reject);
+        }
+    });
+
+    suite.addTestCase({
+        name: "RemoveBreakpoint",
+        description: "Check that debugger does not pause for removed breakpoint.",
+        teardown,
+        test(resolve, reject) {
+            addBreakpointForElementIdentifier(subtreeModifiedTestId, WebInspector.DOMBreakpoint.Type.SubtreeModified)
+            .then((event) => {
+                let promise = WebInspector.domDebuggerManager.awaitEvent(WebInspector.DOMDebuggerManager.Event.DOMBreakpointRemoved);
+                let breakpoint = event.data.breakpoint;
+
+                InspectorTest.log("Remove breakpoint.");
+                WebInspector.domDebuggerManager.removeDOMBreakpoint(breakpoint);
+                return promise;
+            })
+            .then(() => Promise.race([awaitEvaluateInPage("modifySubtreeTest()"), rejectOnPause()]))
+            .then(() => {
+                InspectorTest.pass("Should not pause for removed breakpoint.");
+                resolve();
+            })
+            .catch(reject);
+        }
+    });
+
+    suite.addTestCase({
+        name: "SetBreakpointWithInvalidNodeId",
+        description: "Check that setting a breakpoint for a nonexistant node returns an error.",
+        teardown,
+        test(resolve, reject) {
+            InspectorTest.log("Attempting to set breakpoint.");
+
+            DOMDebuggerAgent.setDOMBreakpoint(0, WebInspector.DOMBreakpoint.Type.SubtreeModified, (error) => {
+                InspectorTest.log("Protocol result: " + error);
+                InspectorTest.expectThat(error, "Protocol should return an error.")
+                resolve();
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "SetBreakpointWithInvalidType",
+        description: "Check that setting a breakpoint with an invalid type returns an error.",
+        teardown,
+        test(resolve, reject) {
+            awaitQuerySelector("body")
+            .then((node) => {
+                InspectorTest.log("Attempting to set breakpoint.");
+
+                DOMDebuggerAgent.setDOMBreakpoint(node.id, "custom-breakpoint-type", (error) => {
+                    InspectorTest.log("Protocol result: " + error);
+                    InspectorTest.expectThat(error, "Protocol should return an error.")
+                    resolve();
+                });
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "RemoveBreakpointWithInvalidNodeId",
+        description: "Check that removing a breakpoint for a nonexistant node returns an error.",
+        teardown,
+        test(resolve, reject) {
+            InspectorTest.log("Attempting to remove breakpoint.");
+
+            DOMDebuggerAgent.removeDOMBreakpoint(0, WebInspector.DOMBreakpoint.Type.SubtreeModified, (error) => {
+                InspectorTest.log("Protocol result: " + error);
+                InspectorTest.expectThat(error, "Protocol should return an error.")
+                resolve();
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "RemoveBreakpointWithInvalidType",
+        description: "Check that removing a breakpoint with an invalid type returns an error.",
+        teardown,
+        test(resolve, reject) {
+            awaitQuerySelector("body")
+            .then((node) => {
+                InspectorTest.log("Attempting to remove breakpoint.");
+
+                DOMDebuggerAgent.removeDOMBreakpoint(node.id, "custom-breakpoint-type", (error) => {
+                    InspectorTest.log("Protocol result: " + error);
+                    InspectorTest.expectThat(error, "Protocol should return an error.")
+                    resolve();
+                });
+            });
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests for DOM breakpoints.</p>
+<div id="test-container" style="display: none">
+    <div id="subtree-modified-test"></div>
+    <div id="attribute-modified-test"></div>
+    <div id="node-removed-test"></div>
+</div>
+</body>
+</html>

@@ -135,6 +135,7 @@ WebInspector.loaded = function()
     this.probeManager = new WebInspector.ProbeManager;
     this.workerManager = new WebInspector.WorkerManager;
     this.replayManager = new WebInspector.ReplayManager;
+    this.domDebuggerManager = new WebInspector.DOMDebuggerManager;
 
     // Enable the Console Agent after creating the singleton managers.
     ConsoleAgent.enable();

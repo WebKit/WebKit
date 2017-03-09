@@ -1,3 +1,16 @@
+2017-03-08  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Add DOM breakpoints UI for node/subtree modification events
+        https://bugs.webkit.org/show_bug.cgi?id=168101
+
+        Reviewed by Joseph Pecoraro.
+
+        Tests for pausing on supported DOM breakpoint types, and DOMDebuggerManager
+        events triggered by added/removed DOM nodes that have breakpoints.
+
+        * inspector/dom-debugger/dom-breakpoints-expected.txt: Added.
+        * inspector/dom-debugger/dom-breakpoints.html: Added.
+
 2017-03-08  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebCrypto] Implement ECDH DeriveBits operation

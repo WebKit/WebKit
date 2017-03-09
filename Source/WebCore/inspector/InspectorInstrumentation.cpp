@@ -667,6 +667,9 @@ void InspectorInstrumentation::domContentLoadedEventFiredImpl(InstrumentingAgent
     if (InspectorDOMAgent* domAgent = instrumentingAgents.inspectorDOMAgent())
         domAgent->mainFrameDOMContentLoaded();
 
+    if (InspectorDOMDebuggerAgent* domDebuggerAgent = instrumentingAgents.inspectorDOMDebuggerAgent())
+        domDebuggerAgent->mainFrameDOMContentLoaded();
+
     if (InspectorPageAgent* pageAgent = instrumentingAgents.inspectorPageAgent())
         pageAgent->domContentEventFired();
 }
