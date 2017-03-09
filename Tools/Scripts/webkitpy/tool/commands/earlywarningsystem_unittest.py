@@ -152,3 +152,25 @@ Running: webkit-patch --status-host=example.com build --no-clean --no-update --b
         test_classes = filter(lambda x: x.run_tests and x.group == "jsc", classes)
         for ews_class in test_classes:
             self._test_ews(ews_class(), False)
+
+    def test_ews_name(self):
+        # These are the names EWS's infrastructure expects, check that they work
+        expected_names = {
+            'gtk-wk2-ews',
+            'win-ews',
+            'ios-ews',
+            'ios-sim-ews',
+            'mac-ews',
+            'mac-wk2-ews',
+            'mac-debug-ews',
+            'mac-32bit-ews',
+            'jsc-ews',
+        }
+        classes = AbstractEarlyWarningSystem.load_ews_classes()
+        names = {cls.name for cls in classes}
+        missing_names = expected_names - names
+        unexpected_names = names - expected_names
+        if missing_names:
+            raise AssertionError("'{}' is not a valid EWS command but is used by EWS's infrastructure".format(missing_names.pop()))
+        if unexpected_names:
+            raise AssertionError("'{}' is a valid EWS command but is not used by EWS's infrastructure".format(unexpected_names.pop()))
