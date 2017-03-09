@@ -1,3 +1,24 @@
+2017-03-09  Chris Dumez  <cdumez@apple.com>
+
+        [WK2] Prevent app nap for the active tab
+        https://bugs.webkit.org/show_bug.cgi?id=169417
+        <rdar://problem/30876965>
+
+        Reviewed by Gavin Barraclough.
+
+        Prevent app nap for the active tab to minimize the risks of breakage.
+
+        From the AppNap documentation [1], the app is only a candidate for app nap if it not the
+        foreground app. However, in the Safari case, the foreground app is Safari (UIProcess) and
+        the same policy does not apply to our foreground WebContent process unless we explicitly
+        make it so. This patch addresses the issue by taking a UserActivity when the tab is
+        active to prevent app nap.
+
+        [1] https://developer.apple.com/library/content/documentation/Performance/Conceptual/power_efficiency_guidelines_osx/AppNap.html
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updateThrottleState):
+
 2017-03-08  Anders Carlsson  <andersca@apple.com>
 
         Add new delegate methods
