@@ -1,3 +1,15 @@
+2017-03-08  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Add helpers to run Six Speed to run-jsc-benchmarks
+        https://bugs.webkit.org/show_bug.cgi?id=169351
+
+        Reviewed by Saam Barati.
+
+        * SixSpeed/wrappers/wrapper.js: Added.
+        (assertEqual):
+        (test):
+        (jscRun):
+
 2017-03-08  Jon Davis  <jond@apple.com>
 
         Fixed ARES-6 animations for other browsers

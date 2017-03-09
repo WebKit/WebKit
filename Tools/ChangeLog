@@ -1,3 +1,20 @@
+2017-03-08  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Add helpers to run Six Speed to run-jsc-benchmarks
+        https://bugs.webkit.org/show_bug.cgi?id=169351
+
+        Reviewed by Saam Barati.
+
+        This patch adds an ability to run six-speed microbenchmarks
+        from run-jsc-benchmarks by specifying six-speed directory in
+        arewefastyet repository.
+
+        While it is a collection of microbenchmarks, it is useful
+        to ensure that our ES6 optimization covers major use cases.
+        For the macrobenchmark, we already have ARES-6.
+
+        * Scripts/run-jsc-benchmarks:
+
 2017-03-08  Sam Weinig  <sam@webkit.org>
 
         import-w3c-tests doesn't work with svn repositories.
