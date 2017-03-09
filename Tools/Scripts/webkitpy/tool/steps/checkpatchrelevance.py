@@ -77,5 +77,5 @@ class CheckPatchRelevance(AbstractStep):
         if self._changes_are_relevant(change_list):
             return True
 
-        _log.info("This patch does not have relevant changes.")
+        _log.debug("This patch does not have relevant changes.")
         raise ScriptError(message="This patch does not have relevant changes.")

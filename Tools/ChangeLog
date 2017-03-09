@@ -1,3 +1,13 @@
+2017-03-09  Srinivasan Vijayaraghavan  <svijayaraghavan@apple.com>
+
+        JSC EWS repeat the log message thrice about patch not being relevant
+        https://bugs.webkit.org/show_bug.cgi?id=169330
+
+        Reviewed by Chris Dumez.
+
+        * Scripts/webkitpy/tool/steps/checkpatchrelevance.py:
+        (CheckPatchRelevance.run): Change log level to 'debug' to reduce stdout traffic.
+
 2017-03-08  Matt Rajca  <mrajca@apple.com>
 
         Let clients control autoplay quirks with website policies.
