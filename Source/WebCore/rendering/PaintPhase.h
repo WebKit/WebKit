@@ -63,6 +63,7 @@ enum PaintBehaviorFlags {
     PaintBehaviorSkipRootBackground          = 1 << 6,
     PaintBehaviorRootBackgroundOnly          = 1 << 7,
     PaintBehaviorSelectionAndBackgroundsOnly = 1 << 8,
+    PaintBehaviorExcludeSelection            = 1 << 9,
 };
 
 typedef unsigned PaintBehavior;

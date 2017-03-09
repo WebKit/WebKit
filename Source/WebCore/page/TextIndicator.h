@@ -49,7 +49,7 @@ enum class TextIndicatorPresentationTransition {
 };
 
 // Make sure to keep these in sync with the ones in Internals.idl.
-enum TextIndicatorOption : uint8_t {
+enum TextIndicatorOption : uint16_t {
     TextIndicatorOptionDefault = 0,
 
     // Use the styled text color instead of forcing black text (the default)
@@ -80,15 +80,20 @@ enum TextIndicatorOption : uint8_t {
     // By default, TextIndicator clips the indicated rects to the visible content rect.
     // If this option is set, do not clip the indicated rects.
     TextIndicatorOptionDoNotClipToVisibleRect = 1 << 7,
+
+    // Include an additional snapshot of everything in view, with the exception of nodes within the currently selected range.
+    TextIndicatorOptionIncludeSnapshotOfAllVisibleContentWithoutSelection = 1 << 8,
 };
-typedef uint8_t TextIndicatorOptions;
+typedef uint16_t TextIndicatorOptions;
 
 struct TextIndicatorData {
     FloatRect selectionRectInRootViewCoordinates;
     FloatRect textBoundingRectInRootViewCoordinates;
+    FloatRect contentImageWithoutSelectionRectInRootViewCoordinates;
     Vector<FloatRect> textRectsInBoundingRectCoordinates;
     float contentImageScaleFactor;
     RefPtr<Image> contentImageWithHighlight;
+    RefPtr<Image> contentImageWithoutSelection;
     RefPtr<Image> contentImage;
     TextIndicatorPresentationTransition presentationTransition;
     TextIndicatorOptions options;

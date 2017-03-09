@@ -474,10 +474,11 @@ void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
 
     bool paintSelectedTextOnly = false;
     bool paintSelectedTextSeparately = false;
+    bool paintNonSelectedTextOnly = false;
     const ShadowData* selectionShadow = nullptr;
     
     // Text with custom underlines does not have selection background painted, so selection paint style is not appropriate for it.
-    TextPaintStyle selectionPaintStyle = haveSelection && !useCustomUnderlines ? computeTextSelectionPaintStyle(textPaintStyle, renderer(), lineStyle, paintInfo, paintSelectedTextOnly, paintSelectedTextSeparately, selectionShadow) : textPaintStyle;
+    TextPaintStyle selectionPaintStyle = haveSelection && !useCustomUnderlines ? computeTextSelectionPaintStyle(textPaintStyle, renderer(), lineStyle, paintInfo, paintSelectedTextOnly, paintSelectedTextSeparately, paintNonSelectedTextOnly, selectionShadow) : textPaintStyle;
 
     // Set our font.
     const FontCascade& font = fontToUse(lineStyle, renderer());
@@ -551,12 +552,32 @@ void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
     textPainter.addTextShadow(textShadow, selectionShadow);
     textPainter.addEmphasis(emphasisMark, emphasisMarkOffset, combinedText);
 
-    textPainter.paintText(textRun, length, boxRect, textOrigin, selectionStart, selectionEnd, paintSelectedTextOnly, paintSelectedTextSeparately);
+    textPainter.paintText(textRun, length, boxRect, textOrigin, selectionStart, selectionEnd, paintSelectedTextOnly, paintSelectedTextSeparately, paintNonSelectedTextOnly);
 
     // Paint decorations
     TextDecoration textDecorations = lineStyle.textDecorationsInEffect();
-    if (textDecorations != TextDecorationNone && paintInfo.phase != PaintPhaseSelection)
-        paintDecoration(context, font, combinedText, textRun, textOrigin, boxRect, textDecorations, textPaintStyle, textShadow);
+    if (textDecorations != TextDecorationNone && paintInfo.phase != PaintPhaseSelection) {
+        FloatRect textDecorationSelectionClipOutRect;
+        if ((paintInfo.paintBehavior & PaintBehaviorExcludeSelection) && selectionStart < selectionEnd && selectionEnd <= length) {
+            textDecorationSelectionClipOutRect = logicalOverflowRect();
+            textDecorationSelectionClipOutRect.moveBy(localPaintOffset);
+            float logicalWidthBeforeRange;
+            float logicalWidthAfterRange;
+            float logicalSelectionWidth = font.widthOfTextRange(textRun, selectionStart, selectionEnd, nullptr, &logicalWidthBeforeRange, &logicalWidthAfterRange);
+            // FIXME: Do we need to handle vertical bottom to top text?
+            if (!isHorizontal()) {
+                textDecorationSelectionClipOutRect.move(0, logicalWidthBeforeRange);
+                textDecorationSelectionClipOutRect.setHeight(logicalSelectionWidth);
+            } else if (direction() == RTL) {
+                textDecorationSelectionClipOutRect.move(logicalWidthAfterRange, 0);
+                textDecorationSelectionClipOutRect.setWidth(logicalSelectionWidth);
+            } else {
+                textDecorationSelectionClipOutRect.move(logicalWidthBeforeRange, 0);
+                textDecorationSelectionClipOutRect.setWidth(logicalSelectionWidth);
+            }
+        }
+        paintDecoration(context, font, combinedText, textRun, textOrigin, boxRect, textDecorations, textPaintStyle, textShadow, textDecorationSelectionClipOutRect);
+    }
 
     if (paintInfo.phase == PaintPhaseForeground) {
         paintDocumentMarkers(context, boxOrigin, lineStyle, font, false);
@@ -695,7 +716,7 @@ static inline void mirrorRTLSegment(float logicalWidth, TextDirection direction,
 }
 
 void InlineTextBox::paintDecoration(GraphicsContext& context, const FontCascade& font, RenderCombineText* combinedText, const TextRun& textRun, const FloatPoint& textOrigin,
-    const FloatRect& boxRect, TextDecoration decoration, TextPaintStyle textPaintStyle, const ShadowData* shadow)
+    const FloatRect& boxRect, TextDecoration decoration, TextPaintStyle textPaintStyle, const ShadowData* shadow, const FloatRect& clipOutRect)
 {
     if (m_truncation == cFullTruncation)
         return;
@@ -721,7 +742,16 @@ void InlineTextBox::paintDecoration(GraphicsContext& context, const FontCascade&
 
     FloatPoint localOrigin = boxRect.location();
     localOrigin.move(start, 0);
+
+    if (!clipOutRect.isEmpty()) {
+        context.save();
+        context.clipOut(clipOutRect);
+    }
+
     decorationPainter.paintTextDecoration(textRun, textOrigin, localOrigin);
+
+    if (!clipOutRect.isEmpty())
+        context.restore();
 
     if (combinedText)
         context.concatCTM(rotation(boxRect, Counterclockwise));

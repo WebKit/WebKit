@@ -170,7 +170,7 @@ void TextPainter::paintTextAndEmphasisMarksIfNeeded(const TextRun& textRun, cons
 }
     
 void TextPainter::paintText(const TextRun& textRun, unsigned length, const FloatRect& boxRect, const FloatPoint& textOrigin, unsigned selectionStart, unsigned selectionEnd,
-    bool paintSelectedTextOnly, bool paintSelectedTextSeparately)
+    bool paintSelectedTextOnly, bool paintSelectedTextSeparately, bool paintNonSelectedTextOnly)
 {
     ASSERT(m_font);
     if (!paintSelectedTextOnly) {
@@ -189,6 +189,10 @@ void TextPainter::paintText(const TextRun& textRun, unsigned length, const Float
                 paintTextAndEmphasisMarksIfNeeded(textRun, boxRect, textOrigin, selectionEnd, length, m_textPaintStyle, m_textShadow);
         }
     }
+
+    if (paintNonSelectedTextOnly)
+        return;
+
     // Paint only the text that is selected.
     if ((paintSelectedTextOnly || paintSelectedTextSeparately) && selectionStart < selectionEnd) {
         GraphicsContextStateSaver stateSaver(m_context, m_selectionPaintStyle.strokeWidth > 0);

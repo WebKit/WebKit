@@ -25,6 +25,7 @@
 #include "FontCascade.h"
 
 #include "CharacterProperties.h"
+#include "ComplexTextController.h"
 #include "FloatRect.h"
 #include "FontCache.h"
 #include "GlyphBuffer.h"
@@ -346,6 +347,43 @@ void FontCascade::drawEmphasisMarks(GraphicsContext& context, const TextRun& run
         drawEmphasisMarksForSimpleText(context, run, mark, point, from, destination);
     else
         drawEmphasisMarksForComplexText(context, run, mark, point, from, destination);
+}
+
+float FontCascade::widthOfTextRange(const TextRun& run, unsigned from, unsigned to, HashSet<const Font*>* fallbackFonts, float* outWidthBeforeRange, float* outWidthAfterRange) const
+{
+    ASSERT(from <= to);
+    ASSERT(to <= run.length());
+
+    float offsetBeforeRange = 0;
+    float offsetAfterRange = 0;
+    float totalWidth = 0;
+
+    auto codePathToUse = codePath(run);
+    if (codePathToUse == Complex) {
+        ComplexTextController complexIterator(*this, run, false, fallbackFonts);
+        complexIterator.advance(from, nullptr, IncludePartialGlyphs, fallbackFonts);
+        offsetBeforeRange = complexIterator.runWidthSoFar();
+        complexIterator.advance(to, nullptr, IncludePartialGlyphs, fallbackFonts);
+        offsetAfterRange = complexIterator.runWidthSoFar();
+        complexIterator.advance(run.length(), nullptr, IncludePartialGlyphs, fallbackFonts);
+        totalWidth = complexIterator.runWidthSoFar();
+    } else {
+        WidthIterator simpleIterator(this, run, fallbackFonts);
+        simpleIterator.advance(from, nullptr);
+        offsetBeforeRange = simpleIterator.runWidthSoFar();
+        simpleIterator.advance(to, nullptr);
+        offsetAfterRange = simpleIterator.runWidthSoFar();
+        simpleIterator.advance(run.length(), nullptr);
+        totalWidth = simpleIterator.runWidthSoFar();
+    }
+
+    if (outWidthBeforeRange)
+        *outWidthBeforeRange = offsetBeforeRange;
+
+    if (outWidthAfterRange)
+        *outWidthAfterRange = totalWidth - offsetAfterRange;
+
+    return offsetAfterRange - offsetBeforeRange;
 }
 
 float FontCascade::width(const TextRun& run, HashSet<const Font*>* fallbackFonts, GlyphOverflow* glyphOverflow) const

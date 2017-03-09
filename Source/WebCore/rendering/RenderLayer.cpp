@@ -4375,6 +4375,9 @@ void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPainti
         else if (localPaintFlags & PaintLayerPaintingRootBackgroundOnly)
             paintBehavior |= PaintBehaviorRootBackgroundOnly;
 
+        if (paintingInfo.paintBehavior & PaintBehaviorExcludeSelection)
+            paintBehavior |= PaintBehaviorExcludeSelection;
+
         LayoutRect paintDirtyRect = localPaintingInfo.paintDirtyRect;
         if (shouldPaintContent || shouldPaintOutline || isPaintingOverlayScrollbars) {
             // Collect the fragments. This will compute the clip rectangles and paint offsets for each layer fragment, as well as whether or not the content of each
@@ -4770,6 +4773,9 @@ void RenderLayer::paintForegroundForFragments(const LayerFragments& layerFragmen
         localPaintBehavior = PaintBehaviorForceWhiteText;
     else
         localPaintBehavior = paintBehavior;
+
+    if (localPaintingInfo.paintBehavior & PaintBehaviorExcludeSelection)
+        localPaintBehavior |= PaintBehaviorExcludeSelection;
 
     // Optimize clipping for the single fragment case.
     bool shouldClip = localPaintingInfo.clipToDirtyRect && layerFragments.size() == 1 && layerFragments[0].shouldPaintContent && !layerFragments[0].foregroundRect.isEmpty();

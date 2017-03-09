@@ -73,7 +73,7 @@ std::unique_ptr<ImageBuffer> snapshotFrameRect(Frame& frame, const IntRect& imag
     return snapshotFrameRectWithClip(frame, imageRect, clipRects, options);
 }
 
-std::unique_ptr<ImageBuffer> snapshotFrameRectWithClip(Frame& frame, const IntRect& imageRect, Vector<FloatRect>& clipRects, SnapshotOptions options)
+std::unique_ptr<ImageBuffer> snapshotFrameRectWithClip(Frame& frame, const IntRect& imageRect, const Vector<FloatRect>& clipRects, SnapshotOptions options)
 {
     if (!frame.page())
         return nullptr;
@@ -97,6 +97,8 @@ std::unique_ptr<ImageBuffer> snapshotFrameRectWithClip(Frame& frame, const IntRe
         paintBehavior |= PaintBehaviorSelectionOnly;
     if (options & SnapshotOptionsPaintSelectionAndBackgroundsOnly)
         paintBehavior |= PaintBehaviorSelectionAndBackgroundsOnly;
+    if (options & SnapshotOptionsPaintEverythingExcludingSelection)
+        paintBehavior |= PaintBehaviorExcludeSelection;
 
     // Other paint behaviors are set by paintContentsForSnapshot.
     frame.view()->setPaintBehavior(paintBehavior);

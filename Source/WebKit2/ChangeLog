@@ -1,3 +1,18 @@
+2017-03-08  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add TextIndicator support for providing a snapshot excluding selected content
+        https://bugs.webkit.org/show_bug.cgi?id=169309
+        <rdar://problem/30883525>
+
+        Reviewed by Tim Horton.
+
+        Serialize the snapshot excluding the selection and the snapshot's bounds when sending TextIndicatorData over
+        IPC to the UI process.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<TextIndicatorData>::encode):
+        (IPC::ArgumentCoder<TextIndicatorData>::decode):
+
 2017-03-08  Brent Fulgham  <bfulgham@apple.com>
 
         REGRESSION(r213564): Netflix does not play content
