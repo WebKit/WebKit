@@ -39,6 +39,12 @@ typedef NS_ENUM(NSInteger, _WKPaginationMode) {
     _WKPaginationModeBottomToTop,
 } WK_API_AVAILABLE(macosx(10.10), ios(8.0));
 
+typedef NS_OPTIONS(NSInteger, _WKMediaCaptureState) {
+    _WKMediaCaptureStateNone = 0,
+    _WKMediaCaptureStateMicrophone = 1 << 0,
+    _WKMediaCaptureStateCamera = 1 << 1,
+} WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+
 #if !TARGET_OS_IPHONE
 
 typedef NS_ENUM(NSInteger, _WKImmediateActionType) {

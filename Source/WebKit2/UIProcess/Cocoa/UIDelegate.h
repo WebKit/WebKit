@@ -91,8 +91,7 @@ private:
 #endif
         bool decidePolicyForUserMediaPermissionRequest(WebKit::WebPageProxy&, WebKit::WebFrameProxy&, API::SecurityOrigin&, API::SecurityOrigin&, WebKit::UserMediaPermissionRequestProxy&) override;
         bool checkUserMediaPermissionForOrigin(WebKit::WebPageProxy&, WebKit::WebFrameProxy&, API::SecurityOrigin&, API::SecurityOrigin&, WebKit::UserMediaPermissionCheckProxy&) override;
-        void didBeginCaptureSession() override;
-        void didEndCaptureSession() override;
+        void mediaCaptureStateDidChange(WebCore::MediaProducer::MediaStateFlags) override;
         void printFrame(WebKit::WebPageProxy*, WebKit::WebFrameProxy*) override;
 #if PLATFORM(IOS)
 #if HAVE(APP_LINKS)
@@ -136,8 +135,7 @@ private:
         bool webViewDidExitFullscreen : 1;
         bool webViewRequestUserMediaAuthorizationForMicrophoneCameraURLMainFrameURLDecisionHandler : 1;
         bool webViewCheckUserMediaPermissionForURLMainFrameURLFrameIdentifierDecisionHandler : 1;
-        bool webViewDidBeginCaptureSession : 1;
-        bool webViewDidEndCaptureSession : 1;
+        bool webViewMediaCaptureStateDidChange : 1;
 #if PLATFORM(IOS)
 #if HAVE(APP_LINKS)
         bool webViewShouldIncludeAppLinkActionsForElement : 1;

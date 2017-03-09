@@ -116,8 +116,7 @@ void UIDelegate::setDelegate(id <WKUIDelegate> delegate)
     m_delegateMethods.webViewDidNotHandleTapAsClickAtPoint = [delegate respondsToSelector:@selector(_webView:didNotHandleTapAsClickAtPoint:)];
     m_delegateMethods.webViewRequestUserMediaAuthorizationForMicrophoneCameraURLMainFrameURLDecisionHandler = [delegate respondsToSelector:@selector(_webView:requestUserMediaAuthorizationForMicrophone:camera:url:mainFrameURL:decisionHandler:)];
     m_delegateMethods.webViewCheckUserMediaPermissionForURLMainFrameURLFrameIdentifierDecisionHandler = [delegate respondsToSelector:@selector(_webView:checkUserMediaPermissionForURL:mainFrameURL:frameIdentifier:decisionHandler:)];
-    m_delegateMethods.webViewDidBeginCaptureSession = [delegate respondsToSelector:@selector(_webViewDidBeginCaptureSession:)];
-    m_delegateMethods.webViewDidEndCaptureSession = [delegate respondsToSelector:@selector(_webViewDidEndCaptureSession:)];
+    m_delegateMethods.webViewMediaCaptureStateDidChange = [delegate respondsToSelector:@selector(_webView:mediaCaptureStateDidChange:)];
     m_delegateMethods.presentingViewControllerForWebView = [delegate respondsToSelector:@selector(_presentingViewControllerForWebView:)];
 #endif
     m_delegateMethods.dataDetectionContextForWebView = [delegate respondsToSelector:@selector(_dataDetectionContextForWebView:)];
@@ -435,22 +434,20 @@ bool UIDelegate::UIClient::checkUserMediaPermissionForOrigin(WebKit::WebPageProx
     return true;
 }
 
-void UIDelegate::UIClient::didBeginCaptureSession()
+void UIDelegate::UIClient::mediaCaptureStateDidChange(WebCore::MediaProducer::MediaStateFlags state)
 {
+    WKWebView *webView = m_uiDelegate.m_webView;
     auto delegate = m_uiDelegate.m_delegate.get();
-    if (!delegate || !m_uiDelegate.m_delegateMethods.webViewDidBeginCaptureSession)
+    if (!delegate || !m_uiDelegate.m_delegateMethods.webViewMediaCaptureStateDidChange)
         return;
 
-    [(id <WKUIDelegatePrivate>)delegate _webViewDidBeginCaptureSession:m_uiDelegate.m_webView];
-}
+    _WKMediaCaptureState mediaCaptureState = _WKMediaCaptureStateNone;
+    if (state & WebCore::MediaProducer::HasActiveAudioCaptureDevice)
+        mediaCaptureState |= _WKMediaCaptureStateMicrophone;
+    if (state & WebCore::MediaProducer::HasActiveVideoCaptureDevice)
+        mediaCaptureState |= _WKMediaCaptureStateCamera;
 
-void UIDelegate::UIClient::didEndCaptureSession()
-{
-    auto delegate = m_uiDelegate.m_delegate.get();
-    if (!delegate || !m_uiDelegate.m_delegateMethods.webViewDidEndCaptureSession)
-        return;
-
-    [(id <WKUIDelegatePrivate>)delegate _webViewDidEndCaptureSession:m_uiDelegate.m_webView];
+    [(id <WKUIDelegatePrivate>)delegate _webView:webView mediaCaptureStateDidChange:mediaCaptureState];
 }
 
 void UIDelegate::UIClient::reachedApplicationCacheOriginQuota(WebPageProxy*, const WebCore::SecurityOrigin& securityOrigin, uint64_t currentQuota, uint64_t totalBytesNeeded, Function<void (unsigned long long)>&& completionHandler)

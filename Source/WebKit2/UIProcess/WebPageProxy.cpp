@@ -6446,9 +6446,10 @@ void WebPageProxy::isPlayingMediaDidChange(MediaProducer::MediaStateFlags state,
     if (state == m_mediaState)
         return;
 
+    WebCore::MediaProducer::MediaStateFlags activeCaptureMask = WebCore::MediaProducer::HasActiveAudioCaptureDevice | WebCore::MediaProducer::HasActiveVideoCaptureDevice;
 #if ENABLE(MEDIA_STREAM)
-    WebCore::MediaProducer::MediaStateFlags oldMediaStateHasActiveCapture = m_mediaState & (WebCore::MediaProducer::HasActiveAudioCaptureDevice | WebCore::MediaProducer::HasActiveVideoCaptureDevice);
-    WebCore::MediaProducer::MediaStateFlags newMediaStateHasActiveCapture = state & (WebCore::MediaProducer::HasActiveAudioCaptureDevice | WebCore::MediaProducer::HasActiveVideoCaptureDevice);
+    WebCore::MediaProducer::MediaStateFlags oldMediaStateHasActiveCapture = m_mediaState & activeCaptureMask;
+    WebCore::MediaProducer::MediaStateFlags newMediaStateHasActiveCapture = state & activeCaptureMask;
 #endif
 
     MediaProducer::MediaStateFlags playingMediaMask = MediaProducer::IsPlayingAudio | MediaProducer::IsPlayingVideo;
@@ -6456,18 +6457,17 @@ void WebPageProxy::isPlayingMediaDidChange(MediaProducer::MediaStateFlags state,
     m_mediaState = state;
 
 #if ENABLE(MEDIA_STREAM)
-    if (!oldMediaStateHasActiveCapture && newMediaStateHasActiveCapture) {
-        m_uiClient->didBeginCaptureSession();
+    if (oldMediaStateHasActiveCapture != newMediaStateHasActiveCapture)
+        m_uiClient->mediaCaptureStateDidChange(m_mediaState);
+    if (!oldMediaStateHasActiveCapture && newMediaStateHasActiveCapture)
         userMediaPermissionRequestManager().startedCaptureSession();
-    } else if (oldMediaStateHasActiveCapture && !newMediaStateHasActiveCapture) {
-        m_uiClient->didEndCaptureSession();
+    else if (oldMediaStateHasActiveCapture && !newMediaStateHasActiveCapture)
         userMediaPermissionRequestManager().endedCaptureSession();
-    }
 #endif
 
     activityStateDidChange(ActivityState::IsAudible);
 
-    playingMediaMask |= MediaProducer::HasActiveAudioCaptureDevice | MediaProducer::HasActiveVideoCaptureDevice;
+    playingMediaMask |= activeCaptureMask;
     if ((oldState & playingMediaMask) != (m_mediaState & playingMediaMask))
         m_uiClient->isPlayingAudioDidChange(*this);
 #if PLATFORM(MAC)
