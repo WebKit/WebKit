@@ -93,8 +93,8 @@ ALWAYS_INLINE bool Heap::testAndSetMarked(HeapVersion markingVersion, const void
     if (cell->isLargeAllocation())
         return cell->largeAllocation().testAndSetMarked();
     MarkedBlock& block = cell->markedBlock();
-    block.aboutToMark(markingVersion);
-    return block.testAndSetMarked(cell);
+    Dependency dependency = block.aboutToMark(markingVersion);
+    return block.testAndSetMarked(cell, dependency);
 }
 
 ALWAYS_INLINE size_t Heap::cellSize(const void* rawCell)

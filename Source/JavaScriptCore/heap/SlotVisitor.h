@@ -175,11 +175,14 @@ private:
     
     void appendJSCellOrAuxiliary(HeapCell*);
     void appendHidden(JSValue);
+    void appendHidden(JSCell*);
 
-    JS_EXPORT_PRIVATE void setMarkedAndAppendToMarkStack(JSCell*);
+    JS_EXPORT_PRIVATE void appendSlow(JSCell*, Dependency);
+    JS_EXPORT_PRIVATE void appendHiddenSlow(JSCell*, Dependency);
+    void appendHiddenSlowImpl(JSCell*, Dependency);
     
     template<typename ContainerType>
-    void setMarkedAndAppendToMarkStack(ContainerType&, JSCell*);
+    void setMarkedAndAppendToMarkStack(ContainerType&, JSCell*, Dependency);
     
     void appendToMarkStack(JSCell*);
     

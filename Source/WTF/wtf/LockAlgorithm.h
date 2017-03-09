@@ -50,10 +50,15 @@ public:
     
     static bool lockFast(Atomic<LockType>& lock)
     {
-        LockType oldValue = lock.load(std::memory_order_relaxed);
-        if (oldValue & isHeldBit)
-            return false;
-        return lock.compareExchangeWeak(oldValue, oldValue | isHeldBit, std::memory_order_acquire);
+        return lock.transaction(
+            [&] (LockType& value) -> bool {
+                if (value & isHeldBit)
+                    return false;
+                value |= isHeldBit;
+                return true;
+            },
+            std::memory_order_acquire,
+            TransactionAbortLikelihood::Unlikely);
     }
     
     static void lock(Atomic<LockType>& lock)
@@ -80,10 +85,15 @@ public:
     
     static bool unlockFast(Atomic<LockType>& lock)
     {
-        LockType oldValue = lock.load(std::memory_order_relaxed);
-        if ((oldValue & mask) != isHeldBit)
-            return false;
-        return lock.compareExchangeWeak(oldValue, oldValue & ~isHeldBit, std::memory_order_release);
+        return lock.transaction(
+            [&] (LockType& value) -> bool {
+                if ((value & mask) != isHeldBit)
+                    return false;
+                value &= ~isHeldBit;
+                return true;
+            },
+            std::memory_order_relaxed,
+            TransactionAbortLikelihood::Unlikely);
     }
     
     static void unlock(Atomic<LockType>& lock)
@@ -206,10 +216,11 @@ public:
                     }
                     
                     lock.transaction(
-                        [&] (LockType& value) {
+                        [&] (LockType& value) -> bool {
                             value &= ~mask;
                             if (result.mayHaveMoreThreads)
                                 value |= hasParkedBit;
+                            return true;
                         });
                     return BargingOpportunity;
                 });

@@ -664,7 +664,7 @@ public:
         
     const Butterfly* butterfly() const { return m_butterfly.get(); }
     Butterfly* butterfly() { return m_butterfly.get(); }
-        
+    
     ConstPropertyStorage outOfLineStorage() const { return m_butterfly.get()->propertyStorage(); }
     PropertyStorage outOfLineStorage() { return m_butterfly.get()->propertyStorage(); }
 

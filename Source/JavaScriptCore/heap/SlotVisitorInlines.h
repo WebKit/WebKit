@@ -31,49 +31,106 @@
 
 namespace JSC {
 
-inline void SlotVisitor::appendUnbarriered(JSValue* slot, size_t count)
+ALWAYS_INLINE void SlotVisitor::appendUnbarriered(JSValue* slot, size_t count)
 {
     for (size_t i = count; i--;)
         appendUnbarriered(slot[i]);
 }
 
-inline void SlotVisitor::appendUnbarriered(JSCell* cell)
+ALWAYS_INLINE void SlotVisitor::appendUnbarriered(JSCell* cell)
 {
-    appendUnbarriered(JSValue(cell));
+    // This needs to be written in a very specific way to ensure that it gets inlined
+    // properly. In particular, it appears that using templates here breaks ALWAYS_INLINE.
+    
+    if (!cell)
+        return;
+    
+    Dependency dependency;
+    if (UNLIKELY(cell->isLargeAllocation())) {
+        dependency = nullDependency();
+        if (LIKELY(cell->largeAllocation().isMarked())) {
+            if (LIKELY(!m_heapSnapshotBuilder))
+                return;
+        }
+    } else {
+        MarkedBlock& block = cell->markedBlock();
+        dependency = block.aboutToMark(m_markingVersion);
+        if (LIKELY(block.isMarked(cell, dependency))) {
+            if (LIKELY(!m_heapSnapshotBuilder))
+                return;
+        }
+    }
+    
+    appendSlow(cell, dependency);
+}
+
+ALWAYS_INLINE void SlotVisitor::appendUnbarriered(JSValue value)
+{
+    if (value.isCell())
+        appendUnbarriered(value.asCell());
+}
+
+ALWAYS_INLINE void SlotVisitor::appendHidden(JSValue value)
+{
+    if (value.isCell())
+        appendHidden(value.asCell());
+}
+
+ALWAYS_INLINE void SlotVisitor::appendHidden(JSCell* cell)
+{
+    // This needs to be written in a very specific way to ensure that it gets inlined
+    // properly. In particular, it appears that using templates here breaks ALWAYS_INLINE.
+    
+    if (!cell)
+        return;
+    
+    Dependency dependency;
+    if (UNLIKELY(cell->isLargeAllocation())) {
+        dependency = nullDependency();
+        if (LIKELY(cell->largeAllocation().isMarked()))
+            return;
+    } else {
+        MarkedBlock& block = cell->markedBlock();
+        dependency = block.aboutToMark(m_markingVersion);
+        if (LIKELY(block.isMarked(cell, dependency)))
+            return;
+    }
+    
+    appendHiddenSlow(cell, dependency);
 }
 
 template<typename T>
-inline void SlotVisitor::append(const Weak<T>& weak)
+ALWAYS_INLINE void SlotVisitor::append(const Weak<T>& weak)
 {
     appendUnbarriered(weak.get());
 }
 
 template<typename T>
-inline void SlotVisitor::append(const WriteBarrierBase<T>& slot)
+ALWAYS_INLINE void SlotVisitor::append(const WriteBarrierBase<T>& slot)
 {
     appendUnbarriered(slot.get());
 }
 
 template<typename T>
-inline void SlotVisitor::appendHidden(const WriteBarrierBase<T>& slot)
+ALWAYS_INLINE void SlotVisitor::appendHidden(const WriteBarrierBase<T>& slot)
 {
     appendHidden(slot.get());
 }
 
 template<typename Iterator>
-inline void SlotVisitor::append(Iterator begin, Iterator end)
+ALWAYS_INLINE void SlotVisitor::append(Iterator begin, Iterator end)
 {
     for (auto it = begin; it != end; ++it)
         append(*it);
 }
 
-inline void SlotVisitor::appendValues(const WriteBarrierBase<Unknown>* barriers, size_t count)
+ALWAYS_INLINE void SlotVisitor::appendValues(const WriteBarrierBase<Unknown>* barriers, size_t count)
 {
     for (size_t i = 0; i < count; ++i)
         append(barriers[i]);
 }
 
-inline void SlotVisitor::appendValuesHidden(const WriteBarrierBase<Unknown>* barriers, size_t count)
+ALWAYS_INLINE void SlotVisitor::appendValuesHidden(const WriteBarrierBase<Unknown>* barriers, size_t count)
 {
     for (size_t i = 0; i < count; ++i)
         appendHidden(barriers[i]);

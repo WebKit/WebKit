@@ -40,13 +40,13 @@ public:
         return bitmapSize;
     }
 
-    bool get(size_t) const;
+    bool get(size_t, Dependency = nullDependency()) const;
     void set(size_t);
     void set(size_t, bool);
     bool testAndSet(size_t);
     bool testAndClear(size_t);
-    bool concurrentTestAndSet(size_t);
-    bool concurrentTestAndClear(size_t);
+    bool concurrentTestAndSet(size_t, Dependency = nullDependency(), TransactionAbortLikelihood = TransactionAbortLikelihood::Likely);
+    bool concurrentTestAndClear(size_t, Dependency = nullDependency(), TransactionAbortLikelihood = TransactionAbortLikelihood::Likely);
     size_t nextPossiblyUnset(size_t) const;
     void clear(size_t);
     void clearAll();
@@ -91,9 +91,9 @@ inline Bitmap<bitmapSize, WordType>::Bitmap()
 }
 
 template<size_t bitmapSize, typename WordType>
-inline bool Bitmap<bitmapSize, WordType>::get(size_t n) const
+inline bool Bitmap<bitmapSize, WordType>::get(size_t n, Dependency dependency) const
 {
-    return !!(bits[n / wordSize] & (one << (n % wordSize)));
+    return !!(bits[n / wordSize + dependency] & (one << (n % wordSize)));
 }
 
 template<size_t bitmapSize, typename WordType>
@@ -132,33 +132,37 @@ inline bool Bitmap<bitmapSize, WordType>::testAndClear(size_t n)
 }
 
 template<size_t bitmapSize, typename WordType>
-inline bool Bitmap<bitmapSize, WordType>::concurrentTestAndSet(size_t n)
+ALWAYS_INLINE bool Bitmap<bitmapSize, WordType>::concurrentTestAndSet(size_t n, Dependency dependency, TransactionAbortLikelihood abortLikelihood)
 {
     WordType mask = one << (n % wordSize);
     size_t index = n / wordSize;
-    WordType* wordPtr = bits.data() + index;
-    WordType oldValue;
-    do {
-        oldValue = *wordPtr;
-        if (oldValue & mask)
+    WordType* data = bits.data() + index + dependency;
+    return !bitwise_cast<Atomic<WordType>*>(data)->transactionRelaxed(
+        [&] (WordType& value) -> bool {
+            if (value & mask)
+                return false;
+            
+            value |= mask;
             return true;
-    } while (!atomicCompareExchangeWeakRelaxed(wordPtr, oldValue, static_cast<WordType>(oldValue | mask)));
-    return false;
+        },
+        abortLikelihood);
 }
 
 template<size_t bitmapSize, typename WordType>
-inline bool Bitmap<bitmapSize, WordType>::concurrentTestAndClear(size_t n)
+ALWAYS_INLINE bool Bitmap<bitmapSize, WordType>::concurrentTestAndClear(size_t n, Dependency dependency, TransactionAbortLikelihood abortLikelihood)
 {
     WordType mask = one << (n % wordSize);
     size_t index = n / wordSize;
-    WordType* wordPtr = bits.data() + index;
-    WordType oldValue;
-    do {
-        oldValue = *wordPtr;
-        if (!(oldValue & mask))
-            return false;
-    } while (!atomicCompareExchangeWeakRelaxed(wordPtr, oldValue, static_cast<WordType>(oldValue & ~mask)));
-    return true;
+    WordType* data = bits.data() + index + dependency;
+    return !bitwise_cast<Atomic<WordType>*>(data)->transactionRelaxed(
+        [&] (WordType& value) -> bool {
+            if (!(value & mask))
+                return false;
+            
+            value &= ~mask;
+            return true;
+        },
+        abortLikelihood);
 }
 
 template<size_t bitmapSize, typename WordType>

@@ -74,8 +74,9 @@ public:
     
     bool isNewlyAllocated() const { return m_isNewlyAllocated; }
     ALWAYS_INLINE bool isMarked() { return m_isMarked.load(std::memory_order_relaxed); }
-    ALWAYS_INLINE bool isMarked(HeapCell*) { return m_isMarked.load(std::memory_order_relaxed); }
-    ALWAYS_INLINE bool isMarkedConcurrently(HeapVersion, HeapCell*) { return m_isMarked.load(std::memory_order_relaxed); }
+    ALWAYS_INLINE bool isMarked(HeapCell*) { return isMarked(); }
+    ALWAYS_INLINE bool isMarked(HeapCell*, Dependency) { return isMarked(); }
+    ALWAYS_INLINE bool isMarkedConcurrently(HeapVersion, HeapCell*) { return isMarked(); }
     bool isLive() { return isMarked() || isNewlyAllocated(); }
     
     bool hasValidCell() const { return m_hasValidCell; }
@@ -109,7 +110,7 @@ public:
     
     const AllocatorAttributes& attributes() const { return m_attributes; }
     
-    void aboutToMark(HeapVersion) { }
+    Dependency aboutToMark(HeapVersion) { return nullDependency(); }
     
     ALWAYS_INLINE bool testAndSetMarked()
     {
@@ -120,7 +121,7 @@ public:
             return true;
         return m_isMarked.compareExchangeStrong(false, true);
     }
-    ALWAYS_INLINE bool testAndSetMarked(HeapCell*) { return testAndSetMarked(); }
+    ALWAYS_INLINE bool testAndSetMarked(HeapCell*, Dependency, TransactionAbortLikelihood = TransactionAbortLikelihood::Likely) { return testAndSetMarked(); }
     void clearMarked() { m_isMarked.store(false); }
     
     void noteMarked() { }

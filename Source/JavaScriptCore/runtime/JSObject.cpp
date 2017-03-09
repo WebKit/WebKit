@@ -382,6 +382,7 @@ ALWAYS_INLINE Structure* JSObject::visitButterflyImpl(SlotVisitor& visitor)
     structure = vm.getStructure(structureID);
     lastOffset = structure->lastOffset();
     IndexingType indexingType = structure->indexingType();
+    Dependency indexingTypeDependency = dependency(indexingType);
     Locker<JSCell> locker(NoLockingNecessary);
     switch (indexingType) {
     case ALL_CONTIGUOUS_INDEXING_TYPES:
@@ -395,14 +396,13 @@ ALWAYS_INLINE Structure* JSObject::visitButterflyImpl(SlotVisitor& visitor)
     default:
         break;
     }
-    WTF::loadLoadFence();
-    butterfly = this->butterfly();
+    butterfly = consume(this, indexingTypeDependency)->butterfly();
+    Dependency butterflyDependency = dependency(butterfly);
     if (!butterfly)
         return structure;
-    WTF::loadLoadFence();
-    if (this->structureID() != structureID)
+    if (consume(this, butterflyDependency)->structureID() != structureID)
         return nullptr;
-    if (structure->lastOffset() != lastOffset)
+    if (consume(structure, butterflyDependency)->lastOffset() != lastOffset)
         return nullptr;
     
     markAuxiliaryAndVisitOutOfLineProperties(visitor, butterfly, structure, lastOffset);

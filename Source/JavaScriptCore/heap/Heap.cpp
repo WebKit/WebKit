@@ -1853,9 +1853,10 @@ void Heap::handleNeedFinalize()
 void Heap::setGCDidJIT()
 {
     m_worldState.transaction(
-        [&] (unsigned& state) {
+        [&] (unsigned& state) -> bool {
             RELEASE_ASSERT(state & stoppedBit);
             state |= gcDidJITBit;
+            return true;
         });
 }
 

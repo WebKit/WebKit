@@ -1,3 +1,50 @@
+2017-03-07  Filip Pizlo  <fpizlo@apple.com>
+
+        WTF should make it super easy to do ARM concurrency tricks
+        https://bugs.webkit.org/show_bug.cgi?id=169300
+
+        Reviewed by Mark Lam.
+        
+        This changes a bunch of GC hot paths to use new concurrency APIs that lead to optimal
+        code on both x86 (fully leverage TSO, transactions become CAS loops) and ARM (use
+        dependency chains for fencing, transactions become LL/SC loops). While inspecting the
+        machine code, I found other opportunities for improvement, like inlining the "am I
+        marked" part of the marking functions.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::setGCDidJIT):
+        * heap/HeapInlines.h:
+        (JSC::Heap::testAndSetMarked):
+        * heap/LargeAllocation.h:
+        (JSC::LargeAllocation::isMarked):
+        (JSC::LargeAllocation::isMarkedConcurrently):
+        (JSC::LargeAllocation::aboutToMark):
+        (JSC::LargeAllocation::testAndSetMarked):
+        * heap/MarkedBlock.h:
+        (JSC::MarkedBlock::areMarksStaleWithDependency):
+        (JSC::MarkedBlock::aboutToMark):
+        (JSC::MarkedBlock::isMarkedConcurrently):
+        (JSC::MarkedBlock::isMarked):
+        (JSC::MarkedBlock::testAndSetMarked):
+        * heap/SlotVisitor.cpp:
+        (JSC::SlotVisitor::appendSlow):
+        (JSC::SlotVisitor::appendHiddenSlow):
+        (JSC::SlotVisitor::appendHiddenSlowImpl):
+        (JSC::SlotVisitor::setMarkedAndAppendToMarkStack):
+        (JSC::SlotVisitor::appendUnbarriered): Deleted.
+        (JSC::SlotVisitor::appendHidden): Deleted.
+        * heap/SlotVisitor.h:
+        * heap/SlotVisitorInlines.h:
+        (JSC::SlotVisitor::appendUnbarriered):
+        (JSC::SlotVisitor::appendHidden):
+        (JSC::SlotVisitor::append):
+        (JSC::SlotVisitor::appendValues):
+        (JSC::SlotVisitor::appendValuesHidden):
+        * runtime/CustomGetterSetter.cpp:
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::visitButterflyImpl):
+        * runtime/JSObject.h:
+
 2017-03-08  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [GTK] JSC test stress/arity-check-ftl-throw.js.ftl-no-cjit-validate-sampling-profiler crashing on GTK bot

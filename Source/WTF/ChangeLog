@@ -1,3 +1,66 @@
+2017-03-07  Filip Pizlo  <fpizlo@apple.com>
+
+        WTF should make it super easy to do ARM concurrency tricks
+        https://bugs.webkit.org/show_bug.cgi?id=169300
+
+        Reviewed by Mark Lam.
+        
+        This adds Atomic<>::loadLink and Atomic<>::storeCond, available only when HAVE(LL_SC).
+        
+        It abstracts loadLink/storeCond behind prepare/attempt. You can write prepare/attempt
+        loops whenever your loop fits into the least common denominator of LL/SC and CAS.
+        
+        This modifies Atomic<>::transaction to use prepare/attempt. So, if you write your loop
+        using Atomic<>::transaction, then you get LL/SC for free.
+
+        Depending on the kind of transaction you are doing, you may not want to perform an LL
+        until you have a chance to just load the current value. Atomic<>::transaction() assumes
+        that you do not care to have any ordering guarantees in that case. If you think that
+        the transaction has a good chance of aborting this way, you want
+        Atomic<>::transaction() to first do a plain load. But if you don't think that such an
+        abort is likely, then you want to go straight to the LL. The API supports this concept
+        via TransactionAbortLikelihood.
+        
+        Additionally, this redoes the depend/consume API to be dead simple. Dependency is
+        unsigned. You get a dependency on a loaded value by just saying
+        dependency(loadedValue). You consume the dependency by using it as a bonus index to
+        some pointer dereference. This is made easy with the consume<T*>(ptr, dependency)
+        helper. In those cases where you want to pass around both a computed value and a
+        dependency, there's DependencyWith<T>. But you won't need it in most cases. The loaded
+        value or any value computed from the loaded value is a fine input to dependency()!
+        
+        This change updates a bunch of hot paths to use the new APIs. Using transaction() gives
+        us optimal LL/SC loops for object marking and lock acquisition.
+        
+        This change also updates a bunch of hot paths to use dependency()/consume().
+        
+        This is a significant Octane/splay speed-up on ARM.
+
+        * wtf/Atomics.h:
+        (WTF::hasFence):
+        (WTF::Atomic::prepare):
+        (WTF::Atomic::attempt):
+        (WTF::Atomic::transaction):
+        (WTF::Atomic::transactionRelaxed):
+        (WTF::nullDependency):
+        (WTF::dependency):
+        (WTF::DependencyWith::DependencyWith):
+        (WTF::dependencyWith):
+        (WTF::consume):
+        (WTF::Atomic::tryTransactionRelaxed): Deleted.
+        (WTF::Atomic::tryTransaction): Deleted.
+        (WTF::zeroWithConsumeDependency): Deleted.
+        (WTF::consumeLoad): Deleted.
+        * wtf/Bitmap.h:
+        (WTF::WordType>::get):
+        (WTF::WordType>::concurrentTestAndSet):
+        (WTF::WordType>::concurrentTestAndClear):
+        * wtf/LockAlgorithm.h:
+        (WTF::LockAlgorithm::lockFast):
+        (WTF::LockAlgorithm::unlockFast):
+        (WTF::LockAlgorithm::unlockSlow):
+        * wtf/Platform.h:
+
 2017-03-08  Anders Carlsson  <andersca@apple.com>
 
         Simplify the PaymentCoordinator interface

@@ -757,6 +757,10 @@
 #define ENABLE_CONCURRENT_JS 1
 #endif
 
+#if CPU(ARM64)
+#define HAVE_LL_SC 1
+#endif // CPU(ARM64)
+
 /* This controls whether B3 is built. B3 is needed for FTL JIT and WebAssembly */
 #if ENABLE(FTL_JIT) || ENABLE(WEBASSEMBLY)
 #define ENABLE_B3_JIT 1

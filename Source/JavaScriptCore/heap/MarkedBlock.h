@@ -258,7 +258,8 @@ public:
     bool isMarked(const void*);
     bool isMarked(HeapVersion markingVersion, const void*);
     bool isMarkedConcurrently(HeapVersion markingVersion, const void*);
-    bool testAndSetMarked(const void*);
+    bool isMarked(const void*, Dependency);
+    bool testAndSetMarked(const void*, Dependency, TransactionAbortLikelihood = TransactionAbortLikelihood::Likely);
         
     bool isAtom(const void*);
     void clearMarked(const void*);
@@ -278,15 +279,15 @@ public:
 
     JS_EXPORT_PRIVATE bool areMarksStale();
     bool areMarksStale(HeapVersion markingVersion);
-    struct MarksWithDependency {
-        bool areStale;
-        ConsumeDependency dependency;
-    };
-    MarksWithDependency areMarksStaleWithDependency(HeapVersion markingVersion);
+    DependencyWith<bool> areMarksStaleWithDependency(HeapVersion markingVersion);
     
-    void aboutToMark(HeapVersion markingVersion);
+    Dependency aboutToMark(HeapVersion markingVersion);
         
-    void assertMarksNotStale();
+#if ASSERT_DISABLED
+    void assertMarksNotStale() { }
+#else
+    JS_EXPORT_PRIVATE void assertMarksNotStale();
+#endif
         
     bool needsDestruction() const { return m_needsDestruction; }
     
@@ -306,7 +307,7 @@ private:
     MarkedBlock(VM&, Handle&);
     Atom* atoms();
         
-    void aboutToMarkSlow(HeapVersion markingVersion);
+    JS_EXPORT_PRIVATE void aboutToMarkSlow(HeapVersion markingVersion);
     void clearHasAnyMarked();
     
     void noteMarkedSlow();
@@ -491,27 +492,19 @@ inline bool MarkedBlock::areMarksStale(HeapVersion markingVersion)
     return markingVersion != m_markingVersion;
 }
 
-ALWAYS_INLINE MarkedBlock::MarksWithDependency MarkedBlock::areMarksStaleWithDependency(HeapVersion markingVersion)
+ALWAYS_INLINE DependencyWith<bool> MarkedBlock::areMarksStaleWithDependency(HeapVersion markingVersion)
 {
-    auto consumed = consumeLoad(&m_markingVersion);
-    MarksWithDependency ret;
-    ret.areStale = consumed.value != markingVersion;
-    ret.dependency = consumed.dependency;
-    return ret;
+    HeapVersion version = m_markingVersion;
+    return dependencyWith(dependency(version), version != markingVersion);
 }
 
-inline void MarkedBlock::aboutToMark(HeapVersion markingVersion)
+inline Dependency MarkedBlock::aboutToMark(HeapVersion markingVersion)
 {
-    if (UNLIKELY(areMarksStale(markingVersion)))
+    auto result = areMarksStaleWithDependency(markingVersion);
+    if (UNLIKELY(result.value))
         aboutToMarkSlow(markingVersion);
-    WTF::loadLoadFence();
+    return result.dependency;
 }
-
-#if ASSERT_DISABLED
-inline void MarkedBlock::assertMarksNotStale()
-{
-}
-#endif // ASSERT_DISABLED
 
 inline void MarkedBlock::Handle::assertMarksNotStale()
 {
@@ -530,16 +523,22 @@ inline bool MarkedBlock::isMarked(HeapVersion markingVersion, const void* p)
 
 inline bool MarkedBlock::isMarkedConcurrently(HeapVersion markingVersion, const void* p)
 {
-    auto marksWithDependency = areMarksStaleWithDependency(markingVersion);
-    if (marksWithDependency.areStale)
+    auto result = areMarksStaleWithDependency(markingVersion);
+    if (result.value)
         return false;
-    return m_marks.get(atomNumber(p) + marksWithDependency.dependency);
+    return m_marks.get(atomNumber(p), result.dependency);
 }
 
-inline bool MarkedBlock::testAndSetMarked(const void* p)
+inline bool MarkedBlock::isMarked(const void* p, Dependency dependency)
 {
     assertMarksNotStale();
-    return m_marks.concurrentTestAndSet(atomNumber(p));
+    return m_marks.get(atomNumber(p), dependency);
+}
+
+inline bool MarkedBlock::testAndSetMarked(const void* p, Dependency dependency, TransactionAbortLikelihood abortLikelihood)
+{
+    assertMarksNotStale();
+    return m_marks.concurrentTestAndSet(atomNumber(p), dependency, abortLikelihood);
 }
 
 inline bool MarkedBlock::Handle::isNewlyAllocated(const void* p)

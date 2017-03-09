@@ -1,3 +1,18 @@
+2017-03-08  Filip Pizlo  <fpizlo@apple.com>
+
+        WTF should make it super easy to do ARM concurrency tricks
+        https://bugs.webkit.org/show_bug.cgi?id=169300
+
+        Reviewed by Mark Lam.
+        
+        This vastly simplifies the consume API. The new API is thoroughly tested by being used
+        in the GC's guts. I think that unit tests are a pain to maintain, so we shouldn't have
+        them unless we are legitimately worried about coverage. We're not in this case.
+
+        * TestWebKitAPI/CMakeLists.txt:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WTF/Consume.cpp: Removed.
+
 2017-03-08  Srinivasan Vijayaraghavan  <svijayaraghavan@apple.com>
 
         Fix error/warning duplication in JSON bindings results

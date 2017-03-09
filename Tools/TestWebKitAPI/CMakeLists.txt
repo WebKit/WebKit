@@ -42,7 +42,6 @@ set(TestWTF_SOURCES
     ${TESTWEBKITAPI_DIR}/TestsController.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/AtomicString.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/BloomFilter.cpp
-    ${TESTWEBKITAPI_DIR}/Tests/WTF/Consume.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/CrossThreadTask.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/CString.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/CheckedArithmeticOperations.cpp
