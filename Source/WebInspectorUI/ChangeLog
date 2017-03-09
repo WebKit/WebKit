@@ -1,3 +1,14 @@
+2017-03-09  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: DOMTreeManager dispatches DocumentUpdated twice when the document is cleared
+        https://bugs.webkit.org/show_bug.cgi?id=168984
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Controllers/DOMTreeManager.js:
+        (WebInspector.DOMTreeManager.prototype._setDocument):
+        Compare old and new document values before dispatching message.
+
 2017-03-09  Devin Rousso  <dcrousso+webkit@gmail.com>
 
         Web Inspector: Add settings for controlling Styles sidebar intelligence

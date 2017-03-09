@@ -201,11 +201,16 @@ WebInspector.DOMTreeManager = class DOMTreeManager extends WebInspector.Object
     _setDocument(payload)
     {
         this._idToDOMNode = {};
+
+        let newDocument = null;
         if (payload && "nodeId" in payload)
-            this._document = new WebInspector.DOMNode(this, null, false, payload);
-        else
-            this._document = null;
-        this.dispatchEventToListeners(WebInspector.DOMTreeManager.Event.DocumentUpdated, this._document);
+            newDocument = new WebInspector.DOMNode(this, null, false, payload);
+
+        if (this._document === newDocument)
+            return;
+
+        this._document = newDocument;
+        this.dispatchEventToListeners(WebInspector.DOMTreeManager.Event.DocumentUpdated, {document: this._document});
     }
 
     _setDetachedRoot(payload)
