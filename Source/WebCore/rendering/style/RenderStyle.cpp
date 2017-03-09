@@ -853,6 +853,9 @@ bool RenderStyle::changeRequiresRepaint(const RenderStyle& other, unsigned& chan
         || m_rareInheritedData->imageRendering != other.m_rareInheritedData->imageRendering)
         return true;
 
+    if (m_rareNonInheritedData->isNotFinal != other.m_rareNonInheritedData->isNotFinal)
+        return true;
+
     if (m_rareNonInheritedData->shapeOutside != other.m_rareNonInheritedData->shapeOutside)
         return true;
 

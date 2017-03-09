@@ -1648,8 +1648,9 @@ public:
     static Isolation initialIsolation() { return IsolationAuto; }
 #endif
 
-    bool isPlaceholderStyle() const { return m_rareNonInheritedData->isPlaceholderStyle; }
-    void setIsPlaceholderStyle() { SET_VAR(m_rareNonInheritedData, isPlaceholderStyle, true); }
+    // Indicates the style is likely to change due to a pending stylesheet load.
+    bool isNotFinal() const { return m_rareNonInheritedData->isNotFinal; }
+    void setIsNotFinal() { SET_VAR(m_rareNonInheritedData, isNotFinal, true); }
 
     void setVisitedLinkColor(const Color&);
     void setVisitedLinkBackgroundColor(const Color& v) { SET_VAR(m_rareNonInheritedData, visitedLinkBackgroundColor, v); }

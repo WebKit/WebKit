@@ -1,3 +1,14 @@
+2017-03-09  Antti Koivisto  <antti@apple.com>
+
+        Loading in-body stylesheets should not block rendering of elements before them
+        https://bugs.webkit.org/show_bug.cgi?id=169345
+
+        Reviewed by Simon Fraser.
+
+        * http/tests/incremental/resources/delayed-css.php: Added.
+        * http/tests/incremental/stylesheet-body-incremental-rendering-expected.html: Added.
+        * http/tests/incremental/stylesheet-body-incremental-rendering.html: Added.
+
 2017-03-08  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] iOS: Live Broadcast video shows scrubber with 00:00 duration until paused

@@ -51,24 +51,6 @@ namespace WebCore {
 
 namespace Style {
 
-static std::unique_ptr<RenderStyle> makePlaceholderStyle(Document& document)
-{
-    auto placeholderStyle = RenderStyle::createPtr();
-    placeholderStyle->setDisplay(NONE);
-    placeholderStyle->setIsPlaceholderStyle();
-
-    FontCascadeDescription fontDescription;
-    fontDescription.setOneFamily(standardFamily);
-    fontDescription.setKeywordSizeFromIdentifier(CSSValueMedium);
-    float size = Style::fontSizeForKeyword(CSSValueMedium, false, document);
-    fontDescription.setSpecifiedSize(size);
-    fontDescription.setComputedSize(size);
-    placeholderStyle->setFontDescription(fontDescription);
-
-    placeholderStyle->fontCascade().update(&document.fontSelector());
-    return placeholderStyle;
-}
-
 TreeResolver::TreeResolver(Document& document)
     : m_document(document)
 {
@@ -126,11 +108,6 @@ void TreeResolver::popScope()
 
 std::unique_ptr<RenderStyle> TreeResolver::styleForElement(Element& element, const RenderStyle& inheritedStyle)
 {
-    if (m_didSeePendingStylesheet && !element.renderer() && !m_document.isIgnoringPendingStylesheets()) {
-        m_document.setHasNodesWithPlaceholderStyle();
-        return makePlaceholderStyle(m_document);
-    }
-
     if (element.hasCustomStyleResolveCallbacks()) {
         RenderStyle* shadowHostStyle = scope().shadowRoot ? m_update->elementStyle(*scope().shadowRoot->host()) : nullptr;
         if (auto customStyle = element.resolveCustomStyle(inheritedStyle, shadowHostStyle)) {
@@ -190,14 +167,24 @@ static bool affectsRenderedSubtree(Element& element, const RenderStyle& newStyle
 
 ElementUpdate TreeResolver::resolveElement(Element& element)
 {
+    if (m_didSeePendingStylesheet && !element.renderer() && !m_document.isIgnoringPendingStylesheets()) {
+        m_document.setHasNodesWithNonFinalStyle();
+        return { };
+    }
+
     auto newStyle = styleForElement(element, parent().style);
 
     if (!affectsRenderedSubtree(element, *newStyle))
         return { };
 
-    auto update = createAnimatedElementUpdate(WTFMove(newStyle), element, parent().change);
-
     auto* existingStyle = element.renderStyle();
+
+    if (m_didSeePendingStylesheet && (!existingStyle || existingStyle->isNotFinal())) {
+        newStyle->setIsNotFinal();
+        m_document.setHasNodesWithNonFinalStyle();
+    }
+
+    auto update = createAnimatedElementUpdate(WTFMove(newStyle), element, parent().change);
 
     if (&element == m_document.documentElement()) {
         m_documentElementStyle = RenderStyle::clonePtr(*update.style);
