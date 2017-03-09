@@ -80,18 +80,19 @@ class TestDownloader(object):
         return Git(test_repository, None, executive=self._host.executive, filesystem=self._filesystem)
 
     def checkout_test_repository(self, revision, url, directory):
-        git = self.git('.')
+        git = None
         if not self._filesystem.exists(directory):
             _log.info('Cloning %s into %s...' % (url, directory))
-            git._run_git(['clone', '-v', url, directory])
+            Git.clone(url, directory, self._host.executive)
+            git = self.git(directory)
         elif self._options.fetch is True:
+            git = self.git(directory)
             _log.info('Fetching %s...' % url)
-            git._run_git(['-C', directory, 'fetch'])
+            git.fetch()
+        else:
+            git = self.git(directory)
         _log.info('Checking out revision ' + revision)
-        checkout_arguments = ['-C', directory, 'checkout', revision]
-        if not self._options.verbose:
-            checkout_arguments += ['-q']
-        git._run_git(checkout_arguments)
+        git.checkout(revision, not self._options.verbose)
 
     def _init_paths_from_expectations(self):
         import_lines = json.loads(self._filesystem.read_text_file(self.import_expectations_path))

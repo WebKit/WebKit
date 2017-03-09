@@ -1,3 +1,28 @@
+2017-03-08  Sam Weinig  <sam@webkit.org>
+
+        import-w3c-tests doesn't work with svn repositories.
+        https://bugs.webkit.org/show_bug.cgi?id=169190
+
+        Reviewed by Tim Horton.
+
+        The script assumed you had WebKit checked-out as a git repository, but
+        there was no reason for that.
+
+        * Scripts/webkitpy/common/checkout/scm/git.py:
+        (Git.clone):
+        Add a class method to clone a repository which does not require 
+        an existing checkout.
+
+        (Git.fetch):
+        (Git.checkout):
+        Add methods needed for test_downloader.py, so it doesn't have to use
+        the internal _run_git 
+
+        * Scripts/webkitpy/w3c/test_downloader.py:
+        (TestDownloader.checkout_test_repository):
+        Switch to using Git.clone(), which doesn't require an existing git
+        directory, and then also adopt non private methods to fetch/checkout.
+
 2017-03-08  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics: Communicate to the network process which domains to partition

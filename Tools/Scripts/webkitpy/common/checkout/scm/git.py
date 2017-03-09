@@ -115,6 +115,14 @@ class Git(SCM, SVNRepository):
             # The Windows bots seem to through a WindowsError when git isn't installed.
             return False
 
+    @classmethod
+    def clone(cls, url, directory, executive=None):
+        try:
+            executive = executive or Executive()
+            return executive.run_command([cls.executable_name, 'clone', '-v', url, directory], error_handler=Executive.ignore_error)
+        except OSError, e:
+            return False
+
     def find_checkout_root(self, path):
         # "git rev-parse --show-cdup" would be another way to get to the root
         checkout_root = self._run_git(['rev-parse', '--show-toplevel'], cwd=(path or "./")).strip()
@@ -572,3 +580,12 @@ class Git(SCM, SVNRepository):
 
     def files_changed_summary_for_commit(self, commit_id):
         return self._run_git(['diff-tree', '--shortstat', '--no-renames', '--no-commit-id', commit_id])
+
+    def fetch(self):
+        return self._run_git(['fetch'])
+
+    def checkout(self, revision, quiet=None):
+        command = ['checkout', revision]
+        if quiet:
+            command += ['-q']
+        return self._run_git(command)
