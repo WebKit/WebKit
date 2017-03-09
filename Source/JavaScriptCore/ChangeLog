@@ -1,3 +1,14 @@
+2017-03-09  Anders Carlsson  <andersca@apple.com>
+
+        Add delegate support to WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=169427
+        Part of rdar://problem/28880714.
+
+        Reviewed by Geoffrey Garen.
+
+        * Configurations/FeatureDefines.xcconfig:
+        Add feature define.
+
 2017-03-09  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Show individual messages in the content pane for a WebSocket

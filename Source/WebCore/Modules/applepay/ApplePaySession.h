@@ -48,10 +48,14 @@ class PaymentContact;
 class PaymentCoordinator;
 class PaymentMethod;
 class URL;
-
+enum class PaymentAuthorizationStatus;
 struct ApplePayLineItem;
 struct ApplePayPaymentRequest;
 struct ApplePayShippingMethod;
+struct ApplePayPaymentAuthorizationResult;
+struct ApplePayPaymentMethodUpdate;
+struct ApplePayShippingContactUpdate;
+struct ApplePayShippingMethodUpdate;
 
 class ApplePaySession final : public RefCounted<ApplePaySession>, public ActiveDOMObject, public EventTargetWithInlineData {
 public:
@@ -75,6 +79,12 @@ public:
     ExceptionOr<void> begin();
     ExceptionOr<void> abort();
     ExceptionOr<void> completeMerchantValidation(JSC::ExecState&, JSC::JSValue merchantSession);
+    ExceptionOr<void> completeShippingMethodSelection(ApplePayShippingMethodUpdate&&);
+    ExceptionOr<void> completeShippingContactSelection(ApplePayShippingContactUpdate&&);
+    ExceptionOr<void> completePaymentMethodSelection(ApplePayPaymentMethodUpdate&&);
+    ExceptionOr<void> completePayment(ApplePayPaymentAuthorizationResult&&);
+
+    // Old functions.
     ExceptionOr<void> completeShippingMethodSelection(unsigned short status, ApplePayLineItem&& newTotal, Vector<ApplePayLineItem>&& newLineItems);
     ExceptionOr<void> completeShippingContactSelection(unsigned short status, Vector<ApplePayShippingMethod>&& newShippingMethods, ApplePayLineItem&& newTotal, Vector<ApplePayLineItem>&& newLineItems);
     ExceptionOr<void> completePaymentMethodSelection(ApplePayLineItem&& newTotal, Vector<ApplePayLineItem>&& newLineItems);
