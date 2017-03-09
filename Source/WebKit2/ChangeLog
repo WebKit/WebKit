@@ -1,3 +1,14 @@
+2017-03-09  Tomas Popela  <tpopela@redhat.com>
+
+        Correctly process the return value of gdk_drag_context_get_selected_action()
+
+        Reviewed by Carlos Garcia Campos.
+
+        It returns the action itself and not the bitmask.
+
+        * UIProcess/gtk/DragAndDropHandler.cpp:
+        (WebKit::DragAndDropHandler::drop):
+
 2017-03-09  Adrian Perez de Castro  <aperez@igalia.com>
 
         [GTK] Use GtkFileChooserNative for open/save dialogs
