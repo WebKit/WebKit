@@ -278,6 +278,7 @@ JS_BINDING_IDLS = \
     $(WebCore)/crypto/parameters/EcKeyParams.idl \
     $(WebCore)/crypto/parameters/EcdhKeyDeriveParams.idl \
     $(WebCore)/crypto/parameters/HmacKeyParams.idl \
+    $(WebCore)/crypto/parameters/Pbkdf2Params.idl \
     $(WebCore)/crypto/parameters/RsaHashedImportParams.idl \
     $(WebCore)/crypto/parameters/RsaHashedKeyGenParams.idl \
     $(WebCore)/crypto/parameters/RsaKeyGenParams.idl \

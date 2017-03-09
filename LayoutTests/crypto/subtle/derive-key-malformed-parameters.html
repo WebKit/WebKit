@@ -68,7 +68,7 @@ crypto.subtle.importKey("jwk", jwkPrivateKey, { name: "ECDH", namedCurve: "P-256
     shouldReject('crypto.subtle.deriveKey({ name:"ECDH", public:publicKey }, privateKey, {name: "hmac", hash: "hmac"}, extractable, ["sign"])');
     shouldReject('crypto.subtle.deriveKey({ name:"ECDH", public:publicKey }, privateKey, {name: "hmac", hash: "sha-1", length: 0}, extractable, ["sign"])');
     // Null usages
-    return shouldReject('crypto.subtle.deriveKey({ name:"ECDH", public:publicKey }, privateKey, {name: "aes-cbc", length: 128}, extractable, [])');
+    return shouldReject('crypto.subtle.deriveKey({ name:"ECDH", public:publicKey }, privateKey, {name: "aes-cbc", length: 128}, extractable, [ ])');
 }).then(finishJSTest, finishJSTest);
 
 </script>

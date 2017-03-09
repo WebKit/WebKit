@@ -1,3 +1,36 @@
+2017-03-09  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Implement PBKDF2 in WebCrypto
+        https://bugs.webkit.org/show_bug.cgi?id=143458
+        <rdar://problem/27311703>
+
+        Reviewed by Brent Fulgham.
+
+        * TestExpectations:
+        Mark slow tests as slow.
+        * crypto/subtle/derive-key-malformed-parameters.html:
+        * crypto/subtle/ecdh-import-key-derive-pbkdf2-key-expected.txt: Added.
+        * crypto/subtle/ecdh-import-key-derive-pbkdf2-key.html: Added.
+        * crypto/subtle/pbkdf2-derive-bits-malformed-parametrs-expected.txt: Added.
+        * crypto/subtle/pbkdf2-derive-bits-malformed-parametrs.html: Added.
+        * crypto/subtle/pbkdf2-import-key-derive-bits-expected.txt: Added.
+        * crypto/subtle/pbkdf2-import-key-derive-bits.html: Added.
+        * crypto/subtle/pbkdf2-import-key-derive-hmac-key-expected.txt: Added.
+        * crypto/subtle/pbkdf2-import-key-derive-hmac-key.html: Added.
+        * crypto/subtle/pbkdf2-import-key-expected.txt: Added.
+        * crypto/subtle/pbkdf2-import-key-malformed-parameters-expected.txt: Added.
+        * crypto/subtle/pbkdf2-import-key-malformed-parameters.html: Added.
+        * crypto/subtle/pbkdf2-import-key.html: Added.
+        * crypto/workers/subtle/pbkdf2-import-key-derive-bits-expected.txt: Added.
+        * crypto/workers/subtle/pbkdf2-import-key-derive-bits.html: Added.
+        * crypto/workers/subtle/pbkdf2-import-key-derive-hmac-key-expected.txt: Added.
+        * crypto/workers/subtle/pbkdf2-import-key-derive-hmac-key.html: Added.
+        * crypto/workers/subtle/pbkdf2-import-key-expected.txt: Added.
+        * crypto/workers/subtle/pbkdf2-import-key.html: Added.
+        * crypto/workers/subtle/resources/pbkdf2-import-key-derive-bits.js: Added.
+        * crypto/workers/subtle/resources/pbkdf2-import-key-derive-hmac-key.js: Added.
+        * crypto/workers/subtle/resources/pbkdf2-import-key.js: Added.
+
 2017-03-09  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] iOS: long press on play button shows the Copy menu

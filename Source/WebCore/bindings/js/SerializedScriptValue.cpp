@@ -1212,6 +1212,10 @@ private:
             // A dummy implementation for now.
             // FIXME: https://bugs.webkit.org/show_bug.cgi?id=169232
             break;
+        case CryptoKeyClass::Raw:
+            // A dummy implementation for now.
+            // FIXME: https://bugs.webkit.org/show_bug.cgi?id=169232
+            break;
         case CryptoKeyClass::RSA:
             write(CryptoKeyClassSubtag::RSA);
             write(key->algorithmIdentifier());

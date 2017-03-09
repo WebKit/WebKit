@@ -185,6 +185,7 @@ list(APPEND WebCore_SOURCES
     crypto/algorithms/CryptoAlgorithmAES_KW.cpp
     crypto/algorithms/CryptoAlgorithmECDH.cpp
     crypto/algorithms/CryptoAlgorithmHMAC.cpp
+    crypto/algorithms/CryptoAlgorithmPBKDF2.cpp
     crypto/algorithms/CryptoAlgorithmRSAES_PKCS1_v1_5.cpp
     crypto/algorithms/CryptoAlgorithmRSASSA_PKCS1_v1_5.cpp
     crypto/algorithms/CryptoAlgorithmRSA_OAEP.cpp
@@ -200,6 +201,7 @@ list(APPEND WebCore_SOURCES
     crypto/keys/CryptoKeyEC.cpp
     crypto/keys/CryptoKeyHMAC.cpp
     crypto/keys/CryptoKeyRSA.cpp
+    crypto/keys/CryptoKeyRaw.cpp
     crypto/keys/CryptoKeySerializationRaw.cpp
 
     crypto/mac/CryptoAlgorithmAES_CBCMac.cpp
@@ -208,6 +210,7 @@ list(APPEND WebCore_SOURCES
     crypto/mac/CryptoAlgorithmAES_KWMac.cpp
     crypto/mac/CryptoAlgorithmECDHMac.cpp
     crypto/mac/CryptoAlgorithmHMACMac.cpp
+    crypto/mac/CryptoAlgorithmPBKDF2Mac.cpp
     crypto/mac/CryptoAlgorithmRSAES_PKCS1_v1_5Mac.cpp
     crypto/mac/CryptoAlgorithmRSASSA_PKCS1_v1_5Mac.cpp
     crypto/mac/CryptoAlgorithmRSA_OAEPMac.cpp

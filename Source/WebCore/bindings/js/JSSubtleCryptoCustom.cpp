@@ -42,6 +42,7 @@
 #include "JSEcdhKeyDeriveParams.h"
 #include "JSHmacKeyParams.h"
 #include "JSJsonWebKey.h"
+#include "JSPbkdf2Params.h"
 #include "JSRsaHashedImportParams.h"
 #include "JSRsaHashedKeyGenParams.h"
 #include "JSRsaKeyGenParams.h"
@@ -160,26 +161,6 @@ static std::unique_ptr<CryptoAlgorithmParameters> normalizeCryptoAlgorithmParame
                 return nullptr;
             }
             break;
-        case Operations::DeriveBits:
-            switch (*identifier) {
-            case CryptoAlgorithmIdentifier::ECDH: {
-                // Remove this hack once https://bugs.webkit.org/show_bug.cgi?id=169333 is fixed.
-                JSValue nameValue = value.getObject()->get(&state, Identifier::fromString(&state, "name"));
-                JSValue publicValue = value.getObject()->get(&state, Identifier::fromString(&state, "public"));
-                JSObject* newValue = constructEmptyObject(&state);
-                newValue->putDirect(vm, Identifier::fromString(&vm, "name"), nameValue);
-                newValue->putDirect(vm, Identifier::fromString(&vm, "publicKey"), publicValue);
-
-                auto params = convertDictionary<CryptoAlgorithmEcdhKeyDeriveParams>(state, newValue);
-                RETURN_IF_EXCEPTION(scope, nullptr);
-                result = std::make_unique<CryptoAlgorithmEcdhKeyDeriveParams>(params);
-                break;
-            }
-            default:
-                throwNotSupportedError(state, scope);
-                return nullptr;
-            }
-            break;
         case Operations::GenerateKey:
             switch (*identifier) {
             case CryptoAlgorithmIdentifier::RSAES_PKCS1_v1_5: {
@@ -229,9 +210,38 @@ static std::unique_ptr<CryptoAlgorithmParameters> normalizeCryptoAlgorithmParame
                 return nullptr;
             }
             break;
+        case Operations::DeriveBits:
+            switch (*identifier) {
+            case CryptoAlgorithmIdentifier::ECDH: {
+                // Remove this hack once https://bugs.webkit.org/show_bug.cgi?id=169333 is fixed.
+                JSValue nameValue = value.getObject()->get(&state, Identifier::fromString(&state, "name"));
+                JSValue publicValue = value.getObject()->get(&state, Identifier::fromString(&state, "public"));
+                JSObject* newValue = constructEmptyObject(&state);
+                newValue->putDirect(vm, Identifier::fromString(&vm, "name"), nameValue);
+                newValue->putDirect(vm, Identifier::fromString(&vm, "publicKey"), publicValue);
+
+                auto params = convertDictionary<CryptoAlgorithmEcdhKeyDeriveParams>(state, newValue);
+                RETURN_IF_EXCEPTION(scope, nullptr);
+                result = std::make_unique<CryptoAlgorithmEcdhKeyDeriveParams>(params);
+                break;
+            }
+            case CryptoAlgorithmIdentifier::PBKDF2: {
+                auto params = convertDictionary<CryptoAlgorithmPbkdf2Params>(state, value);
+                RETURN_IF_EXCEPTION(scope, nullptr);
+                params.hashIdentifier = toHashIdentifier(state, params.hash);
+                RETURN_IF_EXCEPTION(scope, nullptr);
+                result = std::make_unique<CryptoAlgorithmPbkdf2Params>(params);
+                break;
+            }
+            default:
+                throwNotSupportedError(state, scope);
+                return nullptr;
+            }
+            break;
         case Operations::ImportKey:
             switch (*identifier) {
             case CryptoAlgorithmIdentifier::RSAES_PKCS1_v1_5:
+            case CryptoAlgorithmIdentifier::PBKDF2:
                 result = std::make_unique<CryptoAlgorithmParameters>(params);
                 break;
             case CryptoAlgorithmIdentifier::RSASSA_PKCS1_v1_5:
@@ -304,6 +314,9 @@ static std::unique_ptr<CryptoAlgorithmParameters> normalizeCryptoAlgorithmParame
                 result = std::make_unique<CryptoAlgorithmHmacKeyParams>(params);
                 break;
             }
+            case CryptoAlgorithmIdentifier::PBKDF2:
+                result = std::make_unique<CryptoAlgorithmParameters>(params);
+                break;
             default:
                 throwNotSupportedError(state, scope);
                 return nullptr;

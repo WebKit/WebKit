@@ -32,6 +32,7 @@
 #include "CryptoKeyEC.h"
 #include "CryptoKeyHMAC.h"
 #include "CryptoKeyRSA.h"
+#include "CryptoKeyRaw.h"
 #include "JSCryptoAlgorithmBuilder.h"
 #include <heap/HeapInlines.h>
 #include <runtime/JSCJSValueInlines.h>
@@ -85,6 +86,11 @@ JSValue JSCryptoKey::algorithm(JSC::ExecState& state) const
         builder.add("name", rsaAlgorithm.name());
         builder.add("modulusLength", rsaAlgorithm.modulusLength());
         builder.add("publicExponent", rsaAlgorithm.publicExponent());
+        break;
+    }
+    case KeyAlgorithmClass::Raw: {
+        auto& rawAlgorithm = downcast<RawKeyAlgorithm>(*algorithm);
+        builder.add("name", rawAlgorithm.name());
         break;
     }
     }

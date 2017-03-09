@@ -1,0 +1,19 @@
+Test importing a PBKDF2 raw key with malformed parameters
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS crypto.subtle.importKey("spki", rawKey, { name: "PBKDF2" }, nonExtractable, ["deriveKey", "deriveBits"]) rejected promise  with NotSupportedError (DOM Exception 9): The algorithm is not supported.
+PASS crypto.subtle.importKey("pkcs8", rawKey, { name: "PBKDF2" }, nonExtractable, ["deriveKey", "deriveBits"]) rejected promise  with NotSupportedError (DOM Exception 9): The algorithm is not supported.
+PASS crypto.subtle.importKey("jwk", jwkKey, { name: "PBKDF2" }, nonExtractable, ["deriveKey", "deriveBits"]) rejected promise  with NotSupportedError (DOM Exception 9): The algorithm is not supported.
+PASS crypto.subtle.importKey("raw", rawKey, { name: "PBKDF2" }, nonExtractable, ["encrypt"]) rejected promise  with SyntaxError (DOM Exception 12): A required parameter was missing or out-of-range.
+PASS crypto.subtle.importKey("raw", rawKey, { name: "PBKDF2" }, nonExtractable, ["decrypt"]) rejected promise  with SyntaxError (DOM Exception 12): A required parameter was missing or out-of-range.
+PASS crypto.subtle.importKey("raw", rawKey, { name: "PBKDF2" }, nonExtractable, ["sign"]) rejected promise  with SyntaxError (DOM Exception 12): A required parameter was missing or out-of-range.
+PASS crypto.subtle.importKey("raw", rawKey, { name: "PBKDF2" }, nonExtractable, ["verify"]) rejected promise  with SyntaxError (DOM Exception 12): A required parameter was missing or out-of-range.
+PASS crypto.subtle.importKey("raw", rawKey, { name: "PBKDF2" }, nonExtractable, ["wrapKey"]) rejected promise  with SyntaxError (DOM Exception 12): A required parameter was missing or out-of-range.
+PASS crypto.subtle.importKey("raw", rawKey, { name: "PBKDF2" }, nonExtractable, ["unwrapKey"]) rejected promise  with SyntaxError (DOM Exception 12): A required parameter was missing or out-of-range.
+PASS crypto.subtle.importKey("raw", rawKey, { name: "PBKDF2" }, true, ["deriveKey", "deriveBits"]) rejected promise  with SyntaxError (DOM Exception 12): A required parameter was missing or out-of-range.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

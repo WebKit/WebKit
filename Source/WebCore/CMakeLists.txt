@@ -346,6 +346,7 @@ set(WebCore_NON_SVG_IDL_FILES
     crypto/parameters/EcKeyParams.idl
     crypto/parameters/EcdhKeyDeriveParams.idl
     crypto/parameters/HmacKeyParams.idl
+    crypto/parameters/Pbkdf2Params.idl
     crypto/parameters/RsaHashedImportParams.idl
     crypto/parameters/RsaHashedKeyGenParams.idl
     crypto/parameters/RsaKeyGenParams.idl

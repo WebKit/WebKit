@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../resources/common.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+description("Test deriving PBKDF2 Keys with imported ECDH base key");
+
+jsTestIsAsync = true;
+
+var extractable = true;
+var jwkPrivateKey = {
+    kty: "EC",
+    crv: "P-256",
+    x: "1FSVWieTvikFkG1NOyhkUCaMbdQhxwH6aCu4Ez-sRtA",
+    y: "9jmNTLqM4cjBhdAnHcNI9YQV3O8LFmo-EdZWk8ntAaI",
+    d: "ppxBSov3N8_AUcisAuvmLV4yE8e_L_BLE8bZb9Z1Xjg",
+};
+var jwkPublicKey = {
+    kty: "EC",
+    crv: "P-256",
+    x: "1FSVWieTvikFkG1NOyhkUCaMbdQhxwH6aCu4Ez-sRtA",
+    y: "9jmNTLqM4cjBhdAnHcNI9YQV3O8LFmo-EdZWk8ntAaI",
+};
+
+crypto.subtle.importKey("jwk", jwkPrivateKey, { name: "ECDH", namedCurve: "P-256" }, extractable, ["deriveKey"]).then(function(result) {
+    privateKey = result;
+    return crypto.subtle.importKey("jwk", jwkPublicKey, { name: "ECDH", namedCurve: "P-256" }, extractable, [ ]);
+}).then(function(result) {
+    publicKey = result;
+    return crypto.subtle.deriveKey({ name:"ECDH", public:publicKey }, privateKey, "PBKDF2", !extractable, ['deriveKey', 'deriveBits']);
+}).then(function(result) {
+    derivedKey = result;
+
+    shouldBe("derivedKey.type", "'secret'");
+    shouldBe("derivedKey.extractable", "false");
+    shouldBe("derivedKey.algorithm.name", "'PBKDF2'");
+    shouldBe("derivedKey.usages", "['deriveBits', 'deriveKey']");
+
+    finishJSTest();
+});
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

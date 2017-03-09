@@ -388,6 +388,7 @@ if (ENABLE_SUBTLE_CRYPTO)
         crypto/algorithms/CryptoAlgorithmAES_KW.cpp
         crypto/algorithms/CryptoAlgorithmECDH.cpp
         crypto/algorithms/CryptoAlgorithmHMAC.cpp
+        crypto/algorithms/CryptoAlgorithmPBKDF2.cpp
         crypto/algorithms/CryptoAlgorithmRSAES_PKCS1_v1_5.cpp
         crypto/algorithms/CryptoAlgorithmRSASSA_PKCS1_v1_5.cpp
         crypto/algorithms/CryptoAlgorithmRSA_OAEP.cpp
@@ -404,6 +405,7 @@ if (ENABLE_SUBTLE_CRYPTO)
         crypto/gnutls/CryptoAlgorithmAES_GCMGnuTLS.cpp
         crypto/gnutls/CryptoAlgorithmAES_KWGnuTLS.cpp
         crypto/gnutls/CryptoAlgorithmECDHGnuTLS.cpp
+        crypto/gnutls/CryptoAlgorithmPBKDF2GnuTLS.cpp
         crypto/gnutls/CryptoAlgorithmRSAES_PKCS1_v1_5GnuTLS.cpp
         crypto/gnutls/CryptoAlgorithmRSASSA_PKCS1_v1_5GnuTLS.cpp
         crypto/gnutls/CryptoAlgorithmRSA_OAEPGnuTLS.cpp
@@ -418,6 +420,7 @@ if (ENABLE_SUBTLE_CRYPTO)
         crypto/keys/CryptoKeyEC.cpp
         crypto/keys/CryptoKeyHMAC.cpp
         crypto/keys/CryptoKeyRSA.cpp
+        crypto/keys/CryptoKeyRaw.cpp
         crypto/keys/CryptoKeySerializationRaw.cpp
     )
 endif ()

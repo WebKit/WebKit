@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../resources/common.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+description("Test PBKDF2 deriveBits operation with malformed parameters");
+
+jsTestIsAsync = true;
+
+var nonExtractable = false;
+var rawKey = asciiToUint8Array("jnOw99oOZFLIEPMr");
+var salt = asciiToUint8Array("jnOw99oO");
+
+crypto.subtle.importKey("raw", rawKey, "PBKDF2", nonExtractable, ["deriveBits"]).then(function(result) {
+    baseKey = result;
+
+    // Malformed AlgorithmIdentifiers
+    shouldReject('crypto.subtle.deriveBits("PBKDF2", baseKey, null)');
+    shouldReject('crypto.subtle.deriveBits({name: "PBKDF2"}, baseKey, null)');
+    shouldReject('crypto.subtle.deriveBits({name: "PBKDF2", salt: true, iterations: 100000, hash: "sha-1"}, baseKey, 128)');
+    shouldReject('crypto.subtle.deriveBits({name: "PBKDF2", salt: null, iterations: 100000, hash: "sha-1"}, baseKey, 128)');
+    shouldReject('crypto.subtle.deriveBits({name: "PBKDF2", salt: undefined, iterations: 100000, hash: "sha-1"}, baseKey, 128)');
+    shouldReject('crypto.subtle.deriveBits({name: "PBKDF2", salt: Symbol(), iterations: 100000, hash: "sha-1"}, baseKey, 128)');
+    shouldReject('crypto.subtle.deriveBits({name: "PBKDF2", salt: { }, iterations: 100000, hash: "sha-1"}, baseKey, 128)');
+    shouldReject('crypto.subtle.deriveBits({name: "PBKDF2", salt: 1, iterations: 100000, hash: "sha-1"}, baseKey, 128)');
+    shouldReject('crypto.subtle.deriveBits({name: "PBKDF2", salt: salt, iterations: undefined, hash: "sha-1"}, baseKey, 128)');
+    shouldReject('crypto.subtle.deriveBits({name: "PBKDF2", salt: salt, iterations: Symbol(), hash: "sha-1"}, baseKey, 128)');
+    // Wrong length
+    shouldReject('crypto.subtle.deriveBits({name: "PBKDF2", salt: salt, iterations: 100000, hash: "sha-1"}, baseKey, null)');
+    shouldReject('crypto.subtle.deriveBits({name: "PBKDF2", salt: salt, iterations: 100000, hash: "sha-1"}, baseKey, 0)');
+    shouldReject('crypto.subtle.deriveBits({name: "PBKDF2", salt: salt, iterations: 100000, hash: "sha-1"}, baseKey, 5)');
+    // Operation Error
+    return shouldReject('crypto.subtle.deriveBits({name: "PBKDF2", salt: salt, iterations: 0, hash: "sha-1"}, baseKey, 128)');
+}).then(finishJSTest, finishJSTest);
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>
