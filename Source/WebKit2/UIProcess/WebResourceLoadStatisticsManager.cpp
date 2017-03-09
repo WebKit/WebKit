@@ -86,6 +86,11 @@ void WebResourceLoadStatisticsManager::fireDataModificationHandler()
     WebCore::ResourceLoadObserver::sharedObserver().fireDataModificationHandler();
 }
 
+void WebResourceLoadStatisticsManager::fireShouldPartitionCookiesHandler(const String& hostName, bool value)
+{
+    WebCore::ResourceLoadObserver::sharedObserver().fireShouldPartitionCookiesHandler(hostName, value);
+}
+
 void WebResourceLoadStatisticsManager::setNotifyPagesWhenDataRecordsWereScanned(bool value)
 {
     WebResourceLoadStatisticsStore::setNotifyPagesWhenDataRecordsWereScanned(value);

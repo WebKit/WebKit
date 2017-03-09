@@ -28,6 +28,7 @@
 
 #include "APIArray.h"
 #include "APISecurityOrigin.h"
+#include "NetworkProcessMessages.h"
 #include "WebCookieManagerMessages.h"
 #include "WebCookieManagerProxyMessages.h"
 #include "WebProcessPool.h"
@@ -194,6 +195,15 @@ void WebCookieManagerProxy::didGetHTTPCookieAcceptPolicy(uint32_t policy, uint64
     }
 
     callback->performCallbackWithReturnValue(policy);
+}
+
+void WebCookieManagerProxy::setCookieStoragePartitioningEnabled(bool enabled)
+{
+#if PLATFORM(COCOA)
+    processPool()->sendToNetworkingProcess(Messages::NetworkProcess::SetCookieStoragePartitioningEnabled(enabled));
+#else
+    UNUSED_PARAM(enabled);
+#endif
 }
 
 } // namespace WebKit

@@ -31,6 +31,10 @@ messages -> NetworkProcessProxy LegacyReceiver {
 
     GrantSandboxExtensionsToDatabaseProcessForBlobs(uint64_t requestID, Vector<String> paths)
 
+#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
+    ShouldPartitionCookiesForTopPrivatelyOwnedDomains(Vector<String> topPrivatelyOwnedDomains, bool value)
+#endif
+
     ProcessReadyToSuspend()
     SetIsHoldingLockedFiles(bool isHoldingLockedFiles)
 

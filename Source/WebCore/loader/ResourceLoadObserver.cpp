@@ -304,13 +304,17 @@ void ResourceLoadObserver::logUserInteractionWithReducedTimeResolution(const Doc
     if (url.isBlankURL() || url.isEmpty())
         return;
 
-    auto& statistics = m_store->ensureResourceStatisticsForPrimaryDomain(primaryDomain(url));
+    auto primaryDomainStr = primaryDomain(url);
+
+    auto& statistics = m_store->ensureResourceStatisticsForPrimaryDomain(primaryDomainStr);
     double newTimestamp = reduceTimeResolutionToOneDay(WTF::currentTime());
     if (newTimestamp == statistics.mostRecentUserInteraction)
         return;
 
     statistics.hadUserInteraction = true;
     statistics.mostRecentUserInteraction = newTimestamp;
+
+    m_store->fireShouldPartitionCookiesHandler(primaryDomainStr, false);
     m_store->fireDataModificationHandler();
 }
 
@@ -319,9 +323,13 @@ void ResourceLoadObserver::logUserInteraction(const URL& url)
     if (url.isBlankURL() || url.isEmpty())
         return;
 
-    auto& statistics = m_store->ensureResourceStatisticsForPrimaryDomain(primaryDomain(url));
+    auto primaryDomainStr = primaryDomain(url);
+
+    auto& statistics = m_store->ensureResourceStatisticsForPrimaryDomain(primaryDomainStr);
     statistics.hadUserInteraction = true;
     statistics.mostRecentUserInteraction = WTF::currentTime();
+
+    m_store->fireShouldPartitionCookiesHandler(primaryDomainStr, false);
 }
 
 void ResourceLoadObserver::clearUserInteraction(const URL& url)
@@ -412,10 +420,19 @@ void ResourceLoadObserver::fireDataModificationHandler()
     m_store->fireDataModificationHandler();
 }
 
+void ResourceLoadObserver::fireShouldPartitionCookiesHandler(const String& hostName, bool value)
+{
+    m_store->fireShouldPartitionCookiesHandler(primaryDomain(hostName), value);
+}
+
 String ResourceLoadObserver::primaryDomain(const URL& url)
 {
+    return primaryDomain(url.host());
+}
+
+String ResourceLoadObserver::primaryDomain(const String& host)
+{
     String primaryDomain;
-    String host = url.host();
     if (host.isNull() || host.isEmpty())
         primaryDomain = "nullOrigin";
 #if ENABLE(PUBLIC_SUFFIX_LIST)

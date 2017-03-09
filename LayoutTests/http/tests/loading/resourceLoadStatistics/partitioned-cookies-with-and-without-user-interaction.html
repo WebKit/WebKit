@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Test for Partitioned Cookies With and Without User Interaction</title>
+    <script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+    const partitionHost = "127.0.0.1:8000";
+    const thirdPartyOrigin = "http://localhost:8000";
+    const thirdPartyBaseUrl = thirdPartyOrigin + "/loading/resourceLoadStatistics/resources";
+    const firstPartyCookieName = "firstPartyCookie";
+    const subPathToSetFirstPartyCookie = "/set-cookie.php?name=" + firstPartyCookieName + "&value=value";
+    const thirdPartyCookieName = "thirdPartyCookie";
+    const subPathToSetThirdPartyCookie = "/set-cookie.php?name=" + thirdPartyCookieName + "&value=value";
+    const fragmentWithReturnUrl = "http://127.0.0.1:8000/loading/resourceLoadStatistics/partitioned-cookies-with-and-without-user-interaction.html";
+    const subPathToGetCookies = "/get-cookies.php?name1=" + firstPartyCookieName + "&name2=" + thirdPartyCookieName;
+
+    function setEnableFeature(enable) {
+        if (!enable) {
+            testRunner.statisticsResetToConsistentState();
+        }
+        internals.setResourceLoadStatisticsEnabled(enable);
+        testRunner.setCookieStoragePartitioningEnabled(enable);
+    }
+
+    function finishTest() {
+        setEnableFeature(false);
+        testRunner.notifyDone();
+    }
+
+    function openIframe(url, onLoadHandler) {
+        const element = document.createElement("iframe");
+        element.src = url;
+        if (onLoadHandler) {
+            element.onload = onLoadHandler;
+        }
+        document.body.appendChild(element);
+    }
+
+    function setUserInteractionAndContinue() {
+        testRunner.setStatisticsHasHadUserInteraction(thirdPartyOrigin, true);
+        if (!testRunner.isStatisticsHasHadUserInteraction(thirdPartyOrigin))
+            testFailed("Third party did not get logged for user interaction.");
+        runTest();
+    }
+
+    function runTest() {
+        switch (document.location.hash) {
+            case "#step1":
+                document.location.href = thirdPartyBaseUrl + subPathToSetFirstPartyCookie + "#" + fragmentWithReturnUrl + "#step2";
+                break;
+            case "#step2":
+                document.location.hash = "step3";
+                openIframe(thirdPartyBaseUrl + subPathToGetCookies + "&message=Should receive no cookies.", runTest);
+                break;
+            case "#step3":
+                document.location.hash = "step4";
+                openIframe(thirdPartyBaseUrl + subPathToSetThirdPartyCookie + "&message=Setting partitioned, third party cookie.", runTest);
+                break;
+            case "#step4":
+                document.location.hash = "step5";
+                openIframe(thirdPartyBaseUrl + subPathToGetCookies + "&message=Should only receive partitioned, third party cookie.", setUserInteractionAndContinue);
+                break;
+            case "#step5":
+                openIframe(thirdPartyBaseUrl + subPathToGetCookies + "&message=After user interaction, should only receive non-partitioned, first party cookie.", finishTest);
+                break;
+        }
+    }
+
+    if (document.location.host === partitionHost && document.location.hash == "" && window.testRunner && window.internals) {
+        setEnableFeature(true);
+
+        testRunner.statisticsFireShouldPartitionCookiesHandler("localhost", true);
+
+        testRunner.waitUntilDone();
+        testRunner.dumpChildFramesAsText();
+        document.location.hash = "step1";
+    }
+
+    runTest();
+</script>
+</body>
+</html>

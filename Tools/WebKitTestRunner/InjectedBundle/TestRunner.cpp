@@ -766,6 +766,15 @@ void TestRunner::setAlwaysAcceptCookies(bool accept)
     WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), messageBody.get(), nullptr);
 }
 
+void TestRunner::setCookieStoragePartitioningEnabled(bool enabled)
+{
+    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("SetCookieStoragePartitioningEnabled"));
+
+    WKRetainPtr<WKBooleanRef> messageBody(AdoptWK, WKBooleanCreate(enabled));
+
+    WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), messageBody.get(), nullptr);
+}
+
 double TestRunner::preciseTime()
 {
     return currentTime();
@@ -1326,6 +1335,31 @@ void TestRunner::statisticsFireDataModificationHandler()
 {
     WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("StatisticsFireDataModificationHandler"));
     WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), 0, nullptr);
+}
+
+void TestRunner::statisticsFireShouldPartitionCookiesHandler(JSStringRef hostName, bool value)
+{
+    Vector<WKRetainPtr<WKStringRef>> keys;
+    Vector<WKRetainPtr<WKTypeRef>> values;
+    
+    keys.append({ AdoptWK, WKStringCreateWithUTF8CString("HostName") });
+    values.append({ AdoptWK, WKStringCreateWithJSString(hostName) });
+    
+    keys.append({ AdoptWK, WKStringCreateWithUTF8CString("Value") });
+    values.append({ AdoptWK, WKBooleanCreate(value) });
+    
+    Vector<WKStringRef> rawKeys(keys.size());
+    Vector<WKTypeRef> rawValues(values.size());
+    
+    for (size_t i = 0; i < keys.size(); ++i) {
+        rawKeys[i] = keys[i].get();
+        rawValues[i] = values[i].get();
+    }
+    
+    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("StatisticsFireShouldPartitionCookiesHandler"));
+    WKRetainPtr<WKDictionaryRef> messageBody(AdoptWK, WKDictionaryCreate(rawKeys.data(), rawValues.data(), rawKeys.size()));
+    
+    WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), messageBody.get(), nullptr);
 }
 
 void TestRunner::setStatisticsNotifyPagesWhenDataRecordsWereScanned(bool value)

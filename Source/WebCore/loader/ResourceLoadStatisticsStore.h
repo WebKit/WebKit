@@ -56,10 +56,13 @@ public:
     WEBCORE_EXPORT void mergeStatistics(const Vector<ResourceLoadStatistics>&);
     WEBCORE_EXPORT Vector<ResourceLoadStatistics> takeStatistics();
 
-    WEBCORE_EXPORT void setNotificationCallback(std::function<void()> handler);
+    WEBCORE_EXPORT void setNotificationCallback(std::function<void()>);
+    WEBCORE_EXPORT void setShouldPartitionCookiesCallback(std::function<void(const Vector<String>& primaryDomains, bool value)>&&);
 
     void fireDataModificationHandler();
     void setTimeToLiveUserInteraction(double seconds);
+    WEBCORE_EXPORT void fireShouldPartitionCookiesHandler(const String& primaryDomain, bool value);
+    WEBCORE_EXPORT void fireShouldPartitionCookiesHandler(const Vector<String>& primaryDomain, bool value);
 
     WEBCORE_EXPORT void processStatistics(std::function<void(ResourceLoadStatistics&)>&&);
 
@@ -71,6 +74,7 @@ private:
 
     HashMap<String, ResourceLoadStatistics> m_resourceStatisticsMap;
     std::function<void()> m_dataAddedHandler;
+    std::function<void(const Vector<String>& primaryDomains, bool value)> m_shouldPartitionCookiesForDomainsHandler;
 };
     
 } // namespace WebCore

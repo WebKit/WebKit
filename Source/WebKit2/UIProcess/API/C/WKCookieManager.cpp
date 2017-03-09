@@ -74,6 +74,11 @@ void WKCookieManagerGetHTTPCookieAcceptPolicy(WKCookieManagerRef cookieManager, 
     toImpl(cookieManager)->getHTTPCookieAcceptPolicy(toGenericCallbackFunction<WKHTTPCookieAcceptPolicy, HTTPCookieAcceptPolicy>(context, callback));
 }
 
+void WKCookieManagerSetCookieStoragePartitioningEnabled(WKCookieManagerRef cookieManager, bool enabled)
+{
+    toImpl(cookieManager)->setCookieStoragePartitioningEnabled(enabled);
+}
+
 void WKCookieManagerStartObservingCookieChanges(WKCookieManagerRef cookieManager)
 {
     toImpl(cookieManager)->startObservingCookieChanges(WebCore::SessionID::defaultSessionID());

@@ -2270,6 +2270,11 @@ void TestController::statisticsFireDataModificationHandler()
     WKResourceLoadStatisticsManagerFireDataModificationHandler();
 }
     
+void TestController::statisticsFireShouldPartitionCookiesHandler(WKStringRef hostName, bool value)
+{
+    WKResourceLoadStatisticsManagerFireShouldPartitionCookiesHandler(hostName, value);
+}
+
 void TestController::setStatisticsNotifyPagesWhenDataRecordsWereScanned(bool value)
 {
     WKResourceLoadStatisticsManagerSetNotifyPagesWhenDataRecordsWereScanned(value);

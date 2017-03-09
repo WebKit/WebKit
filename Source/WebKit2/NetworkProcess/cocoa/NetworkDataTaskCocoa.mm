@@ -123,9 +123,12 @@ NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataT
     LOG(NetworkSession, "%llu Creating NetworkDataTask with URL %s", [m_task taskIdentifier], nsRequest.URL.absoluteString.UTF8String);
 
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING)
-    String storagePartition = WebCore::cookieStoragePartition(request);
-    if (!storagePartition.isEmpty())
-        m_task.get()._storagePartitionIdentifier = storagePartition;
+    if (session.networkStorageSession().shouldPartitionCookiesForHost(url.host())) {
+        LOG(NetworkSession, "%llu Partitioning cookies for URL %s", [m_task taskIdentifier], nsRequest.URL.absoluteString.UTF8String);
+        String storagePartition = WebCore::cookieStoragePartition(request);
+        if (!storagePartition.isEmpty())
+            m_task.get()._storagePartitionIdentifier = storagePartition;
+    }
 #endif
 
     if (WebCore::ResourceRequest::resourcePrioritiesEnabled())

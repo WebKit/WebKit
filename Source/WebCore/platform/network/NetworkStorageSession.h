@@ -27,6 +27,7 @@
 
 #include "CredentialStorage.h"
 #include "SessionID.h"
+#include <wtf/HashSet.h>
 #include <wtf/text/WTFString.h>
 
 #if PLATFORM(COCOA) || USE(CFURLCONNECTION)
@@ -67,6 +68,10 @@ public:
     CFURLStorageSessionRef platformSession() { return m_platformSession.get(); }
     WEBCORE_EXPORT RetainPtr<CFHTTPCookieStorageRef> cookieStorage() const;
     WEBCORE_EXPORT static void setCookieStoragePartitioningEnabled(bool);
+#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
+    WEBCORE_EXPORT bool shouldPartitionCookiesForHost(const String&);
+    WEBCORE_EXPORT void setShouldPartitionCookiesForHosts(const Vector<String>&, bool value);
+#endif
 #elif USE(SOUP)
     NetworkStorageSession(SessionID, std::unique_ptr<SoupNetworkSession>&&);
     ~NetworkStorageSession();
@@ -106,6 +111,10 @@ private:
 #endif
 
     CredentialStorage m_credentialStorage;
+
+#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
+    HashSet<String> m_topPrivatelyControlledDomainsForCookiePartitioning;
+#endif
 };
 
 WEBCORE_EXPORT String cookieStoragePartition(const ResourceRequest&);

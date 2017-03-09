@@ -63,6 +63,7 @@ public:
     void setResourceLoadStatisticsEnabled(bool);
     bool resourceLoadStatisticsEnabled() const;
     void registerSharedResourceLoadObserver();
+    void registerSharedResourceLoadObserver(std::function<void(const Vector<String>& primaryDomain, bool value)>&& shouldPartitionCookiesForDomainsHandler);
     
     void resourceLoadStatisticsUpdated(const Vector<WebCore::ResourceLoadStatistics>& origins);
 

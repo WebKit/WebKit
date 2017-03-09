@@ -793,6 +793,12 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         return nullptr;
     }
 
+    if (WKStringIsEqualToUTF8CString(messageName, "SetCookieStoragePartitioningEnabled")) {
+        WKBooleanRef accept = static_cast<WKBooleanRef>(messageBody);
+        WKCookieManagerSetCookieStoragePartitioningEnabled(WKContextGetCookieManager(TestController::singleton().context()), WKBooleanGetValue(accept));
+        return nullptr;
+    }
+    
     if (WKStringIsEqualToUTF8CString(messageName, "ImageCountInGeneralPasteboard")) {
         unsigned count = TestController::singleton().imageCountInGeneralPasteboard();
         WKRetainPtr<WKUInt64Ref> result(AdoptWK, WKUInt64Create(count));
@@ -988,6 +994,20 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
     
     if (WKStringIsEqualToUTF8CString(messageName, "StatisticsFireDataModificationHandler")) {
         TestController::singleton().statisticsFireDataModificationHandler();
+        return nullptr;
+    }
+    
+    if (WKStringIsEqualToUTF8CString(messageName, "StatisticsFireShouldPartitionCookiesHandler")) {
+        ASSERT(WKGetTypeID(messageBody) == WKDictionaryGetTypeID());
+        
+        WKDictionaryRef messageBodyDictionary = static_cast<WKDictionaryRef>(messageBody);
+        WKRetainPtr<WKStringRef> hostNameKey(AdoptWK, WKStringCreateWithUTF8CString("HostName"));
+        WKRetainPtr<WKStringRef> valueKey(AdoptWK, WKStringCreateWithUTF8CString("Value"));
+        
+        WKStringRef hostName = static_cast<WKStringRef>(WKDictionaryGetItemForKey(messageBodyDictionary, hostNameKey.get()));
+        WKBooleanRef value = static_cast<WKBooleanRef>(WKDictionaryGetItemForKey(messageBodyDictionary, valueKey.get()));
+        
+        TestController::singleton().statisticsFireShouldPartitionCookiesHandler(hostName, WKBooleanGetValue(value));
         return nullptr;
     }
     

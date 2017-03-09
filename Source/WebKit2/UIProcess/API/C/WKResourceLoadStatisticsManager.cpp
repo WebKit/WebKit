@@ -81,6 +81,11 @@ void WKResourceLoadStatisticsManagerFireDataModificationHandler()
     WebResourceLoadStatisticsManager::fireDataModificationHandler();
 }
 
+void WKResourceLoadStatisticsManagerFireShouldPartitionCookiesHandler(WKStringRef hostName, bool value)
+{
+    WebResourceLoadStatisticsManager::fireShouldPartitionCookiesHandler(toWTFString(hostName), value);
+}
+
 void WKResourceLoadStatisticsManagerSetNotifyPagesWhenDataRecordsWereScanned(bool value)
 {
     WebResourceLoadStatisticsManager::setNotifyPagesWhenDataRecordsWereScanned(value);

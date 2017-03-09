@@ -85,8 +85,11 @@ void WebResourceLoadStatisticsStore::setMinimumTimeBetweeenDataRecordsRemoval(do
 void WebResourceLoadStatisticsStore::classifyResource(ResourceLoadStatistics& resourceStatistic)
 {
     if (!resourceStatistic.isPrevalentResource
-        && m_resourceLoadStatisticsClassifier.hasPrevalentResourceCharacteristics(resourceStatistic))
+        && m_resourceLoadStatisticsClassifier.hasPrevalentResourceCharacteristics(resourceStatistic)) {
         resourceStatistic.isPrevalentResource = true;
+        if (!resourceStatistic.hadUserInteraction)
+            m_resourceLoadStatisticsStore->fireShouldPartitionCookiesHandler(resourceStatistic.highLevelDomain, true);
+    }
 }
 
 void WebResourceLoadStatisticsStore::removeDataRecords()
@@ -170,7 +173,6 @@ bool WebResourceLoadStatisticsStore::resourceLoadStatisticsEnabled() const
     return m_resourceLoadStatisticsEnabled;
 }
 
-
 void WebResourceLoadStatisticsStore::registerSharedResourceLoadObserver()
 {
     ResourceLoadObserver::sharedObserver().setStatisticsStore(m_resourceLoadStatisticsStore.copyRef());
@@ -178,6 +180,14 @@ void WebResourceLoadStatisticsStore::registerSharedResourceLoadObserver()
         if (m_resourceLoadStatisticsStore->isEmpty())
             return;
         processStatisticsAndDataRecords();
+    });
+}
+    
+void WebResourceLoadStatisticsStore::registerSharedResourceLoadObserver(std::function<void(const Vector<String>& primaryDomain, bool value)>&& shouldPartitionCookiesForDomainsHandler)
+{
+    registerSharedResourceLoadObserver();
+    m_resourceLoadStatisticsStore->setShouldPartitionCookiesCallback([this, shouldPartitionCookiesForDomainsHandler = WTFMove(shouldPartitionCookiesForDomainsHandler)] (const Vector<String>& primaryDomains, bool value) {
+        shouldPartitionCookiesForDomainsHandler(primaryDomains, value);
     });
 }
 

@@ -163,6 +163,7 @@ interface TestRunner {
 
     // Cookies testing
     void setAlwaysAcceptCookies(boolean accept);
+    void setCookieStoragePartitioningEnabled(boolean enabled);
 
     void overridePreference(DOMString preference, DOMString value);
 
@@ -258,6 +259,7 @@ interface TestRunner {
     void setStatisticsSubresourceUniqueRedirectTo(DOMString hostName, DOMString hostNameRedirectedTo);
     void setStatisticsTimeToLiveUserInteraction(double seconds);
     void statisticsFireDataModificationHandler();
+    void statisticsFireShouldPartitionCookiesHandler(DOMString hostName, boolean value);
     void setStatisticsNotifyPagesWhenDataRecordsWereScanned(boolean value);
     void setStatisticsShouldClassifyResourcesBeforeDataRecordsRemoval(boolean value);
     void setStatisticsMinimumTimeBetweeenDataRecordsRemoval(double seconds);

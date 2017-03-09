@@ -73,6 +73,7 @@ public:
 
     void setHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicy);
     void getHTTPCookieAcceptPolicy(std::function<void (HTTPCookieAcceptPolicy, CallbackBase::Error)>);
+    void setCookieStoragePartitioningEnabled(bool);
 
     void startObservingCookieChanges(WebCore::SessionID);
     void stopObservingCookieChanges(WebCore::SessionID);

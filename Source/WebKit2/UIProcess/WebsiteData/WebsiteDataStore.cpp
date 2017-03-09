@@ -1048,6 +1048,14 @@ void WebsiteDataStore::removeDataForTopPrivatelyOwnedDomains(OptionSet<WebsiteDa
     });
 }
 
+#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
+void WebsiteDataStore::shouldPartitionCookiesForTopPrivatelyOwnedDomains(const Vector<String>& topPrivatelyOwnedDomains, bool value)
+{
+    for (auto& processPool : processPools())
+        processPool->sendToNetworkingProcess(Messages::NetworkProcess::ShouldPartitionCookiesForTopPrivatelyOwnedDomains(topPrivatelyOwnedDomains, value));
+}
+#endif
+
 void WebsiteDataStore::webPageWasAdded(WebPageProxy& webPageProxy)
 {
     if (m_storageManager)
@@ -1212,8 +1220,15 @@ void WebsiteDataStore::registerSharedResourceLoadObserver()
 {
     if (!m_resourceLoadStatistics)
         return;
-
+    
+#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
+    m_resourceLoadStatistics->registerSharedResourceLoadObserver(
+        [this] (const Vector<String>& topPrivatelyOwnedDomains, bool value) {
+            this->shouldPartitionCookiesForTopPrivatelyOwnedDomains(topPrivatelyOwnedDomains, value);
+        });
+#else
     m_resourceLoadStatistics->registerSharedResourceLoadObserver();
+#endif
 }
 
 }

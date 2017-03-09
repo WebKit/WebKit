@@ -100,8 +100,15 @@ void ResourceLoadStatisticsStore::readDataFromDecoder(KeyedDecoder& decoder)
     if (!succeeded)
         return;
 
-    for (auto& statistics : loadedStatistics)
+    Vector<String> prevalentResourceDomainsWithoutUserInteraction;
+    prevalentResourceDomainsWithoutUserInteraction.reserveInitialCapacity(loadedStatistics.size());
+    for (auto& statistics : loadedStatistics) {
         m_resourceStatisticsMap.set(statistics.highLevelDomain, statistics);
+        if (statistics.isPrevalentResource && !statistics.hadUserInteraction)
+            prevalentResourceDomainsWithoutUserInteraction.uncheckedAppend(statistics.highLevelDomain);
+    }
+    
+    fireShouldPartitionCookiesHandler(prevalentResourceDomainsWithoutUserInteraction, true);
 }
 
 String ResourceLoadStatisticsStore::statisticsForOrigin(const String& origin)
@@ -141,10 +148,28 @@ void ResourceLoadStatisticsStore::setNotificationCallback(std::function<void()> 
     m_dataAddedHandler = WTFMove(handler);
 }
 
+void ResourceLoadStatisticsStore::setShouldPartitionCookiesCallback(std::function<void(const Vector<String>& primaryDomains, bool value)>&& handler)
+{
+    m_shouldPartitionCookiesForDomainsHandler = WTFMove(handler);
+}
+    
 void ResourceLoadStatisticsStore::fireDataModificationHandler()
 {
     if (m_dataAddedHandler)
         m_dataAddedHandler();
+}
+
+void ResourceLoadStatisticsStore::fireShouldPartitionCookiesHandler(const String& primaryDomain, bool value)
+{
+    Vector<String> domainVector;
+    domainVector.append(primaryDomain);
+    fireShouldPartitionCookiesHandler(domainVector, value);
+}
+
+void ResourceLoadStatisticsStore::fireShouldPartitionCookiesHandler(const Vector<String>& primaryDomains, bool value)
+{
+    if (m_shouldPartitionCookiesForDomainsHandler)
+        m_shouldPartitionCookiesForDomainsHandler(primaryDomains, value);
 }
 
 void ResourceLoadStatisticsStore::setTimeToLiveUserInteraction(double seconds)
@@ -170,6 +195,10 @@ bool ResourceLoadStatisticsStore::hasHadRecentUserInteraction(ResourceLoadStatis
         // it has been reset as opposed to its default -1.
         resourceStatistic.mostRecentUserInteraction = 0;
         resourceStatistic.hadUserInteraction = false;
+
+        if (resourceStatistic.isPrevalentResource)
+            fireShouldPartitionCookiesHandler(resourceStatistic.highLevelDomain, true);
+
         return false;
     }
 

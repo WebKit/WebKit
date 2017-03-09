@@ -1,3 +1,26 @@
+2017-03-08  John Wilander  <wilander@apple.com>
+
+        Resource Load Statistics: Communicate to the network process which domains to partition
+        https://bugs.webkit.org/show_bug.cgi?id=169322
+        <rdar://problem/30768921>
+
+        Reviewed by Alex Christensen.
+
+        These changes add support for two new TestRunner functions:
+        - setCookieStoragePartitioningEnabled()
+        - statisticsFireShouldPartitionCookiesHandler()
+
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::setCookieStoragePartitioningEnabled):
+        (WTR::TestRunner::statisticsFireShouldPartitionCookiesHandler):
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::statisticsFireShouldPartitionCookiesHandler):
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveSynchronousMessageFromInjectedBundle):
+
 2017-03-08  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Enable async image decoding for large images

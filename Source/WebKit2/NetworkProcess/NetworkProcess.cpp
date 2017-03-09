@@ -310,6 +310,13 @@ void NetworkProcess::didGrantSandboxExtensionsToDatabaseProcessForBlobs(uint64_t
         handler();
 }
 
+#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
+void NetworkProcess::shouldPartitionCookiesForTopPrivatelyOwnedDomains(const Vector<String>& domains, bool value)
+{
+    NetworkStorageSession::defaultStorageSession().setShouldPartitionCookiesForHosts(domains, value);
+}
+#endif
+
 static void fetchDiskCacheEntries(SessionID sessionID, OptionSet<WebsiteDataFetchOption> fetchOptions, Function<void (Vector<WebsiteData::Entry>)>&& completionHandler)
 {
 #if ENABLE(NETWORK_CACHE)
