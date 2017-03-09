@@ -406,7 +406,6 @@ typedef const char* optionString;
     v(bool, useSigillCrashAnalyzer, false, Configurable, "logs data about SIGILL crashes") \
     \
     v(unsigned, watchdog, 0, Normal, "watchdog timeout (0 = Disabled, N = a timeout period of N milliseconds)") \
-    v(bool, alwaysCheckTraps, false, Normal, "always emit op_check_traps bytecode") \
     v(bool, usePollingTraps, false, Normal, "use polling (instead of signalling) VM traps") \
     \
     v(bool, useICStats, false, Normal, nullptr) \

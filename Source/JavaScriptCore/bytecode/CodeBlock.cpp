@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2010, 2012-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2017 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Cameron Zwarich <cwzwarich@uwaterloo.ca>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -1904,7 +1904,7 @@ void CodeBlock::jettison(Profiler::JettisonReason reason, ReoptimizationMode mod
     if (alternative())
         alternative()->optimizeAfterWarmUp();
 
-    if (reason != Profiler::JettisonDueToOldAge)
+    if (reason != Profiler::JettisonDueToOldAge && reason != Profiler::JettisonDueToVMTraps)
         tallyFrequentExitSites();
 #endif // ENABLE(DFG_JIT)
 
@@ -2964,6 +2964,36 @@ void CodeBlock::jitAfterWarmUp()
 void CodeBlock::jitSoon()
 {
     m_llintExecuteCounter.setNewThreshold(thresholdForJIT(Options::thresholdForJITSoon()), this);
+}
+
+bool CodeBlock::hasInstalledVMTrapBreakpoints() const
+{
+#if ENABLE(SIGNAL_BASED_VM_TRAPS)
+    
+    // This function may be called from a signal handler. We need to be
+    // careful to not call anything that is not signal handler safe, e.g.
+    // we should not perturb the refCount of m_jitCode.
+    if (!JITCode::isOptimizingJIT(jitType()))
+        return false;
+    return m_jitCode->dfgCommon()->hasInstalledVMTrapsBreakpoints();
+#else
+    return false;
+#endif
+}
+
+bool CodeBlock::installVMTrapBreakpoints()
+{
+#if ENABLE(SIGNAL_BASED_VM_TRAPS)
+    // This function may be called from a signal handler. We need to be
+    // careful to not call anything that is not signal handler safe, e.g.
+    // we should not perturb the refCount of m_jitCode.
+    if (!JITCode::isOptimizingJIT(jitType()))
+        return false;
+    m_jitCode->dfgCommon()->installVMTrapBreakpoints();
+    return true;
+#else
+    return false;
+#endif
 }
 
 void CodeBlock::dumpMathICStats()

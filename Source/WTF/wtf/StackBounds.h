@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2013 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2010-2017 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,12 +40,21 @@ class StackBounds {
     const static size_t s_defaultAvailabilityDelta = 64 * 1024;
 
 public:
+    static StackBounds emptyBounds() { return StackBounds(); }
+
     static StackBounds currentThreadStackBounds()
     {
         StackBounds bounds;
         bounds.initialize();
         bounds.checkConsistency();
         return bounds;
+    }
+
+    StackBounds(void* origin, void* end)
+        : m_origin(origin)
+        , m_bound(end)
+    {
+        checkConsistency();
     }
 
     void* origin() const
@@ -65,6 +74,17 @@ public:
         if (isGrowingDownward())
             return static_cast<char*>(m_origin) - static_cast<char*>(m_bound);
         return static_cast<char*>(m_bound) - static_cast<char*>(m_origin);
+    }
+
+    bool isEmpty() const { return !m_origin; }
+
+    bool contains(void* p) const
+    {
+        if (isEmpty())
+            return false;
+        if (isGrowingDownward())
+            return (m_origin >= p) && (p > m_bound);
+        return (m_bound > p) && (p >= m_origin);
     }
 
     void* recursionLimit(size_t minAvailableDelta = s_defaultAvailabilityDelta) const

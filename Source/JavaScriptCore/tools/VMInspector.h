@@ -46,16 +46,22 @@ public:
     void add(VM*);
     void remove(VM*);
 
+    Lock& getLock() { return m_lock; }
+
+    enum class FunctorStatus {
+        Continue,
+        Done
+    };
+
+    template <typename Functor>
+    void iterate(const Locker&, const Functor& functor) { iterate(functor); }
+
     Expected<Locker, Error> lock(Seconds timeout = Seconds::infinity());
 
     Expected<bool, Error> isValidExecutableMemory(const Locker&, void*);
     Expected<CodeBlock*, Error> codeBlockForMachinePC(const Locker&, void*);
 
 private:
-    enum class FunctorStatus {
-        Continue,
-        Done
-    };
     template <typename Functor> void iterate(const Functor& functor)
     {
         for (VM* vm = m_list.head(); vm; vm = vm->next()) {

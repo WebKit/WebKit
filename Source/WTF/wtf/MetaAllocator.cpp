@@ -426,7 +426,7 @@ void MetaAllocator::decrementPageOccupancy(void* address, size_t sizeInBytes)
     }
 }
 
-bool MetaAllocator::isInAllocatedMemory(const LockHolder&, void* address)
+bool MetaAllocator::isInAllocatedMemory(const AbstractLocker&, void* address)
 {
     ASSERT(m_lock.isLocked());
     uintptr_t page = reinterpret_cast<uintptr_t>(address) >> m_logPageSize;

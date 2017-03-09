@@ -72,13 +72,14 @@ public:
     
     void clearCurrentlyExecuting();
 
-    bool contains(const LockHolder&, void* candidateCodeBlock);
+    bool contains(const AbstractLocker&, void* candidateCodeBlock);
     Lock& getLock() { return m_lock; }
 
     // Visits each CodeBlock in the heap until the visitor function returns true
     // to indicate that it is done iterating, or until every CodeBlock has been
     // visited.
     template<typename Functor> void iterate(const Functor&);
+    template<typename Functor> void iterate(const AbstractLocker&, const Functor&);
     
     template<typename Functor> void iterateCurrentlyExecuting(const Functor&);
     

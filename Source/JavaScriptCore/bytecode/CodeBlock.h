@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2017 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Cameron Zwarich <cwzwarich@uwaterloo.ca>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -202,6 +202,9 @@ public:
 
     bool isStrictMode() const { return m_isStrictMode; }
     ECMAMode ecmaMode() const { return isStrictMode() ? StrictMode : NotStrictMode; }
+
+    bool hasInstalledVMTrapBreakpoints() const;
+    bool installVMTrapBreakpoints();
 
     inline bool isKnownNotImmediate(int index)
     {

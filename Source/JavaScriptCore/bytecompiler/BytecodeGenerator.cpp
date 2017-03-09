@@ -1274,8 +1274,7 @@ void BytecodeGenerator::emitLoopHint()
 
 void BytecodeGenerator::emitCheckTraps()
 {
-    if (Options::alwaysCheckTraps() || vm()->watchdog() || vm()->needAsynchronousTerminationSupport())
-        emitOpcode(op_check_traps);
+    emitOpcode(op_check_traps);
 }
 
 void BytecodeGenerator::retrieveLastBinaryOp(int& dstIndex, int& src1Index, int& src2Index)

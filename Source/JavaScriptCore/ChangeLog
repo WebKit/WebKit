@@ -1,3 +1,184 @@
+2017-03-09  Mark Lam  <mark.lam@apple.com>
+
+        Make the VM Traps mechanism non-polling for the DFG and FTL.
+        https://bugs.webkit.org/show_bug.cgi?id=168920
+        <rdar://problem/30738588>
+
+        Reviewed by Filip Pizlo.
+
+        1. Added a ENABLE(SIGNAL_BASED_VM_TRAPS) configuration in Platform.h.
+           This is currently only enabled for OS(DARWIN) and ENABLE(JIT). 
+        2. Added assembler functions for overwriting an instruction with a breakpoint.
+        3. Added a new JettisonDueToVMTraps jettison reason.
+        4. Added CodeBlock and DFG::CommonData utility functions for over-writing
+           invalidation points with breakpoint instructions.
+        5. The BytecodeGenerator now emits the op_check_traps bytecode unconditionally.
+        6. Remove the JSC_alwaysCheckTraps option because of (4) above.
+           For ports that don't ENABLE(SIGNAL_BASED_VM_TRAPS), we'll force
+           Options::usePollingTraps() to always be true.  This makes the VMTraps
+           implementation fall back to using polling based traps only.
+
+        7. Make VMTraps support signal based traps.
+
+        Some design and implementation details of signal based VM traps:
+
+        - The implementation makes use of 2 signal handlers for SIGUSR1 and SIGTRAP.
+
+        - VMTraps::fireTrap() will set the flag for the requested trap and instantiate
+          a SignalSender.  The SignalSender will send SIGUSR1 to the mutator thread that
+          we want to trap, and check for the occurence of one of the following events:
+
+          a. VMTraps::handleTraps() has been called for the requested trap, or
+
+          b. the VM is inactive and is no longer executing any JS code.  We determine
+             this to be the case if the thread no longer owns the JSLock and the VM's
+             entryScope is null.
+
+             Note: the thread can relinquish the JSLock while the VM's entryScope is not
+             null.  This happens when the thread calls JSLock::dropAllLocks() before
+             calling a host function that may block on IO (or whatever).  For our purpose,
+             this counts as the VM still running JS code, and VM::fireTrap() will still
+             be waiting.
+
+          If the SignalSender does not see either of these events, it will sleep for a
+          while and then re-send SIGUSR1 and check for the events again.  When it sees
+          one of these events, it will consider the mutator to have received the trap
+          request.
+
+        - The SIGUSR1 handler will try to insert breakpoints at the invalidation points
+          in the DFG/FTL codeBlock at the top of the stack.  This allows the mutator
+          thread to break (with a SIGTRAP) exactly at an invalidation point, where it's
+          safe to jettison the codeBlock.
+
+          Note: we cannot have the requester thread (that called VMTraps::fireTrap())
+          insert the breakpoint instructions itself.  This is because we need the
+          register state of the the mutator thread (that we want to trap in) in order to
+          find the codeBlocks that we wish to insert the breakpoints in.  Currently,
+          we don't have a generic way for the requester thread to get the register state
+          of another thread.
+
+        - The SIGTRAP handler will check to see if it is trapping on a breakpoint at an
+          invalidation point.  If so, it will jettison the codeBlock and adjust the PC
+          to re-execute the invalidation OSR exit off-ramp.  After the OSR exit, the
+          baseline JIT code will eventually reach an op_check_traps and call
+          VMTraps::handleTraps().
+
+          If the handler is not trapping at an invalidation point, then it must be
+          observing an assertion failure (which also uses the breakpoint instruction).
+          In this case, the handler will defer to the default SIGTRAP handler and crash.
+
+        - The reason we need the SignalSender is because SignalSender::send() is called
+          from another thread in a loop, so that VMTraps::fireTrap() can return sooner.
+          send() needs to make use of the VM pointer, and it is not guaranteed that the
+          VM will outlive the thread.  SignalSender provides the mechanism by which we
+          can nullify the VM pointer when the VM dies so that the thread does not
+          continue to use it.
+
+        * assembler/ARM64Assembler.h:
+        (JSC::ARM64Assembler::replaceWithBrk):
+        * assembler/ARMAssembler.h:
+        (JSC::ARMAssembler::replaceWithBrk):
+        * assembler/ARMv7Assembler.h:
+        (JSC::ARMv7Assembler::replaceWithBkpt):
+        * assembler/MIPSAssembler.h:
+        (JSC::MIPSAssembler::replaceWithBkpt):
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::replaceWithJump):
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::replaceWithBreakpoint):
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::replaceWithBreakpoint):
+        * assembler/MacroAssemblerMIPS.h:
+        (JSC::MacroAssemblerMIPS::replaceWithJump):
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::replaceWithBreakpoint):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::replaceWithInt3):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::jettison):
+        (JSC::CodeBlock::hasInstalledVMTrapBreakpoints):
+        (JSC::CodeBlock::installVMTrapBreakpoints):
+        * bytecode/CodeBlock.h:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitCheckTraps):
+        * dfg/DFGCommonData.cpp:
+        (JSC::DFG::CommonData::installVMTrapBreakpoints):
+        (JSC::DFG::CommonData::isVMTrapBreakpoint):
+        * dfg/DFGCommonData.h:
+        (JSC::DFG::CommonData::hasInstalledVMTrapsBreakpoints):
+        * dfg/DFGJumpReplacement.cpp:
+        (JSC::DFG::JumpReplacement::installVMTrapBreakpoint):
+        * dfg/DFGJumpReplacement.h:
+        (JSC::DFG::JumpReplacement::dataLocation):
+        * dfg/DFGNodeType.h:
+        * heap/CodeBlockSet.cpp:
+        (JSC::CodeBlockSet::contains):
+        * heap/CodeBlockSet.h:
+        * heap/CodeBlockSetInlines.h:
+        (JSC::CodeBlockSet::iterate):
+        * heap/Heap.cpp:
+        (JSC::Heap::forEachCodeBlockIgnoringJITPlansImpl):
+        * heap/Heap.h:
+        * heap/HeapInlines.h:
+        (JSC::Heap::forEachCodeBlockIgnoringJITPlans):
+        * heap/MachineStackMarker.h:
+        (JSC::MachineThreads::threadsListHead):
+        * jit/ExecutableAllocator.cpp:
+        (JSC::ExecutableAllocator::isValidExecutableMemory):
+        * jit/ExecutableAllocator.h:
+        * profiler/ProfilerJettisonReason.cpp:
+        (WTF::printInternal):
+        * profiler/ProfilerJettisonReason.h:
+        * runtime/JSLock.cpp:
+        (JSC::JSLock::didAcquireLock):
+        * runtime/Options.cpp:
+        (JSC::overrideDefaults):
+        * runtime/Options.h:
+        * runtime/PlatformThread.h:
+        (JSC::platformThreadSignal):
+        * runtime/VM.cpp:
+        (JSC::VM::~VM):
+        (JSC::VM::ensureWatchdog):
+        (JSC::VM::handleTraps): Deleted.
+        (JSC::VM::setNeedAsynchronousTerminationSupport): Deleted.
+        * runtime/VM.h:
+        (JSC::VM::ownerThread):
+        (JSC::VM::traps):
+        (JSC::VM::handleTraps):
+        (JSC::VM::needTrapHandling):
+        (JSC::VM::needAsynchronousTerminationSupport): Deleted.
+        * runtime/VMTraps.cpp:
+        (JSC::VMTraps::vm):
+        (JSC::SignalContext::SignalContext):
+        (JSC::SignalContext::adjustPCToPointToTrappingInstruction):
+        (JSC::vmIsInactive):
+        (JSC::findActiveVMAndStackBounds):
+        (JSC::handleSigusr1):
+        (JSC::handleSigtrap):
+        (JSC::installSignalHandlers):
+        (JSC::sanitizedTopCallFrame):
+        (JSC::isSaneFrame):
+        (JSC::VMTraps::tryInstallTrapBreakpoints):
+        (JSC::VMTraps::invalidateCodeBlocksOnStack):
+        (JSC::VMTraps::VMTraps):
+        (JSC::VMTraps::willDestroyVM):
+        (JSC::VMTraps::addSignalSender):
+        (JSC::VMTraps::removeSignalSender):
+        (JSC::VMTraps::SignalSender::willDestroyVM):
+        (JSC::VMTraps::SignalSender::send):
+        (JSC::VMTraps::fireTrap):
+        (JSC::VMTraps::handleTraps):
+        * runtime/VMTraps.h:
+        (JSC::VMTraps::~VMTraps):
+        (JSC::VMTraps::needTrapHandling):
+        (JSC::VMTraps::notifyGrabAllLocks):
+        (JSC::VMTraps::SignalSender::SignalSender):
+        (JSC::VMTraps::invalidateCodeBlocksOnStack):
+        * tools/VMInspector.cpp:
+        * tools/VMInspector.h:
+        (JSC::VMInspector::getLock):
+        (JSC::VMInspector::iterate):
+
 2017-03-09  Filip Pizlo  <fpizlo@apple.com>
 
         WebKit: JSC: JSObject::ensureLength doesn't check if ensureLengthSlow failed

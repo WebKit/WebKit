@@ -332,6 +332,10 @@ static void overrideDefaults()
 #if PLATFORM(IOS)
     Options::useSigillCrashAnalyzer() = true;
 #endif
+
+#if !ENABLE(SIGNAL_BASED_VM_TRAPS)
+    Options::usePollingTraps() = true;
+#endif
 }
 
 static void recomputeDependentOptions()

@@ -136,7 +136,7 @@ public:
 
     RefPtr<ExecutableMemoryHandle> allocate(VM&, size_t sizeInBytes, void* ownerUID, JITCompilationEffort);
 
-    bool isValidExecutableMemory(const LockHolder&, void* address);
+    bool isValidExecutableMemory(const AbstractLocker&, void* address);
 
     static size_t committedByteCount();
 

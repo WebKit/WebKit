@@ -399,7 +399,7 @@ RefPtr<ExecutableMemoryHandle> ExecutableAllocator::allocate(VM&, size_t sizeInB
     return result;
 }
 
-bool ExecutableAllocator::isValidExecutableMemory(const LockHolder& locker, void* address)
+bool ExecutableAllocator::isValidExecutableMemory(const AbstractLocker& locker, void* address)
 {
     return allocator->isInAllocatedMemory(locker, address);
 }

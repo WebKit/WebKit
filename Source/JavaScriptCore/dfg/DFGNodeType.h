@@ -391,7 +391,7 @@ namespace JSC { namespace DFG {
     /* flow. */\
     macro(BottomValue, NodeResultJS) \
     \
-    /* Checks for VM traps. If there is a trap, we call operation operationHandleTraps */ \
+    /* Checks for VM traps. If there is a trap, we'll jettison or call operation operationHandleTraps. */ \
     macro(CheckTraps, NodeMustGenerate) \
     /* Write barriers */\
     macro(StoreBarrier, NodeMustGenerate) \

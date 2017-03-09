@@ -135,7 +135,7 @@ public:
     };
 
     Lock& getLock() { return m_registeredThreadsMutex; }
-    Thread* threadsListHead(const LockHolder&) const { ASSERT(m_registeredThreadsMutex.isLocked()); return m_registeredThreads; }
+    Thread* threadsListHead(const AbstractLocker&) const { ASSERT(m_registeredThreadsMutex.isLocked()); return m_registeredThreads; }
     Thread* machineThreadForCurrentThread();
 
 private:

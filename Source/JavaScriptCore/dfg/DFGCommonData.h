@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -86,7 +86,10 @@ public:
     void shrinkToFit();
     
     bool invalidate(); // Returns true if we did invalidate, or false if the code block was already invalidated.
-    
+    bool hasInstalledVMTrapsBreakpoints() const { return isStillValid && hasVMTrapsBreakpointsInstalled; }
+    void installVMTrapBreakpoints();
+    bool isVMTrapBreakpoint(void* address);
+
     unsigned requiredRegisterCountForExecutionAndExit() const
     {
         return std::max(frameRegisterCount, requiredRegisterCountForExit);
@@ -112,6 +115,7 @@ public:
     bool livenessHasBeenProved; // Initialized and used on every GC.
     bool allTransitionsHaveBeenMarked; // Initialized and used on every GC.
     bool isStillValid;
+    bool hasVMTrapsBreakpointsInstalled { false };
     
 #if USE(JSVALUE32_64)
     std::unique_ptr<Bag<double>> doubleConstants;

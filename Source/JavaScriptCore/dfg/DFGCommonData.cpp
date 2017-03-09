@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -95,6 +95,26 @@ bool CommonData::invalidate()
         jumpReplacements[i].fire();
     isStillValid = false;
     return true;
+}
+
+void CommonData::installVMTrapBreakpoints()
+{
+    if (!isStillValid || hasVMTrapsBreakpointsInstalled)
+        return;
+    hasVMTrapsBreakpointsInstalled = true;
+    for (unsigned i = jumpReplacements.size(); i--;)
+        jumpReplacements[i].installVMTrapBreakpoint();
+}
+
+bool CommonData::isVMTrapBreakpoint(void* address)
+{
+    if (!isStillValid)
+        return false;
+    for (unsigned i = jumpReplacements.size(); i--;) {
+        if (address == jumpReplacements[i].dataLocation())
+            return true;
+    }
+    return false;
 }
 
 void CommonData::validateReferences(const TrackedReferences& trackedReferences)

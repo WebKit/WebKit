@@ -103,7 +103,7 @@ void CodeBlockSet::deleteUnmarkedAndUnreferenced(VM& vm, CollectionScope scope)
     promoteYoungCodeBlocks(locker);
 }
 
-bool CodeBlockSet::contains(const LockHolder&, void* candidateCodeBlock)
+bool CodeBlockSet::contains(const AbstractLocker&, void* candidateCodeBlock)
 {
     RELEASE_ASSERT(m_lock.isLocked());
     CodeBlock* codeBlock = static_cast<CodeBlock*>(candidateCodeBlock);

@@ -2902,6 +2902,12 @@ public:
         return reinterpret_cast<void**>(where)[-1];
     }
 
+    static void replaceWithInt3(void* instructionStart)
+    {
+        uint8_t* ptr = reinterpret_cast<uint8_t*>(instructionStart);
+        ptr[0] = static_cast<uint8_t>(OP_INT3);
+    }
+
     static void replaceWithJump(void* instructionStart, void* to)
     {
         uint8_t* ptr = reinterpret_cast<uint8_t*>(instructionStart);

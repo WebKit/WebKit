@@ -63,7 +63,13 @@ inline void CodeBlockSet::mark(const LockHolder&, CodeBlock* codeBlock)
 template<typename Functor>
 void CodeBlockSet::iterate(const Functor& functor)
 {
-    LockHolder locker(m_lock);
+    auto locker = holdLock(m_lock);
+    iterate(locker, functor);
+}
+
+template<typename Functor>
+void CodeBlockSet::iterate(const AbstractLocker&, const Functor& functor)
+{
     for (auto& codeBlock : m_oldCodeBlocks) {
         bool done = functor(codeBlock);
         if (done)

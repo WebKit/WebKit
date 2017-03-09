@@ -2330,9 +2330,9 @@ void Heap::forEachCodeBlockImpl(const ScopedLambda<bool(CodeBlock*)>& func)
     return m_codeBlocks->iterate(func);
 }
 
-void Heap::forEachCodeBlockIgnoringJITPlansImpl(const ScopedLambda<bool(CodeBlock*)>& func)
+void Heap::forEachCodeBlockIgnoringJITPlansImpl(const AbstractLocker& locker, const ScopedLambda<bool(CodeBlock*)>& func)
 {
-    return m_codeBlocks->iterate(func);
+    return m_codeBlocks->iterate(locker, func);
 }
 
 void Heap::writeBarrierSlowPath(const JSCell* from)

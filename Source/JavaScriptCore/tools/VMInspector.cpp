@@ -146,21 +146,22 @@ auto VMInspector::codeBlockForMachinePC(const VMInspector::Locker&, void* machin
         // 1. CodeBlocks are added to the CodeBlockSet from the main thread before
         //    they are handed to the JIT plans. Those codeBlocks will have a null jitCode,
         //    but we check for that in our lambda functor.
-        // 2. CodeBlockSet::iterate() will acquire the CodeBlockSet lock before iterating.
+        // 2. We will acquire the CodeBlockSet lock before iterating.
         //    This ensures that a CodeBlock won't be GCed while we're iterating.
         // 3. We do a tryLock on the CodeBlockSet's lock first to ensure that it is
         //    safe for the current thread to lock it before calling
         //    Heap::forEachCodeBlockIgnoringJITPlans(). Hence, there's no risk of
         //    re-entering the lock and deadlocking on it.
 
-        auto& lock = vm.heap.codeBlockSet().getLock();
-        bool isSafeToLock = ensureIsSafeToLock(lock);
+        auto& codeBlockSetLock = vm.heap.codeBlockSet().getLock();
+        bool isSafeToLock = ensureIsSafeToLock(codeBlockSetLock);
         if (!isSafeToLock) {
             hasTimeout = true;
             return FunctorStatus::Continue; // Skip this VM.
         }
 
-        vm.heap.forEachCodeBlockIgnoringJITPlans([&] (CodeBlock* cb) {
+        auto locker = holdLock(codeBlockSetLock);
+        vm.heap.forEachCodeBlockIgnoringJITPlans(locker, [&] (CodeBlock* cb) {
             JITCode* jitCode = cb->jitCode().get();
             if (!jitCode) {
                 // If the codeBlock is a replacement codeBlock which is in the process of being

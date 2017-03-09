@@ -1,3 +1,23 @@
+2017-03-09  Mark Lam  <mark.lam@apple.com>
+
+        Make the VM Traps mechanism non-polling for the DFG and FTL.
+        https://bugs.webkit.org/show_bug.cgi?id=168920
+        <rdar://problem/30738588>
+
+        Reviewed by Filip Pizlo.
+
+        Make StackBounds more useful for checking if a pointer is within stack bounds.
+
+        * wtf/MetaAllocator.cpp:
+        (WTF::MetaAllocator::isInAllocatedMemory):
+        * wtf/MetaAllocator.h:
+        * wtf/Platform.h:
+        * wtf/StackBounds.h:
+        (WTF::StackBounds::emptyBounds):
+        (WTF::StackBounds::StackBounds):
+        (WTF::StackBounds::isEmpty):
+        (WTF::StackBounds::contains):
+
 2017-03-07  Filip Pizlo  <fpizlo@apple.com>
 
         WTF should make it super easy to do ARM concurrency tricks

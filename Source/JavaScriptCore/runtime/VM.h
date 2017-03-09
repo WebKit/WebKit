@@ -269,7 +269,7 @@ public:
     static Ref<VM> createContextGroup(HeapType = SmallHeap);
     JS_EXPORT_PRIVATE ~VM();
 
-    JS_EXPORT_PRIVATE Watchdog& ensureWatchdog();
+    Watchdog& ensureWatchdog();
     Watchdog* watchdog() { return m_watchdog.get(); }
 
     HeapProfiler* heapProfiler() const { return m_heapProfiler.get(); }
@@ -314,7 +314,7 @@ public:
     // topVMEntryFrame.
     // FIXME: This should be a void*, because it might not point to a CallFrame.
     // https://bugs.webkit.org/show_bug.cgi?id=160441
-    ExecState* topCallFrame;
+    ExecState* topCallFrame { nullptr };
     JSWebAssemblyInstance* topJSWebAssemblyInstance;
     Strong<Structure> structureStructure;
     Strong<Structure> structureRareDataStructure;
@@ -672,17 +672,19 @@ public:
     template<typename Func>
     void logEvent(CodeBlock*, const char* summary, const Func& func);
 
-    void handleTraps(ExecState*, VMTraps::Mask = VMTraps::Mask::allEventTypes());
+    std::optional<PlatformThread> ownerThread() const { return m_apiLock->ownerThread(); }
 
-    bool needTrapHandling(VMTraps::Mask mask = VMTraps::Mask::allEventTypes()) { return m_traps.needTrapHandling(mask); }
+    VMTraps& traps() { return m_traps; }
+
+    void handleTraps(ExecState* exec, VMTraps::Mask mask = VMTraps::Mask::allEventTypes()) { m_traps.handleTraps(exec, mask); }
+
+    bool needTrapHandling() { return m_traps.needTrapHandling(); }
+    bool needTrapHandling(VMTraps::Mask mask) { return m_traps.needTrapHandling(mask); }
     void* needTrapHandlingAddress() { return m_traps.needTrapHandlingAddress(); }
 
     void notifyNeedDebuggerBreak() { m_traps.fireTrap(VMTraps::NeedDebuggerBreak); }
     void notifyNeedTermination() { m_traps.fireTrap(VMTraps::NeedTermination); }
     void notifyNeedWatchdogCheck() { m_traps.fireTrap(VMTraps::NeedWatchdogCheck); }
-
-    bool needAsynchronousTerminationSupport() const { return m_needAsynchronousTerminationSupport; }
-    JS_EXPORT_PRIVATE void setNeedAsynchronousTerminationSupport();
 
 private:
     friend class LLIntOffsetsExtractor;
@@ -724,8 +726,6 @@ private:
     bool ensureStackCapacityForCLoop(Register* newTopOfStack);
     bool isSafeToRecurseSoftCLoop() const;
 #endif // !ENABLE(JIT)
-
-    std::optional<PlatformThread> ownerThread() const { return m_apiLock->ownerThread(); }
 
     JS_EXPORT_PRIVATE void throwException(ExecState*, Exception*);
     JS_EXPORT_PRIVATE JSValue throwException(ExecState*, JSValue);
@@ -770,7 +770,6 @@ private:
     DeletePropertyMode m_deletePropertyMode { DeletePropertyMode::Default };
     bool m_globalConstRedeclarationShouldThrow { true };
     bool m_shouldBuildPCToCodeOriginMapping { false };
-    bool m_needAsynchronousTerminationSupport { false };
     std::unique_ptr<CodeCache> m_codeCache;
     std::unique_ptr<BuiltinExecutables> m_builtinExecutables;
     HashMap<String, RefPtr<WatchpointSet>> m_impurePropertyWatchpointSets;
@@ -799,6 +798,7 @@ private:
     friend class CatchScope;
     friend class ExceptionScope;
     friend class ThrowScope;
+    friend class VMTraps;
     friend class WTF::DoublyLinkedListNode<VM>;
 };
 

@@ -2536,6 +2536,13 @@ public:
         linkPointer(addressOf(code, where), valuePtr);
     }
 
+    static void replaceWithBrk(void* where)
+    {
+        int insn = excepnGeneration(ExcepnOp_BREAKPOINT, 0, 0);
+        performJITMemcpy(where, &insn, sizeof(int));
+        cacheFlush(where, sizeof(int));
+    }
+
     static void replaceWithJump(void* where, void* to)
     {
         intptr_t offset = (reinterpret_cast<intptr_t>(to) - reinterpret_cast<intptr_t>(where)) >> 2;

@@ -915,6 +915,15 @@ public:
         cacheFlush(insn, codeSize);
     }
 
+    static void replaceWithBkpt(void* instructionStart)
+    {
+        ASSERT(!(bitwise_cast<uintptr_t>(instructionStart) & 3));
+        MIPSWord* insn = reinterpret_cast<MIPSWord*>(reinterpret_cast<intptr_t>(code));
+        int value = 512; /* BRK_BUG */
+        insn[0] = (0x0000000d | ((value & 0x3ff) << OP_SH_CODE));
+        cacheFlush(instructionStart, sizeof(MIPSWord));
+    }
+
     static void replaceWithJump(void* instructionStart, void* to)
     {
         ASSERT(!(bitwise_cast<uintptr_t>(instructionStart) & 3));

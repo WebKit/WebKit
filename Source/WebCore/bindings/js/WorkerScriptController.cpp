@@ -51,7 +51,6 @@ WorkerScriptController::WorkerScriptController(WorkerGlobalScope* workerGlobalSc
     , m_workerGlobalScopeWrapper(*m_vm)
 {
     m_vm->heap.acquireAccess(); // It's not clear that we have good discipline for heap access, so turn it on permanently.
-    m_vm->setNeedAsynchronousTerminationSupport();
     JSVMClientData::initNormalWorld(m_vm.get());
 }
 
@@ -151,11 +150,13 @@ void WorkerScriptController::setException(JSC::Exception* exception)
 
 void WorkerScriptController::scheduleExecutionTermination()
 {
-    // The mutex provides a memory barrier to ensure that once
-    // termination is scheduled, isTerminatingExecution() will
-    // accurately reflect that state when called from another thread.
-    LockHolder locker(m_scheduledTerminationMutex);
-    m_isTerminatingExecution = true;
+    {
+        // The mutex provides a memory barrier to ensure that once
+        // termination is scheduled, isTerminatingExecution() will
+        // accurately reflect that state when called from another thread.
+        LockHolder locker(m_scheduledTerminationMutex);
+        m_isTerminatingExecution = true;
+    }
     m_vm->notifyNeedTermination();
 }
 

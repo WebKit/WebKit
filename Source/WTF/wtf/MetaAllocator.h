@@ -98,7 +98,7 @@ public:
     WTF_EXPORT_PRIVATE size_t debugFreeSpaceSize();
 
     Lock& getLock() { return m_lock; }
-    WTF_EXPORT_PRIVATE bool isInAllocatedMemory(const LockHolder&, void* address);
+    WTF_EXPORT_PRIVATE bool isInAllocatedMemory(const AbstractLocker&, void* address);
     
 #if ENABLE(META_ALLOCATOR_PROFILE)
     void dumpProfile();

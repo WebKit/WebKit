@@ -1482,6 +1482,11 @@ public:
         return FunctionPtr(reinterpret_cast<void(*)()>(ARMAssembler::readCallTarget(call.dataLocation())));
     }
 
+    static void replaceWithJump(CodeLocationLabel instructionStart)
+    {
+        ARMAssembler::replaceWithBkpt(instructionStart.executableAddress());
+    }
+
     static void replaceWithJump(CodeLocationLabel instructionStart, CodeLocationLabel destination)
     {
         ARMAssembler::replaceWithJump(instructionStart.dataLocation(), destination.dataLocation());

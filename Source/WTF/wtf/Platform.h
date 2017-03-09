@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2009, 2013-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2017 Apple Inc. All rights reserved.
  * Copyright (C) 2007-2009 Torch Mobile, Inc.
  * Copyright (C) 2010, 2011 Research In Motion Limited. All rights reserved.
  *
@@ -911,6 +911,10 @@
 #else
 #define ENABLE_EXCEPTION_SCOPE_VERIFICATION 1
 #endif
+#endif
+
+#if OS(DARWIN) && ENABLE(JIT)
+#define ENABLE_SIGNAL_BASED_VM_TRAPS 1
 #endif
 
 /* CSS Selector JIT Compiler */

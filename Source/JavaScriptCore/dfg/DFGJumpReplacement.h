@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,6 +40,8 @@ public:
     }
     
     void fire();
+    void installVMTrapBreakpoint();
+    void* dataLocation() const { return m_source.dataLocation(); }
 
 private:
     CodeLocationLabel m_source;

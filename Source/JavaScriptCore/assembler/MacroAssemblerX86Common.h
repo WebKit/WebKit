@@ -2756,6 +2756,11 @@ public:
     {
     }
 
+    static void replaceWithBreakpoint(CodeLocationLabel instructionStart)
+    {
+        X86Assembler::replaceWithInt3(instructionStart.executableAddress());
+    }
+
     static void replaceWithJump(CodeLocationLabel instructionStart, CodeLocationLabel destination)
     {
         X86Assembler::replaceWithJump(instructionStart.executableAddress(), destination.executableAddress());

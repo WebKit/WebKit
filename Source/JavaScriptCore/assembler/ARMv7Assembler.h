@@ -2327,7 +2327,17 @@ public:
     {
         return reinterpret_cast<void*>(readInt32(where));
     }
-    
+
+    static void replaceWithBkpt(void* instructionStart)
+    {
+        ASSERT(!(bitwise_cast<uintptr_t>(instructionStart) & 1));
+
+        uint16_t* ptr = reinterpret_cast<uint16_t*>(instructionStart);
+        uint16_t instructions = OP_BKPT;
+        performJITMemcpy(ptr, &instructions, sizeof(uint16_t));
+        cacheFlush(ptr, sizeof(uint16_t));
+    }
+
     static void replaceWithJump(void* instructionStart, void* to)
     {
         ASSERT(!(bitwise_cast<uintptr_t>(instructionStart) & 1));

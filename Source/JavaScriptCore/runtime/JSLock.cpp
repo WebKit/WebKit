@@ -144,6 +144,8 @@ void JSLock::didAcquireLock()
 
     m_vm->heap.machineThreads().addCurrentThread();
 
+    m_vm->traps().notifyGrabAllLocks();
+
 #if ENABLE(SAMPLING_PROFILER)
     // Note: this must come after addCurrentThread().
     if (SamplingProfiler* samplingProfiler = m_vm->samplingProfiler())

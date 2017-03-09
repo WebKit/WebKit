@@ -1349,6 +1349,11 @@ public:
         m_assembler.dmbISHST();
     }
     
+    static void replaceWithBreakpoint(CodeLocationLabel instructionStart)
+    {
+        ARMv7Assembler::replaceWithBkpt(instructionStart.dataLocation());
+    }
+
     static void replaceWithJump(CodeLocationLabel instructionStart, CodeLocationLabel destination)
     {
         ARMv7Assembler::replaceWithJump(instructionStart.dataLocation(), destination.dataLocation());

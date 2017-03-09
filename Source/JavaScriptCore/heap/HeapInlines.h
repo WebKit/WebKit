@@ -155,9 +155,9 @@ template<typename Functor> inline void Heap::forEachCodeBlock(const Functor& fun
     forEachCodeBlockImpl(scopedLambdaRef<bool(CodeBlock*)>(func));
 }
 
-template<typename Functor> inline void Heap::forEachCodeBlockIgnoringJITPlans(const Functor& func)
+template<typename Functor> inline void Heap::forEachCodeBlockIgnoringJITPlans(const AbstractLocker& codeBlockSetLocker, const Functor& func)
 {
-    forEachCodeBlockIgnoringJITPlansImpl(scopedLambdaRef<bool(CodeBlock*)>(func));
+    forEachCodeBlockIgnoringJITPlansImpl(codeBlockSetLocker, scopedLambdaRef<bool(CodeBlock*)>(func));
 }
 
 template<typename Functor> inline void Heap::forEachProtectedCell(const Functor& functor)
