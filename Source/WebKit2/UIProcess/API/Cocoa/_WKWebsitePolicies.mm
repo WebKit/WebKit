@@ -57,6 +57,16 @@
     return _websitePolicies->contentBlockersEnabled();
 }
 
+- (void)setAllowsAutoplayQuirks:(BOOL)allowsQuirks
+{
+    _websitePolicies->setAllowsAutoplayQuirks(allowsQuirks);
+}
+
+- (BOOL)allowsAutoplayQuirks
+{
+    return _websitePolicies->allowsAutoplayQuirks();
+}
+
 - (void)setAutoplayPolicy:(_WKWebsiteAutoplayPolicy)policy
 {
     switch (policy) {

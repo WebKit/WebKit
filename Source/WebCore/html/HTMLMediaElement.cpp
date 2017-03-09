@@ -591,8 +591,8 @@ static bool needsAutoplayPlayPauseEventsQuirk(const Document& document)
     if (!page || !page->settings().needsSiteSpecificQuirks())
         return false;
 
-    String host = document.url().host();
-    return equalLettersIgnoringASCIICase(host, "yahoo.com") || host.endsWithIgnoringASCIICase(".yahoo.com");
+    auto* loader = document.loader();
+    return loader && loader->allowsAutoplayQuirks();
 }
 
 static bool needsPlaybackControlsManagerQuirk(Page& page)

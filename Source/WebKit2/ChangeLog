@@ -1,3 +1,35 @@
+2017-03-08  Matt Rajca  <mrajca@apple.com>
+
+        Let clients control autoplay quirks with website policies.
+        https://bugs.webkit.org/show_bug.cgi?id=169390
+
+        Reviewed by Wenson Hsieh.
+        
+        Many sites incorrectly assume media will start off playing and display a pause button from the
+        start. We can trick many of these sites into updating their controls by sending a "pause"
+        event when we prevent a media element from playing.
+
+        We don't want this to become standard web behavior, however, since ultimately sites should adapt
+        to the new behavior. This patch lets clients decide which limited set of sites gets to use auto-play
+        quirks.
+
+        * Shared/WebsitePolicies.h:
+        (WebKit::WebsitePolicies::encode):
+        (WebKit::WebsitePolicies::decode):
+        * UIProcess/API/APIWebsitePolicies.h:
+        * UIProcess/API/C/WKWebsitePolicies.cpp:
+        (WKWebsitePoliciesSetAllowsAutoplayQuirks):
+        (WKWebsitePoliciesGetAllowsAutoplayQuirks):
+        * UIProcess/API/C/WKWebsitePolicies.h:
+        * UIProcess/API/Cocoa/_WKWebsitePolicies.h:
+        * UIProcess/API/Cocoa/_WKWebsitePolicies.mm:
+        (-[_WKWebsitePolicies setAllowsAutoplayQuirks:]):
+        (-[_WKWebsitePolicies allowsAutoplayQuirks]):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updateWebsitePolicies):
+
 2017-03-09  Chris Dumez  <cdumez@apple.com>
 
         [WK2] Prevent app nap for the active tab

@@ -5460,6 +5460,8 @@ void WebPage::updateWebsitePolicies(const WebsitePolicies& websitePolicies)
     if (!documentLoader)
         return;
 
+    documentLoader->setAllowsAutoplayQuirks(websitePolicies.allowsAutoplayQuirks);
+
     switch (websitePolicies.autoplayPolicy) {
     case WebsiteAutoplayPolicy::Default:
         documentLoader->setAutoplayPolicy(AutoplayPolicy::Default);

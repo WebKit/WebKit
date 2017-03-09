@@ -12,9 +12,15 @@
                     } catch(e) { }
                 });
             }
+
+            function videoDidPause() {
+                try {
+                    window.webkit.messageHandlers.testHandler.postMessage("on-pause");
+                } catch(e) { }
+            }
         </script>
     </head>
     <body onload="playVideo()">
-        <video id="video" playsinline src="test.mp4" />
+        <video id="video" onpause=videoDidPause() playsinline src="test.mp4" />
     </body>
 </html>

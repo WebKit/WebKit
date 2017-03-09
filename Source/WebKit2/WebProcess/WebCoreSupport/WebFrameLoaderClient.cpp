@@ -817,6 +817,8 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
     if (documentLoader->userContentExtensionsEnabled())
         documentLoader->setUserContentExtensionsEnabled(websitePolicies.contentBlockersEnabled);
 
+    documentLoader->setAllowsAutoplayQuirks(websitePolicies.allowsAutoplayQuirks);
+
     switch (websitePolicies.autoplayPolicy) {
     case WebsiteAutoplayPolicy::Default:
         documentLoader->setAutoplayPolicy(AutoplayPolicy::Default);

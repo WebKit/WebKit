@@ -1,3 +1,15 @@
+2017-03-08  Matt Rajca  <mrajca@apple.com>
+
+        Let clients control autoplay quirks with website policies.
+        https://bugs.webkit.org/show_bug.cgi?id=169390
+
+        Reviewed by Wenson Hsieh.
+
+        * TestWebKitAPI/Tests/WebKit2/autoplay-check.html:
+        * TestWebKitAPI/Tests/WebKit2Cocoa/WebsitePolicies.mm:
+        (-[AutoplayPoliciesDelegate _webView:decidePolicyForNavigationAction:decisionHandler:]):
+        (TEST):
+
 2017-03-09  Devin Rousso  <dcrousso+webkit@gmail.com>
 
         Unreviewed, change my status to be a WebKit reviewer

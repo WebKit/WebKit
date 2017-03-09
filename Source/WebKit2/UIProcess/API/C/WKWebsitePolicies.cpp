@@ -52,6 +52,16 @@ bool WKWebsitePoliciesGetContentBlockersEnabled(WKWebsitePoliciesRef websitePoli
     return toImpl(websitePolicies)->contentBlockersEnabled();
 }
 
+void WKWebsitePoliciesSetAllowsAutoplayQuirks(WKWebsitePoliciesRef websitePolicies, bool allowsQuirks)
+{
+    toImpl(websitePolicies)->setAllowsAutoplayQuirks(allowsQuirks);
+}
+
+bool WKWebsitePoliciesGetAllowsAutoplayQuirks(WKWebsitePoliciesRef websitePolicies)
+{
+    return toImpl(websitePolicies)->allowsAutoplayQuirks();
+}
+
 WKWebsiteAutoplayPolicy WKWebsitePoliciesGetAutoplayPolicy(WKWebsitePoliciesRef websitePolicies)
 {
     switch (toImpl(websitePolicies)->autoplayPolicy()) {

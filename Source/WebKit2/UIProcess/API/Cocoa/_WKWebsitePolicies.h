@@ -38,6 +38,7 @@ WK_CLASS_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA))
 @interface _WKWebsitePolicies : NSObject
 
 @property (nonatomic) BOOL contentBlockersEnabled;
+@property (nonatomic) BOOL allowsAutoplayQuirks;
 @property (nonatomic) _WKWebsiteAutoplayPolicy autoplayPolicy;
 
 @end

@@ -45,6 +45,9 @@ WK_EXPORT WKWebsitePoliciesRef WKWebsitePoliciesCreate();
 WK_EXPORT bool WKWebsitePoliciesGetContentBlockersEnabled(WKWebsitePoliciesRef);
 WK_EXPORT void WKWebsitePoliciesSetContentBlockersEnabled(WKWebsitePoliciesRef, bool);
 
+WK_EXPORT bool WKWebsitePoliciesGetAllowsAutoplayQuirks(WKWebsitePoliciesRef);
+WK_EXPORT void WKWebsitePoliciesSetAllowsAutoplayQuirks(WKWebsitePoliciesRef, bool);
+
 WK_EXPORT WKWebsiteAutoplayPolicy WKWebsitePoliciesGetAutoplayPolicy(WKWebsitePoliciesRef);
 WK_EXPORT void WKWebsitePoliciesSetAutoplayPolicy(WKWebsitePoliciesRef, WKWebsiteAutoplayPolicy);
 
