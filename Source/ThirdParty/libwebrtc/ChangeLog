@@ -1,3 +1,18 @@
+2017-03-08  Youenn Fablet  <youenn@apple.com>
+
+        Use H264 hardware encoder for Mac libwebrtc
+        https://bugs.webkit.org/show_bug.cgi?id=169383
+
+        Reviewed by Alex Christensen.
+
+        Switching to H264 hardware encoder if available for Mac.
+        Adding logs in case hardware encoder cannot be used.
+
+        * Configurations/libwebrtc.xcconfig:
+        * Source/webrtc/sdk/objc/Framework/Classes/h264_video_toolbox_encoder.mm:
+        (webrtc::H264VideoToolboxEncoder::ResetCompressionSession):
+        (webrtc::H264VideoToolboxEncoder::ConfigureCompressionSession):
+
 2017-03-07  Youenn Fablet  <youenn@apple.com>
 
         TurnPort::OnSocketConnect is crashing

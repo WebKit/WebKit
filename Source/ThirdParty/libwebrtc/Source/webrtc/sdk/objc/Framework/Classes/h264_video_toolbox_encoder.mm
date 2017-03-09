@@ -554,13 +554,42 @@ int H264VideoToolboxEncoder::ResetCompressionSession() {
     CFRelease(pixel_format);
     pixel_format = nullptr;
   }
+
+  // WEBKIT Changes: use hardware encoder if feasible.
+#if defined(WEBRTC_USE_VTB_HARDWARE_ENCODER)
+  CFTypeRef sessionKeys[] = {kVTVideoEncoderSpecification_EnableHardwareAcceleratedVideoEncoder};
+  CFTypeRef sessionValues[] = {kCFBooleanTrue};
+  CFDictionaryRef encoderSpecification = internal::CreateCFDictionary(sessionKeys, sessionValues, 1);
+#endif
+
   OSStatus status = VTCompressionSessionCreate(
       nullptr,  // use default allocator
       width_, height_, kCMVideoCodecType_H264,
+#if defined(WEBRTC_USE_VTB_HARDWARE_ENCODER)
+      encoderSpecification,
+#else
       nullptr,  // use default encoder
+#endif
       source_attributes,
       nullptr,  // use default compressed data allocator
       internal::VTCompressionOutputCallback, this, &compression_session_);
+
+#if defined(WEBRTC_USE_VTB_HARDWARE_ENCODER)
+  CFNumberRef useHardwareEncoderValue = nullptr;
+  OSStatus statusGetter = VTSessionCopyProperty(compression_session_, kVTCompressionPropertyKey_UsingHardwareAcceleratedVideoEncoder, nullptr, &useHardwareEncoderValue);
+  if (statusGetter || !useHardwareEncoderValue) {
+    LOG(LS_WARNING) << "Cannot know whether using hardware H264 encoder, err: " << statusGetter;
+  } else {
+    int useHardwareEncoder = 0;
+    CFNumberGetValue(useHardwareEncoderValue, kCFNumberIntType, &useHardwareEncoder);
+    if (!useHardwareEncoder)
+      LOG(LS_WARNING) << "Using software H264 encoder instead of hardware H264 encoder";
+    else
+      LOG(LS_INFO) << "Using hardware H264 encoder";
+    CFRelease(useHardwareEncoderValue);
+  }
+#endif
+
   if (source_attributes) {
     CFRelease(source_attributes);
     source_attributes = nullptr;
