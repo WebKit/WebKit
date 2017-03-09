@@ -1,3 +1,15 @@
+2017-03-08  Brent Fulgham  <bfulgham@apple.com>
+
+        REGRESSION(r213564): Netflix does not play content
+        https://bugs.webkit.org/show_bug.cgi?id=169391
+        <rdar://problem/30930190>
+
+        Reviewed by Alex Christensen.
+
+        Add the missing IOKit properties identified during testing on Netflix.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2017-03-08  Anders Carlsson  <andersca@apple.com>
 
         Clean up WebPaymentCoordinatorProxy
