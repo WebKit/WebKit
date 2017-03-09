@@ -30,6 +30,7 @@
 #include <WebCore/DiagnosticLoggingClient.h>
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/IndexedDB.h>
+#include <WebCore/NetworkLoadMetrics.h>
 #include <WebCore/PaymentHeaders.h>
 #include <WebCore/ScrollSnapOffsetsInfo.h>
 
@@ -675,6 +676,15 @@ template<> struct EnumTraits<WebCore::ShouldSample> {
         WebCore::ShouldSample,
         WebCore::ShouldSample::No,
         WebCore::ShouldSample::Yes
+    >;
+};
+
+template<> struct EnumTraits<WebCore::NetworkLoadPriority> {
+    using values = EnumValues<
+        WebCore::NetworkLoadPriority,
+        WebCore::NetworkLoadPriority::Low,
+        WebCore::NetworkLoadPriority::Medium,
+        WebCore::NetworkLoadPriority::High
     >;
 };
 

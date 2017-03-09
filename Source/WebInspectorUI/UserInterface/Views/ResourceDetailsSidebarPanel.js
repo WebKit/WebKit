@@ -68,6 +68,8 @@ WebInspector.ResourceDetailsSidebarPanel = class ResourceDetailsSidebarPanel ext
         this._requestDataSection = new WebInspector.DetailsSection("resource-request-data", WebInspector.UIString("Request Data"));
 
         this._requestMethodRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Method"));
+        this._protocolRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Protocol"));
+        this._priorityRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Priority"));
         this._cachedRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Cached"));
 
         this._statusTextRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Status"));
@@ -80,10 +82,10 @@ WebInspector.ResourceDetailsSidebarPanel = class ResourceDetailsSidebarPanel ext
         this._compressedRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Compressed"));
         this._compressionRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Compression"));
 
-        var requestGroup = new WebInspector.DetailsSectionGroup([this._requestMethodRow, this._cachedRow]);
-        var statusGroup = new WebInspector.DetailsSectionGroup([this._statusTextRow, this._statusCodeRow]);
-        var sizeGroup = new WebInspector.DetailsSectionGroup([this._encodedSizeRow, this._decodedSizeRow, this._transferSizeRow]);
-        var compressionGroup = new WebInspector.DetailsSectionGroup([this._compressedRow, this._compressionRow]);
+        let requestGroup = new WebInspector.DetailsSectionGroup([this._requestMethodRow, this._protocolRow, this._priorityRow, this._cachedRow]);
+        let statusGroup = new WebInspector.DetailsSectionGroup([this._statusTextRow, this._statusCodeRow]);
+        let sizeGroup = new WebInspector.DetailsSectionGroup([this._encodedSizeRow, this._decodedSizeRow, this._transferSizeRow]);
+        let compressionGroup = new WebInspector.DetailsSectionGroup([this._compressedRow, this._compressionRow]);
 
         this._requestAndResponseSection = new WebInspector.DetailsSection("resource-request-response", WebInspector.UIString("Request & Response"), [requestGroup, statusGroup, sizeGroup, compressionGroup]);
 
@@ -290,19 +292,38 @@ WebInspector.ResourceDetailsSidebarPanel = class ResourceDetailsSidebarPanel ext
 
     _refreshRequestAndResponse()
     {
-        var resource = this._resource;
-        if (!resource)
+        if (!this._resource)
             return;
 
         // If we don't have a value, we set an em-dash to keep the row from hiding.
         // This keeps the UI from shifting around as data comes in.
 
-        this._requestMethodRow.value = resource.requestMethod || emDash;
+        this._requestMethodRow.value = this._resource.requestMethod || emDash;
 
-        this._cachedRow.value = resource.cached ? WebInspector.UIString("Yes") : WebInspector.UIString("No");
+        // COMPATIBILITY(iOS 10.3): Network load metrics were not previously available.
+        if (NetworkAgent.hasEventParameter("loadingFinished", "metrics")) {
+            this._protocolRow.value = this._resource.protocol || emDash;
 
-        this._statusCodeRow.value = resource.statusCode || emDash;
-        this._statusTextRow.value = resource.statusText || emDash;
+            switch (this._resource.priority) {
+            case WebInspector.Resource.NetworkPriority.Low:
+                this._priorityRow.value = WebInspector.UIString("Low");
+                break;
+            case WebInspector.Resource.NetworkPriority.Medium:
+                this._priorityRow.value = WebInspector.UIString("Medium");
+                break;
+            case WebInspector.Resource.NetworkPriority.High:
+                this._priorityRow.value = WebInspector.UIString("High");
+                break;
+            default:
+                this._priorityRow.value = emDash;
+                break;
+            }
+        }
+
+        this._cachedRow.value = this._resource.cached ? WebInspector.UIString("Yes") : WebInspector.UIString("No");
+
+        this._statusCodeRow.value = this._resource.statusCode || emDash;
+        this._statusTextRow.value = this._resource.statusText || emDash;
 
         this._refreshResponseHeaders();
         this._refreshCompressed();

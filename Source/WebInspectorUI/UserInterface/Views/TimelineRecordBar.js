@@ -231,6 +231,9 @@ WebInspector.TimelineRecordBar = class TimelineRecordBar extends WebInspector.Ob
 
     refresh(graphDataSource)
     {
+        if (isNaN(graphDataSource.secondsPerPixel))
+            return;
+
         console.assert(graphDataSource.zeroTime);
         console.assert(graphDataSource.startTime);
         console.assert(graphDataSource.currentTime);

@@ -77,6 +77,17 @@
             ]
         },
         {
+            "id": "Metrics",
+            "type": "object",
+            "description": "Network load metrics.",
+            "properties": [
+                { "name": "protocol", "type": "string", "optional": true, "description": "Network protocol. ALPN Protocol ID Identification Sequence, as per RFC 7301 (for example, http/2, http/1.1, spdy/3.1)" },
+                { "name": "priority", "type": "string", "enum": ["low", "medium", "high"], "optional": true, "description": "Network priority." },
+                { "name": "connectionIdentifier", "type": "string", "optional": true, "description": "Connection identifier." },
+                { "name": "remoteAddress", "type": "string", "optional": true, "description": "Remote IP address." }
+            ]
+        },
+        {
             "id": "WebSocketRequest",
             "type": "object",
             "description": "WebSocket request data.",
@@ -229,7 +240,8 @@
             "parameters": [
                 { "name": "requestId", "$ref": "RequestId", "description": "Request identifier." },
                 { "name": "timestamp", "$ref": "Timestamp", "description": "Timestamp." },
-                { "name": "sourceMapURL", "type": "string", "optional": true, "description": "URL of source map associated with this resource (if any)." }
+                { "name": "sourceMapURL", "type": "string", "optional": true, "description": "URL of source map associated with this resource (if any)." },
+                { "name": "metrics", "$ref": "Metrics", "optional": true, "description": "Network metrics." }
             ]
         },
         {

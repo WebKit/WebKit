@@ -414,7 +414,7 @@ WebInspector.FrameResourceManager = class FrameResourceManager extends WebInspec
             resource.increaseTransferSize(encodedDataLength);
     }
 
-    resourceRequestDidFinishLoading(requestIdentifier, timestamp, sourceMapURL)
+    resourceRequestDidFinishLoading(requestIdentifier, timestamp, sourceMapURL, metrics)
     {
         // Called from WebInspector.NetworkObserver.
 
@@ -429,7 +429,10 @@ WebInspector.FrameResourceManager = class FrameResourceManager extends WebInspec
         if (!resource)
             return;
 
-        var elapsedTime = WebInspector.timelineManager.computeElapsedTime(timestamp);
+        if (metrics)
+            resource.updateWithMetrics(metrics);
+
+        let elapsedTime = WebInspector.timelineManager.computeElapsedTime(timestamp);
         resource.markAsFinished(elapsedTime);
 
         if (sourceMapURL)
@@ -453,7 +456,7 @@ WebInspector.FrameResourceManager = class FrameResourceManager extends WebInspec
         if (!resource)
             return;
 
-        var elapsedTime = WebInspector.timelineManager.computeElapsedTime(timestamp);
+        let elapsedTime = WebInspector.timelineManager.computeElapsedTime(timestamp);
         resource.markAsFailed(canceled, elapsedTime);
 
         if (resource === resource.parentFrame.provisionalMainResource)

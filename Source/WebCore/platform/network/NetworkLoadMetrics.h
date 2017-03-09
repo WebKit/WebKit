@@ -26,7 +26,10 @@
 
 #pragma once
 
+#include <wtf/Optional.h>
 #include <wtf/Seconds.h>
+#include <wtf/persistence/Decoder.h>
+#include <wtf/persistence/Encoder.h>
 #include <wtf/text/WTFString.h>
 
 #if PLATFORM(COCOA)
@@ -34,6 +37,12 @@ OBJC_CLASS NSDictionary;
 #endif
 
 namespace WebCore {
+
+enum class NetworkLoadPriority {
+    Low,
+    Medium,
+    High,
+};
 
 class NetworkLoadMetrics {
 public:
@@ -57,6 +66,13 @@ public:
         copy.complete = complete;
         copy.protocol = protocol.isolatedCopy();
 
+        if (remoteAddress)
+            copy.remoteAddress = remoteAddress.value().isolatedCopy();
+        if (connectionIdentifier)
+            copy.connectionIdentifier = connectionIdentifier.value().isolatedCopy();
+        if (priority)
+            copy.priority = *priority;
+
         return copy;
     }
 
@@ -70,8 +86,11 @@ public:
         requestStart = Seconds(0);
         responseStart = Seconds(0);
         responseEnd = Seconds(0);
-        protocol = String();
         complete = false;
+        protocol = String();
+        remoteAddress = std::nullopt;
+        connectionIdentifier = std::nullopt;
+        priority = std::nullopt;
     }
 
     bool operator==(const NetworkLoadMetrics& other) const
@@ -85,7 +104,10 @@ public:
             && responseStart == other.responseStart
             && responseEnd == other.responseEnd
             && complete == other.complete
-            && protocol == other.protocol;
+            && protocol == other.protocol
+            && remoteAddress == other.remoteAddress
+            && connectionIdentifier == other.connectionIdentifier
+            && priority == other.priority;
     }
 
     bool operator!=(const NetworkLoadMetrics& other) const
@@ -115,6 +137,10 @@ public:
 
     // ALPN Protocol ID: https://w3c.github.io/resource-timing/#bib-RFC7301
     String protocol;
+
+    std::optional<String> remoteAddress;
+    std::optional<String> connectionIdentifier;
+    std::optional<NetworkLoadPriority> priority;
 };
 
 #if PLATFORM(COCOA)
@@ -138,21 +164,46 @@ void NetworkLoadMetrics::encode(Encoder& encoder) const
     encoder << responseEnd;
     encoder << complete;
     encoder << protocol;
+    encoder << remoteAddress;
+    encoder << connectionIdentifier;
+    encoder << priority;
 }
 
 template<class Decoder>
-bool NetworkLoadMetrics::decode(Decoder& decoder, NetworkLoadMetrics& timing)
+bool NetworkLoadMetrics::decode(Decoder& decoder, NetworkLoadMetrics& metrics)
 {
-    return decoder.decode(timing.domainLookupStart)
-        && decoder.decode(timing.domainLookupEnd)
-        && decoder.decode(timing.connectStart)
-        && decoder.decode(timing.secureConnectionStart)
-        && decoder.decode(timing.connectEnd)
-        && decoder.decode(timing.requestStart)
-        && decoder.decode(timing.responseStart)
-        && decoder.decode(timing.responseEnd)
-        && decoder.decode(timing.complete)
-        && decoder.decode(timing.protocol);
+    return decoder.decode(metrics.domainLookupStart)
+        && decoder.decode(metrics.domainLookupEnd)
+        && decoder.decode(metrics.connectStart)
+        && decoder.decode(metrics.secureConnectionStart)
+        && decoder.decode(metrics.connectEnd)
+        && decoder.decode(metrics.requestStart)
+        && decoder.decode(metrics.responseStart)
+        && decoder.decode(metrics.responseEnd)
+        && decoder.decode(metrics.complete)
+        && decoder.decode(metrics.protocol)
+        && decoder.decode(metrics.remoteAddress)
+        && decoder.decode(metrics.connectionIdentifier)
+        && decoder.decode(metrics.priority);
 }
 
-}
+} // namespace WebCore
+
+// NetworkLoadMetrics should not be stored by the WTF::Persistence::Decoder.
+namespace WTF {
+namespace Persistence {
+
+template<> struct Coder<std::optional<WebCore::NetworkLoadPriority>> {
+    static NO_RETURN_DUE_TO_ASSERT void encode(Encoder&, const std::optional<WebCore::NetworkLoadPriority>&)
+    {
+        ASSERT_NOT_REACHED();
+    }
+
+    static bool decode(Decoder&, std::optional<WebCore::NetworkLoadPriority>&)
+    {
+        ASSERT_NOT_REACHED();
+        return false;
+    }
+};
+
+}} // namespace WTF::Persistence

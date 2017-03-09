@@ -63,6 +63,10 @@ WebInspector.Resource = class Resource extends WebInspector.SourceCode
         this._cached = false;
         this._responseSource = WebInspector.Resource.ResponseSource.Unknown;
         this._timingData = new WebInspector.ResourceTimingData(this);
+        this._protocol = null;
+        this._priority = WebInspector.Resource.NetworkPriority.Unknown;
+        this._remoteAddress = null;
+        this._connectionIdentifier = null;
         this._target = targetId ? WebInspector.targetManager.targetForIdentifier(targetId) : WebInspector.mainTarget;
 
         if (this._initiatorSourceCodeLocation && this._initiatorSourceCodeLocation.sourceCode instanceof WebInspector.Resource)
@@ -128,7 +132,7 @@ WebInspector.Resource = class Resource extends WebInspector.SourceCode
         case WebInspector.Resource.Type.Other:
             return WebInspector.UIString("Other");
         default:
-            console.error("Unknown resource type: ", type);
+            console.error("Unknown resource type", type);
             return null;
         }
     }
@@ -148,9 +152,41 @@ WebInspector.Resource = class Resource extends WebInspector.SourceCode
         case NetworkAgent.ResponseSource.DiskCache:
             return WebInspector.Resource.ResponseSource.DiskCache;
         default:
-            console.error("Unknown response source type: ", source);
+            console.error("Unknown response source type", source);
             return WebInspector.Resource.ResponseSource.Unknown;
         }
+    }
+
+    static networkPriorityFromPayload(priority)
+    {
+        switch (priority) {
+        case NetworkAgent.MetricsPriority.Low:
+            return WebInspector.Resource.NetworkPriority.Low;
+        case NetworkAgent.MetricsPriority.Medium:
+            return WebInspector.Resource.NetworkPriority.Medium;
+        case NetworkAgent.MetricsPriority.High:
+            return WebInspector.Resource.NetworkPriority.High;
+        default:
+            console.error("Unknown metrics priority", priority);
+            return WebInspector.Resource.NetworkPriority.Unknown;
+        }
+    }
+
+    static connectionIdentifierFromPayload(connectionIdentifier)
+    {
+        // Map backend connection identifiers to an easier to read number.
+        if (!WebInspector.Resource.connectionIdentifierMap) {
+            WebInspector.Resource.connectionIdentifierMap = new Map;
+            WebInspector.Resource.nextConnectionIdentifier = 1;
+        }
+
+        let id = WebInspector.Resource.connectionIdentifierMap.get(connectionIdentifier);
+        if (id)
+            return id;
+
+        id = WebInspector.Resource.nextConnectionIdentifier++;
+        WebInspector.Resource.connectionIdentifierMap.set(connectionIdentifier, id);
+        return id;
     }
 
     // Public
@@ -165,6 +201,10 @@ WebInspector.Resource = class Resource extends WebInspector.SourceCode
     get statusText() { return this._statusText; }
     get responseSource() { return this._responseSource; }
     get timingData() { return this._timingData; }
+    get protocol() { return this._protocol; }
+    get priority() { return this._priority; }
+    get remoteAddress() { return this._remoteAddress; }
+    get connectionIdentifier() { return this._connectionIdentifier; }
 
     get url()
     {
@@ -520,6 +560,18 @@ WebInspector.Resource = class Resource extends WebInspector.SourceCode
         this.dispatchEventToListeners(WebInspector.Resource.Event.TimestampsDidChange);
     }
 
+    updateWithMetrics(metrics)
+    {
+        if (metrics.protocol)
+            this._protocol = metrics.protocol;
+        if (metrics.priority)
+            this._priority = WebInspector.Resource.networkPriorityFromPayload(metrics.priority);
+        if (metrics.remoteAddress)
+            this._remoteAddress = metrics.remoteAddress;
+        if (metrics.connectionIdentifier)
+            this._connectionIdentifier = WebInspector.Resource.connectionIdentifierFromPayload(metrics.connectionIdentifier);
+    }
+
     canRequestContent()
     {
         return this._finished;
@@ -797,6 +849,13 @@ WebInspector.Resource.ResponseSource = {
     Network: Symbol("network"),
     MemoryCache: Symbol("memory-cache"),
     DiskCache: Symbol("disk-cache"),
+};
+
+WebInspector.Resource.NetworkPriority = {
+    Unknown: Symbol("unknown"),
+    Low: Symbol("low"),
+    Medium: Symbol("medium"),
+    High: Symbol("high"),
 };
 
 // This MIME Type map is private, use WebInspector.Resource.typeFromMIMEType().

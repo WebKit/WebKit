@@ -226,8 +226,11 @@ WebInspector.TimelineDataGridNode = class TimelineDataGridNode extends WebInspec
         if (!this.revealed)
             return;
 
-        var secondsPerPixel = this._graphDataSource.secondsPerPixel;
-        console.assert(isFinite(secondsPerPixel) && secondsPerPixel > 0);
+        let secondsPerPixel = this._graphDataSource.secondsPerPixel;
+        if (isNaN(secondsPerPixel))
+            return;
+
+        console.assert(secondsPerPixel > 0);
 
         var recordBarIndex = 0;
 

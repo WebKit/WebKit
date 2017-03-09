@@ -87,14 +87,12 @@ void ResourceLoadNotifier::didReceiveData(ResourceLoader* loader, const char* da
     dispatchDidReceiveData(loader->documentLoader(), loader->identifier(), data, dataLength, encodedDataLength);
 }
 
-void ResourceLoadNotifier::didFinishLoad(ResourceLoader* loader, const NetworkLoadMetrics&)
+void ResourceLoadNotifier::didFinishLoad(ResourceLoader* loader, const NetworkLoadMetrics& networkLoadMetrics)
 {    
     if (Page* page = m_frame.page())
         page->progress().completeProgress(loader->identifier());
 
-    // FIXME: Inspector should make use of NetworkLoadMetrics.
-
-    dispatchDidFinishLoading(loader->documentLoader(), loader->identifier());
+    dispatchDidFinishLoading(loader->documentLoader(), loader->identifier(), networkLoadMetrics);
 }
 
 void ResourceLoadNotifier::didFailToLoad(ResourceLoader* loader, const ResourceError& error)
@@ -162,13 +160,13 @@ void ResourceLoadNotifier::dispatchDidReceiveData(DocumentLoader* loader, unsign
     InspectorInstrumentation::didReceiveData(&m_frame, identifier, data, dataLength, encodedDataLength);
 }
 
-void ResourceLoadNotifier::dispatchDidFinishLoading(DocumentLoader* loader, unsigned long identifier)
+void ResourceLoadNotifier::dispatchDidFinishLoading(DocumentLoader* loader, unsigned long identifier, const NetworkLoadMetrics& networkLoadMetrics)
 {
     // Notifying the FrameLoaderClient may cause the frame to be destroyed.
     Ref<Frame> protect(m_frame);
     m_frame.loader().client().dispatchDidFinishLoading(loader, identifier);
 
-    InspectorInstrumentation::didFinishLoading(&m_frame, loader, identifier);
+    InspectorInstrumentation::didFinishLoading(&m_frame, loader, identifier, networkLoadMetrics);
 }
 
 void ResourceLoadNotifier::dispatchDidFailLoading(DocumentLoader* loader, unsigned long identifier, const ResourceError& error)
@@ -196,9 +194,10 @@ void ResourceLoadNotifier::sendRemainingDelegateMessages(DocumentLoader* loader,
     if (dataLength > 0)
         dispatchDidReceiveData(loader, identifier, data, dataLength, encodedDataLength);
 
-    if (error.isNull())
-        dispatchDidFinishLoading(loader, identifier);
-    else
+    if (error.isNull()) {
+        NetworkLoadMetrics emptyMetrics;
+        dispatchDidFinishLoading(loader, identifier, emptyMetrics);
+    } else
         dispatchDidFailLoading(loader, identifier, error);
 }
 

@@ -559,7 +559,7 @@ void SubresourceLoader::didFinishLoading(const NetworkLoadMetrics& networkLoadMe
         return;
     m_resource->finish();
     ASSERT(!reachedTerminalState());
-    didFinishLoadingOnePart(m_resource->response().deprecatedNetworkLoadMetrics());
+    didFinishLoadingOnePart(networkLoadMetrics);
     notifyDone();
     if (reachedTerminalState())
         return;

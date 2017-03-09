@@ -39,7 +39,7 @@ WebInspector.NetworkGridContentView = class NetworkGridContentView extends WebIn
         this._contentTreeOutline = this._networkSidebarPanel.contentTreeOutline;
         this._contentTreeOutline.addEventListener(WebInspector.TreeOutline.Event.SelectionDidChange, this._treeSelectionDidChange, this);
 
-        var columns = {domain: {}, type: {}, method: {}, scheme: {}, statusCode: {}, cached: {}, size: {}, transferSize: {}, requestSent: {}, latency: {}, duration: {}, graph: {}};
+        let columns = {domain: {}, type: {}, method: {}, scheme: {}, statusCode: {}, cached: {}, protocol: {}, priority: {}, remoteAddress: {}, connectionIdentifier: {}, size: {}, transferSize: {}, requestSent: {}, latency: {}, duration: {}, graph: {}};
 
         columns.domain.title = WebInspector.UIString("Domain");
         columns.domain.width = "10%";
@@ -58,6 +58,23 @@ WebInspector.NetworkGridContentView = class NetworkGridContentView extends WebIn
 
         columns.cached.title = WebInspector.UIString("Cached");
         columns.cached.width = "8%";
+
+        columns.protocol.title = WebInspector.UIString("Protocol");
+        columns.protocol.width = "5%";
+        columns.protocol.hidden = true;
+
+        columns.priority.title = WebInspector.UIString("Priority");
+        columns.priority.width = "5%";
+        columns.priority.hidden = true;
+
+        columns.remoteAddress.title = WebInspector.UIString("Remote Address");
+        columns.remoteAddress.width = "8%";
+        columns.remoteAddress.hidden = true;
+
+        columns.connectionIdentifier.title = WebInspector.UIString("Connection");
+        columns.connectionIdentifier.width = "5%";
+        columns.connectionIdentifier.hidden = true;
+        columns.connectionIdentifier.aligned = "right";
 
         columns.size.title = WebInspector.UIString("Size");
         columns.size.width = "6%";
@@ -79,7 +96,7 @@ WebInspector.NetworkGridContentView = class NetworkGridContentView extends WebIn
         columns.duration.width = "9%";
         columns.duration.aligned = "right";
 
-        for (var column in columns)
+        for (let column in columns)
             columns[column].sortable = true;
 
         this._timelineRuler = new WebInspector.TimelineRuler;
@@ -90,6 +107,14 @@ WebInspector.NetworkGridContentView = class NetworkGridContentView extends WebIn
         columns.graph.headerView = this._timelineRuler;
         columns.graph.sortable = false;
 
+        // COMPATIBILITY(iOS 10.3): Network load metrics were not previously available.
+        if (!NetworkAgent.hasEventParameter("loadingFinished", "metrics")) {
+            delete columns.protocol;
+            delete columns.priority;
+            delete columns.remoteAddress;
+            delete columns.connectionIdentifier;
+        }
+
         this._dataGrid = new WebInspector.TimelineDataGrid(columns, this._contentTreeOutline);
         this._dataGrid.addEventListener(WebInspector.DataGrid.Event.SelectedNodeChanged, this._dataGridNodeSelected, this);
         this._dataGrid.sortColumnIdentifier = "requestSent";
@@ -99,7 +124,7 @@ WebInspector.NetworkGridContentView = class NetworkGridContentView extends WebIn
         this.element.classList.add("network-grid");
         this.addSubview(this._dataGrid);
 
-        var networkTimeline = WebInspector.timelineManager.persistentNetworkTimeline;
+        let networkTimeline = WebInspector.timelineManager.persistentNetworkTimeline;
         networkTimeline.addEventListener(WebInspector.Timeline.Event.RecordAdded, this._networkTimelineRecordAdded, this);
         networkTimeline.addEventListener(WebInspector.Timeline.Event.Reset, this._networkTimelineReset, this);
 

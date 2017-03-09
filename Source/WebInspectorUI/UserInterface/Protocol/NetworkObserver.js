@@ -48,9 +48,9 @@ WebInspector.NetworkObserver = class NetworkObserver
         WebInspector.frameResourceManager.resourceRequestDidReceiveData(requestId, dataLength, encodedDataLength, timestamp);
     }
 
-    loadingFinished(requestId, timestamp, sourceMapURL)
+    loadingFinished(requestId, timestamp, sourceMapURL, metrics)
     {
-        WebInspector.frameResourceManager.resourceRequestDidFinishLoading(requestId, timestamp, sourceMapURL);
+        WebInspector.frameResourceManager.resourceRequestDidFinishLoading(requestId, timestamp, sourceMapURL, metrics);
     }
 
     loadingFailed(requestId, timestamp, errorText, canceled)

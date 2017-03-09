@@ -41,6 +41,7 @@
 #include "HTTPHeaderNames.h"
 #include "InspectorInstrumentation.h"
 #include "ManifestParser.h"
+#include "NetworkLoadMetrics.h"
 #include "Page.h"
 #include "ProgressTracker.h"
 #include "ResourceHandle.h"
@@ -572,7 +573,9 @@ void ApplicationCacheGroup::didReceiveData(ResourceHandle* handle, const char* d
 
 void ApplicationCacheGroup::didFinishLoading(ResourceHandle* handle)
 {
-    InspectorInstrumentation::didFinishLoading(m_frame, m_frame->loader().documentLoader(), m_currentResourceIdentifier);
+    // FIXME: We should have NetworkLoadMetrics for ApplicationCache loads.
+    NetworkLoadMetrics emptyMetrics;
+    InspectorInstrumentation::didFinishLoading(m_frame, m_frame->loader().documentLoader(), m_currentResourceIdentifier, emptyMetrics);
 
     if (handle == m_manifestHandle) {
         didFinishLoadingManifest();

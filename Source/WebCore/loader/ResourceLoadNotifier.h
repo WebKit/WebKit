@@ -60,7 +60,7 @@ public:
     void dispatchWillSendRequest(DocumentLoader*, unsigned long identifier, ResourceRequest&, const ResourceResponse& redirectResponse);
     void dispatchDidReceiveResponse(DocumentLoader*, unsigned long identifier, const ResourceResponse&, ResourceLoader* = nullptr);
     void dispatchDidReceiveData(DocumentLoader*, unsigned long identifier, const char* data, int dataLength, int encodedDataLength);
-    void dispatchDidFinishLoading(DocumentLoader*, unsigned long identifier);
+    void dispatchDidFinishLoading(DocumentLoader*, unsigned long identifier, const NetworkLoadMetrics&);
     void dispatchDidFailLoading(DocumentLoader*, unsigned long identifier, const ResourceError&);
 
     void sendRemainingDelegateMessages(DocumentLoader*, unsigned long identifier, const ResourceRequest&, const ResourceResponse&, const char* data, int dataLength, int encodedDataLength, const ResourceError&);

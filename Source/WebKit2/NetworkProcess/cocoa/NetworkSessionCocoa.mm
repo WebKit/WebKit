@@ -80,6 +80,15 @@ static NSURLSessionAuthChallengeDisposition toNSURLSessionAuthChallengeDispositi
     }
 }
 
+static WebCore::NetworkLoadPriority toNetworkLoadPriority(float priority)
+{
+    if (priority <= NSURLSessionTaskPriorityLow)
+        return WebCore::NetworkLoadPriority::Low;
+    if (priority >= NSURLSessionTaskPriorityHigh)
+        return WebCore::NetworkLoadPriority::High;
+    return WebCore::NetworkLoadPriority::Medium;
+}
+
 @interface WKNetworkSessionDelegate : NSObject <NSURLSessionDataDelegate> {
     RefPtr<WebKit::NetworkSessionCocoa> _session;
     bool _withCredentials;
@@ -290,7 +299,13 @@ static NSURLSessionAuthChallengeDisposition toNSURLSessionAuthChallengeDispositi
         networkLoadMetrics.responseStart = Seconds(responseStartInterval);
         networkLoadMetrics.responseEnd = Seconds(responseEndInterval);
         networkLoadMetrics.markComplete();
+
         networkLoadMetrics.protocol = String(m.networkProtocolName);
+        networkLoadMetrics.priority = toNetworkLoadPriority(task.priority);
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000)
+        networkLoadMetrics.remoteAddress = String(m._remoteAddressAndPort);
+        networkLoadMetrics.connectionIdentifier = String([m._connectionIdentifier UUIDString]);
+#endif
     }
 }
 

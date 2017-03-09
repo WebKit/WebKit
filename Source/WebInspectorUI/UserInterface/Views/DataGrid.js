@@ -37,7 +37,7 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.View
         this._sortColumnIdentifierSetting = null;
         this._sortOrder = WebInspector.DataGrid.SortOrder.Indeterminate;
         this._sortOrderSetting = null;
-        this._hiddenColumnSetting = null;
+        this._columnVisibilitySetting = null;
         this._columnChooserEnabled = false;
         this._headerVisible = true;
 
@@ -362,7 +362,7 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.View
 
         this._sortColumnIdentifierSetting = new WebInspector.Setting(this._settingsIdentifier + "-sort", this._sortColumnIdentifier);
         this._sortOrderSetting = new WebInspector.Setting(this._settingsIdentifier + "-sort-order", this._sortOrder);
-        this._hiddenColumnSetting = new WebInspector.Setting(this._settingsIdentifier + "-hidden-columns", []);
+        this._columnVisibilitySetting = new WebInspector.Setting(this._settingsIdentifier + "-column-visibility", {});
 
         if (!this.columns)
             return;
@@ -372,8 +372,11 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.View
             this.sortOrder = this._sortOrderSetting.value;
         }
 
-        for (let columnIdentifier of this._hiddenColumnSetting.value)
-            this.setColumnVisible(columnIdentifier, false);
+        let visibilitySettings = this._columnVisibilitySetting.value;
+        for (let columnIdentifier in visibilitySettings) {
+            let visible = visibilitySettings[columnIdentifier];
+            this.setColumnVisible(columnIdentifier, visible);
+        }
     }
 
     _updateScrollListeners()
@@ -919,14 +922,12 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.View
         column.element.style.width = visible ? column.width : 0;
         column.hidden = !visible;
 
-        if (this._hiddenColumnSetting) {
-            let hiddenColumns = this._hiddenColumnSetting.value.slice();
-            if (column.hidden)
-                hiddenColumns.push(columnIdentifier);
-            else
-                hiddenColumns.remove(columnIdentifier);
-
-            this._hiddenColumnSetting.value = hiddenColumns;
+        if (this._columnVisibilitySetting) {
+            if (this._columnVisibilitySetting.value[columnIdentifier] !== visible) {
+                let copy = Object.shallowCopy(this._columnVisibilitySetting.value);
+                copy[columnIdentifier] = visible;
+                this._columnVisibilitySetting.value = copy;
+            }
         }
 
         this._columnWidthsInitialized = false;

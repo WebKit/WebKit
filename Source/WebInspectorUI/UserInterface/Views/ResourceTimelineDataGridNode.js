@@ -80,6 +80,10 @@ WebInspector.ResourceTimelineDataGridNode = class ResourceTimelineDataGridNode e
             data.requestSent = resource.requestSentTimestamp - zeroTime;
             data.duration = resource.receiveDuration;
             data.latency = resource.latency;
+            data.protocol = resource.protocol;
+            data.priority = resource.priority;
+            data.remoteAddress = resource.remoteAddress;
+            data.connectionIdentifier = resource.connectionIdentifier;
         }
 
         data.graph = this._record.startTime;
@@ -125,6 +129,14 @@ WebInspector.ResourceTimelineDataGridNode = class ResourceTimelineDataGridNode e
         case "latency":
         case "duration":
             return isNaN(value) ? emDash : Number.secondsToString(value, true);
+
+        case "protocol":
+        case "remoteAddress":
+        case "connectionIdentifier":
+            return value || emDash;
+
+        case "priority":
+            return this._displayNameForPriority(value);
         }
 
         return super.createCellContent(columnIdentifier, cell);
@@ -188,6 +200,20 @@ WebInspector.ResourceTimelineDataGridNode = class ResourceTimelineDataGridNode e
 
     // Private
 
+    _displayNameForPriority(priority)
+    {
+        switch (priority) {
+        case WebInspector.Resource.NetworkPriority.Low:
+            return WebInspector.UIString("Low");
+        case WebInspector.Resource.NetworkPriority.Medium:
+            return WebInspector.UIString("Medium");
+        case WebInspector.Resource.NetworkPriority.High:
+            return WebInspector.UIString("High");
+        }
+
+        return emDash;
+    }
+
     _createNameCellDocumentFragment()
     {
         let fragment = document.createDocumentFragment();
@@ -226,7 +252,7 @@ WebInspector.ResourceTimelineDataGridNode = class ResourceTimelineDataGridNode e
 
         let responseSource = this._resource.responseSource;
         if (responseSource === WebInspector.Resource.ResponseSource.MemoryCache || responseSource === WebInspector.Resource.ResponseSource.DiskCache) {
-            console.assert(this._resource.cached, "This resource has a cache responseSource it should also be marked as cached", resource);
+            console.assert(this._resource.cached, "This resource has a cache responseSource it should also be marked as cached", this._resource);
             let span = document.createElement("span");
             let cacheType = document.createElement("span");
             cacheType.classList = "cache-type";

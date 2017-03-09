@@ -1,3 +1,14 @@
+2017-03-09  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Show HTTP protocol version and other Network Load Metrics (IP Address, Priority, Connection ID)
+        https://bugs.webkit.org/show_bug.cgi?id=29687
+        <rdar://problem/19281586>
+
+        Reviewed by Matt Baker and Brian Burg.
+
+        * http/tests/inspector/network/resource-metrics-expected.txt: Added.
+        * http/tests/inspector/network/resource-metrics.html: Added.
+
 2017-03-09  Ryan Haddad  <ryanhaddad@apple.com>
 
         Add iOS baseline for compositing/contents-format/subpixel-antialiased-text-traversal.

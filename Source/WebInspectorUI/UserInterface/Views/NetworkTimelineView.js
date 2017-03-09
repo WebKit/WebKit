@@ -31,7 +31,7 @@ WebInspector.NetworkTimelineView = class NetworkTimelineView extends WebInspecto
 
         console.assert(timeline.type === WebInspector.TimelineRecord.Type.Network);
 
-        let columns = {name: {}, domain: {}, type: {}, method: {}, scheme: {}, statusCode: {}, cached: {}, size: {}, transferSize: {}, requestSent: {}, latency: {}, duration: {}, graph: {}};
+        let columns = {name: {}, domain: {}, type: {}, method: {}, scheme: {}, statusCode: {}, cached: {}, protocol: {}, priority: {}, remoteAddress: {}, connectionIdentifier: {}, size: {}, transferSize: {}, requestSent: {}, latency: {}, duration: {}, graph: {}};
 
         columns.name.title = WebInspector.UIString("Name");
         columns.name.icon = true;
@@ -44,9 +44,9 @@ WebInspector.NetworkTimelineView = class NetworkTimelineView extends WebInspecto
         columns.type.title = WebInspector.UIString("Type");
         columns.type.width = "7%";
 
-        var typeToLabelMap = new Map;
-        for (var key in WebInspector.Resource.Type) {
-            var value = WebInspector.Resource.Type[key];
+        let typeToLabelMap = new Map;
+        for (let key in WebInspector.Resource.Type) {
+            let value = WebInspector.Resource.Type[key];
             typeToLabelMap.set(value, WebInspector.Resource.displayNameForType(value, true));
         }
 
@@ -64,6 +64,23 @@ WebInspector.NetworkTimelineView = class NetworkTimelineView extends WebInspecto
 
         columns.cached.title = WebInspector.UIString("Cached");
         columns.cached.width = "6%";
+
+        columns.protocol.title = WebInspector.UIString("Protocol");
+        columns.protocol.width = "5%";
+        columns.protocol.hidden = true;
+
+        columns.priority.title = WebInspector.UIString("Priority");
+        columns.priority.width = "5%";
+        columns.priority.hidden = true;
+
+        columns.remoteAddress.title = WebInspector.UIString("Remote Address");
+        columns.remoteAddress.width = "8%";
+        columns.remoteAddress.hidden = true;
+
+        columns.connectionIdentifier.title = WebInspector.UIString("Connection");
+        columns.connectionIdentifier.width = "5%";
+        columns.connectionIdentifier.hidden = true;
+        columns.connectionIdentifier.aligned = "right";
 
         columns.size.title = WebInspector.UIString("Size");
         columns.size.width = "6%";
@@ -85,7 +102,7 @@ WebInspector.NetworkTimelineView = class NetworkTimelineView extends WebInspecto
         columns.duration.width = "9%";
         columns.duration.aligned = "right";
 
-        for (var column in columns)
+        for (let column in columns)
             columns[column].sortable = true;
 
         this._timelineRuler = new WebInspector.TimelineRuler;
@@ -95,6 +112,14 @@ WebInspector.NetworkTimelineView = class NetworkTimelineView extends WebInspecto
         columns.graph.width = "15%";
         columns.graph.headerView = this._timelineRuler;
         columns.graph.sortable = false;
+
+        // COMPATIBILITY(iOS 10.3): Network load metrics were not previously available.
+        if (!NetworkAgent.hasEventParameter("loadingFinished", "metrics")) {
+            delete columns.protocol;
+            delete columns.priority;
+            delete columns.remoteAddress;
+            delete columns.connectionIdentifier;
+        }
 
         this._dataGrid = new WebInspector.TimelineDataGrid(columns);
         this._dataGrid.sortDelegate = this;

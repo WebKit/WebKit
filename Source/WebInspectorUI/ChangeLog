@@ -1,3 +1,68 @@
+2017-03-09  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Show HTTP protocol version and other Network Load Metrics (IP Address, Priority, Connection ID)
+        https://bugs.webkit.org/show_bug.cgi?id=29687
+        <rdar://problem/19281586>
+
+        Reviewed by Matt Baker and Brian Burg.
+
+        These columns are available in the Network DataGrids, but are
+        initially hidden. They can be shown by right clicking on the
+        table header and showing these columns. We are going to rework
+        the default list of visible columns later.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        New localized strings for data grid headers and Low/Medium/High.
+
+        * UserInterface/Controllers/FrameResourceManager.js:
+        (WebInspector.FrameResourceManager.prototype.resourceRequestDidFinishLoading):
+        * UserInterface/Protocol/NetworkObserver.js:
+        (WebInspector.NetworkObserver.prototype.loadingFinished):
+        Pass metrics on to the Resource.
+
+        * UserInterface/Models/Resource.js:
+        (WebInspector.Resource):
+        (WebInspector.Resource.displayNameForType):
+        (WebInspector.Resource.responseSourceFromPayload):
+        (WebInspector.Resource.networkPriorityFromPayload):
+        (WebInspector.Resource.connectionIdentifierFromPayload):
+        (WebInspector.Resource.prototype.get protocol):
+        (WebInspector.Resource.prototype.get priority):
+        (WebInspector.Resource.prototype.get remoteAddress):
+        (WebInspector.Resource.prototype.get connectionIdentifier):
+        (WebInspector.Resource.prototype.updateWithMetrics):
+        Include metrics accessors and default values.
+
+        * UserInterface/Views/NetworkGridContentView.js:
+        (WebInspector.NetworkGridContentView):
+        * UserInterface/Views/NetworkTimelineView.js:
+        (WebInspector.NetworkTimelineView):
+        Add metrics columns if the backend may be sending them.
+
+        * UserInterface/Views/ResourceTimelineDataGridNode.js:
+        (WebInspector.ResourceTimelineDataGridNode.prototype.get data):
+        (WebInspector.ResourceTimelineDataGridNode.prototype.createCellContent):
+        (WebInspector.ResourceTimelineDataGridNode.prototype._displayNameForPriority):
+        (WebInspector.ResourceTimelineDataGridNode.prototype._cachedCellContent):
+        Display strings for new columns.
+
+        * UserInterface/Views/TimelineDataGridNode.js:
+        * UserInterface/Views/TimelineRecordBar.js:
+        (WebInspector.TimelineRecordBar.prototype.refresh):
+        Avoid assertions if Graph column is unavailable.
+
+        * UserInterface/Views/DataGrid.js:
+        (WebInspector.DataGrid):
+        (WebInspector.DataGrid.prototype.createSettings):
+        (WebInspector.DataGrid.prototype.setColumnVisible):
+        Better support for restoring user preference of initially
+        hidden columns which the user may have shown.
+
+        * UserInterface/Views/ResourceDetailsSidebarPanel.js:
+        (WebInspector.ResourceDetailsSidebarPanel):
+        (WebInspector.ResourceDetailsSidebarPanel.prototype._refreshRequestAndResponse):
+        Show the Protocol and Priority in the Resources sidebar.
+
 2017-03-09  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Show individual messages in the content pane for a WebSocket

@@ -46,4 +46,11 @@ typedef NSUInteger TimingDataCollection;
 - (NSDictionary *)_timingData;
 @end
 
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000)
+@interface NSURLSessionTaskTransactionMetrics ()
+@property (copy, readonly) NSString* _remoteAddressAndPort;
+@property (copy, readonly) NSUUID* _connectionIdentifier;
+@end
+#endif
+
 #endif

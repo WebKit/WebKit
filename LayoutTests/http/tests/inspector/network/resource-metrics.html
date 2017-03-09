@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../resources/inspector-test.js"></script>
+<script>
+function triggerNetworkLoad() {
+    let url = "resources/data.json?" + Math.random();
+    fetch(url).then(() => {
+        TestPage.dispatchEventToFrontend("LoadComplete");
+    });
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Resource.Metrics");
+
+    function addTestCase({name, description, expression, statusCode, protocol, priority, remoteAddressType, connectionIdentifierType}) {
+        suite.addTestCase({
+            name, description,
+            test(resolve, reject) {
+                InspectorTest.evaluateInPage(expression);
+                Promise.all([
+                    WebInspector.Frame.awaitEvent(WebInspector.Frame.Event.ResourceWasAdded),
+                    WebInspector.Resource.awaitEvent(WebInspector.Resource.Event.ResponseReceived),
+                    InspectorTest.awaitEvent("LoadComplete"),
+                ]).then(([resourceWasAddedEvent, responseReceivedEvent, loadCompleteEvent]) => {
+                    let resource = resourceWasAddedEvent.data.resource;
+                    InspectorTest.expectThat(resource instanceof WebInspector.Resource, "Resource should be created.");
+                    InspectorTest.expectEqual(resource, responseReceivedEvent.target, "Resource should receive a Response.");
+                    InspectorTest.expectEqual(resource.statusCode, statusCode, `statusCode should be ${statusCode}.`);
+                    InspectorTest.expectThat(resource.protocol === null || resource.protocol === protocol, `protocol should be null or ${protocol}.`);
+                    InspectorTest.expectThat(resource.priority === WebInspector.Resource.NetworkPriority.Unknown || resource.priority === priority, `priority should be ${String(WebInspector.Resource.NetworkPriority.Unknown)} or ${String(priority)}.`);
+                    InspectorTest.expectThat(resource.remoteAddress === null || typeof resource.protocol === remoteAddressType, `remoteAddressType should be null or a ${remoteAddressType}.`);
+                    InspectorTest.expectThat(resource.connectionIdentifier === null || typeof resource.protocol === connectionIdentifierType, `connectionIdentifierType should be null or ${connectionIdentifierType}.`);
+                }).then(resolve, reject);
+            }
+        });
+    }
+
+    addTestCase({
+        name: "Resource.Metrics.Network",
+        description: "Load a resource from the network by giving a random URL should have metrics.",
+        expression: `triggerNetworkLoad()`,
+        statusCode: 200,
+        protocol: "http/1.1",
+        priority: WebInspector.Resource.NetworkPriority.Medium,
+        remoteAddressType: "string",
+        connectionIdentifierType: "string",
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Test for Resource metrics (protocol, priority, remoteAddress, connectionIdentifier).</p>
+</body>
+</html>
