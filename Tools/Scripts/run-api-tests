@@ -78,6 +78,7 @@ Usage: $programName [options] [suite or test prefixes]
 
 Platform options:
   --ios-simulator       Run tests in the iOS Simulator
+  --simulator           DEPRECATED alias of --ios-simulator
 
 @{[ sharedCommandLineOptionsUsage(indent => 2, switchWidth => 21) ]}
 Examples

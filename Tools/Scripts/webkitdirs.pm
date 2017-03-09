@@ -438,7 +438,7 @@ sub argumentsForConfiguration()
     # These are determined automatically from stored configuration.
     push(@args, '--debug') if ($configuration =~ "^Debug");
     push(@args, '--release') if ($configuration =~ "^Release");
-    push(@args, '--device') if (defined $xcodeSDK && $xcodeSDK =~ /^iphoneos/);
+    push(@args, '--ios-device') if (defined $xcodeSDK && $xcodeSDK =~ /^iphoneos/);
     push(@args, '--ios-simulator') if (defined $xcodeSDK && $xcodeSDK =~ /^iphonesimulator/);
     push(@args, '--32-bit') if ($architecture ne "x86_64" and !isWin64());
     push(@args, '--64-bit') if (isWin64());
@@ -457,11 +457,11 @@ sub determineXcodeSDK
     if (checkForArgumentAndRemoveFromARGVGettingValue("--sdk", \$sdk)) {
         $xcodeSDK = $sdk;
     }
-    if (checkForArgumentAndRemoveFromARGV("--device")) {
+    if (checkForArgumentAndRemoveFromARGV("--device") || checkForArgumentAndRemoveFromARGV("--ios-device")) {
         my $hasInternalSDK = exitStatus(system("xcrun --sdk iphoneos.internal --show-sdk-version > /dev/null 2>&1")) == 0;
         $xcodeSDK ||= $hasInternalSDK ? "iphoneos.internal" : "iphoneos";
     }
-    if (checkForArgumentAndRemoveFromARGV("--ios-simulator")) {
+    if (checkForArgumentAndRemoveFromARGV("--simulator") || checkForArgumentAndRemoveFromARGV("--ios-simulator")) {
         $xcodeSDK ||= 'iphonesimulator';
     }
 }
