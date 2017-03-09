@@ -25,12 +25,12 @@
 
 #pragma once
 
+#include "CellList.h"
 #include "Heap.h"
-#include "LiveObjectList.h"
 
 namespace JSC {
 
-class JSObject;
+class JSCell;
 class MarkedBlock;
 
 class HeapVerifier {
@@ -46,13 +46,13 @@ public:
     HeapVerifier(Heap*, unsigned numberOfGCCyclesToRecord);
 
     void initializeGCCycle();
-    void gatherLiveObjects(Phase);
-    void trimDeadObjects();
+    void gatherLiveCells(Phase);
+    void trimDeadCells();
     void verify(Phase);
 
-    // Scans all previously recorded LiveObjectLists and checks if the specified
-    // object was in any of those lists.
-    JS_EXPORT_PRIVATE void checkIfRecorded(JSObject*);
+    // Scans all previously recorded CellLists and checks if the specified
+    // cell was in any of those lists.
+    JS_EXPORT_PRIVATE void checkIfRecorded(JSCell*);
 
     static const char* phaseName(Phase);
 
@@ -65,8 +65,8 @@ private:
         }
 
         CollectionScope scope;
-        LiveObjectList before;
-        LiveObjectList after;
+        CellList before;
+        CellList after;
     };
 
     void incrementCycle() { m_currentCycle = (m_currentCycle + 1) % m_numberOfCycles; }
@@ -81,10 +81,10 @@ private:
         return m_cycles[cycleIndex];
     }
 
-    LiveObjectList* liveObjectListForGathering(Phase);
-    bool verifyButterflyIsInStorageSpace(Phase, LiveObjectList&);
+    CellList* cellListForGathering(Phase);
+    bool verifyButterflyIsInStorageSpace(Phase, CellList&);
 
-    static void reportObject(LiveObjectData&, int cycleIndex, HeapVerifier::GCCycle&, LiveObjectList&);
+    static void reportCell(CellProfile&, int cycleIndex, HeapVerifier::GCCycle&, CellList&);
 
     Heap* m_heap;
     int m_currentCycle;

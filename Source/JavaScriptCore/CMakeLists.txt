@@ -499,11 +499,9 @@ set(JavaScriptCore_SOURCES
     heap/HeapSnapshot.cpp
     heap/HeapSnapshotBuilder.cpp
     heap/HeapTimer.cpp
-    heap/HeapVerifier.cpp
     heap/IncrementalSweeper.cpp
     heap/JITStubRoutineSet.cpp
     heap/LargeAllocation.cpp
-    heap/LiveObjectList.cpp
     heap/MachineStackMarker.cpp
     heap/MarkStack.cpp
     heap/MarkedAllocator.cpp
@@ -915,10 +913,12 @@ set(JavaScriptCore_SOURCES
     runtime/WeakSetConstructor.cpp
     runtime/WeakSetPrototype.cpp
 
+    tools/CellList.cpp
     tools/CodeProfile.cpp
     tools/CodeProfiling.cpp
     tools/FunctionOverrides.cpp
     tools/FunctionWhitelist.cpp
+    tools/HeapVerifier.cpp
     tools/JSDollarVM.cpp
     tools/JSDollarVMPrototype.cpp
     tools/SigillCrashAnalyzer.cpp

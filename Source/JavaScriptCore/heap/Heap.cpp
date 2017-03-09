@@ -1103,7 +1103,7 @@ NEVER_INLINE bool Heap::runBeginPhase(GCConductor conn)
         m_verifier->verify(HeapVerifier::Phase::BeforeGC);
             
         m_verifier->initializeGCCycle();
-        m_verifier->gatherLiveObjects(HeapVerifier::Phase::BeforeMarking);
+        m_verifier->gatherLiveCells(HeapVerifier::Phase::BeforeMarking);
     }
         
     prepareForMarking();
@@ -1333,7 +1333,7 @@ NEVER_INLINE bool Heap::runEndPhase(GCConductor conn)
     endMarking();
         
     if (m_verifier) {
-        m_verifier->gatherLiveObjects(HeapVerifier::Phase::AfterMarking);
+        m_verifier->gatherLiveCells(HeapVerifier::Phase::AfterMarking);
         m_verifier->verify(HeapVerifier::Phase::AfterMarking);
     }
         
@@ -1360,7 +1360,7 @@ NEVER_INLINE bool Heap::runEndPhase(GCConductor conn)
     didFinishCollection();
     
     if (m_verifier) {
-        m_verifier->trimDeadObjects();
+        m_verifier->trimDeadCells();
         m_verifier->verify(HeapVerifier::Phase::AfterGC);
     }
 

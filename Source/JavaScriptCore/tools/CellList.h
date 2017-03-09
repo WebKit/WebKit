@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,18 +23,31 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "LiveObjectList.h"
+#pragma once
+
+#include "CellProfile.h"
+#include <wtf/Vector.h>
 
 namespace JSC {
 
-LiveObjectData* LiveObjectList::findObject(JSObject* obj)
-{
-    for (auto& data : liveObjects) {
-        if (obj == data.obj)
-            return &data;
+struct CellList {
+    CellList(const char* name)
+        : name(name)
+        , hasLiveCells(true)
+    {
     }
-    return nullptr;
-}
-
+    
+    void reset()
+    {
+        liveCells.clear();
+        hasLiveCells = true; // Presume to have live objects until the list is trimmed.
+    }
+    
+    CellProfile* findCell(JSCell*);
+    
+    const char* name;
+    Vector<CellProfile> liveCells;
+    bool hasLiveCells;
+};
+    
 } // namespace JSC

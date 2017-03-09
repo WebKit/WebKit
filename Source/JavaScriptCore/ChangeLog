@@ -1,3 +1,59 @@
+2017-03-09  Mark Lam  <mark.lam@apple.com>
+
+        Refactoring some HeapVerifier code.
+        https://bugs.webkit.org/show_bug.cgi?id=169443
+
+        Reviewed by Filip Pizlo.
+
+        Renamed LiveObjectData to CellProfile.
+        Renamed LiveObjectList to CellList.
+        Moved CellProfile.*, CellList.*, and HeapVerifier.* from the heap folder to the tools folder.
+        Updated the HeapVerifier to handle JSCells instead of just JSObjects.
+
+        This is in preparation for subsequent patches to fix up the HeapVerifier for service again.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * heap/Heap.cpp:
+        (JSC::Heap::runBeginPhase):
+        (JSC::Heap::runEndPhase):
+        * heap/HeapVerifier.cpp: Removed.
+        * heap/HeapVerifier.h: Removed.
+        * heap/LiveObjectData.h: Removed.
+        * heap/LiveObjectList.cpp: Removed.
+        * heap/LiveObjectList.h: Removed.
+        * tools/CellList.cpp: Copied from Source/JavaScriptCore/heap/LiveObjectList.cpp.
+        (JSC::CellList::findCell):
+        (JSC::LiveObjectList::findObject): Deleted.
+        * tools/CellList.h: Copied from Source/JavaScriptCore/heap/LiveObjectList.h.
+        (JSC::CellList::CellList):
+        (JSC::CellList::reset):
+        (JSC::LiveObjectList::LiveObjectList): Deleted.
+        (JSC::LiveObjectList::reset): Deleted.
+        * tools/CellProfile.h: Copied from Source/JavaScriptCore/heap/LiveObjectData.h.
+        (JSC::CellProfile::CellProfile):
+        (JSC::LiveObjectData::LiveObjectData): Deleted.
+        * tools/HeapVerifier.cpp: Copied from Source/JavaScriptCore/heap/HeapVerifier.cpp.
+        (JSC::GatherCellFunctor::GatherCellFunctor):
+        (JSC::GatherCellFunctor::visit):
+        (JSC::GatherCellFunctor::operator()):
+        (JSC::HeapVerifier::gatherLiveCells):
+        (JSC::HeapVerifier::cellListForGathering):
+        (JSC::trimDeadCellsFromList):
+        (JSC::HeapVerifier::trimDeadCells):
+        (JSC::HeapVerifier::verifyButterflyIsInStorageSpace):
+        (JSC::HeapVerifier::reportCell):
+        (JSC::HeapVerifier::checkIfRecorded):
+        (JSC::GatherLiveObjFunctor::GatherLiveObjFunctor): Deleted.
+        (JSC::GatherLiveObjFunctor::visit): Deleted.
+        (JSC::GatherLiveObjFunctor::operator()): Deleted.
+        (JSC::HeapVerifier::gatherLiveObjects): Deleted.
+        (JSC::HeapVerifier::liveObjectListForGathering): Deleted.
+        (JSC::trimDeadObjectsFromList): Deleted.
+        (JSC::HeapVerifier::trimDeadObjects): Deleted.
+        (JSC::HeapVerifier::reportObject): Deleted.
+        * tools/HeapVerifier.h: Copied from Source/JavaScriptCore/heap/HeapVerifier.h.
+
 2017-03-09  Anders Carlsson  <andersca@apple.com>
 
         Add delegate support to WebCore

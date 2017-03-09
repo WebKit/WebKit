@@ -66,19 +66,17 @@ void HeapVerifier::initializeGCCycle()
     currentCycle().scope = *heap->collectionScope();
 }
 
-struct GatherLiveObjFunctor : MarkedBlock::CountFunctor {
-    GatherLiveObjFunctor(LiveObjectList& list)
+struct GatherCellFunctor : MarkedBlock::CountFunctor {
+    GatherCellFunctor(CellList& list)
         : m_list(list)
     {
-        ASSERT(!list.liveObjects.size());
+        ASSERT(!list.liveCells.size());
     }
 
     inline void visit(JSCell* cell)
     {
-        if (!cell->isObject())
-            return;        
-        LiveObjectData data(asObject(cell));
-        m_list.liveObjects.append(data);
+        CellProfile profile(cell);
+        m_list.liveCells.append(profile);
     }
 
     IterationStatus operator()(HeapCell* cell, HeapCell::Kind kind) const
@@ -86,26 +84,26 @@ struct GatherLiveObjFunctor : MarkedBlock::CountFunctor {
         if (kind == HeapCell::JSCell) {
             // FIXME: This const_cast exists because this isn't a C++ lambda.
             // https://bugs.webkit.org/show_bug.cgi?id=159644
-            const_cast<GatherLiveObjFunctor*>(this)->visit(static_cast<JSCell*>(cell));
+            const_cast<GatherCellFunctor*>(this)->visit(static_cast<JSCell*>(cell));
         }
         return IterationStatus::Continue;
     }
 
-    LiveObjectList& m_list;
+    CellList& m_list;
 };
 
-void HeapVerifier::gatherLiveObjects(HeapVerifier::Phase phase)
+void HeapVerifier::gatherLiveCells(HeapVerifier::Phase phase)
 {
     Heap* heap = m_heap;
-    LiveObjectList& list = *liveObjectListForGathering(phase);
+    CellList& list = *cellListForGathering(phase);
 
     HeapIterationScope iterationScope(*heap);
     list.reset();
-    GatherLiveObjFunctor functor(list);
+    GatherCellFunctor functor(list);
     heap->m_objectSpace.forEachLiveCell(iterationScope, functor);
 }
 
-LiveObjectList* HeapVerifier::liveObjectListForGathering(HeapVerifier::Phase phase)
+CellList* HeapVerifier::cellListForGathering(HeapVerifier::Phase phase)
 {
     switch (phase) {
     case Phase::BeforeMarking:
@@ -114,48 +112,48 @@ LiveObjectList* HeapVerifier::liveObjectListForGathering(HeapVerifier::Phase pha
         return &currentCycle().after;
     case Phase::BeforeGC:
     case Phase::AfterGC:
-        // We should not be gathering live objects during these phases.
+        // We should not be gathering live cells during these phases.
         break;
     }
     RELEASE_ASSERT_NOT_REACHED();
     return nullptr; // Silencing a compiler warning.
 }
 
-static void trimDeadObjectsFromList(HashSet<JSObject*>& knownLiveSet, LiveObjectList& list)
+static void trimDeadCellsFromList(HashSet<JSCell*>& knownLiveSet, CellList& list)
 {
-    if (!list.hasLiveObjects)
+    if (!list.hasLiveCells)
         return;
 
-    size_t liveObjectsFound = 0;
-    for (auto& objData : list.liveObjects) {
-        if (objData.isConfirmedDead)
-            continue; // Don't "resurrect" known dead objects.
-        if (!knownLiveSet.contains(objData.obj)) {
-            objData.isConfirmedDead = true;
+    size_t liveCellsFound = 0;
+    for (auto& cellProfile : list.liveCells) {
+        if (cellProfile.isConfirmedDead)
+            continue; // Don't "resurrect" known dead cells.
+        if (!knownLiveSet.contains(cellProfile.cell)) {
+            cellProfile.isConfirmedDead = true;
             continue;
         }
-        liveObjectsFound++;
+        liveCellsFound++;
     }
-    list.hasLiveObjects = !!liveObjectsFound;
+    list.hasLiveCells = !!liveCellsFound;
 }
 
-void HeapVerifier::trimDeadObjects()
+void HeapVerifier::trimDeadCells()
 {
-    HashSet<JSObject*> knownLiveSet;
+    HashSet<JSCell*> knownLiveSet;
 
-    LiveObjectList& after = currentCycle().after;
-    for (auto& objData : after.liveObjects)
-        knownLiveSet.add(objData.obj);
+    CellList& after = currentCycle().after;
+    for (auto& cellProfile : after.liveCells)
+        knownLiveSet.add(cellProfile.cell);
 
-    trimDeadObjectsFromList(knownLiveSet, currentCycle().before);
+    trimDeadCellsFromList(knownLiveSet, currentCycle().before);
 
     for (int i = -1; i > -m_numberOfCycles; i--) {
-        trimDeadObjectsFromList(knownLiveSet, cycleForIndex(i).before);
-        trimDeadObjectsFromList(knownLiveSet, cycleForIndex(i).after);
+        trimDeadCellsFromList(knownLiveSet, cycleForIndex(i).before);
+        trimDeadCellsFromList(knownLiveSet, cycleForIndex(i).after);
     }
 }
 
-bool HeapVerifier::verifyButterflyIsInStorageSpace(Phase, LiveObjectList&)
+bool HeapVerifier::verifyButterflyIsInStorageSpace(Phase, CellList&)
 {
     // FIXME: Make this work again. https://bugs.webkit.org/show_bug.cgi?id=161752
     return true;
@@ -168,50 +166,58 @@ void HeapVerifier::verify(HeapVerifier::Phase phase)
     RELEASE_ASSERT(beforeVerified && afterVerified);
 }
 
-void HeapVerifier::reportObject(LiveObjectData& objData, int cycleIndex, HeapVerifier::GCCycle& cycle, LiveObjectList& list)
+void HeapVerifier::reportCell(CellProfile& cellProfile, int cycleIndex, HeapVerifier::GCCycle& cycle, CellList& list)
 {
-    JSObject* obj = objData.obj;
+    JSCell* cell = cellProfile.cell;
 
-    if (objData.isConfirmedDead) {
-        dataLogF("FOUND dead obj %p in GC[%d] %s list '%s'\n",
-            obj, cycleIndex, collectionScopeName(cycle.scope), list.name);
+    if (cellProfile.isConfirmedDead) {
+        dataLogF("FOUND dead cell %p in GC[%d] %s list '%s'\n",
+            cell, cycleIndex, collectionScopeName(cycle.scope), list.name);
         return;
     }
 
-    Structure* structure = obj->structure();
-    Butterfly* butterfly = obj->butterfly();
-    void* butterflyBase = butterfly->base(structure);
+    if (cell->isObject()) {
+        JSObject* object = static_cast<JSObject*>(cell);
+        Structure* structure = object->structure();
+        Butterfly* butterfly = object->butterfly();
+        void* butterflyBase = butterfly->base(structure);
 
-    dataLogF("FOUND obj %p type '%s' butterfly %p (base %p) in GC[%d] %s list '%s'\n",
-        obj, structure->classInfo()->className,
-        butterfly, butterflyBase,
-        cycleIndex, collectionScopeName(cycle.scope), list.name);
+        dataLogF("FOUND object %p type '%s' butterfly %p (base %p) in GC[%d] %s list '%s'\n",
+            object, structure->classInfo()->className,
+            butterfly, butterflyBase,
+            cycleIndex, collectionScopeName(cycle.scope), list.name);
+    } else {
+        Structure* structure = cell->structure();
+        dataLogF("FOUND cell %p type '%s' in GC[%d] %s list '%s'\n",
+            cell, structure->classInfo()->className,
+            cycleIndex, collectionScopeName(cycle.scope), list.name);
+    }
 }
 
-void HeapVerifier::checkIfRecorded(JSObject* obj)
+void HeapVerifier::checkIfRecorded(JSCell* cell)
 {
     bool found = false;
 
     for (int cycleIndex = 0; cycleIndex > -m_numberOfCycles; cycleIndex--) {
         GCCycle& cycle = cycleForIndex(cycleIndex);
-        LiveObjectList& beforeList = cycle.before; 
-        LiveObjectList& afterList = cycle.after; 
+        CellList& beforeList = cycle.before;
+        CellList& afterList = cycle.after;
 
-        LiveObjectData* objData;
-        objData = beforeList.findObject(obj);
-        if (objData) {
-            reportObject(*objData, cycleIndex, cycle, beforeList);
+        CellProfile* profile;
+        profile = beforeList.findCell(cell);
+        if (profile) {
+            reportCell(*profile, cycleIndex, cycle, beforeList);
             found = true;
         }
-        objData = afterList.findObject(obj);
-        if (objData) {
-            reportObject(*objData, cycleIndex, cycle, afterList);
+        profile = afterList.findCell(cell);
+        if (profile) {
+            reportCell(*profile, cycleIndex, cycle, afterList);
             found = true;
         }
     }
 
     if (!found)
-        dataLogF("obj %p NOT FOUND\n", obj);
+        dataLogF("cell %p NOT FOUND\n", cell);
 }
 
 } // namespace JSC

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,16 +27,16 @@
 
 namespace JSC {
 
-class JSObject;
+class JSCell;
 
-struct LiveObjectData {
-    LiveObjectData(JSObject* obj, bool isConfirmedDead = false)
-        : obj(obj)
+struct CellProfile {
+    CellProfile(JSCell* cell, bool isConfirmedDead = false)
+        : cell(cell)
         , isConfirmedDead(isConfirmedDead)
     {
     }
     
-    JSObject* obj;
+    JSCell* cell;
     bool isConfirmedDead;
 };
 
