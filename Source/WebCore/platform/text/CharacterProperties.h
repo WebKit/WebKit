@@ -56,9 +56,8 @@ static inline bool isEmojiGroupCandidate(UChar32 character)
     static bool useSupplementalSymbolsAndPictographs = icuLibraryUnderstandsSupplementalSymbolsAndPictographs();
     if (useSupplementalSymbolsAndPictographs)
         return unicodeBlock == UBLOCK_SUPPLEMENTAL_SYMBOLS_AND_PICTOGRAPHS;
-#else
-    return character >= 0x1F900 && character <= 0x1F9FF;
 #endif
+    return character >= 0x1F900 && character <= 0x1F9FF;
 }
 
 static inline bool isEmojiFitzpatrickModifier(UChar32 character)
