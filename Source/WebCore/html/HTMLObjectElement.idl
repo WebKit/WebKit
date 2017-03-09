@@ -45,7 +45,7 @@
     readonly attribute DOMString validationMessage;
     boolean checkValidity();
     [EnabledAtRuntime=InteractiveFormValidation] boolean reportValidity();
-    void setCustomValidity(DOMString? error);
+    void setCustomValidity(DOMString error);
 
     [CheckSecurityForNode] readonly attribute Document contentDocument;
 
