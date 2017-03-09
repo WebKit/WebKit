@@ -6427,10 +6427,6 @@ private:
                     exceptions->append(jit.emitExceptionCheck(AssemblyHelpers::NormalExceptionCheck, AssemblyHelpers::FarJumpWidth));
                 };
 
-                auto adjustStack = [&] (GPRReg amount) {
-                    jit.addPtr(CCallHelpers::TrustedImm32(sizeof(CallerFrameAndPC)), amount, CCallHelpers::stackPointerRegister);
-                };
-
                 CCallHelpers::JumpList slowCase;
                 unsigned originalStackHeight = params.proc().frameSize();
 
@@ -6449,6 +6445,9 @@ private:
                     jit.negPtr(scratchGPR1);
                     jit.lshiftPtr(CCallHelpers::Imm32(3), scratchGPR1);
                     jit.addPtr(GPRInfo::callFrameRegister, scratchGPR1);
+
+                    // Before touching stack values, we should update the stack pointer to protect them from signal stack.
+                    jit.addPtr(CCallHelpers::TrustedImm32(sizeof(CallerFrameAndPC)), scratchGPR1, CCallHelpers::stackPointerRegister);
 
                     jit.store32(scratchGPR2, CCallHelpers::Address(scratchGPR1, CallFrameSlot::argumentCount * static_cast<int>(sizeof(Register)) + PayloadOffset));
 
@@ -6496,8 +6495,6 @@ private:
                     
                     dontThrow.link(&jit);
                 }
-
-                adjustStack(scratchGPR1);
                 
                 ASSERT(calleeGPR == GPRInfo::regT0);
                 jit.store64(calleeGPR, CCallHelpers::calleeFrameSlot(CallFrameSlot::callee));
@@ -6737,10 +6734,6 @@ private:
                     exceptions->append(jit.emitExceptionCheck(AssemblyHelpers::NormalExceptionCheck, AssemblyHelpers::FarJumpWidth));
                 };
 
-                auto adjustStack = [&] (GPRReg amount) {
-                    jit.addPtr(CCallHelpers::TrustedImm32(sizeof(CallerFrameAndPC)), amount, CCallHelpers::stackPointerRegister);
-                };
-
                 unsigned originalStackHeight = params.proc().frameSize();
 
                 if (forwarding) {
@@ -6752,6 +6745,8 @@ private:
                         inlineCallFrame = node->child3()->origin.semantic.inlineCallFrame;
                     else
                         inlineCallFrame = node->origin.semantic.inlineCallFrame;
+
+                    // emitSetupVarargsFrameFastCase modifies the stack pointer if it succeeds.
                     emitSetupVarargsFrameFastCase(jit, scratchGPR2, scratchGPR1, scratchGPR2, scratchGPR3, inlineCallFrame, data->firstVarArgOffset, slowCase);
 
                     CCallHelpers::Jump done = jit.jump();
@@ -6761,8 +6756,6 @@ private:
                     jit.abortWithReason(DFGVarargsThrowingPathDidNotThrow);
                     
                     done.link(&jit);
-
-                    adjustStack(scratchGPR2);
                 } else {
                     jit.move(CCallHelpers::TrustedImm32(originalStackHeight / sizeof(EncodedJSValue)), scratchGPR1);
                     jit.setupArgumentsWithExecState(argumentsGPR, scratchGPR1, CCallHelpers::TrustedImm32(data->firstVarArgOffset));
@@ -6776,7 +6769,7 @@ private:
                     jit.setupArgumentsWithExecState(scratchGPR2, argumentsGPR, CCallHelpers::TrustedImm32(data->firstVarArgOffset), scratchGPR1);
                     callWithExceptionCheck(bitwise_cast<void*>(operationSetupVarargsFrame));
                     
-                    adjustStack(GPRInfo::returnValueGPR);
+                    jit.addPtr(CCallHelpers::TrustedImm32(sizeof(CallerFrameAndPC)), GPRInfo::returnValueGPR, CCallHelpers::stackPointerRegister);
 
                     calleeLateRep.emitRestore(jit, GPRInfo::regT0);
 

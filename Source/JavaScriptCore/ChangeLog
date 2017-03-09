@@ -1,3 +1,33 @@
+2017-03-08  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [GTK] JSC test stress/arity-check-ftl-throw.js.ftl-no-cjit-validate-sampling-profiler crashing on GTK bot
+        https://bugs.webkit.org/show_bug.cgi?id=160124
+
+        Reviewed by Mark Lam.
+
+        When performing CallVarargs, we will copy values to the stack.
+        Before actually copying values, we need to adjust the stackPointerRegister
+        to ensure copied values are in the allocated stack area.
+        If we do not that, OS can break the values that is stored beyond the stack
+        pointer. For example, signal stack can be constructed on these area, and
+        breaks values.
+
+        This patch fixes the crash in stress/spread-forward-call-varargs-stack-overflow.js
+        in Linux port. Since Linux ports use signal to suspend and resume threads,
+        signal handler is frequently called when enabling sampling profiler. Thus this
+        crash occurs.
+
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallOrConstructVarargsSpread):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallOrConstructVarargs):
+        * jit/SetupVarargsFrame.cpp:
+        (JSC::emitSetupVarargsFrameFastCase):
+        * jit/SetupVarargsFrame.h:
+
 2017-03-08  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Should be able to see where Resources came from (Memory Cache, Disk Cache)

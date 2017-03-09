@@ -1,5 +1,3 @@
-// Fails very often on Linux : https://webkit.org/b/169206
-//@ skip if $hostOS == "linux"
 function assert(b) {
     if (!b)
         throw new Error("Bad assertion");
