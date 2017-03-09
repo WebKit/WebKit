@@ -213,9 +213,7 @@ public:
 #endif // ENABLE(STREAMS_API)
 
 private:
-#if ENABLE(FETCH_API) || ENABLE(READABLE_STREAM_API) || ENABLE(WRITABLE_STREAM_API) || ENABLE(STREAMS_API)
     JSC::VM& m_vm;
-#endif // ENABLE(FETCH_API) || ENABLE(READABLE_STREAM_API) || ENABLE(WRITABLE_STREAM_API) || ENABLE(STREAMS_API)
 #if ENABLE(FETCH_API)
     AnotherGuardedInternalBuiltinBuiltinFunctions m_anotherGuardedInternalBuiltin;
 #endif // ENABLE(FETCH_API)
@@ -274,9 +272,7 @@ private:
 namespace WebCore {
 
 JSBuiltinInternalFunctions::JSBuiltinInternalFunctions(JSC::VM& vm)
-#if ENABLE(FETCH_API) || ENABLE(READABLE_STREAM_API) || ENABLE(WRITABLE_STREAM_API) || ENABLE(STREAMS_API)
     : m_vm(vm)
-#endif // ENABLE(FETCH_API) || ENABLE(READABLE_STREAM_API) || ENABLE(WRITABLE_STREAM_API) || ENABLE(STREAMS_API)
 #if ENABLE(FETCH_API)
     , m_anotherGuardedInternalBuiltin(m_vm)
 #endif // ENABLE(FETCH_API)

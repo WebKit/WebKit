@@ -101,7 +101,7 @@ class BuiltinsInternalsWrapperImplementationGenerator(BuiltinsGenerator):
     def generate_constructor(self):
         guards = set([object.annotations.get('conditional') for object in self.internals if 'conditional' in object.annotations])
         lines = ["JSBuiltinInternalFunctions::JSBuiltinInternalFunctions(JSC::VM& vm)",
-                 BuiltinsGenerator.wrap_with_guard(" || ".join(guards), "    : m_vm(vm)")]
+                 "    : m_vm(vm)"]
         for object in self.internals:
             initializer = "    , %s(m_vm)" % self.member_name(object)
             lines.append(BuiltinsGenerator.wrap_with_guard(object.annotations.get('conditional'), initializer))

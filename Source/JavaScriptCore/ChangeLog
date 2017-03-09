@@ -1,3 +1,19 @@
+2017-03-09  Youenn Fablet  <youenn@apple.com>
+
+        Minimal build is broken
+        https://bugs.webkit.org/show_bug.cgi?id=169416
+
+        Reviewed by Chris Dumez.
+
+        Since we now have some JS built-ins that are not tied to a compilation flag, we can remove compilation guards around m_vm.
+        We could probably remove m_vm by ensuring m_jsDOMBindingInternals appear first but this might break very easily.
+
+        * Scripts/builtins/builtins_generate_internals_wrapper_header.py:
+        (generate_members):
+        * Scripts/builtins/builtins_generate_internals_wrapper_implementation.py:
+        (BuiltinsInternalsWrapperImplementationGenerator.generate_constructor):
+        * Scripts/tests/builtins/expected/WebCoreJSBuiltins.h-result:
+
 2017-03-09  Daniel Bates  <dabates@apple.com>
 
         Guard Credential Management implementation behind a runtime enabled feature flag
