@@ -1,3 +1,15 @@
+2017-03-09  Filip Pizlo  <fpizlo@apple.com>
+
+        WebKit: JSC: JSObject::ensureLength doesn't check if ensureLengthSlow failed
+        https://bugs.webkit.org/show_bug.cgi?id=169215
+
+        Reviewed by Mark Lam.
+        
+        This doesn't have a test because it would be a very complicated test.
+
+        * runtime/JSObject.h:
+        (JSC::JSObject::ensureLength): If ensureLengthSlow returns false, we need to return false.
+
 2017-03-07  Filip Pizlo  <fpizlo@apple.com>
 
         WTF should make it super easy to do ARM concurrency tricks
