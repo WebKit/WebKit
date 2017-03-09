@@ -661,6 +661,7 @@ public:
 #endif
         @NO, WebKitUserTimingEnabledPreferenceKey,
         @NO, WebKitResourceTimingEnabledPreferenceKey,
+        @NO, WebKitCredentialManagementEnabledPreferenceKey,
         nil];
 
 #if !PLATFORM(IOS)
@@ -2992,6 +2993,16 @@ static NSString *classIBCreatorID = nil;
 - (void)setResourceTimingEnabled:(BOOL)flag
 {
     [self _setBoolValue:flag forKey:WebKitResourceTimingEnabledPreferenceKey];
+}
+
+- (BOOL)credentialManagementEnabled
+{
+    return [self _boolValueForKey:WebKitCredentialManagementEnabledPreferenceKey];
+}
+
+- (void)setCredentialManagementEnabled:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitCredentialManagementEnabledPreferenceKey];
 }
 
 #if PLATFORM(IOS)

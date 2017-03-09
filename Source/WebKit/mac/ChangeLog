@@ -1,3 +1,22 @@
+2017-03-09  Daniel Bates  <dabates@apple.com>
+
+        Guard Credential Management implementation behind a runtime enabled feature flag
+        https://bugs.webkit.org/show_bug.cgi?id=169364
+        <rdar://problem/30957425>
+
+        Reviewed by Brent Fulgham.
+
+        Add WebKit preference for Credential Management (disabled by default).
+
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+        (-[WebPreferences credentialManagementEnabled]): Added.
+        (-[WebPreferences setCredentialManagementEnabled:]): Added.
+        * WebView/WebPreferencesPrivate.h:
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChanged:]):
+
 2017-03-09  Anders Carlsson  <andersca@apple.com>
 
         Add delegate support to WebCore

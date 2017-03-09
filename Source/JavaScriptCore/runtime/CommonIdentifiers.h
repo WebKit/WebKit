@@ -36,6 +36,7 @@
     macro(BYTES_PER_ELEMENT) \
     macro(Boolean) \
     macro(Collator) \
+    macro(Credential) \
     macro(CustomElementRegistry) \
     macro(Date) \
     macro(DateTimeFormat) \
@@ -85,6 +86,7 @@
     macro(Number) \
     macro(NumberFormat) \
     macro(Object) \
+    macro(PasswordCredential) \
     macro(PerformanceEntry) \
     macro(PerformanceEntryList) \
     macro(PerformanceMark) \
@@ -112,6 +114,7 @@
     macro(SetIterator)\
     macro(ShadowRoot) \
     macro(SharedArrayBuffer) \
+    macro(SiteBoundCredential) \
     macro(StaticRange) \
     macro(String) \
     macro(Symbol) \

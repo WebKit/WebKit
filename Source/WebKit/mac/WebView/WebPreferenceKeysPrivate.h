@@ -178,6 +178,7 @@
 #define WebKitMediaStreamEnabledPreferenceKey @"WebKitMediaStreamEnabled"
 #define WebKitPeerConnectionEnabledPreferenceKey @"WebKitPeerConnectionEnabled"
 #define WebKitLinkPreloadEnabledPreferenceKey @"WebKitLinkPreloadEnabled"
+#define WebKitCredentialManagementEnabledPreferenceKey @"WebKitCredentialManagementEnabled"
 
 #if !TARGET_OS_IPHONE
 // These are private both because callers should be using the cover methods and because the

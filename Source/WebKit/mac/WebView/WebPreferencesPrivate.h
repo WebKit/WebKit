@@ -529,6 +529,9 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification;
 - (void)setModernMediaControlsEnabled:(BOOL)flag;
 - (BOOL)modernMediaControlsEnabled;
 
+- (void)setCredentialManagementEnabled:(BOOL)flag;
+- (BOOL)credentialManagementEnabled;
+
 @property (nonatomic) BOOL visualViewportEnabled;
 @property (nonatomic) BOOL largeImageAsyncDecodingEnabled;
 @property (nonatomic) BOOL animatedImageAsyncDecodingEnabled;
@@ -540,6 +543,7 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification;
 @property (nonatomic) BOOL userTimingEnabled;
 @property (nonatomic) BOOL resourceTimingEnabled;
 @property (nonatomic) BOOL linkPreloadEnabled;
+@property (nonatomic) BOOL credentialManagementEnabled;
 
 #if TARGET_OS_IPHONE
 @property (nonatomic) BOOL quickLookDocumentSavingEnabled;

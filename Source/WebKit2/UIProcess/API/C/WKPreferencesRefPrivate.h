@@ -481,6 +481,10 @@ WK_EXPORT bool WKPreferencesGetShouldSuppressKeyboardInputDuringProvisionalNavig
 WK_EXPORT void WKPreferencesSetLinkPreloadEnabled(WKPreferencesRef, bool flag);
 WK_EXPORT bool WKPreferencesGetLinkPreloadEnabled(WKPreferencesRef);
 
+// Defaults to false
+WK_EXPORT void WKPreferencesSetCredentialManagementEnabled(WKPreferencesRef, bool flag);
+WK_EXPORT bool WKPreferencesGetCredentialManagementEnabled(WKPreferencesRef);
+
 #ifdef __cplusplus
 }
 #endif

@@ -86,6 +86,8 @@ TestOptions::TestOptions(NSURL *testURL, const TestCommand& command)
             this->enableModernMediaControls = parseBooleanTestHeaderValue(value);
         else if (key == "enablePointerLock")
             this->enablePointerLock = parseBooleanTestHeaderValue(value);
+        else if (key == "enableCredentialManagement")
+            this->enableCredentialManagement = parseBooleanTestHeaderValue(value);
         pairStart = pairEnd + 1;
     }
 }

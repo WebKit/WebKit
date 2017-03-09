@@ -842,6 +842,16 @@ bool WKPreferencesGetModernMediaControlsEnabled(WKPreferencesRef preferencesRef)
     return toImpl(preferencesRef)->modernMediaControlsEnabled();
 }
 
+void WKPreferencesSetCredentialManagementEnabled(WKPreferencesRef preferencesRef, bool flag)
+{
+    toImpl(preferencesRef)->setCredentialManagementEnabled(flag);
+}
+
+bool WKPreferencesGetCredentialManagementEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->credentialManagementEnabled();
+}
+
 void WKPreferencesSetShowsToolTipOverTruncatedText(WKPreferencesRef preferencesRef, bool flag)
 {
     toImpl(preferencesRef)->setShowsToolTipOverTruncatedText(flag);

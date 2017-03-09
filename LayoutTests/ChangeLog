@@ -1,3 +1,19 @@
+2017-03-09  Daniel Bates  <dabates@apple.com>
+
+        Guard Credential Management implementation behind a runtime enabled feature flag
+        https://bugs.webkit.org/show_bug.cgi?id=169364
+        <rdar://problem/30957425>
+
+        Reviewed by Brent Fulgham.
+
+        * credentials/idlharness.html: Use comment header to enable Credential Management API.
+        * platform/mac-elcapitan/js/dom/global-constructors-attributes-expected.txt: Update expected results now
+        that we no longer expose the Credential Management API by default.
+        * platform/mac-wk1/js/dom/global-constructors-attributes-expected.txt: Ditto.
+        * platform/mac-yosemite/js/dom/global-constructors-attributes-expected.txt: Ditto.
+        * platform/mac/js/dom/global-constructors-attributes-expected.txt: Ditto.
+        * platform/win/TestExpectations: For now, skip the Credential Management API tests.
+
 2017-03-09  Yoav Weiss  <yoav@yoav.ws>
 
         [link preload] Double downloads of preloaded CSS

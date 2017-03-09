@@ -644,6 +644,9 @@ webkit.org/b/149630 css3/font-variant-all.html [ ImageOnlyFailure ]
 
 webkit.org/b/158836 imported/w3c/web-platform-tests/encrypted-media [ Skip ]
 
+# Credential Management not supported
+credentials/ [ Skip ]
+
 ################################################################################
 ###########    End Missing Functionality Prevents Testing         ##############
 ################################################################################

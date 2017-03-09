@@ -75,6 +75,9 @@ public:
     void setModernMediaControlsEnabled(bool areEnabled) { m_areModernMediaControlsEnabled = areEnabled; }
     bool modernMediaControlsEnabled() const { return m_areModernMediaControlsEnabled; }
 
+    void setCredentialManagementEnabled(bool isEnabled) { m_isCredentialManagementEnabled = isEnabled; }
+    bool credentialManagementEnabled() const { return m_isCredentialManagementEnabled; }
+
 #if ENABLE(INDEXED_DATABASE_IN_WORKERS)
     void setIndexedDBWorkersEnabled(bool isEnabled) { m_isIndexedDBWorkersEnabled = isEnabled; }
     bool indexedDBWorkersEnabled() const { return m_isIndexedDBWorkersEnabled; }
@@ -210,6 +213,7 @@ private:
     bool m_isResourceTimingEnabled { false };
     bool m_isUserTimingEnabled { false };
     bool m_isInteractiveFormValidationEnabled { false };
+    bool m_isCredentialManagementEnabled { false };
 
     bool m_isDOMIteratorEnabled { true };
     bool m_isGeolocationEnabled { true };

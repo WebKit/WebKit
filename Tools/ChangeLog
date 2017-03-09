@@ -1,3 +1,25 @@
+2017-03-09  Daniel Bates  <dabates@apple.com>
+
+        Guard Credential Management implementation behind a runtime enabled feature flag
+        https://bugs.webkit.org/show_bug.cgi?id=169364
+        <rdar://problem/30957425>
+
+        Reviewed by Brent Fulgham.
+
+        Add a new test option header, enableCredentialManagement, to DumpRenderTree/WebKitTestRunner
+        to enable Credential Management.
+
+        * DumpRenderTree/TestOptions.h:
+        * DumpRenderTree/TestOptions.mm:
+        (TestOptions::TestOptions):
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (enableExperimentalFeatures):
+        (setWebPreferencesForTestOptions):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetPreferencesToConsistentValues):
+        (WTR::updateTestOptionsFromTestHeader):
+        * WebKitTestRunner/TestOptions.h:
+
 2017-03-09  Anders Carlsson  <andersca@apple.com>
 
         Add delegate support to WebCore
