@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-void CryptoAlgorithmECDH::platformDeriveBits(Ref<CryptoKey>&&, Ref<CryptoKey>&&, unsigned long, Callback&&, ScriptExecutionContext&, WorkQueue&)
+void CryptoAlgorithmECDH::platformDeriveBits(Ref<CryptoKey>&&, Ref<CryptoKey>&&, size_t, Callback&&, ScriptExecutionContext&, WorkQueue&)
 {
     notImplemented();
 }
