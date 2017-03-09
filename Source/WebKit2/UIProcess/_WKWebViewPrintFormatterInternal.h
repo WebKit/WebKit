@@ -31,6 +31,10 @@
 - (CGRect)_pageContentRect:(BOOL)firstPage;
 @end
 
+@interface _WKWebViewPrintFormatter ()
+- (void)_setSnapshotPaperRect:(CGRect)paperRect;
+@end
+
 @protocol _WKWebViewPrintProvider <NSObject>
 - (NSUInteger)_wk_pageCountForPrintFormatter:(_WKWebViewPrintFormatter *)printFormatter;
 @property (nonatomic, readonly) CGPDFDocumentRef _wk_printedDocument;

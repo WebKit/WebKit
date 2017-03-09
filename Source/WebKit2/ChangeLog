@@ -1,3 +1,31 @@
+2017-03-09  Andy Estes  <aestes@apple.com>
+
+        [iOS] Add SPI to print to a single tall PDF page
+        https://bugs.webkit.org/show_bug.cgi?id=169439
+        <rdar://problem/30120532>
+
+        Reviewed by Tim Horton.
+
+        * Shared/PrintInfo.cpp:
+        (WebKit::PrintInfo::encode): Encoded snapshotFirstPage.
+        (WebKit::PrintInfo::decode): Decoded snapshotFirstPage.
+        (WebKit::PrintInfo::PrintInfo): Deleted.
+        * Shared/PrintInfo.h: Initialized member variables in place instead of in a default ctor.
+        * UIProcess/_WKWebViewPrintFormatter.h: Declared BOOL property snapshotFirstPage.
+        * UIProcess/_WKWebViewPrintFormatter.mm:
+        (-[_WKWebViewPrintFormatter _setSnapshotPaperRect:]): Added to set a custom paper size.
+        (-[_WKWebViewPrintFormatter rectForPageAtIndex:]): Returned the custom paper rect if
+        snapshotFirstPage is true.
+        * UIProcess/_WKWebViewPrintFormatterInternal.h: 
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView _wk_pageCountForPrintFormatter:]): Computed the custom paper size to be the
+        smaller of the document height and the maximum PDF page height.
+        * UIProcess/ios/WKPDFView.mm:
+        (-[WKPDFView _wk_pageCountForPrintFormatter:]): Changed to return a maximum page size of 1
+        if snapshotFirstPage is true.
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::computePagesForPrintingAndDrawToPDF): Ditto.
+
 2017-03-09  Anders Carlsson  <andersca@apple.com>
 
         Add delegate support to WebCore

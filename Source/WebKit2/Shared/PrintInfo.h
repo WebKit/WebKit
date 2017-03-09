@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PrintInfo_h
-#define PrintInfo_h
+#pragma once
 
 #if USE(APPKIT)
 OBJC_CLASS NSPrintInfo;
@@ -45,7 +44,7 @@ class Encoder;
 namespace WebKit {
 
 struct PrintInfo {
-    PrintInfo();
+    PrintInfo() = default;
 #if PLATFORM(GTK)
     enum PrintMode {
         PrintModeAsync,
@@ -57,9 +56,12 @@ struct PrintInfo {
     explicit PrintInfo(NSPrintInfo *);
 #endif
 
-    float pageSetupScaleFactor;
-    float availablePaperWidth;
-    float availablePaperHeight;
+    float pageSetupScaleFactor { 0 };
+    float availablePaperWidth { 0 };
+    float availablePaperHeight { 0 };
+#if PLATFORM(IOS)
+    bool snapshotFirstPage { false };
+#endif
 
 #if PLATFORM(GTK)
     GRefPtr<GtkPrintSettings> printSettings;
@@ -72,5 +74,3 @@ struct PrintInfo {
 };
 
 }
-
-#endif

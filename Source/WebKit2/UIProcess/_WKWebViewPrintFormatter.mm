@@ -32,6 +32,11 @@
 #import "_WKFrameHandle.h"
 #import <wtf/RetainPtr.h>
 
+@interface UIPrintPageRenderer ()
+@property (nonatomic) CGRect paperRect;
+@property (nonatomic) CGRect printableRect;
+@end
+
 @implementation _WKWebViewPrintFormatter {
     RetainPtr<_WKFrameHandle> _frameToPrint;
     RetainPtr<CGPDFDocumentRef> _printedDocument;
@@ -54,6 +59,13 @@
     return static_cast<WKWebView *>(view);
 }
 
+- (void)_setSnapshotPaperRect:(CGRect)paperRect
+{
+    UIPrintPageRenderer *printPageRenderer = self.printPageRenderer;
+    printPageRenderer.paperRect = paperRect;
+    printPageRenderer.printableRect = paperRect;
+}
+
 - (NSInteger)_recalcPageCount
 {
     _printedDocument = nullptr;
@@ -63,6 +75,8 @@
 
 - (CGRect)rectForPageAtIndex:(NSInteger)pageIndex
 {
+    if (self.snapshotFirstPage)
+        return self.printPageRenderer.paperRect;
     return [self _pageContentRect:pageIndex == self.startPage];
 }
 

@@ -35,13 +35,6 @@
 
 namespace WebKit {
 
-PrintInfo::PrintInfo()
-    : pageSetupScaleFactor(0)
-    , availablePaperWidth(0)
-    , availablePaperHeight(0)
-{
-}
-
 void PrintInfo::encode(IPC::Encoder& encoder) const
 {
     encoder << pageSetupScaleFactor;
@@ -52,6 +45,10 @@ void PrintInfo::encode(IPC::Encoder& encoder) const
     IPC::encode(encoder, printSettings.get());
     IPC::encode(encoder, pageSetup.get());
     encoder.encodeEnum(printMode);
+#endif
+
+#if PLATFORM(IOS)
+    encoder << snapshotFirstPage;
 #endif
 }
 
@@ -70,6 +67,11 @@ bool PrintInfo::decode(IPC::Decoder& decoder, PrintInfo& info)
     if (!IPC::decode(decoder, info.pageSetup))
         return false;
     if (!decoder.decodeEnum(info.printMode))
+        return false;
+#endif
+
+#if PLATFORM(IOS)
+    if (!decoder.decode(info.snapshotFirstPage))
         return false;
 #endif
 

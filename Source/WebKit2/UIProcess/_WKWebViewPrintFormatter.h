@@ -34,6 +34,7 @@ WK_CLASS_AVAILABLE(ios(8.0))
 @interface _WKWebViewPrintFormatter : UIViewPrintFormatter
 
 @property (nonatomic, strong) _WKFrameHandle *frameToPrint;
+@property (nonatomic) BOOL snapshotFirstPage;
 
 @end
 

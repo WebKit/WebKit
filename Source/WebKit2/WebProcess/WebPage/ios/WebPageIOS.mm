@@ -39,6 +39,7 @@
 #import "InteractionInformationAtPosition.h"
 #import "Logging.h"
 #import "PluginView.h"
+#import "PrintInfo.h"
 #import "RemoteLayerTreeDrawingArea.h"
 #import "UserData.h"
 #import "VisibleContentRectUpdateInfo.h"
@@ -3265,7 +3266,8 @@ void WebPage::computePagesForPrintingAndDrawToPDF(uint64_t frameID, const PrintI
     double totalScaleFactor;
     computePagesForPrintingImpl(frameID, printInfo, pageRects, totalScaleFactor);
 
-    std::size_t pageCount = pageRects.size();
+    ASSERT(pageRects.size() >= 1);
+    std::size_t pageCount = printInfo.snapshotFirstPage ? 1 : pageRects.size();
     ASSERT(pageCount <= std::numeric_limits<uint32_t>::max());
     reply->send(pageCount);
 

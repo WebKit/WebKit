@@ -825,9 +825,14 @@ static NSStringCompareOptions stringCompareOptions(_WKFindOptions options)
 - (NSUInteger)_wk_pageCountForPrintFormatter:(_WKWebViewPrintFormatter *)printFormatter
 {
     CGPDFDocumentRef document = _cgPDFDocument.get();
-    if (CGPDFDocumentAllowsPrinting(document))
-        return CGPDFDocumentGetNumberOfPages(document);
-    return 0;
+    if (!CGPDFDocumentAllowsPrinting(document))
+        return 0;
+
+    size_t numberOfPages = CGPDFDocumentGetNumberOfPages(document);
+    if (printFormatter.snapshotFirstPage)
+        return std::min<NSUInteger>(numberOfPages, 1);
+
+    return numberOfPages;
 }
 
 - (CGPDFDocumentRef)_wk_printedDocument
