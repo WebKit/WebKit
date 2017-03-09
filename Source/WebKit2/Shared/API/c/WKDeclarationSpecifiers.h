@@ -50,10 +50,20 @@
 #define __has_extension(x) 0
 #endif
 
-#if defined(__has_extension) && __has_extension(enumerator_attributes) && __has_extension(attribute_unavailable_with_message)
+#if __has_extension(enumerator_attributes) && __has_extension(attribute_unavailable_with_message)
 #define WK_C_DEPRECATED(message) __attribute__((deprecated(message)))
 #else
 #define WK_C_DEPRECATED(message)
+#endif
+
+#ifndef __has_attribute
+#define __has_attribute(x) 0
+#endif
+
+#if __has_attribute(unavailable)
+#define WK_UNAVAILABLE __attribute__((unavailable))
+#else
+#define WK_UNAVAILABLE
 #endif
 
 #endif /* WKDeclarationSpecifiers_h */

@@ -52,9 +52,9 @@ WK_EXPORT void WKPageGroupRemoveAllUserScripts(WKPageGroupRef pageGroup);
 
 // -- DEPRECATED --
 
-WK_EXPORT WKStringRef WKPageGroupCopyIdentifier(WKPageGroupRef pageGroup) __attribute__((unavailable));
-WK_EXPORT void WKPageGroupAddUserContentFilter(WKPageGroupRef pageGroup, WKUserContentFilterRef userContentFilter) __attribute__((unavailable));
-WK_EXPORT void WKPageGroupRemoveUserContentFilter(WKPageGroupRef pageGroup, WKStringRef userContentFilterName) __attribute__((unavailable));
+WK_EXPORT WKStringRef WKPageGroupCopyIdentifier(WKPageGroupRef pageGroup) WK_UNAVAILABLE;
+WK_EXPORT void WKPageGroupAddUserContentFilter(WKPageGroupRef pageGroup, WKUserContentFilterRef userContentFilter) WK_UNAVAILABLE;
+WK_EXPORT void WKPageGroupRemoveUserContentFilter(WKPageGroupRef pageGroup, WKStringRef userContentFilterName) WK_UNAVAILABLE;
 
 #ifdef __cplusplus
 }
