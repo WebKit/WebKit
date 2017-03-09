@@ -115,4 +115,7 @@ WebInspector.settings = {
     // FIXME: change initial value to 'system' once we are happy with RTL support.
     // This will cause Web Inspector to use the system user interface layout direction.
     layoutDirection: new WebInspector.Setting("layout-direction", "ltr"),
+    stylesShowInlineWarnings: new WebInspector.Setting("styles-show-inline-warning", true),
+    stylesInsertNewline: new WebInspector.Setting("styles-insert-newline", true),
+    stylesSelectOnFirstClick: new WebInspector.Setting("styles-select-on-first-click", true),
 };

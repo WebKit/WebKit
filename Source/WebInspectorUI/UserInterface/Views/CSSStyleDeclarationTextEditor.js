@@ -32,7 +32,7 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
 
         this.element.classList.add(WebInspector.CSSStyleDeclarationTextEditor.StyleClassName);
         this.element.classList.add(WebInspector.SyntaxHighlightedStyleClassName);
-        this.element.addEventListener("mousedown", this._handleMouseDown.bind(this));
+        this.element.addEventListener("mousedown", this._handleMouseDown.bind(this), true);
         this.element.addEventListener("mouseup", this._handleMouseUp.bind(this));
 
         this._mouseDownCursorPosition = null;
@@ -89,6 +89,8 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
 
         this.style = style;
         this._shownProperties = [];
+
+        WebInspector.settings.stylesShowInlineWarnings.addEventListener(WebInspector.Setting.Event.Changed, this.refresh, this);
     }
 
     // Public
@@ -429,11 +431,11 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
 
         let cursor = this._codeMirror.coordsChar({left: event.x, top: event.y});
         let line = this._codeMirror.getLine(cursor.line);
-        let trimmedLine = line.trimRight();
-        if (!trimmedLine.trimLeft().length || cursor.ch !== trimmedLine.length)
+        if (!line.trim().length)
             return;
 
         this._mouseDownCursorPosition = cursor;
+        this._mouseDownCursorPosition.previousRange = {from: this._codeMirror.getCursor("from"), to: this._codeMirror.getCursor("to")};
     }
 
     _handleMouseUp(event)
@@ -443,16 +445,55 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
 
         let cursor = this._codeMirror.coordsChar({left: event.x, top: event.y});
         if (this._mouseDownCursorPosition.line === cursor.line && this._mouseDownCursorPosition.ch === cursor.ch) {
-            let nextLine = this._codeMirror.getLine(cursor.line + 1);
-            if (cursor.line < this._codeMirror.lineCount() - 1 && (!nextLine || !nextLine.trim().length)) {
-                this._codeMirror.setCursor({line: cursor.line + 1, ch: 0});
-            } else {
-                let line = this._codeMirror.getLine(cursor.line);
-                let replacement = "\n";
-                if (!line.trimRight().endsWith(";") && !this._textAtCursorIsComment(this._codeMirror, cursor))
-                    replacement = ";" + replacement;
+            let line = this._codeMirror.getLine(cursor.line);
+            if (cursor.ch === line.trimRight().length) {
+                let nextLine = this._codeMirror.getLine(cursor.line + 1);
+                if (WebInspector.settings.stylesInsertNewline.value && cursor.line < this._codeMirror.lineCount() - 1 && (!nextLine || !nextLine.trim().length)) {
+                    this._codeMirror.setCursor({line: cursor.line + 1, ch: 0});
+                } else {
+                    let line = this._codeMirror.getLine(cursor.line);
+                    let replacement = WebInspector.settings.stylesInsertNewline.value ? "\n" : "";
+                    if (!line.trimRight().endsWith(";") && !this._textAtCursorIsComment(this._codeMirror, cursor))
+                        replacement = ";" + replacement;
 
-                this._codeMirror.replaceRange(replacement, cursor);
+                    this._codeMirror.replaceRange(replacement, cursor);
+                }
+            } else if (WebInspector.settings.stylesSelectOnFirstClick.value && this._mouseDownCursorPosition.previousRange) {
+                let from = {line: cursor.line, ch: 0};
+                let to = {line: cursor.line, ch: 0};
+
+                let colonIndex = line.indexOf(":");
+                if (colonIndex === -1) // Select entire line if unable to find colon, such as for a comment.
+                    colonIndex = line.length;
+
+                let text = line;
+
+                if (cursor.ch <= colonIndex) {
+                    text = text.substring(0, colonIndex);
+
+                    to.ch += colonIndex;
+                } else {
+                    text = text.substring(colonIndex + 1);
+
+                    from.ch += colonIndex + 1;
+                    to.ch += line.length;
+                }
+
+                let leadingSpacesCount = text.match(/^\s*/)[0].length;
+                let trailingNonWordCount = text.match(/[\s\;]*$/)[0].length;
+
+                from.ch += leadingSpacesCount;
+                to.ch -= trailingNonWordCount;
+
+                let clickedDifferentLine = this._mouseDownCursorPosition.previousRange.from.line !== cursor.line || this._mouseDownCursorPosition.previousRange.to.line !== cursor.line;
+                let cursorInPreviousRange = cursor.ch >= this._mouseDownCursorPosition.previousRange.from.ch && cursor.ch <= this._mouseDownCursorPosition.previousRange.to.ch;
+                let previousInNewRange = this._mouseDownCursorPosition.previousRange.from.ch >= from.ch && this._mouseDownCursorPosition.previousRange.to.ch <= to.ch;
+
+                // Only select the new range if the editor is not focused, a new line is being clicked,
+                // or the new cursor position is outside of the previous range and the previous range is
+                // outside of the new range (meaning you're not clicking in the same area twice).
+                if (!this._codeMirror.hasFocus() || clickedDifferentLine || (!cursorInPreviousRange && !previousInNewRange))
+                    this._codeMirror.setSelection(from, to);
             }
         }
 
@@ -905,15 +946,17 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
                     let to = {line: marker.range.endLine, ch: marker.range.endColumn};
                     this._codeMirror.markText(from, to, {className: "invalid"});
 
-                    let invalidMarker = document.createElement("button");
-                    invalidMarker.classList.add("invalid-warning-marker", "clickable");
-                    invalidMarker.title = WebInspector.UIString("The variable “%s” does not exist.\nClick to delete and open autocomplete.").format(variableString);
-                    invalidMarker.addEventListener("click", (event) => {
-                        this._codeMirror.replaceRange("", from, to);
-                        this._codeMirror.setCursor(from);
-                        this._completionController.completeAtCurrentPositionIfNeeded(true);
-                    });
-                    this._codeMirror.setBookmark(from, invalidMarker);
+                    if (WebInspector.settings.stylesShowInlineWarnings.value) {
+                        let invalidMarker = document.createElement("button");
+                        invalidMarker.classList.add("invalid-warning-marker", "clickable");
+                        invalidMarker.title = WebInspector.UIString("The variable “%s” does not exist.\nClick to delete and open autocomplete.").format(variableString);
+                        invalidMarker.addEventListener("click", (event) => {
+                            this._codeMirror.replaceRange("", from, to);
+                            this._codeMirror.setCursor(from);
+                            this._completionController.completeAtCurrentPositionIfNeeded(true);
+                        });
+                        this._codeMirror.setBookmark(from, invalidMarker);
+                    }
                     return;
                 }
 
@@ -1044,7 +1087,7 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
             }
         }
 
-        if (this._codeMirror.getOption("readOnly") || property.hasOtherVendorNameOrKeyword() || property.text.trim().endsWith(":"))
+        if (this._codeMirror.getOption("readOnly") || property.hasOtherVendorNameOrKeyword() || property.text.trim().endsWith(":") || !WebInspector.settings.stylesShowInlineWarnings.value)
             return;
 
         var propertyHasUnnecessaryPrefix = property.name.startsWith("-webkit-") && WebInspector.CSSCompletions.cssNameCompletions.isValidPropertyName(property.canonicalName);

@@ -36,11 +36,19 @@
     font-weight: lighter;
 }
 
+.content-view.settings > .separator {
+    height: 2em;
+}
+
 .content-view.settings > .setting-container {
     display: flex;
     align-items: center;
-    margin: 1em 0;
+    margin-top: 1em;
     font-size: 13px;
+}
+
+.content-view.settings > .setting-container.combined {
+    margin-top: 0;
 }
 
 .content-view.settings > .setting-container > .setting-name {
