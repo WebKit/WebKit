@@ -1,3 +1,13 @@
+2017-03-09  Brent Fulgham  <bfulgham@apple.com>
+
+        [WK2][iOS] Extend WebProcess sandbox to support audio and video compression/decompression
+        https://bugs.webkit.org/show_bug.cgi?id=169431
+        <rdar://problem/30844650>
+
+        Reviewed by Youenn Fablet.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2017-03-09  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [WK2] Add a UI delegate hook for custom handling of data interaction operations

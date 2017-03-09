@@ -112,7 +112,8 @@
 
 ;; Media capture, microphone access
 (with-filter (extension "com.apple.webkit.microphone")
-    (allow device-microphone))
+    (allow device-microphone)
+    (allow mach-lookup (global-name "com.apple.coremedia.compressionsession")))
 
 ;; Media capture, camera access
 (with-filter (extension "com.apple.webkit.camera")
@@ -121,16 +122,22 @@
     (allow file-read* (subpath "/Library/CoreMediaIO/Plug-Ins/DAL"))
     (allow mach-lookup (extension "com.apple.app-sandbox.mach"))
     (allow mach-lookup
-        (global-name "com.apple.coremedia.videoqueue")
         (global-name "com.apple.cmio.AppleCameraAssistant")
         ;; Apple DAL assistants
         (global-name "com.apple.cmio.VDCAssistant")
         (global-name "com.apple.cmio.AVCAssistant")
         (global-name "com.apple.cmio.IIDCVideoAssistant")
         ;; QuickTimeIIDCDigitizer assistant
-        (global-name "com.apple.IIDCAssistant"))
+        (global-name "com.apple.IIDCAssistant")
+        (global-name "com.apple.coremedia.compressionsession"))
     (allow iokit-open
         ;; QuickTimeUSBVDCDigitizer
         (iokit-user-client-class "IOUSBDeviceUserClientV2")
         (iokit-user-client-class "IOUSBInterfaceUserClientV2"))
     (allow device-camera))
+
+;; Support incoming video connections
+(allow mach-lookup
+    (global-name "com.apple.audio.audiohald")
+    (global-name "com.apple.coremedia.decompressionsession")
+    (global-name "com.apple.coremedia.videoqueue"))
