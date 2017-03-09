@@ -59,12 +59,4 @@ Element* HTMLAllCollection::namedItemWithIndex(const AtomicString& name, unsigne
     return nullptr;
 }
 
-RefPtr<NodeList> HTMLAllCollection::tags(const String& name)
-{
-    if (name.isNull())
-        return nullptr;
-
-    return ownerNode().getElementsByTagName(name);
-}
-
 } // namespace WebCore

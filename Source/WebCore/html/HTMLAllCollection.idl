@@ -35,8 +35,5 @@
     [Custom] getter Element? item(unsigned long index);
     [Custom] getter (HTMLCollection or Element)? namedItem(DOMString name);
     // [Custom] legacycaller (HTMLCollection or Element)? item(optional DOMString nameOrIndex);
-
-    // FIXME: This is not in the standard. Can we remove it?
-    NodeList tags(DOMString name);
 };
 
