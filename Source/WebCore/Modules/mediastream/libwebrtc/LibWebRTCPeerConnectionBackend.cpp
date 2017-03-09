@@ -76,9 +76,11 @@ static webrtc::PeerConnectionInterface::RTCConfiguration configurationFromMediaE
     if (configuration.iceTransportPolicy == PeerConnectionStates::IceTransportPolicy::Relay)
         rtcConfiguration.type = webrtc::PeerConnectionInterface::kRelay;
 
-    if (configuration.bundlePolicy == PeerConnectionStates::BundlePolicy::MaxBundle)
-        rtcConfiguration.bundle_policy = webrtc::PeerConnectionInterface::kBundlePolicyMaxBundle;
-    else if (configuration.bundlePolicy == PeerConnectionStates::BundlePolicy::MaxCompat)
+    // FIXME: Support PeerConnectionStates::BundlePolicy::MaxBundle.
+    // LibWebRTC does not like it and will fail to set any configuration field otherwise.
+    // See https://bugs.webkit.org/show_bug.cgi?id=169389.
+
+    if (configuration.bundlePolicy == PeerConnectionStates::BundlePolicy::MaxCompat)
         rtcConfiguration.bundle_policy = webrtc::PeerConnectionInterface::kBundlePolicyMaxCompat;
 
     for (auto& server : configuration.iceServers) {
