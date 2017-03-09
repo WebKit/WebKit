@@ -1,3 +1,29 @@
+2017-03-08  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebCrypto] Implement SubtleCrypto::DeriveKey method
+        https://bugs.webkit.org/show_bug.cgi?id=169386
+        <rdar://problem/23789585>
+
+        Reviewed by Brent Fulgham.
+
+        * crypto/subtle/aes-generate-key-malformed-parameters-expected.txt:
+        * crypto/subtle/derive-key-malformed-parameters-expected.txt: Added.
+        * crypto/subtle/derive-key-malformed-parameters.html: Added.
+        * crypto/subtle/deriveKey-malformed-parameters-expected.txt: Removed.
+        * crypto/subtle/deriveKey-malformed-parameters.html: Removed.
+        * crypto/subtle/ecdh-import-key-derive-aes-key-expected.txt: Added.
+        * crypto/subtle/ecdh-import-key-derive-aes-key.html: Added.
+        * crypto/subtle/ecdh-import-key-derive-hmac-key-custom-length-expected.txt: Added.
+        * crypto/subtle/ecdh-import-key-derive-hmac-key-custom-length.html: Added.
+        * crypto/subtle/unwrap-key-malformed-parameters-expected.txt: Renamed from LayoutTests/crypto/subtle/unwrapKey-malformed-parameters-expected.txt.
+        * crypto/subtle/unwrap-key-malformed-parameters.html: Renamed from LayoutTests/crypto/subtle/unwrapKey-malformed-parameters.html.
+        * crypto/subtle/wrap-key-malformed-parameters-expected.txt: Renamed from LayoutTests/crypto/subtle/wrapKey-malformed-parameters-expected.txt.
+        * crypto/subtle/wrap-key-malformed-parameters.html: Renamed from LayoutTests/crypto/subtle/wrapKey-malformed-parameters.html.
+        A bit renaming.
+        * crypto/workers/subtle/ecdh-import-key-derive-key-expected.txt: Added.
+        * crypto/workers/subtle/ecdh-import-key-derive-key.html: Added.
+        * crypto/workers/subtle/resources/ecdh-import-key-derive-key.js: Added.
+
 2017-03-08  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Add DOM breakpoints UI for node/subtree modification events

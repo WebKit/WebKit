@@ -35,7 +35,7 @@ namespace WebCore {
 
 class CryptoAlgorithmRsaKeyGenParams : public CryptoAlgorithmParameters {
 public:
-    unsigned long modulusLength;
+    size_t modulusLength;
     RefPtr<Uint8Array> publicExponent;
 
     Class parametersClass() const override { return Class::RsaKeyGenParams; }

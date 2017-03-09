@@ -39,7 +39,7 @@ public:
         None,
         AesCbcCfbParams,
         AesGcmParams,
-        AesKeyGenParams,
+        AesKeyParams,
         EcKeyParams,
         EcdhKeyDeriveParams,
         HmacKeyParams,

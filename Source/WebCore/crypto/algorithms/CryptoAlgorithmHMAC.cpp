@@ -197,6 +197,11 @@ void CryptoAlgorithmHMAC::exportKey(SubtleCrypto::KeyFormat format, Ref<CryptoKe
     callback(format, WTFMove(result));
 }
 
+ExceptionOr<size_t> CryptoAlgorithmHMAC::getKeyLength(const CryptoAlgorithmParameters& parameters)
+{
+    return CryptoKeyHMAC::getKeyLength(parameters);
+}
+
 ExceptionOr<void> CryptoAlgorithmHMAC::sign(const CryptoAlgorithmParametersDeprecated& parameters, const CryptoKey& key, const CryptoOperationData& data, VectorCallback&& callback, VoidCallback&& failureCallback)
 {
     auto& hmacParameters = downcast<CryptoAlgorithmHmacParamsDeprecated>(parameters);

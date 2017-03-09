@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../resources/common.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+description("Test deriveKey operation with malformed parameters");
+
+jsTestIsAsync = true;
+
+var extractable = true;
+var jwkPrivateKey = {
+    kty: "EC",
+    crv: "P-256",
+    x: "1FSVWieTvikFkG1NOyhkUCaMbdQhxwH6aCu4Ez-sRtA",
+    y: "9jmNTLqM4cjBhdAnHcNI9YQV3O8LFmo-EdZWk8ntAaI",
+    d: "ppxBSov3N8_AUcisAuvmLV4yE8e_L_BLE8bZb9Z1Xjg",
+};
+var jwkPublicKey = {
+    kty: "EC",
+    crv: "P-256",
+    x: "1FSVWieTvikFkG1NOyhkUCaMbdQhxwH6aCu4Ez-sRtA",
+    y: "9jmNTLqM4cjBhdAnHcNI9YQV3O8LFmo-EdZWk8ntAaI",
+};
+var rawKey = asciiToUint8Array("jnOw99oOZFLIEPMr");
+
+// Not enough arguments.
+shouldReject('crypto.subtle.deriveKey()');
+shouldReject('crypto.subtle.deriveKey(1)');
+shouldReject('crypto.subtle.deriveKey(1, 2)');
+shouldReject('crypto.subtle.deriveKey(1, 2, 3)');
+shouldReject('crypto.subtle.deriveKey(1, 2, 3, 4)');
+
+crypto.subtle.importKey("jwk", jwkPrivateKey, { name: "ECDH", namedCurve: "P-256" }, extractable, ["deriveKey"]).then(function(result) {
+    privateKey = result;
+    return crypto.subtle.importKey("jwk", jwkPublicKey, { name: "ECDH", namedCurve: "P-256" }, extractable, [ ]);
+}).then(function(result) {
+    publicKey = result;
+
+    // Malformed GetKeyLength AlgorithmIdentifier.
+    shouldReject('crypto.subtle.deriveKey({ name:"ECDH", public:publicKey }, privateKey, "AES-CBC", extractable, ["encrypt"])');
+    // Not support GetKeyLength AlgorithmIdentifier.
+    shouldReject('crypto.subtle.deriveKey({ name:"ECDH", public:publicKey }, privateKey, "RSAES-PKCS1-v1_5", extractable, ["encrypt"])');
+    shouldReject('crypto.subtle.deriveKey({ name:"ECDH", public:publicKey }, privateKey, {name: "RSA-OAEP", hash: "sha-1"}, extractable, ["encrypt"])');
+    shouldReject('crypto.subtle.deriveKey({ name:"ECDH", public:publicKey }, privateKey, {name: "ECDH", namedCurve: "P-256"}, extractable, ["encrypt"])');
+
+    return crypto.subtle.importKey("raw", rawKey, {name: "hmac", hash: "sha-1"}, extractable, ["sign", "verify"])
+}).then(function(result) {
+    wrongKey = result;
+
+    // Mismatched AlgorithmIdentifier.
+    shouldReject('crypto.subtle.deriveKey({ name:"ECDH", public:publicKey }, wrongKey, {name: "aes-cbc", length: 128}, extractable, ["encrypt"])');
+
+    return crypto.subtle.importKey("jwk", jwkPrivateKey, { name: "ECDH", namedCurve: "P-256" }, extractable, ["deriveBits"]);
+}).then(function(result) {
+    wrongKey = result;
+
+    // Wrong usage.
+    shouldReject('crypto.subtle.deriveKey({ name:"ECDH", public:publicKey }, wrongKey, {name: "aes-cbc", length: 128}, extractable, ["encrypt"])');
+    // derivedKeyType with wrong AES params.
+    shouldReject('crypto.subtle.deriveKey({ name:"ECDH", public:publicKey }, privateKey, {name: "aes-cbc", length: 1}, extractable, ["encrypt"])');
+    // derivedKeyType with wrong HMAC params.
+    shouldReject('crypto.subtle.deriveKey({ name:"ECDH", public:publicKey }, privateKey, {name: "hmac", hash: "hmac"}, extractable, ["sign"])');
+    shouldReject('crypto.subtle.deriveKey({ name:"ECDH", public:publicKey }, privateKey, {name: "hmac", hash: "sha-1", length: 0}, extractable, ["sign"])');
+    // Null usages
+    return shouldReject('crypto.subtle.deriveKey({ name:"ECDH", public:publicKey }, privateKey, {name: "aes-cbc", length: 128}, extractable, [])');
+}).then(finishJSTest, finishJSTest);
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,24 @@
+Test deriveKey operation with malformed parameters
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS crypto.subtle.deriveKey() rejected promise  with TypeError: Not enough arguments.
+PASS crypto.subtle.deriveKey(1) rejected promise  with TypeError: Not enough arguments.
+PASS crypto.subtle.deriveKey(1, 2) rejected promise  with TypeError: Not enough arguments.
+PASS crypto.subtle.deriveKey(1, 2, 3) rejected promise  with TypeError: Not enough arguments.
+PASS crypto.subtle.deriveKey(1, 2, 3, 4) rejected promise  with TypeError: Not enough arguments.
+PASS crypto.subtle.deriveKey({ name:"ECDH", public:publicKey }, privateKey, "AES-CBC", extractable, ["encrypt"]) rejected promise  with TypeError: Member AesKeyParams.length is required and must be an instance of unsigned short.
+PASS crypto.subtle.deriveKey({ name:"ECDH", public:publicKey }, privateKey, "RSAES-PKCS1-v1_5", extractable, ["encrypt"]) rejected promise  with NotSupportedError (DOM Exception 9): The operation is not supported..
+PASS crypto.subtle.deriveKey({ name:"ECDH", public:publicKey }, privateKey, {name: "RSA-OAEP", hash: "sha-1"}, extractable, ["encrypt"]) rejected promise  with NotSupportedError (DOM Exception 9): The operation is not supported..
+PASS crypto.subtle.deriveKey({ name:"ECDH", public:publicKey }, privateKey, {name: "ECDH", namedCurve: "P-256"}, extractable, ["encrypt"]) rejected promise  with NotSupportedError (DOM Exception 9): The operation is not supported..
+PASS crypto.subtle.deriveKey({ name:"ECDH", public:publicKey }, wrongKey, {name: "aes-cbc", length: 128}, extractable, ["encrypt"]) rejected promise  with InvalidAccessError (DOM Exception 15): CryptoKey doesn't match AlgorithmIdentifier.
+PASS crypto.subtle.deriveKey({ name:"ECDH", public:publicKey }, wrongKey, {name: "aes-cbc", length: 128}, extractable, ["encrypt"]) rejected promise  with InvalidAccessError (DOM Exception 15): CryptoKey doesn't support CryptoKey derivation.
+PASS crypto.subtle.deriveKey({ name:"ECDH", public:publicKey }, privateKey, {name: "aes-cbc", length: 1}, extractable, ["encrypt"]) rejected promise  with OperationError (DOM Exception 34): Cannot get key length from derivedKeyType.
+PASS crypto.subtle.deriveKey({ name:"ECDH", public:publicKey }, privateKey, {name: "hmac", hash: "hmac"}, extractable, ["sign"]) rejected promise  with NotSupportedError (DOM Exception 9): The operation is not supported..
+PASS crypto.subtle.deriveKey({ name:"ECDH", public:publicKey }, privateKey, {name: "hmac", hash: "sha-1", length: 0}, extractable, ["sign"]) rejected promise  with TypeError: Cannot get key length from derivedKeyType.
+PASS crypto.subtle.deriveKey({ name:"ECDH", public:publicKey }, privateKey, {name: "aes-cbc", length: 128}, extractable, []) rejected promise  with SyntaxError (DOM Exception 12): A required parameter was missing or out-of-range.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-void CryptoAlgorithmECDH::platformDeriveBits(Ref<CryptoKey>&& baseKey, Ref<CryptoKey>&& publicKey, unsigned long length, Callback&& callback, ScriptExecutionContext& context, WorkQueue& workQueue)
+void CryptoAlgorithmECDH::platformDeriveBits(Ref<CryptoKey>&& baseKey, Ref<CryptoKey>&& publicKey, size_t length, Callback&& callback, ScriptExecutionContext& context, WorkQueue& workQueue)
 {
     context.ref();
     workQueue.dispatch([baseKey = WTFMove(baseKey), publicKey = WTFMove(publicKey), length, callback = WTFMove(callback), &context]() mutable {

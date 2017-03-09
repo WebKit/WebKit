@@ -28,8 +28,11 @@
 
 #if ENABLE(SUBTLE_CRYPTO)
 
+#include "CryptoAlgorithmAesKeyParams.h"
 #include "CryptoAlgorithmRegistry.h"
 #include "CryptoKeyDataOctetSequence.h"
+#include "ExceptionCode.h"
+#include "ExceptionOr.h"
 #include "JsonWebKey.h"
 #include <wtf/text/Base64.h>
 #include <wtf/text/WTFString.h>
@@ -112,6 +115,14 @@ JsonWebKey CryptoKeyAES::exportJwk() const
     result.key_ops = usages();
     result.ext = extractable();
     return result;
+}
+
+ExceptionOr<size_t> CryptoKeyAES::getKeyLength(const CryptoAlgorithmParameters& parameters)
+{
+    auto& aesParameters = downcast<CryptoAlgorithmAesKeyParams>(parameters);
+    if (!lengthIsValid(aesParameters.length))
+        return Exception { OperationError };
+    return aesParameters.length;
 }
 
 std::unique_ptr<KeyAlgorithm> CryptoKeyAES::buildAlgorithm() const

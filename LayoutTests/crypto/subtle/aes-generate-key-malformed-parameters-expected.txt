@@ -3,11 +3,11 @@ Test generating an AES key with malformed-paramters.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS crypto.subtle.generateKey("aes-cbc", extractable, ["encrypt", "decrypt"]) rejected promise  with TypeError: Member AesKeyGenParams.length is required and must be an instance of unsigned short.
-PASS crypto.subtle.generateKey({name: "aes-cbc"}, extractable, ["encrypt", "decrypt"]) rejected promise  with TypeError: Member AesKeyGenParams.length is required and must be an instance of unsigned short.
+PASS crypto.subtle.generateKey("aes-cbc", extractable, ["encrypt", "decrypt"]) rejected promise  with TypeError: Member AesKeyParams.length is required and must be an instance of unsigned short.
+PASS crypto.subtle.generateKey({name: "aes-cbc"}, extractable, ["encrypt", "decrypt"]) rejected promise  with TypeError: Member AesKeyParams.length is required and must be an instance of unsigned short.
 PASS crypto.subtle.generateKey({name: "aes-cbc", length: true}, extractable, ["encrypt", "decrypt"]) rejected promise  with OperationError (DOM Exception 34): The operation failed for an operation-specific reason.
 PASS crypto.subtle.generateKey({name: "aes-cbc", length: null}, extractable, ["encrypt", "decrypt"]) rejected promise  with OperationError (DOM Exception 34): The operation failed for an operation-specific reason.
-PASS crypto.subtle.generateKey({name: "aes-cbc", length: undefined}, extractable, ["encrypt", "decrypt"]) rejected promise  with TypeError: Member AesKeyGenParams.length is required and must be an instance of unsigned short.
+PASS crypto.subtle.generateKey({name: "aes-cbc", length: undefined}, extractable, ["encrypt", "decrypt"]) rejected promise  with TypeError: Member AesKeyParams.length is required and must be an instance of unsigned short.
 PASS crypto.subtle.generateKey({name: "aes-cbc", length: Symbol()}, extractable, ["encrypt", "decrypt"]) rejected promise  with TypeError: Cannot convert a symbol to a number.
 PASS crypto.subtle.generateKey({name: "aes-cbc", length: { }}, extractable, ["encrypt", "decrypt"]) rejected promise  with OperationError (DOM Exception 34): The operation failed for an operation-specific reason.
 PASS crypto.subtle.generateKey({name: "aes-cbc", length: "foo"}, extractable, ["encrypt", "decrypt"]) rejected promise  with OperationError (DOM Exception 34): The operation failed for an operation-specific reason.

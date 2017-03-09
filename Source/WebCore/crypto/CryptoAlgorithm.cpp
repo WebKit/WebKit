@@ -62,7 +62,7 @@ void CryptoAlgorithm::generateKey(const CryptoAlgorithmParameters&, bool, Crypto
     exceptionCallback(NOT_SUPPORTED_ERR);
 }
 
-void CryptoAlgorithm::deriveBits(std::unique_ptr<CryptoAlgorithmParameters>&&, Ref<CryptoKey>&&, unsigned long, VectorCallback&&, ExceptionCallback&& exceptionCallback, ScriptExecutionContext&, WorkQueue&)
+void CryptoAlgorithm::deriveBits(std::unique_ptr<CryptoAlgorithmParameters>&&, Ref<CryptoKey>&&, size_t, VectorCallback&&, ExceptionCallback&& exceptionCallback, ScriptExecutionContext&, WorkQueue&)
 {
     exceptionCallback(NOT_SUPPORTED_ERR);
 }
@@ -85,6 +85,11 @@ void CryptoAlgorithm::wrapKey(Ref<CryptoKey>&&, Vector<uint8_t>&&, VectorCallbac
 void CryptoAlgorithm::unwrapKey(Ref<CryptoKey>&&, Vector<uint8_t>&&, VectorCallback&&, ExceptionCallback&& exceptionCallback)
 {
     exceptionCallback(NOT_SUPPORTED_ERR);
+}
+
+ExceptionOr<size_t> CryptoAlgorithm::getKeyLength(const CryptoAlgorithmParameters&)
+{
+    return Exception { NOT_SUPPORTED_ERR };
 }
 
 ExceptionOr<void> CryptoAlgorithm::encrypt(const CryptoAlgorithmParametersDeprecated&, const CryptoKey&, const CryptoOperationData&, VectorCallback&&, VoidCallback&&)
@@ -122,7 +127,7 @@ ExceptionOr<void> CryptoAlgorithm::deriveKey(const CryptoAlgorithmParametersDepr
     return Exception { NOT_SUPPORTED_ERR };
 }
 
-ExceptionOr<void> CryptoAlgorithm::deriveBits(const CryptoAlgorithmParametersDeprecated&, const CryptoKey&, unsigned long, VectorCallback&&, VoidCallback&&)
+ExceptionOr<void> CryptoAlgorithm::deriveBits(const CryptoAlgorithmParametersDeprecated&, const CryptoKey&, size_t, VectorCallback&&, VoidCallback&&)
 {
     return Exception { NOT_SUPPORTED_ERR };
 }
