@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../resources/inspector-test.js"></script>
+<script src="../../cache/disk-cache/resources/cache-test.js"></script>
+<script>
+function loadAndTriggerInspector(url) {
+    fetch(url).then(() => {
+        TestPage.dispatchEventToFrontend("LoadComplete");
+    });
+}
+
+function triggerNetworkLoad() {
+    loadAndTriggerInspector("/resources/square100.png");
+}
+
+function triggerDiskCacheLoad() {
+    loadAndTriggerInspector("/resources/square100.png");
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Resource.ResponseSource.DiskCache");
+
+    function addTestCase({name, description, setup, expression, statusCode, responseSource}) {
+        suite.addTestCase({
+            name, description, setup,
+            test(resolve, reject) {
+                InspectorTest.evaluateInPage(expression);
+                Promise.all([
+                    WebInspector.Frame.awaitEvent(WebInspector.Frame.Event.ResourceWasAdded),
+                    WebInspector.Resource.awaitEvent(WebInspector.Resource.Event.ResponseReceived),
+                    InspectorTest.awaitEvent("LoadComplete"),
+                ]).then(([resourceWasAddedEvent, responseReceivedEvent, loadCompleteEvent]) => {
+                    let resource = resourceWasAddedEvent.data.resource;
+                    InspectorTest.expectThat(resource instanceof WebInspector.Resource, "Resource should be created.");
+                    InspectorTest.expectEqual(resource, responseReceivedEvent.target, "Resource should receive a Response.");
+                    if (statusCode)
+                        InspectorTest.expectEqual(resource.statusCode, statusCode, `statusCode should be ${statusCode}`);
+                    if (responseSource)
+                        InspectorTest.expectEqual(resource.responseSource, responseSource, `responseSource should be ${String(responseSource)}`);
+                }).then(resolve, reject);
+            }
+        });
+    }
+
+    addTestCase({
+        name: "PossibleNetworkLoad",
+        description: "Load a resource from the network, it might be in an earlier disk cache",
+        setup(resolve) { InspectorTest.evaluateInPage(`internals.clearMemoryCache()`, resolve); },
+        expression: `triggerNetworkLoad()`,
+    });
+
+    addTestCase({
+        name: "Resource.ResponseSource.DiskCache",
+        description: "Load a resource from the disk cache",
+        expression: `triggerDiskCacheLoad()`,
+        responseSource: WebInspector.Resource.ResponseSource.DiskCache,
+        statusCode: 200,
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Test for `Resource.ResponseSource.DiskCache`.</p>
+</body>
+</html>

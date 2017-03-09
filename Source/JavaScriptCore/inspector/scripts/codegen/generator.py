@@ -65,16 +65,15 @@ _TYPES_NEEDING_RUNTIME_CASTS = set([
 ])
 
 # FIXME: This should be converted into a property in JSON.
-_TYPES_WITH_OPEN_FIELDS = set([
-    "Timeline.TimelineEvent",
+_TYPES_WITH_OPEN_FIELDS = {
+    "Timeline.TimelineEvent": [],
     # InspectorStyleSheet not only creates this property but wants to read it and modify it.
-    "CSS.CSSProperty",
+    "CSS.CSSProperty": [],
     # InspectorNetworkAgent needs to update mime-type.
-    "Network.Response",
+    "Network.Response": ["mimeType"],
     # For testing purposes only.
-    "Test.OpenParameterBundle"
-])
-
+    "Test.OpenParameters": ["alpha"],
+}
 
 class Generator:
     def __init__(self, model, platform, input_filepath):
@@ -143,6 +142,13 @@ class Generator:
     @staticmethod
     def type_has_open_fields(_type):
         return _type.qualified_name() in _TYPES_WITH_OPEN_FIELDS
+
+    @staticmethod
+    def open_fields(type_declaration):
+        fields = set(_TYPES_WITH_OPEN_FIELDS.get(type_declaration.type.qualified_name(), []))
+        if not fields:
+            return type_declaration.type_members
+        return filter(lambda member: member.member_name in fields, type_declaration.type_members)
 
     def type_needs_shape_assertions(self, _type):
         if not hasattr(self, "_types_needing_shape_assertions"):

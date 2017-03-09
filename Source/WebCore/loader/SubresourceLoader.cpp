@@ -301,12 +301,14 @@ void SubresourceLoader::didReceiveResponse(const ResourceResponse& response)
         if (response.httpStatusCode() == 304) {
             // 304 Not modified / Use local copy
             // Existing resource is ok, just use it updating the expiration time.
-            m_resource->setResponse(response);
-            MemoryCache::singleton().revalidationSucceeded(*m_resource, response);
+            ResourceResponse revalidationResponse = response;
+            revalidationResponse.setSource(ResourceResponse::Source::MemoryCacheAfterValidation);
+            m_resource->setResponse(revalidationResponse);
+            MemoryCache::singleton().revalidationSucceeded(*m_resource, revalidationResponse);
             if (m_frame && m_frame->page())
                 m_frame->page()->diagnosticLoggingClient().logDiagnosticMessageWithResult(DiagnosticLoggingKeys::cachedResourceRevalidationKey(), emptyString(), DiagnosticLoggingResultPass, ShouldSample::Yes);
             if (!reachedTerminalState())
-                ResourceLoader::didReceiveResponse(response);
+                ResourceLoader::didReceiveResponse(revalidationResponse);
             return;
         }
         // Did not get 304 response, continue as a regular resource load.

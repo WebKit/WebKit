@@ -236,7 +236,8 @@ class CppProtocolTypesHeaderGenerator(CppGenerator):
         if Generator.type_has_open_fields(type_declaration.type):
             lines.append('')
             lines.append('    // Property names for type generated as open.')
-            for type_member in type_declaration.type_members:
+            open_members = Generator.open_fields(type_declaration)
+            for type_member in open_members:
                 export_macro = self.model().framework.setting('export_macro', None)
                 lines.append('    %s static const char* %s;' % (export_macro, ucfirst(type_member.member_name)))
 

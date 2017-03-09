@@ -90,12 +90,12 @@ WebInspector.ResourceTimelineDataGridNode = class ResourceTimelineDataGridNode e
 
     createCellContent(columnIdentifier, cell)
     {
-        var resource = this._resource;
+        let resource = this._resource;
 
         if (resource.failed || resource.canceled || resource.statusCode >= 400)
             cell.classList.add("error");
 
-        var value = this.data[columnIdentifier];
+        let value = this.data[columnIdentifier];
 
         switch (columnIdentifier) {
         case "name":
@@ -112,7 +112,7 @@ WebInspector.ResourceTimelineDataGridNode = class ResourceTimelineDataGridNode e
             return value || emDash;
 
         case "cached":
-            return value ? WebInspector.UIString("Yes") : WebInspector.UIString("No");
+            return this._cachedCellContent();
 
         case "domain":
             return value || emDash;
@@ -217,6 +217,25 @@ WebInspector.ResourceTimelineDataGridNode = class ResourceTimelineDataGridNode e
         }
 
         return fragment;
+    }
+
+    _cachedCellContent()
+    {
+        if (!this._resource.hasResponse())
+            return emDash;
+
+        let responseSource = this._resource.responseSource;
+        if (responseSource === WebInspector.Resource.ResponseSource.MemoryCache || responseSource === WebInspector.Resource.ResponseSource.DiskCache) {
+            console.assert(this._resource.cached, "This resource has a cache responseSource it should also be marked as cached", resource);
+            let span = document.createElement("span");
+            let cacheType = document.createElement("span");
+            cacheType.classList = "cache-type";
+            cacheType.textContent = responseSource === WebInspector.Resource.ResponseSource.MemoryCache ? WebInspector.UIString("(Memory)") : WebInspector.UIString("(Disk)");
+            span.append(WebInspector.UIString("Yes"), " ", cacheType);
+            return span;
+        }
+
+        return this._resource.cached ? WebInspector.UIString("Yes") : WebInspector.UIString("No");
     }
 
     _needsRefresh()

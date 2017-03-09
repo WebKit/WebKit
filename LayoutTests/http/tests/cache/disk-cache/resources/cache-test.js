@@ -75,7 +75,7 @@ function loadResource(test, onload)
     test.xhr.send();
 }
 
-function loadResourcesWithOptions(tests, options, completetion)
+function loadResourcesWithOptions(tests, options, completion)
 {
     if (options["ClearMemoryCache"])
         internals.clearMemoryCache();
@@ -86,14 +86,14 @@ function loadResourcesWithOptions(tests, options, completetion)
         loadResource(tests[i], function (ev) {
             --pendingCount;
             if (!pendingCount)
-                completetion(ev);
-         });
+                completion(ev);
+        });
     }
 }
 
-function loadResources(tests, completetion)
+function loadResources(tests, completion)
 {
-    loadResourcesWithOptions(tests, { "ClearMemoryCache" : true }, completetion);
+    loadResourcesWithOptions(tests, { "ClearMemoryCache" : true }, completion);
 }
 
 function printResults(tests)

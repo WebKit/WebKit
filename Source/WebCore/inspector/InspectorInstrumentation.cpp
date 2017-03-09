@@ -564,12 +564,6 @@ void InspectorInstrumentation::continueAfterPingLoaderImpl(InstrumentingAgents& 
     willSendRequestImpl(instrumentingAgents, identifier, loader, request, response);
 }
 
-void InspectorInstrumentation::markResourceAsCachedImpl(InstrumentingAgents& instrumentingAgents, unsigned long identifier)
-{
-    if (InspectorNetworkAgent* networkAgent = instrumentingAgents.inspectorNetworkAgent())
-        networkAgent->markResourceAsCached(identifier);
-}
-
 void InspectorInstrumentation::didLoadResourceFromMemoryCacheImpl(InstrumentingAgents& instrumentingAgents, DocumentLoader* loader, CachedResource* cachedResource)
 {
     if (!instrumentingAgents.inspectorEnvironment().developerExtrasEnabled())

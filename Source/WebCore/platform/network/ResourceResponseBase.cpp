@@ -565,11 +565,6 @@ ResourceResponseBase::Source ResourceResponseBase::source() const
     return m_source;
 }
 
-void ResourceResponseBase::setSource(Source source)
-{
-    m_source = source;
-}
-
 void ResourceResponseBase::lazyInit(InitLevel initLevel) const
 {
     const_cast<ResourceResponse*>(static_cast<const ResourceResponse*>(this))->platformLazyInit(initLevel);

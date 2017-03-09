@@ -1,3 +1,33 @@
+2017-03-08  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Should be able to see where Resources came from (Memory Cache, Disk Cache)
+        https://bugs.webkit.org/show_bug.cgi?id=164892
+        <rdar://problem/29320562>
+
+        Reviewed by Brian Burg.
+
+        * inspector/protocol/Network.json:
+        Replace "fromDiskCache" property with "source" property which includes
+        more complete information about the source of this response (network,
+        memory cache, disk cache, or unknown).
+
+        * inspector/scripts/codegen/generate_cpp_protocol_types_header.py:
+        (_generate_class_for_object_declaration):
+        * inspector/scripts/codegen/generate_cpp_protocol_types_implementation.py:
+        (CppProtocolTypesImplementationGenerator._generate_open_field_names):
+        * inspector/scripts/codegen/generator.py:
+        (Generator):
+        (Generator.open_fields):
+        To avoid conflicts between the Inspector::Protocol::Network::Response::Source
+        enum and open accessor string symbol that would have the same name, only generate
+        a specific list of open accessor strings. This reduces the list of exported
+        symbols from all properties to just the ones that are needed. This can be
+        cleaned up later if needed.
+
+        * inspector/scripts/tests/generic/expected/type-with-open-parameters.json-result: Added.
+        * inspector/scripts/tests/generic/type-with-open-parameters.json: Added.
+        Test for open accessors generation.
+
 2017-03-08  Keith Miller  <keith_miller@apple.com>
 
         WebAssembly: Make OOB for fast memory do an extra safety check by ensuring the faulting address is in the range we allocated for fast memory

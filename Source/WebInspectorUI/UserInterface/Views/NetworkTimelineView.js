@@ -63,10 +63,10 @@ WebInspector.NetworkTimelineView = class NetworkTimelineView extends WebInspecto
         columns.statusCode.width = "4%";
 
         columns.cached.title = WebInspector.UIString("Cached");
-        columns.cached.width = "4%";
+        columns.cached.width = "6%";
 
         columns.size.title = WebInspector.UIString("Size");
-        columns.size.width = "8%";
+        columns.size.width = "6%";
         columns.size.aligned = "right";
 
         columns.transferSize.title = WebInspector.UIString("Transferred");

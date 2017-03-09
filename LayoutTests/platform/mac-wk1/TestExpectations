@@ -146,6 +146,7 @@ compositing/iframes/overlapped-nested-iframes.html [ Pass Failure ]
 
 # Disk cache is WK2 only
 http/tests/cache/disk-cache
+http/tests/inspector/network/resource-response-source-disk-cache.html
 
 [ Yosemite+ ] fast/ruby/ruby-expansion-cjk-2.html [ ImageOnlyFailure ]
 

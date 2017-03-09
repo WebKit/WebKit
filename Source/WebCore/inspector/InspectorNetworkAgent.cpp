@@ -211,6 +211,25 @@ static Ref<Inspector::Protocol::Network::Request> buildObjectForResourceRequest(
     return requestObject;
 }
 
+static Inspector::Protocol::Network::Response::Source responseSource(ResourceResponse::Source source)
+{
+    switch (source) {
+    case ResourceResponse::Source::Unknown:
+        return Inspector::Protocol::Network::Response::Source::Unknown;
+    case ResourceResponse::Source::Network:
+        return Inspector::Protocol::Network::Response::Source::Network;
+    case ResourceResponse::Source::MemoryCache:
+    case ResourceResponse::Source::MemoryCacheAfterValidation:
+        return Inspector::Protocol::Network::Response::Source::MemoryCache;
+    case ResourceResponse::Source::DiskCache:
+    case ResourceResponse::Source::DiskCacheAfterValidation:
+        return Inspector::Protocol::Network::Response::Source::DiskCache;
+    }
+
+    ASSERT_NOT_REACHED();
+    return Inspector::Protocol::Network::Response::Source::Unknown;
+}
+
 RefPtr<Inspector::Protocol::Network::Response> InspectorNetworkAgent::buildObjectForResourceResponse(const ResourceResponse& response, ResourceLoader* resourceLoader)
 {
     if (response.isNull())
@@ -225,9 +244,9 @@ RefPtr<Inspector::Protocol::Network::Response> InspectorNetworkAgent::buildObjec
         .setStatusText(response.httpStatusText())
         .setHeaders(WTFMove(headers))
         .setMimeType(response.mimeType())
+        .setSource(responseSource(response.source()))
         .release();
 
-    responseObject->setFromDiskCache(response.source() == ResourceResponse::Source::DiskCache || response.source() == ResourceResponse::Source::DiskCacheAfterValidation);
     if (resourceLoader)
         responseObject->setTiming(buildObjectForTiming(response.deprecatedNetworkLoadMetrics(), *resourceLoader));
 
@@ -307,14 +326,6 @@ void InspectorNetworkAgent::willSendRequest(unsigned long identifier, DocumentLo
     String targetId = request.initiatorIdentifier();
 
     m_frontendDispatcher->requestWillBeSent(requestId, m_pageAgent->frameId(loader.frame()), m_pageAgent->loaderId(&loader), loader.url().string(), buildObjectForResourceRequest(request), timestamp(), initiatorObject, buildObjectForResourceResponse(redirectResponse, nullptr), type != InspectorPageAgent::OtherResource ? &resourceType : nullptr, targetId.isEmpty() ? nullptr : &targetId);
-}
-
-void InspectorNetworkAgent::markResourceAsCached(unsigned long identifier)
-{
-    if (m_hiddenRequestIdentifiers.contains(identifier))
-        return;
-
-    m_frontendDispatcher->requestServedFromCache(IdentifiersFactory::requestId(identifier));
 }
 
 void InspectorNetworkAgent::didReceiveResponse(unsigned long identifier, DocumentLoader& loader, const ResourceResponse& response, ResourceLoader* resourceLoader)
@@ -428,10 +439,15 @@ void InspectorNetworkAgent::didLoadResourceFromMemoryCache(DocumentLoader& loade
     String frameId = m_pageAgent->frameId(loader.frame());
     unsigned long identifier = loader.frame()->page()->progress().createUniqueIdentifier();
     String requestId = IdentifiersFactory::requestId(identifier);
+
     m_resourcesData->resourceCreated(requestId, loaderId);
     m_resourcesData->addCachedResource(requestId, &resource);
 
     RefPtr<Inspector::Protocol::Network::Initiator> initiatorObject = buildInitiatorObject(loader.frame() ? loader.frame()->document() : nullptr);
+
+    // FIXME: It would be ideal to generate the Network.Response with the MemoryCache source
+    // instead of whatever ResourceResponse::Source the CachedResources's response has.
+    // The frontend already knows for certain that this was served from the memory cache.
 
     m_frontendDispatcher->requestServedFromMemoryCache(requestId, frameId, loaderId, loader.url().string(), timestamp(), initiatorObject, buildObjectForCachedResource(&resource));
 }

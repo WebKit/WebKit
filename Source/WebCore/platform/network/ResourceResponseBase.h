@@ -132,10 +132,9 @@ public:
     WEBCORE_EXPORT std::optional<std::chrono::system_clock::time_point> lastModified() const;
     ParsedContentRange& contentRange() const;
 
-    // This is primarily for testing support. It is not necessarily accurate in all scenarios.
     enum class Source { Unknown, Network, DiskCache, DiskCacheAfterValidation, MemoryCache, MemoryCacheAfterValidation };
     WEBCORE_EXPORT Source source() const;
-    WEBCORE_EXPORT void setSource(Source);
+    void setSource(Source source) { m_source = source; }
 
     const std::optional<SHA1::Digest>& cacheBodyKey() const { return m_cacheBodyKey; }
     void setCacheBodyKey(const SHA1::Digest& key) { m_cacheBodyKey = key; }

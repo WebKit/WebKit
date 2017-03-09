@@ -42,3 +42,11 @@
 .content-view.network-grid > .data-grid .preserved:not(.selected) .cell-content .timeline-record-bar > .segment {
     filter: grayscale();
 }
+
+.content-view.network-grid > .data-grid .cache-type {
+    color: gray;
+}
+
+.content-view.network-grid > .data-grid:matches(:focus, .force-focus) tr.selected .cache-type {
+    color: var(--selected-foreground-color) !important;
+}

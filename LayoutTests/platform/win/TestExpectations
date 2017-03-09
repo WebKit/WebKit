@@ -2281,6 +2281,7 @@ webkit.org/b/60206 http/tests/navigation/response204.html [ Failure ]
 
 # Disk cache is WK2 only
 http/tests/cache/disk-cache
+http/tests/inspector/network/resource-response-source-disk-cache.html
 
 # The following are unreviewed:
 http/tests/cache/content-type-ignored-during-revalidation.html [ Failure ]

@@ -3,7 +3,7 @@ Tests that a resource has timing information.
 
 == Running test suite: ResourceTimingData
 -- Running test case: CheckResourceTimingInformationForResource
-PASS: Resource should be createad.
+PASS: Resource should be created.
 PASS: Added Resource received a response.
 PASS: Added Resource did finish loading.
 PASS: Newly added resource should have a resource timing model.

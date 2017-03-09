@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../resources/inspector-test.js"></script>
+<script>
+function triggerNetworkLoad() {
+    let url = "resources/data.json?" + Math.random();
+    fetch(url).then(() => {
+        TestPage.dispatchEventToFrontend("LoadComplete");
+    });
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Resource.ResponseSource.Network");
+
+    function addTestCase({name, description, expression, statusCode, responseSource}) {
+        suite.addTestCase({
+            name, description,
+            test(resolve, reject) {
+                InspectorTest.evaluateInPage(expression);
+                Promise.all([
+                    WebInspector.Frame.awaitEvent(WebInspector.Frame.Event.ResourceWasAdded),
+                    WebInspector.Resource.awaitEvent(WebInspector.Resource.Event.ResponseReceived),
+                    InspectorTest.awaitEvent("LoadComplete"),
+                ]).then(([resourceWasAddedEvent, responseReceivedEvent, loadCompleteEvent]) => {
+                    let resource = resourceWasAddedEvent.data.resource;
+                    InspectorTest.expectThat(resource instanceof WebInspector.Resource, "Resource should be created.");
+                    InspectorTest.expectEqual(resource, responseReceivedEvent.target, "Resource should receive a Response.");
+                    InspectorTest.expectEqual(resource.statusCode, statusCode, `statusCode should be ${statusCode}`);
+                    InspectorTest.expectEqual(resource.responseSource, responseSource, `responseSource should be ${String(responseSource)}`);
+                }).then(resolve, reject);
+            }
+        });
+    }
+
+    addTestCase({
+        name: "Resource.ResponseSource.Network",
+        description: "Load a resource from the network by giving a random URL.",
+        expression: `triggerNetworkLoad()`,
+        responseSource: WebInspector.Resource.ResponseSource.Network,
+        statusCode: 200,
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Test for `Resource.ResponseSource.Network`.</p>
+</body>
+</html>

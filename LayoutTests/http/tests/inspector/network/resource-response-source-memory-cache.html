@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="resources/cached-script.js"></script>
+<script src="../resources/inspector-test.js"></script>
+<script>
+TestPage.dispatchEventToFrontend("LoadComplete");
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Resource.ResponseSource.MemoryCache");
+
+    function addReloadTestCase({name, description, expression, pattern, ignoreCache, statusCode, responseSource}) {
+        suite.addTestCase({
+            name, description,
+            test(resolve, reject) {
+                InspectorTest.reloadPage(ignoreCache);
+                InspectorTest.awaitEvent("LoadComplete").then((event) => {
+                    let resource = null;
+                    for (let item of WebInspector.frameResourceManager.mainFrame.resourceCollection.items) {
+                        if (pattern.test(item.url)) {
+                            resource = item;
+                            break;
+                        }
+                    }
+                    if (!resource) {
+                        InspectorTest.fail("Failed to find specific resource.");
+                        reject();
+                        return;
+                    }
+                    InspectorTest.expectThat(resource instanceof WebInspector.Resource, "Resource should be exist.");
+                    InspectorTest.expectEqual(resource.statusCode, statusCode, `statusCode should be ${statusCode}`);
+                    InspectorTest.expectEqual(resource.responseSource, responseSource, `responseSource should be ${String(responseSource)}`);                    
+                }).then(resolve, reject);
+            }
+        });
+    }
+
+    addReloadTestCase({
+        name: "Resource.ResponseSource.MemoryCache",
+        description: "Load a resource from the memory cache by reloading this page.",
+        pattern: /cached-script\.js$/,
+        ignoreCache: false,
+        responseSource: WebInspector.Resource.ResponseSource.MemoryCache,
+        statusCode: 304,
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Test for `Resource.ResponseSource.MemoryCache`.</p>
+</body>
+</html>

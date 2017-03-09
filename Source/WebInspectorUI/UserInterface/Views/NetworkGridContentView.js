@@ -45,22 +45,22 @@ WebInspector.NetworkGridContentView = class NetworkGridContentView extends WebIn
         columns.domain.width = "10%";
 
         columns.type.title = WebInspector.UIString("Type");
-        columns.type.width = "8%";
+        columns.type.width = "6%";
 
         columns.method.title = WebInspector.UIString("Method");
-        columns.method.width = "6%";
+        columns.method.width = "5%";
 
         columns.scheme.title = WebInspector.UIString("Scheme");
-        columns.scheme.width = "6%";
+        columns.scheme.width = "5%";
 
         columns.statusCode.title = WebInspector.UIString("Status");
-        columns.statusCode.width = "6%";
+        columns.statusCode.width = "5%";
 
         columns.cached.title = WebInspector.UIString("Cached");
-        columns.cached.width = "6%";
+        columns.cached.width = "8%";
 
         columns.size.title = WebInspector.UIString("Size");
-        columns.size.width = "8%";
+        columns.size.width = "6%";
         columns.size.aligned = "right";
 
         columns.transferSize.title = WebInspector.UIString("Transferred");
@@ -86,7 +86,7 @@ WebInspector.NetworkGridContentView = class NetworkGridContentView extends WebIn
         this._timelineRuler.allowsClippedLabels = true;
 
         columns.graph.title = WebInspector.UIString("Timeline");
-        columns.graph.width = "15%";
+        columns.graph.width = "20%";
         columns.graph.headerView = this._timelineRuler;
         columns.graph.sortable = false;
 

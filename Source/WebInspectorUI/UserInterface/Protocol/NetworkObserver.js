@@ -34,6 +34,7 @@ WebInspector.NetworkObserver = class NetworkObserver
 
     requestServedFromCache(requestId)
     {
+        // COMPATIBILITY (iOS 10.3): The backend no longer sends this.
         WebInspector.frameResourceManager.markResourceRequestAsServedFromMemoryCache(requestId);
     }
 

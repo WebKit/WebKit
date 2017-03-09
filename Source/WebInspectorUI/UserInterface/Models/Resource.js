@@ -56,9 +56,12 @@ WebInspector.Resource = class Resource extends WebInspector.SourceCode
         this._lastDataReceivedTimestamp = NaN;
         this._finishedOrFailedTimestamp = NaN;
         this._finishThenRequestContentPromise = null;
+        this._statusCode = NaN;
+        this._statusText = null;
         this._size = NaN;
         this._transferSize = NaN;
         this._cached = false;
+        this._responseSource = WebInspector.Resource.ResponseSource.Unknown;
         this._timingData = new WebInspector.ResourceTimingData(this);
         this._target = targetId ? WebInspector.targetManager.targetForIdentifier(targetId) : WebInspector.mainTarget;
 
@@ -130,10 +133,37 @@ WebInspector.Resource = class Resource extends WebInspector.SourceCode
         }
     }
 
+    static responseSourceFromPayload(source)
+    {
+        if (!source)
+            return WebInspector.Resource.ResponseSource.Unknown;
+
+        switch (source) {
+        case NetworkAgent.ResponseSource.Unknown:
+            return WebInspector.Resource.ResponseSource.Unknown;
+        case NetworkAgent.ResponseSource.Network:
+            return WebInspector.Resource.ResponseSource.Network;
+        case NetworkAgent.ResponseSource.MemoryCache:
+            return WebInspector.Resource.ResponseSource.MemoryCache;
+        case NetworkAgent.ResponseSource.DiskCache:
+            return WebInspector.Resource.ResponseSource.DiskCache;
+        default:
+            console.error("Unknown response source type: ", source);
+            return WebInspector.Resource.ResponseSource.Unknown;
+        }
+    }
+
     // Public
 
     get target() { return this._target; }
     get type() { return this._type; }
+    get loaderIdentifier() { return this._loaderIdentifier; }
+    get requestIdentifier() { return this._requestIdentifier; }
+    get requestMethod() { return this._requestMethod; }
+    get requestData() { return this._requestData; }
+    get statusCode() { return this._statusCode; }
+    get statusText() { return this._statusText; }
+    get responseSource() { return this._responseSource; }
     get timingData() { return this._timingData; }
 
     get url()
@@ -245,16 +275,6 @@ WebInspector.Resource = class Resource extends WebInspector.SourceCode
         return this._parentFrame;
     }
 
-    get loaderIdentifier()
-    {
-        return this._loaderIdentifier;
-    }
-
-    get requestIdentifier()
-    {
-        return this._requestIdentifier;
-    }
-
     get finished()
     {
         return this._finished;
@@ -268,16 +288,6 @@ WebInspector.Resource = class Resource extends WebInspector.SourceCode
     get canceled()
     {
         return this._canceled;
-    }
-
-    get requestMethod()
-    {
-        return this._requestMethod;
-    }
-
-    get requestData()
-    {
-        return this._requestData;
     }
 
     get requestDataContentType()
@@ -348,16 +358,6 @@ WebInspector.Resource = class Resource extends WebInspector.SourceCode
     get cached()
     {
         return this._cached;
-    }
-
-    get statusCode()
-    {
-        return this._statusCode;
-    }
-
-    get statusText()
-    {
-        return this._statusText;
     }
 
     get size()
@@ -452,15 +452,20 @@ WebInspector.Resource = class Resource extends WebInspector.SourceCode
         this.dispatchEventToListeners(WebInspector.Resource.Event.TimestampsDidChange);
     }
 
-    updateForResponse(url, mimeType, type, responseHeaders, statusCode, statusText, elapsedTime, timingData)
+    hasResponse()
+    {
+        return !isNaN(this._statusCode);
+    }
+
+    updateForResponse(url, mimeType, type, responseHeaders, statusCode, statusText, elapsedTime, timingData, source)
     {
         console.assert(!this._finished);
         console.assert(!this._failed);
         console.assert(!this._canceled);
 
-        var oldURL = this._url;
-        var oldMIMEType = this._mimeType;
-        var oldType = this._type;
+        let oldURL = this._url;
+        let oldMIMEType = this._mimeType;
+        let oldType = this._type;
 
         if (type in WebInspector.Resource.Type)
             type = WebInspector.Resource.Type[type];
@@ -474,12 +479,17 @@ WebInspector.Resource = class Resource extends WebInspector.SourceCode
         this._responseReceivedTimestamp = elapsedTime || NaN;
         this._timingData = WebInspector.ResourceTimingData.fromPayload(timingData, this);
 
+        if (source)
+            this._responseSource = WebInspector.Resource.responseSourceFromPayload(source);
+
         this._responseHeadersSize = String(this._statusCode).length + this._statusText.length + 12; // Extra length is for "HTTP/1.1 ", " ", and "\r\n".
-        for (var name in this._responseHeaders)
+        for (let name in this._responseHeaders)
             this._responseHeadersSize += name.length + this._responseHeaders[name].length + 4; // Extra length is for ": ", and "\r\n".
 
-        if (statusCode === 304 && !this._cached)
-            this.markAsCached();
+        if (!this._cached) {
+            if (statusCode === 304 || (this._responseSource === WebInspector.Resource.ResponseSource.MemoryCache || this._responseSource === WebInspector.Resource.ResponseSource.DiskCache))
+                this.markAsCached();
+        }
 
         if (oldURL !== url) {
             // Delete the URL components so the URL is re-parsed the next time it is requested.
@@ -566,7 +576,7 @@ WebInspector.Resource = class Resource extends WebInspector.SourceCode
 
         this.dispatchEventToListeners(WebInspector.Resource.Event.CacheStatusDidChange);
 
-        // The transferSize is starts returning 0 when cached is true, unless status is 304.
+        // The transferSize starts returning 0 when cached is true, unless status is 304.
         if (this._statusCode !== 304)
             this.dispatchEventToListeners(WebInspector.Resource.Event.TransferSizeDidChange);
     }
@@ -607,6 +617,26 @@ WebInspector.Resource = class Resource extends WebInspector.SourceCode
 
         this._finished = false;
         this._finishedOrFailedTimestamp = NaN;
+    }
+
+    legacyMarkServedFromMemoryCache()
+    {
+        // COMPATIBILITY (iOS 10.3): This is a legacy code path where we know the resource came from the MemoryCache.
+        console.assert(this._responseSource === WebInspector.Resource.ResponseSource.Unknown);
+
+        this._responseSource = WebInspector.Resource.ResponseSource.MemoryCache;
+
+        this.markAsCached();
+    }
+
+    legacyMarkServedFromDiskCache()
+    {
+        // COMPATIBILITY (iOS 10.3): This is a legacy code path where we know the resource came from the DiskCache.
+        console.assert(this._responseSource === WebInspector.Resource.ResponseSource.Unknown);
+
+        this._responseSource = WebInspector.Resource.ResponseSource.DiskCache;
+
+        this.markAsCached();
     }
 
     getImageSize(callback)
@@ -760,6 +790,13 @@ WebInspector.Resource.Type = {
     Fetch: "resource-type-fetch",
     WebSocket: "resource-type-websocket",
     Other: "resource-type-other"
+};
+
+WebInspector.Resource.ResponseSource = {
+    Unknown: Symbol("unknown"),
+    Network: Symbol("network"),
+    MemoryCache: Symbol("memory-cache"),
+    DiskCache: Symbol("disk-cache"),
 };
 
 // This MIME Type map is private, use WebInspector.Resource.typeFromMIMEType().

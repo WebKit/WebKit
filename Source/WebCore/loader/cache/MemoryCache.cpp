@@ -128,6 +128,7 @@ bool MemoryCache::add(CachedResource& resource)
 
 void MemoryCache::revalidationSucceeded(CachedResource& revalidatingResource, const ResourceResponse& response)
 {
+    ASSERT(response.source() == ResourceResponse::Source::MemoryCacheAfterValidation);
     ASSERT(revalidatingResource.resourceToRevalidate());
     CachedResource& resource = *revalidatingResource.resourceToRevalidate();
     ASSERT(!resource.inCache());

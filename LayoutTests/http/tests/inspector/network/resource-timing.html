@@ -26,7 +26,7 @@ function test()
             .then(([resourceWasAddedEvent, responseReceivedEvent, loadingDidFinishEvent]) => {
                 let resource = resourceWasAddedEvent.data.resource;
 
-                InspectorTest.expectThat(resource instanceof WebInspector.Resource, "Resource should be createad.");
+                InspectorTest.expectThat(resource instanceof WebInspector.Resource, "Resource should be created.");
                 InspectorTest.expectThat(resource === responseReceivedEvent.target, "Added Resource received a response.");
                 InspectorTest.expectThat(resource === loadingDidFinishEvent.target, "Added Resource did finish loading.");
 

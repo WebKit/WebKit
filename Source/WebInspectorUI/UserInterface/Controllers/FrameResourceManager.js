@@ -305,7 +305,7 @@ WebInspector.FrameResourceManager = class FrameResourceManager extends WebInspec
         if (!resource)
             return;
 
-        resource.markAsCached();
+        resource.legacyMarkServedFromMemoryCache();
     }
 
     resourceRequestWasServedFromMemoryCache(requestIdentifier, frameIdentifier, loaderIdentifier, cachedResourcePayload, timestamp, initiator)
@@ -318,15 +318,18 @@ WebInspector.FrameResourceManager = class FrameResourceManager extends WebInspec
 
         console.assert(!this._resourceRequestIdentifierMap.has(requestIdentifier));
 
-        var elapsedTime = WebInspector.timelineManager.computeElapsedTime(timestamp);
-        var initiatorSourceCodeLocation = this._initiatorSourceCodeLocationFromPayload(initiator);
-        var response = cachedResourcePayload.response;
-        var resource = this._addNewResourceToFrameOrTarget(requestIdentifier, frameIdentifier, loaderIdentifier, cachedResourcePayload.url, cachedResourcePayload.type, "GET", null, null, elapsedTime, null, null, initiatorSourceCodeLocation);
-        resource.markAsCached();
-        resource.updateForResponse(cachedResourcePayload.url, response.mimeType, cachedResourcePayload.type, response.headers, response.status, response.statusText, elapsedTime, response.timing);
+        let elapsedTime = WebInspector.timelineManager.computeElapsedTime(timestamp);
+        let initiatorSourceCodeLocation = this._initiatorSourceCodeLocationFromPayload(initiator);
+        let response = cachedResourcePayload.response;
+        const responseSource = NetworkAgent.ResponseSource.MemoryCache;
+
+        let resource = this._addNewResourceToFrameOrTarget(requestIdentifier, frameIdentifier, loaderIdentifier, cachedResourcePayload.url, cachedResourcePayload.type, "GET", null, null, elapsedTime, null, null, initiatorSourceCodeLocation);
+        resource.updateForResponse(cachedResourcePayload.url, response.mimeType, cachedResourcePayload.type, response.headers, response.status, response.statusText, elapsedTime, response.timing, responseSource);
         resource.increaseSize(cachedResourcePayload.bodySize, elapsedTime);
         resource.increaseTransferSize(cachedResourcePayload.bodySize);
         resource.markAsFinished(elapsedTime);
+
+        console.assert(resource.cached, "This resource should be classified as cached since it was served from the MemoryCache", resource);
 
         if (cachedResourcePayload.sourceMapURL)
             WebInspector.sourceMapManager.downloadSourceMap(cachedResourcePayload.sourceMapURL, resource.url, resource);
@@ -372,10 +375,11 @@ WebInspector.FrameResourceManager = class FrameResourceManager extends WebInspec
             this._resourceRequestIdentifierMap.set(requestIdentifier, resource);
         }
 
+        // COMPATIBILITY (iOS 10.3): `fromDiskCache` is legacy, replaced by `source`.
         if (response.fromDiskCache)
-            resource.markAsCached();
+            resource.legacyMarkServedFromDiskCache();
 
-        resource.updateForResponse(response.url, response.mimeType, type, response.headers, response.status, response.statusText, elapsedTime, response.timing);
+        resource.updateForResponse(response.url, response.mimeType, type, response.headers, response.status, response.statusText, elapsedTime, response.timing, response.source);
     }
 
     resourceRequestDidReceiveData(requestIdentifier, dataLength, encodedDataLength, timestamp)
