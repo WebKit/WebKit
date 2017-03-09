@@ -204,6 +204,18 @@ WebInspector.DebuggerManager = class DebuggerManager extends WebInspector.Object
         return [];
     }
 
+    breakpointForSourceCodeLocation(sourceCodeLocation)
+    {
+        console.assert(sourceCodeLocation instanceof WebInspector.SourceCodeLocation);
+
+        for (let breakpoint of this.breakpointsForSourceCode(sourceCodeLocation.sourceCode)) {
+            if (breakpoint.sourceCodeLocation.isEqual(sourceCodeLocation))
+                return breakpoint;
+        }
+
+        return null;
+    }
+
     isBreakpointRemovable(breakpoint)
     {
         return breakpoint !== this._allExceptionsBreakpoint

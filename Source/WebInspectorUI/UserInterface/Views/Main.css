@@ -265,6 +265,7 @@ body.docked:matches(.right, .left) #navigation-sidebar.collapsed > .resizer {
     color: hsl(0, 0%, 33%);
     text-decoration: underline;
     cursor: pointer;
+    -webkit-user-select: none;
 }
 
 .go-to-link:not(.dont-float) {

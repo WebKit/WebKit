@@ -23,11 +23,18 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.appendContextMenuItemsForSourceCode = function(contextMenu, sourceCode)
+WebInspector.appendContextMenuItemsForSourceCode = function(contextMenu, sourceCodeOrLocation)
 {
     console.assert(contextMenu instanceof WebInspector.ContextMenu);
     if (!(contextMenu instanceof WebInspector.ContextMenu))
         return;
+
+    let sourceCode = sourceCodeOrLocation;
+    let location = null;
+    if (sourceCodeOrLocation instanceof WebInspector.SourceCodeLocation) {
+        sourceCode = sourceCodeOrLocation.sourceCode;
+        location = sourceCodeOrLocation;
+    }
 
     console.assert(sourceCode instanceof WebInspector.SourceCode);
     if (!(sourceCode instanceof WebInspector.SourceCode))
@@ -40,6 +47,16 @@ WebInspector.appendContextMenuItemsForSourceCode = function(contextMenu, sourceC
             const frame = null;
             WebInspector.openURL(sourceCode.url, frame, {alwaysOpenExternally: true});
         });
+
+        if (WebInspector.frameResourceManager.resourceForURL(sourceCode.url) && !WebInspector.isShowingResourcesTab()) {
+            contextMenu.appendItem(WebInspector.UIString("Reveal in Resources Tab"), () => {
+                const options = {ignoreNetworkTab: true};
+                if (location)
+                    WebInspector.showSourceCodeLocation(location, options);
+                else
+                    WebInspector.showSourceCode(sourceCode, options);
+            });
+        }
 
         contextMenu.appendItem(WebInspector.UIString("Copy Link Address"), () => {
             InspectorFrontendHost.copyText(sourceCode.url);
@@ -62,4 +79,21 @@ WebInspector.appendContextMenuItemsForSourceCode = function(contextMenu, sourceC
             });
         });
     });
+
+    contextMenu.appendSeparator();
+
+    if (location && (sourceCode instanceof WebInspector.Script || (sourceCode instanceof WebInspector.Resource && sourceCode.type === WebInspector.Resource.Type.Script))) {
+        let existingBreakpoint = WebInspector.debuggerManager.breakpointForSourceCodeLocation(location);
+        if (existingBreakpoint) {
+            contextMenu.appendItem(WebInspector.UIString("Delete Breakpoint"), () => {
+                WebInspector.debuggerManager.removeBreakpoint(existingBreakpoint);
+            });
+        } else {
+            contextMenu.appendItem(WebInspector.UIString("Add Breakpoint"), () => {
+                WebInspector.debuggerManager.addBreakpoint(new WebInspector.Breakpoint(location));
+            });
+        }
+
+        contextMenu.appendSeparator();
+    }
 };

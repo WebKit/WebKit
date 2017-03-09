@@ -1,5 +1,31 @@
 2017-03-08  Devin Rousso  <dcrousso+webkit@gmail.com>
 
+        Web Inspector: add a "create breakpoint" context menu item for linkified source locations
+        https://bugs.webkit.org/show_bug.cgi?id=47442
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Base/Main.js:
+        (WebInspector.isShowingResourcesTab): Added.
+        (WebInspector.linkifyElement):
+        Now calls WebInspector.appendContextMenuItemsForSourceCode on "contextmenu" events for the
+        created element.
+
+        * UserInterface/Controllers/DebuggerManager.js:
+        (WebInspector.DebuggerManager.prototype.breakpointForSourceCodeLocation):
+        Returns the first breakpoint (since there should only be one) that matches the given location.
+
+        * UserInterface/Views/ContextMenuUtilities.js:
+        (WebInspector.appendContextMenuItemsForSourceCode):
+        Rework parameters to also accept a WebInspector.SourceCodeLocation, thereby allowing the
+        setting of breakpoints so long as the associated WebInspector.SourceCode is a script.
+
+        * UserInterface/Views/Main.css:
+        (.resource-link, .go-to-link):
+        Prevent link from being selected.
+
+2017-03-08  Devin Rousso  <dcrousso+webkit@gmail.com>
+
         Web Inspector: RTL: Switching back to System Direction doesn't change the dock side
         https://bugs.webkit.org/show_bug.cgi?id=169323
 

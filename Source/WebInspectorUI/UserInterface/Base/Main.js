@@ -1027,6 +1027,11 @@ WebInspector.showResourcesTab = function()
     this.tabBrowser.showTabForContentView(tabContentView);
 };
 
+WebInspector.isShowingResourcesTab = function()
+{
+    return this.tabBrowser.selectedTabContentView instanceof WebInspector.ResourcesTabContentView;
+};
+
 WebInspector.showStorageTab = function()
 {
     var tabContentView = this.tabBrowser.bestTabContentViewForClass(WebInspector.StorageTabContentView);
@@ -2353,6 +2358,10 @@ WebInspector.linkifyElement = function(linkElement, sourceCodeLocation) {
     }
 
     linkElement.addEventListener("click", showSourceCodeLocation.bind(this));
+    linkElement.addEventListener("contextmenu", (event) => {
+        let contextMenu = WebInspector.ContextMenu.createFromEvent(event);
+        WebInspector.appendContextMenuItemsForSourceCode(contextMenu, sourceCodeLocation);
+    });
 };
 
 WebInspector.sourceCodeForURL = function(url)
