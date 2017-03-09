@@ -49,7 +49,7 @@
 
 [
     Constructor(ApplePayErrorCode errorCode, optional DOMString message = "", optional ApplePayErrorContactField contactField),
-    Conditional=APPLE_PAY,
+    Conditional=APPLE_PAY_DELEGATE,
 ] interface ApplePayError {
     attribute ApplePayErrorCode code;
     attribute DOMString message;
