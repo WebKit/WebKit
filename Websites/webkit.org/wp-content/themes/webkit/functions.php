@@ -101,7 +101,7 @@ add_filter('query_vars', function( $query_vars ) {
 
 add_filter('the_title', function( $title ) {
     if ( is_admin() ) return $title;
-    $title = str_replace(": ", ":<br>", $title);
+    $title = str_replace(": ", ": <br>", $title);
     return $title;
 });
 

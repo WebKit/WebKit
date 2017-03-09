@@ -1,3 +1,12 @@
+2017-03-09  Jon Davis  <jond@apple.com>
+
+        Prevent HTML in rich link previews
+        https://bugs.webkit.org/show_bug.cgi?id=169435
+
+        Reviewed by Tim Horton.
+
+        * wp-content/plugins/social-meta.php:
+
 2017-03-03  Manuel Rego Casasnovas  <rego@igalia.com>
 
         Unreviewed, minor updates on CSS Grid Layout examples.

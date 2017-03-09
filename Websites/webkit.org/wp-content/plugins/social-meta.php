@@ -9,7 +9,7 @@ Author URI:  http://webkit.org
 
 add_action('wp_head', function() {
 
-    $title = get_the_title();
+    $title = the_title_attribute('echo=0');
     $description = get_the_excerpt();
     $type = 'article';
 
