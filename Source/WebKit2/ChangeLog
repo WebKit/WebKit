@@ -1,3 +1,31 @@
+2017-03-08  Anders Carlsson  <andersca@apple.com>
+
+        Add new delegate methods
+        https://bugs.webkit.org/show_bug.cgi?id=169394
+        Part of rdar://problem/28880714.
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/ApplePay/cocoa/WebPaymentCoordinatorProxyCocoa.h:
+        * UIProcess/ApplePay/cocoa/WebPaymentCoordinatorProxyCocoa.mm:
+        (-[WKPaymentAuthorizationViewControllerDelegate invalidate]):
+        (toShippingMethod):
+        (-[WKPaymentAuthorizationViewControllerDelegate paymentAuthorizationViewController:didAuthorizePayment:handler:]):
+        (-[WKPaymentAuthorizationViewControllerDelegate paymentAuthorizationViewController:didSelectPaymentMethod:handler:]):
+        (-[WKPaymentAuthorizationViewControllerDelegate paymentAuthorizationViewController:didSelectShippingMethod:handler:]):
+        (-[WKPaymentAuthorizationViewControllerDelegate paymentAuthorizationViewController:didSelectShippingContact:handler:]):
+        (-[WKPaymentAuthorizationViewControllerDelegate paymentAuthorizationViewController:didAuthorizePayment:completion:]):
+        (-[WKPaymentAuthorizationViewControllerDelegate paymentAuthorizationViewController:didSelectShippingMethod:completion:]):
+        (-[WKPaymentAuthorizationViewControllerDelegate paymentAuthorizationViewController:didSelectShippingContact:completion:]):
+        (WebKit::toPKPaymentAuthorizationStatus):
+        (WebKit::toPKPaymentErrorCode):
+        (WebKit::toNSError):
+        (WebKit::toNSErrors):
+        (WebKit::WebPaymentCoordinatorProxy::platformCompletePaymentSession):
+        (WebKit::WebPaymentCoordinatorProxy::platformCompleteShippingMethodSelection):
+        (WebKit::WebPaymentCoordinatorProxy::platformCompleteShippingContactSelection):
+        (WebKit::WebPaymentCoordinatorProxy::platformCompletePaymentMethodSelection):
+
 2017-03-09  Tim Horton  <timothy_horton@apple.com>
 
         WKWebView should automatically respect insets from the view controller hierarchy

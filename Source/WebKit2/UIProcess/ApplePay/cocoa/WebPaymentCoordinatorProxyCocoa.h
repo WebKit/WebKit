@@ -52,10 +52,17 @@ RetainPtr<PKPaymentRequest> toPKPaymentRequest(WebPageProxy&, const WebCore::URL
     BlockPtr<void (PKPaymentMerchantSession *, NSError *)> _sessionBlock;
 
     BOOL _didReachFinalState;
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000)
+    BlockPtr<void (PKPaymentAuthorizationResult *)> _paymentAuthorizedCompletion;
+    BlockPtr<void (PKPaymentRequestPaymentMethodUpdate *)> _didSelectPaymentMethodCompletion;
+    BlockPtr<void (PKPaymentRequestShippingMethodUpdate *)> _didSelectShippingMethodCompletion;
+    BlockPtr<void (PKPaymentRequestShippingContactUpdate *)> _didSelectShippingContactCompletion;
+#else
     BlockPtr<void (PKPaymentAuthorizationStatus)> _paymentAuthorizedCompletion;
     BlockPtr<void (NSArray *)> _didSelectPaymentMethodCompletion;
     BlockPtr<void (PKPaymentAuthorizationStatus, NSArray *)> _didSelectShippingMethodCompletion;
     BlockPtr<void (PKPaymentAuthorizationStatus, NSArray *, NSArray *)> _didSelectShippingContactCompletion;
+#endif
 }
 
 - (instancetype)initWithPaymentCoordinatorProxy:(WebKit::WebPaymentCoordinatorProxy&)webPaymentCoordinatorProxy;
