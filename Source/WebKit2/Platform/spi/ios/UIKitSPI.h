@@ -873,6 +873,15 @@ typedef enum {
 - (UIResponder *)firstResponder;
 @end
 
+@interface UIView ()
+- (void)safeAreaInsetsDidChange;
+@end
+
+@interface UIScrollView ()
+@property (nonatomic, setter=_setEdgesScrollingContentIntoSafeArea:) UIRectEdge _edgesScrollingContentIntoSafeArea;
+@property (nonatomic, readonly) UIEdgeInsets _systemContentInset;
+@end
+
 WTF_EXTERN_C_BEGIN
 
 BOOL UIKeyboardEnabledInputModesAllowOneToManyShortcuts();

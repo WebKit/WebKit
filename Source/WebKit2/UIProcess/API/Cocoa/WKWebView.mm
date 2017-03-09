@@ -506,6 +506,9 @@ static uint32_t convertSystemLayoutDirection(NSUserInterfaceLayoutDirection dire
     [_scrollView setInternalDelegate:self];
     [_scrollView setBouncesZoom:YES];
 
+    if ([_scrollView respondsToSelector:@selector(_setEdgesScrollingContentIntoSafeArea:)])
+        [_scrollView _setEdgesScrollingContentIntoSafeArea:UIRectEdgeAll];
+
     [self addSubview:_scrollView.get()];
 
     static uint32_t programSDKVersion = dyld_get_program_sdk_version();
@@ -1341,7 +1344,17 @@ static WebCore::Color scrollViewBackgroundColor(WKWebView *webView)
     if (_haveSetObscuredInsets)
         return _obscuredInsets;
 
-    return [_scrollView contentInset];
+    UIEdgeInsets insets = [_scrollView contentInset];
+
+    if ([_scrollView respondsToSelector:@selector(_systemContentInset)]) {
+        UIEdgeInsets systemInsets = [_scrollView _systemContentInset];
+        insets.top += systemInsets.top;
+        insets.bottom += systemInsets.bottom;
+        insets.left += systemInsets.left;
+        insets.right += systemInsets.right;
+    }
+
+    return insets;
 }
 
 - (void)_processDidExit
@@ -2191,6 +2204,19 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     _enclosingScrollViewScrollTimer = nil;
 }
 
+static WebCore::FloatSize activeMinimumLayoutSize(WKWebView *webView, const CGRect& bounds)
+{
+    if (webView->_overridesMinimumLayoutSize)
+        return WebCore::FloatSize(webView->_minimumLayoutSizeOverride);
+
+    if ([webView->_scrollView respondsToSelector:@selector(_systemContentInset)]) {
+        UIEdgeInsets systemContentInset = [webView->_scrollView _systemContentInset];
+        return WebCore::FloatSize(UIEdgeInsetsInsetRect(CGRectMake(0, 0, bounds.size.width, bounds.size.height), systemContentInset).size);
+    }
+
+    return WebCore::FloatSize(bounds.size);
+}
+
 - (void)_frameOrBoundsChanged
 {
     CGRect bounds = self.bounds;
@@ -2198,7 +2224,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 
     if (_dynamicViewportUpdateMode == DynamicViewportUpdateMode::NotResizing) {
         if (!_overridesMinimumLayoutSize)
-            _page->setViewportConfigurationMinimumLayoutSize(WebCore::FloatSize(bounds.size));
+            _page->setViewportConfigurationMinimumLayoutSize(activeMinimumLayoutSize(self, self.bounds));
         if (!_overridesMaximumUnobscuredSize)
             _page->setMaximumUnobscuredSize(WebCore::FloatSize(bounds.size));
         
@@ -2232,6 +2258,14 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     CGPoint contentOffset = [_scrollView contentOffset];
     CGPoint boundedOffset = contentOffsetBoundedInValidRange(_scrollView.get(), contentOffset);
     return !pointsEqualInDevicePixels(contentOffset, boundedOffset, deviceScaleFactor);
+}
+
+- (void)safeAreaInsetsDidChange
+{
+    if ([super respondsToSelector:@selector(safeAreaInsetsDidChange)])
+        [super safeAreaInsetsDidChange];
+
+    [self _scheduleVisibleContentRectUpdate];
 }
 
 - (void)_scheduleVisibleContentRectUpdate
@@ -3654,11 +3688,6 @@ WEBCORE_COMMAND(yankAndSelect)
 }
 
 #if PLATFORM(IOS)
-static WebCore::FloatSize activeMinimumLayoutSize(WKWebView *webView, const CGRect& bounds)
-{
-    return WebCore::FloatSize(webView->_overridesMinimumLayoutSize ? webView->_minimumLayoutSizeOverride : bounds.size);
-}
-
 static WebCore::FloatSize activeMaximumUnobscuredSize(WKWebView *webView, const CGRect& bounds)
 {
     return WebCore::FloatSize(webView->_overridesMaximumUnobscuredSize ? webView->_maximumUnobscuredSizeOverride : bounds.size);

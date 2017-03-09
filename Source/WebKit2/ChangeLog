@@ -1,3 +1,20 @@
+2017-03-09  Tim Horton  <timothy_horton@apple.com>
+
+        WKWebView should automatically respect insets from the view controller hierarchy
+        https://bugs.webkit.org/show_bug.cgi?id=169398
+        <rdar://problem/30617593>
+
+        Reviewed by Dean Jackson.
+
+        * Platform/spi/ios/UIKitSPI.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _initializeWithConfiguration:]):
+        (-[WKWebView _computedContentInset]):
+        (activeMinimumLayoutSize):
+        (-[WKWebView _frameOrBoundsChanged]):
+        Factor insets from above us in the view controller hierarchy into our
+        content insets (and layout size) automatically.
+
 2017-03-09  Tomas Popela  <tpopela@redhat.com>
 
         Correctly process the return value of gdk_drag_context_get_selected_action()
