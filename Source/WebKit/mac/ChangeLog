@@ -1,3 +1,15 @@
+2017-03-08  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add plumbing for WebCore to notify WebKit2 when an edit drag has concluded
+        https://bugs.webkit.org/show_bug.cgi?id=169392
+        <rdar://problem/30882974>
+
+        Reviewed by Tim Horton.
+
+        Add a stub implementation of WebDragClient::didConcludeEditDrag.
+
+        * WebCoreSupport/WebDragClient.h:
+
 2017-03-08  Anders Carlsson  <andersca@apple.com>
 
         Simplify the PaymentCoordinator interface

@@ -311,6 +311,7 @@ messages -> WebPageProxy {
 #if ENABLE(DATA_INTERACTION)
     DidPerformDataInteractionControllerOperation()
     DidHandleStartDataInteractionRequest(bool started)
+    DidConcludeEditDataInteraction(std::optional<WebCore::TextIndicatorData> textIndicator)
 #endif
 
 #if PLATFORM(COCOA)

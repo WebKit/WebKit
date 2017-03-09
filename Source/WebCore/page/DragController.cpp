@@ -246,6 +246,7 @@ bool DragController::performDragOperation(const DragData& dragData)
     }
 
     if ((m_dragDestinationAction & DragDestinationActionEdit) && concludeEditDrag(dragData)) {
+        m_client.didConcludeEditDrag();
         m_documentUnderMouse = nullptr;
         return true;
     }

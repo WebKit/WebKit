@@ -48,6 +48,7 @@ public:
 #if ENABLE(ATTACHMENT_ELEMENT)
     void declareAndWriteAttachment(const String& pasteboardName, WebCore::Element&, const WebCore::URL&, const String& path, WebCore::Frame*) override;
 #endif
+    void didConcludeEditDrag() override { }
 private:
     WebView* m_webView;
 };

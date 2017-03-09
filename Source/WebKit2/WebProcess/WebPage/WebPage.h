@@ -965,6 +965,10 @@ public:
     void didGetLoadDecisionForIcon(bool decision, uint64_t loadIdentifier, uint64_t newCallbackID);
     void setUseIconLoadingClient(bool);
 
+#if ENABLE(DATA_INTERACTION)
+    void didConcludeEditDataInteraction();
+#endif
+
 private:
     WebPage(uint64_t pageID, WebPageCreationParameters&&);
 

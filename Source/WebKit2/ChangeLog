@@ -1,3 +1,48 @@
+2017-03-08  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add plumbing for WebCore to notify WebKit2 when an edit drag has concluded
+        https://bugs.webkit.org/show_bug.cgi?id=169392
+        <rdar://problem/30882974>
+
+        Reviewed by Tim Horton.
+
+        Add boilerplate plumbing for didConcludeEditDataInteraction from the web process to the UI process. Also makes
+        some minor tweaks to WKContentView along the way.
+
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::didConcludeEditDataInteraction):
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+
+        Bail out of zooming to the focus rect when performing a data interaction operation. This needs to eventually
+        work, but is not high priority at the moment.
+
+        (-[WKContentView becomeFirstResponderForWebView]):
+        (-[WKContentView _displayFormNodeInputView]):
+        (-[WKContentView useSelectionAssistantWithMode:]):
+        (-[WKContentView _updateChangedSelection:]):
+        (-[WKContentView suppressAssistantSelectionView]):
+        (-[WKContentView setSuppressAssistantSelectionView:]):
+
+        Add a mechanism for suppressing the text interaction assistant's selection view. If the text interaction
+        assistant exists while beginning or ending suppression, the selection will be deactivated or activated. If there
+        is not text interaction assistant, then we instead remember whether or not we should be suppressing the
+        selection, and bail out of activating the selection if so.
+
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::didConcludeEditDataInteraction):
+        * WebProcess/WebCoreSupport/WebDragClient.h:
+        * WebProcess/WebCoreSupport/gtk/WebDragClientGtk.cpp:
+        * WebProcess/WebCoreSupport/mac/WebDragClientMac.mm:
+        (WebKit::WebDragClient::didConcludeEditDrag):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::didConcludeEditDataInteraction):
+
 2017-03-08  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics: Communicate to the network process which domains to partition

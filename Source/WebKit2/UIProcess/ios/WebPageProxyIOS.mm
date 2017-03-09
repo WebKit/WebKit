@@ -1132,6 +1132,11 @@ void WebPageProxy::requestStartDataInteraction(const WebCore::IntPoint& clientPo
         m_process->send(Messages::WebPage::RequestStartDataInteraction(clientPosition, globalPosition), m_pageID);
 }
 
+void WebPageProxy::didConcludeEditDataInteraction(std::optional<TextIndicatorData> data)
+{
+    m_pageClient.didConcludeEditDataInteraction(data);
+}
+
 #endif
 
 #if USE(QUICK_LOOK)

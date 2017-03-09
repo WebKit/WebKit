@@ -827,7 +827,7 @@ static UIWebSelectionMode toUIWebSelectionMode(WKSelectionGranularity granularit
         SetForScope<BOOL> becomingFirstResponder { _becomingFirstResponder, YES };
         didBecomeFirstResponder = [super becomeFirstResponder];
     }
-    if (didBecomeFirstResponder)
+    if (didBecomeFirstResponder && !self.suppressAssistantSelectionView)
         [_textSelectionAssistant activateSelection];
 
     return didBecomeFirstResponder;
@@ -1140,16 +1140,23 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
 
 - (void)_displayFormNodeInputView
 {
-    // In case user scaling is force enabled, do not use that scaling when zooming in with an input field.
-    // Zooming above the page's default scale factor should only happen when the user performs it.
-    [self _zoomToFocusRect:_assistedNodeInformation.elementRect
-             selectionRect: _didAccessoryTabInitiateFocus ? IntRect() : _assistedNodeInformation.selectionRect
-               insideFixed:_assistedNodeInformation.insideFixedPosition
-                  fontSize:_assistedNodeInformation.nodeFontSize
-              minimumScale:_assistedNodeInformation.minimumScaleFactor
-              maximumScale:_assistedNodeInformation.maximumScaleFactorIgnoringAlwaysScalable
-              allowScaling:(_assistedNodeInformation.allowsUserScalingIgnoringAlwaysScalable && !UICurrentUserInterfaceIdiomIsPad())
-               forceScroll:[self requiresAccessoryView]];
+    BOOL shouldZoomToFocusRect = YES;
+#if ENABLE(DATA_INTERACTION)
+    // FIXME: We need to teach WKWebView to properly zoom and scroll during a data interaction operation.
+    shouldZoomToFocusRect = ![WebItemProviderPasteboard sharedInstance].hasPendingOperation;
+#endif
+    if (shouldZoomToFocusRect) {
+        // In case user scaling is force enabled, do not use that scaling when zooming in with an input field.
+        // Zooming above the page's default scale factor should only happen when the user performs it.
+        [self _zoomToFocusRect:_assistedNodeInformation.elementRect
+                 selectionRect: _didAccessoryTabInitiateFocus ? IntRect() : _assistedNodeInformation.selectionRect
+                   insideFixed:_assistedNodeInformation.insideFixedPosition
+                      fontSize:_assistedNodeInformation.nodeFontSize
+                  minimumScale:_assistedNodeInformation.minimumScaleFactor
+                  maximumScale:_assistedNodeInformation.maximumScaleFactorIgnoringAlwaysScalable
+                  allowScaling:(_assistedNodeInformation.allowsUserScalingIgnoringAlwaysScalable && !UICurrentUserInterfaceIdiomIsPad())
+                   forceScroll:[self requiresAccessoryView]];
+    }
 
     _didAccessoryTabInitiateFocus = NO;
     [self _ensureFormAccessoryView];
@@ -1723,7 +1730,7 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
             [_textSelectionAssistant setGestureRecognizers];
         }
 
-        if (self.isFirstResponder)
+        if (self.isFirstResponder && !self.suppressAssistantSelectionView)
             [_textSelectionAssistant activateSelection];
     }
 }
@@ -3897,11 +3904,33 @@ static bool isAssistableInputType(InputType type)
         [_webSelectionAssistant didEndScrollingOrZoomingPage];
         [[_webSelectionAssistant selectionView] setHidden:NO];
 
-        [_textSelectionAssistant activateSelection];
+        if (!self.suppressAssistantSelectionView)
+            [_textSelectionAssistant activateSelection];
+
         [_textSelectionAssistant didEndScrollingOverflow];
 
         _needsDeferredEndScrollingSelectionUpdate = NO;
     }
+}
+
+- (BOOL)suppressAssistantSelectionView
+{
+    return _suppressAssistantSelectionView;
+}
+
+- (void)setSuppressAssistantSelectionView:(BOOL)suppressAssistantSelectionView
+{
+    if (_suppressAssistantSelectionView == suppressAssistantSelectionView)
+        return;
+
+    _suppressAssistantSelectionView = suppressAssistantSelectionView;
+    if (!_textSelectionAssistant)
+        return;
+
+    if (suppressAssistantSelectionView)
+        [_textSelectionAssistant deactivateSelection];
+    else
+        [_textSelectionAssistant activateSelection];
 }
 
 - (void)_showPlaybackTargetPicker:(BOOL)hasVideo fromRect:(const IntRect&)elementRect

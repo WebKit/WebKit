@@ -82,6 +82,10 @@ static PassRefPtr<ShareableBitmap> convertImageToBitmap(NSImage *image, const In
     return WTFMove(bitmap);
 }
 
+void WebDragClient::didConcludeEditDrag()
+{
+}
+
 void WebDragClient::startDrag(DragImage image, const IntPoint& point, const IntPoint&, const FloatPoint&, DataTransfer&, Frame& frame, DragSourceAction dragSourceAction)
 {
     IntSize bitmapSize([image.get() size]);
