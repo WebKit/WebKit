@@ -44,6 +44,10 @@
 
 /* Controls placement */
 
+.media-controls.mac.inline > .controls-bar button {
+    height: 100% !important;
+}
+
 .media-controls.mac.inline button.play-pause {
     -webkit-mask-position-y: 12px;
 }

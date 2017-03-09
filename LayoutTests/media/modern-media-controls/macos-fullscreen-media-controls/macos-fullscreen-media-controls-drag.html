@@ -22,9 +22,9 @@ media.addEventListener("webkitfullscreenchange", () => {
         shouldBecomeEqual("!!mediaControls.querySelector('.buttons-container.left')", "true", () => {
             shouldBecomeEqualToString("mediaControls.querySelector('.buttons-container.left').style.width", "116px", () => {
                 const bounds = mediaControls.querySelector(".controls-bar").getBoundingClientRect();
-                eventSender.mouseMoveTo(bounds.left + 118, bounds.top + 10);
+                eventSender.mouseMoveTo(bounds.left + 210, bounds.top + 25);
                 eventSender.mouseDown();
-                eventSender.mouseMoveTo(bounds.left + 68, bounds.top - 90);
+                eventSender.mouseMoveTo(bounds.left + 160, bounds.top - 75);
                 eventSender.mouseUp();
 
                 window.requestAnimationFrame(() => {

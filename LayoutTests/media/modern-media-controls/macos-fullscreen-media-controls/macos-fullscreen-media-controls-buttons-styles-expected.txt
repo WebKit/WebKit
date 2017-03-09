@@ -5,39 +5,39 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 RewindButton
-PASS getComputedStyle(button.element).webkitMaskPositionY became "17px"
+PASS getComputedStyle(button.element).top became "17px"
 PASS getComputedStyle(button.element).left is "27px"
-PASS getComputedStyle(button.element).height is "44px"
+PASS getComputedStyle(button.element).height is "16px"
 
 PlayPauseButton
-PASS getComputedStyle(button.element).webkitMaskPositionY became "12px"
+PASS getComputedStyle(button.element).top became "12px"
 PASS getComputedStyle(button.element).left is "78px"
-PASS getComputedStyle(button.element).height is "44px"
+PASS getComputedStyle(button.element).height is "26px"
 
 ForwardButton
-PASS getComputedStyle(button.element).webkitMaskPositionY became "17px"
+PASS getComputedStyle(button.element).top became "17px"
 PASS getComputedStyle(button.element).left is "127px"
-PASS getComputedStyle(button.element).height is "44px"
+PASS getComputedStyle(button.element).height is "16px"
 
 AirplayButton
-PASS getComputedStyle(button.element).webkitMaskPositionY became "18px"
+PASS getComputedStyle(button.element).top became "18px"
 PASS getComputedStyle(button.element).left is "12px"
-PASS getComputedStyle(button.element).height is "44px"
+PASS getComputedStyle(button.element).height is "14px"
 
 PiPButton
-PASS getComputedStyle(button.element).webkitMaskPositionY became "18px"
+PASS getComputedStyle(button.element).top became "18px"
 PASS getComputedStyle(button.element).left is "44px"
-PASS getComputedStyle(button.element).height is "44px"
+PASS getComputedStyle(button.element).height is "16px"
 
 TracksButton
-PASS getComputedStyle(button.element).webkitMaskPositionY became "18px"
+PASS getComputedStyle(button.element).top became "18px"
 PASS getComputedStyle(button.element).left is "79px"
-PASS getComputedStyle(button.element).height is "44px"
+PASS getComputedStyle(button.element).height is "14px"
 
 FullscreenButton
-PASS getComputedStyle(button.element).webkitMaskPositionY became "18px"
+PASS getComputedStyle(button.element).top became "18px"
 PASS getComputedStyle(button.element).left is "111px"
-PASS getComputedStyle(button.element).height is "44px"
+PASS getComputedStyle(button.element).height is "18px"
 PASS successfullyParsed is true
 
 TEST COMPLETE

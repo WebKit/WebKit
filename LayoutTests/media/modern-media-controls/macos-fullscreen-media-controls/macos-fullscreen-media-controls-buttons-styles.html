@@ -12,24 +12,24 @@ const mediaControls = new MacOSFullscreenMediaControls;
 document.body.appendChild(mediaControls.element);
 
 const buttonPositions = [
-    [mediaControls.rewindButton, 27, 17],
-    [mediaControls.playPauseButton, 78, 12],
-    [mediaControls.forwardButton, 127, 17],
-    [mediaControls.airplayButton, 12, 18],
-    [mediaControls.pipButton, 44, 18],
-    [mediaControls.tracksButton, 79, 18],
-    [mediaControls.fullscreenButton, 111, 18]
+    [mediaControls.rewindButton, 27, 17, 16],
+    [mediaControls.playPauseButton, 78, 12, 26],
+    [mediaControls.forwardButton, 127, 17, 16],
+    [mediaControls.airplayButton, 12, 18, 14],
+    [mediaControls.pipButton, 44, 18, 16],
+    [mediaControls.tracksButton, 79, 18, 14],
+    [mediaControls.fullscreenButton, 111, 18, 18]
 ];
 
 let button, x, y;
 (function testButton(index)
 {
-    [button, x, y, width] = buttonPositions[index];
+    [button, x, y, height] = buttonPositions[index];
     debug("");
     debug(button.constructor.name);
-    shouldBecomeEqualToString("getComputedStyle(button.element).webkitMaskPositionY", `${y}px`, () => {
+    shouldBecomeEqualToString("getComputedStyle(button.element).top", `${y}px`, () => {
         shouldBeEqualToString("getComputedStyle(button.element).left", `${x}px`);
-        shouldBeEqualToString("getComputedStyle(button.element).height", "44px");
+        shouldBeEqualToString("getComputedStyle(button.element).height", `${height}px`);
         if (index === buttonPositions.length - 1) {
             mediaControls.element.remove();
             finishJSTest();

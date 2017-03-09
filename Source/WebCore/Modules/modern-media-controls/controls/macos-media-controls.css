@@ -30,7 +30,6 @@
 }
 
 .media-controls.mac > .controls-bar button {
-    height: 100% !important;
     background-color: rgba(255, 255, 255, 0.45);
     mix-blend-mode: plus-lighter;
 }

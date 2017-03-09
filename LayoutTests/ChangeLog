@@ -1,5 +1,26 @@
 2017-03-09  Antoine Quint  <graouts@apple.com>
 
+        [Modern Media Controls] Fullscreen controls are difficult to drag around
+        https://bugs.webkit.org/show_bug.cgi?id=169412
+        <rdar://problem/30931892>
+
+        Reviewed by Eric Carlson.
+
+        * media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-buttons-styles-expected.txt:
+        * media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-buttons-styles.html:
+        Rebaseline test to account for CSS changes.
+
+        * media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-drag-is-prevented-over-button.html:
+        Change drag start coordinate to be right over a button so that it is prevented. Starting with this patch,
+        a drag at this coordinate would have been tolerated as being part of the left buttons container but not
+        part of a button in that container.
+
+        * media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-drag.html:
+        Change drag start coordinate to be right between two buttons so that it would have failed prior to this
+        patch.
+
+2017-03-09  Antoine Quint  <graouts@apple.com>
+
         [Modern Media Controls] Controls are not visible in fullscreen without the controls attribute
         https://bugs.webkit.org/show_bug.cgi?id=169411
         <rdar://problem/30931724>

@@ -115,7 +115,8 @@ class MacOSFullscreenMediaControls extends MacOSMediaControls
 
     _handleMousedown(event)
     {
-        if (event.target !== this.controlsBar.element)
+        // We don't allow dragging when the interaction is initiated on an interactive element. 
+        if (event.target.localName === "button" || event.target.localName === "input")
             return;
 
         event.preventDefault();

@@ -57,11 +57,11 @@
 }
 
 .media-controls.mac.fullscreen button.volume-down {
-    -webkit-mask-position-y: 18px;
+    top: 18px;
 }
 
 .media-controls.mac.fullscreen button.volume-up {
-    -webkit-mask-position-y: 17px;
+    top: 17px;
 }
 
 /* Button containers */
@@ -79,15 +79,15 @@
 /* Buttons placement for center container */
 
 .media-controls.mac.fullscreen button.rewind {
-    -webkit-mask-position-y: 17px;
+    top: 17px;
 }
 
 .media-controls.mac.fullscreen button.play-pause {
-    -webkit-mask-position-y: 12px;
+    top: 12px;
 }
 
 .media-controls.mac.fullscreen button.forward {
-    -webkit-mask-position-y: 17px;
+    top: 17px;
 }
 
 /* Make right container flush to the right */
@@ -99,7 +99,7 @@
 /* Buttons placement for right container */
 
 .media-controls.mac.fullscreen .buttons-container.right button {
-    -webkit-mask-position-y: 18px;
+    top: 18px;
 }
 
 /* Scrubber */
