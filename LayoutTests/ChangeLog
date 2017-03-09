@@ -1,3 +1,28 @@
+2017-03-08  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebCrypto] Implement ECDH DeriveBits operation
+        https://bugs.webkit.org/show_bug.cgi?id=169319
+        <rdar://problem/23789585>
+
+        Reviewed by Brent Fulgham.
+
+        * TestExpectations:
+        Refine some comments.
+        * crypto/subtle/derive-bits-malformed-parameters-expected.txt: Renamed from LayoutTests/crypto/subtle/deriveBits-malformed-parameters-expected.txt.
+        * crypto/subtle/derive-bits-malformed-parameters.html: Added.
+        * crypto/subtle/deriveBits-malformed-parameters.html: Removed.
+        * crypto/subtle/ecdh-derive-bits-malformed-parametrs-expected.txt: Added.
+        * crypto/subtle/ecdh-derive-bits-malformed-parametrs.html: Added.
+        * crypto/subtle/ecdh-generate-key-derive-bits-expected.txt: Added.
+        * crypto/subtle/ecdh-generate-key-derive-bits.html: Added.
+        * crypto/subtle/ecdh-import-key-derive-bits-custom-length-expected.txt: Added.
+        * crypto/subtle/ecdh-import-key-derive-bits-custom-length.html: Added.
+        * crypto/subtle/ecdh-import-key-derive-bits-null-length-expected.txt: Added.
+        * crypto/subtle/ecdh-import-key-derive-bits-null-length.html: Added.
+        * crypto/workers/subtle/ecdh-import-key-derive-bits-expected.txt: Added.
+        * crypto/workers/subtle/ecdh-import-key-derive-bits.html: Added.
+        * crypto/workers/subtle/resources/ecdh-import-key-derive-bits.js: Added.
+
 2017-03-08  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics: Communicate to the network process which domains to partition

@@ -1,0 +1,14 @@
+Test deriveBits operation with malformed parameters
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS crypto.subtle.deriveBits() rejected promise  with TypeError: Not enough arguments.
+PASS crypto.subtle.deriveBits(1) rejected promise  with TypeError: Not enough arguments.
+PASS crypto.subtle.deriveBits(1, 2) rejected promise  with TypeError: Not enough arguments.
+PASS crypto.subtle.deriveBits({ name:"ECDH", public:wrongKey }, wrongKey, 128) rejected promise  with InvalidAccessError (DOM Exception 15): CryptoKey doesn't match AlgorithmIdentifier.
+PASS crypto.subtle.deriveBits({ name:"ECDH", public:wrongKey }, wrongKey, 128) rejected promise  with InvalidAccessError (DOM Exception 15): CryptoKey doesn't support bits derivation.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

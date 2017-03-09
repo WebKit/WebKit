@@ -84,6 +84,8 @@ public:
     JsonWebKey exportJwk() const;
 
     size_t keySizeInBits() const;
+    NamedCurve namedCurve() const { return m_curve; }
+    PlatformECKey platformKey() { return m_platformKey; }
 
 private:
     CryptoKeyEC(CryptoAlgorithmIdentifier, NamedCurve, CryptoKeyType, PlatformECKey, bool extractable, CryptoKeyUsageBitmap);

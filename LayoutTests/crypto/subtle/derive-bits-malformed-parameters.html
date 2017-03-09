@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../resources/common.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+description("Test deriveBits operation with malformed parameters");
+
+
+jsTestIsAsync = true;
+
+var extractable = true;
+var hmacImportParams = {
+    name: "hmac",
+    hash: "sha-1",
+}
+var rawKey = asciiToUint8Array("jnOw99oOZFLIEPMr");
+var jwkKey = {
+    kty: "EC",
+    crv: "P-256",
+    x: "1FSVWieTvikFkG1NOyhkUCaMbdQhxwH6aCu4Ez-sRtA",
+    y: "9jmNTLqM4cjBhdAnHcNI9YQV3O8LFmo-EdZWk8ntAaI",
+    d: "ppxBSov3N8_AUcisAuvmLV4yE8e_L_BLE8bZb9Z1Xjg",
+};
+
+
+// Not enough arguments.
+shouldReject('crypto.subtle.deriveBits()');
+shouldReject('crypto.subtle.deriveBits(1)');
+shouldReject('crypto.subtle.deriveBits(1, 2)');
+
+crypto.subtle.importKey("raw", rawKey, hmacImportParams, extractable, ["sign", "verify"]).then(function(result) {
+    wrongKey = result;
+    // Wrong algorithm identifier.
+    shouldReject('crypto.subtle.deriveBits({ name:"ECDH", public:wrongKey }, wrongKey, 128)');
+
+    return crypto.subtle.importKey("jwk", jwkKey, { name: "ECDH", namedCurve: "P-256" }, extractable, ["deriveKey"]);
+}).then(function(result) {
+    wrongKey = result;
+    // Wrong usage.
+    shouldReject('crypto.subtle.deriveBits({ name:"ECDH", public:wrongKey }, wrongKey, 128)');
+
+    finishJSTest();
+});
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

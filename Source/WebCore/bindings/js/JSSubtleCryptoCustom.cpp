@@ -39,6 +39,7 @@
 #include "JSDOMPromise.h"
 #include "JSDOMWrapper.h"
 #include "JSEcKeyParams.h"
+#include "JSEcdhKeyDeriveParams.h"
 #include "JSHmacKeyParams.h"
 #include "JSJsonWebKey.h"
 #include "JSRsaHashedImportParams.h"
@@ -160,9 +161,28 @@ static std::unique_ptr<CryptoAlgorithmParameters> normalizeCryptoAlgorithmParame
             }
             break;
         case Operations::DeriveKey:
-        case Operations::DeriveBits:
             throwNotSupportedError(state, scope);
             return nullptr;
+        case Operations::DeriveBits:
+            switch (*identifier) {
+            case CryptoAlgorithmIdentifier::ECDH: {
+                // Remove this hack once https://bugs.webkit.org/show_bug.cgi?id=169333 is fixed.
+                JSValue nameValue = value.getObject()->get(&state, Identifier::fromString(&state, "name"));
+                JSValue publicValue = value.getObject()->get(&state, Identifier::fromString(&state, "public"));
+                JSObject* newValue = constructEmptyObject(&state);
+                newValue->putDirect(vm, Identifier::fromString(&vm, "name"), nameValue);
+                newValue->putDirect(vm, Identifier::fromString(&vm, "publicKey"), publicValue);
+
+                auto params = convertDictionary<CryptoAlgorithmEcdhKeyDeriveParams>(state, newValue);
+                RETURN_IF_EXCEPTION(scope, nullptr);
+                result = std::make_unique<CryptoAlgorithmEcdhKeyDeriveParams>(params);
+                break;
+            }
+            default:
+                throwNotSupportedError(state, scope);
+                return nullptr;
+            }
+            break;
         case Operations::GenerateKey:
             switch (*identifier) {
             case CryptoAlgorithmIdentifier::RSAES_PKCS1_v1_5: {
@@ -660,40 +680,6 @@ static void jsSubtleCryptoFunctionDigestPromise(ExecState& state, Ref<DeferredPr
     algorithm->digest(WTFMove(data), WTFMove(callback), WTFMove(exceptionCallback), *scriptExecutionContextFromExecState(&state), subtle->wrapped().workQueue());
 }
 
-static void jsSubtleCryptoFunctionDeriveKeyPromise(ExecState& state, Ref<DeferredPromise>&& promise)
-{
-    VM& vm = state.vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    if (UNLIKELY(state.argumentCount() < 5)) {
-        promise->reject<IDLAny>(createNotEnoughArgumentsError(&state));
-        return;
-    }
-
-    auto params = normalizeCryptoAlgorithmParameters(state, state.uncheckedArgument(0), Operations::DeriveKey);
-    RETURN_IF_EXCEPTION(scope, void());
-
-    // We should always return a NOT_SUPPORTED_ERR since we currently don't support any algorithms that has deriveKey operation.
-    ASSERT_NOT_REACHED();
-}
-
-static void jsSubtleCryptoFunctionDeriveBitsPromise(ExecState& state, Ref<DeferredPromise>&& promise)
-{
-    VM& vm = state.vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    if (UNLIKELY(state.argumentCount() < 3)) {
-        promise->reject<IDLAny>(createNotEnoughArgumentsError(&state));
-        return;
-    }
-
-    auto params = normalizeCryptoAlgorithmParameters(state, state.uncheckedArgument(0), Operations::DeriveBits);
-    RETURN_IF_EXCEPTION(scope, void());
-
-    // We should always return a NOT_SUPPORTED_ERR since we currently don't support any algorithms that has deriveBits operation.
-    ASSERT_NOT_REACHED();
-}
-
 static void jsSubtleCryptoFunctionGenerateKeyPromise(ExecState& state, Ref<DeferredPromise>&& promise)
 {
     VM& vm = state.vm();
@@ -745,6 +731,71 @@ static void jsSubtleCryptoFunctionGenerateKeyPromise(ExecState& state, Ref<Defer
     // regardless what kind of keys it produces: https://www.w3.org/TR/WebCryptoAPI/#SubtleCrypto-method-generateKey
     // That's simply not efficient for AES, HMAC and EC keys. Therefore, we perform it as an async task only for RSA keys.
     algorithm->generateKey(*params, extractable, keyUsages, WTFMove(callback), WTFMove(exceptionCallback), *scriptExecutionContextFromExecState(&state));
+}
+
+static void jsSubtleCryptoFunctionDeriveKeyPromise(ExecState& state, Ref<DeferredPromise>&& promise)
+{
+    VM& vm = state.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (UNLIKELY(state.argumentCount() < 5)) {
+        promise->reject<IDLAny>(createNotEnoughArgumentsError(&state));
+        return;
+    }
+
+    auto params = normalizeCryptoAlgorithmParameters(state, state.uncheckedArgument(0), Operations::DeriveKey);
+    RETURN_IF_EXCEPTION(scope, void());
+
+    // We should always return a NOT_SUPPORTED_ERR since we currently don't support any algorithms that has deriveKey operation.
+    ASSERT_NOT_REACHED();
+}
+
+static void jsSubtleCryptoFunctionDeriveBitsPromise(ExecState& state, Ref<DeferredPromise>&& promise)
+{
+    VM& vm = state.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (UNLIKELY(state.argumentCount() < 3)) {
+        promise->reject<IDLAny>(createNotEnoughArgumentsError(&state));
+        return;
+    }
+
+    auto params = normalizeCryptoAlgorithmParameters(state, state.uncheckedArgument(0), Operations::DeriveBits);
+    RETURN_IF_EXCEPTION(scope, void());
+
+    auto baseKey = toCryptoKey(state, state.uncheckedArgument(1));
+    RETURN_IF_EXCEPTION(scope, void());
+
+    auto length = convert<IDLUnsignedLong>(state, state.uncheckedArgument(2), IntegerConversionConfiguration::Normal);
+    RETURN_IF_EXCEPTION(scope, void());
+
+    if (params->identifier != baseKey->algorithmIdentifier()) {
+        promise->reject(INVALID_ACCESS_ERR, ASCIILiteral("CryptoKey doesn't match AlgorithmIdentifier"));
+        return;
+    }
+
+    if (!baseKey->allows(CryptoKeyUsageDeriveBits)) {
+        promise->reject(INVALID_ACCESS_ERR, ASCIILiteral("CryptoKey doesn't support bits derivation"));
+        return;
+    }
+
+    auto algorithm = CryptoAlgorithmRegistry::singleton().create(params->identifier);
+    if (UNLIKELY(!algorithm)) {
+        throwNotSupportedError(state, scope);
+        return;
+    }
+
+    auto callback = [capturedPromise = promise.copyRef()](const Vector<uint8_t>& derivedKey) mutable {
+        fulfillPromiseWithArrayBuffer(WTFMove(capturedPromise), derivedKey.data(), derivedKey.size());
+        return;
+    };
+    auto exceptionCallback = [capturedPromise = WTFMove(promise)](ExceptionCode ec) mutable {
+        rejectWithException(WTFMove(capturedPromise), ec);
+    };
+
+    auto subtle = jsDynamicDowncast<JSSubtleCrypto*>(vm, state.thisValue());
+    ASSERT(subtle);
+    algorithm->deriveBits(WTFMove(params), baseKey.releaseNonNull(), length, WTFMove(callback), WTFMove(exceptionCallback), *scriptExecutionContextFromExecState(&state), subtle->wrapped().workQueue());
 }
 
 static void jsSubtleCryptoFunctionImportKeyPromise(ExecState& state, Ref<DeferredPromise>&& promise)
@@ -1098,6 +1149,12 @@ JSValue JSSubtleCrypto::digest(ExecState& state)
     return callPromiseFunction<jsSubtleCryptoFunctionDigestPromise, PromiseExecutionScope::WindowOrWorker>(state);
 }
 
+
+JSValue JSSubtleCrypto::generateKey(ExecState& state)
+{
+    return callPromiseFunction<jsSubtleCryptoFunctionGenerateKeyPromise, PromiseExecutionScope::WindowOrWorker>(state);
+}
+
 JSValue JSSubtleCrypto::deriveKey(ExecState& state)
 {
     return callPromiseFunction<jsSubtleCryptoFunctionDeriveKeyPromise, PromiseExecutionScope::WindowOrWorker>(state);
@@ -1106,11 +1163,6 @@ JSValue JSSubtleCrypto::deriveKey(ExecState& state)
 JSValue JSSubtleCrypto::deriveBits(ExecState& state)
 {
     return callPromiseFunction<jsSubtleCryptoFunctionDeriveBitsPromise, PromiseExecutionScope::WindowOrWorker>(state);
-}
-
-JSValue JSSubtleCrypto::generateKey(ExecState& state)
-{
-    return callPromiseFunction<jsSubtleCryptoFunctionGenerateKeyPromise, PromiseExecutionScope::WindowOrWorker>(state);
 }
 
 JSValue JSSubtleCrypto::importKey(ExecState& state)

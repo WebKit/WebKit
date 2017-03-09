@@ -1,0 +1,23 @@
+Test ECDH deriveBits operation with malformed parameters
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS crypto.subtle.deriveBits("ecdh", privateKey, null) rejected promise  with TypeError: Member EcdhKeyDeriveParams.publicKey is required and must be an instance of CryptoKey.
+PASS crypto.subtle.deriveBits({name: "ecdh"}, privateKey, null) rejected promise  with TypeError: Member EcdhKeyDeriveParams.publicKey is required and must be an instance of CryptoKey.
+PASS crypto.subtle.deriveBits({name: "ecdh", public: true}, privateKey, null) rejected promise  with TypeError: Type error.
+PASS crypto.subtle.deriveBits({name: "ecdh", public: null}, privateKey, null) rejected promise  with TypeError: Type error.
+PASS crypto.subtle.deriveBits({name: "ecdh", public: undefined}, privateKey, null) rejected promise  with TypeError: Member EcdhKeyDeriveParams.publicKey is required and must be an instance of CryptoKey.
+PASS crypto.subtle.deriveBits({name: "ecdh", public: Symbol()}, privateKey, null) rejected promise  with TypeError: Type error.
+PASS crypto.subtle.deriveBits({name: "ecdh", public: { }}, privateKey, null) rejected promise  with TypeError: Type error.
+PASS crypto.subtle.deriveBits({name: "ecdh", public: 1}, privateKey, null) rejected promise  with TypeError: Type error.
+PASS crypto.subtle.deriveBits({ name:"ECDH", public:publicKey }, privateKey, 1) rejected promise  with OperationError (DOM Exception 34): The operation failed for an operation-specific reason.
+PASS crypto.subtle.deriveBits({ name:"ECDH", public:publicKey }, publicKey, null) rejected promise  with InvalidAccessError (DOM Exception 15): CryptoKey doesn't support bits derivation.
+PASS crypto.subtle.deriveBits({ name:"ECDH", public:privateKey }, privateKey, null) rejected promise  with InvalidAccessError (DOM Exception 15): The requested operation is not valid for the provided key.
+PASS crypto.subtle.deriveBits({ name:"ECDH", public:fakeKey }, privateKey, null) rejected promise  with InvalidAccessError (DOM Exception 15): The requested operation is not valid for the provided key.
+PASS crypto.subtle.deriveBits({ name:"ECDH", public:publicKeyP384 }, privateKey, null) rejected promise  with InvalidAccessError (DOM Exception 15): The requested operation is not valid for the provided key.
+PASS crypto.subtle.deriveBits({ name:"ECDH", public:publicKey }, privateKey, 384) rejected promise  with OperationError (DOM Exception 34): The operation failed for an operation-specific reason.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

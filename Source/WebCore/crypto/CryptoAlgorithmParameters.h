@@ -41,6 +41,7 @@ public:
         AesGcmParams,
         AesKeyGenParams,
         EcKeyParams,
+        EcdhKeyDeriveParams,
         HmacKeyParams,
         RsaHashedKeyGenParams,
         RsaHashedImportParams,

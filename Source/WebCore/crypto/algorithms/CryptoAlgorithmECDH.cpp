@@ -29,6 +29,7 @@
 #if ENABLE(SUBTLE_CRYPTO)
 
 #include "CryptoAlgorithmEcKeyParams.h"
+#include "CryptoAlgorithmEcdhKeyDeriveParams.h"
 #include "CryptoKeyEC.h"
 #include "ExceptionCode.h"
 
@@ -63,6 +64,56 @@ void CryptoAlgorithmECDH::generateKey(const CryptoAlgorithmParameters& parameter
     pair.publicKey->setUsagesBitmap(0);
     pair.privateKey->setUsagesBitmap(pair.privateKey->usagesBitmap() & (CryptoKeyUsageDeriveKey | CryptoKeyUsageDeriveBits));
     callback(WTFMove(pair));
+}
+
+void CryptoAlgorithmECDH::deriveBits(std::unique_ptr<CryptoAlgorithmParameters>&& parameters, Ref<CryptoKey>&& baseKey, unsigned long length, VectorCallback&& callback, ExceptionCallback&& exceptionCallback, ScriptExecutionContext& context, WorkQueue& workQueue)
+{
+    // We only accept length that is a multiple of 8.
+    if (length % 8) {
+        exceptionCallback(OperationError);
+        return;
+    }
+
+    ASSERT(parameters);
+    auto& ecParameters = downcast<CryptoAlgorithmEcdhKeyDeriveParams>(*parameters);
+
+    if (baseKey->type() != CryptoKey::Type::Private) {
+        exceptionCallback(INVALID_ACCESS_ERR);
+        return;
+    }
+    ASSERT(ecParameters.publicKey);
+    if (ecParameters.publicKey->type() != CryptoKey::Type::Public) {
+        exceptionCallback(INVALID_ACCESS_ERR);
+        return;
+    }
+    if (baseKey->algorithmIdentifier() != ecParameters.publicKey->algorithmIdentifier()) {
+        exceptionCallback(INVALID_ACCESS_ERR);
+        return;
+    }
+    auto& ecBaseKey = downcast<CryptoKeyEC>(baseKey.get());
+    auto& ecPublicKey = downcast<CryptoKeyEC>(*(ecParameters.publicKey.get()));
+    if (ecBaseKey.namedCurve() != ecPublicKey.namedCurve()) {
+        exceptionCallback(INVALID_ACCESS_ERR);
+        return;
+    }
+
+    auto unifiedCallback = [callback = WTFMove(callback), exceptionCallback = WTFMove(exceptionCallback)](std::optional<Vector<uint8_t>>&& derivedKey, unsigned long length) mutable {
+        if (!derivedKey) {
+            exceptionCallback(OperationError);
+            return;
+        }
+        if (!length) {
+            callback(WTFMove(*derivedKey));
+            return;
+        }
+        if (length / 8 > (*derivedKey).size()) {
+            exceptionCallback(OperationError);
+            return;
+        }
+        (*derivedKey).shrink(length / 8);
+        callback(WTFMove(*derivedKey));
+    };
+    platformDeriveBits(WTFMove(baseKey), ecParameters.publicKey.releaseNonNull(), length, WTFMove(unifiedCallback), context, workQueue);
 }
 
 void CryptoAlgorithmECDH::importKey(SubtleCrypto::KeyFormat format, KeyData&& data, const std::unique_ptr<CryptoAlgorithmParameters>&& parameters, bool extractable, CryptoKeyUsageBitmap usages, KeyCallback&& callback, ExceptionCallback&& exceptionCallback)
