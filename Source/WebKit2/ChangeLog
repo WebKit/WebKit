@@ -1,3 +1,22 @@
+2017-03-08  Anders Carlsson  <andersca@apple.com>
+
+        Clean up WebPaymentCoordinatorProxy
+        https://bugs.webkit.org/show_bug.cgi?id=169393
+        Part of rdar://problem/28880714.
+
+        Reviewed by Beth Dakin.
+
+        * UIProcess/ApplePay/cocoa/WebPaymentCoordinatorProxyCocoa.mm:
+        (-[WKPaymentAuthorizationViewControllerDelegate paymentAuthorizationViewControllerDidFinish:]):
+        Move this to where it belongs.
+
+        (WebKit::toPKPaymentSummaryItems):
+        Add a new helper function.
+
+        (WebKit::WebPaymentCoordinatorProxy::platformCompleteShippingMethodSelection):
+        (WebKit::WebPaymentCoordinatorProxy::platformCompleteShippingContactSelection):
+        Use the new helper function.
+
 2017-03-08  Brent Fulgham  <bfulgham@apple.com>
 
         [Mac][WK2] Whitelist a local cache needed by CFNetwork

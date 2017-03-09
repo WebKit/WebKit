@@ -122,17 +122,6 @@ SOFT_LINK_FUNCTION_MAY_FAIL_FOR_SOURCE(WebKit, PassKit, PKCanMakePaymentsWithMer
     _webPaymentCoordinatorProxy->didAuthorizePayment(WebCore::Payment(payment));
 }
 
-- (void)paymentAuthorizationViewControllerDidFinish:(PKPaymentAuthorizationViewController *)controller
-{
-    if (!_webPaymentCoordinatorProxy)
-        return;
-
-    if (!_didReachFinalState)
-        _webPaymentCoordinatorProxy->didCancelPayment();
-
-    _webPaymentCoordinatorProxy->hidePaymentUI();
-}
-
 static WebCore::PaymentRequest::ShippingMethod toShippingMethod(PKShippingMethod *shippingMethod)
 {
     ASSERT(shippingMethod);
@@ -181,6 +170,17 @@ static WebCore::PaymentRequest::ShippingMethod toShippingMethod(PKShippingMethod
     _didSelectPaymentMethodCompletion = completion;
 
     _webPaymentCoordinatorProxy->didSelectPaymentMethod(WebCore::PaymentMethod(paymentMethod));
+}
+
+- (void)paymentAuthorizationViewControllerDidFinish:(PKPaymentAuthorizationViewController *)controller
+{
+    if (!_webPaymentCoordinatorProxy)
+        return;
+
+    if (!_didReachFinalState)
+        _webPaymentCoordinatorProxy->didCancelPayment();
+
+    _webPaymentCoordinatorProxy->hidePaymentUI();
 }
 
 @end
@@ -272,6 +272,20 @@ static RetainPtr<NSDecimalNumber> toDecimalNumber(int64_t value)
 static RetainPtr<PKPaymentSummaryItem> toPKPaymentSummaryItem(const WebCore::PaymentRequest::LineItem& lineItem)
 {
     return [getPKPaymentSummaryItemClass() summaryItemWithLabel:lineItem.label amount:toDecimalNumber(lineItem.amount.value_or(0)).get() type:toPKPaymentSummaryItemType(lineItem.type)];
+}
+
+static RetainPtr<NSArray> toPKPaymentSummaryItems(const WebCore::PaymentRequest::TotalAndLineItems& totalAndLineItems)
+{
+    auto paymentSummaryItems = adoptNS([[NSMutableArray alloc] init]);
+    for (auto& lineItem : totalAndLineItems.lineItems) {
+        if (auto summaryItem = toPKPaymentSummaryItem(lineItem))
+            [paymentSummaryItems addObject:summaryItem.get()];
+    }
+
+    if (auto totalItem = toPKPaymentSummaryItem(totalAndLineItems.total))
+        [paymentSummaryItems addObject:totalItem.get()];
+
+    return paymentSummaryItems;
 }
 
 static PKMerchantCapability toPKMerchantCapabilities(const WebCore::PaymentRequest::MerchantCapabilities& merchantCapabilities)
@@ -479,18 +493,8 @@ void WebPaymentCoordinatorProxy::platformCompleteShippingMethodSelection(const s
 
     auto status = update ? update->status : WebCore::PaymentAuthorizationStatus::Success;
 
-    if (update) {
-        auto paymentSummaryItems = adoptNS([[NSMutableArray alloc] init]);
-        for (auto& lineItem : update->newTotalAndLineItems.lineItems) {
-            if (auto summaryItem = toPKPaymentSummaryItem(lineItem))
-                [paymentSummaryItems addObject:summaryItem.get()];
-        }
-
-        if (auto totalItem = toPKPaymentSummaryItem(update->newTotalAndLineItems.total))
-            [paymentSummaryItems addObject:totalItem.get()];
-
-        m_paymentAuthorizationViewControllerDelegate->_paymentSummaryItems = WTFMove(paymentSummaryItems);
-    }
+    if (update)
+        m_paymentAuthorizationViewControllerDelegate->_paymentSummaryItems = toPKPaymentSummaryItems(update->newTotalAndLineItems);
 
     m_paymentAuthorizationViewControllerDelegate->_didSelectShippingMethodCompletion(toPKPaymentAuthorizationStatus(status), m_paymentAuthorizationViewControllerDelegate->_paymentSummaryItems.get());
     m_paymentAuthorizationViewControllerDelegate->_didSelectShippingMethodCompletion = nullptr;
@@ -504,16 +508,7 @@ void WebPaymentCoordinatorProxy::platformCompleteShippingContactSelection(const 
     auto status = update ? update->status : WebCore::PaymentAuthorizationStatus::Success;
 
     if (update) {
-        auto paymentSummaryItems = adoptNS([[NSMutableArray alloc] init]);
-        for (auto& lineItem : update->newTotalAndLineItems.lineItems) {
-            if (auto summaryItem = toPKPaymentSummaryItem(lineItem))
-                [paymentSummaryItems addObject:summaryItem.get()];
-        }
-
-        if (auto totalItem = toPKPaymentSummaryItem(update->newTotalAndLineItems.total))
-            [paymentSummaryItems addObject:totalItem.get()];
-
-        m_paymentAuthorizationViewControllerDelegate->_paymentSummaryItems = WTFMove(paymentSummaryItems);
+        m_paymentAuthorizationViewControllerDelegate->_paymentSummaryItems = toPKPaymentSummaryItems(update->newTotalAndLineItems);
 
         auto shippingMethods = adoptNS([[NSMutableArray alloc] init]);
         for (auto& shippingMethod : update->newShippingMethods)
