@@ -153,6 +153,10 @@ static Expected<Trigger, std::error_code> loadTrigger(ExecState& exec, const JSO
     if (urlFilterCaseValue && !scope.exception() && urlFilterCaseValue.isBoolean())
         trigger.urlFilterIsCaseSensitive = urlFilterCaseValue.toBoolean(&exec);
 
+    const JSValue topURLFilterCaseValue = triggerObject.get(&exec, Identifier::fromString(&exec, "top-url-filter-is-case-sensitive"));
+    if (topURLFilterCaseValue && !scope.exception() && topURLFilterCaseValue.isBoolean())
+        trigger.topURLConditionIsCaseSensitive = topURLFilterCaseValue.toBoolean(&exec);
+
     const JSValue resourceTypeValue = triggerObject.get(&exec, Identifier::fromString(&exec, "resource-type"));
     if (!scope.exception() && resourceTypeValue.isObject()) {
         auto typeFlagsError = getTypeFlags(exec, resourceTypeValue, trigger.flags, readResourceType);
@@ -194,6 +198,34 @@ static Expected<Trigger, std::error_code> loadTrigger(ExecState& exec, const JSO
             return makeUnexpected(ContentExtensionError::JSONInvalidConditionList);
         trigger.conditionType = Trigger::ConditionType::UnlessDomain;
     } else if (!unlessDomainValue.isUndefined())
+        return makeUnexpected(ContentExtensionError::JSONInvalidConditionList);
+
+    const JSValue ifTopURLValue = triggerObject.get(&exec, Identifier::fromString(&exec, "if-top-url"));
+    if (!scope.exception() && ifTopURLValue.isObject()) {
+        if (trigger.conditionType != Trigger::ConditionType::None)
+            return makeUnexpected(ContentExtensionError::JSONMultipleConditions);
+        auto ifTopURL = getStringList(exec, asObject(ifTopURLValue));
+        if (!ifTopURL.hasValue())
+            return makeUnexpected(ifTopURL.error());
+        trigger.conditions = WTFMove(ifTopURL.value());
+        if (trigger.conditions.isEmpty())
+            return makeUnexpected(ContentExtensionError::JSONInvalidConditionList);
+        trigger.conditionType = Trigger::ConditionType::IfTopURL;
+    } else if (!ifTopURLValue.isUndefined())
+        return makeUnexpected(ContentExtensionError::JSONInvalidConditionList);
+
+    const JSValue unlessTopURLValue = triggerObject.get(&exec, Identifier::fromString(&exec, "unless-top-url"));
+    if (!scope.exception() && unlessTopURLValue.isObject()) {
+        if (trigger.conditionType != Trigger::ConditionType::None)
+            return makeUnexpected(ContentExtensionError::JSONMultipleConditions);
+        auto unlessTopURL = getStringList(exec, asObject(unlessTopURLValue));
+        if (!unlessTopURL.hasValue())
+            return makeUnexpected(unlessTopURL.error());
+        trigger.conditions = WTFMove(unlessTopURL.value());
+        if (trigger.conditions.isEmpty())
+            return makeUnexpected(ContentExtensionError::JSONInvalidConditionList);
+        trigger.conditionType = Trigger::ConditionType::UnlessTopURL;
+    } else if (!unlessTopURLValue.isUndefined())
         return makeUnexpected(ContentExtensionError::JSONInvalidConditionList);
 
     return WTFMove(trigger);

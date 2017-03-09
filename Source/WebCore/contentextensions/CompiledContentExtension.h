@@ -42,10 +42,11 @@ public:
     virtual unsigned filtersWithoutConditionsBytecodeLength() const = 0;
     virtual const DFABytecode* filtersWithConditionsBytecode() const = 0;
     virtual unsigned filtersWithConditionsBytecodeLength() const = 0;
-    virtual const DFABytecode* conditionedFiltersBytecode() const = 0;
-    virtual unsigned conditionedFiltersBytecodeLength() const = 0;
+    virtual const DFABytecode* topURLFiltersBytecode() const = 0;
+    virtual unsigned topURLFiltersBytecodeLength() const = 0;
     virtual const SerializedActionByte* actions() const = 0;
     virtual unsigned actionsLength() const = 0;
+    virtual bool conditionsApplyOnlyToDomain() const = 0;
 };
 
 } // namespace ContentExtensions

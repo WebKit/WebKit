@@ -118,31 +118,33 @@ void ContentExtension::compileGlobalDisplayNoneStyleSheet()
 
 void ContentExtension::populateConditionCacheIfNeeded(const URL& topURL)
 {
-    String domain = topURL.host();
-    if (m_cachedDomain != domain) {
-        DFABytecodeInterpreter interpreter(m_compiledExtension->conditionedFiltersBytecode(), m_compiledExtension->conditionedFiltersBytecodeLength());
+    if (m_cachedTopURL != topURL) {
+        DFABytecodeInterpreter interpreter(m_compiledExtension->topURLFiltersBytecode(), m_compiledExtension->topURLFiltersBytecodeLength());
         const uint16_t allLoadTypesAndResourceTypes = LoadTypeMask | ResourceTypeMask;
-        auto domainActions = interpreter.interpret(domain.utf8(), allLoadTypesAndResourceTypes);
+        String string = m_compiledExtension->conditionsApplyOnlyToDomain() ? topURL.host() : topURL.string();
+        auto topURLActions = interpreter.interpret(string.utf8(), allLoadTypesAndResourceTypes);
         
-        m_cachedConditionedActions.clear();
-        for (uint64_t action : domainActions)
-            m_cachedConditionedActions.add(action);
+        m_cachedTopURLActions.clear();
+        for (uint64_t action : topURLActions)
+            m_cachedTopURLActions.add(action);
+        for (uint64_t action : interpreter.actionsMatchingEverything())
+            m_cachedTopURLActions.add(action);
         
         m_cachedUniversalConditionedActions.clear();
         for (uint64_t action : m_universalActionsWithConditions) {
-        ASSERT_WITH_MESSAGE((action & ~IfConditionFlag) == static_cast<uint32_t>(action), "Universal actions with domains should not have flags.");
-            if (!!(action & IfConditionFlag) == m_cachedConditionedActions.contains(action))
+        ASSERT_WITH_MESSAGE((action & ~IfConditionFlag) == static_cast<uint32_t>(action), "Universal actions with conditions should not have flags.");
+            if (!!(action & IfConditionFlag) == m_cachedTopURLActions.contains(action))
                 m_cachedUniversalConditionedActions.append(static_cast<uint32_t>(action));
         }
         m_cachedUniversalConditionedActions.shrinkToFit();
-        m_cachedDomain = domain;
+        m_cachedTopURL = topURL;
     }
 }
 
-const DFABytecodeInterpreter::Actions& ContentExtension::cachedConditionedActions(const URL& topURL)
+const DFABytecodeInterpreter::Actions& ContentExtension::topURLActions(const URL& topURL)
 {
     populateConditionCacheIfNeeded(topURL);
-    return m_cachedConditionedActions;
+    return m_cachedTopURLActions;
 }
 
 const Vector<uint32_t>& ContentExtension::universalActionsWithConditions(const URL& topURL)

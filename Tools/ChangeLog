@@ -1,3 +1,14 @@
+2017-03-09  Alex Christensen  <achristensen@webkit.org>
+
+        [Content Extensions] Introduce if-top-url and unless-top-url
+        https://bugs.webkit.org/show_bug.cgi?id=169433
+
+        Reviewed by Brady Eidson.
+
+        * TestWebKitAPI/Tests/WebCore/ContentExtensions.cpp:
+        (TestWebKitAPI::TEST_F):
+        Add tests for new functionality and new failure types.
+
 2017-03-09  Srinivasan Vijayaraghavan  <svijayaraghavan@apple.com>
 
         JSC EWS repeat the log message thrice about patch not being relevant

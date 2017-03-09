@@ -98,7 +98,7 @@ void DFABytecodeInterpreter::interpretAppendAction(uint32_t& programCounter, Act
     ASSERT(getInstruction(m_bytecode, m_bytecodeLength, programCounter) == DFABytecodeInstruction::AppendAction
         || getInstruction(m_bytecode, m_bytecodeLength, programCounter) == DFABytecodeInstruction::AppendActionWithIfCondition);
     uint64_t action = (ifCondition ? IfConditionFlag : 0) | static_cast<uint64_t>(getBits<uint32_t>(m_bytecode, m_bytecodeLength, programCounter + sizeof(DFABytecodeInstruction)));
-    if (!m_conditionActions || matchesCondition(action, *m_conditionActions))
+    if (!m_topURLActions || matchesCondition(action, *m_topURLActions))
         actions.add(action);
     
     programCounter += instructionSizeWithArguments(DFABytecodeInstruction::AppendAction);
@@ -119,7 +119,7 @@ void DFABytecodeInterpreter::interpretTestFlagsAndAppendAction(uint32_t& program
     
     if (loadTypeMatches && resourceTypeMatches) {
         uint64_t actionAndFlags = (ifCondition ? IfConditionFlag : 0) | (static_cast<uint64_t>(flagsToCheck) << 32) | static_cast<uint64_t>(getBits<uint32_t>(m_bytecode, m_bytecodeLength, programCounter + sizeof(DFABytecodeInstruction) + sizeof(uint16_t)));
-        if (!m_conditionActions || matchesCondition(actionAndFlags, *m_conditionActions))
+        if (!m_topURLActions || matchesCondition(actionAndFlags, *m_topURLActions))
             actions.add(actionAndFlags);
     }
     programCounter += instructionSizeWithArguments(DFABytecodeInstruction::TestFlagsAndAppendAction);
@@ -169,12 +169,12 @@ DFABytecodeInterpreter::Actions DFABytecodeInterpreter::actionsMatchingEverythin
     return actions;
 }
     
-DFABytecodeInterpreter::Actions DFABytecodeInterpreter::interpretWithConditions(const CString& urlCString, uint16_t flags, const DFABytecodeInterpreter::Actions& conditionActions)
+DFABytecodeInterpreter::Actions DFABytecodeInterpreter::interpretWithConditions(const CString& urlCString, uint16_t flags, const DFABytecodeInterpreter::Actions& topURLActions)
 {
-    ASSERT(!m_conditionActions);
-    m_conditionActions = &conditionActions;
+    ASSERT(!m_topURLActions);
+    m_topURLActions = &topURLActions;
     DFABytecodeInterpreter::Actions actions = interpret(urlCString, flags);
-    m_conditionActions = nullptr;
+    m_topURLActions = nullptr;
     return actions;
 }
 

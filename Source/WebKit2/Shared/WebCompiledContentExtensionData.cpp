@@ -44,8 +44,8 @@ void WebCompiledContentExtensionData::encode(IPC::Encoder& encoder) const
     encoder << filtersWithoutConditionsBytecodeSize;
     encoder << filtersWithConditionsBytecodeOffset;
     encoder << filtersWithConditionsBytecodeSize;
-    encoder << conditionedFiltersBytecodeOffset;
-    encoder << conditionedFiltersBytecodeSize;
+    encoder << topURLFiltersBytecodeOffset;
+    encoder << topURLFiltersBytecodeSize;
 }
 
 bool WebCompiledContentExtensionData::decode(IPC::Decoder& decoder, WebCompiledContentExtensionData& compiledContentExtensionData)
@@ -67,9 +67,9 @@ bool WebCompiledContentExtensionData::decode(IPC::Decoder& decoder, WebCompiledC
         return false;
     if (!decoder.decode(compiledContentExtensionData.filtersWithConditionsBytecodeSize))
         return false;
-    if (!decoder.decode(compiledContentExtensionData.conditionedFiltersBytecodeOffset))
+    if (!decoder.decode(compiledContentExtensionData.topURLFiltersBytecodeOffset))
         return false;
-    if (!decoder.decode(compiledContentExtensionData.conditionedFiltersBytecodeSize))
+    if (!decoder.decode(compiledContentExtensionData.topURLFiltersBytecodeSize))
         return false;
 
     return true;

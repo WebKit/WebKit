@@ -79,13 +79,18 @@ static String constructedPath(const String& base, const String& identifier)
     return WebCore::pathByAppendingComponent(base, "ContentExtension-" + WebCore::encodeForFileName(identifier));
 }
 
-const size_t ContentExtensionFileHeaderSize = sizeof(uint32_t) + 4 * sizeof(uint64_t);
+// The size and offset of the densely packed bytes in the file, not sizeof and offsetof, which would
+// represent the size and offset of the structure in memory, possibly with compiler-added padding.
+const size_t ContentExtensionFileHeaderSize = 2 * sizeof(uint32_t) + 4 * sizeof(uint64_t);
+const size_t ConditionsApplyOnlyToDomainOffset = sizeof(uint32_t) + 4 * sizeof(uint64_t);
+
 struct ContentExtensionMetaData {
     uint32_t version { UserContentExtensionStore::CurrentContentExtensionFileVersion };
     uint64_t actionsSize { 0 };
     uint64_t filtersWithoutConditionsBytecodeSize { 0 };
     uint64_t filtersWithConditionsBytecodeSize { 0 };
     uint64_t conditionedFiltersBytecodeSize { 0 };
+    uint32_t conditionsApplyOnlyToDomain { false };
     
     size_t fileSize() const
     {
@@ -106,6 +111,7 @@ static Data encodeContentExtensionMetaData(const ContentExtensionMetaData& metaD
     encoder << metaData.filtersWithoutConditionsBytecodeSize;
     encoder << metaData.filtersWithConditionsBytecodeSize;
     encoder << metaData.conditionedFiltersBytecodeSize;
+    encoder << metaData.conditionsApplyOnlyToDomain;
 
     ASSERT(encoder.bufferSize() == ContentExtensionFileHeaderSize);
     return Data(encoder.buffer(), encoder.bufferSize());
@@ -130,6 +136,8 @@ static bool decodeContentExtensionMetaData(ContentExtensionMetaData& metaData, c
         if (!decoder.decode(metaData.filtersWithConditionsBytecodeSize))
             return false;
         if (!decoder.decode(metaData.conditionedFiltersBytecodeSize))
+            return false;
+        if (!decoder.decode(metaData.conditionsApplyOnlyToDomain))
             return false;
         success = true;
         return false;
@@ -177,9 +185,10 @@ static std::error_code compiledToFile(String&& json, const String& finalFilePath
             ASSERT(!metaData.filtersWithoutConditionsBytecodeSize);
             ASSERT(!metaData.filtersWithConditionsBytecodeSize);
             ASSERT(!metaData.conditionedFiltersBytecodeSize);
+            ASSERT(!metaData.conditionsApplyOnlyToDomain);
         }
         
-        void writeFiltersWithoutConditionsBytecode(Vector<DFABytecode>&& bytecode) override
+        void writeFiltersWithoutConditionsBytecode(Vector<DFABytecode>&& bytecode) final
         {
             ASSERT(!m_filtersWithConditionBytecodeWritten);
             ASSERT(!m_conditionFiltersBytecodeWritten);
@@ -187,35 +196,37 @@ static std::error_code compiledToFile(String&& json, const String& finalFilePath
             writeToFile(Data(bytecode.data(), bytecode.size()));
         }
         
-        void writeFiltersWithConditionsBytecode(Vector<DFABytecode>&& bytecode) override
+        void writeFiltersWithConditionsBytecode(Vector<DFABytecode>&& bytecode) final
         {
             ASSERT(!m_conditionFiltersBytecodeWritten);
             m_filtersWithConditionBytecodeWritten += bytecode.size();
             writeToFile(Data(bytecode.data(), bytecode.size()));
         }
         
-        void writeConditionedFiltersBytecode(Vector<DFABytecode>&& bytecode) override
+        void writeTopURLFiltersBytecode(Vector<DFABytecode>&& bytecode) final
         {
             m_conditionFiltersBytecodeWritten += bytecode.size();
             writeToFile(Data(bytecode.data(), bytecode.size()));
         }
 
-        void writeActions(Vector<SerializedActionByte>&& actions) override
+        void writeActions(Vector<SerializedActionByte>&& actions, bool conditionsApplyOnlyToDomain) final
         {
             ASSERT(!m_filtersWithoutConditionsBytecodeWritten);
             ASSERT(!m_filtersWithConditionBytecodeWritten);
             ASSERT(!m_conditionFiltersBytecodeWritten);
             ASSERT(!m_actionsWritten);
             m_actionsWritten += actions.size();
+            m_conditionsApplyOnlyToDomain = conditionsApplyOnlyToDomain;
             writeToFile(Data(actions.data(), actions.size()));
         }
         
-        void finalize() override
+        void finalize() final
         {
             m_metaData.actionsSize = m_actionsWritten;
             m_metaData.filtersWithoutConditionsBytecodeSize = m_filtersWithoutConditionsBytecodeWritten;
             m_metaData.filtersWithConditionsBytecodeSize = m_filtersWithConditionBytecodeWritten;
             m_metaData.conditionedFiltersBytecodeSize = m_conditionFiltersBytecodeWritten;
+            m_metaData.conditionsApplyOnlyToDomain = m_conditionsApplyOnlyToDomain;
             
             Data header = encodeContentExtensionMetaData(m_metaData);
             if (!m_fileError && WebCore::seekFile(m_fileHandle, 0ll, WebCore::FileSeekOrigin::SeekFromBeginning) == -1) {
@@ -242,6 +253,7 @@ static std::error_code compiledToFile(String&& json, const String& finalFilePath
         size_t m_filtersWithConditionBytecodeWritten { 0 };
         size_t m_conditionFiltersBytecodeWritten { 0 };
         size_t m_actionsWritten { 0 };
+        bool m_conditionsApplyOnlyToDomain { false };
         bool m_fileError { false };
     };
 
@@ -285,6 +297,7 @@ static RefPtr<API::UserContentExtension> createExtension(const String& identifie
     auto compiledContentExtensionData = WebKit::WebCompiledContentExtensionData(
         WTFMove(sharedMemory),
         fileData,
+        ConditionsApplyOnlyToDomainOffset,
         ContentExtensionFileHeaderSize,
         metaData.actionsSize,
         ContentExtensionFileHeaderSize
@@ -383,7 +396,7 @@ void UserContentExtensionStore::invalidateContentExtensionVersion(const WTF::Str
     auto file = WebCore::openFile(constructedPath(m_storePath, identifier), WebCore::OpenForWrite);
     if (file == WebCore::invalidPlatformFileHandle)
         return;
-    ContentExtensionMetaData invalidHeader = {0, 0, 0, 0, 0};
+    ContentExtensionMetaData invalidHeader;
     auto bytesWritten = WebCore::writeToFile(file, reinterpret_cast<const char*>(&invalidHeader), sizeof(invalidHeader));
     ASSERT_UNUSED(bytesWritten, bytesWritten == sizeof(invalidHeader));
     WebCore::closeFile(file);
@@ -392,12 +405,12 @@ void UserContentExtensionStore::invalidateContentExtensionVersion(const WTF::Str
 const std::error_category& userContentExtensionStoreErrorCategory()
 {
     class UserContentExtensionStoreErrorCategory : public std::error_category {
-        const char* name() const noexcept override
+        const char* name() const noexcept final
         {
             return "user content extension store";
         }
 
-        std::string message(int errorCode) const override
+        std::string message(int errorCode) const final
         {
             switch (static_cast<UserContentExtensionStore::Error>(errorCode)) {
             case UserContentExtensionStore::Error::LookupFailed:

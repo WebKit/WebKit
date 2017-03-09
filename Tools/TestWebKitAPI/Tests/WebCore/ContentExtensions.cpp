@@ -85,7 +85,8 @@ struct CompiledContentExtensionData {
     Vector<ContentExtensions::SerializedActionByte> actions;
     Vector<ContentExtensions::DFABytecode> filtersWithoutConditions;
     Vector<ContentExtensions::DFABytecode> filtersWithConditions;
-    Vector<ContentExtensions::DFABytecode> conditionedFilters;
+    Vector<ContentExtensions::DFABytecode> topURLFilters;
+    bool conditionsApplyOnlyToDomain { false };
 };
 
 class InMemoryContentExtensionCompilationClient final : public ContentExtensions::ContentExtensionCompilationClient {
@@ -96,38 +97,40 @@ public:
         EXPECT_EQ(data.actions.size(), 0ull);
         EXPECT_EQ(data.filtersWithoutConditions.size(), 0ull);
         EXPECT_EQ(data.filtersWithConditions.size(), 0ull);
-        EXPECT_EQ(data.conditionedFilters.size(), 0ull);
+        EXPECT_EQ(data.topURLFilters.size(), 0ull);
     }
 
-    void writeActions(Vector<ContentExtensions::SerializedActionByte>&& actions) final
+    void writeActions(Vector<ContentExtensions::SerializedActionByte>&& actions, bool conditionsApplyOnlyToDomain) final
     {
         EXPECT_FALSE(finalized);
         EXPECT_EQ(m_data.actions.size(), 0ull);
         EXPECT_EQ(m_data.filtersWithoutConditions.size(), 0ull);
         EXPECT_EQ(m_data.filtersWithConditions.size(), 0ull);
-        EXPECT_EQ(m_data.conditionedFilters.size(), 0ull);
+        EXPECT_EQ(m_data.topURLFilters.size(), 0ull);
+        EXPECT_EQ(m_data.actions.size(), 0ull);
         m_data.actions.appendVector(actions);
+        m_data.conditionsApplyOnlyToDomain = conditionsApplyOnlyToDomain;
     }
     
     void writeFiltersWithoutConditionsBytecode(Vector<ContentExtensions::DFABytecode>&& bytecode) final
     {
         EXPECT_FALSE(finalized);
         EXPECT_EQ(m_data.filtersWithConditions.size(), 0ull);
-        EXPECT_EQ(m_data.conditionedFilters.size(), 0ull);
+        EXPECT_EQ(m_data.topURLFilters.size(), 0ull);
         m_data.filtersWithoutConditions.appendVector(bytecode);
     }
     
     void writeFiltersWithConditionsBytecode(Vector<ContentExtensions::DFABytecode>&& bytecode) final
     {
         EXPECT_FALSE(finalized);
-        EXPECT_EQ(m_data.conditionedFilters.size(), 0ull);
+        EXPECT_EQ(m_data.topURLFilters.size(), 0ull);
         m_data.filtersWithConditions.appendVector(bytecode);
     }
     
-    void writeConditionedFiltersBytecode(Vector<ContentExtensions::DFABytecode>&& bytecode) final
+    void writeTopURLFiltersBytecode(Vector<ContentExtensions::DFABytecode>&& bytecode) final
     {
         EXPECT_FALSE(finalized);
-        m_data.conditionedFilters.appendVector(bytecode);
+        m_data.topURLFilters.appendVector(bytecode);
     }
     
     void finalize() final
@@ -171,8 +174,9 @@ public:
     unsigned filtersWithoutConditionsBytecodeLength() const final { return m_data.filtersWithoutConditions.size(); }
     const ContentExtensions::DFABytecode* filtersWithConditionsBytecode() const final { return m_data.filtersWithConditions.data(); }
     unsigned filtersWithConditionsBytecodeLength() const final { return m_data.filtersWithConditions.size(); }
-    const ContentExtensions::DFABytecode* conditionedFiltersBytecode() const final { return m_data.conditionedFilters.data(); }
-    unsigned conditionedFiltersBytecodeLength() const final { return m_data.conditionedFilters.size(); }
+    const ContentExtensions::DFABytecode* topURLFiltersBytecode() const final { return m_data.topURLFilters.data(); }
+    unsigned topURLFiltersBytecodeLength() const final { return m_data.topURLFilters.size(); }
+    bool conditionsApplyOnlyToDomain() const final { return m_data.conditionsApplyOnlyToDomain; }
 
 private:
     InMemoryCompiledContentExtension(CompiledContentExtensionData&& data)
@@ -788,7 +792,72 @@ TEST_F(ContentExtensionTest, DomainTriggersAlongMergedActions)
     testRequest(backend, mainDocumentRequest("http://webkit.org/except-this-ignore-previous-trigger-on-scripts.html", ResourceType::Script), { ContentExtensions::ActionType::BlockCookies, ContentExtensions::ActionType::CSSDisplayNoneSelector });
     testRequest(backend, mainDocumentRequest("http://notwebkit.org/except-this-ignore-previous-trigger-on-scripts.html.test.html", ResourceType::Script), { ContentExtensions::ActionType::BlockCookies, ContentExtensions::ActionType::CSSDisplayNoneSelector, ContentExtensions::ActionType::BlockCookies });
     testRequest(backend, mainDocumentRequest("http://webkit.org/except-this-ignore-previous-trigger-on-scripts.html.test.html", ResourceType::Script), { ContentExtensions::ActionType::BlockCookies, ContentExtensions::ActionType::CSSDisplayNoneSelector, ContentExtensions::ActionType::BlockLoad, ContentExtensions::ActionType::BlockCookies });
+}
 
+TEST_F(ContentExtensionTest, TopURL)
+{
+    const Vector<ContentExtensions::ActionType> blockLoad = { ContentExtensions::ActionType::BlockLoad };
+    const Vector<ContentExtensions::ActionType> blockCookies = { ContentExtensions::ActionType::BlockCookies };
+
+    auto ifTopURL = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"test\\\\.html\", \"if-top-url\":[\"^http://web.*kit.org\"]}}]");
+    testRequest(ifTopURL, mainDocumentRequest("http://webkit.org/test.html"), blockLoad);
+    testRequest(ifTopURL, mainDocumentRequest("http://webkit.org/test.not_html"), { });
+    testRequest(ifTopURL, mainDocumentRequest("http://WEBKIT.org/test.html"), blockLoad);
+    testRequest(ifTopURL, mainDocumentRequest("http://webkit.org/TEST.html"), blockLoad);
+    testRequest(ifTopURL, mainDocumentRequest("http://web__kit.org/test.html"), blockLoad);
+    testRequest(ifTopURL, mainDocumentRequest("http://webk__it.org/test.html"), { });
+    testRequest(ifTopURL, mainDocumentRequest("http://web__kit.org/test.not_html"), { });
+    testRequest(ifTopURL, mainDocumentRequest("http://not_webkit.org/test.html"), { });
+    testRequest(ifTopURL, subResourceRequest("http://not_webkit.org/test.html", "http://webkit.org/not_test.html"), blockLoad);
+    testRequest(ifTopURL, subResourceRequest("http://not_webkit.org/test.html", "http://not_webkit.org/not_test.html"), { });
+    testRequest(ifTopURL, subResourceRequest("http://webkit.org/test.html", "http://not_webkit.org/not_test.html"), { });
+    testRequest(ifTopURL, subResourceRequest("http://webkit.org/test.html", "http://not_webkit.org/test.html"), { });
+    testRequest(ifTopURL, subResourceRequest("http://webkit.org/test.html", "http://webkit.org/test.html"), blockLoad);
+    testRequest(ifTopURL, subResourceRequest("http://webkit.org/test.html", "http://example.com/#http://webkit.org/test.html"), { });
+    testRequest(ifTopURL, subResourceRequest("http://example.com/#http://webkit.org/test.html", "http://webkit.org/test.html"), blockLoad);
+
+    auto unlessTopURL = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"test\\\\.html\", \"unless-top-url\":[\"^http://web.*kit.org\"]}}]");
+    testRequest(unlessTopURL, mainDocumentRequest("http://webkit.org/test.html"), { });
+    testRequest(unlessTopURL, mainDocumentRequest("http://WEBKIT.org/test.html"), { });
+    testRequest(unlessTopURL, mainDocumentRequest("http://webkit.org/TEST.html"), { });
+    testRequest(unlessTopURL, mainDocumentRequest("http://webkit.org/test.not_html"), { });
+    testRequest(unlessTopURL, mainDocumentRequest("http://web__kit.org/test.html"), { });
+    testRequest(unlessTopURL, mainDocumentRequest("http://webk__it.org/test.html"), blockLoad);
+    testRequest(unlessTopURL, mainDocumentRequest("http://web__kit.org/test.not_html"), { });
+    testRequest(unlessTopURL, mainDocumentRequest("http://not_webkit.org/test.html"), blockLoad);
+    testRequest(unlessTopURL, subResourceRequest("http://not_webkit.org/test.html", "http://webkit.org/not_test.html"), { });
+    testRequest(unlessTopURL, subResourceRequest("http://not_webkit.org/test.html", "http://not_webkit.org/not_test.html"), blockLoad);
+    testRequest(unlessTopURL, subResourceRequest("http://webkit.org/test.html", "http://not_webkit.org/not_test.html"), blockLoad);
+    testRequest(unlessTopURL, subResourceRequest("http://webkit.org/test.html", "http://not_webkit.org/test.html"), blockLoad);
+    testRequest(unlessTopURL, subResourceRequest("http://webkit.org/test.html", "http://webkit.org/test.html"), { });
+    testRequest(unlessTopURL, subResourceRequest("http://webkit.org/test.html", "http://example.com/#http://webkit.org/test.html"), blockLoad);
+    testRequest(unlessTopURL, subResourceRequest("http://example.com/#http://webkit.org/test.html", "http://webkit.org/test.html"), { });
+
+    auto ifTopURLMatchesEverything = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"test\\\\.html\", \"if-top-url\":[\".*\"]}}]");
+    testRequest(ifTopURLMatchesEverything, mainDocumentRequest("http://webkit.org/test.html"), blockLoad);
+    testRequest(ifTopURLMatchesEverything, mainDocumentRequest("http://webkit.org/test.not_html"), { });
+    testRequest(ifTopURLMatchesEverything, mainDocumentRequest("http://not_webkit.org/test.html"), blockLoad);
+    
+    auto unlessTopURLMatchesEverything = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"test\\\\.html\", \"unless-top-url\":[\".*\"]}}]");
+    testRequest(unlessTopURLMatchesEverything, mainDocumentRequest("http://webkit.org/test.html"), { });
+    testRequest(unlessTopURLMatchesEverything, mainDocumentRequest("http://webkit.org/test.not_html"), { });
+    testRequest(unlessTopURLMatchesEverything, mainDocumentRequest("http://not_webkit.org/test.html"), { });
+    
+    auto mixedConditions = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"test\\\\.html\", \"if-top-url\":[\"^http://web.*kit.org\"]}},"
+        "{\"action\":{\"type\":\"block-cookies\"},\"trigger\":{\"resource-type\":[\"document\"], \"url-filter\":\"test\\\\.html\", \"unless-top-url\":[\"^http://web.*kit.org\"]}}]");
+    testRequest(mixedConditions, mainDocumentRequest("http://webkit.org/test.html"), blockLoad);
+    testRequest(mixedConditions, mainDocumentRequest("http://not_webkit.org/test.html"), blockCookies);
+    testRequest(mixedConditions, subResourceRequest("http://webkit.org/test.html", "http://not_webkit.org", ResourceType::Document), blockCookies);
+    testRequest(mixedConditions, subResourceRequest("http://webkit.org/test.html", "http://not_webkit.org", ResourceType::Image), { });
+
+    auto caseSensitive = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"test\\\\.html\", \"if-top-url\":[\"^http://web.*kit.org/test\"], \"top-url-filter-is-case-sensitive\":true}}]");
+    testRequest(caseSensitive, mainDocumentRequest("http://webkit.org/test.html"), blockLoad);
+    testRequest(caseSensitive, mainDocumentRequest("http://WEBKIT.org/test.html"), blockLoad); // domains are canonicalized before running regexes.
+    testRequest(caseSensitive, mainDocumentRequest("http://webkit.org/TEST.html"), { });
+
+    auto caseInsensitive = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"test\\\\.html\", \"if-top-url\":[\"^http://web.*kit.org/test\"]}}]");
+    testRequest(caseInsensitive, mainDocumentRequest("http://webkit.org/test.html"), blockLoad);
+    testRequest(caseInsensitive, mainDocumentRequest("http://webkit.org/TEST.html"), blockLoad);
 }
 
 TEST_F(ContentExtensionTest, MultipleExtensions)
@@ -1364,6 +1433,17 @@ TEST_F(ContentExtensionTest, InvalidJSON)
     checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\".*\",\"unless-domain\":[\"a\"]}}]", { });
     checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"[\"}}]",
         ContentExtensions::ContentExtensionError::JSONInvalidRegex);
+
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-domain\":[\"a\"],\"unless-domain\":[\"a\"]}}]", ContentExtensions::ContentExtensionError::JSONMultipleConditions);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-top-url\":[\"a\"],\"unless-top-url\":[]}}]", ContentExtensions::ContentExtensionError::JSONMultipleConditions);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-top-url\":[\"a\"],\"unless-top-url\":[\"a\"]}}]", ContentExtensions::ContentExtensionError::JSONMultipleConditions);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-domain\":[\"a\"],\"if-top-url\":[\"a\"]}}]", ContentExtensions::ContentExtensionError::JSONMultipleConditions);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-top-url\":[],\"unless-domain\":[\"a\"]}}]", ContentExtensions::ContentExtensionError::JSONMultipleConditions);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-top-url\":[\"a\"],\"if-domain\":[\"a\"]}}]", ContentExtensions::ContentExtensionError::JSONMultipleConditions);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-top-url\":[\"a\"]}}, {\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-domain\":[\"a\"]}}]", ContentExtensions::ContentExtensionError::JSONTopURLAndDomainConditions);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-top-url\":[\"a\"]}}, {\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"unless-domain\":[\"a\"]}}]", ContentExtensions::ContentExtensionError::JSONTopURLAndDomainConditions);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"test\\\\.html\", \"unless-top-url\":[\"[\"]}}]", ContentExtensions::ContentExtensionError::JSONInvalidRegex);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\", \"unexpected-identifier-should-be-ignored\":5}}]", { });
 }
 
 TEST_F(ContentExtensionTest, StrictPrefixSeparatedMachines1)

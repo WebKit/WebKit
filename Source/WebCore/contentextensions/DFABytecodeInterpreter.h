@@ -60,7 +60,7 @@ private:
 
     const DFABytecode* m_bytecode;
     const unsigned m_bytecodeLength;
-    const DFABytecodeInterpreter::Actions* m_conditionActions { nullptr };
+    const DFABytecodeInterpreter::Actions* m_topURLActions { nullptr };
 };
 
 } // namespace ContentExtensions    

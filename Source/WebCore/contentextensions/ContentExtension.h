@@ -46,7 +46,7 @@ public:
     const String& identifier() const { return m_identifier; }
     const CompiledContentExtension& compiledExtension() const { return m_compiledExtension.get(); }
     StyleSheetContents* globalDisplayNoneStyleSheet();
-    const DFABytecodeInterpreter::Actions& cachedConditionedActions(const URL& topURL);
+    const DFABytecodeInterpreter::Actions& topURLActions(const URL& topURL);
     const Vector<uint32_t>& universalActionsWithoutConditions() { return m_universalActionsWithoutConditions; }
     const Vector<uint32_t>& universalActionsWithConditions(const URL& topURL);
 
@@ -60,9 +60,9 @@ private:
     RefPtr<StyleSheetContents> m_globalDisplayNoneStyleSheet;
     void compileGlobalDisplayNoneStyleSheet();
 
-    String m_cachedDomain;
+    URL m_cachedTopURL;
     void populateConditionCacheIfNeeded(const URL& topURL);
-    DFABytecodeInterpreter::Actions m_cachedConditionedActions;
+    DFABytecodeInterpreter::Actions m_cachedTopURLActions;
     Vector<uint32_t> m_cachedUniversalConditionedActions;
 
     Vector<uint32_t> m_universalActionsWithoutConditions;

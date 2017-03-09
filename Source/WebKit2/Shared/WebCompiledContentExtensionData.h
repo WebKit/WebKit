@@ -42,17 +42,18 @@ class WebCompiledContentExtensionData {
 public:
     WebCompiledContentExtensionData() = default;
 
-    WebCompiledContentExtensionData(RefPtr<SharedMemory>&& data, NetworkCache::Data fileData, unsigned actionsOffset, unsigned actionsSize, unsigned filtersWithoutConditionsBytecodeOffset, unsigned filtersWithoutConditionsBytecodeSize, unsigned filtersWithConditionsBytecodeOffset, unsigned filtersWithConditionsBytecodeSize, unsigned conditionedFiltersBytecodeOffset, unsigned conditionedFiltersBytecodeSize)
+    WebCompiledContentExtensionData(RefPtr<SharedMemory>&& data, NetworkCache::Data fileData, unsigned conditionsApplyOnlyToDomainOffset, unsigned actionsOffset, unsigned actionsSize, unsigned filtersWithoutConditionsBytecodeOffset, unsigned filtersWithoutConditionsBytecodeSize, unsigned filtersWithConditionsBytecodeOffset, unsigned filtersWithConditionsBytecodeSize, unsigned topURLFiltersBytecodeOffset, unsigned topURLFiltersBytecodeSize)
         : data(WTFMove(data))
         , fileData(fileData)
+        , conditionsApplyOnlyToDomainOffset(conditionsApplyOnlyToDomainOffset)
         , actionsOffset(actionsOffset)
         , actionsSize(actionsSize)
         , filtersWithoutConditionsBytecodeOffset(filtersWithoutConditionsBytecodeOffset)
         , filtersWithoutConditionsBytecodeSize(filtersWithoutConditionsBytecodeSize)
         , filtersWithConditionsBytecodeOffset(filtersWithConditionsBytecodeOffset)
         , filtersWithConditionsBytecodeSize(filtersWithConditionsBytecodeSize)
-        , conditionedFiltersBytecodeOffset(conditionedFiltersBytecodeOffset)
-        , conditionedFiltersBytecodeSize(conditionedFiltersBytecodeSize)
+        , topURLFiltersBytecodeOffset(topURLFiltersBytecodeOffset)
+        , topURLFiltersBytecodeSize(topURLFiltersBytecodeSize)
     {
     }
 
@@ -61,14 +62,15 @@ public:
 
     RefPtr<SharedMemory> data;
     NetworkCache::Data fileData;
+    unsigned conditionsApplyOnlyToDomainOffset { 0 };
     unsigned actionsOffset { 0 };
     unsigned actionsSize { 0 };
     unsigned filtersWithoutConditionsBytecodeOffset { 0 };
     unsigned filtersWithoutConditionsBytecodeSize { 0 };
     unsigned filtersWithConditionsBytecodeOffset { 0 };
     unsigned filtersWithConditionsBytecodeSize { 0 };
-    unsigned conditionedFiltersBytecodeOffset { 0 };
-    unsigned conditionedFiltersBytecodeSize { 0 };
+    unsigned topURLFiltersBytecodeOffset { 0 };
+    unsigned topURLFiltersBytecodeSize { 0 };
 };
 
 }

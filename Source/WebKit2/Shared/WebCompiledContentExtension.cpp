@@ -44,6 +44,11 @@ WebCompiledContentExtension::~WebCompiledContentExtension()
 {
 }
 
+bool WebCompiledContentExtension::conditionsApplyOnlyToDomain() const
+{
+    return *reinterpret_cast<uint32_t*>(reinterpret_cast<uint8_t*>(m_data.data->data()) + m_data.conditionsApplyOnlyToDomainOffset);
+}
+
 const WebCore::ContentExtensions::DFABytecode* WebCompiledContentExtension::filtersWithoutConditionsBytecode() const
 {
     return static_cast<const WebCore::ContentExtensions::DFABytecode*>(m_data.data->data()) + m_data.filtersWithoutConditionsBytecodeOffset;
@@ -64,14 +69,14 @@ unsigned WebCompiledContentExtension::filtersWithConditionsBytecodeLength() cons
     return m_data.filtersWithConditionsBytecodeSize;
 }
 
-const WebCore::ContentExtensions::DFABytecode* WebCompiledContentExtension::conditionedFiltersBytecode() const
+const WebCore::ContentExtensions::DFABytecode* WebCompiledContentExtension::topURLFiltersBytecode() const
 {
-    return static_cast<const WebCore::ContentExtensions::DFABytecode*>(m_data.data->data()) + m_data.conditionedFiltersBytecodeOffset;
+    return static_cast<const WebCore::ContentExtensions::DFABytecode*>(m_data.data->data()) + m_data.topURLFiltersBytecodeOffset;
 }
 
-unsigned WebCompiledContentExtension::conditionedFiltersBytecodeLength() const
+unsigned WebCompiledContentExtension::topURLFiltersBytecodeLength() const
 {
-    return m_data.conditionedFiltersBytecodeSize;
+    return m_data.topURLFiltersBytecodeSize;
 }
 
 const WebCore::ContentExtensions::SerializedActionByte* WebCompiledContentExtension::actions() const

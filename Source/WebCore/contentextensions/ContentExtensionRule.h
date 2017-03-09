@@ -43,17 +43,23 @@ namespace ContentExtensions {
 struct Trigger {
     String urlFilter;
     bool urlFilterIsCaseSensitive { false };
+    bool topURLConditionIsCaseSensitive { false };
     ResourceFlags flags { 0 };
     Vector<String> conditions;
     enum class ConditionType {
         None,
         IfDomain,
         UnlessDomain,
-    } conditionType { ConditionType::None };
+        IfTopURL,
+        UnlessTopURL,
+    };
+    ConditionType conditionType { ConditionType::None };
 
     ~Trigger()
     {
         ASSERT(conditions.isEmpty() == (conditionType == ConditionType::None));
+        if (topURLConditionIsCaseSensitive)
+            ASSERT(conditionType == ConditionType::IfTopURL || conditionType == ConditionType::UnlessTopURL);
     }
 
     bool isEmpty() const

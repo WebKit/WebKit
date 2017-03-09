@@ -40,10 +40,10 @@ public:
     virtual ~ContentExtensionCompilationClient() { }
     
     // Functions should be called in this order. All except writeActions and finalize can be called multiple times, though.
-    virtual void writeActions(Vector<SerializedActionByte>&&) = 0;
+    virtual void writeActions(Vector<SerializedActionByte>&&, bool conditionsApplyOnlyToDomain) = 0;
     virtual void writeFiltersWithoutConditionsBytecode(Vector<DFABytecode>&&) = 0;
     virtual void writeFiltersWithConditionsBytecode(Vector<DFABytecode>&&) = 0;
-    virtual void writeConditionedFiltersBytecode(Vector<DFABytecode>&&) = 0;
+    virtual void writeTopURLFiltersBytecode(Vector<DFABytecode>&&) = 0;
     virtual void finalize() = 0;
 };
 

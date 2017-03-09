@@ -47,8 +47,9 @@ private:
     unsigned filtersWithoutConditionsBytecodeLength() const final;
     const WebCore::ContentExtensions::DFABytecode* filtersWithConditionsBytecode() const final;
     unsigned filtersWithConditionsBytecodeLength() const final;
-    const WebCore::ContentExtensions::DFABytecode* conditionedFiltersBytecode() const final;
-    unsigned conditionedFiltersBytecodeLength() const final;
+    const WebCore::ContentExtensions::DFABytecode* topURLFiltersBytecode() const final;
+    unsigned topURLFiltersBytecodeLength() const final;
+    bool conditionsApplyOnlyToDomain() const final;
     
     const WebCore::ContentExtensions::SerializedActionByte* actions() const final;
     unsigned actionsLength() const final;

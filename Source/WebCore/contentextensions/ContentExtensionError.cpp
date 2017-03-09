@@ -78,13 +78,15 @@ const std::error_category& contentExtensionErrorCategory()
             case ContentExtensionError::JSONInvalidRegex:
                 return "Invalid or unsupported regular expression.";
             case ContentExtensionError::JSONInvalidConditionList:
-                return "Invalid list of if-domain or unless-domain conditions.";
+                return "Invalid list of if-domain, unless-domain, if-top-url, or unless-top-url conditions.";
             case ContentExtensionError::JSONTooManyRules:
                 return "Too many rules in JSON array.";
             case ContentExtensionError::JSONDomainNotLowerCaseASCII:
                 return "Domains must be lower case ASCII. Use punycode to encode non-ASCII characters.";
             case ContentExtensionError::JSONMultipleConditions:
-                return "A trigger cannot have more than one condition (if-domain or unless-domain)";
+                return "A trigger cannot have more than one condition (if-domain, unless-domain, if-top-url, or unless-top-url)";
+            case ContentExtensionError::JSONTopURLAndDomainConditions:
+                return "A list cannot have if-domain and unless-domain mixed with if-top-url and unless-top-url";
             }
 
             return std::string();

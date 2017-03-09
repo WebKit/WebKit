@@ -1,3 +1,37 @@
+2017-03-09  Alex Christensen  <achristensen@webkit.org>
+
+        [Content Extensions] Introduce if-top-url and unless-top-url
+        https://bugs.webkit.org/show_bug.cgi?id=169433
+
+        Reviewed by Brady Eidson.
+
+        Rename conditionedFilters to topURLFilters to reflect the fact that they are the filters
+        that are run on the top URL, and possibly just the domain of the top url.
+        I was a bit too aggressive when renaming domain* to condition* in r213533.
+
+        * Shared/WebCompiledContentExtension.cpp:
+        (WebKit::WebCompiledContentExtension::conditionsApplyOnlyToDomain):
+        (WebKit::WebCompiledContentExtension::topURLFiltersBytecode):
+        (WebKit::WebCompiledContentExtension::topURLFiltersBytecodeLength):
+        (WebKit::WebCompiledContentExtension::conditionedFiltersBytecode): Deleted.
+        (WebKit::WebCompiledContentExtension::conditionedFiltersBytecodeLength): Deleted.
+        * Shared/WebCompiledContentExtension.h:
+        * Shared/WebCompiledContentExtensionData.cpp:
+        (WebKit::WebCompiledContentExtensionData::encode):
+        (WebKit::WebCompiledContentExtensionData::decode):
+        * Shared/WebCompiledContentExtensionData.h:
+        (WebKit::WebCompiledContentExtensionData::WebCompiledContentExtensionData):
+        * UIProcess/API/APIUserContentExtensionStore.cpp:
+        (API::encodeContentExtensionMetaData):
+        (API::decodeContentExtensionMetaData):
+        (API::compiledToFile):
+        (API::createExtension):
+        (API::UserContentExtensionStore::invalidateContentExtensionVersion):
+        (API::userContentExtensionStoreErrorCategory):
+        * UIProcess/API/APIUserContentExtensionStore.h:
+        Increment CurrentContentExtensionFileVersion because we have changed the format of the binary on disk.
+        We only added 4 bytes, but that's binary incompatible and requires re-compiling any existing content extensions.
+
 2017-03-09  Brent Fulgham  <bfulgham@apple.com>
 
         [WK2][iOS] Extend WebProcess sandbox to support audio and video compression/decompression
