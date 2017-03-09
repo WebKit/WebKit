@@ -1,3 +1,18 @@
+2017-03-08  Srinivasan Vijayaraghavan  <svijayaraghavan@apple.com>
+
+        Fix error/warning duplication in JSON bindings results
+        https://bugs.webkit.org/show_bug.cgi?id=169305
+
+        Reviewed by Alexey Proskuryakov.
+
+        The distinction between failures and errors is not meaningful, since all errors will also be failures.
+        As a result, we only need to keep track of failures.
+        
+        * Scripts/webkitpy/bindings/main.py:
+        (BindingsTests.__init__): Remove errors.
+        (BindingsTests.detect_changes): Remove errors.
+        (BindingsTests.main): Remove errors.
+
 2017-03-08  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Add helpers to run Six Speed to run-jsc-benchmarks

@@ -46,7 +46,6 @@ class BindingsTests:
 
         if self.json_file_name:
             self.failures = []
-            self.errors = []
 
     def generate_from_idl(self, generator, idl_file, output_directory, supplemental_dependency_file):
         cmd = ['perl', '-w',
@@ -115,8 +114,6 @@ class BindingsTests:
             except ScriptError, e:
                 output = e.output
                 exit_code = e.exit_code
-                if self.json_file_name:
-                    self.errors.append("(%s) %s" % (generator, output_file))
 
             if exit_code or output:
                 print 'FAIL: (%s) %s' % (generator, output_file)
@@ -203,7 +200,6 @@ class BindingsTests:
         if self.json_file_name:
             json_data = {
                 'failures': self.failures,
-                'errors': self.errors,
             }
 
             with open(self.json_file_name, 'w') as json_file:
