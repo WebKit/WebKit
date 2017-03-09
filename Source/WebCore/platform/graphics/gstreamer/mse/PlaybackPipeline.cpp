@@ -425,7 +425,7 @@ void PlaybackPipeline::flush(AtomicString trackId)
 
     GST_TRACE("Position: %" GST_TIME_FORMAT, GST_TIME_ARGS(position));
 
-    if (position == GST_CLOCK_TIME_NONE) {
+    if (static_cast<guint64>(position) == GST_CLOCK_TIME_NONE) {
         GST_TRACE("Can't determine position, avoiding flush");
         return;
     }
