@@ -179,7 +179,7 @@ void WebDragClient::declareAndWriteAttachment(const String& pasteboardName, Elem
 }
 #endif
 
-#else
+#elif !ENABLE(DATA_INTERACTION)
 
 bool WebDragClient::useLegacyDragClient()
 {
@@ -202,11 +202,11 @@ WebCore::DragSourceAction WebDragClient::dragSourceActionMaskForPoint(const IntP
 void WebDragClient::willPerformDragSourceAction(WebCore::DragSourceAction, const WebCore::IntPoint&, WebCore::DataTransfer&)
 {
 }
-#if !ENABLE(DATA_INTERACTION)
+
 void WebDragClient::startDrag(WebCore::DragImage, const IntPoint&, const IntPoint&, const FloatPoint&, DataTransfer&, Frame&, WebCore::DragSourceAction)
 {
 }
-#endif
+
 void WebDragClient::beginDrag(DragItem, Frame&, const IntPoint&, const IntPoint&, DataTransfer&, DragSourceAction)
 {
 }
