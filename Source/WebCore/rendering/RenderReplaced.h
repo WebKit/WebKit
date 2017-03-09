@@ -32,6 +32,7 @@ public:
     LayoutUnit computeReplacedLogicalWidth(ShouldComputePreferred = ComputeActual) const override;
     LayoutUnit computeReplacedLogicalHeight() const override;
 
+    LayoutSize intrinsicSize() const final { return m_intrinsicSize; }
     LayoutRect replacedContentRect(const LayoutSize& intrinsicSize) const;
 
     bool hasReplacedLogicalWidth() const;
@@ -45,7 +46,6 @@ protected:
 
     void layout() override;
 
-    LayoutSize intrinsicSize() const final { return m_intrinsicSize; }
     void computeIntrinsicRatioInformation(FloatSize& intrinsicSize, double& intrinsicRatio) const override;
 
     void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const final;

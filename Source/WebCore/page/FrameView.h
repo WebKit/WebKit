@@ -275,6 +275,7 @@ public:
 
     void viewportContentsChanged();
     WEBCORE_EXPORT void resumeVisibleImageAnimationsIncludingSubframes();
+    void requestAsyncDecodingForImagesInAbsoluteRectIncludingSubframes(const IntRect&);
 
     String mediaType() const;
     WEBCORE_EXPORT void setMediaType(const String&);
@@ -645,9 +646,11 @@ private:
     void performPostLayoutTasks();
     void autoSizeIfEnabled();
 
+    void applyRecursivelyWithAbsoluteRect(const IntRect&, const std::function<void(FrameView& frameView, const IntRect& rect)>&);
     void applyRecursivelyWithVisibleRect(const std::function<void (FrameView& frameView, const IntRect& visibleRect)>&);
     void resumeVisibleImageAnimations(const IntRect& visibleRect);
     void updateScriptedAnimationsAndTimersThrottlingState(const IntRect& visibleRect);
+    void requestAsyncDecodingForImagesInAbsoluteRect(const IntRect&);
 
     void updateLayerFlushThrottling();
     WEBCORE_EXPORT void adjustTiledBackingCoverage();

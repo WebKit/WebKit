@@ -71,7 +71,8 @@ public:
     void startAsyncDecodingQueue();
     bool requestFrameAsyncDecodingAtIndex(size_t, SubsamplingLevel, const IntSize&);
     void stopAsyncDecodingQueue();
-    bool hasDecodingQueue() { return m_decodingQueue; }
+    bool hasAsyncDecodingQueue() const { return m_decodingQueue; }
+    bool isAsyncDecodingQueueIdle() const;
 
     // Image metadata which is calculated either by the ImageDecoder or directly
     // from the NativeImage if this class was created for a memory image.

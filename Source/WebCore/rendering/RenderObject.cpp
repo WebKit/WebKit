@@ -1995,6 +1995,12 @@ void RenderObject::setVisibleInViewportState(VisibleInViewportState visible)
     if (visible != VisibilityUnknown || hasRareData())
         ensureRareData().setVisibleInViewportState(visible);
 }
+    
+void RenderObject::setIsRegisteredForAsyncImageDecodingCallback(bool registered)
+{
+    if (registered || hasRareData())
+        ensureRareData().setIsRegisteredForAsyncImageDecodingCallback(registered);
+}
 
 RenderObject::RareDataMap& RenderObject::rareDataMap()
 {

@@ -70,7 +70,8 @@ public:
 
     bool isAsyncDecodingRequired();
     bool requestFrameAsyncDecodingAtIndex(size_t index, SubsamplingLevel subsamplingLevel, const IntSize& sizeForDrawing) { return m_frameCache->requestFrameAsyncDecodingAtIndex(index, subsamplingLevel, sizeForDrawing); }
-    bool hasDecodingQueue() const { return m_frameCache->hasDecodingQueue(); }
+    bool hasAsyncDecodingQueue() const { return m_frameCache->hasAsyncDecodingQueue(); }
+    bool isAsyncDecodingQueueIdle() const  { return m_frameCache->isAsyncDecodingQueueIdle(); }
     void stopAsyncDecodingQueue() { m_frameCache->stopAsyncDecodingQueue(); }
 
     // Image metadata which is calculated by the decoder or can deduced by the case of the memory NativeImage.

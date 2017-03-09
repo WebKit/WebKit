@@ -145,10 +145,11 @@ public:
     virtual IntRect bounds() const = 0;
     virtual IntRect boundsWithoutMargin() const = 0;
 
-    // Exposed for testing
     virtual IntRect tileCoverageRect() const = 0;
-    virtual IntRect tileGridExtent() const = 0;
     virtual void setScrollingModeIndication(ScrollingModeIndication) = 0;
+
+    // Exposed for testing
+    virtual IntRect tileGridExtent() const = 0;
 
 #if USE(CA)
     virtual PlatformCALayer* tiledScrollingIndicatorLayer() = 0;

@@ -173,6 +173,7 @@ protected:
     void stopAnimation() override;
     void resetAnimation() override;
     void newFrameNativeImageAvailableAtIndex(size_t) override;
+    void requestAsyncDecoding(const IntSize& sizeForDrawing) override;
 
     // Handle platform-specific data
     void invalidatePlatformData();
@@ -207,6 +208,7 @@ private:
     RepetitionCount m_repetitionsComplete { RepetitionCountNone }; // How many repetitions we've finished.
     double m_desiredFrameStartTime { 0 }; // The system time at which we hope to see the next call to startAnimation().
     bool m_animationFinished { false };
+    bool m_needsRepaint { false };
 
     float m_frameDecodingDurationForTesting { 0 };
     double m_desiredFrameDecodeTimeForTesting { 0 };
