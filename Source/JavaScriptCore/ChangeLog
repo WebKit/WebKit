@@ -1,3 +1,14 @@
+2017-03-09  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Show individual messages in the content pane for a WebSocket
+        https://bugs.webkit.org/show_bug.cgi?id=169011
+
+        Reviewed by Joseph Pecoraro.
+
+        Add walltime parameter and correct the description of Timestamp type.
+
+        * inspector/protocol/Network.json:
+
 2017-03-09  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, fix weak external symbol error.

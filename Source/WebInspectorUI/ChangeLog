@@ -1,3 +1,69 @@
+2017-03-09  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Show individual messages in the content pane for a WebSocket
+        https://bugs.webkit.org/show_bug.cgi?id=169011
+
+        Reviewed by Joseph Pecoraro.
+
+        When selecting a Web Socket in Network panel or Resources, display a table
+        of all messages that have been sent and received.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Controllers/FrameResourceManager.js:
+        (WebInspector.FrameResourceManager.prototype.webSocketWillSendHandshakeRequest):
+        Add a walltime parameter.
+
+        (WebInspector.FrameResourceManager.prototype._webSocketFrameReceivedOrSent):
+        Fix a bug: masked messages are outgoing, not incoming.
+
+        * UserInterface/Images/ArrowUp.svg: Added.
+        * UserInterface/Images/gtk/ArrowUp.svg: Added.
+        Add an icon for outgoing messages.
+
+        * UserInterface/Main.html:
+        * UserInterface/Models/WebSocketResource.js:
+        (WebInspector.WebSocketResource):
+        (WebInspector.WebSocketResource.prototype.get walltime):
+        (WebInspector.WebSocketResource.prototype.addFrame):
+        (WebInspector.WebSocketResource.prototype._walltimeForWebSocketTimestamp):
+        * UserInterface/Protocol/NetworkObserver.js:
+        (WebInspector.NetworkObserver.prototype.webSocketWillSendHandshakeRequest):
+        (WebInspector.NetworkObserver.prototype.webSocketFrameSent):
+        (WebInspector.NetworkObserver.prototype.webSocketFrameError):
+        (WebInspector.NetworkObserver):
+        * UserInterface/Views/NetworkSidebarPanel.js:
+        (WebInspector.NetworkSidebarPanel.prototype.treeElementAddedOrChanged):
+        * UserInterface/Views/ResourceClusterContentView.js:
+        (WebInspector.ResourceClusterContentView.prototype.get responseContentView):
+        * UserInterface/Views/WebSocketContentView.css: Added.
+        (.web-socket.content-view > .data-grid):
+        (.web-socket.content-view > .data-grid table.data):
+        (.web-socket.content-view > .data-grid td.data-column,):
+        (body[dir=ltr] .web-socket.content-view > .data-grid .data-column > div):
+        (body[dir=rtl] .web-socket.content-view > .data-grid .data-column > div):
+        (.web-socket.content-view .icon):
+        (body[dir=ltr] .web-socket.content-view .icon):
+        (body[dir=rtl] .web-socket.content-view .icon):
+        (.web-socket.content-view .outgoing .icon):
+        (.web-socket.content-view .data-grid.variable-height-rows table.data tr:nth-child(odd)):
+        (.web-socket.content-view .data-grid table.data tr.revealed):
+        (.web-socket.content-view .data-grid.variable-height-rows table.data tr.outgoing):
+        (.web-socket.content-view .data-grid.variable-height-rows table.data tr.non-text-frame):
+
+        * UserInterface/Views/WebSocketContentView.js: Added.
+        (WebInspector.WebSocketContentView):
+        Only show Time column when walltime is available.
+
+        (WebInspector.WebSocketContentView.textForOpcode):
+        (WebInspector.WebSocketContentView.prototype.shown):
+        (WebInspector.WebSocketContentView.prototype.hidden):
+        (WebInspector.WebSocketContentView.prototype.addFrame):
+        (WebInspector.WebSocketContentView.prototype._updateFrames):
+        Only render frames that haven't been rendered yet.
+
+        (WebInspector.WebSocketContentView.prototype._addRow):
+        (WebInspector.WebSocketContentView.prototype._timeStringFromTimestamp):
+
 2017-03-09  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: DOMTreeManager dispatches DocumentUpdated twice when the document is cleared

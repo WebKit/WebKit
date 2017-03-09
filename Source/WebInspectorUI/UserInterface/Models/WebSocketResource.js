@@ -25,13 +25,15 @@
 
 WebInspector.WebSocketResource = class WebSocketResource extends WebInspector.Resource
 {
-    constructor(url, loaderIdentifier, targetId, requestIdentifier, requestHeaders, requestData, requestSentTimestamp, initiatorSourceCodeLocation)
+    constructor(url, loaderIdentifier, targetId, requestIdentifier, requestHeaders, requestData, timestamp, walltime, requestSentTimestamp, initiatorSourceCodeLocation)
     {
         const type = WebInspector.Resource.Type.WebSocket;
         const mimeType = null;
         const requestMethod = "GET";
         super(url, mimeType, type, loaderIdentifier, targetId, requestIdentifier, requestMethod, requestHeaders, requestData, requestSentTimestamp, initiatorSourceCodeLocation);
 
+        this._timestamp = timestamp;
+        this._walltime = walltime;
         this._readyState = WebInspector.WebSocketResource.ReadyState.Connecting;
         this._frames = [];
     }
@@ -39,6 +41,7 @@ WebInspector.WebSocketResource = class WebSocketResource extends WebInspector.Re
     // Public
 
     get frames() { return this._frames; }
+    get walltime() { return this._walltime; }
 
     get readyState()
     {
@@ -56,12 +59,21 @@ WebInspector.WebSocketResource = class WebSocketResource extends WebInspector.Re
         this.dispatchEventToListeners(WebInspector.WebSocketResource.Event.ReadyStateChanged, {previousState, state});
     }
 
-    addFrame(data, isIncoming, opcode, timestamp, elapsedTime)
+    addFrame(data, isOutgoing, opcode, timestamp, elapsedTime)
     {
-        let frame = {data, isIncoming, opcode, timestamp, elapsedTime};
+        let frame = {data, isOutgoing, opcode, walltime: this._walltimeForWebSocketTimestamp(timestamp)};
         this._frames.push(frame);
 
+        this.increaseSize(data.length, elapsedTime);
+
         this.dispatchEventToListeners(WebInspector.WebSocketResource.Event.FrameAdded, frame);
+    }
+
+    // Private
+
+    _walltimeForWebSocketTimestamp(timestamp)
+    {
+        return this._walltime + (timestamp - this._timestamp);
     }
 };
 
@@ -74,4 +86,13 @@ WebInspector.WebSocketResource.ReadyState = {
     Closed: Symbol("web-socket-ready-state-closed"),
     Connecting: Symbol("web-socket-ready-state-connecting"),
     Open: Symbol("web-socket-ready-state-open"),
+};
+
+WebInspector.WebSocketResource.OpCodes = {
+    ContinuationFrame: 0,
+    TextFrame: 1,
+    BinaryFrame: 2,
+    ConnectionCloseFrame: 8,
+    PingFrame: 9,
+    PongFrame: 10,
 };

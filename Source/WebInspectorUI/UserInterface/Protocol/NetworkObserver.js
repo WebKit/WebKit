@@ -68,9 +68,9 @@ WebInspector.NetworkObserver = class NetworkObserver
         WebInspector.frameResourceManager.webSocketCreated(requestId, url);
     }
 
-    webSocketWillSendHandshakeRequest(requestId, timestamp, request)
+    webSocketWillSendHandshakeRequest(requestId, timestamp, walltime, request)
     {
-        WebInspector.frameResourceManager.webSocketWillSendHandshakeRequest(requestId, timestamp, request);
+        WebInspector.frameResourceManager.webSocketWillSendHandshakeRequest(requestId, timestamp, walltime, request);
     }
 
     webSocketHandshakeResponseReceived(requestId, timestamp, response)
@@ -88,13 +88,13 @@ WebInspector.NetworkObserver = class NetworkObserver
         WebInspector.frameResourceManager.webSocketFrameReceived(requestId, timestamp, response);
     }
 
-    webSocketFrameError(requestId, timestamp, errorMessage)
-    {
-        // FIXME: Not implemented.
-    }
-
     webSocketFrameSent(requestId, timestamp, response)
     {
         WebInspector.frameResourceManager.webSocketFrameSent(requestId, timestamp, response);
+    }
+
+    webSocketFrameError(requestId, timestamp, errorMessage)
+    {
+        // FIXME: Not implemented.
     }
 };

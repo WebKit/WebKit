@@ -21,6 +21,11 @@
         {
             "id": "Timestamp",
             "type": "number",
+            "description": "Elapsed seconds since frontend connected."
+        },
+        {
+            "id": "Walltime",
+            "type": "number",
             "description": "Number of seconds since epoch."
         },
         {
@@ -255,7 +260,8 @@
             "description": "Fired when WebSocket is about to initiate handshake.",
             "parameters": [
                 { "name": "requestId", "$ref": "RequestId", "description": "Request identifier." },
-                { "name": "timestamp", "$ref": "Timestamp", "description": "Timestamp." },
+                { "name": "timestamp", "$ref": "Timestamp" },
+                { "name": "walltime", "$ref": "Walltime" },
                 { "name": "request", "$ref": "WebSocketRequest", "description": "WebSocket request data." }
             ]
         },
@@ -264,7 +270,7 @@
             "description": "Fired when WebSocket handshake response becomes available.",
             "parameters": [
                 { "name": "requestId", "$ref": "RequestId", "description": "Request identifier." },
-                { "name": "timestamp", "$ref": "Timestamp", "description": "Timestamp." },
+                { "name": "timestamp", "$ref": "Timestamp" },
                 { "name": "response", "$ref": "WebSocketResponse", "description": "WebSocket response data." }
             ]
         },

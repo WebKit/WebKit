@@ -168,13 +168,10 @@ WebInspector.NetworkSidebarPanel = class NetworkSidebarPanel extends WebInspecto
         closeButton.addEventListener(WebInspector.TreeElementStatusButton.Event.Clicked, this._treeElementCloseButtonClicked, this);
         fragment.appendChild(closeButton.element);
 
-        // FIXME: <webkit.org/b/169011> Web Inspector: Show individual messages in the content pane for a WebSocket
-        if (treeElement.resource.type !== WebInspector.Resource.Type.WebSocket) {
-            let goToButton = new WebInspector.TreeElementStatusButton(WebInspector.createGoToArrowButton());
-            goToButton[WebInspector.NetworkSidebarPanel.TreeElementSymbol] = treeElement;
-            goToButton.addEventListener(WebInspector.TreeElementStatusButton.Event.Clicked, this._treeElementGoToArrowWasClicked, this);
-            fragment.appendChild(goToButton.element);
-        }
+        let goToButton = new WebInspector.TreeElementStatusButton(WebInspector.createGoToArrowButton());
+        goToButton[WebInspector.NetworkSidebarPanel.TreeElementSymbol] = treeElement;
+        goToButton.addEventListener(WebInspector.TreeElementStatusButton.Event.Clicked, this._treeElementGoToArrowWasClicked, this);
+        fragment.appendChild(goToButton.element);
 
         treeElement.status = fragment;
     }

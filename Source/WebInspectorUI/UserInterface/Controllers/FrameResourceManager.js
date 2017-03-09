@@ -206,12 +206,18 @@ WebInspector.FrameResourceManager = class FrameResourceManager extends WebInspec
         this._webSocketIdentifierToURL.set(requestId, url);
     }
 
-    webSocketWillSendHandshakeRequest(requestId, timestamp, request)
+    webSocketWillSendHandshakeRequest(requestId, timestamp, walltime, request)
     {
         let url = this._webSocketIdentifierToURL.get(requestId);
         console.assert(url);
         if (!url)
             return;
+
+        // COMPATIBILITY(iOS 10.3): `walltime` did not exist in 10.3 and earlier.
+        if (!NetworkAgent.hasEventParameter("webSocketWillSendHandshakeRequest", "walltime")) {
+            request = arguments[2];
+            walltime = NaN;
+        }
 
         // FIXME: <webkit.org/b/168475> Web Inspector: Correctly display iframe's and worker's WebSockets
         let frameIdentifier = WebInspector.frameResourceManager.mainFrame.id;
@@ -223,7 +229,8 @@ WebInspector.FrameResourceManager = class FrameResourceManager extends WebInspec
         let elapsedTime = WebInspector.timelineManager.computeElapsedTime(timestamp);
         let initiatorSourceCodeLocation = null;
 
-        let resource = new WebInspector.WebSocketResource(url, loaderIdentifier, targetId, requestId, request.headers, requestData, elapsedTime, initiatorSourceCodeLocation);
+        let resource = new WebInspector.WebSocketResource(url, loaderIdentifier, targetId, requestId, request.headers, requestData, timestamp, walltime, elapsedTime, initiatorSourceCodeLocation);
+
         frame.addResource(resource);
 
         this._resourceRequestIdentifierMap.set(requestId, resource);
@@ -280,13 +287,15 @@ WebInspector.FrameResourceManager = class FrameResourceManager extends WebInspec
         if (!resource)
             return;
 
-        let isIncoming = !!response.mask;
+        // Data going from the client to the server is always masked.
+        let isOutgoing = !!response.mask;
+
         let data = response.payloadData;
         let opcode = response.opcode;
 
         let elapsedTime = WebInspector.timelineManager.computeElapsedTime(timestamp);
 
-        resource.addFrame(data, isIncoming, opcode, timestamp, elapsedTime);
+        resource.addFrame(data, isOutgoing, opcode, timestamp, elapsedTime);
     }
 
     markResourceRequestAsServedFromMemoryCache(requestIdentifier)
