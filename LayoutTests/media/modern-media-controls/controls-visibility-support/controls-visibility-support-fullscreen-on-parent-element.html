@@ -1,0 +1,35 @@
+<script src="../../../resources/js-test-pre.js"></script>
+<script src="../resources/media-controls-loader.js" type="text/javascript"></script>
+<script src="../resources/media-controls-utils.js" type="text/javascript"></script>
+<body>
+<video src="../../content/test.mp4" autoplay></video>
+<div id="host"></div>
+<script type="text/javascript">
+
+window.jsTestIsAsync = true;
+
+description("Testing that control are not shown when a parent element is fullscreen and the controls attribute is not present.");
+
+const container = document.querySelector("div#host");
+const media = document.querySelector("video");
+const mediaController = createControls(container, media, null);
+
+media.addEventListener("play", () => {
+    document.documentElement.addEventListener("webkitfullscreenchange", () => {
+        shouldBe("document.webkitFullscreenElement", "document.documentElement");
+        shouldBeFalse("media.webkitDisplayingFullscreen");
+        shouldBeFalse("mediaController.controls.controlsBar.visible");
+        button.remove();
+        container.remove();
+        media.remove();
+        finishJSTest();
+    });
+
+    const button = document.body.appendChild(document.createElement("button"));
+    button.addEventListener("click", () => document.documentElement.webkitRequestFullscreen());
+    pressOnElement(button);
+});
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>

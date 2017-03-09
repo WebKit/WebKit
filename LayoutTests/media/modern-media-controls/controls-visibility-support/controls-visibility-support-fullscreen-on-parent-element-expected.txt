@@ -1,0 +1,12 @@
+Testing that control are not shown when a parent element is fullscreen and the controls attribute is not present.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.webkitFullscreenElement is document.documentElement
+PASS media.webkitDisplayingFullscreen is false
+PASS mediaController.controls.controlsBar.visible is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

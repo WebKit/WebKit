@@ -2800,6 +2800,9 @@ media/modern-media-controls/seek-forward-support [ Skip ]
 media/modern-media-controls/start-support/start-support-fullscreen.html [ Skip ]
 media/modern-media-controls/volume-down-support [ Skip ]
 media/modern-media-controls/volume-up-support [ Skip ]
+media/modern-media-controls/volume-up-support [ Skip ]
+media/modern-media-controls/controls-visibility-support/controls-visibility-support-fullscreen-on-video.html [ Skip ]
+media/modern-media-controls/controls-visibility-support/controls-visibility-support-fullscreen-on-parent-element.html [ Skip ]
 
 # These tests are macOS-specific or mouse-specific
 media/modern-media-controls/media-controller/media-controller-auto-hide-mouse-leave-after-play.html [ Skip ]
