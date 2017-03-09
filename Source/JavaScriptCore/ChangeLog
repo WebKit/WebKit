@@ -6133,15 +6133,15 @@
         sum of the depths of its nodes, with a node's depth equal to the number
         of frames in its associated call stack. For any stack trace,
 
-            S = { sퟶ, sퟷ, …, s푘 }, with endpoints sퟶ, s푘
-            depth(S) = depth(sퟶ) + depth(sퟷ) + … + depth(s푘)
+            S = { s𝟶, s𝟷, …, s𝑘 }, with endpoints s𝟶, s𝑘
+            depth(S) = depth(s𝟶) + depth(s𝟷) + … + depth(s𝑘)
 
         A stack trace is truncated when it exceeds the maximum depth. Truncation
         occurs on node boundaries, not call frames, consequently the maximum depth
         is more of a target than a guarantee:
 
             d = maximum stack trace depth
-            for all S, depth(S) ≤ d + depth(s푘)
+            for all S, depth(S) ≤ d + depth(s𝑘)
 
         Because nodes can belong to multiple stack traces, it may be necessary
         to clone the tail of a stack trace being truncated to prevent other traces
@@ -6234,15 +6234,15 @@
         sum of the depths of its nodes, with a node's depth equal to the number
         of frames in its associated call stack. For any stack trace,
 
-            S = { sퟶ, sퟷ, …, s푘 }, with endpoints sퟶ, s푘
-            depth(S) = depth(sퟶ) + depth(sퟷ) + … + depth(s푘)
+            S = { s𝟶, s𝟷, …, s𝑘 }, with endpoints s𝟶, s𝑘
+            depth(S) = depth(s𝟶) + depth(s𝟷) + … + depth(s𝑘)
 
         A stack trace is truncated when it exceeds the maximum depth. Truncation
         occurs on node boundaries, not call frames, consequently the maximum depth
         is more of a target than a guarantee:
 
             d = maximum stack trace depth
-            for all S, depth(S) ≤ d + depth(s푘)
+            for all S, depth(S) ≤ d + depth(s𝑘)
 
         Because nodes can belong to multiple stack traces, it may be necessary
         to clone the tail of a stack trace being truncated to prevent other traces
