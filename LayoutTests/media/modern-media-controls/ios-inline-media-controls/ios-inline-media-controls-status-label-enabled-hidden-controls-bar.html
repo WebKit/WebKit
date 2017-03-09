@@ -1,0 +1,44 @@
+<script src="../../../resources/js-test-pre.js"></script>
+<script src="../resources/media-controls-loader.js" type="text/javascript"></script>
+<script src="../resources/media-controls-utils.js" type="text/javascript"></script>
+<body>
+<script type="text/javascript">
+
+description("Testing <code>IOSInlineMediaControls</code> statusLabel.enabled while the controls bar is hidden");
+
+window.jsTestIsAsync = true;
+
+const mediaControls = new IOSInlineMediaControls({ width: 600 });
+
+let numberOfFrames = 0;
+scheduler.frameDidFire = function()
+{
+    numberOfFrames++;
+
+    switch (numberOfFrames) {
+    case 1:
+        mediaControls.controlsBar.visible = false;
+        debug("Making the controls bar invisible");
+        shouldBeNull("mediaControls.statusLabel.parent");
+        break;
+    case 2:
+        debug("");
+        debug("Setting statusLabel.enabled = true");
+        mediaControls.statusLabel.enabled = true;
+        break;
+    case 3:
+        mediaControls.controlsBar.visible = true;
+        debug("");
+        debug("Making the controls bar visible again");
+        shouldBe("mediaControls.statusLabel.parent", "mediaControls.controlsBar");
+
+        debug("");
+        finishMediaControlsTest();
+        break;
+    }
+
+};
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>

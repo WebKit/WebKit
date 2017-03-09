@@ -1,0 +1,17 @@
+Testing IOSInlineMediaControls statusLabel.enabled while the controls bar is hidden
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Making the controls bar invisible
+PASS mediaControls.statusLabel.parent is null
+
+Setting statusLabel.enabled = true
+
+Making the controls bar visible again
+PASS mediaControls.statusLabel.parent is mediaControls.controlsBar
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -91,12 +91,6 @@ class MacOSInlineMediaControls extends MacOSMediaControls
             super.handleEvent(event);
     }
 
-    controlsBarVisibilityDidChange(controlsBar)
-    {
-        if (controlsBar.visible)
-            this.layout();
-    }
-
     layoutTraitsDidChange()
     {
         if (!this.leftContainer || !this.rightContainer)

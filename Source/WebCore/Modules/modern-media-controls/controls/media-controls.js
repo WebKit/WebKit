@@ -167,7 +167,8 @@ class MediaControls extends LayoutNode
 
     controlsBarVisibilityDidChange(controlsBar)
     {
-        // Implemented by subclasses as needed.
+        if (controlsBar.visible)
+            this.layout();
     }
 
     layoutTraitsDidChange()

@@ -1,3 +1,17 @@
+2017-03-08  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] iOS: Live Broadcast video shows scrubber with 00:00 duration until paused
+        https://bugs.webkit.org/show_bug.cgi?id=169374
+        <rdar://problem/30063273>
+
+        Reviewed by Dean Jackson.
+
+        Add a test that checks that we correctly show the status label after enabling it with the controls bar
+        invisible.
+
+        * media/modern-media-controls/ios-inline-media-controls/ios-inline-media-controls-status-label-enabled-hidden-controls-bar-expected.txt: Added.
+        * media/modern-media-controls/ios-inline-media-controls/ios-inline-media-controls-status-label-enabled-hidden-controls-bar.html: Added.
+
 2017-03-08  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebCrypto] Implement SubtleCrypto::DeriveKey method
