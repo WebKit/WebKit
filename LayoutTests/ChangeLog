@@ -1,3 +1,18 @@
+2017-03-09  Yoav Weiss  <yoav@yoav.ws>
+
+        [link preload] Double downloads of preloaded CSS
+        https://bugs.webkit.org/show_bug.cgi?id=169274
+
+        Reviewed by Antti Koivisto.
+
+        Added tests making sure that header based preloads also trigger a single download,
+        and that we properly handle multiple charsets for the same preloaded resource.
+
+        * http/tests/preload/single_download_preload_headers-expected.txt: Added.
+        * http/tests/preload/single_download_preload_headers.php: Added.
+        * http/tests/preload/preload-encoding-expected.txt: Added.
+        * http/tests/preload/preload-encoding.php: Added.
+
 2017-03-09  Jiewen Tan  <jiewen_tan@apple.com>
 
         Implement PBKDF2 in WebCrypto

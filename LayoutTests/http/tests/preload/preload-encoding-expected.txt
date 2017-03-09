@@ -1,0 +1,11 @@
+CONSOLE MESSAGE: line 1: SyntaxError: Invalid character '\u8307'
+First load a script with a wrong charset then again with the right one. Second attempt should work and 'scriptSuccess' should be set to true. 'successfullyParsed' will be undefined.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS scriptSuccess is true
+FAIL successfullyParsed should be true (of type boolean). Was undefined (of type undefined).
+
+TEST COMPLETE
+
