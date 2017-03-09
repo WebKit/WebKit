@@ -139,6 +139,8 @@ public:
     static void applyValueAlt(StyleResolver&, CSSValue&);
     static void applyValueWillChange(StyleResolver&, CSSValue&);
 
+    static void applyValueStrokeWidth(StyleResolver&, CSSValue&);
+
 private:
     static void resetEffectiveZoom(StyleResolver&);
 
@@ -1778,6 +1780,12 @@ inline void StyleBuilderCustom::applyValueWillChange(StyleResolver& styleResolve
         }
     }
     styleResolver.style()->setWillChange(WTFMove(willChange));
+}
+
+inline void StyleBuilderCustom::applyValueStrokeWidth(StyleResolver& styleResolver, CSSValue& value)
+{
+    styleResolver.style()->setStrokeWidth(StyleBuilderConverter::convertLength(styleResolver, value));
+    styleResolver.style()->setHasExplicitlySetStrokeWidth(true);
 }
 
 } // namespace WebCore

@@ -1,3 +1,15 @@
+2017-03-08  Per Arne Vollan  <pvollan@apple.com>
+
+        Implement stroke-width CSS property.
+        https://bugs.webkit.org/show_bug.cgi?id=169273
+
+        Reviewed by Simon Fraser.
+
+        * fast/css/stroke-width-expected.html: Added.
+        * fast/css/stroke-width-percent-expected.html: Added.
+        * fast/css/stroke-width-percent.html: Added.
+        * fast/css/stroke-width.html: Added.
+
 2017-03-09  Antti Koivisto  <antti@apple.com>
 
         Loading in-body stylesheets should not block rendering of elements before them

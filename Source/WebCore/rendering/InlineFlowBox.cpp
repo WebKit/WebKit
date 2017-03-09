@@ -169,7 +169,7 @@ void InlineFlowBox::addToLine(InlineBox* child)
         const RenderStyle& childStyle = child->lineStyle();
         if (child->behavesLikeText()) {
             const RenderStyle* childStyle = &child->lineStyle();
-            if (childStyle->letterSpacing() < 0 || childStyle->textShadow() || childStyle->textEmphasisMark() != TextEmphasisMarkNone || childStyle->textStrokeWidth())
+            if (childStyle->letterSpacing() < 0 || childStyle->textShadow() || childStyle->textEmphasisMark() != TextEmphasisMarkNone || childStyle->hasPositiveStrokeWidth())
                 child->clearKnownToHaveNoOverflow();
         } else if (child->renderer().isReplaced()) {
             const RenderBox& box = downcast<RenderBox>(child->renderer());
@@ -904,7 +904,8 @@ inline void InlineFlowBox::addTextBoxVisualOverflow(InlineTextBox& textBox, Glyp
     int leftGlyphEdge = glyphOverflow ? glyphOverflow->left : 0;
     int rightGlyphEdge = glyphOverflow ? glyphOverflow->right : 0;
 
-    int strokeOverflow = static_cast<int>(ceilf(lineStyle.textStrokeWidth() / 2.0f));
+    auto viewportSize = textBox.renderer().frame().view() ? textBox.renderer().frame().view()->size() : IntSize();
+    int strokeOverflow = std::ceil(lineStyle.computedStrokeWidth(viewportSize) / 2.0f);
     int topGlyphOverflow = -strokeOverflow - topGlyphEdge;
     int bottomGlyphOverflow = strokeOverflow + bottomGlyphEdge;
     int leftGlyphOverflow = -strokeOverflow - leftGlyphEdge;

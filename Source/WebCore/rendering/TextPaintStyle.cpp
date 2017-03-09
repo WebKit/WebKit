@@ -67,7 +67,8 @@ TextPaintStyle computeTextPaintStyle(const Frame& frame, const RenderStyle& line
 #if ENABLE(LETTERPRESS)
     paintStyle.useLetterpressEffect = lineStyle.textDecorationsInEffect() & TextDecorationLetterpress;
 #endif
-    paintStyle.strokeWidth = lineStyle.textStrokeWidth();
+    auto viewportSize = frame.view() ? frame.view()->size() : IntSize();
+    paintStyle.strokeWidth = lineStyle.computedStrokeWidth(viewportSize);
     paintStyle.paintOrder = lineStyle.paintOrder();
     paintStyle.lineJoin = lineStyle.joinStyle();
     paintStyle.lineCap = lineStyle.capStyle();
@@ -148,7 +149,8 @@ TextPaintStyle computeTextSelectionPaintStyle(const TextPaintStyle& textPaintSty
             selectionShadow = shadow;
         }
 
-        float strokeWidth = pseudoStyle->textStrokeWidth();
+        auto viewportSize = renderer.frame().view() ? renderer.frame().view()->size() : IntSize();
+        float strokeWidth = pseudoStyle->computedStrokeWidth(viewportSize);
         if (strokeWidth != selectionPaintStyle.strokeWidth) {
             if (!paintSelectedTextOnly)
                 paintSelectedTextSeparately = true;

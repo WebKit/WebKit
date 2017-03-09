@@ -3028,6 +3028,7 @@
         "stroke-width": {
             "inherited": true,
             "codegen-properties": {
+                "custom": "Value",
                 "initial": "initialOneLength",
                 "converter": "Length"
             },

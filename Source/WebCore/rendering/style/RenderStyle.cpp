@@ -2259,5 +2259,34 @@ Vector<PaintType, 3> RenderStyle::paintTypesForPaintOrder(PaintOrder order)
     return paintOrder;
 }
 
+float RenderStyle::computedStrokeWidth(const IntSize& viewportSize) const
+{
+    if (!hasExplicitlySetStrokeWidth())
+        return textStrokeWidth();
+    
+    const Length& length = strokeWidth();
+
+    if (length.isPercent()) {
+        // According to the spec, https://drafts.fxtf.org/paint/#stroke-width, the percentage is relative to the scaled viewport size.
+        // The scaled viewport size is the geometric mean of the viewport width and height.
+        ExceptionOr<float> result = length.value() * (viewportSize.width() + viewportSize.height()) / 200.0f;
+        if (result.hasException())
+            return 0;
+        return result.releaseReturnValue();
+    }
+    
+    if (length.isAuto() || !length.isSpecified())
+        return 0;
+    
+    return floatValueForLength(length, viewportSize.width());
+}
+
+bool RenderStyle::hasPositiveStrokeWidth() const
+{
+    if (!hasExplicitlySetStrokeWidth())
+        return textStrokeWidth() > 0;
+
+    return strokeWidth().isPositive();
+}
 
 } // namespace WebCore

@@ -357,7 +357,7 @@ static Color decorationColor(const RenderStyle& style)
     Color result = style.visitedDependentColor(CSSPropertyWebkitTextDecorationColor);
     if (result.isValid())
         return result;
-    if (style.textStrokeWidth() > 0) {
+    if (style.hasPositiveStrokeWidth()) {
         // Prefer stroke color if possible but not if it's fully transparent.
         result = style.visitedDependentColor(CSSPropertyWebkitTextStrokeColor);
         if (result.isVisible())

@@ -128,6 +128,7 @@ StyleRareInheritedData::StyleRareInheritedData()
     , paintOrder(static_cast<unsigned>(RenderStyle::initialPaintOrder()))
     , capStyle(RenderStyle::initialCapStyle())
     , joinStyle(RenderStyle::initialJoinStyle())
+    , hasSetStrokeWidth(false)
     , strokeWidth(RenderStyle::initialOneLength())
     , hyphenationLimitBefore(-1)
     , hyphenationLimitAfter(-1)
@@ -214,6 +215,7 @@ inline StyleRareInheritedData::StyleRareInheritedData(const StyleRareInheritedDa
     , paintOrder(o.paintOrder)
     , capStyle(o.capStyle)
     , joinStyle(o.joinStyle)
+    , hasSetStrokeWidth(o.hasSetStrokeWidth)
     , strokeWidth(o.strokeWidth)
     , hyphenationString(o.hyphenationString)
     , hyphenationLimitBefore(o.hyphenationLimitBefore)
@@ -324,6 +326,7 @@ bool StyleRareInheritedData::operator==(const StyleRareInheritedData& o) const
         && paintOrder == o.paintOrder
         && capStyle == o.capStyle
         && joinStyle == o.joinStyle
+        && hasSetStrokeWidth == o.hasSetStrokeWidth
         && strokeWidth == o.strokeWidth
         && customProperties == o.customProperties
         && arePointingToEqualData(listStyleImage, o.listStyleImage);
