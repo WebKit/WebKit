@@ -16,9 +16,16 @@ PASS airplayButton.width is not 0
 PASS airplayButton.height is not 0
 PASS airplayButton.needsLayout is true
 PASS scheduler.hasScheduledLayoutCallbacks is true
+PASS scheduler._layoutCallbacks.size is 1
+PASS scheduler._frameID is not -1
+PASS dirtyNodes.has(airplayButton) is true
+frameWillFire()
+PASS dirtyNodes.has(airplayButton) is true
+PASS airplayButton.needsLayout is true
+frameDidFire()
+PASS dirtyNodes.has(airplayButton) is false
+PASS airplayButton.needsLayout is false
 PASS airplayButton.element.style.webkitMaskImage.includes("macOS/airplay@") became true
-PASS macOSFullscreenAirplayButton.element.style.webkitMaskImage.includes("macOS/airplay-fullscreen@") became true
-PASS iOSAirplayButton.element.style.webkitMaskImage.includes("iOS/airplay@") became true
 PASS successfullyParsed is true
 
 TEST COMPLETE
