@@ -1,3 +1,28 @@
+2017-03-09  Filip Pizlo  <fpizlo@apple.com>
+
+        std::isnan/isinf/isfinite should work with WTF time classes
+        https://bugs.webkit.org/show_bug.cgi?id=164991
+
+        Reviewed by Darin Adler.
+        
+        The consensus view (see comments in https://bugs.webkit.org/show_bug.cgi?id=152045) of how
+        to check if something is NaN is to use std::isnan(). To be able to do that for time
+        classes, they need to provide their own isnan() overhload. This also provides isinf()
+        overloads.
+
+        * wtf/MonotonicTime.h:
+        (std::isnan):
+        (std::isinf):
+        * wtf/Seconds.h:
+        (std::isnan):
+        (std::isinf):
+        * wtf/TimeWithDynamicClockType.h:
+        (std::isnan):
+        (std::isinf):
+        * wtf/WallTime.h:
+        (std::isnan):
+        (std::isinf):
+
 2017-03-09  Mark Lam  <mark.lam@apple.com>
 
         Use const AbstractLocker& (instead of const LockHolder&) in more places.

@@ -259,6 +259,25 @@ WTF_EXPORT_PRIVATE void sleep(Seconds);
 
 } // namespace WTF
 
+namespace std {
+
+inline bool isnan(WTF::Seconds seconds)
+{
+    return std::isnan(seconds.value());
+}
+
+inline bool isinf(WTF::Seconds seconds)
+{
+    return std::isinf(seconds.value());
+}
+
+inline bool isfinite(WTF::Seconds seconds)
+{
+    return std::isfinite(seconds.value());
+}
+
+} // namespace std
+
 using namespace WTF::seconds_literals;
 using WTF::Seconds;
 

@@ -1,3 +1,15 @@
+2017-03-09  Filip Pizlo  <fpizlo@apple.com>
+
+        std::isnan/isinf should work with WTF time classes
+        https://bugs.webkit.org/show_bug.cgi?id=164991
+
+        Reviewed by Darin Adler.
+        
+        Changes AtomicsObject to use std::isnan() instead of operator== to detect NaN.
+
+        * runtime/AtomicsObject.cpp:
+        (JSC::atomicsFuncWait):
+
 2017-03-09  Mark Lam  <mark.lam@apple.com>
 
         Use const AbstractLocker& (instead of const LockHolder&) in more places.

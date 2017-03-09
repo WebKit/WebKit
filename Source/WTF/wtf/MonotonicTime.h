@@ -139,6 +139,25 @@ private:
 
 } // namespace WTF
 
+namespace std {
+
+inline bool isnan(WTF::MonotonicTime time)
+{
+    return std::isnan(time.secondsSinceEpoch().value());
+}
+
+inline bool isinf(WTF::MonotonicTime time)
+{
+    return std::isinf(time.secondsSinceEpoch().value());
+}
+
+inline bool isfinite(WTF::MonotonicTime time)
+{
+    return std::isfinite(time.secondsSinceEpoch().value());
+}
+
+} // namespace std
+
 using WTF::MonotonicTime;
 
 #endif // WTF_MonotonicTime_h
