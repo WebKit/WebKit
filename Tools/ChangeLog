@@ -1,3 +1,9 @@
+2017-03-09  Devin Rousso  <dcrousso+webkit@gmail.com>
+
+        Unreviewed, change my status to be a WebKit reviewer
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2017-03-09  Jonathan Bedard  <jbedard@apple.com>
 
         Standardize device/simulator naming conventions
