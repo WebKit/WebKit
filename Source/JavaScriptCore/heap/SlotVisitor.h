@@ -85,7 +85,7 @@ public:
     //
     // If you are not a root and you don't know what kind of barrier you have, then you
     // shouldn't call these methods.
-    JS_EXPORT_PRIVATE void appendUnbarriered(JSValue);
+    void appendUnbarriered(JSValue);
     void appendUnbarriered(JSValue*, size_t);
     void appendUnbarriered(JSCell*);
     
