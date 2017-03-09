@@ -43,11 +43,6 @@ void HTMLOptionsCollection::remove(int index)
     selectElement().remove(index);
 }
 
-void HTMLOptionsCollection::remove(HTMLOptionElement& option)
-{
-    selectElement().remove(option);
-}
-
 int HTMLOptionsCollection::selectedIndex() const
 {
     return selectElement().selectedIndex();

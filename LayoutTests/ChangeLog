@@ -1,5 +1,17 @@
 2017-03-08  Chris Dumez  <cdumez@apple.com>
 
+        Drop select.remove() / options.remove() overloads taking an option element in parameter
+        https://bugs.webkit.org/show_bug.cgi?id=169339
+
+        Reviewed by Sam Weinig.
+
+        Add layout test coverage.
+
+        * fast/dom/HTMLSelectElement/remove-option-element-expected.txt: Added.
+        * fast/dom/HTMLSelectElement/remove-option-element.html: Added.
+
+2017-03-08  Chris Dumez  <cdumez@apple.com>
+
         Parameter to input.setCustomValidity() should not be nullable
         https://bugs.webkit.org/show_bug.cgi?id=169332
 

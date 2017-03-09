@@ -56,7 +56,6 @@ public:
     WEBCORE_EXPORT ExceptionOr<void> add(const OptionOrOptGroupElement&, const std::optional<HTMLElementOrInt>& before);
 
     using Node::remove;
-    ExceptionOr<void> remove(HTMLOptionElement&);
     WEBCORE_EXPORT void remove(int);
 
     WEBCORE_EXPORT String value() const;

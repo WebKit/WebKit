@@ -242,14 +242,6 @@ void HTMLSelectElement::remove(int optionIndex)
     listItems()[listIndex]->remove();
 }
 
-ExceptionOr<void> HTMLSelectElement::remove(HTMLOptionElement& option)
-{
-    if (option.ownerSelectElement() != this)
-        return { };
-
-    return option.remove();
-}
-
 String HTMLSelectElement::value() const
 {
     for (auto* item : listItems()) {

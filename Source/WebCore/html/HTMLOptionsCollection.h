@@ -43,7 +43,6 @@ public:
     using HTMLElementOrInt = Variant<RefPtr<HTMLElement>, int>;
     WEBCORE_EXPORT ExceptionOr<void> add(const OptionOrOptGroupElement&, const std::optional<HTMLElementOrInt>& before);
     WEBCORE_EXPORT void remove(int index);
-    void remove(HTMLOptionElement&);
 
     WEBCORE_EXPORT int selectedIndex() const;
     WEBCORE_EXPORT void setSelectedIndex(int);

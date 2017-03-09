@@ -28,7 +28,6 @@
     // [CEReactions] setter void (unsigned long index, HTMLOptionElement? option);
     [CEReactions, MayThrowException] void add((HTMLOptionElement or HTMLOptGroupElement) element, optional (HTMLElement or long)? before = null);
     [CEReactions] void remove(long index);
-    [CEReactions] void remove(HTMLOptionElement option); // FIXME: This overload is not in the specification and has been dropped from Blink.
 
     attribute long selectedIndex;
 
