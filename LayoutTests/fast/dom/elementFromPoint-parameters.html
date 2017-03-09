@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>Tests that the parameters to document.elementFromPoint() are mandatory and of type double.</p>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script>
+test(function() {
+    assert_throws(new TypeError(), function() { 
+        document.elementFromPoint();
+    }, "Called with no parameter");
+
+    assert_throws(new TypeError(), function() { 
+        document.elementFromPoint(0);
+    }, "Called with 1 parameter");
+}, "Parameters are mandatory.");
+
+test(function() {
+    assert_throws(new TypeError(), function() {
+        document.elementFromPoint(0, Infinity);
+    }, "Passing Infinity as second parameter throws");
+    assert_throws(new TypeError(), function() {
+        document.elementFromPoint(Infinity, 0);
+    }, "Passing Infinity as first parameter throws");
+    assert_throws(new TypeError(), function() {
+        document.elementFromPoint(0, NaN);
+    }, "Passing NaN as second parameter throws");
+    assert_throws(new TypeError(), function() {
+        document.elementFromPoint(NaN, 0);
+    }, "Passing NaN as first parameter throws");
+}, "Parameter should be finite floating point values.");
+</script>
+</body>
+</html>

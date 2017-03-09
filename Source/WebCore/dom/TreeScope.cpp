@@ -313,7 +313,7 @@ Node* TreeScope::nodeFromPoint(const LayoutPoint& clientPoint, LayoutPoint* loca
     return result.innerNode();
 }
 
-Element* TreeScope::elementFromPoint(int x, int y)
+Element* TreeScope::elementFromPoint(double x, double y)
 {
     Document& document = documentScope();
     if (!document.hasLivingRenderTree())

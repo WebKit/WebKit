@@ -219,8 +219,8 @@ shouldBe("nonNumericPolicy('createCSSValueList().item(x)')", "'any type allowed 
 
 // Document
 
-shouldBe("nonNumericPolicy('document.elementFromPoint(x, 0)')", "'any type allowed'");
-shouldBe("nonNumericPolicy('document.elementFromPoint(0, x)')", "'any type allowed'");
+shouldBe("nonNumericPolicy('document.elementFromPoint(x, 0)')", "'mixed'");
+shouldBe("nonNumericPolicy('document.elementFromPoint(0, x)')", "'mixed'");
 
 // Element
 
