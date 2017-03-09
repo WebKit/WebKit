@@ -1,3 +1,19 @@
+2017-03-09  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] iOS: long press on play button shows the Copy menu
+        https://bugs.webkit.org/show_bug.cgi?id=169355
+        <rdar://problem/30928998>
+
+        Reviewed by Dean Jackson.
+
+        Add a test to check that the expected properties are set as they should to disable
+        built-in UI behavior that shows a magnifier or a copy callout when pressing on an
+        element for a long time.
+
+        * media/modern-media-controls/audio/audio-controls-styles-expected.txt: Added.
+        * media/modern-media-controls/audio/audio-controls-styles.html: Added.
+        * platform/mac/TestExpectations:
+
 2017-03-09  Ryan Haddad  <ryanhaddad@apple.com>
 
         Rebaseline js/dom/global-constructors-attributes.html.

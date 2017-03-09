@@ -1481,6 +1481,7 @@ media/modern-media-controls/ios-inline-media-controls/ios-inline-media-controls-
 media/modern-media-controls/media-controller/media-controller-ios-only-enable-tap-gesture-recognizer-with-fades-when-idle.html [ Skip ]
 media/modern-media-controls/media-controller/media-controller-ios-do-not-hide-controls-when-tapping-button.html [ Skip ]
 media/modern-media-controls/media-controller/media-controller-tight-padding.html [ Skip ]
+media/modern-media-controls/audio/audio-controls-styles.html [ Skip ]
 
 webkit.org/b/167266 media/modern-media-controls/media-controller/media-controller-auto-hide-mouse-enter-over-controls-bar.html [ Pass Failure ]
 

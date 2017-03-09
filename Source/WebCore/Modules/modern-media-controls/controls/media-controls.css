@@ -23,6 +23,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+:host {
+    /* We always want to prevent iOS dialogs and the magnifier UI to be shown. */
+    -webkit-user-select: none !important;
+    -webkit-touch-callout: none !important;
+}
+
 :host(audio) {
     width: 200px;
     min-width: 200px !important;
