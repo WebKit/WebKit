@@ -536,11 +536,11 @@ static gboolean webkitWebViewAuthenticate(WebKitWebView* webView, WebKitAuthenti
     return TRUE;
 }
 
-static void fileChooserDialogResponseCallback(GtkDialog* dialog, gint responseID, WebKitFileChooserRequest* request)
+static void fileChooserDialogResponseCallback(GtkFileChooser* dialog, gint responseID, WebKitFileChooserRequest* request)
 {
     GRefPtr<WebKitFileChooserRequest> adoptedRequest = adoptGRef(request);
     if (responseID == GTK_RESPONSE_ACCEPT) {
-        GUniquePtr<GSList> filesList(gtk_file_chooser_get_filenames(GTK_FILE_CHOOSER(dialog)));
+        GUniquePtr<GSList> filesList(gtk_file_chooser_get_filenames(dialog));
         GRefPtr<GPtrArray> filesArray = adoptGRef(g_ptr_array_new());
         for (GSList* file = filesList.get(); file; file = g_slist_next(file))
             g_ptr_array_add(filesArray.get(), file->data);
@@ -549,7 +549,11 @@ static void fileChooserDialogResponseCallback(GtkDialog* dialog, gint responseID
     } else
         webkit_file_chooser_request_cancel(adoptedRequest.get());
 
+#if GTK_CHECK_VERSION(3, 20, 0)
+    g_object_unref(dialog);
+#else
     gtk_widget_destroy(GTK_WIDGET(dialog));
+#endif
 }
 
 static gboolean webkitWebViewRunFileChooser(WebKitWebView* webView, WebKitFileChooserRequest* request)
@@ -559,12 +563,18 @@ static gboolean webkitWebViewRunFileChooser(WebKitWebView* webView, WebKitFileCh
         toplevel = 0;
 
     gboolean allowsMultipleSelection = webkit_file_chooser_request_get_select_multiple(request);
+
+#if GTK_CHECK_VERSION(3, 20, 0)
+    GtkFileChooserNative* dialog = gtk_file_chooser_native_new(allowsMultipleSelection ? _("Select Files") : _("Select File"),
+        toplevel ? GTK_WINDOW(toplevel) : nullptr, GTK_FILE_CHOOSER_ACTION_OPEN, nullptr, nullptr);
+#else
     GtkWidget* dialog = gtk_file_chooser_dialog_new(allowsMultipleSelection ? _("Select Files") : _("Select File"),
                                                     toplevel ? GTK_WINDOW(toplevel) : 0,
                                                     GTK_FILE_CHOOSER_ACTION_OPEN,
                                                     GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                                                     GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
                                                     NULL);
+#endif
 
     if (GtkFileFilter* filter = webkit_file_chooser_request_get_mime_types_filter(request))
         gtk_file_chooser_set_filter(GTK_FILE_CHOOSER(dialog), filter);
@@ -574,7 +584,12 @@ static gboolean webkitWebViewRunFileChooser(WebKitWebView* webView, WebKitFileCh
         gtk_file_chooser_select_filename(GTK_FILE_CHOOSER(dialog), selectedFiles[0]);
 
     g_signal_connect(dialog, "response", G_CALLBACK(fileChooserDialogResponseCallback), g_object_ref(request));
+
+#if GTK_CHECK_VERSION(3, 20, 0)
+    gtk_native_dialog_show(GTK_NATIVE_DIALOG(dialog));
+#else
     gtk_widget_show(dialog);
+#endif
 
     return TRUE;
 }

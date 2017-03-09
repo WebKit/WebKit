@@ -1,3 +1,21 @@
+2017-03-09  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GTK] Use GtkFileChooserNative for open/save dialogs
+        https://bugs.webkit.org/show_bug.cgi?id=169278
+
+        Reviewed by Carlos Garcia Campos.
+
+        When building with GTK+ 3.20.0 or newer, use GtkFileChooserNative instead of GtkFileChooserDialog to allow for
+        better integration with the runtime environment and use native open/save dialogs. This also makes WebKitGTK+ use
+        portal-based load/save dialogs when running inside the Flatpak sandbox.
+
+        The existing GtkFileChooserDialog implementation will still be used when building against older versions of
+        GTK+, so this change does not require a new version of the toolkit.
+
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (fileChooserDialogResponseCallback):
+        (webkitWebViewRunFileChooser):
+
 2017-03-08  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Add plumbing for WebCore to notify WebKit2 when an edit drag has concluded
