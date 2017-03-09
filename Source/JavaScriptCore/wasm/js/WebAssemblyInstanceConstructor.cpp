@@ -101,7 +101,6 @@ JSWebAssemblyInstance* WebAssemblyInstanceConstructor::createInstance(ExecState*
     JSWebAssemblyInstance* instance = JSWebAssemblyInstance::create(vm, instanceStructure, jsModule, moduleRecord->getModuleNamespace(exec));
     RETURN_IF_EXCEPTION(throwScope, nullptr);
 
-
     // Let funcs, memories and tables be initially-empty lists of callable JavaScript objects, WebAssembly.Memory objects and WebAssembly.Table objects, respectively.
     // Let imports be an initially-empty list of external values.
     unsigned numImportFunctions = 0;
@@ -145,6 +144,8 @@ JSWebAssemblyInstance* WebAssemblyInstanceConstructor::createInstance(ExecState*
             // Note: done as part of Plan compilation.
             // iv. Append v to funcs.
             // Note: adding the JSCell to the instance list fulfills closure requirements b. above (the WebAssembly.Instance wil be kept alive) and v. below (the JSFunction).
+
+            ASSERT(numImportFunctions == import.kindIndex);
             instance->setImportFunction(vm, cell, numImportFunctions++);
             // v. Append closure to imports.
             break;
@@ -216,6 +217,7 @@ JSWebAssemblyInstance* WebAssemblyInstanceConstructor::createInstance(ExecState*
             if (!value.isNumber())
                 return exception(createJSWebAssemblyLinkError(exec, vm, ASCIILiteral("imported global must be a number")));
             // iii. Append ToWebAssemblyValue(v) to imports.
+            ASSERT(numImportGlobals == import.kindIndex);
             switch (moduleInformation.globals[import.kindIndex].type) {
             case Wasm::I32:
                 instance->setGlobal(numImportGlobals++, value.toInt32(exec));

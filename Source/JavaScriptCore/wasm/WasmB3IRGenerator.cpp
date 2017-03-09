@@ -304,8 +304,10 @@ static void restoreWebAssemblyGlobalState(VM& vm, const MemoryInformation& memor
             clobbers.set(info.sizeRegister);
 
         B3::PatchpointValue* patchpoint = block->appendNew<B3::PatchpointValue>(proc, B3::Void, Origin());
-        patchpoint->effects = Effects::none();
-        patchpoint->effects.writesPinned = true;
+        Effects effects = Effects::none();
+        effects.writesPinned = true;
+        effects.reads = B3::HeapRange::top();
+        patchpoint->effects = effects;
         patchpoint->clobber(clobbers);
 
         patchpoint->append(instance, ValueRep::SomeRegister);
@@ -1131,13 +1133,12 @@ Expected<std::unique_ptr<WasmInternalFunction>, String> parseAndCompile(VM& vm, 
     WASM_FAIL_IF_HELPER_FAILS(parser.parse());
 
     procedure.resetReachability();
-    validate(procedure, "After parsing:\n");
+    if (!ASSERT_DISABLED)
+        validate(procedure, "After parsing:\n");
 
-    if (verbose)
-        dataLog("Pre SSA: ", procedure);
+    dataLogIf(verbose, "Pre SSA: ", procedure);
     fixSSA(procedure);
-    if (verbose)
-        dataLog("Post SSA: ", procedure);
+    dataLogIf(verbose, "Post SSA: ", procedure);
 
     {
         B3::prepareForGeneration(procedure, optLevel);

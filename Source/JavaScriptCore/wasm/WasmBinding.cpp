@@ -51,6 +51,8 @@ static void materializeImportJSCell(VM* vm, JIT& jit, unsigned importIndex, GPRR
 
 static MacroAssemblerCodeRef wasmToJs(VM* vm, Bag<CallLinkInfo>& callLinkInfos, SignatureIndex signatureIndex, unsigned importIndex)
 {
+    // FIXME: This function doesn't properly abstract away the calling convention.
+    // It'd be super easy to do so: https://bugs.webkit.org/show_bug.cgi?id=169401
     const WasmCallingConvention& wasmCC = wasmCallingConvention();
     const JSCCallingConvention& jsCC = jscCallingConvention();
     const Signature* signature = SignatureInformation::get(vm, signatureIndex);
@@ -121,9 +123,9 @@ static MacroAssemblerCodeRef wasmToJs(VM* vm, Bag<CallLinkInfo>& callLinkInfos, 
 
     // FIXME perform a stack check before updating SP. https://bugs.webkit.org/show_bug.cgi?id=165546
 
-    unsigned numberOfParameters = argCount + 1; // There is a "this" argument.
-    unsigned numberOfRegsForCall = CallFrame::headerSizeInRegisters + numberOfParameters;
-    unsigned numberOfBytesForCall = numberOfRegsForCall * sizeof(Register) - sizeof(CallerFrameAndPC);
+    const unsigned numberOfParameters = argCount + 1; // There is a "this" argument.
+    const unsigned numberOfRegsForCall = CallFrame::headerSizeInRegisters + numberOfParameters;
+    const unsigned numberOfBytesForCall = numberOfRegsForCall * sizeof(Register) - sizeof(CallerFrameAndPC);
     const unsigned stackOffset = WTF::roundUpToMultipleOf(stackAlignmentBytes(), numberOfBytesForCall);
     jit.subPtr(MacroAssembler::TrustedImm32(stackOffset), MacroAssembler::stackPointerRegister);
     JIT::Address calleeFrame = CCallHelpers::Address(MacroAssembler::stackPointerRegister, -static_cast<ptrdiff_t>(sizeof(CallerFrameAndPC)));
@@ -135,7 +137,7 @@ static MacroAssemblerCodeRef wasmToJs(VM* vm, Bag<CallLinkInfo>& callLinkInfos, 
         unsigned marshalledGPRs = 0;
         unsigned marshalledFPRs = 0;
         unsigned calleeFrameOffset = CallFrameSlot::firstArgument * static_cast<int>(sizeof(Register));
-        unsigned frOffset = CallFrameSlot::firstArgument * static_cast<int>(sizeof(Register));
+        unsigned frOffset = CallFrame::headerSizeInRegisters * static_cast<int>(sizeof(Register));
         for (unsigned argNum = 0; argNum < argCount; ++argNum) {
             Type argType = signature->argument(argNum);
             switch (argType) {
@@ -190,7 +192,7 @@ static MacroAssemblerCodeRef wasmToJs(VM* vm, Bag<CallLinkInfo>& callLinkInfos, 
         unsigned marshalledGPRs = 0;
         unsigned marshalledFPRs = 0;
         unsigned calleeFrameOffset = CallFrameSlot::firstArgument * static_cast<int>(sizeof(Register));
-        unsigned frOffset = CallFrameSlot::firstArgument * static_cast<int>(sizeof(Register));
+        unsigned frOffset = CallFrame::headerSizeInRegisters * static_cast<int>(sizeof(Register));
         for (unsigned argNum = 0; argNum < argCount; ++argNum) {
             Type argType = signature->argument(argNum);
             switch (argType) {
@@ -201,7 +203,7 @@ static MacroAssemblerCodeRef wasmToJs(VM* vm, Bag<CallLinkInfo>& callLinkInfos, 
                 RELEASE_ASSERT_NOT_REACHED(); // Handled above.
             case I32:
                 // Skipped: handled above.
-                if (marshalledGPRs < wasmCC.m_gprArgs.size())
+                if (marshalledGPRs >= wasmCC.m_gprArgs.size())
                     frOffset += sizeof(Register);
                 ++marshalledGPRs;
                 calleeFrameOffset += sizeof(Register);

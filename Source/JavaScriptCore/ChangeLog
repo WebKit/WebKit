@@ -1,3 +1,27 @@
+2017-03-09  Saam Barati  <sbarati@apple.com>
+
+        WebAssembly: Make the Unity AngryBots demo run
+        https://bugs.webkit.org/show_bug.cgi?id=169268
+
+        Reviewed by Keith Miller.
+
+        This patch fixes three bugs:
+        1. The WasmBinding code for making a JS call was off
+        by 1 in its stack layout code.
+        2. The WasmBinding code had a "<" comparison instead
+        of a ">=" comparison. This would cause us to calculate
+        the wrong frame pointer offset.
+        3. The code to reload wasm state inside B3IRGenerator didn't
+        properly represent its effects.
+
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::restoreWebAssemblyGlobalState):
+        (JSC::Wasm::parseAndCompile):
+        * wasm/WasmBinding.cpp:
+        (JSC::Wasm::wasmToJs):
+        * wasm/js/WebAssemblyInstanceConstructor.cpp:
+        (JSC::WebAssemblyInstanceConstructor::createInstance):
+
 2017-03-09  Mark Lam  <mark.lam@apple.com>
 
         Make the VM Traps mechanism non-polling for the DFG and FTL.

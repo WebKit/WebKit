@@ -1,3 +1,17 @@
+2017-03-09  Saam Barati  <sbarati@apple.com>
+
+        WebAssembly: Make the Unity AngryBots demo run
+        https://bugs.webkit.org/show_bug.cgi?id=169268
+
+        Reviewed by Keith Miller.
+
+        * wasm/function-tests/many-arguments-to-function.js: Added.
+        (import.Builder.from.string_appeared_here.import.as.assert.from.string_appeared_here.I32Const.0.I32Const.1.I32Const.2.I32Const.3.I32Const.4.I32Const.5.I32Const.6.I32Const.7.I32Const.8.I32Const.9.I32Const.10.I32Const.11.I32Const.12.I32Const.13.I32Const.14.I32Const.15.I32Const.16.I32Const.17.Call.0.Return.End.End.foo):
+        (i.instance.exports.f0.F32Const.F32Const.F32Const.F32Const.F32Const.F32Const.F32Const.F32Const.F32Const.F32Const.F32Const.F32Const.F32Const.F32Const.F32Const.F32Const.F32Const.F32Const.Call.Return.End.End.foo):
+        (i.instance.exports.f0):
+        (instance.exports.f0.GetLocal.GetLocal.GetLocal.GetLocal.GetLocal.GetLocal.GetLocal.GetLocal.GetLocal.GetLocal.GetLocal.GetLocal.GetLocal.GetLocal.GetLocal.GetLocal.GetLocal.GetLocal.Call.Return.End.End.foo):
+        (instance.exports.f0):
+
 2017-03-08  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [GTK] JSC test stress/arity-check-ftl-throw.js.ftl-no-cjit-validate-sampling-profiler crashing on GTK bot
