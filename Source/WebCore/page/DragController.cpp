@@ -184,6 +184,7 @@ void DragController::dragEnded()
 {
     m_dragInitiator = nullptr;
     m_didInitiateDrag = false;
+    m_documentUnderMouse = nullptr;
     clearDragCaret();
     
     m_client.dragEnded();
