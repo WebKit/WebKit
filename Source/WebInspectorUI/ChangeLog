@@ -1,3 +1,14 @@
+2017-03-08  Devin Rousso  <dcrousso+webkit@gmail.com>
+
+        Web Inspector: RTL: Switching back to System Direction doesn't change the dock side
+        https://bugs.webkit.org/show_bug.cgi?id=169323
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Base/Main.js:
+        (WebInspector.setLayoutDirection):
+        Change the dock side based on the resolved layout direction, not the current setting value.
+
 2017-03-08  Matt Baker  <mattbaker@apple.com>
 
         REGRESSION (r212998): Web Inspector: DetailsSections with options have broken layout

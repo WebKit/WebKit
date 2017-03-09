@@ -2176,7 +2176,7 @@ WebInspector.resolvedLayoutDirection = function()
         layoutDirection = InspectorFrontendHost.userInterfaceLayoutDirection();
 
     return layoutDirection;
-}
+};
 
 WebInspector.setLayoutDirection = function(value)
 {
@@ -2188,10 +2188,10 @@ WebInspector.setLayoutDirection = function(value)
 
     WebInspector.settings.layoutDirection.value = value;
 
-    if (value === WebInspector.LayoutDirection.RTL && this._dockConfiguration === WebInspector.DockConfiguration.Right)
+    if (WebInspector.resolvedLayoutDirection() === WebInspector.LayoutDirection.RTL && this._dockConfiguration === WebInspector.DockConfiguration.Right)
         this._dockLeft();
 
-    if (value === WebInspector.LayoutDirection.LTR && this._dockConfiguration === WebInspector.DockConfiguration.Left)
+    if (WebInspector.resolvedLayoutDirection() === WebInspector.LayoutDirection.LTR && this._dockConfiguration === WebInspector.DockConfiguration.Left)
         this._dockRight();
 
     window.location.reload();
