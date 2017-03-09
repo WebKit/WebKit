@@ -43,6 +43,7 @@ public:
     RenderMultiColumnSet* firstMultiColumnSet() const;
     RenderMultiColumnSet* lastMultiColumnSet() const;
     RenderBox* firstColumnSetOrSpanner() const;
+    bool hasColumnSpanner() const { return !m_spannerMap.isEmpty(); }
     static RenderBox* nextColumnSetOrSpannerSiblingOf(const RenderBox*);
     static RenderBox* previousColumnSetOrSpannerSiblingOf(const RenderBox*);
 

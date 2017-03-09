@@ -44,8 +44,8 @@ static PaginatedLine computeLineTopAndBottomWithOverflow(const RenderBlockFlow& 
 {
     // FIXME: Add visualOverflowForDecorations.
     auto& fontMetrics = flow.style().fontCascade().fontMetrics();
-    auto ascent = fontMetrics.floatAscent();
-    auto descent = fontMetrics.floatDescent();
+    auto ascent = fontMetrics.ascent();
+    auto descent = fontMetrics.descent();
     auto lineHeight = lineHeightFromFlow(flow);
     LayoutUnit offset = flow.borderAndPaddingBefore();
     for (auto& strut : struts) {
@@ -94,17 +94,20 @@ static LayoutUnit computeOffsetAfterLineBreak(LayoutUnit lineBreakPosition, bool
 static void setPageBreakForLine(unsigned lineBreakIndex, PaginatedLines& lines, RenderBlockFlow& flow, Layout::SimpleLineStruts& struts,
     bool atTheTopOfColumnOrPage)
 {
-    if (!lineBreakIndex) {
-        // When the first line does not fit the current page, just add a page break in front and set the strut on the block.
-        auto line = lines.first();
-        auto remainingLogicalHeight = flow.pageRemainingLogicalHeightForOffset(line.top, RenderBlockFlow::ExcludePageBoundary);
+    auto line = lines.at(lineBreakIndex);
+    auto remainingLogicalHeight = flow.pageRemainingLogicalHeightForOffset(line.top, RenderBlockFlow::ExcludePageBoundary);
+    auto& style = flow.style();
+    auto firstLineWithDoesNotFit = !lineBreakIndex && line.height < flow.pageLogicalHeightForOffset(line.top);
+    auto orphanDoesNotFit = !style.hasAutoOrphans() && style.orphans() > (short)lineBreakIndex;
+    if (firstLineWithDoesNotFit || orphanDoesNotFit) {
         flow.setPageBreak(line.top, line.height - remainingLogicalHeight);
-        flow.setPaginationStrut(remainingLogicalHeight);
+        flow.setPaginationStrut(line.top + remainingLogicalHeight);
         return;
     }
-    auto beforeLineBreak = lines.at(lineBreakIndex - 1);
-    auto spaceShortage = flow.pageRemainingLogicalHeightForOffset(beforeLineBreak.top, RenderBlockFlow::ExcludePageBoundary) - beforeLineBreak.height;
-    flow.setPageBreak(beforeLineBreak.bottom, spaceShortage);
+    if (atTheTopOfColumnOrPage)
+        flow.setPageBreak(line.top, line.height);
+    else
+        flow.setPageBreak(line.top, line.height - remainingLogicalHeight);
     struts.append({ lineBreakIndex, computeOffsetAfterLineBreak(lines[lineBreakIndex].top, !lineBreakIndex, atTheTopOfColumnOrPage, flow) });
 }
 

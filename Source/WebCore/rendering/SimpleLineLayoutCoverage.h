@@ -35,7 +35,7 @@ void toggleSimpleLineLayout();
 #endif
 
 enum AvoidanceReason_ : uint64_t {
-    FlowIsInsideRegion                    = 1LLU  << 0,
+    FlowIsInsideANonMultiColumnThread     = 1LLU  << 0,
     FlowHasHorizonalWritingMode           = 1LLU  << 1,
     FlowHasOutline                        = 1LLU  << 2,
     FlowIsRuby                            = 1LLU  << 3,
@@ -86,7 +86,11 @@ enum AvoidanceReason_ : uint64_t {
     FlowHasHangingPunctuation             = 1LLU  << 48,
     FlowFontHasOverflowGlyph              = 1LLU  << 49,
     FlowTextHasSurrogatePair              = 1LLU  << 50,
-    EndOfReasons                          = 1LLU  << 51
+    MultiColumnFlowIsNotTopLevel          = 1LLU  << 51,
+    MultiColumnFlowHasColumnSpanner       = 1LLU  << 52,
+    MultiColumnFlowVerticalAlign          = 1LLU  << 53,
+    MultiColumnFlowIsFloating             = 1LLU  << 54,
+    EndOfReasons                          = 1LLU  << 55
 };
 const unsigned NoReason = 0;
 

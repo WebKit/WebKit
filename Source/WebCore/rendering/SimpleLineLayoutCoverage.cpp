@@ -42,8 +42,8 @@ namespace SimpleLineLayout {
 static void printReason(AvoidanceReason reason, TextStream& stream)
 {
     switch (reason) {
-    case FlowIsInsideRegion:
-        stream << "flow is inside region";
+    case FlowIsInsideANonMultiColumnThread:
+        stream << "flow is inside a non-multicolumn container";
         break;
     case FlowHasHorizonalWritingMode:
         stream << "horizontal writing mode";
@@ -182,6 +182,18 @@ static void printReason(AvoidanceReason reason, TextStream& stream)
         break;
     case FlowTextHasSurrogatePair:
         stream << "surrogate pair";
+        break;
+    case MultiColumnFlowIsNotTopLevel:
+        stream << "non top level column";
+        break;
+    case MultiColumnFlowHasColumnSpanner:
+        stream << "column has spanner";
+        break;
+    case MultiColumnFlowVerticalAlign:
+        stream << "column with vertical-align != baseline";
+        break;
+    case MultiColumnFlowIsFloating:
+        stream << "column with floating objecgts";
         break;
     case FlowTextIsEmpty:
     case FlowHasNoChild:

@@ -1,3 +1,13 @@
+2017-03-09  Zalan Bujtas  <zalan@apple.com>
+
+        Simple line layout: Add top level pagination support.
+        https://bugs.webkit.org/show_bug.cgi?id=169410
+        <rdar://problem/28536227>
+
+        Reviewed by Antti Koivisto.
+
+        * TestExpectations:
+
 2017-03-08  Per Arne Vollan  <pvollan@apple.com>
 
         Implement stroke-width CSS property.

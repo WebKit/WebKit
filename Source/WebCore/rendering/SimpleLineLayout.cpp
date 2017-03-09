@@ -40,10 +40,13 @@
 #include "PaintInfo.h"
 #include "RenderBlockFlow.h"
 #include "RenderChildIterator.h"
+#include "RenderFlowThread.h"
 #include "RenderLineBreak.h"
+#include "RenderMultiColumnFlowThread.h"
 #include "RenderStyle.h"
 #include "RenderText.h"
 #include "RenderTextControl.h"
+#include "RenderView.h"
 #include "Settings.h"
 #include "SimpleLineLayoutFlowContents.h"
 #include "SimpleLineLayoutFunctions.h"
@@ -246,8 +249,21 @@ AvoidanceReasonFlags canUseForWithReason(const RenderBlockFlow& flow, IncludeRea
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasNoParent, reasons, includeReasons);
     if (!flow.firstChild())
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasNoChild, reasons, includeReasons);
-    if (flow.flowThreadState() != RenderObject::NotInsideFlowThread)
-        SET_REASON_AND_RETURN_IF_NEEDED(FlowIsInsideRegion, reasons, includeReasons);
+    if (flow.flowThreadState() != RenderObject::NotInsideFlowThread) {
+        auto* flowThread = flow.flowThreadContainingBlock();
+        if (!is<RenderMultiColumnFlowThread>(flowThread))
+            SET_REASON_AND_RETURN_IF_NEEDED(FlowIsInsideANonMultiColumnThread, reasons, includeReasons);
+        auto& columnThread = downcast<RenderMultiColumnFlowThread>(*flowThread);
+        if (columnThread.parent() != &flow.view())
+            SET_REASON_AND_RETURN_IF_NEEDED(MultiColumnFlowIsNotTopLevel, reasons, includeReasons);
+        if (columnThread.hasColumnSpanner())
+            SET_REASON_AND_RETURN_IF_NEEDED(MultiColumnFlowHasColumnSpanner, reasons, includeReasons);
+        auto& style = flow.style();
+        if (style.verticalAlign() != BASELINE)
+            SET_REASON_AND_RETURN_IF_NEEDED(MultiColumnFlowVerticalAlign, reasons, includeReasons);
+        if (style.isFloating())
+            SET_REASON_AND_RETURN_IF_NEEDED(MultiColumnFlowIsFloating, reasons, includeReasons);
+    }
     if (!flow.isHorizontalWritingMode())
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasHorizonalWritingMode, reasons, includeReasons);
     if (flow.hasOutline())

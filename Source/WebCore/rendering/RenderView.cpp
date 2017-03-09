@@ -1237,11 +1237,12 @@ void RenderView::pushLayoutState(RenderObject& root)
 
 void RenderView::pushLayoutStateForPagination(RenderBlockFlow& layoutRoot)
 {
-    pushLayoutState(layoutRoot);
-    ASSERT(m_layoutState);
+    ASSERT(!m_layoutState);
+    m_layoutState = std::make_unique<LayoutState>(layoutRoot);
     m_layoutState->m_isPaginated = true;
     // This is just a flag for known page height (see RenderBlockFlow::checkForPaginationLogicalHeightChange).
     m_layoutState->m_pageLogicalHeight = 1;
+    pushLayoutStateForCurrentFlowThread(layoutRoot);
 }
 
 IntSize RenderView::viewportSizeForCSSViewportUnits() const
