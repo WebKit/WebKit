@@ -950,24 +950,24 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.View
 
     _positionResizerElements()
     {
-        var left = 0;
+        let leadingOffset = 0;
         var previousResizer = null;
 
         // Make n - 1 resizers for n columns.
         var numResizers = this.orderedColumns.length - 1;
 
-        // Calculate left offsets.
+        // Calculate leading offsets.
         // Get the width of the cell in the first (and only) row of the
         // header table in order to determine the width of the column, since
         // it is not possible to query a column for its width.
         var cells = this._headerTableBodyElement.rows[0].cells;
         var columnWidths = [];
         for (var i = 0; i < numResizers; ++i) {
-            left += cells[i].getBoundingClientRect().width;
-            columnWidths.push(left);
+            leadingOffset += cells[i].getBoundingClientRect().width;
+            columnWidths.push(leadingOffset);
         }
 
-        // Apply left offsets.
+        // Apply leading offsets.
         for (var i = 0; i < numResizers; ++i) {
             // Create a new resizer if one does not exist for this column.
             // This resizer is associated with the column to its right.
@@ -977,11 +977,11 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.View
                 this.element.appendChild(resizer.element);
             }
 
-            left = columnWidths[i];
+            leadingOffset = columnWidths[i];
 
             if (this._isColumnVisible(this.orderedColumns[i])) {
                 resizer.element.style.removeProperty("display");
-                resizer.element.style.left = left + "px";
+                resizer.element.style.setProperty(WebInspector.resolvedLayoutDirection() === WebInspector.LayoutDirection.RTL ? "right" : "left", `${leadingOffset}px`);
                 resizer[WebInspector.DataGrid.PreviousColumnOrdinalSymbol] = i;
                 if (previousResizer)
                     previousResizer[WebInspector.DataGrid.NextColumnOrdinalSymbol] = i;
@@ -998,12 +998,12 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.View
 
     _positionHeaderViews()
     {
-        let left = 0;
+        let leadingOffset = 0;
         let headerViews = [];
-        let lefts = [];
+        let offsets = [];
         let columnWidths = [];
 
-        // Calculate left offsets and widths.
+        // Calculate leading offsets and widths.
         for (let columnIdentifier of this.orderedColumns) {
             let column = this.columns.get(columnIdentifier);
             console.assert(column, "Missing column data for header cell with columnIdentifier " + columnIdentifier);
@@ -1014,17 +1014,17 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.View
             let headerView = column["headerView"];
             if (headerView) {
                 headerViews.push(headerView);
-                lefts.push(left);
+                offsets.push(leadingOffset);
                 columnWidths.push(columnWidth);
             }
 
-            left += columnWidth;
+            leadingOffset += columnWidth;
         }
 
-        // Apply left offsets and widths.
+        // Apply leading offsets and widths.
         for (let i = 0; i < headerViews.length; ++i) {
             let headerView = headerViews[i];
-            headerView.element.style.left = lefts[i] + "px";
+            headerView.element.style.setProperty(WebInspector.resolvedLayoutDirection() === WebInspector.LayoutDirection.RTL ? "right" : "left", `${offsets[i]}px`);
             headerView.element.style.width = columnWidths[i] + "px";
             headerView.updateLayout(WebInspector.View.LayoutReason.Resize);
         }
@@ -1791,41 +1791,49 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.View
         if (resizer !== this._currentResizer)
             return;
 
-        // Constrain the dragpoint to be within the containing div of the
-        // datagrid.
-        var dragPoint = (resizer.initialPosition - positionDelta) - this.element.totalOffsetLeft;
+        let isRTL = WebInspector.resolvedLayoutDirection() === WebInspector.LayoutDirection.RTL;
+        if (isRTL)
+            positionDelta *= -1;
+
+        // Constrain the dragpoint to be within the containing div of the datagrid.
+        let dragPoint = 0;
+        if (isRTL)
+            dragPoint += this.element.totalOffsetRight - resizer.initialPosition - positionDelta;
+        else
+            dragPoint += resizer.initialPosition - this.element.totalOffsetLeft - positionDelta;
+
         // Constrain the dragpoint to be within the space made up by the
         // column directly to the left and the column directly to the right.
         var leftColumnIndex = resizer[WebInspector.DataGrid.PreviousColumnOrdinalSymbol];
         var rightColumnIndex = resizer[WebInspector.DataGrid.NextColumnOrdinalSymbol];
         var firstRowCells = this._headerTableBodyElement.rows[0].cells;
-        var leftEdgeOfPreviousColumn = 0;
-        for (var i = 0; i < leftColumnIndex; i++)
-            leftEdgeOfPreviousColumn += firstRowCells[i].offsetWidth;
+        let leadingEdgeOfPreviousColumn = 0;
+        for (let i = 0; i < leftColumnIndex; ++i)
+            leadingEdgeOfPreviousColumn += firstRowCells[i].offsetWidth;
 
         // Differences for other resize methods
         if (this.resizeMethod === WebInspector.DataGrid.ResizeMethod.Last) {
             rightColumnIndex = this.resizers.length;
         } else if (this.resizeMethod === WebInspector.DataGrid.ResizeMethod.First) {
-            leftEdgeOfPreviousColumn += firstRowCells[leftColumnIndex].offsetWidth - firstRowCells[0].offsetWidth;
+            leadingEdgeOfPreviousColumn += firstRowCells[leftColumnIndex].offsetWidth - firstRowCells[0].offsetWidth;
             leftColumnIndex = 0;
         }
 
-        var rightEdgeOfNextColumn = leftEdgeOfPreviousColumn + firstRowCells[leftColumnIndex].offsetWidth + firstRowCells[rightColumnIndex].offsetWidth;
+        let trailingEdgeOfNextColumn = leadingEdgeOfPreviousColumn + firstRowCells[leftColumnIndex].offsetWidth + firstRowCells[rightColumnIndex].offsetWidth;
 
         // Give each column some padding so that they don't disappear.
-        var leftMinimum = leftEdgeOfPreviousColumn + this.ColumnResizePadding;
-        var rightMaximum = rightEdgeOfNextColumn - this.ColumnResizePadding;
+        let leftMinimum = leadingEdgeOfPreviousColumn + this.ColumnResizePadding;
+        let rightMaximum = trailingEdgeOfNextColumn - this.ColumnResizePadding;
 
         dragPoint = Number.constrain(dragPoint, leftMinimum, rightMaximum);
 
-        resizer.element.style.left = (dragPoint - this.CenterResizerOverBorderAdjustment) + "px";
+        resizer.element.style.setProperty(isRTL ? "right" : "left", `${dragPoint - this.CenterResizerOverBorderAdjustment}px`);
 
-        var percentLeftColumn = (((dragPoint - leftEdgeOfPreviousColumn) / this._dataTableElement.offsetWidth) * 100) + "%";
+        let percentLeftColumn = (((dragPoint - leadingEdgeOfPreviousColumn) / this._dataTableElement.offsetWidth) * 100) + "%";
         this._headerTableColumnGroupElement.children[leftColumnIndex].style.width = percentLeftColumn;
         this._dataTableColumnGroupElement.children[leftColumnIndex].style.width = percentLeftColumn;
 
-        var percentRightColumn = (((rightEdgeOfNextColumn - dragPoint) / this._dataTableElement.offsetWidth) * 100) + "%";
+        let percentRightColumn = (((trailingEdgeOfNextColumn - dragPoint) / this._dataTableElement.offsetWidth) * 100) + "%";
         this._headerTableColumnGroupElement.children[rightColumnIndex].style.width = percentRightColumn;
         this._dataTableColumnGroupElement.children[rightColumnIndex].style.width = percentRightColumn;
 

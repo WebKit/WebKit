@@ -26,6 +26,9 @@
 .data-grid {
     position: relative;
     outline: none;
+
+    --data-grid-column-border-start: 1px solid transparent;
+    --data-grid-column-border-end: 0.5px solid var(--border-color);
 }
 
 .data-grid .highlight {
@@ -75,22 +78,22 @@
 }
 
 .data-grid th {
-    text-align: left;
-    vertical-align: middle;
-
-    background-color: white;
-
-    font-weight: normal;
-
     height: 22px;
     padding: 0 6px;
-
+    text-align: start;
+    vertical-align: middle;
+    font-weight: normal;
     white-space: nowrap;
+    background-color: white;
     overflow: hidden;
 }
 
-.data-grid :matches(th, td):not(:last-child) {
-    border-right: 0.5px solid var(--border-color);
+body[dir=ltr] .data-grid :matches(th, td):not(:last-child) {
+    border-right: var(--data-grid-column-border-end);
+}
+
+body[dir=rtl] .data-grid :matches(th, td):not(:last-child) {
+    border-left: var(--data-grid-column-border-end);
 }
 
 .data-grid th.sortable:active {
@@ -99,6 +102,8 @@
 
 .data-grid th:matches(.sort-ascending, .sort-descending) {
     background-color: hsl(0, 0%, 90%);
+
+    --data-grid-sort-div-first-child-padding-end: 12px;
 }
 
 .data-grid tr.filler {
@@ -177,8 +182,12 @@
     font-variant-numeric: tabular-nums;
 }
 
-.data-grid:matches(:focus, .force-focus) tr.selected td:not(:last-child) {
+body[dir=ltr] .data-grid:matches(:focus, .force-focus) tr.selected td:not(:last-child) {
     border-right-color: hsl(210, 100%, 40%);
+}
+
+body[dir=rtl] .data-grid:matches(:focus, .force-focus) tr.selected td:not(:last-child) {
+    border-left-color: hsl(210, 100%, 40%);
 }
 
 .data-grid :matches(th, td) > div {
@@ -192,53 +201,48 @@
 }
 
 .data-grid .right div {
-    text-align: right;
+    text-align: end;
 }
 
 .data-grid th.sortable div {
     position: relative;
 }
 
-.data-grid th:matches(.sort-ascending, .sort-descending) > div:first-child {
-    padding-right: 12px;
+body[dir=ltr] .data-grid th:matches(.sort-ascending, .sort-descending) > div:first-child {
+    padding-right: var(--data-grid-sort-div-first-child-padding-end);
+}
+
+body[dir=rtl] .data-grid th:matches(.sort-ascending, .sort-descending) > div:first-child {
+    padding-left: var(--data-grid-sort-div-first-child-padding-end);
+}
+
+.data-grid th:matches(.sort-ascending, .sort-descending) > div:first-child::after {
+    position: absolute;
+    top: 1px;
+    bottom: 0;
+    width: 9px;
+    height: 8px;
+    margin-bottom: auto;
+    margin-top: auto;
+    content: "";
+    background-size: 9px 8px;
+    background-repeat: no-repeat;
+}
+
+body[dir=ltr] .data-grid th:matches(.sort-ascending, .sort-descending) > div:first-child::after {
+    right: 0;
+}
+
+body[dir=rtl] .data-grid th:matches(.sort-ascending, .sort-descending) > div:first-child::after {
+    left: 0;
 }
 
 .data-grid th.sort-ascending > div:first-child::after {
-    position: absolute;
-    top: 1px;
-    bottom: 0;
-    right: 0;
-
-    margin-bottom: auto;
-    margin-top: auto;
-
-    width: 9px;
-    height: 8px;
-
-    content: "";
-
     background-image: url(../Images/SortIndicatorArrows.svg#up-arrow-normal);
-    background-size: 9px 8px;
-    background-repeat: no-repeat;
 }
 
 .data-grid th.sort-descending > div:first-child::after {
-    position: absolute;
-    top: 1px;
-    bottom: 0;
-    right: 0;
-
-    margin-bottom: auto;
-    margin-top: auto;
-
-    width: 9px;
-    height: 8px;
-
-    content: "";
-
     background-image: url(../Images/SortIndicatorArrows.svg#down-arrow-normal);
-    background-size: 9px 8px;
-    background-repeat: no-repeat;
 }
 
 .data-grid button {
@@ -246,17 +250,21 @@
 }
 
 .data-grid tr.parent td.disclosure::before {
-    float: left;
-
+    width: 13px;
+    height: 100%;
     content: "";
-
     background-image: url(../Images/DisclosureTriangles.svg#closed-normal);
     background-position-y: center;
     background-size: 13px 13px;
     background-repeat: no-repeat;
+}
 
-    width: 13px;
-    height: 100%;
+body[dir=ltr] .data-grid tr.parent td.disclosure::before {
+    float: left;
+}
+
+body[dir=rtl] .data-grid tr.parent td.disclosure::before {
+    float: right;
 }
 
 .data-grid tr.parent.expanded td.disclosure::before {
@@ -307,20 +315,35 @@
 
 .data-grid td .icon {
     display: inline-block;
-    vertical-align: top;
-
     width: 16px;
     height: 16px;
+    vertical-align: top;
 
-    margin-right: 2px;
+    --data-grid-icon-margin-end: 2px;
+}
+
+body[dir=ltr] .data-grid td .icon {
+    margin-right: var(--data-grid-icon-margin-end);
+}
+
+body[dir=rtl] .data-grid td .icon {
+    margin-left: var(--data-grid-icon-margin-end);
 }
 
 .data-grid td .go-to-arrow {
-    float: right;
-
     display: none;
 
-    margin-left: 2px;
+    --data-grid-go-to-arrow-margin-start: 2px;
+}
+
+body[dir=ltr] .data-grid td .go-to-arrow {
+    float: right;
+    margin-left: var(--data-grid-go-to-arrow-margin-start);
+}
+
+body[dir=rtl] .data-grid td .go-to-arrow {
+    float: left;
+    margin-right: var(--data-grid-go-to-arrow-margin-start);
 }
 
 .data-grid tr:matches(.selected, :hover) .go-to-arrow {
@@ -329,25 +352,46 @@
 
 .data-grid .resizer {
     z-index: var(--z-index-resizer);
-    transform: translateX(-2.5px);
+    
+    --data-grid-resizer-translateX: -2.5px;
 }
 
-.data-grid table.header,
-.data-grid table.data {
-    /* Hide right border from first hidden columns. */
+body[dir=ltr] .data-grid .resizer {
+    transform: translateX(var(--data-grid-resizer-translateX));
+}
+
+body[dir=rtl] .data-grid .resizer {
+    transform: translateX(calc(-1 * var(--data-grid-resizer-translateX)));
+}
+
+.data-grid table:matches(.header, .data) {
+    /* Hide starting border from first hidden columns. */
     width: calc(100% + 1px);
-    margin-left: -1px;
+
+    --data-grid-table-margin-start: -1px;
 }
 
-.data-grid :matches(th, td):first-child {
-    border-left: 1px solid transparent;
+body[dir=ltr] .data-grid table:matches(.header, .data) {
+    margin-left: var(--data-grid-table-margin-start);
+}
+
+body[dir=rtl] .data-grid table:matches(.header, .data) {
+    margin-right: var(--data-grid-table-margin-start);
+}
+
+body[dir=ltr] .data-grid :matches(th, td):first-child {
+    border-left: var(--data-grid-column-border-start);
+}
+
+body[dir=rtl] .data-grid :matches(th, td):first-child {
+    border-right: var(--data-grid-column-border-start);
 }
 
 @media (-webkit-min-device-pixel-ratio: 2) {
-    .data-grid table.header,
-    .data-grid table.data {
+    .data-grid table:matches(.header, .data) {
         width: calc(100% + 0.5px);
-        margin-left: -0.5px;
+        
+        --data-grid-table-margin-start: -0.5px;
     }
 
     .data-grid :matches(th, td):first-child {

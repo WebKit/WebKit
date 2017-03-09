@@ -1,3 +1,57 @@
+2017-03-08  Devin Rousso  <dcrousso+webkit@gmail.com>
+
+        Web Inspector: RTL: table header columns and cells don't line up, dragging seems backwards
+        https://bugs.webkit.org/show_bug.cgi?id=168289
+
+        Reviewed by Brian Burg.
+
+        Changed the algorithm used to position columns when in RTL to use right offsets instead of
+        left offsets.  This also applies to the resizer elements between columns.
+
+        * UserInterface/Views/DataGrid.css:
+        (.data-grid):
+        (.data-grid th):
+        (body[dir=ltr] .data-grid :matches(th, td):not(:last-child)):
+        (body[dir=rtl] .data-grid :matches(th, td):not(:last-child)):
+        (.data-grid th:matches(.sort-ascending, .sort-descending)):
+        (body[dir=ltr] .data-grid:matches(:focus, .force-focus) tr.selected td:not(:last-child)):
+        (body[dir=rtl] .data-grid:matches(:focus, .force-focus) tr.selected td:not(:last-child)):
+        (.data-grid .right div):
+        (body[dir=ltr] .data-grid th:matches(.sort-ascending, .sort-descending) > div:first-child):
+        (body[dir=rtl] .data-grid th:matches(.sort-ascending, .sort-descending) > div:first-child):
+        (.data-grid th:matches(.sort-ascending, .sort-descending) > div:first-child::after):
+        (body[dir=ltr] .data-grid th:matches(.sort-ascending, .sort-descending) > div:first-child::after):
+        (body[dir=rtl] .data-grid th:matches(.sort-ascending, .sort-descending) > div:first-child::after):
+        (.data-grid th.sort-ascending > div:first-child::after):
+        (.data-grid th.sort-descending > div:first-child::after):
+        (.data-grid tr.parent td.disclosure::before):
+        (body[dir=ltr] .data-grid tr.parent td.disclosure::before):
+        (body[dir=rtl] .data-grid tr.parent td.disclosure::before):
+        (.data-grid td .icon):
+        (body[dir=ltr] .data-grid td .icon):
+        (body[dir=rtl] .data-grid td .icon):
+        (.data-grid td .go-to-arrow):
+        (body[dir=ltr] .data-grid td .go-to-arrow):
+        (body[dir=rtl] .data-grid td .go-to-arrow):
+        (.data-grid .resizer):
+        (body[dir=ltr] .data-grid .resizer):
+        (body[dir=rtl] .data-grid .resizer):
+        (.data-grid table:matches(.header, .data)):
+        (body[dir=ltr] .data-grid table:matches(.header, .data)):
+        (body[dir=rtl] .data-grid table:matches(.header, .data)):
+        (body[dir=ltr] .data-grid :matches(th, td):first-child):
+        (body[dir=rtl] .data-grid :matches(th, td):first-child):
+        (@media (-webkit-min-device-pixel-ratio: 2)):
+        (.data-grid :matches(th, td):not(:last-child)): Deleted.
+        (.data-grid:matches(:focus, .force-focus) tr.selected td:not(:last-child)): Deleted.
+        (.data-grid th:matches(.sort-ascending, .sort-descending) > div:first-child): Deleted.
+        (.data-grid table.header, .data-grid table.data): Deleted.
+
+        * UserInterface/Views/DataGrid.js:
+        (WebInspector.DataGrid.prototype._positionResizerElements):
+        (WebInspector.DataGrid.prototype._positionHeaderViews):
+        (WebInspector.DataGrid.prototype.resizerDragging):
+
 2017-03-08  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Should be able to see where Resources came from (Memory Cache, Disk Cache)
