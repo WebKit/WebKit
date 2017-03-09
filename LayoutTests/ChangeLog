@@ -1,3 +1,11 @@
+2017-03-09  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Add iOS baseline for compositing/contents-format/subpixel-antialiased-text-traversal.
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator/compositing/contents-format/subpixel-antialiased-text-traversal-expected.txt: Added.
+
 2017-03-09  Daniel Bates  <dabates@apple.com>
 
         Guard Credential Management implementation behind a runtime enabled feature flag
