@@ -1,3 +1,44 @@
+2017-03-10  Mark Lam  <mark.lam@apple.com>
+
+        [Re-landing] Implement a StackTrace utility object that can capture stack traces for debugging.
+        https://bugs.webkit.org/show_bug.cgi?id=169454
+
+        Reviewed by Michael Saboff.
+
+        The underlying implementation is hoisted right out of Assertions.cpp from the
+        implementations of WTFPrintBacktrace().
+
+        The reason we need this StackTrace object is because during heap debugging, we
+        sometimes want to capture the stack trace that allocated the objects of interest.
+        Dumping the stack trace directly to stdout (using WTFReportBacktrace()) may
+        perturb the execution profile sufficiently that an issue may not reproduce,
+        while alternatively, just capturing the stack trace and deferring printing it
+        till we actually need it later perturbs the execution profile less.
+
+        In addition, just capturing the stack traces (instead of printing them
+        immediately at each capture site) allows us to avoid polluting stdout with tons
+        of stack traces that may be irrelevant.
+
+        For now, we only capture the native stack trace.  We'll leave capturing and
+        integrating the JS stack trace as an exercise for the future if we need it then.
+
+        Here's an example of how to use this StackTrace utility:
+
+            // Capture a stack trace of the top 10 frames.
+            std::unique_ptr<StackTrace> trace(StackTrace::captureStackTrace(10));
+            // Print the trace.
+            dataLog(*trace);
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * tools/StackTrace.cpp: Added.
+        (JSC::StackTrace::instanceSize):
+        (JSC::StackTrace::captureStackTrace):
+        (JSC::StackTrace::dump):
+        * tools/StackTrace.h: Added.
+        (JSC::StackTrace::size):
+        (JSC::StackTrace::StackTrace):
+
 2017-03-04  Filip Pizlo  <fpizlo@apple.com>
 
         B3 should have comprehensive support for atomic operations
