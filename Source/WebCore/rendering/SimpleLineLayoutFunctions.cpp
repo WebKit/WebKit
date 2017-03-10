@@ -65,7 +65,7 @@ static void paintDebugBorders(GraphicsContext& context, LayoutRect borderRect, c
     context.drawRect(snappedRect);
 }
 
-static FloatRect computeOverflow(const RenderBlockFlow& flow, const FloatRect& layoutRect)
+FloatRect computeOverflow(const RenderBlockFlow& flow, const FloatRect& layoutRect)
 {
     auto overflowRect = layoutRect;
     auto viewportSize = flow.frame().view() ? flow.frame().view()->size() : IntSize();

@@ -43,6 +43,7 @@ namespace SimpleLineLayout {
 LayoutUnit computeFlowHeight(const RenderBlockFlow&, const Layout&);
 LayoutUnit computeFlowFirstLineBaseline(const RenderBlockFlow&, const Layout&);
 LayoutUnit computeFlowLastLineBaseline(const RenderBlockFlow&, const Layout&);
+FloatRect computeOverflow(const RenderBlockFlow&, const FloatRect&);
 
 void paintFlow(const RenderBlockFlow&, const Layout&, PaintInfo&, const LayoutPoint& paintOffset);
 bool hitTestFlow(const RenderBlockFlow&, const Layout&, const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction);

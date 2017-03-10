@@ -100,8 +100,10 @@ static void setPageBreakForLine(unsigned lineBreakIndex, PaginatedLines& lines, 
     auto firstLineWithDoesNotFit = !lineBreakIndex && line.height < flow.pageLogicalHeightForOffset(line.top);
     auto orphanDoesNotFit = !style.hasAutoOrphans() && style.orphans() > (short)lineBreakIndex;
     if (firstLineWithDoesNotFit || orphanDoesNotFit) {
-        flow.setPageBreak(line.top, line.height - remainingLogicalHeight);
-        flow.setPaginationStrut(line.top + remainingLogicalHeight);
+        auto firstLine = lines.first();
+        auto firstLineOverflowRect = computeOverflow(flow, LayoutRect(0, firstLine.top, 0, firstLine.height));
+        auto firstLineUpperOverhang = std::max<LayoutUnit>(-firstLineOverflowRect.y(), 0);
+        flow.setPaginationStrut(line.top + remainingLogicalHeight + firstLineUpperOverhang);
         return;
     }
     if (atTheTopOfColumnOrPage)

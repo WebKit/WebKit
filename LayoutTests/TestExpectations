@@ -1211,9 +1211,6 @@ svg/custom/font-face-fallback.svg [ Skip ]
 # Test disabled until we can fix layout of orthogonal writing mode roots
 fast/table/colspanMinWidth-vertical.html [ Skip ]
 
-# Orphan lines with visual overflow vs. simple line layout.
-webkit.org/b/169409 fast/multicol/orphans-negative-line-spacing.html [ ImageOnlyFailure ]
-
 ### END OF -disabled tests
 ########################################
 
