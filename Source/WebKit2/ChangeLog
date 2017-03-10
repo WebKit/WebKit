@@ -1,3 +1,11 @@
+2017-03-09  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Unreviewed follow-up to r213682.
+
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (-[WKNetworkSessionDelegate URLSession:task:didFinishCollectingMetrics:]):
+        Forward declare SPIs to address possible build errors.
+
 2017-03-09  Andrew Gold  <agold@apple.com>
 
         WKWebView should provide a way for clients to know the specific media state.

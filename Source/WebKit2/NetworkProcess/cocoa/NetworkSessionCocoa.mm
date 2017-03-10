@@ -52,6 +52,12 @@
 #import <wtf/MainThread.h>
 #import <wtf/NeverDestroyed.h>
 
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000)
+@interface NSURLSessionTaskTransactionMetrics (WKDetails)
+@property (copy, readonly) NSUUID* _connectionIdentifier;
+@end
+#endif
+
 using namespace WebKit;
 
 static NSURLSessionResponseDisposition toNSURLSessionResponseDisposition(WebCore::PolicyAction disposition)
@@ -304,7 +310,8 @@ static WebCore::NetworkLoadPriority toNetworkLoadPriority(float priority)
         networkLoadMetrics.priority = toNetworkLoadPriority(task.priority);
 #if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000)
         networkLoadMetrics.remoteAddress = String(m._remoteAddressAndPort);
-        networkLoadMetrics.connectionIdentifier = String([m._connectionIdentifier UUIDString]);
+        if ([m respondsToSelector:@selector(_connectionIdentifier)])
+            networkLoadMetrics.connectionIdentifier = String([m._connectionIdentifier UUIDString]);
 #endif
     }
 }
