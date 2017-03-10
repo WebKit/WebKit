@@ -114,6 +114,7 @@ void InspectorDOMDebuggerAgent::mainFrameDOMContentLoaded()
 void InspectorDOMDebuggerAgent::discardBindings()
 {
     m_domBreakpoints.clear();
+    m_xhrBreakpoints.clear();
 }
 
 void InspectorDOMDebuggerAgent::setEventListenerBreakpoint(ErrorString& error, const String& eventName)
@@ -393,6 +394,9 @@ void InspectorDOMDebuggerAgent::removeXHRBreakpoint(ErrorString&, const String& 
 
 void InspectorDOMDebuggerAgent::willSendXMLHttpRequest(const String& url)
 {
+    if (!m_debuggerAgent->breakpointsActive())
+        return;
+
     String breakpointURL;
     if (m_pauseOnAllXHRsEnabled)
         breakpointURL = emptyString();

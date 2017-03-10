@@ -179,6 +179,24 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
             let domBreakpointsGroup = new WebInspector.DetailsSectionGroup([this._domBreakpointsRow]);
             let domBreakpointsSection = new WebInspector.DetailsSection("dom-breakpoints", WebInspector.UIString("DOM Breakpoints"), [domBreakpointsGroup]);
             this.contentView.element.appendChild(domBreakpointsSection.element);
+
+            this._xhrBreakpointsContentTreeOutline = this.createContentTreeOutline(true);
+            this._xhrBreakpointTreeController = new WebInspector.XHRBreakpointTreeController(this._xhrBreakpointsContentTreeOutline);
+
+            this._xhrBreakpointsRow = new WebInspector.DetailsSectionRow;
+            this._xhrBreakpointsRow.element.appendChild(this._xhrBreakpointsContentTreeOutline.element);
+
+            let navigationBar = new WebInspector.NavigationBar;
+            let navigationBarWrapper = document.createElement("div");
+            navigationBarWrapper.appendChild(navigationBar.element);
+
+            let addXHRBreakpointButton = new WebInspector.ButtonNavigationItem("add-xhr-breakpoint", WebInspector.UIString("Add XHR Breakpoint"), "Images/Plus13.svg", 13, 13);
+            addXHRBreakpointButton.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._addXHRBreakpointButtonClicked, this);
+            navigationBar.addNavigationItem(addXHRBreakpointButton);
+
+            let xhrBreakpointsGroup = new WebInspector.DetailsSectionGroup([this._xhrBreakpointsRow]);
+            let xhrBreakpointsSection = new WebInspector.DetailsSection("xhr-breakpoints", WebInspector.UIString("XHR Breakpoints"), [xhrBreakpointsGroup], navigationBarWrapper);
+            this.contentView.element.appendChild(xhrBreakpointsSection.element);
         }
 
         this._scriptsContentTreeOutline = this.createContentTreeOutline();
@@ -329,6 +347,11 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
             return;
         }
 
+        if (representedObject === WebInspector.domDebuggerManager.allRequestsBreakpoint) {
+            cookie[WebInspector.DebuggerSidebarPanel.SelectedAllRequestsCookieKey] = true;
+            return;
+        }
+
         super.saveStateToCookie(cookie);
     }
 
@@ -343,6 +366,8 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
             this._allUncaughtExceptionsBreakpointTreeElement.revealAndSelect();
         else if (cookie[WebInspector.DebuggerSidebarPanel.SelectedAssertionsCookieKey])
             this._assertionsBreakpointTreeElement.revealAndSelect();
+        else if (cookie[WebInspector.DebuggerSidebarPanel.SelectedAllRequestsCookieKey])
+            this._xhrBreakpointTreeController.revealAndSelect(WebInspector.domDebuggerManager.allRequestsBreakpoint);
         else
             super.restoreStateFromCookie(cookie, relaxedMatchDelay);
     }
@@ -975,6 +1000,36 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
             this._pauseReasonGroup.rows = [this._pauseReasonTextRow];
             return true;
 
+        case WebInspector.DebuggerManager.PauseReason.XHR:
+            console.assert(WebInspector.domDebuggerManager.supported);
+            console.assert(pauseData, "Expected XHR breakpoint data, but found none.");
+            if (pauseData && pauseData.breakpointURL) {
+                let xhrBreakpoints = WebInspector.domDebuggerManager.xhrBreakpoints;
+                let xhrBreakpoint;
+                for (let breakpoint of xhrBreakpoints) {
+                    if (breakpoint.url === pauseData.breakpointURL) {
+                        xhrBreakpoint = breakpoint;
+                        break;
+                    }
+                }
+
+                if (!xhrBreakpoint)
+                    return;
+
+                this._pauseReasonTreeOutline = this.createContentTreeOutline(true, true);
+
+                let xhrBreakpointTreeElement = new WebInspector.XHRBreakpointTreeElement(xhrBreakpoint, WebInspector.DebuggerSidebarPanel.PausedBreakpointIconStyleClassName, WebInspector.UIString("Triggered XHR Breakpoint"));
+                let xhrBreakpointRow = new WebInspector.DetailsSectionRow;
+                this._pauseReasonTreeOutline.appendChild(xhrBreakpointTreeElement);
+                xhrBreakpointRow.element.appendChild(this._pauseReasonTreeOutline.element);
+
+                this._pauseReasonTextRow.text = pauseData.url;
+                this._pauseReasonGroup.rows = [xhrBreakpointRow, this._pauseReasonTextRow];
+
+                return true;
+            }
+            break;
+
         case WebInspector.DebuggerManager.PauseReason.Other:
             console.error("Paused for unknown reason. We should always have a reason.");
             break;
@@ -1067,6 +1122,27 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
         this._domBreakpointsRow.hideEmptyMessage();
         this._domBreakpointsRow.element.append(this._domBreakpointsContentTreeOutline.element);
     }
+
+    _addXHRBreakpointButtonClicked(event)
+    {
+        let popover = new WebInspector.InputPopover(WebInspector.UIString("Break when URL contains:"), this);
+        popover.show(event.target.element, [WebInspector.RectEdge.MAX_Y, WebInspector.RectEdge.MIN_Y, WebInspector.RectEdge.MAX_X]);
+    }
+
+    // Popover delegate
+
+    willDismissPopover(popover)
+    {
+        if (popover.result !== WebInspector.InputPopover.Result.Committed)
+            return;
+
+        let url = popover.value;
+        if (!url)
+            return;
+
+        let documentURL = WebInspector.frameResourceManager.mainFrame.url;
+        WebInspector.domDebuggerManager.addXHRBreakpoint(new WebInspector.XHRBreakpoint(documentURL, url));
+    }
 };
 
 WebInspector.DebuggerSidebarPanel.DebuggerPausedStyleClassName = "paused";
@@ -1077,3 +1153,4 @@ WebInspector.DebuggerSidebarPanel.PausedBreakpointIconStyleClassName = "breakpoi
 WebInspector.DebuggerSidebarPanel.SelectedAllExceptionsCookieKey = "debugger-sidebar-panel-all-exceptions-breakpoint";
 WebInspector.DebuggerSidebarPanel.SelectedAllUncaughtExceptionsCookieKey = "debugger-sidebar-panel-all-uncaught-exceptions-breakpoint";
 WebInspector.DebuggerSidebarPanel.SelectedAssertionsCookieKey = "debugger-sidebar-panel-assertions-breakpoint";
+WebInspector.DebuggerSidebarPanel.SelectedAllRequestsCookieKey = "debugger-sidebar-panel-all-requests-breakpoint";

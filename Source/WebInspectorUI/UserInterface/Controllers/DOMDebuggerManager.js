@@ -33,7 +33,15 @@ WebInspector.DOMDebuggerManager = class DOMDebuggerManager extends WebInspector.
         this._domBreakpointURLMap = new Map;
         this._domBreakpointFrameIdentifierMap = new Map;
 
+        this._xhrBreakpointsSetting = new WebInspector.Setting("xhr-breakpoints", []);
+        this._xhrBreakpointURLMap = new Map;
+        this._allRequestsBreakpointEnabledSetting = new WebInspector.Setting("break-on-all-requests", false);
+
+        const emptyURL = "";
+        this._allRequestsBreakpoint = new WebInspector.XHRBreakpoint(null, emptyURL, !this._allRequestsBreakpointEnabledSetting.value);
+
         WebInspector.DOMBreakpoint.addEventListener(WebInspector.DOMBreakpoint.Event.DisabledStateDidChange, this._domBreakpointDisabledStateDidChange, this);
+        WebInspector.XHRBreakpoint.addEventListener(WebInspector.XHRBreakpoint.Event.DisabledStateDidChange, this._xhrBreakpointDisabledStateDidChange, this);
 
         WebInspector.domTreeManager.addEventListener(WebInspector.DOMTreeManager.Event.NodeRemoved, this._nodeRemoved, this);
         WebInspector.domTreeManager.addEventListener(WebInspector.DOMTreeManager.Event.NodeInserted, this._nodeInserted, this);
@@ -51,6 +59,11 @@ WebInspector.DOMDebuggerManager = class DOMDebuggerManager extends WebInspector.
                 this.addDOMBreakpoint(breakpoint);
             }
 
+            for (let cookie of this._xhrBreakpointsSetting.value) {
+                let breakpoint = new WebInspector.XHRBreakpoint(cookie.documentURL, cookie.url, cookie.disabled);
+                this.addXHRBreakpoint(breakpoint);
+            }
+
             this._restoringBreakpoints = false;
             this._speculativelyResolveBreakpoints();
         }
@@ -62,6 +75,8 @@ WebInspector.DOMDebuggerManager = class DOMDebuggerManager extends WebInspector.
     {
         return !!window.DOMDebuggerAgent;
     }
+
+    get allRequestsBreakpoint() { return this._allRequestsBreakpoint; }
 
     get domBreakpoints()
     {
@@ -83,6 +98,24 @@ WebInspector.DOMDebuggerManager = class DOMDebuggerManager extends WebInspector.
         }
 
         return resolvedBreakpoints;
+    }
+
+    get xhrBreakpoints()
+    {
+        let mainFrame = WebInspector.frameResourceManager.mainFrame;
+        if (!mainFrame)
+            return [];
+
+        let breakpoints = this._xhrBreakpointURLMap.get(mainFrame.url)
+        if (!breakpoints)
+            return [];
+
+        return breakpoints.slice();
+    }
+
+    isBreakpointRemovable(breakpoint)
+    {
+        return breakpoint !== this._allRequestsBreakpoint;
     }
 
     domBreakpointsForNode(node)
@@ -148,7 +181,45 @@ WebInspector.DOMDebuggerManager = class DOMDebuggerManager extends WebInspector.
 
         breakpoint.domNodeIdentifier = null;
 
-        this._saveBreakpoints();
+        this._saveDOMBreakpoints();
+    }
+
+    addXHRBreakpoint(breakpoint)
+    {
+        console.assert(breakpoint instanceof WebInspector.XHRBreakpoint);
+        if (!breakpoint || !breakpoint.documentURL)
+            return;
+
+        let url = breakpoint.documentURL;
+        let breakpoints = this._xhrBreakpointURLMap.get(url);
+        if (!breakpoints) {
+            breakpoints = [breakpoint];
+            this._xhrBreakpointURLMap.set(url, breakpoints);
+        } else
+            breakpoints.push(breakpoint);
+
+        this._resolveXHRBreakpoint(breakpoint);
+        this._saveXHRBreakpoints();
+    }
+
+    removeXHRBreakpoint(breakpoint)
+    {
+        console.assert(breakpoint instanceof WebInspector.XHRBreakpoint);
+        if (!breakpoint)
+            return;
+
+        let url = breakpoint.documentURL;
+        let breakpoints = this._xhrBreakpointURLMap.get(url);
+        breakpoints.remove(breakpoint, true);
+
+        this._detachXHRBreakpoint(breakpoint);
+
+        if (!breakpoints.length)
+            this._xhrBreakpointURLMap.delete(url);
+
+        this.dispatchEventToListeners(WebInspector.DOMDebuggerManager.Event.DOMBreakpointRemoved, {breakpoint});
+
+        this._saveXHRBreakpoints();
     }
 
     // Private
@@ -203,20 +274,25 @@ WebInspector.DOMDebuggerManager = class DOMDebuggerManager extends WebInspector.
         if (!mainFrame)
             return;
 
-        let breakpoints = this._domBreakpointURLMap.get(mainFrame.url);
-        if (!breakpoints)
-            return;
+        let domBreakpoints = this._domBreakpointURLMap.get(mainFrame.url);
+        if (domBreakpoints) {
+            for (let breakpoint of domBreakpoints) {
+                if (breakpoint.domNodeIdentifier)
+                    continue;
 
-        for (let breakpoint of breakpoints) {
-            if (breakpoint.domNodeIdentifier)
-                continue;
+                WebInspector.domTreeManager.pushNodeByPathToFrontend(breakpoint.path, (nodeIdentifier) => {
+                    if (!nodeIdentifier)
+                        return;
 
-            WebInspector.domTreeManager.pushNodeByPathToFrontend(breakpoint.path, (nodeIdentifier) => {
-                if (!nodeIdentifier)
-                    return;
+                    this._resolveDOMBreakpoint(breakpoint, nodeIdentifier);
+                });
+            }
+        }
 
-                this._resolveDOMBreakpoint(breakpoint, nodeIdentifier);
-            });
+        let xhrBreakpoints = this._xhrBreakpointURLMap.get(mainFrame.url);
+        if (xhrBreakpoints) {
+            for (let breakpoint of xhrBreakpoints)
+                this._resolveXHRBreakpoint(breakpoint);
         }
     }
 
@@ -263,7 +339,47 @@ WebInspector.DOMDebuggerManager = class DOMDebuggerManager extends WebInspector.
             DOMDebuggerAgent.setDOMBreakpoint(nodeIdentifier, breakpoint.type, breakpointUpdated);
     }
 
-    _saveBreakpoints()
+    _detachXHRBreakpoint(breakpoint)
+    {
+        if (breakpoint.disabled)
+            return;
+
+        DOMDebuggerAgent.removeXHRBreakpoint(breakpoint.url, (error) => {
+            if (error)
+                console.error(error);
+
+            this.dispatchEventToListeners(WebInspector.DOMDebuggerManager.Event.XHRBreakpointRemoved, {breakpoint});
+        });
+    }
+
+    _updateXHRBreakpoint(breakpoint, callback)
+    {
+        function breakpointUpdated(error)
+        {
+            if (error)
+                console.error(error);
+
+            if (callback && typeof callback === "function")
+                callback(error);
+        }
+
+        if (breakpoint.disabled)
+            DOMDebuggerAgent.removeXHRBreakpoint(breakpoint.url, breakpointUpdated);
+        else
+            DOMDebuggerAgent.setXHRBreakpoint(breakpoint.url, breakpointUpdated);
+    }
+
+    _resolveXHRBreakpoint(breakpoint)
+    {
+        if (breakpoint.disabled)
+            return;
+
+        this._updateXHRBreakpoint(breakpoint, () => {
+            this.dispatchEventToListeners(WebInspector.DOMDebuggerManager.Event.XHRBreakpointAdded, {breakpoint});
+        });
+    }
+
+    _saveDOMBreakpoints()
     {
         if (this._restoringBreakpoints)
             return;
@@ -275,11 +391,34 @@ WebInspector.DOMDebuggerManager = class DOMDebuggerManager extends WebInspector.
         this._domBreakpointsSetting.value = breakpointsToSave.map((breakpoint) => breakpoint.serializableInfo);
     }
 
+    _saveXHRBreakpoints()
+    {
+        if (this._restoringBreakpoints)
+            return;
+
+        let breakpointsToSave = [];
+        for (let breakpoints of this._xhrBreakpointURLMap.values())
+            breakpointsToSave = breakpointsToSave.concat(breakpoints);
+
+        this._xhrBreakpointsSetting.value = breakpointsToSave.map((breakpoint) => breakpoint.serializableInfo);
+    }
+
     _domBreakpointDisabledStateDidChange(event)
     {
         let breakpoint = event.target;
         this._updateDOMBreakpoint(breakpoint);
-        this._saveBreakpoints();
+        this._saveDOMBreakpoints();
+    }
+
+    _xhrBreakpointDisabledStateDidChange(event)
+    {
+        let breakpoint = event.target;
+
+        if (breakpoint === this._allRequestsBreakpoint)
+            this._allRequestsBreakpointEnabledSetting.value = !breakpoint.disabled;
+
+        this._updateXHRBreakpoint(breakpoint);
+        this._saveXHRBreakpoints();
     }
 
     _childFrameWasRemoved(event)
@@ -301,6 +440,12 @@ WebInspector.DOMDebuggerManager = class DOMDebuggerManager extends WebInspector.
                 breakpoints.forEach((breakpoint) => { breakpoint.domNodeIdentifier = null; });
 
             this._domBreakpointFrameIdentifierMap.clear();
+
+            let xhrBreakpoints = this._xhrBreakpointURLMap.get(frame.url);
+            if (xhrBreakpoints) {
+                for (let breakpoint of xhrBreakpoints)
+                    this._detachXHRBreakpoint(breakpoint);
+            }
         } else
             this._detachBreakpointsForFrame(frame);
 
@@ -356,4 +501,6 @@ WebInspector.DOMDebuggerManager = class DOMDebuggerManager extends WebInspector.
 WebInspector.DOMDebuggerManager.Event = {
     DOMBreakpointAdded: "dom-debugger-manager-dom-breakpoint-added",
     DOMBreakpointRemoved: "dom-debugger-manager-dom-breakpoint-removed",
+    XHRBreakpointAdded: "dom-debugger-manager-xhr-breakpoint-added",
+    XHRBreakpointRemoved: "dom-debugger-manager-xhr-breakpoint-removed",
 };

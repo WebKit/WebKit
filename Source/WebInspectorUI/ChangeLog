@@ -1,5 +1,127 @@
 2017-03-09  Matt Baker  <mattbaker@apple.com>
 
+        Web Inspector: Add XHR breakpoints UI
+        https://bugs.webkit.org/show_bug.cgi?id=168763
+        <rdar://problem/30952439>
+
+        Reviewed by Joseph Pecoraro.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        New UI strings.
+
+        * UserInterface/Controllers/DOMDebuggerManager.js:
+        Plumbing for XHR breakpoints. Like DOM breakpoints, they are tracked
+        per-page. Unlike DOM breakpoints, they have no separate "resolved"
+        state, and are simply added/removed as the main frame changes.
+
+        (WebInspector.DOMDebuggerManager):
+        (WebInspector.DOMDebuggerManager.prototype.get allRequestsBreakpoint):
+        (WebInspector.DOMDebuggerManager.prototype.get xhrBreakpoints):
+        (WebInspector.DOMDebuggerManager.prototype.isBreakpointRemovable):
+        (WebInspector.DOMDebuggerManager.prototype.removeDOMBreakpoint):
+        (WebInspector.DOMDebuggerManager.prototype.addXHRBreakpoint):
+        (WebInspector.DOMDebuggerManager.prototype.removeXHRBreakpoint):
+        (WebInspector.DOMDebuggerManager.prototype._speculativelyResolveBreakpoints):
+        (WebInspector.DOMDebuggerManager.prototype._detachXHRBreakpoint):
+        (WebInspector.DOMDebuggerManager.prototype._updateXHRBreakpoint.breakpointUpdated):
+        (WebInspector.DOMDebuggerManager.prototype._updateXHRBreakpoint):
+        (WebInspector.DOMDebuggerManager.prototype._resolveXHRBreakpoint):
+        (WebInspector.DOMDebuggerManager.prototype._saveXHRBreakpoints):
+        (WebInspector.DOMDebuggerManager.prototype._domBreakpointDisabledStateDidChange):
+        (WebInspector.DOMDebuggerManager.prototype._xhrBreakpointDisabledStateDidChange):
+        (WebInspector.DOMDebuggerManager.prototype._mainResourceDidChange):
+        (WebInspector.DOMDebuggerManager.prototype._saveBreakpoints): Deleted.
+        Renamed `saveDOMBreakpoints`.
+
+        * UserInterface/Controllers/DebuggerManager.js:
+        (WebInspector.DebuggerManager.prototype._pauseReasonFromPayload):
+        Plumbing for XHR breakpoint pause reason.
+
+        * UserInterface/Controllers/XHRBreakpointTreeController.js: Added.
+        Creates the "All Requests" breakpoint, handles DOMDebuggerManager messages,
+        and updates an associated tree outline as XHR breakpoints are added and removed.
+
+        (WebInspector.XHRBreakpointTreeController):
+        (WebInspector.XHRBreakpointTreeController.prototype.revealAndSelect):
+        (WebInspector.XHRBreakpointTreeController.prototype.disconnect):
+        (WebInspector.XHRBreakpointTreeController.prototype._xhrBreakpointAdded):
+        (WebInspector.XHRBreakpointTreeController.prototype._xhrBreakpointRemoved):
+        (WebInspector.XHRBreakpointTreeController.prototype._mainResourceDidChange):
+        (WebInspector.XHRBreakpointTreeController.prototype._reset):
+
+        * UserInterface/Main.html:
+        New files.
+
+        * UserInterface/Models/XHRBreakpoint.js: Added.
+        New model class. XHR breakpoints have an associated URL, which is matched
+        against the request URL when deciding whether to break. An empty URL matches
+        all XMLHttpRequests.
+
+        (WebInspector.XHRBreakpoint):
+        (WebInspector.XHRBreakpoint.prototype.get documentURL):
+        (WebInspector.XHRBreakpoint.prototype.get url):
+        (WebInspector.XHRBreakpoint.prototype.get disabled):
+        (WebInspector.XHRBreakpoint.prototype.set disabled):
+        (WebInspector.XHRBreakpoint.prototype.get serializableInfo):
+        (WebInspector.XHRBreakpoint.prototype.saveIdentityToCookie):
+
+        * UserInterface/Test.html:
+        New files.
+
+        * UserInterface/Views/ContentView.js:
+        (WebInspector.ContentView.createFromRepresentedObject):
+        Plumbing for new represented object type, to prevent runtime assertion.
+
+        * UserInterface/Views/DOMBreakpointTreeElement.js:
+        (WebInspector.DOMBreakpointTreeElement):
+        Reuse BreakpointTreeElement styles.
+
+        * UserInterface/Views/DebuggerSidebarPanel.js:
+        (WebInspector.DebuggerSidebarPanel):
+        (WebInspector.DebuggerSidebarPanel.prototype.saveStateToCookie):
+        (WebInspector.DebuggerSidebarPanel.prototype.restoreStateFromCookie):
+        (WebInspector.DebuggerSidebarPanel.prototype._updatePauseReasonSection):
+        (WebInspector.DebuggerSidebarPanel.prototype._addXHRBreakpointButtonClicked):
+        (WebInspector.DebuggerSidebarPanel.prototype.willDismissPopover):
+
+        * UserInterface/Views/InputPopover.css: Added.
+        (.popover .input-popover-content):
+        (.popover .input-popover-content > .editor):
+        (.popover .input-popover-content > .editor > .CodeMirror):
+        (.popover .input-popover-content > .editor > .CodeMirror-scroll):
+
+        * UserInterface/Views/InputPopover.js: Added.
+        New general purpose popover class. Style and structure lifted from
+        the Popover implementation used by the Probe Expressions UI. A follow-up
+        has been filed to switch that UI over to this new class:
+        https://bugs.webkit.org/show_bug.cgi?id=169428.
+
+        (WebInspector.InputPopover):
+        (WebInspector.InputPopover.prototype.get value):
+        (WebInspector.InputPopover.prototype.get result):
+        (WebInspector.InputPopover.prototype.show):
+        (WebInspector.InputPopover.prototype._presentOverTargetElement):
+
+        * UserInterface/Views/XHRBreakpointTreeElement.js: Added.
+        Tree element class for XHR breakpoints. Behaves identically to
+        script and DOM breakpoint tree elements.
+
+        (WebInspector.XHRBreakpointTreeElement):
+        Reuse BreakpointTreeElement styles.
+        (WebInspector.XHRBreakpointTreeElement.prototype.onattach):
+        (WebInspector.XHRBreakpointTreeElement.prototype.ondetach):
+        (WebInspector.XHRBreakpointTreeElement.prototype.ondelete):
+        (WebInspector.XHRBreakpointTreeElement.prototype.onenter):
+        (WebInspector.XHRBreakpointTreeElement.prototype.onspace):
+        (WebInspector.XHRBreakpointTreeElement.prototype.populateContextMenu):
+        (WebInspector.XHRBreakpointTreeElement.prototype._statusImageElementClicked):
+        (WebInspector.XHRBreakpointTreeElement.prototype._statusImageElementFocused):
+        (WebInspector.XHRBreakpointTreeElement.prototype._statusImageElementMouseDown):
+        (WebInspector.XHRBreakpointTreeElement.prototype._toggleBreakpoint):
+        (WebInspector.XHRBreakpointTreeElement.prototype._updateStatus):
+
+2017-03-09  Matt Baker  <mattbaker@apple.com>
+
         REGRESSION (r196271): Web Inspector: DOM element loses focus/active selection after committing an inline attribute editor in DOMTreeOutline
         https://bugs.webkit.org/show_bug.cgi?id=168119
         <rdar://problem/30466013>

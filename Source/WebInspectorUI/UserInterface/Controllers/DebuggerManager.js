@@ -815,6 +815,8 @@ WebInspector.DebuggerManager = class DebuggerManager extends WebInspector.Object
             return WebInspector.DebuggerManager.PauseReason.Exception;
         case DebuggerAgent.PausedReason.PauseOnNextStatement:
             return WebInspector.DebuggerManager.PauseReason.PauseOnNextStatement;
+        case DebuggerAgent.PausedReason.XHR:
+            return WebInspector.DebuggerManager.PauseReason.XHR;
         default:
             return WebInspector.DebuggerManager.PauseReason.Other;
         }
@@ -1228,5 +1230,6 @@ WebInspector.DebuggerManager.PauseReason = {
     DOM: "DOM",
     Exception: "exception",
     PauseOnNextStatement: "pause-on-next-statement",
+    XHR: "xhr",
     Other: "other",
 };

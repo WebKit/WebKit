@@ -103,3 +103,22 @@
 .sidebar > .panel.navigation.debugger .details-section.dom-breakpoints .item.dom-node .icon {
     content: url(../Images/DOMElement.svg);
 }
+
+.sidebar > .panel.navigation.debugger .details-section.xhr-breakpoints .item.breakpoint .subtitle:before {
+    content: "";
+}
+
+.sidebar > .panel.navigation.debugger .details-section.xhr-breakpoints .item.breakpoint .subtitle {
+    padding-left: 5px;
+    font-family: Menlo, monospace;
+
+    --subtitle-padding-start: 6px;
+}
+
+body[dir=ltr] .sidebar > .panel.navigation.debugger .details-section.xhr-breakpoints .item.breakpoint .subtitle {
+    padding-left: var(--subtitle-padding-start);
+}
+
+body[dir=rtl] .sidebar > .panel.navigation.debugger .details-section.xhr-breakpoints .item.breakpoint .subtitle {
+    padding-right: var(--subtitle-padding-start);
+}

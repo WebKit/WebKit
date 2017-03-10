@@ -35,10 +35,10 @@ WebInspector.DOMBreakpointTreeElement = class DOMBreakpointTreeElement extends W
         if (!title)
             title = WebInspector.DOMBreakpointTreeElement.displayNameForType(breakpoint.type);
 
-        super(["dom-breakpoint", className], title, null, breakpoint);
+        super(["breakpoint", className], title, null, breakpoint);
 
         this._statusImageElement = document.createElement("img");
-        this._statusImageElement.classList.add("status-image");
+        this._statusImageElement.classList.add("status-image", "resolved");
         this.status = this._statusImageElement;
 
         breakpoint.addEventListener(WebInspector.DOMBreakpoint.Event.DisabledStateDidChange, this._updateStatus, this);

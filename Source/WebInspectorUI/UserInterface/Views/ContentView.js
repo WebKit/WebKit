@@ -126,6 +126,9 @@ WebInspector.ContentView = class ContentView extends WebInspector.View
                 return WebInspector.ContentView.createFromRepresentedObject(representedObject.domNode, extraArguments);
         }
 
+        if (representedObject instanceof WebInspector.XHRBreakpoint)
+            return WebInspector.ContentView.createFromRepresentedObject(WebInspector.frameResourceManager.mainFrame.domTree, extraArguments);
+
         if (representedObject instanceof WebInspector.SourceCodeSearchMatchObject) {
             var resultView;
             if (representedObject.sourceCode instanceof WebInspector.Resource)
