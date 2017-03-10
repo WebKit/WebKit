@@ -1,3 +1,9 @@
+2017-03-10  Andy Estes  <aestes@apple.com>
+
+        Skip an API test that isn't expected to pass on iOS 10.
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/QuickLook.mm:
+
 2017-03-10  Srinivasan Vijayaraghavan  <svijayaraghavan@apple.com>
 
         Add bindings-ews to queue status server

@@ -138,11 +138,15 @@ TEST(QuickLook, CancelNavigationAfterResponse)
 
 @end
 
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000
+
 TEST(QuickLook, DidRequestPasswordNavigationDelegate)
 {
     NSURLRequest *passwordProtectedDocumentRequest = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"password-protected" withExtension:@"pages" subdirectory:@"TestWebKitAPI.resources"]];
     runTest([QuickLookPasswordNavigationDelegate class], passwordProtectedDocumentRequest);
 }
+
+#endif
 
 TEST(QuickLook, LegacyQuickLookContent)
 {
