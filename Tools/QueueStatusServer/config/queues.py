@@ -36,6 +36,7 @@ all_queue_names = [
     "gtk-wk2-ews",
     "ios-ews",
     "ios-sim-ews",
+    "bindings-ews",
     "jsc-ews",
     "mac-ews",
     "mac-wk2-ews",
