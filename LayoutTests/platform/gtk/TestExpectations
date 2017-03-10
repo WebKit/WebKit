@@ -480,6 +480,10 @@ webkit.org/b/169272 imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/fai
 webkit.org/b/169272 imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_ECDH.worker.html [ Failure ]
 webkit.org/b/169272 imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/test_failures_ECDH.html [ Failure ]
 webkit.org/b/169272 imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/test_successes_ECDH.html [ Failure ]
+webkit.org/b/169468 imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/pbkdf2.worker.html [ Failure ]
+webkit.org/b/169468 imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/test_pbkdf2.html [ Failure ]
+webkit.org/b/169469 imported/w3c/web-platform-tests/WebCryptoAPI/import_export/ec_importKey.worker.html [ Failure ]
+webkit.org/b/169469 imported/w3c/web-platform-tests/WebCryptoAPI/import_export/test_ec_importKey.html [ Failure ]
 
 # GTK does not implement setAutomaticLinkDetectionEnabled
 editing/inserting/typing-space-to-trigger-smart-link.html [ Skip ]

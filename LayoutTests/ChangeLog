@@ -1,3 +1,16 @@
+2017-03-10  Javier Fernandez  <jfernandez@igalia.com>
+
+        [GTK] Unreviewed test gardening
+        https://bugs.webkit.org/show_bug.cgi?id=169470
+
+        Unreviewed GTK+ gardening. Updated test expectations after regressions r213671 and r213560.
+
+        * platform/gtk/TestExpectations:
+           - imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/pbkdf2.worker.html [ Failure ]
+           - imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/test_pbkdf2.html [ Failure ]
+           - imported/w3c/web-platform-tests/WebCryptoAPI/import_export/ec_importKey.worker.html [ Failure ]
+           - imported/w3c/web-platform-tests/WebCryptoAPI/import_export/test_ec_importKey.html [ Failure ]
+
 2017-03-10  Antti Koivisto  <antti@apple.com>
 
         Loading in-body stylesheets should not block rendering of elements before them
