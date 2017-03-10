@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RemoteLayerTreePropertyApplier_h
-#define RemoteLayerTreePropertyApplier_h
+#pragma once
 
 #include "LayerRepresentation.h"
 #include "RemoteLayerTreeTransaction.h"
@@ -44,5 +43,3 @@ public:
 };
 
 } // namespace WebKit
-
-#endif // RemoteLayerTreePropertyApplier_h

@@ -76,8 +76,10 @@ PlatformCALayerRemote::PlatformCALayerRemote(LayerType layerType, PlatformCALaye
     : PlatformCALayer(layerType, owner)
     , m_context(&context)
 {
-    if (owner)
+    if (owner) {
         m_properties.contentsScale = owner->platformCALayerDeviceScaleFactor();
+        m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::ContentsScaleChanged);
+    }
 }
 
 PlatformCALayerRemote::PlatformCALayerRemote(const PlatformCALayerRemote& other, PlatformCALayerClient* owner, RemoteLayerTreeContext& context)

@@ -217,6 +217,8 @@ interface UIScriptController {
 
     readonly attribute DOMString scrollingTreeAsText;
 
+    object propertiesOfLayerWithID(unsigned long long layerID);
+
     void retrieveSpeakSelectionContent(object callback);
     readonly attribute DOMString accessibilitySpeakSelectionContent;
 

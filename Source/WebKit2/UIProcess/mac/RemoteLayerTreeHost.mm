@@ -204,6 +204,11 @@ void RemoteLayerTreeHost::clearLayers()
     m_rootLayer = nullptr;
 }
 
+LayerOrView* RemoteLayerTreeHost::layerWithIDForTesting(uint64_t layerID) const
+{
+    return getLayer(layerID);
+}
+
 static NSString* const WKLayerIDPropertyKey = @"WKLayerID";
 
 void RemoteLayerTreeHost::setLayerID(CALayer *layer, WebCore::GraphicsLayer::PlatformLayerID layerID)

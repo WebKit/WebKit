@@ -2149,6 +2149,23 @@ ExceptionOr<String> Internals::layerTreeAsText(Document& document, unsigned shor
     return document.frame()->layerTreeAsText(toLayerTreeFlags(flags));
 }
 
+ExceptionOr<uint64_t> Internals::layerIDForElement(Element& element)
+{
+    Document* document = contextDocument();
+    if (!document || !document->frame())
+        return Exception { INVALID_ACCESS_ERR };
+
+    if (!element.renderer() || !element.renderer()->hasLayer())
+        return Exception { NOT_FOUND_ERR };
+
+    auto& layerModelObject = downcast<RenderLayerModelObject>(*element.renderer());
+    if (!layerModelObject.layer()->isComposited())
+        return Exception { NOT_FOUND_ERR };
+    
+    auto* backing = layerModelObject.layer()->backing();
+    return backing->graphicsLayer()->primaryLayerID();
+}
+
 ExceptionOr<String> Internals::repaintRectsAsText() const
 {
     Document* document = contextDocument();

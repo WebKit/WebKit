@@ -478,4 +478,9 @@ bool RemoteLayerTreeDrawingAreaProxy::isAlwaysOnLoggingAllowed() const
     return m_webPageProxy.isAlwaysOnLoggingAllowed();
 }
 
+LayerOrView* RemoteLayerTreeDrawingAreaProxy::layerWithIDForTesting(uint64_t layerID) const
+{
+    return m_remoteLayerTreeHost.layerWithIDForTesting(layerID);
+}
+
 } // namespace WebKit

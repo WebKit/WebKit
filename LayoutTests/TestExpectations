@@ -6,6 +6,7 @@
 # Platform-specific tests. Skipped here, then re-enabled on the appropriate platform.
 #//////////////////////////////////////////////////////////////////////////////////////////
 
+compositing/ios [ Skip ]
 css3/touch-action [ Skip ]
 accessibility/ios-simulator [ Skip ]
 accessibility/gtk [ Skip ]

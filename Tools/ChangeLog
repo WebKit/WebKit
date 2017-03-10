@@ -1,3 +1,38 @@
+2017-03-09  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] Layer content blurry with nested perspective and transforms
+        https://bugs.webkit.org/show_bug.cgi?id=169457
+        rdar://problem/29879484
+
+        Reviewed by Tim Horton.
+
+        We set rasterizationScale on CALayers to the same values as contentsScale, to
+        avoid blurry layers when CA rasterizes, which often happens with nested perspective
+        transforms.
+
+        However, in UI-side compositing, if the page is not zoomed, we never applied the
+        rasterizationScale in the UI process. This happened because the PlatformCALayerRemote
+        constructor set m_properties.contentsScale, but did not set the dirty bit that
+        triggers the application of contentsScale and rasterizationScale in RemoteLayerTreePropertyApplier.
+        The fix is to set this dirty bit.
+
+        The rest of the changes are for testing. Internals now exposes layerIDForElement()
+        for returns an internal (non-stable-across-loads) layerID, which can be passed
+        to UIScriptController.propertiesOfLayerWithID() in the UI process, which inspects
+        the built layer (UIView) hierarchy. propertiesOfLayerWithID() returns a dictionary
+        which the test can dump as JSON, or pull values out of.
+
+        A few #pragma once cleanups also.
+
+        * DumpRenderTree/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptController::propertiesOfLayerWithID):
+        * TestRunnerShared/UIScriptContext/Bindings/UIScriptController.idl:
+        * TestRunnerShared/UIScriptContext/UIScriptController.cpp:
+        (WTR::UIScriptController::propertiesOfLayerWithID):
+        * TestRunnerShared/UIScriptContext/UIScriptController.h:
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptController::propertiesOfLayerWithID):
+
 2017-03-10  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r213618.

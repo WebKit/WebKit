@@ -260,6 +260,8 @@ enum EventThrottlingBehavior {
     const unsigned short LAYER_TREE_INCLUDES_ACCELERATES_DRAWING = 32;
     [MayThrowException] DOMString layerTreeAsText(Document document, optional unsigned short flags = 0);
 
+    [MayThrowException] unsigned long long layerIDForElement(Element element);
+
     [MayThrowException] DOMString scrollingStateTreeAsText();
     [MayThrowException] DOMString mainThreadScrollingReasons(); // FIXME: rename to synchronousScrollingReasons().
     [MayThrowException] ClientRectList? nonFastScrollableRects();

@@ -340,6 +340,11 @@ JSRetainPtr<JSStringRef> UIScriptController::scrollingTreeAsText() const
     return nullptr;
 }
 
+JSObjectRef UIScriptController::propertiesOfLayerWithID(uint64_t layerID) const
+{
+    return nullptr;
+}
+
 void UIScriptController::platformSetDidStartFormControlInteractionCallback()
 {
 }

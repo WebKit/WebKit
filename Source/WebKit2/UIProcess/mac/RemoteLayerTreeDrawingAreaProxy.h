@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RemoteLayerTreeDrawingAreaProxy_h
-#define RemoteLayerTreeDrawingAreaProxy_h
+#pragma once
 
 #include "DrawingAreaProxy.h"
 #include "RemoteLayerTreeHost.h"
@@ -57,6 +56,8 @@ public:
     bool hasDebugIndicator() const { return !!m_debugIndicatorLayerTreeHost; }
 
     bool isAlwaysOnLoggingAllowed() const;
+
+    LayerOrView* layerWithIDForTesting(uint64_t) const;
 
 private:
     void sizeDidChange() override;
@@ -119,5 +120,3 @@ private:
 } // namespace WebKit
 
 SPECIALIZE_TYPE_TRAITS_DRAWING_AREA_PROXY(RemoteLayerTreeDrawingAreaProxy, DrawingAreaTypeRemoteLayerTree)
-
-#endif // RemoteLayerTreeDrawingAreaProxy_h

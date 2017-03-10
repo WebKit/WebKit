@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RemoteLayerTreeHost_h
-#define RemoteLayerTreeHost_h
+#pragma once
 
 #include "LayerRepresentation.h"
 #include "RemoteLayerTreeTransaction.h"
@@ -71,6 +70,8 @@ public:
     // This avoids keeping an outstanding InUse reference when suspended.
     void mapAllIOSurfaceBackingStore();
 
+    LayerOrView* layerWithIDForTesting(uint64_t) const;
+
 private:
     LayerOrView *createLayer(const RemoteLayerTreeTransaction::LayerCreationProperties&, const RemoteLayerTreeTransaction::LayerProperties*);
     static void setLayerID(CALayer *, WebCore::GraphicsLayer::PlatformLayerID);
@@ -85,5 +86,3 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // RemoteLayerTreeHost_h

@@ -140,6 +140,8 @@ public:
     
     JSRetainPtr<JSStringRef> scrollingTreeAsText() const;
 
+    JSObjectRef propertiesOfLayerWithID(uint64_t layerID) const;
+
     void uiScriptComplete(JSStringRef result);
     
     void retrieveSpeakSelectionContent(JSValueRef);
