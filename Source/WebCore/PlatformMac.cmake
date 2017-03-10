@@ -419,6 +419,7 @@ list(APPEND WebCore_SOURCES
     platform/graphics/cg/SubimageCacheWithTimer.cpp
     platform/graphics/cg/TransformationMatrixCG.cpp
 
+    platform/graphics/cocoa/GPUBufferMetal.mm
     platform/graphics/cocoa/GPUDeviceMetal.mm
     platform/graphics/cocoa/GPUFunctionMetal.mm
     platform/graphics/cocoa/GPULibraryMetal.mm
@@ -435,6 +436,7 @@ list(APPEND WebCore_SOURCES
     platform/graphics/cv/TextureCacheCV.mm
     platform/graphics/cv/VideoTextureCopierCV.cpp
 
+    platform/graphics/gpu/GPUBuffer.cpp
     platform/graphics/gpu/GPUDevice.cpp
     platform/graphics/gpu/GPUFunction.cpp
     platform/graphics/gpu/GPULibrary.cpp

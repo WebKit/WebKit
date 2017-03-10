@@ -46,6 +46,7 @@ typedef void PlatformGPUDevice;
 
 namespace WebCore {
 
+class GPUBuffer;
 class GPULibrary;
 
 class GPUDevice : public RefCounted<GPUDevice> {
@@ -63,6 +64,7 @@ public:
     WebGPULayer* layer() { return m_layer.get(); }
 
     WEBCORE_EXPORT RefPtr<GPULibrary> createLibrary(const String& sourceCode);
+    WEBCORE_EXPORT RefPtr<GPUBuffer> createBufferFromData(ArrayBufferView* data);
 
 private:
     GPUDevice();

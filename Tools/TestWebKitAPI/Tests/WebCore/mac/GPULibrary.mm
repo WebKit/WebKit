@@ -31,7 +31,6 @@
 #import <Metal/Metal.h>
 #import <WebCore/GPUDevice.h>
 #import <WebCore/GPULibrary.h>
-#import <wtf/MainThread.h>
 
 using namespace WebCore;
 

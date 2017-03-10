@@ -28,6 +28,7 @@
 
 #if ENABLE(WEBGPU)
 
+#include "GPUBuffer.h"
 #include "GPULibrary.h"
 #include "Logging.h"
 
@@ -56,6 +57,11 @@ GPUDevice::~GPUDevice()
 RefPtr<GPULibrary> GPUDevice::createLibrary(const String& sourceCode)
 {
     return GPULibrary::create(this, sourceCode);
+}
+
+RefPtr<GPUBuffer> GPUDevice::createBufferFromData(ArrayBufferView* data)
+{
+    return GPUBuffer::create(this, data);
 }
 
 #if !PLATFORM(COCOA)

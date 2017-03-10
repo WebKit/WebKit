@@ -96,6 +96,7 @@
 		3162AE9C1E6F2FF5000E4DBC /* GPUDevice.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3162AE9B1E6F2FCE000E4DBC /* GPUDevice.mm */; };
 		316BDBA11E70D71B00DE0D5A /* GPULibrary.mm in Sources */ = {isa = PBXBuildFile; fileRef = 316BDBA01E70D6D800DE0D5A /* GPULibrary.mm */; };
 		316BDBA41E70EF6800DE0D5A /* GPUFunction.mm in Sources */ = {isa = PBXBuildFile; fileRef = 316BDBA31E70EF5D00DE0D5A /* GPUFunction.mm */; };
+		316BDBAC1E7207F100DE0D5A /* GPUBuffer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 316BDBAB1E7207F100DE0D5A /* GPUBuffer.mm */; };
 		33BE5AF9137B5AAE00705813 /* MouseMoveAfterCrash_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 33BE5AF8137B5AAE00705813 /* MouseMoveAfterCrash_Bundle.cpp */; };
 		33DC8912141955FE00747EF7 /* simple-iframe.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 33DC890E1419539300747EF7 /* simple-iframe.html */; };
 		33DC89141419579F00747EF7 /* LoadCanceledNoServerRedirectCallback_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 33DC89131419579F00747EF7 /* LoadCanceledNoServerRedirectCallback_Bundle.cpp */; };
@@ -953,6 +954,7 @@
 		316BDBA01E70D6D800DE0D5A /* GPULibrary.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GPULibrary.mm; sourceTree = "<group>"; };
 		316BDBA21E70DEE500DE0D5A /* GPUTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GPUTest.h; sourceTree = "<group>"; };
 		316BDBA31E70EF5D00DE0D5A /* GPUFunction.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GPUFunction.mm; sourceTree = "<group>"; };
+		316BDBAB1E7207F100DE0D5A /* GPUBuffer.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = GPUBuffer.mm; sourceTree = "<group>"; };
 		333B9CE11277F23100FEFCE3 /* PreventEmptyUserAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PreventEmptyUserAgent.cpp; sourceTree = "<group>"; };
 		33BE5AF4137B5A6C00705813 /* MouseMoveAfterCrash.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MouseMoveAfterCrash.cpp; sourceTree = "<group>"; };
 		33BE5AF8137B5AAE00705813 /* MouseMoveAfterCrash_Bundle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MouseMoveAfterCrash_Bundle.cpp; sourceTree = "<group>"; };
@@ -1670,6 +1672,7 @@
 		3162AE9A1E6F2F8F000E4DBC /* mac */ = {
 			isa = PBXGroup;
 			children = (
+				316BDBAB1E7207F100DE0D5A /* GPUBuffer.mm */,
 				3162AE9B1E6F2FCE000E4DBC /* GPUDevice.mm */,
 				316BDBA31E70EF5D00DE0D5A /* GPUFunction.mm */,
 				316BDBA01E70D6D800DE0D5A /* GPULibrary.mm */,
@@ -2798,6 +2801,7 @@
 				0F139E781A423A6B00F590F5 /* PlatformUtilitiesCocoa.mm in Sources */,
 				7CCE7EA61A411A0F00447C4C /* PlatformUtilitiesMac.mm in Sources */,
 				7CCE7EA71A411A1300447C4C /* PlatformWebViewMac.mm in Sources */,
+				316BDBAC1E7207F100DE0D5A /* GPUBuffer.mm in Sources */,
 				7CCE7F261A411AF600447C4C /* Preferences.mm in Sources */,
 				7A909A821D877480007E10F8 /* IntRect.cpp in Sources */,
 				7CCE7F0B1A411AE600447C4C /* PreventEmptyUserAgent.cpp in Sources */,

@@ -33,7 +33,6 @@
 #import <WebCore/GPUDevice.h>
 #import <WebCore/GPUFunction.h>
 #import <WebCore/GPULibrary.h>
-#import <wtf/MainThread.h>
 
 using namespace WebCore;
 
