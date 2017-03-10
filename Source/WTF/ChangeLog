@@ -1,3 +1,11 @@
+2017-03-10  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed AArch64 Linux buildfix after r213645.
+        https://bugs.webkit.org/show_bug.cgi?id=169300
+
+        * wtf/Atomics.h: intptr_t and int64_t are typedefs for long int on Linux.
+        They are different types only on Darwin platforms.
+
 2017-03-09  Caio Lima  <ticaiolima@gmail.com>
 
         [ESnext] Implement Object Rest - Implementing Object Rest Destructuring

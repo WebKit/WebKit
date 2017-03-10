@@ -235,7 +235,9 @@ DEFINE_LL_SC(8, "w", "b")
 DEFINE_LL_SC(16, "w", "h")
 DEFINE_LL_SC(32, "w", "")
 DEFINE_LL_SC(64, "", "")
+#if OS(DARWIN)
 DEFINE_LL_SC(ptr, "", "")
+#endif
 
 #undef DEFINE_LL_SC
 #endif // CPU(ARM64)
