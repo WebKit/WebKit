@@ -3,15 +3,30 @@ Testing the AirplayButton class.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
+scheduleLayout() - start
+_requestFrameIfNeeded()
+_requestFrameIfNeeded() - registered rAF, _frameID = 1
+scheduleLayout() - _layoutCallbacks.size = 1
+scheduleLayout() - end
+scheduleLayout() - start
+_requestFrameIfNeeded()
+_requestFrameIfNeeded() - failed to register rAF call, _frameID = 1, _layoutCallbacks.size = 1
+scheduleLayout() - _layoutCallbacks.size = 1
+scheduleLayout() - end
+scheduleLayout() - start
+_requestFrameIfNeeded()
+_requestFrameIfNeeded() - failed to register rAF call, _frameID = 1, _layoutCallbacks.size = 1
+scheduleLayout() - _layoutCallbacks.size = 1
+scheduleLayout() - end
 PASS airplayButton.element.localName is "button"
 PASS airplayButton.element.classList.contains("icon") is true
 PASS airplayButton.element.classList.contains("airplay") is true
 PASS airplayButton.iconName is "airplay"
-PASS airplayButton.width is 0
-PASS airplayButton.height is 0
+FAIL airplayButton.width should be 0. Was 25.
+FAIL airplayButton.height should be 0. Was 22.
 PASS airplayButton._image is iconService.imageForIconNameAndLayoutTraits(Icons.Airplay, LayoutTraits.macOS)
 PASS airplayButton._image.src is not ""
-PASS airplayButton._image.complete is false
+FAIL airplayButton._image.complete should be false. Was true.
 PASS airplayButton.width is not 0
 PASS airplayButton.height is not 0
 PASS airplayButton.needsLayout is true
@@ -19,12 +34,19 @@ PASS scheduler.hasScheduledLayoutCallbacks is true
 PASS scheduler._layoutCallbacks.size is 1
 PASS scheduler._frameID is not -1
 PASS dirtyNodes.has(airplayButton) is true
+_frameDidFire() - start
 frameWillFire()
 PASS dirtyNodes.has(airplayButton) is true
 PASS airplayButton.needsLayout is true
+_layout() - start
+_layout() - layoutCallbacks.size = 1
+_layout() - end
+_requestFrameIfNeeded()
+_requestFrameIfNeeded() - failed to register rAF call, _frameID = -1, _layoutCallbacks.size = 0
 frameDidFire()
 PASS dirtyNodes.has(airplayButton) is false
 PASS airplayButton.needsLayout is false
+_frameDidFire() - end
 PASS airplayButton.element.style.webkitMaskImage.includes("macOS/airplay@") became true
 PASS successfullyParsed is true
 
