@@ -1325,7 +1325,7 @@
 		5370B4F51BF26202005C40FC /* AdaptiveInferredPropertyValueWatchpointBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5370B4F31BF25EA2005C40FC /* AdaptiveInferredPropertyValueWatchpointBase.cpp */; };
 		5370B4F61BF26205005C40FC /* AdaptiveInferredPropertyValueWatchpointBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 5370B4F41BF25EA2005C40FC /* AdaptiveInferredPropertyValueWatchpointBase.h */; };
 		5381B9371E60E9660090F794 /* WasmFaultSignalHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5381B9361E60E9660090F794 /* WasmFaultSignalHandler.cpp */; };
-		5381B9391E60E97D0090F794 /* WasmFaultSignalHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 5381B9381E60E97D0090F794 /* WasmFaultSignalHandler.h */; };
+		5381B9391E60E97D0090F794 /* WasmFaultSignalHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 5381B9381E60E97D0090F794 /* WasmFaultSignalHandler.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5381B9401E65DFEB0090F794 /* JSWebAssemblyCodeBlock.h in Headers */ = {isa = PBXBuildFile; fileRef = 5381B93F1E65DFEB0090F794 /* JSWebAssemblyCodeBlock.h */; };
 		5383AA301E65E8A100A532FC /* JSWebAssemblyCodeBlock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5383AA2F1E65E8A100A532FC /* JSWebAssemblyCodeBlock.cpp */; };
 		53917E7B1B7906FA000EBD33 /* JSGenericTypedArrayViewPrototypeFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = 53917E7A1B7906E4000EBD33 /* JSGenericTypedArrayViewPrototypeFunctions.h */; };

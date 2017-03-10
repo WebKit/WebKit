@@ -1,3 +1,12 @@
+2017-03-09  Keith Miller  <keith_miller@apple.com>
+
+        WebAssembly: Enable fast memory for WK2
+        https://bugs.webkit.org/show_bug.cgi?id=169437
+
+        Reviewed by Tim Horton.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
 2017-03-09  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Add XHR breakpoints UI
