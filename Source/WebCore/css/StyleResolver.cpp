@@ -1123,8 +1123,8 @@ Vector<RefPtr<StyleRule>> StyleResolver::styleRulesForElement(const Element* ele
 
 Vector<RefPtr<StyleRule>> StyleResolver::pseudoStyleRulesForElement(const Element* element, PseudoId pseudoId, unsigned rulesToInclude)
 {
-    if (!element || !element->document().haveStylesheetsLoaded())
-        return Vector<RefPtr<StyleRule>>();
+    if (!element)
+        return { };
 
     m_state = State(*element, nullptr);
 

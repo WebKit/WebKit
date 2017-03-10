@@ -389,7 +389,7 @@ Scope::StyleResolverUpdateType Scope::analyzeStyleSheetChange(const Vector<RefPt
     auto styleResolverUpdateType = hasInsertions ? Reset : Additive;
 
     // If we are already parsing the body and so may have significant amount of elements, put some effort into trying to avoid style recalcs.
-    if (!m_document.bodyOrFrameset() || m_document.hasNodesWithPlaceholderStyle())
+    if (!m_document.bodyOrFrameset() || m_document.hasNodesWithNonFinalStyle())
         return styleResolverUpdateType;
 
     StyleInvalidationAnalysis invalidationAnalysis(addedSheets, styleResolver.mediaQueryEvaluator());
@@ -440,7 +440,7 @@ void Scope::updateActiveStyleSheets(UpdateType updateType)
 
     // Don't bother updating, since we haven't loaded all our style info yet
     // and haven't calculated the style resolver for the first time.
-    if (!m_shadowRoot && !m_didUpdateActiveStyleSheets && hasPendingSheets()) {
+    if (!m_shadowRoot && !m_didUpdateActiveStyleSheets && hasPendingSheetsBeforeBody()) {
         clearResolver();
         return;
     }
