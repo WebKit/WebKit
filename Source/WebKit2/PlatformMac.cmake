@@ -22,8 +22,6 @@ endif ()
 list(APPEND WebKit2_SOURCES
     DatabaseProcess/mac/DatabaseProcessMac.mm
 
-    NetworkProcess/CustomProtocols/Cocoa/CustomProtocolManagerCocoa.mm
-
     NetworkProcess/Downloads/PendingDownload.cpp
 
     NetworkProcess/Downloads/cocoa/DownloadCocoa.mm
@@ -242,7 +240,6 @@ list(APPEND WebKit2_SOURCES
 
     UIProcess/Cocoa/AutomationClient.mm
     UIProcess/Cocoa/AutomationSessionClient.mm
-    UIProcess/Cocoa/CustomProtocolManagerClient.mm
     UIProcess/Cocoa/DiagnosticLoggingClient.mm
     UIProcess/Cocoa/DownloadClient.mm
     UIProcess/Cocoa/FindClient.mm

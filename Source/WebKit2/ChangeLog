@@ -1,3 +1,10 @@
+2017-03-09  Alex Christensen  <achristensen@webkit.org>
+
+        Fix GTK build after r213696
+
+        * CMakeLists.txt:
+        * PlatformMac.cmake:
+
 2017-03-09  Brian Nicholson  <bnicholson@mozilla.com> and Alex Christensen  <achristensen@webkit.org>
 
         Expose public APIs for content filters

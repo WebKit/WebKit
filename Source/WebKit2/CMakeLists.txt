@@ -332,6 +332,8 @@ set(WebKit2_SOURCES
     UIProcess/WebVibrationProxy.cpp
     UIProcess/WebViewportAttributes.cpp
 
+    UIProcess/API/APIContentExtension.cpp
+    UIProcess/API/APIContentExtensionStore.cpp
     UIProcess/API/APIExperimentalFeature.cpp
     UIProcess/API/APIFrameInfo.cpp
     UIProcess/API/APIHitTestResult.cpp
@@ -342,8 +344,6 @@ set(WebKit2_SOURCES
     UIProcess/API/APIOpenPanelParameters.cpp
     UIProcess/API/APISessionState.cpp
     UIProcess/API/APIURLSchemeHandlerTask.cpp
-    UIProcess/API/APIUserContentExtension.cpp
-    UIProcess/API/APIUserContentExtensionStore.cpp
     UIProcess/API/APIUserContentWorld.cpp
     UIProcess/API/APIUserScript.cpp
     UIProcess/API/APIUserStyleSheet.cpp

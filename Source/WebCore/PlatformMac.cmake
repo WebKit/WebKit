@@ -215,7 +215,6 @@ list(APPEND WebCore_SOURCES
     crypto/mac/CryptoAlgorithmRSASSA_PKCS1_v1_5Mac.cpp
     crypto/mac/CryptoAlgorithmRSA_OAEPMac.cpp
     crypto/mac/CryptoAlgorithmRegistryMac.cpp
-    crypto/mac/CryptoKeyECDHMac.cpp
     crypto/mac/CryptoKeyMac.cpp
     crypto/mac/CryptoKeyRSAMac.cpp
     crypto/mac/SerializedCryptoKeyWrapMac.mm
