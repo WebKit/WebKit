@@ -936,8 +936,12 @@ public:
     WEBCORE_EXPORT Ref<XPathNSResolver> createNSResolver(Node* nodeResolver);
     WEBCORE_EXPORT ExceptionOr<Ref<XPathResult>> evaluate(const String& expression, Node* contextNode, RefPtr<XPathNSResolver>&&, unsigned short type, XPathResult*);
 
-    bool hasNodesWithNonFinalStyle() const { return m_hasNodesWithNonFinalStyle; }
-    void setHasNodesWithNonFinalStyle() { m_hasNodesWithNonFinalStyle = true; }
+    enum PendingSheetLayout { NoLayoutWithPendingSheets, DidLayoutWithPendingSheets, IgnoreLayoutWithPendingSheets };
+
+    bool didLayoutWithPendingStylesheets() const { return m_pendingSheetLayout == DidLayoutWithPendingSheets; }
+
+    bool hasNodesWithPlaceholderStyle() const { return m_hasNodesWithPlaceholderStyle; }
+    void setHasNodesWithPlaceholderStyle() { m_hasNodesWithPlaceholderStyle = true; }
 
     void updateFocusAppearanceSoon(SelectionRestorationMode);
     void cancelFocusAppearanceUpdate();
@@ -1381,10 +1385,15 @@ private:
     const Ref<Settings> m_settings;
 
     std::unique_ptr<StyleResolver> m_userAgentShadowTreeStyleResolver;
-    bool m_hasNodesWithNonFinalStyle;
+    bool m_hasNodesWithPlaceholderStyle;
     // But sometimes you need to ignore pending stylesheet count to
     // force an immediate layout when requested by JS.
     bool m_ignorePendingStylesheets;
+
+    // If we do ignore the pending stylesheet count, then we need to add a boolean
+    // to track that this happened so that we can do a full repaint when the stylesheets
+    // do eventually load.
+    PendingSheetLayout m_pendingSheetLayout;
 
     RefPtr<DOMWindow> m_domWindow;
     WeakPtr<Document> m_contextDocument;
