@@ -1,3 +1,82 @@
+2017-03-09  Caio Lima  <ticaiolima@gmail.com>
+
+        [ESnext] Implement Object Rest - Implementing Object Rest Destructuring
+        https://bugs.webkit.org/show_bug.cgi?id=167962
+
+        Reviewed by Keith Miller.
+
+        Object Rest/Spread Destructing proposal is in stage 3[1] and this
+        Patch is a prototype implementation of it. A simple change over the
+        parser was necessary to support the new '...' token on Object Pattern
+        destruction rule. In the bytecode generator side, We changed the
+        bytecode generated on ObjectPatternNode::bindValue to store in an
+        array identifiers of already destructed properties, following spec draft
+        section[2], and then pass it as excludedNames to CopyDataProperties.
+        The rest destruction the calls copyDataProperties to perform the
+        copy of rest properties in rhs.
+
+        We also implemented CopyDataProperties as private JS global operation
+        on builtins/GlobalOperations.js following it's specification on [3].
+        It is implemented using Set object to verify if a property is on
+        excludedNames to keep this algorithm with O(n + m) complexity, where n
+        = number of source's own properties and m = excludedNames.length. 
+
+        As a requirement to use JSSets as constants, a change in
+        CodeBlock::create API was necessary, because JSSet creation can throws OOM
+        exception. Now, CodeBlock::finishCreation returns ```false``` if an
+        execption is throwed by
+        CodeBlock::setConstantIdentifierSetRegisters and then we return
+        nullptr to ScriptExecutable::newCodeBlockFor. It is responsible to
+        check if CodeBlock was constructed properly and then, throw OOM
+        exception to the correct scope.
+
+        [1] - https://github.com/sebmarkbage/ecmascript-rest-spread
+        [2] - http://sebmarkbage.github.io/ecmascript-rest-spread/#Rest-RuntimeSemantics-PropertyDestructuringAssignmentEvaluation
+        [3] - http://sebmarkbage.github.io/ecmascript-rest-spread/#AbstractOperations-CopyDataProperties
+
+        * builtins/BuiltinNames.h:
+        * builtins/GlobalOperations.js:
+        (globalPrivate.copyDataProperties):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::finishCreation):
+        (JSC::CodeBlock::setConstantIdentifierSetRegisters):
+        * bytecode/CodeBlock.h:
+        * bytecode/EvalCodeBlock.h:
+        (JSC::EvalCodeBlock::create):
+        * bytecode/FunctionCodeBlock.h:
+        (JSC::FunctionCodeBlock::create):
+        * bytecode/ModuleProgramCodeBlock.h:
+        (JSC::ModuleProgramCodeBlock::create):
+        * bytecode/ProgramCodeBlock.h:
+        (JSC::ProgramCodeBlock::create):
+        * bytecode/UnlinkedCodeBlock.h:
+        (JSC::UnlinkedCodeBlock::addSetConstant):
+        (JSC::UnlinkedCodeBlock::constantIdentifierSets):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitLoad):
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ObjectPatternNode::bindValue):
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::appendObjectPatternEntry):
+        (JSC::ASTBuilder::appendObjectPatternRestEntry):
+        (JSC::ASTBuilder::setContainsObjectRestElement):
+        * parser/Nodes.h:
+        (JSC::ObjectPatternNode::appendEntry):
+        (JSC::ObjectPatternNode::setContainsRestElement):
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseDestructuringPattern):
+        (JSC::Parser<LexerType>::parseProperty):
+        * parser/SyntaxChecker.h:
+        (JSC::SyntaxChecker::operatorStackPop):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::privateToObject):
+        * runtime/JSGlobalObjectFunctions.h:
+        * runtime/ScriptExecutable.cpp:
+        (JSC::ScriptExecutable::newCodeBlockFor):
+
 2017-03-09  Mark Lam  <mark.lam@apple.com>
 
         Implement a StackTrace utility object that can capture stack traces for debugging.

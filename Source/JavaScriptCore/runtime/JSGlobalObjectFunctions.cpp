@@ -735,6 +735,11 @@ EncodedJSValue JSC_HOST_CALL globalFuncProtoSetter(ExecState* exec)
     thisObject->setPrototype(vm, exec, value, shouldThrowIfCantSet);
     return JSValue::encode(jsUndefined());
 }
+
+EncodedJSValue JSC_HOST_CALL privateToObject(ExecState* exec)
+{
+    return JSValue::encode(JSValue(exec->argument(0).toObject(exec)));
+}
     
 EncodedJSValue JSC_HOST_CALL globalFuncBuiltinLog(ExecState* exec)
 {

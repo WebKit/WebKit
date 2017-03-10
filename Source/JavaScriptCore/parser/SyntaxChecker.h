@@ -352,6 +352,12 @@ public:
     void appendObjectPatternEntry(ArrayPattern, const JSTokenLocation&, Expression, DestructuringPattern, Expression)
     {
     }
+    void appendObjectPatternRestEntry(ObjectPattern, const JSTokenLocation&, DestructuringPattern)
+    {
+    }
+    void setContainsObjectRestElement(ObjectPattern, bool)
+    {
+    }
 
     DestructuringPattern createBindingLocation(const JSTokenLocation&, const Identifier&, const JSTextPosition&, const JSTextPosition&, AssignmentContext)
     {

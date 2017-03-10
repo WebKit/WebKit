@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006, 2007, 2008, 2011, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2005, 2006, 2007, 2008, 2011, 2013, 2017 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -120,6 +120,9 @@ namespace WTF {
 
         template<typename OtherCollection>
         bool operator==(const OtherCollection&) const;
+        
+        template<typename OtherCollection>
+        bool operator!=(const OtherCollection&) const;
 
     private:
         HashTableType m_impl;
@@ -361,6 +364,13 @@ namespace WTF {
                 return false;
         }
         return true;
+    }
+    
+    template<typename T, typename U, typename V>
+    template<typename OtherCollection>
+    inline bool HashSet<T, U, V>::operator!=(const OtherCollection& otherCollection) const
+    {
+        return !(*this == otherCollection);
     }
 
 } // namespace WTF

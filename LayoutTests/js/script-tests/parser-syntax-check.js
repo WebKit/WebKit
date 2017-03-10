@@ -691,7 +691,19 @@ valid("var [...[{x} = 20, ...y]] = 20;");
 valid("var {x: [y, ...[...[...{z: [...z]}]]]} = 20");
 valid("var {x: [y, {z: {z: [...z]}}]} = 20");
 invalid("var [...y, ...z] = 20");
-invalid("var [...{...y}] = 20");
+valid("var [...{...y}] = 20");
+valid("var {a, b, ...r} = {a: 1, b: 2, c: 3};");
+valid("var {a, b, ...{d}} = {a: 1, b: 2, c: 3, d: 4};");
+valid("var {a, b, ...{d = 15}} = {a: 1, b: 2, c: 3, d: 4};");
+valid("var {a, b, ...{d = 15, ...r}} = {a: 1, b: 2, c: 3, d: 4};");
+valid("(({a, b, ...r}) => {})({a: 1, b: 2, c: 3, d: 4});");
+valid("(function ({a, b, ...r}) {})({a: 1, b: 2, c: 3, d: 4});");
+valid("var a, b, c; ({a, b, ...r} = {a: 1, b: 2, c: 3, d: 4});");
+valid("function * foo(o) { ({...{ x = yield }} = o); }");
+invalid("var {...r = {a: 2}} = {a: 1, b: 2};");
+invalid("var {...r, b} = {a: 1, b: 2};");
+invalid("var {...r, ...e} = {a: 1, b: 2};");
+invalid("function * (o) { ({ ...{ x: yield } } = o); }");
 
 debug("Rest parameter");
 valid("function foo(...a) { }");
@@ -727,7 +739,7 @@ invalid("let x = (a = 20, ...b, ...c) => { }");
 valid("let x = (a = 20, ...[...b]) => { }");
 valid("let x = (a = 20, ...[...[b = 40]]) => { }");
 valid("let x = (a = 20, ...{b}) => { }");
-invalid("let x = (a = 20, ...{...b}) => { }");
+valid("let x = (a = 20, ...{...b}) => { }");
 invalid("let x = (a = 20, ...{124}) => { }");
 
 debug("non-simple parameter list")

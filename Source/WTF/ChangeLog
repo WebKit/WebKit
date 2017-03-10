@@ -1,3 +1,13 @@
+2017-03-09  Caio Lima  <ticaiolima@gmail.com>
+
+        [ESnext] Implement Object Rest - Implementing Object Rest Destructuring
+        https://bugs.webkit.org/show_bug.cgi?id=167962
+
+        Reviewed by Keith Miller.
+
+        * wtf/HashSet.h:
+        (WTF::=):
+
 2017-03-09  Youenn Fablet  <youenn@apple.com>
 
         Activate VideoToolbox when WebRTC is enabled on iOS

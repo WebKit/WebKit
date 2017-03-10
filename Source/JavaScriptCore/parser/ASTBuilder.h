@@ -942,14 +942,24 @@ public:
     
     void appendObjectPatternEntry(ObjectPattern node, const JSTokenLocation& location, bool wasString, const Identifier& identifier, DestructuringPattern pattern, ExpressionNode* defaultValue)
     {
-        node->appendEntry(location, identifier, wasString, pattern, defaultValue);
+        node->appendEntry(location, identifier, wasString, pattern, defaultValue, ObjectPatternNode::BindingType::Element);
         tryInferNameInPattern(pattern, defaultValue);
     }
 
     void appendObjectPatternEntry(ObjectPattern node, const JSTokenLocation& location, ExpressionNode* propertyExpression, DestructuringPattern pattern, ExpressionNode* defaultValue)
     {
-        node->appendEntry(location, propertyExpression, pattern, defaultValue);
+        node->appendEntry(location, propertyExpression, pattern, defaultValue, ObjectPatternNode::BindingType::Element);
         tryInferNameInPattern(pattern, defaultValue);
+    }
+    
+    void appendObjectPatternRestEntry(ObjectPattern node, const JSTokenLocation& location, DestructuringPattern pattern)
+    {
+        node->appendEntry(location, nullptr, pattern, nullptr, ObjectPatternNode::BindingType::RestElement);
+    }
+
+    void setContainsObjectRestElement(ObjectPattern node, bool containsRestElement)
+    {
+        node->setContainsRestElement(containsRestElement);
     }
 
     BindingPattern createBindingLocation(const JSTokenLocation&, const Identifier& boundProperty, const JSTextPosition& start, const JSTextPosition& end, AssignmentContext context)
