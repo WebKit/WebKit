@@ -1,3 +1,19 @@
+2017-03-09  Matt Baker  <mattbaker@apple.com>
+
+        REGRESSION (r196271): Web Inspector: DOM element loses focus/active selection after committing an inline attribute editor in DOMTreeOutline
+        https://bugs.webkit.org/show_bug.cgi?id=168119
+        <rdar://problem/30466013>
+
+        Reviewed by Brian Burg.
+
+        Fix a regression caused by http://trac.webkit.org/changeset/196271, which
+        updated WebInspector.isEventTargetAnEditableField to detect the editing
+        scenarios used by DOMTreeElement and DataGrid. This subtly changed the
+        behavior of WebInspector._focusChanged, which expected all editable fields
+        to be backed by a CodeMirror instance.
+
+        * UserInterface/Base/Main.js:
+
 2017-03-09  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Show HTTP protocol version and other Network Load Metrics (IP Address, Priority, Connection ID)

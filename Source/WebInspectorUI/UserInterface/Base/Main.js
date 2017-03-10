@@ -1328,8 +1328,8 @@ WebInspector._focusChanged = function(event)
         if (codeMirrorEditorElement && codeMirrorEditorElement !== this.currentFocusElement) {
             this.previousFocusElement = this.currentFocusElement;
             this.currentFocusElement = codeMirrorEditorElement;
+            return;
         }
-        return;
     }
 
     var selection = window.getSelection();
