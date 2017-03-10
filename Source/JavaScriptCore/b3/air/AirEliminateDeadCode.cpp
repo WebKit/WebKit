@@ -118,6 +118,8 @@ bool eliminateDeadCode(Code& code)
         changed = false;
         for (unsigned blockIndex = code.size(); blockIndex--;) {
             BasicBlock* block = code[blockIndex];
+            if (!block)
+                continue;
             for (unsigned instIndex = block->size(); instIndex--;)
                 handleInst(block->at(instIndex));
         }

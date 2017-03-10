@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -86,6 +86,13 @@ public:
     bool operator!=(const HeapRange& other) const
     {
         return !(*this == other);
+    }
+    
+    HeapRange operator|(const HeapRange& other) const
+    {
+        return HeapRange(
+            std::min(m_begin, other.m_begin),
+            std::max(m_end, other.m_end));
     }
     
     explicit operator bool() const { return m_begin != m_end; }

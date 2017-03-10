@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,7 @@
 #if ENABLE(B3_JIT)
 
 #include "B3Type.h"
+#include "B3Width.h"
 #include <wtf/Optional.h>
 #include <wtf/StdLibExtras.h>
 
@@ -81,7 +82,6 @@ enum Opcode : int16_t {
     UDiv,
     Mod, // All bets are off as to what will happen when you execute this for -2^31%-1 and x%0.
     UMod,
-
 
     // Polymorphic negation. Note that we only need this for floating point, since integer negation
     // is exactly like Sub(0, x). But that's not true for floating point. Sub(0, 0) is 0, while
@@ -162,6 +162,110 @@ enum Opcode : int16_t {
     Store16,
     // This is a polymorphic store for Int32, Int64, Float, and Double.
     Store,
+    
+    // Atomic compare and swap that returns a boolean. May choose to do nothing and return false. You can
+    // usually assume that this is faster and results in less code than AtomicStrongCAS, though that's
+    // not necessarily true on Intel, if instruction selection does its job. Imagine that this opcode is
+    // as if you did this atomically:
+    //
+    // template<typename T>
+    // bool AtomicWeakCAS(T expectedValue, T newValue, T* ptr)
+    // {
+    //     if (!rand())
+    //         return false; // Real world example of this: context switch on ARM while doing CAS.
+    //     if (*ptr != expectedValue)
+    //         return false;
+    //     *ptr = newValue;
+    //     return true;
+    // }
+    //
+    // Note that all atomics put the pointer last to be consistent with how loads and stores work. This
+    // is a goofy tradition, but it's harmless, and better than being inconsistent.
+    //
+    // Note that weak CAS has no fencing guarantees when it fails. This means that the following
+    // transformation is always valid:
+    //
+    // Before:
+    //
+    //         Branch(AtomicWeakCAS(expected, new, ptr))
+    //       Successors: Then:#success, Else:#fail
+    //
+    // After:
+    //
+    //         Branch(Equal(Load(ptr), expected))
+    //       Successors: Then:#attempt, Else:#fail
+    //     BB#attempt:
+    //         Branch(AtomicWeakCAS(expected, new, ptr))
+    //       Successors: Then:#success, Else:#fail
+    //
+    // Both kinds of CAS for non-canonical widths (Width8 and Width16) ignore the irrelevant bits of the
+    // input.
+    AtomicWeakCAS,
+    
+    // Atomic compare and swap that returns the old value. Does not have the nondeterminism of WeakCAS.
+    // This is a bit more code and a bit slower in some cases, though not by a lot. Imagine that this
+    // opcode is as if you did this atomically:
+    //
+    // template<typename T>
+    // T AtomicStrongCAS(T expectedValue, T newValue, T* ptr)
+    // {
+    //     T oldValue = *ptr;
+    //     if (oldValue == expectedValue)
+    //         *ptr = newValue;
+    //     return oldValue
+    // }
+    //
+    // AtomicStrongCAS sign-extends its result for subwidth operations.
+    //
+    // Note that AtomicWeakCAS and AtomicStrongCAS sort of have this kind of equivalence:
+    //
+    // AtomicWeakCAS(@exp, @new, @ptr) == Equal(AtomicStrongCAS(@exp, @new, @ptr), @exp)
+    //
+    // Assuming that the WeakCAS does not spuriously fail, of course.
+    AtomicStrongCAS,
+    
+    // Atomically ___ a memory location and return the old value. Syntax:
+    //
+    // @oldValue = AtomicXchg___(@operand, @ptr)
+    //
+    // For non-canonical widths (Width8 and Width16), these return sign-extended results and ignore the
+    // irrelevant bits of their inputs.
+    AtomicXchgAdd,
+    AtomicXchgAnd,
+    AtomicXchgOr,
+    AtomicXchgSub,
+    AtomicXchgXor,
+    
+    // FIXME: Maybe we should have AtomicXchgNeg.
+    // https://bugs.webkit.org/show_bug.cgi?id=169252
+    
+    // Atomically exchange a value with a memory location. Syntax:
+    //
+    // @oldValue = AtomicXchg(@newValue, @ptr)
+    AtomicXchg,
+    
+    // Introduce an invisible dependency for blocking motion of loads with respect to each other. Syntax:
+    //
+    // @result = Depend(@phantom)
+    //
+    // This is eventually codegenerated to have local semantics as if we did:
+    //
+    // @result = $0
+    //
+    // But it ensures that the users of @result cannot execute until @phantom is computed.
+    //
+    // The compiler is not allowed to reason about the fact that Depend codegenerates this way. Any kind
+    // of transformation or analysis that relies on the insight that Depend is really zero is unsound,
+    // because it unlocks reordering of users of @result and @phantom.
+    //
+    // On X86, this is lowered to a load-load fence and @result uses @phantom directly.
+    //
+    // On ARM, this is lowered as if like:
+    //
+    // @result = BitXor(@phantom, @phantom)
+    //
+    // Except that the compiler never gets an opportunity to simplify out the BitXor.
+    Depend,
 
     // This is used to compute the actual address of a Wasm memory operation. It takes an IntPtr
     // and a pinned register then computes the appropriate IntPtr address. For the use-case of
@@ -300,6 +404,112 @@ inline bool isDefinitelyTerminal(Opcode opcode)
         return false;
     }
 }
+
+inline bool isLoad(Opcode opcode)
+{
+    switch (opcode) {
+    case Load8Z:
+    case Load8S:
+    case Load16Z:
+    case Load16S:
+    case Load:
+        return true;
+    default:
+        return false;
+    }
+}
+
+inline bool isStore(Opcode opcode)
+{
+    switch (opcode) {
+    case Store8:
+    case Store16:
+    case Store:
+        return true;
+    default:
+        return false;
+    }
+}
+
+inline bool isLoadStore(Opcode opcode)
+{
+    switch (opcode) {
+    case Load8Z:
+    case Load8S:
+    case Load16Z:
+    case Load16S:
+    case Load:
+    case Store8:
+    case Store16:
+    case Store:
+        return true;
+    default:
+        return false;
+    }
+}
+
+inline bool isAtomic(Opcode opcode)
+{
+    switch (opcode) {
+    case AtomicWeakCAS:
+    case AtomicStrongCAS:
+    case AtomicXchgAdd:
+    case AtomicXchgAnd:
+    case AtomicXchgOr:
+    case AtomicXchgSub:
+    case AtomicXchgXor:
+    case AtomicXchg:
+        return true;
+    default:
+        return false;
+    }
+}
+
+inline bool isAtomicCAS(Opcode opcode)
+{
+    switch (opcode) {
+    case AtomicWeakCAS:
+    case AtomicStrongCAS:
+        return true;
+    default:
+        return false;
+    }
+}
+
+inline bool isAtomicXchg(Opcode opcode)
+{
+    switch (opcode) {
+    case AtomicXchgAdd:
+    case AtomicXchgAnd:
+    case AtomicXchgOr:
+    case AtomicXchgSub:
+    case AtomicXchgXor:
+    case AtomicXchg:
+        return true;
+    default:
+        return false;
+    }
+}
+
+inline bool isMemoryAccess(Opcode opcode)
+{
+    return isAtomic(opcode) || isLoadStore(opcode);
+}
+
+inline Opcode signExtendOpcode(Width width)
+{
+    switch (width) {
+    case Width8:
+        return SExt8;
+    case Width16:
+        return SExt16;
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+        return Oops;
+    }
+}
+
+JS_EXPORT_PRIVATE Opcode storeOpcode(Bank bank, Width width);
 
 } } // namespace JSC::B3
 

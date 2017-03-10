@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,6 +34,19 @@
 namespace JSC { namespace B3 { namespace Air {
 
 const char* const BasicBlock::dumpPrefix = "#";
+
+void BasicBlock::setSuccessors(FrequentedBlock target)
+{
+    m_successors.resize(1);
+    m_successors[0] = target;
+}
+
+void BasicBlock::setSuccessors(FrequentedBlock taken, FrequentedBlock notTaken)
+{
+    m_successors.resize(2);
+    m_successors[0] = taken;
+    m_successors[1] = notTaken;
+}
 
 bool BasicBlock::addPredecessor(BasicBlock* block)
 {

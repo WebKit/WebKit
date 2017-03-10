@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,62 +27,26 @@
 
 #if ENABLE(B3_JIT)
 
-#include "B3Origin.h"
-#include "B3Type.h"
-#include "B3TypeMap.h"
+#include "B3GenericBlockInsertionSet.h"
+#include "AirCode.h"
 #include <wtf/Insertion.h>
 #include <wtf/Vector.h>
 
-namespace JSC { namespace B3 {
+namespace JSC { namespace B3 { namespace Air {
 
-class BasicBlock;
-class Procedure;
-class Value;
+class InsertionSet;
 
-typedef WTF::Insertion<Value*> Insertion;
+typedef GenericBlockInsertionSet<BasicBlock>::BlockInsertion BlockInsertion;
 
-class InsertionSet {
+class BlockInsertionSet : public GenericBlockInsertionSet<BasicBlock> {
 public:
-    InsertionSet(Procedure& procedure)
-        : m_procedure(procedure)
-    {
-    }
-
-    bool isEmpty() const { return m_insertions.isEmpty(); }
-
-    Procedure& code() { return m_procedure; }
-
-    void appendInsertion(const Insertion& insertion)
-    {
-        m_insertions.append(insertion);
-    }
-
-    Value* insertValue(size_t index, Value* value)
-    {
-        appendInsertion(Insertion(index, value));
-        return value;
-    }
-
-    template<typename ValueType, typename... Arguments>
-    ValueType* insert(size_t index, Arguments... arguments);
-
-    Value* insertIntConstant(size_t index, Origin, Type, int64_t value);
-    Value* insertIntConstant(size_t index, Value* likeValue, int64_t value);
-
-    Value* insertBottom(size_t index, Origin, Type);
-    Value* insertBottom(size_t index, Value*);
+    BlockInsertionSet(Code&);
+    ~BlockInsertionSet();
     
-    Value* insertClone(size_t index, Value*);
-
-    void execute(BasicBlock*);
-
-private:
-    Procedure& m_procedure;
-    Vector<Insertion, 8> m_insertions;
-
-    TypeMap<Value*> m_bottomForType;
+    // FIXME: We should eventually implement B3::BlockInsertionSet's splitForward().
+    // https://bugs.webkit.org/show_bug.cgi?id=169253
 };
 
-} } // namespace JSC::B3
+} } } // namespace JSC::B3::Air
 
 #endif // ENABLE(B3_JIT)

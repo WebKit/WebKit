@@ -28,9 +28,8 @@
 
 #if ENABLE(B3_JIT)
 
-#include "AirArg.h"
 #include "B3InsertionSetInlines.h"
-#include "B3MemoryValue.h"
+#include "B3MemoryValueInlines.h"
 #include "B3PhaseScope.h"
 #include "B3ProcedureInlines.h"
 #include "B3ValueInlines.h"
@@ -49,20 +48,21 @@ public:
 
     void run()
     {
-        if (!isARM64())
-            return;
-
+        // FIXME: Perhaps this should be moved to lowerMacros, and quirks mode can impose the requirement
+        // that the offset is legal. But for now this is sort of OK because we run pureCSE after. Also,
+        // we should probably have something better than just pureCSE to clean up the code that this
+        // introduces.
+        // https://bugs.webkit.org/show_bug.cgi?id=169246
+        
         for (BasicBlock* block : m_proc) {
             for (unsigned index = 0; index < block->size(); ++index) {
                 MemoryValue* memoryValue = block->at(index)->as<MemoryValue>();
                 if (!memoryValue)
                     continue;
-
-                int32_t offset = memoryValue->offset();
-                Width width = memoryValue->accessWidth();
-                if (!Air::Arg::isValidAddrForm(offset, width)) {
+                
+                if (!memoryValue->isLegalOffset(memoryValue->offset())) {
                     Value* base = memoryValue->lastChild();
-                    Value* offsetValue = m_insertionSet.insertIntConstant(index, memoryValue->origin(), pointerType(), offset);
+                    Value* offsetValue = m_insertionSet.insertIntConstant(index, memoryValue->origin(), pointerType(), memoryValue->offset());
                     Value* resolvedAddress = m_proc.add<Value>(Add, memoryValue->origin(), base, offsetValue);
                     m_insertionSet.insertValue(index, resolvedAddress);
 

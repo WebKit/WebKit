@@ -68,6 +68,11 @@ public:
     
     Opcode opcode() const { return kind().opcode(); }
     
+    // Note that the kind is meant to be immutable. Do this when you know that this is safe. It's not
+    // usually safe.
+    void setKindUnsafely(Kind kind) { m_kind = kind; }
+    void setOpcodeUnsafely(Opcode opcode) { m_kind.setOpcode(opcode); }
+    
     // It's good practice to mirror Kind methods here, so you can say value->isBlah()
     // instead of value->kind().isBlah().
     bool isChill() const { return kind().isChill(); }
@@ -107,6 +112,8 @@ public:
     // values with Identities on bottom constants. For this reason, this takes a callback that is
     // responsible for creating bottoms. There's a utility for this, see B3BottomProvider.h. You
     // can also access that utility using replaceWithBottom(InsertionSet&, size_t).
+    //
+    // You're guaranteed that bottom is zero.
     template<typename BottomProvider>
     void replaceWithBottom(const BottomProvider&);
     
@@ -256,7 +263,7 @@ public:
     // Makes sure that none of the children are Identity's. If a child points to Identity, this will
     // repoint it at the Identity's child. For simplicity, this will follow arbitrarily long chains
     // of Identity's.
-    void performSubstitution();
+    bool performSubstitution();
     
     // Free values are those whose presence is guaranteed not to hurt code. We consider constants,
     // Identities, and Nops to be free. Constants are free because we hoist them to an optimal place.
@@ -321,6 +328,7 @@ private:
         case IToF:
         case BitwiseCast:
         case Branch:
+        case Depend:
             if (UNLIKELY(numArgs != 1))
                 badKind(kind, numArgs);
             break;

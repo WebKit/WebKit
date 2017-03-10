@@ -155,6 +155,7 @@ void spillEverything(Code& code)
                     case Arg::LateColdUse:
                     case Arg::Scratch:
                     case Arg::EarlyDef:
+                    case Arg::EarlyZDef:
                         for (Reg reg : code.regsInPriorityOrder(bank)) {
                             if (!setBefore.get(reg) && !setAfter.get(reg)) {
                                 setAfter.set(reg);

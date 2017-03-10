@@ -30,6 +30,38 @@
 
 #include <wtf/PrintStream.h>
 
+namespace JSC { namespace B3 {
+
+Type bestType(Bank bank, Width width)
+{
+    switch (width) {
+    case Width8:
+    case Width16:
+    case Width32:
+        switch (bank) {
+        case GP:
+            return Int32;
+        case FP:
+            return Float;
+        }
+        RELEASE_ASSERT_NOT_REACHED();
+        return Void;
+    case Width64:
+        switch (bank) {
+        case GP:
+            return Int64;
+        case FP:
+            return Double;
+        }
+        RELEASE_ASSERT_NOT_REACHED();
+        return Void;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+    return Void;
+}
+
+} } // namespace JSC::B3
+
 namespace WTF {
 
 void printInternal(PrintStream& out, JSC::B3::Width width)

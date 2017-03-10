@@ -48,6 +48,7 @@ void padInterference(Code& code)
                 [&] (Arg&, Arg::Role role, Bank, Width) {
                     switch (role) {
                     case Arg::EarlyDef:
+                    case Arg::EarlyZDef:
                         hasEarlyDef = true;
                         break;
                     case Arg::LateUse:

@@ -30,6 +30,7 @@
 #include "AirValidate.h"
 #include "AllowMacroScratchRegisterUsage.h"
 #include "B3ArgumentRegValue.h"
+#include "B3AtomicValue.h"
 #include "B3BasicBlockInlines.h"
 #include "B3CCallValue.h"
 #include "B3Compilation.h"
@@ -44,6 +45,7 @@
 #include "B3MathExtras.h"
 #include "B3MemoryValue.h"
 #include "B3MoveConstants.h"
+#include "B3NativeTraits.h"
 #include "B3Procedure.h"
 #include "B3ReduceStrength.h"
 #include "B3SlotBaseValue.h"
@@ -295,6 +297,24 @@ void testLoad42()
             root->appendNew<ConstPtrValue>(proc, Origin(), &x)));
 
     CHECK(compileAndRun<int>(proc) == 42);
+}
+
+void testLoadAcq42()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    int x = 42;
+    root->appendNewControlValue(
+        proc, Return, Origin(),
+        root->appendNew<MemoryValue>(
+            proc, Load, Int32, Origin(),
+            root->appendNew<ConstPtrValue>(proc, Origin(), &x),
+            0, HeapRange(42), HeapRange(42)));
+
+    auto code = compile(proc);
+    if (isARM64())
+        checkUsesInstruction(*code, "lda");
+    CHECK(invoke<int>(*code) == 42);
 }
 
 void testLoadWithOffsetImpl(int32_t offset64, int32_t offset32)
@@ -5748,6 +5768,35 @@ void testStoreAddLoad32(int amount)
     CHECK(slot == 37 + amount);
 }
 
+void testStoreRelAddLoadAcq32(int amount)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    int slot = 37;
+    ConstPtrValue* slotPtr = root->appendNew<ConstPtrValue>(proc, Origin(), &slot);
+    root->appendNew<MemoryValue>(
+        proc, Store, Origin(),
+        root->appendNew<Value>(
+            proc, Add, Origin(),
+            root->appendNew<MemoryValue>(
+                proc, Load, Int32, Origin(), slotPtr, 0, HeapRange(42), HeapRange(42)),
+            root->appendNew<Value>(
+                proc, Trunc, Origin(),
+                root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0))),
+        slotPtr, 0, HeapRange(42), HeapRange(42));
+    root->appendNewControlValue(
+        proc, Return, Origin(),
+        root->appendNew<Const32Value>(proc, Origin(), 0));
+
+    auto code = compile(proc);
+    if (isARM64()) {
+        checkUsesInstruction(*code, "lda");
+        checkUsesInstruction(*code, "stl");
+    }
+    CHECK(!invoke<int>(*code, amount));
+    CHECK(slot == 37 + amount);
+}
+
 void testStoreAddLoadImm32(int amount)
 {
     Procedure proc;
@@ -5789,6 +5838,74 @@ void testStoreAddLoad8(int amount, B3::Opcode loadOpcode)
         root->appendNew<Const32Value>(proc, Origin(), 0));
 
     CHECK(!compileAndRun<int>(proc, amount));
+    CHECK(slot == 37 + amount);
+}
+
+void testStoreRelAddLoadAcq8(int amount, B3::Opcode loadOpcode)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    int8_t slot = 37;
+    ConstPtrValue* slotPtr = root->appendNew<ConstPtrValue>(proc, Origin(), &slot);
+    root->appendNew<MemoryValue>(
+        proc, Store8, Origin(),
+        root->appendNew<Value>(
+            proc, Add, Origin(),
+            root->appendNew<MemoryValue>(
+                proc, loadOpcode, Origin(), slotPtr, 0, HeapRange(42), HeapRange(42)),
+            root->appendNew<Value>(
+                proc, Trunc, Origin(),
+                root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0))),
+        slotPtr, 0, HeapRange(42), HeapRange(42));
+    root->appendNewControlValue(
+        proc, Return, Origin(),
+        root->appendNew<Const32Value>(proc, Origin(), 0));
+
+    auto code = compile(proc);
+    if (isARM64()) {
+        checkUsesInstruction(*code, "lda");
+        checkUsesInstruction(*code, "stl");
+    }
+    CHECK(!invoke<int>(*code, amount));
+    CHECK(slot == 37 + amount);
+}
+
+void testStoreRelAddFenceLoadAcq8(int amount, B3::Opcode loadOpcode)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    int8_t slot = 37;
+    ConstPtrValue* slotPtr = root->appendNew<ConstPtrValue>(proc, Origin(), &slot);
+    Value* loadedValue = root->appendNew<MemoryValue>(
+        proc, loadOpcode, Origin(), slotPtr, 0, HeapRange(42), HeapRange(42));
+    PatchpointValue* patchpoint = root->appendNew<PatchpointValue>(proc, Void, Origin());
+    patchpoint->clobber(RegisterSet::macroScratchRegisters());
+    patchpoint->setGenerator(
+        [&] (CCallHelpers& jit, const StackmapGenerationParams&) {
+            AllowMacroScratchRegisterUsage allowScratch(jit);
+            jit.store8(CCallHelpers::TrustedImm32(0xbeef), &slot);
+        });
+    patchpoint->effects = Effects::none();
+    patchpoint->effects.fence = true;
+    root->appendNew<MemoryValue>(
+        proc, Store8, Origin(),
+        root->appendNew<Value>(
+            proc, Add, Origin(),
+            loadedValue,
+            root->appendNew<Value>(
+                proc, Trunc, Origin(),
+                root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0))),
+        slotPtr, 0, HeapRange(42), HeapRange(42));
+    root->appendNewControlValue(
+        proc, Return, Origin(),
+        root->appendNew<Const32Value>(proc, Origin(), 0));
+
+    auto code = compile(proc);
+    if (isARM64()) {
+        checkUsesInstruction(*code, "lda");
+        checkUsesInstruction(*code, "stl");
+    }
+    CHECK(!invoke<int>(*code, amount));
     CHECK(slot == 37 + amount);
 }
 
@@ -5836,6 +5953,35 @@ void testStoreAddLoad16(int amount, B3::Opcode loadOpcode)
     CHECK(slot == 37 + amount);
 }
 
+void testStoreRelAddLoadAcq16(int amount, B3::Opcode loadOpcode)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    int16_t slot = 37;
+    ConstPtrValue* slotPtr = root->appendNew<ConstPtrValue>(proc, Origin(), &slot);
+    root->appendNew<MemoryValue>(
+        proc, Store16, Origin(),
+        root->appendNew<Value>(
+            proc, Add, Origin(),
+            root->appendNew<MemoryValue>(
+                proc, loadOpcode, Origin(), slotPtr, 0, HeapRange(42), HeapRange(42)),
+            root->appendNew<Value>(
+                proc, Trunc, Origin(),
+                root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0))),
+        slotPtr, 0, HeapRange(42), HeapRange(42));
+    root->appendNewControlValue(
+        proc, Return, Origin(),
+        root->appendNew<Const32Value>(proc, Origin(), 0));
+
+    auto code = compile(proc);
+    if (isARM64()) {
+        checkUsesInstruction(*code, "lda");
+        checkUsesInstruction(*code, "stl");
+    }
+    CHECK(!invoke<int>(*code, amount));
+    CHECK(slot == 37 + amount);
+}
+
 void testStoreAddLoadImm16(int amount, B3::Opcode loadOpcode)
 {
     Procedure proc;
@@ -5875,6 +6021,33 @@ void testStoreAddLoad64(int amount)
         root->appendNew<Const32Value>(proc, Origin(), 0));
 
     CHECK(!compileAndRun<int>(proc, amount));
+    CHECK(slot == 37000000000ll + amount);
+}
+
+void testStoreRelAddLoadAcq64(int amount)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    int64_t slot = 37000000000ll;
+    ConstPtrValue* slotPtr = root->appendNew<ConstPtrValue>(proc, Origin(), &slot);
+    root->appendNew<MemoryValue>(
+        proc, Store, Origin(),
+        root->appendNew<Value>(
+            proc, Add, Origin(),
+            root->appendNew<MemoryValue>(
+                proc, Load, Int64, Origin(), slotPtr, 0, HeapRange(42), HeapRange(42)),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0)),
+        slotPtr, 0, HeapRange(42), HeapRange(42));
+    root->appendNewControlValue(
+        proc, Return, Origin(),
+        root->appendNew<Const32Value>(proc, Origin(), 0));
+
+    auto code = compile(proc);
+    if (isARM64()) {
+        checkUsesInstruction(*code, "lda");
+        checkUsesInstruction(*code, "stl");
+    }
+    CHECK(!invoke<int>(*code, amount));
     CHECK(slot == 37000000000ll + amount);
 }
 
@@ -13791,7 +13964,7 @@ void testTrappingStoreElimination()
     compileAndRun<int>(proc);
     unsigned storeCount = 0;
     for (Value* value : proc.values()) {
-        if (MemoryValue::isStore(value->opcode()))
+        if (isStore(value->opcode()))
             storeCount++;
     }
     CHECK_EQ(storeCount, 2u);
@@ -13997,6 +14170,7 @@ void testX86LeaAddAdd()
     root->appendNew<Value>(proc, Return, Origin(), result);
     
     auto code = compile(proc);
+    CHECK_EQ(invoke<intptr_t>(*code, 1, 2), (1 + 2) + 100);
     checkDisassembly(
         *code,
         [&] (const char* disassembly) -> bool {
@@ -14004,7 +14178,6 @@ void testX86LeaAddAdd()
                 || strstr(disassembly, "lea 0x64(%rsi,%rdi), %rax");
         },
         "Expected to find something like lea 0x64(%rdi,%rsi), %rax but didn't!");
-    CHECK_EQ(invoke<intptr_t>(*code, 1, 2), (1 + 2) + 100);
 }
 
 void testX86LeaAddShlRight()
@@ -14041,6 +14214,7 @@ void testX86LeaAddShlLeftScale1()
     root->appendNew<Value>(proc, Return, Origin(), result);
     
     auto code = compile(proc);
+    CHECK_EQ(invoke<intptr_t>(*code, 1, 2), 1 + 2);
     checkDisassembly(
         *code,
         [&] (const char* disassembly) -> bool {
@@ -14048,7 +14222,6 @@ void testX86LeaAddShlLeftScale1()
                 || strstr(disassembly, "lea (%rsi,%rdi), %rax");
         },
         "Expected to find something like lea (%rdi,%rsi), %rax but didn't!");
-    CHECK_EQ(invoke<intptr_t>(*code, 1, 2), 1 + 2);
 }
 
 void testX86LeaAddShlLeftScale2()
@@ -14277,6 +14450,684 @@ void testOptimizeMaterialization()
     CHECK(found);
 }
 
+template<typename T>
+void testAtomicWeakCAS()
+{
+    Type type = NativeTraits<T>::type;
+    Width width = NativeTraits<T>::width;
+    
+    auto checkMyDisassembly = [&] (Compilation& compilation, bool fenced) {
+        if (isX86()) {
+            checkUsesInstruction(compilation, "lock");
+            checkUsesInstruction(compilation, "cmpxchg");
+        } else {
+            if (fenced) {
+                checkUsesInstruction(compilation, "ldax");
+                checkUsesInstruction(compilation, "stlx");
+            } else {
+                checkUsesInstruction(compilation, "ldx");
+                checkUsesInstruction(compilation, "stx");
+            }
+        }
+    };
+    
+    {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+        BasicBlock* reloop = proc.addBlock();
+        BasicBlock* done = proc.addBlock();
+        
+        Value* ptr = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+        root->appendNew<Value>(proc, Jump, Origin());
+        root->setSuccessors(reloop);
+        
+        reloop->appendNew<Value>(
+            proc, Branch, Origin(),
+            reloop->appendNew<AtomicValue>(
+                proc, AtomicWeakCAS, Origin(), width,
+                reloop->appendIntConstant(proc, Origin(), type, 42),
+                reloop->appendIntConstant(proc, Origin(), type, 0xbeef),
+                ptr));
+        reloop->setSuccessors(done, reloop);
+        
+        done->appendNew<Value>(proc, Return, Origin());
+        
+        auto code = compile(proc);
+        T value[2];
+        value[0] = 42;
+        value[1] = 13;
+        invoke<void>(*code, value);
+        CHECK_EQ(value[0], static_cast<T>(0xbeef));
+        CHECK_EQ(value[1], 13);
+        checkMyDisassembly(*code, true);
+    }
+    
+    {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+        BasicBlock* reloop = proc.addBlock();
+        BasicBlock* done = proc.addBlock();
+        
+        Value* ptr = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+        root->appendNew<Value>(proc, Jump, Origin());
+        root->setSuccessors(reloop);
+        
+        reloop->appendNew<Value>(
+            proc, Branch, Origin(),
+            reloop->appendNew<AtomicValue>(
+                proc, AtomicWeakCAS, Origin(), width,
+                reloop->appendIntConstant(proc, Origin(), type, 42),
+                reloop->appendIntConstant(proc, Origin(), type, 0xbeef),
+                ptr, 0, HeapRange(42), HeapRange()));
+        reloop->setSuccessors(done, reloop);
+        
+        done->appendNew<Value>(proc, Return, Origin());
+        
+        auto code = compile(proc);
+        T value[2];
+        value[0] = 42;
+        value[1] = 13;
+        invoke<void>(*code, value);
+        CHECK_EQ(value[0], static_cast<T>(0xbeef));
+        CHECK_EQ(value[1], 13);
+        checkMyDisassembly(*code, false);
+    }
+    
+    {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+        BasicBlock* succ = proc.addBlock();
+        BasicBlock* fail = proc.addBlock();
+        
+        Value* ptr = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+        root->appendNew<Value>(
+            proc, Branch, Origin(),
+            root->appendNew<AtomicValue>(
+                proc, AtomicWeakCAS, Origin(), width,
+                root->appendIntConstant(proc, Origin(), type, 42),
+                root->appendIntConstant(proc, Origin(), type, 0xbeef),
+                ptr));
+        root->setSuccessors(succ, fail);
+        
+        succ->appendNew<MemoryValue>(
+            proc, storeOpcode(GP, width), Origin(),
+            succ->appendIntConstant(proc, Origin(), type, 100),
+            ptr);
+        succ->appendNew<Value>(proc, Return, Origin());
+        
+        fail->appendNew<Value>(proc, Return, Origin());
+        
+        auto code = compile(proc);
+        T value[2];
+        value[0] = 42;
+        value[1] = 13;
+        while (value[0] == 42)
+            invoke<void>(*code, value);
+        CHECK_EQ(value[0], static_cast<T>(100));
+        CHECK_EQ(value[1], 13);
+        value[0] = static_cast<T>(300);
+        invoke<void>(*code, value);
+        CHECK_EQ(value[0], static_cast<T>(300));
+        CHECK_EQ(value[1], 13);
+        checkMyDisassembly(*code, true);
+    }
+    
+    {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+        BasicBlock* succ = proc.addBlock();
+        BasicBlock* fail = proc.addBlock();
+        
+        Value* ptr = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+        root->appendNew<Value>(
+            proc, Branch, Origin(),
+            root->appendNew<Value>(
+                proc, Equal, Origin(),
+                root->appendNew<AtomicValue>(
+                    proc, AtomicWeakCAS, Origin(), width,
+                    root->appendIntConstant(proc, Origin(), type, 42),
+                    root->appendIntConstant(proc, Origin(), type, 0xbeef),
+                    ptr),
+                root->appendIntConstant(proc, Origin(), Int32, 0)));
+        root->setSuccessors(fail, succ);
+        
+        succ->appendNew<MemoryValue>(
+            proc, storeOpcode(GP, width), Origin(),
+            succ->appendIntConstant(proc, Origin(), type, 100),
+            ptr);
+        succ->appendNew<Value>(proc, Return, Origin());
+        
+        fail->appendNew<Value>(proc, Return, Origin());
+        
+        auto code = compile(proc);
+        T value[2];
+        value[0] = 42;
+        value[1] = 13;
+        while (value[0] == 42)
+            invoke<void>(*code, value);
+        CHECK_EQ(value[0], static_cast<T>(100));
+        CHECK_EQ(value[1], 13);
+        value[0] = static_cast<T>(300);
+        invoke<void>(*code, value);
+        CHECK_EQ(value[0], static_cast<T>(300));
+        CHECK_EQ(value[1], 13);
+        checkMyDisassembly(*code, true);
+    }
+    
+    {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+        root->appendNew<Value>(
+            proc, Return, Origin(),
+            root->appendNew<AtomicValue>(
+                proc, AtomicWeakCAS, Origin(), width,
+                root->appendIntConstant(proc, Origin(), type, 42),
+                root->appendIntConstant(proc, Origin(), type, 0xbeef),
+                root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0)));
+        
+        auto code = compile(proc);
+        T value[2];
+        value[0] = 42;
+        value[1] = 13;
+        while (!invoke<bool>(*code, value)) { }
+        CHECK_EQ(value[0], static_cast<T>(0xbeef));
+        CHECK_EQ(value[1], 13);
+        
+        value[0] = static_cast<T>(300);
+        CHECK(!invoke<bool>(*code, value));
+        CHECK_EQ(value[0], static_cast<T>(300));
+        CHECK_EQ(value[1], 13);
+        checkMyDisassembly(*code, true);
+    }
+    
+    {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+        root->appendNew<Value>(
+            proc, Return, Origin(),
+            root->appendNew<Value>(
+                proc, Equal, Origin(),
+                root->appendNew<AtomicValue>(
+                    proc, AtomicWeakCAS, Origin(), width,
+                    root->appendIntConstant(proc, Origin(), type, 42),
+                    root->appendIntConstant(proc, Origin(), type, 0xbeef),
+                    root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0)),
+                root->appendNew<Const32Value>(proc, Origin(), 0)));
+        
+        auto code = compile(proc);
+        T value[2];
+        value[0] = 42;
+        value[1] = 13;
+        while (invoke<bool>(*code, value)) { }
+        CHECK_EQ(value[0], static_cast<T>(0xbeef));
+        CHECK_EQ(value[1], 13);
+        
+        value[0] = static_cast<T>(300);
+        CHECK(invoke<bool>(*code, value));
+        CHECK_EQ(value[0], static_cast<T>(300));
+        CHECK_EQ(value[1], 13);
+        checkMyDisassembly(*code, true);
+    }
+    
+    {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+        root->appendNew<Value>(
+            proc, Return, Origin(),
+            root->appendNew<AtomicValue>(
+                proc, AtomicWeakCAS, Origin(), width,
+                root->appendIntConstant(proc, Origin(), type, 42),
+                root->appendIntConstant(proc, Origin(), type, 0xbeef),
+                root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0),
+                42));
+        
+        auto code = compile(proc);
+        T value[2];
+        value[0] = 42;
+        value[1] = 13;
+        while (!invoke<bool>(*code, bitwise_cast<intptr_t>(value) - 42)) { }
+        CHECK_EQ(value[0], static_cast<T>(0xbeef));
+        CHECK_EQ(value[1], 13);
+        
+        value[0] = static_cast<T>(300);
+        CHECK(!invoke<bool>(*code, bitwise_cast<intptr_t>(value) - 42));
+        CHECK_EQ(value[0], static_cast<T>(300));
+        CHECK_EQ(value[1], 13);
+        checkMyDisassembly(*code, true);
+    }
+}
+
+template<typename T>
+void testAtomicStrongCAS()
+{
+    Type type = NativeTraits<T>::type;
+    Width width = NativeTraits<T>::width;
+    
+    auto checkMyDisassembly = [&] (Compilation& compilation, bool fenced) {
+        if (isX86()) {
+            checkUsesInstruction(compilation, "lock");
+            checkUsesInstruction(compilation, "cmpxchg");
+        } else {
+            if (fenced) {
+                checkUsesInstruction(compilation, "ldax");
+                checkUsesInstruction(compilation, "stlx");
+            } else {
+                checkUsesInstruction(compilation, "ldx");
+                checkUsesInstruction(compilation, "stx");
+            }
+        }
+    };
+    
+    {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+        BasicBlock* succ = proc.addBlock();
+        BasicBlock* fail = proc.addBlock();
+        
+        Value* ptr = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+        root->appendNew<Value>(
+            proc, Branch, Origin(),
+            root->appendNew<Value>(
+                proc, Equal, Origin(),
+                root->appendNew<AtomicValue>(
+                    proc, AtomicStrongCAS, Origin(), width,
+                    root->appendIntConstant(proc, Origin(), type, 42),
+                    root->appendIntConstant(proc, Origin(), type, 0xbeef),
+                    ptr),
+                root->appendIntConstant(proc, Origin(), type, 42)));
+        root->setSuccessors(succ, fail);
+        
+        succ->appendNew<MemoryValue>(
+            proc, storeOpcode(GP, width), Origin(),
+            succ->appendIntConstant(proc, Origin(), type, 100),
+            ptr);
+        succ->appendNew<Value>(proc, Return, Origin());
+        
+        fail->appendNew<Value>(proc, Return, Origin());
+        
+        auto code = compile(proc);
+        T value[2];
+        value[0] = 42;
+        value[1] = 13;
+        invoke<void>(*code, value);
+        CHECK_EQ(value[0], static_cast<T>(100));
+        CHECK_EQ(value[1], 13);
+        value[0] = static_cast<T>(300);
+        invoke<void>(*code, value);
+        CHECK_EQ(value[0], static_cast<T>(300));
+        CHECK_EQ(value[1], 13);
+        checkMyDisassembly(*code, true);
+    }
+    
+    {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+        BasicBlock* succ = proc.addBlock();
+        BasicBlock* fail = proc.addBlock();
+        
+        Value* ptr = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+        root->appendNew<Value>(
+            proc, Branch, Origin(),
+            root->appendNew<Value>(
+                proc, Equal, Origin(),
+                root->appendNew<AtomicValue>(
+                    proc, AtomicStrongCAS, Origin(), width,
+                    root->appendIntConstant(proc, Origin(), type, 42),
+                    root->appendIntConstant(proc, Origin(), type, 0xbeef),
+                    ptr, 0, HeapRange(42), HeapRange()),
+                root->appendIntConstant(proc, Origin(), type, 42)));
+        root->setSuccessors(succ, fail);
+        
+        succ->appendNew<MemoryValue>(
+            proc, storeOpcode(GP, width), Origin(),
+            succ->appendIntConstant(proc, Origin(), type, 100),
+            ptr);
+        succ->appendNew<Value>(proc, Return, Origin());
+        
+        fail->appendNew<Value>(proc, Return, Origin());
+        
+        auto code = compile(proc);
+        T value[2];
+        value[0] = 42;
+        value[1] = 13;
+        invoke<void>(*code, value);
+        CHECK_EQ(value[0], static_cast<T>(100));
+        CHECK_EQ(value[1], 13);
+        value[0] = static_cast<T>(300);
+        invoke<void>(*code, value);
+        CHECK_EQ(value[0], static_cast<T>(300));
+        CHECK_EQ(value[1], 13);
+        checkMyDisassembly(*code, false);
+    }
+    
+    {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+        BasicBlock* succ = proc.addBlock();
+        BasicBlock* fail = proc.addBlock();
+        
+        Value* ptr = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+        root->appendNew<Value>(
+            proc, Branch, Origin(),
+            root->appendNew<Value>(
+                proc, NotEqual, Origin(),
+                root->appendNew<AtomicValue>(
+                    proc, AtomicStrongCAS, Origin(), width,
+                    root->appendIntConstant(proc, Origin(), type, 42),
+                    root->appendIntConstant(proc, Origin(), type, 0xbeef),
+                    ptr),
+                root->appendIntConstant(proc, Origin(), type, 42)));
+        root->setSuccessors(fail, succ);
+        
+        succ->appendNew<MemoryValue>(
+            proc, storeOpcode(GP, width), Origin(),
+            succ->appendIntConstant(proc, Origin(), type, 100),
+            ptr);
+        succ->appendNew<Value>(proc, Return, Origin());
+        
+        fail->appendNew<Value>(proc, Return, Origin());
+        
+        auto code = compile(proc);
+        T value[2];
+        value[0] = 42;
+        value[1] = 13;
+        invoke<void>(*code, value);
+        CHECK_EQ(value[0], static_cast<T>(100));
+        CHECK_EQ(value[1], 13);
+        value[0] = static_cast<T>(300);
+        invoke<void>(*code, value);
+        CHECK_EQ(value[0], static_cast<T>(300));
+        CHECK_EQ(value[1], 13);
+        checkMyDisassembly(*code, true);
+    }
+    
+    {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+        root->appendNew<Value>(
+            proc, Return, Origin(),
+            root->appendNew<AtomicValue>(
+                proc, AtomicStrongCAS, Origin(), width,
+                root->appendIntConstant(proc, Origin(), type, 42),
+                root->appendIntConstant(proc, Origin(), type, 0xbeef),
+                root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0)));
+        
+        auto code = compile(proc);
+        T value[2];
+        value[0] = 42;
+        value[1] = 13;
+        CHECK_EQ(invoke<typename NativeTraits<T>::CanonicalType>(*code, value), 42);
+        CHECK_EQ(value[0], static_cast<T>(0xbeef));
+        CHECK_EQ(value[1], 13);
+        value[0] = static_cast<T>(300);
+        CHECK_EQ(invoke<typename NativeTraits<T>::CanonicalType>(*code, value), static_cast<typename NativeTraits<T>::CanonicalType>(static_cast<T>(300)));
+        CHECK_EQ(value[0], static_cast<T>(300));
+        CHECK_EQ(value[1], 13);
+        value[0] = static_cast<T>(-1);
+        CHECK_EQ(invoke<typename NativeTraits<T>::CanonicalType>(*code, value), static_cast<typename NativeTraits<T>::CanonicalType>(static_cast<T>(-1)));
+        CHECK_EQ(value[0], static_cast<T>(-1));
+        CHECK_EQ(value[1], 13);
+        checkMyDisassembly(*code, true);
+    }
+    
+    {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+        root->appendNew<Value>(
+            proc, Return, Origin(),
+            root->appendNew<Value>(
+                proc, Equal, Origin(),
+                root->appendNew<AtomicValue>(
+                    proc, AtomicStrongCAS, Origin(), width,
+                    root->appendIntConstant(proc, Origin(), type, 42),
+                    root->appendIntConstant(proc, Origin(), type, 0xbeef),
+                    root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0)),
+                root->appendIntConstant(proc, Origin(), type, 42)));
+        
+        auto code = compile(proc);
+        T value[2];
+        value[0] = 42;
+        value[1] = 13;
+        CHECK(invoke<bool>(*code, value));
+        CHECK_EQ(value[0], static_cast<T>(0xbeef));
+        CHECK_EQ(value[1], 13);
+        value[0] = static_cast<T>(300);
+        CHECK(!invoke<bool>(*code, value));
+        CHECK_EQ(value[0], static_cast<T>(300));
+        CHECK_EQ(value[1], 13);
+        checkMyDisassembly(*code, true);
+    }
+    
+    {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+        root->appendNew<Value>(
+            proc, Return, Origin(),
+            root->appendNew<Value>(
+                proc, Equal, Origin(),
+                root->appendNew<Value>(
+                    proc, NotEqual, Origin(),
+                    root->appendNew<AtomicValue>(
+                        proc, AtomicStrongCAS, Origin(), width,
+                        root->appendIntConstant(proc, Origin(), type, 42),
+                        root->appendIntConstant(proc, Origin(), type, 0xbeef),
+                        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0)),
+                    root->appendIntConstant(proc, Origin(), type, 42)),
+                root->appendNew<Const32Value>(proc, Origin(), 0)));
+            
+        auto code = compile(proc);
+        T value[2];
+        value[0] = 42;
+        value[1] = 13;
+        CHECK(invoke<bool>(*code, value));
+        CHECK_EQ(value[0], static_cast<T>(0xbeef));
+        CHECK_EQ(value[1], 13);
+        value[0] = static_cast<T>(300);
+        CHECK(!invoke<bool>(*code, &value));
+        CHECK_EQ(value[0], static_cast<T>(300));
+        CHECK_EQ(value[1], 13);
+        checkMyDisassembly(*code, true);
+    }
+}
+
+template<typename T>
+void testAtomicXchg(B3::Opcode opcode)
+{
+    Type type = NativeTraits<T>::type;
+    Width width = NativeTraits<T>::width;
+    
+    auto doTheMath = [&] (T& memory, T operand) -> T {
+        T oldValue = memory;
+        switch (opcode) {
+        case AtomicXchgAdd:
+            memory += operand;
+            break;
+        case AtomicXchgAnd:
+            memory &= operand;
+            break;
+        case AtomicXchgOr:
+            memory |= operand;
+            break;
+        case AtomicXchgSub:
+            memory -= operand;
+            break;
+        case AtomicXchgXor:
+            memory ^= operand;
+            break;
+        case AtomicXchg:
+            memory = operand;
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+        return oldValue;
+    };
+    
+    auto oldValue = [&] (T memory, T operand) -> T {
+        return doTheMath(memory, operand);
+    };
+    
+    auto newValue = [&] (T memory, T operand) -> T {
+        doTheMath(memory, operand);
+        return memory;
+    };
+    
+    auto checkMyDisassembly = [&] (Compilation& compilation, bool fenced) {
+        if (isX86())
+            checkUsesInstruction(compilation, "lock");
+        else {
+            if (fenced) {
+                checkUsesInstruction(compilation, "ldax");
+                checkUsesInstruction(compilation, "stlx");
+            } else {
+                checkUsesInstruction(compilation, "ldx");
+                checkUsesInstruction(compilation, "stx");
+            }
+        }
+    };
+    
+    {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+        root->appendNew<Value>(
+            proc, Return, Origin(),
+            root->appendNew<AtomicValue>(
+                proc, opcode, Origin(), width,
+                root->appendIntConstant(proc, Origin(), type, 1),
+                root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0)));
+    
+        auto code = compile(proc);
+        T value[2];
+        value[0] = 5;
+        value[1] = 100;
+        CHECK_EQ(invoke<T>(*code, value), oldValue(5, 1));
+        CHECK_EQ(value[0], newValue(5, 1));
+        CHECK_EQ(value[1], 100);
+        checkMyDisassembly(*code, true);
+    }
+    
+    {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+        root->appendNew<Value>(
+            proc, Return, Origin(),
+            root->appendNew<AtomicValue>(
+                proc, opcode, Origin(), width,
+                root->appendIntConstant(proc, Origin(), type, 42),
+                root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0)));
+    
+        auto code = compile(proc);
+        T value[2];
+        value[0] = 5;
+        value[1] = 100;
+        CHECK_EQ(invoke<T>(*code, value), oldValue(5, 42));
+        CHECK_EQ(value[0], newValue(5, 42));
+        CHECK_EQ(value[1], 100);
+        checkMyDisassembly(*code, true);
+    }
+    
+    {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+        root->appendNew<AtomicValue>(
+            proc, opcode, Origin(), width,
+            root->appendIntConstant(proc, Origin(), type, 42),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+        root->appendNew<Value>(proc, Return, Origin());
+    
+        auto code = compile(proc);
+        T value[2];
+        value[0] = 5;
+        value[1] = 100;
+        invoke<T>(*code, value);
+        CHECK_EQ(value[0], newValue(5, 42));
+        CHECK_EQ(value[1], 100);
+        checkMyDisassembly(*code, true);
+    }
+    
+    {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+        root->appendNew<AtomicValue>(
+            proc, opcode, Origin(), width,
+            root->appendIntConstant(proc, Origin(), type, 42),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0),
+            0, HeapRange(42), HeapRange());
+        root->appendNew<Value>(proc, Return, Origin());
+    
+        auto code = compile(proc);
+        T value[2];
+        value[0] = 5;
+        value[1] = 100;
+        invoke<T>(*code, value);
+        CHECK_EQ(value[0], newValue(5, 42));
+        CHECK_EQ(value[1], 100);
+        checkMyDisassembly(*code, false);
+    }
+}
+
+void testDepend32()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* ptr = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* first = root->appendNew<MemoryValue>(proc, Load, Int32, Origin(), ptr, 0);
+    Value* second = root->appendNew<MemoryValue>(
+        proc, Load, Int32, Origin(),
+        root->appendNew<Value>(
+            proc, Add, Origin(), ptr,
+            root->appendNew<Value>(
+                proc, ZExt32, Origin(),
+                root->appendNew<Value>(proc, Depend, Origin(), first))),
+        4);
+    root->appendNew<Value>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(proc, Add, Origin(), first, second));
+    
+    int32_t values[2];
+    values[0] = 42;
+    values[1] = 0xbeef;
+    
+    auto code = compile(proc);
+    if (isARM64())
+        checkUsesInstruction(*code, "eor");
+    else if (isX86()) {
+        checkDoesNotUseInstruction(*code, "mfence");
+        checkDoesNotUseInstruction(*code, "lock");
+    }
+    CHECK_EQ(invoke<int32_t>(*code, values), 42 + 0xbeef);
+}
+
+void testDepend64()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* ptr = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* first = root->appendNew<MemoryValue>(proc, Load, Int64, Origin(), ptr, 0);
+    Value* second = root->appendNew<MemoryValue>(
+        proc, Load, Int64, Origin(),
+        root->appendNew<Value>(
+            proc, Add, Origin(), ptr,
+            root->appendNew<Value>(proc, Depend, Origin(), first)),
+        8);
+    root->appendNew<Value>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(proc, Add, Origin(), first, second));
+    
+    int64_t values[2];
+    values[0] = 42;
+    values[1] = 0xbeef;
+    
+    auto code = compile(proc);
+    if (isARM64())
+        checkUsesInstruction(*code, "eor");
+    else if (isX86()) {
+        checkDoesNotUseInstruction(*code, "mfence");
+        checkDoesNotUseInstruction(*code, "lock");
+    }
+    CHECK_EQ(invoke<int64_t>(*code, values), 42 + 0xbeef);
+}
+
 void testWasmBoundsCheck(unsigned offset)
 {
     Procedure proc;
@@ -14370,6 +15221,13 @@ double negativeZero()
     return -zero();
 }
 
+#define RUN_NOW(test) do {                      \
+        if (!shouldRun(#test))                  \
+            break;                              \
+        dataLog(#test "...\n");                 \
+        test;                                   \
+        dataLog(#test ": OK!\n");               \
+    } while (false)
 #define RUN(test) do {                          \
         if (!shouldRun(#test))                  \
             break;                              \
@@ -14421,12 +15279,11 @@ void run(const char* filter)
         return !filter || !!strcasestr(testName, filter);
     };
 
-    // We run this test first because it fiddles with some
-    // JSC options.
-    testTerminalPatchpointThatNeedsToBeSpilled2();
+    RUN_NOW(testTerminalPatchpointThatNeedsToBeSpilled2());
 
     RUN(test42());
     RUN(testLoad42());
+    RUN(testLoadAcq42());
     RUN(testLoadOffsetImm9Max());
     RUN(testLoadOffsetImm9MaxPlusOne());
     RUN(testLoadOffsetImm9MaxPlusTwo());
@@ -15099,16 +15956,23 @@ void run(const char* filter)
     RUN(testNeg32(52));
     RUN(testNegPtr(53));
     RUN(testStoreAddLoad32(46));
+    RUN(testStoreRelAddLoadAcq32(46));
     RUN(testStoreAddLoadImm32(46));
     RUN(testStoreAddLoad64(4600));
+    RUN(testStoreRelAddLoadAcq64(4600));
     RUN(testStoreAddLoadImm64(4600));
     RUN(testStoreAddLoad8(4, Load8Z));
+    RUN(testStoreRelAddLoadAcq8(4, Load8Z));
+    RUN(testStoreRelAddFenceLoadAcq8(4, Load8Z));
     RUN(testStoreAddLoadImm8(4, Load8Z));
     RUN(testStoreAddLoad8(4, Load8S));
+    RUN(testStoreRelAddLoadAcq8(4, Load8S));
     RUN(testStoreAddLoadImm8(4, Load8S));
     RUN(testStoreAddLoad16(6, Load16Z));
+    RUN(testStoreRelAddLoadAcq16(6, Load16Z));
     RUN(testStoreAddLoadImm16(6, Load16Z));
     RUN(testStoreAddLoad16(6, Load16S));
+    RUN(testStoreRelAddLoadAcq16(6, Load16S));
     RUN(testStoreAddLoadImm16(6, Load16S));
     RUN(testStoreAddLoad32Index(46));
     RUN(testStoreAddLoadImm32Index(46));
@@ -15831,6 +16695,41 @@ void run(const char* filter)
     RUN(testLoadBaseIndexShift2());
     RUN(testLoadBaseIndexShift32());
     RUN(testOptimizeMaterialization());
+    
+    RUN(testAtomicWeakCAS<int8_t>());
+    RUN(testAtomicWeakCAS<int16_t>());
+    RUN(testAtomicWeakCAS<int32_t>());
+    RUN(testAtomicWeakCAS<int64_t>());
+    RUN(testAtomicStrongCAS<int8_t>());
+    RUN(testAtomicStrongCAS<int16_t>());
+    RUN(testAtomicStrongCAS<int32_t>());
+    RUN(testAtomicStrongCAS<int64_t>());
+    RUN(testAtomicXchg<int8_t>(AtomicXchgAdd));
+    RUN(testAtomicXchg<int16_t>(AtomicXchgAdd));
+    RUN(testAtomicXchg<int32_t>(AtomicXchgAdd));
+    RUN(testAtomicXchg<int64_t>(AtomicXchgAdd));
+    RUN(testAtomicXchg<int8_t>(AtomicXchgAnd));
+    RUN(testAtomicXchg<int16_t>(AtomicXchgAnd));
+    RUN(testAtomicXchg<int32_t>(AtomicXchgAnd));
+    RUN(testAtomicXchg<int64_t>(AtomicXchgAnd));
+    RUN(testAtomicXchg<int8_t>(AtomicXchgOr));
+    RUN(testAtomicXchg<int16_t>(AtomicXchgOr));
+    RUN(testAtomicXchg<int32_t>(AtomicXchgOr));
+    RUN(testAtomicXchg<int64_t>(AtomicXchgOr));
+    RUN(testAtomicXchg<int8_t>(AtomicXchgSub));
+    RUN(testAtomicXchg<int16_t>(AtomicXchgSub));
+    RUN(testAtomicXchg<int32_t>(AtomicXchgSub));
+    RUN(testAtomicXchg<int64_t>(AtomicXchgSub));
+    RUN(testAtomicXchg<int8_t>(AtomicXchgXor));
+    RUN(testAtomicXchg<int16_t>(AtomicXchgXor));
+    RUN(testAtomicXchg<int32_t>(AtomicXchgXor));
+    RUN(testAtomicXchg<int64_t>(AtomicXchgXor));
+    RUN(testAtomicXchg<int8_t>(AtomicXchg));
+    RUN(testAtomicXchg<int16_t>(AtomicXchg));
+    RUN(testAtomicXchg<int32_t>(AtomicXchg));
+    RUN(testAtomicXchg<int64_t>(AtomicXchg));
+    RUN(testDepend32());
+    RUN(testDepend64());
 
     RUN(testWasmBoundsCheck(0));
     RUN(testWasmBoundsCheck(100));

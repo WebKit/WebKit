@@ -202,6 +202,8 @@ void Procedure::dump(PrintStream& out) const
         }
         dataLog("    ", deepDump(*this, value), "\n");
     }
+    if (hasQuirks())
+        out.print("Has Quirks: True\n");
     if (variables().size()) {
         out.print("Variables:\n");
         for (Variable* variable : variables())

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -82,7 +82,8 @@ bool Effects::interferes(const Effects& other) const
         || interferesWithWritesPinned(other, *this)
         || writes.overlaps(other.writes)
         || writes.overlaps(other.reads)
-        || reads.overlaps(other.writes);
+        || reads.overlaps(other.writes)
+        || (fence && other.fence);
 }
 
 bool Effects::operator==(const Effects& other) const
@@ -95,7 +96,8 @@ bool Effects::operator==(const Effects& other) const
         && writesPinned == other.writesPinned
         && readsPinned == other.readsPinned
         && writes == other.writes
-        && reads == other.reads;
+        && reads == other.reads
+        && fence == other.fence;
 }
 
 bool Effects::operator!=(const Effects& other) const
@@ -120,6 +122,8 @@ void Effects::dump(PrintStream& out) const
         out.print(comma, "WritesPinned");
     if (readsPinned)
         out.print(comma, "ReadsPinned");
+    if (fence)
+        out.print(comma, "Fence");
     if (writes)
         out.print(comma, "Writes:", writes);
     if (reads)

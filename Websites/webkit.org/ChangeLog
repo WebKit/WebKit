@@ -1,3 +1,14 @@
+2017-03-04  Filip Pizlo  <fpizlo@apple.com>
+
+        B3 should have comprehensive support for atomic operations
+        https://bugs.webkit.org/show_bug.cgi?id=162349
+
+        Reviewed by Keith Miller.
+        
+        Document the new opcodes!
+
+        * docs/b3/intermediate-representation.html:
+
 2017-03-09  Jon Davis  <jond@apple.com>
 
         Prevent HTML in rich link previews

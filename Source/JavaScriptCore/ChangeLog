@@ -1,3 +1,510 @@
+2017-03-04  Filip Pizlo  <fpizlo@apple.com>
+
+        B3 should have comprehensive support for atomic operations
+        https://bugs.webkit.org/show_bug.cgi?id=162349
+
+        Reviewed by Keith Miller.
+        
+        This adds the following capabilities to B3:
+        
+        - Atomic weak/strong unfenced/fenced compare-and-swap
+        - Atomic add/sub/or/and/xor/xchg
+        - Acquire/release fencing on loads/stores
+        - Fenceless load-load dependencies
+        
+        This adds lowering to the following instructions on x86:
+        
+        - lock cmpxchg
+        - lock xadd
+        - lock add/sub/or/and/xor/xchg
+        
+        This adds lowering to the following instructions on ARM64:
+        
+        - ldar and friends
+        - stlr and friends
+        - ldxr and friends (unfenced LL)
+        - stxr and friends (unfended SC)
+        - ldaxr and friends (fenced LL)
+        - stlxr and friends (fenced SC)
+        - eor as a fenceless load-load dependency
+        
+        This does instruction selection pattern matching to ensure that weak/strong CAS and all of the
+        variants of fences and atomic math ops get lowered to the best possible instruction sequence.
+        For example, we support the Equal(AtomicStrongCAS(expected, ...), expected) pattern and a bunch
+        of its friends. You can say Branch(Equal(AtomicStrongCAS(expected, ...), expected)) and it will
+        generate the best possible branch sequence on x86 and ARM64.
+        
+        B3 now knows how to model all of the kinds of fencing. It knows that acq loads are ordered with
+        respect to each other and with respect to rel stores, creating sequential consistency that
+        transcends just the acq/rel fences themselves (see Effects::fence). It knows that the phantom
+        fence effects may only target some abstract heaps but not others, so that load elimination and
+        store sinking can still operate across fences if you just tell B3 that the fence does not alias
+        those accesses. This makes it super easy to teach B3 that some of your heap is thread-local.
+        Even better, it lets you express fine-grained dependencies where the atomics that affect one
+        property in shared memory do not clobber non-atomics that ffect some other property in shared
+        memory.
+        
+        One of my favorite features is Depend, which allows you to express load-load dependencies. On
+        x86 it lowers to nothing, while on ARM64 it lowers to eor.
+        
+        This also exposes a common atomicWeakCAS API to the x86_64/ARM64 MacroAssemblers. Same for
+        acq/rel. JSC's 64-bit JITs are now a happy concurrency playground.
+        
+        This doesn't yet expose the functionality to JS or wasm. SAB still uses the non-intrinsic
+        implementations of the Atomics object, for now.
+        
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * assembler/ARM64Assembler.h:
+        (JSC::ARM64Assembler::ldar):
+        (JSC::ARM64Assembler::ldxr):
+        (JSC::ARM64Assembler::ldaxr):
+        (JSC::ARM64Assembler::stxr):
+        (JSC::ARM64Assembler::stlr):
+        (JSC::ARM64Assembler::stlxr):
+        (JSC::ARM64Assembler::excepnGenerationImmMask):
+        (JSC::ARM64Assembler::exoticLoad):
+        (JSC::ARM64Assembler::storeRelease):
+        (JSC::ARM64Assembler::exoticStore):
+        * assembler/AbstractMacroAssembler.cpp: Added.
+        (WTF::printInternal):
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssemblerBase::invert):
+        * assembler/MacroAssembler.h:
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::loadAcq8SignedExtendTo32):
+        (JSC::MacroAssemblerARM64::loadAcq8):
+        (JSC::MacroAssemblerARM64::storeRel8):
+        (JSC::MacroAssemblerARM64::loadAcq16SignedExtendTo32):
+        (JSC::MacroAssemblerARM64::loadAcq16):
+        (JSC::MacroAssemblerARM64::storeRel16):
+        (JSC::MacroAssemblerARM64::loadAcq32):
+        (JSC::MacroAssemblerARM64::loadAcq64):
+        (JSC::MacroAssemblerARM64::storeRel32):
+        (JSC::MacroAssemblerARM64::storeRel64):
+        (JSC::MacroAssemblerARM64::loadLink8):
+        (JSC::MacroAssemblerARM64::loadLinkAcq8):
+        (JSC::MacroAssemblerARM64::storeCond8):
+        (JSC::MacroAssemblerARM64::storeCondRel8):
+        (JSC::MacroAssemblerARM64::loadLink16):
+        (JSC::MacroAssemblerARM64::loadLinkAcq16):
+        (JSC::MacroAssemblerARM64::storeCond16):
+        (JSC::MacroAssemblerARM64::storeCondRel16):
+        (JSC::MacroAssemblerARM64::loadLink32):
+        (JSC::MacroAssemblerARM64::loadLinkAcq32):
+        (JSC::MacroAssemblerARM64::storeCond32):
+        (JSC::MacroAssemblerARM64::storeCondRel32):
+        (JSC::MacroAssemblerARM64::loadLink64):
+        (JSC::MacroAssemblerARM64::loadLinkAcq64):
+        (JSC::MacroAssemblerARM64::storeCond64):
+        (JSC::MacroAssemblerARM64::storeCondRel64):
+        (JSC::MacroAssemblerARM64::atomicStrongCAS8):
+        (JSC::MacroAssemblerARM64::atomicStrongCAS16):
+        (JSC::MacroAssemblerARM64::atomicStrongCAS32):
+        (JSC::MacroAssemblerARM64::atomicStrongCAS64):
+        (JSC::MacroAssemblerARM64::atomicRelaxedStrongCAS8):
+        (JSC::MacroAssemblerARM64::atomicRelaxedStrongCAS16):
+        (JSC::MacroAssemblerARM64::atomicRelaxedStrongCAS32):
+        (JSC::MacroAssemblerARM64::atomicRelaxedStrongCAS64):
+        (JSC::MacroAssemblerARM64::branchAtomicWeakCAS8):
+        (JSC::MacroAssemblerARM64::branchAtomicWeakCAS16):
+        (JSC::MacroAssemblerARM64::branchAtomicWeakCAS32):
+        (JSC::MacroAssemblerARM64::branchAtomicWeakCAS64):
+        (JSC::MacroAssemblerARM64::branchAtomicRelaxedWeakCAS8):
+        (JSC::MacroAssemblerARM64::branchAtomicRelaxedWeakCAS16):
+        (JSC::MacroAssemblerARM64::branchAtomicRelaxedWeakCAS32):
+        (JSC::MacroAssemblerARM64::branchAtomicRelaxedWeakCAS64):
+        (JSC::MacroAssemblerARM64::depend32):
+        (JSC::MacroAssemblerARM64::depend64):
+        (JSC::MacroAssemblerARM64::loadLink):
+        (JSC::MacroAssemblerARM64::loadLinkAcq):
+        (JSC::MacroAssemblerARM64::storeCond):
+        (JSC::MacroAssemblerARM64::storeCondRel):
+        (JSC::MacroAssemblerARM64::signExtend):
+        (JSC::MacroAssemblerARM64::branch):
+        (JSC::MacroAssemblerARM64::atomicStrongCAS):
+        (JSC::MacroAssemblerARM64::atomicRelaxedStrongCAS):
+        (JSC::MacroAssemblerARM64::branchAtomicWeakCAS):
+        (JSC::MacroAssemblerARM64::branchAtomicRelaxedWeakCAS):
+        (JSC::MacroAssemblerARM64::extractSimpleAddress):
+        (JSC::MacroAssemblerARM64::signExtend<8>):
+        (JSC::MacroAssemblerARM64::signExtend<16>):
+        (JSC::MacroAssemblerARM64::branch<64>):
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::add32):
+        (JSC::MacroAssemblerX86Common::and32):
+        (JSC::MacroAssemblerX86Common::and16):
+        (JSC::MacroAssemblerX86Common::and8):
+        (JSC::MacroAssemblerX86Common::neg32):
+        (JSC::MacroAssemblerX86Common::neg16):
+        (JSC::MacroAssemblerX86Common::neg8):
+        (JSC::MacroAssemblerX86Common::or32):
+        (JSC::MacroAssemblerX86Common::or16):
+        (JSC::MacroAssemblerX86Common::or8):
+        (JSC::MacroAssemblerX86Common::sub16):
+        (JSC::MacroAssemblerX86Common::sub8):
+        (JSC::MacroAssemblerX86Common::sub32):
+        (JSC::MacroAssemblerX86Common::xor32):
+        (JSC::MacroAssemblerX86Common::xor16):
+        (JSC::MacroAssemblerX86Common::xor8):
+        (JSC::MacroAssemblerX86Common::not32):
+        (JSC::MacroAssemblerX86Common::not16):
+        (JSC::MacroAssemblerX86Common::not8):
+        (JSC::MacroAssemblerX86Common::store16):
+        (JSC::MacroAssemblerX86Common::atomicStrongCAS8):
+        (JSC::MacroAssemblerX86Common::atomicStrongCAS16):
+        (JSC::MacroAssemblerX86Common::atomicStrongCAS32):
+        (JSC::MacroAssemblerX86Common::branchAtomicStrongCAS8):
+        (JSC::MacroAssemblerX86Common::branchAtomicStrongCAS16):
+        (JSC::MacroAssemblerX86Common::branchAtomicStrongCAS32):
+        (JSC::MacroAssemblerX86Common::atomicWeakCAS8):
+        (JSC::MacroAssemblerX86Common::atomicWeakCAS16):
+        (JSC::MacroAssemblerX86Common::atomicWeakCAS32):
+        (JSC::MacroAssemblerX86Common::branchAtomicWeakCAS8):
+        (JSC::MacroAssemblerX86Common::branchAtomicWeakCAS16):
+        (JSC::MacroAssemblerX86Common::branchAtomicWeakCAS32):
+        (JSC::MacroAssemblerX86Common::atomicRelaxedWeakCAS8):
+        (JSC::MacroAssemblerX86Common::atomicRelaxedWeakCAS16):
+        (JSC::MacroAssemblerX86Common::atomicRelaxedWeakCAS32):
+        (JSC::MacroAssemblerX86Common::branchAtomicRelaxedWeakCAS8):
+        (JSC::MacroAssemblerX86Common::branchAtomicRelaxedWeakCAS16):
+        (JSC::MacroAssemblerX86Common::branchAtomicRelaxedWeakCAS32):
+        (JSC::MacroAssemblerX86Common::atomicAdd8):
+        (JSC::MacroAssemblerX86Common::atomicAdd16):
+        (JSC::MacroAssemblerX86Common::atomicAdd32):
+        (JSC::MacroAssemblerX86Common::atomicSub8):
+        (JSC::MacroAssemblerX86Common::atomicSub16):
+        (JSC::MacroAssemblerX86Common::atomicSub32):
+        (JSC::MacroAssemblerX86Common::atomicAnd8):
+        (JSC::MacroAssemblerX86Common::atomicAnd16):
+        (JSC::MacroAssemblerX86Common::atomicAnd32):
+        (JSC::MacroAssemblerX86Common::atomicOr8):
+        (JSC::MacroAssemblerX86Common::atomicOr16):
+        (JSC::MacroAssemblerX86Common::atomicOr32):
+        (JSC::MacroAssemblerX86Common::atomicXor8):
+        (JSC::MacroAssemblerX86Common::atomicXor16):
+        (JSC::MacroAssemblerX86Common::atomicXor32):
+        (JSC::MacroAssemblerX86Common::atomicNeg8):
+        (JSC::MacroAssemblerX86Common::atomicNeg16):
+        (JSC::MacroAssemblerX86Common::atomicNeg32):
+        (JSC::MacroAssemblerX86Common::atomicNot8):
+        (JSC::MacroAssemblerX86Common::atomicNot16):
+        (JSC::MacroAssemblerX86Common::atomicNot32):
+        (JSC::MacroAssemblerX86Common::atomicXchgAdd8):
+        (JSC::MacroAssemblerX86Common::atomicXchgAdd16):
+        (JSC::MacroAssemblerX86Common::atomicXchgAdd32):
+        (JSC::MacroAssemblerX86Common::atomicXchg8):
+        (JSC::MacroAssemblerX86Common::atomicXchg16):
+        (JSC::MacroAssemblerX86Common::atomicXchg32):
+        (JSC::MacroAssemblerX86Common::loadAcq8):
+        (JSC::MacroAssemblerX86Common::loadAcq8SignedExtendTo32):
+        (JSC::MacroAssemblerX86Common::loadAcq16):
+        (JSC::MacroAssemblerX86Common::loadAcq16SignedExtendTo32):
+        (JSC::MacroAssemblerX86Common::loadAcq32):
+        (JSC::MacroAssemblerX86Common::storeRel8):
+        (JSC::MacroAssemblerX86Common::storeRel16):
+        (JSC::MacroAssemblerX86Common::storeRel32):
+        (JSC::MacroAssemblerX86Common::storeFence):
+        (JSC::MacroAssemblerX86Common::loadFence):
+        (JSC::MacroAssemblerX86Common::replaceWithJump):
+        (JSC::MacroAssemblerX86Common::maxJumpReplacementSize):
+        (JSC::MacroAssemblerX86Common::patchableJumpSize):
+        (JSC::MacroAssemblerX86Common::supportsFloatingPointRounding):
+        (JSC::MacroAssemblerX86Common::supportsAVX):
+        (JSC::MacroAssemblerX86Common::updateEax1EcxFlags):
+        (JSC::MacroAssemblerX86Common::x86Condition):
+        (JSC::MacroAssemblerX86Common::atomicStrongCAS):
+        (JSC::MacroAssemblerX86Common::branchAtomicStrongCAS):
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::add64):
+        (JSC::MacroAssemblerX86_64::and64):
+        (JSC::MacroAssemblerX86_64::neg64):
+        (JSC::MacroAssemblerX86_64::or64):
+        (JSC::MacroAssemblerX86_64::sub64):
+        (JSC::MacroAssemblerX86_64::xor64):
+        (JSC::MacroAssemblerX86_64::not64):
+        (JSC::MacroAssemblerX86_64::store64):
+        (JSC::MacroAssemblerX86_64::atomicStrongCAS64):
+        (JSC::MacroAssemblerX86_64::branchAtomicStrongCAS64):
+        (JSC::MacroAssemblerX86_64::atomicWeakCAS64):
+        (JSC::MacroAssemblerX86_64::branchAtomicWeakCAS64):
+        (JSC::MacroAssemblerX86_64::atomicRelaxedWeakCAS64):
+        (JSC::MacroAssemblerX86_64::branchAtomicRelaxedWeakCAS64):
+        (JSC::MacroAssemblerX86_64::atomicAdd64):
+        (JSC::MacroAssemblerX86_64::atomicSub64):
+        (JSC::MacroAssemblerX86_64::atomicAnd64):
+        (JSC::MacroAssemblerX86_64::atomicOr64):
+        (JSC::MacroAssemblerX86_64::atomicXor64):
+        (JSC::MacroAssemblerX86_64::atomicNeg64):
+        (JSC::MacroAssemblerX86_64::atomicNot64):
+        (JSC::MacroAssemblerX86_64::atomicXchgAdd64):
+        (JSC::MacroAssemblerX86_64::atomicXchg64):
+        (JSC::MacroAssemblerX86_64::loadAcq64):
+        (JSC::MacroAssemblerX86_64::storeRel64):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::addl_mr):
+        (JSC::X86Assembler::addq_mr):
+        (JSC::X86Assembler::addq_rm):
+        (JSC::X86Assembler::addq_im):
+        (JSC::X86Assembler::andl_mr):
+        (JSC::X86Assembler::andl_rm):
+        (JSC::X86Assembler::andw_rm):
+        (JSC::X86Assembler::andb_rm):
+        (JSC::X86Assembler::andl_im):
+        (JSC::X86Assembler::andw_im):
+        (JSC::X86Assembler::andb_im):
+        (JSC::X86Assembler::andq_mr):
+        (JSC::X86Assembler::andq_rm):
+        (JSC::X86Assembler::andq_im):
+        (JSC::X86Assembler::incq_m):
+        (JSC::X86Assembler::negq_m):
+        (JSC::X86Assembler::negl_m):
+        (JSC::X86Assembler::negw_m):
+        (JSC::X86Assembler::negb_m):
+        (JSC::X86Assembler::notl_m):
+        (JSC::X86Assembler::notw_m):
+        (JSC::X86Assembler::notb_m):
+        (JSC::X86Assembler::notq_m):
+        (JSC::X86Assembler::orl_mr):
+        (JSC::X86Assembler::orl_rm):
+        (JSC::X86Assembler::orw_rm):
+        (JSC::X86Assembler::orb_rm):
+        (JSC::X86Assembler::orl_im):
+        (JSC::X86Assembler::orw_im):
+        (JSC::X86Assembler::orb_im):
+        (JSC::X86Assembler::orq_mr):
+        (JSC::X86Assembler::orq_rm):
+        (JSC::X86Assembler::orq_im):
+        (JSC::X86Assembler::subl_mr):
+        (JSC::X86Assembler::subl_rm):
+        (JSC::X86Assembler::subw_rm):
+        (JSC::X86Assembler::subb_rm):
+        (JSC::X86Assembler::subl_im):
+        (JSC::X86Assembler::subw_im):
+        (JSC::X86Assembler::subb_im):
+        (JSC::X86Assembler::subq_mr):
+        (JSC::X86Assembler::subq_rm):
+        (JSC::X86Assembler::subq_im):
+        (JSC::X86Assembler::xorl_mr):
+        (JSC::X86Assembler::xorl_rm):
+        (JSC::X86Assembler::xorl_im):
+        (JSC::X86Assembler::xorw_rm):
+        (JSC::X86Assembler::xorw_im):
+        (JSC::X86Assembler::xorb_rm):
+        (JSC::X86Assembler::xorb_im):
+        (JSC::X86Assembler::xorq_im):
+        (JSC::X86Assembler::xorq_rm):
+        (JSC::X86Assembler::xorq_mr):
+        (JSC::X86Assembler::xchgb_rm):
+        (JSC::X86Assembler::xchgw_rm):
+        (JSC::X86Assembler::xchgl_rm):
+        (JSC::X86Assembler::xchgq_rm):
+        (JSC::X86Assembler::movw_im):
+        (JSC::X86Assembler::movq_i32m):
+        (JSC::X86Assembler::cmpxchgb_rm):
+        (JSC::X86Assembler::cmpxchgw_rm):
+        (JSC::X86Assembler::cmpxchgl_rm):
+        (JSC::X86Assembler::cmpxchgq_rm):
+        (JSC::X86Assembler::xaddb_rm):
+        (JSC::X86Assembler::xaddw_rm):
+        (JSC::X86Assembler::xaddl_rm):
+        (JSC::X86Assembler::xaddq_rm):
+        (JSC::X86Assembler::X86InstructionFormatter::SingleInstructionBufferWriter::memoryModRM):
+        * b3/B3AtomicValue.cpp: Added.
+        (JSC::B3::AtomicValue::~AtomicValue):
+        (JSC::B3::AtomicValue::dumpMeta):
+        (JSC::B3::AtomicValue::cloneImpl):
+        (JSC::B3::AtomicValue::AtomicValue):
+        * b3/B3AtomicValue.h: Added.
+        * b3/B3BasicBlock.h:
+        * b3/B3BlockInsertionSet.cpp:
+        (JSC::B3::BlockInsertionSet::BlockInsertionSet):
+        (JSC::B3::BlockInsertionSet::insert): Deleted.
+        (JSC::B3::BlockInsertionSet::insertBefore): Deleted.
+        (JSC::B3::BlockInsertionSet::insertAfter): Deleted.
+        (JSC::B3::BlockInsertionSet::execute): Deleted.
+        * b3/B3BlockInsertionSet.h:
+        * b3/B3Effects.cpp:
+        (JSC::B3::Effects::interferes):
+        (JSC::B3::Effects::operator==):
+        (JSC::B3::Effects::dump):
+        * b3/B3Effects.h:
+        (JSC::B3::Effects::forCall):
+        (JSC::B3::Effects::mustExecute):
+        * b3/B3EliminateCommonSubexpressions.cpp:
+        * b3/B3Generate.cpp:
+        (JSC::B3::generateToAir):
+        * b3/B3GenericBlockInsertionSet.h: Added.
+        (JSC::B3::GenericBlockInsertionSet::GenericBlockInsertionSet):
+        (JSC::B3::GenericBlockInsertionSet::insert):
+        (JSC::B3::GenericBlockInsertionSet::insertBefore):
+        (JSC::B3::GenericBlockInsertionSet::insertAfter):
+        (JSC::B3::GenericBlockInsertionSet::execute):
+        * b3/B3HeapRange.h:
+        (JSC::B3::HeapRange::operator|):
+        * b3/B3InsertionSet.cpp:
+        (JSC::B3::InsertionSet::insertClone):
+        * b3/B3InsertionSet.h:
+        * b3/B3LegalizeMemoryOffsets.cpp:
+        * b3/B3LowerMacros.cpp:
+        (JSC::B3::lowerMacros):
+        * b3/B3LowerMacrosAfterOptimizations.cpp:
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::LowerToAir):
+        (JSC::B3::Air::LowerToAir::run):
+        (JSC::B3::Air::LowerToAir::effectiveAddr):
+        (JSC::B3::Air::LowerToAir::addr):
+        (JSC::B3::Air::LowerToAir::loadPromiseAnyOpcode):
+        (JSC::B3::Air::LowerToAir::appendShift):
+        (JSC::B3::Air::LowerToAir::tryAppendStoreBinOp):
+        (JSC::B3::Air::LowerToAir::storeOpcode):
+        (JSC::B3::Air::LowerToAir::createStore):
+        (JSC::B3::Air::LowerToAir::finishAppendingInstructions):
+        (JSC::B3::Air::LowerToAir::newBlock):
+        (JSC::B3::Air::LowerToAir::splitBlock):
+        (JSC::B3::Air::LowerToAir::fillStackmap):
+        (JSC::B3::Air::LowerToAir::appendX86Div):
+        (JSC::B3::Air::LowerToAir::appendX86UDiv):
+        (JSC::B3::Air::LowerToAir::loadLinkOpcode):
+        (JSC::B3::Air::LowerToAir::storeCondOpcode):
+        (JSC::B3::Air::LowerToAir::appendCAS):
+        (JSC::B3::Air::LowerToAir::appendVoidAtomic):
+        (JSC::B3::Air::LowerToAir::appendGeneralAtomic):
+        (JSC::B3::Air::LowerToAir::lower):
+        (JSC::B3::Air::LowerToAir::lowerX86Div): Deleted.
+        (JSC::B3::Air::LowerToAir::lowerX86UDiv): Deleted.
+        * b3/B3LowerToAir.h:
+        * b3/B3MemoryValue.cpp:
+        (JSC::B3::MemoryValue::isLegalOffset):
+        (JSC::B3::MemoryValue::accessType):
+        (JSC::B3::MemoryValue::accessBank):
+        (JSC::B3::MemoryValue::accessByteSize):
+        (JSC::B3::MemoryValue::dumpMeta):
+        (JSC::B3::MemoryValue::MemoryValue):
+        (JSC::B3::MemoryValue::accessWidth): Deleted.
+        * b3/B3MemoryValue.h:
+        * b3/B3MemoryValueInlines.h: Added.
+        (JSC::B3::MemoryValue::isLegalOffset):
+        (JSC::B3::MemoryValue::requiresSimpleAddr):
+        (JSC::B3::MemoryValue::accessWidth):
+        * b3/B3MoveConstants.cpp:
+        * b3/B3NativeTraits.h: Added.
+        * b3/B3Opcode.cpp:
+        (JSC::B3::storeOpcode):
+        (WTF::printInternal):
+        * b3/B3Opcode.h:
+        (JSC::B3::isLoad):
+        (JSC::B3::isStore):
+        (JSC::B3::isLoadStore):
+        (JSC::B3::isAtomic):
+        (JSC::B3::isAtomicCAS):
+        (JSC::B3::isAtomicXchg):
+        (JSC::B3::isMemoryAccess):
+        (JSC::B3::signExtendOpcode):
+        * b3/B3Procedure.cpp:
+        (JSC::B3::Procedure::dump):
+        * b3/B3Procedure.h:
+        (JSC::B3::Procedure::hasQuirks):
+        (JSC::B3::Procedure::setHasQuirks):
+        * b3/B3PureCSE.cpp:
+        (JSC::B3::pureCSE):
+        * b3/B3PureCSE.h:
+        * b3/B3ReduceStrength.cpp:
+        * b3/B3Validate.cpp:
+        * b3/B3Value.cpp:
+        (JSC::B3::Value::returnsBool):
+        (JSC::B3::Value::effects):
+        (JSC::B3::Value::key):
+        (JSC::B3::Value::performSubstitution):
+        (JSC::B3::Value::typeFor):
+        * b3/B3Value.h:
+        * b3/B3Width.cpp:
+        (JSC::B3::bestType):
+        * b3/B3Width.h:
+        (JSC::B3::canonicalWidth):
+        (JSC::B3::isCanonicalWidth):
+        (JSC::B3::mask):
+        * b3/air/AirArg.cpp:
+        (JSC::B3::Air::Arg::jsHash):
+        (JSC::B3::Air::Arg::dump):
+        (WTF::printInternal):
+        * b3/air/AirArg.h:
+        (JSC::B3::Air::Arg::isAnyUse):
+        (JSC::B3::Air::Arg::isColdUse):
+        (JSC::B3::Air::Arg::cooled):
+        (JSC::B3::Air::Arg::isEarlyUse):
+        (JSC::B3::Air::Arg::isLateUse):
+        (JSC::B3::Air::Arg::isAnyDef):
+        (JSC::B3::Air::Arg::isEarlyDef):
+        (JSC::B3::Air::Arg::isLateDef):
+        (JSC::B3::Air::Arg::isZDef):
+        (JSC::B3::Air::Arg::simpleAddr):
+        (JSC::B3::Air::Arg::statusCond):
+        (JSC::B3::Air::Arg::isSimpleAddr):
+        (JSC::B3::Air::Arg::isMemory):
+        (JSC::B3::Air::Arg::isStatusCond):
+        (JSC::B3::Air::Arg::isCondition):
+        (JSC::B3::Air::Arg::ptr):
+        (JSC::B3::Air::Arg::base):
+        (JSC::B3::Air::Arg::isGP):
+        (JSC::B3::Air::Arg::isFP):
+        (JSC::B3::Air::Arg::isValidForm):
+        (JSC::B3::Air::Arg::forEachTmpFast):
+        (JSC::B3::Air::Arg::forEachTmp):
+        (JSC::B3::Air::Arg::asAddress):
+        (JSC::B3::Air::Arg::asStatusCondition):
+        (JSC::B3::Air::Arg::isInvertible):
+        (JSC::B3::Air::Arg::inverted):
+        * b3/air/AirBasicBlock.cpp:
+        (JSC::B3::Air::BasicBlock::setSuccessors):
+        * b3/air/AirBasicBlock.h:
+        * b3/air/AirBlockInsertionSet.cpp: Added.
+        (JSC::B3::Air::BlockInsertionSet::BlockInsertionSet):
+        (JSC::B3::Air::BlockInsertionSet::~BlockInsertionSet):
+        * b3/air/AirBlockInsertionSet.h: Added.
+        * b3/air/AirDumpAsJS.cpp: Removed.
+        * b3/air/AirDumpAsJS.h: Removed.
+        * b3/air/AirEliminateDeadCode.cpp:
+        (JSC::B3::Air::eliminateDeadCode):
+        * b3/air/AirGenerate.cpp:
+        (JSC::B3::Air::prepareForGeneration):
+        * b3/air/AirInstInlines.h:
+        (JSC::B3::Air::isAtomicStrongCASValid):
+        (JSC::B3::Air::isBranchAtomicStrongCASValid):
+        (JSC::B3::Air::isAtomicStrongCAS8Valid):
+        (JSC::B3::Air::isAtomicStrongCAS16Valid):
+        (JSC::B3::Air::isAtomicStrongCAS32Valid):
+        (JSC::B3::Air::isAtomicStrongCAS64Valid):
+        (JSC::B3::Air::isBranchAtomicStrongCAS8Valid):
+        (JSC::B3::Air::isBranchAtomicStrongCAS16Valid):
+        (JSC::B3::Air::isBranchAtomicStrongCAS32Valid):
+        (JSC::B3::Air::isBranchAtomicStrongCAS64Valid):
+        * b3/air/AirOpcode.opcodes:
+        * b3/air/AirOptimizeBlockOrder.cpp:
+        (JSC::B3::Air::optimizeBlockOrder):
+        * b3/air/AirPadInterference.cpp:
+        (JSC::B3::Air::padInterference):
+        * b3/air/AirSpillEverything.cpp:
+        (JSC::B3::Air::spillEverything):
+        * b3/air/opcode_generator.rb:
+        * b3/testb3.cpp:
+        (JSC::B3::testLoadAcq42):
+        (JSC::B3::testStoreRelAddLoadAcq32):
+        (JSC::B3::testStoreRelAddLoadAcq8):
+        (JSC::B3::testStoreRelAddFenceLoadAcq8):
+        (JSC::B3::testStoreRelAddLoadAcq16):
+        (JSC::B3::testStoreRelAddLoadAcq64):
+        (JSC::B3::testTrappingStoreElimination):
+        (JSC::B3::testX86LeaAddAdd):
+        (JSC::B3::testX86LeaAddShlLeftScale1):
+        (JSC::B3::testAtomicWeakCAS):
+        (JSC::B3::testAtomicStrongCAS):
+        (JSC::B3::testAtomicXchg):
+        (JSC::B3::testDepend32):
+        (JSC::B3::testDepend64):
+        (JSC::B3::run):
+        * runtime/Options.h:
+
 2017-03-10  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed typo fixes after r213652.

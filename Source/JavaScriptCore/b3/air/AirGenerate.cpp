@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,7 +31,6 @@
 #include "AirAllocateRegistersByGraphColoring.h"
 #include "AirAllocateStack.h"
 #include "AirCode.h"
-#include "AirDumpAsJS.h"
 #include "AirEliminateDeadCode.h"
 #include "AirFixObviousSpills.h"
 #include "AirFixPartialRegisterStalls.h"
@@ -62,17 +61,19 @@ void prepareForGeneration(Code& code)
 {
     TimingScope timingScope("Air::prepareForGeneration");
     
+    // If we're doing super verbose dumping, the phase scope of any phase will already do a dump.
+    if (shouldDumpIR(AirMode) && !shouldDumpIRAtEachPhase(AirMode)) {
+        dataLog("Initial air:\n");
+        dataLog(code);
+    }
+    
     // We don't expect the incoming code to have predecessors computed.
     code.resetReachability();
     
     if (shouldValidateIR())
         validate(code);
 
-    // If we're doing super verbose dumping, the phase scope of any phase will already do a dump.
-    if (shouldDumpIR(AirMode) && !shouldDumpIRAtEachPhase(AirMode)) {
-        dataLog("Initial air:\n");
-        dataLog(code);
-    }
+    simplifyCFG(code);
 
     lowerMacros(code);
 
@@ -107,23 +108,11 @@ void prepareForGeneration(Code& code)
     // does things like identify which callee-saves we're using and saves them.
     handleCalleeSaves(code);
     
-    if (Options::dumpAirAsJSBeforeAllocateStack()) {
-        dataLog("Dumping Air as JS before allocateStack:\n");
-        dumpAsJS(code, WTF::dataFile());
-        dataLog("Air hash: ", code.jsHash(), "\n");
-    }
-
     // This turns all Stack and CallArg Args into Addr args that use the frame pointer. It does
     // this by first-fit allocating stack slots. It should be pretty darn close to optimal, so we
     // shouldn't have to worry about this very much.
     allocateStack(code);
     
-    if (Options::dumpAirAfterAllocateStack()) {
-        dataLog("Dumping Air after allocateStack:\n");
-        dataLog(code);
-        dataLog("Air hash: ", code.jsHash(), "\n");
-    }
-
     // If we coalesced moves then we can unbreak critical edges. This is the main reason for this
     // phase.
     simplifyCFG(code);

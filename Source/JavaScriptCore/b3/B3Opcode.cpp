@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -65,6 +65,23 @@ std::optional<Opcode> invertedCompare(Opcode opcode, Type type)
         return Above;
     default:
         return std::nullopt;
+    }
+}
+
+Opcode storeOpcode(Bank bank, Width width)
+{
+    switch (bank) {
+    case GP:
+        switch (width) {
+        case Width8:
+            return Store8;
+        case Width16:
+            return Store16;
+        default:
+            return Store;
+        }
+    case FP:
+        return Store;
     }
 }
 
@@ -262,6 +279,33 @@ void printInternal(PrintStream& out, Opcode opcode)
         return;
     case Store:
         out.print("Store");
+        return;
+    case AtomicWeakCAS:
+        out.print("AtomicWeakCAS");
+        return;
+    case AtomicStrongCAS:
+        out.print("AtomicStrongCAS");
+        return;
+    case AtomicXchgAdd:
+        out.print("AtomicXchgAdd");
+        return;
+    case AtomicXchgAnd:
+        out.print("AtomicXchgAnd");
+        return;
+    case AtomicXchgOr:
+        out.print("AtomicXchgOr");
+        return;
+    case AtomicXchgSub:
+        out.print("AtomicXchgSub");
+        return;
+    case AtomicXchgXor:
+        out.print("AtomicXchgXor");
+        return;
+    case AtomicXchg:
+        out.print("AtomicXchg");
+        return;
+    case Depend:
+        out.print("Depend");
         return;
     case WasmAddress:
         out.print("WasmAddress");

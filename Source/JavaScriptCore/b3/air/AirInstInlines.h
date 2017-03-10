@@ -277,6 +277,73 @@ inline bool isX86UDiv64Valid(const Inst& inst)
     return isX86DivHelperValid(inst);
 }
 
+inline bool isAtomicStrongCASValid(const Inst& inst)
+{
+#if CPU(X86) || CPU(X86_64)
+    switch (inst.args.size()) {
+    case 3:
+        return inst.args[0] == Tmp(X86Registers::eax);
+    case 5:
+        return inst.args[1] == Tmp(X86Registers::eax);
+    default:
+        return false;
+    }
+#else // CPU(X86) || CPU(X86_64)
+    UNUSED_PARAM(inst);
+    return false;
+#endif // CPU(X86) || CPU(X86_64)
+}
+
+inline bool isBranchAtomicStrongCASValid(const Inst& inst)
+{
+#if CPU(X86) || CPU(X86_64)
+    return inst.args[1] == Tmp(X86Registers::eax);
+#else // CPU(X86) || CPU(X86_64)
+    UNUSED_PARAM(inst);
+    return false;
+#endif // CPU(X86) || CPU(X86_64)
+}
+
+inline bool isAtomicStrongCAS8Valid(const Inst& inst)
+{
+    return isAtomicStrongCASValid(inst);
+}
+
+inline bool isAtomicStrongCAS16Valid(const Inst& inst)
+{
+    return isAtomicStrongCASValid(inst);
+}
+
+inline bool isAtomicStrongCAS32Valid(const Inst& inst)
+{
+    return isAtomicStrongCASValid(inst);
+}
+
+inline bool isAtomicStrongCAS64Valid(const Inst& inst)
+{
+    return isAtomicStrongCASValid(inst);
+}
+
+inline bool isBranchAtomicStrongCAS8Valid(const Inst& inst)
+{
+    return isBranchAtomicStrongCASValid(inst);
+}
+
+inline bool isBranchAtomicStrongCAS16Valid(const Inst& inst)
+{
+    return isBranchAtomicStrongCASValid(inst);
+}
+
+inline bool isBranchAtomicStrongCAS32Valid(const Inst& inst)
+{
+    return isBranchAtomicStrongCASValid(inst);
+}
+
+inline bool isBranchAtomicStrongCAS64Valid(const Inst& inst)
+{
+    return isBranchAtomicStrongCASValid(inst);
+}
+
 } } } // namespace JSC::B3::Air
 
 #endif // ENABLE(B3_JIT)

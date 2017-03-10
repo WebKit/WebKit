@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,12 +28,13 @@
 
 #if ENABLE(B3_JIT)
 
+#include "B3AtomicValue.h"
 #include "B3BasicBlockInlines.h"
 #include "B3BlockInsertionSet.h"
 #include "B3ComputeDivisionMagic.h"
 #include "B3Dominators.h"
 #include "B3InsertionSetInlines.h"
-#include "B3MemoryValue.h"
+#include "B3MemoryValueInlines.h"
 #include "B3PhaseScope.h"
 #include "B3PhiChildren.h"
 #include "B3ProcedureInlines.h"
@@ -602,7 +603,7 @@ private:
             }
 
             break;
-
+            
         case Neg:
             // Turn this: Neg(constant)
             // Into this: -constant
@@ -1295,6 +1296,16 @@ private:
                     break;
                 }
             }
+            
+            if (!m_proc.hasQuirks()) {
+                // Turn this: SExt8(AtomicXchg___)
+                // Into this: AtomicXchg___
+                if (isAtomicXchg(m_value->child(0)->opcode())
+                    && m_value->child(0)->as<AtomicValue>()->accessWidth() == Width8) {
+                    replaceWithIdentity(m_value->child(0));
+                    break;
+                }
+            }
             break;
 
         case SExt16:
@@ -1340,6 +1351,16 @@ private:
                             BitAnd, m_value->origin(), input,
                             m_insertionSet.insert<Const32Value>(
                                 m_index, m_value->origin(), mask & 0x7fff)));
+                    break;
+                }
+            }
+
+            if (!m_proc.hasQuirks()) {
+                // Turn this: SExt16(AtomicXchg___)
+                // Into this: AtomicXchg___
+                if (isAtomicXchg(m_value->child(0)->opcode())
+                    && m_value->child(0)->as<AtomicValue>()->accessWidth() == Width16) {
+                    replaceWithIdentity(m_value->child(0));
                     break;
                 }
             }
@@ -2101,22 +2122,25 @@ private:
         ASSERT(m_value->numChildren() >= 2);
         
         // Leave it alone if the right child is a constant.
-        if (m_value->child(1)->isConstant())
+        if (m_value->child(1)->isConstant()
+            || m_value->child(0)->opcode() == AtomicStrongCAS)
             return;
         
-        if (m_value->child(0)->isConstant()) {
+        auto swap = [&] () {
             std::swap(m_value->child(0), m_value->child(1));
             m_changed = true;
-            return;
-        }
-
+        };
+        
+        if (m_value->child(0)->isConstant())
+            return swap();
+        
+        if (m_value->child(1)->opcode() == AtomicStrongCAS)
+            return swap();
+        
         // Sort the operands. This is an important canonicalization. We use the index instead of
         // the address to make this at least slightly deterministic.
-        if (m_value->child(0)->index() > m_value->child(1)->index()) {
-            std::swap(m_value->child(0), m_value->child(1));
-            m_changed = true;
-            return;
-        }
+        if (m_value->child(0)->index() > m_value->child(1)->index())
+            return swap();
     }
 
     // FIXME: This should really be a forward analysis. Instead, we uses a bounded-search backwards

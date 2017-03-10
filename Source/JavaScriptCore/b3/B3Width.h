@@ -65,7 +65,20 @@ inline Width widthForType(Type type)
         return Width64;
     }
     ASSERT_NOT_REACHED();
+    return Width8;
 }
+
+inline Width canonicalWidth(Width width)
+{
+    return std::max(Width32, width);
+}
+
+inline bool isCanonicalWidth(Width width)
+{
+    return width >= Width32;
+}
+
+Type bestType(Bank bank, Width width);
 
 inline Width conservativeWidth(Bank bank)
 {
@@ -95,6 +108,20 @@ inline Width widthForBytes(unsigned bytes)
         return Width32;
     default:
         return Width64;
+    }
+}
+
+inline uint64_t mask(Width width)
+{
+    switch (width) {
+    case Width8:
+        return 0x00000000000000ffllu;
+    case Width16:
+        return 0x000000000000ffffllu;
+    case Width32:
+        return 0x00000000ffffffffllu;
+    case Width64:
+        return 0xffffffffffffffffllu;
     }
 }
 

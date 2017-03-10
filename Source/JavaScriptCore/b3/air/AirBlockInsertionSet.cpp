@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,21 +23,27 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#include "config.h"
+#include "AirBlockInsertionSet.h"
 
 #if ENABLE(B3_JIT)
 
-#include <wtf/PrintStream.h>
+#include "AirBasicBlock.h"
+#include "AirCode.h"
+#include <wtf/BubbleSort.h>
 
 namespace JSC { namespace B3 { namespace Air {
 
-class Code;
+BlockInsertionSet::BlockInsertionSet(Code &code)
+    : GenericBlockInsertionSet(code.m_blocks)
+{
+}
 
-// This is used for benchmarking. Various operations on Air are interesting from a benchmarking
-// standpoint. We can write some Air phases in JS and then use that to benchmark JS. The benchmark
-// is called JSAir, and it's in PerformanceTests/JSAir.
-void dumpAsJS(Code&, PrintStream&);
+BlockInsertionSet::~BlockInsertionSet()
+{
+}
 
 } } } // namespace JSC::B3::Air
 
 #endif // ENABLE(B3_JIT)
+

@@ -70,7 +70,7 @@ public:
         // that the def happens before any of the effects of the stackmap. This is only valid for
         // the result constraint of a Patchpoint.
         SomeEarlyRegister,
-
+        
         // As an input representation, this forces a particular register. As an output
         // representation, this tells us what register B3 picked.
         Register,

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -117,6 +117,7 @@ public:
     Value* addIntConstant(Origin, Type, int64_t value);
     Value* addIntConstant(Value*, int64_t value);
 
+    // You're guaranteed that bottom is zero.
     Value* addBottom(Origin, Type);
     Value* addBottom(Value*);
 
@@ -195,6 +196,17 @@ public:
     // alive. Great for compiler-generated data sections, like switch jump tables and constant pools.
     // This returns memory that has been zero-initialized.
     JS_EXPORT_PRIVATE void* addDataSection(size_t);
+    
+    // Some operations are specified in B3 IR to behave one way but on this given CPU they behave a
+    // different way. When true, those B3 IR ops switch to behaving the CPU way, and the optimizer may
+    // start taking advantage of it.
+    //
+    // One way to think of it is like this. Imagine that you find that the cleanest way of lowering
+    // something in lowerMacros is to unconditionally replace one opcode with another. This is a shortcut
+    // where you instead keep the same opcode, but rely on the opcode's meaning changes once lowerMacros
+    // sets hasQuirks.
+    bool hasQuirks() const { return m_hasQuirks; }
+    void setHasQuirks(bool value) { m_hasQuirks = value; }
 
     OpaqueByproducts& byproducts() { return *m_byproducts; }
 
@@ -252,6 +264,7 @@ private:
     RefPtr<SharedTask<void(PrintStream&, Origin)>> m_originPrinter;
     const void* m_frontendData;
     PCToOriginMap m_pcToOriginMap;
+    bool m_hasQuirks { false };
 };
 
 } } // namespace JSC::B3

@@ -51,13 +51,48 @@ class Arg
         @bank = bank
         @width = width
     end
-
-    def widthCode
+    
+    def self.widthCode(width)
         if width == "Ptr"
             "pointerWidth()"
         else
             "Width#{width}"
         end
+    end
+
+    def widthCode
+        Arg.widthCode(width)
+    end
+    
+    def self.roleCode(role)
+        case role
+        when "U"
+            "Use"
+        when "D"
+            "Def"
+        when "ZD"
+            "ZDef"
+        when "UD"
+            "UseDef"
+        when "UZD"
+            "UseZDef"
+        when "UA"
+            "UseAddr"
+        when "S"
+            "Scratch"
+        when "ED"
+            "EarlyDef"
+        when "EZD"
+            "EarlyZDef"
+        when "LU"
+            "LateUse"
+        else
+            raise
+        end
+    end
+    
+    def roleCode
+        Arg.roleCode(role)
     end
 end
 
@@ -182,7 +217,7 @@ def lex(str, fileName)
 end
 
 def isRole(token)
-    token =~ /\A((U)|(D)|(UD)|(ZD)|(UZD)|(UA)|(S))\Z/
+    token =~ /\A((U)|(D)|(UD)|(ZD)|(UZD)|(UA)|(S)|(ED)|(EZD)|(LU))\Z/
 end
 
 def isGF(token)
@@ -190,7 +225,7 @@ def isGF(token)
 end
 
 def isKind(token)
-    token =~ /\A((Tmp)|(Imm)|(BigImm)|(BitImm)|(BitImm64)|(Addr)|(Index)|(RelCond)|(ResCond)|(DoubleCond))\Z/
+    token =~ /\A((Tmp)|(Imm)|(BigImm)|(BitImm)|(BitImm64)|(SimpleAddr)|(Addr)|(Index)|(RelCond)|(ResCond)|(DoubleCond)|(StatusCond))\Z/
 end
 
 def isArch(token)
@@ -264,7 +299,7 @@ class Parser
 
     def consumeKind
         result = token.string
-        parseError("Expected kind (Imm, BigImm, BitImm, BitImm64, Tmp, Addr, Index, RelCond, ResCond, or DoubleCond)") unless isKind(result)
+        parseError("Expected kind (Imm, BigImm, BitImm, BitImm64, Tmp, SimpleAddr, Addr, Index, RelCond, ResCond, DoubleCond, or StatusCond)") unless isKind(result)
         advance
         result
     end
@@ -634,28 +669,7 @@ writeH("OpcodeUtils") {
         else
             overload.signature.each_with_index {
                 | arg, index |
-                
-                role = nil
-                case arg.role
-                when "U"
-                    role = "Use"
-                when "D"
-                    role = "Def"
-                when "ZD"
-                    role = "ZDef"
-                when "UD"
-                    role = "UseDef"
-                when "UZD"
-                    role = "UseZDef"
-                when "UA"
-                    role = "UseAddr"
-                when "S"
-                    role = "Scratch"
-                else
-                    raise
-                end
-
-                outp.puts "functor(args[#{index}], Arg::#{role}, #{arg.bank}P, #{arg.widthCode});"
+                outp.puts "functor(args[#{index}], Arg::#{arg.roleCode}, #{arg.bank}P, #{arg.widthCode});"
             }
         end
     }
@@ -804,6 +818,9 @@ writeH("OpcodeGenerated") {
                 when "BitImm64"
                     outp.puts "if (!Arg::isValidBitImm64Form(args[#{index}].value()))"
                     outp.puts "OPGEN_RETURN(false);"
+                when "SimpleAddr"
+                    outp.puts "if (!args[#{index}].tmp().isGP())"
+                    outp.puts "OPGEN_RETURN(false);"
                 when "Addr"
                     if arg.role == "UA"
                         outp.puts "if (args[#{index}].isStack() && args[#{index}].stackSlot()->isSpill())"
@@ -819,6 +836,7 @@ writeH("OpcodeGenerated") {
                 when "RelCond"
                 when "ResCond"
                 when "DoubleCond"
+                when "StatusCond"
                 else
                     raise "Unexpected kind: #{kind.name}"
                 end
@@ -1095,7 +1113,7 @@ writeH("OpcodeGenerated") {
                     outp.print "args[#{index}].asTrustedImm32()"
                 when "BigImm", "BitImm64"
                     outp.print "args[#{index}].asTrustedImm64()"
-                when "Addr"
+                when "SimpleAddr", "Addr"
                     outp.print "args[#{index}].asAddress()"
                 when "Index"
                     outp.print "args[#{index}].asBaseIndex()"
@@ -1105,6 +1123,8 @@ writeH("OpcodeGenerated") {
                     outp.print "args[#{index}].asResultCondition()"
                 when "DoubleCond"
                     outp.print "args[#{index}].asDoubleCondition()"
+                when "StatusCond"
+                    outp.print "args[#{index}].asStatusCondition()"
                 end
             }
 
@@ -1148,27 +1168,7 @@ File.open("JSAir_opcode.js", "w") {
                 outp.puts "case #{overload.signature.length}:" if needOverloadSwitch
                 overload.signature.each_with_index {
                     | arg, index |
-                    role = nil
-                    case arg.role
-                    when "U"
-                        role = "Use"
-                    when "D"
-                        role = "Def"
-                    when "ZD"
-                        role = "ZDef"
-                    when "UD"
-                        role = "UseDef"
-                    when "UZD"
-                        role = "UseZDef"
-                    when "UA"
-                        role = "UseAddr"
-                    when "S"
-                        role = "Scratch"
-                    else
-                        raise
-                    end
-                    
-                    outp.puts "inst.visitArg(#{index}, func, Arg.#{role}, #{arg.bank}P, #{arg.width});"
+                    outp.puts "inst.visitArg(#{index}, func, Arg.#{arg.roleCode}, #{arg.bank}P, #{arg.width});"
                 }
                 outp.puts "break;"
             }

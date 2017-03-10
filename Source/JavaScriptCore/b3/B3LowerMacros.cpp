@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,19 +29,22 @@
 #if ENABLE(B3_JIT)
 
 #include "AllowMacroScratchRegisterUsage.h"
+#include "B3AtomicValue.h"
 #include "B3BasicBlockInlines.h"
 #include "B3BlockInsertionSet.h"
 #include "B3CCallValue.h"
 #include "B3CaseCollectionInlines.h"
 #include "B3ConstPtrValue.h"
+#include "B3FenceValue.h"
 #include "B3InsertionSetInlines.h"
-#include "B3MemoryValue.h"
+#include "B3MemoryValueInlines.h"
 #include "B3PatchpointValue.h"
 #include "B3PhaseScope.h"
 #include "B3ProcedureInlines.h"
 #include "B3StackmapGenerationParams.h"
 #include "B3SwitchValue.h"
 #include "B3UpsilonValue.h"
+#include "B3UseCounts.h"
 #include "B3ValueInlines.h"
 #include "CCallHelpers.h"
 #include "LinkBuffer.h"
@@ -58,11 +61,14 @@ public:
         : m_proc(proc)
         , m_blockInsertionSet(proc)
         , m_insertionSet(proc)
+        , m_useCounts(proc)
     {
     }
 
     bool run()
     {
+        RELEASE_ASSERT(!m_proc.hasQuirks());
+        
         for (BasicBlock* block : m_proc) {
             m_block = block;
             processCurrentBlock();
@@ -72,6 +78,10 @@ public:
             m_proc.resetReachability();
             m_proc.invalidateCFG();
         }
+        
+        // This indicates that we've 
+        m_proc.setHasQuirks(true);
+        
         return m_changed;
     }
     
@@ -185,7 +195,127 @@ private:
                 m_changed = true;
                 break;
             }
+                
+            case Depend: {
+                if (isX86()) {
+                    // Create a load-load fence. This codegens to nothing on X86. We use it to tell the
+                    // compiler not to block load motion.
+                    FenceValue* fence = m_insertionSet.insert<FenceValue>(m_index, m_origin);
+                    fence->read = HeapRange();
+                    fence->write = HeapRange::top();
+                    
+                    // Kill the Depend, which should unlock a bunch of code simplification.
+                    m_value->replaceWithBottom(m_insertionSet, m_index);
+                    
+                    m_changed = true;
+                }
+                break;
+            }
 
+            case AtomicWeakCAS:
+            case AtomicStrongCAS: {
+                AtomicValue* atomic = m_value->as<AtomicValue>();
+                Width width = atomic->accessWidth();
+                
+                if (isCanonicalWidth(width))
+                    break;
+                
+                Value* expectedValue = atomic->child(0);
+                
+                if (!isX86()) {
+                    // On ARM, the load part of the CAS does a load with zero extension. Therefore, we need
+                    // to zero-extend the input.
+                    Value* maskedExpectedValue = m_insertionSet.insert<Value>(
+                        m_index, BitAnd, m_origin, expectedValue,
+                        m_insertionSet.insertIntConstant(m_index, expectedValue, mask(width)));
+                    
+                    atomic->child(0) = maskedExpectedValue;
+                }
+                
+                if (atomic->opcode() == AtomicStrongCAS) {
+                    Value* newValue = m_insertionSet.insert<Value>(
+                        m_index, signExtendOpcode(width), m_origin,
+                        m_insertionSet.insertClone(m_index, atomic));
+                    
+                    atomic->replaceWithIdentity(newValue);
+                }
+                
+                m_changed = true;
+                break;
+            }
+                
+            case AtomicXchgAdd:
+            case AtomicXchgAnd:
+            case AtomicXchgOr:
+            case AtomicXchgSub:
+            case AtomicXchgXor:
+            case AtomicXchg: {
+                // On X86, these may actually return garbage in the high bits. On ARM64, these sorta
+                // zero-extend their high bits, except that the high bits might get polluted by high
+                // bits in the operand. So, either way, we need to throw a sign-extend on these
+                // things.
+                
+                if (isX86()) {
+                    if (m_value->opcode() == AtomicXchgSub && m_useCounts.numUses(m_value)) {
+                        // On x86, xchgadd is better than xchgsub if it has any users.
+                        m_value->setOpcodeUnsafely(AtomicXchgAdd);
+                        m_value->child(0) = m_insertionSet.insert<Value>(
+                            m_index, Neg, m_origin, m_value->child(0));
+                    }
+                    
+                    bool exempt = false;
+                    switch (m_value->opcode()) {
+                    case AtomicXchgAnd:
+                    case AtomicXchgOr:
+                    case AtomicXchgSub:
+                    case AtomicXchgXor:
+                        exempt = true;
+                        break;
+                    default:
+                        break;
+                    }
+                    if (exempt)
+                        break;
+                }
+                
+                AtomicValue* atomic = m_value->as<AtomicValue>();
+                Width width = atomic->accessWidth();
+                
+                if (isCanonicalWidth(width))
+                    break;
+                
+                Value* newValue = m_insertionSet.insert<Value>(
+                    m_index, signExtendOpcode(width), m_origin,
+                    m_insertionSet.insertClone(m_index, atomic));
+                
+                atomic->replaceWithIdentity(newValue);
+                m_changed = true;
+                break;
+            }
+                
+            case Load8Z:
+            case Load16Z: {
+                if (isX86())
+                    break;
+                
+                MemoryValue* memory = m_value->as<MemoryValue>();
+                if (!memory->hasFence())
+                    break;
+                
+                // Sub-width load-acq on ARM64 always sign extends.
+                Value* newLoad = m_insertionSet.insertClone(m_index, memory);
+                newLoad->setOpcodeUnsafely(memory->opcode() == Load8Z ? Load8S : Load16S);
+                
+                Value* newValue = m_insertionSet.insert<Value>(
+                    m_index, BitAnd, m_origin, newLoad,
+                    m_insertionSet.insertIntConstant(
+                        m_index, m_origin, Int32, mask(memory->accessWidth())));
+
+                m_value->replaceWithIdentity(newValue);
+                m_changed = true;
+                break;
+            }
+                
             default:
                 break;
             }
@@ -470,6 +600,7 @@ private:
     Procedure& m_proc;
     BlockInsertionSet m_blockInsertionSet;
     InsertionSet m_insertionSet;
+    UseCounts m_useCounts;
     BasicBlock* m_block;
     unsigned m_index;
     Value* m_value;
@@ -477,21 +608,12 @@ private:
     bool m_changed { false };
 };
 
-bool lowerMacrosImpl(Procedure& proc)
-{
-    LowerMacros lowerMacros(proc);
-    return lowerMacros.run();
-}
-
 } // anonymous namespace
 
 bool lowerMacros(Procedure& proc)
 {
-    PhaseScope phaseScope(proc, "lowerMacros");
-    bool result = lowerMacrosImpl(proc);
-    if (shouldValidateIR())
-        RELEASE_ASSERT(!lowerMacrosImpl(proc));
-    return result;
+    LowerMacros lowerMacros(proc);
+    return lowerMacros.run();
 }
 
 } } // namespace JSC::B3

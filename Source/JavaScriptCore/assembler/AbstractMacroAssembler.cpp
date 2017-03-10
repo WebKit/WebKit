@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,20 +23,30 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#include "config.h"
+#include "MacroAssembler.h" // Have to break with style because AbstractMacroAssembler.h is a shady header.
 
-#if ENABLE(B3_JIT)
+#if ENABLE(ASSEMBLER)
 
-namespace JSC { namespace B3 {
+#include <wtf/PrintStream.h>
 
-class Procedure;
-namespace Air { class Code; }
+using namespace JSC;
 
-// This lowers the current B3 procedure to an Air code. Note that this assumes that the procedure is in
-// quirks mode, but it does not assert this, to simplify how we write tests.
+namespace WTF {
 
-JS_EXPORT_PRIVATE void lowerToAir(Procedure&);
+void printInternal(PrintStream& out, AbstractMacroAssemblerBase::StatusCondition condition)
+{
+    switch (condition) {
+    case AbstractMacroAssemblerBase::Success:
+        out.print("Success");
+        return;
+    case AbstractMacroAssemblerBase::Failure:
+        out.print("Failure");
+        return;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
 
-} } // namespace JSC::B3
+} // namespace WTF
 
-#endif // ENABLE(B3_JIT)
+#endif // ENABLE(ASSEMBLER)

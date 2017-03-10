@@ -416,9 +416,6 @@ typedef const char* optionString;
     v(bool, dumpModuleLoadingState, false, Normal, nullptr) \
     v(bool, exposeInternalModuleLoader, false, Normal, "expose the internal module loader object to the global space for debugging") \
     \
-    v(bool, dumpAirAsJSBeforeAllocateStack, false, Normal, nullptr) \
-    v(bool, dumpAirAfterAllocateStack, false, Normal, nullptr) \
-    \
     v(bool, useSuperSampler, false, Normal, nullptr) \
     \
     v(bool, reportLLIntStats, false, Configurable, "Reports LLInt statistics") \

@@ -148,6 +148,28 @@
 
     <p>Each basic block contains a Vector&lt;Value*&gt; as the contents of the block. Control
       flow inside the block is implicit based on the order of Values in the vector.</p>
+    
+    <h2>Memory model</h2>
+    
+    <p>B3 uses a secondary address space of <i>abstract heaps</i> to reason about aliasing and
+      concurrency. This address space is 32-bit and we point at it using the HeapRange type. If you
+      never supply HeapRanges to your memory operations (the default), they will have [0, UINT_MAX]
+      as their range, indicating that the operation may conservatively write to all 2<sup>32</sup>
+      abstract heaps. Two memory operations are said to alias if they access the same abstract heaps.
+      A simple example of using HeapRanges is with loads and stores, but you can also supply
+      HeapRanges as bounds on the effects of calls and patchpoints.</p>
+    
+    <p>Fences are modeled as phantom effects that we call <i>fence ranges</i>. For example, a load
+      fence could be represented as a patchpoint that writes to [0, UINT_MAX]. B3 models load fences,
+      store fences, store-load fences, acquire fences, and release fences using fence ranges. The
+      absence of a fence range means that there is no fence.</p>
+    
+    <p>Acquire fences are modeled as phantom writes to memory, while release fences are modeled as
+      phantom reads from memory. By itself this does not permit B3 to do all of the reorderings that
+      acquire/release allow. B3 is therefore allowed to treat loads/stores with fence ranges more
+      precisely. The phantom write effects of a fenced load cannot write to anything that is read or
+      written after the fence. The phantom read effects of a fenced store cannot read anything that
+      is written after the fence.</p>
 
     <h2>Opcodes</h2>
 
@@ -395,50 +417,125 @@
       <dt>Int32 Load8Z(IntPtr, offset)</dt>
       <dd>Loads a byte from the address, which is computed by adding the compile-time 32-bit
         signed integer offset to the child value.  Zero extends the loaded byte, so the high 24
-        bits are all zero.  Must use the MemoryValue class.  May have the Traps flag set.</dd>
+        bits are all zero.  Must use the MemoryValue class.  May have the Traps flag set. May set
+        a fence range to turn this into a load acquire.</dd>
 
       <dt>Int32 Load8S(IntPtr, offset)</dt>
       <dd>Loads a byte from the address, which is computed by adding the compile-time 32-bit
         signed integer offset to the child value.  Sign extends the loaded byte.  Must use the
-        MemoryValue class.  May have the Traps flag set.</dd>
+        MemoryValue class.  May have the Traps flag set. May set
+        a fence range to turn this into a load acquire.</dd>
 
       <dt>Int32 Load16Z(IntPtr, offset)</dt>
       <dd>Loads a 16-bit integer from the address, which is computed by adding the compile-time
         32-bit signed integer offset to the child value.  Zero extends the loaded 16-bit
         integer, so the high 16 bits are all zero.  Misaligned loads are not penalized.  Must
-        use the MemoryValue class.  May have the Traps flag set.</dd>
+        use the MemoryValue class.  May have the Traps flag set. May set
+        a fence range to turn this into a load acquire.</dd>
 
       <dt>Int32 Load16S(IntPtr, offset)</dt>
       <dd>Loads a 16-bit integer from the address, which is computed by adding the compile-time
         32-bit signed integer offset to the child value.  Sign extends the loaded 16-bit
         integer.  Misaligned loads are not penalized.  Must use the MemoryValue class.  May have the
-        Traps flag set.</dd>
+        Traps flag set. May set a fence range to turn this into a load acquire.</dd>
 
       <dt>T Load(IntPtr, offset)</dt>
       <dd>Valid for any type except Void.  Loads a value of that type from the address, which is
         computed by adding the compile-time 32-bit signed integer offset to the child value.
         Misaligned loads are not penalized.  Must use the MemoryValue class.  May have the Traps
-        flag set.</dd>
+        flag set. May set a fence range to turn this into a load acquire.</dd>
 
       <dt>Void Store8(Int32, IntPtr, offset)</dt>
       <dd>Stores a the low byte of the first child into the address computed by adding the
         compile-time 32-bit signed integer offset to the second child.  Must use the MemoryValue
-        class.  May have the Traps flag set.</dd>
+        class.  May have the Traps flag set. May set a fence range to turn this into a store release.</dd>
 
       <dt>Void Store16(Int32, IntPtr, offset)</dt>
       <dd>Stores a the low 16 bits of the first child into the address computed by adding the
         compile-time 32-bit signed integer offset to the second child.  Misaligned stores are
-        not penalized.  Must use the MemoryValue class.  May have the Traps flag set.</dd>
+        not penalized.  Must use the MemoryValue class.  May have the Traps flag set. May set a
+        fence range to turn this into a store release.</dd>
 
       <dt>Void Store(T, IntPtr, offset)</dt>
       <dd>Stores the value in the first child into the address computed by adding the
         compile-time 32-bit signed integer offset to the second child.  Misaligned stores are
-        not penalized.  Must use the MemoryValue class.  May have the Traps flag set.</dd>
+        not penalized.  Must use the MemoryValue class.  May have the Traps flag set. May set a
+        fence range to turn this into a store release.</dd>
+      
+      <dt>Int32 AtomicWeakCAS(T expectedValue, T newValue, IntPtr ptr)</dt>
+      <dd>Performs a weak <a href="https://en.wikipedia.org/wiki/Compare-and-swap">CAS
+          (compare-and-swap)</a>. Returns a boolean (0 or 1) to indicate the result (failure or
+        success, respectively). May spuriously fail, in which case it will do nothing and return
+        0. You can supply a fence range to indicate that the CAS is fenced. Fenced CAS has both
+        acquire and release fences, and claims to both read and write the full fence range in
+        addition to whatever primary range is supplied for the CAS itself. AtomicWeakCAS only
+        has fencing behavior in the case that it succeeds. Atomic operations take a width parameter,
+        allowing them to operate over 8-bit, 16-bit, 32-bit, or 64-bit integer memory locations.</dd>
+
+      <dt>T AtomicStrongCAS(T expectedValue, T newValue, IntPtr ptr)</dt>
+      <dd>Performs a strong <a href="https://en.wikipedia.org/wiki/Compare-and-swap">CAS
+          (compare-and-swap)</a>. Returns the old value before the CAS. The instruction selector
+        is smart about Equal(AtomicStrongCAS(expected, ...), expected) patterns, so this opcode
+        is also the best way to do a strong CAS that returns a boolean - just use Equal to compare
+        the result to expected. You can supply a fence range to indicate that the CAS is fenced.
+        Fenced CAS has both acquire and release fences, and claims to both read and write the full
+        fence range in addition to whatever primary range is supplied for the CAS itself.
+        AtomicStrongCAS has the same fencing on failure and success. Atomic operations take a width
+        parameter, allowing them to operate over 8-bit, 16-bit, 32-bit, or 64-bit integer memory
+        locations. Returns a sign-extended result for 8-bit or 16-bit widths.</dd>
+      
+      <dt>T AtomicXchgAdd(T, IntPtr)</dt>
+      <dd>Atomically adds a value to the memory location and returns the old value. Is allowed to
+        have a fence range, which causes it to have acquire/release fencing. Atomic operations take
+        a width parameter, allowing them to operate over 8-bit, 16-bit, 32-bit, or 64-bit integer memory
+        locations. Returns a sign-extended result for 8-bit or 16-bit widths.</dd>
+
+      <dt>T AtomicXchgAnd(T, IntPtr)</dt>
+      <dd>Atomically bitwise-ands a value to the memory location and returns the old value. Is allowed to
+        have a fence range, which causes it to have acquire/release fencing. Atomic operations take
+        a width parameter, allowing them to operate over 8-bit, 16-bit, 32-bit, or 64-bit integer memory
+        locations. Returns a sign-extended result for 8-bit or 16-bit widths.</dd>
+
+      <dt>T AtomicXchgOr(T, IntPtr)</dt>
+      <dd>Atomically bitwise-ors a value to the memory location and returns the old value. Is allowed to
+        have a fence range, which causes it to have acquire/release fencing. Atomic operations take
+        a width parameter, allowing them to operate over 8-bit, 16-bit, 32-bit, or 64-bit integer memory
+        locations. Returns a sign-extended result for 8-bit or 16-bit widths.</dd>
+
+      <dt>T AtomicXchgSub(T, IntPtr)</dt>
+      <dd>Atomically subtracts a value to the memory location and returns the old value. Is allowed to
+        have a fence range, which causes it to have acquire/release fencing. Atomic operations take
+        a width parameter, allowing them to operate over 8-bit, 16-bit, 32-bit, or 64-bit integer memory
+        locations. Returns a sign-extended result for 8-bit or 16-bit widths.</dd>
+
+      <dt>T AtomicXchgXor(T, IntPtr)</dt>
+      <dd>Atomically bitwise-xors a value to the memory location and returns the old value. Is allowed to
+        have a fence range, which causes it to have acquire/release fencing. Atomic operations take
+        a width parameter, allowing them to operate over 8-bit, 16-bit, 32-bit, or 64-bit integer memory
+        locations. Returns a sign-extended result for 8-bit or 16-bit widths.</dd>
+
+      <dt>T AtomicXchg(T, IntPtr)</dt>
+      <dd>Atomically stores a value to the memory location and returns the old value. Is allowed to
+        have a fence range, which causes it to have acquire/release fencing. Atomic operations take
+        a width parameter, allowing them to operate over 8-bit, 16-bit, 32-bit, or 64-bit integer memory
+        locations. Returns a sign-extended result for 8-bit or 16-bit widths.</dd>
+      
+      <dt>T Depend(T)</dt>
+      <dd>Only valid for integer types. This is guaranteed to return zero by xoring the input with
+        itself, and the B3 compiler guarantees that it will not leverage this knowledge for any
+        optimization. On x86, this is lowered to a Fence with read=Bottom, write=Top (i.e. a load-load
+        fence) and then it's constant-folded to zero. On ARM, this is preserved through the compiler
+        pipeline all the way to the MacroAssembler, which turns this into a <code>eor</code>. Using
+        Depend is the most efficient way to create load-load dependencies, regarldess of platform. It
+        allows B3's CSE to work for surrounding loads and it even supports CSEing the dependency
+        itself - so two identical load chains with no interleaving effects can be turned into one. On
+        ARM, it also avoids emitting an expensive <code>dmb ish</code> load-load fence. Because of the
+        benefits for CSE, it's recommended to use Depend for load-load dependencies even if you're only
+        targeting x86.</dd>
 
       <dt>IntPtr WasmAddress(IntPtr, pinnedGPR)</dt>
       <dd>This is used to compute the address of a wasm memory load from a pinned base GPR.
         Must use the WasmAddressValue class.</dd>
-
 
       <dt>Void Fence()</dt>
       <dd>Abstracts standalone data fences on x86 and ARM. Must use the FenceValue class, which has

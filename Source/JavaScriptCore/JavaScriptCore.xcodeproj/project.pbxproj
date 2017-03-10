@@ -274,6 +274,14 @@
 		0F2C63B01E60AE4300C13839 /* B3Bank.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F2C63AC1E60AE3C00C13839 /* B3Bank.h */; };
 		0F2C63B11E60AE4500C13839 /* B3Width.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F2C63AD1E60AE3C00C13839 /* B3Width.cpp */; };
 		0F2C63B21E60AE4700C13839 /* B3Width.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F2C63AE1E60AE3D00C13839 /* B3Width.h */; };
+		0F2C63B61E6343EA00C13839 /* B3AtomicValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F2C63B31E6343E800C13839 /* B3AtomicValue.cpp */; };
+		0F2C63B71E6343ED00C13839 /* B3AtomicValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F2C63B41E6343E800C13839 /* B3AtomicValue.h */; };
+		0F2C63B81E6343F700C13839 /* B3GenericBlockInsertionSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F2C63B51E6343E800C13839 /* B3GenericBlockInsertionSet.h */; };
+		0F2C63BB1E63440A00C13839 /* AirBlockInsertionSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F2C63B91E63440800C13839 /* AirBlockInsertionSet.cpp */; };
+		0F2C63BC1E63440C00C13839 /* AirBlockInsertionSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F2C63BA1E63440800C13839 /* AirBlockInsertionSet.h */; };
+		0F2C63C01E660EA700C13839 /* AbstractMacroAssembler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F2C63BF1E660EA500C13839 /* AbstractMacroAssembler.cpp */; };
+		0F2C63C21E664A5C00C13839 /* B3NativeTraits.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F2C63C11E664A5A00C13839 /* B3NativeTraits.h */; };
+		0F2C63C41E69EF9400C13839 /* B3MemoryValueInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F2C63C31E69EF9200C13839 /* B3MemoryValueInlines.h */; };
 		0F2D4DDD19832D34007D4B19 /* DebuggerScope.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F2D4DDB19832D34007D4B19 /* DebuggerScope.cpp */; };
 		0F2D4DDE19832D34007D4B19 /* DebuggerScope.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F2D4DDC19832D34007D4B19 /* DebuggerScope.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F2D4DE819832DAC007D4B19 /* ToThisStatus.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F2D4DE519832DAC007D4B19 /* ToThisStatus.cpp */; };
@@ -2249,8 +2257,6 @@
 		DC2143081CA32E58000A8869 /* ICStats.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DC2143051CA32E52000A8869 /* ICStats.cpp */; };
 		DC3D2B0A1D34316200BA918C /* HeapCell.h in Headers */ = {isa = PBXBuildFile; fileRef = DC3D2B091D34316100BA918C /* HeapCell.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DC3D2B0C1D34377000BA918C /* HeapCell.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DC3D2B0B1D34376E00BA918C /* HeapCell.cpp */; };
-		DC454B8C1D00E822004C18AF /* AirDumpAsJS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DC454B8A1D00E81F004C18AF /* AirDumpAsJS.cpp */; };
-		DC454B8D1D00E824004C18AF /* AirDumpAsJS.h in Headers */ = {isa = PBXBuildFile; fileRef = DC454B8B1D00E81F004C18AF /* AirDumpAsJS.h */; };
 		DC605B5D1CE26EA000593718 /* ProfilerEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DC605B591CE26E9800593718 /* ProfilerEvent.cpp */; };
 		DC605B5E1CE26EA200593718 /* ProfilerEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = DC605B5A1CE26E9800593718 /* ProfilerEvent.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DC605B5F1CE26EA500593718 /* ProfilerUID.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DC605B5B1CE26E9800593718 /* ProfilerUID.cpp */; };
@@ -2775,6 +2781,14 @@
 		0F2C63AC1E60AE3C00C13839 /* B3Bank.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = B3Bank.h; path = b3/B3Bank.h; sourceTree = "<group>"; };
 		0F2C63AD1E60AE3C00C13839 /* B3Width.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = B3Width.cpp; path = b3/B3Width.cpp; sourceTree = "<group>"; };
 		0F2C63AE1E60AE3D00C13839 /* B3Width.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = B3Width.h; path = b3/B3Width.h; sourceTree = "<group>"; };
+		0F2C63B31E6343E800C13839 /* B3AtomicValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = B3AtomicValue.cpp; path = b3/B3AtomicValue.cpp; sourceTree = "<group>"; };
+		0F2C63B41E6343E800C13839 /* B3AtomicValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = B3AtomicValue.h; path = b3/B3AtomicValue.h; sourceTree = "<group>"; };
+		0F2C63B51E6343E800C13839 /* B3GenericBlockInsertionSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = B3GenericBlockInsertionSet.h; path = b3/B3GenericBlockInsertionSet.h; sourceTree = "<group>"; };
+		0F2C63B91E63440800C13839 /* AirBlockInsertionSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AirBlockInsertionSet.cpp; path = b3/air/AirBlockInsertionSet.cpp; sourceTree = "<group>"; };
+		0F2C63BA1E63440800C13839 /* AirBlockInsertionSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AirBlockInsertionSet.h; path = b3/air/AirBlockInsertionSet.h; sourceTree = "<group>"; };
+		0F2C63BF1E660EA500C13839 /* AbstractMacroAssembler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractMacroAssembler.cpp; sourceTree = "<group>"; };
+		0F2C63C11E664A5A00C13839 /* B3NativeTraits.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = B3NativeTraits.h; path = b3/B3NativeTraits.h; sourceTree = "<group>"; };
+		0F2C63C31E69EF9200C13839 /* B3MemoryValueInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = B3MemoryValueInlines.h; path = b3/B3MemoryValueInlines.h; sourceTree = "<group>"; };
 		0F2D4DDB19832D34007D4B19 /* DebuggerScope.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DebuggerScope.cpp; sourceTree = "<group>"; };
 		0F2D4DDC19832D34007D4B19 /* DebuggerScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DebuggerScope.h; sourceTree = "<group>"; };
 		0F2D4DDF19832D91007D4B19 /* TypeProfilerLog.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TypeProfilerLog.cpp; sourceTree = "<group>"; };
@@ -4795,8 +4809,6 @@
 		DC2143061CA32E52000A8869 /* ICStats.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ICStats.h; sourceTree = "<group>"; };
 		DC3D2B091D34316100BA918C /* HeapCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HeapCell.h; sourceTree = "<group>"; };
 		DC3D2B0B1D34376E00BA918C /* HeapCell.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HeapCell.cpp; sourceTree = "<group>"; };
-		DC454B8A1D00E81F004C18AF /* AirDumpAsJS.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AirDumpAsJS.cpp; path = b3/air/AirDumpAsJS.cpp; sourceTree = "<group>"; };
-		DC454B8B1D00E81F004C18AF /* AirDumpAsJS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AirDumpAsJS.h; path = b3/air/AirDumpAsJS.h; sourceTree = "<group>"; };
 		DC605B591CE26E9800593718 /* ProfilerEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ProfilerEvent.cpp; path = profiler/ProfilerEvent.cpp; sourceTree = "<group>"; };
 		DC605B5A1CE26E9800593718 /* ProfilerEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProfilerEvent.h; path = profiler/ProfilerEvent.h; sourceTree = "<group>"; };
 		DC605B5B1CE26E9800593718 /* ProfilerUID.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ProfilerUID.cpp; path = profiler/ProfilerUID.cpp; sourceTree = "<group>"; };
@@ -5314,6 +5326,8 @@
 				0FEC84B31BDACD880080FF74 /* air */,
 				0FEC84B41BDACDAC0080FF74 /* B3ArgumentRegValue.cpp */,
 				0FEC84B51BDACDAC0080FF74 /* B3ArgumentRegValue.h */,
+				0F2C63B31E6343E800C13839 /* B3AtomicValue.cpp */,
+				0F2C63B41E6343E800C13839 /* B3AtomicValue.h */,
 				0F2C63AB1E60AE3C00C13839 /* B3Bank.cpp */,
 				0F2C63AC1E60AE3C00C13839 /* B3Bank.h */,
 				0FEC84B61BDACDAC0080FF74 /* B3BasicBlock.cpp */,
@@ -5376,6 +5390,7 @@
 				0FEC84CD1BDACDAC0080FF74 /* B3FrequentedBlock.h */,
 				0FEC84CE1BDACDAC0080FF74 /* B3Generate.cpp */,
 				0FEC84CF1BDACDAC0080FF74 /* B3Generate.h */,
+				0F2C63B51E6343E800C13839 /* B3GenericBlockInsertionSet.h */,
 				0FEC84D01BDACDAC0080FF74 /* B3GenericFrequentedBlock.h */,
 				0FEC85BF1BE167A00080FF74 /* B3HeapRange.cpp */,
 				0FEC85C01BE167A00080FF74 /* B3HeapRange.h */,
@@ -5398,8 +5413,10 @@
 				43AB26C51C1A52F700D82AE6 /* B3MathExtras.h */,
 				0FEC84D51BDACDAC0080FF74 /* B3MemoryValue.cpp */,
 				0FEC84D61BDACDAC0080FF74 /* B3MemoryValue.h */,
+				0F2C63C31E69EF9200C13839 /* B3MemoryValueInlines.h */,
 				0F338E031BF0276C0013C88F /* B3MoveConstants.cpp */,
 				0F338E041BF0276C0013C88F /* B3MoveConstants.h */,
+				0F2C63C11E664A5A00C13839 /* B3NativeTraits.h */,
 				0F338E051BF0276C0013C88F /* B3OpaqueByproduct.h */,
 				0F338E061BF0276C0013C88F /* B3OpaqueByproducts.cpp */,
 				0F338E071BF0276C0013C88F /* B3OpaqueByproducts.h */,
@@ -5491,6 +5508,8 @@
 				0F64EAF21C4ECD0600621E9B /* AirArgInlines.h */,
 				0FEC854C1BDACDC70080FF74 /* AirBasicBlock.cpp */,
 				0FEC854D1BDACDC70080FF74 /* AirBasicBlock.h */,
+				0F2C63B91E63440800C13839 /* AirBlockInsertionSet.cpp */,
+				0F2C63BA1E63440800C13839 /* AirBlockInsertionSet.h */,
 				0FB3878B1BFBC44D00E3AB1E /* AirBlockWorklist.h */,
 				0F6183201C45BF070072450B /* AirCCallingConvention.cpp */,
 				0F6183211C45BF070072450B /* AirCCallingConvention.h */,
@@ -5502,8 +5521,6 @@
 				0F10F1A21C420BF0001C07D2 /* AirCustom.h */,
 				79ABB17B1E5CCB570045B9A6 /* AirDisassembler.cpp */,
 				79ABB17C1E5CCB570045B9A6 /* AirDisassembler.h */,
-				DC454B8A1D00E81F004C18AF /* AirDumpAsJS.cpp */,
-				DC454B8B1D00E81F004C18AF /* AirDumpAsJS.h */,
 				0F4570361BE44C910062A629 /* AirEliminateDeadCode.cpp */,
 				0F4570371BE44C910062A629 /* AirEliminateDeadCode.h */,
 				0F6183231C45BF070072450B /* AirEmitShuffle.cpp */,
@@ -7355,6 +7372,7 @@
 			isa = PBXGroup;
 			children = (
 				0F1FE51B1922A3BC006987C5 /* AbortReason.h */,
+				0F2C63BF1E660EA500C13839 /* AbstractMacroAssembler.cpp */,
 				860161DF0F3A83C100F84710 /* AbstractMacroAssembler.h */,
 				0F3730901C0CD70C00052BFA /* AllowMacroScratchRegisterUsage.h */,
 				8640923B156EED3B00566CB2 /* ARM64Assembler.h */,
@@ -7383,8 +7401,8 @@
 				86C568DE11A213EE0007F7F0 /* MacroAssemblerMIPS.h */,
 				FE68C6351B90DDD90042BCB3 /* MacroAssemblerPrinter.cpp */,
 				FE68C6361B90DDD90042BCB3 /* MacroAssemblerPrinter.h */,
-				860161E00F3A83C100F84710 /* MacroAssemblerX86.h */,
 				860161E10F3A83C100F84710 /* MacroAssemblerX86_64.h */,
+				860161E00F3A83C100F84710 /* MacroAssemblerX86.h */,
 				A7A4AE0717973B26005612B1 /* MacroAssemblerX86Common.cpp */,
 				860161E20F3A83C100F84710 /* MacroAssemblerX86Common.h */,
 				65860177185A8F5E00030EEE /* MaxFrameExtentForSlowPathCall.h */,
@@ -7978,7 +7996,6 @@
 				658824AF1E5CFDB000FB7359 /* ConfigFile.h in Headers */,
 				0FEC85761BDACDC70080FF74 /* AirCode.h in Headers */,
 				0F10F1A31C420BF0001C07D2 /* AirCustom.h in Headers */,
-				DC454B8D1D00E824004C18AF /* AirDumpAsJS.h in Headers */,
 				0F4570391BE44C910062A629 /* AirEliminateDeadCode.h in Headers */,
 				0F61832D1C45BF070072450B /* AirEmitShuffle.h in Headers */,
 				0F4DE1CF1C4C1B54004D6C11 /* AirFixObviousSpills.h in Headers */,
@@ -7991,6 +8008,7 @@
 				0FEC85801BDACDC70080FF74 /* AirInst.h in Headers */,
 				0FEC85811BDACDC70080FF74 /* AirInstInlines.h in Headers */,
 				0FDF67D71D9DC442001B9825 /* AirKind.h in Headers */,
+				0F2C63BC1E63440C00C13839 /* AirBlockInsertionSet.h in Headers */,
 				2684D4381C00161C0081D663 /* AirLiveness.h in Headers */,
 				0FE34C1A1C4B39AE0003A512 /* AirLogRegisterPressure.h in Headers */,
 				0F61832F1C45BF070072450B /* AirLowerAfterRegAlloc.h in Headers */,
@@ -8082,6 +8100,7 @@
 				43422A631C158E6D00E2EB98 /* B3ConstFloatValue.h in Headers */,
 				0FEC85B31BDED9570080FF74 /* B3ConstPtrValue.h in Headers */,
 				0F338DF61BE93D550013C88F /* B3ConstrainedValue.h in Headers */,
+				0F2C63B81E6343F700C13839 /* B3GenericBlockInsertionSet.h in Headers */,
 				0F338E0E1BF0276C0013C88F /* B3DataSection.h in Headers */,
 				0F33FCFC1C1625BE00323F67 /* B3Dominators.h in Headers */,
 				0F6B8AD91C4EDDA200969052 /* B3DuplicateTails.h in Headers */,
@@ -8272,6 +8291,7 @@
 				A77A423E17A0BBFD00A8DB81 /* DFGAbstractHeap.h in Headers */,
 				A704D90317A0BAA8006BA554 /* DFGAbstractInterpreter.h in Headers */,
 				A704D90417A0BAA8006BA554 /* DFGAbstractInterpreterInlines.h in Headers */,
+				0F2C63C21E664A5C00C13839 /* B3NativeTraits.h in Headers */,
 				0F620177143FCD3F0068B77C /* DFGAbstractValue.h in Headers */,
 				0FD3E4021B618AAF00C80E1E /* DFGAdaptiveInferredPropertyValueWatchpoint.h in Headers */,
 				0F18D3D01B55A6E0002C5C9F /* DFGAdaptiveStructureWatchpoint.h in Headers */,
@@ -8404,6 +8424,7 @@
 				0F392C8A1B46188400844728 /* DFGOSRExitFuzz.h in Headers */,
 				0FEFC9AB1681A3B600567F53 /* DFGOSRExitJumpPlaceholder.h in Headers */,
 				0F235BEE17178E7300690C7F /* DFGOSRExitPreparation.h in Headers */,
+				0F2C63B71E6343ED00C13839 /* B3AtomicValue.h in Headers */,
 				0F6237981AE45CA700D402EA /* DFGPhantomInsertionPhase.h in Headers */,
 				0FFFC95C14EF90AF00C72532 /* DFGPhase.h in Headers */,
 				0F2B9CEB19D0BA7D00B1D1B5 /* DFGPhiChildren.h in Headers */,
@@ -8821,6 +8842,7 @@
 				79B819931DD25CF500DDC714 /* JSGlobalObjectInlines.h in Headers */,
 				A51007C1187CC3C600B38879 /* JSGlobalObjectInspectorController.h in Headers */,
 				A50E4B6418809DD50068A46D /* JSGlobalObjectRuntimeAgent.h in Headers */,
+				0F2C63C41E69EF9400C13839 /* B3MemoryValueInlines.h in Headers */,
 				A503FA2A188F105900110F14 /* JSGlobalObjectScriptDebugServer.h in Headers */,
 				A513E5C0185BFACC007E95AD /* JSInjectedScriptHost.h in Headers */,
 				A513E5C2185BFACC007E95AD /* JSInjectedScriptHostPrototype.h in Headers */,
@@ -9831,6 +9853,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				0FFA549716B8835000B3A982 /* A64DOpcode.cpp in Sources */,
+				0F2C63C01E660EA700C13839 /* AbstractMacroAssembler.cpp in Sources */,
 				AD4937C31DDBE6140077C807 /* AbstractModuleRecord.cpp in Sources */,
 				0F55F0F414D1063900AC7649 /* AbstractPC.cpp in Sources */,
 				5370B4F51BF26202005C40FC /* AdaptiveInferredPropertyValueWatchpointBase.cpp in Sources */,
@@ -9841,7 +9864,6 @@
 				0FEC85731BDACDC70080FF74 /* AirCCallSpecial.cpp in Sources */,
 				0FEC85751BDACDC70080FF74 /* AirCode.cpp in Sources */,
 				0F61832B1C45BF070072450B /* AirCustom.cpp in Sources */,
-				DC454B8C1D00E822004C18AF /* AirDumpAsJS.cpp in Sources */,
 				0F4570381BE44C910062A629 /* AirEliminateDeadCode.cpp in Sources */,
 				0F61832C1C45BF070072450B /* AirEmitShuffle.cpp in Sources */,
 				0F4DE1CE1C4C1B54004D6C11 /* AirFixObviousSpills.cpp in Sources */,
@@ -10288,6 +10310,7 @@
 				9E729407190F01A5001A91B5 /* InitializeThreading.cpp in Sources */,
 				A513E5B7185B8BD3007E95AD /* InjectedScript.cpp in Sources */,
 				A514B2C2185A684400F3C7CB /* InjectedScriptBase.cpp in Sources */,
+				0F2C63B61E6343EA00C13839 /* B3AtomicValue.cpp in Sources */,
 				A58E35911860DECF001F24FE /* InjectedScriptHost.cpp in Sources */,
 				A513E5CA185F9624007E95AD /* InjectedScriptManager.cpp in Sources */,
 				A5840E20187B7B8600843B10 /* InjectedScriptModule.cpp in Sources */,
@@ -10306,6 +10329,7 @@
 				E35E035F1B7AB43E0073AD2A /* InspectorInstrumentationObject.cpp in Sources */,
 				A532438B18568335002ED692 /* InspectorProtocolObjects.cpp in Sources */,
 				A50E4B6118809DD50068A46D /* InspectorRuntimeAgent.cpp in Sources */,
+				0F2C63BB1E63440A00C13839 /* AirBlockInsertionSet.cpp in Sources */,
 				A55165D21BDF0B98003B75C1 /* InspectorScriptProfilerAgent.cpp in Sources */,
 				A593CF821840377100BFCE27 /* InspectorValues.cpp in Sources */,
 				147F39CF107EC37600427A48 /* InternalFunction.cpp in Sources */,

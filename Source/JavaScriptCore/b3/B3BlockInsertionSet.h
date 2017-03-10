@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +27,7 @@
 
 #if ENABLE(B3_JIT)
 
+#include "B3GenericBlockInsertionSet.h"
 #include "B3Procedure.h"
 #include <wtf/Insertion.h>
 #include <wtf/Vector.h>
@@ -35,26 +36,13 @@ namespace JSC { namespace B3 {
 
 class InsertionSet;
 
-typedef WTF::Insertion<std::unique_ptr<BasicBlock>> BlockInsertion;
+typedef GenericBlockInsertionSet<BasicBlock>::BlockInsertion BlockInsertion;
 
-class BlockInsertionSet {
+class BlockInsertionSet : public GenericBlockInsertionSet<BasicBlock> {
 public:
     BlockInsertionSet(Procedure&);
     ~BlockInsertionSet();
     
-    void insert(BlockInsertion&&);
-
-    // Insert a new block at a given index.
-    BasicBlock* insert(unsigned index, double frequency = PNaN);
-
-    // Inserts a new block before the given block. Usually you will not pass the frequency
-    // argument. Passing PNaN causes us to just use the frequency of the 'before' block. That's
-    // usually what you want.
-    BasicBlock* insertBefore(BasicBlock* before, double frequency = PNaN);
-
-    // Inserts a new block after the given block.
-    BasicBlock* insertAfter(BasicBlock* after, double frequency = PNaN);
-
     // A helper to split a block when forward iterating over it. It creates a new block to hold
     // everything before the instruction at valueIndex. The current block is left with
     // everything at and after valueIndex. If the optional InsertionSet is provided, it will get
@@ -80,12 +68,9 @@ public:
     BasicBlock* splitForward(
         BasicBlock*, unsigned& valueIndex, InsertionSet* = nullptr,
         double frequency = PNaN);
-    
-    bool execute();
 
 private:
     Procedure& m_proc;
-    Vector<BlockInsertion, 8> m_insertions;
 };
 
 } } // namespace JSC::B3

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2012, 2014-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,6 +36,7 @@
 #include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/SharedTask.h>
+#include <wtf/Vector.h>
 #include <wtf/WeakRandom.h>
 
 namespace JSC {
@@ -50,8 +51,28 @@ namespace DFG {
 struct OSRExit;
 }
 
+class AbstractMacroAssemblerBase {
+public:
+    enum StatusCondition {
+        Success,
+        Failure
+    };
+    
+    static StatusCondition invert(StatusCondition condition)
+    {
+        switch (condition) {
+        case Success:
+            return Failure;
+        case Failure:
+            return Success;
+        }
+        RELEASE_ASSERT_NOT_REACHED();
+        return Success;
+    }
+};
+
 template <class AssemblerType, class MacroAssemblerType>
-class AbstractMacroAssembler {
+class AbstractMacroAssembler : public AbstractMacroAssemblerBase {
 public:
     typedef AbstractMacroAssembler<AssemblerType, MacroAssemblerType> AbstractMacroAssemblerType;
     typedef AssemblerType AssemblerType_T;
@@ -1108,3 +1129,16 @@ AbstractMacroAssembler<AssemblerType, MacroAssemblerType>::Address::indexedBy(
 #endif // ENABLE(ASSEMBLER)
 
 } // namespace JSC
+
+#if ENABLE(ASSEMBLER)
+
+namespace WTF {
+
+class PrintStream;
+
+void printInternal(PrintStream& out, JSC::AbstractMacroAssemblerBase::StatusCondition);
+
+} // namespace WTF
+
+#endif // ENABLE(ASSEMBLER)
+

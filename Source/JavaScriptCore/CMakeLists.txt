@@ -64,6 +64,7 @@ set(JavaScriptCore_SOURCES
     API/OpaqueJSString.cpp
 
     assembler/ARMAssembler.cpp
+    assembler/AbstractMacroAssembler.cpp
     assembler/LinkBuffer.cpp
     assembler/MacroAssembler.cpp
     assembler/MacroAssemblerARM.cpp
@@ -76,12 +77,12 @@ set(JavaScriptCore_SOURCES
     b3/air/AirAllocateStack.cpp
     b3/air/AirArg.cpp
     b3/air/AirBasicBlock.cpp
+    b3/air/AirBlockInsertionSet.cpp
     b3/air/AirCCallSpecial.cpp
     b3/air/AirCCallingConvention.cpp
     b3/air/AirCode.cpp
     b3/air/AirCustom.cpp
     b3/air/AirDisassembler.cpp
-    b3/air/AirDumpAsJS.cpp
     b3/air/AirEliminateDeadCode.cpp
     b3/air/AirEmitShuffle.cpp
     b3/air/AirFixObviousSpills.cpp
@@ -110,6 +111,7 @@ set(JavaScriptCore_SOURCES
     b3/air/AirValidate.cpp
 
     b3/B3ArgumentRegValue.cpp
+    b3/B3AtomicValue.cpp
     b3/B3Bank.cpp
     b3/B3BasicBlock.cpp
     b3/B3BlockInsertionSet.cpp

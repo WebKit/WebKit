@@ -56,6 +56,8 @@ private:
     HashMap<ValueKey, Matches> m_map;
 };
 
+bool pureCSE(Procedure&);
+
 } } // namespace JSC::B3
 
 #endif // ENABLE(B3_JIT)

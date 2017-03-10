@@ -32,7 +32,7 @@
 #include "B3BasicBlockInlines.h"
 #include "B3Dominators.h"
 #include "B3InsertionSetInlines.h"
-#include "B3MemoryValue.h"
+#include "B3MemoryValueInlines.h"
 #include "B3PhaseScope.h"
 #include "B3ProcedureInlines.h"
 #include "B3ValueInlines.h"
@@ -203,12 +203,8 @@ private:
                                 if (!candidatePointer->hasIntPtr())
                                     return false;
                                 
-                                intptr_t offset = desiredOffset(candidatePointer);
-                                if (!B3::isRepresentableAs<int32_t>(static_cast<int64_t>(offset)))
-                                    return false;
-                                return Air::Arg::isValidAddrForm(
-                                    static_cast<int32_t>(offset),
-                                    widthForBytes(memoryValue->accessByteSize()));
+                                int64_t offset = desiredOffset(candidatePointer);
+                                return memoryValue->isLegalOffset(offset);
                             });
                         
                         if (bestPointer) {
