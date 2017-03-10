@@ -30,6 +30,8 @@
 
 #include "GPUBuffer.h"
 #include "GPULibrary.h"
+#include "GPUTexture.h"
+#include "GPUTextureDescriptor.h"
 #include "Logging.h"
 
 namespace WebCore {
@@ -62,6 +64,11 @@ RefPtr<GPULibrary> GPUDevice::createLibrary(const String& sourceCode)
 RefPtr<GPUBuffer> GPUDevice::createBufferFromData(ArrayBufferView* data)
 {
     return GPUBuffer::create(this, data);
+}
+
+RefPtr<GPUTexture> GPUDevice::createTexture(GPUTextureDescriptor* descriptor)
+{
+    return GPUTexture::create(this, descriptor);
 }
 
 #if !PLATFORM(COCOA)

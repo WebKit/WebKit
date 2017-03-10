@@ -1374,6 +1374,12 @@
 		316BDBA61E71FA6F00DE0D5A /* GPUBufferMetal.mm in Sources */ = {isa = PBXBuildFile; fileRef = 316BDBA51E71FA6F00DE0D5A /* GPUBufferMetal.mm */; };
 		316BDBA91E71FA9300DE0D5A /* GPUBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 316BDBA71E71FA9300DE0D5A /* GPUBuffer.cpp */; };
 		316BDBAA1E71FA9300DE0D5A /* GPUBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 316BDBA81E71FA9300DE0D5A /* GPUBuffer.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		316BDBAE1E73549C00DE0D5A /* GPUTextureMetal.mm in Sources */ = {isa = PBXBuildFile; fileRef = 316BDBAD1E73549C00DE0D5A /* GPUTextureMetal.mm */; };
+		316BDBB11E7354BB00DE0D5A /* GPUTexture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 316BDBAF1E7354BB00DE0D5A /* GPUTexture.cpp */; };
+		316BDBB21E7354BB00DE0D5A /* GPUTexture.h in Headers */ = {isa = PBXBuildFile; fileRef = 316BDBB01E7354BB00DE0D5A /* GPUTexture.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		316BDBB41E7357B000DE0D5A /* GPUTextureDescriptorMetal.mm in Sources */ = {isa = PBXBuildFile; fileRef = 316BDBB31E7357B000DE0D5A /* GPUTextureDescriptorMetal.mm */; };
+		316BDBB71E7357CB00DE0D5A /* GPUTextureDescriptor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 316BDBB51E7357CB00DE0D5A /* GPUTextureDescriptor.cpp */; };
+		316BDBB81E7357CB00DE0D5A /* GPUTextureDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 316BDBB61E7357CB00DE0D5A /* GPUTextureDescriptor.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		316FE0710E6CCBEE00BF6088 /* JSCSSKeyframeRule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 316FE06D0E6CCBEE00BF6088 /* JSCSSKeyframeRule.cpp */; };
 		316FE0720E6CCBEE00BF6088 /* JSCSSKeyframeRule.h in Headers */ = {isa = PBXBuildFile; fileRef = 316FE06E0E6CCBEE00BF6088 /* JSCSSKeyframeRule.h */; };
 		316FE0730E6CCBEE00BF6088 /* JSCSSKeyframesRule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 316FE06F0E6CCBEE00BF6088 /* JSCSSKeyframesRule.cpp */; };
@@ -8739,6 +8745,12 @@
 		316BDBA51E71FA6F00DE0D5A /* GPUBufferMetal.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GPUBufferMetal.mm; sourceTree = "<group>"; };
 		316BDBA71E71FA9300DE0D5A /* GPUBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GPUBuffer.cpp; sourceTree = "<group>"; };
 		316BDBA81E71FA9300DE0D5A /* GPUBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GPUBuffer.h; sourceTree = "<group>"; };
+		316BDBAD1E73549C00DE0D5A /* GPUTextureMetal.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GPUTextureMetal.mm; sourceTree = "<group>"; };
+		316BDBAF1E7354BB00DE0D5A /* GPUTexture.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GPUTexture.cpp; sourceTree = "<group>"; };
+		316BDBB01E7354BB00DE0D5A /* GPUTexture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GPUTexture.h; sourceTree = "<group>"; };
+		316BDBB31E7357B000DE0D5A /* GPUTextureDescriptorMetal.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GPUTextureDescriptorMetal.mm; sourceTree = "<group>"; };
+		316BDBB51E7357CB00DE0D5A /* GPUTextureDescriptor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GPUTextureDescriptor.cpp; sourceTree = "<group>"; };
+		316BDBB61E7357CB00DE0D5A /* GPUTextureDescriptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GPUTextureDescriptor.h; sourceTree = "<group>"; };
 		316FE06D0E6CCBEE00BF6088 /* JSCSSKeyframeRule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCSSKeyframeRule.cpp; sourceTree = "<group>"; };
 		316FE06E0E6CCBEE00BF6088 /* JSCSSKeyframeRule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCSSKeyframeRule.h; sourceTree = "<group>"; };
 		316FE06F0E6CCBEE00BF6088 /* JSCSSKeyframesRule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCSSKeyframesRule.cpp; sourceTree = "<group>"; };
@@ -17563,6 +17575,10 @@
 				316BDB931E70C89700DE0D5A /* GPUFunction.h */,
 				316BDB981E70CBBF00DE0D5A /* GPULibrary.cpp */,
 				316BDB991E70CBBF00DE0D5A /* GPULibrary.h */,
+				316BDBB51E7357CB00DE0D5A /* GPUTextureDescriptor.cpp */,
+				316BDBB61E7357CB00DE0D5A /* GPUTextureDescriptor.h */,
+				316BDBAF1E7354BB00DE0D5A /* GPUTexture.cpp */,
+				316BDBB01E7354BB00DE0D5A /* GPUTexture.h */,
 				498770D71242C535002226BA /* Texture.cpp */,
 				498770D81242C535002226BA /* Texture.h */,
 				498770D91242C535002226BA /* TilingData.cpp */,
@@ -22658,6 +22674,8 @@
 				316BDB881E6E141C00DE0D5A /* GPUDeviceMetal.mm */,
 				316BDB961E70CA2400DE0D5A /* GPUFunctionMetal.mm */,
 				316BDB9C1E70CD9000DE0D5A /* GPULibraryMetal.mm */,
+				316BDBB31E7357B000DE0D5A /* GPUTextureDescriptorMetal.mm */,
+				316BDBAD1E73549C00DE0D5A /* GPUTextureMetal.mm */,
 				2D0B4AA918DA1CCD00434DE1 /* IOSurface.h */,
 				2D0B4AAA18DA1CCD00434DE1 /* IOSurface.mm */,
 				AD9FF6E01908391D003B61E0 /* IOSurfacePoolCocoa.mm */,
@@ -28577,6 +28595,7 @@
 				BC2272BD0E82EAAE00E7F975 /* StyleRareNonInheritedData.h in Headers */,
 				BC2272870E82E70700E7F975 /* StyleReflection.h in Headers */,
 				E461802D1C8DD2900026C02C /* StyleRelations.h in Headers */,
+				316BDBB81E7357CB00DE0D5A /* GPUTextureDescriptor.h in Headers */,
 				5750A9751E68D00000705C4A /* CryptoKeyEC.h in Headers */,
 				E4D58EB517B4DBDC00CBDCA8 /* StyleResolveForDocument.h in Headers */,
 				E139866415478474001E3F65 /* StyleResolver.h in Headers */,
@@ -29289,6 +29308,7 @@
 				93F199ED08245E59001E9ABC /* XSLTProcessor.h in Headers */,
 				E1BE512E0CF6C512002EA959 /* XSLTUnicodeSort.h in Headers */,
 				977E2E0F12F0FC9C00C13379 /* XSSAuditor.h in Headers */,
+				316BDBB21E7354BB00DE0D5A /* GPUTexture.h in Headers */,
 				977E2E0F12F0FC9C00C13380 /* XSSAuditorDelegate.h in Headers */,
 				A5416FE618810EF80009FC5F /* YouTubeEmbedShadowElement.h in Headers */,
 				7A5515F5191830A3009687D2 /* YouTubePluginReplacement.h in Headers */,
@@ -30153,6 +30173,7 @@
 				0F97A658155DA81E00FADD4C /* DisplayRefreshMonitorIOS.mm in Sources */,
 				49AF2D6C14435D210016A784 /* DisplayRefreshMonitorMac.cpp in Sources */,
 				2D29ECC7192ECC8300984B78 /* DisplayRefreshMonitorManager.cpp in Sources */,
+				316BDBAE1E73549C00DE0D5A /* GPUTextureMetal.mm in Sources */,
 				CD52481A18E200ED0008A07D /* DisplaySleepDisabler.cpp in Sources */,
 				5D8C4DBF1428222C0026CE72 /* DisplaySleepDisablerCocoa.cpp in Sources */,
 				FD31609012B026F700C1A359 /* Distance.cpp in Sources */,
@@ -30678,6 +30699,7 @@
 				7C522D4B15B477E8009B7C95 /* InspectorOverlay.cpp in Sources */,
 				4F6FDD641341DEDD001F8EE3 /* InspectorPageAgent.cpp in Sources */,
 				99CC0B6618BE9F15006CEBCC /* InspectorReplayAgent.cpp in Sources */,
+				316BDBB41E7357B000DE0D5A /* GPUTextureDescriptorMetal.mm in Sources */,
 				82AB1773125C826700C5069D /* InspectorStyleSheet.cpp in Sources */,
 				754133AA102E00F400075D00 /* InspectorTimelineAgent.cpp in Sources */,
 				A54A0C5D1DB6D9C00017A90B /* InspectorWorkerAgent.cpp in Sources */,
@@ -31865,6 +31887,7 @@
 				1AF8E13312565A4400230FF7 /* ProxyServer.cpp in Sources */,
 				1AF8E1C3125673E000230FF7 /* ProxyServerCFNet.cpp in Sources */,
 				FF945ECB161F7F3600971BC8 /* PseudoElement.cpp in Sources */,
+				316BDBB11E7354BB00DE0D5A /* GPUTexture.cpp in Sources */,
 				0081FEFF16B0A2B6008AAA7A /* PublicSuffixMac.mm in Sources */,
 				CDEE393717974259001D7580 /* PublicURLManager.cpp in Sources */,
 				550A0BC9085F6039007353D6 /* QualifiedName.cpp in Sources */,
@@ -32668,6 +32691,7 @@
 				AAA728F816D1D8BC00D3BBC6 /* WebAccessibilityObjectWrapperIOS.mm in Sources */,
 				AA478A8016CD70C3007D1BB4 /* WebAccessibilityObjectWrapperMac.mm in Sources */,
 				2D3EF4491917915C00034184 /* WebActionDisablingCALayerDelegate.mm in Sources */,
+				316BDBB71E7357CB00DE0D5A /* GPUTextureDescriptor.cpp in Sources */,
 				120DE3ED1C86CA3E00B6D4DD /* WebAnimation.cpp in Sources */,
 				CDE667A41E4BBF1500E8154A /* WebAudioBufferList.cpp in Sources */,
 				07D637411BB0B11300256CE9 /* WebAudioSourceProviderAVFObjC.mm in Sources */,

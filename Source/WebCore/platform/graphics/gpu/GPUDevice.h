@@ -48,6 +48,8 @@ namespace WebCore {
 
 class GPUBuffer;
 class GPULibrary;
+class GPUTexture;
+class GPUTextureDescriptor;
 
 class GPUDevice : public RefCounted<GPUDevice> {
 public:
@@ -65,6 +67,7 @@ public:
 
     WEBCORE_EXPORT RefPtr<GPULibrary> createLibrary(const String& sourceCode);
     WEBCORE_EXPORT RefPtr<GPUBuffer> createBufferFromData(ArrayBufferView* data);
+    WEBCORE_EXPORT RefPtr<GPUTexture> createTexture(GPUTextureDescriptor*);
 
 private:
     GPUDevice();
