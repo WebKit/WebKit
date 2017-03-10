@@ -2978,7 +2978,7 @@ public:
         return FunctionPtr(reinterpret_cast<void(*)()>(MIPSAssembler::readCallTarget(call.dataLocation())));
     }
 
-    static void replaceWithJump(CodeLocationLabel instructionStart)
+    static void replaceWithBreakpoint(CodeLocationLabel instructionStart)
     {
         MIPSAssembler::replaceWithBkpt(instructionStart.executableAddress());
     }

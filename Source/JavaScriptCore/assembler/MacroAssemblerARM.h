@@ -1482,7 +1482,7 @@ public:
         return FunctionPtr(reinterpret_cast<void(*)()>(ARMAssembler::readCallTarget(call.dataLocation())));
     }
 
-    static void replaceWithJump(CodeLocationLabel instructionStart)
+    static void replaceWithBreakpoint(CodeLocationLabel instructionStart)
     {
         ARMAssembler::replaceWithBkpt(instructionStart.executableAddress());
     }
