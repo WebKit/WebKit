@@ -20,6 +20,7 @@ find_library(COREAUDIO_LIBRARY CoreAudio)
 find_library(DISKARBITRATION_LIBRARY DiskArbitration)
 find_library(IOKIT_LIBRARY IOKit)
 find_library(IOSURFACE_LIBRARY IOSurface)
+find_library(METAL_LIBRARY Metal)
 find_library(OPENGL_LIBRARY OpenGL)
 find_library(QUARTZ_LIBRARY Quartz)
 find_library(QUARTZCORE_LIBRARY QuartzCore)
@@ -40,6 +41,7 @@ list(APPEND WebCore_LIBRARIES
     ${DISKARBITRATION_LIBRARY}
     ${IOKIT_LIBRARY}
     ${IOSURFACE_LIBRARY}
+    ${METAL_LIBRARY}
     ${OPENGL_LIBRARY}
     ${QUARTZ_LIBRARY}
     ${QUARTZCORE_LIBRARY}
@@ -215,6 +217,7 @@ list(APPEND WebCore_SOURCES
     crypto/mac/CryptoAlgorithmRSASSA_PKCS1_v1_5Mac.cpp
     crypto/mac/CryptoAlgorithmRSA_OAEPMac.cpp
     crypto/mac/CryptoAlgorithmRegistryMac.cpp
+    crypto/mac/CryptoKeyECMac.cpp
     crypto/mac/CryptoKeyMac.cpp
     crypto/mac/CryptoKeyRSAMac.cpp
     crypto/mac/SerializedCryptoKeyWrapMac.mm
@@ -303,6 +306,8 @@ list(APPEND WebCore_SOURCES
     platform/audio/AudioSession.cpp
 
     platform/audio/cocoa/MediaSessionManagerCocoa.cpp
+
+    platform/audio/mac/CAAudioStreamDescription.cpp
 
     platform/audio/mac/AudioBusMac.mm
     platform/audio/mac/AudioDestinationMac.cpp
@@ -430,6 +435,7 @@ list(APPEND WebCore_SOURCES
     platform/graphics/cocoa/IOSurfacePoolCocoa.mm
     platform/graphics/cocoa/WebActionDisablingCALayerDelegate.mm
     platform/graphics/cocoa/WebCoreCALayerExtras.mm
+    platform/graphics/cocoa/WebGPULayer.mm
 
     platform/graphics/cv/PixelBufferConformerCV.cpp
     platform/graphics/cv/TextureCacheCV.mm

@@ -1,5 +1,11 @@
 2017-03-09  Alex Christensen  <achristensen@webkit.org>
 
+        Fix CMake build
+
+        * PlatformMac.cmake:
+
+2017-03-09  Alex Christensen  <achristensen@webkit.org>
+
         Fix GTK build after r213696
 
         * CMakeLists.txt:
