@@ -676,3 +676,5 @@ fast/events/context-activated-by-key-event.html [ Skip ]
 webkit.org/b/168933 fast/regions/inline-block-inside-anonymous-overflow-with-covered-controls.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/168346 [ Sierra Debug ] editing/selection/move-by-word-visually-multi-space.html [ Pass Timeout ]
+
+webkit.org/b/169481 [ Debug ] webrtc/libwebrtc/descriptionGetters.html [ Pass Failure ]
