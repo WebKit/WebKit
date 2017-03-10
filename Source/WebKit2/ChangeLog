@@ -1,3 +1,16 @@
+2017-03-10  Brent Fulgham  <bfulgham@apple.com>
+
+        [WebRTC][WK2][iOS] Support com.apple.coremedia.compressionsession for more WebRTC Cases
+        https://bugs.webkit.org/show_bug.cgi?id=169480
+        <rdar://problem/30978577>
+
+        Reviewed by Youenn Fablet.
+
+        Always allow 'com.apple.coremedia.compressionsession' since it is also needed when sending
+        canvas data across a peer connection.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2017-03-10  Andy Estes  <aestes@apple.com>
 
         [QuickLook] Add WKNavigationDelegate SPI to notify when a password is requested

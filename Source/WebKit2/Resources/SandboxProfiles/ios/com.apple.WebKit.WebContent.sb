@@ -112,8 +112,7 @@
 
 ;; Media capture, microphone access
 (with-filter (extension "com.apple.webkit.microphone")
-    (allow device-microphone)
-    (allow mach-lookup (global-name "com.apple.coremedia.compressionsession")))
+    (allow device-microphone))
 
 ;; Media capture, camera access
 (with-filter (extension "com.apple.webkit.camera")
@@ -128,8 +127,7 @@
         (global-name "com.apple.cmio.AVCAssistant")
         (global-name "com.apple.cmio.IIDCVideoAssistant")
         ;; QuickTimeIIDCDigitizer assistant
-        (global-name "com.apple.IIDCAssistant")
-        (global-name "com.apple.coremedia.compressionsession"))
+        (global-name "com.apple.IIDCAssistant"))
     (allow iokit-open
         ;; QuickTimeUSBVDCDigitizer
         (iokit-user-client-class "IOUSBDeviceUserClientV2")
@@ -139,5 +137,6 @@
 ;; Support incoming video connections
 (allow mach-lookup
     (global-name "com.apple.audio.audiohald")
+    (global-name "com.apple.coremedia.compressionsession")
     (global-name "com.apple.coremedia.decompressionsession")
     (global-name "com.apple.coremedia.videoqueue"))
