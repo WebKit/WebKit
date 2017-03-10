@@ -1,3 +1,10 @@
+2017-03-10  Alex Christensen  <achristensen@webkit.org>
+
+        Fix CMake build.
+
+        * CMakeLists.txt:
+        Make more forwarding headers so we can find WasmFaultSignalHandler.h from WebProcess.cpp.
+
 2017-03-10  Mark Lam  <mark.lam@apple.com>
 
         [Re-landing] Implement a StackTrace utility object that can capture stack traces for debugging.

@@ -1,3 +1,10 @@
+2017-03-10  Alex Christensen  <achristensen@webkit.org>
+
+        Fix CMake build.
+
+        * WebView/WebNotification.h:
+        Don't assume we have already included something that includes NSObject.h.
+
 2017-03-09  Daniel Bates  <dabates@apple.com>
 
         Guard Credential Management implementation behind a runtime enabled feature flag

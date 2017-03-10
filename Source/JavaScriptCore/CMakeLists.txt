@@ -1247,6 +1247,7 @@ set(JavaScriptCore_FORWARDING_HEADERS_DIRECTORIES
     profiler
     replay
     runtime
+    wasm
     yarr
 
     collector/handles
