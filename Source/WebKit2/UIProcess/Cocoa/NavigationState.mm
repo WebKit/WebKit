@@ -168,6 +168,7 @@ void NavigationState::setNavigationDelegate(id <WKNavigationDelegate> delegate)
 #if USE(QUICK_LOOK)
     m_navigationDelegateMethods.webViewDidStartLoadForQuickLookDocumentInMainFrame = [delegate respondsToSelector:@selector(_webView:didStartLoadForQuickLookDocumentInMainFrameWithFileName:uti:)];
     m_navigationDelegateMethods.webViewDidFinishLoadForQuickLookDocumentInMainFrame = [delegate respondsToSelector:@selector(_webView:didFinishLoadForQuickLookDocumentInMainFrame:)];
+    m_navigationDelegateMethods.webViewDidRequestPasswordForQuickLookDocument = [delegate respondsToSelector:@selector(_webViewDidRequestPasswordForQuickLookDocument:)];
 #endif
 }
 
@@ -245,6 +246,20 @@ void NavigationState::navigationGestureSnapshotWasRemoved()
 
     [static_cast<id <WKNavigationDelegatePrivate>>(navigationDelegate) _webViewDidRemoveNavigationGestureSnapshot:m_webView];
 }
+
+#if USE(QUICK_LOOK)
+void NavigationState::didRequestPasswordForQuickLookDocument()
+{
+    if (!m_navigationDelegateMethods.webViewDidRequestPasswordForQuickLookDocument)
+        return;
+
+    auto navigationDelegate = m_navigationDelegate.get();
+    if (!navigationDelegate)
+        return;
+
+    [static_cast<id <WKNavigationDelegatePrivate>>(navigationDelegate) _webViewDidRequestPasswordForQuickLookDocument:m_webView];
+}
+#endif
 
 void NavigationState::didFirstPaint()
 {

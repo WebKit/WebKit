@@ -1,3 +1,17 @@
+2017-03-10  Andy Estes  <aestes@apple.com>
+
+        [QuickLook] Add WKNavigationDelegate SPI to notify when a password is requested
+        https://bugs.webkit.org/show_bug.cgi?id=169459
+        <rdar://problem/30621913>
+
+        Reviewed by Alex Christensen.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2Cocoa/QuickLook.mm:
+        (runTest):
+        (TEST):
+        (-[QuickLookPasswordNavigationDelegate _webViewDidRequestPasswordForQuickLookDocument:]):
+
 2017-03-10  Srinivasan Vijayaraghavan  <svijayaraghavan@apple.com>
 
         Add support for Bindings EWS

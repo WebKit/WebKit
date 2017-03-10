@@ -75,6 +75,9 @@ public:
     void navigationGestureDidEnd(bool willNavigate, WebBackForwardListItem&);
     void willRecordNavigationSnapshot(WebBackForwardListItem&);
     void navigationGestureSnapshotWasRemoved();
+#if USE(QUICK_LOOK)
+    void didRequestPasswordForQuickLookDocument();
+#endif
 
     void didFirstPaint();
 
@@ -191,6 +194,7 @@ private:
 #if USE(QUICK_LOOK)
         bool webViewDidStartLoadForQuickLookDocumentInMainFrame : 1;
         bool webViewDidFinishLoadForQuickLookDocumentInMainFrame : 1;
+        bool webViewDidRequestPasswordForQuickLookDocument : 1;
 #endif
     } m_navigationDelegateMethods;
 

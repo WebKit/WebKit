@@ -1,3 +1,19 @@
+2017-03-10  Andy Estes  <aestes@apple.com>
+
+        [QuickLook] Add WKNavigationDelegate SPI to notify when a password is requested
+        https://bugs.webkit.org/show_bug.cgi?id=169459
+        <rdar://problem/30621913>
+
+        Reviewed by Alex Christensen.
+
+        * UIProcess/API/Cocoa/WKNavigationDelegatePrivate.h:
+        * UIProcess/Cocoa/NavigationState.h:
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::setNavigationDelegate):
+        (WebKit::NavigationState::didRequestPasswordForQuickLookDocument):
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::requestPasswordForQuickLookDocument):
+
 2017-03-09  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS WK2] Layer content blurry with nested perspective and transforms

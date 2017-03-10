@@ -808,8 +808,11 @@ void PageClientImpl::requestPasswordForQuickLookDocument(const String& fileName,
         ASSERT(fileName == String { passwordView.documentName });
         [passwordView showPasswordFailureAlert];
         passwordView.userDidEnterPassword = passwordHandler;
-    } else
-        [m_webView _showPasswordViewWithDocumentName:fileName passwordHandler:passwordHandler];
+        return;
+    }
+
+    [m_webView _showPasswordViewWithDocumentName:fileName passwordHandler:passwordHandler];
+    NavigationState::fromWebPage(*m_webView->_page).didRequestPasswordForQuickLookDocument();
 }
 #endif
 

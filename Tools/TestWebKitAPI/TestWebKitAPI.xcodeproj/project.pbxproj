@@ -479,6 +479,7 @@
 		A13EBBAB1B87434600097110 /* PlatformUtilitiesCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0F139E721A423A2B00F590F5 /* PlatformUtilitiesCocoa.mm */; };
 		A13EBBB01B87436F00097110 /* BundleParametersPlugIn.mm in Sources */ = {isa = PBXBuildFile; fileRef = A13EBBAE1B87436F00097110 /* BundleParametersPlugIn.mm */; };
 		A13EBBB11B87438000097110 /* BundleParameters.mm in Sources */ = {isa = PBXBuildFile; fileRef = A13EBBAC1B87436F00097110 /* BundleParameters.mm */; };
+		A1409AD91E7254D4004949D9 /* password-protected.pages in Copy Resources */ = {isa = PBXBuildFile; fileRef = A1409AD81E7254AC004949D9 /* password-protected.pages */; };
 		A14FC5851B89739100D107EB /* WKWebViewConfigurationExtras.mm in Sources */ = {isa = PBXBuildFile; fileRef = A14FC5831B89739100D107EB /* WKWebViewConfigurationExtras.mm */; };
 		A14FC5881B8991BF00D107EB /* ContentFiltering.mm in Sources */ = {isa = PBXBuildFile; fileRef = A14FC5861B8991B600D107EB /* ContentFiltering.mm */; };
 		A14FC58B1B89927100D107EB /* ContentFilteringPlugIn.mm in Sources */ = {isa = PBXBuildFile; fileRef = A14FC5891B89927100D107EB /* ContentFilteringPlugIn.mm */; };
@@ -647,6 +648,7 @@
 			dstPath = TestWebKitAPI.resources;
 			dstSubfolderSpec = 7;
 			files = (
+				A1409AD91E7254D4004949D9 /* password-protected.pages in Copy Resources */,
 				5120C83E1E67678F0025B250 /* WebsiteDataStoreCustomPaths.html in Copy Resources */,
 				F4856CA31E649EA8009D7EE7 /* attachment-element.html in Copy Resources */,
 				8361F1781E610B4E00759B25 /* link-with-download-attribute-with-slashes.html in Copy Resources */,
@@ -1228,6 +1230,7 @@
 		A13EBBA91B87428D00097110 /* WebProcessPlugIn.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebProcessPlugIn.mm; sourceTree = "<group>"; };
 		A13EBBAC1B87436F00097110 /* BundleParameters.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BundleParameters.mm; sourceTree = "<group>"; };
 		A13EBBAE1B87436F00097110 /* BundleParametersPlugIn.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BundleParametersPlugIn.mm; sourceTree = "<group>"; };
+		A1409AD81E7254AC004949D9 /* password-protected.pages */ = {isa = PBXFileReference; lastKnownFileType = file; path = "password-protected.pages"; sourceTree = "<group>"; };
 		A14FC5831B89739100D107EB /* WKWebViewConfigurationExtras.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebViewConfigurationExtras.mm; sourceTree = "<group>"; };
 		A14FC5841B89739100D107EB /* WKWebViewConfigurationExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKWebViewConfigurationExtras.h; sourceTree = "<group>"; };
 		A14FC5861B8991B600D107EB /* ContentFiltering.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ContentFiltering.mm; sourceTree = "<group>"; };
@@ -1836,6 +1839,7 @@
 				CEBCA1341E3A803400C73293 /* page-with-csp-iframe.html */,
 				CEBCA1371E3A803400C73293 /* page-without-csp.html */,
 				CEBCA1361E3A803400C73293 /* page-without-csp-iframe.html */,
+				A1409AD81E7254AC004949D9 /* password-protected.pages */,
 				F4F405BB1D4C0CF8007A9707 /* skinny-autoplaying-video-with-audio.html */,
 				515BE16E1D4288FF00DD7C68 /* StoreBlobToBeDeleted.html */,
 				51714EB21CF8C761004723C4 /* WebProcessKillIDBCleanup-1.html */,

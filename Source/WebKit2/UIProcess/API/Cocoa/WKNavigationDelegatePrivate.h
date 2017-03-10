@@ -70,6 +70,7 @@ static const WKNavigationResponsePolicy _WKNavigationResponsePolicyBecomeDownloa
 #if TARGET_OS_IPHONE
 - (void)_webView:(WKWebView *)webView didStartLoadForQuickLookDocumentInMainFrameWithFileName:(NSString *)fileName uti:(NSString *)uti;
 - (void)_webView:(WKWebView *)webView didFinishLoadForQuickLookDocumentInMainFrame:(NSData *)documentData;
+- (void)_webViewDidRequestPasswordForQuickLookDocument:(WKWebView *)webView;
 #endif
 
 @end
