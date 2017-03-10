@@ -320,7 +320,7 @@ void webkit_security_manager_register_uri_scheme_as_empty_document(WebKitSecurit
  * Whether @scheme is considered as an empty document scheme.
  * See also webkit_security_manager_register_uri_scheme_as_empty_document().
  *
- * Returns: %TRUE if @scheme is a an empty document scheme or %FALSE otherwise.
+ * Returns: %TRUE if @scheme is an empty document scheme or %FALSE otherwise.
  */
 gboolean webkit_security_manager_uri_scheme_is_empty_document(WebKitSecurityManager* manager, const char* scheme)
 {

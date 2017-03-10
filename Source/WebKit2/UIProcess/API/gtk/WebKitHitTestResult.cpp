@@ -380,7 +380,7 @@ gboolean webkit_hit_test_result_context_is_selection(WebKitHitTestResult* hitTes
  * Gets the value of the #WebKitHitTestResult:link-uri property.
  *
  * Returns: the URI of the link element in the coordinates of the Hit Test,
- *    or %NULL if there ins't a link element in @hit_test_result context
+ *    or %NULL if there isn't a link element in @hit_test_result context
  */
 const gchar* webkit_hit_test_result_get_link_uri(WebKitHitTestResult* hitTestResult)
 {
@@ -396,7 +396,7 @@ const gchar* webkit_hit_test_result_get_link_uri(WebKitHitTestResult* hitTestRes
  * Gets the value of the #WebKitHitTestResult:link-title property.
  *
  * Returns: the title of the link element in the coordinates of the Hit Test,
- *    or %NULL if there ins't a link element in @hit_test_result context or the
+ *    or %NULL if there isn't a link element in @hit_test_result context or the
  *    link element doesn't have a title
  */
 const gchar* webkit_hit_test_result_get_link_title(WebKitHitTestResult* hitTestResult)
@@ -413,7 +413,7 @@ const gchar* webkit_hit_test_result_get_link_title(WebKitHitTestResult* hitTestR
  * Gets the value of the #WebKitHitTestResult:link-label property.
  *
  * Returns: the label of the link element in the coordinates of the Hit Test,
- *    or %NULL if there ins't a link element in @hit_test_result context or the
+ *    or %NULL if there isn't a link element in @hit_test_result context or the
  *    link element doesn't have a label
  */
 const gchar* webkit_hit_test_result_get_link_label(WebKitHitTestResult* hitTestResult)
@@ -430,7 +430,7 @@ const gchar* webkit_hit_test_result_get_link_label(WebKitHitTestResult* hitTestR
  * Gets the value of the #WebKitHitTestResult:image-uri property.
  *
  * Returns: the URI of the image element in the coordinates of the Hit Test,
- *    or %NULL if there ins't an image element in @hit_test_result context
+ *    or %NULL if there isn't an image element in @hit_test_result context
  */
 const gchar* webkit_hit_test_result_get_image_uri(WebKitHitTestResult* hitTestResult)
 {
@@ -446,7 +446,7 @@ const gchar* webkit_hit_test_result_get_image_uri(WebKitHitTestResult* hitTestRe
  * Gets the value of the #WebKitHitTestResult:media-uri property.
  *
  * Returns: the URI of the media element in the coordinates of the Hit Test,
- *    or %NULL if there ins't a media element in @hit_test_result context
+ *    or %NULL if there isn't a media element in @hit_test_result context
  */
 const gchar* webkit_hit_test_result_get_media_uri(WebKitHitTestResult* hitTestResult)
 {

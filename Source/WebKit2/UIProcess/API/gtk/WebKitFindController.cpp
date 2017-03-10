@@ -345,7 +345,7 @@ guint webkit_find_controller_get_max_match_count(WebKitFindController* findContr
  * @find_controller: the #WebKitFindController
  *
  * Gets the #WebKitWebView this find controller is associated to. Do
- * not unref the returned instance as it belongs to the
+ * not dereference the returned instance as it belongs to the
  * #WebKitFindController.
  *
  * Returns: (transfer none): the #WebKitWebView.

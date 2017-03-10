@@ -197,7 +197,7 @@ WebKitFileChooserRequest* webkitFileChooserRequestCreate(API::OpenPanelParameter
  * Returns: (array zero-terminated=1) (transfer none): a
  * %NULL-terminated array of strings if a list of accepted MIME types
  * is defined or %NULL otherwise, meaning that any MIME type should be
- * accepted. This array and its contents are owned by WebKitGTK+ and
+ * accepted. This array and its contents are owned by WebKit and
  * should not be modified or freed.
  */
 const gchar* const* webkit_file_chooser_request_get_mime_types(WebKitFileChooserRequest* request)
@@ -239,7 +239,7 @@ const gchar* const* webkit_file_chooser_request_get_mime_types(WebKitFileChooser
  *
  * Returns: (transfer none): a #GtkFileFilter if a list of accepted
  * MIME types is defined or %NULL otherwise. The returned object is
- * owned by WebKitGTK+ should not be modified or freed.
+ * owned by WebKit should not be modified or freed.
  */
 GtkFileFilter* webkit_file_chooser_request_get_mime_types_filter(WebKitFileChooserRequest* request)
 {
@@ -329,7 +329,7 @@ void webkit_file_chooser_request_select_files(WebKitFileChooserRequest* request,
  * Returns: (array zero-terminated=1) (transfer none): a
  * %NULL-terminated array of strings if there are selected files
  * associated with the request or %NULL otherwise. This array and its
- * contents are owned by WebKitGTK+ and should not be modified or
+ * contents are owned by WebKit and should not be modified or
  * freed.
  */
 const gchar* const* webkit_file_chooser_request_get_selected_files(WebKitFileChooserRequest* request)

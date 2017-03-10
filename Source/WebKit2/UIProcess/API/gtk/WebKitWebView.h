@@ -111,7 +111,7 @@ typedef enum {
  * @WEBKIT_LOAD_REDIRECTED: A provisional data source received
  * a server redirect.
  * @WEBKIT_LOAD_COMMITTED: The content started arriving for a page load.
- * The necessary transport requirements are stabilished, and the
+ * The necessary transport requirements are established, and the
  * load is being performed.
  * @WEBKIT_LOAD_FINISHED: Load completed. All resources are done loading
  * or there was an error during the load operation.

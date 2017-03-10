@@ -153,7 +153,7 @@ WebKitContextMenuItem* webkit_context_menu_item_new(GtkAction* action)
  * load operation will be stopped. You can get the #GtkAction of a
  * #WebKitContextMenuItem created with a #WebKitContextMenuAction with
  * webkit_context_menu_item_get_action() and connect to #GtkAction::activate signal
- * to be notified when the item is activated. But you can't prevent the asociated
+ * to be notified when the item is activated. But you can't prevent the associated
  * action from being performed.
  *
  * Returns: the newly created #WebKitContextMenuItem object.

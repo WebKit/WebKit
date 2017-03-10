@@ -78,7 +78,7 @@ typedef enum {
  * @WEBKIT_PLUGIN_ERROR_FAILED: Generic plugin load failure
  * @WEBKIT_PLUGIN_ERROR_CANNOT_FIND_PLUGIN: Load failure due to missing plugin
  * @WEBKIT_PLUGIN_ERROR_CANNOT_LOAD_PLUGIN: Load failure due to inability to load plugin
- * @WEBKIT_PLUGIN_ERROR_JAVA_UNAVAILABLE: Load failue due to missing Java support that is required to load plugin
+ * @WEBKIT_PLUGIN_ERROR_JAVA_UNAVAILABLE: Load failure due to missing Java support that is required to load plugin
  * @WEBKIT_PLUGIN_ERROR_CONNECTION_CANCELLED: Load failure due to connection cancellation
  * @WEBKIT_PLUGIN_ERROR_WILL_HANDLE_LOAD: Load failure since plugin handles the load
  *
@@ -123,9 +123,9 @@ typedef enum {
 
 /**
  * WebKitJavascriptError:
- * @WEBKIT_JAVASCRIPT_ERROR_SCRIPT_FAILED: An exception was raised in Javascript execution
+ * @WEBKIT_JAVASCRIPT_ERROR_SCRIPT_FAILED: An exception was raised in JavaScript execution
  *
- * Enum values used to denote errors happending when executing Javascript
+ * Enum values used to denote errors happening when executing JavaScript
  */
 typedef enum {
     WEBKIT_JAVASCRIPT_ERROR_SCRIPT_FAILED = 699
@@ -135,7 +135,7 @@ typedef enum {
  * WebKitSnapshotError:
  * @WEBKIT_SNAPSHOT_ERROR_FAILED_TO_CREATE: An error occurred when creating a webpage snapshot.
  *
- * Enum values used to denote errors happending when creating snapshots of #WebKitWebView
+ * Enum values used to denote errors happening when creating snapshots of #WebKitWebView
  */
 typedef enum {
     WEBKIT_SNAPSHOT_ERROR_FAILED_TO_CREATE = 799

@@ -39,7 +39,7 @@ using namespace WebCore;
  *
  * WebKitResponsePolicyDecision represents a policy decision for a
  * resource response, whether from the network or the local system.
- * A very common usecase for these types of decision is deciding
+ * A very common use case for these types of decision is deciding
  * whether or not to download a particular resource or to load it
  * normally.
  */

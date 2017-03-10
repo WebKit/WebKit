@@ -71,7 +71,7 @@ static void webkit_policy_decision_class_init(WebKitPolicyDecisionClass* decisio
  * webkit_policy_decision_use:
  * @decision: a #WebKitPolicyDecision
  *
- * Accept the action which triggerd this decision.
+ * Accept the action which triggered this decision.
  */
 void webkit_policy_decision_use(WebKitPolicyDecision* decision)
 {
@@ -88,7 +88,7 @@ void webkit_policy_decision_use(WebKitPolicyDecision* decision)
  * webkit_policy_decision_ignore:
  * @decision: a #WebKitPolicyDecision
  *
- * Ignore the action which triggerd this decision. For instance, for a
+ * Ignore the action which triggered this decision. For instance, for a
  * #WebKitResponsePolicyDecision, this would cancel the request.
  */
 void webkit_policy_decision_ignore(WebKitPolicyDecision* decision)

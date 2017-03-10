@@ -1066,7 +1066,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      * @web_view: the #WebKitWebView on which the signal is emitted
      * @load_event: the #WebKitLoadEvent
      *
-     * Emitted when the a load operation in @web_view changes.
+     * Emitted when a load operation in @web_view changes.
      * The signal is always emitted with %WEBKIT_LOAD_STARTED when a
      * new load request is made and %WEBKIT_LOAD_FINISHED when the load
      * finishes successfully or due to an error. When the ongoing load
@@ -1251,7 +1251,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      * <function>window.showModalDialog</function>. The purpose of
      * this signal is to allow the client application to prepare the
      * new view to behave as modal. Once the signal is emitted a new
-     * mainloop will be run to block user interaction in the parent
+     * main loop will be run to block user interaction in the parent
      * #WebKitWebView until the new dialog is closed.
      */
     signals[RUN_AS_MODAL] =
@@ -1478,7 +1478,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      * @web_view: the #WebKitWebView on which the signal is emitted
      * @print_operation: the #WebKitPrintOperation that will handle the print request
      *
-     * Emitted when printing is requested on @web_view, usually by a javascript call,
+     * Emitted when printing is requested on @web_view, usually by a JavaScript call,
      * before the print dialog is shown. This signal can be used to set the initial
      * print settings and page setup of @print_operation to be used as default values in
      * the print dialog. You can call webkit_print_operation_set_print_settings() and
@@ -2295,7 +2295,7 @@ WebKitUserContentManager* webkit_web_view_get_user_content_manager(WebKitWebView
  * @web_view: a #WebKitWebView
  *
  * Get whether a #WebKitWebView is ephemeral. To create an ephemeral #WebKitWebView you need to
- * use g_object_new() and pass is-ephemeral propery with %TRUE value. See
+ * use g_object_new() and pass is-ephemeral property with %TRUE value. See
  * #WebKitWebView:is-ephemeral for more details.
  * If @web_view was created with a ephemeral #WebKitWebView:related-view or an
  * ephemeral #WebKitWebView:web-context it will also be ephemeral.
@@ -2403,7 +2403,7 @@ void webkit_web_view_load_html(WebKitWebView* webView, const gchar* content, con
  * Load the given @content string for the URI @content_uri.
  * This allows clients to display page-loading errors in the #WebKitWebView itself.
  * When this method is called from #WebKitWebView::load-failed signal to show an
- * error page, the the back-forward list is maintained appropriately.
+ * error page, then the back-forward list is maintained appropriately.
  * For everything else this method works the same way as webkit_web_view_load_html().
  */
 void webkit_web_view_load_alternate_html(WebKitWebView* webView, const gchar* content, const gchar* contentURI, const gchar* baseURI)
@@ -2579,7 +2579,7 @@ void webkit_web_view_stop_loading(WebKitWebView* webView)
  * Gets the value of the #WebKitWebView:is-loading property.
  * You can monitor when a #WebKitWebView is loading a page by connecting to
  * notify::is-loading signal of @web_view. This is useful when you are
- * interesting in knowing when the view is loding something but not in the
+ * interesting in knowing when the view is loading something but not in the
  * details about the status of the load operation, for example to start a spinner
  * when the view is loading a page and stop it when it finishes.
  *
@@ -3481,7 +3481,7 @@ gboolean webkit_web_view_save_to_file_finish(WebKitWebView* webView, GAsyncResul
  *
  * Requests downloading of the specified URI string for @web_view.
  *
- * Returns: (transfer full): a new #WebKitDownload representing the
+ * Returns: (transfer full): a new #WebKitDownload representing
  *    the download operation.
  */
 WebKitDownload* webkit_web_view_download_uri(WebKitWebView* webView, const char* uri)

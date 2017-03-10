@@ -43,7 +43,7 @@ typedef struct _WebKitPrintOperationPrivate WebKitPrintOperationPrivate;
 
 /**
  * WebKitPrintOperationResponse:
- * @WEBKIT_PRINT_OPERATION_RESPONSE_PRINT: Print button was cliked in print dialog
+ * @WEBKIT_PRINT_OPERATION_RESPONSE_PRINT: Print button was clicked in print dialog
  * @WEBKIT_PRINT_OPERATION_RESPONSE_CANCEL: Print dialog was cancelled
  *
  * Enum values representing the response of the print dialog shown with

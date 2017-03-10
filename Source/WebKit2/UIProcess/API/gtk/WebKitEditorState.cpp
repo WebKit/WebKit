@@ -128,7 +128,7 @@ void webkitEditorStateChanged(WebKitEditorState* editorState, const EditorState&
  *
  * Gets the typing attributes at the current cursor position.
  * If there is a selection, this returns the typing attributes
- * of the the selected text. Note that in case of a selection,
+ * of the selected text. Note that in case of a selection,
  * typing attributes are considered active only when they are
  * present throughout the selection.
  *

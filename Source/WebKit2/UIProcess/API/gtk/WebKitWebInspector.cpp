@@ -266,7 +266,7 @@ static void webkit_web_inspector_class_init(WebKitWebInspectorClass* findClass)
      * in the inspector view to show the inspector in a separate window. In this case
      * the signal #WebKitWebInspector::open-window is emitted after this one.
      *
-     * To prevent the inspector vew from being detached you can connect to this
+     * To prevent the inspector view from being detached you can connect to this
      * signal and simply return %TRUE.
      *
      * Returns: %TRUE to stop other handlers from being invoked for the event.

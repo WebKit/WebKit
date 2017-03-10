@@ -42,7 +42,7 @@ typedef struct _WebKitEditorStatePrivate WebKitEditorStatePrivate;
 
 /**
  * WebKitEditorTypingAttributes:
- * @WEBKIT_EDITOR_TYPING_ATTRIBUTE_NONE: No typing attrubutes.
+ * @WEBKIT_EDITOR_TYPING_ATTRIBUTE_NONE: No typing attributes.
  * @WEBKIT_EDITOR_TYPING_ATTRIBUTE_BOLD: Bold typing attribute.
  * @WEBKIT_EDITOR_TYPING_ATTRIBUTE_ITALIC: Italic typing attribute.
  * @WEBKIT_EDITOR_TYPING_ATTRIBUTE_UNDERLINE: Underline typing attribute.

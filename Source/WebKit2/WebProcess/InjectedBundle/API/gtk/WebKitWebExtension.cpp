@@ -217,7 +217,7 @@ WebKitWebExtension* webkitWebExtensionCreate(InjectedBundle* bundle)
  * Get the web page of the given @page_id.
  *
  * Returns: (transfer none): the #WebKitWebPage for the given @page_id, or %NULL if the
- *    identifier doesn't correspond to an exsiting web page.
+ *    identifier doesn't correspond to an existing web page.
  */
 WebKitWebPage* webkit_web_extension_get_page(WebKitWebExtension* extension, guint64 pageID)
 {

@@ -1084,7 +1084,7 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
      * Whether to turn on site-specific quirks. Turning this on will
      * tell WebKit to use some site-specific workarounds for
      * better web compatibility. For example, older versions of
-     * MediaWiki will incorrectly send to WebKit a css file with KHTML
+     * MediaWiki will incorrectly send to WebKit a CSS file with KHTML
      * workarounds. By turning on site-specific quirks, WebKit will
      * special-case this and other cases to make some specific sites work.
      */
@@ -1290,8 +1290,8 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
      * The #WebKitHardwareAccelerationPolicy to decide how to enable and disable
      * hardware acceleration. The default value %WEBKIT_HARDWARE_ACCELERATION_POLICY_ON_DEMAND
      * enables the hardware acceleration when the web contents request it, disabling it again
-     * when no longer needed. It's possible to enfore hardware acceleration to be always enabled
-     * by using %WEBKIT_HARDWARE_ACCELERATION_POLICY_ALWAYS. And it's also posible to disable it
+     * when no longer needed. It's possible to enforce hardware acceleration to be always enabled
+     * by using %WEBKIT_HARDWARE_ACCELERATION_POLICY_ALWAYS. And it's also possible to disable it
      * completely using %WEBKIT_HARDWARE_ACCELERATION_POLICY_NEVER. Note that disabling hardware
      * acceleration might cause some websites to not render correctly or consume more CPU.
      *
@@ -2497,7 +2497,7 @@ void webkit_settings_set_enable_webaudio(WebKitSettings* settings, gboolean enab
  *
  * Get the #WebKitSettings:enable-webgl property.
  *
- * Returns: %TRUE If webgl support is enabled or %FALSE otherwise.
+ * Returns: %TRUE If WebGL support is enabled or %FALSE otherwise.
  */
 gboolean webkit_settings_get_enable_webgl(WebKitSettings* settings)
 {

@@ -751,7 +751,7 @@ void webkit_website_data_manager_remove(WebKitWebsiteDataManager* manager, WebKi
  *
  * Finish an asynchronous operation started with webkit_website_data_manager_remove().
  *
- * Returns: %TRUE if website data resources were succesfully removed, or %FALSE otherwise.
+ * Returns: %TRUE if website data resources were successfully removed, or %FALSE otherwise.
  *
  * Since: 2.16
  */
@@ -803,7 +803,7 @@ void webkit_website_data_manager_clear(WebKitWebsiteDataManager* manager, WebKit
  *
  * Finish an asynchronous operation started with webkit_website_data_manager_clear()
  *
- * Returns: %TRUE if website data was succesfully cleared, or %FALSE otherwise.
+ * Returns: %TRUE if website data was successfully cleared, or %FALSE otherwise.
  *
  * Since: 2.16
  */

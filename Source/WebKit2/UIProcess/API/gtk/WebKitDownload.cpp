@@ -352,7 +352,7 @@ void webkitDownloadNotifyProgress(WebKitDownload* download, guint64 bytesReceive
     g_signal_emit(download, signals[RECEIVED_DATA], 0, bytesReceived);
 
     // Throttle progress notification to not consume high amounts of
-    // CPU on fast links, except when the last notification occured
+    // CPU on fast links, except when the last notification occurred
     // more than 0.016 secs ago (60 FPS), or the last notified progress
     // is passed in 1% or we reached the end.
     gdouble currentElapsed = g_timer_elapsed(priv->timer.get(), 0);
@@ -470,7 +470,7 @@ const gchar* webkit_download_get_destination(WebKitDownload* download)
  * filename you can connect to notify::response signal and call
  * webkit_download_set_destination().
  * If #WebKitDownload::decide-destination signal is not handled
- * and destination URI is not set when the download tranfer starts,
+ * and destination URI is not set when the download transfer starts,
  * the file will be saved with the filename suggested by the server in
  * %G_USER_DIRECTORY_DOWNLOAD directory.
  */

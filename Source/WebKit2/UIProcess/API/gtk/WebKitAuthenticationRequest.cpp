@@ -150,10 +150,10 @@ AuthenticationChallengeProxy* webkitAuthenticationRequestGetAuthenticationChalle
  *
  * Determine whether the authentication method associated with this
  * #WebKitAuthenticationRequest should allow the storage of credentials.
- * This will return %FALSE if webkit doesn't support credential storing
+ * This will return %FALSE if WebKit doesn't support credential storing
  * or if private browsing is enabled.
  *
- * Returns: %TRUE if webkit can store credentials or %FALSE otherwise.
+ * Returns: %TRUE if WebKit can store credentials or %FALSE otherwise.
  *
  * Since: 2.2
  */

@@ -56,7 +56,7 @@ WebFrame* webkitFrameGetWebFrame(WebKitFrame* frame)
  * webkit_frame_is_main_frame:
  * @frame: a #WebKitFrame
  *
- * Gets whether @frame is the a main frame of a #WebKitWebPage
+ * Gets whether @frame is the main frame of a #WebKitWebPage
  *
  * Returns: %TRUE if @frame is a main frame or %FALSE otherwise
  *

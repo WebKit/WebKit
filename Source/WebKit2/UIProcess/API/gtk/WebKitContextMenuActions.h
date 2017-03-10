@@ -38,12 +38,12 @@ G_BEGIN_DECLS
  * @WEBKIT_CONTEXT_MENU_ACTION_OPEN_IMAGE_IN_NEW_WINDOW: Open current image in a new window.
  * @WEBKIT_CONTEXT_MENU_ACTION_DOWNLOAD_IMAGE_TO_DISK: Download current image.
  * @WEBKIT_CONTEXT_MENU_ACTION_COPY_IMAGE_TO_CLIPBOARD: Copy current image to the clipboard.
- * @WEBKIT_CONTEXT_MENU_ACTION_COPY_IMAGE_URL_TO_CLIPBOARD: Copy curent image location to the clipboard.
+ * @WEBKIT_CONTEXT_MENU_ACTION_COPY_IMAGE_URL_TO_CLIPBOARD: Copy current image location to the clipboard.
  * @WEBKIT_CONTEXT_MENU_ACTION_OPEN_FRAME_IN_NEW_WINDOW: Open current frame in a new window.
  * @WEBKIT_CONTEXT_MENU_ACTION_GO_BACK: Load the previous history item.
  * @WEBKIT_CONTEXT_MENU_ACTION_GO_FORWARD: Load the next history item.
  * @WEBKIT_CONTEXT_MENU_ACTION_STOP: Stop any ongoing loading operation.
- * @WEBKIT_CONTEXT_MENU_ACTION_RELOAD: Reload the conents of current view.
+ * @WEBKIT_CONTEXT_MENU_ACTION_RELOAD: Reload the contents of current view.
  * @WEBKIT_CONTEXT_MENU_ACTION_COPY: Copy current selection the clipboard.
  * @WEBKIT_CONTEXT_MENU_ACTION_CUT: Cut current selection to the clipboard.
  * @WEBKIT_CONTEXT_MENU_ACTION_PASTE: Paste clipboard contents.
