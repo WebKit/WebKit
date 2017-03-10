@@ -1,0 +1,9 @@
+main frame - didStartProvisionalLoadForFrame
+main frame - didCommitLoadForFrame
+main frame - didReceiveTitle: Test Cleared Store
+main frame - didFinishDocumentLoadForFrame
+main frame - didHandleOnloadEventsForFrame
+main frame - didFinishLoadForFrame
+PASS Host classified as prevalent resource.
+PASS Host is no longer a prevalent resource after the store was cleared.
+

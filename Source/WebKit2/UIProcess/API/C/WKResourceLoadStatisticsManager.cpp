@@ -101,6 +101,11 @@ void WKResourceLoadStatisticsManagerSetMinimumTimeBetweeenDataRecordsRemoval(dou
     WebResourceLoadStatisticsManager::setMinimumTimeBetweeenDataRecordsRemoval(seconds);
 }
 
+void WKResourceLoadStatisticsManagerClearInMemoryAndPersistentStore()
+{
+    WebResourceLoadStatisticsManager::clearInMemoryAndPersistentStore();
+}
+
 void WKResourceLoadStatisticsManagerResetToConsistentState()
 {
     WebResourceLoadStatisticsManager::resetToConsistentState();

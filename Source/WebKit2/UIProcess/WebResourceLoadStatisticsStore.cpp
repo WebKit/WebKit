@@ -146,10 +146,8 @@ void WebResourceLoadStatisticsStore::processStatisticsAndDataRecords()
         });
     }
     removeDataRecords();
-    
-    auto encoder = coreStore().createEncoderFromData();
-    
-    writeEncoderToDisk(*encoder.get(), "full_browsing_session");
+
+    writeStoreToDisk();
 }
 
 void WebResourceLoadStatisticsStore::resourceLoadStatisticsUpdated(const Vector<WebCore::ResourceLoadStatistics>& origins)
@@ -188,6 +186,9 @@ void WebResourceLoadStatisticsStore::registerSharedResourceLoadObserver(std::fun
     registerSharedResourceLoadObserver();
     m_resourceLoadStatisticsStore->setShouldPartitionCookiesCallback([this, shouldPartitionCookiesForDomainsHandler = WTFMove(shouldPartitionCookiesForDomainsHandler)] (const Vector<String>& primaryDomains, bool value) {
         shouldPartitionCookiesForDomainsHandler(primaryDomains, value);
+    });
+    m_resourceLoadStatisticsStore->setWritePersistentStoreCallback([this]() {
+        writeStoreToDisk();
     });
 }
 
@@ -234,6 +235,12 @@ String WebResourceLoadStatisticsStore::persistentStoragePath(const String& label
 
     // TODO Decide what to call this file
     return pathByAppendingComponent(m_statisticsStoragePath, label + "_resourceLog.plist");
+}
+
+void WebResourceLoadStatisticsStore::writeStoreToDisk()
+{
+    auto encoder = coreStore().createEncoderFromData();
+    writeEncoderToDisk(*encoder.get(), "full_browsing_session");
 }
 
 void WebResourceLoadStatisticsStore::writeEncoderToDisk(KeyedEncoder& encoder, const String& label) const

@@ -106,6 +106,13 @@ void WebResourceLoadStatisticsManager::setMinimumTimeBetweeenDataRecordsRemoval(
     WebResourceLoadStatisticsStore::setMinimumTimeBetweeenDataRecordsRemoval(seconds);
 }
 
+void WebResourceLoadStatisticsManager::clearInMemoryAndPersistentStore()
+{
+    auto store = WebCore::ResourceLoadObserver::sharedObserver().statisticsStore();
+    if (store)
+        store->clearInMemoryAndPersistent();
+}
+
 void WebResourceLoadStatisticsManager::resetToConsistentState()
 {
     WebCore::ResourceLoadObserver::sharedObserver().setTimeToLiveUserInteraction(2592000);

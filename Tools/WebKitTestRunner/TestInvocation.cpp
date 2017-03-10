@@ -1032,6 +1032,11 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         return nullptr;
     }
     
+    if (WKStringIsEqualToUTF8CString(messageName, "StatisticsClearInMemoryAndPersistentStore")) {
+        TestController::singleton().statisticsClearInMemoryAndPersistentStore();
+        return nullptr;
+    }
+    
     if (WKStringIsEqualToUTF8CString(messageName, "StatisticsResetToConsistentState")) {
         TestController::singleton().statisticsResetToConsistentState();
         return nullptr;

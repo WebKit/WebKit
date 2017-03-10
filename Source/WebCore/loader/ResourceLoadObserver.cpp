@@ -68,6 +68,18 @@ void ResourceLoadObserver::setStatisticsStore(Ref<ResourceLoadStatisticsStore>&&
     m_store = WTFMove(store);
 }
 
+void ResourceLoadObserver::clearInMemoryAndPersistentStore()
+{
+    m_store->clearInMemoryAndPersistent();
+}
+
+void ResourceLoadObserver::clearInMemoryAndPersistentStore(std::chrono::system_clock::time_point modifiedSince)
+{
+    auto then = std::chrono::system_clock::to_time_t(modifiedSince);
+    if (then <= 0)
+        clearInMemoryAndPersistentStore();
+}
+
 static inline bool is3xxRedirect(const ResourceResponse& response)
 {
     return response.httpStatusCode() >= 300 && response.httpStatusCode() <= 399;

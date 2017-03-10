@@ -1382,6 +1382,12 @@ void TestRunner::setStatisticsMinimumTimeBetweeenDataRecordsRemoval(double secon
     WKRetainPtr<WKDoubleRef> messageBody(AdoptWK, WKDoubleCreate(seconds));
     WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), messageBody.get(), nullptr);
 }
+
+void TestRunner::statisticsClearInMemoryAndPersistentStore()
+{
+    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("StatisticsClearInMemoryAndPersistentStore"));
+    WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), 0, nullptr);
+}
     
 void TestRunner::statisticsResetToConsistentState()
 {

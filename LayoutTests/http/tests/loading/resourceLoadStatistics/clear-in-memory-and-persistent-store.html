@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Test Cleared Store</title>
+    <script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+    const hostUnderTest = "127.0.0.1:8000";
+    const statisticsUrl = "http://" + hostUnderTest + "/temp";
+    const topFrameOrigin1 = "http://127.0.0.2:8000/temp";
+    const topFrameOrigin2 = "http://127.0.0.3:8000/temp";
+    const topFrameOrigin3 = "http://127.0.0.4:8000/temp";
+    function runTestRunnerTest() {
+        testRunner.setStatisticsPrevalentResource(statisticsUrl, false);
+        if (testRunner.isStatisticsPrevalentResource(statisticsUrl))
+            testFailed("Host did not get set as non-prevalent resource.");
+
+        testRunner.setStatisticsSubframeUnderTopFrameOrigin(statisticsUrl, topFrameOrigin1);
+        testRunner.setStatisticsSubresourceUniqueRedirectTo(statisticsUrl, topFrameOrigin1);
+        testRunner.setStatisticsSubresourceUnderTopFrameOrigin(statisticsUrl, topFrameOrigin1);
+        testRunner.setStatisticsSubresourceUnderTopFrameOrigin(statisticsUrl, topFrameOrigin2);
+        testRunner.setStatisticsSubframeUnderTopFrameOrigin(statisticsUrl, topFrameOrigin2);
+        testRunner.setStatisticsSubresourceUniqueRedirectTo(statisticsUrl, topFrameOrigin3);
+        testRunner.setStatisticsSubresourceUnderTopFrameOrigin(statisticsUrl, topFrameOrigin3);
+
+        testRunner.statisticsFireDataModificationHandler();
+
+        if (testRunner.isStatisticsPrevalentResource(statisticsUrl))
+            testPassed("Host classified as prevalent resource.");
+        else
+            testFailed("Host did not get classified as prevalent resource.");
+
+        testRunner.statisticsClearInMemoryAndPersistentStore();
+
+        if (testRunner.isStatisticsPrevalentResource(statisticsUrl))
+            testFailed("Host is still a prevalent resource after the store was cleared.");
+        else
+            testPassed("Host is no longer a prevalent resource after the store was cleared.");
+
+        testRunner.statisticsResetToConsistentState();
+        internals.setResourceLoadStatisticsEnabled(false);
+        testRunner.notifyDone();
+    }
+
+    if (document.location.host === hostUnderTest && window.testRunner && window.internals) {
+        testRunner.waitUntilDone();
+        internals.setResourceLoadStatisticsEnabled(true);
+        runTestRunnerTest();
+    }
+</script>
+</body>
+</html>

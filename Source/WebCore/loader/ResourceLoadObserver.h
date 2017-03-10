@@ -70,6 +70,8 @@ public:
 
     WEBCORE_EXPORT RefPtr<ResourceLoadStatisticsStore> statisticsStore();
     WEBCORE_EXPORT void setStatisticsStore(Ref<ResourceLoadStatisticsStore>&&);
+    WEBCORE_EXPORT void clearInMemoryAndPersistentStore();
+    WEBCORE_EXPORT void clearInMemoryAndPersistentStore(std::chrono::system_clock::time_point modifiedSince);
 
     WEBCORE_EXPORT String statisticsForOrigin(const String&);
 

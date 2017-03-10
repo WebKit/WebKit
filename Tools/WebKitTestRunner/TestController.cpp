@@ -2292,6 +2292,12 @@ void TestController::setStatisticsMinimumTimeBetweeenDataRecordsRemoval(double s
 {
     WKResourceLoadStatisticsManagerSetMinimumTimeBetweeenDataRecordsRemoval(seconds);
 }
+
+void TestController::statisticsClearInMemoryAndPersistentStore()
+{
+    WKResourceLoadStatisticsManagerClearInMemoryAndPersistentStore();
+}
+
 void TestController::statisticsResetToConsistentState()
 {
     WKResourceLoadStatisticsManagerResetToConsistentState();

@@ -713,6 +713,7 @@ http/tests/loading/resourceLoadStatistics/classify-as-prevalent-based-on-mixed-s
 http/tests/loading/resourceLoadStatistics/classify-as-prevalent-based-on-sub-frame-under-top-frame-origins.html [ Pass ]
 http/tests/loading/resourceLoadStatistics/classify-as-prevalent-based-on-subresource-under-top-frame-origins.html [ Pass ]
 http/tests/loading/resourceLoadStatistics/classify-as-prevalent-based-on-subresource-unique-redirects-to.html [ Pass ]
+http/tests/loading/resourceLoadStatistics/clear-in-memory-and-persistent-store.html [ Pass ]
 
 ### END OF (5) Progressions, expected successes that are expected failures in WebKit1.
 ########################################

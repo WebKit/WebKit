@@ -52,6 +52,7 @@ public:
     static void setNotifyPagesWhenDataRecordsWereScanned(bool);
     static void setShouldClassifyResourcesBeforeDataRecordsRemoval(bool value);
     static void setMinimumTimeBetweeenDataRecordsRemoval(double seconds);
+    static void clearInMemoryAndPersistentStore();
     static void resetToConsistentState();
 
 private:

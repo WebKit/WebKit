@@ -39,6 +39,7 @@
 #include <WebCore/DatabaseTracker.h>
 #include <WebCore/HTMLMediaElement.h>
 #include <WebCore/OriginLock.h>
+#include <WebCore/ResourceLoadObserver.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/SecurityOriginData.h>
 #include <wtf/RunLoop.h>
@@ -769,6 +770,9 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, std::chr
     }
 #endif
 
+    if (dataTypes.contains(WebsiteDataType::WebsiteDataTypeResourceLoadStatistics))
+        WebCore::ResourceLoadObserver::sharedObserver().clearInMemoryAndPersistentStore(modifiedSince);
+
     // There's a chance that we don't have any pending callbacks. If so, we want to dispatch the completion handler right away.
     callbackAggregator->callIfNeeded();
 }
@@ -1034,6 +1038,9 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, const Ve
         State::deleteData(*callbackAggregator, plugins(), WTFMove(hostNames));
     }
 #endif
+
+    if (dataTypes.contains(WebsiteDataType::WebsiteDataTypeResourceLoadStatistics))
+        WebCore::ResourceLoadObserver::sharedObserver().clearInMemoryAndPersistentStore();
 
     // There's a chance that we don't have any pending callbacks. If so, we want to dispatch the completion handler right away.
     callbackAggregator->callIfNeeded();

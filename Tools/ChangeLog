@@ -1,3 +1,23 @@
+2017-03-09  John Wilander  <wilander@apple.com>
+
+        Resource Load Statistics: Remove statistics data as part of full website data removal
+        https://bugs.webkit.org/show_bug.cgi?id=169448
+
+        Reviewed by Alex Christensen.
+
+        This patch adds infrastructure for the new TestRunner function
+        statisticsClearInMemoryAndPersistentStore().
+
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::statisticsClearInMemoryAndPersistentStore):
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::statisticsClearInMemoryAndPersistentStore):
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveSynchronousMessageFromInjectedBundle):
+
 2017-03-09  Dean Jackson  <dino@apple.com>
 
         WebGPU: Backend - Buffers

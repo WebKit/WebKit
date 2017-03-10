@@ -47,6 +47,7 @@ public:
     bool isEmpty() const { return m_resourceStatisticsMap.isEmpty(); }
     size_t size() const { return m_resourceStatisticsMap.size(); }
     void clear() { m_resourceStatisticsMap.clear(); }
+    WEBCORE_EXPORT void clearInMemoryAndPersistent();
 
     ResourceLoadStatistics& ensureResourceStatisticsForPrimaryDomain(const String&);
     void setResourceStatisticsForPrimaryDomain(const String&, ResourceLoadStatistics&&);
@@ -58,6 +59,8 @@ public:
 
     WEBCORE_EXPORT void setNotificationCallback(std::function<void()>);
     WEBCORE_EXPORT void setShouldPartitionCookiesCallback(std::function<void(const Vector<String>& primaryDomains, bool value)>&&);
+    WEBCORE_EXPORT void setWritePersistentStoreCallback(std::function<void()>&&);
+
 
     void fireDataModificationHandler();
     void setTimeToLiveUserInteraction(double seconds);
@@ -75,6 +78,7 @@ private:
     HashMap<String, ResourceLoadStatistics> m_resourceStatisticsMap;
     std::function<void()> m_dataAddedHandler;
     std::function<void(const Vector<String>& primaryDomains, bool value)> m_shouldPartitionCookiesForDomainsHandler;
+    std::function<void()> m_writePersistentStoreHandler;
 };
     
 } // namespace WebCore

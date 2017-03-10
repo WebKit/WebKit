@@ -111,6 +111,13 @@ void ResourceLoadStatisticsStore::readDataFromDecoder(KeyedDecoder& decoder)
     fireShouldPartitionCookiesHandler(prevalentResourceDomainsWithoutUserInteraction, true);
 }
 
+void ResourceLoadStatisticsStore::clearInMemoryAndPersistent()
+{
+    clear();
+    if (m_writePersistentStoreHandler)
+        m_writePersistentStoreHandler();
+}
+
 String ResourceLoadStatisticsStore::statisticsForOrigin(const String& origin)
 {
     auto iter = m_resourceStatisticsMap.find(origin);
@@ -153,6 +160,11 @@ void ResourceLoadStatisticsStore::setShouldPartitionCookiesCallback(std::functio
     m_shouldPartitionCookiesForDomainsHandler = WTFMove(handler);
 }
     
+void ResourceLoadStatisticsStore::setWritePersistentStoreCallback(std::function<void()>&& handler)
+{
+    m_writePersistentStoreHandler = WTFMove(handler);
+}
+
 void ResourceLoadStatisticsStore::fireDataModificationHandler()
 {
     if (m_dataAddedHandler)
