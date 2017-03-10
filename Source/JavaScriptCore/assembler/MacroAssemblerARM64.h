@@ -3408,7 +3408,7 @@ public:
 
     static void replaceWithBreakpoint(CodeLocationLabel instructionStart)
     {
-        ARM64Assembler::replaceWithBrk(instructionStart.executableAddress());
+        ARM64Assembler::replaceWithBkpt(instructionStart.executableAddress());
     }
 
     static void replaceWithJump(CodeLocationLabel instructionStart, CodeLocationLabel destination)

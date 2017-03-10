@@ -1,3 +1,20 @@
+2017-03-10  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed ARM buildfix after r213652.
+        https://bugs.webkit.org/show_bug.cgi?id=168920
+
+        r213652 used replaceWithBrk and replaceWithBkpt names for the same
+        function, which was inconsistent and caused build error in ARMAssembler.
+
+        * assembler/ARM64Assembler.h:
+        (JSC::ARM64Assembler::replaceWithBkpt): Renamed replaceWithBrk to replaceWithBkpt.
+        (JSC::ARM64Assembler::replaceWithBrk): Deleted.
+        * assembler/ARMAssembler.h:
+        (JSC::ARMAssembler::replaceWithBkpt): Renamed replaceWithBrk to replaceWithBkpt.
+        (JSC::ARMAssembler::replaceWithBrk): Deleted.
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::replaceWithBreakpoint):
+
 2017-03-10  Alex Christensen  <achristensen@webkit.org>
 
         Win64 build fix.

@@ -2536,7 +2536,7 @@ public:
         linkPointer(addressOf(code, where), valuePtr);
     }
 
-    static void replaceWithBrk(void* where)
+    static void replaceWithBkpt(void* where)
     {
         int insn = excepnGeneration(ExcepnOp_BREAKPOINT, 0, 0);
         performJITMemcpy(where, &insn, sizeof(int));

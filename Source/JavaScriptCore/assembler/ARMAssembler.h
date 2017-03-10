@@ -995,7 +995,7 @@ namespace JSC {
             return reinterpret_cast<void*>(readPointer(reinterpret_cast<void*>(getAbsoluteJumpAddress(from))));
         }
 
-        static void replaceWithBrk(void* instructionStart)
+        static void replaceWithBkpt(void* instructionStart)
         {
             ARMWord* instruction = reinterpret_cast<ARMWord*>(instructionStart);
             instruction[0] = BKPT;
