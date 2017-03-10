@@ -1,3 +1,54 @@
+<<<<<<< .mine
+2017-03-09  Michael Saboff  <msaboff@apple.com>
+
+        Add plumbing to WebProcess to enable JavaScriptCore configuration and logging
+        https://bugs.webkit.org/show_bug.cgi?id=169387
+
+        Reviewed by Filip Pizlo.
+
+        Added a path and sandbox extension for JavaScript configuration directory.
+        These are sent to the Web process on startup along with other parameters.
+        When JavaScript configuration file processing is enabled, the WebProcess
+        will look for the file WebContent.config in that directory and configure
+        JavaScriptCore with its contents.
+
+        The directory location is for Mac is ~/Library/WebKit/JavaScriptConfig and
+        the location on iOS is <process-container-path>/Library/WebKit/JavaScriptConfig.
+        JavaScript configuration file processing is controlled via a boolean kept in
+        the WebProcess pool.  For Debug builds, config file processing is enabled.
+        For Release builds it is disabled.
+
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+        * UIProcess/API/APIProcessPoolConfiguration.cpp:
+        (API::ProcessPoolConfiguration::createWithLegacyOptions):
+        (API::ProcessPoolConfiguration::ProcessPoolConfiguration):
+        (API::ProcessPoolConfiguration::copy):
+        * UIProcess/API/APIProcessPoolConfiguration.h:
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextJavaScriptConfigurationFileEnabled):
+        (WKContextSetJavaScriptConfigurationFileEnabled):
+        * UIProcess/API/C/WKContext.h:
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::legacyPlatformDefaultJavaScriptConfigurationDirectory):
+        * UIProcess/gtk/WebProcessPoolGtk.cpp:
+        (WebKit::WebProcessPool::legacyPlatformDefaultJavaScriptConfigurationDirectory):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::legacyWebsiteDataStoreConfiguration):
+        (WebKit::WebProcessPool::createNewWebProcess):
+        (WebKit::WebProcessPool::setJavaScriptConfigurationFileEnabled):
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::resolveDirectoriesIfNecessary):
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+        (WebKit::WebsiteDataStore::resolvedJavaScriptConfigurationDirectory):
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+
+||||||| .r213687
+=======
 2017-03-09  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics: Remove statistics data as part of full website data removal
@@ -29,6 +80,7 @@
             Both WebsiteDataStore::removeData() functions now cover resource load
             statistics.
 
+>>>>>>> .r213688
 2017-03-09  Brady Eidson  <beidson@apple.com>
 
         Add WKURLSchemeHandler API for handling custom protocols.

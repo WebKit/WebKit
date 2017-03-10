@@ -30,6 +30,7 @@
 #import "LegacyCustomProtocolManager.h"
 #import "Logging.h"
 #import "ObjCObjectGraph.h"
+#import <runtime/ConfigFile.h>
 #import "SandboxExtension.h"
 #import "SandboxInitializationParameters.h"
 #import "SecItemShim.h"
@@ -102,6 +103,7 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters&& par
     SandboxExtension::consumePermanently(parameters.applicationCacheDirectoryExtensionHandle);
     SandboxExtension::consumePermanently(parameters.mediaCacheDirectoryExtensionHandle);
     SandboxExtension::consumePermanently(parameters.mediaKeyStorageDirectoryExtensionHandle);
+    SandboxExtension::consumePermanently(parameters.javaScriptConfigurationDirectoryExtensionHandle);
 #if ENABLE(MEDIA_STREAM)
     SandboxExtension::consumePermanently(parameters.audioCaptureExtensionHandle);
 #endif
@@ -111,6 +113,11 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters&& par
     SandboxExtension::consumePermanently(parameters.containerTemporaryDirectoryExtensionHandle);
 #endif
 #endif
+
+    if (!parameters.javaScriptConfigurationDirectory.isEmpty()) {
+        String javaScriptConfigFile = parameters.javaScriptConfigurationDirectory + "/JSC.config";
+        JSC::processConfigFile(javaScriptConfigFile.latin1().data(), "com.apple.WebKit.WebContent", parameters.uiProcessBundleIdentifier.latin1().data());
+    }
 
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
     setSharedHTTPCookieStorage(parameters.uiProcessCookieStorageIdentifier);

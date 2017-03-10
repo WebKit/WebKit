@@ -28,6 +28,7 @@
 
 #include "Options.h"
 #include <limits.h>
+#include <mutex>
 #include <stdio.h>
 #include <string.h>
 #include <wtf/ASCIICType.h>
@@ -444,6 +445,7 @@ void ConfigFile::canonicalizePaths()
             }
         }
     }
+#endif
 
     char* lastPathSeperator = strrchr(m_filename, '/');
 
@@ -455,7 +457,24 @@ void ConfigFile::canonicalizePaths()
         m_configDirectory[0] = '/';
         m_configDirectory[1] = '\0';
     }
-#endif
+}
+
+void processConfigFile(const char* configFilename, const char* processName, const char* parentProcessName)
+{
+    static std::once_flag processConfigFileOnceFlag;
+    
+    if (!configFilename || !strlen(configFilename))
+        return;
+
+    std::call_once(processConfigFileOnceFlag, [&]{
+        if (configFilename) {
+            ConfigFile configFile(configFilename);
+            configFile.setProcessName(processName);
+            if (parentProcessName)
+                configFile.setParentProcessName(parentProcessName);
+            configFile.parse();
+        }
+    });
 }
 
 } // namespace JSC

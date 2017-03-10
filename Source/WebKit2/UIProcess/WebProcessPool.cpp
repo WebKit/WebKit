@@ -142,6 +142,7 @@ static WebsiteDataStore::Configuration legacyWebsiteDataStoreConfiguration(API::
     configuration.mediaCacheDirectory = processPoolConfiguration.mediaCacheDirectory();
     configuration.mediaKeysStorageDirectory = processPoolConfiguration.mediaKeysStorageDirectory();
     configuration.networkCacheDirectory = processPoolConfiguration.diskCacheDirectory();
+    configuration.javaScriptConfigurationDirectory = processPoolConfiguration.javaScriptConfigurationDirectory();
 
     // This is needed to support legacy WK2 clients, which did not have resource load statistics.
     configuration.resourceLoadStatisticsDirectory = API::WebsiteDataStore::defaultResourceLoadStatisticsDirectory();
@@ -597,6 +598,12 @@ WebProcessProxy& WebProcessPool::createNewWebProcess(WebsiteDataStore* websiteDa
         parameters.mediaKeyStorageDirectory = m_resolvedPaths.mediaKeyStorageDirectory;
     if (!parameters.mediaKeyStorageDirectory.isEmpty())
         SandboxExtension::createHandleWithoutResolvingPath(parameters.mediaKeyStorageDirectory, SandboxExtension::ReadWrite, parameters.mediaKeyStorageDirectoryExtensionHandle);
+
+    if (javaScriptConfigurationFileEnabled()) {
+        parameters.javaScriptConfigurationDirectory = websiteDataStore ? websiteDataStore->resolvedJavaScriptConfigurationDirectory() : String();
+        if (!parameters.javaScriptConfigurationDirectory.isEmpty())
+            SandboxExtension::createHandleWithoutResolvingPath(parameters.javaScriptConfigurationDirectory, SandboxExtension::ReadWrite, parameters.javaScriptConfigurationDirectoryExtensionHandle);
+    }
 
     parameters.shouldUseTestingNetworkSession = m_shouldUseTestingNetworkSession;
 
@@ -1361,6 +1368,11 @@ void WebProcessPool::setInitialConnectedGamepads(const Vector<std::unique_ptr<UI
 }
 
 #endif // ENABLE(GAMEPAD)
+
+void WebProcessPool::setJavaScriptConfigurationFileEnabled(bool flag)
+{
+    m_javaScriptConfigurationFileEnabled = flag;
+}
 
 void WebProcessPool::garbageCollectJavaScriptObjects()
 {

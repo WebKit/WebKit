@@ -87,6 +87,9 @@ public:
     const WTF::String& mediaKeysStorageDirectory() const { return m_mediaKeysStorageDirectory; }
     void setMediaKeysStorageDirectory(const WTF::String& mediaKeysStorageDirectory) { m_mediaKeysStorageDirectory = mediaKeysStorageDirectory; }
 
+    const WTF::String& javaScriptConfigurationDirectory() const { return m_javaScriptConfigurationDirectory; }
+    void setJavaScriptConfigurationDirectory(const WTF::String& javaScriptConfigurationDirectory) { m_javaScriptConfigurationDirectory = javaScriptConfigurationDirectory; }
+
     const Vector<WTF::String>& cachePartitionedURLSchemes() { return m_cachePartitionedURLSchemes; }
     void setCachePartitionedURLSchemes(Vector<WTF::String>&& cachePartitionedURLSchemes) { m_cachePartitionedURLSchemes = WTFMove(cachePartitionedURLSchemes); }
 
@@ -134,6 +137,7 @@ private:
     WTF::String m_webSQLDatabaseDirectory;
     WTF::String m_mediaKeysStorageDirectory;
     WTF::String m_resourceLoadStatisticsDirectory;
+    WTF::String m_javaScriptConfigurationDirectory;
     Vector<WTF::String> m_cachePartitionedURLSchemes;
     Vector<WTF::String> m_alwaysRevalidatedURLSchemes;
     bool m_fullySynchronousModeIsAllowedForTesting { false };

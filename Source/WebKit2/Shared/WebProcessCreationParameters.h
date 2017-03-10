@@ -75,6 +75,8 @@ struct WebProcessCreationParameters {
     SandboxExtension::Handle webSQLDatabaseDirectoryExtensionHandle;
     String mediaCacheDirectory;
     SandboxExtension::Handle mediaCacheDirectoryExtensionHandle;
+    String javaScriptConfigurationDirectory;
+    SandboxExtension::Handle javaScriptConfigurationDirectoryExtensionHandle;
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
     Vector<uint8_t> uiProcessCookieStorageIdentifier;
 #endif

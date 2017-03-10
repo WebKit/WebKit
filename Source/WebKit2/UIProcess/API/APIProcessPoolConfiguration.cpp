@@ -52,6 +52,7 @@ Ref<ProcessPoolConfiguration> ProcessPoolConfiguration::createWithLegacyOptions(
     configuration->m_localStorageDirectory = WebKit::WebProcessPool::legacyPlatformDefaultLocalStorageDirectory();
     configuration->m_mediaKeysStorageDirectory = WebKit::WebProcessPool::legacyPlatformDefaultMediaKeysStorageDirectory();
     configuration->m_webSQLDatabaseDirectory = WebKit::WebProcessPool::legacyPlatformDefaultWebSQLDatabaseDirectory();
+    configuration->m_javaScriptConfigurationDirectory = WebKit::WebProcessPool::legacyPlatformDefaultJavaScriptConfigurationDirectory();
 
     return configuration;
 }
@@ -81,6 +82,7 @@ ProcessPoolConfiguration::ProcessPoolConfiguration()
     , m_localStorageDirectory(WebsiteDataStore::defaultLocalStorageDirectory())
     , m_webSQLDatabaseDirectory(WebsiteDataStore::defaultWebSQLDatabaseDirectory())
     , m_mediaKeysStorageDirectory(WebsiteDataStore::defaultMediaKeysStorageDirectory())
+    , m_javaScriptConfigurationDirectory("")
 {
 }
 
@@ -105,6 +107,7 @@ Ref<ProcessPoolConfiguration> ProcessPoolConfiguration::copy()
     copy->m_injectedBundlePath = this->m_injectedBundlePath;
     copy->m_localStorageDirectory = this->m_localStorageDirectory;
     copy->m_mediaKeysStorageDirectory = this->m_mediaKeysStorageDirectory;
+    copy->m_javaScriptConfigurationDirectory = this->m_javaScriptConfigurationDirectory;
     copy->m_webSQLDatabaseDirectory = this->m_webSQLDatabaseDirectory;
     copy->m_cachePartitionedURLSchemes = this->m_cachePartitionedURLSchemes;
     copy->m_alwaysRevalidatedURLSchemes = this->m_alwaysRevalidatedURLSchemes;

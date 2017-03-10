@@ -53,4 +53,6 @@ private:
     char m_configDirectory[s_maxPathLength + 1];
 };
 
+JS_EXPORT_PRIVATE void processConfigFile(const char* configFile, const char* processName, const char* parentProcessName = nullptr);
+
 } // namespace JSC

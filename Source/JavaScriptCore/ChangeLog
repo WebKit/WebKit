@@ -1,3 +1,21 @@
+2017-03-09  Michael Saboff  <msaboff@apple.com>
+
+        Add plumbing to WebProcess to enable JavaScriptCore configuration and logging
+        https://bugs.webkit.org/show_bug.cgi?id=169387
+
+        Reviewed by Filip Pizlo.
+
+        Added a helper function, processConfigFile(), to process configuration file.
+        Changed jsc.cpp to use that function in lieu of processing the config file
+        manually.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj: Made ConfigFile.h a private header file.
+        * jsc.cpp:
+        (jscmain):
+        * runtime/ConfigFile.cpp:
+        (JSC::processConfigFile):
+        * runtime/ConfigFile.h:
+
 2017-03-09  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Show HTTP protocol version and other Network Load Metrics (IP Address, Priority, Connection ID)

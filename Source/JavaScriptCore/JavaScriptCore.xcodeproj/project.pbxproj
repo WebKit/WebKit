@@ -1390,7 +1390,7 @@
 		655EB29B10CE2581001A990E /* NodesCodegen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 655EB29A10CE2581001A990E /* NodesCodegen.cpp */; };
 		657CF45819BF6662004ACBF2 /* JSCallee.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 657CF45619BF6662004ACBF2 /* JSCallee.cpp */; };
 		657CF45919BF6662004ACBF2 /* JSCallee.h in Headers */ = {isa = PBXBuildFile; fileRef = 657CF45719BF6662004ACBF2 /* JSCallee.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		658824AF1E5CFDB000FB7359 /* ConfigFile.h in Headers */ = {isa = PBXBuildFile; fileRef = 658824AE1E5CFDB000FB7359 /* ConfigFile.h */; };
+		658824AF1E5CFDB000FB7359 /* ConfigFile.h in Headers */ = {isa = PBXBuildFile; fileRef = 658824AE1E5CFDB000FB7359 /* ConfigFile.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		658824B11E5CFDF400FB7359 /* ConfigFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 658824B01E5CFDF400FB7359 /* ConfigFile.cpp */; };
 		658D3A5619638268003C45D6 /* VMEntryRecord.h in Headers */ = {isa = PBXBuildFile; fileRef = 658D3A5519638268003C45D6 /* VMEntryRecord.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		65B8392E1BACAD360044E824 /* CachedRecovery.h in Headers */ = {isa = PBXBuildFile; fileRef = 65B8392C1BACA92A0044E824 /* CachedRecovery.h */; };
@@ -7975,6 +7975,7 @@
 				0F61832A1C45BF070072450B /* AirCCallingConvention.h in Headers */,
 				5381B9401E65DFEB0090F794 /* JSWebAssemblyCodeBlock.h in Headers */,
 				0FEC85741BDACDC70080FF74 /* AirCCallSpecial.h in Headers */,
+				658824AF1E5CFDB000FB7359 /* ConfigFile.h in Headers */,
 				0FEC85761BDACDC70080FF74 /* AirCode.h in Headers */,
 				0F10F1A31C420BF0001C07D2 /* AirCustom.h in Headers */,
 				DC454B8D1D00E824004C18AF /* AirDumpAsJS.h in Headers */,
@@ -8395,7 +8396,6 @@
 				A7D89CFE17A0B8CC00773AD8 /* DFGOSRAvailabilityAnalysisPhase.h in Headers */,
 				0FD82E57141DAF1000179C94 /* DFGOSREntry.h in Headers */,
 				0FD8A32617D51F5700CA2C40 /* DFGOSREntrypointCreationPhase.h in Headers */,
-				658824AF1E5CFDB000FB7359 /* ConfigFile.h in Headers */,
 				0FC0976A1468A6F700CF2442 /* DFGOSRExit.h in Headers */,
 				0F235BEC17178E7300690C7F /* DFGOSRExitBase.h in Headers */,
 				0FFB921C16D02F110055A5DB /* DFGOSRExitCompilationInfo.h in Headers */,

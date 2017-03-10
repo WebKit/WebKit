@@ -502,6 +502,16 @@ void WKContextGetStatisticsWithOptions(WKContextRef contextRef, WKStatisticsOpti
     toImpl(contextRef)->getStatistics(optionsMask, toGenericCallbackFunction(context, callback));
 }
 
+bool WKContextJavaScriptConfigurationFileEnabled(WKContextRef contextRef)
+{
+    return toImpl(contextRef)->javaScriptConfigurationFileEnabled();
+}
+
+void WKContextSetJavaScriptConfigurationFileEnabled(WKContextRef contextRef, bool enable)
+{
+    toImpl(contextRef)->setJavaScriptConfigurationFileEnabled(enable);
+}
+
 void WKContextGarbageCollectJavaScriptObjects(WKContextRef contextRef)
 {
     toImpl(contextRef)->garbageCollectJavaScriptObjects();

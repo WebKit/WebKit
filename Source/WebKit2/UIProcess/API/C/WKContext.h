@@ -154,6 +154,8 @@ typedef void (*WKContextGetStatisticsFunction)(WKDictionaryRef statistics, WKErr
 WK_EXPORT void WKContextGetStatistics(WKContextRef context, void* functionContext, WKContextGetStatisticsFunction function);
 WK_EXPORT void WKContextGetStatisticsWithOptions(WKContextRef context, WKStatisticsOptions statisticsMask, void* functionContext, WKContextGetStatisticsFunction function);
 
+WK_EXPORT bool WKContextJavaScriptConfigurationFileEnabled(WKContextRef context);
+WK_EXPORT void WKContextSetJavaScriptConfigurationFileEnabled(WKContextRef context, bool enable);
 WK_EXPORT void WKContextGarbageCollectJavaScriptObjects(WKContextRef context);
 WK_EXPORT void WKContextSetJavaScriptGarbageCollectorTimerEnabled(WKContextRef context, bool enable);
 

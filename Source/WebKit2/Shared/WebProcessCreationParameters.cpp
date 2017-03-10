@@ -54,6 +54,8 @@ void WebProcessCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << webSQLDatabaseDirectoryExtensionHandle;
     encoder << mediaCacheDirectory;
     encoder << mediaCacheDirectoryExtensionHandle;
+    encoder << javaScriptConfigurationDirectory;
+    encoder << javaScriptConfigurationDirectoryExtensionHandle;
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
     encoder << uiProcessCookieStorageIdentifier;
 #endif
@@ -163,6 +165,10 @@ bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreat
     if (!decoder.decode(parameters.mediaCacheDirectory))
         return false;
     if (!decoder.decode(parameters.mediaCacheDirectoryExtensionHandle))
+        return false;
+    if (!decoder.decode(parameters.javaScriptConfigurationDirectory))
+        return false;
+    if (!decoder.decode(parameters.javaScriptConfigurationDirectoryExtensionHandle))
         return false;
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
     if (!decoder.decode(parameters.uiProcessCookieStorageIdentifier))

@@ -3784,11 +3784,7 @@ int jscmain(int argc, char** argv)
     // comes first.
     CommandLine options(argc, argv);
 
-    if (Options::configFile()) {
-        ConfigFile configFile(Options::configFile());
-        configFile.setProcessName("jsc");
-        configFile.parse();
-    }
+    processConfigFile(Options::configFile(), "jsc");
 
     // Initialize JSC before getting VM.
     WTF::initializeMainThread();
