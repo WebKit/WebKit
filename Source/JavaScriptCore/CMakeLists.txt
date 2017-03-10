@@ -922,6 +922,7 @@ set(JavaScriptCore_SOURCES
     tools/JSDollarVM.cpp
     tools/JSDollarVMPrototype.cpp
     tools/SigillCrashAnalyzer.cpp
+    tools/StackTrace.cpp
     tools/VMInspector.cpp
 
     wasm/JSWebAssembly.cpp
