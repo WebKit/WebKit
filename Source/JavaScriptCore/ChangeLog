@@ -1,3 +1,16 @@
+2017-03-09  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r213695.
+
+        This change broke the Windows build.
+
+        Reverted changeset:
+
+        "Implement a StackTrace utility object that can capture stack
+        traces for debugging."
+        https://bugs.webkit.org/show_bug.cgi?id=169454
+        http://trac.webkit.org/changeset/213695
+
 2017-03-09  Caio Lima  <ticaiolima@gmail.com>
 
         [ESnext] Implement Object Rest - Implementing Object Rest Destructuring

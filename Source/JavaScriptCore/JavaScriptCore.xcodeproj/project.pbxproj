@@ -2365,8 +2365,6 @@
 		FE1BD0211E72027900134BC9 /* CellProfile.h in Headers */ = {isa = PBXBuildFile; fileRef = FE1BD0201E72027000134BC9 /* CellProfile.h */; };
 		FE1BD0241E72053800134BC9 /* HeapVerifier.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE1BD0221E72052F00134BC9 /* HeapVerifier.cpp */; };
 		FE1BD0251E72053800134BC9 /* HeapVerifier.h in Headers */ = {isa = PBXBuildFile; fileRef = FE1BD0231E72052F00134BC9 /* HeapVerifier.h */; };
-		FE1BD02B1E721B4C00134BC9 /* StackTrace.h in Headers */ = {isa = PBXBuildFile; fileRef = FE1BD02A1E721B3700134BC9 /* StackTrace.h */; };
-		FE1BD02C1E721B5100134BC9 /* StackTrace.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE1BD0291E721B3700134BC9 /* StackTrace.cpp */; };
 		FE1C0FFD1B193E9800B53FCA /* Exception.h in Headers */ = {isa = PBXBuildFile; fileRef = FE1C0FFC1B193E9800B53FCA /* Exception.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE1C0FFF1B194FD100B53FCA /* Exception.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE1C0FFE1B194FD100B53FCA /* Exception.cpp */; };
 		FE20CE9D15F04A9500DF3430 /* LLIntCLoop.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE20CE9B15F04A9500DF3430 /* LLIntCLoop.cpp */; };
@@ -4947,8 +4945,6 @@
 		FE1BD0201E72027000134BC9 /* CellProfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CellProfile.h; sourceTree = "<group>"; };
 		FE1BD0221E72052F00134BC9 /* HeapVerifier.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HeapVerifier.cpp; sourceTree = "<group>"; };
 		FE1BD0231E72052F00134BC9 /* HeapVerifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HeapVerifier.h; sourceTree = "<group>"; };
-		FE1BD0291E721B3700134BC9 /* StackTrace.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StackTrace.cpp; sourceTree = "<group>"; };
-		FE1BD02A1E721B3700134BC9 /* StackTrace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StackTrace.h; sourceTree = "<group>"; };
 		FE1C0FFC1B193E9800B53FCA /* Exception.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Exception.h; sourceTree = "<group>"; };
 		FE1C0FFE1B194FD100B53FCA /* Exception.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Exception.cpp; sourceTree = "<group>"; };
 		FE20CE9B15F04A9500DF3430 /* LLIntCLoop.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LLIntCLoop.cpp; path = llint/LLIntCLoop.cpp; sourceTree = "<group>"; };
@@ -6942,8 +6938,6 @@
 				86B5822C14D22F5F00A9C306 /* ProfileTreeNode.h */,
 				FE3022D01E3D739600BAC493 /* SigillCrashAnalyzer.cpp */,
 				FE3022D11E3D739600BAC493 /* SigillCrashAnalyzer.h */,
-				FE1BD0291E721B3700134BC9 /* StackTrace.cpp */,
-				FE1BD02A1E721B3700134BC9 /* StackTrace.h */,
 				86B5826A14D35D5100A9C306 /* TieredMMapArray.h */,
 				FE3022D41E42856700BAC493 /* VMInspector.cpp */,
 				FE3022D51E42856700BAC493 /* VMInspector.h */,
@@ -8744,7 +8738,6 @@
 				FE187A0D1C030D5C0038BBCA /* JITDivGenerator.h in Headers */,
 				0F46808214BA572D00BFE272 /* JITExceptions.h in Headers */,
 				0FB14E1F18124ACE009B6B4D /* JITInlineCacheGenerator.h in Headers */,
-				FE1BD02B1E721B4C00134BC9 /* StackTrace.h in Headers */,
 				86CC85A10EE79A4700288682 /* JITInlines.h in Headers */,
 				FE3A06BE1C11041200390FDD /* JITLeftShiftGenerator.h in Headers */,
 				79233C2B1D34715700C5A834 /* JITMathIC.h in Headers */,
@@ -10185,7 +10178,6 @@
 				0FC97F4118202119002C9B26 /* DFGWatchpointCollectionPhase.cpp in Sources */,
 				0FDB2CE7174830A2007B3C1B /* DFGWorklist.cpp in Sources */,
 				0FE050171AA9091100D33B33 /* DirectArguments.cpp in Sources */,
-				FE1BD02C1E721B5100134BC9 /* StackTrace.cpp in Sources */,
 				0FE050151AA9091100D33B33 /* DirectArgumentsOffset.cpp in Sources */,
 				0F2EBBAB1DEDF95000990369 /* DirectEvalCodeCache.cpp in Sources */,
 				14386A741DD69895008652C4 /* DirectEvalExecutable.cpp in Sources */,
