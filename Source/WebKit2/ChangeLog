@@ -1,3 +1,14 @@
+2017-03-10  Zan Dobersek  <zdobersek@igalia.com>
+
+        [WK2] Guard GLib-specific typedefs in InjectedBundle.h with USE(GLIB)
+        https://bugs.webkit.org/show_bug.cgi?id=169464
+
+        Reviewed by Carlos Garcia Campos.
+
+        * WebProcess/InjectedBundle/InjectedBundle.h: Use the more appropriate
+        USE(GLIB) guard for the two typedefs revolving around GModule, instead
+        of the PLATFORM(GTK) guard.
+
 2017-03-09  Tomas Popela  <tpopela@redhat.com>
 
         Unreviewed, fix documentation typos
