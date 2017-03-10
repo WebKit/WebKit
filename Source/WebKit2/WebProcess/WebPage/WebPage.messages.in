@@ -469,4 +469,10 @@ messages -> WebPage LegacyReceiver {
 #if USE(QUICK_LOOK)
     DidReceivePasswordForQuickLookDocument(String password)
 #endif
+
+    RegisterURLSchemeHandler(uint64_t identifier, String scheme)
+
+    URLSchemeHandlerTaskDidReceiveResponse(uint64_t providerIdentifier, uint64_t taskIdentifier, WebCore::ResourceResponse response)
+    URLSchemeHandlerTaskDidReceiveData(uint64_t providerIdentifier, uint64_t taskIdentifier, IPC::DataReference data)
+    URLSchemeHandlerTaskDidComplete(uint64_t providerIdentifier, uint64_t taskIdentifier, WebCore::ResourceError error)
 }

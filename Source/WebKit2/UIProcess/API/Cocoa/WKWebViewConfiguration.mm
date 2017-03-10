@@ -33,11 +33,14 @@
 #import "WKPreferences.h"
 #import "WKProcessPool.h"
 #import "WKUserContentController.h"
+#import "WKWebView.h"
 #import "WKWebViewContentProviderRegistry.h"
 #import "WeakObjCPtr.h"
+#import "WebKit2Initialize.h"
 #import "_WKVisitedLinkStore.h"
 #import "_WKWebsiteDataStoreInternal.h"
 #import <WebCore/RuntimeApplicationChecks.h>
+#import <WebCore/URLParser.h>
 #import <wtf/RetainPtr.h>
 
 #if PLATFORM(IOS)
@@ -94,6 +97,7 @@ private:
     WebKit::WeakObjCPtr<WKWebView> _alternateWebViewForNavigationGestures;
     RetainPtr<NSString> _groupIdentifier;
     LazyInitialized<RetainPtr<NSString>> _applicationNameForUserAgent;
+    LazyInitialized<RetainPtr<NSMutableDictionary<NSString *, id <WKURLSchemeHandler>>>> _urlSchemeHandlers;
     NSTimeInterval _incrementalRenderingSuppressionTimeout;
     BOOL _treatsSHA1SignedCertificatesAsInsecure;
     BOOL _respectsImageOrientation;
@@ -141,7 +145,9 @@ private:
 {
     if (!(self = [super init]))
         return nil;
-    
+
+    WebKit::InitializeWebKit2();
+
 #if PLATFORM(IOS)
     _allowsPictureInPictureMediaPlayback = YES;
     _allowsInlineMediaPlayback = WebCore::deviceClass() == MGDeviceClassiPad;
@@ -328,6 +334,8 @@ private:
     configuration->_needsStorageAccessFromFileURLsQuirk = self->_needsStorageAccessFromFileURLsQuirk;
     configuration->_overrideContentSecurityPolicy = self->_overrideContentSecurityPolicy;
 
+    configuration->_urlSchemeHandlers.set(adoptNS([self._urlSchemeHandlers mutableCopyWithZone:zone]));
+
     return configuration;
 }
 
@@ -400,6 +408,33 @@ static NSString *defaultApplicationNameForUserAgent()
     _visitedLinkStore.set(visitedLinkStore);
 }
 
+- (void)setURLSchemeHandler:(id <WKURLSchemeHandler>)urlSchemeHandler forURLScheme:(NSString *)urlScheme
+{
+    auto *urlSchemeHandlers = _urlSchemeHandlers.get([] { return adoptNS([[NSMutableDictionary alloc] init]); });
+
+    if ([WKWebView handlesURLScheme:urlScheme])
+        [NSException raise:NSInvalidArgumentException format:@"'%@' is a URL scheme that WKWebView handles natively", urlScheme];
+
+    auto canonicalScheme = WebCore::URLParser::maybeCanonicalizeScheme(urlScheme);
+    if (!canonicalScheme)
+        [NSException raise:NSInvalidArgumentException format:@"'%@' is not a valid URL scheme", urlScheme];
+
+    if ([urlSchemeHandlers objectForKey:(NSString *)canonicalScheme.value()])
+        [NSException raise:NSInvalidArgumentException format:@"URL scheme '%@' already has a registered URL scheme handler", urlScheme];
+
+    [urlSchemeHandlers setObject:urlSchemeHandler forKey:(NSString *)canonicalScheme.value()];
+}
+
+- (nullable id <WKURLSchemeHandler>)urlSchemeHandlerForURLScheme:(NSString *)urlScheme
+{
+    auto canonicalScheme = WebCore::URLParser::maybeCanonicalizeScheme(urlScheme);
+    if (!canonicalScheme)
+        return nil;
+
+    auto *urlSchemeHandlers = _urlSchemeHandlers.get([] { return adoptNS([[NSMutableDictionary alloc] init]); });
+    return [urlSchemeHandlers objectForKey:(NSString *)canonicalScheme.value()];
+}
+
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
 
@@ -414,6 +449,11 @@ static NSString *defaultApplicationNameForUserAgent()
 }
 
 #pragma clang diagnostic pop
+
+- (NSMutableDictionary<NSString *, id <WKURLSchemeHandler>> *)_urlSchemeHandlers
+{
+    return _urlSchemeHandlers.get([] { return adoptNS([[NSMutableDictionary alloc] init]); });
+}
 
 #if PLATFORM(IOS)
 - (WKWebViewContentProviderRegistry *)_contentProviderRegistry

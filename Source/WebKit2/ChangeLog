@@ -1,3 +1,139 @@
+2017-03-09  Brady Eidson  <beidson@apple.com>
+
+        Add WKURLSchemeHandler API for handling custom protocols.
+        https://bugs.webkit.org/show_bug.cgi?id=169422
+
+        Reviewed by Tim Horton.
+
+        This introduces two new protocols to the WK2 API surface:
+        - WKURLSchemeHandler
+        - WKURLSchemeHandlerTask
+        
+        By registering an object that conforms to the WKURLSchemeHandler protocol with a WKWebViewConfiguration an application will
+        be handed an object conforming to WKURLSchemeHandlerTask for each resource load in that WKWebView with a custom URL scheme.
+        
+        Using that id <WKURLSchemeHandlerTask>, the application can communicate the data for the resource back to WebKit.
+        
+        * Shared/API/APIObject.h:
+        * Shared/Cocoa/APIObject.mm:
+        (API::Object::newObject):
+
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+
+        * UIProcess/API/APIURLSchemeHandlerTask.cpp: 
+        (API::URLSchemeHandlerTask::create):
+        (API::URLSchemeHandlerTask::URLSchemeHandlerTask):
+        * UIProcess/API/APIURLSchemeHandlerTask.h: 
+
+        Add the WKURLSchemeHandler @protocol:
+        * UIProcess/API/Cocoa/WKURLSchemeHandler.h: Added.
+
+        Add the WKURLSchemeHandlerTask @protocol, as well as WebKit's concrete implementation of it:
+        * UIProcess/API/Cocoa/WKURLSchemeHandlerTask.h: Added.
+        * UIProcess/API/Cocoa/WKURLSchemeHandlerTask.mm: Added.
+        (raiseExceptionIfNecessary):
+        (-[WKURLSchemeHandlerTaskImpl request]):
+        (-[WKURLSchemeHandlerTaskImpl didReceiveResponse:]):
+        (-[WKURLSchemeHandlerTaskImpl didReceiveData:]):
+        (-[WKURLSchemeHandlerTaskImpl didFinish]):
+        (-[WKURLSchemeHandlerTaskImpl didFailWithError:]):
+        (-[WKURLSchemeHandlerTaskImpl _apiObject]):
+        * UIProcess/API/Cocoa/WKURLSchemeHandlerTaskInternal.h: 
+        (WebKit::wrapper):
+
+        * UIProcess/API/Cocoa/WKWebView.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _initializeWithConfiguration:]):
+        (-[WKWebView urlSchemeHandlerForURLScheme:]):
+        (+[WKWebView handlesURLScheme:]):
+
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.h:
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration copyWithZone:]):
+        (-[WKWebViewConfiguration setURLSchemeHandler:forURLScheme:]):
+        (-[WKWebViewConfiguration urlSchemeHandlerForURLScheme:]):
+        (-[WKWebViewConfiguration _urlSchemeHandlers]):
+        * UIProcess/API/Cocoa/WKWebViewConfigurationInternal.h:
+
+        * UIProcess/Cocoa/WebURLSchemeHandlerCocoa.h: 
+        (WebKit::WebURLSchemeHandlerCocoa::apiHandler):
+        * UIProcess/Cocoa/WebURLSchemeHandlerCocoa.mm: Added.
+        (WebKit::WebURLSchemeHandlerCocoa::create):
+        (WebKit::WebURLSchemeHandlerCocoa::WebURLSchemeHandlerCocoa):
+        (WebKit::WebURLSchemeHandlerCocoa::platformStartTask):
+        (WebKit::WebURLSchemeHandlerCocoa::platformStopTask):
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::creationParameters):
+        (WebKit::WebPageProxy::setURLSchemeHandlerForScheme):
+        (WebKit::WebPageProxy::urlSchemeHandlerForScheme):
+        (WebKit::WebPageProxy::startURLSchemeHandlerTask):
+        (WebKit::WebPageProxy::stopURLSchemeHandlerTask):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+
+        * UIProcess/WebURLSchemeHandler.cpp: 
+        (WebKit::generateWebURLSchemeHandlerIdentifier):
+        (WebKit::WebURLSchemeHandler::WebURLSchemeHandler):
+        (WebKit::WebURLSchemeHandler::~WebURLSchemeHandler):
+        (WebKit::WebURLSchemeHandler::startTask):
+        (WebKit::WebURLSchemeHandler::stopTask):
+        * UIProcess/WebURLSchemeHandler.h: 
+        (WebKit::WebURLSchemeHandler::identifier):
+
+        * UIProcess/WebURLSchemeHandlerTask.cpp: Added.
+        (WebKit::WebURLSchemeHandlerTask::create):
+        (WebKit::WebURLSchemeHandlerTask::WebURLSchemeHandlerTask):
+        (WebKit::WebURLSchemeHandlerTask::didReceiveResponse):
+        (WebKit::WebURLSchemeHandlerTask::didReceiveData):
+        (WebKit::WebURLSchemeHandlerTask::didComplete):
+        (WebKit::WebURLSchemeHandlerTask::pageDestroyed):
+        (WebKit::WebURLSchemeHandlerTask::stop):
+        * UIProcess/WebURLSchemeHandlerTask.h: Added.
+        (WebKit::WebURLSchemeHandlerTask::identifier):
+        (WebKit::WebURLSchemeHandlerTask::request):
+
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::scheduleLoad):
+        (WebKit::WebLoaderStrategy::remove):
+        * WebProcess/Network/WebLoaderStrategy.h:
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::urlSchemeHandlerForScheme):
+        (WebKit::WebPage::registerURLSchemeHandler):
+        (WebKit::WebPage::urlSchemeHandlerTaskDidReceiveResponse):
+        (WebKit::WebPage::urlSchemeHandlerTaskDidReceiveData):
+        (WebKit::WebPage::urlSchemeHandlerTaskDidComplete):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
+        * WebProcess/WebPage/WebURLSchemeHandlerProxy.cpp: Added.
+        (WebKit::WebURLSchemeHandlerProxy::WebURLSchemeHandlerProxy):
+        (WebKit::WebURLSchemeHandlerProxy::~WebURLSchemeHandlerProxy):
+        (WebKit::WebURLSchemeHandlerProxy::startNewTask):
+        (WebKit::WebURLSchemeHandlerProxy::taskDidReceiveResponse):
+        (WebKit::WebURLSchemeHandlerProxy::taskDidReceiveData):
+        (WebKit::WebURLSchemeHandlerProxy::taskDidComplete):
+        * WebProcess/WebPage/WebURLSchemeHandlerProxy.h:
+        (WebKit::WebURLSchemeHandlerProxy::identifier):
+        (WebKit::WebURLSchemeHandlerProxy::page):
+
+        * WebProcess/WebPage/WebURLSchemeHandlerTaskProxy.cpp: Added.
+        (WebKit::WebURLSchemeHandlerTaskProxy::WebURLSchemeHandlerTaskProxy):
+        (WebKit::WebURLSchemeHandlerTaskProxy::startLoading):
+        (WebKit::WebURLSchemeHandlerTaskProxy::stopLoading):
+        (WebKit::WebURLSchemeHandlerTaskProxy::didReceiveResponse):
+        (WebKit::WebURLSchemeHandlerTaskProxy::didReceiveData):
+        (WebKit::WebURLSchemeHandlerTaskProxy::didComplete):
+        * WebProcess/WebPage/WebURLSchemeHandlerTaskProxy.h:
+        (WebKit::WebURLSchemeHandlerTaskProxy::request):
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        * CMakeLists.txt:
+
 2017-03-09  Joseph Pecoraro  <pecoraro@apple.com>
 
         Unreviewed follow-up to r213682.

@@ -50,6 +50,9 @@ public:
 
     static const UIDNA& internationalDomainNameTranscoder();
 
+    WEBCORE_EXPORT static bool isSpecialScheme(const String& scheme);
+    WEBCORE_EXPORT static std::optional<String> maybeCanonicalizeScheme(const String& scheme);
+
 private:
     static std::optional<uint16_t> defaultPortForProtocol(StringView);
     friend std::optional<uint16_t> defaultPortForProtocol(StringView);

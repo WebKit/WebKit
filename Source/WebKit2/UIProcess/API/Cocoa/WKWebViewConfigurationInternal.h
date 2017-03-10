@@ -32,6 +32,8 @@
 
 @interface WKWebViewConfiguration ()
 
+@property (nonatomic, readonly) NSMutableDictionary<NSString *, id <WKURLSchemeHandler>> *_urlSchemeHandlers;
+
 #if PLATFORM(IOS)
 @property (nonatomic, setter=_setContentProviderRegistry:) WKWebViewContentProviderRegistry *_contentProviderRegistry;
 #endif

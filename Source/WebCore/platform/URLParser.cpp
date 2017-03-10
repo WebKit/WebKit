@@ -790,6 +790,28 @@ ALWAYS_INLINE static Scheme scheme(StringView scheme)
     }
 }
 
+std::optional<String> URLParser::maybeCanonicalizeScheme(const String& scheme)
+{
+    if (scheme.isEmpty())
+        return std::nullopt;
+
+    if (!isASCIIAlpha(scheme[0]))
+        return std::nullopt;
+
+    for (size_t i = 1; i < scheme.length(); ++i) {
+        if (isASCIIAlphanumeric(scheme[i]) || scheme[i] == '+' || scheme[i] == '-' || scheme[i] == '.')
+            continue;
+        return std::nullopt;
+    }
+
+    return scheme.convertToASCIILowercase();
+}
+
+bool URLParser::isSpecialScheme(const String& schemeArg)
+{
+    return scheme(schemeArg) != Scheme::NonSpecial;
+}
+
 enum class URLParser::URLPart {
     SchemeEnd,
     UserStart,

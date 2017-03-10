@@ -279,6 +279,11 @@ WK_CLASS_AVAILABLE(macosx(10.10), ios(8.0))
 
 #endif
 
+/* @abstract Checks whether or not WKWebViews handle the given URL scheme by default.
+ @param scheme The URL scheme to check.
+ */
++ (BOOL)handlesURLScheme:(NSString *)urlScheme WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+
 @end
 
 #if !TARGET_OS_IPHONE

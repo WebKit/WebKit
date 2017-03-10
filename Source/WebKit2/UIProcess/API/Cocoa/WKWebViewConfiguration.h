@@ -36,6 +36,7 @@ NS_ASSUME_NONNULL_BEGIN
 @class WKProcessPool;
 @class WKUserContentController;
 @class WKWebsiteDataStore;
+@protocol WKURLSchemeHandler;
 
 #if TARGET_OS_IPHONE
 
@@ -174,6 +175,25 @@ WK_CLASS_AVAILABLE(macosx(10.10), ios(8.0))
 @property (nonatomic) WKUserInterfaceDirectionPolicy userInterfaceDirectionPolicy WK_API_AVAILABLE(macosx(10.12));
 
 #endif
+
+/* @abstract Sets the URL scheme handler object for the given URL scheme.
+ @param urlSchemeHandler The object to register.
+ @param scheme The URL scheme the object will handle.
+ @discussion Each URL scheme can only have one URL scheme handler object registered.
+ An exception will be thrown if you try to register an object for a particular URL scheme more than once.
+ URL schemes are case insensitive. e.g. "myprotocol" and "MyProtocol" are equivalent.
+ Valid URL schemes must start with an ASCII letter and can only contain ASCII letters, numbers, the '+' character,
+ the '-' character, and the '.' character.
+ An exception will be thrown if you try to register a URL scheme handler for an invalid URL scheme.
+ An exception will be thrown if you try to register a URL scheme handler for a URL scheme that WebKit handles internally.
+ You can use +[WKWebView handlesURLScheme:] to check the availability of a given URL scheme.
+ */
+- (void)setURLSchemeHandler:(nullable id <WKURLSchemeHandler>)urlSchemeHandler forURLScheme:(NSString *)urlScheme WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+
+/* @abstract Returns the currently registered URL scheme handler object for the given URL scheme.
+ @param scheme The URL scheme to lookup.
+ */
+- (nullable id <WKURLSchemeHandler>)urlSchemeHandlerForURLScheme:(NSString *)urlScheme WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 @end
 

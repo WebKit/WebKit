@@ -490,4 +490,7 @@ messages -> WebPageProxy {
 #endif
 
     SetIsUsingHighPerformanceWebGL(bool isUsingHighPerformanceWebGL)
+
+    StartURLSchemeHandlerTask(uint64_t loaderIdentifier, uint64_t resourceIdentifier, WebCore::ResourceRequest request)
+    StopURLSchemeHandlerTask(uint64_t loaderIdentifier, uint64_t resourceIdentifier)
 }

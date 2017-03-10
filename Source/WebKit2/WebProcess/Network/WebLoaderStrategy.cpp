@@ -39,8 +39,11 @@
 #include "WebFrameLoaderClient.h"
 #include "WebFrameNetworkingContext.h"
 #include "WebPage.h"
+#include "WebPageProxyMessages.h"
 #include "WebProcess.h"
 #include "WebResourceLoader.h"
+#include "WebURLSchemeHandlerProxy.h"
+#include "WebURLSchemeHandlerTaskProxy.h"
 #include <WebCore/ApplicationCacheHost.h>
 #include <WebCore/CachedResource.h>
 #include <WebCore/DiagnosticLoggingClient.h>
@@ -194,6 +197,16 @@ void WebLoaderStrategy::scheduleLoad(ResourceLoader& resourceLoader, CachedResou
     }
 #endif
 
+    if (webPage) {
+        if (auto* handler = webPage->urlSchemeHandlerForScheme(resourceLoader.request().url().protocol().toStringWithoutCopying())) {
+            LOG(NetworkScheduling, "(WebProcess) WebLoaderStrategy::scheduleLoad, URL '%s' will be handled by a UIProcess URL scheme handler.", resourceLoader.url().string().utf8().data());
+            RELEASE_LOG_IF_ALLOWED(resourceLoader, "scheduleLoad: URL will be handled by a UIProcess URL scheme handler (frame = %p, resourceID = %" PRIu64 ")", resourceLoader.frame(), identifier);
+
+            handler->startNewTask(resourceLoader);
+            return;
+        }
+    }
+
     LOG(NetworkScheduling, "(WebProcess) WebLoaderStrategy::scheduleLoad, url '%s' will be scheduled with the NetworkProcess with priority %d", resourceLoader.url().string().latin1().data(), static_cast<int>(resourceLoader.request().priority()));
 
     ContentSniffingPolicy contentSniffingPolicy = resourceLoader.shouldSniffContent() ? SniffContent : DoNotSniffContent;
@@ -258,6 +271,11 @@ void WebLoaderStrategy::remove(ResourceLoader* resourceLoader)
 
     if (m_internallyFailedResourceLoaders.contains(resourceLoader)) {
         m_internallyFailedResourceLoaders.remove(resourceLoader);
+        return;
+    }
+
+    if (auto task = m_urlSchemeHandlerTasks.take(resourceLoader->identifier())) {
+        task->stopLoading();
         return;
     }
     

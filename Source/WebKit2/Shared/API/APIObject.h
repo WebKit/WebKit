@@ -144,6 +144,7 @@ public:
         RunJavaScriptConfirmResultListener,
         RunJavaScriptPromptResultListener,
         TextChecker,
+        URLSchemeHandlerTask,
         UserContentController,
         UserContentExtension,
         UserContentExtensionStore,

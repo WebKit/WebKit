@@ -42,6 +42,7 @@
 #include <WebCore/ScrollTypes.h>
 #include <WebCore/SessionID.h>
 #include <WebCore/UserInterfaceLayoutDirection.h>
+#include <wtf/HashMap.h>
 #include <wtf/text/WTFString.h>
 
 #if PLATFORM(MAC)
@@ -145,6 +146,8 @@ struct WebPageCreationParameters {
     WebCore::LayoutMilestones observedLayoutMilestones;
 
     String overrideContentSecurityPolicy;
+
+    HashMap<String, uint64_t> urlSchemeHandlers;
 
 #if ENABLE(WEB_RTC)
     bool iceCandidateFilteringEnabled { true };
