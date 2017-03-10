@@ -28,6 +28,11 @@ PASS Object.getOwnPropertyDescriptor(global, 'AnimationTimeline').hasOwnProperty
 PASS Object.getOwnPropertyDescriptor(global, 'AnimationTimeline').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(global, 'AnimationTimeline').enumerable is false
 PASS Object.getOwnPropertyDescriptor(global, 'AnimationTimeline').configurable is true
+PASS Object.getOwnPropertyDescriptor(global, 'ApplePayError').value is ApplePayError
+PASS Object.getOwnPropertyDescriptor(global, 'ApplePayError').hasOwnProperty('get') is false
+PASS Object.getOwnPropertyDescriptor(global, 'ApplePayError').hasOwnProperty('set') is false
+PASS Object.getOwnPropertyDescriptor(global, 'ApplePayError').enumerable is false
+PASS Object.getOwnPropertyDescriptor(global, 'ApplePayError').configurable is true
 PASS Object.getOwnPropertyDescriptor(global, 'ApplePaySession').value is ApplePaySession
 PASS Object.getOwnPropertyDescriptor(global, 'ApplePaySession').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'ApplePaySession').hasOwnProperty('set') is false
@@ -228,6 +233,11 @@ PASS Object.getOwnPropertyDescriptor(global, 'CSSValueList').hasOwnProperty('get
 PASS Object.getOwnPropertyDescriptor(global, 'CSSValueList').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(global, 'CSSValueList').enumerable is false
 PASS Object.getOwnPropertyDescriptor(global, 'CSSValueList').configurable is true
+PASS Object.getOwnPropertyDescriptor(global, 'CanvasCaptureMediaStreamTrack').value is CanvasCaptureMediaStreamTrack
+PASS Object.getOwnPropertyDescriptor(global, 'CanvasCaptureMediaStreamTrack').hasOwnProperty('get') is false
+PASS Object.getOwnPropertyDescriptor(global, 'CanvasCaptureMediaStreamTrack').hasOwnProperty('set') is false
+PASS Object.getOwnPropertyDescriptor(global, 'CanvasCaptureMediaStreamTrack').enumerable is false
+PASS Object.getOwnPropertyDescriptor(global, 'CanvasCaptureMediaStreamTrack').configurable is true
 PASS Object.getOwnPropertyDescriptor(global, 'CanvasGradient').value is CanvasGradient
 PASS Object.getOwnPropertyDescriptor(global, 'CanvasGradient').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'CanvasGradient').hasOwnProperty('set') is false

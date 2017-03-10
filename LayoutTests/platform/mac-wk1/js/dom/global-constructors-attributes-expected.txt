@@ -28,6 +28,11 @@ PASS Object.getOwnPropertyDescriptor(global, 'AnimationTimeline').hasOwnProperty
 PASS Object.getOwnPropertyDescriptor(global, 'AnimationTimeline').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(global, 'AnimationTimeline').enumerable is false
 PASS Object.getOwnPropertyDescriptor(global, 'AnimationTimeline').configurable is true
+PASS Object.getOwnPropertyDescriptor(global, 'ApplePayError').value is ApplePayError
+PASS Object.getOwnPropertyDescriptor(global, 'ApplePayError').hasOwnProperty('get') is false
+PASS Object.getOwnPropertyDescriptor(global, 'ApplePayError').hasOwnProperty('set') is false
+PASS Object.getOwnPropertyDescriptor(global, 'ApplePayError').enumerable is false
+PASS Object.getOwnPropertyDescriptor(global, 'ApplePayError').configurable is true
 PASS Object.getOwnPropertyDescriptor(global, 'ApplicationCache').value is ApplicationCache
 PASS Object.getOwnPropertyDescriptor(global, 'ApplicationCache').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'ApplicationCache').hasOwnProperty('set') is false
