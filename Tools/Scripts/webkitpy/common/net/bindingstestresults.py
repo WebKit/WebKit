@@ -28,11 +28,8 @@ _log = logging.getLogger(__name__)
 
 
 class BindingsTestResults(AbstractTestResults):
-    def __init__(self, failures, errors):
+    def __init__(self, failures):
         self._failures = failures
-        self._errors = errors
-
-        self._failing_test_names = failures + errors
 
     @classmethod
     def results_from_string(cls, string):
@@ -40,22 +37,22 @@ class BindingsTestResults(AbstractTestResults):
         if not parsed_results:
             return None
 
-        if 'failures' not in parsed_results or 'errors' not in parsed_results:
+        if 'failures' not in parsed_results:
             return None
 
-        return cls(parsed_results['failures'], parsed_results['errors'])
+        return cls(parsed_results['failures'])
 
     def is_subset(self, other):
-        return set(self._failures) <= set(other._failures) and set(self._errors) <= set(other._errors)
+        return set(self._failures) <= set(other._failures)
 
     def equals(self, other):
-        return set(self._failures) == set(other._failures) and set(self._errors) == set(other._errors)
+        return set(self._failures) == set(other._failures)
 
     def all_passed(self):
-        return not self._failures and not self._errors
+        return not self._failures
 
     def failing_tests(self):
-        return self._failing_test_names
+        return self._failures
 
     # No defined failure limit for bindings tests.
     def did_exceed_test_failure_limit(self):

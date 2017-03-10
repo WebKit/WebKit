@@ -1,3 +1,57 @@
+2017-03-10  Srinivasan Vijayaraghavan  <svijayaraghavan@apple.com>
+
+        Add support for Bindings EWS
+        https://bugs.webkit.org/show_bug.cgi?id=169308
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Scripts/webkitpy/common/config/ews.json: Add bindings-ews. Can test without building; should_build = False.
+        * Scripts/webkitpy/common/net/bindingstestresults.py:
+        (BindingsTestResults.__init__): Removed 'errors'.
+        (BindingsTestResults.results_from_string): Ditto.
+        (BindingsTestResults.is_subset): Ditto.
+        (BindingsTestResults.equals): Ditto.
+        (BindingsTestResults.all_passed): Ditto.
+        (BindingsTestResults.failing_tests): Ditto.
+        * Scripts/webkitpy/common/net/bindingstestresults_unittest.py:
+        (BindingsTestResultsTest.test_results_from_string): Removed 'errors'.
+        (BindingsTestResultsTest.test_results_from_string_success): Removed 'errors'.
+        * Scripts/webkitpy/tool/bot/earlywarningsystemtask.py:
+        (EarlyWarningSystemTask.__init__): Add should_build parameter.
+        (EarlyWarningSystemTask.run): Check should_build before calling self._build().
+        * Scripts/webkitpy/tool/bot/retrylogic_unittest.py: Renamed from Tools/Scripts/webkitpy/tool/bot/jscews_unittest.py.
+        (MockBindingsEarlyWarningSystem): Based of MockJSCEarlyWarningSystem. Mocked so we can provide test results.
+        (MockBindingsEarlyWarningSystem.__init__): Sets attributes.
+        (MockBindingsEarlyWarningSystem.test_results): Returns test results provided by us, instead of JSON output.
+        (BindingsEarlyWarningSystemTest): Class to test retry logic in below situations.
+        (BindingsEarlyWarningSystemTest._results_indicate_all_passed): False if None or or has failures, else True.
+        (BindingsEarlyWarningSystemTest._create_task):
+        (BindingsEarlyWarningSystemTest.test_success_case): Clean patch on clean tree.
+        (BindingsEarlyWarningSystemTest.test_test_failure): Red patch on clean tree.
+        (BindingsEarlyWarningSystemTest.test_fix): Clean patch on red tree.
+        (BindingsEarlyWarningSystemTest.test_ineffective_patch): Red patch on red tree.
+        (BindingsEarlyWarningSystemTest.test_partially_effective_patch): Red patch on redder tree.
+        (BindingsEarlyWarningSystemTest.test_different_test_failures_in_patch_and_tree): Red patch on red tree.
+        * Scripts/webkitpy/tool/bot/patchanalysistask.py:
+        (PatchAnalysisTask._build_and_test_without_patch): Don't build if should_build is False (eg. on Bindings EWS).
+        (PatchAnalysisTask._retry_bindings_tests): Retry logic for Bindings tests.
+        (PatchAnalysisTask._test_patch): If tests failed on Bindings EWS, and call _retry_bindings_tests.
+        * Scripts/webkitpy/tool/commands/earlywarningsystem.py:
+        (AbstractEarlyWarningSystem.begin_work_queue): Use BindingsTestResultsReader on Bindings EWS.
+        (AbstractEarlyWarningSystem._create_task): Pass should_build argument.
+        (AbstractEarlyWarningSystem.load_ews_classes): Add should_build argument (True by default).
+        * Scripts/webkitpy/tool/commands/earlywarningsystem_unittest.py:
+        (TestBindingsEWS): Bindings EWS class, derived from AbstractEarlyWarningSystem.
+        (AbstractEarlyWarningSystemTest.test_failing_bindings_tests_message): Unit test message posted to Bugzilla.
+        (EarlyWarningSystemTest._default_expected_logs): Not building on all ewses anymore; make build line optional.
+        (EarlyWarningSystemTest.test_ews_name): Add bindings-ews.
+        * Scripts/webkitpy/tool/steps/checkpatchrelevance.py:
+        (CheckPatchRelevance): Add bindings paths.
+        (CheckPatchRelevance._changes_are_relevant): Cleaner way to check if we should perform this step.
+        * Scripts/webkitpy/tool/steps/steps_unittest.py: Add unit tests for Bindings EWS patch relevance.
+        (test_patch_relevant_bindings): Test for patch relevant to bindings.
+        (test_patch_not_relevant_bindings): Test for patch not relevant to bindings.
+
 2017-03-09  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS WK2] Layer content blurry with nested perspective and transforms

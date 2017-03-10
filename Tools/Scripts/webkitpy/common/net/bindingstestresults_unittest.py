@@ -27,17 +27,15 @@ from webkitpy.common.net.bindingstestresults import BindingsTestResults
 
 class BindingsTestResultsTest(unittest.TestCase):
     def test_results_from_string(self):
-        incomplete_json_v1 = '{"failures": []}'
-        incomplete_json_v2 = '{"errors":[]}'
-        self.assertEqual(None, BindingsTestResults.results_from_string(incomplete_json_v1))
-        self.assertEqual(None, BindingsTestResults.results_from_string(incomplete_json_v2))
+        incomplete_json = '{"key2": []}'
+        self.assertEqual(None, BindingsTestResults.results_from_string(incomplete_json))
 
     def test_results_from_string_success(self):
-        no_failures_string = '{"failures": [], "errors":[]}'
-        no_failures_results = BindingsTestResults([], [])
+        no_failures_string = '{"failures": []}'
+        no_failures_results = BindingsTestResults([])
         self.assertTrue(no_failures_results.equals(BindingsTestResults.results_from_string(no_failures_string)))
         self.assertTrue(no_failures_results.all_passed())
 
-        test_string = '{"failures": ["failure1"], "errors": ["error1", "error2"]}'
-        test_results = BindingsTestResults(["failure1"], ["error1", "error2"])
+        test_string = '{"failures": ["failure1"]}'
+        test_results = BindingsTestResults(["failure1"])
         self.assertTrue(test_results.equals(BindingsTestResults.results_from_string(test_string)))

@@ -37,6 +37,7 @@ from webkitpy.common.config.ports import DeprecatedPort
 from webkitpy.common.system.filesystem import FileSystem
 from webkitpy.common.system.executive import ScriptError
 from webkitpy.tool.bot.earlywarningsystemtask import EarlyWarningSystemTask, EarlyWarningSystemTaskDelegate
+from webkitpy.tool.bot.bindingstestresultsreader import BindingsTestResultsReader
 from webkitpy.tool.bot.layouttestresultsreader import LayoutTestResultsReader
 from webkitpy.tool.bot.jsctestresultsreader import JSCTestResultsReader
 from webkitpy.tool.bot.patchanalysistask import UnableToApplyPatch, PatchIsNotValid, PatchIsNotApplicable
@@ -59,6 +60,8 @@ class AbstractEarlyWarningSystem(AbstractReviewQueue, EarlyWarningSystemTaskDele
 
         if self.group() == "jsc":
             self._test_results_reader = JSCTestResultsReader(self._tool, self._port.jsc_results_directory())
+        elif self.group() == "bindings":
+            self._test_results_reader = BindingsTestResultsReader(self._tool, self._port.jsc_results_directory())
         else:
             self._test_results_reader = LayoutTestResultsReader(self._tool, self._port.results_directory(), self._log_directory())
 
@@ -88,7 +91,7 @@ class AbstractEarlyWarningSystem(AbstractReviewQueue, EarlyWarningSystemTaskDele
 
     # This exists for mocking
     def _create_task(self, patch):
-        return EarlyWarningSystemTask(self, patch, self._options.run_tests)
+        return EarlyWarningSystemTask(self, patch, should_run_tests=self._options.run_tests, should_build=self.should_build)
 
     def review_patch(self, patch):
         task = self._create_task(patch)
@@ -174,5 +177,6 @@ class AbstractEarlyWarningSystem(AbstractReviewQueue, EarlyWarningSystemTaskDele
                 'watchers': config.get('watchers', []),
                 'run_tests': config.get('runTests', cls.run_tests),
                 '_group': config.get('group', None),
+                'should_build': config.get('shouldBuild', True),
             }))
         return classes

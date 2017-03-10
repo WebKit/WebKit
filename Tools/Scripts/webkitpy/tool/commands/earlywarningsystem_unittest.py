@@ -30,6 +30,7 @@
 from webkitpy.thirdparty.mock import Mock
 from webkitpy.common.host import Host
 from webkitpy.common.host_mock import MockHost
+from webkitpy.common.net.bindingstestresults import BindingsTestResults
 from webkitpy.common.net.jsctestresults import JSCTestResults
 from webkitpy.common.net.layouttestresults import LayoutTestResults
 from webkitpy.common.system.outputcapture import OutputCapture
@@ -54,6 +55,12 @@ class TestJSCEWS(AbstractEarlyWarningSystem):
     port_name = "mac"  # Needs to be a port which port/factory understands.
     _build_style = None
     _group = "jsc"
+
+
+class TestBindingsEWS(AbstractEarlyWarningSystem):
+    port_name = "mac"
+    _build_style = None
+    _group = "bindings"
 
 
 class AbstractEarlyWarningSystemTest(QueuesTest):
@@ -81,6 +88,12 @@ class AbstractEarlyWarningSystemTest(QueuesTest):
         message = "New failing tests:\nes6.yaml/es6/typed_arrays_Int8Array.js.default\nes6.yaml/es6/typed_arrays_Uint8Array.js.default\napiTests"
         self._test_message(ews, results, message)
 
+    def test_failing_bindings_tests_message(self):
+        ews = TestBindingsEWS()
+        results = lambda a: BindingsTestResults(["(JS) TestMapLike.idl", "(JS) TestNode.idl"])
+        message = "New failing tests:\n(JS) TestMapLike.idl\n(JS) TestNode.idl"
+        self._test_message(ews, results, message)
+
 
 class MockEarlyWarningSystemTaskForInconclusiveJSCResults(EarlyWarningSystemTask):
     def _test_patch(self):
@@ -104,6 +117,13 @@ class EarlyWarningSystemTest(QueuesTest):
             "build_style": ews.build_style(),
             "group": ews.group(),
         }
+
+        if ews.should_build:
+            build_line = "Running: webkit-patch --status-host=example.com build --no-clean --no-update --build-style=%(build_style)s --group=%(group)s --port=%(port)s%(architecture)s\n" % string_replacements
+        else:
+            build_line = ""
+        string_replacements['build_line'] = build_line
+
         if ews.run_tests:
             run_tests_line = "Running: webkit-patch --status-host=example.com build-and-test --no-clean --no-update --test --non-interactive --build-style=%(build_style)s --group=%(group)s --port=%(port)s%(architecture)s\n" % string_replacements
         else:
@@ -123,8 +143,7 @@ Running: webkit-patch --status-host=example.com clean --port=%(port)s%(architect
 Running: webkit-patch --status-host=example.com update --port=%(port)s%(architecture)s
 Running: webkit-patch --status-host=example.com apply-attachment --no-update --non-interactive 10000 --port=%(port)s%(architecture)s
 Running: webkit-patch --status-host=example.com check-patch-relevance --group=%(group)s --port=%(port)s%(architecture)s
-Running: webkit-patch --status-host=example.com build --no-clean --no-update --build-style=%(build_style)s --group=%(group)s --port=%(port)s%(architecture)s
-%(run_tests_line)s%(result_lines)s""" % string_replacements,
+%(build_line)s%(run_tests_line)s%(result_lines)s""" % string_replacements,
             "handle_unexpected_error": "Mock error message\n",
             "handle_script_error": "ScriptError error message\n\nMOCK output\n",
         }
@@ -164,6 +183,7 @@ Running: webkit-patch --status-host=example.com build --no-clean --no-update --b
             'mac-wk2-ews',
             'mac-debug-ews',
             'mac-32bit-ews',
+            'bindings-ews',
             'jsc-ews',
         }
         classes = AbstractEarlyWarningSystem.load_ews_classes()

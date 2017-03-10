@@ -51,5 +51,12 @@
         "name": "jsc-ews",
         "group": "jsc",
         "runTests": true
+    },
+    "Bindings EWS": {
+        "port": "mac",
+        "name": "bindings-ews",
+        "group": "bindings",
+        "runTests": true,
+        "shouldBuild": false
     }
 }

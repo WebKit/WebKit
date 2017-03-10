@@ -256,3 +256,29 @@ This patch does not have relevant changes.
         expected_logs = """MOCK run_and_throw_if_fail: ['Tools/Scripts/run-bindings-tests', '--json-output=/tmp/bindings_test_results.json'], cwd=/mock-checkout
 """
         OutputCapture().assert_outputs(self, step.run, [{}], expected_logs=expected_logs)
+
+    def test_patch_relevant_bindings(self):
+        self.maxDiff = None
+        mock_options = self._step_options()
+        mock_options.group = "bindings"
+        tool = MockTool(log_executive=True)
+        tool.scm()._mockChangedFiles = ["Source/WebCore/features.json", "Source/ChangeLog"]
+        # FIXME: We shouldn't use a real port-object here, but there is too much to mock at the moment.
+        tool._deprecated_port = DeprecatedPort()
+        step = steps.CheckPatchRelevance(tool, mock_options)
+        expected_logs = """Checking relevance of patch
+"""
+        OutputCapture().assert_outputs(self, step.run, [{}], expected_logs=expected_logs)
+
+    def test_patch_not_relevant_bindings(self):
+        self.maxDiff = None
+        mock_options = self._step_options()
+        mock_options.group = "bindings"
+        tool = MockTool(log_executive=True)
+        tool.scm()._mockChangedFiles = ["Source/JavaScriptCore/Makefile", "Source/ChangeLog"]
+        # FIXME: We shouldn't use a real port-object here, but there is too much to mock at the moment.
+        tool._deprecated_port = DeprecatedPort()
+        step = steps.CheckPatchRelevance(tool, mock_options)
+        expected_logs = """Checking relevance of patch
+This patch does not have relevant changes.
+"""
