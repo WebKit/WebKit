@@ -1,3 +1,18 @@
+2017-03-10  Alex Christensen  <achristensen@webkit.org>
+
+        Win64 build fix.
+
+        * b3/B3FenceValue.h:
+        * b3/B3Value.h:
+        Putting JS_EXPORT_PRIVATE on member functions in classes that are declared with JS_EXPORT_PRIVATE
+        doesn't accomplish anything except making Visual Studio mad.
+        * b3/air/opcode_generator.rb:
+        winnt.h has naming collisions with enum values from AirOpcode.h.
+        For example, MemoryFence is #defined to be _mm_mfence, which is declared to be a function in emmintrin.h.
+        RotateLeft32 is #defined to be _rotl, which is declared to be a function in <stdlib.h>
+        A clean solution is just to put Opcode:: before the references to the opcode names to tell Visual Studio
+        that it is referring to the enum value in AirOpcode.h and not the function declaration elsewhere.
+
 2017-03-09  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r213695.

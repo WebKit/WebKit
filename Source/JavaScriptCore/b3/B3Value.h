@@ -476,7 +476,7 @@ private:
     Origin m_origin;
     AdjacencyList m_children;
 
-    JS_EXPORT_PRIVATE NO_RETURN_DUE_TO_CRASH static void badKind(Kind, unsigned);
+    NO_RETURN_DUE_TO_CRASH static void badKind(Kind, unsigned);
 
 public:
     BasicBlock* owner { nullptr }; // computed by Procedure::resetValueOwners().

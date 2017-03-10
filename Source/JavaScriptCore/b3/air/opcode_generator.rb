@@ -548,7 +548,7 @@ def matchInstOverload(outp, speed, inst)
     outp.puts "switch (#{inst}->kind.opcode) {"
     $opcodes.values.each {
         | opcode |
-        outp.puts "case #{opcode.name}:"
+        outp.puts "case Opcode::#{opcode.name}:"
         if opcode.custom
             yield opcode, nil
         else
@@ -668,7 +668,7 @@ writeH("OpcodeUtils") {
     outp.puts "switch (opcode) {"
     $opcodes.values.each {
         | opcode |
-        outp.puts "case #{opcode.name}:"
+        outp.puts "case Opcode::#{opcode.name}:"
         if opcode.custom
             outp.puts "OPGEN_RETURN(#{opcode.name}Custom::isValidFormStatic(arguments...));"
         else
@@ -721,7 +721,7 @@ writeH("OpcodeUtils") {
     $opcodes.values.each {
         | opcode |
         if opcode.attributes[:terminal]
-            outp.puts "case #{opcode.name}:"
+            outp.puts "case Opcode::#{opcode.name}:"
             didFindTerminals = true
         end
     }
@@ -740,7 +740,7 @@ writeH("OpcodeUtils") {
     $opcodes.values.each {
         | opcode |
         if opcode.attributes[:return]
-            outp.puts "case #{opcode.name}:"
+            outp.puts "case Opcode::#{opcode.name}:"
             didFindReturns = true
         end
     }
@@ -766,7 +766,7 @@ writeH("OpcodeGenerated") {
     outp.puts "    switch (opcode) {"
     $opcodes.keys.each {
         | opcode |
-        outp.puts "    case #{opcode}:"
+        outp.puts "    case Opcode::#{opcode}:"
         outp.puts "        out.print(\"#{opcode}\");"
         outp.puts "        return;"
     }
@@ -839,7 +839,7 @@ writeH("OpcodeGenerated") {
     outp.puts "switch (kind.opcode) {"
     $opcodes.values.each {
         | opcode |
-        outp.puts "case #{opcode.name}:"
+        outp.puts "case Opcode::#{opcode.name}:"
 
         if opcode.custom
             outp.puts "OPGEN_RETURN(#{opcode.name}Custom::admitsStack(*this, argIndex));"
@@ -983,7 +983,7 @@ writeH("OpcodeGenerated") {
     $opcodes.values.each {
         | opcode |
         if opcode.attributes[:terminal]
-            outp.puts "case #{opcode.name}:"
+            outp.puts "case Opcode::#{opcode.name}:"
             foundTrue = true
         end
     }
@@ -993,7 +993,7 @@ writeH("OpcodeGenerated") {
     $opcodes.values.each {
         | opcode |
         if opcode.custom
-            outp.puts "case #{opcode.name}:"
+            outp.puts "case Opcode::#{opcode.name}:"
             outp.puts "return #{opcode.name}Custom::isTerminal(*this);"
         end
     }
@@ -1011,7 +1011,7 @@ writeH("OpcodeGenerated") {
     $opcodes.values.each {
         | opcode |
         if opcode.attributes[:effects]
-            outp.puts "case #{opcode.name}:"
+            outp.puts "case Opcode::#{opcode.name}:"
             foundTrue = true
         end
     }
@@ -1021,7 +1021,7 @@ writeH("OpcodeGenerated") {
     $opcodes.values.each {
         | opcode |
         if opcode.custom
-            outp.puts "case #{opcode.name}:"
+            outp.puts "case Opcode::#{opcode.name}:"
             outp.puts "return #{opcode.name}Custom::hasNonArgNonControlEffects(*this);"
         end
     }
@@ -1039,7 +1039,7 @@ writeH("OpcodeGenerated") {
     $opcodes.values.each {
         | opcode |
         if opcode.attributes[:terminal] or opcode.attributes[:effects]
-            outp.puts "case #{opcode.name}:"
+            outp.puts "case Opcode::#{opcode.name}:"
             foundTrue = true
         end
     }
@@ -1049,7 +1049,7 @@ writeH("OpcodeGenerated") {
     $opcodes.values.each {
         | opcode |
         if opcode.custom
-            outp.puts "case #{opcode.name}:"
+            outp.puts "case Opcode::#{opcode.name}:"
             outp.puts "return #{opcode.name}Custom::hasNonArgEffects(*this);"
         end
     }
@@ -1137,7 +1137,7 @@ File.open("JSAir_opcode.js", "w") {
     outp.puts "switch (inst.opcode) {"
     $opcodes.values.each {
         | opcode |
-        outp.puts "case #{opcode.name}:"
+        outp.puts "case Opcode::#{opcode.name}:"
         if opcode.custom
             outp.puts "#{opcode.name}Custom.forEachArg(inst, func);"
         else
@@ -1193,7 +1193,7 @@ File.open("JSAir_opcode.js", "w") {
     $opcodes.values.each {
         | opcode |
         if opcode.attributes[:terminal] or opcode.attributes[:effects]
-            outp.puts "case #{opcode.name}:"
+            outp.puts "case Opcode::#{opcode.name}:"
             foundTrue = true
         end
     }
@@ -1203,7 +1203,7 @@ File.open("JSAir_opcode.js", "w") {
     $opcodes.values.each {
         | opcode |
         if opcode.custom
-            outp.puts "case #{opcode.name}:"
+            outp.puts "case Opcode::#{opcode.name}:"
             outp.puts "return #{opcode.name}Custom.hasNonArgNonControlEffects(inst);"
         end
     }
@@ -1217,7 +1217,7 @@ File.open("JSAir_opcode.js", "w") {
     outp.puts "switch (opcode) {"
     $opcodes.keys.sort.each_with_index {
         | opcode, index |
-        outp.puts "case #{opcode}:"
+        outp.puts "case Opcode::#{opcode}:"
         outp.puts "return #{index}"
     }
     outp.puts "default:"

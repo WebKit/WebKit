@@ -1,3 +1,13 @@
+2017-03-10  Alex Christensen  <achristensen@webkit.org>
+
+        Win64 build fix.
+
+        * Source/cmake/OptionsWin.cmake:
+        WASM got turned on on Win64.  Judging by the state of WasmMemory.cpp, I'm going to
+        assume this was a mistake and turn it off until someone writes a version that uses
+        VirtualAlloc/VirtualFree instead of mmap.
+        The FTL seems a bit unstable, though.  This fixes the build, but more fixes are necessary.
+
 2017-03-06  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Unreviewed, fix AppleWin build

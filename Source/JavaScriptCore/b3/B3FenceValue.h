@@ -78,9 +78,9 @@ protected:
 private:
     friend class Procedure;
     
-    JS_EXPORT_PRIVATE FenceValue(Origin origin, HeapRange read, HeapRange write);
+    FenceValue(Origin origin, HeapRange read, HeapRange write);
     
-    JS_EXPORT_PRIVATE FenceValue(Origin origin);
+    FenceValue(Origin origin);
 };
 
 } } // namespace JSC::B3
