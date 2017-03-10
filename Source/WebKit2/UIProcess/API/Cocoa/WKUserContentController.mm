@@ -30,6 +30,7 @@
 
 #import "APISerializedScriptValue.h"
 #import "APIUserContentWorld.h"
+#import "WKContentExtensionInternal.h"
 #import "WKFrameInfoInternal.h"
 #import "WKNSArray.h"
 #import "WKScriptMessageHandler.h"
@@ -89,6 +90,27 @@
 - (void)removeAllUserScripts
 {
     _userContentControllerProxy->removeAllUserScripts();
+}
+
+- (void)addContentExtension:(WKContentExtension *)contentExtension
+{
+#if ENABLE(CONTENT_EXTENSIONS)
+    _userContentControllerProxy->addContentExtension(*contentExtension->_contentExtension);
+#endif
+}
+
+- (void)removeContentExtension:(NSString *)identifier
+{
+#if ENABLE(CONTENT_EXTENSIONS)
+    _userContentControllerProxy->removeContentExtension(identifier);
+#endif
+}
+
+- (void)removeAllContentExtensions
+{
+#if ENABLE(CONTENT_EXTENSIONS)
+    _userContentControllerProxy->removeAllContentExtensions();
+#endif
 }
 
 class ScriptMessageHandlerDelegate final : public WebKit::WebScriptMessageHandler::Client {
@@ -153,21 +175,21 @@ private:
 - (void)_addUserContentFilter:(_WKUserContentFilter *)userContentFilter
 {
 #if ENABLE(CONTENT_EXTENSIONS)
-    _userContentControllerProxy->addUserContentExtension(*userContentFilter->_userContentExtension);
+    _userContentControllerProxy->addContentExtension(*userContentFilter->_contentExtension->_contentExtension);
 #endif
 }
 
 - (void)_removeUserContentFilter:(NSString *)userContentFilterName
 {
 #if ENABLE(CONTENT_EXTENSIONS)
-    _userContentControllerProxy->removeUserContentExtension(userContentFilterName);
+    _userContentControllerProxy->removeContentExtension(userContentFilterName);
 #endif
 }
 
 - (void)_removeAllUserContentFilters
 {
 #if ENABLE(CONTENT_EXTENSIONS)
-    _userContentControllerProxy->removeAllUserContentExtensions();
+    _userContentControllerProxy->removeAllContentExtensions();
 #endif
 }
 

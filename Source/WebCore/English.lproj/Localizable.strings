@@ -172,6 +172,9 @@
 /* Subtitle of the label to show on a snapshotted plug-in */
 "Click to restart" = "Click to restart";
 
+/* WKErrorContentExtensionStoreCompileFailed description */
+"Compiling a WKContentExtension failed" = "Compiling a WKContentExtension failed";
+
 /* WebKitErrorCannotShowMIMEType description */
 "Content with specified MIME type can’t be shown" = "Content with specified MIME type can’t be shown";
 
@@ -358,6 +361,12 @@
 /* Look Up context menu item with selected word */
 "Look Up “<selection>”" = "Look Up “<selection>”";
 
+/* WKErrorContentExtensionStoreLookupFailed description */
+"Looking up a WKContentExtension failed" = "Looking up a WKContentExtension failed";
+
+/* WKErrorContentExtensionStoreVersionMismatch description */
+"Looking up a WKContentExtension found a binary that is incompatible" = "Looking up a WKContentExtension found a binary that is incompatible";
+
 /* Media Loop context menu item */
 "Loop" = "Loop";
 
@@ -495,6 +504,9 @@
 
 /* Reload context menu item */
 "Reload" = "Reload";
+
+/* WKErrorContentExtensionStoreRemoveFailed description */
+"Removing a WKContentExtension failed" = "Removing a WKContentExtension failed";
 
 /* default label for Reset buttons in forms on web pages */
 "Reset" = "Reset";

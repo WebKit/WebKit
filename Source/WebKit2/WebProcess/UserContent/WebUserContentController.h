@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebUserContentController_h
-#define WebUserContentController_h
+#pragma once
 
 #include "MessageReceiver.h"
 #include "WebScriptMessageHandler.h"
@@ -95,9 +94,9 @@ private:
     void removeAllUserScriptMessageHandlers(const Vector<uint64_t>&);
 
 #if ENABLE(CONTENT_EXTENSIONS)
-    void addUserContentExtensions(const Vector<std::pair<String, WebCompiledContentExtensionData>>&);
-    void removeUserContentExtension(const String& name);
-    void removeAllUserContentExtensions();
+    void addContentExtensions(const Vector<std::pair<String, WebCompiledContentExtensionData>>&);
+    void removeContentExtension(const String& name);
+    void removeAllContentExtensions();
 #endif
 
     void addUserScriptInternal(InjectedBundleScriptWorld&, uint64_t userScriptIdentifier, WebCore::UserScript&&);
@@ -128,5 +127,3 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // WebUserContentController_h

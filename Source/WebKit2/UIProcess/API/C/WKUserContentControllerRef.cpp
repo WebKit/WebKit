@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WKUserContentControllerRef.h"
 
-#include "APIUserContentExtension.h"
+#include "APIContentExtension.h"
 #include "APIUserScript.h"
 #include "WKAPICast.h"
 #include "WebUserContentControllerProxy.h"
@@ -62,13 +62,13 @@ void WKUserContentControllerRemoveAllUserScripts(WKUserContentControllerRef user
 void WKUserContentControllerAddUserContentFilter(WKUserContentControllerRef userContentControllerRef, WKUserContentFilterRef userContentFilterRef)
 {
 #if ENABLE(CONTENT_EXTENSIONS)
-    toImpl(userContentControllerRef)->addUserContentExtension(*toImpl(userContentFilterRef));
+    toImpl(userContentControllerRef)->addContentExtension(*toImpl(userContentFilterRef));
 #endif
 }
 
 void WKUserContentControllerRemoveAllUserContentFilters(WKUserContentControllerRef userContentControllerRef)
 {
 #if ENABLE(CONTENT_EXTENSIONS)
-    toImpl(userContentControllerRef)->removeAllUserContentExtensions();
+    toImpl(userContentControllerRef)->removeAllContentExtensions();
 #endif
 }

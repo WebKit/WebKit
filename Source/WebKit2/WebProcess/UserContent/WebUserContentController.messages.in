@@ -40,8 +40,8 @@ messages -> WebUserContentController {
     RemoveAllUserScriptMessageHandlers(Vector<uint64_t> worldIdentifiers);
 
 #if ENABLE(CONTENT_EXTENSIONS)
-    AddUserContentExtensions(Vector<std::pair<String, WebKit::WebCompiledContentExtensionData>> userContentFilters);
-    RemoveUserContentExtension(String name);
-    RemoveAllUserContentExtensions();
+    AddContentExtensions(Vector<std::pair<String, WebKit::WebCompiledContentExtensionData>> contentFilters);
+    RemoveContentExtension(String name);
+    RemoveAllContentExtensions();
 #endif
 }

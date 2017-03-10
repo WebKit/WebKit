@@ -27,11 +27,15 @@
 
 #if WK_API_ENABLED
 
+@class WKContentExtensionStore;
+
 @interface _WKUserContentExtensionStore (WKPrivate)
 
 // For testing only.
 - (void)_removeAllContentExtensions;
 - (void)_invalidateContentExtensionVersionForIdentifier:(NSString *)identifier;
+
+- (id)_initWithWKContentExtensionStore:(WKContentExtensionStore*)contentExtensionStore;
 
 @end
 

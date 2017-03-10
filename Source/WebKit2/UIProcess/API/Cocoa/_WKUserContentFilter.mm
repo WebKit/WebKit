@@ -35,18 +35,26 @@
 
 @implementation _WKUserContentFilter
 
-- (void)dealloc
-{
-    _userContentExtension->~UserContentExtension();
-
-    [super dealloc];
-}
-
 #pragma mark WKObject protocol implementation
 
 - (API::Object&)_apiObject
 {
-    return *_userContentExtension;
+    return [_contentExtension _apiObject];
+}
+
+@end
+
+@implementation _WKUserContentFilter (WKPrivate)
+
+- (id)_initWithWKContentExtension:(WKContentExtension*)contentExtension
+{
+    self = [super init];
+    if (!self)
+        return nil;
+    
+    _contentExtension = contentExtension;
+    
+    return self;
 }
 
 @end

@@ -339,22 +339,22 @@ void WebUserContentController::removeUserScriptMessageHandlerInternal(InjectedBu
 #endif
 
 #if ENABLE(CONTENT_EXTENSIONS)
-void WebUserContentController::addUserContentExtensions(const Vector<std::pair<String, WebCompiledContentExtensionData>>& userContentExtensions)
+void WebUserContentController::addContentExtensions(const Vector<std::pair<String, WebCompiledContentExtensionData>>& contentExtensions)
 {
-    for (const auto& userContentExtension : userContentExtensions) {
-        WebCompiledContentExtensionData contentExtensionData = userContentExtension.second;
+    for (const auto& contentExtension : contentExtensions) {
+        WebCompiledContentExtensionData contentExtensionData = contentExtension.second;
         RefPtr<WebCompiledContentExtension> compiledContentExtension = WebCompiledContentExtension::create(WTFMove(contentExtensionData));
 
-        m_contentExtensionBackend.addContentExtension(userContentExtension.first, WTFMove(compiledContentExtension));
+        m_contentExtensionBackend.addContentExtension(contentExtension.first, WTFMove(compiledContentExtension));
     }
 }
 
-void WebUserContentController::removeUserContentExtension(const String& name)
+void WebUserContentController::removeContentExtension(const String& name)
 {
     m_contentExtensionBackend.removeContentExtension(name);
 }
 
-void WebUserContentController::removeAllUserContentExtensions()
+void WebUserContentController::removeAllContentExtensions()
 {
     m_contentExtensionBackend.removeAllContentExtensions();
 }

@@ -25,8 +25,8 @@
 
 #include "config.h"
 
+#include "APIContentExtension.h"
 #include "APIDictionary.h"
-#include "APIUserContentExtension.h"
 #include "WKArray.h"
 #include "WKContextPrivate.h"
 #include "WKMutableDictionary.h"
@@ -56,22 +56,22 @@ WKStringRef WKPageGroupCopyIdentifier(WKPageGroupRef)
     return nullptr;
 }
 
-void WKPageGroupAddUserContentFilter(WKPageGroupRef pageGroupRef, WKUserContentFilterRef userContentFilterRef)
+void WKPageGroupAddUserContentFilter(WKPageGroupRef pageGroupRef, WKUserContentFilterRef contentFilterRef)
 {
 #if ENABLE(CONTENT_EXTENSIONS)
-    toImpl(pageGroupRef)->userContentController().addUserContentExtension(*toImpl(userContentFilterRef));
+    toImpl(pageGroupRef)->userContentController().addContentExtension(*toImpl(contentFilterRef));
 #else
     UNUSED_PARAM(pageGroupRef);
-    UNUSED_PARAM(userContentFilterRef);
+    UNUSED_PARAM(contentFilterRef);
 #endif
 }
 
-void WKPageGroupRemoveUserContentFilter(WKPageGroupRef pageGroupRef, WKStringRef userContentFilterNameRef)
+void WKPageGroupRemoveUserContentFilter(WKPageGroupRef pageGroupRef, WKStringRef contentFilterNameRef)
 {
 #if ENABLE(CONTENT_EXTENSIONS)
-    toImpl(pageGroupRef)->userContentController().removeUserContentExtension(toWTFString(userContentFilterNameRef));
+    toImpl(pageGroupRef)->userContentController().removeContentExtension(toWTFString(contentFilterNameRef));
 #else
     UNUSED_PARAM(pageGroupRef);
-    UNUSED_PARAM(userContentFilterNameRef);
+    UNUSED_PARAM(contentFilterNameRef);
 #endif
 }

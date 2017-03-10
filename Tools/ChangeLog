@@ -1,3 +1,24 @@
+2017-03-09  Brian Nicholson  <bnicholson@mozilla.com> and Alex Christensen  <achristensen@webkit.org>
+
+        Expose public APIs for content filters
+        https://bugs.webkit.org/show_bug.cgi?id=150479
+
+        Reviewed by Brady Eidson and Geoff Garen.
+
+        Keep the existing tests to verify that I made the wrapper classes for the old SPI work correctly.
+        Add new identical tests for the new API are added with the new names.
+        We should keep both until we migrate from and remove the old SPI.
+        Enum error code values and strings have changed, but the API is source compatible.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2Cocoa/WKUserContentExtensionStore.mm: Copied from Tools/TestWebKitAPI/Tests/WebKit2Cocoa/_WKUserContentExtensionStore.mm.
+        (WKUserContentExtensionStoreTest::SetUp):
+        (TEST_F):
+        (checkDomain):
+        (_WKUserContentExtensionStoreTest::SetUp): Deleted.
+        * TestWebKitAPI/Tests/WebKit2Cocoa/_WKUserContentExtensionStore.mm:
+        (checkDomain):
+
 2017-03-09  Daniel Bates  <dabates@apple.com>
 
         Attempt to fix the WebKit2 test bots following <https://trac.webkit.org/changeset/213676>

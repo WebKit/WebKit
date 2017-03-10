@@ -39,7 +39,7 @@
 #include <WebCore/SerializedScriptValue.h>
 
 #if ENABLE(CONTENT_EXTENSIONS)
-#include "APIUserContentExtension.h"
+#include "APIContentExtension.h"
 #include "WebCompiledContentExtension.h"
 #endif
 
@@ -97,10 +97,10 @@ void WebUserContentControllerProxy::addProcess(WebProcessProxy& webProcessProxy)
     webProcessProxy.connection()->send(Messages::WebUserContentController::AddUserScriptMessageHandlers(messageHandlers), m_identifier);
 
 #if ENABLE(CONTENT_EXTENSIONS)
-    Vector<std::pair<String, WebCompiledContentExtensionData>> userContentExtensions;
-    for (const auto& userContentExtension : m_userContentExtensions.values())
-        userContentExtensions.append(std::make_pair(userContentExtension->name(), userContentExtension->compiledExtension().data()));
-    webProcessProxy.connection()->send(Messages::WebUserContentController::AddUserContentExtensions(userContentExtensions), m_identifier);
+    Vector<std::pair<String, WebCompiledContentExtensionData>> contentExtensions;
+    for (const auto& contentExtension : m_contentExtensions.values())
+        contentExtensions.append(std::make_pair(contentExtension->name(), contentExtension->compiledExtension().data()));
+    webProcessProxy.connection()->send(Messages::WebUserContentController::AddContentExtensions(contentExtensions), m_identifier);
 #endif
 }
 
@@ -338,30 +338,30 @@ void WebUserContentControllerProxy::didPostMessage(IPC::Connection& connection, 
 }
 
 #if ENABLE(CONTENT_EXTENSIONS)
-void WebUserContentControllerProxy::addUserContentExtension(API::UserContentExtension& userContentExtension)
+void WebUserContentControllerProxy::addContentExtension(API::ContentExtension& contentExtension)
 {
-    m_userContentExtensions.set(userContentExtension.name(), &userContentExtension);
+    m_contentExtensions.set(contentExtension.name(), &contentExtension);
 
-    auto pair = std::make_pair(userContentExtension.name(), userContentExtension.compiledExtension().data());
+    auto pair = std::make_pair(contentExtension.name(), contentExtension.compiledExtension().data());
 
     for (WebProcessProxy* process : m_processes)
-        process->connection()->send(Messages::WebUserContentController::AddUserContentExtensions({ pair }), m_identifier);
+        process->connection()->send(Messages::WebUserContentController::AddContentExtensions({ pair }), m_identifier);
 }
 
-void WebUserContentControllerProxy::removeUserContentExtension(const String& name)
+void WebUserContentControllerProxy::removeContentExtension(const String& name)
 {
-    m_userContentExtensions.remove(name);
+    m_contentExtensions.remove(name);
 
     for (WebProcessProxy* process : m_processes)
-        process->connection()->send(Messages::WebUserContentController::RemoveUserContentExtension(name), m_identifier);
+        process->connection()->send(Messages::WebUserContentController::RemoveContentExtension(name), m_identifier);
 }
 
-void WebUserContentControllerProxy::removeAllUserContentExtensions()
+void WebUserContentControllerProxy::removeAllContentExtensions()
 {
-    m_userContentExtensions.clear();
+    m_contentExtensions.clear();
 
     for (WebProcessProxy* process : m_processes)
-        process->connection()->send(Messages::WebUserContentController::RemoveAllUserContentExtensions(), m_identifier);
+        process->connection()->send(Messages::WebUserContentController::RemoveAllContentExtensions(), m_identifier);
 }
 #endif
 

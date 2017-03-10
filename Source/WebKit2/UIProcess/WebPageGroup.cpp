@@ -27,7 +27,7 @@
 #include "WebPageGroup.h"
 
 #include "APIArray.h"
-#include "APIUserContentExtension.h"
+#include "APIContentExtension.h"
 #include "APIUserScript.h"
 #include "APIUserStyleSheet.h"
 #include "WebCompiledContentExtension.h"

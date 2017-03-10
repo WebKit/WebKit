@@ -51,6 +51,8 @@
 #include <WebCore/Settings.h>
 
 namespace API {
+class ContentExtension;
+class ContentExtensionStore;
 class ExperimentalFeature;
 class FrameHandle;
 class FrameInfo;
@@ -63,8 +65,6 @@ class OpenPanelParameters;
 class PageConfiguration;
 class ProcessPoolConfiguration;
 class SessionState;
-class UserContentExtension;
-class UserContentExtensionStore;
 class UserScript;
 class WebsiteDataStore;
 class WebsitePolicies;
@@ -161,8 +161,8 @@ WK_ADD_API_MAPPING(WKResourceLoadStatisticsManagerRef, WebResourceLoadStatistics
 WK_ADD_API_MAPPING(WKSessionStateRef, API::SessionState)
 WK_ADD_API_MAPPING(WKTextCheckerRef, WebTextChecker)
 WK_ADD_API_MAPPING(WKUserContentControllerRef, WebUserContentControllerProxy)
-WK_ADD_API_MAPPING(WKUserContentExtensionStoreRef, API::UserContentExtensionStore)
-WK_ADD_API_MAPPING(WKUserContentFilterRef, API::UserContentExtension)
+WK_ADD_API_MAPPING(WKUserContentExtensionStoreRef, API::ContentExtensionStore)
+WK_ADD_API_MAPPING(WKUserContentFilterRef, API::ContentExtension)
 WK_ADD_API_MAPPING(WKUserMediaPermissionCheckRef, UserMediaPermissionCheckProxy)
 WK_ADD_API_MAPPING(WKUserMediaPermissionRequestRef, UserMediaPermissionRequestProxy)
 WK_ADD_API_MAPPING(WKUserScriptRef, API::UserScript)

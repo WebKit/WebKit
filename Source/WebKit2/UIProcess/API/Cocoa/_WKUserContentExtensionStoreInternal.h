@@ -27,22 +27,14 @@
 
 #if WK_API_ENABLED
 
-#import "APIUserContentExtensionStore.h"
+#import "APIContentExtensionStore.h"
 #import "WKObject.h"
 
-namespace WebKit {
-
-inline _WKUserContentExtensionStore *wrapper(API::UserContentExtensionStore& store)
-{
-    ASSERT([store.wrapper() isKindOfClass:[_WKUserContentExtensionStore class]]);
-    return (_WKUserContentExtensionStore *)store.wrapper();
-}
-
-}
+@class WKContentExtensionStore;
 
 @interface _WKUserContentExtensionStore () <WKObject> {
 @package
-    API::ObjectStorage<API::UserContentExtensionStore> _userContentExtensionStore;
+    RetainPtr<WKContentExtensionStore> _contentExtensionStore;
 }
 @end
 

@@ -85,7 +85,7 @@ ResourceError interruptedForPolicyChangeError(const ResourceRequest& request)
 #if ENABLE(CONTENT_FILTERING)
 ResourceError blockedByContentFilterError(const ResourceRequest& request)
 {
-    return ResourceError(API::Error::webKitErrorDomain(), kWKErrorCodeFrameLoadBlockedByContentFilter, request.url(), WEB_UI_STRING("The URL was blocked by a content filter", "WebKitErrorBlockedByContentFilter"));
+    return ResourceError(API::Error::webKitErrorDomain(), kWKErrorCodeFrameLoadBlockedByContentFilter, request.url(), WEB_UI_STRING("The URL was blocked by a content filter", "WebKitErrorFrameLoadBlockedByContentFilter description"));
 }
 #endif
 

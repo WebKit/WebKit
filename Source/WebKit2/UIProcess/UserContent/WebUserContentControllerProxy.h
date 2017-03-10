@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebUserContentControllerProxy_h
-#define WebUserContentControllerProxy_h
+#pragma once
 
 #include "APIObject.h"
 #include "MessageReceiver.h"
@@ -38,8 +37,8 @@
 
 namespace API {
 class Array;
+class ContentExtension;
 class UserContentWorld;
-class UserContentExtension;
 class UserScript;
 class UserStyleSheet;
 }
@@ -92,9 +91,9 @@ public:
     void removeAllUserMessageHandlers(API::UserContentWorld&);
 
 #if ENABLE(CONTENT_EXTENSIONS)
-    void addUserContentExtension(API::UserContentExtension&);
-    void removeUserContentExtension(const String&);
-    void removeAllUserContentExtensions();
+    void addContentExtension(API::ContentExtension&);
+    void removeContentExtension(const String&);
+    void removeAllContentExtensions();
 #endif
 
 private:
@@ -116,10 +115,8 @@ private:
     HashCountedSet<RefPtr<API::UserContentWorld>> m_userContentWorlds;
 
 #if ENABLE(CONTENT_EXTENSIONS)
-    HashMap<String, RefPtr<API::UserContentExtension>> m_userContentExtensions;
+    HashMap<String, RefPtr<API::ContentExtension>> m_contentExtensions;
 #endif
 };
 
 } // namespace WebKit
-
-#endif // WebUserContentControllerProxy_h

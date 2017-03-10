@@ -1,3 +1,164 @@
+2017-03-09  Brian Nicholson  <bnicholson@mozilla.com> and Alex Christensen  <achristensen@webkit.org>
+
+        Expose public APIs for content filters
+        https://bugs.webkit.org/show_bug.cgi?id=150479
+
+        Reviewed by Brady Eidson and Geoff Garen.
+
+        This takes _WKUserContentExtensionStore and _WKUserContentFilter and turns them into the consistently-named public API
+        WKContentExtensionStore and WKContentExtension respectively with the same design and functionaly of the original SPI.
+        We also added public functions to WKUserContentController corresponding to existing private functions.
+
+        The old SPI ObjC classes are now just wrappers around the new ObjC classes, which are wrappers around C++ objects in the API namespace.
+        
+        The peak-memory-reducing optimization of having NS_RELEASES_ARGUMENT in _compileContentExtensionForIdentifier is kept for Safari,
+        but the public API doesn't need such an optimization.  The public compileContentExtensionForIdentifier will not deallocate the input
+        NSString during compiling.
+        
+        We moved the error codes into the WKErrorDomain, which requires changing the values of the error codes and domain, but source
+        compiled that uses the SPI before and after should still work.  Using new applications with old frameworks or vice versa will
+        have unexpected error codes, though.
+
+        * Shared/API/APIObject.h:
+        * Shared/API/c/WKDeprecatedFunctions.cpp:
+        (WKPageGroupAddUserContentFilter):
+        (WKPageGroupRemoveUserContentFilter):
+        * Shared/Cocoa/APIObject.mm:
+        (API::Object::newObject):
+        * UIProcess/API/APIContentExtension.cpp: Copied from UIProcess/API/APIUserContentExtension.cpp.
+        (API::ContentExtension::ContentExtension):
+        (API::ContentExtension::~ContentExtension):
+        (API::UserContentExtension::UserContentExtension): Deleted.
+        (API::UserContentExtension::~UserContentExtension): Deleted.
+        * UIProcess/API/APIContentExtension.h: Copied from UIProcess/API/APIUserContentExtension.h.
+        * UIProcess/API/APIContentExtensionStore.cpp: Copied from UIProcess/API/APIUserContentExtensionStore.cpp.
+        (API::ContentExtensionStore::defaultStore):
+        (API::ContentExtensionStore::storeWithPath):
+        (API::ContentExtensionStore::ContentExtensionStore):
+        (API::ContentExtensionStore::~ContentExtensionStore):
+        (API::compiledToFile):
+        (API::createExtension):
+        (API::ContentExtensionStore::lookupContentExtension):
+        (API::ContentExtensionStore::compileContentExtension):
+        (API::ContentExtensionStore::removeContentExtension):
+        (API::ContentExtensionStore::synchronousRemoveAllContentExtensions):
+        (API::ContentExtensionStore::invalidateContentExtensionVersion):
+        (API::contentExtensionStoreErrorCategory):
+        (API::UserContentExtensionStore::defaultStore): Deleted.
+        (API::UserContentExtensionStore::storeWithPath): Deleted.
+        (API::UserContentExtensionStore::UserContentExtensionStore): Deleted.
+        (API::UserContentExtensionStore::~UserContentExtensionStore): Deleted.
+        (API::UserContentExtensionStore::lookupContentExtension): Deleted.
+        (API::UserContentExtensionStore::compileContentExtension): Deleted.
+        (API::UserContentExtensionStore::removeContentExtension): Deleted.
+        (API::UserContentExtensionStore::synchronousRemoveAllContentExtensions): Deleted.
+        (API::UserContentExtensionStore::invalidateContentExtensionVersion): Deleted.
+        (API::userContentExtensionStoreErrorCategory): Deleted.
+        * UIProcess/API/APIContentExtensionStore.h: Copied from UIProcess/API/APIUserContentExtensionStore.h.
+        (API::make_error_code):
+        * UIProcess/API/APIUserContentExtension.cpp: Removed.
+        * UIProcess/API/APIUserContentExtension.h: Removed.
+        * UIProcess/API/APIUserContentExtensionStore.cpp: Removed.
+        * UIProcess/API/APIUserContentExtensionStore.h: Removed.
+        * UIProcess/API/C/WKAPICast.h:
+        * UIProcess/API/C/WKPageGroup.cpp:
+        * UIProcess/API/C/WKUserContentControllerRef.cpp:
+        (WKUserContentControllerAddUserContentFilter):
+        (WKUserContentControllerRemoveAllUserContentFilters):
+        * UIProcess/API/C/WKUserContentExtensionStoreRef.cpp:
+        (WKUserContentExtensionStoreGetTypeID):
+        * UIProcess/API/Cocoa/APIUserContentExtensionStoreCocoa.mm:
+        (API::ContentExtensionStore::defaultStorePath):
+        (API::UserContentExtensionStore::defaultStorePath): Deleted.
+        * UIProcess/API/Cocoa/WKContentExtension.h: Copied from UIProcess/API/Cocoa/_WKUserContentFilter.h.
+        * UIProcess/API/Cocoa/WKContentExtension.mm: Copied from UIProcess/API/Cocoa/_WKUserContentFilter.mm.
+        (-[WKContentExtension dealloc]):
+        (-[WKContentExtension _apiObject]):
+        (-[_WKUserContentFilter dealloc]): Deleted.
+        (-[_WKUserContentFilter _apiObject]): Deleted.
+        * UIProcess/API/Cocoa/WKContentExtensionInternal.h: Copied from UIProcess/API/Cocoa/_WKUserContentFilterInternal.h.
+        (WebKit::wrapper):
+        * UIProcess/API/Cocoa/WKContentExtensionStore.h: Copied from UIProcess/API/Cocoa/_WKUserContentExtensionStore.h.
+        * UIProcess/API/Cocoa/WKContentExtensionStore.mm: Copied from UIProcess/API/Cocoa/_WKUserContentExtensionStore.mm.
+        (-[WKContentExtensionStore dealloc]):
+        (+[WKContentExtensionStore defaultStore]):
+        (+[WKContentExtensionStore storeWithURL:]):
+        (-[WKContentExtensionStore compileContentExtensionForIdentifier:encodedContentExtension:completionHandler:]):
+        (-[WKContentExtensionStore _compileContentExtensionForIdentifier:encodedContentExtension:completionHandler:releasesArgument:]):
+        (-[WKContentExtensionStore lookupContentExtensionForIdentifier:completionHandler:]):
+        (-[WKContentExtensionStore removeContentExtensionForIdentifier:completionHandler:]):
+        (-[WKContentExtensionStore _apiObject]):
+        (-[WKContentExtensionStore _removeAllContentExtensions]):
+        (-[WKContentExtensionStore _invalidateContentExtensionVersionForIdentifier:]):
+        (-[WKContentExtensionStore _compileContentExtensionForIdentifier:encodedContentExtension:completionHandler:]):
+        (-[_WKUserContentExtensionStore dealloc]): Deleted.
+        (+[_WKUserContentExtensionStore defaultStore]): Deleted.
+        (+[_WKUserContentExtensionStore storeWithURL:]): Deleted.
+        (-[_WKUserContentExtensionStore compileContentExtensionForIdentifier:encodedContentExtension:completionHandler:]): Deleted.
+        (-[_WKUserContentExtensionStore lookupContentExtensionForIdentifier:completionHandler:]): Deleted.
+        (-[_WKUserContentExtensionStore removeContentExtensionForIdentifier:completionHandler:]): Deleted.
+        (-[_WKUserContentExtensionStore _apiObject]): Deleted.
+        (-[_WKUserContentExtensionStore _removeAllContentExtensions]): Deleted.
+        (-[_WKUserContentExtensionStore _invalidateContentExtensionVersionForIdentifier:]): Deleted.
+        * UIProcess/API/Cocoa/WKContentExtensionStoreInternal.h: Copied from UIProcess/API/Cocoa/_WKUserContentExtensionStoreInternal.h.
+        (WebKit::wrapper):
+        * UIProcess/API/Cocoa/WKContentExtensionStorePrivate.h: Copied from UIProcess/API/Cocoa/_WKUserContentExtensionStorePrivate.h.
+        * UIProcess/API/Cocoa/WKError.h:
+        * UIProcess/API/Cocoa/WKError.mm:
+        (localizedDescriptionForErrorCode):
+        * UIProcess/API/Cocoa/WKUserContentController.h:
+        * UIProcess/API/Cocoa/WKUserContentController.mm:
+        (-[WKUserContentController addContentExtension:]):
+        (-[WKUserContentController removeContentExtension:]):
+        (-[WKUserContentController removeAllContentExtensions]):
+        (-[WKUserContentController _addUserContentFilter:]):
+        (-[WKUserContentController _removeUserContentFilter:]):
+        (-[WKUserContentController _removeAllUserContentFilters]):
+        * UIProcess/API/Cocoa/_WKUserContentExtensionStore.h:
+        * UIProcess/API/Cocoa/_WKUserContentExtensionStore.mm:
+        (+[_WKUserContentExtensionStore defaultStore]):
+        (+[_WKUserContentExtensionStore storeWithURL:]):
+        (-[_WKUserContentExtensionStore compileContentExtensionForIdentifier:encodedContentExtension:completionHandler:]):
+        (-[_WKUserContentExtensionStore lookupContentExtensionForIdentifier:completionHandler:]):
+        (-[_WKUserContentExtensionStore removeContentExtensionForIdentifier:completionHandler:]):
+        (-[_WKUserContentExtensionStore _apiObject]):
+        (-[_WKUserContentExtensionStore _removeAllContentExtensions]):
+        (-[_WKUserContentExtensionStore _invalidateContentExtensionVersionForIdentifier:]):
+        (-[_WKUserContentExtensionStore _initWithWKContentExtensionStore:]):
+        (-[_WKUserContentExtensionStore dealloc]): Deleted.
+        * UIProcess/API/Cocoa/_WKUserContentExtensionStoreInternal.h:
+        (WebKit::wrapper): Deleted.
+        * UIProcess/API/Cocoa/_WKUserContentExtensionStorePrivate.h:
+        * UIProcess/API/Cocoa/_WKUserContentFilter.mm:
+        (-[_WKUserContentFilter _apiObject]):
+        (-[_WKUserContentFilter _initWithWKContentExtension:]):
+        (-[_WKUserContentFilter dealloc]): Deleted.
+        * UIProcess/API/Cocoa/_WKUserContentFilterInternal.h:
+        (WebKit::wrapper): Deleted.
+        * UIProcess/API/Cocoa/_WKUserContentFilterPrivate.h: Added.
+        * UIProcess/UserContent/WebUserContentControllerProxy.cpp:
+        (WebKit::WebUserContentControllerProxy::addProcess):
+        (WebKit::WebUserContentControllerProxy::addContentExtension):
+        (WebKit::WebUserContentControllerProxy::removeContentExtension):
+        (WebKit::WebUserContentControllerProxy::removeAllContentExtensions):
+        (WebKit::WebUserContentControllerProxy::addUserContentExtension): Deleted.
+        (WebKit::WebUserContentControllerProxy::removeUserContentExtension): Deleted.
+        (WebKit::WebUserContentControllerProxy::removeAllUserContentExtensions): Deleted.
+        * UIProcess/UserContent/WebUserContentControllerProxy.h:
+        * UIProcess/WebPageGroup.cpp:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/UserContent/WebUserContentController.cpp:
+        (WebKit::WebUserContentController::addContentExtensions):
+        (WebKit::WebUserContentController::removeContentExtension):
+        (WebKit::WebUserContentController::removeAllContentExtensions):
+        (WebKit::WebUserContentController::addUserContentExtensions): Deleted.
+        (WebKit::WebUserContentController::removeUserContentExtension): Deleted.
+        (WebKit::WebUserContentController::removeAllUserContentExtensions): Deleted.
+        * WebProcess/UserContent/WebUserContentController.h:
+        * WebProcess/UserContent/WebUserContentController.messages.in:
+        * WebProcess/WebCoreSupport/mac/WebErrorsMac.mm:
+        (WebKit::blockedByContentFilterError):
+
 2017-03-09  Brady Eidson  <beidson@apple.com>
 
         Fix some debug builds after r213686

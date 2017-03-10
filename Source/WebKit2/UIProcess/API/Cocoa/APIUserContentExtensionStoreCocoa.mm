@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "APIUserContentExtensionStore.h"
+#include "APIContentExtensionStore.h"
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
@@ -32,7 +32,7 @@
 
 namespace API {
 
-String UserContentExtensionStore::defaultStorePath()
+String ContentExtensionStore::defaultStorePath()
 {
     static dispatch_once_t onceToken;
     static NSURL *contentExtensionStoreURL;
