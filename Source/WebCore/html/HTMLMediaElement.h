@@ -733,6 +733,10 @@ private:
     void dispatchPlayPauseEventsIfNeedsQuirks();
     SuccessOr<MediaPlaybackDenialReason> canTransitionFromAutoplayToPlay() const;
 
+    enum class PlaybackWithoutUserGesture { None, Started, Prevented };
+    void setPlaybackWithoutUserGesture(PlaybackWithoutUserGesture);
+    void userDidInterfereWithAutoplay();
+
     MediaTime minTimeSeekable() const;
     MediaTime maxTimeSeekable() const;
 
@@ -993,8 +997,8 @@ private:
     bool m_haveVisibleTextTrack : 1;
     bool m_processingPreferenceChange : 1;
 
-    enum class PlaybackWithoutUserGesture { None, Started, Prevented };
     PlaybackWithoutUserGesture m_playbackWithoutUserGesture;
+    std::optional<MediaTime> m_playbackWithoutUserGestureStartedTime;
 
     String m_subtitleTrackLanguage;
     MediaTime m_lastTextTrackUpdateTime { -1, 1 };
