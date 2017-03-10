@@ -322,7 +322,6 @@
         * WebProcess/WebProcess.cpp:
         (WebKit::WebProcess::initializeWebProcess):
 
-<<<<<<< .mine
 2017-03-09  Michael Saboff  <msaboff@apple.com>
 
         Add plumbing to WebProcess to enable JavaScriptCore configuration and logging
@@ -371,8 +370,6 @@
         * WebProcess/cocoa/WebProcessCocoa.mm:
         (WebKit::WebProcess::platformInitializeWebProcess):
 
-||||||| .r213687
-=======
 2017-03-09  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics: Remove statistics data as part of full website data removal
@@ -404,7 +401,6 @@
             Both WebsiteDataStore::removeData() functions now cover resource load
             statistics.
 
->>>>>>> .r213688
 2017-03-09  Brady Eidson  <beidson@apple.com>
 
         Add WKURLSchemeHandler API for handling custom protocols.
