@@ -1,3 +1,16 @@
+2017-03-09  Daniel Bates  <dabates@apple.com>
+
+        Attempt to fix the WebKit2 test bots following <https://trac.webkit.org/changeset/213676>
+        (https://bugs.webkit.org/show_bug.cgi?id=169364)
+
+        Create new WebView with Credential Management enabled when the enableCredentialManagement
+        WebKitTestRunner option is specified.
+
+        * WebKitTestRunner/ios/PlatformWebViewIOS.mm:
+        (WTR::PlatformWebView::viewSupportsOptions):
+        * WebKitTestRunner/mac/PlatformWebViewMac.mm:
+        (WTR::PlatformWebView::viewSupportsOptions):
+
 2017-03-09  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics: Remove statistics data as part of full website data removal

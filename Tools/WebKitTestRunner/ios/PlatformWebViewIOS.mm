@@ -298,7 +298,8 @@ bool PlatformWebView::viewSupportsOptions(const TestOptions& options) const
         || m_options.useCharacterSelectionGranularity != options.useCharacterSelectionGranularity
         || m_options.enableIntersectionObserver != options.enableIntersectionObserver
         || m_options.enableModernMediaControls != options.enableModernMediaControls
-        || m_options.enablePointerLock != options.enablePointerLock)
+        || m_options.enablePointerLock != options.enablePointerLock
+        || m_options.enableCredentialManagement != options.enableCredentialManagement)
         return false;
 
     return true;
