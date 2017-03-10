@@ -231,9 +231,6 @@ public:
     void resumePausedImageAnimationsIfNeeded(IntRect visibleRect);
     void addRendererWithPausedImageAnimations(RenderElement&);
     void removeRendererWithPausedImageAnimations(RenderElement&);
-    void registerForAsyncImageDecodingCallback(RenderElement&);
-    void unregisterForAsyncImageDecodingCallback(RenderElement&);
-    void requestAsyncDecodingForImagesInAbsoluteRect(const IntRect&);
 
     class RepaintRegionAccumulator {
         WTF_MAKE_NONCOPYABLE(RepaintRegionAccumulator);
@@ -391,7 +388,6 @@ private:
 
     HashSet<RenderElement*> m_renderersWithPausedImageAnimation;
     HashSet<RenderElement*> m_visibleInViewportRenderers;
-    HashSet<RenderElement*> m_asyncDecodingImageRenderers;
     Vector<RefPtr<RenderWidget>> m_protectedRenderWidgets;
 
 #if ENABLE(SERVICE_CONTROLS)

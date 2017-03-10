@@ -289,16 +289,6 @@ void HTMLImageElement::didAttachRenderers()
     // image height and width for the alt text instead.
     if (!m_imageLoader.image() && !renderImageResource.cachedImage())
         renderImage.setImageSizeForAltText();
-    
-    renderImage.registerForAsyncImageDecodingCallback();
-}
-    
-void HTMLImageElement::willDetachRenderers()
-{
-    if (!is<RenderImage>(renderer()))
-        return;
-
-    renderer()->unregisterForAsyncImageDecodingCallback();
 }
 
 Node::InsertionNotificationRequest HTMLImageElement::insertedInto(ContainerNode& insertionPoint)

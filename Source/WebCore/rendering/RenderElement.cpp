@@ -154,8 +154,6 @@ RenderElement::~RenderElement()
         view().removeRendererWithPausedImageAnimations(*this);
     if (isRegisteredForVisibleInViewportCallback())
         view().unregisterForVisibleInViewportCallback(*this);
-    if (isRegisteredForAsyncImageDecodingCallback())
-        view().unregisterForAsyncImageDecodingCallback(*this);
 }
 
 RenderPtr<RenderElement> RenderElement::createFor(Element& element, RenderStyle&& style, RendererCreationType creationType)
@@ -1436,28 +1434,34 @@ bool RenderElement::mayCauseRepaintInsideViewport(const IntRect* optionalViewpor
     return visibleRect.intersects(enclosingIntRect(absoluteClippedOverflowRect()));
 }
 
-bool RenderElement::intersectsAbsoluteRect(const IntRect& rect) const
+static bool shouldRepaintForImageAnimation(const RenderElement& renderer, const IntRect& visibleRect)
 {
-    if (style().visibility() != VISIBLE)
+    const Document& document = renderer.document();
+    if (document.activeDOMObjectsAreSuspended())
         return false;
-    if (view().frameView().isOffscreen())
+    if (renderer.style().visibility() != VISIBLE)
+        return false;
+    if (renderer.view().frameView().isOffscreen())
         return false;
 
     // Use background rect if we are the root or if we are the body and the background is propagated to the root.
     // FIXME: This is overly conservative as the image may not be a background-image, in which case it will not
     // be propagated to the root. At this point, we unfortunately don't have access to the image anymore so we
     // can no longer check if it is a background image.
-    bool backgroundIsPaintedByRoot = isDocumentElementRenderer();
-    if (isBody()) {
-        auto& rootRenderer = *parent(); // If <body> has a renderer then <html> does too.
+    bool backgroundIsPaintedByRoot = renderer.isDocumentElementRenderer();
+    if (renderer.isBody()) {
+        auto& rootRenderer = *renderer.parent(); // If <body> has a renderer then <html> does too.
         ASSERT(rootRenderer.isDocumentElementRenderer());
         ASSERT(is<HTMLHtmlElement>(rootRenderer.element()));
         // FIXME: Should share body background propagation code.
         backgroundIsPaintedByRoot = !rootRenderer.hasBackground();
 
     }
-    LayoutRect backgroundPaintingRect = backgroundIsPaintedByRoot ? view().backgroundRect() : absoluteClippedOverflowRect();
-    return rect.intersects(enclosingIntRect(backgroundPaintingRect));
+    LayoutRect backgroundPaintingRect = backgroundIsPaintedByRoot ? renderer.view().backgroundRect() : renderer.absoluteClippedOverflowRect();
+    if (!visibleRect.intersects(enclosingIntRect(backgroundPaintingRect)))
+        return false;
+
+    return true;
 }
 
 void RenderElement::registerForVisibleInViewportCallback()
@@ -1492,7 +1496,7 @@ void RenderElement::newImageAnimationFrameAvailable(CachedImage& image)
 {
     auto& frameView = view().frameView();
     auto visibleRect = frameView.windowToContents(frameView.windowClipRect());
-    if (document().activeDOMObjectsAreSuspended() || !intersectsAbsoluteRect(visibleRect)) {
+    if (!shouldRepaintForImageAnimation(*this, visibleRect)) {
         // FIXME: It would be better to pass the image along with the renderer
         // so that we can be smarter about detecting if the image is inside the
         // viewport in repaintForPausedImageAnimationsIfNeeded().
@@ -1505,7 +1509,7 @@ void RenderElement::newImageAnimationFrameAvailable(CachedImage& image)
 bool RenderElement::repaintForPausedImageAnimationsIfNeeded(const IntRect& visibleRect)
 {
     ASSERT(m_hasPausedImageAnimations);
-    if (document().activeDOMObjectsAreSuspended() || !intersectsAbsoluteRect(visibleRect))
+    if (!shouldRepaintForImageAnimation(*this, visibleRect))
         return false;
 
     repaint();
@@ -1515,24 +1519,6 @@ bool RenderElement::repaintForPausedImageAnimationsIfNeeded(const IntRect& visib
         downcast<RenderBoxModelObject>(*this).contentChanged(ImageChanged);
 
     return true;
-}
-    
-void RenderElement::registerForAsyncImageDecodingCallback()
-{
-    if (isRegisteredForAsyncImageDecodingCallback())
-        return;
-
-    view().registerForAsyncImageDecodingCallback(*this);
-    setIsRegisteredForAsyncImageDecodingCallback(true);
-}
-    
-void RenderElement::unregisterForAsyncImageDecodingCallback()
-{
-    if (!isRegisteredForAsyncImageDecodingCallback())
-        return;
-
-    view().unregisterForAsyncImageDecodingCallback(*this);
-    setIsRegisteredForAsyncImageDecodingCallback(false);
 }
 
 const RenderStyle* RenderElement::getCachedPseudoStyle(PseudoId pseudo, const RenderStyle* parentStyle) const

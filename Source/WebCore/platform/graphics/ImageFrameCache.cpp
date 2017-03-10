@@ -67,7 +67,7 @@ ImageFrameCache::ImageFrameCache(NativeImagePtr&& nativeImage)
 
 ImageFrameCache::~ImageFrameCache()
 {
-    ASSERT(!hasAsyncDecodingQueue());
+    ASSERT(!hasDecodingQueue());
 }
 
 void ImageFrameCache::destroyDecodedData(size_t frameCount, size_t excludeFrame)
@@ -256,14 +256,14 @@ void ImageFrameCache::cacheFrameNativeImageAtIndex(NativeImagePtr&& nativeImage,
 Ref<WorkQueue> ImageFrameCache::decodingQueue()
 {
     if (!m_decodingQueue)
-        m_decodingQueue = WorkQueue::create("org.webkit.ImageDecoder", WorkQueue::Type::Serial, WorkQueue::QOS::Default);
+        m_decodingQueue = WorkQueue::create("org.webkit.ImageDecoder", WorkQueue::Type::Serial, WorkQueue::QOS::UserInteractive);
     
     return *m_decodingQueue;
 }
 
 void ImageFrameCache::startAsyncDecodingQueue()
 {
-    if (hasAsyncDecodingQueue() || !isDecoderAvailable())
+    if (hasDecodingQueue() || !isDecoderAvailable())
         return;
 
     m_frameRequestQueue.open();
@@ -306,7 +306,7 @@ bool ImageFrameCache::requestFrameAsyncDecodingAtIndex(size_t index, Subsampling
     if (frame.hasValidNativeImage(subsamplingLevel, sizeForDrawing))
         return false;
 
-    if (!hasAsyncDecodingQueue())
+    if (!hasDecodingQueue())
         startAsyncDecodingQueue();
     
     frame.enqueueSizeForDecoding(sizeForDrawing);
@@ -314,18 +314,9 @@ bool ImageFrameCache::requestFrameAsyncDecodingAtIndex(size_t index, Subsampling
     return true;
 }
 
-bool ImageFrameCache::isAsyncDecodingQueueIdle() const
-{
-    for (const ImageFrame& frame : m_frames) {
-        if (frame.isBeingDecoded())
-            return false;
-    }
-    return true;
-}
-    
 void ImageFrameCache::stopAsyncDecodingQueue()
 {
-    if (!hasAsyncDecodingQueue())
+    if (!hasDecodingQueue())
         return;
     
     m_frameRequestQueue.close();

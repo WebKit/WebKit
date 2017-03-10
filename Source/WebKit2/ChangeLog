@@ -1,3 +1,17 @@
+2017-03-10  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r213618.
+        https://bugs.webkit.org/show_bug.cgi?id=169475
+
+        Suspect this is the cause of a large memory regression
+        (Requested by jonlee_ on #webkit).
+
+        Reverted changeset:
+
+        "Enable async image decoding for large images"
+        https://bugs.webkit.org/show_bug.cgi?id=165039
+        http://trac.webkit.org/changeset/213618
+
 2017-03-10  Zan Dobersek  <zdobersek@igalia.com>
 
         [WK2] Guard GLib-specific typedefs in InjectedBundle.h with USE(GLIB)

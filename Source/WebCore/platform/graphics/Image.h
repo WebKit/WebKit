@@ -130,7 +130,6 @@ public:
     virtual void stopAnimation() {}
     virtual void resetAnimation() {}
     virtual void newFrameNativeImageAvailableAtIndex(size_t) { }
-    virtual void requestAsyncDecoding(const IntSize&) { }
     
     // Typically the CachedImage that owns us.
     ImageObserver* imageObserver() const { return m_imageObserver; }

@@ -35,13 +35,10 @@
 #include "HTMLHtmlElement.h"
 #include "HTMLIFrameElement.h"
 #include "HitTestResult.h"
-#include "Image.h"
 #include "ImageQualityController.h"
 #include "NodeTraversal.h"
 #include "Page.h"
-#include "RenderDescendantIterator.h"
 #include "RenderGeometryMap.h"
-#include "RenderImage.h"
 #include "RenderIterator.h"
 #include "RenderLayer.h"
 #include "RenderLayerBacking.h"
@@ -1423,40 +1420,6 @@ void RenderView::resumePausedImageAnimationsIfNeeded(IntRect visibleRect)
     }
     for (auto& renderer : toRemove)
         removeRendererWithPausedImageAnimations(*renderer);
-}
-
-void RenderView::registerForAsyncImageDecodingCallback(RenderElement& renderer)
-{
-    ASSERT(!m_asyncDecodingImageRenderers.contains(&renderer));
-    m_asyncDecodingImageRenderers.add(&renderer);
-}
-
-void RenderView::unregisterForAsyncImageDecodingCallback(RenderElement& renderer)
-{
-    ASSERT(m_asyncDecodingImageRenderers.contains(&renderer));
-    m_asyncDecodingImageRenderers.remove(&renderer);
-}
-    
-void RenderView::requestAsyncDecodingForImagesInAbsoluteRect(const IntRect& rect)
-{
-    for (auto* renderer : m_asyncDecodingImageRenderers) {
-        if (!renderer->intersectsAbsoluteRect(rect))
-            continue;
-        
-        auto& renderImage = downcast<RenderImage>(*renderer);
-        
-        CachedImage* image = renderImage.cachedImage();
-        if (!image || !image->hasImage())
-            continue;
-
-        // Get the destination rectangle of the image scaled by the all the scaling factors
-        // that will eventually be applied to the graphics context.
-        LayoutRect replacedContentRect = renderImage.replacedContentRect(renderImage.intrinsicSize());
-        FloatRect rect = snapRectToDevicePixels(replacedContentRect, document().deviceScaleFactor());
-        rect.scale(frame().page()->pageScaleFactor() * frame().pageZoomFactor() * document().deviceScaleFactor());
-
-        image->image()->requestAsyncDecoding(expandedIntSize(rect.size()));
-    }
 }
 
 RenderView::RepaintRegionAccumulator::RepaintRegionAccumulator(RenderView* view)

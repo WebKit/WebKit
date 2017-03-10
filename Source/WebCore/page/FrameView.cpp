@@ -1058,10 +1058,6 @@ bool FrameView::flushCompositingStateForThisFrame(const Frame& rootFrameForFlush
 #endif
 
     renderView->compositor().flushPendingLayerChanges(&rootFrameForFlush == m_frame.ptr());
-    
-    if (TiledBacking* tiledBacking = this->tiledBacking())
-        requestAsyncDecodingForImagesInAbsoluteRectIncludingSubframes(tiledBacking->tileCoverageRect());
-    
     return true;
 }
 
@@ -2531,19 +2527,6 @@ void FrameView::scrollPositionChanged(const ScrollPosition& oldPosition, const S
     updateLayoutViewport();
     viewportContentsChanged();
 }
-    
-void FrameView::applyRecursivelyWithAbsoluteRect(const IntRect& rect, const std::function<void(FrameView&, const IntRect&)>& apply)
-{
-    apply(*this, rect);
-
-    // Recursive call for subframes. We cache the current FrameView's windowClipRect to avoid recomputing it for every subframe.
-    IntRect windowClipRect = contentsToWindow(rect);
-    SetForScope<IntRect*> windowClipRectCache(m_cachedWindowClipRect, &windowClipRect);
-    for (Frame* childFrame = frame().tree().firstChild(); childFrame; childFrame = childFrame->tree().nextSibling()) {
-        if (auto* childView = childFrame->view())
-            childView->applyRecursivelyWithAbsoluteRect(rect, apply);
-    }
-}
 
 void FrameView::applyRecursivelyWithVisibleRect(const std::function<void (FrameView& frameView, const IntRect& visibleRect)>& apply)
 {
@@ -2595,30 +2578,6 @@ void FrameView::resumeVisibleImageAnimationsIncludingSubframes()
 {
     applyRecursivelyWithVisibleRect([] (FrameView& frameView, const IntRect& visibleRect) {
         frameView.resumeVisibleImageAnimations(visibleRect);
-    });
-}
-
-void FrameView::requestAsyncDecodingForImagesInAbsoluteRect(const IntRect& rect)
-{
-    if (!frame().view()) {
-        // The frame is being destroyed.
-        return;
-    }
-
-    if (rect.isEmpty())
-        return;
-
-    if (auto* renderView = frame().contentRenderer())
-        renderView->requestAsyncDecodingForImagesInAbsoluteRect(rect);
-}
-
-void FrameView::requestAsyncDecodingForImagesInAbsoluteRectIncludingSubframes(const IntRect& rect)
-{
-    if (!frame().settings().largeImageAsyncDecodingEnabled())
-        return;
-
-    applyRecursivelyWithAbsoluteRect(rect, [] (FrameView& frameView, const IntRect& rect) {
-        frameView.requestAsyncDecodingForImagesInAbsoluteRect(rect);
     });
 }
 

@@ -458,8 +458,6 @@ public:
         NotVisibleInViewport,
     };
     VisibleInViewportState visibleInViewportState() { return m_bitfields.hasRareData() ? rareData().visibleInViewportState() : VisibilityUnknown; }
-    
-    bool isRegisteredForAsyncImageDecodingCallback() { return m_bitfields.hasRareData() && rareData().isRegisteredForAsyncImageDecodingCallback(); }
 
     bool hasLayer() const { return m_bitfields.hasLayer(); }
 
@@ -571,7 +569,6 @@ public:
     void setHasOutlineAutoAncestor(bool = true);
     void setIsRegisteredForVisibleInViewportCallback(bool);
     void setVisibleInViewportState(VisibleInViewportState);
-    void setIsRegisteredForAsyncImageDecodingCallback(bool);
 
     // Hook so that RenderTextControl can return the line height of its inner renderer.
     // For other renderers, the value is the same as lineHeight(false).
@@ -988,7 +985,6 @@ private:
             , m_hasOutlineAutoAncestor(false)
             , m_isRegisteredForVisibleInViewportCallback(false)
             , m_visibleInViewportState(VisibilityUnknown)
-            , m_isRegisteredForAsyncImageDecodingCallback(false)
         {
         }
         ADD_BOOLEAN_BITFIELD(isDragging, IsDragging);
@@ -999,7 +995,6 @@ private:
         // From RenderElement
         ADD_BOOLEAN_BITFIELD(isRegisteredForVisibleInViewportCallback, IsRegisteredForVisibleInViewportCallback);
         ADD_ENUM_BITFIELD(visibleInViewportState, VisibleInViewportState, VisibleInViewportState, 2);
-        ADD_BOOLEAN_BITFIELD(isRegisteredForAsyncImageDecodingCallback, IsRegisteredForAsyncImageDecodingCallback);
         std::unique_ptr<RenderStyle> cachedFirstLineStyle;
     };
     

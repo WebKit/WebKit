@@ -956,8 +956,6 @@ static void resetWebPreferencesToConsistentValues()
     [preferences setHiddenPageCSSAnimationSuspensionEnabled:NO];
     
     [preferences setMediaStreamEnabled:YES];
-    
-    [preferences setLargeImageAsyncDecodingEnabled:NO];
 
     [WebPreferences _clearNetworkLoaderSession];
     [WebPreferences _setCurrentNetworkLoaderSessionCookieAcceptPolicy:NSHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain];
