@@ -1,3 +1,12 @@
+2017-03-09  Brady Eidson  <beidson@apple.com>
+
+        Fix some debug builds after r213686
+
+        Unreviewed.
+
+        * UIProcess/Cocoa/WebURLSchemeHandlerCocoa.mm:
+        (WebKit::WebURLSchemeHandlerCocoa::WebURLSchemeHandlerCocoa): Remove the 32-bit NOT_REACHED protection for now.
+
 2017-03-09  Keith Miller  <keith_miller@apple.com>
 
         WebAssembly: Enable fast memory for WK2

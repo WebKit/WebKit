@@ -45,9 +45,6 @@ Ref<WebURLSchemeHandlerCocoa> WebURLSchemeHandlerCocoa::create(id <WKURLSchemeHa
 WebURLSchemeHandlerCocoa::WebURLSchemeHandlerCocoa(id <WKURLSchemeHandler> apiHandler)
     : m_apiHandler(apiHandler)
 {
-#if !WK_API_ENABLED
-    ASSERT_NOT_REACHED();
-#endif
 }
 
 void WebURLSchemeHandlerCocoa::platformStartTask(WebPageProxy& page, WebURLSchemeHandlerTask& task)
