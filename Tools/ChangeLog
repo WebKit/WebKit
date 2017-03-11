@@ -3,6 +3,15 @@
         checkpatchrelevance: Exception message is printed twice due to ScriptError handler
         https://bugs.webkit.org/show_bug.cgi?id=169496
 
+        Unreviewed fix.
+
+        * Scripts/webkitpy/tool/commands/earlywarningsystem_unittest.py: Add --quiet flag to expected logs.
+
+2017-03-10  Srinivasan Vijayaraghavan  <svijayaraghavan@apple.com>
+
+        checkpatchrelevance: Exception message is printed twice due to ScriptError handler
+        https://bugs.webkit.org/show_bug.cgi?id=169496
+
         Reviewed by Alexey Proskuryakov.
 
         * Scripts/webkitpy/tool/bot/patchanalysistask.py:

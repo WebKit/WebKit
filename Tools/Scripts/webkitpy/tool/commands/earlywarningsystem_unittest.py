@@ -142,7 +142,7 @@ class EarlyWarningSystemTest(QueuesTest):
 Running: webkit-patch --status-host=example.com clean --port=%(port)s%(architecture)s
 Running: webkit-patch --status-host=example.com update --port=%(port)s%(architecture)s
 Running: webkit-patch --status-host=example.com apply-attachment --no-update --non-interactive 10000 --port=%(port)s%(architecture)s
-Running: webkit-patch --status-host=example.com check-patch-relevance --group=%(group)s --port=%(port)s%(architecture)s
+Running: webkit-patch --status-host=example.com check-patch-relevance --quiet --group=%(group)s --port=%(port)s%(architecture)s
 %(build_line)s%(run_tests_line)s%(result_lines)s""" % string_replacements,
             "handle_unexpected_error": "Mock error message\n",
             "handle_script_error": "ScriptError error message\n\nMOCK output\n",
