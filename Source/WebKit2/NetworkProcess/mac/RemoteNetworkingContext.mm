@@ -36,10 +36,11 @@
 #import <WebKitSystemInterface.h>
 #import <wtf/MainThread.h>
 
+#if !USE(NETWORK_SESSION)
+
 using namespace WebCore;
 
 namespace WebKit {
-
 
 RemoteNetworkingContext::~RemoteNetworkingContext()
 {
@@ -93,11 +94,8 @@ void RemoteNetworkingContext::ensurePrivateBrowsingSession(SessionID sessionID)
         base = SessionTracker::getIdentifierBase();
 
     NetworkStorageSession::ensurePrivateBrowsingSession(sessionID, base + '.' + String::number(sessionID.sessionID()));
+}
 
-#if USE(NETWORK_SESSION)
-    auto networkSession = NetworkSession::create(sessionID, NetworkProcess::singleton().supplement<LegacyCustomProtocolManager>());
-    SessionTracker::setSession(sessionID, WTFMove(networkSession));
+}
+
 #endif
-}
-
-}

@@ -232,9 +232,11 @@ void NetworkProcess::initializeNetworkProcess(NetworkProcessCreationParameters&&
 
     setCanHandleHTTPSServerTrustEvaluation(parameters.canHandleHTTPSServerTrustEvaluation);
 
+#if !USE(NETWORK_SESSION)
     // FIXME: instead of handling this here, a message should be sent later (scales to multiple sessions)
     if (parameters.privateBrowsingEnabled)
         RemoteNetworkingContext::ensurePrivateBrowsingSession(SessionID::legacyPrivateSessionID());
+#endif
 
     if (parameters.shouldUseTestingNetworkSession)
         NetworkStorageSession::switchToNewTestingSession();
@@ -287,7 +289,9 @@ void NetworkProcess::clearCachedCredentials()
 
 void NetworkProcess::ensurePrivateBrowsingSession(SessionID sessionID)
 {
+#if !USE(NETWORK_SESSION)
     RemoteNetworkingContext::ensurePrivateBrowsingSession(sessionID);
+#endif
 }
 
 void NetworkProcess::destroyPrivateBrowsingSession(SessionID sessionID)

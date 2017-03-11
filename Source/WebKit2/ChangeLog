@@ -1,3 +1,24 @@
+2017-03-10  Alex Christensen  <achristensen@webkit.org>
+
+        Don't compile RemoteNetworkingContext when using NetworkSession
+        https://bugs.webkit.org/show_bug.cgi?id=169497
+
+        Reviewed by Andy Estes.
+
+        RemoteNetworkingContext is only really used because PingHandle requires a NetworkingContext.
+        When using NetworkSession, we use PingLoad instead of PingHandle, so there's no reason to 
+        ensure there's a RemoteNetworkingContext corresponding to new private sessions when they're never used.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::initializeNetworkProcess):
+        (WebKit::NetworkProcess::ensurePrivateBrowsingSession):
+        * NetworkProcess/RemoteNetworkingContext.h:
+        * NetworkProcess/mac/RemoteNetworkingContext.mm:
+        (WebKit::RemoteNetworkingContext::ensurePrivateBrowsingSession):
+        * NetworkProcess/soup/RemoteNetworkingContextSoup.cpp: Removed.
+        * PlatformGTK.cmake:
+        GTK only uses NetworkSession, so RemoteNetworkingContextSoup is no longer necessary.
+
 2017-03-10  Brent Fulgham  <bfulgham@apple.com>
 
         [WebRTC][WK2][iOS] Support com.apple.coremedia.compressionsession for more WebRTC Cases
