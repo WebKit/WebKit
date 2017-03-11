@@ -43,6 +43,7 @@
 		0F66B2921DC97BAB004A1D3F /* WallTime.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F66B2881DC97BAB004A1D3F /* WallTime.cpp */; };
 		0F66B2931DC97BAB004A1D3F /* WallTime.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F66B2891DC97BAB004A1D3F /* WallTime.h */; };
 		0F725CAC1C50461600AD943A /* RangeSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F725CAB1C50461600AD943A /* RangeSet.h */; };
+		0F79C7C41E73511800EB34D1 /* FastTLS.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F79C7C31E73511800EB34D1 /* FastTLS.h */; };
 		0F7C5FB61D885CF20044F5E2 /* FastBitVector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F7C5FB51D885CF20044F5E2 /* FastBitVector.cpp */; };
 		0F824A681B7443A0002E345D /* ParkingLot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F824A641B7443A0002E345D /* ParkingLot.cpp */; };
 		0F824A691B7443A0002E345D /* ParkingLot.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F824A651B7443A0002E345D /* ParkingLot.h */; };
@@ -421,6 +422,7 @@
 		0F66B2881DC97BAB004A1D3F /* WallTime.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WallTime.cpp; sourceTree = "<group>"; };
 		0F66B2891DC97BAB004A1D3F /* WallTime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WallTime.h; sourceTree = "<group>"; };
 		0F725CAB1C50461600AD943A /* RangeSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RangeSet.h; sourceTree = "<group>"; };
+		0F79C7C31E73511800EB34D1 /* FastTLS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FastTLS.h; sourceTree = "<group>"; };
 		0F7C5FB51D885CF20044F5E2 /* FastBitVector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FastBitVector.cpp; sourceTree = "<group>"; };
 		0F824A641B7443A0002E345D /* ParkingLot.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ParkingLot.cpp; sourceTree = "<group>"; };
 		0F824A651B7443A0002E345D /* ParkingLot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParkingLot.h; sourceTree = "<group>"; };
@@ -974,6 +976,7 @@
 				0FD81AC4154FB22E00983E72 /* FastBitVector.h */,
 				A8A472A1151A825A004123FF /* FastMalloc.cpp */,
 				A8A472A2151A825A004123FF /* FastMalloc.h */,
+				0F79C7C31E73511800EB34D1 /* FastTLS.h */,
 				B38FD7BC168953E80065C969 /* FeatureDefines.h */,
 				0F9D335B165DBA73005AD387 /* FilePrintStream.cpp */,
 				0F9D335C165DBA73005AD387 /* FilePrintStream.h */,
@@ -1486,6 +1489,7 @@
 				0F0D85B417234CC100338210 /* NoLock.h in Headers */,
 				A8A473EF151A825B004123FF /* Noncopyable.h in Headers */,
 				CE46516E19DB1FB4003ECA05 /* NSMapTableSPI.h in Headers */,
+				0F79C7C41E73511800EB34D1 /* FastTLS.h in Headers */,
 				A8A473F5151A825B004123FF /* NumberOfCores.h in Headers */,
 				7E29C33E15FFD79B00516D61 /* ObjcRuntimeExtras.h in Headers */,
 				1AFDE6531953B23D00C48FFA /* Optional.h in Headers */,

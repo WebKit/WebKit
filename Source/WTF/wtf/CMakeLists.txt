@@ -30,6 +30,7 @@ set(WTF_HEADERS
     DisallowCType.h
     DoublyLinkedList.h
     FastMalloc.h
+    FastTLS.h
     FeatureDefines.h
     FilePrintStream.h
     FlipBytes.h

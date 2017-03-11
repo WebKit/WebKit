@@ -1588,6 +1588,13 @@ public:
         CHECK_DATASIZE();
         insn(exoticStore(MEMOPSIZE, ExoticStoreFence_Release, result, src, dst));
     }
+    
+#if ENABLE(FAST_TLS_JIT)
+    void mrs_TPIDRRO_EL0(RegisterID dst)
+    {
+        insn(0xd53bd060 | dst); // Thanks, otool -t!
+    }
+#endif
 
     template<int datasize>
     ALWAYS_INLINE void orn(RegisterID rd, RegisterID rn, RegisterID rm)

@@ -3857,6 +3857,14 @@ public:
     void loadFence()
     {
     }
+    
+#if ENABLE(FAST_TLS_JIT)
+    void loadFromTLS32(uint32_t offset, RegisterID dst)
+    {
+        m_assembler.gs();
+        m_assembler.movl_mr(offset, dst);
+    }
+#endif
 
     static void replaceWithBreakpoint(CodeLocationLabel instructionStart)
     {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008-2017 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,25 +27,15 @@
 #ifndef WTFThreadData_h
 #define WTFThreadData_h
 
+#include <wtf/FastTLS.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/StackBounds.h>
 #include <wtf/StackStats.h>
-#include <wtf/text/StringHash.h>
-
-#if USE(APPLE_INTERNAL_SDK)
-#include <System/pthread_machdep.h>
-#endif
-
-#if defined(__PTK_FRAMEWORK_JAVASCRIPTCORE_KEY1)
-#define USE_PTHREAD_GETSPECIFIC_DIRECT 1
-#endif
-
-#if !USE(PTHREAD_GETSPECIFIC_DIRECT)
 #include <wtf/ThreadSpecific.h>
 #include <wtf/Threading.h>
-#endif
+#include <wtf/text/StringHash.h>
 
 namespace WTF {
 
@@ -122,8 +112,7 @@ private:
     void* m_savedStackPointerAtVMEntry;
     void* m_savedLastStackTop;
 
-#if USE(PTHREAD_GETSPECIFIC_DIRECT)
-    static const pthread_key_t directKey = __PTK_FRAMEWORK_JAVASCRIPTCORE_KEY1;
+#if HAVE(FAST_TLS)
     WTF_EXPORT_PRIVATE static WTFThreadData& createAndRegisterForGetspecificDirect();
 #else
     static WTF_EXPORTDATA ThreadSpecific<WTFThreadData>* staticData;
@@ -141,12 +130,12 @@ inline WTFThreadData& wtfThreadData()
     // WRT JavaScriptCore:
     //    wtfThreadData() is initially called from initializeThreading(), ensuring
     //    this is initially called in a pthread_once locked context.
-#if !USE(PTHREAD_GETSPECIFIC_DIRECT)
+#if !HAVE(FAST_TLS)
     if (!WTFThreadData::staticData)
         WTFThreadData::staticData = new ThreadSpecific<WTFThreadData>;
     return **WTFThreadData::staticData;
 #else
-    if (WTFThreadData* data = static_cast<WTFThreadData*>(_pthread_getspecific_direct(WTFThreadData::directKey)))
+    if (WTFThreadData* data = static_cast<WTFThreadData*>(_pthread_getspecific_direct(WTF_THREAD_DATA_KEY)))
         return *data;
     return WTFThreadData::createAndRegisterForGetspecificDirect();
 #endif

@@ -69,6 +69,7 @@
 #include "VM.h"
 #include <cmath>
 #include <string>
+#include <wtf/FastTLS.h>
 #include <wtf/ListDump.h>
 #include <wtf/Lock.h>
 #include <wtf/NumberOfCores.h>
@@ -15210,6 +15211,28 @@ void testWasmAddress()
         CHECK_EQ(numToStore, value);
 }
 
+void testFastTLS()
+{
+#if ENABLE(FAST_TLS_JIT)
+    _pthread_setspecific_direct(WTF_TESTING_KEY, bitwise_cast<void*>(static_cast<uintptr_t>(0xbeef)));
+    
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    
+    PatchpointValue* patchpoint = root->appendNew<PatchpointValue>(proc, pointerType(), Origin());
+    patchpoint->clobber(RegisterSet::macroScratchRegisters());
+    patchpoint->setGenerator(
+        [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+            AllowMacroScratchRegisterUsage allowScratch(jit);
+            jit.loadFromTLSPtr(fastTLSOffsetForKey(WTF_TESTING_KEY), params[0].gpr());
+        });
+    
+    root->appendNew<Value>(proc, Return, Origin(), patchpoint);
+    
+    CHECK_EQ(compileAndRun<uintptr_t>(proc), static_cast<uintptr_t>(0xbeef));
+#endif
+}
+
 // Make sure the compiler does not try to optimize anything out.
 NEVER_INLINE double zero()
 {
@@ -16736,6 +16759,8 @@ void run(const char* filter)
     RUN(testWasmBoundsCheck(10000));
     RUN(testWasmBoundsCheck(std::numeric_limits<unsigned>::max() - 5));
     RUN(testWasmAddress());
+    
+    RUN(testFastTLS());
 
     if (isX86()) {
         RUN(testBranchBitAndImmFusion(Identity, Int64, 1, Air::BranchTest32, Air::Arg::Tmp));

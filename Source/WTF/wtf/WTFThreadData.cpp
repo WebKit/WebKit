@@ -35,7 +35,7 @@
 
 namespace WTF {
 
-#if !USE(PTHREAD_GETSPECIFIC_DIRECT)
+#if !HAVE(FAST_TLS)
 ThreadSpecific<WTFThreadData>* WTFThreadData::staticData;
 #endif
 
@@ -61,12 +61,12 @@ WTFThreadData::~WTFThreadData()
         m_atomicStringTableDestructor(m_defaultAtomicStringTable);
 }
 
-#if USE(PTHREAD_GETSPECIFIC_DIRECT)
+#if HAVE(FAST_TLS)
 WTFThreadData& WTFThreadData::createAndRegisterForGetspecificDirect()
 {
     WTFThreadData* data = new WTFThreadData;
-    _pthread_setspecific_direct(directKey, data);
-    pthread_key_init_np(directKey, [](void* data){
+    _pthread_setspecific_direct(WTF_THREAD_DATA_KEY, data);
+    pthread_key_init_np(WTF_THREAD_DATA_KEY, [](void* data){
         delete static_cast<WTFThreadData*>(data);
     });
     return *data;

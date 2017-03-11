@@ -1,3 +1,46 @@
+2017-03-10  Filip Pizlo  <fpizlo@apple.com>
+
+        The JITs should be able to emit fast TLS loads
+        https://bugs.webkit.org/show_bug.cgi?id=169483
+
+        Reviewed by Keith Miller.
+        
+        Added loadFromTLS32/64/Ptr to the MacroAssembler and added a B3 test for this.
+
+        * assembler/ARM64Assembler.h:
+        (JSC::ARM64Assembler::mrs_TPIDRRO_EL0):
+        * assembler/MacroAssembler.h:
+        (JSC::MacroAssembler::loadFromTLSPtr):
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::loadFromTLS32):
+        (JSC::MacroAssemblerARM64::loadFromTLS64):
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::loadFromTLS32):
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::loadFromTLS64):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::adcl_im):
+        (JSC::X86Assembler::addl_mr):
+        (JSC::X86Assembler::addl_im):
+        (JSC::X86Assembler::andl_im):
+        (JSC::X86Assembler::orl_im):
+        (JSC::X86Assembler::orl_rm):
+        (JSC::X86Assembler::subl_im):
+        (JSC::X86Assembler::cmpb_im):
+        (JSC::X86Assembler::cmpl_rm):
+        (JSC::X86Assembler::cmpl_im):
+        (JSC::X86Assembler::testb_im):
+        (JSC::X86Assembler::movb_i8m):
+        (JSC::X86Assembler::movb_rm):
+        (JSC::X86Assembler::movl_mr):
+        (JSC::X86Assembler::movq_mr):
+        (JSC::X86Assembler::movsxd_rr):
+        (JSC::X86Assembler::gs):
+        (JSC::X86Assembler::X86InstructionFormatter::SingleInstructionBufferWriter::memoryModRM):
+        * b3/testb3.cpp:
+        (JSC::B3::testFastTLS):
+        (JSC::B3::run):
+
 2017-03-10  Alex Christensen  <achristensen@webkit.org>
 
         Fix watch and tv builds after r213294

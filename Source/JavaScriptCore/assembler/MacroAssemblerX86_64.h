@@ -1701,6 +1701,14 @@ public:
         store64(imm, dest);
     }
     
+#if ENABLE(FAST_TLS_JIT)
+    void loadFromTLS64(uint32_t offset, RegisterID dst)
+    {
+        m_assembler.gs();
+        m_assembler.movl_mr(offset, dst);
+    }
+#endif
+
     void truncateDoubleToUint32(FPRegisterID src, RegisterID dest)
     {
         m_assembler.cvttsd2siq_rr(src, dest);

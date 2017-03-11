@@ -218,6 +218,7 @@ private:
 #if CPU(X86_64)
         OP_MOVSXD_GvEv                  = 0x63,
 #endif
+        PRE_GS                          = 0x65,
         PRE_OPERAND_SIZE                = 0x66,
         PRE_SSE_66                      = 0x66,
         OP_PUSH_Iz                      = 0x68,
@@ -431,10 +432,10 @@ public:
     void adcl_im(int imm, const void* addr)
     {
         if (CAN_SIGN_EXTEND_8_32(imm)) {
-            m_formatter.oneByteOp(OP_GROUP1_EvIb, GROUP1_OP_ADC, addr);
+            m_formatter.oneByteOpAddr(OP_GROUP1_EvIb, GROUP1_OP_ADC, bitwise_cast<uint32_t>(addr));
             m_formatter.immediate8(imm);
         } else {
-            m_formatter.oneByteOp(OP_GROUP1_EvIz, GROUP1_OP_ADC, addr);
+            m_formatter.oneByteOpAddr(OP_GROUP1_EvIz, GROUP1_OP_ADC, bitwise_cast<uint32_t>(addr));
             m_formatter.immediate32(imm);
         }
     }
@@ -458,7 +459,7 @@ public:
 #if !CPU(X86_64)
     void addl_mr(const void* addr, RegisterID dst)
     {
-        m_formatter.oneByteOp(OP_ADD_GvEv, dst, addr);
+        m_formatter.oneByteOpAddr(OP_ADD_GvEv, dst, bitwise_cast<uint32_t>(addr));
     }
 #endif
 
@@ -631,10 +632,10 @@ public:
     void addl_im(int imm, const void* addr)
     {
         if (CAN_SIGN_EXTEND_8_32(imm)) {
-            m_formatter.oneByteOp(OP_GROUP1_EvIb, GROUP1_OP_ADD, addr);
+            m_formatter.oneByteOpAddr(OP_GROUP1_EvIb, GROUP1_OP_ADD, bitwise_cast<uint32_t>(addr));
             m_formatter.immediate8(imm);
         } else {
-            m_formatter.oneByteOp(OP_GROUP1_EvIz, GROUP1_OP_ADD, addr);
+            m_formatter.oneByteOpAddr(OP_GROUP1_EvIz, GROUP1_OP_ADD, bitwise_cast<uint32_t>(addr));
             m_formatter.immediate32(imm);
         }
     }
@@ -818,10 +819,10 @@ public:
     void andl_im(int imm, const void* addr)
     {
         if (CAN_SIGN_EXTEND_8_32(imm)) {
-            m_formatter.oneByteOp(OP_GROUP1_EvIb, GROUP1_OP_AND, addr);
+            m_formatter.oneByteOpAddr(OP_GROUP1_EvIb, GROUP1_OP_AND, bitwise_cast<uint32_t>(addr));
             m_formatter.immediate8(imm);
         } else {
-            m_formatter.oneByteOp(OP_GROUP1_EvIz, GROUP1_OP_AND, addr);
+            m_formatter.oneByteOpAddr(OP_GROUP1_EvIz, GROUP1_OP_AND, bitwise_cast<uint32_t>(addr));
             m_formatter.immediate32(imm);
         }
     }
@@ -1159,17 +1160,17 @@ public:
     void orl_im(int imm, const void* addr)
     {
         if (CAN_SIGN_EXTEND_8_32(imm)) {
-            m_formatter.oneByteOp(OP_GROUP1_EvIb, GROUP1_OP_OR, addr);
+            m_formatter.oneByteOpAddr(OP_GROUP1_EvIb, GROUP1_OP_OR, bitwise_cast<uint32_t>(addr));
             m_formatter.immediate8(imm);
         } else {
-            m_formatter.oneByteOp(OP_GROUP1_EvIz, GROUP1_OP_OR, addr);
+            m_formatter.oneByteOpAddr(OP_GROUP1_EvIz, GROUP1_OP_OR, bitwise_cast<uint32_t>(addr));
             m_formatter.immediate32(imm);
         }
     }
 
     void orl_rm(RegisterID src, const void* addr)
     {
-        m_formatter.oneByteOp(OP_OR_EvGv, src, addr);
+        m_formatter.oneByteOpAddr(OP_OR_EvGv, src, bitwise_cast<uint32_t>(addr));
     }
 #endif
 
@@ -1357,10 +1358,10 @@ public:
     void subl_im(int imm, const void* addr)
     {
         if (CAN_SIGN_EXTEND_8_32(imm)) {
-            m_formatter.oneByteOp(OP_GROUP1_EvIb, GROUP1_OP_SUB, addr);
+            m_formatter.oneByteOpAddr(OP_GROUP1_EvIb, GROUP1_OP_SUB, bitwise_cast<uint32_t>(addr));
             m_formatter.immediate8(imm);
         } else {
-            m_formatter.oneByteOp(OP_GROUP1_EvIz, GROUP1_OP_SUB, addr);
+            m_formatter.oneByteOpAddr(OP_GROUP1_EvIz, GROUP1_OP_SUB, bitwise_cast<uint32_t>(addr));
             m_formatter.immediate32(imm);
         }
     }
@@ -1857,7 +1858,7 @@ public:
 #if CPU(X86)
     void cmpb_im(int imm, const void* addr)
     {
-        m_formatter.oneByteOp(OP_GROUP1_EbIb, GROUP1_OP_CMP, addr);
+        m_formatter.oneByteOpAddr(OP_GROUP1_EbIb, GROUP1_OP_CMP, bitwise_cast<uint32_t>(addr));
         m_formatter.immediate8(imm);
     }
 #endif
@@ -1938,16 +1939,16 @@ public:
 #else
     void cmpl_rm(RegisterID reg, const void* addr)
     {
-        m_formatter.oneByteOp(OP_CMP_EvGv, reg, addr);
+        m_formatter.oneByteOpAddr(OP_CMP_EvGv, reg, bitwise_cast<uint32_t>(addr));
     }
 
     void cmpl_im(int imm, const void* addr)
     {
         if (CAN_SIGN_EXTEND_8_32(imm)) {
-            m_formatter.oneByteOp(OP_GROUP1_EvIb, GROUP1_OP_CMP, addr);
+            m_formatter.oneByteOpAddr(OP_GROUP1_EvIb, GROUP1_OP_CMP, bitwise_cast<uint32_t>(addr));
             m_formatter.immediate8(imm);
         } else {
-            m_formatter.oneByteOp(OP_GROUP1_EvIz, GROUP1_OP_CMP, addr);
+            m_formatter.oneByteOpAddr(OP_GROUP1_EvIz, GROUP1_OP_CMP, bitwise_cast<uint32_t>(addr));
             m_formatter.immediate32(imm);
         }
     }
@@ -2025,7 +2026,7 @@ public:
 #if CPU(X86)
     void testb_im(int imm, const void* addr)
     {
-        m_formatter.oneByteOp(OP_GROUP3_EbIb, GROUP3_OP_TEST, addr);
+        m_formatter.oneByteOpAddr(OP_GROUP3_EbIb, GROUP3_OP_TEST, bitwise_cast<uint32_t>(addr));
         m_formatter.immediate8(imm);
     }
 #endif
@@ -2279,7 +2280,7 @@ public:
     void movb_i8m(int imm, const void* addr)
     {
         ASSERT(-128 <= imm && imm < 128);
-        m_formatter.oneByteOp(OP_GROUP11_EvIb, GROUP11_MOV, addr);
+        m_formatter.oneByteOpAddr(OP_GROUP11_EvIb, GROUP11_MOV, bitwise_cast<uint32_t>(addr));
         m_formatter.immediate8(imm);
     }
 #endif
@@ -2301,7 +2302,7 @@ public:
 #if !CPU(X86_64)
     void movb_rm(RegisterID src, const void* addr)
     {
-        m_formatter.oneByteOp(OP_MOV_EbGb, src, addr);
+        m_formatter.oneByteOpAddr(OP_MOV_EbGb, src, bitwise_cast<uint32_t>(addr));
     }
 #endif
     
@@ -2352,6 +2353,11 @@ public:
 #else
         m_formatter.immediate32(reinterpret_cast<int>(addr));
 #endif
+    }
+
+    void movl_mr(uint32_t addr, RegisterID dst)
+    {
+        m_formatter.oneByteOpAddr(OP_MOV_GvEv, dst, addr);
     }
 
 #if CPU(X86_64)
@@ -2407,6 +2413,11 @@ public:
         m_formatter.oneByteOp64(OP_MOV_GvEv, dst, base, index, scale, offset);
     }
 
+    void movq_mr(uint32_t addr, RegisterID dst)
+    {
+        m_formatter.oneByteOp64Addr(OP_MOV_GvEv, dst, addr);
+    }
+
     void movq_i32m(int imm, int offset, RegisterID base)
     {
         m_formatter.oneByteOp64(OP_GROUP11_EvIz, GROUP11_MOV, base, offset);
@@ -2435,28 +2446,26 @@ public:
     {
         m_formatter.oneByteOp64(OP_MOVSXD_GvEv, dst, src);
     }
-    
-    
 #else
-    void movl_rm(RegisterID src, const void* addr)
-    {
-        if (src == X86Registers::eax)
-            movl_EAXm(addr);
-        else 
-            m_formatter.oneByteOp(OP_MOV_EvGv, src, addr);
-    }
-    
     void movl_mr(const void* addr, RegisterID dst)
     {
         if (dst == X86Registers::eax)
             movl_mEAX(addr);
         else
-            m_formatter.oneByteOp(OP_MOV_GvEv, dst, addr);
+            m_formatter.oneByteOpAddr(OP_MOV_GvEv, dst, bitwise_cast<uint32_t>(addr));
     }
 
+    void movl_rm(RegisterID src, const void* addr)
+    {
+        if (src == X86Registers::eax)
+            movl_EAXm(addr);
+        else 
+            m_formatter.oneByteOpAddr(OP_MOV_EvGv, src, bitwise_cast<uint32_t>(addr));
+    }
+    
     void movl_i32m(int imm, const void* addr)
     {
-        m_formatter.oneByteOp(OP_GROUP11_EvIz, GROUP11_MOV, addr);
+        m_formatter.oneByteOpAddr(OP_GROUP11_EvIz, GROUP11_MOV, bitwise_cast<uint32_t>(addr));
         m_formatter.immediate32(imm);
     }
 #endif
@@ -2494,7 +2503,7 @@ public:
 #if !CPU(X86_64)
     void movzbl_mr(const void* address, RegisterID dst)
     {
-        m_formatter.twoByteOp(OP2_MOVZX_GvEb, dst, address);
+        m_formatter.twoByteOpAddr(OP2_MOVZX_GvEb, dst, bitwise_cast<uint32_t>(address));
     }
 #endif
 
@@ -2604,7 +2613,7 @@ public:
 #else
     void cmovl_mr(Condition cond, const void* addr, RegisterID dst)
     {
-        m_formatter.twoByteOp(cmovcc(cond), dst, addr);
+        m_formatter.twoByteOpAddr(cmovcc(cond), dst, bitwise_cast<uint32_t>(addr));
     }
 #endif
 
@@ -2677,7 +2686,7 @@ public:
 #if !CPU(X86_64)
     void jmp_m(const void* address)
     {
-        m_formatter.oneByteOp(OP_GROUP5_Ev, GROUP5_OP_JMPN, address);
+        m_formatter.oneByteOpAddr(OP_GROUP5_Ev, GROUP5_OP_JMPN, bitwise_cast<uint32_t>(address));
     }
 #endif
 
@@ -2853,7 +2862,7 @@ public:
     void addsd_mr(const void* address, XMMRegisterID dst)
     {
         m_formatter.prefix(PRE_SSE_F2);
-        m_formatter.twoByteOp(OP2_ADDSD_VsdWsd, (RegisterID)dst, address);
+        m_formatter.twoByteOpAddr(OP2_ADDSD_VsdWsd, (RegisterID)dst, bitwise_cast<uint32_t>(address));
     }
 #endif
 
@@ -2911,7 +2920,7 @@ public:
     void cvtsi2sd_mr(const void* address, XMMRegisterID dst)
     {
         m_formatter.prefix(PRE_SSE_F2);
-        m_formatter.twoByteOp(OP2_CVTSI2SD_VsdEd, (RegisterID)dst, address);
+        m_formatter.twoByteOpAddr(OP2_CVTSI2SD_VsdEd, (RegisterID)dst, bitwise_cast<uint32_t>(address));
     }
 #endif
 
@@ -3068,12 +3077,12 @@ public:
     void movsd_mr(const void* address, XMMRegisterID dst)
     {
         m_formatter.prefix(PRE_SSE_F2);
-        m_formatter.twoByteOp(OP2_MOVSD_VsdWsd, (RegisterID)dst, address);
+        m_formatter.twoByteOpAddr(OP2_MOVSD_VsdWsd, (RegisterID)dst, bitwise_cast<uint32_t>(address));
     }
     void movsd_rm(XMMRegisterID src, const void* address)
     {
         m_formatter.prefix(PRE_SSE_F2);
-        m_formatter.twoByteOp(OP2_MOVSD_WsdVsd, (RegisterID)src, address);
+        m_formatter.twoByteOpAddr(OP2_MOVSD_WsdVsd, (RegisterID)src, bitwise_cast<uint32_t>(address));
     }
 #endif
 
@@ -3398,6 +3407,15 @@ public:
     void lock()
     {
         m_formatter.prefix(PRE_LOCK);
+    }
+    
+    // Causes the memory access in the next instruction to be offset by %gs. Usually you use
+    // this with a 32-bit absolute address load. That "address" ends up being the offset to
+    // %gs. This prefix is ignored by lea. Getting the value of %gs is hard - you can pretty
+    // much just use it as a secret offset.
+    void gs()
+    {
+        m_formatter.prefix(PRE_GS);
     }
     
     void cmpxchgb_rm(RegisterID src, int offset, RegisterID base)
@@ -4053,14 +4071,17 @@ private:
                 }
             }
 
-#if !CPU(X86_64)
-            ALWAYS_INLINE void memoryModRM(int reg, const void* address)
+            ALWAYS_INLINE void memoryModRMAddr(int reg, uint32_t address)
             {
+#if CPU(X86_64)
+                putModRmSib(ModRmMemoryNoDisp, reg, noBase, noIndex, 0);
+#else
                 // noBase + ModRmMemoryNoDisp means noBase + ModRmMemoryDisp32!
                 putModRm(ModRmMemoryNoDisp, reg, noBase);
-                putIntUnchecked(reinterpret_cast<int32_t>(address));
-            }
 #endif
+                putIntUnchecked(address);
+            }
+
             ALWAYS_INLINE void twoBytesVex(OneByteOpcodeID simdPrefix, RegisterID inOpReg, RegisterID r)
             {
                 putByteUnchecked(VexPrefix::TwoBytes);
@@ -4185,14 +4206,12 @@ private:
             writer.memoryModRM(reg, base, index, scale, offset);
         }
 
-#if !CPU(X86_64)
-        void oneByteOp(OneByteOpcodeID opcode, int reg, const void* address)
+        void oneByteOpAddr(OneByteOpcodeID opcode, int reg, uint32_t address)
         {
             SingleInstructionBufferWriter writer(m_buffer);
             writer.putByteUnchecked(opcode);
-            writer.memoryModRM(reg, address);
+            writer.memoryModRMAddr(reg, address);
         }
-#endif
 
         void twoByteOp(TwoByteOpcodeID opcode)
         {
@@ -4228,15 +4247,14 @@ private:
             writer.memoryModRM(reg, base, index, scale, offset);
         }
 
-#if !CPU(X86_64)
-        void twoByteOp(TwoByteOpcodeID opcode, int reg, const void* address)
+        void twoByteOpAddr(TwoByteOpcodeID opcode, int reg, uint32_t address)
         {
             SingleInstructionBufferWriter writer(m_buffer);
             writer.putByteUnchecked(OP_2BYTE_ESCAPE);
             writer.putByteUnchecked(opcode);
-            writer.memoryModRM(reg, address);
+            writer.memoryModRMAddr(reg, address);
         }
-#endif
+
         void vexNdsLigWigTwoByteOp(OneByteOpcodeID simdPrefix, TwoByteOpcodeID opcode, RegisterID dest, RegisterID a, RegisterID b)
         {
             SingleInstructionBufferWriter writer(m_buffer);
@@ -4365,6 +4383,14 @@ private:
             writer.emitRexW(reg, index, base);
             writer.putByteUnchecked(opcode);
             writer.memoryModRM(reg, base, index, scale, offset);
+        }
+
+        void oneByteOp64Addr(OneByteOpcodeID opcode, int reg, uint32_t address)
+        {
+            SingleInstructionBufferWriter writer(m_buffer);
+            writer.emitRexW(reg, 0, 0);
+            writer.putByteUnchecked(opcode);
+            writer.memoryModRMAddr(reg, address);
         }
 
         void twoByteOp64(TwoByteOpcodeID opcode, int reg, RegisterID rm)

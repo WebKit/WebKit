@@ -761,6 +761,14 @@
 #define HAVE_LL_SC 1
 #endif // CPU(ARM64)
 
+#if __has_include(<System/pthread_machdep.h>)
+#define HAVE_FAST_TLS 1
+#endif
+
+#if (CPU(X86_64) || CPU(ARM64)) && HAVE(FAST_TLS)
+#define ENABLE_FAST_TLS_JIT 1
+#endif
+
 /* This controls whether B3 is built. B3 is needed for FTL JIT and WebAssembly */
 #if ENABLE(FTL_JIT) || ENABLE(WEBASSEMBLY)
 #define ENABLE_B3_JIT 1

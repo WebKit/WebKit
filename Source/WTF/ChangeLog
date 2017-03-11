@@ -1,3 +1,23 @@
+2017-03-10  Filip Pizlo  <fpizlo@apple.com>
+
+        The JITs should be able to emit fast TLS loads
+        https://bugs.webkit.org/show_bug.cgi?id=169483
+
+        Reviewed by Keith Miller.
+        
+        Consolidated what we know about fast TLS in FastTLS.h.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/FastTLS.h: Added.
+        (WTF::loadFastTLS):
+        (WTF::fastTLSOffsetForKey):
+        * wtf/Platform.h:
+        * wtf/WTFThreadData.cpp:
+        (WTF::WTFThreadData::createAndRegisterForGetspecificDirect):
+        * wtf/WTFThreadData.h:
+        (WTF::wtfThreadData):
+
 2017-03-10  Mark Lam  <mark.lam@apple.com>
 
         Turn ENABLE(MASM_PROBE) on by default for OS(DARWIN) release builds.

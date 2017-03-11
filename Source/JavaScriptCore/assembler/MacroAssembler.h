@@ -627,6 +627,13 @@ public:
         load32(address, dest);
     }
 
+#if ENABLE(FAST_TLS_JIT)
+    void loadFromTLSPtr(uint32_t offset, RegisterID dst)
+    {
+        loadFromTLS32(offset, dst);
+    }
+#endif
+
     DataLabel32 loadPtrWithAddressOffsetPatch(Address address, RegisterID dest)
     {
         return load32WithAddressOffsetPatch(address, dest);
@@ -933,6 +940,13 @@ public:
     {
         load64(address, dest);
     }
+
+#if ENABLE(FAST_TLS_JIT)
+    void loadFromTLSPtr(uint32_t offset, RegisterID dst)
+    {
+        loadFromTLS64(offset, dst);
+    }
+#endif
 
     DataLabel32 loadPtrWithAddressOffsetPatch(Address address, RegisterID dest)
     {

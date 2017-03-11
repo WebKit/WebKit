@@ -3598,6 +3598,24 @@ public:
         m_assembler.eor<64>(dest, src, src);
     }
     
+#if ENABLE(FAST_TLS_JIT)
+    // This will use scratch registers if the offset is not legal.
+    
+    void loadFromTLS32(uint32_t offset, RegisterID dst)
+    {
+        m_assembler.mrs_TPIDRRO_EL0(dst);
+        and64(TrustedImm32(~7), dst);
+        load32(Address(dst, offset), dst);
+    }
+    
+    void loadFromTLS64(uint32_t offset, RegisterID dst)
+    {
+        m_assembler.mrs_TPIDRRO_EL0(dst);
+        and64(TrustedImm32(~7), dst);
+        load64(Address(dst, offset), dst);
+    }
+#endif // ENABLE(FAST_TLS_JIT)
+    
     // Misc helper functions.
 
     // Invert a relational condition, e.g. == becomes !=, < becomes >=, etc.
