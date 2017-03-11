@@ -1,10 +1,20 @@
+2017-03-11  Csaba Osztrogonác  <ossy@webkit.org>
+
+        REGRESSION(r213645): It made JSC tests super slow and timeout on AArch64 Linux
+        https://bugs.webkit.org/show_bug.cgi?id=169510
+
+        Unreviewed, disable LL_SC on Linux to unbreak this platform.
+
+        * wtf/Atomics.h:
+        * wtf/Platform.h:
+
 2017-03-10  Filip Pizlo  <fpizlo@apple.com>
 
         The JITs should be able to emit fast TLS loads
         https://bugs.webkit.org/show_bug.cgi?id=169483
 
         Reviewed by Keith Miller.
-        
+
         Consolidated what we know about fast TLS in FastTLS.h.
 
         * WTF.xcodeproj/project.pbxproj:

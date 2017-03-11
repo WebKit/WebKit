@@ -177,7 +177,7 @@ struct Atomic {
     std::atomic<T> value;
 };
 
-#if CPU(ARM64)
+#if CPU(ARM64) && HAVE(LL_SC)
 #define DEFINE_LL_SC(width, modifier, suffix)   \
     template<> \
     ALWAYS_INLINE uint ## width ## _t Atomic<uint ## width ##_t>::loadLink(std::memory_order order) \
@@ -240,7 +240,7 @@ DEFINE_LL_SC(ptr, "", "")
 #endif
 
 #undef DEFINE_LL_SC
-#endif // CPU(ARM64)
+#endif // CPU(ARM64) && HAVE(LL_SC)
 
 template<typename T>
 inline T atomicLoad(T* location, std::memory_order order = std::memory_order_seq_cst)
