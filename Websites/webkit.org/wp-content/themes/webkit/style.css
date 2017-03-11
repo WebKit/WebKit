@@ -653,12 +653,18 @@ footer .menu {
     position: relative;
     box-sizing: border-box;
     font-size: 2rem;
+    text-align: center;
 }
 
 .twitter-tile.text-only {
     display: -webkit-flex;
     display: flex;
     justify-content: center;
+    text-align: left;
+}
+
+.twitter-tile .media {
+    text-align: center;
 }
 
 .twitter-tile.text-only .tile-content {
@@ -670,8 +676,10 @@ footer .menu {
 }
 
 .twitter-tile img {
-    width: 100%;
+    display: inline-block;
+    width: auto;
     height: auto;
+    max-width: 100%;
     max-height: 256px;
 }
 
@@ -699,6 +707,7 @@ footer .menu {
     display: inline-block;
     margin: 0 1.3rem;
 }
+
 .twitter-controls a {
     opacity: 0.66;
     transition: opacity 300ms ease-out;

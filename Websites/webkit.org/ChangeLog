@@ -1,3 +1,25 @@
+2017-03-10  Jon Davis  <jond@apple.com>
+
+        Switch back to the Twitter API for the Tweet widget
+        https://bugs.webkit.org/show_bug.cgi?id=168749
+
+        Reviewed by Lucas Forschler.
+        
+        Updates the Twitter widget tile implementation to prefer the Twitter API to populate tweets 
+        displayed through the widget. If the API fails for any reason, it falls back to using the 
+        Tweet listener for updated tweets.
+        
+        The Twitter API provides the benefit of embedding media and being able to display the full 
+        URLs rather than Twitter-shortened URLs.
+
+        * wp-content/plugins/tweet-listener.php:
+        * wp-content/themes/webkit/style.css:
+        (.twitter-tile .tile-content):
+        (.twitter-tile.text-only):
+        (.twitter-tile .media):
+        (.twitter-tile img):
+        * wp-content/themes/webkit/widgets/twitter.php:
+
 2017-03-04  Filip Pizlo  <fpizlo@apple.com>
 
         B3 should have comprehensive support for atomic operations

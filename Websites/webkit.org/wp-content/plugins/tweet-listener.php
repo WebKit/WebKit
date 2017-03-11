@@ -12,7 +12,7 @@ TweetListener::object();
 class TweetListener {
 
     private static $object = null;
-    
+
     const AUTH_TOKEN = TWITTER_LISTENER_AUTH;
     const DATA_KEY = 'recent_tweet';
 
@@ -28,9 +28,12 @@ class TweetListener {
     }
 
     public function listen() {
-        
+
+        if (!isset($_POST['token']) || $_POST['token'] != TWITTER_LISTENER_AUTH)
+            wp_die();
+
         $defaults = array(
-            'text' => '', 
+            'text' => '',
             'username' => '@webkit',
             'link' => '',
             'created' => '',
@@ -41,10 +44,10 @@ class TweetListener {
         update_option(self::DATA_KEY, $data);
         wp_die();
     }
-    
+
     public function tweet() {
         $data = (object)get_option(self::DATA_KEY);
-        
+
         // Setup compatible Tweet structure
 
         $Tweet = new StdClass();
@@ -64,7 +67,7 @@ class TweetListener {
                 $Tweet->entities->urls[] = $URL;
             }
         }
-        
+
         return $Tweet;
     }
 
