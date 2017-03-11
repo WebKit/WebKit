@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2009, 2011, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2009, 2011, 2016, 2017 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -40,6 +40,10 @@
 
 #if ENABLE(WEBGL)
 #include "JSWebGLRenderingContextBase.h"
+#endif
+
+#if ENABLE(WEBGPU)
+#include "JSWebGPURenderingContext.h"
 #endif
 
 #if ENABLE(TOUCH_EVENTS)
@@ -149,6 +153,10 @@ JSValue JSDocument::getCSSCanvasContext(JSC::ExecState& state)
 #if ENABLE(WEBGL)
     if (is<WebGLRenderingContextBase>(*context))
         return toJS(&state, globalObject(), downcast<WebGLRenderingContextBase>(*context));
+#endif
+#if ENABLE(WEBGPU)
+    if (is<WebGPURenderingContext>(*context))
+        return toJS(&state, globalObject(), downcast<WebGPURenderingContext>(*context));
 #endif
 
     return toJS(&state, globalObject(), downcast<CanvasRenderingContext2D>(*context));

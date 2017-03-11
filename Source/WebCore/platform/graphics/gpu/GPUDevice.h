@@ -47,6 +47,10 @@ typedef void PlatformGPUDevice;
 namespace WebCore {
 
 class GPUBuffer;
+// FIXME: WebGPU - Stub implementation - not implemented yet.
+class GPUCommandQueue;
+class GPUDrawable;
+// FIXME: WebGPU - End stub.
 class GPULibrary;
 class GPUTexture;
 class GPUTextureDescriptor;
@@ -68,6 +72,12 @@ public:
     WEBCORE_EXPORT RefPtr<GPULibrary> createLibrary(const String& sourceCode);
     WEBCORE_EXPORT RefPtr<GPUBuffer> createBufferFromData(ArrayBufferView* data);
     WEBCORE_EXPORT RefPtr<GPUTexture> createTexture(GPUTextureDescriptor*);
+
+    // FIXME: WebGPU - Stub implementation - not implemented yet.
+    GPUCommandQueue* createCommandQueue() { return nullptr; }
+    GPUDrawable* getFramebuffer() { return nullptr; }
+    void markLayerComposited() { }
+    // FIXME: WebGPU - End stub.
 
 private:
     GPUDevice();

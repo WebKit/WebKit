@@ -1,4 +1,4 @@
-# Copyright (C) 2006-2008, 2012, 2014-2015 Apple Inc. All rights reserved.
+# Copyright (C) 2006-2008, 2012, 2014-2015, 2017 Apple Inc. All rights reserved.
 # Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
 # Copyright (C) 2009 Cameron McCormack <cam@mcc.id.au>
 #
@@ -562,6 +562,25 @@ JS_BINDING_IDLS = \
     $(WebCore)/html/canvas/WebGLUniformLocation.idl \
     $(WebCore)/html/canvas/WebGLVertexArrayObject.idl \
     $(WebCore)/html/canvas/WebGLVertexArrayObjectOES.idl \
+    $(WebCore)/html/canvas/WebGPUBuffer.idl \
+    $(WebCore)/html/canvas/WebGPUCommandBuffer.idl \
+    $(WebCore)/html/canvas/WebGPUCommandQueue.idl \
+    $(WebCore)/html/canvas/WebGPUDepthStencilDescriptor.idl \
+    $(WebCore)/html/canvas/WebGPUDepthStencilState.idl \
+    $(WebCore)/html/canvas/WebGPUDrawable.idl \
+    $(WebCore)/html/canvas/WebGPUFunction.idl \
+    $(WebCore)/html/canvas/WebGPULibrary.idl \
+    $(WebCore)/html/canvas/WebGPURenderCommandEncoder.idl \
+    $(WebCore)/html/canvas/WebGPURenderingContext.idl \
+    $(WebCore)/html/canvas/WebGPURenderPassAttachmentDescriptor.idl \
+    $(WebCore)/html/canvas/WebGPURenderPassColorAttachmentDescriptor.idl \
+    $(WebCore)/html/canvas/WebGPURenderPassDepthAttachmentDescriptor.idl \
+    $(WebCore)/html/canvas/WebGPURenderPassDescriptor.idl \
+    $(WebCore)/html/canvas/WebGPURenderPipelineColorAttachmentDescriptor.idl \
+    $(WebCore)/html/canvas/WebGPURenderPipelineDescriptor.idl \
+    $(WebCore)/html/canvas/WebGPURenderPipelineState.idl \
+    $(WebCore)/html/canvas/WebGPUTexture.idl \
+    $(WebCore)/html/canvas/WebGPUTextureDescriptor.idl \
     $(WebCore)/html/track/AudioTrack.idl \
     $(WebCore)/html/track/AudioTrackList.idl \
     $(WebCore)/html/track/DataCue.idl \
