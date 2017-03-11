@@ -35,6 +35,7 @@ class CheckPatchRelevance(AbstractStep):
     def options(cls):
         return AbstractStep.options() + [
             Options.group,
+            Options.quiet,
         ]
 
     bindings_paths = [

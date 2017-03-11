@@ -132,6 +132,7 @@ class PatchAnalysisTask(object):
     def _check_patch_relevance(self):
         args = [
             "check-patch-relevance",
+            "--quiet",
         ]
 
         if hasattr(self._delegate, 'group'):
