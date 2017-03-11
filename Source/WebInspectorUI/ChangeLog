@@ -1,5 +1,20 @@
 2017-03-10  Devin Rousso  <dcrousso+webkit@gmail.com>
 
+        Web Inspector: popover with compositing reasons in Layers sidebar has hard to read layout
+        https://bugs.webkit.org/show_bug.cgi?id=167081
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/LayerTreeDetailsSidebarPanel.css:
+        (.layer-tree-popover):
+        (.layer-tree-popover p):
+        (.layer-tree-popover ul):
+        (body[dir=ltr] .layer-tree-popover ul):
+        (body[dir=rtl] .layer-tree-popover ul):
+        Show `list-item-style` and make the <p> element stand out more (larger and bold).
+
+2017-03-10  Devin Rousso  <dcrousso+webkit@gmail.com>
+
         Web Inspector: in Resources tab navigation bar, can't save the same file from context menu item more than once
         https://bugs.webkit.org/show_bug.cgi?id=165665
 
