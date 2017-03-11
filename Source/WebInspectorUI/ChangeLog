@@ -1,5 +1,17 @@
 2017-03-10  Devin Rousso  <dcrousso+webkit@gmail.com>
 
+        Web Inspector: in Resources tab navigation bar, can't save the same file from context menu item more than once
+        https://bugs.webkit.org/show_bug.cgi?id=165665
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/ContextMenuUtilities.js:
+        (WebInspector.appendContextMenuItemsForSourceCode):
+        Force the "Save As" dialog to appear when saving, as otherwise subsequent clicks on "Save"
+        in the context menu will just override the previously saved file.
+
+2017-03-10  Devin Rousso  <dcrousso+webkit@gmail.com>
+
         Web Inspector: REGRESSION(r213149): scope bar items in elements sidebar have wrong padding/margin
         https://bugs.webkit.org/show_bug.cgi?id=169204
 

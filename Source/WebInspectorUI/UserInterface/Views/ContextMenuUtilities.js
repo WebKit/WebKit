@@ -73,10 +73,11 @@ WebInspector.appendContextMenuItemsForSourceCode = function(contextMenu, sourceC
 
     contextMenu.appendItem(WebInspector.UIString("Save File"), () => {
         sourceCode.requestContent().then(() => {
+            const forceSaveAs = true;
             WebInspector.saveDataToFile({
                 url: sourceCode.url || "",
                 content: sourceCode.content
-            });
+            }, forceSaveAs);
         });
     });
 
