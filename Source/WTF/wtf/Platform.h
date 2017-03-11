@@ -899,7 +899,7 @@
 
 /* Enable the following if you want to use the MacroAssembler::probe() facility
    to do JIT debugging. */
-#if (CPU(X86) || CPU(X86_64) || CPU(ARM64) || (CPU(ARM_THUMB2) && PLATFORM(IOS))) && ENABLE(JIT) && OS(DARWIN) && !defined(NDEBUG)
+#if (CPU(X86) || CPU(X86_64) || CPU(ARM64) || (CPU(ARM_THUMB2) && PLATFORM(IOS))) && ENABLE(JIT) && OS(DARWIN)
 #define ENABLE_MASM_PROBE 1
 #else
 #define ENABLE_MASM_PROBE 0
