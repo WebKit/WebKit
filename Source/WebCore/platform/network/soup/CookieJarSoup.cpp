@@ -144,33 +144,6 @@ void deleteCookie(const NetworkStorageSession& session, const URL& url, const St
     }
 }
 
-static SoupDate* msToSoupDate(double ms)
-{
-    int year = msToYear(ms);
-    int dayOfYear = dayInYear(ms, year);
-    bool leapYear = isLeapYear(year);
-    return soup_date_new(year, monthFromDayInYear(dayOfYear, leapYear), dayInMonthFromDayInYear(dayOfYear, leapYear), msToHours(ms), msToMinutes(ms), static_cast<int>(ms / 1000) % 60);
-}
-
-static SoupCookie* toSoupCookie(const Cookie& cookie)
-{
-    SoupCookie* soupCookie = soup_cookie_new(cookie.name.utf8().data(), cookie.value.utf8().data(),
-        cookie.domain.utf8().data(), cookie.path.utf8().data(), -1);
-    soup_cookie_set_http_only(soupCookie, cookie.httpOnly);
-    soup_cookie_set_secure(soupCookie, cookie.secure);
-    if (!cookie.session) {
-        SoupDate* date = msToSoupDate(cookie.expires);
-        soup_cookie_set_expires(soupCookie, date);
-        soup_date_free(date);
-    }
-    return soupCookie;
-}
-
-void addCookie(const NetworkStorageSession& session, const URL&, const Cookie& cookie)
-{
-    soup_cookie_jar_add_cookie(session.cookieStorage(), toSoupCookie(cookie));
-}
-
 void getHostnamesWithCookies(const NetworkStorageSession& session, HashSet<String>& hostnames)
 {
     GUniquePtr<GSList> cookies(soup_cookie_jar_all_cookies(session.cookieStorage()));

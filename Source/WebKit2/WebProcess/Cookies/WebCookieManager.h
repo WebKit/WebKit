@@ -34,12 +34,14 @@
 #include <stdint.h>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/Vector.h>
 
 #if USE(SOUP)
 #include "SoupCookiePersistentStorageType.h"
 #endif
 
 namespace WebCore {
+class URL;
 struct Cookie;
 }
 
@@ -69,7 +71,8 @@ private:
     void deleteCookiesForHostname(WebCore::SessionID, const String&);
     void deleteAllCookies(WebCore::SessionID);
     void deleteAllCookiesModifiedSince(WebCore::SessionID, std::chrono::system_clock::time_point);
-    void addCookie(WebCore::SessionID, const WebCore::Cookie&, const String& hostname);
+
+    void setCookies(WebCore::SessionID, const Vector<WebCore::Cookie>&, const WebCore::URL&, const WebCore::URL& mainDocumentURL);
 
     void platformSetHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicy);
     void getHTTPCookieAcceptPolicy(uint64_t callbackID);

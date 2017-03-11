@@ -1,3 +1,38 @@
+2017-03-11  Brady Eidson  <beidson@apple.com>
+
+        Cleanup "addCookie" and its sole user.
+        https://bugs.webkit.org/show_bug.cgi?id=169486
+
+        Reviewed by Brian Burg.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::addCookie): Deleted.
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.messages.in:
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<Cookie>::encode): Deleted.
+        (IPC::ArgumentCoder<Cookie>::decode): Deleted.
+        * Shared/WebCoreArgumentCoders.h:
+
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::addSingleCookie):
+
+        * UIProcess/WebCookieManagerProxy.cpp:
+        (WebKit::WebCookieManagerProxy::setCookies):
+        (WebKit::WebCookieManagerProxy::addCookie): Deleted.
+        * UIProcess/WebCookieManagerProxy.h:
+
+        * WebProcess/Cookies/WebCookieManager.cpp:
+        (WebKit::WebCookieManager::setCookies):
+        (WebKit::WebCookieManager::addCookie): Deleted.
+        * WebProcess/Cookies/WebCookieManager.h:
+        * WebProcess/Cookies/WebCookieManager.messages.in:
+
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebKit::WebPlatformStrategies::addCookie): Deleted.
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.h:
+
 2017-03-10  Alex Christensen  <achristensen@webkit.org>
 
         Fix watch and tv builds after r213294

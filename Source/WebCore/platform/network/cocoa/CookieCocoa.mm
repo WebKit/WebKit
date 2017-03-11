@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003, 2006, 2008, 2012, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,27 +23,31 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#import "config.h"
+#import "Cookie.h"
 
-#include <wtf/Forward.h>
-#include <wtf/Vector.h>
-#include <wtf/text/WTFString.h>
+#import <wtf/BlockObjCExceptions.h>
 
 namespace WebCore {
 
-class Document;
-class URL;
-struct Cookie;
+Cookie::operator NSHTTPCookie *() const
+{
+    // FIXME: existing APIs do not provide a way to set httpOnly without parsing headers from scratch.
 
-// Functions in this file take a Document pointer to determine which cookie storage to use. We should merge that into call sites, and use PlatformCookieJar directly.
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
 
-// These two functions implement document.cookie API, with special rules for HttpOnly cookies.
-WEBCORE_EXPORT String cookies(const Document&, const URL&);
-WEBCORE_EXPORT void setCookies(Document&, const URL&, const String& cookieString);
+    return [NSHTTPCookie cookieWithProperties:@{
+        NSHTTPCookieName: name,
+        NSHTTPCookieValue: value,
+        NSHTTPCookieDomain: domain,
+        NSHTTPCookiePath: path,
+        NSHTTPCookieDomain: domain,
+        NSHTTPCookieSecure: @(secure),
+        NSHTTPCookieDiscard: @(session),
+        NSHTTPCookieExpires: [NSDate dateWithTimeIntervalSince1970:expires / 1000.0],
+        }];
 
-WEBCORE_EXPORT bool cookiesEnabled(const Document&);
-WEBCORE_EXPORT String cookieRequestHeaderFieldValue(const Document&, const URL&);
-WEBCORE_EXPORT bool getRawCookies(const Document&, const URL&, Vector<Cookie>&);
-WEBCORE_EXPORT void deleteCookie(const Document&, const URL&, const String& cookieName);
+    END_BLOCK_OBJC_EXCEPTIONS
+}
 
 } // namespace WebCore

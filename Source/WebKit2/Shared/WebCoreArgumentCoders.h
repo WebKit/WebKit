@@ -83,7 +83,6 @@ class UserStyleSheet;
 class UserScript;
 class URL;
 struct CompositionUnderline;
-struct Cookie;
 struct DictationAlternative;
 struct DictionaryPopupInfo;
 struct EventTrackingRegions;
@@ -403,11 +402,6 @@ template<> struct ArgumentCoder<WebCore::SoupNetworkProxySettings> {
 template<> struct ArgumentCoder<WebCore::CompositionUnderline> {
     static void encode(Encoder&, const WebCore::CompositionUnderline&);
     static bool decode(Decoder&, WebCore::CompositionUnderline&);
-};
-
-template<> struct ArgumentCoder<WebCore::Cookie> {
-    static void encode(Encoder&, const WebCore::Cookie&);
-    static bool decode(Decoder&, WebCore::Cookie&);
 };
 
 template<> struct ArgumentCoder<WebCore::DatabaseDetails> {

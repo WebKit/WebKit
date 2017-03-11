@@ -69,7 +69,8 @@ public:
     void deleteCookiesForHostname(WebCore::SessionID, const String& hostname);
     void deleteAllCookies(WebCore::SessionID);
     void deleteAllCookiesModifiedSince(WebCore::SessionID, std::chrono::system_clock::time_point);
-    void addCookie(WebCore::SessionID, const WebCore::Cookie&, const String& hostname);
+
+    void setCookies(WebCore::SessionID, const Vector<WebCore::Cookie>&, const WebCore::URL&, const WebCore::URL& mainDocumentURL);
 
     void setHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicy);
     void getHTTPCookieAcceptPolicy(std::function<void (HTTPCookieAcceptPolicy, CallbackBase::Error)>);

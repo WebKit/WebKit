@@ -332,12 +332,6 @@ void deleteCookie(const NetworkStorageSession&, const URL&, const String&)
     // FIXME: Not yet implemented
 }
 
-void addCookie(const NetworkStorageSession&, const URL&, const Cookie&)
-{
-    // FIXME: implement this command. <https://webkit.org/b/156296>
-    notImplemented();
-}
-
 void getHostnamesWithCookies(const NetworkStorageSession&, HashSet<String>& hostnames)
 {
     // FIXME: Not yet implemented

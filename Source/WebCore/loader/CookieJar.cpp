@@ -83,9 +83,4 @@ void deleteCookie(const Document& document, const URL& url, const String& cookie
     platformStrategies()->cookiesStrategy()->deleteCookie(storageSession(document), url, cookieName);
 }
 
-void addCookie(const Document& document, const URL& url, const Cookie& cookie)
-{
-    platformStrategies()->cookiesStrategy()->addCookie(storageSession(document), url, cookie);
-}
-
 }

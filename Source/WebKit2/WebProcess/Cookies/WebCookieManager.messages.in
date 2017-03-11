@@ -28,7 +28,8 @@
     void DeleteCookiesForHostname(WebCore::SessionID sessionID, String hostname)
     void DeleteAllCookies(WebCore::SessionID sessionID)
     void DeleteAllCookiesModifiedSince(WebCore::SessionID sessionID, std::chrono::system_clock::time_point time)
-    void AddCookie(WebCore::SessionID sessionID, struct WebCore::Cookie cookie, String hostname)
+
+    void SetCookies(WebCore::SessionID sessionID, Vector<WebCore::Cookie> cookies, WebCore::URL url, WebCore::URL mainDocumentURL);
 
     void SetHTTPCookieAcceptPolicy(uint32_t policy)
     void GetHTTPCookieAcceptPolicy(uint64_t callbackID)

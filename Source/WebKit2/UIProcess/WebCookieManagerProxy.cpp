@@ -129,9 +129,9 @@ void WebCookieManagerProxy::deleteAllCookiesModifiedSince(WebCore::SessionID ses
     processPool()->sendToNetworkingProcessRelaunchingIfNecessary(Messages::WebCookieManager::DeleteAllCookiesModifiedSince(sessionID, time));
 }
 
-void WebCookieManagerProxy::addCookie(WebCore::SessionID sessionID, const WebCore::Cookie& cookie, const String& hostname)
+void WebCookieManagerProxy::setCookies(WebCore::SessionID sessionID, const Vector<WebCore::Cookie>& cookies, const WebCore::URL& url, const WebCore::URL& mainDocumentURL)
 {
-    processPool()->sendToNetworkingProcessRelaunchingIfNecessary(Messages::WebCookieManager::AddCookie(sessionID, cookie, hostname));
+    processPool()->sendToNetworkingProcessRelaunchingIfNecessary(Messages::WebCookieManager::SetCookies(sessionID, cookies, url, mainDocumentURL));
 }
 
 void WebCookieManagerProxy::startObservingCookieChanges(WebCore::SessionID sessionID)

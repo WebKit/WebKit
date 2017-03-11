@@ -30,9 +30,11 @@
 
 #if USE(SOUP)
 
+#include "Cookie.h"
 #include "ResourceHandle.h"
 #include "SoupNetworkSession.h"
 #include <libsoup/soup.h>
+#include <wtf/DateMath.h>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/glib/GUniquePtr.h>
@@ -273,6 +275,35 @@ void NetworkStorageSession::saveCredentialToPersistentStorage(const ProtectionSp
     UNUSED_PARAM(credential);
 #endif
 }
+
+static SoupDate* msToSoupDate(double ms)
+{
+    int year = msToYear(ms);
+    int dayOfYear = dayInYear(ms, year);
+    bool leapYear = isLeapYear(year);
+    return soup_date_new(year, monthFromDayInYear(dayOfYear, leapYear), dayInMonthFromDayInYear(dayOfYear, leapYear), msToHours(ms), msToMinutes(ms), static_cast<int>(ms / 1000) % 60);
+}
+
+static SoupCookie* toSoupCookie(const Cookie& cookie)
+{
+    SoupCookie* soupCookie = soup_cookie_new(cookie.name.utf8().data(), cookie.value.utf8().data(),
+        cookie.domain.utf8().data(), cookie.path.utf8().data(), -1);
+    soup_cookie_set_http_only(soupCookie, cookie.httpOnly);
+    soup_cookie_set_secure(soupCookie, cookie.secure);
+    if (!cookie.session) {
+        SoupDate* date = msToSoupDate(cookie.expires);
+        soup_cookie_set_expires(soupCookie, date);
+        soup_date_free(date);
+    }
+    return soupCookie;
+}
+
+void NetworkStorageSession::setCookies(const Vector<Cookie>& cookies, const URL&, const URL&)
+{
+    for (auto cookie : cookies)
+        soup_cookie_jar_add_cookie(cookieStorage(), toSoupCookie(cookie));
+}
+
 
 } // namespace WebCore
 

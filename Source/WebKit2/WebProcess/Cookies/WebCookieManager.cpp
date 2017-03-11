@@ -30,6 +30,7 @@
 #include "WebCookieManagerMessages.h"
 #include "WebCookieManagerProxyMessages.h"
 #include "WebCoreArgumentCoders.h"
+#include <WebCore/Cookie.h>
 #include <WebCore/CookieStorage.h>
 #include <WebCore/NetworkStorageSession.h>
 #include <WebCore/PlatformCookieJar.h>
@@ -83,10 +84,10 @@ void WebCookieManager::deleteAllCookiesModifiedSince(SessionID sessionID, std::c
         WebCore::deleteAllCookiesModifiedSince(*storageSession, time);
 }
 
-void WebCookieManager::addCookie(SessionID sessionID, const Cookie& cookie, const String& hostname)
+void WebCookieManager::setCookies(WebCore::SessionID sessionID, const Vector<Cookie>& cookies, const URL& url, const URL& mainDocumentURL)
 {
     if (auto* storageSession = NetworkStorageSession::storageSession(sessionID))
-        WebCore::addCookie(*storageSession, URL(URL(), hostname), cookie);
+        storageSession->setCookies(cookies, url, mainDocumentURL);
 }
 
 void WebCookieManager::notifyCookiesDidChange(SessionID sessionID)

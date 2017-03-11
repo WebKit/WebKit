@@ -218,12 +218,6 @@ void deleteCookie(const NetworkStorageSession& session, const URL& url, const St
     }
 }
 
-void addCookie(const NetworkStorageSession&, const URL&, const Cookie&)
-{
-    // FIXME: implement this command. <https://webkit.org/b/156298>
-    notImplemented();
-}
-
 void getHostnamesWithCookies(const NetworkStorageSession& session, HashSet<String>& hostnames)
 {
     RetainPtr<CFArrayRef> cookiesCF = adoptCF(CFHTTPCookieStorageCopyCookies(session.cookieStorage().get()));

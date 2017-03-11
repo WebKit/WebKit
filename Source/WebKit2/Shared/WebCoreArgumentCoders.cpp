@@ -31,7 +31,6 @@
 #include <WebCore/AuthenticationChallenge.h>
 #include <WebCore/BlobPart.h>
 #include <WebCore/CertificateInfo.h>
-#include <WebCore/Cookie.h>
 #include <WebCore/Credential.h>
 #include <WebCore/Cursor.h>
 #include <WebCore/DatabaseDetails.h>
@@ -1279,41 +1278,6 @@ bool ArgumentCoder<CompositionUnderline>::decode(Decoder& decoder, CompositionUn
     if (!decoder.decode(underline.thick))
         return false;
     if (!decoder.decode(underline.color))
-        return false;
-
-    return true;
-}
-
-
-void ArgumentCoder<Cookie>::encode(Encoder& encoder, const Cookie& cookie)
-{
-    encoder << cookie.name;
-    encoder << cookie.value;
-    encoder << cookie.domain;
-    encoder << cookie.path;
-    encoder << cookie.expires;
-    encoder << cookie.httpOnly;
-    encoder << cookie.secure;
-    encoder << cookie.session;
-}
-
-bool ArgumentCoder<Cookie>::decode(Decoder& decoder, Cookie& cookie)
-{
-    if (!decoder.decode(cookie.name))
-        return false;
-    if (!decoder.decode(cookie.value))
-        return false;
-    if (!decoder.decode(cookie.domain))
-        return false;
-    if (!decoder.decode(cookie.path))
-        return false;
-    if (!decoder.decode(cookie.expires))
-        return false;
-    if (!decoder.decode(cookie.httpOnly))
-        return false;
-    if (!decoder.decode(cookie.secure))
-        return false;
-    if (!decoder.decode(cookie.session))
         return false;
 
     return true;

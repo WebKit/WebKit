@@ -155,11 +155,6 @@ void WebPlatformStrategies::deleteCookie(const NetworkStorageSession& session, c
     WebProcess::singleton().networkConnection().connection().send(Messages::NetworkConnectionToWebProcess::DeleteCookie(session.sessionID(), url, cookieName), 0);
 }
 
-void WebPlatformStrategies::addCookie(const NetworkStorageSession& session, const URL& url, const Cookie& cookie)
-{
-    WebProcess::singleton().networkConnection().connection().send(Messages::NetworkConnectionToWebProcess::AddCookie(session.sessionID(), url, cookie), 0);
-}
-
 #if PLATFORM(COCOA)
 // PasteboardStrategy
 

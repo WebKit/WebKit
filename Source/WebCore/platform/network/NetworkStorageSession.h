@@ -41,11 +41,17 @@
 typedef struct _SoupCookieJar SoupCookieJar;
 #endif
 
+#ifdef __OBJC__
+#include <objc/objc.h>
+#endif
+
 namespace WebCore {
 
 class NetworkingContext;
 class ResourceRequest;
 class SoupNetworkSession;
+
+struct Cookie;
 
 class NetworkStorageSession {
     WTF_MAKE_NONCOPYABLE(NetworkStorageSession); WTF_MAKE_FAST_ALLOCATED;
@@ -60,6 +66,10 @@ public:
 
     SessionID sessionID() const { return m_sessionID; }
     CredentialStorage& credentialStorage() { return m_credentialStorage; }
+
+#ifdef __OBJC__
+    NSHTTPCookieStorage *nsCookieStorage() const;
+#endif
 
 #if PLATFORM(COCOA) || USE(CFURLCONNECTION)
     NetworkStorageSession(SessionID, RetainPtr<CFURLStorageSessionRef>);
@@ -89,6 +99,8 @@ public:
 
     NetworkingContext* context() const;
 #endif
+
+    WEBCORE_EXPORT void setCookies(const Vector<Cookie>&, const URL&, const URL& mainDocumentURL);
 
 private:
     static HashMap<SessionID, std::unique_ptr<NetworkStorageSession>>& globalSessionMap();

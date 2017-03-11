@@ -29,47 +29,93 @@
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
 
+#ifdef __OBJC__
+#include <objc/objc.h>
+#endif
+
 namespace WebCore {
 
-    struct Cookie {
-        Cookie() { }
+struct Cookie {
+    Cookie() { }
 
-        Cookie(const String& name, const String& value, const String& domain,
-                const String& path, double expires, bool httpOnly, bool secure,
-                bool session)
-            : name(name)
-            , value(value)
-            , domain(domain)
-            , path(path)
-            , expires(expires)
-            , httpOnly(httpOnly)
-            , secure(secure)
-            , session(session)
-        {
-        }
+    Cookie(const String& name, const String& value, const String& domain, const String& path, double expires, bool httpOnly, bool secure, bool session)
+        : name(name)
+        , value(value)
+        , domain(domain)
+        , path(path)
+        , expires(expires)
+        , httpOnly(httpOnly)
+        , secure(secure)
+        , session(session)
+    {
+    }
 
-        String name;
-        String value;
-        String domain;
-        String path;
-        // Expiration date, expressed as milliseconds since the UNIX epoch.
-        double expires;
-        bool httpOnly;
-        bool secure;
-        bool session;
-    };
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static bool decode(Decoder&, Cookie&);
 
-    struct CookieHash {
-        static unsigned hash(const Cookie& key)
-        { 
-            return StringHash::hash(key.name) + StringHash::hash(key.domain) + StringHash::hash(key.path) + key.secure;
-        }
+#ifdef __OBJC__
+    operator NSHTTPCookie *() const;
+#endif
 
-        static bool equal(const Cookie& a, const Cookie& b)
-        {
-            return a.name == b.name && a.domain == b.domain && a.path == b.path && a.secure == b.secure;
-        }
-    };
+    String name;
+    String value;
+    String domain;
+    String path;
+    // Expiration date, expressed as milliseconds since the UNIX epoch.
+    double expires;
+    bool httpOnly;
+    bool secure;
+    bool session;
+};
+
+struct CookieHash {
+    static unsigned hash(const Cookie& key)
+    { 
+        return StringHash::hash(key.name) + StringHash::hash(key.domain) + StringHash::hash(key.path) + key.secure;
+    }
+
+    static bool equal(const Cookie& a, const Cookie& b)
+    {
+        return a.name == b.name && a.domain == b.domain && a.path == b.path && a.secure == b.secure;
+    }
+};
+
+template<class Encoder>
+void Cookie::encode(Encoder& encoder) const
+{
+    encoder << name;
+    encoder << value;
+    encoder << domain;
+    encoder << path;
+    encoder << expires;
+    encoder << httpOnly;
+    encoder << secure;
+    encoder << session;
+}
+
+template<class Decoder>
+bool Cookie::decode(Decoder& decoder, Cookie& cookie)
+{
+    if (!decoder.decode(cookie.name))
+        return false;
+    if (!decoder.decode(cookie.value))
+        return false;
+    if (!decoder.decode(cookie.domain))
+        return false;
+    if (!decoder.decode(cookie.path))
+        return false;
+    if (!decoder.decode(cookie.expires))
+        return false;
+    if (!decoder.decode(cookie.httpOnly))
+        return false;
+    if (!decoder.decode(cookie.secure))
+        return false;
+    if (!decoder.decode(cookie.session))
+        return false;
+
+    return true;
+}
+
 }
 
 namespace WTF {

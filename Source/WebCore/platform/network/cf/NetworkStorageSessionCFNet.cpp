@@ -166,4 +166,11 @@ void NetworkStorageSession::setShouldPartitionCookiesForHosts(const Vector<Strin
 
 #endif // HAVE(CFNETWORK_STORAGE_PARTITIONING)
 
+#if !PLATFORM(COCOA)
+void NetworkStorageSession::setCookies(const Vector<Cookie>&, const URL&, const URL&)
+{
+    // FIXME: Implement this. <https://webkit.org/b/156298>
+}
+#endif
+
 }
