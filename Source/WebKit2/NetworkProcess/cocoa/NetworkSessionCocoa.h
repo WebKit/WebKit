@@ -51,6 +51,7 @@ public:
     static void setSourceApplicationAuditTokenData(RetainPtr<CFDataRef>&&);
     static void setSourceApplicationBundleIdentifier(const String&);
     static void setSourceApplicationSecondaryIdentifier(const String&);
+    static void setAllowsCellularAccess(bool);
 #if PLATFORM(IOS)
     static void setCTDataConnectionServiceType(const String&);
 #endif

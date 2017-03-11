@@ -84,6 +84,7 @@ struct NetworkProcessCreationParameters {
     uint64_t nsURLCacheDiskCapacity;
     String sourceApplicationBundleIdentifier;
     String sourceApplicationSecondaryIdentifier;
+    bool allowsCellularAccess { true };
 #if PLATFORM(IOS)
     String ctDataConnectionServiceType;
 #endif

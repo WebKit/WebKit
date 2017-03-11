@@ -171,6 +171,16 @@
     _processPoolConfiguration->setSourceApplicationSecondaryIdentifier(sourceApplicationSecondaryIdentifier);
 }
 
+- (BOOL)allowsCellularAccess
+{
+    return _processPoolConfiguration->allowsCellularAccess();
+}
+
+- (void)setAllowsCellularAccess:(BOOL)allowsCellularAccess
+{
+    _processPoolConfiguration->setAllowsCellularAccess(allowsCellularAccess);
+}
+
 #if PLATFORM(IOS)
 - (NSString *)CTDataConnectionServiceType
 {

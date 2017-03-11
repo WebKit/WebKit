@@ -87,6 +87,7 @@ void NetworkProcess::platformInitializeNetworkProcessCocoa(const NetworkProcessC
     NetworkSessionCocoa::setSourceApplicationAuditTokenData(sourceApplicationAuditData());
     NetworkSessionCocoa::setSourceApplicationBundleIdentifier(parameters.sourceApplicationBundleIdentifier);
     NetworkSessionCocoa::setSourceApplicationSecondaryIdentifier(parameters.sourceApplicationSecondaryIdentifier);
+    NetworkSessionCocoa::setAllowsCellularAccess(parameters.allowsCellularAccess);
 #if PLATFORM(IOS)
     NetworkSessionCocoa::setCTDataConnectionServiceType(parameters.ctDataConnectionServiceType);
 #endif

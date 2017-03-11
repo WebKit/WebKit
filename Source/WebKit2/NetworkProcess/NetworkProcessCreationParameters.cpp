@@ -76,6 +76,7 @@ void NetworkProcessCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << nsURLCacheDiskCapacity;
     encoder << sourceApplicationBundleIdentifier;
     encoder << sourceApplicationSecondaryIdentifier;
+    encoder << allowsCellularAccess;
 #if PLATFORM(IOS)
     encoder << ctDataConnectionServiceType;
 #endif
@@ -162,6 +163,8 @@ bool NetworkProcessCreationParameters::decode(IPC::Decoder& decoder, NetworkProc
     if (!decoder.decode(result.sourceApplicationBundleIdentifier))
         return false;
     if (!decoder.decode(result.sourceApplicationSecondaryIdentifier))
+        return false;
+    if (!decoder.decode(result.allowsCellularAccess))
         return false;
 #if PLATFORM(IOS)
     if (!decoder.decode(result.ctDataConnectionServiceType))

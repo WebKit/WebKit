@@ -429,6 +429,12 @@ static NSURLSessionConfiguration *configurationForSessionID(const WebCore::Sessi
     return [NSURLSessionConfiguration defaultSessionConfiguration];
 }
 
+static bool& globalAllowsCellularAccess()
+{
+    static bool allowsCellularAccess { true };
+    return allowsCellularAccess;
+}
+
 static LegacyCustomProtocolManager*& globalLegacyCustomProtocolManager()
 {
     static LegacyCustomProtocolManager* customProtocolManager { nullptr };
@@ -488,6 +494,11 @@ void NetworkSessionCocoa::setSourceApplicationSecondaryIdentifier(const String& 
     ASSERT(!sessionsCreated);
     globalSourceApplicationSecondaryIdentifier() = identifier;
 }
+    
+void NetworkSessionCocoa::setAllowsCellularAccess(bool value)
+{
+    globalAllowsCellularAccess() = value;
+}
 
 #if PLATFORM(IOS)
 void NetworkSessionCocoa::setCTDataConnectionServiceType(const String& type)
@@ -520,6 +531,9 @@ NetworkSessionCocoa::NetworkSessionCocoa(WebCore::SessionID sessionID, LegacyCus
 
     NSURLSessionConfiguration *configuration = configurationForSessionID(m_sessionID);
 
+    if (!globalAllowsCellularAccess())
+        configuration.allowsCellularAccess = NO;
+    
     if (NetworkCache::singleton().isEnabled())
         configuration.URLCache = nil;
     
