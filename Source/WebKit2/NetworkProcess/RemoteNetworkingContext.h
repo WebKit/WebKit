@@ -24,12 +24,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef RemoteNetworkingContext_h
+#define RemoteNetworkingContext_h
 
 #include <WebCore/NetworkingContext.h>
 #include <WebCore/SessionID.h>
-
-#if !USE(NETWORK_SESSION)
 
 namespace WebKit {
 
@@ -74,4 +73,4 @@ private:
 
 }
 
-#endif
+#endif // RemoteNetworkingContext_h

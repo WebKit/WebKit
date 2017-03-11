@@ -40,6 +40,7 @@ list(APPEND WebKit2_SOURCES
     NetworkProcess/soup/NetworkProcessMainSoup.cpp
     NetworkProcess/soup/NetworkProcessSoup.cpp
     NetworkProcess/soup/NetworkSessionSoup.cpp
+    NetworkProcess/soup/RemoteNetworkingContextSoup.cpp
 
     Platform/IPC/glib/GSocketMonitor.cpp
     Platform/IPC/unix/AttachmentUnix.cpp
