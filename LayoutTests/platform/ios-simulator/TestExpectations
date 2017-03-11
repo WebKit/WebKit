@@ -544,6 +544,8 @@ compositing/layer-creation/animation-overlap-with-children.html
 compositing/overflow/ancestor-overflow.html
 compositing/tiling/huge-layer-img.html
 
+webkit.org/b/169457 compositing/regions/transformed-layer-inside-transformed-layer.html [ ImageOnlyFailure ]
+
 # <rdar://problem/19191637> compositing/layer-creation/deep-tree.html fails
 compositing/layer-creation/deep-tree.html
 

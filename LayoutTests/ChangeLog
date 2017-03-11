@@ -1,3 +1,13 @@
+2017-03-10  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Mark compositing/regions/transformed-layer-inside-transformed-layer.html as failing on ios-simulator.
+        https://bugs.webkit.org/show_bug.cgi?id=169457
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator-wk1/TestExpectations:
+        * platform/ios-simulator/TestExpectations:
+
 2017-03-10  Zalan Bujtas  <zalan@apple.com>
 
         Simple line layout: Check how many orphans needed on the current page before breaking.
