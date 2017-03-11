@@ -31,6 +31,8 @@ BubbleQueueServer = function()
         "gtk-wk2-ews": {platform: Dashboard.Platform.LinuxGTK, shortName: "gtk-wk2", title: "WebKit2\xa0Release\xa0Build\xa0EWS"},
         "ios-ews": {platform: Dashboard.Platform.iOS10Device, shortName: "ios", title: "Release\xa0Build\xa0EWS"},
         "ios-sim-ews": {platform: Dashboard.Platform.iOS10Simulator, shortName: "ios-sim", title: "WebKit2\xa0Release\xa0Tests\xa0EWS"},
+        "bindings-ews": {platform: Dashboard.Platform.MacOSXElCapitan, shortName: "bindings", title: "Bindings\xa0EWS"},
+        "jsc-ews": {platform: Dashboard.Platform.MacOSXElCapitan, shortName: "jsc", title: "Release\xa0JSC\xa0Tests\xa0EWS"},
         "mac-ews": {platform: Dashboard.Platform.MacOSXElCapitan, shortName: "mac", title: "WebKit1\xa0Release\xa0Tests\xa0EWS"},
         "mac-wk2-ews": {platform: Dashboard.Platform.MacOSXElCapitan, shortName: "mac-wk2", title: "WebKit2\xa0Release\xa0Tests\xa0EWS"},
         "mac-debug-ews": {platform: Dashboard.Platform.MacOSXElCapitan, shortName: "mac-debug", title: "WebKit1\xa0Debug\xa0Tests\xa0EWS"},

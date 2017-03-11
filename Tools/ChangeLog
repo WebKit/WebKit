@@ -1,3 +1,13 @@
+2017-03-10  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Add new EWS queues to bot watcher's dashboard.
+        https://bugs.webkit.org/show_bug.cgi?id=169485
+
+        Reviewed by Alexey Proskuryakov.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BubbleQueueServer.js:
+        (BubbleQueueServer): Add Bindings and JSC EWS queues.
+
 2017-03-10  Andy Estes  <aestes@apple.com>
 
         Skip an API test that isn't expected to pass on iOS 10.
