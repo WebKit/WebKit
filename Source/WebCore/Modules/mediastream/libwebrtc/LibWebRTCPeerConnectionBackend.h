@@ -67,9 +67,10 @@ private:
     RefPtr<RTCSessionDescription> currentRemoteDescription() const final;
     RefPtr<RTCSessionDescription> pendingRemoteDescription() const final;
 
+    void notifyAddedTrack(RTCRtpSender&) final;
     // FIXME: API to implement for real
     Vector<RefPtr<MediaStream>> getRemoteStreams() const final { return { }; }
-    void replaceTrack(RTCRtpSender&, RefPtr<MediaStreamTrack>&&, DOMPromise<void>&&) final { }
+    void replaceTrack(RTCRtpSender&, Ref<MediaStreamTrack>&&, DOMPromise<void>&&) final { }
 
     void emulatePlatformEvent(const String&) final { }
 

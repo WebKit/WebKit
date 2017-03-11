@@ -39,31 +39,29 @@ namespace WebCore {
 
 Ref<RTCRtpSender> RTCRtpSender::create(Ref<MediaStreamTrack>&& track, Vector<String>&& mediaStreamIds, RTCRtpSenderClient& client)
 {
-    const String& trackKind = track->kind();
-    return adoptRef(*new RTCRtpSender(WTFMove(track), trackKind, WTFMove(mediaStreamIds), client));
+    auto sender = adoptRef(*new RTCRtpSender(track->kind(), WTFMove(mediaStreamIds), client));
+    sender->setTrack(WTFMove(track));
+    return sender;
 }
 
 Ref<RTCRtpSender> RTCRtpSender::create(const String& trackKind, Vector<String>&& mediaStreamIds, RTCRtpSenderClient& client)
 {
-    return adoptRef(*new RTCRtpSender(nullptr, trackKind, WTFMove(mediaStreamIds), client));
+    return adoptRef(*new RTCRtpSender(trackKind, WTFMove(mediaStreamIds), client));
 }
 
-RTCRtpSender::RTCRtpSender(RefPtr<MediaStreamTrack>&& track, const String& trackKind, Vector<String>&& mediaStreamIds, RTCRtpSenderClient& client)
+RTCRtpSender::RTCRtpSender(const String& trackKind, Vector<String>&& mediaStreamIds, RTCRtpSenderClient& client)
     : RTCRtpSenderReceiverBase()
     , m_trackKind(trackKind)
     , m_mediaStreamIds(WTFMove(mediaStreamIds))
     , m_client(&client)
 {
-    setTrack(WTFMove(track));
 }
 
-void RTCRtpSender::setTrack(RefPtr<MediaStreamTrack>&& track)
+void RTCRtpSender::setTrack(Ref<MediaStreamTrack>&& track)
 {
-    // Save the id from the first non-null track set. That id will be used to negotiate the sender
-    // even if the track is replaced.
-    if (!m_track && track)
-        m_trackId = track->id();
-
+    ASSERT(!isStopped());
+    ASSERT(!m_track);
+    m_trackId = track->id();
     m_track = WTFMove(track);
 }
 

@@ -158,19 +158,34 @@ void LibWebRTCMediaEndpoint::doSetRemoteDescription(RTCSessionDescription& descr
     m_backend->SetRemoteDescription(&m_setRemoteSessionDescriptionObserver, sessionDescription.release());
 }
 
-static inline std::string streamId(RTCPeerConnection& connection)
+void LibWebRTCMediaEndpoint::addTrack(MediaStreamTrack& track, const Vector<String>& mediaStreamIds)
 {
-    auto& senders = connection.getSenders();
-    if (senders.size()) {
-        for (RTCRtpSender& sender : senders) {
-            auto* track = sender.track();
-            if (track) {
-                ASSERT(sender.mediaStreamIds().size() == 1);
-                return std::string(sender.mediaStreamIds().first().utf8().data());
-            }
-        }
+    if (!LibWebRTCProvider::factory())
+        return;
+
+    std::vector<webrtc::MediaStreamInterface*> mediaStreams;
+    rtc::scoped_refptr<webrtc::MediaStreamInterface> mediaStream = nullptr;
+    if (mediaStreamIds.size()) {
+        // libwebrtc is only using the first one if any.
+        mediaStream = LibWebRTCProvider::factory()->CreateLocalMediaStream(mediaStreamIds[0].utf8().data());
+        mediaStreams.push_back(mediaStream.get());
     }
-    return "av_label";
+    
+    auto& source = track.source();
+    ASSERT(source.type() != RealtimeMediaSource::None);
+
+    if (source.type() == RealtimeMediaSource::Audio) {
+        auto trackSource = RealtimeOutgoingAudioSource::create(source);
+        auto audioTrack = LibWebRTCProvider::factory()->CreateAudioTrack(track.id().utf8().data(), trackSource.ptr());
+        trackSource->setTrack(rtc::scoped_refptr<webrtc::AudioTrackInterface>(audioTrack));
+        m_peerConnectionBackend.addAudioSource(WTFMove(trackSource));
+        m_backend->AddTrack(audioTrack.get(), WTFMove(mediaStreams));
+    } else {
+        auto videoSource = RealtimeOutgoingVideoSource::create(source);
+        auto videoTrack = LibWebRTCProvider::factory()->CreateVideoTrack(track.id().utf8().data(), videoSource.ptr());
+        m_peerConnectionBackend.addVideoSource(WTFMove(videoSource));
+        m_backend->AddTrack(videoTrack.get(), WTFMove(mediaStreams));
+    }
 }
 
 void LibWebRTCMediaEndpoint::doCreateOffer()
@@ -181,31 +196,6 @@ void LibWebRTCMediaEndpoint::doCreateOffer()
     }
         
     m_isInitiator = true;
-    auto& senders = m_peerConnectionBackend.connection().getSenders();
-    if (senders.size()) {
-        // FIXME: We only support one stream for the moment.
-        auto stream = LibWebRTCProvider::factory()->CreateLocalMediaStream(streamId(m_peerConnectionBackend.connection()));
-        for (RTCRtpSender& sender : senders) {
-            auto* track = sender.track();
-            if (track) {
-                ASSERT(sender.mediaStreamIds().size() == 1);
-                auto& source = track->source();
-                if (source.type() == RealtimeMediaSource::Audio) {
-                    auto trackSource = RealtimeOutgoingAudioSource::create(source);
-                    auto rtcTrack = LibWebRTCProvider::factory()->CreateAudioTrack(track->id().utf8().data(), trackSource.ptr());
-                    trackSource->setTrack(rtc::scoped_refptr<webrtc::AudioTrackInterface>(rtcTrack));
-                    m_peerConnectionBackend.addAudioSource(WTFMove(trackSource));
-                    stream->AddTrack(WTFMove(rtcTrack));
-                } else {
-                    auto videoSource = RealtimeOutgoingVideoSource::create(source);
-                    auto videoTrack = LibWebRTCProvider::factory()->CreateVideoTrack(track->id().utf8().data(), videoSource.ptr());
-                    m_peerConnectionBackend.addVideoSource(WTFMove(videoSource));
-                    stream->AddTrack(WTFMove(videoTrack));
-                }
-            }
-        }
-        m_backend->AddStream(stream);
-    }
     m_backend->CreateOffer(&m_createSessionDescriptionObserver, nullptr);
 }
 
@@ -217,37 +207,13 @@ void LibWebRTCMediaEndpoint::doCreateAnswer()
     }
 
     m_isInitiator = false;
-
-    auto& senders = m_peerConnectionBackend.connection().getSenders();
-    if (senders.size()) {
-        // FIXME: We only support one stream for the moment.
-        auto stream = LibWebRTCProvider::factory()->CreateLocalMediaStream(streamId(m_peerConnectionBackend.connection()));
-        for (RTCRtpSender& sender : senders) {
-            auto* track = sender.track();
-            if (track) {
-                ASSERT(sender.mediaStreamIds().size() == 1);
-                auto& source = track->source();
-                if (source.type() == RealtimeMediaSource::Audio) {
-                    auto trackSource = RealtimeOutgoingAudioSource::create(source);
-                    auto rtcTrack = LibWebRTCProvider::factory()->CreateAudioTrack(track->id().utf8().data(), trackSource.ptr());
-                    trackSource->setTrack(rtc::scoped_refptr<webrtc::AudioTrackInterface>(rtcTrack));
-                    m_peerConnectionBackend.addAudioSource(WTFMove(trackSource));
-                    stream->AddTrack(WTFMove(rtcTrack));
-                } else {
-                    auto videoSource = RealtimeOutgoingVideoSource::create(source);
-                    auto videoTrack = LibWebRTCProvider::factory()->CreateVideoTrack(track->id().utf8().data(), videoSource.ptr());
-                    m_peerConnectionBackend.addVideoSource(WTFMove(videoSource));
-                    stream->AddTrack(WTFMove(videoTrack));
-                }
-            }
-        }
-        m_backend->AddStream(stream);
-    }
     m_backend->CreateAnswer(&m_createSessionDescriptionObserver, nullptr);
 }
 
 void LibWebRTCMediaEndpoint::getStats(MediaStreamTrack* track, const DeferredPromise& promise)
 {
+    UNUSED_PARAM(track);
+    UNUSED_PARAM(promise);
     m_backend->GetStats(StatsCollector::create(*this, promise, track).get());
 }
 

@@ -1,3 +1,12 @@
+2017-03-10  Youenn Fablet  <youenn@apple.com>
+
+        Move libwebrtc backend to using tracks
+        https://bugs.webkit.org/show_bug.cgi?id=169472
+
+        Reviewed by Alex Christensen.
+
+        * Source/webrtc/pc/rtcstatscollector.cc: Moving from using media stream to tracks.
+
 2017-03-08  Youenn Fablet  <youenn@apple.com>
 
         Use H264 hardware encoder for Mac libwebrtc

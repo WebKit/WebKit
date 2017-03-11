@@ -159,7 +159,7 @@ private:
     bool canSuspendForDocumentSuspension() const final;
 
     // RTCRtpSenderClient
-    void replaceTrack(RTCRtpSender&, RefPtr<MediaStreamTrack>&&, DOMPromise<void>&&) final;
+    void replaceTrack(RTCRtpSender&, Ref<MediaStreamTrack>&&, DOMPromise<void>&&) final;
 
     PeerConnectionStates::SignalingState m_signalingState { PeerConnectionStates::SignalingState::Stable };
     PeerConnectionStates::IceGatheringState m_iceGatheringState { PeerConnectionStates::IceGatheringState::New };

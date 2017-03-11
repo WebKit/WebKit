@@ -1198,6 +1198,20 @@ std::map<MediaStreamTrackInterface*, std::string>
 RTCStatsCollector::PrepareTrackToID_s() const {
   RTC_DCHECK(signaling_thread_->IsCurrent());
   std::map<MediaStreamTrackInterface*, std::string> track_to_id;
+#if defined(WEBRTC_WEBKIT_BUILD)
+  for (auto& sender : pc_->GetSenders()) {
+    auto track = sender->track();
+    if (!track)
+      continue;
+    track_to_id[track.get()] = track->id();
+  }
+  for (auto& receiver : pc_->GetReceivers()) {
+    auto track = receiver->track();
+    if (!track)
+      continue;
+    track_to_id[track.get()] = track->id();
+  }
+#else
   StreamCollectionInterface* local_and_remote_streams[] =
       { pc_->local_streams().get(), pc_->remote_streams().get() };
   for (auto& streams : local_and_remote_streams) {
@@ -1215,6 +1229,7 @@ RTCStatsCollector::PrepareTrackToID_s() const {
       }
     }
   }
+#endif
   return track_to_id;
 }
 

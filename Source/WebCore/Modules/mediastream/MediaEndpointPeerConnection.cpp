@@ -693,7 +693,7 @@ std::unique_ptr<RTCDataChannelHandler> MediaEndpointPeerConnection::createDataCh
     return m_mediaEndpoint->createDataChannelHandler(label, options);
 }
 
-void MediaEndpointPeerConnection::replaceTrack(RTCRtpSender& sender, RefPtr<MediaStreamTrack>&& withTrack, DOMPromise<void>&& promise)
+void MediaEndpointPeerConnection::replaceTrack(RTCRtpSender& sender, Ref<MediaStreamTrack>&& withTrack, DOMPromise<void>&& promise)
 {
     RTCRtpTransceiver* transceiver = matchTransceiver(m_peerConnection.getTransceivers(), [&sender] (RTCRtpTransceiver& current) {
         return &current.sender() == &sender;
@@ -713,7 +713,7 @@ void MediaEndpointPeerConnection::replaceTrack(RTCRtpSender& sender, RefPtr<Medi
     });
 }
 
-void MediaEndpointPeerConnection::replaceTrackTask(RTCRtpSender& sender, const String& mid, RefPtr<MediaStreamTrack>&& withTrack, DOMPromise<void>& promise)
+void MediaEndpointPeerConnection::replaceTrackTask(RTCRtpSender& sender, const String& mid, Ref<MediaStreamTrack>&& withTrack, DOMPromise<void>& promise)
 {
     if (m_peerConnection.internalSignalingState() == SignalingState::Closed)
         return;

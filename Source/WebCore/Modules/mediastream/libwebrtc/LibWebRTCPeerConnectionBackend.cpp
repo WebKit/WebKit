@@ -169,11 +169,6 @@ void LibWebRTCPeerConnectionBackend::doStop()
 
 void LibWebRTCPeerConnectionBackend::doAddIceCandidate(RTCIceCandidate& candidate)
 {
-    if (!m_isRemoteDescriptionSet) {
-        addIceCandidateFailed(Exception { INVALID_STATE_ERR, "No remote description set" });
-        return;
-    }
-
     webrtc::SdpParseError error;
     int sdpMLineIndex = candidate.sdpMLineIndex() ? candidate.sdpMLineIndex().value() : 0;
     std::unique_ptr<webrtc::IceCandidateInterface> rtcCandidate(webrtc::CreateIceCandidate(candidate.sdpMid().utf8().data(), sdpMLineIndex, candidate.candidate().utf8().data(), &error));
@@ -248,6 +243,12 @@ RefPtr<RTCSessionDescription> LibWebRTCPeerConnectionBackend::localDescription()
 RefPtr<RTCSessionDescription> LibWebRTCPeerConnectionBackend::remoteDescription() const
 {
     return m_endpoint->remoteDescription();
+}
+
+void LibWebRTCPeerConnectionBackend::notifyAddedTrack(RTCRtpSender& sender)
+{
+    ASSERT(sender.track());
+    m_endpoint->addTrack(*sender.track(), sender.mediaStreamIds());
 }
 
 } // namespace WebCore

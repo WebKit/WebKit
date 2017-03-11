@@ -123,6 +123,7 @@ ExceptionOr<Ref<RTCRtpSender>> RTCPeerConnection::addTrack(Ref<MediaStreamTrack>
             existingSender.setMediaStreamIds(WTFMove(mediaStreamIds));
             transceiver->enableSendingDirection();
             sender = &existingSender;
+            
             break;
         }
     }
@@ -146,6 +147,7 @@ ExceptionOr<Ref<RTCRtpSender>> RTCPeerConnection::addTrack(Ref<MediaStreamTrack>
 
     m_backend->markAsNeedingNegotiation();
 
+    m_backend->notifyAddedTrack(*sender);
     return Ref<RTCRtpSender> { *sender };
 }
 
@@ -510,7 +512,7 @@ void RTCPeerConnection::fireEvent(Event& event)
     dispatchEvent(event);
 }
 
-void RTCPeerConnection::replaceTrack(RTCRtpSender& sender, RefPtr<MediaStreamTrack>&& withTrack, DOMPromise<void>&& promise)
+void RTCPeerConnection::replaceTrack(RTCRtpSender& sender, Ref<MediaStreamTrack>&& withTrack, DOMPromise<void>&& promise)
 {
     m_backend->replaceTrack(sender, WTFMove(withTrack), WTFMove(promise));
 }

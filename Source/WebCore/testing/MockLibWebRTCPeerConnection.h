@@ -34,6 +34,7 @@
 namespace WebCore {
 
 class LibWebRTCProvider;
+class MockRtpSender;
 
 void useMockRTCPeerConnectionFactory(LibWebRTCProvider*, const String&);
 
@@ -58,12 +59,15 @@ private:
     void StopRtcEventLog() override { }
     void Close() override { }
 
+    bool AddStream(webrtc::MediaStreamInterface*) final { return false; }
+    void RemoveStream(webrtc::MediaStreamInterface*) final { }
+
 protected:
     void SetRemoteDescription(webrtc::SetSessionDescriptionObserver*, webrtc::SessionDescriptionInterface*) final;
     void CreateAnswer(webrtc::CreateSessionDescriptionObserver*, const webrtc::MediaConstraintsInterface*) final;
     rtc::scoped_refptr<webrtc::DataChannelInterface> CreateDataChannel(const std::string&, const webrtc::DataChannelInit*) final;
-    bool AddStream(webrtc::MediaStreamInterface*) final;
-    void RemoveStream(webrtc::MediaStreamInterface*) final;
+    rtc::scoped_refptr<webrtc::RtpSenderInterface> AddTrack(webrtc::MediaStreamTrackInterface*, std::vector<webrtc::MediaStreamInterface*> streams) final;
+    bool RemoveTrack(webrtc::RtpSenderInterface*) final;
 
     void SetLocalDescription(webrtc::SetSessionDescriptionObserver*, webrtc::SessionDescriptionInterface*) override;
     bool GetStats(webrtc::StatsObserver*, webrtc::MediaStreamTrackInterface*, StatsOutputLevel) override { return false; }
@@ -73,10 +77,11 @@ protected:
 
     webrtc::PeerConnectionObserver& m_observer;
     unsigned m_counter { 0 };
-    rtc::scoped_refptr<webrtc::MediaStreamInterface> m_stream;
+    Vector<rtc::scoped_refptr<MockRtpSender>> m_senders;
     bool m_isInitiator { true };
     bool m_isReceivingAudio { false };
     bool m_isReceivingVideo { false };
+    std::string m_streamLabel;
 };
 
 class MockLibWebRTCSessionDescription: public webrtc::SessionDescriptionInterface {
@@ -199,6 +204,25 @@ private:
     int m_id { -1 };
 };
 
+class MockRtpSender : public webrtc::RtpSenderInterface {
+public:
+    MockRtpSender(rtc::scoped_refptr<webrtc::MediaStreamTrackInterface>&& track) : m_track(WTFMove(track)) { }
+
+    bool SetTrack(webrtc::MediaStreamTrackInterface*) final { return false; }
+    rtc::scoped_refptr<webrtc::MediaStreamTrackInterface> track() const final { return m_track; }
+    
+    uint32_t ssrc() const { return 0; }
+    cricket::MediaType media_type() const { return cricket::MEDIA_TYPE_VIDEO; }
+    std::string id() const { return ""; }
+    std::vector<std::string> stream_ids() const { return { }; }
+    webrtc::RtpParameters GetParameters() const { return { }; }
+    bool SetParameters(const webrtc::RtpParameters&) { return false; }
+    rtc::scoped_refptr<webrtc::DtmfSenderInterface> GetDtmfSender() const { return nullptr; }
+
+private:
+    rtc::scoped_refptr<webrtc::MediaStreamTrackInterface> m_track;
+};
+    
 class MockLibWebRTCPeerConnectionFactory : public webrtc::PeerConnectionFactoryInterface {
 public:
     static rtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface> create(String&& testCase) { return new rtc::RefCountedObject<MockLibWebRTCPeerConnectionFactory>(WTFMove(testCase)); }
