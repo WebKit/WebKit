@@ -1,3 +1,14 @@
+2017-03-10  Dave Hyatt  <hyatt@apple.com>
+
+        Percentage constrained images shrinking inside blocks inside nested flex boxes
+        https://bugs.webkit.org/show_bug.cgi?id=169438
+
+        Reviewed by Dean Jackson.
+
+        * fast/hidpi/percent-height-image-nested-expected.html: Added.
+        * fast/hidpi/percent-height-image-nested.html: Added.
+        * fast/hidpi/resources/pic.jpg: Added.
+
 2017-03-10  Youenn Fablet  <youenn@apple.com>
 
         Move libwebrtc backend to using tracks

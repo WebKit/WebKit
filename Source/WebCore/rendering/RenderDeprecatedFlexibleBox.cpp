@@ -309,8 +309,6 @@ void RenderDeprecatedFlexibleBox::layoutBlock(bool relayoutChildren, LayoutUnit)
 
     ChildFrameRects oldChildRects;
     appendChildFrameRects(this, oldChildRects);
-    
-    dirtyForLayoutFromPercentageHeightDescendants();
 
     if (isHorizontal())
         layoutHorizontalBox(relayoutChildren);

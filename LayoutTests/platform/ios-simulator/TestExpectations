@@ -2901,3 +2901,7 @@ fast/table/003.html [ Skip ]
 # Bundle upload is not supported on iOS
 fast/files/filereader-zip-bundle-using-open-panel.html [ Skip ]
 http/tests/local/fileapi/upload-zip-bundle-as-blob-using-open-panel.html [ Skip ]
+
+# Results differ from desktop
+fast/hidpi/percent-height-image-nested.html [ Skip ]
+

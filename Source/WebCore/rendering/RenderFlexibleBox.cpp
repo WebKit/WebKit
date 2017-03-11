@@ -263,8 +263,6 @@ void RenderFlexibleBox::layoutBlock(bool relayoutChildren, LayoutUnit)
 
     beginUpdateScrollInfoAfterLayoutTransaction();
 
-    dirtyForLayoutFromPercentageHeightDescendants();
-
     prepareOrderIteratorAndMargins();
 
     // Fieldsets need to find their legend and position it inside the border of the object.
