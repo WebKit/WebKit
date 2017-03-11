@@ -1,3 +1,13 @@
+2017-03-10  Zalan Bujtas  <zalan@apple.com>
+
+        Simple line layout: Check how many orphans needed on the current page before breaking.
+        https://bugs.webkit.org/show_bug.cgi?id=169477
+
+        Reviewed by Antti Koivisto.
+
+        * fast/multicol/simple-line-layout-orphans-and-widows-expected.html: Added.
+        * fast/multicol/simple-line-layout-orphans-and-widows.html: Added.
+
 2017-03-10  Ryan Haddad  <ryanhaddad@apple.com>
 
         Mark webrtc/libwebrtc/descriptionGetters.html as a flaky.
