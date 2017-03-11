@@ -760,7 +760,7 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
             contextMenu.appendItem(WebInspector.UIString("Jump to Definition"), this._showCustomElementDefinition.bind(this));
         }
 
-        if (node.nodeType() === Node.ELEMENT_NODE) {
+        if (WebInspector.domDebuggerManager.supported && node.nodeType() === Node.ELEMENT_NODE) {
             contextMenu.appendSeparator();
 
             const allowEditing = false;

@@ -1,3 +1,19 @@
+2017-03-10  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Only show "Break on..." menu if backend supports DOM breakpoints
+        https://bugs.webkit.org/show_bug.cgi?id=169488
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Controllers/DOMBreakpointTreeController.js:
+        (WebInspector.DOMBreakpointTreeController.appendBreakpointContextMenuItems):
+        Added assert to catch future cases where UI is being added when
+        backend support doesn't exist.
+
+        * UserInterface/Views/DOMTreeElement.js:
+        (WebInspector.DOMTreeElement.prototype._populateNodeContextMenu):
+        Check for backend support.
+
 2017-03-10  Devin Rousso  <dcrousso+webkit@gmail.com>
 
         Web Inspector: popover with compositing reasons in Layers sidebar has hard to read layout

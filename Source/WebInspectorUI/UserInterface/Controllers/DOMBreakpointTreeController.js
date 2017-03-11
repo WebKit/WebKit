@@ -44,6 +44,8 @@ WebInspector.DOMBreakpointTreeController = class DOMBreakpointsTreeController ex
 
     static appendBreakpointContextMenuItems(contextMenu, domNode, allowEditing)
     {
+        console.assert(WebInspector.domDebuggerManager.supported);
+
         let subMenu = contextMenu.appendSubMenuItem(WebInspector.UIString("Break on…"));
 
         let breakpoints = WebInspector.domDebuggerManager.domBreakpointsForNode(domNode);
