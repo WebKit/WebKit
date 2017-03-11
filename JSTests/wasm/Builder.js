@@ -579,7 +579,10 @@ export default class Builder {
                 break;
 
             case "Element":
-                this[section] = function() {
+                this[section] = function(...args) {
+                    if (args.length !== 0)
+                        throw new Error("You're doing it wrong. This element does not take arguments. You must chain the call with another Element()");
+
                     const s = this._addSection(section);
                     const elementBuilder = {
                         End: () => this,

@@ -1312,6 +1312,8 @@
 		52C0611F1AA51E1C00B4ADBA /* RuntimeType.h in Headers */ = {isa = PBXBuildFile; fileRef = 52C0611D1AA51E1B00B4ADBA /* RuntimeType.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		52C952B719A289850069B386 /* TypeProfiler.h in Headers */ = {isa = PBXBuildFile; fileRef = 52C952B619A289850069B386 /* TypeProfiler.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		52C952B919A28A1C0069B386 /* TypeProfiler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52C952B819A28A1C0069B386 /* TypeProfiler.cpp */; };
+		52F6C35D1E71EB080081F4CC /* WebAssemblyWrapperFunction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52F6C35B1E71EB080081F4CC /* WebAssemblyWrapperFunction.cpp */; };
+		52F6C35E1E71EB080081F4CC /* WebAssemblyWrapperFunction.h in Headers */ = {isa = PBXBuildFile; fileRef = 52F6C35C1E71EB080081F4CC /* WebAssemblyWrapperFunction.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		531374BD1D5CE67600AF7A0B /* WasmPlan.h in Headers */ = {isa = PBXBuildFile; fileRef = 531374BC1D5CE67600AF7A0B /* WasmPlan.h */; };
 		531374BF1D5CE95000AF7A0B /* WasmPlan.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 531374BE1D5CE95000AF7A0B /* WasmPlan.cpp */; };
 		533B15DF1DC7F463004D500A /* WasmOps.h in Headers */ = {isa = PBXBuildFile; fileRef = 533B15DE1DC7F463004D500A /* WasmOps.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3789,6 +3791,8 @@
 		52C0611D1AA51E1B00B4ADBA /* RuntimeType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RuntimeType.h; sourceTree = "<group>"; };
 		52C952B619A289850069B386 /* TypeProfiler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TypeProfiler.h; sourceTree = "<group>"; };
 		52C952B819A28A1C0069B386 /* TypeProfiler.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TypeProfiler.cpp; sourceTree = "<group>"; };
+		52F6C35B1E71EB080081F4CC /* WebAssemblyWrapperFunction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebAssemblyWrapperFunction.cpp; path = js/WebAssemblyWrapperFunction.cpp; sourceTree = "<group>"; };
+		52F6C35C1E71EB080081F4CC /* WebAssemblyWrapperFunction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebAssemblyWrapperFunction.h; path = js/WebAssemblyWrapperFunction.h; sourceTree = "<group>"; };
 		531374BC1D5CE67600AF7A0B /* WasmPlan.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmPlan.h; sourceTree = "<group>"; };
 		531374BE1D5CE95000AF7A0B /* WasmPlan.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WasmPlan.cpp; sourceTree = "<group>"; };
 		533B15DE1DC7F463004D500A /* WasmOps.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmOps.h; sourceTree = "<group>"; };
@@ -7908,6 +7912,8 @@
 				AD2FCBC31DB58DA400B3E736 /* WebAssemblyTablePrototype.h */,
 				ADBC54D21DF8EA00005BF738 /* WebAssemblyToJSCallee.cpp */,
 				ADBC54D31DF8EA00005BF738 /* WebAssemblyToJSCallee.h */,
+				52F6C35B1E71EB080081F4CC /* WebAssemblyWrapperFunction.cpp */,
+				52F6C35C1E71EB080081F4CC /* WebAssemblyWrapperFunction.h */,
 			);
 			name = js;
 			sourceTree = "<group>";
@@ -8245,6 +8251,7 @@
 				0F21C27D14BE727A00ADC64B /* CodeSpecializationKind.h in Headers */,
 				0F0B83A714BCF50700885B4F /* CodeType.h in Headers */,
 				0FA762051DB9242900B7A2FD /* CollectionScope.h in Headers */,
+				52F6C35E1E71EB080081F4CC /* WebAssemblyWrapperFunction.h in Headers */,
 				A53243981856A489002ED692 /* CombinedDomains.json in Headers */,
 				BC18C3F30E16F5CD00B34460 /* CommonIdentifiers.h in Headers */,
 				0F15F15F14B7A73E005DE37D /* CommonSlowPaths.h in Headers */,
@@ -10358,6 +10365,7 @@
 				A503FA19188E0FB000110F14 /* JavaScriptCallFrame.cpp in Sources */,
 				1429D92F0ED22D7000B89619 /* JIT.cpp in Sources */,
 				FE1220281BE7F5910039E6F2 /* JITAddGenerator.cpp in Sources */,
+				52F6C35D1E71EB080081F4CC /* WebAssemblyWrapperFunction.cpp in Sources */,
 				86A90ED00EE7D51F00AB350D /* JITArithmetic.cpp in Sources */,
 				A75706DE118A2BCF0057F88F /* JITArithmetic32_64.cpp in Sources */,
 				FE3A06B11C10CB8400390FDD /* JITBitAndGenerator.cpp in Sources */,

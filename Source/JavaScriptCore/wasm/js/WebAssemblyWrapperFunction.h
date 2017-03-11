@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,39 +27,40 @@
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "AbstractModuleRecord.h"
-#include "WasmFormat.h"
+#include "JSFunction.h"
+#include "JSWebAssemblyCodeBlock.h"
 
 namespace JSC {
 
-class JSWebAssemblyInstance;
-class WebAssemblyFunction;
-
-// Based on the WebAssembly.Instance specification
-// https://github.com/WebAssembly/design/blob/master/JS.md#webassemblyinstance-constructor
-class WebAssemblyModuleRecord : public AbstractModuleRecord {
-    friend class LLIntOffsetsExtractor;
+class WebAssemblyWrapperFunction : public JSFunction {
 public:
-    typedef AbstractModuleRecord Base;
+    typedef JSFunction Base;
 
-    DECLARE_EXPORT_INFO;
+    const static unsigned StructureFlags = Base::StructureFlags;
 
+    DECLARE_INFO;
+
+    static WebAssemblyWrapperFunction* create(VM&, JSGlobalObject*, JSObject*, unsigned importIndex, JSWebAssemblyCodeBlock*, Wasm::SignatureIndex);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
-    static WebAssemblyModuleRecord* create(ExecState*, VM&, Structure*, const Identifier&, const Wasm::ModuleInformation&);
 
-    void link(ExecState*, JSWebAssemblyInstance*);
-    JS_EXPORT_PRIVATE JSValue evaluate(ExecState*);
+    Wasm::SignatureIndex signatureIndex() const { return m_signatureIndex; }
+    void* wasmEntrypoint() { return m_wasmEntrypointCode; }
+    JSObject* function() { return m_function.get(); }
 
-private:
-    WebAssemblyModuleRecord(VM&, Structure*, const Identifier&);
-
-    void finishCreation(ExecState*, VM&, const Wasm::ModuleInformation&);
-    static void destroy(JSCell*);
-
+protected:
     static void visitChildren(JSCell*, SlotVisitor&);
 
-    WriteBarrier<JSWebAssemblyInstance> m_instance;
-    WriteBarrier<JSObject> m_startFunction;
+    void finishCreation(VM&, NativeExecutable*, unsigned length, const String& name, JSObject*, JSWebAssemblyCodeBlock*);
+
+private:
+    WebAssemblyWrapperFunction(VM&, JSGlobalObject*, Structure*, Wasm::SignatureIndex, void* wasmEntrypointCode);
+
+    // We keep a reference to our CodeBlock because we have a raw
+    // pointer to asm code that it owns.
+    WriteBarrier<JSWebAssemblyCodeBlock> m_codeBlock;
+    WriteBarrier<JSObject> m_function;
+    void* m_wasmEntrypointCode;
+    Wasm::SignatureIndex m_signatureIndex;
 };
 
 } // namespace JSC

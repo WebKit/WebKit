@@ -1,3 +1,83 @@
+2017-03-10  Saam Barati  <sbarati@apple.com>
+
+        WebAssembly: Make more demos run
+        https://bugs.webkit.org/show_bug.cgi?id=165510
+        <rdar://problem/29760310>
+
+        Reviewed by Keith Miller.
+
+        This patch makes another Wasm demo run:
+        https://kripken.github.io/BananaBread/cube2/bb.html
+        
+        This patch fixes two bugs:
+        1. When WebAssemblyFunctionType was added, we did not properly
+        update the last JS type value.
+        2. Our code for our JS -> Wasm entrypoint was wrong. It lead to bad
+        code generation where we would emit B3 that would write over r12
+        and rbx (on x86) which is invalid since those are our pinned registers.
+        This patch just rewrites the entrypoint to use hand written assembler
+        code. I was planning on doing this anyways because it's a compile
+        time speed boost.
+        
+        Also, this patch adds support for some new API features:
+        We can now export an import, either via a direct export, or via a Table and the
+        Element section. I've added a new class called WebAssemblyWrapperFunction that
+        just wraps over a JSObject that is a function. Wrapper functions have types
+        associated with them, so if they're re-imported, or called via call_indirect,
+        they can be type checked.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::visitChildren):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::webAssemblyWrapperFunctionStructure):
+        * runtime/JSType.h:
+        * wasm/JSWebAssemblyCodeBlock.h:
+        (JSC::JSWebAssemblyCodeBlock::wasmToJsCallStubForImport):
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::createJSToWasmWrapper):
+        * wasm/WasmCallingConvention.h:
+        (JSC::Wasm::CallingConvention::headerSizeInBytes):
+        * wasm/js/JSWebAssemblyHelpers.h:
+        (JSC::isWebAssemblyHostFunction):
+        * wasm/js/JSWebAssemblyInstance.cpp:
+        (JSC::JSWebAssemblyInstance::JSWebAssemblyInstance):
+        * wasm/js/JSWebAssemblyInstance.h:
+        (JSC::JSWebAssemblyInstance::importFunction):
+        (JSC::JSWebAssemblyInstance::importFunctions):
+        (JSC::JSWebAssemblyInstance::setImportFunction):
+        * wasm/js/JSWebAssemblyTable.cpp:
+        (JSC::JSWebAssemblyTable::JSWebAssemblyTable):
+        (JSC::JSWebAssemblyTable::grow):
+        (JSC::JSWebAssemblyTable::clearFunction):
+        (JSC::JSWebAssemblyTable::setFunction):
+        * wasm/js/JSWebAssemblyTable.h:
+        (JSC::JSWebAssemblyTable::getFunction):
+        * wasm/js/WebAssemblyFunction.cpp:
+        (JSC::callWebAssemblyFunction):
+        * wasm/js/WebAssemblyInstanceConstructor.cpp:
+        (JSC::WebAssemblyInstanceConstructor::createInstance):
+        * wasm/js/WebAssemblyModuleRecord.cpp:
+        (JSC::WebAssemblyModuleRecord::link):
+        (JSC::WebAssemblyModuleRecord::evaluate):
+        * wasm/js/WebAssemblyModuleRecord.h:
+        * wasm/js/WebAssemblyTablePrototype.cpp:
+        (JSC::webAssemblyTableProtoFuncGet):
+        (JSC::webAssemblyTableProtoFuncSet):
+        * wasm/js/WebAssemblyWrapperFunction.cpp: Added.
+        (JSC::callWebAssemblyWrapperFunction):
+        (JSC::WebAssemblyWrapperFunction::WebAssemblyWrapperFunction):
+        (JSC::WebAssemblyWrapperFunction::create):
+        (JSC::WebAssemblyWrapperFunction::finishCreation):
+        (JSC::WebAssemblyWrapperFunction::createStructure):
+        (JSC::WebAssemblyWrapperFunction::visitChildren):
+        * wasm/js/WebAssemblyWrapperFunction.h: Added.
+        (JSC::WebAssemblyWrapperFunction::signatureIndex):
+        (JSC::WebAssemblyWrapperFunction::wasmEntrypoint):
+        (JSC::WebAssemblyWrapperFunction::function):
+
 2017-03-10  Mark Lam  <mark.lam@apple.com>
 
         JSC: BindingNode::bindValue doesn't increase the scope's reference count.

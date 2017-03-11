@@ -968,6 +968,7 @@ set(JavaScriptCore_SOURCES
     wasm/js/WebAssemblyTableConstructor.cpp
     wasm/js/WebAssemblyTablePrototype.cpp
     wasm/js/WebAssemblyToJSCallee.cpp
+    wasm/js/WebAssemblyWrapperFunction.cpp
 
     yarr/RegularExpression.cpp
     yarr/YarrCanonicalizeUCS2.cpp

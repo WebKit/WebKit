@@ -60,18 +60,18 @@ public:
         return m_codeBlock.get();
     }
 
-    WriteBarrier<JSCell>* importFunction(unsigned idx)
+    WriteBarrier<JSObject>* importFunction(unsigned idx)
     {
         RELEASE_ASSERT(idx < m_numImportFunctions);
         return &importFunctions()[idx];
     }
 
-    WriteBarrier<JSCell>* importFunctions()
+    WriteBarrier<JSObject>* importFunctions()
     {
-        return bitwise_cast<WriteBarrier<JSCell>*>(bitwise_cast<char*>(this) + offsetOfImportFunctions());
+        return bitwise_cast<WriteBarrier<JSObject>*>(bitwise_cast<char*>(this) + offsetOfImportFunctions());
     }
 
-    void setImportFunction(VM& vm, JSCell* value, unsigned idx)
+    void setImportFunction(VM& vm, JSObject* value, unsigned idx)
     {
         importFunction(idx)->set(vm, this, value);
     }

@@ -1039,85 +1039,165 @@ void B3IRGenerator::dump(const Vector<ControlEntry>& controlStack, const Express
 
 static void createJSToWasmWrapper(VM& vm, CompilationContext& compilationContext, WasmInternalFunction& function, const Signature* signature, const ModuleInformation& info)
 {
-    Procedure proc;
-    BasicBlock* block = proc.addBlock();
+    CCallHelpers& jit = *compilationContext.jsEntrypointJIT;
 
-    Origin origin;
+    jit.emitFunctionPrologue();
 
-    jscCallingConvention().setupFrameInPrologue(&function.jsToWasmCalleeMoveLocation, proc, origin, block);
+    // FIXME Stop using 0 as codeBlocks. https://bugs.webkit.org/show_bug.cgi?id=165321
+    jit.store64(CCallHelpers::TrustedImm64(0), CCallHelpers::Address(GPRInfo::callFrameRegister, CallFrameSlot::codeBlock * static_cast<int>(sizeof(Register))));
+    MacroAssembler::DataLabelPtr calleeMoveLocation = jit.moveWithPatch(MacroAssembler::TrustedImmPtr(nullptr), GPRInfo::nonPreservedNonReturnGPR);
+    jit.storePtr(GPRInfo::nonPreservedNonReturnGPR, CCallHelpers::Address(GPRInfo::callFrameRegister, CallFrameSlot::callee * static_cast<int>(sizeof(Register))));
+    CodeLocationDataLabelPtr* linkedCalleeMove = &function.jsToWasmCalleeMoveLocation;
+    jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
+        *linkedCalleeMove = linkBuffer.locationOf(calleeMoveLocation);
+    });
 
-    if (!ASSERT_DISABLED) {
-        // This should be guaranteed by our JS wrapper that handles calls to us.
-        // Just prevent against crazy when ASSERT is enabled.
-        Value* framePointer = block->appendNew<B3::Value>(proc, B3::FramePointer, origin);
-        Value* offSetOfArgumentCount = block->appendNew<Const64Value>(proc, origin, CallFrameSlot::argumentCount * sizeof(Register));
-        Value* argumentCount = block->appendNew<MemoryValue>(proc, Load, Int32, origin,
-            block->appendNew<Value>(proc, Add, origin, framePointer, offSetOfArgumentCount));
+    RegisterSet toSave;
+    const PinnedRegisterInfo& pinnedRegs = PinnedRegisterInfo::get();
+    toSave.set(pinnedRegs.baseMemoryPointer);
+    for (const PinnedSizeRegisterInfo& regInfo : pinnedRegs.sizeRegisters)
+        toSave.set(regInfo.sizeRegister);
 
-        Value* expectedArgumentCount = block->appendNew<Const32Value>(proc, origin, signature->argumentCount());
+#if !ASSERT_DISABLED
+    unsigned toSaveSize = toSave.numberOfSetGPRs();
+    // They should all be callee saves.
+    toSave.filter(RegisterSet::calleeSaveRegisters());
+    ASSERT(toSave.numberOfSetGPRs() == toSaveSize);
+#endif
 
-        CheckValue* argumentCountCheck = block->appendNew<CheckValue>(proc, Check, origin,
-            block->appendNew<Value>(proc, Above, origin, expectedArgumentCount, argumentCount));
+    RegisterAtOffsetList registersToSpill(toSave, RegisterAtOffsetList::OffsetBaseType::FramePointerBased);
+    function.jsToWasmEntrypoint.calleeSaveRegisters = registersToSpill;
 
-        argumentCountCheck->setGenerator([] (CCallHelpers& jit, const StackmapGenerationParams&) {
-            jit.breakpoint();
-        });
+    unsigned totalFrameSize = registersToSpill.size() * sizeof(void*);
+    totalFrameSize += WasmCallingConvention::headerSizeInBytes();
+    totalFrameSize -= sizeof(CallerFrameAndPC);
+    unsigned numGPRs = 0;
+    unsigned numFPRs = 0;
+    for (unsigned i = 0; i < signature->argumentCount(); i++) {
+        switch (signature->argument(i)) {
+        case Wasm::I64:
+        case Wasm::I32:
+            if (numGPRs >= wasmCallingConvention().m_gprArgs.size())
+                totalFrameSize += sizeof(void*);
+            ++numGPRs;
+            break;
+        case Wasm::F32:
+        case Wasm::F64:
+            if (numFPRs >= wasmCallingConvention().m_fprArgs.size())
+                totalFrameSize += sizeof(void*);
+            ++numFPRs;
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
     }
 
-    // FIXME The instance is currently set by the C++ code in WebAssemblyFunction::call. We shouldn't go through the extra C++ hoop. https://bugs.webkit.org/show_bug.cgi?id=166486
-    Value* instance = block->appendNew<MemoryValue>(proc, Load, pointerType(), Origin(),
-        block->appendNew<ConstPtrValue>(proc, Origin(), &vm.topJSWebAssemblyInstance));
-    restoreWebAssemblyGlobalState(vm, info.memory, instance, proc, block);
+    totalFrameSize = WTF::roundUpToMultipleOf(stackAlignmentBytes(), totalFrameSize);
+    jit.subPtr(MacroAssembler::TrustedImm32(totalFrameSize), MacroAssembler::stackPointerRegister);
 
-    // Get our arguments.
-    Vector<Value*> arguments;
-    jscCallingConvention().loadArguments(signature, proc, block, origin, [&] (Value* argument, unsigned) {
-        arguments.append(argument);
-    });
+    // We save all these registers regardless of having a memory or not.
+    // The reason is that we use one of these as a scratch. That said,
+    // almost all real wasm programs use memory, so it's not really
+    // worth optimizing for the case that they don't.
+    for (const RegisterAtOffset& regAtOffset : registersToSpill) {
+        GPRReg reg = regAtOffset.reg().gpr();
+        ptrdiff_t offset = regAtOffset.offset();
+        jit.storePtr(reg, CCallHelpers::Address(GPRInfo::callFrameRegister, offset));
+    }
 
-    // Move the arguments into place.
-    Value* result = wasmCallingConvention().setupCall(proc, block, origin, arguments, toB3Type(signature->returnType()), [&] (PatchpointValue* patchpoint) {
-        CompilationContext* context = &compilationContext;
+    {
+        CCallHelpers::Address calleeFrame = CCallHelpers::Address(MacroAssembler::stackPointerRegister, -static_cast<ptrdiff_t>(sizeof(CallerFrameAndPC)));
+        numGPRs = 0;
+        numFPRs = 0;
+        // We're going to set the pinned registers after this. So
+        // we can use this as a scratch for now since we saved it above.
+        GPRReg scratchReg = pinnedRegs.baseMemoryPointer;
 
-        // wasm -> wasm calls clobber pinned registers unconditionally. This JS -> wasm transition must therefore restore these pinned registers (which are usually callee-saved) to account for this.
-        const PinnedRegisterInfo* pinnedRegs = &PinnedRegisterInfo::get();
-        RegisterSet clobbers;
-        clobbers.set(pinnedRegs->baseMemoryPointer);
-        for (auto info : pinnedRegs->sizeRegisters)
-            clobbers.set(info.sizeRegister);
-        patchpoint->effects.writesPinned = true;
-        patchpoint->clobber(clobbers);
+        ptrdiff_t jsOffset = CallFrameSlot::thisArgument * sizeof(void*);
+        ptrdiff_t wasmOffset = CallFrame::headerSizeInRegisters * sizeof(void*);
+        for (unsigned i = 0; i < signature->argumentCount(); i++) {
+            switch (signature->argument(i)) {
+            case Wasm::I32:
+            case Wasm::I64:
+                if (numGPRs >= wasmCallingConvention().m_gprArgs.size()) {
+                    if (signature->argument(i) == Wasm::I32) {
+                        jit.load32(CCallHelpers::Address(GPRInfo::callFrameRegister, jsOffset), scratchReg);
+                        jit.store32(scratchReg, calleeFrame.withOffset(wasmOffset));
+                    } else {
+                        jit.load64(CCallHelpers::Address(GPRInfo::callFrameRegister, jsOffset), scratchReg);
+                        jit.store64(scratchReg, calleeFrame.withOffset(wasmOffset));
+                    }
+                    wasmOffset += sizeof(void*);
+                } else {
+                    if (signature->argument(i) == Wasm::I32)
+                        jit.load32(CCallHelpers::Address(GPRInfo::callFrameRegister, jsOffset), wasmCallingConvention().m_gprArgs[numGPRs].gpr());
+                    else
+                        jit.load64(CCallHelpers::Address(GPRInfo::callFrameRegister, jsOffset), wasmCallingConvention().m_gprArgs[numGPRs].gpr());
+                }
+                ++numGPRs;
+                break;
+            case Wasm::F32:
+            case Wasm::F64:
+                if (numFPRs >= wasmCallingConvention().m_fprArgs.size()) {
+                    if (signature->argument(i) == Wasm::F32) {
+                        jit.load32(CCallHelpers::Address(GPRInfo::callFrameRegister, jsOffset), scratchReg);
+                        jit.store32(scratchReg, calleeFrame.withOffset(wasmOffset));
+                    } else {
+                        jit.load64(CCallHelpers::Address(GPRInfo::callFrameRegister, jsOffset), scratchReg);
+                        jit.store64(scratchReg, calleeFrame.withOffset(wasmOffset));
+                    }
+                    wasmOffset += sizeof(void*);
+                } else {
+                    if (signature->argument(i) == Wasm::F32)
+                        jit.loadFloat(CCallHelpers::Address(GPRInfo::callFrameRegister, jsOffset), wasmCallingConvention().m_fprArgs[numFPRs].fpr());
+                    else
+                        jit.loadDouble(CCallHelpers::Address(GPRInfo::callFrameRegister, jsOffset), wasmCallingConvention().m_fprArgs[numFPRs].fpr());
+                }
+                ++numFPRs;
+                break;
+            default:
+                RELEASE_ASSERT_NOT_REACHED();
+            }
 
-        patchpoint->setGenerator([context] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
-            AllowMacroScratchRegisterUsage allowScratch(jit);
+            jsOffset += sizeof(void*);
+        }
+    }
 
-            CCallHelpers::Call call = jit.call();
-            context->jsEntrypointToWasmEntrypointCall = call;
-        });
-    });
+    if (!!info.memory) {
+        GPRReg baseMemory = pinnedRegs.baseMemoryPointer;
+        jit.loadPtr(&vm.topJSWebAssemblyInstance, baseMemory);
+        jit.loadPtr(CCallHelpers::Address(baseMemory, JSWebAssemblyInstance::offsetOfMemory()), baseMemory);
+        const auto& sizeRegs = pinnedRegs.sizeRegisters;
+        ASSERT(sizeRegs.size() >= 1);
+        ASSERT(!sizeRegs[0].sizeOffset); // The following code assumes we start at 0, and calculates subsequent size registers relative to 0.
+        jit.loadPtr(CCallHelpers::Address(baseMemory, JSWebAssemblyMemory::offsetOfSize()), sizeRegs[0].sizeRegister);
+        jit.loadPtr(CCallHelpers::Address(baseMemory, JSWebAssemblyMemory::offsetOfMemory()), baseMemory);
+        for (unsigned i = 1; i < sizeRegs.size(); ++i)
+            jit.add64(CCallHelpers::TrustedImm32(-sizeRegs[i].sizeOffset), sizeRegs[0].sizeRegister, sizeRegs[i].sizeRegister);
+    }
 
-    // Return the result, if needed.
+    compilationContext.jsEntrypointToWasmEntrypointCall = jit.call();
+
+    for (const RegisterAtOffset& regAtOffset : registersToSpill) {
+        GPRReg reg = regAtOffset.reg().gpr();
+        ASSERT(reg != GPRInfo::returnValueGPR);
+        ptrdiff_t offset = regAtOffset.offset();
+        jit.loadPtr(CCallHelpers::Address(GPRInfo::callFrameRegister, offset), reg);
+    }
+
     switch (signature->returnType()) {
-    case Wasm::Void:
-        block->appendNewControlValue(proc, B3::Return, origin);
-        break;
     case Wasm::F32:
-    case Wasm::F64:
-        result = block->appendNew<Value>(proc, BitwiseCast, origin, result);
-        FALLTHROUGH;
-    case Wasm::I32:
-    case Wasm::I64:
-        block->appendNewControlValue(proc, B3::Return, origin, result);
+        jit.moveFloatTo32(FPRInfo::returnValueFPR, GPRInfo::returnValueGPR);
         break;
-    case Wasm::Func:
-    case Wasm::Anyfunc:
-        RELEASE_ASSERT_NOT_REACHED();
+    case Wasm::F64:
+        jit.moveDoubleTo64(FPRInfo::returnValueFPR, GPRInfo::returnValueGPR);
+        break;
+    default:
+        break;
     }
 
-    B3::prepareForGeneration(proc);
-    B3::generate(proc, *compilationContext.jsEntrypointJIT);
-    compilationContext.jsEntrypointByproducts = proc.releaseByproducts();
-    function.jsToWasmEntrypoint.calleeSaveRegisters = proc.calleeSaveRegisters();
+    jit.emitFunctionEpilogue();
+    jit.ret();
 }
 
 Expected<std::unique_ptr<WasmInternalFunction>, String> parseAndCompile(VM& vm, CompilationContext& compilationContext, const uint8_t* functionStart, size_t functionLength, const Signature* signature, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, const ModuleInformation& info, const Vector<SignatureIndex>& moduleSignatureIndicesToUniquedSignatureIndices, unsigned optLevel)

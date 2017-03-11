@@ -94,6 +94,12 @@ public:
         return bitwise_cast<WriteBarrier<JSWebAssemblyCallee>*>(bitwise_cast<char*>(this) + offsetOfCallees());
     }
 
+    void* wasmToJsCallStubForImport(unsigned importIndex)
+    {
+        RELEASE_ASSERT(importIndex < m_wasmExitStubs.size());
+        return m_wasmExitStubs[importIndex].wasmToJs.code().executableAddress();
+    }
+
 private:
     JSWebAssemblyCodeBlock(VM&, JSWebAssemblyModule*, Bag<CallLinkInfo>&&, Vector<Wasm::WasmExitStubs>&&, Wasm::Memory::Mode, unsigned calleeCount);
     DECLARE_EXPORT_INFO;

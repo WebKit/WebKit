@@ -84,6 +84,7 @@ private:
     }
 
 public:
+    static unsigned headerSizeInBytes() { return headerSize; }
     void setupFrameInPrologue(CodeLocationDataLabelPtr* calleeMoveLocation, B3::Procedure& proc, B3::Origin origin, B3::BasicBlock* block) const
     {
         static_assert(CallFrameSlot::callee * sizeof(Register) < headerSize, "We rely on this here for now.");

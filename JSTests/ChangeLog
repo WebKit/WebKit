@@ -1,3 +1,20 @@
+2017-03-10  Saam Barati  <sbarati@apple.com>
+
+        WebAssembly: Make more demos run
+        https://bugs.webkit.org/show_bug.cgi?id=165510
+        <rdar://problem/29760310>
+
+        Reviewed by Keith Miller.
+
+        * wasm/Builder.js:
+        (export.default.Builder.prototype._registerSectionBuilders.const.section.in.WASM.description.section.switch.section.case.string_appeared_here.this.section):
+        * wasm/js-api/wrapper-function.js: Added.
+        (exportImport):
+        (return.new.WebAssembly.Module):
+        (assert.throws.makeInstance):
+        (assert.throws.Bar):
+        (assert.throws):
+
 2017-03-10  Mark Lam  <mark.lam@apple.com>
 
         JSC: BindingNode::bindValue doesn't increase the scope's reference count.

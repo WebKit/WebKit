@@ -106,7 +106,7 @@ EncodedJSValue JSC_HOST_CALL webAssemblyTableProtoFuncGet(ExecState* exec)
         return { };
     }
 
-    if (WebAssemblyFunction* result = table->getFunction(index))
+    if (JSObject* result = table->getFunction(index))
         return JSValue::encode(result);
     return JSValue::encode(jsNull());
 }
@@ -120,8 +120,9 @@ EncodedJSValue JSC_HOST_CALL webAssemblyTableProtoFuncSet(ExecState* exec)
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
 
     JSValue value = exec->argument(1);
-    WebAssemblyFunction* function = jsDynamicCast<WebAssemblyFunction*>(vm, value);
-    if (!value.isNull() && !function) {
+    WebAssemblyFunction* wasmFunction;
+    WebAssemblyWrapperFunction* wasmWrapperFunction;
+    if (!value.isNull() && !isWebAssemblyHostFunction(vm, value, wasmFunction, wasmWrapperFunction)) {
         throwException(exec, throwScope,
             createTypeError(exec, ASCIILiteral("WebAssembly.Table.prototype.set expects the second argument to be null or an instance of WebAssembly.Function")));
         return { };
@@ -139,8 +140,12 @@ EncodedJSValue JSC_HOST_CALL webAssemblyTableProtoFuncSet(ExecState* exec)
     if (value.isNull())
         table->clearFunction(index);
     else {
-        ASSERT(!!function);
-        table->setFunction(vm, index, function);
+        ASSERT(value.isObject() && isWebAssemblyHostFunction(vm, jsCast<JSObject*>(value), wasmFunction, wasmWrapperFunction));
+        ASSERT(!!wasmFunction || !!wasmWrapperFunction);
+        if (wasmFunction)
+            table->setFunction(vm, index, wasmFunction);
+        else
+            table->setFunction(vm, index, wasmWrapperFunction);
     }
     
     return JSValue::encode(jsUndefined());

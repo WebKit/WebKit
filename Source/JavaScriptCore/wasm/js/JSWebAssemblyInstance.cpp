@@ -67,7 +67,7 @@ JSWebAssemblyInstance::JSWebAssemblyInstance(VM& vm, Structure* structure, unsig
     : Base(vm, structure)
     , m_numImportFunctions(numImportFunctions)
 {
-    memset(importFunctions(), 0, m_numImportFunctions * sizeof(WriteBarrier<JSCell>));
+    memset(importFunctions(), 0, m_numImportFunctions * sizeof(WriteBarrier<JSObject>));
 }
 
 void JSWebAssemblyInstance::finishCreation(VM& vm, JSWebAssemblyModule* module, JSModuleNamespaceObject* moduleNamespaceObject)

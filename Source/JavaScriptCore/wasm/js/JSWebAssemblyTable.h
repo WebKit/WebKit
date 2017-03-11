@@ -29,6 +29,7 @@
 
 #include "JSDestructibleObject.h"
 #include "JSObject.h"
+#include "WebAssemblyWrapperFunction.h"
 #include "WebAssemblyFunction.h"
 #include <wtf/MallocPtr.h>
 
@@ -50,13 +51,14 @@ public:
     std::optional<uint32_t> maximum() const { return m_maximum; }
     uint32_t size() const { return m_size; }
     bool grow(uint32_t newSize) WARN_UNUSED_RETURN;
-    WebAssemblyFunction* getFunction(uint32_t index)
+    JSObject* getFunction(uint32_t index)
     {
         RELEASE_ASSERT(index < m_size);
         return m_jsFunctions.get()[index].get();
     }
     void clearFunction(uint32_t index);
     void setFunction(VM&, uint32_t index, WebAssemblyFunction*);
+    void setFunction(VM&, uint32_t index, WebAssemblyWrapperFunction*);
 
     static ptrdiff_t offsetOfSize() { return OBJECT_OFFSETOF(JSWebAssemblyTable, m_size); }
     static ptrdiff_t offsetOfFunctions() { return OBJECT_OFFSETOF(JSWebAssemblyTable, m_functions); }
@@ -74,7 +76,7 @@ private:
     static void visitChildren(JSCell*, SlotVisitor&);
 
     MallocPtr<Wasm::CallableFunction> m_functions;
-    MallocPtr<WriteBarrier<WebAssemblyFunction>> m_jsFunctions;
+    MallocPtr<WriteBarrier<JSObject>> m_jsFunctions;
     std::optional<uint32_t> m_maximum;
     uint32_t m_size;
 };

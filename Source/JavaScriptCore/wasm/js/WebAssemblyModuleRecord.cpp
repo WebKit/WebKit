@@ -32,6 +32,7 @@
 #include "JSCInlines.h"
 #include "JSLexicalEnvironment.h"
 #include "JSModuleEnvironment.h"
+#include "JSWebAssemblyHelpers.h"
 #include "JSWebAssemblyInstance.h"
 #include "JSWebAssemblyLinkError.h"
 #include "JSWebAssemblyModule.h"
@@ -110,19 +111,26 @@ void WebAssemblyModuleRecord::link(ExecState* state, JSWebAssemblyInstance* inst
             //   i. If there is an Exported Function Exotic Object func in funcs whose func.[[Closure]] equals c, then return func.
             //   ii. (Note: At most one wrapper is created for any closure, so func is unique, even if there are multiple occurrances in the list. Moreover, if the item was an import that is already an Exported Function Exotic Object, then the original function object will be found. For imports that are regular JS functions, a new wrapper will be created.)
             if (exp.kindIndex < functionImportCount) {
-                // FIXME Implement re-exporting an import. https://bugs.webkit.org/show_bug.cgi?id=165510
-                RELEASE_ASSERT_NOT_REACHED();
+                unsigned functionIndex = exp.kindIndex;
+                JSObject* functionImport = instance->importFunction(functionIndex)->get();
+                if (isWebAssemblyHostFunction(vm, functionImport))
+                    exportedValue = functionImport;
+                else {
+                    Wasm::SignatureIndex signatureIndex = module->signatureIndexFromFunctionIndexSpace(functionIndex);
+                    exportedValue = WebAssemblyWrapperFunction::create(vm, globalObject, functionImport, functionIndex, codeBlock, signatureIndex);
+                }
+            } else {
+                //   iii. Otherwise:
+                //     a. Let func be an Exported Function Exotic Object created from c.
+                //     b. Append func to funcs.
+                //     c. Return func.
+                JSWebAssemblyCallee* jsEntrypointCallee = codeBlock->jsEntrypointCalleeFromFunctionIndexSpace(exp.kindIndex);
+                JSWebAssemblyCallee* wasmEntrypointCallee = codeBlock->wasmEntrypointCalleeFromFunctionIndexSpace(exp.kindIndex);
+                Wasm::SignatureIndex signatureIndex = module->signatureIndexFromFunctionIndexSpace(exp.kindIndex);
+                const Wasm::Signature* signature = Wasm::SignatureInformation::get(&vm, signatureIndex);
+                WebAssemblyFunction* function = WebAssemblyFunction::create(vm, globalObject, signature->argumentCount(), exp.field.string(), instance, jsEntrypointCallee, wasmEntrypointCallee, signatureIndex);
+                exportedValue = function;
             }
-            //   iii. Otherwise:
-            //     a. Let func be an Exported Function Exotic Object created from c.
-            //     b. Append func to funcs.
-            //     c. Return func.
-            JSWebAssemblyCallee* jsEntrypointCallee = codeBlock->jsEntrypointCalleeFromFunctionIndexSpace(exp.kindIndex);
-            JSWebAssemblyCallee* wasmEntrypointCallee = codeBlock->wasmEntrypointCalleeFromFunctionIndexSpace(exp.kindIndex);
-            Wasm::SignatureIndex signatureIndex = module->signatureIndexFromFunctionIndexSpace(exp.kindIndex);
-            const Wasm::Signature* signature = Wasm::SignatureInformation::get(&vm, signatureIndex);
-            WebAssemblyFunction* function = WebAssemblyFunction::create(vm, globalObject, signature->argumentCount(), exp.field.string(), instance, jsEntrypointCallee, wasmEntrypointCallee, signatureIndex);
-            exportedValue = function;
             break;
         }
         case Wasm::ExternalKind::Table: {
@@ -184,7 +192,7 @@ void WebAssemblyModuleRecord::link(ExecState* state, JSWebAssemblyInstance* inst
         ASSERT(!signature->argumentCount());
         ASSERT(signature->returnType() == Wasm::Void);
         if (startFunctionIndexSpace < codeBlock->functionImportCount()) {
-            JSCell* startFunction = instance->importFunction(startFunctionIndexSpace)->get();
+            JSObject* startFunction = instance->importFunction(startFunctionIndexSpace)->get();
             m_startFunction.set(vm, this, startFunction);
         } else {
             JSWebAssemblyCallee* jsEntrypointCallee = codeBlock->jsEntrypointCalleeFromFunctionIndexSpace(startFunctionIndexSpace);
@@ -241,14 +249,28 @@ JSValue WebAssemblyModuleRecord::evaluate(ExecState* state)
                 // for the import.
                 // https://bugs.webkit.org/show_bug.cgi?id=165510
                 uint32_t functionIndex = element.functionIndices[i];
+                Wasm::SignatureIndex signatureIndex = module->signatureIndexFromFunctionIndexSpace(functionIndex);
                 if (functionIndex < codeBlock->functionImportCount()) {
-                    return JSValue::decode(
-                        throwVMRangeError(state, scope, ASCIILiteral("Element is setting the table value with an import. This is not yet implemented. FIXME.")));
+                    JSObject* functionImport = jsCast<JSObject*>(m_instance->importFunction(functionIndex)->get());
+                    if (isWebAssemblyHostFunction(vm, functionImport)) {
+                        WebAssemblyFunction* wasmFunction = jsDynamicCast<WebAssemblyFunction*>(vm, functionImport);
+                        // If we ever import a WebAssemblyWrapperFunction, we set the import as the unwrapped value.
+                        // Because a WebAssemblyWrapperFunction can never wrap another WebAssemblyWrapperFunction,
+                        // the only type this could be is WebAssemblyFunction.
+                        RELEASE_ASSERT(wasmFunction);
+                        table->setFunction(vm, tableIndex, wasmFunction);
+                        ++tableIndex;
+                        continue;
+                    }
+
+                    table->setFunction(vm, tableIndex,
+                        WebAssemblyWrapperFunction::create(vm, m_instance->globalObject(), functionImport, functionIndex, codeBlock, signatureIndex));
+                    ++tableIndex;
+                    continue;
                 }
 
                 JSWebAssemblyCallee* jsEntrypointCallee = codeBlock->jsEntrypointCalleeFromFunctionIndexSpace(functionIndex);
                 JSWebAssemblyCallee* wasmEntrypointCallee = codeBlock->wasmEntrypointCalleeFromFunctionIndexSpace(functionIndex);
-                Wasm::SignatureIndex signatureIndex = module->signatureIndexFromFunctionIndexSpace(functionIndex);
                 const Wasm::Signature* signature = Wasm::SignatureInformation::get(&vm, signatureIndex);
                 // FIXME: Say we export local function "foo" at function index 0.
                 // What if we also set it to the table an Element w/ index 0.
@@ -288,7 +310,7 @@ JSValue WebAssemblyModuleRecord::evaluate(ExecState* state)
         }
     }
 
-    if (JSCell* startFunction = m_startFunction.get()) {
+    if (JSObject* startFunction = m_startFunction.get()) {
         CallData callData;
         CallType callType = JSC::getCallData(startFunction, callData);
         call(state, startFunction, callType, callData, jsUndefined(), state->emptyList());
