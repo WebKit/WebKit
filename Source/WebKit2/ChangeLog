@@ -1,5 +1,14 @@
 2017-03-10  Alex Christensen  <achristensen@webkit.org>
 
+        Fix watch and tv builds after r213294
+        https://bugs.webkit.org/show_bug.cgi?id=169508
+
+        Reviewed by Dan Bernstein.
+
+        * Configurations/FeatureDefines.xcconfig:
+
+2017-03-10  Alex Christensen  <achristensen@webkit.org>
+
         Add SPI to set NSURLSessionConfiguration.allowsCellularAccess from _WKProcessPoolConfiguration
         https://bugs.webkit.org/show_bug.cgi?id=169500
         <rdar://problem/29599569>
