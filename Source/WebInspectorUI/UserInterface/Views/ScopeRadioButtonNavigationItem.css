@@ -59,6 +59,7 @@ body[dir=rtl] .scope-radio-button-navigation-item > .scope-radio-button-item-sel
 .scope-radio-button-navigation-item > .arrows {
     width: 5px;
     height: 11px;
+    pointer-events: none;
     transform: translateY(1px);
 }
 

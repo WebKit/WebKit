@@ -1,3 +1,20 @@
+2017-03-10  Devin Rousso  <dcrousso+webkit@gmail.com>
+
+        Web Inspector: REGRESSION(r213149): scope bar items in elements sidebar have wrong padding/margin
+        https://bugs.webkit.org/show_bug.cgi?id=169204
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/Sidebar.css:
+        (.sidebar > .navigation-bar):
+        Replace `align-content` with `align-items`, as the former causes the child elements to fill
+        as much vertical space as possible instead of only using the space necessary for its content.
+
+        * UserInterface/Views/ScopeRadioButtonNavigationItem.css:
+        (.scope-radio-button-navigation-item > .arrows):
+        Drive-by fix: ensure that the up/down arrows are not clickable, which would prevent the
+        <select> from showing.
+
 2017-03-09  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Add XHR breakpoints UI

@@ -39,7 +39,7 @@
     top: 0;
     left: 0;
     right: 0;
-    align-content: center;
+    align-items: center;
 }
 
 .sidebar > .panel {
