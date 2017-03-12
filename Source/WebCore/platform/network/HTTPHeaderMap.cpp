@@ -97,7 +97,7 @@ void HTTPHeaderMap::add(const String& name, const String& value)
     if (!findHTTPHeaderName(name, headerName)) {
         auto result = m_uncommonHeaders.add(name, value);
         if (!result.isNewEntry)
-            result.iterator->value = result.iterator->value + ',' + value;
+            result.iterator->value = result.iterator->value + ", " + value;
         return;
     }
     add(headerName, value);
@@ -148,7 +148,7 @@ void HTTPHeaderMap::add(HTTPHeaderName name, const String& value)
 {
     auto result = m_commonHeaders.add(name, value);
     if (!result.isNewEntry)
-        result.iterator->value = result.iterator->value + ',' + value;
+        result.iterator->value = result.iterator->value + ", " + value;
 }
 
 } // namespace WebCore

@@ -1,3 +1,14 @@
+2017-03-11  Youenn Fablet  <youenn@apple.com>
+
+        XMLHttpRequest: make setRequestHeader() use `, ` as separator (including a space)
+        https://bugs.webkit.org/show_bug.cgi?id=169285
+
+        Reviewed by Sam Weinig.
+
+        * http/tests/xmlhttprequest/check-combining-headers-expected.txt:
+        * http/tests/xmlhttprequest/check-combining-headers.html:
+        * http/tests/xmlhttprequest/web-apps/005.html:
+
 2017-03-10  Dave Hyatt  <hyatt@apple.com>
 
         Percentage constrained images shrinking inside blocks inside nested flex boxes

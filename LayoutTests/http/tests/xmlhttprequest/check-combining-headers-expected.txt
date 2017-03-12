@@ -5,8 +5,8 @@ CONSOLE MESSAGE: line 17: Refused to set unsafe header "Content-Transfer-Encodin
 
 PASS XMLHttpRequest: setRequestHeader() - combining headers (Authorization) 
 PASS XMLHttpRequest: setRequestHeader() - combining headers (Pragma) 
-FAIL XMLHttpRequest: setRequestHeader() - combining headers (User-Agent) assert_true: Combined header value should be t1,t2 expected true got false
-FAIL XMLHttpRequest: setRequestHeader() - combining headers (Content-Transfer-Encoding) assert_equals: Combined header value should be t1,t2 expected (string) "t1,t2" but got (undefined) undefined
+FAIL XMLHttpRequest: setRequestHeader() - combining headers (User-Agent) assert_true: Combined header value should be t1, t2 expected true got false
+FAIL XMLHttpRequest: setRequestHeader() - combining headers (Content-Transfer-Encoding) assert_equals: Combined header value should be t1, t2 expected (string) "t1, t2" but got (undefined) undefined
 PASS XMLHttpRequest: setRequestHeader() - combining headers (Content-Type) 
 PASS XMLHttpRequest: setRequestHeader() - combining headers (Overwrite) 
 PASS XMLHttpRequest: setRequestHeader() - combining headers (If) 

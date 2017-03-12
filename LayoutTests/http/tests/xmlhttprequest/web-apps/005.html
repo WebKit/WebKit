@@ -19,7 +19,7 @@
    r.setRequestHeader('X-Test-Header', 'ONE');
    r.setRequestHeader('X-Test-Header', 'TWO');
    r.send(null);
-   if (r.responseText == 'RESULT:[ONE,TWO]') {
+   if (r.responseText == 'RESULT:[ONE, TWO]') {
      p.firstChild.data = 'PASS';
    } else {
      p.firstChild.data = 'FAIL (' + r.responseText + ')';

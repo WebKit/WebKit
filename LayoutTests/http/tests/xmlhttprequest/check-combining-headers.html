@@ -17,9 +17,9 @@
           client.setRequestHeader(header, "t2")
           client.send(null)
           if (!doNotshowFullValueInError)
-              assert_equals(JSON.parse(client.response)[header.toLowerCase()], "t1,t2", "Combined header value should be t1,t2")
+              assert_equals(JSON.parse(client.response)[header.toLowerCase()], "t1, t2", "Combined header value should be t1, t2")
           else
-              assert_true(JSON.parse(client.response)[header.toLowerCase()] == "t1,t2", "Combined header value should be t1,t2")
+              assert_true(JSON.parse(client.response)[header.toLowerCase()] == "t1, t2", "Combined header value should be t1, t2")
         }, document.title + " (" + header + ")")
       }
       request("Authorization")

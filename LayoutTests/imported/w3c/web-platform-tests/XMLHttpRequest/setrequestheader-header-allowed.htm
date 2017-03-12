@@ -12,7 +12,7 @@
       function request(header) {
         test(function() {
           var client = new XMLHttpRequest()
-          client.open("POST", "resources/inspect-headers.py?filter_value=t1,t2", false)
+          client.open("POST", "resources/inspect-headers.py?filter_value=t1, t2", false)
           client.setRequestHeader(header, "t1")
           client.setRequestHeader(header, "t2")
           client.send(null)
