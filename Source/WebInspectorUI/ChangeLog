@@ -1,3 +1,19 @@
+2017-03-11  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: RTL: fix broken font content view
+        https://bugs.webkit.org/show_bug.cgi?id=169513
+
+        Reviewed by Brian Burg.
+
+        Add RTL support to the Font content view.
+
+        * UserInterface/Views/FontResourceContentView.css:
+        (.content-view.resource.font .preview > .line > .metric):
+        (body[dir=ltr] .content-view.resource.font .preview > .line > .metric):
+        (body[dir=rtl] .content-view.resource.font .preview > .line > .metric):
+        Compensate for the flipped z-order of the content and metric elements in
+        RTL by pushing metrics below the content.
+
 2017-03-10  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Only show "Break on..." menu if backend supports DOM breakpoints

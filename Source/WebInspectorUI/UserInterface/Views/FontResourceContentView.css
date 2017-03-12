@@ -71,7 +71,17 @@
     width: 100%;
     height: 1px;
 
-    margin-right: -100%; /* Causes this element to be zero width and draw behind the text. */
+    --margin-end: -100%; /* Causes this element to be zero width and draw behind the text. */
+}
+
+body[dir=ltr] .content-view.resource.font .preview > .line > .metric {
+    margin-right: var(--margin-end);
+}
+
+body[dir=rtl] .content-view.resource.font .preview > .line > .metric {
+    margin-left: var(--margin-end);
+    position: relative;
+    z-index: -1;
 }
 
 .content-view.resource.font .metric.top {
