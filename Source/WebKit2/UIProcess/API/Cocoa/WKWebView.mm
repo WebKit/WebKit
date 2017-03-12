@@ -508,8 +508,9 @@ static uint32_t convertSystemLayoutDirection(NSUserInterfaceLayoutDirection dire
     [_scrollView setInternalDelegate:self];
     [_scrollView setBouncesZoom:YES];
 
-    if ([_scrollView respondsToSelector:@selector(_setEdgesScrollingContentIntoSafeArea:)])
-        [_scrollView _setEdgesScrollingContentIntoSafeArea:UIRectEdgeAll];
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000
+    [_scrollView _setEdgesScrollingContentIntoSafeArea:UIRectEdgeAll];
+#endif
 
     [self addSubview:_scrollView.get()];
 
@@ -1352,13 +1353,13 @@ static WebCore::Color scrollViewBackgroundColor(WKWebView *webView)
 
     UIEdgeInsets insets = [_scrollView contentInset];
 
-    if ([_scrollView respondsToSelector:@selector(_systemContentInset)]) {
-        UIEdgeInsets systemInsets = [_scrollView _systemContentInset];
-        insets.top += systemInsets.top;
-        insets.bottom += systemInsets.bottom;
-        insets.left += systemInsets.left;
-        insets.right += systemInsets.right;
-    }
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000
+    UIEdgeInsets systemInsets = [_scrollView _systemContentInset];
+    insets.top += systemInsets.top;
+    insets.bottom += systemInsets.bottom;
+    insets.left += systemInsets.left;
+    insets.right += systemInsets.right;
+#endif
 
     return insets;
 }
@@ -2215,12 +2216,12 @@ static WebCore::FloatSize activeMinimumLayoutSize(WKWebView *webView, const CGRe
     if (webView->_overridesMinimumLayoutSize)
         return WebCore::FloatSize(webView->_minimumLayoutSizeOverride);
 
-    if ([webView->_scrollView respondsToSelector:@selector(_systemContentInset)]) {
-        UIEdgeInsets systemContentInset = [webView->_scrollView _systemContentInset];
-        return WebCore::FloatSize(UIEdgeInsetsInsetRect(CGRectMake(0, 0, bounds.size.width, bounds.size.height), systemContentInset).size);
-    }
-
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000
+    UIEdgeInsets systemContentInset = [webView->_scrollView _systemContentInset];
+    return WebCore::FloatSize(UIEdgeInsetsInsetRect(CGRectMake(0, 0, bounds.size.width, bounds.size.height), systemContentInset).size);
+#else
     return WebCore::FloatSize(bounds.size);
+#endif
 }
 
 - (void)_frameOrBoundsChanged
@@ -2266,13 +2267,14 @@ static WebCore::FloatSize activeMinimumLayoutSize(WKWebView *webView, const CGRe
     return !pointsEqualInDevicePixels(contentOffset, boundedOffset, deviceScaleFactor);
 }
 
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000
 - (void)safeAreaInsetsDidChange
 {
-    if ([super respondsToSelector:@selector(safeAreaInsetsDidChange)])
-        [super safeAreaInsetsDidChange];
+    [super safeAreaInsetsDidChange];
 
     [self _scheduleVisibleContentRectUpdate];
 }
+#endif
 
 - (void)_scheduleVisibleContentRectUpdate
 {

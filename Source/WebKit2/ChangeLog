@@ -1,3 +1,20 @@
+2017-03-12  Dan Bernstein  <mitz@apple.com>
+
+        [iOS] Some more -respondsToSelector: checks are unnecessary
+        https://bugs.webkit.org/show_bug.cgi?id=169525
+
+        Reviewed by Tim Horton.
+
+        * Platform/spi/ios/UIKitSPI.h: Moved redeclarations of methods that are declared in the
+          Apple internal SDK into the #if !USE(APPLE_INTERNAL_SDK) section.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _initializeWithConfiguration:]): Replaced unnecessary -respondsToSelector:
+          check with compile-time check for the deployment target.
+        (-[WKWebView _computedContentInset]): Ditto.
+        (activeMinimumLayoutSize): Ditto.
+        (-[WKWebView safeAreaInsetsDidChange]): Ditto.
+
 2017-03-11  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Enable async image decoding for large images

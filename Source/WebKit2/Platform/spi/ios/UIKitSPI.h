@@ -314,6 +314,10 @@ typedef enum {
 @property (nonatomic) CGFloat horizontalScrollDecelerationFactor;
 @property (nonatomic) CGFloat verticalScrollDecelerationFactor;
 @property (nonatomic, readonly) BOOL _isInterruptingDeceleration;
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 110000
+@property (nonatomic, setter=_setEdgesScrollingContentIntoSafeArea:) UIRectEdge _edgesScrollingContentIntoSafeArea;
+@property (nonatomic, readonly) UIEdgeInsets _systemContentInset;
+#endif
 @end
 
 @interface NSString (UIKitDetails)
@@ -455,6 +459,9 @@ typedef NS_ENUM (NSInteger, _UIBackdropMaskViewFlags) {
 - (void)setSize:(CGSize)size;
 @property (nonatomic, assign, setter=_setBackdropMaskViewFlags:) NSInteger _backdropMaskViewFlags;
 - (void)_populateArchivedSubviews:(NSMutableSet *)encodedViews;
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 110000
+- (void)safeAreaInsetsDidChange;
+#endif
 @end
 
 @interface UIWebSelectionView : UIView
@@ -871,15 +878,6 @@ typedef enum {
 
 @interface UIResponder ()
 - (UIResponder *)firstResponder;
-@end
-
-@interface UIView ()
-- (void)safeAreaInsetsDidChange;
-@end
-
-@interface UIScrollView ()
-@property (nonatomic, setter=_setEdgesScrollingContentIntoSafeArea:) UIRectEdge _edgesScrollingContentIntoSafeArea;
-@property (nonatomic, readonly) UIEdgeInsets _systemContentInset;
 @end
 
 WTF_EXTERN_C_BEGIN
