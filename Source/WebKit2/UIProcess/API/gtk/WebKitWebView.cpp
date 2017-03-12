@@ -567,6 +567,8 @@ static gboolean webkitWebViewRunFileChooser(WebKitWebView* webView, WebKitFileCh
 #if GTK_CHECK_VERSION(3, 20, 0)
     GtkFileChooserNative* dialog = gtk_file_chooser_native_new(allowsMultipleSelection ? _("Select Files") : _("Select File"),
         toplevel ? GTK_WINDOW(toplevel) : nullptr, GTK_FILE_CHOOSER_ACTION_OPEN, nullptr, nullptr);
+    if (toplevel)
+        gtk_native_dialog_set_modal(dialog, TRUE);
 #else
     GtkWidget* dialog = gtk_file_chooser_dialog_new(allowsMultipleSelection ? _("Select Files") : _("Select File"),
                                                     toplevel ? GTK_WINDOW(toplevel) : 0,
@@ -574,6 +576,8 @@ static gboolean webkitWebViewRunFileChooser(WebKitWebView* webView, WebKitFileCh
                                                     GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                                                     GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
                                                     NULL);
+    if (toplevel)
+        gtk_window_set_modal(GTK_WINDOW(dialog), TRUE);
 #endif
 
     if (GtkFileFilter* filter = webkit_file_chooser_request_get_mime_types_filter(request))

@@ -1,3 +1,14 @@
+2017-03-12  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GTK] File choosers should run as modal by default if possible
+        https://bugs.webkit.org/show_bug.cgi?id=169526
+
+        Reviewed by Michael Catanzaro.
+
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkitWebViewRunFileChooser): If a top-level window containing the web view is found, call
+        gtk_native_dialog_set_modal() to configure the dialog accordingly.
+
 2017-03-12  Dan Bernstein  <mitz@apple.com>
 
         [iOS] Some more -respondsToSelector: checks are unnecessary
