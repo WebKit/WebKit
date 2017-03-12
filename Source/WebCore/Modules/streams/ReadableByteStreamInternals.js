@@ -345,3 +345,111 @@ function readableByteStreamControllerEnqueueChunkToQueue(controller, buffer, byt
     });
     controller.@totalQueuedBytes += byteLength;
 }
+
+function readableByteStreamControllerRespond(controller, bytesWritten)
+{
+    "use strict";
+
+    bytesWritten = @Number(bytesWritten);
+
+    if (@isNaN(bytesWritten) || bytesWritten === @Number.POSITIVE_INFINITY || bytesWritten < 0 )
+        @throwRangeError("bytesWritten has an incorrect value");
+
+    @assert(controller.@pendingPullIntos.length > 0);
+
+    @readableByteStreamControllerRespondInternal(controller, bytesWritten);
+}
+
+function readableByteStreamControllerRespondInternal(controller, bytesWritten)
+{
+    "use strict";
+
+    let firstDescriptor = controller.@pendingPullIntos[0];
+    let stream = controller.@controlledReadableStream;
+
+    if (stream.@state === @streamClosed) {
+        if (bytesWritten !== 0)
+            @throwTypeError("bytesWritten is different from 0 even though stream is closed");
+        @readableByteStreamControllerRespondInClosedState(controller, firstDescriptor);
+    } else {
+        // FIXME: Also implement case of readable state (distinct patch to avoid adding too many different cases
+        // in a single patch).
+        @throwTypeError("Readable state is not yet supported");
+    }
+}
+
+function readableByteStreamControllerRespondInClosedState(controller, firstDescriptor)
+{
+    "use strict";
+
+    firstDescriptor.buffer = @transferBufferToCurrentRealm(firstDescriptor.buffer);
+    @assert(firstDescriptor.bytesFilled === 0);
+
+    // FIXME: Spec does not describe below test. However, only ReadableStreamBYOBReader has a readIntoRequests
+    // property. This issue has been reported through WHATWG/streams GitHub
+    // (https://github.com/whatwg/streams/issues/686), but no solution has been provided for the moment.
+    // Therefore, below test is added as a temporary fix.
+    if (!@isReadableStreamBYOBReader(controller.@reader))
+        return;
+
+    while (controller.@reader.@readIntoRequests.length > 0) {
+        let pullIntoDescriptor = @readableByteStreamControllerShiftPendingPullInto(controller);
+        @readableByteStreamControllerCommitPullIntoDescriptor(controller.@controlledReadableStream, pullIntoDescriptor);
+    }
+}
+
+function readableByteStreamControllerShiftPendingPullInto(controller)
+{
+    "use strict";
+
+    let descriptor = controller.@pendingPullIntos.@shift();
+    @readableByteStreamControllerInvalidateBYOBRequest(controller);
+    return descriptor;
+}
+
+function readableByteStreamControllerInvalidateBYOBRequest(controller)
+{
+    "use strict";
+
+    if (controller.@byobRequest === @undefined)
+        return;
+    controller.@byobRequest.@associatedReadableByteStreamController = @undefined;
+    controller.@byobRequest.@view = @undefined;
+    controller.@byobRequest = @undefined;
+}
+
+function readableByteStreamControllerCommitPullIntoDescriptor(stream, pullIntoDescriptor)
+{
+    "use strict";
+
+    @assert(stream.@state !== @streamErrored);
+    let done = false;
+    if (stream.@state === @streamClosed) {
+        @assert(!pullIntoDescriptor.bytesFilled);
+        done = true;
+    }
+    let filledView = @readableByteStreamControllerConvertPullIntoDescriptor(pullIntoDescriptor);
+    if (pullIntoDescriptor.readerType === "default")
+        @readableStreamFulfillReadRequest(stream, filledView, done);
+    else {
+        @assert(pullIntoDescriptor.readerType === "byob");
+        @readableStreamFulfillReadIntoRequest(stream, filledView, done);
+    }
+}
+
+function readableByteStreamControllerConvertPullIntoDescriptor(pullIntoDescriptor)
+{
+    "use strict";
+
+    @assert(pullIntoDescriptor.bytesFilled <= pullIntoDescriptor.bytesLength);
+    @assert(pullIntoDescriptor.bytesFilled % pullIntoDescriptor.elementSize === 0);
+
+    return new pullIntoDescriptor.ctor(pullIntoDescriptor.buffer, pullIntoDescriptor.byteOffset, pullIntoDescriptor.bytesFilled / pullIntoDescriptor.elementSize);
+}
+
+function readableStreamFulfillReadIntoRequest(stream, chunk, done)
+{
+    "use strict";
+
+    stream.@reader.@readIntoRequests.@shift().@resolve.@call(@undefined, {value: chunk, done: done});
+}

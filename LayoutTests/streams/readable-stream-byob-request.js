@@ -85,4 +85,117 @@ test(function() {
 
 }, "byobRequest.view length should be equal to autoAllocateChunkSize")
 
+test(function() {
+
+    let controller;
+    const rs = new ReadableStream({
+        autoAllocateChunkSize: 16,
+        start: function(c) {
+            controller = c;
+        },
+        type: "bytes"
+    });
+
+    rs.getReader().read();
+    const byobReq = controller.byobRequest;
+
+    assert_throws(new TypeError("Can only call ReadableStreamBYOBRequest.respond on instances of ReadableStreamBYOBRequest"),
+        function() { byobReq.respond.apply(rs, 1); });
+
+}, "Calling respond() with a this object different from ReadableStreamBYOBRequest should throw a TypeError");
+
+test(function() {
+
+    let controller;
+    const rs = new ReadableStream({
+        autoAllocateChunkSize: 16,
+        start: function(c) {
+            controller = c;
+        },
+        type: "bytes"
+    });
+
+    rs.getReader().read();
+    const byobReq = controller.byobRequest;
+
+    assert_throws(new RangeError("bytesWritten has an incorrect value"),
+        function() { byobReq.respond(-1); });
+}, "Calling respond() with a negative bytesWritten value should throw a RangeError");
+
+test(function() {
+
+    let controller;
+    const rs = new ReadableStream({
+        autoAllocateChunkSize: 16,
+        start: function(c) {
+            controller = c;
+        },
+        type: "bytes"
+    });
+
+    rs.getReader().read();
+    const byobReq = controller.byobRequest;
+
+    assert_throws(new RangeError("bytesWritten has an incorrect value"),
+        function() { byobReq.respond("abc"); });
+}, "Calling respond() with a bytesWritten value which is not a number should throw a RangeError");
+
+test(function() {
+
+    let controller;
+    const rs = new ReadableStream({
+        autoAllocateChunkSize: 16,
+        start: function(c) {
+            controller = c;
+        },
+        type: "bytes"
+    });
+
+    rs.getReader().read();
+    const byobReq = controller.byobRequest;
+
+    assert_throws(new RangeError("bytesWritten has an incorrect value"),
+        function() { byobReq.respond(Number.POSITIVE_INFINITY); });
+}, "Calling respond() with a positive infinity bytesWritten value should throw a RangeError");
+
+test(function() {
+
+    let controller;
+    const rs = new ReadableStream({
+        autoAllocateChunkSize: 16,
+        start: function(c) {
+            controller = c;
+        },
+        type: "bytes"
+    });
+
+    rs.getReader().read();
+    const byobReq = controller.byobRequest;
+    controller.close();
+
+    assert_throws(new TypeError("bytesWritten is different from 0 even though stream is closed"),
+        function() { byobReq.respond(1); });
+}, "Calling respond() with a bytesWritten value different from 0 when stream is closed should throw a TypeError");
+
+test(function() {
+
+    let controller;
+    const rs = new ReadableStream({
+        autoAllocateChunkSize: 16,
+        start: function(c) {
+            controller = c;
+        },
+        type: "bytes"
+    });
+
+    // FIXME: When ReadableStreamBYOBReader is implemented, another test (or even several ones)
+    // based on this one should be added so that reader's readIntoRequests attribute is not empty
+    // and currently unreachable code is reached.
+    rs.getReader().read();
+    const byobReq = controller.byobRequest;
+    controller.close();
+    byobReq.respond(0);
+
+}, "Calling respond() with a bytesWritten value of 0 when stream is closed should succeed");
+
 done();

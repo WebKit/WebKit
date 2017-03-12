@@ -14,7 +14,7 @@ PASS ReadableStream with byte source: releaseLock() on ReadableStreamReader with
 PASS ReadableStream with byte source: Automatic pull() after start() 
 PASS ReadableStream with byte source: Automatic pull() after start() and read() 
 FAIL ReadableStream with byte source: autoAllocateChunkSize assert_equals: pull() must have been invoked once expected 1 but got 0
-FAIL ReadableStream with byte source: Mix of auto allocate and BYOB promise_test: Unhandled rejection with value: object "TypeError: ReadableStreamBYOBRequest respond() is not implemented"
+FAIL ReadableStream with byte source: Mix of auto allocate and BYOB promise_test: Unhandled rejection with value: object "TypeError: Readable state is not yet supported"
 PASS ReadableStream with byte source: Automatic pull() after start() and read(view) 
 PASS ReadableStream with byte source: enqueue(), getReader(), then read() 
 PASS ReadableStream with byte source: Push source that doesn't understand pull signal 

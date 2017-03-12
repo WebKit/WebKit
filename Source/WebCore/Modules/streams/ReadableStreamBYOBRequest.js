@@ -29,8 +29,13 @@ function respond(bytesWritten)
 {
     "use strict";
 
-    // FIXME: Implement appropriate behavior.
-    @throwTypeError("ReadableStreamBYOBRequest respond() is not implemented");
+    if (!@isReadableStreamBYOBRequest(this))
+        throw @makeThisTypeError("ReadableStreamBYOBRequest", "respond");
+
+    if (this.@associatedReadableByteStreamController === @undefined)
+        @throwTypeError("ReadableStreamBYOBRequest.associatedReadableByteStreamController is undefined");
+
+    return @readableByteStreamControllerRespond(this.@associatedReadableByteStreamController, bytesWritten);
 }
 
 function respondWithNewView(view)
