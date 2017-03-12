@@ -1,3 +1,9 @@
+2017-03-11  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Unreviewed, suprress warnings in JSC B3
+
+        * b3/B3Opcode.cpp:
+
 2017-03-11  Michael Saboff  <msaboff@apple.com>
 
         Allow regular expressions to be used when selecting a process name in JSC config file

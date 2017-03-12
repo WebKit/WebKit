@@ -30,6 +30,11 @@
 
 #include <wtf/PrintStream.h>
 
+#if COMPILER(GCC) && ASSERT_DISABLED
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wreturn-type"
+#endif // COMPILER(GCC) && ASSERT_DISABLED
+
 namespace JSC { namespace B3 {
 
 std::optional<Opcode> invertedCompare(Opcode opcode, Type type)
@@ -363,5 +368,9 @@ void printInternal(PrintStream& out, Opcode opcode)
 }
 
 } // namespace WTF
+
+#if COMPILER(GCC) && ASSERT_DISABLED
+#pragma GCC diagnostic pop
+#endif // COMPILER(GCC) && ASSERT_DISABLED
 
 #endif // ENABLE(B3_JIT)
