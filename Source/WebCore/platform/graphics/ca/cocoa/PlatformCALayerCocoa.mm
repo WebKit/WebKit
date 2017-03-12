@@ -1192,6 +1192,20 @@ void PlatformCALayerCocoa::enumerateRectsBeingDrawn(CGContextRef context, void (
     wkCALayerEnumerateRectsBeingDrawnWithBlock(m_layer.get(), context, block);
 }
 
+unsigned PlatformCALayerCocoa::backingStoreBytesPerPixel() const
+{
+#if PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 90300
+    if (wantsDeepColorBackingStore())
+        return isOpaque() ? 4 : 5;
+#endif
+
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
+    if (!isOpaque() && supportsSubpixelAntialiasedText())
+        return 8;
+#endif
+    return 4;
+}
+
 AVPlayerLayer *PlatformCALayerCocoa::avPlayerLayer() const
 {
     if (layerType() != LayerTypeAVPlayerLayer)

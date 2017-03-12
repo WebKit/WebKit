@@ -175,6 +175,8 @@ public:
 
     void enumerateRectsBeingDrawn(CGContextRef, void (^block)(CGRect)) override;
 
+    unsigned backingStoreBytesPerPixel() const override;
+
 private:
     PlatformCALayerCocoa(LayerType, PlatformCALayerClient* owner);
     PlatformCALayerCocoa(PlatformLayer*, PlatformCALayerClient* owner);
