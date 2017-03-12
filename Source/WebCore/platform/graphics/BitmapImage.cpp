@@ -196,7 +196,10 @@ void BitmapImage::draw(GraphicsContext& context, const FloatRect& destRect, cons
         }
     } else {
         ASSERT(!frameIsBeingDecodedAtIndex(m_currentFrame, m_sizeForDrawing));
-        image = frameImageAtIndex(m_currentFrame, m_currentSubsamplingLevel, { }, &context);
+        if (shouldUseAsyncDecodingForAnimatedImage())
+            image = frameImageAtIndex(m_currentFrame);
+        else
+            image = frameImageAtIndex(m_currentFrame, m_currentSubsamplingLevel, { }, &context);
     }
 
     if (!image) // If it's too early we won't have an image yet.
