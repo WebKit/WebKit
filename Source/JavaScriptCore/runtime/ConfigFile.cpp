@@ -37,6 +37,7 @@
 #include <wtf/text/StringBuilder.h>
 
 #if OS(UNIX) || OS(DARWIN)
+#include <regex.h>
 #include <unistd.h>
 #endif
 
@@ -136,6 +137,32 @@ public:
         return nullptr;
     }
 
+    char* tryConsumeRegExPattern(bool& ignoreCase)
+    {
+        if (!fillBufferIfNeeded())
+            return nullptr;
+
+        if (*m_srcPtr != '/')
+            return nullptr;
+
+        char* stringStart = m_srcPtr + 1;
+
+        char* stringEnd = strchr(stringStart, '/');
+        if (stringEnd) {
+            *stringEnd = '\0';
+            m_srcPtr = stringEnd + 1;
+            if (*m_srcPtr == 'i') {
+                ignoreCase = true;
+                m_srcPtr++;
+            } else
+                ignoreCase = false;
+
+            return stringStart;
+        }
+
+        return nullptr;
+    }
+    
     char* tryConsumeUpto(bool& foundChar, char c)
     {
         if (!fillBufferIfNeeded())
@@ -339,12 +366,30 @@ void ConfigFile::parse()
     };
 
     auto parsePredicate = [&](bool& predicateMatches, const char* matchValue) {
-        char* predicateValue = nullptr;
-        if (scanner.tryConsume("==")
-            && (predicateValue = scanner.tryConsumeString()) && matchValue) {
+        if (scanner.tryConsume("==")) {
+            char* predicateValue = nullptr;
+            if ((predicateValue = scanner.tryConsumeString()) && matchValue) {
                 predicateMatches = !strcmp(predicateValue, matchValue);
                 return true;
+            }
         }
+#if OS(UNIX) || OS(DARWIN)
+        else if (scanner.tryConsume("=~")) {
+            char* predicateRegExString = nullptr;
+            bool ignoreCase { false };
+            if ((predicateRegExString = scanner.tryConsumeRegExPattern(ignoreCase)) && matchValue) {
+                regex_t predicateRegEx;
+                int regexFlags = REG_EXTENDED;
+                if (ignoreCase)
+                    regexFlags |= REG_ICASE;
+                if (regcomp(&predicateRegEx, predicateRegExString, regexFlags))
+                    return false;
+
+                predicateMatches = !regexec(&predicateRegEx, matchValue, 0, nullptr, 0);
+                return true;
+            }
+        }
+#endif
 
         return false;
     };

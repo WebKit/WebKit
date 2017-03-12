@@ -1,3 +1,16 @@
+2017-03-11  Michael Saboff  <msaboff@apple.com>
+
+        Allow regular expressions to be used when selecting a process name in JSC config file
+        https://bugs.webkit.org/show_bug.cgi?id=169495
+
+        Reviewed by Saam Barati.
+
+        Only added regular expression selectors for unix like platforms.
+
+        * runtime/ConfigFile.cpp:
+        (JSC::ConfigFileScanner::tryConsumeRegExPattern):
+        (JSC::ConfigFile::parse):
+
 2017-03-11  Jon Lee  <jonlee@apple.com>
 
         WebGPU prototype - Front-End
