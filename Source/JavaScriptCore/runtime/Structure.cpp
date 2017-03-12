@@ -918,6 +918,8 @@ void Structure::willStoreValueSlow(
         table->makeTop(vm, propertyName, age);
         entry->hasInferredType = false;
     }
+    
+    propertyTable->use(); // This makes it safe to use entry above.
 }
 
 #if DUMP_PROPERTYMAP_STATS

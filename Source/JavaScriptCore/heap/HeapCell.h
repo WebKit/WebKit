@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -66,6 +66,18 @@ public:
     AllocatorAttributes allocatorAttributes() const;
     DestructionMode destructionMode() const;
     Kind cellKind() const;
+    
+    // Call use() after the last point where you need `this` pointer to be kept alive. You usually don't
+    // need to use this, but it might be necessary if you're otherwise referring to an object's innards
+    // but not the object itself.
+#if COMPILER(GCC_OR_CLANG)
+    void use() const
+    {
+        asm volatile ("" : : "r"(this) : "memory");
+    }
+#else
+    void use() const;
+#endif
 };
 
 } // namespace JSC
