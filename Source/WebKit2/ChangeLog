@@ -1,3 +1,20 @@
+2017-03-11  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Enable async image decoding for large images
+        https://bugs.webkit.org/show_bug.cgi?id=165039
+
+        Reviewed by Simon Fraser.
+
+        Add WK2 preferences for setting/getting LargeImageAsyncDecoding and
+        AnimatedImageAsyncDecoding.
+        
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetLargeImageAsyncDecodingEnabled):
+        (WKPreferencesGetLargeImageAsyncDecodingEnabled):
+        (WKPreferencesSetAnimatedImageAsyncDecodingEnabled):
+        (WKPreferencesGetAnimatedImageAsyncDecodingEnabled):
+        * UIProcess/API/C/WKPreferencesRefPrivate.h:
+
 2017-03-11  Alex Christensen  <achristensen@webkit.org>
 
         Rollout r213746

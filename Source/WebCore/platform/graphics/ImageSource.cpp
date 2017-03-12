@@ -148,10 +148,10 @@ bool ImageSource::isAllDataReceived()
     return isDecoderAvailable() ? m_decoder->isAllDataReceived() : m_frameCache->frameCount();
 }
 
-bool ImageSource::isAsyncDecodingRequired()
+bool ImageSource::shouldUseAsyncDecoding()
 {
     // FIXME: figure out the best heuristic for enabling async image decoding.
-    return size().area() * sizeof(RGBA32) >= 100 * KB;
+    return size().area() * sizeof(RGBA32) >= (frameCount() > 1 ? 100 * KB : 500 * KB);
 }
 
 SubsamplingLevel ImageSource::maximumSubsamplingLevel()

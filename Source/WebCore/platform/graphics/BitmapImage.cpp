@@ -67,14 +67,14 @@ void BitmapImage::destroyDecodedData(bool destroyAll)
 {
     if (!destroyAll)
         m_source.destroyDecodedDataBeforeFrame(m_currentFrame);
-    else if (m_source.hasDecodingQueue())
+    else if (m_source.hasAsyncDecodingQueue())
         m_source.destroyAllDecodedDataExcludeFrame(m_currentFrame);
     else
         m_source.destroyAllDecodedData();
 
     // There's no need to throw away the decoder unless we're explicitly asked
     // to destroy all of the frames.
-    if (!destroyAll || m_source.hasDecodingQueue())
+    if (!destroyAll || m_source.hasAsyncDecodingQueue())
         m_source.clearFrameBufferCache(m_currentFrame);
     else
         m_source.clear(data());
@@ -103,7 +103,7 @@ bool BitmapImage::dataChanged(bool allDataReceived)
 NativeImagePtr BitmapImage::frameImageAtIndex(size_t index, const std::optional<SubsamplingLevel>& subsamplingLevel, const std::optional<IntSize>& sizeForDrawing, const GraphicsContext* targetContext)
 {
     if (!frameHasValidNativeImageAtIndex(index, subsamplingLevel, sizeForDrawing)) {
-        LOG(Images, "BitmapImage::%s - %p - url: %s [subsamplingLevel was %d, resampling]", __FUNCTION__, this, sourceURL().characters8(), static_cast<int>(frameSubsamplingLevelAtIndex(index)));
+        LOG(Images, "BitmapImage::%s - %p - url: %s [subsamplingLevel was %d, resampling]", __FUNCTION__, this, sourceURL().utf8().data(), static_cast<int>(frameSubsamplingLevelAtIndex(index)));
         invalidatePlatformData();
     }
 
@@ -161,28 +161,52 @@ void BitmapImage::draw(GraphicsContext& context, const FloatRect& destRect, cons
     if (destRect.isEmpty() || srcRect.isEmpty())
         return;
 
-    m_sizeForDrawing = enclosingIntRect(destRect).size();
+    float scale = subsamplingScale(context, destRect, srcRect);
+    m_currentSubsamplingLevel = allowSubsampling() ? m_source.subsamplingLevelForScale(scale) : SubsamplingLevel::Default;
+    m_sizeForDrawing = enclosingIntRect(context.getCTM().mapRect(destRect)).size();
+
+    LOG(Images, "BitmapImage::%s - %p - url: %s [subsamplingLevel = %d scale = %.4f]", __FUNCTION__, this, sourceURL().utf8().data(), static_cast<int>(m_currentSubsamplingLevel), scale);
+
     StartAnimationResult result = internalStartAnimation();
+    if (result == StartAnimationResult::DecodingActive && showDebugBackground()) {
+        fillWithSolidColor(context, destRect, Color::yellow, op);
+        return;
+    }
 
-    Color color;
-    if (result == StartAnimationResult::DecodingActive && showDebugBackground())
-        color = Color::yellow;
-    else
-        color = singlePixelSolidColor();
+    ASSERT_IMPLIES(result == StartAnimationResult::DecodingActive, m_source.frameHasValidNativeImageAtIndex(m_currentFrame, m_currentSubsamplingLevel, m_sizeForDrawing));
 
+    NativeImagePtr image;
+    if (shouldUseAsyncDecodingForLargeImage()) {
+        if (m_source.frameHasValidNativeImageAtIndex(m_currentFrame, m_currentSubsamplingLevel, m_sizeForDrawing))
+            image = frameImageAtIndex(m_currentFrame, m_currentSubsamplingLevel, m_sizeForDrawing, &context);
+        else {
+            ASSERT(!canAnimate() && !m_currentFrame);
+            if (!frameIsBeingDecodedAtIndex(m_currentFrame, m_sizeForDrawing)) {
+                m_source.requestFrameAsyncDecodingAtIndex(0, m_currentSubsamplingLevel, m_sizeForDrawing);
+                LOG(Images, "BitmapImage::%s - %p - url: %s [requesting large async decoding]", __FUNCTION__, this, sourceURL().utf8().data());
+            }
+
+            if (!frameHasDecodedNativeImage(m_currentFrame)) {
+                if (showDebugBackground())
+                    fillWithSolidColor(context, destRect, Color::yellow, op);
+                return;
+            }
+
+            image = frameImageAtIndex(m_currentFrame);
+        }
+    } else {
+        ASSERT(!frameIsBeingDecodedAtIndex(m_currentFrame, m_sizeForDrawing));
+        image = frameImageAtIndex(m_currentFrame, m_currentSubsamplingLevel, { }, &context);
+    }
+
+    if (!image) // If it's too early we won't have an image yet.
+        return;
+
+    Color color = singlePixelSolidColor();
     if (color.isValid()) {
         fillWithSolidColor(context, destRect, color, op);
         return;
     }
-
-    float scale = subsamplingScale(context, destRect, srcRect);
-    m_currentSubsamplingLevel = allowSubsampling() ? m_source.subsamplingLevelForScale(scale) : SubsamplingLevel::Default;
-    LOG(Images, "BitmapImage::%s - %p - url: %s [m_currentFrame = %ld subsamplingLevel = %d scale = %.4f]", __FUNCTION__, this, sourceURL().characters8(), m_currentFrame, static_cast<int>(m_currentSubsamplingLevel), scale);
-
-    ASSERT_IMPLIES(result == StartAnimationResult::DecodingActive, m_source.frameHasValidNativeImageAtIndex(m_currentFrame, m_currentSubsamplingLevel, m_sizeForDrawing));
-    auto image = frameImageAtIndex(m_currentFrame, m_currentSubsamplingLevel, m_sizeForDrawing, &context);
-    if (!image) // If it's too early we won't have an image yet.
-        return;
 
     ImageOrientation orientation(description.imageOrientation());
     if (description.respectImageOrientation() == RespectImageOrientation)
@@ -238,14 +262,14 @@ bool BitmapImage::canAnimate()
     return shouldAnimate() && frameCount() > 1;
 }
 
-bool BitmapImage::isLargeImageAsyncDecodingRequired()
+bool BitmapImage::shouldUseAsyncDecodingForLargeImage()
 {
-    return !canAnimate() && allowLargeImageAsyncDecoding() && (isAsyncDecodingForcedForTesting() || m_source.isAsyncDecodingRequired());
+    return !canAnimate() && allowLargeImageAsyncDecoding() && (shouldUseAsyncDecodingForTesting() || m_source.shouldUseAsyncDecoding());
 }
 
-bool BitmapImage::isAnimatedImageAsyncDecodingRequired()
+bool BitmapImage::shouldUseAsyncDecodingForAnimatedImage()
 {
-    return canAnimate() && allowAnimatedImageAsyncDecoding() && (isAsyncDecodingForcedForTesting() || m_source.isAsyncDecodingRequired());
+    return canAnimate() && allowAnimatedImageAsyncDecoding() && (shouldUseAsyncDecodingForTesting() || m_source.shouldUseAsyncDecoding());
 }
 
 void BitmapImage::clearTimer()
@@ -267,11 +291,11 @@ BitmapImage::StartAnimationResult BitmapImage::internalStartAnimation()
 
     if (m_frameTimer)
         return StartAnimationResult::TimerActive;
-    
+
     // Don't start a new animation until we draw the frame that is currently being decoded.
     size_t nextFrame = (m_currentFrame + 1) % frameCount();
     if (frameIsBeingDecodedAtIndex(nextFrame, m_sizeForDrawing)) {
-        LOG(Images, "BitmapImage::%s - %p - url: %s [nextFrame = %ld is being decoded]", __FUNCTION__, this, sourceURL().characters8(), nextFrame);
+        LOG(Images, "BitmapImage::%s - %p - url: %s [nextFrame = %ld is being decoded]", __FUNCTION__, this, sourceURL().utf8().data(), nextFrame);
         return StartAnimationResult::DecodingActive;
     }
 
@@ -312,14 +336,14 @@ BitmapImage::StartAnimationResult BitmapImage::internalStartAnimation()
     // it will be decoded on a separate work queue. When decoding nextFrame finishes, we will be notified
     // through the callback newFrameNativeImageAvailableAtIndex(). Otherwise, advanceAnimation() will be called
     // when the timer fires and m_currentFrame will be advanced to nextFrame since it is not being decoded.
-    if (m_sizeForDrawing && isAnimatedImageAsyncDecodingRequired()) {
-        bool isAsyncDecode = m_source.requestFrameAsyncDecodingAtIndex(nextFrame, m_currentSubsamplingLevel, *m_sizeForDrawing);
+    if (shouldUseAsyncDecodingForAnimatedImage()) {
+        bool isAsyncDecode = m_source.requestFrameAsyncDecodingAtIndex(nextFrame, m_currentSubsamplingLevel, m_sizeForDrawing);
 
 #if !LOG_DISABLED
         if (isAsyncDecode)
-            LOG(Images, "BitmapImage::%s - %p - url: %s [requesting async decoding for nextFrame = %ld]", __FUNCTION__, this, sourceURL().characters8(), nextFrame);
+            LOG(Images, "BitmapImage::%s - %p - url: %s [requesting async decoding for nextFrame = %ld]", __FUNCTION__, this, sourceURL().utf8().data(), nextFrame);
         else
-            LOG(Images, "BitmapImage::%s - %p - url: %s [cachedFrameCount = %ld nextFrame = %ld]", __FUNCTION__, this, sourceURL().characters8(), ++m_cachedFrameCount, nextFrame);
+            LOG(Images, "BitmapImage::%s - %p - url: %s [cachedFrameCount = %ld nextFrame = %ld]", __FUNCTION__, this, sourceURL().utf8().data(), ++m_cachedFrameCount, nextFrame);
 #else
         UNUSED_PARAM(isAsyncDecode);
 #endif
@@ -338,7 +362,7 @@ void BitmapImage::advanceAnimation()
 
     // Pretend as if decoding nextFrame has taken m_frameDecodingDurationForTesting from
     // the time this decoding was requested.
-    if (isAsyncDecodingForcedForTesting()) {
+    if (shouldUseAsyncDecodingForTesting()) {
         double time = monotonicallyIncreasingTime();
         // Start a timer with the remaining time from now till the m_desiredFrameDecodeTime.
         if (m_desiredFrameDecodeTimeForTesting > std::max(time, m_desiredFrameStartTime)) {
@@ -346,7 +370,7 @@ void BitmapImage::advanceAnimation()
             return;
         }
     }
-    
+
     // Don't advance to nextFrame unless its decoding has finished or was not required.
     size_t nextFrame = (m_currentFrame + 1) % frameCount();
     if (!frameIsBeingDecodedAtIndex(nextFrame, m_sizeForDrawing))
@@ -355,7 +379,7 @@ void BitmapImage::advanceAnimation()
         // Force repaint if showDebugBackground() is on.
         if (showDebugBackground())
             imageObserver()->changedInRect(this);
-        LOG(Images, "BitmapImage::%s - %p - url: %s [lateFrameCount = %ld nextFrame = %ld]", __FUNCTION__, this, sourceURL().characters8(), ++m_lateFrameCount, nextFrame);
+        LOG(Images, "BitmapImage::%s - %p - url: %s [lateFrameCount = %ld nextFrame = %ld]", __FUNCTION__, this, sourceURL().utf8().data(), ++m_lateFrameCount, nextFrame);
     }
 }
 
@@ -369,7 +393,7 @@ void BitmapImage::internalAdvanceAnimation()
     if (imageObserver())
         imageObserver()->animationAdvanced(this);
 
-    LOG(Images, "BitmapImage::%s - %p - url: %s [m_currentFrame = %ld]", __FUNCTION__, this, sourceURL().characters8(), m_currentFrame);
+    LOG(Images, "BitmapImage::%s - %p - url: %s [m_currentFrame = %ld]", __FUNCTION__, this, sourceURL().utf8().data(), m_currentFrame);
 }
 
 void BitmapImage::stopAnimation()
@@ -395,13 +419,21 @@ void BitmapImage::resetAnimation()
 void BitmapImage::newFrameNativeImageAvailableAtIndex(size_t index)
 {
     UNUSED_PARAM(index);
-    ASSERT(index == (m_currentFrame + 1) % frameCount());
-
-    // Don't advance to nextFrame unless the timer was fired before its decoding finishes.
-    if (canAnimate() && !m_frameTimer)
-        internalAdvanceAnimation();
-    else
-        LOG(Images, "BitmapImage::%s - %p - url: %s [earlyFrameCount = %ld nextFrame = %ld]", __FUNCTION__, this, sourceURL().characters8(), ++m_earlyFrameCount, index);
+    if (canAnimate()) {
+        ASSERT(index == (m_currentFrame + 1) % frameCount());
+        
+        // Don't advance to nextFrame unless the timer was fired before its decoding finishes.
+        if (canAnimate() && !m_frameTimer)
+            internalAdvanceAnimation();
+        else
+            LOG(Images, "BitmapImage::%s - %p - url: %s [earlyFrameCount = %ld nextFrame = %ld]", __FUNCTION__, this, sourceURL().utf8().data(), ++m_earlyFrameCount, index);
+    } else {
+        ASSERT(index == m_currentFrame && !m_currentFrame);
+        imageObserver()->changedInRect(this, nullptr);
+        
+        if (m_source.isAsyncDecodingQueueIdle())
+            m_source.stopAsyncDecodingQueue();
+    }
 }
 
 void BitmapImage::dump(TextStream& ts) const

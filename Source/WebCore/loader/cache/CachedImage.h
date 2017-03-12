@@ -144,8 +144,8 @@ private:
 #else
         bool m_allowSubsampling { false };
 #endif
-        bool m_allowLargeImageAsyncDecoding { true };
-        bool m_allowAnimatedImageAsyncDecoding { true };
+        bool m_allowLargeImageAsyncDecoding { false };
+        bool m_allowAnimatedImageAsyncDecoding { false };
         bool m_showDebugBackground { false };
     };
 

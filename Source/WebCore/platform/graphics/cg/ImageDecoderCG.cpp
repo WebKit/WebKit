@@ -377,7 +377,13 @@ NativeImagePtr ImageDecoder::createFrameImageAtIndex(size_t index, SubsamplingLe
         options = imageSourceOptions(subsamplingLevel);
         image = adoptCF(CGImageSourceCreateImageAtIndex(m_nativeDecoder.get(), index, options.get()));
     } else {
-        IntSize size = frameSizeAtIndex(index, subsamplingLevel);
+        // CGImageSourceCreateThumbnailAtIndex() returns a CGImage with the image native size
+        // regardless of the subsamplingLevel unless kCGImageSourceSubsampleFactor is passed.
+        // Here we are trying to see which size is smaller: the image native size or the
+        // sizeForDrawing. If we want a CGImage with the image native size, sizeForDrawing will
+        // not passed. So we need to get the image native size with the default subsampling and
+        // then compare it with sizeForDrawing.
+        IntSize size = frameSizeAtIndex(index, SubsamplingLevel::Default);
 
         if (size.unclampedArea() < sizeForDrawing.value().unclampedArea()) {
             // Decode an image asynchronously for its native size.

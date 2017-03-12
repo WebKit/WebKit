@@ -719,6 +719,8 @@ void TestController::resetPreferencesToConsistentValues(const TestOptions& optio
     WKCookieManagerDeleteAllCookies(WKContextGetCookieManager(m_context.get()));
 
     WKPreferencesSetMockCaptureDevicesEnabled(preferences, true);
+    
+    WKPreferencesSetLargeImageAsyncDecodingEnabled(preferences, false);
 
     platformResetPreferencesToConsistentValues();
 }

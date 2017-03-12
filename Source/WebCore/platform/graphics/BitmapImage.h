@@ -96,10 +96,10 @@ public:
     bool currentFrameKnownToBeOpaque() const override { return !frameHasAlphaAtIndex(currentFrame()); }
     ImageOrientation orientationForCurrentFrame() const override { return frameOrientationAtIndex(currentFrame()); }
 
-    bool isAsyncDecodingForcedForTesting() const { return m_frameDecodingDurationForTesting > 0; }
+    bool shouldUseAsyncDecodingForTesting() const { return m_frameDecodingDurationForTesting > 0; }
     void setFrameDecodingDurationForTesting(float duration) { m_frameDecodingDurationForTesting = duration; }
-    bool isLargeImageAsyncDecodingRequired();
-    bool isAnimatedImageAsyncDecodingRequired();
+    bool shouldUseAsyncDecodingForLargeImage();
+    bool shouldUseAsyncDecodingForAnimatedImage();
 
     // Accessors for native image formats.
 #if USE(APPKIT)
@@ -202,7 +202,7 @@ private:
 
     size_t m_currentFrame { 0 }; // The index of the current frame of animation.
     SubsamplingLevel m_currentSubsamplingLevel { SubsamplingLevel::Default };
-    std::optional<IntSize> m_sizeForDrawing;
+    IntSize m_sizeForDrawing;
     std::unique_ptr<Timer> m_frameTimer;
     RepetitionCount m_repetitionsComplete { RepetitionCountNone }; // How many repetitions we've finished.
     double m_desiredFrameStartTime { 0 }; // The system time at which we hope to see the next call to startAnimation().

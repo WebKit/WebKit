@@ -1,3 +1,17 @@
+2017-03-11  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Enable async image decoding for large images
+        https://bugs.webkit.org/show_bug.cgi?id=165039
+
+        Reviewed by Simon Fraser.
+
+        Disable LargeImageAsyncDecoding for DRT/WTR.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (resetWebPreferencesToConsistentValues):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetPreferencesToConsistentValues):
+
 2017-03-10  Alex Christensen  <achristensen@webkit.org>
 
         Fix watch and tv builds after r213294
