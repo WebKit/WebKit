@@ -30,6 +30,8 @@ WebInspector.DOMNodeTreeElement = class DOMNodeTreeElement extends WebInspector.
         console.assert(domNode instanceof WebInspector.DOMNode);
 
         super("dom-node", domNode.displayName, null, domNode, true);
+
+        this.status = WebInspector.linkifyNodeReferenceElement(domNode, WebInspector.createGoToArrowButton());
     }
 
     // Protected
@@ -47,5 +49,11 @@ WebInspector.DOMNodeTreeElement = class DOMNodeTreeElement extends WebInspector.
 
         const allowEditing = true;
         WebInspector.DOMBreakpointTreeController.appendBreakpointContextMenuItems(contextMenu, this.representedObject, allowEditing);
+
+        contextMenu.appendSeparator();
+
+        contextMenu.appendItem(WebInspector.UIString("Reveal in DOM Tree"), () => {
+            WebInspector.domTreeManager.inspectElement(this.representedObject.id);
+        });
     }
 };

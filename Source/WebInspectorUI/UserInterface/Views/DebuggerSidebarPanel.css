@@ -104,6 +104,10 @@
     content: url(../Images/DOMElement.svg);
 }
 
+.sidebar > .panel.navigation.debugger .details-section.dom-breakpoints .item.dom-node:not(:hover, .selected) .status .go-to-arrow {
+    display: none;
+}
+
 .sidebar > .panel.navigation.debugger .details-section.xhr-breakpoints .item.breakpoint .subtitle:before {
     content: "";
 }

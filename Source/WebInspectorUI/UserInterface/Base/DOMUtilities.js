@@ -65,19 +65,26 @@ WebInspector.linkifyNodeReference = function(node, maxLength)
 
     let link = document.createElement("span");
     link.append(displayName);
-    link.setAttribute("role", "link");
+    return WebInspector.linkifyNodeReferenceElement(node, link, displayName);
+};
 
-    link.title = displayName;
+WebInspector.linkifyNodeReferenceElement = function(node, element, displayName)
+{
+    if (!displayName)
+        displayName = node.displayName;
+
+    element.setAttribute("role", "link");
+    element.title = displayName;
 
     let nodeType = node.nodeType();
     if ((nodeType !== Node.DOCUMENT_NODE || node.parentNode) && nodeType !== Node.TEXT_NODE)
-        link.className = "node-link";
+        element.classList.add("node-link");
 
-    link.addEventListener("click", WebInspector.domTreeManager.inspectElement.bind(WebInspector.domTreeManager, node.id));
-    link.addEventListener("mouseover", WebInspector.domTreeManager.highlightDOMNode.bind(WebInspector.domTreeManager, node.id, "all"));
-    link.addEventListener("mouseout", WebInspector.domTreeManager.hideDOMNodeHighlight.bind(WebInspector.domTreeManager));
+    element.addEventListener("click", WebInspector.domTreeManager.inspectElement.bind(WebInspector.domTreeManager, node.id));
+    element.addEventListener("mouseover", WebInspector.domTreeManager.highlightDOMNode.bind(WebInspector.domTreeManager, node.id, "all"));
+    element.addEventListener("mouseout", WebInspector.domTreeManager.hideDOMNodeHighlight.bind(WebInspector.domTreeManager));
 
-    return link;
+    return element;
 };
 
 function createSVGElement(tagName)

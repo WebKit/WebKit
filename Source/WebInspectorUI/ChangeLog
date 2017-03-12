@@ -1,5 +1,26 @@
 2017-03-11  Matt Baker  <mattbaker@apple.com>
 
+        Web Inspector: Add "goto arrow" to DOMNodeTreeElements in the Debugger tab
+        https://bugs.webkit.org/show_bug.cgi?id=168752
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Base/DOMUtilities.js:
+        (WebInspector.linkifyNodeReference):
+        (WebInspector.linkifyNodeReferenceElement):
+        Expose linkifying an existing element.
+
+        * UserInterface/Views/DOMNodeTreeElement.js:
+        (WebInspector.DOMNodeTreeElement):
+        (WebInspector.DOMNodeTreeElement.prototype.populateContextMenu):
+        Add "Reveal in DOM Tree" context menu item.
+
+        * UserInterface/Views/DebuggerSidebarPanel.css:
+        (.sidebar > .panel.navigation.debugger .details-section.dom-breakpoints .item.dom-node:not(:hover, .selected) .status .go-to-arrow):
+        Hide the go-to arrow unless hovering or selected.
+
+2017-03-11  Matt Baker  <mattbaker@apple.com>
+
         Web Inspector: RTL: fix broken font content view
         https://bugs.webkit.org/show_bug.cgi?id=169513
 
