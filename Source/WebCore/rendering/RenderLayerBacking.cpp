@@ -606,12 +606,12 @@ bool RenderLayerBacking::updateConfiguration()
             m_graphicsLayer->setReplicatedByLayer(reflectionLayer);
         }
     } else
-        m_graphicsLayer->setReplicatedByLayer(0);
+        m_graphicsLayer->setReplicatedByLayer(nullptr);
 
     if (!m_owningLayer.isRootLayer()) {
         bool isSimpleContainer = isSimpleContainerCompositingLayer();
         bool didUpdateContentsRect = false;
-        updateDirectlyCompositedContents(isSimpleContainer, didUpdateContentsRect);
+        updateDirectlyCompositedBoxDecorations(isSimpleContainer, didUpdateContentsRect);
     } else
         updateRootLayerConfiguration();
     
@@ -1096,7 +1096,7 @@ void RenderLayerBacking::updateAfterDescendants()
         bool didUpdateContentsRect = false;
         // FIXME: this duplicates work we did in updateConfiguration().
         isSimpleContainer = isSimpleContainerCompositingLayer();
-        updateDirectlyCompositedContents(isSimpleContainer, didUpdateContentsRect);
+        updateDirectlyCompositedBoxDecorations(isSimpleContainer, didUpdateContentsRect);
         if (!didUpdateContentsRect && m_graphicsLayer->usesContentsLayer())
             resetContentsRect();
     }
@@ -1180,7 +1180,7 @@ void RenderLayerBacking::adjustAncestorCompositingBoundsForFlowThread(LayoutRect
     }
 }
 
-void RenderLayerBacking::updateDirectlyCompositedContents(bool isSimpleContainer, bool& didUpdateContentsRect)
+void RenderLayerBacking::updateDirectlyCompositedBoxDecorations(bool isSimpleContainer, bool& didUpdateContentsRect)
 {
     if (!m_owningLayer.hasVisibleContent())
         return;
@@ -1709,8 +1709,11 @@ static inline bool hasVisibleBoxDecorations(const RenderStyle& style)
     return style.hasVisibleBorder() || style.hasBorderRadius() || style.hasOutline() || style.hasAppearance() || style.boxShadow() || style.hasFilter();
 }
 
-static bool canCreateTiledImage(const RenderStyle& style)
+static bool canDirectlyCompositeBackgroundBackgroundImage(const RenderStyle& style)
 {
+    if (!GraphicsLayer::supportsContentsTiling())
+        return false;
+
     auto& fillLayer = style.backgroundLayers();
     if (fillLayer.next())
         return false;
@@ -1738,7 +1741,7 @@ static bool canCreateTiledImage(const RenderStyle& style)
     return true;
 }
 
-static bool hasVisibleBoxDecorationsOrBackgroundImage(const RenderStyle& style)
+static bool hasPaintedBoxDecorationsOrBackgroundImage(const RenderStyle& style)
 {
     if (hasVisibleBoxDecorations(style))
         return true;
@@ -1746,7 +1749,7 @@ static bool hasVisibleBoxDecorationsOrBackgroundImage(const RenderStyle& style)
     if (!style.hasBackgroundImage())
         return false;
 
-    return !GraphicsLayer::supportsContentsTiling() || !canCreateTiledImage(style);
+    return !canDirectlyCompositeBackgroundBackgroundImage(style);
 }
 
 static inline bool hasPerspectiveOrPreserves3D(const RenderStyle& style)
@@ -1832,7 +1835,7 @@ void RenderLayerBacking::updateRootLayerConfiguration()
     }
 }
 
-static bool supportsDirectBoxDecorationsComposition(const RenderLayerModelObject& renderer)
+static bool supportsDirectlyCompositedBoxDecorations(const RenderLayerModelObject& renderer)
 {
     if (!GraphicsLayer::supportsBackgroundColorContent())
         return false;
@@ -1841,7 +1844,7 @@ static bool supportsDirectBoxDecorationsComposition(const RenderLayerModelObject
     if (renderer.hasClip())
         return false;
 
-    if (hasVisibleBoxDecorationsOrBackgroundImage(style))
+    if (hasPaintedBoxDecorationsOrBackgroundImage(style))
         return false;
 
     // FIXME: We can't create a directly composited background if this
@@ -1864,7 +1867,7 @@ bool RenderLayerBacking::paintsBoxDecorations() const
     if (!m_owningLayer.hasVisibleBoxDecorations())
         return false;
 
-    return !supportsDirectBoxDecorationsComposition(renderer());
+    return !supportsDirectlyCompositedBoxDecorations(renderer());
 }
 
 bool RenderLayerBacking::paintsChildRenderers() const
@@ -1926,7 +1929,7 @@ bool RenderLayerBacking::isSimpleContainerCompositingLayer() const
         
         // Reject anything that has a border, a border-radius or outline,
         // or is not a simple background (no background, or solid color).
-        if (hasVisibleBoxDecorationsOrBackgroundImage(rootObject->style()))
+        if (hasPaintedBoxDecorationsOrBackgroundImage(rootObject->style()))
             return false;
         
         // Now look at the body's renderer.
@@ -1937,7 +1940,7 @@ bool RenderLayerBacking::isSimpleContainerCompositingLayer() const
         if (!bodyRenderer)
             return false;
         
-        if (hasVisibleBoxDecorationsOrBackgroundImage(bodyRenderer->style()))
+        if (hasPaintedBoxDecorationsOrBackgroundImage(bodyRenderer->style()))
             return false;
     }
 
@@ -2049,7 +2052,7 @@ void RenderLayerBacking::contentChanged(ContentChangeType changeType)
         return;
     }
 
-    if ((changeType == BackgroundImageChanged) && canCreateTiledImage(renderer().style()))
+    if ((changeType == BackgroundImageChanged) && canDirectlyCompositeBackgroundBackgroundImage(renderer().style()))
         updateGeometry();
 
     if ((changeType == MaskImageChanged) && m_maskLayer) {
