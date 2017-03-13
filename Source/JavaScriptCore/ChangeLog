@@ -1,3 +1,16 @@
+2017-03-13  Caio Lima  <ticaiolima@gmail.com>
+
+        [JSC] It should be possible create a label named let when parsing Statement in non strict mode
+        https://bugs.webkit.org/show_bug.cgi?id=168684
+
+        Reviewed by Saam Barati.
+
+        This patch is fixing a Parser bug to allow define a label named
+        ```let``` in sloppy mode when parsing a Statement.
+
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseStatement):
+
 2017-03-11  Filip Pizlo  <fpizlo@apple.com>
 
         Structure::willStoreValueSlow needs to keep the property table alive until the end

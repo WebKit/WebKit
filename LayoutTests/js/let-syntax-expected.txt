@@ -69,6 +69,7 @@ PASS Does not have syntax error: 'let x = { get foo() { let foo = 20; } };'
 PASS Does not have syntax error: ''use strict'; let x = { get foo() { let foo = 20; } };'
 PASS Does not have syntax error: 'let x = { get foo() { class foo { } } };'
 PASS Does not have syntax error: ''use strict'; let x = { get foo() { class foo { } } };'
+PASS Does not have syntax error: 'let x; with ({}) let: y = 3;'
 SyntaxError: Unexpected keyword 'let'. Can't use 'let' as an identifier name for a LexicalDeclaration.
 SyntaxError: Unexpected keyword 'let'. Can't use 'let' as an identifier name for a LexicalDeclaration.
 PASS Has syntax error: 'let let;'
@@ -189,8 +190,8 @@ PASS Has syntax error: 'for (let i = 20, j = 40, i = 10; i < 10; i++) {}'
 SyntaxError: Cannot declare a let variable twice: 'i'.
 SyntaxError: Cannot declare a let variable twice: 'i'.
 PASS Has syntax error: ''use strict'; for (let i = 20, j = 40, i = 10; i < 10; i++) {}'
-SyntaxError: Unexpected identifier 'x'. Parse error.
-SyntaxError: Unexpected identifier 'x'. Parse error.
+SyntaxError: Unexpected identifier 'x'
+SyntaxError: Unexpected identifier 'x'
 PASS Has syntax error: 'let x = 20; if (truth()) let x = 40;'
 SyntaxError: Unexpected keyword 'let'
 SyntaxError: Unexpected keyword 'let'
@@ -387,6 +388,9 @@ PASS Has syntax error: 'function f() { function x(){}; class x{}; }'
 SyntaxError: Cannot declare a class twice: 'x'.
 SyntaxError: Cannot declare a class twice: 'x'.
 PASS Has syntax error: ''use strict'; function f() { function x(){}; class x{}; }'
+SyntaxError: Unexpected identifier 'y'
+SyntaxError: Unexpected identifier 'y'
+PASS Has syntax error: 'let x; with ({}) let y = 3;'
 ReferenceError: Can't find variable: let
 PASS Does not have syntax error: 'let;'
 SyntaxError: Unexpected token ';'. Expected a parameter pattern or a ')' in parameter list.
@@ -437,6 +441,10 @@ PASS Does not have syntax error: 'try { } catch(let) {}'
 SyntaxError: Cannot use the keyword 'let' as a catch parameter name.
 SyntaxError: Cannot use the keyword 'let' as a catch parameter name.
 PASS Has syntax error: ''use strict'; try { } catch(let) {}'
+PASS Does not have syntax error: 'let x; if (true) let: x = 3;'
+SyntaxError: Unexpected keyword 'let'
+SyntaxError: Unexpected keyword 'let'
+PASS Has syntax error: ''use strict'; let x; if (true) let: x = 3;'
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -1,3 +1,14 @@
+2017-03-13  Caio Lima  <ticaiolima@gmail.com>
+
+        [JSC] It should be possible create a label named let when parsing Statement in non strict mode
+        https://bugs.webkit.org/show_bug.cgi?id=168684
+
+        Reviewed by Saam Barati.
+
+        * js/let-syntax-expected.txt:
+        * js/script-tests/let-syntax.js:
+        (shouldNotHaveSyntaxErrorSloopyOnly):
+
 2017-03-13  Ryan Haddad  <ryanhaddad@apple.com>
 
         Rebaseline js/dom/global-constructors-attributes.html.
