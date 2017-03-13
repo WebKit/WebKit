@@ -359,6 +359,9 @@ void RemoteLayerBackingStore::drawInContext(GraphicsContext& context, CGImageRef
     case PlatformCALayer::LayerTypeRootLayer:
     case PlatformCALayer::LayerTypeAVPlayerLayer:
     case PlatformCALayer::LayerTypeWebGLLayer:
+#if ENABLE(WEBGPU)
+    case PlatformCALayer::LayerTypeWebGPULayer:
+#endif
     case PlatformCALayer::LayerTypeShapeLayer:
     case PlatformCALayer::LayerTypeScrollingLayer:
     case PlatformCALayer::LayerTypeCustom:

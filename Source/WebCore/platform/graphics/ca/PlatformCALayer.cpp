@@ -226,6 +226,11 @@ TextStream& operator<<(TextStream& ts, PlatformCALayer::LayerType layerType)
     case PlatformCALayer::LayerTypeWebGLLayer:
         ts << "web-gl-layer";
         break;
+#if ENABLE(WEBGPU)
+    case PlatformCALayer::LayerTypeWebGPULayer:
+        ts << "webgpu-layer";
+        break;
+#endif
     case PlatformCALayer::LayerTypeShapeLayer:
         ts << "shape-layer";
         break;

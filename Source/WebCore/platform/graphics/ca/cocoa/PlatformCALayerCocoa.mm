@@ -40,6 +40,9 @@
 #import "WebActionDisablingCALayerDelegate.h"
 #import "WebCoreCALayerExtras.h"
 #import "WebGLLayer.h"
+#if ENABLE(WEBGPU)
+#import "WebGPULayer.h"
+#endif
 #import "WebLayer.h"
 #import "WebSystemBackdropLayer.h"
 #import "WebTiledBackingLayer.h"
@@ -195,6 +198,11 @@ PlatformCALayer::LayerType PlatformCALayerCocoa::layerTypeForPlatformLayer(Platf
     if ([layer isKindOfClass:[WebGLLayer class]])
         return LayerTypeWebGLLayer;
 
+#if ENABLE(WEBGPU)
+    if ([layer isKindOfClass:[WebGPULayer class]])
+        return LayerTypeWebGPULayer;
+#endif
+
     return LayerTypeCustom;
 }
 
@@ -246,6 +254,9 @@ PlatformCALayerCocoa::PlatformCALayerCocoa(LayerType layerType, PlatformCALayerC
     case LayerTypeAVPlayerLayer:
         layerClass = getAVPlayerLayerClass();
         break;
+#if ENABLE(WEBGPU)
+    case LayerTypeWebGPULayer:
+#endif
     case LayerTypeWebGLLayer:
         // We don't create PlatformCALayerCocoas wrapped around WebGLLayers.
         ASSERT_NOT_REACHED();
@@ -284,7 +295,11 @@ void PlatformCALayerCocoa::commonInit()
     [m_layer setValue:[NSValue valueWithPointer:this] forKey:platformCALayerPointer];
     
     // Clear all the implicit animations on the CALayer
+#if ENABLE(WEBGPU)
+    if (m_layerType == LayerTypeAVPlayerLayer || m_layerType == LayerTypeWebGLLayer || m_layerType == LayerTypeWebGPULayer || m_layerType == LayerTypeScrollingLayer || m_layerType == LayerTypeCustom)
+#else
     if (m_layerType == LayerTypeAVPlayerLayer || m_layerType == LayerTypeWebGLLayer || m_layerType == LayerTypeScrollingLayer || m_layerType == LayerTypeCustom)
+#endif
         [m_layer web_disableAllActions];
     else
         [m_layer setDelegate:[WebActionDisablingCALayerDelegate shared]];

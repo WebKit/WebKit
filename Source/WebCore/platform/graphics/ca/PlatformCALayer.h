@@ -73,6 +73,9 @@ public:
         LayerTypeRootLayer,
         LayerTypeAVPlayerLayer,
         LayerTypeWebGLLayer,
+#if ENABLE(WEBGPU)
+        LayerTypeWebGPULayer,
+#endif
         LayerTypeBackdropLayer,
         LayerTypeShapeLayer,
         LayerTypeLightSystemBackdropLayer,

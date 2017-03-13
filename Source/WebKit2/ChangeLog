@@ -1,3 +1,25 @@
+2017-03-13  Dean Jackson  <dino@apple.com>
+
+        WebGPU remote layer hosting
+        https://bugs.webkit.org/show_bug.cgi?id=169539
+        <rdar://problem/31005380>
+
+        Reviewed by Jon Lee.
+
+        Implement the host-side part of WebGPULayer.
+
+        * Shared/mac/RemoteLayerBackingStore.mm: Add support for LayerTypeWebGPULayer.
+        (WebKit::RemoteLayerBackingStore::drawInContext):
+        * Shared/mac/RemoteLayerTreeTransaction.mm: Ditto.
+        (WebKit::RemoteLayerTreeTransaction::description):
+        * UIProcess/ios/RemoteLayerTreeHostIOS.mm: Ditto.
+        (WebKit::RemoteLayerTreeHost::createLayer):
+        * UIProcess/mac/RemoteLayerTreeHost.mm: Ditto.
+        (WebKit::RemoteLayerTreeHost::createLayer):
+        * WebProcess/WebPage/mac/PlatformCALayerRemoteCustom.mm: Ditto.
+        (WebKit::PlatformCALayerRemoteCustom::PlatformCALayerRemoteCustom):
+        (WebKit::PlatformCALayerRemoteCustom::clone):
+
 2017-03-13  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed GTK+ build fix. Use WTF::Function<> for the
