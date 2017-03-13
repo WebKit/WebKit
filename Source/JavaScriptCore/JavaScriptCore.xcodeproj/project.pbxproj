@@ -2384,7 +2384,6 @@
 		FE3022D31E3D73A500BAC493 /* SigillCrashAnalyzer.h in Headers */ = {isa = PBXBuildFile; fileRef = FE3022D11E3D739600BAC493 /* SigillCrashAnalyzer.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE3022D61E42857300BAC493 /* VMInspector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE3022D41E42856700BAC493 /* VMInspector.cpp */; };
 		FE3022D71E42857300BAC493 /* VMInspector.h in Headers */ = {isa = PBXBuildFile; fileRef = FE3022D51E42856700BAC493 /* VMInspector.h */; };
-		FE3022D91E43C93400BAC493 /* JSVirtualMachinePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = FE3022D81E43C85500BAC493 /* JSVirtualMachinePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE318FDF1CAC982700DFCC54 /* ECMAScriptSpecInternalFunctions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE318FDD1CAC8C5300DFCC54 /* ECMAScriptSpecInternalFunctions.cpp */; };
 		FE318FE01CAC982F00DFCC54 /* ECMAScriptSpecInternalFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = FE318FDE1CAC8C5300DFCC54 /* ECMAScriptSpecInternalFunctions.h */; };
 		FE3422121D6B81C30032BE88 /* ThrowScope.h in Headers */ = {isa = PBXBuildFile; fileRef = FE3422111D6B818C0032BE88 /* ThrowScope.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -4974,7 +4973,6 @@
 		FE3022D11E3D739600BAC493 /* SigillCrashAnalyzer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SigillCrashAnalyzer.h; sourceTree = "<group>"; };
 		FE3022D41E42856700BAC493 /* VMInspector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VMInspector.cpp; sourceTree = "<group>"; };
 		FE3022D51E42856700BAC493 /* VMInspector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VMInspector.h; sourceTree = "<group>"; };
-		FE3022D81E43C85500BAC493 /* JSVirtualMachinePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSVirtualMachinePrivate.h; sourceTree = "<group>"; };
 		FE318FDD1CAC8C5300DFCC54 /* ECMAScriptSpecInternalFunctions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ECMAScriptSpecInternalFunctions.cpp; sourceTree = "<group>"; };
 		FE318FDE1CAC8C5300DFCC54 /* ECMAScriptSpecInternalFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECMAScriptSpecInternalFunctions.h; sourceTree = "<group>"; };
 		FE3422111D6B818C0032BE88 /* ThrowScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThrowScope.h; sourceTree = "<group>"; };
@@ -6035,7 +6033,6 @@
 				86E3C60F167BAB87006D760A /* JSVirtualMachine.h */,
 				86E3C610167BAB87006D760A /* JSVirtualMachine.mm */,
 				86E3C611167BAB87006D760A /* JSVirtualMachineInternal.h */,
-				FE3022D81E43C85500BAC493 /* JSVirtualMachinePrivate.h */,
 				A7482E37116A697B003B0712 /* JSWeakObjectMapRefInternal.h */,
 				A7482B7A1166CDEA003B0712 /* JSWeakObjectMapRefPrivate.cpp */,
 				A7482B791166CDEA003B0712 /* JSWeakObjectMapRefPrivate.h */,
@@ -8939,7 +8936,6 @@
 				BC18C42C0E16F5CD00B34460 /* JSValueRef.h in Headers */,
 				86E3C615167BABD7006D760A /* JSVirtualMachine.h in Headers */,
 				86E3C61D167BABEE006D760A /* JSVirtualMachineInternal.h in Headers */,
-				FE3022D91E43C93400BAC493 /* JSVirtualMachinePrivate.h in Headers */,
 				A7CA3AE817DA41AE006538AF /* JSWeakMap.h in Headers */,
 				A7482E93116A7CAD003B0712 /* JSWeakObjectMapRefInternal.h in Headers */,
 				A7482B9311671147003B0712 /* JSWeakObjectMapRefPrivate.h in Headers */,
