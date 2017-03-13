@@ -60,6 +60,20 @@ CLSID gRegCLSIDs[] = {
 };
 #undef CLSID_FOR_CLASS
 
+#if defined(DEPRECATED_EXPORT_SYMBOLS)
+
+// Force symbols to be included so we can export them for legacy clients.
+// DEPRECATED! People should get these symbols from JavaScriptCore.dll, not WebKit.dll!
+typedef struct OpaqueJSClass* JSClassRef;
+typedef const struct OpaqueJSContext* JSContextRef;
+typedef const struct OpaqueJSValue* JSValueRef;
+typedef struct OpaqueJSString* JSStringRef;
+typedef wchar_t JSChar;
+typedef unsigned JSPropertyAttributes;
+struct JSClassDefinition;
+
+#endif
+
 HashCountedSet<String>& gClassNameCount()
 {
     static NeverDestroyed<HashCountedSet<String>> gClassNameCount;
@@ -286,103 +300,103 @@ void bindJavaScriptTrampoline()
 extern "C"
 {
 
-JSClassRef JSClassCreate(const JSClassDefinition* definition)
+WEBKIT_API JSClassRef JSClassCreate(const JSClassDefinition* definition)
 {
     if (m_jsClassCreateFunction)
         return m_jsClassCreateFunction(definition);
     return nullptr;
 }
 
-void* JSObjectGetPrivate(JSObjectRef object)
+WEBKIT_API void* JSObjectGetPrivate(JSObjectRef object)
 {
     if (m_jsObjectGetPrivateFunction)
         return m_jsObjectGetPrivateFunction(object);
     return nullptr;
 }
 
-JSObjectRef JSObjectMake(JSContextRef ctx, JSClassRef classRef, void* data)
+WEBKIT_API JSObjectRef JSObjectMake(JSContextRef ctx, JSClassRef classRef, void* data)
 {
     if (m_jsObjectMakeFunction)
         return m_jsObjectMakeFunction(ctx, classRef, data);
     return nullptr;
 }
 
-void JSObjectSetProperty(JSContextRef ctx, JSObjectRef object, JSStringRef propertyName, JSValueRef value, JSPropertyAttributes attributes, JSValueRef* exception)
+WEBKIT_API void JSObjectSetProperty(JSContextRef ctx, JSObjectRef object, JSStringRef propertyName, JSValueRef value, JSPropertyAttributes attributes, JSValueRef* exception)
 {
     if (m_jsObjectSetPropertyFunction)
         m_jsObjectSetPropertyFunction(ctx, object, propertyName, value, attributes, exception);
 }
 
-JSStringRef JSStringCreateWithCFString(CFStringRef value)
+WEBKIT_API JSStringRef JSStringCreateWithCFString(CFStringRef value)
 {
     if (m_jsStringCreateWithCFStringFunction)
         return m_jsStringCreateWithCFStringFunction(value);
     return nullptr;
 }
 
-JSStringRef JSStringCreateWithUTF8CString(const char* value)
+WEBKIT_API JSStringRef JSStringCreateWithUTF8CString(const char* value)
 {
     if (m_jsStringCreateWithUTF8CStringFunction)
         return m_jsStringCreateWithUTF8CStringFunction(value);
     return nullptr;
 }
 
-const JSChar* JSStringGetCharactersPtr(JSStringRef value)
+WEBKIT_API const JSChar* JSStringGetCharactersPtr(JSStringRef value)
 {
     if (m_jsStringGetCharactersPtrFunction)
         return m_jsStringGetCharactersPtrFunction(value);
     return nullptr;
 }
 
-size_t JSStringGetLength(JSStringRef value)
+WEBKIT_API size_t JSStringGetLength(JSStringRef value)
 {
     if (m_jsStringGetLengthFunction)
         return m_jsStringGetLengthFunction(value);
     return 0;
 }
 
-void JSStringRelease(JSStringRef value)
+WEBKIT_API void JSStringRelease(JSStringRef value)
 {
     if (m_jsStringReleaseFunction)
         return m_jsStringReleaseFunction(value);
 }
 
-bool JSValueIsNumber(JSContextRef ctx, JSValueRef value)
+WEBKIT_API bool JSValueIsNumber(JSContextRef ctx, JSValueRef value)
 {
     if (m_jsValueIsNumberFunction)
         return m_jsValueIsNumberFunction(ctx, value);
     return false;
 }
 
-bool JSValueIsString(JSContextRef ctx, JSValueRef value)
+WEBKIT_API bool JSValueIsString(JSContextRef ctx, JSValueRef value)
 {
     if (m_jsValueIsStringFunction)
         return m_jsValueIsStringFunction(ctx, value);
     return false;
 }
 
-JSValueRef JSValueMakeString(JSContextRef ctx, JSStringRef value)
+WEBKIT_API JSValueRef JSValueMakeString(JSContextRef ctx, JSStringRef value)
 {
     if (m_jsValueMakeStringFunction)
         return m_jsValueMakeStringFunction(ctx, value);
     return nullptr;
 }
 
-JSValueRef JSValueMakeUndefined(JSContextRef ctx)
+WEBKIT_API JSValueRef JSValueMakeUndefined(JSContextRef ctx)
 {
     if (m_jsValueMakeUndefinedFunction)
         return m_jsValueMakeUndefinedFunction(ctx);
     return nullptr;
 }
 
-double JSValueToNumber(JSContextRef ctx, JSValueRef value, JSValueRef* exception)
+WEBKIT_API double JSValueToNumber(JSContextRef ctx, JSValueRef value, JSValueRef* exception)
 {
     if (m_jsValueToNumberFunction)
         return m_jsValueToNumberFunction(ctx, value, exception);
     return 0;
 }
 
-JSStringRef JSValueToStringCopy(JSContextRef ctx, JSValueRef value, JSValueRef* exception)
+WEBKIT_API JSStringRef JSValueToStringCopy(JSContextRef ctx, JSValueRef value, JSValueRef* exception)
 {
     if (m_jsValueToStringCopyFunction)
         return m_jsValueToStringCopyFunction(ctx, value, exception);

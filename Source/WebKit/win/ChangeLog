@@ -1,5 +1,17 @@
 2017-03-13  Per Arne Vollan  <pvollan@apple.com>
 
+        [Win] Compile fix.
+        https://bugs.webkit.org/show_bug.cgi?id=169545
+
+        Reviewed by Brent Fulgham.
+
+        Fix inconsistent dll linkage warnings.
+ 
+        * WebKitDLL.cpp:
+        * WebKitDLL.h:
+
+2017-03-13  Per Arne Vollan  <pvollan@apple.com>
+
         Unreviewed Win build fix.
         
         WebCore::CookiesStrategy::addCookie has been removed, we should also remove the override.
