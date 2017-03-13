@@ -36,6 +36,7 @@
 #include "JSBoundFunction.h"
 #include "JSCInlines.h"
 #include "ObjectConstructor.h"
+#include <unicode/ucurr.h>
 
 namespace JSC {
 
@@ -94,62 +95,17 @@ static Vector<String> localeData(const String& locale, size_t keyIndex)
     return numberingSystemsForLocale(locale);
 }
 
-static inline unsigned computeCurrencySortKey(const String& currency)
-{
-    ASSERT(currency.length() == 3);
-    ASSERT(currency.isAllSpecialCharacters<isASCIIUpper>());
-    return (currency[0] << 16) + (currency[1] << 8) + currency[2];
-}
-
-static inline unsigned computeCurrencySortKey(const char* currency)
-{
-    ASSERT(strlen(currency) == 3);
-    ASSERT(isAllSpecialCharacters<isASCIIUpper>(currency, 3));
-    return (currency[0] << 16) + (currency[1] << 8) + currency[2];
-}
-
-static unsigned extractCurrencySortKey(std::pair<const char*, unsigned>* currencyMinorUnit)
-{
-    return computeCurrencySortKey(currencyMinorUnit->first);
-}
-
 static unsigned computeCurrencyDigits(const String& currency)
 {
     // 11.1.1 The abstract operation CurrencyDigits (currency)
     // "If the ISO 4217 currency and funds code list contains currency as an alphabetic code,
     // then return the minor unit value corresponding to the currency from the list; else return 2.
-    std::pair<const char*, unsigned> currencyMinorUnits[] = {
-        { "BHD", 3 },
-        { "BIF", 0 },
-        { "BYR", 0 },
-        { "CLF", 4 },
-        { "CLP", 0 },
-        { "DJF", 0 },
-        { "GNF", 0 },
-        { "IQD", 3 },
-        { "ISK", 0 },
-        { "JOD", 3 },
-        { "JPY", 0 },
-        { "KMF", 0 },
-        { "KRW", 0 },
-        { "KWD", 3 },
-        { "LYD", 3 },
-        { "OMR", 3 },
-        { "PYG", 0 },
-        { "RWF", 0 },
-        { "TND", 3 },
-        { "UGX", 0 },
-        { "UYI", 0 },
-        { "VND", 0 },
-        { "VUV", 0 },
-        { "XAF", 0 },
-        { "XOF", 0 },
-        { "XPF", 0 }
-    };
-    auto* currencyMinorUnit = tryBinarySearch<std::pair<const char*, unsigned>>(currencyMinorUnits, WTF_ARRAY_LENGTH(currencyMinorUnits), computeCurrencySortKey(currency), extractCurrencySortKey);
-    if (currencyMinorUnit)
-        return currencyMinorUnit->second;
-    return 2;
+    Vector<UChar> chars = currency.charactersWithNullTermination();
+    UErrorCode status = U_ZERO_ERROR;
+    uint32_t result = ucurr_getDefaultFractionDigits(chars.data(), &status);
+    if (U_FAILURE(status))
+        result = 2;
+    return result;
 }
 
 void IntlNumberFormat::initializeNumberFormat(ExecState& state, JSValue locales, JSValue optionsValue)
