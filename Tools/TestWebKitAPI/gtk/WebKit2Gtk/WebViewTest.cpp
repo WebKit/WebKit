@@ -333,6 +333,15 @@ void WebViewTest::clickMouseButton(int x, int y, unsigned button, unsigned mouse
     doMouseButtonEvent(GDK_BUTTON_RELEASE, x, y, button, mouseModifiers);
 }
 
+void WebViewTest::emitPopupMenuSignal()
+{
+    GtkWidget* viewWidget = GTK_WIDGET(m_webView);
+    g_assert(gtk_widget_get_realized(viewWidget));
+
+    gboolean handled;
+    g_signal_emit_by_name(viewWidget, "popup-menu", &handled);
+}
+
 void WebViewTest::keyStroke(unsigned keyVal, unsigned keyModifiers)
 {
     g_assert(m_parentWindow);

@@ -234,7 +234,7 @@ public:
 
 #if ENABLE(CONTEXT_MENUS)
     WEBCORE_EXPORT bool sendContextMenuEvent(const PlatformMouseEvent&);
-    bool sendContextMenuEventForKey();
+    WEBCORE_EXPORT bool sendContextMenuEventForKey();
 #endif
 
     void setMouseDownMayStartAutoscroll() { m_mouseDownMayStartAutoscroll = true; }

@@ -897,6 +897,7 @@ public:
 #if ENABLE(CONTEXT_MENUS)
     // Called by the WebContextMenuProxy.
     void contextMenuItemSelected(const WebContextMenuItemData&);
+    void handleContextMenuKeyEvent();
 #endif
 
     // Called by the WebOpenPanelResultListenerProxy.

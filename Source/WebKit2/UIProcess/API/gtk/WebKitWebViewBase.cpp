@@ -807,6 +807,20 @@ static gboolean webkitWebViewBaseScrollEvent(GtkWidget* widget, GdkEventScroll* 
     return TRUE;
 }
 
+static gboolean webkitWebViewBasePopupMenu(GtkWidget* widget)
+{
+    WebKitWebViewBase* webViewBase = WEBKIT_WEB_VIEW_BASE(widget);
+    WebKitWebViewBasePrivate* priv = webViewBase->priv;
+
+    GdkEvent* currentEvent = gtk_get_current_event();
+    if (!currentEvent)
+        currentEvent = gdk_event_new(GDK_NOTHING);
+    priv->contextMenuEvent.reset(currentEvent);
+    priv->pageProxy->handleContextMenuKeyEvent();
+
+    return TRUE;
+}
+
 static gboolean webkitWebViewBaseMotionNotifyEvent(GtkWidget* widget, GdkEventMotion* event)
 {
     WebKitWebViewBase* webViewBase = WEBKIT_WEB_VIEW_BASE(widget);
@@ -1121,6 +1135,7 @@ static void webkit_web_view_base_class_init(WebKitWebViewBaseClass* webkitWebVie
     widgetClass->button_press_event = webkitWebViewBaseButtonPressEvent;
     widgetClass->button_release_event = webkitWebViewBaseButtonReleaseEvent;
     widgetClass->scroll_event = webkitWebViewBaseScrollEvent;
+    widgetClass->popup_menu = webkitWebViewBasePopupMenu;
     widgetClass->motion_notify_event = webkitWebViewBaseMotionNotifyEvent;
     widgetClass->enter_notify_event = webkitWebViewBaseCrossingNotifyEvent;
     widgetClass->leave_notify_event = webkitWebViewBaseCrossingNotifyEvent;

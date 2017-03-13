@@ -121,6 +121,7 @@ messages -> WebPage LegacyReceiver {
 
 #if ENABLE(CONTEXT_MENUS)
     ContextMenuHidden()
+    ContextMenuForKeyEvent()
 #endif
 
     ScrollBy(uint32_t scrollDirection, uint32_t scrollGranularity)

@@ -1616,6 +1616,21 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      * </para></listitem>
      * </itemizedlist>
      *
+     * The @event is expected to be one of the following types:
+     * <itemizedlist>
+     * <listitem><para>
+     * a #GdkEventButton of type %GDK_BUTTON_PRESS when the context menu
+     * was triggered with mouse.
+     * <listitem><para>
+     * a #GdkEventKey of type %GDK_KEY_PRESS if the keyboard was used to show
+     * the menu.
+     * </para></listitem>
+     * <listitem><para>
+     * a generic #GdkEvent of type %GDK_NOTHING when the #GtkWidget:popup-menu
+     * signal was used to show the context menu.
+     * </para></listitem>
+     * </itemizedlist>
+     *
      * If the signal handler returns %FALSE the context menu represented by @context_menu
      * will be shown, if it return %TRUE the context menu will not be shown.
      *

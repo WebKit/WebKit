@@ -2899,8 +2899,9 @@ bool EventHandler::sendContextMenuEventForKey()
         RenderBoxModelObject* box = focusedElement->renderBoxModelObject();
         if (!box)
             return false;
-        IntRect clippedRect = box->pixelSnappedAbsoluteClippedOverflowRect();
-        location = IntPoint(clippedRect.x(), clippedRect.maxY() - 1);
+
+        IntRect boundingBoxRect = box->absoluteBoundingBoxRect(true);
+        location = IntPoint(boundingBoxRect.x(), boundingBoxRect.maxY() - 1);
     } else {
         location = IntPoint(
             rightAligned ? view->contentsWidth() - kContextMenuMargin : kContextMenuMargin,
@@ -2932,7 +2933,7 @@ bool EventHandler::sendContextMenuEventForKey()
 
     PlatformMouseEvent platformMouseEvent(position, globalPosition, RightButton, eventType, 1, false, false, false, false, WTF::currentTime(), ForceAtClick, NoTap);
 
-    return !dispatchMouseEvent(eventNames().contextmenuEvent, targetNode, true, 0, platformMouseEvent, false);
+    return sendContextMenuEvent(platformMouseEvent);
 }
 #endif // ENABLE(CONTEXT_MENUS)
 
