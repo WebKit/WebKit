@@ -490,6 +490,15 @@ String WebProcessPool::legacyPlatformDefaultJavaScriptConfigurationDirectory()
 #endif
 }
 
+#if PLATFORM(IOS)
+void WebProcessPool::setJavaScriptConfigurationFileEnabledFromDefaults()
+{
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+
+    setJavaScriptConfigurationFileEnabled([defaults boolForKey:@"WebKitJavaScriptCoreUseConfigFile"]);
+}
+#endif
+
 bool WebProcessPool::isNetworkCacheEnabled()
 {
 #if ENABLE(NETWORK_CACHE)

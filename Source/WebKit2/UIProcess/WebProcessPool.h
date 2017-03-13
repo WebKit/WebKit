@@ -278,6 +278,10 @@ public:
     
     bool javaScriptConfigurationFileEnabled() { return m_javaScriptConfigurationFileEnabled; }
     void setJavaScriptConfigurationFileEnabled(bool flag);
+#if PLATFORM(IOS)
+    void setJavaScriptConfigurationFileEnabledFromDefaults();
+#endif
+
     void garbageCollectJavaScriptObjects();
     void setJavaScriptGarbageCollectorTimerEnabled(bool flag);
 

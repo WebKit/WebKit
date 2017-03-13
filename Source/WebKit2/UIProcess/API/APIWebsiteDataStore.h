@@ -60,12 +60,16 @@ public:
     static String defaultWebSQLDatabaseDirectory();
     static String defaultResourceLoadStatisticsDirectory();
 
+    static String defaultJavaScriptConfigurationDirectory();
+
     static WebKit::WebsiteDataStore::Configuration defaultDataStoreConfiguration();
 
 private:
+    enum ShouldCreateDirectory { CreateDirectory, DontCreateDirectory };
+
     WebsiteDataStore();
 
-    static String tempDirectoryFileSystemRepresentation(const String& directoryName);
+    static String tempDirectoryFileSystemRepresentation(const String& directoryName, ShouldCreateDirectory shouldCreateDirectory = CreateDirectory);
     static String cacheDirectoryFileSystemRepresentation(const String& directoryName);
     static String websiteDataDirectoryFileSystemRepresentation(const String& directoryName);
 

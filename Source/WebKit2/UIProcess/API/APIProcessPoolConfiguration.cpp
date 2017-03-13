@@ -82,7 +82,7 @@ ProcessPoolConfiguration::ProcessPoolConfiguration()
     , m_localStorageDirectory(WebsiteDataStore::defaultLocalStorageDirectory())
     , m_webSQLDatabaseDirectory(WebsiteDataStore::defaultWebSQLDatabaseDirectory())
     , m_mediaKeysStorageDirectory(WebsiteDataStore::defaultMediaKeysStorageDirectory())
-    , m_javaScriptConfigurationDirectory("")
+    , m_javaScriptConfigurationDirectory(WebsiteDataStore::defaultJavaScriptConfigurationDirectory())
 {
 }
 

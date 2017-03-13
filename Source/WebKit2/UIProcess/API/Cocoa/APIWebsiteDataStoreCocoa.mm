@@ -87,7 +87,12 @@ String WebsiteDataStore::defaultResourceLoadStatisticsDirectory()
     return websiteDataDirectoryFileSystemRepresentation("ResourceLoadStatistics");
 }
 
-String WebsiteDataStore::tempDirectoryFileSystemRepresentation(const String& directoryName)
+String WebsiteDataStore::defaultJavaScriptConfigurationDirectory()
+{
+    return tempDirectoryFileSystemRepresentation("JavaScriptCoreDebug", DontCreateDirectory);
+}
+
+String WebsiteDataStore::tempDirectoryFileSystemRepresentation(const String& directoryName, ShouldCreateDirectory shouldCreateDirectory)
 {
     static dispatch_once_t onceToken;
     static NSURL *tempURL;
@@ -108,7 +113,9 @@ String WebsiteDataStore::tempDirectoryFileSystemRepresentation(const String& dir
     });
     
     NSURL *url = [tempURL URLByAppendingPathComponent:directoryName isDirectory:YES];
-    if (![[NSFileManager defaultManager] createDirectoryAtURL:url withIntermediateDirectories:YES attributes:nil error:nullptr])
+
+    if (shouldCreateDirectory == CreateDirectory
+        && (![[NSFileManager defaultManager] createDirectoryAtURL:url withIntermediateDirectories:YES attributes:nil error:nullptr]))
         LOG_ERROR("Failed to create directory %@", url);
     
     return url.absoluteURL.path.fileSystemRepresentation;
@@ -183,6 +190,8 @@ WebKit::WebsiteDataStore::Configuration WebsiteDataStore::defaultDataStoreConfig
     configuration.localStorageDirectory = defaultLocalStorageDirectory();
     configuration.mediaKeysStorageDirectory = defaultMediaKeysStorageDirectory();
     configuration.resourceLoadStatisticsDirectory = defaultResourceLoadStatisticsDirectory();
+    
+    configuration.javaScriptConfigurationDirectory = defaultJavaScriptConfigurationDirectory();
 
     return configuration;
 }

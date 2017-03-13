@@ -599,6 +599,10 @@ WebProcessProxy& WebProcessPool::createNewWebProcess(WebsiteDataStore* websiteDa
     if (!parameters.mediaKeyStorageDirectory.isEmpty())
         SandboxExtension::createHandleWithoutResolvingPath(parameters.mediaKeyStorageDirectory, SandboxExtension::ReadWrite, parameters.mediaKeyStorageDirectoryExtensionHandle);
 
+#if PLATFORM(IOS)
+    setJavaScriptConfigurationFileEnabledFromDefaults();
+#endif
+
     if (javaScriptConfigurationFileEnabled()) {
         parameters.javaScriptConfigurationDirectory = websiteDataStore ? websiteDataStore->resolvedJavaScriptConfigurationDirectory() : String();
         if (!parameters.javaScriptConfigurationDirectory.isEmpty())
