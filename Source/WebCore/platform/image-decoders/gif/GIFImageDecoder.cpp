@@ -133,6 +133,10 @@ void GIFImageDecoder::clearFrameBufferCache(size_t clearBeforeFrame)
     if (m_frameBufferCache.isEmpty())
         return; // Nothing to do.
 
+    // Lock the decodelock here, as we are going to destroy the GIFImageReader and doing so while
+    // there's an ongoing decode will cause a crash.
+    LockHolder locker(m_decodeLock);
+
     // The "-1" here is tricky.  It does not mean that |clearBeforeFrame| is the
     // last frame we wish to preserve, but rather that we never want to clear
     // the very last frame in the cache: it's empty (so clearing it is

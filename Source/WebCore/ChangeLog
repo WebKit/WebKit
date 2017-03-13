@@ -1,3 +1,18 @@
+2017-03-06  Miguel Gomez  <magomez@igalia.com>
+
+        [GTK] WebProcess from WebKitGtk+ 2.15.x SIGSEVs in GIFLZWContext::doLZW(unsigned char const*, unsigned long) at Source/WebCore/platform/image-decoders/gif/GIFImageReader.cpp:303
+        https://bugs.webkit.org/show_bug.cgi?id=167304
+
+        Reviewed by Carlos Garcia Campos.
+
+        Add a lock to ensure that the GIFImageReader that we are using for decoding is not deleted while
+        the decoding thread is using it.
+
+        No new tests.
+
+        * platform/image-decoders/gif/GIFImageDecoder.cpp:
+        (WebCore::GIFImageDecoder::clearFrameBufferCache):
+
 2017-03-06  Vanessa Chipirrás Navalón  <vchipirras@igalia.com>
 
         [GStreamer] Adopt nullptr
