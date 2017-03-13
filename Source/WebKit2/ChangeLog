@@ -1,3 +1,18 @@
+2017-03-13  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Web Automation: automation commands hang when trying to navigate go/back and it's not possible
+        https://bugs.webkit.org/show_bug.cgi?id=169407
+
+        Reviewed by Michael Catanzaro.
+
+        Trying to navigate back or forward when there are no back/forward items makes the automation commands to hang, because
+        navigation callback is never called. WebPageProxy returns nullptr to indicate no navigation will take place. In
+        that case we can consider that the operation succeeded.
+
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::goBackInBrowsingContext):
+        (WebKit::WebAutomationSession::goForwardInBrowsingContext):
+
 2017-03-13  Zan Dobersek  <zdobersek@igalia.com>
 
         [WK2][CMake] Remove the intermediate NetworkProcess_COMMON_SOURCES variable
