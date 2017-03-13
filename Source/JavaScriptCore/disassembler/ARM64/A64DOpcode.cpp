@@ -327,7 +327,7 @@ const char* A64DOpcodeBitfield::format()
 
     if (!(opc() & 0x1) && ((immediateS() & 0x1f) == 0x1f) && (is64Bit() == (immediateS() >> 5))) {
         // asr/lsr
-        appendInstructionName(!opc() ? "ars" : "lsr");
+        appendInstructionName(!opc() ? "asr" : "lsr");
 
         appendRegisterName(rd(), is64Bit());
         appendSeparator();
