@@ -1,3 +1,16 @@
+2017-03-07  Dave Hyatt  <hyatt@apple.com>
+
+        Animated GIFs fail to play in multi-column layout
+        https://bugs.webkit.org/show_bug.cgi?id=167901
+        <rdar://problem/30382262>
+
+        Reviewed by Zalan Bujtas.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::computeRectForRepaint):
+        Make sure to handle the case where we pass in a null repaintContainer and need
+        to cross a multicolumn flow thread -> region boundary as a result.
+
 2017-03-07  Chris Dumez  <cdumez@apple.com>
 
         Align initEvent / initCustomEvent / initMessageEvent with the latest specification

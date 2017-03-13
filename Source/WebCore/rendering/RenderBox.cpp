@@ -57,6 +57,7 @@
 #include "RenderIterator.h"
 #include "RenderLayer.h"
 #include "RenderLayerCompositor.h"
+#include "RenderMultiColumnFlowThread.h"
 #include "RenderNamedFlowFragment.h"
 #include "RenderNamedFlowThread.h"
 #include "RenderTableCell.h"
@@ -2293,6 +2294,21 @@ LayoutRect RenderBox::computeRectForRepaint(const LayoutRect& rect, const Render
         adjustedRect.expand(locationOffset - flooredLocationOffset);
         locationOffset = flooredLocationOffset;
     }
+
+    if (is<RenderMultiColumnFlowThread>(this)) {
+        // We won't normally run this code. Only when the repaintContainer is null (i.e., we're trying
+        // to get the rect in view coordinates) will we come in here, since normally repaintContainer
+        // will be set and we'll stop at the flow thread. This case is mainly hit by the check for whether
+        // or not images should animate.
+        // FIXME: Just as with offsetFromContainer, we aren't really handling objects that span
+        // multiple columns properly.
+        LayoutPoint physicalPoint(flipForWritingMode(adjustedRect.location()));
+        if (auto* region = downcast<RenderMultiColumnFlowThread>(*this).physicalTranslationFromFlowToRegion((physicalPoint))) {
+            adjustedRect.setLocation(region->flipForWritingMode(physicalPoint));
+            return region->computeRectForRepaint(adjustedRect, repaintContainer, context);
+        }
+    }
+
     LayoutPoint topLeft = adjustedRect.location();
     topLeft.move(locationOffset);
 
