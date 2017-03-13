@@ -243,7 +243,7 @@ WKPreferences *defaultPreferences()
     if (browserWindowController) {
         NSOpenPanel *openPanel = [[NSOpenPanel openPanel] retain];
         [openPanel beginSheetModalForWindow:browserWindowController.window completionHandler:^(NSInteger result) {
-            if (result != NSFileHandlingPanelOKButton)
+            if (result != NSModalResponseOK)
                 return;
 
             NSURL *url = [openPanel.URLs objectAtIndex:0];
@@ -254,7 +254,7 @@ WKPreferences *defaultPreferences()
 
     NSOpenPanel *openPanel = [NSOpenPanel openPanel];
     [openPanel beginWithCompletionHandler:^(NSInteger result) {
-        if (result != NSFileHandlingPanelOKButton)
+        if (result != NSModalResponseOK)
             return;
 
         BrowserWindowController *controller = [self createBrowserWindowController:nil];

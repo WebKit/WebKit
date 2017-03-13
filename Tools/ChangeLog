@@ -1,3 +1,14 @@
+2017-03-13  Anders Carlsson  <andersca@apple.com>
+
+        Fix build warnings.
+
+        * MiniBrowser/mac/AppDelegate.m:
+        (-[BrowserAppDelegate openDocument:]):
+        * MiniBrowser/mac/ExtensionManagerWindowController.m:
+        (-[ExtensionManagerWindowController add:]):
+        * MiniBrowser/mac/WK2BrowserWindowController.m:
+        (-[WK2BrowserWindowController webView:runOpenPanelWithParameters:initiatedByFrame:completionHandler:webView:runOpenPanelWithParameters:initiatedByFrame:completionHandler:]):
+
 2017-03-13  Martin Robinson  <mrobinson@igalia.com>
 
         Remove my email from some of the watchlists

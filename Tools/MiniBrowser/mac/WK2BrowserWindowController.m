@@ -507,7 +507,7 @@ static BOOL areEssentiallyEqual(double a, double b)
     openPanel.allowsMultipleSelection = parameters.allowsMultipleSelection;
 
     [openPanel beginSheetModalForWindow:webView.window completionHandler:^(NSInteger result) {
-        if (result == NSFileHandlingPanelOKButton)
+        if (result == NSModalResponseOK)
             completionHandler(openPanel.URLs);
         else
             completionHandler(nil);

@@ -75,7 +75,7 @@
     
     [openPanel beginSheetModalForWindow:self.window completionHandler:^(NSInteger result)
     {
-        if (result != NSFileHandlingPanelOKButton)
+        if (result != NSModalResponseOK)
             return;
 
         NSURL *url = [openPanel.URLs objectAtIndex:0];
