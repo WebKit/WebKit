@@ -1,3 +1,19 @@
+2017-03-10  Antti Koivisto  <antti@apple.com>
+
+        imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/sizes/parse-a-sizes-attribute.html is unreliable
+        https://bugs.webkit.org/show_bug.cgi?id=169465
+
+        Reviewed by Zalan Bujtas.
+
+        It shows all subtests passing but that is a bug. We don't even support all the unit types.
+        The test occasionally fails when reloading, that failing results are actually the correct ones.
+
+        * css/parser/SizesAttributeParser.cpp:
+        (WebCore::SizesAttributeParser::SizesAttributeParser):
+
+            Ensure we have correct size for the iframe before parsing 'sizes' attribute values. The interpretation of
+            these may depend on the iframe dimensions.
+
 2017-03-09  Chris Dumez  <cdumez@apple.com>
 
         Align Document.elementFromPoint() with the CSSOM specification
