@@ -1,5 +1,11 @@
 2017-03-13  Devin Rousso  <webkit@devinrousso.com>
 
+        Unreviewed, fix accidental comma.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
+2017-03-13  Devin Rousso  <webkit@devinrousso.com>
+
         Unreviewed, change my email.
 
         * Scripts/webkitpy/common/config/contributors.json:
