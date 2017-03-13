@@ -315,8 +315,6 @@ webkit.org/b/168357 imported/w3c/web-platform-tests/resource-timing/rt-initiator
 webkit.org/b/168448 imported/w3c/web-platform-tests/resource-timing/rt-shared-resource-in-frames.html [ Pass Failure ]
 webkit.org/b/168448 imported/w3c/web-platform-tests/resource-timing/rt-shared-resource-in-workers.html [ Pass Failure ]
 
-webkit.org/b/161176 [ Debug ] imported/w3c/web-platform-tests/url/url-setters.html [ Skip ]
-
 webkit.org/b/157068 imported/w3c/web-platform-tests/fetch/nosniff/importscripts.html [ Skip ]
 webkit.org/b/157145 imported/w3c/web-platform-tests/fetch/nosniff/stylesheet.html [ Failure Pass ]
 webkit.org/b/161312 imported/w3c/web-platform-tests/html/semantics/document-metadata/the-link-element/document-without-browsing-context.html [ Failure Pass ]

@@ -579,6 +579,7 @@ TEST_F(URLParserTest, ParseRelative)
     checkRelativeURL("notspecial://something#", "file:////var//containers//stuff/", {"notspecial", "", "", "something", 0, "", "", "", "notspecial://something#"}, TestTabs::No);
     checkRelativeURL("http://something?", "file:////var//containers//stuff/", {"http", "", "", "something", 0, "/", "", "", "http://something/?"}, TestTabs::No);
     checkRelativeURL("http://something#", "file:////var//containers//stuff/", {"http", "", "", "something", 0, "/", "", "", "http://something/#"}, TestTabs::No);
+    checkRelativeURL("file:", "file:///path?query#fragment", {"file", "", "", "", 0, "/path", "query", "", "file:///path?query"});
 
     // The checking of slashes in SpecialAuthoritySlashes needed to get this to pass contradicts what is in the spec,
     // but it is included in the web platform tests.
