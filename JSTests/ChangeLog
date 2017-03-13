@@ -1,3 +1,12 @@
+2017-03-08  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [GTK] JSC test stress/arity-check-ftl-throw.js.ftl-no-cjit-validate-sampling-profiler crashing on GTK bot
+        https://bugs.webkit.org/show_bug.cgi?id=160124
+
+        Reviewed by Mark Lam.
+
+        * stress/spread-forward-call-varargs-stack-overflow.js:
+
 2017-02-22  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         JSModuleNamespace object should have IC
