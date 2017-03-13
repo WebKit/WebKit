@@ -92,7 +92,9 @@ class TestRunner:
 
     SLOW = [
         "WTF_Lock.ContendedShortSection",
+        "WTF_Lock.ContendedLongSection",
         "WTF_WordLock.ContendedShortSection",
+        "WTF_WordLock.ContendedLongSection",
         "WebKit2Gtk/TestInspectorServer",
     ]
 

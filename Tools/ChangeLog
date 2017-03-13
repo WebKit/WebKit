@@ -1,3 +1,16 @@
+2017-03-06  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] Mark WTF_Lock.ContendedLongSection and WTF_WordLock.ContendedLongSection as slow.
+
+        Unreviewed test gardening.
+
+        The ContendedShortSection version of this tests were already marked as slow.
+        And the ContendedLongSection version takes more or less the same time to run.
+        They cause time outs on the bot sometimes.
+
+        * Scripts/run-gtk-tests:
+        (TestRunner):
+
 2017-03-06  Alex Christensen  <achristensen@webkit.org>
 
         Fix URLs relative to file URLs with paths beginning with Windows drive letters
