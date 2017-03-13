@@ -1,3 +1,13 @@
+2017-03-10  Mark Lam  <mark.lam@apple.com>
+
+        JSC: BindingNode::bindValue doesn't increase the scope's reference count.
+        https://bugs.webkit.org/show_bug.cgi?id=168546
+        <rdar://problem/30589551>
+
+        Reviewed by Saam Barati.
+
+        * stress/regress-168546.js: Added.
+
 2017-03-06  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Null pointer crash when loading module with unresolved import also as a script file
