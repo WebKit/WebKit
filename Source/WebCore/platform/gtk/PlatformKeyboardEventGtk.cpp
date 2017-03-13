@@ -1266,6 +1266,7 @@ PlatformKeyboardEvent::PlatformKeyboardEvent(GdkEventKey* event, const Compositi
     , m_code(keyCodeForHardwareKeyCode(event->hardware_keycode))
     , m_keyIdentifier(keyIdentifierForGdkKeyCode(event->keyval))
     , m_windowsVirtualKeyCode(windowsKeyCodeForGdkKeyCode(event->keyval))
+    , m_handledByInputMethod(false)
     , m_autoRepeat(false)
     , m_isKeypad(event->keyval >= GDK_KP_Space && event->keyval <= GDK_KP_9)
     , m_isSystemKey(false)
