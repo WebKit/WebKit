@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<p>Test that the parameter to setCustomValidity() is not nullable</p>
+<script>
+function testFormControl(control, name)
+{
+    test(() => {
+        assert_true(control.checkValidity(), "Initial checkValidity()");
+        assert_true(control.validity.valid, "Initial ValidityState.valid");
+        assert_false(control.validity.customError, "Initial ValidityState.customError");
+        assert_equals(control.validationMessage, "", "Initial validationMessage");
+
+        control.setCustomValidity("error");
+        assert_false(control.checkValidity(), "checkValidity() after setting custom validity message to 'error'");
+        assert_false(control.validity.valid, "ValidityState.valid after setting custom validity message to 'error'");
+        assert_true(control.validity.customError, "ValidityState.customError after setting custom validity message to 'error'");
+        assert_equals(control.validationMessage, "error", "validationMessage after setting custom validity message to 'error'");
+
+        control.setCustomValidity(null);
+        assert_false(control.checkValidity(), "checkValidity() after setting custom validity message to null");
+        assert_false(control.validity.valid, "ValidityState.valid after setting custom validity message to null");
+        assert_true(control.validity.customError, "ValidityState.customError after setting custom validity message to null");
+        assert_equals(control.validationMessage, "null", "validationMessage after setting custom validity message to null");
+
+        control.setCustomValidity(undefined);
+        assert_false(control.checkValidity(), "checkValidity() after setting custom validity message to undefined");
+        assert_false(control.validity.valid, "ValidityState.valid after setting custom validity message to undefined");
+        assert_true(control.validity.customError, "ValidityState.customError after setting custom validity message to undefined");
+        assert_equals(control.validationMessage, "undefined", "validationMessage after setting custom validity message to undefined");
+
+        control.setCustomValidity("");
+        assert_true(control.checkValidity(), "checkValidity() after setting custom validity message to empty string");
+        assert_true(control.validity.valid, "ValidityState.valid after setting custom validity message to empty string");
+        assert_false(control.validity.customError, "ValidityState.customError after setting custom validity message to empty string");
+        assert_equals(control.validationMessage, "", "validationMessage after setting custom validity message to empty string");
+    }, name);
+}
+
+function testFormControlBarredFromValidation(control, name)
+{
+    test(() => {
+        assert_true(control.checkValidity(), "Initial checkValidity()");
+        assert_true(control.validity.valid, "Initial ValidityState.valid");
+        assert_false(control.validity.customError, "Initial ValidityState.customError");
+        assert_equals(control.validationMessage, "", "Initial validationMessage");
+
+        control.setCustomValidity("error");
+        assert_true(control.checkValidity(), "checkValidity() after setting custom validity message to 'error'");
+        assert_true(control.validity.valid, "ValidityState.valid after setting custom validity message to 'error'");
+        assert_false(control.validity.customError, "ValidityState.customError after setting custom validity message to 'error'");
+        assert_equals(control.validationMessage, "", "validationMessage after setting custom validity message to 'error'");
+
+        control.setCustomValidity("");
+        assert_true(control.checkValidity(), "checkValidity() after setting custom validity message to empty string");
+        assert_true(control.validity.valid, "ValidityState.valid after setting custom validity message to empty string");
+        assert_false(control.validity.customError, "ValidityState.customError after setting custom validity message to empty string");
+        assert_equals(control.validationMessage, "", "validationMessage after setting custom validity message to empty string");
+    }, name);
+}
+
+testFormControl(document.createElement("button"), "button Element");
+testFormControl(document.createElement("input"), "input Element");
+testFormControl(document.createElement("select"), "select Element");
+testFormControl(document.createElement("textarea"), "textarea Element");
+
+// The following controls are not validated in WebKit (only object seems to be barred from validation in the specification).
+testFormControlBarredFromValidation(document.createElement("fieldset"), "fieldset Element");
+testFormControlBarredFromValidation(document.createElement("keygen"), "keygen Element");
+testFormControlBarredFromValidation(document.createElement("object"), "object Element");
+testFormControlBarredFromValidation(document.createElement("output"), "output Element");
+
+</script>
+</body>
+</html>

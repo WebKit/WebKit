@@ -105,13 +105,13 @@ for (i = 0; i < v.length; i++) {
     v[i].setCustomValidity(undefined);
 }
 shouldBeFalse('customErrorFor("fieldset-many-changes")');
-shouldBeFalse('customErrorFor("button-many-changes")');
+shouldBeTrue('customErrorFor("button-many-changes")');
 shouldBeFalse('customErrorFor("button-button-many-changes")');
 shouldBeFalse('customErrorFor("button-reset-many-changes")');
-shouldBeFalse('customErrorFor("select-many-changes")');
-shouldBeFalse('customErrorFor("textarea-many-changes")');
-shouldBeFalse('customErrorFor("input-many-changes")');
-shouldBeFalse('customErrorFor("input-submit-many-changes")');
+shouldBeTrue('customErrorFor("select-many-changes")');
+shouldBeTrue('customErrorFor("textarea-many-changes")');
+shouldBeTrue('customErrorFor("input-many-changes")');
+shouldBeTrue('customErrorFor("input-submit-many-changes")');
 
 debug('Set with three arguments.');
 for (i = 0; i < v.length; i++)
@@ -129,13 +129,13 @@ debug('Set null.');
 for (i = 0; i < v.length; i++)
     v[i].setCustomValidity(null);
 shouldBeFalse('customErrorFor("fieldset-many-changes")');
-shouldBeFalse('customErrorFor("button-many-changes")');
+shouldBeTrue('customErrorFor("button-many-changes")');
 shouldBeFalse('customErrorFor("button-button-many-changes")');
 shouldBeFalse('customErrorFor("button-reset-many-changes")');
-shouldBeFalse('customErrorFor("select-many-changes")');
-shouldBeFalse('customErrorFor("textarea-many-changes")');
-shouldBeFalse('customErrorFor("input-many-changes")');
-shouldBeFalse('customErrorFor("input-submit-many-changes")');
+shouldBeTrue('customErrorFor("select-many-changes")');
+shouldBeTrue('customErrorFor("textarea-many-changes")');
+shouldBeTrue('customErrorFor("input-many-changes")');
+shouldBeTrue('customErrorFor("input-submit-many-changes")');
 
 debug('Set some value, and set undefined.');
 for (i = 0; i < v.length; i++) {
@@ -143,13 +143,13 @@ for (i = 0; i < v.length; i++) {
     v[i].setCustomValidity(undefined);
 }
 shouldBeFalse('customErrorFor("fieldset-many-changes")');
-shouldBeFalse('customErrorFor("button-many-changes")');
+shouldBeTrue('customErrorFor("button-many-changes")');
 shouldBeFalse('customErrorFor("button-button-many-changes")');
 shouldBeFalse('customErrorFor("button-reset-many-changes")');
-shouldBeFalse('customErrorFor("select-many-changes")');
-shouldBeFalse('customErrorFor("textarea-many-changes")');
-shouldBeFalse('customErrorFor("input-many-changes")');
-shouldBeFalse('customErrorFor("input-submit-many-changes")');
+shouldBeTrue('customErrorFor("select-many-changes")');
+shouldBeTrue('customErrorFor("textarea-many-changes")');
+shouldBeTrue('customErrorFor("input-many-changes")');
+shouldBeTrue('customErrorFor("input-submit-many-changes")');
 
 debug('');
 </script>
