@@ -1103,7 +1103,7 @@ void RenderLayerBacking::updateAfterDescendants()
 
     updateDrawsContent(isSimpleContainer);
 
-    m_graphicsLayer->setContentsVisible(m_owningLayer.hasVisibleContent() || isPaintDestinationForDescendantLayers());
+    m_graphicsLayer->setContentsVisible(m_owningLayer.hasVisibleContent() || hasVisibleNonCompositedDescendants());
     if (m_scrollingLayer) {
         m_scrollingLayer->setContentsVisible(renderer().style().visibility() == VISIBLE);
         m_scrollingLayer->setUserInteractionEnabled(renderer().style().pointerEvents() != PE_NONE);
@@ -1947,7 +1947,9 @@ bool RenderLayerBacking::isSimpleContainerCompositingLayer() const
     return true;
 }
 
-static bool descendantLayerPaintsIntoAncestor(RenderLayer& parent)
+enum class LayerTraversal { Continue, Stop };
+
+static LayerTraversal traverseVisibleNonCompositedDescendantLayers(RenderLayer& parent, std::function<LayerTraversal (const RenderLayer&)> layerFunc)
 {
     // FIXME: We shouldn't be called with a stale z-order lists. See bug 85512.
     parent.updateLayerListsIfNeeded();
@@ -1958,38 +1960,73 @@ static bool descendantLayerPaintsIntoAncestor(RenderLayer& parent)
 
     if (auto* normalFlowList = parent.normalFlowList()) {
         for (auto* childLayer : *normalFlowList) {
-            if (!compositedWithOwnBackingStore(*childLayer) && (childLayer->isVisuallyNonEmpty() || descendantLayerPaintsIntoAncestor(*childLayer)))
-                return true;
+            if (compositedWithOwnBackingStore(*childLayer))
+                continue;
+
+            if (layerFunc(*childLayer) == LayerTraversal::Stop)
+                return LayerTraversal::Stop;
+            
+            if (traverseVisibleNonCompositedDescendantLayers(*childLayer, layerFunc) == LayerTraversal::Stop)
+                return LayerTraversal::Stop;
         }
     }
 
     if (parent.isStackingContainer()) {
         if (!parent.hasVisibleDescendant())
-            return false;
+            return LayerTraversal::Continue;
 
         // Use the m_hasCompositingDescendant bit to optimize?
         if (auto* negZOrderList = parent.negZOrderList()) {
             for (auto* childLayer : *negZOrderList) {
-                if (!compositedWithOwnBackingStore(*childLayer) && (childLayer->isVisuallyNonEmpty() || descendantLayerPaintsIntoAncestor(*childLayer)))
-                    return true;
+                if (compositedWithOwnBackingStore(*childLayer))
+                    continue;
+
+                if (layerFunc(*childLayer) == LayerTraversal::Stop)
+                    return LayerTraversal::Stop;
+
+                if (traverseVisibleNonCompositedDescendantLayers(*childLayer, layerFunc) == LayerTraversal::Stop)
+                    return LayerTraversal::Stop;
             }
         }
 
         if (auto* posZOrderList = parent.posZOrderList()) {
             for (auto* childLayer : *posZOrderList) {
-                if (!compositedWithOwnBackingStore(*childLayer) && (childLayer->isVisuallyNonEmpty() || descendantLayerPaintsIntoAncestor(*childLayer)))
-                    return true;
+                if (compositedWithOwnBackingStore(*childLayer))
+                    continue;
+
+                if (layerFunc(*childLayer) == LayerTraversal::Stop)
+                    return LayerTraversal::Stop;
+
+                if (traverseVisibleNonCompositedDescendantLayers(*childLayer, layerFunc) == LayerTraversal::Stop)
+                    return LayerTraversal::Stop;
             }
         }
     }
 
-    return false;
+    return LayerTraversal::Continue;
 }
 
 // Conservative test for having no rendered children.
 bool RenderLayerBacking::isPaintDestinationForDescendantLayers() const
 {
-    return descendantLayerPaintsIntoAncestor(m_owningLayer);
+    bool hasPaintingDescendant = false;
+    traverseVisibleNonCompositedDescendantLayers(m_owningLayer, [&hasPaintingDescendant](const RenderLayer& layer) {
+        hasPaintingDescendant = layer.isVisuallyNonEmpty();
+        return hasPaintingDescendant ? LayerTraversal::Stop : LayerTraversal::Continue;
+    });
+
+    return hasPaintingDescendant;
+}
+
+bool RenderLayerBacking::hasVisibleNonCompositedDescendants() const
+{
+    bool hasVisibleDescendant = false;
+    traverseVisibleNonCompositedDescendantLayers(m_owningLayer, [&hasVisibleDescendant](const RenderLayer& layer) {
+        hasVisibleDescendant = layer.hasVisibleContent();
+        return hasVisibleDescendant ? LayerTraversal::Stop : LayerTraversal::Continue;
+    });
+
+    return hasVisibleDescendant;
 }
 
 bool RenderLayerBacking::containsPaintedContent(bool isSimpleContainer) const

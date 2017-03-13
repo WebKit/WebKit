@@ -1,3 +1,26 @@
+2017-03-05  Simon Fraser  <simon.fraser@apple.com>
+
+        Make some RenderLayer tree traversal in RenderLayerBacking more generic
+        https://bugs.webkit.org/show_bug.cgi?id=169177
+
+        Reviewed by Zalan Bujtas.
+
+        The real goal of this patch is reduce the number of callers of
+        RenderLayerBacking::isPaintDestinationForDescendantLayers() to one. To achieve that,
+        have the setContentsVisible() logic (which is really just about the CSS 'visibility' property)
+        do its own tree traversal which just consults layer.hasVisibleContent(). So
+        make descendantLayerPaintsIntoAncestor() a generic traversal function which walks
+        descendant layers which may paint into the target layer. The "Visible" in the name
+        reflects the fact that it can bypass a subtree for a layer with !hasVisibleDescendant().
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateAfterDescendants):
+        (WebCore::traverseVisibleNonCompositedDescendantLayers):
+        (WebCore::RenderLayerBacking::isPaintDestinationForDescendantLayers):
+        (WebCore::RenderLayerBacking::hasVisibleNonCompositedDescendants):
+        (WebCore::descendantLayerPaintsIntoAncestor): Deleted.
+        * rendering/RenderLayerBacking.h:
+
 2017-03-04  Simon Fraser  <simon.fraser@apple.com>
 
         Clarify some terminology in RenderLayerBacking
