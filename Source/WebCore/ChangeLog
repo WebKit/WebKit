@@ -1,3 +1,20 @@
+2017-03-05  Simon Fraser  <simon.fraser@apple.com>
+
+        Avoid backing store for layers with empty text nodes in a few more cases
+        https://bugs.webkit.org/show_bug.cgi?id=169185
+
+        Reviewed by Dan Bernstein.
+
+        In hasPaintingNonLayerDescendants() we can check whether the RenderText's linesBoundingBox()
+        is empty to avoid backing store in a few more cases. Also use containsOnlyWhitespace() rather
+        than isAllCollapsibleWhitespace(), because there's no need for backing store for non-selectable
+        whitespace text.
+
+        Covered by existing tests.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::calculateClipRects):
+
 2017-03-05  Chris Dumez  <cdumez@apple.com>
 
         Using <form> in <template> causes following <form> to get swallowed

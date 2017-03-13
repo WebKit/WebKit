@@ -61,7 +61,6 @@ This tests that layers are rebuilt properly after the page is restored from the 
         (GraphicsLayer
           (position 8.00 274.00)
           (bounds 784.00 224.00)
-          (drawsContent 1)
           (children 1
             (GraphicsLayer
               (position -8.00 -8.00)

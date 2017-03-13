@@ -6587,10 +6587,16 @@ static bool hasPaintingNonLayerDescendants(const RenderElement& renderer, int de
     for (const auto& child : childrenOfType<RenderObject>(renderer)) {
         if (++siblingCount > maxSiblingCount)
             return true;
-        
+
         if (is<RenderText>(child)) {
-            bool isSelectable = renderer.style().userSelect() != SELECT_NONE;
-            if (isSelectable || !downcast<RenderText>(child).isAllCollapsibleWhitespace())
+            const auto& renderText = downcast<RenderText>(child);
+            if (renderText.linesBoundingBox().isEmpty())
+                continue;
+
+            if (renderer.style().userSelect() != SELECT_NONE)
+                return true;
+
+            if (!renderText.text()->containsOnlyWhitespace())
                 return true;
         }
         

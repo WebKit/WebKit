@@ -1,3 +1,21 @@
+2017-03-05  Simon Fraser  <simon.fraser@apple.com>
+
+        Avoid backing store for layers with empty text nodes in a few more cases
+        https://bugs.webkit.org/show_bug.cgi?id=169185
+
+        Reviewed by Dan Bernstein.
+
+        inline-block-no-backing.html enhanced to have a layer with non-collapsible whitespace (an &nbsp;).
+
+        Rebaselined other tests.
+
+        * compositing/backing/inline-block-no-backing-expected.txt:
+        * compositing/backing/inline-block-no-backing.html:
+        * compositing/iframes/page-cache-layer-tree-expected.txt:
+        * css3/blending/blend-mode-clip-accelerated-blending-canvas-expected.txt:
+        * platform/ios-simulator-wk2/compositing/backing/inline-block-no-backing-expected.txt:
+        * platform/ios-simulator-wk2/compositing/iframes/page-cache-layer-tree-expected.txt:
+
 2017-03-05  Chris Dumez  <cdumez@apple.com>
 
         Using <form> in <template> causes following <form> to get swallowed
