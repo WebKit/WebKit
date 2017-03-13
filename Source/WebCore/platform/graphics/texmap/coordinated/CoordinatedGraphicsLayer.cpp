@@ -53,7 +53,9 @@ static CoordinatedLayerID toCoordinatedLayerID(GraphicsLayer* layer)
 
 void CoordinatedGraphicsLayer::notifyFlushRequired()
 {
-    ASSERT(m_coordinator);
+    if (!m_coordinator)
+        return;
+
     if (m_coordinator->isFlushingLayerChanges())
         return;
 
