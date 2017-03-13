@@ -61,6 +61,14 @@ void GPUCommandBuffer::presentDrawable(GPUDrawable* drawable)
     drawable->release();
 }
 
+void GPUCommandBuffer::commit()
+{
+    if (!m_commandBuffer)
+        return;
+
+    [m_commandBuffer commit];
+}
+
 } // namespace WebCore
 
 #endif

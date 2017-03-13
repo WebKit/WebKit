@@ -71,23 +71,7 @@ static const int kMaxTextureSize = 4096;
 
 std::unique_ptr<WebGPURenderingContext> WebGPURenderingContext::create(HTMLCanvasElement& canvas)
 {
-    UNUSED_PARAM(canvas);
-/* FIXME: WebGPU - To be implemented.
-    Document& document = canvas.document();
-    Frame* frame = document.frame();
-    if (!frame)
-        return nullptr;
-
-    GPUDevice::Attributes attributes;
-
-    attributes.antialias = false;
-
-    // FIXME: WebGPU - handle retina.
-    // if (page)
-    //     attributes.devicePixelRatio = page->deviceScaleFactor();
-
-    HostWindow* hostWindow = document.view()->root()->hostWindow();
-    RefPtr<GPUDevice> device(GPUDevice::create(attributes, hostWindow));
+    RefPtr<GPUDevice> device(GPUDevice::create());
 
     if (!device) {
         // FIXME: WebGPU - dispatch an event here for the failure.
@@ -99,8 +83,6 @@ std::unique_ptr<WebGPURenderingContext> WebGPURenderingContext::create(HTMLCanva
     renderingContext->suspendIfNeeded();
 
     return renderingContext;
-*/
-    return nullptr;
 }
 
 WebGPURenderingContext::WebGPURenderingContext(HTMLCanvasElement& canvas, PassRefPtr<GPUDevice> device)

@@ -48,7 +48,7 @@ GPUDrawable::GPUDrawable(GPUDevice* device)
 
 void GPUDrawable::release()
 {
-    LOG(WebGPU, "MetalDrawable::release()");
+    LOG(WebGPU, "GPUDrawable::release()");
     m_drawable = nullptr;
 }
     

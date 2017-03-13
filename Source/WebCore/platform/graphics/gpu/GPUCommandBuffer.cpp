@@ -47,10 +47,6 @@ GPUCommandBuffer::~GPUCommandBuffer()
     LOG(WebGPU, "GPUCommandBuffer::~GPUCommandBuffer()");
 }
 
-void GPUCommandBuffer::commit()
-{
-}
-
 RefPtr<GPURenderCommandEncoder> GPUCommandBuffer::createRenderCommandEncoder(GPURenderPassDescriptor* descriptor)
 {
     return GPURenderCommandEncoder::create(this, descriptor);
