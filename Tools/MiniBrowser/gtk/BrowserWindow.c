@@ -259,7 +259,20 @@ static void backForwadlistChanged(WebKitBackForwardList *backForwadlist, WebKitB
 
 static void webViewClose(WebKitWebView *webView, BrowserWindow *window)
 {
-    gtk_widget_destroy(GTK_WIDGET(window));
+    int tabsCount = gtk_notebook_get_n_pages(GTK_NOTEBOOK(window->notebook));
+    if (tabsCount == 1) {
+        gtk_widget_destroy(GTK_WIDGET(window));
+        return;
+    }
+
+    int i;
+    for (i = 0; i < tabsCount; ++i) {
+        BrowserTab *tab = (BrowserTab *)gtk_notebook_get_nth_page(GTK_NOTEBOOK(window->notebook), i);
+        if (browser_tab_get_web_view(tab) == webView) {
+            gtk_widget_destroy(GTK_WIDGET(tab));
+            return;
+        }
+    }
 }
 
 static void webViewRunAsModal(WebKitWebView *webView, BrowserWindow *window)
@@ -799,6 +812,9 @@ static void browserWindowSwitchTab(GtkNotebook *notebook, BrowserTab *tab, guint
 
         WebKitWebView *webView = browser_tab_get_web_view(window->activeTab);
         g_signal_handlers_disconnect_by_data(webView, window);
+
+        /* We always want close to be connected even for not active tabs */
+        g_signal_connect(webView, "close", G_CALLBACK(webViewClose), window);
 
         WebKitBackForwardList *backForwadlist = webkit_web_view_get_back_forward_list(webView);
         g_signal_handlers_disconnect_by_data(backForwadlist, window);
