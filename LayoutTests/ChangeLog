@@ -1,3 +1,14 @@
+2017-03-07  Zalan Bujtas  <zalan@apple.com>
+
+        Simple line layout: Do not use invalid m_lastNonWhitespaceFragment while removing trailing whitespace.
+        https://bugs.webkit.org/show_bug.cgi?id=169288
+        rdar://problem/30576976
+
+        Reviewed by Antti Koivisto.
+
+        * fast/text/simple-line-layout-line-is-all-whitespace-expected.txt: Added.
+        * fast/text/simple-line-layout-line-is-all-whitespace.html: Added.
+
 2017-03-07  Chris Dumez  <cdumez@apple.com>
 
         Align initEvent / initCustomEvent / initMessageEvent with the latest specification

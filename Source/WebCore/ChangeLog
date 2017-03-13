@@ -1,3 +1,22 @@
+2017-03-07  Zalan Bujtas  <zalan@apple.com>
+
+        Simple line layout: Do not use invalid m_lastNonWhitespaceFragment while removing trailing whitespace.
+        https://bugs.webkit.org/show_bug.cgi?id=169288
+        rdar://problem/30576976
+
+        Reviewed by Antti Koivisto.
+
+        When the current line has nothing but whitespace, m_lastNonWhitespaceFragment is invalid so
+        we should not use the start/end values to decide how many characters we need to revert.
+        This patch makes m_lastNonWhitespaceFragment optional. When it's invalid we just remove
+        all the runs from the current line since they are all considered whitespace runs.
+
+        Test: fast/text/simple-line-layout-line-is-all-whitespace.html
+
+        * rendering/SimpleLineLayout.cpp:
+        (WebCore::SimpleLineLayout::revertAllRunsOnCurrentLine):
+        (WebCore::SimpleLineLayout::LineState::removeTrailingWhitespace):
+
 2017-03-07  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         ShadowBlur::calculateLayerBoundingRect doesn't need to return the enclosingIntRect of layerRect

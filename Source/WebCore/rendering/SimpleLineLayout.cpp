@@ -344,6 +344,12 @@ static float computeLineLeft(ETextAlign textAlign, float availableWidth, float c
     return 0;
 }
 
+static void revertAllRunsOnCurrentLine(Layout::RunVector& runs)
+{
+    while (!runs.isEmpty() && !runs.last().isEndOfLine)
+        runs.removeLast();
+}
+
 static void revertRuns(Layout::RunVector& runs, unsigned positionToRevertTo, float width)
 {
     while (runs.size()) {
@@ -489,11 +495,26 @@ public:
 
     void removeTrailingWhitespace(Layout::RunVector& runs)
     {
-        if (m_lastFragment.type() != TextFragmentIterator::TextFragment::Whitespace || m_lastFragment.end() == m_lastNonWhitespaceFragment.end())
+        if (m_lastFragment.type() != TextFragmentIterator::TextFragment::Whitespace)
             return;
-        revertRuns(runs, m_lastNonWhitespaceFragment.end(), m_trailingWhitespaceWidth);
-        m_runsWidth -= m_trailingWhitespaceWidth;
-        m_lastFragment = m_lastNonWhitespaceFragment;
+        if (m_lastNonWhitespaceFragment) {
+            auto needsReverting = m_lastNonWhitespaceFragment->end() != m_lastFragment.end();
+            // Trailing whitespace fragment might actually have zero length.
+            ASSERT(needsReverting || !m_trailingWhitespaceWidth);
+            if (needsReverting) {
+                revertRuns(runs, m_lastNonWhitespaceFragment->end(), m_trailingWhitespaceWidth);
+                m_runsWidth -= m_trailingWhitespaceWidth;
+            }
+            m_trailingWhitespaceWidth = 0;
+            m_lastFragment = *m_lastNonWhitespaceFragment;
+            return;
+        }
+        // This line is all whitespace.
+        revertAllRunsOnCurrentLine(runs);
+        m_runsWidth = 0;
+        m_trailingWhitespaceWidth = 0;
+        // FIXME: Make m_lastFragment optional.
+        m_lastFragment = TextFragmentIterator::TextFragment();
     }
 
 private:
@@ -508,7 +529,7 @@ private:
     float m_runsWidth { 0 };
     TextFragmentIterator::TextFragment m_overflowedFragment;
     TextFragmentIterator::TextFragment m_lastFragment;
-    TextFragmentIterator::TextFragment m_lastNonWhitespaceFragment;
+    std::optional<TextFragmentIterator::TextFragment> m_lastNonWhitespaceFragment;
     TextFragmentIterator::TextFragment m_lastCompleteFragment;
     float m_uncompletedWidth { 0 };
     float m_trailingWhitespaceWidth { 0 }; // Use this to remove trailing whitespace without re-mesuring the text.
