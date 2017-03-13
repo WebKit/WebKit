@@ -282,6 +282,7 @@ describe('/api/manifest', function () {
         Promise.all([
             db.insert('repositories', {id: 11, name: 'WebKit', url: 'https://trac.webkit.org/$1'}),
             db.insert('repositories', {id: 9, name: 'OS X'}),
+            db.insert('repositories', {id: 101, name: 'WebKit', owner: 9, url: 'https://trac.webkit.org/$1'}),
             db.insert('build_triggerables', {id: 200, name: 'build.webkit.org'}),
             db.insert('build_triggerables', {id: 201, name: 'ios-build.webkit.org'}),
             db.insert('tests', {id: 1, name: 'SomeTest'}),
@@ -310,6 +311,11 @@ describe('/api/manifest', function () {
             let webkit = Repository.findById(11);
             assert.equal(webkit.name(), 'WebKit');
             assert.equal(webkit.urlForRevision(123), 'https://trac.webkit.org/123');
+
+            let osWebkit1 = Repository.findById(101);
+            assert.equal(osWebkit1.name(), 'WebKit');
+            assert.equal(osWebkit1.owner(), 9);
+            assert.equal(osWebkit1.urlForRevision(123), 'https://trac.webkit.org/123');
 
             let osx = Repository.findById(9);
             assert.equal(osx.name(), 'OS X');

@@ -188,6 +188,26 @@ class Database
         return $rows ? ($returning == '*' ? $rows[0] : $rows[0][$returning_column_name]) : NULL;
     }
 
+    // FIXME: Should improve _select_update_or_insert_row to handle the NULL column case.
+    function select_or_insert_repository_row($repository_name, $repository_owner_id)
+    {
+        $result = NULL;
+        if ($repository_owner_id == NULL) {
+            $result = $this->query_and_fetch_all('INSERT INTO repositories (repository_name) SELECT $1
+                WHERE NOT EXISTS (SELECT repository_id FROM repositories WHERE repository_name = $2 AND repository_owner IS NULL) RETURNING repository_id',
+                array($repository_name, $repository_name));
+            if (!$result)
+                $result = $this->query_and_fetch_all('SELECT repository_id FROM repositories WHERE repository_name = $1 AND repository_owner IS NULL', array($repository_name));
+        } else {
+            $result = $this->query_and_fetch_all('INSERT INTO repositories (repository_name, repository_owner) SELECT $1, $2
+                WHERE NOT EXISTS (SELECT repository_id FROM repositories WHERE (repository_name, repository_owner) = ($3, $4)) RETURNING repository_id',
+                array($repository_name, $repository_owner_id, $repository_name, $repository_owner_id));
+            if (!$result)
+                $result = $this->query_and_fetch_all('SELECT repository_id FROM repositories WHERE (repository_name, repository_owner) = ($1, $2)', array($repository_name, $repository_owner_id));
+        }
+        return $result ? $result[0]['repository_id'] : NULL;
+    }
+
     function select_first_row($table, $prefix, $params, $order_by = NULL) {
         return $this->select_first_or_last_row($table, $prefix, $params, $order_by, FALSE);
     }

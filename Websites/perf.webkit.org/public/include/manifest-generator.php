@@ -138,6 +138,7 @@ class ManifestGenerator {
                 'name' => $row['repository_name'],
                 'url' => $row['repository_url'],
                 'blameUrl' => $row['repository_blame_url'],
+                'owner'=> $row['repository_owner'],
                 'hasReportedCommits' => in_array($row['repository_id'], $repositories_with_commit));
         }
 

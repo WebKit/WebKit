@@ -27,10 +27,10 @@ class CommitLogFetcher {
 
     function repository_id_from_name($name)
     {
-        $repository_row = $this->db->select_first_row('repositories', 'repository', array('name' => $name));
+        $repository_row = $this->db->query_and_fetch_all('SELECT repository_id FROM repositories WHERE repository_name = $1 AND repository_owner is NULL', array($name));
         if (!$repository_row)
             return NULL;
-        return $repository_row['repository_id'];
+        return $repository_row[0]['repository_id'];
     }
 
     function fetch_between($repository_id, $first, $second, $keyword = NULL) {

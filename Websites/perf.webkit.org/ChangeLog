@@ -1,3 +1,47 @@
+2017-03-13  Dewei Zhu  <dewei_zhu@apple.com>
+
+        Add the ability to report a commit with sub-commits.
+        https://bugs.webkit.org/show_bug.cgi?id=168962
+
+        Reviewed by Ryosuke Niwa.
+
+        Introduce 'commit_ownerships' which records ownership between commits.
+        On existing production server, run ```
+            CREATE TABLE commit_ownerships (
+                commit_owner integer NOT NULL REFERENCES commits ON DELETE CASCADE,
+                commit_ownee integer NOT NULL REFERENCES commits ON DELETE CASCADE,
+                PRIMARY KEY (commit_owner, commit_ownee)
+            );
+            ALTER TABLE repositories RENAME repository_parent TO repository_owner;
+            ALTER TABLE repositories DROP repository_name_must_be_unique;
+            CREATE UNIQUE INDEX repository_name_owner_unique_index ON repositories (repository_owner, repository_name) WHERE repository_owner IS NOT NULL;
+            CREATE UNIQUE INDEX repository_name_unique_index ON repositories (repository_name) WHERE repository_owner IS NULL;
+        ``` to update database.
+        Add unit-tests to cover this change.
+
+        * init-database.sql:
+        * public/api/report-commits.php:
+        * public/include/commit-log-fetcher.php:
+        * public/include/db.php:
+        * public/include/manifest-generator.php:
+        * public/include/report-processor.php:
+        * public/v3/models/repository.js:
+        (Repository):
+        (Repository.prototype.owner):
+        * server-tests/admin-reprocess-report-tests.js:
+        (addBuilderForReport.simpleReportWithRevisions.0.then):
+        (then):
+        * server-tests/api-manifest.js:
+        (then):
+        * server-tests/api-report-commits-tests.js:
+        (addSlaveForReport.sameRepositoryNameInSubCommitAndMajorCommit.then):
+        (then):
+        (addSlaveForReport.systemVersionCommitWithSubcommits.then):
+        (addSlaveForReport.multipleSystemVersionCommitsWithSubcommits.then):
+        (addSlaveForReport.systemVersionCommitWithEmptySubcommits.then):
+        (addSlaveForReport.systemVersionCommitAndSubcommitWithTimestamp.then):
+        * tools/js/database.js:
+
 2017-03-07  Ryosuke Niwa  <rniwa@webkit.org>
 
         Update ReadMe.md to use directory format for backing up & restoring the database

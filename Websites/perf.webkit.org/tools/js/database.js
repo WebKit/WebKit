@@ -136,6 +136,7 @@ const tableToPrefixMap = {
     'builds': 'build',
     'builders': 'builder',
     'commits': 'commit',
+    'commit_ownerships': 'commit',
     'committers': 'committer',
     'test_configurations': 'config',
     'test_metrics': 'metric',

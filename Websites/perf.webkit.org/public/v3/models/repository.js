@@ -7,6 +7,7 @@ class Repository extends LabeledObject {
         this._url = object.url;
         this._blameUrl = object.blameUrl;
         this._hasReportedCommits = object.hasReportedCommits;
+        this._owner = object.owner;
     }
 
     hasUrlForRevision() { return !!this._url; }
@@ -19,6 +20,11 @@ class Repository extends LabeledObject {
     urlForRevisionRange(from, to)
     {
         return (this._blameUrl || '').replace(/\$1/g, from).replace(/\$2/g, to);
+    }
+
+    owner()
+    {
+        return this._owner;
     }
 
     static sortByNamePreferringOnesWithURL(repositories)

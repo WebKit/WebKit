@@ -150,7 +150,7 @@ class ReportProcessor {
 
 
         foreach ($revisions as $repository_name => $revision_data) {
-            $repository_id = $this->db->select_or_insert_row('repositories', 'repository', array('name' => $repository_name));
+            $repository_id = $this->db->select_or_insert_repository_row($repository_name, NULL);
             if (!$repository_id)
                 $this->exit_with_error('FailedToInsertRepository', array('name' => $repository_name));
 
@@ -309,7 +309,7 @@ class TestRunsGenerator {
                 foreach ($aggregators_and_values as $aggregator_and_values) {
                     if ($aggregator_and_values['aggregator'] == $aggregator) {
                         $values = $aggregator_and_values['values'];
-                        break;                        
+                        break;
                     }
                 }
                 if (!$values) {
@@ -404,7 +404,7 @@ class TestRunsGenerator {
                         }
                         $iteration_value = $iteration_value[1];
                     }
-                    array_push($flattened_value, $iteration_value);                    
+                    array_push($flattened_value, $iteration_value);
                 }
             }
             $this->values_to_commit[$i]['mean'] = $this->aggregate_values('Arithmetic', $flattened_value);

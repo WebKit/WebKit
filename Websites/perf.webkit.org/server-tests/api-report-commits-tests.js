@@ -287,4 +287,334 @@ describe("/api/report-commits/", function () {
         }).catch(done);
     });
 
+    const sameRepositoryNameInSubCommitAndMajorCommit = {
+        "slaveName": "someSlave",
+        "slavePassword": "somePassword",
+        "commits": [
+            {
+                "repository": "OSX",
+                "revision": "Sierra16D32",
+                "order": 1,
+                "subCommits": {
+                    "WebKit": {
+                        "revision": "141978",
+                        "author": {"name": "Commit Queue", "account": "commit-queue@webkit.org"},
+                        "message": "WebKit Commit",
+                    },
+                    "JavaScriptCore": {
+                        "revision": "141978",
+                        "author": {"name": "Mikhail Pozdnyakov", "account": "mikhail.pozdnyakov@intel.com"},
+                        "message": "JavaScriptCore commit",
+                    }
+                }
+            },
+            {
+                "repository": "WebKit",
+                "revision": "141978",
+                "author": {"name": "Commit Queue", "account": "commit-queue@webkit.org"},
+                "message": "WebKit Commit",
+            }
+        ]
+    }
+
+    it("should distinguish between repositories with the asme name but with a different owner.", function (done) {
+        const db = TestServer.database();
+        addSlaveForReport(sameRepositoryNameInSubCommitAndMajorCommit).then(function () {
+            return TestServer.remoteAPI().postJSON('/api/report-commits/', sameRepositoryNameInSubCommitAndMajorCommit);
+        }).then(function (response) {
+            assert.equal(response['status'], 'OK');
+            return db.selectRows('repositories', {'name': 'WebKit'});
+        }).then(function (result) {
+            assert.equal(result.length, 2);
+            let osWebKit = result[0];
+            let webkitRepository = result[1];
+            assert.notEqual(osWebKit.id, webkitRepository.id);
+            assert.equal(osWebKit.name, webkitRepository.name);
+            assert.equal(webkitRepository.owner, null);
+            done();
+        })
+    });
+
+    const systemVersionCommitWithSubcommits = {
+        "slaveName": "someSlave",
+        "slavePassword": "somePassword",
+        "commits": [
+            {
+                "repository": "OSX",
+                "revision": "Sierra16D32",
+                "order": 1,
+                "subCommits": {
+                    "WebKit": {
+                        "revision": "141978",
+                        "author": {"name": "Commit Queue", "account": "commit-queue@webkit.org"},
+                        "message": "WebKit Commit",
+                    },
+                    "JavaScriptCore": {
+                        "revision": "141978",
+                        "author": {"name": "Mikhail Pozdnyakov", "account": "mikhail.pozdnyakov@intel.com"},
+                        "message": "JavaScriptCore commit",
+                    }
+                }
+            }
+        ]
+    }
+
+    it("should accept inserting one commit with some sub commits", function (done) {
+        const db = TestServer.database();
+        addSlaveForReport(systemVersionCommitWithSubcommits).then(function () {
+            return TestServer.remoteAPI().postJSON('/api/report-commits/', systemVersionCommitWithSubcommits);
+        }).then(function (response) {
+            assert.equal(response['status'], 'OK');
+            return Promise.all([db.selectRows('commits', {'revision': 'Sierra16D32'}),
+                db.selectRows('commits', {'message': 'WebKit Commit'}),
+                db.selectRows('commits', {'message': 'JavaScriptCore commit'}),
+                db.selectRows('repositories', {'name': 'OSX'}),
+                db.selectRows('repositories', {'name': "WebKit"}),
+                db.selectRows('repositories', {'name': 'JavaScriptCore'})])
+        }).then(function (result) {
+            assert.equal(result.length, 6);
+
+            assert.equal(result[0].length, 1);
+            const osxCommit = result[0][0];
+            assert.notEqual(osxCommit, null);
+
+            assert.equal(result[1].length, 1);
+            const webkitCommit = result[1][0];
+            assert.notEqual(webkitCommit, null);
+
+            assert.equal(result[2].length, 1);
+            const jscCommit = result[2][0];
+            assert.notEqual(jscCommit, null);
+
+            assert.equal(result[3].length, 1);
+            const osxRepository = result[3][0];
+            assert.notEqual(osxRepository, null);
+
+            assert.equal(result[4].length, 1);
+            const webkitRepository = result[4][0];
+            assert.notEqual(webkitRepository, null);
+
+            assert.equal(result[5].length, 1);
+            const jscRepository = result[5][0];
+            assert.notEqual(jscRepository, null);
+
+            assert.equal(osxCommit.repository, osxRepository.id);
+            assert.equal(webkitCommit.repository, webkitRepository.id);
+            assert.equal(jscCommit.repository, jscRepository.id);
+            assert.equal(osxRepository.owner, null);
+            assert.equal(webkitRepository.owner, osxRepository.id);
+            assert.equal(jscRepository.owner, osxRepository.id);
+
+            return Promise.all([db.selectRows('commit_ownerships', {'owner': osxCommit.id, 'owned': webkitCommit.id}, {'sortBy': 'owner'}),
+                db.selectRows('commit_ownerships', {'owner': osxCommit.id, 'owned': jscCommit.id}, {'sortBy': 'owner'}),
+                db.selectRows('commits', {'repository': webkitRepository.id})]);
+        }).then(function (result) {
+            assert.equal(result.length, 3);
+
+            assert.equal(result[0].length, 1);
+            const ownerCommitForWebKitCommit = result[0][0];
+            assert.notEqual(ownerCommitForWebKitCommit, null);
+
+            assert.equal(result[1].length, 1);
+            const ownerCommitForJSCCommit =  result[1][0];
+            assert.notEqual(ownerCommitForJSCCommit, null);
+
+            assert.equal(result[2].length, 1);
+            done();
+        }).catch(done);
+    })
+
+    const multipleSystemVersionCommitsWithSubcommits = {
+        "slaveName": "someSlave",
+        "slavePassword": "somePassword",
+        "commits": [
+            {
+                "repository": "OSX",
+                "revision": "Sierra16D32",
+                "order": 2,
+                "subCommits": {
+                    "WebKit": {
+                        "revision": "141978",
+                        "author": {"name": "Commit Queue", "account": "commit-queue@webkit.org"},
+                        "message": "WebKit Commit",
+                    },
+                    "JavaScriptCore": {
+                        "revision": "141978",
+                        "author": {"name": "Mikhail Pozdnyakov", "account": "mikhail.pozdnyakov@intel.com"},
+                        "message": "JavaScriptCore commit",
+                    }
+                }
+            },
+            {
+                "repository": "OSX",
+                "revision": "Sierra16C67",
+                "order": 1,
+                "subCommits": {
+                    "WebKit": {
+                        "revision": "141978",
+                        "author": {"name": "Commit Queue", "account": "commit-queue@webkit.org"},
+                        "message": "WebKit Commit",
+                    },
+                    "JavaScriptCore": {
+                        "revision": "141999",
+                        "author": {"name": "Mikhail Pozdnyakov", "account": "mikhail.pozdnyakov@intel.com"},
+                        "message": "new JavaScriptCore commit",
+                    }
+                }
+            }
+        ]
+    };
+
+    it("should accept inserting multiple commits with multiple sub-commits", function (done) {
+        const db = TestServer.database();
+        addSlaveForReport(multipleSystemVersionCommitsWithSubcommits).then(function () {
+            return TestServer.remoteAPI().postJSON('/api/report-commits/', multipleSystemVersionCommitsWithSubcommits);
+        }).then(function (response) {
+            assert.equal(response['status'], 'OK');
+            return Promise.all([db.selectRows('commits', {'revision': 'Sierra16D32'}),
+                db.selectRows('commits', {'revision': 'Sierra16C67'}),
+                db.selectRows('commits', {'message': 'WebKit Commit'}),
+                db.selectRows('commits', {'message': 'JavaScriptCore commit'}),
+                db.selectRows('commits', {'message': 'new JavaScriptCore commit'}),
+                db.selectRows('repositories', {'name': 'OSX'}),
+                db.selectRows('repositories', {'name': "WebKit"}),
+                db.selectRows('repositories', {'name': 'JavaScriptCore'})])
+        }).then(function (result) {
+            assert.equal(result.length, 8);
+
+            assert.equal(result[0].length, 1);
+            const osxCommit0 = result[0][0];
+            assert.notEqual(osxCommit0, null);
+
+            assert.equal(result[1].length, 1);
+            const osxCommit1 = result[1][0];
+            assert.notEqual(osxCommit1, null);
+
+            assert.equal(result[2].length, 1);
+            const webkitCommit = result[2][0];
+            assert.notEqual(webkitCommit, null);
+
+            assert.equal(result[3].length, 1);
+            const jscCommit0 = result[3][0];
+            assert.notEqual(jscCommit0, null);
+
+            assert.equal(result[4].length, 1);
+            const jscCommit1 = result[4][0];
+            assert.notEqual(jscCommit1, null);
+
+            assert.equal(result[5].length, 1)
+            const osxRepository = result[5][0];
+            assert.notEqual(osxRepository, null);
+            assert.equal(osxRepository.owner, null);
+
+            assert.equal(result[6].length, 1)
+            const webkitRepository = result[6][0];
+            assert.equal(webkitRepository.owner, osxRepository.id);
+
+            assert.equal(result[7].length, 1);
+            const jscRepository = result[7][0];
+            assert.equal(jscRepository.owner, osxRepository.id);
+
+            assert.equal(osxCommit0.repository, osxRepository.id);
+            assert.equal(osxCommit1.repository, osxRepository.id);
+            assert.equal(webkitCommit.repository, webkitRepository.id);
+            assert.equal(jscCommit0.repository, jscRepository.id);
+            assert.equal(jscCommit1.repository, jscRepository.id);
+            assert.equal(osxRepository.owner, null);
+            assert.equal(webkitRepository.owner, osxRepository.id);
+            assert.equal(jscRepository.owner, osxRepository.id);
+
+            return Promise.all([db.selectRows('commit_ownerships', {'owner': osxCommit0.id, 'owned': webkitCommit.id}, {'sortBy': 'owner'}),
+                db.selectRows('commit_ownerships', {'owner': osxCommit1.id, 'owned': webkitCommit.id}, {'sortBy': 'owner'}),
+                db.selectRows('commit_ownerships', {'owner': osxCommit0.id, 'owned': jscCommit0.id}, {'sortBy': 'owner'}),
+                db.selectRows('commit_ownerships', {'owner': osxCommit1.id, 'owned': jscCommit1.id}, {'sortBy': 'owner'}),
+                db.selectRows('commits', {'repository': webkitRepository.id})]);
+        }).then(function (result) {
+            assert.equal(result.length, 5);
+
+            assert.equal(result[0].length, 1);
+            const ownerCommitForWebKitCommit0 = result[0][0];
+            assert.notEqual(ownerCommitForWebKitCommit0, null);
+
+            assert.equal(result[1].length, 1);
+            const ownerCommitForWebKitCommit1 = result[1][0];
+            assert.notEqual(ownerCommitForWebKitCommit1, null);
+
+            assert.equal(result[2].length, 1);
+            const ownerCommitForJSCCommit0 = result[2][0];
+            assert.notEqual(ownerCommitForJSCCommit0, null);
+
+            assert.equal(result[3].length, 1);
+            const ownerCommitForJSCCommit1 = result[3][0];
+            assert.notEqual(ownerCommitForJSCCommit1, null);
+
+            assert.equal(result[4].length, 1);
+
+            done();
+        }).catch(done);
+    });
+
+    const systemVersionCommitWithEmptySubcommits = {
+        "slaveName": "someSlave",
+        "slavePassword": "somePassword",
+        "commits": [
+            {
+                "repository": "OSX",
+                "revision": "Sierra16D32",
+                "order": 1,
+                "subCommits": {
+                }
+            }
+        ]
+    }
+
+    it("should accept inserting one commit with no sub commits", function (done) {
+        const db = TestServer.database();
+        addSlaveForReport(systemVersionCommitWithEmptySubcommits).then(function () {
+            return TestServer.remoteAPI().postJSON('/api/report-commits/', systemVersionCommitWithEmptySubcommits);
+        }).then(function (response) {
+            assert.equal(response['status'], 'OK');
+            return Promise.all([db.selectAll('commits'), db.selectAll('repositories'), db.selectAll('commit_ownerships', 'owner')]);
+        }).then(function (result) {
+            let commits = result[0];
+            let repositories = result[1];
+            let commit_ownerships = result[2];
+            assert.equal(commits.length, 1);
+            assert.equal(repositories.length, 1);
+            assert.equal(commits[0].repository, repositories[0].id);
+            assert.equal(repositories[0].name, 'OSX');
+            assert.equal(commit_ownerships.length, 0);
+            done();
+        }).catch(done);
+    });
+
+    const systemVersionCommitAndSubcommitWithTimestamp = {
+        "slaveName": "someSlave",
+        "slavePassword": "somePassword",
+        "commits": [
+            {
+                "repository": "OSX",
+                "revision": "Sierra16D32",
+                "order": 1,
+                "subCommits": {
+                    "WebKit": {
+                        "revision": "141978",
+                        "time": "2013-02-06T08:55:20.9Z",
+                        "author": {"name": "Commit Queue", "account": "commit-queue@webkit.org"},
+                        "message": "WebKit Commit",
+                    }
+                }
+            }
+        ]
+    }
+
+    it("should reject inserting one commit with sub commits that contains timestamp", function (done) {
+        const db = TestServer.database();
+        addSlaveForReport(systemVersionCommitAndSubcommitWithTimestamp).then(function () {
+            return TestServer.remoteAPI().postJSON('/api/report-commits/', systemVersionCommitAndSubcommitWithTimestamp);
+        }).then(function (response) {
+            assert.equal(response['status'], 'SubCommitShouldNotContainTimestamp');
+            done();
+        }).catch(done);
+    });
 });

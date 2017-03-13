@@ -7,6 +7,7 @@ DROP TABLE IF EXISTS builds CASCADE;
 DROP TABLE IF EXISTS committers CASCADE;
 DROP TABLE IF EXISTS commits CASCADE;
 DROP TABLE IF EXISTS build_commits CASCADE;
+DROP TABLE IF EXISTS commit_ownerships CASCADE;
 DROP TABLE IF EXISTS build_slaves CASCADE;
 DROP TABLE IF EXISTS builders CASCADE;
 DROP TABLE IF EXISTS repositories CASCADE;
@@ -38,11 +39,15 @@ CREATE TABLE platforms (
 
 CREATE TABLE repositories (
     repository_id serial PRIMARY KEY,
-    repository_parent integer REFERENCES repositories ON DELETE CASCADE,
+    repository_owner integer REFERENCES repositories ON DELETE CASCADE,
     repository_name varchar(64) NOT NULL,
     repository_url varchar(1024),
-    repository_blame_url varchar(1024),
-    CONSTRAINT repository_name_must_be_unique UNIQUE(repository_parent, repository_name));
+    repository_blame_url varchar(1024));
+
+CREATE UNIQUE INDEX repository_name_owner_unique_index ON repositories (repository_owner, repository_name)
+    WHERE repository_owner IS NOT NULL;
+CREATE UNIQUE INDEX repository_name_unique_index ON repositories (repository_name)
+    WHERE repository_owner IS NULL;
 
 CREATE TABLE bug_trackers (
     tracker_id serial PRIMARY KEY,
@@ -97,6 +102,12 @@ CREATE TABLE commits (
     CONSTRAINT commit_in_repository_must_be_unique UNIQUE(commit_repository, commit_revision));
 CREATE INDEX commit_time_index ON commits(commit_time);
 CREATE INDEX commit_order_index ON commits(commit_order);
+
+CREATE TABLE commit_ownerships (
+    commit_owner integer NOT NULL REFERENCES commits ON DELETE CASCADE,
+    commit_owned integer NOT NULL REFERENCES commits ON DELETE CASCADE,
+    PRIMARY KEY (commit_owner, commit_owned)
+);
 
 CREATE TABLE build_commits (
     commit_build integer NOT NULL REFERENCES builds ON DELETE CASCADE,

@@ -24,6 +24,44 @@ describe("/admin/reprocess-report", function () {
             },
         }];
 
+    const simpleReportWithRevisions = [{
+        "buildNumber": "1986",
+        "buildTime": "2013-02-28T10:12:03",
+        "builderName": "someBuilder",
+        "builderPassword": "somePassword",
+        "platform": "Mountain Lion",
+        "tests": {
+                "test": {
+                    "metrics": {"FrameRate": { "current": [[1, 2, 3], [4, 5, 6]] }}
+                },
+            },
+        "revisions": {
+                "WebKit": {
+                    "timestamp": "2017-03-01T09:38:44.826833Z",
+                    "revision": "213214"
+                }
+            }
+        }];
+
+    it("should still create new repository when repository ownerships are different", function (done) {
+        let db = TestServer.database();
+        addBuilderForReport(simpleReportWithRevisions[0]).then(function () {
+            return db.insert('repositories', {'name': 'WebKit', 'owner': 1});
+        }).then(function () {
+            return TestServer.remoteAPI().postJSON('/api/report/', simpleReportWithRevisions);
+        }).then(function (response) {
+            assert.equal(response['status'], 'OK');
+            return db.selectRows('repositories', {'name': 'WebKit'});
+        }).then(function (repositories) {
+            assert.equal(repositories.length, 2);
+            const webkitRepsitoryId = repositories[0].owner == 1 ? repositories[1].id : repositories[0].id;
+            return db.selectRows('commits', {'revision': '213214', 'repository': webkitRepsitoryId});
+        }).then(function (result) {
+            assert(result.length, 1);
+            done();
+        }).catch(done);
+    });
+
     it("should add build", function (done) {
         let db = TestServer.database();
         let reportId;
