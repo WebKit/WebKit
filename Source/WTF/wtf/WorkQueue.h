@@ -27,11 +27,11 @@
 #ifndef WorkQueue_h
 #define WorkQueue_h
 
-#include <chrono>
 #include <functional>
 #include <wtf/Forward.h>
 #include <wtf/FunctionDispatcher.h>
 #include <wtf/RefCounted.h>
+#include <wtf/Seconds.h>
 #include <wtf/Threading.h>
 
 #if USE(COCOA_EVENT_LOOP)
@@ -66,10 +66,10 @@ public:
     WTF_EXPORT_PRIVATE static Ref<WorkQueue> create(const char* name, Type = Type::Serial, QOS = QOS::Default);
     virtual ~WorkQueue();
 
-    WTF_EXPORT_PRIVATE void dispatch(Function<void ()>&&) override;
-    WTF_EXPORT_PRIVATE void dispatchAfter(std::chrono::nanoseconds, Function<void ()>&&);
+    WTF_EXPORT_PRIVATE void dispatch(Function<void()>&&) override;
+    WTF_EXPORT_PRIVATE void dispatchAfter(Seconds, Function<void()>&&);
 
-    WTF_EXPORT_PRIVATE static void concurrentApply(size_t iterations, const std::function<void (size_t index)>&);
+    WTF_EXPORT_PRIVATE static void concurrentApply(size_t iterations, const std::function<void(size_t index)>&);
 
 #if USE(COCOA_EVENT_LOOP)
     dispatch_queue_t dispatchQueue() const { return m_dispatchQueue; }
@@ -99,7 +99,7 @@ private:
     volatile LONG m_isWorkThreadRegistered;
 
     Mutex m_functionQueueLock;
-    Vector<Function<void ()>> m_functionQueue;
+    Vector<Function<void()>> m_functionQueue;
 
     HANDLE m_timerQueue;
 #elif USE(GLIB_EVENT_LOOP) || USE(GENERIC_EVENT_LOOP)

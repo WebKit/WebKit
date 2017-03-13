@@ -32,9 +32,9 @@ namespace WTF {
 class RunLoop::TimerBase::ScheduledTask : public ThreadSafeRefCounted<ScheduledTask> {
 WTF_MAKE_NONCOPYABLE(ScheduledTask);
 public:
-    static RefPtr<ScheduledTask> create(Function<void()>&& function, Seconds interval, bool repeating)
+    static Ref<ScheduledTask> create(Function<void()>&& function, Seconds interval, bool repeating)
     {
-        return adoptRef(new ScheduledTask(WTFMove(function), interval, repeating));
+        return adoptRef(*new ScheduledTask(WTFMove(function), interval, repeating));
     }
 
     ScheduledTask(Function<void()>&& function, Seconds interval, bool repeating)
@@ -73,7 +73,7 @@ public:
     }
 
     struct EarliestSchedule {
-        bool operator()(const RefPtr<ScheduledTask>& lhs, const RefPtr<ScheduledTask>& rhs)
+        bool operator()(const Ref<ScheduledTask>& lhs, const Ref<ScheduledTask>& rhs)
         {
             return lhs->scheduledTimePoint() > rhs->scheduledTimePoint();
         }
@@ -112,7 +112,7 @@ RunLoop::~RunLoop()
         m_stopCondition.wait(m_loopLock);
 }
 
-inline bool RunLoop::populateTasks(RunMode runMode, Status& statusOfThisLoop, Deque<RefPtr<TimerBase::ScheduledTask>>& firedTimers)
+inline bool RunLoop::populateTasks(RunMode runMode, Status& statusOfThisLoop, Deque<Ref<TimerBase::ScheduledTask>>& firedTimers)
 {
     LockHolder locker(m_loopLock);
 
@@ -139,12 +139,12 @@ inline bool RunLoop::populateTasks(RunMode runMode, Status& statusOfThisLoop, De
     // Check expired timers.
     MonotonicTime now = MonotonicTime::now();
     while (!m_schedules.isEmpty()) {
-        RefPtr<TimerBase::ScheduledTask> earliest = m_schedules.first();
+        Ref<TimerBase::ScheduledTask> earliest = m_schedules.first().copyRef();
         if (earliest->scheduledTimePoint() > now)
             break;
         std::pop_heap(m_schedules.begin(), m_schedules.end(), TimerBase::ScheduledTask::EarliestSchedule());
         m_schedules.removeLast();
-        firedTimers.append(earliest);
+        firedTimers.append(WTFMove(earliest));
     }
 
     return true;
@@ -160,14 +160,14 @@ void RunLoop::runImpl(RunMode runMode)
         m_mainLoops.append(&statusOfThisLoop);
     }
 
-    Deque<RefPtr<TimerBase::ScheduledTask>> firedTimers;
+    Deque<Ref<TimerBase::ScheduledTask>> firedTimers;
     while (true) {
         if (!populateTasks(runMode, statusOfThisLoop, firedTimers))
             return;
 
         // Dispatch scheduled timers.
         while (!firedTimers.isEmpty()) {
-            RefPtr<TimerBase::ScheduledTask> task = firedTimers.takeFirst();
+            Ref<TimerBase::ScheduledTask> task = firedTimers.takeFirst();
             if (task->fired()) {
                 // Reschedule because the timer requires repeating.
                 // Since we will query the timers' time points before sleeping,
@@ -218,30 +218,30 @@ void RunLoop::wakeUp()
     wakeUp(locker);
 }
 
-void RunLoop::schedule(const AbstractLocker&, RefPtr<TimerBase::ScheduledTask>&& task)
+void RunLoop::schedule(const AbstractLocker&, Ref<TimerBase::ScheduledTask>&& task)
 {
     m_schedules.append(WTFMove(task));
     std::push_heap(m_schedules.begin(), m_schedules.end(), TimerBase::ScheduledTask::EarliestSchedule());
 }
 
-void RunLoop::schedule(RefPtr<TimerBase::ScheduledTask>&& task)
+void RunLoop::schedule(Ref<TimerBase::ScheduledTask>&& task)
 {
     LockHolder locker(m_loopLock);
     schedule(locker, WTFMove(task));
 }
 
-void RunLoop::scheduleAndWakeUp(RefPtr<TimerBase::ScheduledTask> task)
+void RunLoop::scheduleAndWakeUp(Ref<TimerBase::ScheduledTask>&& task)
 {
     LockHolder locker(m_loopLock);
     schedule(locker, WTFMove(task));
     wakeUp(locker);
 }
 
-void RunLoop::dispatchAfter(std::chrono::nanoseconds delay, Function<void ()>&& function)
+void RunLoop::dispatchAfter(Seconds delay, Function<void()>&& function)
 {
     LockHolder locker(m_loopLock);
     bool repeating = false;
-    schedule(locker, TimerBase::ScheduledTask::create(WTFMove(function), Seconds(delay.count() / 1000.0 / 1000.0 / 1000.0), repeating));
+    schedule(locker, TimerBase::ScheduledTask::create(WTFMove(function), delay, repeating));
     wakeUp(locker);
 }
 
@@ -269,7 +269,7 @@ void RunLoop::TimerBase::start(double interval, bool repeating)
     m_scheduledTask = ScheduledTask::create([this] {
         fired();
     }, Seconds(interval), repeating);
-    m_runLoop.scheduleAndWakeUp(m_scheduledTask);
+    m_runLoop.scheduleAndWakeUp(*m_scheduledTask);
 }
 
 void RunLoop::TimerBase::stop()

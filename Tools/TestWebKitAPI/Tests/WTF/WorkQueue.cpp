@@ -66,7 +66,7 @@ TEST(WTF_WorkQueue, Simple)
 
     queue->dispatch([&](void) {
         m_functionCallOrder.append(longTestLabel);
-        std::this_thread::sleep_for(std::chrono::nanoseconds(100));
+        std::this_thread::sleep_for(100ns);
         calledLongTest = true;
     });
 
@@ -120,7 +120,7 @@ TEST(WTF_WorkQueue, TwoQueues)
     });
 
     queue2->dispatch([&](void) {
-        std::this_thread::sleep_for(std::chrono::milliseconds(50));
+        std::this_thread::sleep_for(50ms);
 
         LockHolder locker(m_lock);
 
@@ -178,7 +178,7 @@ TEST(WTF_WorkQueue, DispatchAfter)
         m_testCompleted.notifyOne();
     });
 
-    queue->dispatchAfter(std::chrono::milliseconds(500), [&](void) {
+    queue->dispatchAfter(500_ms, [&](void) {
         LockHolder locker(m_lock);
         m_functionCallOrder.append(dispatchAfterLabel);
         calledDispatchAfterTest = true;
@@ -212,7 +212,7 @@ TEST(WTF_WorkQueue, DestroyOnSelf)
         LockHolder locker(lock);
         {
             auto queue = WorkQueue::create("com.apple.WebKit.Test.dispatchAfter");
-            queue->dispatchAfter(std::chrono::milliseconds(500), [&](void) {
+            queue->dispatchAfter(500_ms, [&](void) {
                 LockHolder locker(lock);
                 dispatchAfterTestStarted.wait(lock, [&] {
                     return started;

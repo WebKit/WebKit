@@ -56,7 +56,7 @@ void WorkQueue::platformInvalidate()
     }
 }
 
-void WorkQueue::dispatch(Function<void ()>&& function)
+void WorkQueue::dispatch(Function<void()>&& function)
 {
     RefPtr<WorkQueue> protect(this);
     m_runLoop->dispatch([protect, function = WTFMove(function)] {
@@ -64,7 +64,7 @@ void WorkQueue::dispatch(Function<void ()>&& function)
     });
 }
 
-void WorkQueue::dispatchAfter(std::chrono::nanoseconds delay, Function<void ()>&& function)
+void WorkQueue::dispatchAfter(Seconds delay, Function<void()>&& function)
 {
     RefPtr<WorkQueue> protect(this);
     m_runLoop->dispatchAfter(delay, [protect, function = WTFMove(function)] {

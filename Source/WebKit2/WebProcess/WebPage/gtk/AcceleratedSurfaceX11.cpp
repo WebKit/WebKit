@@ -144,7 +144,7 @@ bool AcceleratedSurfaceX11::resize(const IntSize& size)
     XFlush(m_display);
 
     // Release the previous pixmap later to give some time to the UI process to update.
-    RunLoop::main().dispatchAfter(std::chrono::seconds(5), [pixmap = WTFMove(m_pixmap)] { });
+    RunLoop::main().dispatchAfter(5_s, [pixmap = WTFMove(m_pixmap)] { });
     createPixmap();
     return true;
 }

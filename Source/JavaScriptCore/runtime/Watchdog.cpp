@@ -158,7 +158,7 @@ void Watchdog::startTimer(std::chrono::microseconds timeLimit)
     // So, we always need to null check m_vm before using it. The VM will notify the Watchdog
     // via willDestroyVM() before it goes away.
     RefPtr<Watchdog> protectedThis = this;
-    m_timerQueue->dispatchAfter(std::chrono::nanoseconds(timeLimit), [this, protectedThis] {
+    m_timerQueue->dispatchAfter(Seconds::fromMicroseconds(timeLimit.count()), [this, protectedThis] {
         LockHolder locker(m_lock);
         if (m_vm)
             m_vm->notifyNeedWatchdogCheck();

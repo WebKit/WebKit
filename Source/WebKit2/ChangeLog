@@ -1,3 +1,16 @@
+2017-03-13  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [WTF] Clean up RunLoop and WorkQueue with Seconds and Function
+        https://bugs.webkit.org/show_bug.cgi?id=169537
+
+        Reviewed by Sam Weinig.
+
+        * Shared/ChildProcess.cpp:
+        (WebKit::didCloseOnConnectionWorkQueue):
+        * UIProcess/Storage/LocalStorageDatabase.cpp:
+        * WebProcess/WebPage/gtk/AcceleratedSurfaceX11.cpp:
+        (WebKit::AcceleratedSurfaceX11::resize):
+
 2017-03-13  Chris Dumez  <cdumez@apple.com>
 
         Allow termination of background WebProcesses that go over a given CPU usage threshold

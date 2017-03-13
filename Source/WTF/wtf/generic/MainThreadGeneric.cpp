@@ -37,7 +37,7 @@ void initializeMainThreadPlatform()
 
 void scheduleDispatchFunctionsOnMainThread()
 {
-    RunLoop::main().dispatch(std::function<void()>(dispatchFunctionsFromMainThread));
+    RunLoop::main().dispatch(Function<void()>(&dispatchFunctionsFromMainThread));
 }
 
 }

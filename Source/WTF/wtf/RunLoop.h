@@ -34,6 +34,7 @@
 #include <wtf/FunctionDispatcher.h>
 #include <wtf/HashMap.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/Seconds.h>
 #include <wtf/Threading.h>
 
 #if USE(GLIB_EVENT_LOOP)
@@ -54,7 +55,7 @@ public:
     WTF_EXPORT_PRIVATE static bool isMain();
     ~RunLoop();
 
-    void dispatch(Function<void ()>&&) override;
+    void dispatch(Function<void()>&&) override;
 
     WTF_EXPORT_PRIVATE static void run();
     WTF_EXPORT_PRIVATE void stop();
@@ -74,7 +75,7 @@ public:
 #endif
 
 #if USE(GLIB_EVENT_LOOP) || USE(GENERIC_EVENT_LOOP)
-    WTF_EXPORT_PRIVATE void dispatchAfter(std::chrono::nanoseconds, Function<void ()>&&);
+    WTF_EXPORT_PRIVATE void dispatchAfter(Seconds, Function<void()>&&);
 #endif
 
     class TimerBase {
@@ -115,7 +116,7 @@ public:
         void updateReadyTime();
         GRefPtr<GSource> m_source;
         bool m_isRepeating { false };
-        std::chrono::microseconds m_fireInterval { 0 };
+        Seconds m_fireInterval { 0 };
 #elif USE(GENERIC_EVENT_LOOP)
         class ScheduledTask;
         RefPtr<ScheduledTask> m_scheduledTask;
@@ -149,7 +150,7 @@ private:
     void performWork();
 
     Mutex m_functionQueueLock;
-    Deque<Function<void ()>> m_functionQueue;
+    Deque<Function<void()>> m_functionQueue;
 
 #if USE(WINDOWS_EVENT_LOOP)
     static bool registerRunLoopMessageWindowClass();
@@ -168,10 +169,10 @@ private:
     Vector<GRefPtr<GMainLoop>> m_mainLoops;
     GRefPtr<GSource> m_source;
 #elif USE(GENERIC_EVENT_LOOP)
-    void schedule(RefPtr<TimerBase::ScheduledTask>&&);
-    void schedule(const AbstractLocker&, RefPtr<TimerBase::ScheduledTask>&&);
+    void schedule(Ref<TimerBase::ScheduledTask>&&);
+    void schedule(const AbstractLocker&, Ref<TimerBase::ScheduledTask>&&);
     void wakeUp(const AbstractLocker&);
-    void scheduleAndWakeUp(RefPtr<TimerBase::ScheduledTask>);
+    void scheduleAndWakeUp(Ref<TimerBase::ScheduledTask>&&);
 
     enum class RunMode {
         Iterate,
@@ -183,12 +184,12 @@ private:
         Stopping,
     };
     void runImpl(RunMode);
-    bool populateTasks(RunMode, Status&, Deque<RefPtr<TimerBase::ScheduledTask>>&);
+    bool populateTasks(RunMode, Status&, Deque<Ref<TimerBase::ScheduledTask>>&);
 
     Lock m_loopLock;
     Condition m_readyToRun;
     Condition m_stopCondition;
-    Vector<RefPtr<TimerBase::ScheduledTask>> m_schedules;
+    Vector<Ref<TimerBase::ScheduledTask>> m_schedules;
     Vector<Status*> m_mainLoops;
     bool m_shutdown { false };
     bool m_pendingTasks { false };

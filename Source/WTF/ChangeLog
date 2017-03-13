@@ -1,3 +1,48 @@
+2017-03-13  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [WTF] Clean up RunLoop and WorkQueue with Seconds and Function
+        https://bugs.webkit.org/show_bug.cgi?id=169537
+
+        Reviewed by Sam Weinig.
+
+        This patch modernizes RunLoop and WorkQueue.
+
+        1. Use Ref<> aggressively
+        2. Use Seconds instead of chrono times
+        3. Use Function<> instead of std::function
+
+        * wtf/MainThread.cpp:
+        (WTF::dispatchFunctionsFromMainThread):
+        * wtf/RunLoop.h:
+        * wtf/WorkQueue.h:
+        * wtf/cocoa/WorkQueueCocoa.cpp:
+        (WTF::WorkQueue::dispatch):
+        (WTF::WorkQueue::dispatchAfter):
+        (WTF::WorkQueue::concurrentApply):
+        * wtf/generic/MainThreadGeneric.cpp:
+        (WTF::scheduleDispatchFunctionsOnMainThread):
+        * wtf/generic/RunLoopGeneric.cpp:
+        (WTF::RunLoop::TimerBase::ScheduledTask::create):
+        (WTF::RunLoop::TimerBase::ScheduledTask::EarliestSchedule::operator()):
+        (WTF::RunLoop::populateTasks):
+        (WTF::RunLoop::runImpl):
+        (WTF::RunLoop::schedule):
+        (WTF::RunLoop::scheduleAndWakeUp):
+        (WTF::RunLoop::dispatchAfter):
+        (WTF::RunLoop::TimerBase::start):
+        * wtf/generic/WorkQueueGeneric.cpp:
+        (WorkQueue::dispatch):
+        (WorkQueue::dispatchAfter):
+        * wtf/glib/RunLoopGLib.cpp:
+        (WTF::DispatchAfterContext::DispatchAfterContext):
+        (WTF::RunLoop::dispatchAfter):
+        (WTF::RunLoop::TimerBase::updateReadyTime):
+        (WTF::RunLoop::TimerBase::start):
+        * wtf/win/WorkQueueWin.cpp:
+        (WTF::WorkQueue::performWorkOnRegisteredWorkThread):
+        (WTF::WorkQueue::dispatch):
+        (WTF::WorkQueue::dispatchAfter):
+
 2017-03-13  Chris Dumez  <cdumez@apple.com>
 
         [WK2] Only report background WebProcesses as unresponsive in the background after 90 seconds

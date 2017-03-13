@@ -111,7 +111,7 @@ void initializeMainThread()
 #endif
 
 // 0.1 sec delays in UI is approximate threshold when they become noticeable. Have a limit that's half of that.
-static const auto maxRunLoopSuspensionTime = std::chrono::milliseconds(50);
+static const auto maxRunLoopSuspensionTime = 50_ms;
 
 void dispatchFunctionsFromMainThread()
 {
@@ -120,7 +120,7 @@ void dispatchFunctionsFromMainThread()
     if (callbacksPaused)
         return;
 
-    auto startTime = std::chrono::steady_clock::now();
+    auto startTime = MonotonicTime::now();
 
     Function<void ()> function;
 
@@ -142,7 +142,7 @@ void dispatchFunctionsFromMainThread()
         // yield so the user input can be processed. Otherwise user may not be able to even close the window.
         // This code has effect only in case the scheduleDispatchFunctionsOnMainThread() is implemented in a way that
         // allows input events to be processed before we are back here.
-        if (std::chrono::steady_clock::now() - startTime > maxRunLoopSuspensionTime) {
+        if (MonotonicTime::now() - startTime > maxRunLoopSuspensionTime) {
             scheduleDispatchFunctionsOnMainThread();
             break;
         }

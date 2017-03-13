@@ -51,7 +51,7 @@ void WorkQueue::performWorkOnRegisteredWorkThread()
     m_functionQueueLock.lock();
 
     while (!m_functionQueue.isEmpty()) {
-        Vector<Function<void ()>> functionQueue;
+        Vector<Function<void()>> functionQueue;
         m_functionQueue.swap(functionQueue);
 
         // Allow more work to be scheduled while we're not using the queue directly.
@@ -98,7 +98,7 @@ void WorkQueue::platformInvalidate()
     ::DeleteTimerQueueEx(m_timerQueue, 0);
 }
 
-void WorkQueue::dispatch(Function<void ()>&& function)
+void WorkQueue::dispatch(Function<void()>&& function)
 {
     MutexLocker locker(m_functionQueueLock);
     ref();
@@ -118,7 +118,7 @@ struct TimerContext : public ThreadSafeRefCounted<TimerContext> {
     static RefPtr<TimerContext> create() { return adoptRef(new TimerContext); }
 
     WorkQueue* queue;
-    Function<void ()> function;
+    Function<void()> function;
     Mutex timerMutex;
     HANDLE timer;
 
@@ -149,7 +149,7 @@ void WorkQueue::timerCallback(void* context, BOOLEAN timerOrWaitFired)
     }
 }
 
-void WorkQueue::dispatchAfter(std::chrono::nanoseconds duration, Function<void ()>&& function)
+void WorkQueue::dispatchAfter(Seconds duration, Function<void()>&& function)
 {
     ASSERT(m_timerQueue);
     ref();
@@ -164,7 +164,7 @@ void WorkQueue::dispatchAfter(std::chrono::nanoseconds duration, Function<void (
         // timer handle has been stored in it.
         MutexLocker lock(context->timerMutex);
 
-        int64_t milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(duration).count();
+        int64_t milliseconds = duration.milliseconds();
 
         // From empirical testing, we've seen CreateTimerQueueTimer() sometimes fire up to 5+ ms early.
         // This causes havoc for clients of this code that expect to not be called back until the

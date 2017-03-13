@@ -1,3 +1,13 @@
+2017-03-13  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [WTF] Clean up RunLoop and WorkQueue with Seconds and Function
+        https://bugs.webkit.org/show_bug.cgi?id=169537
+
+        Reviewed by Sam Weinig.
+
+        * TestWebKitAPI/Tests/WTF/WorkQueue.cpp:
+        (TestWebKitAPI::TEST):
+
 2017-03-13  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] Remove dead code from previous autotools build in build-jsc

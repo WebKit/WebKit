@@ -1,3 +1,13 @@
+2017-03-13  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [WTF] Clean up RunLoop and WorkQueue with Seconds and Function
+        https://bugs.webkit.org/show_bug.cgi?id=169537
+
+        Reviewed by Sam Weinig.
+
+        * runtime/Watchdog.cpp:
+        (JSC::Watchdog::startTimer):
+
 2017-03-11  Filip Pizlo  <fpizlo@apple.com>
 
         FTL should not flush strict arguments unless it really needs to

@@ -48,7 +48,7 @@ static void didCloseOnConnectionWorkQueue(IPC::Connection*)
 {
     // If the connection has been closed and we haven't responded in the main thread for 10 seconds
     // the process will exit forcibly.
-    auto watchdogDelay = std::chrono::seconds(10);
+    auto watchdogDelay = 10_s;
 
     WorkQueue::create("com.apple.WebKit.ChildProcess.WatchDogQueue")->dispatchAfter(watchdogDelay, [] {
         // We use _exit here since the watchdog callback is called from another thread and we don't want

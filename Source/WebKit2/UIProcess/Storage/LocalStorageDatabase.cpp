@@ -40,7 +40,7 @@
 
 using namespace WebCore;
 
-static const auto databaseUpdateInterval = std::chrono::seconds(1);
+static const auto databaseUpdateInterval = 1_s;
 
 static const int maximumItemsToUpdate = 100;
 
