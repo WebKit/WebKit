@@ -113,9 +113,10 @@ public:
             return false;
 
 #if USE(COORDINATED_GRAPHICS_THREADED)
-        if (LIKELY(GST_IS_SAMPLE(m_sample.get())))
-            webkitVideoSinkRepaintRequested(sink, m_sample.get());
-        m_sample = nullptr;
+        auto sample = WTFMove(m_sample);
+        locker.unlockEarly();
+        if (LIKELY(GST_IS_SAMPLE(sample.get())))
+            webkitVideoSinkRepaintRequested(sink, sample.get());
 #else
         m_sink = sink;
         m_timer.startOneShot(0);
