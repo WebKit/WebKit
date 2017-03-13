@@ -1,3 +1,38 @@
+2017-03-03  Simon Fraser  <simon.fraser@apple.com>
+
+        Clean up RenderImage and a RenderImageResource function
+        https://bugs.webkit.org/show_bug.cgi?id=169153
+
+        Reviewed by Zalan Bujtas.
+        
+        Change all calls to imageResource().cachedImage() in RenderImage to use the inline
+        cachedImage() function.
+
+        In RenderImage::paintReplaced(), early return after the broken image block (and no need
+        to test imageResource().hasImage() again in the second condition). Convert height/width to size,
+        which also forces us to be explicit about using flooredIntSize() when fetching the image
+        (perhaps this should be a roundedIntSize, but I didn't want to change behavior).
+
+        Change RenderImageResource::image() to take an IntSize, rather than int height and width.
+
+        No behavior change.
+
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::styleDidChange):
+        (WebCore::RenderImage::imageChanged):
+        (WebCore::RenderImage::notifyFinished):
+        (WebCore::RenderImage::paintReplaced):
+        (WebCore::RenderImage::paintIntoRect):
+        (WebCore::RenderImage::foregroundIsKnownToBeOpaqueInRect):
+        (WebCore::RenderImage::embeddedContentBox):
+        * rendering/RenderImageResource.cpp:
+        (WebCore::RenderImageResource::image):
+        * rendering/RenderImageResource.h:
+        (WebCore::RenderImageResource::image):
+        * rendering/RenderImageResourceStyleImage.cpp:
+        (WebCore::RenderImageResourceStyleImage::image):
+        * rendering/RenderImageResourceStyleImage.h:
+
 2017-03-03  Alex Christensen  <achristensen@webkit.org>
 
         [URLParser] Fix file: as a relative file URL

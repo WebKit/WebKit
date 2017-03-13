@@ -49,7 +49,7 @@ public:
 
     void resetAnimation();
 
-    virtual RefPtr<Image> image(int width = 0, int height = 0) const;
+    virtual RefPtr<Image> image(const IntSize& size = { }) const;
     virtual bool errorOccurred() const;
 
     virtual void setContainerSizeForRenderer(const IntSize&);
