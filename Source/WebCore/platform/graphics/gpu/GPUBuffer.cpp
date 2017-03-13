@@ -28,8 +28,8 @@
 
 #if ENABLE(WEBGPU)
 
-#import "GPUDevice.h"
-#import "Logging.h"
+#include "GPUDevice.h"
+#include "Logging.h"
 
 namespace WebCore {
 

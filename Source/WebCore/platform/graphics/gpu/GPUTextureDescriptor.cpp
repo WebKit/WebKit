@@ -28,7 +28,7 @@
 
 #if ENABLE(WEBGPU)
 
-#import "Logging.h"
+#include "Logging.h"
 
 namespace WebCore {
 

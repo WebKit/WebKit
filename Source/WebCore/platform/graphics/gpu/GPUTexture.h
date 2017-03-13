@@ -38,24 +38,26 @@ OBJC_CLASS MTLTexture;
 namespace WebCore {
 
 class GPUDevice;
+class GPUDrawable;
 class GPUTextureDescriptor;
 
 class GPUTexture : public RefCounted<GPUTexture> {
 public:
     static RefPtr<GPUTexture> create(GPUDevice*, GPUTextureDescriptor*);
-    static RefPtr<GPUTexture> createFromExistingTexture(GPUTexture*);
+    static RefPtr<GPUTexture> createFromDrawable(GPUDrawable*);
+
     WEBCORE_EXPORT ~GPUTexture();
 
     WEBCORE_EXPORT unsigned long width() const;
     WEBCORE_EXPORT unsigned long height() const;
 
 #if PLATFORM(COCOA)
-    WEBCORE_EXPORT MTLTexture* platformTexture();
+    WEBCORE_EXPORT MTLTexture *platformTexture();
 #endif
 
 private:
     GPUTexture(GPUDevice*, GPUTextureDescriptor*);
-    GPUTexture(GPUTexture*);
+    GPUTexture(GPUDrawable*);
     
 #if PLATFORM(COCOA)
     RetainPtr<MTLTexture> m_texture;

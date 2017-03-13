@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "GPUBuffer.h"
+#import "config.h"
+#import "GPUBuffer.h"
 
 #if ENABLE(WEBGPU)
 
@@ -42,7 +42,7 @@ GPUBuffer::GPUBuffer(GPUDevice* device, ArrayBufferView* data)
     if (!device || !device->platformDevice() || !data)
         return;
 
-    m_buffer = (MTLBuffer*)[device->platformDevice() newBufferWithBytes:data->baseAddress() length:data->byteLength() options:MTLResourceOptionCPUCacheModeDefault];
+    m_buffer = adoptNS((MTLBuffer *)[device->platformDevice() newBufferWithBytes:data->baseAddress() length:data->byteLength() options:MTLResourceOptionCPUCacheModeDefault]);
 }
 
 unsigned long GPUBuffer::length() const
@@ -65,7 +65,7 @@ RefPtr<ArrayBuffer> GPUBuffer::contents()
     return m_contents;
 }
 
-MTLBuffer* GPUBuffer::platformBuffer()
+MTLBuffer *GPUBuffer::platformBuffer()
 {
     return m_buffer.get();
 }

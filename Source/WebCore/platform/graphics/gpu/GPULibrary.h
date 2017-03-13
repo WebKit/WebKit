@@ -54,7 +54,7 @@ public:
     WEBCORE_EXPORT RefPtr<GPUFunction> functionWithName(const String&);
 
 #if PLATFORM(COCOA)
-    WEBCORE_EXPORT MTLLibrary* platformLibrary();
+    WEBCORE_EXPORT MTLLibrary *platformLibrary();
 #endif
 
 private:

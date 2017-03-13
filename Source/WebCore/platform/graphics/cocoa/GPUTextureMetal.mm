@@ -23,12 +23,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "GPUTexture.h"
+#import "config.h"
+#import "GPUTexture.h"
 
 #if ENABLE(WEBGPU)
 
 #import "GPUDevice.h"
+#import "GPUDrawable.h"
 #import "GPUTextureDescriptor.h"
 #import "Logging.h"
 
@@ -43,15 +44,12 @@ GPUTexture::GPUTexture(GPUDevice* device, GPUTextureDescriptor* descriptor)
     if (!device || !device->platformDevice() || !descriptor || !descriptor->platformTextureDescriptor())
         return;
 
-    m_texture = (MTLTexture*)[device->platformDevice() newTextureWithDescriptor:descriptor->platformTextureDescriptor()];
+    m_texture = adoptNS((MTLTexture *)[device->platformDevice() newTextureWithDescriptor:descriptor->platformTextureDescriptor()]);
 }
 
-GPUTexture::GPUTexture(GPUTexture* other)
+GPUTexture::GPUTexture(GPUDrawable* other)
 {
     LOG(WebGPU, "GPUTexture::GPUTexture()");
-
-    if (!other || !other->platformTexture())
-        return;
 
     m_texture = other->platformTexture();
 }
@@ -74,7 +72,7 @@ unsigned long GPUTexture::height() const
     return texture.height;
 }
 
-MTLTexture* GPUTexture::platformTexture()
+MTLTexture *GPUTexture::platformTexture()
 {
     return m_texture.get();
 }

@@ -28,9 +28,7 @@
 
 #if ENABLE(WEBGPU)
 
-/* FIXME: WebGPU - Not implemented yet.
 #include "GPUDrawable.h"
- */
 #include "GPUTexture.h"
 #include "WebGPURenderingContext.h"
 #include "WebGPUTexture.h"
@@ -49,7 +47,7 @@ WebGPUDrawable::WebGPUDrawable(WebGPURenderingContext* context)
     if (!m_drawable)
         return;
 
-    RefPtr<GPUTexture> drawableTexture = GPUTexture::createFromExistingTexture(m_drawable->texture());
+    RefPtr<GPUTexture> drawableTexture = GPUTexture::createFromDrawable(m_drawable.get());
     m_texture = WebGPUTexture::createFromDrawableTexture(context, drawableTexture);
 }
 

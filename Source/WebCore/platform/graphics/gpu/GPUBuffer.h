@@ -48,7 +48,7 @@ public:
     WEBCORE_EXPORT RefPtr<ArrayBuffer> contents();
 
 #if PLATFORM(COCOA)
-    WEBCORE_EXPORT MTLBuffer* platformBuffer();
+    WEBCORE_EXPORT MTLBuffer *platformBuffer();
 #endif
 
 private:

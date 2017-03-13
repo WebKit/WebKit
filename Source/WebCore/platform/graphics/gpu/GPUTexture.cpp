@@ -28,8 +28,9 @@
 
 #if ENABLE(WEBGPU)
 
-#import "GPUDevice.h"
-#import "Logging.h"
+#include "GPUDevice.h"
+#include "GPUDrawable.h"
+#include "Logging.h"
 
 namespace WebCore {
 
@@ -39,7 +40,7 @@ RefPtr<GPUTexture> GPUTexture::create(GPUDevice* device, GPUTextureDescriptor* d
     return texture;
 }
 
-RefPtr<GPUTexture> GPUTexture::createFromExistingTexture(GPUTexture* other)
+RefPtr<GPUTexture> GPUTexture::createFromDrawable(GPUDrawable* other)
 {
     RefPtr<GPUTexture> texture = adoptRef(new GPUTexture(other));
     return texture;

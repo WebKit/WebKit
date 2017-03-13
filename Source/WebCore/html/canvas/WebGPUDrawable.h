@@ -31,13 +31,7 @@
 
 namespace WebCore {
 
-// FIXME: WebGPU - Stub implementation - not implemented yet.
-// class GPUDrawable;
-class GPUDrawable : public RefCounted<GPUDrawable> {
-public:
-    GPUTexture* texture() { return nullptr; }
-};
-// FIXME: WebGPU - End stub.
+class GPUDrawable;
 class WebGPUTexture;
 
 class WebGPUDrawable : public WebGPUObject {

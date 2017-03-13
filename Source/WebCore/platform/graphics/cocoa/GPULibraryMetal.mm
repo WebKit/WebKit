@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "GPULibrary.h"
+#import "config.h"
+#import "GPULibrary.h"
 
 #if ENABLE(WEBGPU)
 
@@ -43,7 +43,7 @@ GPULibrary::GPULibrary(GPUDevice* device, const String& sourceCode)
         return;
 
     NSError *error = [NSError errorWithDomain:@"com.apple.WebKit.GPU" code:1 userInfo:nil];
-    m_library = (MTLLibrary*)[device->platformDevice() newLibraryWithSource:sourceCode options:nil error:&error];
+    m_library = adoptNS((MTLLibrary *)[device->platformDevice() newLibraryWithSource:sourceCode options:nil error:&error]);
     if (!m_library)
         LOG(WebGPU, "Compilation error: %s", [[error localizedDescription] UTF8String]);
 }
@@ -58,9 +58,7 @@ String GPULibrary::label() const
 
 void GPULibrary::setLabel(const String& label)
 {
-    if (!m_library)
-        return;
-
+    ASSERT(m_library);
     [m_library setLabel:label];
 }
 
@@ -78,7 +76,7 @@ Vector<String> GPULibrary::functionNames()
     return names;
 }
 
-MTLLibrary* GPULibrary::platformLibrary()
+MTLLibrary *GPULibrary::platformLibrary()
 {
     return m_library.get();
 }

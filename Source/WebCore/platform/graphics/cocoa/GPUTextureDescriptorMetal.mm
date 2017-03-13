@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "GPUTextureDescriptor.h"
+#import "config.h"
+#import "GPUTextureDescriptor.h"
 
 #if ENABLE(WEBGPU)
 
@@ -38,7 +38,7 @@ GPUTextureDescriptor::GPUTextureDescriptor(unsigned long pixelFormat, unsigned l
 {
     LOG(WebGPU, "GPUTextureDescriptor::GPUTextureDescriptor()");
 
-    m_textureDescriptor = (MTLTextureDescriptor*)[MTLTextureDescriptor texture2DDescriptorWithPixelFormat:static_cast<MTLPixelFormat>(pixelFormat) width:width height:height mipmapped:mipmapped];
+    m_textureDescriptor = (MTLTextureDescriptor *)[MTLTextureDescriptor texture2DDescriptorWithPixelFormat:static_cast<MTLPixelFormat>(pixelFormat) width:width height:height mipmapped:mipmapped];
 }
 
 unsigned long GPUTextureDescriptor::width() const
@@ -119,7 +119,7 @@ void GPUTextureDescriptor::setUsage(unsigned long newUsage)
     [m_textureDescriptor setUsage:newUsage];
 }
 
-MTLTextureDescriptor* GPUTextureDescriptor::platformTextureDescriptor()
+MTLTextureDescriptor *GPUTextureDescriptor::platformTextureDescriptor()
 {
     return m_textureDescriptor.get();
 }

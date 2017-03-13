@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "GPUFunction.h"
+#import "config.h"
+#import "GPUFunction.h"
 
 #if ENABLE(WEBGPU)
 
@@ -41,7 +41,7 @@ GPUFunction::GPUFunction(GPULibrary* library, const String& name)
     if (!library || !library->platformLibrary())
         return;
 
-    m_function = (MTLFunction*)[library->platformLibrary() newFunctionWithName:name];
+    m_function = adoptNS((MTLFunction *)[library->platformLibrary() newFunctionWithName:name]);
 }
 
 String GPUFunction::name() const
@@ -52,7 +52,7 @@ String GPUFunction::name() const
     return [m_function name];
 }
 
-MTLFunction* GPUFunction::platformFunction()
+MTLFunction *GPUFunction::platformFunction()
 {
     return m_function.get();
 }

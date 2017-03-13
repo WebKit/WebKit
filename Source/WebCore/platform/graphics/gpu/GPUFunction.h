@@ -48,7 +48,7 @@ public:
     WEBCORE_EXPORT String name() const;
 
 #if PLATFORM(COCOA)
-    WEBCORE_EXPORT MTLFunction* platformFunction();
+    WEBCORE_EXPORT MTLFunction *platformFunction();
 #endif
 
 private:

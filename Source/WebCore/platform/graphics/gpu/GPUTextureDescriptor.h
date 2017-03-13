@@ -61,7 +61,7 @@ public:
     WEBCORE_EXPORT void setUsage(unsigned long);
 
 #if PLATFORM(COCOA)
-    WEBCORE_EXPORT MTLTextureDescriptor* platformTextureDescriptor();
+    WEBCORE_EXPORT MTLTextureDescriptor *platformTextureDescriptor();
 #endif
 
 private:
