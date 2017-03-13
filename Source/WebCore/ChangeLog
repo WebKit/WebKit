@@ -1,3 +1,36 @@
+2017-03-13  Miguel Gomez  <magomez@igalia.com>
+
+        ImageDecoder can be deleted while the async decoder thread is still using it
+        https://bugs.webkit.org/show_bug.cgi?id=169199
+
+        Reviewed by Carlos Garcia Campos.
+
+        Make the image decoder used by ImageSource and ImageFrameCache into a RefPtr instead of
+        and unique_ptr, and pass a reference to the decoder thread. This ensures that the decoder
+        will stay alive as long as the decoding thread is processing frames. Also, stop the async
+        decoding queue if a new decoder is set to ImageFrameCache.
+
+        No new tests.
+
+        * platform/graphics/ImageFrameCache.cpp:
+        (WebCore::ImageFrameCache::setDecoder):
+        (WebCore::ImageFrameCache::decoder):
+        (WebCore::ImageFrameCache::startAsyncDecodingQueue):
+        (WebCore::ImageFrameCache::metadata):
+        * platform/graphics/ImageFrameCache.h:
+        (WebCore::ImageFrameCache::setDecoder): Deleted.
+        Moved to source file so we can keep the ImageDecoder forward declaration.
+        (WebCore::ImageFrameCache::decoder): Deleted.
+        Moved to source file so we can keep the ImageDecoder forward declaration.
+        * platform/graphics/ImageSource.h:
+        * platform/graphics/cg/ImageDecoderCG.h:
+        (WebCore::ImageDecoder::create):
+        * platform/graphics/win/ImageDecoderDirect2D.h:
+        (WebCore::ImageDecoder::create):
+        * platform/image-decoders/ImageDecoder.cpp:
+        (WebCore::ImageDecoder::create):
+        * platform/image-decoders/ImageDecoder.h:
+
 2017-03-10  Antti Koivisto  <antti@apple.com>
 
         imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/sizes/parse-a-sizes-attribute.html is unreliable
