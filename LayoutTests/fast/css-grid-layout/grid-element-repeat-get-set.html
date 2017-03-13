@@ -70,8 +70,8 @@
 }
 
 .multipleTrackRepeat {
-    grid-template-rows: repeat(3, -webkit-min-content [a] -webkit-max-content [b c] 20px [d]) [e] 1em;
-    grid-template-columns: [start] 20px repeat(2, [a] minmax(20px, -webkit-min-content) -webkit-max-content [b]) 200px [c] -webkit-min-content [end];
+    grid-template-rows: repeat(3, min-content [a] max-content [b c] 20px [d]) [e] 1em;
+    grid-template-columns: [start] 20px repeat(2, [a] minmax(20px, min-content) max-content [b]) 200px [c] min-content [end];
 }
 
 </style>

@@ -8,16 +8,16 @@ testGridTemplatesValues(document.getElementById("gridWithEMElement"), "100px 120
 testGridTemplatesValues(document.getElementById("gridWithThreeItems"), "15px auto 100px", "120px 18px auto");
 testGridTemplatesValues(document.getElementById("gridWithPercentAndViewportPercent"), "50% 120px", "35% 168px");
 testGridTemplatesValues(document.getElementById("gridWithFitContentAndFitAvailable"), "none", "none");
-testGridTemplatesValues(document.getElementById("gridWithMinMaxContent"), "-webkit-min-content -webkit-max-content", "-webkit-max-content -webkit-min-content");
+testGridTemplatesValues(document.getElementById("gridWithMinMaxContent"), "min-content max-content", "max-content min-content");
 testGridTemplatesValues(document.getElementById("gridWithMinMaxAndFixed"), "minmax(45px, 30%) 15px", "120px minmax(35%, 10px)");
-testGridTemplatesValues(document.getElementById("gridWithMinMaxAndMinMaxContent"), "minmax(-webkit-min-content, 30%) 15px", "120px minmax(35%, -webkit-max-content)");
+testGridTemplatesValues(document.getElementById("gridWithMinMaxAndMinMaxContent"), "minmax(min-content, 30%) 15px", "120px minmax(35%, max-content)");
 testGridTemplatesValues(document.getElementById("gridWithFractionFraction"), "1fr 2fr", "3fr 4fr");
-testGridTemplatesValues(document.getElementById("gridWithFractionMinMax"), "minmax(-webkit-min-content, 45px) 2fr", "3fr minmax(14px, -webkit-max-content)");
+testGridTemplatesValues(document.getElementById("gridWithFractionMinMax"), "minmax(min-content, 45px) 2fr", "3fr minmax(14px, max-content)");
 testGridTemplatesValues(document.getElementById("gridWithCalcCalc"), "200px 100px", "150px 75px");
 testGridTemplatesValues(document.getElementById("gridWithCalcAndFixed"), "50% 80px", "88px 25%");
-testGridTemplatesValues(document.getElementById("gridWithCalcAndMinMax"), "calc(30px + 20%) minmax(-webkit-min-content, 80px)", "minmax(25%, -webkit-max-content) calc(10% - 7px)");
+testGridTemplatesValues(document.getElementById("gridWithCalcAndMinMax"), "calc(30px + 20%) minmax(min-content, 80px)", "minmax(25%, max-content) calc(10% - 7px)");
 testGridTemplatesValues(document.getElementById("gridWithCalcInsideMinMax"), "minmax(calc(23px + 10%), 400px) 120px", "150px minmax(5%, calc(50% - 125px))");
-testGridTemplatesValues(document.getElementById("gridWithAutoInsideMinMax"), "minmax(auto, 20px) 10%", "-webkit-max-content minmax(-webkit-min-content, auto)");
+testGridTemplatesValues(document.getElementById("gridWithAutoInsideMinMax"), "minmax(auto, 20px) 10%", "max-content minmax(min-content, auto)");
 
 debug("");
 debug("Test the initial value");
@@ -54,7 +54,7 @@ testGridTemplatesSetBadJSValues("none 16em", "none 56%");
 testGridTemplatesSetBadJSValues("none none", "none none");
 testGridTemplatesSetBadJSValues("auto none", "auto none");
 testGridTemplatesSetBadJSValues("auto none 16em", "auto 18em none");
-testGridTemplatesSetBadJSValues("-webkit-fit-content -webkit-fit-content", "-webkit-fit-available -webkit-fit-available");
+testGridTemplatesSetBadJSValues("fit-content fit-content", "-webkit-fit-available -webkit-fit-available");
 // Negative values are not allowed.
 testGridTemplatesSetBadJSValues("-10px minmax(16px, 32px)", "minmax(10%, 15%) -10vw");
 testGridTemplatesSetBadJSValues("10px minmax(16px, -1vw)", "minmax(-1%, 15%) 10vw");

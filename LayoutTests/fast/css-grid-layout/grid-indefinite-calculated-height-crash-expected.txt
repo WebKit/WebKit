@@ -1,3 +1,3 @@
-* { display: inline-grid; height: calc(100% - 10px); grid-template-rows: minmax(100%, -webkit-max-content); }
+* { display: inline-grid; height: calc(100% - 10px); grid-template-rows: minmax(100%, max-content); }
 if (window.testRunner) testRunner.dumpAsText();
 This test has PASSED if it didn't CRASH on Debug builds.

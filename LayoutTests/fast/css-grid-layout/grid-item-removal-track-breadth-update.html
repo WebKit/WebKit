@@ -9,23 +9,23 @@
 }
 
 .gridMinContentFixed {
-    grid-template-columns: minmax(-webkit-min-content, 100px);
-    grid-template-rows: minmax(-webkit-min-content, 40px);
+    grid-template-columns: minmax(min-content, 100px);
+    grid-template-rows: minmax(min-content, 40px);
 }
 
 .gridMaxContentFixed {
-    grid-template-columns: minmax(-webkit-max-content, 150px);
-    grid-template-rows: minmax(-webkit-max-content, 40px);
+    grid-template-columns: minmax(max-content, 150px);
+    grid-template-rows: minmax(max-content, 40px);
 }
 
 .gridFixedMinContent {
-    grid-template-columns: minmax(100px, -webkit-min-content);
-    grid-template-rows: minmax(40px, -webkit-min-content);
+    grid-template-columns: minmax(100px, min-content);
+    grid-template-rows: minmax(40px, min-content);
 }
 
 .gridFixedMaxContent {
-    grid-template-columns: minmax(100px, -webkit-max-content);
-    grid-template-rows: minmax(40px, -webkit-max-content);
+    grid-template-columns: minmax(100px, max-content);
+    grid-template-rows: minmax(40px, max-content);
 }
 
 .lessConstrainedContainer {

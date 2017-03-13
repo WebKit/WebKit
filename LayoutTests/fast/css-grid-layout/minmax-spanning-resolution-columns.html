@@ -14,12 +14,12 @@
 }
 
 .gridMinMaxMin {
-    grid-template-columns: minmax(-webkit-min-content, 50px) minmax(-webkit-max-content, 140px);
+    grid-template-columns: minmax(min-content, 50px) minmax(max-content, 140px);
     grid-template-rows: 50px 100px;
 }
 
 .gridMinMaxMax {
-    grid-template-columns: minmax(50px, -webkit-min-content) minmax(40px, -webkit-max-content);
+    grid-template-columns: minmax(50px, min-content) minmax(40px, max-content);
     grid-template-rows: 50px 100px;
 }
 

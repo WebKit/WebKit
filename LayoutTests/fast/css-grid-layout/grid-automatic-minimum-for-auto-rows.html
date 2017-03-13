@@ -11,7 +11,7 @@
 .minHeight60 { min-height: 60px; }
 .minHeight70 { min-height: 70px; }
 .minHeight90 { min-height: 90px; }
-.minHeightMaxContent { min-height: -webkit-max-content; }
+.minHeightMaxContent { min-height: max-content; }
 
 .height30 { height: 30px; }
 .height50 { height: 50px; }
@@ -24,13 +24,13 @@
 /* All these 4 cases are equivalent. We use them interchangeably. */
 .gridAuto { grid-template-rows: auto; }
 .gridMinMaxAutoAuto { grid-template-rows: minmax(auto, auto); }
-.gridMinMaxAutoMaxContent { grid-template-rows: minmax(auto, -webkit-max-content); }
-.gridMinMaxMinContentAuto { grid-template-rows: minmax(-webkit-min-content, auto); }
+.gridMinMaxAutoMaxContent { grid-template-rows: minmax(auto, max-content); }
+.gridMinMaxMinContentAuto { grid-template-rows: minmax(min-content, auto); }
 
 /* All these 3 cases are equivalent. We use them interchangeably. */
 .gridAutoAndAuto { grid-template-rows: auto auto; }
 .gridAutoAndMinMaxAutoAuto { grid-template-rows: auto minmax(auto, auto); }
-.gridMinMaxAutoMaxContentAndAuto { grid-template-rows: minmax(auto, -webkit-max-content) auto; }
+.gridMinMaxAutoMaxContentAndAuto { grid-template-rows: minmax(auto, max-content) auto; }
 
 </style>
 <script src="../../resources/js-test.js"></script>

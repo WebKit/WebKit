@@ -7,52 +7,52 @@
     font: 10px/1 Ahem;
 }
 .gridMinContentFixedAndAuto {
-    grid-template-columns: minmax(-webkit-min-content, 15px) auto;
+    grid-template-columns: minmax(min-content, 15px) auto;
 }
 .gridMaxContentFixedAndAuto {
-    grid-template-columns: minmax(-webkit-max-content, 15px) auto;
+    grid-template-columns: minmax(max-content, 15px) auto;
 }
 .gridAutoAndAuto {
     grid-template-columns: auto auto;
 }
 .gridMinContentAndMinContentFixed {
-    grid-template-columns: -webkit-min-content minmax(-webkit-min-content, 30px);
+    grid-template-columns: min-content minmax(min-content, 30px);
 }
 .gridMinContentAndMaxContentFixed {
-    grid-template-columns: -webkit-min-content minmax(-webkit-max-content, 30px);
+    grid-template-columns: min-content minmax(max-content, 30px);
 }
 .gridMaxContentAndMinContent {
-    grid-template-columns: -webkit-max-content -webkit-min-content;
+    grid-template-columns: max-content min-content;
 }
 .gridFixedMinContentAndMaxContent {
-    grid-template-columns: minmax(10px, -webkit-min-content) -webkit-max-content;
+    grid-template-columns: minmax(10px, min-content) max-content;
 }
 .gridFixedMaxContentAndMinContent {
-    grid-template-columns: minmax(10px, -webkit-max-content) -webkit-min-content;
+    grid-template-columns: minmax(10px, max-content) min-content;
 }
 .gridAutoMinContent {
-    grid-template-columns: auto -webkit-min-content;
+    grid-template-columns: auto min-content;
 }
 .gridAutoMaxContent {
-    grid-template-columns: auto -webkit-max-content;
+    grid-template-columns: auto max-content;
 }
 .gridMaxContentAndMinContentFixed {
-    grid-template-columns: -webkit-max-content minmax(-webkit-min-content, 35px);
+    grid-template-columns: max-content minmax(min-content, 35px);
 }
 .gridMaxContentAndMaxContentFixed {
-    grid-template-columns: -webkit-max-content minmax(-webkit-max-content, 35px);
+    grid-template-columns: max-content minmax(max-content, 35px);
 }
 .gridMinContentFixedAndFixedFixedAndAuto {
-    grid-template-columns: minmax(-webkit-min-content, 20px) minmax(20px, 30px) auto;
+    grid-template-columns: minmax(min-content, 20px) minmax(20px, 30px) auto;
 }
 .gridAutoAndFixedFixedAndMaxContentFixed {
-    grid-template-columns: auto minmax(20px, 30px) minmax(-webkit-max-content, 20px);
+    grid-template-columns: auto minmax(20px, 30px) minmax(max-content, 20px);
 }
 .gridMaxContentAndMaxContentFixedAndMaxContent {
-    grid-template-columns: -webkit-max-content minmax(-webkit-max-content, 20px) -webkit-max-content;
+    grid-template-columns: max-content minmax(max-content, 20px) max-content;
 }
 .gridAutoAndMinContentFixedAndMinContent {
-    grid-template-columns: auto minmax(-webkit-min-content, 30px) -webkit-min-content;
+    grid-template-columns: auto minmax(min-content, 30px) min-content;
 }
 
 </style>

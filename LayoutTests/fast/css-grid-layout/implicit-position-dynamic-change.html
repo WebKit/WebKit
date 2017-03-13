@@ -4,8 +4,8 @@
 <link href="resources/grid-alignment.css" rel="stylesheet">
 <style>
 .gridFixedContent {
-    grid-template-columns: 50px minmax(-webkit-min-content, 50px) minmax(-webkit-max-content, 50px) minmax(50px, -webkit-min-content);
-    grid-template-rows: 70px minmax(-webkit-max-content, 70px) minmax(50px, -webkit-min-content) minmax(65px, -webkit-max-content);
+    grid-template-columns: 50px minmax(min-content, 50px) minmax(max-content, 50px) minmax(50px, min-content);
+    grid-template-rows: 70px minmax(max-content, 70px) minmax(50px, min-content) minmax(65px, max-content);
 }
 </style>
 <script src="../../resources/check-layout.js"></script>

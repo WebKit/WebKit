@@ -1,10 +1,4 @@
 
-FAIL .flexbox 1 assert_equals: 
-<div class="flexbox column" data-expected-height="20">
-    <div class="vertical" data-expected-width="50" data-expected-height="20">
-        <div style="width: 50px; height: 20px; background-color: blue;" data-expected-width="50" data-expected-height="20"></div>
-    </div>
-</div>
-width expected 50 but got 784
+PASS .flexbox 1 
 PASS .flexbox 2 
 

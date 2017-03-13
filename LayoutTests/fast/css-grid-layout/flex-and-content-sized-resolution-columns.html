@@ -8,23 +8,23 @@
 }
 
 .gridFixedAndMinContentAndFlex {
-     grid-template-columns: 20px -webkit-min-content 1fr;
+     grid-template-columns: 20px min-content 1fr;
 }
 
 .gridMinMaxFixedFlexAndMaxContentAndAuto {
-     grid-template-columns: minmax(20px, 1fr) -webkit-max-content auto;
+     grid-template-columns: minmax(20px, 1fr) max-content auto;
 }
 
 .gridMinMaxAutoFixedAndMinContentAndFixed {
-     grid-template-columns: minmax(auto, 35px) -webkit-min-content 25px;
+     grid-template-columns: minmax(auto, 35px) min-content 25px;
 }
 
 .gridMinContentAndMinMaxFixedMinContentAndFlex {
-     grid-template-columns: -webkit-min-content minmax(20px, -webkit-min-content) 2fr;
+     grid-template-columns: min-content minmax(20px, min-content) 2fr;
 }
 
 .gridMaxContentAndMinMaxFixedMaxContentAndFlex {
-     grid-template-columns: -webkit-max-content minmax(20px, -webkit-max-content) 1fr;
+     grid-template-columns: max-content minmax(20px, max-content) 1fr;
 }
 
 </style>

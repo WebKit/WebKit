@@ -14,7 +14,7 @@
 
 .gridOnlyAutoRepeat { grid-template-columns: repeat(auto-fill, 30px [autobar]); }
 .gridAutoRepeatAndFixedBefore { grid-template-columns: 10px [foo] 20% [bar] repeat(auto-fill, [autofoo] 35px); }
-.gridAutoRepeatAndFixedAfter { grid-template-columns: repeat(auto-fill, [first] 30px [last]) [foo] minmax(60px, 80px) [bar] minmax(45px, -webkit-max-content); }
+.gridAutoRepeatAndFixedAfter { grid-template-columns: repeat(auto-fill, [first] 30px [last]) [foo] minmax(60px, 80px) [bar] minmax(45px, max-content); }
 .gridAutoRepeatAndFixed { grid-template-columns: [start] repeat(2, 50px [a]) [middle] repeat(auto-fill, [autofoo] 15px [autobar]) minmax(5%, 10%) [end]; }
 .gridMultipleNames { grid-template-columns: [start] 20px [foo] 50% repeat(auto-fill, [bar] 20px [start foo]) [foo] 10% [end bar]; }
 .gridMultipleTracks { grid-template-columns: [start] 20px repeat(auto-fill, [a] 2em [b c] 10% [d]) [e] minmax(75px, 1fr) [last]; }

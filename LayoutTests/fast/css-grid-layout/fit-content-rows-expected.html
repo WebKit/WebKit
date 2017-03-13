@@ -61,7 +61,7 @@ div.grid > div { -webkit-writing-mode: vertical-lr; }
 
 </style>
 
-<p>This test checks that 'fit-content()' works as expected, i.e., it's similar to 'auto' ('minmax(auto, -webkit-max-content)') except that the growth limit is clamped at the argument of 'fit-content' (if greater that the 'auto' minimum).</p>
+<p>This test checks that 'fit-content()' works as expected, i.e., it's similar to 'auto' ('minmax(auto, max-content)') except that the growth limit is clamped at the argument of 'fit-content' (if greater that the 'auto' minimum).</p>
 
 <div class="grid fc0">
     <div class="item">XXX</div>
@@ -134,68 +134,68 @@ div.grid > div { -webkit-writing-mode: vertical-lr; }
 <br clear="all">
 <br clear="all">
 
-<div class="grid" style="grid-template-rows: minmax(auto, 40px) -webkit-max-content;">
+<div class="grid" style="grid-template-rows: minmax(auto, 40px) max-content;">
     <div class="spanningItem">XXX XX XXX</div>
     <div class="test firstRow"></div>
     <div class="test secondRow"></div>
 </div>
 
-<div class="grid" style="grid-template-rows: minmax(auto, 40px) -webkit-max-content;">
+<div class="grid" style="grid-template-rows: minmax(auto, 40px) max-content;">
     <div class="item">XXXXX</div>
     <div class="spanningItem">XXX XX XXX</div>
     <div class="test firstRow"></div>
     <div class="test secondRow"></div>
 </div>
 
-<div class="grid" style="grid-template-rows: minmax(auto, 40px) -webkit-max-content;">
+<div class="grid" style="grid-template-rows: minmax(auto, 40px) max-content;">
     <div class="item secondRow">XXXXX</div>
     <div class="spanningItem">XXX XX XXX</div>
     <div class="test firstRow"></div>
     <div class="test secondRow"></div>
 </div>
 
-<div class="grid" style="grid-template-rows: -webkit-min-content minmax(auto, 40px);">
+<div class="grid" style="grid-template-rows: min-content minmax(auto, 40px);">
     <div class="spanningItem">XXX XX XXX</div>
     <div class="test firstRow"></div>
     <div class="test secondRow"></div>
 </div>
 
-<div class="grid" style="grid-template-rows: -webkit-min-content minmax(auto, 40px);">
+<div class="grid" style="grid-template-rows: min-content minmax(auto, 40px);">
     <div class="item">XXXXX</div>
     <div class="spanningItem">XXX XX XXX</div>
     <div class="test firstRow"></div>
     <div class="test secondRow"></div>
 </div>
 
-<div class="grid" style="grid-template-rows: -webkit-min-content minmax(auto, 40px);">
+<div class="grid" style="grid-template-rows: min-content minmax(auto, 40px);">
     <div class="item secondRow">XXXXX</div>
     <div class="spanningItem">XXX XX XXX</div>
     <div class="test firstRow"></div>
     <div class="test secondRow"></div>
 </div>
 
-<div class="grid" style="grid-template-rows: minmax(auto, 30px) -webkit-min-content -webkit-max-content">
+<div class="grid" style="grid-template-rows: minmax(auto, 30px) min-content max-content">
     <div class="spanningItem">XXX XX XXX</div>
     <div class="test firstRow"></div>
     <div class="test secondRow"></div>
     <div class="test thirdRow"></div>
 </div>
 
-<div class="grid" style="grid-template-rows: -webkit-min-content minmax(auto, 30px) -webkit-max-content">
+<div class="grid" style="grid-template-rows: min-content minmax(auto, 30px) max-content">
     <div class="spanningItem">XXX XX XXX</div>
     <div class="test firstRow"></div>
     <div class="test secondRow"></div>
     <div class="test thirdRow"></div>
 </div>
 
-<div class="grid" style="grid-template-rows: -webkit-min-content -webkit-max-content minmax(auto, 30px)">
+<div class="grid" style="grid-template-rows: min-content max-content minmax(auto, 30px)">
     <div class="spanningItem">XXX XX XXX</div>
     <div class="test firstRow"></div>
     <div class="test secondRow"></div>
     <div class="test thirdRow"></div>
 </div>
 
-<div class="grid" style="grid-template-rows: minmax(auto, 30px) -webkit-min-content -webkit-max-content">
+<div class="grid" style="grid-template-rows: minmax(auto, 30px) min-content max-content">
     <div class="item" style="grid-row: 1">XXX XX</div>
     <div class="spanningItem">XXX XX XXX</div>
     <div class="test firstRow"></div>
@@ -203,7 +203,7 @@ div.grid > div { -webkit-writing-mode: vertical-lr; }
     <div class="test thirdRow"></div>
 </div>
 
-<div class="grid" style="grid-template-rows: -webkit-min-content minmax(auto, 30px) -webkit-max-content">
+<div class="grid" style="grid-template-rows: min-content minmax(auto, 30px) max-content">
     <div class="item" style="grid-row: 1">XXX XX</div>
     <div class="spanningItem">XXX XX XXX</div>
     <div class="test firstRow"></div>
@@ -211,7 +211,7 @@ div.grid > div { -webkit-writing-mode: vertical-lr; }
     <div class="test thirdRow"></div>
 </div>
 
-<div class="grid" style="grid-template-rows: -webkit-min-content -webkit-max-content minmax(auto, 30px)">
+<div class="grid" style="grid-template-rows: min-content max-content minmax(auto, 30px)">
     <div class="item" style="grid-row: 2">XXX XX</div>
     <div class="spanningItem">XXX XX XXX</div>
     <div class="test firstRow"></div>
@@ -304,21 +304,21 @@ div.grid > div { -webkit-writing-mode: vertical-lr; }
     <div class="test secondRow"></div>
 </div>
 
-<div class="grid" style="grid-template-rows: -webkit-max-content auto;">
+<div class="grid" style="grid-template-rows: max-content auto;">
     <div class="spanningItem" style="grid-column: 1;">XX XX XX XX</div>
     <div class="spanningItem">XXX XXX</div>
     <div class="test firstRow"></div>
     <div class="test secondRow"></div>
 </div>
 
-<div class="grid" style="grid-template-rows: auto -webkit-min-content;">
+<div class="grid" style="grid-template-rows: auto min-content;">
     <div class="spanningItem" style="grid-column: 1;">XX XX XX XX</div>
     <div class="spanningItem">XXX XXX</div>
     <div class="test firstRow"></div>
     <div class="test secondRow"></div>
 </div>
 
-<div class="grid" style="grid-template-rows: -webkit-max-content auto -webkit-max-content;">
+<div class="grid" style="grid-template-rows: max-content auto max-content;">
     <div class="spanningItem" style="grid-column: 1;">XX XX XX XX</div>
     <div class="spanningItem">XXX XXX</div>
     <div class="test firstRow"></div>
@@ -326,7 +326,7 @@ div.grid > div { -webkit-writing-mode: vertical-lr; }
     <div class="test thirdRow"></div>
 </div>
 
-<div class="grid" style="grid-template-rows: -webkit-min-content auto -webkit-min-content;">
+<div class="grid" style="grid-template-rows: min-content auto min-content;">
     <div class="spanningItem" style="grid-column: 1;">XX XX XX XX</div>
     <div class="spanningItem">XXX XXX</div>
     <div class="test firstRow"></div>

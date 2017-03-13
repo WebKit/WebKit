@@ -211,12 +211,15 @@ inline Length StyleBuilderConverter::convertLengthSizing(StyleResolver& styleRes
         return Length(Intrinsic);
     case CSSValueMinIntrinsic:
         return Length(MinIntrinsic);
+    case CSSValueMinContent:
     case CSSValueWebkitMinContent:
         return Length(MinContent);
+    case CSSValueMaxContent:
     case CSSValueWebkitMaxContent:
         return Length(MaxContent);
     case CSSValueWebkitFillAvailable:
         return Length(FillAvailable);
+    case CSSValueFitContent:
     case CSSValueWebkitFitContent:
         return Length(FitContent);
     case CSSValueAuto:
@@ -835,10 +838,10 @@ inline ScrollSnapAlign StyleBuilderConverter::convertScrollSnapAlign(StyleResolv
 
 inline GridLength StyleBuilderConverter::createGridTrackBreadth(const CSSPrimitiveValue& primitiveValue, StyleResolver& styleResolver)
 {
-    if (primitiveValue.valueID() == CSSValueWebkitMinContent)
+    if (primitiveValue.valueID() == CSSValueMinContent || primitiveValue.valueID() == CSSValueWebkitMinContent)
         return Length(MinContent);
 
-    if (primitiveValue.valueID() == CSSValueWebkitMaxContent)
+    if (primitiveValue.valueID() == CSSValueMaxContent || primitiveValue.valueID() == CSSValueWebkitMaxContent)
         return Length(MaxContent);
 
     // Fractional unit.

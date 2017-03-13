@@ -24,7 +24,7 @@
     grid-column-gap: calc(2px + 1vw);
 }
 .gridInvalidRowGap { grid-row-gap: 10%; }
-.gridInvalidColumnGap { grid-column-gap: -webkit-max-content; }
+.gridInvalidColumnGap { grid-column-gap: max-content; }
 .gridInvalidMultipleRowColumnGaps {
     grid-row-gap: 10px 1px;
     grid-column-gap: 0px 0px 0px;
@@ -35,7 +35,7 @@
 }
 .gridInvalidGridGap { grid-gap: 20px 20px 10px; }
 .gridInvalidNoneGap { grid-gap: none; }
-.gridInvalidImplicitGridGap { grid-gap: -webkit-fit-content; }
+.gridInvalidImplicitGridGap { grid-gap: fit-content; }
 
 </style>
 <script src="../../resources/js-test.js"></script>

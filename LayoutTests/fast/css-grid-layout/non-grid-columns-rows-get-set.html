@@ -29,8 +29,8 @@
     grid-template-rows: 10vh;
 }
 .gridWithFitContent {
-    grid-template-columns: -webkit-fit-content;
-    grid-template-rows: -webkit-fit-content;
+    grid-template-columns: fit-content;
+    grid-template-rows: fit-content;
 }
 .gridWithFitAvailable {
     grid-template-columns: -webkit-fit-available;
@@ -41,12 +41,12 @@
     grid-template-rows: minmax(20px, 50%);
 }
 .gridWithMinContent {
-    grid-template-columns: -webkit-min-content;
-    grid-template-rows: -webkit-min-content;
+    grid-template-columns: min-content;
+    grid-template-rows: min-content;
 }
 .gridWithMaxContent {
-    grid-template-columns: -webkit-max-content;
-    grid-template-rows: -webkit-max-content;
+    grid-template-columns: max-content;
+    grid-template-rows: max-content;
 }
 .gridWithFraction {
     grid-template-columns: 1fr;
@@ -70,7 +70,7 @@
 }
 .gridWithAutoInsideMinMax {
     grid-template-columns: minmax(auto, 20px);
-    grid-template-rows: minmax(-webkit-min-content, auto);
+    grid-template-rows: minmax(min-content, auto);
 }
 </style>
 <script src="../../resources/js-test-pre.js"></script>

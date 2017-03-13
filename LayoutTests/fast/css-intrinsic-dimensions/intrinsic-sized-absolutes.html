@@ -24,28 +24,28 @@ Tests that intrinsic width values on absolutely positioned element work.
 
 <!-- width tests -->
 <div class="container">
-    <div class="child" style="width: -webkit-max-content;" data-expected-width="210">
+    <div class="child" style="width: max-content;" data-expected-width="210">
         <div class="content"></div>
         <div class="content"></div>
     </div>
 </div>
 
 <div class="container">
-    <div class="child" style="width: -webkit-min-content;" data-expected-width="110">
+    <div class="child" style="width: min-content;" data-expected-width="110">
         <div class="content"></div>
         <div class="content"></div>
     </div>
 </div>
 
 <div class="container">
-    <div class="child" style="width: -webkit-fit-content;" data-expected-width="210">
+    <div class="child" style="width: fit-content;" data-expected-width="210">
         <div class="content"></div>
         <div class="content"></div>
     </div>
 </div>
 
 <div class="container" style="width: 50px">
-    <div class="child" style="width: -webkit-fit-content;" data-expected-width="110">
+    <div class="child" style="width: fit-content;" data-expected-width="110">
         <div class="content"></div>
         <div class="content"></div>
     </div>
@@ -60,28 +60,28 @@ Tests that intrinsic width values on absolutely positioned element work.
 
 <!-- min-width tests -->
 <div class="container">
-    <div class="child" style="min-width: -webkit-max-content; width: 10px;" data-expected-width="210">
+    <div class="child" style="min-width: max-content; width: 10px;" data-expected-width="210">
         <div class="content"></div>
         <div class="content"></div>
     </div>
 </div>
 
 <div class="container">
-    <div class="child" style="min-width: -webkit-min-content; width: 10px;" data-expected-width="110">
+    <div class="child" style="min-width: min-content; width: 10px;" data-expected-width="110">
         <div class="content"></div>
         <div class="content"></div>
     </div>
 </div>
 
 <div class="container">
-    <div class="child" style="min-width: -webkit-fit-content; width: 10px;" data-expected-width="210">
+    <div class="child" style="min-width: fit-content; width: 10px;" data-expected-width="210">
         <div class="content"></div>
         <div class="content"></div>
     </div>
 </div>
 
 <div class="container" style="width: 50px">
-    <div class="child" style="min-width: -webkit-fit-content; width: 10px;" data-expected-width="110">
+    <div class="child" style="min-width: fit-content; width: 10px;" data-expected-width="110">
         <div class="content"></div>
         <div class="content"></div>
     </div>
@@ -96,28 +96,28 @@ Tests that intrinsic width values on absolutely positioned element work.
 
 <!-- max-width tests -->
 <div class="container">
-    <div class="child" style="max-width: -webkit-max-content; width: 1000px;" data-expected-width="210">
+    <div class="child" style="max-width: max-content; width: 1000px;" data-expected-width="210">
         <div class="content"></div>
         <div class="content"></div>
     </div>
 </div>
 
 <div class="container">
-    <div class="child" style="max-width: -webkit-min-content; width: 1000px;" data-expected-width="110">
+    <div class="child" style="max-width: min-content; width: 1000px;" data-expected-width="110">
         <div class="content"></div>
         <div class="content"></div>
     </div>
 </div>
 
 <div class="container">
-    <div class="child" style="max-width: -webkit-fit-content; width: 1000px;" data-expected-width="210">
+    <div class="child" style="max-width: fit-content; width: 1000px;" data-expected-width="210">
         <div class="content"></div>
         <div class="content"></div>
     </div>
 </div>
 
 <div class="container" style="width: 50px">
-    <div class="child" style="max-width: -webkit-fit-content; width: 1000px;" data-expected-width="110">
+    <div class="child" style="max-width: fit-content; width: 1000px;" data-expected-width="110">
         <div class="content"></div>
         <div class="content"></div>
     </div>

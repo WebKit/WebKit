@@ -8,28 +8,28 @@
     font: 10px/1 Ahem;
 }
 .gridFixedMinContentAndFixedMaxContent {
-     grid-template-columns: minmax(20px, -webkit-min-content) minmax(20px, -webkit-max-content);
+     grid-template-columns: minmax(20px, min-content) minmax(20px, max-content);
 }
 .gridMaxContentFixedAndMinContentFixed {
-     grid-template-columns: minmax(-webkit-max-content, 50px) minmax(-webkit-min-content, 50px);
+     grid-template-columns: minmax(max-content, 50px) minmax(min-content, 50px);
 }
 .gridFixedMinContentAndAuto {
-     grid-template-columns: minmax(20px, -webkit-min-content) auto;
+     grid-template-columns: minmax(20px, min-content) auto;
 }
 .gridFixedMaxContentAndAuto {
-     grid-template-columns: minmax(20px, -webkit-max-content) auto;
+     grid-template-columns: minmax(20px, max-content) auto;
 }
 .gridMaxContentAndAuto {
-     grid-template-columns: -webkit-max-content auto;
+     grid-template-columns: max-content auto;
 }
 .gridAutoAndMaxContent {
-     grid-template-columns: auto -webkit-max-content;
+     grid-template-columns: auto max-content;
 }
 .gridMinContentAndAuto {
-     grid-template-columns: -webkit-min-content auto;
+     grid-template-columns: min-content auto;
 }
 .gridAutoAndMinContent {
-     grid-template-columns: -webkit-min-content auto;
+     grid-template-columns: min-content auto;
 }
 .spanTwo {
      grid-column: 1 / 3;

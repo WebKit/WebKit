@@ -8,14 +8,14 @@ testGridTemplatesValues(document.getElementById("gridWithAutoElement"), "auto", 
 testGridTemplatesValues(document.getElementById("gridWithEMElement"), "100px", "150px");
 testGridTemplatesValues(document.getElementById("gridWithViewPortPercentageElement"), "64px", "60px");
 testGridTemplatesValues(document.getElementById("gridWithMinMax"), "minmax(10%, 15px)", "minmax(20px, 50%)");
-testGridTemplatesValues(document.getElementById("gridWithMinContent"), "-webkit-min-content", "-webkit-min-content");
-testGridTemplatesValues(document.getElementById("gridWithMaxContent"), "-webkit-max-content", "-webkit-max-content");
+testGridTemplatesValues(document.getElementById("gridWithMinContent"), "min-content", "min-content");
+testGridTemplatesValues(document.getElementById("gridWithMaxContent"), "max-content", "max-content");
 testGridTemplatesValues(document.getElementById("gridWithFraction"), "1fr", "2fr");
 testGridTemplatesValues(document.getElementById("gridWithCalc"), "150px", "75px");
 testGridTemplatesValues(document.getElementById("gridWithCalcComplex"), "calc(50% + 150px)", "calc(65% + 75px)");
 testGridTemplatesValues(document.getElementById("gridWithCalcInsideMinMax"), "minmax(10%, 15px)", "minmax(20px, 50%)");
 testGridTemplatesValues(document.getElementById("gridWithCalcComplexInsideMinMax"), "minmax(10%, calc(50% + 15px))", "minmax(calc(20px + 10%), 50%)");
-testGridTemplatesValues(document.getElementById("gridWithAutoInsideMinMax"), "minmax(auto, 20px)", "minmax(-webkit-min-content, auto)");
+testGridTemplatesValues(document.getElementById("gridWithAutoInsideMinMax"), "minmax(auto, 20px)", "minmax(min-content, auto)");
 
 debug("");
 debug("Test getting wrong values for grid-template-columns and grid-template-rows through CSS (they should resolve to the default: 'none')");
@@ -39,16 +39,16 @@ testNonGridTemplatesSetJSValues("18px", "66px");
 testNonGridTemplatesSetJSValues("55%", "40%");
 testNonGridTemplatesSetJSValues("auto", "auto");
 testNonGridTemplatesSetJSValues("10vw", "25vh", "80px", "150px");
-testNonGridTemplatesSetJSValues("-webkit-min-content", "-webkit-min-content");
-testNonGridTemplatesSetJSValues("-webkit-max-content", "-webkit-max-content");
+testNonGridTemplatesSetJSValues("min-content", "min-content");
+testNonGridTemplatesSetJSValues("max-content", "max-content");
 
 debug("");
 debug("Test getting and setting grid-template-columns and grid-template-rows to minmax() values through JS");
 testNonGridTemplatesSetJSValues("minmax(55%, 45px)", "minmax(30px, 40%)");
 testNonGridTemplatesSetJSValues("minmax(22em, 8vh)", "minmax(10vw, 5em)", "minmax(220px, 48px)", "minmax(80px, 50px)");
-testNonGridTemplatesSetJSValues("minmax(-webkit-min-content, 8vh)", "minmax(10vw, -webkit-min-content)", "minmax(-webkit-min-content, 48px)", "minmax(80px, -webkit-min-content)");
-testNonGridTemplatesSetJSValues("minmax(22em, -webkit-max-content)", "minmax(-webkit-max-content, 5em)", "minmax(220px, -webkit-max-content)", "minmax(-webkit-max-content, 50px)");
-testNonGridTemplatesSetJSValues("minmax(-webkit-min-content, -webkit-max-content)", "minmax(-webkit-max-content, -webkit-min-content)");
+testNonGridTemplatesSetJSValues("minmax(min-content, 8vh)", "minmax(10vw, min-content)", "minmax(min-content, 48px)", "minmax(80px, min-content)");
+testNonGridTemplatesSetJSValues("minmax(22em, max-content)", "minmax(max-content, 5em)", "minmax(220px, max-content)", "minmax(max-content, 50px)");
+testNonGridTemplatesSetJSValues("minmax(min-content, max-content)", "minmax(max-content, min-content)");
 // Unit comparison should be case-insensitive.
 testNonGridTemplatesSetJSValues("3600Fr", "154fR", "3600fr", "154fr", "3600fr", "154fr");
 // Float values are allowed.

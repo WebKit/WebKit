@@ -271,14 +271,6 @@ webkit.org/b/136754 css3/flexbox/csswg/ttwf-reftest-flex-wrap.html [ ImageOnlyFa
 webkit.org/b/165062 fast/css-grid-layout/grid-baseline.html [ ImageOnlyFailure ]
 webkit.org/b/165062 fast/css-grid-layout/grid-baseline-margins.html [ ImageOnlyFailure ]
 webkit.org/b/149891 imported/w3c/csswg-test/css-grid-1/grid-layout-properties.html [ Failure ]
-webkit.org/b/169195 imported/w3c/csswg-test/css-grid-1/grid-definition/grid-inline-support-flexible-lengths-001.xht [ Failure ]
-webkit.org/b/169195 imported/w3c/csswg-test/css-grid-1/grid-definition/grid-inline-support-grid-template-columns-rows-001.xht [ Failure ]
-webkit.org/b/169195 imported/w3c/csswg-test/css-grid-1/grid-definition/grid-inline-support-named-grid-lines-001.xht [ Failure ]
-webkit.org/b/169195 imported/w3c/csswg-test/css-grid-1/grid-definition/grid-inline-support-repeat-001.xht [ Failure ]
-webkit.org/b/169195 imported/w3c/csswg-test/css-grid-1/grid-definition/grid-support-flexible-lengths-001.xht [ Failure ]
-webkit.org/b/169195 imported/w3c/csswg-test/css-grid-1/grid-definition/grid-support-grid-template-columns-rows-001.xht [ Failure ]
-webkit.org/b/169195 imported/w3c/csswg-test/css-grid-1/grid-definition/grid-support-named-grid-lines-001.xht [ Failure ]
-webkit.org/b/169195 imported/w3c/csswg-test/css-grid-1/grid-definition/grid-support-repeat-001.xht [ Failure ]
 webkit.org/b/169271 imported/w3c/csswg-test/css-grid-1/grid-items/grid-items-sizing-alignment-001.html [ ImageOnlyFailure ]
 
 # nth-child tests takes long time and Debug build sometimes timeouts because there are many test cases.

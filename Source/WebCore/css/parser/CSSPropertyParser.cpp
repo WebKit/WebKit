@@ -1286,10 +1286,9 @@ static RefPtr<CSSValue> consumeTextIndent(CSSParserTokenRange& range, CSSParserM
     return list;
 }
 
-// FIXME-NEWPARSER: Drop the prefix on min-content, max-content and fit-content.
 static bool validWidthOrHeightKeyword(CSSValueID id, const CSSParserContext& /*context*/)
 {
-    if (id == CSSValueIntrinsic || id == CSSValueMinIntrinsic || id == CSSValueWebkitMinContent || id == CSSValueWebkitMaxContent || id == CSSValueWebkitFillAvailable || id == CSSValueWebkitFitContent) {
+    if (id == CSSValueIntrinsic || id == CSSValueMinIntrinsic || id == CSSValueMinContent || id == CSSValueWebkitMinContent || id == CSSValueMaxContent || id == CSSValueWebkitMaxContent || id == CSSValueWebkitFillAvailable || id == CSSValueFitContent || id == CSSValueWebkitFitContent) {
         return true;
     }
     return false;
@@ -3157,7 +3156,7 @@ static RefPtr<CSSValue> consumeGridLine(CSSParserTokenRange& range)
 static bool isGridTrackFixedSized(const CSSPrimitiveValue& primitiveValue)
 {
     CSSValueID valueID = primitiveValue.valueID();
-    if (valueID == CSSValueWebkitMinContent || valueID == CSSValueWebkitMaxContent || valueID == CSSValueAuto || primitiveValue.isFlex())
+    if (valueID == CSSValueMinContent || valueID == CSSValueWebkitMinContent || valueID == CSSValueMaxContent || valueID == CSSValueWebkitMaxContent || valueID == CSSValueAuto || primitiveValue.isFlex())
         return false;
 
     return true;
@@ -3275,7 +3274,7 @@ static bool parseGridTemplateAreasRow(const String& gridRowNames, NamedGridAreaM
 static RefPtr<CSSPrimitiveValue> consumeGridBreadth(CSSParserTokenRange& range, CSSParserMode cssParserMode)
 {
     const CSSParserToken& token = range.peek();
-    if (identMatches<CSSValueWebkitMinContent, CSSValueWebkitMaxContent, CSSValueAuto>(token.id()))
+    if (identMatches<CSSValueMinContent, CSSValueWebkitMinContent, CSSValueMaxContent, CSSValueWebkitMaxContent, CSSValueAuto>(token.id()))
         return consumeIdent(range);
     if (token.type() == DimensionToken && token.unitType() == CSSPrimitiveValue::UnitType::CSS_FR) {
         if (range.peek().numericValue() < 0)

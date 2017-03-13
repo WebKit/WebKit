@@ -61,8 +61,8 @@
     grid-template-rows: -webkit-fitcontent -webkit-fit-available;
 }
 .gridWithMinMaxContent {
-    grid-template-columns: -webkit-min-content -webkit-max-content;
-    grid-template-rows: -webkit-max-content -webkit-min-content;
+    grid-template-columns: min-content max-content;
+    grid-template-rows: max-content min-content;
 }
 .gridWithMinMaxAndFixed {
     grid-template-columns: minmax(45px, 30%) 15px;
@@ -70,8 +70,8 @@
     font: 10px Ahem;
 }
 .gridWithMinMaxAndMinMaxContent {
-    grid-template-columns: minmax(-webkit-min-content, 30%) 15px;
-    grid-template-rows: 12em minmax(35%, -webkit-max-content);
+    grid-template-columns: minmax(min-content, 30%) 15px;
+    grid-template-rows: 12em minmax(35%, max-content);
     font: 10px Ahem;
 }
 .gridWithFractionFraction {
@@ -79,8 +79,8 @@
     grid-template-rows: 3fr 5fr;
 }
 .gridWithFractionMinMax {
-    grid-template-columns: minmax(-webkit-min-content, 45px) 2fr;
-    grid-template-rows: 3fr minmax(14px, -webkit-max-content);
+    grid-template-columns: minmax(min-content, 45px) 2fr;
+    grid-template-rows: 3fr minmax(14px, max-content);
 }
 .gridWithCalcCalc {
     grid-template-columns: calc(200px) calc(10em);
@@ -93,8 +93,8 @@
     font: 10px Ahem;
 }
 .gridWithCalcAndMinMax {
-    grid-template-columns: calc(30px + 20%) minmax(-webkit-min-content, 80px);
-    grid-template-rows: minmax(25%, -webkit-max-content) calc(10% - 7px);
+    grid-template-columns: calc(30px + 20%) minmax(min-content, 80px);
+    grid-template-rows: minmax(25%, max-content) calc(10% - 7px);
 }
 .gridWithCalcInsideMinMax {
     grid-template-columns: minmax(calc(23px + 10%), 400px) 12em;
@@ -102,7 +102,7 @@
     font: 10px Ahem;
 }
 .gridWithAutoInsideMinMax {
-    grid-template-columns: minmax(auto, -webkit-min-content) 30px;
+    grid-template-columns: minmax(auto, min-content) 30px;
     grid-template-rows: calc(100px + 2em) minmax(10%, auto);
 }
 </style>

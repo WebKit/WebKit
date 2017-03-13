@@ -116,10 +116,10 @@
     <img data-expected-height="60" style="min-height:60px" src="../images/resources/green-10.png">
     <img data-expected-height="75" style="min-height:150%" src="../images/resources/blue-100.png">
     <img data-expected-height="75" style="min-height:150%" src="../images/resources/green-10.png">
-    <img data-expected-height="10" style="min-height:-webkit-min-content;height:1px" src="../images/resources/blue-10.png">
-    <img data-expected-height="100" style="min-height:-webkit-max-content;height:1px" src="../images/resources/green-100.png">
+    <img data-expected-height="10" style="min-height:min-content;height:1px" src="../images/resources/blue-10.png">
+    <img data-expected-height="100" style="min-height:max-content;height:1px" src="../images/resources/green-100.png">
     <img data-expected-height="50" style="min-height:-webkit-fill-available" src="../images/resources/blue-10.png">
-    <img data-expected-height="10" style="min-height:-webkit-fit-content;height:1px" src="../images/resources/green-10.png">
+    <img data-expected-height="10" style="min-height:fit-content;height:1px" src="../images/resources/green-10.png">
 </div>
 
 <!-- tests that max-height shrinks the height of flex items less than the height of the flexbox -->
@@ -128,20 +128,20 @@
     <img data-expected-height="40" style="max-height:40px" src="../images/resources/green-10.png">
     <img data-expected-height="25" style="max-height:50%" src="../images/resources/blue-100.png">
     <img data-expected-height="25" style="max-height:50%" src="../images/resources/green-10.png">
-    <img data-expected-height="10" style="max-height:-webkit-min-content;height:1000px;" src="../images/resources/blue-10.png">
-    <img data-expected-height="100" style="max-height:-webkit-max-content;height:1000px;" src="../images/resources/green-100.png">
+    <img data-expected-height="10" style="max-height:min-content;height:1000px;" src="../images/resources/blue-10.png">
+    <img data-expected-height="100" style="max-height:max-content;height:1000px;" src="../images/resources/green-100.png">
     <img data-expected-height="50" style="max-height:-webkit-fill-available" src="../images/resources/blue-100.png">
-    <img data-expected-height="10" style="max-height:-webkit-fit-content;height:1000px" src="../images/resources/green-10.png">
+    <img data-expected-height="10" style="max-height:fit-content;height:1000px" src="../images/resources/green-10.png">
 </div>
 
 <!-- tests that images can shrink below their CSS height with min-height: min-content -->
 <div class="flexbox column" style="height:50px">
-    <img data-expected-height="50" style="flex-shrink:1;height:1000px;min-height:-webkit-min-content;" src="../images/resources/blue-10.png">
+    <img data-expected-height="50" style="flex-shrink:1;height:1000px;min-height:min-content;" src="../images/resources/blue-10.png">
 </div>
 
 <!-- tests that text can shrink below its CSS height with min-height: min-content -->
 <div class="flexbox column" style="height:50px">
-    <div data-expected-height="50" style="flex-shrink:1;height:1000px;min-height:-webkit-min-content;" src="../images/resources/blue-10.png">
+    <div data-expected-height="50" style="flex-shrink:1;height:1000px;min-height:min-content;" src="../images/resources/blue-10.png">
       Some text<br>
       Some more text
     </div>
@@ -149,7 +149,7 @@
 
 <!-- tests that images can shrink below their CSS width with min-width: min-content -->
 <div class="flexbox" style="width:50px">
-    <img data-expected-width="50" style="flex-shrink:1;width:1000px;min-width:-webkit-min-content;" src="../images/resources/blue-10.png">
+    <img data-expected-width="50" style="flex-shrink:1;width:1000px;min-width:min-content;" src="../images/resources/blue-10.png">
 </div>
 
 <!-- tests that min-width expands the width of flex items beyond the width of the flexbox -->
@@ -158,14 +158,14 @@
     <img data-expected-width="60" style="min-width:60px" src="../images/resources/green-10.png">
     <img data-expected-width="75" style="min-width:150%" src="../images/resources/blue-100.png">
     <img data-expected-width="75" style="min-width:150%" src="../images/resources/green-10.png">
-    <img data-expected-width="100" style="min-width:-webkit-min-content" src="../images/resources/blue-100.png">
-    <img data-expected-width="50" style="min-width:-webkit-min-content" src="../images/resources/green-10.png">
-    <img data-expected-width="100" style="min-width:-webkit-max-content" src="../images/resources/blue-100.png">
-    <img data-expected-width="50" style="min-width:-webkit-max-content" src="../images/resources/green-10.png">
+    <img data-expected-width="100" style="min-width:min-content" src="../images/resources/blue-100.png">
+    <img data-expected-width="50" style="min-width:min-content" src="../images/resources/green-10.png">
+    <img data-expected-width="100" style="min-width:max-content" src="../images/resources/blue-100.png">
+    <img data-expected-width="50" style="min-width:max-content" src="../images/resources/green-10.png">
     <img data-expected-width="50" style="min-width:-webkit-fill-available" src="../images/resources/blue-100.png">
     <img data-expected-width="50" style="min-width:-webkit-fill-available" src="../images/resources/green-10.png">
-    <img data-expected-width="100" style="min-width:-webkit-fit-content" src="../images/resources/blue-100.png">
-    <img data-expected-width="50" style="min-width:-webkit-fit-content" src="../images/resources/green-10.png">
+    <img data-expected-width="100" style="min-width:fit-content" src="../images/resources/blue-100.png">
+    <img data-expected-width="50" style="min-width:fit-content" src="../images/resources/green-10.png">
 </div>
 
 <!-- tests that max-width shrinks the width of flex items less than the width of the flexbox -->
@@ -174,14 +174,14 @@
     <img data-expected-width="40" style="max-width:40px" src="../images/resources/green-10.png">
     <img data-expected-width="25" style="max-width:50%" src="../images/resources/blue-100.png">
     <img data-expected-width="25" style="max-width:50%" src="../images/resources/green-10.png">
-    <img data-expected-width="50" style="max-width:-webkit-min-content" src="../images/resources/blue-100.png">
-    <img data-expected-width="10" style="max-width:-webkit-min-content" src="../images/resources/green-10.png">
-    <img data-expected-width="50" style="max-width:-webkit-max-content" src="../images/resources/blue-100.png">
-    <img data-expected-width="10" style="max-width:-webkit-max-content" src="../images/resources/green-10.png">
+    <img data-expected-width="50" style="max-width:min-content" src="../images/resources/blue-100.png">
+    <img data-expected-width="10" style="max-width:min-content" src="../images/resources/green-10.png">
+    <img data-expected-width="50" style="max-width:max-content" src="../images/resources/blue-100.png">
+    <img data-expected-width="10" style="max-width:max-content" src="../images/resources/green-10.png">
     <img data-expected-width="50" style="max-width:-webkit-fill-available" src="../images/resources/blue-100.png">
     <img data-expected-width="50" style="max-width:-webkit-fill-available" src="../images/resources/green-10.png">
-    <img data-expected-width="50" style="max-width:-webkit-fit-content" src="../images/resources/blue-100.png">
-    <img data-expected-width="10" style="max-width:-webkit-fit-content" src="../images/resources/green-10.png">
+    <img data-expected-width="50" style="max-width:fit-content" src="../images/resources/blue-100.png">
+    <img data-expected-width="10" style="max-width:fit-content" src="../images/resources/green-10.png">
 </div>
 
 </html>

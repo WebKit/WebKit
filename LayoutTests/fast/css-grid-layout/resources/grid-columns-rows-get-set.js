@@ -43,18 +43,18 @@ testGridTemplatesSetJSValues("18px", "66px");
 testGridTemplatesSetJSValues("55%", "40%", "440px", "240px");
 testGridTemplatesSetJSValues("auto", "auto", "0px", "0px");
 testGridTemplatesSetJSValues("10vw", "25vh", "80px", "150px");
-testGridTemplatesSetJSValues("-webkit-min-content", "-webkit-min-content", "0px", "0px");
-testGridTemplatesSetJSValues("-webkit-max-content", "-webkit-max-content", "0px", "0px");
+testGridTemplatesSetJSValues("min-content", "min-content", "0px", "0px");
+testGridTemplatesSetJSValues("max-content", "max-content", "0px", "0px");
 testGridTemplatesSetJSValues("fit-content(100px)", "fit-content(25%)", "0px", "0px");
 
 debug("");
 debug("Test getting and setting grid-template-columns and grid-template-rows to minmax() values through JS");
 testGridTemplatesSetJSValues("minmax(55%, 45px)", "minmax(30px, 40%)", "440px", "240px");
 testGridTemplatesSetJSValues("minmax(22em, 8vh)", "minmax(10vw, 5em)", "220px", "80px");
-testGridTemplatesSetJSValues("minmax(-webkit-min-content, 8vh)", "minmax(10vw, -webkit-min-content)", "48px", "80px");
-testGridTemplatesSetJSValues("minmax(22em, -webkit-max-content)", "minmax(-webkit-max-content, 5em)", "220px", "50px");
-testGridTemplatesSetJSValues("minmax(-webkit-min-content, -webkit-max-content)", "minmax(-webkit-max-content, -webkit-min-content)", "0px", "0px");
-testGridTemplatesSetJSValues("minmax(auto, -webkit-max-content)", "minmax(10vw, auto)", "0px", "80px");
+testGridTemplatesSetJSValues("minmax(min-content, 8vh)", "minmax(10vw, min-content)", "48px", "80px");
+testGridTemplatesSetJSValues("minmax(22em, max-content)", "minmax(max-content, 5em)", "220px", "50px");
+testGridTemplatesSetJSValues("minmax(min-content, max-content)", "minmax(max-content, min-content)", "0px", "0px");
+testGridTemplatesSetJSValues("minmax(auto, max-content)", "minmax(10vw, auto)", "0px", "80px");
 // Unit comparison should be case-insensitive.
 testGridTemplatesSetJSValues("3600Fr", "154fR", "800px", "600px", "3600fr", "154fr");
 
@@ -88,7 +88,7 @@ testGridTemplatesSetBadJSValues("minmax(1fr, 100px)", "minmax(2.5fr, 200px)");
 testGridTemplatesSetBadJSValues("fit-content()", "fit-content( )");
 testGridTemplatesSetBadJSValues("fit-content(-10em)", "fit-content(-2px)");
 testGridTemplatesSetBadJSValues("fit-content(10px 2%)", "fit-content(5% 10em)");
-testGridTemplatesSetBadJSValues("fit-content(-webkit-max-content)", "fit-content(-webkit-min-content)");
+testGridTemplatesSetBadJSValues("fit-content(max-content)", "fit-content(min-content)");
 testGridTemplatesSetBadJSValues("fit-content(auto)", "fit-content(3fr)");
 testGridTemplatesSetBadJSValues("fit-content(repeat(2, 100px))", "fit-content(repeat(auto-fit), 1%)");
 testGridTemplatesSetBadJSValues("fit-content(fit-content(10px))", "fit-content(fit-content(30%))");
@@ -106,7 +106,7 @@ testGridTemplatesSetBadJSValues("-1px", "-6em");
 testGridTemplatesSetBadJSValues("minmax(-1%, 32%)", "minmax(2vw, -6em)");
 // Invalid expressions with calc
 testGridTemplatesSetBadJSValues("calc(16px 30px)", "calc(25px + auto)");
-testGridTemplatesSetBadJSValues("minmax(-webkit-min-content, calc())", "calc(10%(");
+testGridTemplatesSetBadJSValues("minmax(min-content, calc())", "calc(10%(");
 
 debug("");
 debug("Test setting grid-template-columns and grid-template-rows back to 'none' through JS");

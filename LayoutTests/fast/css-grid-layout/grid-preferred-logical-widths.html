@@ -10,17 +10,17 @@
 }
 
 .gridMinContentFixed {
-    grid-template-columns: minmax(-webkit-min-content, 40px) minmax(-webkit-min-content, 40px);
+    grid-template-columns: minmax(min-content, 40px) minmax(min-content, 40px);
     grid-template-rows: 10px;
 }
 
 .gridFixedMinContent {
-    grid-template-columns: minmax(30px, -webkit-min-content) minmax(30px, -webkit-min-content);
+    grid-template-columns: minmax(30px, min-content) minmax(30px, min-content);
     grid-template-rows: 10px;
 }
 
 .gridFixedMaxContent {
-    grid-template-columns: minmax(40px, -webkit-max-content) minmax(40px, -webkit-max-content);
+    grid-template-columns: minmax(40px, max-content) minmax(40px, max-content);
     grid-template-rows: 10px;
 }
 

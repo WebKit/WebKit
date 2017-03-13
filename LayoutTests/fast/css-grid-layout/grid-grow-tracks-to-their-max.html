@@ -7,23 +7,23 @@
 }
 
 .gridContentSizedColumn {
-    grid-template-columns: minmax(-webkit-min-content, 20px);
+    grid-template-columns: minmax(min-content, 20px);
     grid-template-rows: 10px;
 }
 
 .gridContentSizedColumnFreeSpace {
-    grid-template-columns: minmax(-webkit-min-content, 100px);
+    grid-template-columns: minmax(min-content, 100px);
     grid-template-rows: 10px;
 }
 
 .gridContentSizedRow {
     grid-template-columns: 40px;
-    grid-template-rows: minmax(-webkit-max-content, 10px);
+    grid-template-rows: minmax(max-content, 10px);
 }
 
 .gridContentSizedRowFreeSpace {
     grid-template-columns: 40px;
-    grid-template-rows: minmax(-webkit-max-content, 100px);
+    grid-template-rows: minmax(max-content, 100px);
 }
 
 .definiteWidth { width: 80px; }

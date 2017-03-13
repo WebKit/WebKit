@@ -14,12 +14,12 @@
 
 .gridMinMaxMin {
     grid-template-columns: 50px 100px;
-    grid-template-rows: minmax(-webkit-min-content, 50px) minmax(-webkit-max-content, 140px);
+    grid-template-rows: minmax(min-content, 50px) minmax(max-content, 140px);
 }
 
 .gridMinMaxMax {
     grid-template-columns: 50px 100px;
-    grid-template-rows: minmax(50px, -webkit-min-content) minmax(40px, -webkit-max-content);
+    grid-template-rows: minmax(50px, min-content) minmax(40px, max-content);
 }
 </style>
 <script src="../../resources/check-layout.js"></script>

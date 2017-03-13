@@ -37,10 +37,10 @@
 .col2 { grid-column: 2 / 3; background: indigo; }
 .col3 { grid-column: 3 / 4; background: green; }
 
-.gridMinContent { grid-template: 20px / minmax(0px, -webkit-min-content) 5px; }
-.gridMaxContent { grid-template: 20px / 5px minmax(0px, -webkit-max-content); }
-.gridMinMaxContent { grid-template: 20px / minmax(0px, -webkit-min-content) 5% minmax(0px, -webkit-max-content); }
-.gridAutoMinContent { grid-template: 20px / minmax(0px, auto) 5px minmax(0px, -webkit-min-content); }
+.gridMinContent { grid-template: 20px / minmax(0px, min-content) 5px; }
+.gridMaxContent { grid-template: 20px / 5px minmax(0px, max-content); }
+.gridMinMaxContent { grid-template: 20px / minmax(0px, min-content) 5% minmax(0px, max-content); }
+.gridAutoMinContent { grid-template: 20px / minmax(0px, auto) 5px minmax(0px, min-content); }
 .gridFitContentAuto { grid-template: 20px / fit-content(100px) 5px minmax(0px, auto); }
 
 </style>

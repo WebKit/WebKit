@@ -10,13 +10,13 @@
      grid-template-columns: auto auto;
  }
  .gridFixedMinContentFixedMaxContent {
-    grid-template-columns: minmax(50px, -webkit-min-content) minmax(40px, -webkit-max-content);
+    grid-template-columns: minmax(50px, min-content) minmax(40px, max-content);
  }
  .gridMaxContentAndAuto {
-     grid-template-columns: -webkit-max-content auto;
+     grid-template-columns: max-content auto;
  }
  .gridMinContentAndAuto {
-     grid-template-columns: -webkit-min-content auto;
+     grid-template-columns: min-content auto;
  }
 </style>
 <script src="../../resources/js-test.js"></script>

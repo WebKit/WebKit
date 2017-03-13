@@ -395,11 +395,11 @@ void CSSPrimitiveValue::init(const Length& length)
         return;
     case MinContent:
         m_primitiveUnitType = CSS_VALUE_ID;
-        m_value.valueID = CSSValueWebkitMinContent;
+        m_value.valueID = CSSValueMinContent;
         return;
     case MaxContent:
         m_primitiveUnitType = CSS_VALUE_ID;
-        m_value.valueID = CSSValueWebkitMaxContent;
+        m_value.valueID = CSSValueMaxContent;
         return;
     case FillAvailable:
         m_primitiveUnitType = CSS_VALUE_ID;
@@ -407,7 +407,7 @@ void CSSPrimitiveValue::init(const Length& length)
         return;
     case FitContent:
         m_primitiveUnitType = CSS_VALUE_ID;
-        m_value.valueID = CSSValueWebkitFitContent;
+        m_value.valueID = CSSValueFitContent;
         return;
     case Percent:
         m_primitiveUnitType = CSS_PERCENTAGE;

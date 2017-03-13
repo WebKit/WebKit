@@ -37,11 +37,11 @@ body {
 .autoMaxTracks { grid: minmax(20px, auto) minmax(20px, auto) / minmax(40px, auto) minmax(40px, auto); }
 
 /* content-sized tracks disallowed to be stetched */
-.minContentTracks { grid: -webkit-min-content -webkit-min-content / -webkit-min-content -webkit-min-content; }
-.maxContentTracks { grid: -webkit-max-content -webkit-max-content / -webkit-max-content -webkit-max-content; }
-.minMaxWithMaxContentTracks { grid: minmax(20px, -webkit-max-content) minmax(20px, -webkit-max-content) / minmax(20px, -webkit-max-content) minmax(20px, -webkit-max-content); }
-.minMaxWithMinContentTracks { grid: minmax(20px, -webkit-min-content) minmax(20px, -webkit-min-content) / minmax(20px, -webkit-min-content) minmax(20px, -webkit-min-content); }
-.minMaxWithMinAutoTracks { grid: minmax(auto, -webkit-max-content) minmax(auto, -webkit-max-content) / minmax(auto, -webkit-max-content) minmax(auto, -webkit-max-content); }
+.minContentTracks { grid: min-content min-content / min-content min-content; }
+.maxContentTracks { grid: max-content max-content / max-content max-content; }
+.minMaxWithMaxContentTracks { grid: minmax(20px, max-content) minmax(20px, max-content) / minmax(20px, max-content) minmax(20px, max-content); }
+.minMaxWithMinContentTracks { grid: minmax(20px, min-content) minmax(20px, min-content) / minmax(20px, min-content) minmax(20px, min-content); }
+.minMaxWithMinAutoTracks { grid: minmax(auto, max-content) minmax(auto, max-content) / minmax(auto, max-content) minmax(auto, max-content); }
 
 </style>
 </head>

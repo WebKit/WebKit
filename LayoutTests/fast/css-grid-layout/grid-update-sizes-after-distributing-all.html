@@ -6,29 +6,29 @@
  .grid { font: 10px/1 Ahem; }
 
  .gridAutoAndMaxContent {
-    grid-template-columns: auto -webkit-max-content;
+    grid-template-columns: auto max-content;
  }
  .gridFixedMinContentAndFixedMaxContent {
-    grid-template-columns: minmax(10px, -webkit-min-content) minmax(10px, -webkit-max-content);
+    grid-template-columns: minmax(10px, min-content) minmax(10px, max-content);
  }
  .gridMinContentAndMaxContent {
-    grid-template-columns: -webkit-min-content -webkit-max-content;
+    grid-template-columns: min-content max-content;
  }
 
  .gridMinContentAndFixedAndMaxContent {
-    grid-template-columns: -webkit-min-content 20px -webkit-max-content;
+    grid-template-columns: min-content 20px max-content;
  }
 
  .gridMaxContentAndFixedAndAuto {
-    grid-template-columns: -webkit-max-content 20px auto;
+    grid-template-columns: max-content 20px auto;
  }
 
  .gridRepeatTwoMaxContentAndMinContent {
-    grid-template-columns: repeat(2, -webkit-max-content -webkit-min-content);
+    grid-template-columns: repeat(2, max-content min-content);
  }
 
  .gridRepeatTwoAutoAndMaxContent {
-    grid-template-columns: repeat(2, auto -webkit-max-content);
+    grid-template-columns: repeat(2, auto max-content);
  }
 
  .columns1And2 { grid-column: 1 / span 2; }
