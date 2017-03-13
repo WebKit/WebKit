@@ -8,22 +8,18 @@
         color: black;
         background: white;
       }
-      .mc {
-        columns: 3;
-        column-gap: 15px;
-        column-fill: auto;
-        -webkit-columns: 3;
-        -webkit-column-gap: 15px;
-        -webkit-column-fill: auto;
-        height: 100px;
-        box-sizing:border-box;
-        border:10px solid green;
-        background:white;
-      }
+    
+    .mc { border:10px solid green;height:100px; box-sizing:border-box }
+    .rect { float:left; border-right:10px solid green; width:115px; height:80px; box-sizing:border-box; }
     </style>
   </head>
   <body>
     <p>There should be a rectangle with a solid 10px thick green border below, and no red.</p>
-    <div class="mc"></div>
+    <div class="mc">
+         <div class="rect"></div>
+        
+        <div class="rect"></div>
+        
+    </div>
   </body>
 </html>
