@@ -51,7 +51,7 @@
 #include <wtf/RefPtr.h>
 #include <wtf/text/StringBuilder.h>
 
-#if OS(DARWIN)
+#if OS(DARWIN) || OS(LINUX)
 #include <cxxabi.h>
 #include <dlfcn.h>
 #endif
@@ -746,7 +746,7 @@ String SamplingProfiler::StackFrame::displayName(VM& vm)
     }
 
     if (frameType == FrameType::Unknown || frameType == FrameType::C) {
-#if OS(DARWIN)
+#if OS(DARWIN) || OS(LINUX)
         if (frameType == FrameType::C) {
             const char* mangledName = nullptr;
             const char* cxaDemangled = nullptr;

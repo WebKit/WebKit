@@ -1,5 +1,21 @@
 2017-03-13  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        [JSC][Linux] Allow profilers to demangle C++ names
+        https://bugs.webkit.org/show_bug.cgi?id=169559
+
+        Reviewed by Michael Catanzaro.
+
+        Linux also offers dladdr & demangling feature.
+        Thus, we can use it to show the names in profilers.
+        For example, SamplingProfiler tells us the C function names.
+
+        * runtime/SamplingProfiler.cpp:
+        (JSC::SamplingProfiler::StackFrame::displayName):
+        * tools/CodeProfile.cpp:
+        (JSC::symbolName):
+
+2017-03-13  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         [WTF] Clean up RunLoop and WorkQueue with Seconds and Function
         https://bugs.webkit.org/show_bug.cgi?id=169537
 

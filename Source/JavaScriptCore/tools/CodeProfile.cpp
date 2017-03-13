@@ -32,7 +32,7 @@
 #include "ProfileTreeNode.h"
 #include <wtf/text/WTFString.h>
 
-#if OS(DARWIN)
+#if OS(DARWIN) || OS(LINUX)
 #include <cxxabi.h>
 #include <dlfcn.h>
 #include <execinfo.h>
@@ -55,7 +55,7 @@ const char* CodeProfile::s_codeTypeNames[CodeProfile::NumberOfCodeTypes] = {
 // Helper function, find the symbol name for a pc in JSC.
 static const char* symbolName(void* address)
 {
-#if OS(DARWIN)
+#if OS(DARWIN) || OS(LINUX)
     Dl_info info;
     if (!dladdr(address, &info) || !info.dli_sname)
         return "<unknown>";
