@@ -2344,9 +2344,6 @@ sub GeneratePropertiesHashTable
 
         my $functionLength = GetFunctionLength($function);
 
-        # FIXME: Remove this once we can get rid of the quirk introduced in https://bugs.webkit.org/show_bug.cgi?id=163967.
-        $functionLength = 3 if $interfaceName eq "Event" and $function->name eq "initEvent";
-
         if ($function->extendedAttributes->{DOMJIT}) {
             push(@$hashValue2, "&DOMJITSignatureFor" . $interface->type->name . $codeGenerator->WK_ucfirst($function->name));
         } else {

@@ -1,3 +1,29 @@
+2017-03-07  Chris Dumez  <cdumez@apple.com>
+
+        Align initEvent / initCustomEvent / initMessageEvent with the latest specification
+        https://bugs.webkit.org/show_bug.cgi?id=169176
+
+        Reviewed by Alex Christensen.
+
+        Re-sync web-platform tests from upstream after:
+        - https://github.com/w3c/web-platform-tests/pull/5043
+        - https://github.com/w3c/web-platform-tests/pull/5044
+
+        * web-platform-tests/dom/events/CustomEvent-expected.txt:
+        * web-platform-tests/dom/events/CustomEvent.html:
+        * web-platform-tests/dom/events/Event-initEvent-expected.txt:
+        * web-platform-tests/dom/events/Event-initEvent.html:
+        * web-platform-tests/dom/interfaces-expected.txt:
+        * web-platform-tests/dom/interfaces.html:
+        * web-platform-tests/html/dom/interfaces-expected.txt:
+        * web-platform-tests/html/dom/interfaces.html:
+        * web-platform-tests/html/dom/resources/interfaces.idl: Copied from LayoutTests/imported/w3c/web-platform-tests/html/dom/interfaces.html.
+        * web-platform-tests/html/dom/resources/untested-interfaces.idl: Added.
+        * web-platform-tests/html/webappapis/scripting/events/messageevent-constructor-expected.txt: Removed.
+        * web-platform-tests/html/webappapis/scripting/events/messageevent-constructor.html: Removed.
+        * web-platform-tests/html/webappapis/scripting/events/messageevent-constructor.https-expected.txt:
+        * web-platform-tests/html/webappapis/scripting/events/messageevent-constructor.https.html:
+
 2017-03-06  Alex Christensen  <achristensen@webkit.org>
 
         Fix URLs relative to file URLs with paths beginning with Windows drive letters

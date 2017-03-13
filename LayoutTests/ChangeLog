@@ -1,3 +1,16 @@
+2017-03-07  Chris Dumez  <cdumez@apple.com>
+
+        Align initEvent / initCustomEvent / initMessageEvent with the latest specification
+        https://bugs.webkit.org/show_bug.cgi?id=169176
+
+        Reviewed by Alex Christensen.
+
+        Updated existing tests to reflect behavior change.
+
+        * fast/events/init-events-expected.txt:
+        * fast/events/script-tests/init-events.js:
+        * fast/eventsource/eventsource-attribute-listeners.html:
+
 2017-03-06  Brent Fulgham  <bfulgham@apple.com>
 
         Validate DOM after potentially destructive actions during parser insert operations

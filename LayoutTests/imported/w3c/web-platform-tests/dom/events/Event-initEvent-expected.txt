@@ -9,4 +9,6 @@ PASS Calling initEvent must not have an effect during dispatching.
 PASS Calling initEvent must unset the stop propagation flag. 
 PASS Calling initEvent must unset the stop immediate propagation flag. 
 PASS Calling initEvent during propagation. 
+PASS First parameter to initEvent should be mandatory. 
+PASS Tests initEvent's default parameter values. 
 

@@ -1,3 +1,36 @@
+2017-03-07  Chris Dumez  <cdumez@apple.com>
+
+        Align initEvent / initCustomEvent / initMessageEvent with the latest specification
+        https://bugs.webkit.org/show_bug.cgi?id=169176
+
+        Reviewed by Alex Christensen.
+
+        Align initEvent / initCustomEvent / initMessageEvent with the latest specification
+        after:
+        - https://github.com/whatwg/dom/pull/417
+        - https://github.com/whatwg/html/pull/2410
+
+        In particular, the following changes were made:
+        - initEvent: The length property now properly returns 1 instead of 3 as only the
+          first parameter is mandatory. We were already behaving correcting the the length
+          property value was wrong because we forgot to drop a hack from the bindings
+          generator.
+        - initCustomEvent: Make all parameters except the first optional. Previously, all
+          parameters were mandatory so this is safe.
+        - initMessageEvent: Drop the custom code and mark the first parameter as mandatory.
+          A side effect of dropping the custom code is that null is no longer considered as
+          valid input for the last parameter. The parameter is of type sequence<> and the
+          new behavior is consistent with the specification and Firefox. If it turns out to
+          break existing content, I'll make the parameter nullable in a follow-up.
+
+        No new tests, updated existing tests.
+
+        * bindings/js/JSMessageEventCustom.cpp:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GeneratePropertiesHashTable):
+        * dom/CustomEvent.idl:
+        * dom/MessageEvent.idl:
+
 2017-03-06  Brent Fulgham  <bfulgham@apple.com>
 
         Validate DOM after potentially destructive actions during parser insert operations

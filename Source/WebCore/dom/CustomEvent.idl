@@ -31,7 +31,7 @@
 ] interface CustomEvent : Event {
     [CustomGetter] readonly attribute any detail;
 
-    [CallWith=ScriptState] void initCustomEvent(DOMString type, boolean bubbles, boolean cancelable, any detail);
+    [CallWith=ScriptState] void initCustomEvent(DOMString type, optional boolean bubbles = false, optional boolean cancelable = false, optional any detail = null);
 };
 
 dictionary CustomEventInit : EventInit {
