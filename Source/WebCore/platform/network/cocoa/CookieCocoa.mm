@@ -26,28 +26,80 @@
 #import "config.h"
 #import "Cookie.h"
 
-#import <wtf/BlockObjCExceptions.h>
+#import <wtf/text/StringBuilder.h>
 
 namespace WebCore {
+
+static Vector<uint16_t> portVectorFromList(NSArray<NSNumber *> *portList)
+{
+    Vector<uint16_t> ports;
+    ports.reserveInitialCapacity(portList.count);
+
+    for (NSNumber *port : portList)
+        ports.uncheckedAppend(port.unsignedShortValue);
+
+    return ports;
+}
+
+static NSString *portStringFromVector(const Vector<uint16_t>& ports)
+{
+    if (ports.isEmpty())
+        return nil;
+
+    auto *string = [NSMutableString stringWithCapacity:ports.size() * 5];
+
+    for (size_t i = 0; i < ports.size() - 1; ++i)
+        [string appendFormat:@"%" PRIu16 ", ", ports[i]];
+
+    [string appendFormat:@"%" PRIu16, ports.last()];
+
+    return string;
+}
+
+Cookie::Cookie(NSHTTPCookie *cookie)
+    : Cookie(cookie.name, cookie.value, cookie.domain, cookie.path, [cookie.expiresDate timeIntervalSince1970] * 1000.0,
+    cookie.HTTPOnly, cookie.secure, cookie.sessionOnly, cookie.comment, cookie.commentURL, portVectorFromList(cookie.portList))
+{
+}
 
 Cookie::operator NSHTTPCookie *() const
 {
     // FIXME: existing APIs do not provide a way to set httpOnly without parsing headers from scratch.
 
-    BEGIN_BLOCK_OBJC_EXCEPTIONS
+    NSMutableDictionary *properties = [NSMutableDictionary dictionaryWithCapacity:11];
 
-    return [NSHTTPCookie cookieWithProperties:@{
-        NSHTTPCookieName: name,
-        NSHTTPCookieValue: value,
-        NSHTTPCookieDomain: domain,
-        NSHTTPCookiePath: path,
-        NSHTTPCookieDomain: domain,
-        NSHTTPCookieSecure: @(secure),
-        NSHTTPCookieDiscard: @(session),
-        NSHTTPCookieExpires: [NSDate dateWithTimeIntervalSince1970:expires / 1000.0],
-        }];
+    if (!comment.isNull())
+        [properties setObject:(NSString *)comment forKey:NSHTTPCookieComment];
 
-    END_BLOCK_OBJC_EXCEPTIONS
+    if (!commentURL.isNull())
+        [properties setObject:(NSURL *)commentURL forKey:NSHTTPCookieCommentURL];
+
+    if (!domain.isNull())
+        [properties setObject:(NSString *)domain forKey:NSHTTPCookieDomain];
+
+    if (!name.isNull())
+        [properties setObject:(NSString *)name forKey:NSHTTPCookieName];
+
+    if (!path.isNull())
+        [properties setObject:(NSString *)path forKey:NSHTTPCookiePath];
+
+    if (!value.isNull())
+        [properties setObject:(NSString *)value forKey:NSHTTPCookieValue];
+
+    NSDate *expirationDate = [NSDate dateWithTimeIntervalSince1970:expires / 1000.0];
+    auto maxAge = [expirationDate timeIntervalSinceNow];
+    if (maxAge > 0)
+        [properties setObject:[NSString stringWithFormat:@"%f", maxAge] forKey:NSHTTPCookieMaximumAge];
+
+    auto* portString = portStringFromVector(ports);
+    if (portString)
+        [properties setObject:portString forKey:NSHTTPCookiePort];
+
+    [properties setObject:@(secure) forKey:NSHTTPCookieSecure];
+    [properties setObject:(session ? @"TRUE" : @"FALSE") forKey:NSHTTPCookieDiscard];
+    [properties setObject:@"1" forKey:NSHTTPCookieVersion];
+
+    return [NSHTTPCookie cookieWithProperties:properties];
 }
 
 } // namespace WebCore

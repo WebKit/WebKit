@@ -23,9 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef Cookie_h
-#define Cookie_h
+#pragma once
 
+#include "URL.h"
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
 
@@ -38,7 +38,7 @@ namespace WebCore {
 struct Cookie {
     Cookie() { }
 
-    Cookie(const String& name, const String& value, const String& domain, const String& path, double expires, bool httpOnly, bool secure, bool session)
+    Cookie(const String& name, const String& value, const String& domain, const String& path, double expires, bool httpOnly, bool secure, bool session, const String& comment, const URL& commentURL, const Vector<uint16_t> ports)
         : name(name)
         , value(value)
         , domain(domain)
@@ -47,6 +47,9 @@ struct Cookie {
         , httpOnly(httpOnly)
         , secure(secure)
         , session(session)
+        , comment(comment)
+        , commentURL(commentURL)
+        , ports(ports)
     {
     }
 
@@ -54,6 +57,7 @@ struct Cookie {
     template<class Decoder> static bool decode(Decoder&, Cookie&);
 
 #ifdef __OBJC__
+    WEBCORE_EXPORT Cookie(NSHTTPCookie *);
     operator NSHTTPCookie *() const;
 #endif
 
@@ -66,6 +70,10 @@ struct Cookie {
     bool httpOnly;
     bool secure;
     bool session;
+    String comment;
+    URL commentURL;
+    Vector<uint16_t> ports;
+
 };
 
 struct CookieHash {
@@ -83,14 +91,7 @@ struct CookieHash {
 template<class Encoder>
 void Cookie::encode(Encoder& encoder) const
 {
-    encoder << name;
-    encoder << value;
-    encoder << domain;
-    encoder << path;
-    encoder << expires;
-    encoder << httpOnly;
-    encoder << secure;
-    encoder << session;
+    encoder << name << value << domain << path << expires << httpOnly << secure << session << comment << commentURL << ports;
 }
 
 template<class Decoder>
@@ -112,6 +113,12 @@ bool Cookie::decode(Decoder& decoder, Cookie& cookie)
         return false;
     if (!decoder.decode(cookie.session))
         return false;
+    if (!decoder.decode(cookie.comment))
+        return false;
+    if (!decoder.decode(cookie.commentURL))
+        return false;
+    if (!decoder.decode(cookie.ports))
+        return false;
 
     return true;
 }
@@ -124,5 +131,3 @@ namespace WTF {
         typedef WebCore::CookieHash Hash;
     };
 }
-
-#endif

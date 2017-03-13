@@ -228,9 +228,7 @@ bool getRawCookies(const NetworkStorageSession& session, const URL& firstParty, 
     rawCookies.reserveCapacity(count);
     for (NSUInteger i = 0; i < count; ++i) {
         NSHTTPCookie *cookie = (NSHTTPCookie *)[cookies objectAtIndex:i];
-        NSTimeInterval expires = [[cookie expiresDate] timeIntervalSince1970] * 1000;
-        rawCookies.uncheckedAppend(Cookie([cookie name], [cookie value], [cookie domain], [cookie path], expires,
-            [cookie isHTTPOnly], [cookie isSecure], [cookie isSessionOnly]));
+        rawCookies.uncheckedAppend({ cookie });
     }
 
     END_BLOCK_OBJC_EXCEPTIONS;
