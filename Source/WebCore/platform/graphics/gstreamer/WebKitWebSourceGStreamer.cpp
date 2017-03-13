@@ -270,7 +270,7 @@ static void webkit_web_src_init(WebKitWebSrc* src)
 
     priv->createdInMainThread = isMainThread();
 
-    priv->appsrc = GST_APP_SRC(gst_element_factory_make("appsrc", 0));
+    priv->appsrc = GST_APP_SRC(gst_element_factory_make("appsrc", nullptr));
     if (!priv->appsrc) {
         GST_ERROR_OBJECT(src, "Failed to create appsrc");
         return;
@@ -287,7 +287,7 @@ static void webkit_web_src_init(WebKitWebSrc* src)
     GST_OBJECT_FLAG_SET(priv->srcpad, GST_PAD_FLAG_NEED_PARENT);
     gst_pad_set_query_function(priv->srcpad, webKitWebSrcQueryWithParent);
 
-    gst_app_src_set_callbacks(priv->appsrc, &appsrcCallbacks, src, 0);
+    gst_app_src_set_callbacks(priv->appsrc, &appsrcCallbacks, src, nullptr);
     gst_app_src_set_emit_signals(priv->appsrc, FALSE);
     gst_app_src_set_stream_type(priv->appsrc, GST_APP_STREAM_TYPE_SEEKABLE);
 
@@ -308,9 +308,9 @@ static void webkit_web_src_init(WebKitWebSrc* src)
     // likely that libsoup already provides new data before
     // the queue is really empty.
     // This might need tweaking for ports not using libsoup.
-    g_object_set(priv->appsrc, "min-percent", 20, NULL);
+    g_object_set(priv->appsrc, "min-percent", 20, nullptr);
 
-    gst_app_src_set_caps(priv->appsrc, 0);
+    gst_app_src_set_caps(priv->appsrc, nullptr);
     gst_app_src_set_size(priv->appsrc, -1);
 }
 
@@ -319,7 +319,7 @@ static void webKitWebSrcDispose(GObject* object)
     WebKitWebSrc* src = WEBKIT_WEB_SRC(object);
     WebKitWebSrcPrivate* priv = src->priv;
 
-    priv->player = 0;
+    priv->player = nullptr;
 
     GST_CALL_PARENT(G_OBJECT_CLASS, dispose, (object));
 }
@@ -339,7 +339,7 @@ static void webKitWebSrcSetProperty(GObject* object, guint propID, const GValue*
 
     switch (propID) {
     case PROP_LOCATION:
-        gst_uri_handler_set_uri(reinterpret_cast<GstURIHandler*>(src), g_value_get_string(value), 0);
+        gst_uri_handler_set_uri(reinterpret_cast<GstURIHandler*>(src), g_value_get_string(value), nullptr);
         break;
     case PROP_KEEP_ALIVE:
         src->priv->keepAlive = g_value_get_boolean(value);
@@ -433,13 +433,13 @@ static void webKitWebSrcStop(WebKitWebSrc* src)
     if (!wasSeeking) {
         priv->size = 0;
         priv->requestedOffset = 0;
-        priv->player = 0;
+        priv->player = nullptr;
     }
 
     locker.unlock();
 
     if (priv->appsrc) {
-        gst_app_src_set_caps(priv->appsrc, 0);
+        gst_app_src_set_caps(priv->appsrc, nullptr);
         if (!wasSeeking)
             gst_app_src_set_size(priv->appsrc, -1);
     }
@@ -615,7 +615,7 @@ static GstStateChangeReturn webKitWebSrcChangeState(GstElement* element, GstStat
         if (!priv->appsrc) {
             gst_element_post_message(element,
                                      gst_missing_element_message_new(element, "appsrc"));
-            GST_ELEMENT_ERROR(src, CORE, MISSING_PLUGIN, (0), ("no appsrc"));
+            GST_ELEMENT_ERROR(src, CORE, MISSING_PLUGIN, (nullptr), ("no appsrc"));
             return GST_STATE_CHANGE_FAILURE;
         }
         break;
@@ -658,7 +658,7 @@ static gboolean webKitWebSrcQueryWithParent(GstPad* pad, GstObject* parent, GstQ
     case GST_QUERY_DURATION: {
         GstFormat format;
 
-        gst_query_parse_duration(query, &format, NULL);
+        gst_query_parse_duration(query, &format, nullptr);
 
         GST_DEBUG_OBJECT(src, "duration query in format %s", gst_format_get_name(format));
         WTF::GMutexLocker<GMutex> locker(*GST_OBJECT_GET_LOCK(src));
@@ -710,7 +710,7 @@ static GstURIType webKitWebSrcUriGetType(GType)
 
 const gchar* const* webKitWebSrcGetProtocols(GType)
 {
-    static const char* protocols[] = {"http", "https", "blob", 0 };
+    static const char* protocols[] = {"http", "https", "blob", nullptr };
     return protocols;
 }
 
@@ -936,7 +936,7 @@ void StreamingClient::handleResponseReceived(const ResourceResponse& response)
     } else
         gst_app_src_set_size(priv->appsrc, -1);
 
-    gst_app_src_set_caps(priv->appsrc, 0);
+    gst_app_src_set_caps(priv->appsrc, nullptr);
 }
 
 void StreamingClient::handleDataReceived(const char* data, int length)
@@ -1003,7 +1003,7 @@ void StreamingClient::handleDataReceived(const char* data, int length)
 
     GstFlowReturn ret = gst_app_src_push_buffer(priv->appsrc, priv->buffer.leakRef());
     if (ret != GST_FLOW_OK && ret != GST_FLOW_EOS)
-        GST_ELEMENT_ERROR(src, CORE, FAILED, (0), (0));
+        GST_ELEMENT_ERROR(src, CORE, FAILED, (nullptr), (nullptr));
 }
 
 void StreamingClient::handleNotifyFinished()
@@ -1182,7 +1182,7 @@ void ResourceHandleStreamingClient::didFail(ResourceHandle*, const ResourceError
     WebKitWebSrc* src = WEBKIT_WEB_SRC(m_src);
 
     GST_ERROR_OBJECT(src, "Have failure: %s", error.localizedDescription().utf8().data());
-    GST_ELEMENT_ERROR(src, RESOURCE, FAILED, ("%s", error.localizedDescription().utf8().data()), (0));
+    GST_ELEMENT_ERROR(src, RESOURCE, FAILED, ("%s", error.localizedDescription().utf8().data()), (nullptr));
     gst_app_src_end_of_stream(src->priv->appsrc);
 }
 
@@ -1197,7 +1197,7 @@ void ResourceHandleStreamingClient::wasBlocked(ResourceHandle*)
     uri.reset(g_strdup(src->priv->originalURI.data()));
     locker.unlock();
 
-    GST_ELEMENT_ERROR(src, RESOURCE, OPEN_READ, ("Access to \"%s\" was blocked", uri.get()), (0));
+    GST_ELEMENT_ERROR(src, RESOURCE, OPEN_READ, ("Access to \"%s\" was blocked", uri.get()), (nullptr));
 }
 
 void ResourceHandleStreamingClient::cannotShowURL(ResourceHandle*)
@@ -1211,7 +1211,7 @@ void ResourceHandleStreamingClient::cannotShowURL(ResourceHandle*)
     uri.reset(g_strdup(src->priv->originalURI.data()));
     locker.unlock();
 
-    GST_ELEMENT_ERROR(src, RESOURCE, OPEN_READ, ("Can't show \"%s\"", uri.get()), (0));
+    GST_ELEMENT_ERROR(src, RESOURCE, OPEN_READ, ("Can't show \"%s\"", uri.get()), (nullptr));
 }
 
 #endif // USE(GSTREAMER)

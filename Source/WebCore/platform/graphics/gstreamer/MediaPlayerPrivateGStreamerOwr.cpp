@@ -286,7 +286,7 @@ void MediaPlayerPrivateGStreamerOwr::registerMediaEngine(MediaEngineRegistrar re
     if (initializeGStreamerAndGStreamerDebugging()) {
         registrar([](MediaPlayer* player) {
             return std::make_unique<MediaPlayerPrivateGStreamerOwr>(player);
-        }, getSupportedTypes, supportsType, 0, 0, 0, 0);
+        }, getSupportedTypes, supportsType, nullptr, nullptr, nullptr, nullptr);
     }
 }
 

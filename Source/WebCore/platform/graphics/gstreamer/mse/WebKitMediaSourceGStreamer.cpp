@@ -593,7 +593,7 @@ GstURIType webKitMediaSrcUriGetType(GType)
 
 const gchar* const* webKitMediaSrcGetProtocols(GType)
 {
-    static const char* protocols[] = {"mediasourceblob", 0 };
+    static const char* protocols[] = {"mediasourceblob", nullptr };
     return protocols;
 }
 

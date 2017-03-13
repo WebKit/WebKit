@@ -76,7 +76,7 @@ static gboolean webkitTextCombinerPadEvent(GstPad*, GstObject* parent, GstEvent*
 
 static void webkit_text_combiner_init(WebKitTextCombiner* combiner)
 {
-    combiner->funnel = gst_element_factory_make("funnel", NULL);
+    combiner->funnel = gst_element_factory_make("funnel", nullptr);
     ASSERT(combiner->funnel);
 
     gboolean ret = gst_bin_add(GST_BIN(combiner), combiner->funnel);
@@ -147,7 +147,7 @@ static gboolean webkitTextCombinerPadEvent(GstPad* pad, GstObject* parent, GstEv
              * the funnel */
             if (targetParent == combiner->funnel) {
                 /* Setup a WebVTT encoder */
-                GstElement* encoder = gst_element_factory_make("webvttenc", NULL);
+                GstElement* encoder = gst_element_factory_make("webvttenc", nullptr);
                 ASSERT(encoder);
 
                 ret = gst_bin_add(GST_BIN(combiner), encoder);
@@ -232,7 +232,7 @@ static GstPad* webkitTextCombinerRequestNewPad(GstElement * element,
     GstPad* pad = gst_element_request_pad(combiner->funnel, templ, name, caps);
     ASSERT(pad);
 
-    GstPad* ghostPad = GST_PAD(g_object_new(WEBKIT_TYPE_TEXT_COMBINER_PAD, "direction", gst_pad_get_direction(pad), NULL));
+    GstPad* ghostPad = GST_PAD(g_object_new(WEBKIT_TYPE_TEXT_COMBINER_PAD, "direction", gst_pad_get_direction(pad), nullptr));
     ASSERT(ghostPad);
 
     ret = gst_ghost_pad_construct(GST_GHOST_PAD(ghostPad));
@@ -295,7 +295,7 @@ static void webkit_text_combiner_pad_class_init(WebKitTextCombinerPadClass* klas
 
 GstElement* webkitTextCombinerNew()
 {
-    return GST_ELEMENT(g_object_new(WEBKIT_TYPE_TEXT_COMBINER, 0));
+    return GST_ELEMENT(g_object_new(WEBKIT_TYPE_TEXT_COMBINER, nullptr));
 }
 
 #endif // ENABLE(VIDEO) && USE(GSTREAMER) && ENABLE(VIDEO_TRACK)

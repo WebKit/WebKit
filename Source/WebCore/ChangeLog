@@ -1,3 +1,91 @@
+2017-03-06  Vanessa Chipirrás Navalón  <vchipirras@igalia.com>
+
+        [GStreamer] Adopt nullptr
+        https://bugs.webkit.org/show_bug.cgi?id=123438
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        To adapt the code to the C++11 standard, all NULL or 0 pointers have been changed to nullptr.
+
+        * platform/audio/gstreamer/AudioDestinationGStreamer.cpp:
+        (WebCore::AudioDestinationGStreamer::AudioDestinationGStreamer):
+        * platform/audio/gstreamer/AudioFileReaderGStreamer.cpp:
+        (WebCore::AudioFileReader::handleNewDeinterleavePad):
+        (WebCore::AudioFileReader::plugDeinterleave):
+        (WebCore::AudioFileReader::decodeAudioForBusCreation):
+        * platform/audio/gstreamer/AudioSourceProviderGStreamer.cpp:
+        (WebCore::AudioSourceProviderGStreamer::AudioSourceProviderGStreamer):
+        (WebCore::AudioSourceProviderGStreamer::configureAudioBin):
+        (WebCore::AudioSourceProviderGStreamer::setClient):
+        (WebCore::AudioSourceProviderGStreamer::handleNewDeinterleavePad):
+        * platform/audio/gstreamer/WebKitWebAudioSourceGStreamer.cpp:
+        (webkit_web_audio_src_init):
+        (webKitWebAudioSrcLoop):
+        (webKitWebAudioSrcChangeState):
+        * platform/graphics/gstreamer/AudioTrackPrivateGStreamer.cpp:
+        (WebCore::AudioTrackPrivateGStreamer::setEnabled):
+        * platform/graphics/gstreamer/GStreamerUtilities.cpp:
+        (WebCore::initializeGStreamer):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::setAudioStreamProperties):
+        (WebCore::MediaPlayerPrivateGStreamer::registerMediaEngine):
+        (WebCore::initializeGStreamerAndRegisterWebKitElements):
+        (WebCore::MediaPlayerPrivateGStreamer::MediaPlayerPrivateGStreamer):
+        (WebCore::MediaPlayerPrivateGStreamer::~MediaPlayerPrivateGStreamer):
+        (WebCore::MediaPlayerPrivateGStreamer::newTextSample):
+        (WebCore::MediaPlayerPrivateGStreamer::handleMessage):
+        (WebCore::MediaPlayerPrivateGStreamer::processTableOfContents):
+        Removed the unused second argument on processTableOfContentsEntry function.
+        (WebCore::MediaPlayerPrivateGStreamer::processTableOfContentsEntry):
+        Removed the unused second argument on this function.
+        (WebCore::MediaPlayerPrivateGStreamer::fillTimerFired):
+        (WebCore::MediaPlayerPrivateGStreamer::loadNextLocation):
+        (WebCore::MediaPlayerPrivateGStreamer::createAudioSink):
+        (WebCore::MediaPlayerPrivateGStreamer::createGSTPlayBin):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h:
+        Removed the unused second argument on processTableOfContentsEntry function.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerBase::MediaPlayerPrivateGStreamerBase):
+        (WebCore::MediaPlayerPrivateGStreamerBase::setMuted):
+        (WebCore::MediaPlayerPrivateGStreamerBase::muted):
+        (WebCore::MediaPlayerPrivateGStreamerBase::notifyPlayerOfMute):
+        (WebCore::MediaPlayerPrivateGStreamerBase::setStreamVolumeElement):
+        (WebCore::MediaPlayerPrivateGStreamerBase::decodedFrameCount):
+        (WebCore::MediaPlayerPrivateGStreamerBase::droppedFrameCount):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerOwr.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerOwr::registerMediaEngine):
+        * platform/graphics/gstreamer/TextCombinerGStreamer.cpp:
+        (webkit_text_combiner_init):
+        (webkitTextCombinerPadEvent):
+        (webkitTextCombinerRequestNewPad):
+        (webkitTextCombinerNew):
+        * platform/graphics/gstreamer/TextSinkGStreamer.cpp:
+        (webkitTextSinkNew):
+        * platform/graphics/gstreamer/TrackPrivateBaseGStreamer.cpp:
+        (WebCore::TrackPrivateBaseGStreamer::tagsChanged):
+        (WebCore::TrackPrivateBaseGStreamer::notifyTrackOfActiveChanged):
+        * platform/graphics/gstreamer/VideoSinkGStreamer.cpp:
+        (webkit_video_sink_init):
+        (webkitVideoSinkProposeAllocation):
+        (webkitVideoSinkNew):
+        * platform/graphics/gstreamer/VideoTrackPrivateGStreamer.cpp:
+        (WebCore::VideoTrackPrivateGStreamer::setSelected):
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp:
+        (webkit_web_src_init):
+        (webKitWebSrcDispose):
+        (webKitWebSrcSetProperty):
+        (webKitWebSrcStop):
+        (webKitWebSrcChangeState):
+        (webKitWebSrcQueryWithParent):
+        (webKitWebSrcGetProtocols):
+        (StreamingClient::handleResponseReceived):
+        (StreamingClient::handleDataReceived):
+        (ResourceHandleStreamingClient::didFail):
+        (ResourceHandleStreamingClient::wasBlocked):
+        (ResourceHandleStreamingClient::cannotShowURL):
+        * platform/graphics/gstreamer/mse/WebKitMediaSourceGStreamer.cpp:
+        (webKitMediaSrcGetProtocols):
+
 2017-03-05  Simon Fraser  <simon.fraser@apple.com>
 
         Avoid backing store for layers with empty text nodes in a few more cases

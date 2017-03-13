@@ -83,7 +83,7 @@ static void copyGStreamerBuffersToAudioChannel(GstAdapter* adapter, AudioBus* bu
 }
 
 AudioSourceProviderGStreamer::AudioSourceProviderGStreamer()
-    : m_client(0)
+    : m_client(nullptr)
     , m_deinterleaveSourcePads(0)
     , m_deinterleavePadAddedHandlerId(0)
     , m_deinterleaveNoMorePadsHandlerId(0)
@@ -113,13 +113,13 @@ void AudioSourceProviderGStreamer::configureAudioBin(GstElement* audioBin, GstEl
     m_audioSinkBin = audioBin;
 
     GstElement* audioTee = gst_element_factory_make("tee", "audioTee");
-    GstElement* audioQueue = gst_element_factory_make("queue", 0);
-    GstElement* audioConvert = gst_element_factory_make("audioconvert", 0);
-    GstElement* audioConvert2 = gst_element_factory_make("audioconvert", 0);
-    GstElement* audioResample = gst_element_factory_make("audioresample", 0);
-    GstElement* audioResample2 = gst_element_factory_make("audioresample", 0);
+    GstElement* audioQueue = gst_element_factory_make("queue", nullptr);
+    GstElement* audioConvert = gst_element_factory_make("audioconvert", nullptr);
+    GstElement* audioConvert2 = gst_element_factory_make("audioconvert", nullptr);
+    GstElement* audioResample = gst_element_factory_make("audioresample", nullptr);
+    GstElement* audioResample2 = gst_element_factory_make("audioresample", nullptr);
     GstElement* volumeElement = gst_element_factory_make("volume", "volume");
-    GstElement* audioSink = gst_element_factory_make("autoaudiosink", 0);
+    GstElement* audioSink = gst_element_factory_make("autoaudiosink", nullptr);
 
     gst_bin_add_many(GST_BIN(m_audioSinkBin.get()), audioTee, audioQueue, audioConvert, audioResample, volumeElement, audioConvert2, audioResample2, audioSink, nullptr);
 
@@ -211,10 +211,10 @@ void AudioSourceProviderGStreamer::setClient(AudioSourceProviderClient* client)
     // The audioconvert and audioresample elements are needed to
     // ensure deinterleave and the sinks downstream receive buffers in
     // the format specified by the capsfilter.
-    GstElement* audioQueue = gst_element_factory_make("queue", 0);
-    GstElement* audioConvert  = gst_element_factory_make("audioconvert", 0);
-    GstElement* audioResample = gst_element_factory_make("audioresample", 0);
-    GstElement* capsFilter = gst_element_factory_make("capsfilter", 0);
+    GstElement* audioQueue = gst_element_factory_make("queue", nullptr);
+    GstElement* audioConvert  = gst_element_factory_make("audioconvert", nullptr);
+    GstElement* audioResample = gst_element_factory_make("audioresample", nullptr);
+    GstElement* capsFilter = gst_element_factory_make("capsfilter", nullptr);
     GstElement* deInterleave = gst_element_factory_make("deinterleave", "deinterleave");
 
     g_object_set(deInterleave, "keep-positions", TRUE, nullptr);
@@ -257,8 +257,8 @@ void AudioSourceProviderGStreamer::handleNewDeinterleavePad(GstPad* pad)
 
     if (m_deinterleaveSourcePads > 2) {
         g_warning("The AudioSourceProvider supports only mono and stereo audio. Silencing out this new channel.");
-        GstElement* queue = gst_element_factory_make("queue", 0);
-        GstElement* sink = gst_element_factory_make("fakesink", 0);
+        GstElement* queue = gst_element_factory_make("queue", nullptr);
+        GstElement* sink = gst_element_factory_make("fakesink", nullptr);
         g_object_set(sink, "async", FALSE, nullptr);
         gst_bin_add_many(GST_BIN(m_audioSinkBin.get()), queue, sink, nullptr);
 
@@ -277,14 +277,14 @@ void AudioSourceProviderGStreamer::handleNewDeinterleavePad(GstPad* pad)
     // in an appsink so we can pull the data from each
     // channel. Pipeline looks like:
     // ... deinterleave ! queue ! appsink.
-    GstElement* queue = gst_element_factory_make("queue", 0);
-    GstElement* sink = gst_element_factory_make("appsink", 0);
+    GstElement* queue = gst_element_factory_make("queue", nullptr);
+    GstElement* sink = gst_element_factory_make("appsink", nullptr);
 
     GstAppSinkCallbacks callbacks;
-    callbacks.eos = 0;
-    callbacks.new_preroll = 0;
+    callbacks.eos = nullptr;
+    callbacks.new_preroll = nullptr;
     callbacks.new_sample = onAppsinkNewBufferCallback;
-    gst_app_sink_set_callbacks(GST_APP_SINK(sink), &callbacks, this, 0);
+    gst_app_sink_set_callbacks(GST_APP_SINK(sink), &callbacks, this, nullptr);
 
     g_object_set(sink, "async", FALSE, nullptr);
 

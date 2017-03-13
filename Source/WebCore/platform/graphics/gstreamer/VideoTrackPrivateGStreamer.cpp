@@ -55,7 +55,7 @@ void VideoTrackPrivateGStreamer::setSelected(bool selected)
     VideoTrackPrivate::setSelected(selected);
 
     if (selected && m_playbin)
-        g_object_set(m_playbin.get(), "current-video", m_index, NULL);
+        g_object_set(m_playbin.get(), "current-video", m_index, nullptr);
 }
 
 } // namespace WebCore

@@ -184,14 +184,14 @@ static void webkit_web_audio_src_init(WebKitWebAudioSrc* src)
     src->priv = priv;
     new (priv) WebKitWebAudioSourcePrivate();
 
-    priv->sourcePad = webkitGstGhostPadFromStaticTemplate(&srcTemplate, "src", 0);
+    priv->sourcePad = webkitGstGhostPadFromStaticTemplate(&srcTemplate, "src", nullptr);
     gst_element_add_pad(GST_ELEMENT(src), priv->sourcePad);
 
-    priv->provider = 0;
-    priv->bus = 0;
+    priv->provider = nullptr;
+    priv->bus = nullptr;
 
     g_rec_mutex_init(&priv->mutex);
-    priv->task = adoptGRef(gst_task_new(reinterpret_cast<GstTaskFunction>(webKitWebAudioSrcLoop), src, 0));
+    priv->task = adoptGRef(gst_task_new(reinterpret_cast<GstTaskFunction>(webKitWebAudioSrcLoop), src, nullptr));
 
     gst_task_set_lock(priv->task.get(), &priv->mutex);
 }
@@ -344,7 +344,7 @@ static void webKitWebAudioSrcLoop(WebKitWebAudioSrc* src)
     }
 
     // FIXME: Add support for local/live audio input.
-    priv->provider->render(0, priv->bus, priv->framesToPull);
+    priv->provider->render(nullptr, priv->bus, priv->framesToPull);
 
     ASSERT(channelBufferList.size() == priv->sources.size());
     bool failed = false;
@@ -378,7 +378,7 @@ static GstStateChangeReturn webKitWebAudioSrcChangeState(GstElement* element, Gs
     case GST_STATE_CHANGE_NULL_TO_READY:
         if (!src->priv->interleave) {
             gst_element_post_message(element, gst_missing_element_message_new(element, "interleave"));
-            GST_ELEMENT_ERROR(src, CORE, MISSING_PLUGIN, (0), ("no interleave"));
+            GST_ELEMENT_ERROR(src, CORE, MISSING_PLUGIN, (nullptr), ("no interleave"));
             return GST_STATE_CHANGE_FAILURE;
         }
         src->priv->numberOfSamples = 0;
