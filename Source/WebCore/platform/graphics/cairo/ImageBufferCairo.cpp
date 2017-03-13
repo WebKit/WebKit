@@ -551,7 +551,7 @@ static bool encodeImage(cairo_surface_t* image, const String& mimeType, Vector<c
     return cairo_surface_write_to_png_stream(image, writeFunction, output) == CAIRO_STATUS_SUCCESS;
 }
 
-String ImageBuffer::toDataURL(const String& mimeType, std::optional<double>, CoordinateSystem) const
+String ImageBuffer::toDataURL(const String& mimeType, std::optional<double> quality, CoordinateSystem) const
 {
     ASSERT(MIMETypeRegistry::isSupportedImageMIMETypeForEncoding(mimeType));
 
