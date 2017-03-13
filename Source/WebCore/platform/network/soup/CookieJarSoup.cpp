@@ -116,7 +116,7 @@ bool getRawCookies(const NetworkStorageSession& session, const URL& /*firstParty
         SoupCookie* cookie = static_cast<SoupCookie*>(iter->data);
         rawCookies.append(Cookie(String::fromUTF8(cookie->name), String::fromUTF8(cookie->value), String::fromUTF8(cookie->domain),
             String::fromUTF8(cookie->path), cookie->expires ? static_cast<double>(soup_date_to_time_t(cookie->expires)) * 1000 : 0,
-            cookie->http_only, cookie->secure, !cookie->expires));
+            cookie->http_only, cookie->secure, !cookie->expires, String(), URL(), Vector<uint16_t>{ }));
         soup_cookie_free(cookie);
     }
 
