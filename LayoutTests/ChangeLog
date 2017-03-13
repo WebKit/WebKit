@@ -1,3 +1,18 @@
+2017-03-13  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] Volume icon doesn't turn to mute when the knob is set to 0
+        https://bugs.webkit.org/show_bug.cgi?id=169553
+        <rdar://problem/30754543>
+
+        Reviewed by Eric Carlson.
+
+        Adding a new test where we drag the volume slider to 0 and ensure that the volume gets muted
+        and that clicking on the mute button resets the volume to be the same value as prior to the
+        dragging interaction.
+
+        * media/modern-media-controls/volume-support/volume-support-drag-to-mute-expected.txt: Added.
+        * media/modern-media-controls/volume-support/volume-support-drag-to-mute.html: Added.
+
 2017-03-13  Manuel Rego Casasnovas  <rego@igalia.com>
 
         Unprefix -webkit-min-content, -webkit-max-content and -webkit-fit-content

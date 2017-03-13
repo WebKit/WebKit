@@ -35,25 +35,9 @@ class VolumeSlider extends Slider
 
         this.height = 11;
         this.enabled = true;
-
-        this._active = false;
-        this.element.addEventListener("mousedown", this);
     }
 
     // Protected
-
-    handleEvent(event)
-    {
-        super.handleEvent(event);
-
-        if (event instanceof MouseEvent) {
-            this._active = event.type === "mousedown";
-            if (event.type === "mousedown")
-                window.addEventListener("mouseup", this, true);
-            else
-                window.removeEventListener("mouseup", this, true);
-        }
-    }
 
     draw(ctx)
     {
@@ -110,7 +94,7 @@ class VolumeSlider extends Slider
         addRoundedRect(ctx, knobX + 1, 0, knobDiameter, knobDiameter, knobRadius);
         ctx.closePath();
         ctx.clip();
-        ctx.fillStyle = this._active ? "white" : "rgb(138, 138, 138)";
+        ctx.fillStyle = this.isActive ? "white" : "rgb(138, 138, 138)";
         ctx.fillRect(0, 0, width, height);
         ctx.restore();
 

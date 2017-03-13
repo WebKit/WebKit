@@ -40,12 +40,14 @@ class VolumeSupport extends MediaControllerSupport
 
     controlValueWillStartChanging(control)
     {
+        this._volumeBeforeChange = this.mediaController.media.volume;
         this.mediaController.media.muted = false;
     }
 
     controlValueDidChange(control)
     {
-        this.mediaController.media.volume = control.value;
+        this.mediaController.media.volume = (control.value === 0 && this._volumeBeforeChange > 0) ? this._volumeBeforeChange : control.value;
+        this.mediaController.media.muted = control.value === 0;
     }
 
     syncControl()

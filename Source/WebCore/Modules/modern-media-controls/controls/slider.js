@@ -36,9 +36,10 @@ class Slider extends LayoutItem
         this._canvas = new LayoutNode(`<canvas></canvas>`);
 
         this._input = new LayoutNode(`<input type="range" min="0" max="1" step="0.001" />`);
-        this._input.element.addEventListener("change", this);
+        this._input.element.addEventListener("mousedown", this);
         this._input.element.addEventListener("input", this);
 
+        this.isActive = false;
         this.value = 0;
 
         this.children = [this._canvas, this._input];
@@ -55,7 +56,7 @@ class Slider extends LayoutItem
 
     set value(value)
     {
-        if (this._valueIsChanging)
+        if (this.isActive)
             return;
 
         this._value = value;
@@ -79,11 +80,14 @@ class Slider extends LayoutItem
     handleEvent(event)
     {
         switch (event.type) {
+        case "mousedown":
+            this._handleMousedownEvent();
+            break;
+        case "mouseup":
+            this._handleMouseupEvent();
+            break;
         case "input":
             this._handleInputEvent();
-            break;
-        case "change":
-            this._handleChangeEvent();
             break;
         }
     }
@@ -118,20 +122,32 @@ class Slider extends LayoutItem
 
     // Private
 
+    _handleMousedownEvent()
+    {
+        const mediaControls = this.parentOfType(MediaControls);
+        this._mouseupTarget = (!mediaControls || mediaControls instanceof MacOSInlineMediaControls) ? window : mediaControls.element;
+        this._mouseupTarget.addEventListener("mouseup", this, true);
+
+        if (this.uiDelegate && typeof this.uiDelegate.controlValueWillStartChanging === "function")
+            this.uiDelegate.controlValueWillStartChanging(this);
+        this.isActive = true;
+        this.needsLayout = true;
+    }
+
     _handleInputEvent()
     {
-        if (!this._valueIsChanging && this.uiDelegate && typeof this.uiDelegate.controlValueWillStartChanging === "function")
-            this.uiDelegate.controlValueWillStartChanging(this);
-        this._valueIsChanging = true;
         if (this.uiDelegate && typeof this.uiDelegate.controlValueDidChange === "function")
             this.uiDelegate.controlValueDidChange(this);
 
         this.needsLayout = true;
     }
 
-    _handleChangeEvent()
+    _handleMouseupEvent()
     {
-        delete this._valueIsChanging;
+        this._mouseupTarget.removeEventListener("mouseup", this, true);
+        delete this._mouseupTarget;
+
+        this.isActive = false;
         if (this.uiDelegate && typeof this.uiDelegate.controlValueDidStopChanging === "function")
             this.uiDelegate.controlValueDidStopChanging(this);
 
