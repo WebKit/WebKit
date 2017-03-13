@@ -1,3 +1,20 @@
+2017-03-13  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Database's query functions should support querying for a row with NULL value
+        https://bugs.webkit.org/show_bug.cgi?id=169504
+
+        Reviewed by Antti Koivisto.
+
+        Add the support for calling select_* with one of column values set to NULL.
+        This feature is useful in webkit.org/b/146374 and webkit.org/b/168962.
+
+        * public/include/db.php:
+        (Database::prepare_params): Added $null_columns as an optional argument.
+        (Database::select_conditions_with_null_columns): Added. Builds up a query string by appending AND x is NULL
+        to match columns whose value must be NULL.
+        (Database::_select_update_or_insert_row):
+        (Database::select_rows):
+
 2017-03-13  Dewei Zhu  <dewei_zhu@apple.com>
 
         Add the ability to report a commit with sub-commits.
