@@ -35,7 +35,21 @@ WebInspector.EventListenerSectionGroup = class EventListenerSectionGroup extends
         var rows = [];
         rows.push(new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Node"), this._nodeTextOrLink()));
         rows.push(new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Function"), this._functionTextOrLink()));
-        rows.push(new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Type"), this._type()));
+
+        if (this._eventListener.useCapture)
+            rows.push(new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Capturing"), WebInspector.UIString("Yes")));
+        else
+            rows.push(new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Bubbling"), WebInspector.UIString("Yes")));
+
+        if (this._eventListener.isAttribute)
+            rows.push(new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Attribute"), WebInspector.UIString("Yes")));
+
+        if (this._eventListener.passive)
+            rows.push(new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Passive"), WebInspector.UIString("Yes")));
+
+        if (this._eventListener.once)
+            rows.push(new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Once"), WebInspector.UIString("Yes")));
+
         this.rows = rows;
     }
 
@@ -52,17 +66,6 @@ WebInspector.EventListenerSectionGroup = class EventListenerSectionGroup extends
             return "document";
 
         return WebInspector.linkifyNodeReference(node);
-    }
-
-    _type()
-    {
-        if (this._eventListener.useCapture)
-            return WebInspector.UIString("Capturing");
-
-        if (this._eventListener.isAttribute)
-            return WebInspector.UIString("Attribute");
-
-        return WebInspector.UIString("Bubbling");
     }
 
     _functionTextOrLink()

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test() {
+    let domNode = null;
+
+    let suite = InspectorTest.createAsyncSuite("DOM.getEventListenersForNode");
+
+    suite.addTestCase({
+        name: "DOM.getEventListenersForNode.Basic",
+        description: "Ensure all applicable fields of each event listener is supplied.",
+        test(resolve, reject) {
+            DOMAgent.getEventListenersForNode(domNode.id, (error, eventListeners) => {
+                if (error) {
+                    reject(error);
+                    return;
+                }
+
+                for (let eventListener of eventListeners) {
+                    let node = WebInspector.domTreeManager.nodeForId(eventListener.nodeId);
+
+
+                    InspectorTest.log(`Event: ${eventListener.type}`);
+                    InspectorTest.log(`Node: ${node.displayName}`);
+                    InspectorTest.log(`Capture: ${eventListener.useCapture}`);
+                    InspectorTest.log(`Attribute: ${eventListener.isAttribute}`);
+
+                    if (eventListener.passive)
+                        InspectorTest.log(`Passive: ${eventListener.passive}`);
+                    if (eventListener.once)
+                        InspectorTest.log(`Once: ${eventListener.once}`);
+
+                    InspectorTest.expectThat(eventListener.location, "The Event Listener has a source location.");
+                    InspectorTest.expectThat(eventListener.handlerBody, "The Event Listener has a function.");
+
+                    InspectorTest.log("");
+                }
+
+                resolve();
+            });
+        }
+    });
+
+    WebInspector.domTreeManager.requestDocument((documentNode) => {
+        WebInspector.domTreeManager.querySelector(documentNode.id, "div#x", (contentNodeId) => {
+            if (!contentNodeId) {
+                InspectorTest.fail("DOM node not found.");
+                InspectorTest.completeTest();
+                return;
+            }
+
+            domNode = WebInspector.domTreeManager.nodeForId(contentNodeId);
+
+            suite.runTestCasesAndFinish();
+        });
+    });
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Testing DOMAgent.getEventListenersForNode.</p>
+
+    <div id="x"></div>
+    <script>
+        let element = document.getElementById("x");
+        element.addEventListener("alpha", (event) => {});
+        element.addEventListener("beta", (event) => {}, {once: true});
+
+        document.body.addEventListener("alpha", (event) => {}, true);
+
+        document.addEventListener("alpha", (event) => {}, {passive: true});
+    </script>
+</body>
+</html>

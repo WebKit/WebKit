@@ -1,3 +1,13 @@
+2017-03-13  Devin Rousso  <webkit@devinrousso.com>
+
+        Web Inspector: Event Listeners section is missing 'once', 'passive' event listener flags
+        https://bugs.webkit.org/show_bug.cgi?id=167080
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector/protocol/DOM.json:
+        Add "passive" and "once" items to the EventListener type.
+
 2017-03-13  Mark Lam  <mark.lam@apple.com>
 
         Remove obsolete experimental ObjC SPI.

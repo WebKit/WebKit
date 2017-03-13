@@ -1546,6 +1546,10 @@ Ref<Inspector::Protocol::DOM::EventListener> InspectorDOMAgent::buildObjectForEv
         if (!sourceName.isEmpty())
             value->setSourceName(sourceName);
     }
+    if (registeredEventListener.isPassive())
+        value->setPassive(true);
+    if (registeredEventListener.isOnce())
+        value->setOnce(true);
     return value;
 }
     
