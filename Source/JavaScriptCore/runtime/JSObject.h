@@ -960,13 +960,14 @@ protected:
         ASSERT(length < MAX_ARRAY_INDEX);
         ASSERT(hasContiguous(indexingType()) || hasInt32(indexingType()) || hasDouble(indexingType()) || hasUndecided(indexingType()));
 
-        bool result = true;
-        if (m_butterfly.get()->vectorLength() < length)
-            result = ensureLengthSlow(vm, length);
+        if (m_butterfly.get()->vectorLength() < length) {
+            if (!ensureLengthSlow(vm, length))
+                return false;
+        }
             
         if (m_butterfly.get()->publicLength() < length)
             m_butterfly.get()->setPublicLength(length);
-        return result;
+        return true;
     }
         
     // Call this if you want to shrink the butterfly backing store, and you're
