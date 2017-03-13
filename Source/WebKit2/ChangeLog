@@ -1,3 +1,24 @@
+2017-03-13  Zan Dobersek  <zdobersek@igalia.com>
+
+        [WK2] Move AcceleratedSurface files under WebProcess/WebPage/CoordinatedGraphics
+        https://bugs.webkit.org/show_bug.cgi?id=169348
+
+        Reviewed by Carlos Garcia Campos.
+
+        Move the AcceleratedSurface header and implementation files under the
+        WebProcess/WebPage directory since that class is not specific to the
+        GTK+ port.
+
+        * PlatformGTK.cmake:
+        * WebProcess/WebPage/AcceleratedSurface.cpp: Renamed from Source/WebKit2/WebProcess/WebPage/gtk/AcceleratedSurface.cpp.
+        (WebKit::AcceleratedSurface::create):
+        (WebKit::AcceleratedSurface::AcceleratedSurface):
+        (WebKit::AcceleratedSurface::resize):
+        * WebProcess/WebPage/AcceleratedSurface.h: Renamed from Source/WebKit2/WebProcess/WebPage/gtk/AcceleratedSurface.h.
+        (WebKit::AcceleratedSurface::window):
+        (WebKit::AcceleratedSurface::surfaceID):
+        (WebKit::AcceleratedSurface::shouldPaintMirrored):
+
 2017-03-13  Konstantin Tokarev  <annulen@yandex.ru>
 
         [cmake] [WK2] Guard flags intended for GCC-like compilers with COMPILER_IS_GCC_OR_CLANG

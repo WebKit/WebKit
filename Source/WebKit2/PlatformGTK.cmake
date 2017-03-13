@@ -479,6 +479,7 @@ list(APPEND WebKit2_SOURCES
     WebProcess/WebCoreSupport/soup/WebFrameNetworkingContext.cpp
 
     WebProcess/WebPage/AcceleratedDrawingArea.cpp
+    WebProcess/WebPage/AcceleratedSurface.cpp
 
     WebProcess/WebPage/CoordinatedGraphics/AreaAllocator.cpp
     WebProcess/WebPage/CoordinatedGraphics/CompositingCoordinator.cpp
@@ -492,7 +493,6 @@ list(APPEND WebKit2_SOURCES
 
     WebProcess/WebPage/gstreamer/WebPageGStreamer.cpp
 
-    WebProcess/WebPage/gtk/AcceleratedSurface.cpp
     WebProcess/WebPage/gtk/AcceleratedSurfaceWayland.cpp
     WebProcess/WebPage/gtk/AcceleratedSurfaceX11.cpp
     WebProcess/WebPage/gtk/PrinterListGtk.cpp
