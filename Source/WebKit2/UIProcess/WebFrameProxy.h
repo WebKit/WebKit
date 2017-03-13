@@ -101,9 +101,9 @@ public:
     bool isDisplayingMarkupDocument() const;
     bool isDisplayingPDFDocument() const;
 
-    void getWebArchive(std::function<void (API::Data*, CallbackBase::Error)>);
-    void getMainResourceData(std::function<void (API::Data*, CallbackBase::Error)>);
-    void getResourceData(API::URL*, std::function<void (API::Data*, CallbackBase::Error)>);
+    void getWebArchive(Function<void (API::Data*, CallbackBase::Error)>&&);
+    void getMainResourceData(Function<void (API::Data*, CallbackBase::Error)>&&);
+    void getResourceData(API::URL*, Function<void (API::Data*, CallbackBase::Error)>&&);
 
     void didStartProvisionalLoad(const String& url);
     void didReceiveServerRedirectForProvisionalLoad(const String& url);

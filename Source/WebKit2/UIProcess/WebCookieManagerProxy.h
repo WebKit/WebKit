@@ -65,7 +65,7 @@ public:
 
     void initializeClient(const WKCookieManagerClientBase*);
     
-    void getHostnamesWithCookies(WebCore::SessionID, std::function<void (API::Array*, CallbackBase::Error)>);
+    void getHostnamesWithCookies(WebCore::SessionID, Function<void (API::Array*, CallbackBase::Error)>&&);
     void deleteCookiesForHostname(WebCore::SessionID, const String& hostname);
     void deleteAllCookies(WebCore::SessionID);
     void deleteAllCookiesModifiedSince(WebCore::SessionID, std::chrono::system_clock::time_point);
@@ -73,7 +73,7 @@ public:
     void setCookies(WebCore::SessionID, const Vector<WebCore::Cookie>&, const WebCore::URL&, const WebCore::URL& mainDocumentURL);
 
     void setHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicy);
-    void getHTTPCookieAcceptPolicy(std::function<void (HTTPCookieAcceptPolicy, CallbackBase::Error)>);
+    void getHTTPCookieAcceptPolicy(Function<void (HTTPCookieAcceptPolicy, CallbackBase::Error)>);
     void setCookieStoragePartitioningEnabled(bool);
 
     void startObservingCookieChanges(WebCore::SessionID);

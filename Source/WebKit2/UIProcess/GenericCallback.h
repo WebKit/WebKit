@@ -32,6 +32,7 @@
 #include "ShareableBitmap.h"
 #include "WKAPICast.h"
 #include <functional>
+#include <wtf/Function.h>
 #include <wtf/HashMap.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -92,11 +93,11 @@ private:
 template<typename... T>
 class GenericCallback : public CallbackBase {
 public:
-    typedef std::function<void (T..., Error)> CallbackFunction;
+    typedef Function<void (T..., Error)> CallbackFunction;
 
-    static PassRefPtr<GenericCallback> create(CallbackFunction callback, const ProcessThrottler::BackgroundActivityToken& activityToken = nullptr)
+    static PassRefPtr<GenericCallback> create(CallbackFunction&& callback, const ProcessThrottler::BackgroundActivityToken& activityToken = nullptr)
     {
-        return adoptRef(new GenericCallback(callback, activityToken));
+        return adoptRef(new GenericCallback(WTFMove(callback), activityToken));
     }
 
     virtual ~GenericCallback()
@@ -109,9 +110,9 @@ public:
         if (!m_callback)
             return;
 
-        m_callback(returnValue..., Error::None);
+        m_callback.value()(returnValue..., Error::None);
 
-        m_callback = nullptr;
+        m_callback = std::nullopt;
     }
 
     void performCallback()
@@ -124,15 +125,15 @@ public:
         if (!m_callback)
             return;
 
-        m_callback(typename std::remove_reference<T>::type()..., error);
+        m_callback.value()(typename std::remove_reference<T>::type()..., error);
 
-        m_callback = nullptr;
+        m_callback = std::nullopt;
     }
 
 private:
-    GenericCallback(CallbackFunction callback, const ProcessThrottler::BackgroundActivityToken& activityToken)
+    GenericCallback(CallbackFunction&& callback, const ProcessThrottler::BackgroundActivityToken& activityToken)
         : CallbackBase(type(), activityToken)
-        , m_callback(callback)
+        , m_callback(WTFMove(callback))
     {
     }
 
@@ -143,7 +144,7 @@ private:
         return &tag;
     }
 
-    CallbackFunction m_callback;
+    std::optional<CallbackFunction> m_callback;
 };
 
 template<typename APIReturnValueType, typename InternalReturnValueType = typename APITypeInfo<APIReturnValueType>::ImplType*>
@@ -192,6 +193,13 @@ public:
 
     template<typename... T>
     uint64_t put(std::function<void (T...)> function, const ProcessThrottler::BackgroundActivityToken& activityToken)
+    {
+        auto callback = GenericCallbackType<sizeof...(T), T...>::type::create(WTFMove(function), activityToken);
+        return put(callback);
+    }
+
+    template<typename... T>
+    uint64_t put(Function<void (T...)>&& function, const ProcessThrottler::BackgroundActivityToken& activityToken)
     {
         auto callback = GenericCallbackType<sizeof...(T), T...>::type::create(WTFMove(function), activityToken);
         return put(callback);
