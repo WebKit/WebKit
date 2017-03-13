@@ -1,3 +1,15 @@
+2017-03-05  Chris Dumez  <cdumez@apple.com>
+
+        Using <form> in <template> causes following <form> to get swallowed
+        https://bugs.webkit.org/show_bug.cgi?id=163552
+
+        Reviewed by Sam Weinig.
+
+        Add layout test coverage.
+
+        * fast/parser/form-after-template-expected.html: Added.
+        * fast/parser/form-after-template.html: Added.
+
 2017-03-03  Alex Christensen  <achristensen@webkit.org>
 
         [URLParser] Fix file: as a relative file URL

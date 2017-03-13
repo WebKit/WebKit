@@ -1,3 +1,26 @@
+2017-03-05  Chris Dumez  <cdumez@apple.com>
+
+        Using <form> in <template> causes following <form> to get swallowed
+        https://bugs.webkit.org/show_bug.cgi?id=163552
+
+        Reviewed by Sam Weinig.
+
+        As per the HTML specification [1], when finding a "form" tag in the "in body"
+        insertion mode, we should insert an HTML element for the token, and, if there
+        is no template element on the stack of open elements, set the form element
+        pointer to point to the element created.
+
+        We were missing the "if there is no template element on the stack of open
+        elements" check and setting the form element pointer unconditionally.
+        This patch fixes the issue.
+
+        [1] https://html.spec.whatwg.org/multipage/syntax.html#parsing-main-inbody:form-element-pointer-2
+
+        Test: fast/parser/form-after-template.html
+
+        * html/parser/HTMLConstructionSite.cpp:
+        (WebCore::HTMLConstructionSite::insertHTMLFormElement):
+
 2017-03-05  Simon Fraser  <simon.fraser@apple.com>
 
         Make some RenderLayer tree traversal in RenderLayerBacking more generic
