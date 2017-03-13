@@ -1,3 +1,14 @@
+2017-03-13  Per Arne Vollan  <pvollan@apple.com>
+
+        Unreviewed Win build fix.
+        
+        WebCore::CookiesStrategy::addCookie has been removed, we should also remove the override.
+
+        * WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebPlatformStrategies::addCookie): Deleted.
+        (WebPlatformStrategies::addCookie): Deleted.
+        * WebCoreSupport/WebPlatformStrategies.h:
+
 2017-03-10  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Re-export a few symbols for backwards compatibility
