@@ -1,3 +1,118 @@
+2017-03-13  Brady Eidson  <beidson@apple.com>
+
+        WKWebView provides no access to cookies.
+        https://bugs.webkit.org/show_bug.cgi?id=140191
+
+        Reviewed by Tim Horton.
+
+        This adds a new WKHTTPCookieManager SPI.
+        It follows the NSHTTPCookieStorage API but asynchronous (with completion handlers).
+        
+        * CMakeLists.txt:
+        * WebKit2.xcodeproj/project.pbxproj:
+
+        * Shared/API/APIObject.h:
+        * Shared/Cocoa/APIObject.mm:
+        (API::Object::newObject):
+
+        * UIProcess/API/APIHTTPCookieStorage.cpp: Added.
+        (API::HTTPCookieStorage::HTTPCookieStorage):
+        (API::HTTPCookieStorage::~HTTPCookieStorage):
+        (API::HTTPCookieStorage::cookies):
+        (API::HTTPCookieStorage::setCookie):
+        (API::HTTPCookieStorage::setCookies):
+        (API::HTTPCookieStorage::deleteCookie):
+        (API::HTTPCookieStorage::removeCookiesSinceDate):
+        (API::HTTPCookieStorage::setHTTPCookieAcceptPolicy):
+        (API::HTTPCookieStorage::getHTTPCookieAcceptPolicy):
+        * UIProcess/API/APIHTTPCookieStorage.h: Added.
+
+        * UIProcess/API/APIWebsiteDataStore.cpp:
+        (API::WebsiteDataStore::defaultDataStore):
+        (API::WebsiteDataStore::httpCookieStorage):
+        * UIProcess/API/APIWebsiteDataStore.h:
+
+        * UIProcess/API/C/WKCookieManager.cpp:
+        (WKCookieManagerDeleteAllCookiesModifiedAfterDate):
+        (WKCookieManagerSetHTTPCookieAcceptPolicy):
+        (WKCookieManagerGetHTTPCookieAcceptPolicy):
+
+        * UIProcess/API/C/WKWebsiteDataStoreRef.cpp:
+        (WKWebsiteDataStoreGetDefaultDataStore):
+
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        (-[WKProcessPool _setCookieAcceptPolicy:]):
+
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (+[WKWebsiteDataStore defaultDataStore]):
+        (-[WKWebsiteDataStore _httpCookieStorage]):
+        * UIProcess/API/Cocoa/WKWebsiteDataStorePrivate.h:
+        
+        * UIProcess/API/Cocoa/WKHTTPCookieStorage.h:
+        * UIProcess/API/Cocoa/WKHTTPCookieStorage.mm: Added.
+        (coreCookiesToNSCookies):
+        (-[WKHTTPCookieStorage dealloc]):
+        (-[WKHTTPCookieStorage fetchCookies:]):
+        (-[WKHTTPCookieStorage fetchCookiesForURL:completionHandler:]):
+        (-[WKHTTPCookieStorage setCookie:completionHandler:]):
+        (-[WKHTTPCookieStorage deleteCookie:completionHandler:]):
+        (-[WKHTTPCookieStorage setCookies:forURL:mainDocumentURL:completionHandler:]):
+        (-[WKHTTPCookieStorage removeCookiesSinceDate:completionHandler:]):
+        (-[WKHTTPCookieStorage setCookieAcceptPolicy:completionHandler:]):
+        (kitCookiePolicyToNSCookiePolicy):
+        (-[WKHTTPCookieStorage fetchCookieAcceptPolicy:]):
+        (-[WKHTTPCookieStorage _apiObject]):
+        * UIProcess/API/Cocoa/WKHTTPCookieStorageInternal.h: Copied from Source/WebKit2/UIProcess/API/Cocoa/WKWebsiteDataStorePrivate.h.
+        (WebKit::wrapper):
+
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::addSingleCookie):
+
+        * UIProcess/WebCookieManagerProxy.cpp:
+        (WebKit::WebCookieManagerProxy::getHostnamesWithCookies):
+        (WebKit::WebCookieManagerProxy::deleteCookiesForHostname):
+        (WebKit::WebCookieManagerProxy::deleteAllCookies):
+        (WebKit::WebCookieManagerProxy::deleteCookie):
+        (WebKit::WebCookieManagerProxy::deleteAllCookiesModifiedSince):
+        (WebKit::WebCookieManagerProxy::setCookie):
+        (WebKit::WebCookieManagerProxy::setCookies):
+        (WebKit::WebCookieManagerProxy::getAllCookies):
+        (WebKit::WebCookieManagerProxy::getCookies):
+        (WebKit::WebCookieManagerProxy::didSetCookies):
+        (WebKit::WebCookieManagerProxy::didGetCookies):
+        (WebKit::WebCookieManagerProxy::didDeleteCookies):
+        (WebKit::WebCookieManagerProxy::startObservingCookieChanges):
+        (WebKit::WebCookieManagerProxy::stopObservingCookieChanges):
+        (WebKit::WebCookieManagerProxy::setCookieObserverCallback):
+        (WebKit::WebCookieManagerProxy::cookiesDidChange):
+        (WebKit::WebCookieManagerProxy::setHTTPCookieAcceptPolicy):
+        (WebKit::WebCookieManagerProxy::getHTTPCookieAcceptPolicy):
+        (WebKit::WebCookieManagerProxy::didGetHTTPCookieAcceptPolicy):
+        (WebKit::WebCookieManagerProxy::didSetHTTPCookieAcceptPolicy):
+        * UIProcess/WebCookieManagerProxy.h:
+        * UIProcess/WebCookieManagerProxy.messages.in:
+
+        * UIProcess/WebFrameProxy.h:
+        
+        * UIProcess/WebProcessPool.cpp:
+        * UIProcess/WebProcessPool.h:
+        
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::processPoolForCookieStorageOperations):
+        (WebKit::WebsiteDataStore::processPools):
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+        
+        * WebProcess/Cookies/WebCookieManager.cpp:
+        (WebKit::WebCookieManager::deleteCookie):
+        (WebKit::WebCookieManager::deleteAllCookiesModifiedSince):
+        (WebKit::WebCookieManager::getAllCookies):
+        (WebKit::WebCookieManager::getCookies):
+        (WebKit::WebCookieManager::setCookie):
+        (WebKit::WebCookieManager::setCookies):
+        (WebKit::WebCookieManager::setHTTPCookieAcceptPolicy):
+        * WebProcess/Cookies/WebCookieManager.h:
+        * WebProcess/Cookies/WebCookieManager.messages.in:
+
 2017-03-13  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics: More efficient network process messaging + Fix bug in user interaction reporting

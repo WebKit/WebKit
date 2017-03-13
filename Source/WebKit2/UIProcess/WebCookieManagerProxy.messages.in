@@ -23,6 +23,11 @@
 messages -> WebCookieManagerProxy {
     DidGetHostnamesWithCookies(Vector<String> hostnames, uint64_t callbackID);
     DidGetHTTPCookieAcceptPolicy(uint32_t policy, uint64_t callbackID);
-    
+
+    DidSetHTTPCookieAcceptPolicy(uint64_t callbackID);
+    DidDeleteCookies(uint64_t callbackID);
+    DidSetCookies(uint64_t callbackID);
+    DidGetCookies(Vector<WebCore::Cookie> cookies, uint64_t callbackID);
+
     CookiesDidChange(WebCore::SessionID sessionID)
 }

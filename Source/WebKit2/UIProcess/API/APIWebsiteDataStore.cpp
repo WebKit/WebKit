@@ -31,13 +31,13 @@
 
 namespace API {
 
-RefPtr<WebsiteDataStore> WebsiteDataStore::defaultDataStore()
+Ref<WebsiteDataStore> WebsiteDataStore::defaultDataStore()
 {
     WebKit::InitializeWebKit2();
 
     static WebsiteDataStore* defaultDataStore = adoptRef(new WebsiteDataStore(defaultDataStoreConfiguration())).leakRef();
 
-    return defaultDataStore;
+    return *defaultDataStore;
 }
 
 Ref<WebsiteDataStore> WebsiteDataStore::createNonPersistentDataStore()
@@ -62,6 +62,14 @@ WebsiteDataStore::WebsiteDataStore(WebKit::WebsiteDataStore::Configuration confi
 
 WebsiteDataStore::~WebsiteDataStore()
 {
+}
+
+HTTPCookieStorage& WebsiteDataStore::httpCookieStorage()
+{
+    if (!m_apiHTTPCookieStorage)
+        m_apiHTTPCookieStorage = HTTPCookieStorage::create(*this);
+
+    return *m_apiHTTPCookieStorage;
 }
 
 bool WebsiteDataStore::isPersistent()

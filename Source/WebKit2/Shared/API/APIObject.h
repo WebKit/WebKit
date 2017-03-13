@@ -116,6 +116,7 @@ public:
         FullScreenManager,
         GeolocationManager,
         GeolocationPermissionRequest,
+        HTTPCookieStorage,
         HitTestResult,
         GeolocationPosition,
         GrammarDetail,

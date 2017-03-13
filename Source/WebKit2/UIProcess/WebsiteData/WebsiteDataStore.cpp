@@ -30,6 +30,7 @@
 #include "APIWebsiteDataRecord.h"
 #include "NetworkProcessMessages.h"
 #include "StorageManager.h"
+#include "WebCookieManagerProxy.h"
 #include "WebProcessMessages.h"
 #include "WebProcessPool.h"
 #include "WebResourceLoadStatisticsStore.h"
@@ -103,6 +104,27 @@ WebsiteDataStore::~WebsiteDataStore()
         for (auto& processPool : WebProcessPool::allProcessPools())
             processPool->sendToNetworkingProcess(Messages::NetworkProcess::DestroyPrivateBrowsingSession(m_sessionID));
     }
+}
+
+Ref<WebProcessPool> WebsiteDataStore::processPoolForCookieStorageOperations()
+{
+    // Our concepts of WebProcess, WebProcessPool, WebsiteDataStore, and SessionIDs have all started to overlap
+    // without clear divisions of responsibilities.
+    // In practice, multiple WebProcessPools can contain "the same session", especially since there is currently
+    // only a single default global SessionID.
+    //
+    // This means that multiple NetworkProcesses can be using the same session, which means that multiple
+    // NetworkProcesses can be referring to the same platform cookie storage.
+    //
+    // While this may cause complications with future APIs it is actually fine for implementing the WKHTTPCookieStorage API
+    // because we only need one NetworkProcess to successfully make a requested platform cookie storage change.
+    //
+    // FIXME: We need to start to unravel this mess going forward.
+
+    auto pools = processPools(1);
+    ASSERT(!pools.isEmpty());
+
+    return **pools.begin();
 }
 
 void WebsiteDataStore::resolveDirectoriesIfNecessary()
@@ -1108,7 +1130,7 @@ void WebsiteDataStore::webProcessDidCloseConnection(WebProcessProxy& webProcessP
         m_storageManager->processDidCloseConnection(webProcessProxy, connection);
 }
 
-HashSet<RefPtr<WebProcessPool>> WebsiteDataStore::processPools() const
+HashSet<RefPtr<WebProcessPool>> WebsiteDataStore::processPools(size_t count) const
 {
     HashSet<RefPtr<WebProcessPool>> processPools;
     for (auto& process : processes())
@@ -1122,11 +1144,20 @@ HashSet<RefPtr<WebProcessPool>> WebsiteDataStore::processPools() const
                     processPools.add(processPool);
                     break;
                 }
+            } else if (&API::WebsiteDataStore::defaultDataStore()->websiteDataStore() == this) {
+                // If a process pool doesn't have an explicit data store and this is the default WebsiteDataStore,
+                // add that process pool to the set.
+                // FIXME: This behavior is weird and necessitated by the fact that process pools don't always
+                // have a data store; they should.
+                processPools.add(processPool);
             }
+
+            if (processPools.size() == count)
+                break;
         }
     }
 
-    if (processPools.isEmpty()) {
+    if (processPools.isEmpty() && count) {
         auto processPool = WebProcessPool::create(API::ProcessPoolConfiguration::createWithWebsiteDataStoreConfiguration(m_configuration));
         processPools.add(processPool.ptr());
     }

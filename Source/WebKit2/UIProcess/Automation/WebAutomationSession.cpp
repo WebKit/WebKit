@@ -734,7 +734,7 @@ void WebAutomationSession::addSingleCookie(ErrorString& errorString, const Strin
 
     // FIXME: Using activeURL here twice is basically saying "this is always in the context of the main document"
     // which probably isn't accurate.
-    cookieManager->setCookies(WebCore::SessionID::defaultSessionID(), { cookie }, activeURL, activeURL);
+    cookieManager->setCookies(WebCore::SessionID::defaultSessionID(), { cookie }, activeURL, activeURL, [](CallbackBase::Error){});
 
     callback->sendSuccess();
 }

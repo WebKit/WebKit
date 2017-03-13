@@ -58,7 +58,7 @@ struct Cookie {
 
 #ifdef __OBJC__
     WEBCORE_EXPORT Cookie(NSHTTPCookie *);
-    operator NSHTTPCookie *() const;
+    WEBCORE_EXPORT operator NSHTTPCookie *() const;
 #endif
 
     String name;

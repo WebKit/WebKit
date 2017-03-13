@@ -26,7 +26,7 @@
 #ifndef APIWebsiteDataStore_h
 #define APIWebsiteDataStore_h
 
-#include "APIObject.h"
+#include "APIHTTPCookieStorage.h"
 #include "WebsiteDataStore.h"
 #include <WebCore/SessionID.h>
 #include <wtf/text/WTFString.h>
@@ -35,7 +35,7 @@ namespace API {
 
 class WebsiteDataStore final : public ObjectImpl<Object::Type::WebsiteDataStore> {
 public:
-    static RefPtr<WebsiteDataStore> defaultDataStore();
+    static Ref<WebsiteDataStore> defaultDataStore();
     static Ref<WebsiteDataStore> createNonPersistentDataStore();
     static Ref<WebsiteDataStore> create(WebKit::WebsiteDataStore::Configuration);
 
@@ -49,6 +49,7 @@ public:
     void registerSharedResourceLoadObserver();
 
     WebKit::WebsiteDataStore& websiteDataStore() { return *m_websiteDataStore; }
+    HTTPCookieStorage& httpCookieStorage();
 
     static String defaultApplicationCacheDirectory();
     static String defaultNetworkCacheDirectory();
@@ -74,6 +75,7 @@ private:
     static String websiteDataDirectoryFileSystemRepresentation(const String& directoryName);
 
     RefPtr<WebKit::WebsiteDataStore> m_websiteDataStore;
+    RefPtr<HTTPCookieStorage> m_apiHTTPCookieStorage;
 };
 
 }

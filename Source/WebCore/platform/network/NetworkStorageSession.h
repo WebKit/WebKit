@@ -100,7 +100,11 @@ public:
     NetworkingContext* context() const;
 #endif
 
+    WEBCORE_EXPORT void setCookie(const Cookie&);
     WEBCORE_EXPORT void setCookies(const Vector<Cookie>&, const URL&, const URL& mainDocumentURL);
+    WEBCORE_EXPORT void deleteCookie(const Cookie&);
+    WEBCORE_EXPORT Vector<Cookie> getAllCookies();
+    WEBCORE_EXPORT Vector<Cookie> getCookies(const URL&);
 
 private:
     static HashMap<SessionID, std::unique_ptr<NetworkStorageSession>>& globalSessionMap();

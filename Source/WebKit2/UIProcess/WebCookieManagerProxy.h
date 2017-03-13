@@ -55,6 +55,7 @@ class WebProcessProxy;
 
 typedef GenericCallback<API::Array*> ArrayCallback;
 typedef GenericCallback<HTTPCookieAcceptPolicy> HTTPCookieAcceptPolicyCallback;
+typedef GenericCallback<const Vector<WebCore::Cookie>&> GetCookiesCallback;
 
 class WebCookieManagerProxy : public API::ObjectImpl<API::Object::Type::CookieManager>, public WebContextSupplement, private IPC::MessageReceiver {
 public:
@@ -66,14 +67,20 @@ public:
     void initializeClient(const WKCookieManagerClientBase*);
     
     void getHostnamesWithCookies(WebCore::SessionID, Function<void (API::Array*, CallbackBase::Error)>&&);
+    void deleteCookie(WebCore::SessionID, const WebCore::Cookie&, Function<void (CallbackBase::Error)>&&);
     void deleteCookiesForHostname(WebCore::SessionID, const String& hostname);
     void deleteAllCookies(WebCore::SessionID);
-    void deleteAllCookiesModifiedSince(WebCore::SessionID, std::chrono::system_clock::time_point);
+    void deleteAllCookiesModifiedSince(WebCore::SessionID, std::chrono::system_clock::time_point, Function<void (CallbackBase::Error)>&&);
 
-    void setCookies(WebCore::SessionID, const Vector<WebCore::Cookie>&, const WebCore::URL&, const WebCore::URL& mainDocumentURL);
+    void setCookie(WebCore::SessionID, const WebCore::Cookie&, Function<void (CallbackBase::Error)>&&);
+    void setCookies(WebCore::SessionID, const Vector<WebCore::Cookie>&, const WebCore::URL&, const WebCore::URL& mainDocumentURL, Function<void (CallbackBase::Error)>&&);
 
-    void setHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicy);
-    void getHTTPCookieAcceptPolicy(Function<void (HTTPCookieAcceptPolicy, CallbackBase::Error)>);
+    void getAllCookies(WebCore::SessionID, Function<void (const Vector<WebCore::Cookie>&, CallbackBase::Error)>&& completionHandler);
+    void getCookies(WebCore::SessionID, const WebCore::URL&, Function<void (const Vector<WebCore::Cookie>&, CallbackBase::Error)>&& completionHandler);
+
+    void setHTTPCookieAcceptPolicy(WebCore::SessionID, HTTPCookieAcceptPolicy, Function<void (CallbackBase::Error)>&&);
+    void getHTTPCookieAcceptPolicy(WebCore::SessionID, Function<void (HTTPCookieAcceptPolicy, CallbackBase::Error)>&&);
+
     void setCookieStoragePartitioningEnabled(bool);
 
     void startObservingCookieChanges(WebCore::SessionID);
@@ -95,6 +102,11 @@ private:
     void didGetHostnamesWithCookies(const Vector<String>&, uint64_t callbackID);
     void didGetHTTPCookieAcceptPolicy(uint32_t policy, uint64_t callbackID);
 
+    void didSetHTTPCookieAcceptPolicy(uint64_t callbackID);
+    void didSetCookies(uint64_t callbackID);
+    void didGetCookies(const Vector<WebCore::Cookie>&, uint64_t callbackID);
+    void didDeleteCookies(uint64_t callbackID);
+
     void cookiesDidChange(WebCore::SessionID);
 
     // WebContextSupplement
@@ -113,6 +125,8 @@ private:
 
     HashMap<uint64_t, RefPtr<ArrayCallback>> m_arrayCallbacks;
     HashMap<uint64_t, RefPtr<HTTPCookieAcceptPolicyCallback>> m_httpCookieAcceptPolicyCallbacks;
+    HashMap<uint64_t, RefPtr<VoidCallback>> m_voidCallbacks;
+    HashMap<uint64_t, RefPtr<GetCookiesCallback>> m_getCookiesCallbacks;
 
     HashMap<WebCore::SessionID, std::function<void ()>> m_cookieObservers;
 

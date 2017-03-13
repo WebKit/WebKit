@@ -31,6 +31,7 @@
 #include "WebFrameListenerProxy.h"
 #include <WebCore/FrameLoaderTypes.h>
 #include <wtf/Forward.h>
+#include <wtf/Function.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/text/WTFString.h>
 

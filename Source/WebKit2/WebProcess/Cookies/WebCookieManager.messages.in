@@ -27,11 +27,15 @@
     void GetHostnamesWithCookies(WebCore::SessionID sessionID, uint64_t callbackID)
     void DeleteCookiesForHostname(WebCore::SessionID sessionID, String hostname)
     void DeleteAllCookies(WebCore::SessionID sessionID)
-    void DeleteAllCookiesModifiedSince(WebCore::SessionID sessionID, std::chrono::system_clock::time_point time)
 
-    void SetCookies(WebCore::SessionID sessionID, Vector<WebCore::Cookie> cookies, WebCore::URL url, WebCore::URL mainDocumentURL);
+    void SetCookie(WebCore::SessionID sessionID, struct WebCore::Cookie cookie, uint64_t callbackID)
+    void SetCookies(WebCore::SessionID sessionID, Vector<WebCore::Cookie> cookies, WebCore::URL url, WebCore::URL mainDocumentURL, uint64_t callbackID)
+    void GetAllCookies(WebCore::SessionID sessionID, uint64_t callbackID)
+    void GetCookies(WebCore::SessionID sessionID, WebCore::URL url, uint64_t callbackID)
+    void DeleteCookie(WebCore::SessionID sessionID, struct WebCore::Cookie cookie, uint64_t callbackID)
+    void DeleteAllCookiesModifiedSince(WebCore::SessionID sessionID, std::chrono::system_clock::time_point time, uint64_t callbackID)
 
-    void SetHTTPCookieAcceptPolicy(uint32_t policy)
+    void SetHTTPCookieAcceptPolicy(uint32_t policy, uint64_t callbackID)
     void GetHTTPCookieAcceptPolicy(uint64_t callbackID)
     
     void StartObservingCookieChanges(WebCore::SessionID sessionID)

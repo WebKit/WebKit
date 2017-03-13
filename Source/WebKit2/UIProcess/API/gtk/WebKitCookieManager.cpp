@@ -27,6 +27,7 @@
 #include "WebKitWebsiteDataManagerPrivate.h"
 #include "WebKitWebsiteDataPrivate.h"
 #include "WebsiteDataRecord.h"
+#include <WebCore/SessionID.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/text/CString.h>
 
@@ -178,7 +179,7 @@ void webkit_cookie_manager_set_accept_policy(WebKitCookieManager* manager, WebKi
     g_return_if_fail(WEBKIT_IS_COOKIE_MANAGER(manager));
 
     for (auto* processPool : webkitWebsiteDataManagerGetProcessPools(manager->priv->dataManager))
-        processPool->supplement<WebCookieManagerProxy>()->setHTTPCookieAcceptPolicy(toHTTPCookieAcceptPolicy(policy));
+        processPool->supplement<WebCookieManagerProxy>()->setHTTPCookieAcceptPolicy(WebCore::SessionID::defaultSessionID(), toHTTPCookieAcceptPolicy(policy), [](CallbackBase::Error){});
 }
 
 static void webkitCookieManagerGetAcceptPolicyCallback(WKHTTPCookieAcceptPolicy policy, WKErrorRef, void* context)
@@ -212,7 +213,7 @@ void webkit_cookie_manager_get_accept_policy(WebKitCookieManager* manager, GCanc
         return;
     }
 
-    processPools[0]->supplement<WebCookieManagerProxy>()->getHTTPCookieAcceptPolicy(
+    processPools[0]->supplement<WebCookieManagerProxy>()->getHTTPCookieAcceptPolicy(WebCore::SessionID::defaultSessionID(), 
         toGenericCallbackFunction<WKHTTPCookieAcceptPolicy, HTTPCookieAcceptPolicy>(task.leakRef(), webkitCookieManagerGetAcceptPolicyCallback));
 }
 

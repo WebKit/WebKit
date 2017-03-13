@@ -61,17 +61,17 @@ void WKCookieManagerDeleteAllCookiesModifiedAfterDate(WKCookieManagerRef cookieM
     using namespace std::chrono;
 
     auto time = system_clock::time_point(duration_cast<system_clock::duration>(duration<double>(date)));
-    toImpl(cookieManagerRef)->deleteAllCookiesModifiedSince(WebCore::SessionID::defaultSessionID(), time);
+    toImpl(cookieManagerRef)->deleteAllCookiesModifiedSince(WebCore::SessionID::defaultSessionID(), time, [](CallbackBase::Error){});
 }
 
 void WKCookieManagerSetHTTPCookieAcceptPolicy(WKCookieManagerRef cookieManager, WKHTTPCookieAcceptPolicy policy)
 {
-    toImpl(cookieManager)->setHTTPCookieAcceptPolicy(toHTTPCookieAcceptPolicy(policy));
+    toImpl(cookieManager)->setHTTPCookieAcceptPolicy(WebCore::SessionID::defaultSessionID(), toHTTPCookieAcceptPolicy(policy), [](CallbackBase::Error){});
 }
 
 void WKCookieManagerGetHTTPCookieAcceptPolicy(WKCookieManagerRef cookieManager, void* context, WKCookieManagerGetHTTPCookieAcceptPolicyFunction callback)
 {
-    toImpl(cookieManager)->getHTTPCookieAcceptPolicy(toGenericCallbackFunction<WKHTTPCookieAcceptPolicy, HTTPCookieAcceptPolicy>(context, callback));
+    toImpl(cookieManager)->getHTTPCookieAcceptPolicy(WebCore::SessionID::defaultSessionID(), toGenericCallbackFunction<WKHTTPCookieAcceptPolicy, HTTPCookieAcceptPolicy>(context, callback));
 }
 
 void WKCookieManagerSetCookieStoragePartitioningEnabled(WKCookieManagerRef cookieManager, bool enabled)

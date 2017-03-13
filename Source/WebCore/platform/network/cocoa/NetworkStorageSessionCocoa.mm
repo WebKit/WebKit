@@ -32,6 +32,13 @@
 
 namespace WebCore {
 
+void NetworkStorageSession::setCookie(const Cookie& cookie)
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    [nsCookieStorage() setCookie:(NSHTTPCookie *)cookie];
+    END_BLOCK_OBJC_EXCEPTIONS;
+}
+
 void NetworkStorageSession::setCookies(const Vector<Cookie>& cookies, const URL& url, const URL& mainDocumentURL)
 {
     RetainPtr<NSMutableArray> nsCookies = adoptNS([[NSMutableArray alloc] initWithCapacity:cookies.size()]);
@@ -41,6 +48,31 @@ void NetworkStorageSession::setCookies(const Vector<Cookie>& cookies, const URL&
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     [nsCookieStorage() setCookies:nsCookies.get() forURL:(NSURL *)url mainDocumentURL:(NSURL *)mainDocumentURL];
     END_BLOCK_OBJC_EXCEPTIONS;
+}
+
+void NetworkStorageSession::deleteCookie(const Cookie& cookie)
+{
+    [nsCookieStorage() deleteCookie:(NSHTTPCookie *)cookie];
+}
+
+static Vector<Cookie> nsCookiesToCookieVector(NSArray<NSHTTPCookie *> *nsCookies)
+{
+    Vector<Cookie> cookies;
+    cookies.reserveInitialCapacity(nsCookies.count);
+    for (NSHTTPCookie *nsCookie in nsCookies)
+        cookies.uncheckedAppend(nsCookie);
+
+    return cookies;
+}
+
+Vector<Cookie> NetworkStorageSession::getAllCookies()
+{
+    return nsCookiesToCookieVector(nsCookieStorage().cookies);
+}
+
+Vector<Cookie> NetworkStorageSession::getCookies(const URL& url)
+{
+    return nsCookiesToCookieVector([nsCookieStorage() cookiesForURL:(NSURL *)url]);
 }
 
 NSHTTPCookieStorage *NetworkStorageSession::nsCookieStorage() const

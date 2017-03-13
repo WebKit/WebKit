@@ -196,7 +196,7 @@ static WebKit::HTTPCookieAcceptPolicy toHTTPCookieAcceptPolicy(NSHTTPCookieAccep
 
 - (void)_setCookieAcceptPolicy:(NSHTTPCookieAcceptPolicy)policy
 {
-    _processPool->supplement<WebKit::WebCookieManagerProxy>()->setHTTPCookieAcceptPolicy(toHTTPCookieAcceptPolicy(policy));
+    _processPool->supplement<WebKit::WebCookieManagerProxy>()->setHTTPCookieAcceptPolicy(WebCore::SessionID::defaultSessionID(), toHTTPCookieAcceptPolicy(policy), [](WebKit::CallbackBase::Error){});
 }
 
 - (id)_objectForBundleParameter:(NSString *)parameter

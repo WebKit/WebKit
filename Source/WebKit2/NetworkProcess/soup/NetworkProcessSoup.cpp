@@ -124,7 +124,7 @@ void NetworkProcess::platformInitializeNetworkProcess(const NetworkProcessCreati
         supplement<WebCookieManager>()->setCookiePersistentStorage(parameters.cookiePersistentStoragePath,
             parameters.cookiePersistentStorageType);
     }
-    supplement<WebCookieManager>()->setHTTPCookieAcceptPolicy(parameters.cookieAcceptPolicy);
+    supplement<WebCookieManager>()->setHTTPCookieAcceptPolicy(parameters.cookieAcceptPolicy, 0);
 
     if (!parameters.languages.isEmpty())
         userPreferredLanguagesChanged(parameters.languages);
