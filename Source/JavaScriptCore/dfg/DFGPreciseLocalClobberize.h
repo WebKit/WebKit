@@ -197,11 +197,9 @@ private:
 
             
         default: {
-            // All of the outermost arguments, except this, are read in sloppy mode.
-            if (!m_graph.m_codeBlock->isStrictMode()) {
-                for (unsigned i = m_graph.m_codeBlock->numParameters(); i-- > 1;)
-                    m_read(virtualRegisterForArgument(i));
-            }
+            // All of the outermost arguments, except this, are definitely read.
+            for (unsigned i = m_graph.m_codeBlock->numParameters(); i-- > 1;)
+                m_read(virtualRegisterForArgument(i));
         
             // The stack header is read.
             for (unsigned i = 0; i < CallFrameSlot::thisArgument; ++i)
@@ -209,10 +207,8 @@ private:
         
             // Read all of the inline arguments and call frame headers that we didn't already capture.
             for (InlineCallFrame* inlineCallFrame = m_node->origin.semantic.inlineCallFrame; inlineCallFrame; inlineCallFrame = inlineCallFrame->getCallerInlineFrameSkippingTailCalls()) {
-                if (!inlineCallFrame->isStrictMode()) {
-                    for (unsigned i = inlineCallFrame->arguments.size(); i-- > 1;)
-                        m_read(VirtualRegister(inlineCallFrame->stackOffset + virtualRegisterForArgument(i).offset()));
-                }
+                for (unsigned i = inlineCallFrame->arguments.size(); i-- > 1;)
+                    m_read(VirtualRegister(inlineCallFrame->stackOffset + virtualRegisterForArgument(i).offset()));
                 if (inlineCallFrame->isClosureCall)
                     m_read(VirtualRegister(inlineCallFrame->stackOffset + CallFrameSlot::callee));
                 if (inlineCallFrame->isVarargs())
