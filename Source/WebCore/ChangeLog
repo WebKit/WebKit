@@ -1,3 +1,26 @@
+2017-03-06  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [css-grid] Stretch should grow and shrink items to fit its grid area
+        https://bugs.webkit.org/show_bug.cgi?id=163200
+
+        Reviewed by Darin Adler.
+
+        After some discussions the CSS WG agreed that stretch should not only
+        grow items, but also shrink them to fit its grid area.
+        That way the "min-width|height: auto" is somehow ignored for grid items.
+        More info at: https://github.com/w3c/csswg-drafts/issues/283
+
+        The good part is that this allows us to remove some ugly code we've
+        in RenderBox that was only used by Grid Layout.
+
+        For images, we'll be stretching on both axis right now, so the aspect
+        ratio won't be preserved. The default behavior might change in those
+        cases, but that should be implemented in a different patch.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::computeLogicalWidthInRegion):
+        (WebCore::RenderBox::computeLogicalHeight):
+
 2017-03-06  Miguel Gomez  <magomez@igalia.com>
 
         [GTK] WebProcess from WebKitGtk+ 2.15.x SIGSEVs in GIFLZWContext::doLZW(unsigned char const*, unsigned long) at Source/WebCore/platform/image-decoders/gif/GIFImageReader.cpp:303
