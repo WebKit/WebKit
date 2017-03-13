@@ -1,3 +1,16 @@
+2017-03-01  Tomas Popela  <tpopela@redhat.com>
+
+        [GTK] Fix problems found by Coverity scan in WebPrintOperationGtk.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=169027
+
+        Reviewed by Carlos Garcia Campos.
+
+        Initialize the lastPagePosition variable and remove an unused one
+        - totalToPrint.
+
+        * WebProcess/WebPage/gtk/WebPrintOperationGtk.cpp:
+        (WebKit::PrintPagesData::PrintPagesData):
+
 2017-03-01  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update OptionsGTK.cmake and NEWS for 2.15.91 release.
