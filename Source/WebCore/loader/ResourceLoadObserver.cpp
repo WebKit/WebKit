@@ -326,7 +326,6 @@ void ResourceLoadObserver::logUserInteractionWithReducedTimeResolution(const Doc
     statistics.hadUserInteraction = true;
     statistics.mostRecentUserInteraction = newTimestamp;
 
-    m_store->fireShouldPartitionCookiesHandler(primaryDomainStr, false);
     m_store->fireDataModificationHandler();
 }
 
@@ -341,7 +340,7 @@ void ResourceLoadObserver::logUserInteraction(const URL& url)
     statistics.hadUserInteraction = true;
     statistics.mostRecentUserInteraction = WTF::currentTime();
 
-    m_store->fireShouldPartitionCookiesHandler(primaryDomainStr, false);
+    m_store->fireShouldPartitionCookiesHandler({primaryDomainStr}, { });
 }
 
 void ResourceLoadObserver::clearUserInteraction(const URL& url)
@@ -432,9 +431,9 @@ void ResourceLoadObserver::fireDataModificationHandler()
     m_store->fireDataModificationHandler();
 }
 
-void ResourceLoadObserver::fireShouldPartitionCookiesHandler(const String& hostName, bool value)
+void ResourceLoadObserver::fireShouldPartitionCookiesHandler(const Vector<String>& domainsToRemove, const Vector<String>& domainsToAdd)
 {
-    m_store->fireShouldPartitionCookiesHandler(primaryDomain(hostName), value);
+    m_store->fireShouldPartitionCookiesHandler(domainsToRemove, domainsToAdd);
 }
 
 String ResourceLoadObserver::primaryDomain(const URL& url)

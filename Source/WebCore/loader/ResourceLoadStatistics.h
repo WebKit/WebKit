@@ -87,6 +87,9 @@ struct ResourceLoadStatistics {
     HashCountedSet<String> redirectedToOtherPrevalentResourceOrigins;
     bool isPrevalentResource { false };
     unsigned dataRecordsRemoved { 0 };
+
+    // In-memory only
+    bool isMarkedForCookiePartitioning { false };
 };
 
 } // namespace WebCore

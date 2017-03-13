@@ -85,11 +85,8 @@ void WebResourceLoadStatisticsStore::setMinimumTimeBetweeenDataRecordsRemoval(do
 void WebResourceLoadStatisticsStore::classifyResource(ResourceLoadStatistics& resourceStatistic)
 {
     if (!resourceStatistic.isPrevalentResource
-        && m_resourceLoadStatisticsClassifier.hasPrevalentResourceCharacteristics(resourceStatistic)) {
+        && m_resourceLoadStatisticsClassifier.hasPrevalentResourceCharacteristics(resourceStatistic))
         resourceStatistic.isPrevalentResource = true;
-        if (!resourceStatistic.hadUserInteraction)
-            m_resourceLoadStatisticsStore->fireShouldPartitionCookiesHandler(resourceStatistic.highLevelDomain, true);
-    }
 }
 
 void WebResourceLoadStatisticsStore::removeDataRecords()
@@ -97,15 +94,15 @@ void WebResourceLoadStatisticsStore::removeDataRecords()
     if (m_dataRecordsRemovalPending)
         return;
 
-    Vector<String> prevalentResourceDomains = coreStore().prevalentResourceDomainsWithoutUserInteraction();
-    if (!prevalentResourceDomains.size())
-        return;
-
     double now = currentTime();
     if (m_lastTimeDataRecordsWereRemoved
         && now < m_lastTimeDataRecordsWereRemoved + minimumTimeBetweeenDataRecordsRemoval)
         return;
 
+    Vector<String> prevalentResourceDomains = coreStore().prevalentResourceDomainsWithoutUserInteraction();
+    if (!prevalentResourceDomains.size())
+        return;
+    
     m_dataRecordsRemovalPending = true;
     m_lastTimeDataRecordsWereRemoved = now;
 
@@ -153,6 +150,7 @@ void WebResourceLoadStatisticsStore::processStatisticsAndDataRecords()
 void WebResourceLoadStatisticsStore::resourceLoadStatisticsUpdated(const Vector<WebCore::ResourceLoadStatistics>& origins)
 {
     coreStore().mergeStatistics(origins);
+    coreStore().fireShouldPartitionCookiesHandler();
     processStatisticsAndDataRecords();
 }
 
@@ -181,11 +179,11 @@ void WebResourceLoadStatisticsStore::registerSharedResourceLoadObserver()
     });
 }
     
-void WebResourceLoadStatisticsStore::registerSharedResourceLoadObserver(std::function<void(const Vector<String>& primaryDomain, bool value)>&& shouldPartitionCookiesForDomainsHandler)
+void WebResourceLoadStatisticsStore::registerSharedResourceLoadObserver(std::function<void(const Vector<String>& domainsToRemove, const Vector<String>& domainsToAdd)>&& shouldPartitionCookiesForDomainsHandler)
 {
     registerSharedResourceLoadObserver();
-    m_resourceLoadStatisticsStore->setShouldPartitionCookiesCallback([this, shouldPartitionCookiesForDomainsHandler = WTFMove(shouldPartitionCookiesForDomainsHandler)] (const Vector<String>& primaryDomains, bool value) {
-        shouldPartitionCookiesForDomainsHandler(primaryDomains, value);
+    m_resourceLoadStatisticsStore->setShouldPartitionCookiesCallback([this, shouldPartitionCookiesForDomainsHandler = WTFMove(shouldPartitionCookiesForDomainsHandler)] (const Vector<String>& domainsToRemove, const Vector<String>& domainsToAdd) {
+        shouldPartitionCookiesForDomainsHandler(domainsToRemove, domainsToAdd);
     });
     m_resourceLoadStatisticsStore->setWritePersistentStoreCallback([this]() {
         writeStoreToDisk();

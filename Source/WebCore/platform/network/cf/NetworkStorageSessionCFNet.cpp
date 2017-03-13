@@ -154,14 +154,15 @@ bool NetworkStorageSession::shouldPartitionCookiesForHost(const String& host)
     return m_topPrivatelyControlledDomainsForCookiePartitioning.contains(domain);
 }
 
-void NetworkStorageSession::setShouldPartitionCookiesForHosts(const Vector<String>& hosts, bool value)
+void NetworkStorageSession::setShouldPartitionCookiesForHosts(const Vector<String>& domainsToRemove, const Vector<String>& domainsToAdd)
 {
-    if (value)
-        m_topPrivatelyControlledDomainsForCookiePartitioning.add(hosts.begin(), hosts.end());
-    else {
-        for (auto& host : hosts)
-            m_topPrivatelyControlledDomainsForCookiePartitioning.remove(host);
+    if (!domainsToRemove.isEmpty()) {
+        for (auto& domain : domainsToRemove)
+            m_topPrivatelyControlledDomainsForCookiePartitioning.remove(domain);
     }
+        
+    if (!domainsToAdd.isEmpty())
+        m_topPrivatelyControlledDomainsForCookiePartitioning.add(domainsToAdd.begin(), domainsToAdd.end());
 }
 
 #endif // HAVE(CFNETWORK_STORAGE_PARTITIONING)

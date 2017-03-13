@@ -294,6 +294,10 @@ String ResourceLoadStatistics::toString() const
     builder.appendNumber(dataRecordsRemoved);
     builder.append('\n');
 
+    // In-memory only
+    appendBoolean(builder, "isMarkedForCookiePartitioning", isMarkedForCookiePartitioning);
+    builder.append('\n');
+
     builder.append('\n');
 
     return builder.toString();
@@ -353,6 +357,9 @@ void ResourceLoadStatistics::merge(const ResourceLoadStatistics& other)
     mergeHashCountedSet(redirectedToOtherPrevalentResourceOrigins, other.redirectedToOtherPrevalentResourceOrigins);
     isPrevalentResource |= other.isPrevalentResource;
     dataRecordsRemoved += other.dataRecordsRemoved;
+    
+    // In-memory only
+    isMarkedForCookiePartitioning |= other.isMarkedForCookiePartitioning;
 }
 
 }

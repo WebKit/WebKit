@@ -66,7 +66,7 @@ public:
     WEBCORE_EXPORT void setReducedTimestampResolution(double seconds);
 
     WEBCORE_EXPORT void fireDataModificationHandler();
-    WEBCORE_EXPORT void fireShouldPartitionCookiesHandler(const String& primaryDomain, bool value);
+    WEBCORE_EXPORT void fireShouldPartitionCookiesHandler(const Vector<String>& domainsToRemove, const Vector<String>& domainsToAdd);
 
     WEBCORE_EXPORT RefPtr<ResourceLoadStatisticsStore> statisticsStore();
     WEBCORE_EXPORT void setStatisticsStore(Ref<ResourceLoadStatisticsStore>&&);

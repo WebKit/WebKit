@@ -1059,10 +1059,10 @@ void WebsiteDataStore::removeDataForTopPrivatelyOwnedDomains(OptionSet<WebsiteDa
 }
 
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING)
-void WebsiteDataStore::shouldPartitionCookiesForTopPrivatelyOwnedDomains(const Vector<String>& topPrivatelyOwnedDomains, bool value)
+void WebsiteDataStore::shouldPartitionCookiesForTopPrivatelyOwnedDomains(const Vector<String>& domainsToRemove, const Vector<String>& domainsToAdd)
 {
     for (auto& processPool : processPools())
-        processPool->sendToNetworkingProcess(Messages::NetworkProcess::ShouldPartitionCookiesForTopPrivatelyOwnedDomains(topPrivatelyOwnedDomains, value));
+        processPool->sendToNetworkingProcess(Messages::NetworkProcess::ShouldPartitionCookiesForTopPrivatelyOwnedDomains(domainsToRemove, domainsToAdd));
 }
 #endif
 
@@ -1233,8 +1233,8 @@ void WebsiteDataStore::registerSharedResourceLoadObserver()
     
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING)
     m_resourceLoadStatistics->registerSharedResourceLoadObserver(
-        [this] (const Vector<String>& topPrivatelyOwnedDomains, bool value) {
-            this->shouldPartitionCookiesForTopPrivatelyOwnedDomains(topPrivatelyOwnedDomains, value);
+        [this] (const Vector<String>& domainsToRemove, const Vector<String>& domainsToAdd) {
+            this->shouldPartitionCookiesForTopPrivatelyOwnedDomains(domainsToRemove, domainsToAdd);
         });
 #else
     m_resourceLoadStatistics->registerSharedResourceLoadObserver();

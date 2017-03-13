@@ -103,12 +103,14 @@ void ResourceLoadStatisticsStore::readDataFromDecoder(KeyedDecoder& decoder)
     Vector<String> prevalentResourceDomainsWithoutUserInteraction;
     prevalentResourceDomainsWithoutUserInteraction.reserveInitialCapacity(loadedStatistics.size());
     for (auto& statistics : loadedStatistics) {
-        m_resourceStatisticsMap.set(statistics.highLevelDomain, statistics);
-        if (statistics.isPrevalentResource && !statistics.hadUserInteraction)
+        if (statistics.isPrevalentResource && !statistics.hadUserInteraction) {
             prevalentResourceDomainsWithoutUserInteraction.uncheckedAppend(statistics.highLevelDomain);
+            statistics.isMarkedForCookiePartitioning = true;
+        }
+        m_resourceStatisticsMap.set(statistics.highLevelDomain, statistics);
     }
-    
-    fireShouldPartitionCookiesHandler(prevalentResourceDomainsWithoutUserInteraction, true);
+
+    fireShouldPartitionCookiesHandler({ }, prevalentResourceDomainsWithoutUserInteraction);
 }
 
 void ResourceLoadStatisticsStore::clearInMemoryAndPersistent()
@@ -155,7 +157,7 @@ void ResourceLoadStatisticsStore::setNotificationCallback(std::function<void()> 
     m_dataAddedHandler = WTFMove(handler);
 }
 
-void ResourceLoadStatisticsStore::setShouldPartitionCookiesCallback(std::function<void(const Vector<String>& primaryDomains, bool value)>&& handler)
+void ResourceLoadStatisticsStore::setShouldPartitionCookiesCallback(std::function<void(const Vector<String>& domainsToRemove, const Vector<String>& domainsToAdd)>&& handler)
 {
     m_shouldPartitionCookiesForDomainsHandler = WTFMove(handler);
 }
@@ -171,17 +173,32 @@ void ResourceLoadStatisticsStore::fireDataModificationHandler()
         m_dataAddedHandler();
 }
 
-void ResourceLoadStatisticsStore::fireShouldPartitionCookiesHandler(const String& primaryDomain, bool value)
+void ResourceLoadStatisticsStore::fireShouldPartitionCookiesHandler()
 {
-    Vector<String> domainVector;
-    domainVector.append(primaryDomain);
-    fireShouldPartitionCookiesHandler(domainVector, value);
+    Vector<String> domainsToRemove;
+    Vector<String> domainsToAdd;
+    
+    for (auto& resourceStatistic : m_resourceStatisticsMap.values()) {
+        bool recentUserInteraction = hasHadRecentUserInteraction(resourceStatistic);
+        if (resourceStatistic.isMarkedForCookiePartitioning && recentUserInteraction) {
+            resourceStatistic.isMarkedForCookiePartitioning = false;
+            domainsToRemove.append(resourceStatistic.highLevelDomain);
+        } else if (!resourceStatistic.isMarkedForCookiePartitioning && !recentUserInteraction && resourceStatistic.isPrevalentResource) {
+            resourceStatistic.isMarkedForCookiePartitioning = true;
+            domainsToAdd.append(resourceStatistic.highLevelDomain);
+        }
+    }
+    
+    fireShouldPartitionCookiesHandler(domainsToRemove, domainsToAdd);
 }
 
-void ResourceLoadStatisticsStore::fireShouldPartitionCookiesHandler(const Vector<String>& primaryDomains, bool value)
+void ResourceLoadStatisticsStore::fireShouldPartitionCookiesHandler(const Vector<String>& domainsToRemove, const Vector<String>& domainsToAdd)
 {
+    if (domainsToRemove.isEmpty() && domainsToAdd.isEmpty())
+        return;
+
     if (m_shouldPartitionCookiesForDomainsHandler)
-        m_shouldPartitionCookiesForDomainsHandler(primaryDomains, value);
+        m_shouldPartitionCookiesForDomainsHandler(domainsToRemove, domainsToAdd);
 }
 
 void ResourceLoadStatisticsStore::setTimeToLiveUserInteraction(double seconds)
@@ -207,9 +224,6 @@ bool ResourceLoadStatisticsStore::hasHadRecentUserInteraction(ResourceLoadStatis
         // it has been reset as opposed to its default -1.
         resourceStatistic.mostRecentUserInteraction = 0;
         resourceStatistic.hadUserInteraction = false;
-
-        if (resourceStatistic.isPrevalentResource)
-            fireShouldPartitionCookiesHandler(resourceStatistic.highLevelDomain, true);
 
         return false;
     }

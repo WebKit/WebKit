@@ -1,3 +1,43 @@
+2017-03-13  John Wilander  <wilander@apple.com>
+
+        Resource Load Statistics: More efficient network process messaging + Fix bug in user interaction reporting
+        https://bugs.webkit.org/show_bug.cgi?id=169506
+
+        Reviewed by Alex Christensen.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::shouldPartitionCookiesForTopPrivatelyOwnedDomains):
+            Now takes two vectors – domainsToRemove and domainsToAdd.
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+            The message now takes two vectors – domainsToRemove and domainsToAdd.
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::shouldPartitionCookiesForTopPrivatelyOwnedDomains):
+            Now takes two vectors – domainsToRemove and domainsToAdd.
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/Network/NetworkProcessProxy.messages.in:
+            The message now takes two vectors – domainsToRemove and domainsToAdd.
+        * UIProcess/WebResourceLoadStatisticsManager.cpp:
+        (WebKit::WebResourceLoadStatisticsManager::fireShouldPartitionCookiesHandler):
+            Now converts to the two vectors needed by
+            WebCore::ResourceLoadObserver::fireShouldPartitionCookiesHandler().
+        * UIProcess/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::classifyResource):
+            No longer explicitly calls ResourceLoadStatisticsStore::fireShouldPartitionCookiesHandler().
+        (WebKit::WebResourceLoadStatisticsStore::removeDataRecords):
+            Changed the order of two blocks to not build a vector if we are to return early.
+        (WebKit::WebResourceLoadStatisticsStore::resourceLoadStatisticsUpdated):
+            Now calls WebCore::ResourceLoadObserver::fireShouldPartitionCookiesHandler().
+        (WebKit::WebResourceLoadStatisticsStore::registerSharedResourceLoadObserver):
+            Now takes a handler with two vectors – domainsToRemove and domainsToAdd.
+        * UIProcess/WebResourceLoadStatisticsStore.h:
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::shouldPartitionCookiesForTopPrivatelyOwnedDomains):
+            Now takes two vectors – domainsToRemove and domainsToAdd.
+        (WebKit::WebsiteDataStore::registerSharedResourceLoadObserver):
+            Now submits a handler that takes two vectors – domainsToRemove and domainsToAdd.
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+
 2017-03-13  Dean Jackson  <dino@apple.com>
 
         Respect the runtime flag for WebGPU, default feature to off, and print a warning
