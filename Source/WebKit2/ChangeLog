@@ -1,3 +1,17 @@
+2017-03-13  Dean Jackson  <dino@apple.com>
+
+        Respect the runtime flag for WebGPU, default feature to off, and print a warning
+        https://bugs.webkit.org/show_bug.cgi?id=169564
+        <rdar://problems/31018864>
+
+        Reviewed by Tim Horton.
+
+        Make sure WebGPU respects its runtime feature flag. Also, since
+        this implementation doesn't validate content, it should default
+        to being disabled.
+
+        * Shared/WebPreferencesDefinitions.h:
+
 2017-03-13  Anders Carlsson  <andersca@apple.com>
 
         Fix more build warnings.

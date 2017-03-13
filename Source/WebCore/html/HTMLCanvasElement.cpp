@@ -44,6 +44,7 @@
 #include "ImageData.h"
 #include "MIMETypeRegistry.h"
 #include "RenderHTMLCanvas.h"
+#include "RuntimeEnabledFeatures.h"
 #include "ScriptController.h"
 #include "Settings.h"
 #include <math.h>
@@ -200,7 +201,7 @@ CanvasRenderingContext* HTMLCanvasElement::getContext(const String& type)
         return getContext2d(type);
 
 #if ENABLE(WEBGPU)
-    if (HTMLCanvasElement::isWebGPUType(type))
+    if (HTMLCanvasElement::isWebGPUType(type) && RuntimeEnabledFeatures::sharedFeatures().webGPUEnabled())
         return getContextWebGPU(type);
 #endif
 
@@ -316,6 +317,9 @@ bool HTMLCanvasElement::isWebGPUType(const String& type)
 CanvasRenderingContext* HTMLCanvasElement::getContextWebGPU(const String& type)
 {
     ASSERT_UNUSED(type, HTMLCanvasElement::isWebGPUType(type));
+
+    if (!RuntimeEnabledFeatures::sharedFeatures().webGPUEnabled())
+        return nullptr;
 
     if (m_context && !m_context->isGPU())
         return nullptr;
