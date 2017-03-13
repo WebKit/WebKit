@@ -1,3 +1,24 @@
+2017-03-06  Brent Fulgham  <bfulgham@apple.com>
+
+        Validate DOM after potentially destructive actions during parser insert operations
+        https://bugs.webkit.org/show_bug.cgi?id=169222
+        <rdar://problem/30689729>
+
+        Reviewed by Ryosuke Niwa.
+
+        Do not perform an insert operation if the next child's parent is no longer
+        part of the tree. This can happen if JavaScript runs during node removal
+        events and modifies the contents of the document.
+
+        This patch was inspired by a similar Blink change by Marius Mlynski:
+        <https://src.chromium.org/viewvc/blink?view=revision&revision=200690>        
+
+        Tests: fast/parser/scriptexec-during-parserInsertBefore.html
+
+        * html/parser/HTMLConstructionSite.cpp:
+        (WebCore::executeReparentTask):
+        (WebCore::executeInsertAlreadyParsedChildTask):
+
 2017-03-06  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [CMake] SN-DBS fails to build: Cannot open include file: 'WebCoreTestSupportPrefix.h'
