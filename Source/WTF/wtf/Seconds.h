@@ -57,6 +57,11 @@ public:
         return Seconds(minutes * 60);
     }
 
+    static constexpr Seconds fromHours(double hours)
+    {
+        return Seconds(hours * 3600);
+    }
+
     static constexpr Seconds fromMilliseconds(double milliseconds)
     {
         return Seconds(milliseconds / 1000);
@@ -208,6 +213,11 @@ constexpr Seconds operator"" _min(long double minutes)
     return Seconds::fromMinutes(minutes);
 }
 
+constexpr Seconds operator"" _h(long double hours)
+{
+    return Seconds::fromHours(hours);
+}
+
 constexpr Seconds operator"" _s(long double seconds)
 {
     return Seconds(seconds);
@@ -231,6 +241,11 @@ constexpr Seconds operator"" _ns(long double nanoseconds)
 constexpr Seconds operator"" _min(unsigned long long minutes)
 {
     return Seconds::fromMinutes(minutes);
+}
+
+constexpr Seconds operator"" _h(unsigned long long hours)
+{
+    return Seconds::fromHours(hours);
 }
 
 constexpr Seconds operator"" _s(unsigned long long seconds)

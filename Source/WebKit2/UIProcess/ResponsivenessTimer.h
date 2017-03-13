@@ -52,7 +52,7 @@ public:
 
     void invalidate();
     
-    bool isResponsive() { return m_isResponsive; }
+    bool isResponsive() const { return m_isResponsive; }
 
     void processTerminated();
 

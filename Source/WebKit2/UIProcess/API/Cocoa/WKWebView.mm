@@ -4357,7 +4357,7 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
 
 - (BOOL)_webProcessIsResponsive
 {
-    return _page->process().responsivenessTimer().isResponsive();
+    return _page->process().isResponsive();
 }
 
 - (void)_setFullscreenDelegate:(id<_WKFullscreenDelegate>)delegate

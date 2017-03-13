@@ -29,7 +29,6 @@
 #include "APIFrameHandle.h"
 #include "APIPageGroupHandle.h"
 #include "APIPageHandle.h"
-#include "BackgroundProcessResponsivenessTimer.h"
 #include "DataReference.h"
 #include "DownloadProxyMap.h"
 #include "Logging.h"
@@ -97,13 +96,13 @@ Ref<WebProcessProxy> WebProcessProxy::create(WebProcessPool& processPool, Websit
 WebProcessProxy::WebProcessProxy(WebProcessPool& processPool, WebsiteDataStore* websiteDataStore)
     : ChildProcessProxy(processPool.alwaysRunsAtBackgroundPriority())
     , m_responsivenessTimer(*this)
+    , m_backgroundResponsivenessTimer(*this)
     , m_processPool(processPool)
     , m_mayHaveUniversalFileReadSandboxExtension(false)
     , m_numberOfTimesSuddenTerminationWasDisabled(0)
     , m_throttler(*this)
     , m_isResponsive(NoOrMaybe::Maybe)
     , m_visiblePageCounter([this](RefCounterEvent) { updateBackgroundResponsivenessTimer(); })
-    , m_backgroundResponsivenessTimer(std::make_unique<BackgroundProcessResponsivenessTimer>(*this))
     , m_websiteDataStore(websiteDataStore)
 {
     WebPasteboardProxy::singleton().addWebProcessProxy(*this);
@@ -177,6 +176,7 @@ void WebProcessProxy::shutDown()
     }
 
     m_responsivenessTimer.invalidate();
+    m_backgroundResponsivenessTimer.invalidate();
     m_tokenForHoldingLockedFiles = nullptr;
 
     Vector<RefPtr<WebFrameProxy>> frames;
@@ -741,6 +741,11 @@ RefPtr<API::UserInitiatedAction> WebProcessProxy::userInitiatedActivity(uint64_t
     return result.iterator->value;
 }
 
+bool WebProcessProxy::isResponsive() const
+{
+    return m_responsivenessTimer.isResponsive() && m_backgroundResponsivenessTimer.isResponsive();
+}
+
 void WebProcessProxy::didDestroyUserGestureToken(uint64_t identifier)
 {
     ASSERT(UserInitiatedActionMap::isValidKey(identifier));
@@ -1097,10 +1102,20 @@ void WebProcessProxy::didReceiveMainThreadPing()
         callback(isWebProcessResponsive);
 }
 
+void WebProcessProxy::didReceiveBackgroundResponsivenessPing()
+{
+    m_backgroundResponsivenessTimer.didReceiveBackgroundResponsivenessPong();
+}
+
+void WebProcessProxy::processTerminated()
+{
+    m_responsivenessTimer.processTerminated();
+    m_backgroundResponsivenessTimer.processTerminated();
+}
+
 void WebProcessProxy::updateBackgroundResponsivenessTimer()
 {
-    if (m_backgroundResponsivenessTimer)
-        m_backgroundResponsivenessTimer->updateState();
+    m_backgroundResponsivenessTimer.updateState();
 }
 
 #if !PLATFORM(COCOA)

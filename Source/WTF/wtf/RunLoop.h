@@ -85,8 +85,10 @@ public:
 
         void startRepeating(double repeatInterval) { start(repeatInterval, true); }
         void startRepeating(std::chrono::milliseconds repeatInterval) { startRepeating(repeatInterval.count() * 0.001); }
+        void startRepeating(Seconds repeatInterval) { startRepeating(repeatInterval.value()); }
         void startOneShot(double interval) { start(interval, false); }
         void startOneShot(std::chrono::milliseconds interval) { start(interval.count() * 0.001, false); }
+        void startOneShot(Seconds interval) { start(interval.value(), false); }
 
         WTF_EXPORT_PRIVATE void stop();
         WTF_EXPORT_PRIVATE bool isActive() const;

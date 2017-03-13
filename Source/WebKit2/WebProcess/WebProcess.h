@@ -283,6 +283,7 @@ private:
     void setJavaScriptGarbageCollectorTimerEnabled(bool flag);
 
     void mainThreadPing();
+    void backgroundResponsivenessPing();
 
 #if ENABLE(GAMEPAD)
     void setInitialGamepads(const Vector<GamepadData>&);

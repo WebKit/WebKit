@@ -88,7 +88,7 @@ using namespace WebKit;
 
 - (BOOL)_webProcessIsResponsive
 {
-    return _page->process().responsivenessTimer().isResponsive();
+    return _page->process().isResponsive();
 }
 
 - (double)estimatedProgress

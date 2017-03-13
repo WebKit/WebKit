@@ -1,3 +1,22 @@
+2017-03-13  Chris Dumez  <cdumez@apple.com>
+
+        [WK2] Only report background WebProcesses as unresponsive in the background after 90 seconds
+        https://bugs.webkit.org/show_bug.cgi?id=169425
+        <rdar://problem/30954003>
+
+        Reviewed by Andreas Kling.
+
+        * wtf/RunLoop.h:
+        (WTF::RunLoop::TimerBase::startRepeating):
+        (WTF::RunLoop::TimerBase::startOneShot):
+        Add overloads to RunLoop::Timer that take Seconds in parameter,
+        for convenience.
+
+        * wtf/Seconds.h:
+        (WTF::Seconds::fromHours):
+        (WTF::seconds_literals::operator _h):
+        Allow _h suffix for initializing Seconds type to hours.
+
 2017-03-11  Csaba Osztrogonác  <ossy@webkit.org>
 
         REGRESSION(r213645): It made JSC tests super slow and timeout on AArch64 Linux

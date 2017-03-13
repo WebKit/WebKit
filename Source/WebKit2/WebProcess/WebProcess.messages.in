@@ -100,6 +100,7 @@ messages -> WebProcess LegacyReceiver {
     ProcessDidResume()
 
     MainThreadPing()
+    BackgroundResponsivenessPing()
 
 #if ENABLE(GAMEPAD)
     SetInitialGamepads(Vector<WebKit::GamepadData> gamepadDatas)

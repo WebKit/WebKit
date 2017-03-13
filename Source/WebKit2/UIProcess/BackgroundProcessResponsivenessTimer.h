@@ -25,23 +25,39 @@
 
 #pragma once
 
-#include "WebProcessProxy.h"
+#include "ResponsivenessTimer.h"
 #include <wtf/RunLoop.h>
 
 namespace WebKit {
 
+class WebProcessProxy;
+
 class BackgroundProcessResponsivenessTimer {
 public:
     explicit BackgroundProcessResponsivenessTimer(WebProcessProxy&);
+    ~BackgroundProcessResponsivenessTimer();
     void updateState();
 
+    void didReceiveBackgroundResponsivenessPong();
+    bool isResponsive() const { return m_isResponsive; }
+
+    void invalidate();
+    void processTerminated();
+
 private:
-    void timerFired();
-    bool shouldBeActive() const { return !m_webProcessProxy.visiblePageCount() && m_webProcessProxy.pageCount(); }
+    void responsivenessCheckTimerFired();
+    void timeoutTimerFired();
+    void setResponsive(bool);
+
+    bool shouldBeActive() const;
+    void scheduleNextResponsivenessCheck();
+    ResponsivenessTimer::Client& client() const;
 
     WebProcessProxy& m_webProcessProxy;
-    std::chrono::seconds m_interval;
-    RunLoop::Timer<BackgroundProcessResponsivenessTimer> m_timer;
+    Seconds m_checkingInterval;
+    RunLoop::Timer<BackgroundProcessResponsivenessTimer> m_responsivenessCheckTimer;
+    RunLoop::Timer<BackgroundProcessResponsivenessTimer> m_timeoutTimer;
+    bool m_isResponsive { true };
 };
 
 }

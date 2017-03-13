@@ -1,3 +1,57 @@
+2017-03-13  Chris Dumez  <cdumez@apple.com>
+
+        [WK2] Only report background WebProcesses as unresponsive in the background after 90 seconds
+        https://bugs.webkit.org/show_bug.cgi?id=169425
+        <rdar://problem/30954003>
+
+        Reviewed by Andreas Kling.
+
+        The background responsiveness checking was previously relying on the
+        isResponsive(std::function<void(bool)>) API which uses the ResponsivenessTimer
+        and has a timeout of 3 seconds. We believe this is too aggressive for background
+        tabs. Update BackgroundResponsiveTimer to stop relying on ResponsivenessTimer
+        and have its own timeout Timer which a delay of 90 seconds instead.
+
+        * UIProcess/API/C/mac/WKPagePrivateMac.mm:
+        (-[WKObservablePageState _webProcessIsResponsive]):
+        * UIProcess/API/Cocoa/WKBrowsingContextController.mm:
+        (-[WKBrowsingContextController _webProcessIsResponsive]):
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _webProcessIsResponsive]):
+        * UIProcess/BackgroundProcessResponsivenessTimer.cpp:
+        (WebKit::BackgroundProcessResponsivenessTimer::BackgroundProcessResponsivenessTimer):
+        (WebKit::BackgroundProcessResponsivenessTimer::~BackgroundProcessResponsivenessTimer):
+        (WebKit::BackgroundProcessResponsivenessTimer::updateState):
+        (WebKit::BackgroundProcessResponsivenessTimer::didReceiveBackgroundResponsivenessPong):
+        (WebKit::BackgroundProcessResponsivenessTimer::invalidate):
+        (WebKit::BackgroundProcessResponsivenessTimer::processTerminated):
+        (WebKit::BackgroundProcessResponsivenessTimer::responsivenessCheckTimerFired):
+        (WebKit::BackgroundProcessResponsivenessTimer::timeoutTimerFired):
+        (WebKit::BackgroundProcessResponsivenessTimer::setResponsive):
+        (WebKit::BackgroundProcessResponsivenessTimer::shouldBeActive):
+        (WebKit::BackgroundProcessResponsivenessTimer::scheduleNextResponsivenessCheck):
+        (WebKit::BackgroundProcessResponsivenessTimer::client):
+        * UIProcess/BackgroundProcessResponsivenessTimer.h:
+        (WebKit::BackgroundProcessResponsivenessTimer::isResponsive):
+        * UIProcess/ResponsivenessTimer.h:
+        (WebKit::ResponsivenessTimer::isResponsive):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::resetStateAfterProcessExited):
+        (WebKit::WebPageProxy::updateBackingStoreDiscardableState):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::WebProcessProxy):
+        (WebKit::WebProcessProxy::shutDown):
+        (WebKit::WebProcessProxy::isResponsive):
+        (WebKit::WebProcessProxy::didReceiveBackgroundResponsivenessPing):
+        (WebKit::WebProcessProxy::processTerminated):
+        (WebKit::WebProcessProxy::updateBackgroundResponsivenessTimer):
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/WebProcessProxy.messages.in:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::backgroundResponsivenessPing):
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+
 2017-03-13  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Web Automation: automation commands hang when trying to navigate go/back and it's not possible

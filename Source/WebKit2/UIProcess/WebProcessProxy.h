@@ -26,6 +26,7 @@
 #pragma once
 
 #include "APIUserInitiatedAction.h"
+#include "BackgroundProcessResponsivenessTimer.h"
 #include "ChildProcessProxy.h"
 #include "MessageReceiverMap.h"
 #include "PluginInfoStore.h"
@@ -54,7 +55,6 @@ struct PluginInfo;
 
 namespace WebKit {
 
-class BackgroundProcessResponsivenessTimer;
 class NetworkProcessProxy;
 class WebBackForwardListItem;
 class WebPageGroup;
@@ -64,7 +64,7 @@ enum class WebsiteDataType;
 struct WebNavigationDataStore;
 struct WebsiteData;
 
-class WebProcessProxy : public ChildProcessProxy, ResponsivenessTimer::Client, private ProcessThrottlerClient {
+class WebProcessProxy : public ChildProcessProxy, public ResponsivenessTimer::Client, private ProcessThrottlerClient {
 public:
     typedef HashMap<uint64_t, RefPtr<WebBackForwardListItem>> WebBackForwardListItemMap;
     typedef HashMap<uint64_t, RefPtr<WebFrameProxy>> WebFrameProxyMap;
@@ -99,6 +99,7 @@ public:
     RefPtr<API::UserInitiatedAction> userInitiatedActivity(uint64_t);
 
     ResponsivenessTimer& responsivenessTimer() { return m_responsivenessTimer; }
+    bool isResponsive() const;
 
     WebFrameProxy* webFrame(uint64_t) const;
     bool canCreateFrame(uint64_t frameID) const;
@@ -157,9 +158,12 @@ public:
 
     void isResponsive(std::function<void(bool isWebProcessResponsive)>);
     void didReceiveMainThreadPing();
+    void didReceiveBackgroundResponsivenessPing();
 
     void memoryPressureStatusChanged(bool isUnderMemoryPressure) { m_isUnderMemoryPressure = isUnderMemoryPressure; }
     bool isUnderMemoryPressure() const { return m_isUnderMemoryPressure; }
+
+    void processTerminated();
 
 private:
     explicit WebProcessProxy(WebProcessPool&, WebsiteDataStore*);
@@ -233,6 +237,7 @@ private:
     bool canTerminateChildProcess();
 
     ResponsivenessTimer m_responsivenessTimer;
+    BackgroundProcessResponsivenessTimer m_backgroundResponsivenessTimer;
     
     RefPtr<WebConnectionToWebProcess> m_webConnection;
     Ref<WebProcessPool> m_processPool;
@@ -262,7 +267,6 @@ private:
     Vector<std::function<void(bool webProcessIsResponsive)>> m_isResponsiveCallbacks;
 
     VisibleWebPageCounter m_visiblePageCounter;
-    std::unique_ptr<BackgroundProcessResponsivenessTimer> m_backgroundResponsivenessTimer;
 
     // FIXME: WebsiteDataStores should be made per-WebPageProxy throughout WebKit2. Get rid of this member.
     RefPtr<WebsiteDataStore> m_websiteDataStore;

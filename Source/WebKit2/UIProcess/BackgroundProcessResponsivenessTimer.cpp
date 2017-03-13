@@ -27,48 +27,123 @@
 #include "BackgroundProcessResponsivenessTimer.h"
 
 #include "Logging.h"
+#include "WebProcessMessages.h"
+#include "WebProcessProxy.h"
 
 namespace WebKit {
 
-static const std::chrono::seconds initialInterval { 20s };
-static const std::chrono::seconds maximumInterval { 8h };
+static const Seconds initialCheckingInterval { 20_s };
+static const Seconds maximumCheckingInterval { 8_h };
+static const Seconds responsivenessTimeout { 90_s };
 
 BackgroundProcessResponsivenessTimer::BackgroundProcessResponsivenessTimer(WebProcessProxy& webProcessProxy)
     : m_webProcessProxy(webProcessProxy)
-    , m_interval(initialInterval)
-    , m_timer(RunLoop::main(), this, &BackgroundProcessResponsivenessTimer::timerFired)
+    , m_checkingInterval(initialCheckingInterval)
+    , m_responsivenessCheckTimer(RunLoop::main(), this, &BackgroundProcessResponsivenessTimer::responsivenessCheckTimerFired)
+    , m_timeoutTimer(RunLoop::main(), this, &BackgroundProcessResponsivenessTimer::timeoutTimerFired)
+{
+}
+
+BackgroundProcessResponsivenessTimer::~BackgroundProcessResponsivenessTimer()
 {
 }
 
 void BackgroundProcessResponsivenessTimer::updateState()
 {
     if (!shouldBeActive()) {
-        if (m_timer.isActive()) {
-            m_interval = initialInterval;
-            m_timer.stop();
+        if (m_responsivenessCheckTimer.isActive()) {
+            m_checkingInterval = initialCheckingInterval;
+            m_responsivenessCheckTimer.stop();
         }
+        m_timeoutTimer.stop();
+        m_isResponsive = true;
         return;
     }
 
-    if (!m_timer.isActive())
-        m_timer.startOneShot(m_interval);
+    if (!m_responsivenessCheckTimer.isActive())
+        m_responsivenessCheckTimer.startOneShot(m_checkingInterval);
 }
 
-void BackgroundProcessResponsivenessTimer::timerFired()
+void BackgroundProcessResponsivenessTimer::didReceiveBackgroundResponsivenessPong()
+{
+    if (!m_timeoutTimer.isActive())
+        return;
+
+    m_timeoutTimer.stop();
+    scheduleNextResponsivenessCheck();
+
+    setResponsive(true);
+}
+
+void BackgroundProcessResponsivenessTimer::invalidate()
+{
+    m_timeoutTimer.stop();
+    m_responsivenessCheckTimer.stop();
+}
+
+void BackgroundProcessResponsivenessTimer::processTerminated()
+{
+    invalidate();
+    setResponsive(true);
+}
+
+void BackgroundProcessResponsivenessTimer::responsivenessCheckTimerFired()
 {
     ASSERT(shouldBeActive());
-    // WebProcessProxy::responsive() takes care of calling processDidBecomeUnresponsive for us.
-    m_webProcessProxy.isResponsive([this](bool processIsResponsive) {
-        if (processIsResponsive) {
-            // Exponential backoff to avoid waking up the process too often.
-            m_interval = std::min(m_interval * 2, maximumInterval);
-            m_timer.startOneShot(m_interval);
-            return;
-        }
+    ASSERT(!m_timeoutTimer.isActive());
 
-        RELEASE_LOG_ERROR(PerformanceLogging, "Notified the client that a background WebProcess has become unresponsive");
-        m_interval = initialInterval;
-    });
+    m_timeoutTimer.startOneShot(responsivenessTimeout);
+    m_webProcessProxy.send(Messages::WebProcess::BackgroundResponsivenessPing(), 0);
+}
+
+void BackgroundProcessResponsivenessTimer::timeoutTimerFired()
+{
+    ASSERT(shouldBeActive());
+
+    scheduleNextResponsivenessCheck();
+
+    if (!m_isResponsive)
+        return;
+
+    if (!client().mayBecomeUnresponsive())
+        return;
+
+    setResponsive(false);
+}
+
+void BackgroundProcessResponsivenessTimer::setResponsive(bool isResponsive)
+{
+    if (m_isResponsive == isResponsive)
+        return;
+
+    client().willChangeIsResponsive();
+    m_isResponsive = isResponsive;
+    client().didChangeIsResponsive();
+
+    if (m_isResponsive) {
+        RELEASE_LOG_ERROR(PerformanceLogging, "Notifying the client that a background WebProcess has become responsive again");
+        client().didBecomeResponsive();
+    } else {
+        RELEASE_LOG_ERROR(PerformanceLogging, "Notifying the client that a background WebProcess has become unresponsive");
+        client().didBecomeUnresponsive();
+    }
+}
+
+bool BackgroundProcessResponsivenessTimer::shouldBeActive() const
+{
+    return !m_webProcessProxy.visiblePageCount() && m_webProcessProxy.pageCount();
+}
+
+void BackgroundProcessResponsivenessTimer::scheduleNextResponsivenessCheck()
+{
+    // Exponential backoff to avoid waking up the process too often.
+    m_checkingInterval = std::min(m_checkingInterval * 2, maximumCheckingInterval);
+    m_responsivenessCheckTimer.startOneShot(m_checkingInterval);
+}
+
+ResponsivenessTimer::Client& BackgroundProcessResponsivenessTimer::client() const
+{
+    return m_webProcessProxy;
 }
 
 } // namespace WebKit
