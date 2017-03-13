@@ -1,3 +1,12 @@
+2017-03-13  Martin Robinson  <mrobinson@igalia.com>
+
+        Remove my email from some of the watchlists
+        https://bugs.webkit.org/show_bug.cgi?id=169541
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        * Scripts/webkitpy/common/config/watchlist: Remove my name from some lists.
+
 2017-03-13  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [WTF] Clean up RunLoop and WorkQueue with Seconds and Function
