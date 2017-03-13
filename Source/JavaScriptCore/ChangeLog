@@ -1,3 +1,18 @@
+2017-03-06  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Null pointer crash when loading module with unresolved import also as a script file
+        https://bugs.webkit.org/show_bug.cgi?id=168971
+
+        Reviewed by Saam Barati.
+
+        If linking throws an error, this error should be re-thrown
+        when requesting the same module.
+
+        * builtins/ModuleLoaderPrototype.js:
+        (globalPrivate.newRegistryEntry):
+        * runtime/JSModuleRecord.cpp:
+        (JSC::JSModuleRecord::link):
+
 2017-03-06  Daniel Ehrenberg  <littledan@igalia.com>
 
         Currency digits calculation in Intl.NumberFormat should call out to ICU
