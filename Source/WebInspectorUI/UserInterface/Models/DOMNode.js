@@ -507,7 +507,7 @@ WebInspector.DOMNode = class DOMNode extends WebInspector.Object
         DOMAgent.getOuterHTML(this.id, copy);
     }
 
-    eventListeners(callback)
+    getEventListeners(callback)
     {
         DOMAgent.getEventListenersForNode(this.id, callback);
     }

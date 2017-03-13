@@ -34,6 +34,8 @@ WebInspector.DOMNodeDetailsSidebarPanel = class DOMNodeDetailsSidebarPanel exten
         WebInspector.domTreeManager.addEventListener(WebInspector.DOMTreeManager.Event.CharacterDataModified, this._characterDataModified, this);
         WebInspector.domTreeManager.addEventListener(WebInspector.DOMTreeManager.Event.CustomElementStateChanged, this._customElementStateChanged, this);
 
+        this._eventListenerGroupingMethodSetting = new WebInspector.Setting("dom-node-event-listener-grouping-method", WebInspector.DOMNodeDetailsSidebarPanel.EventListenerGroupingMethod.Event);
+
         this.element.classList.add("dom-node");
 
         this._identityNodeTypeRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Type"));
@@ -54,8 +56,28 @@ WebInspector.DOMNodeDetailsSidebarPanel = class DOMNodeDetailsSidebarPanel exten
         var propertiesGroup = new WebInspector.DetailsSectionGroup([this._propertiesRow]);
         var propertiesSection = new WebInspector.DetailsSection("dom-node-properties", WebInspector.UIString("Properties"), [propertiesGroup]);
 
+        let eventListenersFilterElement = useSVGSymbol("Images/FilterFieldGlyph.svg", "filter", WebInspector.UIString("Grouping Method"));
+
+        let eventListenersGroupMethodSelectElement = eventListenersFilterElement.appendChild(document.createElement("select"));
+        eventListenersGroupMethodSelectElement.addEventListener("change", (event) => {
+            this._eventListenerGroupingMethodSetting.value = eventListenersGroupMethodSelectElement.value;
+
+            this._refreshEventListeners();
+        });
+
+        function createOption(text, value) {
+            let optionElement = eventListenersGroupMethodSelectElement.appendChild(document.createElement("option"));
+            optionElement.value = value;
+            optionElement.textContent = text;
+        }
+
+        createOption(WebInspector.UIString("Group by Event"), WebInspector.DOMNodeDetailsSidebarPanel.EventListenerGroupingMethod.Event);
+        createOption(WebInspector.UIString("Group by Node"), WebInspector.DOMNodeDetailsSidebarPanel.EventListenerGroupingMethod.Node);
+
+        eventListenersGroupMethodSelectElement.value = this._eventListenerGroupingMethodSetting.value;
+
         this._eventListenersSectionGroup = new WebInspector.DetailsSectionGroup;
-        var eventListenersSection = new WebInspector.DetailsSection("dom-node-event-listeners", WebInspector.UIString("Event Listeners"), [this._eventListenersSectionGroup]);
+        let eventListenersSection = new WebInspector.DetailsSection("dom-node-event-listeners", WebInspector.UIString("Event Listeners"), [this._eventListenersSectionGroup], eventListenersFilterElement);
 
         this.contentView.element.appendChild(identitySection.element);
         this.contentView.element.appendChild(attributesSection.element);
@@ -227,7 +249,65 @@ WebInspector.DOMNodeDetailsSidebarPanel = class DOMNodeDetailsSidebarPanel exten
         if (!domNode)
             return;
 
-        domNode.eventListeners(eventListenersCallback.bind(this));
+        function createEventListenerSection(title, eventListeners, options = {}) {
+            let groups = eventListeners.map((eventListener) => new WebInspector.EventListenerSectionGroup(eventListener, options));
+
+            const optionsElement = null;
+            const defaultCollapsedSettingValue = true;
+            let section = new WebInspector.DetailsSection(`${title}-event-listener-section`, title, groups, optionsElement, defaultCollapsedSettingValue);
+            section.element.classList.add("event-listener-section");
+            return section;
+        }
+
+        function generateGroupsByEvent(eventListeners) {
+            let eventListenerTypes = new Map;
+            for (let eventListener of eventListeners) {
+                eventListener.node = WebInspector.domTreeManager.nodeForId(eventListener.nodeId);
+
+                let eventListenersForType = eventListenerTypes.get(eventListener.type);
+                if (!eventListenersForType)
+                    eventListenerTypes.set(eventListener.type, eventListenersForType = []);
+
+                eventListenersForType.push(eventListener);
+            }
+
+            let rows = [];
+
+            let types = Array.from(eventListenerTypes.keys());
+            types.sort();
+            for (let type of types)
+                rows.push(createEventListenerSection(type, eventListenerTypes.get(type), {hideType: true}));
+
+            return rows;
+        }
+
+        function generateGroupsByNode(eventListeners) {
+            let eventListenerNodes = new Map;
+            for (let eventListener of eventListeners) {
+                eventListener.node = WebInspector.domTreeManager.nodeForId(eventListener.nodeId);
+
+                let eventListenersForNode = eventListenerNodes.get(eventListener.node);
+                if (!eventListenersForNode)
+                    eventListenerNodes.set(eventListener.node, eventListenersForNode = []);
+
+                eventListenersForNode.push(eventListener);
+            }
+
+            let rows = [];
+
+            let currentNode = domNode;
+            do {
+                let eventListenersForNode = eventListenerNodes.get(currentNode);
+                if (!eventListenersForNode)
+                    continue;
+
+                eventListenersForNode.sort((a, b) => a.type.toLowerCase().localeCompare(b.type.toLowerCase()));
+
+                rows.push(createEventListenerSection(currentNode.displayName, eventListenersForNode, {hideNode: true}));
+            } while (currentNode = currentNode.parentNode);
+
+            return rows;
+        }
 
         function eventListenersCallback(error, eventListeners)
         {
@@ -238,37 +318,25 @@ WebInspector.DOMNodeDetailsSidebarPanel = class DOMNodeDetailsSidebarPanel exten
             if (this.domNode !== domNode)
                 return;
 
-            var eventListenerTypes = [];
-            var eventListenerSections = {};
-            for (var i = 0; i < eventListeners.length; ++i) {
-                var eventListener = eventListeners[i];
-                eventListener.node = WebInspector.domTreeManager.nodeForId(eventListener.nodeId);
-
-                var type = eventListener.type;
-                var section = eventListenerSections[type];
-                if (!section) {
-                    section = new WebInspector.EventListenerSection(type, domNode.id);
-                    eventListenerSections[type] = section;
-                    eventListenerTypes.push(type);
-                }
-
-                section.addListener(eventListener);
-            }
-
-            if (!eventListenerTypes.length) {
+            if (!eventListeners.length) {
                 var emptyRow = new WebInspector.DetailsSectionRow(WebInspector.UIString("No Event Listeners"));
                 emptyRow.showEmptyMessage();
                 this._eventListenersSectionGroup.rows = [emptyRow];
                 return;
             }
 
-            eventListenerTypes.sort();
+            switch (this._eventListenerGroupingMethodSetting.value) {
+            case WebInspector.DOMNodeDetailsSidebarPanel.EventListenerGroupingMethod.Event:
+                this._eventListenersSectionGroup.rows = generateGroupsByEvent.call(this, eventListeners);
+                break;
 
-            var rows = [];
-            for (var i = 0; i < eventListenerTypes.length; ++i)
-                rows.push(eventListenerSections[eventListenerTypes[i]]);
-            this._eventListenersSectionGroup.rows = rows;
+            case WebInspector.DOMNodeDetailsSidebarPanel.EventListenerGroupingMethod.Node:
+                this._eventListenersSectionGroup.rows = generateGroupsByNode.call(this, eventListeners);
+                break;
+            }
         }
+
+        domNode.getEventListeners(eventListenersCallback.bind(this));
     }
 
     _refreshAccessibility()
@@ -701,6 +769,11 @@ WebInspector.DOMNodeDetailsSidebarPanel = class DOMNodeDetailsSidebarPanel exten
 
         return dataGrid;
     }
+};
+
+WebInspector.DOMNodeDetailsSidebarPanel.EventListenerGroupingMethod = {
+    Event: "event",
+    Node: "node",
 };
 
 WebInspector.DOMNodeDetailsSidebarPanel.PropertiesObjectGroupName = "dom-node-details-sidebar-properties-object-group";

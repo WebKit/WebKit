@@ -1,5 +1,49 @@
 2017-03-13  Devin Rousso  <webkit@devinrousso.com>
 
+        Web Inspector: Event Listeners detail section is unhelpful, default should show listeners by element rather than by event
+        https://bugs.webkit.org/show_bug.cgi?id=167077
+
+        Reviewed by Joseph Pecoraro.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Main.html:
+        * UserInterface/Views/EventListenerSection.js: Removed.
+
+        * UserInterface/Models/DOMNode.js:
+        (WebInspector.DOMNode.prototype.eventListeners): Renamed to getEventListeners.
+
+        * UserInterface/Views/DOMNodeDetailsSidebarPanel.css: Added.
+        (.sidebar > .panel.dom-node-details .details-section.dom-node-event-listeners > .header > .filter):
+        (body[dir=ltr] .sidebar > .panel.dom-node-details .details-section.dom-node-event-listeners > .header > .filter):
+        (body[dir=rtl] .sidebar > .panel.dom-node-details .details-section.dom-node-event-listeners > .header > .filter):
+        (.sidebar > .panel.dom-node-details .details-section.dom-node-event-listeners > .header > .filter:hover):
+        (.sidebar > .panel.dom-node-details .details-section.dom-node-event-listeners > .header > .filter:active):
+        (.sidebar > .panel.dom-node-details .details-section.dom-node-event-listeners.collapsed > .header > .filter):
+        (.sidebar > .panel.dom-node-details .details-section.dom-node-event-listeners > .header > .filter > select):
+
+        * UserInterface/Views/DOMNodeDetailsSidebarPanel.js:
+        (WebInspector.DOMNodeDetailsSidebarPanel.createOption):
+        (WebInspector.DOMNodeDetailsSidebarPanel):
+        (WebInspector.DOMNodeDetailsSidebarPanel.prototype._refreshEventListeners.createEventListenerSection):
+        (WebInspector.DOMNodeDetailsSidebarPanel.prototype._refreshEventListeners.generateGroupsByEvent):
+        (WebInspector.DOMNodeDetailsSidebarPanel.prototype._refreshEventListeners.generateGroupsByNode):
+        (WebInspector.DOMNodeDetailsSidebarPanel.prototype._refreshEventListeners.eventListenersCallback):
+        (WebInspector.DOMNodeDetailsSidebarPanel.prototype._refreshEventListeners):
+        Add a filter to the Event Listeners section that changes the way in which event listeners
+        are grouped.  Currently supports two methods:
+         - Group by Event
+         - Group by Node
+
+        * UserInterface/Views/EventListenerSectionGroup.js:
+        (WebInspector.EventListenerSectionGroup):
+        Add ability to display the event type.
+
+        * UserInterface/Views/DetailsSection.css:
+        (.details-section):
+        Drive-by fix: CSS variable was named incorrectly.
+
+2017-03-13  Devin Rousso  <webkit@devinrousso.com>
+
         Web Inspector: Event Listeners section is missing 'once', 'passive' event listener flags
         https://bugs.webkit.org/show_bug.cgi?id=167080
 

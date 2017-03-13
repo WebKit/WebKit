@@ -25,15 +25,17 @@
 
 WebInspector.EventListenerSectionGroup = class EventListenerSectionGroup extends WebInspector.DetailsSectionGroup
 {
-    constructor(eventListener, nodeId)
+    constructor(eventListener, options = {})
     {
         super();
 
         this._eventListener = eventListener;
-        this._nodeId = nodeId;
 
         var rows = [];
-        rows.push(new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Node"), this._nodeTextOrLink()));
+        if (!options.hideType)
+            rows.push(new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Event"), this._eventListener.type));
+        if (!options.hideNode)
+            rows.push(new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Node"), this._nodeTextOrLink()));
         rows.push(new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Function"), this._functionTextOrLink()));
 
         if (this._eventListener.useCapture)

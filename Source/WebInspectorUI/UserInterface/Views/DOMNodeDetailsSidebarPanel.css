@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Devin Rousso <webkit@devinrousso.com>. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,23 +23,45 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.EventListenerSection = class EventListenerSection extends WebInspector.DetailsSection
-{
-    constructor(type, nodeId)
-    {
-        super(type + "-event-listener-section", type, [], null, true);
+.sidebar > .panel.dom-node-details .details-section.dom-node-event-listeners > .header > .filter {
+    display: inline-block;
+    position: relative;
+    width: 14px;
+    height: 14px;
+}
 
-        this.element.classList.add("event-listener-section");
+body[dir=ltr] .sidebar > .panel.dom-node-details .details-section.dom-node-event-listeners > .header > .filter {
+    float: right;
+}
 
-        this._nodeId = nodeId;
-    }
+body[dir=rtl] .sidebar > .panel.dom-node-details .details-section.dom-node-event-listeners > .header > .filter {
+    float: left;
+}
 
-    // Public
+.sidebar > .panel.dom-node-details .details-section.dom-node-event-listeners > .header > .filter:hover {
+    filter: brightness(0.75);
+}
 
-    addListener(eventListener)
-    {
-        var groups = this.groups;
-        groups.push(new WebInspector.EventListenerSectionGroup(eventListener, this._nodeId));
-        this.groups = groups;
-    }
-};
+.sidebar > .panel.dom-node-details .details-section.dom-node-event-listeners > .header > .filter:active {
+    filter: brightness(0.5);
+}
+
+.sidebar > .panel.dom-node-details .details-section.dom-node-event-listeners.collapsed > .header > .filter {
+    display: none;
+}
+
+.sidebar > .panel.dom-node-details .details-section.dom-node-event-listeners > .header > .filter > select {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    margin: 0;
+    padding: 0;
+    color: transparent;
+    background-color: transparent;
+    border: none;
+    border-radius: 50%;
+    opacity: 0;
+    -webkit-appearance: none;
+}
