@@ -33,18 +33,7 @@
 
 namespace WebCore {
 
-// FIXME: WebGPU - Stub implementation - not implemented yet.
-// class GPUCommandBuffer;
-class GPUDrawable;
-class GPURenderCommandEncoder;
-class GPURenderPassDescriptor;
-class GPUCommandBuffer : public RefCounted<GPUCommandBuffer> {
-public:
-    GPURenderCommandEncoder* createRenderCommandEncoder(GPURenderPassDescriptor*) { return nullptr; }
-    void commit() { }
-    void presentDrawable(GPUDrawable*) { }
-};
-// FIXME: WebGPU - End stub.
+class GPUCommandBuffer;
 class WebGPUCommandQueue;
 class WebGPUDrawable;
 class WebGPUFunction;

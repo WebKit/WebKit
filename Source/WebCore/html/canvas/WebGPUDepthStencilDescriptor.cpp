@@ -28,9 +28,7 @@
 
 #if ENABLE(WEBGPU)
 
-/* FIXME: WebGPU - Not implemented yet.
 #include "GPUDepthStencilDescriptor.h"
-*/
 #include "WebGPURenderingContext.h"
 
 namespace WebCore {
@@ -48,22 +46,6 @@ WebGPUDepthStencilDescriptor::WebGPUDepthStencilDescriptor()
 
 WebGPUDepthStencilDescriptor::~WebGPUDepthStencilDescriptor()
 {
-}
-
-String WebGPUDepthStencilDescriptor::label() const
-{
-    if (!m_depthStencilDescriptor)
-        return emptyString();
-
-    return m_depthStencilDescriptor->label();
-}
-
-void WebGPUDepthStencilDescriptor::setLabel(const String& label)
-{
-    if (!m_depthStencilDescriptor)
-        return;
-
-    m_depthStencilDescriptor->setLabel(label);
 }
 
 bool WebGPUDepthStencilDescriptor::depthWriteEnabled() const
@@ -91,12 +73,6 @@ void WebGPUDepthStencilDescriptor::setDepthCompareFunction(CompareFunction newDe
 {
     m_depthCompareFunction = newDepthCompareFunction;
     m_depthStencilDescriptor->setDepthCompareFunction(toGPUCompareFunction(m_depthCompareFunction));
-
-// FIXME: WebGPU - not implemented yet.
-//    if (Optional<WebGPUCompareFunction> compareFunction = toWebGPUCompareFunction(newDepthCompareFunction)) {
-//        m_depthCompareFunction = compareFunction.value();
-//        m_depthStencilDescriptor->setDepthCompareFunction(toGPUCompareFunction(m_depthCompareFunction));
-//    }
 }
 
 } // namespace WebCore

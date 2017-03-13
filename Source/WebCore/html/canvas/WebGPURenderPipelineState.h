@@ -33,17 +33,7 @@
 
 namespace WebCore {
 
-// FIXME: WebGPU - Stub implementation - not implemented yet.
-// class GPURenderPipelineState;
-class GPURenderPipelineDescriptor;
-class GPURenderPipelineState : public RefCounted<GPURenderPipelineState> {
-public:
-    static RefPtr<GPURenderPipelineState> create(GPUDevice*, GPURenderPipelineDescriptor*) { return nullptr; }
-    String label() const { return emptyString(); }
-    void setLabel(const String&) { }
-};
-// FIXME: WebGPU - End stub.
-
+class GPURenderPipelineState;
 class WebGPURenderPipelineDescriptor;
 
 class WebGPURenderPipelineState : public WebGPUObject {

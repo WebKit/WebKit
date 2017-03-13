@@ -33,17 +33,7 @@
 
 namespace WebCore {
 
-// FIXME: WebGPU - Stub implementation - not implemented yet.
-// class GPURenderPassAttachmentDescriptor;
-class GPURenderPassAttachmentDescriptor : public RefCounted<GPURenderPassAttachmentDescriptor> {
-public:
-    unsigned long loadAction() const { return 0; }
-    void setLoadAction(unsigned long) { }
-    unsigned long storeAction() const { return 0; }
-    void setStoreAction(unsigned long) { }
-    void setTexture(GPUTexture*) { }
-};
-// FIXME: WebGPU - End stub.
+class GPURenderPassAttachmentDescriptor;
 class WebGPUTexture;
 
 class WebGPURenderPassAttachmentDescriptor : public WebGPUObject {

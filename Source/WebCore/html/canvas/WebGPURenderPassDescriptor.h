@@ -28,26 +28,14 @@
 #if ENABLE(WEBGPU)
 
 #include "WebGPUObject.h"
-/* FIXME: WebGPU - Not implemented yet.
 #include "WebGPURenderPassColorAttachmentDescriptor.h"
 #include "WebGPURenderPassDepthAttachmentDescriptor.h"
-*/
 
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
-// FIXME: WebGPU - Stub implementation - not implemented yet.
-// class GPURenderPassDescriptor;
-class GPURenderPassDepthAttachmentDescriptor;
-class GPURenderPassDescriptor : public RefCounted<GPURenderPassDescriptor> {
-public:
-    static RefPtr<GPURenderPassDescriptor> create() { return nullptr; }
-    GPURenderPassDepthAttachmentDescriptor* depthAttachment() { return nullptr; }
-    // Vector<RefPtr<GPURenderPassColorAttachmentDescriptor>> colorAttachments() { return Vector<RefPtr<GPURenderPassColorAttachmentDescriptor>>(); }
-};
-// FIXME: WebGPU - End stub.
-
+class GPURenderPassDescriptor;
 class WebGPURenderPassColorAttachmentDescriptor;
 class WebGPURenderPassDepthAttachmentDescriptor;
 

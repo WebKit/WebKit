@@ -28,9 +28,7 @@
 
 #if ENABLE(WEBGPU)
 
-/* FIXME: WebGPU - Not implemented yet.
 #include "GPURenderPipelineColorAttachmentDescriptor.h"
-*/
 #include "WebGPURenderingContext.h"
 
 namespace WebCore {

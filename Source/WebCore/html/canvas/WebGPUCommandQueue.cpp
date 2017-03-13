@@ -28,9 +28,7 @@
 
 #if ENABLE(WEBGPU)
 
-/* FIXME: WebGPU - Not implemented yet.
 #include "GPUCommandQueue.h"
-*/
 #include "WebGPUCommandBuffer.h"
 #include "WebGPURenderingContext.h"
 

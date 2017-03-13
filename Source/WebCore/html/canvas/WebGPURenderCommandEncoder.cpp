@@ -28,11 +28,9 @@
 
 #if ENABLE(WEBGPU)
 
-/* FIXME: WebGPU - Not implemented yet.
 #include "GPUCommandBuffer.h"
 #include "GPURenderCommandEncoder.h"
 #include "GPURenderPassDescriptor.h"
-*/
 #include "WebGPUBuffer.h"
 #include "WebGPUCommandBuffer.h"
 #include "WebGPUDepthStencilState.h"

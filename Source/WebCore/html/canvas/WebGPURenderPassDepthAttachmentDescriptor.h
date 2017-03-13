@@ -32,14 +32,7 @@
 
 namespace WebCore {
 
-// FIXME: WebGPU - Stub implementation - not implemented yet.
-// class GPURenderPassDepthAttachmentDescriptor;
-class GPURenderPassDepthAttachmentDescriptor : public GPURenderPassAttachmentDescriptor {
-public:
-    double clearDepth() const { return 0; }
-    void setClearDepth(double) { }
-};
-// FIXME: WebGPU - End stub.
+class GPURenderPassDepthAttachmentDescriptor;
 
 class WebGPURenderPassDepthAttachmentDescriptor : public WebGPURenderPassAttachmentDescriptor {
 public:

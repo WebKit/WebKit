@@ -43,8 +43,6 @@
     EnabledAtRuntime=WebGPU
 ] interface WebGPUDepthStencilDescriptor {
 
-    attribute DOMString label;
-
     attribute WebGPUCompareFunction depthCompareFunction;
     attribute boolean depthWriteEnabled;
 

@@ -29,8 +29,6 @@
     EnabledAtRuntime=WebGPU
 ] interface WebGPURenderPipelineDescriptor {
 
-    attribute DOMString label;
-
     attribute WebGPUFunction? vertexFunction;
     attribute WebGPUFunction? fragmentFunction;
 

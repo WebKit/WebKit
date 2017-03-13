@@ -32,14 +32,7 @@
 
 namespace WebCore {
 
-// FIXME: WebGPU - Stub implementation - not implemented yet.
-// class GPURenderPipelineColorAttachmentDescriptor;
-class GPURenderPipelineColorAttachmentDescriptor : public RefCounted<GPURenderPipelineColorAttachmentDescriptor> {
-public:
-    unsigned long pixelFormat() const { return 0; }
-    void setPixelFormat(unsigned long) { }
-};
-// FIXME: WebGPU - End stub.
+class GPURenderPipelineColorAttachmentDescriptor;
 
 class WebGPURenderPipelineColorAttachmentDescriptor : public WebGPUObject {
 public:

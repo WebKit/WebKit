@@ -35,21 +35,7 @@
 namespace WebCore {
 
 class GPUFunction;
-
-// FIXME: WebGPU - stub implementation.
-class GPURenderPipelineDescriptor : public RefCounted<GPURenderPipelineDescriptor> {
-public:
-    static RefPtr<GPURenderPipelineDescriptor> create() { return nullptr; }
-    Vector<RefPtr<GPURenderPipelineColorAttachmentDescriptor>> colorAttachments() { return Vector<RefPtr<GPURenderPipelineColorAttachmentDescriptor>>(); }
-    String label() const { return emptyString(); }
-    void setLabel(const String&) { }
-    void setVertexFunction(GPUFunction*) { }
-    void setFragmentFunction(GPUFunction*) { }
-    unsigned long depthAttachmentPixelFormat() const { return 0; }
-    void setDepthAttachmentPixelFormat(unsigned long) { }
-};
-// FIXME: WebGPU - end stub.
-
+class GPURenderPipelineDescriptor;
 class WebGPUFunction;
 class WebGPURenderPipelineColorAttachmentDescriptor;
 
@@ -57,9 +43,6 @@ class WebGPURenderPipelineDescriptor : public WebGPUObject {
 public:
     virtual ~WebGPURenderPipelineDescriptor();
     static Ref<WebGPURenderPipelineDescriptor> create();
-
-    String label() const;
-    void setLabel(const String&);
 
     RefPtr<WebGPUFunction> vertexFunction() const;
     void setVertexFunction(RefPtr<WebGPUFunction>);

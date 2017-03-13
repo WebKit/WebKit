@@ -28,9 +28,7 @@
 
 #if ENABLE(WEBGPU)
 
-/* FIXME: WebGPU - Not implemented yet.FIXME: WebGPU - Not implemented yet.
 #include "GPURenderPipelineState.h"
- */
 #include "WebGPURenderPipelineDescriptor.h"
 #include "WebGPURenderingContext.h"
 

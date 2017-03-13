@@ -28,9 +28,7 @@
 
 #if ENABLE(WEBGPU)
 
-/* FIXME: WebGPU - Not implemented yet.
 #include "GPURenderPassDepthAttachmentDescriptor.h"
- */
 #include "GPUTexture.h"
 #include "WebGPURenderingContext.h"
 #include "WebGPUTexture.h"

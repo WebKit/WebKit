@@ -34,14 +34,7 @@
 
 namespace WebCore {
 
-// FIXME: WebGPU - Stub implementation - not implemented yet.
-// class GPURenderPassColorAttachmentDescriptor;
-class GPURenderPassColorAttachmentDescriptor : public GPURenderPassAttachmentDescriptor {
-public:
-    Vector<float> clearColor() const { return Vector<float>(); }
-    void setClearColor(const Vector<float>&) { }
-};
-// FIXME: WebGPU - End stub.
+class GPURenderPassColorAttachmentDescriptor;
 
 class WebGPURenderPassColorAttachmentDescriptor : public WebGPURenderPassAttachmentDescriptor {
 public:

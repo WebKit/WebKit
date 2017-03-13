@@ -28,9 +28,7 @@
 
 #if ENABLE(WEBGPU)
 
-/* FIXME: WebGPU - Not implemented yet.
 #include "GPUDepthStencilState.h"
- */
 #include "WebGPUDepthStencilDescriptor.h"
 #include "WebGPURenderingContext.h"
 

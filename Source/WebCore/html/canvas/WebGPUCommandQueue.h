@@ -34,17 +34,7 @@
 namespace WebCore {
 
 class GPUCommandBuffer;
-
-// FIXME: WebGPU - Stub implementation - not implemented yet.
-// class GPUCommandQueue;
-class GPUCommandQueue : public RefCounted<GPUCommandQueue> {
-public:
-    GPUCommandBuffer* createCommandBuffer() { return nullptr; }
-    String label() const { return emptyString(); }
-    void setLabel(const String&) { }
-};
-// FIXME: WebGPU - End stub.
-
+class GPUCommandQueue;
 class WebGPUCommandBuffer;
 
 class WebGPUCommandQueue : public WebGPUObject {

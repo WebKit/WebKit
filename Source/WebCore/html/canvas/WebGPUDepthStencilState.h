@@ -33,17 +33,7 @@
 
 namespace WebCore {
 
-// FIXME: WebGPU - Stub implementation - not implemented yet.
-// class GPUDepthStencilState;
-class GPUDevice;
-class GPUDepthStencilDescriptor;
-class GPUDepthStencilState : public RefCounted<GPUDepthStencilState> {
-public:
-    static RefPtr<GPUDepthStencilState> create(GPUDevice*, GPUDepthStencilDescriptor*) { return nullptr; }
-    String label() const { return emptyString(); }
-    void setLabel(const String&) { }
-};
-// FIXME: WebGPU - End stub.
+class GPUDepthStencilState;
 class WebGPUDepthStencilDescriptor;
 
 class WebGPUDepthStencilState : public WebGPUObject {

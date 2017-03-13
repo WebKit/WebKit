@@ -29,10 +29,8 @@
 #if ENABLE(WEBGPU)
 
 #include "GPUFunction.h"
-/* FIXME: WebGPU - Not implemented yet.
 #include "GPURenderPipelineColorAttachmentDescriptor.h"
 #include "GPURenderPipelineDescriptor.h"
-*/
 #include "WebGPUFunction.h"
 #include "WebGPURenderPipelineColorAttachmentDescriptor.h"
 #include "WebGPURenderingContext.h"
@@ -52,22 +50,6 @@ WebGPURenderPipelineDescriptor::WebGPURenderPipelineDescriptor()
 
 WebGPURenderPipelineDescriptor::~WebGPURenderPipelineDescriptor()
 {
-}
-
-String WebGPURenderPipelineDescriptor::label() const
-{
-    if (!m_renderPipelineDescriptor)
-        return emptyString();
-
-    return m_renderPipelineDescriptor->label();
-}
-
-void WebGPURenderPipelineDescriptor::setLabel(const String& label)
-{
-    if (!m_renderPipelineDescriptor)
-        return;
-
-    m_renderPipelineDescriptor->setLabel(label);
 }
 
 RefPtr<WebGPUFunction> WebGPURenderPipelineDescriptor::vertexFunction() const

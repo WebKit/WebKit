@@ -33,21 +33,10 @@
 
 namespace WebCore {
 
-// FIXME: WebGPU - Stub implementation - not implemented yet.
-// class GPURenderCommandEncoder;
+class GPURenderCommandEncoder;
 class GPUBuffer;
 class GPURenderPipelineState;
 class GPUDepthStencilState;
-class GPURenderCommandEncoder : public RefCounted<GPURenderCommandEncoder> {
-public:
-    void setRenderPipelineState(GPURenderPipelineState*) { }
-    void setDepthStencilState(GPUDepthStencilState*) { }
-    void setVertexBuffer(GPUBuffer*, unsigned, unsigned) { }
-    void setFragmentBuffer(GPUBuffer*, unsigned, unsigned) { }
-    void drawPrimitives(unsigned, unsigned, unsigned) { }
-    void endEncoding() { }
-};
-// FIXME: WebGPU - End stub.
 class WebGPUCommandBuffer;
 class WebGPUDepthStencilState;
 class WebGPURenderPassDescriptor;

@@ -32,6 +32,8 @@
 
 namespace WebCore {
 
+enum class GPUCompareFunction;
+
 enum class WebGPUCompareFunction {
     Never,
     Less,
@@ -45,20 +47,6 @@ enum class WebGPUCompareFunction {
 
 std::optional<WebGPUCompareFunction> toWebGPUCompareFunction(const String&);
 String web3DCompareFunctionName(const WebGPUCompareFunction);
-
-// FIXME: WebGPU - Stub implementation - not implemented yet.
-// enum class GPUCompareFunction;
-enum class GPUCompareFunction {
-    Never,
-    Less,
-    Equal,
-    LessEqual,
-    Greater,
-    NotEqual,
-    GreaterEqual,
-    Always
-};
-// FIXME: WebGPU - End stub.
 GPUCompareFunction toGPUCompareFunction(const WebGPUCompareFunction);
 
 } // namespace WebCore

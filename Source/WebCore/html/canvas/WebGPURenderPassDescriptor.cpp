@@ -28,11 +28,9 @@
 
 #if ENABLE(WEBGPU)
 
-/* FIXME: WebGPU - Not implemented yet.
 #include "GPURenderPassColorAttachmentDescriptor.h"
 #include "GPURenderPassDepthAttachmentDescriptor.h"
 #include "GPURenderPassDescriptor.h"
-*/
 #include "WebGPURenderPassColorAttachmentDescriptor.h"
 #include "WebGPURenderPassDepthAttachmentDescriptor.h"
 #include "WebGPURenderingContext.h"
@@ -72,10 +70,9 @@ Vector<RefPtr<WebGPURenderPassColorAttachmentDescriptor>> WebGPURenderPassDescri
         return Vector<RefPtr<WebGPURenderPassColorAttachmentDescriptor>>();
 
     if (!m_colorAttachmentDescriptors.size()) {
-        // FIXME: WebGPU - GPURenderPassColorAttachmentDescriptor not implemented yet.
-        //        Vector<RefPtr<GPURenderPassColorAttachmentDescriptor>> platformColorAttachments = m_renderPassDescriptor->colorAttachments();
-        //        for (auto& attachment : platformColorAttachments)
-        //            m_colorAttachmentDescriptors.append(WebGPURenderPassColorAttachmentDescriptor::create(this->context(), attachment.get()));
+        Vector<RefPtr<GPURenderPassColorAttachmentDescriptor>> platformColorAttachments = m_renderPassDescriptor->colorAttachments();
+        for (auto& attachment : platformColorAttachments)
+            m_colorAttachmentDescriptors.append(WebGPURenderPassColorAttachmentDescriptor::create(this->context(), attachment.get()));
     }
     return m_colorAttachmentDescriptors;
 }
