@@ -1,3 +1,22 @@
+2017-03-07  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        ShadowBlur::calculateLayerBoundingRect doesn't need to return the enclosingIntRect of layerRect
+        https://bugs.webkit.org/show_bug.cgi?id=168650
+
+        Reviewed by Simon Fraser.
+
+        No new tests, no behavior change.
+
+        * platform/graphics/ShadowBlur.h: Change the type of return value
+        from IntRect to IntSize.
+        * platform/graphics/ShadowBlur.cpp:
+        (WebCore::ShadowBlur::calculateLayerBoundingRect): Ditto.
+        (WebCore::ShadowBlur::drawRectShadow): Rename a variable layerRect layerSize.
+        (WebCore::ShadowBlur::drawInsetShadow): Ditto.
+        (WebCore::ShadowBlur::drawRectShadowWithoutTiling): Ditto.
+        (WebCore::ShadowBlur::drawInsetShadowWithoutTiling): Ditto.
+        (WebCore::ShadowBlur::beginShadowLayer): Ditto.
+
 2017-03-07  Dave Hyatt  <hyatt@apple.com>
 
         Animated GIFs fail to play in multi-column layout
