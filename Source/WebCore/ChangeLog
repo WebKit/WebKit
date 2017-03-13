@@ -1,5 +1,17 @@
 2017-03-06  Fujii Hironori  <Hironori.Fujii@sony.com>
 
+        [CMake] SN-DBS fails to build: Cannot open include file: 'WebCoreTestSupportPrefix.h'
+        https://bugs.webkit.org/show_bug.cgi?id=169244
+
+        Reviewed by Alex Christensen.
+
+        A distributed build system SN-DBS can not find
+        WebCoreTestSupportPrefix.h without an include path to it.
+
+        * CMakeLists.txt: Add 'WebCore/testing/js' to include paths.
+
+2017-03-06  Fujii Hironori  <Hironori.Fujii@sony.com>
+
         [cairo] error C2065: 'quality': undeclared identifier since r213412
         https://bugs.webkit.org/show_bug.cgi?id=169240
 
