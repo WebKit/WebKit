@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests that paginated lines are painting properly when lines visually overflow.</title>
+<style>
+html {
+	overflow: hidden;
+}
+div {
+  column-fill: auto;
+  font-size: 241px;
+  line-height: 0.7;
+}
+</style>
+</head>
+<body>
+<div>
+foobar
+foobar
+foobar
+foobar
+foobar
+foobar
+foobar
+foobar
+foobar
+foobar
+foobar
+foobar
+foobar
+foobar
+foobar
+foobar
+</div>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    internals.setPagination("LeftToRightPaginated", 0);
+}
+
+setTimeout(function() {
+    window.scrollTo(1600, 0);
+    document.body.offsetHeight;
+    if (window.testRunner)
+        testRunner.notifyDone();
+}, 0);
+</script>
+</body>
+</html>

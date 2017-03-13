@@ -132,22 +132,27 @@ RunResolver::RunResolver(const RenderBlockFlow& flow, const Layout& layout)
 {
 }
 
-unsigned RunResolver::adjustLineIndexForStruts(LayoutUnit y, unsigned lineIndexCandidate) const
+unsigned RunResolver::adjustLineIndexForStruts(LayoutUnit y, IndexType type, unsigned lineIndexCandidate) const
 {
     auto& struts = m_layout.struts();
     // We need to offset the lineIndex with line struts when there's an actual strut before the candidate.
     auto& strut = struts.first();
     if (strut.lineBreak >= lineIndexCandidate)
         return lineIndexCandidate;
-    // Jump over the first strut since we know that the line we are looking for is beyond the strut.
-    unsigned strutIndex = 1;
-    float topPosition = strut.lineBreak * m_lineHeight + strut.offset;
+    unsigned strutIndex = 0;
+    std::optional<unsigned> lastIndexCandidate;
+    float topPosition = strut.lineBreak * m_lineHeight + (m_baseline - m_ascent);
     for (auto lineIndex = strut.lineBreak; lineIndex < m_layout.lineCount(); ++lineIndex) {
+        float strutOffset = 0;
         if (strutIndex < struts.size() && struts.at(strutIndex).lineBreak == lineIndex)
-            topPosition += struts.at(strutIndex++).offset;
-        if (y >= topPosition && y < (topPosition + m_lineHeight))
-            return lineIndex;
-        topPosition += m_lineHeight;
+            strutOffset = struts.at(strutIndex++).offset;
+        if (y >= topPosition && y < (topPosition + m_ascent + m_descent + strutOffset)) {
+            if (type == IndexType::First)
+                return lineIndex;
+            lastIndexCandidate = lineIndex;
+        } else if (lastIndexCandidate)
+            return *lastIndexCandidate;
+        topPosition += m_lineHeight + strutOffset;
     }
     return m_layout.lineCount() - 1;
 }
@@ -157,14 +162,15 @@ unsigned RunResolver::lineIndexForHeight(LayoutUnit height, IndexType type) cons
     ASSERT(m_lineHeight);
     float y = height - m_borderAndPaddingBefore;
     // Lines may overlap, adjust to get the first or last line at this height.
+    auto adjustedY = y;
     if (type == IndexType::First)
-        y += m_lineHeight - (m_baseline + m_descent);
+        adjustedY += m_lineHeight - (m_baseline + m_descent);
     else
-        y -= m_baseline - m_ascent;
-    y = std::max<float>(y, 0);
-    auto lineIndexCandidate =  std::min<unsigned>(y / m_lineHeight, m_layout.lineCount() - 1);
+        adjustedY -= m_baseline - m_ascent;
+    adjustedY = std::max<float>(adjustedY, 0);
+    auto lineIndexCandidate =  std::min<unsigned>(adjustedY / m_lineHeight, m_layout.lineCount() - 1);
     if (m_layout.hasLineStruts())
-        return adjustLineIndexForStruts(y, lineIndexCandidate);
+        return adjustLineIndexForStruts(y, type, lineIndexCandidate);
     return lineIndexCandidate;
 }
 
@@ -175,7 +181,6 @@ WTF::IteratorRange<RunResolver::Iterator> RunResolver::rangeForRect(const Layout
 
     unsigned firstLine = lineIndexForHeight(rect.y(), IndexType::First);
     unsigned lastLine = std::max(firstLine, lineIndexForHeight(rect.maxY(), IndexType::Last));
-
     auto rangeBegin = begin().advanceLines(firstLine);
     if (rangeBegin == end())
         return { end(), end() };

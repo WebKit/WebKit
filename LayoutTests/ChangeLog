@@ -1,3 +1,13 @@
+2017-03-12  Zalan Bujtas  <zalan@apple.com>
+
+        Simple line layout: Paginated content is not painted properly when font overflows line height.
+        https://bugs.webkit.org/show_bug.cgi?id=169516
+
+        Reviewed by Antti Koivisto.
+
+        * fast/multicol/simple-line-layout-line-index-after-strut-expected.html: Added.
+        * fast/multicol/simple-line-layout-line-index-after-strut.html: Added.
+
 2017-03-12  Javier Fernandez  <jfernandez@igalia.com>
 
         [GTK] Unreviewed test gardening
