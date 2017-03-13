@@ -1,3 +1,12 @@
+2017-03-12  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] Incorrect availability annotations in WKUserContentController.h
+        https://bugs.webkit.org/show_bug.cgi?id=169536
+
+        Reviewed by Alexey Proskuryakov.
+
+        * UIProcess/API/Cocoa/WKUserContentController.h: Use WK_MAC_TBA for macOS availability.
+
 2017-03-12  Brady Eidson  <beidson@apple.com>
 
         Transition GenericCallback from std::function to WTF::Function.

@@ -74,16 +74,16 @@ WK_CLASS_AVAILABLE(macosx(10.10), ios(8.0))
 /*! @abstract Adds a user content extension.
  @param name The name of the user content extension to add.
  */
-- (void)addContentExtension:(WKContentExtension *)contentExtension WK_API_AVAILABLE(macosx(WK_IOS_TBA), ios(WK_IOS_TBA));
+- (void)addContentExtension:(WKContentExtension *)contentExtension WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 /*! @abstract Removes a user content extension.
  @param name The identifier of the user content extension to remove.
  */
-- (void)removeContentExtension:(NSString *)identifier WK_API_AVAILABLE(macosx(WK_IOS_TBA), ios(WK_IOS_TBA));
+- (void)removeContentExtension:(NSString *)identifier WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 /*! @abstract Removes all associated user content extensions.
  */
-- (void)removeAllContentExtensions WK_API_AVAILABLE(macosx(WK_IOS_TBA), ios(WK_IOS_TBA));
+- (void)removeAllContentExtensions WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 @end
 
