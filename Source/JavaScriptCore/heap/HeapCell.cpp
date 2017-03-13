@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +27,16 @@
 #include "HeapCell.h"
 
 #include <wtf/PrintStream.h>
+
+namespace JSC {
+
+#if !COMPILER(GCC_OR_CLANG)
+void HeapCell::use() const
+{
+}
+#endif
+
+} // namespace JSC
 
 namespace WTF {
 

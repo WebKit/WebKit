@@ -1,3 +1,20 @@
+2017-03-11  Filip Pizlo  <fpizlo@apple.com>
+
+        Structure::willStoreValueSlow needs to keep the property table alive until the end
+        https://bugs.webkit.org/show_bug.cgi?id=169520
+
+        Reviewed by Michael Saboff.
+
+        We use pointers logically interior to `propertyTable` after doing a GC. We need to prevent the
+        compiler from optimizing away pointers to `propertyTable`.
+        
+        * heap/HeapCell.cpp:
+        (JSC::HeapCell::use):
+        * heap/HeapCell.h:
+        (JSC::HeapCell::use): Introduce API for keeping a pointer alive until some point in execution.
+        * runtime/Structure.cpp:
+        (JSC::Structure::willStoreValueSlow): Use HeapCell::use() to keep the pointer alive.
+
 2017-03-10  Mark Lam  <mark.lam@apple.com>
 
         JSC: BindingNode::bindValue doesn't increase the scope's reference count.
