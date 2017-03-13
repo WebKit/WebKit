@@ -582,6 +582,7 @@ localizedStrings["Original formatting"] = "Original formatting";
 localizedStrings["Originally %s"] = "Originally %s";
 localizedStrings["Other"] = "Other";
 localizedStrings["Other Issue"] = "Other Issue";
+localizedStrings["Outgoing message"] = "Outgoing message";
 localizedStrings["Outline"] = "Outline";
 localizedStrings["Output: "] = "Output: ";
 localizedStrings["Outset"] = "Outset";

@@ -42,7 +42,6 @@ WebInspector.WebSocketContentView = class WebSocketContentView extends WebInspec
         let columns = {data: {}};
         columns.data.title = WebInspector.UIString("Data");
         columns.data.sortable = false;
-        columns.data.icon = true;
         columns.data.width = "85%";
 
         if (this._showTimeColumn)
@@ -103,7 +102,7 @@ WebInspector.WebSocketContentView = class WebSocketContentView extends WebInspec
             opcode === WebInspector.WebSocketResource.OpCodes.TextFrame ? "text-frame" : "non-text-frame"
         ];
 
-        this._addRow(nodeText, time, classNames);
+        this._addRow(nodeText, time, classNames, isOutgoing);
     }
 
     // Private
@@ -119,21 +118,16 @@ WebInspector.WebSocketContentView = class WebSocketContentView extends WebInspec
         this._framesRendered = framesLength;
     }
 
-    _addRow(data, time, classNames)
+    _addRow(data, time, classNames, isOutgoing)
     {
         let node;
         if (this._showTimeColumn)
-            node = new WebInspector.DataGridNode({data, time: this._timeStringFromTimestamp(time)});
+            node = new WebInspector.WebSocketDataGridNode({data, time, isOutgoing});
         else
-            node = new WebInspector.DataGridNode({data});
+            node = new WebInspector.WebSocketDataGridNode({data, isOutgoing});
 
         this._dataGrid.appendChild(node);
 
         node.element.classList.add(...classNames);
-    }
-
-    _timeStringFromTimestamp(timestamp)
-    {
-        return new Date(timestamp * 1000).toLocaleTimeString();
     }
 };

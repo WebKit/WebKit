@@ -23,58 +23,32 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.web-socket.content-view > .data-grid {
-    height: 100%;
-}
+WebInspector.WebSocketDataGridNode = class WebSocketDataGridNode extends WebInspector.DataGridNode
+{
+    // Public
 
-.web-socket.content-view > .data-grid table.data {
-    height: auto;
-    background-image: none;
-}
+    createCellContent(columnIdentifier)
+    {
+        if (columnIdentifier === "data") {
+            let fragment = document.createDocumentFragment();
+            if (this._data.isOutgoing) {
+                let iconElement = useSVGSymbol("Images/ArrowUp.svg", "icon", WebInspector.UIString("Outgoing message"));
+                fragment.appendChild(iconElement);
+            }
+            fragment.appendChild(document.createTextNode(this._data.data));
+            return fragment;
+        }
 
-.web-socket.content-view > .data-grid td.data-column,
-.web-socket.content-view .data-grid td.data-column > div {
-    height: auto;
-    white-space: pre-wrap;
-}
+        if (columnIdentifier === "time")
+            return this._timeStringFromTimestamp(this._data.time);
 
-body[dir=ltr] .web-socket.content-view > .data-grid .data-column > div {
-    padding-left: 18px;
-}
+        return super.createCellContent(columnIdentifier);
+    }
 
-body[dir=rtl] .web-socket.content-view > .data-grid .data-column > div {
-    padding-right: 18px;
-}
+    // Private
 
-.web-socket.content-view .icon {
-    position: absolute;
-    margin-top: -1px;
-}
-
-body[dir=ltr] .web-socket.content-view .icon {
-    left: 4px;
-    margin-right: 2px;
-}
-
-body[dir=rtl] .web-socket.content-view .icon {
-    right: 4px;
-    margin-left: 2px;
-}
-
-.web-socket.content-view .data-grid.variable-height-rows table.data tr:nth-child(odd) {
-    background-color: unset;
-}
-
-.web-socket.content-view .data-grid table.data tr.revealed {
-    border-bottom: 0.5px solid hsla(0, 0%, 0%, 0.1);
-}
-
-.web-socket.content-view .data-grid.variable-height-rows table.data tr.outgoing {
-    background-color: hsl(80, 85%, 92%);
-    color: hsl(120, 100%, 16%);
-}
-
-.web-socket.content-view .data-grid.variable-height-rows table.data tr.non-text-frame {
-    background-color: hsl(50, 100%, 90%);
-    color: hsl(3, 96%, 27%);
-}
+    _timeStringFromTimestamp(timestamp)
+    {
+        return new Date(timestamp * 1000).toLocaleTimeString();
+    }
+};

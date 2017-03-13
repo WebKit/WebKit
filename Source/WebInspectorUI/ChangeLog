@@ -1,3 +1,27 @@
+2017-03-13  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: WebSockets: color of outgoing message icon should match text color
+        https://bugs.webkit.org/show_bug.cgi?id=169512
+        <rdar://problem/30994284>
+
+        Reviewed by Devin Rousso.
+
+        Include SVG icon as an inline SVG element to make currentColor work.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Main.html:
+        * UserInterface/Views/WebSocketContentView.css:
+        (.web-socket.content-view .outgoing .icon): Deleted.
+        * UserInterface/Views/WebSocketContentView.js:
+        (WebInspector.WebSocketContentView):
+        (WebInspector.WebSocketContentView.prototype.addFrame):
+        (WebInspector.WebSocketContentView.prototype._addRow):
+        (WebInspector.WebSocketContentView.prototype._timeStringFromTimestamp): Deleted.
+        * UserInterface/Views/WebSocketDataGridNode.js: Added.
+        (WebInspector.WebSocketDataGridNode.prototype.createCellContent):
+        (WebInspector.WebSocketDataGridNode.prototype._timeStringFromTimestamp):
+        (WebInspector.WebSocketDataGridNode):
+
 2017-03-13  Devin Rousso  <webkit@devinrousso.com>
 
         Web Inspector: Event Listeners detail section is unhelpful, default should show listeners by element rather than by event
