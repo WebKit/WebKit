@@ -1,3 +1,11 @@
+2017-03-13  Anders Carlsson  <andersca@apple.com>
+
+        Fix build warnings.
+
+        * WebCoreSupport/WebInspectorClient.mm:
+        (WebInspectorFrontendClient::save):
+        (-[WebInspectorWindowController webView:runOpenPanelForFileButtonWithResultListener:allowMultipleFiles:]):
+
 2017-03-11  Brady Eidson  <beidson@apple.com>
 
         Cleanup "addCookie" and its sole user.

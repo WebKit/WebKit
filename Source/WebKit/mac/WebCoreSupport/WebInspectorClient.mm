@@ -332,9 +332,9 @@ void WebInspectorFrontendClient::save(const String& suggestedURL, const String& 
     panel.directoryURL = [platformURL URLByDeletingLastPathComponent];
 
     auto completionHandler = ^(NSInteger result) {
-        if (result == NSFileHandlingPanelCancelButton)
+        if (result == NSModalResponseCancel)
             return;
-        ASSERT(result == NSFileHandlingPanelOKButton);
+        ASSERT(result == NSModalResponseOK);
         saveToURL(panel.URL);
     };
 
@@ -684,11 +684,11 @@ void WebInspectorFrontendClient::append(const String& suggestedURL, const String
     panel.allowsMultipleSelection = allowMultipleFiles;
 
     auto completionHandler = ^(NSInteger result) {
-        if (result == NSFileHandlingPanelCancelButton) {
+        if (result == NSModalResponseCancel) {
             [resultListener cancel];
             return;
         }
-        ASSERT(result == NSFileHandlingPanelOKButton);
+        ASSERT(result == NSModalResponseOK);
 
         NSArray *URLs = panel.URLs;
         NSMutableArray *filenames = [NSMutableArray arrayWithCapacity:URLs.count];
