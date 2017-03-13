@@ -45,11 +45,6 @@ static const size_t logChannelCount = WTF_ARRAY_LENGTH(logChannels);
 
 void initializeLogChannelsIfNecessary()
 {
-    static bool haveInitializedLogChannels = false;
-    if (haveInitializedLogChannels)
-        return;
-    haveInitializedLogChannels = true;
-
     static bool haveInitializedLoggingChannels = false;
     if (haveInitializedLoggingChannels)
         return;
