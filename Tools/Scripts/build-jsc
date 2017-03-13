@@ -186,9 +186,6 @@ sub buildMyProject
         if ($projectName ne "WTF") {
             $result = buildVisualStudioProject("$projectName.vcxproj/$projectName.sln");
         }
-    } elsif (isGtk()) {
-        checkForArgumentAndRemoveFromARGV("--gtk");
-        $result = buildGtkProject($projectName, 0);
     } else {
         die "Building not defined for this platform!\n";
     }
