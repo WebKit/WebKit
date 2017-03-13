@@ -1,3 +1,16 @@
+2017-03-11  Filip Pizlo  <fpizlo@apple.com>
+
+        FTL should not flush strict arguments unless it really needs to
+        https://bugs.webkit.org/show_bug.cgi?id=169519
+
+        Reviewed by Mark Lam.
+        
+        This is a refinement that we should have done ages ago. This kills some pointless PutStacks
+        in DFG SSA IR. It can sometimes unlock other optimizations.
+
+        * dfg/DFGPreciseLocalClobberize.h:
+        (JSC::DFG::PreciseLocalClobberizeAdaptor::readTop):
+
 2017-03-13  Caio Lima  <ticaiolima@gmail.com>
 
         [JSC] It should be possible create a label named let when parsing Statement in non strict mode
