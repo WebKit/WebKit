@@ -1,3 +1,20 @@
+2017-03-13  Zan Dobersek  <zdobersek@igalia.com>
+
+        [WK2][CMake] Remove the intermediate NetworkProcess_COMMON_SOURCES variable
+        https://bugs.webkit.org/show_bug.cgi?id=169524
+
+        Reviewed by Michael Catanzaro.
+
+        The NetworkProcess-specific source files listed in the
+        NetworkProcess_COMMON_SOURCES variable definition should be directly
+        inlined into the list with which the WebKit2_SOURCE variable is defined.
+        The NetworkProcess_COMMON_SOURCES variable is appended to the
+        WebKit2_SOURCES variable anyway, and is not used anywhere else. The
+        separate variable was previously use to support configurations that
+        allowed disabling NetworkProcess.
+
+        * CMakeLists.txt:
+
 2017-03-13  Dean Jackson  <dino@apple.com>
 
         WebGPU remote layer hosting

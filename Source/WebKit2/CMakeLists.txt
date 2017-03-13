@@ -94,19 +94,26 @@ if (ENABLE_GRAPHICS_CONTEXT_3D)
     )
 endif ()
 
-set(NetworkProcess_COMMON_SOURCES
+set(WebKit2_SOURCES
     NetworkProcess/CustomProtocols/LegacyCustomProtocolManager.cpp
+
+    NetworkProcess/Downloads/BlobDownloadClient.cpp
+    NetworkProcess/Downloads/Download.cpp
+    NetworkProcess/Downloads/DownloadManager.cpp
+    NetworkProcess/Downloads/PendingDownload.cpp
+
+    NetworkProcess/FileAPI/NetworkBlobRegistry.cpp
 
     NetworkProcess/NetworkConnectionToWebProcess.cpp
     NetworkProcess/NetworkDataTask.cpp
     NetworkProcess/NetworkDataTaskBlob.cpp
     NetworkProcess/NetworkLoad.cpp
     NetworkProcess/NetworkProcess.cpp
+    NetworkProcess/NetworkProcessCreationParameters.cpp
     NetworkProcess/NetworkProcessPlatformStrategies.cpp
+    NetworkProcess/NetworkResourceLoadParameters.cpp
     NetworkProcess/NetworkResourceLoader.cpp
     NetworkProcess/NetworkSession.cpp
-
-    NetworkProcess/FileAPI/NetworkBlobRegistry.cpp
 
     NetworkProcess/cache/NetworkCache.cpp
     NetworkProcess/cache/NetworkCacheBlobStorage.cpp
@@ -127,21 +134,11 @@ set(NetworkProcess_COMMON_SOURCES
     NetworkProcess/capture/NetworkCaptureReplayer.cpp
     NetworkProcess/capture/NetworkCaptureResource.cpp
     NetworkProcess/capture/NetworkDataTaskReplay.cpp
-)
 
-set(WebKit2_SOURCES
     DatabaseProcess/DatabaseProcess.cpp
     DatabaseProcess/DatabaseToWebProcessConnection.cpp
 
     DatabaseProcess/IndexedDB/WebIDBConnectionToClient.cpp
-
-    NetworkProcess/NetworkProcessCreationParameters.cpp
-    NetworkProcess/NetworkResourceLoadParameters.cpp
-
-    NetworkProcess/Downloads/BlobDownloadClient.cpp
-    NetworkProcess/Downloads/Download.cpp
-    NetworkProcess/Downloads/DownloadManager.cpp
-    NetworkProcess/Downloads/PendingDownload.cpp
 
     Platform/Logging.cpp
     Platform/Module.cpp
@@ -585,8 +582,6 @@ set(WebKit2_SOURCES
     WebProcess/WebPage/WebURLSchemeHandlerProxy.cpp
     WebProcess/WebPage/WebURLSchemeHandlerTaskProxy.cpp
     WebProcess/WebPage/WebUndoStep.cpp
-
-    ${NetworkProcess_COMMON_SOURCES}
 )
 
 set(WebKit2_MESSAGES_IN_FILES
