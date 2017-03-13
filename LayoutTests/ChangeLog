@@ -1,3 +1,11 @@
+2017-03-13  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Skip WebGPU tests on ios-simulator.
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator/TestExpectations:
+
 2017-03-13  Devin Rousso  <webkit@devinrousso.com>
 
         Web Inspector: Event Listeners section is missing 'once', 'passive' event listener flags

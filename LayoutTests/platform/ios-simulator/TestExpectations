@@ -37,6 +37,9 @@ webgl
 fast/canvas/webgl
 http/tests/webgl
 
+# WebGPU is not enabled on iOS Simulator.
+fast/canvas/webgpu
+
 # Encrypted Media Extensions are not enabled
 media/encrypted-media/
 fast/events/constructors/device-proximity-event-constructor.html
