@@ -1,3 +1,19 @@
+2017-03-13  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        MiniBrowser: a tab closed from javascript always closes the window
+        https://bugs.webkit.org/show_bug.cgi?id=169415
+
+        Reviewed by Michael Catanzaro.
+
+        When I implemented tabs support in MiniBrowser I forgot about web view close. We connect to the signal (only for
+        the active tab) and close the window. That worked when we didn't have tabs, but now we should close the tab, or
+        the window if it's the last tab.
+
+        * MiniBrowser/gtk/BrowserWindow.c:
+        (webViewClose): Destroy the window if therte's only one tab, otherwise search for the tab corresponding to the web
+        view and destroy it.
+        (browserWindowSwitchTab): Re-connect to close signal, we want to handle close on all tabs.
+
 2017-03-11  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Enable async image decoding for large images
