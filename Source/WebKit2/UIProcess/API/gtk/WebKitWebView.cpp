@@ -568,7 +568,7 @@ static gboolean webkitWebViewRunFileChooser(WebKitWebView* webView, WebKitFileCh
     GtkFileChooserNative* dialog = gtk_file_chooser_native_new(allowsMultipleSelection ? _("Select Files") : _("Select File"),
         toplevel ? GTK_WINDOW(toplevel) : nullptr, GTK_FILE_CHOOSER_ACTION_OPEN, nullptr, nullptr);
     if (toplevel)
-        gtk_native_dialog_set_modal(dialog, TRUE);
+        gtk_native_dialog_set_modal(GTK_NATIVE_DIALOG(dialog), TRUE);
 #else
     GtkWidget* dialog = gtk_file_chooser_dialog_new(allowsMultipleSelection ? _("Select Files") : _("Select File"),
                                                     toplevel ? GTK_WINDOW(toplevel) : 0,
