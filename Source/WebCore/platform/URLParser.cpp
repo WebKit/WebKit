@@ -487,6 +487,29 @@ void URLParser::appendWindowsDriveLetter(CodePointIterator<CharacterType>& itera
     advance(iterator);
 }
 
+bool URLParser::copyBaseWindowsDriveLetter(const URL& base)
+{
+    if (base.protocolIs("file")) {
+        RELEASE_ASSERT(base.m_portEnd < base.m_string.length());
+        if (base.m_string.is8Bit()) {
+            const LChar* begin = base.m_string.characters8();
+            CodePointIterator<LChar> c(begin + base.m_portEnd + 1, begin + base.m_string.length());
+            if (isWindowsDriveLetter(c)) {
+                appendWindowsDriveLetter(c);
+                return true;
+            }
+        } else {
+            const UChar* begin = base.m_string.characters16();
+            CodePointIterator<UChar> c(begin + base.m_portEnd + 1, begin + base.m_string.length());
+            if (isWindowsDriveLetter(c)) {
+                appendWindowsDriveLetter(c);
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
 template<typename CharacterType>
 bool URLParser::shouldCopyFileURL(CodePointIterator<CharacterType> iterator)
 {
@@ -814,9 +837,9 @@ void URLParser::copyASCIIStringUntil(const String& string, size_t length)
     if (string.isNull())
         return;
     ASSERT(m_asciiBuffer.isEmpty());
-    if (string.is8Bit()) {
+    if (string.is8Bit())
         appendToASCIIBuffer(string.characters8(), length);
-    } else {
+    else {
         const UChar* characters = string.characters16();
         for (size_t i = 0; i < length; ++i) {
             UChar c = characters[i];
@@ -1602,19 +1625,6 @@ void URLParser::parse(const CharacterType* input, const unsigned length, const U
                 state = State::FileHost;
                 break;
             }
-            if (base.isValid() && base.protocolIs("file")) {
-                // FIXME: This String copy is unnecessary.
-                String basePath = base.path();
-                if (basePath.length() >= 2) {
-                    bool windowsQuirk = basePath.is8Bit()
-                        ? isWindowsDriveLetter(CodePointIterator<LChar>(basePath.characters8(), basePath.characters8() + basePath.length()))
-                        : isWindowsDriveLetter(CodePointIterator<UChar>(basePath.characters16(), basePath.characters16() + basePath.length()));
-                    if (windowsQuirk) {
-                        appendToASCIIBuffer(basePath[0]);
-                        appendToASCIIBuffer(basePath[1]);
-                    }
-                }
-            }
             syntaxViolation(c);
             appendToASCIIBuffer("//", 2);
             m_url.m_userStart = currentPosition(c) - 1;
@@ -1622,9 +1632,14 @@ void URLParser::parse(const CharacterType* input, const unsigned length, const U
             m_url.m_passwordEnd = m_url.m_userStart;
             m_url.m_hostEnd = m_url.m_userStart;
             m_url.m_portEnd = m_url.m_userStart;
-            m_url.m_pathAfterLastSlash = m_url.m_userStart + 1;
-            if (isWindowsDriveLetter(c))
+            if (isWindowsDriveLetter(c)) {
                 appendWindowsDriveLetter(c);
+                m_url.m_pathAfterLastSlash = m_url.m_userStart + 1;
+            } else if (copyBaseWindowsDriveLetter(base)) {
+                appendToASCIIBuffer('/');
+                m_url.m_pathAfterLastSlash = m_url.m_userStart + 4;
+            } else
+                m_url.m_pathAfterLastSlash = m_url.m_userStart + 1;
             state = State::Path;
             break;
         case State::FileHost:
@@ -1931,7 +1946,11 @@ void URLParser::parse(const CharacterType* input, const unsigned length, const U
         m_url.m_passwordEnd = m_url.m_userStart;
         m_url.m_hostEnd = m_url.m_userStart;
         m_url.m_portEnd = m_url.m_userStart;
-        m_url.m_pathAfterLastSlash = m_url.m_userStart + 1;
+        if (copyBaseWindowsDriveLetter(base)) {
+            appendToASCIIBuffer('/');
+            m_url.m_pathAfterLastSlash = m_url.m_userStart + 4;
+        } else
+            m_url.m_pathAfterLastSlash = m_url.m_userStart + 1;
         m_url.m_pathEnd = m_url.m_pathAfterLastSlash;
         m_url.m_queryEnd = m_url.m_pathAfterLastSlash;
         m_url.m_fragmentEnd = m_url.m_pathAfterLastSlash;
