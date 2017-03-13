@@ -1,5 +1,14 @@
 2017-03-13  Anders Carlsson  <andersca@apple.com>
 
+        Fix more build warnings.
+
+        * UIProcess/mac/WKWebInspectorWKWebView.mm:
+        (WebKit::runOpenPanel):
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        (WebKit::WebInspectorProxy::platformSave):
+
+2017-03-13  Anders Carlsson  <andersca@apple.com>
+
         Fix build warnings.
 
         * UIProcess/mac/RemoteWebInspectorProxyMac.mm:

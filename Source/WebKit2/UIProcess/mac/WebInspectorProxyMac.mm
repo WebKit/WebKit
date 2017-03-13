@@ -463,9 +463,9 @@ void WebInspectorProxy::platformSave(const String& suggestedURL, const String& c
     panel.directoryURL = [platformURL URLByDeletingLastPathComponent];
 
     auto completionHandler = ^(NSInteger result) {
-        if (result == NSFileHandlingPanelCancelButton)
+        if (result == NSModalResponseCancel)
             return;
-        ASSERT(result == NSFileHandlingPanelOKButton);
+        ASSERT(result == NSModalResponseOK);
         saveToURL(panel.URL);
     };
 

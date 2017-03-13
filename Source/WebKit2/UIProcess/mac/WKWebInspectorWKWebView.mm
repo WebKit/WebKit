@@ -81,7 +81,7 @@ static void runOpenPanel(WKPageRef page, WKFrameRef frame, WKOpenPanelParameters
     WKRetain(listener);
 
     auto completionHandler = ^(NSInteger result) {
-        if (result == NSFileHandlingPanelOKButton) {
+        if (result == NSModalResponseOK) {
             WKRetainPtr<WKMutableArrayRef> fileURLs = adoptWK(WKMutableArrayCreate());
 
             for (NSURL* nsURL in [openPanel URLs]) {
