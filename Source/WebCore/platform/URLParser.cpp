@@ -1957,6 +1957,18 @@ void URLParser::parse(const CharacterType* input, const unsigned length, const U
         break;
     case State::FileHost:
         LOG_FINAL_STATE("FileHost");
+        if (takesTwoAdvancesUntilEnd(CodePointIterator<CharacterType>(authorityOrHostBegin, c))
+            && isWindowsDriveLetter(authorityOrHostBegin)) {
+            syntaxViolation(authorityOrHostBegin);
+            appendToASCIIBuffer('/');
+            appendWindowsDriveLetter(authorityOrHostBegin);
+            m_url.m_pathAfterLastSlash = currentPosition(c);
+            m_url.m_pathEnd = m_url.m_pathAfterLastSlash;
+            m_url.m_queryEnd = m_url.m_pathAfterLastSlash;
+            m_url.m_fragmentEnd = m_url.m_pathAfterLastSlash;
+            break;
+        }
+        
         if (authorityOrHostBegin == c) {
             syntaxViolation(c);
             appendToASCIIBuffer('/');

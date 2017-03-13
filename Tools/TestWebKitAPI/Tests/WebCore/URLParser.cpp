@@ -584,6 +584,9 @@ TEST_F(URLParserTest, ParseRelative)
     checkRelativeURL("/abc", "file:///C:/a/b", {"file", "", "", "", 0, "/C:/abc", "", "", "file:///C:/abc"});
     checkRelativeURL("/abc", "file:///C:", {"file", "", "", "", 0, "/C:/abc", "", "", "file:///C:/abc"});
     checkRelativeURL("/abc", "file:///", {"file", "", "", "", 0, "/abc", "", "", "file:///abc"});
+    checkRelativeURL("//d:", "file:///C:/a/b", {"file", "", "", "", 0, "/d:", "", "", "file:///d:"}, TestTabs::No);
+    checkRelativeURL("//d|", "file:///C:/a/b", {"file", "", "", "", 0, "/d:", "", "", "file:///d:"}, TestTabs::No);
+    checkRelativeURL("//A|", "file:///C:/a/b", {"file", "", "", "", 0, "/A:", "", "", "file:///A:"}, TestTabs::No);
 
     // The checking of slashes in SpecialAuthoritySlashes needed to get this to pass contradicts what is in the spec,
     // but it is included in the web platform tests.

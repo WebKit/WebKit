@@ -386,7 +386,7 @@ PASS Parsing: <pix/submit.gif> against <file:///C:/Users/Domenic/Dropbox/GitHub/
 PASS Parsing: <..> against <file:///C:/> 
 PASS Parsing: <..> against <file:///> 
 PASS Parsing: </> against <file:///C:/a/b> 
-FAIL Parsing: <//d:> against <file:///C:/a/b> assert_equals: href expected "file:///d:" but got "file://d/"
+PASS Parsing: <//d:> against <file:///C:/a/b> 
 PASS Parsing: <//d:/..> against <file:///C:/a/b> 
 PASS Parsing: <..> against <file:///ab:/> 
 PASS Parsing: <..> against <file:///1:/> 
