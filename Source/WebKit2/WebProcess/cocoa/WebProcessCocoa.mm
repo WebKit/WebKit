@@ -48,6 +48,7 @@
 #import <JavaScriptCore/Options.h>
 #import <WebCore/AXObjectCache.h>
 #import <WebCore/CFNetworkSPI.h>
+#import <WebCore/CPUMonitor.h>
 #import <WebCore/FileSystem.h>
 #import <WebCore/FontCache.h>
 #import <WebCore/FontCascade.h>
@@ -76,6 +77,10 @@
 using namespace WebCore;
 
 namespace WebKit {
+
+#if PLATFORM(MAC)
+static const Seconds backgroundCPUMonitoringInterval { 15_min };
+#endif
 
 void WebProcess::platformSetCacheModel(CacheModel)
 {
@@ -366,6 +371,49 @@ void WebProcess::updateActivePages()
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), [activePageURLs] {
         WKSetApplicationInformationItem(CFSTR("LSActivePageUserVisibleOriginsKey"), (__bridge CFArrayRef)activePageURLs.get());
     });
+#endif
+}
+
+void WebProcess::updateBackgroundCPULimit()
+{
+#if PLATFORM(MAC)
+    std::optional<double> backgroundCPULimit;
+
+    // Use the largest limit among all pages in this process.
+    for (auto& page : m_pageMap.values()) {
+        auto pageCPULimit = page->backgroundCPULimit();
+        if (!pageCPULimit) {
+            backgroundCPULimit = std::nullopt;
+            break;
+        }
+        if (!backgroundCPULimit || pageCPULimit > backgroundCPULimit.value())
+            backgroundCPULimit = pageCPULimit;
+    }
+
+    if (m_backgroundCPULimit == backgroundCPULimit)
+        return;
+
+    m_backgroundCPULimit = backgroundCPULimit;
+    updateBackgroundCPUMonitorState();
+#endif
+}
+
+void WebProcess::updateBackgroundCPUMonitorState()
+{
+#if PLATFORM(MAC)
+    if (!m_backgroundCPULimit || hasVisibleWebPage()) {
+        if (m_backgroundCPUMonitor)
+            m_backgroundCPUMonitor->setCPULimit(std::nullopt);
+        return;
+    }
+
+    if (!m_backgroundCPUMonitor) {
+        m_backgroundCPUMonitor = std::make_unique<CPUMonitor>(backgroundCPUMonitoringInterval, [this] {
+            RELEASE_LOG(PerformanceLogging, "%p - WebProcess exceeded background CPU limit of %.1f%%", this, m_backgroundCPULimit.value() * 100);
+            parentProcessConnection()->send(Messages::WebProcessProxy::DidExceedBackgroundCPULimit(), 0);
+        });
+    }
+    m_backgroundCPUMonitor->setCPULimit(m_backgroundCPULimit.value());
 #endif
 }
 

@@ -1113,6 +1113,33 @@ void WebProcessProxy::processTerminated()
     m_backgroundResponsivenessTimer.processTerminated();
 }
 
+static Vector<RefPtr<WebPageProxy>> pagesCopy(WTF::IteratorRange<WebProcessProxy::WebPageProxyMap::const_iterator::Values> pages)
+{
+    Vector<RefPtr<WebPageProxy>> vector;
+    for (auto& page : pages)
+        vector.append(page);
+    return vector;
+}
+
+void WebProcessProxy::didExceedBackgroundCPULimit()
+{
+    for (auto& page : pages()) {
+        if (page->isViewVisible())
+            return;
+
+        if (page->isPlayingAudio()) {
+            RELEASE_LOG(PerformanceLogging, "%p - WebProcessProxy::didExceedBackgroundCPULimit() WebProcess has exceeded the background CPU limit but we are not terminating it because there is audio playing", this);
+            return;
+        }
+    }
+
+    RELEASE_LOG(PerformanceLogging, "%p - WebProcessProxy::didExceedBackgroundCPULimit() Terminating background WebProcess that has exceeded the background CPU limit", this);
+
+    // We only terminate the process here. We will call processDidCrash() once one of the pages becomes visible again (see WebPageProxy::dispatchActivityStateChange()).
+    for (auto& page : pagesCopy(pages()))
+        page->terminateProcess(WebPageProxy::TerminationReason::ResourceExhaustionWhileInBackground);
+}
+
 void WebProcessProxy::updateBackgroundResponsivenessTimer()
 {
     m_backgroundResponsivenessTimer.updateState();

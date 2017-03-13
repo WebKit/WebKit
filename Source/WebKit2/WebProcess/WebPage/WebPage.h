@@ -972,6 +972,7 @@ public:
 #endif
 
     WebURLSchemeHandlerProxy* urlSchemeHandlerForScheme(const String&);
+    std::optional<double> backgroundCPULimit() const { return m_backgroundCPULimit; }
 
 private:
     WebPage(uint64_t pageID, WebPageCreationParameters&&);
@@ -1550,6 +1551,7 @@ private:
     WebCore::UserInterfaceLayoutDirection m_userInterfaceLayoutDirection { WebCore::UserInterfaceLayoutDirection::LTR };
 
     const String m_overrideContentSecurityPolicy;
+    const std::optional<double> m_backgroundCPULimit;
 
     HashMap<String, std::unique_ptr<WebURLSchemeHandlerProxy>> m_schemeToURLSchemeHandlerProxyMap;
     HashMap<uint64_t, WebURLSchemeHandlerProxy*> m_identifierToURLSchemeHandlerProxyMap;

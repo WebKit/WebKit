@@ -93,6 +93,9 @@ public:
     bool initialCapitalizationEnabled() { return m_initialCapitalizationEnabled; }
     void setInitialCapitalizationEnabled(bool initialCapitalizationEnabled) { m_initialCapitalizationEnabled = initialCapitalizationEnabled; }
 
+    std::optional<double> backgroundCPULimit() const { return m_backgroundCPULimit; }
+    void setBackgroundCPULimit(double cpuLimit) { m_backgroundCPULimit = cpuLimit; }
+
     bool waitsForPaintAfterViewDidMoveToWindow() const { return m_waitsForPaintAfterViewDidMoveToWindow; }
     void setWaitsForPaintAfterViewDidMoveToWindow(bool shouldSynchronize) { m_waitsForPaintAfterViewDidMoveToWindow = shouldSynchronize; }
 
@@ -124,6 +127,7 @@ private:
     bool m_initialCapitalizationEnabled = true;
     bool m_waitsForPaintAfterViewDidMoveToWindow = true;
     bool m_controlledByAutomation = false;
+    std::optional<double> m_backgroundCPULimit;
 
     WTF::String m_overrideContentSecurityPolicy;
 };

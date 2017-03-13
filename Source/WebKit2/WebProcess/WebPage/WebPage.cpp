@@ -361,6 +361,7 @@ WebPage::WebPage(uint64_t pageID, WebPageCreationParameters&& parameters)
     , m_userActivityHysteresis([this](HysteresisState) { updateUserActivity(); })
     , m_userInterfaceLayoutDirection(parameters.userInterfaceLayoutDirection)
     , m_overrideContentSecurityPolicy { parameters.overrideContentSecurityPolicy }
+    , m_backgroundCPULimit(parameters.backgroundCPULimit)
 {
     ASSERT(m_pageID);
 
@@ -2624,6 +2625,7 @@ void WebPage::setActivityState(ActivityState::Flags activityState, bool wantsDid
         pluginView->activityStateDidChange(changed);
 
     m_drawingArea->activityStateDidChange(changed, wantsDidUpdateActivityState, callbackIDs);
+    WebProcess::singleton().pageActivityStateDidChange(m_pageID, changed);
 
     if (changed & ActivityState::IsInWindow)
         updateIsInWindow();

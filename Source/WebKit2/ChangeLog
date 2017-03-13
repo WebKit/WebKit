@@ -1,3 +1,129 @@
+2017-03-13  Chris Dumez  <cdumez@apple.com>
+
+        Allow termination of background WebProcesses that go over a given CPU usage threshold
+        https://bugs.webkit.org/show_bug.cgi?id=169456
+        <rdar://problem/30960968>
+
+        Reviewed by Andreas Kling.
+
+        Allow termination of background WebProcesses that go over a given CPU usage threshold.
+        This can be enabled client side via the WKPageConfigurationSetBackgroundCPULimit()
+        SPI. The client provides the actual CPU threshold it wants to use at page level.
+
+        If such limit is set, whenever a WebContent process has no visible pages, we start
+        monitoring its CPU usage over 15 minutes periods. At the end of each period, we
+        check if the process' average CPU usage over this period was greater than the
+        background CPU limit. If it greater, the WebContent process send an IPC message to
+        the UIProcess letting it know that it exceeded the CPU limit. The UI process will
+        then log a message and terminate the process unless it has any audio playing.
+
+        Once a WebProcess has been terminated, we do not let the client know until one of its
+        pages becomes visible again. When this happens, we call the processDidCrash
+        delegate and Safari will take care of reloading the tab and showing the crash
+        banner then. This is done because we do not want to reload content that is
+        using a lot of CPU while in the background.
+
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+        Add backgroundCPULimit to WebPageCreationParameters.
+
+        * UIProcess/API/APIPageConfiguration.cpp:
+        (API::PageConfiguration::copy):
+        * UIProcess/API/APIPageConfiguration.h:
+        (API::PageConfiguration::backgroundCPULimit):
+        (API::PageConfiguration::setBackgroundCPULimit):
+        Add backgroundCPULimit to APIPageConfiguration.
+
+        * UIProcess/API/C/WKPageConfigurationRef.cpp:
+        (WKPageConfigurationSetBackgroundCPULimit):
+        * UIProcess/API/C/WKPageConfigurationRef.h:
+        Add SPI to set background CPU limit.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::reattachToWebProcess):
+        Reset m_wasTerminatedDueToResourceExhaustionWhileInBackground flag
+        as the process was restarted.
+
+        (WebKit::WebPageProxy::dispatchActivityStateChange):
+        When the visibility state changes for a page that was terminated
+        while in the background due to exceeded CPU limit, notify the
+        client that the process crashed via the processDidCrash delegate.
+        Safari will use this delegate to reload the tab and show the crash
+        banner.
+
+        (WebKit::WebPageProxy::terminateProcess):
+        Add parameter to terminateProcess() to provide the reason. If the
+        page was terminated due to reaching CPU limit, set a flag so we
+        can delay calling processDidCrash until the page becomes visible
+        again.
+
+        (WebKit::WebPageProxy::creationParameters):
+        Set backgroundCPULimit on the WebPageCreationParameters.
+
+        * UIProcess/WebPageProxy.h:
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::pagesCopy):
+        Add utility function to copy the list of pages to a Vector.
+
+        (WebKit::WebProcessProxy::didExceedBackgroundCPULimit):
+        When we get an IPC message from a WebContent process to let us
+        know that the process exceeded the background CPU limit, we log
+        a message and we terminate it if it has no audio playing.
+
+        * UIProcess/WebProcessProxy.h:
+
+        * UIProcess/WebProcessProxy.messages.in:
+        Add DidExceedBackgroundCPULimit IPC message so the WebContent process
+        can let us know when it goes over the background CPU limit.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::m_backgroundCPULimit):
+        (WebKit::WebPage::setActivityState):
+        Notify the WebProcess whenever the activity state of a WebPage changes.
+        The WebProcess currently uses this information to determine when the
+        visibility of a page changes. This is needed as we only want to monitor
+        CPU usage of *background* WebContent processes (processes that have no
+        visible WebPage).
+
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::backgroundCPULimit):
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::createWebPage):
+        (WebKit::WebProcess::removeWebPage):
+        Call updateBackgroundCPULimit() whenever a WebPage is added or removed
+        since the limit is per page.
+
+        (WebKit::WebProcess::updateBackgroundCPULimit):
+        (WebKit::WebProcess::updateBackgroundCPUMonitorState):
+        No-ops on other platforms than Mac at the moment.
+
+        (WebKit::WebProcess::pageActivityStateDidChange):
+        Call updateBackgroundCPUMonitorState() whenever the visibility of the
+        WebPage changes as we only monitor the CPU usage of *background* WebContent
+        processes.
+
+        (WebKit::WebProcess::hasVisibleWebPage):
+        Add utility function to determine if there is any visible WebPage in this
+        WebContent process. If the function returns false, then we consider the
+        WebContent process to be a *background* WebContent process.
+
+        * WebProcess/WebProcess.h:
+
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::updateBackgroundCPULimit):
+        Compute the WebProcess' background CPU limit given the limit set for each
+        of its WebPages. We use the largest (i.e. most permissive) background CPU
+        limit among all the pages.
+
+        (WebKit::WebProcess::updateBackgroundCPUMonitorState):
+        Update the state of the background CPU monitor. This is called whenever
+        the background CPU limit of the process changes or whenever the visibility
+        of a WebPage changes.
+
 2017-03-13  Michael Saboff  <msaboff@apple.com>
 
         Add iOS plumbing to WebProcess to enable JavaScriptCore configuration and logging

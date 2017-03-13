@@ -680,7 +680,8 @@ public:
 
     double estimatedProgress() const;
 
-    void terminateProcess();
+    enum class TerminationReason { ResourceExhaustionWhileInBackground, Other };
+    void terminateProcess(TerminationReason = TerminationReason::Other);
 
     SessionState sessionState(const std::function<bool (WebBackForwardListItem&)>& = nullptr) const;
     RefPtr<API::Navigation> restoreFromSessionState(SessionState, bool navigate);
@@ -1721,6 +1722,7 @@ private:
     ProcessThrottler::ForegroundActivityToken m_activityToken;
 #endif
     bool m_initialCapitalizationEnabled;
+    std::optional<double> m_backgroundCPULimit;
     Ref<WebBackForwardList> m_backForwardList;
         
     bool m_maintainsInactiveSelection;
@@ -1984,6 +1986,7 @@ private:
 #endif
 
     bool m_isUsingHighPerformanceWebGL { false };
+    bool m_wasTerminatedDueToResourceExhaustionWhileInBackground { false };
         
     WeakPtrFactory<WebPageProxy> m_weakPtrFactory;
 

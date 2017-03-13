@@ -164,6 +164,7 @@ public:
     bool isUnderMemoryPressure() const { return m_isUnderMemoryPressure; }
 
     void processTerminated();
+    void didExceedBackgroundCPULimit();
 
 private:
     explicit WebProcessProxy(WebProcessPool&, WebsiteDataStore*);

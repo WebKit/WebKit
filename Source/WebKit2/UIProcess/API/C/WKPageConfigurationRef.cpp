@@ -108,3 +108,8 @@ void WKPageConfigurationSetInitialCapitalizationEnabled(WKPageConfigurationRef c
 {
     toImpl(configuration)->setInitialCapitalizationEnabled(enabled);
 }
+
+void WKPageConfigurationSetBackgroundCPULimit(WKPageConfigurationRef configuration, double cpuLimit)
+{
+    toImpl(configuration)->setBackgroundCPULimit(cpuLimit);
+}

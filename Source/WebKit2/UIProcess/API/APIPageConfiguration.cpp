@@ -68,6 +68,7 @@ Ref<PageConfiguration> PageConfiguration::copy() const
     copy->m_alwaysRunsAtForegroundPriority = this->m_alwaysRunsAtForegroundPriority;
 #endif
     copy->m_initialCapitalizationEnabled = this->m_initialCapitalizationEnabled;
+    copy->m_backgroundCPULimit = this->m_backgroundCPULimit;
     copy->m_controlledByAutomation = this->m_controlledByAutomation;
     copy->m_overrideContentSecurityPolicy = this->m_overrideContentSecurityPolicy;
 

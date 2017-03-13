@@ -93,6 +93,7 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
     encoder.encodeEnum(userInterfaceLayoutDirection);
     encoder.encodeEnum(observedLayoutMilestones);
     encoder << overrideContentSecurityPolicy;
+    encoder << backgroundCPULimit;
     encoder << urlSchemeHandlers;
 #if ENABLE(WEB_RTC)
     encoder << iceCandidateFilteringEnabled;
@@ -220,6 +221,9 @@ bool WebPageCreationParameters::decode(IPC::Decoder& decoder, WebPageCreationPar
         return false;
 
     if (!decoder.decode(parameters.overrideContentSecurityPolicy))
+        return false;
+
+    if (!decoder.decode(parameters.backgroundCPULimit))
         return false;
 
     if (!decoder.decode(parameters.urlSchemeHandlers))
