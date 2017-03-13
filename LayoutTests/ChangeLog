@@ -1,3 +1,17 @@
+2017-03-09  Chris Dumez  <cdumez@apple.com>
+
+        Align Document.elementFromPoint() with the CSSOM specification
+        https://bugs.webkit.org/show_bug.cgi?id=169403
+
+        Reviewed by Sam Weinig.
+
+        Add layout test coverage.
+
+        * fast/dom/elementFromPoint-parameters-expected.txt: Added.
+        * fast/dom/elementFromPoint-parameters.html: Added.
+        * fast/dom/non-numeric-values-numeric-parameters-expected.txt:
+        * fast/dom/script-tests/non-numeric-values-numeric-parameters.js:
+
 2017-03-08  Chris Dumez  <cdumez@apple.com>
 
         Parameter to input.setCustomValidity() should not be nullable

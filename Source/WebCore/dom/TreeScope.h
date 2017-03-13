@@ -87,7 +87,7 @@ public:
     void removeLabel(const AtomicStringImpl& forAttributeValue, HTMLLabelElement&);
     HTMLLabelElement* labelElementForId(const AtomicString& forAttributeValue);
 
-    WEBCORE_EXPORT Element* elementFromPoint(int x, int y);
+    WEBCORE_EXPORT Element* elementFromPoint(double x, double y);
 
     // Find first anchor with the given name.
     // First searches for an element with the given ID, but if that fails, then looks

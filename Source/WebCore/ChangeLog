@@ -1,3 +1,25 @@
+2017-03-09  Chris Dumez  <cdumez@apple.com>
+
+        Align Document.elementFromPoint() with the CSSOM specification
+        https://bugs.webkit.org/show_bug.cgi?id=169403
+
+        Reviewed by Sam Weinig.
+
+        Align Document.elementFromPoint() with the CSSOM specification:
+        - https://drafts.csswg.org/cssom-view/#extensions-to-the-document-interface
+
+        In particular, the parameters should be mandatory and of type double.
+
+        The parameters are mandatory in both Firefox and Chrome already. Parameters
+        are finite floating point in Firefox and integers in Chrome.
+
+        Test: fast/dom/elementFromPoint-parameters.html
+
+        * dom/DocumentOrShadowRoot.idl:
+        * dom/TreeScope.cpp:
+        (WebCore::TreeScope::elementFromPoint):
+        * dom/TreeScope.h:
+
 2017-03-08  Chris Dumez  <cdumez@apple.com>
 
         Parameter to input.setCustomValidity() should not be nullable
