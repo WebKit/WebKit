@@ -150,6 +150,7 @@ function installDependenciesWithApt {
         gdb \
         libapache2-mod-bw \
         $(aptIfElse libapache2-mod-php7.0 libapache2-mod-php5) \
+        libcgi-pm-perl \
         libgpg-error-dev \
         psmisc \
         pulseaudio-utils \
