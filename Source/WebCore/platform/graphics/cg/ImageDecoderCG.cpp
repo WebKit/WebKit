@@ -58,41 +58,68 @@ const CFStringRef WebCoreCGImagePropertyAPNGLoopCount = CFSTR("LoopCount");
 const CFStringRef kCGImageSourceShouldPreferRGB32 = CFSTR("kCGImageSourceShouldPreferRGB32");
 const CFStringRef kCGImageSourceSkipMetadata = CFSTR("kCGImageSourceSkipMetadata");
 
-static RetainPtr<CFDictionaryRef> createImageSourceOptions(SubsamplingLevel subsamplingLevel, DecodingMode decodingMode)
+static RetainPtr<CFMutableDictionaryRef> createImageSourceOptions()
 {
     RetainPtr<CFMutableDictionaryRef> options = adoptCF(CFDictionaryCreateMutable(nullptr, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
-
     CFDictionarySetValue(options.get(), kCGImageSourceShouldCache, kCFBooleanTrue);
     CFDictionarySetValue(options.get(), kCGImageSourceShouldPreferRGB32, kCFBooleanTrue);
     CFDictionarySetValue(options.get(), kCGImageSourceSkipMetadata, kCFBooleanTrue);
-
-    if (subsamplingLevel > SubsamplingLevel::First) {
-        RetainPtr<CFNumberRef> subsampleNumber;
-        subsamplingLevel = std::min(SubsamplingLevel::Last, std::max(SubsamplingLevel::First, subsamplingLevel));
-        int subsampleInt = 1 << static_cast<int>(subsamplingLevel); // [0..3] => [1, 2, 4, 8]
-        subsampleNumber = adoptCF(CFNumberCreate(nullptr,  kCFNumberIntType,  &subsampleInt));
-        CFDictionarySetValue(options.get(), kCGImageSourceSubsampleFactor, subsampleNumber.get());
-    }
-
-    if (decodingMode == DecodingMode::Immediate) {
-        CFDictionarySetValue(options.get(), kCGImageSourceShouldCacheImmediately, kCFBooleanTrue);
-        CFDictionarySetValue(options.get(), kCGImageSourceCreateThumbnailFromImageAlways, kCFBooleanTrue);
-    }
-
+    return options;
+}
+    
+static RetainPtr<CFMutableDictionaryRef> createImageSourceAsyncOptions()
+{
+    RetainPtr<CFMutableDictionaryRef> options = createImageSourceOptions();
+    CFDictionarySetValue(options.get(), kCGImageSourceShouldCacheImmediately, kCFBooleanTrue);
+    CFDictionarySetValue(options.get(), kCGImageSourceCreateThumbnailFromImageAlways, kCFBooleanTrue);
     return options;
 }
 
-static RetainPtr<CFDictionaryRef> imageSourceOptions(SubsamplingLevel subsamplingLevel = SubsamplingLevel::Default, DecodingMode decodingMode = DecodingMode::OnDemand)
+static RetainPtr<CFMutableDictionaryRef> appendImageSourceOption(RetainPtr<CFMutableDictionaryRef>&& options, SubsamplingLevel subsamplingLevel)
 {
-    if (subsamplingLevel > SubsamplingLevel::First)
-        return createImageSourceOptions(subsamplingLevel, decodingMode);
-
-    static NeverDestroyed<RetainPtr<CFDictionaryRef>> optionsOnDemand = createImageSourceOptions(SubsamplingLevel::First, DecodingMode::OnDemand);
-    static NeverDestroyed<RetainPtr<CFDictionaryRef>> optionsImmediate = createImageSourceOptions(SubsamplingLevel::First, DecodingMode::Immediate);
-
-    return decodingMode == DecodingMode::OnDemand ? optionsOnDemand : optionsImmediate;
+    RetainPtr<CFNumberRef> subsampleNumber;
+    subsamplingLevel = std::min(SubsamplingLevel::Last, std::max(SubsamplingLevel::First, subsamplingLevel));
+    int subsampleInt = 1 << static_cast<int>(subsamplingLevel); // [0..3] => [1, 2, 4, 8]
+    subsampleNumber = adoptCF(CFNumberCreate(nullptr,  kCFNumberIntType,  &subsampleInt));
+    CFDictionarySetValue(options.get(), kCGImageSourceSubsampleFactor, subsampleNumber.get());
+    return WTFMove(options);
 }
 
+static RetainPtr<CFMutableDictionaryRef> appendImageSourceOption(RetainPtr<CFMutableDictionaryRef>&& options, const IntSize& sizeForDrawing)
+{
+    unsigned maxPixelSize = std::max(sizeForDrawing.width(), sizeForDrawing.height());
+    RetainPtr<CFNumberRef> maxPixelSizeNumber = adoptCF(CFNumberCreate(nullptr, kCFNumberIntType, &maxPixelSize));
+    CFDictionarySetValue(options.get(), kCGImageSourceThumbnailMaxPixelSize, maxPixelSizeNumber.get());
+    return WTFMove(options);
+}
+    
+static RetainPtr<CFMutableDictionaryRef> appendImageSourceOptions(RetainPtr<CFMutableDictionaryRef>&& options, SubsamplingLevel subsamplingLevel, const std::optional<IntSize>& sizeForDrawing)
+{
+    if (subsamplingLevel != SubsamplingLevel::Default)
+        options = appendImageSourceOption(WTFMove(options), subsamplingLevel);
+    
+    if (sizeForDrawing)
+        options = appendImageSourceOption(WTFMove(options), sizeForDrawing.value());
+
+    return WTFMove(options);
+}
+    
+static RetainPtr<CFDictionaryRef> imageSourceOptions(SubsamplingLevel subsamplingLevel = SubsamplingLevel::Default)
+{
+    static NeverDestroyed<RetainPtr<CFMutableDictionaryRef>> options = createImageSourceOptions();
+    if (subsamplingLevel == SubsamplingLevel::Default)
+        return options.get();
+    return appendImageSourceOption(adoptCF(CFDictionaryCreateMutableCopy(nullptr, 0, options.get().get())), subsamplingLevel);
+}
+
+static RetainPtr<CFDictionaryRef> imageSourceAsyncOptions(SubsamplingLevel subsamplingLevel = SubsamplingLevel::Default, const std::optional<IntSize>& sizeForDrawing = { })
+{
+    static NeverDestroyed<RetainPtr<CFMutableDictionaryRef>> options = createImageSourceAsyncOptions();
+    if (subsamplingLevel == SubsamplingLevel::Default && !sizeForDrawing)
+        return options.get();
+    return appendImageSourceOptions(adoptCF(CFDictionaryCreateMutableCopy(nullptr, 0, options.get().get())), subsamplingLevel, sizeForDrawing);
+}
+    
 static ImageOrientation orientationFromProperties(CFDictionaryRef imageProperties)
 {
     ASSERT(imageProperties);
@@ -339,17 +366,29 @@ unsigned ImageDecoder::frameBytesAtIndex(size_t index, SubsamplingLevel subsampl
     return (frameSize.area() * 4).unsafeGet();
 }
 
-NativeImagePtr ImageDecoder::createFrameImageAtIndex(size_t index, SubsamplingLevel subsamplingLevel, DecodingMode decodingMode) const
+NativeImagePtr ImageDecoder::createFrameImageAtIndex(size_t index, SubsamplingLevel subsamplingLevel, const std::optional<IntSize>& sizeForDrawing) const
 {
     LOG(Images, "ImageDecoder %p createFrameImageAtIndex %lu", this, index);
-
-    RetainPtr<CFDictionaryRef> options = imageSourceOptions(subsamplingLevel, decodingMode);
+    RetainPtr<CFDictionaryRef> options;
     RetainPtr<CGImageRef> image;
 
-    if (decodingMode == DecodingMode::OnDemand)
+    if (!sizeForDrawing) {
+        // Decode an image synchronously for its native size.
+        options = imageSourceOptions(subsamplingLevel);
         image = adoptCF(CGImageSourceCreateImageAtIndex(m_nativeDecoder.get(), index, options.get()));
-    else
+    } else {
+        IntSize size = frameSizeAtIndex(index, subsamplingLevel);
+
+        if (size.unclampedArea() < sizeForDrawing.value().unclampedArea()) {
+            // Decode an image asynchronously for its native size.
+            options = imageSourceAsyncOptions(subsamplingLevel);
+        } else {
+            // Decode an image asynchronously for sizeForDrawing since it is smaller than the image native size.
+            options = imageSourceAsyncOptions(subsamplingLevel, sizeForDrawing);
+        }
+        
         image = adoptCF(CGImageSourceCreateThumbnailAtIndex(m_nativeDecoder.get(), index, options.get()));
+    }
     
 #if PLATFORM(IOS)
     // <rdar://problem/7371198> - CoreGraphics changed the default caching behaviour in iOS 4.0 to kCGImageCachingTransient

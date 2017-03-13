@@ -63,6 +63,7 @@ ImageFrame& ImageFrame::operator=(const ImageFrame& other)
 
     m_nativeImage = other.m_nativeImage;
     m_subsamplingLevel = other.m_subsamplingLevel;
+    m_sizeForDrawing = other.m_sizeForDrawing;
 
     m_orientation = other.m_orientation;
     m_duration = other.m_duration;
@@ -122,6 +123,45 @@ IntSize ImageFrame::size() const
         return backingStore()->size();
 #endif
     return m_size;
+}
+    
+static int maxDimension(const IntSize& size)
+{
+    return std::max(size.width(), size.height());
+}
+
+bool ImageFrame::isBeingDecoded(const std::optional<IntSize>& sizeForDrawing) const
+{
+    if (!m_sizeForDecoding.size())
+        return false;
+    
+    if (!sizeForDrawing)
+        return true;
+
+    // Return true if the ImageFrame will be decoded eventually with a suitable sizeForDecoding.
+    return maxDimension(m_sizeForDecoding.last()) >= maxDimension(*sizeForDrawing);
+}
+    
+bool ImageFrame::hasValidNativeImage(const std::optional<SubsamplingLevel>& subsamplingLevel, const std::optional<IntSize>& sizeForDrawing) const
+{
+    ASSERT_IMPLIES(!subsamplingLevel, !sizeForDrawing);
+
+    if (!hasNativeImage())
+        return false;
+
+    // The caller does not care about subsamplingLevel or sizeForDrawing. The current NativeImage is fine.
+    if (!subsamplingLevel)
+        return true;
+
+    if (*subsamplingLevel < m_subsamplingLevel)
+        return false;
+
+    // The NativeImage was decoded with the native size. So it is valid for any size.
+    if (!m_sizeForDrawing)
+        return true;
+
+    // The NativeImage was decoded for a specific size. The two sizeForDrawings have to match.
+    return sizeForDrawing && maxDimension(*m_sizeForDrawing) >= maxDimension(*sizeForDrawing);
 }
 
 Color ImageFrame::singlePixelSolidColor() const

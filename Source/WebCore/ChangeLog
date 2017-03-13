@@ -1,3 +1,136 @@
+2017-03-07  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Asynchronous image decoding should consider the drawing size if it is smaller than the size of the image
+        https://bugs.webkit.org/show_bug.cgi?id=168814
+
+        Reviewed by Simon Fraser.
+
+        If the image destinationRect.size() is smaller than the imageSourceSize
+        (e.g. 3000x3000 pixels), CGImageSourceCreateThumbnailAtIndex() is slower
+        than CGImageSourceCreateImageAtIndex() in decoding this image. To overcome
+        this problem, the entry (kCGImageSourceThumbnailMaxPixelSize,
+        max(destinationRect.width, destinationRect.height)) is added to the options
+        dictionary when calling CGImageSourceCreateThumbnailAtIndex(). This will
+        avoid copying a large block of memory for the unscaled bitmap image.
+
+        An argument named 'sizeForDrawing' of type std::optional<IntSize> will be passed
+        all the way from BitmapImage to ImageDecoder. If bool(sizeForDrawing) equals
+        true that means we want async image decoding. Otherwise the image will be decoded
+        synchronously.
+
+        The subsamplingLevel argument will be passed as std::optional<SubsamplingLevel>.
+        to ImageFrame query functions. When combined with sizeForDrawing, the meaning of
+        these two arguments will be the following:
+        -- !bool(subsamplingLevel): No caching is required. return what is stored in ImageFrameCache.
+        -- bool(subsamplingLevel) && !bool(sizeForDrawing): Match subsamplingLevel only. Recache if it's different.
+        -- bool(subsamplingLevel) && bool(sizeForDrawing): Match both both. . Recache if one of them is different.
+
+        We are going to allow decoding the same ImageFrame for different sizeForDrawings.
+        The rule is a new decoding is allowed only if the maxPixelSize(sizeForDrawing) of
+        the last requested image decoding is less than the new request sizeForDrawing.
+
+        * loader/cache/CachedImage.h: Add a helper function which returns the URL of a CachedImage.
+
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::frameImageAtIndex): Add a new argument for sizeForDrawing.
+        (WebCore::BitmapImage::nativeImage): Pass an empty sizeForDrawing to frameImageAtIndex(). We an image with the native size.
+        (WebCore::BitmapImage::nativeImageForCurrentFrame): Ditto.
+        (WebCore::BitmapImage::nativeImageOfSize): Ditto.
+        (WebCore::BitmapImage::draw): Pass the destRect.size() to internalStartAnimation().
+        (WebCore::BitmapImage::isAsyncDecodingRequired): A helper function to answer the question
+        whether the async image decoding is required. It takes into account the animated images, the
+        large image, and the image size.
+        (WebCore::BitmapImage::internalStartAnimation):  If async image decoding is requested for this frame m_sizeForDraw
+        will be set. If internalStartAnimation() is called from startAnimation(), sizeForDraw will be empty. In this
+        case no async image decoding will be requested. This happens only when startAnimation() is called from outside
+        BitmapImage::draw().
+        (WebCore::BitmapImage::advanceAnimation): Change the log message.
+        (WebCore::BitmapImage::newFrameNativeImageAvailableAtIndex): Ditto.
+        * platform/graphics/BitmapImage.h:
+
+        * platform/graphics/ImageFrame.cpp:
+        (WebCore::ImageFrame::operator=):  Include m_sizeForDraw in the properties of ImageFrame.
+        (WebCore::maxPixelSize): Returns the maximum of the width() and the height of an IntSize.
+        (WebCore::ImageFrame::isBeingDecoded): Returns true if the ImageFrame is currently being decoded for a specific sizeForDrawing.
+        (WebCore::ImageFrame::hasValidNativeImage): Ditto.
+        * platform/graphics/ImageFrame.h:
+        (WebCore::ImageFrame::enqueueSizeForDecoding): Adds a new sizeForDrawing; this sets the ImageFrame is being decoded for this sizeForDrawing.
+        (WebCore::ImageFrame::dequeueSizeForDecoding): Removes the first sizeForDrawing was enqueued; this marks this ImageFrame has finished decoding for this sizeForDrawing.
+        (WebCore::ImageFrame::clearSizeForDecoding): Clears the sizeForDecoding queue. Marks the ImageFrame for not being decoded.
+        (WebCore::ImageFrame::isEmpty): Replace Decoding::Empty by Decoding::None.
+        (WebCore::ImageFrame::sizeForDrawing): Returns the ImageFrame sizeForDraw.
+        (WebCore::ImageFrame::hasDecodedNativeImage): Returns true if the ImageFrame doesn't need decoding before drawing.
+        (WebCore::ImageFrame::hasValidNativeImage): Deleted. Moved to the source file.
+
+        * platform/graphics/ImageFrameCache.cpp:
+        (WebCore::ImageFrameCache::setFrameNativeImageAtIndex): Take a new argument for sizeForDraw.
+        (WebCore::ImageFrameCache::setFrameMetadataAtIndex):  When sizeForDraw is set, use the decoder to get the image
+        frame size. Otherwise, get the size of the nativeImage.
+        (WebCore::ImageFrameCache::replaceFrameNativeImageAtIndex): Take a new argument for sizeForDraw.
+        (WebCore::ImageFrameCache::cacheFrameNativeImageAtIndex): Ditto.
+        (WebCore::ImageFrameCache::startAsyncDecodingQueue): Pass the sizeForDraw as a new property of the ImageFrame.
+        (WebCore::ImageFrameCache::requestFrameAsyncDecodingAtIndex): Store sizeForDraw in ImageFrameRequest. Delete unneeded check.
+        This function always receives a valid subsamplingLevel. 
+        (WebCore::ImageFrameCache::stopAsyncDecodingQueue): Marks all the queued ImageFrames for not being decoded.
+        (WebCore::ImageFrameCache::frameAtIndexCacheIfNeeded): Take a new argument for sizeForDraw. If this function fixes the
+        properties of ImageFrame properties, keep the old sizeForDraw and/or subsamplingLevel. If a new frame is 
+        decoded, no async image decoding will be done in this code path. So pass an empty std::optional<IntSize> to 
+        ImageDecoder::createFrameImageAtIndex() and store std::optional<IntSize> in ImageFrame.
+        (WebCore::ImageFrameCache::frameMetadataAtIndex): A new helper function which takes a variable number of arguments which
+        will be passed to the (ImageFrame::*functor).
+        (WebCore::ImageFrameCache::frameMetadataAtIndexCacheIfNeeded): Make this function takes a variable number of arguments which
+        will be passed to the frameAtIndexCacheIfNeeded().
+        (WebCore::ImageFrameCache::size): Pass an Metadata, valid SubsamplingLevel and empty sizeForDraw to frameMetadataAtIndexCacheIfNeeded().
+        (WebCore::ImageFrameCache::sizeRespectingOrientation): Ditto.
+        (WebCore::ImageFrameCache::singlePixelSolidColor): Pass MetadataAndImage, empty SubsamplingLevel and empty sizeForDraw to
+        frameMetadataAtIndexCacheIfNeeded(); we can use the current frame image regardless of its size.
+        (WebCore::ImageFrameCache::frameIsBeingDecodedAtIndex): Pass the ImageFrame method as a function argument instead of 
+        passing it as a template argument.
+        (WebCore::ImageFrameCache::frameIsCompleteAtIndex): Ditto.
+        (WebCore::ImageFrameCache::frameHasAlphaAtIndex): Ditto.
+        (WebCore::ImageFrameCache::frameHasImageAtIndex): Ditto.
+        (WebCore::ImageFrameCache::frameHasValidNativeImageAtIndex): Pass subsamplingLevel and sizeForDrawing to frameMetadataAtIndex().
+        (WebCore::ImageFrameCache::frameHasDecodedNativeImage): New helper function to answer the question whether an ImageFrame will need
+        decoding when drawing or not.
+        (WebCore::ImageFrameCache::frameSubsamplingLevelAtIndex):  Pass the ImageFrame method as a function argument instead of 
+        passing it as a template argument.
+        (WebCore::ImageFrameCache::frameSizeAtIndex): Ditto.
+        (WebCore::ImageFrameCache::frameBytesAtIndex): Ditto.
+        (WebCore::ImageFrameCache::frameDurationAtIndex): Ditto.
+        (WebCore::ImageFrameCache::frameOrientationAtIndex):
+        (WebCore::ImageFrameCache::frameImageAtIndex): Ditto.
+        (WebCore::ImageFrameCache::frameAtIndex): Deleted. Renamed to frameAtIndexCacheIfNeeded().
+        * platform/graphics/ImageFrameCache.h:
+        (WebCore::ImageFrameCache::frameAtIndexCacheIfNeeded):
+
+        * platform/graphics/ImageObserver.h: Define a virtual function for image sourceUrl().
+
+        * platform/graphics/ImageSource.cpp:
+        (WebCore::ImageSource::frameImageAtIndex): Take a new argument for sizeForDrawing.
+        * platform/graphics/ImageSource.h:
+        (WebCore::ImageSource::requestFrameAsyncDecodingAtIndex): Take a new argument for sizeForDrawing.
+        (WebCore::ImageSource::frameHasValidNativeImageAtIndex): Ditto.
+        (WebCore::ImageSource::frameHasDecodedNativeImage): New helper function.
+        (WebCore::ImageSource::frameImageAtIndex): Ditto.
+
+        * platform/graphics/cg/ImageDecoderCG.cpp:
+        (WebCore::createImageSourceOptions): Create a dictionary with the basic image decoding options.
+        (WebCore::createImageSourceAsyncOptions): Create a dictionary with the basic asynchronous image decoding options.
+        (WebCore::appendImageSourceOption): Append the SubsamplingLevel or the MaxPixelSize option to an CGImageSource options dictionary.
+        (WebCore::appendImageSourceOptions): Append the SubsamplingLevel and the MaxPixelSize option to an CGImageSource options dictionary.
+        (WebCore::imageSourceOptions): Creates a dictionary for the synchronous image decoding options.
+        (WebCore::imageSourceAsyncOptions): Creates a dictionary for the asynchronous image decoding options.
+        (WebCore::ImageDecoder::createFrameImageAtIndex): Replace the DecodingMode argument by an std::optional<IntSize>.
+        * platform/graphics/cg/ImageDecoderCG.h: Change a prototype.
+
+        * platform/graphics/win/ImageDecoderDirect2D.cpp: 
+        (WebCore::ImageDecoder::createFrameImageAtIndex): Replace the DecodingMode argument by an std::optional<IntSize>.
+        * platform/graphics/win/ImageDecoderDirect2D.h: Change a prototype.
+
+        * platform/image-decoders/ImageDecoder.cpp: 
+        (WebCore::ImageDecoder::createFrameImageAtIndex): Replace the DecodingMode argument by an std::optional<IntSize>.
+        * platform/image-decoders/ImageDecoder.h: Change a prototype.
+
 2017-03-07  Alex Christensen  <achristensen@webkit.org>
 
         [URLParser] Fix file URLs that are just file:// and a Windows drive letter

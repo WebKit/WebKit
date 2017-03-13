@@ -30,6 +30,7 @@ namespace WebCore {
 
 class Image;
 class IntRect;
+class URL;
 
 // Interface for notification about changes to an image, including decoding,
 // drawing, and animating.
@@ -37,6 +38,7 @@ class ImageObserver {
 protected:
     virtual ~ImageObserver() {}
 public:
+    virtual URL sourceUrl() const = 0;
     virtual bool allowSubsampling() const = 0;
     virtual bool allowLargeImageAsyncDecoding() const = 0;
     virtual bool allowAnimatedImageAsyncDecoding() const = 0;
