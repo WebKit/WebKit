@@ -476,14 +476,17 @@ webkit.org/b/133122 imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/rsa
 webkit.org/b/133122 imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/rsa_pss.worker.html [ Failure ]
 webkit.org/b/133122 imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/test_rsa_pkcs.html [ Failure ]
 webkit.org/b/133122 imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/test_rsa_pss.html [ Failure ]
-webkit.org/b/169272 imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_ECDH.worker.html [ Failure ]
-webkit.org/b/169272 imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_ECDH.worker.html [ Failure ]
-webkit.org/b/169272 imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/test_failures_ECDH.html [ Failure ]
-webkit.org/b/169272 imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/test_successes_ECDH.html [ Failure ]
-webkit.org/b/169468 imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/pbkdf2.worker.html [ Failure ]
-webkit.org/b/169468 imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/test_pbkdf2.html [ Failure ]
-webkit.org/b/169469 imported/w3c/web-platform-tests/WebCryptoAPI/import_export/ec_importKey.worker.html [ Failure ]
-webkit.org/b/169469 imported/w3c/web-platform-tests/WebCryptoAPI/import_export/test_ec_importKey.html [ Failure ]
+# We don't support ECDH functions
+webkit.org/b/169272 imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_ECDH.worker.html [ Skip ]
+webkit.org/b/169272 imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_ECDH.worker.html [ Skip ]
+webkit.org/b/169272 imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/test_failures_ECDH.html [ Skip ]
+webkit.org/b/169272 imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/test_successes_ECDH.html [ Skip ]
+webkit.org/b/169272 imported/w3c/web-platform-tests/WebCryptoAPI/import_export/ec_importKey.worker.html [ Skip ]
+webkit.org/b/169272 imported/w3c/web-platform-tests/WebCryptoAPI/import_export/test_ec_importKey.html [ Skip ]
+# We don't support PBKDF2
+webkit.org/b/169528 imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/pbkdf2.worker.html [ Skip ]
+webkit.org/b/169528 imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/test_pbkdf2.html [ Skip ]
+
 
 # GTK does not implement setAutomaticLinkDetectionEnabled
 editing/inserting/typing-space-to-trigger-smart-link.html [ Skip ]
@@ -820,6 +823,8 @@ webkit.org/b/161960 fast/dom/HTMLLinkElement/prefetch-beforeload.html [ Failure 
 # Font variations build flag is turned off
 webkit.org/b/162815 fast/text/variations/ [ Skip ]
 webkit.org/b/162815 animations/font-variations/ [ Skip ]
+
+webkit.org/b/169531 fast/text/font-selection-font-face-parse.html [ Skip ]
 
 webkit.org/b/158836 imported/w3c/web-platform-tests/encrypted-media [ Skip ]
 

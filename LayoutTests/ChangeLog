@@ -1,3 +1,17 @@
+2017-03-12  Javier Fernandez  <jfernandez@igalia.com>
+
+        [GTK] Unreviewed test gardening
+        https://bugs.webkit.org/show_bug.cgi?id=169534
+
+        Unreviewed GTK+ gardening.
+
+        Rebaseline tests:
+           - http/tests/xmlhttprequest/xmlhttprequest-test-custom-headers.html
+
+        * platform/gtk/TestExpectations:
+           - fast/text/font-selection-font-face-parse.html [ Skip ]
+        * platform/gtk/http/tests/xmlhttprequest/xmlhttprequest-test-custom-headers-expected.txt:
+
 2017-03-12  Romain Bellessort  <romain.bellessort@crf.canon.fr>
 
         [Readable Streams API] Implement ReadableStreamBYOBRequest respond() (closed stream state)
