@@ -1,5 +1,32 @@
 2017-03-03  Simon Fraser  <simon.fraser@apple.com>
 
+        Clean up some RenderLayerBacking code
+        https://bugs.webkit.org/show_bug.cgi?id=169160
+
+        Reviewed by Dean Jackson.
+
+        Modern loops in descendantLayerPaintsIntoAncestor().
+
+        Rename RenderLayerBacking::paintsChildren() to RenderLayerBacking::paintsChildRenderers() to clarify that
+        it refers to renderers, not RenderLayers.
+
+        Rename RenderLayerBacking::paintsNonDirectCompositedBoxDecoration() to RenderLayerBacking::paintsBoxDecorations().
+        "Paints" already implies non-composited.
+
+        No behavior change.
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateDrawsContent):
+        (WebCore::RenderLayerBacking::paintsBoxDecorations):
+        (WebCore::RenderLayerBacking::paintsChildRenderers):
+        (WebCore::RenderLayerBacking::isSimpleContainerCompositingLayer):
+        (WebCore::descendantLayerPaintsIntoAncestor):
+        (WebCore::RenderLayerBacking::paintsNonDirectCompositedBoxDecoration): Deleted.
+        (WebCore::RenderLayerBacking::paintsChildren): Deleted.
+        * rendering/RenderLayerBacking.h:
+
+2017-03-03  Simon Fraser  <simon.fraser@apple.com>
+
         Clean up RenderImage and a RenderImageResource function
         https://bugs.webkit.org/show_bug.cgi?id=169153
 

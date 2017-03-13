@@ -309,8 +309,8 @@ private:
     
     bool isMainFrameRenderViewLayer() const;
     
-    bool paintsNonDirectCompositedBoxDecoration() const;
-    bool paintsChildren() const;
+    bool paintsBoxDecorations() const;
+    bool paintsChildRenderers() const;
 
     // Returns true if this compositing layer has no visible content.
     bool isSimpleContainerCompositingLayer() const;
