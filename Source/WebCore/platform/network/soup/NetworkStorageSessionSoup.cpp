@@ -317,11 +317,13 @@ void NetworkStorageSession::deleteCookie(const Cookie&)
 Vector<Cookie> NetworkStorageSession::getAllCookies()
 {
     // FIXME: Implement for WK2 to use.
+    return { };
 }
 
 Vector<Cookie> NetworkStorageSession::getCookies(const URL&)
 {
     // FIXME: Implement for WK2 to use.
+    return { };
 }
 
 } // namespace WebCore
