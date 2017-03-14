@@ -1,3 +1,12 @@
+2017-03-14  Megan Gardner  <megan_gardner@apple.com>
+
+        Correctly export WebItemProviderPasteboard
+        https://bugs.webkit.org/show_bug.cgi?id=169578
+
+        Reviewed by Tim Horton.
+
+        * MigrateHeaders.make:
+
 2017-03-14  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [WK2] Data interaction tests occasionally hit assertions in debug builds

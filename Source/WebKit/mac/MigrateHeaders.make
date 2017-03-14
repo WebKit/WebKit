@@ -45,6 +45,7 @@ endif
 
 ifneq ($(PLATFORM_NAME), macosx)
 HEADERS += \
+    $(PRIVATE_HEADERS_DIR)/AbstractPasteboard.h \
     $(PRIVATE_HEADERS_DIR)/KeyEventCodesIOS.h \
     $(PRIVATE_HEADERS_DIR)/WAKAppKitStubs.h \
     $(PRIVATE_HEADERS_DIR)/WAKResponder.h \
@@ -57,6 +58,7 @@ HEADERS += \
     $(PRIVATE_HEADERS_DIR)/WebCoreThreadMessage.h \
     $(PRIVATE_HEADERS_DIR)/WebCoreThreadRun.h \
     $(PRIVATE_HEADERS_DIR)/WebEvent.h \
+    $(PRIVATE_HEADERS_DIR)/WebItemProviderPasteboard.h \
 #
 endif
 
