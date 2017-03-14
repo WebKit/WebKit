@@ -1929,3 +1929,5 @@ webrtc [ Skip ]
 fast/events/context-activated-by-key-event.html [ Skip ]
 
 webkit.org/b/168924 scrollingcoordinator/ios/non-stable-viewport-scroll.html [ Pass Failure ]
+
+webkit.org/b/169640 imported/w3c/web-platform-tests/html/webappapis/scripting/events/event-handler-javascript.html [ Failure ]
