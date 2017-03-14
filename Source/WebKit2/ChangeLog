@@ -1,3 +1,21 @@
+2017-03-14  Tim Horton  <timothy_horton@apple.com>
+
+        Let PDFLayerController drive cursor updates so that it's correct more often
+        https://bugs.webkit.org/show_bug.cgi?id=169626
+        <rdar://problem/30762943>
+
+        Reviewed by Simon Fraser.
+
+        * WebProcess/Plugins/PDF/DeprecatedPDFLayerControllerSPI.h:
+        * WebProcess/Plugins/PDF/DeprecatedPDFPlugin.h:
+        * WebProcess/Plugins/PDF/DeprecatedPDFPlugin.mm:
+        (-[WKPDFLayerControllerDelegate setMouseCursor:]):
+        (WebKit::PDFPlugin::handleMouseEvent):
+        (WebKit::PDFPlugin::handleMouseEnterEvent):
+        (WebKit::pdfLayerControllerCursorTypeToCursor):
+        (WebKit::PDFPlugin::notifyCursorChanged):
+        Disable updateCursor and use the setMouseCursor delegate method when possible.
+
 2017-03-14  Andrew Gold  <agold@apple.com>
 
         Extend WKPreferences to include preferences for testing MediaCapture.

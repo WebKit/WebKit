@@ -87,6 +87,7 @@ public:
     void notifyDisplayModeChanged(int);
 
     void notifySelectionChanged(PDFSelection *);
+    void notifyCursorChanged(uint64_t /* PDFLayerControllerCursorType */);
 
     void clickedLink(NSURL *);
     void saveToPDF();
@@ -249,6 +250,7 @@ private:
 
     WebFrame* webFrame() const { return m_frame; }
 
+#if __MAC_OS_X_VERSION_MIN_REQUIRED < 101300
     enum UpdateCursorMode {
         UpdateIfNeeded,
         ForceUpdate
@@ -260,6 +262,7 @@ private:
     };
 
     void updateCursor(const WebMouseEvent&, UpdateCursorMode = UpdateIfNeeded);
+#endif
 
     JSObjectRef makeJSPDFDoc(JSContextRef);
     static JSValueRef jsPDFDocPrint(JSContextRef, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
@@ -297,8 +300,10 @@ private:
 
     String m_lastFoundString;
 
+#if __MAC_OS_X_VERSION_MIN_REQUIRED < 101300
     HitTestResult m_lastHitTestResult;
-    
+#endif
+
     RetainPtr<WKPDFLayerControllerDelegate> m_pdfLayerControllerDelegate;
 
     WebCore::IntSize m_size;

@@ -33,6 +33,12 @@
 @class CPReadingModel;
 @class PDFViewLayout;
 
+typedef NS_ENUM(NSInteger, PDFLayerControllerCursorType) {
+    kPDFLayerControllerCursorTypePointer = 0,
+    kPDFLayerControllerCursorTypeHand,
+    kPDFLayerControllerCursorTypeIBeam,
+};
+
 @protocol PDFLayerControllerDelegate <NSObject>
 
 - (void)updateScrollPosition:(CGPoint)newPosition;
@@ -48,6 +54,8 @@
 - (void)pdfLayerController:(PDFLayerController *)pdfLayerController didChangeContentScaleFactor:(CGFloat)scaleFactor;
 - (void)pdfLayerController:(PDFLayerController *)pdfLayerController didChangeDisplayMode:(int)mode;
 - (void)pdfLayerController:(PDFLayerController *)pdfLayerController didChangeSelection:(PDFSelection *)selection;
+
+- (void)setMouseCursor:(PDFLayerControllerCursorType)cursorType;
 
 @end
 

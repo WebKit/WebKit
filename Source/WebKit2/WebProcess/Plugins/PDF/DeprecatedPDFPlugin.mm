@@ -396,6 +396,11 @@ static const int defaultScrollMagnitudeThresholdForPageFlip = 20;
     _pdfPlugin->notifySelectionChanged(selection);
 }
 
+- (void)setMouseCursor:(PDFLayerControllerCursorType)cursorType
+{
+    _pdfPlugin->notifyCursorChanged(cursorType);
+}
+
 @end
 
 @interface PDFViewLayout
@@ -1353,6 +1358,7 @@ NSEvent *PDFPlugin::nsEventForWebMouseEvent(const WebMouseEvent& event)
     return [NSEvent mouseEventWithType:eventType location:positionInPDFViewCoordinates modifierFlags:modifierFlags timestamp:0 windowNumber:0 context:nil eventNumber:0 clickCount:event.clickCount() pressure:0];
 }
 
+#if __MAC_OS_X_VERSION_MIN_REQUIRED < 101300
 void PDFPlugin::updateCursor(const WebMouseEvent& event, UpdateCursorMode mode)
 {
     HitTestResult hitTestResult = None;
@@ -1367,6 +1373,7 @@ void PDFPlugin::updateCursor(const WebMouseEvent& event, UpdateCursorMode mode)
     webFrame()->page()->send(Messages::WebPageProxy::SetCursor(hitTestResult == Text ? iBeamCursor() : pointerCursor()));
     m_lastHitTestResult = hitTestResult;
 }
+#endif
 
 bool PDFPlugin::handleMouseEvent(const WebMouseEvent& event)
 {
@@ -1409,7 +1416,9 @@ bool PDFPlugin::handleMouseEvent(const WebMouseEvent& event)
     switch (event.type()) {
     case WebEvent::MouseMove:
         mouseMovedInContentArea();
+#if __MAC_OS_X_VERSION_MIN_REQUIRED < 101300
         updateCursor(event);
+#endif
 
         if (targetScrollbar) {
             if (!targetScrollbarForLastMousePosition) {
@@ -1474,7 +1483,9 @@ bool PDFPlugin::handleMouseEvent(const WebMouseEvent& event)
 bool PDFPlugin::handleMouseEnterEvent(const WebMouseEvent& event)
 {
     mouseEnteredContentArea();
+#if __MAC_OS_X_VERSION_MIN_REQUIRED < 101300
     updateCursor(event, ForceUpdate);
+#endif
     return false;
 }
 
@@ -1859,6 +1870,24 @@ void PDFPlugin::focusPreviousAnnotation()
 void PDFPlugin::notifySelectionChanged(PDFSelection *)
 {
     webFrame()->page()->didChangeSelection();
+}
+
+static const Cursor& pdfLayerControllerCursorTypeToCursor(PDFLayerControllerCursorType type)
+{
+    switch (type) {
+    case kPDFLayerControllerCursorTypeHand:
+        return handCursor();
+    case kPDFLayerControllerCursorTypeIBeam:
+        return iBeamCursor();
+    case kPDFLayerControllerCursorTypePointer:
+    default:
+        return pointerCursor();
+    }
+}
+
+void PDFPlugin::notifyCursorChanged(uint64_t type)
+{
+    webFrame()->page()->send(Messages::WebPageProxy::SetCursor(pdfLayerControllerCursorTypeToCursor(static_cast<PDFLayerControllerCursorType>(type))));
 }
 
 String PDFPlugin::getSelectionString() const
