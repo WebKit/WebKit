@@ -1,0 +1,9 @@
+
+PASS Key is injected into value - single segment path 
+PASS Key is injected into value - multi-segment path 
+PASS Key is injected into value - multi-segment path, partially populated 
+PASS put() throws if key cannot be injected - single segment path 
+FAIL put() throws if key cannot be injected - multi-segment path assert_throws: Key path should be checked against value function "() => {
+      store.put({a: {b: 123} });
+    }" did not throw
+

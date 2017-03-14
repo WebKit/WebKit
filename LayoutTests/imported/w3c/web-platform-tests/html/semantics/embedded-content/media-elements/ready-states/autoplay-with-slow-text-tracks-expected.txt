@@ -1,0 +1,9 @@
+CONSOLE MESSAGE: line 31: TypeError: null is not an object (evaluating 'track.track.cues.length')
+CONSOLE MESSAGE: line 31: TypeError: null is not an object (evaluating 'track.track.cues.length')
+CONSOLE MESSAGE: line 31: TypeError: null is not an object (evaluating 'track.track.cues.length')
+CONSOLE MESSAGE: line 31: TypeError: null is not an object (evaluating 'track.track.cues.length')
+CONSOLE MESSAGE: line 31: TypeError: null is not an object (evaluating 'track.track.cues.length')
+
+Harness Error (FAIL), message = TypeError: null is not an object (evaluating 'track.track.cues.length')
+
+

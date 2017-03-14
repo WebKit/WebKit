@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 67: TypeError: undefined is not an object (evaluating 'w1.close')
+CONSOLE MESSAGE: line 68: TypeError: undefined is not an object (evaluating 'w1.close')
 
 Harness Error (FAIL), message = TypeError: undefined is not an object (evaluating 'w1.close')
 

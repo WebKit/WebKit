@@ -4,6 +4,8 @@ PASS ReadableStream with byte source can be constructed with no errors
 PASS ReadableStream with byte source: Construct and expect start and pull being called 
 PASS ReadableStream with byte source: No automatic pull call if start doesn't finish 
 PASS ReadableStream with byte source: Construct with highWaterMark of 0 
+FAIL ReadableStream with byte source: desiredSize when closed assert_equals: after closing, desiredSize must be 0 expected 0 but got 10
+FAIL ReadableStream with byte source: desiredSize when errored assert_equals: after erroring, desiredSize must be null expected (object) null but got (number) 10
 PASS ReadableStream with byte source: getReader(), then releaseLock() 
 FAIL ReadableStream with byte source: getReader() with mode set to byob, then releaseLock() ReadableStreamBYOBReader is not implemented
 PASS ReadableStream with byte source: Test that closing a stream does not release a reader automatically 

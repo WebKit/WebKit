@@ -1,0 +1,3 @@
+
+PASS XHR2 Timeout Property Tests 
+

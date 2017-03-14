@@ -24,6 +24,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/cursor-overloads.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/delete-request-queue.html
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/error-attributes.html
+/LayoutTests/imported/w3c/web-platform-tests/IndexedDB/event-dispatch-active-flag.html
+/LayoutTests/imported/w3c/web-platform-tests/IndexedDB/fire-error-event-exception.html
+/LayoutTests/imported/w3c/web-platform-tests/IndexedDB/fire-success-event-exception.html
+/LayoutTests/imported/w3c/web-platform-tests/IndexedDB/fire-upgradeneeded-event-exception.html
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/historical.html
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idb-binary-key-detached.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idb-binary-key-roundtrip.htm
@@ -136,6 +140,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbdatabase_transaction3.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbdatabase_transaction4.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbdatabase_transaction5.htm
+/LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbfactory-deleteDatabase-opaque-origin.html
+/LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbfactory-open-error-properties.html
+/LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbfactory-open-opaque-origin.html
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbfactory_cmp.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbfactory_cmp2.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbfactory_cmp3.htm
@@ -303,6 +310,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/key_invalid.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/key_valid.html
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/keygenerator-constrainterror.htm
+/LayoutTests/imported/w3c/web-platform-tests/IndexedDB/keygenerator-explicit.html
+/LayoutTests/imported/w3c/web-platform-tests/IndexedDB/keygenerator-inject.html
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/keygenerator-overflow.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/keygenerator.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/keyorder.htm
@@ -323,12 +332,15 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/transaction-abort-index-metadata-revert.html
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/transaction-abort-multiple-metadata-revert.html
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/transaction-abort-object-store-metadata-revert.html
+/LayoutTests/imported/w3c/web-platform-tests/IndexedDB/transaction-abort-request-error.html
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/transaction-create_in_versionchange.htm
+/LayoutTests/imported/w3c/web-platform-tests/IndexedDB/transaction-deactivation-timing.html
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/transaction-lifetime-blocked.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/transaction-lifetime-empty.html
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/transaction-lifetime.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/transaction-requestqueue.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/transaction_bubble-and-capture.htm
+/LayoutTests/imported/w3c/web-platform-tests/IndexedDB/upgrade-transaction-deactivation-timing.html
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/upgrade-transaction-lifecycle-backend-aborted.html
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/upgrade-transaction-lifecycle-committed.html
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/upgrade-transaction-lifecycle-user-aborted.html

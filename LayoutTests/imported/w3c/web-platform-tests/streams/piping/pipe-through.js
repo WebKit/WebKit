@@ -37,7 +37,7 @@ promise_test(() => {
     assert_array_equals(chunks, [1, 2, 3, 4, 5]), 'chunks should match');
 }, 'Piping through a duck-typed pass-through transform stream should work');
 
-promise_test(t => {
+promise_test(() => {
   const transform = {
     writable: new WritableStream({
       start(c) {
@@ -77,7 +77,7 @@ test(() => {
 
 test(() => {
   const dummy = {
-    pipeTo(args) {
+    pipeTo() {
       return { not: 'a promise' };
     }
   };
@@ -90,7 +90,7 @@ test(() => {
 
 test(() => {
   const dummy = {
-    pipeTo(args) {
+    pipeTo() {
       return {
         then() {},
         this: 'is not a real promise'

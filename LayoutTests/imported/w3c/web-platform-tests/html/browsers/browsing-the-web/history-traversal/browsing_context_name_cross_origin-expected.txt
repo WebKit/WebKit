@@ -1,11 +1,11 @@
 Blocked access to external URL http://www.localhost:8800/html/browsers/browsing-the-web/history-traversal/browsing_context_name-2.html
 
-PASS Restoring window.name on cross-origin history traversal 
-
+page load
 Step 1
+iframe onload
 Step 2
+iframe onload
 Step 3
-Step 4
-Step 5
-Step 6
+
+FAIL Restoring window.name on cross-origin history traversal assert_equals: expected 2 but got 1
 

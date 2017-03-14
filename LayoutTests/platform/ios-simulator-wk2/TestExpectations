@@ -1893,6 +1893,9 @@ webkit.org/b/165814 imported/w3c/web-platform-tests/html/browsers/browsing-the-w
 webkit.org/b/161359 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/scroll-to-fragid/scroll-to-top.html [ Pass Failure ]
 webkit.org/b/161631 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/scroll-to-fragid/scroll-to-id-top.html [ Pass Failure ]
 
+webkit.org/b/169523 imported/w3c/web-platform-tests/html/webappapis/system-state-and-capabilities/the-navigator-object/NavigatorID.worker.html [ Failure ]
+webkit.org/b/169523 imported/w3c/web-platform-tests/IndexedDB/fire-error-event-exception.html [ Failure ]
+
 # rdar://problem/26477855
 http/tests/xmlhttprequest/logout.html [ Failure ]
 

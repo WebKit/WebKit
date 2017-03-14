@@ -16,5 +16,13 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/csswg-test/CONTRIBUTING.md
-/LayoutTests/imported/w3c/csswg-test/LICENSE
+/LayoutTests/imported/w3c/csswg-test/LICENSE.md
 /LayoutTests/imported/w3c/csswg-test/README.md
+/LayoutTests/imported/w3c/csswg-test/build-css-testsuites.sh
+/LayoutTests/imported/w3c/csswg-test/config.default.json
+/LayoutTests/imported/w3c/csswg-test/lint
+/LayoutTests/imported/w3c/csswg-test/lint.whitelist
+/LayoutTests/imported/w3c/csswg-test/manifest
+/LayoutTests/imported/w3c/csswg-test/requirements.txt
+/LayoutTests/imported/w3c/csswg-test/serve
+/LayoutTests/imported/w3c/csswg-test/serve.py

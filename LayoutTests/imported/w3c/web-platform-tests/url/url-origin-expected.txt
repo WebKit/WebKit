@@ -206,8 +206,10 @@ PASS Origin parsing: <//www.example2.com> against <http://www.example.com/test>
 PASS Origin parsing: <http://ExAmPlE.CoM> against <http://other.com/> 
 PASS Origin parsing: <http://GOO​⁠﻿goo.com> against <http://other.com/> 
 PASS Origin parsing: <http://www.foo。bar.com> against <http://other.com/> 
+PASS Origin parsing: <https://x/�?�#�> against <about:blank> 
 PASS Origin parsing: <http://Ｇｏ.com> against <http://other.com/> 
 FAIL Origin parsing: <http://你好你好> against <http://other.com/> assert_equals: origin expected "http://你好你好" but got "http://xn--6qqa088eba"
+FAIL Origin parsing: <https://faß.ExAmPlE/> against <about:blank> assert_equals: origin expected "https://faß.example" but got "https://xn--fa-hia.example"
 PASS Origin parsing: <http://%30%78%63%30%2e%30%32%35%30.01> against <http://other.com/> 
 PASS Origin parsing: <http://%30%78%63%30%2e%30%32%35%30.01%2e> against <http://other.com/> 
 PASS Origin parsing: <http://０Ｘｃ０．０２５０．０１> against <http://other.com/> 
@@ -249,6 +251,8 @@ FAIL Origin parsing: <sc://!"$&'()*+,-.;<=>^_`{|}~/> against <about:blank> asse
 FAIL Origin parsing: <x> against <sc://ñ> assert_equals: origin expected "null" but got "sc://%c3%b1"
 FAIL Origin parsing: <sc:\../> against <about:blank> assert_equals: origin expected "null" but got "sc://"
 FAIL Origin parsing: <sc::a@example.net> against <about:blank> assert_equals: origin expected "null" but got "sc://"
+FAIL Origin parsing: <wow:%NBD> against <about:blank> assert_equals: origin expected "null" but got "wow://"
+FAIL Origin parsing: <wow:%1G> against <about:blank> assert_equals: origin expected "null" but got "wow://"
 FAIL Origin parsing: <ftp://%e2%98%83> against <about:blank> assert_equals: origin expected "ftp://☃" but got "ftp://xn--n3h"
 FAIL Origin parsing: <https://%e2%98%83> against <about:blank> assert_equals: origin expected "https://☃" but got "https://xn--n3h"
 PASS Origin parsing: <http://127.0.0.1:10100/relative_import.html> against <about:blank> 
@@ -276,6 +280,7 @@ PASS Origin parsing: <http://10000000000.com> against <http://other.com/>
 PASS Origin parsing: <http://4294967295> against <http://other.com/> 
 PASS Origin parsing: <http://0xffffffff> against <http://other.com/> 
 PASS Origin parsing: <http://256.256.256.256.256> against <http://other.com/> 
+PASS Origin parsing: <https://0x.0x.0> against <about:blank> 
 PASS Origin parsing: <http://[1:0::]> against <http://example.net/> 
 FAIL Origin parsing: <sc://ñ> against <about:blank> assert_equals: origin expected "null" but got "sc://%c3%b1"
 FAIL Origin parsing: <sc://ñ?x> against <about:blank> assert_equals: origin expected "null" but got "sc://%c3%b1"

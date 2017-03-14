@@ -40,6 +40,14 @@
             }
         },
         {
+            "href": "javascript:alert(1)",
+            "new_value": "defuse",
+            "expected": {
+                "href": "defuse:alert(1)",
+                "protocol": "defuse:"
+            }
+        },
+        {
             "comment": "Upper-case ASCII is lower-cased",
             "href": "a://example.net",
             "new_value": "B",
@@ -216,6 +224,14 @@
             }
         },
         {
+            "href": "javascript:alert(1)",
+            "new_value": "wario",
+            "expected": {
+                "href": "javascript:alert(1)",
+                "username": ""
+            }
+        },
+        {
             "href": "http://example.net",
             "new_value": "me",
             "expected": {
@@ -271,6 +287,14 @@
             "expected": {
                 "href": "sc:///",
                 "username": ""
+            }
+        },
+        {
+            "href": "javascript://x/",
+            "new_value": "wario",
+            "expected": {
+                "href": "javascript://wario@x/",
+                "username": "wario"
             }
         },
         {
@@ -369,6 +393,14 @@
             }
         },
         {
+            "href": "javascript://x/",
+            "new_value": "bowser",
+            "expected": {
+                "href": "javascript://:bowser@x/",
+                "password": "bowser"
+            }
+        },
+        {
             "href": "file://test/",
             "new_value": "test",
             "expected": {
@@ -458,6 +490,25 @@
                 "href": "sc://x/",
                 "host": "x",
                 "hostname": "x"
+            }
+        },
+        {
+            "href": "sc://x/",
+            "new_value": "ß",
+            "expected": {
+                "href": "sc://%C3%9F/",
+                "host": "%C3%9F",
+                "hostname": "%C3%9F"
+            }
+        },
+        {
+            "comment": "IDNA Nontransitional_Processing",
+            "href": "https://x/",
+            "new_value": "ß",
+            "expected": {
+                "href": "https://xn--zca/",
+                "host": "xn--zca",
+                "hostname": "xn--zca"
             }
         },
         {
@@ -813,6 +864,16 @@
             }
         },
         {
+            "href": "file://hi/x",
+            "new_value": "",
+            "expected": {
+                "href": "file:///x",
+                "host": "",
+                "hostname": "",
+                "port": ""
+            }
+        },
+        {
             "href": "sc://test@test/",
             "new_value": "",
             "expected": {
@@ -1137,6 +1198,16 @@
             }
         },
         {
+            "href": "file://hi/x",
+            "new_value": "",
+            "expected": {
+                "href": "file:///x",
+                "host": "",
+                "hostname": "",
+                "port": ""
+            }
+        },
+        {
             "href": "sc://test@test/",
             "new_value": "",
             "expected": {
@@ -1348,6 +1419,14 @@
             "new_value": "12",
             "expected": {
                 "href": "sc://x:12/",
+                "port": "12"
+            }
+        },
+        {
+            "href": "javascript://x/",
+            "new_value": "12",
+            "expected": {
+                "href": "javascript://x:12/",
                 "port": "12"
             }
         }
@@ -1608,6 +1687,14 @@
             "expected": {
                 "href": "http://example.net/#%c3%89t%C3%A9",
                 "hash": "#%c3%89t%C3%A9"
+            }
+        },
+        {
+            "href": "javascript:alert(1)",
+            "new_value": "castle",
+            "expected": {
+                "href": "javascript:alert(1)#castle",
+                "hash": "#castle"
             }
         }
     ]

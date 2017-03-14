@@ -100,6 +100,32 @@ promise_test(t => {
   return Promise.resolve();
 }, 'ReadableStream with byte source: Construct with highWaterMark of 0');
 
+test(() => {
+  new ReadableStream({
+    start(c) {
+      assert_equals(c.desiredSize, 10, 'desiredSize must start at the highWaterMark');
+      c.close();
+      assert_equals(c.desiredSize, 0, 'after closing, desiredSize must be 0');
+    },
+    type: 'bytes'
+  }, {
+    highWaterMark: 10
+  });
+}, 'ReadableStream with byte source: desiredSize when closed');
+
+test(() => {
+  new ReadableStream({
+    start(c) {
+      assert_equals(c.desiredSize, 10, 'desiredSize must start at the highWaterMark');
+      c.error();
+      assert_equals(c.desiredSize, null, 'after erroring, desiredSize must be null');
+    },
+    type: 'bytes'
+  }, {
+    highWaterMark: 10
+  });
+}, 'ReadableStream with byte source: desiredSize when errored');
+
 promise_test(t => {
   const stream = new ReadableStream({
     type: 'bytes'

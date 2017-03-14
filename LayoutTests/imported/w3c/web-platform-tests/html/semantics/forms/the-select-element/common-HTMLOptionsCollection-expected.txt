@@ -6,4 +6,5 @@ PASS Setting a length equal to existing length changes nothing
 PASS Setting a length lower than the old length trims nodes from the end 
 PASS Setting element to null by index removed the element 
 PASS Setting element by index should correctly append and replace elements 
+PASS Changing the length adds new nodes; The new nodes will not copy select's prefix 
 

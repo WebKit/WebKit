@@ -23,6 +23,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/url/a-element-xhtml.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/url/a-element.html
 /LayoutTests/imported/w3c/web-platform-tests/url/a-element.js
+/LayoutTests/imported/w3c/web-platform-tests/url/failure.html
 /LayoutTests/imported/w3c/web-platform-tests/url/historical.html
 /LayoutTests/imported/w3c/web-platform-tests/url/historical.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/url/interfaces.html

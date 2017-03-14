@@ -1,0 +1,3 @@
+
+FAIL self.origin should be correct assert_equals: expected (string) "http://localhost:8800" but got (undefined) undefined
+

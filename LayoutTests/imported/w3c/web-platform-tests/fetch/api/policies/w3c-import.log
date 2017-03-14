@@ -20,11 +20,16 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/policies/csp-blocked.html.headers
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/policies/csp-blocked.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/policies/csp-blocked.js.headers
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/policies/nested-policy.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/policies/nested-policy.js.headers
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/policies/referrer-no-referrer-service-worker.https.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/policies/referrer-no-referrer-worker.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/policies/referrer-no-referrer.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/policies/referrer-no-referrer.html.headers
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/policies/referrer-no-referrer.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/policies/referrer-no-referrer.js.headers
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/policies/referrer-origin-service-worker.https.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/policies/referrer-origin-when-cross-origin-service-worker.https.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/policies/referrer-origin-when-cross-origin-worker.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/policies/referrer-origin-when-cross-origin.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/policies/referrer-origin-when-cross-origin.html.headers
@@ -35,6 +40,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/policies/referrer-origin.html.headers
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/policies/referrer-origin.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/policies/referrer-origin.js.headers
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/policies/referrer-unsafe-url-service-worker.https.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/policies/referrer-unsafe-url-worker.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/policies/referrer-unsafe-url.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/policies/referrer-unsafe-url.html.headers

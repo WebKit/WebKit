@@ -1,55 +1,21 @@
 
-FAIL text field selection for the input hidden assert_throws: function "function (){
-        el.selectionStart;
-      }" threw object "TypeError: Type error" that is not a DOMException InvalidStateError: property "code" is equal to undefined, expected 11
-FAIL text field selection for the input email assert_throws: function "function (){
-        el.selectionStart;
-      }" did not throw
-FAIL text field selection for the input datetime-local assert_throws: function "function (){
-        el.selectionStart;
-      }" did not throw
-FAIL text field selection for the input date assert_throws: function "function (){
-        el.selectionStart;
-      }" did not throw
-FAIL text field selection for the input month assert_throws: function "function (){
-        el.selectionStart;
-      }" did not throw
-FAIL text field selection for the input week assert_throws: function "function (){
-        el.selectionStart;
-      }" did not throw
-FAIL text field selection for the input time assert_throws: function "function (){
-        el.selectionStart;
-      }" did not throw
-FAIL text field selection for the input number assert_throws: function "function (){
-        el.selectionStart;
-      }" did not throw
-FAIL text field selection for the input range assert_throws: function "function (){
-        el.selectionStart;
-      }" threw object "TypeError: Type error" that is not a DOMException InvalidStateError: property "code" is equal to undefined, expected 11
-FAIL text field selection for the input color assert_throws: function "function (){
-        el.selectionStart;
-      }" threw object "TypeError: Type error" that is not a DOMException InvalidStateError: property "code" is equal to undefined, expected 11
-FAIL text field selection for the input checkbox assert_throws: function "function (){
-        el.selectionStart;
-      }" threw object "TypeError: Type error" that is not a DOMException InvalidStateError: property "code" is equal to undefined, expected 11
-FAIL text field selection for the input radio assert_throws: function "function (){
-        el.selectionStart;
-      }" threw object "TypeError: Type error" that is not a DOMException InvalidStateError: property "code" is equal to undefined, expected 11
-FAIL text field selection for the input file assert_throws: function "function (){
-        el.selectionStart;
-      }" threw object "TypeError: Type error" that is not a DOMException InvalidStateError: property "code" is equal to undefined, expected 11
-FAIL text field selection for the input submit assert_throws: function "function (){
-        el.selectionStart;
-      }" threw object "TypeError: Type error" that is not a DOMException InvalidStateError: property "code" is equal to undefined, expected 11
-FAIL text field selection for the input image assert_throws: function "function (){
-        el.selectionStart;
-      }" threw object "TypeError: Type error" that is not a DOMException InvalidStateError: property "code" is equal to undefined, expected 11
-FAIL text field selection for the input reset assert_throws: function "function (){
-        el.selectionStart;
-      }" threw object "TypeError: Type error" that is not a DOMException InvalidStateError: property "code" is equal to undefined, expected 11
-FAIL text field selection for the input button assert_throws: function "function (){
-        el.selectionStart;
-      }" threw object "TypeError: Type error" that is not a DOMException InvalidStateError: property "code" is equal to undefined, expected 11
+FAIL text field selection for the input hidden Type error
+FAIL text field selection for the input email assert_equals: expected (object) null but got (number) 0
+FAIL text field selection for the input datetime-local assert_equals: expected (object) null but got (number) 0
+FAIL text field selection for the input date assert_equals: expected (object) null but got (number) 0
+FAIL text field selection for the input month assert_equals: expected (object) null but got (number) 0
+FAIL text field selection for the input week assert_equals: expected (object) null but got (number) 0
+FAIL text field selection for the input time assert_equals: expected (object) null but got (number) 0
+FAIL text field selection for the input number assert_equals: expected (object) null but got (number) 0
+FAIL text field selection for the input range Type error
+FAIL text field selection for the input color Type error
+FAIL text field selection for the input checkbox Type error
+FAIL text field selection for the input radio Type error
+FAIL text field selection for the input file Type error
+FAIL text field selection for the input submit Type error
+FAIL text field selection for the input image Type error
+FAIL text field selection for the input reset Type error
+FAIL text field selection for the input button Type error
 PASS text field selection for the input text 
 PASS text field selection for the input search 
 PASS text field selection for the input tel 

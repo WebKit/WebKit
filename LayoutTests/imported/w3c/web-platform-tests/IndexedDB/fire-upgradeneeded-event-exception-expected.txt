@@ -1,0 +1,10 @@
+CONSOLE MESSAGE: line 26: Error
+CONSOLE MESSAGE: line 37: Error
+CONSOLE MESSAGE: line 51: Error
+CONSOLE MESSAGE: line 63: Error
+
+PASS Exception in upgradeneeded handler 
+PASS Exception in upgradeneeded listener 
+PASS Exception in second upgradeneeded listener 
+FAIL Exception in first upgradeneeded listener, tx active in second assert_equals: Active check should either not throw anything, or throw TransactionInactiveError expected "TransactionInactiveError" but got "InvalidStateError"
+

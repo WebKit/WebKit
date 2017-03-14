@@ -6,5 +6,6 @@ PASS HTMLElement member must be nuked: commandHidden
 PASS HTMLElement member must be nuked: commandDisabled 
 PASS HTMLElement member must be nuked: commandChecked 
 PASS HTMLElement member must be nuked: commandTriggers 
+PASS HTMLElement member must be nuked: dropzone 
 PASS HTMLElement member must be nuked: inert 
 

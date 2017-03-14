@@ -16,9 +16,10 @@ CONSOLE MESSAGE: line 30: Refused to set unsafe header "Transfer-Encoding"
 CONSOLE MESSAGE: line 31: Refused to set unsafe header "Upgrade"
 CONSOLE MESSAGE: line 32: Refused to set unsafe header "Via"
 CONSOLE MESSAGE: line 33: Refused to set unsafe header "Proxy-"
-CONSOLE MESSAGE: line 34: Refused to set unsafe header "Proxy-Authorization"
-CONSOLE MESSAGE: line 35: Refused to set unsafe header "Sec-"
-CONSOLE MESSAGE: line 36: Refused to set unsafe header "Sec-X"
+CONSOLE MESSAGE: line 34: Refused to set unsafe header "Proxy-LIES"
+CONSOLE MESSAGE: line 35: Refused to set unsafe header "Proxy-Authorization"
+CONSOLE MESSAGE: line 36: Refused to set unsafe header "Sec-"
+CONSOLE MESSAGE: line 37: Refused to set unsafe header "Sec-X"
 
-PASS XMLHttpRequest: setRequestHeader() - headers that are forbidden 
+FAIL XMLHttpRequest: setRequestHeader() - headers that are forbidden assert_equals: expected "" but got "{\"error\": {\"message\": \"Traceback (most recent call last):\\n  File \\"/Volumes/Data/EWS/WebKit/LayoutTests/imported/w3c/web-platform-tests/tools/wptserve/wptserve/handlers.py\\", line 246, in __call__\n    rv = self.func(request, response)\n  File \\"/Volumes/Data/EWS/WebKit/LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/resources/inspect-headers.py\\", line 31, in main\n    result = get_response(request.raw_headers, filter_value, filter_name)\nAttributeError: 'Request' object has no attribute 'raw_headers'\n\", \"code\": 500}}"
 

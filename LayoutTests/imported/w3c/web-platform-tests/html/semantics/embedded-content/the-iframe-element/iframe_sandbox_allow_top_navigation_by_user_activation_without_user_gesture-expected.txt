@@ -1,0 +1,9 @@
+CONSOLE MESSAGE: line 17: Error while parsing the 'sandbox' attribute: 'allow-top-navigation-by-user-activation' is an invalid sandbox flag.
+CONSOLE MESSAGE: line 8: Unsafe JavaScript attempt to initiate navigation for frame with URL 'http://localhost:8800/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_allow_top_navigation_by_user_activation_without_user_gesture.html' from frame with URL 'http://localhost:8800/html/semantics/embedded-content/the-iframe-element/support/iframe-that-performs-top-navigation-without-user-gesture-failed.html'. The frame attempting navigation of the top-level window is sandboxed, but the 'allow-top-navigation' flag is not set.
+
+This tests that an iframe in sandbox with 'allow-top-navigation-by-user-activation' cannot navigate its top level page, if it is not trigged by a user gesture.
+
+
+
+FAIL The sandboxed iframe should post a message saying the test was in the state of 'PASS'. assert_equals: The message should say 'PASS' instead of 'FAIL' expected "PASS" but got "FAIL"
+

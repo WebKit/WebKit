@@ -24,6 +24,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/browsing_context_name-2.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/browsing_context_name-3.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/browsing_context_name-4.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/browsing_context_name_cross_origin-0.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/browsing_context_name_cross_origin.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/contains.json
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/events.html

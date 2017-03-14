@@ -1,0 +1,3 @@
+
+FAIL XMLHttpRequest: The send() method: Fire a progress event named loadstart on upload object (synchronous flag is unset) assert_equals: upload.onloadstart: event.total expected 7 but got 0
+

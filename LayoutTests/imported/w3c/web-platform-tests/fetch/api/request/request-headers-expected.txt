@@ -55,5 +55,4 @@ PASS Request should get its content-type from the body if none is provided
 PASS Request should get its content-type from init headers if one is provided 
 PASS Testing request header creations with various objects 
 PASS Testing empty Request Content-Type header 
-PASS Passing undefined headers to Request constructor should not throw 
 

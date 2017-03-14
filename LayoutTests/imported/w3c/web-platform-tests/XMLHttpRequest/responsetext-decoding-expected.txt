@@ -1,6 +1,6 @@
 
 PASS XMLHttpRequest: responseText decoding (application/xml %3C%3Fxml%20version%3D'1.0'%20encoding%3D'windows-1252'%3F%3E%3Cx%3E%FF%3C%2Fx%3E) 
-PASS XMLHttpRequest: responseText decoding (text/html %3C!doctype%20html%3E%3Cmeta%20charset%3Dwindows-1252%3E%FF) 
+FAIL XMLHttpRequest: responseText decoding (text/html %3C!doctype%20html%3E%3Cmeta%20charset%3Dwindows-1252%3E%FF) assert_equals: expected "<!doctype html><meta charset=windows-1252>\ufffd" but got "<!doctype html><meta charset=windows-1252>ÿ"
 PASS XMLHttpRequest: responseText decoding (text/plain;charset=windows-1252 %FF) 
 PASS XMLHttpRequest: responseText decoding (text/plain %FF) 
 PASS XMLHttpRequest: responseText decoding (text/plain %FE%FF) 

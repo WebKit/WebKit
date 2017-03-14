@@ -1,0 +1,6 @@
+toBlob.null
+toBlob with zero dimension returns a null Blob
+Actual output:
+
+PASS toBlob with zero dimension returns a null Blob 
+

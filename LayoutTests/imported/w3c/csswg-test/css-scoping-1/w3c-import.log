@@ -15,6 +15,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/csswg-test/css-scoping-1/OWNERS
 /LayoutTests/imported/w3c/csswg-test/css-scoping-1/css-scoping-shadow-assigned-node-with-before-after-expected.html
 /LayoutTests/imported/w3c/csswg-test/css-scoping-1/css-scoping-shadow-assigned-node-with-before-after.html
 /LayoutTests/imported/w3c/csswg-test/css-scoping-1/css-scoping-shadow-assigned-node-with-rules-expected.html
@@ -34,6 +35,8 @@ List of files:
 /LayoutTests/imported/w3c/csswg-test/css-scoping-1/css-scoping-shadow-slot-expected.html
 /LayoutTests/imported/w3c/csswg-test/css-scoping-1/css-scoping-shadow-slot-fallback-expected.html
 /LayoutTests/imported/w3c/csswg-test/css-scoping-1/css-scoping-shadow-slot-fallback.html
+/LayoutTests/imported/w3c/csswg-test/css-scoping-1/css-scoping-shadow-slot-style-expected.html
+/LayoutTests/imported/w3c/csswg-test/css-scoping-1/css-scoping-shadow-slot-style.html
 /LayoutTests/imported/w3c/csswg-test/css-scoping-1/css-scoping-shadow-slot.html
 /LayoutTests/imported/w3c/csswg-test/css-scoping-1/css-scoping-shadow-slotted-nested-expected.html
 /LayoutTests/imported/w3c/csswg-test/css-scoping-1/css-scoping-shadow-slotted-nested.html

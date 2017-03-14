@@ -1,7 +1,9 @@
 This test requires JavaScript.
 
 PASS Selectors-API Level 2 Test Suite: HTML with Selectors Level 3 
+PASS Document should not support matches 
 PASS Detached Element supports matches 
+PASS Fragment should not support matches 
 PASS In-document Element supports matches 
 PASS DIV Element.matches(null) 
 PASS DIV Element.matches(undefined) 

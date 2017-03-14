@@ -9,6 +9,14 @@ PASS DocumentFragment is in default namespace, prefix null
 PASS DocumentFragment is in default namespace, prefix "" 
 PASS DocumentFragment is in default namespace, prefix "foo" 
 PASS DocumentFragment is in default namespace, prefix "xmlns" 
+PASS DocumentType should have null nemspace, prefix null 
+PASS DocumentType should have null namespace, prefix "" 
+PASS DocumentType should have null namespace, prefix "foo" 
+PASS DocumentType should have null namespace, prefix "xmlns" 
+PASS DocumentType is in default namespace, prefix null 
+PASS DocumentType is in default namespace, prefix "" 
+PASS DocumentType is in default namespace, prefix "foo" 
+PASS DocumentType is in default namespace, prefix "xmlns" 
 PASS Element should have null namespace, prefix null 
 PASS Element should have null namespace, prefix "" 
 PASS Element should not have namespace matching prefix with namespaceURI value 

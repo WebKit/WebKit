@@ -1,0 +1,4 @@
+
+FAIL Basic Access-Control-Expose-Headers: * support assert_equals: expected (string) "X" but got (object) null
+PASS Cannot use * for credentialed fetches 
+

@@ -3,7 +3,7 @@ if (this.document === undefined) {
   importScripts("../resources/utils.js");
 }
 
-function testReferrer(referrer, expected) {
+function testReferrer(referrer, expected, desc) {
   promise_test(function(test) {
     var url = RESOURCES_DIR + "inspect-headers.py?headers=referer"
     var req = new Request(url, { referrer: referrer });
@@ -17,12 +17,12 @@ function testReferrer(referrer, expected) {
         assert_equals(actual, "", "request's referer should be empty");
       }
     });
-  });
+  }, desc);
 }
 
-testReferrer("about:client", window.location.href);
+testReferrer("about:client", self.location.href, 'about:client referrer');
 
-var fooURL = new URL("./foo", window.location).href;
-testReferrer(fooURL, fooURL);
+var fooURL = new URL("./foo", self.location).href;
+testReferrer(fooURL, fooURL, 'url referrer');
 
 done();

@@ -1,6 +1,18 @@
 
-FAIL value IDL attribute of input type hidden without value attribute assert_equals: expected "" but got "foo"
-FAIL value IDL attribute of input type hidden with value attribute assert_equals: expected "bar" but got "foo"
+PASS value IDL attribute of input type hidden without value attribute 
+PASS value IDL attribute of input type hidden with value attribute 
+PASS value IDL attribute of input type submit without value attribute 
+PASS value IDL attribute of input type submit with value attribute 
+PASS value IDL attribute of input type image without value attribute 
+PASS value IDL attribute of input type image with value attribute 
+PASS value IDL attribute of input type reset without value attribute 
+PASS value IDL attribute of input type reset with value attribute 
+PASS value IDL attribute of input type button without value attribute 
+PASS value IDL attribute of input type button with value attribute 
+PASS value IDL attribute of input type checkbox without value attribute 
+PASS value IDL attribute of input type checkbox with value attribute 
+PASS value IDL attribute of input type radio without value attribute 
+PASS value IDL attribute of input type radio with value attribute 
 PASS value IDL attribute of input type text without value attribute 
 PASS value IDL attribute of input type text with value attribute 
 PASS value IDL attribute of input type search without value attribute 
@@ -29,16 +41,4 @@ PASS value IDL attribute of input type range without value attribute
 PASS value IDL attribute of input type range with value attribute 
 PASS value IDL attribute of input type color without value attribute 
 PASS value IDL attribute of input type color with value attribute 
-FAIL value IDL attribute of input type checkbox without value attribute assert_equals: expected "on" but got "foo"
-FAIL value IDL attribute of input type checkbox with value attribute assert_equals: expected "bar" but got "foo"
-FAIL value IDL attribute of input type radio without value attribute assert_equals: expected "on" but got "foo"
-FAIL value IDL attribute of input type radio with value attribute assert_equals: expected "bar" but got "foo"
-FAIL value IDL attribute of input type submit without value attribute assert_equals: expected "" but got "foo"
-FAIL value IDL attribute of input type submit with value attribute assert_equals: expected "bar" but got "foo"
-FAIL value IDL attribute of input type image without value attribute assert_equals: expected "" but got "foo"
-FAIL value IDL attribute of input type image with value attribute assert_equals: expected "bar" but got "foo"
-FAIL value IDL attribute of input type reset without value attribute assert_equals: expected "" but got "foo"
-FAIL value IDL attribute of input type reset with value attribute assert_equals: expected "bar" but got "foo"
-FAIL value IDL attribute of input type button without value attribute assert_equals: expected "" but got "foo"
-FAIL value IDL attribute of input type button with value attribute assert_equals: expected "bar" but got "foo"
 

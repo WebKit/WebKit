@@ -1,3 +1,3 @@
 
-PASS XMLHttpRequest: setRequestHeader() - headers that differ in case 
+FAIL XMLHttpRequest: setRequestHeader() - headers that differ in case assert_equals: expected "x-test," but got "{\"error\": {\"message\": \"Traceback (most recent call last):\\n  File \\"/Volumes/Data/EWS/WebKit/LayoutTests/imported/w3c/web-platform-tests/tools/wptserve/wptserve/handlers.py\\", line 246, in __call__\n    rv = self.func(request, response)\n  File \\"/Volumes/Data/EWS/WebKit/LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/resources/inspect-headers.py\\", line 31, in main\n    result = get_response(request.raw_headers, filter_value, filter_name)\nAttributeError: 'Request' object has no attribute 'raw_headers'\n\", \"code\": 500}}"
 

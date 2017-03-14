@@ -19,6 +19,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-object-element/object-attributes.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-object-element/object-fallback.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-object-element/object-handler.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-object-element/object-ignored-in-media-element.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-object-element/object-in-object-fallback-2.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-object-element/test0.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-object-element/test1.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-object-element/test2.html

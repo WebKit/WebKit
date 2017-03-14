@@ -1,0 +1,8 @@
+
+Harness Error (TIMEOUT), message = null
+
+FAIL Floating point arithmetic must manifest near NUMBER.MAX_SAFE_INTEGER (total ends up positive) assert_equals: [[queueTotalSize]] must clamp to 0 if it becomes negative expected 0 but got 1
+FAIL Floating point arithmetic must manifest near 0 (total ends up positive, but clamped) assert_equals: [[queueTotalSize]] must clamp to 0 if it becomes negative expected 0 but got 1.1102230246251565e-16
+PASS Floating point arithmetic must manifest near 0 (total ends up positive, and not clamped) 
+PASS Floating point arithmetic must manifest near 0 (total ends up zero) 
+

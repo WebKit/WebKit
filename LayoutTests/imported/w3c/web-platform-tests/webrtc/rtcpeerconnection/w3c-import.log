@@ -17,3 +17,4 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/rtcpeerconnection/rtcpeerconnection-constructor.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/rtcpeerconnection/rtcpeerconnection-idl.html
+/LayoutTests/imported/w3c/web-platform-tests/webrtc/rtcpeerconnection/setRemoteDescription.html

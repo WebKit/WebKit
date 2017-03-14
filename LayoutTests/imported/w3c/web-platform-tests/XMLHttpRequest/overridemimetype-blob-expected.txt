@@ -1,0 +1,7 @@
+
+FAIL Use text/xml as fallback MIME type assert_equals: expected "text/xml" but got ""
+PASS Use text/xml as fallback MIME type, 2 
+FAIL Bogus MIME type should end up as application/octet-stream assert_equals: expected "" but got "bogus"
+FAIL Bogus MIME type should end up as application/octet-stream, 2 assert_equals: expected "" but got "text/xml;charset=†"
+FAIL Valid MIME types need to be normalized assert_equals: expected "" but got "HI/x;test"
+

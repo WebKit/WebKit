@@ -73,6 +73,7 @@ TRAILING WHITESPACE: encoding/legacy*/*
 W3C-TEST.ORG:README.md
 W3C-TEST.ORG:*/README.md
 W3C-TEST.ORG:docs/*
+SET TIMEOUT: docs/*
 
 ## Helper scripts ##
 
@@ -87,7 +88,7 @@ CR AT EOL:WebIDL/valid/idl/documentation-dos.widl
 CR AT EOL:cors/resources/cors-headers.asis
 CR AT EOL:html/semantics/embedded-content/the-canvas-element/size.attributes.parse.whitespace.html
 INDENT TABS:html/semantics/embedded-content/the-canvas-element/size.attributes.parse.whitespace.html
-CR AT EOL:webvtt/webvtt-file-format-parsing/webvtt-file-parsing/support/newlines.vtt
+CR AT EOL:webvtt/parsing/file-parsing/tests/support/newlines.vtt
 PARSE-FAILED:dom/nodes/Document-createElement-namespace-tests/empty.svg
 PARSE-FAILED:dom/nodes/Document-createElement-namespace-tests/empty.xhtml
 PARSE-FAILED:dom/nodes/Document-createElement-namespace-tests/minimal_html.svg
@@ -106,6 +107,7 @@ PRINT STATEMENT:encrypted-media/polyfill/make-polyfill-tests.py
 W3C-TEST.ORG:subresource-integrity/refresh-header.js.headers
 
 # semi-legitimate use of console.*
+CONSOLE:console/*
 CONSOLE:streams/resources/test-utils.js
 CONSOLE:service-workers/service-worker/resources/navigation-redirect-other-origin.html
 CONSOLE:service-workers/service-worker/navigation-redirect.https.html
@@ -132,6 +134,76 @@ PARSE-FAILED:dom/nodes/Document-createElement-namespace-tests/minimal_html.xml
 TRAILING WHITESPACE:webgl/tools/*.patch
 # The tests under this directory are not done by us
 *:webgl/conformance-1.0.3/*
+
+# setTimeout usage (should probably mostly be fixed)
+SET TIMEOUT: *-manual.*
+SET TIMEOUT: 2dcontext/*
+SET TIMEOUT: annotation-model/scripts/ajv.min.js
+SET TIMEOUT: cookies/resources/testharness-helpers.js
+SET TIMEOUT: common/reftest-wait.js
+SET TIMEOUT: conformance-checkers/*
+SET TIMEOUT: content-security-policy/*
+SET TIMEOUT: encrypted-media/Google/migrated_to_root_disabled/encrypted-media-utils.js
+SET TIMEOUT: encrypted-media/polyfill/chrome-polyfill.js
+SET TIMEOUT: encrypted-media/polyfill/clearkey-polyfill.js
+SET TIMEOUT: encrypted-media/scripts/playback-temporary-events.js
+SET TIMEOUT: eventsource/eventsource-close.htm
+SET TIMEOUT: eventsource/eventsource-request-cancellation.htm
+SET TIMEOUT: html/*
+SET TIMEOUT: IndexedDB/*
+SET TIMEOUT: media-source/mediasource-util.js
+SET TIMEOUT: media-source/URL-createObjectURL-revoke.html
+SET TIMEOUT: mixed-content/generic/sanity-checker.js
+SET TIMEOUT: navigation-timing/*
+SET TIMEOUT: offscreen-canvas/the-offscreen-canvas/*
+SET TIMEOUT: old-tests/submission/Microsoft/history/history_000.htm
+SET TIMEOUT: old-tests/submission/Microsoft/sandbox/*
+SET TIMEOUT: old-tests/submission/Microsoft/structuredclone/structuredclone_0.html
+SET TIMEOUT: old-tests/submission/Opera/script_scheduling/*
+SET TIMEOUT: old-tests/webdriver/timeouts/res/implicit_waits_tests.html
+SET TIMEOUT: page-visibility/resources/pagevistestharness.js
+SET TIMEOUT: payment-request/allowpaymentrequest/setting-allowpaymentrequest-timing.https.sub.html
+SET TIMEOUT: pointerevents/pointerevent_support.js
+SET TIMEOUT: preload/single-download-preload.html
+SET TIMEOUT: resource-timing/resource-timing.js
+SET TIMEOUT: screen-orientation/lock-bad-argument.html
+SET TIMEOUT: screen-orientation/onchange-event.html
+SET TIMEOUT: screen-orientation/resources/sandboxed-iframe-locking.html
+SET TIMEOUT: secure-contexts/basic-popup-and-iframe-tests.https.js
+SET TIMEOUT: service-workers/service-worker/activation.https.html
+SET TIMEOUT: service-workers/service-worker/fetch-frame-resource.https.html
+SET TIMEOUT: service-workers/service-worker/fetch-request-redirect.https.html
+SET TIMEOUT: service-workers/service-worker/fetch-waits-for-activate.https.html
+SET TIMEOUT: service-workers/service-worker/update-recovery.https.html
+SET TIMEOUT: service-workers/service-worker/resources/extendable-event-async-waituntil.js
+SET TIMEOUT: service-workers/service-worker/resources/fetch-event-async-respond-with-worker.js
+SET TIMEOUT: service-workers/service-worker/resources/fetch-event-test-worker.js
+SET TIMEOUT: service-workers/service-worker/resources/performance-timeline-worker.js
+SET TIMEOUT: shadow-dom/Document-prototype-currentScript.html
+SET TIMEOUT: shadow-dom/scroll-to-the-fragment-in-shadow-tree.html
+SET TIMEOUT: shadow-dom/slotchange-event.html
+SET TIMEOUT: shadow-dom/untriaged/html-elements-in-shadow-trees/html-forms/test-003.html
+SET TIMEOUT: shadow-dom/untriaged/html-elements-in-shadow-trees/inert-html-elements/test-001.html
+SET TIMEOUT: streams/piping/close-propagation-forward.js
+SET TIMEOUT: streams/piping/error-propagation-backward.js
+SET TIMEOUT: streams/piping/error-propagation-forward.js
+SET TIMEOUT: streams/piping/general.js
+SET TIMEOUT: streams/readable-streams/cancel.js
+SET TIMEOUT: streams/resources/rs-utils.js
+SET TIMEOUT: streams/writable-streams/byte-length-queuing-strategy.js
+SET TIMEOUT: user-timing/*
+SET TIMEOUT: webaudio/js/lodash.js
+SET TIMEOUT: webaudio/the-audio-api/the-mediaelementaudiosourcenode-interface/mediaElementAudioSourceToScriptProcessorTest.html
+SET TIMEOUT: webdriver/*
+SET TIMEOUT: webmessaging/*
+SET TIMEOUT: websockets/*
+SET TIMEOUT: webstorage/eventTestHarness.js
+SET TIMEOUT: webvtt/*
+SET TIMEOUT: workers/*
+SET TIMEOUT: XMLHttpRequest/open-url-multi-window-6.htm
+SET TIMEOUT: XMLHttpRequest/xmlhttprequest-timeout-reused.html
+SET TIMEOUT: XMLHttpRequest/resources/init.htm
+SET TIMEOUT: XMLHttpRequest/resources/xmlhttprequest-timeout.js
 
 # CI scripts
 PRINT STATEMENT:check_stability.py

@@ -1,0 +1,32 @@
+CONSOLE MESSAGE: line 32: Error
+CONSOLE MESSAGE: line 42: Error
+CONSOLE MESSAGE: line 51: Error
+CONSOLE MESSAGE: line 63: Error
+CONSOLE MESSAGE: line 73: Error
+CONSOLE MESSAGE: line 91: Error
+CONSOLE MESSAGE: line 101: Error
+CONSOLE MESSAGE: line 110: Error
+CONSOLE MESSAGE: line 122: Error
+CONSOLE MESSAGE: line 132: Error
+CONSOLE MESSAGE: line 150: Error
+CONSOLE MESSAGE: line 160: Error
+CONSOLE MESSAGE: line 169: Error
+CONSOLE MESSAGE: line 181: Error
+CONSOLE MESSAGE: line 191: Error
+
+PASS Exception in error event handler on request 
+PASS Exception in error event handler on request, with preventDefault 
+PASS Exception in error event listener on request 
+PASS Exception in second error event listener on request 
+FAIL Exception in first error event listener on request, transaction active in second assert_equals: Active check should either not throw anything, or throw TransactionInactiveError expected "TransactionInactiveError" but got "InvalidStateError"
+PASS Exception in error event handler on transaction 
+PASS Exception in error event handler on transaction, with preventDefault 
+PASS Exception in error event listener on transaction 
+PASS Exception in second error event listener on transaction 
+FAIL Exception in first error event listener on transaction, transaction active in second assert_equals: Active check should either not throw anything, or throw TransactionInactiveError expected "TransactionInactiveError" but got "InvalidStateError"
+PASS Exception in error event handler on connection 
+PASS Exception in error event handler on connection, with preventDefault 
+PASS Exception in error event listener on connection 
+PASS Exception in second error event listener on connection 
+FAIL Exception in first error event listener on connection, transaction active in second assert_equals: Active check should either not throw anything, or throw TransactionInactiveError expected "TransactionInactiveError" but got "InvalidStateError"
+

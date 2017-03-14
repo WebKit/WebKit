@@ -1,3 +1,4 @@
+Blocked access to external URL https://www.localhost:9443/fetch/api/resources/inspect-headers.py?cors&headers=referer
 
-FAIL Request's referrer is origin assert_equals: request's referrer is http://localhost:8800/ expected "http://localhost:8800/" but got "http://localhost:8800/fetch/api/policies/referrer-origin-when-cross-origin.js?pipe=sub"
+FAIL Request's referrer is origin promise_test: Unhandled rejection with value: object "TypeError: Type error"
 

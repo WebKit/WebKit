@@ -42,6 +42,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/request-headers-worker.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/request-headers.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/request-headers.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/request-referrer-redirected-worker.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/request-referrer-worker.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/request-referrer.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/request-referrer.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/request-upload-worker.html

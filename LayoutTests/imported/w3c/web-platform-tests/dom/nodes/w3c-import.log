@@ -104,6 +104,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Element-siblingElement-null-xhtml.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Element-siblingElement-null.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Element-tagName.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Element-webkitMatchesSelector.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/MutationObserver-attributes.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/MutationObserver-characterData.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/MutationObserver-childList.html

@@ -15,15 +15,10 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/browsing-context-window.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/browsing-context.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/noreferrer-cross-origin-close-manual.sub.html
-/LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/noreferrer-cross-origin-window-name.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/noreferrer-cross-origin-window-name-manual.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/noreferrer-null-opener.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/noreferrer-window-name.html
-/LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/noreferrer.html
-/LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/support-close.html
-/LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/support-named-null-opener.html
-/LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/support-nested-browsing-contexts.html
-/LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/support-open-cross-origin.sub.html
-/LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/support-opener-null.html
-/LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/support-post-to-opener.html
-/LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/support-window-name-echo.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/targeting-multiple-cross-origin-manual.sub.html

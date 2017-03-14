@@ -2,7 +2,7 @@
     {
         "name": "csswg-test",
         "url": "https://github.com/w3c/csswg-test.git",
-        "revision": "b2daa426addd5ccb8e9ce1c5d800f9d82603f1ec",
+        "revision": "d5146115f631a1cc6bc53a4f134d4e2a26fe2fb5",
         "paths_to_skip": [
             "support",
             "tools",
@@ -15,7 +15,7 @@
     {
         "name": "web-platform-tests",
         "url": "https://github.com/w3c/web-platform-tests.git",
-        "revision": "06c6c52e05e05483d3c844168a417ee27a554eb7",
+        "revision": "a5b95cb31914507088a4eda16f7674bbc6f3313f",
         "paths_to_skip": [
             "conformance-checkers",
             "docs",

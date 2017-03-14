@@ -1,12 +1,12 @@
 
-PASS XHR method GET with charset text/plain 
-PASS XHR method GET with charset text/plain (base64) 
-PASS XHR method GET with charset text/html 
-PASS XHR method GET with charset text/html;charset=UTF-8 
-PASS XHR method GET with charset image/png 
-FAIL XHR method POST with charset text/plain assert_equals: expected 0 but got 200
-FAIL XHR method PUT with charset text/plain assert_equals: expected 0 but got 200
-FAIL XHR method DELETE with charset text/plain assert_equals: expected 0 but got 200
-FAIL XHR method HEAD with charset text/plain assert_equals: expected 0 but got 200
-FAIL XHR method UNICORN with charset text/plain assert_equals: expected 0 but got 200
+PASS XHR method GET with MIME type text/plain 
+PASS XHR method GET with MIME type text/plain (base64) 
+PASS XHR method GET with MIME type text/html 
+PASS XHR method GET with MIME type text/html;charset=UTF-8 
+PASS XHR method GET with MIME type image/png 
+PASS XHR method POST with MIME type text/plain 
+PASS XHR method PUT with MIME type text/plain 
+PASS XHR method DELETE with MIME type text/plain 
+PASS XHR method HEAD with MIME type text/plain 
+PASS XHR method UNICORN with MIME type text/plain 
 

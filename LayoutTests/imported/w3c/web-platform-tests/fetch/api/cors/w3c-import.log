@@ -21,6 +21,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/cors/cors-cookies-worker.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/cors/cors-cookies.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/cors/cors-cookies.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/cors/cors-expose-star-worker.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/cors/cors-expose-star.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/cors/cors-expose-star.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/cors/cors-filtering-worker.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/cors/cors-filtering.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/cors/cors-filtering.js
@@ -39,6 +42,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/cors/cors-preflight-referrer-worker.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/cors/cors-preflight-referrer.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/cors/cors-preflight-referrer.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/cors/cors-preflight-star-worker.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/cors/cors-preflight-star.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/cors/cors-preflight-star.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/cors/cors-preflight-status-worker.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/cors/cors-preflight-status.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/cors/cors-preflight-status.js

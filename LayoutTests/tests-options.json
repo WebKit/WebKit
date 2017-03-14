@@ -8,6 +8,9 @@
     "http/tests/xmlhttprequest/timeout-greater-than-default-network-timeout.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/IndexedDB/idb-binary-key-roundtrip.htm": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/IndexedDB/idbcursor-continuePrimaryKey-exception-order.htm": [
         "slow"
     ],
@@ -27,6 +30,12 @@
         "slow"
     ],
     "imported/w3c/web-platform-tests/IndexedDB/idbobjectstore_createIndex8-valid_keys.htm": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/IndexedDB/idbobjectstore_getKey.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/IndexedDB/key-conversion-exceptions.htm": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/IndexedDB/key_valid.html": [
@@ -168,6 +177,9 @@
         "slow"
     ],
     "imported/w3c/web-platform-tests/XMLHttpRequest/xmlhttprequest-timeout-overridesexpires.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/XMLHttpRequest/xmlhttprequest-timeout-reused.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/XMLHttpRequest/xmlhttprequest-timeout-simple.html": [
@@ -435,6 +447,9 @@
         "slow"
     ],
     "imported/w3c/web-platform-tests/fetch/api/request/request-cache.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/fetch/api/request/request-keepalive-quota.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/persisted-user-state-restoration/scroll-restoration-fragment-scrolling-cross-origin.html": [

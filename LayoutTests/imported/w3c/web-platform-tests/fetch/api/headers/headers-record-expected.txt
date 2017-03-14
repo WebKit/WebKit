@@ -1,0 +1,13 @@
+
+PASS Passing nothing to Headers constructor 
+PASS Passing undefined to Headers constructor 
+PASS Passing null to Headers constructor 
+FAIL Basic operation with one property assert_equals: expected 4 but got 3
+FAIL Basic operation with one property and a proto assert_equals: expected 4 but got 3
+FAIL Correct operation ordering with two properties assert_equals: expected 6 but got 4
+FAIL Correct operation ordering with two properties one of which has an invalid name assert_equals: expected 5 but got 4
+FAIL Correct operation ordering with two properties one of which has an invalid value assert_equals: expected 4 but got 3
+FAIL Correct operation ordering with non-enumerable properties assert_equals: expected 6 but got 5
+FAIL Correct operation ordering with undefined descriptors assert_equals: expected 6 but got 5
+FAIL Correct operation ordering with repeated keys assert_equals: expected 9 but got 6
+

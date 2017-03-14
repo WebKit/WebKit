@@ -1,0 +1,3 @@
+
+PASS Properties of error event from failed open() 
+

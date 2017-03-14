@@ -166,6 +166,20 @@
     "hash": "# e"
   },
   {
+    "input": "lolscheme:x x#x x",
+    "base": "about:blank",
+    "href": "lolscheme:x x#x x",
+    "protocol": "lolscheme:",
+    "username": "",
+    "password": "",
+    "host": "",
+    "hostname": "",
+    "port": "",
+    "pathname": "x x",
+    "search": "",
+    "hash": "#x x"
+  },
+  {
     "input": "http://f:/c",
     "base": "http://example.org/foo/bar",
     "href": "http://f/c",
@@ -3568,7 +3582,7 @@
     "base": "http://other.com/",
     "failure": true
   },
-  "U+FFFD is disallowed",
+  "U+FFFD",
   {
     "input": "https://\ufffd",
     "base": "about:blank",
@@ -3578,6 +3592,21 @@
     "input": "https://%EF%BF%BD",
     "base": "about:blank",
     "failure": true
+  },
+  {
+    "input": "https://x/\ufffd?\ufffd#\ufffd",
+    "base": "about:blank",
+    "href": "https://x/%EF%BF%BD?%EF%BF%BD#%EF%BF%BD",
+    "origin": "https://x",
+    "protocol": "https:",
+    "username": "",
+    "password": "",
+    "host": "x",
+    "hostname": "x",
+    "port": "",
+    "pathname": "/%EF%BF%BD",
+    "search": "?%EF%BF%BD",
+    "hash": "#%EF%BF%BD"
   },
   "Test name prepping, fullwidth input should be converted to ASCII and NOT IDN-ized. This is 'Go' in fullwidth UTF-8/UTF-16.",
   {
@@ -3628,6 +3657,35 @@
     "password": "",
     "host": "xn--6qqa088eba",
     "hostname": "xn--6qqa088eba",
+    "port": "",
+    "pathname": "/",
+    "search": "",
+    "hash": ""
+  },
+  {
+    "input": "https://faß.ExAmPlE/",
+    "base": "about:blank",
+    "href": "https://xn--fa-hia.example/",
+    "origin": "https://faß.example",
+    "protocol": "https:",
+    "username": "",
+    "password": "",
+    "host": "xn--fa-hia.example",
+    "hostname": "xn--fa-hia.example",
+    "port": "",
+    "pathname": "/",
+    "search": "",
+    "hash": ""
+  },
+  {
+    "input": "sc://faß.ExAmPlE/",
+    "base": "about:blank",
+    "href": "sc://fa%C3%9F.ExAmPlE/",
+    "protocol": "sc:",
+    "username": "",
+    "password": "",
+    "host": "fa%C3%9F.ExAmPlE",
+    "hostname": "fa%C3%9F.ExAmPlE",
     "port": "",
     "pathname": "/",
     "search": "",
@@ -3686,16 +3744,21 @@
     "base": "http://other.com/",
     "failure": true
   },
-  "Invalid escaping should trigger the regular host error handling",
+  "Invalid escaping in hosts causes failure",
   {
     "input": "http://%3g%78%63%30%2e%30%32%35%30%2E.01",
     "base": "http://other.com/",
     "failure": true
   },
-  "Something that isn't exactly an IP should get treated as a host and spaces escaped",
+  "A space in a host causes failure",
   {
     "input": "http://192.168.0.1 hello",
     "base": "http://other.com/",
+    "failure": true
+  },
+  {
+    "input": "https://x x:12",
+    "base": "about:blank",
     "failure": true
   },
   "Fullwidth and escaped UTF-8 fullwidth should still be treated as IP",
@@ -4424,6 +4487,37 @@
     "search": "",
     "hash": ""
   },
+  "# unknown scheme with bogus percent-encoding",
+  {
+    "input": "wow:%NBD",
+    "base": "about:blank",
+    "href": "wow:%NBD",
+    "origin": "null",
+    "protocol": "wow:",
+    "username": "",
+    "password": "",
+    "host": "",
+    "hostname": "",
+    "port": "",
+    "pathname": "%NBD",
+    "search": "",
+    "hash": ""
+  },
+  {
+    "input": "wow:%1G",
+    "base": "about:blank",
+    "href": "wow:%1G",
+    "origin": "null",
+    "protocol": "wow:",
+    "username": "",
+    "password": "",
+    "host": "",
+    "hostname": "",
+    "port": "",
+    "pathname": "%1G",
+    "search": "",
+    "hash": ""
+  },
   "# Hosts and percent-encoding",
   {
     "input": "ftp://example.com%80/",
@@ -4796,6 +4890,21 @@
     "search": "",
     "hash": ""
   },
+  {
+    "input": "https://0x.0x.0",
+    "base": "about:blank",
+    "href": "https://0.0.0.0/",
+    "origin": "https://0.0.0.0",
+    "protocol": "https:",
+    "username": "",
+    "password": "",
+    "host": "0.0.0.0",
+    "hostname": "0.0.0.0",
+    "port": "",
+    "pathname": "/",
+    "search": "",
+    "hash": ""
+  },
   "# file URLs containing percent-encoded Windows drive letters (shouldn't work)",
   {
     "input": "file:///C%3A/",
@@ -4868,7 +4977,7 @@
     "search": "",
     "hash": ""
   },
-  "# More file URL tests by zcorpan",
+  "# More file URL tests by zcorpan and annevk",
   {
     "input": "/",
     "base": "file:///C:/a/b",
@@ -4939,6 +5048,90 @@
     "search": "",
     "hash": ""
   },
+  {
+    "input": "",
+    "base": "file:///test?test#test",
+    "href": "file:///test?test",
+    "protocol": "file:",
+    "username": "",
+    "password": "",
+    "host": "",
+    "hostname": "",
+    "port": "",
+    "pathname": "/test",
+    "search": "?test",
+    "hash": ""
+  },
+  {
+    "input": "file:",
+    "base": "file:///test?test#test",
+    "href": "file:///test?test",
+    "protocol": "file:",
+    "username": "",
+    "password": "",
+    "host": "",
+    "hostname": "",
+    "port": "",
+    "pathname": "/test",
+    "search": "?test",
+    "hash": ""
+  },
+  {
+    "input": "?x",
+    "base": "file:///test?test#test",
+    "href": "file:///test?x",
+    "protocol": "file:",
+    "username": "",
+    "password": "",
+    "host": "",
+    "hostname": "",
+    "port": "",
+    "pathname": "/test",
+    "search": "?x",
+    "hash": ""
+  },
+  {
+    "input": "file:?x",
+    "base": "file:///test?test#test",
+    "href": "file:///test?x",
+    "protocol": "file:",
+    "username": "",
+    "password": "",
+    "host": "",
+    "hostname": "",
+    "port": "",
+    "pathname": "/test",
+    "search": "?x",
+    "hash": ""
+  },
+  {
+    "input": "#x",
+    "base": "file:///test?test#test",
+    "href": "file:///test?test#x",
+    "protocol": "file:",
+    "username": "",
+    "password": "",
+    "host": "",
+    "hostname": "",
+    "port": "",
+    "pathname": "/test",
+    "search": "?test",
+    "hash": "#x"
+  },
+  {
+    "input": "file:#x",
+    "base": "file:///test?test#test",
+    "href": "file:///test?test#x",
+    "protocol": "file:",
+    "username": "",
+    "password": "",
+    "host": "",
+    "hostname": "",
+    "port": "",
+    "pathname": "/test",
+    "search": "?test",
+    "hash": "#x"
+  },
   "# file URLs without base URL by Rimas Misevičius",
   {
     "input": "file:",
@@ -4982,7 +5175,7 @@
     "search": "",
     "hash": "#frag"
   },
-  "# IPv6 trailing zeros test",
+  "# IPv6 tests",
   {
     "input": "http://[1:0::]",
     "base": "http://example.net/",
@@ -4998,16 +5191,56 @@
     "search": "",
     "hash": ""
   },
+  {
+    "input": "http://[0:1:2:3:4:5:6:7:8]",
+    "base": "http://example.net/",
+    "failure": true
+  },
+  {
+    "input": "https://[0::0::0]",
+    "base": "about:blank",
+    "failure": true
+  },
+  {
+    "input": "https://[0:.0]",
+    "base": "about:blank",
+    "failure": true
+  },
+  {
+    "input": "https://[0:0:]",
+    "base": "about:blank",
+    "failure": true
+  },
+  {
+    "input": "https://[0:1:2:3:4:5:6:7.0.0.0.1]",
+    "base": "about:blank",
+    "failure": true
+  },
+  {
+    "input": "https://[0:1.00.0.0.0]",
+    "base": "about:blank",
+    "failure": true
+  },
+  {
+    "input": "https://[0:1.290.0.0.0]",
+    "base": "about:blank",
+    "failure": true
+  },
+  {
+    "input": "https://[0:1.23.23]",
+    "base": "about:blank",
+    "failure": true
+  },
   "# Empty host",
   {
     "input": "http://?",
     "base": "about:blank",
-    "failure": "true"
+    "failure": true
   },
   {
     "input": "http://#",
     "base": "about:blank",
-    "failure": "true"
+    "failure": true
   },
   "# Non-special-URL path tests",
   {
@@ -5411,5 +5644,33 @@
     "input": "non-special://[:80/",
     "base": "about:blank",
     "failure": true
+  },
+  {
+    "input": "blob:https://example.com:443/",
+    "base": "about:blank",
+    "href": "blob:https://example.com:443/",
+    "protocol": "blob:",
+    "username": "",
+    "password": "",
+    "host": "",
+    "hostname": "",
+    "port": "",
+    "pathname": "https://example.com:443/",
+    "search": "",
+    "hash": ""
+  },
+  {
+    "input": "blob:d3958f5c-0777-0845-9dcf-2cb28783acaf",
+    "base": "about:blank",
+    "href": "blob:d3958f5c-0777-0845-9dcf-2cb28783acaf",
+    "protocol": "blob:",
+    "username": "",
+    "password": "",
+    "host": "",
+    "hostname": "",
+    "port": "",
+    "pathname": "d3958f5c-0777-0845-9dcf-2cb28783acaf",
+    "search": "",
+    "hash": ""
   }
 ]

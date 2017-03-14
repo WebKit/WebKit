@@ -1,14 +1,14 @@
 
-PASS Can get the ReadableStreamReader constructor indirectly 
+PASS Can get the ReadableStreamDefaultReader constructor indirectly 
 PASS Can get the ReadableStreamController constructor indirectly 
 PASS ReadableStream.prototype.cancel enforces a brand check 
 PASS ReadableStream.prototype.getReader enforces a brand check 
 PASS ReadableStream.prototype.tee enforces a brand check 
-PASS ReadableStreamReader enforces a brand check on its argument 
-PASS ReadableStreamReader.prototype.closed enforces a brand check 
-PASS ReadableStreamReader.prototype.cancel enforces a brand check 
-PASS ReadableStreamReader.prototype.read enforces a brand check 
-PASS ReadableStreamReader.prototype.releaseLock enforces a brand check 
+PASS ReadableStreamDefaultReader enforces a brand check on its argument 
+PASS ReadableStreamDefaultReader.prototype.closed enforces a brand check 
+PASS ReadableStreamDefaultReader.prototype.cancel enforces a brand check 
+PASS ReadableStreamDefaultReader.prototype.read enforces a brand check 
+PASS ReadableStreamDefaultReader.prototype.releaseLock enforces a brand check 
 PASS ReadableStreamController enforces a brand check on its argument 
 PASS ReadableStreamController can't be given a fully-constructed ReadableStream 
 PASS ReadableStreamController.prototype.close enforces a brand check 

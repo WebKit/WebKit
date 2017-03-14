@@ -26,11 +26,13 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location-pathname-setter-question-mark.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location-protocol-setter-non-broken-weird.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location-protocol-setter-non-broken.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location-protocol-setter-with-colon.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location-protocol-setter.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location-prototype-setting.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location-stringifier.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location-symbol-toprimitive.html
-/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location-valueof.html 
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location-tojson.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location-valueof.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location_assign_about_blank-1.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location_assign_about_blank.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location_hash.html
