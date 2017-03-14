@@ -1,3 +1,16 @@
+2017-03-14  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r213953. rdar://problem/31049771
+
+    2017-03-14  Andy Estes  <aestes@apple.com>
+
+            Update ApplePaySession.html after r213949
+
+            Rubber-stamped by Beth Dakin.
+
+            * http/tests/ssl/applepay/ApplePaySession-expected.txt:
+            * http/tests/ssl/applepay/ApplePaySession.html:
+
 2017-03-03  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r213253. rdar://problem/30773140

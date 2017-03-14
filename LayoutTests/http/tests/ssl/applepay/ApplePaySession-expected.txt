@@ -213,9 +213,6 @@ PASS new ApplePaySession(2, request) threw exception TypeError: Value is not a s
 SETUP: request = validRequest(); request.requiredBillingContactFields = { };
 PASS new ApplePaySession(2, request) threw exception TypeError: Type error.
 
-SETUP: request = validRequest(); request.requiredBillingContactFields = [];
-PASS new ApplePaySession(2, request) threw exception TypeError: At least one contact field must be provided..
-
 SETUP: request = validRequest(); request.requiredBillingContactFields = [''];
 PASS new ApplePaySession(2, request) threw exception TypeError: Type error.
 
@@ -235,6 +232,9 @@ SETUP: request = validRequest(); request.requiredBillingContactFields = ['email'
 PASS new ApplePaySession(2, request) did not throw exception.
 
 SETUP: request = validRequest(); request.requiredBillingContactFields = ['email', 'email'];
+PASS new ApplePaySession(2, request) did not throw exception.
+
+SETUP: request = validRequest(); request.requiredBillingContactFields = [];
 PASS new ApplePaySession(2, request) did not throw exception.
 
 Testing PaymentRequest.billingContact
@@ -271,9 +271,6 @@ PASS new ApplePaySession(2, request) threw exception TypeError: Value is not a s
 SETUP: request = validRequest(); request.requiredShippingContactFields = { };
 PASS new ApplePaySession(2, request) threw exception TypeError: Type error.
 
-SETUP: request = validRequest(); request.requiredShippingContactFields = [];
-PASS new ApplePaySession(2, request) threw exception TypeError: At least one contact field must be provided..
-
 SETUP: request = validRequest(); request.requiredShippingContactFields = [''];
 PASS new ApplePaySession(2, request) threw exception TypeError: Type error.
 
@@ -293,6 +290,9 @@ SETUP: request = validRequest(); request.requiredShippingContactFields = ['email
 PASS new ApplePaySession(2, request) did not throw exception.
 
 SETUP: request = validRequest(); request.requiredShippingContactFields = ['email', 'email'];
+PASS new ApplePaySession(2, request) did not throw exception.
+
+SETUP: request = validRequest(); request.requiredShippingContactFields = [];
 PASS new ApplePaySession(2, request) did not throw exception.
 
 Testing PaymentRequest.shippingContact
