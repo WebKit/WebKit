@@ -47,7 +47,7 @@
 #include "WebCoreThread.h"
 #endif
 
-#if PLATFORM(GTK)
+#if USE(GLIB)
 #include <wtf/glib/GRefPtr.h>
 #endif
 
@@ -156,7 +156,7 @@ void WorkerThread::workerThread()
     FloatingPointEnvironment::singleton().propagateMainThreadEnvironment();
 #endif
 
-#if PLATFORM(GTK)
+#if USE(GLIB)
     GRefPtr<GMainContext> mainContext = adoptGRef(g_main_context_new());
     g_main_context_push_thread_default(mainContext.get());
 #endif
@@ -189,7 +189,7 @@ void WorkerThread::workerThread()
 
     runEventLoop();
 
-#if PLATFORM(GTK)
+#if USE(GLIB)
     g_main_context_pop_thread_default(mainContext.get());
 #endif
 
