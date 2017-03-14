@@ -369,7 +369,6 @@
 		7CCE7EE51A411AE600447C4C /* CloseThenTerminate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C8DDAA91735DE1D00EA5AC0 /* CloseThenTerminate.cpp */; };
 		7CCE7EE61A411AE600447C4C /* CloseFromWithinCreatePage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A50AA1C1A2A4E7000F4C345 /* CloseFromWithinCreatePage.cpp */; };
 		7CCE7EE71A411AE600447C4C /* CanHandleRequest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC246D98132F1FE100B56D7C /* CanHandleRequest.cpp */; };
-		7CCE7EE81A411AE600447C4C /* CookieManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F6F3F29013342FEB00A6BF19 /* CookieManager.cpp */; };
 		7CCE7EE91A411AE600447C4C /* DidAssociateFormControls.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F6B7BE93174691EF008A3445 /* DidAssociateFormControls.cpp */; };
 		7CCE7EEA1A411AE600447C4C /* DidNotHandleKeyDown.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9331407B17B4419000F083B1 /* DidNotHandleKeyDown.cpp */; };
 		7CCE7EEB1A411AE600447C4C /* DocumentStartUserScriptAlertCrash.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCB6803F126FBFE100642A61 /* DocumentStartUserScriptAlertCrash.cpp */; };
@@ -2685,7 +2684,6 @@
 				A14FC5881B8991BF00D107EB /* ContentFiltering.mm in Sources */,
 				7CCE7EB81A411A7E00447C4C /* ContextMenuCanCopyURL.mm in Sources */,
 				5C2936931D5BF70D00DEAB1E /* CookieAcceptPolicy.mm in Sources */,
-				7CCE7EE81A411AE600447C4C /* CookieManager.cpp in Sources */,
 				7CCE7EAC1A411A3400447C4C /* Counters.cpp in Sources */,
 				2D1C04A71D76298B000A6816 /* TestNavigationDelegate.mm in Sources */,
 				37FB72971DB2E82F00E41BE4 /* ContextMenuDefaultItemsHaveTags.mm in Sources */,

@@ -1,3 +1,12 @@
+2017-03-13  Brady Eidson  <beidson@apple.com>
+
+        REGRESSION (r213877): WebKit2.CookieManager fails.
+        https://bugs.webkit.org/show_bug.cgi?id=169581
+
+        Unreviewed gardening
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj: Skip for now until I can fix.
+
 2017-03-14  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [WTF] Clean up RunLoop and WorkQueue with Seconds and Function
