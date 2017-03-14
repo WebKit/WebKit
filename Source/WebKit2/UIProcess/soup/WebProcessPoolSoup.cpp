@@ -42,6 +42,7 @@ void WebProcessPool::platformInitializeNetworkProcess(NetworkProcessCreationPara
     parameters.cookieAcceptPolicy = m_initialHTTPCookieAcceptPolicy;
     parameters.ignoreTLSErrors = m_ignoreTLSErrors;
     parameters.languages = WebCore::userPreferredLanguages();
+    parameters.shouldEnableNetworkCacheEfficacyLogging = false;
     parameters.proxySettings = m_networkProxySettings;
 }
 

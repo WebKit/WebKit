@@ -49,18 +49,18 @@ struct NetworkProcessCreationParameters {
     void encode(IPC::Encoder&) const;
     static bool decode(IPC::Decoder&, NetworkProcessCreationParameters&);
 
-    bool privateBrowsingEnabled { false };
-    CacheModel cacheModel { CacheModelDocumentViewer };
+    bool privateBrowsingEnabled;
+    CacheModel cacheModel;
     int64_t diskCacheSizeOverride { -1 };
-    bool canHandleHTTPSServerTrustEvaluation { true };
+    bool canHandleHTTPSServerTrustEvaluation;
 
     String diskCacheDirectory;
     SandboxExtension::Handle diskCacheDirectoryExtensionHandle;
 #if ENABLE(NETWORK_CACHE)
-    bool shouldEnableNetworkCache { false };
-    bool shouldEnableNetworkCacheEfficacyLogging { false };
+    bool shouldEnableNetworkCache;
+    bool shouldEnableNetworkCacheEfficacyLogging;
 #if ENABLE(NETWORK_CACHE_SPECULATIVE_REVALIDATION)
-    bool shouldEnableNetworkCacheSpeculativeRevalidation { false };
+    bool shouldEnableNetworkCacheSpeculativeRevalidation;
 #endif
 #endif
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
@@ -72,7 +72,7 @@ struct NetworkProcessCreationParameters {
     SandboxExtension::Handle parentBundleDirectoryExtensionHandle;
 #endif
     bool shouldSuppressMemoryPressureHandler { false };
-    bool shouldUseTestingNetworkSession { false };
+    bool shouldUseTestingNetworkSession;
     std::chrono::milliseconds loadThrottleLatency { 0ms };
 
     Vector<String> urlSchemesRegisteredForCustomProtocols;
@@ -98,9 +98,9 @@ struct NetworkProcessCreationParameters {
 
 #if USE(SOUP)
     String cookiePersistentStoragePath;
-    uint32_t cookiePersistentStorageType { 0 };
-    HTTPCookieAcceptPolicy cookieAcceptPolicy { 0 };
-    bool ignoreTLSErrors { true };
+    uint32_t cookiePersistentStorageType;
+    HTTPCookieAcceptPolicy cookieAcceptPolicy;
+    bool ignoreTLSErrors;
     Vector<String> languages;
     WebCore::SoupNetworkProxySettings proxySettings;
 #endif

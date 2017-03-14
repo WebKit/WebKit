@@ -1,3 +1,15 @@
+2017-03-14  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r213915.
+
+        Caused WK2 LayoutTests to exit early with timeouts.
+
+        Reverted changeset:
+
+        "Fix uninitialized public members in NetworkProcess"
+        https://bugs.webkit.org/show_bug.cgi?id=169598
+        http://trac.webkit.org/changeset/213915
+
 2017-03-14  Brady Eidson  <beidson@apple.com>
 
         REGRESSION (r213877): WebKit2.CookieManager fails.

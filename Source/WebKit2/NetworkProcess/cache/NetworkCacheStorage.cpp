@@ -367,13 +367,13 @@ struct RecordMetaData {
     Key key;
     std::chrono::system_clock::time_point timeStamp;
     SHA1::Digest headerHash;
-    uint64_t headerSize { 0 };
+    uint64_t headerSize;
     SHA1::Digest bodyHash;
-    uint64_t bodySize { 0 };
-    bool isBodyInline { false };
+    uint64_t bodySize;
+    bool isBodyInline;
 
     // Not encoded as a field. Header starts immediately after meta data.
-    uint64_t headerOffset { 0 };
+    uint64_t headerOffset;
 };
 
 static bool decodeRecordMetaData(RecordMetaData& metaData, const Data& fileData)
