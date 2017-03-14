@@ -1621,6 +1621,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      * <listitem><para>
      * a #GdkEventButton of type %GDK_BUTTON_PRESS when the context menu
      * was triggered with mouse.
+     * </para></listitem>
      * <listitem><para>
      * a #GdkEventKey of type %GDK_KEY_PRESS if the keyboard was used to show
      * the menu.
