@@ -107,6 +107,12 @@ bool CACFLayerTreeHost::acceleratedCompositingAvailable()
     }
 
     RefPtr<CACFLayerTreeHost> host = CACFLayerTreeHost::create();
+
+    if (!host) {
+        available = false;
+        return available;
+    }
+
     host->setWindow(testWindow);
     available = host->createRenderer();
     host->setWindow(0);
