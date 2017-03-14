@@ -1,3 +1,25 @@
+2017-03-14  Filip Pizlo  <fpizlo@apple.com>
+
+        Record the HashSet/HashMap operations in DFG/FTL/B3 and replay them in a benchmark
+        https://bugs.webkit.org/show_bug.cgi?id=169590
+
+        Reviewed by Saam Barati.
+        
+        Adds code to support logging some hashtable stuff in the DFG.
+
+        * dfg/DFGAvailabilityMap.cpp:
+        (JSC::DFG::AvailabilityMap::pruneHeap):
+        * dfg/DFGCombinedLiveness.cpp:
+        (JSC::DFG::liveNodesAtHead):
+        (JSC::DFG::CombinedLiveness::CombinedLiveness):
+        * dfg/DFGCombinedLiveness.h:
+        * dfg/DFGLivenessAnalysisPhase.cpp:
+        (JSC::DFG::LivenessAnalysisPhase::run):
+        (JSC::DFG::LivenessAnalysisPhase::processBlock):
+        * dfg/DFGNode.cpp:
+        * dfg/DFGNode.h:
+        * dfg/DFGObjectAllocationSinkingPhase.cpp:
+
 2017-03-14  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Remove unused Network protocol event

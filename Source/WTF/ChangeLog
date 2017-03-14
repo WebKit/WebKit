@@ -1,3 +1,37 @@
+2017-03-14  Filip Pizlo  <fpizlo@apple.com>
+
+        Record the HashSet/HashMap operations in DFG/FTL/B3 and replay them in a benchmark
+        https://bugs.webkit.org/show_bug.cgi?id=169590
+
+        Reviewed by Saam Barati.
+        
+        This adds LoggingHashSet and LoggingHashMap, which are drop-in replacements for HashSet and
+        HashMap that log everything that they do, so that you can replay it later.
+        
+        This also adds a benchmark (HashSetDFGReplay) based on doing a recording of some of the HashSets
+        in the DFG compiler.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * benchmarks/HashSetDFGReplay.cpp: Added.
+        (benchmark):
+        (main):
+        * wtf/CMakeLists.txt:
+        * wtf/GlobalVersion.cpp: Added.
+        (WTF::newGlobalVersion):
+        * wtf/GlobalVersion.h: Added.
+        * wtf/HashMap.h:
+        (WTF::X>::swap):
+        * wtf/HashSet.h:
+        (WTF::V>::addVoid):
+        * wtf/LoggingHashID.h: Added.
+        (WTF::LoggingHashID::LoggingHashID):
+        (WTF::LoggingHashID::dump):
+        * wtf/LoggingHashMap.h: Added.
+        * wtf/LoggingHashSet.h: Added.
+        * wtf/LoggingHashTraits.h: Added.
+        (WTF::LoggingHashKeyTraits::print):
+        (WTF::LoggingHashValueTraits::print):
+
 2017-03-13  Jer Noble  <jer.noble@apple.com>
 
         Make classes used by Media Stream encode/decode friendly

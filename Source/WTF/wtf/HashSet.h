@@ -86,6 +86,9 @@ namespace WTF {
         // and an isNewEntry bool that indicates if it is a new or existing entry in the set.
         AddResult add(const ValueType&);
         AddResult add(ValueType&&);
+        
+        void addVoid(const ValueType&);
+        void addVoid(ValueType&&);
 
         // An alternate version of add() that finds the object by hashing and comparing
         // with some other type, to avoid the cost of type conversion if the object is already
@@ -224,6 +227,18 @@ namespace WTF {
     inline auto HashSet<T, U, V>::add(ValueType&& value) -> AddResult
     {
         return m_impl.add(WTFMove(value));
+    }
+
+    template<typename T, typename U, typename V>
+    inline void HashSet<T, U, V>::addVoid(const ValueType& value)
+    {
+        m_impl.add(value);
+    }
+
+    template<typename T, typename U, typename V>
+    inline void HashSet<T, U, V>::addVoid(ValueType&& value)
+    {
+        m_impl.add(WTFMove(value));
     }
 
     template<typename Value, typename HashFunctions, typename Traits>

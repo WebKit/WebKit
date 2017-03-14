@@ -22,6 +22,7 @@
 #define WTF_HashMap_h
 
 #include <initializer_list>
+#include <wtf/DataLog.h>
 #include <wtf/HashTable.h>
 #include <wtf/IteratorRange.h>
 
@@ -79,7 +80,7 @@ public:
         for (const auto& keyValuePair : initializerList)
             add(keyValuePair.key, keyValuePair.value);
     }
-
+    
     void swap(HashMap&);
 
     unsigned size() const;
@@ -212,7 +213,7 @@ struct HashMapTranslatorAdapter {
 template<typename T, typename U, typename V, typename W, typename X>
 inline void HashMap<T, U, V, W, X>::swap(HashMap& other)
 {
-    m_impl.swap(other.m_impl); 
+    m_impl.swap(other.m_impl);
 }
 
 template<typename T, typename U, typename V, typename W, typename X>

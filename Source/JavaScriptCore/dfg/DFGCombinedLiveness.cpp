@@ -35,12 +35,12 @@
 
 namespace JSC { namespace DFG {
 
-HashSet<Node*> liveNodesAtHead(Graph& graph, BasicBlock* block)
+NodeSet liveNodesAtHead(Graph& graph, BasicBlock* block)
 {
-    HashSet<Node*> seen;
+    NodeSet seen;
     for (NodeFlowProjection node : block->ssa->liveAtHead) {
         if (node.kind() == NodeFlowProjection::Primary)
-            seen.add(node.node());
+            seen.addVoid(node.node());
     }
     
     AvailabilityMap& availabilityMap = block->ssa->availabilityAtHead;
@@ -72,7 +72,7 @@ CombinedLiveness::CombinedLiveness(Graph& graph)
     for (BasicBlock* block : graph.blocksInNaturalOrder()) {
         for (BasicBlock* successor : block->successors()) {
             for (Node* node : liveAtHead[successor])
-                liveAtTail[block].add(node);
+                liveAtTail[block].addVoid(node);
         }
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,8 +37,15 @@
 #include "JSCInlines.h"
 #include <wtf/BitVector.h>
 #include <wtf/IndexSparseSet.h>
+#include <wtf/LoggingHashSet.h>
 
 namespace JSC { namespace DFG {
+
+// Uncomment this to log hashtable operations.
+// static const char templateString[] = "unsigned, DefaultHash<unsigned>::Hash, WTF::UnsignedWithZeroKeyHashTraits<unsigned>";
+// typedef LoggingHashSet<templateString, unsigned, DefaultHash<unsigned>::Hash, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> LiveSet;
+
+typedef HashSet<unsigned, DefaultHash<unsigned>::Hash, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> LiveSet;
 
 class LivenessAnalysisPhase : public Phase {
 public:
@@ -91,7 +98,7 @@ public:
                     liveAtHead.uncheckedAppend(m_indexing.nodeProjection(index));
             }
             {
-                const HashSet<unsigned, DefaultHash<unsigned>::Hash, WTF::UnsignedWithZeroKeyHashTraits<unsigned>>& liveAtTailIndices = m_liveAtTail[blockIndex];
+                const LiveSet& liveAtTailIndices = m_liveAtTail[blockIndex];
                 Vector<NodeFlowProjection>& liveAtTail = block->ssa->liveAtTail;
                 liveAtTail.resize(0);
                 liveAtTail.reserveCapacity(liveAtTailIndices.size());
@@ -157,8 +164,7 @@ private:
 
         bool changedPredecessor = false;
         for (BasicBlock* predecessor : block->predecessors) {
-            HashSet<unsigned, DefaultHash<unsigned>::Hash, WTF::UnsignedWithZeroKeyHashTraits<unsigned>>&
-                liveAtTail = m_liveAtTail[predecessor];
+            LiveSet& liveAtTail = m_liveAtTail[predecessor];
             for (unsigned newValue : *m_workset) {
                 if (liveAtTail.add(newValue)) {
                     if (!m_dirtyBlocks.quickSet(predecessor->index))
@@ -176,7 +182,7 @@ private:
 
     // Live values per block edge.
     BlockMap<Vector<unsigned, 0, UnsafeVectorOverflow, 1>> m_liveAtHead;
-    BlockMap<HashSet<unsigned, DefaultHash<unsigned>::Hash, WTF::UnsignedWithZeroKeyHashTraits<unsigned>>> m_liveAtTail;
+    BlockMap<LiveSet> m_liveAtTail;
 
     // Single sparse set allocated once and used by every basic block.
     std::unique_ptr<IndexSparseSet<UnsafeVectorOverflow>> m_workset;
