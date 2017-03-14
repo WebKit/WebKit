@@ -130,6 +130,9 @@ public:
 
     MediaTime toTimeScale(uint32_t, RoundingFlags = RoundingFlags::HalfAwayFromZero) const;
 
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static bool decode(Decoder&, MediaTime&);
+
 private:
     void setTimeScale(uint32_t, RoundingFlags = RoundingFlags::HalfAwayFromZero);
 
@@ -144,6 +147,21 @@ private:
 inline MediaTime operator*(int32_t lhs, const MediaTime& rhs) { return rhs.operator*(lhs); }
 
 WTF_EXPORT_PRIVATE extern MediaTime abs(const MediaTime& rhs);
+
+template<class Encoder>
+void MediaTime::encode(Encoder& encoder) const
+{
+    encoder << m_timeValue << m_timeScale << m_timeFlags;
+}
+
+template<class Decoder>
+bool MediaTime::decode(Decoder& decoder, MediaTime& time)
+{
+    return decoder.decode(time.m_timeValue)
+        && decoder.decode(time.m_timeScale)
+        && decoder.decode(time.m_timeFlags);
+}
+
 }
 
 using WTF::MediaTime;

@@ -49,12 +49,12 @@ public:
     }
 
     bool supportsWidth() const { return m_supportedConstraints.supportsWidth(); }
-    unsigned long width() const { return m_width; }
-    void setWidth(unsigned long width) { m_width = width; }
+    uint32_t width() const { return m_width; }
+    void setWidth(uint32_t width) { m_width = width; }
 
     bool supportsHeight() const { return m_supportedConstraints.supportsHeight(); }
-    unsigned long height() const { return m_height; }
-    void setHeight(unsigned long height) { m_height = height; }
+    uint32_t height() const { return m_height; }
+    void setHeight(uint32_t height) { m_height = height; }
 
     bool supportsAspectRatio() const { return m_supportedConstraints.supportsAspectRatio(); }
     float aspectRatio() const { return m_aspectRatio; }
@@ -73,12 +73,12 @@ public:
     void setVolume(double volume) { m_volume = volume; }
 
     bool supportsSampleRate() const { return m_supportedConstraints.supportsSampleRate(); }
-    unsigned long sampleRate() const { return m_sampleRate; }
-    void setSampleRate(unsigned long sampleRate) { m_sampleRate = sampleRate; }
+    uint32_t sampleRate() const { return m_sampleRate; }
+    void setSampleRate(uint32_t sampleRate) { m_sampleRate = sampleRate; }
 
     bool supportsSampleSize() const { return m_supportedConstraints.supportsSampleSize(); }
-    unsigned long sampleSize() const { return m_sampleSize; }
-    void setSampleSize(unsigned long sampleSize) { m_sampleSize = sampleSize; }
+    uint32_t sampleSize() const { return m_sampleSize; }
+    void setSampleSize(uint32_t sampleSize) { m_sampleSize = sampleSize; }
 
     bool supportsEchoCancellation() const { return m_supportedConstraints.supportsEchoCancellation(); }
     bool echoCancellation() const { return m_echoCancellation; }
@@ -94,15 +94,18 @@ public:
 
     void setSupportedConstraits(const RealtimeMediaSourceSupportedConstraints& supportedConstraints) { m_supportedConstraints = supportedConstraints; }
 
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static bool decode(Decoder&, RealtimeMediaSourceSettings&);
+
 private:
-    unsigned long m_width { 0 };
-    unsigned long m_height { 0 };
+    uint32_t m_width { 0 };
+    uint32_t m_height { 0 };
     float m_aspectRatio { 0 };
     float m_frameRate { 0 };
     VideoFacingMode m_facingMode { Unknown };
     double m_volume { 0 };
-    unsigned long m_sampleRate { 0 };
-    unsigned long m_sampleSize { 0 };
+    uint32_t m_sampleRate { 0 };
+    uint32_t m_sampleSize { 0 };
     bool m_echoCancellation { 0 };
 
     AtomicString m_deviceId;
@@ -110,6 +113,40 @@ private:
 
     RealtimeMediaSourceSupportedConstraints m_supportedConstraints;
 };
+
+template<class Encoder>
+void RealtimeMediaSourceSettings::encode(Encoder& encoder) const
+{
+    encoder << m_width
+        << m_height
+        << m_aspectRatio
+        << m_frameRate
+        << m_volume
+        << m_sampleRate
+        << m_sampleSize
+        << m_echoCancellation
+        << m_deviceId
+        << m_groupId
+        << m_supportedConstraints;
+    encoder.encodeEnum(m_facingMode);
+}
+
+template<class Decoder>
+bool RealtimeMediaSourceSettings::decode(Decoder& decoder, RealtimeMediaSourceSettings& settings)
+{
+    return decoder.decode(settings.m_width)
+        && decoder.decode(settings.m_height)
+        && decoder.decode(settings.m_aspectRatio)
+        && decoder.decode(settings.m_frameRate)
+        && decoder.decode(settings.m_volume)
+        && decoder.decode(settings.m_sampleRate)
+        && decoder.decode(settings.m_sampleSize)
+        && decoder.decode(settings.m_echoCancellation)
+        && decoder.decode(settings.m_deviceId)
+        && decoder.decode(settings.m_groupId)
+        && decoder.decode(settings.m_supportedConstraints)
+        && decoder.decodeEnum(settings.m_facingMode);
+}
 
 } // namespace WebCore
 

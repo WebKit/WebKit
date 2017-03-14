@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-bool operator==(const AudioStreamBasicDescription&, const AudioStreamBasicDescription&);
+WEBCORE_EXPORT bool operator==(const AudioStreamBasicDescription&, const AudioStreamBasicDescription&);
 inline bool operator!=(const AudioStreamBasicDescription& a, const AudioStreamBasicDescription& b) { return !(a == b); }
 
 class CAAudioStreamDescription final : public AudioStreamDescription {
@@ -76,6 +76,9 @@ public:
     const AudioStreamBasicDescription& streamDescription() const { return m_streamDescription; }
     AudioStreamBasicDescription& streamDescription() { return m_streamDescription; }
 
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static bool decode(Decoder&, CAAudioStreamDescription&);
+
 private:
     void calculateFormat();
 
@@ -83,6 +86,36 @@ private:
     mutable PlatformDescription m_platformDescription;
     mutable PCMFormat m_format { None };
 };
+
+template<class Encoder>
+void CAAudioStreamDescription::encode(Encoder& encoder) const
+{
+    encoder << m_streamDescription.mSampleRate
+        << m_streamDescription.mFormatID
+        << m_streamDescription.mFormatFlags
+        << m_streamDescription.mBytesPerPacket
+        << m_streamDescription.mFramesPerPacket
+        << m_streamDescription.mBytesPerFrame
+        << m_streamDescription.mChannelsPerFrame
+        << m_streamDescription.mBitsPerChannel
+        << m_streamDescription.mReserved;
+    encoder.encodeEnum(m_format);
+}
+
+template<class Decoder>
+bool CAAudioStreamDescription::decode(Decoder& decoder, CAAudioStreamDescription& description)
+{
+    return decoder.decode(description.m_streamDescription.mSampleRate)
+        && decoder.decode(description.m_streamDescription.mFormatID)
+        && decoder.decode(description.m_streamDescription.mFormatFlags)
+        && decoder.decode(description.m_streamDescription.mBytesPerPacket)
+        && decoder.decode(description.m_streamDescription.mFramesPerPacket)
+        && decoder.decode(description.m_streamDescription.mBytesPerFrame)
+        && decoder.decode(description.m_streamDescription.mChannelsPerFrame)
+        && decoder.decode(description.m_streamDescription.mBitsPerChannel)
+        && decoder.decode(description.m_streamDescription.mReserved)
+        && decoder.decodeEnum(description.m_format);
+}
 
 inline CAAudioStreamDescription toCAAudioStreamDescription(const AudioStreamDescription& description)
 {

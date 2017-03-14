@@ -59,6 +59,7 @@ public:
 
     bool enabled() const { return m_enabled; }
     void setEnabled(bool enabled) { m_enabled = enabled; }
+
 private:
     String m_persistentId;
     DeviceType m_type { DeviceType::Unknown };

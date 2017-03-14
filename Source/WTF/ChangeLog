@@ -1,3 +1,14 @@
+2017-03-13  Jer Noble  <jer.noble@apple.com>
+
+        Make classes used by Media Stream encode/decode friendly
+        https://bugs.webkit.org/show_bug.cgi?id=169567
+
+        Reviewed by Eric Carlson.
+
+        * wtf/MediaTime.h:
+        (WTF::MediaTime::encode):
+        (WTF::MediaTime::decode):
+
 2017-03-14  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Add secondsAs<T> methods to Seconds to convert it to integers with clamp

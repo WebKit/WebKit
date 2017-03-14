@@ -2348,45 +2348,16 @@ bool ArgumentCoder<ResourceLoadStatistics>::decode(Decoder& decoder, WebCore::Re
 #if ENABLE(MEDIA_STREAM)
 void ArgumentCoder<MediaConstraintsData>::encode(Encoder& encoder, const WebCore::MediaConstraintsData& constraint)
 {
-    encoder << constraint.mandatoryConstraints;
-
-    auto& advancedConstraints = constraint.advancedConstraints;
-    encoder << static_cast<uint64_t>(advancedConstraints.size());
-    for (const auto& advancedConstraint : advancedConstraints)
-        encoder << advancedConstraint;
-
-    encoder << constraint.isValid;
+    encoder << constraint.mandatoryConstraints
+        << constraint.advancedConstraints
+        << constraint.isValid;
 }
 
 bool ArgumentCoder<MediaConstraintsData>::decode(Decoder& decoder, WebCore::MediaConstraintsData& constraints)
 {
-    MediaTrackConstraintSetMap mandatoryConstraints;
-    if (!decoder.decode(mandatoryConstraints))
-        return false;
-
-    uint64_t advancedCount;
-    if (!decoder.decode(advancedCount))
-        return false;
-
-    Vector<MediaTrackConstraintSetMap> advancedConstraints;
-    advancedConstraints.reserveInitialCapacity(advancedCount);
-    for (size_t i = 0; i < advancedCount; ++i) {
-        MediaTrackConstraintSetMap map;
-        if (!decoder.decode(map))
-            return false;
-
-        advancedConstraints.uncheckedAppend(WTFMove(map));
-    }
-
-    bool isValid;
-    if (!decoder.decode(isValid))
-        return false;
-
-    constraints.mandatoryConstraints = WTFMove(mandatoryConstraints);
-    constraints.advancedConstraints = WTFMove(advancedConstraints);
-    constraints.isValid = isValid;
-
-    return true;
+    return decoder.decode(constraints.mandatoryConstraints)
+        && decoder.decode(constraints.advancedConstraints)
+        && decoder.decode(constraints.isValid);
 }
 
 void ArgumentCoder<CaptureDevice>::encode(Encoder& encoder, const WebCore::CaptureDevice& device)
