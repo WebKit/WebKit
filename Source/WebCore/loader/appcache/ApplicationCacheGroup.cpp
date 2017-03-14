@@ -575,7 +575,7 @@ void ApplicationCacheGroup::didFinishLoading(ResourceHandle* handle)
 {
     // FIXME: We should have NetworkLoadMetrics for ApplicationCache loads.
     NetworkLoadMetrics emptyMetrics;
-    InspectorInstrumentation::didFinishLoading(m_frame, m_frame->loader().documentLoader(), m_currentResourceIdentifier, emptyMetrics);
+    InspectorInstrumentation::didFinishLoading(m_frame, m_frame->loader().documentLoader(), m_currentResourceIdentifier, emptyMetrics, nullptr);
 
     if (handle == m_manifestHandle) {
         didFinishLoadingManifest();

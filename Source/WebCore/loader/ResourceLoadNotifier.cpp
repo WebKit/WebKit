@@ -92,7 +92,7 @@ void ResourceLoadNotifier::didFinishLoad(ResourceLoader* loader, const NetworkLo
     if (Page* page = m_frame.page())
         page->progress().completeProgress(loader->identifier());
 
-    dispatchDidFinishLoading(loader->documentLoader(), loader->identifier(), networkLoadMetrics);
+    dispatchDidFinishLoading(loader->documentLoader(), loader->identifier(), networkLoadMetrics, loader);
 }
 
 void ResourceLoadNotifier::didFailToLoad(ResourceLoader* loader, const ResourceError& error)
@@ -153,13 +153,13 @@ void ResourceLoadNotifier::dispatchDidReceiveData(DocumentLoader* loader, unsign
     InspectorInstrumentation::didReceiveData(&m_frame, identifier, data, dataLength, encodedDataLength);
 }
 
-void ResourceLoadNotifier::dispatchDidFinishLoading(DocumentLoader* loader, unsigned long identifier, const NetworkLoadMetrics& networkLoadMetrics)
+void ResourceLoadNotifier::dispatchDidFinishLoading(DocumentLoader* loader, unsigned long identifier, const NetworkLoadMetrics& networkLoadMetrics, ResourceLoader* resourceLoader)
 {
     // Notifying the FrameLoaderClient may cause the frame to be destroyed.
     Ref<Frame> protect(m_frame);
     m_frame.loader().client().dispatchDidFinishLoading(loader, identifier);
 
-    InspectorInstrumentation::didFinishLoading(&m_frame, loader, identifier, networkLoadMetrics);
+    InspectorInstrumentation::didFinishLoading(&m_frame, loader, identifier, networkLoadMetrics, resourceLoader);
 }
 
 void ResourceLoadNotifier::dispatchDidFailLoading(DocumentLoader* loader, unsigned long identifier, const ResourceError& error)
@@ -189,7 +189,7 @@ void ResourceLoadNotifier::sendRemainingDelegateMessages(DocumentLoader* loader,
 
     if (error.isNull()) {
         NetworkLoadMetrics emptyMetrics;
-        dispatchDidFinishLoading(loader, identifier, emptyMetrics);
+        dispatchDidFinishLoading(loader, identifier, emptyMetrics, nullptr);
     } else
         dispatchDidFailLoading(loader, identifier, error);
 }

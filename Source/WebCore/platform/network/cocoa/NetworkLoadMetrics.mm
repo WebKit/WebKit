@@ -41,11 +41,11 @@ void copyTimingData(NSDictionary *timingData, NetworkLoadMetrics& timing)
 {
     if (!timingData)
         return;
-    
+
     // This is not the navigationStart time in monotonic time, but the other times are relative to this time
     // and only the differences between times are stored.
     double referenceStart = timingValue(timingData, @"_kCFNTimingDataFetchStart");
-    
+
     double domainLookupStart = timingValue(timingData, @"_kCFNTimingDataDomainLookupStart");
     double domainLookupEnd = timingValue(timingData, @"_kCFNTimingDataDomainLookupEnd");
     double connectStart = timingValue(timingData, @"_kCFNTimingDataConnectStart");
@@ -53,14 +53,14 @@ void copyTimingData(NSDictionary *timingData, NetworkLoadMetrics& timing)
     double connectEnd = timingValue(timingData, @"_kCFNTimingDataConnectEnd");
     double requestStart = timingValue(timingData, @"_kCFNTimingDataRequestStart");
     double responseStart = timingValue(timingData, @"_kCFNTimingDataResponseStart");
-    
-    timing.domainLookupStart = Seconds(domainLookupStart <= 0 ? Seconds(-1) : Seconds::fromMilliseconds(domainLookupStart - referenceStart));
-    timing.domainLookupEnd = Seconds(domainLookupEnd <= 0 ? Seconds(-1) : Seconds::fromMilliseconds(domainLookupEnd - referenceStart));
-    timing.connectStart = Seconds(connectStart <= 0 ? Seconds(-1) : Seconds::fromMilliseconds(connectStart - referenceStart));
-    timing.secureConnectionStart = Seconds(secureConnectionStart <= 0 ? Seconds(-1) : Seconds::fromMilliseconds(secureConnectionStart - referenceStart));
-    timing.connectEnd = Seconds(connectEnd <= 0 ? Seconds(-1) : Seconds::fromMilliseconds(connectEnd - referenceStart));
-    timing.requestStart = Seconds(requestStart <= 0 ? Seconds(0) : Seconds::fromMilliseconds(requestStart - referenceStart));
-    timing.responseStart = Seconds(responseStart <= 0 ? Seconds(0) : Seconds::fromMilliseconds(responseStart - referenceStart));
+
+    timing.domainLookupStart = Seconds(domainLookupStart <= 0 ? -1 : domainLookupStart - referenceStart);
+    timing.domainLookupEnd = Seconds(domainLookupEnd <= 0 ? -1 : domainLookupEnd - referenceStart);
+    timing.connectStart = Seconds(connectStart <= 0 ? -1 : connectStart - referenceStart);
+    timing.secureConnectionStart = Seconds(secureConnectionStart <= 0 ? -1 : secureConnectionStart - referenceStart);
+    timing.connectEnd = Seconds(connectEnd <= 0 ? -1 : connectEnd - referenceStart);
+    timing.requestStart = Seconds(requestStart <= 0 ? 0 : requestStart - referenceStart);
+    timing.responseStart = Seconds(responseStart <= 0 ? 0 : responseStart - referenceStart);
 
     // NOTE: responseEnd is not populated in this code path.
 }

@@ -419,13 +419,18 @@ void InspectorNetworkAgent::didReceiveData(unsigned long identifier, const char*
     m_frontendDispatcher->dataReceived(requestId, timestamp(), dataLength, encodedDataLength);
 }
 
-void InspectorNetworkAgent::didFinishLoading(unsigned long identifier, DocumentLoader& loader, const NetworkLoadMetrics& networkLoadMetrics)
+void InspectorNetworkAgent::didFinishLoading(unsigned long identifier, DocumentLoader& loader, const NetworkLoadMetrics& networkLoadMetrics, ResourceLoader* resourceLoader)
 {
     if (m_hiddenRequestIdentifiers.remove(identifier))
         return;
 
-    // FIXME: We should use the NetworkLoadMetrics's responseEnd to match ResourceTiming.
-    double elapsedFinishTime = timestamp();
+    double elapsedFinishTime;
+    if (resourceLoader && networkLoadMetrics.isComplete()) {
+        MonotonicTime startTime = resourceLoader->loadTiming().startTime();
+        double startTimeInInspector = m_environment.executionStopwatch()->elapsedTimeSince(startTime);
+        elapsedFinishTime = startTimeInInspector + networkLoadMetrics.responseEnd.seconds();
+    } else
+        elapsedFinishTime = timestamp();
 
     String requestId = IdentifiersFactory::requestId(identifier);
     if (m_resourcesData->resourceType(requestId) == InspectorPageAgent::DocumentResource)

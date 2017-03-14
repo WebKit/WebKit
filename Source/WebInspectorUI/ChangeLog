@@ -1,3 +1,19 @@
+2017-03-14  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: More accurate Resource Timing data in Web Inspector
+        https://bugs.webkit.org/show_bug.cgi?id=169577
+
+        Reviewed by Youenn Fablet.
+
+        * UserInterface/Models/ResourceTimingData.js:
+        (WebInspector.ResourceTimingData.prototype.get requestStart):
+        (WebInspector.ResourceTimingData.prototype.get responseStart):
+        Fallback to the startTime if available instead of using the
+        inaccurate WebContentProcess gathered timestamps.
+
+        (WebInspector.ResourceTimingData.prototype.markResponseEndTime):
+        Verify responseEnd compared to other times we may have.
+
 2017-03-14  Devin Rousso  <webkit@devinrousso.com>
 
         Web Inspector: Remove unnecessary assert for Number.percentageString
