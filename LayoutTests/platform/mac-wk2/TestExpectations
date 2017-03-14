@@ -680,3 +680,5 @@ webkit.org/b/168346 [ Sierra Debug ] editing/selection/move-by-word-visually-mul
 webkit.org/b/169481 [ Debug ] webrtc/libwebrtc/descriptionGetters.html [ Pass Failure ]
 
 webkit.org/b/169621 imported/w3c/web-platform-tests/IndexedDB/fire-error-event-exception.html [ Pass Failure ]
+
+webkit.org/b/169640 imported/w3c/web-platform-tests/html/webappapis/scripting/events/event-handler-javascript.html [ Failure ]
