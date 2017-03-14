@@ -89,10 +89,12 @@ const iconService = new class IconService {
         else
             throw "Could not identify icon's platform from layout traits.";
 
-        if (layoutTraits & LayoutTraits.Fullscreen && IconsWithFullscreenVariants.includes(iconName))
-            iconName += "-fullscreen";
-        else if (layoutTraits & LayoutTraits.Compact && IconsWithCompactVariants.includes(iconName))
-            iconName += "-compact";
+        if (layoutTraits & LayoutTraits.macOS) {
+            if (layoutTraits & LayoutTraits.Fullscreen && IconsWithFullscreenVariants.includes(iconName))
+                iconName += "-fullscreen";
+            else if (layoutTraits & LayoutTraits.Compact && IconsWithCompactVariants.includes(iconName))
+                iconName += "-compact";
+        }
 
         const fileName = `${iconName}@${window.devicePixelRatio}x`;
 

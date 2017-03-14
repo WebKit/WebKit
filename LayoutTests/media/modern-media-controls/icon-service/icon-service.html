@@ -15,6 +15,11 @@ shouldBeTrue('iconService.imageForIconNameAndLayoutTraits(Icons.Pause, LayoutTra
 shouldBeTrue('iconService.imageForIconNameAndLayoutTraits(Icons.Pause, LayoutTraits.macOS | LayoutTraits.Fullscreen).src.includes("macOS/pause-fullscreen@")');
 
 debug("");
+debug("Checking fullscreen or compact layout traits are ignored on iOS");
+shouldBeTrue('iconService.imageForIconNameAndLayoutTraits(Icons.Pause, LayoutTraits.iOS | LayoutTraits.Fullscreen) === iconService.imageForIconNameAndLayoutTraits(Icons.Pause, LayoutTraits.iOS)');
+shouldBeTrue('iconService.imageForIconNameAndLayoutTraits(Icons.Pause, LayoutTraits.iOS | LayoutTraits.Compact) === iconService.imageForIconNameAndLayoutTraits(Icons.Pause, LayoutTraits.iOS)');
+
+debug("");
 debug("Checking requested images are cached");
 shouldBeTrue('iconService.imageForIconNameAndLayoutTraits(Icons.Pause, LayoutTraits.macOS) === iconService.imageForIconNameAndLayoutTraits(Icons.Pause, LayoutTraits.macOS)');
 

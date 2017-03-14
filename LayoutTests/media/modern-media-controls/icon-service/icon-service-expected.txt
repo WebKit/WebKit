@@ -8,6 +8,10 @@ PASS iconService.imageForIconNameAndLayoutTraits(Icons.Pause, LayoutTraits.macOS
 PASS iconService.imageForIconNameAndLayoutTraits(Icons.Pause, LayoutTraits.iOS).src.includes("iOS/pause@") is true
 PASS iconService.imageForIconNameAndLayoutTraits(Icons.Pause, LayoutTraits.macOS | LayoutTraits.Fullscreen).src.includes("macOS/pause-fullscreen@") is true
 
+Checking fullscreen or compact layout traits are ignored on iOS
+PASS iconService.imageForIconNameAndLayoutTraits(Icons.Pause, LayoutTraits.iOS | LayoutTraits.Fullscreen) === iconService.imageForIconNameAndLayoutTraits(Icons.Pause, LayoutTraits.iOS) is true
+PASS iconService.imageForIconNameAndLayoutTraits(Icons.Pause, LayoutTraits.iOS | LayoutTraits.Compact) === iconService.imageForIconNameAndLayoutTraits(Icons.Pause, LayoutTraits.iOS) is true
+
 Checking requested images are cached
 PASS iconService.imageForIconNameAndLayoutTraits(Icons.Pause, LayoutTraits.macOS) === iconService.imageForIconNameAndLayoutTraits(Icons.Pause, LayoutTraits.macOS) is true
 PASS successfullyParsed is true

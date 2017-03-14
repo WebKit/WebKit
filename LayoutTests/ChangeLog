@@ -1,5 +1,18 @@
 2017-03-14  Antoine Quint  <graouts@apple.com>
 
+        [Modern Media Controls] iOS may attempt to load fullscreen icon variants
+        https://bugs.webkit.org/show_bug.cgi?id=169608
+        <rdar://problem/31037369>
+
+        Reviewed by Eric Carlson.
+
+        Amend an existing test to check that we disregard fullscreen and compact variants on iOS.
+
+        * media/modern-media-controls/icon-service/icon-service-expected.txt:
+        * media/modern-media-controls/icon-service/icon-service.html:
+
+2017-03-14  Antoine Quint  <graouts@apple.com>
+
         [Modern Media Controls] Controls are laid out incorrectly with RTL languages
         https://bugs.webkit.org/show_bug.cgi?id=169605
         <rdar://problem/30975709>
