@@ -142,39 +142,11 @@ void CanvasCaptureMediaStreamTrack::Source::captureCanvas()
     if (!m_canvas->originClean())
         return;
 
-    // FIXME: This is probably not efficient.
-    m_currentImage = m_canvas->copiedImage();
-
     auto sample = m_canvas->toMediaSample();
     if (!sample)
         return;
 
     videoSampleAvailable(*sample);
-}
-
-void CanvasCaptureMediaStreamTrack::Source::paintCurrentFrameInContext(GraphicsContext& context, const FloatRect& rect)
-{
-    if (!m_canvas)
-        return;
-
-    if (context.paintingDisabled())
-        return;
-
-    auto image = currentFrameImage();
-    if (!image)
-        return;
-
-    FloatRect fullRect(0, 0, m_canvas->width(), m_canvas->height());
-
-    GraphicsContextStateSaver stateSaver(context);
-    context.setImageInterpolationQuality(InterpolationLow);
-    IntRect paintRect(IntPoint(0, 0), IntSize(rect.width(), rect.height()));
-    context.drawImage(*image, rect);
-}
-
-RefPtr<Image> CanvasCaptureMediaStreamTrack::Source::currentFrameImage()
-{
-    return m_currentImage;
 }
 
 }

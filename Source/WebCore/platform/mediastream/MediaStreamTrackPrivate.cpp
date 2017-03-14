@@ -49,8 +49,6 @@ Ref<MediaStreamTrackPrivate> MediaStreamTrackPrivate::create(Ref<RealtimeMediaSo
 MediaStreamTrackPrivate::MediaStreamTrackPrivate(Ref<RealtimeMediaSource>&& source, String&& id)
     : m_source(WTFMove(source))
     , m_id(WTFMove(id))
-    , m_isEnabled(true)
-    , m_isEnded(false)
 {
     m_source->addObserver(*this);
 }
@@ -115,6 +113,7 @@ void MediaStreamTrackPrivate::endTrack()
     // only track using the source and it does stop, we will only call each observer's
     // trackEnded method once.
     m_isEnded = true;
+    updateReadyState();
 
     m_source->requestStop(this);
 
@@ -127,6 +126,7 @@ Ref<MediaStreamTrackPrivate> MediaStreamTrackPrivate::clone()
     auto clonedMediaStreamTrackPrivate = create(m_source.copyRef());
     clonedMediaStreamTrackPrivate->m_isEnabled = this->m_isEnabled;
     clonedMediaStreamTrackPrivate->m_isEnded = this->m_isEnded;
+    clonedMediaStreamTrackPrivate->updateReadyState();
 
     return clonedMediaStreamTrackPrivate;
 }
@@ -146,21 +146,6 @@ RefPtr<RealtimeMediaSourceCapabilities> MediaStreamTrackPrivate::capabilities() 
     return m_source->capabilities();
 }
 
-void MediaStreamTrackPrivate::paintCurrentFrameInContext(GraphicsContext& context, const FloatRect& rect)
-{
-    if (context.paintingDisabled() || m_source->type() != RealtimeMediaSource::Type::Video || ended())
-        return;
-
-    if (!m_source->muted())
-        m_source->paintCurrentFrameInContext(context, rect);
-    else {
-        GraphicsContextStateSaver stateSaver(context);
-        context.translate(rect.x(), rect.y() + rect.height());
-        IntRect paintRect(IntPoint(0, 0), IntSize(rect.width(), rect.height()));
-        context.fillRect(paintRect, Color::black);
-    }
-}
-
 void MediaStreamTrackPrivate::applyConstraints(const MediaConstraints& constraints, RealtimeMediaSource::SuccessHandler successHandler, RealtimeMediaSource::FailureHandler failureHandler)
 {
     m_source->applyConstraints(constraints, successHandler, failureHandler);
@@ -177,6 +162,7 @@ void MediaStreamTrackPrivate::sourceStopped()
         return;
 
     m_isEnded = true;
+    updateReadyState();
 
     for (auto& observer : m_observers)
         observer->trackEnded(*this);
@@ -208,6 +194,11 @@ bool MediaStreamTrackPrivate::preventSourceFromStopping()
 
 void MediaStreamTrackPrivate::videoSampleAvailable(MediaSample& mediaSample)
 {
+    if (!m_haveProducedData) {
+        m_haveProducedData = true;
+        updateReadyState();
+    }
+
     mediaSample.setTrackID(id());
     for (auto& observer : m_observers)
         observer->sampleBufferUpdated(*this, mediaSample);
@@ -215,8 +206,31 @@ void MediaStreamTrackPrivate::videoSampleAvailable(MediaSample& mediaSample)
 
 void MediaStreamTrackPrivate::audioSamplesAvailable(const MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t)
 {
+    if (!m_haveProducedData) {
+        m_haveProducedData = true;
+        updateReadyState();
+    }
+
     for (auto& observer : m_observers)
         observer->audioSamplesAvailable(*this);
+}
+
+
+void MediaStreamTrackPrivate::updateReadyState()
+{
+    ReadyState state = ReadyState::None;
+
+    if (m_isEnded)
+        state = ReadyState::Ended;
+    else if (m_haveProducedData)
+        state = ReadyState::Live;
+
+    if (state == m_readyState)
+        return;
+
+    m_readyState = state;
+    for (auto& observer : m_observers)
+        observer->readyStateChanged(*this);
 }
 
 } // namespace WebCore

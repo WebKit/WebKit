@@ -141,9 +141,6 @@ public:
 
     virtual AudioSourceProvider* audioSourceProvider() { return nullptr; }
 
-    virtual RefPtr<Image> currentFrameImage() { return nullptr; }
-    virtual void paintCurrentFrameInContext(GraphicsContext&, const FloatRect&) { }
-
     void setWidth(int);
     void setHeight(int);
     const IntSize& size() const { return m_size; }

@@ -7,25 +7,26 @@ PASS mediaDevices.getUserMedia generated a stream successfully.
 video.src = window.URL.createObjectURL(mediaStream)
 
  === beginning round of pixel tests ===
-PASS pixel was black
+PASS pixel was black.
 
  === all video tracks disabled ===
 PASS pixel was black.
 
- === video track reenabled ===
-PASS pixel was white.
+ === video track reenabled, should NOT render current frame ===
+PASS pixel was black.
 
  ===== play video =====
 video.play()
 
  === beginning round of pixel tests ===
-PASS pixel was black
+PASS pixel was white.
 
  === all video tracks disabled ===
 PASS pixel was black.
 
- === video track reenabled ===
+ === video track reenabled, should render current frame ===
 PASS pixel was white.
+
 PASS successfullyParsed is true
 
 TEST COMPLETE

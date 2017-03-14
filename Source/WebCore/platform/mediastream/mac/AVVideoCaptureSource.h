@@ -77,11 +77,6 @@ private:
     void captureOutputDidOutputSampleBufferFromConnection(AVCaptureOutput*, CMSampleBufferRef, AVCaptureConnection*) final;
     void processNewFrame(RetainPtr<CMSampleBufferRef>);
 
-    void paintCurrentFrameInContext(GraphicsContext&, const FloatRect&) final;
-
-    RetainPtr<CGImageRef> currentFrameCGImage();
-    RefPtr<Image> currentFrameImage() final;
-
     RetainPtr<NSString> m_pendingPreset;
     RetainPtr<CMSampleBufferRef> m_buffer;
     RetainPtr<CGImageRef> m_lastImage;

@@ -103,7 +103,11 @@ using namespace WebCore;
 
 namespace WebCore {
 
+#if PLATFORM(MAC)
 const OSType videoCaptureFormat = kCVPixelFormatType_420YpCbCr8Planar;
+#else
+const OSType videoCaptureFormat = kCVPixelFormatType_420YpCbCr8BiPlanarFullRange;
+#endif
 
 RefPtr<AVMediaCaptureSource> AVVideoCaptureSource::create(AVCaptureDeviceTypedef* device, const AtomicString& id, const MediaConstraints* constraints, String& invalidConstraint)
 {
@@ -434,58 +438,6 @@ void AVVideoCaptureSource::captureOutputDidOutputSampleBufferFromConnection(AVCa
     scheduleDeferredTask([this, buffer] {
         this->processNewFrame(buffer);
     });
-}
-
-RefPtr<Image> AVVideoCaptureSource::currentFrameImage()
-{
-    if (!currentFrameCGImage())
-        return nullptr;
-
-    FloatRect imageRect(0, 0, m_width, m_height);
-    std::unique_ptr<ImageBuffer> imageBuffer = ImageBuffer::create(imageRect.size(), Unaccelerated);
-
-    if (!imageBuffer)
-        return nullptr;
-
-    paintCurrentFrameInContext(imageBuffer->context(), imageRect);
-
-    return ImageBuffer::sinkIntoImage(WTFMove(imageBuffer));
-}
-
-RetainPtr<CGImageRef> AVVideoCaptureSource::currentFrameCGImage()
-{
-    if (m_lastImage)
-        return m_lastImage;
-
-    if (!m_buffer)
-        return nullptr;
-
-    CVPixelBufferRef pixelBuffer = static_cast<CVPixelBufferRef>(CMSampleBufferGetImageBuffer(m_buffer.get()));
-    ASSERT(CVPixelBufferGetPixelFormatType(pixelBuffer) == videoCaptureFormat);
-
-    if (!m_pixelBufferConformer)
-        m_pixelBufferConformer = std::make_unique<PixelBufferConformerCV>((CFDictionaryRef)@{ (NSString *)kCVPixelBufferPixelFormatTypeKey: @(kCVPixelFormatType_32BGRA) });
-
-    ASSERT(m_pixelBufferConformer);
-    if (!m_pixelBufferConformer)
-        return nullptr;
-
-    m_lastImage = m_pixelBufferConformer->createImageFromPixelBuffer(pixelBuffer);
-
-    return m_lastImage;
-}
-
-void AVVideoCaptureSource::paintCurrentFrameInContext(GraphicsContext& context, const FloatRect& rect)
-{
-    if (context.paintingDisabled() || !currentFrameCGImage())
-        return;
-
-    GraphicsContextStateSaver stateSaver(context);
-    context.translate(rect.x(), rect.y() + rect.height());
-    context.scale(FloatSize(1, -1));
-    context.setImageInterpolationQuality(InterpolationLow);
-    IntRect paintRect(IntPoint(0, 0), IntSize(rect.width(), rect.height()));
-    CGContextDrawImage(context.platformContext(), CGRectMake(0, 0, paintRect.width(), paintRect.height()), m_lastImage.get());
 }
 
 NSString* AVVideoCaptureSource::bestSessionPresetForVideoDimensions(std::optional<int> width, std::optional<int> height) const

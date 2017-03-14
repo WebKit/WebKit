@@ -33,7 +33,12 @@
         return pixel[0] === 255 && pixel[1] === 255 && pixel[2] === 255 && pixel[3] === 255;
     }
 
-    function attempt(numberOfTries, call, callback, successMessage)
+    function canvasShouldBeBlack()
+    {
+        return !(mediaStream.getVideoTracks()[0].enabled && havePlayed);
+    }
+    
+    function attempt(numberOfTries, call, callback)
     {
         if (numberOfTries <= 0) {
             testFailed('Pixel check did not succeed after multiple tries.');
@@ -42,13 +47,13 @@
 
         let attemptSucceeded = call();
         if (attemptSucceeded) {
-            testPassed(successMessage);
+            testPassed(canvasShouldBeBlack() ? 'pixel was black.' : 'pixel was white.');
             callback();
 
             return;
         }
         
-        setTimeout(() => { attempt(--numberOfTries, call, callback, successMessage); }, 50);
+        setTimeout(() => { attempt(--numberOfTries, call, callback); }, 50);
     }
 
     function repeatWithVideoPlayingAndFinishTest()
@@ -56,34 +61,36 @@
         if (video.paused) {
             debug('<br> ===== play video =====');
             evalAndLog('video.play()');
+            havePlayed = true;
             beginTestRound();
-        } else
+        } else {
+            debug('');
             video.pause();
             finishJSTest();
+        }
     }
 
     function reenableTrack()
     {
         mediaStream.getVideoTracks()[0].enabled = true;
-        debug('<br> === video track reenabled ===');
+        debug(`<br> === video track reenabled, should${havePlayed ? "" : " NOT"} render current frame ===`);
 
         // The video is not guaranteed to render non-black frames before the canvas is drawn to and the pixels are checked.
         // A timeout is used to ensure that the pixel check is done after the video renders non-black frames.
-        attempt(10, checkPixels, repeatWithVideoPlayingAndFinishTest, 'pixel was white.');
+        attempt(10, checkPixels, repeatWithVideoPlayingAndFinishTest);
     }
 
     function checkPixels()
     {
         context.clearRect(0, 0, canvas.width, canvas.height);
         buffer = context.getImageData(30, 242, 1, 1).data;
-        if(!isPixelTransparent(buffer)) {
+        if (!isPixelTransparent(buffer))
             testFailed('pixel was not transparent after clearing canvas.');
-        }
 
         context.drawImage(video, 0, 0, canvas.width, canvas.height);
         buffer = context.getImageData(30, 242, 1, 1).data;
 
-        if (mediaStream.getVideoTracks()[0].enabled && havePlayed)
+        if (!canvasShouldBeBlack())
             return isPixelWhite(buffer);
         else
             return isPixelBlack(buffer);
@@ -96,13 +103,13 @@
         
         // The video is not guaranteed to render black frames before the canvas is drawn to and the pixels are checked.
         // A timeout is used to ensure that the pixel check is done after the video renders black frames.
-        attempt(10, checkPixels, reenableTrack, 'pixel was black.');
+        attempt(10, checkPixels, reenableTrack);
     }
 
     function beginTestRound()
     {
         debug('<br> === beginning round of pixel tests ===');
-        attempt(1, checkPixels, disableAllTracks, 'pixel was black');
+        attempt(10, checkPixels, disableAllTracks);
     }
 
     function canplay()

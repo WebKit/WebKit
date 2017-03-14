@@ -239,30 +239,6 @@ FloatSize MediaStreamPrivate::intrinsicSize() const
     return size;
 }
 
-void MediaStreamPrivate::paintCurrentFrameInContext(GraphicsContext& context, const FloatRect& rect)
-{
-    if (context.paintingDisabled())
-        return;
-
-    if (active() && m_activeVideoTrack)
-        m_activeVideoTrack->paintCurrentFrameInContext(context, rect);
-    else {
-        GraphicsContextStateSaver stateSaver(context);
-        context.translate(rect.x(), rect.y() + rect.height());
-        context.scale(FloatSize(1, -1));
-        IntRect paintRect(IntPoint(0, 0), IntSize(rect.width(), rect.height()));
-        context.fillRect(paintRect, Color::black);
-    }
-}
-
-RefPtr<Image> MediaStreamPrivate::currentFrameImage()
-{
-    if (!active() || !m_activeVideoTrack)
-        return nullptr;
-
-    return m_activeVideoTrack->source().currentFrameImage();
-}
-
 void MediaStreamPrivate::updateActiveVideoTrack()
 {
     m_activeVideoTrack = nullptr;

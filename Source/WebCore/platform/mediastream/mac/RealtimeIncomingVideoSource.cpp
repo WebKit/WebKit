@@ -150,52 +150,6 @@ void RealtimeIncomingVideoSource::processNewSample(CMSampleBufferRef sample, uns
     videoSampleAvailable(MediaSampleAVFObjC::create(sample));
 }
 
-static inline void drawImage(ImageBuffer& imageBuffer, CGImageRef image, const FloatRect& rect)
-{
-    auto& context = imageBuffer.context();
-    GraphicsContextStateSaver stateSaver(context);
-    context.translate(rect.x(), rect.y() + rect.height());
-    context.scale(FloatSize(1, -1));
-    context.setImageInterpolationQuality(InterpolationLow);
-    IntRect paintRect(IntPoint(0, 0), IntSize(rect.width(), rect.height()));
-    CGContextDrawImage(context.platformContext(), CGRectMake(0, 0, paintRect.width(), paintRect.height()), image);
-}
-
-RefPtr<Image> RealtimeIncomingVideoSource::currentFrameImage()
-{
-    if (!m_buffer)
-        return nullptr;
-
-    FloatRect rect(0, 0, m_currentSettings.width(), m_currentSettings.height());
-    auto imageBuffer = ImageBuffer::create(rect.size(), Unaccelerated);
-
-    auto pixelBuffer = static_cast<CVPixelBufferRef>(CMSampleBufferGetImageBuffer(m_buffer.get()));
-    drawImage(*imageBuffer, m_conformer.createImageFromPixelBuffer(pixelBuffer).get(), rect);
-
-    return ImageBuffer::sinkIntoImage(WTFMove(imageBuffer));
-}
-
-void RealtimeIncomingVideoSource::paintCurrentFrameInContext(GraphicsContext& context, const FloatRect& rect)
-{
-    if (context.paintingDisabled())
-        return;
-
-    if (!m_buffer)
-        return;
-
-    // FIXME: Can we optimize here the painting?
-    FloatRect fullRect(0, 0, m_currentSettings.width(), m_currentSettings.height());
-    auto imageBuffer = ImageBuffer::create(fullRect.size(), Unaccelerated);
-
-    auto pixelBuffer = static_cast<CVPixelBufferRef>(CMSampleBufferGetImageBuffer(m_buffer.get()));
-    drawImage(*imageBuffer, m_conformer.createImageFromPixelBuffer(pixelBuffer).get(), fullRect);
-
-    GraphicsContextStateSaver stateSaver(context);
-    context.setImageInterpolationQuality(InterpolationLow);
-    IntRect paintRect(IntPoint(0, 0), IntSize(rect.width(), rect.height()));
-    context.drawImage(*imageBuffer->copyImage(DontCopyBackingStore), rect);
-}
-
 RefPtr<RealtimeMediaSourceCapabilities> RealtimeIncomingVideoSource::capabilities() const
 {
     return m_capabilities;

@@ -93,9 +93,6 @@ public:
     void stopProducingData();
     bool isProducingData() const;
 
-    RefPtr<Image> currentFrameImage();
-    void paintCurrentFrameInContext(GraphicsContext&, const FloatRect&);
-
     bool hasVideo() const;
     bool hasAudio() const;
     bool muted() const;

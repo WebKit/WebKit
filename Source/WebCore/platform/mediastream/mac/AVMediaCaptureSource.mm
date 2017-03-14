@@ -347,8 +347,8 @@ NSArray<NSString*>* sessionKVOProperties()
 - (void)disconnect
 {
     [NSObject cancelPreviousPerformRequestsWithTarget:self];
-    m_callback = 0;
     [self removeNotificationObservers];
+    m_callback = nullptr;
 }
 
 - (void)addNotificationObservers
@@ -368,8 +368,7 @@ NSArray<NSString*>* sessionKVOProperties()
 - (void)removeNotificationObservers
 {
 #if PLATFORM(IOS)
-    ASSERT(m_callback);
-    [[NSNotificationCenter defaultCenter] removeObserver:m_callback->session()];
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 #endif
 }
 
@@ -426,7 +425,7 @@ NSArray<NSString*>* sessionKVOProperties()
 
 - (void)endSessionInterrupted:(NSNotification*)notification
 {
-    LOG(Media, "WebCoreAVMediaCaptureSourceObserver::endSessionInterrupted(%p) ", self);
+    LOG(Media, "WebCoreAVMediaCaptureSourceObserver::endSessionInterrupted(%p)", self);
 
     if (m_callback)
         m_callback->captureSessionEndInterruption(notification);

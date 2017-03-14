@@ -76,9 +76,6 @@ private:
     bool applyFacingMode(RealtimeMediaSourceSettings::VideoFacingMode) override { return true; }
     bool applyAspectRatio(double) override { return true; }
 
-    RefPtr<Image> currentFrameImage() override;
-    void paintCurrentFrameInContext(GraphicsContext&, const FloatRect&) override;
-
     void generateFrame();
 
     float m_baseFontSize { 0 };

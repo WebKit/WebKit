@@ -49,6 +49,7 @@ class AudioTrackPrivateMediaStreamCocoa;
 class AVVideoCaptureSource;
 class Clock;
 class MediaSourcePrivateClient;
+class PixelBufferConformerCV;
 class VideoTrackPrivateMediaStream;
 
 #if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
@@ -77,7 +78,7 @@ public:
     void ensureLayer();
     void destroyLayer();
 
-    void layerStatusDidChange(AVSampleBufferDisplayLayer*, NSNumber*);
+    void layerStatusDidChange(AVSampleBufferDisplayLayer*);
 
 private:
     // MediaPlayerPrivateInterface
@@ -135,7 +136,6 @@ private:
     MediaTime calculateTimelineOffset(const MediaSample&, double);
     
     void enqueueVideoSample(MediaStreamTrackPrivate&, MediaSample&);
-    bool shouldEnqueueVideoSampleBuffer() const;
     void flushAndRemoveVideoSampleBuffers();
     void requestNotificationWhenReadyForVideoData();
 
@@ -161,9 +161,8 @@ private:
     MediaPlayer::ReadyState currentReadyState();
     void updateReadyState();
 
-    void updateIntrinsicSize(const FloatSize&);
     void updateTracks();
-    void renderingModeChanged();
+    void updateRenderingMode();
     void checkSelectedVideoTrack();
 
     void scheduleDeferredTask(Function<void ()>&&);
@@ -175,8 +174,8 @@ private:
         LivePreview,
     };
     DisplayMode currentDisplayMode() const;
-    void updateDisplayMode();
-    void updatePausedImage();
+    bool updateDisplayMode();
+    void updateCurrentFrameImage();
 
     // MediaStreamPrivate::Observer
     void activeStatusChanged() override;
@@ -190,7 +189,7 @@ private:
     void trackSettingsChanged(MediaStreamTrackPrivate&) override { };
     void trackEnabledChanged(MediaStreamTrackPrivate&) override { };
     void sampleBufferUpdated(MediaStreamTrackPrivate&, MediaSample&) override;
-    void audioSamplesAvailable(MediaStreamTrackPrivate&) override;
+    void readyStateChanged(MediaStreamTrackPrivate&) override;
 
 #if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
     void setVideoFullscreenLayer(PlatformLayer*, std::function<void()> completionHandler) override;
@@ -212,7 +211,16 @@ private:
     std::unique_ptr<Clock> m_clock;
 
     MediaTime m_pausedTime;
-    RetainPtr<CGImageRef> m_pausedImage;
+
+    struct CurrentFramePainter {
+        CurrentFramePainter() = default;
+        void reset();
+
+        RetainPtr<CGImageRef> cgImage;
+        RefPtr<MediaSample> mediaSample;
+        std::unique_ptr<PixelBufferConformerCV> pixelBufferConformer;
+    };
+    CurrentFramePainter m_imagePainter;
 
     HashMap<String, RefPtr<AudioTrackPrivateMediaStreamCocoa>> m_audioTrackMap;
     HashMap<String, RefPtr<VideoTrackPrivateMediaStream>> m_videoTrackMap;
@@ -220,17 +228,16 @@ private:
 
     MediaPlayer::NetworkState m_networkState { MediaPlayer::Empty };
     MediaPlayer::ReadyState m_readyState { MediaPlayer::HaveNothing };
+    MediaPlayer::ReadyState m_previousReadyState { MediaPlayer::HaveNothing };
     FloatSize m_intrinsicSize;
     float m_volume { 1 };
     DisplayMode m_displayMode { None };
     bool m_playing { false };
     bool m_muted { false };
-    bool m_haveEverPlayed { false };
     bool m_ended { false };
     bool m_hasEverEnqueuedVideoFrame { false };
-    bool m_hasReceivedMedia { false };
-    bool m_isFrameDisplayed { false };
     bool m_pendingSelectedTrackCheck { false };
+    bool m_shouldDisplayFirstVideoFrame { false };
 
 #if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
     std::unique_ptr<VideoFullscreenLayerManager> m_videoFullscreenLayerManager;

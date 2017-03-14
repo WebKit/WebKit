@@ -64,8 +64,6 @@ private:
         bool isProducingData() const { return m_isProducingData; }
         RefPtr<RealtimeMediaSourceCapabilities> capabilities() const final { return nullptr; }
         const RealtimeMediaSourceSettings& settings() const final { return m_settings; }
-        RefPtr<Image> currentFrameImage() final;
-        void paintCurrentFrameInContext(GraphicsContext&, const FloatRect&) final;
         bool applySize(const IntSize&) final { return true; }
 
         void captureCanvas();

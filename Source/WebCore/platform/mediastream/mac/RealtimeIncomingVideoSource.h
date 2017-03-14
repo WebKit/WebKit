@@ -63,9 +63,6 @@ private:
     RealtimeMediaSourceSupportedConstraints& supportedConstraints();
 
     void processNewSample(CMSampleBufferRef, unsigned, unsigned);
-    RefPtr<Image> currentFrameImage() final;
-
-    void paintCurrentFrameInContext(GraphicsContext&, const FloatRect&) final;
 
     bool isProducingData() const final { return m_isProducingData && m_buffer; }
     bool applySize(const IntSize&) final { return true; }
