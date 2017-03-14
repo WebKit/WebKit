@@ -73,18 +73,24 @@ void WebCookieManagerProxy::processPoolDestroyed()
 {
     invalidateCallbackMap(m_arrayCallbacks, CallbackBase::Error::OwnerWasInvalidated);
     invalidateCallbackMap(m_httpCookieAcceptPolicyCallbacks, CallbackBase::Error::OwnerWasInvalidated);
+    invalidateCallbackMap(m_voidCallbacks, CallbackBase::Error::OwnerWasInvalidated);
+    invalidateCallbackMap(m_getCookiesCallbacks, CallbackBase::Error::OwnerWasInvalidated);
 }
 
 void WebCookieManagerProxy::processDidClose(WebProcessProxy*)
 {
     invalidateCallbackMap(m_arrayCallbacks, CallbackBase::Error::ProcessExited);
     invalidateCallbackMap(m_httpCookieAcceptPolicyCallbacks, CallbackBase::Error::ProcessExited);
+    invalidateCallbackMap(m_voidCallbacks, CallbackBase::Error::ProcessExited);
+    invalidateCallbackMap(m_getCookiesCallbacks, CallbackBase::Error::ProcessExited);
 }
 
 void WebCookieManagerProxy::processDidClose(NetworkProcessProxy*)
 {
     invalidateCallbackMap(m_arrayCallbacks, CallbackBase::Error::ProcessExited);
     invalidateCallbackMap(m_httpCookieAcceptPolicyCallbacks, CallbackBase::Error::ProcessExited);
+    invalidateCallbackMap(m_voidCallbacks, CallbackBase::Error::ProcessExited);
+    invalidateCallbackMap(m_getCookiesCallbacks, CallbackBase::Error::ProcessExited);
 }
 
 void WebCookieManagerProxy::refWebContextSupplement()

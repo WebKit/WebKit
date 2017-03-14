@@ -1,3 +1,14 @@
+2017-03-14  Brady Eidson  <beidson@apple.com>
+
+        REGRESSION (r213877): WebKit2.CookieManager fails.
+        https://bugs.webkit.org/show_bug.cgi?id=169581
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/WebCookieManagerProxy.cpp:
+        (WebKit::WebCookieManagerProxy::processPoolDestroyed): Invalidate the new sets of callbacks.
+        (WebKit::WebCookieManagerProxy::processDidClose): Ditto.
+
 2017-03-14  Tomas Popela  <tpopela@redhat.com>
 
         Fix uninitialized public members in NetworkProcess
