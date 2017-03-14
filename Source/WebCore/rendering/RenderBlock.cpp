@@ -2943,7 +2943,7 @@ LayoutUnit RenderBlock::lineHeight(bool firstLine, LineDirectionMode direction, 
         return RenderBox::lineHeight(firstLine, direction, linePositionMode);
 
     if (firstLine && view().usesFirstLineRules()) {
-        auto& s = firstLine ? firstLineStyle() : style();
+        auto& s = firstLineStyle();
         if (&s != &style())
             return s.computedLineHeight();
     }
