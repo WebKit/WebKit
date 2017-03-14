@@ -1,3 +1,13 @@
+2017-03-14  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [WTF] Clean up RunLoop and WorkQueue with Seconds and Function
+        https://bugs.webkit.org/show_bug.cgi?id=169537
+
+        Reviewed by Carlos Garcia Campos.
+
+        * TestWebKitAPI/Tests/WTF/Time.cpp:
+        (TestWebKitAPI::TEST):
+
 2017-03-13  Brady Eidson  <beidson@apple.com>
 
         WKWebView provides no access to cookies.

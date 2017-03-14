@@ -1,3 +1,29 @@
+2017-03-14  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Add secondsAs<T> methods to Seconds to convert it to integers with clamp
+        https://bugs.webkit.org/show_bug.cgi?id=169537
+
+        Reviewed by Carlos Garcia Campos.
+
+        When using the usual static_cast, infinity becomes 0 accidentally.
+        It is not intended value when using Seconds for timeout value.
+        Instead, we use clampToAccepting64 to convert Seconds to
+        integer values to pass them to the system functions.
+
+        * wtf/MathExtras.h:
+        (clampToAccepting64):
+        * wtf/Seconds.h:
+        (WTF::Seconds::minutesAs):
+        (WTF::Seconds::secondsAs):
+        (WTF::Seconds::millisecondsAs):
+        (WTF::Seconds::microsecondsAs):
+        (WTF::Seconds::nanosecondsAs):
+        * wtf/cocoa/WorkQueueCocoa.cpp:
+        (WTF::WorkQueue::dispatchAfter):
+        * wtf/glib/RunLoopGLib.cpp:
+        (WTF::RunLoop::dispatchAfter):
+        (WTF::RunLoop::TimerBase::updateReadyTime):
+
 2017-03-13  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC][Linux] Implement VMTrap in Linux ports

@@ -39,7 +39,7 @@ void WorkQueue::dispatch(Function<void()>&& function)
 
 void WorkQueue::dispatchAfter(Seconds duration, Function<void()>&& function)
 {
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, duration.nanoseconds()), m_dispatchQueue, BlockPtr<void()>::fromCallable([protectedThis = makeRef(*this), function = WTFMove(function)] {
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, duration.nanosecondsAs<int64_t>()), m_dispatchQueue, BlockPtr<void()>::fromCallable([protectedThis = makeRef(*this), function = WTFMove(function)] {
         function();
     }).get());
 }

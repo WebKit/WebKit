@@ -140,7 +140,7 @@ private:
 
 void RunLoop::dispatchAfter(Seconds duration, Function<void()>&& function)
 {
-    GRefPtr<GSource> source = adoptGRef(g_timeout_source_new(duration.milliseconds()));
+    GRefPtr<GSource> source = adoptGRef(g_timeout_source_new(duration.millisecondsAs<guint>()));
     g_source_set_name(source.get(), "[WebKit] RunLoop dispatchAfter");
 
     std::unique_ptr<DispatchAfterContext> context = std::make_unique<DispatchAfterContext>(WTFMove(function));
@@ -185,7 +185,7 @@ void RunLoop::TimerBase::updateReadyTime()
     }
 
     gint64 currentTime = g_get_monotonic_time();
-    gint64 targetTime = currentTime + std::min<gint64>(G_MAXINT64 - currentTime, m_fireInterval.microseconds());
+    gint64 targetTime = currentTime + std::min<gint64>(G_MAXINT64 - currentTime, m_fireInterval.microsecondsAs<gint64>());
     ASSERT(targetTime >= currentTime);
     g_source_set_ready_time(m_source.get(), targetTime);
 }

@@ -193,6 +193,17 @@ inline int clampToInteger(T x)
     return static_cast<int>(x);
 }
 
+// Explicitly accept 64bit result when clamping double value.
+// Keep in mind that double can only represent 53bit integer precisely.
+template<typename T> inline T clampToAccepting64(double value, T min = defaultMinimumForClamp<T>(), T max = defaultMaximumForClamp<T>())
+{
+    if (value >= static_cast<double>(max))
+        return max;
+    if (value <= static_cast<double>(min))
+        return min;
+    return static_cast<T>(value);
+}
+
 inline bool isWithinIntRange(float x)
 {
     return x > static_cast<float>(std::numeric_limits<int>::min()) && x < static_cast<float>(std::numeric_limits<int>::max());
