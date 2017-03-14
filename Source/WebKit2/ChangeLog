@@ -1,3 +1,10 @@
+2017-03-14  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix syntax error in GTK+ API docs.
+
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkit_web_view_class_init):
+
 2017-03-13  Brady Eidson  <beidson@apple.com>
 
         WKWebView provides no access to cookies.
