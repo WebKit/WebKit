@@ -44,6 +44,9 @@ private:
     void validateRequestConstraints(ValidConstraintsHandler validHandler, InvalidConstraintsHandler invalidHandler, const MediaConstraints& audioConstraints, const MediaConstraints& videoConstraints) final;
     Vector<CaptureDevice> getMediaStreamDevices() final;
     void createMediaStream(NewMediaStreamHandler, const String& audioDeviceID, const String& videoDeviceID, const MediaConstraints* audioConstraints, const MediaConstraints* videoConstraints) final;
+
+    RealtimeMediaSource::CaptureFactory* defaultAudioFactory() final;
+    RealtimeMediaSource::CaptureFactory* defaultVideoFactory() final;
 };
 
 }

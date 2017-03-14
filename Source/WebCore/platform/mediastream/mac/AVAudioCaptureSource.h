@@ -46,6 +46,8 @@ public:
 
     static RefPtr<AVMediaCaptureSource> create(AVCaptureDevice*, const AtomicString&, const MediaConstraints*, String&);
 
+    WEBCORE_EXPORT static CaptureFactory& factory();
+
 private:
     AVAudioCaptureSource(AVCaptureDevice*, const AtomicString&);
     virtual ~AVAudioCaptureSource();

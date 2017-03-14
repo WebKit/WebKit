@@ -32,6 +32,7 @@
 #include "MockRealtimeAudioSource.h"
 
 #if ENABLE(MEDIA_STREAM)
+#include "CaptureDevice.h"
 #include "Logging.h"
 #include "MediaConstraints.h"
 #include "NotImplemented.h"
@@ -39,6 +40,15 @@
 #include "UUID.h"
 
 namespace WebCore {
+
+class MockRealtimeAudioSourceFactory : public RealtimeMediaSource::CaptureFactory {
+public:
+    RefPtr<RealtimeMediaSource> createMediaSourceForCaptureDeviceWithConstraints(const CaptureDevice& captureDevice, const MediaConstraints* constraints, String&) final {
+        if (captureDevice.type() == CaptureDevice::DeviceType::Audio)
+            return MockRealtimeAudioSource::create(captureDevice.label(), constraints);
+        return nullptr;
+    }
+};
 
 #if !PLATFORM(MAC) && !PLATFORM(IOS)
 RefPtr<MockRealtimeAudioSource> MockRealtimeAudioSource::create(const String& name, const MediaConstraints* constraints)
@@ -57,7 +67,13 @@ RefPtr<MockRealtimeAudioSource> MockRealtimeAudioSource::createMuted(const Strin
     return source;
 }
 #endif
-    
+
+RealtimeMediaSource::CaptureFactory& MockRealtimeAudioSource::factory()
+{
+    NeverDestroyed<MockRealtimeAudioSourceFactory> factory;
+    return factory.get();
+}
+
 MockRealtimeAudioSource::MockRealtimeAudioSource(const String& name)
     : MockRealtimeMediaSource(createCanonicalUUIDString(), RealtimeMediaSource::Type::Audio, name)
     , m_timer(RunLoop::current(), this, &MockRealtimeAudioSource::tick)

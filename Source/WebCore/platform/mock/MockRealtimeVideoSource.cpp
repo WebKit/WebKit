@@ -32,6 +32,7 @@
 #include "MockRealtimeVideoSource.h"
 
 #if ENABLE(MEDIA_STREAM)
+#include "CaptureDevice.h"
 #include "GraphicsContext.h"
 #include "ImageBuffer.h"
 #include "IntRect.h"
@@ -46,6 +47,15 @@
 #include <wtf/text/StringView.h>
 
 namespace WebCore {
+
+class MockRealtimeVideoSourceFactory : public RealtimeMediaSource::CaptureFactory {
+public:
+    RefPtr<RealtimeMediaSource> createMediaSourceForCaptureDeviceWithConstraints(const CaptureDevice& captureDevice, const MediaConstraints* constraints, String&) final {
+        if (captureDevice.type() == CaptureDevice::DeviceType::Video)
+            return MockRealtimeVideoSource::create(captureDevice.label(), constraints);
+        return nullptr;
+    }
+};
 
 #if !PLATFORM(MAC) && !PLATFORM(IOS)
 RefPtr<MockRealtimeVideoSource> MockRealtimeVideoSource::create(const String& name, const MediaConstraints* constraints)
@@ -64,6 +74,12 @@ RefPtr<MockRealtimeVideoSource> MockRealtimeVideoSource::createMuted(const Strin
     return source;
 }
 #endif
+
+RealtimeMediaSource::CaptureFactory& MockRealtimeVideoSource::factory()
+{
+    NeverDestroyed<MockRealtimeVideoSourceFactory> factory;
+    return factory.get();
+}
 
 MockRealtimeVideoSource::MockRealtimeVideoSource(const String& name)
     : MockRealtimeMediaSource(createCanonicalUUIDString(), RealtimeMediaSource::Type::Video, name)

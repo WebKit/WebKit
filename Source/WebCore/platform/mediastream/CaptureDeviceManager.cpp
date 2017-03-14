@@ -69,40 +69,7 @@ bool CaptureDeviceManager::captureDeviceFromDeviceID(const String& captureDevice
     return false;
 }
 
-Vector<String> CaptureDeviceManager::bestSourcesForTypeAndConstraints(RealtimeMediaSource::Type type, const MediaConstraints& constraints, String& invalidConstraint)
-{
-    Vector<RefPtr<RealtimeMediaSource>> bestSources;
-
-    struct {
-        bool operator()(RefPtr<RealtimeMediaSource> a, RefPtr<RealtimeMediaSource> b)
-        {
-            return a->fitnessScore() < b->fitnessScore();
-        }
-    } sortBasedOnFitnessScore;
-
-    ASSERT(type != RealtimeMediaSource::Type::None);
-    CaptureDevice::DeviceType deviceType = type == RealtimeMediaSource::Type::Video ? CaptureDevice::DeviceType::Video : CaptureDevice::DeviceType::Audio;
-    for (auto& captureDevice : captureDevices()) {
-        if (!captureDevice.enabled() || captureDevice.type() != deviceType)
-            continue;
-
-        if (auto captureSource = createMediaSourceForCaptureDeviceWithConstraints(captureDevice, &constraints, invalidConstraint))
-            bestSources.append(captureSource.leakRef());
-    }
-
-    Vector<String> sourceUIDs;
-    if (bestSources.isEmpty())
-        return sourceUIDs;
-
-    sourceUIDs.reserveInitialCapacity(bestSources.size());
-    std::sort(bestSources.begin(), bestSources.end(), sortBasedOnFitnessScore);
-    for (auto& device : bestSources)
-        sourceUIDs.uncheckedAppend(device->persistentID());
-
-    return sourceUIDs;
-}
-
-RefPtr<RealtimeMediaSource> CaptureDeviceManager::sourceWithUID(const String& deviceUID, RealtimeMediaSource::Type type, const MediaConstraints* constraints, String& invalidConstraint)
+std::optional<CaptureDevice> CaptureDeviceManager::deviceWithUID(const String& deviceUID, RealtimeMediaSource::Type type)
 {
     for (auto& captureDevice : captureDevices()) {
         CaptureDevice::DeviceType deviceType;
@@ -124,11 +91,10 @@ RefPtr<RealtimeMediaSource> CaptureDeviceManager::sourceWithUID(const String& de
         if (!captureDevice.enabled())
             continue;
 
-        if (auto mediaSource = createMediaSourceForCaptureDeviceWithConstraints(captureDevice, constraints, invalidConstraint))
-            return mediaSource;
+        return captureDevice;
     }
 
-    return nullptr;
+    return std::nullopt;
 }
 
 #endif // ENABLE(MEDIA_STREAM)

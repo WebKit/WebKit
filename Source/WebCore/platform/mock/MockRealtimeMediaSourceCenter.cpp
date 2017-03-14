@@ -131,6 +131,17 @@ Vector<CaptureDevice> MockRealtimeMediaSourceCenter::getMediaStreamDevices()
     return sources;
 }
 
+RealtimeMediaSource::CaptureFactory* MockRealtimeMediaSourceCenter::defaultAudioFactory()
+{
+    return &MockRealtimeAudioSource::factory();
+}
+
+RealtimeMediaSource::CaptureFactory* MockRealtimeMediaSourceCenter::defaultVideoFactory()
+{
+    return &MockRealtimeVideoSource::factory();
+}
+
+
 } // namespace WebCore
 
 #endif // ENABLE(MEDIA_STREAM)

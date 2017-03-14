@@ -45,6 +45,8 @@ public:
     static RefPtr<MockRealtimeAudioSource> create(const String&, const MediaConstraints*);
     static RefPtr<MockRealtimeAudioSource> createMuted(const String& name);
 
+    static CaptureFactory& factory();
+
     virtual ~MockRealtimeAudioSource() = default;
 
 protected:

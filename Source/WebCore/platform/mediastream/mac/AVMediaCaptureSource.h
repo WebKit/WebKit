@@ -40,6 +40,7 @@ OBJC_CLASS AVCaptureOutput;
 OBJC_CLASS AVCaptureSession;
 OBJC_CLASS AVCaptureVideoDataOutput;
 OBJC_CLASS NSError;
+OBJC_CLASS NSNotification;
 OBJC_CLASS WebCoreAVMediaCaptureSourceObserver;
 
 typedef struct opaqueCMSampleBuffer *CMSampleBufferRef;

@@ -66,6 +66,28 @@ RealtimeMediaSourceCenter::~RealtimeMediaSourceCenter()
 {
 }
 
+void RealtimeMediaSourceCenter::setAudioFactory(RealtimeMediaSource::CaptureFactory& factory)
+{
+    m_audioFactory = &factory;
+}
+
+void RealtimeMediaSourceCenter::unsetAudioFactory(RealtimeMediaSource::CaptureFactory& factory)
+{
+    if (m_audioFactory == &factory)
+        m_audioFactory = nullptr;
+}
+
+void RealtimeMediaSourceCenter::setVideoFactory(RealtimeMediaSource::CaptureFactory& factory)
+{
+    m_videoFactory = &factory;
+}
+
+void RealtimeMediaSourceCenter::unsetVideoFactory(RealtimeMediaSource::CaptureFactory& factory)
+{
+    if (m_videoFactory == &factory)
+        m_videoFactory = nullptr;
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(MEDIA_STREAM)

@@ -30,6 +30,7 @@
 
 #import "AudioSampleBufferList.h"
 #import "CAAudioStreamDescription.h"
+#import "CaptureDevice.h"
 #import "Logging.h"
 #import "MediaConstraints.h"
 #import "MediaSampleAVFObjC.h"
@@ -41,6 +42,7 @@
 #import <AVFoundation/AVCaptureSession.h>
 #import <CoreAudio/CoreAudioTypes.h>
 #import <wtf/HashSet.h>
+#import <wtf/NeverDestroyed.h>
 
 #import "CoreMediaSoftLink.h"
 
@@ -75,6 +77,15 @@ SOFT_LINK_POINTER(AVFoundation, AVMediaTypeAudio, NSString *)
 
 namespace WebCore {
 
+class AVAudioCaptureSourceFactory : public RealtimeMediaSource::CaptureFactory {
+public:
+    RefPtr<RealtimeMediaSource> createMediaSourceForCaptureDeviceWithConstraints(const CaptureDevice& captureDevice, const MediaConstraints* constraints, String& invalidConstraint) final {
+        AVCaptureDeviceTypedef *device = [getAVCaptureDeviceClass() deviceWithUniqueID:captureDevice.persistentId()];
+        ASSERT(!device || (device && captureDevice.type() == CaptureDevice::DeviceType::Audio));
+        return device ? AVAudioCaptureSource::create(device, emptyString(), constraints, invalidConstraint) : nullptr;
+    }
+};
+
 RefPtr<AVMediaCaptureSource> AVAudioCaptureSource::create(AVCaptureDeviceTypedef* device, const AtomicString& id, const MediaConstraints* constraints, String& invalidConstraint)
 {
     auto source = adoptRef(new AVAudioCaptureSource(device, id));
@@ -87,6 +98,12 @@ RefPtr<AVMediaCaptureSource> AVAudioCaptureSource::create(AVCaptureDeviceTypedef
     }
 
     return source;
+}
+
+RealtimeMediaSource::CaptureFactory& AVAudioCaptureSource::factory()
+{
+    static NeverDestroyed<AVAudioCaptureSourceFactory> factory;
+    return factory.get();
 }
 
 AVAudioCaptureSource::AVAudioCaptureSource(AVCaptureDeviceTypedef* device, const AtomicString& id)

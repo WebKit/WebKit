@@ -37,13 +37,10 @@ public:
     virtual Vector<CaptureDevice>& captureDevices() = 0;
     virtual void refreshCaptureDevices() { }
     virtual Vector<CaptureDevice> getSourcesInfo();
-    virtual Vector<String> bestSourcesForTypeAndConstraints(RealtimeMediaSource::Type, const MediaConstraints&, String&);
-    virtual RefPtr<RealtimeMediaSource> sourceWithUID(const String&, RealtimeMediaSource::Type, const MediaConstraints*, String&);
+    virtual std::optional<CaptureDevice> deviceWithUID(const String&, RealtimeMediaSource::Type);
 
 protected:
     virtual ~CaptureDeviceManager();
-    virtual RefPtr<RealtimeMediaSource> createMediaSourceForCaptureDeviceWithConstraints(const CaptureDevice&, const MediaConstraints*, String&) = 0;
-
     bool captureDeviceFromDeviceID(const String& captureDeviceID, CaptureDevice& source);
 };
 

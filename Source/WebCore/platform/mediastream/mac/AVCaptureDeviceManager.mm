@@ -176,18 +176,6 @@ Vector<CaptureDevice> AVCaptureDeviceManager::getSourcesInfo()
     return CaptureDeviceManager::getSourcesInfo();
 }
 
-RefPtr<RealtimeMediaSource> AVCaptureDeviceManager::createMediaSourceForCaptureDeviceWithConstraints(const CaptureDevice& captureDevice, const MediaConstraints* constraints, String& invalidConstraint)
-{
-    AVCaptureDeviceTypedef *device = [getAVCaptureDeviceClass() deviceWithUniqueID:captureDevice.persistentId()];
-    if (!device)
-        return nullptr;
-
-    if (captureDevice.type() == CaptureDevice::DeviceType::Audio)
-        return AVAudioCaptureSource::create(device, emptyString(), constraints, invalidConstraint);
-
-    return AVVideoCaptureSource::create(device, emptyString(), constraints, invalidConstraint);
-}
-
 void AVCaptureDeviceManager::registerForDeviceNotifications()
 {
     [[NSNotificationCenter defaultCenter] addObserver:m_objcObserver.get() selector:@selector(deviceConnected:) name:AVCaptureDeviceWasConnectedNotification object:nil];

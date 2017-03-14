@@ -42,6 +42,8 @@ private:
     void enumerateMediaDevices(WebCore::MediaDevicesEnumerationRequest&) final;
     void cancelMediaDevicesEnumerationRequest(WebCore::MediaDevicesEnumerationRequest&) final;
 
+    void initializeFactories();
+
     WebPage& m_page;
 };
 

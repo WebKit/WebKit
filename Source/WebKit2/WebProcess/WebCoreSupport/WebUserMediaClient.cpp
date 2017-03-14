@@ -33,6 +33,7 @@ namespace WebKit {
 WebUserMediaClient::WebUserMediaClient(WebPage& page)
     : m_page(page)
 {
+    initializeFactories();
 }
 
 void WebUserMediaClient::pageDestroyed()
@@ -59,6 +60,13 @@ void WebUserMediaClient::cancelMediaDevicesEnumerationRequest(MediaDevicesEnumer
 {
     m_page.userMediaPermissionRequestManager().cancelMediaDevicesEnumeration(request);
 }
+
+#if !PLATFORM(COCOA)
+void WebUserMediaClient::initializeFactories()
+{
+
+}
+#endif
 
 } // namespace WebKit;
 

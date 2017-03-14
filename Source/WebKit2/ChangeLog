@@ -1,3 +1,18 @@
+2017-03-06  Jer Noble  <jer.noble@apple.com>
+
+        Refactor: Allow WebKit2 to override the creation of RealtimeMediaSources
+        https://bugs.webkit.org/show_bug.cgi?id=169227
+
+        Reviewed by Eric Carlson.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebCoreSupport/WebUserMediaClient.cpp:
+        (WebKit::WebUserMediaClient::WebUserMediaClient):
+        (WebKit::WebUserMediaClient::initializeFactories): Add empty non-Cocoa implementation.
+        * WebProcess/WebCoreSupport/WebUserMediaClient.h:
+        * WebProcess/WebCoreSupport/cocoa/WebUserMediaClientMac.mm: Added.
+        (WebKit::WebUserMediaClient::initializeFactories): Initialize a (for now) pass-through factory.
+
 2017-03-14  Dean Jackson  <dino@apple.com>
 
         Rename LayerTypeWebGLLayer and use it for both WebGL and WebGPU

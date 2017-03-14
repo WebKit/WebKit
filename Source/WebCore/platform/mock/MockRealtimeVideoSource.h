@@ -49,6 +49,8 @@ public:
     static RefPtr<MockRealtimeVideoSource> create(const String&, const MediaConstraints*);
     static RefPtr<MockRealtimeVideoSource> createMuted(const String& name);
 
+    static CaptureFactory& factory();
+
     virtual ~MockRealtimeVideoSource() { }
 
 protected:

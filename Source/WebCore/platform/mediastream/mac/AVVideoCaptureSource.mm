@@ -109,6 +109,15 @@ const OSType videoCaptureFormat = kCVPixelFormatType_420YpCbCr8Planar;
 const OSType videoCaptureFormat = kCVPixelFormatType_420YpCbCr8BiPlanarFullRange;
 #endif
 
+class AVVideoCaptureSourceFactory : public RealtimeMediaSource::CaptureFactory {
+public:
+    RefPtr<RealtimeMediaSource> createMediaSourceForCaptureDeviceWithConstraints(const CaptureDevice& captureDevice, const MediaConstraints* constraints, String& invalidConstraint) final {
+        AVCaptureDeviceTypedef *device = [getAVCaptureDeviceClass() deviceWithUniqueID:captureDevice.persistentId()];
+        ASSERT(!device || (captureDevice.type() == CaptureDevice::DeviceType::Video));
+        return device ? AVVideoCaptureSource::create(device, emptyString(), constraints, invalidConstraint) : nullptr;
+    }
+};
+
 RefPtr<AVMediaCaptureSource> AVVideoCaptureSource::create(AVCaptureDeviceTypedef* device, const AtomicString& id, const MediaConstraints* constraints, String& invalidConstraint)
 {
     auto source = adoptRef(new AVVideoCaptureSource(device, id));
@@ -121,6 +130,12 @@ RefPtr<AVMediaCaptureSource> AVVideoCaptureSource::create(AVCaptureDeviceTypedef
     }
 
     return source;
+}
+
+RealtimeMediaSource::CaptureFactory& AVVideoCaptureSource::factory()
+{
+    static NeverDestroyed<AVVideoCaptureSourceFactory> factory;
+    return factory.get();
 }
 
 AVVideoCaptureSource::AVVideoCaptureSource(AVCaptureDeviceTypedef* device, const AtomicString& id)

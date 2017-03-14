@@ -1883,6 +1883,7 @@
 		CD4B4D9D1E765E0000D27092 /* SharedRingBufferStorage.h in Headers */ = {isa = PBXBuildFile; fileRef = CD4B4D9B1E765E0000D27092 /* SharedRingBufferStorage.h */; };
 		CD5C66A0134B9D38004FE2A8 /* InjectedBundlePageFullScreenClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD5C669E134B9D36004FE2A8 /* InjectedBundlePageFullScreenClient.cpp */; };
 		CD5C66A1134B9D38004FE2A8 /* InjectedBundlePageFullScreenClient.h in Headers */ = {isa = PBXBuildFile; fileRef = CD5C669F134B9D37004FE2A8 /* InjectedBundlePageFullScreenClient.h */; };
+		CD6178141E6DE9A000FDA57D /* WebUserMediaClientMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = CD6178121E6DE9A000FDA57D /* WebUserMediaClientMac.mm */; };
 		CD6F75F4131B66D000D6B21E /* WebFullScreenManagerProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD73BA3E131A2E8A00EEDED2 /* WebFullScreenManagerProxy.cpp */; };
 		CD73BA47131ACC9A00EEDED2 /* WebFullScreenManagerProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD73BA45131ACC8800EEDED2 /* WebFullScreenManagerProxyMessageReceiver.cpp */; };
 		CD73BA4E131ACDB700EEDED2 /* WebFullScreenManagerMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD73BA48131ACD8E00EEDED2 /* WebFullScreenManagerMessageReceiver.cpp */; };
@@ -4172,6 +4173,7 @@
 		CD4B4D9B1E765E0000D27092 /* SharedRingBufferStorage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SharedRingBufferStorage.h; sourceTree = "<group>"; };
 		CD5C669E134B9D36004FE2A8 /* InjectedBundlePageFullScreenClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundlePageFullScreenClient.cpp; sourceTree = "<group>"; };
 		CD5C669F134B9D37004FE2A8 /* InjectedBundlePageFullScreenClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedBundlePageFullScreenClient.h; sourceTree = "<group>"; };
+		CD6178121E6DE9A000FDA57D /* WebUserMediaClientMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WebUserMediaClientMac.mm; path = cocoa/WebUserMediaClientMac.mm; sourceTree = "<group>"; };
 		CD73BA37131A29FE00EEDED2 /* WebFullScreenManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebFullScreenManager.cpp; path = FullScreen/WebFullScreenManager.cpp; sourceTree = "<group>"; };
 		CD73BA38131A29FE00EEDED2 /* WebFullScreenManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebFullScreenManager.h; path = FullScreen/WebFullScreenManager.h; sourceTree = "<group>"; };
 		CD73BA39131A29FE00EEDED2 /* WebFullScreenManager.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = WebFullScreenManager.messages.in; path = FullScreen/WebFullScreenManager.messages.in; sourceTree = "<group>"; };
@@ -6450,6 +6452,7 @@
 		BC032D5D10F437220058C15A /* WebCoreSupport */ = {
 			isa = PBXGroup;
 			children = (
+				CD6178111E6DE98000FDA57D /* cocoa */,
 				2D28F3DF1885CCB4004B9EAE /* ios */,
 				BC111ADE112F5B9A00337BAB /* mac */,
 				1A7284441959ED100007BCE5 /* SessionStateConversion.cpp */,
@@ -7816,6 +7819,14 @@
 				C57193BA18C149D0002D0F12 /* WKFormSelectPopover.mm */,
 			);
 			name = forms;
+			sourceTree = "<group>";
+		};
+		CD6178111E6DE98000FDA57D /* cocoa */ = {
+			isa = PBXGroup;
+			children = (
+				CD6178121E6DE9A000FDA57D /* WebUserMediaClientMac.mm */,
+			);
+			name = cocoa;
 			sourceTree = "<group>";
 		};
 		CD73BA3D131A2A2100EEDED2 /* FullScreen */ = {
@@ -9968,6 +9979,7 @@
 				753E3E0D1887398500188496 /* SessionTracker.cpp in Sources */,
 				1A6420E412DCE2FF00CAAE2C /* ShareableBitmap.cpp in Sources */,
 				C01A260112662F2100C9ED55 /* ShareableBitmapCG.cpp in Sources */,
+				CD6178141E6DE9A000FDA57D /* WebUserMediaClientMac.mm in Sources */,
 				51217460164C20E30037A5C1 /* ShareableResource.cpp in Sources */,
 				4450AEC01DC3FAE5009943F2 /* SharedMemoryCocoa.cpp in Sources */,
 				2DAF06D718BD1A470081CEB1 /* SmartMagnificationController.mm in Sources */,

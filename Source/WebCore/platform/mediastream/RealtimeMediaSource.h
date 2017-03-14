@@ -54,6 +54,7 @@ class MediaTime;
 namespace WebCore {
 
 class AudioStreamDescription;
+class CaptureDevice;
 class FloatRect;
 class GraphicsContext;
 class MediaStreamPrivate;
@@ -80,6 +81,15 @@ public:
 
         // May be called on a background thread.
         virtual void audioSamplesAvailable(const MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t /*numberOfFrames*/) { }
+    };
+
+    class CaptureFactory {
+    public:
+        virtual ~CaptureFactory() = default;
+        virtual RefPtr<RealtimeMediaSource> createMediaSourceForCaptureDeviceWithConstraints(const CaptureDevice&, const MediaConstraints*, String&) = 0;
+
+    protected:
+        CaptureFactory() = default;
     };
 
     virtual ~RealtimeMediaSource() { }

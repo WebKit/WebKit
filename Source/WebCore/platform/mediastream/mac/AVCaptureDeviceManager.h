@@ -60,7 +60,6 @@ protected:
     AVCaptureDeviceManager();
     ~AVCaptureDeviceManager() final;
 
-    RefPtr<RealtimeMediaSource> createMediaSourceForCaptureDeviceWithConstraints(const CaptureDevice&, const MediaConstraints*, String&) final;
     void refreshCaptureDevices() final;
     void registerForDeviceNotifications();
 
