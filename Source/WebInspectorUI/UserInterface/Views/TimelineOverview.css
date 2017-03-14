@@ -27,19 +27,33 @@
     --timeline-sidebar-width: 197px;
 }
 
+body[dir=ltr] .timeline-overview > :matches(.navigation-bar.timelines, .tree-outline.timelines) {
+    left: 0;
+    border-right: 1px solid var(--border-color);
+}
+
+body[dir=rtl] .timeline-overview > :matches(.navigation-bar.timelines, .tree-outline.timelines) {
+    right: 0;
+    border-left: 1px solid var(--border-color);
+}
+
+body[dir=ltr] .timeline-overview:not(.frames) > :matches(.scroll-container, .timeline-ruler, .graphs-container) {
+    left: var(--timeline-sidebar-width);
+}
+
+body[dir=rtl] .timeline-overview:not(.frames) > :matches(.scroll-container, .timeline-ruler, .graphs-container) {
+    right: var(--timeline-sidebar-width);
+}
+
 .timeline-overview > .navigation-bar.timelines {
+    box-sizing: border-box;
     justify-content: flex-start;
     position: absolute;
     top: 0;
-    left: 0;
+    z-index: var(--z-index-header);
     width: var(--timeline-sidebar-width);
     height: 23px;
-
-    box-sizing: border-box;
-    z-index: var(--z-index-header);
-
     background-color: white;
-    border-right: 1px solid var(--border-color);
     border-bottom: 1px solid var(--border-color);
 }
 
@@ -62,11 +76,9 @@
 .timeline-overview > .tree-outline.timelines {
     position: absolute;
     top: 23px;
-    left: 0;
-    width: var(--timeline-sidebar-width);
     z-index: var(--z-index-header);
+    width: var(--timeline-sidebar-width);
     background-color: var(--panel-background-color);
-    border-right: 1px solid var(--border-color);
 }
 
 .timeline-overview.edit-instruments > .tree-outline.timelines {
@@ -118,9 +130,9 @@ body.window-inactive .timeline-overview > .tree-outline.timelines .item.selected
 
 .timeline-overview > .scroll-container {
     position: absolute;
-    left: var(--timeline-sidebar-width);
     right: 0;
     bottom: 0;
+    left: 0;
     height: 16px;
     overflow-x: auto;
     overflow-y: hidden;
@@ -149,9 +161,9 @@ body.window-inactive .timeline-overview > .tree-outline.timelines .item.selected
 .timeline-overview > .timeline-ruler {
     position: absolute;
     top: 0;
-    left: var(--timeline-sidebar-width);
-    bottom: 0;
     right: 0;
+    bottom: 0;
+    left: 0;
 }
 
 .timeline-overview.frames > .timeline-ruler {
@@ -182,12 +194,8 @@ body.window-inactive .timeline-overview > .tree-outline.timelines .item.selected
 .timeline-overview > .graphs-container {
     position: absolute;
     top: 23px;
-    left: var(--timeline-sidebar-width);
-    bottom: 0;
     right: 0;
-}
-
-.timeline-overview.frames > .graphs-container {
+    bottom: 0;
     left: 0;
 }
 
@@ -211,8 +219,15 @@ body.mac-platform.legacy .timeline-overview > .graphs-container {
 .timeline-overview > .scroll-container > .scroll-width-sizer {
     position: absolute;
     top: 0;
-    left: 0;
     height: 1px;
     visibility: hidden;
     pointer-events: none;
+}
+
+body[dir=ltr] .timeline-overview > .scroll-container > .scroll-width-sizer {
+    left: 0;
+}
+
+body[dir=rtl] .timeline-overview > .scroll-container > .scroll-width-sizer {
+    right: 0;
 }

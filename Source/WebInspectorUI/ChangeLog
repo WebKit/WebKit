@@ -1,3 +1,25 @@
+2017-03-14  Devin Rousso  <webkit@devinrousso.com>
+
+        Web Inspector: RTL: add support for TimelineOverview sidebar and container layout
+        https://bugs.webkit.org/show_bug.cgi?id=169583
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/TimelineOverview.css:
+        (body[dir=ltr] .timeline-overview > :matches(.navigation-bar.timelines, .tree-outline.timelines)):
+        (body[dir=rtl] .timeline-overview > :matches(.navigation-bar.timelines, .tree-outline.timelines)):
+        (body[dir=ltr] .timeline-overview:not(.frames) > :matches(.scroll-container, .timeline-ruler, .graphs-container)):
+        (body[dir=rtl] .timeline-overview:not(.frames) > :matches(.scroll-container, .timeline-ruler, .graphs-container)):
+        (.timeline-overview > .navigation-bar.timelines):
+        (.timeline-overview > .tree-outline.timelines):
+        (.timeline-overview > .scroll-container):
+        (.timeline-overview > .timeline-ruler):
+        (.timeline-overview > .graphs-container):
+        (.timeline-overview > .scroll-container > .scroll-width-sizer):
+        (body[dir=ltr] .timeline-overview > .scroll-container > .scroll-width-sizer):
+        (body[dir=rtl] .timeline-overview > .scroll-container > .scroll-width-sizer):
+        (.timeline-overview.frames > .graphs-container): Deleted.
+
 2017-03-14  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: More accurate Resource Timing data in Web Inspector
