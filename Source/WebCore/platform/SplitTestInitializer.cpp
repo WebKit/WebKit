@@ -26,7 +26,7 @@
 #include "config.h"
 #include "SplitTestInitializer.h"
 
-#if (defined(RC_SEED_BUILD) && RC_SEED_BUILD) && !PLATFORM(IOS) && OS(DARWIN) && USE(APPLE_INTERNAL_SDK)
+#if !PLATFORM(IOS) && OS(DARWIN) && USE(APPLE_INTERNAL_SDK)
 
 #include <dlfcn.h>
 #include <mutex>

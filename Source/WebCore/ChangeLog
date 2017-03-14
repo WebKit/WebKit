@@ -1,3 +1,15 @@
+2017-02-22  Matthew Hanson  <matthew_hanson@apple.com>
+
+        rdar://problem/30657889
+
+    2017-02-22  Filip Pizlo  <fpizlo@apple.com>
+
+            A:B testing should not be contingent upon RC_SEED_BUILD
+
+            Reviewed by Alexey Proskuryakov.
+
+            * platform/SplitTestInitializer.cpp:
+
 2017-03-01  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r213211. rdar://problem/30742143
