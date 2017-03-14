@@ -1815,13 +1815,14 @@ void WebPageProxy::performDragControllerAction(DragControllerAction action, Drag
 #endif
 }
 
-void WebPageProxy::didPerformDragControllerAction(uint64_t dragOperation, bool mouseIsOverFileInput, unsigned numberOfItemsToBeAccepted)
+void WebPageProxy::didPerformDragControllerAction(uint64_t dragOperation, bool mouseIsOverFileInput, unsigned numberOfItemsToBeAccepted, const IntRect& insertionRect)
 {
     MESSAGE_CHECK(dragOperation <= DragOperationDelete);
 
     m_currentDragOperation = static_cast<DragOperation>(dragOperation);
     m_currentDragIsOverFileInput = mouseIsOverFileInput;
     m_currentDragNumberOfFilesToBeAccepted = numberOfItemsToBeAccepted;
+    m_currentDragCaretRect = insertionRect;
 }
 
 #if PLATFORM(GTK)
@@ -1845,6 +1846,14 @@ void WebPageProxy::dragCancelled()
 {
     if (isValid())
         m_process->send(Messages::WebPage::DragCancelled(), m_pageID);
+}
+
+void WebPageProxy::resetCurrentDragInformation()
+{
+    m_currentDragOperation = WebCore::DragOperationNone;
+    m_currentDragIsOverFileInput = false;
+    m_currentDragNumberOfFilesToBeAccepted = 0;
+    m_currentDragCaretRect = { };
 }
 #endif // ENABLE(DRAG_SUPPORT)
 

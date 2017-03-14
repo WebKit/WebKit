@@ -833,7 +833,7 @@ public:
     void dragExited(WebCore::DragData&, const String& dragStorageName = String());
     void performDragOperation(WebCore::DragData&, const String& dragStorageName, const SandboxExtension::Handle&, const SandboxExtension::HandleArray&);
 
-    void didPerformDragControllerAction(uint64_t dragOperation, bool mouseIsOverFileInput, unsigned numberOfItemsToBeAccepted);
+    void didPerformDragControllerAction(uint64_t dragOperation, bool mouseIsOverFileInput, unsigned numberOfItemsToBeAccepted, const WebCore::IntRect& insertionRect);
     void dragEnded(const WebCore::IntPoint& clientPosition, const WebCore::IntPoint& globalPosition, uint64_t operation);
     void dragCancelled();
 #if PLATFORM(COCOA)
@@ -889,12 +889,8 @@ public:
     WebCore::DragOperation currentDragOperation() const { return m_currentDragOperation; }
     bool currentDragIsOverFileInput() const { return m_currentDragIsOverFileInput; }
     unsigned currentDragNumberOfFilesToBeAccepted() const { return m_currentDragNumberOfFilesToBeAccepted; }
-    void resetCurrentDragInformation()
-    {
-        m_currentDragOperation = WebCore::DragOperationNone;
-        m_currentDragIsOverFileInput = false;
-        m_currentDragNumberOfFilesToBeAccepted = 0;
-    }
+    WebCore::IntRect currentDragCaretRect() const { return m_currentDragCaretRect; }
+    void resetCurrentDragInformation();
 #endif
 
     void preferencesDidChange();
@@ -1873,6 +1869,7 @@ private:
     WebCore::DragOperation m_currentDragOperation;
     bool m_currentDragIsOverFileInput;
     unsigned m_currentDragNumberOfFilesToBeAccepted;
+    WebCore::IntRect m_currentDragCaretRect;
 #endif
 
     PageLoadState m_pageLoadState;
