@@ -15,20 +15,20 @@ function sampleBuildRequestData()
             "platform": "31",
             "testGroup": "2128",
             "order": "0",
-            "rootSet": "4255",
+            "commitSet": "4255",
             "status": "pending",
             "url": null,
             "build": null,
             "createdAt": 1458688514000
         }],
-        "rootSets": [{
+        "commitSets": [{
             "id": "4255",
-            "roots": ["87832", "93116"]
+            "commits": ["87832", "93116"]
         }, {
             "id": "4256",
-            "roots": ["87832", "96336"]
+            "commits": ["87832", "96336"]
         }],
-        "roots": [{
+        "commits": [{
             "id": "87832",
             "repository": "9",
             "revision": "10.11 15A284",

@@ -802,11 +802,11 @@ describe('MeasurementSet', () => {
                 assert.equal(point.id, 26530031);
 
                 const commitTime = 1482398562950;
-                const rootSet = point.rootSet();
-                assert.equal(point.rootSet(), rootSet);
-                assert.deepEqual(rootSet.repositories(), [webkit]);
-                assert.equal(rootSet.revisionForRepository(webkit), '210096');
-                const commit = rootSet.commitForRepository(webkit);
+                const commitSet = point.commitSet();
+                assert.equal(point.commitSet(), commitSet);
+                assert.deepEqual(commitSet.repositories(), [webkit]);
+                assert.equal(commitSet.revisionForRepository(webkit), '210096');
+                const commit = commitSet.commitForRepository(webkit);
                 assert.equal(commit.repository(), webkit);
                 assert.equal(+commit.time(), commitTime);
                 assert.equal(commit.author(), null);
@@ -815,7 +815,7 @@ describe('MeasurementSet', () => {
                 assert.equal(commit.url(), 'http://trac.webkit.org/changeset/210096');
                 assert.equal(commit.label(), 'r210096');
                 assert.equal(commit.title(), 'WebKit at r210096');
-                assert.equal(rootSet.latestCommitTime(), commitTime);
+                assert.equal(commitSet.latestCommitTime(), commitTime);
 
                 const build = point.build();
                 assert.equal(point.build(), build);
@@ -836,12 +836,12 @@ describe('MeasurementSet', () => {
                 assert.equal(point.id, 26530779);
 
                 const commitTime = 1482424870729;
-                const rootSet = point.rootSet();
-                assert.equal(rootSet.revisionForRepository(webkit), '210097');
-                const commit = rootSet.commitForRepository(webkit);
+                const commitSet = point.commitSet();
+                assert.equal(commitSet.revisionForRepository(webkit), '210097');
+                const commit = commitSet.commitForRepository(webkit);
                 assert.equal(+commit.time(), commitTime);
                 assert.equal(commit.revision(), '210097');
-                assert.equal(rootSet.latestCommitTime(), commitTime);
+                assert.equal(commitSet.latestCommitTime(), commitTime);
 
                 const build = point.build();
                 assert.equal(build.builder(), builder);
@@ -856,35 +856,35 @@ describe('MeasurementSet', () => {
                 assert.equal(point.markedOutlier, true);
             }).then(() => {
                 assert.equal(points[2].id, 26532275);
-                assert.equal(points[2].rootSet().revisionForRepository(webkit), '210102');
+                assert.equal(points[2].commitSet().revisionForRepository(webkit), '210102');
                 assert.equal(+points[2].build().buildTime(), 1482436041865);
                 assert.equal(points[2].build().buildNumber(), 10879);
                 assert.equal(points[2].time, 1482431464371);
                 assert.equal(points[2].value, 134.2725);
 
                 assert.equal(points[3].id, 26547226);
-                assert.equal(points[3].rootSet().revisionForRepository(webkit), '210168');
+                assert.equal(points[3].commitSet().revisionForRepository(webkit), '210168');
                 assert.equal(+points[3].build().buildTime(), 1482852452143);
                 assert.equal(points[3].build().buildNumber(), 10902);
                 assert.equal(points[3].time, 1482852412735);
                 assert.equal(points[3].value, 150.9625);
 
                 assert.equal(points[4].id, 26559915);
-                assert.equal(points[4].rootSet().revisionForRepository(webkit), '210222');
+                assert.equal(points[4].commitSet().revisionForRepository(webkit), '210222');
                 assert.equal(+points[4].build().buildTime(), 1483347926429);
                 assert.equal(points[4].build().buildNumber(), 10924);
                 assert.equal(points[4].time, 1483347732051);
                 assert.equal(points[4].value, 141.72);
 
                 assert.equal(points[5].id, 26564388);
-                assert.equal(points[5].rootSet().revisionForRepository(webkit), '210231');
+                assert.equal(points[5].commitSet().revisionForRepository(webkit), '210231');
                 assert.equal(+points[5].build().buildTime(), 1483415426049);
                 assert.equal(points[5].build().buildNumber(), 10930);
                 assert.equal(points[5].time, 1483412171531);
                 assert.equal(points[5].value, 138.13125);
 
                 assert.equal(points[6].id, 26568867);
-                assert.equal(points[6].rootSet().revisionForRepository(webkit), '210240');
+                assert.equal(points[6].commitSet().revisionForRepository(webkit), '210240');
                 assert.equal(+points[6].build().buildTime(), 1483469642993);
                 assert.equal(points[6].build().buildNumber(), 10935);
                 assert.equal(points[6].time, 1483469584347);
@@ -904,42 +904,42 @@ describe('MeasurementSet', () => {
                     points[i] = fullSeries.findPointByIndex(i);
 
                 assert.equal(points[0].id, 26530031);
-                assert.equal(points[0].rootSet().revisionForRepository(webkit), '210096');
+                assert.equal(points[0].commitSet().revisionForRepository(webkit), '210096');
                 assert.equal(+points[0].build().buildTime(), 1482413222311);
                 assert.equal(points[0].build().buildNumber(), 10877);
                 assert.equal(points[0].time, 1482398562950);
                 assert.equal(points[0].value, 135.26375);
 
                 assert.equal(points[1].id, 26532275);
-                assert.equal(points[1].rootSet().revisionForRepository(webkit), '210102');
+                assert.equal(points[1].commitSet().revisionForRepository(webkit), '210102');
                 assert.equal(+points[1].build().buildTime(), 1482436041865);
                 assert.equal(points[1].build().buildNumber(), 10879);
                 assert.equal(points[1].time, 1482431464371);
                 assert.equal(points[1].value, 134.2725);
 
                 assert.equal(points[2].id, 26547226);
-                assert.equal(points[2].rootSet().revisionForRepository(webkit), '210168');
+                assert.equal(points[2].commitSet().revisionForRepository(webkit), '210168');
                 assert.equal(+points[2].build().buildTime(), 1482852452143);
                 assert.equal(points[2].build().buildNumber(), 10902);
                 assert.equal(points[2].time, 1482852412735);
                 assert.equal(points[2].value, 150.9625);
 
                 assert.equal(points[3].id, 26559915);
-                assert.equal(points[3].rootSet().revisionForRepository(webkit), '210222');
+                assert.equal(points[3].commitSet().revisionForRepository(webkit), '210222');
                 assert.equal(+points[3].build().buildTime(), 1483347926429);
                 assert.equal(points[3].build().buildNumber(), 10924);
                 assert.equal(points[3].time, 1483347732051);
                 assert.equal(points[3].value, 141.72);
 
                 assert.equal(points[4].id, 26564388);
-                assert.equal(points[4].rootSet().revisionForRepository(webkit), '210231');
+                assert.equal(points[4].commitSet().revisionForRepository(webkit), '210231');
                 assert.equal(+points[4].build().buildTime(), 1483415426049);
                 assert.equal(points[4].build().buildNumber(), 10930);
                 assert.equal(points[4].time, 1483412171531);
                 assert.equal(points[4].value, 138.13125);
 
                 assert.equal(points[5].id, 26568867);
-                assert.equal(points[5].rootSet().revisionForRepository(webkit), '210240');
+                assert.equal(points[5].commitSet().revisionForRepository(webkit), '210240');
                 assert.equal(+points[5].build().buildTime(), 1483469642993);
                 assert.equal(points[5].build().buildNumber(), 10935);
                 assert.equal(points[5].time, 1483469584347);

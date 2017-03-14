@@ -15,7 +15,7 @@ function sampleTestGroup() {
             "createdAt": 1458688514000,
             "hidden": false,
             "buildRequests": ["16985", "16986", "16987", "16988", "16989", "16990", "16991", "16992"],
-            "rootSets": ["4255", "4256", "4255", "4256", "4255", "4256", "4255", "4256"]
+            "commitSets": ["4255", "4256", "4255", "4256", "4255", "4256", "4255", "4256"]
         }
         ],
         "buildRequests": [{
@@ -25,7 +25,7 @@ function sampleTestGroup() {
             "platform": "31",
             "testGroup": "2128",
             "order": "0",
-            "rootSet": "4255",
+            "commitSet": "4255",
             "status": "pending",
             "url": null,
             "build": null,
@@ -37,7 +37,7 @@ function sampleTestGroup() {
             "platform": "31",
             "testGroup": "2128",
             "order": "1",
-            "rootSet": "4256",
+            "commitSet": "4256",
             "status": "pending",
             "url": null,
             "build": null,
@@ -50,7 +50,7 @@ function sampleTestGroup() {
             "platform": "31",
             "testGroup": "2128",
             "order": "2",
-            "rootSet": "4255",
+            "commitSet": "4255",
             "status": "pending",
             "url": null,
             "build": null,
@@ -62,22 +62,22 @@ function sampleTestGroup() {
             "platform": "31",
             "testGroup": "2128",
             "order": "3",
-            "rootSet": "4256",
+            "commitSet": "4256",
             "status": "pending",
             "url": null,
             "build": null,
             "createdAt": 1458688514000
         }
         ],
-        "rootSets": [{
+        "commitSets": [{
             "id": "4255",
-            "roots": ["87832", "93116"]
+            "commits": ["87832", "93116"]
         }, {
             "id": "4256",
-            "roots": ["87832", "96336"]
+            "commits": ["87832", "96336"]
         }
         ],
-        "roots": [{
+        "commits": [{
             "id": "87832",
             "repository": "9",
             "revision": "10.11 15A284",
@@ -157,18 +157,18 @@ describe('TestGroup', function () {
         it('should create root sets for each group', function () {
             var buildRequests = TestGroup._createModelsFromFetchedTestGroups(sampleTestGroup())[0].buildRequests();
 
-            var firstSet = buildRequests[0].rootSet();
-            assert.ok(firstSet instanceof RootSet);
-            assert.equal(firstSet, buildRequests[2].rootSet());
+            var firstSet = buildRequests[0].commitSet();
+            assert.ok(firstSet instanceof CommitSet);
+            assert.equal(firstSet, buildRequests[2].commitSet());
 
-            var secondSet = buildRequests[1].rootSet();
-            assert.ok(secondSet instanceof RootSet);
-            assert.equal(secondSet, buildRequests[3].rootSet());
+            var secondSet = buildRequests[1].commitSet();
+            assert.ok(secondSet instanceof CommitSet);
+            assert.equal(secondSet, buildRequests[3].commitSet());
 
             assert.equal(firstSet.revisionForRepository(MockModels.webkit), '191622');
             var firstWebKitCommit = firstSet.commitForRepository(MockModels.webkit);
             assert.ok(firstWebKitCommit instanceof CommitLog);
-            assert.ok(firstWebKitCommit, buildRequests[2].rootSet().commitForRepository(MockModels.webkit));
+            assert.ok(firstWebKitCommit, buildRequests[2].commitSet().commitForRepository(MockModels.webkit));
             assert.ok(firstWebKitCommit.repository(), MockModels.webkit);
             assert.ok(firstWebKitCommit.revision(), '191622');
             assert.ok(firstWebKitCommit.time() instanceof Date);
@@ -177,7 +177,7 @@ describe('TestGroup', function () {
             assert.equal(secondSet.revisionForRepository(MockModels.webkit), '192736');
             var secondWebKitCommit = secondSet.commitForRepository(MockModels.webkit);
             assert.ok(secondWebKitCommit instanceof CommitLog);
-            assert.ok(secondWebKitCommit, buildRequests[3].rootSet().commitForRepository(MockModels.webkit));
+            assert.ok(secondWebKitCommit, buildRequests[3].commitSet().commitForRepository(MockModels.webkit));
             assert.ok(secondWebKitCommit.repository(), MockModels.webkit);
             assert.ok(secondWebKitCommit.revision(), '192736');
             assert.ok(secondWebKitCommit.time() instanceof Date);
@@ -186,9 +186,9 @@ describe('TestGroup', function () {
             assert.equal(firstSet.revisionForRepository(MockModels.osx), '10.11 15A284');
             var osxCommit = firstSet.commitForRepository(MockModels.osx);
             assert.ok(osxCommit instanceof CommitLog);
-            assert.equal(osxCommit, buildRequests[1].rootSet().commitForRepository(MockModels.osx));
-            assert.equal(osxCommit, buildRequests[2].rootSet().commitForRepository(MockModels.osx));
-            assert.equal(osxCommit, buildRequests[3].rootSet().commitForRepository(MockModels.osx));
+            assert.equal(osxCommit, buildRequests[1].commitSet().commitForRepository(MockModels.osx));
+            assert.equal(osxCommit, buildRequests[2].commitSet().commitForRepository(MockModels.osx));
+            assert.equal(osxCommit, buildRequests[3].commitSet().commitForRepository(MockModels.osx));
             assert.ok(osxCommit.repository(), MockModels.osx);
             assert.ok(osxCommit.revision(), '10.11 15A284');
         });

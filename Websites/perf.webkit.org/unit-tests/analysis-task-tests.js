@@ -207,7 +207,7 @@ describe('AnalysisTask', function () {
             var adaptor = new MeasurementAdaptor(measurementCluster().formatMap);
             var adaptedMeasurement = adaptor.applyTo(measurementCluster().configurations.current[0]);
             assert.equal(adaptedMeasurement.id, 37188161);
-            assert.equal(adaptedMeasurement.rootSet().commitForRepository(MockModels.webkit).revision(), '196051');
+            assert.equal(adaptedMeasurement.commitSet().commitForRepository(MockModels.webkit).revision(), '196051');
 
             var promise = AnalysisTask.fetchAll();
             requests[0].resolve(sampleAnalysisTask());

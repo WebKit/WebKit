@@ -29,7 +29,7 @@ function syncLoop(options)
     global.Metric.clearStaticMap();
     global.Platform.clearStaticMap();
     global.Repository.clearStaticMap();
-    global.RootSet.clearStaticMap();
+    global.CommitSet.clearStaticMap();
     global.Test.clearStaticMap();
     global.TestGroup.clearStaticMap();
     global.Triggerable.clearStaticMap();

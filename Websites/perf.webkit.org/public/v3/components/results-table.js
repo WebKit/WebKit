@@ -50,7 +50,7 @@ class ResultsTable extends ComponentBase {
                 if (self._rangeSelectorLabels) {
                     for (var label of self._rangeSelectorLabels) {
                         var content = '';
-                        if (row.rootSet()) {
+                        if (row.commitSet()) {
                             content = element('input',
                                 {type: 'radio', name: label, onchange: self._rangeSelectorClicked.bind(self, label, row)});
                         }
@@ -66,7 +66,7 @@ class ResultsTable extends ComponentBase {
                     cells.push(element('td', {class: 'whole-row-label', colspan: repositoryList.length + 1}, row.labelForWholeRow()));
                 else {
                     cells.push(element('td', row.resultContent(barGraphGroup)));
-                    cells.push(self._createRevisionListCells(repositoryList, revisionSupressionCount, group, row.rootSet(), rowIndex));
+                    cells.push(self._createRevisionListCells(repositoryList, revisionSupressionCount, group, row.commitSet(), rowIndex));
                 }
 
                 return element('tr', [cells, row.additionalColumns()]);
@@ -92,23 +92,23 @@ class ResultsTable extends ComponentBase {
         Instrumentation.endMeasuringTime('ResultsTable', 'render');
     }
 
-    _createRevisionListCells(repositoryList, revisionSupressionCount, testGroup, rootSet, rowIndex)
+    _createRevisionListCells(repositoryList, revisionSupressionCount, testGroup, commitSet, rowIndex)
     {
         var element = ComponentBase.createElement;
         var link = ComponentBase.createLink;
         var cells = [];
         for (var repository of repositoryList) {
-            var commit = rootSet ? rootSet.commitForRepository(repository) : null;
+            var commit = commitSet ? commitSet.commitForRepository(repository) : null;
 
             if (revisionSupressionCount[repository.id()]) {
                 revisionSupressionCount[repository.id()]--;
                 continue;
             }
 
-            var succeedingRowIndex = rowIndex + 1;
+            let succeedingRowIndex = rowIndex + 1;
             while (succeedingRowIndex < testGroup.rows.length) {
-                var succeedingRootSet = testGroup.rows[succeedingRowIndex].rootSet();
-                if (succeedingRootSet && commit != succeedingRootSet.commitForRepository(repository))
+                const succeedingCommitSet = testGroup.rows[succeedingRowIndex].commitSet();
+                if (succeedingCommitSet && commit != succeedingCommitSet.commitForRepository(repository))
                     break;
                 succeedingRowIndex++;
             }
@@ -148,21 +148,21 @@ class ResultsTable extends ComponentBase {
             }
             return a.hasUrlForRevision() ? -1 /* a < b */ : 1; // a > b
         });
-        var rootSets = [];
-        for (var group of rowGroups) {
-            for (var row of group.rows) {
-                var rootSet = row.rootSet();
-                if (rootSet)
-                    rootSets.push(rootSet);
+        const commitSets = [];
+        for (let group of rowGroups) {
+            for (let row of group.rows) {
+                const commitSet = row.commitSet();
+                if (commitSet)
+                    commitSets.push(commitSet);
             }
         }
-        if (!rootSets.length)
+        if (!commitSets.length)
             return [];
 
-        var repositoryPresenceMap = {};
-        for (var repository of allRepositories) {
-            var someCommit = rootSets[0].commitForRepository(repository);
-            if (RootSet.containsMultipleCommitsForRepository(rootSets, repository))
+        const repositoryPresenceMap = {};
+        for (let repository of allRepositories) {
+            const someCommit = commitSets[0].commitForRepository(repository);
+            if (CommitSet.containsMultipleCommitsForRepository(commitSets, repository))
                 repositoryPresenceMap[repository.id()] = true;
             else if (someCommit)
                 extraRepositories.push(someCommit);
@@ -271,19 +271,19 @@ class ResultsTable extends ComponentBase {
 }
 
 class ResultsTableRow {
-    constructor(heading, rootSet)
+    constructor(heading, commitSet)
     {
         this._heading = heading;
         this._result = null;
         this._link = null;
         this._label = '-';
-        this._rootSet = rootSet;
+        this._commitSet = commitSet;
         this._additionalColumns = [];
         this._labelForWholeRow = null;
     }
 
     heading() { return this._heading; }
-    rootSet() { return this._rootSet; }
+    commitSet() { return this._commitSet; }
     setResult(result) { this._result = result; }
     setLink(link, label)
     {

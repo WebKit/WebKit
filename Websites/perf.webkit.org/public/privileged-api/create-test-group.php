@@ -9,13 +9,13 @@ function main() {
 
     $task_id = array_get($data, 'task');
     $name = array_get($data, 'name');
-    $root_sets = array_get($data, 'rootSets');
+    $commit_sets_info = array_get($data, 'commitSets');
     $repetition_count = intval(array_get($data, 'repetitionCount', 1));
 
     if (!$name)
         exit_with_error('MissingName');
-    if (!$root_sets)
-        exit_with_error('MissingRootSets');
+    if (!$commit_sets_info)
+        exit_with_error('MissingCommitSets');
     if ($repetition_count < 1)
         exit_with_error('InvalidRepetitionCount', array('repetitionCount' => $repetition_count));
 
@@ -26,16 +26,16 @@ function main() {
     if (!$triggerable)
         exit_with_error('TriggerableNotFoundForTask', array('task' => $task_id));
 
-    $commit_sets = commit_sets_from_root_sets($db, $root_sets);
+    $commit_sets = ensure_commit_sets($db, $commit_sets_info);
 
     $db->begin_transaction();
 
-    $root_set_id_list = array();
+    $commit_set_id_list = array();
     foreach ($commit_sets as $commit_list) {
-        $root_set_id = $db->insert_row('root_sets', 'rootset', array());
+        $commit_set_id = $db->insert_row('commit_sets', 'commitset', array());
         foreach ($commit_list as $commit)
-            $db->insert_row('roots', 'root', array('set' => $root_set_id, 'commit' => $commit), 'commit');
-        array_push($root_set_id_list, $root_set_id);
+            $db->insert_row('commit_set_relationships', 'commitset', array('set' => $commit_set_id, 'commit' => $commit), 'commit');
+        array_push($commit_set_id_list, $commit_set_id);
     }
 
     $group_id = $db->insert_row('analysis_test_groups', 'testgroup',
@@ -43,14 +43,14 @@ function main() {
 
     $order = 0;
     for ($i = 0; $i < $repetition_count; $i++) {
-        foreach ($root_set_id_list as $root_set_id) {
+        foreach ($commit_set_id_list as $commit_set_id) {
             $db->insert_row('build_requests', 'request', array(
                 'triggerable' => $triggerable['id'],
                 'platform' => $triggerable['platform'],
                 'test' => $triggerable['test'],
                 'group' => $group_id,
                 'order' => $order,
-                'root_set' => $root_set_id));
+                'commit_set' => $commit_set_id));
             $order++;
         }
     }
@@ -60,13 +60,13 @@ function main() {
     exit_with_success(array('testGroupId' => $group_id));
 }
 
-function commit_sets_from_root_sets($db, $root_sets) {
+function ensure_commit_sets($db, $commit_sets_info) {
     $repository_name_to_id = array();
     foreach ($db->fetch_table('repositories') as $row)
         $repository_name_to_id[$row['repository_name']] = $row['repository_id'];
 
     $commit_sets = array();
-    foreach ($root_sets as $repository_name => $revisions) {
+    foreach ($commit_sets_info as $repository_name => $revisions) {
         $repository_id = array_get($repository_name_to_id, $repository_name);
         if (!$repository_id)
             exit_with_error('RepositoryNotFound', array('name' => $repository_name));
@@ -83,7 +83,7 @@ function commit_sets_from_root_sets($db, $root_sets) {
     $commit_count_per_set = count($commit_sets[0]);
     foreach ($commit_sets as $commits) {
         if ($commit_count_per_set != count($commits))
-            exit_with_error('InvalidRootSets', array('rootSets' => $root_sets));
+            exit_with_error('InvalidCommitSets', array('commitSets' => $commit_sets));
     }
 
     return $commit_sets;

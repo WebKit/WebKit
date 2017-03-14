@@ -110,7 +110,7 @@ function sampleiOSConfigWithExpansions()
     }
 }
 
-let sampleRootSetData = {
+let sampleCommitSetData = {
     'WebKit': {
         'id': '111127',
         'time': 1456955807334,
@@ -207,14 +207,14 @@ function createSampleBuildRequest(platform, test)
     assert(platform instanceof Platform);
     assert(test instanceof Test);
 
-    let rootSet = RootSet.ensureSingleton('4197', {roots: [
+    let commitSet = CommitSet.ensureSingleton('4197', {commits: [
         {'id': '111127', 'time': 1456955807334, 'repository': MockModels.webkit, 'revision': '197463'},
         {'id': '111237', 'time': 1456931874000, 'repository': MockModels.sharedRepository, 'revision': '80229'},
         {'id': '111239', 'time': 1456931874000, 'repository': MockModels.webkitGit, 'revision': '9abcdef'},
         {'id': '88930', 'time': 0, 'repository': MockModels.ios, 'revision': '13A452'},
     ]});
 
-    let request = BuildRequest.ensureSingleton('16733-' + platform.id(), {'rootSet': rootSet, 'status': 'pending', 'platform': platform, 'test': test});
+    let request = BuildRequest.ensureSingleton('16733-' + platform.id(), {'commitSet': commitSet, 'status': 'pending', 'platform': platform, 'test': test});
     return request;
 }
 
@@ -231,7 +231,7 @@ function samplePendingBuild(buildRequestId, buildTime, slaveName)
             ['reason', 'force build','Force Build Form'],
             [
                 'roots_dict',
-                JSON.stringify(sampleRootSetData),
+                JSON.stringify(sampleCommitSetData),
                 'Force Build Form'
             ],
             ['slavename', slaveName, ''],
@@ -280,7 +280,7 @@ function sampleInProgressBuild(slaveName)
             ['desired_image', '13A452', 'Force Build Form'],
             ['owner', '<unknown>', 'Force Build Form'],
             ['reason', 'force build', 'Force Build Form'],
-            ['roots_dict', JSON.stringify(sampleRootSetData), 'Force Build Form'],
+            ['roots_dict', JSON.stringify(sampleCommitSetData), 'Force Build Form'],
             ['scheduler', 'ABTest-iPad-RunBenchmark-Tests-ForceScheduler', 'Scheduler'],
             ['slavename', slaveName || 'ABTest-iPad-0', 'BuildSlave'],
         ],
@@ -356,7 +356,7 @@ function sampleFinishedBuild(buildRequestId, slaveName)
             ['desired_image', '13A452', 'Force Build Form'],
             ['owner', '<unknown>', 'Force Build Form'],
             ['reason', 'force build', 'Force Build Form'],
-            ['roots_dict', JSON.stringify(sampleRootSetData), 'Force Build Form'],
+            ['roots_dict', JSON.stringify(sampleCommitSetData), 'Force Build Form'],
             ['scheduler', 'ABTest-iPad-RunBenchmark-Tests-ForceScheduler', 'Scheduler'],
             ['slavename', slaveName || 'ABTest-iPad-0', 'BuildSlave'],
         ],
@@ -594,13 +594,13 @@ describe('BuildbotSyncer', function () {
         it('should resolve "rootOptions"', function () {
             let syncers = BuildbotSyncer._loadConfig(RemoteAPI, sampleiOSConfig());
             let properties = syncers[0]._propertiesForBuildRequest(createSampleBuildRequest(MockModels.iphone, MockModels.speedometer));
-            assert.equal(properties['roots_dict'], JSON.stringify(sampleRootSetData));
+            assert.equal(properties['roots_dict'], JSON.stringify(sampleCommitSetData));
         });
 
         it('should resolve "rootsExcluding"', function () {
             let syncers = BuildbotSyncer._loadConfig(RemoteAPI, sampleiOSConfig());
             let properties = syncers[0]._propertiesForBuildRequest(createSampleBuildRequest(MockModels.iphone, MockModels.speedometer));
-            assert.equal(properties['roots_dict'], JSON.stringify(sampleRootSetData));
+            assert.equal(properties['roots_dict'], JSON.stringify(sampleCommitSetData));
         });
 
         it('should set the property for the build request id', function () {

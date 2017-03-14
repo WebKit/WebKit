@@ -6,10 +6,10 @@ class BuildRequestsFetcher {
     function __construct($db) {
         $this->db = $db;
         $this->rows = null;
-        $this->root_sets = array();
-        $this->roots_by_id = array();
-        $this->roots = array();
-        $this->root_sets_by_id = array();
+        $this->commit_sets = array();
+        $this->commits_by_id = array();
+        $this->commits = array();
+        $this->commit_sets_by_id = array();
     }
 
     function fetch_for_task($task_id) {
@@ -60,9 +60,9 @@ class BuildRequestsFetcher {
         foreach ($this->rows as $row) {
             $test_id = $row['request_test'];
             $platform_id = $row['request_platform'];
-            $root_set_id = $row['request_root_set'];
+            $commit_set_id = $row['request_commit_set'];
 
-            $this->fetch_roots_for_set_if_needed($root_set_id, $resolve_ids);
+            $this->fetch_commits_for_set_if_needed($commit_set_id, $resolve_ids);
 
             array_push($requests, array(
                 'id' => $row['request_id'],
@@ -72,7 +72,7 @@ class BuildRequestsFetcher {
                 'platform' => $resolve_ids ? $id_to_platform_name[$platform_id] : $platform_id,
                 'testGroup' => $row['request_group'],
                 'order' => $row['request_order'],
-                'rootSet' => $root_set_id,
+                'commitSet' => $commit_set_id,
                 'status' => $row['request_status'],
                 'url' => $row['request_url'],
                 'build' => $row['request_build'],
@@ -82,45 +82,45 @@ class BuildRequestsFetcher {
         return $requests;
     }
 
-    function root_sets() {
-        return $this->root_sets;
+    function commit_sets() {
+        return $this->commit_sets;
     }
 
-    function roots() {
-        return $this->roots;
+    function commits() {
+        return $this->commits;
     }
 
-    private function fetch_roots_for_set_if_needed($root_set_id, $resolve_ids) {
-        if (array_key_exists($root_set_id, $this->root_sets_by_id))
+    private function fetch_commits_for_set_if_needed($commit_set_id, $resolve_ids) {
+        if (array_key_exists($commit_set_id, $this->commit_sets_by_id))
             return;
 
-        $root_rows = $this->db->query_and_fetch_all('SELECT *
-            FROM roots, commits LEFT OUTER JOIN repositories ON commit_repository = repository_id
-            WHERE root_commit = commit_id AND root_set = $1', array($root_set_id));
+        $commit_rows = $this->db->query_and_fetch_all('SELECT *
+            FROM commit_set_relationships, commits LEFT OUTER JOIN repositories ON commit_repository = repository_id
+            WHERE commitset_commit = commit_id AND commitset_set = $1', array($commit_set_id));
 
-        $root_ids = array();
-        foreach ($root_rows as $row) {
+        $commit_ids = array();
+        foreach ($commit_rows as $row) {
             $repository_id = $resolve_ids ? $row['repository_name'] : $row['repository_id'];
             $revision = $row['commit_revision'];
             $commit_time = $row['commit_time'];
-            array_push($root_ids, $row['commit_id']);
+            array_push($commit_ids, $row['commit_id']);
 
-            $root_id = $row['commit_id'];
-            if (array_key_exists($root_id, $this->roots_by_id))
+            $commit_id = $row['commit_id'];
+            if (array_key_exists($commit_id, $this->commits_by_id))
                 continue;
 
-            array_push($this->roots, array(
-                'id' => $root_id,
+            array_push($this->commits, array(
+                'id' => $commit_id,
                 'repository' => $repository_id,
                 'revision' => $revision,
                 'time' => Database::to_js_time($commit_time)));
 
-            $this->roots_by_id[$root_id] = TRUE;
+            $this->commits_by_id[$commit_id] = TRUE;
         }
 
-        $this->root_sets_by_id[$root_set_id] = TRUE;
+        $this->commit_sets_by_id[$commit_set_id] = TRUE;
 
-        array_push($this->root_sets, array('id' => $root_set_id, 'roots' => $root_ids));
+        array_push($this->commit_sets, array('id' => $commit_set_id, 'commits' => $commit_ids));
     }
 }
 

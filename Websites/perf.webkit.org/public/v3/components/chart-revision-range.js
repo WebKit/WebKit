@@ -38,10 +38,10 @@ class ChartRevisionRange {
     {
         if (!point || !repository)
             return null;
-        const rootSet = point.rootSet();
-        if (!rootSet)
+        const commitSet = point.commitSet();
+        if (!commitSet)
             return null;
-        const commit = rootSet.commitForRepository(repository);
+        const commit = commitSet.commitForRepository(repository);
         if (!commit)
             return null;
         return commit.revision();
@@ -52,14 +52,14 @@ class ChartRevisionRange {
         if (!currentPoint)
             return null;
 
-        const currentRootSet = currentPoint.rootSet();
-        const previousRootSet = previousPoint ? previousPoint.rootSet() : null;
+        const currentCommitSet = currentPoint.commitSet();
+        const previousCommitSet = previousPoint ? previousPoint.commitSet() : null;
 
-        const repositoriesInCurrentRootSet = Repository.sortByNamePreferringOnesWithURL(currentRootSet.repositories());
+        const repositoriesInCurrentCommitSet = Repository.sortByNamePreferringOnesWithURL(currentCommitSet.repositories());
         const revisionList = [];
-        for (let repository of repositoriesInCurrentRootSet) {
-            let currentCommit = currentRootSet.commitForRepository(repository);
-            let previousCommit = previousRootSet ? previousRootSet.commitForRepository(repository) : null;
+        for (let repository of repositoriesInCurrentCommitSet) {
+            let currentCommit = currentCommitSet.commitForRepository(repository);
+            let previousCommit = previousCommitSet ? previousCommitSet.commitForRepository(repository) : null;
             revisionList.push(currentCommit.diff(previousCommit));
         }
         return revisionList;

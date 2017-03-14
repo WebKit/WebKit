@@ -200,11 +200,11 @@ class BuildbotSyncer {
     {
         assert(buildRequest instanceof BuildRequest);
 
-        let rootSet = buildRequest.rootSet();
-        assert(rootSet instanceof RootSet);
+        const commitSet = buildRequest.commitSet();
+        assert(commitSet instanceof CommitSet);
 
-        let repositoryByName = {};
-        for (let repository of rootSet.repositories())
+        const repositoryByName = {};
+        for (let repository of commitSet.repositories())
             repositoryByName[repository.name()] = repository;
 
         let propertiesTemplate = null;
@@ -223,14 +223,14 @@ class BuildbotSyncer {
                 let repositoryName = value['root'];
                 let repository = repositoryByName[repositoryName];
                 assert(repository, `"${repositoryName}" must be specified`);
-                properties[key] = rootSet.revisionForRepository(repository);
+                properties[key] = commitSet.revisionForRepository(repository);
             } else if ('rootOptions' in value) {
                 const filteredOptions = value['rootOptions'].filter((option) => option in repositoryByName);
                 assert.equal(filteredOptions.length, 1, `There should be exactly one valid root among "${value['rootOptions']}".`);
-                properties[key] = rootSet.revisionForRepository(repositoryByName[filteredOptions[0]]);
+                properties[key] = commitSet.revisionForRepository(repositoryByName[filteredOptions[0]]);
             }
             else if ('rootsExcluding' in value) {
-                let revisionSet = this._revisionSetFromRootSetWithExclusionList(rootSet, value['rootsExcluding']);
+                let revisionSet = this._revisionSetFromCommitSetWithExclusionList(commitSet, value['rootsExcluding']);
                 properties[key] = JSON.stringify(revisionSet);
             }
         }
@@ -240,13 +240,13 @@ class BuildbotSyncer {
         return properties;
     }
 
-    _revisionSetFromRootSetWithExclusionList(rootSet, exclusionList)
+    _revisionSetFromCommitSetWithExclusionList(commitSet, exclusionList)
     {
-        let revisionSet = {};
-        for (let repository of rootSet.repositories()) {
+        const revisionSet = {};
+        for (let repository of commitSet.repositories()) {
             if (exclusionList.indexOf(repository.name()) >= 0)
                 continue;
-            let commit = rootSet.commitForRepository(repository);
+            const commit = commitSet.commitForRepository(repository);
             revisionSet[repository.name()] = {
                 id: commit.id(),
                 time: +commit.time(),

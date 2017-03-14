@@ -29,19 +29,19 @@ class TestGroupResultsTable extends ResultsTable {
 
     buildRowGroups()
     {
-        var testGroup = this._testGroup;
+        const testGroup = this._testGroup;
         if (!testGroup)
             return [];
 
-        var rootSets = this._testGroup.requestedRootSets();
-        var groups = rootSets.map(function (rootSet) {
-            var rows = [new ResultsTableRow('Mean', rootSet)];
+        const commitSets = this._testGroup.requestedCommitSets();
+        const groups = commitSets.map(function (commitSet) {
+            const rows = [new ResultsTableRow('Mean', commitSet)];
             var results = [];
 
-            for (var request of testGroup.requestsForRootSet(rootSet)) {
+            for (var request of testGroup.requestsForCommitSet(commitSet)) {
                 var result = request.result();
-                // Call result.rootSet() for each result since the set of revisions used in testing maybe different from requested ones.
-                var row = new ResultsTableRow(1 + +request.order(), result ? result.rootSet() : null);
+                // Call result.commitSet() for each result since the set of revisions used in testing maybe different from requested ones.
+                var row = new ResultsTableRow(1 + +request.order(), result ? result.commitSet() : null);
                 rows.push(row);
                 if (result) {
                     row.setLink(result.build().url(), result.build().label());
@@ -55,16 +55,16 @@ class TestGroupResultsTable extends ResultsTable {
             if (!isNaN(aggregatedResult.value))
                 rows[0].setResult(aggregatedResult);
 
-            return {heading: testGroup.labelForRootSet(rootSet), rows:rows};
+            return {heading: testGroup.labelForCommitSet(commitSet), rows};
         });
 
-        var comparisonRows = [];
-        for (var i = 0; i < rootSets.length; i++) {
-            for (var j = i + 1; j < rootSets.length; j++) {
-                var startConfig = testGroup.labelForRootSet(rootSets[i]);
-                var endConfig = testGroup.labelForRootSet(rootSets[j]);
+        const comparisonRows = [];
+        for (let i = 0; i < commitSets.length; i++) {
+            for (let j = i + 1; j < commitSets.length; j++) {
+                const startConfig = testGroup.labelForCommitSet(commitSets[i]);
+                const endConfig = testGroup.labelForCommitSet(commitSets[j]);
 
-                var result = this._testGroup.compareTestResults(rootSets[i], rootSets[j]);
+                const result = this._testGroup.compareTestResults(commitSets[i], commitSets[j]);
                 if (result.changeType == null)
                     continue;
 

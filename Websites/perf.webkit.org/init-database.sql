@@ -26,8 +26,8 @@ DROP TABLE IF EXISTS triggerable_configurations CASCADE;
 DROP TABLE IF EXISTS triggerable_repositories CASCADE;
 DROP TABLE IF EXISTS bugs CASCADE;
 DROP TABLE IF EXISTS analysis_test_groups CASCADE;
-DROP TABLE IF EXISTS root_sets CASCADE;
-DROP TABLE IF EXISTS roots CASCADE;
+DROP TABLE IF EXISTS commit_sets CASCADE;
+DROP TABLE IF EXISTS commit_set_relationships CASCADE;
 DROP TABLE IF EXISTS build_requests CASCADE;
 DROP TYPE IF EXISTS build_request_status_type CASCADE;
 
@@ -251,12 +251,12 @@ CREATE TABLE analysis_test_groups (
     CONSTRAINT testgroup_name_must_be_unique_for_each_task UNIQUE(testgroup_task, testgroup_name));
 CREATE INDEX testgroup_task_index ON analysis_test_groups(testgroup_task);
 
-CREATE TABLE root_sets (
-    rootset_id serial PRIMARY KEY);
+CREATE TABLE commit_sets (
+    commitset_id serial PRIMARY KEY);
 
-CREATE TABLE roots (
-    root_set integer REFERENCES root_sets NOT NULL,
-    root_commit integer REFERENCES commits NOT NULL);
+CREATE TABLE commit_set_relationships (
+    commitset_set integer REFERENCES commit_sets NOT NULL,
+    commitset_commit integer REFERENCES commits NOT NULL);
 
 CREATE TYPE build_request_status_type as ENUM ('pending', 'scheduled', 'running', 'failed', 'completed', 'canceled');
 CREATE TABLE build_requests (
@@ -266,7 +266,7 @@ CREATE TABLE build_requests (
     request_test integer REFERENCES tests NOT NULL,
     request_group integer REFERENCES analysis_test_groups NOT NULL,
     request_order integer NOT NULL,
-    request_root_set integer REFERENCES root_sets NOT NULL,
+    request_commit_set integer REFERENCES commit_sets NOT NULL,
     request_status build_request_status_type NOT NULL DEFAULT 'pending',
     request_url varchar(1024),
     request_build integer REFERENCES builds,

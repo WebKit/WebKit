@@ -17,8 +17,8 @@ class BuildRequest extends DataModelObject {
         console.assert(object.test instanceof Test);
         this._test = object.test;
         this._order = object.order;
-        console.assert(object.rootSet instanceof RootSet);
-        this._rootSet = object.rootSet;
+        console.assert(object.commitSet instanceof CommitSet);
+        this._commitSet = object.commitSet;
         this._status = object.status;
         this._statusUrl = object.url;
         this._buildId = object.build;
@@ -30,7 +30,7 @@ class BuildRequest extends DataModelObject {
     {
         console.assert(this._testGroup == object.testGroup);
         console.assert(this._order == object.order);
-        console.assert(this._rootSet == object.rootSet);
+        console.assert(this._commitSet == object.commitSet);
         this._status = object.status;
         this._statusUrl = object.url;
         this._buildId = object.build;
@@ -42,7 +42,7 @@ class BuildRequest extends DataModelObject {
     platform() { return this._platform; }
     test() { return this._test; }
     order() { return +this._order; }
-    rootSet() { return this._rootSet; }
+    commitSet() { return this._commitSet; }
 
     status() { return this._status; }
     hasFinished() { return this._status == 'failed' || this._status == 'completed' || this._status == 'canceled'; }
@@ -139,15 +139,15 @@ class BuildRequest extends DataModelObject {
 
     static constructBuildRequestsFromData(data)
     {
-        var rootIdMap = {};
-        for (var root of data['roots']) {
-            rootIdMap[root.id] = root;
-            root.repository = Repository.findById(root.repository);
+        const commitIdMap = {};
+        for (let commit of data['commits']) {
+            commitIdMap[commit.id] = commit;
+            commit.repository = Repository.findById(commit.repository);
         }
 
-        var rootSets = data['rootSets'].map(function (row) {
-            row.roots = row.roots.map(function (rootId) { return rootIdMap[rootId]; });
-            return RootSet.ensureSingleton(row.id, row);
+        const commitSets = data['commitSets'].map((row) => {
+            row.commits = row.commits.map((commitId) => commitIdMap[commitId]);
+            return CommitSet.ensureSingleton(row.id, row);
         });
 
         return data['buildRequests'].map(function (rawData) {
@@ -155,7 +155,7 @@ class BuildRequest extends DataModelObject {
             rawData.test = Test.findById(rawData.test);
             rawData.testGroupId = rawData.testGroup;
             rawData.testGroup = TestGroup.findById(rawData.testGroup);
-            rawData.rootSet = RootSet.findById(rawData.rootSet);
+            rawData.commitSet = CommitSet.findById(rawData.commitSet);
             return BuildRequest.ensureSingleton(rawData.id, rawData);
         });
     }

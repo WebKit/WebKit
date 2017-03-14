@@ -85,21 +85,21 @@ class AnalysisResultsViewer extends ResultsTable {
         Instrumentation.startMeasuringTime('AnalysisResultsViewer', 'buildRowGroups');
 
         var testGroups = this._testGroups || [];
-        var rootSetsInTestGroups = this._collectRootSetsInTestGroups(testGroups);
+        var commitSetsInTestGroups = this._collectCommitSetsInTestGroups(testGroups);
 
-        var rowToMatchingRootSets = new Map;
-        var rowList = this._buildRowsForPointsAndTestGroups(rootSetsInTestGroups, rowToMatchingRootSets);
+        var rowToMatchingCommitSets = new Map;
+        var rowList = this._buildRowsForPointsAndTestGroups(commitSetsInTestGroups, rowToMatchingCommitSets);
 
         var testGroupLayoutMap = new Map;
         var self = this;
         rowList.forEach(function (row, rowIndex) {
-            var matchingRootSets = rowToMatchingRootSets.get(row);
-            if (!matchingRootSets) {
+            var matchingCommitSets = rowToMatchingCommitSets.get(row);
+            if (!matchingCommitSets) {
                 console.assert(row instanceof AnalysisResultsViewer.ExpandableRow);
                 return;
             }
 
-            for (var entry of matchingRootSets) {
+            for (var entry of matchingCommitSets) {
                 var testGroup = entry.testGroup();
 
                 var block = testGroupLayoutMap.get(testGroup);
@@ -130,80 +130,80 @@ class AnalysisResultsViewer extends ResultsTable {
         return [{rows: rowList}];
     }
 
-    _collectRootSetsInTestGroups(testGroups)
+    _collectCommitSetsInTestGroups(testGroups)
     {
         if (!this._testGroups)
             return [];
 
-        var rootSetsInTestGroups = [];
+        var commitSetsInTestGroups = [];
         for (var group of this._testGroups) {
-            var sortedSets = group.requestedRootSets();
+            var sortedSets = group.requestedCommitSets();
             for (var i = 0; i < sortedSets.length; i++)
-                rootSetsInTestGroups.push(new AnalysisResultsViewer.RootSetInTestGroup(group, sortedSets[i], sortedSets[i + 1]));
+                commitSetsInTestGroups.push(new AnalysisResultsViewer.CommitSetInTestGroup(group, sortedSets[i], sortedSets[i + 1]));
         }
 
-        return rootSetsInTestGroups;
+        return commitSetsInTestGroups;
     }
 
-    _buildRowsForPointsAndTestGroups(rootSetsInTestGroups, rowToMatchingRootSets)
+    _buildRowsForPointsAndTestGroups(commitSetsInTestGroups, rowToMatchingCommitSets)
     {
         console.assert(this._startPoint.series == this._endPoint.series);
         var rowList = [];
         var pointAfterEnd = this._endPoint.series.nextPoint(this._endPoint);
-        var rootSetsWithPoints = new Set;
+        var commitSetsWithPoints = new Set;
         var pointIndex = 0;
         var previousPoint;
         for (var point = this._startPoint; point && point != pointAfterEnd; point = point.series.nextPoint(point), pointIndex++) {
-            var rootSetInPoint = point.rootSet();
-            var matchingRootSets = [];
-            for (var entry of rootSetsInTestGroups) {
-                if (rootSetInPoint.equals(entry.rootSet()) && !rootSetsWithPoints.has(entry)) {
-                    matchingRootSets.push(entry);
-                    rootSetsWithPoints.add(entry);
+            const commitSetInPoint = point.commitSet();
+            const matchingCommitSets = [];
+            for (var entry of commitSetsInTestGroups) {
+                if (commitSetInPoint.equals(entry.commitSet()) && !commitSetsWithPoints.has(entry)) {
+                    matchingCommitSets.push(entry);
+                    commitSetsWithPoints.add(entry);
                 }
             }
 
-            var hasMatchingTestGroup = !!matchingRootSets.length;
+            const hasMatchingTestGroup = !!matchingCommitSets.length;
             if (!hasMatchingTestGroup && !this._expandedPoints.has(point))
                 continue;
 
-            var row = new ResultsTableRow(pointIndex.toString(), rootSetInPoint);
+            const row = new ResultsTableRow(pointIndex.toString(), commitSetInPoint);
             row.setResult(point);
 
             if (previousPoint && previousPoint.series.nextPoint(previousPoint) != point)
                 rowList.push(new AnalysisResultsViewer.ExpandableRow(this._expandBetween.bind(this, previousPoint, point)));
             previousPoint = point;
 
-            rowToMatchingRootSets.set(row, matchingRootSets);
+            rowToMatchingCommitSets.set(row, matchingCommitSets);
             rowList.push(row);
         }
 
-        rootSetsInTestGroups.forEach(function (entry) {
-            if (rootSetsWithPoints.has(entry))
+        commitSetsInTestGroups.forEach(function (entry) {
+            if (commitSetsWithPoints.has(entry))
                 return;
 
             for (var i = 0; i < rowList.length; i++) {
                 var row = rowList[i];
-                if (!(row instanceof AnalysisResultsViewer.ExpandableRow) && row.rootSet().equals(entry.rootSet())) {
-                    rowToMatchingRootSets.get(row).push(entry);
+                if (!(row instanceof AnalysisResultsViewer.ExpandableRow) && row.commitSet().equals(entry.commitSet())) {
+                    rowToMatchingCommitSets.get(row).push(entry);
                     return;
                 }
             }
 
-            var groupTime = entry.rootSet().latestCommitTime();
-            var newRow = new ResultsTableRow(null, entry.rootSet());
-            rowToMatchingRootSets.set(newRow, [entry]);
+            var groupTime = entry.commitSet().latestCommitTime();
+            var newRow = new ResultsTableRow(null, entry.commitSet());
+            rowToMatchingCommitSets.set(newRow, [entry]);
 
             for (var i = 0; i < rowList.length; i++) {
                 if (rowList[i] instanceof AnalysisResultsViewer.ExpandableRow)
                     continue;
 
-                if (entry.succeedingRootSet() && rowList[i].rootSet().equals(entry.succeedingRootSet())) {
+                if (entry.succeedingCommitSet() && rowList[i].commitSet().equals(entry.succeedingCommitSet())) {
                     rowList.splice(i, 0, newRow);
                     return;
                 }
 
-                var rowTime = rowList[i].rootSet().latestCommitTime();
+                var rowTime = rowList[i].commitSet().latestCommitTime();
                 if (rowTime > groupTime) {
                     rowList.splice(i, 0, newRow);
                     return;
@@ -211,13 +211,13 @@ class AnalysisResultsViewer extends ResultsTable {
 
                 if (rowTime == groupTime) {
                     // Missing some commits. Do as best as we can to avoid going backwards in time.
-                    var repositoriesInNewRow = entry.rootSet().repositories();
+                    var repositoriesInNewRow = entry.commitSet().repositories();
                     for (var j = i; j < rowList.length; j++) {
                         if (rowList[j] instanceof AnalysisResultsViewer.ExpandableRow)
                             continue;
                         for (var repository of repositoriesInNewRow) {
-                            var newCommit = entry.rootSet().commitForRepository(repository);
-                            var rowCommit = rowList[j].rootSet().commitForRepository(repository);
+                            var newCommit = entry.commitSet().commitForRepository(repository);
+                            var rowCommit = rowList[j].commitSet().commitForRepository(repository);
                             if (!rowCommit || newCommit.time() < rowCommit.time()) {
                                 rowList.splice(j, 0, newRow);
                                 return;
@@ -227,8 +227,8 @@ class AnalysisResultsViewer extends ResultsTable {
                 }
             }
 
-            var newRow = new ResultsTableRow(null, entry.rootSet());
-            rowToMatchingRootSets.set(newRow, [entry]);
+            var newRow = new ResultsTableRow(null, entry.commitSet());
+            rowToMatchingCommitSets.set(newRow, [entry]);
             rowList.push(newRow);
         });
 
@@ -355,26 +355,26 @@ AnalysisResultsViewer.ExpandableRow = class extends ResultsTableRow {
     }
 }
 
-AnalysisResultsViewer.RootSetInTestGroup = class {
-    constructor(testGroup, rootSet, succeedingRootSet)
+AnalysisResultsViewer.CommitSetInTestGroup = class {
+    constructor(testGroup, commitSet, succeedingCommitSet)
     {
         console.assert(testGroup instanceof TestGroup);
-        console.assert(rootSet instanceof RootSet);
+        console.assert(commitSet instanceof CommitSet);
         this._testGroup = testGroup;
-        this._rootSet = rootSet;
-        this._succeedingRootSet = succeedingRootSet;
+        this._commitSet = commitSet;
+        this._succeedingCommitSet = succeedingCommitSet;
     }
 
     testGroup() { return this._testGroup; }
-    rootSet() { return this._rootSet; }
-    succeedingRootSet() { return this._succeedingRootSet; }
+    commitSet() { return this._commitSet; }
+    succeedingCommitSet() { return this._succeedingCommitSet; }
 }
 
 AnalysisResultsViewer.TestGroupStackingBlock = class {
     constructor(testGroup, className, callback)
     {
         this._testGroup = testGroup;
-        this._rootSetIndexRowIndexMap = [];
+        this._commitSetIndexRowIndexMap = [];
         this._className = className;
         this._label = null;
         this._title = null;
@@ -382,10 +382,10 @@ AnalysisResultsViewer.TestGroupStackingBlock = class {
         this._callback = callback;
     }
 
-    addRowIndex(rootSetInTestGroup, rowIndex)
+    addRowIndex(commitSetInTestGroup, rowIndex)
     {
-        console.assert(rootSetInTestGroup instanceof AnalysisResultsViewer.RootSetInTestGroup);
-        this._rootSetIndexRowIndexMap.push({rootSet: rootSetInTestGroup.rootSet(), rowIndex: rowIndex});
+        console.assert(commitSetInTestGroup instanceof AnalysisResultsViewer.CommitSetInTestGroup);
+        this._commitSetIndexRowIndexMap.push({commitSet: commitSetInTestGroup.commitSet(), rowIndex: rowIndex});
     }
 
     testGroup() { return this._testGroup; }
@@ -402,10 +402,10 @@ AnalysisResultsViewer.TestGroupStackingBlock = class {
         }, ComponentBase.createLink(this._label, this._title, this._callback));
     }
 
-    isComplete() { return this._rootSetIndexRowIndexMap.length >= 2; }
+    isComplete() { return this._commitSetIndexRowIndexMap.length >= 2; }
 
-    startRowIndex() { return this._rootSetIndexRowIndexMap[0].rowIndex; }
-    endRowIndex() { return this._rootSetIndexRowIndexMap[this._rootSetIndexRowIndexMap.length - 1].rowIndex; }
+    startRowIndex() { return this._commitSetIndexRowIndexMap[0].rowIndex; }
+    endRowIndex() { return this._commitSetIndexRowIndexMap[this._commitSetIndexRowIndexMap.length - 1].rowIndex; }
     isThin()
     {
         this._computeTestGroupStatus();
@@ -417,10 +417,10 @@ AnalysisResultsViewer.TestGroupStackingBlock = class {
         if (this._status || !this.isComplete())
             return;
 
-        console.assert(this._rootSetIndexRowIndexMap.length <= 2); // FIXME: Support having more root sets.
+        console.assert(this._commitSetIndexRowIndexMap.length <= 2); // FIXME: Support having more root sets.
 
         var result = this._testGroup.compareTestResults(
-            this._rootSetIndexRowIndexMap[0].rootSet, this._rootSetIndexRowIndexMap[1].rootSet);
+            this._commitSetIndexRowIndexMap[0].commitSet, this._commitSetIndexRowIndexMap[1].commitSet);
 
         this._label = result.label;
         this._title = result.fullLabel;

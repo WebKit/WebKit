@@ -148,8 +148,8 @@ const tableToPrefixMap = {
     'platforms': 'platform',
     'reports': 'report',
     'repositories': 'repository',
-    'root_sets': 'rootset',
-    'roots': 'root',
+    'commit_sets': 'commitset',
+    'commit_set_relationships': 'commitset',
     'run_iterations': 'iteration',
 }
 

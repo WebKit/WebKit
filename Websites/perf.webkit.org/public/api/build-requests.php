@@ -33,8 +33,8 @@ function main($id, $path, $post_data) {
     $resolve_id = array_get($_GET, 'useLegacyIdResolution');
     exit_with_success(array(
         'buildRequests' => $resolve_id ? $requests_fetcher->results_with_resolved_ids() : $requests_fetcher->results(),
-        'rootSets' => $requests_fetcher->root_sets(),
-        'roots' => $requests_fetcher->roots(),
+        'commitSets' => $requests_fetcher->commit_sets(),
+        'commits' => $requests_fetcher->commits(),
     ));
 }
 

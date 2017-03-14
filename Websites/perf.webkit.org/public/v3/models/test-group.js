@@ -12,9 +12,9 @@ class TestGroup extends LabeledObject {
         this._buildRequests = [];
         this._requestsAreInOrder = false;
         this._repositories = null;
-        this._requestedRootSets = null;
-        this._rootSetToLabel = new Map;
-        this._allRootSets = null;
+        this._requestedCommitSets = null;
+        this._commitSetToLabel = new Map;
+        this._allCommitSets = null;
         console.assert(!object.platform || object.platform instanceof Platform);
         this._platform = object.platform;
     }
@@ -37,54 +37,54 @@ class TestGroup extends LabeledObject {
     {
         this._buildRequests.push(request);
         this._requestsAreInOrder = false;
-        this._requestedRootSets = null;
-        this._rootSetToLabel.clear();
+        this._requestedCommitSets = null;
+        this._commitSetToLabel.clear();
     }
 
     repetitionCount()
     {
         if (!this._buildRequests.length)
             return 0;
-        var rootSet = this._buildRequests[0].rootSet();
+        var commitSet = this._buildRequests[0].commitSet();
         var count = 0;
         for (var request of this._buildRequests) {
-            if (request.rootSet() == rootSet)
+            if (request.commitSet() == commitSet)
                 count++;
         }
         return count;
     }
 
-    requestedRootSets()
+    requestedCommitSets()
     {
-        if (!this._requestedRootSets) {
+        if (!this._requestedCommitSets) {
             this._orderBuildRequests();
-            this._requestedRootSets = [];
+            this._requestedCommitSets = [];
             for (var request of this._buildRequests) {
-                var set = request.rootSet();
-                if (!this._requestedRootSets.includes(set))
-                    this._requestedRootSets.push(set);
+                var set = request.commitSet();
+                if (!this._requestedCommitSets.includes(set))
+                    this._requestedCommitSets.push(set);
             }
-            this._requestedRootSets.sort(function (a, b) { return a.latestCommitTime() - b.latestCommitTime(); });
+            this._requestedCommitSets.sort(function (a, b) { return a.latestCommitTime() - b.latestCommitTime(); });
             var setIndex = 0;
-            for (var set of this._requestedRootSets) {
-                this._rootSetToLabel.set(set, String.fromCharCode('A'.charCodeAt(0) + setIndex));
+            for (var set of this._requestedCommitSets) {
+                this._commitSetToLabel.set(set, String.fromCharCode('A'.charCodeAt(0) + setIndex));
                 setIndex++;
             }
 
         }
-        return this._requestedRootSets;
+        return this._requestedCommitSets;
     }
 
-    requestsForRootSet(rootSet)
+    requestsForCommitSet(commitSet)
     {
         this._orderBuildRequests();
-        return this._buildRequests.filter(function (request) { return request.rootSet() == rootSet; });
+        return this._buildRequests.filter(function (request) { return request.commitSet() == commitSet; });
     }
 
-    labelForRootSet(rootSet)
+    labelForCommitSet(commitSet)
     {
-        console.assert(this._requestedRootSets);
-        return this._rootSetToLabel.get(rootSet);
+        console.assert(this._requestedCommitSets);
+        return this._commitSetToLabel.get(commitSet);
     }
 
     _orderBuildRequests()
@@ -97,7 +97,7 @@ class TestGroup extends LabeledObject {
 
     didSetResult(request)
     {
-        this._allRootSets = null;
+        this._allCommitSets = null;
     }
 
     hasFinished()
@@ -115,12 +115,12 @@ class TestGroup extends LabeledObject {
         return this._buildRequests.some(function (request) { return request.isPending(); });
     }
 
-    compareTestResults(rootSetA, rootSetB)
+    compareTestResults(commitSetA, commitSetB)
     {
-        var beforeValues = this._valuesForRootSet(rootSetA);
-        var afterValues = this._valuesForRootSet(rootSetB);
-        var beforeMean = Statistics.sum(beforeValues) / beforeValues.length;
-        var afterMean = Statistics.sum(afterValues) / afterValues.length;
+        const beforeValues = this._valuesForCommitSet(commitSetA);
+        const afterValues = this._valuesForCommitSet(commitSetB);
+        const beforeMean = Statistics.sum(beforeValues) / beforeValues.length;
+        const afterMean = Statistics.sum(afterValues) / afterValues.length;
 
         var metric = AnalysisTask.findById(this._taskId).metric();
         console.assert(metric);
@@ -160,11 +160,11 @@ class TestGroup extends LabeledObject {
         return result;
     }
 
-    _valuesForRootSet(rootSet)
+    _valuesForCommitSet(commitSet)
     {
-        var requests = this.requestsForRootSet(rootSet);
-        var values = [];
-        for (var request of requests) {
+        const requests = this.requestsForCommitSet(commitSet);
+        const values = [];
+        for (let request of requests) {
             if (request.result())
                 values.push(request.result().value);
         }
@@ -197,16 +197,15 @@ class TestGroup extends LabeledObject {
         });
     }
 
-    static createAndRefetchTestGroups(task, name, repetitionCount, rootSets)
+    static createAndRefetchTestGroups(task, name, repetitionCount, commitSets)
     {
-        var self = this;
         return PrivilegedAPI.sendRequest('create-test-group', {
             task: task.id(),
             name: name,
             repetitionCount: repetitionCount,
-            rootSets: rootSets,
-        }).then(function (data) {
-            return self.cachedFetch('../api/test-groups', {task: task.id()}, true).then(self._createModelsFromFetchedTestGroups.bind(self));
+            commitSets: commitSets,
+        }).then((data) => {
+            return this.cachedFetch('../api/test-groups', {task: task.id()}, true).then((data) => this._createModelsFromFetchedTestGroups(data));
         });
     }
 

@@ -1,6 +1,6 @@
 'use strict';
 
-class RootSet extends DataModelObject {
+class CommitSet extends DataModelObject {
 
     constructor(id, object)
     {
@@ -12,8 +12,8 @@ class RootSet extends DataModelObject {
         if (!object)
             return;
 
-        for (var row of object.roots) {
-            var repositoryId = row.repository.id();
+        for (let row of object.commits) {
+            const repositoryId = row.repository.id();
             console.assert(!this._repositoryToCommitMap[repositoryId]);
             this._repositoryToCommitMap[repositoryId] = CommitLog.ensureSingleton(row.id, row);
             this._repositories.push(row.repository);
@@ -52,14 +52,14 @@ class RootSet extends DataModelObject {
         return true;
     }
 
-    static containsMultipleCommitsForRepository(rootSets, repository)
+    static containsMultipleCommitsForRepository(commitSets, repository)
     {
         console.assert(repository instanceof Repository);
-        if (rootSets.length < 2)
+        if (commitSets.length < 2)
             return false;
-        var firstCommit = rootSets[0].commitForRepository(repository);
-        for (var set of rootSets) {
-            var anotherCommit = set.commitForRepository(repository);
+        const firstCommit = commitSets[0].commitForRepository(repository);
+        for (let set of commitSets) {
+            const anotherCommit = set.commitForRepository(repository);
             if (!firstCommit != !anotherCommit || (firstCommit && firstCommit.revision() != anotherCommit.revision()))
                 return true;
         }
@@ -67,7 +67,7 @@ class RootSet extends DataModelObject {
     }
 }
 
-class MeasurementRootSet extends RootSet {
+class MeasurementCommitSet extends CommitSet {
 
     constructor(id, revisionList)
     {
@@ -87,21 +87,21 @@ class MeasurementRootSet extends RootSet {
         }
     }
 
-    // Use RootSet's static maps because MeasurementRootSet and RootSet are logically of the same type.
+    // Use CommitSet's static maps because MeasurementCommitSet and CommitSet are logically of the same type.
     // FIXME: Idaelly, DataModel should take care of this but traversing prototype chain is expensive.
-    namedStaticMap(name) { return RootSet.namedStaticMap(name); }
-    ensureNamedStaticMap(name) { return RootSet.ensureNamedStaticMap(name); }
-    static namedStaticMap(name) { return RootSet.namedStaticMap(name); }
-    static ensureNamedStaticMap(name) { return RootSet.ensureNamedStaticMap(name); }
+    namedStaticMap(name) { return CommitSet.namedStaticMap(name); }
+    ensureNamedStaticMap(name) { return CommitSet.ensureNamedStaticMap(name); }
+    static namedStaticMap(name) { return CommitSet.namedStaticMap(name); }
+    static ensureNamedStaticMap(name) { return CommitSet.ensureNamedStaticMap(name); }
 
     static ensureSingleton(measurementId, revisionList)
     {
-        var rootSetId = measurementId + '-rootset';
-        return RootSet.findById(rootSetId) || (new MeasurementRootSet(rootSetId, revisionList));
+        const commitSetId = measurementId + '-commitset';
+        return CommitSet.findById(commitSetId) || (new MeasurementCommitSet(commitSetId, revisionList));
     }
 }
 
-class CustomRootSet {
+class CustomCommitSet {
 
     constructor()
     {
@@ -120,7 +120,7 @@ class CustomRootSet {
 }
 
 if (typeof module != 'undefined') {
-    module.exports.RootSet = RootSet;
-    module.exports.MeasurementRootSet = MeasurementRootSet;
-    module.exports.CustomRootSet = CustomRootSet;
+    module.exports.CommitSet = CommitSet;
+    module.exports.MeasurementCommitSet = MeasurementCommitSet;
+    module.exports.CustomCommitSet = CustomCommitSet;
 }

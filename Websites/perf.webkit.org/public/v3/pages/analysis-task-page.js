@@ -249,8 +249,8 @@ class AnalysisTaskPage extends PageWithHeading {
 
         var repositoryList;
         if (this._startPoint) {
-            var rootSet = this._startPoint.rootSet();
-            repositoryList = Repository.sortByNamePreferringOnesWithURL(rootSet.repositories());
+            var commitSet = this._startPoint.commitSet();
+            repositoryList = Repository.sortByNamePreferringOnesWithURL(commitSet.repositories());
         } else
             repositoryList = Repository.sortByNamePreferringOnesWithURL(Repository.all());
 
@@ -285,7 +285,7 @@ class AnalysisTaskPage extends PageWithHeading {
         var selectedRange = this._analysisResultsViewer.selectedRange();
         var a = selectedRange['A'];
         var b = selectedRange['B'];
-        this._newTestGroupFormForViewer.setRootSetMap(a && b ? {'A': a.rootSet(), 'B': b.rootSet()} : null);
+        this._newTestGroupFormForViewer.setCommitSetMap(a && b ? {'A': a.commitSet(), 'B': b.commitSet()} : null);
         this._newTestGroupFormForViewer.enqueueToRender();
         this._newTestGroupFormForViewer.element().style.display = this._triggerable ? null : 'none';
 
@@ -296,8 +296,8 @@ class AnalysisTaskPage extends PageWithHeading {
             this._chartPane.setMainSelection([this._startPoint.time, this._endPoint.time]);
 
         var points = this._chartPane.selectedPoints();
-        this._newTestGroupFormForChart.setRootSetMap(points && points.length() >= 2 ?
-                {'A': points.firstPoint().rootSet(), 'B': points.lastPoint().rootSet()} : null);
+        this._newTestGroupFormForChart.setCommitSetMap(points && points.length() >= 2 ?
+                {'A': points.firstPoint().commitSet(), 'B': points.lastPoint().commitSet()} : null);
         this._newTestGroupFormForChart.enqueueToRender();
         this._newTestGroupFormForChart.element().style.display = this._triggerable ? null : 'none';
 
@@ -377,9 +377,9 @@ class AnalysisTaskPage extends PageWithHeading {
 
             this._chartPane.setMainSelection(null);
             if (this._currentTestGroup) {
-                var rootSetsInTestGroup = this._currentTestGroup.requestedRootSets();
-                var startTime = rootSetsInTestGroup[0].latestCommitTime();
-                var endTime = rootSetsInTestGroup[rootSetsInTestGroup.length - 1].latestCommitTime();
+                const commitSetsInTestGroup = this._currentTestGroup.requestedCommitSets();
+                const startTime = commitSetsInTestGroup[0].latestCommitTime();
+                const endTime = commitSetsInTestGroup[commitSetsInTestGroup.length - 1].latestCommitTime();
                 if (startTime != endTime)
                     this._chartPane.setMainSelection([startTime, endTime]);
             }
@@ -512,15 +512,15 @@ class AnalysisTaskPage extends PageWithHeading {
     _retryCurrentTestGroup(repetitionCount)
     {
         console.assert(this._currentTestGroup);
-        var testGroup = this._currentTestGroup;
-        var newName = this._createRetryNameForTestGroup(testGroup.name());
-        var rootSetList = testGroup.requestedRootSets();
+        const testGroup = this._currentTestGroup;
+        const newName = this._createRetryNameForTestGroup(testGroup.name());
+        const commitSetList = testGroup.requestedCommitSets();
 
-        var rootSetMap = {};
-        for (var rootSet of rootSetList)
-            rootSetMap[testGroup.labelForRootSet(rootSet)] = rootSet;
+        const commitSetMap = {};
+        for (let commitSet of commitSetList)
+            commitSetMap[testGroup.labelForCommitSet(commitSet)] = commitSet;
 
-        return this._createTestGroupAfterVerifyingRootSetList(newName, repetitionCount, rootSetMap);
+        return this._createTestGroupAfterVerifyingCommitSetList(newName, repetitionCount, commitSetMap);
     }
 
     _chartSelectionDidChange()
@@ -529,9 +529,9 @@ class AnalysisTaskPage extends PageWithHeading {
         this.enqueueToRender();
     }
 
-    _createNewTestGroupFromChart(name, repetitionCount, rootSetMap)
+    _createNewTestGroupFromChart(name, repetitionCount, commitSetMap)
     {
-        return this._createTestGroupAfterVerifyingRootSetList(name, repetitionCount, rootSetMap);
+        return this._createTestGroupAfterVerifyingCommitSetList(name, repetitionCount, commitSetMap);
     }
 
     _selectedRowInAnalysisResultsViewer()
@@ -539,39 +539,39 @@ class AnalysisTaskPage extends PageWithHeading {
         this.enqueueToRender();
     }
 
-    _createNewTestGroupFromViewer(name, repetitionCount, rootSetMap)
+    _createNewTestGroupFromViewer(name, repetitionCount, commitSetMap)
     {
-        return this._createTestGroupAfterVerifyingRootSetList(name, repetitionCount, rootSetMap);
+        return this._createTestGroupAfterVerifyingCommitSetList(name, repetitionCount, commitSetMap);
     }
 
-    _createTestGroupAfterVerifyingRootSetList(testGroupName, repetitionCount, rootSetMap)
+    _createTestGroupAfterVerifyingCommitSetList(testGroupName, repetitionCount, commitSetMap)
     {
         if (this._hasDuplicateTestGroupName(testGroupName))
             alert(`There is already a test group named "${testGroupName}"`);
 
-        var rootSetsByName = {};
-        var firstLabel;
-        for (firstLabel in rootSetMap) {
-            var rootSet = rootSetMap[firstLabel];
-            for (var repository of rootSet.repositories())
-                rootSetsByName[repository.name()] = [];
+        const commitSetsByName = {};
+        let firstLabel;
+        for (firstLabel in commitSetMap) {
+            const commitSet = commitSetMap[firstLabel];
+            for (let repository of commitSet.repositories())
+                commitSetsByName[repository.name()] = [];
             break;
         }
 
-        var setIndex = 0;
-        for (var label in rootSetMap) {
-            var rootSet = rootSetMap[label];
-            for (var repository of rootSet.repositories()) {
-                var list = rootSetsByName[repository.name()];
+        let setIndex = 0;
+        for (let label in commitSetMap) {
+            const commitSet = commitSetMap[label];
+            for (let repository of commitSet.repositories()) {
+                const list = commitSetsByName[repository.name()];
                 if (!list) {
                     alert(`Set ${label} specifies ${repository.label()} but set ${firstLabel} does not.`);
                     return null;
                 }
-                list.push(rootSet.revisionForRepository(repository));
+                list.push(commitSet.revisionForRepository(repository));
             }
             setIndex++;
-            for (var name in rootSetsByName) {
-                var list = rootSetsByName[name];
+            for (let name in commitSetsByName) {
+                const list = commitSetsByName[name];
                 if (list.length < setIndex) {
                     alert(`Set ${firstLabel} specifies ${name} but set ${label} does not.`);
                     return null;
@@ -579,7 +579,7 @@ class AnalysisTaskPage extends PageWithHeading {
             }
         }
 
-        TestGroup.createAndRefetchTestGroups(this._task, testGroupName, repetitionCount, rootSetsByName)
+        TestGroup.createAndRefetchTestGroups(this._task, testGroupName, repetitionCount, commitSetsByName)
             .then(this._didFetchTestGroups.bind(this), function (error) {
             alert('Failed to create a new test group: ' + error);
         });

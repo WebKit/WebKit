@@ -252,19 +252,19 @@ function createAnalysisTaskAndNotify(config, range, summary)
                 throw response;
 
             var triggerable = response['triggerables'][0];
-            var rootSets = {};
+            var commitSets = {};
             for (var repositoryId of triggerable['acceptedRepositories']) {
                 var startRevision = range.startMeasurement.revisionForRepository(repositoryId);
                 var endRevision = range.endMeasurement.revisionForRepository(repositoryId);
                 if (startRevision == null || endRevision == null)
                     continue;
-                rootSets[config.repositories[repositoryId].name] = [startRevision, endRevision];
+                commitSets[config.repositories[repositoryId].name] = [startRevision, endRevision];
             }
 
             var testData = {
                 task: analysisTaskId,
                 name: 'Confirming the ' + changeType,
-                rootSets: rootSets,
+                commitSets: commitSets,
                 repetitionCount: Math.max(2, Math.min(8, Math.floor((range.endIndex - range.startIndex) / 4))),
 
                 slaveName: settings.slave.name,

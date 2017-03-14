@@ -12,7 +12,7 @@ MockData = {
         Metric.clearStaticMap();
         Platform.clearStaticMap();
         Repository.clearStaticMap();
-        RootSet.clearStaticMap();
+        CommitSet.clearStaticMap();
         Test.clearStaticMap();
         TestGroup.clearStaticMap();
         Triggerable.clearStaticMap();
@@ -35,18 +35,18 @@ MockData = {
             db.insert('tests', {id: MockData.someTestId(), name: 'some test'}),
             db.insert('test_metrics', {id: 300, test: 200, name: 'some metric'}),
             db.insert('test_configurations', {id: 301, metric: 300, platform: 65, type: 'current'}),
-            db.insert('root_sets', {id: 401}),
-            db.insert('roots', {set: 401, commit: 87832}),
-            db.insert('roots', {set: 401, commit: 93116}),
-            db.insert('root_sets', {id: 402}),
-            db.insert('roots', {set: 402, commit: 87832}),
-            db.insert('roots', {set: 402, commit: 96336}),
+            db.insert('commit_sets', {id: 401}),
+            db.insert('commit_set_relationships', {set: 401, commit: 87832}),
+            db.insert('commit_set_relationships', {set: 401, commit: 93116}),
+            db.insert('commit_sets', {id: 402}),
+            db.insert('commit_set_relationships', {set: 402, commit: 87832}),
+            db.insert('commit_set_relationships', {set: 402, commit: 96336}),
             db.insert('analysis_tasks', {id: 500, platform: 65, metric: 300, name: 'some task'}),
             db.insert('analysis_test_groups', {id: 600, task: 500, name: 'some test group'}),
-            db.insert('build_requests', {id: 700, status: statusList[0], triggerable: 1, platform: 65, test: 200, group: 600, order: 0, root_set: 401}),
-            db.insert('build_requests', {id: 701, status: statusList[1], triggerable: 1, platform: 65, test: 200, group: 600, order: 1, root_set: 402}),
-            db.insert('build_requests', {id: 702, status: statusList[2], triggerable: 1, platform: 65, test: 200, group: 600, order: 2, root_set: 401}),
-            db.insert('build_requests', {id: 703, status: statusList[3], triggerable: 1, platform: 65, test: 200, group: 600, order: 3, root_set: 402}),
+            db.insert('build_requests', {id: 700, status: statusList[0], triggerable: 1, platform: 65, test: 200, group: 600, order: 0, commit_set: 401}),
+            db.insert('build_requests', {id: 701, status: statusList[1], triggerable: 1, platform: 65, test: 200, group: 600, order: 1, commit_set: 402}),
+            db.insert('build_requests', {id: 702, status: statusList[2], triggerable: 1, platform: 65, test: 200, group: 600, order: 2, commit_set: 401}),
+            db.insert('build_requests', {id: 703, status: statusList[3], triggerable: 1, platform: 65, test: 200, group: 600, order: 3, commit_set: 402}),
         ]);
     },
     addAnotherMockTestGroup: function (db, statusList, author)
@@ -55,10 +55,10 @@ MockData = {
             statusList = ['pending', 'pending', 'pending', 'pending'];
         return Promise.all([
             db.insert('analysis_test_groups', {id: 601, task: 500, name: 'another test group', author: author}),
-            db.insert('build_requests', {id: 713, status: statusList[3], triggerable: 1, platform: 65, test: 200, group: 601, order: 3, root_set: 402}),
-            db.insert('build_requests', {id: 710, status: statusList[0], triggerable: 1, platform: 65, test: 200, group: 601, order: 0, root_set: 401}),
-            db.insert('build_requests', {id: 712, status: statusList[2], triggerable: 1, platform: 65, test: 200, group: 601, order: 2, root_set: 401}),
-            db.insert('build_requests', {id: 711, status: statusList[1], triggerable: 1, platform: 65, test: 200, group: 601, order: 1, root_set: 402}),
+            db.insert('build_requests', {id: 713, status: statusList[3], triggerable: 1, platform: 65, test: 200, group: 601, order: 3, commit_set: 402}),
+            db.insert('build_requests', {id: 710, status: statusList[0], triggerable: 1, platform: 65, test: 200, group: 601, order: 0, commit_set: 401}),
+            db.insert('build_requests', {id: 712, status: statusList[2], triggerable: 1, platform: 65, test: 200, group: 601, order: 2, commit_set: 401}),
+            db.insert('build_requests', {id: 711, status: statusList[1], triggerable: 1, platform: 65, test: 200, group: 601, order: 1, commit_set: 402}),
         ]);
     },
     mockTestSyncConfigWithSingleBuilder: function ()

@@ -9,7 +9,7 @@ var MockModels = {
             Metric.clearStaticMap();
             Platform.clearStaticMap();
             Repository.clearStaticMap();
-            RootSet.clearStaticMap();
+            CommitSet.clearStaticMap();
             Test.clearStaticMap();
             TestGroup.clearStaticMap();
             BuildRequest.clearStaticMap();

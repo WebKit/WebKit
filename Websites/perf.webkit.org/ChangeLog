@@ -1,3 +1,140 @@
+2017-03-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Rename RootSet to CommitSet
+        https://bugs.webkit.org/show_bug.cgi?id=169580
+
+        Rubber-stamped by Chris Dumez.
+
+        Renamed root_sets to commit_sets and roots to commit_set_relationships in the database schema, and renamed
+        related classes in public/v3/ and tools accordingly.
+
+        RootSet, MeasurementRootSet, and CustomRootSet are respectively renamed to CommitSet, MeasurementCommitSet,
+        and CustomCommitSet.
+
+        In order to migrate the database, run:
+        ```
+        BEGIN;
+        ALTER TABLE root_sets RENAME TO commit_sets;
+        ALTER TABLE commit_sets RENAME COLUMN rootset_id TO commitset_id;
+        ALTER TABLE roots RENAME TO commit_set_relationships;
+        ALTER TABLE commit_set_relationships RENAME COLUMN root_set TO commitset_set;
+        ALTER TABLE commit_set_relationships RENAME COLUMN root_commit TO commitset_commit;
+        ALTER TABLE build_requests RENAME COLUMN request_root_set TO request_commit_set;
+        END;
+        ```
+
+        * browser-tests/index.html:
+        * init-database.sql:
+        * public/api/build-requests.php:
+        (main):
+        * public/api/test-groups.php:
+        (main):
+        (format_test_group):
+        * public/include/build-requests-fetcher.php:
+        (BuildRequestsFetcher::__construct):
+        (BuildRequestsFetcher::results_internal):
+        (BuildRequestsFetcher::commit_sets): Renamed from root_sets.
+        (BuildRequestsFetcher::commits): Renamed from roots.
+        (BuildRequestsFetcher::fetch_commits_for_set_if_needed): Renamed from fetch_roots_for_set_if_needed.
+        * public/privileged-api/create-test-group.php:
+        (main):
+        (ensure_commit_sets): Renamed from commit_sets_from_root_sets.
+        * public/v3/components/analysis-results-viewer.js:
+        (AnalysisResultsViewer.prototype.buildRowGroups):
+        (AnalysisResultsViewer.prototype._collectCommitSetsInTestGroups): Renamed from _collectRootSetsInTestGroups.
+        (AnalysisResultsViewer.prototype._buildRowsForPointsAndTestGroups):
+        (AnalysisResultsViewer.prototype._buildRowsForPointsAndTestGroups):
+        (AnalysisResultsViewer.CommitSetInTestGroup): Renamed from RootSetInTestGroup.
+        (AnalysisResultsViewer.CommitSetInTestGroup.prototype.constructor):
+        (AnalysisResultsViewer.CommitSetInTestGroup.prototype.commitSet): Renamed from rootSet.
+        (AnalysisResultsViewer.CommitSetInTestGroup.prototype.succeedingCommitSet): Renamed from succeedingRootSet.
+        (AnalysisResultsViewer.TestGroupStackingBlock.prototype.constructor):
+        (AnalysisResultsViewer.TestGroupStackingBlock.prototype.addRowIndex):
+        (AnalysisResultsViewer.TestGroupStackingBlock.prototype.isComplete):
+        (AnalysisResultsViewer.TestGroupStackingBlock.prototype.startRowIndex):
+        (AnalysisResultsViewer.TestGroupStackingBlock.prototype.endRowIndex):
+        (AnalysisResultsViewer.TestGroupStackingBlock.prototype._computeTestGroupStatus):
+        * public/v3/components/chart-revision-range.js:
+        (ChartRevisionRange.prototype._revisionForPoint):
+        (ChartRevisionRange.prototype._computeRevisionList):
+        * public/v3/components/customizable-test-group-form.js:
+        (CustomizableTestGroupForm.prototype.constructor):
+        (CustomizableTestGroupForm.prototype.setCommitSetMap): Renamed from setRootSetMap.
+        (CustomizableTestGroupForm.prototype._submitted):
+        (CustomizableTestGroupForm.prototype._computeCommitSetMap): Renamed from _computeRootSetMap.
+        (CustomizableTestGroupForm.prototype.render): Renamed from render.
+        (CustomizableTestGroupForm.prototype._constructRevisionRadioButtons):
+        * public/v3/components/results-table.js:
+        (ResultsTable.prototype.render):
+        (ResultsTable.prototype._createRevisionListCells):
+        (ResultsTable.prototype._computeRepositoryList):
+        (ResultsTableRow.prototype.constructor):
+        (ResultsTableRow.prototype.commitSet): Renamed from rootSet.
+        * public/v3/components/test-group-results-table.js:
+        (TestGroupResultsTable.prototype.buildRowGroups):
+        * public/v3/index.html:
+        * public/v3/models/build-request.js:
+        (BuildRequest.prototype.constructor):
+        (BuildRequest.prototype.updateSingleton):
+        (BuildRequest.prototype.commitSet): Renamed from rootSet.
+        (BuildRequest.constructBuildRequestsFromData):
+        * public/v3/models/commit-set.js: Renamed from public/v3/models/root-set.js.
+        (CommitSet): Renamed from RootSet.
+        (CommitSet.containsMultipleCommitsForRepository):
+        (MeasurementCommitSet): Renamed from MeasurementRootSet.
+        (MeasurementCommitSet.prototype.namedStaticMap):
+        (MeasurementCommitSet.prototype.ensureNamedStaticMap):
+        (MeasurementCommitSet.namedStaticMap):
+        (MeasurementCommitSet.ensureNamedStaticMap):
+        (MeasurementCommitSet.ensureSingleton):
+        (CustomCommitSet): Renamed from CustomRootSet.
+        * public/v3/models/measurement-adaptor.js:
+        (MeasurementAdaptor.prototype.applyTo):
+        * public/v3/models/test-group.js:
+        (TestGroup.prototype.constructor):
+        (TestGroup.prototype.addBuildRequest):
+        (TestGroup.prototype.repetitionCount):
+        (TestGroup.prototype.requestedCommitSets): Renamed from requestedRootSets.
+        (TestGroup.prototype.requestsForCommitSet): Renamed from requestsForRootSet.
+        (TestGroup.prototype.labelForCommitSet): Renamed from labelForRootSet.
+        (TestGroup.prototype.didSetResult):
+        (TestGroup.prototype.compareTestResults):
+        (TestGroup.prototype._valuesForCommitSet): Renamed from _valuesForRootSet.
+        (TestGroup.prototype.createAndRefetchTestGroups):
+        * public/v3/pages/analysis-task-page.js:
+        (AnalysisTaskPage.prototype.render):
+        (AnalysisTaskPage.prototype._retryCurrentTestGroup):
+        (AnalysisTaskPage.prototype._createNewTestGroupFromChart):
+        (AnalysisTaskPage.prototype._createNewTestGroupFromViewer):
+        (AnalysisTaskPage.prototype._createTestGroupAfterVerifyingCommitSetList):
+        * server-tests/api-build-requests-tests.js:
+        * server-tests/resources/mock-data.js:
+        (MockData.resetV3Models):
+        (MockData.addMockData):
+        (MockData.addAnotherMockTestGroup):
+        * tools/detect-changes.js:
+        (createAnalysisTaskAndNotify):
+        * tools/js/buildbot-syncer.js:
+        (BuildbotSyncer.prototype._propertiesForBuildRequest):
+        (BuildbotSyncer.prototype._revisionSetFromCommitSetWithExclusionList):
+        * tools/js/database.js:
+        (tableToPrefixMap):
+        * tools/js/v3-models.js:
+        * tools/sync-buildbot.js:
+        (syncLoop):
+        * tools/sync-with-buildbot.py: Deleted. No longer used.
+        * unit-tests/analysis-task-tests.js:
+        * unit-tests/build-request-tests.js:
+        (sampleBuildRequestData):
+        * unit-tests/buildbot-syncer-tests.js:
+        (sampleCommitSetData):
+        * unit-tests/measurement-adaptor-tests.js:
+        * unit-tests/measurement-set-tests.js:
+        * unit-tests/resources/mock-v3-models.js:
+        (MockModels.inject):
+        * unit-tests/test-groups-tests.js:
+        (sampleTestGroup):
+
 2017-03-13  Ryosuke Niwa  <rniwa@webkit.org>
 
         Database's query functions should support querying for a row with NULL value

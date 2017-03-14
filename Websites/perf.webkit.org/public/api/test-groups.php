@@ -49,13 +49,13 @@ function main($path) {
     foreach ($build_requests as $request) {
         $request_group = &$group_by_id[$request['testGroup']];
         array_push($request_group['buildRequests'], $request['id']);
-        array_push($request_group['rootSets'], $request['rootSet']);
+        array_push($request_group['commitSets'], $request['commitSet']);
     }
 
     exit_with_success(array('testGroups' => $test_groups,
         'buildRequests' => $build_requests,
-        'rootSets' => $build_requests_fetcher->root_sets(),
-        'roots' => $build_requests_fetcher->roots()));
+        'commitSets' => $build_requests_fetcher->commit_sets(),
+        'commits' => $build_requests_fetcher->commits()));
 }
 
 function format_test_group($group_row) {
@@ -67,7 +67,7 @@ function format_test_group($group_row) {
         'createdAt' => strtotime($group_row['testgroup_created_at']) * 1000,
         'hidden' => Database::is_true($group_row['testgroup_hidden']),
         'buildRequests' => array(),
-        'rootSets' => array(),
+        'commitSets' => array(),
     );
 }
 

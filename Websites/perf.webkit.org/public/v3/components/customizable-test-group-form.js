@@ -4,7 +4,7 @@ class CustomizableTestGroupForm extends TestGroupForm {
     constructor()
     {
         super('customizable-test-group-form');
-        this._rootSetMap = null;
+        this._commitSetMap = null;
         this._renderedRepositorylist = null;
         this._customized = false;
         this._nameControl = this.content().querySelector('.name');
@@ -12,16 +12,16 @@ class CustomizableTestGroupForm extends TestGroupForm {
         this.content().querySelector('a').onclick = this._customize.bind(this);
     }
 
-    setRootSetMap(map)
+    setCommitSetMap(map)
     {
-        this._rootSetMap = map;
+        this._commitSetMap = map;
         this._customized = false;
     }
 
     _submitted()
     {
         if (this._startCallback)
-            this._startCallback(this._nameControl.value, this._repetitionCount, this._computeRootSetMap());
+            this._startCallback(this._nameControl.value, this._repetitionCount, this._computeCommitSetMap());
     }
 
     _customize(event)
@@ -31,24 +31,24 @@ class CustomizableTestGroupForm extends TestGroupForm {
         this.enqueueToRender();
     }
 
-    _computeRootSetMap()
+    _computeCommitSetMap()
     {
-        console.assert(this._rootSetMap);
+        console.assert(this._commitSetMap);
         if (!this._customized)
-            return this._rootSetMap;
+            return this._commitSetMap;
 
         console.assert(this._renderedRepositorylist);
         var map = {};
-        for (var label in this._rootSetMap) {
-            var customRootSet = new CustomRootSet;
+        for (var label in this._commitSetMap) {
+            var customCommitSet = new CustomCommitSet;
             for (var repository of this._renderedRepositorylist) {
                 var className = CustomizableTestGroupForm._classForLabelAndRepository(label, repository);
                 var revision = this.content().querySelector('.' + className).value;
                 console.assert(revision);
                 if (revision)
-                    customRootSet.setRevisionForRepository(repository, revision);
+                    customCommitSet.setRevisionForRepository(repository, revision);
             }
-            map[label] = customRootSet;
+            map[label] = customCommitSet;
         }
         return map;
     }
@@ -56,7 +56,7 @@ class CustomizableTestGroupForm extends TestGroupForm {
     render()
     {
         super.render();
-        var map = this._rootSetMap;
+        var map = this._commitSetMap;
 
         this.content().querySelector('button').disabled = !(map && this._nameControl.value);
         this.content().querySelector('.customize-link').style.display = !map ? 'none' : null;
@@ -68,11 +68,11 @@ class CustomizableTestGroupForm extends TestGroupForm {
         console.assert(map);
 
         var repositorySet = new Set;
-        var rootSetLabels = [];
+        var commitSetLabels = [];
         for (var label in map) {
             for (var repository of map[label].repositories())
                 repositorySet.add(repository);
-            rootSetLabels.push(label);
+            commitSetLabels.push(label);
         }
 
         this._renderedRepositorylist = Repository.sortByNamePreferringOnesWithURL(Array.from(repositorySet.values()));
@@ -82,8 +82,8 @@ class CustomizableTestGroupForm extends TestGroupForm {
             element('table', {class: 'custom-table'}, [
                 element('thead',
                     element('tr',
-                        [element('td', 'Repository'), rootSetLabels.map(function (label) {
-                            return element('td', {colspan: rootSetLabels.length + 1}, label);
+                        [element('td', 'Repository'), commitSetLabels.map(function (label) {
+                            return element('td', {colspan: commitSetLabels.length + 1}, label);
                         })])),
                 element('tbody',
                     this._renderedRepositorylist.map(function (repository) {
@@ -96,18 +96,18 @@ class CustomizableTestGroupForm extends TestGroupForm {
 
     static _classForLabelAndRepository(label, repository) { return label + '-' + repository.id(); }
 
-    static _constructRevisionRadioButtons(rootSetMap, repository, rowLabel)
+    static _constructRevisionRadioButtons(commitSetMap, repository, rowLabel)
     {
         var className = this._classForLabelAndRepository(rowLabel, repository);
         var groupName = className + '-group';
         var element = ComponentBase.createElement;
         var revisionEditor = element('input', {class: className});
 
-        var nodes = [];
-        for (var labelToChoose in rootSetMap) {
-            var commit = rootSetMap[labelToChoose].commitForRepository(repository);
-            var checked = labelToChoose == rowLabel;
-            var radioButton = this._createRadioButton(groupName, revisionEditor, commit, checked);
+        const nodes = [];
+        for (let labelToChoose in commitSetMap) {
+            const commit = commitSetMap[labelToChoose].commitForRepository(repository);
+            const checked = labelToChoose == rowLabel;
+            const radioButton = this._createRadioButton(groupName, revisionEditor, commit, checked);
             if (checked)
                 revisionEditor.value = commit ? commit.revision() : '';
             nodes.push(element('td', element('label', [radioButton, labelToChoose])));
