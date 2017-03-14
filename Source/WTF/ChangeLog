@@ -1,5 +1,14 @@
 2017-03-14  Filip Pizlo  <fpizlo@apple.com>
 
+        Fix some typos in this benchmark.
+
+        Rubber stamped by Saam Barati.
+
+        * benchmarks/HashSetDFGReplay.cpp:
+        (main):
+
+2017-03-14  Filip Pizlo  <fpizlo@apple.com>
+
         Record the HashSet/HashMap operations in DFG/FTL/B3 and replay them in a benchmark
         https://bugs.webkit.org/show_bug.cgi?id=169590
 

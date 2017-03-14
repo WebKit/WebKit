@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-// Compile with: xcrun clang++ -o HashSetDFGReplay Source/WTF/benchmarks/HashSetDFGReplay.cpp -O2 -W -ISource/WTF -ISource/WTF/benchmarks -LWebKitBuild/Release -lWTF -framework Foundation -licucore -std=c++11 -fvisibility=hidden
+// Compile with: xcrun clang++ -o HashSetDFGReplay Source/WTF/benchmarks/HashSetDFGReplay.cpp -O2 -W -ISource/WTF -ISource/WTF/benchmarks -LWebKitBuild/Release -lWTF -framework Foundation -licucore -std=c++11 -fvisibility=hidden -DNDEBUG=1
 
 #include <wtf/DataLog.h>
 #include <wtf/HashSet.h>
@@ -10984,12 +10984,12 @@ int main(int, char**)
 {
     WTF::initializeThreading();
     
-    MonotonicTime before = MonotonicTime::now();
+    WallTime before = WallTime::now();
     
     for (unsigned i = 0; i < 1000; ++i)
         benchmark();
 
-    MonotonicTime after = MonotonicTime::now();
+    WallTime after = WallTime::now();
     dataLog("That took ", after - before, "\n");    
     return 0;
 }
