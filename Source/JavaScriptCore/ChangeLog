@@ -1,3 +1,14 @@
+2017-03-14  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Remove unused Network protocol event
+        https://bugs.webkit.org/show_bug.cgi?id=169619
+
+        Reviewed by Mark Lam.
+
+        * inspector/protocol/Network.json:
+        This became unused in r213621 and should have been removed
+        from the protocol file then.
+
 2017-03-14  Mark Lam  <mark.lam@apple.com>
 
         Add a null check in VMTraps::willDestroyVM() to handle a race condition.

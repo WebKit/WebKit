@@ -206,13 +206,6 @@
             ]
         },
         {
-            "name": "requestServedFromCache",
-            "description": "Fired if request ended up loading from cache.",
-            "parameters": [
-                { "name": "requestId", "$ref": "RequestId", "description": "Request identifier." }
-            ]
-        },
-        {
             "name": "responseReceived",
             "description": "Fired when HTTP response is available.",
             "parameters": [
