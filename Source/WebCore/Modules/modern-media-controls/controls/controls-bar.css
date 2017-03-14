@@ -26,6 +26,7 @@
 .controls-bar {
     position: absolute;
     transition: opacity 0.1s linear;
+    direction: ltr;
 }
 
 .controls-bar.faded {

@@ -1,0 +1,20 @@
+<script src="../../../resources/js-test-pre.js"></script>
+<script src="../resources/media-controls-loader.js" type="text/javascript"></script>
+<body>
+<script type="text/javascript">
+
+window.jsTestIsAsync = true;
+
+description("Testing that the controls bar enforces left-to-right layout.");
+
+const mediaControls = new MediaControls({ layoutTraits: LayoutTraits.macOS });
+
+// Add the media controls and set the direction to be RTL.
+document.body.appendChild(mediaControls.element).style.direction = "rtl";
+
+// Ensure that the controls bar itself enforces an LTR direction.
+shouldBecomeEqualToString("getComputedStyle(mediaControls.controlsBar.element).direction", "ltr", finishJSTest);
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>

@@ -1,0 +1,10 @@
+Testing that the controls bar enforces left-to-right layout.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS getComputedStyle(mediaControls.controlsBar.element).direction became "ltr"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
