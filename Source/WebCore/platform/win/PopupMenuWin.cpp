@@ -128,12 +128,12 @@ LPCWSTR PopupMenuWin::popupClassName()
 
 void PopupMenuWin::show(const IntRect& r, FrameView* view, int index)
 {
+    if (view && view->frame().page())
+        m_scaleFactor = view->frame().page()->deviceScaleFactor();
+
     calculatePositionAndSize(r, view);
     if (clientRect().isEmpty())
         return;
-
-    if (view && view->frame().page())
-        m_scaleFactor = view->frame().page()->deviceScaleFactor();
 
     HWND hostWindow = view->hostWindow()->platformPageClient();
 
@@ -319,9 +319,16 @@ void PopupMenuWin::calculatePositionAndSize(const IntRect& r, FrameView* v)
 
     rScreenCoords.setLocation(location);
 
+    m_font = client()->menuStyle().font();
+    auto d = m_font.fontDescription();
+    d.setComputedSize(d.computedSize() * m_scaleFactor);
+    m_font = FontCascade(d, m_font.letterSpacing(), m_font.wordSpacing());
+    m_font.update(m_popupClient->fontSelector());
+
     // First, determine the popup's height
     int itemCount = client()->listSize();
-    m_itemHeight = client()->menuStyle().font().fontMetrics().height() + optionSpacingMiddle;
+    m_itemHeight = m_font.fontMetrics().height() + optionSpacingMiddle;
+
     int naturalHeight = m_itemHeight * itemCount;
     int popupHeight = std::min(maxPopupHeight, naturalHeight);
     // The popup should show an integral number of items (i.e. no partial items should be visible)
@@ -334,7 +341,7 @@ void PopupMenuWin::calculatePositionAndSize(const IntRect& r, FrameView* v)
         if (text.isEmpty())
             continue;
 
-        FontCascade itemFont = client()->menuStyle().font();
+        FontCascade itemFont = m_font;
         if (client()->itemIsLabel(i)) {
             auto d = itemFont.fontDescription();
             d.setWeight(d.bolderWeight());
@@ -639,8 +646,8 @@ void PopupMenuWin::paint(const IntRect& damageRect, HDC hdc)
 
         TextRun textRun(itemText, 0, 0, AllowTrailingExpansion, itemStyle.textDirection(), itemStyle.hasTextDirectionOverride());
         context.setFillColor(optionTextColor);
-        
-        FontCascade itemFont = client()->menuStyle().font();
+
+        FontCascade itemFont = m_font;
         if (client()->itemIsLabel(index)) {
             auto d = itemFont.fontDescription();
             d.setWeight(d.bolderWeight());
