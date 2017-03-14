@@ -32,10 +32,10 @@
 NS_ASSUME_NONNULL_BEGIN
 
 /*!
- A WKHTTPCookieStorage object allows managing the HTTP cookies associated with a particular WKWebsiteDataStore.
+ A WKHTTPCookieStore object allows managing the HTTP cookies associated with a particular WKWebsiteDataStore.
  */
 WK_CLASS_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA))
-@interface WKHTTPCookieStorage : NSObject
+@interface WKHTTPCookieStore : NSObject
 
 - (instancetype)init NS_UNAVAILABLE;
 

@@ -39,14 +39,14 @@ namespace API {
 
 class WebsiteDataStore;
 
-class HTTPCookieStorage final : public ObjectImpl<Object::Type::HTTPCookieStorage> {
+class HTTPCookieStore final : public ObjectImpl<Object::Type::HTTPCookieStore> {
 public:
-    static Ref<HTTPCookieStorage> create(WebsiteDataStore& websiteDataStore)
+    static Ref<HTTPCookieStore> create(WebsiteDataStore& websiteDataStore)
     {
-        return adoptRef(*new HTTPCookieStorage(websiteDataStore));
+        return adoptRef(*new HTTPCookieStore(websiteDataStore));
     }
 
-    virtual ~HTTPCookieStorage();
+    virtual ~HTTPCookieStore();
 
     void cookies(Function<void (const Vector<WebCore::Cookie>&)>&& completionHandler);
     void cookies(const WebCore::URL&, Function<void (const Vector<WebCore::Cookie>&)>&& completionHandler);
@@ -61,7 +61,7 @@ public:
     void getHTTPCookieAcceptPolicy(Function<void (WebKit::HTTPCookieAcceptPolicy)>&& completionHandler);
     
 private:
-    HTTPCookieStorage(WebsiteDataStore&);
+    HTTPCookieStore(WebsiteDataStore&);
 
     WebsiteDataStore& m_owningDataStore;
 };

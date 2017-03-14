@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "APIHTTPCookieStorage.h"
+#include "APIHTTPCookieStore.h"
 
 #include "APIWebsiteDataStore.h"
 #include "WebCookieManagerProxy.h"
@@ -35,16 +35,16 @@ using namespace WebKit;
 
 namespace API {
 
-HTTPCookieStorage::HTTPCookieStorage(WebsiteDataStore& websiteDataStore)
+HTTPCookieStore::HTTPCookieStore(WebsiteDataStore& websiteDataStore)
     : m_owningDataStore(websiteDataStore)
 {
 }
 
-HTTPCookieStorage::~HTTPCookieStorage()
+HTTPCookieStore::~HTTPCookieStore()
 {
 }
 
-void HTTPCookieStorage::cookies(Function<void (const Vector<WebCore::Cookie>&)>&& completionHandler)
+void HTTPCookieStore::cookies(Function<void (const Vector<WebCore::Cookie>&)>&& completionHandler)
 {
     auto& dataStore = m_owningDataStore.websiteDataStore();
     auto pool = dataStore.processPoolForCookieStorageOperations();
@@ -55,7 +55,7 @@ void HTTPCookieStorage::cookies(Function<void (const Vector<WebCore::Cookie>&)>&
     });
 }
 
-void HTTPCookieStorage::cookies(const WebCore::URL& url, Function<void (const Vector<WebCore::Cookie>&)>&& completionHandler)
+void HTTPCookieStore::cookies(const WebCore::URL& url, Function<void (const Vector<WebCore::Cookie>&)>&& completionHandler)
 {
     auto& dataStore = m_owningDataStore.websiteDataStore();
     auto pool = dataStore.processPoolForCookieStorageOperations();
@@ -66,7 +66,7 @@ void HTTPCookieStorage::cookies(const WebCore::URL& url, Function<void (const Ve
     });
 }
 
-void HTTPCookieStorage::setCookie(const WebCore::Cookie& cookie, Function<void ()>&& completionHandler)
+void HTTPCookieStore::setCookie(const WebCore::Cookie& cookie, Function<void ()>&& completionHandler)
 {
     auto& dataStore = m_owningDataStore.websiteDataStore();
     auto pool = dataStore.processPoolForCookieStorageOperations();
@@ -77,7 +77,7 @@ void HTTPCookieStorage::setCookie(const WebCore::Cookie& cookie, Function<void (
     });
 }
 
-void HTTPCookieStorage::setCookies(const Vector<WebCore::Cookie>& cookies, const WebCore::URL& url, const WebCore::URL& mainDocumentURL, Function<void ()>&& completionHandler)
+void HTTPCookieStore::setCookies(const Vector<WebCore::Cookie>& cookies, const WebCore::URL& url, const WebCore::URL& mainDocumentURL, Function<void ()>&& completionHandler)
 {
     auto& dataStore = m_owningDataStore.websiteDataStore();
     auto pool = dataStore.processPoolForCookieStorageOperations();
@@ -88,7 +88,7 @@ void HTTPCookieStorage::setCookies(const Vector<WebCore::Cookie>& cookies, const
     });
 }
 
-void HTTPCookieStorage::deleteCookie(const WebCore::Cookie& cookie, Function<void ()>&& completionHandler)
+void HTTPCookieStore::deleteCookie(const WebCore::Cookie& cookie, Function<void ()>&& completionHandler)
 {
     auto& dataStore = m_owningDataStore.websiteDataStore();
     auto pool = dataStore.processPoolForCookieStorageOperations();
@@ -99,7 +99,7 @@ void HTTPCookieStorage::deleteCookie(const WebCore::Cookie& cookie, Function<voi
     });
 }
 
-void HTTPCookieStorage::removeCookiesSinceDate(std::chrono::system_clock::time_point date, Function<void ()>&& completionHandler)
+void HTTPCookieStore::removeCookiesSinceDate(std::chrono::system_clock::time_point date, Function<void ()>&& completionHandler)
 {
     auto& dataStore = m_owningDataStore.websiteDataStore();
     auto pool = dataStore.processPoolForCookieStorageOperations();
@@ -110,7 +110,7 @@ void HTTPCookieStorage::removeCookiesSinceDate(std::chrono::system_clock::time_p
     });
 }
 
-void HTTPCookieStorage::setHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicy policy, Function<void ()>&& completionHandler)
+void HTTPCookieStore::setHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicy policy, Function<void ()>&& completionHandler)
 {
     auto& dataStore = m_owningDataStore.websiteDataStore();
     auto pool = dataStore.processPoolForCookieStorageOperations();
@@ -121,7 +121,7 @@ void HTTPCookieStorage::setHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicy policy,
     });
 }
 
-void HTTPCookieStorage::getHTTPCookieAcceptPolicy(Function<void (HTTPCookieAcceptPolicy)>&& completionHandler)
+void HTTPCookieStore::getHTTPCookieAcceptPolicy(Function<void (HTTPCookieAcceptPolicy)>&& completionHandler)
 {
     auto& dataStore = m_owningDataStore.websiteDataStore();
     auto pool = dataStore.processPoolForCookieStorageOperations();

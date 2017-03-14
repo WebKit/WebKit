@@ -23,26 +23,26 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WKHTTPCookieStorage.h"
+#import "WKHTTPCookieStore.h"
 
 #if WK_API_ENABLED
 
-#import "APIHTTPCookieStorage.h"
+#import "APIHTTPCookieStore.h"
 #import "WKObject.h"
 
 namespace WebKit {
 
-inline WKHTTPCookieStorage *wrapper(API::HTTPCookieStorage& cookieStorage)
+inline WKHTTPCookieStore *wrapper(API::HTTPCookieStore& cookieStore)
 {
-    ASSERT([cookieStorage.wrapper() isKindOfClass:[WKHTTPCookieStorage class]]);
-    return (WKHTTPCookieStorage *)cookieStorage.wrapper();
+    ASSERT([cookieStore.wrapper() isKindOfClass:[WKHTTPCookieStore class]]);
+    return (WKHTTPCookieStore *)cookieStore.wrapper();
 }
 
 }
 
-@interface WKHTTPCookieStorage () <WKObject> {
+@interface WKHTTPCookieStore () <WKObject> {
 @package
-    API::ObjectStorage<API::HTTPCookieStorage> _cookieStorage;
+    API::ObjectStorage<API::HTTPCookieStore> _cookieStore;
 }
 @end
 

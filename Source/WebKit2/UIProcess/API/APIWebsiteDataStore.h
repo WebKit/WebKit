@@ -26,7 +26,7 @@
 #ifndef APIWebsiteDataStore_h
 #define APIWebsiteDataStore_h
 
-#include "APIHTTPCookieStorage.h"
+#include "APIHTTPCookieStore.h"
 #include "WebsiteDataStore.h"
 #include <WebCore/SessionID.h>
 #include <wtf/text/WTFString.h>
@@ -49,7 +49,7 @@ public:
     void registerSharedResourceLoadObserver();
 
     WebKit::WebsiteDataStore& websiteDataStore() { return *m_websiteDataStore; }
-    HTTPCookieStorage& httpCookieStorage();
+    HTTPCookieStore& httpCookieStore();
 
     static String defaultApplicationCacheDirectory();
     static String defaultNetworkCacheDirectory();
@@ -75,7 +75,7 @@ private:
     static String websiteDataDirectoryFileSystemRepresentation(const String& directoryName);
 
     RefPtr<WebKit::WebsiteDataStore> m_websiteDataStore;
-    RefPtr<HTTPCookieStorage> m_apiHTTPCookieStorage;
+    RefPtr<HTTPCookieStore> m_apiHTTPCookieStore;
 };
 
 }

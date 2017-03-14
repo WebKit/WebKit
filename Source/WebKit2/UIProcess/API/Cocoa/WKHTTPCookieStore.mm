@@ -24,7 +24,7 @@
  */
 
 #import "config.h"
-#import "WKHTTPCookieStorageInternal.h"
+#import "WKHTTPCookieStoreInternal.h"
 
 #if WK_API_ENABLED
 
@@ -44,18 +44,18 @@ static NSArray<NSHTTPCookie *> *coreCookiesToNSCookies(const Vector<WebCore::Coo
     return nsCookies;
 }
 
-@implementation WKHTTPCookieStorage
+@implementation WKHTTPCookieStore
 
 - (void)dealloc
 {
-    _cookieStorage->API::HTTPCookieStorage::~HTTPCookieStorage();
+    _cookieStore->API::HTTPCookieStore::~HTTPCookieStore();
 
     [super dealloc];
 }
 
 - (void)fetchCookies:(void (^)(NSArray<NSHTTPCookie *> *))completionHandler
 {
-    _cookieStorage->cookies([handler = adoptNS([completionHandler copy])](const Vector<WebCore::Cookie>& cookies) {
+    _cookieStore->cookies([handler = adoptNS([completionHandler copy])](const Vector<WebCore::Cookie>& cookies) {
         auto rawHandler = (void (^)(NSArray<NSHTTPCookie *> *))handler.get();
         rawHandler(coreCookiesToNSCookies(cookies));
     });
@@ -63,7 +63,7 @@ static NSArray<NSHTTPCookie *> *coreCookiesToNSCookies(const Vector<WebCore::Coo
 
 - (void)fetchCookiesForURL:(NSURL *)url completionHandler:(void (^)(NSArray<NSHTTPCookie *> *))completionHandler
 {
-    _cookieStorage->cookies(url, [handler = adoptNS([completionHandler copy])](const Vector<WebCore::Cookie>& cookies) {
+    _cookieStore->cookies(url, [handler = adoptNS([completionHandler copy])](const Vector<WebCore::Cookie>& cookies) {
         auto rawHandler = (void (^)(NSArray<NSHTTPCookie *> *))handler.get();
         rawHandler(coreCookiesToNSCookies(cookies));
     });
@@ -71,7 +71,7 @@ static NSArray<NSHTTPCookie *> *coreCookiesToNSCookies(const Vector<WebCore::Coo
 
 - (void)setCookie:(NSHTTPCookie *)cookie completionHandler:(void (^)())completionHandler
 {
-    _cookieStorage->setCookie(cookie, [handler = adoptNS([completionHandler copy])]() {
+    _cookieStore->setCookie(cookie, [handler = adoptNS([completionHandler copy])]() {
         auto rawHandler = (void (^)())handler.get();
         if (rawHandler)
             rawHandler();
@@ -81,7 +81,7 @@ static NSArray<NSHTTPCookie *> *coreCookiesToNSCookies(const Vector<WebCore::Coo
 
 - (void)deleteCookie:(NSHTTPCookie *)cookie completionHandler:(void (^)())completionHandler
 {
-    _cookieStorage->deleteCookie(cookie, [handler = adoptNS([completionHandler copy])]() {
+    _cookieStore->deleteCookie(cookie, [handler = adoptNS([completionHandler copy])]() {
         auto rawHandler = (void (^)())handler.get();
         if (rawHandler)
             rawHandler();
@@ -95,7 +95,7 @@ static NSArray<NSHTTPCookie *> *coreCookiesToNSCookies(const Vector<WebCore::Coo
     for (NSHTTPCookie *cookie : cookies)
         coreCookies.uncheckedAppend(cookie);
 
-    _cookieStorage->setCookies(coreCookies, URL, mainDocumentURL, [handler = adoptNS([completionHandler copy])]() {
+    _cookieStore->setCookies(coreCookies, URL, mainDocumentURL, [handler = adoptNS([completionHandler copy])]() {
         auto rawHandler = (void (^)())handler.get();
         if (rawHandler)
             rawHandler();
@@ -106,7 +106,7 @@ static NSArray<NSHTTPCookie *> *coreCookiesToNSCookies(const Vector<WebCore::Coo
 {
     auto systemClockTime = std::chrono::system_clock::time_point(std::chrono::duration_cast<std::chrono::system_clock::duration>(std::chrono::duration<double>(date.timeIntervalSince1970)));
 
-    _cookieStorage->removeCookiesSinceDate(systemClockTime, [handler = adoptNS([completionHandler copy])]() {
+    _cookieStore->removeCookiesSinceDate(systemClockTime, [handler = adoptNS([completionHandler copy])]() {
         auto rawHandler = (void (^)())handler.get();
         if (rawHandler)
             rawHandler();
@@ -115,7 +115,7 @@ static NSArray<NSHTTPCookie *> *coreCookiesToNSCookies(const Vector<WebCore::Coo
 
 - (void)setCookieAcceptPolicy:(NSHTTPCookieAcceptPolicy)policy completionHandler:(void (^)())completionHandler
 {
-    _cookieStorage->setHTTPCookieAcceptPolicy(policy, [handler = adoptNS([completionHandler copy])]() {
+    _cookieStore->setHTTPCookieAcceptPolicy(policy, [handler = adoptNS([completionHandler copy])]() {
         auto rawHandler = (void (^)())handler.get();
         if (rawHandler)
             rawHandler();
@@ -143,7 +143,7 @@ static NSHTTPCookieAcceptPolicy kitCookiePolicyToNSCookiePolicy(WebKit::HTTPCook
 
 - (void)fetchCookieAcceptPolicy:(void (^)(NSHTTPCookieAcceptPolicy))completionHandler
 {
-    _cookieStorage->getHTTPCookieAcceptPolicy([handler = adoptNS([completionHandler copy])](WebKit::HTTPCookieAcceptPolicy policy) {
+    _cookieStore->getHTTPCookieAcceptPolicy([handler = adoptNS([completionHandler copy])](WebKit::HTTPCookieAcceptPolicy policy) {
         auto rawHandler = (void (^)(NSHTTPCookieAcceptPolicy))handler.get();
         rawHandler(kitCookiePolicyToNSCookiePolicy(policy));
     });
@@ -153,7 +153,7 @@ static NSHTTPCookieAcceptPolicy kitCookiePolicyToNSCookiePolicy(WebKit::HTTPCook
 
 - (API::Object&)_apiObject
 {
-    return *_cookieStorage;
+    return *_cookieStore;
 }
 
 @end

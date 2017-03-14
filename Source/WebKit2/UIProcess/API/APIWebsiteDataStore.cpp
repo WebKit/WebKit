@@ -64,12 +64,12 @@ WebsiteDataStore::~WebsiteDataStore()
 {
 }
 
-HTTPCookieStorage& WebsiteDataStore::httpCookieStorage()
+HTTPCookieStore& WebsiteDataStore::httpCookieStore()
 {
-    if (!m_apiHTTPCookieStorage)
-        m_apiHTTPCookieStorage = HTTPCookieStorage::create(*this);
+    if (!m_apiHTTPCookieStore)
+        m_apiHTTPCookieStore = HTTPCookieStore::create(*this);
 
-    return *m_apiHTTPCookieStorage;
+    return *m_apiHTTPCookieStore;
 }
 
 bool WebsiteDataStore::isPersistent()

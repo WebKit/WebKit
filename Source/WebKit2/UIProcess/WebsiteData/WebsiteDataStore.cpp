@@ -116,7 +116,7 @@ Ref<WebProcessPool> WebsiteDataStore::processPoolForCookieStorageOperations()
     // This means that multiple NetworkProcesses can be using the same session, which means that multiple
     // NetworkProcesses can be referring to the same platform cookie storage.
     //
-    // While this may cause complications with future APIs it is actually fine for implementing the WKHTTPCookieStorage API
+    // While this may cause complications with future APIs it is actually fine for implementing the WKHTTPCookieStore API
     // because we only need one NetworkProcess to successfully make a requested platform cookie storage change.
     //
     // FIXME: We need to start to unravel this mess going forward.

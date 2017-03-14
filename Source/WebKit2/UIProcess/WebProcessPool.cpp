@@ -30,7 +30,7 @@
 #include "APIAutomationClient.h"
 #include "APICustomProtocolManagerClient.h"
 #include "APIDownloadClient.h"
-#include "APIHTTPCookieStorage.h"
+#include "APIHTTPCookieStore.h"
 #include "APILegacyContextHistoryClient.h"
 #include "APIPageConfiguration.h"
 #include "APIProcessPoolConfiguration.h"

@@ -28,7 +28,7 @@
 
 #if WK_API_ENABLED
 
-#import "WKHTTPCookieStorageInternal.h"
+#import "WKHTTPCookieStoreInternal.h"
 #import "WKNSArray.h"
 #import "WKWebsiteDataRecordInternal.h"
 #import "WebsiteDataFetchOption.h"
@@ -195,9 +195,9 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
     _websiteDataStore->websiteDataStore().setResourceLoadStatisticsEnabled(enabled);
 }
 
-- (WKHTTPCookieStorage *)_httpCookieStorage
+- (WKHTTPCookieStore *)_httpCookieStore
 {
-    return WebKit::wrapper(_websiteDataStore->httpCookieStorage());
+    return WebKit::wrapper(_websiteDataStore->httpCookieStore());
 }
 
 @end

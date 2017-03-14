@@ -76,7 +76,7 @@ namespace API {
 class AutomationClient;
 class CustomProtocolManagerClient;
 class DownloadClient;
-class HTTPCookieStorage;
+class HTTPCookieStore;
 class LegacyContextHistoryClient;
 class PageConfiguration;
 }

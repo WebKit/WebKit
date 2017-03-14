@@ -1063,9 +1063,9 @@
 		51D124351E6DF652002B2820 /* WKURLSchemeHandlerTask.h in Headers */ = {isa = PBXBuildFile; fileRef = 51D1242F1E6DDDD7002B2820 /* WKURLSchemeHandlerTask.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		51D124361E6DFB39002B2820 /* WKURLSchemeHandlerTask.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51D124301E6DDDD7002B2820 /* WKURLSchemeHandlerTask.mm */; };
 		51D1243A1E6E0AAB002B2820 /* APIURLSchemeHandlerTask.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51D124381E6DFDB9002B2820 /* APIURLSchemeHandlerTask.cpp */; };
-		51D124911E74BF3C002B2820 /* APIHTTPCookieStorage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51D124821E734AC8002B2820 /* APIHTTPCookieStorage.cpp */; };
-		51D124921E74BF48002B2820 /* WKHTTPCookieStorage.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51D124851E734AE3002B2820 /* WKHTTPCookieStorage.mm */; };
-		51D124991E763C01002B2820 /* WKHTTPCookieStorage.h in Headers */ = {isa = PBXBuildFile; fileRef = 51D124841E734AE3002B2820 /* WKHTTPCookieStorage.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		51D124911E74BF3C002B2820 /* APIHTTPCookieStore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51D124821E734AC8002B2820 /* APIHTTPCookieStore.cpp */; };
+		51D124921E74BF48002B2820 /* WKHTTPCookieStore.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51D124851E734AE3002B2820 /* WKHTTPCookieStore.mm */; };
+		51D124991E763C01002B2820 /* WKHTTPCookieStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 51D124841E734AE3002B2820 /* WKHTTPCookieStore.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51D130531382EAC000351EDD /* SecItemRequestData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51D1304F1382EAC000351EDD /* SecItemRequestData.cpp */; };
 		51D130541382EAC000351EDD /* SecItemRequestData.h in Headers */ = {isa = PBXBuildFile; fileRef = 51D130501382EAC000351EDD /* SecItemRequestData.h */; };
 		51D130551382EAC000351EDD /* SecItemResponseData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51D130511382EAC000351EDD /* SecItemResponseData.cpp */; };
@@ -3293,11 +3293,11 @@
 		51D124371E6DFD2A002B2820 /* WKURLSchemeHandlerTaskInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKURLSchemeHandlerTaskInternal.h; sourceTree = "<group>"; };
 		51D124381E6DFDB9002B2820 /* APIURLSchemeHandlerTask.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = APIURLSchemeHandlerTask.cpp; sourceTree = "<group>"; };
 		51D124391E6DFDB9002B2820 /* APIURLSchemeHandlerTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIURLSchemeHandlerTask.h; sourceTree = "<group>"; };
-		51D124821E734AC8002B2820 /* APIHTTPCookieStorage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = APIHTTPCookieStorage.cpp; sourceTree = "<group>"; };
-		51D124831E734AC8002B2820 /* APIHTTPCookieStorage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIHTTPCookieStorage.h; sourceTree = "<group>"; };
-		51D124841E734AE3002B2820 /* WKHTTPCookieStorage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKHTTPCookieStorage.h; sourceTree = "<group>"; };
-		51D124851E734AE3002B2820 /* WKHTTPCookieStorage.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKHTTPCookieStorage.mm; sourceTree = "<group>"; };
-		51D124861E734AE3002B2820 /* WKHTTPCookieStorageInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKHTTPCookieStorageInternal.h; sourceTree = "<group>"; };
+		51D124821E734AC8002B2820 /* APIHTTPCookieStore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = APIHTTPCookieStore.cpp; sourceTree = "<group>"; };
+		51D124831E734AC8002B2820 /* APIHTTPCookieStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIHTTPCookieStore.h; sourceTree = "<group>"; };
+		51D124841E734AE3002B2820 /* WKHTTPCookieStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKHTTPCookieStore.h; sourceTree = "<group>"; };
+		51D124851E734AE3002B2820 /* WKHTTPCookieStore.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKHTTPCookieStore.mm; sourceTree = "<group>"; };
+		51D124861E734AE3002B2820 /* WKHTTPCookieStoreInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKHTTPCookieStoreInternal.h; sourceTree = "<group>"; };
 		51D1304F1382EAC000351EDD /* SecItemRequestData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SecItemRequestData.cpp; sourceTree = "<group>"; };
 		51D130501382EAC000351EDD /* SecItemRequestData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SecItemRequestData.h; sourceTree = "<group>"; };
 		51D130511382EAC000351EDD /* SecItemResponseData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SecItemResponseData.cpp; sourceTree = "<group>"; };
@@ -5562,9 +5562,9 @@
 				1A4D664918A3030E00D82E21 /* WKFrameInfo.mm */,
 				2DF9EEE71A78245500B6CFBE /* WKFrameInfoInternal.h */,
 				1A6FA21D1BD0435B00AAA650 /* WKFrameInfoPrivate.h */,
-				51D124841E734AE3002B2820 /* WKHTTPCookieStorage.h */,
-				51D124851E734AE3002B2820 /* WKHTTPCookieStorage.mm */,
-				51D124861E734AE3002B2820 /* WKHTTPCookieStorageInternal.h */,
+				51D124841E734AE3002B2820 /* WKHTTPCookieStore.h */,
+				51D124851E734AE3002B2820 /* WKHTTPCookieStore.mm */,
+				51D124861E734AE3002B2820 /* WKHTTPCookieStoreInternal.h */,
 				1A422F8A18B29B5400D8CD96 /* WKHistoryDelegatePrivate.h */,
 				1AB40EE31BF677E300BA81BE /* WKMenuItemIdentifiers.mm */,
 				1AB40EE41BF677E300BA81BE /* WKMenuItemIdentifiersPrivate.h */,
@@ -6758,8 +6758,8 @@
 				2DABA7751A82B42100EF0F1A /* APIHistoryClient.h */,
 				93A88B421BC8828C00ABA5C2 /* APIHitTestResult.cpp */,
 				93A88B431BC8828C00ABA5C2 /* APIHitTestResult.h */,
-				51D124821E734AC8002B2820 /* APIHTTPCookieStorage.cpp */,
-				51D124831E734AC8002B2820 /* APIHTTPCookieStorage.h */,
+				51D124821E734AC8002B2820 /* APIHTTPCookieStore.cpp */,
+				51D124831E734AC8002B2820 /* APIHTTPCookieStore.h */,
 				5143B2611DDD0DA00014FAC6 /* APIIconLoadingClient.h */,
 				7CE4D2061A46775700C7F152 /* APILegacyContextHistoryClient.h */,
 				1A2464F21891E45100234C5B /* APILoaderClient.h */,
@@ -8552,7 +8552,7 @@
 				514129941C6428BB0059E714 /* WebIDBConnectionToServer.h in Headers */,
 				510523741C73D38B007993CB /* WebIDBConnectionToServerMessages.h in Headers */,
 				BCCF6ABD12C91EF9008F9C35 /* WebImage.h in Headers */,
-				51D124991E763C01002B2820 /* WKHTTPCookieStorage.h in Headers */,
+				51D124991E763C01002B2820 /* WKHTTPCookieStore.h in Headers */,
 				1C8E28201275D15400BC7BD0 /* WebInspector.h in Headers */,
 				BC032D8210F4378D0058C15A /* WebInspectorClient.h in Headers */,
 				A55BA8351BA3E70A007CD33D /* WebInspectorFrontendAPIDispatcher.h in Headers */,
@@ -9806,7 +9806,7 @@
 				1A6FBA2B11E6862700DB1371 /* NetscapeBrowserFuncs.cpp in Sources */,
 				1A6FBD2911E69BC200DB1371 /* NetscapePlugin.cpp in Sources */,
 				1AE5B7FB11E7AED200BA6767 /* NetscapePluginMac.mm in Sources */,
-				51D124921E74BF48002B2820 /* WKHTTPCookieStorage.mm in Sources */,
+				51D124921E74BF48002B2820 /* WKHTTPCookieStore.mm in Sources */,
 				1A4A9C5512B816CF008FE984 /* NetscapePluginModule.cpp in Sources */,
 				839A2F311E2067450039057E /* HighPerformanceGraphicsUsageSampler.cpp in Sources */,
 				1A4A9C9A12B821CD008FE984 /* NetscapePluginModuleMac.mm in Sources */,
@@ -9825,7 +9825,7 @@
 				831EEBBE1BD85C4300BB64C3 /* NetworkCacheSpeculativeLoad.cpp in Sources */,
 				832AE2531BE2E8CD00FAAE10 /* NetworkCacheSpeculativeLoadManager.cpp in Sources */,
 				83BDCCB91AC5FDB6003F6441 /* NetworkCacheStatistics.cpp in Sources */,
-				51D124911E74BF3C002B2820 /* APIHTTPCookieStorage.cpp in Sources */,
+				51D124911E74BF3C002B2820 /* APIHTTPCookieStore.cpp in Sources */,
 				E4436ED01A0D040B00EAD204 /* NetworkCacheStorage.cpp in Sources */,
 				8310428C1BD6B66F00A715E4 /* NetworkCacheSubresourcesEntry.cpp in Sources */,
 				5302583D1DCBBD2200DA89C2 /* NetworkCaptureEvent.cpp in Sources */,

@@ -27,7 +27,7 @@
 
 #import "PlatformUtilities.h"
 #import <WebKit/WKFoundation.h>
-#import <WebKit/WKHTTPCookieStorage.h>
+#import <WebKit/WKHTTPCookieStore.h>
 #import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <wtf/RetainPtr.h>
 
@@ -40,10 +40,10 @@ TEST(WebKit2, WKHTTPCookieStorage)
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
     [webView loadHTMLString:@"Oh hello" baseURL:[NSURL URLWithString:@"http://webkit.org"]];
 
-    RetainPtr<WKHTTPCookieStorage> cookieStorage = [WKWebsiteDataStore defaultDataStore]._httpCookieStorage;
+    RetainPtr<WKHTTPCookieStore> cookieStore = [WKWebsiteDataStore defaultDataStore]._httpCookieStore;
 
     NSArray<NSHTTPCookie *> *cookies = nil;
-    [cookieStorage fetchCookies:[cookiesPtr = &cookies](NSArray<NSHTTPCookie *> *nsCookies) {
+    [cookieStore fetchCookies:[cookiesPtr = &cookies](NSArray<NSHTTPCookie *> *nsCookies) {
         *cookiesPtr = [nsCookies retain];
         gotFlag = true;
     }];
@@ -73,21 +73,21 @@ TEST(WebKit2, WKHTTPCookieStorage)
         NSHTTPCookieMaximumAge: @"10000",
     }];
 
-    [cookieStorage setCookie:cookie1.get() completionHandler:[](){
+    [cookieStore setCookie:cookie1.get() completionHandler:[](){
         gotFlag = true;
     }];
 
     TestWebKitAPI::Util::run(&gotFlag);
     gotFlag = false;
 
-    [cookieStorage setCookie:cookie2.get() completionHandler:[](){
+    [cookieStore setCookie:cookie2.get() completionHandler:[](){
         gotFlag = true;
     }];
 
     TestWebKitAPI::Util::run(&gotFlag);
     gotFlag = false;
 
-    [cookieStorage fetchCookies:[cookiesPtr = &cookies](NSArray<NSHTTPCookie *> *nsCookies) {
+    [cookieStore fetchCookies:[cookiesPtr = &cookies](NSArray<NSHTTPCookie *> *nsCookies) {
         *cookiesPtr = [nsCookies retain];
         gotFlag = true;
     }];

@@ -36,7 +36,7 @@
 #import "WKContentExtensionInternal.h"
 #import "WKContentExtensionStoreInternal.h"
 #import "WKFrameInfoInternal.h"
-#import "WKHTTPCookieStorageInternal.h"
+#import "WKHTTPCookieStoreInternal.h"
 #import "WKNSArray.h"
 #import "WKNSData.h"
 #import "WKNSDictionary.h"
@@ -179,8 +179,8 @@ void* Object::newObject(size_t size, Type type)
         wrapper = [WKFrameInfo alloc];
         break;
 
-    case Type::HTTPCookieStorage:
-        wrapper = [WKHTTPCookieStorage alloc];
+    case Type::HTTPCookieStore:
+        wrapper = [WKHTTPCookieStore alloc];
         break;
 
 #if PLATFORM(MAC)

@@ -29,7 +29,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class WKHTTPCookieStorage;
+@class WKHTTPCookieStore;
 @class _WKWebsiteDataStoreConfiguration;
 
 typedef NS_OPTIONS(NSUInteger, _WKWebsiteDataStoreFetchOptions) {
@@ -44,8 +44,8 @@ typedef NS_OPTIONS(NSUInteger, _WKWebsiteDataStoreFetchOptions) {
 
 @property (nonatomic, setter=_setResourceLoadStatisticsEnabled:) BOOL _resourceLoadStatisticsEnabled WK_API_AVAILABLE(macosx(10.12), ios(10.0));
 
-/*! @abstract Returns the cookie storage representing HTTP cookies in this website data store. */
-@property (nonatomic, readonly) WKHTTPCookieStorage *_httpCookieStorage WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+/*! @abstract Returns the cookie store representing HTTP cookies in this website data store. */
+@property (nonatomic, readonly) WKHTTPCookieStore *_httpCookieStore WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 @end
 
