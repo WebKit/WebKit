@@ -173,8 +173,7 @@ void AudioSampleDataSource::pushSamplesInternal(const AudioBufferList& bufferLis
 #endif
 
     m_ringBuffer->store(sampleBufferList, sampleCount, sampleTime.timeValue());
-    m_timeStamp = sampleTime.timeValue();
-
+    m_lastPushedSampleCount = sampleCount;
 
 #if !LOG_DISABLED
     uint64_t startFrame2 = 0;
@@ -224,7 +223,7 @@ bool AudioSampleDataSource::pullSamplesInternal(AudioBufferList& buffer, size_t&
     m_ringBuffer->getCurrentFrameBounds(startFrame, endFrame);
 
     if (m_transitioningFromPaused) {
-        uint64_t buffered = endFrame - m_timeStamp;
+        uint64_t buffered = endFrame - startFrame;
         if (buffered < sampleCount * 2) {
             AudioSampleBufferList::zeroABL(buffer, byteCount);
             sampleCount = 0;
@@ -235,12 +234,12 @@ bool AudioSampleDataSource::pullSamplesInternal(AudioBufferList& buffer, size_t&
         const double tenMS = .01;
         const double fiveMS = .005;
         double sampleRate = m_outputDescription->sampleRate();
-        m_outputSampleOffset = timeStamp + m_timeStamp;
-        if (buffered > sampleRate * twentyMS)
+        m_outputSampleOffset = timeStamp + (endFrame - sampleCount);
+        if (m_lastPushedSampleCount > sampleRate * twentyMS)
             m_outputSampleOffset -= sampleRate * twentyMS;
-        else if (buffered > sampleRate * tenMS)
+        else if (m_lastPushedSampleCount > sampleRate * tenMS)
             m_outputSampleOffset -= sampleRate * tenMS;
-        else if (buffered > sampleRate * fiveMS)
+        else if (m_lastPushedSampleCount > sampleRate * fiveMS)
             m_outputSampleOffset -= sampleRate * fiveMS;
 
         m_transitioningFromPaused = false;
