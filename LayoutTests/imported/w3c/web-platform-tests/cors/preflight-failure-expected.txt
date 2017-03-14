@@ -1,0 +1,74 @@
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?headers=x-test&location=http%3A%2F%2Fwww1.localhost%3A8800%2Fcors%2Fresources%2Fcors-makeheader.py%3Fheaders%3Dx-test%260&code=100&preflight=100&1 due to access control checks.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?headers=x-test&location=http%3A%2F%2Fwww1.localhost%3A8800%2Fcors%2Fresources%2Fcors-makeheader.py%3Fheaders%3Dx-test%262&code=101&preflight=101&3 due to access control checks.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?headers=x-test&location=http%3A%2F%2Fwww1.localhost%3A8800%2Fcors%2Fresources%2Fcors-makeheader.py%3Fheaders%3Dx-test%264&code=300&preflight=300&5 due to access control checks.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?headers=x-test&location=http%3A%2F%2Fwww1.localhost%3A8800%2Fcors%2Fresources%2Fcors-makeheader.py%3Fheaders%3Dx-test%266&code=301&preflight=301&7 due to access control checks.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?headers=x-test&location=http%3A%2F%2Fwww1.localhost%3A8800%2Fcors%2Fresources%2Fcors-makeheader.py%3Fheaders%3Dx-test%268&code=302&preflight=302&9 due to access control checks.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?headers=x-test&location=http%3A%2F%2Fwww1.localhost%3A8800%2Fcors%2Fresources%2Fcors-makeheader.py%3Fheaders%3Dx-test%2610&code=303&preflight=303&11 due to access control checks.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?headers=x-test&location=http%3A%2F%2Fwww1.localhost%3A8800%2Fcors%2Fresources%2Fcors-makeheader.py%3Fheaders%3Dx-test%2612&code=304&preflight=304&13 due to access control checks.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?headers=x-test&location=http%3A%2F%2Fwww1.localhost%3A8800%2Fcors%2Fresources%2Fcors-makeheader.py%3Fheaders%3Dx-test%2614&code=305&preflight=305&15 due to access control checks.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?headers=x-test&location=http%3A%2F%2Fwww1.localhost%3A8800%2Fcors%2Fresources%2Fcors-makeheader.py%3Fheaders%3Dx-test%2616&code=306&preflight=306&17 due to access control checks.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?headers=x-test&location=http%3A%2F%2Fwww1.localhost%3A8800%2Fcors%2Fresources%2Fcors-makeheader.py%3Fheaders%3Dx-test%2618&code=307&preflight=307&19 due to access control checks.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?headers=x-test&location=http%3A%2F%2Fwww1.localhost%3A8800%2Fcors%2Fresources%2Fcors-makeheader.py%3Fheaders%3Dx-test%2620&code=308&preflight=308&21 due to access control checks.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?headers=x-test&location=http%3A%2F%2Fwww1.localhost%3A8800%2Fcors%2Fresources%2Fcors-makeheader.py%3Fheaders%3Dx-test%2622&code=400&preflight=400&23 due to access control checks.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?headers=x-test&location=http%3A%2F%2Fwww1.localhost%3A8800%2Fcors%2Fresources%2Fcors-makeheader.py%3Fheaders%3Dx-test%2624&code=401&preflight=401&25 due to access control checks.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?headers=x-test&location=http%3A%2F%2Fwww1.localhost%3A8800%2Fcors%2Fresources%2Fcors-makeheader.py%3Fheaders%3Dx-test%2626&code=402&preflight=402&27 due to access control checks.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?headers=x-test&location=http%3A%2F%2Fwww1.localhost%3A8800%2Fcors%2Fresources%2Fcors-makeheader.py%3Fheaders%3Dx-test%2628&code=403&preflight=403&29 due to access control checks.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?headers=x-test&location=http%3A%2F%2Fwww1.localhost%3A8800%2Fcors%2Fresources%2Fcors-makeheader.py%3Fheaders%3Dx-test%2630&code=404&preflight=404&31 due to access control checks.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?headers=x-test&location=http%3A%2F%2Fwww1.localhost%3A8800%2Fcors%2Fresources%2Fcors-makeheader.py%3Fheaders%3Dx-test%2632&code=405&preflight=405&33 due to access control checks.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?headers=x-test&location=http%3A%2F%2Fwww1.localhost%3A8800%2Fcors%2Fresources%2Fcors-makeheader.py%3Fheaders%3Dx-test%2634&code=406&preflight=406&35 due to access control checks.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?headers=x-test&location=http%3A%2F%2Fwww1.localhost%3A8800%2Fcors%2Fresources%2Fcors-makeheader.py%3Fheaders%3Dx-test%2636&code=407&preflight=407&37 due to access control checks.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?headers=x-test&location=http%3A%2F%2Fwww1.localhost%3A8800%2Fcors%2Fresources%2Fcors-makeheader.py%3Fheaders%3Dx-test%2638&code=408&preflight=408&39 due to access control checks.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?headers=x-test&location=http%3A%2F%2Fwww1.localhost%3A8800%2Fcors%2Fresources%2Fcors-makeheader.py%3Fheaders%3Dx-test%2640&code=409&preflight=409&41 due to access control checks.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?headers=x-test&location=http%3A%2F%2Fwww1.localhost%3A8800%2Fcors%2Fresources%2Fcors-makeheader.py%3Fheaders%3Dx-test%2642&code=410&preflight=410&43 due to access control checks.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?headers=x-test&location=http%3A%2F%2Fwww1.localhost%3A8800%2Fcors%2Fresources%2Fcors-makeheader.py%3Fheaders%3Dx-test%2644&code=411&preflight=411&45 due to access control checks.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?headers=x-test&location=http%3A%2F%2Fwww1.localhost%3A8800%2Fcors%2Fresources%2Fcors-makeheader.py%3Fheaders%3Dx-test%2646&code=412&preflight=412&47 due to access control checks.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?headers=x-test&location=http%3A%2F%2Fwww1.localhost%3A8800%2Fcors%2Fresources%2Fcors-makeheader.py%3Fheaders%3Dx-test%2648&code=413&preflight=413&49 due to access control checks.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?headers=x-test&location=http%3A%2F%2Fwww1.localhost%3A8800%2Fcors%2Fresources%2Fcors-makeheader.py%3Fheaders%3Dx-test%2650&code=414&preflight=414&51 due to access control checks.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?headers=x-test&location=http%3A%2F%2Fwww1.localhost%3A8800%2Fcors%2Fresources%2Fcors-makeheader.py%3Fheaders%3Dx-test%2652&code=415&preflight=415&53 due to access control checks.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?headers=x-test&location=http%3A%2F%2Fwww1.localhost%3A8800%2Fcors%2Fresources%2Fcors-makeheader.py%3Fheaders%3Dx-test%2654&code=416&preflight=416&55 due to access control checks.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?headers=x-test&location=http%3A%2F%2Fwww1.localhost%3A8800%2Fcors%2Fresources%2Fcors-makeheader.py%3Fheaders%3Dx-test%2656&code=417&preflight=417&57 due to access control checks.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?headers=x-test&location=http%3A%2F%2Fwww1.localhost%3A8800%2Fcors%2Fresources%2Fcors-makeheader.py%3Fheaders%3Dx-test%2658&code=500&preflight=500&59 due to access control checks.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?headers=x-test&location=http%3A%2F%2Fwww1.localhost%3A8800%2Fcors%2Fresources%2Fcors-makeheader.py%3Fheaders%3Dx-test%2660&code=501&preflight=501&61 due to access control checks.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?headers=x-test&location=http%3A%2F%2Fwww1.localhost%3A8800%2Fcors%2Fresources%2Fcors-makeheader.py%3Fheaders%3Dx-test%2662&code=502&preflight=502&63 due to access control checks.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?headers=x-test&location=http%3A%2F%2Fwww1.localhost%3A8800%2Fcors%2Fresources%2Fcors-makeheader.py%3Fheaders%3Dx-test%2664&code=503&preflight=503&65 due to access control checks.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?headers=x-test&location=http%3A%2F%2Fwww1.localhost%3A8800%2Fcors%2Fresources%2Fcors-makeheader.py%3Fheaders%3Dx-test%2666&code=504&preflight=504&67 due to access control checks.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?headers=x-test&location=http%3A%2F%2Fwww1.localhost%3A8800%2Fcors%2Fresources%2Fcors-makeheader.py%3Fheaders%3Dx-test%2668&code=505&preflight=505&69 due to access control checks.
+Preflight responds with non-2XX status code
+
+
+PASS Should throw error if preflight respond with 100 
+PASS Should throw error if preflight respond with 101 
+PASS Should throw error if preflight respond with 300 
+PASS Should throw error if preflight respond with 301 
+PASS Should throw error if preflight respond with 302 
+PASS Should throw error if preflight respond with 303 
+PASS Should throw error if preflight respond with 304 
+PASS Should throw error if preflight respond with 305 
+PASS Should throw error if preflight respond with 306 
+PASS Should throw error if preflight respond with 307 
+PASS Should throw error if preflight respond with 308 
+PASS Should throw error if preflight respond with 400 
+PASS Should throw error if preflight respond with 401 
+PASS Should throw error if preflight respond with 402 
+PASS Should throw error if preflight respond with 403 
+PASS Should throw error if preflight respond with 404 
+PASS Should throw error if preflight respond with 405 
+PASS Should throw error if preflight respond with 406 
+PASS Should throw error if preflight respond with 407 
+PASS Should throw error if preflight respond with 408 
+PASS Should throw error if preflight respond with 409 
+PASS Should throw error if preflight respond with 410 
+PASS Should throw error if preflight respond with 411 
+PASS Should throw error if preflight respond with 412 
+PASS Should throw error if preflight respond with 413 
+PASS Should throw error if preflight respond with 414 
+PASS Should throw error if preflight respond with 415 
+PASS Should throw error if preflight respond with 416 
+PASS Should throw error if preflight respond with 417 
+PASS Should throw error if preflight respond with 500 
+PASS Should throw error if preflight respond with 501 
+PASS Should throw error if preflight respond with 502 
+PASS Should throw error if preflight respond with 503 
+PASS Should throw error if preflight respond with 504 
+PASS Should throw error if preflight respond with 505 
+

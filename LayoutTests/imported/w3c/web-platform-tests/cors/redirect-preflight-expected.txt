@@ -1,0 +1,14 @@
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?preflight=200&headers=x-test&location=http%3A%2F%2Fwww1.localhost%3A8800%2Fcors%2Fresources%2Fcors-makeheader.py%3Fheaders%3Dx-test%260&code=301&1 due to access control checks.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?preflight=200&headers=x-test&location=http%3A%2F%2Fwww1.localhost%3A8800%2Fcors%2Fresources%2Fcors-makeheader.py%3Fheaders%3Dx-test%262&code=302&3 due to access control checks.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?preflight=200&headers=x-test&location=http%3A%2F%2Fwww1.localhost%3A8800%2Fcors%2Fresources%2Fcors-makeheader.py%3Fheaders%3Dx-test%264&code=303&5 due to access control checks.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?preflight=200&headers=x-test&location=http%3A%2F%2Fwww1.localhost%3A8800%2Fcors%2Fresources%2Fcors-makeheader.py%3Fheaders%3Dx-test%266&code=307&7 due to access control checks.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?preflight=200&headers=x-test&location=http%3A%2F%2Fwww1.localhost%3A8800%2Fcors%2Fresources%2Fcors-makeheader.py%3Fheaders%3Dx-test%268&code=308&9 due to access control checks.
+Redirect with preflight
+
+
+FAIL Should allow redirect 301 after succesful (200) preflight assert_equals: Successfull redirect expected 200 but got 0
+FAIL Should allow redirect 302 after succesful (200) preflight assert_equals: Successfull redirect expected 200 but got 0
+FAIL Should allow redirect 303 after succesful (200) preflight assert_equals: Successfull redirect expected 200 but got 0
+FAIL Should allow redirect 307 after succesful (200) preflight assert_equals: Successfull redirect expected 200 but got 0
+FAIL Should allow redirect 308 after succesful (200) preflight assert_equals: Successfull redirect expected 200 but got 0
+

@@ -35,6 +35,9 @@ media/ios [ Skip ]
 media/controls/ipad [ Skip ]
 fast/text-autosizing [ Skip ]
 
+# window.showModalDialog is only tested in DumpRenderTree on Mac.
+editing/execCommand/show-modal-dialog-during-execCommand.html [ Skip ]
+
 fast/shadow-dom/touch-event-on-text-assigned-to-slot.html [ Skip ]
 
 fast/forms/attributed-strings.html [ Skip ]
@@ -710,6 +713,12 @@ fast/mediastream/RTCPeerConnection-addIceCandidate.html [ Failure  ]
 imported/w3c/web-platform-tests/webrtc/datachannel-emptystring.html [ Failure  ]
 imported/w3c/web-platform-tests/webrtc/no-media-call.html [ Failure  ]
 imported/w3c/web-platform-tests/webrtc/promises-call.html [ Failure  ]
+
+# Need updating wptserve
+imported/w3c/web-platform-tests/XMLHttpRequest/setrequestheader-content-type.htm [ Skip ]
+imported/w3c/web-platform-tests/XMLHttpRequest/open-url-redirected-worker-origin.htm [ Skip ]
+imported/w3c/web-platform-tests/html/webappapis/system-state-and-capabilities/the-navigator-object/NavigatorID.html [ Skip ]
+imported/w3c/web-platform-tests/html/webappapis/system-state-and-capabilities/the-navigator-object/NavigatorID.worker.html [ Skip ]
 
 # Only iOS WK1 has testRunner.setPagePaused.
 fast/dom/timer-fire-after-page-pause.html [ Skip ]

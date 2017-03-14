@@ -209,6 +209,9 @@
     "imported/w3c/web-platform-tests/XMLHttpRequest/xmlhttprequest-timeout-worker-twice.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/cors/status-async.htm": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/dom/nodes/Document-characterSet-normalization.html": [
         "slow"
     ],

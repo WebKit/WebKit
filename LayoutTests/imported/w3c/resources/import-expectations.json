@@ -106,7 +106,7 @@
     "web-platform-tests/console": "skip", 
     "web-platform-tests/content-security-policy": "skip", 
     "web-platform-tests/cookies": "skip", 
-    "web-platform-tests/cors": "skip", 
+    "web-platform-tests/cors": "import", 
     "web-platform-tests/css-typed-om": "skip", 
     "web-platform-tests/css-values": "skip", 
     "web-platform-tests/cssom": "skip", 

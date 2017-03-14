@@ -1,0 +1,54 @@
+Blocked access to external URL http://www1.localhost:8800/cors/resources/preflight.py?token=392a30cd-ce3d-4663-85f4-5b95816600b8
+Blocked access to external URL http://www1.localhost:8800/cors/resources/preflight.py?token=bdc783ee-bc1a-4a80-8206-9ff503a2335f
+Blocked access to external URL http://www1.localhost:8800/cors/resources/preflight.py?token=7f937523-74aa-4ba0-8fe6-8a39fb111f47
+Blocked access to external URL http://www1.localhost:8800/cors/resources/preflight.py?token=35ba3c52-65b8-4b34-b2cb-553765266f57
+Blocked access to external URL http://www1.localhost:8800/cors/resources/preflight.py?token=5cb24269-d166-4abd-8347-c0337cc6ca47
+Blocked access to external URL http://www1.localhost:8800/cors/resources/preflight.py?token=7bf64789-3840-4b6b-96e4-2d2e27587619
+Blocked access to external URL http://www1.localhost:8800/cors/resources/preflight.py?token=c44f6790-53b8-4993-b0b1-e21a3cc3d245
+Blocked access to external URL http://www1.localhost:8800/cors/resources/preflight.py?token=a56a5860-7f84-4aa5-8e89-9caabc49b7ad
+Blocked access to external URL http://www1.localhost:8800/cors/resources/preflight.py?token=bfef417e-6a08-4467-ae21-d093b0b72d43
+Blocked access to external URL http://www1.localhost:8800/cors/resources/preflight.py?token=4d2914db-3e65-4004-8aa2-5b416d3bd139
+Blocked access to external URL http://www1.localhost:8800/cors/resources/preflight.py?token=545e6e0a-ab91-425c-9fee-d7c76bda8f77
+Blocked access to external URL http://www1.localhost:8800/cors/resources/preflight.py?token=b95b5f11-7b56-4283-85c0-af71766d239b
+Blocked access to external URL http://www1.localhost:8800/cors/resources/preflight.py?token=9c6e28cf-2e5a-41c8-8ba0-e353ab96d8b4
+Blocked access to external URL http://www1.localhost:8800/cors/resources/preflight.py?token=10a72420-e8c1-4284-911a-2f66e7959016
+Blocked access to external URL http://www1.localhost:8800/cors/resources/preflight.py?token=2fc8911b-9594-4abd-83af-7c8caeb58e17
+Blocked access to external URL http://www1.localhost:8800/cors/resources/preflight.py?token=0bde01ea-410c-45e1-9d25-2a59714db8f8
+Blocked access to external URL http://www1.localhost:8800/cors/resources/preflight.py?token=0272d215-0f1c-4517-8069-ac8135e2f905
+Blocked access to external URL http://www1.localhost:8800/cors/resources/preflight.py?token=098da67a-9610-4892-8e70-db38ab79afce
+Blocked access to external URL http://www1.localhost:8800/cors/resources/preflight.py?token=f2d525c1-f373-47af-a6fe-6a1b62658356
+Blocked access to external URL http://www1.localhost:8800/cors/resources/preflight.py?token=f967e5a3-7df3-4ad2-9d38-0f8064fad2d2
+Blocked access to external URL http://www1.localhost:8800/cors/resources/preflight.py?token=b6010190-0f35-4998-a0c1-331119a76a0e
+Blocked access to external URL http://www1.localhost:8800/cors/resources/preflight.py?token=ae19d0d4-657d-4333-97be-2332eb0a683a
+Blocked access to external URL http://www1.localhost:8800/cors/resources/preflight.py?token=350fc654-7f4c-4a0d-94fe-c02f3e9b953d
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/preflight.py?token=e3ceb821-d17d-404e-91ef-705b61832c7e due to access control checks.
+Simple requests
+
+Simple requests shouldn't trigger preflight
+
+
+FAIL No preflight GET and {"Accept":"test"} The operation was aborted.
+FAIL No preflight HEAD and {"Accept":"test"} The operation was aborted.
+FAIL No preflight POST and {"Accept":"test"} The operation was aborted.
+FAIL No preflight GET and {"accept-language":"test"} The operation was aborted.
+FAIL No preflight HEAD and {"accept-language":"test"} The operation was aborted.
+FAIL No preflight POST and {"accept-language":"test"} The operation was aborted.
+FAIL No preflight GET and {"CONTENT-language":"test"} The operation was aborted.
+FAIL No preflight HEAD and {"CONTENT-language":"test"} The operation was aborted.
+FAIL No preflight POST and {"CONTENT-language":"test"} The operation was aborted.
+FAIL No preflight GET and {"Content-Type":"application/x-www-form-urlencoded"} The operation was aborted.
+FAIL No preflight HEAD and {"Content-Type":"application/x-www-form-urlencoded"} The operation was aborted.
+FAIL No preflight POST and {"Content-Type":"application/x-www-form-urlencoded"} The operation was aborted.
+FAIL No preflight GET and {"content-type":"multipart/form-data"} The operation was aborted.
+FAIL No preflight HEAD and {"content-type":"multipart/form-data"} The operation was aborted.
+FAIL No preflight POST and {"content-type":"multipart/form-data"} The operation was aborted.
+FAIL No preflight GET and {"content-type":"text/plain"} The operation was aborted.
+FAIL No preflight HEAD and {"content-type":"text/plain"} The operation was aborted.
+FAIL No preflight POST and {"content-type":"text/plain"} The operation was aborted.
+FAIL No preflight GET and {"accept":"test","accept-language":"test","content-language":"test","content-type":"text/plain; parameter=whatever"} The operation was aborted.
+FAIL No preflight HEAD and {"accept":"test","accept-language":"test","content-language":"test","content-type":"text/plain; parameter=whatever"} The operation was aborted.
+FAIL No preflight POST and {"accept":"test","accept-language":"test","content-language":"test","content-type":"text/plain; parameter=whatever"} The operation was aborted.
+FAIL No preflight Get and {"content-type":"text/plain; parameter=extra_bonus"} The operation was aborted.
+FAIL No preflight post and {"content-type":"text/plain"} The operation was aborted.
+FAIL Check simple headers (async) assert_unreached: onerror Reached unreachable code
+

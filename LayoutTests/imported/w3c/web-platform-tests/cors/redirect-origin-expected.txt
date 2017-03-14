@@ -1,0 +1,133 @@
+Blocked access to external URL http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=*&location=http%3A%2F%2Flocalhost%3A8800%2Fcors%2Fresources%2Fcors-makeheader.py%3Forigin%3D*%26get_value%3Dlast%2610_1&10_0
+CONSOLE MESSAGE: line 144: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=*&location=http%3A%2F%2Flocalhost%3A8800%2Fcors%2Fresources%2Fcors-makeheader.py%3Forigin%3D*%26get_value%3Dlast%2610_1&10_0 due to access control checks.
+Blocked access to external URL http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=*&location=http%3A%2F%2Flocalhost%3A8800%2Fcors%2Fresources%2Fcors-makeheader.py%3Forigin%3Dhttp%3A%2F%2Flocalhost%3A8800%26get_value%3Dlast%2611_1&11_0
+CONSOLE MESSAGE: line 168: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=*&location=http%3A%2F%2Flocalhost%3A8800%2Fcors%2Fresources%2Fcors-makeheader.py%3Forigin%3Dhttp%3A%2F%2Flocalhost%3A8800%26get_value%3Dlast%2611_1&11_0 due to access control checks.
+Blocked access to external URL http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=*&location=http%3A%2F%2Flocalhost%3A8800%2Fcors%2Fresources%2Fcors-makeheader.py%3Forigin%3Dnull%26get_value%3Dlast%2612_1&12_0
+CONSOLE MESSAGE: line 144: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=*&location=http%3A%2F%2Flocalhost%3A8800%2Fcors%2Fresources%2Fcors-makeheader.py%3Forigin%3Dnull%26get_value%3Dlast%2612_1&12_0 due to access control checks.
+Blocked access to external URL http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=*&location=http%3A%2F%2Flocalhost%3A8800%2Fcors%2Fresources%2Fcors-makeheader.py%3Forigin%3Dnone%26get_value%3Dlast%2613_1&13_0
+CONSOLE MESSAGE: line 168: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=*&location=http%3A%2F%2Flocalhost%3A8800%2Fcors%2Fresources%2Fcors-makeheader.py%3Forigin%3Dnone%26get_value%3Dlast%2613_1&13_0 due to access control checks.
+Blocked access to external URL http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=http://localhost:8800&location=http%3A%2F%2Flocalhost%3A8800%2Fcors%2Fresources%2Fcors-makeheader.py%3Forigin%3D*%26get_value%3Dlast%2614_1&14_0
+CONSOLE MESSAGE: line 144: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=http://localhost:8800&location=http%3A%2F%2Flocalhost%3A8800%2Fcors%2Fresources%2Fcors-makeheader.py%3Forigin%3D*%26get_value%3Dlast%2614_1&14_0 due to access control checks.
+Blocked access to external URL http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=http://localhost:8800&location=http%3A%2F%2Flocalhost%3A8800%2Fcors%2Fresources%2Fcors-makeheader.py%3Forigin%3Dhttp%3A%2F%2Flocalhost%3A8800%26get_value%3Dlast%2615_1&15_0
+CONSOLE MESSAGE: line 168: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=http://localhost:8800&location=http%3A%2F%2Flocalhost%3A8800%2Fcors%2Fresources%2Fcors-makeheader.py%3Forigin%3Dhttp%3A%2F%2Flocalhost%3A8800%26get_value%3Dlast%2615_1&15_0 due to access control checks.
+Blocked access to external URL http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=http://localhost:8800&location=http%3A%2F%2Flocalhost%3A8800%2Fcors%2Fresources%2Fcors-makeheader.py%3Forigin%3Dnull%26get_value%3Dlast%2616_1&16_0
+CONSOLE MESSAGE: line 144: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=http://localhost:8800&location=http%3A%2F%2Flocalhost%3A8800%2Fcors%2Fresources%2Fcors-makeheader.py%3Forigin%3Dnull%26get_value%3Dlast%2616_1&16_0 due to access control checks.
+Blocked access to external URL http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=http://localhost:8800&location=http%3A%2F%2Flocalhost%3A8800%2Fcors%2Fresources%2Fcors-makeheader.py%3Forigin%3Dnone%26get_value%3Dlast%2617_1&17_0
+CONSOLE MESSAGE: line 168: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=http://localhost:8800&location=http%3A%2F%2Flocalhost%3A8800%2Fcors%2Fresources%2Fcors-makeheader.py%3Forigin%3Dnone%26get_value%3Dlast%2617_1&17_0 due to access control checks.
+Blocked access to external URL http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=null&location=http%3A%2F%2Flocalhost%3A8800%2Fcors%2Fresources%2Fcors-makeheader.py%3Forigin%3D*%26get_value%3Dlast%2618_1&18_0
+CONSOLE MESSAGE: line 168: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=null&location=http%3A%2F%2Flocalhost%3A8800%2Fcors%2Fresources%2Fcors-makeheader.py%3Forigin%3D*%26get_value%3Dlast%2618_1&18_0 due to access control checks.
+Blocked access to external URL http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=none&location=http%3A%2F%2Flocalhost%3A8800%2Fcors%2Fresources%2Fcors-makeheader.py%3Forigin%3D*%26get_value%3Dlast%2619_1&19_0
+CONSOLE MESSAGE: line 168: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=none&location=http%3A%2F%2Flocalhost%3A8800%2Fcors%2Fresources%2Fcors-makeheader.py%3Forigin%3D*%26get_value%3Dlast%2619_1&19_0 due to access control checks.
+Blocked access to external URL http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=*&location=http%3A%2F%2Fwww1.localhost%3A8800%2Fcors%2Fresources%2Fcors-makeheader.py%3Forigin%3D*%26get_value%3Dlast%2620_1&20_0
+CONSOLE MESSAGE: line 144: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=*&location=http%3A%2F%2Fwww1.localhost%3A8800%2Fcors%2Fresources%2Fcors-makeheader.py%3Forigin%3D*%26get_value%3Dlast%2620_1&20_0 due to access control checks.
+Blocked access to external URL http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=*&location=http%3A%2F%2Fwww1.localhost%3A8800%2Fcors%2Fresources%2Fcors-makeheader.py%3Forigin%3Dhttp%3A%2F%2Flocalhost%3A8800%26get_value%3Dlast%2621_1&21_0
+CONSOLE MESSAGE: line 144: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=*&location=http%3A%2F%2Fwww1.localhost%3A8800%2Fcors%2Fresources%2Fcors-makeheader.py%3Forigin%3Dhttp%3A%2F%2Flocalhost%3A8800%26get_value%3Dlast%2621_1&21_0 due to access control checks.
+Blocked access to external URL http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=*&location=http%3A%2F%2Fwww1.localhost%3A8800%2Fcors%2Fresources%2Fcors-makeheader.py%3Forigin%3Dnull%26get_value%3Dlast%2622_1&22_0
+CONSOLE MESSAGE: line 168: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=*&location=http%3A%2F%2Fwww1.localhost%3A8800%2Fcors%2Fresources%2Fcors-makeheader.py%3Forigin%3Dnull%26get_value%3Dlast%2622_1&22_0 due to access control checks.
+Blocked access to external URL http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=*&location=http%3A%2F%2Fwww1.localhost%3A8800%2Fcors%2Fresources%2Fcors-makeheader.py%3Forigin%3Dnone%26get_value%3Dlast%2623_1&23_0
+CONSOLE MESSAGE: line 168: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=*&location=http%3A%2F%2Fwww1.localhost%3A8800%2Fcors%2Fresources%2Fcors-makeheader.py%3Forigin%3Dnone%26get_value%3Dlast%2623_1&23_0 due to access control checks.
+Blocked access to external URL http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=http://localhost:8800&location=http%3A%2F%2Fwww1.localhost%3A8800%2Fcors%2Fresources%2Fcors-makeheader.py%3Forigin%3D*%26get_value%3Dlast%2624_1&24_0
+CONSOLE MESSAGE: line 144: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=http://localhost:8800&location=http%3A%2F%2Fwww1.localhost%3A8800%2Fcors%2Fresources%2Fcors-makeheader.py%3Forigin%3D*%26get_value%3Dlast%2624_1&24_0 due to access control checks.
+Blocked access to external URL http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=http://localhost:8800&location=http%3A%2F%2Fwww1.localhost%3A8800%2Fcors%2Fresources%2Fcors-makeheader.py%3Forigin%3Dhttp%3A%2F%2Flocalhost%3A8800%26get_value%3Dlast%2625_1&25_0
+CONSOLE MESSAGE: line 144: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=http://localhost:8800&location=http%3A%2F%2Fwww1.localhost%3A8800%2Fcors%2Fresources%2Fcors-makeheader.py%3Forigin%3Dhttp%3A%2F%2Flocalhost%3A8800%26get_value%3Dlast%2625_1&25_0 due to access control checks.
+Blocked access to external URL http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=http://localhost:8800&location=http%3A%2F%2Fwww1.localhost%3A8800%2Fcors%2Fresources%2Fcors-makeheader.py%3Forigin%3Dnull%26get_value%3Dlast%2626_1&26_0
+CONSOLE MESSAGE: line 168: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=http://localhost:8800&location=http%3A%2F%2Fwww1.localhost%3A8800%2Fcors%2Fresources%2Fcors-makeheader.py%3Forigin%3Dnull%26get_value%3Dlast%2626_1&26_0 due to access control checks.
+Blocked access to external URL http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=http://localhost:8800&location=http%3A%2F%2Fwww1.localhost%3A8800%2Fcors%2Fresources%2Fcors-makeheader.py%3Forigin%3Dnone%26get_value%3Dlast%2627_1&27_0
+CONSOLE MESSAGE: line 168: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=http://localhost:8800&location=http%3A%2F%2Fwww1.localhost%3A8800%2Fcors%2Fresources%2Fcors-makeheader.py%3Forigin%3Dnone%26get_value%3Dlast%2627_1&27_0 due to access control checks.
+Blocked access to external URL http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=null&location=http%3A%2F%2Fwww1.localhost%3A8800%2Fcors%2Fresources%2Fcors-makeheader.py%3Forigin%3D*%26get_value%3Dlast%2628_1&28_0
+CONSOLE MESSAGE: line 168: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=null&location=http%3A%2F%2Fwww1.localhost%3A8800%2Fcors%2Fresources%2Fcors-makeheader.py%3Forigin%3D*%26get_value%3Dlast%2628_1&28_0 due to access control checks.
+Blocked access to external URL http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=none&location=http%3A%2F%2Fwww1.localhost%3A8800%2Fcors%2Fresources%2Fcors-makeheader.py%3Forigin%3D*%26get_value%3Dlast%2629_1&29_0
+CONSOLE MESSAGE: line 168: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=none&location=http%3A%2F%2Fwww1.localhost%3A8800%2Fcors%2Fresources%2Fcors-makeheader.py%3Forigin%3D*%26get_value%3Dlast%2629_1&29_0 due to access control checks.
+Blocked access to external URL http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=*&location=http%3A%2F%2Fwww2.localhost%3A8800%2Fcors%2Fresources%2Fcors-makeheader.py%3Forigin%3D*%26get_value%3Dlast%2630_1&30_0
+CONSOLE MESSAGE: line 144: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=*&location=http%3A%2F%2Fwww2.localhost%3A8800%2Fcors%2Fresources%2Fcors-makeheader.py%3Forigin%3D*%26get_value%3Dlast%2630_1&30_0 due to access control checks.
+Blocked access to external URL http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=*&location=http%3A%2F%2Fwww2.localhost%3A8800%2Fcors%2Fresources%2Fcors-makeheader.py%3Forigin%3Dhttp%3A%2F%2Flocalhost%3A8800%26get_value%3Dlast%2631_1&31_0
+CONSOLE MESSAGE: line 168: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=*&location=http%3A%2F%2Fwww2.localhost%3A8800%2Fcors%2Fresources%2Fcors-makeheader.py%3Forigin%3Dhttp%3A%2F%2Flocalhost%3A8800%26get_value%3Dlast%2631_1&31_0 due to access control checks.
+Blocked access to external URL http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=*&location=http%3A%2F%2Fwww2.localhost%3A8800%2Fcors%2Fresources%2Fcors-makeheader.py%3Forigin%3Dnull%26get_value%3Dlast%2632_1&32_0
+CONSOLE MESSAGE: line 144: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=*&location=http%3A%2F%2Fwww2.localhost%3A8800%2Fcors%2Fresources%2Fcors-makeheader.py%3Forigin%3Dnull%26get_value%3Dlast%2632_1&32_0 due to access control checks.
+Blocked access to external URL http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=*&location=http%3A%2F%2Fwww2.localhost%3A8800%2Fcors%2Fresources%2Fcors-makeheader.py%3Forigin%3Dnone%26get_value%3Dlast%2633_1&33_0
+CONSOLE MESSAGE: line 168: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=*&location=http%3A%2F%2Fwww2.localhost%3A8800%2Fcors%2Fresources%2Fcors-makeheader.py%3Forigin%3Dnone%26get_value%3Dlast%2633_1&33_0 due to access control checks.
+Blocked access to external URL http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=http://localhost:8800&location=http%3A%2F%2Fwww2.localhost%3A8800%2Fcors%2Fresources%2Fcors-makeheader.py%3Forigin%3D*%26get_value%3Dlast%2634_1&34_0
+CONSOLE MESSAGE: line 144: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=http://localhost:8800&location=http%3A%2F%2Fwww2.localhost%3A8800%2Fcors%2Fresources%2Fcors-makeheader.py%3Forigin%3D*%26get_value%3Dlast%2634_1&34_0 due to access control checks.
+Blocked access to external URL http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=http://localhost:8800&location=http%3A%2F%2Fwww2.localhost%3A8800%2Fcors%2Fresources%2Fcors-makeheader.py%3Forigin%3Dhttp%3A%2F%2Flocalhost%3A8800%26get_value%3Dlast%2635_1&35_0
+CONSOLE MESSAGE: line 168: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=http://localhost:8800&location=http%3A%2F%2Fwww2.localhost%3A8800%2Fcors%2Fresources%2Fcors-makeheader.py%3Forigin%3Dhttp%3A%2F%2Flocalhost%3A8800%26get_value%3Dlast%2635_1&35_0 due to access control checks.
+Blocked access to external URL http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=http://localhost:8800&location=http%3A%2F%2Fwww2.localhost%3A8800%2Fcors%2Fresources%2Fcors-makeheader.py%3Forigin%3Dnull%26get_value%3Dlast%2636_1&36_0
+CONSOLE MESSAGE: line 144: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=http://localhost:8800&location=http%3A%2F%2Fwww2.localhost%3A8800%2Fcors%2Fresources%2Fcors-makeheader.py%3Forigin%3Dnull%26get_value%3Dlast%2636_1&36_0 due to access control checks.
+Blocked access to external URL http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=http://localhost:8800&location=http%3A%2F%2Fwww2.localhost%3A8800%2Fcors%2Fresources%2Fcors-makeheader.py%3Forigin%3Dnone%26get_value%3Dlast%2637_1&37_0
+CONSOLE MESSAGE: line 168: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=http://localhost:8800&location=http%3A%2F%2Fwww2.localhost%3A8800%2Fcors%2Fresources%2Fcors-makeheader.py%3Forigin%3Dnone%26get_value%3Dlast%2637_1&37_0 due to access control checks.
+Blocked access to external URL http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=null&location=http%3A%2F%2Fwww2.localhost%3A8800%2Fcors%2Fresources%2Fcors-makeheader.py%3Forigin%3D*%26get_value%3Dlast%2638_1&38_0
+CONSOLE MESSAGE: line 168: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=null&location=http%3A%2F%2Fwww2.localhost%3A8800%2Fcors%2Fresources%2Fcors-makeheader.py%3Forigin%3D*%26get_value%3Dlast%2638_1&38_0 due to access control checks.
+Blocked access to external URL http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=none&location=http%3A%2F%2Fwww2.localhost%3A8800%2Fcors%2Fresources%2Fcors-makeheader.py%3Forigin%3D*%26get_value%3Dlast%2639_1&39_0
+CONSOLE MESSAGE: line 168: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=none&location=http%3A%2F%2Fwww2.localhost%3A8800%2Fcors%2Fresources%2Fcors-makeheader.py%3Forigin%3D*%26get_value%3Dlast%2639_1&39_0 due to access control checks.
+Blocked access to external URL http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=*&location=http%3A%2F%2Fwww1.localhost%3A8800%2Fcors%2Fresources%2Fcors-makeheader.py%3Forigin%3Dhttp%3A%2F%2Fwww1.localhost%3A8800%26get_value%3Dlast%2640_1&40_0
+CONSOLE MESSAGE: line 168: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=*&location=http%3A%2F%2Fwww1.localhost%3A8800%2Fcors%2Fresources%2Fcors-makeheader.py%3Forigin%3Dhttp%3A%2F%2Fwww1.localhost%3A8800%26get_value%3Dlast%2640_1&40_0 due to access control checks.
+Blocked access to external URL http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=*&location=http%3A%2F%2Fwww2.localhost%3A8800%2Fcors%2Fresources%2Fcors-makeheader.py%3Forigin%3Dhttp%3A%2F%2Fwww1.localhost%3A8800%26get_value%3Dlast%2641_1&41_0
+CONSOLE MESSAGE: line 168: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=*&location=http%3A%2F%2Fwww2.localhost%3A8800%2Fcors%2Fresources%2Fcors-makeheader.py%3Forigin%3Dhttp%3A%2F%2Fwww1.localhost%3A8800%26get_value%3Dlast%2641_1&41_0 due to access control checks.
+Blocked access to external URL http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=http://www1.localhost:8800&location=http%3A%2F%2Fwww1.localhost%3A8800%2Fcors%2Fresources%2Fcors-makeheader.py%3Forigin%3D*%26get_value%3Dlast%2642_1&42_0
+CONSOLE MESSAGE: line 168: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=http://www1.localhost:8800&location=http%3A%2F%2Fwww1.localhost%3A8800%2Fcors%2Fresources%2Fcors-makeheader.py%3Forigin%3D*%26get_value%3Dlast%2642_1&42_0 due to access control checks.
+Blocked access to external URL http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=*&get_value=last&0_1
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=*&get_value=last&0_1 due to access control checks.
+Blocked access to external URL http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=http://localhost:8800&get_value=last&1_1
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=http://localhost:8800&get_value=last&1_1 due to access control checks.
+Blocked access to external URL http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=null&get_value=last&2_1
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=null&get_value=last&2_1 due to access control checks.
+Blocked access to external URL http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=none&get_value=last&3_1
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=none&get_value=last&3_1 due to access control checks.
+Blocked access to external URL http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=*&get_value=last&4_1
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=*&get_value=last&4_1 due to access control checks.
+Blocked access to external URL http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=null&get_value=last&6_1
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=null&get_value=last&6_1 due to access control checks.
+Blocked access to external URL http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=http://localhost:8800&get_value=last&5_1
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=http://localhost:8800&get_value=last&5_1 due to access control checks.
+Blocked access to external URL http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=*&get_value=last&8_1
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=*&get_value=last&8_1 due to access control checks.
+Blocked access to external URL http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=*&get_value=last&9_1
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=*&get_value=last&9_1 due to access control checks.
+Blocked access to external URL http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=none&get_value=last&7_1
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=none&get_value=last&7_1 due to access control checks.
+CORS redirect handling
+
+
+FAIL local (*) to remote (*), expect origin=http://localhost:8800 assert_true: Got response expected true got false
+FAIL local (*) to remote (http://localhost:8800), expect origin=http://localhost:8800 assert_true: Got response expected true got false
+PASS local (*) to remote (null), expect to fail 
+PASS local (*) to remote (none), expect to fail 
+FAIL local (http://localhost:8800) to remote (*), expect origin=http://localhost:8800 assert_true: Got response expected true got false
+FAIL local (http://localhost:8800) to remote (http://localhost:8800), expect origin=http://localhost:8800 assert_true: Got response expected true got false
+PASS local (http://localhost:8800) to remote (null), expect to fail 
+PASS local (http://localhost:8800) to remote (none), expect to fail 
+FAIL local (null) to remote (*), expect origin=http://localhost:8800 assert_true: Got response expected true got false
+FAIL local (none) to remote (*), expect origin=http://localhost:8800 assert_true: Got response expected true got false
+FAIL remote (*) to local (*), expect origin=null assert_true: Got response expected true got false
+PASS remote (*) to local (http://localhost:8800), expect to fail 
+FAIL remote (*) to local (null), expect origin=null assert_true: Got response expected true got false
+PASS remote (*) to local (none), expect to fail 
+FAIL remote (http://localhost:8800) to local (*), expect origin=null assert_true: Got response expected true got false
+PASS remote (http://localhost:8800) to local (http://localhost:8800), expect to fail 
+FAIL remote (http://localhost:8800) to local (null), expect origin=null assert_true: Got response expected true got false
+PASS remote (http://localhost:8800) to local (none), expect to fail 
+PASS remote (null) to local (*), expect to fail 
+PASS remote (none) to local (*), expect to fail 
+FAIL remote (*) to remote (*), expect origin=http://localhost:8800 assert_true: Got response expected true got false
+FAIL remote (*) to remote (http://localhost:8800), expect origin=http://localhost:8800 assert_true: Got response expected true got false
+PASS remote (*) to remote (null), expect to fail 
+PASS remote (*) to remote (none), expect to fail 
+FAIL remote (http://localhost:8800) to remote (*), expect origin=http://localhost:8800 assert_true: Got response expected true got false
+FAIL remote (http://localhost:8800) to remote (http://localhost:8800), expect origin=http://localhost:8800 assert_true: Got response expected true got false
+PASS remote (http://localhost:8800) to remote (null), expect to fail 
+PASS remote (http://localhost:8800) to remote (none), expect to fail 
+PASS remote (null) to remote (*), expect to fail 
+PASS remote (none) to remote (*), expect to fail 
+FAIL remote (*) to remote2 (*), expect origin=null assert_true: Got response expected true got false
+PASS remote (*) to remote2 (http://localhost:8800), expect to fail 
+FAIL remote (*) to remote2 (null), expect origin=null assert_true: Got response expected true got false
+PASS remote (*) to remote2 (none), expect to fail 
+FAIL remote (http://localhost:8800) to remote2 (*), expect origin=null assert_true: Got response expected true got false
+PASS remote (http://localhost:8800) to remote2 (http://localhost:8800), expect to fail 
+FAIL remote (http://localhost:8800) to remote2 (null), expect origin=null assert_true: Got response expected true got false
+PASS remote (http://localhost:8800) to remote2 (none), expect to fail 
+PASS remote (null) to remote2 (*), expect to fail 
+PASS remote (none) to remote2 (*), expect to fail 
+PASS remote (*) to remote (http://www1.localhost:8800), expect to fail 
+PASS remote (*) to remote2 (http://www1.localhost:8800), expect to fail 
+PASS remote (http://www1.localhost:8800) to remote (*), expect to fail 
+

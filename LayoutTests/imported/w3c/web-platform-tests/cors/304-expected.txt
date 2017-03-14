@@ -1,0 +1,16 @@
+Blocked access to external URL http://www1.localhost:8800/cors/resources/304.py?id=1&r=%s1489438094491
+CONSOLE MESSAGE: line 27: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/304.py?id=1&r=%s1489438094491 due to access control checks.
+Blocked access to external URL http://www1.localhost:8800/cors/resources/304.py?id=3&r=%s1489438094498
+CONSOLE MESSAGE: line 27: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/304.py?id=3&r=%s1489438094498 due to access control checks.
+Blocked access to external URL http://www1.localhost:8800/cors/resources/304.py?id=5&r=%s1489438094500
+CONSOLE MESSAGE: line 27: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/304.py?id=5&r=%s1489438094500 due to access control checks.
+Blocked access to external URL http://www1.localhost:8800/cors/resources/304.py?id=7&r=%s1489438094501
+CONSOLE MESSAGE: line 27: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/304.py?id=7&r=%s1489438094501 due to access control checks.
+CORS - 304 Responses
+
+
+FAIL A 304 response with no CORS headers inherits from the stored response assert_equals: didn't get successful 1st response; expected "Success" but got ""
+FAIL A 304 can expand Access-Control-Expose-Headers assert_equals: didn't get successful 1st response; expected "Success" but got ""
+FAIL A 304 can contract Access-Control-Expose-Headers assert_equals: didn't get successful 1st response; expected "Success" but got ""
+FAIL A 304 can change Access-Control-Allow-Origin assert_equals: didn't get successful 1st response; expected "Success" but got ""
+

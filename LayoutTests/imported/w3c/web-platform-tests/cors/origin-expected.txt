@@ -1,0 +1,120 @@
+Blocked access to external URL http://www1.localhost:8800/cors//resources/cors-makeheader.py?origin=*
+Blocked access to external URL http://www1.localhost:8800/cors//resources/cors-makeheader.py?origin=%20*%20%20
+Blocked access to external URL http://www1.localhost:8800/cors//resources/cors-makeheader.py?origin=%09*
+Blocked access to external URL http://www1.localhost:8800/cors//resources/cors-makeheader.py?origin=http%3A%2F%2Flocalhost%3A8800
+Blocked access to external URL http://www1.localhost:8800/cors//resources/cors-makeheader.py?origin=%20http%3A%2F%2Flocalhost%3A8800
+Blocked access to external URL http://www1.localhost:8800/cors//resources/cors-makeheader.py?origin=%20http%3A%2F%2Flocalhost%3A8800%20%20%20%09%20
+Blocked access to external URL http://www1.localhost:8800/cors//resources/cors-makeheader.py?origin=%09http%3A%2F%2Flocalhost%3A8800
+Blocked access to external URL http://www1.localhost:8800/cors//resources/cors-makeheader.py?origin=http%3A%2F%2Fwww1.localhost%3A8800
+Blocked access to external URL http://www1.localhost:8800/cors//resources/cors-makeheader.py?origin=%2F%2Flocalhost%3A8800
+Blocked access to external URL http://www1.localhost:8800/cors//resources/cors-makeheader.py?origin=%3A%2F%2Flocalhost%3A8800
+Blocked access to external URL http://www1.localhost:8800/cors//resources/cors-makeheader.py?origin=ftp%3A%2F%2Flocalhost%3A8800
+Blocked access to external URL http://www1.localhost:8800/cors//resources/cors-makeheader.py?origin=http%3A%3A%2F%2Flocalhost%3A8800
+Blocked access to external URL http://www1.localhost:8800/cors//resources/cors-makeheader.py?origin=http%3A%2Flocalhost%3A8800
+Blocked access to external URL http://www1.localhost:8800/cors//resources/cors-makeheader.py?origin=http%3Alocalhost%3A8800
+Blocked access to external URL http://www1.localhost:8800/cors//resources/cors-makeheader.py?origin=localhost%3A8800
+Blocked access to external URL http://www1.localhost:8800/cors//resources/cors-makeheader.py?origin=http%3A%2F%2Flocalhost%3A8800%3F
+Blocked access to external URL http://www1.localhost:8800/cors//resources/cors-makeheader.py?origin=http%3A%2F%2Flocalhost%3A8800%2F
+Blocked access to external URL http://www1.localhost:8800/cors//resources/cors-makeheader.py?origin=http%3A%2F%2Flocalhost%3A8800%20%2F
+Blocked access to external URL http://www1.localhost:8800/cors//resources/cors-makeheader.py?origin=http%3A%2F%2Flocalhost%3A8800%23
+Blocked access to external URL http://www1.localhost:8800/cors//resources/cors-makeheader.py?origin=http%3A%2F%2Flocalhost%3A8800%2523
+Blocked access to external URL http://www1.localhost:8800/cors//resources/cors-makeheader.py?origin=http%3A%2F%2Flocalhost%3A8800%3A80
+Blocked access to external URL http://www1.localhost:8800/cors//resources/cors-makeheader.py?origin=http%3A%2F%2Flocalhost%3A8800%2C%20*
+Blocked access to external URL http://www1.localhost:8800/cors//resources/cors-makeheader.py?origin=http%3A%2F%2Flocalhost%3A8800%00
+Blocked access to external URL http://www1.localhost:8800/cors//resources/cors-makeheader.py?origin=HTTP%3A%2F%2FLOCALHOST%3A8800
+Blocked access to external URL http://www1.localhost:8800/cors//resources/cors-makeheader.py?origin=HTTP%3A%2F%2Flocalhost%3A8800
+Blocked access to external URL http://www1.localhost:8800/cors//resources/cors-makeheader.py?origin=-
+Blocked access to external URL http://www1.localhost:8800/cors//resources/cors-makeheader.py?origin=**
+Blocked access to external URL http://www1.localhost:8800/cors//resources/cors-makeheader.py?origin=%00*
+Blocked access to external URL http://www1.localhost:8800/cors//resources/cors-makeheader.py?origin=*%00
+Blocked access to external URL http://www1.localhost:8800/cors//resources/cors-makeheader.py?origin='*'
+Blocked access to external URL http://www1.localhost:8800/cors//resources/cors-makeheader.py?origin=%22*%22
+Blocked access to external URL http://www1.localhost:8800/cors//resources/cors-makeheader.py?origin=*%20*
+Blocked access to external URL http://www1.localhost:8800/cors//resources/cors-makeheader.py?origin=*%20null
+Blocked access to external URL http://www1.localhost:8800/cors//resources/cors-makeheader.py?origin=*http%3A%2F%2F*
+Blocked access to external URL http://www1.localhost:8800/cors//resources/cors-makeheader.py?origin=*http%3A%2F%2Flocalhost%3A8800
+Blocked access to external URL http://www1.localhost:8800/cors//resources/cors-makeheader.py?origin=*%20http%3A%2F%2Flocalhost%3A8800
+Blocked access to external URL http://www1.localhost:8800/cors//resources/cors-makeheader.py?origin=*%2C%20http%3A%2F%2Flocalhost%3A8800
+Blocked access to external URL http://www1.localhost:8800/cors//resources/cors-makeheader.py?origin=%00http%3A%2F%2Flocalhost%3A8800
+Blocked access to external URL http://www1.localhost:8800/cors//resources/cors-makeheader.py?origin=null%20http%3A%2F%2Flocalhost%3A8800
+Blocked access to external URL http://www1.localhost:8800/cors//resources/cors-makeheader.py?origin=http%3A%2F%2Fexample.net
+Blocked access to external URL http://www1.localhost:8800/cors//resources/cors-makeheader.py?origin=null
+Blocked access to external URL http://www1.localhost:8800/cors//resources/cors-makeheader.py?origin=null%20*
+Blocked access to external URL http://www1.localhost:8800/cors//resources/cors-makeheader.py?origin=
+Blocked access to external URL http://www1.localhost:8800/cors//resources/cors-makeheader.py?origin=http%3A%2F%2Flocalhost%3A8800%2Fcors%2Forigin.htm
+Blocked access to external URL http://www1.localhost:8800/cors//resources/cors-makeheader.py?origin=http%3A%2F%2Flocalhost%3A8800%2Fcors%2F
+Blocked access to external URL http://www1.localhost:8800/cors//resources/cors-makeheader.py?origin=http%3A%2F%2Fwww1.localhost%3A8800%2Fcors%2F
+Blocked access to external URL http://www1.localhost:8800/cors//resources/cors-makeheader.py?origin=localhost%3A8800
+Blocked access to external URL http://www1.localhost:8800/cors//resources/cors-makeheader.py?origin=.localhost%3A8800
+Blocked access to external URL http://www1.localhost:8800/cors//resources/cors-makeheader.py?origin=*.localhost%3A8800
+Blocked access to external URL http://www1.localhost:8800/cors//resources/cors-makeheader.py?origin=http%3A%2F%2Flocalhost%3A8800
+Blocked access to external URL http://www1.localhost:8800/cors//resources/cors-makeheader.py?origin=http%3A%2F%2F.localhost%3A8800
+Blocked access to external URL http://www1.localhost:8800/cors//resources/cors-makeheader.py?origin=http%3A%2F%2F*.localhost%3A8800
+Blocked access to external URL http://www1.localhost:8800/cors//resources/cors-makeheader.py?origin=&origin2=*
+Blocked access to external URL http://www1.localhost:8800/cors//resources/cors-makeheader.py?origin=*&origin2=
+Blocked access to external URL http://www1.localhost:8800/cors//resources/cors-makeheader.py?origin=*&origin2=*
+Blocked access to external URL http://www1.localhost:8800/cors//resources/cors-makeheader.py?origin=&origin2=http%3A%2F%2Flocalhost%3A8800
+Blocked access to external URL http://www1.localhost:8800/cors//resources/cors-makeheader.py?origin=*&origin2=http%3A%2F%2Flocalhost%3A8800
+Blocked access to external URL http://www1.localhost:8800/cors//resources/cors-makeheader.py?origin=http%3A%2F%2Flocalhost%3A8800&origin2=http%3A%2F%2Flocalhost%3A8800
+Access-Control-Allow-Origin handling
+
+
+FAIL Allow origin: * The operation was aborted.
+FAIL Allow origin: _*__ The operation was aborted.
+FAIL Allow origin: [tab]* The operation was aborted.
+FAIL Allow origin: http://localhost:8800 The operation was aborted.
+FAIL Allow origin: _http://localhost:8800 The operation was aborted.
+FAIL Allow origin: _http://localhost:8800___[tab]_ The operation was aborted.
+FAIL Allow origin: [tab]http://localhost:8800 The operation was aborted.
+PASS Disallow origin: http://www1.localhost:8800 
+PASS Disallow origin: //localhost:8800 
+PASS Disallow origin: ://localhost:8800 
+PASS Disallow origin: ftp://localhost:8800 
+PASS Disallow origin: http:://localhost:8800 
+PASS Disallow origin: http:/localhost:8800 
+PASS Disallow origin: http:localhost:8800 
+PASS Disallow origin: localhost:8800 
+PASS Disallow origin: http://localhost:8800? 
+PASS Disallow origin: http://localhost:8800/ 
+PASS Disallow origin: http://localhost:8800 / 
+PASS Disallow origin: http://localhost:8800# 
+PASS Disallow origin: http://localhost:8800%23 
+PASS Disallow origin: http://localhost:8800:80 
+PASS Disallow origin: http://localhost:8800, * 
+PASS Disallow origin: http://localhost:8800\0 
+PASS Disallow origin: HTTP://LOCALHOST:8800 
+PASS Disallow origin: HTTP://localhost:8800 
+PASS Disallow origin: - 
+PASS Disallow origin: ** 
+PASS Disallow origin: \0* 
+PASS Disallow origin: *\0 
+PASS Disallow origin: '*' 
+PASS Disallow origin: "*" 
+PASS Disallow origin: * * 
+PASS Disallow origin: * null 
+PASS Disallow origin: *http://* 
+PASS Disallow origin: *http://localhost:8800 
+PASS Disallow origin: * http://localhost:8800 
+PASS Disallow origin: *, http://localhost:8800 
+PASS Disallow origin: \0http://localhost:8800 
+PASS Disallow origin: null http://localhost:8800 
+PASS Disallow origin: http://example.net 
+PASS Disallow origin: null 
+PASS Disallow origin: null * 
+PASS Disallow origin:  
+PASS Disallow origin: http://localhost:8800/cors/origin.htm 
+PASS Disallow origin: http://localhost:8800/cors/ 
+PASS Disallow origin: http://www1.localhost:8800/cors/ 
+PASS Disallow origin: localhost:8800 
+PASS Disallow origin: .localhost:8800 
+PASS Disallow origin: *.localhost:8800 
+PASS Disallow origin: http://localhost:8800 
+PASS Disallow origin: http://.localhost:8800 
+PASS Disallow origin: http://*.localhost:8800 
+PASS Disallow multiple headers (, *) 
+PASS Disallow multiple headers (*, ) 
+PASS Disallow multiple headers (*, *) 
+PASS Disallow multiple headers (, http://localhost:8800) 
+PASS Disallow multiple headers (*, http://localhost:8800) 
+PASS Disallow multiple headers (http://localhost:8800, http://localhost:8800) 
+

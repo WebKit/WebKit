@@ -302,6 +302,20 @@ webkit.org/b/154310 [ Debug ] imported/w3c/web-platform-tests/html/dom/reflectio
 webkit.org/b/154310 [ Debug ] imported/w3c/web-platform-tests/html/dom/reflection-text.html  [ Skip ]
 webkit.org/b/162517 [ Debug ] imported/w3c/web-platform-tests/html/the-xhtml-syntax/parsing-xhtml-documents/xhtml-mathml-dtd-entity-support.htm [ Skip ]
 
+# Tests that are flaky due to console log / error messages
+webkit.org/b/169565 imported/w3c/web-platform-tests/cors/basic.htm [ Failure ]
+webkit.org/b/169565 imported/w3c/web-platform-tests/cors/credentials-flag.htm [ Failure ]
+webkit.org/b/169565 imported/w3c/web-platform-tests/cors/preflight-cache.htm [ Failure ]
+webkit.org/b/169565 imported/w3c/web-platform-tests/cors/preflight-failure.htm [ Failure ]
+webkit.org/b/169565 imported/w3c/web-platform-tests/cors/redirect-origin.htm [ Failure ]
+webkit.org/b/169565 imported/w3c/web-platform-tests/cors/redirect-preflight.htm [ Failure ]
+webkit.org/b/169565 imported/w3c/web-platform-tests/cors/redirect-preflight-2.htm [ Failure ]
+webkit.org/b/169565 imported/w3c/web-platform-tests/cors/simple-requests.htm [ Failure ]
+webkit.org/b/169565 imported/w3c/web-platform-tests/cors/simple-requests.htm [ Failure ]
+webkit.org/b/169565 imported/w3c/web-platform-tests/cors/status-preflight.htm [ Failure ]
+webkit.org/b/169565 imported/w3c/web-platform-tests/cors/status-async.htm [ Failure ]
+webkit.org/b/169565 imported/w3c/web-platform-tests/cors/304.htm [ Failure ]
+
 # WPT tests that fail after doing full test repository reimport and need further investigation
 imported/w3c/web-platform-tests/XMLHttpRequest/send-entity-body-document.htm [ Pass Failure Timeout ]
 imported/w3c/web-platform-tests/dom/nodes/Document-createElement-namespace.html [ Pass Failure ]

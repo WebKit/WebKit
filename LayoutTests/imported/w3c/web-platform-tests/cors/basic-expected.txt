@@ -1,0 +1,22 @@
+Blocked access to external URL http://www1.localhost:8800/cors/resources/cors-makeheader.py?get_value=hest_er_best&origin=none&1
+CONSOLE MESSAGE: line 49: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?get_value=hest_er_best&origin=none&1 due to access control checks.
+Blocked access to external URL http://www1.localhost:8801/cors/resources/cors-makeheader.py?get_value=hest_er_best&origin=none&3
+CONSOLE MESSAGE: line 49: XMLHttpRequest cannot load http://www1.localhost:8801/cors/resources/cors-makeheader.py?get_value=hest_er_best&origin=none&3 due to access control checks.
+Blocked access to external URL https://www1.localhost:9443/cors/resources/cors-makeheader.py?get_value=hest_er_best&origin=none&4
+CONSOLE MESSAGE: line 49: XMLHttpRequest cannot load https://www1.localhost:9443/cors/resources/cors-makeheader.py?get_value=hest_er_best&origin=none&4 due to access control checks.
+Blocked access to external URL http://www1.localhost:8800/cors/resources/cors-makeheader.py?get_value=hest_er_best&1
+CONSOLE MESSAGE: line 47: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?get_value=hest_er_best&1 due to access control checks.
+Blocked access to external URL http://www1.localhost:8801/cors/resources/cors-makeheader.py?get_value=hest_er_best&3
+CONSOLE MESSAGE: line 47: XMLHttpRequest cannot load http://www1.localhost:8801/cors/resources/cors-makeheader.py?get_value=hest_er_best&3 due to access control checks.
+Blocked access to external URL https://www1.localhost:9443/cors/resources/cors-makeheader.py?get_value=hest_er_best&4
+CONSOLE MESSAGE: line 47: XMLHttpRequest cannot load https://www1.localhost:9443/cors/resources/cors-makeheader.py?get_value=hest_er_best&4 due to access control checks.
+CONSOLE MESSAGE: Origin http://localhost:8800 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8801/cors/resources/cors-makeheader.py?get_value=hest_er_best&origin=none&2 due to access control checks.
+
+PASS Same domain basic usage 
+FAIL Cross domain basic usage assert_true: Got CORS-allowed response expected true got false
+PASS Same domain different port 
+FAIL Cross domain different port assert_true: Got CORS-allowed response expected true got false
+FAIL Cross domain different protocol assert_true: Got CORS-allowed response expected true got false
+FAIL Same domain different protocol different port assert_true: Got CORS-allowed response expected true got false
+

@@ -1,0 +1,67 @@
+Blocked access to external URL http://www1.localhost:8800/cors/resources/status.py?code=200&text=OK&content=Not%20today.&type=
+CONSOLE MESSAGE: line 39: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/status.py?code=200&text=OK&content=Not%20today.&type= due to access control checks.
+Blocked access to external URL http://www1.localhost:8800/cors/resources/status.py?code=201&text=OK/Created&content=Not%20today%2001.&type=
+CONSOLE MESSAGE: line 39: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/status.py?code=201&text=OK/Created&content=Not%20today%2001.&type= due to access control checks.
+Blocked access to external URL http://www1.localhost:8800/cors/resources/status.py?code=202&text=OK/Accepted&content=Not%20today%2002.&type=
+CONSOLE MESSAGE: line 39: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/status.py?code=202&text=OK/Accepted&content=Not%20today%2002.&type= due to access control checks.
+Blocked access to external URL http://www1.localhost:8800/cors/resources/status.py?code=203&text=OK/Non-Authoritative%20Information&content=Not%20today%2003.&type=
+CONSOLE MESSAGE: line 39: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/status.py?code=203&text=OK/Non-Authoritative%20Information&content=Not%20today%2003.&type= due to access control checks.
+Blocked access to external URL http://www1.localhost:8800/cors/resources/status.py?code=204&text=OK/No%20Content&content=&type=
+CONSOLE MESSAGE: line 39: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/status.py?code=204&text=OK/No%20Content&content=&type= due to access control checks.
+Blocked access to external URL http://www1.localhost:8800/cors/resources/status.py?code=205&text=OK/Reset%20Content&content=&type=
+CONSOLE MESSAGE: line 39: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/status.py?code=205&text=OK/Reset%20Content&content=&type= due to access control checks.
+Blocked access to external URL http://www1.localhost:8800/cors/resources/status.py?code=206&text=OK/Partial%20Content&content=Not%20today%2006.&type=
+CONSOLE MESSAGE: line 39: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/status.py?code=206&text=OK/Partial%20Content&content=Not%20today%2006.&type= due to access control checks.
+Blocked access to external URL http://www1.localhost:8800/cors/resources/status.py?code=209&text=OK&content=Not%20today%2009.&type=
+CONSOLE MESSAGE: line 39: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/status.py?code=209&text=OK&content=Not%20today%2009.&type= due to access control checks.
+Blocked access to external URL http://www1.localhost:8800/cors/resources/status.py?code=299&text=OK&content=Not%20today%2099.&type=
+CONSOLE MESSAGE: line 39: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/status.py?code=299&text=OK&content=Not%20today%2099.&type= due to access control checks.
+Blocked access to external URL http://www1.localhost:8800/cors/resources/status.py?code=200&text=OK&content=%3Cx%3E402%3C/x%3E&type=text/xml
+CONSOLE MESSAGE: line 39: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/status.py?code=200&text=OK&content=%3Cx%3E402%3C/x%3E&type=text/xml due to access control checks.
+Blocked access to external URL http://www1.localhost:8800/cors/resources/status.py?code=200&text=OK&content=Nice!&type=text/doesnotmatter
+CONSOLE MESSAGE: line 39: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/status.py?code=200&text=OK&content=Nice!&type=text/doesnotmatter due to access control checks.
+Blocked access to external URL http://www1.localhost:8800/cors/resources/status.py?code=400&headers=x-nonsimple&text=OHAI
+CONSOLE MESSAGE: line 91: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/status.py?code=400&headers=x-nonsimple&text=OHAI due to access control checks.
+Blocked access to external URL http://www1.localhost:8800/cors/resources/status.py?code=401&headers=x-nonsimple&text=OHAI
+CONSOLE MESSAGE: line 91: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/status.py?code=401&headers=x-nonsimple&text=OHAI due to access control checks.
+Blocked access to external URL http://www1.localhost:8800/cors/resources/status.py?code=404&headers=x-nonsimple&text=OHAI
+CONSOLE MESSAGE: line 91: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/status.py?code=404&headers=x-nonsimple&text=OHAI due to access control checks.
+Blocked access to external URL http://www1.localhost:8800/cors/resources/status.py?code=500&headers=x-nonsimple&text=OHAI
+CONSOLE MESSAGE: line 91: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/status.py?code=500&headers=x-nonsimple&text=OHAI due to access control checks.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/status.py?code=200&text=OK&content=400&type=text/plain due to access control checks.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/status.py?code=200&text=OK&content=bah&type= due to access control checks.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/status.py?code=699&headers=x-nonsimple&text=OHAI due to access control checks.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/status.py?code=501&headers=x-nonsimple&text=OHAI due to access control checks.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/status.py?code=400&headers=x-nonsimple&text=OHAI due to access control checks.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/status.py?code=401&headers=x-nonsimple&text=OHAI due to access control checks.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/status.py?code=404&headers=x-nonsimple&text=OHAI due to access control checks.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/status.py?code=699&headers=x-nonsimple&text=OHAI due to access control checks.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/status.py?code=501&headers=x-nonsimple&text=OHAI due to access control checks.
+Status returned
+
+
+FAIL Status on GET 200 assert_equals: response status expected 200 but got 0
+FAIL Status on GET 201 assert_equals: response status expected 201 but got 0
+FAIL Status on GET 202 assert_equals: response status expected 202 but got 0
+FAIL Status on GET 203 assert_equals: response status expected 203 but got 0
+FAIL Status on GET 204 assert_equals: response status expected 204 but got 0
+FAIL Status on GET 205 assert_equals: response status expected 205 but got 0
+FAIL Status on GET 206 assert_equals: response status expected 206 but got 0
+FAIL Status on GET 209 assert_equals: response status expected 209 but got 0
+FAIL Status on GET 299 assert_equals: response status expected 299 but got 0
+FAIL Status on POST 200 assert_equals: response status expected 200 but got 0
+FAIL Status on HEAD 200 assert_equals: response status expected 200 but got 0
+FAIL Status on PUT 200 assert_equals: response status expected 200 but got 0
+FAIL Status on CHICKEN 200 assert_equals: response status expected 200 but got 0
+FAIL Status on GET 400 assert_equals: response status expected 400 but got 0
+FAIL Status on HEAD 401 assert_equals: response status expected 401 but got 0
+FAIL Status on POST 404 assert_equals: response status expected 404 but got 0
+FAIL Status on POST 500 assert_equals: response status expected 500 but got 0
+PASS Status on PUT 699 
+PASS Status on CHICKEN 501 
+PASS Status on GET 400 (nonsimple) 
+PASS Status on HEAD 401 (nonsimple) 
+PASS Status on POST 404 (nonsimple) 
+PASS Status on PUT 699 (nonsimple) 
+PASS Status on CHICKEN 501 (nonsimple) 
+

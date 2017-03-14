@@ -1,3 +1,71 @@
+2017-03-14  Youenn Fablet  <youenn@apple.com>
+
+        Import web-platform-tests/cors
+        https://bugs.webkit.org/show_bug.cgi?id=169565
+
+        Reviewed by Sam Weinig.
+
+        * resources/import-expectations.json:
+        * web-platform-tests/cors/304-expected.txt: Added.
+        * web-platform-tests/cors/304.htm: Added.
+        * web-platform-tests/cors/OWNERS: Added.
+        * web-platform-tests/cors/README.md: Added.
+        * web-platform-tests/cors/allow-headers-expected.txt: Added.
+        * web-platform-tests/cors/allow-headers.htm: Added.
+        * web-platform-tests/cors/basic-expected.txt: Added.
+        * web-platform-tests/cors/basic.htm: Added.
+        * web-platform-tests/cors/credentials-flag-expected.txt: Added.
+        * web-platform-tests/cors/credentials-flag.htm: Added.
+        * web-platform-tests/cors/late-upload-events-expected.txt: Added.
+        * web-platform-tests/cors/late-upload-events.htm: Added.
+        * web-platform-tests/cors/origin-expected.txt: Added.
+        * web-platform-tests/cors/origin.htm: Added.
+        * web-platform-tests/cors/preflight-cache-expected.txt: Added.
+        * web-platform-tests/cors/preflight-cache.htm: Added.
+        * web-platform-tests/cors/preflight-failure-expected.txt: Added.
+        * web-platform-tests/cors/preflight-failure.htm: Added.
+        * web-platform-tests/cors/redirect-origin-expected.txt: Added.
+        * web-platform-tests/cors/redirect-origin.htm: Added.
+        * web-platform-tests/cors/redirect-preflight-2-expected.txt: Added.
+        * web-platform-tests/cors/redirect-preflight-2.htm: Added.
+        * web-platform-tests/cors/redirect-preflight-expected.txt: Added.
+        * web-platform-tests/cors/redirect-preflight.htm: Added.
+        * web-platform-tests/cors/redirect-userinfo-expected.txt: Added.
+        * web-platform-tests/cors/redirect-userinfo.htm: Added.
+        * web-platform-tests/cors/remote-origin-expected.txt: Added.
+        * web-platform-tests/cors/remote-origin.htm: Added.
+        * web-platform-tests/cors/request-headers-expected.txt: Added.
+        * web-platform-tests/cors/request-headers.htm: Added.
+        * web-platform-tests/cors/resources/304.py: Added.
+        (error):
+        (main):
+        * web-platform-tests/cors/resources/checkandremove.py: Added.
+        (main):
+        * web-platform-tests/cors/resources/cors-cookie.py: Added.
+        (main):
+        * web-platform-tests/cors/resources/cors-headers.asis: Added.
+        * web-platform-tests/cors/resources/cors-makeheader.py: Added.
+        (main):
+        * web-platform-tests/cors/resources/preflight.py: Added.
+        (main):
+        * web-platform-tests/cors/resources/remote-xhrer.html: Added.
+        * web-platform-tests/cors/resources/status.py: Added.
+        (main):
+        * web-platform-tests/cors/resources/w3c-import.log: Added.
+        * web-platform-tests/cors/response-headers-expected.txt: Added.
+        * web-platform-tests/cors/response-headers.htm: Added.
+        * web-platform-tests/cors/simple-requests-expected.txt: Added.
+        * web-platform-tests/cors/simple-requests.htm: Added.
+        * web-platform-tests/cors/status-async-expected.txt: Added.
+        * web-platform-tests/cors/status-async.htm: Added.
+        * web-platform-tests/cors/status-expected.txt: Added.
+        * web-platform-tests/cors/status-preflight-expected.txt: Added.
+        * web-platform-tests/cors/status-preflight.htm: Added.
+        * web-platform-tests/cors/status.htm: Added.
+        * web-platform-tests/cors/support.js: Added.
+        (dirname):
+        * web-platform-tests/cors/w3c-import.log: Added.
+
 2017-03-13  Youenn Fablet  <youenn@apple.com>
 
         Sync web-platform-tests up to revision a5b95cb31914507088a4eda16f7674bbc6f3313f

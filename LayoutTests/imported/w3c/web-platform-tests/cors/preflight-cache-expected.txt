@@ -1,0 +1,18 @@
+Blocked access to external URL http://www1.localhost:8800/cors/resources/preflight.py?token=7ec9a471-9f36-47f4-8d2b-82be1a6ebd87
+CONSOLE MESSAGE: line 34: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/preflight.py?token=7ec9a471-9f36-47f4-8d2b-82be1a6ebd87 due to access control checks.
+Blocked access to external URL http://www1.localhost:8800/cors/resources/preflight.py?token=7875264a-b4e7-4ff5-b722-9d47a7b65d3d
+CONSOLE MESSAGE: line 34: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/preflight.py?token=7875264a-b4e7-4ff5-b722-9d47a7b65d3d due to access control checks.
+Blocked access to external URL http://www1.localhost:8800/cors/resources/preflight.py?token=a1b8f4df-357b-4bc2-9167-f8e4b4acdc12&max_age=0
+CONSOLE MESSAGE: line 34: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/preflight.py?token=a1b8f4df-357b-4bc2-9167-f8e4b4acdc12&max_age=0 due to access control checks.
+Blocked access to external URL http://www1.localhost:8800/cors/resources/preflight.py?token=0328e3a7-7b6e-41d4-9ad3-7229edf8fae2&max_age=-1
+CONSOLE MESSAGE: line 34: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/preflight.py?token=0328e3a7-7b6e-41d4-9ad3-7229edf8fae2&max_age=-1 due to access control checks.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/preflight.py?max_age=1&token=e9729b23-4089-4d28-8cee-6a3c547664ca due to access control checks.
+Preflight cache
+
+
+FAIL Test preflight  A network error occurred.
+FAIL preflight for x-print should be cached  A network error occurred.
+FAIL age = 0, should not be cached  A network error occurred.
+FAIL age = -1, should not be cached  A network error occurred.
+FAIL preflight first request, second from cache, wait, third should preflight again assert_unreached: Got unexpected error event on the XHR object Reached unreachable code
+
