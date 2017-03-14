@@ -678,3 +678,5 @@ webkit.org/b/168933 fast/regions/inline-block-inside-anonymous-overflow-with-cov
 webkit.org/b/168346 [ Sierra Debug ] editing/selection/move-by-word-visually-multi-space.html [ Pass Timeout ]
 
 webkit.org/b/169481 [ Debug ] webrtc/libwebrtc/descriptionGetters.html [ Pass Failure ]
+
+webkit.org/b/169621 imported/w3c/web-platform-tests/IndexedDB/fire-error-event-exception.html [ Pass Failure ]
