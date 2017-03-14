@@ -1,3 +1,13 @@
+2017-03-14  Devin Rousso  <webkit@devinrousso.com>
+
+        Web Inspector: allow the user to copy locked CSS selectors in Style - Rules
+        https://bugs.webkit.org/show_bug.cgi?id=169587
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Views/CSSStyleDeclarationSection.css:
+        (.style-declaration-section:matches(.locked, .selector-locked) > .header > .selector):
+
 2017-03-13  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: WebSockets: color of outgoing message icon should match text color

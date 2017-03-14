@@ -160,6 +160,10 @@ body[dir=rtl] .style-declaration-section > .header > textarea {
     word-wrap: break-word;
 }
 
+.style-declaration-section:matches(.locked, .selector-locked) > .header > .selector {
+    -webkit-user-select: text;
+}
+
 .style-declaration-section > .header > .selector > .matched {
     color: black;
 }
