@@ -27,6 +27,8 @@
     position: absolute;
     height: 12px;
     z-index: 1;
+
+    --timeline-record-bar-has-inactive-segment-not-inactive-segment-border-start: 1px solid hsla(215, 67%, 53%, 0.7) !important;
 }
 
 .timeline-record-bar > .segment {
@@ -48,14 +50,25 @@
     z-index: 0;
 }
 
-.timeline-record-bar > .segment.inactive,
-.timeline-record-bar.unfinished > .segment {
+/*
+The selector `.timeline-record-bar.has-inactive-segment > .segment:not(.inactive)` is used to
+differentiate between the "active" and "inactive" parts of a network entry.  As an example, the
+"active" part would be the Response and the "inactive" part would be the Request.  This selector
+ensures that there is a different style between "active" and "inactive" only when the network entry
+has an "inactive" segment.
+*/
+
+body[dir=ltr] .timeline-record-bar > .segment.inactive,
+body[dir=ltr] .timeline-record-bar.unfinished > .segment,
+body[dir=rtl] .timeline-record-bar.has-inactive-segment > .segment:not(.inactive) {
     border-top-right-radius: 0 !important;
     border-bottom-right-radius: 0 !important;
     border-right: none;
 }
 
-.timeline-record-bar.has-inactive-segment > .segment:not(.inactive) {
+body[dir=ltr] .timeline-record-bar.has-inactive-segment > .segment:not(.inactive),
+body[dir=rtl] .timeline-record-bar > .segment.inactive,
+body[dir=rtl] .timeline-record-bar.unfinished > .segment {
     border-top-left-radius: 0 !important;
     border-bottom-left-radius: 0 !important;
 }
@@ -69,8 +82,12 @@
     background-color: hsl(215, 63%, 85%) !important;
 }
 
-:matches(:focus, .force-focus) .selected .timeline-record-bar.has-inactive-segment > .segment:not(.inactive) {
-    border-left: 1px solid hsla(215, 67%, 53%, 0.7) !important;
+body[dir=ltr] :matches(:focus, .force-focus) .selected .timeline-record-bar.has-inactive-segment > .segment:not(.inactive) {
+    border-left: var(--timeline-record-bar-has-inactive-segment-not-inactive-segment-border-start);
+}
+
+body[dir=rtl] :matches(:focus, .force-focus) .selected .timeline-record-bar.has-inactive-segment > .segment:not(.inactive) {
+    border-right: var(--timeline-record-bar-has-inactive-segment-not-inactive-segment-border-start);
 }
 
 .timeline-record-bar.timeline-record-type-network > .segment {

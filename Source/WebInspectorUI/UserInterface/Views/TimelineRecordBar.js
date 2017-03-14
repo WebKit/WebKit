@@ -270,10 +270,11 @@ WebInspector.TimelineRecordBar = class TimelineRecordBar extends WebInspector.Ob
 
         var graphDuration = graphEndTime - graphStartTime;
 
-        var newBarLeftPosition = (barStartTime - graphStartTime) / graphDuration;
-        this._updateElementPosition(this._element, newBarLeftPosition, "left");
+        let newBarPosition = (barStartTime - graphStartTime) / graphDuration;
+        let property = WebInspector.resolvedLayoutDirection() === WebInspector.LayoutDirection.RTL ? "right" : "left";
+        this._updateElementPosition(this._element, newBarPosition, property);
 
-        var newBarWidth = ((barEndTime - graphStartTime) / graphDuration) - newBarLeftPosition;
+        var newBarWidth = ((barEndTime - graphStartTime) / graphDuration) - newBarPosition;
         this._updateElementPosition(this._element, newBarWidth, "width");
 
         if (!this._activeBarElement && this._renderMode !== WebInspector.TimelineRecordBar.RenderMode.InactiveOnly) {
@@ -295,7 +296,7 @@ WebInspector.TimelineRecordBar = class TimelineRecordBar extends WebInspector.Ob
             }
 
             // If this TimelineRecordBar is reused and had an inactive bar previously, clean it up.
-            this._activeBarElement.style.removeProperty("left");
+            this._activeBarElement.style.removeProperty(WebInspector.resolvedLayoutDirection() === WebInspector.LayoutDirection.RTL ? "right" : "left");
             this._activeBarElement.style.removeProperty("width");
 
             if (!this._activeBarElement.parentNode)
@@ -339,7 +340,8 @@ WebInspector.TimelineRecordBar = class TimelineRecordBar extends WebInspector.Ob
                 this._inactiveBarElement.classList.add("inactive");
             }
 
-            this._updateElementPosition(this._inactiveBarElement, 1 - middlePercentage, "right");
+            let property = WebInspector.resolvedLayoutDirection() === WebInspector.LayoutDirection.RTL ? "left" : "right";
+            this._updateElementPosition(this._inactiveBarElement, 1 - middlePercentage, property);
             this._updateElementPosition(this._inactiveBarElement, middlePercentage, "width");
 
             if (!this._inactiveBarElement.parentNode)
@@ -347,7 +349,8 @@ WebInspector.TimelineRecordBar = class TimelineRecordBar extends WebInspector.Ob
         }
 
         if (!inactiveUnfinished && this._renderMode !== WebInspector.TimelineRecordBar.RenderMode.InactiveOnly) {
-            this._updateElementPosition(this._activeBarElement, middlePercentage, "left");
+            let property = WebInspector.resolvedLayoutDirection() === WebInspector.LayoutDirection.RTL ? "right" : "left";
+            this._updateElementPosition(this._activeBarElement, middlePercentage, property);
             this._updateElementPosition(this._activeBarElement, 1 - middlePercentage, "width");
 
             if (!this._activeBarElement.parentNode)

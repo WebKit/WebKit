@@ -89,7 +89,7 @@ WebInspector.HeapAllocationsTimelineOverviewGraph = class HeapAllocationsTimelin
                 });
             }
 
-            imageElement.style.left = x + "px";
+            imageElement.style.setProperty(WebInspector.resolvedLayoutDirection() === WebInspector.LayoutDirection.RTL ? "right" : "left", `${x}px`);
 
             if (record.heapSnapshot.invalid)
                 imageElement.classList.add("invalid");

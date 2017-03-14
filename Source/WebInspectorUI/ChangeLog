@@ -1,5 +1,49 @@
 2017-03-14  Devin Rousso  <webkit@devinrousso.com>
 
+        Web Inspector: RTL: add support for Timeline graphs
+        https://bugs.webkit.org/show_bug.cgi?id=169585
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/HeapAllocationsTimelineOverviewGraph.js:
+        (WebInspector.HeapAllocationsTimelineOverviewGraph.prototype.layout):
+        Rework the calculation for the icon offset to use "right" in RTL.
+
+        * UserInterface/Views/MemoryTimelineOverviewGraph.css:
+        (body[dir=rtl] .timeline-overview-graph.memory > .stacked-line-chart):
+        Flip the chart when in RTL.
+
+        * UserInterface/Views/TimelineRecordBar.css:
+        (.timeline-record-bar):
+        (body[dir=ltr] .timeline-record-bar > .segment.inactive):
+        (body[dir=rtl] .timeline-record-bar > .segment.inactive):
+        (body[dir=ltr] .timeline-record-bar.unfinished > .segment):
+        (body[dir=rtl] .timeline-record-bar.unfinished > .segment):
+        (body[dir=ltr] .timeline-record-bar.has-inactive-segment > .segment:not(.inactive)):
+        (body[dir=rtl] .timeline-record-bar.has-inactive-segment > .segment:not(.inactive)):
+        (body[dir=ltr] :matches(:focus, .force-focus) .selected .timeline-record-bar.has-inactive-segment > .segment:not(.inactive)):
+        (body[dir=rtl] :matches(:focus, .force-focus) .selected .timeline-record-bar.has-inactive-segment > .segment:not(.inactive)):
+        (.timeline-record-bar > .segment.inactive,): Deleted.
+        (.timeline-record-bar.has-inactive-segment > .segment:not(.inactive)): Deleted.
+        (:matches(:focus, .force-focus) .selected .timeline-record-bar.has-inactive-segment > .segment:not(.inactive)): Deleted.
+
+        * UserInterface/Views/TimelineRecordBar.js:
+        (WebInspector.TimelineRecordBar.prototype.refresh):
+        Apply the position updates to "right" in RTL.
+
+        * UserInterface/Views/TimelineRecordFrame.js:
+        (WebInspector.TimelineRecordFrame.prototype.refresh):
+        Apply the position updates to "right" in RTL.
+
+        * UserInterface/Views/TimelineRuler.js:
+        (WebInspector.TimelineRuler.prototype.layout):
+        (WebInspector.TimelineRuler.prototype._updatePositionOfElement):
+        (WebInspector.TimelineRuler.prototype._updateMarkers):
+        (WebInspector.TimelineRuler.prototype._updateSelection):
+        Apply the position updates to "right" in RTL.
+
+2017-03-14  Devin Rousso  <webkit@devinrousso.com>
+
         Web Inspector: RTL: add support for DataGrid disclosure arrows and indentation
         https://bugs.webkit.org/show_bug.cgi?id=169582
 

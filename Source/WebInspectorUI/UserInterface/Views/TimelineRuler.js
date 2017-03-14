@@ -493,24 +493,25 @@ WebInspector.TimelineRuler = class TimelineRuler extends WebInspector.View
             }
 
             let dividerTime = firstDividerTime + (sliceTime * i);
-            let newLeftPosition = (dividerTime - this._startTime) / duration;
+            let newPosition = (dividerTime - this._startTime) / duration;
 
             if (!this._allowsClippedLabels) {
                 // Don't allow dividers under 0% where they will be completely hidden.
-                if (newLeftPosition < 0)
+                if (newPosition < 0)
                     continue;
 
                 // When over 100% it is time to stop making/updating dividers.
-                if (newLeftPosition > 1)
+                if (newPosition > 1)
                     break;
 
                 // Don't allow the left-most divider spacing to be so tight it clips.
-                if ((newLeftPosition * visibleWidth) < WebInspector.TimelineRuler.MinimumLeftDividerSpacing)
+                if ((newPosition * visibleWidth) < WebInspector.TimelineRuler.MinimumLeftDividerSpacing)
                     continue;
             }
 
-            this._updatePositionOfElement(dividerElement, newLeftPosition, visibleWidth);
-            this._updatePositionOfElement(markerDividerElement, newLeftPosition, visibleWidth);
+            let property = WebInspector.resolvedLayoutDirection() === WebInspector.LayoutDirection.RTL ? "right" : "left";
+            this._updatePositionOfElement(dividerElement, newPosition, visibleWidth, property);
+            this._updatePositionOfElement(markerDividerElement, newPosition, visibleWidth, property);
 
             console.assert(dividerElement.firstChild.classList.contains(WebInspector.TimelineRuler.DividerLabelElementStyleClassName));
 
@@ -604,8 +605,6 @@ WebInspector.TimelineRuler = class TimelineRuler extends WebInspector.View
 
     _updatePositionOfElement(element, newPosition, visibleWidth, property)
     {
-        property = property || "left";
-
         newPosition *= this._endTimePinned ? 100 : visibleWidth;
 
         let newPositionAprox = Math.round(newPosition * 100);
@@ -622,9 +621,9 @@ WebInspector.TimelineRuler = class TimelineRuler extends WebInspector.View
         }
 
         for (let [marker, markerElement] of this._markerElementMap) {
-            let newLeftPosition = (marker.time - this._startTime) / duration;
-
-            this._updatePositionOfElement(markerElement, newLeftPosition, visibleWidth);
+            let newPosition = (marker.time - this._startTime) / duration;
+            let property = WebInspector.resolvedLayoutDirection() === WebInspector.LayoutDirection.RTL ? "right" : "left";
+            this._updatePositionOfElement(markerElement, newPosition, visibleWidth, property);
 
             if (!markerElement.parentNode)
                 this._markersElement.appendChild(markerElement);
@@ -658,19 +657,21 @@ WebInspector.TimelineRuler = class TimelineRuler extends WebInspector.View
         let formattedStartTimeText = this._formatDividerLabelText(this._selectionStartTime - this._zeroTime);
         let formattedEndTimeText = this._formatDividerLabelText(this._selectionEndTime - this._zeroTime);
 
-        let newLeftPosition = Number.constrain((this._selectionStartTime - this._startTime) / duration, 0, 1);
-        this._updatePositionOfElement(this._leftShadedAreaElement, newLeftPosition, visibleWidth, "width");
-        this._updatePositionOfElement(this._leftSelectionHandleElement, newLeftPosition, visibleWidth, "left");
-        this._updatePositionOfElement(this._selectionDragElement, newLeftPosition, visibleWidth, "left");
+        let startProperty = WebInspector.resolvedLayoutDirection() === WebInspector.LayoutDirection.RTL ? "right" : "left";
+        let newStartPosition = Number.constrain((this._selectionStartTime - this._startTime) / duration, 0, 1);
+        this._updatePositionOfElement(this._leftShadedAreaElement, newStartPosition, visibleWidth, "width");
+        this._updatePositionOfElement(this._leftSelectionHandleElement, newStartPosition, visibleWidth, startProperty);
+        this._updatePositionOfElement(this._selectionDragElement, newStartPosition, visibleWidth, startProperty);
 
         this._leftSelectionHandleElement.classList.toggle("clamped", startTimeClamped);
         this._leftSelectionHandleElement.classList.toggle("hidden", startTimeClamped && endTimeClamped && this._selectionStartTime < this._startTime);
         this._leftSelectionHandleElement.title = formattedStartTimeText;
 
-        let newRightPosition = 1 - Number.constrain((this._selectionEndTime - this._startTime) / duration, 0, 1);
-        this._updatePositionOfElement(this._rightShadedAreaElement, newRightPosition, visibleWidth, "width");
-        this._updatePositionOfElement(this._rightSelectionHandleElement, newRightPosition, visibleWidth, "right");
-        this._updatePositionOfElement(this._selectionDragElement, newRightPosition, visibleWidth, "right");
+        let endProperty = WebInspector.resolvedLayoutDirection() === WebInspector.LayoutDirection.RTL ? "left" : "right";
+        let newEndPosition = 1 - Number.constrain((this._selectionEndTime - this._startTime) / duration, 0, 1);
+        this._updatePositionOfElement(this._rightShadedAreaElement, newEndPosition, visibleWidth, "width");
+        this._updatePositionOfElement(this._rightSelectionHandleElement, newEndPosition, visibleWidth, endProperty);
+        this._updatePositionOfElement(this._selectionDragElement, newEndPosition, visibleWidth, endProperty);
 
         this._rightSelectionHandleElement.classList.toggle("clamped", endTimeClamped);
         this._rightSelectionHandleElement.classList.toggle("hidden", startTimeClamped && endTimeClamped && this._selectionEndTime > this._endTime);

@@ -55,6 +55,10 @@ body .timeline-overview > .graphs-container > .timeline-overview-graph.memory {
     background-color: hsl(0, 0%, 96%);
 }
 
+body[dir=rtl] .timeline-overview-graph.memory > .stacked-line-chart {
+    transform: scaleX(-1);
+}
+
 .timeline-overview-graph.memory > .stacked-line-chart > svg > path.javascript {
     stroke: var(--memory-javascript-stroke-color);
     fill: var(--memory-javascript-fill-color);

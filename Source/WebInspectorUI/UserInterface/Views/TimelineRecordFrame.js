@@ -97,8 +97,11 @@ WebInspector.TimelineRecordFrame = class TimelineRecordFrame extends WebInspecto
         this._element.style.width = (1 / graphDataSource.timelineOverview.secondsPerPixel) + "px";
 
         var graphDuration = graphDataSource.endTime - graphDataSource.startTime;
-        var recordLeftPosition = (frameIndex - graphDataSource.startTime) / graphDuration;
-        this._updateElementPosition(this._element, recordLeftPosition, "left");
+        let recordPosition = (frameIndex - graphDataSource.startTime) / graphDuration;
+
+        let property = WebInspector.resolvedLayoutDirection() === WebInspector.LayoutDirection.RTL ? "right" : "left";
+        this._updateElementPosition(this._element, recordPosition, property);
+
         this._updateChildElements(graphDataSource);
 
         return true;
