@@ -1,3 +1,27 @@
+2017-03-14  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Nwtr ignores ImageDiff's errors for ref tests
+        https://bugs.webkit.org/show_bug.cgi?id=168033
+
+        Reviewed by Alexey Proskuryakov.
+
+        Nwtr checks ImageDiff's errors only for pixel tests, but for ref
+        tests. Those errors of ref tests also should be checked.
+
+        In the current implementation of expected mismatch ref tests,
+        diff_image was called if the image hashes match. This is useless
+        because two images are ensured identical in that case. Calling
+        image_hash is considered unnecessary for expected mismatch ref
+        tests. Do not call diff_image for them.
+
+        As the result, check the error only for expected match ref tests.
+
+        * Scripts/webkitpy/layout_tests/controllers/single_test_runner.py:
+        (SingleTestRunner._compare_image): Rename a variable 'err_str' to 'error_string'.
+        (SingleTestRunner._compare_output_with_reference): Do not call
+        diff_image for expected mismatch ref tests. Check the error and
+        marked the test failed for expected match ref tests.
+
 2017-03-14  Brady Eidson  <beidson@apple.com>
 
         REGRESSION (r213877): WebKit2.CookieManager fails.

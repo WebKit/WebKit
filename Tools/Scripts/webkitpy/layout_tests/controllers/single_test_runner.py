@@ -273,11 +273,11 @@ class SingleTestRunner(object):
             failures.append(test_failures.FailureMissingImageHash())
         elif driver_output.image_hash != expected_driver_output.image_hash:
             diff_result = self._port.diff_image(expected_driver_output.image, driver_output.image)
-            err_str = diff_result[2]
-            if err_str:
-                _log.warning('  %s : %s' % (self._test_name, err_str))
+            error_string = diff_result[2]
+            if error_string:
+                _log.warning('  %s : %s' % (self._test_name, error_string))
                 failures.append(test_failures.FailureImageHashMismatch())
-                driver_output.error = (driver_output.error or '') + err_str
+                driver_output.error = (driver_output.error or '') + error_string
             else:
                 driver_output.image_diff = diff_result[0]
                 if driver_output.image_diff:
@@ -331,16 +331,18 @@ class SingleTestRunner(object):
         if not reference_driver_output.image_hash and not actual_driver_output.image_hash:
             failures.append(test_failures.FailureReftestNoImagesGenerated(reference_filename))
         elif mismatch:
+            # Calling image_hash is considered unnecessary for expected mismatch ref tests.
             if reference_driver_output.image_hash == actual_driver_output.image_hash:
-                diff_result = self._port.diff_image(reference_driver_output.image, actual_driver_output.image, tolerance=0)
-                if not diff_result[0]:
-                    failures.append(test_failures.FailureReftestMismatchDidNotOccur(reference_filename))
-                else:
-                    _log.warning("  %s -> ref test hashes matched but diff failed" % self._test_name)
-
+                failures.append(test_failures.FailureReftestMismatchDidNotOccur(reference_filename))
         elif reference_driver_output.image_hash != actual_driver_output.image_hash:
+            # ImageDiff has a hard coded color distance threshold even though tolerance=0 is specified.
             diff_result = self._port.diff_image(reference_driver_output.image, actual_driver_output.image, tolerance=0)
-            if diff_result[0]:
+            error_string = diff_result[2]
+            if error_string:
+                _log.warning('  %s : %s' % (self._test_name, error_string))
+                failures.append(test_failures.FailureReftestMismatch(reference_filename))
+                actual_driver_output.error = (actual_driver_output.error or '') + error_string
+            elif diff_result[0]:
                 failures.append(test_failures.FailureReftestMismatch(reference_filename))
             else:
                 _log.warning("  %s -> ref test hashes didn't match but diff passed" % self._test_name)
