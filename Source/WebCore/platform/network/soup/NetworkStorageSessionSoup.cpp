@@ -304,6 +304,11 @@ void NetworkStorageSession::setCookies(const Vector<Cookie>& cookies, const URL&
         soup_cookie_jar_add_cookie(cookieStorage(), toSoupCookie(cookie));
 }
 
+void NetworkStorageSession::setCookie(const Cookie&)
+{
+    // FIXME: Implement for WK2 to use.
+}
+
 void NetworkStorageSession::deleteCookie(const Cookie&)
 {
     // FIXME: Implement for WK2 to use.
