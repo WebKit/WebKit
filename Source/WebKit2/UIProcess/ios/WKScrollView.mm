@@ -222,7 +222,7 @@ static inline bool valuesAreWithinOnePixel(CGFloat a, CGFloat b)
 {
     [super setContentInset:contentInset];
 
-    [_internalDelegate _scheduleVisibleContentRectUpdate];
+    [_internalDelegate _updateVisibleContentRects];
 }
 
 // Fetch top/left rubberband amounts (as negative values).

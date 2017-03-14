@@ -3713,7 +3713,7 @@ static bool isAssistableInputType(InputType type)
     
     // The custom fixed position rect behavior is affected by -isAssistingNode, so if that changes we need to recompute rects.
     if (editableChanged)
-        [_webView _scheduleVisibleContentRectUpdate];
+        [_webView _updateVisibleContentRects];
     
     [self _displayFormNodeInputView];
 
@@ -3747,7 +3747,7 @@ static bool isAssistableInputType(InputType type)
 
     // The custom fixed position rect behavior is affected by -isAssistingNode, so if that changes we need to recompute rects.
     if (editableChanged)
-        [_webView _scheduleVisibleContentRectUpdate];
+        [_webView _updateVisibleContentRects];
 
     [_webView didEndFormControlInteraction];
 }

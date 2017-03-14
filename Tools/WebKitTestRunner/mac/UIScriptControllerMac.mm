@@ -66,11 +66,6 @@ void UIScriptController::doAfterNextStablePresentationUpdate(JSValueRef callback
     doAsyncTask(callback);
 }
 
-void UIScriptController::doAfterVisibleContentRectUpdate(JSValueRef callback)
-{
-    doAsyncTask(callback);
-}
-
 void UIScriptController::insertText(JSStringRef text, int location, int length)
 {
 #if WK_API_ENABLED

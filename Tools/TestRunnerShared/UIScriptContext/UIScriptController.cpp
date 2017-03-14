@@ -74,10 +74,6 @@ void UIScriptController::doAfterPresentationUpdate(JSValueRef)
 void UIScriptController::doAfterNextStablePresentationUpdate(JSValueRef)
 {
 }
-
-void UIScriptController::doAfterVisibleContentRectUpdate(JSValueRef)
-{
-}
 #endif
 
 void UIScriptController::setDidStartFormControlInteractionCallback(JSValueRef callback)

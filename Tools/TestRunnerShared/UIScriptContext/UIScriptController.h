@@ -54,7 +54,6 @@ public:
     void doAsyncTask(JSValueRef callback);
     void doAfterPresentationUpdate(JSValueRef callback);
     void doAfterNextStablePresentationUpdate(JSValueRef callback);
-    void doAfterVisibleContentRectUpdate(JSValueRef callback);
 
     void zoomToScale(double scale, JSValueRef callback);
 
