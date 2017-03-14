@@ -1,3 +1,12 @@
+2017-03-14  Andy Estes  <aestes@apple.com>
+
+        Update ApplePaySession.html after r213949
+
+        Rubber-stamped by Beth Dakin.
+
+        * http/tests/ssl/applepay/ApplePaySession-expected.txt:
+        * http/tests/ssl/applepay/ApplePaySession.html:
+
 2017-03-14  Ryan Haddad  <ryanhaddad@apple.com>
 
         Mark imported/w3c/web-platform-tests/html/webappapis/scripting/events/event-handler-javascript.html as failing on ios-simulator-wk2.
