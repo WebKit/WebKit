@@ -1,3 +1,19 @@
+2017-03-14  Eric Carlson  <eric.carlson@apple.com>
+
+        [iOS] The web process should inherit application state from UI process
+        https://bugs.webkit.org/show_bug.cgi?id=169156
+        <rdar://problem/30845473>
+
+        Reviewed by Brady Eidson.
+        
+        Move PID proxy setup to platformInitializeWebProcess as suggested in 
+        post-landing feedback.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::platformInitialize):
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+
 2017-03-14  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r213915.

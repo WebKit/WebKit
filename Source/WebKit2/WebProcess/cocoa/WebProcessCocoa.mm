@@ -67,11 +67,23 @@
 #import <stdio.h>
 
 #if PLATFORM(IOS)
+#import "CelestialSPI.h"
 #import <WebCore/GraphicsServicesSPI.h>
+#import <WebCore/SoftLinking.h>
 #endif
 
 #if USE(OS_STATE)
 #include <os/state_private.h>
+#endif
+
+#if PLATFORM(IOS)
+SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL(Celestial)
+
+SOFT_LINK_CLASS_OPTIONAL(Celestial, AVSystemController)
+
+SOFT_LINK_CONSTANT_MAY_FAIL(Celestial, AVSystemController_PIDToInheritApplicationStateFrom, NSString *)
+
+#define AVSystemController_PIDToInheritApplicationStateFrom getAVSystemController_PIDToInheritApplicationStateFrom()
 #endif
 
 using namespace WebCore;
@@ -158,6 +170,16 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters&& par
 #if TARGET_OS_IPHONE
     // Priority decay on iOS 9 is impacting page load time so we fix the priority of the WebProcess' main thread (rdar://problem/22003112).
     pthread_set_fixedpriority_self();
+#endif
+
+#if PLATFORM(IOS)
+    if (canLoadAVSystemController_PIDToInheritApplicationStateFrom()) {
+        pid_t pid = WebProcess::singleton().presenterApplicationPid();
+        NSError *error = nil;
+        [[getAVSystemControllerClass() sharedAVSystemController] setAttribute:@(pid) forKey:AVSystemController_PIDToInheritApplicationStateFrom error:&error];
+        if (error)
+            WTFLogAlways("Failed to set up PID proxying: %s", [[error localizedDescription] UTF8String]);
+    }
 #endif
 }
 
