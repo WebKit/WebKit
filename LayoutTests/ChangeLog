@@ -1,3 +1,13 @@
+2017-03-14  Zalan Bujtas  <zalan@apple.com>
+
+        Simple line layout: Adjust hyphenation constrains based on the normal line layout line-breaking logic.
+        https://bugs.webkit.org/show_bug.cgi?id=169617
+
+        Reviewed by Antti Koivisto.
+
+        * fast/text/simple-line-layout-hyphenation-constrains-expected.html: Added.
+        * fast/text/simple-line-layout-hyphenation-constrains.html: Added.
+
 2017-03-14  Ryan Haddad  <ryanhaddad@apple.com>
 
         Mark imported/w3c/web-platform-tests/cors/status.htm as flaky.

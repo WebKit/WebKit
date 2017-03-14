@@ -612,14 +612,19 @@ static void updateLineConstrains(const RenderBlockFlow& flow, LineState& line, c
 }
 
 static std::optional<unsigned> hyphenPositionForFragment(unsigned splitPosition, TextFragmentIterator::TextFragment& fragmentToSplit,
-    const TextFragmentIterator& textFragmentIterator, float availableWidth)
+    const TextFragmentIterator& textFragmentIterator, float availableWidth, bool lineIsEmpty)
 {
     auto& style = textFragmentIterator.style();
     bool shouldHyphenate = style.shouldHyphenate && (!style.hyphenLimitLines || fragmentToSplit.wrappingWithHyphenCounter() < *style.hyphenLimitLines);
     if (!shouldHyphenate)
         return std::nullopt;
 
-    if (!enoughWidthForHyphenation(availableWidth, style.font.pixelSize()))
+    // FIXME: This is a workaround for webkit.org/b/169613. See maxPrefixWidth computation in tryHyphenating().
+    // It does not work properly with non-collapsed leading tabs when font is enlarged.
+    auto adjustedAvailableWidth = availableWidth - style.hyphenStringWidth;
+    if (!lineIsEmpty)
+        adjustedAvailableWidth += style.spaceWidth;
+    if (!enoughWidthForHyphenation(adjustedAvailableWidth, style.font.pixelSize()))
         return std::nullopt;
 
     // We might be able to fit the hyphen at the split position.
@@ -636,7 +641,7 @@ static std::optional<unsigned> hyphenPositionForFragment(unsigned splitPosition,
     return textFragmentIterator.lastHyphenPosition(fragmentToSplit, splitPositionWithHyphen + 1);
 }
 
-static TextFragmentIterator::TextFragment splitFragmentToFitLine(TextFragmentIterator::TextFragment& fragmentToSplit, float availableWidth, bool keepAtLeastOneCharacter, const TextFragmentIterator& textFragmentIterator)
+static TextFragmentIterator::TextFragment splitFragmentToFitLine(TextFragmentIterator::TextFragment& fragmentToSplit, float availableWidth, bool lineIsEmpty, const TextFragmentIterator& textFragmentIterator)
 {
     // FIXME: add surrogate pair support.
     unsigned start = fragmentToSplit.start();
@@ -647,9 +652,9 @@ static TextFragmentIterator::TextFragment splitFragmentToFitLine(TextFragmentIte
     unsigned splitPosition = (*it);
     // Does first character fit this line?
     if (splitPosition == start) {
-        if (keepAtLeastOneCharacter)
+        if (lineIsEmpty)
             ++splitPosition;
-    } else if (auto hyphenPosition = hyphenPositionForFragment(splitPosition, fragmentToSplit, textFragmentIterator, availableWidth))
+    } else if (auto hyphenPosition = hyphenPositionForFragment(splitPosition, fragmentToSplit, textFragmentIterator, availableWidth, lineIsEmpty))
         return fragmentToSplit.splitWithHyphen(*hyphenPosition, textFragmentIterator);
     return fragmentToSplit.split(splitPosition, textFragmentIterator);
 }
