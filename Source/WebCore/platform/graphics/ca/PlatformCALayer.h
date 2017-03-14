@@ -72,10 +72,7 @@ public:
         LayerTypeTiledBackingTileLayer,
         LayerTypeRootLayer,
         LayerTypeAVPlayerLayer,
-        LayerTypeWebGLLayer,
-#if ENABLE(WEBGPU)
-        LayerTypeWebGPULayer,
-#endif
+        LayerTypeContentsProvidedLayer,
         LayerTypeBackdropLayer,
         LayerTypeShapeLayer,
         LayerTypeLightSystemBackdropLayer,

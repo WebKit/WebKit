@@ -206,10 +206,7 @@ LayerOrView *RemoteLayerTreeHost::createLayer(const RemoteLayerTreeTransaction::
         break;
     case PlatformCALayer::LayerTypeCustom:
     case PlatformCALayer::LayerTypeAVPlayerLayer:
-#if ENABLE(WEBGPU)
-    case PlatformCALayer::LayerTypeWebGPULayer:
-#endif
-    case PlatformCALayer::LayerTypeWebGLLayer:
+    case PlatformCALayer::LayerTypeContentsProvidedLayer:
         if (!m_isDebugLayerTreeHost) {
             view = adoptNS([[WKRemoteView alloc] initWithFrame:CGRectZero contextID:properties.hostingContextID]);
             if (properties.type == PlatformCALayer::LayerTypeAVPlayerLayer) {

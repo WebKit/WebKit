@@ -196,11 +196,11 @@ PlatformCALayer::LayerType PlatformCALayerCocoa::layerTypeForPlatformLayer(Platf
         return LayerTypeAVPlayerLayer;
 
     if ([layer isKindOfClass:[WebGLLayer class]])
-        return LayerTypeWebGLLayer;
+        return LayerTypeContentsProvidedLayer;
 
 #if ENABLE(WEBGPU)
     if ([layer isKindOfClass:[WebGPULayer class]])
-        return LayerTypeWebGPULayer;
+        return LayerTypeContentsProvidedLayer;
 #endif
 
     return LayerTypeCustom;
@@ -254,11 +254,8 @@ PlatformCALayerCocoa::PlatformCALayerCocoa(LayerType layerType, PlatformCALayerC
     case LayerTypeAVPlayerLayer:
         layerClass = getAVPlayerLayerClass();
         break;
-#if ENABLE(WEBGPU)
-    case LayerTypeWebGPULayer:
-#endif
-    case LayerTypeWebGLLayer:
-        // We don't create PlatformCALayerCocoas wrapped around WebGLLayers.
+    case LayerTypeContentsProvidedLayer:
+        // We don't create PlatformCALayerCocoas wrapped around WebGLLayers or WebGPULayers.
         ASSERT_NOT_REACHED();
         break;
     case LayerTypeShapeLayer:
@@ -295,11 +292,7 @@ void PlatformCALayerCocoa::commonInit()
     [m_layer setValue:[NSValue valueWithPointer:this] forKey:platformCALayerPointer];
     
     // Clear all the implicit animations on the CALayer
-#if ENABLE(WEBGPU)
-    if (m_layerType == LayerTypeAVPlayerLayer || m_layerType == LayerTypeWebGLLayer || m_layerType == LayerTypeWebGPULayer || m_layerType == LayerTypeScrollingLayer || m_layerType == LayerTypeCustom)
-#else
-    if (m_layerType == LayerTypeAVPlayerLayer || m_layerType == LayerTypeWebGLLayer || m_layerType == LayerTypeScrollingLayer || m_layerType == LayerTypeCustom)
-#endif
+    if (m_layerType == LayerTypeAVPlayerLayer || m_layerType == LayerTypeContentsProvidedLayer || m_layerType == LayerTypeScrollingLayer || m_layerType == LayerTypeCustom)
         [m_layer web_disableAllActions];
     else
         [m_layer setDelegate:[WebActionDisablingCALayerDelegate shared]];

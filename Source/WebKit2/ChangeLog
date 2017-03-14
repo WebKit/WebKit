@@ -1,3 +1,27 @@
+2017-03-14  Dean Jackson  <dino@apple.com>
+
+        Rename LayerTypeWebGLLayer and use it for both WebGL and WebGPU
+        https://bugs.webkit.org/show_bug.cgi?id=169628
+        <rdar://problems/31047025>
+
+        Reviewed by Simon Fraser.
+
+        Rename LayerTypeWebGLLayer to LayerTypeContentsProvidedLayer
+        and use it for both WebGLLayer and WebGPULayer, to avoid
+        code duplication.
+
+        * Shared/mac/RemoteLayerBackingStore.mm:
+        (WebKit::RemoteLayerBackingStore::drawInContext):
+        * Shared/mac/RemoteLayerTreeTransaction.mm:
+        (WebKit::RemoteLayerTreeTransaction::description):
+        * UIProcess/ios/RemoteLayerTreeHostIOS.mm:
+        (WebKit::RemoteLayerTreeHost::createLayer):
+        * UIProcess/mac/RemoteLayerTreeHost.mm:
+        (WebKit::RemoteLayerTreeHost::createLayer):
+        * WebProcess/WebPage/mac/PlatformCALayerRemoteCustom.mm:
+        (WebKit::PlatformCALayerRemoteCustom::PlatformCALayerRemoteCustom):
+        (WebKit::PlatformCALayerRemoteCustom::clone):
+
 2017-03-13  Jer Noble  <jer.noble@apple.com>
 
         Make classes used by Media Stream encode/decode friendly

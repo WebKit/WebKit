@@ -223,14 +223,9 @@ TextStream& operator<<(TextStream& ts, PlatformCALayer::LayerType layerType)
     case PlatformCALayer::LayerTypeAVPlayerLayer:
         ts << "av-player-layer";
         break;
-    case PlatformCALayer::LayerTypeWebGLLayer:
-        ts << "web-gl-layer";
+    case PlatformCALayer::LayerTypeContentsProvidedLayer:
+        ts << "contents-provided-layer";
         break;
-#if ENABLE(WEBGPU)
-    case PlatformCALayer::LayerTypeWebGPULayer:
-        ts << "webgpu-layer";
-        break;
-#endif
     case PlatformCALayer::LayerTypeShapeLayer:
         ts << "shape-layer";
         break;

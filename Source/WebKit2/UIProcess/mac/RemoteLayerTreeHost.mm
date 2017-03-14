@@ -254,10 +254,7 @@ LayerOrView *RemoteLayerTreeHost::createLayer(const RemoteLayerTreeTransaction::
         break;
     case PlatformCALayer::LayerTypeCustom:
     case PlatformCALayer::LayerTypeAVPlayerLayer:
-#if ENABLE(WEBGPU)
-    case PlatformCALayer::LayerTypeWebGPULayer:
-#endif
-    case PlatformCALayer::LayerTypeWebGLLayer:
+    case PlatformCALayer::LayerTypeContentsProvidedLayer:
         if (!m_isDebugLayerTreeHost)
             layer = WKMakeRenderLayer(properties.hostingContextID);
         else
