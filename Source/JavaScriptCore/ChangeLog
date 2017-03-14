@@ -1,5 +1,25 @@
 2017-03-14  Mark Lam  <mark.lam@apple.com>
 
+        Add a null check in VMTraps::willDestroyVM() to handle a race condition.
+        https://bugs.webkit.org/show_bug.cgi?id=169620
+
+        Reviewed by Filip Pizlo.
+
+        There exists a race between VMTraps::willDestroyVM() (which removed SignalSenders
+        from its m_signalSenders list) and SignalSender::send() (which removes itself
+        from the list).  In the event that SignalSender::send() removes itself between
+        the time that VMTraps::willDestroyVM() checks if m_signalSenders is empty and the
+        time it takes a sender from m_signalSenders, VMTraps::willDestroyVM() may end up
+        with a NULL sender pointer.  The fix is to add the missing null check before using
+        the sender pointer.
+
+        * runtime/VMTraps.cpp:
+        (JSC::VMTraps::willDestroyVM):
+        (JSC::VMTraps::fireTrap):
+        * runtime/VMTraps.h:
+
+2017-03-14  Mark Lam  <mark.lam@apple.com>
+
         Gardening: Speculative build fix for CLoop after r213886.
         https://bugs.webkit.org/show_bug.cgi?id=169436
 

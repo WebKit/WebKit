@@ -403,6 +403,8 @@ VMTraps::VMTraps()
 
 void VMTraps::willDestroyVM()
 {
+    m_isShuttingDown = true;
+    WTF::storeStoreFence();
 #if ENABLE(SIGNAL_BASED_VM_TRAPS)
     while (!m_signalSenders.isEmpty()) {
         RefPtr<SignalSender> sender;
@@ -413,9 +415,12 @@ void VMTraps::willDestroyVM()
             // to acquire these locks in the opposite order.
             auto locker = holdLock(m_lock);
             sender = m_signalSenders.takeAny();
+            if (!sender)
+                break;
         }
         sender->willDestroyVM();
     }
+    ASSERT(m_signalSenders.isEmpty());
 #endif
 }
 
@@ -476,6 +481,7 @@ void VMTraps::fireTrap(VMTraps::EventType eventType)
     ASSERT(!vm().currentThreadIsHoldingAPILock());
     {
         auto locker = holdLock(m_lock);
+        ASSERT(!m_isShuttingDown);
         setTrapForEvent(locker, eventType);
         m_needToInvalidatedCodeBlocks = true;
     }

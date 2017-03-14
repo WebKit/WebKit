@@ -167,6 +167,7 @@ private:
         BitField m_trapsBitField;
     };
     bool m_needToInvalidatedCodeBlocks { false };
+    bool m_isShuttingDown { false };
 
 #if ENABLE(SIGNAL_BASED_VM_TRAPS)
     HashSet<RefPtr<SignalSender>> m_signalSenders;
