@@ -413,6 +413,23 @@ static std::optional<PaymentAuthorizationStatus> toPaymentAuthorizationStatus(un
     }
 }
 
+static Vector<PaymentError> convert(const Vector<RefPtr<ApplePayError>>& errors)
+{
+    Vector<PaymentError> convertedErrors;
+
+    for (auto& error : errors) {
+        PaymentError convertedError;
+
+        convertedError.code = error->code();
+        convertedError.message = error->message();
+        convertedError.contactField = error->contactField();
+
+        convertedErrors.append(convertedError);
+    }
+
+    return convertedErrors;
+}
+
 static ExceptionOr<PaymentAuthorizationResult> convertAndValidate(ApplePayPaymentAuthorizationResult&& result)
 {
     PaymentAuthorizationResult convertedResult;
@@ -421,6 +438,7 @@ static ExceptionOr<PaymentAuthorizationResult> convertAndValidate(ApplePayPaymen
     if (!authorizationStatus)
         return Exception { INVALID_ACCESS_ERR };
     convertedResult.status = *authorizationStatus;
+    convertedResult.errors = convert(result.errors);
 
     return WTFMove(convertedResult);
 }

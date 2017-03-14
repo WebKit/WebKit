@@ -37,14 +37,12 @@
 ] enum ApplePayErrorContactField {
     "phoneNumber",
     "emailAddress",
-    "givenName",
-    "familyName",
-    "addressLines",
+    "name",
+    "address",
     "locality",
     "postalCode",
     "administrativeArea",
-    "country",
-    "countryCode"
+    "country"
 };
 
 [

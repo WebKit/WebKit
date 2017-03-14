@@ -161,14 +161,12 @@ struct PaymentError {
     enum class ContactField {
         PhoneNumber,
         EmailAddress,
-        GivenName,
-        FamilyName,
-        AddressLines,
+        Name,
+        Address,
         Locality,
         PostalCode,
         AdministrativeArea,
         Country,
-        CountryCode,
     };
 
     Code code;
@@ -218,14 +216,12 @@ template<> struct EnumTraits<WebCore::PaymentError::ContactField> {
         WebCore::PaymentError::ContactField,
         WebCore::PaymentError::ContactField::PhoneNumber,
         WebCore::PaymentError::ContactField::EmailAddress,
-        WebCore::PaymentError::ContactField::GivenName,
-        WebCore::PaymentError::ContactField::FamilyName,
-        WebCore::PaymentError::ContactField::AddressLines,
+        WebCore::PaymentError::ContactField::Name,
+        WebCore::PaymentError::ContactField::Address,
         WebCore::PaymentError::ContactField::Locality,
         WebCore::PaymentError::ContactField::PostalCode,
         WebCore::PaymentError::ContactField::AdministrativeArea,
-        WebCore::PaymentError::ContactField::Country,
-        WebCore::PaymentError::ContactField::CountryCode
+        WebCore::PaymentError::ContactField::Country
     >;
 };
 

@@ -1,3 +1,14 @@
+2017-03-14  Anders Carlsson  <andersca@apple.com>
+
+        Propagate PassKit errors
+        https://bugs.webkit.org/show_bug.cgi?id=169633
+        rdar://problem/31043392
+
+        Reviewed by Dean Jackson.
+
+        * UIProcess/ApplePay/cocoa/WebPaymentCoordinatorProxyCocoa.mm:
+        (WebKit::toNSError):
+
 2017-03-06  Jer Noble  <jer.noble@apple.com>
 
         Refactor: Allow WebKit2 to override the creation of RealtimeMediaSources

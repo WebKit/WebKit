@@ -58,11 +58,23 @@ SOFT_LINK_CONSTANT(PassKit, PKPaymentNetworkPrivateLabel, NSString *);
 SOFT_LINK_CONSTANT(PassKit, PKPaymentNetworkVisa, NSString *);
 
 #if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000)
+SOFT_LINK_FRAMEWORK(Contacts)
+SOFT_LINK_CONSTANT(Contacts, CNPostalAddressStreetKey, NSString *);
+SOFT_LINK_CONSTANT(Contacts, CNPostalAddressCityKey, NSString *);
+SOFT_LINK_CONSTANT(Contacts, CNPostalAddressStateKey, NSString *);
+SOFT_LINK_CONSTANT(Contacts, CNPostalAddressPostalCodeKey, NSString *);
+SOFT_LINK_CONSTANT(Contacts, CNPostalAddressCountryKey, NSString *);
 SOFT_LINK_CLASS(PassKit, PKPaymentAuthorizationResult)
 SOFT_LINK_CLASS(PassKit, PKPaymentRequestPaymentMethodUpdate)
 SOFT_LINK_CLASS(PassKit, PKPaymentRequestShippingContactUpdate)
 SOFT_LINK_CLASS(PassKit, PKPaymentRequestShippingMethodUpdate)
 SOFT_LINK_CONSTANT(PassKit, PKPaymentErrorDomain, NSString *);
+SOFT_LINK_CONSTANT(PassKit, PKContactFieldPostalAddress, NSString *);
+SOFT_LINK_CONSTANT(PassKit, PKContactFieldEmailAddress, NSString *);
+SOFT_LINK_CONSTANT(PassKit, PKContactFieldPhoneNumber, NSString *);
+SOFT_LINK_CONSTANT(PassKit, PKContactFieldName, NSString *);
+SOFT_LINK_CONSTANT(PassKit, PKPaymentErrorContactFieldUserInfoKey, NSString *);
+SOFT_LINK_CONSTANT(PassKit, PKPaymentErrorPostalAddressUserInfoKey, NSString *);
 #endif
 
 typedef void (^PKCanMakePaymentsCompletion)(BOOL isValid, NSError *error);
@@ -547,7 +559,52 @@ static RetainPtr<NSError> toNSError(const WebCore::PaymentError& error)
     auto userInfo = adoptNS([[NSMutableDictionary alloc] init]);
     [userInfo setObject:error.message forKey:NSLocalizedDescriptionKey];
 
-    // FIXME: Set the contact field key.
+    if (error.contactField) {
+        NSString *pkContactField = nil;
+        NSString *postalAddressKey = nil;
+
+        switch (*error.contactField) {
+        case WebCore::PaymentError::ContactField::PhoneNumber:
+            pkContactField = getPKContactFieldPhoneNumber();
+            break;
+
+        case WebCore::PaymentError::ContactField::EmailAddress:
+            pkContactField = getPKContactFieldEmailAddress();
+            break;
+
+        case WebCore::PaymentError::ContactField::Name:
+            pkContactField = getPKContactFieldName();
+            break;
+
+        case WebCore::PaymentError::ContactField::Address:
+            pkContactField = getPKContactFieldPostalAddress();
+            postalAddressKey = getCNPostalAddressStreetKey();
+            break;
+
+        case WebCore::PaymentError::ContactField::Locality:
+            pkContactField = getPKContactFieldPostalAddress();
+            postalAddressKey = getCNPostalAddressCityKey();
+            break;
+
+        case WebCore::PaymentError::ContactField::PostalCode:
+            pkContactField = getPKContactFieldPostalAddress();
+            postalAddressKey = getCNPostalAddressPostalCodeKey();
+            break;
+
+        case WebCore::PaymentError::ContactField::AdministrativeArea:
+            pkContactField = getPKContactFieldPostalAddress();
+            postalAddressKey = getCNPostalAddressCityKey();
+            break;
+
+        case WebCore::PaymentError::ContactField::Country:
+            pkContactField = getPKContactFieldPostalAddress();
+            postalAddressKey = getCNPostalAddressCountryKey();
+            break;
+        }
+
+        [userInfo setObject:pkContactField forKey:getPKPaymentErrorContactFieldUserInfoKey()];
+        [userInfo setObject:postalAddressKey forKey:getPKPaymentErrorPostalAddressUserInfoKey()];
+    }
 
     return adoptNS([[NSError alloc] initWithDomain:getPKPaymentErrorDomain() code:toPKPaymentErrorCode(error.code) userInfo:userInfo.get()]);
 }
