@@ -566,7 +566,6 @@ public:
     void destroyRenderTree();
     void disconnectFromFrame();
     void prepareForDestruction();
-    void didBecomeCurrentDocumentInView();
 
     // Override ScriptExecutionContext methods to do additional work
     bool shouldBypassMainWorldContentSecurityPolicy() const final;
