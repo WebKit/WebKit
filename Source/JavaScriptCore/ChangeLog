@@ -1,3 +1,28 @@
+2017-03-14  Brian Burg  <bburg@apple.com>
+
+        [Cocoa] Web Inspector: generated code for parsing an array of primitive-type enums from payload does not work
+        https://bugs.webkit.org/show_bug.cgi?id=169629
+
+        Reviewed by Joseph Pecoraro.
+
+        This was encountered while trying to compile new protocol definitions that support the Actions API.
+
+        * inspector/scripts/codegen/models.py:
+        (EnumType.__repr__): Improve debug logging so fields match the class member names.
+
+        * inspector/scripts/codegen/objc_generator.py:
+        (ObjCGenerator.payload_to_objc_expression_for_member):
+        If the array elements are actually a primitive type, then there's no need to do any
+        conversion from a payload. This happens for free since the payload is a tree of
+        NSDictionary, NSString, NSNumber, etc. 
+
+        * inspector/scripts/tests/generic/expected/shadowed-optional-type-setters.json-result:
+        * inspector/scripts/tests/generic/expected/type-declaration-object-type.json-result:
+        Rebaseline.
+
+        * inspector/scripts/tests/generic/type-declaration-object-type.json:
+        Add new cases for properties that contain an array with enum type references and an array of anonymous enums.
+
 2017-03-14  Filip Pizlo  <fpizlo@apple.com>
 
         Record the HashSet/HashMap operations in DFG/FTL/B3 and replay them in a benchmark

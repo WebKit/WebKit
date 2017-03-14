@@ -18,10 +18,23 @@
             "items": { "$ref": "Error" }
         },
         {
+            "id": "MouseButton",
+            "type": "string",
+            "description": "Enumerates different mouse buttons that can be used.",
+            "enum": [
+                "None",
+                "Left",
+                "Middle",
+                "Right"
+            ]
+        },
+        {
             "id": "OptionalParameterBundle",
             "type": "object",
             "properties": [
                 { "name": "columnNames", "type": "array", "optional": true, "items": { "type": "string" } },
+                { "name": "buttons", "type": "array", "optional": true, "items": { "$ref": "MouseButton" } },
+                { "name": "directionality", "type": "string", "enum": ["LTR", "RTL"], "optional": true },
                 { "name": "notes", "type": "string", "optional": true },
                 { "name": "timestamp", "type": "number", "optional": true },
                 { "name": "values", "type": "object", "optional": true },
@@ -35,6 +48,8 @@
             "type": "object",
             "properties": [
                 { "name": "columnNames", "type": "array", "items": { "type": "string" } },
+                { "name": "buttons", "type": "array", "items": { "$ref": "MouseButton" } },
+                { "name": "directionality", "type": "string", "enum": ["LTR", "RTL"] },
                 { "name": "notes", "type": "string" },
                 { "name": "timestamp", "type": "number" },
                 { "name": "values", "type": "object" },
@@ -70,6 +85,8 @@
             "id": "ParameterBundle",
             "type": "object",
             "properties": [
+                { "name": "directionality", "type": "string", "enum": ["LTR", "RTL"] },
+                { "name": "buttons", "type": "array", "items": { "$ref": "Database.MouseButton" } },
                 { "name": "columnNames", "type": "array", "items": { "type": "string" } },
                 { "name": "notes", "type": "string" },
                 { "name": "timestamp", "type": "number" },

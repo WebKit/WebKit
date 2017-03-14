@@ -1061,7 +1061,7 @@ using namespace Inspector;
 
     self.string = payload[@"string"];
 
-    self.array = objcArrayFromPayload<NSString>(payload[@"array"]);
+    self.array = payload[@"array"];
 
     return self;
 }

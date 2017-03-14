@@ -486,8 +486,16 @@ class ObjCGenerator(Generator):
             objc_class = self.objc_class_for_type(member.type)
             return '[[%s alloc] initWithPayload:payload[@"%s"]]' % (objc_class, member.member_name)
         if isinstance(_type, ArrayType):
-            objc_class = self.objc_class_for_type(member.type.element_type)
-            return 'objcArrayFromPayload<%s>(payload[@"%s"])' % (objc_class, member.member_name)
+            element_type = member.type.element_type
+            if isinstance(element_type, EnumType):
+                element_type = element_type.primitive_type
+
+            # In this case, there is no conversion that needs to be done, the array already contains an ObjC type.
+            if isinstance(element_type, PrimitiveType):
+                return 'payload[@"%s"]' % member.member_name
+            else:
+                objc_class = self.objc_class_for_type(element_type)
+                return 'objcArrayFromPayload<%s>(payload[@"%s"])' % (objc_class, member.member_name)
 
     # JSON object setter/getter selectors for types.
 

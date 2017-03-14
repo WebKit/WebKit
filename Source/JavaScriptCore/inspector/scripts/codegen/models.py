@@ -258,7 +258,7 @@ class EnumType(Type):
         self.is_anonymous = is_anonymous
 
     def __repr__(self):
-        return 'EnumType[value_type=%s; values=%s]' % (self.qualified_name(), ', '.join(map(str, self.enum_values())))
+        return 'EnumType[primitive_type=%s; enum_values=%s]' % (self.qualified_name(), ', '.join(map(str, self.enum_values())))
 
     def is_enum(self):
         return True
