@@ -1003,7 +1003,6 @@ Object.defineProperty(Number, "percentageString",
 {
     value: function(fraction, precision = 1)
     {
-        console.assert(fraction >= 0 && fraction <= 1);
         return fraction.toLocaleString(undefined, {minimumFractionDigits: precision, style: "percent"});
     }
 });
