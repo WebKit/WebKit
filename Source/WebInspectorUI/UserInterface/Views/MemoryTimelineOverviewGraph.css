@@ -35,20 +35,35 @@ body .timeline-overview > .graphs-container > .timeline-overview-graph.memory {
 .timeline-overview-graph.memory > .legend {
     position: absolute;
     top: 0;
-    right: 0;
-
-    pointer-events: none;
     padding: 2px;
     font-size: 8px;
-    background-color: white;
     color: hsl(0, 0%, 50%);
+    background-color: white;
+    pointer-events: none;
+}
+
+body[dir=ltr] .timeline-overview-graph.memory > .legend {
+    right: 0;
+}
+
+body[dir=rtl] .timeline-overview-graph.memory > .legend {
+    left: 0;
 }
 
 .timeline-overview-graph.memory .memory-pressure-event {
-    border-left: 1px solid black;
     position: absolute;
     top: 0;
     bottom: 0;
+
+    --memory-timeline-overview-graph-pressure-event-border-start: 1px solid black;
+}
+
+body[dir=ltr] .timeline-overview-graph.memory .memory-pressure-event {
+    border-left: var(--memory-timeline-overview-graph-pressure-event-border-start);
+}
+
+body[dir=rtl] .timeline-overview-graph.memory .memory-pressure-event {
+    border-right: var(--memory-timeline-overview-graph-pressure-event-border-start);
 }
 
 .timeline-overview-graph:nth-child(even) > .legend {

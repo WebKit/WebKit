@@ -44,9 +44,18 @@
 }
 
 .timeline-view.memory > .content > .details > .timeline-ruler {
-    margin-left: 150px;
     position: relative;
     top: 5px;
+
+    --memory-timeline-view-details-timeline-ruler-margin-start: 150px;
+}
+
+body[dir=ltr] .timeline-view.memory > .content > .details > .timeline-ruler {
+    margin-left: var(--memory-timeline-view-details-timeline-ruler-margin-start);
+}
+
+body[dir=rtl] .timeline-view.memory > .content > .details > .timeline-ruler {
+    margin-right: var(--memory-timeline-view-details-timeline-ruler-margin-start);
 }
 
 .timeline-view.memory > .content > .details > .subtitle {
@@ -74,9 +83,18 @@
 }
 
 .timeline-view.memory > .content > .overview > .divider {
-    border-right: 1px solid var(--border-color);
     margin-left: 10px;
     margin-right: 10px;
+
+    --memory-timeline-view-overview-divider-border-end: 1px solid var(--border-color);
+}
+
+body[dir=ltr] .timeline-view.memory > .content > .overview > .divider {
+    border-right: var(--memory-timeline-view-overview-divider-border-end);
+}
+
+body[dir=rtl] .timeline-view.memory > .content > .overview > .divider {
+    border-left: var(--memory-timeline-view-overview-divider-border-end);
 }
 
 .timeline-view.memory > .content > .overview .total-usage,
@@ -86,38 +104,62 @@
 }
 
 .timeline-view.memory .legend {
-    padding-left: 20px;
-    text-align: left;
+    text-align: start;
+
+    --memory-timeline-view-legent-padding-start: 20px;
+}
+
+body[dir=ltr] .timeline-view.memory .legend {
+    padding-left: var(--memory-timeline-view-legent-padding-start);
+}
+
+body[dir=rtl] .timeline-view.memory .legend {
+    padding-right: var(--memory-timeline-view-legent-padding-start);
 }
 
 .timeline-view.memory .legend > .row {
     position: relative;
     width: 100px;
     height: 27px;
+
+    --memory-timeline-view-legend-row-offset-start: 20px;
 }
 
 .timeline-view.memory .legend > .row > .swatch {
     position: absolute;
     top: 1px;
-    left: 0;
     width: 1em;
     height: 1em;
+}
+
+body[dir=ltr] .timeline-view.memory .legend > .row > .swatch {
+    left: 0;
+}
+
+body[dir=rtl] .timeline-view.memory .legend > .row > .swatch {
+    right: 0;
 }
 
 .timeline-view.memory .legend > .row > p {
     margin: 0;
 }
 
+body[dir=ltr] .timeline-view.memory .legend > .row > :matches(.label, .size) {
+    left: var(--memory-timeline-view-legend-row-offset-start);
+}
+
+body[dir=rtl] .timeline-view.memory .legend > .row > :matches(.label, .size) {
+    right: var(--memory-timeline-view-legend-row-offset-start);
+}
+
 .timeline-view.memory .legend > .row > .label {
     position: absolute;
     top: 0;
-    left: 20px;
 }
 
 .timeline-view.memory .legend > .row > .size {
     position: absolute;
     top: 12px;
-    left: 20px;
     color: hsl(0, 0%, 70%);
 }
 

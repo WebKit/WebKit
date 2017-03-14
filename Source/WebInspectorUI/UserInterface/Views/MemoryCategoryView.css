@@ -30,12 +30,23 @@
 
 .memory-category-view > .details {
     width: 150px;
-    padding-left: 15px;
     padding-top: 10px;
-    border-right: 1px solid var(--border-color);
     font-family: '-webkit-system-font';
     font-size: 12px;
     color: hsl(0, 0%, 70%);
+
+    --memory-category-view-details-padding-start: 15px;
+    --memory-category-view-details-border-end: 1px solid var(--border-color);
+}
+
+body[dir=ltr] .memory-category-view > .details {
+    padding-left: var(--memory-category-view-details-padding-start);
+    border-right: var(--memory-category-view-details-border-end);
+}
+
+body[dir=rtl] .memory-category-view > .details {
+    padding-right: var(--memory-category-view-details-padding-start);
+    border-left: var(--memory-category-view-details-border-end);
 }
 
 .memory-category-view > .details > .name {

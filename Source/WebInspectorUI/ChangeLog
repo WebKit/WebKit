@@ -1,5 +1,48 @@
 2017-03-14  Devin Rousso  <webkit@devinrousso.com>
 
+        Web Inspector: RTL: add support for Memory timeline
+        https://bugs.webkit.org/show_bug.cgi?id=169584
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/MemoryCategoryView.css:
+        (.memory-category-view > .details):
+        (body[dir=ltr] .memory-category-view > .details):
+        (body[dir=rtl] .memory-category-view > .details):
+
+        * UserInterface/Views/MemoryTimelineOverviewGraph.css:
+        (.timeline-overview-graph.memory > .legend):
+        (body[dir=ltr] .timeline-overview-graph.memory > .legend):
+        (body[dir=rtl] .timeline-overview-graph.memory > .legend):
+        (.timeline-overview-graph.memory .memory-pressure-event):
+        (body[dir=ltr] .timeline-overview-graph.memory .memory-pressure-event):
+        (body[dir=rtl] .timeline-overview-graph.memory .memory-pressure-event):
+
+        * UserInterface/Views/MemoryTimelineOverviewGraph.js:
+        (WebInspector.MemoryTimelineOverviewGraph.prototype.layout):
+        Rework the calculation for the marker offset to use "right" in RTL.
+
+        * UserInterface/Views/MemoryTimelineView.css:
+        (.timeline-view.memory > .content > .details > .timeline-ruler):
+        (body[dir=ltr] .timeline-view.memory > .content > .details > .timeline-ruler):
+        (body[dir=rtl] .timeline-view.memory > .content > .details > .timeline-ruler):
+        (.timeline-view.memory > .content > .overview > .divider):
+        (body[dir=ltr] .timeline-view.memory > .content > .overview > .divider):
+        (body[dir=rtl] .timeline-view.memory > .content > .overview > .divider):
+        (.timeline-view.memory .legend):
+        (body[dir=ltr] .timeline-view.memory .legend):
+        (body[dir=rtl] .timeline-view.memory .legend):
+        (.timeline-view.memory .legend > .row):
+        (.timeline-view.memory .legend > .row > .swatch):
+        (body[dir=ltr] .timeline-view.memory .legend > .row > .swatch):
+        (body[dir=rtl] .timeline-view.memory .legend > .row > .swatch):
+        (body[dir=ltr] .timeline-view.memory .legend > .row > :matches(.label, .size)):
+        (body[dir=rtl] .timeline-view.memory .legend > .row > :matches(.label, .size)):
+        (.timeline-view.memory .legend > .row > .label):
+        (.timeline-view.memory .legend > .row > .size):
+
+2017-03-14  Devin Rousso  <webkit@devinrousso.com>
+
         Web Inspector: RTL: add support for Timeline graphs
         https://bugs.webkit.org/show_bug.cgi?id=169585
 

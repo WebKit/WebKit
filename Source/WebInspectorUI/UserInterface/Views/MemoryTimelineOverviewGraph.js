@@ -120,7 +120,8 @@ WebInspector.MemoryTimelineOverviewGraph = class MemoryTimelineOverviewGraph ext
             }
 
             let memoryPressureEvent = visibleMemoryPressureEventMarkers[i];
-            markerElement.style.left = xScale(memoryPressureEvent.timestamp) + "px";
+            let property = WebInspector.resolvedLayoutDirection() === WebInspector.LayoutDirection.RTL ? "right" : "left";
+            markerElement.style.setProperty(property, `${xScale(memoryPressureEvent.timestamp)}px`);
         }
 
         // Remove excess marker elements.
