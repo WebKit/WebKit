@@ -196,9 +196,13 @@ Ref<RealtimeMediaSource> MockMediaEndpoint::createMutedRemoteSource(const String
     RefPtr<RealtimeMediaSource> source;
 
     switch (type) {
-    case RealtimeMediaSource::Audio: source = MockRealtimeAudioSource::createMuted("remote audio"); break;
-    case RealtimeMediaSource::Video: source = MockRealtimeVideoSource::createMuted("remote video"); break;
-    case RealtimeMediaSource::None:
+    case RealtimeMediaSource::Type::Audio:
+        source = MockRealtimeAudioSource::createMuted("remote audio");
+        break;
+    case RealtimeMediaSource::Type::Video:
+        source = MockRealtimeVideoSource::createMuted("remote video");
+        break;
+    case RealtimeMediaSource::Type::None:
         ASSERT_NOT_REACHED();
     }
 

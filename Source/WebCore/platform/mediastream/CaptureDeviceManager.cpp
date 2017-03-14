@@ -80,7 +80,8 @@ Vector<String> CaptureDeviceManager::bestSourcesForTypeAndConstraints(RealtimeMe
         }
     } sortBasedOnFitnessScore;
 
-    CaptureDevice::DeviceType deviceType = type == RealtimeMediaSource::Video ? CaptureDevice::DeviceType::Video : CaptureDevice::DeviceType::Audio;
+    ASSERT(type != RealtimeMediaSource::Type::None);
+    CaptureDevice::DeviceType deviceType = type == RealtimeMediaSource::Type::Video ? CaptureDevice::DeviceType::Video : CaptureDevice::DeviceType::Audio;
     for (auto& captureDevice : captureDevices()) {
         if (!captureDevice.enabled() || captureDevice.type() != deviceType)
             continue;
@@ -104,10 +105,19 @@ Vector<String> CaptureDeviceManager::bestSourcesForTypeAndConstraints(RealtimeMe
 RefPtr<RealtimeMediaSource> CaptureDeviceManager::sourceWithUID(const String& deviceUID, RealtimeMediaSource::Type type, const MediaConstraints* constraints, String& invalidConstraint)
 {
     for (auto& captureDevice : captureDevices()) {
-        if (type == RealtimeMediaSource::None)
-            continue;
+        CaptureDevice::DeviceType deviceType;
 
-        CaptureDevice::DeviceType deviceType = type == RealtimeMediaSource::Video ? CaptureDevice::DeviceType::Video : CaptureDevice::DeviceType::Audio;
+        switch (type) {
+        case RealtimeMediaSource::Type::None:
+            continue;
+        case RealtimeMediaSource::Type::Audio:
+            deviceType = CaptureDevice::DeviceType::Audio;
+            break;
+        case RealtimeMediaSource::Type::Video:
+            deviceType = CaptureDevice::DeviceType::Video;
+            break;
+        }
+
         if (captureDevice.persistentId() != deviceUID || captureDevice.type() != deviceType)
             continue;
 

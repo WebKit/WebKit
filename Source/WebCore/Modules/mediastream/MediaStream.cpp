@@ -158,12 +158,12 @@ MediaStreamTrack* MediaStream::getTrackById(String id)
 
 MediaStreamTrackVector MediaStream::getAudioTracks() const
 {
-    return trackVectorForType(RealtimeMediaSource::Audio);
+    return trackVectorForType(RealtimeMediaSource::Type::Audio);
 }
 
 MediaStreamTrackVector MediaStream::getVideoTracks() const
 {
-    return trackVectorForType(RealtimeMediaSource::Video);
+    return trackVectorForType(RealtimeMediaSource::Type::Video);
 }
 
 MediaStreamTrackVector MediaStream::getTracks() const

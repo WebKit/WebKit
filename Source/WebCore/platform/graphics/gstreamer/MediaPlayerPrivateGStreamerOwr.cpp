@@ -200,7 +200,7 @@ void MediaPlayerPrivateGStreamerOwr::load(MediaStreamPrivate& streamPrivate)
         // TODO: Support for multiple tracks of the same type.
 
         switch (track->type()) {
-        case RealtimeMediaSource::Audio:
+        case RealtimeMediaSource::Type::Audio:
             if (!m_audioTrack) {
                 String preSelectedDevice = getenv("WEBKIT_AUDIO_DEVICE");
                 if (!preSelectedDevice || (preSelectedDevice == track->label())) {
@@ -212,7 +212,7 @@ void MediaPlayerPrivateGStreamerOwr::load(MediaStreamPrivate& streamPrivate)
                 }
             }
             break;
-        case RealtimeMediaSource::Video:
+        case RealtimeMediaSource::Type::Video:
             if (!m_videoTrack) {
                 String preSelectedDevice = getenv("WEBKIT_VIDEO_DEVICE");
                 if (!preSelectedDevice || (preSelectedDevice == track->label())) {
@@ -225,7 +225,7 @@ void MediaPlayerPrivateGStreamerOwr::load(MediaStreamPrivate& streamPrivate)
                 }
             }
             break;
-        case RealtimeMediaSource::None:
+        case RealtimeMediaSource::Type::None:
             GST_WARNING("Loading a track with None type");
         }
 
@@ -382,9 +382,9 @@ void MediaPlayerPrivateGStreamerOwr::maybeHandleChangeMutedState(MediaStreamTrac
     auto& realTimeMediaSource = static_cast<RealtimeMediaSourceOwr&>(track.source());
     auto mediaSource = OWR_MEDIA_SOURCE(realTimeMediaSource.mediaSource());
 
-    GST_DEBUG("%s track now %s", track.type() == RealtimeMediaSource::Audio ? "audio":"video", realTimeMediaSource.muted() ? "muted":"un-muted");
+    GST_DEBUG("%s track now %s", track.type() == RealtimeMediaSource::Type::Audio ? "audio":"video", realTimeMediaSource.muted() ? "muted":"un-muted");
     switch (track.type()) {
-    case RealtimeMediaSource::Audio:
+    case RealtimeMediaSource::Type::Audio:
         if (!realTimeMediaSource.muted()) {
             g_object_set(m_audioRenderer.get(), "disabled", false, nullptr);
             owr_media_renderer_set_source(OWR_MEDIA_RENDERER(m_audioRenderer.get()), mediaSource);
@@ -395,7 +395,7 @@ void MediaPlayerPrivateGStreamerOwr::maybeHandleChangeMutedState(MediaStreamTrac
         if (mediaSource)
             g_object_set(mediaSource, "mute", !track.enabled(), nullptr);
         break;
-    case RealtimeMediaSource::Video:
+    case RealtimeMediaSource::Type::Video:
         if (!realTimeMediaSource.muted()) {
             g_object_set(m_videoRenderer.get(), "disabled", false, nullptr);
             owr_media_renderer_set_source(OWR_MEDIA_RENDERER(m_videoRenderer.get()), mediaSource);
@@ -404,7 +404,7 @@ void MediaPlayerPrivateGStreamerOwr::maybeHandleChangeMutedState(MediaStreamTrac
             owr_media_renderer_set_source(OWR_MEDIA_RENDERER(m_videoRenderer.get()), nullptr);
         }
         break;
-    case RealtimeMediaSource::None:
+    case RealtimeMediaSource::Type::None:
         GST_WARNING("Trying to change mute state of a track with None type");
     }
 }
@@ -416,16 +416,16 @@ void MediaPlayerPrivateGStreamerOwr::trackSettingsChanged(MediaStreamTrackPrivat
 
 void MediaPlayerPrivateGStreamerOwr::trackEnabledChanged(MediaStreamTrackPrivate& track)
 {
-    GST_DEBUG("%s track now %s", track.type() == RealtimeMediaSource::Audio ? "audio":"video", track.enabled() ? "enabled":"disabled");
+    GST_DEBUG("%s track now %s", track.type() == RealtimeMediaSource::Type::Audio ? "audio":"video", track.enabled() ? "enabled":"disabled");
 
     switch (track.type()) {
-    case RealtimeMediaSource::Audio:
+    case RealtimeMediaSource::Type::Audio:
         g_object_set(m_audioRenderer.get(), "disabled", !track.enabled(), nullptr);
         break;
-    case RealtimeMediaSource::Video:
+    case RealtimeMediaSource::Type::Video:
         g_object_set(m_videoRenderer.get(), "disabled", !track.enabled(), nullptr);
         break;
-    case RealtimeMediaSource::None:
+    case RealtimeMediaSource::Type::None:
         GST_WARNING("Trying to change enabled state of a track with None type");
     }
 }

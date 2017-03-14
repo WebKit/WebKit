@@ -68,7 +68,7 @@ const AtomicString& MediaStreamTrack::kind() const
     static NeverDestroyed<AtomicString> audioKind("audio", AtomicString::ConstructFromLiteral);
     static NeverDestroyed<AtomicString> videoKind("video", AtomicString::ConstructFromLiteral);
 
-    if (m_private->type() == RealtimeMediaSource::Audio)
+    if (m_private->type() == RealtimeMediaSource::Type::Audio)
         return audioKind;
     return videoKind;
 }

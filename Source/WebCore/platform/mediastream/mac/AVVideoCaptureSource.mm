@@ -124,7 +124,7 @@ RefPtr<AVMediaCaptureSource> AVVideoCaptureSource::create(AVCaptureDeviceTypedef
 }
 
 AVVideoCaptureSource::AVVideoCaptureSource(AVCaptureDeviceTypedef* device, const AtomicString& id)
-    : AVMediaCaptureSource(device, id, RealtimeMediaSource::Video)
+    : AVMediaCaptureSource(device, id, Type::Video)
 {
 }
 

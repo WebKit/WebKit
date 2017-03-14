@@ -66,7 +66,7 @@ RefPtr<MockRealtimeVideoSource> MockRealtimeVideoSource::createMuted(const Strin
 #endif
 
 MockRealtimeVideoSource::MockRealtimeVideoSource(const String& name)
-    : MockRealtimeMediaSource(createCanonicalUUIDString(), RealtimeMediaSource::Video, name)
+    : MockRealtimeMediaSource(createCanonicalUUIDString(), RealtimeMediaSource::Type::Video, name)
     , m_timer(RunLoop::current(), this, &MockRealtimeVideoSource::generateFrame)
 {
     setFrameRate(30);

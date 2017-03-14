@@ -84,10 +84,16 @@ CaptureDevice MockRealtimeMediaSource::videoDeviceInfo()
 MockRealtimeMediaSource::MockRealtimeMediaSource(const String& id, RealtimeMediaSource::Type type, const String& name)
     : BaseRealtimeMediaSourceClass(id, type, name)
 {
-    if (type == RealtimeMediaSource::Audio)
+    switch (type) {
+    case RealtimeMediaSource::Type::Audio:
         setPersistentID(mockAudioSourcePersistentID());
-    else
+        return;
+    case RealtimeMediaSource::Type::Video:
         setPersistentID(mockVideoSourcePersistentID());
+        return;
+    case RealtimeMediaSource::Type::None:
+        ASSERT_NOT_REACHED();
+    }
 }
 
 void MockRealtimeMediaSource::initializeCapabilities()

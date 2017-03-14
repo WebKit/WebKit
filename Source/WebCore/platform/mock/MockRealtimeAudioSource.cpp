@@ -59,7 +59,7 @@ RefPtr<MockRealtimeAudioSource> MockRealtimeAudioSource::createMuted(const Strin
 #endif
     
 MockRealtimeAudioSource::MockRealtimeAudioSource(const String& name)
-    : MockRealtimeMediaSource(createCanonicalUUIDString(), RealtimeMediaSource::Audio, name)
+    : MockRealtimeMediaSource(createCanonicalUUIDString(), RealtimeMediaSource::Type::Audio, name)
     , m_timer(RunLoop::current(), this, &MockRealtimeAudioSource::tick)
 {
 }

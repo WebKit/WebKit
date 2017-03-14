@@ -354,15 +354,15 @@ Ref<RealtimeMediaSource> MediaEndpointOwr::createMutedRemoteSource(const String&
     RefPtr<RealtimeMediaSourceOwr> source;
 
     switch (type) {
-    case RealtimeMediaSource::Audio:
+    case RealtimeMediaSource::Type::Audio:
         name = "remote audio";
         source = adoptRef(new RealtimeAudioSourceOwr(nullptr, id, type, name));
         break;
-    case RealtimeMediaSource::Video:
+    case RealtimeMediaSource::Type::Video:
         name = "remote video";
         source = adoptRef(new RealtimeVideoSourceOwr(nullptr, id, type, name));
         break;
-    case RealtimeMediaSource::None:
+    case RealtimeMediaSource::Type::None:
         ASSERT_NOT_REACHED();
     }
 

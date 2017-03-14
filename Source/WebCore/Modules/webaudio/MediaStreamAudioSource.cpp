@@ -40,7 +40,7 @@ Ref<MediaStreamAudioSource> MediaStreamAudioSource::create()
 }
 
 MediaStreamAudioSource::MediaStreamAudioSource()
-    : RealtimeMediaSource(ASCIILiteral("WebAudio-") + createCanonicalUUIDString(), RealtimeMediaSource::Audio, "MediaStreamAudioDestinationNode")
+    : RealtimeMediaSource(ASCIILiteral("WebAudio-") + createCanonicalUUIDString(), RealtimeMediaSource::Type::Audio, "MediaStreamAudioDestinationNode")
 {
 }
 

@@ -44,7 +44,7 @@ public:
     static Ref<EmptyRealtimeMediaSource> create() { return adoptRef(*new EmptyRealtimeMediaSource()); }
 
 private:
-    EmptyRealtimeMediaSource() : RealtimeMediaSource(emptyString(), RealtimeMediaSource::None, emptyString()) { }
+    EmptyRealtimeMediaSource() : RealtimeMediaSource(emptyString(), Type::None, emptyString()) { }
 
     RefPtr<RealtimeMediaSourceCapabilities> capabilities() const final { return nullptr; }
     const RealtimeMediaSourceSettings& settings() const final { return m_sourceSettings; }

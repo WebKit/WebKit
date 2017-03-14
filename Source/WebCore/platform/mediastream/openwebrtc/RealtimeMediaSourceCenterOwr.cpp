@@ -143,16 +143,16 @@ void RealtimeMediaSourceCenterOwr::mediaSourcesAvailable(GList* sources)
 
         RealtimeMediaSource::Type mediaSourceType;
         if (mediaType & OWR_MEDIA_TYPE_AUDIO)
-            mediaSourceType = RealtimeMediaSource::Audio;
+            mediaSourceType = RealtimeMediaSource::Type::Audio;
         else if (mediaType & OWR_MEDIA_TYPE_VIDEO)
-            mediaSourceType = RealtimeMediaSource::Video;
+            mediaSourceType = RealtimeMediaSource::Type::Video;
         else {
-            mediaSourceType = RealtimeMediaSource::None;
+            mediaSourceType = RealtimeMediaSource::Type::None;
             ASSERT_NOT_REACHED();
         }
 
         RefPtr<RealtimeMediaSourceOwr> mediaSource;
-        if (mediaSourceType == RealtimeMediaSource::Audio)
+        if (mediaSourceType == RealtimeMediaSource::Type::Audio)
             mediaSource = adoptRef(new RealtimeAudioSourceOwr(source, id, mediaSourceType, sourceName));
         else
             mediaSource = adoptRef(new RealtimeVideoSourceOwr(source, id, mediaSourceType, sourceName));

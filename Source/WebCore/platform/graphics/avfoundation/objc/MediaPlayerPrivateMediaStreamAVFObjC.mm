@@ -722,12 +722,12 @@ void MediaPlayerPrivateMediaStreamAVFObjC::sampleBufferUpdated(MediaStreamTrackP
         return;
 
     switch (track.type()) {
-    case RealtimeMediaSource::None:
+    case RealtimeMediaSource::Type::None:
         // Do nothing.
         break;
-    case RealtimeMediaSource::Audio:
+    case RealtimeMediaSource::Type::Audio:
         break;
-    case RealtimeMediaSource::Video:
+    case RealtimeMediaSource::Type::Video:
         if (&track == m_activeVideoTrack.get())
             enqueueVideoSample(track, mediaSample);
         break;
@@ -853,7 +853,7 @@ void MediaPlayerPrivateMediaStreamAVFObjC::updateTracks()
             break;
         }
     };
-    updateTracksOfType(m_audioTrackMap, RealtimeMediaSource::Audio, currentTracks, &AudioTrackPrivateMediaStreamCocoa::create, setAudioTrackState);
+    updateTracksOfType(m_audioTrackMap, RealtimeMediaSource::Type::Audio, currentTracks, &AudioTrackPrivateMediaStreamCocoa::create, setAudioTrackState);
 
     Function<void(RefPtr<VideoTrackPrivateMediaStream>, int, TrackState)> setVideoTrackState = [&](auto track, int index, TrackState state)
     {
@@ -875,7 +875,7 @@ void MediaPlayerPrivateMediaStreamAVFObjC::updateTracks()
             break;
         }
     };
-    updateTracksOfType(m_videoTrackMap, RealtimeMediaSource::Video, currentTracks, &VideoTrackPrivateMediaStream::create, setVideoTrackState);
+    updateTracksOfType(m_videoTrackMap, RealtimeMediaSource::Type::Video, currentTracks, &VideoTrackPrivateMediaStream::create, setVideoTrackState);
 }
 
 std::unique_ptr<PlatformTimeRanges> MediaPlayerPrivateMediaStreamAVFObjC::seekable() const

@@ -90,7 +90,7 @@ RefPtr<AVMediaCaptureSource> AVAudioCaptureSource::create(AVCaptureDeviceTypedef
 }
 
 AVAudioCaptureSource::AVAudioCaptureSource(AVCaptureDeviceTypedef* device, const AtomicString& id)
-    : AVMediaCaptureSource(device, id, RealtimeMediaSource::Audio)
+    : AVMediaCaptureSource(device, id, Type::Audio)
 {
 }
     
