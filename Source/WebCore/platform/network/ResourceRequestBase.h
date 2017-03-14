@@ -144,19 +144,6 @@ public:
     WEBCORE_EXPORT bool isConditional() const;
     WEBCORE_EXPORT void makeUnconditional();
 
-    // Whether the associated ResourceHandleClient needs to be notified of
-    // upload progress made for that resource.
-    bool reportUploadProgress() const { return m_reportUploadProgress; }
-    void setReportUploadProgress(bool reportUploadProgress) { m_reportUploadProgress = reportUploadProgress; }
-
-    // Whether the timing information should be collected for the request.
-    bool reportLoadTiming() const { return m_reportLoadTiming; }
-    void setReportLoadTiming(bool reportLoadTiming) { m_reportLoadTiming = reportLoadTiming; }
-
-    // Whether actual headers being sent/received should be collected and reported for the request.
-    bool reportRawHeaders() const { return m_reportRawHeaders; }
-    void setReportRawHeaders(bool reportRawHeaders) { m_reportRawHeaders = reportRawHeaders; }
-
     // Whether this request should be hidden from the Inspector.
     bool hiddenFromInspector() const { return m_hiddenFromInspector; }
     void setHiddenFromInspector(bool hiddenFromInspector) { m_hiddenFromInspector = hiddenFromInspector; }
@@ -234,9 +221,6 @@ protected:
     mutable bool m_platformRequestUpdated { false };
     mutable bool m_resourceRequestBodyUpdated { false };
     mutable bool m_platformRequestBodyUpdated { false };
-    bool m_reportUploadProgress { false };
-    bool m_reportLoadTiming { false };
-    bool m_reportRawHeaders { false };
     bool m_hiddenFromInspector { false };
     bool m_ignoreForRequestCount { false };
     ResourceLoadPriority m_priority { ResourceLoadPriority::Low };

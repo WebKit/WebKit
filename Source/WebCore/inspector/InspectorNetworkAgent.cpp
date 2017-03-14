@@ -342,9 +342,6 @@ void InspectorNetworkAgent::willSendRequest(unsigned long identifier, DocumentLo
     for (auto& entry : m_extraRequestHeaders)
         request.setHTTPHeaderField(entry.key, entry.value);
 
-    request.setReportLoadTiming(true);
-    request.setReportRawHeaders(true);
-
     if (m_cacheDisabled) {
         request.setHTTPHeaderField(HTTPHeaderName::Pragma, "no-cache");
         request.setCachePolicy(ReloadIgnoringCacheData);
