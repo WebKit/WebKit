@@ -145,7 +145,11 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.View
         if (this._scrollbarWidth === scrollbarWidth)
             return;
 
-        this._headerWrapperElement.style.paddingRight = scrollbarWidth + "px";
+        if (WebInspector.resolvedLayoutDirection() === WebInspector.LayoutDirection.RTL)
+            this._headerWrapperElement.style.setProperty("padding-left", `${scrollbarWidth}px`);
+        else
+            this._headerWrapperElement.style.setProperty("padding-right", `${scrollbarWidth}px`);
+
         this._scrollbarWidth = scrollbarWidth;
     }
 

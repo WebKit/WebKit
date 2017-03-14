@@ -259,6 +259,10 @@ body[dir=rtl] .data-grid th:matches(.sort-ascending, .sort-descending) > div:fir
     background-repeat: no-repeat;
 }
 
+body[dir=rtl] .data-grid tr.parent td.disclosure::before {
+    transform: scaleX(-1);
+}
+
 body[dir=ltr] .data-grid tr.parent td.disclosure::before {
     float: left;
 }

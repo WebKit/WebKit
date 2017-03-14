@@ -1,5 +1,30 @@
 2017-03-14  Devin Rousso  <webkit@devinrousso.com>
 
+        Web Inspector: RTL: add support for DataGrid disclosure arrows and indentation
+        https://bugs.webkit.org/show_bug.cgi?id=169582
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/DataGrid.css:
+        (body[dir=rtl] .data-grid tr.parent td.disclosure::before):
+        Flip the image in RTL.
+
+        * UserInterface/Views/DataGrid.js:
+        (WebInspector.DataGrid.prototype._updateScrollbarPadding):
+        Rework the padding calculation for the scrollbar offset to use "right" in RTL.
+
+        * UserInterface/Views/DataGridNode.js:
+        (WebInspector.DataGridNode.prototype.get indentPadding):
+        (WebInspector.DataGridNode.prototype.createCell):
+        Rework the padding calculation for indenting (as a child) to use "right" in RTL.
+
+        (WebInspector.DataGridNode.prototype.isEventWithinDisclosureTriangle):
+        Calculate the position of the ::before triangle based on the layout direction.
+
+        (WebInspector.DataGridNode.prototype.get leftPadding): Deleted.
+
+2017-03-14  Devin Rousso  <webkit@devinrousso.com>
+
         Web Inspector: RTL: add support for TimelineOverview sidebar and container layout
         https://bugs.webkit.org/show_bug.cgi?id=169583
 
