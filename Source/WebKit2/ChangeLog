@@ -1,3 +1,21 @@
+2017-03-14  Andrew Gold  <agold@apple.com>
+
+        Extend WKPreferences to include preferences for testing MediaCapture.
+        https://bugs.webkit.org/show_bug.cgi?id=169560
+
+        Reviewed by Youenn Fablet.
+
+        * UIProcess/API/Cocoa/WKPreferences.mm:
+        (-[WKPreferences _mockCaptureDevicesEnabled]):
+        (-[WKPreferences _setMockCaptureDevicesEnabled:]):
+        (-[WKPreferences _mediaCaptureRequiresSecureConnection]):
+        (-[WKPreferences _setMediaCaptureRequiresSecureConnection:]):
+        (-[WKPreferences _enumeratingAllNetworkInterfacesEnabled]):
+        (-[WKPreferences _setEnumeratingAllNetworkInterfacesEnabled:]):
+        (-[WKPreferences _iceCandidateFiltertingEnabled]):
+        (-[WKPreferences _setICECandidateFilteringEnabled:]):
+        * UIProcess/API/Cocoa/WKPreferencesPrivate.h:
+
 2017-03-14  Brady Eidson  <beidson@apple.com>
 
         Rename WKHTTPCookieStorage to WKHTTPCookieStore.

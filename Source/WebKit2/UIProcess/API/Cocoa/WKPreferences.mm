@@ -547,6 +547,46 @@ static _WKStorageBlockingPolicy toAPI(WebCore::SecurityOrigin::StorageBlockingPo
     _preferences->setLoadsImagesAutomatically(loadsImagesAutomatically);
 }
 
+- (BOOL)_mockCaptureDevicesEnabled
+{
+    return _preferences->mockCaptureDevicesEnabled();
+}
+
+- (void)_setMockCaptureDevicesEnabled:(BOOL)enabled
+{
+    _preferences->setMockCaptureDevicesEnabled(enabled);
+}
+
+- (BOOL)_mediaCaptureRequiresSecureConnection
+{
+    return _preferences->mediaCaptureRequiresSecureConnection();
+}
+
+- (void)_setMediaCaptureRequiresSecureConnection:(BOOL)requiresSecureConnection
+{
+    _preferences->setMediaCaptureRequiresSecureConnection(requiresSecureConnection);
+}
+
+- (BOOL)_enumeratingAllNetworkInterfacesEnabled
+{
+    return _preferences->enumeratingAllNetworkInterfacesEnabled();
+}
+
+- (void)_setEnumeratingAllNetworkInterfacesEnabled:(BOOL)enabled
+{
+    _preferences->setEnumeratingAllNetworkInterfacesEnabled(enabled);
+}
+
+- (BOOL)_iceCandidateFiltertingEnabled
+{
+    return _preferences->iceCandidateFilteringEnabled();
+}
+
+- (void)_setICECandidateFilteringEnabled:(BOOL)enabled
+{
+    _preferences->setICECandidateFilteringEnabled(enabled);
+}
+
 @end
 
 #endif // WK_API_ENABLED
