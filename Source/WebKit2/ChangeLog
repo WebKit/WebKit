@@ -1,3 +1,27 @@
+2017-03-14  Jer Noble  <jer.noble@apple.com>
+
+        Adapt CARingBuffer to be usable across processes
+        https://bugs.webkit.org/show_bug.cgi?id=169591
+
+        Reviewed by Alex Christensen.
+
+        Add a new class which wraps a SharedMemory object and uses that shared memory as the
+        backing store of a CARingBuffer. This backing store can be set to "read only", which
+        prevents the backing from being de- or re-allocated.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        * Shared/Cocoa/SharedRingBufferStorage.cpp: Added.
+        (WebKit::SharedRingBufferStorage::setStorage):
+        (WebKit::SharedRingBufferStorage::setReadOnly):
+        (WebKit::SharedRingBufferStorage::allocate):
+        (WebKit::SharedRingBufferStorage::deallocate):
+        (WebKit::SharedRingBufferStorage::data):
+        * Shared/Cocoa/SharedRingBufferStorage.h: Added.
+        (WebKit::SharedRingBufferStorage::SharedRingBufferStorage):
+        (WebKit::SharedRingBufferStorage::invalidate):
+        (WebKit::SharedRingBufferStorage::storage):
+        (WebKit::SharedRingBufferStorage::readOnly):
+
 2017-03-14  Eric Carlson  <eric.carlson@apple.com>
 
         [iOS] The web process should inherit application state from UI process
