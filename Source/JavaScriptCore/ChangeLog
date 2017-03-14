@@ -1,3 +1,42 @@
+2017-03-13  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC][Linux] Implement VMTrap in Linux ports
+        https://bugs.webkit.org/show_bug.cgi?id=169436
+
+        Reviewed by Mark Lam.
+
+        This patch port VMTrap to Linux ports.
+        We extract MachineContext accessors from various places (wasm/, heap/ and tools/)
+        and use them in all the JSC code.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * heap/MachineStackMarker.cpp:
+        (JSC::MachineThreads::Thread::Registers::stackPointer):
+        (JSC::MachineThreads::Thread::Registers::framePointer):
+        (JSC::MachineThreads::Thread::Registers::instructionPointer):
+        (JSC::MachineThreads::Thread::Registers::llintPC):
+        * heap/MachineStackMarker.h:
+        * runtime/MachineContext.h: Added.
+        (JSC::MachineContext::stackPointer):
+        (JSC::MachineContext::framePointer):
+        (JSC::MachineContext::instructionPointer):
+        (JSC::MachineContext::argumentPointer<1>):
+        (JSC::MachineContext::argumentPointer):
+        (JSC::MachineContext::llintInstructionPointer):
+        * runtime/PlatformThread.h:
+        (JSC::platformThreadSignal):
+        * runtime/VMTraps.cpp:
+        (JSC::SignalContext::SignalContext):
+        (JSC::SignalContext::adjustPCToPointToTrappingInstruction):
+        * tools/CodeProfiling.cpp:
+        (JSC::profilingTimer):
+        * tools/SigillCrashAnalyzer.cpp:
+        (JSC::SignalContext::SignalContext):
+        (JSC::SignalContext::dump):
+        * tools/VMInspector.cpp:
+        * wasm/WasmFaultSignalHandler.cpp:
+        (JSC::Wasm::trapHandler):
+
 2017-03-13  Mark Lam  <mark.lam@apple.com>
 
         Make the HeapVerifier useful again.

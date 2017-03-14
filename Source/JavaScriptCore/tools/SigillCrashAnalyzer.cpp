@@ -28,6 +28,7 @@
 
 #include "CallFrame.h"
 #include "CodeBlock.h"
+#include "MachineContext.h"
 #include "VMInspector.h"
 #include <mutex>
 #include <wtf/StdLibExtras.h>
@@ -78,17 +79,17 @@ private:
     
 #endif // USE(OS_LOG)
 
-#if CPU(X86_64)
 struct SignalContext {
     SignalContext(mcontext_t& mcontext)
         : mcontext(mcontext)
-        , machinePC(reinterpret_cast<void*>(mcontext->__ss.__rip))
-        , stackPointer(reinterpret_cast<void*>(mcontext->__ss.__rsp))
-        , framePointer(reinterpret_cast<CallFrame*>(mcontext->__ss.__rbp))
+        , machinePC(MachineContext::instructionPointer(mcontext))
+        , stackPointer(MachineContext::stackPointer(mcontext))
+        , framePointer(MachineContext::framePointer(mcontext))
     { }
 
     void dump()
     {
+#if CPU(X86_64)
 #define FOR_EACH_REGISTER(v) \
         v(rax) \
         v(rbx) \
@@ -116,26 +117,8 @@ struct SignalContext {
         log("Register " #__reg ": %p", reinterpret_cast<void*>(mcontext->__ss.__##__reg));
         FOR_EACH_REGISTER(DUMP_REGISTER)
 #undef FOR_EACH_REGISTER
-    }
-
-    mcontext_t& mcontext;
-    void* machinePC;
-    void* stackPointer;
-    void* framePointer;
-};
 
 #elif CPU(ARM64)
-
-struct SignalContext {
-    SignalContext(mcontext_t& mcontext)
-        : mcontext(mcontext)
-        , machinePC(reinterpret_cast<void*>(mcontext->__ss.__pc))
-        , stackPointer(reinterpret_cast<void*>(mcontext->__ss.__sp))
-        , framePointer(reinterpret_cast<CallFrame*>(mcontext->__ss.__fp))
-    { }
-
-    void dump()
-    {
         int i;
         for (i = 0; i < 28; i += 4) {
             log("x%d: %016llx x%d: %016llx x%d: %016llx x%d: %016llx",
@@ -149,6 +132,7 @@ struct SignalContext {
             i, mcontext->__ss.__x[i], mcontext->__ss.__fp, mcontext->__ss.__lr);
         log("sp: %016llx pc: %016llx cpsr: %08x",
             mcontext->__ss.__sp, mcontext->__ss.__pc, mcontext->__ss.__cpsr);
+#endif
     }
 
     mcontext_t& mcontext;
@@ -156,20 +140,6 @@ struct SignalContext {
     void* stackPointer;
     void* framePointer;
 };
-
-#else
-
-struct SignalContext {
-    SignalContext(mcontext_t&) { }
-    
-    void dump() { }
-    
-    void* machinePC;
-    void* stackPointer;
-    void* framePointer;
-};
-    
-#endif
 
 struct sigaction originalSigIllAction;
 

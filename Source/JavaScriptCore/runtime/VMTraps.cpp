@@ -33,6 +33,7 @@
 #include "ExceptionHelpers.h"
 #include "HeapInlines.h"
 #include "LLIntPCRanges.h"
+#include "MachineContext.h"
 #include "MachineStackMarker.h"
 #include "MacroAssembler.h"
 #include "VM.h"
@@ -56,79 +57,31 @@ ALWAYS_INLINE VM& VMTraps::vm() const
 struct sigaction originalSigusr1Action;
 struct sigaction originalSigtrapAction;
 
-#if CPU(X86_64)
-
 struct SignalContext {
     SignalContext(mcontext_t& mcontext)
         : mcontext(mcontext)
-        , trapPC(reinterpret_cast<void*>(mcontext->__ss.__rip))
-        , stackPointer(reinterpret_cast<void*>(mcontext->__ss.__rsp))
-        , framePointer(reinterpret_cast<void*>(mcontext->__ss.__rbp))
+        , trapPC(MachineContext::instructionPointer(mcontext))
+        , stackPointer(MachineContext::stackPointer(mcontext))
+        , framePointer(MachineContext::framePointer(mcontext))
     {
+#if CPU(X86_64) || CPU(X86)
         // On X86_64, SIGTRAP reports the address after the trapping PC. So, dec by 1.
         trapPC = reinterpret_cast<uint8_t*>(trapPC) - 1;
+#endif
     }
 
     void adjustPCToPointToTrappingInstruction()
     {
-        mcontext->__ss.__rip = reinterpret_cast<uintptr_t>(trapPC);
-    }
-
-    mcontext_t& mcontext;
-    void* trapPC;
-    void* stackPointer;
-    void* framePointer;
-};
-    
-#elif CPU(X86)
-
-struct SignalContext {
-    SignalContext(mcontext_t& mcontext)
-        : mcontext(mcontext)
-        , trapPC(reinterpret_cast<void*>(mcontext->__ss.__eip))
-        , stackPointer(reinterpret_cast<void*>(mcontext->__ss.__esp))
-        , framePointer(reinterpret_cast<void*>(mcontext->__ss.__ebp))
-    {
-        // On X86, SIGTRAP reports the address after the trapping PC. So, dec by 1.
-        trapPC = reinterpret_cast<uint8_t*>(trapPC) - 1;
-    }
-    
-    void adjustPCToPointToTrappingInstruction()
-    {
-        mcontext->__ss.__eip = reinterpret_cast<uintptr_t>(trapPC);
-    }
-    
-    mcontext_t& mcontext;
-    void* trapPC;
-    void* stackPointer;
-    void* framePointer;
-};
-
-#elif CPU(ARM64) || CPU(ARM_THUMB2) || CPU(ARM)
-    
-struct SignalContext {
-    SignalContext(mcontext_t& mcontext)
-        : mcontext(mcontext)
-        , trapPC(reinterpret_cast<void*>(mcontext->__ss.__pc))
-        , stackPointer(reinterpret_cast<void*>(mcontext->__ss.__sp))
-#if CPU(ARM64)
-        , framePointer(reinterpret_cast<void*>(mcontext->__ss.__fp))
-#elif CPU(ARM_THUMB2)
-        , framePointer(reinterpret_cast<void*>(mcontext->__ss.__r[7]))
-#elif CPU(ARM)
-        , framePointer(reinterpret_cast<void*>(mcontext->__ss.__r[11]))
+#if CPU(X86_64) || CPU(X86)
+        MachineContext::instructionPointer(mcontext) = trapPC;
 #endif
-    { }
-        
-    void adjustPCToPointToTrappingInstruction() { }
+    }
 
     mcontext_t& mcontext;
     void* trapPC;
     void* stackPointer;
     void* framePointer;
 };
-    
-#endif
 
 inline static bool vmIsInactive(VM& vm)
 {

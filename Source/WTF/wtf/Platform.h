@@ -922,7 +922,7 @@
 #endif
 #endif
 
-#if OS(DARWIN) && ENABLE(JIT)
+#if (OS(DARWIN) || OS(LINUX) || OS(FREEBSD)) && ENABLE(JIT)
 #define ENABLE_SIGNAL_BASED_VM_TRAPS 1
 #endif
 

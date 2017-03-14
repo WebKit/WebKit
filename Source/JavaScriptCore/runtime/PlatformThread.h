@@ -29,6 +29,10 @@
 #include <pthread.h>
 #endif
 
+#if USE(PTHREADS) && !OS(WINDOWS) && !OS(DARWIN)
+#include <signal.h>
+#endif
+
 #if OS(DARWIN)
 #include <mach/thread_act.h>
 #elif OS(WINDOWS)
@@ -60,6 +64,12 @@ inline PlatformThread currentPlatformThread()
 inline bool platformThreadSignal(PlatformThread platformThread, int signalNumber)
 {
     pthread_t pthreadID = pthread_from_mach_thread_np(platformThread);
+    int errNo = pthread_kill(pthreadID, signalNumber);
+    return !errNo; // A 0 errNo means success.
+}
+#elif USE(PTHREADS)
+inline bool platformThreadSignal(PlatformThread pthreadID, int signalNumber)
+{
     int errNo = pthread_kill(pthreadID, signalNumber);
     return !errNo; // A 0 errNo means success.
 }

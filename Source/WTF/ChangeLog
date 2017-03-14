@@ -1,5 +1,16 @@
 2017-03-13  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        [JSC][Linux] Implement VMTrap in Linux ports
+        https://bugs.webkit.org/show_bug.cgi?id=169436
+
+        Reviewed by Mark Lam.
+
+        Enable VMTrap mechanism for Linux and FreeBSD.
+
+        * wtf/Platform.h:
+
+2017-03-13  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         [WTF] Clean up RunLoop and WorkQueue with Seconds and Function
         https://bugs.webkit.org/show_bug.cgi?id=169537
 

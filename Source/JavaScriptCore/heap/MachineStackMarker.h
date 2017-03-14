@@ -21,6 +21,7 @@
 
 #pragma once
 
+#include "MachineContext.h"
 #include "PlatformThread.h"
 #include "RegisterState.h"
 #include <wtf/Lock.h>
@@ -80,25 +81,8 @@ public:
             void* llintPC() const;
 #endif // ENABLE(SAMPLING_PROFILER)
             
-#if OS(DARWIN)
-#if CPU(X86)
-            typedef i386_thread_state_t PlatformRegisters;
-#elif CPU(X86_64)
-            typedef x86_thread_state64_t PlatformRegisters;
-#elif CPU(PPC)
-            typedef ppc_thread_state_t PlatformRegisters;
-#elif CPU(PPC64)
-            typedef ppc_thread_state64_t PlatformRegisters;
-#elif CPU(ARM)
-            typedef arm_thread_state_t PlatformRegisters;
-#elif CPU(ARM64)
-            typedef arm_thread_state64_t PlatformRegisters;
-#else
-#error Unknown Architecture
-#endif
-            
-#elif OS(WINDOWS)
-            typedef CONTEXT PlatformRegisters;
+#if OS(DARWIN) || OS(WINDOWS)
+            using PlatformRegisters = MachineContext::PlatformRegisters;
 #elif USE(PTHREADS)
             struct PlatformRegisters {
                 pthread_attr_t attribute;

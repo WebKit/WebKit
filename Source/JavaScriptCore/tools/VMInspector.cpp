@@ -29,6 +29,7 @@
 #include "CodeBlock.h"
 #include "CodeBlockSet.h"
 #include "HeapInlines.h"
+#include "MachineContext.h"
 #include <mutex>
 #include <wtf/Expected.h>
 

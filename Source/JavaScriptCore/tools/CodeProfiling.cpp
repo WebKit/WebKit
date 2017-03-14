@@ -27,6 +27,7 @@
 #include "CodeProfiling.h"
 
 #include "CodeProfile.h"
+#include "MachineContext.h"
 #include <wtf/MetaAllocator.h>
 
 #if HAVE(SIGNAL_H)
@@ -66,19 +67,13 @@ static void setProfileTimer(unsigned usec)
 #pragma clang diagnostic pop
 #endif
 
-#if OS(DARWIN) && !PLATFORM(GTK) && CPU(X86_64)
+#if (OS(DARWIN) && !PLATFORM(GTK) && CPU(X86_64)) || (OS(LINUX) && CPU(X86))
 static void profilingTimer(int, siginfo_t*, void* uap)
 {
     mcontext_t context = static_cast<ucontext_t*>(uap)->uc_mcontext;
-    CodeProfiling::sample(reinterpret_cast<void*>(context->__ss.__rip),
-                          reinterpret_cast<void**>(context->__ss.__rbp));
-}
-#elif OS(LINUX) && CPU(X86)
-static void profilingTimer(int, siginfo_t*, void* uap)
-{
-    mcontext_t context = static_cast<ucontext_t*>(uap)->uc_mcontext;
-    CodeProfiling::sample(reinterpret_cast<void*>(context.gregs[REG_EIP]),
-                          reinterpret_cast<void**>(context.gregs[REG_EBP]));
+    CodeProfiling::sample(
+        MachineContext::instructionPointer(context),
+        reinterpret_cast<void**>(MachineContext::framePointer(context)));
 }
 #endif
 

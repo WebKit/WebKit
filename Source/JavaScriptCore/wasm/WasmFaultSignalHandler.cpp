@@ -29,6 +29,7 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "ExecutableAllocator.h"
+#include "MachineContext.h"
 #include "VM.h"
 #include "WasmExceptionType.h"
 #include "WasmMemory.h"
@@ -50,40 +51,10 @@ static bool fastHandlerInstalled { false };
 static StaticLock codeLocationsLock;
 static LazyNeverDestroyed<HashSet<std::tuple<VM*, void*, void*>>> codeLocations; // (vm, start, end)
 
-// FIXME: Clean up mcontext_t handling code since it is scattered in heap/, tools/ and wasm/.
-// https://bugs.webkit.org/show_bug.cgi?id=169180
-#if CPU(X86_64)
-
-#if OS(DARWIN)
-#define InstructionPointerGPR context->__ss.__rip
-#define FirstArgumentGPR context->__ss.__rsi
-#elif OS(FREEBSD)
-#define InstructionPointerGPR context.mc_rip
-#define FirstArgumentGPR context.mc_rsi
-#elif defined(__GLIBC__)
-#define InstructionPointerGPR context.gregs[REG_RIP]
-#define FirstArgumentGPR context.gregs[REG_RSI]
-#endif
-
-#else
-
-#if OS(DARWIN)
-#define InstructionPointerGPR context->__ss.__pc
-#define FirstArgumentGPR context->__ss.__x[1]
-#elif OS(FREEBSD)
-#define InstructionPointerGPR context.mc_gpregs.gp_elr
-#define FirstArgumentGPR context.mc_gpregs.gp_x[1]
-#elif defined(__GLIBC__)
-#define InstructionPointerGPR context.pc
-#define FirstArgumentGPR context.regs[1]
-#endif
-
-#endif
-
 static void trapHandler(int signal, siginfo_t* sigInfo, void* ucontext)
 {
     mcontext_t& context = static_cast<ucontext_t*>(ucontext)->uc_mcontext;
-    void* faultingInstruction = reinterpret_cast<void*>(InstructionPointerGPR);
+    void* faultingInstruction = MachineContext::instructionPointer(context);
     dataLogLnIf(verbose, "starting handler for fault at: ", RawPointer(faultingInstruction));
 
     dataLogLnIf(verbose, "JIT memory start: ", RawPointer(reinterpret_cast<void*>(startOfFixedExecutableMemoryPool)), " end: ", RawPointer(reinterpret_cast<void*>(endOfFixedExecutableMemoryPool)));
@@ -122,8 +93,8 @@ static void trapHandler(int signal, siginfo_t* sigInfo, void* ucontext)
                     if (!exceptionStub)
                         break;
                     dataLogLnIf(verbose, "found stub: ", RawPointer(exceptionStub.code().executableAddress()));
-                    FirstArgumentGPR = static_cast<uint64_t>(ExceptionType::OutOfBoundsMemoryAccess);
-                    InstructionPointerGPR = reinterpret_cast<uint64_t>(exceptionStub.code().executableAddress());
+                    MachineContext::argumentPointer<1>(context) = reinterpret_cast<void*>(ExceptionType::OutOfBoundsMemoryAccess);
+                    MachineContext::instructionPointer(context) = exceptionStub.code().executableAddress();
                     return;
                 }
             }
