@@ -28,13 +28,25 @@
 
 namespace JSC {
 
-CellProfile* CellList::findCell(JSCell* cell)
+CellProfile* CellList::find(HeapCell* cell)
 {
-    for (auto& profile : liveCells) {
-        if (cell == profile.cell)
-            return &profile;
+    if (!size())
+        return nullptr;
+
+    if (!m_mapIsUpToDate) {
+        m_map.clear();
+        for (auto& profile : m_cells)
+            m_map.add(profile.cell(), &profile);
+        m_mapIsUpToDate = true;
     }
-    return nullptr;
+    return m_map.get(cell);
+}
+
+void CellList::reset()
+{
+    m_cells.clear();
+    m_map.clear();
+    m_mapIsUpToDate = false;
 }
 
 } // namespace JSC

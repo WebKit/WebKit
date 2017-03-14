@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,6 +33,11 @@ namespace JSC {
 template<typename Functor> inline void MarkedSpace::forEachLiveCell(HeapIterationScope&, const Functor& functor)
 {
     ASSERT(isIterating());
+    forEachLiveCell(functor);
+}
+
+template<typename Functor> inline void MarkedSpace::forEachLiveCell(const Functor& functor)
+{
     BlockIterator end = m_blocks.set().end();
     for (BlockIterator it = m_blocks.set().begin(); it != end; ++it) {
         if ((*it)->handle().forEachLiveCell(functor) == IterationStatus::Done)

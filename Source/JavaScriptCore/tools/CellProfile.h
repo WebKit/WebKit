@@ -25,19 +25,70 @@
 
 #pragma once
 
+#include "JSCell.h"
+#include "StackTrace.h"
+#include "Structure.h"
+#include <wtf/MonotonicTime.h>
+
 namespace JSC {
 
-class JSCell;
-
 struct CellProfile {
-    CellProfile(JSCell* cell, bool isConfirmedDead = false)
-        : cell(cell)
-        , isConfirmedDead(isConfirmedDead)
+    enum Liveness {
+        Unknown,
+        Dead,
+        Live
+    };
+
+    CellProfile(HeapCell* cell, HeapCell::Kind kind, Liveness liveness)
+        : m_cell(cell)
+        , m_kind(kind)
+        , m_liveness(liveness)
+        , m_timestamp(MonotonicTime::now())
     {
+        if (m_kind == HeapCell::JSCell && m_liveness != Dead)
+            m_className = jsCell()->structure()->classInfo()->className;
     }
+
+    CellProfile(CellProfile&& other)
+        : m_cell(other.m_cell)
+        , m_kind(other.m_kind)
+        , m_liveness(other.m_liveness)
+        , m_timestamp(other.m_timestamp)
+        , m_className(other.m_className)
+        , m_stackTrace(WTFMove(other.m_stackTrace))
+    { }
+
+    HeapCell* cell() const { return m_cell; }
+    JSCell* jsCell() const
+    {
+        ASSERT(isJSCell());
+        return static_cast<JSCell*>(m_cell);
+    }
+
+    bool isJSCell() const { return m_kind == HeapCell::JSCell; }
     
-    JSCell* cell;
-    bool isConfirmedDead;
+    HeapCell::Kind kind() const { return m_kind; }
+
+    bool isLive() const { return m_liveness == Live; }
+    bool isDead() const { return m_liveness == Dead; }
+
+    void setIsLive() { m_liveness = Live; }
+    void setIsDead() { m_liveness = Dead; }
+
+    MonotonicTime timestamp() const { return m_timestamp; }
+
+    const char* className() const { return m_className; }
+
+    StackTrace* stackTrace() const { return m_stackTrace.get(); }
+    void setStackTrace(StackTrace* trace) { m_stackTrace = std::unique_ptr<StackTrace>(trace); }
+
+private:
+    HeapCell* m_cell;
+    HeapCell::Kind m_kind;
+    Liveness m_liveness { Unknown };
+    MonotonicTime m_timestamp;
+    const char* m_className { nullptr };
+    std::unique_ptr<StackTrace> m_stackTrace;
 };
 
 } // namespace JSC

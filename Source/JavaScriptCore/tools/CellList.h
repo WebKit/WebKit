@@ -26,28 +26,41 @@
 #pragma once
 
 #include "CellProfile.h"
-#include <wtf/Vector.h>
+#include <wtf/HashMap.h>
+#include <wtf/SegmentedVector.h>
 
 namespace JSC {
 
-struct CellList {
+class CellList {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
     CellList(const char* name)
-        : name(name)
-        , hasLiveCells(true)
+        : m_name(name)
     {
     }
     
-    void reset()
+    const char* name() const { return m_name; }
+    size_t size() const { return m_cells.size(); }
+
+    typedef SegmentedVector<CellProfile, 64> CellProfileVector;
+    CellProfileVector& cells() { return m_cells; }
+
+    void add(CellProfile&& profile)
     {
-        liveCells.clear();
-        hasLiveCells = true; // Presume to have live objects until the list is trimmed.
+        m_cells.append(WTFMove(profile));
+        m_mapIsUpToDate = false;
     }
-    
-    CellProfile* findCell(JSCell*);
-    
-    const char* name;
-    Vector<CellProfile> liveCells;
-    bool hasLiveCells;
+
+    void reset();
+
+    CellProfile* find(HeapCell*);
+
+private:
+    const char* m_name;
+    CellProfileVector m_cells;
+
+    bool m_mapIsUpToDate { false };
+    HashMap<HeapCell*, CellProfile*> m_map;
 };
     
 } // namespace JSC

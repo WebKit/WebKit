@@ -1097,12 +1097,12 @@ NEVER_INLINE bool Heap::runBeginPhase(GCConductor conn)
         
     willStartCollection(scope);
         
-    if (m_verifier) {
+    if (UNLIKELY(m_verifier)) {
         // Verify that live objects from the last GC cycle haven't been corrupted by
         // mutators before we begin this new GC cycle.
         m_verifier->verify(HeapVerifier::Phase::BeforeGC);
             
-        m_verifier->initializeGCCycle();
+        m_verifier->startGC();
         m_verifier->gatherLiveCells(HeapVerifier::Phase::BeforeMarking);
     }
         
@@ -1332,7 +1332,7 @@ NEVER_INLINE bool Heap::runEndPhase(GCConductor conn)
     updateObjectCounts();
     endMarking();
         
-    if (m_verifier) {
+    if (UNLIKELY(m_verifier)) {
         m_verifier->gatherLiveCells(HeapVerifier::Phase::AfterMarking);
         m_verifier->verify(HeapVerifier::Phase::AfterMarking);
     }
@@ -1357,12 +1357,12 @@ NEVER_INLINE bool Heap::runEndPhase(GCConductor conn)
     m_objectSpace.prepareForAllocation();
     updateAllocationLimits();
 
-    didFinishCollection();
-    
-    if (m_verifier) {
+    if (UNLIKELY(m_verifier)) {
         m_verifier->trimDeadCells();
         m_verifier->verify(HeapVerifier::Phase::AfterGC);
     }
+
+    didFinishCollection();
 
     if (false) {
         dataLog("Heap state after GC:\n");
@@ -2161,6 +2161,9 @@ void Heap::didFinishCollection()
         gatherExtraHeapSnapshotData(*heapProfiler);
         removeDeadHeapSnapshotNodes(*heapProfiler);
     }
+
+    if (UNLIKELY(m_verifier))
+        m_verifier->endGC();
 
     RELEASE_ASSERT(m_collectionScope);
     m_lastCollectionScope = m_collectionScope;

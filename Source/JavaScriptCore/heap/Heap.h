@@ -351,7 +351,9 @@ public:
     CFRunLoopRef runLoop() const { return m_runLoop.get(); }
     JS_EXPORT_PRIVATE void setRunLoop(CFRunLoopRef);
 #endif // USE(CF)
-    
+
+    HeapVerifier* verifier() const { return m_verifier.get(); }
+
 private:
     friend class AllocatingScope;
     friend class CodeBlock;

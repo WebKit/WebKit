@@ -42,7 +42,7 @@ class LLIntOffsetsExtractor;
 #define FOR_EACH_MARKED_ALLOCATOR_BIT(macro) \
     macro(live, Live) /* The set of block indices that have actual blocks. */\
     macro(empty, Empty) /* The set of all blocks that have no live objects and nothing to destroy. */ \
-    macro(allocated, Allocated) /* The set of allblocks that are full of live objects. */\
+    macro(allocated, Allocated) /* The set of all blocks that are full of live objects. */\
     macro(canAllocateButNotEmpty, CanAllocateButNotEmpty) /* The set of all blocks are neither empty nor retired (i.e. are more than minMarkedBlockUtilization full). */ \
     macro(eden, Eden) /* The set of all blocks that have new objects since the last GC. */\
     macro(unswept, Unswept) /* The set of all blocks that could be swept by the incremental sweeper. */\
@@ -155,13 +155,7 @@ public:
     void* allocate(GCDeferralContext* = nullptr);
     void* tryAllocate(GCDeferralContext* = nullptr);
     Heap* heap() { return m_heap; }
-    MarkedBlock::Handle* takeLastActiveBlock()
-    {
-        MarkedBlock::Handle* block = m_lastActiveBlock;
-        m_lastActiveBlock = 0;
-        return block;
-    }
-    
+
     template<typename Functor> void forEachBlock(const Functor&);
     template<typename Functor> void forEachNotEmptyBlock(const Functor&);
     

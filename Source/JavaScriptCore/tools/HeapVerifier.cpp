@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,11 +26,14 @@
 #include "config.h"
 #include "HeapVerifier.h"
 
-#include "ButterflyInlines.h"
+#include "CodeBlock.h"
 #include "HeapIterationScope.h"
 #include "JSCInlines.h"
 #include "JSObject.h"
 #include "MarkedSpaceInlines.h"
+#include "VMInspector.h"
+#include "ValueProfile.h"
+#include <wtf/ProcessID.h>
 
 namespace JSC {
 
@@ -59,48 +62,36 @@ const char* HeapVerifier::phaseName(HeapVerifier::Phase phase)
     return nullptr; // Silencing a compiler warning.
 }
 
-void HeapVerifier::initializeGCCycle()
+void HeapVerifier::startGC()
 {
     Heap* heap = m_heap;
     incrementCycle();
+    currentCycle().reset();
     currentCycle().scope = *heap->collectionScope();
+    currentCycle().timestamp = MonotonicTime::now();
+    ASSERT(!m_didPrintLogs);
 }
 
-struct GatherCellFunctor : MarkedBlock::CountFunctor {
-    GatherCellFunctor(CellList& list)
-        : m_list(list)
-    {
-        ASSERT(!list.liveCells.size());
+void HeapVerifier::endGC()
+{
+    if (m_didPrintLogs) {
+        dataLog("END ");
+        printVerificationHeader();
+        dataLog("\n\n");
+        m_didPrintLogs = false;
     }
-
-    inline void visit(JSCell* cell)
-    {
-        CellProfile profile(cell);
-        m_list.liveCells.append(profile);
-    }
-
-    IterationStatus operator()(HeapCell* cell, HeapCell::Kind kind) const
-    {
-        if (kind == HeapCell::JSCell) {
-            // FIXME: This const_cast exists because this isn't a C++ lambda.
-            // https://bugs.webkit.org/show_bug.cgi?id=159644
-            const_cast<GatherCellFunctor*>(this)->visit(static_cast<JSCell*>(cell));
-        }
-        return IterationStatus::Continue;
-    }
-
-    CellList& m_list;
-};
+}
 
 void HeapVerifier::gatherLiveCells(HeapVerifier::Phase phase)
 {
     Heap* heap = m_heap;
     CellList& list = *cellListForGathering(phase);
 
-    HeapIterationScope iterationScope(*heap);
     list.reset();
-    GatherCellFunctor functor(list);
-    heap->m_objectSpace.forEachLiveCell(iterationScope, functor);
+    heap->m_objectSpace.forEachLiveCell([&list] (HeapCell* cell, HeapCell::Kind kind) {
+        list.add({ cell, kind, CellProfile::Live });
+        return IterationStatus::Continue;
+    });
 }
 
 CellList* HeapVerifier::cellListForGathering(HeapVerifier::Phase phase)
@@ -119,31 +110,25 @@ CellList* HeapVerifier::cellListForGathering(HeapVerifier::Phase phase)
     return nullptr; // Silencing a compiler warning.
 }
 
-static void trimDeadCellsFromList(HashSet<JSCell*>& knownLiveSet, CellList& list)
+static void trimDeadCellsFromList(CellList& knownLiveSet, CellList& list)
 {
-    if (!list.hasLiveCells)
+    if (!list.size())
         return;
 
-    size_t liveCellsFound = 0;
-    for (auto& cellProfile : list.liveCells) {
-        if (cellProfile.isConfirmedDead)
+    for (auto& cellProfile : list.cells()) {
+        if (cellProfile.isDead())
             continue; // Don't "resurrect" known dead cells.
-        if (!knownLiveSet.contains(cellProfile.cell)) {
-            cellProfile.isConfirmedDead = true;
+        if (!knownLiveSet.find(cellProfile.cell())) {
+            cellProfile.setIsDead();
             continue;
         }
-        liveCellsFound++;
+        cellProfile.setIsLive();
     }
-    list.hasLiveCells = !!liveCellsFound;
 }
 
 void HeapVerifier::trimDeadCells()
 {
-    HashSet<JSCell*> knownLiveSet;
-
-    CellList& after = currentCycle().after;
-    for (auto& cellProfile : after.liveCells)
-        knownLiveSet.add(cellProfile.cell);
+    CellList& knownLiveSet = currentCycle().after;
 
     trimDeadCellsFromList(knownLiveSet, currentCycle().before);
 
@@ -153,71 +138,330 @@ void HeapVerifier::trimDeadCells()
     }
 }
 
-bool HeapVerifier::verifyButterflyIsInStorageSpace(Phase, CellList&)
+void HeapVerifier::printVerificationHeader()
 {
-    // FIXME: Make this work again. https://bugs.webkit.org/show_bug.cgi?id=161752
+    RELEASE_ASSERT(m_heap->collectionScope());
+    CollectionScope scope = currentCycle().scope;
+    MonotonicTime gcCycleTimestamp = currentCycle().timestamp;
+    dataLog("Verifying heap in [p", getCurrentProcessID(), ", t", currentThread(), "] vm ",
+        RawPointer(m_heap->vm()), " on ", scope, " GC @ ", gcCycleTimestamp, "\n");
+}
+
+bool HeapVerifier::verifyCellList(Phase phase, CellList& list)
+{
+    VM& vm = *m_heap->vm();
+    auto& liveCells = list.cells();
+
+    bool listNamePrinted = false;
+    auto printHeaderIfNeeded = [&] () {
+        if (listNamePrinted)
+            return;
+        
+        printVerificationHeader();
+        dataLog(" @ phase ", phaseName(phase), ": FAILED in cell list '", list.name(), "' (size ", liveCells.size(), ")\n");
+        listNamePrinted = true;
+        m_didPrintLogs = true;
+    };
+    
+    bool success = true;
+    for (size_t i = 0; i < liveCells.size(); i++) {
+        CellProfile& profile = liveCells[i];
+        if (!profile.isLive())
+            continue;
+
+        if (!profile.isJSCell())
+            continue;
+
+        JSCell* cell = profile.jsCell();
+        success |= validateJSCell(&vm, cell, &profile, &list, printHeaderIfNeeded, "  ");
+    }
+
+    return success;
+}
+
+bool HeapVerifier::validateCell(HeapCell* cell, VM* expectedVM)
+{
+    auto printNothing = [] () { };
+
+    if (cell->isZapped()) {
+        dataLog("    cell ", RawPointer(cell), " is ZAPPED\n");
+        return false;
+    }
+
+    if (cell->cellKind() != HeapCell::JSCell)
+        return true; // Nothing more to validate.
+
+    JSCell* jsCell = static_cast<JSCell*>(cell);
+    return validateJSCell(expectedVM, jsCell, nullptr, nullptr, printNothing);
+}
+
+bool HeapVerifier::validateJSCell(VM* expectedVM, JSCell* cell, CellProfile* profile, CellList* list, std::function<void()> printHeaderIfNeeded, const char* prefix)
+{
+    auto printHeaderAndCell = [cell, profile, printHeaderIfNeeded, prefix] () {
+        printHeaderIfNeeded();
+        dataLog(prefix, "cell ", RawPointer(cell));
+        if (profile)
+            dataLog(" [", profile->className(), "]");
+    };
+
+    // 1. Validate the cell.
+
+    if (cell->isZapped()) {
+        printHeaderAndCell();
+        dataLog(" is zapped\n");
+        return false;
+    }
+
+    StructureID structureID = cell->structureID();
+    if (!structureID) {
+        printHeaderAndCell();
+        dataLog(" has NULL structureID\n");
+        return false;
+    }
+
+    if (expectedVM) {
+        VM& vm = *expectedVM;
+
+        VM* cellVM = cell->vm();
+        if (cellVM != expectedVM) {
+            printHeaderAndCell();
+            dataLog(" is from a different VM: expected:", RawPointer(expectedVM), " actual:", RawPointer(cellVM), "\n");
+            return false;
+        }
+
+        // 2. Validate the cell's structure
+
+        Structure* structure = vm.getStructure(structureID);
+        if (!structure) {
+            printHeaderAndCell();
+#if USE(JSVALUE64)
+            uint32_t structureIDAsUint32 = structureID;
+#else
+            uint32_t structureIDAsUint32 = reinterpret_cast<uint32_t>(structureID);
+#endif
+            dataLog(" with structureID ", structureIDAsUint32, " maps to a NULL Structure pointer\n");
+            return false;
+        }
+
+        if (structure->isZapped()) {
+            printHeaderAndCell();
+            dataLog(" has ZAPPED structure ", RawPointer(structure), "\n");
+            return false;
+        }
+
+        if (!structure->structureID()) {
+            printHeaderAndCell();
+            dataLog(" has structure ", RawPointer(structure), " whose structureID is NULL\n");
+            return false;
+        }
+
+        VM* structureVM = structure->vm();
+        if (structureVM != expectedVM) {
+            printHeaderAndCell();
+            dataLog(" has structure ", RawPointer(structure), " from a different VM: expected:", RawPointer(expectedVM), " actual:", RawPointer(structureVM), "\n");
+            return false;
+        }
+
+        if (list) {
+            auto* structureProfile = list->find(structure);
+            if (!structureProfile) {
+                printHeaderAndCell();
+                dataLog(" has structure ", RawPointer(structure), " NOT found in the live cell list\n");
+                return false;
+            }
+
+            if (!structureProfile->isLive()) {
+                printHeaderAndCell();
+                dataLog(" has DEAD structure ", RawPointer(structure), "\n");
+                return false;
+            }
+        }
+
+        StructureID structureStructureID = structure->structureID();
+        if (!structureStructureID) {
+            printHeaderAndCell();
+            dataLog(" has structure ", RawPointer(structure), " with a NULL structureID\n");
+            return false;
+        }
+
+        // 3. Validate the cell's structure's structure.
+        
+        Structure* structureStructure = vm.getStructure(structureID);
+        if (!structureStructure) {
+            printHeaderAndCell();
+            dataLog(" has structure ", RawPointer(structure), " whose structure is NULL\n");
+            return false;
+        }
+        
+        if (structureStructure->isZapped()) {
+            printHeaderAndCell();
+            dataLog(" has structure ", RawPointer(structure), " whose structure ", RawPointer(structureStructure), " is ZAPPED\n");
+            return false;
+        }
+        
+        if (!structureStructure->structureID()) {
+            printHeaderAndCell();
+            dataLog(" has structure ", RawPointer(structure), " whose structure ", RawPointer(structureStructure), " has a NULL structureID\n");
+            return false;
+        }
+        
+        VM* structureStructureVM = structureStructure->vm();
+        if (structureStructureVM != expectedVM) {
+            printHeaderAndCell();
+            dataLog(" has structure ", RawPointer(structure), " whose structure ", RawPointer(structureStructure), " is from a different VM: expected:", RawPointer(expectedVM), " actual:", RawPointer(structureStructureVM), "\n");
+            return false;
+        }
+        
+        if (list) {
+            auto* structureStructureProfile = list->find(structureStructure);
+            if (!structureStructureProfile) {
+                printHeaderAndCell();
+                dataLog(" has structure ", RawPointer(structure), " whose structure ", RawPointer(structureStructure), " is NOT found in the live cell list\n");
+                return false;
+            }
+            
+            if (!structureStructureProfile->isLive()) {
+                printHeaderAndCell();
+                dataLog(" has structure ", RawPointer(structure), " whose structure ", RawPointer(structureStructure), " is DEAD\n");
+                return false;
+            }
+        }
+        
+        CodeBlock* codeBlock = jsDynamicCast<CodeBlock*>(vm, cell);
+        if (UNLIKELY(codeBlock)) {
+            bool success = true;
+            for (unsigned i = 0; i < codeBlock->totalNumberOfValueProfiles(); ++i) {
+                ValueProfile* valueProfile = codeBlock->getFromAllValueProfiles(i);
+                for (unsigned i = 0; i < ValueProfile::totalNumberOfBuckets; ++i) {
+                    JSValue value = JSValue::decode(valueProfile->m_buckets[i]);
+                    if (!value)
+                        continue;
+                    if (!value.isCell())
+                        continue;
+                    JSCell* valueCell = value.asCell();
+                    if (valueCell->isZapped()) {
+                        printHeaderIfNeeded();
+                        dataLog(prefix, "CodeBlock ", RawPointer(codeBlock), " has ZAPPED ValueProfile cell ", RawPointer(valueCell), "\n");
+                        success = false;
+                        continue;
+                    }
+                }
+            }
+            if (!success)
+                return false;
+        }
+    }
+
     return true;
 }
 
 void HeapVerifier::verify(HeapVerifier::Phase phase)
 {
-    bool beforeVerified = verifyButterflyIsInStorageSpace(phase, currentCycle().before);
-    bool afterVerified = verifyButterflyIsInStorageSpace(phase, currentCycle().after);
-    RELEASE_ASSERT(beforeVerified && afterVerified);
+    if (phase == Phase::AfterGC) {
+        bool verified = verifyCellList(phase, currentCycle().after);
+        RELEASE_ASSERT(verified);
+    }
 }
 
-void HeapVerifier::reportCell(CellProfile& cellProfile, int cycleIndex, HeapVerifier::GCCycle& cycle, CellList& list)
+void HeapVerifier::reportCell(CellProfile& profile, int cycleIndex, HeapVerifier::GCCycle& cycle, CellList& list, const char* prefix)
 {
-    JSCell* cell = cellProfile.cell;
+    HeapCell* cell = profile.cell();
+    VM* vm = m_heap->vm();
 
-    if (cellProfile.isConfirmedDead) {
-        dataLogF("FOUND dead cell %p in GC[%d] %s list '%s'\n",
-            cell, cycleIndex, collectionScopeName(cycle.scope), list.name);
-        return;
+    if (prefix)
+        dataLog(prefix);
+
+    dataLog("FOUND");
+    if (profile.isLive())
+        dataLog(" LIVE");
+    else if (profile.isDead())
+        dataLog(" DEAD");
+
+    if (!profile.isJSCell())
+        dataLog(" HeapCell ");
+    else
+        dataLog(" JSCell ");
+    dataLog(RawPointer(cell));
+
+    if (profile.className())
+        dataLog(" [", profile.className(), "]");
+
+    if (profile.isLive() && profile.isJSCell()) {
+        JSCell* jsCell = profile.jsCell();
+        Structure* structure = jsCell->structure();
+        dataLog(" structure:", RawPointer(structure));
+        if (jsCell->isObject()) {
+            JSObject* obj = static_cast<JSObject*>(cell);
+            Butterfly* butterfly = obj->butterfly();
+            void* butterflyBase = butterfly->base(structure);
+            
+            dataLog(" butterfly:", RawPointer(butterfly), " (base:", RawPointer(butterflyBase), ")");
+        }
     }
 
-    if (cell->isObject()) {
-        JSObject* object = static_cast<JSObject*>(cell);
-        Structure* structure = object->structure();
-        Butterfly* butterfly = object->butterfly();
-        void* butterflyBase = butterfly->base(structure);
-
-        dataLogF("FOUND object %p type '%s' butterfly %p (base %p) in GC[%d] %s list '%s'\n",
-            object, structure->classInfo()->className,
-            butterfly, butterflyBase,
-            cycleIndex, collectionScopeName(cycle.scope), list.name);
-    } else {
-        Structure* structure = cell->structure();
-        dataLogF("FOUND cell %p type '%s' in GC[%d] %s list '%s'\n",
-            cell, structure->classInfo()->className,
-            cycleIndex, collectionScopeName(cycle.scope), list.name);
-    }
+    dataLog(" in ", cycle.scope, " GC[", cycleIndex, "] in '", list.name(), "' list in VM ",
+        RawPointer(vm), " recorded at time ", profile.timestamp(), "\n");
+    if (profile.stackTrace())
+        dataLog(*profile.stackTrace());
 }
 
-void HeapVerifier::checkIfRecorded(JSCell* cell)
+void HeapVerifier::checkIfRecorded(HeapCell* cell)
 {
     bool found = false;
+    const char* const prefix = "  ";
+    static const bool verbose = true;
 
     for (int cycleIndex = 0; cycleIndex > -m_numberOfCycles; cycleIndex--) {
         GCCycle& cycle = cycleForIndex(cycleIndex);
-        CellList& beforeList = cycle.before;
-        CellList& afterList = cycle.after;
+        CellList* lists[] = { &cycle.before, &cycle.after };
 
-        CellProfile* profile;
-        profile = beforeList.findCell(cell);
-        if (profile) {
-            reportCell(*profile, cycleIndex, cycle, beforeList);
-            found = true;
-        }
-        profile = afterList.findCell(cell);
-        if (profile) {
-            reportCell(*profile, cycleIndex, cycle, afterList);
-            found = true;
+        if (verbose)
+            dataLog("Checking ", cycle.scope, " GC<", cycle.timestamp, ">, cycle [", cycleIndex, "]:\n");
+        
+        const char* resultPrefix = "    ";
+        for (auto* list : lists) {
+            if (verbose)
+                dataLog(prefix, "Cycle [", cycleIndex, "] '", list->name(), "' list: ");
+
+            CellProfile* profile = list->find(cell);
+            if (profile) {
+                reportCell(*profile, cycleIndex, cycle, *list, resultPrefix);
+                found = true;
+            } else if (verbose)
+                dataLog(resultPrefix, "cell NOT found\n");
         }
     }
 
     if (!found)
-        dataLogF("cell %p NOT FOUND\n", cell);
+        dataLog(prefix, "cell ", RawPointer(cell), " NOT FOUND\n");
+}
+
+// The following are slower but more robust versions of the corresponding functions of the same name.
+// These robust versions are designed so that we can call them interactively from a C++ debugger
+// to query if a candidate is recorded cell.
+
+void HeapVerifier::checkIfRecorded(uintptr_t candidateCell)
+{
+    HeapCell* candidateHeapCell = reinterpret_cast<HeapCell*>(candidateCell);
+    
+    VMInspector& inspector = VMInspector::instance();
+    auto expectedLocker = inspector.lock(Seconds(2));
+    if (!expectedLocker) {
+        ASSERT(expectedLocker.error() == VMInspector::Error::TimedOut);
+        dataLog("ERROR: Timed out while waiting to iterate VMs.");
+        return;
+    }
+
+    auto& locker = expectedLocker.value();
+    inspector.iterate(locker, [&] (VM& vm) {
+        if (!vm.heap.m_verifier)
+            return VMInspector::FunctorStatus::Continue;
+        
+        auto* verifier = vm.heap.m_verifier.get();
+        dataLog("Search for cell ", RawPointer(candidateHeapCell), " in VM ", RawPointer(&vm), ":\n");
+        verifier->checkIfRecorded(candidateHeapCell);
+        return VMInspector::FunctorStatus::Continue;
+    });
 }
 
 } // namespace JSC

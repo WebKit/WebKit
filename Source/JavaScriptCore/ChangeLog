@@ -1,3 +1,121 @@
+2017-03-13  Mark Lam  <mark.lam@apple.com>
+
+        Make the HeapVerifier useful again.
+        https://bugs.webkit.org/show_bug.cgi?id=161752
+
+        Reviewed by Filip Pizlo.
+
+        Resurrect the HeapVerifier.  Here's what the verifier now offers:
+
+        1. It captures the list of cells before and after GCs up to N GC cycles.
+           N is set by JSC_numberOfGCCyclesToRecordForVerification.
+           Currently, N defaults to 3.
+
+           This is useful if we're debugging in lldb and want to check if a candidate
+           cell pointer was observed by the GC during the last N GC cycles.  We can do
+           this check buy calling HeapVerifier::checkIfRecorded() with the cell address.
+
+           HeapVerifier::checkIfRecorded() is robust and can be used on bogus addresses.
+           If the candidate cell was previously recorded by the HeapVerifier during a
+           GC cycle, checkIfRecorded() will dump any useful info it has on that cell.
+
+        2. The HeapVerifier will verify that cells in its captured list after a GC are
+           sane.  Some examples of cell insanity are:
+           - the cell claims to belong to a different VM.
+           - the cell has a NULL structureID.
+           - the cell has a NULL structure.
+           - the cell's structure has a NULL structureID.
+           - the cell's structure has a NULL structure.
+           - the cell's structure's structure has a NULL structureID.
+           - the cell's structure's structure has a NULL structure.
+
+           These are all signs of corruption or a GC bug.  The verifier will report any
+           insanity it finds, and then crash with a RELEASE_ASSERT.
+
+        3. Since the HeapVerifier captures list of cells in the heap before and after GCs
+           for the last N GCs, it will also automatically "trim" dead cells those list
+           after the most recent GC.
+
+           "trim" here means that the CellProfile in the HeapVerifier's lists will be
+           updated to reflect that the cell is now dead.  It still keeps a record of the
+           dead cell pointer and the meta data collected about it back when it was alive.
+           As a result, checkIfRecorded() will also report if the candidate cell passed
+           to it is a dead object from a previous GC cycle. 
+
+        4. Each CellProfile captured by the HeapVerifier now track the following info:
+           - the cell's HeapCell::Kind.
+           - the cell's liveness.
+           - if is JSCell, the cell's classInfo()->className.
+           - an associated timestamp.
+           - an associated stack trace.
+
+           Currently, the timestamp is only used for the time when the cell was recorded
+           by the HeapVerifier during GC.  The stack trace is currently unused.
+
+           However, these fields are kept there so that we can instrument the VM (during
+           a debugging session, which requires rebuilding the VM) and record interesting
+           stack traces like that of the time of allocation of the cell.  Since
+           capturing the stack traces for each cell is a very heavy weight operation,
+           the HeapVerifier code does not do this by default.  Instead, we just leave
+           the building blocks for doing so in place to ease future debugging efforts.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::runBeginPhase):
+        (JSC::Heap::runEndPhase):
+        (JSC::Heap::didFinishCollection):
+        * heap/Heap.h:
+        (JSC::Heap::verifier):
+        * heap/MarkedAllocator.h:
+        (JSC::MarkedAllocator::takeLastActiveBlock): Deleted.
+        * heap/MarkedSpace.h:
+        * heap/MarkedSpaceInlines.h:
+        (JSC::MarkedSpace::forEachLiveCell):
+        * tools/CellList.cpp:
+        (JSC::CellList::find):
+        (JSC::CellList::reset):
+        (JSC::CellList::findCell): Deleted.
+        * tools/CellList.h:
+        (JSC::CellList::CellList):
+        (JSC::CellList::name):
+        (JSC::CellList::size):
+        (JSC::CellList::cells):
+        (JSC::CellList::add):
+        (JSC::CellList::reset): Deleted.
+        * tools/CellProfile.h:
+        (JSC::CellProfile::CellProfile):
+        (JSC::CellProfile::cell):
+        (JSC::CellProfile::jsCell):
+        (JSC::CellProfile::isJSCell):
+        (JSC::CellProfile::kind):
+        (JSC::CellProfile::isLive):
+        (JSC::CellProfile::isDead):
+        (JSC::CellProfile::setIsLive):
+        (JSC::CellProfile::setIsDead):
+        (JSC::CellProfile::timestamp):
+        (JSC::CellProfile::className):
+        (JSC::CellProfile::stackTrace):
+        (JSC::CellProfile::setStackTrace):
+        * tools/HeapVerifier.cpp:
+        (JSC::HeapVerifier::startGC):
+        (JSC::HeapVerifier::endGC):
+        (JSC::HeapVerifier::gatherLiveCells):
+        (JSC::trimDeadCellsFromList):
+        (JSC::HeapVerifier::trimDeadCells):
+        (JSC::HeapVerifier::printVerificationHeader):
+        (JSC::HeapVerifier::verifyCellList):
+        (JSC::HeapVerifier::validateCell):
+        (JSC::HeapVerifier::validateJSCell):
+        (JSC::HeapVerifier::verify):
+        (JSC::HeapVerifier::reportCell):
+        (JSC::HeapVerifier::checkIfRecorded):
+        (JSC::HeapVerifier::initializeGCCycle): Deleted.
+        (JSC::GatherCellFunctor::GatherCellFunctor): Deleted.
+        (JSC::GatherCellFunctor::visit): Deleted.
+        (JSC::GatherCellFunctor::operator()): Deleted.
+        (JSC::HeapVerifier::verifyButterflyIsInStorageSpace): Deleted.
+        * tools/HeapVerifier.h:
+        (JSC::HeapVerifier::GCCycle::reset):
+
 2017-03-13  SKumarMetro  <s.kumar@metrological.com>
 
         JSC: fix compilation errors for MIPS
