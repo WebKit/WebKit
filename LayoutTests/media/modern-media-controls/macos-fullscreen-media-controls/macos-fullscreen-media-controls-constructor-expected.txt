@@ -8,11 +8,10 @@ PASS mediaControls.element.className is "media-controls mac fullscreen"
 PASS mediaControls.layoutTraits is LayoutTraits.macOS | LayoutTraits.Fullscreen
 
 Controls bar
-PASS mediaControls.controlsBar.children.length is 5
+PASS mediaControls.controlsBar.children.length is 4
 PASS mediaControls.controlsBar.children[1] instanceof ButtonsContainer is true
 PASS mediaControls.controlsBar.children[2] instanceof ButtonsContainer is true
 PASS mediaControls.controlsBar.children[3] instanceof ButtonsContainer is true
-PASS mediaControls.controlsBar.children[4] is mediaControls.timeControl
 
 Left container
 PASS mediaControls.controlsBar.children[1].buttons is [mediaControls.volumeDownButton, mediaControls.volumeSlider, mediaControls.volumeUpButton]

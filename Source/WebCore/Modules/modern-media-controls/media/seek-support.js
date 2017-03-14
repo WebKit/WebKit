@@ -28,6 +28,11 @@ class SeekSupport extends MediaControllerSupport
 
     // Protected
 
+    get mediaEvents()
+    {
+        return ["durationchange"];
+    }
+
     get multiplier()
     {
         // Implemented by subclasses.
@@ -39,6 +44,11 @@ class SeekSupport extends MediaControllerSupport
             this._startSeeking();
         else
             this._stopSeeking();
+    }
+
+    syncControl()
+    {
+        this.control.enabled = this.mediaController.media.duration !== Number.POSITIVE_INFINITY;
     }
 
     // Private

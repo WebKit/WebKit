@@ -71,7 +71,7 @@ class MacOSFullscreenMediaControls extends MacOSMediaControls
             rightMargin: 12
         });
 
-        this.controlsBar.children = [new BackgroundTint, this._leftContainer, this._centerContainer, this._rightContainer, this.timeControl];
+        this.controlsBar.children = [new BackgroundTint, this._leftContainer, this._centerContainer, this._rightContainer];
 
         this.controlsBar.element.addEventListener("mousedown", this);
     }
@@ -108,7 +108,14 @@ class MacOSFullscreenMediaControls extends MacOSMediaControls
         this._centerContainer.layout();
         this._rightContainer.layout();
 
-        this.timeControl.width = FullscreenTimeControlWidth;
+        if (this.statusLabel.enabled && this.statusLabel.parent !== this.controlsBar) {
+            this.timeControl.remove();
+            this.controlsBar.addChild(this.statusLabel);
+        } else if (!this.statusLabel.enabled && this.timeControl.parent !== this.controlsBar) {
+            this.statusLabel.remove();
+            this.controlsBar.addChild(this.timeControl);
+            this.timeControl.width = FullscreenTimeControlWidth;
+        }
     }
 
     // Private

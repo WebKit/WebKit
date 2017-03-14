@@ -2809,6 +2809,7 @@ media/modern-media-controls/volume-up-support [ Skip ]
 media/modern-media-controls/volume-up-support [ Skip ]
 media/modern-media-controls/controls-visibility-support/controls-visibility-support-fullscreen-on-video.html [ Skip ]
 media/modern-media-controls/controls-visibility-support/controls-visibility-support-fullscreen-on-parent-element.html [ Skip ]
+http/tests/media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-live-broadcast.html [ Skip ]
 
 # These tests are macOS-specific or mouse-specific
 media/modern-media-controls/media-controller/media-controller-auto-hide-mouse-leave-after-play.html [ Skip ]

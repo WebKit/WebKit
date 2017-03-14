@@ -117,3 +117,13 @@
 .media-controls.mac.fullscreen .scrubber {
     top: -3px;
 }
+
+/* Status Label */
+
+.media-controls.mac.fullscreen > .controls-bar .status-label {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 13px;
+    text-align: center;
+}

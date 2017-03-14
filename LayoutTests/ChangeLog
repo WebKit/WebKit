@@ -1,3 +1,24 @@
+2017-03-14  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] Fullscreen controls during Live Broadcast is completely broken
+        https://bugs.webkit.org/show_bug.cgi?id=169354
+        <rdar://problem/30636370>
+
+        Reviewed by Dean Jackson.
+
+        Add a new test, skipped on iOS, to check scrubbing controls are disabled in fullscreen
+        for a Live Broadcast video and that the status label is visible. We also rebaseline a
+        couple of tests now that the time control is added on first layout instead of inside
+        the constructor.
+
+        * http/tests/media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-live-broadcast-expected.txt: Added.
+        * http/tests/media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-live-broadcast.html: Added.
+        * media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-constructor-expected.txt:
+        * media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-constructor.html:
+        * media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-time-control-styles-expected.txt:
+        * media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-time-control-styles.html:
+        * platform/ios-simulator/TestExpectations:
+
 2017-03-14  Ryan Haddad  <ryanhaddad@apple.com>
 
         Skip 12 web-platform-tests until wptserver is upgraded.

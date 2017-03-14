@@ -9,14 +9,11 @@ description("Testing the <code>MacOSFullscreenMediaControls</code> computed styl
 window.jsTestIsAsync = true;
 
 const mediaControls = new MacOSFullscreenMediaControls;
+document.body.appendChild(mediaControls.element);
 
-scheduler.frameDidFire = function()
-{
-    document.body.appendChild(mediaControls.element);
-
+shouldBecomeEqualToString("window.getComputedStyle(mediaControls.timeControl.element).width", "457px", () => {
     shouldBeEqualToString("window.getComputedStyle(mediaControls.timeControl.element).left", "10px");
     shouldBeEqualToString("window.getComputedStyle(mediaControls.timeControl.element).top", "48px");
-    shouldBeEqualToString("window.getComputedStyle(mediaControls.timeControl.element).width", "457px");
     shouldBeEqualToString("window.getComputedStyle(mediaControls.timeControl.scrubber.element).top", "-3px");
     shouldBeEqualToString("window.getComputedStyle(mediaControls.timeControl.elapsedTimeLabel.element).fontSize", "12px");
     shouldBeEqualToString("window.getComputedStyle(mediaControls.timeControl.remainingTimeLabel.element).fontSize", "12px");
@@ -25,7 +22,7 @@ scheduler.frameDidFire = function()
     mediaControls.element.remove();
 
     finishMediaControlsTest();
-};
+});
 
 </script>
 <script src="../../../resources/js-test-post.js"></script>

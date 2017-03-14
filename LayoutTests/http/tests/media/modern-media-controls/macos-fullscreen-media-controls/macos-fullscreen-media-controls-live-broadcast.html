@@ -1,0 +1,45 @@
+<script src="../../../../../resources/js-test-pre.js"></script>
+<script src="/media-resources/modern-media-controls/resources/media-controls-loader.js"></script>
+<script src="/media-resources/modern-media-controls/resources/media-controls-utils.js"></script>
+<body>
+<video src="../../resources/hls/test-live.php" style="width: 800px;" autoplay></video>
+<div id="shadow"></div>
+<script type="text/javascript">
+
+window.jsTestIsAsync = true;
+
+description("Testing that we do not show the seeking controls in fullscreen with a live broadcast video and instead show the status label.");
+
+const shadowRoot = document.querySelector("div#shadow").attachShadow({ mode: "open" });
+const media = document.querySelector("video");
+const mediaController = createControls(shadowRoot, media, null);
+
+media.addEventListener("webkitfullscreenchange", () => {
+    if (!media.webkitDisplayingFullscreen)
+        return;
+
+    shouldBecomeEqual("media.duration", "Number.POSITIVE_INFINITY", () => {
+        shouldBeFalse("mediaController.controls.rewindButton.enabled");
+        shouldBeFalse("mediaController.controls.forwardButton.enabled");
+        shouldBe("mediaController.controls.timeControl.parent", "null");
+        shouldBe("mediaController.controls.statusLabel.parent", "mediaController.controls.controlsBar");
+
+        debug("");
+        media.remove();
+        shadowRoot.host.remove();
+        finishJSTest();
+    });
+});
+
+media.addEventListener("play", () => {
+    media.pause();
+
+    const button = document.body.appendChild(document.createElement("button"));
+    button.addEventListener("click", event => media.webkitEnterFullscreen());
+    pressOnElement(button);
+    button.remove();
+});
+
+</script>
+<script src="../../../../../resources/js-test-post.js"></script>
+</body>

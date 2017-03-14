@@ -13,11 +13,10 @@ shouldBe("mediaControls.layoutTraits", "LayoutTraits.macOS | LayoutTraits.Fullsc
 
 debug("");
 debug("Controls bar");
-shouldBe("mediaControls.controlsBar.children.length", "5");
+shouldBe("mediaControls.controlsBar.children.length", "4");
 shouldBeTrue("mediaControls.controlsBar.children[1] instanceof ButtonsContainer");
 shouldBeTrue("mediaControls.controlsBar.children[2] instanceof ButtonsContainer");
 shouldBeTrue("mediaControls.controlsBar.children[3] instanceof ButtonsContainer");
-shouldBe("mediaControls.controlsBar.children[4]", "mediaControls.timeControl");
 
 debug("");
 debug("Left container");

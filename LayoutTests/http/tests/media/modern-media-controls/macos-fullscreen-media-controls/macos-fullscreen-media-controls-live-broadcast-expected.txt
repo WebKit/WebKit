@@ -1,0 +1,15 @@
+Testing that we do not show the seeking controls in fullscreen with a live broadcast video and instead show the status label.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS media.duration became Number.POSITIVE_INFINITY
+PASS mediaController.controls.rewindButton.enabled is false
+PASS mediaController.controls.forwardButton.enabled is false
+PASS mediaController.controls.timeControl.parent is null
+PASS mediaController.controls.statusLabel.parent is mediaController.controls.controlsBar
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

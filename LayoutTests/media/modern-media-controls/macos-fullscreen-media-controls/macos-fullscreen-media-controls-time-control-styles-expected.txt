@@ -3,9 +3,9 @@ Testing the MacOSFullscreenMediaControls computed styles.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
+PASS window.getComputedStyle(mediaControls.timeControl.element).width became "457px"
 PASS window.getComputedStyle(mediaControls.timeControl.element).left is "10px"
 PASS window.getComputedStyle(mediaControls.timeControl.element).top is "48px"
-PASS window.getComputedStyle(mediaControls.timeControl.element).width is "457px"
 PASS window.getComputedStyle(mediaControls.timeControl.scrubber.element).top is "-3px"
 PASS window.getComputedStyle(mediaControls.timeControl.elapsedTimeLabel.element).fontSize is "12px"
 PASS window.getComputedStyle(mediaControls.timeControl.remainingTimeLabel.element).fontSize is "12px"
