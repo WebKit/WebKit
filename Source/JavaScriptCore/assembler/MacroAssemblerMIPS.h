@@ -28,14 +28,16 @@
 
 #if ENABLE(ASSEMBLER) && CPU(MIPS)
 
-#include "AbstractMacroAssembler.h"
 #include "MIPSAssembler.h"
+#include "AbstractMacroAssembler.h"
 
 namespace JSC {
 
 class MacroAssemblerMIPS : public AbstractMacroAssembler<MIPSAssembler, MacroAssemblerMIPS> {
 public:
     typedef MIPSRegisters::FPRegisterID FPRegisterID;
+    static const unsigned numGPRs = 32;
+    static const unsigned numFPRs = 32;
 
     MacroAssemblerMIPS()
         : m_fixedWidth(false)

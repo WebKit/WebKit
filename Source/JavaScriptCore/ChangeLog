@@ -1,3 +1,21 @@
+2017-03-13  SKumarMetro  <s.kumar@metrological.com>
+
+        JSC: fix compilation errors for MIPS
+        https://bugs.webkit.org/show_bug.cgi?id=168402
+
+        Reviewed by Mark Lam.
+
+        * assembler/MIPSAssembler.h:
+        (JSC::MIPSAssembler::fillNops):
+        Added.
+        * assembler/MacroAssemblerMIPS.h:
+        Added MacroAssemblerMIPS::numGPRs and MacroAssemblerMIPS::numFPRs .
+        * bytecode/InlineAccess.h:
+        (JSC::InlineAccess::sizeForPropertyAccess):
+        (JSC::InlineAccess::sizeForPropertyReplace):
+        (JSC::InlineAccess::sizeForLengthAccess):
+        Added MIPS cases.
+
 2017-03-13  Filip Pizlo  <fpizlo@apple.com>
 
         FTL should not flush strict arguments unless it really needs to

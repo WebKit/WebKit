@@ -32,6 +32,7 @@
 
 #include "AssemblerBuffer.h"
 #include "JITCompilationEffort.h"
+#include <limits.h>
 #include <wtf/Assertions.h>
 #include <wtf/SegmentedVector.h>
 
@@ -191,7 +192,19 @@ public:
     {
         emitInst(0x00000000);
     }
+    
+    static void fillNops(void* base, size_t size, bool isCopyingToExecutableMemory)
+    {
+        UNUSED_PARAM(isCopyingToExecutableMemory);
+        RELEASE_ASSERT(!(size % sizeof(int32_t)));
 
+        int32_t* ptr = static_cast<int32_t*>(base);
+        const size_t num32s = size / sizeof(int32_t);
+        const int32_t insn = 0x00000000;
+        for (size_t i = 0; i < num32s; i++)
+            *ptr++ = insn;
+    }
+    
     void sync()
     {
         emitInst(0x0000000f);
