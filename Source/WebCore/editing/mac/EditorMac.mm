@@ -258,7 +258,7 @@ String Editor::userVisibleString(const URL& url)
 
 void Editor::selectionWillChange()
 {
-    if (!hasComposition() || ignoreCompositionSelectionChange() || m_frame.selection().isNone())
+    if (!hasComposition() || ignoreSelectionChanges() || m_frame.selection().isNone())
         return;
 
     cancelComposition();

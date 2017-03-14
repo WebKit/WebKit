@@ -1,3 +1,38 @@
+2017-03-14  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [WK2] Data interaction tests occasionally hit assertions in debug builds
+        https://bugs.webkit.org/show_bug.cgi?id=169002
+        <rdar://problem/30994806>
+
+        Reviewed by Tim Horton.
+
+        Renames setIgnoreCompositionSelectionChange to setIgnoreSelectionChanges. See WebCore ChangeLog for more details.
+
+        * Shared/EditorState.cpp:
+        (WebKit::EditorState::encode):
+        (WebKit::EditorState::decode):
+        * Shared/EditorState.h:
+        * UIProcess/gtk/WebPageProxyGtk.cpp:
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::editorStateChanged):
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::editorStateChanged):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::editorState):
+        (WebKit::WebPage::performDragControllerAction):
+        (WebKit::WebPage::setComposition):
+        (WebKit::WebPage::didChangeSelection):
+        * WebProcess/WebPage/ios/FindControllerIOS.mm:
+        (WebKit::setSelectionChangeUpdatesEnabledInAllFrames):
+        (WebKit::FindController::willFindString):
+        (WebKit::FindController::didFailToFindString):
+        (WebKit::FindController::didHideFindIndicator):
+        (WebKit::setCompositionSelectionChangeEnabledInAllFrames): Deleted.
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::updateSelectionAppearance):
+        (WebKit::WebPage::replaceSelectedText):
+        (WebKit::WebPage::replaceDictatedText):
+
 2017-03-14  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix syntax error in GTK+ API docs.

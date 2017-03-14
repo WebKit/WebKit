@@ -534,7 +534,7 @@ IntRect WebPage::rectForElementAtInteractionLocation()
 void WebPage::updateSelectionAppearance()
 {
     Frame& frame = m_page->focusController().focusedOrMainFrame();
-    if (!frame.editor().ignoreCompositionSelectionChange() && (frame.editor().hasComposition() || !frame.selection().selection().isNone()))
+    if (!frame.editor().ignoreSelectionChanges() && (frame.editor().hasComposition() || !frame.selection().selection().isNone()))
         didChangeSelection();
 }
 
@@ -2156,10 +2156,10 @@ void WebPage::replaceSelectedText(const String& oldText, const String& newText)
     if (plainTextReplacingNoBreakSpace(wordRange.get()) != oldText)
         return;
     
-    frame.editor().setIgnoreCompositionSelectionChange(true);
+    frame.editor().setIgnoreSelectionChanges(true);
     frame.selection().setSelectedRange(wordRange.get(), UPSTREAM, true);
     frame.editor().insertText(newText, 0);
-    frame.editor().setIgnoreCompositionSelectionChange(false);
+    frame.editor().setIgnoreSelectionChanges(false);
 }
 
 void WebPage::replaceDictatedText(const String& oldText, const String& newText)
@@ -2183,10 +2183,10 @@ void WebPage::replaceDictatedText(const String& oldText, const String& newText)
         return;
 
     // We don't want to notify the client that the selection has changed until we are done inserting the new text.
-    frame.editor().setIgnoreCompositionSelectionChange(true);
+    frame.editor().setIgnoreSelectionChanges(true);
     frame.selection().setSelectedRange(range.get(), UPSTREAM, true);
     frame.editor().insertText(newText, 0);
-    frame.editor().setIgnoreCompositionSelectionChange(false);
+    frame.editor().setIgnoreSelectionChanges(false);
 }
 
 void WebPage::requestAutocorrectionData(const String& textForAutocorrection, uint64_t callbackID)

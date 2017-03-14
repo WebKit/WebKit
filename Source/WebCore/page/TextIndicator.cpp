@@ -71,7 +71,7 @@ RefPtr<TextIndicator> TextIndicator::createWithRange(const Range& range, TextInd
     Ref<Frame> protector(*frame);
 
 #if PLATFORM(IOS)
-    frame->editor().setIgnoreCompositionSelectionChange(true);
+    frame->editor().setIgnoreSelectionChanges(true);
     frame->selection().setUpdateAppearanceEnabled(true);
 #endif
 
@@ -93,7 +93,7 @@ RefPtr<TextIndicator> TextIndicator::createWithRange(const Range& range, TextInd
     frame->selection().setSelection(oldSelection);
 
 #if PLATFORM(IOS)
-    frame->editor().setIgnoreCompositionSelectionChange(false, Editor::RevealSelection::No);
+    frame->editor().setIgnoreSelectionChanges(false, Editor::RevealSelection::No);
     frame->selection().setUpdateAppearanceEnabled(false);
 #endif
 

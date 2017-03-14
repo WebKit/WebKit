@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if 0
+#if ENABLE(DATA_INTERACTION)
 
 #import "TestWKWebView.h"
 #import <UIKit/UIItemProvider.h>
@@ -32,7 +32,7 @@
 #import <WebKit/_WKTestingDelegate.h>
 #import <wtf/BlockPtr.h>
 
-@class MockDataInteractionInfo;
+@class MockDataOperationSession;
 @class MockDataInteractionSession;
 
 extern NSString * const DataInteractionEnterEventName;
@@ -52,7 +52,7 @@ typedef NS_ENUM(NSInteger, DataInteractionPhase) {
 @interface DataInteractionSimulator : NSObject<_WKTestingDelegate, WKUIDelegatePrivate> {
     RetainPtr<TestWKWebView> _webView;
     RetainPtr<MockDataInteractionSession> _dataInteractionSession;
-    RetainPtr<MockDataInteractionInfo> _dataInteractionInfo;
+    RetainPtr<MockDataOperationSession> _dataOperationSession;
     RetainPtr<NSMutableArray> _observedEventNames;
     RetainPtr<UIItemProvider> _externalItemProvider;
     RetainPtr<NSArray *> _finalSelectionRects;

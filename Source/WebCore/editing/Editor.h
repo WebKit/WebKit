@@ -334,8 +334,8 @@ public:
     const Vector<CompositionUnderline>& customCompositionUnderlines() const { return m_customCompositionUnderlines; }
 
     enum class RevealSelection { No, Yes };
-    WEBCORE_EXPORT void setIgnoreCompositionSelectionChange(bool, RevealSelection shouldRevealExistingSelection = RevealSelection::Yes);
-    bool ignoreCompositionSelectionChange() const { return m_ignoreCompositionSelectionChange; }
+    WEBCORE_EXPORT void setIgnoreSelectionChanges(bool, RevealSelection shouldRevealExistingSelection = RevealSelection::Yes);
+    bool ignoreSelectionChanges() const { return m_ignoreSelectionChanges; }
 
     WEBCORE_EXPORT PassRefPtr<Range> rangeForPoint(const IntPoint& windowPoint);
 
@@ -544,7 +544,7 @@ private:
     unsigned m_compositionStart;
     unsigned m_compositionEnd;
     Vector<CompositionUnderline> m_customCompositionUnderlines;
-    bool m_ignoreCompositionSelectionChange { false };
+    bool m_ignoreSelectionChanges { false };
     bool m_shouldStartNewKillRingSequence { false };
     bool m_shouldStyleWithCSS { false };
     const std::unique_ptr<KillRing> m_killRing;

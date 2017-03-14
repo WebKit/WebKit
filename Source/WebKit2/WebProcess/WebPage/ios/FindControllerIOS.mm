@@ -131,15 +131,15 @@ void FindController::hideFindIndicator()
     didHideFindIndicator();
 }
 
-static void setCompositionSelectionChangeEnabledInAllFrames(WebPage& page, bool enabled)
+static void setSelectionChangeUpdatesEnabledInAllFrames(WebPage& page, bool enabled)
 {
     for (Frame* coreFrame = page.mainFrame(); coreFrame; coreFrame = coreFrame->tree().traverseNext())
-        coreFrame->editor().setIgnoreCompositionSelectionChange(enabled);
+        coreFrame->editor().setIgnoreSelectionChanges(enabled);
 }
 
 void FindController::willFindString()
 {
-    setCompositionSelectionChangeEnabledInAllFrames(*m_webPage, true);
+    setSelectionChangeUpdatesEnabledInAllFrames(*m_webPage, true);
 }
 
 void FindController::didFindString()
@@ -157,12 +157,12 @@ void FindController::didFindString()
 
 void FindController::didFailToFindString()
 {
-    setCompositionSelectionChangeEnabledInAllFrames(*m_webPage, false);
+    setSelectionChangeUpdatesEnabledInAllFrames(*m_webPage, false);
 }
 
 void FindController::didHideFindIndicator()
 {
-    setCompositionSelectionChangeEnabledInAllFrames(*m_webPage, false);
+    setSelectionChangeUpdatesEnabledInAllFrames(*m_webPage, false);
 }
 
 } // namespace WebKit

@@ -7211,7 +7211,7 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
 
     [self _updateSecureInputState];
 
-    if (!coreFrame->editor().hasComposition() || coreFrame->editor().ignoreCompositionSelectionChange())
+    if (!coreFrame->editor().hasComposition() || coreFrame->editor().ignoreSelectionChanges())
         return;
 
     unsigned start;

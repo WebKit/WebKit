@@ -1683,7 +1683,7 @@ bool Editor::cancelCompositionIfSelectionIsInvalid()
 {
     unsigned start;
     unsigned end;
-    if (!hasComposition() || ignoreCompositionSelectionChange() || getCompositionSelection(start, end))
+    if (!hasComposition() || ignoreSelectionChanges() || getCompositionSelection(start, end))
         return false;
 
     cancelComposition();
@@ -1700,7 +1700,7 @@ void Editor::setComposition(const String& text, SetCompositionMode mode)
     ASSERT(mode == ConfirmComposition || mode == CancelComposition);
     UserTypingGestureIndicator typingGestureIndicator(m_frame);
 
-    setIgnoreCompositionSelectionChange(true);
+    setIgnoreSelectionChanges(true);
 
     if (mode == CancelComposition)
         ASSERT(text == emptyString());
@@ -1711,7 +1711,7 @@ void Editor::setComposition(const String& text, SetCompositionMode mode)
     m_customCompositionUnderlines.clear();
 
     if (m_frame.selection().isNone()) {
-        setIgnoreCompositionSelectionChange(false);
+        setIgnoreSelectionChanges(false);
         return;
     }
 
@@ -1731,7 +1731,7 @@ void Editor::setComposition(const String& text, SetCompositionMode mode)
         TypingCommand::closeTyping(&m_frame);
     }
 
-    setIgnoreCompositionSelectionChange(false);
+    setIgnoreSelectionChanges(false);
 }
 
 void Editor::setComposition(const String& text, const Vector<CompositionUnderline>& underlines, unsigned selectionStart, unsigned selectionEnd)
@@ -1740,7 +1740,7 @@ void Editor::setComposition(const String& text, const Vector<CompositionUnderlin
 
     UserTypingGestureIndicator typingGestureIndicator(m_frame);
 
-    setIgnoreCompositionSelectionChange(true);
+    setIgnoreSelectionChanges(true);
 
     // Updates styles before setting selection for composition to prevent
     // inserting the previous composition text into text nodes oddly.
@@ -1750,7 +1750,7 @@ void Editor::setComposition(const String& text, const Vector<CompositionUnderlin
     selectComposition();
 
     if (m_frame.selection().isNone()) {
-        setIgnoreCompositionSelectionChange(false);
+        setIgnoreSelectionChanges(false);
         return;
     }
 
@@ -1843,7 +1843,7 @@ void Editor::setComposition(const String& text, const Vector<CompositionUnderlin
         }
     }
 
-    setIgnoreCompositionSelectionChange(false);
+    setIgnoreSelectionChanges(false);
 
 #if PLATFORM(IOS)        
     client()->stopDelayingAndCoalescingContentChangeNotifications();
@@ -2775,7 +2775,7 @@ PassRefPtr<Range> Editor::rangeForPoint(const IntPoint& windowPoint)
 
 void Editor::revealSelectionAfterEditingOperation(const ScrollAlignment& alignment, RevealExtentOption revealExtentOption)
 {
-    if (m_ignoreCompositionSelectionChange)
+    if (m_ignoreSelectionChanges)
         return;
 
 #if PLATFORM(IOS)
@@ -2787,12 +2787,12 @@ void Editor::revealSelectionAfterEditingOperation(const ScrollAlignment& alignme
     m_frame.selection().revealSelection(revealMode, alignment, revealExtentOption);
 }
 
-void Editor::setIgnoreCompositionSelectionChange(bool ignore, RevealSelection shouldRevealExistingSelection)
+void Editor::setIgnoreSelectionChanges(bool ignore, RevealSelection shouldRevealExistingSelection)
 {
-    if (m_ignoreCompositionSelectionChange == ignore)
+    if (m_ignoreSelectionChanges == ignore)
         return;
 
-    m_ignoreCompositionSelectionChange = ignore;
+    m_ignoreSelectionChanges = ignore;
 #if PLATFORM(IOS)
     // FIXME: Should suppress selection change notifications during a composition change <https://webkit.org/b/38830> 
     if (!ignore)
@@ -2944,7 +2944,7 @@ void Editor::changeSelectionAfterCommand(const VisibleSelection& newSelection, F
     // starts a new kill ring sequence, but we want to do these things (matches AppKit).
 #if PLATFORM(IOS)
     // FIXME: Should suppress selection change notifications during a composition change <https://webkit.org/b/38830>
-    if (m_ignoreCompositionSelectionChange)
+    if (m_ignoreSelectionChanges)
         return;
 #endif
     if (selectionDidNotChangeDOMPosition && client())
@@ -3286,7 +3286,7 @@ void Editor::respondToChangedSelection(const VisibleSelection&, FrameSelection::
 {
 #if PLATFORM(IOS)
     // FIXME: Should suppress selection change notifications during a composition change <https://webkit.org/b/38830> 
-    if (m_ignoreCompositionSelectionChange)
+    if (m_ignoreSelectionChanges)
         return;
 #endif
 

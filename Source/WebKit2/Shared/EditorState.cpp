@@ -32,7 +32,7 @@ namespace WebKit {
 
 void EditorState::encode(IPC::Encoder& encoder) const
 {
-    encoder << shouldIgnoreCompositionSelectionChange;
+    encoder << shouldIgnoreSelectionChanges;
     encoder << selectionIsNone;
     encoder << selectionIsRange;
     encoder << isContentEditable;
@@ -56,7 +56,7 @@ void EditorState::encode(IPC::Encoder& encoder) const
 
 bool EditorState::decode(IPC::Decoder& decoder, EditorState& result)
 {
-    if (!decoder.decode(result.shouldIgnoreCompositionSelectionChange))
+    if (!decoder.decode(result.shouldIgnoreSelectionChanges))
         return false;
 
     if (!decoder.decode(result.selectionIsNone))

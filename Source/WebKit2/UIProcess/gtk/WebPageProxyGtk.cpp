@@ -79,7 +79,7 @@ void WebPageProxy::editorStateChanged(const EditorState& editorState)
 {
     m_editorState = editorState;
     
-    if (editorState.shouldIgnoreCompositionSelectionChange)
+    if (editorState.shouldIgnoreSelectionChanges)
         return;
     if (m_editorState.selectionIsRange)
         WebPasteboardProxy::singleton().setPrimarySelectionOwner(focusedFrame());
