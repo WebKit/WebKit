@@ -1243,3 +1243,5 @@ imported/w3c/web-platform-tests/XMLHttpRequest/setrequestheader-header-forbidden
 imported/w3c/web-platform-tests/XMLHttpRequest/setrequestheader-open-setrequestheader.htm [ Skip ]
 imported/w3c/web-platform-tests/html/dom/interfaces.worker.html [ Skip ]
 imported/w3c/web-platform-tests/html/webappapis/scripting/events/event-handler-attributes-body-window.html [ Skip ]
+
+webkit.org/b/169625 imported/w3c/web-platform-tests/cors/status.htm [ Pass Failure ]
