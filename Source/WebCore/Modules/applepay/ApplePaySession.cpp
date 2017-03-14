@@ -252,9 +252,6 @@ static ExceptionOr<Vector<String>> convertAndValidate(unsigned version, Vector<S
 
 static ExceptionOr<PaymentRequest::ContactFields> convertAndValidate(Vector<ApplePayPaymentRequest::ContactField>&& contactFields)
 {
-    if (contactFields.isEmpty())
-        return Exception { TypeError, "At least one contact field must be provided." };
-
     PaymentRequest::ContactFields result;
 
     for (auto& contactField : contactFields) {
