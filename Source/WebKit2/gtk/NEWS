@@ -1,4 +1,14 @@
 ==================
+WebKitGTK+ 2.15.92
+==================
+
+  - Show the context menu when triggered by the keyboard.
+  - Fix web process deadlocks when destroying the media player.
+  - Fix web process crashes when loading animated GIFs.
+  - Fix several crashes and rendering issues.
+  - Translation updates: Polish.
+
+==================
 WebKitGTK+ 2.15.91
 ==================
 
