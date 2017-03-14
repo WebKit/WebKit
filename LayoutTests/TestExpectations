@@ -35,6 +35,9 @@ media/ios [ Skip ]
 media/controls/ipad [ Skip ]
 fast/text-autosizing [ Skip ]
 
+# window.showModalDialog is only tested in DumpRenderTree on Mac.
+editing/execCommand/show-modal-dialog-during-execCommand.html [ Skip ]
+
 fast/shadow-dom/touch-event-on-text-assigned-to-slot.html [ Skip ]
 
 fast/forms/attributed-strings.html [ Skip ]
