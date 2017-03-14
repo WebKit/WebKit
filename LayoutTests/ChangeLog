@@ -1,3 +1,12 @@
+2017-03-14  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Skip 12 web-platform-tests until wptserver is upgraded.
+        https://bugs.webkit.org/show_bug.cgi?id=169615
+
+        Unreviewed test gardening.
+
+        * TestExpectations:
+
 2017-03-14  Youenn Fablet  <youenn@apple.com>
 
         Import web-platform-tests/cors
