@@ -40,6 +40,10 @@
 #endif
 #endif
 
+#if OS(DARWIN)
+#include <mach/thread_act.h>
+#endif
+
 namespace JSC {
 namespace MachineContext {
 
