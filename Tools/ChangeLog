@@ -1,3 +1,19 @@
+2017-03-14  Jonathan Bedard  <jbedard@apple.com>
+
+        webkitpy: Efficient app installation for device testing
+        https://bugs.webkit.org/show_bug.cgi?id=169054
+        <rdar://problem/30790207>
+
+        Reviewed by Daniel Bates.
+
+        We should only install an app on a device once, not every time the app is run.
+        Move app installation to setup.
+
+        * Scripts/webkitpy/port/ios.py:
+        (IOSPort.setup_test_run): Install app to device.
+        * Scripts/webkitpy/port/simulator_process.py:
+        (SimulatorProcess.__init__): Remove app installation.
+
 2017-03-14  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Nwtr ignores ImageDiff's errors for ref tests
