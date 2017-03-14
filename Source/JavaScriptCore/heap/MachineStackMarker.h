@@ -83,10 +83,11 @@ public:
             
 #if OS(DARWIN) || OS(WINDOWS)
             using PlatformRegisters = MachineContext::PlatformRegisters;
+#elif (OS(FREEBSD) || defined(__GLIBC__)) && ENABLE(JIT)
+            using PlatformRegisters = mcontext_t;
 #elif USE(PTHREADS)
             struct PlatformRegisters {
                 pthread_attr_t attribute;
-                mcontext_t machineContext;
             };
 #else
 #error Need a thread register struct for this platform

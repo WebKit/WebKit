@@ -1,3 +1,22 @@
+2017-03-14  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Drop unnecessary pthread_attr_t for JIT enabled Linux / FreeBSD environment
+        https://bugs.webkit.org/show_bug.cgi?id=169592
+
+        Reviewed by Carlos Garcia Campos.
+
+        Since suspended mcontext_t has all the necessary information, we can drop
+        pthread_attr_t allocation and destroy for JIT enabled Linux / FreeBSD environment.
+
+        * heap/MachineStackMarker.cpp:
+        (JSC::MachineThreads::Thread::getRegisters):
+        (JSC::MachineThreads::Thread::Registers::stackPointer):
+        (JSC::MachineThreads::Thread::Registers::framePointer):
+        (JSC::MachineThreads::Thread::Registers::instructionPointer):
+        (JSC::MachineThreads::Thread::Registers::llintPC):
+        (JSC::MachineThreads::Thread::freeRegisters):
+        * heap/MachineStackMarker.h:
+
 2017-03-14  Zan Dobersek  <zdobersek@igalia.com>
 
         [GLib] Use USE(GLIB) guards in JavaScriptCore/inspector/EventLoop.cpp

@@ -461,6 +461,9 @@ size_t MachineThreads::Thread::getRegisters(Thread::Registers& registers)
     regs.ContextFlags = CONTEXT_INTEGER | CONTEXT_CONTROL;
     GetThreadContext(platformThreadHandle, &regs);
     return sizeof(CONTEXT);
+#elif ((OS(FREEBSD) || defined(__GLIBC__)) && ENABLE(JIT))
+    regs = suspendedMachineContext;
+    return sizeof(Registers::PlatformRegisters);
 #elif USE(PTHREADS)
     pthread_attr_init(&regs.attribute);
 #if HAVE(PTHREAD_NP_H) || OS(NETBSD)
@@ -472,7 +475,6 @@ size_t MachineThreads::Thread::getRegisters(Thread::Registers& registers)
     // FIXME: this function is non-portable; other POSIX systems may have different np alternatives
     pthread_getattr_np(platformThread, &regs.attribute);
 #endif
-    regs.machineContext = suspendedMachineContext;
     return 0;
 #else
 #error Need a way to get thread registers on this platform
@@ -481,13 +483,9 @@ size_t MachineThreads::Thread::getRegisters(Thread::Registers& registers)
 
 void* MachineThreads::Thread::Registers::stackPointer() const
 {
-#if OS(DARWIN) || OS(WINDOWS)
+#if OS(DARWIN) || OS(WINDOWS) || ((OS(FREEBSD) || defined(__GLIBC__)) && ENABLE(JIT))
     return MachineContext::stackPointer(regs);
 #elif USE(PTHREADS)
-
-#if (OS(FREEBSD) || defined(__GLIBC__)) && ENABLE(JIT)
-    return MachineContext::stackPointer(regs.machineContext);
-#else
     void* stackBase = 0;
     size_t stackSize = 0;
 #if OS(OPENBSD)
@@ -501,8 +499,6 @@ void* MachineThreads::Thread::Registers::stackPointer() const
     (void)rc; // FIXME: Deal with error code somehow? Seems fatal.
     ASSERT(stackBase);
     return static_cast<char*>(stackBase) + stackSize;
-#endif
-
 #else
 #error Need a way to get the stack pointer for another thread on this platform
 #endif
@@ -511,10 +507,8 @@ void* MachineThreads::Thread::Registers::stackPointer() const
 #if ENABLE(SAMPLING_PROFILER)
 void* MachineThreads::Thread::Registers::framePointer() const
 {
-#if OS(DARWIN) || OS(WINDOWS)
+#if OS(DARWIN) || OS(WINDOWS) || (OS(FREEBSD) || defined(__GLIBC__))
     return MachineContext::framePointer(regs);
-#elif OS(FREEBSD) || defined(__GLIBC__)
-    return MachineContext::framePointer(regs.machineContext);
 #else
 #error Need a way to get the frame pointer for another thread on this platform
 #endif
@@ -522,10 +516,8 @@ void* MachineThreads::Thread::Registers::framePointer() const
 
 void* MachineThreads::Thread::Registers::instructionPointer() const
 {
-#if OS(DARWIN) || OS(WINDOWS)
+#if OS(DARWIN) || OS(WINDOWS) || (OS(FREEBSD) || defined(__GLIBC__))
     return MachineContext::instructionPointer(regs);
-#elif OS(FREEBSD) || defined(__GLIBC__)
-    return MachineContext::instructionPointer(regs.machineContext);
 #else
 #error Need a way to get the instruction pointer for another thread on this platform
 #endif
@@ -534,10 +526,8 @@ void* MachineThreads::Thread::Registers::instructionPointer() const
 void* MachineThreads::Thread::Registers::llintPC() const
 {
     // LLInt uses regT4 as PC.
-#if OS(DARWIN) || OS(WINDOWS)
+#if OS(DARWIN) || OS(WINDOWS) || (OS(FREEBSD) || defined(__GLIBC__))
     return MachineContext::llintInstructionPointer(regs);
-#elif OS(FREEBSD) || defined(__GLIBC__)
-    return MachineContext::llintInstructionPointer(regs.machineContext);
 #else
 #error Need a way to get the LLIntPC for another thread on this platform
 #endif
@@ -547,7 +537,7 @@ void* MachineThreads::Thread::Registers::llintPC() const
 void MachineThreads::Thread::freeRegisters(Thread::Registers& registers)
 {
     Thread::Registers::PlatformRegisters& regs = registers.regs;
-#if USE(PTHREADS) && !OS(WINDOWS) && !OS(DARWIN)
+#if USE(PTHREADS) && !OS(WINDOWS) && !OS(DARWIN) && !((OS(FREEBSD) || defined(__GLIBC__)) && ENABLE(JIT))
     pthread_attr_destroy(&regs.attribute);
 #else
     UNUSED_PARAM(regs);
