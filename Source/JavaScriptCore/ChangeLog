@@ -1,3 +1,17 @@
+2017-03-14  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GLib] Use USE(GLIB) guards in JavaScriptCore/inspector/EventLoop.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=169594
+
+        Reviewed by Carlos Garcia Campos.
+
+        Instead of PLATFORM(GTK) guards, utilize the USE(GLIB) build guards
+        to guard the GLib-specific includes and invocations in the JSC
+        inspector's EventLoop class implementation.
+
+        * inspector/EventLoop.cpp:
+        (Inspector::EventLoop::cycle):
+
 2017-03-13  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC][Linux] Implement VMTrap in Linux ports
