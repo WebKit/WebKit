@@ -1488,7 +1488,6 @@ webkit.org/b/167266 media/modern-media-controls/media-controller/media-controlle
 webkit.org/b/165386 media/modern-media-controls/seek-backward-support/seek-backward-support.html [ Pass Timeout ]
 
 webkit.org/b/169158 media/modern-media-controls/tracks-support/tracks-support-show-panel-after-dragging-controls.html [ Pass Failure ]
-webkit.org/b/167373 media/modern-media-controls/tracks-support/tracks-support-show-panel-fullscreen.html [ Pass Failure ]
 
 webkit.org/b/169568 media/modern-media-controls/volume-down-support/volume-down-support.html [ Pass Failure ]
 

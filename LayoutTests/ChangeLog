@@ -1,5 +1,19 @@
 2017-03-15  Antoine Quint  <graouts@apple.com>
 
+        [Modern Media Controls] Tracks menu overlaps controls bar in fullscreen
+        https://bugs.webkit.org/show_bug.cgi?id=169670
+        <rdar://problem/31060086>
+
+        Reviewed by Eric Carlson.
+
+        Unflake a test that checks the tracks panel position in fullscreen.
+
+        * media/modern-media-controls/tracks-support/tracks-support-show-panel-fullscreen-expected.txt:
+        * media/modern-media-controls/tracks-support/tracks-support-show-panel-fullscreen.html:
+        * platform/mac/TestExpectations:
+
+2017-03-15  Antoine Quint  <graouts@apple.com>
+
         [Modern Media Controls] Captions do not default to Auto when language is changed
         https://bugs.webkit.org/show_bug.cgi?id=169675
         <rdar://problem/30423369>
