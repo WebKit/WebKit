@@ -26,44 +26,36 @@
 #ifndef PDFLayerControllerSPI_h
 #define PDFLayerControllerSPI_h
 
-#include "PDFKitImports.h"
-
 #if ENABLE(PDFKIT_PLUGIN)
-#if USE(DEPRECATED_PDF_PLUGIN)
-
-#include "DeprecatedPDFLayerControllerSPI.h"
-
-#else // USE(DEPRECATED_PDF_PLUGIN)
 
 #import <PDFKit/PDFKit.h>
 
 @class CPReadingModel;
 @class PDFViewLayout;
 
+typedef NS_ENUM(NSInteger, PDFLayerControllerCursorType) {
+    kPDFLayerControllerCursorTypePointer = 0,
+    kPDFLayerControllerCursorTypeHand,
+    kPDFLayerControllerCursorTypeIBeam,
+};
+
 @protocol PDFLayerControllerDelegate <NSObject>
 
-@optional
-
-- (void)pdfLayerController:(PDFLayerController *)pdfLayerController scrollToPoint:(CGPoint)newPosition;
-- (void)pdfLayerController:(PDFLayerController *)pdfLayerController invalidateRect:(CGRect)rect;
-- (void)pdfLayerControllerInvalidateHUD:(PDFLayerController *)pdfLayerController;
-
-- (void)pdfLayerControllerZoomIn:(PDFLayerController *)pdfLayerController;
-- (void)pdfLayerControllerZoomOut:(PDFLayerController *)pdfLayerController;
+- (void)updateScrollPosition:(CGPoint)newPosition;
+- (void)writeItemsToPasteboard:(NSArray *)items withTypes:(NSArray *)types;
+- (void)showDefinitionForAttributedString:(NSAttributedString *)string atPoint:(CGPoint)point;
+- (void)performWebSearch:(NSString *)string;
+- (void)performSpotlightSearch:(NSString *)string;
+- (void)openWithNativeApplication;
+- (void)saveToPDF;
 
 - (void)pdfLayerController:(PDFLayerController *)pdfLayerController didChangeActiveAnnotation:(PDFAnnotation *)annotation;
-- (void)pdfLayerController:(PDFLayerController *)pdfLayerController didClickLinkWithURL:(NSURL *)url;
+- (void)pdfLayerController:(PDFLayerController *)pdfLayerController clickedLinkWithURL:(NSURL *)url;
+- (void)pdfLayerController:(PDFLayerController *)pdfLayerController didChangeContentScaleFactor:(CGFloat)scaleFactor;
 - (void)pdfLayerController:(PDFLayerController *)pdfLayerController didChangeDisplayMode:(int)mode;
 - (void)pdfLayerController:(PDFLayerController *)pdfLayerController didChangeSelection:(PDFSelection *)selection;
 
-- (void)pdfLayerController:(PDFLayerController *)pdfLayerController copyItems:(NSArray *)items withTypes:(NSArray *)types;
-- (void)pdfLayerController:(PDFLayerController *)pdfLayerController showDefinitionForAttributedString:(NSAttributedString *)string atPoint:(CGPoint)point;
-- (void)pdfLayerController:(PDFLayerController *)pdfLayerController performWebSearchForString:(NSString *)string;
-- (void)pdfLayerController:(PDFLayerController *)pdfLayerController performSpotlightSearchForString:(NSString *)string;
-- (void)pdfLayerControllerSaveToPDF:(PDFLayerController *)pdfLayerController;
-- (void)pdfLayerControllerOpenWithNativeApplication:(PDFLayerController *)pdfLayerController;
-
-- (NSColorSpace*)pdfLayerControllerColorSpace:(PDFLayerController *)pdfLayerController;
+- (void)setMouseCursor:(PDFLayerControllerCursorType)cursorType;
 
 @end
 
@@ -72,73 +64,76 @@
 
 @interface PDFLayerController ()
 
+@property (retain) CALayer *parentLayer;
 @property (retain) PDFDocument *document;
-@property (assign) id<PDFLayerControllerDelegate> delegate;
-@property (retain) NSArray *searchMatches;
+@property (retain) id<PDFLayerControllerDelegate> delegate;
 
 - (void)setFrameSize:(CGSize)size;
 
-- (void)setDisplayMode:(int)mode;
-- (int)displayMode;
-- (int)realDisplayMode;
+- (PDFDisplayMode)displayMode;
+- (void)setDisplayMode:(PDFDisplayMode)mode;
+- (void)setDisplaysPageBreaks:(BOOL)pageBreaks;
+
+- (CGFloat)contentScaleFactor;
+- (void)setContentScaleFactor:(CGFloat)scaleFactor;
+
+- (CGFloat)deviceScaleFactor;
+- (void)setDeviceScaleFactor:(CGFloat)scaleFactor;
 
 - (CGSize)contentSize;
 - (CGSize)contentSizeRespectingZoom;
 
-- (CGFloat)contentScaleFactor;
-- (void)setContentScaleFactor:(CGFloat)contentScaleFactor;
+- (void)snapshotInContext:(CGContextRef)context;
 
-- (PDFViewLayout *)layout;
+- (void)magnifyWithMagnification:(CGFloat)magnification atPoint:(CGPoint)point immediately:(BOOL)immediately;
 
-- (void)drawInContext:(CGContextRef)context;
-- (void)drawHUDInContext:(CGContextRef)context;
+- (CGPoint)scrollPosition;
+- (void)setScrollPosition:(CGPoint)newPosition;
+- (void)scrollWithDelta:(CGSize)delta;
 
 - (void)mouseDown:(NSEvent *)event;
+- (void)rightMouseDown:(NSEvent *)event;
+- (void)mouseMoved:(NSEvent *)event;
 - (void)mouseUp:(NSEvent *)event;
 - (void)mouseDragged:(NSEvent *)event;
-
-- (BOOL)mouseDown:(NSEvent *)event inHUDWithBounds:(CGRect)bounds;
-- (BOOL)mouseUp:(NSEvent *)event inHUDWithBounds:(CGRect)bounds;
-- (BOOL)mouseDragged:(NSEvent *)event inHUDWithBounds:(CGRect)bounds;
+- (void)mouseEntered:(NSEvent *)event;
+- (void)mouseExited:(NSEvent *)event;
 
 - (NSMenu *)menuForEvent:(NSEvent *)event;
 
-- (NSArray *)pageRects;
-
-- (void)setVisibleRect:(CGRect)visibleRect;
-
-- (void)gotoSelection:(PDFSelection *)selection;
-- (void)gotoDestination:(PDFDestination *)destination;
-- (void)gotoRect:(CGRect)rect onPage:(PDFPage *)page;
+- (NSArray *)findString:(NSString *)string caseSensitive:(BOOL)isCaseSensitive highlightMatches:(BOOL)shouldHighlightMatches;
 
 - (PDFSelection *)currentSelection;
 - (void)setCurrentSelection:(PDFSelection *)selection;
-
-- (void)searchInDictionaryWithSelection:(PDFSelection *)selection;
+- (PDFSelection *)searchSelection;
+- (void)setSearchSelection:(PDFSelection *)selection;
+- (void)gotoSelection:(PDFSelection *)selection;
 - (PDFSelection *)getSelectionForWordAtPoint:(CGPoint)point;
 - (NSArray *)rectsForSelectionInLayoutSpace:(PDFSelection *)selection;
+- (NSArray *)rectsForAnnotationInLayoutSpace:(PDFAnnotation *)annotation;
+- (PDFViewLayout *)layout;
+- (NSRect)frame;
 
-- (NSArray *)highlights;
-- (void)setHighlights:(NSArray*)highlights;
-
-- (PDFSelection *)searchSelection;
-- (NSArray *)searchMatches;
-- (void)setSearchSelection:(PDFSelection*)selection;
-- (NSArray *)findString:(NSString *)string caseSensitive:(BOOL)isCaseSensitive highlightMatches:(BOOL)shouldHighlightMatches;
+- (PDFPage *)currentPage;
+- (NSUInteger)lastPageIndex;
+- (NSUInteger)currentPageIndex;
+- (void)gotoNextPage;
+- (void)gotoPreviousPage;
 
 - (void)copySelection;
 - (void)selectAll;
 
-- (PDFPage *)currentPage;
-- (NSUInteger)currentPageIndex;
+- (bool)keyDown:(NSEvent *)event;
 
-- (BOOL)documentIsLocked;
-- (void)attemptToUnlockWithPassword:(NSString *)password;
+- (void)setHUDEnabled:(BOOL)enabled;
+- (BOOL)hudEnabled;
 
 - (CGRect)boundsForAnnotation:(PDFAnnotation *)annotation;
 - (void)activateNextAnnotation:(BOOL)previous;
 
-- (NSRect)frame;
+- (void)attemptToUnlockWithPassword:(NSString *)password;
+
+- (void)searchInDictionaryWithSelection:(PDFSelection *)selection;
 
 // Accessibility
 
@@ -166,7 +161,6 @@
 
 @end
 
-#endif // USE(DEPRECATED_PDF_PLUGIN)
-#endif // ENABLE(PDFPLUGIN)
+#endif
 
 #endif // PDFLayerControllerSPI_h

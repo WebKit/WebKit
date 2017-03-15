@@ -1,3 +1,22 @@
+2017-03-15  Tim Horton  <timothy_horton@apple.com>
+
+        Un-deprecate the original PDFPlugin
+        https://bugs.webkit.org/show_bug.cgi?id=169655
+
+        Reviewed by Anders Carlsson.
+
+        * Shared/mac/PDFKitImports.h:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/Plugins/PDF/DeprecatedPDFLayerControllerSPI.h: Removed.
+        * WebProcess/Plugins/PDF/DeprecatedPDFPlugin.h: Removed.
+        * WebProcess/Plugins/PDF/DeprecatedPDFPlugin.mm: Removed.
+        * WebProcess/Plugins/PDF/PDFLayerControllerSPI.h:
+        * WebProcess/Plugins/PDF/PDFPlugin.h:
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        * WebProcess/Plugins/PDF/PDFPluginAnnotation.mm:
+        The transition to the non-deprecated PDFPlugin never happened,
+        and we have a very different plan now.
+
 2017-03-15  Alex Christensen  <achristensen@webkit.org>
 
         Compiled content extensions should include the JSON source

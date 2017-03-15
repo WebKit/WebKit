@@ -104,14 +104,9 @@ void PDFPluginAnnotation::updateGeometry()
     StyledElement* styledElement = static_cast<StyledElement*>(element());
     styledElement->setInlineStyleProperty(CSSPropertyWidth, annotationRect.size.width, CSSPrimitiveValue::CSS_PX);
     styledElement->setInlineStyleProperty(CSSPropertyHeight, annotationRect.size.height, CSSPrimitiveValue::CSS_PX);
-#if !USE(DEPRECATED_PDF_PLUGIN)
-    styledElement->setInlineStyleProperty(CSSPropertyLeft, annotationRect.origin.x, CSSPrimitiveValue::CSS_PX);
-    styledElement->setInlineStyleProperty(CSSPropertyTop, documentSize.height() - annotationRect.origin.y - annotationRect.size.height, CSSPrimitiveValue::CSS_PX);
-#else
     IntPoint scrollPosition(m_pdfLayerController.scrollPosition);
     styledElement->setInlineStyleProperty(CSSPropertyLeft, annotationRect.origin.x - scrollPosition.x(), CSSPrimitiveValue::CSS_PX);
     styledElement->setInlineStyleProperty(CSSPropertyTop, documentSize.height() - annotationRect.origin.y - annotationRect.size.height - scrollPosition.y(), CSSPrimitiveValue::CSS_PX);
-#endif
 }
 
 bool PDFPluginAnnotation::handleEvent(Event* event)

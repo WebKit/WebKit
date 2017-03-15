@@ -618,7 +618,7 @@
 		2D2ADF0916362DD500197E47 /* PDFPluginTextAnnotation.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D2ADF0616362DC700197E47 /* PDFPluginTextAnnotation.mm */; };
 		2D2ADF0B16362DDB00197E47 /* PDFPluginAnnotation.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D2ADF031636243500197E47 /* PDFPluginAnnotation.mm */; };
 		2D2ADF1016364D8200197E47 /* PDFPluginChoiceAnnotation.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D2ADF0E16364D8200197E47 /* PDFPluginChoiceAnnotation.mm */; };
-		2D3494641BCC2EC30064F0BE /* DeprecatedPDFPlugin.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D0035231BC7414800DA8716 /* DeprecatedPDFPlugin.mm */; };
+		2D3494641BCC2EC30064F0BE /* PDFPlugin.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D0035231BC7414800DA8716 /* PDFPlugin.mm */; };
 		2D3A65DA1A7C3A1F00CAC637 /* WKNavigationActionRef.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D3A65D81A7C3A1F00CAC637 /* WKNavigationActionRef.cpp */; };
 		2D3A65DB1A7C3A1F00CAC637 /* WKNavigationActionRef.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D3A65D91A7C3A1F00CAC637 /* WKNavigationActionRef.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2D3A65DE1A7C3A7D00CAC637 /* WKNavigationResponseRef.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D3A65DC1A7C3A7D00CAC637 /* WKNavigationResponseRef.cpp */; };
@@ -654,7 +654,6 @@
 		2D819B9E18627EE9001F03D1 /* ViewGestureGeometryCollector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D819B99186275B3001F03D1 /* ViewGestureGeometryCollector.cpp */; };
 		2D819BA11862800E001F03D1 /* ViewGestureGeometryCollectorMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D819B9F1862800E001F03D1 /* ViewGestureGeometryCollectorMessageReceiver.cpp */; };
 		2D819BA21862800E001F03D1 /* ViewGestureGeometryCollectorMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D819BA01862800E001F03D1 /* ViewGestureGeometryCollectorMessages.h */; };
-		2D870D1016234FFE000A3F20 /* PDFPlugin.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D870D0E1622B7F9000A3F20 /* PDFPlugin.mm */; };
 		2D8710161828415D0018FA01 /* PlatformCALayerRemoteCustom.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D8710141828415D0018FA01 /* PlatformCALayerRemoteCustom.mm */; };
 		2D8710171828415D0018FA01 /* PlatformCALayerRemoteCustom.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D8710151828415D0018FA01 /* PlatformCALayerRemoteCustom.h */; };
 		2D87861D1BDB54BF00D02ABB /* _WKUserStyleSheet.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D87861B1BDB54BF00D02ABB /* _WKUserStyleSheet.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2780,8 +2779,8 @@
 		29AD3097164B4E210072DEA9 /* LegacyCustomProtocolManagerProxy.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = LegacyCustomProtocolManagerProxy.messages.in; path = CustomProtocols/LegacyCustomProtocolManagerProxy.messages.in; sourceTree = "<group>"; };
 		29CD55A8128E294F00133C85 /* WKAccessibilityWebPageObjectBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKAccessibilityWebPageObjectBase.h; sourceTree = "<group>"; };
 		29CD55A9128E294F00133C85 /* WKAccessibilityWebPageObjectBase.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKAccessibilityWebPageObjectBase.mm; sourceTree = "<group>"; };
-		2D0035221BC7414800DA8716 /* DeprecatedPDFPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DeprecatedPDFPlugin.h; path = PDF/DeprecatedPDFPlugin.h; sourceTree = "<group>"; };
-		2D0035231BC7414800DA8716 /* DeprecatedPDFPlugin.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = DeprecatedPDFPlugin.mm; path = PDF/DeprecatedPDFPlugin.mm; sourceTree = "<group>"; };
+		2D0035221BC7414800DA8716 /* PDFPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PDFPlugin.h; path = PDF/PDFPlugin.h; sourceTree = "<group>"; };
+		2D0035231BC7414800DA8716 /* PDFPlugin.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PDFPlugin.mm; path = PDF/PDFPlugin.mm; sourceTree = "<group>"; };
 		2D10875E1D2C573E00B85F82 /* LoadParameters.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LoadParameters.cpp; sourceTree = "<group>"; };
 		2D10875F1D2C573E00B85F82 /* LoadParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoadParameters.h; sourceTree = "<group>"; };
 		2D1087621D2C641B00B85F82 /* LoadParametersCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LoadParametersCocoa.mm; sourceTree = "<group>"; };
@@ -2801,10 +2800,9 @@
 		2D2ADF031636243500197E47 /* PDFPluginAnnotation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PDFPluginAnnotation.mm; path = PDF/PDFPluginAnnotation.mm; sourceTree = "<group>"; };
 		2D2ADF0516362DC700197E47 /* PDFPluginTextAnnotation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PDFPluginTextAnnotation.h; path = PDF/PDFPluginTextAnnotation.h; sourceTree = "<group>"; };
 		2D2ADF0616362DC700197E47 /* PDFPluginTextAnnotation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PDFPluginTextAnnotation.mm; path = PDF/PDFPluginTextAnnotation.mm; sourceTree = "<group>"; };
-		2D2ADF0C16363DEC00197E47 /* DeprecatedPDFLayerControllerSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = DeprecatedPDFLayerControllerSPI.h; path = PDF/DeprecatedPDFLayerControllerSPI.h; sourceTree = "<group>"; };
+		2D2ADF0C16363DEC00197E47 /* PDFLayerControllerSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = PDFLayerControllerSPI.h; path = PDF/PDFLayerControllerSPI.h; sourceTree = "<group>"; };
 		2D2ADF0D16364D8200197E47 /* PDFPluginChoiceAnnotation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PDFPluginChoiceAnnotation.h; path = PDF/PDFPluginChoiceAnnotation.h; sourceTree = "<group>"; };
 		2D2ADF0E16364D8200197E47 /* PDFPluginChoiceAnnotation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PDFPluginChoiceAnnotation.mm; path = PDF/PDFPluginChoiceAnnotation.mm; sourceTree = "<group>"; };
-		2D3494631BCC23BF0064F0BE /* PDFLayerControllerSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = PDFLayerControllerSPI.h; path = PDF/PDFLayerControllerSPI.h; sourceTree = "<group>"; };
 		2D3A65D81A7C3A1F00CAC637 /* WKNavigationActionRef.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKNavigationActionRef.cpp; sourceTree = "<group>"; };
 		2D3A65D91A7C3A1F00CAC637 /* WKNavigationActionRef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKNavigationActionRef.h; sourceTree = "<group>"; };
 		2D3A65DC1A7C3A7D00CAC637 /* WKNavigationResponseRef.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKNavigationResponseRef.cpp; sourceTree = "<group>"; };
@@ -2843,8 +2841,6 @@
 		2D819B9B186275B3001F03D1 /* ViewGestureGeometryCollector.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ViewGestureGeometryCollector.messages.in; sourceTree = "<group>"; };
 		2D819B9F1862800E001F03D1 /* ViewGestureGeometryCollectorMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ViewGestureGeometryCollectorMessageReceiver.cpp; sourceTree = "<group>"; };
 		2D819BA01862800E001F03D1 /* ViewGestureGeometryCollectorMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewGestureGeometryCollectorMessages.h; sourceTree = "<group>"; };
-		2D870D0D1622B7F9000A3F20 /* PDFPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PDFPlugin.h; path = PDF/PDFPlugin.h; sourceTree = "<group>"; };
-		2D870D0E1622B7F9000A3F20 /* PDFPlugin.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PDFPlugin.mm; path = PDF/PDFPlugin.mm; sourceTree = "<group>"; };
 		2D8710141828415D0018FA01 /* PlatformCALayerRemoteCustom.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PlatformCALayerRemoteCustom.mm; sourceTree = "<group>"; };
 		2D8710151828415D0018FA01 /* PlatformCALayerRemoteCustom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformCALayerRemoteCustom.h; sourceTree = "<group>"; };
 		2D87861B1BDB54BF00D02ABB /* _WKUserStyleSheet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKUserStyleSheet.h; sourceTree = "<group>"; };
@@ -7902,13 +7898,10 @@
 		E199875B142BF9CF00BB2DE7 /* PDF */ = {
 			isa = PBXGroup;
 			children = (
-				2D2ADF0C16363DEC00197E47 /* DeprecatedPDFLayerControllerSPI.h */,
-				2D0035221BC7414800DA8716 /* DeprecatedPDFPlugin.h */,
-				2D0035231BC7414800DA8716 /* DeprecatedPDFPlugin.mm */,
+				2D2ADF0C16363DEC00197E47 /* PDFLayerControllerSPI.h */,
+				2D0035221BC7414800DA8716 /* PDFPlugin.h */,
+				2D0035231BC7414800DA8716 /* PDFPlugin.mm */,
 				3574B37F1665932C00859BB7 /* PDFAnnotationTextWidgetDetails.h */,
-				2D3494631BCC23BF0064F0BE /* PDFLayerControllerSPI.h */,
-				2D870D0D1622B7F9000A3F20 /* PDFPlugin.h */,
-				2D870D0E1622B7F9000A3F20 /* PDFPlugin.mm */,
 				2D2ADF021636243500197E47 /* PDFPluginAnnotation.h */,
 				2D2ADF031636243500197E47 /* PDFPluginAnnotation.mm */,
 				2D2ADF0D16364D8200197E47 /* PDFPluginChoiceAnnotation.h */,
@@ -9711,7 +9704,7 @@
 				C55F91701C595F630029E92D /* DataDetectionResult.mm in Sources */,
 				1AC7537F183BE50F0072CB15 /* DataReference.cpp in Sources */,
 				BC032DA510F437D10058C15A /* Decoder.cpp in Sources */,
-				2D3494641BCC2EC30064F0BE /* DeprecatedPDFPlugin.mm in Sources */,
+				2D3494641BCC2EC30064F0BE /* PDFPlugin.mm in Sources */,
 				83891B6D1A68C30B0030F386 /* DiagnosticLoggingClient.mm in Sources */,
 				5C1427011C23F84C00D41183 /* Download.cpp in Sources */,
 				A1DF631218E0B7C8003A3E2A /* DownloadClient.mm in Sources */,
@@ -9891,7 +9884,6 @@
 				1AC7537B183A9FDB0072CB15 /* PageLoadState.cpp in Sources */,
 				C574A58212E66681002DFE98 /* PasteboardTypes.mm in Sources */,
 				E19582D6153CC05400B60875 /* PDFKitImports.mm in Sources */,
-				2D870D1016234FFE000A3F20 /* PDFPlugin.mm in Sources */,
 				2D2ADF0B16362DDB00197E47 /* PDFPluginAnnotation.mm in Sources */,
 				2D2ADF1016364D8200197E47 /* PDFPluginChoiceAnnotation.mm in Sources */,
 				2D429BFD1721E2C700EC681F /* PDFPluginPasswordField.mm in Sources */,

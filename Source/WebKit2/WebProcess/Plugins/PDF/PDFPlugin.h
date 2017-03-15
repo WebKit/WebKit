@@ -29,18 +29,12 @@
 #include "PDFKitImports.h"
 
 #if ENABLE(PDFKIT_PLUGIN)
-#if USE(DEPRECATED_PDF_PLUGIN)
-
-#include "DeprecatedPDFPlugin.h"
-
-#else // USE(DEPRECATED_PDF_PLUGIN)
 
 #include "Plugin.h"
 #include "WebEvent.h"
 #include "WebHitTestResultData.h"
 #include <WebCore/AffineTransform.h>
 #include <WebCore/FindOptions.h>
-#include <WebCore/PageOverlay.h>
 #include <WebCore/ScrollableArea.h>
 #include <wtf/RetainPtr.h>
 
@@ -74,7 +68,7 @@ class PDFPluginPasswordField;
 class PluginView;
 class WebFrame;
 
-class PDFPlugin final : public Plugin {
+class PDFPlugin final : public Plugin, private WebCore::ScrollableArea {
 public:
     static Ref<PDFPlugin> create(WebFrame*);
     ~PDFPlugin();
@@ -82,15 +76,18 @@ public:
     static WebCore::PluginInfo pluginInfo();
 
     WebCore::IntSize size() const { return m_size; }
-    float scaleFactor() const;
 
     void didMutatePDFDocument() { m_pdfDocumentWasMutated = true; }
 
+    void paintControlForLayerInContext(CALayer *, CGContextRef);
     void setActiveAnnotation(PDFAnnotation *);
-
+    
+    using ScrollableArea::notifyScrollPositionChanged;
+    void notifyContentScaleFactorChanged(CGFloat scaleFactor);
     void notifyDisplayModeChanged(int);
 
     void notifySelectionChanged(PDFSelection *);
+    void notifyCursorChanged(uint64_t /* PDFLayerControllerCursorType */);
 
     void clickedLink(NSURL *);
     void saveToPDF();
@@ -99,25 +96,13 @@ public:
     void showDefinitionForAttributedString(NSAttributedString *, CGPoint);
     void performWebSearch(NSString *);
     void performSpotlightSearch(NSString *);
-    void invalidatePDFRect(WebCore::IntRect);
-    void invalidateHUD();
-    void scrollToPoint(WebCore::IntPoint);
-
-    void zoomIn();
-    void zoomOut();
 
     void focusNextAnnotation();
     void focusPreviousAnnotation();
 
     void attemptToUnlockPDF(const String& password);
 
-    WebCore::IntPoint convertFromPluginToPDFView(const WebCore::IntPoint&) const;
-    WebCore::IntPoint convertFromRootViewToPlugin(const WebCore::IntPoint&) const;
-    WebCore::IntPoint convertFromPDFViewToRootView(const WebCore::IntPoint&) const;
-
-    WebCore::IntRect convertFromPDFViewToRootView(const WebCore::IntRect&) const;
     WebCore::FloatRect convertFromPDFViewToScreen(const WebCore::FloatRect&) const;
-
     WebCore::IntRect boundsOnScreen() const;
     
     bool showContextMenuAtPoint(const WebCore::IntPoint&);
@@ -125,10 +110,9 @@ public:
     String lookupTextAtLocation(const WebCore::FloatPoint&, WebHitTestResultData&, PDFSelection **, NSDictionary **) const;
     WebCore::FloatRect rectForSelectionInRootView(PDFSelection *) const;
 
-    PDFLayerController *pdfLayerController() const { return m_pdfLayerController.get(); }
-    WebFrame* webFrame() const { return m_frame; }
+    CGFloat scaleFactor() const;
 
-    bool isLocked() const;
+    bool shouldPlaceBlockDirectionScrollbarOnLeft() const override { return false; }
 
 private:
     explicit PDFPlugin(WebFrame*);
@@ -136,15 +120,15 @@ private:
     // Plugin functions.
     bool initialize(const Parameters&) override;
     void destroy() override;
-    void paint(WebCore::GraphicsContext&, const WebCore::IntRect& dirtyRectInWindowCoordinates) override;
-    void updateControlTints(WebCore::GraphicsContext&) override { }
-    bool supportsSnapshotting() const override { return false; }
+    void paint(WebCore::GraphicsContext&, const WebCore::IntRect& dirtyRectInWindowCoordinates) override { }
+    void updateControlTints(WebCore::GraphicsContext&) override;
+    bool supportsSnapshotting() const override { return true; }
     RefPtr<ShareableBitmap> snapshot() override;
-    PlatformLayer* pluginLayer() override { return nullptr; }
+    PlatformLayer* pluginLayer() override;
     bool isTransparent() override { return false; }
-    bool wantsWheelEvents() override { return false; }
+    bool wantsWheelEvents() override { return true; }
     void geometryDidChange(const WebCore::IntSize& pluginSize, const WebCore::IntRect& clipRect, const WebCore::AffineTransform& pluginToRootViewTransform) override;
-    void contentsScaleFactorChanged(float) override { }
+    void contentsScaleFactorChanged(float) override;
     void visibilityDidChange(bool) override { }
     void frameDidFinishLoading(uint64_t requestID) override;
     void frameDidFail(uint64_t requestID, bool wasCancelled) override;
@@ -159,31 +143,31 @@ private:
     void manualStreamDidFinishLoading() override;
     void manualStreamDidFail(bool wasCancelled) override;
     bool handleMouseEvent(const WebMouseEvent&) override;
-    bool handleWheelEvent(const WebWheelEvent&) override { return false; }
+    bool handleWheelEvent(const WebWheelEvent&) override;
     bool handleMouseEnterEvent(const WebMouseEvent&) override;
     bool handleMouseLeaveEvent(const WebMouseEvent&) override;
     bool handleContextMenuEvent(const WebMouseEvent&) override;
-    bool handleKeyboardEvent(const WebKeyboardEvent&) override { return false; }
+    bool handleKeyboardEvent(const WebKeyboardEvent&) override;
     bool handleEditingCommand(const String& commandName, const String& argument) override;
     bool isEditingCommandEnabled(const String&) override;
+    bool handlesPageScaleFactor() const override;
+    bool requiresUnifiedScaleFactor() const override { return true; }
     void setFocus(bool) override { }
-    NPObject* pluginScriptableNPObject() override { return nullptr; }
+    NPObject* pluginScriptableNPObject() override { return 0; }
     void windowFocusChanged(bool) override { }
     void windowAndViewFramesChanged(const WebCore::IntRect& windowFrameInScreenCoordinates, const WebCore::IntRect& viewFrameInWindowCoordinates) override { }
     void windowVisibilityChanged(bool) override { }
     uint64_t pluginComplexTextInputIdentifier() const override { return 0; }
     void sendComplexTextInput(const String& textInput) override { }
     void setLayerHostingMode(LayerHostingMode) override { }
-    WebCore::Scrollbar* horizontalScrollbar() override { return nullptr; }
-    WebCore::Scrollbar* verticalScrollbar() override { return nullptr; }
+    WebCore::Scrollbar* horizontalScrollbar() override { return m_horizontalScrollbar.get(); }
+    WebCore::Scrollbar* verticalScrollbar() override { return m_verticalScrollbar.get(); }
     void storageBlockingStateChanged(bool) override { }
     void privateBrowsingStateChanged(bool) override { }
     bool getFormValue(String& formValue) override { return false; }
-    bool handleScroll(WebCore::ScrollDirection, WebCore::ScrollGranularity) override { return false; }
+    bool handleScroll(WebCore::ScrollDirection, WebCore::ScrollGranularity) override;
     RefPtr<WebCore::SharedBuffer> liveResourceData() const override;
-
-    bool handlesPageScaleFactor() const override { return false; }
-    bool requiresUnifiedScaleFactor() const override { return true; }
+    void willDetatchRenderer() override;
 
     bool isBeingAsynchronouslyInitialized() const override { return false; }
 
@@ -203,20 +187,55 @@ private:
     bool shouldAllowScripting() override { return false; }
     bool shouldAllowNavigationFromDrags() override { return true; }
     bool shouldAlwaysAutoStart() const override { return true; }
-    bool canCreateTransientPaintingSnapshot() const override { return false; }
+
+    // ScrollableArea functions.
+    WebCore::IntRect scrollCornerRect() const override;
+    WebCore::ScrollableArea* enclosingScrollableArea() const override;
+    bool isScrollableOrRubberbandable() override { return true; }
+    bool hasScrollableOrRubberbandableAncestor() override { return true; }
+    WebCore::IntRect scrollableAreaBoundingBox(bool* = nullptr) const override;
+    void setScrollOffset(const WebCore::ScrollOffset&) override;
+    void invalidateScrollbarRect(WebCore::Scrollbar&, const WebCore::IntRect&) override;
+    void invalidateScrollCornerRect(const WebCore::IntRect&) override;
+    WebCore::IntPoint lastKnownMousePosition() const override { return m_lastMousePositionInPluginCoordinates; }
+    int scrollSize(WebCore::ScrollbarOrientation) const override;
+    bool isActive() const override;
+    bool isScrollCornerVisible() const override { return false; }
+    int scrollOffset(WebCore::ScrollbarOrientation) const override;
+    WebCore::ScrollPosition scrollPosition() const override;
+    WebCore::ScrollPosition minimumScrollPosition() const override;
+    WebCore::ScrollPosition maximumScrollPosition() const override;
+    WebCore::IntSize visibleSize() const override { return m_size; }
+    WebCore::IntSize contentsSize() const override { return m_pdfDocumentSize; }
+    WebCore::Scrollbar* horizontalScrollbar() const override { return m_horizontalScrollbar.get(); }
+    WebCore::Scrollbar* verticalScrollbar() const override { return m_verticalScrollbar.get(); }
+    bool shouldSuspendScrollAnimations() const override { return false; } // If we return true, ScrollAnimatorMac will keep cycling a timer forever, waiting for a good time to animate.
+    void scrollbarStyleChanged(WebCore::ScrollbarStyle, bool forceUpdate) override;
+    WebCore::IntRect convertFromScrollbarToContainingView(const WebCore::Scrollbar&, const WebCore::IntRect& scrollbarRect) const override;
+    WebCore::IntRect convertFromContainingViewToScrollbar(const WebCore::Scrollbar&, const WebCore::IntRect& parentRect) const override;
+    WebCore::IntPoint convertFromScrollbarToContainingView(const WebCore::Scrollbar&, const WebCore::IntPoint& scrollbarPoint) const override;
+    WebCore::IntPoint convertFromContainingViewToScrollbar(const WebCore::Scrollbar&, const WebCore::IntPoint& parentPoint) const override;
+    bool forceUpdateScrollbarsOnMainThreadForPerformanceTesting() const override;
 
     // PDFPlugin functions.
+    void updateScrollbars();
+    Ref<WebCore::Scrollbar> createScrollbar(WebCore::ScrollbarOrientation);
+    void destroyScrollbar(WebCore::ScrollbarOrientation);
     void pdfDocumentDidLoad();
     void addArchiveResource();
     void computePageBoxes();
     void calculateSizes();
-    void didCalculateSizes();
     void runScriptsInPDFDocument();
 
     NSEvent *nsEventForWebMouseEvent(const WebMouseEvent&);
-
+    WebCore::IntPoint convertFromPluginToPDFView(const WebCore::IntPoint&) const;
+    WebCore::IntPoint convertFromRootViewToPlugin(const WebCore::IntPoint&) const;
+    WebCore::IntPoint convertFromPDFViewToRootView(const WebCore::IntPoint&) const;
+    
     bool supportsForms();
     bool isFullFramePlugin() const;
+
+    void updatePageAndDeviceScaleFactors();
 
     void createPasswordEntryForm();
 
@@ -229,66 +248,51 @@ private:
     NSData *liveData() const;
     NSData *rawData() const { return (NSData *)m_data.get(); }
 
-    enum class UpdateCursor {
-        IfNeeded,
-        Force
+    WebFrame* webFrame() const { return m_frame; }
+
+#if __MAC_OS_X_VERSION_MIN_REQUIRED < 101300
+    enum UpdateCursorMode {
+        UpdateIfNeeded,
+        ForceUpdate
     };
 
-    enum class HitTestResult {
+    enum HitTestResult {
         None,
-        Text,
-        HUD
+        Text
     };
 
-    void updateCursor(const WebMouseEvent&, UpdateCursor = UpdateCursor::IfNeeded);
+    void updateCursor(const WebMouseEvent&, UpdateCursorMode = UpdateIfNeeded);
+#endif
 
     JSObjectRef makeJSPDFDoc(JSContextRef);
     static JSValueRef jsPDFDocPrint(JSContextRef, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
 
     void convertPostScriptDataIfNeeded();
 
+    // Regular plug-ins don't need access to view, but we add scrollbars to embedding FrameView for proper event handling.
     PluginView* pluginView();
     const PluginView* pluginView() const;
 
-    class HUD : public WebCore::PageOverlay::Client {
-    public:
-        explicit HUD(PDFPlugin& plugin);
-        virtual ~HUD();
-
-        void invalidate();
-        bool containsPointInRootView(WebCore::IntPoint);
-
-        enum class AnimateVisibilityTransition { No, Yes };
-        void setVisible(bool, AnimateVisibilityTransition);
-
-    private:
-        void willMoveToPage(WebCore::PageOverlay&, WebCore::Page*) override;
-        void didMoveToPage(WebCore::PageOverlay&, WebCore::Page*) override;
-        void drawRect(WebCore::PageOverlay&, WebCore::GraphicsContext&, const WebCore::IntRect& dirtyRect) override;
-        bool mouseEvent(WebCore::PageOverlay&, const WebCore::PlatformMouseEvent&) override;
-
-        WebCore::IntRect frameInRootView() const;
-
-        bool m_visible { false };
-        Ref<WebCore::PageOverlay> m_overlay;
-        PDFPlugin& m_plugin;
-    };
-
     WebFrame* m_frame;
 
-    bool m_isPostScript { false };
-    bool m_pdfDocumentWasMutated { false };
-    bool m_usingContinuousMode { true };
+    bool m_isPostScript;
+    bool m_pdfDocumentWasMutated;
 
+    WebCore::IntSize m_scrollOffset;
+
+    RetainPtr<CALayer> m_containerLayer;
+    RetainPtr<CALayer> m_contentLayer;
+    RetainPtr<CALayer> m_horizontalScrollbarLayer;
+    RetainPtr<CALayer> m_verticalScrollbarLayer;
+    RetainPtr<CALayer> m_scrollCornerLayer;
     RetainPtr<PDFLayerController> m_pdfLayerController;
     RetainPtr<WKPDFPluginAccessibilityObject> m_accessibilityObject;
-
+    
     RefPtr<PDFPluginAnnotation> m_activeAnnotation;
     RefPtr<PDFPluginPasswordField> m_passwordField;
-    RefPtr<WebCore::Element> m_passwordContainer;
+    RefPtr<WebCore::Element> m_annotationContainer;
 
     WebCore::AffineTransform m_rootViewToPluginTransform;
-    WebCore::AffineTransform m_pluginToRootViewTransform;
     WebMouseEvent m_lastMouseEvent;
     WebCore::IntPoint m_lastMousePositionInPluginCoordinates;
 
@@ -296,8 +300,10 @@ private:
 
     String m_lastFoundString;
 
+#if __MAC_OS_X_VERSION_MIN_REQUIRED < 101300
     HitTestResult m_lastHitTestResult;
-    
+#endif
+
     RetainPtr<WKPDFLayerControllerDelegate> m_pdfLayerControllerDelegate;
 
     WebCore::IntSize m_size;
@@ -308,16 +314,17 @@ private:
     RetainPtr<CFMutableDataRef> m_data;
 
     RetainPtr<PDFDocument> m_pdfDocument;
+    Vector<WebCore::IntRect> m_pageBoxes;
     WebCore::IntSize m_pdfDocumentSize; // All pages, including gaps.
 
-    HUD m_HUD;
+    RefPtr<WebCore::Scrollbar> m_horizontalScrollbar;
+    RefPtr<WebCore::Scrollbar> m_verticalScrollbar;
 };
 
 } // namespace WebKit
 
 SPECIALIZE_TYPE_TRAITS_PLUGIN(PDFPlugin, PDFPluginType)
 
-#endif // USE(DEPRECATED_PDF_PLUGIN)
 #endif // ENABLE(PDFKIT_PLUGIN)
 
 #endif // PDFPlugin_h

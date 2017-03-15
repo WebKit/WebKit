@@ -28,12 +28,6 @@
 
 #if PLATFORM(MAC)
 
-#if __has_include(<PDFKit/PDFLayerControllerVersioningPriv.h>)
-#import <PDFKit/PDFLayerControllerVersioningPriv.h>
-#endif
-
-#define USE_DEPRECATED_PDF_PLUGIN (!defined(PDFKIT_HAS_PDFLAYERCONTROLLER_2) || !PDFKIT_HAS_PDFLAYERCONTROLLER_2)
-
 namespace WebKit {
 
 NSString *pdfKitFrameworkPath();
