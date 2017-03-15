@@ -390,6 +390,7 @@ private:
         if (!thisObject)
             return throwVMTypeError(exec, scope);
         bool shouldThrow = thisObject->get(exec, PropertyName(Identifier::fromString(exec, "shouldThrow"))).toBoolean(exec);
+        RETURN_IF_EXCEPTION(scope, encodedJSValue());
         if (shouldThrow)
             return throwVMTypeError(exec, scope);
         return JSValue::encode(jsNumber(100));
@@ -1594,6 +1595,7 @@ JSInternalPromise* GlobalObject::moduleLoaderResolve(JSGlobalObject* globalObjec
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
     JSInternalPromiseDeferred* deferred = JSInternalPromiseDeferred::create(exec, globalObject);
+    RELEASE_ASSERT(!scope.exception());
     const Identifier key = keyValue.toPropertyKey(exec);
     if (UNLIKELY(scope.exception())) {
         JSValue exception = scope.exception();
@@ -1629,7 +1631,9 @@ JSInternalPromise* GlobalObject::moduleLoaderResolve(JSGlobalObject* globalObjec
     auto directoryName = extractDirectoryName(referrer.impl());
     if (!directoryName)
         return deferred->reject(exec, createError(exec, makeString("Could not resolve the referrer name '", String(referrer.impl()), "'.")));
-    return deferred->resolve(exec, jsString(exec, resolvePath(directoryName.value(), ModuleName(key.impl()))));
+    auto result = deferred->resolve(exec, jsString(exec, resolvePath(directoryName.value(), ModuleName(key.impl()))));
+    RELEASE_ASSERT(!scope.exception());
+    return result;
 }
 
 static void convertShebangToJSComment(Vector<char>& buffer)
@@ -1717,7 +1721,9 @@ JSInternalPromise* GlobalObject::moduleLoaderFetch(JSGlobalObject* globalObject,
     if (!fetchModuleFromLocalFileSystem(moduleKey, utf8))
         return deferred->reject(exec, createError(exec, makeString("Could not open file '", moduleKey, "'.")));
 
-    return deferred->resolve(exec, JSSourceCode::create(exec->vm(), makeSource(stringFromUTF(utf8), SourceOrigin { moduleKey }, moduleKey, TextPosition(), SourceProviderSourceType::Module)));
+    auto result = deferred->resolve(exec, JSSourceCode::create(exec->vm(), makeSource(stringFromUTF(utf8), SourceOrigin { moduleKey }, moduleKey, TextPosition(), SourceProviderSourceType::Module)));
+    RELEASE_ASSERT(!scope.exception());
+    return result;
 }
 
 
@@ -2094,8 +2100,11 @@ EncodedJSValue JSC_HOST_CALL functionRun(ExecState* exec)
     GlobalObject* globalObject = GlobalObject::create(vm, GlobalObject::createStructure(vm, jsNull()), Vector<String>());
 
     JSArray* array = constructEmptyArray(globalObject->globalExec(), 0);
-    for (unsigned i = 1; i < exec->argumentCount(); ++i)
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    for (unsigned i = 1; i < exec->argumentCount(); ++i) {
         array->putDirectIndex(globalObject->globalExec(), i - 1, exec->uncheckedArgument(i));
+        RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    }
     globalObject->putDirect(
         vm, Identifier::fromString(globalObject->globalExec(), "arguments"), array);
 
@@ -2124,8 +2133,11 @@ EncodedJSValue JSC_HOST_CALL functionRunString(ExecState* exec)
     GlobalObject* globalObject = GlobalObject::create(vm, GlobalObject::createStructure(vm, jsNull()), Vector<String>());
 
     JSArray* array = constructEmptyArray(globalObject->globalExec(), 0);
-    for (unsigned i = 1; i < exec->argumentCount(); ++i)
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    for (unsigned i = 1; i < exec->argumentCount(); ++i) {
         array->putDirectIndex(globalObject->globalExec(), i - 1, exec->uncheckedArgument(i));
+        RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    }
     globalObject->putDirect(
         vm, Identifier::fromString(globalObject->globalExec(), "arguments"), array);
 
@@ -2917,6 +2929,7 @@ EncodedJSValue JSC_HOST_CALL functionLoadModule(ExecState* exec)
     });
 
     promise->then(exec, nullptr, errorHandler);
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
     vm.drainMicrotasks();
     if (error)
         return JSValue::encode(throwException(exec, scope, error));
@@ -2959,6 +2972,7 @@ EncodedJSValue JSC_HOST_CALL functionCheckModuleSyntax(ExecState* exec)
 
     ParserError error;
     bool validSyntax = checkModuleSyntax(exec, makeSource(source, { }, String(), TextPosition(), SourceProviderSourceType::Module), error);
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
     stopWatch.stop();
 
     if (!validSyntax)
@@ -3051,9 +3065,12 @@ static CString valueWithTypeOfWasmValue(ExecState* exec, VM& vm, JSValue value, 
 
 static JSValue box(ExecState* exec, VM& vm, JSValue wasmValue)
 {
+    auto scope = DECLARE_CATCH_SCOPE(vm);
 
     JSString* type = asString(wasmValue.get(exec, makeIdentifier(vm, "type")));
+    ASSERT_UNUSED(scope, !scope.exception());
     JSValue value = wasmValue.get(exec, makeIdentifier(vm, "value"));
+    ASSERT(!scope.exception());
 
     auto unboxString = [&] (const char* hexFormat, const char* decFormat, auto& result) {
         if (!value.isString())
@@ -3308,10 +3325,14 @@ static void dumpException(GlobalObject* globalObject, JSValue exception)
     printf("Exception: %s\n", exception.toWTFString(globalObject->globalExec()).utf8().data());
 
     Identifier nameID = Identifier::fromString(globalObject->globalExec(), "name");
+    CHECK_EXCEPTION();
     Identifier fileNameID = Identifier::fromString(globalObject->globalExec(), "sourceURL");
+    CHECK_EXCEPTION();
     Identifier lineNumberID = Identifier::fromString(globalObject->globalExec(), "line");
+    CHECK_EXCEPTION();
     Identifier stackID = Identifier::fromString(globalObject->globalExec(), "stack");
-    
+    CHECK_EXCEPTION();
+
     JSValue nameValue = exception.get(globalObject->globalExec(), nameID);
     CHECK_EXCEPTION();
     JSValue fileNameValue = exception.get(globalObject->globalExec(), fileNameID);
@@ -3404,9 +3425,10 @@ static bool runWithScripts(GlobalObject* globalObject, const Vector<Script>& scr
             if (scripts[i].strictMode == Script::StrictMode::Strict)
                 scriptBuffer.append("\"use strict\";\n", strlen("\"use strict\";\n"));
 
-            if (isModule)
+            if (isModule) {
                 promise = loadAndEvaluateModule(globalObject->globalExec(), fileName);
-            else {
+                RELEASE_ASSERT(!scope.exception());
+            } else {
                 if (!fetchScriptFromLocalFileSystem(fileName, scriptBuffer))
                     return false; // fail early so we can catch missing files
             }
@@ -3434,6 +3456,7 @@ static bool runWithScripts(GlobalObject* globalObject, const Vector<Script>& scr
             });
 
             promise->then(globalObject->globalExec(), fulfillHandler, rejectHandler);
+            RELEASE_ASSERT(!scope.exception());
             vm.drainMicrotasks();
         } else {
             NakedPtr<Exception> evaluationException;

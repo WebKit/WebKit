@@ -1,5 +1,30 @@
 2017-03-15  Mark Lam  <mark.lam@apple.com>
 
+        Fix exception scope verification failures in jsc.cpp.
+        https://bugs.webkit.org/show_bug.cgi?id=164968
+
+        Reviewed by Saam Barati.
+
+        * jsc.cpp:
+        (WTF::CustomGetter::customGetter):
+
+        (GlobalObject::moduleLoaderResolve):
+        (GlobalObject::moduleLoaderFetch):
+        - The only way modules would throw an exception is if we encounter an OutOfMemory
+          error.  This should be extremely rare.  At this point, I don't think it's worth
+          doing the dance to propagate the exception when this happens.  Instead, we'll
+          simply do a RELEASE_ASSERT that we don't see any exceptions here.
+
+        (functionRun):
+        (functionRunString):
+        (functionLoadModule):
+        (functionCheckModuleSyntax):
+        (box):
+        (dumpException):
+        (runWithScripts):
+
+2017-03-15  Mark Lam  <mark.lam@apple.com>
+
         Fix missing exception checks in Interpreter.cpp.
         https://bugs.webkit.org/show_bug.cgi?id=164964
 
