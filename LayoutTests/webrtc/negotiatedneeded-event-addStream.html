@@ -26,6 +26,23 @@ promise_test((test) => {
         });
     });
 }, "on negotiation needed in case of adding a stream");
+
+promise_test((test) => {
+    if (window.testRunner)
+        testRunner.setUserMediaPermission(true);
+
+    return navigator.mediaDevices.getUserMedia({ video: true}).then((stream) => {
+        return new Promise((resolve, reject) => {
+            if (window.internals)
+                internals.useMockRTCPeerConnectionFactory("OneRealPeerConnection");
+            var pc = new RTCPeerConnection();
+            pc.onnegotiationneeded = () => { reject(); };
+            pc.addStream(stream);
+            pc.close();
+            setTimeout(resolve, 500);
+        });
+    });
+}, "on negotiation needed not called if pc is closed");
         </script>
     </body>
 </html>

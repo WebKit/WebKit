@@ -477,33 +477,35 @@ void RTCPeerConnection::setSignalingState(SignalingState newState)
 
 void RTCPeerConnection::updateIceGatheringState(IceGatheringState newState)
 {
-    scriptExecutionContext()->postTask([=](ScriptExecutionContext&) {
-        if (m_signalingState == SignalingState::Closed || m_iceGatheringState == newState)
+    scriptExecutionContext()->postTask([protectedThis = makeRef(*this), newState](ScriptExecutionContext&) {
+        if (protectedThis->m_signalingState == SignalingState::Closed || protectedThis->m_iceGatheringState == newState)
             return;
 
-        m_iceGatheringState = newState;
-        dispatchEvent(Event::create(eventNames().icegatheringstatechangeEvent, false, false));
+        protectedThis->m_iceGatheringState = newState;
+        protectedThis->dispatchEvent(Event::create(eventNames().icegatheringstatechangeEvent, false, false));
     });
 }
 
 void RTCPeerConnection::updateIceConnectionState(IceConnectionState newState)
 {
-    scriptExecutionContext()->postTask([=](ScriptExecutionContext&) {
-        if (m_signalingState == SignalingState::Closed || m_iceConnectionState == newState)
+    scriptExecutionContext()->postTask([protectedThis = makeRef(*this), newState](ScriptExecutionContext&) {
+        if (protectedThis->m_signalingState == SignalingState::Closed || protectedThis->m_iceConnectionState == newState)
             return;
 
-        m_iceConnectionState = newState;
-        dispatchEvent(Event::create(eventNames().iceconnectionstatechangeEvent, false, false));
+        protectedThis->m_iceConnectionState = newState;
+        protectedThis->dispatchEvent(Event::create(eventNames().iceconnectionstatechangeEvent, false, false));
     });
 }
 
 void RTCPeerConnection::scheduleNegotiationNeededEvent()
 {
-    scriptExecutionContext()->postTask([=](ScriptExecutionContext&) {
-        if (m_backend->isNegotiationNeeded()) {
-            m_backend->clearNegotiationNeededState();
-            dispatchEvent(Event::create(eventNames().negotiationneededEvent, false, false));
-        }
+    scriptExecutionContext()->postTask([protectedThis = makeRef(*this)](ScriptExecutionContext&) {
+        if (protectedThis->m_signalingState == SignalingState::Closed)
+            return;
+        if (!protectedThis->m_backend->isNegotiationNeeded())
+            return;
+        protectedThis->m_backend->clearNegotiationNeededState();
+        protectedThis->dispatchEvent(Event::create(eventNames().negotiationneededEvent, false, false));
     });
 }
 

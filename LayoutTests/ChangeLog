@@ -1,3 +1,13 @@
+2017-03-15  Youenn Fablet  <youenn@apple.com>
+
+        Preventive clean-up: ensure RTCPeerConnection stays valid when calling postTask
+        https://bugs.webkit.org/show_bug.cgi?id=169661
+
+        Reviewed by Alex Christensen.
+
+        * webrtc/negotiatedneeded-event-addStream-expected.txt:
+        * webrtc/negotiatedneeded-event-addStream.html:
+
 2017-03-14  Ryan Haddad  <ryanhaddad@apple.com>
 
         Mark media/modern-media-controls/volume-down-support/volume-down-support.html as flaky.
