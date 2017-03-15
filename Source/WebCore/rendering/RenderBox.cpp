@@ -3149,7 +3149,7 @@ LayoutUnit RenderBox::computeReplacedLogicalWidthUsing(SizeType widthType, Lengt
     return 0;
 }
 
-LayoutUnit RenderBox::computeReplacedLogicalHeight() const
+LayoutUnit RenderBox::computeReplacedLogicalHeight(std::optional<LayoutUnit>) const
 {
     return computeReplacedLogicalHeightRespectingMinMaxHeight(computeReplacedLogicalHeightUsing(MainOrPreferredSize, style().logicalHeight()));
 }

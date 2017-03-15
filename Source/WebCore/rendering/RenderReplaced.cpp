@@ -408,6 +408,25 @@ void RenderReplaced::computeIntrinsicRatioInformation(FloatSize& intrinsicSize, 
     intrinsicRatio = intrinsicSize.width() / intrinsicSize.height();
 }
 
+LayoutUnit RenderReplaced::computeConstrainedLogicalWidth(ShouldComputePreferred shouldComputePreferred) const
+{
+    if (shouldComputePreferred == ComputePreferred)
+        return computeReplacedLogicalWidthRespectingMinMaxWidth(LayoutUnit(), ComputePreferred);
+
+    // The aforementioned 'constraint equation' used for block-level, non-replaced
+    // elements in normal flow:
+    // 'margin-left' + 'border-left-width' + 'padding-left' + 'width' +
+    // 'padding-right' + 'border-right-width' + 'margin-right' = width of
+    // containing block
+    LayoutUnit logicalWidth = containingBlock()->availableLogicalWidth();
+    
+    // This solves above equation for 'width' (== logicalWidth).
+    LayoutUnit marginStart = minimumValueForLength(style().marginStart(), logicalWidth);
+    LayoutUnit marginEnd = minimumValueForLength(style().marginEnd(), logicalWidth);
+    logicalWidth = std::max(LayoutUnit(), (logicalWidth - (marginStart + marginEnd + (size().width() - clientWidth()))));
+    return computeReplacedLogicalWidthRespectingMinMaxWidth(logicalWidth, shouldComputePreferred);
+}
+
 LayoutUnit RenderReplaced::computeReplacedLogicalWidth(ShouldComputePreferred shouldComputePreferred) const
 {
     if (style().logicalWidth().isSpecified() || style().logicalWidth().isIntrinsic())
@@ -421,7 +440,7 @@ LayoutUnit RenderReplaced::computeReplacedLogicalWidth(ShouldComputePreferred sh
     computeAspectRatioInformationForRenderBox(contentRenderer, constrainedSize, intrinsicRatio);
 
     if (style().logicalWidth().isAuto()) {
-        bool computedHeightIsAuto = hasAutoHeightOrContainingBlockWithAutoHeight();
+        bool computedHeightIsAuto = style().logicalHeight().isAuto();
         bool hasIntrinsicWidth = constrainedSize.width() > 0;
 
         // If 'height' and 'width' both have computed values of 'auto' and the element also has an intrinsic width, then that intrinsic width is the used value of 'width'.
@@ -434,30 +453,21 @@ LayoutUnit RenderReplaced::computeReplacedLogicalWidth(ShouldComputePreferred sh
             // or if 'width' has a computed value of 'auto', 'height' has some other computed value, and the element does have an intrinsic ratio; then the used value
             // of 'width' is: (used height) * (intrinsic ratio)
             if (intrinsicRatio && ((computedHeightIsAuto && !hasIntrinsicWidth && hasIntrinsicHeight) || !computedHeightIsAuto)) {
-                LayoutUnit logicalHeight = computeReplacedLogicalHeight();
+                LayoutUnit estimatedUsedWidth = hasIntrinsicWidth ? LayoutUnit(constrainedSize.width()) : computeConstrainedLogicalWidth(shouldComputePreferred);
+                LayoutUnit logicalHeight = computeReplacedLogicalHeight(std::optional<LayoutUnit>(estimatedUsedWidth));
                 return computeReplacedLogicalWidthRespectingMinMaxWidth(roundToInt(round(logicalHeight * intrinsicRatio)), shouldComputePreferred);
             }
 
-            // If 'height' and 'width' both have computed values of 'auto' and the element has an intrinsic ratio but no intrinsic height or width, then the used value of
-            // 'width' is undefined in CSS 2.1. However, it is suggested that, if the containing block's width does not itself depend on the replaced element's width, then
-            // the used value of 'width' is calculated from the constraint equation used for block-level, non-replaced elements in normal flow.
-            if (computedHeightIsAuto && !hasIntrinsicWidth && !hasIntrinsicHeight) {
-                // The aforementioned 'constraint equation' used for block-level, non-replaced elements in normal flow:
-                // 'margin-left' + 'border-left-width' + 'padding-left' + 'width' + 'padding-right' + 'border-right-width' + 'margin-right' = width of containing block
-                LayoutUnit logicalWidth;
-                if (auto* blockWithWidth = firstContainingBlockWithLogicalWidth(this)) {
-                    logicalWidth = blockWithWidth->computeReplacedLogicalWidthUsing(MainOrPreferredSize, blockWithWidth->style().logicalWidth());
-                    if (!blockWithWidth->style().logicalMaxWidth().isMaxContent() && !blockWithWidth->style().logicalMinWidth().isMinContent())
-                        logicalWidth = blockWithWidth->computeReplacedLogicalWidthRespectingMinMaxWidth(logicalWidth, shouldComputePreferred);
-                } else
-                    logicalWidth = containingBlock()->availableLogicalWidth();
-
-                // This solves above equation for 'width' (== logicalWidth).
-                LayoutUnit marginStart = minimumValueForLength(style().marginStart(), logicalWidth);
-                LayoutUnit marginEnd = minimumValueForLength(style().marginEnd(), logicalWidth);
-                logicalWidth = std::max<LayoutUnit>(0, logicalWidth - (marginStart + marginEnd + (width() - clientWidth())));
-                return computeReplacedLogicalWidthRespectingMinMaxWidth(logicalWidth, shouldComputePreferred);
-            }
+            
+            // If 'height' and 'width' both have computed values of 'auto' and the
+            // element has an intrinsic ratio but no intrinsic height or width, then
+            // the used value of 'width' is undefined in CSS 2.1. However, it is
+            // suggested that, if the containing block's width does not itself depend
+            // on the replaced element's width, then the used value of 'width' is
+            // calculated from the constraint equation used for block-level,
+            // non-replaced elements in normal flow.
+            if (computedHeightIsAuto && !hasIntrinsicWidth && !hasIntrinsicHeight)
+                return computeConstrainedLogicalWidth(shouldComputePreferred);
         }
 
         // Otherwise, if 'width' has a computed value of 'auto', and the element has an intrinsic width, then that intrinsic width is the used value of 'width'.
@@ -474,7 +484,7 @@ LayoutUnit RenderReplaced::computeReplacedLogicalWidth(ShouldComputePreferred sh
     return computeReplacedLogicalWidthRespectingMinMaxWidth(intrinsicLogicalWidth(), shouldComputePreferred);
 }
 
-LayoutUnit RenderReplaced::computeReplacedLogicalHeight() const
+LayoutUnit RenderReplaced::computeReplacedLogicalHeight(std::optional<LayoutUnit> estimatedUsedWidth) const
 {
     // 10.5 Content height: the 'height' property: http://www.w3.org/TR/CSS21/visudet.html#propdef-height
     if (hasReplacedLogicalHeight())
@@ -496,8 +506,10 @@ LayoutUnit RenderReplaced::computeReplacedLogicalHeight() const
 
     // Otherwise, if 'height' has a computed value of 'auto', and the element has an intrinsic ratio then the used value of 'height' is:
     // (used width) / (intrinsic ratio)
-    if (intrinsicRatio)
-        return computeReplacedLogicalHeightRespectingMinMaxHeight(roundToInt(round(availableLogicalWidth() / intrinsicRatio)));
+    if (intrinsicRatio) {
+        LayoutUnit usedWidth = estimatedUsedWidth ? estimatedUsedWidth.value() : availableLogicalWidth();
+        return computeReplacedLogicalHeightRespectingMinMaxHeight(roundToInt(round(usedWidth / intrinsicRatio)));
+    }
 
     // Otherwise, if 'height' has a computed value of 'auto', and the element has an intrinsic height, then that intrinsic height is the used value of 'height'.
     if (hasIntrinsicHeight)

@@ -71,7 +71,6 @@ private:
     void layout() final;
 
     LayoutUnit computeReplacedLogicalWidth(ShouldComputePreferred  = ComputeActual) const final;
-    LayoutUnit computeReplacedLogicalHeight() const final;
     LayoutUnit minimumReplacedHeight() const final;
 
 #if ENABLE(FULLSCREEN_API)

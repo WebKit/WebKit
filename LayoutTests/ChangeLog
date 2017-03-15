@@ -1,3 +1,14 @@
+2017-03-15  Dave Hyatt  <hyatt@apple.com>
+
+        Positioned SVG not sized correctly
+        https://bugs.webkit.org/show_bug.cgi?id=169693
+        <rdar://problem/30996893>
+
+        Reviewed by Zalan Bujtas.
+
+        * svg/in-html/rect-positioned-expected.html: Added.
+        * svg/in-html/rect-positioned.html: Added.
+
 2017-03-15  Ryan Haddad  <ryanhaddad@apple.com>
 
         Clean up TestExpectations for some WPT LayoutTests.

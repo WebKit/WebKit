@@ -245,11 +245,6 @@ LayoutUnit RenderVideo::computeReplacedLogicalWidth(ShouldComputePreferred shoul
     return RenderReplaced::computeReplacedLogicalWidth(shouldComputePreferred);
 }
 
-LayoutUnit RenderVideo::computeReplacedLogicalHeight() const
-{
-    return RenderReplaced::computeReplacedLogicalHeight();
-}
-
 LayoutUnit RenderVideo::minimumReplacedHeight() const 
 {
     return RenderReplaced::minimumReplacedHeight(); 
