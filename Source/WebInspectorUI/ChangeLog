@@ -1,3 +1,43 @@
+2017-03-15  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: REGRESSION: Elements Tab > Node Details Sidebar > Properties Section is spammed with TypeErrors
+        https://bugs.webkit.org/show_bug.cgi?id=153911
+        <rdar://problem/24520098>
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Views/DOMNodeDetailsSidebarPanel.js:
+        (WebInspector.DOMNodeDetailsSidebarPanel.prototype._refreshProperties.nodeResolved.inspectedPage_node_collectPrototypes):
+        (WebInspector.DOMNodeDetailsSidebarPanel.prototype._refreshProperties.nodeResolved):
+        Update due to naming conventions for code that evalutes in the inspected page.
+
+        (WebInspector.DOMNodeDetailsSidebarPanel.prototype._refreshProperties.fillSection):
+        (WebInspector.DOMNodeDetailsSidebarPanel.prototype._refreshProperties):
+        Create a more complete ObjectTreeView for the different sections.
+
+        * UserInterface/Views/ObjectTreePropertyTreeElement.js:
+        (WebInspector.ObjectTreePropertyTreeElement.prototype._updateChildren):
+        PureAPI behaves the same as ClassAPI and just shows own properties.
+
+        * UserInterface/Views/ObjectTreeView.js:
+        (WebInspector.ObjectTreeView.prototype.showOnlyProperties):
+        In only properties mode don't show the Prototype expander at the end.
+
+        (WebInspector.ObjectTreeView.prototype.setPrototypeNameOverride):
+        Allow a prototype name override at the top level. This will allow clients
+        to specify that the object at the top level is a Prototype object, so that
+        ObjectTreePropertyTreeElements can infer the right NativeFunctionParameter
+        information knowing that those properties are on a particular prototype.
+
+        (WebInspector.ObjectTreeView.prototype.update):
+        For the PureAPI use getOwnProperties instead of getDisplayableProperties.
+        This avoids the special handling we have for DOM native properties which
+        we bubble up to the top as value descriptors even though they are actually
+        accessor descriptors on prototypes.
+
+        (WebInspector.ObjectTreeView.prototype._updateProperties):
+        Pass the prototype name override onward for object properties.
+
 2017-03-14  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Exception when fetching computed styles can break future updates of section

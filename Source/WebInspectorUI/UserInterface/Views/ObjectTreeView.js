@@ -39,6 +39,7 @@ WebInspector.ObjectTreeView = class ObjectTreeView extends WebInspector.Object
         this._propertyPath = propertyPath || new WebInspector.PropertyPath(this._object, "this");
         this._expanded = false;
         this._hasLosslessPreview = false;
+        this._includeProtoProperty = true;
 
         // If ObjectTree is used outside of the console, we do not know when to release
         // WeakMap entries. Currently collapse would work. For the console, we can just
@@ -216,6 +217,8 @@ WebInspector.ObjectTreeView = class ObjectTreeView extends WebInspector.Object
         this._inConsole = false;
 
         this._element.classList.add("properties-only");
+
+        this._includeProtoProperty = false;
     }
 
     appendTitleSuffix(suffixElement)
@@ -234,6 +237,11 @@ WebInspector.ObjectTreeView = class ObjectTreeView extends WebInspector.Object
         this._extraProperties.push(propertyDescriptor);
     }
 
+    setPrototypeNameOverride(override)
+    {
+        this._prototypeNameOverride = override;
+    }
+
     // Protected
 
     update()
@@ -242,6 +250,8 @@ WebInspector.ObjectTreeView = class ObjectTreeView extends WebInspector.Object
             this._object.getCollectionEntries(0, 100, this._updateChildren.bind(this, this._updateEntries));
         else if (this._object.isClass())
             this._object.classPrototype.getDisplayablePropertyDescriptors(this._updateChildren.bind(this, this._updateProperties));
+        else if (this._mode === WebInspector.ObjectTreeView.Mode.PureAPI)
+            this._object.getOwnPropertyDescriptors(this._updateChildren.bind(this, this._updateProperties));
         else
             this._object.getDisplayablePropertyDescriptors(this._updateChildren.bind(this, this._updateProperties));
     }
@@ -297,21 +307,23 @@ WebInspector.ObjectTreeView = class ObjectTreeView extends WebInspector.Object
 
         var hadProto = false;
         for (var propertyDescriptor of properties) {
-            // COMPATIBILITY (iOS 8): Sometimes __proto__ is not a value, but a get/set property.
-            // In those cases it is actually not useful to show.
-            if (propertyDescriptor.name === "__proto__" && !propertyDescriptor.hasValue())
-                continue;
+            if (propertyDescriptor.name === "__proto__") {
+                // COMPATIBILITY (iOS 8): Sometimes __proto__ is not a value, but a get/set property.
+                // In those cases it is actually not useful to show.
+                if (!propertyDescriptor.hasValue())
+                    continue;
+                if (!this._includeProtoProperty)
+                    continue;
+                hadProto = true;
+            }
 
             if (isArray && isPropertyMode) {
                 if (propertyDescriptor.isIndexProperty())
                     this._outline.appendChild(new WebInspector.ObjectTreeArrayIndexTreeElement(propertyDescriptor, propertyPath));
                 else if (propertyDescriptor.name === "__proto__")
-                    this._outline.appendChild(new WebInspector.ObjectTreePropertyTreeElement(propertyDescriptor, propertyPath, this._mode));
+                    this._outline.appendChild(new WebInspector.ObjectTreePropertyTreeElement(propertyDescriptor, propertyPath, this._mode, this._prototypeNameOverride));
             } else
-                this._outline.appendChild(new WebInspector.ObjectTreePropertyTreeElement(propertyDescriptor, propertyPath, this._mode));
-
-            if (propertyDescriptor.name === "__proto__")
-                hadProto = true;
+                this._outline.appendChild(new WebInspector.ObjectTreePropertyTreeElement(propertyDescriptor, propertyPath, this._mode, this._prototypeNameOverride));
         }
 
         if (!this._outline.children.length || (hadProto && this._outline.children.length === 1)) {
@@ -376,6 +388,7 @@ WebInspector.ObjectTreeView.Mode = {
     Properties: Symbol("object-tree-properties"),      // Properties
     PrototypeAPI: Symbol("object-tree-prototype-api"), // API view on a live object instance, so getters can be invoked.
     ClassAPI: Symbol("object-tree-class-api"),         // API view without an object instance, can not invoke getters.
+    PureAPI: Symbol("object-tree-pure-api"),           // API view without special displayable property handling, just own properties. Getters can be invoked if the property path has a non-prototype object.
 };
 
 WebInspector.ObjectTreeView.Event = {
