@@ -517,7 +517,7 @@ enum EventThrottlingBehavior {
 
     [Conditional=WEBGL] void simulateWebGLContextChanged(WebGLRenderingContextBase context);
 
-    void observeMediaStreamTrack(MediaStreamTrack track);
-    readonly attribute unsigned long trackAudioSampleCount;
-    readonly attribute unsigned long trackVideoSampleCount;
+    [Conditional=MEDIA_STREAM] void observeMediaStreamTrack(MediaStreamTrack track);
+    [Conditional=MEDIA_STREAM] readonly attribute unsigned long trackAudioSampleCount;
+    [Conditional=MEDIA_STREAM] readonly attribute unsigned long trackVideoSampleCount;
 };

@@ -377,8 +377,10 @@ Ref<Internals> Internals::create(Document& document)
 
 Internals::~Internals()
 {
+#if ENABLE(MEDIA_STREAM)
     if (m_track)
         m_track->source().removeObserver(*this);
+#endif
 }
 
 void Internals::resetToConsistentState(Page& page)
@@ -3828,10 +3830,12 @@ void Internals::simulateWebGLContextChanged(WebGLRenderingContextBase& context)
 #endif
 
 
+#if ENABLE(MEDIA_STREAM)
 void Internals::observeMediaStreamTrack(MediaStreamTrack& track)
 {
     m_track = &track;
     m_track->source().addObserver(*this);
 }
+#endif
 
 } // namespace WebCore
