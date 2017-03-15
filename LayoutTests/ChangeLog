@@ -1,3 +1,16 @@
+2017-03-15  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] Using the arrow keys to navigate in the tracks menu also scrolls the page
+        https://bugs.webkit.org/show_bug.cgi?id=169671
+        <rdar://problem/31060091>
+
+        Reviewed by Eric Carlson.
+
+        Add a test that checks that preventDefault() is called on "keydown" events that we know to handle.
+
+        * media/modern-media-controls/tracks-panel/tracks-panel-prevent-default-on-keydown-expected.txt: Added.
+        * media/modern-media-controls/tracks-panel/tracks-panel-prevent-default-on-keydown.html: Added.
+
 2017-03-15  Jonathan Bedard  <jbedard@apple.com>
 
         Remove TestExpectations.orig after r213882

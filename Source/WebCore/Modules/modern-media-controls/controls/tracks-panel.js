@@ -225,7 +225,13 @@ class TracksPanel extends LayoutNode
         case "Escape":
             this._dismiss();
             break;
+        default:
+            return;
         }
+
+        // Ensure that we don't let the browser react to a key code we handled,
+        // for instance scrolling the page if we handled an arrow key.
+        event.preventDefault();
     }
 
     _dismiss()

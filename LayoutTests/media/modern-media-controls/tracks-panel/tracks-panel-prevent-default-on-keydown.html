@@ -1,0 +1,40 @@
+<script src="../../../resources/js-test-pre.js"></script>
+<script src="../resources/media-controls-loader.js" type="text/javascript"></script>
+<body style="height: 3000px">
+<script type="text/javascript">
+
+window.jsTestIsAsync = true;
+
+description("Testing a <code>TracksPanel</code> calls preventDefault() on events it handles.");
+
+const mediaControls = new MacOSInlineMediaControls({ width: 680, height: 300 });
+document.body.appendChild(mediaControls.element);
+
+debug("mediaControls.showTracksPanel()");
+mediaControls.showTracksPanel();
+
+scheduler.frameDidFire = function()
+{
+    window.requestAnimationFrame(() => {
+        debug("");
+        debug("Pressing the ArrowDown key");
+        eventSender.keyDown("ArrowDown");
+        debug("Pressing the ArrowRight key");
+        eventSender.keyDown("ArrowRight");
+        debug("");
+        mediaControls.element.remove();
+        finishJSTest();
+    });
+    scheduler.frameDidFire = null;
+}
+
+document.body.addEventListener("keydown", event => {
+    if (event.key === "ArrowRight")
+        shouldBeFalse("event.defaultPrevented");
+    else if (event.key === "ArrowDown")
+        shouldBeTrue("event.defaultPrevented");
+});
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
