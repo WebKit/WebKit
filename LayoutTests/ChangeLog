@@ -1,3 +1,11 @@
+2017-03-15  Jonathan Bedard  <jbedard@apple.com>
+
+        Remove TestExpectations.orig after r213882
+
+        Unreviewed, removing file committed by mistake.
+
+        * TestExpectations.orig: Removed.
+
 2017-03-15  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] Tracks menu overlaps controls bar in fullscreen
