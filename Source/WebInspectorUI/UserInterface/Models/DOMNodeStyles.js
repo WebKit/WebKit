@@ -79,6 +79,18 @@ WebInspector.DOMNodeStyles = class DOMNodeStyles extends WebInspector.Object
         let fetchedInlineStylesPromise = new WebInspector.WrappedPromise;
         let fetchedComputedStylesPromise = new WebInspector.WrappedPromise;
 
+        // Ensure we resolve these promises even in the case of an error.
+        function wrap(func, promise) {
+            return (...args) => {
+                try {
+                    func.apply(this, args);
+                } catch (e) {
+                    console.error(e);
+                    promise.resolve();
+                }
+            };
+        }
+
         function parseRuleMatchArrayPayload(matchArray, node, inherited)
         {
             var result = [];
@@ -239,9 +251,9 @@ WebInspector.DOMNodeStyles = class DOMNodeStyles extends WebInspector.Object
         // FIXME: Convert to pushing StyleSheet information to the frontend. <rdar://problem/13213680>
         WebInspector.cssStyleManager.fetchStyleSheetsIfNeeded();
 
-        CSSAgent.getMatchedStylesForNode.invoke({nodeId: this._node.id, includePseudo: true, includeInherited: true}, fetchedMatchedStyles.bind(this));
-        CSSAgent.getInlineStylesForNode.invoke({nodeId: this._node.id}, fetchedInlineStyles.bind(this));
-        CSSAgent.getComputedStyleForNode.invoke({nodeId: this._node.id}, fetchedComputedStyle.bind(this));
+        CSSAgent.getMatchedStylesForNode.invoke({nodeId: this._node.id, includePseudo: true, includeInherited: true}, wrap.call(this, fetchedMatchedStyles, fetchedMatchedStylesPromise));
+        CSSAgent.getInlineStylesForNode.invoke({nodeId: this._node.id}, wrap.call(this, fetchedInlineStyles, fetchedInlineStylesPromise));
+        CSSAgent.getComputedStyleForNode.invoke({nodeId: this._node.id}, wrap.call(this, fetchedComputedStyle, fetchedComputedStylesPromise));
 
         this._pendingRefreshTask = Promise.all([fetchedMatchedStylesPromise.promise, fetchedInlineStylesPromise.promise, fetchedComputedStylesPromise.promise])
         .then(() => {

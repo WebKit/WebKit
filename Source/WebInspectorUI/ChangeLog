@@ -1,3 +1,17 @@
+2017-03-14  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Exception when fetching computed styles can break future updates of section
+        https://bugs.webkit.org/show_bug.cgi?id=169638
+        <rdar://problem/30588688>
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Models/DOMNodeStyles.js:
+        (WebInspector.DOMNodeStyles.prototype.refresh.wrap):
+        (WebInspector.DOMNodeStyles.prototype.refresh):
+        Gracefully handle exceptions. If an exception did happen we
+        would be unable to update these in the future.
+
 2017-03-14  Devin Rousso  <webkit@devinrousso.com>
 
         Web Inspector: RTL: add support for Memory timeline
