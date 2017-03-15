@@ -1,3 +1,14 @@
+2017-03-15  Alex Christensen  <achristensen@webkit.org>
+
+        Compiled content extensions should include the JSON source
+        https://bugs.webkit.org/show_bug.cgi?id=169643
+
+        Reviewed by Geoffrey Garen.
+
+        * TestWebKitAPI/Tests/WebCore/ContentExtensions.cpp:
+        * TestWebKitAPI/Tests/WebKit2Cocoa/WKUserContentExtensionStore.mm:
+        (TEST_F):
+
 2017-03-15  Kocsen Chung  <kocsen_chung@apple.com>
 
         Use git's -C flag when possible in VCSUtils.pm

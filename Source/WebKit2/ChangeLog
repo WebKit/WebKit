@@ -1,3 +1,33 @@
+2017-03-15  Alex Christensen  <achristensen@webkit.org>
+
+        Compiled content extensions should include the JSON source
+        https://bugs.webkit.org/show_bug.cgi?id=169643
+
+        Reviewed by Geoffrey Garen.
+
+        * UIProcess/API/APIContentExtensionStore.cpp:
+        (API::ContentExtensionStore::ContentExtensionStore):
+        (API::ContentExtensionMetaData::fileSize):
+        (API::encodeContentExtensionMetaData):
+        (API::decodeContentExtensionMetaData):
+        (API::compiledToFile):
+        (API::createExtension):
+        (API::ContentExtensionStore::getContentExtensionSource):
+        * UIProcess/API/APIContentExtensionStore.h:
+        * UIProcess/API/Cocoa/WKContentExtensionStore.mm:
+        (toWKErrorCode):
+        (-[WKContentExtensionStore lookupContentExtensionForIdentifier:completionHandler:]):
+        (-[WKContentExtensionStore removeContentExtensionForIdentifier:completionHandler:]):
+        (-[WKContentExtensionStore _getContentExtensionSourceForIdentifier:completionHandler:]):
+        * UIProcess/API/Cocoa/WKContentExtensionStorePrivate.h:
+        * UIProcess/API/Cocoa/WKError.h:
+        * UIProcess/API/Cocoa/_WKUserContentExtensionStore.h:
+        * UIProcess/API/Cocoa/_WKUserContentExtensionStore.mm:
+        (toUserContentExtensionStoreError):
+        (-[_WKUserContentExtensionStore compileContentExtensionForIdentifier:encodedContentExtension:completionHandler:]):
+        (-[_WKUserContentExtensionStore lookupContentExtensionForIdentifier:completionHandler:]):
+        (-[_WKUserContentExtensionStore removeContentExtensionForIdentifier:completionHandler:]):
+
 2017-03-15  Dean Jackson  <dino@apple.com>
 
         Sort Xcode project files

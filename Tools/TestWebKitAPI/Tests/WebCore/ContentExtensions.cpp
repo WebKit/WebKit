@@ -100,6 +100,8 @@ public:
         EXPECT_EQ(data.topURLFilters.size(), 0ull);
     }
 
+    void writeSource(const String&) final { }
+
     void writeActions(Vector<ContentExtensions::SerializedActionByte>&& actions, bool conditionsApplyOnlyToDomain) final
     {
         EXPECT_FALSE(finalized);

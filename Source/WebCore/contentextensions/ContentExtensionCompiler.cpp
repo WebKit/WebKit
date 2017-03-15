@@ -306,6 +306,8 @@ std::error_code compileRuleList(ContentExtensionCompilationClient& client, Strin
 #if CONTENT_EXTENSIONS_PERFORMANCE_REPORTING
     double patternPartitioningStart = monotonicallyIncreasingTime();
 #endif
+    
+    client.writeSource(ruleJSON);
 
     Vector<SerializedActionByte> actions;
     Vector<unsigned> actionLocations = serializeActions(parsedRuleList, actions);

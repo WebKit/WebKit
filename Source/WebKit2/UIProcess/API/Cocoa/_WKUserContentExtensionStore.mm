@@ -38,6 +38,26 @@
 
 NSString * const _WKUserContentExtensionsDomain = @"WKErrorDomain";
 
+static NSError *toUserContentExtensionStoreError(const NSError *error)
+{
+    if (!error)
+        return nil;
+
+    ASSERT(error.domain == WKErrorDomain);
+    switch (error.code) {
+    case WKErrorContentExtensionStoreLookupFailed:
+        return [NSError errorWithDomain:_WKUserContentExtensionsDomain code:_WKUserContentExtensionStoreErrorLookupFailed userInfo:error.userInfo];
+    case WKErrorContentExtensionStoreVersionMismatch:
+        return [NSError errorWithDomain:_WKUserContentExtensionsDomain code:_WKUserContentExtensionStoreErrorVersionMismatch userInfo:error.userInfo];
+    case WKErrorContentExtensionStoreCompileFailed:
+        return [NSError errorWithDomain:_WKUserContentExtensionsDomain code:_WKUserContentExtensionStoreErrorCompileFailed userInfo:error.userInfo];
+    case WKErrorContentExtensionStoreRemoveFailed:
+        return [NSError errorWithDomain:_WKUserContentExtensionsDomain code:_WKUserContentExtensionStoreErrorRemoveFailed userInfo:error.userInfo];
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+}
+
 @implementation _WKUserContentExtensionStore
 
 + (instancetype)defaultStore
@@ -54,7 +74,7 @@ NSString * const _WKUserContentExtensionsDomain = @"WKErrorDomain";
 {
     [_contentExtensionStore _compileContentExtensionForIdentifier:identifier encodedContentExtension:encodedContentExtension completionHandler:^(WKContentExtension *contentExtension, NSError *error) {
         _WKUserContentFilter *contentFilter = contentExtension ? [[[_WKUserContentFilter alloc] _initWithWKContentExtension:contentExtension] autorelease] : nil;
-        completionHandler(contentFilter, error);
+        completionHandler(contentFilter, toUserContentExtensionStoreError(error));
     }];
 }
 
@@ -62,13 +82,15 @@ NSString * const _WKUserContentExtensionsDomain = @"WKErrorDomain";
 {
     [_contentExtensionStore lookupContentExtensionForIdentifier:identifier completionHandler:^(WKContentExtension *contentExtension, NSError *error) {
         _WKUserContentFilter *contentFilter = contentExtension ? [[[_WKUserContentFilter alloc] _initWithWKContentExtension:contentExtension] autorelease] : nil;
-        completionHandler(contentFilter, error);
+        completionHandler(contentFilter, toUserContentExtensionStoreError(error));
     }];
 }
 
 - (void)removeContentExtensionForIdentifier:(NSString *)identifier completionHandler:(void (^)(NSError *))completionHandler
 {
-    [_contentExtensionStore removeContentExtensionForIdentifier:identifier completionHandler:completionHandler];
+    [_contentExtensionStore removeContentExtensionForIdentifier:identifier completionHandler:^(NSError *error) {
+        completionHandler(toUserContentExtensionStoreError(error));
+    }];
 }
 
 #pragma mark WKObject protocol implementation

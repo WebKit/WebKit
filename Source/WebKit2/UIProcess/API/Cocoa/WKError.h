@@ -42,7 +42,7 @@ WK_EXTERN NSString * const WKErrorDomain WK_API_AVAILABLE(macosx(10.10), ios(8.0
  @constant WKErrorJavaScriptExceptionOccurred          Indicates that a JavaScript exception occurred.
  @constant WKErrorJavaScriptResultTypeIsUnsupported    Indicates that the result of JavaScript execution could not be returned.
  @constant WKErrorContentExtensionStoreLookupFailed    Indicates that looking up a WKUserContentExtension failed.
- @constant WKErrorContentExtensionStoreVersionMismatch Indicates that looking up a WKUserContentExtension found an extension with an incompatible binary version.
+ @constant WKErrorContentExtensionStoreVersionMismatch Indicates that the WKUserContentExtension version did not match the latest.
  @constant WKErrorContentExtensionStoreCompileFailed   Indicates that compiling a WKUserContentExtension failed.
  @constant WKErrorContentExtensionStoreRemoveFailed    Indicates that removing a WKUserContentExtension failed.
  */

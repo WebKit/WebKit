@@ -42,7 +42,7 @@ class ContentExtension;
 class ContentExtensionStore final : public ObjectImpl<Object::Type::ContentExtensionStore> {
 public:
     enum class Error {
-        LookupFailed = 6, // Mirrors value of WKErrorContentExtensionStoreLookupFailed
+        LookupFailed = 1,
         VersionMismatch,
         CompileFailed,
         RemoveFailed
@@ -50,7 +50,9 @@ public:
     
     // This should be incremented every time a functional change is made to the bytecode, file format, etc.
     // to prevent crashing while loading old data.
-    const static uint32_t CurrentContentExtensionFileVersion = 8;
+    // Also update ContentExtensionStore::getContentExtensionSource to be able to find the original JSON
+    // source from old versions.
+    const static uint32_t CurrentContentExtensionFileVersion = 9;
 
     static ContentExtensionStore& defaultStore();
     static Ref<ContentExtensionStore> storeWithPath(const WTF::String& storePath);
@@ -66,6 +68,7 @@ public:
     // For testing only.
     void synchronousRemoveAllContentExtensions();
     void invalidateContentExtensionVersion(const WTF::String& identifier);
+    void getContentExtensionSource(const WTF::String& identifier, Function<void(WTF::String)>);
 
 private:
     WTF::String defaultStorePath();

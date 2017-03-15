@@ -32,6 +32,7 @@
 // For testing only.
 - (void)_removeAllContentExtensions;
 - (void)_invalidateContentExtensionVersionForIdentifier:(NSString *)identifier;
+- (void)_getContentExtensionSourceForIdentifier:(NSString *)identifier completionHandler:(void (^)(NSString*))completionHandler;
 
 // NS_RELEASES_ARGUMENT to keep peak memory usage low.
 - (void)_compileContentExtensionForIdentifier:(NSString *)identifier encodedContentExtension:(NSString *) NS_RELEASES_ARGUMENT encodedContentExtension completionHandler:(void (^)(WKContentExtension *, NSError *))completionHandler;

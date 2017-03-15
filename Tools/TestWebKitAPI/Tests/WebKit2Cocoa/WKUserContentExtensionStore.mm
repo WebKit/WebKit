@@ -146,6 +146,13 @@ TEST_F(WKContentExtensionStoreTest, VersionMismatch)
         doneLookingUp = true;
     }];
     TestWebKitAPI::Util::run(&doneLookingUp);
+
+    __block bool doneGettingSource = false;
+    [[WKContentExtensionStore defaultStore] _getContentExtensionSourceForIdentifier:@"TestExtension" completionHandler:^(NSString* source) {
+        EXPECT_NULL(source);
+        doneGettingSource = true;
+    }];
+    TestWebKitAPI::Util::run(&doneGettingSource);
 }
 
 TEST_F(WKContentExtensionStoreTest, Removal)
@@ -181,6 +188,71 @@ TEST_F(WKContentExtensionStoreTest, NonExistingIdentifierRemove)
         doneRemoving = true;
     }];
     TestWebKitAPI::Util::run(&doneRemoving);
+}
+
+TEST_F(WKContentExtensionStoreTest, NonDefaultStore)
+{
+    NSURL *tempDir = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:@"ContentExtensionTest"] isDirectory:YES];
+    WKContentExtensionStore *store = [WKContentExtensionStore storeWithURL:tempDir];
+    NSString *identifier = @"TestExtension";
+    NSString *fileName = @"ContentExtension-TestExtension";
+
+    __block bool doneCompiling = false;
+    [store compileContentExtensionForIdentifier:identifier encodedContentExtension:basicFilter completionHandler:^(WKContentExtension *filter, NSError *error) {
+        EXPECT_NOT_NULL(filter);
+        EXPECT_NULL(error);
+        doneCompiling = true;
+    }];
+    TestWebKitAPI::Util::run(&doneCompiling);
+
+    NSData *data = [NSData dataWithContentsOfURL:[tempDir URLByAppendingPathComponent:fileName]];
+    EXPECT_NOT_NULL(data);
+    EXPECT_EQ(data.length, 228u);
+    
+    __block bool doneCheckingSource = false;
+    [store _getContentExtensionSourceForIdentifier:identifier completionHandler:^(NSString *source) {
+        EXPECT_NOT_NULL(source);
+        EXPECT_STREQ(basicFilter.UTF8String, source.UTF8String);
+        doneCheckingSource = true;
+    }];
+    TestWebKitAPI::Util::run(&doneCheckingSource);
+    
+    __block bool doneRemoving = false;
+    [store removeContentExtensionForIdentifier:identifier completionHandler:^(NSError *error) {
+        EXPECT_NULL(error);
+        doneRemoving = true;
+    }];
+    TestWebKitAPI::Util::run(&doneRemoving);
+
+    NSData *dataAfterRemoving = [NSData dataWithContentsOfURL:[tempDir URLByAppendingPathComponent:fileName]];
+    EXPECT_NULL(dataAfterRemoving);
+}
+
+TEST_F(WKContentExtensionStoreTest, NonASCIISource)
+{
+    static NSString *nonASCIIFilter = @"[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\".*webkit.org\"}, \"unused\":\"ðŸ’©\"}]";
+    NSURL *tempDir = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:@"ContentExtensionTest"] isDirectory:YES];
+    WKContentExtensionStore *store = [WKContentExtensionStore storeWithURL:tempDir];
+    NSString *identifier = @"TestExtension";
+    NSString *fileName = @"ContentExtension-TestExtension";
+    
+    __block bool done = false;
+    [store compileContentExtensionForIdentifier:identifier encodedContentExtension:nonASCIIFilter completionHandler:^(WKContentExtension *filter, NSError *error) {
+        EXPECT_NOT_NULL(filter);
+        EXPECT_NULL(error);
+
+        [store _getContentExtensionSourceForIdentifier:identifier completionHandler:^(NSString *source) {
+            EXPECT_NOT_NULL(source);
+            EXPECT_STREQ(nonASCIIFilter.UTF8String, source.UTF8String);
+
+            [store _removeAllContentExtensions];
+            NSData *dataAfterRemoving = [NSData dataWithContentsOfURL:[tempDir URLByAppendingPathComponent:fileName]];
+            EXPECT_NULL(dataAfterRemoving);
+
+            done = true;
+        }];
+    }];
+    TestWebKitAPI::Util::run(&done);
 }
 
 #endif

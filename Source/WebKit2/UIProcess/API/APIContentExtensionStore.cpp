@@ -68,6 +68,7 @@ ContentExtensionStore::ContentExtensionStore(const WTF::String& storePath)
     , m_readQueue(WorkQueue::create("ContentExtensionStore Read Queue"))
     , m_removeQueue(WorkQueue::create("ContentExtensionStore Remove Queue"))
 {
+    WebCore::makeAllDirectories(storePath);
 }
 
 ContentExtensionStore::~ContentExtensionStore()
@@ -81,11 +82,12 @@ static String constructedPath(const String& base, const String& identifier)
 
 // The size and offset of the densely packed bytes in the file, not sizeof and offsetof, which would
 // represent the size and offset of the structure in memory, possibly with compiler-added padding.
-const size_t ContentExtensionFileHeaderSize = 2 * sizeof(uint32_t) + 4 * sizeof(uint64_t);
-const size_t ConditionsApplyOnlyToDomainOffset = sizeof(uint32_t) + 4 * sizeof(uint64_t);
+const size_t ContentExtensionFileHeaderSize = 2 * sizeof(uint32_t) + 5 * sizeof(uint64_t);
+const size_t ConditionsApplyOnlyToDomainOffset = sizeof(uint32_t) + 5 * sizeof(uint64_t);
 
 struct ContentExtensionMetaData {
     uint32_t version { ContentExtensionStore::CurrentContentExtensionFileVersion };
+    uint64_t sourceSize { 0 };
     uint64_t actionsSize { 0 };
     uint64_t filtersWithoutConditionsBytecodeSize { 0 };
     uint64_t filtersWithConditionsBytecodeSize { 0 };
@@ -95,6 +97,7 @@ struct ContentExtensionMetaData {
     size_t fileSize() const
     {
         return ContentExtensionFileHeaderSize
+            + sourceSize
             + actionsSize
             + filtersWithoutConditionsBytecodeSize
             + filtersWithConditionsBytecodeSize
@@ -107,6 +110,7 @@ static Data encodeContentExtensionMetaData(const ContentExtensionMetaData& metaD
     WTF::Persistence::Encoder encoder;
 
     encoder << metaData.version;
+    encoder << metaData.sourceSize;
     encoder << metaData.actionsSize;
     encoder << metaData.filtersWithoutConditionsBytecodeSize;
     encoder << metaData.filtersWithConditionsBytecodeSize;
@@ -128,6 +132,8 @@ static bool decodeContentExtensionMetaData(ContentExtensionMetaData& metaData, c
 
         WTF::Persistence::Decoder decoder(data, size);
         if (!decoder.decode(metaData.version))
+            return false;
+        if (!decoder.decode(metaData.sourceSize))
             return false;
         if (!decoder.decode(metaData.actionsSize))
             return false;
@@ -181,11 +187,31 @@ static std::error_code compiledToFile(String&& json, const String& finalFilePath
             : m_fileHandle(fileHandle)
             , m_metaData(metaData)
         {
+            ASSERT(!metaData.sourceSize);
             ASSERT(!metaData.actionsSize);
             ASSERT(!metaData.filtersWithoutConditionsBytecodeSize);
             ASSERT(!metaData.filtersWithConditionsBytecodeSize);
             ASSERT(!metaData.conditionedFiltersBytecodeSize);
             ASSERT(!metaData.conditionsApplyOnlyToDomain);
+        }
+        
+        void writeSource(const String& sourceJSON) final {
+            ASSERT(!m_filtersWithoutConditionsBytecodeWritten);
+            ASSERT(!m_filtersWithConditionBytecodeWritten);
+            ASSERT(!m_conditionFiltersBytecodeWritten);
+            ASSERT(!m_actionsWritten);
+            ASSERT(!m_sourceWritten);
+            writeToFile(sourceJSON.is8Bit());
+            m_sourceWritten += sizeof(bool);
+            if (sourceJSON.is8Bit()) {
+                size_t serializedLength = sourceJSON.length() * sizeof(LChar);
+                writeToFile(Data(sourceJSON.characters8(), serializedLength));
+                m_sourceWritten += serializedLength;
+            } else {
+                size_t serializedLength = sourceJSON.length() * sizeof(UChar);
+                writeToFile(Data(reinterpret_cast<const uint8_t*>(sourceJSON.characters16()), serializedLength));
+                m_sourceWritten += serializedLength;
+            }
         }
         
         void writeFiltersWithoutConditionsBytecode(Vector<DFABytecode>&& bytecode) final
@@ -222,6 +248,7 @@ static std::error_code compiledToFile(String&& json, const String& finalFilePath
         
         void finalize() final
         {
+            m_metaData.sourceSize = m_sourceWritten;
             m_metaData.actionsSize = m_actionsWritten;
             m_metaData.filtersWithoutConditionsBytecodeSize = m_filtersWithoutConditionsBytecodeWritten;
             m_metaData.filtersWithConditionsBytecodeSize = m_filtersWithConditionBytecodeWritten;
@@ -239,6 +266,10 @@ static std::error_code compiledToFile(String&& json, const String& finalFilePath
         bool hadErrorWhileWritingToFile() { return m_fileError; }
 
     private:
+        void writeToFile(bool value)
+        {
+            writeToFile(Data(reinterpret_cast<const uint8_t*>(&value), sizeof(value)));
+        }
         void writeToFile(const Data& data)
         {
             if (!m_fileError && !writeDataToFile(data, m_fileHandle)) {
@@ -253,6 +284,7 @@ static std::error_code compiledToFile(String&& json, const String& finalFilePath
         size_t m_filtersWithConditionBytecodeWritten { 0 };
         size_t m_conditionFiltersBytecodeWritten { 0 };
         size_t m_actionsWritten { 0 };
+        size_t m_sourceWritten { 0 };
         bool m_conditionsApplyOnlyToDomain { false };
         bool m_fileError { false };
     };
@@ -294,20 +326,21 @@ static std::error_code compiledToFile(String&& json, const String& finalFilePath
 static RefPtr<API::ContentExtension> createExtension(const String& identifier, const ContentExtensionMetaData& metaData, const Data& fileData)
 {
     auto sharedMemory = WebKit::SharedMemory::create(const_cast<uint8_t*>(fileData.data()), fileData.size(), WebKit::SharedMemory::Protection::ReadOnly);
+    const size_t headerAndSourceSize = ContentExtensionFileHeaderSize + metaData.sourceSize;
     auto compiledContentExtensionData = WebKit::WebCompiledContentExtensionData(
         WTFMove(sharedMemory),
         fileData,
         ConditionsApplyOnlyToDomainOffset,
-        ContentExtensionFileHeaderSize,
+        headerAndSourceSize,
         metaData.actionsSize,
-        ContentExtensionFileHeaderSize
+        headerAndSourceSize
             + metaData.actionsSize,
         metaData.filtersWithoutConditionsBytecodeSize,
-        ContentExtensionFileHeaderSize
+        headerAndSourceSize
             + metaData.actionsSize
             + metaData.filtersWithoutConditionsBytecodeSize,
         metaData.filtersWithConditionsBytecodeSize,
-        ContentExtensionFileHeaderSize
+        headerAndSourceSize
             + metaData.actionsSize
             + metaData.filtersWithoutConditionsBytecodeSize
             + metaData.filtersWithConditionsBytecodeSize,
@@ -401,7 +434,48 @@ void ContentExtensionStore::invalidateContentExtensionVersion(const WTF::String&
     ASSERT_UNUSED(bytesWritten, bytesWritten == sizeof(invalidHeader));
     WebCore::closeFile(file);
 }
-    
+
+void ContentExtensionStore::getContentExtensionSource(const WTF::String& identifier, Function<void(WTF::String)> completionHandler)
+{
+    m_readQueue->dispatch([protectedThis = makeRef(*this), identifier = identifier.isolatedCopy(), storePath = m_storePath.isolatedCopy(), completionHandler = WTFMove(completionHandler)]() mutable {
+        auto path = constructedPath(storePath, identifier);
+        
+        auto complete = [protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler)](String source) mutable {
+            RunLoop::main().dispatch([protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler), source = source.isolatedCopy()] {
+                completionHandler(source);
+            });
+        };
+        
+        ContentExtensionMetaData metaData;
+        Data fileData;
+        if (!openAndMapContentExtension(path, metaData, fileData)) {
+            complete({ });
+            return;
+        }
+        
+        switch (metaData.version) {
+        case 9:
+            if (!metaData.sourceSize) {
+                complete({ });
+                return;
+            }
+            bool is8Bit = fileData.data()[ContentExtensionFileHeaderSize];
+            size_t start = ContentExtensionFileHeaderSize + sizeof(bool);
+            size_t length = metaData.sourceSize - sizeof(bool);
+            if (is8Bit)
+                complete(String(fileData.data() + start, length));
+            else {
+                ASSERT(!(length % sizeof(UChar)));
+                complete(String(reinterpret_cast<const UChar*>(fileData.data() + start), length / sizeof(UChar)));
+            }
+            return;
+        }
+
+        // Older versions cannot recover the original JSON source from disk.
+        complete({ });
+    });
+}
+
 const std::error_category& contentExtensionStoreErrorCategory()
 {
     class ContentExtensionStoreErrorCategory : public std::error_category {
