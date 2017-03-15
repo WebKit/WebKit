@@ -1,3 +1,20 @@
+2017-03-15  Chris Dumez  <cdumez@apple.com>
+
+        Document state (e.g. form data) is lost after a tab is terminated in the background for power reasons
+        https://bugs.webkit.org/show_bug.cgi?id=169635
+        <rdar://problem/31046729>
+
+        Reviewed by Andreas Kling.
+
+        Document state (e.g. form data) was lost after a tab was terminated in the background for power
+        reasons. To address the issue, we now save the document state whenever a page is backgrounded.
+        This document state automatically gets restored when reloading the page after termination.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::visibilityDidChange):
+        (WebKit::WebPage::setActivityState):
+        * WebProcess/WebPage/WebPage.h:
+
 2017-03-15  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         WebContent crash due to bad variant access in WebKit: WebKit::WebPage::expandedRangeFromHandle

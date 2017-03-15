@@ -1,3 +1,21 @@
+2017-03-15  Chris Dumez  <cdumez@apple.com>
+
+        Document state (e.g. form data) is lost after a tab is terminated in the background for power reasons
+        https://bugs.webkit.org/show_bug.cgi?id=169635
+        <rdar://problem/31046729>
+
+        Reviewed by Andreas Kling.
+
+        Add API test coverage.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2/mac/RestoreStateAfterTermination.mm: Added.
+        (TestWebKitAPI::runJavaScriptAlert):
+        (TestWebKitAPI::didFinishLoad):
+        (TestWebKitAPI::didCrash):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit2/simple-form.html:
+
 2017-03-15  Alex Christensen  <achristensen@webkit.org>
 
         Compiled content extensions should include the JSON source

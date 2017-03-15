@@ -2612,6 +2612,17 @@ void WebPage::updateIsInWindow(bool isInitialState)
         layoutIfNeeded();
 }
 
+void WebPage::visibilityDidChange()
+{
+    bool isVisible = m_activityState & ActivityState::IsVisible;
+    if (!isVisible) {
+        // We save the document / scroll state when backgrounding a tab so that we are able to restore it
+        // if it gets terminated while in the background.
+        if (auto* frame = m_mainFrame->coreFrame())
+            frame->loader().history().saveDocumentAndScrollState();
+    }
+}
+
 void WebPage::setActivityState(ActivityState::Flags activityState, bool wantsDidUpdateActivityState, const Vector<uint64_t>& callbackIDs)
 {
     ActivityState::Flags changed = m_activityState ^ activityState;
@@ -2629,6 +2640,9 @@ void WebPage::setActivityState(ActivityState::Flags activityState, bool wantsDid
 
     if (changed & ActivityState::IsInWindow)
         updateIsInWindow();
+
+    if (changed & ActivityState::IsVisible)
+        visibilityDidChange();
 }
 
 void WebPage::setLayerHostingMode(LayerHostingMode layerHostingMode)
