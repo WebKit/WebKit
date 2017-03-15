@@ -177,7 +177,12 @@ private:
 
     bool paintsIntoCanvasBuffer() const;
 
-    bool isGPUBased() const;
+#if ENABLE(WEBGL)
+    bool is3D() const;
+#endif
+#if ENABLE(WEBGPU)
+    bool isGPU() const;
+#endif
 
     HashSet<CanvasObserver*> m_observers;
     std::unique_ptr<CanvasRenderingContext> m_context;

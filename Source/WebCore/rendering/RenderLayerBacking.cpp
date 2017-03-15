@@ -81,8 +81,13 @@ CanvasCompositingStrategy canvasCompositingStrategy(const RenderObject& renderer
     if (!context || !context->isAccelerated())
         return UnacceleratedCanvas;
     
-    if (context->isGPUBased())
+    if (context->is3d())
         return CanvasAsLayerContents;
+
+#if ENABLE(WEBGPU)
+    if (context->isGPU())
+        return CanvasAsLayerContents;
+#endif
 
 #if ENABLE(ACCELERATED_2D_CANVAS)
     return CanvasAsLayerContents;
