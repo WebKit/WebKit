@@ -1,3 +1,9 @@
+2017-03-14  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Unreviewed, skip fast/media/video-element-in-details-collapse.html on iOS
+
+        * platform/ios-simulator/TestExpectations:
+
 2017-03-14  Youenn Fablet  <youenn@apple.com>
 
         REGRESSION (r213882): 12 new/updated web-platform-tests failing

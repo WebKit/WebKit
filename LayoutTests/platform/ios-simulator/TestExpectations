@@ -375,6 +375,9 @@ fast/events/keyboardevent-code.html [ Skip ]
 http/tests/navigation/keyboard-events-during-provisional-navigation.html [ Skip ]
 media/audio-dealloc-crash.html [ Skip ]
 
+# This test uses EventSender's mouseMoveTo, mouseUp and mouseDown
+fast/media/video-element-in-details-collapse.html [ Skip ]
+
 # The file-wrapper part of <attachment> is not yet working on iOS
 fast/attachment/attachment-type-attribute.html [ Skip ]
 
