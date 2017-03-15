@@ -165,7 +165,6 @@
 		076F0D0E12B8192700C26AA4 /* MediaPlayerPrivateAVFoundation.h in Headers */ = {isa = PBXBuildFile; fileRef = 076F0D0A12B8192700C26AA4 /* MediaPlayerPrivateAVFoundation.h */; };
 		077664FC183E6B5C00133B92 /* JSQuickTimePluginReplacement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 077664FA183E6B5C00133B92 /* JSQuickTimePluginReplacement.cpp */; };
 		077664FD183E6B5C00133B92 /* JSQuickTimePluginReplacement.h in Headers */ = {isa = PBXBuildFile; fileRef = 077664FB183E6B5C00133B92 /* JSQuickTimePluginReplacement.h */; };
-		0779BF0E18453168000B6AE7 /* HTMLMediaElementMediaStream.h in Headers */ = {isa = PBXBuildFile; fileRef = 0779BF0B18453168000B6AE7 /* HTMLMediaElementMediaStream.h */; };
 		077AF14018F4AE400001ED61 /* SerializedPlatformRepresentation.h in Headers */ = {isa = PBXBuildFile; fileRef = 077AF13E18F4AE400001ED61 /* SerializedPlatformRepresentation.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		077AF14318F4B1BB0001ED61 /* SerializedPlatformRepresentationMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 077AF14118F4B1BB0001ED61 /* SerializedPlatformRepresentationMac.h */; };
 		077AF14418F4B1BB0001ED61 /* SerializedPlatformRepresentationMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 077AF14218F4B1BB0001ED61 /* SerializedPlatformRepresentationMac.mm */; };
@@ -1420,6 +1419,12 @@
 		316BDC0B1E76344E00DE0D5A /* GPURenderPipelineColorAttachmentDescriptorMetal.mm in Sources */ = {isa = PBXBuildFile; fileRef = 316BDC0A1E76343600DE0D5A /* GPURenderPipelineColorAttachmentDescriptorMetal.mm */; };
 		316BDC0C1E7634CF00DE0D5A /* GPURenderPipelineColorAttachmentDescriptor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 316BDC081E76342700DE0D5A /* GPURenderPipelineColorAttachmentDescriptor.cpp */; };
 		316BDC0D1E7634D200DE0D5A /* GPURenderPipelineColorAttachmentDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 316BDC091E76342700DE0D5A /* GPURenderPipelineColorAttachmentDescriptor.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		316DCB1F1E78CA55001B5F87 /* JSRTCOfferAnswerOptions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 316DCB191E78CA55001B5F87 /* JSRTCOfferAnswerOptions.cpp */; };
+		316DCB201E78CA55001B5F87 /* JSRTCOfferAnswerOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 316DCB1A1E78CA55001B5F87 /* JSRTCOfferAnswerOptions.h */; };
+		316DCB211E78CA55001B5F87 /* JSRTCRtpTransceiverDirection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 316DCB1B1E78CA55001B5F87 /* JSRTCRtpTransceiverDirection.cpp */; };
+		316DCB221E78CA55001B5F87 /* JSRTCRtpTransceiverDirection.h in Headers */ = {isa = PBXBuildFile; fileRef = 316DCB1C1E78CA55001B5F87 /* JSRTCRtpTransceiverDirection.h */; };
+		316DCB311E78FB6C001B5F87 /* JSRTCAnswerOptions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 316DCB2D1E78F496001B5F87 /* JSRTCAnswerOptions.cpp */; };
+		316DCB321E78FB70001B5F87 /* JSRTCOfferOptions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 316DCB2F1E78F496001B5F87 /* JSRTCOfferOptions.cpp */; };
 		316FE0710E6CCBEE00BF6088 /* JSCSSKeyframeRule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 316FE06D0E6CCBEE00BF6088 /* JSCSSKeyframeRule.cpp */; };
 		316FE0720E6CCBEE00BF6088 /* JSCSSKeyframeRule.h in Headers */ = {isa = PBXBuildFile; fileRef = 316FE06E0E6CCBEE00BF6088 /* JSCSSKeyframeRule.h */; };
 		316FE0730E6CCBEE00BF6088 /* JSCSSKeyframesRule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 316FE06F0E6CCBEE00BF6088 /* JSCSSKeyframesRule.cpp */; };
@@ -7493,8 +7498,6 @@
 		076F0D0A12B8192700C26AA4 /* MediaPlayerPrivateAVFoundation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaPlayerPrivateAVFoundation.h; sourceTree = "<group>"; };
 		077664FA183E6B5C00133B92 /* JSQuickTimePluginReplacement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSQuickTimePluginReplacement.cpp; sourceTree = "<group>"; };
 		077664FB183E6B5C00133B92 /* JSQuickTimePluginReplacement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSQuickTimePluginReplacement.h; sourceTree = "<group>"; };
-		0779BF0B18453168000B6AE7 /* HTMLMediaElementMediaStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLMediaElementMediaStream.h; sourceTree = "<group>"; };
-		0779BF0C18453168000B6AE7 /* HTMLMediaElementMediaStream.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HTMLMediaElementMediaStream.idl; sourceTree = "<group>"; };
 		077AF13E18F4AE400001ED61 /* SerializedPlatformRepresentation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SerializedPlatformRepresentation.h; sourceTree = "<group>"; };
 		077AF14118F4B1BB0001ED61 /* SerializedPlatformRepresentationMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SerializedPlatformRepresentationMac.h; sourceTree = "<group>"; };
 		077AF14218F4B1BB0001ED61 /* SerializedPlatformRepresentationMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SerializedPlatformRepresentationMac.mm; sourceTree = "<group>"; };
@@ -8896,6 +8899,22 @@
 		316BDC081E76342700DE0D5A /* GPURenderPipelineColorAttachmentDescriptor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GPURenderPipelineColorAttachmentDescriptor.cpp; sourceTree = "<group>"; };
 		316BDC091E76342700DE0D5A /* GPURenderPipelineColorAttachmentDescriptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GPURenderPipelineColorAttachmentDescriptor.h; sourceTree = "<group>"; };
 		316BDC0A1E76343600DE0D5A /* GPURenderPipelineColorAttachmentDescriptorMetal.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GPURenderPipelineColorAttachmentDescriptorMetal.mm; sourceTree = "<group>"; };
+		316DCB121E78BE43001B5F87 /* RTCOfferAnswerOptions.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = RTCOfferAnswerOptions.idl; sourceTree = "<group>"; };
+		316DCB161E78C330001B5F87 /* RTCRtpTransceiverDirection.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RTCRtpTransceiverDirection.h; sourceTree = "<group>"; };
+		316DCB171E78C330001B5F87 /* RTCRtpTransceiverDirection.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = RTCRtpTransceiverDirection.idl; sourceTree = "<group>"; };
+		316DCB181E78C453001B5F87 /* RTCEnums.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RTCEnums.h; sourceTree = "<group>"; };
+		316DCB191E78CA55001B5F87 /* JSRTCOfferAnswerOptions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSRTCOfferAnswerOptions.cpp; sourceTree = "<group>"; };
+		316DCB1A1E78CA55001B5F87 /* JSRTCOfferAnswerOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSRTCOfferAnswerOptions.h; sourceTree = "<group>"; };
+		316DCB1B1E78CA55001B5F87 /* JSRTCRtpTransceiverDirection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSRTCRtpTransceiverDirection.cpp; sourceTree = "<group>"; };
+		316DCB1C1E78CA55001B5F87 /* JSRTCRtpTransceiverDirection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSRTCRtpTransceiverDirection.h; sourceTree = "<group>"; };
+		316DCB281E78F395001B5F87 /* RTCOfferOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RTCOfferOptions.h; sourceTree = "<group>"; };
+		316DCB291E78F395001B5F87 /* RTCOfferOptions.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = RTCOfferOptions.idl; sourceTree = "<group>"; };
+		316DCB2B1E78F3A9001B5F87 /* RTCAnswerOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RTCAnswerOptions.h; sourceTree = "<group>"; };
+		316DCB2C1E78F3A9001B5F87 /* RTCAnswerOptions.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = RTCAnswerOptions.idl; sourceTree = "<group>"; };
+		316DCB2D1E78F496001B5F87 /* JSRTCAnswerOptions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSRTCAnswerOptions.cpp; sourceTree = "<group>"; };
+		316DCB2E1E78F496001B5F87 /* JSRTCAnswerOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSRTCAnswerOptions.h; sourceTree = "<group>"; };
+		316DCB2F1E78F496001B5F87 /* JSRTCOfferOptions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSRTCOfferOptions.cpp; sourceTree = "<group>"; };
+		316DCB301E78F496001B5F87 /* JSRTCOfferOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSRTCOfferOptions.h; sourceTree = "<group>"; };
 		316FE06D0E6CCBEE00BF6088 /* JSCSSKeyframeRule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCSSKeyframeRule.cpp; sourceTree = "<group>"; };
 		316FE06E0E6CCBEE00BF6088 /* JSCSSKeyframeRule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCSSKeyframeRule.h; sourceTree = "<group>"; };
 		316FE06F0E6CCBEE00BF6088 /* JSCSSKeyframesRule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCSSKeyframesRule.cpp; sourceTree = "<group>"; };
@@ -15789,8 +15808,6 @@
 				073794EE19EE364200E5A045 /* DOMURLMediaStream.idl */,
 				93A806111E03B51C008A1F26 /* DoubleRange.h */,
 				93A806121E03B51C008A1F26 /* DoubleRange.idl */,
-				0779BF0B18453168000B6AE7 /* HTMLMediaElementMediaStream.h */,
-				0779BF0C18453168000B6AE7 /* HTMLMediaElementMediaStream.idl */,
 				93A806131E03B51C008A1F26 /* LongRange.h */,
 				93A806141E03B51C008A1F26 /* LongRange.idl */,
 				07221B4A17CEC32700848E51 /* MediaConstraintsImpl.cpp */,
@@ -15839,6 +15856,8 @@
 				072A703F1D6E8F6200DF0AFC /* OverconstrainedErrorEvent.idl */,
 				41E408381DCB747900EFCE19 /* PeerConnectionBackend.cpp */,
 				5E2C434D1BCEE2E50001E2BC /* PeerConnectionBackend.h */,
+				316DCB2B1E78F3A9001B5F87 /* RTCAnswerOptions.h */,
+				316DCB2C1E78F3A9001B5F87 /* RTCAnswerOptions.idl */,
 				07AB996518DA3C010018771E /* RTCConfiguration.h */,
 				07AB996618DA3C010018771E /* RTCConfiguration.idl */,
 				418205481E53EAAD00D62207 /* RTCController.cpp */,
@@ -15855,6 +15874,7 @@
 				07221B6C17CEC32700848E51 /* RTCDTMFToneChangeEvent.cpp */,
 				07221B6D17CEC32700848E51 /* RTCDTMFToneChangeEvent.h */,
 				07221B6E17CEC32700848E51 /* RTCDTMFToneChangeEvent.idl */,
+				316DCB181E78C453001B5F87 /* RTCEnums.h */,
 				07221B7117CEC32700848E51 /* RTCIceCandidate.cpp */,
 				07221B7217CEC32700848E51 /* RTCIceCandidate.h */,
 				07221B7317CEC32700848E51 /* RTCIceCandidate.idl */,
@@ -15865,6 +15885,9 @@
 				07AB996818DA3C010018771E /* RTCIceServer.idl */,
 				5E6653091DA437BF00FDD84C /* RTCIceTransport.h */,
 				073794DC19EE2C5200E5A045 /* RTCOfferAnswerOptions.h */,
+				316DCB121E78BE43001B5F87 /* RTCOfferAnswerOptions.idl */,
+				316DCB281E78F395001B5F87 /* RTCOfferOptions.h */,
+				316DCB291E78F395001B5F87 /* RTCOfferOptions.idl */,
 				07221B7717CEC32700848E51 /* RTCPeerConnection.cpp */,
 				07221B7817CEC32700848E51 /* RTCPeerConnection.h */,
 				07221B7917CEC32700848E51 /* RTCPeerConnection.idl */,
@@ -15880,6 +15903,8 @@
 				5E5E2B101CFC3E4B000C0D85 /* RTCRtpTransceiver.cpp */,
 				5E5E2B111CFC3E4B000C0D85 /* RTCRtpTransceiver.h */,
 				5E5E2B121CFC3E4B000C0D85 /* RTCRtpTransceiver.idl */,
+				316DCB161E78C330001B5F87 /* RTCRtpTransceiverDirection.h */,
+				316DCB171E78C330001B5F87 /* RTCRtpTransceiverDirection.idl */,
 				07221B7A17CEC32700848E51 /* RTCSessionDescription.cpp */,
 				07221B7B17CEC32700848E51 /* RTCSessionDescription.h */,
 				07221B7C17CEC32700848E51 /* RTCSessionDescription.idl */,
@@ -16062,6 +16087,8 @@
 				0704A40A1D6DFC690086DCDB /* JSOverconstrainedError.h */,
 				0704A4131D6F39FB0086DCDB /* JSOverconstrainedErrorEvent.cpp */,
 				0704A4141D6F39FB0086DCDB /* JSOverconstrainedErrorEvent.h */,
+				316DCB2D1E78F496001B5F87 /* JSRTCAnswerOptions.cpp */,
+				316DCB2E1E78F496001B5F87 /* JSRTCAnswerOptions.h */,
 				073794E319EE2FF200E5A045 /* JSRTCConfiguration.cpp */,
 				073794E419EE2FF200E5A045 /* JSRTCConfiguration.h */,
 				07969D9117D14151007FF842 /* JSRTCDataChannel.cpp */,
@@ -16078,6 +16105,10 @@
 				07969D9E17D14151007FF842 /* JSRTCIceCandidateEvent.h */,
 				073794E919EE341E00E5A045 /* JSRTCIceServer.cpp */,
 				073794EA19EE341E00E5A045 /* JSRTCIceServer.h */,
+				316DCB191E78CA55001B5F87 /* JSRTCOfferAnswerOptions.cpp */,
+				316DCB1A1E78CA55001B5F87 /* JSRTCOfferAnswerOptions.h */,
+				316DCB2F1E78F496001B5F87 /* JSRTCOfferOptions.cpp */,
+				316DCB301E78F496001B5F87 /* JSRTCOfferOptions.h */,
 				07969D9F17D14151007FF842 /* JSRTCPeerConnection.cpp */,
 				07969DA017D14151007FF842 /* JSRTCPeerConnection.h */,
 				5E2C436D1BCF0D690001E2BC /* JSRTCRtpReceiver.cpp */,
@@ -16086,6 +16117,8 @@
 				5E2C43701BCF0D690001E2BC /* JSRTCRtpSender.h */,
 				5E2C436D1BCF0D690001E2BD /* JSRTCRtpTransceiver.cpp */,
 				5E2C436E1BCF0D690001E2BD /* JSRTCRtpTransceiver.h */,
+				316DCB1B1E78CA55001B5F87 /* JSRTCRtpTransceiverDirection.cpp */,
+				316DCB1C1E78CA55001B5F87 /* JSRTCRtpTransceiverDirection.h */,
 				07969DA117D14151007FF842 /* JSRTCSessionDescription.cpp */,
 				07969DA217D14151007FF842 /* JSRTCSessionDescription.h */,
 				07969DA717D14151007FF842 /* JSRTCStatsReport.cpp */,
@@ -27046,7 +27079,6 @@
 				E44613A50CD6331000FADA75 /* HTMLMediaElement.h in Headers */,
 				CD5209E61B0BD9E10077184E /* HTMLMediaElementEnums.h in Headers */,
 				C937FE8D1B1F6821008ECC5D /* HTMLMediaElementMediaSession.h in Headers */,
-				0779BF0E18453168000B6AE7 /* HTMLMediaElementMediaStream.h in Headers */,
 				A8EA79F40A1916DF00A8EF5F /* HTMLMenuElement.h in Headers */,
 				2BE8E2C712A589EC00FAD550 /* HTMLMetaCharsetParser.h in Headers */,
 				A871DC240A15205700B12A68 /* HTMLMetaElement.h in Headers */,
@@ -27144,6 +27176,7 @@
 				5185FC8F1BB4C4E80012898F /* IDBGetResult.h in Headers */,
 				5185FC911BB4C4E80012898F /* IDBIndex.h in Headers */,
 				51F798F01BE880E7008AE491 /* IDBIndexInfo.h in Headers */,
+				316DCB201E78CA55001B5F87 /* JSRTCOfferAnswerOptions.h in Headers */,
 				51E269371DD3BD9B006B6A58 /* IDBIterateCursorData.h in Headers */,
 				5185FC951BB4C4E80012898F /* IDBKey.h in Headers */,
 				5185FC971BB4C4E80012898F /* IDBKeyData.h in Headers */,
@@ -27333,6 +27366,7 @@
 				FDA15EA212B03EE1003A583A /* JSChannelMergerNode.h in Headers */,
 				FDA15EA412B03EE1003A583A /* JSChannelSplitterNode.h in Headers */,
 				65DF31F409D1CC60000BE325 /* JSCharacterData.h in Headers */,
+				316DCB221E78CA55001B5F87 /* JSRTCRtpTransceiverDirection.h in Headers */,
 				BCC065880F3CE2A700CD2D87 /* JSClientRect.h in Headers */,
 				BCC0658A0F3CE2A700CD2D87 /* JSClientRectList.h in Headers */,
 				836D03321DA8A14200FFD96B /* JSClipboardEvent.h in Headers */,
@@ -30504,6 +30538,7 @@
 				946D374D1D6D08A60077084F /* CSSParserTokenRange.cpp in Sources */,
 				9418278E1D8CAF9200492764 /* CSSPendingSubstitutionValue.cpp in Sources */,
 				977B3862122883E900B81FF8 /* CSSPreloadScanner.cpp in Sources */,
+				316DCB1F1E78CA55001B5F87 /* JSRTCOfferAnswerOptions.cpp in Sources */,
 				A80E6D050A1989CA007FB8C5 /* CSSPrimitiveValue.cpp in Sources */,
 				A80E6CF70A1989CA007FB8C5 /* CSSProperty.cpp in Sources */,
 				78D02BC5154A18DF00B62D05 /* CSSPropertyAnimation.cpp in Sources */,
@@ -30846,6 +30881,7 @@
 				515BE1911D54F5FB00DD7C68 /* GamepadProvider.cpp in Sources */,
 				1432E8490C51493F00B1500F /* GCController.cpp in Sources */,
 				4FB390AD15EF61F3007AD51F /* GeneratedImage.cpp in Sources */,
+				316DCB211E78CA55001B5F87 /* JSRTCRtpTransceiverDirection.cpp in Sources */,
 				830030F51B7D33B500ED3AAC /* GenericCachedHTMLCollection.cpp in Sources */,
 				0720B0A014D3323500642955 /* GenericEventQueue.cpp in Sources */,
 				CD4BE52A1CE136EF009D87DA /* GenericTaskQueue.cpp in Sources */,
@@ -31623,6 +31659,7 @@
 				E51A81DF17298D7700BFCA61 /* JSPerformance.cpp in Sources */,
 				CB38FD511CCF938900592A3F /* JSPerformanceEntry.cpp in Sources */,
 				CB38FD571CD21E2A00592A3F /* JSPerformanceEntryCustom.cpp in Sources */,
+				316DCB311E78FB6C001B5F87 /* JSRTCAnswerOptions.cpp in Sources */,
 				A58C59D01E382EAC0047859C /* JSPerformanceMark.cpp in Sources */,
 				A58C59D21E382EB00047859C /* JSPerformanceMeasure.cpp in Sources */,
 				8A9A587011E84C36008ACFD1 /* JSPerformanceNavigation.cpp in Sources */,
@@ -31998,6 +32035,7 @@
 				A456FA2611AD4A830020B420 /* LabelsNodeList.cpp in Sources */,
 				E18772F1126E2629003DD586 /* Language.cpp in Sources */,
 				2917B5611473496C0052C9D0 /* LayerFlushScheduler.cpp in Sources */,
+				316DCB321E78FB70001B5F87 /* JSRTCOfferOptions.cpp in Sources */,
 				2917B566147349950052C9D0 /* LayerFlushSchedulerMac.cpp in Sources */,
 				7AA3A69F194B59B6001CBD24 /* LayerPool.cpp in Sources */,
 				0F36E7371BD1837A002DB891 /* LayoutPoint.cpp in Sources */,

@@ -34,15 +34,6 @@ struct RTCOfferAnswerOptions {
     bool voiceActivityDetection { true };
 };
 
-struct RTCOfferOptions : RTCOfferAnswerOptions {
-    int64_t offerToReceiveVideo { 0 };
-    int64_t offerToReceiveAudio { 0 };
-    bool iceRestart { false };
-};
-
-struct RTCAnswerOptions : RTCOfferAnswerOptions {
-};
-
 } // namespace WebCore
 
 #endif // ENABLE(WEB_RTC)

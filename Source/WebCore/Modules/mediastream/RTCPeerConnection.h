@@ -2,6 +2,7 @@
  * Copyright (C) 2012 Google Inc. All rights reserved.
  * Copyright (C) 2013 Nokia Corporation and/or its subsidiary(-ies).
  * Copyright (C) 2015 Ericsson AB. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,9 +38,11 @@
 #include "ActiveDOMObject.h"
 #include "EventTarget.h"
 #include "MediaStream.h"
+#include "RTCAnswerOptions.h"
 #include "RTCConfiguration.h"
 #include "RTCDataChannel.h"
-#include "RTCOfferAnswerOptions.h"
+#include "RTCEnums.h"
+#include "RTCOfferOptions.h"
 #include "RTCRtpTransceiver.h"
 
 namespace WebCore {
@@ -51,6 +54,10 @@ class RTCIceCandidate;
 class RTCPeerConnectionErrorCallback;
 class RTCSessionDescription;
 class RTCStatsCallback;
+
+struct RTCRtpTransceiverInit {
+    RTCRtpTransceiverDirection direction;
+};
 
 class RTCPeerConnection final : public RefCounted<RTCPeerConnection>, public RTCRtpSenderClient, public EventTargetWithInlineData, public ActiveDOMObject {
 public:
@@ -74,15 +81,8 @@ public:
     ExceptionOr<Ref<RTCRtpSender>> addTrack(Ref<MediaStreamTrack>&&, const Vector<std::reference_wrapper<MediaStream>>&);
     ExceptionOr<void> removeTrack(RTCRtpSender&);
 
-    // This enum is mirrored in RTCRtpTransceiver.h
-    enum class RtpTransceiverDirection { Sendrecv, Sendonly, Recvonly, Inactive };
-
-    struct RtpTransceiverInit {
-        RtpTransceiverDirection direction;
-    };
-
-    ExceptionOr<Ref<RTCRtpTransceiver>> addTransceiver(Ref<MediaStreamTrack>&&, const RtpTransceiverInit&);
-    ExceptionOr<Ref<RTCRtpTransceiver>> addTransceiver(const String& kind, const RtpTransceiverInit&);
+    ExceptionOr<Ref<RTCRtpTransceiver>> addTransceiver(Ref<MediaStreamTrack>&&, const RTCRtpTransceiverInit&);
+    ExceptionOr<Ref<RTCRtpTransceiver>> addTransceiver(const String& kind, const RTCRtpTransceiverInit&);
 
     void queuedCreateOffer(RTCOfferOptions&&, PeerConnection::SessionDescriptionPromise&&);
     void queuedCreateAnswer(RTCAnswerOptions&&, PeerConnection::SessionDescriptionPromise&&);
@@ -143,7 +143,7 @@ public:
 private:
     RTCPeerConnection(ScriptExecutionContext&);
 
-    void completeAddTransceiver(RTCRtpTransceiver&, const RtpTransceiverInit&);
+    void completeAddTransceiver(RTCRtpTransceiver&, const RTCRtpTransceiverInit&);
 
     RTCController& rtcController();
     void registerToController();

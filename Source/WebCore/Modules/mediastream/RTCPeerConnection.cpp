@@ -2,6 +2,7 @@
  * Copyright (C) 2012 Google Inc. All rights reserved.
  * Copyright (C) 2013 Nokia Corporation and/or its subsidiary(-ies).
  * Copyright (C) 2015, 2016 Ericsson AB. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -48,7 +49,6 @@
 #include "RTCDataChannel.h"
 #include "RTCIceCandidate.h"
 #include "RTCIceCandidateEvent.h"
-#include "RTCOfferAnswerOptions.h"
 #include "RTCSessionDescription.h"
 #include "RTCTrackEvent.h"
 #include "UUID.h"
@@ -172,7 +172,7 @@ ExceptionOr<void> RTCPeerConnection::removeTrack(RTCRtpSender& sender)
     return { };
 }
 
-ExceptionOr<Ref<RTCRtpTransceiver>> RTCPeerConnection::addTransceiver(Ref<MediaStreamTrack>&& track, const RtpTransceiverInit& init)
+ExceptionOr<Ref<RTCRtpTransceiver>> RTCPeerConnection::addTransceiver(Ref<MediaStreamTrack>&& track, const RTCRtpTransceiverInit& init)
 {
     if (m_signalingState == SignalingState::Closed)
         return Exception { INVALID_STATE_ERR };
@@ -190,7 +190,7 @@ ExceptionOr<Ref<RTCRtpTransceiver>> RTCPeerConnection::addTransceiver(Ref<MediaS
     return WTFMove(transceiver);
 }
 
-ExceptionOr<Ref<RTCRtpTransceiver>> RTCPeerConnection::addTransceiver(const String& kind, const RtpTransceiverInit& init)
+ExceptionOr<Ref<RTCRtpTransceiver>> RTCPeerConnection::addTransceiver(const String& kind, const RTCRtpTransceiverInit& init)
 {
     if (m_signalingState == SignalingState::Closed)
         return Exception { INVALID_STATE_ERR };
@@ -210,7 +210,7 @@ ExceptionOr<Ref<RTCRtpTransceiver>> RTCPeerConnection::addTransceiver(const Stri
     return WTFMove(transceiver);
 }
 
-void RTCPeerConnection::completeAddTransceiver(RTCRtpTransceiver& transceiver, const RtpTransceiverInit& init)
+void RTCPeerConnection::completeAddTransceiver(RTCRtpTransceiver& transceiver, const RTCRtpTransceiverInit& init)
 {
     transceiver.setDirection(static_cast<RTCRtpTransceiver::Direction>(init.direction));
 

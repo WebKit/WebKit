@@ -32,6 +32,7 @@
 
 #if ENABLE(WEB_RTC)
 
+#include "RTCEnums.h"
 #include "RTCIceTransport.h"
 #include "RTCRtpReceiver.h"
 #include "RTCRtpSender.h"
@@ -45,7 +46,7 @@ namespace WebCore {
 class RTCRtpTransceiver : public RefCounted<RTCRtpTransceiver>, public ScriptWrappable {
 public:
     // This enum is mirrored in RTCPeerConnection.h
-    enum class Direction { Sendrecv, Sendonly, Recvonly, Inactive };
+    using Direction = RTCRtpTransceiverDirection;
 
     static Ref<RTCRtpTransceiver> create(Ref<RTCRtpSender>&& sender, Ref<RTCRtpReceiver>&& receiver) { return adoptRef(*new RTCRtpTransceiver(WTFMove(sender), WTFMove(receiver))); }
     virtual ~RTCRtpTransceiver() { }
