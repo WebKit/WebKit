@@ -64,7 +64,9 @@ public:
     WEBCORE_EXPORT Frame* traverseNextRendered(const Frame* stayWithin = nullptr) const;
     WEBCORE_EXPORT Frame* traverseNextWithWrap(bool) const;
     WEBCORE_EXPORT Frame* traversePreviousWithWrap(bool) const;
-    
+
+    Frame* traverseNextInPostOrderWithWrap(bool) const;
+
     WEBCORE_EXPORT void appendChild(Frame&);
     void detachFromParent() { m_parent = nullptr; }
     void removeChild(Frame&);
@@ -85,6 +87,7 @@ public:
     unsigned indexInParent() const;
 
 private:
+    Frame* deepFirstChild() const;
     Frame* deepLastChild() const;
 
     bool scopedBy(TreeScope*) const;
