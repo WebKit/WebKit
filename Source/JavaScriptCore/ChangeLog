@@ -1,3 +1,21 @@
+2017-03-15  Daniel Ehrenberg  <littledan@chromium.org>
+
+        Switch back to ISO 4217 for Intl CurrencyDigits data
+        https://bugs.webkit.org/show_bug.cgi?id=169182
+    
+        Previously, a patch switched Intl.NumberFormat to use CLDR data through
+        ICU to get the default number of decimal digits for a currency.
+        However, that change actually violated the ECMA 402 specification,
+        which references ISO 4217 as the data source. This patch reverts to
+        an in-line implementation of that data.
+
+        Reviewed by Saam Barati.
+
+        * runtime/IntlNumberFormat.cpp:
+        (JSC::computeCurrencySortKey):
+        (JSC::extractCurrencySortKey):
+        (JSC::computeCurrencyDigits):
+
 2017-03-15  Saam Barati  <sbarati@apple.com>
 
         WebAssembly: When we GC to try to get a fast memory, we should call collectAllGarbage(), not collectSync()
