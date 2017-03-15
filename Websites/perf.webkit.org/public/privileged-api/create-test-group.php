@@ -7,16 +7,23 @@ function main() {
     $data = ensure_privileged_api_data_and_token_or_slave($db);
     $author = remote_user_name($data);
 
-    $task_id = array_get($data, 'task');
-    $name = array_get($data, 'name');
+    $arguments = validate_arguments($data, array(
+        'name' => '/.+/',
+        'task' => 'int',
+        'repetitionCount' => 'int?',
+    ));
+    $name = $arguments['name'];
+    $task_id = $arguments['task'];
+    $repetition_count = $arguments['repetitionCount'];
     $commit_sets_info = array_get($data, 'commitSets');
-    $repetition_count = intval(array_get($data, 'repetitionCount', 1));
 
-    if (!$name)
-        exit_with_error('MissingName');
+    require_format('Task', $task_id, '/^\d+$/');
     if (!$commit_sets_info)
-        exit_with_error('MissingCommitSets');
-    if ($repetition_count < 1)
+        exit_with_error('InvalidCommitSets');
+
+    if ($repetition_count === null)
+        $repetition_count = 1;
+    else if ($repetition_count < 1)
         exit_with_error('InvalidRepetitionCount', array('repetitionCount' => $repetition_count));
 
     $task = $db->select_first_row('analysis_tasks', 'task', array('id' => $task_id));
@@ -79,6 +86,9 @@ function ensure_commit_sets($db, $commit_sets_info) {
             array_push($commit_sets[$i], $commit['commit_id']);
         }
     }
+
+    if (count($commit_sets) < 2)
+        exit_with_error('InvalidCommitSets', array('commitSets' => $commit_sets_info));
 
     $commit_count_per_set = count($commit_sets[0]);
     foreach ($commit_sets as $commits) {

@@ -25,7 +25,7 @@ MockData = {
             statusList = ['pending', 'pending', 'pending', 'pending'];
         return Promise.all([
             db.insert('build_triggerables', {id: 1, name: 'build-webkit'}),
-            db.insert('build_slaves', {id: 2, name: 'sync-slave', password_hash: crypto.createHash('sha256').update('password').digest('hex')}),
+            db.insert('build_slaves', {id: 20, name: 'sync-slave', password_hash: crypto.createHash('sha256').update('password').digest('hex')}),
             db.insert('repositories', {id: 9, name: 'OS X'}),
             db.insert('repositories', {id: 11, name: 'WebKit'}),
             db.insert('commits', {id: 87832, repository: 9, revision: '10.11 15A284'}),

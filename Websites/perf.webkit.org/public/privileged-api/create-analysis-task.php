@@ -8,26 +8,25 @@ function main() {
 
     $author = remote_user_name($data);
     $name = array_get($data, 'name');
-    $start_run_id = array_get($data, 'startRun');
-    $end_run_id = array_get($data, 'endRun');
 
     $segmentation_name = array_get($data, 'segmentationStrategy');
     $test_range_name = array_get($data, 'testRangeStrategy');
 
     if (!$name)
         exit_with_error('MissingName', array('name' => $name));
-    $range = array('startRunId' => $start_run_id, 'endRunId' => $end_run_id);
-    if (!$start_run_id || !$end_run_id)
-        exit_with_error('MissingRange', $range);
 
-    $start_run = ensure_row_by_id($db, 'test_runs', 'run', $start_run_id, 'InvalidStartRun', $range);
-    $end_run = ensure_row_by_id($db, 'test_runs', 'run', $end_run_id, 'InvalidEndRun', $range);
+    $range = validate_arguments($data, array('startRun' => 'int', 'endRun' => 'int'));
+
+    $start_run = ensure_row_by_id($db, 'test_runs', 'run', $range['startRun'], 'InvalidStartRun', $range);
+    $start_run_id = $start_run['run_id'];
+    $end_run = ensure_row_by_id($db, 'test_runs', 'run', $range['endRun'], 'InvalidEndRun', $range);
+    $end_run_id = $end_run['run_id'];
 
     $config = ensure_config_from_runs($db, $start_run, $end_run);
 
     $start_run_time = time_for_run($db, $start_run_id);
     $end_run_time = time_for_run($db, $end_run_id);
-    if (!$start_run_time || !$end_run_time)
+    if (!$start_run_time || !$end_run_time || $start_run_time == $end_run_time)
         exit_with_error('InvalidTimeRange', array('startTime' => $start_run_time, 'endTime' => $end_run_time));
 
     $db->begin_transaction();

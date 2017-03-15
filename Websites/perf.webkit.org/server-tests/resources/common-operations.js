@@ -19,7 +19,7 @@ function addSlaveForReport(report)
 
 function prepareServerTest(test)
 {
-    test.timeout(1000);
+    test.timeout(5000);
     TestServer.inject();
 
     beforeEach(function () {

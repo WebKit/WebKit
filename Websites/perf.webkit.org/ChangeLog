@@ -1,5 +1,31 @@
 2017-03-15  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Add tests for privileged-api/create-analysis-task and privileged-api/create-test-group
+        https://bugs.webkit.org/show_bug.cgi?id=169688
+
+        Rubber-stamped by Antti Koivisto.
+
+        Added tests for privileged-api/create-analysis-task and privileged-api/create-test-group, and fixed newly found bugs.
+
+        * public/privileged-api/create-analysis-task.php:
+        (main): Fixed the bug that we were not explicitly checking whether start_run and end_run were integers or not.
+        Also return InvalidTimeRange when start and end times are identical as that makes no sense for an analysis task.
+
+        * public/privileged-api/create-test-group.php:
+        (main): Fixed a bug that we were not explicitly checking task and repetitionCount to be an integer.
+        (ensure_commit_sets): Fixed the bug that the number of commit sets weren't checked. 
+
+        * server-tests/privileged-api-create-analysis-task-tests.js: Added.
+        * server-tests/privileged-api-create-test-group-tests.js: Added.
+
+        * server-tests/resources/common-operations.js:
+        (prepareServerTest): Increase the timeout from 1s to 5s.
+
+        * server-tests/resources/mock-data.js:
+        (MockData.addMockData): Use a higher database ID of 20 for a mock build_slave to avoid a conflict with auto-generated IDs.
+
+2017-03-15  Ryosuke Niwa  <rniwa@webkit.org>
+
         Make unit tests return a promise instead of manually calling done
         https://bugs.webkit.org/show_bug.cgi?id=169663
 
