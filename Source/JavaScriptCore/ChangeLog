@@ -1,3 +1,17 @@
+2017-03-14  Mark Lam  <mark.lam@apple.com>
+
+        BytecodeGenerator should use the same function to determine if it needs to store the DerivedConstructor in an ArrowFunction lexical environment.
+        https://bugs.webkit.org/show_bug.cgi?id=169647
+        <rdar://problem/31051832>
+
+        Reviewed by Michael Saboff.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::usesDerivedConstructorInArrowFunctionLexicalEnvironment):
+        (JSC::BytecodeGenerator::initializeArrowFunctionContextScopeIfNeeded):
+        (JSC::BytecodeGenerator::emitPutDerivedConstructorToArrowFunctionContextScope):
+        * bytecompiler/BytecodeGenerator.h:
+
 2017-03-14  Brian Burg  <bburg@apple.com>
 
         [Cocoa] Web Inspector: generated code for parsing an array of primitive-type enums from payload does not work
