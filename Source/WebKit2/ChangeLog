@@ -1,3 +1,20 @@
+2017-03-15  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        WebContent crash due to bad variant access in WebKit: WebKit::WebPage::expandedRangeFromHandle
+        https://bugs.webkit.org/show_bug.cgi?id=169657
+        <rdar://problem/30631070>
+
+        Reviewed by Tim Horton.
+
+        In WebPageIOS.mm, the call to unionDOMRanges from WebPage::expandedRangeFromHandle invokes
+        Range::compareBoundaryPoints, assuming that the return value is not an exception, and then attempts to perform
+        integer comparison on the result. This is one speculative cause of the web content crash in the radar.
+
+        There isn't a known way to reproduce this crash.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::unionDOMRanges):
+
 2017-03-15  Tim Horton  <timothy_horton@apple.com>
 
         Un-deprecate the original PDFPlugin
