@@ -1,3 +1,18 @@
+2017-03-15  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] Captions do not default to Auto when language is changed
+        https://bugs.webkit.org/show_bug.cgi?id=169675
+        <rdar://problem/30423369>
+
+        Reviewed by Eric Carlson.
+
+        Add new tests that check the cases where the expected selected track should be "Off" or "Auto".
+
+        * media/modern-media-controls/tracks-support/tracks-support-auto-text-track-expected.txt: Added.
+        * media/modern-media-controls/tracks-support/tracks-support-auto-text-track.html: Added.
+        * media/modern-media-controls/tracks-support/tracks-support-off-text-track-expected.txt: Added.
+        * media/modern-media-controls/tracks-support/tracks-support-off-text-track.html: Added.
+
 2017-03-15  Ryan Haddad  <ryanhaddad@apple.com>
 
         Mark http/tests/media/modern-media-controls/time-labels-support/long-time.html as flaky on mac-wk1.
