@@ -76,7 +76,10 @@ WebInspector.ResourceClusterContentView = class ResourceClusterContentView exten
             break;
 
         case WebInspector.Resource.Type.Image:
-            this._responseContentView = new WebInspector.ImageResourceContentView(this._resource);
+            if (this._resource.mimeTypeComponents.type === "image/svg+xml")
+                this._responseContentView = new WebInspector.SVGImageResourceClusterContentView(this._resource);
+            else
+                this._responseContentView = new WebInspector.ImageResourceContentView(this._resource);
             break;
 
         case WebInspector.Resource.Type.Font:

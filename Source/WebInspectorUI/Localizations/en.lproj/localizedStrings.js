@@ -757,6 +757,7 @@ localizedStrings["Socket"] = "Socket";
 localizedStrings["Sockets"] = "Sockets";
 localizedStrings["Sort Ascending"] = "Sort Ascending";
 localizedStrings["Sort Descending"] = "Sort Descending";
+localizedStrings["Source"] = "Source";
 localizedStrings["Sources"] = "Sources";
 localizedStrings["Spaces"] = "Spaces";
 localizedStrings["Spacing"] = "Spacing";

@@ -1,5 +1,32 @@
 2017-03-15  Devin Rousso  <webkit@devinrousso.com>
 
+        Web Inspector: SVG image content view should toggle between image and source
+        https://bugs.webkit.org/show_bug.cgi?id=16079
+
+        Reviewed by Joseph Pecoraro.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Main.html:
+
+        * UserInterface/Views/ResourceClusterContentView.js:
+        (WebInspector.ResourceClusterContentView.prototype.get responseContentView):
+        Show the SVG cluster content view if the MIME type matches an SVG file.
+
+        * UserInterface/Views/SVGImageResourceClusterContentView.js: Added.
+        (WebInspector.SVGImageResourceClusterContentView):
+        (WebInspector.SVGImageResourceClusterContentView.prototype.get resource):
+        (WebInspector.SVGImageResourceClusterContentView.prototype.get selectionPathComponents):
+        (WebInspector.SVGImageResourceClusterContentView.prototype.shown):
+        (WebInspector.SVGImageResourceClusterContentView.prototype.closed):
+        (WebInspector.SVGImageResourceClusterContentView.prototype.saveToCookie):
+        (WebInspector.SVGImageResourceClusterContentView.prototype.restoreFromCookie):
+        (WebInspector.SVGImageResourceClusterContentView.prototype._pathComponentForContentView):
+        (WebInspector.SVGImageResourceClusterContentView.prototype._identifierForContentView):
+        (WebInspector.SVGImageResourceClusterContentView.prototype._showContentViewForIdentifier):
+        (WebInspector.SVGImageResourceClusterContentView.prototype._pathComponentSelected):
+
+2017-03-15  Devin Rousso  <webkit@devinrousso.com>
+
         Web Inspector: RTL: add support for Timeline ruler selections/movement
         https://bugs.webkit.org/show_bug.cgi?id=169588
 
