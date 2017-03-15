@@ -222,8 +222,8 @@ sub scmRemoveExecutableBit($)
 
 sub isGitDirectory($)
 {
-    my ($dir) = @_;
-    return system("cd $dir && git rev-parse > " . File::Spec->devnull() . " 2>&1") == 0;
+    my ($directory) = @_;
+    return system("git -C '$directory' rev-parse > " . File::Spec->devnull() . " 2>&1") == 0;
 }
 
 sub isGit()
@@ -238,15 +238,11 @@ sub isGitSVNDirectory($)
 {
     my ($directory) = @_;
 
-    my $savedWorkingDirectory = Cwd::getcwd();
-    chdir($directory);
-
     # There doesn't seem to be an officially documented way to determine
     # if you're in a git-svn checkout. The best suggestions seen so far
     # all use something like the following:
-    my $output = `git config --get svn-remote.svn.fetch 2>& 1`;
+    my $output = `git -C '$directory' config --get svn-remote.svn.fetch 2>&1`;
     $isGitSVN = exitStatus($?) == 0 && $output ne "";
-    chdir($savedWorkingDirectory);
     return $isGitSVN;
 }
 
@@ -426,25 +422,24 @@ sub isWindows()
 
 sub svnRevisionForDirectory($)
 {
-    my ($dir) = @_;
+    my ($directory) = @_;
     my $revision;
 
-    if (isSVNDirectory($dir)) {
-        my $escapedDir = escapeSubversionPath($dir);
+    if (isSVNDirectory($directory)) {
+        my $escapedDir = escapeSubversionPath($directory);
         my $command = "svn info $escapedDir | grep Revision:";
         $command = "LC_ALL=C $command" if !isWindows();
         my $svnInfo = `$command`;
         ($revision) = ($svnInfo =~ m/Revision: (\d+).*/g);
-    } elsif (isGitDirectory($dir)) {
-        my $command = "git log --grep=\"git-svn-id: \" -n 1 | grep git-svn-id:";
+    } elsif (isGitDirectory($directory)) {
+        my $command = "git -C '$directory' log --grep=\"git-svn-id: \" -n 1 | grep git-svn-id:";
         $command = "LC_ALL=C $command" if !isWindows();
-        $command = "cd $dir && $command";
         my $gitLog = `$command`;
         ($revision) = ($gitLog =~ m/ +git-svn-id: .+@(\d+) /g);
     }
     if (!defined($revision)) {
         $revision = "unknown";
-        warn "Unable to determine current SVN revision in $dir";
+        warn "Unable to determine current SVN revision in $directory";
     }
     return $revision;
 }
@@ -461,9 +456,9 @@ sub svnInfoForPath($)
         $command = "LC_ALL=C $command" if !isWindows();
         $svnInfo = `$command`;
     } elsif (isGitDirectory($file)) {
-        my $command = "git svn info";
+        my $command = "git -C '$file' svn info";
         $command = "LC_ALL=C $command" if !isWindows();
-        $svnInfo = `cd $relativePath && $command`;
+        $svnInfo = `$command`;
     }
 
     return $svnInfo;

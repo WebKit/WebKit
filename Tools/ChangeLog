@@ -1,3 +1,21 @@
+2017-03-15  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Use git's -C flag when possible in VCSUtils.pm
+        https://bugs.webkit.org/show_bug.cgi?id=169003
+
+        Reviewed by Sam Weinig.
+
+        Use the git -C flag where appropriate to perform the
+        operation on a target directory and avoid unnecessary logic
+        to `cd` in and out of the target directory.
+
+        * Scripts/VCSUtils.pm:
+        (isGitDirectory):
+        (isGitSVNDirectory):
+        (svnRevisionForDirectory):
+        (svnInfoForPath):
+        For all four subroutines, use git's -C flag and strip `cd` logic.
+
 2017-03-14  Aakash Jain  <aakash_jain@apple.com>
 
         start-queue-mac.sh should create logs directory if it doesn't exist
