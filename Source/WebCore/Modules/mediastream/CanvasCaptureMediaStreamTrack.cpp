@@ -62,6 +62,7 @@ CanvasCaptureMediaStreamTrack::Source::Source(HTMLCanvasElement& canvas, std::op
     : RealtimeMediaSource(String(), Type::Video, String())
     , m_frameRequestRate(WTFMove(frameRequestRate))
     , m_requestFrameTimer(*this, &Source::requestFrameTimerFired)
+    , m_canvasChangedTimer(*this, &Source::captureCanvas)
     , m_canvas(&canvas)
 {
     m_settings.setWidth(canvas.width());
@@ -123,7 +124,10 @@ void CanvasCaptureMediaStreamTrack::Source::canvasChanged(HTMLCanvasElement& can
 {
     ASSERT_UNUSED(canvas, m_canvas == &canvas);
 
-    captureCanvas();
+    // FIXME: We should try to generate the frame at the time the screen is being updated.
+    if (m_canvasChangedTimer.isActive())
+        return;
+    m_canvasChangedTimer.startOneShot(0);
 }
 
 void CanvasCaptureMediaStreamTrack::Source::captureCanvas()

@@ -516,4 +516,8 @@ enum EventThrottlingBehavior {
     void disableTileSizeUpdateDelay();
 
     [Conditional=WEBGL] void simulateWebGLContextChanged(WebGLRenderingContextBase context);
+
+    void observeMediaStreamTrack(MediaStreamTrack track);
+    readonly attribute unsigned long trackAudioSampleCount;
+    readonly attribute unsigned long trackVideoSampleCount;
 };

@@ -28,6 +28,7 @@
 
 #include "HTMLCanvasElement.h"
 #include "MediaStreamTrack.h"
+#include "Timer.h"
 #include <wtf/TypeCasts.h>
 
 namespace WebCore {
@@ -73,6 +74,7 @@ private:
         bool m_shouldEmitFrame { true };
         std::optional<double> m_frameRequestRate;
         Timer m_requestFrameTimer;
+        Timer m_canvasChangedTimer;
         RealtimeMediaSourceSettings m_settings;
         HTMLCanvasElement* m_canvas;
         RefPtr<Image> m_currentImage;

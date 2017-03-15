@@ -1,3 +1,13 @@
+2017-03-14  Youenn Fablet  <youenn@apple.com>
+
+        CanvasCapture should not generate a frame per each canvas draw command
+        https://bugs.webkit.org/show_bug.cgi?id=169498
+
+        Reviewed by Simon Fraser & Eric Carlson.
+
+        * fast/mediastream/captureStream/canvas2d-heavy-drawing-expected.txt: Added.
+        * fast/mediastream/captureStream/canvas2d-heavy-drawing.html: Added.
+
 2017-03-14  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Unreviewed, skip fast/media/video-element-in-details-collapse.html on iOS

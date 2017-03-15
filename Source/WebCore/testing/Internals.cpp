@@ -90,6 +90,7 @@
 #include "MallocStatistics.h"
 #include "MediaPlayer.h"
 #include "MediaProducer.h"
+#include "MediaStreamTrack.h"
 #include "MemoryCache.h"
 #include "MemoryInfo.h"
 #include "MockLibWebRTCPeerConnection.h"
@@ -376,6 +377,8 @@ Ref<Internals> Internals::create(Document& document)
 
 Internals::~Internals()
 {
+    if (m_track)
+        m_track->source().removeObserver(*this);
 }
 
 void Internals::resetToConsistentState(Page& page)
@@ -3824,5 +3827,11 @@ void Internals::simulateWebGLContextChanged(WebGLRenderingContextBase& context)
 }
 #endif
 
+
+void Internals::observeMediaStreamTrack(MediaStreamTrack& track)
+{
+    m_track = &track;
+    m_track->source().addObserver(*this);
+}
 
 } // namespace WebCore

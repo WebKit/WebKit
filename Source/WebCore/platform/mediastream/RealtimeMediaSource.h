@@ -137,8 +137,8 @@ public:
     virtual bool remote() const { return m_remote; }
     virtual void setRemote(bool remote) { m_remote = remote; }
 
-    void addObserver(Observer&);
-    void removeObserver(Observer&);
+    WEBCORE_EXPORT void addObserver(Observer&);
+    WEBCORE_EXPORT void removeObserver(Observer&);
 
     virtual void startProducingData() { }
     virtual void stopProducingData() { }

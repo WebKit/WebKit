@@ -1,0 +1,78 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+    <body>
+        <canvas id="canvas1" width=100px height=100px></canvas>
+        <video id="video" autoplay width=100px height=100px></video>
+        <canvas id="canvas2" width=100px height=100px></canvas>
+        <script src="../../../resources/testharness.js"></script>
+        <script src="../../../resources/testharnessreport.js"></script>
+        <script>
+
+var canvas1 = document.getElementById("canvas1");
+var canvas2 = document.getElementById("canvas2");
+var video = document.getElementById("video");
+
+var previousTrackSampleCount = 0
+function validateCanvas(resolve, reject)
+{
+    try {
+        if (window.internals) {
+             assert_true((internals.trackVideoSampleCount - previousTrackSampleCount) <= 1, "got too much internals.trackVideoSampleCount");
+             previousTrackSampleCount = internals.trackVideoSampleCount;
+        }
+        canvas2.getContext("2d").drawImage(video, 0 ,0);
+        assert_array_equals(canvas2.getContext("2d").getImageData(0 ,0, 100, 100), canvas2.getContext("2d").getImageData(0, 0, 100, 100));
+    } catch(e) {
+        reject(e);
+        return;
+    }
+    setTimeout(() => { validateCanvas(reject, resolve); }, 5);
+}
+
+function checkCanvas(canvas, stream)
+{
+    return new Promise((resolve, reject) => {
+        video.srcObject = stream;
+        video.onplay = () => {
+            if (window.internals)
+                previousTrackSampleCount = internals.trackVideoSampleCount;
+            validateCanvas(resolve, reject);
+            setTimeout(resolve, 500);
+        }
+    });
+}
+
+var cptr = 0;
+function printLine()
+{
+    var context = canvas1.getContext("2d");
+    context.fillStyle = "red";
+    for (var i = 0 ; i < 100; ++i)
+        context.fillRect(0, 0, 100, 100);
+
+    cptr += 5;
+    if (cptr > 255)
+        cptr = 0;
+    context.fillStyle="rgb(0, " + cptr + ", 0)";
+    context.fillRect(0, 0, 100, 100);
+    setTimeout(printLine, 100);
+}
+
+promise_test((test) => {
+    var stream = canvas1.captureStream();
+
+    assert_false(!!stream.getAudioTracks().length);
+    assert_true(stream.getVideoTracks().length == 1);
+
+    if (window.internals)
+        internals.observeMediaStreamTrack(stream.getVideoTracks()[0]);
+
+    promise = checkCanvas(canvas1, stream);
+
+    printLine();
+
+    return promise;
+}, "captureStream with 2d context drawing");
+        </script>
+    </body>
+</html>
