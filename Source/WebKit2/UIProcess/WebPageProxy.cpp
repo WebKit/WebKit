@@ -6734,6 +6734,11 @@ void WebPageProxy::clearWheelEventTestTrigger()
 
 void WebPageProxy::callAfterNextPresentationUpdate(std::function<void (CallbackBase::Error)> callback)
 {
+    if (!isValid() || !m_drawingArea) {
+        callback(CallbackBase::Error::OwnerWasInvalidated);
+        return;
+    }
+
     m_drawingArea->dispatchAfterEnsuringDrawing(callback);
 }
 
