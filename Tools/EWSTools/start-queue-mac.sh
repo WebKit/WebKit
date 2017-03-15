@@ -41,6 +41,11 @@ QUEUE_PARAMS="$@"
 
 EWS_HOME=/Volumes/Data/EWS
 WEBKIT_HOME=$EWS_HOME/WebKit
+LOGS_DIR=$EWS_HOME/$QUEUE_NAME-logs
+
+if [ ! -d "$LOGS_DIR" ]; then
+    mkdir -p $LOGS_DIR
+fi
 
 # If building for iOS, make sure we run this script to make it possible to build frameworks.
 if [ "$QUEUE_NAME" == "ios-ews" ]; then
@@ -52,7 +57,7 @@ TIME_TO_REBOOT=$(( $(date +%s) + 3600 * 12))
 
 while [ $TIME_TO_REBOOT -gt $(date +%s) ] || [ $(date +%H) -lt 1 ] || [ $(date +%H) -ge 6 ]; do
     # Delete log files older than 30 days, move aside the main $QUEUE_NAME-ews.log file to prevent it from growing extra large.
-    cd $EWS_HOME/$QUEUE_NAME-logs
+    cd $LOGS_DIR
     find . -mtime +30 -delete
     if [ -s $QUEUE_NAME.log ]; then
         filesize=$(stat -f%z "$QUEUE_NAME.log")  # filesize in bytes.
