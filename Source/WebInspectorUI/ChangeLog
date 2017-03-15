@@ -1,3 +1,13 @@
+2017-03-15  Devin Rousso  <webkit@devinrousso.com>
+
+        Web Inspector: RTL: flip Memory timelines
+        https://bugs.webkit.org/show_bug.cgi?id=169694
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/MemoryCategoryView.css:
+        (body[dir=rtl] .memory-category-view > .graph):
+
 2017-03-15  Joseph Pecoraro  <pecoraro@apple.com>
 
         JSContext Inspector: NetworkAgent may be unavailable

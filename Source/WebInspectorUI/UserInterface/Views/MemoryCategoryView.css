@@ -57,3 +57,7 @@ body[dir=rtl] .memory-category-view > .details {
     position: relative;
     bottom: -3px;
 }
+
+body[dir=rtl] .memory-category-view > .graph {
+    transform: scaleX(-1);
+}
