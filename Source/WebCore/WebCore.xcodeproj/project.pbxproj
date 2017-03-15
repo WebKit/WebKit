@@ -1334,6 +1334,7 @@
 		31078CCA1880AACE008099DC /* JSOESTextureHalfFloatLinear.h in Headers */ = {isa = PBXBuildFile; fileRef = 31078CC61880AAAA008099DC /* JSOESTextureHalfFloatLinear.h */; };
 		310D71951B335C9D009C7B73 /* ThemeCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 310D71931B335C9D009C7B73 /* ThemeCocoa.mm */; };
 		310D71961B335C9E009C7B73 /* ThemeCocoa.h in Headers */ = {isa = PBXBuildFile; fileRef = 310D71941B335C9D009C7B73 /* ThemeCocoa.h */; };
+		311518FC1E78C15F00EC514A /* GPUBasedCanvasRenderingContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 311518FB1E78C15F00EC514A /* GPUBasedCanvasRenderingContext.h */; };
 		311C08BD18EB7CAF00B65615 /* mediaControlsApple.css in Resources */ = {isa = PBXBuildFile; fileRef = CDC1DD4117CC2C48008CB55D /* mediaControlsApple.css */; };
 		311C08BE18EB7CAF00B65615 /* mediaControlsApple.js in Resources */ = {isa = PBXBuildFile; fileRef = CDE6560E17CA6E7600526BA7 /* mediaControlsApple.js */; };
 		311C08BF18EB7CAF00B65615 /* mediaControlsiOS.css in Resources */ = {isa = PBXBuildFile; fileRef = CDAAF45D1869094E003C1717 /* mediaControlsiOS.css */; };
@@ -8817,6 +8818,7 @@
 		31078CC61880AAAA008099DC /* JSOESTextureHalfFloatLinear.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSOESTextureHalfFloatLinear.h; sourceTree = "<group>"; };
 		310D71931B335C9D009C7B73 /* ThemeCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ThemeCocoa.mm; sourceTree = "<group>"; };
 		310D71941B335C9D009C7B73 /* ThemeCocoa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThemeCocoa.h; sourceTree = "<group>"; };
+		311518FB1E78C15F00EC514A /* GPUBasedCanvasRenderingContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GPUBasedCanvasRenderingContext.h; sourceTree = "<group>"; };
 		311C08BC18E35D6800B65615 /* ControlStates.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ControlStates.h; sourceTree = "<group>"; };
 		31288E6E0E3005D6003619AE /* CSSKeyframeRule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSKeyframeRule.cpp; sourceTree = "<group>"; };
 		31288E6F0E3005D6003619AE /* CSSKeyframeRule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSKeyframeRule.h; sourceTree = "<group>"; };

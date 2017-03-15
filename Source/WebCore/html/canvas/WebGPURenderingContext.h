@@ -27,8 +27,7 @@
 
 #if ENABLE(WEBGPU)
 
-#include "ActiveDOMObject.h"
-#include "CanvasRenderingContext.h"
+#include "GPUBasedCanvasRenderingContext.h"
 #include "GPUDevice.h"
 #include <runtime/ArrayBuffer.h>
 
@@ -46,18 +45,15 @@ class WebGPUBuffer;
 class WebGPUTexture;
 class WebGPUTextureDescriptor;
 
-class WebGPURenderingContext : public CanvasRenderingContext, public ActiveDOMObject {
+class WebGPURenderingContext : public GPUBasedCanvasRenderingContext {
 public:
     static std::unique_ptr<WebGPURenderingContext> create(HTMLCanvasElement&);
-//    virtual ~WebGPURenderingContext();
 
-    bool isGPU() const override { return true; }
+    bool isWebGPU() const final { return true; }
 
-    bool isAccelerated() const override { return true; }
+    void reshape(int width, int height) final;
 
-    void reshape(int width, int height);
-
-    void markLayerComposited();
+    void markLayerComposited() final;
 
     PlatformLayer* platformLayer() const override;
 
@@ -90,7 +86,6 @@ protected:
     void initializeNewContext();
 
 private:
-//    WebGPURenderingContext(HTMLCanvasElement*);//, GraphicsContext3D::Attributes);
     WebGPURenderingContext(HTMLCanvasElement&, PassRefPtr<GPUDevice>);
 
     RefPtr<GPUDevice> m_device;
@@ -98,6 +93,6 @@ private:
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_CANVASRENDERINGCONTEXT(WebCore::WebGPURenderingContext, isGPU())
+SPECIALIZE_TYPE_TRAITS_CANVASRENDERINGCONTEXT(WebCore::WebGPURenderingContext, isWebGPU())
 
 #endif

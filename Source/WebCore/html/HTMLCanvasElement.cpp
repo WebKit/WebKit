@@ -37,6 +37,7 @@
 #include "ExceptionCode.h"
 #include "Frame.h"
 #include "FrameLoaderClient.h"
+#include "GPUBasedCanvasRenderingContext.h"
 #include "GeometryUtilities.h"
 #include "GraphicsContext.h"
 #include "HTMLNames.h"
@@ -293,7 +294,7 @@ CanvasRenderingContext* HTMLCanvasElement::getContextWebGL(const String& type, W
     if (!shouldEnableWebGL(document().settings()))
         return nullptr;
 
-    if (m_context && !m_context->is3d())
+    if (m_context && !m_context->isWebGL())
         return nullptr;
 
     if (!m_context) {
@@ -321,7 +322,7 @@ CanvasRenderingContext* HTMLCanvasElement::getContextWebGPU(const String& type)
     if (!RuntimeEnabledFeatures::sharedFeatures().webGPUEnabled())
         return nullptr;
 
-    if (m_context && !m_context->isGPU())
+    if (m_context && !m_context->isWebGPU())
         return nullptr;
 
     if (!m_context) {
@@ -393,16 +394,8 @@ void HTMLCanvasElement::reset()
 
     setSurfaceSize(newSize);
 
-#if ENABLE(WEBGPU)
-    // FIXME: WebGPU needs something here too.
-    if (isGPU() && oldSize != size())
-        static_cast<WebGPURenderingContext*>(m_context.get())->reshape(width(), height());
-#endif
-
-#if ENABLE(WEBGL)
-    if (is3D() && oldSize != size())
-        static_cast<WebGLRenderingContextBase*>(m_context.get())->reshape(width(), height());
-#endif
+    if (isGPUBased() && oldSize != size())
+        downcast<GPUBasedCanvasRenderingContext>(*m_context).reshape(width(), height());
 
     auto renderer = this->renderer();
     if (is<RenderHTMLCanvas>(renderer)) {
@@ -467,30 +460,14 @@ void HTMLCanvasElement::paint(GraphicsContext& context, const LayoutRect& r)
         }
     }
 
-#if ENABLE(WEBGPU)
-    if (isGPU())
-        static_cast<WebGPURenderingContext*>(m_context.get())->markLayerComposited();
-#endif
-
-#if ENABLE(WEBGL)
-    if (is3D())
-        static_cast<WebGLRenderingContextBase*>(m_context.get())->markLayerComposited();
-#endif
+    if (isGPUBased())
+        downcast<GPUBasedCanvasRenderingContext>(*m_context).markLayerComposited();
 }
 
-#if ENABLE(WEBGPU)
-bool HTMLCanvasElement::isGPU() const
+bool HTMLCanvasElement::isGPUBased() const
 {
-    return m_context && m_context->isGPU();
+    return m_context && m_context->isGPUBased();
 }
-#endif
-
-#if ENABLE(WEBGL)
-bool HTMLCanvasElement::is3D() const
-{
-    return m_context && m_context->is3d();
-}
-#endif
 
 void HTMLCanvasElement::makeRenderingResultsAvailable()
 {
@@ -592,7 +569,7 @@ ExceptionOr<void> HTMLCanvasElement::toBlob(ScriptExecutionContext& context, Ref
 RefPtr<ImageData> HTMLCanvasElement::getImageData()
 {
 #if ENABLE(WEBGL)
-    if (!is3D())
+    if (!m_context || !m_context->isWebGL())
         return nullptr;
 
     WebGLRenderingContextBase* ctx = static_cast<WebGLRenderingContextBase*>(m_context.get());
