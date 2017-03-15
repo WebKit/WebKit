@@ -514,7 +514,10 @@ WebInspector.TimelineOverview = class TimelineOverview extends WebInspector.View
         this._dontUpdateScrollLeft = true;
 
         let scrollOffset = this._scrollContainerElement.scrollLeft;
-        this.scrollStartTime = this._startTime + (scrollOffset * this.secondsPerPixel);
+        if (WebInspector.resolvedLayoutDirection() === WebInspector.LayoutDirection.RTL)
+            this.scrollStartTime = this._startTime - (scrollOffset * this.secondsPerPixel);
+        else
+            this.scrollStartTime = this._startTime + (scrollOffset * this.secondsPerPixel);
 
         // Force layout so we can update with the scroll position synchronously.
         this.updateLayoutIfNeeded();

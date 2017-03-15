@@ -183,11 +183,13 @@ body.window-inactive .timeline-overview > .tree-outline.timelines .item.selected
     transform: translateX(0px);
 }
 
-.timeline-overview.frames > .timeline-ruler:not(.both-handles-clamped) > .selection-handle.right {
+body[dir=ltr] .timeline-overview.frames > .timeline-ruler:not(.both-handles-clamped) > .selection-handle.right,
+body[dir=rtl] .timeline-overview.frames > .timeline-ruler:not(.both-handles-clamped) > .selection-handle.left {
     transform: translateX(5px);
 }
 
-.timeline-overview.frames > .timeline-ruler:not(.both-handles-clamped) > .shaded-area.right {
+body[dir=ltr] .timeline-overview.frames > .timeline-ruler:not(.both-handles-clamped) > .shaded-area.right,
+body[dir=rtl] .timeline-overview.frames > .timeline-ruler:not(.both-handles-clamped) > .shaded-area.left {
     transform: translateX(1px);
 }
 

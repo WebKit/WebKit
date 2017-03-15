@@ -208,11 +208,13 @@ body.window-inactive .timeline-ruler > .header > .divider {
     display: none;
 }
 
-.timeline-ruler > .selection-handle.left {
+body[dir=ltr] .timeline-ruler > .selection-handle.left,
+body[dir=rtl] .timeline-ruler > .selection-handle.right {
     transform: translateX(-4px);
 }
 
-.timeline-ruler > .selection-handle.right {
+body[dir=ltr] .timeline-ruler > .selection-handle.right,
+body[dir=rtl] .timeline-ruler > .selection-handle.left {
     transform: translateX(4px);
 }
 
@@ -224,10 +226,12 @@ body.window-inactive .timeline-ruler > .header > .divider {
     z-index: 15;
 }
 
-.timeline-ruler > .shaded-area.left {
+body[dir=ltr] .timeline-ruler > .shaded-area.left,
+body[dir=rtl] .timeline-ruler > .shaded-area.right {
     left: 0;
 }
 
-.timeline-ruler > .shaded-area.right {
+body[dir=ltr] .timeline-ruler > .shaded-area.right,
+body[dir=rtl] .timeline-ruler > .shaded-area.left {
     right: 0;
 }

@@ -757,8 +757,12 @@ WebInspector.TimelineRuler = class TimelineRuler extends WebInspector.View
             var selectionDragElementRect = this._selectionDragElement.getBoundingClientRect();
             this._moveSelectionMaximumLeftOffset = this._rulerBoundingClientRect.left + (event.pageX - selectionDragElementRect.left);
             this._moveSelectionMaximumRightOffset = this._rulerBoundingClientRect.right - (selectionDragElementRect.right - event.pageX);
-        } else
-            this._mouseDownPosition = event.pageX - this._rulerBoundingClientRect.left;
+        } else {
+            if (WebInspector.resolvedLayoutDirection() === WebInspector.LayoutDirection.RTL)
+                this._mouseDownPosition = this._rulerBoundingClientRect.right - event.pageX;
+            else
+                this._mouseDownPosition = event.pageX - this._rulerBoundingClientRect.left;
+        }
 
         this._mouseMoved = false;
 
@@ -779,11 +783,19 @@ WebInspector.TimelineRuler = class TimelineRuler extends WebInspector.View
 
         this._mouseMoved = true;
 
+        let isRTL = WebInspector.resolvedLayoutDirection() === WebInspector.LayoutDirection.RTL;
+
         let currentMousePosition;
         if (this._selectionIsMove) {
             currentMousePosition = Math.max(this._moveSelectionMaximumLeftOffset, Math.min(this._moveSelectionMaximumRightOffset, event.pageX));
 
-            let offsetTime = (currentMousePosition - this._lastMousePosition) * this.secondsPerPixel;
+            let positionDelta = 0;
+            if (isRTL)
+                positionDelta = this._lastMousePosition - currentMousePosition;
+            else
+                positionDelta = currentMousePosition - this._lastMousePosition;
+
+            let offsetTime = positionDelta * this.secondsPerPixel;
             let selectionDuration = this.selectionEndTime - this.selectionStartTime;
             let oldSelectionStartTime = this.selectionStartTime;
 
@@ -804,7 +816,10 @@ WebInspector.TimelineRuler = class TimelineRuler extends WebInspector.View
 
             this._lastMousePosition = currentMousePosition;
         } else {
-            currentMousePosition = event.pageX - this._rulerBoundingClientRect.left;
+            if (isRTL)
+                currentMousePosition = this._rulerBoundingClientRect.right - event.pageX;
+            else
+                currentMousePosition = event.pageX - this._rulerBoundingClientRect.left;
 
             this.selectionStartTime = Math.max(this.startTime, this.startTime + (Math.min(currentMousePosition, this._mouseDownPosition) * this.secondsPerPixel));
             this.selectionEndTime = Math.min(this.startTime + (Math.max(currentMousePosition, this._mouseDownPosition) * this.secondsPerPixel), this.endTime);
@@ -828,7 +843,12 @@ WebInspector.TimelineRuler = class TimelineRuler extends WebInspector.View
 
             if (this.selectionEndTime - this.selectionStartTime < this.minimumSelectionDuration) {
                 // The section is smaller than allowed, grow in the direction of the drag to meet the minumum.
-                var currentMousePosition = event.pageX - this._rulerBoundingClientRect.left;
+                let currentMousePosition = 0;
+                if (WebInspector.resolvedLayoutDirection() === WebInspector.LayoutDirection.RTL)
+                    currentMousePosition = this._rulerBoundingClientRect.right - event.pageX;
+                else
+                    currentMousePosition = event.pageX - this._rulerBoundingClientRect.left;
+
                 if (currentMousePosition > this._mouseDownPosition) {
                     this.selectionEndTime = Math.min(this.selectionStartTime + this.minimumSelectionDuration, this.endTime);
                     this.selectionStartTime = this.selectionEndTime - this.minimumSelectionDuration;
@@ -864,7 +884,11 @@ WebInspector.TimelineRuler = class TimelineRuler extends WebInspector.View
             return;
 
         this._dragHandleIsStartTime = event.target === this._leftSelectionHandleElement;
-        this._mouseDownPosition = event.pageX - this.element.totalOffsetLeft;
+
+        if (WebInspector.resolvedLayoutDirection() === WebInspector.LayoutDirection.RTL)
+            this._mouseDownPosition = this.element.totalOffsetRight - event.pageX;
+        else
+            this._mouseDownPosition = event.pageX - this.element.totalOffsetLeft;
 
         this._selectionHandleMouseMoveEventListener = this._handleSelectionHandleMouseMove.bind(this);
         this._selectionHandleMouseUpEventListener = this._handleSelectionHandleMouseUp.bind(this);
@@ -883,7 +907,12 @@ WebInspector.TimelineRuler = class TimelineRuler extends WebInspector.View
     {
         console.assert(event.button === 0);
 
-        let currentMousePosition = event.pageX - this.element.totalOffsetLeft;
+        let currentMousePosition = 0;
+        if (WebInspector.resolvedLayoutDirection() === WebInspector.LayoutDirection.RTL)
+            currentMousePosition = this.element.totalOffsetRight - event.pageX;
+        else
+            currentMousePosition = event.pageX - this.element.totalOffsetLeft;
+
         let currentTime = this.startTime + (currentMousePosition * this.secondsPerPixel);
         if (this.snapInterval)
             currentTime = this._snapValue(currentTime);

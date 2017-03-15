@@ -1,3 +1,48 @@
+2017-03-15  Devin Rousso  <webkit@devinrousso.com>
+
+        Web Inspector: RTL: add support for Timeline ruler selections/movement
+        https://bugs.webkit.org/show_bug.cgi?id=169588
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Views/TimelineOverview.css:
+        (body[dir=ltr] .timeline-overview.frames > .timeline-ruler:not(.both-handles-clamped) > .selection-handle.right):
+        (body[dir=rtl] .timeline-overview.frames > .timeline-ruler:not(.both-handles-clamped) > .selection-handle.left):
+        (body[dir=ltr] .timeline-overview.frames > .timeline-ruler:not(.both-handles-clamped) > .shaded-area.right):
+        (body[dir=rtl] .timeline-overview.frames > .timeline-ruler:not(.both-handles-clamped) > .shaded-area.left):
+        (.timeline-overview.frames > .timeline-ruler:not(.both-handles-clamped) > .selection-handle.right): Deleted.
+        (.timeline-overview.frames > .timeline-ruler:not(.both-handles-clamped) > .shaded-area.right): Deleted.
+        Fixes alignment of selection handles when in Frames view.
+
+        * UserInterface/Views/TimelineOverview.js:
+        (WebInspector.TimelineOverview.prototype._handleScrollEvent):
+        Support horizontal scrolling in timelines by treating the current scroll value as negative
+        when in RTL, flipping the scroll direction.
+
+        * UserInterface/Views/TimelineRuler.css:
+        (body[dir=ltr] .timeline-ruler > .selection-handle.left):
+        (body[dir=rtl] .timeline-ruler > .selection-handle.left):
+        (body[dir=ltr] .timeline-ruler > .selection-handle.right):
+        (body[dir=rtl] .timeline-ruler > .selection-handle.right):
+        (body[dir=ltr] .timeline-ruler > .shaded-area.left):
+        (body[dir=rtl] .timeline-ruler > .shaded-area.left):
+        (body[dir=ltr] .timeline-ruler > .shaded-area.right):
+        (body[dir=rtl] .timeline-ruler > .shaded-area.right):
+        (.timeline-ruler > .selection-handle.left): Deleted.
+        (.timeline-ruler > .selection-handle.right): Deleted.
+        (.timeline-ruler > .shaded-area.left): Deleted.
+        (.timeline-ruler > .shaded-area.right): Deleted.
+        Flip the position alignment of the selection handles and shaded areas when in RTL.
+
+        * UserInterface/Views/TimelineRuler.js:
+        (WebInspector.TimelineRuler.prototype._handleMouseDown):
+        (WebInspector.TimelineRuler.prototype._handleMouseMove):
+        (WebInspector.TimelineRuler.prototype._handleMouseUp):
+        (WebInspector.TimelineRuler.prototype._handleSelectionHandleMouseDown):
+        (WebInspector.TimelineRuler.prototype._handleSelectionHandleMouseMove):
+        Treat the current mouse position (event.pageX) as a negative value when in RTL, meaning that
+        the delta movement from the starting position is flipped.
+
 2017-03-15  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: REGRESSION: Elements Tab > Node Details Sidebar > Properties Section is spammed with TypeErrors
