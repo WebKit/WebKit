@@ -7,75 +7,28 @@
     <script src="../resources/testharnessreport.js"></script>
     <script src ="routines.js"></script>
     <script>
-    var test = async_test(() => {
+    promise_test((test) => {
         if (window.testRunner)
             testRunner.setUserMediaPermission(true);
 
-        var heardHum = false;
-        var heardBop = false;
-        var heardBip = false;
-
-        navigator.mediaDevices.getUserMedia({audio: true}).then((stream) => {
+       return navigator.mediaDevices.getUserMedia({audio: true}).then((stream) => {
             if (window.internals)
                 internals.useMockRTCPeerConnectionFactory("TwoRealPeerConnections");
-
-            createConnections((firstConnection) => {
-                firstConnection.addStream(stream);
-            }, (secondConnection) => {
-                secondConnection.onaddstream = (streamEvent) => {
-                    var context = new webkitAudioContext();
-                    var sourceNode = context.createMediaStreamSource(streamEvent.stream);
-                    var analyser = context.createAnalyser();
-                    var gain = context.createGain();
-
-                    analyser.fftSize = 2048;
-                    analyser.smoothingTimeConstant = 0;
-                    analyser.minDecibels = -100;
-                    analyser.maxDecibels = 0;
-                    gain.gain.value = 0;
-
-                    sourceNode.connect(analyser);
-                    analyser.connect(gain);
-                    gain.connect(context.destination);
-
-                    function analyse() {
-                        var freqDomain = new Uint8Array(analyser.frequencyBinCount);
-                        analyser.getByteFrequencyData(freqDomain);
-
-                        var hasFrequency = expectedFrequency => {
-                            var bin = Math.floor(expectedFrequency * analyser.fftSize / context.sampleRate);
-                            return bin < freqDomain.length && freqDomain[bin] >= 150;
-                        };
-
-                        if (!heardHum)
-                            heardHum = hasFrequency(150);
-
-                        if (!heardBip)
-                            heardBip = hasFrequency(1500);
-
-                        if (!heardBop)
-                            heardBop = hasFrequency(500);
-
-                        if (heardHum && heardBip && heardBop)
-                            done();
-                    };
-
-                    var done = test.step_func_done(() => {
-                        clearTimeout(timeout);
-                        clearInterval(interval);
-
-                        assert_true(heardHum, "heard hum");
-                        assert_true(heardBip, "heard bip");
-                        assert_true(heardBop, "heard bop");
-                        test.done();
-                    });
-
-                    var timeout = setTimeout(done, 3000);
-                    var interval = setInterval(analyse, 1000 / 30);
-                    analyse();
-                }
+            return new Promise((resolve, reject) => {
+                createConnections((firstConnection) => {
+                    firstConnection.addStream(stream);
+                }, (secondConnection) => {
+                    secondConnection.onaddstream = (streamEvent) => { resolve(streamEvent.stream); };
+                });
+                setTimeout(() => reject("Test timed out"), 5000);
+            }).then((stream) => {
+                return analyseAudio(stream, 1000);
+            }).then((results) => {
+                assert_true(results.heardHum, "heard hum");
+                assert_true(results.heardBip, "heard bip");
+                assert_true(results.heardBop, "heard bop");
             });
-        });
+         });
     }, "Basic audio playback through a peer connection");
     </script>
 </head>

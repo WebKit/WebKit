@@ -733,6 +733,18 @@ imported/w3c/web-platform-tests/XMLHttpRequest/setrequestheader-content-type.htm
 imported/w3c/web-platform-tests/XMLHttpRequest/open-url-redirected-worker-origin.htm [ Skip ]
 imported/w3c/web-platform-tests/html/webappapis/system-state-and-capabilities/the-navigator-object/NavigatorID.html [ Skip ]
 imported/w3c/web-platform-tests/html/webappapis/system-state-and-capabilities/the-navigator-object/NavigatorID.worker.html [ Skip ]
+imported/w3c/web-platform-tests/XMLHttpRequest/anonymous-mode-unsupported.htm [ Failure ]
+imported/w3c/web-platform-tests/XMLHttpRequest/open-after-setrequestheader.htm [ Failure ]
+imported/w3c/web-platform-tests/XMLHttpRequest/open-referer.htm [ Failure ]
+imported/w3c/web-platform-tests/XMLHttpRequest/send-accept-language.htm [ Failure ]
+imported/w3c/web-platform-tests/XMLHttpRequest/setrequestheader-allow-empty-value.htm [ Failure ]
+imported/w3c/web-platform-tests/XMLHttpRequest/setrequestheader-allow-whitespace-in-value.htm [ Failure ]
+imported/w3c/web-platform-tests/XMLHttpRequest/setrequestheader-case-insensitive.htm [ Failure ]
+imported/w3c/web-platform-tests/XMLHttpRequest/setrequestheader-header-allowed.htm [ Failure ]
+imported/w3c/web-platform-tests/XMLHttpRequest/setrequestheader-header-forbidden.htm [ Failure ]
+imported/w3c/web-platform-tests/XMLHttpRequest/setrequestheader-open-setrequestheader.htm [ Failure ]
+imported/w3c/web-platform-tests/html/dom/interfaces.worker.html [ Failure ]
+imported/w3c/web-platform-tests/html/webappapis/scripting/events/event-handler-attributes-body-window.html [ Failure ]
 
 # Only iOS WK1 has testRunner.setPagePaused.
 fast/dom/timer-fire-after-page-pause.html [ Skip ]

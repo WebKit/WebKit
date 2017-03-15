@@ -189,6 +189,20 @@ rtc::scoped_refptr<webrtc::PeerConnectionInterface> MockLibWebRTCPeerConnectionF
     return new rtc::RefCountedObject<MockLibWebRTCPeerConnection>(*observer);
 }
 
+rtc::scoped_refptr<webrtc::VideoTrackInterface> MockLibWebRTCPeerConnectionFactory::CreateVideoTrack(const std::string& id, webrtc::VideoTrackSourceInterface* source)
+{
+    if (m_testCase == "TwoRealPeerConnections")
+        return realPeerConnectionFactory()->CreateVideoTrack(id, source);
+    return new rtc::RefCountedObject<MockLibWebRTCVideoTrack>(id, source);
+}
+
+rtc::scoped_refptr<webrtc::AudioTrackInterface> MockLibWebRTCPeerConnectionFactory::CreateAudioTrack(const std::string& id, webrtc::AudioSourceInterface* source)
+{
+    if (m_testCase == "TwoRealPeerConnections")
+        return realPeerConnectionFactory()->CreateAudioTrack(id, source);
+    return new rtc::RefCountedObject<MockLibWebRTCAudioTrack>(id, source);
+}
+
 rtc::scoped_refptr<webrtc::MediaStreamInterface> MockLibWebRTCPeerConnectionFactory::CreateLocalMediaStream(const std::string& label)
 {
     return new rtc::RefCountedObject<webrtc::MediaStream>(label);

@@ -11,68 +11,56 @@
         <canvas id="canvas" width="640" height="480"></canvas>
         <script src ="routines.js"></script>
         <script>
-if (window.internals)
-    internals.useMockRTCPeerConnectionFactory("TwoRealPeerConnections");
-
-if (window.testRunner)
-    testRunner.setUserMediaPermission(true);
-
 video = document.getElementById("video");
 canvas = document.getElementById("canvas");
 // FIXME: We should use tracks
 
 function testImage()
 {
-    try {
-        canvas.width = video.videoWidth;
-        canvas.height = video.videoHeight;
-        canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
 
-        imageData = canvas.getContext('2d').getImageData(10, 325, 250, 1);
-        data = imageData.data;
+    imageData = canvas.getContext('2d').getImageData(10, 325, 250, 1);
+    data = imageData.data;
 
-        var index = 20;
-        assert_true(data[index] < 100);
-        assert_true(data[index + 1] < 100);
-        assert_true(data[index + 2] < 100);
+    var index = 20;
+    assert_true(data[index] < 100);
+    assert_true(data[index + 1] < 100);
+    assert_true(data[index + 2] < 100);
 
-        index = 80;
-        assert_true(data[index] > 200);
-        assert_true(data[index + 1] > 200);
-        assert_true(data[index + 2] > 200);
+    index = 80;
+    assert_true(data[index] > 200);
+    assert_true(data[index + 1] > 200);
+    assert_true(data[index + 2] > 200);
 
-        index += 80;
-        assert_true(data[index] > 200);
-        assert_true(data[index + 1] > 200);
-        assert_true(data[index + 2] < 100);
-
-        finishTest();
-    } catch(e) {
-        errorTest(e);
-    }
+    index += 80;
+    assert_true(data[index] > 200);
+    assert_true(data[index + 1] > 200);
+    assert_true(data[index + 2] < 100);
 }
 
-function testStream(stream)
-{
-    video.srcObject = stream;
-    // Video may play with black frames
-    video.onplay = setTimeout(() => {
-        testImage();
-    }, 1000);
-}
-
-var finishTest, errorTest;
 promise_test((test) => {
+    if (window.testRunner)
+        testRunner.setUserMediaPermission(true);
+
     return navigator.mediaDevices.getUserMedia({ video: true}).then((stream) => {
         return new Promise((resolve, reject) => {
-            finishTest = resolve;
-            errorTest = reject;
+            if (window.internals)
+                internals.useMockRTCPeerConnectionFactory("TwoRealPeerConnections");
+
             createConnections((firstConnection) => {
                 firstConnection.addStream(stream);
             }, (secondConnection) => {
-                secondConnection.onaddstream = (streamEvent) => { testStream(streamEvent.stream); };
+                secondConnection.onaddstream = (streamEvent) => { resolve(streamEvent.stream); };
             });
+            setTimeout(() => reject("Test timed out"), 5000);
         });
+    }).then((stream) => {
+        video.srcObject = stream;
+        return video.play();
+    }).then(() => {
+        testImage();
     });
 }, "Basic video exchange");
         </script>

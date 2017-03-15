@@ -71,3 +71,62 @@ function onAddIceCandidateError(error)
 {
     assert_unreached();
 }
+
+function analyseAudio(stream, duration)
+{
+    return new Promise((resolve, reject) => {
+        var context = new webkitAudioContext();
+        var sourceNode = context.createMediaStreamSource(stream);
+        var analyser = context.createAnalyser();
+        var gain = context.createGain();
+
+        var results = { heardHum: false, heardBip: false, heardBop: false };
+
+        analyser.fftSize = 2048;
+        analyser.smoothingTimeConstant = 0;
+        analyser.minDecibels = -100;
+        analyser.maxDecibels = 0;
+        gain.gain.value = 0;
+
+        sourceNode.connect(analyser);
+        analyser.connect(gain);
+        gain.connect(context.destination);
+
+       function analyse() {
+           var freqDomain = new Uint8Array(analyser.frequencyBinCount);
+           analyser.getByteFrequencyData(freqDomain);
+
+           var hasFrequency = expectedFrequency => {
+                var bin = Math.floor(expectedFrequency * analyser.fftSize / context.sampleRate);
+                return bin < freqDomain.length && freqDomain[bin] >= 150;
+           };
+
+           if (!results.heardHum)
+                results.heardHum = hasFrequency(150);
+
+           if (!results.heardBip)
+               results.heardBip = hasFrequency(1500);
+
+           if (!results.heardBop)
+                results.heardBop = hasFrequency(500);
+
+            if (results.heardHum && results.heardBip && results.heardBop)
+                done();
+        };
+
+       function done() {
+            clearTimeout(timeout);
+            clearInterval(interval);
+            resolve(results);
+       }
+
+        var timeout = setTimeout(done, 3 * duration);
+        var interval = setInterval(analyse, duration / 30);
+        analyse();
+    });
+}
+
+function waitFor(duration)
+{
+    return new Promise((resolve) => setTimeout(resolve, duration));
+}

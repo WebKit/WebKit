@@ -708,7 +708,7 @@ webkit.org/b/146182 editing/selection/leak-document-with-selection-inside.html [
 media/session [ Skip ]
 
 # WebRTC backend not enabled by default on Mac/iOS release bots.
-# GTK enables some of this tests on their TestExpectations file.
+# GTK enables some of these tests on their TestExpectations file.
 [ Release ] webrtc [ Skip ]
 
 [ Debug ] webrtc/audio-peer-connection-webaudio.html [ Failure ]

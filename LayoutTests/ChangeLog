@@ -1,5 +1,23 @@
 2017-03-15  Youenn Fablet  <youenn@apple.com>
 
+        run-webkit-tests is always creating mock libwebrtc tracks
+        https://bugs.webkit.org/show_bug.cgi?id=169658
+
+        Reviewed by Alex Christensen.
+
+        * TestExpectations:
+        * webrtc/audio-peer-connection-webaudio.html:
+        * webrtc/peer-connection-audio-mute-expected.txt: Added.
+        * webrtc/peer-connection-audio-mute.html: Added.
+        * webrtc/routines.js:
+        (analyseAudio):
+        * webrtc/video-expected.txt:
+        * webrtc/video-mute-expected.txt: Added.
+        * webrtc/video-mute.html: Added.
+        * webrtc/video.html:
+
+2017-03-15  Youenn Fablet  <youenn@apple.com>
+
         Preventive clean-up: ensure RTCPeerConnection stays valid when calling postTask
         https://bugs.webkit.org/show_bug.cgi?id=169661
 

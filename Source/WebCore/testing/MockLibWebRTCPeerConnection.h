@@ -244,8 +244,9 @@ private:
     rtc::scoped_refptr<webrtc::VideoTrackSourceInterface> CreateVideoSource(cricket::VideoCapturer*) final { return nullptr; }
     rtc::scoped_refptr<webrtc::VideoTrackSourceInterface> CreateVideoSource(cricket::VideoCapturer*, const webrtc::MediaConstraintsInterface*) final { return nullptr; }
 
-    rtc::scoped_refptr<webrtc::VideoTrackInterface> CreateVideoTrack(const std::string& id, webrtc::VideoTrackSourceInterface* source) final { return new rtc::RefCountedObject<MockLibWebRTCVideoTrack>(id, source); }
-    rtc::scoped_refptr<webrtc::AudioTrackInterface> CreateAudioTrack(const std::string& id, webrtc::AudioSourceInterface* source) final { return new rtc::RefCountedObject<MockLibWebRTCAudioTrack>(id, source); }
+    rtc::scoped_refptr<webrtc::VideoTrackInterface> CreateVideoTrack(const std::string&, webrtc::VideoTrackSourceInterface*) final;
+    rtc::scoped_refptr<webrtc::AudioTrackInterface> CreateAudioTrack(const std::string&, webrtc::AudioSourceInterface*) final;
+
     bool StartAecDump(rtc::PlatformFile, int64_t) final { return false; }
     void StopAecDump() final { }
 
