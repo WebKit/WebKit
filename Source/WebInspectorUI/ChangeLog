@@ -1,3 +1,15 @@
+2017-03-15  Joseph Pecoraro  <pecoraro@apple.com>
+
+        JSContext Inspector: NetworkAgent may be unavailable
+        https://bugs.webkit.org/show_bug.cgi?id=169691
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/ResourceDetailsSidebarPanel.js:
+        (WebInspector.ResourceDetailsSidebarPanel.prototype._refreshRequestAndResponse):
+        Check that NetworkAgent even exists. An augmented JSContext may have Resources
+        without having a NetworkAgent.
+
 2017-03-15  Nikita Vasilyev  <nvasilyev@apple.com>
 
         REGRESSION (r213622): Web Inspector: DataGrid headers should NOT be centered

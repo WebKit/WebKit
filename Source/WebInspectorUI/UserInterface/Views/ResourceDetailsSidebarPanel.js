@@ -301,7 +301,7 @@ WebInspector.ResourceDetailsSidebarPanel = class ResourceDetailsSidebarPanel ext
         this._requestMethodRow.value = this._resource.requestMethod || emDash;
 
         // COMPATIBILITY(iOS 10.3): Network load metrics were not previously available.
-        if (NetworkAgent.hasEventParameter("loadingFinished", "metrics")) {
+        if (window.NetworkAgent && NetworkAgent.hasEventParameter("loadingFinished", "metrics")) {
             this._protocolRow.value = this._resource.protocol || emDash;
 
             switch (this._resource.priority) {
