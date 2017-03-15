@@ -1,3 +1,12 @@
+2017-03-15  Dean Jackson  <dino@apple.com>
+
+        Sort Xcode project files
+        https://bugs.webkit.org/show_bug.cgi?id=169669
+
+        Reviewed by Antoine Quint.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
 2017-02-27  Aakash Jain  <aakash_jain@apple.com>
 
         Enable SUPPORTS_TEXT_BASED_API in WebKitLegacy for iOS

@@ -39,9 +39,9 @@
 			isa = PBXGroup;
 			children = (
 				1C09D05C1E31C73300725F18 /* Configurations */,
-				1C09D0571E31C57E00725F18 /* config.h */,
 				1C09D03F1E31C32800725F18 /* pal */,
 				1C09D03E1E31C32800725F18 /* Products */,
+				1C09D0571E31C57E00725F18 /* config.h */,
 			);
 			sourceTree = "<group>";
 		};

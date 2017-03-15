@@ -1,3 +1,12 @@
+2017-03-15  Dean Jackson  <dino@apple.com>
+
+        Sort Xcode project files
+        https://bugs.webkit.org/show_bug.cgi?id=169669
+
+        Reviewed by Antoine Quint.
+
+        * WTF.xcodeproj/project.pbxproj:
+
 2017-03-14  Filip Pizlo  <fpizlo@apple.com>
 
         Fix some typos in this benchmark.
