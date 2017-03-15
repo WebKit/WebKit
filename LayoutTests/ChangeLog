@@ -1,3 +1,16 @@
+2017-03-14  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        RenderElements should unregister for viewport visibility callbacks when they are destroyed
+        https://bugs.webkit.org/show_bug.cgi?id=169521
+        <rdar://problem/30959545>
+
+        Reviewed by Simon Fraser.
+
+        Adds a new layout test covering this regression. See WebCore ChangeLog for more details.
+
+        * fast/media/video-element-in-details-collapse-expected.txt: Added.
+        * fast/media/video-element-in-details-collapse.html: Added.
+
 2017-03-14  Andy Estes  <aestes@apple.com>
 
         Update ApplePaySession.html after r213949

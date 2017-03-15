@@ -1132,6 +1132,9 @@ void RenderElement::willBeDestroyed()
 
     destroyLeftoverChildren();
 
+    if (isRegisteredForVisibleInViewportCallback())
+        unregisterForVisibleInViewportCallback();
+
     if (hasCounterNodeMap())
         RenderCounter::destroyCounterNodes(*this);
 
