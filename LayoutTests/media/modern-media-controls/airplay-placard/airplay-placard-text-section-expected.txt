@@ -3,6 +3,7 @@ Testing that text selection is turned off for AirplayPlacard.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
+PASS !!document.querySelector('.placard') became true
 PASS window.getComputedStyle(document.querySelector('.title')).webkitUserSelect is "none"
 PASS window.getComputedStyle(document.querySelector('.title')).cursor is "default"
 PASS window.getComputedStyle(document.querySelector('.description')).webkitUserSelect is "none"

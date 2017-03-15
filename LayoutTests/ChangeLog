@@ -1,3 +1,16 @@
+2017-03-15  Antoine Quint  <graouts@apple.com>
+
+        [mac-wk1 debug] LayoutTest media/modern-media-controls/airplay-placard/airplay-placard-text-section.html is a flaky timeout
+        https://bugs.webkit.org/show_bug.cgi?id=169654
+        <rdar://problem/31059092>
+
+        Reviewed by Dean Jackson.
+
+        Using an asynchronous assertion to improve reliability.
+
+        * media/modern-media-controls/airplay-placard/airplay-placard-text-section-expected.txt:
+        * media/modern-media-controls/airplay-placard/airplay-placard-text-section.html:
+
 2017-03-14  Youenn Fablet  <youenn@apple.com>
 
         CanvasCapture should not generate a frame per each canvas draw command

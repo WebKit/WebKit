@@ -12,8 +12,7 @@ const mediaControls = new MacOSInlineMediaControls({ width: 600, height: 300 });
 mediaControls.showPlacard(mediaControls.airplayPlacard);
 document.body.appendChild(mediaControls.element);
 
-scheduler.frameDidFire = function()
-{
+shouldBecomeEqual("!!document.querySelector('.placard')", "true", () => {
     shouldBeEqualToString("window.getComputedStyle(document.querySelector('.title')).webkitUserSelect", "none");
     shouldBeEqualToString("window.getComputedStyle(document.querySelector('.title')).cursor", "default");
     shouldBeEqualToString("window.getComputedStyle(document.querySelector('.description')).webkitUserSelect", "none");
@@ -21,8 +20,8 @@ scheduler.frameDidFire = function()
 
     mediaControls.element.remove();
     debug("");
-    finishMediaControlsTest();
-};
+    finishJSTest();
+});
 
 </script>
 <script src="../../../resources/js-test-post.js"></script>
