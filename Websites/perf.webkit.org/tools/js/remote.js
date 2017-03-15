@@ -4,10 +4,12 @@ let assert = require('assert');
 let http = require('http');
 let https = require('https');
 let querystring = require('querystring');
+let CommonRemoteAPI = require('../../public/shared/common-remote.js').CommonRemoteAPI;
 
-class RemoteAPI {
+class NodeRemoteAPI extends CommonRemoteAPI {
     constructor(server)
     {
+        super();
         this._server = null;
         this._cookies = new Map;
         if (server)
@@ -53,50 +55,6 @@ class RemoteAPI {
 
     clearCookies() { this._cookies = new Map; }
 
-    getJSON(path)
-    {
-        return this.sendHttpRequest(path, 'GET', null, null).then(function (result) {
-            try {
-                return JSON.parse(result.responseText);
-            } catch (error) {
-                console.error(result.responseText);
-                throw error;
-            }
-        });
-    }
-
-    getJSONWithStatus(path)
-    {
-        return this.getJSON(path).then(function (result) {
-            if (result['status'] != 'OK')
-                return Promise.reject(result);
-            return result;
-        });
-    }
-
-    postJSON(path, data)
-    {
-        const contentType = 'application/json';
-        const payload = JSON.stringify(data || {});
-        return this.sendHttpRequest(path, 'POST', 'application/json', payload).then(function (result) {
-            try {
-                return JSON.parse(result.responseText);
-            } catch (error) {
-                console.error(result.responseText);
-                throw error;
-            }
-        });
-    }
-
-    postJSONWithStatus(path, data)
-    {
-        return this.postJSON(path, data).then(function (result) {
-            if (result['status'] != 'OK')
-                return Promise.reject(result);
-            return result;
-        });
-    }
-
     postFormUrlencodedData(path, data)
     {
         const contentType = 'application/x-www-form-urlencoded';
@@ -109,8 +67,7 @@ class RemoteAPI {
     sendHttpRequest(path, method, contentType, content)
     {
         let server = this._server;
-        const self = this;
-        return new Promise(function (resolve, reject) {
+        return new Promise((resolve, reject) => {
             let options = {
                 hostname: server.host,
                 port: server.port,
@@ -119,20 +76,18 @@ class RemoteAPI {
                 path: path,
             };
 
-            let request = (server.scheme == 'http' ? http : https).request(options, function (response) {
+            let request = (server.scheme == 'http' ? http : https).request(options, (response) => {
                 let responseText = '';
                 response.setEncoding('utf8');
-                response.on('data', function (chunk) { responseText += chunk; });
-                response.on('end', function () {
-                    if (response.statusCode != 200) {
-                        reject(response.statusCode);
-                        return;
-                    }
+                response.on('data', (chunk) => { responseText += chunk; });
+                response.on('end', () => {
+                    if (response.statusCode != 200)
+                        return reject(response.statusCode);
 
                     if ('set-cookie' in response.headers) {
-                        for (const cookie of response.headers['set-cookie']) {
-                            var nameValue = cookie.split('=')
-                            self._cookies.set(nameValue[0], nameValue[1]);
+                        for (let cookie of response.headers['set-cookie']) {
+                            const nameValue = cookie.split('=');
+                            this._cookies.set(nameValue[0], nameValue[1]);
                         }
                     }
                     resolve({statusCode: response.statusCode, responseText: responseText});
@@ -144,11 +99,8 @@ class RemoteAPI {
             if (contentType)
                 request.setHeader('Content-Type', contentType);
 
-            if (self._cookies.size) {
-                request.setHeader('Cookie', Array.from(self._cookies.keys()).map(function (key) {
-                    return `${key}=${self._cookies.get(key)}`;
-                }).join('; '));
-            }
+            if (this._cookies.size)
+                request.setHeader('Cookie', Array.from(this._cookies.keys()).map((key) => `${key}=${this._cookies.get(key)}`).join('; '));
 
             if (content)
                 request.write(content);
@@ -159,4 +111,4 @@ class RemoteAPI {
 };
 
 if (typeof module != 'undefined')
-    module.exports.RemoteAPI = RemoteAPI;
+    module.exports.RemoteAPI = NodeRemoteAPI;

@@ -75,9 +75,9 @@ describe("/privileged-api/update-run-status", function () {
             RemoteAPI.clearCookies();
             return RemoteAPI.postJSONWithStatus('/privileged-api/update-run-status', {token: PrivilegedAPI._token});
         }).then(() => {
-            assert(false, 'PrivilegedAPI.sendRequest should reject');
-        }, (response) => {
-            assert.equal(response['status'], 'InvalidToken');
+            assert(false, 'should never be reached');
+        }, (error) => {
+            assert.equal(error, 'InvalidToken');
         });
     });
 
@@ -94,9 +94,9 @@ describe("/privileged-api/update-run-status", function () {
         }).then(() => {
             return RemoteAPI.postJSONWithStatus('/privileged-api/update-run-status', {token: 'bad'});
         }).then(() => {
-            assert(false, 'PrivilegedAPI.sendRequest should reject');
-        }, (response) => {
-            assert.equal(response['status'], 'InvalidToken');
+            assert(false, 'should never be reached');
+        }, (error) => {
+            assert.equal(error, 'InvalidToken');
         });
     });
 

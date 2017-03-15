@@ -69,14 +69,11 @@ class BuildbotTriggerable {
             return self._pullBuildbotOnAllSyncers(buildReqeustsByGroup);
         }).then(function (updates) {
             // FIXME: Add a new API that just updates the requests.
-            return self._remote.postJSON(`/api/build-requests/${self._name}`, {
+            return self._remote.postJSONWithStatus(`/api/build-requests/${self._name}`, {
                 'slaveName': self._slaveInfo.name,
                 'slavePassword': self._slaveInfo.password,
                 'buildRequestUpdates': updates});
-        }).then(function (response) {
-            if (response['status'] != 'OK')
-                self._logger.log('Failed to update the build requests status: ' + response['status']);
-        })
+        });
     }
 
     _validateRequests(buildRequests)

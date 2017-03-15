@@ -63,40 +63,40 @@ describe('/privileged-api/create-analysis-task', function () {
     it('should return "MissingName" on an empty request', () => {
         return PrivilegedAPI.sendRequest('create-analysis-task', {}).then((content) => {
             assert(false, 'should never be reached');
-        }, (response) => {
-            assert.equal(response['status'], 'MissingName');
+        }, (error) => {
+            assert.equal(error, 'MissingName');
         });
     });
 
     it('should return "InvalidStartRun" when startRun is missing but endRun is set', () => {
         return PrivilegedAPI.sendRequest('create-analysis-task', {name: 'hi', endRun: 1}).then((content) => {
             assert(false, 'should never be reached');
-        }, (response) => {
-            assert.equal(response['status'], 'InvalidStartRun');
+        }, (error) => {
+            assert.equal(error, 'InvalidStartRun');
         });
     });
 
     it('should return "InvalidEndRun" when endRun is missing but startRun is set', () => {
         return PrivilegedAPI.sendRequest('create-analysis-task', {name: 'hi', startRun: 1}).then((content) => {
             assert(false, 'should never be reached');
-        }, (response) => {
-            assert.equal(response['status'], 'InvalidEndRun');
+        }, (error) => {
+            assert.equal(error, 'InvalidEndRun');
         });
     });
 
     it('should return "InvalidStartRun" when startRun is not a valid integer', () => {
         return PrivilegedAPI.sendRequest('create-analysis-task', {name: 'hi', startRun: "foo", endRun: 1}).then((content) => {
             assert(false, 'should never be reached');
-        }, (response) => {
-            assert.equal(response['status'], 'InvalidStartRun');
+        }, (error) => {
+            assert.equal(error, 'InvalidStartRun');
         });
     });
 
     it('should return "InvalidEndRun" when endRun is not a valid integer', () => {
         return PrivilegedAPI.sendRequest('create-analysis-task', {name: 'hi', startRun: 1, endRun: "foo"}).then((content) => {
             assert(false, 'should never be reached');
-        }, (response) => {
-            assert.equal(response['status'], 'InvalidEndRun');
+        }, (error) => {
+            assert.equal(error, 'InvalidEndRun');
         });
     });
 
@@ -106,8 +106,8 @@ describe('/privileged-api/create-analysis-task', function () {
         }).then(() => {
             return PrivilegedAPI.sendRequest('create-analysis-task', {name: 'hi', startRun: 100, endRun: 1}).then((content) => {
                 assert(false, 'should never be reached');
-            }, (response) => {
-                assert.equal(response['status'], 'InvalidStartRun');
+            }, (error) => {
+                assert.equal(error, 'InvalidStartRun');
             });
         });
     });
@@ -118,8 +118,8 @@ describe('/privileged-api/create-analysis-task', function () {
         }).then(() => {
             return PrivilegedAPI.sendRequest('create-analysis-task', {name: 'hi', startRun: 1, endRun: 100}).then((content) => {
                 assert(false, 'should never be reached');
-            }, (response) => {
-                assert.equal(response['status'], 'InvalidEndRun');
+            }, (error) => {
+                assert.equal(error, 'InvalidEndRun');
             });
         });
     });
@@ -130,8 +130,8 @@ describe('/privileged-api/create-analysis-task', function () {
         }).then(() => {
             return PrivilegedAPI.sendRequest('create-analysis-task', {name: 'hi', startRun: 1, endRun: 1}).then((content) => {
                 assert(false, 'should never be reached');
-            }, (response) => {
-                assert.equal(response['status'], 'InvalidTimeRange');
+            }, (error) => {
+                assert.equal(error, 'InvalidTimeRange');
             });
         });
     });
@@ -142,8 +142,8 @@ describe('/privileged-api/create-analysis-task', function () {
         }).then(() => {
             return PrivilegedAPI.sendRequest('create-analysis-task', {name: 'hi', startRun: 1, endRun: 2}).then((content) => {
                 assert(false, 'should never be reached');
-            }, (response) => {
-                assert.equal(response['status'], 'RunConfigMismatch');
+            }, (error) => {
+                assert.equal(error, 'RunConfigMismatch');
             });
         });
     });
@@ -204,8 +204,8 @@ describe('/privileged-api/create-analysis-task', function () {
         }).then((content) => {
             return PrivilegedAPI.sendRequest('create-analysis-task', {name: 'hi', startRun: startId, endRun: endId}).then(() => {
                 assert(false, 'should never be reached');
-            }, (response) => {
-                assert.equal(response['status'], 'DuplicateAnalysisTask');
+            }, (error) => {
+                assert.equal(error, 'DuplicateAnalysisTask');
             });
         }).then(() => {
             return db.selectAll('analysis_tasks');

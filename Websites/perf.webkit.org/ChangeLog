@@ -1,5 +1,50 @@
 2017-03-15  Ryosuke Niwa  <rniwa@webkit.org>
 
+        In-browser and node.js implementations of RemoteAPI should share some code
+        https://bugs.webkit.org/show_bug.cgi?id=169695
+
+        Rubber-stamped by Antti Koivisto.
+
+        Extracted CommonRemoteAPI out of RemoteAPI implementations for node.js and browser. 
+
+        * public/shared/common-remote.js: Added.
+        (CommonRemoteAPI): Added.
+        (CommonRemoteAPI.prototype.postJSON): Extracted from RemoteAPI.
+        (CommonRemoteAPI.prototype.postJSONWithStatus): Ditto.
+        (CommonRemoteAPI.prototype.getJSON): Ditto.
+        (CommonRemoteAPI.prototype.getJSONWithStatus): Ditto.
+        (CommonRemoteAPI.prototype.sendHttpRequest): Added. Needs to implemented by a subclass.
+        (CommonRemoteAPI.prototype._asJSON): Added.
+        (CommonRemoteAPI.prototype._checkStatus): Added.
+
+        * public/v3/index.html: Include common-remote.js.
+
+        * public/v3/privileged-api.js:
+        (PrivilegedAPI): Use class now that we don't include data.js.
+        (PrivilegedAPI.sendRequest): Modernized the code.
+        (PrivilegedAPI.requestCSRFToken): Ditto.
+
+        * public/v3/remote.js:
+        (BrowserRemoteAPI): Renamed from RemoteAPI. window.RemoteAPI is now an instance of this class.
+        (BrowserRemoteAPI.prototype.sendHttpRequest): Moved from RemoteAPI.sendHttpRequest.
+        (BrowserRemoteAPI.prototype.sendHttpRequest):
+
+        * server-tests/privileged-api-create-analysis-task-tests.js: Updated tests since NodeJSRemoteAPI
+        now throws the JSON status as an error to be consistent with BrowserRemoteAPI.
+        * server-tests/privileged-api-create-test-group-tests.js: Ditto.
+        * server-tests/privileged-api-upate-run-status.js: Ditto.
+
+        * tools/js/buildbot-triggerable.js:
+        (BuildbotTriggerable.prototype.syncOnce): Just use postJSONWithStatus instead of manually
+        checking the status.
+
+        * tools/js/remote.js:
+        (NodeRemoteAPI): Renamed from RemoteAPI. Still exported as RemoteAPI.
+        (NodeRemoteAPI.prototype.constructor):
+        (NodeRemoteAPI.prototype.sendHttpRequest): Modernized the code.
+
+2017-03-15  Ryosuke Niwa  <rniwa@webkit.org>
+
         Fix server tests after r213998 and r213969
         https://bugs.webkit.org/show_bug.cgi?id=169690
 

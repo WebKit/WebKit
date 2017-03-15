@@ -116,72 +116,72 @@ describe('/privileged-api/create-test-group', function () {
     it('should return "InvalidName" on an empty request', () => {
         return PrivilegedAPI.sendRequest('create-test-group', {}).then((content) => {
             assert(false, 'should never be reached');
-        }, (response) => {
-            assert.equal(response['status'], 'InvalidName');
+        }, (error) => {
+            assert.equal(error, 'InvalidName');
         });
     });
 
     it('should return "InvalidTask" when task is not specified', () => {
         return PrivilegedAPI.sendRequest('create-test-group', {name: 'test', commitSets: [[1]]}).then((content) => {
             assert(false, 'should never be reached');
-        }, (response) => {
-            assert.equal(response['status'], 'InvalidTask');
+        }, (error) => {
+            assert.equal(error, 'InvalidTask');
         });
     });
 
     it('should return "InvalidTask" when task is not a valid integer', () => {
         return PrivilegedAPI.sendRequest('create-test-group', {name: 'test', task: 'foo', commitSets: [[1]]}).then((content) => {
             assert(false, 'should never be reached');
-        }, (response) => {
-            assert.equal(response['status'], 'InvalidTask');
+        }, (error) => {
+            assert.equal(error, 'InvalidTask');
         });
     });
 
     it('should return "InvalidCommitSets" when commit sets are not specified', () => {
         return PrivilegedAPI.sendRequest('create-test-group', {name: 'test', task: 1, repetitionCount: 1}).then((content) => {
             assert(false, 'should never be reached');
-        }, (response) => {
-            assert.equal(response['status'], 'InvalidCommitSets');
+        }, (error) => {
+            assert.equal(error, 'InvalidCommitSets');
         });
     });
 
     it('should return "InvalidCommitSets" when commit sets is empty', () => {
         return PrivilegedAPI.sendRequest('create-test-group', {name: 'test', task: 1, repetitionCount: 1, commitSets: {}}).then((content) => {
             assert(false, 'should never be reached');
-        }, (response) => {
-            assert.equal(response['status'], 'InvalidCommitSets');
+        }, (error) => {
+            assert.equal(error, 'InvalidCommitSets');
         });
     });
 
     it('should return "InvalidTask" when there is no matching task', () => {
         return PrivilegedAPI.sendRequest('create-test-group', {name: 'test', task: 1, repetitionCount: 1, commitSets: {'WebKit': []}}).then((content) => {
             assert(false, 'should never be reached');
-        }, (response) => {
-            assert.equal(response['status'], 'InvalidTask');
+        }, (error) => {
+            assert.equal(error, 'InvalidTask');
         });
     });
 
     it('should return "InvalidRepetitionCount" when repetitionCount is not a valid integer', () => {
         return PrivilegedAPI.sendRequest('create-test-group', {name: 'test', task: 1, repetitionCount: 'foo', commitSets: {'WebKit': []}}).then((content) => {
             assert(false, 'should never be reached');
-        }, (response) => {
-            assert.equal(response['status'], 'InvalidRepetitionCount');
+        }, (error) => {
+            assert.equal(error, 'InvalidRepetitionCount');
         });
     });
 
     it('should return "InvalidRepetitionCount" when repetitionCount is a negative integer', () => {
         return PrivilegedAPI.sendRequest('create-test-group', {name: 'test', task: 1, repetitionCount: -5, commitSets: {'WebKit': []}}).then((content) => {
             assert(false, 'should never be reached');
-        }, (response) => {
-            assert.equal(response['status'], 'InvalidRepetitionCount');
+        }, (error) => {
+            assert.equal(error, 'InvalidRepetitionCount');
         });
     });
 
     it('should return "InvalidTask" when there is no matching task', () => {
         return PrivilegedAPI.sendRequest('create-test-group', {name: 'test', task: 1, commitSets: {'WebKit': []}}).then((content) => {
             assert(false, 'should never be reached');
-        }, (response) => {
-            assert.equal(response['status'], 'InvalidTask');
+        }, (error) => {
+            assert.equal(error, 'InvalidTask');
         });
     });
 
@@ -189,8 +189,8 @@ describe('/privileged-api/create-test-group', function () {
         return createAnalysisTask('some task').then((taskId) => {
             return PrivilegedAPI.sendRequest('create-test-group', {name: 'test', task: taskId, commitSets: {'WebKit': []}}).then((content) => {
                 assert(false, 'should never be reached');
-            }, (response) => {
-                assert.equal(response['status'], 'TriggerableNotFoundForTask');
+            }, (error) => {
+                assert.equal(error, 'TriggerableNotFoundForTask');
             });
         });
     });
@@ -199,8 +199,8 @@ describe('/privileged-api/create-test-group', function () {
         return addTriggerableAndCreateTask('some task').then((taskId) => {
             return PrivilegedAPI.sendRequest('create-test-group', {name: 'test', task: taskId, commitSets: {'WebKit': []}}).then((content) => {
                 assert(false, 'should never be reached');
-            }, (response) => {
-                assert.equal(response['status'], 'InvalidCommitSets');
+            }, (error) => {
+                assert.equal(error, 'InvalidCommitSets');
             });
         });
     });
@@ -209,8 +209,8 @@ describe('/privileged-api/create-test-group', function () {
         return addTriggerableAndCreateTask('some task').then((taskId) => {
             return PrivilegedAPI.sendRequest('create-test-group', {name: 'test', task: taskId, commitSets: {'Foo': []}}).then((content) => {
                 assert(false, 'should never be reached');
-            }, (response) => {
-                assert.equal(response['status'], 'RepositoryNotFound');
+            }, (error) => {
+                assert.equal(error, 'RepositoryNotFound');
             });
         });
     });
@@ -219,8 +219,8 @@ describe('/privileged-api/create-test-group', function () {
         return addTriggerableAndCreateTask('some task').then((taskId) => {
             return PrivilegedAPI.sendRequest('create-test-group', {name: 'test', task: taskId, commitSets: {'WebKit': ['1']}}).then((content) => {
                 assert(false, 'should never be reached');
-            }, (response) => {
-                assert.equal(response['status'], 'RevisionNotFound');
+            }, (error) => {
+                assert.equal(error, 'RevisionNotFound');
             });
         });
     });
@@ -229,8 +229,8 @@ describe('/privileged-api/create-test-group', function () {
         return addTriggerableAndCreateTask('some task').then((taskId) => {
             return PrivilegedAPI.sendRequest('create-test-group', {name: 'test', task: taskId, commitSets: {'WebKit': ['191622', '191623'], 'macOS': ['15A284']}}).then((content) => {
                 assert(false, 'should never be reached');
-            }, (response) => {
-                assert.equal(response['status'], 'InvalidCommitSets');
+            }, (error) => {
+                assert.equal(error, 'InvalidCommitSets');
             });
         });
     });

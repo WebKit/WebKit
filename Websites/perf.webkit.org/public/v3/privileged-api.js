@@ -1,23 +1,25 @@
 "use strict";
 
-// FIXME: Use real class syntax once the dependency on data.js has been removed.
-var PrivilegedAPI = class {
+class PrivilegedAPI {
 
     static sendRequest(path, data)
     {
-        var clonedData = {};
-        for (var key in data)
+        const clonedData = {};
+        for (let key in data)
             clonedData[key] = data[key];
 
-        return this.requestCSRFToken().then(function (token) {
+        const fullPath = '/privileged-api/' + path;
+        const post = () => RemoteAPI.postJSONWithStatus(fullPath, clonedData);
+
+        return this.requestCSRFToken().then((token) => {
             clonedData['token'] = token;
-            return RemoteAPI.postJSONWithStatus('/privileged-api/' + path, clonedData).catch(function (status) {
+            return post().catch((status) => {
                 if (status != 'InvalidToken')
                     return Promise.reject(status);
-                PrivilegedAPI._token = null;
-                return PrivilegedAPI.requestCSRFToken().then(function (token) {
+                this._token = null;
+                return this.requestCSRFToken().then((token) => {
                     clonedData['token'] = token;
-                    return RemoteAPI.postJSONWithStatus('/privileged-api/' + path, clonedData);
+                    return post();
                 });
             });
         });
@@ -25,14 +27,14 @@ var PrivilegedAPI = class {
 
     static requestCSRFToken()
     {
-        var maxNetworkLatency = 3 * 60 * 1000; /* 3 minutes */
+        const maxNetworkLatency = 3 * 60 * 1000; /* 3 minutes */
         if (this._token && this._expiration > Date.now() + maxNetworkLatency)
             return Promise.resolve(this._token);
 
-        return RemoteAPI.postJSONWithStatus('/privileged-api/generate-csrf-token').then(function (result) {
-            PrivilegedAPI._token = result['token'];
-            PrivilegedAPI._expiration = new Date(result['expiration']);
-            return PrivilegedAPI._token;
+        return RemoteAPI.postJSONWithStatus('/privileged-api/generate-csrf-token').then((result) => {
+            this._token = result['token'];
+            this._expiration = new Date(result['expiration']);
+            return this._token;
         });
     }
 
