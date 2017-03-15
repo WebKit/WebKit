@@ -59,7 +59,7 @@ class Repository(object):
 
     def fetch_commits_and_submit(self, server_config, max_fetch_count, max_ancestor_fetch_count):
         if not self._last_fetched:
-            print "Determining the stating revision for %s" % self._name
+            print "Determining the starting revision for %s" % self._name
             self._last_fetched = self.determine_last_reported_revision(server_config)
 
         pending_commits = []

@@ -7,16 +7,7 @@ const MockData = require('./resources/mock-data.js');
 const MockRemoteAPI = require('../unit-tests/resources/mock-remote-api.js').MockRemoteAPI;
 const TestServer = require('./resources/test-server.js');
 const prepareServerTest = require('./resources/common-operations.js').prepareServerTest;
-
-class MockLogger {
-    constructor()
-    {
-        this._logs = [];
-    }
-
-    log(text) { this._logs.push(text); }
-    error(text) { this._logs.push(text); }
-}
+const MockLogger = require('./resources/mock-logger.js').MockLogger;
 
 describe('BuildbotTriggerable', function () {
     prepareServerTest(this);

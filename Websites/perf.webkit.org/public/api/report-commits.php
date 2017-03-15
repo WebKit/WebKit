@@ -26,7 +26,7 @@ function main($post_data)
 
     $db->begin_transaction();
     foreach ($commits as $commit_info) {
-        $repository_id = $db->select_or_insert_repository_row($commit_info['repository'], NULL);
+        $repository_id = $db->select_or_insert_row('repositories', 'repository', array('name' => $commit_info['repository'], 'owner' => NULL));
         if (!$repository_id) {
             $db->rollback_transaction();
             exit_with_error('FailedToInsertRepository', array('commit' => $commit_info));
@@ -40,7 +40,7 @@ function main($post_data)
                 $db->rollback_transaction();
                 exit_with_error('SubCommitShouldNotContainTimestamp', array('commit' => $sub_commit_info));
             }
-            $sub_commit_repository_id = $db->select_or_insert_repository_row($sub_commit_repository_name, $repository_id);
+            $sub_commit_repository_id = $db->select_or_insert_row('repositories', 'repository', array('name' => $sub_commit_repository_name, 'owner' => $repository_id));
             if (!$sub_commit_repository_id) {
                 $db->rollback_transaction();
                 exit_with_error('FailedToInsertRepository', array('commit' => $sub_commit_info));

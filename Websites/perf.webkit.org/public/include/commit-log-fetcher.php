@@ -27,13 +27,14 @@ class CommitLogFetcher {
 
     function repository_id_from_name($name)
     {
-        $repository_row = $this->db->query_and_fetch_all('SELECT repository_id FROM repositories WHERE repository_name = $1 AND repository_owner is NULL', array($name));
+        $repository_row = $this->db->select_first_row('repositories', 'repository', array('name' => $name, 'owner' => NULL));
         if (!$repository_row)
             return NULL;
-        return $repository_row[0]['repository_id'];
+        return $repository_row['repository_id'];
     }
 
-    function fetch_between($repository_id, $first, $second, $keyword = NULL) {
+    function fetch_between($repository_id, $first, $second, $keyword = NULL)
+    {
         $statements = 'SELECT commit_id as "id",
             commit_revision as "revision",
             commit_previous_commit as "previousCommit",
@@ -79,6 +80,25 @@ class CommitLogFetcher {
 
         foreach ($commits as &$commit)
             $commit['time'] = Database::to_js_time($commit['time']);
+
+        return $commits;
+    }
+
+    # FIXME: this is not DRY. Ideally, $db should provide the ability to search with criteria that specifies a range.
+    function fetch_last_reported_between_orders($repository_id, $from, $to)
+    {
+        $statements = 'SELECT * FROM commits LEFT OUTER JOIN committers ON commit_committer = committer_id
+            WHERE commit_repository = $1 AND commit_reported = true';
+        $from = intval($from);
+        $to = intval($to);
+        $statements .= ' AND commit_order >= $2 AND commit_order <= $3 ORDER BY commit_order DESC LIMIT 1';
+
+        $commits = $this->db->query_and_fetch_all($statements, array($repository_id, $from, $to));
+        if (!is_array($commits))
+            return NULL;
+
+        foreach ($commits as &$commit)
+            $commit = $this->format_single_commit($commit)[0];
 
         return $commits;
     }

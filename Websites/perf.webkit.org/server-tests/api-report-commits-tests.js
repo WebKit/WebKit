@@ -298,7 +298,7 @@ describe("/api/report-commits/", function () {
         ]
     }
 
-    it("should distinguish between repositories with the asme name but with a different owner.", () => {
+    it("should distinguish between repositories with the same name but with a different owner.", () => {
         return addSlaveForReport(sameRepositoryNameInSubCommitAndMajorCommit).then(() => {
             return TestServer.remoteAPI().postJSON('/api/report-commits/', sameRepositoryNameInSubCommitAndMajorCommit);
         }).then((response) => {

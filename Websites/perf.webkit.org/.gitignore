@@ -1,0 +1,3 @@
+public/data
+node_modules
+server-tests/resources/test-server.log

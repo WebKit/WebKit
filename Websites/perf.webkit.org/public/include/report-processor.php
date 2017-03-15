@@ -150,7 +150,7 @@ class ReportProcessor {
 
 
         foreach ($revisions as $repository_name => $revision_data) {
-            $repository_id = $this->db->select_or_insert_repository_row($repository_name, NULL);
+            $repository_id = $this->db->select_or_insert_row('repositories', 'repository', array('name' => $repository_name, 'owner' => NULL));
             if (!$repository_id)
                 $this->exit_with_error('FailedToInsertRepository', array('name' => $repository_name));
 

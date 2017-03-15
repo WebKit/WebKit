@@ -301,6 +301,47 @@ describe("/api/commits/", function () {
         });
     });
 
+    describe('/api/commits/<repository>/last-reported?from=<start_order>&to=<end_order>', () => {
+        it("should return a list of commit in given valid order range", () => {
+            const db = TestServer.database();
+            return Promise.all([
+                db.insert('repositories', {'id': 1, 'name': 'OSX'}),
+                db.insert('commits', {'repository': 1, 'revision': 'Sierra16C67', 'order': 367, 'reported': true}),
+                db.insert('commits', {'repository': 1, 'revision': 'Sierra16C68', 'order': 368, 'reported': true}),
+                db.insert('commits', {'repository': 1, 'revision': 'Sierra16C69', 'order': 369, 'reported': false}),
+                db.insert('commits', {'repository': 1, 'revision': 'Sierra16D32', 'order': 432, 'reported': true})
+            ]).then(() => {
+                return TestServer.remoteAPI().getJSON('/api/commits/OSX/last-reported?from=367&to=370');
+            }).then((response) => {
+                assert.equal(response['status'], 'OK');
+                const results = response['commits'];
+                assert.equal(results.length, 1);
+                const commit = results[0];
+                assert.equal(commit.revision, 'Sierra16C68');
+            }).then(() => {
+                return TestServer.remoteAPI().getJSON('/api/commits/OSX/last-reported?from=370&to=367');
+            }).then((response) => {
+                assert.equal(response['status'], 'OK');
+                const results = response['commits'];
+                assert.equal(results.length, 0);
+            }).then(() => {
+                return TestServer.remoteAPI().getJSON('/api/commits/OSX/last-reported?from=200&to=299');
+            }).then((response) => {
+                assert.equal(response['status'], 'OK');
+                const results = response['commits'];
+                assert.equal(results.length, 0);
+            }).then(() => {
+                return TestServer.remoteAPI().getJSON('/api/commits/OSX/last-reported?from=369&to=432');
+            }).then((response) => {
+                assert.equal(response['status'], 'OK');
+                const results = response['commits'];
+                assert.equal(results.length, 1);
+                const commit = results[0];
+                assert.equal(commit.revision, 'Sierra16D32');
+            });
+        });
+    });
+
     describe('/api/commits/<repository>/<commit>', () => {
         it("should return RepositoryNotFound when there are no matching repository", () => {
             return TestServer.remoteAPI().getJSON('/api/commits/WebKit/210949').then((response) => {
