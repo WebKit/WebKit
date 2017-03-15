@@ -1,5 +1,24 @@
 2017-03-15  Devin Rousso  <webkit@devinrousso.com>
 
+        Web Inspector: Add icons for SVG Image cluster path components
+        https://bugs.webkit.org/show_bug.cgi?id=169687
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Images/Image.svg: Added.
+        * UserInterface/Images/Source.svg: Added.
+        * UserInterface/Images/gtk/Image.svg: Added.
+        * UserInterface/Images/gtk/Source.svg: Added.
+
+        * UserInterface/Views/PathComponentIcons.css:
+        (.image-icon .icon):
+        (.source-icon .icon):
+
+        * UserInterface/Views/SVGImageResourceClusterContentView.js:
+        (WebInspector.SVGImageResourceClusterContentView):
+
+2017-03-15  Devin Rousso  <webkit@devinrousso.com>
+
         Web Inspector: RTL: flip Memory timelines
         https://bugs.webkit.org/show_bug.cgi?id=169694
 

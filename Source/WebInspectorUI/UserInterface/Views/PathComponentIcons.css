@@ -103,6 +103,14 @@
     content: url(../Images/HeapSnapshotDiff.svg);
 }
 
+.image-icon .icon {
+    content: url("../Images/Image.svg");
+}
+
+.source-icon .icon {
+    content: url("../Images/Source.svg");
+}
+
 /* FIXME: <https://webkit.org/b/155077> [GTK] Web Inspector: Add new GTK+ icons for different Script Timeline Views */
 /* FIXME: <https://webkit.org/b/155282> [GTK] Web Inspector: Add new GTK+ icons for different Heap Allocations Timeline Views (Heap Snapshots) */
 body:not(.mac-platform, .windows-platform) .events-icon .icon,

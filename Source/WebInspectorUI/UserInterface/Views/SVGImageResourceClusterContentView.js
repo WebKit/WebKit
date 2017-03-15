@@ -32,15 +32,15 @@ WebInspector.SVGImageResourceClusterContentView = class SVGImageResourceClusterC
         this._resource = resource;
 
         let createPathComponent = (displayName, className, identifier) => {
-            const textOnly = true;
+            const textOnly = false;
             const showSelectorArrows = true;
             let pathComponent = new WebInspector.HierarchicalPathComponent(displayName, className, identifier, textOnly, showSelectorArrows);
             pathComponent.addEventListener(WebInspector.HierarchicalPathComponent.Event.SiblingWasSelected, this._pathComponentSelected, this);
             return pathComponent;
         };
 
-        this._imagePathComponent = createPathComponent(WebInspector.UIString("Image"), "image", WebInspector.SVGImageResourceClusterContentView.Identifier.Image);
-        this._sourcePathComponent = createPathComponent(WebInspector.UIString("Source"), "source", WebInspector.SVGImageResourceClusterContentView.Identifier.Source);
+        this._imagePathComponent = createPathComponent(WebInspector.UIString("Image"), "image-icon", WebInspector.SVGImageResourceClusterContentView.Identifier.Image);
+        this._sourcePathComponent = createPathComponent(WebInspector.UIString("Source"), "source-icon", WebInspector.SVGImageResourceClusterContentView.Identifier.Source);
 
         this._imagePathComponent.nextSibling = this._sourcePathComponent;
         this._sourcePathComponent.previousSibling = this._imagePathComponent;
