@@ -768,7 +768,7 @@ static void printLayer(StringBuilder& builder, const PlatformCALayer* layer, int
     case PlatformCALayer::LayerTypeTiledBackingTileLayer: layerTypeName = "tiled-backing-tile-layer"; break;
     case PlatformCALayer::LayerTypeRootLayer: layerTypeName = "root-layer"; break;
     case PlatformCALayer::LayerTypeAVPlayerLayer: layerTypeName = "avplayer-layer"; break;
-    case PlatformCALayer::LayerTypeWebGLLayer: layerTypeName = "webgl-layer"; break;
+    case PlatformCALayer::LayerTypeContentsProvidedLayer: layerTypeName = "contents-provided-layer"; break;
     case PlatformCALayer::LayerTypeBackdropLayer: layerTypeName = "backdrop-layer"; break;
     case PlatformCALayer::LayerTypeShapeLayer: layerTypeName = "shape-layer"; break;
     case PlatformCALayer::LayerTypeLightSystemBackdropLayer: layerTypeName = "light-system-backdrop-layer"; break;
