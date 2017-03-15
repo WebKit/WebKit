@@ -1,6 +1,6 @@
 'use strict';
 
-var assert = require('assert');
+const assert = require('assert');
 
 require('../tools/js/v3-models.js');
 let MockModels = require('./resources/mock-v3-models.js').MockModels;
@@ -116,57 +116,56 @@ function measurementCluster()
     };
 }
 
-describe('AnalysisTask', function () {
+describe('AnalysisTask', () => {
     MockModels.inject();
     let requests = MockRemoteAPI.inject();
 
-    describe('fetchAll', function () {
-        it('should request all analysis tasks', function () {
-            var callCount = 0;
-            AnalysisTask.fetchAll().then(function () { callCount++; });
+    describe('fetchAll', () => {
+        it('should request all analysis tasks', () => {
+            let callCount = 0;
+            AnalysisTask.fetchAll().then(() => { callCount++; });
             assert.equal(callCount, 0);
             assert.equal(requests.length, 1);
             assert.equal(requests[0].url, '../api/analysis-tasks');
         });
 
-        it('should not request all analysis tasks multiple times', function () {
-            var callCount = 0;
-            AnalysisTask.fetchAll().then(function () { callCount++; });
+        it('should not request all analysis tasks multiple times', () => {
+            let callCount = 0;
+            AnalysisTask.fetchAll().then(() => { callCount++; });
             assert.equal(callCount, 0);
             assert.equal(requests.length, 1);
             assert.equal(requests[0].url, '../api/analysis-tasks');
 
-            AnalysisTask.fetchAll().then(function () { callCount++; });
+            AnalysisTask.fetchAll().then(() => { callCount++; });
             assert.equal(callCount, 0);
             assert.equal(requests.length, 1);
         });
 
-        it('should resolve the promise when the request is fullfilled', function (done) {
-            var callCount = 0;
-            var promise = AnalysisTask.fetchAll().then(function () { callCount++; });
+        it('should resolve the promise when the request is fullfilled', () => {
+            let callCount = 0;
+            const promise = AnalysisTask.fetchAll().then(() => { callCount++; });
             assert.equal(callCount, 0);
             assert.equal(requests.length, 1);
             assert.equal(requests[0].url, '../api/analysis-tasks');
 
             requests[0].resolve(sampleAnalysisTask());
 
-            var anotherCallCount = 0;
-            promise.then(function () {
+            let anotherCallCount = 0;
+            return promise.then(() => {
                 assert.equal(callCount, 1);
-                AnalysisTask.fetchAll().then(function () { anotherCallCount++; });
-            }).then(function () {
+                AnalysisTask.fetchAll().then(() => { anotherCallCount++; });
+            }).then(() => {
                 assert.equal(callCount, 1);
                 assert.equal(anotherCallCount, 1);
                 assert.equal(requests.length, 1);
-                done();
-            }).catch(function (error) { done(error); });
+            });
         });
 
-        it('should create AnalysisTask objects', function (done) {
-            var promise = AnalysisTask.fetchAll();
+        it('should create AnalysisTask objects', () => {
+            const promise = AnalysisTask.fetchAll();
             requests[0].resolve(sampleAnalysisTask());
 
-            promise.then(function () {
+            return promise.then(() => {
                 assert.equal(AnalysisTask.all().length, 1);
                 var task = AnalysisTask.all()[0];
                 assert.equal(task.id(), 1082);
@@ -181,15 +180,14 @@ describe('AnalysisTask', function () {
                 assert.equal(task.startTime(), 1454444458791);
                 assert.equal(task.endMeasurementId(), 37253448);
                 assert.equal(task.endTime(), 1454515020303);
-                done();
-            }).catch(function (error) { done(error); });
+            });
         });
 
-        it('should create CommitLog objects for `causes`', function (done) {
-            var promise = AnalysisTask.fetchAll();
+        it('should create CommitLog objects for `causes`', () => {
+            const promise = AnalysisTask.fetchAll();
             requests[0].resolve(sampleAnalysisTask());
 
-            promise.then(function () {
+            return promise.then(() => {
                 assert.equal(AnalysisTask.all().length, 1);
                 var task = AnalysisTask.all()[0];
 
@@ -199,20 +197,19 @@ describe('AnalysisTask', function () {
                 assert.equal(commit.revision(), '196051');
                 assert.equal(commit.repository(), MockModels.webkit);
                 assert.equal(+commit.time(), 1454481246108);
-                done();
-            }).catch(function (error) { done(error); });
+            });
         });
 
-        it('should find CommitLog objects for `causes` when MeasurementAdaptor created matching objects', function (done) {
-            var adaptor = new MeasurementAdaptor(measurementCluster().formatMap);
-            var adaptedMeasurement = adaptor.applyTo(measurementCluster().configurations.current[0]);
+        it('should find CommitLog objects for `causes` when MeasurementAdaptor created matching objects', () => {
+            const adaptor = new MeasurementAdaptor(measurementCluster().formatMap);
+            const adaptedMeasurement = adaptor.applyTo(measurementCluster().configurations.current[0]);
             assert.equal(adaptedMeasurement.id, 37188161);
             assert.equal(adaptedMeasurement.commitSet().commitForRepository(MockModels.webkit).revision(), '196051');
 
-            var promise = AnalysisTask.fetchAll();
+            const promise = AnalysisTask.fetchAll();
             requests[0].resolve(sampleAnalysisTask());
 
-            promise.then(function () {
+            return promise.then(() => {
                 assert.equal(AnalysisTask.all().length, 1);
                 var task = AnalysisTask.all()[0];
 
@@ -221,8 +218,7 @@ describe('AnalysisTask', function () {
                 assert.equal(commit.revision(), '196051');
                 assert.equal(commit.repository(), MockModels.webkit);
                 assert.equal(+commit.time(), 1454481246108);
-                done();
-            }).catch(function (error) { done(error); });
+            });
         });
     });
 });

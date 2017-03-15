@@ -416,113 +416,113 @@ function sampleFinishedBuild(buildRequestId, slaveName)
     };
 }
 
-describe('BuildbotSyncer', function () {
+describe('BuildbotSyncer', () => {
     MockModels.inject();
     let requests = MockRemoteAPI.inject('http://build.webkit.org');
 
-    describe('_loadConfig', function () {
+    describe('_loadConfig', () => {
 
-        it('should create BuildbotSyncer objects for a configuration that specify all required options', function () {
+        it('should create BuildbotSyncer objects for a configuration that specify all required options', () => {
             let syncers = BuildbotSyncer._loadConfig(MockRemoteAPI, {'configurations': [smallConfiguration()]});
             assert.equal(syncers.length, 1);
         });
 
-        it('should throw when some required options are missing', function () {
-            assert.throws(function () {
+        it('should throw when some required options are missing', () => {
+            assert.throws(() => {
                 let config = smallConfiguration();
                 delete config['builder'];
                 BuildbotSyncer._loadConfig(MockRemoteAPI, {'configurations': [config]});
             }, 'builder should be a required option');
-            assert.throws(function () {
+            assert.throws(() => {
                 let config = smallConfiguration();
                 delete config['platform'];
                 BuildbotSyncer._loadConfig(MockRemoteAPI, {'configurations': [config]});
             }, 'platform should be a required option');
-            assert.throws(function () {
+            assert.throws(() => {
                 let config = smallConfiguration();
                 delete config['test'];
                 BuildbotSyncer._loadConfig(MockRemoteAPI, {'configurations': [config]});
             }, 'test should be a required option');
-            assert.throws(function () {
+            assert.throws(() => {
                 let config = smallConfiguration();
                 delete config['arguments'];
                 BuildbotSyncer._loadConfig(MockRemoteAPI, {'configurations': [config]});
             });
-            assert.throws(function () {
+            assert.throws(() => {
                 let config = smallConfiguration();
                 delete config['buildRequestArgument'];
                 BuildbotSyncer._loadConfig(MockRemoteAPI, {'configurations': [config]});
             });
         });
 
-        it('should throw when a test name is not an array of strings', function () {
-            assert.throws(function () {
+        it('should throw when a test name is not an array of strings', () => {
+            assert.throws(() => {
                 let config = smallConfiguration();
                 config.test = 'some test';
                 BuildbotSyncer._loadConfig(MockRemoteAPI, {'configurations': [config]});
             });
-            assert.throws(function () {
+            assert.throws(() => {
                 let config = smallConfiguration();
                 config.test = [1];
                 BuildbotSyncer._loadConfig(MockRemoteAPI, {'configurations': [config]});
             });
         });
 
-        it('should throw when arguments is not an object', function () {
-            assert.throws(function () {
+        it('should throw when arguments is not an object', () => {
+            assert.throws(() => {
                 let config = smallConfiguration();
                 config.arguments = 'hello';
                 BuildbotSyncer._loadConfig(MockRemoteAPI, {'configurations': [config]});
             });
         });
 
-        it('should throw when arguments\'s values are malformed', function () {
-            assert.throws(function () {
+        it('should throw when arguments\'s values are malformed', () => {
+            assert.throws(() => {
                 let config = smallConfiguration();
                 config.arguments = {'some': {'root': 'some root', 'rootsExcluding': ['other root']}};
                 BuildbotSyncer._loadConfig(RemoteAPI, {'configurations': [config]});
             });
-            assert.throws(function () {
+            assert.throws(() => {
                 let config = smallConfiguration();
                 config.arguments = {'some': {'otherKey': 'some root'}};
                 BuildbotSyncer._loadConfig(RemoteAPI, {'configurations': [config]});
             });
-            assert.throws(function () {
+            assert.throws(() => {
                 let config = smallConfiguration();
                 config.arguments = {'some': {'root': ['a', 'b']}};
                 BuildbotSyncer._loadConfig(RemoteAPI, {'configurations': [config]});
             });
-            assert.throws(function () {
+            assert.throws(() => {
                 let config = smallConfiguration();
                 config.arguments = {'some': {'root': 1}};
                 BuildbotSyncer._loadConfig(RemoteAPI, {'configurations': [config]});
             });
-            assert.throws(function () {
+            assert.throws(() => {
                 let config = smallConfiguration();
                 config.arguments = {'some': {'rootsExcluding': 'a'}};
                 BuildbotSyncer._loadConfig(RemoteAPI, {'configurations': [config]});
             });
-            assert.throws(function () {
+            assert.throws(() => {
                 let config = smallConfiguration();
                 config.arguments = {'some': {'rootsExcluding': [1]}};
                 BuildbotSyncer._loadConfig(RemoteAPI, {'configurations': [config]});
             });
         });
 
-        it('should create BuildbotSyncer objects for valid configurations', function () {
+        it('should create BuildbotSyncer objects for valid configurations', () => {
             let syncers = BuildbotSyncer._loadConfig(RemoteAPI, sampleiOSConfig());
             assert.equal(syncers.length, 2);
             assert.ok(syncers[0] instanceof BuildbotSyncer);
             assert.ok(syncers[1] instanceof BuildbotSyncer);
         });
 
-        it('should parse builder names correctly', function () {
+        it('should parse builder names correctly', () => {
             let syncers = BuildbotSyncer._loadConfig(RemoteAPI, sampleiOSConfig());
             assert.equal(syncers[0].builderName(), 'ABTest-iPhone-RunBenchmark-Tests');
             assert.equal(syncers[1].builderName(), 'ABTest-iPad-RunBenchmark-Tests');
         });
 
-        it('should parse test configurations correctly', function () {
+        it('should parse test configurations correctly', () => {
             let syncers = BuildbotSyncer._loadConfig(RemoteAPI, sampleiOSConfig());
 
             let configurations = syncers[0].testConfigurations();
@@ -542,7 +542,7 @@ describe('BuildbotSyncer', function () {
             assert.equal(configurations[1].test, MockModels.jetstream);
         });
 
-        it('should parse test configurations with types and platforms expansions correctly', function () {
+        it('should parse test configurations with types and platforms expansions correctly', () => {
             let syncers = BuildbotSyncer._loadConfig(RemoteAPI, sampleiOSConfigWithExpansions());
 
             assert.equal(syncers.length, 2);
@@ -567,14 +567,14 @@ describe('BuildbotSyncer', function () {
         });
     });
 
-    describe('_propertiesForBuildRequest', function () {
-        it('should include all properties specified in a given configuration', function () {
+    describe('_propertiesForBuildRequest', () => {
+        it('should include all properties specified in a given configuration', () => {
             let syncers = BuildbotSyncer._loadConfig(RemoteAPI, sampleiOSConfig());
             let properties = syncers[0]._propertiesForBuildRequest(createSampleBuildRequest(MockModels.iphone, MockModels.speedometer));
             assert.deepEqual(Object.keys(properties), ['desired_image', 'opensource', 'roots_dict', 'test_name', 'forcescheduler', 'build_request_id']);
         });
 
-        it('should preserve non-parametric property values', function () {
+        it('should preserve non-parametric property values', () => {
             let syncers = BuildbotSyncer._loadConfig(RemoteAPI, sampleiOSConfig());
             let properties = syncers[0]._propertiesForBuildRequest(createSampleBuildRequest(MockModels.iphone, MockModels.speedometer));
             assert.equal(properties['test_name'], 'speedometer');
@@ -585,25 +585,25 @@ describe('BuildbotSyncer', function () {
             assert.equal(properties['forcescheduler'], 'ABTest-iPad-RunBenchmark-Tests-ForceScheduler');
         });
 
-        it('should resolve "root"', function () {
+        it('should resolve "root"', () => {
             let syncers = BuildbotSyncer._loadConfig(RemoteAPI, sampleiOSConfig());
             let properties = syncers[0]._propertiesForBuildRequest(createSampleBuildRequest(MockModels.iphone, MockModels.speedometer));
             assert.equal(properties['desired_image'], '13A452');
         });
 
-        it('should resolve "rootOptions"', function () {
+        it('should resolve "rootOptions"', () => {
             let syncers = BuildbotSyncer._loadConfig(RemoteAPI, sampleiOSConfig());
             let properties = syncers[0]._propertiesForBuildRequest(createSampleBuildRequest(MockModels.iphone, MockModels.speedometer));
             assert.equal(properties['roots_dict'], JSON.stringify(sampleCommitSetData));
         });
 
-        it('should resolve "rootsExcluding"', function () {
+        it('should resolve "rootsExcluding"', () => {
             let syncers = BuildbotSyncer._loadConfig(RemoteAPI, sampleiOSConfig());
             let properties = syncers[0]._propertiesForBuildRequest(createSampleBuildRequest(MockModels.iphone, MockModels.speedometer));
             assert.equal(properties['roots_dict'], JSON.stringify(sampleCommitSetData));
         });
 
-        it('should set the property for the build request id', function () {
+        it('should set the property for the build request id', () => {
             let syncers = BuildbotSyncer._loadConfig(RemoteAPI, sampleiOSConfig());
             let request = createSampleBuildRequest(MockModels.iphone, MockModels.speedometer);
             let properties = syncers[0]._propertiesForBuildRequest(request);
@@ -611,8 +611,8 @@ describe('BuildbotSyncer', function () {
         });
     });
 
-    describe('pullBuildbot', function () {
-        it('should fetch pending builds from the right URL', function () {
+    describe('pullBuildbot', () => {
+        it('should fetch pending builds from the right URL', () => {
             let syncer = BuildbotSyncer._loadConfig(MockRemoteAPI, sampleiOSConfig())[1];
             assert.equal(syncer.builderName(), 'ABTest-iPad-RunBenchmark-Tests');
             let expectedURL = '/json/builders/ABTest-iPad-RunBenchmark-Tests/pendingBuilds';
@@ -622,7 +622,7 @@ describe('BuildbotSyncer', function () {
             assert.equal(requests[0].url, expectedURL);
         });
 
-        it('should fetch recent builds once pending builds have been fetched', function (done) {
+        it('should fetch recent builds once pending builds have been fetched', () => {
             let syncer = BuildbotSyncer._loadConfig(MockRemoteAPI, sampleiOSConfig())[1];
             assert.equal(syncer.builderName(), 'ABTest-iPad-RunBenchmark-Tests');
 
@@ -630,32 +630,30 @@ describe('BuildbotSyncer', function () {
             assert.equal(requests.length, 1);
             assert.equal(requests[0].url, '/json/builders/ABTest-iPad-RunBenchmark-Tests/pendingBuilds');
             requests[0].resolve([]);
-            Promise.resolve().then(function () {
+            return MockRemoteAPI.waitForRequest().then(() => {
                 assert.equal(requests.length, 2);
                 assert.equal(requests[1].url, '/json/builders/ABTest-iPad-RunBenchmark-Tests/builds/?select=-1');
-                done();
-            }).catch(done);
+            });
         });
 
-        it('should fetch the right number of recent builds', function (done) {
+        it('should fetch the right number of recent builds', () => {
             let syncer = BuildbotSyncer._loadConfig(MockRemoteAPI, sampleiOSConfig())[1];
 
             syncer.pullBuildbot(3);
             assert.equal(requests.length, 1);
             assert.equal(requests[0].url, '/json/builders/ABTest-iPad-RunBenchmark-Tests/pendingBuilds');
             requests[0].resolve([]);
-            Promise.resolve().then(function () {
+            return MockRemoteAPI.waitForRequest().then(() => {
                 assert.equal(requests.length, 2);
                 assert.equal(requests[1].url, '/json/builders/ABTest-iPad-RunBenchmark-Tests/builds/?select=-1&select=-2&select=-3');
-                done();
-            }).catch(done);
+            });
         });
 
-        it('should create BuildbotBuildEntry for pending builds', function (done) {
+        it('should create BuildbotBuildEntry for pending builds', () => {
             let syncer = BuildbotSyncer._loadConfig(MockRemoteAPI, sampleiOSConfig())[1];
             let promise = syncer.pullBuildbot();
             requests[0].resolve([samplePendingBuild()]);
-            promise.then(function (entries) {
+            return promise.then((entries) => {
                 assert.equal(entries.length, 1);
                 let entry = entries[0];
                 assert.ok(entry instanceof BuildbotBuildEntry);
@@ -666,22 +664,20 @@ describe('BuildbotSyncer', function () {
                 assert.ok(!entry.isInProgress());
                 assert.ok(!entry.hasFinished());
                 assert.equal(entry.url(), 'http://build.webkit.org/builders/ABTest-iPad-RunBenchmark-Tests/');
-                done();
-            }).catch(done);
+            });
         });
 
-        it('should create BuildbotBuildEntry for in-progress builds', function (done) {
+        it('should create BuildbotBuildEntry for in-progress builds', () => {
             let syncer = BuildbotSyncer._loadConfig(MockRemoteAPI, sampleiOSConfig())[1];
 
             let promise = syncer.pullBuildbot(1);
             assert.equal(requests.length, 1);
             requests[0].resolve([]);
-            Promise.resolve().then(function () {
+            return MockRemoteAPI.waitForRequest().then(() => {
                 assert.equal(requests.length, 2);
                 requests[1].resolve({[-1]: sampleInProgressBuild()});
-            }).catch(done);
-
-            promise.then(function (entries) {
+                return promise;
+            }).then((entries) => {
                 assert.equal(entries.length, 1);
                 let entry = entries[0];
                 assert.ok(entry instanceof BuildbotBuildEntry);
@@ -692,22 +688,20 @@ describe('BuildbotSyncer', function () {
                 assert.ok(entry.isInProgress());
                 assert.ok(!entry.hasFinished());
                 assert.equal(entry.url(), 'http://build.webkit.org/builders/ABTest-iPad-RunBenchmark-Tests/builds/614');
-                done();
-            }).catch(done);
+            });
         });
 
-        it('should create BuildbotBuildEntry for finished builds', function (done) {
+        it('should create BuildbotBuildEntry for finished builds', () => {
             let syncer = BuildbotSyncer._loadConfig(MockRemoteAPI, sampleiOSConfig())[1];
 
             let promise = syncer.pullBuildbot(1);
             assert.equal(requests.length, 1);
             requests[0].resolve([]);
-            Promise.resolve().then(function () {
+            return MockRemoteAPI.waitForRequest().then(() => {
                 assert.equal(requests.length, 2);
                 requests[1].resolve({[-1]: sampleFinishedBuild()});
-            }).catch(done);
-
-            promise.then(function (entries) {
+                return promise;
+            }).then((entries) => {
                 assert.deepEqual(entries.length, 1);
                 let entry = entries[0];
                 assert.ok(entry instanceof BuildbotBuildEntry);
@@ -718,11 +712,10 @@ describe('BuildbotSyncer', function () {
                 assert.ok(!entry.isInProgress());
                 assert.ok(entry.hasFinished());
                 assert.equal(entry.url(), 'http://build.webkit.org/builders/ABTest-iPad-RunBenchmark-Tests/builds/1755');
-                done();
-            }).catch(done);
+            });
         });
 
-        it('should create BuildbotBuildEntry for mixed pending, in-progress, finished, and missing builds', function (done) {
+        it('should create BuildbotBuildEntry for mixed pending, in-progress, finished, and missing builds', () => {
             let syncer = BuildbotSyncer._loadConfig(MockRemoteAPI, sampleiOSConfig())[1];
 
             let promise = syncer.pullBuildbot(5);
@@ -730,12 +723,11 @@ describe('BuildbotSyncer', function () {
 
             requests[0].resolve([samplePendingBuild(123)]);
 
-            Promise.resolve().then(function () {
+            return MockRemoteAPI.waitForRequest().then(() => {
                 assert.equal(requests.length, 2);
                 requests[1].resolve({[-1]: sampleFinishedBuild(), [-2]: {'error': 'Not available'}, [-4]: sampleInProgressBuild()});
-            }).catch(done);
-
-            promise.then(function (entries) {
+                return promise;
+            }).then((entries) => {
                 assert.deepEqual(entries.length, 3);
 
                 let entry = entries[0];
@@ -767,12 +759,10 @@ describe('BuildbotSyncer', function () {
                 assert.ok(!entry.isInProgress());
                 assert.ok(entry.hasFinished());
                 assert.equal(entry.url(), 'http://build.webkit.org/builders/ABTest-iPad-RunBenchmark-Tests/builds/1755');
-
-                done();
-            }).catch(done);
+            });
         });
 
-        it('should sort BuildbotBuildEntry by order', function (done) {
+        it('should sort BuildbotBuildEntry by order', () => {
             let syncer = BuildbotSyncer._loadConfig(MockRemoteAPI, sampleiOSConfig())[1];
 
             let promise = syncer.pullBuildbot(5);
@@ -780,12 +770,11 @@ describe('BuildbotSyncer', function () {
 
             requests[0].resolve([samplePendingBuild(456, 2), samplePendingBuild(123, 1)]);
 
-            Promise.resolve().then(function () {
+            return MockRemoteAPI.waitForRequest().then(() => {
                 assert.equal(requests.length, 2);
                 requests[1].resolve({[-3]: sampleFinishedBuild(), [-1]: {'error': 'Not available'}, [-2]: sampleInProgressBuild()});
-            }).catch(done);
-
-            promise.then(function (entries) {
+                return promise;
+            }).then((entries) => {
                 assert.deepEqual(entries.length, 4);
 
                 let entry = entries[0];
@@ -827,12 +816,10 @@ describe('BuildbotSyncer', function () {
                 assert.ok(!entry.isInProgress());
                 assert.ok(entry.hasFinished());
                 assert.equal(entry.url(), 'http://build.webkit.org/builders/ABTest-iPad-RunBenchmark-Tests/builds/1755');
-
-                done();
-            }).catch(done);
+            });
         });
 
-        it('should override BuildbotBuildEntry for pending builds by in-progress builds', function (done) {
+        it('should override BuildbotBuildEntry for pending builds by in-progress builds', () => {
             let syncer = BuildbotSyncer._loadConfig(MockRemoteAPI, sampleiOSConfig())[1];
 
             let promise = syncer.pullBuildbot(5);
@@ -840,12 +827,11 @@ describe('BuildbotSyncer', function () {
 
             requests[0].resolve([samplePendingBuild()]);
 
-            Promise.resolve().then(function () {
+            return MockRemoteAPI.waitForRequest().then(() => {
                 assert.equal(requests.length, 2);
                 requests[1].resolve({[-1]: sampleInProgressBuild()});
-            }).catch(done);
-
-            promise.then(function (entries) {
+                return promise;
+            }).then((entries) => {
                 assert.equal(entries.length, 1);
 
                 let entry = entries[0];
@@ -857,12 +843,10 @@ describe('BuildbotSyncer', function () {
                 assert.ok(entry.isInProgress());
                 assert.ok(!entry.hasFinished());
                 assert.equal(entry.url(), 'http://build.webkit.org/builders/ABTest-iPad-RunBenchmark-Tests/builds/614');
-
-                done();
-            }).catch(done);
+            });
         });
 
-        it('should override BuildbotBuildEntry for pending builds by finished builds', function (done) {
+        it('should override BuildbotBuildEntry for pending builds by finished builds', () => {
             let syncer = BuildbotSyncer._loadConfig(MockRemoteAPI, sampleiOSConfig())[1];
 
             let promise = syncer.pullBuildbot(5);
@@ -870,12 +854,11 @@ describe('BuildbotSyncer', function () {
 
             requests[0].resolve([samplePendingBuild()]);
 
-            Promise.resolve().then(function () {
+            return MockRemoteAPI.waitForRequest().then(() => {
                 assert.equal(requests.length, 2);
                 requests[1].resolve({[-1]: sampleFinishedBuild(16733)});
-            }).catch(done);
-
-            promise.then(function (entries) {
+                return promise;
+            }).then((entries) => {
                 assert.equal(entries.length, 1);
 
                 let entry = entries[0];
@@ -887,18 +870,17 @@ describe('BuildbotSyncer', function () {
                 assert.ok(!entry.isInProgress());
                 assert.ok(entry.hasFinished());
                 assert.equal(entry.url(), 'http://build.webkit.org/builders/ABTest-iPad-RunBenchmark-Tests/builds/1755');
-
-                done();
-            }).catch(done);
+            });
         });
     });
 
-    describe('scheduleRequest', function () {
-        it('should schedule a build request on a specified slave', function (done) {
+    describe('scheduleRequest', () => {
+        it('should schedule a build request on a specified slave', () => {
             let syncer = BuildbotSyncer._loadConfig(MockRemoteAPI, sampleiOSConfig())[0];
 
+            const waitForRequest = MockRemoteAPI.waitForRequest();
             syncer.scheduleRequest(createSampleBuildRequest(MockModels.iphone, MockModels.speedometer), 'some-slave');
-            Promise.resolve().then(function () {
+            return waitForRequest.then(() => {
                 assert.equal(requests.length, 1);
                 assert.equal(requests[0].url, '/builders/ABTest-iPhone-RunBenchmark-Tests/force');
                 assert.equal(requests[0].method, 'POST');
@@ -913,188 +895,160 @@ describe('BuildbotSyncer', function () {
                     'slavename': 'some-slave',
                     'test_name': 'speedometer'
                 });
-                done();
-            }).catch(done);
+            });
         });
     });
 
-    describe('scheduleRequestInGroupIfAvailable', function () {
+    describe('scheduleRequestInGroupIfAvailable', () => {
 
         function pullBuildbotWithAssertion(syncer, pendingBuilds, inProgressAndFinishedBuilds)
         {
-            let promise = syncer.pullBuildbot(5);
+            const promise = syncer.pullBuildbot(5);
             assert.equal(requests.length, 1);
             requests[0].resolve(pendingBuilds);
-            return Promise.resolve().then(function () {
+            return MockRemoteAPI.waitForRequest().then(() => {
                 assert.equal(requests.length, 2);
                 requests[1].resolve(inProgressAndFinishedBuilds);
                 requests.length = 0;
-            }).then(function () {
                 return promise;
             });
         }
 
-        it('should schedule a build if builder has no builds if slaveList is not specified', function (done) {
+        it('should schedule a build if builder has no builds if slaveList is not specified', () => {
             let syncer = BuildbotSyncer._loadConfig(MockRemoteAPI, {'configurations': [smallConfiguration()]})[0];
 
-            pullBuildbotWithAssertion(syncer, [], {}).then(function () {
+            return pullBuildbotWithAssertion(syncer, [], {}).then(() => {
                 syncer.scheduleRequestInGroupIfAvailable(createSampleBuildRequest(MockModels.somePlatform, MockModels.someTest));
-            }).then(function () {
                 assert.equal(requests.length, 1);
                 assert.equal(requests[0].url, '/builders/some%20builder/force');
                 assert.equal(requests[0].method, 'POST');
                 assert.deepEqual(requests[0].data, {id: '16733-' + MockModels.somePlatform.id()});
-                done();
-            }).catch(done);
+            });
         });
 
-        it('should schedule a build if builder only has finished builds if slaveList is not specified', function (done) {
+        it('should schedule a build if builder only has finished builds if slaveList is not specified', () => {
             let syncer = BuildbotSyncer._loadConfig(MockRemoteAPI, {'configurations': [smallConfiguration()]})[0];
 
-            pullBuildbotWithAssertion(syncer, [], {[-1]: smallFinishedBuild()}).then(function () {
+            return pullBuildbotWithAssertion(syncer, [], {[-1]: smallFinishedBuild()}).then(() => {
                 syncer.scheduleRequestInGroupIfAvailable(createSampleBuildRequest(MockModels.somePlatform, MockModels.someTest));
-            }).then(function () {
                 assert.equal(requests.length, 1);
                 assert.equal(requests[0].url, '/builders/some%20builder/force');
                 assert.equal(requests[0].method, 'POST');
                 assert.deepEqual(requests[0].data, {id: '16733-' + MockModels.somePlatform.id()});
-                done();
-            }).catch(done);
+            });
         });
 
-        it('should not schedule a build if builder has a pending build if slaveList is not specified', function (done) {
+        it('should not schedule a build if builder has a pending build if slaveList is not specified', () => {
             let syncer = BuildbotSyncer._loadConfig(MockRemoteAPI, {'configurations': [smallConfiguration()]})[0];
 
-            pullBuildbotWithAssertion(syncer, [smallPendingBuild()], {}).then(function () {
+            return pullBuildbotWithAssertion(syncer, [smallPendingBuild()], {}).then(() => {
                 syncer.scheduleRequestInGroupIfAvailable(createSampleBuildRequest(MockModels.somePlatform, MockModels.someTest));
-            }).then(function () {
                 assert.equal(requests.length, 0);
-                done();
-            }).catch(done);
+            });
         });
 
-        it('should schedule a build if builder does not have pending or completed builds on the matching slave', function (done) {
+        it('should schedule a build if builder does not have pending or completed builds on the matching slave', () => {
             let syncer = BuildbotSyncer._loadConfig(MockRemoteAPI, sampleiOSConfig())[0];
 
-            pullBuildbotWithAssertion(syncer, [], {}).then(function () {
+            return pullBuildbotWithAssertion(syncer, [], {}).then(() => {
                 syncer.scheduleRequestInGroupIfAvailable(createSampleBuildRequest(MockModels.iphone, MockModels.speedometer));
-            }).then(function () {
                 assert.equal(requests.length, 1);
                 assert.equal(requests[0].url, '/builders/ABTest-iPhone-RunBenchmark-Tests/force');
                 assert.equal(requests[0].method, 'POST');
-                done();
-            }).catch(done);
+            });
         });
 
-        it('should schedule a build if builder only has finished builds on the matching slave', function (done) {
+        it('should schedule a build if builder only has finished builds on the matching slave', () => {
             let syncer = BuildbotSyncer._loadConfig(MockRemoteAPI, sampleiOSConfig())[1];
 
-            pullBuildbotWithAssertion(syncer, [], {[-1]: sampleFinishedBuild()}).then(function () {
+            pullBuildbotWithAssertion(syncer, [], {[-1]: sampleFinishedBuild()}).then(() => {
                 syncer.scheduleRequestInGroupIfAvailable(createSampleBuildRequest(MockModels.ipad, MockModels.speedometer));
-            }).then(function () {
                 assert.equal(requests.length, 1);
                 assert.equal(requests[0].url, '/builders/ABTest-iPad-RunBenchmark-Tests/force');
                 assert.equal(requests[0].method, 'POST');
-                done();
-            }).catch(done);
+            });
         });
 
-        it('should not schedule a build if builder has a pending build on the maching slave', function (done) {
+        it('should not schedule a build if builder has a pending build on the maching slave', () => {
             let syncer = BuildbotSyncer._loadConfig(MockRemoteAPI, sampleiOSConfig())[1];
 
-            pullBuildbotWithAssertion(syncer, [samplePendingBuild()], {}).then(function () {
+            pullBuildbotWithAssertion(syncer, [samplePendingBuild()], {}).then(() => {
                 syncer.scheduleRequestInGroupIfAvailable(createSampleBuildRequest(MockModels.ipad, MockModels.speedometer));
-            }).then(function () {
                 assert.equal(requests.length, 0);
-                done();
-            }).catch(done);
+            });
         });
 
-        it('should schedule a build if builder only has a pending build on a non-maching slave', function (done) {
+        it('should schedule a build if builder only has a pending build on a non-maching slave', () => {
             let syncer = BuildbotSyncer._loadConfig(MockRemoteAPI, sampleiOSConfig())[1];
 
-            pullBuildbotWithAssertion(syncer, [samplePendingBuild(1, 1, 'another-slave')], {}).then(function () {
+            return pullBuildbotWithAssertion(syncer, [samplePendingBuild(1, 1, 'another-slave')], {}).then(() => {
                 syncer.scheduleRequestInGroupIfAvailable(createSampleBuildRequest(MockModels.ipad, MockModels.speedometer));
-            }).then(function () {
                 assert.equal(requests.length, 1);
-                done();
-            }).catch(done);
+            });
         });
 
-        it('should schedule a build if builder only has an in-progress build on the matching slave', function (done) {
+        it('should schedule a build if builder only has an in-progress build on the matching slave', () => {
             let syncer = BuildbotSyncer._loadConfig(MockRemoteAPI, sampleiOSConfig())[1];
 
-            pullBuildbotWithAssertion(syncer, [], {[-1]: sampleInProgressBuild()}).then(function () {
+            return pullBuildbotWithAssertion(syncer, [], {[-1]: sampleInProgressBuild()}).then(() => {
                 syncer.scheduleRequestInGroupIfAvailable(createSampleBuildRequest(MockModels.ipad, MockModels.speedometer));
-            }).then(function () {
                 assert.equal(requests.length, 1);
-                done();
-            }).catch(done);
+            });
         });
 
-        it('should schedule a build if builder has an in-progress build on another slave', function (done) {
+        it('should schedule a build if builder has an in-progress build on another slave', () => {
             let syncer = BuildbotSyncer._loadConfig(MockRemoteAPI, sampleiOSConfig())[1];
 
-            pullBuildbotWithAssertion(syncer, [], {[-1]: sampleInProgressBuild('other-slave')}).then(function () {
+            return pullBuildbotWithAssertion(syncer, [], {[-1]: sampleInProgressBuild('other-slave')}).then(() => {
                 syncer.scheduleRequestInGroupIfAvailable(createSampleBuildRequest(MockModels.ipad, MockModels.speedometer));
-            }).then(function () {
                 assert.equal(requests.length, 1);
-                done();
-            }).catch(done);
+            });
         });
 
-        it('should not schedule a build if the request does not match any configuration', function (done) {
+        it('should not schedule a build if the request does not match any configuration', () => {
             let syncer = BuildbotSyncer._loadConfig(MockRemoteAPI, sampleiOSConfig())[0];
 
-            pullBuildbotWithAssertion(syncer, [], {}).then(function () {
+            return pullBuildbotWithAssertion(syncer, [], {}).then(() => {
                 syncer.scheduleRequestInGroupIfAvailable(createSampleBuildRequest(MockModels.ipad, MockModels.speedometer));
-            }).then(function () {
                 assert.equal(requests.length, 0);
-                done();
-            }).catch(done);
+            });
         });
 
-        it('should not schedule a build if a new request had been submitted to the same slave', function (done) {
+        it('should not schedule a build if a new request had been submitted to the same slave', (done) => {
             let syncer = BuildbotSyncer._loadConfig(MockRemoteAPI, sampleiOSConfig())[1];
 
-            pullBuildbotWithAssertion(syncer, [], {}).then(function () {
+            pullBuildbotWithAssertion(syncer, [], {}).then(() => {
                 syncer.scheduleRequest(createSampleBuildRequest(MockModels.ipad, MockModels.speedometer), 'ABTest-iPad-0');
                 syncer.scheduleRequest(createSampleBuildRequest(MockModels.ipad, MockModels.speedometer), 'ABTest-iPad-1');
-            }).then(function () {
+            }).then(() => {
                 assert.equal(requests.length, 2);
                 syncer.scheduleRequestInGroupIfAvailable(createSampleBuildRequest(MockModels.ipad, MockModels.speedometer));
-            }).then(function () {
+            }).then(() => {
                 assert.equal(requests.length, 2);
                 done();
             }).catch(done);
         });
 
-        it('should schedule a build if a new request had been submitted to another slave', function (done) {
+        it('should schedule a build if a new request had been submitted to another slave', () => {
             let syncer = BuildbotSyncer._loadConfig(MockRemoteAPI, sampleiOSConfig())[1];
 
-            pullBuildbotWithAssertion(syncer, [], {}).then(function () {
+            return pullBuildbotWithAssertion(syncer, [], {}).then(() => {
                 syncer.scheduleRequest(createSampleBuildRequest(MockModels.ipad, MockModels.speedometer), 'ABTest-iPad-0');
-            }).then(function () {
                 assert.equal(requests.length, 1);
                 syncer.scheduleRequestInGroupIfAvailable(createSampleBuildRequest(MockModels.ipad, MockModels.speedometer), 'ABTest-iPad-1');
-            }).then(function () {
                 assert.equal(requests.length, 2);
-                done();
-            }).catch(done);
+            });
         });
 
-        it('should not schedule a build if a new request had been submitted to the same builder without slaveList', function (done) {
+        it('should not schedule a build if a new request had been submitted to the same builder without slaveList', () => {
             let syncer = BuildbotSyncer._loadConfig(MockRemoteAPI, {'configurations': [smallConfiguration()]})[0];
 
-            pullBuildbotWithAssertion(syncer, [], {}).then(function () {
+            return pullBuildbotWithAssertion(syncer, [], {}).then(() => {
                 syncer.scheduleRequest(createSampleBuildRequest(MockModels.somePlatform, MockModels.someTest), null);
-            }).then(function () {
                 assert.equal(requests.length, 1);
                 syncer.scheduleRequestInGroupIfAvailable(createSampleBuildRequest(MockModels.somePlatform, MockModels.someTest));
-            }).then(function () {
                 assert.equal(requests.length, 1);
-                done();
-            }).catch(done);
+            });
         });
     });
 });

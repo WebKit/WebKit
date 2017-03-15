@@ -1,3 +1,20 @@
+2017-03-15  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Make unit tests return a promise instead of manually calling done
+        https://bugs.webkit.org/show_bug.cgi?id=169663
+
+        Reviewed by Antti Koivisto.
+
+        Make the existing unit tests always reutrn a promise instead of manually calling "done" callback as done
+        in r213969. The promise tests are a lot more stable and less error prone.
+
+        Also use MockRemoteAPI.waitForRequest() instead of chaining two resolved promises where appropriate.
+
+        * unit-tests/analysis-task-tests.js:
+        * unit-tests/buildbot-syncer-tests.js:
+        * unit-tests/checkconfig.js:
+        * unit-tests/privileged-api-tests.js:
+
 2017-03-15  Dewei Zhu  <dewei_zhu@apple.com>
 
         Rewrite 'pull-os-versions' script in Javascript to add support for reporting os revisions with sub commits.
