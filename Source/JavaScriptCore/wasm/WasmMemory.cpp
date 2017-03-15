@@ -119,15 +119,15 @@ inline bool tryGetFastMemory(VM& vm, void*& memory, size_t& mappedCapacity, Memo
     // If we have allocated all the fast memories... too bad.
     if (allocatedFastMemories == maxFastMemories) {
         // There is a reasonable chance that another module has died but has not been collected yet. Don't lose hope yet!
-        vm.heap.collectSync();
+        vm.heap.collectAllGarbage();
         return dequeFastMemory();
     }
 
     if (mmapBytes(fastMemoryMappedBytes, memory)) {
         mappedCapacity = fastMemoryMappedBytes;
         mode = Memory::Signaling;
-        allocatedFastMemories++;
         LockHolder locker(memoryLock);
+        allocatedFastMemories++;
         auto result = activeFastMemories(locker).add(memory);
         ASSERT_UNUSED(result, result.isNewEntry);
     }

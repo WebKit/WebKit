@@ -1,3 +1,21 @@
+2017-03-15  Saam Barati  <sbarati@apple.com>
+
+        WebAssembly: When we GC to try to get a fast memory, we should call collectAllGarbage(), not collectSync()
+        https://bugs.webkit.org/show_bug.cgi?id=169704
+
+        Reviewed by Mark Lam.
+
+        We weren't always sweeping the memory needed to free
+        the WasmMemory we wanted to use. collectAllGarbage()
+        will do this if the JS objects wrapping WasmMemory
+        are dead.
+
+        This patch also moves the increment of the allocatedFastMemories
+        integer to be thread safe.
+
+        * wasm/WasmMemory.cpp:
+        (JSC::Wasm::tryGetFastMemory):
+
 2017-03-15  Mark Lam  <mark.lam@apple.com>
 
         Fix exception scope verification failures in jsc.cpp.
