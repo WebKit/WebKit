@@ -81,7 +81,7 @@ class AnalysisTask extends LabeledObject {
     {
         param.task = this.id();
         return PrivilegedAPI.sendRequest('update-analysis-task', param).then(function (data) {
-            return AnalysisTask.cachedFetch('../api/analysis-tasks', {id: param.task}, true)
+            return AnalysisTask.cachedFetch('/api/analysis-tasks', {id: param.task}, true)
                 .then(AnalysisTask._constructAnalysisTasksFromRawData.bind(AnalysisTask));
         });
     }
@@ -96,7 +96,7 @@ class AnalysisTask extends LabeledObject {
             bugTracker: tracker.id(),
             number: bugNumber,
         }).then(function (data) {
-            return AnalysisTask.cachedFetch('../api/analysis-tasks', {id: id}, true)
+            return AnalysisTask.cachedFetch('/api/analysis-tasks', {id: id}, true)
                 .then(AnalysisTask._constructAnalysisTasksFromRawData.bind(AnalysisTask));
         });
     }
@@ -112,7 +112,7 @@ class AnalysisTask extends LabeledObject {
             number: bug.bugNumber(),
             shouldDelete: true,
         }).then(function (data) {
-            return AnalysisTask.cachedFetch('../api/analysis-tasks', {id: id}, true)
+            return AnalysisTask.cachedFetch('/api/analysis-tasks', {id: id}, true)
                 .then(AnalysisTask._constructAnalysisTasksFromRawData.bind(AnalysisTask));
         });
     }
@@ -128,7 +128,7 @@ class AnalysisTask extends LabeledObject {
             revision: revision,
             kind: kind,
         }).then(function (data) {
-            return AnalysisTask.cachedFetch('../api/analysis-tasks', {id: id}, true)
+            return AnalysisTask.cachedFetch('/api/analysis-tasks', {id: id}, true)
                 .then(AnalysisTask._constructAnalysisTasksFromRawData.bind(AnalysisTask));
         });
     }
@@ -141,7 +141,7 @@ class AnalysisTask extends LabeledObject {
             task: id,
             commit: commit.id(),
         }).then(function (data) {
-            return AnalysisTask.cachedFetch('../api/analysis-tasks', {id: id}, true)
+            return AnalysisTask.cachedFetch('/api/analysis-tasks', {id: id}, true)
                 .then(AnalysisTask._constructAnalysisTasksFromRawData.bind(AnalysisTask));
         });
     }
@@ -215,13 +215,13 @@ class AnalysisTask extends LabeledObject {
     {
         if (this._fetchAllPromise)
             return this._fetchAllPromise;
-        return this.cachedFetch('../api/analysis-tasks', params, noCache).then(this._constructAnalysisTasksFromRawData.bind(this));
+        return this.cachedFetch('/api/analysis-tasks', params, noCache).then(this._constructAnalysisTasksFromRawData.bind(this));
     }
 
     static fetchAll()
     {
         if (!this._fetchAllPromise)
-            this._fetchAllPromise = RemoteAPI.getJSONWithStatus('../api/analysis-tasks').then(this._constructAnalysisTasksFromRawData.bind(this));
+            this._fetchAllPromise = RemoteAPI.getJSONWithStatus('/api/analysis-tasks').then(this._constructAnalysisTasksFromRawData.bind(this));
         return this._fetchAllPromise;
     }
 

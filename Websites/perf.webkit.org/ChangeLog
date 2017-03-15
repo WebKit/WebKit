@@ -1,5 +1,32 @@
 2017-03-15  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Fix server tests after r213998 and r213969
+        https://bugs.webkit.org/show_bug.cgi?id=169690
+
+        Reviewed by Antti Koivisto.
+
+        Fixed the existing server tests.
+
+        * public/v3/models/analysis-task.js:
+        (AnalysisTask.prototype._updateRemoteState): Use the relative path from the root so that it works inside tests.
+        (AnalysisTask.prototype.associateBug): Ditto.
+        (AnalysisTask.prototype.dissociateBug): Ditto.
+        (AnalysisTask.prototype.associateCommit): Ditto.
+        (AnalysisTask.prototype.dissociateCommit): Ditto.
+        (AnalysisTask._fetchSubset): Ditto.
+        (AnalysisTask.fetchAll): Ditto.
+        * public/v3/models/test-group.js:
+        (TestGroup.prototype.updateName): Ditto.
+        (TestGroup.prototype.updateHiddenFlag): Ditto.
+        (TestGroup.createAndRefetchTestGroups): Ditto.
+        (TestGroup.cachedFetch): Ditto.
+        * server-tests/api-manifest.js: Reverted an inadvertant change in r213969.
+        * tools/js/database.js:
+        (tableToPrefixMap): Added analysis_strategies.
+        * unit-tests/analysis-task-tests.js: Updated expectations per changes to AnalysisTask.
+
+2017-03-15  Ryosuke Niwa  <rniwa@webkit.org>
+
         Add tests for privileged-api/create-analysis-task and privileged-api/create-test-group
         https://bugs.webkit.org/show_bug.cgi?id=169688
 

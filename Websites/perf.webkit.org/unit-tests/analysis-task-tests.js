@@ -126,7 +126,7 @@ describe('AnalysisTask', () => {
             AnalysisTask.fetchAll().then(() => { callCount++; });
             assert.equal(callCount, 0);
             assert.equal(requests.length, 1);
-            assert.equal(requests[0].url, '../api/analysis-tasks');
+            assert.equal(requests[0].url, '/api/analysis-tasks');
         });
 
         it('should not request all analysis tasks multiple times', () => {
@@ -134,7 +134,7 @@ describe('AnalysisTask', () => {
             AnalysisTask.fetchAll().then(() => { callCount++; });
             assert.equal(callCount, 0);
             assert.equal(requests.length, 1);
-            assert.equal(requests[0].url, '../api/analysis-tasks');
+            assert.equal(requests[0].url, '/api/analysis-tasks');
 
             AnalysisTask.fetchAll().then(() => { callCount++; });
             assert.equal(callCount, 0);
@@ -146,7 +146,7 @@ describe('AnalysisTask', () => {
             const promise = AnalysisTask.fetchAll().then(() => { callCount++; });
             assert.equal(callCount, 0);
             assert.equal(requests.length, 1);
-            assert.equal(requests[0].url, '../api/analysis-tasks');
+            assert.equal(requests[0].url, '/api/analysis-tasks');
 
             requests[0].resolve(sampleAnalysisTask());
 

@@ -127,6 +127,7 @@ class Database {
 
 const tableToPrefixMap = {
     'aggregators': 'aggregator',
+    'analysis_strategies': 'strategy',
     'analysis_tasks': 'task',
     'analysis_test_groups': 'testgroup',
     'bug_trackers': 'tracker',

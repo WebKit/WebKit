@@ -179,7 +179,7 @@ class TestGroup extends LabeledObject {
             group: id,
             name: newName,
         }).then(function (data) {
-            return TestGroup.cachedFetch(`../api/test-groups/${id}`, {}, true)
+            return TestGroup.cachedFetch(`/api/test-groups/${id}`, {}, true)
                 .then(TestGroup._createModelsFromFetchedTestGroups.bind(TestGroup));
         });
     }
@@ -192,7 +192,7 @@ class TestGroup extends LabeledObject {
             group: id,
             hidden: !!hidden,
         }).then(function (data) {
-            return TestGroup.cachedFetch(`../api/test-groups/${id}`, {}, true)
+            return TestGroup.cachedFetch(`/api/test-groups/${id}`, {}, true)
                 .then(TestGroup._createModelsFromFetchedTestGroups.bind(TestGroup));
         });
     }
@@ -205,13 +205,13 @@ class TestGroup extends LabeledObject {
             repetitionCount: repetitionCount,
             commitSets: commitSets,
         }).then((data) => {
-            return this.cachedFetch('../api/test-groups', {task: task.id()}, true).then((data) => this._createModelsFromFetchedTestGroups(data));
+            return this.cachedFetch('/api/test-groups', {task: task.id()}, true).then((data) => this._createModelsFromFetchedTestGroups(data));
         });
     }
 
     static fetchByTask(taskId)
     {
-        return this.cachedFetch('../api/test-groups', {task: taskId}).then(this._createModelsFromFetchedTestGroups.bind(this));
+        return this.cachedFetch('/api/test-groups', {task: taskId}).then(this._createModelsFromFetchedTestGroups.bind(this));
     }
 
     static _createModelsFromFetchedTestGroups(data)
