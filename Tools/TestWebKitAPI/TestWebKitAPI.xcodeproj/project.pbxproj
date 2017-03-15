@@ -481,6 +481,8 @@
 		A13EBBB01B87436F00097110 /* BundleParametersPlugIn.mm in Sources */ = {isa = PBXBuildFile; fileRef = A13EBBAE1B87436F00097110 /* BundleParametersPlugIn.mm */; };
 		A13EBBB11B87438000097110 /* BundleParameters.mm in Sources */ = {isa = PBXBuildFile; fileRef = A13EBBAC1B87436F00097110 /* BundleParameters.mm */; };
 		A1409AD91E7254D4004949D9 /* password-protected.pages in Copy Resources */ = {isa = PBXBuildFile; fileRef = A1409AD81E7254AC004949D9 /* password-protected.pages */; };
+		A14AAB631E78D7DE00C1ADC2 /* WKPDFView.mm in Sources */ = {isa = PBXBuildFile; fileRef = A14AAB611E78D7DE00C1ADC2 /* WKPDFView.mm */; };
+		A14AAB651E78DC5400C1ADC2 /* encrypted.pdf in Copy Resources */ = {isa = PBXBuildFile; fileRef = A14AAB641E78DC3F00C1ADC2 /* encrypted.pdf */; };
 		A14FC5851B89739100D107EB /* WKWebViewConfigurationExtras.mm in Sources */ = {isa = PBXBuildFile; fileRef = A14FC5831B89739100D107EB /* WKWebViewConfigurationExtras.mm */; };
 		A14FC5881B8991BF00D107EB /* ContentFiltering.mm in Sources */ = {isa = PBXBuildFile; fileRef = A14FC5861B8991B600D107EB /* ContentFiltering.mm */; };
 		A14FC58B1B89927100D107EB /* ContentFilteringPlugIn.mm in Sources */ = {isa = PBXBuildFile; fileRef = A14FC5891B89927100D107EB /* ContentFilteringPlugIn.mm */; };
@@ -649,6 +651,7 @@
 			dstPath = TestWebKitAPI.resources;
 			dstSubfolderSpec = 7;
 			files = (
+				A14AAB651E78DC5400C1ADC2 /* encrypted.pdf in Copy Resources */,
 				A1409AD91E7254D4004949D9 /* password-protected.pages in Copy Resources */,
 				5120C83E1E67678F0025B250 /* WebsiteDataStoreCustomPaths.html in Copy Resources */,
 				F4856CA31E649EA8009D7EE7 /* attachment-element.html in Copy Resources */,
@@ -1233,6 +1236,8 @@
 		A13EBBAC1B87436F00097110 /* BundleParameters.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BundleParameters.mm; sourceTree = "<group>"; };
 		A13EBBAE1B87436F00097110 /* BundleParametersPlugIn.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BundleParametersPlugIn.mm; sourceTree = "<group>"; };
 		A1409AD81E7254AC004949D9 /* password-protected.pages */ = {isa = PBXFileReference; lastKnownFileType = file; path = "password-protected.pages"; sourceTree = "<group>"; };
+		A14AAB611E78D7DE00C1ADC2 /* WKPDFView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKPDFView.mm; sourceTree = "<group>"; };
+		A14AAB641E78DC3F00C1ADC2 /* encrypted.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = encrypted.pdf; sourceTree = "<group>"; };
 		A14FC5831B89739100D107EB /* WKWebViewConfigurationExtras.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebViewConfigurationExtras.mm; sourceTree = "<group>"; };
 		A14FC5841B89739100D107EB /* WKWebViewConfigurationExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKWebViewConfigurationExtras.h; sourceTree = "<group>"; };
 		A14FC5861B8991B600D107EB /* ContentFiltering.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ContentFiltering.mm; sourceTree = "<group>"; };
@@ -1654,6 +1659,7 @@
 				51D124971E763AF8002B2820 /* WKHTTPCookieStorage.mm */,
 				375E0E151D66674400EFEC2C /* WKNSNumber.mm */,
 				37B47E2E1D64E7CA005F4EFF /* WKObject.mm */,
+				A14AAB611E78D7DE00C1ADC2 /* WKPDFView.mm */,
 				2D00065D1C1F58940088E6A7 /* WKPDFViewResizeCrash.mm */,
 				5E4B1D2C1D404C6100053621 /* WKScrollViewDelegateCrash.mm */,
 				5CE354D81E70D9C300BEFE3B /* WKUserContentExtensionStore.mm */,
@@ -2117,6 +2123,7 @@
 				9B270FED1DDC25FD002D53F3 /* closed-shadow-tree-test.html */,
 				5C9E56861DF9148E00C9EE33 /* contentBlockerCheck.html */,
 				290F4274172A1FDE00939FF0 /* custom-protocol-sync-xhr.html */,
+				A14AAB641E78DC3F00C1ADC2 /* encrypted.pdf */,
 				07492B391DF8ADA400633DE1 /* enumerateMediaDevices.html */,
 				C5E1AFFD16B22179006CC1F2 /* execCopy.html */,
 				BC2D004A12A9FEB300E732A3 /* file-with-anchor.html */,
@@ -2869,6 +2876,7 @@
 				7CCE7EDE1A411A9200447C4C /* URL.cpp in Sources */,
 				7CCE7EB01A411A4400447C4C /* URLExtras.mm in Sources */,
 				07492B3B1DF8B14C00633DE1 /* EnumerateMediaDevices.cpp in Sources */,
+				A14AAB631E78D7DE00C1ADC2 /* WKPDFView.mm in Sources */,
 				C25CCA061E51380B0026CB8A /* LineBreaking.mm in Sources */,
 				7A6A2C701DCCFA8C00C0D085 /* LocalStorageQuirkTest.mm in Sources */,
 				D34E08761E4E42E1005FF14A /* WKWebViewGetContents.mm in Sources */,

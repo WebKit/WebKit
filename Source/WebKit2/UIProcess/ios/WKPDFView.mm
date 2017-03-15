@@ -151,7 +151,7 @@ typedef struct {
 
 - (CGPDFDocumentRef)pdfDocument
 {
-    return [_pdfDocument CGDocument];
+    return _cgPDFDocument.get();
 }
 
 static void detachViewForPage(PDFPageInfo& page)

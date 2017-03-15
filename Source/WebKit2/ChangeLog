@@ -1,3 +1,15 @@
+2017-03-14  Andy Estes  <aestes@apple.com>
+
+        [iOS] -[WKWebView _dataForDisplayedPDF] returns nil when called before an encrypted PDF has been unlocked
+        https://bugs.webkit.org/show_bug.cgi?id=169653
+        <rdar://problem/24137675>
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/ios/WKPDFView.mm:
+        (-[WKPDFView pdfDocument]): Changed to return _cgPDFDocument directly instead of via the
+        UIPDFDocument, which is only created after the PDF has been unlocked.
+
 2017-03-14  Tim Horton  <timothy_horton@apple.com>
 
         Let PDFLayerController drive cursor updates so that it's correct more often
