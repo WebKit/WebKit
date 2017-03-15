@@ -14,11 +14,14 @@ const media = document.querySelector("video");
 const mediaController = createControls(shadowRoot, media, null);
 
 media.addEventListener("durationchange", function() {
-    shouldBeTrue("mediaController.controls.timeControl.labelsMayDisplayTimesOverAnHour");
-    debug("");
-    shadowRoot.host.remove();
-    media.remove();
-    finishJSTest();
+    media.currentTime = 5;
+    shouldBeTrue("mediaController.controls.timeControl.useSixDigitsForTimeLabels");
+    shouldBecomeEqualToString("mediaController.controls.timeControl.elapsedTimeLabel.element.textContent", "00:00:05", () => {
+        debug("");
+        shadowRoot.host.remove();
+        media.remove();
+        finishJSTest();
+    });
 });
 
 </script>

@@ -1,13 +1,13 @@
-Testing the TimeControl class property labelsMayDisplayTimesOverAnHour.
+Testing the TimeControl class property useSixDigitsForTimeLabels.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
 Testing default value
-PASS timeControl.labelsMayDisplayTimesOverAnHour is false
+PASS timeControl.useSixDigitsForTimeLabels is false
 
-Setting timeControl.labelsMayDisplayTimesOverAnHour = true
-PASS timeControl.labelsMayDisplayTimesOverAnHour is true
+Setting timeControl.useSixDigitsForTimeLabels = true
+PASS timeControl.useSixDigitsForTimeLabels is true
 
 PASS timeControl.elapsedTimeLabel.x is -2
 PASS timeControl.scrubber.x is 65

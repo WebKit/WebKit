@@ -1,5 +1,23 @@
 2017-03-15  Antoine Quint  <graouts@apple.com>
 
+        [Modern Media Controls] Always use six digits to display time when overall media duration is an hour or more
+        https://bugs.webkit.org/show_bug.cgi?id=169668
+        <rdar://problem/31059699>
+
+        Reviewed by Dean Jackson.
+
+        Rebase some tests due to the rename of the labelsMayDisplayTimesOverAnHour property to
+        useSixDigitsForTimeLabels. We also add an assertion in long-time.html to check that
+        we currently use six digits to display a time that is under an hour but where the
+        media duration is over an hour.
+
+        * http/tests/media/modern-media-controls/time-labels-support/long-time-expected.txt:
+        * http/tests/media/modern-media-controls/time-labels-support/long-time.html:
+        * media/modern-media-controls/time-control/time-control-use-six-digits-for-time-labels-expected.txt: Renamed from LayoutTests/media/modern-media-controls/time-control/time-control-labels-may-display-times-over-an-hour-expected.txt.
+        * media/modern-media-controls/time-control/time-control-use-six-digits-for-time-labels.html: Renamed from LayoutTests/media/modern-media-controls/time-control/time-control-labels-may-display-times-over-an-hour.html.
+
+2017-03-15  Antoine Quint  <graouts@apple.com>
+
         [mac-wk1 debug] LayoutTest media/modern-media-controls/airplay-placard/airplay-placard-text-section.html is a flaky timeout
         https://bugs.webkit.org/show_bug.cgi?id=169654
         <rdar://problem/31059092>

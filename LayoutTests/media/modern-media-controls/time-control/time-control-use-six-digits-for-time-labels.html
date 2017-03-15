@@ -4,17 +4,17 @@
 <body>
 <script type="text/javascript">
 
-description("Testing the <code>TimeControl</code> class property labelsMayDisplayTimesOverAnHour.");
+description("Testing the <code>TimeControl</code> class property useSixDigitsForTimeLabels.");
 
 const timeControl = new TimeControl;
 
 debug("Testing default value");
-shouldBeFalse("timeControl.labelsMayDisplayTimesOverAnHour");
+shouldBeFalse("timeControl.useSixDigitsForTimeLabels");
 
 debug("");
-debug("Setting timeControl.labelsMayDisplayTimesOverAnHour = true");
-timeControl.labelsMayDisplayTimesOverAnHour = true;
-shouldBeTrue("timeControl.labelsMayDisplayTimesOverAnHour");
+debug("Setting timeControl.useSixDigitsForTimeLabels = true");
+timeControl.useSixDigitsForTimeLabels = true;
+shouldBeTrue("timeControl.useSixDigitsForTimeLabels");
 
 timeControl.width = 500;
 debug("");

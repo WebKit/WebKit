@@ -45,7 +45,7 @@ class TimeLabelsSupport extends MediaControllerSupport
 
         this.control.elapsedTimeLabel.value = shouldShowZeroDurations ? 0 : media.currentTime;
         this.control.remainingTimeLabel.value = shouldShowZeroDurations ? 0 : (media.currentTime - media.duration);
-        this.control.labelsMayDisplayTimesOverAnHour = !shouldShowZeroDurations && media.duration >= (60 * 60);
+        this.control.useSixDigitsForTimeLabels = !shouldShowZeroDurations && media.duration >= (60 * 60);
     }
 
 }

@@ -26,11 +26,12 @@
 class TimeLabel extends LayoutNode
 {
 
-    constructor()
+    constructor(timeControl)
     {
         super(`<div class="time-label"></div>`);
 
         this.value = 0;
+        this._timeControl = timeControl;
     }
 
     // Public
@@ -70,7 +71,7 @@ class TimeLabel extends LayoutNode
         const intHours = Math.floor(absTime / (60 * 60)).toFixed(0);
 
         const timeStrings = [intMinutes, intSeconds];
-        if (intHours > 0)
+        if (intHours > 0 || (this._timeControl && this._timeControl.useSixDigitsForTimeLabels))
             timeStrings.unshift(intHours);
 
         const sign = time < 0 ? "-" : "";
