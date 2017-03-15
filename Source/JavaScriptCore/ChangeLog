@@ -1,3 +1,20 @@
+2017-03-15  Mark Lam  <mark.lam@apple.com>
+
+        Fix missing exception checks in Interpreter.cpp.
+        https://bugs.webkit.org/show_bug.cgi?id=164964
+
+        Reviewed by Saam Barati.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::eval):
+        (JSC::sizeOfVarargs):
+        (JSC::sizeFrameForVarargs):
+        (JSC::Interpreter::executeProgram):
+        (JSC::Interpreter::executeCall):
+        (JSC::Interpreter::executeConstruct):
+        (JSC::Interpreter::prepareForRepeatCall):
+        (JSC::Interpreter::execute):
+
 2017-03-15  Dean Jackson  <dino@apple.com>
 
         Sort Xcode project files
