@@ -4,12 +4,10 @@ const assert = require('assert');
 
 const TestServer = require('./resources/test-server.js');
 const addSlaveForReport = require('./resources/common-operations.js').addSlaveForReport;
-const connectToDatabaseInEveryTest = require('./resources/common-operations.js').connectToDatabaseInEveryTest;
+const prepareServerTest = require('./resources/common-operations.js').prepareServerTest;
 
 describe("/api/report-commits/", function () {
-    this.timeout(1000);
-    TestServer.inject();
-    connectToDatabaseInEveryTest();
+    prepareServerTest(this);
 
     const emptyReport = {
         "slaveName": "someSlave",
@@ -78,54 +76,49 @@ describe("/api/report-commits/", function () {
         ]
     }
 
-    it("should reject error when slave name is missing", function (done) {
-        TestServer.remoteAPI().postJSON('/api/report-commits/', {}).then(function (response) {
+    it("should reject error when slave name is missing", () => {
+        return TestServer.remoteAPI().postJSON('/api/report-commits/', {}).then((response) => {
             assert.equal(response['status'], 'MissingSlaveName');
-            done();
-        }).catch(done);
+        });
     });
 
-    it("should reject when there are no slaves", function (done) {
-        TestServer.remoteAPI().postJSON('/api/report-commits/', emptyReport).then(function (response) {
+    it("should reject when there are no slaves", () => {
+        return TestServer.remoteAPI().postJSON('/api/report-commits/', emptyReport).then((response) => {
             assert.equal(response['status'], 'SlaveNotFound');
             return TestServer.database().selectAll('commits');
-        }).then(function (rows) {
+        }).then((rows) => {
             assert.equal(rows.length, 0);
-            done();
-        }).catch(done);
+        });
     });
 
-    it("should accept an empty report", function (done) {
-        addSlaveForReport(emptyReport).then(function () {
+    it("should accept an empty report", () => {
+        return addSlaveForReport(emptyReport).then(() => {
             return TestServer.remoteAPI().postJSON('/api/report-commits/', emptyReport);
-        }).then(function (response) {
+        }).then((response) => {
             assert.equal(response['status'], 'OK');
-            done();
-        }).catch(done);
+        });
     });
 
-    it("should add a missing repository", function (done) {
-        const db = TestServer.database();
-        addSlaveForReport(subversionCommit).then(function () {
+    it("should add a missing repository", () => {
+        return addSlaveForReport(subversionCommit).then(() => {
             return TestServer.remoteAPI().postJSON('/api/report-commits/', subversionCommit);
-        }).then(function (response) {
+        }).then((response) => {
             assert.equal(response['status'], 'OK');
-            return db.selectAll('repositories');
-        }).then(function (rows) {
+            return TestServer.database().selectAll('repositories');
+        }).then((rows) => {
             assert.equal(rows.length, 1);
             assert.equal(rows[0]['name'], subversionCommit.commits[0]['repository']);
-            done();
-        }).catch(done);
+        });
     });
 
-    it("should store a commit from a valid slave", function (done) {
-        const db = TestServer.database();
-        addSlaveForReport(subversionCommit).then(function () {
+    it("should store a commit from a valid slave", () => {
+        return addSlaveForReport(subversionCommit).then(() => {
             return TestServer.remoteAPI().postJSON('/api/report-commits/', subversionCommit);
-        }).then(function (response) {
+        }).then((response) => {
             assert.equal(response['status'], 'OK');
+            const db = TestServer.database();
             return Promise.all([db.selectAll('commits'), db.selectAll('committers')]);
-        }).then(function (result) {
+        }).then((result) => {
             let commits = result[0];
             let committers = result[1];
             let reportedData = subversionCommit.commits[0];
@@ -138,31 +131,28 @@ describe("/api/report-commits/", function () {
             assert.equal(commits[0]['committer'], committers[0]['id']);
             assert.equal(committers[0]['name'], reportedData['author']['name']);
             assert.equal(committers[0]['account'], reportedData['author']['account']);
-
-            done();
-        }).catch(done);
+        });
     });
 
-    it("should reject an invalid revision number", function (done) {
-        addSlaveForReport(subversionCommit).then(function () {
+    it("should reject an invalid revision number", () => {
+        return addSlaveForReport(subversionCommit).then(() => {
             return TestServer.remoteAPI().postJSON('/api/report-commits/', subversionInvalidCommit);
-        }).then(function (response) {
+        }).then((response) => {
             assert.equal(response['status'], 'InvalidRevision');
             return TestServer.database().selectAll('commits');
-        }).then(function (rows) {
+        }).then((rows) => {
             assert.equal(rows.length, 0);
-            done();
-        }).catch(done);
+        });
     });
 
-    it("should store two commits from a valid slave", function (done) {
-        const db = TestServer.database();
-        addSlaveForReport(subversionTwoCommits).then(function () {
+    it("should store two commits from a valid slave", () => {
+        return addSlaveForReport(subversionTwoCommits).then(() => {
             return TestServer.remoteAPI().postJSON('/api/report-commits/', subversionTwoCommits);
-        }).then(function (response) {
+        }).then((response) => {
             assert.equal(response['status'], 'OK');
+            const db = TestServer.database();
             return Promise.all([db.selectAll('commits'), db.selectAll('committers')]);
-        }).then(function (result) {
+        }).then((result) => {
             const commits = result[0];
             const committers = result[1];
             assert.equal(commits.length, 2);
@@ -185,38 +175,34 @@ describe("/api/report-commits/", function () {
             assert.equal(commits[1]['previous_commit'], commits[0]['id']);
             assert.equal(committers[1]['name'], reportedData['author']['name']);
             assert.equal(committers[1]['account'], reportedData['author']['account']);
-
-            done();
-        }).catch(done);
+        });
     });
 
-    it("should fail if previous commit is invalid", function (done) {
-        const db = TestServer.database();
-        addSlaveForReport(subversionInvalidPreviousCommit).then(function () {
+    it("should fail if previous commit is invalid", () => {
+        return addSlaveForReport(subversionInvalidPreviousCommit).then(() => {
             return TestServer.remoteAPI().postJSON('/api/report-commits/', subversionInvalidPreviousCommit);
-        }).then(function (response) {
+        }).then((response) => {
             assert.equal(response['status'], 'FailedToFindPreviousCommit');
-            return db.selectAll('commits');
-        }).then(function (result) {
+            return TestServer.database().selectAll('commits');
+        }).then((result) => {
             assert.equal(result.length, 0);
-            done();
-        }).catch(done);
+        });
     });
 
-    it("should update an existing commit if there is one", function (done) {
+    it("should update an existing commit if there is one", () => {
         const db = TestServer.database();
         const reportedData = subversionCommit.commits[0];
-        addSlaveForReport(subversionCommit).then(function () {
+        return addSlaveForReport(subversionCommit).then(() => {
             return Promise.all([
                 db.insert('repositories', {'id': 1, 'name': 'WebKit'}),
                 db.insert('commits', {'repository': 1, 'revision': reportedData['revision'], 'time': reportedData['time']})
             ]);
-        }).then(function () {
+        }).then(() => {
             return TestServer.remoteAPI().postJSON('/api/report-commits/', subversionCommit);
-        }).then(function (response) {
+        }).then((response) => {
             assert.equal(response['status'], 'OK');
             return Promise.all([db.selectAll('commits'), db.selectAll('committers')]);
-        }).then(function (result) {
+        }).then((result) => {
             const commits = result[0];
             const committers = result[1];
 
@@ -226,27 +212,25 @@ describe("/api/report-commits/", function () {
             assert.equal(commits[0]['committer'], committers[0]['id']);
             assert.equal(committers[0]['name'], reportedData['author']['name']);
             assert.equal(committers[0]['account'], reportedData['author']['account']);
-
-            done();
-        }).catch(done);
+        });
     });
 
-    it("should not update an unrelated commit", function (done) {
+    it("should not update an unrelated commit", () => {
         const db = TestServer.database();
         const firstData = subversionTwoCommits.commits[0];
         const secondData = subversionTwoCommits.commits[1];
-        addSlaveForReport(subversionCommit).then(function () {
+        return addSlaveForReport(subversionCommit).then(() => {
             return Promise.all([
                 db.insert('repositories', {'id': 1, 'name': 'WebKit'}),
                 db.insert('commits', {'id': 2, 'repository': 1, 'revision': firstData['revision'], 'time': firstData['time']}),
                 db.insert('commits', {'id': 3, 'repository': 1, 'revision': secondData['revision'], 'time': secondData['time']})
             ]);
-        }).then(function () {
+        }).then(() => {
             return TestServer.remoteAPI().postJSON('/api/report-commits/', subversionCommit);
-        }).then(function (response) {
+        }).then((response) => {
             assert.equal(response['status'], 'OK');
             return Promise.all([db.selectAll('commits'), db.selectAll('committers')]);
-        }).then(function (result) {
+        }).then((result) => {
             const commits = result[0];
             const committers = result[1];
 
@@ -261,30 +245,27 @@ describe("/api/report-commits/", function () {
             assert.equal(commits[1]['id'], 3);
             assert.equal(commits[1]['message'], null);
             assert.equal(commits[1]['committer'], null);
-
-            done();
-        }).catch(done);
+        });
     });
 
-    it("should update an existing committer if there is one", function (done) {
+    it("should update an existing committer if there is one", () => {
         const db = TestServer.database();
         const author = subversionCommit.commits[0]['author'];
-        addSlaveForReport(subversionCommit).then(function () {
+        return addSlaveForReport(subversionCommit).then(() => {
             return Promise.all([
                 db.insert('repositories', {'id': 1, 'name': 'WebKit'}),
                 db.insert('committers', {'repository': 1, 'account': author['account']}),
             ]);
-        }).then(function () {
+        }).then(() => {
             return TestServer.remoteAPI().postJSON('/api/report-commits/', subversionCommit);
-        }).then(function (response) {
+        }).then((response) => {
             assert.equal(response['status'], 'OK');
             return db.selectAll('committers');
-        }).then(function (committers) {
+        }).then((committers) => {
             assert.equal(committers.length, 1);
             assert.equal(committers[0]['name'], author['name']);
             assert.equal(committers[0]['account'], author['account']);
-            done();
-        }).catch(done);
+        });
     });
 
     const sameRepositoryNameInSubCommitAndMajorCommit = {
@@ -317,22 +298,20 @@ describe("/api/report-commits/", function () {
         ]
     }
 
-    it("should distinguish between repositories with the asme name but with a different owner.", function (done) {
-        const db = TestServer.database();
-        addSlaveForReport(sameRepositoryNameInSubCommitAndMajorCommit).then(function () {
+    it("should distinguish between repositories with the asme name but with a different owner.", () => {
+        return addSlaveForReport(sameRepositoryNameInSubCommitAndMajorCommit).then(() => {
             return TestServer.remoteAPI().postJSON('/api/report-commits/', sameRepositoryNameInSubCommitAndMajorCommit);
-        }).then(function (response) {
+        }).then((response) => {
             assert.equal(response['status'], 'OK');
-            return db.selectRows('repositories', {'name': 'WebKit'});
-        }).then(function (result) {
+            return TestServer.database().selectRows('repositories', {'name': 'WebKit'});
+        }).then((result) => {
             assert.equal(result.length, 2);
             let osWebKit = result[0];
             let webkitRepository = result[1];
             assert.notEqual(osWebKit.id, webkitRepository.id);
             assert.equal(osWebKit.name, webkitRepository.name);
             assert.equal(webkitRepository.owner, null);
-            done();
-        })
+        });
     });
 
     const systemVersionCommitWithSubcommits = {
@@ -359,11 +338,11 @@ describe("/api/report-commits/", function () {
         ]
     }
 
-    it("should accept inserting one commit with some sub commits", function (done) {
+    it("should accept inserting one commit with some sub commits", () => {
         const db = TestServer.database();
-        addSlaveForReport(systemVersionCommitWithSubcommits).then(function () {
+        return addSlaveForReport(systemVersionCommitWithSubcommits).then(() => {
             return TestServer.remoteAPI().postJSON('/api/report-commits/', systemVersionCommitWithSubcommits);
-        }).then(function (response) {
+        }).then((response) => {
             assert.equal(response['status'], 'OK');
             return Promise.all([db.selectRows('commits', {'revision': 'Sierra16D32'}),
                 db.selectRows('commits', {'message': 'WebKit Commit'}),
@@ -371,7 +350,7 @@ describe("/api/report-commits/", function () {
                 db.selectRows('repositories', {'name': 'OSX'}),
                 db.selectRows('repositories', {'name': "WebKit"}),
                 db.selectRows('repositories', {'name': 'JavaScriptCore'})])
-        }).then(function (result) {
+        }).then((result) => {
             assert.equal(result.length, 6);
 
             assert.equal(result[0].length, 1);
@@ -408,7 +387,7 @@ describe("/api/report-commits/", function () {
             return Promise.all([db.selectRows('commit_ownerships', {'owner': osxCommit.id, 'owned': webkitCommit.id}, {'sortBy': 'owner'}),
                 db.selectRows('commit_ownerships', {'owner': osxCommit.id, 'owned': jscCommit.id}, {'sortBy': 'owner'}),
                 db.selectRows('commits', {'repository': webkitRepository.id})]);
-        }).then(function (result) {
+        }).then((result) => {
             assert.equal(result.length, 3);
 
             assert.equal(result[0].length, 1);
@@ -420,8 +399,7 @@ describe("/api/report-commits/", function () {
             assert.notEqual(ownerCommitForJSCCommit, null);
 
             assert.equal(result[2].length, 1);
-            done();
-        }).catch(done);
+        });
     })
 
     const multipleSystemVersionCommitsWithSubcommits = {
@@ -465,11 +443,11 @@ describe("/api/report-commits/", function () {
         ]
     };
 
-    it("should accept inserting multiple commits with multiple sub-commits", function (done) {
+    it("should accept inserting multiple commits with multiple sub-commits", () => {
         const db = TestServer.database();
-        addSlaveForReport(multipleSystemVersionCommitsWithSubcommits).then(function () {
+        return addSlaveForReport(multipleSystemVersionCommitsWithSubcommits).then(() => {
             return TestServer.remoteAPI().postJSON('/api/report-commits/', multipleSystemVersionCommitsWithSubcommits);
-        }).then(function (response) {
+        }).then((response) => {
             assert.equal(response['status'], 'OK');
             return Promise.all([db.selectRows('commits', {'revision': 'Sierra16D32'}),
                 db.selectRows('commits', {'revision': 'Sierra16C67'}),
@@ -479,7 +457,7 @@ describe("/api/report-commits/", function () {
                 db.selectRows('repositories', {'name': 'OSX'}),
                 db.selectRows('repositories', {'name': "WebKit"}),
                 db.selectRows('repositories', {'name': 'JavaScriptCore'})])
-        }).then(function (result) {
+        }).then((result) => {
             assert.equal(result.length, 8);
 
             assert.equal(result[0].length, 1);
@@ -529,7 +507,7 @@ describe("/api/report-commits/", function () {
                 db.selectRows('commit_ownerships', {'owner': osxCommit0.id, 'owned': jscCommit0.id}, {'sortBy': 'owner'}),
                 db.selectRows('commit_ownerships', {'owner': osxCommit1.id, 'owned': jscCommit1.id}, {'sortBy': 'owner'}),
                 db.selectRows('commits', {'repository': webkitRepository.id})]);
-        }).then(function (result) {
+        }).then((result) => {
             assert.equal(result.length, 5);
 
             assert.equal(result[0].length, 1);
@@ -549,9 +527,7 @@ describe("/api/report-commits/", function () {
             assert.notEqual(ownerCommitForJSCCommit1, null);
 
             assert.equal(result[4].length, 1);
-
-            done();
-        }).catch(done);
+        });
     });
 
     const systemVersionCommitWithEmptySubcommits = {
@@ -568,14 +544,14 @@ describe("/api/report-commits/", function () {
         ]
     }
 
-    it("should accept inserting one commit with no sub commits", function (done) {
-        const db = TestServer.database();
-        addSlaveForReport(systemVersionCommitWithEmptySubcommits).then(function () {
+    it("should accept inserting one commit with no sub commits", () => {
+        return addSlaveForReport(systemVersionCommitWithEmptySubcommits).then(() => {
             return TestServer.remoteAPI().postJSON('/api/report-commits/', systemVersionCommitWithEmptySubcommits);
-        }).then(function (response) {
+        }).then((response) => {
             assert.equal(response['status'], 'OK');
+            const db = TestServer.database();
             return Promise.all([db.selectAll('commits'), db.selectAll('repositories'), db.selectAll('commit_ownerships', 'owner')]);
-        }).then(function (result) {
+        }).then((result) => {
             let commits = result[0];
             let repositories = result[1];
             let commit_ownerships = result[2];
@@ -584,8 +560,7 @@ describe("/api/report-commits/", function () {
             assert.equal(commits[0].repository, repositories[0].id);
             assert.equal(repositories[0].name, 'OSX');
             assert.equal(commit_ownerships.length, 0);
-            done();
-        }).catch(done);
+        });
     });
 
     const systemVersionCommitAndSubcommitWithTimestamp = {
@@ -608,13 +583,11 @@ describe("/api/report-commits/", function () {
         ]
     }
 
-    it("should reject inserting one commit with sub commits that contains timestamp", function (done) {
-        const db = TestServer.database();
-        addSlaveForReport(systemVersionCommitAndSubcommitWithTimestamp).then(function () {
+    it("should reject inserting one commit with sub commits that contains timestamp", () => {
+        return addSlaveForReport(systemVersionCommitAndSubcommitWithTimestamp).then(() => {
             return TestServer.remoteAPI().postJSON('/api/report-commits/', systemVersionCommitAndSubcommitWithTimestamp);
-        }).then(function (response) {
+        }).then((response) => {
             assert.equal(response['status'], 'SubCommitShouldNotContainTimestamp');
-            done();
-        }).catch(done);
+        });
     });
 });

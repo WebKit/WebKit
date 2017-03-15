@@ -6,19 +6,15 @@ require('../tools/js/v3-models.js');
 
 const MockData = require('./resources/mock-data.js');
 const TestServer = require('./resources/test-server.js');
+const prepareServerTest = require('./resources/common-operations.js').prepareServerTest;
 
 describe('/api/manifest', function () {
-    this.timeout(1000);
-    TestServer.inject();
+    prepareServerTest(this);
 
-    beforeEach(function () {
-        MockData.resetV3Models();
-    });
-
-    it("should generate an empty manifest when database is empty", function (done) {
-        TestServer.remoteAPI().getJSON('/api/manifest').then(function (manifest) {
+    it("should generate an empty manifest when database is empty", () => {
+        return TestServer.remoteAPI().getJSON('/api/manifest').then((manifest) => {
             assert.deepEqual(Object.keys(manifest).sort(), ['all', 'bugTrackers', 'builders', 'dashboard', 'dashboards',
-                'elapsedTime', 'metrics', 'repositories', 'siteTitle', 'status', 'summaryPages', 'tests', 'triggerables']);
+                'elapsedTime', 'fileUploadSizeLimit', 'metrics', 'repositories', 'siteTitle', 'status', 'summaryPages', 'tests', 'triggerables']);
 
             assert.equal(typeof(manifest.elapsedTime), 'number');
             delete manifest.elapsedTime;
@@ -35,20 +31,19 @@ describe('/api/manifest', function () {
                 tests: {},
                 triggerables: {},
                 summaryPages: [],
+                fileUploadSizeLimit: 0,
                 status: 'OK'
             });
-            done();
-        }).catch(done);
+        });
     });
 
     const bugzillaData = {id: 1, name: 'Bugzilla', bug_url: 'https://webkit.org/b/$number', new_bug_url: 'https://bugs.webkit.org/'};
     const radarData = {id: 2, name: 'Radar'};
 
-    it("should generate manifest with bug trackers without repositories", function (done) {
-        TestServer.database().connect();
-        TestServer.database().insert('bug_trackers', bugzillaData).then(function () {
+    it("should generate manifest with bug trackers without repositories", () => {
+        return TestServer.database().insert('bug_trackers', bugzillaData).then(() => {
             return TestServer.remoteAPI().getJSON('/api/manifest');
-        }).then(function (content) {
+        }).then((content) => {
             assert.deepEqual(content.bugTrackers, {1: {name: 'Bugzilla', bugUrl: 'https://webkit.org/b/$number',
                 newBugUrl: 'https://bugs.webkit.org/', repositories: null}});
 
@@ -58,15 +53,12 @@ describe('/api/manifest', function () {
             assert.equal(tracker.name(), 'Bugzilla');
             assert.equal(tracker.bugUrl(123), 'https://webkit.org/b/123');
             assert.equal(tracker.newBugUrl(), 'https://bugs.webkit.org/');
-
-            done();
-        }).catch(done);
+        });
     });
 
-    it("should generate manifest with bug trackers and repositories", function (done) {
+    it("should generate manifest with bug trackers and repositories", () => {
         let db = TestServer.database();
-        db.connect();
-        Promise.all([
+        return Promise.all([
             db.insert('bug_trackers', bugzillaData),
             db.insert('bug_trackers', radarData),
             db.insert('repositories', {id: 11, name: 'WebKit', url: 'https://trac.webkit.org/$1'}),
@@ -75,9 +67,9 @@ describe('/api/manifest', function () {
             db.insert('tracker_repositories', {tracker: bugzillaData.id, repository: 11}),
             db.insert('tracker_repositories', {tracker: radarData.id, repository: 9}),
             db.insert('tracker_repositories', {tracker: radarData.id, repository: 22}),
-        ]).then(function () {
+        ]).then(() => {
             return TestServer.remoteAPI().getJSON('/api/manifest');
-        }).then(function (content) {
+        }).then((content) => {
             let manifest = Manifest._didFetchManifest(content);
 
             let webkit = Repository.findById(11);
@@ -104,21 +96,18 @@ describe('/api/manifest', function () {
             assert(tracker);
             assert.equal(tracker.name(), 'Radar');
             assert.deepEqual(Repository.sortByName(tracker.repositories()), [osx, ios]);
-
-            done();
-        }).catch(done);
+        });
     });
 
-    it("should generate manifest with builders", function (done) {
+    it("should generate manifest with builders", () => {
         let db = TestServer.database();
-        db.connect();
-        Promise.all([
+        return Promise.all([
             db.insert('builders', {id: 1, name: 'SomeBuilder', password_hash: 'a',
                 build_url: 'https://build.webkit.org/builders/$builderName/build/$buildNumber'}),
             db.insert('builders', {id: 2, name: 'SomeOtherBuilder', password_hash: 'b'})
-        ]).then(function () {
+        ]).then(() => {
             return TestServer.remoteAPI().getJSON('/api/manifest');
-        }).then(function (content) {
+        }).then((content) => {
             assert.deepEqual(content.builders, {
                 '1': {name: 'SomeBuilder', buildUrl: 'https://build.webkit.org/builders/$builderName/build/$buildNumber'},
                 '2': {name: 'SomeOtherBuilder', buildUrl: null}
@@ -135,15 +124,12 @@ describe('/api/manifest', function () {
             assert(builder);
             assert.equal(builder.name(), 'SomeOtherBuilder');
             assert.equal(builder.urlForBuild(123), null);
-
-            done();
-        }).catch(done);
+        });
     });
 
-    it("should generate manifest with tests, metrics, and platforms", function (done) {
+    it("should generate manifest with tests, metrics, and platforms", () => {
         let db = TestServer.database();
-        db.connect();
-        Promise.all([
+        return Promise.all([
             db.insert('tests', {id: 1, name: 'SomeTest'}),
             db.insert('tests', {id: 2, name: 'SomeOtherTest'}),
             db.insert('tests', {id: 3, name: 'ChildTest', parent: 1}),
@@ -163,9 +149,9 @@ describe('/api/manifest', function () {
             db.insert('test_configurations', {id: 105, metric: 9, platform: 46, type: 'current'}),
             db.insert('test_configurations', {id: 106, metric: 5, platform: 23, type: 'current'}),
             db.insert('test_configurations', {id: 107, metric: 5, platform: 23, type: 'baseline'}),
-        ]).then(function () {
+        ]).then(() => {
             return TestServer.remoteAPI().getJSON('/api/manifest');
-        }).then(function (content) {
+        }).then((content) => {
             assert.deepEqual(content.tests, {
                 "1": {"name": "SomeTest", "parentId": null, "url": null},
                 "2": {"name": "SomeOtherTest", "parentId": null, "url": null},
@@ -271,15 +257,12 @@ describe('/api/manifest', function () {
             assert.equal(grandChildTest.metrics().length, 1);
             assert.equal(grandChildTest.metrics()[0].label(), 'Time');
             assert.equal(grandChildTest.metrics()[0].fullName(), 'SomeTest \u220B ChildTest \u220B GrandChild : Time');
-
-            done();
-        }).catch(done);
+        });
     });
 
-    it("should generate manifest with triggerables", function (done) {
+    it("should generate manifest with triggerables", () => {
         let db = TestServer.database();
-        db.connect();
-        Promise.all([
+        return Promise.all([
             db.insert('repositories', {id: 11, name: 'WebKit', url: 'https://trac.webkit.org/$1'}),
             db.insert('repositories', {id: 9, name: 'OS X'}),
             db.insert('repositories', {id: 101, name: 'WebKit', owner: 9, url: 'https://trac.webkit.org/$1'}),
@@ -305,9 +288,9 @@ describe('/api/manifest', function () {
             db.insert('triggerable_configurations', {triggerable: 200, test: 2, platform: 46}),
             db.insert('triggerable_configurations', {triggerable: 201, test: 1, platform: 23}),
             db.insert('triggerable_configurations', {triggerable: 201, test: 2, platform: 23}),
-        ]).then(function () {
+        ]).then(() => {
             return Manifest.fetch();
-        }).then(function () {
+        }).then(() => {
             let webkit = Repository.findById(11);
             assert.equal(webkit.name(), 'WebKit');
             assert.equal(webkit.urlForRevision(123), 'https://trac.webkit.org/123');
@@ -351,9 +334,7 @@ describe('/api/manifest', function () {
 
             assert.equal(Triggerable.findByTestConfiguration(someOtherTest, ios9iphone5s), iosTriggerable);
             assert.equal(Triggerable.findByTestConfiguration(childTest, ios9iphone5s), iosTriggerable);
-
-            done();
-        }).catch(done);
+        });
     });
 
 });

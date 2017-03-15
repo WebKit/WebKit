@@ -7,16 +7,10 @@ require('../tools/js/v3-models.js');
 const MockData = require('./resources/mock-data.js');
 const TestServer = require('./resources/test-server.js');
 const addBuilderForReport = require('./resources/common-operations.js').addBuilderForReport;
-const connectToDatabaseInEveryTest = require('./resources/common-operations.js').connectToDatabaseInEveryTest;
+const prepareServerTest = require('./resources/common-operations.js').prepareServerTest;
 
 describe("/api/measurement-set", function () {
-    this.timeout(1000);
-    TestServer.inject();
-    connectToDatabaseInEveryTest();
-
-    beforeEach(function () {
-        MockData.resetV3Models();
-    });
+    prepareServerTest(this);
 
     function queryPlatformAndMetric(platformName, metricName)
     {
@@ -135,65 +129,61 @@ describe("/api/measurement-set", function () {
             },
         }}];
 
-    it("should reject when platform ID is missing", function (done) {
-        addBuilderForReport(reportWithBuildTime[0]).then(function () {
+    it("should reject when platform ID is missing", () => {
+        return addBuilderForReport(reportWithBuildTime[0]).then(() => {
             return TestServer.remoteAPI().postJSON('/api/report/', reportWithBuildTime);
-        }).then(function (response) {
+        }).then((response) => {
             assert.equal(response['status'], 'OK');
             return queryPlatformAndMetric('Mountain Lion', 'Time');
-        }).then(function (result) {
+        }).then((result) => {
             return TestServer.remoteAPI().getJSON(`/api/measurement-set/?metric=${result.metricId}`);
-        }).then(function (response) {
+        }).then((response) => {
             assert.equal(response['status'], 'AmbiguousRequest');
-            done();
-        }).catch(done);
+        });
     });
 
-    it("should reject when metric ID is missing", function (done) {
-        addBuilderForReport(reportWithBuildTime[0]).then(function () {
+    it("should reject when metric ID is missing", () => {
+        return addBuilderForReport(reportWithBuildTime[0]).then(() => {
             return TestServer.remoteAPI().postJSON('/api/report/', reportWithBuildTime);
-        }).then(function (response) {
+        }).then((response) => {
             assert.equal(response['status'], 'OK');
             return queryPlatformAndMetric('Mountain Lion', 'Time');
-        }).then(function (result) {
+        }).then((result) => {
             return TestServer.remoteAPI().getJSON(`/api/measurement-set/?platform=${result.platformId}`);
-        }).then(function (response) {
+        }).then((response) => {
             assert.equal(response['status'], 'AmbiguousRequest');
-            done();
-        }).catch(done);
+        });
     });
 
-    it("should reject an invalid platform name", function (done) {
-        addBuilderForReport(reportWithBuildTime[0]).then(function () {
+    it("should reject an invalid platform name", () => {
+        return addBuilderForReport(reportWithBuildTime[0]).then(() => {
             return TestServer.remoteAPI().postJSON('/api/report/', reportWithBuildTime);
-        }).then(function (response) {
+        }).then((response) => {
             assert.equal(response['status'], 'OK');
             return queryPlatformAndMetric('Mountain Lion', 'Time');
-        }).then(function (result) {
+        }).then((result) => {
             return TestServer.remoteAPI().getJSON(`/api/measurement-set/?platform=${result.platformId}a&metric=${result.metricId}`);
-        }).then(function (response) {
+        }).then((response) => {
             assert.equal(response['status'], 'InvalidPlatform');
-            done();
-        }).catch(done);
+        });
     });
 
-    it("should reject an invalid metric name", function (done) {
-        addBuilderForReport(reportWithBuildTime[0]).then(function () {
+    it("should reject an invalid metric name", () => {
+        return addBuilderForReport(reportWithBuildTime[0]).then(() => {
             return TestServer.remoteAPI().postJSON('/api/report/', reportWithBuildTime);
-        }).then(function (response) {
+        }).then((response) => {
             assert.equal(response['status'], 'OK');
             return queryPlatformAndMetric('Mountain Lion', 'Time');
-        }).then(function (result) {
+        }).then((result) => {
             return TestServer.remoteAPI().getJSON(`/api/measurement-set/?platform=${result.platformId}&metric=${result.metricId}b`);
-        }).then(function (response) {
+        }).then((response) => {
             assert.equal(response['status'], 'InvalidMetric');
-            done();
-        }).catch(done);
+        });
     });
 
-    it("should be able to return an empty report", function (done) {
+    it("should return 404 when the report is empty", () => {
         const db = TestServer.database();
-        Promise.all([
+        return Promise.all([
             db.insert('tests', {id: 1, name: 'SomeTest'}),
             db.insert('tests', {id: 2, name: 'SomeOtherTest'}),
             db.insert('tests', {id: 3, name: 'ChildTest', parent: 1}),
@@ -213,25 +203,24 @@ describe("/api/measurement-set", function () {
             db.insert('test_configurations', {id: 105, metric: 9, platform: 46, type: 'current'}),
             db.insert('test_configurations', {id: 106, metric: 5, platform: 23, type: 'current'}),
             db.insert('test_configurations', {id: 107, metric: 5, platform: 23, type: 'baseline'}),
-        ]).then(function () {
-            return TestServer.remoteAPI().getJSONWithStatus(`/api/measurement-set/?platform=46&metric=5`).then(function (response) {
-                assert.equal(response.statusCode, 404);
-            }, function (error) {
+        ]).then(() => {
+            return TestServer.remoteAPI().getJSONWithStatus(`/api/measurement-set/?platform=46&metric=5`).then((response) => {
+                assert(false);
+            }, (error) => {
                 assert.equal(error, 404);
-                done();
             });
-        }).catch(done);
+        });
     });
 
-    it("should be able to retrieve a reported value", function (done) {
-        addBuilderForReport(reportWithBuildTime[0]).then(function () {
+    it("should be able to retrieve a reported value", () => {
+        return addBuilderForReport(reportWithBuildTime[0]).then(() => {
             return TestServer.remoteAPI().postJSON('/api/report/', reportWithBuildTime);
-        }).then(function (response) {
+        }).then((response) => {
             assert.equal(response['status'], 'OK');
             return queryPlatformAndMetric('Mountain Lion', 'Time');
-        }).then(function (result) {
+        }).then((result) => {
             return TestServer.remoteAPI().getJSONWithStatus(`/api/measurement-set/?platform=${result.platformId}&metric=${result.metricId}`);
-        }).then(function (response) {
+        }).then((response) => {
             const buildTime = +(new Date(reportWithBuildTime[0]['buildTime']));
 
             assert.deepEqual(Object.keys(response).sort(),
@@ -248,7 +237,7 @@ describe("/api/measurement-set", function () {
 
             assert.deepEqual(Object.keys(response['configurations']), ['current']);
 
-            var currentRows = response['configurations']['current'];
+            const currentRows = response['configurations']['current'];
             assert.equal(currentRows.length, 1);
             assert.equal(currentRows[0].length, response['formatMap'].length);
             assert.deepEqual(format(response['formatMap'], currentRows[0]), {
@@ -261,17 +250,16 @@ describe("/api/measurement-set", function () {
                 commitTime: buildTime,
                 buildTime: buildTime,
                 buildNumber: '123'});
-            done();
-        }).catch(done);
+        });
     });
 
-    it("should return return the right IDs for measurement, build, and builder", function (done) {
-        addBuilderForReport(reportWithBuildTime[0]).then(function () {
+    it("should return return the right IDs for measurement, build, and builder", () => {
+        return addBuilderForReport(reportWithBuildTime[0]).then(() => {
             return TestServer.remoteAPI().postJSON('/api/report/', reportWithBuildTime);
-        }).then(function (response) {
+        }).then((response) => {
             assert.equal(response['status'], 'OK');
             return queryPlatformAndMetric('Mountain Lion', 'Time');
-        }).then(function (result) {
+        }).then((result) => {
             const db = TestServer.database();
             return Promise.all([
                 db.selectAll('test_runs'),
@@ -279,7 +267,7 @@ describe("/api/measurement-set", function () {
                 db.selectAll('builders'),
                 TestServer.remoteAPI().getJSONWithStatus(`/api/measurement-set/?platform=${result.platformId}&metric=${result.metricId}`),
             ]);
-        }).then(function (result) {
+        }).then((result) => {
             const runs = result[0];
             const builds = result[1];
             const builders = result[2];
@@ -299,23 +287,8 @@ describe("/api/measurement-set", function () {
             assert.equal(measurement[response['formatMap'].indexOf('id')], measurementId);
             assert.equal(measurement[response['formatMap'].indexOf('build')], buildId);
             assert.equal(measurement[response['formatMap'].indexOf('builder')], builderId);
-
-            done();
-        }).catch(done);
-    });
-
-    function postReports(reports, callback)
-    {
-        if (!reports.length)
-            return callback();
-
-        postJSON('/api/report/', reports[0], function (response) {
-            assert.equal(response.statusCode, 200);
-            assert.equal(JSON.parse(response.responseText)['status'], 'OK');
-
-            postReports(reports.slice(1), callback);
         });
-    }
+    });
 
     function queryPlatformAndMetricWithRepository(platformName, metricName, repositoryName)
     {
@@ -324,24 +297,22 @@ describe("/api/measurement-set", function () {
             db.selectFirstRow('platforms', {name: platformName}),
             db.selectFirstRow('test_metrics', {name: metricName}),
             db.selectFirstRow('repositories', {name: repositoryName}),
-        ]).then(function (result) {
-            return {platformId: result[0]['id'], metricId: result[1]['id'], repositoryId: result[2]['id']};
-        });
+        ]).then((result) => ({platformId: result[0]['id'], metricId: result[1]['id'], repositoryId: result[2]['id']}));
     }
 
-    it("should order results by commit time", function (done) {
+    it("should order results by commit time", () => {
         const remote = TestServer.remoteAPI();
         let repositoryId;
-        addBuilderForReport(reportWithBuildTime[0]).then(function () {
+        return addBuilderForReport(reportWithBuildTime[0]).then(() => {
             return remote.postJSON('/api/report/', reportWithBuildTime);
-        }).then(function () {
+        }).then(() => {
             return remote.postJSON('/api/report/', reportWithRevision);
-        }).then(function () {
+        }).then(() => {
             return queryPlatformAndMetricWithRepository('Mountain Lion', 'Time', 'WebKit');
-        }).then(function (result) {
+        }).then((result) => {
             repositoryId = result.repositoryId;
             return remote.getJSONWithStatus(`/api/measurement-set/?platform=${result.platformId}&metric=${result.metricId}`);
-        }).then(function (response) {
+        }).then((response) => {
             const currentRows = response['configurations']['current'];
             const buildTime = +(new Date(reportWithBuildTime[0]['buildTime']));
             const revisionTime = +(new Date(reportWithRevision[0]['revisions']['WebKit']['timestamp']));
@@ -368,14 +339,13 @@ describe("/api/measurement-set", function () {
                 commitTime: buildTime,
                 buildTime: buildTime,
                 buildNumber: '123' });
-            done();
-        }).catch(done);
+        });
     });
 
-    it("should order results by build time when commit times are missing", function (done) {
+    it("should order results by build time when commit times are missing", () => {
         const remote = TestServer.remoteAPI();
         let repositoryId;
-        addBuilderForReport(reportWithBuildTime[0]).then(() => {
+        return addBuilderForReport(reportWithBuildTime[0]).then(() => {
             const db = TestServer.database();
             return Promise.all([
                 db.insert('repositories', {'id': 1, 'name': 'macOS'}),
@@ -396,7 +366,7 @@ describe("/api/measurement-set", function () {
                 "platform": "Sierra",
                 "tests": { "Test": {"metrics": {"Time": { "baseline": [1, 2, 3, 4, 5] } } } },
             }]);
-        }).then(function () {
+        }).then(() => {
             return remote.postJSON('/api/report/', [{
                 "buildNumber": "1002",
                 "buildTime": '2017-01-19 19:46:37',
@@ -410,11 +380,11 @@ describe("/api/measurement-set", function () {
                 "platform": "Sierra",
                 "tests": { "Test": {"metrics": {"Time": { "baseline": [5, 6, 7, 8, 9] } } } },
             }]);
-        }).then(function () {
+        }).then(() => {
             return queryPlatformAndMetricWithRepository('Sierra', 'Time', 'macOS');
-        }).then(function (result) {
+        }).then((result) => {
             return remote.getJSONWithStatus(`/api/measurement-set/?platform=${result.platformId}&metric=${result.metricId}`);
-        }).then(function (response) {
+        }).then((response) => {
             const currentRows = response['configurations']['baseline'];
             assert.equal(currentRows.length, 2);
             assert.deepEqual(format(response['formatMap'], currentRows[0]), {
@@ -437,105 +407,97 @@ describe("/api/measurement-set", function () {
                 commitTime: +Date.UTC(2017, 0, 19, 19, 46, 37),
                 buildTime: +Date.UTC(2017, 0, 19, 19, 46, 37),
                 buildNumber: '1002' });
-            done();
-        }).catch(done);
+        });
     });
 
     function buildNumbers(parsedResult, config)
     {
-        return parsedResult['configurations'][config].map(function (row) {
-            return format(parsedResult['formatMap'], row)['buildNumber'];
-        });
+        return parsedResult['configurations'][config].map((row) => format(parsedResult['formatMap'], row)['buildNumber']);
     }
 
-    it("should include one data point after the current time range", function (done) {
+    it("should include one data point after the current time range", () => {
         const remote = TestServer.remoteAPI();
-        addBuilderForReport(reportWithBuildTime[0]).then(function () {
+        return addBuilderForReport(reportWithBuildTime[0]).then(() => {
             return remote.postJSON('/api/report/', reportWithAncentRevision);
-        }).then(function () {
+        }).then(() => {
             return remote.postJSON('/api/report/', reportWithNewRevision);
-        }).then(function () {
+        }).then(() => {
             return queryPlatformAndMetric('Mountain Lion', 'Time');
-        }).then(function (result) {
+        }).then((result) => {
             return remote.getJSONWithStatus(`/api/measurement-set/?platform=${result.platformId}&metric=${result.metricId}`);
-        }).then(function (response) {
+        }).then((response) => {
             assert.equal(response['status'], 'OK');
             assert.equal(response['clusterCount'], 2, 'should have two clusters');
             assert.deepEqual(buildNumbers(response, 'current'),
                 [reportWithAncentRevision[0]['buildNumber'], reportWithNewRevision[0]['buildNumber']]);
-            done();
-        }).catch(done);
+        });
     });
 
-    it("should always include one old data point before the current time range", function (done) {
+    it("should always include one old data point before the current time range", () => {
         const remote = TestServer.remoteAPI();
-        addBuilderForReport(reportWithBuildTime[0]).then(function () {
+        return addBuilderForReport(reportWithBuildTime[0]).then(() => {
             return remote.postJSON('/api/report/', reportWithBuildTime);
-        }).then(function () {
+        }).then(() => {
             return remote.postJSON('/api/report/', reportWithAncentRevision);
-        }).then(function () {
+        }).then(() => {
             return queryPlatformAndMetric('Mountain Lion', 'Time');
-        }).then(function (result) {
+        }).then((result) => {
             return remote.getJSONWithStatus(`/api/measurement-set/?platform=${result.platformId}&metric=${result.metricId}`);
-        }).then(function (response) {
+        }).then((response) => {
             assert.equal(response['clusterCount'], 2, 'should have two clusters');
             let currentRows = response['configurations']['current'];
             assert.equal(currentRows.length, 2, 'should contain two data points');
             assert.deepEqual(buildNumbers(response, 'current'), [reportWithAncentRevision[0]['buildNumber'], reportWithBuildTime[0]['buildNumber']]);
-            done();
-        }).catch(done);
+        });
     });
 
-    it("should create cached results", function (done) {
+    it("should create cached results", () => {
         const remote = TestServer.remoteAPI();
         let cachePrefix;
-        addBuilderForReport(reportWithBuildTime[0]).then(function () {
+        return addBuilderForReport(reportWithBuildTime[0]).then(() => {
             return remote.postJSON('/api/report/', reportWithAncentRevision);
-        }).then(function () {
+        }).then(() => {
             return remote.postJSON('/api/report/', reportWithRevision);
-        }).then(function () {
+        }).then(() => {
             return remote.postJSON('/api/report/', reportWithNewRevision);
-        }).then(function () {
+        }).then(() => {
             return queryPlatformAndMetric('Mountain Lion', 'Time');
-        }).then(function (result) {
+        }).then((result) => {
             cachePrefix = '/data/measurement-set-' + result.platformId + '-' + result.metricId;
             return remote.getJSONWithStatus(`/api/measurement-set/?platform=${result.platformId}&metric=${result.metricId}`);
-        }).then(function (newResult) {
-            return remote.getJSONWithStatus(`${cachePrefix}.json`).then(function (cachedResult) {
+        }).then((newResult) => {
+            return remote.getJSONWithStatus(`${cachePrefix}.json`).then((cachedResult) => {
                 assert.deepEqual(newResult, cachedResult);
                 return remote.getJSONWithStatus(`${cachePrefix}-${cachedResult['startTime']}.json`);
-            }).then(function (oldResult) {
-                var oldBuildNumbers = buildNumbers(oldResult, 'current');
-                var newBuildNumbers = buildNumbers(newResult, 'current');
+            }).then((oldResult) => {
+                const oldBuildNumbers = buildNumbers(oldResult, 'current');
+                const newBuildNumbers = buildNumbers(newResult, 'current');
                 assert(oldBuildNumbers.length >= 2, 'The old cluster should contain at least two data points');
                 assert(newBuildNumbers.length >= 2, 'The new cluster should contain at least two data points');
                 assert.deepEqual(oldBuildNumbers.slice(oldBuildNumbers.length - 2), newBuildNumbers.slice(0, 2),
                     'Two conseqcutive clusters should share two data points');
-                done();
             });
-        }).catch(done);
+        });
     });
 
-    it("should use lastModified timestamp identical to that in the manifest file", function (done) {
+    it("should use lastModified timestamp identical to that in the manifest file", () => {
         const remote = TestServer.remoteAPI();
-        addBuilderForReport(reportWithBuildTime[0]).then(function () {
+        return addBuilderForReport(reportWithBuildTime[0]).then(() => {
             return remote.postJSON('/api/report/', reportWithRevision);
-        }).then(function () {
+        }).then(() => {
             return queryPlatformAndMetric('Mountain Lion', 'Time');
-        }).then(function (result) {
+        }).then((result) => {
             return remote.getJSONWithStatus(`/api/measurement-set/?platform=${result.platformId}&metric=${result.metricId}`);
-        }).then(function (primaryCluster) {
-            return remote.getJSONWithStatus('/api/manifest').then(function (content) {
+        }).then((primaryCluster) => {
+            return remote.getJSONWithStatus('/api/manifest').then((content) => {
                 const manifest = Manifest._didFetchManifest(content);
 
                 const platform = Platform.findByName('Mountain Lion');
                 assert.equal(Metric.all().length, 1);
                 const metric = Metric.all()[0];
                 assert.equal(platform.lastModified(metric), primaryCluster['lastModified']);
-
-                done();
             });
-        }).catch(done);
+        });
     });
 
 });

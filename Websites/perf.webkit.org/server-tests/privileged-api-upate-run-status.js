@@ -6,12 +6,10 @@ const assert = require('assert');
 
 const TestServer = require('./resources/test-server.js');
 const addBuilderForReport = require('./resources/common-operations.js').addBuilderForReport;
-const connectToDatabaseInEveryTest = require('./resources/common-operations.js').connectToDatabaseInEveryTest;
+const prepareServerTest = require('./resources/common-operations.js').prepareServerTest;
 
 describe("/privileged-api/update-run-status", function () {
-    this.timeout(1000);
-    TestServer.inject();
-    connectToDatabaseInEveryTest();
+    prepareServerTest(this);
 
     const reportWithRevision = [{
         "buildNumber": "124",
@@ -35,100 +33,95 @@ describe("/privileged-api/update-run-status", function () {
             },
         }}];
 
-    it("should be able to mark a run as an outlier", function (done) {
+    it("should be able to mark a run as an outlier", () => {
         const db = TestServer.database();
         let id;
-        addBuilderForReport(reportWithRevision[0]).then(function () {
+        return addBuilderForReport(reportWithRevision[0]).then(() => {
             return TestServer.remoteAPI().postJSON('/api/report/', reportWithRevision);
-        }).then(function (response) {
+        }).then((response) => {
             assert.equal(response['status'], 'OK');
             return db.selectAll('test_runs');
-        }).then(function (runRows) {
+        }).then((runRows) => {
             assert.equal(runRows.length, 1);
             assert.equal(runRows[0]['mean_cache'], 11);
             assert.equal(runRows[0]['iteration_count_cache'], 1);
             assert.equal(runRows[0]['marked_outlier'], false);
             id = runRows[0]['id'];
             return PrivilegedAPI.requestCSRFToken();
-        }).then(function () {
+        }).then(() => {
             return PrivilegedAPI.sendRequest('update-run-status', {'run': id, 'markedOutlier': true, 'token': PrivilegedAPI._token});
-        }).then(function () {
+        }).then(() => {
             return db.selectAll('test_runs');
-        }).then(function (runRows) {
+        }).then((runRows) => {
             assert.equal(runRows.length, 1);
             assert.equal(runRows[0]['mean_cache'], 11);
             assert.equal(runRows[0]['iteration_count_cache'], 1);
             assert.equal(runRows[0]['marked_outlier'], true);
-            done();
-        }).catch(done);
+        });
     });
 
-    it("should reject when the token is not set in cookie", function (done) {
+    it("should reject when the token is not set in cookie", () => {
         const db = TestServer.database();
-        addBuilderForReport(reportWithRevision[0]).then(function () {
+        return addBuilderForReport(reportWithRevision[0]).then(() => {
             return TestServer.remoteAPI().postJSON('/api/report/', reportWithRevision);
-        }).then(function (response) {
+        }).then((response) => {
             assert.equal(response['status'], 'OK');
             return db.selectAll('test_runs');
-        }).then(function (runRows) {
+        }).then((runRows) => {
             assert.equal(runRows.length, 1);
             assert.equal(runRows[0]['marked_outlier'], false);
             return PrivilegedAPI.requestCSRFToken();
-        }).then(function () {
+        }).then(() => {
             RemoteAPI.clearCookies();
             return RemoteAPI.postJSONWithStatus('/privileged-api/update-run-status', {token: PrivilegedAPI._token});
-        }).then(function () {
+        }).then(() => {
             assert(false, 'PrivilegedAPI.sendRequest should reject');
-        }, function (response) {
+        }, (response) => {
             assert.equal(response['status'], 'InvalidToken');
-            done();
-        }).catch(done);
+        });
     });
 
-    it("should reject when the token in the request content is bad", function (done) {
-        const db = TestServer.database();
-        addBuilderForReport(reportWithRevision[0]).then(function () {
+    it("should reject when the token in the request content is bad", () => {
+        return addBuilderForReport(reportWithRevision[0]).then(() => {
             return TestServer.remoteAPI().postJSON('/api/report/', reportWithRevision);
-        }).then(function (response) {
+        }).then((response) => {
             assert.equal(response['status'], 'OK');
-            return db.selectAll('test_runs');
-        }).then(function (runRows) {
+            return TestServer.database().selectAll('test_runs');
+        }).then((runRows) => {
             assert.equal(runRows.length, 1);
             assert.equal(runRows[0]['marked_outlier'], false);
             return PrivilegedAPI.requestCSRFToken();
-        }).then(function () {
+        }).then(() => {
             return RemoteAPI.postJSONWithStatus('/privileged-api/update-run-status', {token: 'bad'});
-        }).then(function () {
+        }).then(() => {
             assert(false, 'PrivilegedAPI.sendRequest should reject');
-        }, function (response) {
+        }, (response) => {
             assert.equal(response['status'], 'InvalidToken');
-            done();
-        }).catch(done);
+        });
     });
 
-    it("should be able to unmark a run as an outlier", function (done) {
+    it("should be able to unmark a run as an outlier", () => {
         const db = TestServer.database();
-        addBuilderForReport(reportWithRevision[0]).then(function () {
+        return addBuilderForReport(reportWithRevision[0]).then(() => {
             return TestServer.remoteAPI().postJSON('/api/report/', reportWithRevision);
-        }).then(function (response) {
+        }).then((response) => {
             assert.equal(response['status'], 'OK');
             return db.selectAll('test_runs');
-        }).then(function (runRows) {
+        }).then((runRows) => {
             assert.equal(runRows.length, 1);
             assert.equal(runRows[0]['marked_outlier'], false);
             return PrivilegedAPI.sendRequest('update-run-status', {'run': runRows[0]['id'], 'markedOutlier': true});
-        }).then(function () {
+        }).then(() => {
             return db.selectAll('test_runs');
-        }).then(function (runRows) {
+        }).then((runRows) => {
             assert.equal(runRows.length, 1);
             assert.equal(runRows[0]['marked_outlier'], true);
             return PrivilegedAPI.sendRequest('update-run-status', {'run': runRows[0]['id'], 'markedOutlier': false});
-        }).then(function () {
+        }).then(() => {
             return db.selectAll('test_runs');
-        }).then(function (runRows) {
+        }).then((runRows) => {
             assert.equal(runRows.length, 1);
             assert.equal(runRows[0]['marked_outlier'], false);
-            done();
-        }).catch(done);
+        });
     });
 });

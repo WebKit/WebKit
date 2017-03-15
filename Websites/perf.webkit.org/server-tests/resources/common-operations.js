@@ -17,9 +17,14 @@ function addSlaveForReport(report)
     });
 }
 
-function connectToDatabaseInEveryTest()
+function prepareServerTest(test)
 {
+    test.timeout(1000);
+    TestServer.inject();
+
     beforeEach(function () {
+        if (typeof(MockData) != 'undefined')
+            MockData.resetV3Models();
         TestServer.database().connect({keepAlive: true});
     });
 
@@ -41,6 +46,6 @@ function submitReport(report)
 if (typeof module != 'undefined') {
     module.exports.addBuilderForReport = addBuilderForReport;
     module.exports.addSlaveForReport = addSlaveForReport;
-    module.exports.connectToDatabaseInEveryTest = connectToDatabaseInEveryTest;
+    module.exports.prepareServerTest = prepareServerTest;
     module.exports.submitReport = submitReport;
 }

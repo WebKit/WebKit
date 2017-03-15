@@ -5,12 +5,10 @@ const assert = require('assert');
 const TestServer = require('./resources/test-server.js');
 const addBuilderForReport = require('./resources/common-operations.js').addBuilderForReport;
 const addSlaveForReport = require('./resources/common-operations.js').addSlaveForReport;
-const connectToDatabaseInEveryTest = require('./resources/common-operations.js').connectToDatabaseInEveryTest;
+const prepareServerTest = require('./resources/common-operations.js').prepareServerTest;
 
 describe("/api/report", function () {
-    this.timeout(1000);
-    TestServer.inject();
-    connectToDatabaseInEveryTest();
+    prepareServerTest(this);
 
     function emptyReport()
     {
@@ -56,36 +54,33 @@ describe("/api/report", function () {
         };
     }
 
-    it("should reject error when builder name is missing", function (done) {
-        TestServer.remoteAPI().postJSON('/api/report/', [{"buildTime": "2013-02-28T10:12:03.388304"}]).then(function (response) {
+    it("should reject error when builder name is missing", () => {
+        return TestServer.remoteAPI().postJSON('/api/report/', [{"buildTime": "2013-02-28T10:12:03.388304"}]).then((response) => {
             assert.equal(response['status'], 'MissingBuilderName');
-            done();
-        }).catch(done);
-    });
-
-    it("should reject error when build time is missing", function (done) {
-        addBuilderForReport(emptyReport()).then(function () {
-            return TestServer.remoteAPI().postJSON('/api/report/', [{"builderName": "someBuilder", "builderPassword": "somePassword"}]);
-        }).then(function (response) {
-            assert.equal(response['status'], 'MissingBuildTime');
-            done();
         });
     });
 
-    it("should reject when there are no builders", function (done) {
-        TestServer.remoteAPI().postJSON('/api/report/', [emptyReport()]).then(function (response) {
+    it("should reject error when build time is missing", () => {
+        return addBuilderForReport(emptyReport()).then(() => {
+            return TestServer.remoteAPI().postJSON('/api/report/', [{"builderName": "someBuilder", "builderPassword": "somePassword"}]);
+        }).then((response) => {
+            assert.equal(response['status'], 'MissingBuildTime');
+        });
+    });
+
+    it("should reject when there are no builders", () => {
+        return TestServer.remoteAPI().postJSON('/api/report/', [emptyReport()]).then((response) => {
             assert.equal(response['status'], 'BuilderNotFound');
             assert.equal(response['failureStored'], false);
             assert.equal(response['processedRuns'], 0);
             return TestServer.database().selectAll('reports');
-        }).then(function (reports) {
+        }).then((reports) => {
             assert.equal(reports.length, 0);
-            done();
-        }).catch(done);
+        });
     });
 
-    it("should reject a report without a builder password", function (done) {
-        addBuilderForReport(emptyReport()).then(function () {
+    it("should reject a report without a builder password", () => {
+        return addBuilderForReport(emptyReport()).then(() => {
             var report = [{
                 "buildNumber": "123",
                 "buildTime": "2013-02-28T10:12:03.388304",
@@ -93,26 +88,25 @@ describe("/api/report", function () {
                 "tests": {},
                 "revisions": {}}];
             return TestServer.remoteAPI().postJSON('/api/report/', report);
-        }).then(function (response) {
+        }).then((response) => {
             assert.equal(response['status'], 'BuilderNotFound');
             assert.equal(response['failureStored'], false);
             assert.equal(response['processedRuns'], 0);
             return TestServer.database().selectAll('reports');
-        }).then(function (reports) {
+        }).then((reports) => {
             assert.equal(reports.length, 0);
-            done();
-        }).catch(done);
+        });
     });
 
-    it("should store a report from a valid builder", function (done) {
-        addBuilderForReport(emptyReport()).then(function () {
+    it("should store a report from a valid builder", () => {
+        return addBuilderForReport(emptyReport()).then(() => {
             return TestServer.remoteAPI().postJSON('/api/report/', [emptyReport()]);
-        }).then(function (response) {
+        }).then((response) => {
             assert.equal(response['status'], 'OK');
             assert.equal(response['failureStored'], false);
             assert.equal(response['processedRuns'], 1);
             return TestServer.database().selectAll('reports');
-        }).then(function (reports) {
+        }).then((reports) => {
             assert.equal(reports.length, 1);
             const submittedContent = emptyReport();
             const storedContent = JSON.parse(reports[0]['content']);
@@ -121,24 +115,22 @@ describe("/api/report", function () {
             delete submittedContent['tests'];
             delete storedContent['tests'];
             assert.deepEqual(storedContent, submittedContent);
-
-            done();
-        }).catch(done);
+        });
     });
 
-    it("should treat the slave password as the builder password if there is no matching slave", function (done) {
+    it("should treat the slave password as the builder password if there is no matching slave", () => {
         let report = emptyReport();
         report['slavePassword'] = report['builderPassword'];
         delete report['builderPassword'];
 
-        addSlaveForReport(report).then(function () {
+        return addSlaveForReport(report).then(() => {
             return TestServer.remoteAPI().postJSON('/api/report/', [report]);
-        }).then(function (response) {
+        }).then((response) => {
             assert.equal(response['status'], 'OK');
             assert.equal(response['failureStored'], false);
             assert.equal(response['processedRuns'], 1);
             return TestServer.database().selectAll('reports');
-        }).then(function (reports) {
+        }).then((reports) => {
             assert.equal(reports.length, 1);
             const storedContent = JSON.parse(reports[0]['content']);
 
@@ -146,20 +138,18 @@ describe("/api/report", function () {
             delete report['tests'];
             delete storedContent['tests'];
             assert.deepEqual(storedContent, report);
-
-            done();
-        }).catch(done);
+        });
     });
 
-    it("should store a report from a valid slave", function (done) {
-        addSlaveForReport(emptySlaveReport()).then(function () {
+    it("should store a report from a valid slave", () => {
+        return addSlaveForReport(emptySlaveReport()).then(() => {
             return TestServer.remoteAPI().postJSON('/api/report/', [emptySlaveReport()]);
-        }).then(function (response) {
+        }).then((response) => {
             assert.equal(response['status'], 'OK');
             assert.equal(response['failureStored'], false);
             assert.equal(response['processedRuns'], 1);
             return TestServer.database().selectAll('reports');
-        }).then(function (reports) {
+        }).then((reports) => {
             assert.equal(reports.length, 1);
             const submittedContent = emptySlaveReport();
             const storedContent = JSON.parse(reports[0]['content']);
@@ -168,88 +158,81 @@ describe("/api/report", function () {
             delete submittedContent['tests'];
             delete storedContent['tests'];
             assert.deepEqual(storedContent, submittedContent);
-
-            done();
-        }).catch(done);
+        });
     });
 
-    it("should store the builder name but not the builder password", function (done) {
-        addBuilderForReport(emptyReport()).then(function () {
+    it("should store the builder name but not the builder password", () => {
+        return addBuilderForReport(emptyReport()).then(() => {
             return TestServer.remoteAPI().postJSON('/api/report/', [emptyReport()]);
-        }).then(function (response) {
+        }).then((response) => {
             return TestServer.database().selectAll('reports');
-        }).then(function (reports) {
+        }).then((reports) => {
             assert.equal(reports.length, 1);
             const storedContent = JSON.parse(reports[0]['content']);
             assert.equal(storedContent['builderName'], emptyReport()['builderName']);
             assert(!('builderPassword' in storedContent));
-            done();
-        }).catch(done);
+        });
     });
 
-    it("should add a slave if there isn't one and the report was authenticated by a builder", function (done) {
-        addBuilderForReport(emptyReport()).then(function () {
+    it("should add a slave if there isn't one and the report was authenticated by a builder", () => {
+        return addBuilderForReport(emptyReport()).then(() => {
             return TestServer.remoteAPI().postJSON('/api/report/', [emptyReport()]);
-        }).then(function (response) {
+        }).then((response) => {
             return TestServer.database().selectAll('build_slaves');
-        }).then(function (slaves) {
+        }).then((slaves) => {
             assert.equal(slaves.length, 1);
             assert.equal(slaves[0]['name'], emptyReport()['slaveName']);
-            done();
-        }).catch(done);
+        });
     });
 
-    it("should add a builder if there isn't one and the report was authenticated by a slave", function (done) {
-        addSlaveForReport(emptySlaveReport()).then(function () {
+    it("should add a builder if there isn't one and the report was authenticated by a slave", () => {
+        return addSlaveForReport(emptySlaveReport()).then(() => {
             return TestServer.remoteAPI().postJSON('/api/report/', [emptySlaveReport()]);
-        }).then(function (response) {
+        }).then((response) => {
             return TestServer.database().selectAll('builders');
-        }).then(function (builders) {
+        }).then((builders) => {
             assert.equal(builders.length, 1);
             assert.equal(builders[0]['name'], emptyReport()['builderName']);
-            done();
-        }).catch(done);
+        });
     });
 
-    it("should add a build", function (done) {
-        addBuilderForReport(emptyReport()).then(function () {
+    it("should add a build", () => {
+        return addBuilderForReport(emptyReport()).then(() => {
             return TestServer.remoteAPI().postJSON('/api/report/', [emptyReport()]);
-        }).then(function () {
+        }).then(() => {
             return TestServer.database().selectAll('builds');
-        }).then(function (builds) {
+        }).then((builds) => {
             assert.strictEqual(builds[0]['number'], 123);
-            done();
-        }).catch(done);
+        });
     });
 
-    it("should add the platform", function (done) {
-        addBuilderForReport(emptyReport()).then(function () {
+    it("should add the platform", () => {
+        return addBuilderForReport(emptyReport()).then(() => {
             return TestServer.remoteAPI().postJSON('/api/report/', [emptyReport()]);
-        }).then(function () {
+        }).then(() => {
             return TestServer.database().selectAll('platforms');
-        }).then(function (platforms) {
+        }).then((platforms) => {
             assert.equal(platforms.length, 1);
             assert.equal(platforms[0]['name'], 'Mountain Lion');
-            done();
-        }).catch(done);
+        });
     });
 
-    it("should add repositories and build revisions", function (done) {
-        addBuilderForReport(emptyReport()).then(function () {
+    it("should add repositories and build revisions", () => {
+        return addBuilderForReport(emptyReport()).then(() => {
             return TestServer.remoteAPI().postJSON('/api/report/', [emptyReport()]);
-        }).then(function (response) {
+        }).then((response) => {
             const db = TestServer.database();
             return Promise.all([
                 db.selectAll('repositories'),
                 db.selectAll('commits'),
                 db.selectAll('build_commits', 'build_commit'),
             ]);
-        }).then(function (result) {
+        }).then((result) => {
             const repositories = result[0];
             const commits = result[1];
             const buildCommitsRelations = result[2];
             assert.equal(repositories.length, 2);
-            assert.deepEqual(repositories.map(function (row) { return row['name']; }).sort(), ['OS X', 'WebKit']);
+            assert.deepEqual(repositories.map((row) => { return row['name']; }).sort(), ['OS X', 'WebKit']);
 
             assert.equal(commits.length, 2);
             assert.equal(buildCommitsRelations.length, 2);
@@ -269,58 +252,55 @@ describe("/api/report", function () {
             assert.equal(repositoryNameToRevisionRow['WebKit']['revision'], '141977');
             assert.equal(repositoryNameToRevisionRow['WebKit']['time'].toString(),
                 new Date('2013-02-06 08:55:20.9').toString());
-            done();
-        }).catch(done);
+        });
     });
 
-    it("should not create a duplicate build for the same build number if build times are close", function (done) {
-        let firstReport = emptyReport();
+    it("should not create a duplicate build for the same build number if build times are close", () => {
+        const firstReport = emptyReport();
         firstReport['buildTime'] = '2013-02-28T10:12:04';
-        let secondReport = emptyReport();
+        const secondReport = emptyReport();
         secondReport['buildTime'] = '2013-02-28T10:22:03';
 
-        addBuilderForReport(emptyReport()).then(function () {
+        return addBuilderForReport(emptyReport()).then(() => {
             return TestServer.remoteAPI().postJSON('/api/report/', [firstReport]);
-        }).then(function (response) {
+        }).then((response) => {
             assert.equal(response['status'], 'OK');
             return TestServer.database().selectAll('builds');
-        }).then(function (builds) {
+        }).then((builds) => {
             assert.equal(builds.length, 1);
             return TestServer.remoteAPI().postJSON('/api/report/', [secondReport]);
-        }).then(function (response) {
+        }).then((response) => {
             assert.equal(response['status'], 'OK');
             return TestServer.database().selectAll('builds');
-        }).then(function (builds) {
+        }).then((builds) => {
             assert.equal(builds.length, 1);
-            done();
-        }).catch(done);
+        });
     });
 
-    it("should create distinct builds for the same build number if build times are far apart", function (done) {
-        let firstReport = emptyReport();
+    it("should create distinct builds for the same build number if build times are far apart", () => {
+        const firstReport = emptyReport();
         firstReport['buildTime'] = '2013-02-28T10:12:03';
-        let secondReport = emptyReport();
+        const secondReport = emptyReport();
         secondReport['buildTime'] = '2014-01-20T22:23:34';
 
-        addBuilderForReport(emptyReport()).then(function () {
+        return addBuilderForReport(emptyReport()).then(() => {
             return TestServer.remoteAPI().postJSON('/api/report/', [firstReport]);
-        }).then(function (response) {
+        }).then((response) => {
             assert.equal(response['status'], 'OK');
             return TestServer.database().selectAll('builds');
-        }).then(function (builds) {
+        }).then((builds) => {
             assert.equal(builds.length, 1);
             return TestServer.remoteAPI().postJSON('/api/report/', [secondReport]);
-        }).then(function (response) {
+        }).then((response) => {
             assert.equal(response['status'], 'OK');
             return TestServer.database().selectAll('builds');
-        }).then(function (builds) {
+        }).then((builds) => {
             assert.equal(builds.length, 2);
-            done();
-        }).catch(done);
+        });
     });
 
-    it("should reject a report with mismatching revision info", function (done) {
-        let firstReport = emptyReport();
+    it("should reject a report with mismatching revision info", () => {
+        const firstReport = emptyReport();
         firstReport['revisions'] = {
             "WebKit": {
                 "revision": "141977",
@@ -328,7 +308,7 @@ describe("/api/report", function () {
             }
         };
 
-        let secondReport = emptyReport();
+        const secondReport = emptyReport();
         secondReport['revisions'] = {
             "WebKit": {
                 "revision": "150000",
@@ -336,22 +316,21 @@ describe("/api/report", function () {
             }
         };
 
-        addBuilderForReport(firstReport).then(function () {
+        return addBuilderForReport(firstReport).then(() => {
             return TestServer.remoteAPI().postJSON('/api/report/', [firstReport]);
-        }).then(function (response) {
+        }).then((response) => {
             assert.equal(response['status'], 'OK');
             return TestServer.database().selectAll('builds');
-        }).then(function (builds) {
+        }).then((builds) => {
             assert.equal(builds.length, 1);
             return TestServer.remoteAPI().postJSON('/api/report/', [secondReport]);
-        }).then(function (response) {
+        }).then((response) => {
             assert.equal(response['status'], 'MismatchingCommitRevision');
             assert(JSON.stringify(response).indexOf('141977') >= 0);
             assert(JSON.stringify(response).indexOf('150000') >= 0);
             assert.equal(response['failureStored'], true);
             assert.equal(response['processedRuns'], 0);
-            done();
-        }).catch(done);
+        });
     });
 
     const reportWithTwoLevelsOfAggregations = {
@@ -400,15 +379,15 @@ describe("/api/report", function () {
 
     function reportAfterAddingBuilderAndAggregators(report)
     {
-        return addBuilderForReport(report).then(function () {
+        return addBuilderForReport(report).then(() => {
             const db = TestServer.database();
             return Promise.all([
                 db.insert('aggregators', {name: 'Arithmetic'}),
                 db.insert('aggregators', {name: 'Geometric'}),
             ]);
-        }).then(function () {
+        }).then(() => {
             return TestServer.remoteAPI().postJSON('/api/report/', [report]);
-        }).then(function (response) {
+        }).then((response) => {
             assert.equal(response['status'], 'OK');
             assert.equal(response['failureStored'], false);
             return response;
@@ -419,34 +398,31 @@ describe("/api/report", function () {
         queryAndFetchAll('SELECT * FROM test_runs WHERE run_config IN'
             + '(SELECT config_id FROM test_configurations, test_metrics, tests WHERE config_metric = metric_id AND metric_test = test_id AND'
             + 'test_name = $1 AND metric_name = $2)',
-            ['Arithmetic', 'values.reduce(function (a, b) { return a + b; }) / values.length'], function () {
+            ['Arithmetic', 'values.reduce(function (a, b) { return a + b; }) / values.length'], () => {
             queryAndFetchAll('INSERT INTO aggregators (aggregator_name, aggregator_definition) values ($1, $2)',
                 ['Geometric', 'Math.pow(values.reduce(function (a, b) { return a * b; }), 1 / values.length)'], callback);
         });
     }
 
-    it("should accept a report with aggregators", function (done) {
-        reportAfterAddingBuilderAndAggregators(reportWithTwoLevelsOfAggregations).then(function () {
-            done();
-        }).catch(done);
+    it("should accept a report with aggregators", () => {
+        return reportAfterAddingBuilderAndAggregators(reportWithTwoLevelsOfAggregations);
     });
 
-    it("should add tests", function (done) {
-        reportAfterAddingBuilderAndAggregators(reportWithTwoLevelsOfAggregations).then(function () {
+    it("should add tests", () => {
+        return reportAfterAddingBuilderAndAggregators(reportWithTwoLevelsOfAggregations).then(() => {
             return TestServer.database().selectAll('tests');
-        }).then(function (tests) {
-            assert.deepEqual(tests.map(function (row) { return row['name']; }).sort(),
+        }).then((tests) => {
+            assert.deepEqual(tests.map((row) => { return row['name']; }).sort(),
                 ['CSS', 'DOM', 'DummyBenchmark', 'DummyPageLoading', 'ModifyNodes', 'TraverseNodes', 'apple.com', 'webkit.org']);
-            done();
-        }).catch(done);
+        });
     });
 
-    it("should add metrics", function (done) {
-        reportAfterAddingBuilderAndAggregators(reportWithTwoLevelsOfAggregations).then(function () {
+    it("should add metrics", () => {
+        return reportAfterAddingBuilderAndAggregators(reportWithTwoLevelsOfAggregations).then(() => {
             return TestServer.database().query('SELECT * FROM tests, test_metrics LEFT JOIN aggregators ON metric_aggregator = aggregator_id WHERE metric_test = test_id');
-        }).then(function (result) {
-            let testNameToMetrics = {};
-            result.rows.forEach(function (row) {
+        }).then((result) => {
+            const testNameToMetrics = {};
+            result.rows.forEach((row) => {
                 if (!(row['test_name'] in testNameToMetrics))
                     testNameToMetrics[row['test_name']] = new Array;
                 testNameToMetrics[row['test_name']].push([row['metric_name'], row['aggregator_name']]);
@@ -459,15 +435,14 @@ describe("/api/report", function () {
             assert.deepEqual(testNameToMetrics['TraverseNodes'], [['Time', null]]);
             assert.deepEqual(testNameToMetrics['apple.com'], [['Time', null]]);
             assert.deepEqual(testNameToMetrics['webkit.org'], [['Time', null]]);
-            done();
-        }).catch(done);
+        });
     });
 
     function fetchTestConfig(testName, metricName)
     {
         return TestServer.database().query(`SELECT * FROM tests, test_metrics, test_configurations
             WHERE test_id = metric_test AND metric_id = config_metric
-            AND test_name = $1 AND metric_name = $2`, [testName, metricName]).then(function (result) {
+            AND test_name = $1 AND metric_name = $2`, [testName, metricName]).then((result) => {
                 assert.equal(result.rows.length, 1);
                 return result.rows[0];
             });
@@ -476,19 +451,19 @@ describe("/api/report", function () {
     function fetchTestRunIterationsForMetric(testName, metricName)
     {
         const db = TestServer.database();
-        return fetchTestConfig(testName, metricName).then(function (config) {
+        return fetchTestConfig(testName, metricName).then((config) => {
             return db.selectFirstRow('test_runs', {config: config['config_id']});
-        }).then(function (run) {
-            return db.selectRows('run_iterations', {run: run['id']}, {sortBy: 'order'}).then(function (iterations) {
+        }).then((run) => {
+            return db.selectRows('run_iterations', {run: run['id']}, {sortBy: 'order'}).then((iterations) => {
                 return {run: run, iterations: iterations};
             });
         });
     }
 
-    it("should store run values", function (done) {
-        reportAfterAddingBuilderAndAggregators(reportWithTwoLevelsOfAggregations).then(function () {
+    it("should store run values", () => {
+        return reportAfterAddingBuilderAndAggregators(reportWithTwoLevelsOfAggregations).then(() => {
             return fetchTestRunIterationsForMetric('apple.com', 'Time');
-        }).then(function (result) {
+        }).then((result) => {
             const run = result.run;
             const runId = run['id'];
             assert.deepEqual(result.iterations, [
@@ -496,12 +471,12 @@ describe("/api/report", function () {
                 {run: runId, order: 1, group: null, value: 510, relative_time: null},
                 {run: runId, order: 2, group: null, value: 520, relative_time: null},
                 {run: runId, order: 3, group: null, value: 530, relative_time: null}]);
-            var sum = 500 + 510 + 520 + 530;
+            const sum = 500 + 510 + 520 + 530;
             assert.equal(run['mean_cache'], sum / result.iterations.length);
             assert.equal(run['sum_cache'], sum);
             assert.equal(run['square_sum_cache'], 500 * 500 + 510 * 510 + 520 * 520 + 530 * 530);
             return fetchTestRunIterationsForMetric('CSS', 'Time');
-        }).then(function (result) {
+        }).then((result) => {
             const run = result.run;
             const runId = run['id'];
             assert.deepEqual(result.iterations, [
@@ -529,14 +504,13 @@ describe("/api/report", function () {
             assert.equal(run['mean_cache'], sum / result.iterations.length);
             assert.equal(run['sum_cache'], sum);
             assert.equal(run['square_sum_cache'], squareSum);
-            done();
-        }).catch(done);
+        });
     });
 
-    it("should store aggregated run values", function (done) {
-        reportAfterAddingBuilderAndAggregators(reportWithTwoLevelsOfAggregations).then(function () {
+    it("should store aggregated run values", () => {
+        return reportAfterAddingBuilderAndAggregators(reportWithTwoLevelsOfAggregations).then(() => {
             return fetchTestRunIterationsForMetric('DummyPageLoading', 'Time');
-        }).then(function (result) {
+        }).then((result) => {
             const run = result.run;
             const runId = result.run['id'];
             const expectedValues = [(500 + 100) / 2, (510 + 110) / 2, (520 + 120) / 2, (530 + 130) / 2];
@@ -549,14 +523,13 @@ describe("/api/report", function () {
             assert.equal(run['mean_cache'], sum / result.iterations.length);
             assert.equal(run['sum_cache'], sum);
             assert.equal(run['square_sum_cache'], expectedValues.reduce(function (sum, value) { return sum + value * value; }, 0));
-            done();
-        }).catch(done);
+        });
     });
 
-    it("should be able to compute the aggregation of aggregated values", function (done) {
-        reportAfterAddingBuilderAndAggregators(reportWithTwoLevelsOfAggregations).then(function () {
+    it("should be able to compute the aggregation of aggregated values", () => {
+        return reportAfterAddingBuilderAndAggregators(reportWithTwoLevelsOfAggregations).then(() => {
             return fetchTestRunIterationsForMetric('DummyBenchmark', 'Time');
-        }).then(function (result) {
+        }).then((result) => {
             const run = result.run;
             const runId = run['id'];
             const expectedIterations = [];
@@ -574,8 +547,7 @@ describe("/api/report", function () {
             assert.equal(run['mean_cache'], sum / result.iterations.length);
             assert.equal(run['sum_cache'], sum);
             assert.equal(run['square_sum_cache'], squareSum);
-            done();
-        }).catch(done);
+        });
     });
 
     function reportWithSameSubtestName()
@@ -611,28 +583,25 @@ describe("/api/report", function () {
         };
     }
 
-    it("should be able to add a report with same subtest name", function (done) {
-        reportAfterAddingBuilderAndAggregators(reportWithSameSubtestName()).then(function () {
-            done();
-        }).catch(done);
+    it("should be able to add a report with same subtest name", () => {
+        return reportAfterAddingBuilderAndAggregators(reportWithSameSubtestName());
     });
 
-    it("should be able to reuse the same test rows", function (done) {
-        reportAfterAddingBuilderAndAggregators(reportWithSameSubtestName()).then(function () {
+    it("should be able to reuse the same test rows", () => {
+        return reportAfterAddingBuilderAndAggregators(reportWithSameSubtestName()).then(() => {
             return TestServer.database().selectAll('tests');
-        }).then(function (tests) {
+        }).then((tests) => {
             assert.equal(tests.length, 6);
             let newReport = reportWithSameSubtestName();
             newReport.buildNumber = "125";
             newReport.buildTime = "2013-02-28T12:17:24.1";
             return TestServer.remoteAPI().postJSON('/api/report/', [newReport]);
-        }).then(function (response) {
+        }).then((response) => {
             assert.equal(response['status'], 'OK');
             return TestServer.database().selectAll('tests');
-        }).then(function (tests) {
+        }).then((tests) => {
             assert.equal(tests.length, 6);
-            done();
-        }).catch(done);
+        });
     });
 
     const reportWithSameSingleValue = {
@@ -655,24 +624,23 @@ describe("/api/report", function () {
             },
         }};
 
-    it("should be able to add a report with single value results", function (done) {
-        reportAfterAddingBuilderAndAggregators(reportWithSameSingleValue).then(function () {
+    it("should be able to add a report with single value results", () => {
+        return reportAfterAddingBuilderAndAggregators(reportWithSameSingleValue).then(() => {
             return fetchTestRunIterationsForMetric('test1', 'Combined');
-        }).then(function (result) {
+        }).then((result) => {
             const run = result.run;
             assert.equal(run['iteration_count_cache'], 1);
             assert.equal(run['mean_cache'], 3);
             assert.equal(run['sum_cache'], 3);
             assert.equal(run['square_sum_cache'], 9);
             return fetchTestRunIterationsForMetric('suite', 'Combined');
-        }).then(function (result) {
+        }).then((result) => {
             const run = result.run;
             assert.equal(run['iteration_count_cache'], 1);
             assert.equal(run['mean_cache'], 5);
             assert.equal(run['sum_cache'], 5);
             assert.equal(run['square_sum_cache'], 25);
-            done();
-        }).catch(done);
+        });
     });
 
     const reportWithSameValuePairs = {
@@ -688,10 +656,10 @@ describe("/api/report", function () {
             },
         };
 
-    it("should be able to add a report with (relative time, value) pairs", function (done) {
-        reportAfterAddingBuilderAndAggregators(reportWithSameValuePairs).then(function () {
+    it("should be able to add a report with (relative time, value) pairs", () => {
+        return reportAfterAddingBuilderAndAggregators(reportWithSameValuePairs).then(() => {
             return fetchTestRunIterationsForMetric('test', 'FrameRate');
-        }).then(function (result) {
+        }).then((result) => {
             const run = result.run;
             assert.equal(run['iteration_count_cache'], 3);
             assert.equal(run['mean_cache'], 4);
@@ -703,8 +671,7 @@ describe("/api/report", function () {
                 {run: runId, order: 0, group: null, value: 4, relative_time: 0},
                 {run: runId, order: 1, group: null, value: 5, relative_time: 100},
                 {run: runId, order: 2, group: null, value: 3, relative_time: 205}]);
-            done();
-        }).catch(done);
+        });
     });
 
     const reportsUpdatingDifferentTests = [
@@ -734,40 +701,38 @@ describe("/api/report", function () {
         },
     ];
 
-    it("should update the last modified date of test configurations with new runs", function (done) {
-        addBuilderForReport(reportsUpdatingDifferentTests[0]).then(function () {
+    it("should update the last modified date of test configurations with new runs", () => {
+        return addBuilderForReport(reportsUpdatingDifferentTests[0]).then(() => {
             return TestServer.remoteAPI().postJSON('/api/report/', [reportsUpdatingDifferentTests[0]]);
-        }).then(function (response) {
+        }).then((response) => {
             assert.equal(response['status'], 'OK');
             return fetchTestConfig('test1', 'Time');
-        }).then(function (originalConfig) {
-            return TestServer.remoteAPI().postJSON('/api/report/', [reportsUpdatingDifferentTests[2]]).then(function () {
+        }).then((originalConfig) => {
+            return TestServer.remoteAPI().postJSON('/api/report/', [reportsUpdatingDifferentTests[2]]).then(() => {
                 return fetchTestConfig('test1', 'Time');
-            }).then(function (config) {
+            }).then((config) => {
                 assert(originalConfig['config_runs_last_modified'] instanceof Date);
                 assert(config['config_runs_last_modified'] instanceof Date);
                 assert(+originalConfig['config_runs_last_modified'] < +config['config_runs_last_modified']);
-                done();
             });
-        }).catch(done);
+        });
     });
 
-    it("should not update the last modified date of unrelated test configurations", function (done) {
-        addBuilderForReport(reportsUpdatingDifferentTests[0]).then(function () {
+    it("should not update the last modified date of unrelated test configurations", () => {
+        return addBuilderForReport(reportsUpdatingDifferentTests[0]).then(() => {
             return TestServer.remoteAPI().postJSON('/api/report/', [reportsUpdatingDifferentTests[0]]);
-        }).then(function (response) {
+        }).then((response) => {
             assert.equal(response['status'], 'OK');
             return fetchTestConfig('test1', 'Time');
-        }).then(function (originalConfig) {
-            return TestServer.remoteAPI().postJSON('/api/report/', [reportsUpdatingDifferentTests[1]]).then(function (response) {
+        }).then((originalConfig) => {
+            return TestServer.remoteAPI().postJSON('/api/report/', [reportsUpdatingDifferentTests[1]]).then((response) => {
                 assert.equal(response['status'], 'OK');
                 return fetchTestConfig('test1', 'Time');
-            }).then(function (config) {
+            }).then((config) => {
                 assert(originalConfig['config_runs_last_modified'] instanceof Date);
                 assert(config['config_runs_last_modified'] instanceof Date);
                 assert.equal(+originalConfig['config_runs_last_modified'], +config['config_runs_last_modified']);
-                done();
             });
-        }).catch(done);
+        });
     });
 });

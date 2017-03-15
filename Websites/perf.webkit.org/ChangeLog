@@ -1,3 +1,30 @@
+2017-03-14  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Make server tests return a promise instead of manually calling done
+        https://bugs.webkit.org/show_bug.cgi?id=169648
+
+        Rubber-stamped by Chris Dumez.
+
+        Make the existing server tests always reutrn a promise instead of manually calling "done" callback.
+        The promise tests are a lot more stable and less error prone.
+
+        Also use arrow functions everywhere and use prepareServerTest, renamed from connectToDatabaseInEveryTest,
+        in more tests instead of manually connecting to database in every test, and reset v3 models.
+
+        * server-tests/admin-platforms-tests.js:
+        * server-tests/admin-reprocess-report-tests.js:
+        * server-tests/api-build-requests-tests.js:
+        * server-tests/api-manifest.js:
+        * server-tests/api-measurement-set-tests.js:
+        (.postReports): Deleted. Not used in any test.
+        * server-tests/api-report-commits-tests.js:
+        * server-tests/api-report-tests.js:
+        * server-tests/api-update-triggerable.js:
+        * server-tests/privileged-api-upate-run-status.js:
+        * server-tests/resources/common-operations.js:
+        (prepareServerTest): Renamed from connectToDatabaseInEveryTest. Increase the timeout and reset v3 models.
+        * server-tests/tools-buildbot-triggerable-tests.js:
+
 2017-03-12  Ryosuke Niwa  <rniwa@webkit.org>
 
         Rename RootSet to CommitSet

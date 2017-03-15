@@ -4,11 +4,10 @@ const assert = require('assert');
 
 const TestServer = require('./resources/test-server.js');
 const addSlaveForReport = require('./resources/common-operations.js').addSlaveForReport;
-const connectToDatabaseInEveryTest = require('./resources/common-operations.js').connectToDatabaseInEveryTest;
+const prepareServerTest = require('./resources/common-operations.js').prepareServerTest;
 
-describe("/api/commits/", () => {
-    TestServer.inject();
-    connectToDatabaseInEveryTest();
+describe("/api/commits/", function () {
+    prepareServerTest(this);
 
     const subversionCommits = {
         "slaveName": "someSlave",
