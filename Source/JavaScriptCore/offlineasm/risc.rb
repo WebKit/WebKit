@@ -374,7 +374,7 @@ def riscLowerMalformedImmediates(list, validImmediates)
             when "addi", "addp", "addq", "addis", "subi", "subp", "subq", "subis"
                 if node.operands[0].is_a? Immediate and
                         (not validImmediates.include? node.operands[0].value) and
-                        validImmediates.include? -node.operands[0].value
+                        validImmediates.include? -node.operands[0].value and
                         node.operands.size == 2
                     if node.opcode =~ /add/
                         newOpcode = "sub" + $~.post_match
