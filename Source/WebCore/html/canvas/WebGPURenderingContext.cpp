@@ -86,8 +86,7 @@ std::unique_ptr<WebGPURenderingContext> WebGPURenderingContext::create(HTMLCanva
 }
 
 WebGPURenderingContext::WebGPURenderingContext(HTMLCanvasElement& canvas, PassRefPtr<GPUDevice> device)
-    : CanvasRenderingContext(canvas)
-    , ActiveDOMObject(&canvas.document())
+    : GPUBasedCanvasRenderingContext(canvas)
     , m_device(device)
 {
     initializeNewContext();

@@ -460,8 +460,7 @@ std::unique_ptr<WebGLRenderingContextBase> WebGLRenderingContextBase::create(HTM
 }
 
 WebGLRenderingContextBase::WebGLRenderingContextBase(HTMLCanvasElement& passedCanvas, WebGLContextAttributes attributes)
-    : CanvasRenderingContext(passedCanvas)
-    , ActiveDOMObject(&passedCanvas.document())
+    : GPUBasedCanvasRenderingContext(passedCanvas)
     , m_dispatchContextLostEventTimer(*this, &WebGLRenderingContextBase::dispatchContextLostEvent)
     , m_restoreTimer(*this, &WebGLRenderingContextBase::maybeRestoreContext)
     , m_attributes(attributes)
@@ -474,8 +473,7 @@ WebGLRenderingContextBase::WebGLRenderingContextBase(HTMLCanvasElement& passedCa
 }
 
 WebGLRenderingContextBase::WebGLRenderingContextBase(HTMLCanvasElement& passedCanvas, Ref<GraphicsContext3D>&& context, WebGLContextAttributes attributes)
-    : CanvasRenderingContext(passedCanvas)
-    , ActiveDOMObject(&passedCanvas.document())
+    : GPUBasedCanvasRenderingContext(passedCanvas)
     , m_context(WTFMove(context))
     , m_dispatchContextLostEventTimer(*this, &WebGLRenderingContextBase::dispatchContextLostEvent)
     , m_restoreTimer(*this, &WebGLRenderingContextBase::maybeRestoreContext)
