@@ -1,3 +1,16 @@
+2017-03-15  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        REGRESSION (r213622): Web Inspector: DataGrid headers should NOT be centered
+        https://bugs.webkit.org/show_bug.cgi?id=169645
+        <rdar://problem/31051520>
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Views/DataGrid.css:
+        (.data-grid th):
+        (body[dir=ltr] .data-grid th):
+        (body[dir=rtl] .data-grid th):
+
 2017-03-15  Devin Rousso  <webkit@devinrousso.com>
 
         Web Inspector: SVG image content view should toggle between image and source

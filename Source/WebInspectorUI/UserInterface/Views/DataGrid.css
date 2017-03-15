@@ -80,12 +80,20 @@
 .data-grid th {
     height: 22px;
     padding: 0 6px;
-    text-align: start;
     vertical-align: middle;
     font-weight: normal;
     white-space: nowrap;
     background-color: white;
     overflow: hidden;
+}
+
+/* FIXME: Use `text-align: start` once https://webkit.org/b/141417 is fixed. */
+body[dir=ltr] .data-grid th {
+    text-align: left;
+}
+
+body[dir=rtl] .data-grid th {
+    text-align: right;
 }
 
 body[dir=ltr] .data-grid :matches(th, td):not(:last-child) {
