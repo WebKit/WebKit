@@ -875,9 +875,9 @@ bool CodeBlock::setConstantIdentifierSetRegisters(VM& vm, const Vector<ConstantI
         JSSet* jsSet = JSSet::create(exec, vm, setStructure);
         RETURN_IF_EXCEPTION(scope, false);
 
-        const HashSet<UniquedStringImpl*>& set = entry.first;
-        for (auto setEntry : set) {
-            JSString* jsString = jsOwnedString(&vm, setEntry);
+        const IdentifierSet& set = entry.first;
+        for (auto& setEntry : set) {
+            JSString* jsString = jsOwnedString(&vm, setEntry.get());
             jsSet->add(exec, JSValue(jsString));
             RETURN_IF_EXCEPTION(scope, false);
         }

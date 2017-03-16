@@ -736,11 +736,6 @@ EncodedJSValue JSC_HOST_CALL globalFuncProtoSetter(ExecState* exec)
     return JSValue::encode(jsUndefined());
 }
 
-EncodedJSValue JSC_HOST_CALL privateToObject(ExecState* exec)
-{
-    return JSValue::encode(JSValue(exec->argument(0).toObject(exec)));
-}
-    
 EncodedJSValue JSC_HOST_CALL globalFuncBuiltinLog(ExecState* exec)
 {
     dataLog(exec->argument(0).toWTFString(exec), "\n");

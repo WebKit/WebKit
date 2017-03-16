@@ -86,11 +86,11 @@ function copyDataProperties(target, source, excludedSet)
     if (!@isObject(target))
         @throwTypeError("target needs to be an object");
     
-    if (source === @undefined || source === null)
+    if (source == null)
         return target;
     
-    let from = @toObject(source);
-    let keys = @Object.@getOwnPropertyNames(from);
+    let from = @Object(source);
+    let keys = @Reflect.@ownKeys(from);
     let keysLength = keys.length;
     for (let i = 0; i < keysLength; i++) {
         let nextKey = keys[i];

@@ -50,7 +50,6 @@ EncodedJSValue JSC_HOST_CALL globalFuncThrowTypeErrorArgumentsCalleeAndCaller(Ex
 EncodedJSValue JSC_HOST_CALL globalFuncProtoGetter(ExecState*);
 EncodedJSValue JSC_HOST_CALL globalFuncProtoSetter(ExecState*);
 EncodedJSValue JSC_HOST_CALL globalFuncBuiltinLog(ExecState*);
-EncodedJSValue JSC_HOST_CALL privateToObject(ExecState*);
 EncodedJSValue JSC_HOST_CALL globalFuncImportModule(ExecState*);
 
 double jsToNumber(StringView);

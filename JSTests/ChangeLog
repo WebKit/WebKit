@@ -1,3 +1,22 @@
+2017-03-16  Caio Lima  <ticaiolima@gmail.com>
+
+        [ESnext] Implement Object Spread
+        https://bugs.webkit.org/show_bug.cgi?id=167963
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/object-spread.js: Added.
+        (let.assert):
+        (assert.sameValue):
+        (let.o.get a):
+        (let.obj.get c):
+        (cthulhu.get x):
+        (let.obj.set c):
+        (calls.o.get z):
+        (calls.o.get a):
+        (try.let.obj.get foo):
+        (get calls):
+
 2017-03-15  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Default parameter part should be retrieved by op_get_argument opcode instead of changing arity

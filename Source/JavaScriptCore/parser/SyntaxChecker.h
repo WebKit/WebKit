@@ -76,7 +76,7 @@ public:
         ConditionalExpr, AssignmentExpr, TypeofExpr, NewTargetExpr,
         DeleteExpr, ArrayLiteralExpr, BindingDestructuring, RestParameter,
         ArrayDestructuring, ObjectDestructuring, SourceElementsResult,
-        FunctionBodyResult, SpreadExpr, ArgumentsResult,
+        FunctionBodyResult, SpreadExpr, ObjectSpreadExpr, ArgumentsResult,
         PropertyListResult, ArgumentsListResult, ElementsListResult,
         StatementResult, FormalParameterListResult, ClauseResult,
         ClauseListResult, CommaExpr, DestructuringAssignment,
@@ -194,6 +194,7 @@ public:
     int createArguments() { return ArgumentsResult; }
     int createArguments(int) { return ArgumentsResult; }
     ExpressionType createSpreadExpression(const JSTokenLocation&, ExpressionType, int, int, int) { return SpreadExpr; }
+    ExpressionType createObjectSpreadExpression(const JSTokenLocation&, ExpressionType, int, int, int) { return ObjectSpreadExpr; }
     TemplateString createTemplateString(const JSTokenLocation&, const Identifier*, const Identifier*) { return TemplateStringResult; }
     TemplateStringList createTemplateStringList(TemplateString) { return TemplateStringListResult; }
     TemplateStringList createTemplateStringList(TemplateStringList, TemplateString) { return TemplateStringListResult; }
@@ -211,6 +212,10 @@ public:
             return Property(type);
         ASSERT(name);
         return Property(name, type);
+    }
+    Property createProperty(int, PropertyNode::Type type, PropertyNode::PutType, bool, SuperBinding, bool)
+    {
+        return Property(type);
     }
     Property createProperty(VM* vm, ParserArena& parserArena, double name, int, PropertyNode::Type type, PropertyNode::PutType, bool complete, SuperBinding, bool)
     {

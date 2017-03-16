@@ -1934,9 +1934,9 @@ RegisterID* BytecodeGenerator::emitLoad(RegisterID* dst, JSValue v, SourceCodeRe
     return constantID;
 }
 
-RegisterID* BytecodeGenerator::emitLoad(RegisterID* dst, HashSet<UniquedStringImpl*>& set)
+RegisterID* BytecodeGenerator::emitLoad(RegisterID* dst, IdentifierSet& set)
 {
-    for (ConstantIndentifierSetEntry entry : m_codeBlock->constantIdentifierSets()) {
+    for (const auto& entry : m_codeBlock->constantIdentifierSets()) {
         if (entry.first != set)
             continue;
         

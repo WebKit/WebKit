@@ -68,7 +68,7 @@ typedef unsigned UnlinkedArrayProfile;
 typedef unsigned UnlinkedArrayAllocationProfile;
 typedef unsigned UnlinkedObjectAllocationProfile;
 typedef unsigned UnlinkedLLIntCallLinkInfo;
-typedef std::pair<HashSet<UniquedStringImpl*>, unsigned> ConstantIndentifierSetEntry;
+typedef std::pair<IdentifierSet, unsigned> ConstantIndentifierSetEntry;
 
 struct UnlinkedStringJumpTable {
     struct OffsetLocation {
@@ -187,7 +187,7 @@ public:
         return m_bitVectors.size() - 1;
     }
     
-    void addSetConstant(HashSet<UniquedStringImpl*>& set)
+    void addSetConstant(IdentifierSet& set)
     {
         VM& vm = *this->vm();
         auto locker = lockDuringMarking(vm.heap, *this);

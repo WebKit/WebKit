@@ -1,3 +1,13 @@
+2017-03-16  Caio Lima  <ticaiolima@gmail.com>
+
+        [ESnext] Implement Object Spread
+        https://bugs.webkit.org/show_bug.cgi?id=167963
+
+        Reviewed by Yusuke Suzuki.
+
+        * js/parser-syntax-check-expected.txt:
+        * js/script-tests/parser-syntax-check.js:
+
 2017-03-16  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [WebRTC] SDP sess-id in the "o=" line should be a value between 0 and LLONG_MAX.
