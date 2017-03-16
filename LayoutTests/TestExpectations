@@ -711,9 +711,7 @@ media/session [ Skip ]
 # GTK enables some of these tests on their TestExpectations file.
 [ Release ] webrtc [ Skip ]
 
-[ Debug ] webrtc/peer-connection-audio-mute.html [ Pass Failure ]
 [ Debug ] webrtc/peer-connection-audio-mute2.html [ Pass Failure ]
-[ Debug ] webrtc/peer-connection-remote-audio-mute.html [ Pass Failure ]
 [ Debug ] webrtc/peer-connection-remote-audio-mute2.html [ Pass Failure ]
 fast/mediastream/getUserMedia-webaudio.html [ Skip ]
 fast/mediastream/RTCPeerConnection-AddRemoveStream.html [ Skip ]

@@ -1,3 +1,12 @@
+2017-03-16  Youenn Fablet  <youenn@apple.com>
+
+        [mac-wk2 debug] LayoutTest webrtc/video-mute.html is timing out
+        https://bugs.webkit.org/show_bug.cgi?id=169758
+
+        Reviewed by Eric Carlson.
+
+        * TestExpectations:
+
 2017-03-16  Zalan Bujtas  <zalan@apple.com>
 
         Stay inside the continuation while searching for a candidate ancestor for insertion.

@@ -1188,8 +1188,8 @@ private:
 #endif
 
 #if ENABLE(WEB_RTC)
-    void disableICECandidateFiltering() { m_page->rtcController().disableICECandidateFiltering(); }
-    void enableICECandidateFiltering() { m_page->rtcController().enableICECandidateFiltering(); }
+    void disableICECandidateFiltering();
+    void enableICECandidateFiltering();
 #if USE(LIBWEBRTC)
     void disableEnumeratingAllNetworkInterfaces() { m_page->libWebRTCProvider().disableEnumeratingAllNetworkInterfaces(); }
     void enableEnumeratingAllNetworkInterfaces() { m_page->libWebRTCProvider().enableEnumeratingAllNetworkInterfaces(); }
@@ -1547,6 +1547,10 @@ private:
 
 #if USE(OS_STATE)
     std::chrono::system_clock::time_point m_loadCommitTime;
+#endif
+
+#if ENABLE(WEB_RTC)
+    bool m_shouldDoICECandidateFiltering { true };
 #endif
 
     WebCore::UserInterfaceLayoutDirection m_userInterfaceLayoutDirection { WebCore::UserInterfaceLayoutDirection::LTR };

@@ -199,7 +199,8 @@ void UserMediaProcessManager::endedCaptureSession(UserMediaPermissionRequestMana
         return;
 
 #if ENABLE(WEB_RTC) && USE(LIBWEBRTC)
-    if (currentExtensions == ProcessState::SandboxExtensionsGranted::None && proxy.page().preferences().iceCandidateFilteringEnabled())
+    // FIXME: We should only do EnableICECandidateFiltering when the page is being reloaded.
+    if (currentExtensions == ProcessState::SandboxExtensionsGranted::None)
         proxy.page().process().send(Messages::WebPage::EnableICECandidateFiltering(), proxy.page().pageID());
 #endif
 

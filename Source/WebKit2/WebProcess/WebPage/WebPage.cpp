@@ -556,7 +556,9 @@ WebPage::WebPage(uint64_t pageID, WebPageCreationParameters&& parameters)
 #endif
 
 #if ENABLE(WEB_RTC)
-    if (!parameters.iceCandidateFilteringEnabled)
+    m_shouldDoICECandidateFiltering = parameters.iceCandidateFilteringEnabled;
+
+    if (!m_shouldDoICECandidateFiltering)
         disableICECandidateFiltering();
 #if USE(LIBWEBRTC)
     if (parameters.enumeratingAllNetworkInterfacesEnabled)
@@ -567,6 +569,22 @@ WebPage::WebPage(uint64_t pageID, WebPageCreationParameters&& parameters)
     for (auto iterator : parameters.urlSchemeHandlers)
         registerURLSchemeHandler(iterator.value, iterator.key);
 }
+
+#if ENABLE(WEB_RTC)
+void WebPage::disableICECandidateFiltering()
+{
+    if (!m_shouldDoICECandidateFiltering)
+        return;
+    m_page->rtcController().disableICECandidateFiltering();
+}
+
+void WebPage::enableICECandidateFiltering()
+{
+    if (!m_shouldDoICECandidateFiltering)
+        return;
+    m_page->rtcController().disableICECandidateFiltering();
+}
+#endif
 
 void WebPage::reinitializeWebPage(WebPageCreationParameters&& parameters)
 {
