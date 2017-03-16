@@ -1908,9 +1908,11 @@ public:
         return m_refCount;
     }
     
+    // Return true if the execution of this Node does not affect our ability to OSR to the FTL.
+    // FIXME: Isn't this just like checking if the node has effects?
     bool isSemanticallySkippable()
     {
-        return op() == CountExecution;
+        return op() == CountExecution || op() == InvalidationPoint;
     }
 
     unsigned refCount()

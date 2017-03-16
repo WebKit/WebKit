@@ -2307,6 +2307,14 @@ static bool shouldTriggerFTLCompile(CodeBlock* codeBlock, JITCode* jitCode)
 
 static void triggerFTLReplacementCompile(VM* vm, CodeBlock* codeBlock, JITCode* jitCode)
 {
+    if (codeBlock->codeType() == GlobalCode) {
+        // Global code runs once, so we don't want to do anything. We don't want to defer indefinitely,
+        // since this may have been spuriously called from tier-up initiated in a loop, and that loop may
+        // later want to run faster code. Deferring for warm-up seems safest.
+        jitCode->optimizeAfterWarmUp(codeBlock);
+        return;
+    }
+    
     Worklist::State worklistState;
     if (Worklist* worklist = existingGlobalFTLWorklistOrNull()) {
         worklistState = worklist->completeAllReadyPlansForVM(
@@ -2456,6 +2464,8 @@ static char* tierUpCommon(ExecState* exec, unsigned originBytecodeIndex, unsigne
     if (canOSRFromHere) {
         unsigned streamIndex = jitCode->bytecodeIndexToStreamIndex.get(originBytecodeIndex);
         if (CodeBlock* entryBlock = jitCode->osrEntryBlock()) {
+            if (Options::verboseOSR())
+                dataLog("OSR entry: From ", RawPointer(jitCode), " got entry block ", RawPointer(entryBlock), "\n");
             if (void* address = FTL::prepareOSREntry(exec, codeBlock, entryBlock, originBytecodeIndex, streamIndex)) {
                 CODEBLOCK_LOG_EVENT(entryBlock, "osrEntry", ("at bc#", originBytecodeIndex));
                 return static_cast<char*>(address);
@@ -2574,6 +2584,8 @@ static char* tierUpCommon(ExecState* exec, unsigned originBytecodeIndex, unsigne
     // It's possible that the for-entry compile already succeeded. In that case OSR
     // entry will succeed unless we ran out of stack. It's not clear what we should do.
     // We signal to try again after a while if that happens.
+    if (Options::verboseOSR())
+        dataLog("Immediate OSR entry: From ", RawPointer(jitCode), " got entry block ", RawPointer(jitCode->osrEntryBlock()), "\n");
     void* address = FTL::prepareOSREntry(
         exec, codeBlock, jitCode->osrEntryBlock(), originBytecodeIndex, streamIndex);
     return static_cast<char*>(address);

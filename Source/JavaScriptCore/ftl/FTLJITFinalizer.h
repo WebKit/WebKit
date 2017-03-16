@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -56,6 +56,8 @@ public:
     size_t codeSize() override;
     bool finalize() override;
     bool finalizeFunction() override;
+    
+    bool finalizeCommon();
 
     std::unique_ptr<LinkBuffer> b3CodeLinkBuffer;
 

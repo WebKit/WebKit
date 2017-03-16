@@ -394,36 +394,6 @@ static void compileStub(
         jit.store64(GPRInfo::regT0, unwindScratch + i);
     }
     
-    jit.load32(CCallHelpers::payloadFor(CallFrameSlot::argumentCount), GPRInfo::regT2);
-    
-    // Let's say that the FTL function had failed its arity check. In that case, the stack will
-    // contain some extra stuff.
-    //
-    // We compute the padded stack space:
-    //
-    //     paddedStackSpace = roundUp(codeBlock->numParameters - regT2 + 1)
-    //
-    // The stack will have regT2 + CallFrameHeaderSize stuff.
-    // We want to make the stack look like this, from higher addresses down:
-    //
-    //     - argument padding
-    //     - actual arguments
-    //     - call frame header
-
-    // This code assumes that we're dealing with FunctionCode.
-    RELEASE_ASSERT(codeBlock->codeType() == FunctionCode);
-    
-    jit.add32(
-        MacroAssembler::TrustedImm32(-codeBlock->numParameters()), GPRInfo::regT2,
-        GPRInfo::regT3);
-    MacroAssembler::Jump arityIntact = jit.branch32(
-        MacroAssembler::GreaterThanOrEqual, GPRInfo::regT3, MacroAssembler::TrustedImm32(0));
-    jit.neg32(GPRInfo::regT3);
-    jit.add32(MacroAssembler::TrustedImm32(1 + stackAlignmentRegisters() - 1), GPRInfo::regT3);
-    jit.and32(MacroAssembler::TrustedImm32(-stackAlignmentRegisters()), GPRInfo::regT3);
-    jit.add32(GPRInfo::regT3, GPRInfo::regT2);
-    arityIntact.link(&jit);
-
     CodeBlock* baselineCodeBlock = jit.baselineCodeBlockFor(exit.m_codeOrigin);
 
     // First set up SP so that our data doesn't get clobbered by signals.

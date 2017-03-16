@@ -1,3 +1,18 @@
+2017-03-16  Filip Pizlo  <fpizlo@apple.com>
+
+        FTL should support global and eval code
+        https://bugs.webkit.org/show_bug.cgi?id=169656
+
+        Reviewed by Geoffrey Garen and Saam Barati.
+        
+        Added basic performance tests of global and eval code. These tests will run a lot faster in with
+        the FTL because of the object allocation.
+
+        * microbenchmarks/eval-code-ftl-reentry.js: Added.
+        * microbenchmarks/eval-code-ftl.js: Added.
+        * microbenchmarks/global-code-ftl.js: Added.
+        * stress/arith-log-on-various-types.js: This was a flaky fail with concurrent JIT, so I stopped running it with concurrent JIT. The failure was its assertion about how many times something gets compiled.
+
 2017-03-16  Caio Lima  <ticaiolima@gmail.com>
 
         [ESnext] Implement Object Spread

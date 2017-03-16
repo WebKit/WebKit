@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -48,6 +48,7 @@
 #include "LinkBuffer.h"
 #include "PCToCodeOriginMap.h"
 #include "ScratchRegisterAllocator.h"
+#include <wtf/Function.h>
 
 namespace JSC { namespace FTL {
 
@@ -77,10 +78,8 @@ void compile(State& state, Safepoint::Result& safepointResult)
     
     std::unique_ptr<RegisterAtOffsetList> registerOffsets =
         std::make_unique<RegisterAtOffsetList>(state.proc->calleeSaveRegisters());
-    if (shouldDumpDisassembly()) {
-        dataLog("Unwind info for ", CodeBlockWithJITType(state.graph.m_codeBlock, JITCode::FTLJIT), ":\n");
-        dataLog("    ", *registerOffsets, "\n");
-    }
+    if (shouldDumpDisassembly())
+        dataLog("Unwind info for ", CodeBlockWithJITType(state.graph.m_codeBlock, JITCode::FTLJIT), ": ", *registerOffsets, "\n");
     state.graph.m_codeBlock->setCalleeSaveRegisters(WTFMove(registerOffsets));
     ASSERT(!(state.proc->frameSize() % sizeof(EncodedJSValue)));
     state.jitCode->common.frameRegisterCount = state.proc->frameSize() / sizeof(EncodedJSValue);
@@ -160,7 +159,7 @@ void compile(State& state, Safepoint::Result& safepointResult)
     if (B3::Air::Disassembler* disassembler = state.proc->code().disassembler()) {
         PrintStream& out = WTF::dataFile();
 
-        out.print("\nGenerated FTL JIT code for ", CodeBlockWithJITType(state.graph.m_codeBlock, JITCode::FTLJIT), ", instruction count = ", state.graph.m_codeBlock->instructionCount(), ":\n");
+        out.print("Generated ", state.graph.m_plan.mode, " code for ", CodeBlockWithJITType(state.graph.m_codeBlock, JITCode::FTLJIT), ", instruction count = ", state.graph.m_codeBlock->instructionCount(), ":\n");
 
         LinkBuffer& linkBuffer = *state.finalizer->b3CodeLinkBuffer;
         B3::Value* currentB3Value = nullptr;
@@ -182,7 +181,7 @@ void compile(State& state, Safepoint::Result& safepointResult)
                 return;
 
             HashSet<Node*> localPrintedNodes;
-            std::function<void(Node*)> printNodeRecursive = [&] (Node* node) {
+            WTF::Function<void(Node*)> printNodeRecursive = [&] (Node* node) {
                 if (printedNodes.contains(node) || localPrintedNodes.contains(node))
                     return;
 
@@ -207,7 +206,7 @@ void compile(State& state, Safepoint::Result& safepointResult)
             printDFGNode(bitwise_cast<Node*>(value->origin().data()));
 
             HashSet<B3::Value*> localPrintedValues;
-            std::function<void(B3::Value*)> printValueRecursive = [&] (B3::Value* value) {
+            WTF::Function<void(B3::Value*)> printValueRecursive = [&] (B3::Value* value) {
                 if (printedValues.contains(value) || localPrintedValues.contains(value))
                     return;
 

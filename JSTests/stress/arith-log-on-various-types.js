@@ -1,4 +1,5 @@
-//@ defaultNoEagerRun
+//@ runNoCJITValidatePhases
+//@ runFTLNoCJITValidate
 "use strict";
 
 let logOfFour = Math.log(4);

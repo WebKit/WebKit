@@ -102,7 +102,7 @@ void* prepareOSREntry(
     
     void* result = entryCode->addressForCall(ArityCheckNotRequired).executableAddress();
     if (Options::verboseOSR())
-        dataLog("    Entry will succeed, going to address", RawPointer(result), "\n");
+        dataLog("    Entry will succeed, going to address ", RawPointer(result), "\n");
     
     return result;
 }

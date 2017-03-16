@@ -1,3 +1,40 @@
+2017-03-16  Filip Pizlo  <fpizlo@apple.com>
+
+        FTL should support global and eval code
+        https://bugs.webkit.org/show_bug.cgi?id=169656
+
+        Reviewed by Geoffrey Garen and Saam Barati.
+        
+        Turned off the restriction against global and eval code running in the FTL, and then fixed all of
+        the things that didn't work.
+        
+        This is a big speed-up on microbenchmarks that I wrote for this patch. One of the reasons why we
+        hadn't done this earlier is that we've never seen a benchmark that needed it. Global and eval
+        code rarely gets FTL-hot. Still, this seems like possibly a small JetStream speed-up.
+
+        * dfg/DFGJITCode.cpp:
+        (JSC::DFG::JITCode::setOSREntryBlock): I outlined this for better debugging.
+        * dfg/DFGJITCode.h:
+        (JSC::DFG::JITCode::setOSREntryBlock): Deleted.
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::isSemanticallySkippable): It turns out that global code often has InvalidationPoints before LoopHints. They are also skippable from the standpoint of OSR entrypoint analysis.
+        * dfg/DFGOperations.cpp: Don't do any normal compiles of global code - just do OSR compiles.
+        * ftl/FTLCapabilities.cpp: Enable FTL for global and eval code.
+        (JSC::FTL::canCompile):
+        * ftl/FTLCompile.cpp: Just debugging clean-ups.
+        (JSC::FTL::compile):
+        * ftl/FTLJITFinalizer.cpp: Implement finalize() and ensure that we only do things with the entrypoint buffer if we have one. We won't have one for eval code that we aren't OSR entering into.
+        (JSC::FTL::JITFinalizer::finalize):
+        (JSC::FTL::JITFinalizer::finalizeFunction):
+        (JSC::FTL::JITFinalizer::finalizeCommon):
+        * ftl/FTLJITFinalizer.h:
+        * ftl/FTLLink.cpp: When entering a function normally, we need the "entrypoint" to put the arity check code. Global and eval code don't need this.
+        (JSC::FTL::link):
+        * ftl/FTLOSREntry.cpp: Fix a dataLog statement.
+        (JSC::FTL::prepareOSREntry):
+        * ftl/FTLOSRExitCompiler.cpp: Remove dead code that happened to assert that we're exiting from a function.
+        (JSC::FTL::compileStub):
+
 2017-03-16  Michael Saboff  <msaboff@apple.com>
 
         WebAssembly: function-tests/load-offset.js fails on ARM64

@@ -398,12 +398,6 @@ CapabilityLevel canCompile(Graph& graph)
         return CannotCompile;
     }
     
-    if (graph.m_codeBlock->codeType() != FunctionCode) {
-        if (verboseCapabilities())
-            dataLog("FTL rejecting ", *graph.m_codeBlock, " because it doesn't belong to a function.\n");
-        return CannotCompile;
-    }
-
     if (UNLIKELY(graph.m_codeBlock->ownerScriptExecutable()->neverFTLOptimize())) {
         if (verboseCapabilities())
             dataLog("FTL rejecting ", *graph.m_codeBlock, " because it is marked as never FTL compile.\n");
