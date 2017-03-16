@@ -52,8 +52,11 @@ class IntRect;
 struct Cookie;
 }
 
-#if USE(APPKIT)
+#if PLATFORM(COCOA)
 OBJC_CLASS NSArray;
+#endif
+
+#if USE(APPKIT)
 OBJC_CLASS NSEvent;
 #endif
 
@@ -169,7 +172,8 @@ private:
     // Get base64 encoded PNG data from a bitmap.
     std::optional<String> platformGetBase64EncodedPNGData(const ShareableBitmap::Handle&);
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
+    // The type parameter of the NSArray argument is platform-dependent.
     void sendSynthesizedEventsToPage(WebPageProxy&, NSArray *eventsToSend);
 #endif
 
@@ -215,6 +219,12 @@ private:
 
 #if ENABLE(REMOTE_INSPECTOR)
     Inspector::FrontendChannel* m_remoteChannel { nullptr };
+#endif
+
+#if PLATFORM(IOS)
+    // Keep track of currently active modifiers across multiple keystrokes.
+    // We don't synthesize platform keyboard events on iOS, so we need to track it ourselves.
+    unsigned m_currentModifiers { 0 };
 #endif
 };
 

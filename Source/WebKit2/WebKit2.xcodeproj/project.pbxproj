@@ -1393,6 +1393,7 @@
 		990D28BB1C6539D300986977 /* AutomationSessionClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 990D28B71C6539A000986977 /* AutomationSessionClient.h */; };
 		990D28BC1C6539DA00986977 /* AutomationSessionClient.mm in Sources */ = {isa = PBXBuildFile; fileRef = 990D28B81C6539A000986977 /* AutomationSessionClient.mm */; };
 		990D28C01C6553F100986977 /* APIAutomationSessionClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 990D28B31C6526D400986977 /* APIAutomationSessionClient.h */; };
+		9946EF861E7B027000541E79 /* WebAutomationSessionIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9946EF851E7B026600541E79 /* WebAutomationSessionIOS.mm */; };
 		9955A6EC1C7980C200EB6A93 /* WebAutomationSession.h in Headers */ = {isa = PBXBuildFile; fileRef = 9955A6EB1C7980BB00EB6A93 /* WebAutomationSession.h */; };
 		9955A6ED1C7980CA00EB6A93 /* WebAutomationSession.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9955A6EA1C7980BB00EB6A93 /* WebAutomationSession.cpp */; };
 		9955A6EF1C79810800EB6A93 /* Automation.json in Headers */ = {isa = PBXBuildFile; fileRef = 9955A6E91C7980BB00EB6A93 /* Automation.json */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3655,6 +3656,7 @@
 		990D28B31C6526D400986977 /* APIAutomationSessionClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIAutomationSessionClient.h; sourceTree = "<group>"; };
 		990D28B71C6539A000986977 /* AutomationSessionClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AutomationSessionClient.h; sourceTree = "<group>"; };
 		990D28B81C6539A000986977 /* AutomationSessionClient.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AutomationSessionClient.mm; sourceTree = "<group>"; };
+		9946EF851E7B026600541E79 /* WebAutomationSessionIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebAutomationSessionIOS.mm; sourceTree = "<group>"; };
 		9955A6E91C7980BB00EB6A93 /* Automation.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = Automation.json; sourceTree = "<group>"; };
 		9955A6EA1C7980BB00EB6A93 /* WebAutomationSession.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebAutomationSession.cpp; sourceTree = "<group>"; };
 		9955A6EB1C7980BB00EB6A93 /* WebAutomationSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebAutomationSession.h; sourceTree = "<group>"; };
@@ -6346,10 +6348,19 @@
 			path = mac;
 			sourceTree = "<group>";
 		};
+		9946EF821E7B023D00541E79 /* ios */ = {
+			isa = PBXGroup;
+			children = (
+				9946EF851E7B026600541E79 /* WebAutomationSessionIOS.mm */,
+			);
+			path = ios;
+			sourceTree = "<group>";
+		};
 		9955A6E81C79809000EB6A93 /* Automation */ = {
 			isa = PBXGroup;
 			children = (
 				99C3AE251DAD946700AF5C16 /* cocoa */,
+				9946EF821E7B023D00541E79 /* ios */,
 				99C3AE221DAD8E1400AF5C16 /* mac */,
 				9955A6E91C7980BB00EB6A93 /* Automation.json */,
 				9955A6EA1C7980BB00EB6A93 /* WebAutomationSession.cpp */,
@@ -9661,6 +9672,7 @@
 				7CD3A4821A5D02FA009623B8 /* APINavigation.cpp in Sources */,
 				BCF69FA31176D01400471A52 /* APINavigationData.cpp in Sources */,
 				CD491B171E73525500009066 /* UserMediaCaptureManagerProxyMessageReceiver.cpp in Sources */,
+				9946EF861E7B027000541E79 /* WebAutomationSessionIOS.mm in Sources */,
 				B63403F914910D57001070B5 /* APIObject.cpp in Sources */,
 				378E1A3D181ED6FF0031007A /* APIObject.mm in Sources */,
 				BC857FB612B830E600EDEB2E /* APIOpenPanelParameters.cpp in Sources */,

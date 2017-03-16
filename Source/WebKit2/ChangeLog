@@ -1,3 +1,37 @@
+2017-03-16  Brian Burg  <bburg@apple.com>
+
+        [iOS WK2] Web Automation: implement platform methods for simulating keyboard events
+        https://bugs.webkit.org/show_bug.cgi?id=169487
+        <rdar://problem/28360564>
+
+        Reviewed by Joseph Pecoraro.
+
+        Reimplement platformSimulateKey{Stroke, Sequence} to simulate events coming from UIKit.
+        These events are sent directly into WebCore without going through the keyboard system,
+        since we don't need to show the keyboard when simulating keystrokes. For example, the
+        keystrokes may not be representable given the current keyboard layout and system language.
+
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        * UIProcess/Automation/WebAutomationSession.h:
+        Un-stub implementations that now exist for iOS.
+
+        * UIProcess/Automation/ios/WebAutomationSessionIOS.mm: Added.
+
+        (WebKit::WebAutomationSession::sendSynthesizedEventsToPage): Added.
+        This is similar to the Mac version, but it sends events directly into WebPageProxy
+        instead of sending them to the NSWindow containing the WebView.
+
+        (WebKit::WebAutomationSession::platformSimulateKeyStroke):
+        Use a somewhat different strategy for determining the charCode/keyCode since we cannot
+        rely on the system keyboard / input manager to generate and deliver real key events.
+        Compared to the Mac platform method, this requires setting up fewer fields and does
+        not use AppKit's current modifier state to determine the effect of sticky modifiers.
+
+        (WebKit::WebAutomationSession::platformSimulateKeySequence):
+        This is almost verbatim from the Mac platform method but uses a different event class.
+
+        * WebKit2.xcodeproj/project.pbxproj: Add new file.
+
 2017-03-16  Youenn Fablet  <youenn@apple.com>
 
         [mac-wk2 debug] LayoutTest webrtc/video-mute.html is timing out

@@ -827,7 +827,7 @@ void WebAutomationSession::performMouseInteraction(Inspector::ErrorString& error
 
 void WebAutomationSession::performKeyboardInteractions(ErrorString& errorString, const String& handle, const Inspector::InspectorArray& interactions, Ref<PerformKeyboardInteractionsCallback>&& callback)
 {
-#if !USE(APPKIT)
+#if !PLATFORM(COCOA)
     FAIL_WITH_PREDEFINED_ERROR(NotImplemented);
 #else
     WebPageProxy* page = webPageProxyForHandle(handle);
@@ -897,7 +897,7 @@ void WebAutomationSession::performKeyboardInteractions(ErrorString& errorString,
 
     for (auto& action : actionsToPerform)
         action();
-#endif // USE(APPKIT)
+#endif // PLATFORM(COCOA)
 }
 
 void WebAutomationSession::takeScreenshot(ErrorString& errorString, const String& handle, Ref<TakeScreenshotCallback>&& callback)
@@ -938,7 +938,9 @@ void WebAutomationSession::didTakeScreenshot(uint64_t callbackID, const Shareabl
 void WebAutomationSession::platformSimulateMouseInteraction(WebKit::WebPageProxy&, const WebCore::IntPoint&, Inspector::Protocol::Automation::MouseInteraction, Inspector::Protocol::Automation::MouseButton, WebEvent::Modifiers)
 {
 }
+#endif // !PLATFORM(MAC)
 
+#if !PLATFORM(COCOA)
 void WebAutomationSession::platformSimulateKeyStroke(WebPageProxy&, Inspector::Protocol::Automation::KeyboardInteractionType, Inspector::Protocol::Automation::VirtualKey)
 {
 }
@@ -946,9 +948,7 @@ void WebAutomationSession::platformSimulateKeyStroke(WebPageProxy&, Inspector::P
 void WebAutomationSession::platformSimulateKeySequence(WebPageProxy&, const String&)
 {
 }
-#endif // !PLATFORM(MAC)
 
-#if !PLATFORM(COCOA)
 std::optional<String> WebAutomationSession::platformGetBase64EncodedPNGData(const ShareableBitmap::Handle&)
 {
     return String();
