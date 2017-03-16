@@ -1,5 +1,21 @@
 2017-03-16  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [UNIX] Implement currentSearchLocaleID() and currentTextBreakLocaleID()
+        https://bugs.webkit.org/show_bug.cgi?id=169745
+
+        Reviewed by Yusuke Suzuki.
+
+        Add a common implementation for Unix based ports using setlocale.
+
+        * wtf/PlatformGTK.cmake:
+        * wtf/PlatformJSCOnly.cmake:
+        * wtf/text/gtk/TextBreakIteratorInternalICUGtk.cpp: Removed.
+        * wtf/text/unix/TextBreakIteratorInternalICUUnix.cpp: Renamed from Source/WTF/wtf/text/jsconly/TextBreakIteratorInternalICUJSCOnly.cpp.
+        (WTF::currentSearchLocaleID):
+        (WTF::currentTextBreakLocaleID):
+
+2017-03-16  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GLIB] MainThread implementation is not GTK+ specific
         https://bugs.webkit.org/show_bug.cgi?id=169736
 

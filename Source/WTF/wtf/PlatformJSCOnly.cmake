@@ -2,9 +2,17 @@ list(APPEND WTF_SOURCES
     PlatformUserPreferredLanguagesUnix.cpp
 
     generic/WorkQueueGeneric.cpp
-
-    text/jsconly/TextBreakIteratorInternalICUJSCOnly.cpp
 )
+
+if (WIN32)
+    list(APPEND WTF_SOURCES
+        text/win/TextBreakIteratorInternalICUWin.cpp
+    )
+else ()
+    list(APPEND WTF_SOURCES
+        text/unix/TextBreakIteratorInternalICUUnix.cpp
+    )
+endif ()
 
 if (LOWERCASE_EVENT_LOOP_TYPE STREQUAL "glib")
     list(APPEND WTF_SOURCES
