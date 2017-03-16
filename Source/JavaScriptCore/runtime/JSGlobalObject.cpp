@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2009, 2014-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2017 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Cameron Zwarich (cwzwarich@uwaterloo.ca)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -80,7 +80,6 @@
 #include "JSDataViewPrototype.h"
 #include "JSDollarVM.h"
 #include "JSDollarVMPrototype.h"
-#include "JSFixedArray.h"
 #include "JSFunction.h"
 #include "JSGeneratorFunction.h"
 #include "JSGenericTypedArrayViewConstructorInlines.h"

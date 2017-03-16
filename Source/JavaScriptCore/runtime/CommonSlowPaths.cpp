@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -993,16 +993,19 @@ SLOW_PATH_DECL(slow_path_new_array_with_spread)
 
     JSValue* values = bitwise_cast<JSValue*>(&OP(2));
 
-    unsigned arraySize = 0;
+    Checked<unsigned, RecordOverflow> checkedArraySize = 0;
     for (int i = 0; i < numItems; i++) {
         if (bitVector.get(i)) {
             JSValue value = values[-i];
             JSFixedArray* array = jsCast<JSFixedArray*>(value);
-            arraySize += array->size();
+            checkedArraySize += array->size();
         } else
-            arraySize += 1;
+            checkedArraySize += 1;
     }
+    if (UNLIKELY(checkedArraySize.hasOverflowed()))
+        THROW(createOutOfMemoryError(exec));
 
+    unsigned arraySize = checkedArraySize.unsafeGet();
     JSGlobalObject* globalObject = exec->lexicalGlobalObject();
     Structure* structure = globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous);
 

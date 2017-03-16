@@ -47,7 +47,6 @@
 #include "JSAsyncFunction.h"
 #include "JSCInlines.h"
 #include "JSCJSValue.h"
-#include "JSFixedArray.h"
 #include "JSGeneratorFunction.h"
 #include "JSGlobalObjectFunctions.h"
 #include "JSLexicalEnvironment.h"
