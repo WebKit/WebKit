@@ -1,3 +1,13 @@
+2017-03-16  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Mark imported/w3c/web-platform-tests/IndexedDB/fire-success-event-exception.html as flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=169760
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator-wk2/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+
 2017-03-16  Daniel Bates  <dabates@apple.com>
 
         Update test fast/events/pageshow-pagehide-on-back-cached-with-frames.html to ensure
