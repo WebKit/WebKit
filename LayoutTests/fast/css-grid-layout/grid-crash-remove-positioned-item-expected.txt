@@ -1,0 +1,5 @@
+webkit.org/b/169739 - [css-grid] Crash on debug removing a positioned child
+
+This test has PASSED if it does not CRASH on debug.
+
+item
