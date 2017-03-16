@@ -178,7 +178,7 @@ void setMainThreadCallbacksPaused(bool paused)
         scheduleDispatchFunctionsOnMainThread();
 }
 
-#if !OS(DARWIN) && !PLATFORM(GTK)
+#if !OS(DARWIN) && !USE(GLIB_EVENT_LOOP)
 bool isMainThread()
 {
     return currentThread() == mainThreadIdentifier;

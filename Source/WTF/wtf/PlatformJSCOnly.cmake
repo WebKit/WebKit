@@ -1,6 +1,8 @@
 list(APPEND WTF_SOURCES
     PlatformUserPreferredLanguagesUnix.cpp
 
+    generic/WorkQueueGeneric.cpp
+
     text/jsconly/TextBreakIteratorInternalICUJSCOnly.cpp
 )
 
@@ -9,7 +11,6 @@ if (LOWERCASE_EVENT_LOOP_TYPE STREQUAL "glib")
         glib/GRefPtr.cpp
         glib/MainThreadGLib.cpp
         glib/RunLoopGLib.cpp
-        glib/WorkQueueGLib.cpp
     )
     list(APPEND WTF_SYSTEM_INCLUDE_DIRECTORIES
         ${GLIB_INCLUDE_DIRS}
@@ -23,7 +24,6 @@ else ()
     list(APPEND WTF_SOURCES
         generic/MainThreadGeneric.cpp
         generic/RunLoopGeneric.cpp
-        generic/WorkQueueGeneric.cpp
     )
 endif ()
 
