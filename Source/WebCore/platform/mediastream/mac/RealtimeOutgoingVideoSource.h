@@ -36,10 +36,11 @@
 #include <webrtc/base/optional.h>
 #include <webrtc/common_video/include/i420_buffer_pool.h>
 #include <webrtc/media/base/videosinkinterface.h>
+#include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebCore {
 
-class RealtimeOutgoingVideoSource final : public RefCounted<RealtimeOutgoingVideoSource>, public webrtc::VideoTrackSourceInterface, private RealtimeMediaSource::Observer {
+class RealtimeOutgoingVideoSource final : public ThreadSafeRefCounted<RealtimeOutgoingVideoSource>, public webrtc::VideoTrackSourceInterface, private RealtimeMediaSource::Observer {
 public:
     static Ref<RealtimeOutgoingVideoSource> create(Ref<RealtimeMediaSource>&& videoSource) { return adoptRef(*new RealtimeOutgoingVideoSource(WTFMove(videoSource))); }
 

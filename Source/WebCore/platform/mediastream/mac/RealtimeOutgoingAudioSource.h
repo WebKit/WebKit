@@ -34,6 +34,7 @@
 #include "LibWebRTCMacros.h"
 #include "RealtimeMediaSource.h"
 #include <webrtc/api/mediastreaminterface.h>
+#include <wtf/ThreadSafeRefCounted.h>
 
 namespace webrtc {
 class AudioTrackInterface;
@@ -42,7 +43,7 @@ class AudioTrackSinkInterface;
 
 namespace WebCore {
 
-class RealtimeOutgoingAudioSource final : public RefCounted<RealtimeOutgoingAudioSource>, public webrtc::AudioSourceInterface, private RealtimeMediaSource::Observer {
+class RealtimeOutgoingAudioSource final : public ThreadSafeRefCounted<RealtimeOutgoingAudioSource>, public webrtc::AudioSourceInterface, private RealtimeMediaSource::Observer {
 public:
     static Ref<RealtimeOutgoingAudioSource> create(Ref<RealtimeMediaSource>&& audioSource) { return adoptRef(*new RealtimeOutgoingAudioSource(WTFMove(audioSource))); }
     ~RealtimeOutgoingAudioSource() { m_audioSource->removeObserver(*this); }
@@ -76,7 +77,7 @@ private:
     CAAudioStreamDescription m_inputStreamDescription;
     CAAudioStreamDescription m_outputStreamDescription;
 
-    Vector<uint16_t> m_audioBuffer;
+    Vector<uint8_t> m_audioBuffer;
     uint64_t m_startFrame { 0 };
     bool m_muted { false };
     bool m_enabled { true };
