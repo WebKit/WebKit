@@ -24,6 +24,7 @@ DROP TYPE IF EXISTS analysis_task_result_type CASCADE;
 DROP TABLE IF EXISTS build_triggerables CASCADE;
 DROP TABLE IF EXISTS triggerable_configurations CASCADE;
 DROP TABLE IF EXISTS triggerable_repositories CASCADE;
+DROP TABLE IF EXISTS uploaded_files CASCADE;
 DROP TABLE IF EXISTS bugs CASCADE;
 DROP TABLE IF EXISTS analysis_test_groups CASCADE;
 DROP TABLE IF EXISTS commit_sets CASCADE;
@@ -240,6 +241,19 @@ CREATE TABLE triggerable_configurations (
     trigconfig_platform integer REFERENCES platforms NOT NULL,
     trigconfig_triggerable integer REFERENCES build_triggerables NOT NULL,
     CONSTRAINT triggerable_must_be_unique_for_test_and_platform UNIQUE(trigconfig_test, trigconfig_platform));
+
+CREATE TABLE uploaded_files (
+    file_id serial PRIMARY KEY,
+    file_created_at timestamp NOT NULL DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC'),
+    file_deleted_at timestamp,
+    file_mime varchar(64),
+    file_filename varchar(1024) NOT NULL,
+    file_extension varchar(16),
+    file_author varchar(256),
+    file_size bigint NOT NULL,
+    file_sha256 char(64) NOT NULL);
+CREATE INDEX file_author_index ON uploaded_files(file_author);
+CREATE UNIQUE INDEX file_sha256_index ON uploaded_files(file_sha256) WHERE file_deleted_at is NULL;
 
 CREATE TABLE analysis_test_groups (
     testgroup_id serial PRIMARY KEY,

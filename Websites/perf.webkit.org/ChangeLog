@@ -1,3 +1,99 @@
+2017-03-16  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add the file uploading capability to the perf dashboard.
+        https://bugs.webkit.org/show_bug.cgi?id=169737
+
+        Reviewed by Chris Dumez.
+
+        Added /privileged-api/upload-file to upload a file, and /api/uploaded-file/ to download the file
+        and retrieve its meta data based on its SHA256. We treat two files with the identical SHA256 as
+        identical since anyone who can upload a file using this mechanism can execute arbitrary code in
+        our bots anyway. This is important for avoiding uploading a large darwinup roots multiple times
+        to the server, saving both user's time/bandwidth and server's disk space.
+
+        * config.json: Added uploadDirectory, uploadFileLimitInMB, and uploadUserQuotaInMB as options.
+        * init-database.sql: Added uploaded_files table.
+
+        * public/api/uploaded-file.php: Added.
+        (main): /api/uploaded-file/N would download uploaded_file with id=N. /api/uploaded-file/?sha256=X
+        would return the meta data for uploaded_file with sha256=X.
+        (stream_file_content): Streams the file content in 64KB chunks. We support Range & If-Range HTTP
+        request headers so that browsers can pause and resume downloading of a large root file.
+        (parse_range_header): Parses Range HTTP request header.
+
+        * public/include/json-header.php:
+        (remote_user_name): Use the default argument of NULL.
+
+        * public/include/manifest-generator.php:
+        (ManifestGenerator::generate): Include the maximum upload size in the manifest file to let the
+        frontend code preemptively check the file size before attempting to submit a file.
+
+        * public/include/uploaded-file-helpers.php: Added.
+        (format_uploaded_file):
+        (uploaded_file_path_for_row):
+
+        * public/privileged-api/upload-file-form.html: Added. For debugging purposes.
+        (fetchCSRFfToken):
+        (upload):
+
+        * public/privileged-api/upload-file.php: Added.
+        (main):
+        (query_total_file_size):
+        (create_uploaded_file_from_form_data):
+
+        * public/shared/common-remote.js:
+        (CommonRemoteAPI.prototype.postFormData): Added.
+        (CommonRemoteAPI.prototype.postFormDataWithStatus): Added.
+        (CommonRemoteAPI.prototype.sendHttpRequestWithFormData): Added.
+        (CommonRemoteAPI.prototype._asJSON): Throw an exception instead of calling a non-existent reject.
+
+        * public/v3/models/uploaded-file.js: Added.
+        (UploadedFile): Added.
+        (UploadedFile.uploadFile): Added.
+        (UploadedFile.fetchUnloadedFileWithIdenticalHash): Added. Finds the file with the same SHA256 in
+        the server to avoid uploading a large custom root multiple times.
+        (UploadedFile._computeSHA256Hash): Added.
+
+        * public/v3/privileged-api.js:
+        (PrivilegedAPI.prototype.sendRequest): Added the options dictionary as a third argument. For now,
+        only support useFormData boolean.
+
+        * public/v3/remote.js:
+        (BrowserRemoteAPI.prototype.sendHttpRequestWithFormData): Added.
+
+        * server-tests/api-manifest.js: Updated per the inclusion of fileUploadSizeLimit in the manifest.
+        * server-tests/api-uploaded-file.js: Added.
+        * server-tests/privileged-api-upload-file-tests.js: Added.
+
+        * server-tests/resources/temporary-file.js: Added.
+        (TemporaryFile): Added. A helper class for creating a temporary file to upload.
+        (TemporaryFile.makeTemporaryFileOfSizeInMB):
+        (TemporaryFile.makeTemporaryFile):
+        (TemporaryFile.inject):
+
+        * server-tests/resources/test-server.conf: Set upload_max_filesize and post_max_size for testing.
+        * server-tests/resources/test-server.js:
+        (TestServer.prototype.testConfig): Use uploadFileLimitInMB and uploadUserQuotaInMB of 2MB and 5MB.
+        (TestServer.prototype._ensureDataDirectory): Create a directory to store uploaded files inside
+        the data directory. In a production server, we can place it outside ServerRoot / DocumentRoot.
+        (TestServer.prototype.cleanDataDirectory): Delete the aforementioned directory as needed.
+
+        * tools/js/database.js:
+        (tableToPrefixMap): Added uploaded_files.
+
+        * tools/js/remote.js:
+        (NodeRemoteAPI.prototype.sendHttpRequest): Added a dictionary to specify request headers and
+        a callback to process the response as arguments. Fixed the bug that any 2xx code other than 200
+        was resulting in a rejected promise. Also include the response headers in the result for tests.
+        Finally, when content is a function, call that instead of writing the content since FormData
+        requires a custom logic.
+        (NodeRemoteAPI.prototype.sendHttpRequestWithFormData): Added.
+
+        * tools/js/v3-models.js: Include uploaded-file.js.
+
+        * tools/run-tests.py:
+        (main): Add form-data as a new dependency.
+
 2017-03-15  Dewei Zhu  <dewei_zhu@apple.com>
 
         Fix unit test and bug fix for 'pull-os-versions.js' script.

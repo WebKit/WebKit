@@ -2,14 +2,16 @@
 
 class PrivilegedAPI {
 
-    static sendRequest(path, data)
+    static sendRequest(path, data, options = {useFormData: false})
     {
         const clonedData = {};
         for (let key in data)
             clonedData[key] = data[key];
 
         const fullPath = '/privileged-api/' + path;
-        const post = () => RemoteAPI.postJSONWithStatus(fullPath, clonedData);
+        const post = options.useFormData
+            ? () => RemoteAPI.postFormDataWithStatus(fullPath, clonedData)
+            : () => RemoteAPI.postJSONWithStatus(fullPath, clonedData);
 
         return this.requestCSRFToken().then((token) => {
             clonedData['token'] = token;

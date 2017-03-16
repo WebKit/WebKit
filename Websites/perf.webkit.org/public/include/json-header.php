@@ -1,6 +1,7 @@
 <?php
 
 require_once('db.php');
+
 require_once('test-path-resolver.php');
 
 header('Content-type: application/json');
@@ -116,8 +117,8 @@ function ensure_privileged_api_data_and_token() {
     return $data;
 }
 
-function remote_user_name($data) {
-    return should_authenticate_as_slave($data) ? NULL : array_get($_SERVER, 'REMOTE_USER');
+function remote_user_name($data = NULL) {
+    return $data && should_authenticate_as_slave($data) ? NULL : array_get($_SERVER, 'REMOTE_USER');
 }
 
 function should_authenticate_as_slave($data) {

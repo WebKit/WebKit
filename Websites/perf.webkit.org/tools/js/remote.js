@@ -64,7 +64,7 @@ class NodeRemoteAPI extends CommonRemoteAPI {
         });
     }
 
-    sendHttpRequest(path, method, contentType, content)
+    sendHttpRequest(path, method, contentType, content, headers = {}, responseHandler = null)
     {
         let server = this._server;
         return new Promise((resolve, reject) => {
@@ -78,10 +78,14 @@ class NodeRemoteAPI extends CommonRemoteAPI {
 
             let request = (server.scheme == 'http' ? http : https).request(options, (response) => {
                 let responseText = '';
-                response.setEncoding('utf8');
-                response.on('data', (chunk) => { responseText += chunk; });
+                if (responseHandler)
+                    responseHandler(response);
+                else {
+                    response.setEncoding('utf8');
+                    response.on('data', (chunk) => { responseText += chunk; });
+                }
                 response.on('end', () => {
-                    if (response.statusCode != 200)
+                    if (response.statusCode < 200 || response.statusCode >= 300)
                         return reject(response.statusCode);
 
                     if ('set-cookie' in response.headers) {
@@ -90,7 +94,7 @@ class NodeRemoteAPI extends CommonRemoteAPI {
                             this._cookies.set(nameValue[0], nameValue[1]);
                         }
                     }
-                    resolve({statusCode: response.statusCode, responseText: responseText});
+                    resolve({statusCode: response.statusCode, responseText: responseText, headers: response.headers});
                 });
             });
 
@@ -102,12 +106,26 @@ class NodeRemoteAPI extends CommonRemoteAPI {
             if (this._cookies.size)
                 request.setHeader('Cookie', Array.from(this._cookies.keys()).map((key) => `${key}=${this._cookies.get(key)}`).join('; '));
 
-            if (content)
-                request.write(content);
+            for (let headerName in headers)
+                request.setHeader(headerName, headers[headerName]);
 
-            request.end();
+            if (content instanceof Function)
+                content(request);
+            else {
+                if (content)
+                    request.write(content);
+                request.end();
+            }
         });
     }
+
+    sendHttpRequestWithFormData(path, formData)
+    {
+        return this.sendHttpRequest(path, 'POST', `multipart/form-data; boundary=${formData.getBoundary()}`, (request) => {
+            formData.pipe(request);
+        });
+    }
+
 };
 
 if (typeof module != 'undefined')

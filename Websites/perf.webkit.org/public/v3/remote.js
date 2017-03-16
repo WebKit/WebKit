@@ -36,6 +36,11 @@ class BrowserRemoteAPI extends CommonRemoteAPI {
         });
     }
 
+    sendHttpRequestWithFormData(path, formData)
+    {
+        return this.sendHttpRequest(path, 'POST', null, formData); // Content-type is set by the browser.
+    }
+
 }
 
 const RemoteAPI = new BrowserRemoteAPI;

@@ -11,6 +11,19 @@ class CommonRemoteAPI {
         return this._checkStatus(this.postJSON(path, data));
     }
 
+    postFormData(path, data)
+    {
+        const formData = new FormData();
+        for (let key in data)
+            formData.append(key, data[key]);
+        return this._asJSON(this.sendHttpRequestWithFormData(path, formData));
+    }
+
+    postFormDataWithStatus(path, data)
+    {
+        return this._checkStatus(this.postFormData(path, data));
+    }
+
     getJSON(path)
     {
         return this._asJSON(this.sendHttpRequest(path, 'GET', null, null));
@@ -26,6 +39,11 @@ class CommonRemoteAPI {
         throw 'NotImplemented';
     }
 
+    sendHttpRequestWithFormData(path, formData)
+    {
+        throw 'NotImplemented';
+    }
+
     _asJSON(promise)
     {
         return promise.then((result) => {
@@ -33,7 +51,7 @@ class CommonRemoteAPI {
                 return JSON.parse(result.responseText);
             } catch (error) {
                 console.error(result.responseText);
-                reject(result.statusCode + ', ' + error);
+                throw `{result.statusCode}: ${error}`;
             }
         });
     }

@@ -11,7 +11,7 @@ def main():
     node_modules_dir = os.path.join(root_dir, 'node_modules')
 
     os.chdir(root_dir)
-    packages = ['mocha', 'pg']
+    packages = ['mocha', 'pg', 'form-data']
     for package_name in packages:
         target_dir = os.path.join(node_modules_dir, package_name)
         if not os.path.isdir(target_dir):

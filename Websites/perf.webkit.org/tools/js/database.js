@@ -152,6 +152,7 @@ const tableToPrefixMap = {
     'commit_sets': 'commitset',
     'commit_set_relationships': 'commitset',
     'run_iterations': 'iteration',
+    'uploaded_files': 'file',
 }
 
 if (typeof module != 'undefined')

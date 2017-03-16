@@ -28,6 +28,7 @@ importFromV3('models/test.js', 'Test');
 importFromV3('models/test-group.js', 'TestGroup');
 importFromV3('models/time-series.js', 'TimeSeries');
 importFromV3('models/triggerable.js', 'Triggerable');
+importFromV3('models/uploaded-file.js', 'UploadedFile');
 
 importFromV3('privileged-api.js', 'PrivilegedAPI');
 importFromV3('instrumentation.js', 'Instrumentation');
