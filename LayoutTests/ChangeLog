@@ -1,3 +1,23 @@
+2017-03-16  Youenn Fablet  <youenn@apple.com>
+
+        Improve WebRTC track enabled support
+        https://bugs.webkit.org/show_bug.cgi?id=169727
+
+        Reviewed by Alex Christensen.
+
+        * TestExpectations:
+        * webrtc/audio-peer-connection-webaudio.html:
+        * webrtc/peer-connection-audio-mute-expected.txt:
+        * webrtc/peer-connection-audio-mute.html:
+        * webrtc/peer-connection-audio-mute2-expected.txt: Added.
+        * webrtc/peer-connection-audio-mute2.html: Added.
+        * webrtc/peer-connection-remote-audio-mute-expected.txt: Added.
+        * webrtc/peer-connection-remote-audio-mute.html: Added.
+        * webrtc/video-mute-expected.txt:
+        * webrtc/video-mute.html:
+        * webrtc/video-remote-mute-expected.txt: Added.
+        * webrtc/video-remote-mute.html: Added.
+
 2017-03-16  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-grid] Crash on debug removing a positioned child

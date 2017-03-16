@@ -92,6 +92,7 @@ void RealtimeOutgoingVideoSource::videoSampleAvailable(MediaSample& sample)
         auto blackBuffer = m_bufferPool.CreateBuffer(settings.width(), settings.height());
         blackBuffer->SetToBlack();
         sendFrame(WTFMove(blackBuffer));
+        return;
     }
 
     ASSERT(sample.platformSample().type == PlatformSample::CMSampleBufferType);

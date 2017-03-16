@@ -70,6 +70,8 @@ private:
     // rtc::VideoSinkInterface
     void OnFrame(const webrtc::VideoFrame&) final;
 
+    CVPixelBufferRef pixelBufferFromVideoFrame(const webrtc::VideoFrame&);
+
     RefPtr<Image> m_currentImage;
     RealtimeMediaSourceSettings m_currentSettings;
     RealtimeMediaSourceSupportedConstraints m_supportedConstraints;
@@ -79,6 +81,9 @@ private:
     rtc::scoped_refptr<webrtc::VideoTrackInterface> m_videoTrack;
     RetainPtr<CMSampleBufferRef> m_buffer;
     PixelBufferConformerCV m_conformer;
+    RetainPtr<CVPixelBufferRef> m_blackFrame;
+    int m_blackFrameWidth { 0 };
+    int m_blackFrameHeight { 0 };
 };
 
 } // namespace WebCore

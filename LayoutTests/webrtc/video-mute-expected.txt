@@ -1,4 +1,4 @@
 
 
-PASS Video muted/unmuted track 
+PASS Outgoing muted/unmuted video track 
 

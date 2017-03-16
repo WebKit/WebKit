@@ -1,3 +1,3 @@
 
-FAIL Muting and unmuting an audio track assert_true: heard hum expected true got false
+PASS Muting a local audio track and making sure the remote track is silent 
 

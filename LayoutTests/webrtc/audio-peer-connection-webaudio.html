@@ -11,7 +11,7 @@
         if (window.testRunner)
             testRunner.setUserMediaPermission(true);
 
-       return navigator.mediaDevices.getUserMedia({audio: true}).then((stream) => {
+        return navigator.mediaDevices.getUserMedia({audio: true}).then((stream) => {
             if (window.internals)
                 internals.useMockRTCPeerConnectionFactory("TwoRealPeerConnections");
             return new Promise((resolve, reject) => {
@@ -21,14 +21,14 @@
                     secondConnection.onaddstream = (streamEvent) => { resolve(streamEvent.stream); };
                 });
                 setTimeout(() => reject("Test timed out"), 5000);
-            }).then((stream) => {
-                return analyseAudio(stream, 1000);
-            }).then((results) => {
-                assert_true(results.heardHum, "heard hum");
-                assert_true(results.heardBip, "heard bip");
-                assert_true(results.heardBop, "heard bop");
             });
-         });
+        }).then((remoteStream) => {
+            return analyseAudio(remoteStream, 1000);
+        }).then((results) => {
+            assert_true(results.heardHum, "heard hum");
+            assert_true(results.heardBip, "heard bip");
+            assert_true(results.heardBop, "heard bop");
+        });
     }, "Basic audio playback through a peer connection");
     </script>
 </head>

@@ -147,9 +147,6 @@ void MockRealtimeAudioSourceMac::reconfigure()
 
 void MockRealtimeAudioSourceMac::render(double delta)
 {
-    if (m_muted || !m_enabled)
-        return;
-
     if (!m_audioBufferList)
         reconfigure();
 
@@ -162,8 +159,11 @@ void MockRealtimeAudioSourceMac::render(double delta)
         uint32_t bipBopCount = std::min(frameCount, bipBopRemain);
         for (auto& audioBuffer : m_audioBufferList->buffers()) {
             audioBuffer.mDataByteSize = frameCount * m_streamFormat.mBytesPerFrame;
-            memcpy(audioBuffer.mData, &m_bipBopBuffer[bipBopStart], sizeof(Float32) * bipBopCount);
-            addHum(HumVolume, HumFrequency, m_sampleRate, m_samplesRendered, static_cast<float*>(audioBuffer.mData), bipBopCount);
+            if (!m_muted && m_enabled) {
+                memcpy(audioBuffer.mData, &m_bipBopBuffer[bipBopStart], sizeof(Float32) * bipBopCount);
+                addHum(HumVolume, HumFrequency, m_sampleRate, m_samplesRendered, static_cast<float*>(audioBuffer.mData), bipBopCount);
+            } else
+                memset(audioBuffer.mData, 0, sizeof(Float32) * bipBopCount);
         }
         emitSampleBuffers(bipBopCount);
         m_samplesRendered += bipBopCount;

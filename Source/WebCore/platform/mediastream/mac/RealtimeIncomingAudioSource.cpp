@@ -95,12 +95,16 @@ void RealtimeIncomingAudioSource::OnData(const void* audioData, int bitsPerSampl
             m_audioSourceProvider->prepare(&m_streamFormat);
     }
 
+    // FIXME: We should not need to do the extra memory allocation and copy.
+    // Instead, we should be able to directly pass audioData pointer.
     WebAudioBufferList audioBufferList { CAAudioStreamDescription(m_streamFormat), WTF::safeCast<uint32_t>(numberOfFrames) };
     audioBufferList.buffer(0)->mDataByteSize = numberOfChannels * numberOfFrames * bitsPerSample / 8;
     audioBufferList.buffer(0)->mNumberChannels = numberOfChannels;
-    // FIXME: We should not need to do the extra memory allocation and copy.
-    // Instead, we should be able to directly pass audioData pointer.
-    memcpy(audioBufferList.buffer(0)->mData, audioData, audioBufferList.buffer(0)->mDataByteSize);
+
+    if (muted() || !enabled())
+        memset(audioBufferList.buffer(0)->mData, 0, audioBufferList.buffer(0)->mDataByteSize);
+    else
+        memcpy(audioBufferList.buffer(0)->mData, audioData, audioBufferList.buffer(0)->mDataByteSize);
 
     audioSamplesAvailable(mediaTime, audioBufferList, CAAudioStreamDescription(m_streamFormat), numberOfFrames);
 }

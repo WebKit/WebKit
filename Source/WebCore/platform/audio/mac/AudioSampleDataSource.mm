@@ -311,6 +311,16 @@ bool AudioSampleDataSource::pullAvalaibleSamplesAsChunks(AudioBufferList& buffer
         timeStamp = startFrame;
 
     startFrame = timeStamp;
+
+    if (m_muted) {
+        AudioSampleBufferList::zeroABL(buffer, sampleCountPerChunk * m_outputDescription->bytesPerFrame());
+        while (endFrame - startFrame >= sampleCountPerChunk) {
+            consumeFilledBuffer();
+            startFrame += sampleCountPerChunk;
+        }
+        return true;
+    }
+
     while (endFrame - startFrame >= sampleCountPerChunk) {
         if (m_ringBuffer->fetch(&buffer, sampleCountPerChunk, startFrame, CARingBuffer::Copy))
             return false;

@@ -13,53 +13,38 @@
         if (window.testRunner)
             testRunner.setUserMediaPermission(true);
 
-        return navigator.mediaDevices.getUserMedia({audio: true}).then((stream) => {
+        var localTrack;
+        return navigator.mediaDevices.getUserMedia({audio: true}).then((localStream) => {
             if (window.internals)
                 internals.useMockRTCPeerConnectionFactory("TwoRealPeerConnections");
 
-            var stream;
+            localTrack = localStream.getAudioTracks()[0];
+            var remoteStream;
             return new Promise((resolve, reject) => {
                 createConnections((firstConnection) => {
-                    firstConnection.addStream(stream);
+                    firstConnection.addStream(localStream);
                 }, (secondConnection) => {
                     secondConnection.onaddstream = (streamEvent) => {
-                        stream = streamEvent.stream;
+                        remoteStream = streamEvent.stream;
                         resolve();
                     };
                 });
             }).then(() => {
                 return waitFor(500);
             }).then(() => {
-                return analyseAudio(stream, 500).then((results) => {
-                    assert_true(results.heardHum, "heard hum");
-                    assert_true(results.heardBip, "heard bip");
-                    assert_true(results.heardBop, "heard bop");
+                return analyseAudio(remoteStream, 500).then((results) => {
+                    assert_true(results.heardHum, "heard hum from remote enabled track");
                 });
             }).then(() => {
-                stream.getAudioTracks().forEach((track) => {
-                    track.enabled = false;
-                });
+                localTrack.enabled = false;
                 return waitFor(500);
             }).then(() => {
-                return analyseAudio(stream, 500).then((results) => {
-                    assert_false(results.heardHum, "heard hum");
-                    assert_false(results.heardBip, "heard bip");
-                    assert_false(results.heardBop, "heard bop");
-                });
-            }).then(() => {
-                stream.getAudioTracks().forEach((track) => {
-                    track.enabled = true;
-                });
-                return waitFor(500);
-            }).then(() => {
-                return analyseAudio(stream, 500).then((results) => {
-                    assert_true(results.heardHum, "heard hum");
-                    assert_true(results.heardBip, "heard bip");
-                    assert_true(results.heardBop, "heard bop");
+                return analyseAudio(remoteStream, 500).then((results) => {
+                    assert_false(results.heardHum, "not heard hum from remote disabled track");
                 });
             });
         });
-    }, "Muting and unmuting an audio track");
+    }, "Muting a local audio track and making sure the remote track is silent");
     </script>
 </body>
 </html>

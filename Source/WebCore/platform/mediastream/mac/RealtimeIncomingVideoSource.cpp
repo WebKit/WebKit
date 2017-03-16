@@ -92,13 +92,40 @@ void RealtimeIncomingVideoSource::stopProducingData()
         m_videoTrack->RemoveSink(this);
 }
 
+CVPixelBufferRef RealtimeIncomingVideoSource::pixelBufferFromVideoFrame(const webrtc::VideoFrame& frame)
+{
+    if (muted() || !enabled()) {
+        if (!m_blackFrame || m_blackFrameWidth != frame.width() || m_blackFrameHeight != frame.height()) {
+            CVPixelBufferRef pixelBuffer = nullptr;
+            auto status = CVPixelBufferCreate(kCFAllocatorDefault, frame.width(), frame.height(), kCVPixelFormatType_420YpCbCr8Planar, nullptr, &pixelBuffer);
+            ASSERT_UNUSED(status, status == noErr);
+
+            m_blackFrame = pixelBuffer;
+            m_blackFrameWidth = frame.width();
+            m_blackFrameHeight = frame.height();
+
+            status = CVPixelBufferLockBaseAddress(pixelBuffer, 0);
+            ASSERT(status == noErr);
+            void* data = CVPixelBufferGetBaseAddress(pixelBuffer);
+            size_t yLength = frame.width() * frame.height();
+            memset(data, 0, yLength);
+            memset(static_cast<uint8_t*>(data) + yLength, 128, yLength / 2);
+
+            status = CVPixelBufferUnlockBaseAddress(pixelBuffer, 0);
+            ASSERT(!status);
+        }
+        return m_blackFrame.get();
+    }
+    auto buffer = frame.video_frame_buffer();
+    return static_cast<CVPixelBufferRef>(buffer->native_handle());
+}
+
 void RealtimeIncomingVideoSource::OnFrame(const webrtc::VideoFrame& frame)
 {
     if (!m_isProducingData)
         return;
 
-    auto buffer = frame.video_frame_buffer();
-    CVPixelBufferRef pixelBuffer = static_cast<CVPixelBufferRef>(buffer->native_handle());
+    auto pixelBuffer = pixelBufferFromVideoFrame(frame);
 
     // FIXME: Convert timing information from VideoFrame to CMSampleTimingInfo.
     // For the moment, we will pretend that frames should be rendered asap.

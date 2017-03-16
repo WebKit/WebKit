@@ -21,10 +21,11 @@ function isVideoBlack()
     canvas.height = video.videoHeight;
     canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
 
-    imageData = canvas.getContext('2d').getImageData(10, 325, 250, 1);
+    imageData = canvas.getContext('2d').getImageData(0, 0, canvas.width, canvas.height);
     data = imageData.data;
     for (var cptr = 0; cptr < canvas.width * canvas.height; ++cptr) {
-        if (data[4 * cptr] || data[4 * cptr + 1] || data[4 * cptr + 2])
+        // Approximatively black pixels.
+        if (data[4 * cptr] > 10 || data[4 * cptr + 1] > 10 || data[4 * cptr + 2] > 10)
             return false;
     }
     return true;
@@ -35,35 +36,36 @@ promise_test((test) => {
     if (window.testRunner)
         testRunner.setUserMediaPermission(true);
 
-    return navigator.mediaDevices.getUserMedia({ video: true}).then((stream) => {
+    return navigator.mediaDevices.getUserMedia({ video: true}).then((localStream) => {
         return new Promise((resolve, reject) => {
             if (window.internals)
                 internals.useMockRTCPeerConnectionFactory("TwoRealPeerConnections");
 
+            track = localStream.getVideoTracks()[0];
+
             createConnections((firstConnection) => {
-                firstConnection.addStream(stream);
+                firstConnection.addStream(localStream);
             }, (secondConnection) => {
                 secondConnection.onaddstream = (streamEvent) => { resolve(streamEvent.stream); };
             });
             setTimeout(() => reject("Test timed out"), 5000);
         });
-    }).then((stream) => {
-        video.srcObject = stream;
-        track = stream.getVideoTracks()[0];
+    }).then((remoteStream) => {
+        video.srcObject = remoteStream;
         return video.play();
     }).then(() => {
-         assert_false(isVideoBlack());
+         assert_false(isVideoBlack(), "track is enabled, video is not black");
     }).then(() => {
         track.enabled = false;
         return waitFor(500);
     }).then(() => {
-        assert_true(isVideoBlack());
+        assert_true(isVideoBlack(), "track is disabled, video is black");
         track.enabled = true;
         return waitFor(500);
     }).then(() => {
-        assert_false(isVideoBlack());
+        assert_false(isVideoBlack(), "track is reenabled, video is not black");
     });
-}, "Video muted/unmuted track");
+}, "Outgoing muted/unmuted video track");
         </script>
     </body>
 </html>
