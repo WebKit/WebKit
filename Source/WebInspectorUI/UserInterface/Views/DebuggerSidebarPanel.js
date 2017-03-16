@@ -436,7 +436,7 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
             breakpoint.resolved = true;
 
         let breakpointTreeElement = new WebInspector.BreakpointTreeElement(breakpoint);
-        parentTreeElement.insertChild(breakpointTreeElement, insertionIndexForObjectInListSortedByFunction(breakpointTreeElement, parentTreeElement.children, this._compareDebuggerTreeElements));
+        parentTreeElement.insertChild(breakpointTreeElement, insertionIndexForObjectInListSortedByFunction(breakpointTreeElement, parentTreeElement.children, this._compareTreeElements));
         if (parentTreeElement.children.length === 1)
             parentTreeElement.expand();
         return breakpointTreeElement;
@@ -880,13 +880,15 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
         return a.mainTitle.localeCompare(b.mainTitle);
     }
 
-    _compareDebuggerTreeElements(a, b)
+    _compareTreeElements(a, b)
     {
-        if (!a.debuggerObject || !b.debuggerObject)
+        if (!a.representedObject || !b.representedObject)
             return 0;
 
-        var aLocation = a.debuggerObject.sourceCodeLocation;
-        var bLocation = b.debuggerObject.sourceCodeLocation;
+        let aLocation = a.representedObject.sourceCodeLocation;
+        let bLocation = b.representedObject.sourceCodeLocation;
+        if (!aLocation || !bLocation)
+            return 0;
 
         var comparisonResult = aLocation.displayLineNumber - bLocation.displayLineNumber;
         if (comparisonResult !== 0)
@@ -1077,7 +1079,7 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
 
         issueTreeElement = new WebInspector.IssueTreeElement(issueMessage);
 
-        parentTreeElement.insertChild(issueTreeElement, insertionIndexForObjectInListSortedByFunction(issueTreeElement, parentTreeElement.children, this._compareDebuggerTreeElements));
+        parentTreeElement.insertChild(issueTreeElement, insertionIndexForObjectInListSortedByFunction(issueTreeElement, parentTreeElement.children, this._compareTreeElements));
         if (parentTreeElement.children.length === 1)
             parentTreeElement.expand();
 

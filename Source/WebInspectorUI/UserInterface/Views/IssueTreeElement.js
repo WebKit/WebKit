@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.IssueTreeElement = class IssueTreeElement extends WebInspector.DebuggerTreeElement
+WebInspector.IssueTreeElement = class IssueTreeElement extends WebInspector.GeneralTreeElement
 {
     constructor(issueMessage)
     {

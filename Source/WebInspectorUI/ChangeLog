@@ -1,3 +1,30 @@
+2017-03-16  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Refactoring: remove DebuggerTreeElement class
+        https://bugs.webkit.org/show_bug.cgi?id=169697
+
+        Reviewed by Devin Rousso.
+
+        Remove unnecessary class DebuggerTreeElement from TreeElement class hierarchy.
+        The `sourceCodeLocation` property on IssueMessage and Breakpoint (the debugger
+        objects) can be tested for generically using TreeElement.prototype.representedObject.
+
+        * UserInterface/Main.html:
+        Remove file.
+
+        * UserInterface/Views/BreakpointTreeElement.js:
+        * UserInterface/Views/IssueTreeElement.js:
+        Change base class to GeneralTreeElement.
+
+        * UserInterface/Views/DebuggerSidebarPanel.js:
+        (WebInspector.DebuggerSidebarPanel.prototype._addBreakpoint):
+        (WebInspector.DebuggerSidebarPanel.prototype._compareTreeElements):
+        (WebInspector.DebuggerSidebarPanel.prototype._addIssue):
+        (WebInspector.DebuggerSidebarPanel.prototype._compareDebuggerTreeElements): Deleted.
+        Renamed to just "_compareTreeElements".
+
+        * UserInterface/Views/DebuggerTreeElement.js: Removed.
+
 2017-03-16  Devin Rousso  <webkit@devinrousso.com>
 
         Web Inspector: RTL: goto arrow for source locations is pointing wrong way in Timeline data grids

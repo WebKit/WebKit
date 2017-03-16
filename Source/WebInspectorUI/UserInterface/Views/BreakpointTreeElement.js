@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.BreakpointTreeElement = class BreakpointTreeElement extends WebInspector.DebuggerTreeElement
+WebInspector.BreakpointTreeElement = class BreakpointTreeElement extends WebInspector.GeneralTreeElement
 {
     constructor(breakpoint, className, title)
     {
