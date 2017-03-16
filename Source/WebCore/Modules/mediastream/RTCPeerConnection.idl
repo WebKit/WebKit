@@ -92,12 +92,9 @@
     // FIXME 169644: update parameter to (RTCIceCandidateInit or RTCIceCandidate)
     [JSBuiltin] Promise<void> addIceCandidate(RTCIceCandidate candidate);
 
-    // FIXME 169644: convert to enum
-    readonly attribute DOMString signalingState;
-    // FIXME 169644: convert to enum
-    readonly attribute DOMString iceGatheringState;
-    // FIXME 169644: convert to enum
-    readonly attribute DOMString iceConnectionState;
+    readonly attribute RTCSignalingState signalingState;
+    readonly attribute RTCIceGatheringState iceGatheringState;
+    readonly attribute RTCIceConnectionState iceConnectionState;
 
     // FIXME 169644: missing connectionState
     // FIXME 169644: missing canTrickleIceCandidates

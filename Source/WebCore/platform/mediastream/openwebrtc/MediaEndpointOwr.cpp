@@ -445,19 +445,19 @@ void MediaEndpointOwr::processIceTransportStateChange(OwrSession* session)
     if (owrIceState == OWR_ICE_STATE_READY && !transceiver.gotEndOfRemoteCandidates())
         return;
 
-    MediaEndpoint::IceTransportState transportState;
+    RTCIceTransportState transportState;
     switch (owrIceState) {
     case OWR_ICE_STATE_CONNECTING:
-        transportState = MediaEndpoint::IceTransportState::Checking;
+        transportState = RTCIceTransportState::Checking;
         break;
     case OWR_ICE_STATE_CONNECTED:
-        transportState = MediaEndpoint::IceTransportState::Connected;
+        transportState = RTCIceTransportState::Connected;
         break;
     case OWR_ICE_STATE_READY:
-        transportState = MediaEndpoint::IceTransportState::Completed;
+        transportState = RTCIceTransportState::Completed;
         break;
     case OWR_ICE_STATE_FAILED:
-        transportState = MediaEndpoint::IceTransportState::Failed;
+        transportState = RTCIceTransportState::Failed;
         break;
     default:
         return;

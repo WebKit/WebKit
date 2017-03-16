@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2015 Ericsson AB. All rights reserved.
- * Copyright (C) 2016 Apple INC. All rights reserved.
+ * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -46,7 +46,7 @@ namespace WebCore {
 void PeerConnectionBackend::createOffer(RTCOfferOptions&& options, PeerConnection::SessionDescriptionPromise&& promise)
 {
     ASSERT(!m_offerAnswerPromise);
-    ASSERT(m_peerConnection.internalSignalingState() != PeerConnectionStates::SignalingState::Closed);
+    ASSERT(m_peerConnection.signalingState() != RTCSignalingState::Closed);
 
     m_offerAnswerPromise = WTFMove(promise);
     doCreateOffer(WTFMove(options));
@@ -56,7 +56,7 @@ void PeerConnectionBackend::createOfferSucceeded(String&& sdp)
 {
     ASSERT(isMainThread());
 
-    if (m_peerConnection.internalSignalingState() == PeerConnectionStates::SignalingState::Closed)
+    if (m_peerConnection.signalingState() == RTCSignalingState::Closed)
         return;
 
     ASSERT(m_offerAnswerPromise);
@@ -68,7 +68,7 @@ void PeerConnectionBackend::createOfferFailed(Exception&& exception)
 {
     ASSERT(isMainThread());
 
-    if (m_peerConnection.internalSignalingState() == PeerConnectionStates::SignalingState::Closed)
+    if (m_peerConnection.signalingState() == RTCSignalingState::Closed)
         return;
 
     ASSERT(m_offerAnswerPromise);
@@ -79,7 +79,7 @@ void PeerConnectionBackend::createOfferFailed(Exception&& exception)
 void PeerConnectionBackend::createAnswer(RTCAnswerOptions&& options, PeerConnection::SessionDescriptionPromise&& promise)
 {
     ASSERT(!m_offerAnswerPromise);
-    ASSERT(m_peerConnection.internalSignalingState() != PeerConnectionStates::SignalingState::Closed);
+    ASSERT(m_peerConnection.signalingState() != RTCSignalingState::Closed);
 
     m_offerAnswerPromise = WTFMove(promise);
     doCreateAnswer(WTFMove(options));
@@ -89,7 +89,7 @@ void PeerConnectionBackend::createAnswerSucceeded(String&& sdp)
 {
     ASSERT(isMainThread());
 
-    if (m_peerConnection.internalSignalingState() == PeerConnectionStates::SignalingState::Closed)
+    if (m_peerConnection.signalingState() == RTCSignalingState::Closed)
         return;
 
     ASSERT(m_offerAnswerPromise);
@@ -101,7 +101,7 @@ void PeerConnectionBackend::createAnswerFailed(Exception&& exception)
 {
     ASSERT(isMainThread());
 
-    if (m_peerConnection.internalSignalingState() == PeerConnectionStates::SignalingState::Closed)
+    if (m_peerConnection.signalingState() == RTCSignalingState::Closed)
         return;
 
     ASSERT(m_offerAnswerPromise);
@@ -109,16 +109,16 @@ void PeerConnectionBackend::createAnswerFailed(Exception&& exception)
     m_offerAnswerPromise = std::nullopt;
 }
 
-static inline bool isLocalDescriptionTypeValidForState(RTCSessionDescription::SdpType type, PeerConnectionStates::SignalingState state)
+static inline bool isLocalDescriptionTypeValidForState(RTCSessionDescription::SdpType type, RTCSignalingState state)
 {
     switch (state) {
-    case PeerConnectionStates::SignalingState::Stable:
+    case RTCSignalingState::Stable:
         return type == RTCSessionDescription::SdpType::Offer;
-    case PeerConnectionStates::SignalingState::HaveLocalOffer:
+    case RTCSignalingState::HaveLocalOffer:
         return type == RTCSessionDescription::SdpType::Offer;
-    case PeerConnectionStates::SignalingState::HaveRemoteOffer:
+    case RTCSignalingState::HaveRemoteOffer:
         return type == RTCSessionDescription::SdpType::Answer || type == RTCSessionDescription::SdpType::Pranswer;
-    case PeerConnectionStates::SignalingState::HaveLocalPrAnswer:
+    case RTCSignalingState::HaveLocalPranswer:
         return type == RTCSessionDescription::SdpType::Answer || type == RTCSessionDescription::SdpType::Pranswer;
     default:
         return false;
@@ -130,9 +130,9 @@ static inline bool isLocalDescriptionTypeValidForState(RTCSessionDescription::Sd
 
 void PeerConnectionBackend::setLocalDescription(RTCSessionDescription& sessionDescription, DOMPromise<void>&& promise)
 {
-    ASSERT(m_peerConnection.internalSignalingState() != PeerConnectionStates::SignalingState::Closed);
+    ASSERT(m_peerConnection.signalingState() != RTCSignalingState::Closed);
 
-    if (!isLocalDescriptionTypeValidForState(sessionDescription.type(), m_peerConnection.internalSignalingState())) {
+    if (!isLocalDescriptionTypeValidForState(sessionDescription.type(), m_peerConnection.signalingState())) {
         promise.reject(INVALID_STATE_ERR, "Description type incompatible with current signaling state");
         return;
     }
@@ -145,7 +145,7 @@ void PeerConnectionBackend::setLocalDescriptionSucceeded()
 {
     ASSERT(isMainThread());
 
-    if (m_peerConnection.internalSignalingState() == PeerConnectionStates::SignalingState::Closed)
+    if (m_peerConnection.signalingState() == RTCSignalingState::Closed)
         return;
 
     ASSERT(m_setDescriptionPromise);
@@ -158,7 +158,7 @@ void PeerConnectionBackend::setLocalDescriptionFailed(Exception&& exception)
 {
     ASSERT(isMainThread());
 
-    if (m_peerConnection.internalSignalingState() == PeerConnectionStates::SignalingState::Closed)
+    if (m_peerConnection.signalingState() == RTCSignalingState::Closed)
         return;
 
     ASSERT(m_setDescriptionPromise);
@@ -167,16 +167,16 @@ void PeerConnectionBackend::setLocalDescriptionFailed(Exception&& exception)
     m_setDescriptionPromise = std::nullopt;
 }
 
-static inline bool isRemoteDescriptionTypeValidForState(RTCSessionDescription::SdpType type, PeerConnectionStates::SignalingState state)
+static inline bool isRemoteDescriptionTypeValidForState(RTCSessionDescription::SdpType type, RTCSignalingState state)
 {
     switch (state) {
-    case PeerConnectionStates::SignalingState::Stable:
+    case RTCSignalingState::Stable:
         return type == RTCSessionDescription::SdpType::Offer;
-    case PeerConnectionStates::SignalingState::HaveLocalOffer:
+    case RTCSignalingState::HaveLocalOffer:
         return type == RTCSessionDescription::SdpType::Answer || type == RTCSessionDescription::SdpType::Pranswer;
-    case PeerConnectionStates::SignalingState::HaveRemoteOffer:
+    case RTCSignalingState::HaveRemoteOffer:
         return type == RTCSessionDescription::SdpType::Offer;
-    case PeerConnectionStates::SignalingState::HaveRemotePrAnswer:
+    case RTCSignalingState::HaveRemotePranswer:
         return type == RTCSessionDescription::SdpType::Answer || type == RTCSessionDescription::SdpType::Pranswer;
     default:
         return false;
@@ -188,9 +188,9 @@ static inline bool isRemoteDescriptionTypeValidForState(RTCSessionDescription::S
 
 void PeerConnectionBackend::setRemoteDescription(RTCSessionDescription& sessionDescription, DOMPromise<void>&& promise)
 {
-    ASSERT(m_peerConnection.internalSignalingState() != PeerConnectionStates::SignalingState::Closed);
+    ASSERT(m_peerConnection.signalingState() != RTCSignalingState::Closed);
 
-    if (!isRemoteDescriptionTypeValidForState(sessionDescription.type(), m_peerConnection.internalSignalingState())) {
+    if (!isRemoteDescriptionTypeValidForState(sessionDescription.type(), m_peerConnection.signalingState())) {
         promise.reject(INVALID_STATE_ERR, "Description type incompatible with current signaling state");
         return;
     }
@@ -203,7 +203,7 @@ void PeerConnectionBackend::setRemoteDescriptionSucceeded()
 {
     ASSERT(isMainThread());
 
-    if (m_peerConnection.internalSignalingState() == PeerConnectionStates::SignalingState::Closed)
+    if (m_peerConnection.signalingState() == RTCSignalingState::Closed)
         return;
 
     ASSERT(m_setDescriptionPromise);
@@ -216,7 +216,7 @@ void PeerConnectionBackend::setRemoteDescriptionFailed(Exception&& exception)
 {
     ASSERT(isMainThread());
 
-    if (m_peerConnection.internalSignalingState() == PeerConnectionStates::SignalingState::Closed)
+    if (m_peerConnection.signalingState() == RTCSignalingState::Closed)
         return;
 
     ASSERT(m_setDescriptionPromise);
@@ -227,7 +227,7 @@ void PeerConnectionBackend::setRemoteDescriptionFailed(Exception&& exception)
 
 void PeerConnectionBackend::addIceCandidate(RTCIceCandidate& iceCandidate, DOMPromise<void>&& promise)
 {
-    ASSERT(m_peerConnection.internalSignalingState() != PeerConnectionStates::SignalingState::Closed);
+    ASSERT(m_peerConnection.signalingState() != RTCSignalingState::Closed);
 
     if (iceCandidate.sdpMid().isNull() && !iceCandidate.sdpMLineIndex()) {
         promise.reject(Exception { TypeError, ASCIILiteral("Trying to add a candidate that is missing both sdpMid and sdpMLineIndex") });
@@ -241,7 +241,7 @@ void PeerConnectionBackend::addIceCandidateSucceeded()
 {
     ASSERT(isMainThread());
 
-    if (m_peerConnection.internalSignalingState() == PeerConnectionStates::SignalingState::Closed)
+    if (m_peerConnection.signalingState() == RTCSignalingState::Closed)
         return;
 
     // FIXME: Update remote description and set ICE connection state to checking if not already done so.
@@ -254,7 +254,7 @@ void PeerConnectionBackend::addIceCandidateSucceeded()
 void PeerConnectionBackend::addIceCandidateFailed(Exception&& exception)
 {
     ASSERT(isMainThread());
-    if (m_peerConnection.internalSignalingState() == PeerConnectionStates::SignalingState::Closed)
+    if (m_peerConnection.signalingState() == RTCSignalingState::Closed)
         return;
 
     ASSERT(m_addIceCandidatePromise);
@@ -332,14 +332,14 @@ void PeerConnectionBackend::doneGatheringCandidates()
     ASSERT(isMainThread());
 
     m_peerConnection.fireEvent(RTCIceCandidateEvent::create(false, false, nullptr));
-    m_peerConnection.updateIceGatheringState(PeerConnectionStates::IceGatheringState::Complete);
+    m_peerConnection.updateIceGatheringState(RTCIceGatheringState::Complete);
 }
 
-void PeerConnectionBackend::updateSignalingState(PeerConnectionStates::SignalingState newSignalingState)
+void PeerConnectionBackend::updateSignalingState(RTCSignalingState newSignalingState)
 {
     ASSERT(isMainThread());
 
-    if (newSignalingState != m_peerConnection.internalSignalingState()) {
+    if (newSignalingState != m_peerConnection.signalingState()) {
         m_peerConnection.setSignalingState(newSignalingState);
         m_peerConnection.fireEvent(Event::create(eventNames().signalingstatechangeEvent, false, false));
     }
@@ -361,7 +361,7 @@ void PeerConnectionBackend::markAsNeedingNegotiation()
     
     m_negotiationNeeded = true;
     
-    if (m_peerConnection.internalSignalingState() == PeerConnectionStates::SignalingState::Stable)
+    if (m_peerConnection.signalingState() == RTCSignalingState::Stable)
         m_peerConnection.scheduleNegotiationNeededEvent();
 }
 

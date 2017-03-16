@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,6 +38,7 @@
 #include "PlatformStrategies.h"
 #include "RTCDataChannel.h"
 #include "RTCDataChannelEvent.h"
+#include "RTCEnums.h"
 #include "RTCPeerConnection.h"
 #include "RTCSessionDescription.h"
 #include "RTCStatsReport.h"
@@ -348,21 +349,21 @@ void LibWebRTCMediaEndpoint::StatsCollector::OnStatsDelivered(const rtc::scoped_
     });
 }
 
-static PeerConnectionStates::SignalingState signalingState(webrtc::PeerConnectionInterface::SignalingState state)
+static RTCSignalingState signalingState(webrtc::PeerConnectionInterface::SignalingState state)
 {
     switch (state) {
     case webrtc::PeerConnectionInterface::kStable:
-        return PeerConnectionStates::SignalingState::Stable;
+        return RTCSignalingState::Stable;
     case webrtc::PeerConnectionInterface::kHaveLocalOffer:
-        return PeerConnectionStates::SignalingState::HaveLocalOffer;
+        return RTCSignalingState::HaveLocalOffer;
     case webrtc::PeerConnectionInterface::kHaveLocalPrAnswer:
-        return PeerConnectionStates::SignalingState::HaveLocalPrAnswer;
+        return RTCSignalingState::HaveLocalPranswer;
     case webrtc::PeerConnectionInterface::kHaveRemoteOffer:
-        return PeerConnectionStates::SignalingState::HaveRemoteOffer;
+        return RTCSignalingState::HaveRemoteOffer;
     case webrtc::PeerConnectionInterface::kHaveRemotePrAnswer:
-        return PeerConnectionStates::SignalingState::HaveRemotePrAnswer;
+        return RTCSignalingState::HaveRemotePranswer;
     case webrtc::PeerConnectionInterface::kClosed:
-        return PeerConnectionStates::SignalingState::Closed;
+        return RTCSignalingState::Closed;
     }
 }
 
@@ -495,36 +496,36 @@ void LibWebRTCMediaEndpoint::OnRenegotiationNeeded()
     });
 }
 
-static inline PeerConnectionStates::IceConnectionState iceConnectionState(webrtc::PeerConnectionInterface::IceConnectionState state)
+static inline RTCIceConnectionState toRTCIceConnectionState(webrtc::PeerConnectionInterface::IceConnectionState state)
 {
     switch (state) {
     case webrtc::PeerConnectionInterface::kIceConnectionNew:
-        return PeerConnectionStates::IceConnectionState::New;
+        return RTCIceConnectionState::New;
     case webrtc::PeerConnectionInterface::kIceConnectionChecking:
-        return PeerConnectionStates::IceConnectionState::Checking;
+        return RTCIceConnectionState::Checking;
     case webrtc::PeerConnectionInterface::kIceConnectionConnected:
-        return PeerConnectionStates::IceConnectionState::Connected;
+        return RTCIceConnectionState::Connected;
     case webrtc::PeerConnectionInterface::kIceConnectionCompleted:
-        return PeerConnectionStates::IceConnectionState::Completed;
+        return RTCIceConnectionState::Completed;
     case webrtc::PeerConnectionInterface::kIceConnectionFailed:
-        return PeerConnectionStates::IceConnectionState::Failed;
+        return RTCIceConnectionState::Failed;
     case webrtc::PeerConnectionInterface::kIceConnectionDisconnected:
-        return PeerConnectionStates::IceConnectionState::Disconnected;
+        return RTCIceConnectionState::Disconnected;
     case webrtc::PeerConnectionInterface::kIceConnectionClosed:
-        return PeerConnectionStates::IceConnectionState::Closed;
+        return RTCIceConnectionState::Closed;
     case webrtc::PeerConnectionInterface::kIceConnectionMax:
         ASSERT_NOT_REACHED();
-        return PeerConnectionStates::IceConnectionState::New;
+        return RTCIceConnectionState::New;
     }
 }
 
 void LibWebRTCMediaEndpoint::OnIceConnectionChange(webrtc::PeerConnectionInterface::IceConnectionState state)
 {
-    auto connectionState = iceConnectionState(state);
+    auto connectionState = toRTCIceConnectionState(state);
     callOnMainThread([protectedThis = makeRef(*this), connectionState] {
         if (protectedThis->isStopped())
             return;
-        if (protectedThis->m_peerConnectionBackend.connection().internalIceConnectionState() != connectionState)
+        if (protectedThis->m_peerConnectionBackend.connection().iceConnectionState() != connectionState)
             protectedThis->m_peerConnectionBackend.connection().updateIceConnectionState(connectionState);
     });
 }

@@ -58,7 +58,6 @@
 namespace WebCore {
 
 using namespace PeerConnection;
-using namespace PeerConnectionStates;
 
 Ref<RTCPeerConnection> RTCPeerConnection::create(ScriptExecutionContext& context)
 {
@@ -66,7 +65,7 @@ Ref<RTCPeerConnection> RTCPeerConnection::create(ScriptExecutionContext& context
     peerConnection->suspendIfNeeded();
     // RTCPeerConnection may send events at about any time during its lifetime.
     // Let's make it uncollectable until the pc is closed by JS or the page stops it.
-    if (peerConnection->m_signalingState != SignalingState::Closed) {
+    if (peerConnection->m_signalingState != RTCSignalingState::Closed) {
         peerConnection->setPendingActivity(peerConnection.ptr());
         peerConnection->registerToController();
     }
@@ -97,7 +96,7 @@ ExceptionOr<void> RTCPeerConnection::initializeWith(Document& document, RTCConfi
 
 ExceptionOr<Ref<RTCRtpSender>> RTCPeerConnection::addTrack(Ref<MediaStreamTrack>&& track, const Vector<std::reference_wrapper<MediaStream>>& streams)
 {
-    if (m_signalingState == SignalingState::Closed)
+    if (m_signalingState == RTCSignalingState::Closed)
         return Exception { INVALID_STATE_ERR };
 
     // Require at least one stream until https://github.com/w3c/webrtc-pc/issues/288 is resolved
@@ -153,7 +152,7 @@ ExceptionOr<Ref<RTCRtpSender>> RTCPeerConnection::addTrack(Ref<MediaStreamTrack>
 
 ExceptionOr<void> RTCPeerConnection::removeTrack(RTCRtpSender& sender)
 {
-    if (m_signalingState == SignalingState::Closed)
+    if (m_signalingState == RTCSignalingState::Closed)
         return Exception { INVALID_STATE_ERR };
 
     bool shouldAbort = true;
@@ -174,7 +173,7 @@ ExceptionOr<void> RTCPeerConnection::removeTrack(RTCRtpSender& sender)
 
 ExceptionOr<Ref<RTCRtpTransceiver>> RTCPeerConnection::addTransceiver(Ref<MediaStreamTrack>&& track, const RTCRtpTransceiverInit& init)
 {
-    if (m_signalingState == SignalingState::Closed)
+    if (m_signalingState == RTCSignalingState::Closed)
         return Exception { INVALID_STATE_ERR };
 
     String transceiverMid = RTCRtpTransceiver::getNextMid();
@@ -192,7 +191,7 @@ ExceptionOr<Ref<RTCRtpTransceiver>> RTCPeerConnection::addTransceiver(Ref<MediaS
 
 ExceptionOr<Ref<RTCRtpTransceiver>> RTCPeerConnection::addTransceiver(const String& kind, const RTCRtpTransceiverInit& init)
 {
-    if (m_signalingState == SignalingState::Closed)
+    if (m_signalingState == RTCSignalingState::Closed)
         return Exception { INVALID_STATE_ERR };
 
     if (kind != "audio" && kind != "video")
@@ -220,7 +219,7 @@ void RTCPeerConnection::completeAddTransceiver(RTCRtpTransceiver& transceiver, c
 
 void RTCPeerConnection::queuedCreateOffer(RTCOfferOptions&& options, SessionDescriptionPromise&& promise)
 {
-    if (m_signalingState == SignalingState::Closed) {
+    if (m_signalingState == RTCSignalingState::Closed) {
         promise.reject(INVALID_STATE_ERR);
         return;
     }
@@ -230,7 +229,7 @@ void RTCPeerConnection::queuedCreateOffer(RTCOfferOptions&& options, SessionDesc
 
 void RTCPeerConnection::queuedCreateAnswer(RTCAnswerOptions&& options, SessionDescriptionPromise&& promise)
 {
-    if (m_signalingState == SignalingState::Closed) {
+    if (m_signalingState == RTCSignalingState::Closed) {
         promise.reject(INVALID_STATE_ERR);
         return;
     }
@@ -240,7 +239,7 @@ void RTCPeerConnection::queuedCreateAnswer(RTCAnswerOptions&& options, SessionDe
 
 void RTCPeerConnection::queuedSetLocalDescription(RTCSessionDescription& description, DOMPromise<void>&& promise)
 {
-    if (m_signalingState == SignalingState::Closed) {
+    if (m_signalingState == RTCSignalingState::Closed) {
         promise.reject(INVALID_STATE_ERR);
         return;
     }
@@ -265,7 +264,7 @@ RefPtr<RTCSessionDescription> RTCPeerConnection::pendingLocalDescription() const
 
 void RTCPeerConnection::queuedSetRemoteDescription(RTCSessionDescription& description, DOMPromise<void>&& promise)
 {
-    if (m_signalingState == SignalingState::Closed) {
+    if (m_signalingState == RTCSignalingState::Closed) {
         promise.reject(INVALID_STATE_ERR);
         return;
     }
@@ -290,7 +289,7 @@ RefPtr<RTCSessionDescription> RTCPeerConnection::pendingRemoteDescription() cons
 
 void RTCPeerConnection::queuedAddIceCandidate(RTCIceCandidate& rtcCandidate, DOMPromise<void>&& promise)
 {
-    if (m_signalingState == SignalingState::Closed) {
+    if (m_signalingState == RTCSignalingState::Closed) {
         promise.reject(INVALID_STATE_ERR);
         return;
     }
@@ -298,68 +297,9 @@ void RTCPeerConnection::queuedAddIceCandidate(RTCIceCandidate& rtcCandidate, DOM
     m_backend->addIceCandidate(rtcCandidate, WTFMove(promise));
 }
 
-String RTCPeerConnection::signalingState() const
-{
-    switch (m_signalingState) {
-    case SignalingState::Stable:
-        return ASCIILiteral("stable");
-    case SignalingState::HaveLocalOffer:
-        return ASCIILiteral("have-local-offer");
-    case SignalingState::HaveRemoteOffer:
-        return ASCIILiteral("have-remote-offer");
-    case SignalingState::HaveLocalPrAnswer:
-        return ASCIILiteral("have-local-pranswer");
-    case SignalingState::HaveRemotePrAnswer:
-        return ASCIILiteral("have-remote-pranswer");
-    case SignalingState::Closed:
-        return ASCIILiteral("closed");
-    }
-
-    ASSERT_NOT_REACHED();
-    return String();
-}
-
-String RTCPeerConnection::iceGatheringState() const
-{
-    switch (m_iceGatheringState) {
-    case IceGatheringState::New:
-        return ASCIILiteral("new");
-    case IceGatheringState::Gathering:
-        return ASCIILiteral("gathering");
-    case IceGatheringState::Complete:
-        return ASCIILiteral("complete");
-    }
-
-    ASSERT_NOT_REACHED();
-    return String();
-}
-
-String RTCPeerConnection::iceConnectionState() const
-{
-    switch (m_iceConnectionState) {
-    case IceConnectionState::New:
-        return ASCIILiteral("new");
-    case IceConnectionState::Checking:
-        return ASCIILiteral("checking");
-    case IceConnectionState::Connected:
-        return ASCIILiteral("connected");
-    case IceConnectionState::Completed:
-        return ASCIILiteral("completed");
-    case IceConnectionState::Failed:
-        return ASCIILiteral("failed");
-    case IceConnectionState::Disconnected:
-        return ASCIILiteral("disconnected");
-    case IceConnectionState::Closed:
-        return ASCIILiteral("closed");
-    }
-
-    ASSERT_NOT_REACHED();
-    return String();
-}
-
 ExceptionOr<void> RTCPeerConnection::setConfiguration(RTCConfiguration&& configuration)
 {
-    if (m_signalingState == SignalingState::Closed)
+    if (m_signalingState == RTCSignalingState::Closed)
         return Exception { INVALID_STATE_ERR };
 
     Vector<MediaEndpointConfiguration::IceServerInfo> servers;
@@ -398,7 +338,7 @@ void RTCPeerConnection::getStats(MediaStreamTrack* selector, Ref<DeferredPromise
 
 ExceptionOr<Ref<RTCDataChannel>> RTCPeerConnection::createDataChannel(ScriptExecutionContext& context, String&& label, RTCDataChannelInit&& options)
 {
-    if (m_signalingState == SignalingState::Closed)
+    if (m_signalingState == RTCSignalingState::Closed)
         return Exception { INVALID_STATE_ERR };
 
     // FIXME: Check options
@@ -411,13 +351,13 @@ ExceptionOr<Ref<RTCDataChannel>> RTCPeerConnection::createDataChannel(ScriptExec
 
 void RTCPeerConnection::close()
 {
-    if (m_signalingState == SignalingState::Closed)
+    if (m_signalingState == RTCSignalingState::Closed)
         return;
 
     m_backend->stop();
 
-    m_iceConnectionState = IceConnectionState::Closed;
-    m_signalingState = SignalingState::Closed;
+    m_iceConnectionState = RTCIceConnectionState::Closed;
+    m_signalingState = RTCSignalingState::Closed;
 
     for (RTCRtpSender& sender : m_transceiverSet->senders())
         sender.stop();
@@ -470,15 +410,15 @@ void RTCPeerConnection::addTransceiver(Ref<RTCRtpTransceiver>&& transceiver)
     m_transceiverSet->append(WTFMove(transceiver));
 }
 
-void RTCPeerConnection::setSignalingState(SignalingState newState)
+void RTCPeerConnection::setSignalingState(RTCSignalingState newState)
 {
     m_signalingState = newState;
 }
 
-void RTCPeerConnection::updateIceGatheringState(IceGatheringState newState)
+void RTCPeerConnection::updateIceGatheringState(RTCIceGatheringState newState)
 {
     scriptExecutionContext()->postTask([protectedThis = makeRef(*this), newState](ScriptExecutionContext&) {
-        if (protectedThis->m_signalingState == SignalingState::Closed || protectedThis->m_iceGatheringState == newState)
+        if (protectedThis->m_signalingState == RTCSignalingState::Closed || protectedThis->m_iceGatheringState == newState)
             return;
 
         protectedThis->m_iceGatheringState = newState;
@@ -486,10 +426,10 @@ void RTCPeerConnection::updateIceGatheringState(IceGatheringState newState)
     });
 }
 
-void RTCPeerConnection::updateIceConnectionState(IceConnectionState newState)
+void RTCPeerConnection::updateIceConnectionState(RTCIceConnectionState newState)
 {
     scriptExecutionContext()->postTask([protectedThis = makeRef(*this), newState](ScriptExecutionContext&) {
-        if (protectedThis->m_signalingState == SignalingState::Closed || protectedThis->m_iceConnectionState == newState)
+        if (protectedThis->m_signalingState == RTCSignalingState::Closed || protectedThis->m_iceConnectionState == newState)
             return;
 
         protectedThis->m_iceConnectionState = newState;
@@ -500,7 +440,7 @@ void RTCPeerConnection::updateIceConnectionState(IceConnectionState newState)
 void RTCPeerConnection::scheduleNegotiationNeededEvent()
 {
     scriptExecutionContext()->postTask([protectedThis = makeRef(*this)](ScriptExecutionContext&) {
-        if (protectedThis->m_signalingState == SignalingState::Closed)
+        if (protectedThis->m_signalingState == RTCSignalingState::Closed)
             return;
         if (!protectedThis->m_backend->isNegotiationNeeded())
             return;

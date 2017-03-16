@@ -38,11 +38,9 @@
 #include "ActiveDOMObject.h"
 #include "EventTarget.h"
 #include "MediaStream.h"
-#include "RTCAnswerOptions.h"
 #include "RTCConfiguration.h"
 #include "RTCDataChannel.h"
 #include "RTCEnums.h"
-#include "RTCOfferOptions.h"
 #include "RTCRtpTransceiver.h"
 
 namespace WebCore {
@@ -55,6 +53,8 @@ class RTCPeerConnectionErrorCallback;
 class RTCSessionDescription;
 class RTCStatsCallback;
 
+struct RTCAnswerOptions;
+struct RTCOfferOptions;
 struct RTCRtpTransceiverInit {
     RTCRtpTransceiverDirection direction;
 };
@@ -64,10 +64,7 @@ public:
     static Ref<RTCPeerConnection> create(ScriptExecutionContext&);
     virtual ~RTCPeerConnection();
 
-    using AnswerOptions = RTCAnswerOptions;
     using DataChannelInit = RTCDataChannelInit;
-    using OfferAnswerOptions = RTCOfferAnswerOptions;
-    using OfferOptions = RTCOfferOptions;
 
     ExceptionOr<void> initializeWith(Document&, RTCConfiguration&&);
 
@@ -97,12 +94,12 @@ public:
     RefPtr<RTCSessionDescription> currentRemoteDescription() const;
     RefPtr<RTCSessionDescription> pendingRemoteDescription() const;
 
-    String signalingState() const;
+    RTCSignalingState signalingState() const { return m_signalingState; }
 
     void queuedAddIceCandidate(RTCIceCandidate&, DOMPromise<void>&&);
 
-    String iceGatheringState() const;
-    String iceConnectionState() const;
+    RTCIceGatheringState iceGatheringState() const { return m_iceGatheringState; }
+    RTCIceConnectionState iceConnectionState() const { return m_iceConnectionState; }
 
     const RTCConfiguration& getConfiguration() const { return m_configuration; }
     ExceptionOr<void> setConfiguration(RTCConfiguration&&);
@@ -125,17 +122,14 @@ public:
 
     // API used by PeerConnectionBackend and relatives
     void addTransceiver(Ref<RTCRtpTransceiver>&&);
-    void setSignalingState(PeerConnectionStates::SignalingState);
-    void updateIceGatheringState(PeerConnectionStates::IceGatheringState);
-    void updateIceConnectionState(PeerConnectionStates::IceConnectionState);
+    void setSignalingState(RTCSignalingState);
+    void updateIceGatheringState(RTCIceGatheringState);
+    void updateIceConnectionState(RTCIceConnectionState);
 
     void scheduleNegotiationNeededEvent();
 
     RTCRtpSenderClient& senderClient() { return *this; }
     void fireEvent(Event&);
-    PeerConnectionStates::SignalingState internalSignalingState() const { return m_signalingState; }
-    PeerConnectionStates::IceGatheringState internalIceGatheringState() const { return m_iceGatheringState; }
-    PeerConnectionStates::IceConnectionState internalIceConnectionState() const { return m_iceConnectionState; }
 
     void disableICECandidateFiltering() { m_backend->disableICECandidateFiltering(); }
     void enableICECandidateFiltering() { m_backend->enableICECandidateFiltering(); }
@@ -161,9 +155,9 @@ private:
     // RTCRtpSenderClient
     void replaceTrack(RTCRtpSender&, Ref<MediaStreamTrack>&&, DOMPromise<void>&&) final;
 
-    PeerConnectionStates::SignalingState m_signalingState { PeerConnectionStates::SignalingState::Stable };
-    PeerConnectionStates::IceGatheringState m_iceGatheringState { PeerConnectionStates::IceGatheringState::New };
-    PeerConnectionStates::IceConnectionState m_iceConnectionState { PeerConnectionStates::IceConnectionState::New };
+    RTCSignalingState m_signalingState { RTCSignalingState::Stable };
+    RTCIceGatheringState m_iceGatheringState { RTCIceGatheringState::New };
+    RTCIceConnectionState m_iceConnectionState { RTCIceConnectionState::New };
 
     std::unique_ptr<RtpTransceiverSet> m_transceiverSet { std::unique_ptr<RtpTransceiverSet>(new RtpTransceiverSet()) };
 

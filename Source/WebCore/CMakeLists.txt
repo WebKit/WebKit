@@ -241,6 +241,8 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/mediastream/RTCDataChannelEvent.idl
     Modules/mediastream/RTCIceCandidate.idl
     Modules/mediastream/RTCIceCandidateEvent.idl
+    Modules/mediastream/RTCIceConnectionState.idl
+    Modules/mediastream/RTCIceGatheringState.idl
     Modules/mediastream/RTCIceServer.idl
     Modules/mediastream/RTCOfferAnswerOptions.idl
     Modules/mediastream/RTCOfferOptions.idl
@@ -250,6 +252,7 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/mediastream/RTCRtpTransceiver.idl
     Modules/mediastream/RTCRtpTransceiverDirection.idl
     Modules/mediastream/RTCSessionDescription.idl
+    Modules/mediastream/RTCSignalingState.idl
     Modules/mediastream/RTCStatsReport.idl
     Modules/mediastream/RTCTrackEvent.idl
 

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2015 Ericsson AB. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -66,8 +67,6 @@ public:
         Failed
     };
 
-    using IceTransportState = PeerConnectionStates::IceTransportState;
-
     virtual void setConfiguration(MediaEndpointConfiguration&&) = 0;
 
     virtual void generateDtlsInfo() = 0;
@@ -98,7 +97,7 @@ public:
     virtual void gotDtlsFingerprint(const String& fingerprint, const String& fingerprintFunction) = 0;
     virtual void gotIceCandidate(const String& mid, IceCandidate&&) = 0;
     virtual void doneGatheringCandidates(const String& mid) = 0;
-    virtual void iceTransportStateChanged(const String& mid, MediaEndpoint::IceTransportState) = 0;
+    virtual void iceTransportStateChanged(const String& mid, RTCIceTransportState) = 0;
 
     virtual ~MediaEndpointClient() { }
 };

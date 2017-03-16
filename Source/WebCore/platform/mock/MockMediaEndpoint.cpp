@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2015 Ericsson AB. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -277,27 +278,27 @@ void MockMediaEndpoint::stepIceTransportStates()
 
     // Should go to:
     // 'checking'
-    m_iceTransportStateChanges.append(std::make_pair(m_mids[0], MediaEndpoint::IceTransportState::Checking));
-    m_iceTransportStateChanges.append(std::make_pair(m_mids[1], MediaEndpoint::IceTransportState::Checking));
-    m_iceTransportStateChanges.append(std::make_pair(m_mids[2], MediaEndpoint::IceTransportState::Checking));
+    m_iceTransportStateChanges.append(std::make_pair(m_mids[0], RTCIceTransportState::Checking));
+    m_iceTransportStateChanges.append(std::make_pair(m_mids[1], RTCIceTransportState::Checking));
+    m_iceTransportStateChanges.append(std::make_pair(m_mids[2], RTCIceTransportState::Checking));
 
     // 'connected'
-    m_iceTransportStateChanges.append(std::make_pair(m_mids[0], MediaEndpoint::IceTransportState::Connected));
-    m_iceTransportStateChanges.append(std::make_pair(m_mids[1], MediaEndpoint::IceTransportState::Completed));
-    m_iceTransportStateChanges.append(std::make_pair(m_mids[2], MediaEndpoint::IceTransportState::Closed));
+    m_iceTransportStateChanges.append(std::make_pair(m_mids[0], RTCIceTransportState::Connected));
+    m_iceTransportStateChanges.append(std::make_pair(m_mids[1], RTCIceTransportState::Completed));
+    m_iceTransportStateChanges.append(std::make_pair(m_mids[2], RTCIceTransportState::Closed));
 
     // 'completed'
-    m_iceTransportStateChanges.append(std::make_pair(m_mids[0], MediaEndpoint::IceTransportState::Completed));
+    m_iceTransportStateChanges.append(std::make_pair(m_mids[0], RTCIceTransportState::Completed));
 
     // 'failed'
-    m_iceTransportStateChanges.append(std::make_pair(m_mids[0], MediaEndpoint::IceTransportState::Failed));
+    m_iceTransportStateChanges.append(std::make_pair(m_mids[0], RTCIceTransportState::Failed));
 
     // 'disconnected'
-    m_iceTransportStateChanges.append(std::make_pair(m_mids[1], MediaEndpoint::IceTransportState::Disconnected));
-    m_iceTransportStateChanges.append(std::make_pair(m_mids[0], MediaEndpoint::IceTransportState::Closed));
+    m_iceTransportStateChanges.append(std::make_pair(m_mids[1], RTCIceTransportState::Disconnected));
+    m_iceTransportStateChanges.append(std::make_pair(m_mids[0], RTCIceTransportState::Closed));
 
     // 'new'
-    m_iceTransportStateChanges.append(std::make_pair(m_mids[1], MediaEndpoint::IceTransportState::Closed));
+    m_iceTransportStateChanges.append(std::make_pair(m_mids[1], RTCIceTransportState::Closed));
 
     // Reverse order to use takeLast() while keeping the above order
     m_iceTransportStateChanges.reverse();
