@@ -67,7 +67,6 @@ public:
         bool isCollapsed() const { return m_isCollapsed; }
         bool isCollapsible() const { return m_isCollapsible; }
         bool hasHyphen() const { return m_hasHyphen; }
-        unsigned wrappingWithHyphenCounter() const { return m_hyphenationCounter; }
 
         bool isEmpty() const { return start() == end() && !isLineBreak(); }
         TextFragment split(unsigned splitPosition, const TextFragmentIterator&);
@@ -95,7 +94,6 @@ public:
         bool m_isCollapsed { false };
         bool m_isCollapsible { false };
         bool m_hasHyphen { false };
-        unsigned m_hyphenationCounter { 0 };
     };
     TextFragment nextTextFragment(float xPosition = 0);
     void revertToEndOfFragment(const TextFragment&);
@@ -172,7 +170,6 @@ inline TextFragmentIterator::TextFragment TextFragmentIterator::TextFragment::sp
 {
     ASSERT(textFragmentIterator.style().shouldHyphenate);
     auto rightSide = split(hyphenPosition, textFragmentIterator);
-    rightSide.m_hyphenationCounter = m_hyphenationCounter + 1;
     m_hasHyphen = true;
     m_width += textFragmentIterator.style().hyphenStringWidth;
     return rightSide;

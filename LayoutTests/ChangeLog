@@ -1,3 +1,13 @@
+2017-03-16  Zalan Bujtas  <zalan@apple.com>
+
+        Simple line layout: Extend webkit-hyphenate-limit-lines to cover subsequent words.
+        https://bugs.webkit.org/show_bug.cgi?id=169631
+
+        Reviewed by Antti Koivisto.
+
+        * fast/text/simple-line-layout-hyphenation-limit-lines-accross-words-expected.html: Added.
+        * fast/text/simple-line-layout-hyphenation-limit-lines-accross-words.html: Added.
+
 2017-03-16  Youenn Fablet  <youenn@apple.com>
 
         [mac-wk2 debug] LayoutTest webrtc/video-mute.html is timing out
