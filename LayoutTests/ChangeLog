@@ -1,3 +1,16 @@
+2017-03-16  Daniel Bates  <dabates@apple.com>
+
+        Update test fast/events/pageshow-pagehide-on-back-cached-with-frames.html to ensure
+        that pageshow events are dispatched to frames in post-order traversal
+        <https://bugs.webkit.org/show_bug.cgi?id=169682>
+
+        Reviewed by Brady Eidson.
+
+        * fast/events/pageshow-pagehide-on-back-cached-with-frames-expected.txt:
+        * fast/events/pageshow-pagehide-on-back-cached-with-frames.html:
+        * fast/events/resources/pageshow-pagehide-subframe-cachable-2.html: Added.
+        * fast/events/resources/pageshow-pagehide-subsubframe-cachable-2.html: Added.
+
 2017-03-16  Youenn Fablet  <youenn@apple.com>
 
         Improve WebRTC track enabled support
