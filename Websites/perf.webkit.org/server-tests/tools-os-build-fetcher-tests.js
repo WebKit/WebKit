@@ -12,7 +12,8 @@ const MockLogger = require('./resources/mock-logger.js').MockLogger;
 
 
 describe('OSBuildFetcher', function() {
-    prepareServerTest(this);
+    this.timeout(5000);
+    TestServer.inject();
 
     beforeEach(function () {
         MockRemoteAPI.reset('http://build.webkit.org');
@@ -34,7 +35,7 @@ describe('OSBuildFetcher', function() {
     };
 
     const anotherSubCommitWithWebKit = {
-        'WebKit': {'revision': '141999',}
+        'WebKit': {'revision': '141999'}
     };
 
     const anotherSubCommitWithWebKitAndJavaScriptCore = {
@@ -102,6 +103,8 @@ describe('OSBuildFetcher', function() {
             assert.equal(fetcher._computeOrder('16d321'), 1603032100);
             assert.equal(fetcher._computeOrder('16D321z'), 1603032126);
             assert.equal(fetcher._computeOrder('16d321Z'), 1603032126);
+            assert.equal(fetcher._computeOrder('10.12.3 16D32'), 1603003200);
+            assert.equal(fetcher._computeOrder('10.12.3 Sierra16D32'), 1603003200);
         });
 
         it('should throw assertion error when given a invalid revision', () => {
@@ -132,12 +135,8 @@ describe('OSBuildFetcher', function() {
                 return fetchCommitsPromise;
             }).then((results) => {
                 assert.equal(results.length, 2);
-                assert.equal(results[0]['repository'], 'OSX');
-                assert.equal(results[0]['revision'], '16E321z');
-                assert.equal(results[0]['order'], 1604032126);
-                assert.equal(results[1]['repository'], 'OSX');
-                assert.equal(results[1]['revision'], '16F321');
-                assert.equal(results[1]['order'], 1605032100);
+                assert.deepEqual(results[0], {repository: 'OSX', order: 1604032126, revision: '16E321z'});
+                assert.deepEqual(results[1], {repository: 'OSX', order: 1605032100, revision: '16F321'});
             });
         });
     });
@@ -214,6 +213,16 @@ describe('OSBuildFetcher', function() {
     })
 
     describe('OSBuildFetcher.fetchAndReportNewBuilds', () => {
+
+        beforeEach(function () {
+            TestServer.database().connect({keepAlive: true});
+        });
+
+        afterEach(function () {
+            TestServer.database().disconnect();
+        });
+
+
         it('should report all build commits with sub-commits', () => {
             const logger = new MockLogger;
             const fetchter = new OSBuildFetcher(config, TestServer.remoteAPI(), slaveAuth, MockSubprocess, logger);

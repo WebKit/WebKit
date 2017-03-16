@@ -26,10 +26,13 @@ function syncLoop(options)
     let osConfigList = JSON.parse(fs.readFileSync(options['--os-config-json'], 'utf8'));
     let serverConfig = JSON.parse(fs.readFileSync(options['--server-config-json'], 'utf8'));
 
-    // v3 models use the global RemoteAPI to access the perf dashboard.
-    global.RemoteAPI = new RemoteAPI(serverConfig.server);
+    const remoteAPI = new RemoteAPI(serverConfig.server);
 
-    Promise.all(osConfigList.map(osConfig => new OSBuildFetcher(osConfig, global.RemoteAPI, new Subprocess, serverConfig.slave, console))).catch((error) => {
+    Promise.all(osConfigList.map(osConfig => new OSBuildFetcher(osConfig, remoteAPI, serverConfig.slave, new Subprocess, console))).then((fetchers) => {
+        return fetchers.reduce((promise, fetcher) => {
+            return promise.then(() => fetcher.fetchAndReportNewBuilds());
+        }, Promise.resolve());
+    }).catch((error) => {
         console.error(error);
         if (typeof(error.stack) == 'string') {
             for (let line of error.stack.split('\n'))
