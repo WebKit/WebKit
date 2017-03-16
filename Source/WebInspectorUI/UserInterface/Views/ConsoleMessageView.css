@@ -67,6 +67,10 @@
     -webkit-user-select: text;
 }
 
+.console-message-text > span > :matches(.console-message-enclosed, .console-message-preview, .console-message-preview-divider) {
+    -webkit-user-select: none;
+}
+
 .console-message.expandable .console-top-level-message::before {
     display: inline-block;
 
@@ -234,7 +238,6 @@
     font-family: -apple-system, sans-serif;
     font-size: 12px;
     font-weight: normal;
-    -webkit-user-select: text;
 }
 
 .console-message-extra-parameter .stack-trace {
@@ -243,10 +246,8 @@
 
 .console-message-location.call-frame {
     display: inline-block;
-    -webkit-user-select: text;
-    max-height: 16px;
-
     max-width: 50vw;
+    max-height: 16px;
     overflow: hidden;
     text-overflow: ellipsis;
 }

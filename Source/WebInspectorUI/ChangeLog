@@ -1,3 +1,17 @@
+2017-03-15  Devin Rousso  <webkit@devinrousso.com>
+
+        Web Inspector: Selecting text in the console does not do what I expect
+        https://bugs.webkit.org/show_bug.cgi?id=169570
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Views/ConsoleMessageView.css:
+        (.console-message-text > span > :matches(.console-message-enclosed, .console-message-preview, .console-message-preview-divider)):
+        (.console-message .console-message-location):
+        (.console-message-location.call-frame):
+        Prevent text selection on anything other than the message text.  The other information that
+        is not selectable can still be copied by selecting the message itself and copying.
+
 2017-03-15  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: WebSockets: Update Arrow Up icon to fit in with the rest of our iconography
