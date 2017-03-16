@@ -27,14 +27,9 @@
 
 #include "config.h"
 
-#include "URL.h"
 #include "NotImplemented.h"
-#include <float.h>
-#include <wtf/text/WTFString.h>
-
-/********************************************************/
-/* Completely empty stubs (mostly to allow DRT to run): */
-/********************************************************/
+#include "URL.h"
+#include <wtf/Forward.h>
 
 namespace WebCore {
 
@@ -45,14 +40,8 @@ void getSupportedKeySizes(Vector<String>&)
 
 String signedPublicKeyAndChallengeString(unsigned, const String&, const URL&)
 {
-    return String();
-}
-
-float userIdleTime()
-{
-    // Return an arbitrarily high userIdleTime so that releasing pages from the page cache isn't postponed.
     notImplemented();
-    return FLT_MAX;
+    return { };
 }
 
-}
+} // namespace WebCore

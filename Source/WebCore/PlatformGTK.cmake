@@ -81,6 +81,7 @@ list(APPEND WebCore_SOURCES
     platform/glib/KeyedDecoderGlib.cpp
     platform/glib/KeyedEncoderGlib.cpp
     platform/glib/MainThreadSharedTimerGLib.cpp
+    platform/glib/SSLKeyGeneratorGLib.cpp
     platform/glib/SharedBufferGlib.cpp
 
     platform/graphics/GLContext.cpp
@@ -142,7 +143,6 @@ list(APPEND WebCore_SOURCES
     platform/gtk/PasteboardGtk.cpp
     platform/gtk/ScrollAnimatorGtk.cpp
     platform/gtk/SelectionData.cpp
-    platform/gtk/TemporaryLinkStubs.cpp
     platform/gtk/UserAgentGtk.cpp
 
     platform/image-decoders/cairo/ImageBackingStoreCairo.cpp
