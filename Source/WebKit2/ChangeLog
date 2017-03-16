@@ -1,3 +1,11 @@
+2017-03-16  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed follow-up to r213787. Move the DatabaseProcess build targets
+        to the top of WebKit2_SOURCES list in order to maintain the alphabetical
+        order.
+
+        * CMakeLists.txt:
+
 2017-03-15  Alex Christensen  <achristensen@webkit.org>
 
         Fix CMake build.
