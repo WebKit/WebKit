@@ -1,3 +1,25 @@
+2017-03-16  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r213737. rdar://problem/30983702
+
+    2017-03-10  Brent Fulgham  <bfulgham@apple.com>
+
+            [Win] Re-export a few symbols for backwards compatibility
+            https://bugs.webkit.org/show_bug.cgi?id=169490
+            <rdar://problem/30983623>
+
+            Reviewed by Dean Jackson.
+
+            Re-introduce a workaround that re-exports a few JavaScriptCore functions
+            that had been erroneously exported by WebKit in older builds. This
+            is needed so that we do not break certain old software still being used.
+
+            * WebKitDLL.cpp:
+            (DllMain): Bind functions at startup.
+            (bindJavaScriptTrampoline): Find JavaScriptCore library functions and
+            re-export them from WebKit.dll.
+            * WebKitDLL.h: Only advertise these functions when building WebKt itself.
+
 2017-02-28  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] REGRESSION(r211254): IWebPreferencesPrivate binary API broken
