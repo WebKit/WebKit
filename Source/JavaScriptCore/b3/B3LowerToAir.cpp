@@ -2764,7 +2764,7 @@ private:
         case WasmAddress: {
             WasmAddressValue* address = m_value->as<WasmAddressValue>();
 
-            append(Add64, Arg(address->pinnedGPR()), tmp(address));
+            append(Add64, Arg(address->pinnedGPR()), tmp(m_value->child(0)), tmp(address));
             return;
         }
 

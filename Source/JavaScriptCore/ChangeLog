@@ -1,3 +1,16 @@
+2017-03-16  Michael Saboff  <msaboff@apple.com>
+
+        WebAssembly: function-tests/load-offset.js fails on ARM64
+        https://bugs.webkit.org/show_bug.cgi?id=169724
+
+        Reviewed by Keith Miller.
+
+        We need to use the two source version of Add64 to create a Wasm address with the
+        other source the first child.
+
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::lower):
+
 2017-03-16  Jon Lee  <jonlee@apple.com>
 
         Add FIXMEs to update WebRTC
