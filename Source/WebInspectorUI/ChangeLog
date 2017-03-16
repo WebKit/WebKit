@@ -1,3 +1,75 @@
+2017-03-16  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: RTL: add FindBanner support for RTL layout
+        https://bugs.webkit.org/show_bug.cgi?id=168723
+
+        Reviewed by Timothy Hatcher.
+
+        Due to the large number of CSS tricks used by this widget, adding RTL
+        support involves changing a large number of rules. The important parts:
+
+        - Use '.segmented.{previous,next}-result' instead of '.segmented.
+        {left,right}', this makes the style rules way less confusing for RTL.
+
+        - Flip icons so icons look like "< >" but actions are reversed.
+
+        - Get rid of the weird expanding button divider. This is impossible
+        to mirror with the existing adjacent sibling combinator, and it does
+        not match the system appearance. Just replace the mini-divider with a
+        full divider and remove related dynamic rules that trigger on :active.
+
+        - Always keep the button divider between next/previous on the rightmost
+        button, to avoid subtle differences between LTR and RTL.
+
+        - Fix some mistakes where we weren't using --border-color and also
+        didn't adjust the handcoded border color for the inactive window case.
+
+        * UserInterface/Views/FindBanner.css:
+        (.find-banner):
+        (body[dir=ltr] .find-banner > :first-child,):
+        (body[dir=ltr] .find-banner > :last-child,):
+        (.find-banner > input[type="search"]):
+        (body[dir=ltr] .find-banner > input[type="search"]):
+        (body[dir=rtl] .find-banner > input[type="search"]):
+        (.find-banner > button:active:not(:disabled)):
+        (.find-banner > button.segmented):
+        (.find-banner > button.segmented.previous-result):
+        (body[dir=ltr] .find-banner > button.segmented.previous-result):
+        (body[dir=rtl] .find-banner > button.segmented.previous-result):
+        (body[dir=ltr] .find-banner > button.segmented.previous-result > .glyph):
+        (body[dir=rtl] .find-banner > button.segmented.previous-result > .glyph):
+        (body[dir=ltr] .find-banner > button.segmented.previous-result:active:not(:disabled) > .glyph):
+        (body[dir=rtl] .find-banner > button.segmented.previous-result:active:not(:disabled) > .glyph):
+        (.find-banner > button.segmented.next-result):
+        (body[dir=ltr] .find-banner > button.segmented.next-result):
+        (body[dir=rtl] .find-banner > button.segmented.next-result):
+        (body[dir=ltr] .find-banner > button.segmented.next-result > .glyph):
+        (body[dir=rtl] .find-banner > button.segmented.next-result > .glyph):
+        (body[dir=ltr] .find-banner > button.segmented.next-result:active:not(:disabled) > .glyph):
+        (body[dir=rtl] .find-banner > button.segmented.next-result:active:not(:disabled) > .glyph):
+        (.find-banner.console-find-banner > input[type="search"]):
+        (body[dir=ltr] .find-banner.console-find-banner > input[type="search"]):
+        (body[dir=rtl] .find-banner.console-find-banner > input[type="search"]):
+        (body[dir=ltr] .find-banner.console-find-banner > input[type="search"]::-webkit-textfield-decoration-container):
+        (body[dir=rtl] .find-banner.console-find-banner > input[type="search"]::-webkit-textfield-decoration-container):
+        (.find-banner > :first-child): Deleted.
+        (.find-banner > :last-child): Deleted.
+        (.find-banner > button.segmented.left): Deleted.
+        (.find-banner > button:not(:active).segmented.right:before): Deleted.
+        (.find-banner > button.segmented.left:active + button.segmented.right,): Deleted.
+        (.find-banner > button.segmented.left:active + button.segmented.right:before): Deleted.
+        (.find-banner > button.segmented.left > .glyph): Deleted.
+        (.find-banner > button.segmented.left:active:not(:disabled) > .glyph): Deleted.
+        (.find-banner > button.segmented.right): Deleted.
+        (.find-banner > button.segmented.right > .glyph): Deleted.
+        (.find-banner > button.segmented.right:active:not(:disabled) > .glyph): Deleted.
+        (.find-banner.console-find-banner > input[type="search"]::-webkit-textfield-decoration-container): Deleted.
+
+        * UserInterface/Views/FindBanner.js:
+        (WebInspector.FindBanner):
+        Change left and right to logical names for the buttons, and inline
+        some style classes with single uses.
+
 2017-03-15  Devin Rousso  <webkit@devinrousso.com>
 
         Web Inspector: Selecting text in the console does not do what I expect

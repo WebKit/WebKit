@@ -42,6 +42,8 @@
     transition-timing-function: ease-in;
 
     z-index: var(--z-index-header);
+
+    --find-banner-outer-child-margin: 8px;
 }
 
 .find-banner.showing {
@@ -64,16 +66,19 @@
     transition-timing-function: ease-out;
 }
 
-.find-banner > :first-child {
-    margin-left: 8px !important;
+body[dir=ltr] .find-banner > :first-child,
+body[dir=rtl] .find-banner > :last-child {
+    margin-left: var(--find-banner-outer-child-margin) !important;
 }
 
-.find-banner > :last-child {
-    margin-right: 8px !important;
+body[dir=ltr] .find-banner > :last-child,
+body[dir=rtl] .find-banner > :first-child {
+    margin-right: var(--find-banner-outer-child-margin) !important;
 }
 
 .find-banner > input[type="search"] {
-    margin: 1px -1px 1px 6px;
+    margin-top: 1px;
+    margin-bottom: 1px;
 
     width: 30vw;
     min-width: 143px;
@@ -86,8 +91,33 @@
     outline: none;
 
     border: 1px solid var(--border-color);
-    border-radius: 4px 0 0 4px;
+
     background-color: white;
+
+    --find-banner-search-box-margin-start: 6px;
+    --find-banner-search-box-margin-end: -1px;
+    --find-banner-search-box-border-radius-start: 4px;
+    --find-banner-search-box-border-radius-end: 0;
+}
+
+body[dir=ltr] .find-banner > input[type="search"] {
+    margin-left: var(--find-banner-search-box-margin-start);
+    margin-right: var(--find-banner-search-box-margin-end);
+
+    border-top-left-radius: var(--find-banner-search-box-border-radius-start);
+    border-bottom-left-radius: var(--find-banner-search-box-border-radius-start);
+    border-top-right-radius: var(--find-banner-search-box-border-radius-end);
+    border-bottom-right-radius: var(--find-banner-search-box-border-radius-end);
+}
+
+body[dir=rtl] .find-banner > input[type="search"] {
+    margin-left: var(--find-banner-search-box-margin-end);
+    margin-right: var(--find-banner-search-box-margin-start);
+
+    border-top-left-radius: var(--find-banner-search-box-border-radius-end);
+    border-bottom-left-radius: var(--find-banner-search-box-border-radius-end);
+    border-top-right-radius: var(--find-banner-search-box-border-radius-start);
+    border-bottom-right-radius: var(--find-banner-search-box-border-radius-start);
 }
 
 .find-banner > button {
@@ -125,62 +155,78 @@
 }
 
 .find-banner > button:active:not(:disabled) {
-    border: 1px solid var(--border-color-dark);
+    border: 1px solid var(--border-color);
     background-color: var(--button-background-color-pressed);
 }
 
 .find-banner > button.segmented {
     margin: 1px 0;
+
+    --find-banner-previous-result-border-end: solid 1px var(--border-color);
 }
 
-.find-banner > button.segmented.left {
+.find-banner > button.segmented.previous-result {
     border-radius: 0;
-    border-right: none;
 }
 
-.find-banner > button:not(:active).segmented.right:before {
-    content: "";
-    position: relative;
-    display: block;
-    float: left;
-    width: 1px;
-    height: 13px;
-    right: 6px;
-    top: -1px;
-    background-color: var(--border-color);
+body[dir=ltr] .find-banner > button.segmented.previous-result {
+    border-right: var(--find-banner-previous-result-border-end);
 }
 
-.find-banner > button.segmented.left:active + button.segmented.right,
-.find-banner > button.segmented.right:active {
-    border-left: solid 1px var(--border-color-dark);
+body[dir=rtl] .find-banner > button.segmented.previous-result {
+    border-left: var(--find-banner-previous-result-border-end);
 }
 
-.find-banner > button.segmented.left:active + button.segmented.right:before {
-    display: none;
-}
-
-.find-banner > button.segmented.left > .glyph {
+body[dir=ltr] .find-banner > button.segmented.previous-result > .glyph {
     background-image: url(../Images/BackForwardArrows.svg#left-arrow-normal);
 }
 
-.find-banner > button.segmented.left:active:not(:disabled) > .glyph {
+body[dir=rtl] .find-banner > button.segmented.previous-result > .glyph {
+    background-image: url(../Images/BackForwardArrows.svg#right-arrow-normal);
+}
+
+body[dir=ltr] .find-banner > button.segmented.previous-result:active:not(:disabled) > .glyph {
     background-image: url(../Images/BackForwardArrows.svg#left-arrow-active);
 }
 
-.find-banner > button.segmented.right {
-    border-top-left-radius: 0;
-    border-bottom-left-radius: 0;
-    margin-left: -1px;
-    border-left: none;
-}
-
-.find-banner > button.segmented.right > .glyph {
-    background-image: url(../Images/BackForwardArrows.svg#right-arrow-normal);
-    margin-left: 1px;
-}
-
-.find-banner > button.segmented.right:active:not(:disabled) > .glyph {
+body[dir=rtl] .find-banner > button.segmented.previous-result:active:not(:disabled) > .glyph {
     background-image: url(../Images/BackForwardArrows.svg#right-arrow-active);
+}
+
+.find-banner > button.segmented.next-result {
+    --next-result-border-style-start: none;
+    --next-result-border-radius-start: 0;
+    --next-result-glyph-margin-start: 1px;
+}
+
+body[dir=ltr] .find-banner > button.segmented.next-result {
+    border-top-left-radius: var(--next-result-border-radius-start);
+    border-bottom-left-radius: var(--next-result-border-radius-start);
+    border-left: var(--next-result-border-style-start);
+}
+
+body[dir=rtl] .find-banner > button.segmented.next-result {
+    border-top-right-radius: var(--next-result-border-radius-start);
+    border-bottom-right-radius: var(--next-result-border-radius-start);
+    border-right: var(--next-result-border-style-start);
+}
+
+body[dir=ltr] .find-banner > button.segmented.next-result > .glyph {
+    background-image: url(../Images/BackForwardArrows.svg#right-arrow-normal);
+    margin-left: var(--next-result-glyph-margin-start);
+}
+
+body[dir=rtl] .find-banner > button.segmented.next-result > .glyph {
+    background-image: url(../Images/BackForwardArrows.svg#left-arrow-normal);
+    margin-right: var(--next-result-glyph-margin-start);
+}
+
+body[dir=ltr] .find-banner > button.segmented.next-result:active:not(:disabled) > .glyph {
+    background-image: url(../Images/BackForwardArrows.svg#right-arrow-active);
+}
+
+body[dir=rtl] .find-banner > button.segmented.next-result:active:not(:disabled) > .glyph {
+    background-image: url(../Images/BackForwardArrows.svg#left-arrow-active);
 }
 
 .find-banner > button.segmented {
@@ -211,10 +257,28 @@ body .find-banner.console-find-banner {
 .find-banner.console-find-banner > input[type="search"] {
     padding-top: 0;
     outline: none;
-    border: 1px solid hsla(0, 0%, 0%, 0.35);
-    border-radius: 3px 0 0 3px;
+    border: 1px solid var(--border-color);
     background-color: hsla(0, 0%, 100%, 0.2);
     background-clip: padding-box;
+
+    --console-find-banner-search-box-border-radius-start: 3px;
+    --console-find-banner-search-box-border-radius-end: 0;
+
+    --console-find-banner-search-box-decoration-margin-start: 4px;
+}
+
+body[dir=ltr] .find-banner.console-find-banner > input[type="search"] {
+    border-top-left-radius: var(--console-find-banner-search-box-border-radius-start);
+    border-bottom-left-radius: var(--console-find-banner-search-box-border-radius-start);
+    border-top-right-radius: var(--console-find-banner-search-box-border-radius-end);
+    border-bottom-right-radius: var(--console-find-banner-search-box-border-radius-end);
+}
+
+body[dir=rtl] .find-banner.console-find-banner > input[type="search"] {
+    border-top-left-radius: var(--console-find-banner-search-box-border-radius-end);
+    border-bottom-left-radius: var(--console-find-banner-search-box-border-radius-end);
+    border-top-right-radius: var(--console-find-banner-search-box-border-radius-start);
+    border-bottom-right-radius: var(--console-find-banner-search-box-border-radius-start);
 }
 
 .find-banner.console-find-banner > :matches(input[type="search"], button) {
@@ -225,8 +289,12 @@ body .find-banner.console-find-banner {
     color: hsla(0, 0%, 0%, 0.35);
 }
 
-.find-banner.console-find-banner > input[type="search"]::-webkit-textfield-decoration-container {
-    margin-left: 4px;
+body[dir=ltr] .find-banner.console-find-banner > input[type="search"]::-webkit-textfield-decoration-container {
+    margin-left: var(--console-find-banner-search-box-decoration-margin-start);
+}
+
+body[dir=rtl] .find-banner.console-find-banner > input[type="search"]::-webkit-textfield-decoration-container {
+    margin-right: var(--console-find-banner-search-box-decoration-margin-start);
 }
 
 .find-banner.console-find-banner > input[type="search"]:focus {

@@ -51,8 +51,7 @@ WebInspector.FindBanner = class FindBanner extends WebInspector.NavigationItem
         this.element.appendChild(this._inputField);
 
         this._previousResultButton = document.createElement("button");
-        this._previousResultButton.classList.add(WebInspector.FindBanner.SegmentedButtonStyleClassName);
-        this._previousResultButton.classList.add(WebInspector.FindBanner.LeftSegmentButtonStyleClassName);
+        this._previousResultButton.classList.add("segmented", "previous-result");
         this._previousResultButton.disabled = true;
         this._previousResultButton.addEventListener("click", this._previousResultButtonClicked.bind(this));
         this.element.appendChild(this._previousResultButton);
@@ -62,8 +61,7 @@ WebInspector.FindBanner = class FindBanner extends WebInspector.NavigationItem
         this._previousResultButton.appendChild(previousResultButtonGlyphElement);
 
         this._nextResultButton = document.createElement("button");
-        this._nextResultButton.classList.add(WebInspector.FindBanner.SegmentedButtonStyleClassName);
-        this._nextResultButton.classList.add(WebInspector.FindBanner.RightSegmentButtonStyleClassName);
+        this._nextResultButton.classList.add("segmented", "next-result");
         this._nextResultButton.disabled = true;
         this._nextResultButton.addEventListener("click", this._nextResultButtonClicked.bind(this));
         this.element.appendChild(this._nextResultButton);
@@ -316,9 +314,6 @@ WebInspector.FindBanner.SupportsFindBannerStyleClassName = "supports-find-banner
 WebInspector.FindBanner.ShowingFindBannerStyleClassName = "showing-find-banner";
 WebInspector.FindBanner.NoTransitionStyleClassName = "no-find-banner-transition";
 WebInspector.FindBanner.ShowingStyleClassName = "showing";
-WebInspector.FindBanner.SegmentedButtonStyleClassName = "segmented";
-WebInspector.FindBanner.LeftSegmentButtonStyleClassName = "left";
-WebInspector.FindBanner.RightSegmentButtonStyleClassName = "right";
 WebInspector.FindBanner.SegmentGlyphStyleClassName = "glyph";
 
 WebInspector.FindBanner.Event = {
