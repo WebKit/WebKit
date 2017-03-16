@@ -1,3 +1,16 @@
+2017-03-15  Guillaume Emont  <guijemont@igalia.com>
+
+        [jsc][mips] Fix compilation error introduced in r213652
+        https://bugs.webkit.org/show_bug.cgi?id=169723
+
+        Reviewed by Mark Lam.
+
+        The new replaceWithBkpt() contains a lapsus in it
+        (s/code/instructionStart) and won't compile.
+
+        * assembler/MIPSAssembler.h:
+        (JSC::MIPSAssembler::replaceWithBkpt):
+
 2017-03-15  Daniel Ehrenberg  <littledan@chromium.org>
 
         Switch back to ISO 4217 for Intl CurrencyDigits data
