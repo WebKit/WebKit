@@ -6,7 +6,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 *** A remote description is needed before a candidate can be added
 PASS pc.remoteDescription is null
-PASS promise pc.addIceCandidate(new RTCIceCandidate({candidate: 'foo', sdpMid: 0})) rejected with InvalidStateError (DOM Exception 11): No remote description set
+PASS promise pc.addIceCandidate(new RTCIceCandidate({candidate: 'foo', sdpMid: 0})) rejected with OperationError (DOM Exception 34): Expect line: candidate:<candidate-str>
 PASS Remote description set
 
 *** Define sdpMid, badSdpMid, sdpMLineIndex and badSdpMLineIndex for testing

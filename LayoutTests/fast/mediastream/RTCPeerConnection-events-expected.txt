@@ -3,12 +3,7 @@ Tests that RTCPeerConnection event callbacks are async so that for example close
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS gotStream was called.
-PASS gotStream done.
-PASS onNegotiationNeeded was called.
-PASS onNegotiationNeeded done.
-PASS onStateChange was called.
-PASS pc.signalingState is 'closed'
+FAIL webkitGetUserMedia threw exception :TypeError: navigator.webkitGetUserMedia is not a function. (In 'navigator.webkitGetUserMedia(dictionary, callback, error)', 'navigator.webkitGetUserMedia' is undefined)
 PASS successfullyParsed is true
 
 TEST COMPLETE

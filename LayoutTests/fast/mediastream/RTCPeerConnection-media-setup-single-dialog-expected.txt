@@ -21,46 +21,14 @@ A: add media
 A: create offer
 A: got offer, set it as local description
 A: local offer set
-PASS pcA.signalingState is 'have-local-offer'
-PASS pcA.pendingLocalDescription is an instance of RTCSessionDescription
+FAIL pcA.signalingState should be have-local-offer. Was stable.
+FAIL pcA.pendingLocalDescription is not an instance of RTCSessionDescription
 PASS pcA.currentLocalDescription is null
 
 A: send offer to B
 A --- offer --> B
 B: got offer from A, set it as remote description
-----------
-PASS B: got remote track event
-----------
-B: remote offer set
-PASS pcB.signalingState is 'have-remote-offer'
-PASS pcB.pendingRemoteDescription is an instance of RTCSessionDescription
-PASS pcB.currentRemoteDescription is null
-
-B: add media (to include in answer)
-B: create answer
-B: got answer, set it as local description
-B: local answer set
-PASS pcB.signalingState is 'stable'
-PASS pcB.pendingLocalDescription is null
-PASS pcB.currentLocalDescription is an instance of RTCSessionDescription
-PASS pcB.pendingRemoteDescription is null
-FAIL pcB.currentRemoetDescription is not an instance of RTCSessionDescription
-
-B: send answer to A
-A <-- answer -- B
-A: got answer from B, set it as remote description
-----------
-PASS A: got remote track event
-----------
-A: remote answer set
-PASS pcA.signalingState is 'stable'
-PASS pcA.pendingLocalDescription is null
-PASS pcA.currentLocalDescription is an instance of RTCSessionDescription
-PASS pcA.pendingRemoteDescription is null
-FAIL pcA.currentRemoetDescription is not an instance of RTCSessionDescription
-
-PASS Offer/answer dialog completed
-
+FAIL Error in promise chain: TypeError: Argument 1 ('description') to RTCPeerConnection.setRemoteDescription must be an instance of RTCSessionDescription
 PASS successfullyParsed is true
 
 TEST COMPLETE

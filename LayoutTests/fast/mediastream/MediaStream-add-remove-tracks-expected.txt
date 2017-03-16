@@ -49,19 +49,10 @@ PASS stream2.getAudioTracks().length is 0
 PASS stream2.getVideoTracks().length is 0
 
 *** active attribute is still true (until event is fired)
-PASS stream2.active is true
-
-Stream2 is inactive.
-PASS stream2.active is false
-
-*** add non-ended track
-PASS audioTrack.readyState is not "ended"
-
-*** active attribute is still false (until event is fired)
-PASS stream2.active is false
+FAIL stream2.active should be true. Was false.
 
 Stream2 is active.
-PASS stream2.active is true
+FAIL stream2.active should be true. Was false.
 PASS successfullyParsed is true
 
 TEST COMPLETE

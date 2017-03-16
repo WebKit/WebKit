@@ -21,85 +21,14 @@ A: add media
 A: create offer
 A: got offer, set it as local description
 A: local offer set
-PASS pcA.signalingState is 'have-local-offer'
-PASS pcA.pendingLocalDescription is an instance of RTCSessionDescription
+FAIL pcA.signalingState should be have-local-offer. Was stable.
+FAIL pcA.pendingLocalDescription is not an instance of RTCSessionDescription
 PASS pcA.currentLocalDescription is null
 
 A: send offer to B
 A --- offer --> B
 B: got offer from A, set it as remote description
-----------
-PASS B: got remote track event
-----------
-B: remote offer set
-PASS pcB.signalingState is 'have-remote-offer'
-PASS pcB.pendingRemoteDescription is an instance of RTCSessionDescription
-PASS pcB.currentRemoteDescription is null
-
-B: create answer (without local media)
-B: got answer, set it as local description
-B: local answer set
-PASS pcB.signalingState is 'stable'
-PASS pcB.pendingLocalDescription is null
-PASS pcB.currentLocalDescription is an instance of RTCSessionDescription
-PASS pcB.pendingRemoteDescription is null
-PASS pcB.currentRemoteDescription is an instance of RTCSessionDescription
-
-B: send answer to A
-A <-- answer -- B
-A: got answer from B, set it as remote description
-A: remote answer set
-PASS pcA.signalingState is 'stable'
-PASS pcA.pendingLocalDescription is null
-PASS pcA.currentLocalDescription is an instance of RTCSessionDescription
-PASS pcA.pendingRemoteDescription is null
-PASS pcA.currentRemoteDescription is an instance of RTCSessionDescription
-
-PASS First offer/answer dialog completed
-========================================
-
-PASS pcB.getSenders().length is 1
-B: add media (should reuse sender)
-PASS pcB.getSenders().length is 1
-B: create offer
-B: got offer, set it as local description
-B: local offer set (session update so we have both pending and current local descriptions)
-PASS pcB.signalingState is 'have-local-offer'
-PASS pcB.pendingLocalDescription is an instance of RTCSessionDescription
-PASS pcB.currentLocalDescription is an instance of RTCSessionDescription
-
-B: send offer to A
-A <-- offer --- B
-A: got offer from B, set it as remote description
-----------
-PASS A: got remote track event
-----------
-A: remote offer set (session update so we have both pending and current remote descriptions)
-PASS pcA.signalingState is 'have-remote-offer'
-PASS pcA.pendingRemoteDescription is an instance of RTCSessionDescription
-PASS pcA.currentRemoteDescription is an instance of RTCSessionDescription
-
-A: create answer
-A: got answer, set it as local description
-A: local answer set
-PASS pcA.signalingState is 'stable'
-PASS pcA.pendingLocalDescription is null
-PASS pcA.currentLocalDescription is an instance of RTCSessionDescription
-PASS pcA.pendingRemoteDescription is null
-PASS pcA.currentRemoteDescription is an instance of RTCSessionDescription
-
-A: send answer to B
-A --- answer -> B
-B: got answer from A, set it as remote description
-B: remote answer set
-PASS pcB.signalingState is 'stable'
-PASS pcB.pendingLocalDescription is null
-PASS pcB.currentLocalDescription is an instance of RTCSessionDescription
-PASS pcB.pendingRemoteDescription is null
-PASS pcB.currentRemoteDescription is an instance of RTCSessionDescription
-
-PASS Second offer/answer dialog completed
-
+FAIL Error in promise chain: TypeError: Argument 1 ('description') to RTCPeerConnection.setRemoteDescription must be an instance of RTCSessionDescription
 PASS successfullyParsed is true
 
 TEST COMPLETE

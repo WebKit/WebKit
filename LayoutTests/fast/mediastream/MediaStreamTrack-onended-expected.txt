@@ -3,22 +3,7 @@ Tests MediaStreamTrack::onended callback.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-
-PASS gotStream was called.
-PASS track.readyState == "ended" is false
-PASS trackClone.readyState == "ended" is false
-
-PASS streamEnded was called.
-PASS track.readyState == "ended" is true
-PASS trackClone.readyState == "ended" is true
-
-PASS gotStream2 was called.
-PASS track.readyState == "ended" is false
-PASS trackClone.readyState == "ended" is false
-
-PASS streamEnded2 was called.
-PASS track.readyState == "ended" is true
-PASS trackClone.readyState == "ended" is true
+FAIL webkitGetUserMedia threw exception :TypeError: navigator.webkitGetUserMedia is not a function. (In 'navigator.webkitGetUserMedia(dictionary, callback, error)', 'navigator.webkitGetUserMedia' is undefined)
 PASS successfullyParsed is true
 
 TEST COMPLETE

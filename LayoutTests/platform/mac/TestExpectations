@@ -156,23 +156,12 @@ fast/forms/week
 webkit.org/b/136452 http/tests/security/contentTypeOptions
 
 # Media Stream API is not fully supported.
-fast/mediastream/MediaStream-add-remove-tracks.html
 fast/mediastream/MediaStream-add-ended-tracks.html
-fast/mediastream/MediaStreamTrack-onended.html
-fast/mediastream/MediaStreamTrack.html
 
-# WebRTC is not supported yet.
 fast/mediastream/RTCPeerConnection-dtmf.html [ Skip ]
-fast/mediastream/RTCPeerConnection-events.html [ Skip ]
 fast/mediastream/RTCPeerConnection-ice.html [ Skip ]
 fast/mediastream/RTCPeerConnection-media-setup-callbacks-single-dialog.html [ Skip ]
 fast/mediastream/RTCPeerConnection-stats.html [ Skip ]
-fast/mediastream/RTCPeerConnection-statsSelector.html [ Skip ]
-fast/mediastream/RTCPeerConnection-setRemoteDescription-offer.html [ Skip ]
-fast/mediastream/RTCPeerConnection-remotely-assigned-transceiver-mid.html [ Skip ]
-fast/mediastream/RTCPeerConnection-media-setup-two-dialogs.html [ Skip ]
-fast/mediastream/RTCPeerConnection-media-setup-single-dialog.html [ Skip ]
-fast/mediastream/RTCPeerConnection-setLocalDescription-offer.html [ Skip ]
 
 # Asserts in debug.
 [ Debug ] fast/images/large-size-image-crash.html [ Skip ]

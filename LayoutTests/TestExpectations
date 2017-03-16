@@ -714,20 +714,12 @@ media/session [ Skip ]
 [ Debug ] webrtc/peer-connection-audio-mute2.html [ Pass Failure ]
 [ Debug ] webrtc/peer-connection-remote-audio-mute2.html [ Pass Failure ]
 fast/mediastream/getUserMedia-webaudio.html [ Skip ]
-fast/mediastream/RTCPeerConnection-AddRemoveStream.html [ Skip ]
 fast/mediastream/RTCPeerConnection-closed-state.html [ Skip ]
 fast/mediastream/RTCPeerConnection-iceconnectionstatechange-event.html [ Skip ]
 fast/mediastream/RTCPeerConnection-more-media-to-negotiate.html [ Skip ]
-fast/mediastream/RTCPeerConnection-onnegotiationneeded.html [ Skip ]
 fast/mediastream/RTCPeerConnection-overloaded-operations-params.html [ Skip ]
 fast/mediastream/RTCRtpSender-replaceTrack.html [ Skip ]
 fast/mediastream/RTCPeerConnection-icecandidate-event.html [ Pass Failure ]
-
-# See webkit.org/b/168736
-fast/mediastream/RTCPeerConnection-addIceCandidate.html [ Failure  ]
-imported/w3c/web-platform-tests/webrtc/datachannel-emptystring.html [ Failure  ]
-imported/w3c/web-platform-tests/webrtc/no-media-call.html [ Failure  ]
-imported/w3c/web-platform-tests/webrtc/promises-call.html [ Failure  ]
 
 # Need updating wptserve
 imported/w3c/web-platform-tests/XMLHttpRequest/setrequestheader-content-type.htm [ Skip ]

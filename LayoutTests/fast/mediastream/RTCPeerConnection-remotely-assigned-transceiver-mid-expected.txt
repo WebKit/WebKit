@@ -8,18 +8,11 @@ A's transceiver is not yet associated with a media description and should have a
 PASS pcA.getTransceivers()[0].mid is null
 A: local offer set (mid gets defined)
 midAssignedByA = pcA.getTransceivers()[0].mid
-PASS midAssignedByA !== null is true
+FAIL midAssignedByA !== null should be true. Was false.
 pcB.addTrack(stream.getAudioTracks()[0], stream)
 B's transceiver is not yet associated with a media description and should have a null mid
 PASS pcB.getTransceivers()[0].mid is null
-PASS B: got remote track event
-PASS event.track is an instance of MediaStreamTrack
-B: remote offer set (mid gets defined)
-B's transceiver should get its mid from the remote side (A)
-PASS pcB.getTransceivers()[0].mid is midAssignedByA
-PASS A: got remote track event
-PASS Offer/answer dialog completed
-PASS B: remote track unmute event
+FAIL Error in promise chain: TypeError: Argument 1 ('description') to RTCPeerConnection.setRemoteDescription must be an instance of RTCSessionDescription
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -10,27 +10,14 @@ PASS pc.remoteDescription is null
 PASS pc.pendingRemoteDescription is null
 PASS pc.currentRemoteDescription is null
 
-*** 'track' event must fire before setRemoteDescription promise is fulfilled
-*** Check track event properties
-PASS pc.getReceivers().includes(trackEvent.receiver) is true
-PASS pc.getTransceivers().includes(trackEvent.transceiver) is true
-*** Remote track should be muted initially
-PASS trackEvent.track.muted is true
-*** Remote track properties should match track added at remote side (remotePc)
-PASS trackEvent.track.kind is remotePcAudioTrack.kind
-PASS trackEvent.track.id is remotePcAudioTrack.id
-PASS trackEvent.track.label is 'remote audio'
-*** Check local and remote transceivers
-PASS trackEvent.transceiver.mid is remotePcAudioTransceiver.mid
-
 PASS remoteOffer1 set as remote description
-PASS pc.signalingState is 'have-remote-offer'
-PASS pc.remoteDescription is remoteOffer1
-PASS pc.pendingRemoteDescription is remoteOffer1
+FAIL pc.signalingState should be have-remote-offer. Was stable.
+FAIL pc.remoteDescription should be [object RTCSessionDescription]. Was null.
+FAIL pc.pendingRemoteDescription should be [object RTCSessionDescription]. Was null.
 PASS pc.currentRemoteDescription is null
 
 PASS remoteOffer1 set as remote description (again)
-PASS pc.signalingState is 'have-remote-offer'
+FAIL pc.signalingState should be have-remote-offer. Was stable.
 
 *** Try setting local descriptions with bad types for the current state
 PASS promise pc.setRemoteDescription({type:'answer', sdp:remoteOffer1.sdp}); rejected with InvalidStateError (DOM Exception 11): Description type incompatible with current signaling state
@@ -38,25 +25,12 @@ PASS promise pc.setRemoteDescription({type:'pranswer', sdp:remoteOffer1.sdp}); r
 
 *** Create (remote) offer with video (remoteOffer2)
 *** Done, start testing with remoteOffer2
-PASS pc.signalingState is 'have-remote-offer'
-
-*** 'track' event must fire before setRemoteDescription promise is fulfilled
-*** Check track event properties
-PASS pc.getReceivers().includes(trackEvent.receiver) is true
-PASS pc.getTransceivers().includes(trackEvent.transceiver) is true
-*** Remote track should be muted initially
-PASS trackEvent.track.muted is true
-*** Remote track properties should match track added at remote side (remotePc)
-PASS trackEvent.track.kind is remotePcVideoTrack.kind
-PASS trackEvent.track.id is remotePcVideoTrack.id
-PASS trackEvent.track.label is 'remote video'
-*** Check local and remote transceivers
-PASS trackEvent.transceiver.mid is remotePcVideoTransceiver.mid
+FAIL pc.signalingState should be have-remote-offer. Was stable.
 
 PASS remoteOffer2 set as remote description
-PASS pc.signalingState is 'have-remote-offer'
-PASS pc.remoteDescription is remoteOffer2
-PASS pc.pendingRemoteDescription is remoteOffer2
+FAIL pc.signalingState should be have-remote-offer. Was stable.
+FAIL pc.remoteDescription should be [object RTCSessionDescription]. Was null.
+FAIL pc.pendingRemoteDescription should be [object RTCSessionDescription]. Was null.
 PASS pc.currentRemoteDescription is null
 
 PASS successfullyParsed is true
