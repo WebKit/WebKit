@@ -56,37 +56,6 @@ extern CLSID gRegCLSIDs[];
 
 WEBKIT_API void shutDownWebKit();
 
-#if defined(DEPRECATED_EXPORT_SYMBOLS)
-
-#include <JavaScriptCore/JSObjectRef.h>
-
-// Force symbols to be included so we can export them for legacy clients.
-// DEPRECATED! People should get these symbols from JavaScriptCore.dll, not WebKit.dll!
-typedef struct OpaqueJSClass* JSClassRef;
-typedef const struct OpaqueJSContext* JSContextRef;
-typedef const struct OpaqueJSValue* JSValueRef;
-typedef struct OpaqueJSString* JSStringRef;
-typedef wchar_t JSChar;
-typedef unsigned JSPropertyAttributes;
-
-WEBKIT_API JSClassRef JSClassCreate(const JSClassDefinition*);
-WEBKIT_API void* JSObjectGetPrivate(JSObjectRef);
-WEBKIT_API JSObjectRef JSObjectMake(JSContextRef, JSClassRef, void*);
-WEBKIT_API void JSObjectSetProperty(JSContextRef, JSObjectRef, JSStringRef propertyName, JSValueRef, JSPropertyAttributes, JSValueRef* exception);
-WEBKIT_API JSStringRef JSStringCreateWithCFString(CFStringRef);
-WEBKIT_API JSStringRef JSStringCreateWithUTF8CString(const char*);
-WEBKIT_API const JSChar* JSStringGetCharactersPtr(JSStringRef);
-WEBKIT_API size_t JSStringGetLength(JSStringRef);
-WEBKIT_API void JSStringRelease(JSStringRef);
-WEBKIT_API bool JSValueIsNumber(JSContextRef, JSValueRef);
-WEBKIT_API bool JSValueIsString(JSContextRef, JSValueRef);
-WEBKIT_API JSValueRef JSValueMakeString(JSContextRef, JSStringRef);
-WEBKIT_API JSValueRef JSValueMakeUndefined(JSContextRef ctx);
-WEBKIT_API double JSValueToNumber(JSContextRef, JSValueRef, JSValueRef*);
-WEBKIT_API JSStringRef JSValueToStringCopy(JSContextRef, JSValueRef, JSValueRef* exception);
-// End
-#endif
-
 #ifdef __cplusplus
 }
 #endif
