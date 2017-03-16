@@ -1,3 +1,18 @@
+2017-03-16  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [WebRTC] SDP sess-id in the "o=" line should be a value between 0 and LLONG_MAX.
+        https://bugs.webkit.org/show_bug.cgi?id=169681
+
+        Reviewed by Alejandro G. Castro.
+
+        Check that the generated sess-id value its between the limits before validating it.
+        This is covered by the tests fast/mediastream/RTCPeerConnection-inspect-answer.html
+        and fast/mediastream/RTCPeerConnection-inspect-offer.html.
+        Both tests will fail if the sess-id value generated is not within the limits.
+
+        * fast/mediastream/resources/sdp-utils.js:
+        (printComparableSessionDescription):
+
 2017-03-15  Zalan Bujtas  <zalan@apple.com>
 
         Do not reparent floating object until after intruding/overhanging dependency is cleared.

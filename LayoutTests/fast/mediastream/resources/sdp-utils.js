@@ -27,9 +27,12 @@
                 // Session block
                 var oline;
 
-                if (oline = match(line, regexp.oline))
-                    line = line.replace(oline[2], verified("session-id"));
-                else if (match(line, regexp.msidsemantic)) {
+                if (oline = match(line, regexp.oline)) {
+                    var sessid = parseInt(oline[2]);
+                    // The session-id should be a number between 0 and LLONG_MAX (2^63-1).
+                    if (sessid >= 0 && sessid <= 9223372036854775807)
+                        line = line.replace(oline[2], verified("session-id"));
+                } else if (match(line, regexp.msidsemantic)) {
                     mdescVariables.forEach(function (variables) {
                         line = line.replace(variables.streamId, verified("media-stream-id"));
                     });

@@ -46,8 +46,8 @@ public:
     }
     virtual ~MediaEndpointSessionConfiguration() { }
 
-    uint64_t sessionId() const { return m_sessionId; }
-    void setSessionId(uint64_t sessionId) { m_sessionId = sessionId; }
+    int64_t sessionId() const { return m_sessionId; }
+    void setSessionId(int64_t sessionId) { m_sessionId = sessionId; }
 
     unsigned sessionVersion() const { return m_sessionVersion; }
     void setSessionVersion(unsigned sessionVersion) { m_sessionVersion = sessionVersion; }
@@ -70,10 +70,10 @@ private:
     MediaEndpointSessionConfiguration()
     {
         m_sessionId = cryptographicallyRandomNumber();
-        m_sessionId = m_sessionId << 32 | cryptographicallyRandomNumber();
+        m_sessionId = m_sessionId << 31 | cryptographicallyRandomNumber();
     }
 
-    uint64_t m_sessionId;
+    int64_t m_sessionId;
     unsigned m_sessionVersion { 0 };
 
     Vector<PeerMediaDescription> m_mediaDescriptions;
