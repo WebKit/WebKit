@@ -278,6 +278,8 @@ protected:
 
     void removeFromRenderFlowThreadIncludingDescendants(bool shouldUpdateState);
     void adjustFlowThreadStateOnContainingBlockChangeIfNeeded();
+    
+    bool noLongerAffectsParentBlock() const { return s_noLongerAffectsParentBlock; }
 
 private:
     RenderElement(ContainerNode&, RenderStyle&&, BaseTypeFlags);

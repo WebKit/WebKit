@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests that we don't crash while moving floats around.</title>
+<script>
+function runTest() {
+	document.body.offsetHeight
+	div0.style.float = "right"
+	window.getSelection().addRange(document.createRange());
+	div0.parentElement.removeChild(div0)
+	document.body.offsetHeight
+    if (window.testRunner)
+        testRunner.dumpAsText();
+}
+</script>
+<body onload="runTest()">
+<div style="display: inline-flex"></div><div id=div0><li style="float: left"></li></div><br><div></div>
+PASS if no crash or assert.
+</body>
+</html>

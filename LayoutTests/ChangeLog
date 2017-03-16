@@ -1,3 +1,14 @@
+2017-03-15  Zalan Bujtas  <zalan@apple.com>
+
+        Do not reparent floating object until after intruding/overhanging dependency is cleared.
+        https://bugs.webkit.org/show_bug.cgi?id=169711
+        <rdar://problem/30959743>
+
+        Reviewed by Simon Fraser.
+
+        * fast/block/float/inline-becomes-float-and-moves-around-expected.txt: Added.
+        * fast/block/float/inline-becomes-float-and-moves-around.html: Added.
+
 2017-03-15  Dave Hyatt  <hyatt@apple.com>
 
         Positioned SVG not sized correctly
