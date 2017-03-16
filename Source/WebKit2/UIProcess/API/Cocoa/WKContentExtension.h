@@ -30,6 +30,9 @@
 WK_CLASS_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA))
 @interface WKContentExtension : NSObject
 
+/*! @abstract A copy of the identifier of the content extension. */
+@property (nonatomic, readonly, copy) NSString *identifier;
+
 @end
 
 #endif // WK_API_ENABLED

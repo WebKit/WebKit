@@ -37,7 +37,7 @@ static WKErrorCode toWKErrorCode(const std::error_code& error)
     ASSERT(error.category() == API::contentExtensionStoreErrorCategory());
     switch (static_cast<API::ContentExtensionStore::Error>(error.value())) {
     case API::ContentExtensionStore::Error::LookupFailed:
-        return WKErrorContentExtensionStoreLookupFailed;
+        return WKErrorContentExtensionStoreLookUpFailed;
     case API::ContentExtensionStore::Error::VersionMismatch:
         return WKErrorContentExtensionStoreVersionMismatch;
     case API::ContentExtensionStore::Error::CompileFailed:
@@ -101,7 +101,7 @@ static WKErrorCode toWKErrorCode(const std::error_code& error)
     });
 }
 
-- (void)lookupContentExtensionForIdentifier:(NSString *)identifier completionHandler:(void (^)(WKContentExtension *, NSError *))completionHandler
+- (void)lookUpContentExtensionForIdentifier:(NSString *)identifier completionHandler:(void (^)(WKContentExtension *, NSError *))completionHandler
 {
     auto handler = adoptNS([completionHandler copy]);
 
@@ -111,7 +111,7 @@ static WKErrorCode toWKErrorCode(const std::error_code& error)
 
             auto userInfo = @{NSHelpAnchorErrorKey: [NSString stringWithFormat:@"Extension lookup failed: %s", error.message().c_str()]};
             auto wkError = toWKErrorCode(error);
-            ASSERT(wkError == WKErrorContentExtensionStoreLookupFailed || wkError == WKErrorContentExtensionStoreVersionMismatch);
+            ASSERT(wkError == WKErrorContentExtensionStoreLookUpFailed || wkError == WKErrorContentExtensionStoreVersionMismatch);
             rawHandler(nil, [NSError errorWithDomain:WKErrorDomain code:wkError userInfo:userInfo]);
             return;
         }

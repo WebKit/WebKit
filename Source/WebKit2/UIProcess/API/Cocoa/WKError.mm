@@ -58,7 +58,7 @@ NSString *localizedDescriptionForErrorCode(WKErrorCode errorCode)
     case WKErrorJavaScriptResultTypeIsUnsupported:
         return WEB_UI_STRING("JavaScript execution returned a result of an unsupported type", "WKErrorJavaScriptResultTypeIsUnsupported description");
 
-    case WKErrorContentExtensionStoreLookupFailed:
+    case WKErrorContentExtensionStoreLookUpFailed:
         return WEB_UI_STRING("Looking up a WKUserContentExtension failed", "WKErrorContentExtensionStoreLookupFailed description");
 
     case WKErrorContentExtensionStoreVersionMismatch:

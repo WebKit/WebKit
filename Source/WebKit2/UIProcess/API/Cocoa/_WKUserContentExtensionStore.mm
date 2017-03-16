@@ -45,7 +45,7 @@ static NSError *toUserContentExtensionStoreError(const NSError *error)
 
     ASSERT(error.domain == WKErrorDomain);
     switch (error.code) {
-    case WKErrorContentExtensionStoreLookupFailed:
+    case WKErrorContentExtensionStoreLookUpFailed:
         return [NSError errorWithDomain:_WKUserContentExtensionsDomain code:_WKUserContentExtensionStoreErrorLookupFailed userInfo:error.userInfo];
     case WKErrorContentExtensionStoreVersionMismatch:
         return [NSError errorWithDomain:_WKUserContentExtensionsDomain code:_WKUserContentExtensionStoreErrorVersionMismatch userInfo:error.userInfo];
@@ -80,7 +80,7 @@ static NSError *toUserContentExtensionStoreError(const NSError *error)
 
 - (void)lookupContentExtensionForIdentifier:(NSString *)identifier completionHandler:(void (^)(_WKUserContentFilter *, NSError *))completionHandler
 {
-    [_contentExtensionStore lookupContentExtensionForIdentifier:identifier completionHandler:^(WKContentExtension *contentExtension, NSError *error) {
+    [_contentExtensionStore lookUpContentExtensionForIdentifier:identifier completionHandler:^(WKContentExtension *contentExtension, NSError *error) {
         _WKUserContentFilter *contentFilter = contentExtension ? [[[_WKUserContentFilter alloc] _initWithWKContentExtension:contentExtension] autorelease] : nil;
         completionHandler(contentFilter, toUserContentExtensionStoreError(error));
     }];

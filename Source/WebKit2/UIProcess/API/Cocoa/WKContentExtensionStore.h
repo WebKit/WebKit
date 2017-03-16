@@ -36,7 +36,7 @@ WK_CLASS_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA))
 + (instancetype)storeWithURL:(NSURL *)url;
 
 - (void)compileContentExtensionForIdentifier:(NSString *)identifier encodedContentExtension:(NSString *) encodedContentExtension completionHandler:(void (^)(WKContentExtension *, NSError *))completionHandler;
-- (void)lookupContentExtensionForIdentifier:(NSString *)identifier completionHandler:(void (^)(WKContentExtension *, NSError *))completionHandler;
+- (void)lookUpContentExtensionForIdentifier:(NSString *)identifier completionHandler:(void (^)(WKContentExtension *, NSError *))completionHandler;
 - (void)removeContentExtensionForIdentifier:(NSString *)identifier completionHandler:(void (^)(NSError *))completionHandler;
 
 @end

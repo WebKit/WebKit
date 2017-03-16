@@ -99,10 +99,10 @@
 #endif
 }
 
-- (void)removeContentExtension:(NSString *)identifier
+- (void)removeContentExtension:(WKContentExtension *)contentExtension
 {
 #if ENABLE(CONTENT_EXTENSIONS)
-    _userContentControllerProxy->removeContentExtension(identifier);
+    _userContentControllerProxy->removeContentExtension(contentExtension->_contentExtension->name());
 #endif
 }
 

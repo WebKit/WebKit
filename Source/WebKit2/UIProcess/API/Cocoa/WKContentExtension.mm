@@ -46,6 +46,11 @@
     return *_contentExtension;
 }
 
+- (NSString *)identifier
+{
+    return _contentExtension->name();
+}
+
 @end
 
 #endif // WK_API_ENABLED

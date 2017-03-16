@@ -41,10 +41,10 @@ WK_EXTERN NSString * const WKErrorDomain WK_API_AVAILABLE(macosx(10.10), ios(8.0
  @constant WKErrorWebViewInvalidated                   Indicates that the WKWebView was invalidated.
  @constant WKErrorJavaScriptExceptionOccurred          Indicates that a JavaScript exception occurred.
  @constant WKErrorJavaScriptResultTypeIsUnsupported    Indicates that the result of JavaScript execution could not be returned.
- @constant WKErrorContentExtensionStoreLookupFailed    Indicates that looking up a WKUserContentExtension failed.
- @constant WKErrorContentExtensionStoreVersionMismatch Indicates that the WKUserContentExtension version did not match the latest.
  @constant WKErrorContentExtensionStoreCompileFailed   Indicates that compiling a WKUserContentExtension failed.
+ @constant WKErrorContentExtensionStoreLookUpFailed    Indicates that looking up a WKUserContentExtension failed.
  @constant WKErrorContentExtensionStoreRemoveFailed    Indicates that removing a WKUserContentExtension failed.
+ @constant WKErrorContentExtensionStoreVersionMismatch Indicates that the WKUserContentExtension version did not match the latest.
  */
 typedef NS_ENUM(NSInteger, WKErrorCode) {
     WKErrorUnknown = 1,
@@ -52,10 +52,10 @@ typedef NS_ENUM(NSInteger, WKErrorCode) {
     WKErrorWebViewInvalidated,
     WKErrorJavaScriptExceptionOccurred,
     WKErrorJavaScriptResultTypeIsUnsupported WK_API_AVAILABLE(macosx(10.11), ios(9.0)),
-    WKErrorContentExtensionStoreLookupFailed WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA)),
-    WKErrorContentExtensionStoreVersionMismatch WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA)),
     WKErrorContentExtensionStoreCompileFailed WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA)),
+    WKErrorContentExtensionStoreLookUpFailed WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA)),
     WKErrorContentExtensionStoreRemoveFailed WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA)),
+    WKErrorContentExtensionStoreVersionMismatch WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA)),
 } WK_API_AVAILABLE(macosx(10.10), ios(8.0));
 
 NS_ASSUME_NONNULL_END
