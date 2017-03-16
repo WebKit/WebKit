@@ -143,6 +143,8 @@ public:
     int numParameters() const { return m_numParameters; }
     void setNumParameters(int newValue);
 
+    int numberOfArgumentsToSkip() const { return m_numberOfArgumentsToSkip; }
+
     int numCalleeLocals() const { return m_numCalleeLocals; }
 
     int* addressOfNumParameters() { return &m_numParameters; }
@@ -954,6 +956,7 @@ private:
 
     WriteBarrier<UnlinkedCodeBlock> m_unlinkedCode;
     int m_numParameters;
+    int m_numberOfArgumentsToSkip { 0 };
     union {
         unsigned m_debuggerRequests;
         struct {
