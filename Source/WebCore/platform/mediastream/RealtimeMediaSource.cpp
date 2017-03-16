@@ -64,7 +64,6 @@ void RealtimeMediaSource::reset()
     m_stopped = false;
     m_muted = false;
     m_readonly = false;
-    m_remote = false;
 }
 
 void RealtimeMediaSource::addObserver(RealtimeMediaSource::Observer& observer)

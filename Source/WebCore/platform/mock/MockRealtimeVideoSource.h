@@ -78,6 +78,8 @@ private:
     bool applyFacingMode(RealtimeMediaSourceSettings::VideoFacingMode) override { return true; }
     bool applyAspectRatio(double) override { return true; }
 
+    bool isCaptureSource() const final { return true; }
+
     void generateFrame();
 
     float m_baseFontSize { 0 };

@@ -70,7 +70,7 @@ public:
     void setMuted(bool muted) { m_source->setMuted(muted); }
 
     bool readonly() const;
-    bool remote() const;
+    bool isCaptureTrack() const;
 
     bool enabled() const { return m_isEnabled; }
     void setEnabled(bool);

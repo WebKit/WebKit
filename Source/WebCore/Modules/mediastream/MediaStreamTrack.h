@@ -65,7 +65,6 @@ public:
 
     bool muted() const;
     bool readonly() const;
-    bool remote() const;
 
     enum class State { New, Live, Ended };
     State readyState() const;
@@ -74,6 +73,8 @@ public:
 
     Ref<MediaStreamTrack> clone();
     void stopProducingData();
+
+    bool isCaptureTrack() const;
 
     struct TrackSettings {
         std::optional<int> width;

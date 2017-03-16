@@ -199,19 +199,19 @@ bool MediaStreamPrivate::hasAudio() const
     return false;
 }
 
-bool MediaStreamPrivate::hasLocalVideoSource() const
+bool MediaStreamPrivate::hasCaptureVideoSource() const
 {
     for (auto& track : m_trackSet.values()) {
-        if (track->type() == RealtimeMediaSource::Type::Video && !track->remote())
+        if (track->type() == RealtimeMediaSource::Type::Video && track->isCaptureTrack())
             return true;
     }
     return false;
 }
 
-bool MediaStreamPrivate::hasLocalAudioSource() const
+bool MediaStreamPrivate::hasCaptureAudioSource() const
 {
     for (auto& track : m_trackSet.values()) {
-        if (track->type() == RealtimeMediaSource::Type::Audio && !track->remote())
+        if (track->type() == RealtimeMediaSource::Type::Audio && track->isCaptureTrack())
             return true;
     }
     return false;

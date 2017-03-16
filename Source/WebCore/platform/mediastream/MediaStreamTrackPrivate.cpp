@@ -85,9 +85,9 @@ bool MediaStreamTrackPrivate::readonly() const
     return m_source->readonly();
 }
 
-bool MediaStreamTrackPrivate::remote() const
+bool MediaStreamTrackPrivate::isCaptureTrack() const
 {
-    return m_source->remote();
+    return m_source->isCaptureSource();
 }
 
 void MediaStreamTrackPrivate::setEnabled(bool enabled)

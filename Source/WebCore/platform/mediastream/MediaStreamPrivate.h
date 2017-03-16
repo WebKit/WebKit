@@ -97,8 +97,8 @@ public:
     bool hasAudio() const;
     bool muted() const;
 
-    bool hasLocalVideoSource() const;
-    bool hasLocalAudioSource() const;
+    bool hasCaptureVideoSource() const;
+    bool hasCaptureAudioSource() const;
 
     FloatSize intrinsicSize() const;
 

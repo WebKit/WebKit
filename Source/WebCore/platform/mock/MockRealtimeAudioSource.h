@@ -73,6 +73,8 @@ private:
 
     void tick();
 
+    bool isCaptureSource() const final { return true; }
+
     RunLoop::Timer<MockRealtimeAudioSource> m_timer;
     double m_startTime { NAN };
     double m_lastRenderTime { NAN };

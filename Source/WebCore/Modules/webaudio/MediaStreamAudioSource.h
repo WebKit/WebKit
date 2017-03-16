@@ -63,6 +63,7 @@ private:
     MediaStreamAudioSource();
 
     AudioSourceProvider* audioSourceProvider() override;
+    bool isCaptureSource() const final { return true; }
 
     String m_deviceId;
     Lock m_audioConsumersLock;

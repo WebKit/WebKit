@@ -314,13 +314,13 @@ MediaProducer::MediaStateFlags MediaStream::mediaState() const
 
     if (m_private->hasAudio()) {
         state |= HasAudioOrVideo;
-        if (m_private->hasLocalAudioSource() && m_private->isProducingData())
+        if (m_private->hasCaptureAudioSource() && m_private->isProducingData())
             state |= HasActiveAudioCaptureDevice;
     }
 
     if (m_private->hasVideo()) {
         state |= HasAudioOrVideo;
-        if (m_private->hasLocalVideoSource() && m_private->isProducingData())
+        if (m_private->hasCaptureVideoSource() && m_private->isProducingData())
             state |= HasActiveVideoCaptureDevice;
     }
 

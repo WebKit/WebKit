@@ -96,6 +96,8 @@ private:
     void beginConfiguration() final;
     void commitConfiguration() final;
 
+    bool isCaptureSource() const final { return true; }
+
     void initializeSettings();
     void initializeCapabilities();
 
