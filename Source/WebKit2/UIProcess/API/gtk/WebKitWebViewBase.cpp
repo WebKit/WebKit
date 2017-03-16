@@ -161,42 +161,42 @@ struct _WebKitWebViewBasePrivate {
     WebKitWebViewChildrenMap children;
     std::unique_ptr<PageClientImpl> pageClient;
     RefPtr<WebPageProxy> pageProxy;
-    bool shouldForwardNextKeyEvent;
-    bool shouldForwardNextWheelEvent;
+    bool shouldForwardNextKeyEvent { false };
+    bool shouldForwardNextWheelEvent { false };
     ClickCounter clickCounter;
     CString tooltipText;
     IntRect tooltipArea;
     GRefPtr<AtkObject> accessible;
-    GtkWidget* authenticationDialog;
-    GtkWidget* inspectorView;
-    AttachmentSide inspectorAttachmentSide;
-    unsigned inspectorViewSize;
+    GtkWidget* authenticationDialog { nullptr };
+    GtkWidget* inspectorView { nullptr };
+    AttachmentSide inspectorAttachmentSide { AttachmentSide::Bottom };
+    unsigned inspectorViewSize { 0 };
     GUniquePtr<GdkEvent> contextMenuEvent;
-    WebContextMenuProxyGtk* activeContextMenuProxy;
+    WebContextMenuProxyGtk* activeContextMenuProxy { nullptr };
     InputMethodFilter inputMethodFilter;
     KeyBindingTranslator keyBindingTranslator;
     TouchEventsMap touchEvents;
     IntSize contentsSize;
 
-    GtkWindow* toplevelOnScreenWindow;
-    unsigned long toplevelFocusInEventID;
-    unsigned long toplevelFocusOutEventID;
-    unsigned long toplevelWindowStateEventID;
-    unsigned long toplevelWindowRealizedID;
+    GtkWindow* toplevelOnScreenWindow { nullptr };
+    unsigned long toplevelFocusInEventID { 0 };
+    unsigned long toplevelFocusOutEventID { 0 };
+    unsigned long toplevelWindowStateEventID { 0 };
+    unsigned long toplevelWindowRealizedID { 0 };
 
     // View State.
-    ActivityState::Flags activityState;
-    ActivityState::Flags activityStateFlagsToUpdate;
+    ActivityState::Flags activityState { 0 };
+    ActivityState::Flags activityStateFlagsToUpdate { 0 };
     RunLoop::Timer<WebKitWebViewBasePrivate> updateActivityStateTimer;
 
-    WebKitWebViewBaseDownloadRequestHandler downloadHandler;
+    WebKitWebViewBaseDownloadRequestHandler downloadHandler { 0 };
 
 #if ENABLE(FULLSCREEN_API)
-    bool fullScreenModeActive;
+    bool fullScreenModeActive { false };
     WebFullScreenClientGtk fullScreenClient;
     GRefPtr<GDBusProxy> screenSaverProxy;
     GRefPtr<GCancellable> screenSaverInhibitCancellable;
-    unsigned screenSaverCookie;
+    unsigned screenSaverCookie { 0 };
 #endif
 
     std::unique_ptr<AcceleratedBackingStore> acceleratedBackingStore;

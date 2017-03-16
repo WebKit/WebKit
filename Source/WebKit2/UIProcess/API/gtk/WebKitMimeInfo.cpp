@@ -35,7 +35,7 @@ struct _WebKitMimeInfo {
     CString description;
     GRefPtr<GPtrArray> extensions;
 
-    int referenceCount;
+    int referenceCount { 0 };
 };
 
 G_DEFINE_BOXED_TYPE(WebKitMimeInfo, webkit_mime_info, webkit_mime_info_ref, webkit_mime_info_unref)

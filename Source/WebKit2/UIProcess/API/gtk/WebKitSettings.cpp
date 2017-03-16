@@ -71,8 +71,8 @@ struct _WebKitSettingsPrivate {
     CString pictographFontFamily;
     CString defaultCharset;
     CString userAgent;
-    bool allowModalDialogs;
-    bool zoomTextOnly;
+    bool allowModalDialogs { false };
+    bool zoomTextOnly { false };
 };
 
 /**

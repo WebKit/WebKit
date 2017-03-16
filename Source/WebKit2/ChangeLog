@@ -1,3 +1,16 @@
+2017-03-16  Tomas Popela  <tpopela@redhat.com>
+
+        Fix uninitialized public members in Webkit2/UIProcess/API/gtk
+        https://bugs.webkit.org/show_bug.cgi?id=169602
+
+        Reviewed by Michael Catanzaro.
+
+        Found by Coverity scan.
+
+        * UIProcess/API/gtk/WebKitMimeInfo.cpp:
+        * UIProcess/API/gtk/WebKitSettings.cpp:
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+
 2017-03-16  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed follow-up to r213787. Move the DatabaseProcess build targets
