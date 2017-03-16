@@ -356,6 +356,7 @@ body[dir=ltr] .data-grid td .go-to-arrow {
 body[dir=rtl] .data-grid td .go-to-arrow {
     float: left;
     margin-right: var(--data-grid-go-to-arrow-margin-start);
+    transform: scaleX(-1);
 }
 
 .data-grid tr:matches(.selected, :hover) .go-to-arrow {

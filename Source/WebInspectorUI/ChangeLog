@@ -1,3 +1,13 @@
+2017-03-16  Devin Rousso  <webkit@devinrousso.com>
+
+        Web Inspector: RTL: goto arrow for source locations is pointing wrong way in Timeline data grids
+        https://bugs.webkit.org/show_bug.cgi?id=169764
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Views/DataGrid.css:
+        (body[dir=rtl] .data-grid td .go-to-arrow):
+
 2017-03-16  Brian Burg  <bburg@apple.com>
 
         Web Inspector: RTL: add FindBanner support for RTL layout
