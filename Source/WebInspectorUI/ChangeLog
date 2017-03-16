@@ -1,5 +1,44 @@
 2017-03-16  Devin Rousso  <webkit@devinrousso.com>
 
+        Web Inspector: RTL: selected frame indicator is not positioned correctly
+        https://bugs.webkit.org/show_bug.cgi?id=169763
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Views/RenderingFrameTimelineOverviewGraph.js:
+        (WebInspector.RenderingFrameTimelineOverviewGraph.prototype._updateFrameMarker):
+        (WebInspector.RenderingFrameTimelineOverviewGraph.prototype._mouseClicked):
+        Treat the current mouse position (event.pageX) as a negative value when in RTL, meaning that
+        the delta movement from the starting position is flipped.
+
+        * UserInterface/Views/TimelineRuler.css:
+        (body[dir=ltr] .timeline-ruler > .header > .divider,):
+        (body[dir=rtl] .timeline-ruler > .header > .divider,):
+        (.timeline-ruler > .header > .divider):
+        (.timeline-ruler > .header > .divider > .label):
+        (body[dir=ltr] .timeline-ruler > .header > .divider > .label):
+        (body[dir=rtl] .timeline-ruler > .header > .divider > .label):
+        (.timeline-ruler > .markers > .divider):
+        (.timeline-ruler > .markers > .marker):
+        (body[dir=ltr] .timeline-ruler > .markers > .marker):
+        (body[dir=rtl] .timeline-ruler > .markers > .marker):
+        (.timeline-ruler > .markers > .marker::before):
+        (body[dir=ltr] .timeline-ruler > .markers > .marker::before):
+        (body[dir=rtl] .timeline-ruler > .markers > .marker::before):
+        (body[dir=ltr] .timeline-ruler > .markers > .marker.current-time):
+        (body[dir=rtl] .timeline-ruler > .markers > .marker.current-time):
+        (.timeline-ruler > .markers > .marker.current-time::before):
+        (.timeline-ruler > .markers > .marker.current-time): Deleted.
+
+        (.timeline-ruler > .selection-handle):
+        (body[dir=ltr] .timeline-ruler > .selection-handle.left):
+        (body[dir=rtl] .timeline-ruler > .selection-handle.left):
+        (body[dir=ltr] .timeline-ruler > .selection-handle.right):
+        (body[dir=rtl] .timeline-ruler > .selection-handle.right):
+        Drive-by: add CSS variable for clarity.
+
+2017-03-16  Devin Rousso  <webkit@devinrousso.com>
+
         Web Inspector: RTL: filter mode icon in Debugger sidebar is misaligned
         https://bugs.webkit.org/show_bug.cgi?id=169766
 

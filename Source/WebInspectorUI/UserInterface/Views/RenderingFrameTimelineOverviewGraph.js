@@ -226,7 +226,8 @@ WebInspector.RenderingFrameTimelineOverviewGraph = class RenderingFrameTimelineO
         this._selectedFrameMarker.style.width = frameWidth + "px";
 
         var markerLeftPosition = this.selectedRecord.frameIndex - this.startTime;
-        this._selectedFrameMarker.style.left = ((markerLeftPosition / this.timelineOverview.visibleDuration) * 100).toFixed(2) + "%";
+        let property = WebInspector.resolvedLayoutDirection() === WebInspector.LayoutDirection.RTL ? "right" : "left";
+        this._selectedFrameMarker.style.setProperty(property, ((markerLeftPosition / this.timelineOverview.visibleDuration) * 100).toFixed(2) + "%");
 
         if (!this._selectedFrameMarker.parentElement)
             this.element.appendChild(this._selectedFrameMarker);
@@ -246,7 +247,12 @@ WebInspector.RenderingFrameTimelineOverviewGraph = class RenderingFrameTimelineO
 
     _mouseClicked(event)
     {
-        var position = event.pageX - this.element.getBoundingClientRect().left;
+        let position = 0;
+        if (WebInspector.resolvedLayoutDirection() === WebInspector.LayoutDirection.RTL)
+            position = this.element.totalOffsetRight - event.pageX;
+        else
+            position = event.pageX - this.element.totalOffsetLeft;
+
         var frameIndex = Math.floor(position * this.timelineOverview.secondsPerPixel + this.startTime);
         if (frameIndex < 0 || frameIndex >= this._renderingFrameTimeline.records.length)
             return;

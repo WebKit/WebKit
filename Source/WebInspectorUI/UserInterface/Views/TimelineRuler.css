@@ -27,6 +27,8 @@
     position: relative;
     pointer-events: none;
     z-index: 1;
+
+    --timeline-ruler-marker-translateX: -1px;
 }
 
 .timeline-ruler.allows-time-range-selection:not(.disabled) {
@@ -42,6 +44,16 @@
     pointer-events: none;
 }
 
+body[dir=ltr] .timeline-ruler > .header > .divider,
+body[dir=ltr] .timeline-ruler > .markers > :matches(.divider, .marker) {
+    transform: translateX(var(--timeline-ruler-marker-translateX));
+}
+
+body[dir=rtl] .timeline-ruler > .header > .divider,
+body[dir=rtl] .timeline-ruler > .markers > :matches(.divider, .marker) {
+    transform: translateX(calc(-1 * var(--timeline-ruler-marker-translateX)));
+}
+
 .timeline-ruler > .header {
     border-bottom: 1px solid var(--border-color);
 
@@ -52,12 +64,12 @@
     height: 23px;
 }
 
+
 .timeline-ruler > .header > .divider {
     position: absolute;
     width: 1px;
     top: 0;
     bottom: 0;
-    transform: translateX(-1px);
     background-image: linear-gradient(to bottom, hsla(0, 0%, 70%, 0), hsla(0, 0%, 70%, 2) 85%);
 }
 
@@ -68,10 +80,19 @@ body.window-inactive .timeline-ruler > .header > .divider {
 .timeline-ruler > .header > .divider > .label {
     position: absolute;
     top: 6px;
-    right: 5px;
     font-size: 9px;
     color: hsl(0, 0%, 50%);
     white-space: nowrap;
+
+    --timeline-ruler-header-divider-label-offset-end: 5px;
+}
+
+body[dir=ltr] .timeline-ruler > .header > .divider > .label {
+    right: var(--timeline-ruler-header-divider-label-offset-end);
+}
+
+body[dir=rtl] .timeline-ruler > .header > .divider > .label {
+    left: var(--timeline-ruler-header-divider-label-offset-end);
 }
 
 .timeline-ruler > .markers {
@@ -88,7 +109,6 @@ body.window-inactive .timeline-ruler > .header > .divider {
     width: 1px;
     top: 1px;
     bottom: 0;
-    transform: translateX(-1px);
     background-color: hsla(0, 0%, 0%, 0.05);
 }
 
@@ -96,14 +116,17 @@ body.window-inactive .timeline-ruler > .header > .divider {
     position: absolute;
     top: 0;
     bottom: 0;
-
-    transform: translateX(-1px);
-
-    border-left-width: 1px;
-    border-left-style: solid;
-    border-left-color: hsla(0, 0%, 50%, 0.5);
-
     pointer-events: all;
+
+    --timeline-ruler-marker-border-start: 1px solid hsla(0, 0%, 50%, 0.5);
+}
+
+body[dir=ltr] .timeline-ruler > .markers > .marker {
+    border-left: var(--timeline-ruler-marker-border-start);
+}
+
+body[dir=rtl] .timeline-ruler > .markers > .marker {
+    border-right: var(--timeline-ruler-marker-border-start);
 }
 
 /* Larger tooltip area */
@@ -111,31 +134,43 @@ body.window-inactive .timeline-ruler > .header > .divider {
     z-index: 20;
     width: 3px;
 }
+
 .timeline-ruler > .markers > .marker::before {
     width: 3px;
     content: "";
     position: absolute;
-    left: -3px;
     top: 0;
     bottom: 0;
+
+    --timeline-ruler-marker-before-offset-start: -3px;
 }
 
-.timeline-ruler > .markers > .marker.current-time {
+body[dir=ltr] .timeline-ruler > .markers > .marker::before {
+    left: var(--timeline-ruler-marker-before-offset-start);
+}
+
+body[dir=rtl] .timeline-ruler > .markers > .marker::before {
+    right: var(--timeline-ruler-marker-before-offset-start);
+}
+
+body[dir=ltr] .timeline-ruler > .markers > .marker.current-time {
     border-left-color: red;
+}
+
+body[dir=rtl] .timeline-ruler > .markers > .marker.current-time {
+    border-right-color: red;
 }
 
 .timeline-ruler > .markers > .marker.current-time::before {
     position: absolute;
     top: -5px;
-    left: -5px;
-
     width: 9px;
     height: 9px;
-    border-radius: 5px;
-
     background-color: red;
-
+    border-radius: 5px;
     content: "";
+
+     --timeline-ruler-marker-before-offset-start: -5px;
 }
 
 .timeline-ruler > .markers > .marker.load-event {
@@ -179,6 +214,8 @@ body.window-inactive .timeline-ruler > .header > .divider {
     cursor: col-resize;
     pointer-events: all;
     z-index: 15;
+
+    --timeline-ruler-selection-handle-translateX: -4px;
 }
 
 .timeline-ruler.disabled > .selection-handle {
@@ -210,12 +247,12 @@ body.window-inactive .timeline-ruler > .header > .divider {
 
 body[dir=ltr] .timeline-ruler > .selection-handle.left,
 body[dir=rtl] .timeline-ruler > .selection-handle.right {
-    transform: translateX(-4px);
+    transform: translateX(var(--timeline-ruler-selection-handle-translateX));
 }
 
 body[dir=ltr] .timeline-ruler > .selection-handle.right,
 body[dir=rtl] .timeline-ruler > .selection-handle.left {
-    transform: translateX(4px);
+    transform: translateX(calc(-1 * var(--timeline-ruler-selection-handle-translateX)));
 }
 
 .timeline-ruler > .shaded-area {
