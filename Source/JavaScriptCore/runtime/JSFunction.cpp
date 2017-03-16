@@ -104,7 +104,7 @@ JSFunction* JSFunction::createBuiltinFunction(VM& vm, FunctionExecutable* execut
 {
     JSFunction* function = create(vm, executable, globalObject);
     function->putDirect(vm, vm.propertyNames->name, jsString(&vm, executable->name().string()), ReadOnly | DontEnum);
-    function->putDirect(vm, vm.propertyNames->length, jsNumber(executable->functionLength()), ReadOnly | DontEnum);
+    function->putDirect(vm, vm.propertyNames->length, jsNumber(executable->parameterCount()), ReadOnly | DontEnum);
     return function;
 }
 
@@ -112,7 +112,7 @@ JSFunction* JSFunction::createBuiltinFunction(VM& vm, FunctionExecutable* execut
 {
     JSFunction* function = create(vm, executable, globalObject);
     function->putDirect(vm, vm.propertyNames->name, jsString(&vm, name), ReadOnly | DontEnum);
-    function->putDirect(vm, vm.propertyNames->length, jsNumber(executable->functionLength()), ReadOnly | DontEnum);
+    function->putDirect(vm, vm.propertyNames->length, jsNumber(executable->parameterCount()), ReadOnly | DontEnum);
     return function;
 }
 
@@ -623,7 +623,7 @@ void JSFunction::reifyLength(VM& vm)
 
     ASSERT(!hasReifiedLength());
     ASSERT(!isHostFunction());
-    JSValue initialValue = jsNumber(jsExecutable()->functionLength());
+    JSValue initialValue = jsNumber(jsExecutable()->parameterCount());
     unsigned initialAttributes = DontEnum | ReadOnly;
     const Identifier& identifier = vm.propertyNames->length;
     putDirect(vm, identifier, initialValue, initialAttributes);

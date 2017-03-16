@@ -427,14 +427,14 @@ public:
         unsigned startColumn, unsigned endColumn, int functionKeywordStart, 
         int functionNameStart, int parametersStart, bool inStrictContext, 
         ConstructorKind constructorKind, SuperBinding superBinding,
-        unsigned parameterCount, unsigned functionLength,
+        unsigned parameterCount,
         SourceParseMode mode, bool isArrowFunctionBodyExpression)
     {
         return new (m_parserArena) FunctionMetadataNode(
             m_parserArena, startLocation, endLocation, startColumn, endColumn, 
             functionKeywordStart, functionNameStart, parametersStart, 
             inStrictContext, constructorKind, superBinding,
-            parameterCount, functionLength, mode, isArrowFunctionBodyExpression);
+            parameterCount, mode, isArrowFunctionBodyExpression);
     }
 
     ExpressionNode* createArrowFunctionExpr(const JSTokenLocation& location, const ParserFunctionInfo<ASTBuilder>& functionInfo)

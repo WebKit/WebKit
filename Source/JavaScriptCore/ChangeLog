@@ -1,5 +1,73 @@
 2017-03-15  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        [JSC] Default parameter part should be retrieved by op_get_argument opcode instead of changing arity
+        https://bugs.webkit.org/show_bug.cgi?id=164582
+
+        Reviewed by Saam Barati.
+
+        Previously we implement the default parameters as follows.
+
+            1. We count the default parameters as the usual parameters.
+            2. We just get the argument register.
+            3. Check it with op_is_undefined.
+            4. And fill the binding with either the argument register or default value.
+
+        The above is simple. However, it has the side effect that it always increase the arity of the function.
+        While `function.length` does not increase, internally, the number of parameters of CodeBlock increases.
+        This effectively prevent our DFG / FTL to perform inlining: currently we only allows DFG to inline
+        the function with the arity less than or equal the number of passing arguments. It is OK. But when using
+        default parameters, we frequently do not pass the argument for the parameter with the default value.
+        Thus, in our current implementation, we frequently need to fixup the arity. And we frequently fail
+        to inline the function.
+
+        This patch fixes the above problem by not increasing the arity of the function. When we encounter the
+        parameter with the default value, we use `op_argument` to get the argument instead of using the argument
+        registers.
+
+        This improves six-speed defaults.es6 performance by 4.45x.
+
+            defaults.es6        968.4126+-101.2350   ^    217.6602+-14.8831       ^ definitely 4.4492x faster
+
+        * bytecode/UnlinkedFunctionExecutable.cpp:
+        (JSC::UnlinkedFunctionExecutable::UnlinkedFunctionExecutable):
+        * bytecode/UnlinkedFunctionExecutable.h:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::initializeDefaultParameterValuesAndSetupFunctionScopeStack):
+        (JSC::BytecodeGenerator::initializeNextParameter):
+        (JSC::BytecodeGenerator::initializeParameters):
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::FunctionNode::emitBytecode):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::inliningCost):
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::createFunctionMetadata):
+        * parser/Nodes.cpp:
+        (JSC::FunctionMetadataNode::FunctionMetadataNode):
+        * parser/Nodes.h:
+        (JSC::FunctionParameters::size):
+        (JSC::FunctionParameters::at):
+        (JSC::FunctionParameters::append):
+        (JSC::FunctionParameters::isSimpleParameterList):
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::isArrowFunctionParameters):
+        (JSC::Parser<LexerType>::parseGeneratorFunctionSourceElements):
+        (JSC::Parser<LexerType>::parseAsyncFunctionSourceElements):
+        (JSC::Parser<LexerType>::parseFormalParameters):
+        (JSC::Parser<LexerType>::parseFunctionBody):
+        (JSC::Parser<LexerType>::parseFunctionParameters):
+        (JSC::Parser<LexerType>::parseFunctionInfo):
+        * parser/Parser.h:
+        * parser/SyntaxChecker.h:
+        (JSC::SyntaxChecker::createFunctionMetadata):
+        * runtime/FunctionExecutable.h:
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::createBuiltinFunction):
+        (JSC::JSFunction::reifyLength):
+
+2017-03-15  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         [DFG] ToString operation should have fixup for primitives to say this node does not have side effects
         https://bugs.webkit.org/show_bug.cgi?id=169544
 

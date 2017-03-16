@@ -3465,13 +3465,13 @@ void EvalNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
 void FunctionNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
 {
     if (generator.vm()->typeProfiler()) {
-        for (size_t i = 0; i < m_parameters->size(); i++) {
-            // Destructuring parameters are handled in destructuring nodes.
-            if (!m_parameters->at(i).first->isBindingNode())
-                continue;
-            BindingNode* parameter = static_cast<BindingNode*>(m_parameters->at(i).first);
-            RegisterID reg(CallFrame::argumentOffset(i));
-            generator.emitProfileType(&reg, ProfileTypeBytecodeFunctionArgument, parameter->divotStart(), parameter->divotEnd());
+        // If the parameter list is non simple one, it is handled in bindValue's code.
+        if (m_parameters->isSimpleParameterList()) {
+            for (size_t i = 0; i < m_parameters->size(); i++) {
+                BindingNode* bindingNode = static_cast<BindingNode*>(m_parameters->at(i).first);
+                RegisterID reg(CallFrame::argumentOffset(i));
+                generator.emitProfileType(&reg, ProfileTypeBytecodeFunctionArgument, bindingNode->divotStart(), bindingNode->divotEnd());
+            }
         }
     }
 

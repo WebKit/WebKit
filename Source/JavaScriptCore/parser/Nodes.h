@@ -1867,22 +1867,6 @@ namespace JSC {
         ModuleNameNode* m_moduleName { nullptr };
     };
 
-    class FunctionParameters : public ParserArenaDeletable {
-    public:
-        FunctionParameters();
-        ALWAYS_INLINE unsigned size() const { return m_patterns.size(); }
-        ALWAYS_INLINE std::pair<DestructuringPatternNode*, ExpressionNode*> at(unsigned index) { return m_patterns[index]; }
-        ALWAYS_INLINE void append(DestructuringPatternNode* pattern, ExpressionNode* defaultValue) 
-        { 
-            ASSERT(pattern); 
-            m_patterns.append(std::make_pair(pattern, defaultValue));
-        }
-
-    private:
-
-        Vector<std::pair<DestructuringPatternNode*, ExpressionNode*>, 3> m_patterns;
-    };
-
     class FunctionMetadataNode final : public Node, public ParserArenaDeletable {
     public:
         using ParserArenaDeletable::operator new;
@@ -1891,7 +1875,7 @@ namespace JSC {
             ParserArena&, const JSTokenLocation& start, const JSTokenLocation& end, 
             unsigned startColumn, unsigned endColumn, int functionKeywordStart, 
             int functionNameStart, int parametersStart, bool isInStrictContext, 
-            ConstructorKind, SuperBinding, unsigned parameterCount, unsigned functionLength,
+            ConstructorKind, SuperBinding, unsigned parameterCount,
             SourceParseMode, bool isArrowFunctionBodyExpression);
 
         void finishParsing(const SourceCode&, const Identifier&, FunctionMode);
@@ -1911,7 +1895,6 @@ namespace JSC {
         unsigned startColumn() const { return m_startColumn; }
         unsigned endColumn() const { return m_endColumn; }
         unsigned parameterCount() const { return m_parameterCount; }
-        unsigned functionLength() const { return m_functionLength; }
         SourceParseMode parseMode() const { return m_parseMode; }
 
         void setEndPosition(JSTextPosition);
@@ -1948,7 +1931,6 @@ namespace JSC {
         SourceCode m_classSource;
         int m_startStartOffset;
         unsigned m_parameterCount;
-        unsigned m_functionLength;
         int m_lastLine;
         SourceParseMode m_parseMode;
         unsigned m_isInStrictContext : 1;
@@ -2237,6 +2219,36 @@ namespace JSC {
 
         DestructuringPatternNode* m_bindings;
         ExpressionNode* m_initializer;
+    };
+
+    class FunctionParameters : public ParserArenaDeletable {
+    public:
+        FunctionParameters();
+        ALWAYS_INLINE unsigned size() const { return m_patterns.size(); }
+        ALWAYS_INLINE std::pair<DestructuringPatternNode*, ExpressionNode*> at(unsigned index) { return m_patterns[index]; }
+        ALWAYS_INLINE void append(DestructuringPatternNode* pattern, ExpressionNode* defaultValue)
+        {
+            ASSERT(pattern);
+
+            // http://www.ecma-international.org/ecma-262/6.0/index.html#sec-functiondeclarationinstantiation
+            // This implements IsSimpleParameterList in the Ecma 2015 spec.
+            // If IsSimpleParameterList is false, we will create a strict-mode like arguments object.
+            // IsSimpleParameterList is false if the argument list contains any default parameter values,
+            // a rest parameter, or any destructuring patterns.
+            // If we do have default parameters, destructuring parameters, or a rest parameter, our parameters will be allocated in a different scope.
+
+            bool hasDefaultParameterValue = defaultValue;
+            bool isSimpleParameter = !hasDefaultParameterValue && pattern->isBindingNode();
+            m_isSimpleParameterList &= isSimpleParameter;
+
+            m_patterns.append(std::make_pair(pattern, defaultValue));
+        }
+        ALWAYS_INLINE bool isSimpleParameterList() const { return m_isSimpleParameterList; }
+
+    private:
+
+        Vector<std::pair<DestructuringPatternNode*, ExpressionNode*>, 3> m_patterns;
+        bool m_isSimpleParameterList { true };
     };
 
     class FuncDeclNode : public StatementNode {

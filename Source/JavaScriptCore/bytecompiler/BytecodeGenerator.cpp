@@ -254,15 +254,8 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
     // If IsSimpleParameterList is false, we will create a strict-mode like arguments object.
     // IsSimpleParameterList is false if the argument list contains any default parameter values,
     // a rest parameter, or any destructuring patterns.
-    bool isSimpleParameterList = true;
     // If we do have default parameters, destructuring parameters, or a rest parameter, our parameters will be allocated in a different scope.
-    for (size_t i = 0; i < parameters.size(); i++) {
-        std::pair<DestructuringPatternNode*, ExpressionNode*> parameter = parameters.at(i);
-        bool hasDefaultParameterValue = !!parameter.second;
-        auto pattern = parameter.first;
-        bool isSimpleParameter = !hasDefaultParameterValue && pattern->isBindingNode();
-        isSimpleParameterList &= isSimpleParameter;
-    }
+    bool isSimpleParameterList = parameters.isSimpleParameterList();
 
     SourceParseMode parseMode = codeBlock->parseMode();
 
@@ -983,10 +976,12 @@ void BytecodeGenerator::initializeDefaultParameterValuesAndSetupFunctionScopeSta
             std::pair<DestructuringPatternNode*, ExpressionNode*> parameter = parameters.at(i);
             if (parameter.first->isRestParameter())
                 continue;
-            RefPtr<RegisterID> parameterValue = &registerFor(virtualRegisterForArgument(1 + i));
-            emitMove(temp.get(), parameterValue.get());
+            if ((i + 1) < m_parameters.size())
+                emitMove(temp.get(), &m_parameters[i + 1]);
+            else
+                emitGetArgument(temp.get(), i);
             if (parameter.second) {
-                RefPtr<RegisterID> condition = emitIsUndefined(newTemporary(), parameterValue.get());
+                RefPtr<RegisterID> condition = emitIsUndefined(newTemporary(), temp.get());
                 Ref<Label> skipDefaultParameterBecauseNotUndefined = newLabel();
                 emitJumpIfFalse(condition.get(), skipDefaultParameterBecauseNotUndefined.get());
                 emitNode(temp.get(), parameter.second);
@@ -1103,7 +1098,8 @@ void BytecodeGenerator::initializeArrowFunctionContextScopeIfNeeded(SymbolTable*
 RegisterID* BytecodeGenerator::initializeNextParameter()
 {
     VirtualRegister reg = virtualRegisterForArgument(m_codeBlock->numParameters());
-    RegisterID& parameter = registerFor(reg);
+    m_parameters.grow(m_parameters.size() + 1);
+    auto& parameter = registerFor(reg);
     parameter.setIndex(reg.offset());
     m_codeBlock->addParameter();
     return &parameter;
@@ -1113,14 +1109,23 @@ void BytecodeGenerator::initializeParameters(FunctionParameters& parameters)
 {
     // Make sure the code block knows about all of our parameters, and make sure that parameters
     // needing destructuring are noted.
-    m_parameters.grow(parameters.size() + 1); // reserve space for "this"
     m_thisRegister.setIndex(initializeNextParameter()->index()); // this
+
+    bool nonSimpleArguments = false;
     for (unsigned i = 0; i < parameters.size(); ++i) {
-        auto pattern = parameters.at(i).first;
+        auto parameter = parameters.at(i);
+        auto pattern = parameter.first;
         if (pattern->isRestParameter()) {
             RELEASE_ASSERT(!m_restParameter);
             m_restParameter = static_cast<RestParameterNode*>(pattern);
-        } else
+            nonSimpleArguments = true;
+            continue;
+        }
+        if (parameter.second) {
+            nonSimpleArguments = true;
+            continue;
+        }
+        if (!nonSimpleArguments)
             initializeNextParameter();
     }
 }

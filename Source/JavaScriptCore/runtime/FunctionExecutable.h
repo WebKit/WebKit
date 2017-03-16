@@ -145,7 +145,6 @@ public:
     const Identifier& ecmaName() { return m_unlinkedExecutable->ecmaName(); }
     const Identifier& inferredName() { return m_unlinkedExecutable->inferredName(); }
     unsigned parameterCount() const { return m_unlinkedExecutable->parameterCount(); } // Excluding 'this'!
-    unsigned functionLength() const { return m_unlinkedExecutable->functionLength(); }
     SourceParseMode parseMode() const { return m_unlinkedExecutable->parseMode(); }
     JSParserScriptMode scriptMode() const { return m_unlinkedExecutable->scriptMode(); }
     const SourceCode& classSource() const { return m_unlinkedExecutable->classSource(); }
