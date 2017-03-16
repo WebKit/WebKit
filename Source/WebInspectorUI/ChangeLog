@@ -1,3 +1,14 @@
+2017-03-15  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: WebSockets: Update Arrow Up icon to fit in with the rest of our iconography
+        https://bugs.webkit.org/show_bug.cgi?id=169696
+        <rdar://problem/31073748>
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Images/ArrowUp.svg:
+        * UserInterface/Images/gtk/ArrowUp.svg:
+
 2017-03-15  Devin Rousso  <webkit@devinrousso.com>
 
         Web Inspector: Add icons for SVG Image cluster path components
