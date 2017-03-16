@@ -1,5 +1,20 @@
 2017-03-16  Devin Rousso  <webkit@devinrousso.com>
 
+        Web Inspector: add "Save Selected" context menu item to Console
+        https://bugs.webkit.org/show_bug.cgi?id=151837
+
+        Reviewed by Joseph Pecoraro.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Base/Main.js:
+        (WebInspector.saveDataToFile):
+        Allow data to be saved without a provided URL.  It will default to localized "Untitled".
+
+        * UserInterface/Views/LogContentView.js:
+        (WebInspector.LogContentView.prototype._handleContextMenuEvent):
+
+2017-03-16  Devin Rousso  <webkit@devinrousso.com>
+
         Web Inspector: RTL: selected frame indicator is not positioned correctly
         https://bugs.webkit.org/show_bug.cgi?id=169763
 

@@ -379,6 +379,15 @@ WebInspector.LogContentView = class LogContentView extends WebInspector.ContentV
             contextMenu.appendItem(WebInspector.UIString("Copy Selected"), () => {
                 InspectorFrontendHost.copyText(this._formatMessagesAsData(true));
             });
+
+            contextMenu.appendItem(WebInspector.UIString("Save Selected"), () => {
+                const forceSaveAs = true;
+                WebInspector.saveDataToFile({
+                    url: "web-inspector:///Console.txt",
+                    content: this._formatMessagesAsData(true),
+                }, forceSaveAs);
+            });
+
             contextMenu.appendSeparator();
         }
 

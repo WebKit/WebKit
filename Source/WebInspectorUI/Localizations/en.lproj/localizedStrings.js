@@ -686,6 +686,7 @@ localizedStrings["Role"] = "Role";
 localizedStrings["Rule"] = "Rule";
 localizedStrings["Samples"] = "Samples";
 localizedStrings["Save File"] = "Save File";
+localizedStrings["Save Selected"] = "Save Selected";
 localizedStrings["Save configuration"] = "Save configuration";
 localizedStrings["Scheme"] = "Scheme";
 localizedStrings["Scope"] = "Scope";

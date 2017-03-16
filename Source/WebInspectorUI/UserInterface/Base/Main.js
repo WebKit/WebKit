@@ -874,15 +874,15 @@ WebInspector.saveDataToFile = function(saveData, forceSaveAs)
         return;
     }
 
-    console.assert(saveData.url);
     console.assert(saveData.content);
-    if (!saveData.url || !saveData.content)
+    if (!saveData.content)
         return;
 
-    let suggestedName = parseURL(saveData.url).lastPathComponent;
+    let url = saveData.url || "";
+    let suggestedName = parseURL(url).lastPathComponent;
     if (!suggestedName) {
         suggestedName = WebInspector.UIString("Untitled");
-        let dataURLTypeMatch = /^data:([^;]+)/.exec(saveData.url);
+        let dataURLTypeMatch = /^data:([^;]+)/.exec(url);
         if (dataURLTypeMatch)
             suggestedName += WebInspector.fileExtensionForMIMEType(dataURLTypeMatch[1]) || "";
     }
