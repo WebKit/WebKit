@@ -244,6 +244,8 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/mediastream/RTCIceConnectionState.idl
     Modules/mediastream/RTCIceGatheringState.idl
     Modules/mediastream/RTCIceServer.idl
+    Modules/mediastream/RTCIceTransport.idl
+    Modules/mediastream/RTCIceTransportState.idl
     Modules/mediastream/RTCOfferAnswerOptions.idl
     Modules/mediastream/RTCOfferOptions.idl
     Modules/mediastream/RTCPeerConnection.idl

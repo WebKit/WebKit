@@ -873,12 +873,12 @@ void MediaEndpointPeerConnection::iceTransportStateChanged(const String& mid, RT
     ASSERT(transceiver);
 
     RTCIceTransportState transportState = static_cast<RTCIceTransportState>(mediaEndpointIceTransportState);
-    transceiver->iceTransport().setTransportState(transportState);
+    transceiver->iceTransport().setState(transportState);
 
     // Determine if the script needs to be notified.
     Vector<RTCIceTransportState> transportStates;
     for (auto& transceiver : m_peerConnection.getTransceivers())
-        transportStates.append(transceiver->iceTransport().transportState());
+        transportStates.append(transceiver->iceTransport().state());
 
     RTCIceTransportState derivedState = deriveAggregatedIceConnectionState(transportStates);
     m_peerConnection.updateIceConnectionState(static_cast<RTCIceConnectionState>(derivedState));

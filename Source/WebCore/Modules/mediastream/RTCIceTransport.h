@@ -48,8 +48,8 @@ public:
     }
     virtual ~RTCIceTransport() { }
 
-    RTCIceTransportState transportState() const { return m_transportState; }
-    void setTransportState(RTCIceTransportState state) { m_transportState = state; }
+    RTCIceTransportState state() const { return m_transportState; }
+    void setState(RTCIceTransportState state) { m_transportState = state; }
 
     RTCIceGatheringState gatheringState() const { return m_gatheringState; }
     void setGatheringState(RTCIceGatheringState state) { m_gatheringState = state; }

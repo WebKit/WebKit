@@ -104,6 +104,7 @@
     macro(Request) \
     macro(RTCDTMFToneChangeEvent) \
     macro(RTCIceCandidate) \
+    macro(RTCIceTransport) \
     macro(RTCPeerConnection) \
     macro(RTCRtpReceiver) \
     macro(RTCRtpSender) \

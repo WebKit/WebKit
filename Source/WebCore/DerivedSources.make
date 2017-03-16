@@ -188,6 +188,8 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/mediastream/RTCIceConnectionState.idl \
     $(WebCore)/Modules/mediastream/RTCIceGatheringState.idl \
     $(WebCore)/Modules/mediastream/RTCIceServer.idl \
+    $(WebCore)/Modules/mediastream/RTCIceTransport.idl \
+    $(WebCore)/Modules/mediastream/RTCIceTransportState.idl \
     $(WebCore)/Modules/mediastream/RTCOfferAnswerOptions.idl \
     $(WebCore)/Modules/mediastream/RTCOfferOptions.idl \
     $(WebCore)/Modules/mediastream/RTCPeerConnection.idl \

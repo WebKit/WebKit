@@ -51,6 +51,8 @@
     ImplementedAs=RTCRtpTransceiverInit
 ] dictionary RTCRtpTransceiverInit {
     RTCRtpTransceiverDirection direction = "sendrecv";
+    // FIXME 169662: missing streams
+    // FIXME 169662: missing sendEncodings
 };
 
 [

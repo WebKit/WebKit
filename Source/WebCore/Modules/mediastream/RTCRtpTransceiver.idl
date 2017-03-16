@@ -36,11 +36,14 @@ typedef RTCRtpTransceiverDirection RtpTransceiverDirection;
     EnabledAtRuntime=PeerConnection
 ] interface RTCRtpTransceiver {
     readonly attribute DOMString? mid;
+    // FIXME 169662: missing [SameObject]
     readonly attribute RTCRtpSender sender;
+    // FIXME 169662: missing [SameObject]
     readonly attribute RTCRtpReceiver receiver;
     readonly attribute boolean stopped;
     readonly attribute RtpTransceiverDirection direction;
-
+    // FIXME 169662: missing currentDirection
     void setDirection(RtpTransceiverDirection direction);
     void stop();
+    // FIXME 169662: missing setCodecPreferences
 };

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2015 Ericsson AB. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,6 +34,10 @@
     EnabledAtRuntime=PeerConnection,
 ] interface RTCRtpSender {
     readonly attribute MediaStreamTrack? track;
-
+    // FIXME 169662: missing transport
+    // FIXME 169662: missing rtcpTransport
+    // FIXME 169662: missing getCapabilities
+    // FIXME 169662: missing setParameters
+    // FIXME 169662: missing getParameters
     [MayThrowException] Promise<void> replaceTrack(MediaStreamTrack withTrack);
 };

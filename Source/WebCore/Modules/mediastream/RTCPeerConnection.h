@@ -68,19 +68,7 @@ public:
 
     ExceptionOr<void> initializeWith(Document&, RTCConfiguration&&);
 
-    const Vector<std::reference_wrapper<RTCRtpSender>>& getSenders() const { return m_transceiverSet->senders(); }
-    const Vector<std::reference_wrapper<RTCRtpReceiver>>& getReceivers() const { return m_transceiverSet->receivers(); }
-    const Vector<RefPtr<RTCRtpTransceiver>>& getTransceivers() const { return m_transceiverSet->list(); }
-
-    // Part of legacy MediaStream-based API (mostly implemented as JS built-ins)
-    Vector<RefPtr<MediaStream>> getRemoteStreams() const { return m_backend->getRemoteStreams(); }
-
-    ExceptionOr<Ref<RTCRtpSender>> addTrack(Ref<MediaStreamTrack>&&, const Vector<std::reference_wrapper<MediaStream>>&);
-    ExceptionOr<void> removeTrack(RTCRtpSender&);
-
-    ExceptionOr<Ref<RTCRtpTransceiver>> addTransceiver(Ref<MediaStreamTrack>&&, const RTCRtpTransceiverInit&);
-    ExceptionOr<Ref<RTCRtpTransceiver>> addTransceiver(const String& kind, const RTCRtpTransceiverInit&);
-
+    // 4.3.2 RTCPeerConnection Interface
     void queuedCreateOffer(RTCOfferOptions&&, PeerConnection::SessionDescriptionPromise&&);
     void queuedCreateAnswer(RTCAnswerOptions&&, PeerConnection::SessionDescriptionPromise&&);
 
@@ -94,21 +82,35 @@ public:
     RefPtr<RTCSessionDescription> currentRemoteDescription() const;
     RefPtr<RTCSessionDescription> pendingRemoteDescription() const;
 
-    RTCSignalingState signalingState() const { return m_signalingState; }
-
     void queuedAddIceCandidate(RTCIceCandidate&, DOMPromise<void>&&);
 
+    RTCSignalingState signalingState() const { return m_signalingState; }
     RTCIceGatheringState iceGatheringState() const { return m_iceGatheringState; }
     RTCIceConnectionState iceConnectionState() const { return m_iceConnectionState; }
 
     const RTCConfiguration& getConfiguration() const { return m_configuration; }
     ExceptionOr<void> setConfiguration(RTCConfiguration&&);
+    void close();
 
-    void getStats(MediaStreamTrack*, Ref<DeferredPromise>&&);
+    // 5.1 RTCPeerConnection extensions
+    const Vector<std::reference_wrapper<RTCRtpSender>>& getSenders() const { return m_transceiverSet->senders(); }
+    const Vector<std::reference_wrapper<RTCRtpReceiver>>& getReceivers() const { return m_transceiverSet->receivers(); }
+    const Vector<RefPtr<RTCRtpTransceiver>>& getTransceivers() const { return m_transceiverSet->list(); }
 
+    ExceptionOr<Ref<RTCRtpSender>> addTrack(Ref<MediaStreamTrack>&&, const Vector<std::reference_wrapper<MediaStream>>&);
+    ExceptionOr<void> removeTrack(RTCRtpSender&);
+
+    ExceptionOr<Ref<RTCRtpTransceiver>> addTransceiver(Ref<MediaStreamTrack>&&, const RTCRtpTransceiverInit&);
+    ExceptionOr<Ref<RTCRtpTransceiver>> addTransceiver(const String& kind, const RTCRtpTransceiverInit&);
+
+    // 6.1 Peer-to-peer data API
     ExceptionOr<Ref<RTCDataChannel>> createDataChannel(ScriptExecutionContext&, String&&, RTCDataChannelInit&&);
 
-    void close();
+    // 8.2 Statistics API
+    void getStats(MediaStreamTrack*, Ref<DeferredPromise>&&);
+
+    // Legacy MediaStream-based API, mostly implemented as JS built-ins
+    Vector<RefPtr<MediaStream>> getRemoteStreams() const { return m_backend->getRemoteStreams(); }
 
     // EventTarget
     EventTargetInterface eventTargetInterface() const final { return RTCPeerConnectionEventTargetInterfaceType; }
