@@ -21,9 +21,16 @@ var extractable = true;
 
 crypto.subtle.generateKey(algorithmKeyGen, extractable, ["deriveKey", "deriveBits"]).then(function(result) {
     privateKey = result.privateKey;
+    publicKey = result.publicKey;
 
     // Wrong key and format.
     return shouldReject('crypto.subtle.exportKey("raw", privateKey)');
+}).then(function() {
+    // Wrong key and format.
+    return shouldReject('crypto.subtle.exportKey("spki", privateKey)');
+}).then(function() {
+    // Wrong key and format.
+    return shouldReject('crypto.subtle.exportKey("pkcs8", publicKey)');
 }).then(finishJSTest, finishJSTest);
 
 </script>

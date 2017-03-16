@@ -2582,6 +2582,7 @@
 		57E657EC1E7162EA00F941CA /* CryptoAlgorithmPbkdf2Params.h in Headers */ = {isa = PBXBuildFile; fileRef = 57E657EB1E7162EA00F941CA /* CryptoAlgorithmPbkdf2Params.h */; };
 		57E657EF1E71665400F941CA /* JSPbkdf2Params.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 57E657ED1E71665400F941CA /* JSPbkdf2Params.cpp */; };
 		57E657F01E71665400F941CA /* JSPbkdf2Params.h in Headers */ = {isa = PBXBuildFile; fileRef = 57E657EE1E71665400F941CA /* JSPbkdf2Params.h */; };
+		57E664FC1E73703300765536 /* CommonCryptoDERUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 57E664FB1E73703300765536 /* CommonCryptoDERUtilities.h */; };
 		57EF5E601D20C83900171E60 /* TextCodecReplacement.h in Headers */ = {isa = PBXBuildFile; fileRef = 57EF5E5F1D20C83900171E60 /* TextCodecReplacement.h */; };
 		57EF5E621D20D28700171E60 /* TextCodecReplacement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 57EF5E611D20D28700171E60 /* TextCodecReplacement.cpp */; };
 		57FEDD3F1DB6D59200EB96F5 /* CryptoAlgorithmRsaKeyGenParams.h in Headers */ = {isa = PBXBuildFile; fileRef = 57FEDD3E1DB6D59200EB96F5 /* CryptoAlgorithmRsaKeyGenParams.h */; };
@@ -10257,6 +10258,7 @@
 		57E657EB1E7162EA00F941CA /* CryptoAlgorithmPbkdf2Params.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptoAlgorithmPbkdf2Params.h; sourceTree = "<group>"; };
 		57E657ED1E71665400F941CA /* JSPbkdf2Params.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSPbkdf2Params.cpp; sourceTree = "<group>"; };
 		57E657EE1E71665400F941CA /* JSPbkdf2Params.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSPbkdf2Params.h; sourceTree = "<group>"; };
+		57E664FB1E73703300765536 /* CommonCryptoDERUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommonCryptoDERUtilities.h; sourceTree = "<group>"; };
 		57EF5E5F1D20C83900171E60 /* TextCodecReplacement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextCodecReplacement.h; sourceTree = "<group>"; };
 		57EF5E611D20D28700171E60 /* TextCodecReplacement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextCodecReplacement.cpp; sourceTree = "<group>"; };
 		57F827391DB72C22009D2BF4 /* RsaHashedKeyGenParams.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = RsaHashedKeyGenParams.idl; sourceTree = "<group>"; };
@@ -24200,6 +24202,7 @@
 		E172AF71180F343400FBADB9 /* mac */ = {
 			isa = PBXGroup;
 			children = (
+				57E664FB1E73703300765536 /* CommonCryptoDERUtilities.h */,
 				E125F843182425C900D84CD9 /* CryptoAlgorithmAES_CBCMac.cpp */,
 				570440571E53851600356601 /* CryptoAlgorithmAES_CFBMac.cpp */,
 				57B5F80D1E5D2F2D00F34F90 /* CryptoAlgorithmAES_GCMMac.cpp */,
@@ -27068,6 +27071,7 @@
 				2D8287F716E4A0380086BD00 /* HitTestLocation.h in Headers */,
 				930908910AF7EDE40081DF01 /* HitTestRequest.h in Headers */,
 				9307F1D80AF2D59000DBA31A /* HitTestResult.h in Headers */,
+				57E664FC1E73703300765536 /* CommonCryptoDERUtilities.h in Headers */,
 				BC3BC29C0E91AB0F00835588 /* HostWindow.h in Headers */,
 				FD31609912B026F700C1A359 /* HRTFDatabase.h in Headers */,
 				FD31609B12B026F700C1A359 /* HRTFDatabaseLoader.h in Headers */,

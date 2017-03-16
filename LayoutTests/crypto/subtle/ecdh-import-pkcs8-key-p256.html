@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../resources/common.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+description("Test importing a P-256 PKCS8 ECDH key");
+
+jsTestIsAsync = true;
+
+var pkcs8Key = hexStringToUint8Array("308187020100301306072a8648ce3d020106082a8648ce3d030107046d306b02010104200a21f3f048b893b0f2b5a8459bd6d2bc112614aa86437f8fa2496a0e27f5b0a8a14403420004d726bd565878f24ee3616890d3668503334b84da3434b2774a44d6e4b9c536dd60e9181e1d1469ba3e6aba8987225f6e797d01a0dc400a4a298c902bae66abe2");
+var extractable = true;
+
+debug("Importing a key...");
+crypto.subtle.importKey("pkcs8", pkcs8Key, {name: "ECDH", namedCurve: "P-256"}, extractable, ["deriveKey", "deriveBits"]).then(function(result) {
+    publicKey = result;
+
+    shouldBe("publicKey.toString()", "'[object CryptoKey]'");
+    shouldBe("publicKey.type", "'private'");
+    shouldBe("publicKey.extractable", "true");
+    shouldBe("publicKey.algorithm.name", "'ECDH'");
+    shouldBe("publicKey.algorithm.namedCurve", "'P-256'");
+    shouldBe("publicKey.usages", "[ 'deriveBits', 'deriveKey' ]");
+
+    finishJSTest();
+});
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

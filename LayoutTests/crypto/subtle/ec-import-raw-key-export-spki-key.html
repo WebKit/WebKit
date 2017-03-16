@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../resources/common.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+description("Test importing an ECDH raw key and then export it in SPKI format");
+
+jsTestIsAsync = true;
+
+var rawKey = hexStringToUint8Array("04dc08d9bf603333eab1ad29cef41a6203ab6ecce03c5a4a9bf5771a3fb9f971d89a09664bfb87c61199b3453220eadec714c49ad1e24bf5d7ec5bddeca6420893");
+var expectedSpkiKey = "3059301306072a8648ce3d020106082a8648ce3d03010703420004dc08d9bf603333eab1ad29cef41a6203ab6ecce03c5a4a9bf5771a3fb9f971d89a09664bfb87c61199b3453220eadec714c49ad1e24bf5d7ec5bddeca6420893";
+var extractable = true;
+
+debug("Importing a key...");
+crypto.subtle.importKey("raw", rawKey, { name: "ECDH", namedCurve: "P-256" }, extractable, [ ]).then(function(key) {
+    return crypto.subtle.exportKey("spki", key);
+}).then(function(result) {
+    publicKey = result;
+
+    shouldBe("bytesToHexString(publicKey)", "expectedSpkiKey");
+
+    finishJSTest();
+});
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

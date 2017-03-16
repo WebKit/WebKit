@@ -28,6 +28,7 @@
 
 #if ENABLE(SUBTLE_CRYPTO)
 
+#include "CommonCryptoDERUtilities.h"
 #include "CommonCryptoUtilities.h"
 #include "CryptoAlgorithmRegistry.h"
 #include "CryptoKeyDataRSAComponents.h"
@@ -39,16 +40,7 @@
 namespace WebCore {
 
 // OID rsaEncryption: 1.2.840.113549.1.1.1. Per https://tools.ietf.org/html/rfc3279#section-2.3.1
-static unsigned char RSAOIDHeader[] = {0x30, 0x0d, 0x06, 0x09, 0x2a, 0x86, 0x48, 0x86, 0xf7, 0x0d, 0x01, 0x01, 0x01, 0x05, 0x00};
-// Version 0. Per https://tools.ietf.org/html/rfc5208#section-5
-static unsigned char Version[] = {0x02, 0x01, 0x00};
-
-// Per X.690 08/2015: https://www.itu.int/rec/T-REC-X.680-X.693/en
-static unsigned char BitStringMark = 0x03;
-static unsigned char OctetStringMark = 0x04;
-static unsigned char SequenceMark = 0x30;
-
-static unsigned char InitialOctet = 0x00;
+static const unsigned char RSAOIDHeader[] = {0x30, 0x0d, 0x06, 0x09, 0x2a, 0x86, 0x48, 0x86, 0xf7, 0x0d, 0x01, 0x01, 0x01, 0x05, 0x00};
 
 // FIXME: We should get rid of magic number 16384. It assumes that the length of provided key will not exceed 16KB.
 // https://bugs.webkit.org/show_bug.cgi?id=164942
@@ -253,41 +245,6 @@ static bool bigIntegerToUInt32(const Vector<uint8_t>& bigInteger, uint32_t& resu
     return true;
 }
 
-static size_t bytesUsedToEncodedLength(uint8_t octet)
-{
-    if (octet < 128)
-        return 1;
-    return octet - 127;
-}
-
-static size_t bytesNeededForEncodedLength(size_t length)
-{
-    if (!length)
-        return 0;
-    size_t result = 1;
-    while (result < sizeof(length) && length >= (1 << (result * 8)))
-        result += 1;
-    return result;
-}
-
-static void addEncodedASN1Length(Vector<uint8_t>& in, size_t length)
-{
-    if (length < 128) {
-        in.append(length);
-        return;
-    }
-
-    size_t extraBytes = bytesNeededForEncodedLength(length);
-    in.append(128 + extraBytes);
-
-    size_t lastPosition = in.size() + extraBytes - 1;
-    in.grow(in.size() + extraBytes);
-    for (size_t i = 0; i < extraBytes; i++) {
-        in[lastPosition - i] = length & 0xff;
-        length = length >> 8;
-    }
-}
-
 // FIXME: We should use WorkQueue here instead of dispatch_async once WebKitSubtleCrypto is deprecated.
 // https://bugs.webkit.org/show_bug.cgi?id=164943
 void CryptoKeyRSA::generatePair(CryptoAlgorithmIdentifier algorithm, CryptoAlgorithmIdentifier hash, bool hasHash, unsigned modulusLength, const Vector<uint8_t>& publicExponent, bool extractable, CryptoKeyUsageBitmap usage, KeyPairCallback&& callback, VoidCallback&& failureCallback, ScriptExecutionContext* context)
@@ -373,10 +330,11 @@ ExceptionOr<Vector<uint8_t>> CryptoKeyRSA::exportSpki() const
     keyBytes.shrink(keySize);
 
     // RSAOIDHeader + BitStringMark + Length + keySize + InitialOctet
-    size_t totalSize = sizeof(RSAOIDHeader) + bytesNeededForEncodedLength(keySize + 1) + keySize + 3;
+    size_t totalSize = sizeof(RSAOIDHeader) + bytesNeededForEncodedLength(keySize + 1) + keySize + 2;
 
     // Per https://tools.ietf.org/html/rfc5280#section-4.1. subjectPublicKeyInfo.
     Vector<uint8_t> result;
+    result.reserveCapacity(totalSize + bytesNeededForEncodedLength(totalSize) + 1);
     result.append(SequenceMark);
     addEncodedASN1Length(result, totalSize);
     result.append(RSAOIDHeader, sizeof(RSAOIDHeader));
@@ -431,10 +389,11 @@ ExceptionOr<Vector<uint8_t>> CryptoKeyRSA::exportPkcs8() const
     keyBytes.shrink(keySize);
 
     // Version + RSAOIDHeader + OctetStringMark + Length + keySize
-    size_t totalSize = sizeof(Version) + sizeof(RSAOIDHeader) + bytesNeededForEncodedLength(keySize) + keySize + 2;
+    size_t totalSize = sizeof(Version) + sizeof(RSAOIDHeader) + bytesNeededForEncodedLength(keySize) + keySize + 1;
 
     // Per https://tools.ietf.org/html/rfc5208#section-5. PrivateKeyInfo.
     Vector<uint8_t> result;
+    result.reserveCapacity(totalSize + bytesNeededForEncodedLength(totalSize) + 1);
     result.append(SequenceMark);
     addEncodedASN1Length(result, totalSize);
     result.append(Version, sizeof(Version));

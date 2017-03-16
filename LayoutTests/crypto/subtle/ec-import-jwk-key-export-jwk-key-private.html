@@ -28,15 +28,15 @@ debug("Importing a key...");
 crypto.subtle.importKey("jwk", jwkKey, { name: "ECDH", namedCurve: "P-256" }, extractable, ["deriveKey", "deriveBits"]).then(function(result) {
     return crypto.subtle.exportKey("jwk", result);
 }).then(function(result) {
-    publicKey = result;
+    privateKey = result;
 
-    shouldBe("publicKey.kty", "jwkKey.kty");
-    shouldBe("publicKey.crv", "jwkKey.crv");
-    shouldBe("publicKey.x", "jwkKey.x");
-    shouldBe("publicKey.y", "jwkKey.y");
-    shouldBe("publicKey.d", "jwkKey.d");
-    shouldBe("publicKey.key_ops", "jwkKey.key_ops");
-    shouldBe("publicKey.ext", "jwkKey.ext");
+    shouldBe("privateKey.kty", "jwkKey.kty");
+    shouldBe("privateKey.crv", "jwkKey.crv");
+    shouldBe("privateKey.x", "jwkKey.x");
+    shouldBe("privateKey.y", "jwkKey.y");
+    shouldBe("privateKey.d", "jwkKey.d");
+    shouldBe("privateKey.key_ops", "jwkKey.key_ops");
+    shouldBe("privateKey.ext", "jwkKey.ext");
 
     finishJSTest();
 });

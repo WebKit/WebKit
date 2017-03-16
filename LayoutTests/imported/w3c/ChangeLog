@@ -1,3 +1,14 @@
+2017-03-16  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebCrypto] Support SPKI/PKCS8 for Elliptic Curve
+        https://bugs.webkit.org/show_bug.cgi?id=169318
+        <rdar://problem/31081956>
+
+        Reviewed by Brent Fulgham.
+
+        * web-platform-tests/WebCryptoAPI/import_export/ec_importKey.worker-expected.txt:
+        * web-platform-tests/WebCryptoAPI/import_export/test_ec_importKey-expected.txt:
+
 2017-03-14  Youenn Fablet  <youenn@apple.com>
 
         Import web-platform-tests/cors

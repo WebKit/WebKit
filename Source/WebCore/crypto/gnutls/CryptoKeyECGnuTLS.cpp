@@ -48,7 +48,7 @@ size_t CryptoKeyEC::keySizeInBits() const
     return 0;
 }
 
-Vector<uint8_t> CryptoKeyEC::exportRaw() const
+Vector<uint8_t> CryptoKeyEC::platformExportRaw() const
 {
     notImplemented();
 
@@ -86,6 +86,34 @@ RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportJWKPrivate(CryptoAlgorithmIdentif
 void CryptoKeyEC::platformAddFieldElements(JsonWebKey&) const
 {
     notImplemented();
+}
+
+RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportSpki(CryptoAlgorithmIdentifier, NamedCurve, Vector<uint8_t>&&, bool, CryptoKeyUsageBitmap)
+{
+    notImplemented();
+
+    return nullptr;
+}
+
+Vector<uint8_t> CryptoKeyEC::platformExportSpki() const
+{
+    notImplemented();
+
+    return { };
+}
+
+RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportPkcs8(CryptoAlgorithmIdentifier, NamedCurve, Vector<uint8_t>&&, bool, CryptoKeyUsageBitmap)
+{
+    notImplemented();
+
+    return nullptr;
+}
+
+Vector<uint8_t> CryptoKeyEC::platformExportPkcs8() const
+{
+    notImplemented();
+
+    return { };
 }
 
 } // namespace WebCore

@@ -153,9 +153,20 @@ void CryptoAlgorithmECDH::importKey(SubtleCrypto::KeyFormat format, KeyData&& da
         }
         result = CryptoKeyEC::importRaw(ecParameters.identifier, ecParameters.namedCurve, WTFMove(WTF::get<Vector<uint8_t>>(data)), extractable, usages);
         break;
-    default:
-        exceptionCallback(NOT_SUPPORTED_ERR);
-        return;
+    case SubtleCrypto::KeyFormat::Spki:
+        if (usages) {
+            exceptionCallback(SYNTAX_ERR);
+            return;
+        }
+        result = CryptoKeyEC::importSpki(ecParameters.identifier, ecParameters.namedCurve, WTFMove(WTF::get<Vector<uint8_t>>(data)), extractable, usages);
+        break;
+    case SubtleCrypto::KeyFormat::Pkcs8:
+        if (usages && (usages ^ CryptoKeyUsageDeriveKey) && (usages ^ CryptoKeyUsageDeriveBits) && (usages ^ (CryptoKeyUsageDeriveKey | CryptoKeyUsageDeriveBits))) {
+            exceptionCallback(SYNTAX_ERR);
+            return;
+        }
+        result = CryptoKeyEC::importPkcs8(ecParameters.identifier, ecParameters.namedCurve, WTFMove(WTF::get<Vector<uint8_t>>(data)), extractable, usages);
+        break;
     }
     if (!result) {
         exceptionCallback(DataError);
@@ -176,21 +187,36 @@ void CryptoAlgorithmECDH::exportKey(SubtleCrypto::KeyFormat format, Ref<CryptoKe
 
     KeyData result;
     switch (format) {
-    case SubtleCrypto::KeyFormat::Jwk: {
+    case SubtleCrypto::KeyFormat::Jwk:
         result = ecKey.exportJwk();
         break;
-    }
     case SubtleCrypto::KeyFormat::Raw: {
-        if (ecKey.type() != CryptoKey::Type::Public) {
-            exceptionCallback(INVALID_ACCESS_ERR);
+        auto raw = ecKey.exportRaw();
+        if (raw.hasException()) {
+            exceptionCallback(raw.releaseException().code());
             return;
         }
-        result = ecKey.exportRaw();
+        result = raw.releaseReturnValue();
         break;
     }
-    default:
-        exceptionCallback(NOT_SUPPORTED_ERR);
-        return;
+    case SubtleCrypto::KeyFormat::Spki: {
+        auto spki = ecKey.exportSpki();
+        if (spki.hasException()) {
+            exceptionCallback(spki.releaseException().code());
+            return;
+        }
+        result = spki.releaseReturnValue();
+        break;
+    }
+    case SubtleCrypto::KeyFormat::Pkcs8: {
+        auto pkcs8 = ecKey.exportPkcs8();
+        if (pkcs8.hasException()) {
+            exceptionCallback(pkcs8.releaseException().code());
+            return;
+        }
+        result = pkcs8.releaseReturnValue();
+        break;
+    }
     }
 
     callback(format, WTFMove(result));

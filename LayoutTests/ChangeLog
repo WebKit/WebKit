@@ -1,3 +1,66 @@
+2017-03-16  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebCrypto] Support SPKI/PKCS8 for Elliptic Curve
+        https://bugs.webkit.org/show_bug.cgi?id=169318
+        <rdar://problem/31081956>
+
+        Reviewed by Brent Fulgham.
+
+        * crypto/subtle/ec-export-key-malformed-parameters-expected.txt:
+        * crypto/subtle/ec-export-key-malformed-parameters.html:
+        * crypto/subtle/ec-import-jwk-key-export-jwk-key-private-expected.txt:
+        * crypto/subtle/ec-import-jwk-key-export-jwk-key-private.html:
+        * crypto/subtle/ec-import-jwk-key-export-pkcs8-key-expected.txt: Added.
+        * crypto/subtle/ec-import-jwk-key-export-pkcs8-key.html: Added.
+        * crypto/subtle/ec-import-jwk-key-export-spki-key-expected.txt: Added.
+        * crypto/subtle/ec-import-jwk-key-export-spki-key.html: Added.
+        * crypto/subtle/ec-import-key-malformed-parameters-expected.txt:
+        * crypto/subtle/ec-import-key-malformed-parameters.html:
+        * crypto/subtle/ec-import-pkcs8-key-export-jwk-key-expected.txt: Added.
+        * crypto/subtle/ec-import-pkcs8-key-export-jwk-key.html: Added.
+        * crypto/subtle/ec-import-pkcs8-key-export-pkcs8-key-p256-expected.txt: Added.
+        * crypto/subtle/ec-import-pkcs8-key-export-pkcs8-key-p256.html: Added.
+        * crypto/subtle/ec-import-pkcs8-key-export-pkcs8-key-p384-expected.txt: Added.
+        * crypto/subtle/ec-import-pkcs8-key-export-pkcs8-key-p384.html: Added.
+        * crypto/subtle/ec-import-raw-key-export-spki-key-expected.txt: Added.
+        * crypto/subtle/ec-import-raw-key-export-spki-key.html: Added.
+        * crypto/subtle/ec-import-spki-key-export-jwk-key-expected.txt: Added.
+        * crypto/subtle/ec-import-spki-key-export-jwk-key.html: Added.
+        * crypto/subtle/ec-import-spki-key-export-raw-key-expected.txt: Added.
+        * crypto/subtle/ec-import-spki-key-export-raw-key.html: Added.
+        * crypto/subtle/ec-import-spki-key-export-spki-key-p256-expected.txt: Added.
+        * crypto/subtle/ec-import-spki-key-export-spki-key-p256.html: Added.
+        * crypto/subtle/ec-import-spki-key-export-spki-key-p384-expected.txt: Added.
+        * crypto/subtle/ec-import-spki-key-export-spki-key-p384.html: Added.
+        * crypto/subtle/ecdh-generate-export-key-spki-p256-expected.txt: Added.
+        * crypto/subtle/ecdh-generate-export-key-spki-p256.html: Added.
+        * crypto/subtle/ecdh-generate-export-key-spki-p384-expected.txt: Added.
+        * crypto/subtle/ecdh-generate-export-key-spki-p384.html: Added.
+        * crypto/subtle/ecdh-generate-export-pkcs8-p256-expected.txt: Added.
+        * crypto/subtle/ecdh-generate-export-pkcs8-p256.html: Added.
+        * crypto/subtle/ecdh-generate-export-pkcs8-p384-expected.txt: Added.
+        * crypto/subtle/ecdh-generate-export-pkcs8-p384.html: Added.
+        * crypto/subtle/ecdh-import-pkcs8-key-p256-expected.txt: Added.
+        * crypto/subtle/ecdh-import-pkcs8-key-p256.html: Added.
+        * crypto/subtle/ecdh-import-pkcs8-key-p384-expected.txt: Added.
+        * crypto/subtle/ecdh-import-pkcs8-key-p384.html: Added.
+        * crypto/subtle/ecdh-import-spki-key-p256-expected.txt: Added.
+        * crypto/subtle/ecdh-import-spki-key-p256.html: Added.
+        * crypto/subtle/ecdh-import-spki-key-p384-expected.txt: Added.
+        * crypto/subtle/ecdh-import-spki-key-p384.html: Added.
+        * crypto/workers/subtle/ec-generate-export-pkcs8-key-expected.txt: Added.
+        * crypto/workers/subtle/ec-generate-export-pkcs8-key.html: Added.
+        * crypto/workers/subtle/ec-generate-export-spki-key-expected.txt: Added.
+        * crypto/workers/subtle/ec-generate-export-spki-key.html: Added.
+        * crypto/workers/subtle/ec-import-pkcs8-key-expected.txt: Added.
+        * crypto/workers/subtle/ec-import-pkcs8-key.html: Added.
+        * crypto/workers/subtle/ec-import-spki-key-expected.txt: Added.
+        * crypto/workers/subtle/ec-import-spki-key.html: Added.
+        * crypto/workers/subtle/resources/ec-generate-export-pkcs8-key.js: Added.
+        * crypto/workers/subtle/resources/ec-generate-export-spki-key.js: Added.
+        * crypto/workers/subtle/resources/ec-import-pkcs8-key.js: Added.
+        * crypto/workers/subtle/resources/ec-import-spki-key.js: Added.
+
 2017-03-16  Zalan Bujtas  <zalan@apple.com>
 
         Simple line layout: Extend webkit-hyphenate-limit-lines to cover subsequent words.
