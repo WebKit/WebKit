@@ -621,16 +621,20 @@ void RenderInline::addChildToContinuation(RenderObject* newChild, RenderObject* 
     auto* flow = continuationBefore(beforeChild);
     // It may or may not be the direct parent of the beforeChild.
     RenderBoxModelObject* beforeChildAncestor = nullptr;
-    // In case of anonymous wrappers, the parent of the beforeChild is mostly irrelevant. What we need is the topmost wrapper.
     if (!beforeChild) {
         auto* continuation = nextContinuation(flow);
         beforeChildAncestor = continuation ? continuation : flow;
     } else if (canUseAsParentForContinuation(beforeChild->parent()))
         beforeChildAncestor = downcast<RenderBoxModelObject>(beforeChild->parent());
     else if (beforeChild->parent()) {
+        // In case of anonymous wrappers, the parent of the beforeChild is mostly irrelevant. What we need is the topmost wrapper.
         auto* parent = beforeChild->parent();
-        while (parent && parent->parent() && parent->parent()->isAnonymous())
+        while (parent && parent->parent() && parent->parent()->isAnonymous()) {
+            // The ancestor candidate needs to be inside the continuation.
+            if (parent->hasContinuation())
+                break;
             parent = parent->parent();
+        }
         ASSERT(parent && parent->parent());
         beforeChildAncestor = downcast<RenderBoxModelObject>(parent->parent());
     } else
