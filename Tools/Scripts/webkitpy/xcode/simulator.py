@@ -179,7 +179,7 @@ class Simulator(object):
     unavailable_version_re = re.compile('-- Unavailable: (?P<identifier>[^ ]+) --')
     version_re = re.compile('-- (i|watch|tv)OS (?P<version>\d+\.\d+)(?P<internal> Internal)? --')
     devices_re = re.compile(
-        '\s*(?P<name>.+) \((?P<udid>[^)]+)\) \((?P<state>[^)]+)\)( \((?P<availability>[^)]+)\))?')
+        '\s*(?P<name>.+) \((?P<udid>[A-Z0-9\-]+)\) \((?P<state>[^)]+)\)( \((?P<availability>[^)]+)\))?')
 
     managed_devices = {}
     Device = None

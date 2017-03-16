@@ -68,6 +68,7 @@ watchOS 2.0 (2.0 - 13S343) (com.apple.CoreSimulator.SimRuntime.watchOS-2-0)
     iPad Retina (733FC71E-22F4-4077-BF79-25C27EA881FC) (Shutdown)
     iPad Air (67266841-82F3-4545-AED6-568B117E41A8) (Shutdown)
     iPad Pro (9.7 inch) (DEBD50B8-0566-4D7A-BCDB-4134CFE5DA40) (Shutdown)
+    iPhone 7 (2AE58BBE-0995-4326-9B65-2F413E2E33DC) (Shutdown) (unavailable, runtime profile not found)
 -- iOS 8.0 Internal --
 -- tvOS 9.0 --
 Apple TV 1080p (55281ABE-9C27-438B-AD50-C540D7BC4BAC) (Shutdown)
@@ -133,7 +134,7 @@ Apple TV 1080p (55281ABE-9C27-438B-AD50-C540D7BC4BAC) (Shutdown)
         self.assertEqual(True, runtime_ios_8.available)
         self.assertEqual(False, runtime_ios_8.is_internal_runtime)
         self.assertEqual(tuple([8, 0]), runtime_ios_8.version)
-        self.assertEqual(10, len(runtime_ios_8.devices))
+        self.assertEqual(11, len(runtime_ios_8.devices))
 
         device_iphone_4s = runtime_ios_8.devices[0]
         self.assertEqual('iPhone 4s', device_iphone_4s.name)
@@ -194,6 +195,12 @@ Apple TV 1080p (55281ABE-9C27-438B-AD50-C540D7BC4BAC) (Shutdown)
         self.assertEqual('DEBD50B8-0566-4D7A-BCDB-4134CFE5DA40', device_ipad_pro.udid)
         self.assertEqual(True, device_ipad_pro.available)
         self.assertEqual(runtime_ios_8, device_ipad_pro.runtime)
+
+        device_iphone_7 = runtime_ios_8.devices[10]
+        self.assertEqual('iPhone 7', device_iphone_7.name)
+        self.assertEqual('2AE58BBE-0995-4326-9B65-2F413E2E33DC', device_iphone_7.udid)
+        self.assertEqual(False, device_iphone_7.available)
+        self.assertEqual(runtime_ios_8, device_iphone_7.runtime)
 
         runtime_ios_8_internal = simulator.runtimes[1]
         self.assertEqual('com.apple.CoreSimulator.SimRuntime.iOS-8-0-Internal', runtime_ios_8_internal.identifier)
