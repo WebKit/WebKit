@@ -145,11 +145,12 @@ void SocketStreamHandleImpl::readBytes(gssize bytesRead)
     }
 
     // The client can close the handle, potentially removing the last reference.
-    RefPtr<SocketStreamHandle> protectedThis(this);
-    std::optional<size_t> optionalLength;
-    if (bytesRead != -1)
-        optionalLength = static_cast<size_t>(bytesRead);
-    m_client.didReceiveSocketStreamData(*this, m_readBuffer.get(), optionalLength);
+    Ref<SocketStreamHandle> protectedThis(*this);
+    if (bytesRead == -1)
+        m_client.didFailToReceiveSocketStreamData();
+    else
+        m_client.didReceiveSocketStreamData(*this, m_readBuffer.get(), static_cast<size_t>(bytesRead));
+
     if (m_inputStream) {
         g_input_stream_read_async(m_inputStream.get(), m_readBuffer.get(), READ_BUFFER_SIZE, G_PRIORITY_DEFAULT, m_cancellable.get(),
             reinterpret_cast<GAsyncReadyCallback>(readReadyCallback), protectedThis.leakRef());

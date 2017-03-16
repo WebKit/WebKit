@@ -537,11 +537,10 @@ void SocketStreamHandleImpl::readStreamCallback(CFStreamEventType type)
         if (!length)
             return;
 
-        std::optional<size_t> optionalLength;
-        if (length != -1)
-            optionalLength = length;
-        
-        m_client.didReceiveSocketStreamData(*this, reinterpret_cast<const char*>(ptr), optionalLength);
+        if (length == -1)
+            m_client.didFailToReceiveSocketStreamData(*this);
+        else
+            m_client.didReceiveSocketStreamData(*this, reinterpret_cast<const char*>(ptr), length);
 
         return;
     }

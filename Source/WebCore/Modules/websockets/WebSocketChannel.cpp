@@ -307,18 +307,15 @@ void WebSocketChannel::didCloseSocketStream(SocketStreamHandle& handle)
     deref();
 }
 
-void WebSocketChannel::didReceiveSocketStreamData(SocketStreamHandle& handle, const char* data, std::optional<size_t> len)
+void WebSocketChannel::didReceiveSocketStreamData(SocketStreamHandle& handle, const char* data, size_t length)
 {
-    if (len)
-        LOG(Network, "WebSocketChannel %p didReceiveSocketStreamData() Received %zu bytes", this, len.value());
-    else
-        LOG(Network, "WebSocketChannel %p didReceiveSocketStreamData() Received no bytes", this);
+    LOG(Network, "WebSocketChannel %p didReceiveSocketStreamData() Received %zu bytes", this, length);
     Ref<WebSocketChannel> protectedThis(*this); // The client can close the channel, potentially removing the last reference.
     ASSERT(&handle == m_handle);
     if (!m_document) {
         return;
     }
-    if (!len || !len.value()) {
+    if (!length) {
         handle.disconnect();
         return;
     }
@@ -329,7 +326,7 @@ void WebSocketChannel::didReceiveSocketStreamData(SocketStreamHandle& handle, co
     }
     if (m_shouldDiscardReceivedData)
         return;
-    if (!appendToBuffer(data, len.value())) {
+    if (!appendToBuffer(data, length)) {
         m_shouldDiscardReceivedData = true;
         fail("Ran out of memory while receiving WebSocket data.");
         return;
@@ -338,6 +335,11 @@ void WebSocketChannel::didReceiveSocketStreamData(SocketStreamHandle& handle, co
         if (!processBuffer())
             break;
     }
+}
+
+void WebSocketChannel::didFailToReceiveSocketStreamData(SocketStreamHandle& handle)
+{
+    handle.disconnect();
 }
 
 void WebSocketChannel::didUpdateBufferedAmount(SocketStreamHandle&, size_t bufferedAmount)
