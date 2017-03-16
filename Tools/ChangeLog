@@ -1,3 +1,21 @@
+2017-03-16  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Fix quotes around --pretty format git flag.
+        https://bugs.webkit.org/show_bug.cgi?id=169712
+
+        Reviewed by Ryosuke Niwa.
+
+        Remove double quotes from command list element '--pretty="format:%ct"' since it will cause
+        subprocess to not work as expected.
+        Additionally, take advantage of `git -C` flag.
+
+        * Scripts/webkitpy/common/checkout/scm/git.py:
+        (Git.native_revision):
+        Take advantage of `git -C` flag.
+        (Git.timestamp_of_native_revision):
+        Take advantage of `git -C` flag and remove double quotes from git formatter.
+        We know this works from `committer_email_for_revision()` function.
+
 2017-03-16  Alex Christensen  <achristensen@webkit.org>
 
         Clean up WKContentExtension API

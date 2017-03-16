@@ -289,7 +289,7 @@ class Git(SCM, SVNRepository):
         return str(match.group('svn_revision'))
 
     def native_revision(self, path):
-        return self._run_git(['log', '-1', '--pretty=format:%H', self.find_checkout_root(path)])
+        return self._run_git(['-C', self.find_checkout_root(path), 'log', '-1', '--pretty=format:%H'])
 
     def svn_url(self):
         git_command = ['svn', 'info']
@@ -315,7 +315,7 @@ class Git(SCM, SVNRepository):
         return time_without_timezone.strftime('%Y-%m-%dT%H:%M:%SZ')
 
     def timestamp_of_native_revision(self, path, sha):
-        unix_timestamp = self._run_git(['log', '-1', sha, '--pretty="format:%ct"', self.find_checkout_root(path)]).rstrip()
+        unix_timestamp = self._run_git(['-C', self.find_checkout_root(path), 'log', '-1', sha, '--pretty=format:%ct']).rstrip()
         commit_timestamp = datetime.datetime.utcfromtimestamp(float(unix_timestamp))
         return commit_timestamp.strftime('%Y-%m-%dT%H:%M:%SZ')
 
