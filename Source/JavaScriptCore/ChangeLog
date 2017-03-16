@@ -1,5 +1,17 @@
 2017-03-16  Mark Lam  <mark.lam@apple.com>
 
+        Array concat operation should check for length overflows.
+        https://bugs.webkit.org/show_bug.cgi?id=169796
+        <rdar://problem/31095276>
+
+        Reviewed by Keith Miller.
+
+        * runtime/ArrayPrototype.cpp:
+        (JSC::concatAppendOne):
+        (JSC::arrayProtoPrivateFuncConcatMemcpy):
+
+2017-03-16  Mark Lam  <mark.lam@apple.com>
+
         The new array with spread operation needs to check for length overflows.
         https://bugs.webkit.org/show_bug.cgi?id=169780
         <rdar://problem/31072182>
