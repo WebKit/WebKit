@@ -1,3 +1,16 @@
+2017-03-15  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [DFG] ToString operation should have fixup for primitives to say this node does not have side effects
+        https://bugs.webkit.org/show_bug.cgi?id=169544
+
+        Reviewed by Saam Barati.
+
+        * microbenchmarks/template-string-array.js: Added.
+        (test):
+        * stress/to-string-non-cell-use.js: Added.
+        (shouldBe):
+        (shouldThrow):
+
 2017-03-13  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r213856.

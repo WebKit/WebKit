@@ -2235,6 +2235,16 @@ private:
             fixEdge<CellUse>(node->child1());
             return;
         }
+
+        // ToString(Symbol) throws an error. So if the child1 can include Symbols,
+        // we need to care about it in the clobberize. In the following case,
+        // since NotCellUse edge filter is used and this edge filters Symbols,
+        // we can say that ToString never throws an error!
+        if (node->child1()->shouldSpeculateNotCell()) {
+            fixEdge<NotCellUse>(node->child1());
+            node->clearFlags(NodeMustGenerate);
+            return;
+        }
     }
 
     bool attemptToMakeFastStringAdd(Node* node)

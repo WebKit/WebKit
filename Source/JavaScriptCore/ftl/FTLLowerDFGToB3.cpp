@@ -4933,10 +4933,13 @@ private:
         }
             
         case CellUse:
+        case NotCellUse:
         case UntypedUse: {
             LValue value;
             if (m_node->child1().useKind() == CellUse)
                 value = lowCell(m_node->child1());
+            else if (m_node->child1().useKind() == NotCellUse)
+                value = lowNotCell(m_node->child1());
             else
                 value = lowJSValue(m_node->child1());
             
@@ -4947,6 +4950,8 @@ private:
             LValue isCellPredicate;
             if (m_node->child1().useKind() == CellUse)
                 isCellPredicate = m_out.booleanTrue;
+            else if (m_node->child1().useKind() == NotCellUse)
+                isCellPredicate = m_out.booleanFalse;
             else
                 isCellPredicate = this->isCell(value, provenType(m_node->child1()));
             m_out.branch(isCellPredicate, unsure(isCell), unsure(notString));
@@ -12228,6 +12233,13 @@ private:
         DFG_CRASH(m_graph, m_node, "Value not defined");
         return 0;
     }
+
+    LValue lowNotCell(Edge edge)
+    {
+        LValue result = lowJSValue(edge, ManualOperandSpeculation);
+        FTL_TYPE_CHECK(jsValueValue(result), edge, ~SpecCell, isCell(result));
+        return result;
+    }
     
     LValue lowStorage(Edge edge)
     {
@@ -12631,6 +12643,13 @@ private:
     void speculateCell(Edge edge)
     {
         lowCell(edge);
+    }
+
+    void speculateNotCell(Edge edge)
+    {
+        if (!m_interpreter.needsTypeCheck(edge))
+            return;
+        lowNotCell(edge);
     }
     
     void speculateCellOrOther(Edge edge)
@@ -13148,15 +13167,6 @@ private:
         m_out.jump(continuation);
         
         m_out.appendTo(continuation, lastNext);
-    }
-    
-    void speculateNotCell(Edge edge)
-    {
-        if (!m_interpreter.needsTypeCheck(edge))
-            return;
-        
-        LValue value = lowJSValue(edge, ManualOperandSpeculation);
-        typeCheck(jsValueValue(value), edge, ~SpecCell, isCell(value));
     }
     
     void speculateOther(Edge edge)

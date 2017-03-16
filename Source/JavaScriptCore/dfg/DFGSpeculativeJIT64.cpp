@@ -3739,37 +3739,6 @@ void SpeculativeJIT::compile(Node* node)
         
     case ToString:
     case CallStringConstructor: {
-        if (node->child1().useKind() == UntypedUse) {
-            JSValueOperand op1(this, node->child1());
-            GPRReg op1GPR = op1.gpr();
-            
-            GPRFlushedCallResult result(this);
-            GPRReg resultGPR = result.gpr();
-            
-            flushRegisters();
-            
-            JITCompiler::Jump done;
-            if (node->child1()->prediction() & SpecString) {
-                JITCompiler::Jump slowPath1 = m_jit.branchIfNotCell(JSValueRegs(op1GPR));
-                JITCompiler::Jump slowPath2 = m_jit.branchIfNotString(op1GPR);
-                m_jit.move(op1GPR, resultGPR);
-                done = m_jit.jump();
-                slowPath1.link(&m_jit);
-                slowPath2.link(&m_jit);
-            }
-            if (op == ToString)
-                callOperation(operationToString, resultGPR, op1GPR);
-            else {
-                ASSERT(op == CallStringConstructor);
-                callOperation(operationCallStringConstructor, resultGPR, op1GPR);
-            }
-            m_jit.exceptionCheck();
-            if (done.isSet())
-                done.link(&m_jit);
-            cellResult(resultGPR, node);
-            break;
-        }
-        
         compileToStringOrCallStringConstructorOnCell(node);
         break;
     }

@@ -1,3 +1,47 @@
+2017-03-15  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [DFG] ToString operation should have fixup for primitives to say this node does not have side effects
+        https://bugs.webkit.org/show_bug.cgi?id=169544
+
+        Reviewed by Saam Barati.
+
+        Our DFG ToString only considers well about String operands. While ToString(non cell operand) does not have
+        any side effect, it is not modeled well in DFG.
+
+        This patch introduces a fixup for ToString with NonCellUse edge. If this edge is set, ToString does not
+        clobber things (like ToLowerCase, producing String). And ToString(NonCellUse) allows us to perform CSE!
+
+        Our microbenchmark shows 32.9% improvement due to dropped GetButterfly and CSE for ToString().
+
+                                            baseline                  patched
+
+            template-string-array       12.6284+-0.2766     ^      9.4998+-0.2295        ^ definitely 1.3293x faster
+
+        And SixSpeed template_string.es6 shows 16.68x performance improvement due to LICM onto this non-side-effectful ToString().
+
+                                          baseline                  patched
+
+            template_string.es6     3229.7343+-40.5705    ^    193.6077+-36.3349       ^ definitely 16.6818x faster
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupToStringOrCallStringConstructor):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileToStringOrCallStringConstructorOnCell):
+        (JSC::DFG::SpeculativeJIT::speculateNotCell):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileToStringOrCallStringConstructor):
+        (JSC::FTL::DFG::LowerDFGToB3::lowNotCell):
+        (JSC::FTL::DFG::LowerDFGToB3::speculateNotCell):
+
 2017-03-15  Ryan Haddad  <ryanhaddad@apple.com>
 
         Revert part of r213978 to see if it resolves LayoutTest crashes.

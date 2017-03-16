@@ -1408,6 +1408,10 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
             read(World);
             write(Heap);
             return;
+
+        case NotCellUse:
+            def(PureValue(node));
+            return;
             
         default:
             RELEASE_ASSERT_NOT_REACHED();

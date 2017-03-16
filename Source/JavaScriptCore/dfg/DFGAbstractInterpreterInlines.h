@@ -1858,6 +1858,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                 m_graph.registerStructure(m_graph.globalObjectFor(node->origin.semantic)->stringObjectStructure()));
             break;
         case StringOrStringObjectUse:
+        case NotCellUse:
             break;
         case CellUse:
         case UntypedUse:
