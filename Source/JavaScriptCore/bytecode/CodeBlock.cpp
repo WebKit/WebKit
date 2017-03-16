@@ -306,6 +306,7 @@ CodeBlock::CodeBlock(VM* vm, Structure* structure, CopyParsedBlockTag, CodeBlock
     , m_isStrictMode(other.m_isStrictMode)
     , m_codeType(other.m_codeType)
     , m_unlinkedCode(*other.m_vm, this, other.m_unlinkedCode.get())
+    , m_numberOfArgumentsToSkip(other.m_numberOfArgumentsToSkip)
     , m_hasDebuggerStatement(false)
     , m_steppingMode(SteppingModeDisabled)
     , m_numBreakpoints(0)
