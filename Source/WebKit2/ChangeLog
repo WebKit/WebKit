@@ -1,3 +1,9 @@
+2017-03-15  Alex Christensen  <achristensen@webkit.org>
+
+        Fix CMake build.
+
+        * PlatformMac.cmake:
+
 2017-03-15  Jer Noble  <jer.noble@apple.com>
 
         Optionally capture audio in the UIProcess

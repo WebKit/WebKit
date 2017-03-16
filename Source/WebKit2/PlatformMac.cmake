@@ -194,6 +194,7 @@ list(APPEND WebKit2_SOURCES
     UIProcess/API/Cocoa/WKContentExtensionStore.mm
     UIProcess/API/Cocoa/WKError.mm
     UIProcess/API/Cocoa/WKFrameInfo.mm
+    UIProcess/API/Cocoa/WKHTTPCookieStore.mm
     UIProcess/API/Cocoa/WKMenuItemIdentifiers.mm
     UIProcess/API/Cocoa/WKNSURLAuthenticationChallenge.mm
     UIProcess/API/Cocoa/WKNavigation.mm
@@ -339,7 +340,6 @@ list(APPEND WebKit2_SOURCES
     WebProcess/Plugins/Netscape/mac/NetscapePluginMac.mm
     WebProcess/Plugins/Netscape/mac/PluginProxyMac.mm
 
-    WebProcess/Plugins/PDF/DeprecatedPDFPlugin.mm
     WebProcess/Plugins/PDF/PDFPlugin.mm
     WebProcess/Plugins/PDF/PDFPluginAnnotation.mm
     WebProcess/Plugins/PDF/PDFPluginChoiceAnnotation.mm
