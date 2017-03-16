@@ -258,6 +258,8 @@ void WebProcessPool::platformInitializeWebProcess(WebProcessCreationParameters& 
     // FIXME: Remove this and related parameter when <rdar://problem/29448368> is fixed.
     if (mediaStreamEnabled || webRTCEnabled)
         SandboxExtension::createHandleForGenericExtension("com.apple.webkit.microphone", parameters.audioCaptureExtensionHandle);
+
+    parameters.shouldCaptureAudioInUIProcess = m_defaultPageGroup->preferences().shouldCaptureAudioInUIProcess();
 #endif
 }
 

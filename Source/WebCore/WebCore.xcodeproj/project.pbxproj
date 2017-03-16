@@ -6174,7 +6174,7 @@
 		CDE595971BF26E2100A1CBE8 /* CDMSessionMediaSourceAVFObjC.h in Headers */ = {isa = PBXBuildFile; fileRef = CDE595961BF26E2100A1CBE8 /* CDMSessionMediaSourceAVFObjC.h */; };
 		CDE5959D1BF2757100A1CBE8 /* CDMSessionMediaSourceAVFObjC.mm in Sources */ = {isa = PBXBuildFile; fileRef = CDE5959C1BF2757100A1CBE8 /* CDMSessionMediaSourceAVFObjC.mm */; };
 		CDE667A41E4BBF1500E8154A /* WebAudioBufferList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDE667A21E4BBF1500E8154A /* WebAudioBufferList.cpp */; };
-		CDE667A51E4BBF1500E8154A /* WebAudioBufferList.h in Headers */ = {isa = PBXBuildFile; fileRef = CDE667A31E4BBF1500E8154A /* WebAudioBufferList.h */; };
+		CDE667A51E4BBF1500E8154A /* WebAudioBufferList.h in Headers */ = {isa = PBXBuildFile; fileRef = CDE667A31E4BBF1500E8154A /* WebAudioBufferList.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CDE7FC44181904B1002BBB77 /* OrderIterator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDE7FC42181904B1002BBB77 /* OrderIterator.cpp */; };
 		CDE7FC45181904B1002BBB77 /* OrderIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = CDE7FC43181904B1002BBB77 /* OrderIterator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CDE83DB1183C44060031EAA3 /* VideoPlaybackQuality.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDE83DAF183C44060031EAA3 /* VideoPlaybackQuality.cpp */; };
@@ -6191,6 +6191,7 @@
 		CDEA7C851276230400B846DD /* RenderFullScreen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDEA7C831276230400B846DD /* RenderFullScreen.cpp */; };
 		CDEE393717974259001D7580 /* PublicURLManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDEE393617974259001D7580 /* PublicURLManager.cpp */; };
 		CDEF4FD717E85C8F00AEE24B /* GridLength.h in Headers */ = {isa = PBXBuildFile; fileRef = CDEF4FD617E85C8F00AEE24B /* GridLength.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		CDEFA2281E7669E8000AE99C /* PlatformAudioData.h in Headers */ = {isa = PBXBuildFile; fileRef = CDE667A11E4BBA4D00E8154A /* PlatformAudioData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CDF2B004181F059C00F2B424 /* MediaDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = CDF2B003181F059C00F2B424 /* MediaDescription.h */; };
 		CDF2B0101820540600F2B424 /* MockBox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDF2B0061820540600F2B424 /* MockBox.cpp */; };
 		CDF2B0111820540600F2B424 /* MockBox.h in Headers */ = {isa = PBXBuildFile; fileRef = CDF2B0071820540600F2B424 /* MockBox.h */; };
@@ -27017,6 +27018,7 @@
 				FD31609912B026F700C1A359 /* HRTFDatabase.h in Headers */,
 				FD31609B12B026F700C1A359 /* HRTFDatabaseLoader.h in Headers */,
 				FD31609D12B026F700C1A359 /* HRTFElevation.h in Headers */,
+				CDEFA2281E7669E8000AE99C /* PlatformAudioData.h in Headers */,
 				FD31609F12B026F700C1A359 /* HRTFKernel.h in Headers */,
 				FD3160A112B026F700C1A359 /* HRTFPanner.h in Headers */,
 				BC97E23A109144950010D361 /* HTMLAllCollection.h in Headers */,

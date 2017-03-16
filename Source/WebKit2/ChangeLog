@@ -1,3 +1,89 @@
+2017-03-15  Jer Noble  <jer.noble@apple.com>
+
+        Optionally capture audio in the UIProcess
+        https://bugs.webkit.org/show_bug.cgi?id=169609
+
+        Reviewed by Alex Christensen.
+
+        Add a new class pair, UserMediaCaptureManager/Proxy, to allow a RealtimeMediaSource
+        requested in a WebProcess to be created in the UIProcess and push its audio data across the
+        process boundary to its clients in the WebProcess. Because these classes are clients of the
+        RealtimeMediaSourceCenter::singleton(), they must be a singleton in the WebProcess as well,
+        so they are attached to the WebProcess class in the web process and to WebProcessProxy in
+        the UIProcess.
+
+        * UIProcess/Cocoa/UserMediaCaptureManagerProxy.cpp: Added.
+        (WebKit::UserMediaCaptureManagerProxy::SourceProxy::SourceProxy):
+        (WebKit::UserMediaCaptureManagerProxy::SourceProxy::~SourceProxy):
+        (WebKit::UserMediaCaptureManagerProxy::SourceProxy::source):
+        (WebKit::UserMediaCaptureManagerProxy::SourceProxy::description):
+        (WebKit::UserMediaCaptureManagerProxy::SourceProxy::numberOfFrames):
+        (WebKit::UserMediaCaptureManagerProxy::UserMediaCaptureManagerProxy):
+        (WebKit::UserMediaCaptureManagerProxy::~UserMediaCaptureManagerProxy):
+        (WebKit::UserMediaCaptureManagerProxy::createMediaSourceForCaptureDeviceWithConstraints):
+        (WebKit::UserMediaCaptureManagerProxy::startProducingData):
+        (WebKit::UserMediaCaptureManagerProxy::stopProducingData):
+        * UIProcess/Cocoa/UserMediaCaptureManagerProxy.h:
+        (WebKit::UserMediaCaptureManagerProxy::process):
+        * UIProcess/Cocoa/UserMediaCaptureManagerProxy.messages.in: Added.
+        * WebProcess/cocoa/UserMediaCaptureManager.cpp: Added.
+        (WebKit::nextSessionID):
+        (WebKit::UserMediaCaptureManager::Source::Source):
+        (WebKit::UserMediaCaptureManager::Source::~Source):
+        (WebKit::UserMediaCaptureManager::Source::setCapabilities):
+        (WebKit::UserMediaCaptureManager::Source::setSettings):
+        (WebKit::UserMediaCaptureManager::Source::description):
+        (WebKit::UserMediaCaptureManager::Source::setStorage):
+        (WebKit::UserMediaCaptureManager::Source::setRingBufferFrameBounds):
+        (WebKit::UserMediaCaptureManager::Source::audioSamplesAvailable):
+        (WebKit::UserMediaCaptureManager::UserMediaCaptureManager):
+        (WebKit::UserMediaCaptureManager::~UserMediaCaptureManager):
+        (WebKit::UserMediaCaptureManager::supplementName):
+        (WebKit::UserMediaCaptureManager::initialize):
+        (WebKit::UserMediaCaptureManager::createMediaSourceForCaptureDeviceWithConstraints):
+        (WebKit::UserMediaCaptureManager::sourceStopped):
+        (WebKit::UserMediaCaptureManager::sourceMutedChanged):
+        (WebKit::UserMediaCaptureManager::sourceEnabledChanged):
+        (WebKit::UserMediaCaptureManager::sourceSettingsChanged):
+        (WebKit::UserMediaCaptureManager::storageChanged):
+        (WebKit::UserMediaCaptureManager::ringBufferFrameBoundsChanged):
+        (WebKit::UserMediaCaptureManager::audioSamplesAvailable):
+        (WebKit::UserMediaCaptureManager::startProducingData):
+        (WebKit::UserMediaCaptureManager::stopProducingData):
+        * WebProcess/cocoa/UserMediaCaptureManager.h: Added.
+        * WebProcess/cocoa/UserMediaCaptureManager.messages.in: Added.
+
+        Initialize UserMediaCaptureManager/Proxy:
+
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::WebProcessProxy):
+        * UIProcess/WebProcessProxy.h:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::WebProcess):
+
+        WebUserMediaClientMac is no longer necessary now that the UserMediaCaptureManager overrides
+        the factories:
+
+        * WebProcess/WebCoreSupport/WebUserMediaClient.cpp:
+        (WebKit::WebUserMediaClient::WebUserMediaClient):
+        (WebKit::WebUserMediaClient::initializeFactories): Deleted.
+
+        Add a new preference and WebProcessCreationParameters member to control whether
+        capturing is done in the UIProcess:
+
+        * Shared/WebPreferencesDefinitions.h:
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+
+        Add new files to the project:
+
+        * DerivedSources.make:
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2017-03-15  Tim Horton  <timothy_horton@apple.com>
 
         Null deref under callAfterNextPresentationUpdate

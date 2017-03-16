@@ -85,6 +85,7 @@ public:
     WEBCORE_EXPORT void setCurrentFrameBounds(uint64_t startFrame, uint64_t endFrame);
 
     uint32_t channelCount() const { return m_channelCount; }
+    CARingBufferStorage& storage() { return m_buffers; }
 
 private:
     size_t frameOffset(uint64_t frameNumber) { return (frameNumber & m_frameCountMask) * m_bytesPerFrame; }

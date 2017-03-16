@@ -45,6 +45,7 @@ VPATH = \
     $(WebKit2)/WebProcess/Geolocation \
     $(WebKit2)/WebProcess/IconDatabase \
     $(WebKit2)/WebProcess/MediaCache \
+    $(WebKit2)/WebProcess/MediaStream \
     $(WebKit2)/WebProcess/Network \
     $(WebKit2)/WebProcess/Network/webrtc \
     $(WebKit2)/WebProcess/Notifications \
@@ -65,6 +66,7 @@ VPATH = \
     $(WebKit2)/UIProcess/Cocoa \
     $(WebKit2)/UIProcess/Databases \
     $(WebKit2)/UIProcess/Downloads \
+    $(WebKit2)/UIProcess/MediaStream \
     $(WebKit2)/UIProcess/Network \
     $(WebKit2)/UIProcess/Network/CustomProtocols \
     $(WebKit2)/UIProcess/Notifications \
@@ -121,6 +123,8 @@ MESSAGE_RECEIVERS = \
     SmartMagnificationController \
     StorageAreaMap \
     StorageManager \
+    UserMediaCaptureManager \
+    UserMediaCaptureManagerProxy \
     ViewGestureController \
     ViewGestureGeometryCollector \
     ViewUpdateDispatcher \

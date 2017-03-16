@@ -42,7 +42,7 @@ class CAAudioStreamDescription;
 class WebAudioBufferList : public PlatformAudioData {
 public:
     WebAudioBufferList(const CAAudioStreamDescription&);
-    WebAudioBufferList(const CAAudioStreamDescription&, uint32_t sampleCount);
+    WEBCORE_EXPORT WebAudioBufferList(const CAAudioStreamDescription&, uint32_t sampleCount);
     WebAudioBufferList(const CAAudioStreamDescription&, CMSampleBufferRef);
 
     AudioBufferList* list() const { return m_list.get(); }

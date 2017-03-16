@@ -68,6 +68,7 @@ void WebProcessCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << mediaKeyStorageDirectoryExtensionHandle;
 #if ENABLE(MEDIA_STREAM)
     encoder << audioCaptureExtensionHandle;
+    encoder << shouldCaptureAudioInUIProcess;
 #endif
     encoder << shouldUseTestingNetworkSession;
     encoder << urlSchemesRegisteredAsEmptyDocument;
@@ -188,6 +189,8 @@ bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreat
         return false;
 #if ENABLE(MEDIA_STREAM)
     if (!decoder.decode(parameters.audioCaptureExtensionHandle))
+        return false;
+    if (!decoder.decode(parameters.shouldCaptureAudioInUIProcess))
         return false;
 #endif
     if (!decoder.decode(parameters.shouldUseTestingNetworkSession))

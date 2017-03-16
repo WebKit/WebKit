@@ -61,7 +61,7 @@ class MediaStreamPrivate;
 class PlatformAudioData;
 class RealtimeMediaSourceSettings;
 
-class RealtimeMediaSource : public RefCounted<RealtimeMediaSource> {
+class WEBCORE_EXPORT RealtimeMediaSource : public RefCounted<RealtimeMediaSource> {
 public:
     class Observer {
     public:
@@ -199,6 +199,8 @@ protected:
     virtual void applyConstraint(const MediaConstraint&);
     virtual void applyConstraints(const FlattenedConstraint&);
     virtual void applySizeAndFrameRate(std::optional<int> width, std::optional<int> height, std::optional<double>);
+
+    const Vector<Observer*> observers() const { return m_observers; }
 
     bool m_muted { false };
     bool m_enabled { true };

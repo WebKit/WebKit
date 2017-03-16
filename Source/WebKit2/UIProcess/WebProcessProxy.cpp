@@ -62,6 +62,7 @@
 #if PLATFORM(COCOA)
 #include "ObjCObjectGraph.h"
 #include "PDFPlugin.h"
+#include "UserMediaCaptureManagerProxy.h"
 #endif
 
 #if ENABLE(SEC_ITEM_SHIM)
@@ -104,8 +105,13 @@ WebProcessProxy::WebProcessProxy(WebProcessPool& processPool, WebsiteDataStore* 
     , m_isResponsive(NoOrMaybe::Maybe)
     , m_visiblePageCounter([this](RefCounterEvent) { updateBackgroundResponsivenessTimer(); })
     , m_websiteDataStore(websiteDataStore)
+#if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
+    , m_userMediaCaptureManagerProxy(std::make_unique<UserMediaCaptureManagerProxy>(*this))
+#endif
 {
     WebPasteboardProxy::singleton().addWebProcessProxy(*this);
+
+
 
     connect();
 }

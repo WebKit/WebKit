@@ -103,6 +103,12 @@
 #define DEFAULT_CANVAS_USES_ACCELERATED_DRAWING true
 #endif
 
+#if PLATFORM(COCOA)
+#define DEFAULT_SHOULD_CAPTURE_AUDIO_IN_UIPROCESS true
+#else
+#define DEFAULT_SHOULD_CAPTURE_AUDIO_IN_UIPROCESS false
+#endif
+
 // macro(KeyUpper, KeyLower, TypeNameUpper, TypeName, DefaultValue, HumanReadableName, HumanReadableDescription)
 
 #define FOR_EACH_WEBKIT_BOOL_PREFERENCE(macro) \
@@ -252,6 +258,7 @@
     macro(GamepadsEnabled, gamepadsEnabled, Bool, bool, true, "Gamepads", "Web Gamepad API support") \
     macro(InputEventsEnabled, inputEventsEnabled, Bool, bool, true, "Input Events", "Enable InputEvents support") \
     macro(CredentialManagementEnabled, credentialManagementEnabled, Bool, bool, false, "Credential Management", "Enable Credential Management support") \
+    macro(ShouldCaptureAudioInUIProcess, shouldCaptureAudioInUIProcess, Bool, bool, DEFAULT_SHOULD_CAPTURE_AUDIO_IN_UIPROCESS, "Capture", "Capture Audio in UIProcess") \
     \
 
 #define FOR_EACH_WEBKIT_DOUBLE_PREFERENCE(macro) \

@@ -114,11 +114,9 @@
 #include <wtf/text/StringHash.h>
 
 #if PLATFORM(COCOA)
-#include "ObjCObjectGraph.h"
-#endif
-
-#if PLATFORM(COCOA)
 #include "CookieStorageShim.h"
+#include "ObjCObjectGraph.h"
+#include "UserMediaCaptureManager.h"
 #endif
 
 #if ENABLE(SEC_ITEM_SHIM)
@@ -189,6 +187,10 @@ WebProcess::WebProcess()
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     addSupplement<WebMediaKeyStorageManager>();
+#endif
+
+#if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
+    addSupplement<UserMediaCaptureManager>();
 #endif
 
     m_plugInAutoStartOriginHashes.add(SessionID::defaultSessionID(), HashMap<unsigned, double>());

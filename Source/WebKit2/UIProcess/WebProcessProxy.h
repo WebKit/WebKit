@@ -56,6 +56,7 @@ struct PluginInfo;
 namespace WebKit {
 
 class NetworkProcessProxy;
+class UserMediaCaptureManagerProxy;
 class WebBackForwardListItem;
 class WebPageGroup;
 class WebProcessPool;
@@ -273,6 +274,10 @@ private:
     RefPtr<WebsiteDataStore> m_websiteDataStore;
 
     bool m_isUnderMemoryPressure { false };
+
+#if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
+    std::unique_ptr<UserMediaCaptureManagerProxy> m_userMediaCaptureManagerProxy;
+#endif
 };
 
 } // namespace WebKit

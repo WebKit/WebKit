@@ -1,0 +1,154 @@
+/*
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+#include "UserMediaCaptureManagerProxy.h"
+
+#if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
+
+#include "SharedRingBufferStorage.h"
+#include "UserMediaCaptureManagerMessages.h"
+#include "WebCoreArgumentCoders.h"
+#include "WebProcessProxy.h"
+#include <WebCore/CARingBuffer.h>
+#include <WebCore/MediaConstraintsImpl.h>
+#include <WebCore/RealtimeMediaSourceCenter.h>
+#include <WebCore/WebAudioBufferList.h>
+#include <wtf/UniqueRef.h>
+
+using namespace WebCore;
+
+namespace WebKit {
+
+class UserMediaCaptureManagerProxy::SourceProxy : public RealtimeMediaSource::Observer, public SharedRingBufferStorage::Client {
+public:
+    SourceProxy(uint64_t id, UserMediaCaptureManagerProxy& manager, Ref<RealtimeMediaSource>&& source)
+        : m_id(id)
+        , m_manager(manager)
+        , m_source(WTFMove(source))
+        , m_ringBuffer(makeUniqueRef<SharedRingBufferStorage>(makeUniqueRef<SharedRingBufferStorage>(this)))
+    {
+        m_source->addObserver(*this);
+    }
+
+    ~SourceProxy()
+    {
+        storage().invalidate();
+        m_source->removeObserver(*this);
+    }
+
+    RealtimeMediaSource& source() { return m_source; }
+    SharedRingBufferStorage& storage() { return static_cast<SharedRingBufferStorage&>(m_ringBuffer.storage()); }
+    CAAudioStreamDescription& description() { return m_description; }
+    int64_t numberOfFrames() { return m_numberOfFrames; }
+
+    void sourceStopped() final {
+        m_manager.process().send(Messages::UserMediaCaptureManager::SourceStopped(m_id), 0);
+    }
+
+    void sourceMutedChanged() final {
+        m_manager.process().send(Messages::UserMediaCaptureManager::SourceMutedChanged(m_id, m_source->muted()), 0);
+    }
+
+    void sourceEnabledChanged() final {
+        m_manager.process().send(Messages::UserMediaCaptureManager::SourceEnabledChanged(m_id, m_source->enabled()), 0);
+    }
+
+    void sourceSettingsChanged() final {
+        m_manager.process().send(Messages::UserMediaCaptureManager::SourceSettingsChanged(m_id, m_source->settings()), 0);
+    }
+
+    void audioSamplesAvailable(const MediaTime& time, const PlatformAudioData& audioData, const AudioStreamDescription& description, size_t numberOfFrames) final {
+        if (m_description != description) {
+            ASSERT(description.platformDescription().type == PlatformDescription::CAAudioStreamBasicType);
+            m_description = *WTF::get<const AudioStreamBasicDescription*>(description.platformDescription().description);
+
+            // Allocate a ring buffer large enough to contain 2 seconds of audio.
+            m_numberOfFrames = m_description.sampleRate() * 2;
+            m_ringBuffer.allocate(m_description.streamDescription(), m_numberOfFrames);
+        }
+
+        ASSERT(is<WebAudioBufferList>(audioData));
+        m_ringBuffer.store(downcast<WebAudioBufferList>(audioData).list(), numberOfFrames, time.timeValue());
+        uint64_t startFrame;
+        uint64_t endFrame;
+        m_ringBuffer.getCurrentFrameBounds(startFrame, endFrame);
+        m_manager.process().send(Messages::UserMediaCaptureManager::AudioSamplesAvailable(m_id, time, numberOfFrames, startFrame, endFrame), 0);
+    }
+
+    void storageChanged(SharedMemory* storage) final {
+        SharedMemory::Handle handle;
+        if (storage)
+            storage->createHandle(handle, SharedMemory::Protection::ReadOnly);
+        m_manager.process().send(Messages::UserMediaCaptureManager::StorageChanged(m_id, handle, m_description, m_numberOfFrames), 0);
+    }
+
+protected:
+    uint64_t m_id;
+    UserMediaCaptureManagerProxy& m_manager;
+    Ref<RealtimeMediaSource> m_source;
+    CARingBuffer m_ringBuffer;
+    CAAudioStreamDescription m_description { };
+    int64_t m_numberOfFrames { 0 };
+};
+
+UserMediaCaptureManagerProxy::UserMediaCaptureManagerProxy(WebProcessProxy& process)
+    : m_process(process)
+{
+    m_process.addMessageReceiver(Messages::UserMediaCaptureManagerProxy::messageReceiverName(), *this);
+}
+
+UserMediaCaptureManagerProxy::~UserMediaCaptureManagerProxy()
+{
+    m_process.removeMessageReceiver(Messages::UserMediaCaptureManagerProxy::messageReceiverName());
+}
+
+void UserMediaCaptureManagerProxy::createMediaSourceForCaptureDeviceWithConstraints(uint64_t id, const CaptureDevice& device, const MediaConstraintsData& constraintsData, bool& succeeded, String& invalidConstraints)
+{
+    auto constraints = MediaConstraintsImpl::create(constraintsData);
+    RefPtr<RealtimeMediaSource> source = RealtimeMediaSourceCenter::singleton().defaultAudioFactory()->createMediaSourceForCaptureDeviceWithConstraints(device, constraints.ptr(), invalidConstraints);
+    succeeded = !!source;
+    
+    if (source)
+        m_proxies.set(id, std::make_unique<SourceProxy>(id, *this, source.releaseNonNull()));
+}
+
+void UserMediaCaptureManagerProxy::startProducingData(uint64_t id)
+{
+    auto iter = m_proxies.find(id);
+    if (iter != m_proxies.end())
+        iter->value->source().startProducingData();
+}
+
+void UserMediaCaptureManagerProxy::stopProducingData(uint64_t id)
+{
+    auto iter = m_proxies.find(id);
+    if (iter != m_proxies.end())
+        iter->value->source().stopProducingData();
+}
+
+}
+
+#endif

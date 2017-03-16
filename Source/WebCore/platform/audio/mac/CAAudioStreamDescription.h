@@ -90,31 +90,13 @@ private:
 template<class Encoder>
 void CAAudioStreamDescription::encode(Encoder& encoder) const
 {
-    encoder << m_streamDescription.mSampleRate
-        << m_streamDescription.mFormatID
-        << m_streamDescription.mFormatFlags
-        << m_streamDescription.mBytesPerPacket
-        << m_streamDescription.mFramesPerPacket
-        << m_streamDescription.mBytesPerFrame
-        << m_streamDescription.mChannelsPerFrame
-        << m_streamDescription.mBitsPerChannel
-        << m_streamDescription.mReserved;
-    encoder.encodeEnum(m_format);
+    encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(&m_streamDescription), sizeof(m_streamDescription), 1);
 }
 
 template<class Decoder>
 bool CAAudioStreamDescription::decode(Decoder& decoder, CAAudioStreamDescription& description)
 {
-    return decoder.decode(description.m_streamDescription.mSampleRate)
-        && decoder.decode(description.m_streamDescription.mFormatID)
-        && decoder.decode(description.m_streamDescription.mFormatFlags)
-        && decoder.decode(description.m_streamDescription.mBytesPerPacket)
-        && decoder.decode(description.m_streamDescription.mFramesPerPacket)
-        && decoder.decode(description.m_streamDescription.mBytesPerFrame)
-        && decoder.decode(description.m_streamDescription.mChannelsPerFrame)
-        && decoder.decode(description.m_streamDescription.mBitsPerChannel)
-        && decoder.decode(description.m_streamDescription.mReserved)
-        && decoder.decodeEnum(description.m_format);
+    return decoder.decodeFixedLengthData(reinterpret_cast<uint8_t*>(&description.m_streamDescription), sizeof(description.m_streamDescription), 1);
 }
 
 inline CAAudioStreamDescription toCAAudioStreamDescription(const AudioStreamDescription& description)
