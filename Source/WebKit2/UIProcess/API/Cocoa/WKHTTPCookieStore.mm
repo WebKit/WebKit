@@ -28,11 +28,13 @@
 
 #if WK_API_ENABLED
 
-#include "HTTPCookieAcceptPolicy.h"
-#include <WebCore/CFNetworkSPI.h>
-#include <WebCore/Cookie.h>
-#include <WebCore/URL.h>
-#include <wtf/RetainPtr.h>
+#import "HTTPCookieAcceptPolicy.h"
+#import "WeakObjCPtr.h"
+#import <WebCore/CFNetworkSPI.h>
+#import <WebCore/Cookie.h>
+#import <WebCore/URL.h>
+#import <wtf/HashMap.h>
+#import <wtf/RetainPtr.h>
 
 static NSArray<NSHTTPCookie *> *coreCookiesToNSCookies(const Vector<WebCore::Cookie>& coreCookies)
 {
@@ -44,26 +46,39 @@ static NSArray<NSHTTPCookie *> *coreCookiesToNSCookies(const Vector<WebCore::Coo
     return nsCookies;
 }
 
-@implementation WKHTTPCookieStore
+class WKHTTPCookieStoreObserver : public API::HTTPCookieStore::Observer {
+public:
+    explicit WKHTTPCookieStoreObserver(id<WKHTTPCookieStoreObserver> observer)
+        : m_observer(observer)
+    {
+    }
+
+private:
+    void cookiesDidChange(API::HTTPCookieStore& cookieStore) final
+    {
+        [m_observer.get() cookiesDidChangeInCookieStore:WebKit::wrapper(cookieStore)];
+    }
+
+    WebKit::WeakObjCPtr<id<WKHTTPCookieStoreObserver>> m_observer;
+};
+
+@implementation WKHTTPCookieStore {
+    HashMap<id<WKHTTPCookieStoreObserver>, std::unique_ptr<WKHTTPCookieStoreObserver>> _observers;
+}
 
 - (void)dealloc
 {
+    for (auto& observer : _observers.values())
+        _cookieStore->unregisterObserver(*observer);
+
     _cookieStore->API::HTTPCookieStore::~HTTPCookieStore();
 
     [super dealloc];
 }
 
-- (void)fetchCookies:(void (^)(NSArray<NSHTTPCookie *> *))completionHandler
+- (void)allCookies:(void (^)(NSArray<NSHTTPCookie *> *))completionHandler
 {
     _cookieStore->cookies([handler = adoptNS([completionHandler copy])](const Vector<WebCore::Cookie>& cookies) {
-        auto rawHandler = (void (^)(NSArray<NSHTTPCookie *> *))handler.get();
-        rawHandler(coreCookiesToNSCookies(cookies));
-    });
-}
-
-- (void)fetchCookiesForURL:(NSURL *)url completionHandler:(void (^)(NSArray<NSHTTPCookie *> *))completionHandler
-{
-    _cookieStore->cookies(url, [handler = adoptNS([completionHandler copy])](const Vector<WebCore::Cookie>& cookies) {
         auto rawHandler = (void (^)(NSArray<NSHTTPCookie *> *))handler.get();
         rawHandler(coreCookiesToNSCookies(cookies));
     });
@@ -88,65 +103,23 @@ static NSArray<NSHTTPCookie *> *coreCookiesToNSCookies(const Vector<WebCore::Coo
     });
 }
 
-- (void)setCookies:(NSArray<NSHTTPCookie *> *)cookies forURL:(NSURL *)URL mainDocumentURL:(NSURL *)mainDocumentURL completionHandler:(void (^)())completionHandler
+- (void)addObserver:(id<WKHTTPCookieStoreObserver>)observer
 {
-    Vector<WebCore::Cookie> coreCookies;
-    coreCookies.reserveInitialCapacity(cookies.count);
-    for (NSHTTPCookie *cookie : cookies)
-        coreCookies.uncheckedAppend(cookie);
+    auto result = _observers.add(observer, nullptr);
+    if (!result.isNewEntry)
+        return;
 
-    _cookieStore->setCookies(coreCookies, URL, mainDocumentURL, [handler = adoptNS([completionHandler copy])]() {
-        auto rawHandler = (void (^)())handler.get();
-        if (rawHandler)
-            rawHandler();
-    });
+    result.iterator->value = std::make_unique<WKHTTPCookieStoreObserver>(observer);
+    _cookieStore->registerObserver(*result.iterator->value);
 }
 
-- (void)removeCookiesSinceDate:(NSDate *)date completionHandler:(void (^)())completionHandler
+- (void)removeObserver:(id<WKHTTPCookieStoreObserver>)observer
 {
-    auto systemClockTime = std::chrono::system_clock::time_point(std::chrono::duration_cast<std::chrono::system_clock::duration>(std::chrono::duration<double>(date.timeIntervalSince1970)));
+    auto result = _observers.take(observer);
+    if (!result)
+        return;
 
-    _cookieStore->removeCookiesSinceDate(systemClockTime, [handler = adoptNS([completionHandler copy])]() {
-        auto rawHandler = (void (^)())handler.get();
-        if (rawHandler)
-            rawHandler();
-    });
-}
-
-- (void)setCookieAcceptPolicy:(NSHTTPCookieAcceptPolicy)policy completionHandler:(void (^)())completionHandler
-{
-    _cookieStore->setHTTPCookieAcceptPolicy(policy, [handler = adoptNS([completionHandler copy])]() {
-        auto rawHandler = (void (^)())handler.get();
-        if (rawHandler)
-            rawHandler();
-    });
-}
-
-static NSHTTPCookieAcceptPolicy kitCookiePolicyToNSCookiePolicy(WebKit::HTTPCookieAcceptPolicy kitPolicy)
-{
-    switch (kitPolicy) {
-    case WebKit::HTTPCookieAcceptPolicyAlways:
-        return NSHTTPCookieAcceptPolicyAlways;
-    case WebKit::HTTPCookieAcceptPolicyNever:
-        return NSHTTPCookieAcceptPolicyNever;
-    case WebKit::HTTPCookieAcceptPolicyOnlyFromMainDocumentDomain:
-        return NSHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain;
-    case WebKit::HTTPCookieAcceptPolicyExclusivelyFromMainDocumentDomain:
-        // Cast required because of CFNetworkSPI.
-        return static_cast<NSHTTPCookieAcceptPolicy>(NSHTTPCookieAcceptPolicyExclusivelyFromMainDocumentDomain);
-    default:
-        ASSERT_NOT_REACHED();
-    }
-
-    return NSHTTPCookieAcceptPolicyNever;
-}
-
-- (void)fetchCookieAcceptPolicy:(void (^)(NSHTTPCookieAcceptPolicy))completionHandler
-{
-    _cookieStore->getHTTPCookieAcceptPolicy([handler = adoptNS([completionHandler copy])](WebKit::HTTPCookieAcceptPolicy policy) {
-        auto rawHandler = (void (^)(NSHTTPCookieAcceptPolicy))handler.get();
-        rawHandler(kitCookiePolicyToNSCookiePolicy(policy));
-    });
+    _cookieStore->unregisterObserver(*result);
 }
 
 #pragma mark WKObject protocol implementation

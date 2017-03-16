@@ -399,6 +399,9 @@ public:
     void setCookieStoragePartitioningEnabled(bool);
 #endif
 
+    static uint64_t registerProcessPoolCreationListener(Function<void(WebProcessPool&)>&&);
+    static void unregisterProcessPoolCreationListener(uint64_t identifier);
+
 private:
     void platformInitialize();
 

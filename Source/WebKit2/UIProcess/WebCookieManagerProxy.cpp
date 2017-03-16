@@ -60,6 +60,7 @@ WebCookieManagerProxy::WebCookieManagerProxy(WebProcessPool* processPool)
 
 WebCookieManagerProxy::~WebCookieManagerProxy()
 {
+    ASSERT(m_cookieObservers.isEmpty());
 }
 
 void WebCookieManagerProxy::initializeClient(const WKCookieManagerClientBase* client)
@@ -75,6 +76,17 @@ void WebCookieManagerProxy::processPoolDestroyed()
     invalidateCallbackMap(m_httpCookieAcceptPolicyCallbacks, CallbackBase::Error::OwnerWasInvalidated);
     invalidateCallbackMap(m_voidCallbacks, CallbackBase::Error::OwnerWasInvalidated);
     invalidateCallbackMap(m_getCookiesCallbacks, CallbackBase::Error::OwnerWasInvalidated);
+
+    Vector<Observer*> observers;
+    for (auto& observerSet : m_cookieObservers.values()) {
+        for (auto* observer : observerSet)
+            observers.append(observer);
+    }
+
+    for (auto* observer : observers)
+        observer->managerDestroyed();
+
+    ASSERT(m_cookieObservers.isEmpty());
 }
 
 void WebCookieManagerProxy::processDidClose(WebProcessProxy*)
@@ -212,19 +224,50 @@ void WebCookieManagerProxy::stopObservingCookieChanges(SessionID sessionID)
     processPool()->sendToNetworkingProcessRelaunchingIfNecessary(Messages::WebCookieManager::StopObservingCookieChanges(sessionID));
 }
 
-void WebCookieManagerProxy::setCookieObserverCallback(SessionID sessionID, std::function<void ()>&& callback)
+
+void WebCookieManagerProxy::setCookieObserverCallback(WebCore::SessionID sessionID, std::function<void ()>&& callback)
 {
     if (callback)
-        m_cookieObservers.set(sessionID, WTFMove(callback));
+        m_legacyCookieObservers.set(sessionID, WTFMove(callback));
     else
-        m_cookieObservers.remove(sessionID);
+        m_legacyCookieObservers.remove(sessionID);
+}
+
+void WebCookieManagerProxy::registerObserver(WebCore::SessionID sessionID, Observer& observer)
+{
+    auto result = m_cookieObservers.set(sessionID, HashSet<Observer*>());
+    result.iterator->value.add(&observer);
+
+    if (result.isNewEntry)
+        startObservingCookieChanges(sessionID);
+}
+
+void WebCookieManagerProxy::unregisterObserver(WebCore::SessionID sessionID, Observer& observer)
+{
+    auto iterator = m_cookieObservers.find(sessionID);
+    if (iterator == m_cookieObservers.end())
+        return;
+
+    iterator->value.remove(&observer);
+    if (!iterator->value.isEmpty())
+        return;
+
+    m_cookieObservers.remove(iterator);
+    stopObservingCookieChanges(sessionID);
 }
 
 void WebCookieManagerProxy::cookiesDidChange(SessionID sessionID)
 {
     m_client.cookiesDidChange(this);
-    if (auto callback = m_cookieObservers.get(sessionID))
+    if (auto callback = m_legacyCookieObservers.get(sessionID))
         callback();
+
+    auto iterator = m_cookieObservers.find(sessionID);
+    if (iterator == m_cookieObservers.end())
+        return;
+
+    for (auto* observer : iterator->value)
+        observer->cookiesDidChange();
 }
 
 void WebCookieManagerProxy::setHTTPCookieAcceptPolicy(SessionID, HTTPCookieAcceptPolicy policy, Function<void (CallbackBase::Error)>&& callbackFunction)

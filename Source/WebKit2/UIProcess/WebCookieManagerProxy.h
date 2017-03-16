@@ -88,6 +88,16 @@ public:
 
     void setCookieObserverCallback(WebCore::SessionID, std::function<void ()>&&);
 
+    class Observer {
+    public:
+        virtual ~Observer() { }
+        virtual void cookiesDidChange() = 0;
+        virtual void managerDestroyed() = 0;
+    };
+
+    void registerObserver(WebCore::SessionID, Observer&);
+    void unregisterObserver(WebCore::SessionID, Observer&);
+
 #if USE(SOUP)
     void setCookiePersistentStorage(const String& storagePath, uint32_t storageType);
     void getCookiePersistentStorage(String& storagePath, uint32_t& storageType) const;
@@ -128,7 +138,8 @@ private:
     HashMap<uint64_t, RefPtr<VoidCallback>> m_voidCallbacks;
     HashMap<uint64_t, RefPtr<GetCookiesCallback>> m_getCookiesCallbacks;
 
-    HashMap<WebCore::SessionID, std::function<void ()>> m_cookieObservers;
+    HashMap<WebCore::SessionID, std::function<void ()>> m_legacyCookieObservers;
+    HashMap<WebCore::SessionID, HashSet<Observer*>> m_cookieObservers;
 
     WebCookieManagerProxyClient m_client;
 

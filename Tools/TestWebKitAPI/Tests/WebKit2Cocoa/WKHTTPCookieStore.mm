@@ -34,16 +34,36 @@
 #if WK_API_ENABLED
 
 static bool gotFlag;
+uint64_t observerCallbacks;
+RetainPtr<WKHTTPCookieStore> globalCookieStore;
 
-TEST(WebKit2, WKHTTPCookieStorage)
+@interface CookieObserver : NSObject<WKHTTPCookieStoreObserver>
+- (void)cookiesDidChangeInCookieStore:(WKHTTPCookieStore *)cookieStore;
+@end
+
+@implementation CookieObserver
+
+- (void)cookiesDidChangeInCookieStore:(WKHTTPCookieStore *)cookieStore
+{
+    ASSERT_EQ(cookieStore, globalCookieStore.get());
+    ++observerCallbacks;
+}
+
+@end
+
+TEST(WebKit2, WKHTTPCookieStore)
 {
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
     [webView loadHTMLString:@"Oh hello" baseURL:[NSURL URLWithString:@"http://webkit.org"]];
 
-    RetainPtr<WKHTTPCookieStore> cookieStore = [WKWebsiteDataStore defaultDataStore]._httpCookieStore;
+    globalCookieStore = [WKWebsiteDataStore defaultDataStore]._httpCookieStore;
+    RetainPtr<CookieObserver> observer1 = adoptNS([[CookieObserver alloc] init]);
+    RetainPtr<CookieObserver> observer2 = adoptNS([[CookieObserver alloc] init]);
+    [globalCookieStore addObserver:observer1.get()];
+    [globalCookieStore addObserver:observer2.get()];
 
     NSArray<NSHTTPCookie *> *cookies = nil;
-    [cookieStore fetchCookies:[cookiesPtr = &cookies](NSArray<NSHTTPCookie *> *nsCookies) {
+    [globalCookieStore allCookies:[cookiesPtr = &cookies](NSArray<NSHTTPCookie *> *nsCookies) {
         *cookiesPtr = [nsCookies retain];
         gotFlag = true;
     }];
@@ -73,28 +93,30 @@ TEST(WebKit2, WKHTTPCookieStorage)
         NSHTTPCookieMaximumAge: @"10000",
     }];
 
-    [cookieStore setCookie:cookie1.get() completionHandler:[](){
+    [globalCookieStore setCookie:cookie1.get() completionHandler:[](){
         gotFlag = true;
     }];
 
     TestWebKitAPI::Util::run(&gotFlag);
     gotFlag = false;
 
-    [cookieStore setCookie:cookie2.get() completionHandler:[](){
+    [globalCookieStore setCookie:cookie2.get() completionHandler:[](){
         gotFlag = true;
     }];
 
     TestWebKitAPI::Util::run(&gotFlag);
     gotFlag = false;
 
-    [cookieStore fetchCookies:[cookiesPtr = &cookies](NSArray<NSHTTPCookie *> *nsCookies) {
+    [globalCookieStore allCookies:[cookiesPtr = &cookies](NSArray<NSHTTPCookie *> *nsCookies) {
         *cookiesPtr = [nsCookies retain];
         gotFlag = true;
     }];
 
     TestWebKitAPI::Util::run(&gotFlag);
+    gotFlag = false;
 
     ASSERT_EQ(cookies.count, 2u);
+    ASSERT_EQ(observerCallbacks, 4u);
 
     for (NSHTTPCookie *cookie : cookies) {
         if ([cookie.name isEqual:@"CookieName"]) {
@@ -112,8 +134,37 @@ TEST(WebKit2, WKHTTPCookieStorage)
             ASSERT_FALSE(cookie2.get().sessionOnly);
         }
     }
-
     [cookies release];
+
+    [globalCookieStore deleteCookie:cookie2.get() completionHandler:[](){
+        gotFlag = true;
+    }];
+
+    TestWebKitAPI::Util::run(&gotFlag);
+    gotFlag = false;
+
+    [globalCookieStore allCookies:[cookiesPtr = &cookies](NSArray<NSHTTPCookie *> *nsCookies) {
+        *cookiesPtr = [nsCookies retain];
+        gotFlag = true;
+    }];
+
+    TestWebKitAPI::Util::run(&gotFlag);
+    gotFlag = false;
+
+    ASSERT_EQ(cookies.count, 1u);
+    ASSERT_EQ(observerCallbacks, 6u);
+
+    for (NSHTTPCookie *cookie : cookies) {
+        ASSERT_TRUE([cookie1.get().path isEqualToString:cookie.path]);
+        ASSERT_TRUE([cookie1.get().value isEqualToString:cookie.value]);
+        ASSERT_TRUE([cookie1.get().domain isEqualToString:cookie.domain]);
+        ASSERT_TRUE(cookie1.get().secure);
+        ASSERT_TRUE(cookie1.get().sessionOnly);
+    }
+    [cookies release];
+
+    [globalCookieStore removeObserver:observer1.get()];
+    [globalCookieStore removeObserver:observer2.get()];
 }
 
 #endif

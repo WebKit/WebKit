@@ -296,6 +296,10 @@ void WebProcessPool::platformInitializeNetworkProcess(NetworkProcessCreationPara
 
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
     RetainPtr<CFDataRef> cookieStorageData = adoptCF(CFHTTPCookieStorageCreateIdentifyingData(kCFAllocatorDefault, [[NSHTTPCookieStorage sharedHTTPCookieStorage] _cookieStorage]));
+
+    static int i = 0;
+    [(NSData *)cookieStorageData.get() writeToFile:[NSString stringWithFormat:@"/Volumes/Data/FujiUser/dump%i.plist", i++] atomically:NO];
+
     ASSERT(parameters.uiProcessCookieStorageIdentifier.isEmpty());
     parameters.uiProcessCookieStorageIdentifier.append(CFDataGetBytePtr(cookieStorageData.get()), CFDataGetLength(cookieStorageData.get()));
 #endif

@@ -28,6 +28,7 @@
 #include "APIObject.h"
 #include "HTTPCookieAcceptPolicy.h"
 #include <wtf/Function.h>
+#include <wtf/HashSet.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -35,8 +36,13 @@ class URL;
 struct Cookie;
 }
 
+namespace WebKit {
+class WebCookieManagerProxy;
+}
+
 namespace API {
 
+class APIWebCookieManagerProxyObserver;
 class WebsiteDataStore;
 
 class HTTPCookieStore final : public ObjectImpl<Object::Type::HTTPCookieStore> {
@@ -49,21 +55,34 @@ public:
     virtual ~HTTPCookieStore();
 
     void cookies(Function<void (const Vector<WebCore::Cookie>&)>&& completionHandler);
-    void cookies(const WebCore::URL&, Function<void (const Vector<WebCore::Cookie>&)>&& completionHandler);
-
     void setCookie(const WebCore::Cookie&, Function<void ()>&& completionHandler);
-    void setCookies(const Vector<WebCore::Cookie>&, const WebCore::URL&, const WebCore::URL& mainDocumentURL, Function<void ()>&& completionHandler);
     void deleteCookie(const WebCore::Cookie&, Function<void ()>&& completionHandler);
 
-    void removeCookiesSinceDate(std::chrono::system_clock::time_point, Function<void ()>&& completionHandler);
+    class Observer {
+    public:
+        virtual ~Observer() { }
+        virtual void cookiesDidChange(HTTPCookieStore&) = 0;
+    };
 
-    void setHTTPCookieAcceptPolicy(WebKit::HTTPCookieAcceptPolicy, Function<void ()>&& completionHandler);
-    void getHTTPCookieAcceptPolicy(Function<void (WebKit::HTTPCookieAcceptPolicy)>&& completionHandler);
-    
+    void registerObserver(Observer&);
+    void unregisterObserver(Observer&);
+
+    void cookiesDidChange();
+    void cookieManagerDestroyed();
+
 private:
     HTTPCookieStore(WebsiteDataStore&);
 
+    void registerForNewProcessPoolNotifications();
+    void unregisterForNewProcessPoolNotifications();
+
     WebsiteDataStore& m_owningDataStore;
+    HashSet<Observer*> m_observers;
+
+    WebKit::WebCookieManagerProxy* m_observedCookieManagerProxy { nullptr };
+    std::unique_ptr<APIWebCookieManagerProxyObserver> m_cookieManagerProxyObserver;
+
+    uint64_t m_processPoolCreationListenerIdentifier { 0 };
 };
 
 }

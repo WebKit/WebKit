@@ -31,6 +31,13 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@class WKHTTPCookieStore;
+
+@protocol WKHTTPCookieStoreObserver <NSObject>
+@optional
+- (void)cookiesDidChangeInCookieStore:(WKHTTPCookieStore *)cookieStore;
+@end
+
 /*!
  A WKHTTPCookieStore object allows managing the HTTP cookies associated with a particular WKWebsiteDataStore.
  */
@@ -42,12 +49,7 @@ WK_CLASS_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA))
 /*! @abstract Fetches all stored cookies.
  @param completionHandler A block to invoke with the fetched cookies.
  */
-- (void)fetchCookies:(void (^)(NSArray<NSHTTPCookie *> *))completionHandler;
-
-/*! @abstract Fetches all of the stored cookies for the given URL.
- @param completionHandler A block to invoke with the fetched cookies.
- */
-- (void)fetchCookiesForURL:(NSURL *)url completionHandler:(void (^)(NSArray<NSHTTPCookie *> *))completionHandler;
+- (void)allCookies:(void (^)(NSArray<NSHTTPCookie *> *))completionHandler;
 
 /*! @abstract Set a cookie.
  @param cookie The cookie to set.
@@ -55,35 +57,22 @@ WK_CLASS_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA))
  */
 - (void)setCookie:(NSHTTPCookie *)cookie completionHandler:(nullable void (^)())completionHandler;
 
-/*! @abstract Adds an array cookies to the cookie store, following the cookie accept policy.
- @param cookies The cookies to set.
- @param URL The URL from which the cookies were sent.
- @param mainDocumentURL The main document URL to be used as a base for the "same domain as main document" policy.
- @param completionHandler A block to invoke once the cookies have been stored.
- */
-- (void)setCookies:(NSArray<NSHTTPCookie *> *)cookies forURL:(NSURL *)url mainDocumentURL:(nullable NSURL *)mainDocumentURL completionHandler:(nullable void (^)())completionHandler;
-
 /*! @abstract Delete the specified cookie.
  @param completionHandler A block to invoke once the cookie has been deleted.
  */
 - (void)deleteCookie:(NSHTTPCookie *)cookie completionHandler:(nullable void (^)())completionHandler;
 
-/*! @abstract Delete all cookies from the cookie storage since the provided date.
- @param date The date after which set cookies should be removed.
- @param completionHandler A block to invoke once the cookies have been deleted.
+/*! @abstract Adds a WKHTTPCookieStoreObserver object with the cookie store.
+ @param observer The observer object to add.
+ @discussion The observer is not retained by the receiver. It is your responsibility
+ to unregister the observer before it becomes invalid.
  */
-- (void)removeCookiesSinceDate:(NSDate *)date completionHandler:(nullable void (^)())completionHandler;
+- (void)addObserver:(id<WKHTTPCookieStoreObserver>)observer;
 
-/*! @abstract Sets the cookie accept policy preference of the receiver.
- @param policy The cookie accept policy to set.
- @param completionHandler A block to invoke once the policy has been set.
+/*! @abstract Removes a WKHTTPCookieStoreObserver object from the cookie store.
+ @param observer The observer to remove.
  */
-- (void)setCookieAcceptPolicy:(NSHTTPCookieAcceptPolicy)policy completionHandler:(nullable void (^)())completionHandler;
-
-/*! @abstract Fetches the cookie accept policy preference of the receiver.
- @param completionHandler A block to invoke with the fetched policy.
- */
-- (void)fetchCookieAcceptPolicy:(void (^)(NSHTTPCookieAcceptPolicy))completionHandler;
+- (void)removeObserver:(id<WKHTTPCookieStoreObserver>)observer;
 
 @end
 

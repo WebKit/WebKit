@@ -1,3 +1,77 @@
+2017-03-16  Brady Eidson  <beidson@apple.com>
+
+        Update the WKHTTPCookieStore API to be simpler and add observers.
+        <rdar://problem/31096000> and https://bugs.webkit.org/show_bug.cgi?id=169776
+
+        Reviewed by Alex Christensen.
+        
+        When reviewing the API internally we realized the NSHTTPCookieStorage model doesn't
+        necessarily fit perfectly, and that to handle partitioned cookies going forward we
+        need to be much simpler right now.
+        
+        We also realized that we should implement the "cookie store changed" observer for
+        any clients that might be providing a cookie viewing API.
+        
+        * UIProcess/API/APIHTTPCookieStore.cpp:
+        (API::HTTPCookieStore::~HTTPCookieStore):
+        (API::HTTPCookieStore::deleteCookie):
+        (API::APIWebCookieManagerProxyObserver::APIWebCookieManagerProxyObserver):
+        (API::HTTPCookieStore::registerObserver):
+        (API::HTTPCookieStore::unregisterObserver):
+        (API::HTTPCookieStore::cookiesDidChange):
+        (API::HTTPCookieStore::cookieManagerDestroyed):
+        (API::HTTPCookieStore::registerForNewProcessPoolNotifications):
+        (API::HTTPCookieStore::unregisterForNewProcessPoolNotifications):
+        (API::HTTPCookieStore::setCookies): Deleted.
+        (API::HTTPCookieStore::removeCookiesSinceDate): Deleted.
+        (API::HTTPCookieStore::setHTTPCookieAcceptPolicy): Deleted.
+        (API::HTTPCookieStore::getHTTPCookieAcceptPolicy): Deleted.
+        * UIProcess/API/APIHTTPCookieStore.h:
+        
+        * UIProcess/API/Cocoa/WKHTTPCookieStore.h:
+        * UIProcess/API/Cocoa/WKHTTPCookieStore.mm:
+        (WKHTTPCookieStoreObserver::WKHTTPCookieStoreObserver):
+        (-[WKHTTPCookieStore dealloc]):
+        (-[WKHTTPCookieStore allCookies:]):
+        (-[WKHTTPCookieStore addObserver:]):
+        (-[WKHTTPCookieStore removeObserver:]):
+        (-[WKHTTPCookieStore fetchCookies:]): Deleted.
+        (-[WKHTTPCookieStore fetchCookiesForURL:completionHandler:]): Deleted.
+        (-[WKHTTPCookieStore setCookies:forURL:mainDocumentURL:completionHandler:]): Deleted.
+        (-[WKHTTPCookieStore removeCookiesSinceDate:completionHandler:]): Deleted.
+        (-[WKHTTPCookieStore setCookieAcceptPolicy:completionHandler:]): Deleted.
+        (kitCookiePolicyToNSCookiePolicy): Deleted.
+        (-[WKHTTPCookieStore fetchCookieAcceptPolicy:]): Deleted.
+
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeNetworkProcess):
+
+        * UIProcess/WebCookieManagerProxy.cpp:
+        (WebKit::WebCookieManagerProxy::~WebCookieManagerProxy):
+        (WebKit::WebCookieManagerProxy::processPoolDestroyed):
+        (WebKit::WebCookieManagerProxy::registerObserver):
+        (WebKit::WebCookieManagerProxy::unregisterObserver):
+        (WebKit::WebCookieManagerProxy::cookiesDidChange):
+        (WebKit::WebCookieManagerProxy::setCookieObserverCallback): Deleted.
+        * UIProcess/WebCookieManagerProxy.h:
+        (WebKit::WebCookieManagerProxy::Observer::~Observer):
+
+        Add the ability for interested clients to listen for the creation of new WebProcessPools,
+        which is needed by APIHTTPCookieStore:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::generateListenerIdentifier):
+        (WebKit::processPoolCreationListenerFunctionMap):
+        (WebKit::WebProcessPool::registerProcessPoolCreationListener):
+        (WebKit::WebProcessPool::unregisterProcessPoolCreationListener):
+        (WebKit::WebProcessPool::create):
+        * UIProcess/WebProcessPool.h:
+
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::processPoolForCookieStorageNotifications):
+        (WebKit::WebsiteDataStore::isAssociatedProcessPool):
+        (WebKit::WebsiteDataStore::processPools):
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+
 2017-03-16  Brian Burg  <bburg@apple.com>
 
         [iOS WK2] Web Automation: implement platform methods for simulating keyboard events

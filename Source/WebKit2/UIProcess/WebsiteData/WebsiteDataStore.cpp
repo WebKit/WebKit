@@ -127,6 +127,12 @@ Ref<WebProcessPool> WebsiteDataStore::processPoolForCookieStorageOperations()
     return **pools.begin();
 }
 
+WebProcessPool* WebsiteDataStore::processPoolForCookieStorageNotifications()
+{
+    auto pools = processPools(1, false);
+    return pools.isEmpty() ? nullptr : pools.begin()->get();
+}
+
 void WebsiteDataStore::resolveDirectoriesIfNecessary()
 {
     if (m_hasResolvedDirectories)
@@ -1130,7 +1136,23 @@ void WebsiteDataStore::webProcessDidCloseConnection(WebProcessProxy& webProcessP
         m_storageManager->processDidCloseConnection(webProcessProxy, connection);
 }
 
-HashSet<RefPtr<WebProcessPool>> WebsiteDataStore::processPools(size_t count) const
+bool WebsiteDataStore::isAssociatedProcessPool(WebProcessPool& processPool) const
+{
+    if (auto dataStore = processPool.websiteDataStore()) {
+        if (&dataStore->websiteDataStore() == this)
+            return true;
+    } else if (&API::WebsiteDataStore::defaultDataStore()->websiteDataStore() == this) {
+        // If a process pool doesn't have an explicit data store and this is the default WebsiteDataStore,
+        // add that process pool to the set.
+        // FIXME: This behavior is weird and necessitated by the fact that process pools don't always
+        // have a data store; they should.
+        return true;
+    }
+
+    return false;
+}
+
+HashSet<RefPtr<WebProcessPool>> WebsiteDataStore::processPools(size_t count, bool ensureAPoolExists) const
 {
     HashSet<RefPtr<WebProcessPool>> processPools;
     for (auto& process : processes())
@@ -1139,25 +1161,17 @@ HashSet<RefPtr<WebProcessPool>> WebsiteDataStore::processPools(size_t count) con
     if (processPools.isEmpty()) {
         // Check if we're one of the legacy data stores.
         for (auto& processPool : WebProcessPool::allProcessPools()) {
-            if (auto dataStore = processPool->websiteDataStore()) {
-                if (&dataStore->websiteDataStore() == this) {
-                    processPools.add(processPool);
-                    break;
-                }
-            } else if (&API::WebsiteDataStore::defaultDataStore()->websiteDataStore() == this) {
-                // If a process pool doesn't have an explicit data store and this is the default WebsiteDataStore,
-                // add that process pool to the set.
-                // FIXME: This behavior is weird and necessitated by the fact that process pools don't always
-                // have a data store; they should.
-                processPools.add(processPool);
-            }
+            if (!isAssociatedProcessPool(*processPool))
+                continue;
+
+            processPools.add(processPool);
 
             if (processPools.size() == count)
                 break;
         }
     }
 
-    if (processPools.isEmpty() && count) {
+    if (processPools.isEmpty() && count && ensureAPoolExists) {
         auto processPool = WebProcessPool::create(API::ProcessPoolConfiguration::createWithWebsiteDataStoreConfiguration(m_configuration));
         processPools.add(processPool.ptr());
     }
