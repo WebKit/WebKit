@@ -1483,6 +1483,8 @@ media/modern-media-controls/media-controller/media-controller-ios-do-not-hide-co
 media/modern-media-controls/media-controller/media-controller-tight-padding.html [ Skip ]
 media/modern-media-controls/audio/audio-controls-styles.html [ Skip ]
 
+webkit.org/b/169118 [ Debug ] media/modern-media-controls/fullscreen-support/fullscreen-support-click.html [ Pass Timeout ]
+
 webkit.org/b/167266 media/modern-media-controls/media-controller/media-controller-auto-hide-mouse-enter-over-controls-bar.html [ Pass Failure ]
 
 webkit.org/b/165386 media/modern-media-controls/seek-backward-support/seek-backward-support.html [ Pass Timeout ]

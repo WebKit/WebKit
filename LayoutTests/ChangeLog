@@ -1,5 +1,14 @@
 2017-03-16  Ryan Haddad  <ryanhaddad@apple.com>
 
+        TestExpectations gardening for modern-media-controls tests.
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+        * platform/mac/TestExpectations:
+
+2017-03-16  Ryan Haddad  <ryanhaddad@apple.com>
+
         Mark imported/w3c/web-platform-tests/IndexedDB/fire-success-event-exception.html as flaky.
         https://bugs.webkit.org/show_bug.cgi?id=169760
 
