@@ -1,3 +1,16 @@
+2017-03-16  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GLIB] MainThread implementation is not GTK+ specific
+        https://bugs.webkit.org/show_bug.cgi?id=169736
+
+        Reviewed by Yusuke Suzuki.
+
+        It's implemented in MainThreadGLib.cpp for glib based ports, so ifdefs in MainThread should not be
+        PLATFORM(GTK) but USE(GLIB).
+
+        * wtf/MainThread.cpp:
+        * wtf/MainThread.h:
+
 2017-03-15  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [CMake][JSCOnly] Fix build with GLib event loop

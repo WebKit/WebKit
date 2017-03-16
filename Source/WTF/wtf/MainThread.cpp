@@ -41,7 +41,7 @@
 namespace WTF {
 
 static bool callbacksPaused; // This global variable is only accessed from main thread.
-#if !OS(DARWIN) && !PLATFORM(GTK)
+#if !OS(DARWIN) && !USE(GLIB)
 static ThreadIdentifier mainThreadIdentifier;
 #endif
 
@@ -53,7 +53,7 @@ static Deque<Function<void ()>>& functionQueue()
     return functionQueue;
 }
 
-#if OS(DARWIN) || PLATFORM(GTK)
+#if OS(DARWIN) || USE(GLIB)
 static pthread_once_t initializeMainThreadKeyOnce = PTHREAD_ONCE_INIT;
 
 static void initializeMainThreadOnce()
@@ -68,7 +68,7 @@ void initializeMainThread()
     pthread_once(&initializeMainThreadKeyOnce, initializeMainThreadOnce);
 }
 
-#if !USE(WEB_THREAD) && !PLATFORM(GTK)
+#if !USE(WEB_THREAD) && !USE(GLIB)
 static void initializeMainThreadToProcessMainThreadOnce()
 {
     initializeThreading();
@@ -80,7 +80,7 @@ void initializeMainThreadToProcessMainThread()
 {
     pthread_once(&initializeMainThreadKeyOnce, initializeMainThreadToProcessMainThreadOnce);
 }
-#elif !PLATFORM(GTK)
+#elif !USE(GLIB)
 static pthread_once_t initializeWebThreadKeyOnce = PTHREAD_ONCE_INIT;
 
 static void initializeWebThreadOnce()
@@ -178,7 +178,7 @@ void setMainThreadCallbacksPaused(bool paused)
         scheduleDispatchFunctionsOnMainThread();
 }
 
-#if !OS(DARWIN) && !USE(GLIB_EVENT_LOOP)
+#if !OS(DARWIN) && !USE(GLIB)
 bool isMainThread()
 {
     return currentThread() == mainThreadIdentifier;
