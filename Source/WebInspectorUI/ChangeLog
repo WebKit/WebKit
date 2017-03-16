@@ -1,3 +1,15 @@
+2017-03-16  Devin Rousso  <webkit@devinrousso.com>
+
+        Web Inspector: RTL: filter mode icon in Debugger sidebar is misaligned
+        https://bugs.webkit.org/show_bug.cgi?id=169766
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Views/FilterBar.css:
+        (.filter-bar > .navigation-bar > .item):
+        (body[dir=ltr] .filter-bar > .navigation-bar > .item):
+        (body[dir=rtl] .filter-bar > .navigation-bar > .item):
+
 2017-03-16  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Refactoring: remove DebuggerTreeElement class
