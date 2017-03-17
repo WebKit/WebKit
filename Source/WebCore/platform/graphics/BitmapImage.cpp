@@ -352,6 +352,8 @@ BitmapImage::StartAnimationResult BitmapImage::internalStartAnimation()
 #endif
 
         m_desiredFrameDecodeTimeForTesting = time + std::max(m_frameDecodingDurationForTesting, 0.0f);
+        if (m_clearDecoderAfterAsyncFrameRequestForTesting)
+            m_source.clear(data());
     }
 
     ASSERT(!m_frameTimer);

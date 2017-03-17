@@ -1,0 +1,9 @@
+Ensure that clearing the image decoder while decoding an animation doesn't crash.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

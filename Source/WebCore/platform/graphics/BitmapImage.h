@@ -100,6 +100,7 @@ public:
     void setFrameDecodingDurationForTesting(float duration) { m_frameDecodingDurationForTesting = duration; }
     bool shouldUseAsyncDecodingForLargeImage();
     bool shouldUseAsyncDecodingForAnimatedImage();
+    void setClearDecoderAfterAsyncFrameRequestForTesting(bool value) { m_clearDecoderAfterAsyncFrameRequestForTesting = value; }
 
     // Accessors for native image formats.
 #if USE(APPKIT)
@@ -210,6 +211,7 @@ private:
 
     float m_frameDecodingDurationForTesting { 0 };
     double m_desiredFrameDecodeTimeForTesting { 0 };
+    bool m_clearDecoderAfterAsyncFrameRequestForTesting { false };
 #if !LOG_DISABLED
     size_t m_lateFrameCount { 0 };
     size_t m_earlyFrameCount { 0 };

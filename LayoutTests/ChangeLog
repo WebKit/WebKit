@@ -1,3 +1,17 @@
+2017-03-17  Miguel Gomez  <magomez@igalia.com>
+
+        Follow-up (r213833): write a layout test for 169199
+        https://bugs.webkit.org/show_bug.cgi?id=169576
+        <rdar://problem/31024766>
+
+        Reviewed by Said Abou-Hallawa.
+
+        Add a test that ensures there's no crash when deleting the ImageDecoder after requesting
+        an async decoding operation.
+
+        * fast/images/clear-animation-decoder-expected.txt: Added.
+        * fast/images/clear-animation-decoder.html: Added.
+
 2017-03-17  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed GTK+ gardening. Mark mediastream and webrtc new failures.
