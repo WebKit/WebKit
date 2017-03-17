@@ -328,6 +328,7 @@ webkit.org/b/167127 pointer-lock/locked-element-removed-from-dom.html
 webkit.org/b/167857 pageoverlay/overlay-remove-reinsert-view.html [ Skip ]
 
 webkit.org/b/168409 [ Debug ] media/modern-media-controls/airplay-button/airplay-button.html [ Pass Failure Timeout ]
+webkit.org/b/169654 [ Debug ] media/modern-media-controls/airplay-placard/airplay-placard-text-section.html [ Pass Timeout ]
 webkit.org/b/169677 [ Release ] http/tests/media/modern-media-controls/time-labels-support/long-time.html [ Pass Timeout ]
 webkit.org/b/167589 media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-buttons-containers-styles.html [ Pass Timeout ]
 webkit.org/b/169117 media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-audio-background.html [ Pass Timeout ]
