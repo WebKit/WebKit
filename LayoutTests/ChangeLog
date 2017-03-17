@@ -1,5 +1,12 @@
 2017-03-16  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Add baseline for fast/canvas/webgl/context-creation-attributes.html.
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/fast/canvas/webgl/context-creation-attributes-expected.txt: Added.
+
+2017-03-16  Ryan Haddad  <ryanhaddad@apple.com>
+
         Unreviewed test gardening.
 
         * TestExpectations:
