@@ -105,6 +105,7 @@ public:
     WEBCORE_EXPORT void deleteCookie(const Cookie&);
     WEBCORE_EXPORT Vector<Cookie> getAllCookies();
     WEBCORE_EXPORT Vector<Cookie> getCookies(const URL&);
+    WEBCORE_EXPORT void flushCookieStore();
 
 private:
     static HashMap<SessionID, std::unique_ptr<NetworkStorageSession>>& globalSessionMap();

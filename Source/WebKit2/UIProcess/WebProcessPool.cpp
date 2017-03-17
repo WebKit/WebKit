@@ -144,8 +144,11 @@ void WebProcessPool::unregisterProcessPoolCreationListener(uint64_t identifier)
 Ref<WebProcessPool> WebProcessPool::create(API::ProcessPoolConfiguration& configuration)
 {
     InitializeWebKit2();
-    auto newPool = adoptRef(*new WebProcessPool(configuration));
+    return adoptRef(*new WebProcessPool(configuration));
+}
 
+void WebProcessPool::notifyThisWebProcessPoolWasCreated()
+{
     auto& listenerMap = processPoolCreationListenerFunctionMap();
 
     Vector<uint64_t> identifiers;
@@ -164,7 +167,7 @@ Ref<WebProcessPool> WebProcessPool::create(API::ProcessPoolConfiguration& config
         // removing itself from the map of listeners.
         // If the identifier still exists in the map later, we move it back in.
         Function<void(WebProcessPool&)> function = WTFMove(iterator->value);
-        function(newPool.get());
+        function(*this);
 
         iterator = listenerMap.find(identifier);
         if (iterator != listenerMap.end()) {
@@ -172,8 +175,6 @@ Ref<WebProcessPool> WebProcessPool::create(API::ProcessPoolConfiguration& config
             iterator->value = WTFMove(function);
         }
     }
-
-    return newPool;
 }
 
 static Vector<WebProcessPool*>& processPools()
@@ -278,6 +279,8 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
 #ifndef NDEBUG
     processPoolCounter.increment();
 #endif
+
+    notifyThisWebProcessPoolWasCreated();
 }
 
 #if !PLATFORM(COCOA)

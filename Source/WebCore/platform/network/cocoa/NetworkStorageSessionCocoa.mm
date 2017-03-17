@@ -26,6 +26,7 @@
 #import "config.h"
 #import "NetworkStorageSession.h"
 
+#import "CFNetworkSPI.h"
 #import "Cookie.h"
 #import "URL.h"
 #import <wtf/BlockObjCExceptions.h>
@@ -73,6 +74,11 @@ Vector<Cookie> NetworkStorageSession::getAllCookies()
 Vector<Cookie> NetworkStorageSession::getCookies(const URL& url)
 {
     return nsCookiesToCookieVector([nsCookieStorage() cookiesForURL:(NSURL *)url]);
+}
+
+void NetworkStorageSession::flushCookieStore()
+{
+    [nsCookieStorage() _saveCookies];
 }
 
 NSHTTPCookieStorage *NetworkStorageSession::nsCookieStorage() const

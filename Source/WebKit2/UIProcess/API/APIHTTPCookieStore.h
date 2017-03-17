@@ -81,6 +81,7 @@ private:
 
     WebKit::WebCookieManagerProxy* m_observedCookieManagerProxy { nullptr };
     std::unique_ptr<APIWebCookieManagerProxyObserver> m_cookieManagerProxyObserver;
+    bool m_observingUIProcessCookies { false };
 
     uint64_t m_processPoolCreationListenerIdentifier { 0 };
 };

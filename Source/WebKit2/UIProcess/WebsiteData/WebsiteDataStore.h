@@ -103,8 +103,7 @@ public:
 
     StorageManager* storageManager() { return m_storageManager.get(); }
 
-    Ref<WebProcessPool> processPoolForCookieStorageOperations();
-    WebProcessPool* processPoolForCookieStorageNotifications();
+    WebProcessPool* processPoolForCookieStorageOperations();
     bool isAssociatedProcessPool(WebProcessPool&) const;
 
 private:

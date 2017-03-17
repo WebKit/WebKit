@@ -106,28 +106,7 @@ WebsiteDataStore::~WebsiteDataStore()
     }
 }
 
-Ref<WebProcessPool> WebsiteDataStore::processPoolForCookieStorageOperations()
-{
-    // Our concepts of WebProcess, WebProcessPool, WebsiteDataStore, and SessionIDs have all started to overlap
-    // without clear divisions of responsibilities.
-    // In practice, multiple WebProcessPools can contain "the same session", especially since there is currently
-    // only a single default global SessionID.
-    //
-    // This means that multiple NetworkProcesses can be using the same session, which means that multiple
-    // NetworkProcesses can be referring to the same platform cookie storage.
-    //
-    // While this may cause complications with future APIs it is actually fine for implementing the WKHTTPCookieStore API
-    // because we only need one NetworkProcess to successfully make a requested platform cookie storage change.
-    //
-    // FIXME: We need to start to unravel this mess going forward.
-
-    auto pools = processPools(1);
-    ASSERT(!pools.isEmpty());
-
-    return **pools.begin();
-}
-
-WebProcessPool* WebsiteDataStore::processPoolForCookieStorageNotifications()
+WebProcessPool* WebsiteDataStore::processPoolForCookieStorageOperations()
 {
     auto pools = processPools(1, false);
     return pools.isEmpty() ? nullptr : pools.begin()->get();

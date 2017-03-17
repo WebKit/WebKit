@@ -1,3 +1,32 @@
+2017-03-17  Brady Eidson  <beidson@apple.com>
+
+        Make HTTPCookieStorage operate in the UIProcess in absence of a WebProcessPool.
+        <rdar://problem/31102330> and https://bugs.webkit.org/show_bug.cgi?id=169797
+
+        Reviewed by Alex Christensen.
+
+        * UIProcess/API/APIHTTPCookieStore.cpp:
+        (API::HTTPCookieStore::~HTTPCookieStore):
+        (API::HTTPCookieStore::cookies):
+        (API::HTTPCookieStore::setCookie):
+        (API::HTTPCookieStore::deleteCookie):
+        (API::HTTPCookieStore::registerObserver):
+        (API::HTTPCookieStore::unregisterObserver):
+        (API::HTTPCookieStore::cookieManagerDestroyed):
+        (API::HTTPCookieStore::registerForNewProcessPoolNotifications):
+        * UIProcess/API/APIHTTPCookieStore.h:
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::create):
+        (WebKit::WebProcessPool::notifyThisWebProcessPoolWasCreated):
+        (WebKit::m_hiddenPageThrottlingTimer):
+        * UIProcess/WebProcessPool.h:
+
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::processPoolForCookieStorageOperations):
+        (WebKit::WebsiteDataStore::processPoolForCookieStorageNotifications): Deleted.
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+
 2017-03-17  Chris Dumez  <cdumez@apple.com>
 
         [WK2] Disable background tab responsiveness detection on iOS

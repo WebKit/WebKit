@@ -113,6 +113,8 @@ public:
     explicit WebProcessPool(API::ProcessPoolConfiguration&);        
     virtual ~WebProcessPool();
 
+    void notifyThisWebProcessPoolWasCreated();
+
     API::ProcessPoolConfiguration& configuration() { return m_configuration.get(); }
 
     static const Vector<WebProcessPool*>& allProcessPools();

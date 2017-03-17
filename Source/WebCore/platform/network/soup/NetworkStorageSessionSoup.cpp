@@ -326,6 +326,11 @@ Vector<Cookie> NetworkStorageSession::getCookies(const URL&)
     return { };
 }
 
+void NetworkStorageSession::flushCookieStore()
+{
+    // FIXME: Implement for WK2 to use.
+}
+
 } // namespace WebCore
 
 #endif // USE(SOUP)
