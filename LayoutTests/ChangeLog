@@ -1,3 +1,13 @@
+2017-03-17  Dave Hyatt  <hyatt@apple.com>
+
+        Disable per-region boxes for multicolumn
+        https://bugs.webkit.org/show_bug.cgi?id=169830
+
+        Reviewed by Zalan Bujtas.
+
+        * fast/multicol/float-adjacent-to-overflow-block-expected.html: Added.
+        * fast/multicol/float-adjacent-to-overflow-block.html: Added.
+
 2017-03-17  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebCrypto] Make sure all CryptoKey classes are structured clonable

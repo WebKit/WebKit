@@ -211,8 +211,8 @@ LayoutRect RenderBox::borderBoxRectInRegion(RenderRegion* region, RenderBoxRegio
     if (!region)
         return borderBoxRect();
 
-    RenderFlowThread* flowThread = flowThreadContainingBlock();
-    if (!flowThread)
+    auto* flowThread = flowThreadContainingBlock();
+    if (!is<RenderNamedFlowThread>(flowThread))
         return borderBoxRect();
 
     RenderRegion* startRegion = nullptr;
@@ -2729,7 +2729,7 @@ RenderBoxRegionInfo* RenderBox::renderBoxRegionInfo(RenderRegion* region, Render
     // FIXME: For now we limit this computation to normal RenderBlocks. Future patches will expand
     // support to cover all boxes.
     RenderFlowThread* flowThread = flowThreadContainingBlock();
-    if (isRenderFlowThread() || !flowThread || !canHaveBoxInfoInRegion() || flowThread->style().writingMode() != style().writingMode())
+    if (isRenderFlowThread() || !is<RenderNamedFlowThread>(flowThread) || !canHaveBoxInfoInRegion() || flowThread->style().writingMode() != style().writingMode())
         return nullptr;
 
     LogicalExtentComputedValues computedValues;
