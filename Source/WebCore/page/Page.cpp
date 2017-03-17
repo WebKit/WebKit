@@ -2217,6 +2217,7 @@ void Page::accessibilitySettingsDidChange()
             auto* styleResolver = document->styleScope().resolverIfExists();
             if (styleResolver && styleResolver->hasMediaQueriesAffectedByAccessibilitySettingsChange()) {
                 document->styleScope().didChangeStyleSheetEnvironment();
+                document->evaluateMediaQueryList();
                 neededRecalc = true;
                 // FIXME: This instrumentation event is not strictly accurate since cached media query results do not persist across StyleResolver rebuilds.
                 InspectorInstrumentation::mediaQueryResultChanged(*document);

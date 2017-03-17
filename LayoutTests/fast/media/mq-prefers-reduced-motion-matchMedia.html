@@ -1,0 +1,41 @@
+<html>
+<head>
+<title>CSS4 media query test: prefers-reduced-motion using matchMedia and addListener.</title>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function runTest()
+{
+    if (!window.internals)
+        return;
+
+    var motionQuery = window.matchMedia("(prefers-reduced-motion)");
+    motionQuery.addListener(() => {
+        document.getElementById("after").textContent = motionQuery.matches ? "true" : "false";
+        testRunner.notifyDone();
+    });
+
+    document.getElementById("before").textContent = motionQuery.matches ? "true" : "false";
+    window.internals.settings.forcedPrefersReducedMotionAccessibilityValue = "on";
+    if (testRunner.runUIScript) {
+        testRunner.runUIScript(`
+            (function() {
+                uiController.simulateAccessibilitySettingsChangeNotification(function() {
+                    uiController.uiScriptComplete("Done");
+                });
+            })();`);
+    }
+}
+
+window.addEventListener("load", runTest, false);
+</script>
+</head>
+<body>
+  <p>Initial value of motionQuery.matches: <span id="before">unknown</span> - should be false</p>
+  <p>Updated value of motionQuery.matches: <span id="after">unknown</span> - should be true</p>
+  <p>Note the updated value will only be filled if the listener fires.</p>
+</body>
+</html>

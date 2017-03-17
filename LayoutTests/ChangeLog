@@ -1,3 +1,14 @@
+2017-03-17  Dean Jackson  <dino@apple.com>
+
+        MediaQueryList instances do not update for `prefers-reduced-motion`
+        https://bugs.webkit.org/show_bug.cgi?id=169835
+        <rdar://problem/30339378>
+
+        Reviewed by Anders Carlsson.
+
+        * fast/media/mq-prefers-reduced-motion-matchMedia-expected.txt: Added.
+        * fast/media/mq-prefers-reduced-motion-matchMedia.html: Added.
+
 2017-03-17  Ryan Haddad  <ryanhaddad@apple.com>
 
         Mark media/modern-media-controls/airplay-placard/airplay-placard-text-section.html as flaky.
