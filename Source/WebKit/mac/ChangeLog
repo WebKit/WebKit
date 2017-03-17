@@ -1,3 +1,15 @@
+2017-03-17  Antti Koivisto  <antti@apple.com>
+
+        Add a reload policy where only expired subresources are revalidated
+        https://bugs.webkit.org/show_bug.cgi?id=169756
+
+        Reviewed by Andreas Kling.
+
+        * WebView/WebFrame.mm:
+        (toWebFrameLoadType):
+        (-[WebFrame reload]):
+        (-[WebFrame reloadFromOrigin]):
+
 2017-03-17  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [WK1] Support animated transitions when performing a data interaction operation

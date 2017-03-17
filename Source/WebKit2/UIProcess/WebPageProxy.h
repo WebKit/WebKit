@@ -404,7 +404,7 @@ public:
     void navigateToPDFLinkWithSimulatedClick(const String& url, WebCore::IntPoint documentPoint, WebCore::IntPoint screenPoint);
 
     void stopLoading();
-    RefPtr<API::Navigation> reload(bool reloadFromOrigin, bool contentBlockersEnabled);
+    RefPtr<API::Navigation> reload(OptionSet<WebCore::ReloadOption>);
 
     RefPtr<API::Navigation> goForward();
     RefPtr<API::Navigation> goBack();

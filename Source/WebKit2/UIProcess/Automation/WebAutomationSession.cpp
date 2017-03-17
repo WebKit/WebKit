@@ -341,8 +341,7 @@ void WebAutomationSession::reloadBrowsingContext(Inspector::ErrorString& errorSt
         callback->sendFailure(STRING_FOR_PREDEFINED_ERROR_NAME(Timeout));
     m_pendingNavigationInBrowsingContextCallbacksPerPage.set(page->pageID(), WTFMove(callback));
 
-    const bool reloadFromOrigin = false;
-    page->reload(reloadFromOrigin, { });
+    page->reload({ });
 }
 
 void WebAutomationSession::navigationOccurredForPage(const WebPageProxy& page)

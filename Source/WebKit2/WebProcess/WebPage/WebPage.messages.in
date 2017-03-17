@@ -140,7 +140,7 @@ messages -> WebPage LegacyReceiver {
 
     NavigateToPDFLinkWithSimulatedClick(String url, WebCore::IntPoint documentPoint, WebCore::IntPoint screenPoint)
 
-    Reload(uint64_t navigationID, bool reloadFromOrigin, bool contentBlockersEnabled, WebKit::SandboxExtension::Handle sandboxExtensionHandle)
+    Reload(uint64_t navigationID, uint32_t reloadOptions, WebKit::SandboxExtension::Handle sandboxExtensionHandle)
     StopLoading()
 
     StopLoadingFrame(uint64_t frameID)

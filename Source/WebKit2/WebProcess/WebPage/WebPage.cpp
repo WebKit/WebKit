@@ -1315,7 +1315,7 @@ void WebPage::setDefersLoading(bool defersLoading)
     m_page->setDefersLoading(defersLoading);
 }
 
-void WebPage::reload(uint64_t navigationID, bool reloadFromOrigin, bool contentBlockersEnabled, const SandboxExtension::Handle& sandboxExtensionHandle)
+void WebPage::reload(uint64_t navigationID, uint32_t reloadOptions, const SandboxExtension::Handle& sandboxExtensionHandle)
 {
     SendStopResponsivenessTimer stopper(this);
 
@@ -1323,7 +1323,7 @@ void WebPage::reload(uint64_t navigationID, bool reloadFromOrigin, bool contentB
     m_pendingNavigationID = navigationID;
 
     m_sandboxExtensionTracker.beginLoad(m_mainFrame.get(), sandboxExtensionHandle);
-    corePage()->userInputBridge().reloadFrame(m_mainFrame->coreFrame(), reloadFromOrigin, contentBlockersEnabled);
+    corePage()->userInputBridge().reloadFrame(m_mainFrame->coreFrame(), OptionSet<ReloadOption>::fromRaw(reloadOptions));
 }
 
 void WebPage::goForward(uint64_t navigationID, uint64_t backForwardItemID)
@@ -4140,7 +4140,7 @@ static bool shouldReuseCommittedSandboxExtension(WebFrame* frame)
     FrameLoadType frameLoadType = frameLoader.loadType();
 
     // If the page is being reloaded, it should reuse whatever extension is committed.
-    if (frameLoadType == FrameLoadType::Reload || frameLoadType == FrameLoadType::ReloadFromOrigin)
+    if (isReload(frameLoadType))
         return true;
 
     DocumentLoader* documentLoader = frameLoader.documentLoader();

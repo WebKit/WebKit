@@ -249,6 +249,13 @@ static bool canCachePage(Page& page)
         isCacheable = false;
         break;
     }
+    case FrameLoadType::ReloadExpiredOnly: {
+        // No point writing to the cache on a reload, since we will just write over it again when we leave that page.
+        PCLOG("   -Load type is: ReloadRevalidatingExpired");
+        logPageCacheFailureDiagnosticMessage(diagnosticLoggingClient, DiagnosticLoggingKeys::reloadRevalidatingExpiredKey());
+        isCacheable = false;
+        break;
+    }
     case FrameLoadType::Standard:
     case FrameLoadType::Back:
     case FrameLoadType::Forward:

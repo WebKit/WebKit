@@ -1,3 +1,15 @@
+2017-03-17  Antti Koivisto  <antti@apple.com>
+
+        Add a reload policy where only expired subresources are revalidated
+        https://bugs.webkit.org/show_bug.cgi?id=169756
+
+        Reviewed by Andreas Kling.
+
+        * http/tests/cache/reload-expired-only-expected.txt: Added.
+        * http/tests/cache/reload-expired-only.html: Added.
+        * http/tests/cache/resources/document-with-cached-unique-script.html: Added.
+        * http/tests/cache/resources/random-cached.cgi:
+
 2017-03-17  Nan Wang  <n_wang@apple.com>
 
         AX: VoiceOver no longer works corectly with editable text in the web

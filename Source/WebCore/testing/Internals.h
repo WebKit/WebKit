@@ -388,6 +388,7 @@ public:
     String toolTipFromElement(Element&) const;
 
     void forceReload(bool endToEnd);
+    void reloadExpiredOnly();
 
     void enableAutoSizeMode(bool enabled, int minimumWidth, int minimumHeight, int maximumWidth, int maximumHeight);
 

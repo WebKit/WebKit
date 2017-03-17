@@ -844,9 +844,7 @@ static uint32_t convertSystemLayoutDirection(NSUserInterfaceLayoutDirection dire
 
 - (WKNavigation *)reload
 {
-    const bool reloadFromOrigin = false;
-    const bool contentBlockersEnabled = true;
-    auto navigation = _page->reload(reloadFromOrigin, contentBlockersEnabled);
+    auto navigation = _page->reload({ });
     if (!navigation)
         return nil;
 
@@ -855,9 +853,7 @@ static uint32_t convertSystemLayoutDirection(NSUserInterfaceLayoutDirection dire
 
 - (WKNavigation *)reloadFromOrigin
 {
-    const bool reloadFromOrigin = true;
-    const bool contentBlockersEnabled = true;
-    auto navigation = _page->reload(reloadFromOrigin, contentBlockersEnabled);
+    auto navigation = _page->reload(WebCore::ReloadOption::FromOrigin);
     if (!navigation)
         return nil;
 
@@ -3692,9 +3688,16 @@ WEBCORE_COMMAND(yankAndSelect)
 
 - (WKNavigation *)_reloadWithoutContentBlockers
 {
-    const bool reloadFromOrigin = false;
-    const bool contentBlockersEnabled = false;
-    auto navigation = _page->reload(reloadFromOrigin, contentBlockersEnabled);
+    auto navigation = _page->reload(WebCore::ReloadOption::DisableContentBlockers);
+    if (!navigation)
+        return nil;
+    
+    return [wrapper(*navigation.leakRef()) autorelease];
+}
+
+- (WKNavigation *)_reloadExpiredOnly
+{
+    auto navigation = _page->reload(WebCore::ReloadOption::ExpiredOnly);
     if (!navigation)
         return nil;
     

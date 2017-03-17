@@ -229,6 +229,7 @@ void HistoryController::restoreDocumentState()
     switch (m_frame.loader().loadType()) {
     case FrameLoadType::Reload:
     case FrameLoadType::ReloadFromOrigin:
+    case FrameLoadType::ReloadExpiredOnly:
     case FrameLoadType::Same:
     case FrameLoadType::Replace:
         // Not restoring the document state.

@@ -2838,7 +2838,16 @@ void Internals::setUsesMockScrollAnimator(bool enabled)
 
 void Internals::forceReload(bool endToEnd)
 {
-    frame()->loader().reload(endToEnd);
+    OptionSet<ReloadOption> reloadOptions;
+    if (endToEnd)
+        reloadOptions |= ReloadOption::FromOrigin;
+
+    frame()->loader().reload(reloadOptions);
+}
+
+void Internals::reloadExpiredOnly()
+{
+    frame()->loader().reload(ReloadOption::ExpiredOnly);
 }
 
 void Internals::enableAutoSizeMode(bool enabled, int minimumWidth, int minimumHeight, int maximumWidth, int maximumHeight)

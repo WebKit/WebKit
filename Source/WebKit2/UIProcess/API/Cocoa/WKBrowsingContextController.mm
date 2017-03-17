@@ -187,16 +187,12 @@ static HashMap<WebPageProxy*, WKBrowsingContextController *>& browsingContextCon
 
 - (void)reload
 {
-    const bool reloadFromOrigin = false;
-    const bool contentBlockersEnabled = true;
-    _page->reload(reloadFromOrigin, contentBlockersEnabled);
+    _page->reload({ });
 }
 
 - (void)reloadFromOrigin
 {
-    const bool reloadFromOrigin = true;
-    const bool contentBlockersEnabled = true;
-    _page->reload(reloadFromOrigin, contentBlockersEnabled);
+    _page->reload(WebCore::ReloadOption::FromOrigin);
 }
 
 - (NSString *)applicationNameForUserAgent

@@ -156,6 +156,7 @@ bool isBackForwardLoadType(FrameLoadType type)
     case FrameLoadType::Standard:
     case FrameLoadType::Reload:
     case FrameLoadType::ReloadFromOrigin:
+    case FrameLoadType::ReloadExpiredOnly:
     case FrameLoadType::Same:
     case FrameLoadType::RedirectWithLockedBackForwardList:
     case FrameLoadType::Replace:
@@ -164,6 +165,26 @@ bool isBackForwardLoadType(FrameLoadType type)
     case FrameLoadType::Forward:
     case FrameLoadType::IndexedBackForward:
         return true;
+    }
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
+bool isReload(FrameLoadType type)
+{
+    switch (type) {
+    case FrameLoadType::Reload:
+    case FrameLoadType::ReloadFromOrigin:
+    case FrameLoadType::ReloadExpiredOnly:
+        return true;
+    case FrameLoadType::Standard:
+    case FrameLoadType::Same:
+    case FrameLoadType::RedirectWithLockedBackForwardList:
+    case FrameLoadType::Replace:
+    case FrameLoadType::Back:
+    case FrameLoadType::Forward:
+    case FrameLoadType::IndexedBackForward:
+        return false;
     }
     ASSERT_NOT_REACHED();
     return false;
@@ -1213,7 +1234,7 @@ void FrameLoader::loadURL(const FrameLoadRequest& frameLoadRequest, const String
         request.setDomainForCachePartition(m_frame.tree().top().document()->securityOrigin().domainForCachePartition());
 
     addExtraFieldsToRequest(request, newLoadType, true);
-    if (newLoadType == FrameLoadType::Reload || newLoadType == FrameLoadType::ReloadFromOrigin)
+    if (isReload(newLoadType))
         request.setCachePolicy(ReloadIgnoringCacheData);
 
     ASSERT(newLoadType != FrameLoadType::Same);
@@ -1266,7 +1287,7 @@ void FrameLoader::loadURL(const FrameLoadRequest& frameLoadRequest, const String
         m_quickRedirectComing = false;
         if (m_provisionalDocumentLoader)
             m_provisionalDocumentLoader->setIsClientRedirect(true);
-    } else if (sameURL && newLoadType != FrameLoadType::Reload && newLoadType != FrameLoadType::ReloadFromOrigin) {
+    } else if (sameURL && !isReload(newLoadType)) {
         // Example of this case are sites that reload the same URL with a different cookie
         // driving the generated content, or a master frame with links that drive a target
         // frame, where the user has clicked on the same link repeatedly.
@@ -1403,6 +1424,9 @@ static void logNavigation(MainFrame& frame, const URL& destinationURL, FrameLoad
         break;
     case FrameLoadType::ReloadFromOrigin:
         navigationDescription = ASCIILiteral("reloadFromOrigin");
+        break;
+    case FrameLoadType::ReloadExpiredOnly:
+        navigationDescription = ASCIILiteral("reloadRevalidatingExpired");
         break;
     case FrameLoadType::Replace:
     case FrameLoadType::RedirectWithLockedBackForwardList:
@@ -1576,7 +1600,7 @@ void FrameLoader::reloadWithOverrideEncoding(const String& encoding)
     loadWithDocumentLoader(loader.ptr(), FrameLoadType::Reload, 0, AllowNavigationToInvalidURL::Yes);
 }
 
-void FrameLoader::reload(bool endToEndReload, bool contentBlockersEnabled)
+void FrameLoader::reload(OptionSet<ReloadOption> options)
 {
     if (!m_documentLoader)
         return;
@@ -1597,7 +1621,7 @@ void FrameLoader::reload(bool endToEndReload, bool contentBlockersEnabled)
     Ref<DocumentLoader> loader = m_client.createDocumentLoader(initialRequest, defaultSubstituteDataForURL(initialRequest.url()));
     applyShouldOpenExternalURLsPolicyToNewDocumentLoader(loader, m_documentLoader->shouldOpenExternalURLsPolicyToPropagate());
 
-    loader->setUserContentExtensionsEnabled(contentBlockersEnabled);
+    loader->setUserContentExtensionsEnabled(!options.contains(ReloadOption::DisableContentBlockers));
     
     ResourceRequest& request = loader->request();
 
@@ -1609,8 +1633,16 @@ void FrameLoader::reload(bool endToEndReload, bool contentBlockersEnabled)
         loader->setTriggeringAction(NavigationAction(request, NavigationType::FormResubmitted));
 
     loader->setOverrideEncoding(m_documentLoader->overrideEncoding());
+
+    auto frameLoadTypeForReloadOptions = [] (auto options) {
+        if (options.contains(ReloadOption::FromOrigin))
+            return FrameLoadType::ReloadFromOrigin;
+        if (options.contains(ReloadOption::ExpiredOnly))
+            return FrameLoadType::ReloadExpiredOnly;
+        return FrameLoadType::Reload;
+    };
     
-    loadWithDocumentLoader(loader.ptr(), endToEndReload ? FrameLoadType::ReloadFromOrigin : FrameLoadType::Reload, 0, AllowNavigationToInvalidURL::Yes);
+    loadWithDocumentLoader(loader.ptr(), frameLoadTypeForReloadOptions(options), 0, AllowNavigationToInvalidURL::Yes);
 }
 
 void FrameLoader::stopAllLoaders(ClearProvisionalItemPolicy clearProvisionalItemPolicy)
@@ -1972,6 +2004,7 @@ void FrameLoader::transitionToCommitted(CachedPage* cachedPage)
 
     case FrameLoadType::Reload:
     case FrameLoadType::ReloadFromOrigin:
+    case FrameLoadType::ReloadExpiredOnly:
     case FrameLoadType::Same:
     case FrameLoadType::Replace:
         history().updateForReload();
@@ -1989,11 +2022,6 @@ void FrameLoader::transitionToCommitted(CachedPage* cachedPage)
         history().updateForRedirectWithLockedBackForwardList();
         m_client.transitionToCommittedForNewPage();
         break;
-
-    // FIXME Remove this check when dummy ds is removed (whatever "dummy ds" is).
-    // An exception should be thrown if we're in the FrameLoadTypeUninitialized state.
-    default:
-        ASSERT_NOT_REACHED();
     }
 
     m_documentLoader->writer().setMIMEType(dl->responseMIMEType());
@@ -2229,6 +2257,7 @@ CachePolicy FrameLoader::subresourceCachePolicy() const
     case FrameLoadType::Replace:
     case FrameLoadType::Same:
     case FrameLoadType::Standard:
+    case FrameLoadType::ReloadExpiredOnly:
         return CachePolicyVerify;
     }
 
@@ -2315,7 +2344,7 @@ void FrameLoader::checkLoadCompleteForThisFrame()
              
             // If the user had a scroll point, scroll to it, overriding the anchor point if any.
             if (m_frame.page()) {
-                if (isBackForwardLoadType(m_loadType) || m_loadType == FrameLoadType::Reload || m_loadType == FrameLoadType::ReloadFromOrigin)
+                if (isBackForwardLoadType(m_loadType) || isReload(m_loadType))
                     history().restoreScrollPositionAndViewState();
             }
 
@@ -2613,26 +2642,30 @@ ResourceRequestCachePolicy FrameLoader::defaultRequestCachingPolicy(const Resour
 {
     if (m_overrideCachePolicyForTesting)
         return m_overrideCachePolicyForTesting.value();
-    if (!isMainResource) {
-        if (request.isConditional())
+
+    if (isMainResource) {
+        if (isReload(loadType) || request.isConditional())
             return ReloadIgnoringCacheData;
-        if (documentLoader()->isLoadingInAPISense()) {
-            // If we inherit cache policy from a main resource, we use the DocumentLoader's
-            // original request cache policy for two reasons:
-            // 1. For POST requests, we mutate the cache policy for the main resource,
-            //    but we do not want this to apply to subresources
-            // 2. Delegates that modify the cache policy using willSendRequest: should
-            //    not affect any other resources. Such changes need to be done
-            //    per request.
-            ResourceRequestCachePolicy mainDocumentOriginalCachePolicy = documentLoader()->originalRequest().cachePolicy();
-            // Back-forward navigations try to load main resource from cache only to avoid re-submitting form data, and start over (with a warning dialog) if that fails.
-            // This policy is set on initial request too, but should not be inherited.
-            return (mainDocumentOriginalCachePolicy == ReturnCacheDataDontLoad) ? ReturnCacheDataElseLoad : mainDocumentOriginalCachePolicy;
-        }
-    // FIXME: Other FrameLoader functions have duplicated code for setting cache policy of main request when reloading.
-    // It seems better to manage it explicitly than to hide the logic inside addExtraFieldsToRequest().
-    } else if (loadType == FrameLoadType::Reload || loadType == FrameLoadType::ReloadFromOrigin || request.isConditional())
+
+        return UseProtocolCachePolicy;
+    }
+
+    if (request.isConditional())
         return ReloadIgnoringCacheData;
+
+    if (documentLoader()->isLoadingInAPISense()) {
+        // If we inherit cache policy from a main resource, we use the DocumentLoader's
+        // original request cache policy for two reasons:
+        // 1. For POST requests, we mutate the cache policy for the main resource,
+        //    but we do not want this to apply to subresources
+        // 2. Delegates that modify the cache policy using willSendRequest: should
+        //    not affect any other resources. Such changes need to be done
+        //    per request.
+        ResourceRequestCachePolicy mainDocumentOriginalCachePolicy = documentLoader()->originalRequest().cachePolicy();
+        // Back-forward navigations try to load main resource from cache only to avoid re-submitting form data, and start over (with a warning dialog) if that fails.
+        // This policy is set on initial request too, but should not be inherited.
+        return (mainDocumentOriginalCachePolicy == ReturnCacheDataDontLoad) ? ReturnCacheDataElseLoad : mainDocumentOriginalCachePolicy;
+    }
 
     return UseProtocolCachePolicy;
 }
@@ -2899,8 +2932,7 @@ bool FrameLoader::shouldPerformFragmentNavigation(bool isFormSubmission, const S
     // FIXME: What about load types other than Standard and Reload?
 
     return (!isFormSubmission || equalLettersIgnoringASCIICase(httpMethod, "get"))
-        && loadType != FrameLoadType::Reload
-        && loadType != FrameLoadType::ReloadFromOrigin
+        && !isReload(loadType)
         && loadType != FrameLoadType::Same
         && !shouldReload(m_frame.document()->url(), url)
         // We don't want to just scroll if a link from within a
@@ -3447,6 +3479,7 @@ void FrameLoader::loadDifferentDocumentItem(HistoryItem& item, FrameLoadType loa
         switch (loadType) {
         case FrameLoadType::Reload:
         case FrameLoadType::ReloadFromOrigin:
+        case FrameLoadType::ReloadExpiredOnly:
             request.setCachePolicy(ReloadIgnoringCacheData);
             break;
         case FrameLoadType::Back:
@@ -3466,7 +3499,7 @@ void FrameLoader::loadDifferentDocumentItem(HistoryItem& item, FrameLoadType loa
         case FrameLoadType::RedirectWithLockedBackForwardList:
             break;
         case FrameLoadType::Same:
-        default:
+        case FrameLoadType::Replace:
             ASSERT_NOT_REACHED();
         }
 

@@ -1059,6 +1059,9 @@ static WebFrameLoadType toWebFrameLoadType(FrameLoadType frameLoadType)
         return WebFrameLoadTypeReplace;
     case FrameLoadType::ReloadFromOrigin:
         return WebFrameLoadTypeReloadFromOrigin;
+    case FrameLoadType::ReloadExpiredOnly:
+        ASSERT_NOT_REACHED();
+        return WebFrameLoadTypeReload;
     }
 }
 
@@ -2539,12 +2542,12 @@ static NSURL *createUniqueWebDataURL()
 
 - (void)reload
 {
-    _private->coreFrame->loader().reload(false);
+    _private->coreFrame->loader().reload({ });
 }
 
 - (void)reloadFromOrigin
 {
-    _private->coreFrame->loader().reload(true);
+    _private->coreFrame->loader().reload(WebCore::ReloadOption::FromOrigin);
 }
 
 - (WebFrame *)findFrameNamed:(NSString *)name

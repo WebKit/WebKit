@@ -242,23 +242,22 @@ void WKPageStopLoading(WKPageRef pageRef)
 
 void WKPageReload(WKPageRef pageRef)
 {
-    const bool reloadFromOrigin = false;
-    const bool contentBlockersEnabled = true;
-    toImpl(pageRef)->reload(reloadFromOrigin, contentBlockersEnabled);
+    toImpl(pageRef)->reload({ });
 }
 
 void WKPageReloadWithoutContentBlockers(WKPageRef pageRef)
 {
-    const bool reloadFromOrigin = false;
-    const bool contentBlockersEnabled = false;
-    toImpl(pageRef)->reload(reloadFromOrigin, contentBlockersEnabled);
+    toImpl(pageRef)->reload(WebCore::ReloadOption::DisableContentBlockers);
 }
 
 void WKPageReloadFromOrigin(WKPageRef pageRef)
 {
-    const bool reloadFromOrigin = true;
-    const bool contentBlockersEnabled = true;
-    toImpl(pageRef)->reload(reloadFromOrigin, contentBlockersEnabled);
+    toImpl(pageRef)->reload(WebCore::ReloadOption::FromOrigin);
+}
+
+void WKPageReloadExpiredOnly(WKPageRef pageRef)
+{
+    toImpl(pageRef)->reload(WebCore::ReloadOption::ExpiredOnly);
 }
 
 bool WKPageTryClose(WKPageRef pageRef)

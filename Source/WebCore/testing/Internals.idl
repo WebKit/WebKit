@@ -392,6 +392,7 @@ enum EventThrottlingBehavior {
     void setUsesMockScrollAnimator(boolean enabled);
 
     void forceReload(boolean endToEnd);
+    void reloadExpiredOnly();
 
     void enableAutoSizeMode(boolean enabled, long minimumWidth, long minimumHeight, long maximumWidth, long maximumHeight);
 

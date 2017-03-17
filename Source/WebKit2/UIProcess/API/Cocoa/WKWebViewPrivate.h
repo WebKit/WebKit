@@ -228,6 +228,7 @@ typedef NS_ENUM(NSInteger, _WKImmediateActionType) {
 #endif
 
 - (WKNavigation *)_reloadWithoutContentBlockers WK_API_AVAILABLE(macosx(10.12), ios(10.0));
+- (WKNavigation *)_reloadExpiredOnly WK_API_AVAILABLE(macosx(10.13), ios(11.0));
 
 - (void)_killWebContentProcessAndResetState;
 

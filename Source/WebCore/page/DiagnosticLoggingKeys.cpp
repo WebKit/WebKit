@@ -488,6 +488,11 @@ String DiagnosticLoggingKeys::reloadFromOriginKey()
     return ASCIILiteral("reloadFromOrigin");
 }
 
+String DiagnosticLoggingKeys::reloadRevalidatingExpiredKey()
+{
+    return ASCIILiteral("reloadRevalidatingExpired");
+}
+
 String DiagnosticLoggingKeys::sameLoadKey()
 {
     return ASCIILiteral("sameLoad");

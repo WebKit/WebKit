@@ -27,6 +27,7 @@
 
 #pragma once
 
+#include "FrameLoaderTypes.h"
 #include "ScrollTypes.h"
 #include <wtf/Noncopyable.h>
 
@@ -88,7 +89,7 @@ public:
 
     // Navigation APIs.
     WEBCORE_EXPORT void loadRequest(const FrameLoadRequest&, InputSource source = InputSource::User);
-    WEBCORE_EXPORT void reloadFrame(Frame*, bool endToEndReload, bool contentBlockersEnabled, InputSource = InputSource::User);
+    WEBCORE_EXPORT void reloadFrame(Frame*, OptionSet<ReloadOption>, InputSource = InputSource::User);
     WEBCORE_EXPORT void stopLoadingFrame(Frame*, InputSource source = InputSource::User);
     WEBCORE_EXPORT bool tryClosePage(InputSource source = InputSource::User);
 

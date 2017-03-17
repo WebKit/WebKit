@@ -306,7 +306,7 @@ HRESULT WebFrame::reloadFromOrigin()
     if (!coreFrame)
         return E_UNEXPECTED;
 
-    coreFrame->loader().reload(true);
+    coreFrame->loader().reload(WebCore::ReloadOption::FromOrigin);
     return S_OK;
 }
 

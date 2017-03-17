@@ -123,6 +123,7 @@ public:
     static String redirectKey();
     static String reloadFromOriginKey();
     static String reloadKey();
+    static String reloadRevalidatingExpiredKey();
     static String replaceKey();
     static String resourceLoadedKey();
     static String resourceResponseSourceKey();
