@@ -1555,6 +1555,7 @@ CharacterOffset AXObjectCache::traverseToOffsetInRange(RefPtr<Range>range, int o
     
     bool toNodeEnd = option & TraverseOptionToNodeEnd;
     bool validateOffset = option & TraverseOptionValidateOffset;
+    bool doNotEnterTextControls = option & TraverseOptionDoNotEnterTextControls;
     
     int offsetInCharacter = 0;
     int cumulativeOffset = 0;
@@ -1564,7 +1565,7 @@ CharacterOffset AXObjectCache::traverseToOffsetInRange(RefPtr<Range>range, int o
     bool finished = false;
     int lastStartOffset = 0;
     
-    TextIterator iterator(range.get(), TextIteratorEntersTextControls);
+    TextIterator iterator(range.get(), doNotEnterTextControls ? TextIteratorDefaultBehavior : TextIteratorEntersTextControls);
     
     // When the range has zero length, there might be replaced node or brTag that we need to increment the characterOffset.
     if (iterator.atEnd()) {
@@ -1617,11 +1618,13 @@ CharacterOffset AXObjectCache::traverseToOffsetInRange(RefPtr<Range>range, int o
                     if (childNode && childNode->renderer() && childNode->renderer()->isBR()) {
                         currentNode = childNode;
                         hasReplacedNodeOrBR = true;
-                    } else if (currentNode->isShadowRoot()) {
+                    } else if (Element *shadowHost = currentNode->shadowHost()) {
                         // Since we are entering text controls, we should set the currentNode
                         // to be the shadow host when there's no content.
-                        currentNode = currentNode->shadowHost();
-                        continue;
+                        if (nodeIsTextControl(shadowHost)) {
+                            currentNode = currentNode->shadowHost();
+                            continue;
+                        }
                     } else if (currentNode != previousNode) {
                         // We should set the start offset and length for the current node in case this is the last iteration.
                         lastStartOffset = 1;
@@ -1837,7 +1840,7 @@ void AXObjectCache::setTextMarkerDataWithCharacterOffset(TextMarkerData& textMar
     this->setNodeInUse(domNode);
 }
 
-CharacterOffset AXObjectCache::startOrEndCharacterOffsetForRange(RefPtr<Range> range, bool isStart)
+CharacterOffset AXObjectCache::startOrEndCharacterOffsetForRange(RefPtr<Range> range, bool isStart, bool enterTextControls)
 {
     if (!range)
         return CharacterOffset();
@@ -1865,7 +1868,10 @@ CharacterOffset AXObjectCache::startOrEndCharacterOffsetForRange(RefPtr<Range> r
         offset += nodeStartOffset.offset;
     }
     
-    return traverseToOffsetInRange(WTFMove(copyRange), offset, isStart ? TraverseOptionDefault : TraverseOptionToNodeEnd, stayWithinRange);
+    TraverseOption options = isStart ? TraverseOptionDefault : TraverseOptionToNodeEnd;
+    if (!enterTextControls)
+        options = static_cast<TraverseOption>(options | TraverseOptionDoNotEnterTextControls);
+    return traverseToOffsetInRange(WTFMove(copyRange), offset, options, stayWithinRange);
 }
 
 void AXObjectCache::startOrEndTextMarkerDataForRange(TextMarkerData& textMarkerData, RefPtr<Range> range, bool isStart)
@@ -2616,8 +2622,8 @@ CharacterOffset AXObjectCache::characterOffsetForIndex(int index, const Accessib
         return CharacterOffset();
     
     RefPtr<Range> range = obj->elementRange();
-    CharacterOffset start = startOrEndCharacterOffsetForRange(range, true);
-    CharacterOffset end = startOrEndCharacterOffsetForRange(range, false);
+    CharacterOffset start = startOrEndCharacterOffsetForRange(range, true, true);
+    CharacterOffset end = startOrEndCharacterOffsetForRange(range, false, true);
     CharacterOffset result = start;
     for (int i = 0; i < index; i++) {
         result = nextCharacterOffset(result, false);

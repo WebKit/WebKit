@@ -1,0 +1,31 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<input id="input" type='text' placeholder='text'>
+
+<div role="group" id="console"></div>
+
+<script>
+
+    description("This tests that start and end text markers of an input element with placeholder are valid.");
+
+    // Test contenteditable with newlines.
+    var input = accessibilityController.accessibleElementById("input");
+    var textMarkerRange = input.textMarkerRangeForElement(input);
+    var startMarker = input.endTextMarkerForTextMarkerRange(textMarkerRange);
+    var endMarker = input.endTextMarkerForTextMarkerRange(textMarkerRange);
+    
+    // make sure the associated object of endMarker is the input object
+    var startObject = input.accessibilityElementForTextMarker(startMarker);
+    var endObject = input.accessibilityElementForTextMarker(endMarker);
+    shouldBeTrue("input.isEqual(startObject)");
+    shouldBeTrue("input.isEqual(endObject)");
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
