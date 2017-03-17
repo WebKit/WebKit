@@ -1,3 +1,12 @@
+2017-03-16  Youenn Fablet  <youenn@apple.com>
+
+        activating webrtc tests on Release bots
+        https://bugs.webkit.org/show_bug.cgi?id=169775
+
+        Unreviewed.
+
+        * TestExpectations:
+
 2017-03-16  Dean Jackson  <dino@apple.com>
 
         WebGL: Improve index validation when using uint index values
