@@ -1,3 +1,12 @@
+2017-03-17  Michael Saboff  <msaboff@apple.com>
+
+        Use USE_INTERNAL_SDK to compute ENABLE_FAST_JIT_PERMISSIONS instead of HAVE_INTERNAL_SDK
+        https://bugs.webkit.org/show_bug.cgi?id=169817
+
+        Reviewed by Filip Pizlo.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2017-03-17  Antti Koivisto  <antti@apple.com>
 
         Add a reload policy where only expired subresources are revalidated
