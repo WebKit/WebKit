@@ -73,9 +73,9 @@ void RealtimeOutgoingVideoSource::RemoveSink(rtc::VideoSinkInterface<webrtc::Vid
     m_sinks.removeFirst(sink);
 }
 
-void RealtimeOutgoingVideoSource::sendFrame(rtc::scoped_refptr<webrtc::VideoFrameBuffer>&& buffer)
+void RealtimeOutgoingVideoSource::sendFrame(rtc::scoped_refptr<webrtc::VideoFrameBuffer>&& buffer, webrtc::VideoRotation rotation)
 {
-    webrtc::VideoFrame frame(buffer, 0, 0, webrtc::kVideoRotation_0);
+    webrtc::VideoFrame frame(buffer, 0, 0, rotation);
     for (auto* sink : m_sinks)
         sink->OnFrame(frame);
 }
@@ -91,7 +91,7 @@ void RealtimeOutgoingVideoSource::videoSampleAvailable(MediaSample& sample)
     if (m_muted || !m_enabled) {
         auto blackBuffer = m_bufferPool.CreateBuffer(settings.width(), settings.height());
         blackBuffer->SetToBlack();
-        sendFrame(WTFMove(blackBuffer));
+        sendFrame(WTFMove(blackBuffer), webrtc::kVideoRotation_0);
         return;
     }
 
@@ -99,8 +99,25 @@ void RealtimeOutgoingVideoSource::videoSampleAvailable(MediaSample& sample)
     auto pixelBuffer = static_cast<CVPixelBufferRef>(CMSampleBufferGetImageBuffer(sample.platformSample().sample.cmSampleBuffer));
     auto pixelFormatType = CVPixelBufferGetPixelFormatType(pixelBuffer);
 
-    if (pixelFormatType == kCVPixelFormatType_420YpCbCr8Planar) {
-        sendFrame(new rtc::RefCountedObject<webrtc::CoreVideoFrameBuffer>(pixelBuffer));
+    webrtc::VideoRotation rotation;
+    switch (sample.videoOrientation()) {
+    case MediaSample::VideoOrientation::Unknown:
+    case MediaSample::VideoOrientation::Portrait:
+        rotation = webrtc::kVideoRotation_0;
+        break;
+    case MediaSample::VideoOrientation::PortraitUpsideDown:
+        rotation = webrtc::kVideoRotation_180;
+        break;
+    case MediaSample::VideoOrientation::LandscapeRight:
+        rotation = webrtc::kVideoRotation_90;
+        break;
+    case MediaSample::VideoOrientation::LandscapeLeft:
+        rotation = webrtc::kVideoRotation_270;
+        break;
+    }
+
+    if (pixelFormatType == kCVPixelFormatType_420YpCbCr8Planar || pixelFormatType == kCVPixelFormatType_420YpCbCr8BiPlanarFullRange) {
+        sendFrame(new rtc::RefCountedObject<webrtc::CoreVideoFrameBuffer>(pixelBuffer), rotation);
         return;
     }
 
@@ -116,7 +133,7 @@ void RealtimeOutgoingVideoSource::videoSampleAvailable(MediaSample& sample)
         webrtc::ConvertToI420(webrtc::kBGRA, source, 0, 0, settings.width(), settings.height(), 0, webrtc::kVideoRotation_0, newBuffer);
     }
     CVPixelBufferUnlockBaseAddress(pixelBuffer, 0);
-    sendFrame(WTFMove(newBuffer));
+    sendFrame(WTFMove(newBuffer), rotation);
 }
 
 } // namespace WebCore

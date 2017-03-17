@@ -417,7 +417,7 @@ bool AVVideoCaptureSource::updateFramerate(CMSampleBufferRef sampleBuffer)
     return frameRate != m_frameRate;
 }
 
-void AVVideoCaptureSource::processNewFrame(RetainPtr<CMSampleBufferRef> sampleBuffer)
+void AVVideoCaptureSource::processNewFrame(RetainPtr<CMSampleBufferRef> sampleBuffer, RetainPtr<AVCaptureConnectionType> connection)
 {
     // Ignore frames delivered when the session is not running, we want to hang onto the last image
     // delivered before it stopped.
@@ -432,8 +432,27 @@ void AVVideoCaptureSource::processNewFrame(RetainPtr<CMSampleBufferRef> sampleBu
     m_buffer = sampleBuffer;
     m_lastImage = nullptr;
 
+    MediaSample::VideoOrientation orientation = MediaSample::VideoOrientation::Unknown;
+    switch ([connection videoOrientation]) {
+    case AVCaptureVideoOrientationPortrait:
+        orientation = MediaSample::VideoOrientation::Portrait;
+        break;
+    case AVCaptureVideoOrientationPortraitUpsideDown:
+        orientation = MediaSample::VideoOrientation::PortraitUpsideDown;
+        break;
+    case AVCaptureVideoOrientationLandscapeRight:
+        orientation = MediaSample::VideoOrientation::LandscapeRight;
+        break;
+    case AVCaptureVideoOrientationLandscapeLeft:
+        orientation = MediaSample::VideoOrientation::LandscapeLeft;
+        break;
+    }
+
     bool settingsChanged = false;
     CMVideoDimensions dimensions = CMVideoFormatDescriptionGetDimensions(formatDescription);
+    if (orientation == MediaSample::VideoOrientation::LandscapeRight || orientation == MediaSample::VideoOrientation::LandscapeLeft)
+        std::swap(dimensions.width, dimensions.height);
+
     if (dimensions.width != m_width || dimensions.height != m_height) {
         m_width = dimensions.width;
         m_height = dimensions.height;
@@ -443,15 +462,16 @@ void AVVideoCaptureSource::processNewFrame(RetainPtr<CMSampleBufferRef> sampleBu
     if (settingsChanged)
         settingsDidChange();
 
-    videoSampleAvailable(MediaSampleAVFObjC::create(m_buffer.get()));
+    videoSampleAvailable(MediaSampleAVFObjC::create(m_buffer.get(), orientation, [connection isVideoMirrored]));
 }
 
-void AVVideoCaptureSource::captureOutputDidOutputSampleBufferFromConnection(AVCaptureOutputType*, CMSampleBufferRef sampleBuffer, AVCaptureConnectionType*)
+void AVVideoCaptureSource::captureOutputDidOutputSampleBufferFromConnection(AVCaptureOutputType*, CMSampleBufferRef sampleBuffer, AVCaptureConnectionType* captureConnection)
 {
     RetainPtr<CMSampleBufferRef> buffer = sampleBuffer;
+    RetainPtr<AVCaptureConnectionType> connection = captureConnection;
 
-    scheduleDeferredTask([this, buffer] {
-        this->processNewFrame(buffer);
+    scheduleDeferredTask([this, buffer, connection] {
+        this->processNewFrame(buffer, connection);
     });
 }
 

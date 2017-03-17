@@ -77,7 +77,7 @@ private:
     bool updateFramerate(CMSampleBufferRef);
 
     void captureOutputDidOutputSampleBufferFromConnection(AVCaptureOutput*, CMSampleBufferRef, AVCaptureConnection*) final;
-    void processNewFrame(RetainPtr<CMSampleBufferRef>);
+    void processNewFrame(RetainPtr<CMSampleBufferRef>, RetainPtr<AVCaptureConnection>);
 
     RetainPtr<NSString> m_pendingPreset;
     RetainPtr<CMSampleBufferRef> m_buffer;

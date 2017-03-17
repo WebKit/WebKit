@@ -31,6 +31,7 @@
 #include "MediaPlayerPrivate.h"
 #include "MediaSample.h"
 #include "MediaStreamPrivate.h"
+#include <CoreGraphics/CGAffineTransform.h>
 #include <wtf/Function.h>
 #include <wtf/MediaTime.h>
 #include <wtf/WeakPtr.h>
@@ -75,10 +76,15 @@ public:
 
     WeakPtr<MediaPlayerPrivateMediaStreamAVFObjC> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(); }
 
-    void ensureLayer();
-    void destroyLayer();
+    void ensureLayers();
+    void destroyLayers();
 
     void layerStatusDidChange(AVSampleBufferDisplayLayer*);
+    void layerErrorDidChange(AVSampleBufferDisplayLayer*);
+    void backgroundLayerBoundsChanged();
+
+    PlatformLayer* displayLayer();
+    PlatformLayer* backgroundLayer();
 
 private:
     // MediaPlayerPrivateInterface
@@ -99,7 +105,7 @@ private:
 
     void play() override;
     void pause() override;
-    bool paused() const override;
+    bool paused() const override { return !playing(); }
 
     void setVolume(float) override;
     void setMuted(bool) override;
@@ -156,7 +162,7 @@ private:
 
     bool ended() const override { return m_ended; }
 
-    bool shouldBePlaying() const;
+    void setShouldBufferData(bool) override;
 
     MediaPlayer::ReadyState currentReadyState();
     void updateReadyState();
@@ -176,6 +182,13 @@ private:
     DisplayMode currentDisplayMode() const;
     bool updateDisplayMode();
     void updateCurrentFrameImage();
+
+    enum class PlaybackState {
+        None,
+        Playing,
+        Paused,
+    };
+    bool playing() const { return m_playbackState == PlaybackState::Playing; }
 
     // MediaStreamPrivate::Observer
     void activeStatusChanged() override;
@@ -200,6 +213,8 @@ private:
 
     AudioSourceProvider* audioSourceProvider() final;
 
+    CGAffineTransform videoTransformationMatrix(MediaSample&);
+
     MediaPlayer* m_player { nullptr };
     WeakPtrFactory<MediaPlayerPrivateMediaStreamAVFObjC> m_weakPtrFactory;
     RefPtr<MediaStreamPrivate> m_mediaStreamPrivate;
@@ -208,6 +223,7 @@ private:
 
     RetainPtr<WebAVSampleBufferStatusChangeListener> m_statusChangeListener;
     RetainPtr<AVSampleBufferDisplayLayer> m_sampleBufferDisplayLayer;
+    RetainPtr<PlatformLayer> m_backgroundLayer;
     std::unique_ptr<Clock> m_clock;
 
     MediaTime m_pausedTime;
@@ -232,12 +248,18 @@ private:
     FloatSize m_intrinsicSize;
     float m_volume { 1 };
     DisplayMode m_displayMode { None };
+    PlaybackState m_playbackState { PlaybackState::None };
+    MediaSample::VideoOrientation m_videoOrientation { MediaSample::VideoOrientation::Unknown };
+    CGAffineTransform m_videoTransform;
+    bool m_videoMirrored { false };
     bool m_playing { false };
     bool m_muted { false };
     bool m_ended { false };
     bool m_hasEverEnqueuedVideoFrame { false };
     bool m_pendingSelectedTrackCheck { false };
     bool m_shouldDisplayFirstVideoFrame { false };
+    bool m_transformIsValid { false };
+    bool m_videoSizeChanged;
 
 #if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
     std::unique_ptr<VideoFullscreenLayerManager> m_videoFullscreenLayerManager;

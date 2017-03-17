@@ -37,7 +37,7 @@ class MediaSampleAVFObjC final : public MediaSample {
 public:
     static Ref<MediaSampleAVFObjC> create(CMSampleBufferRef sample, int trackID) { return adoptRef(*new MediaSampleAVFObjC(sample, trackID)); }
     static Ref<MediaSampleAVFObjC> create(CMSampleBufferRef sample, AtomicString trackID) { return adoptRef(*new MediaSampleAVFObjC(sample, trackID)); }
-    static Ref<MediaSampleAVFObjC> create(CMSampleBufferRef sample) { return adoptRef(*new MediaSampleAVFObjC(sample)); }
+    static Ref<MediaSampleAVFObjC> create(CMSampleBufferRef sample, VideoOrientation orientation = VideoOrientation::Unknown, bool mirrored = false) { return adoptRef(*new MediaSampleAVFObjC(sample, orientation, mirrored)); }
     static RefPtr<MediaSampleAVFObjC> createImageSample(Ref<JSC::Uint8ClampedArray>&&, unsigned long width, unsigned long height);
     static RefPtr<MediaSampleAVFObjC> createImageSample(Vector<uint8_t>&&, unsigned long width, unsigned long height);
 
@@ -56,6 +56,13 @@ private:
         , m_id(String::format("%d", trackID))
     {
     }
+    MediaSampleAVFObjC(CMSampleBufferRef sample, VideoOrientation orientation, bool mirrored)
+        : m_sample(sample)
+        , m_orientation(orientation)
+        , m_mirrored(mirrored)
+    {
+    }
+
     virtual ~MediaSampleAVFObjC() { }
 
     MediaTime presentationTime() const override;
@@ -79,8 +86,13 @@ private:
     std::pair<RefPtr<MediaSample>, RefPtr<MediaSample>> divide(const MediaTime& presentationTime) override;
     Ref<MediaSample> createNonDisplayingCopy() const override;
 
+    VideoOrientation videoOrientation() const final { return m_orientation; }
+    bool videoMirrored() const final { return m_mirrored; }
+
     RetainPtr<CMSampleBufferRef> m_sample;
     AtomicString m_id;
+    VideoOrientation m_orientation { VideoOrientation::Unknown };
+    bool m_mirrored { false };
 };
 
 }

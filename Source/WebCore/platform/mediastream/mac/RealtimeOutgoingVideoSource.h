@@ -50,7 +50,7 @@ public:
 private:
     RealtimeOutgoingVideoSource(Ref<RealtimeMediaSource>&&);
 
-    void sendFrame(rtc::scoped_refptr<webrtc::VideoFrameBuffer>&&);
+    void sendFrame(rtc::scoped_refptr<webrtc::VideoFrameBuffer>&&, webrtc::VideoRotation);
 
     // Notifier API
     void RegisterObserver(webrtc::ObserverInterface*) final { }

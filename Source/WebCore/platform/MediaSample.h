@@ -77,6 +77,16 @@ public:
     virtual SampleFlags flags() const = 0;
     virtual PlatformSample platformSample() = 0;
 
+    enum class VideoOrientation {
+        Unknown,
+        Portrait,
+        PortraitUpsideDown,
+        LandscapeRight,
+        LandscapeLeft,
+    };
+    virtual VideoOrientation videoOrientation() const { return VideoOrientation::Unknown; }
+    virtual bool videoMirrored() const { return false; }
+
     bool isSync() const { return flags() & IsSync; }
     bool isNonDisplaying() const { return flags() & IsNonDisplaying; }
 
