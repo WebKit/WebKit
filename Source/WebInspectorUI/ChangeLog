@@ -1,3 +1,23 @@
+2017-03-16  Devin Rousso  <webkit@devinrousso.com>
+
+        Web Inspector: Console Evaluation links in the Console should not show normally
+        https://bugs.webkit.org/show_bug.cgi?id=157483
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Models/CallFrame.js:
+        (WebInspector.CallFrame):
+        (WebInspector.CallFrame.prototype.get isConsoleEvaluation):
+        (WebInspector.CallFrame.fromDebuggerPayload):
+        (WebInspector.CallFrame.fromPayload):
+        Move console evaluation check to the constructor for consistency.
+
+        * UserInterface/Views/ConsoleMessageView.js:
+        (WebInspector.ConsoleMessageView.prototype._appendLocationLink):
+        * UserInterface/Views/StackTraceView.js:
+        (WebInspector.StackTraceView):
+        Only add CallFrameView elements if the corresponding CallFame is not a console evaluation.
+
 2017-03-16  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: REGRESSION (r213691): Saving DOM breakpoints broken after refactoring

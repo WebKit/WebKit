@@ -34,6 +34,12 @@ WebInspector.CallFrame = class CallFrame extends WebInspector.Object
         console.assert(!thisObject || thisObject instanceof WebInspector.RemoteObject);
         console.assert(!scopeChain || scopeChain instanceof Array);
 
+        this._isConsoleEvaluation = sourceCodeLocation && isWebInspectorConsoleEvaluationScript(sourceCodeLocation.sourceCode.sourceURL);
+        if (this._isConsoleEvaluation) {
+            functionName = WebInspector.UIString("Console Evaluation");
+            programCode = true;
+        }
+
         this._target = target;
         this._id = id || null;
         this._sourceCodeLocation = sourceCodeLocation || null;
@@ -56,6 +62,7 @@ WebInspector.CallFrame = class CallFrame extends WebInspector.Object
     get thisObject() { return this._thisObject; }
     get scopeChain() { return this._scopeChain; }
     get isTailDeleted() { return this._isTailDeleted; }
+    get isConsoleEvaluation() { return this._isConsoleEvaluation; }
 
     saveIdentityToCookie()
     {
@@ -204,12 +211,6 @@ WebInspector.CallFrame = class CallFrame extends WebInspector.Object
         let nativeCode = false;
         let programCode = WebInspector.CallFrame.programCodeFromPayload(payload);
         let isTailDeleted = payload.isTailDeleted;
-
-        if (sourceCodeLocation && isWebInspectorConsoleEvaluationScript(sourceCodeLocation.sourceCode.sourceURL)) {
-            functionName = WebInspector.UIString("Console Evaluation");
-            programCode = true;
-        }
-
         return new WebInspector.CallFrame(target, id, sourceCodeLocation, functionName, thisObject, scopeChain, nativeCode, programCode, isTailDeleted);
     }
 
@@ -250,11 +251,10 @@ WebInspector.CallFrame = class CallFrame extends WebInspector.Object
             }
         }
 
-        if (sourceCodeLocation && isWebInspectorConsoleEvaluationScript(sourceCodeLocation.sourceCode.sourceURL)) {
-            functionName = WebInspector.UIString("Console Evaluation");
-            programCode = true;
-        }
-
-        return new WebInspector.CallFrame(target, null, sourceCodeLocation, functionName, null, null, nativeCode, programCode);
+        const id = null;
+        const thisObject = null;
+        const scopeChain = null;
+        const isTailDeleted = false;
+        return new WebInspector.CallFrame(target, id, sourceCodeLocation, functionName, thisObject, scopeChain, nativeCode, programCode, isTailDeleted);
     }
 };

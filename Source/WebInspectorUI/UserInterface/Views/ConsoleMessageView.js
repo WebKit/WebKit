@@ -343,7 +343,7 @@ WebInspector.ConsoleMessageView = class ConsoleMessageView extends WebInspector.
             });
         }
 
-        if (callFrame) {
+        if (callFrame && (!callFrame.isConsoleEvaluation || WebInspector.isDebugUIEnabled())) {
             const showFunctionName = !!callFrame.functionName;
             var locationElement = new WebInspector.CallFrameView(callFrame, showFunctionName);
             locationElement.classList.add("console-message-location");

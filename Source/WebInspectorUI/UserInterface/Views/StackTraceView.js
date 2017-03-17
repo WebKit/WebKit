@@ -35,6 +35,8 @@ WebInspector.StackTraceView = class StackTraceView extends WebInspector.Object
         for (var callFrame of stackTrace.callFrames) {
             if (!callFrame.sourceCodeLocation && callFrame.functionName === null)
                 continue;
+            if (callFrame.isConsoleEvaluation && !WebInspector.isDebugUIEnabled())
+                continue;
 
             var callFrameElement = new WebInspector.CallFrameView(callFrame, true);
             element.appendChild(callFrameElement);
