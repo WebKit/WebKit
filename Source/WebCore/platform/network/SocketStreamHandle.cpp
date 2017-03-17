@@ -32,6 +32,7 @@
 #include "SocketStreamHandle.h"
 
 #include "SocketStreamHandleClient.h"
+#include <wtf/Function.h>
 
 namespace WebCore {
 
@@ -49,35 +50,35 @@ SocketStreamHandle::SocketStreamState SocketStreamHandle::state() const
     return m_state;
 }
 
-bool SocketStreamHandle::send(const char* data, size_t length)
+void SocketStreamHandle::send(const char* data, size_t length, Function<void(bool)> completionHandler)
 {
     if (m_state == Connecting || m_state == Closing)
-        return false;
+        return completionHandler(false);
     if (!m_buffer.isEmpty()) {
         if (m_buffer.size() + length > bufferSize) {
             // FIXME: report error to indicate that buffer has no more space.
-            return false;
+            return completionHandler(false);
         }
         m_buffer.append(data, length);
         m_client.didUpdateBufferedAmount(static_cast<SocketStreamHandle&>(*this), bufferedAmount());
-        return true;
+        return completionHandler(true);
     }
     size_t bytesWritten = 0;
     if (m_state == Open) {
         if (auto result = platformSend(data, length))
             bytesWritten = result.value();
         else
-            return false;
+            return completionHandler(false);
     }
     if (m_buffer.size() + length - bytesWritten > bufferSize) {
         // FIXME: report error to indicate that buffer has no more space.
-        return false;
+        return completionHandler(false);
     }
     if (bytesWritten < length) {
         m_buffer.append(data + bytesWritten, length - bytesWritten);
         m_client.didUpdateBufferedAmount(static_cast<SocketStreamHandle&>(*this), bufferedAmount());
     }
-    return true;
+    return completionHandler(true);
 }
 
 void SocketStreamHandle::close()

@@ -278,8 +278,10 @@ void WebSocketChannel::didOpenSocketStream(SocketStreamHandle& handle)
     if (m_identifier)
         InspectorInstrumentation::willSendWebSocketHandshakeRequest(m_document, m_identifier, m_handshake->clientHandshakeRequest());
     CString handshakeMessage = m_handshake->clientHandshakeMessage();
-    if (!handle.send(handshakeMessage.data(), handshakeMessage.length()))
-        fail("Failed to send WebSocket handshake.");
+    handle.send(handshakeMessage.data(), handshakeMessage.length(), [this, protectedThis = makeRef(*this)] (bool success) {
+        if (!success)
+            fail("Failed to send WebSocket handshake.");
+    });
 }
 
 void WebSocketChannel::didCloseSocketStream(SocketStreamHandle& handle)
@@ -742,14 +744,18 @@ void WebSocketChannel::processOutgoingFrameQueue()
         auto frame = m_outgoingFrameQueue.takeFirst();
         switch (frame->frameType) {
         case QueuedFrameTypeString: {
-            if (!sendFrame(frame->opCode, frame->stringData.data(), frame->stringData.length()))
-                fail("Failed to send WebSocket frame.");
+            sendFrame(frame->opCode, frame->stringData.data(), frame->stringData.length(), [this, protectedThis = makeRef(*this)] (bool success) {
+                if (!success)
+                    fail("Failed to send WebSocket frame.");
+            });
             break;
         }
 
         case QueuedFrameTypeVector:
-            if (!sendFrame(frame->opCode, frame->vectorData.data(), frame->vectorData.size()))
-                fail("Failed to send WebSocket frame.");
+            sendFrame(frame->opCode, frame->vectorData.data(), frame->vectorData.size(), [this, protectedThis = makeRef(*this)] (bool success) {
+                if (!success)
+                    fail("Failed to send WebSocket frame.");
+            });
             break;
 
         case QueuedFrameTypeBlob: {
@@ -773,8 +779,10 @@ void WebSocketChannel::processOutgoingFrameQueue()
                 RefPtr<ArrayBuffer> result = m_blobLoader->arrayBufferResult();
                 m_blobLoader = nullptr;
                 m_blobLoaderStatus = BlobLoaderNotStarted;
-                if (!sendFrame(frame->opCode, static_cast<const char*>(result->data()), result->byteLength()))
-                    fail("Failed to send WebSocket frame.");
+                sendFrame(frame->opCode, static_cast<const char*>(result->data()), result->byteLength(), [this, protectedThis = makeRef(*this)] (bool success) {
+                    if (!success)
+                        fail("Failed to send WebSocket frame.");
+                });
                 break;
             }
             }
@@ -804,7 +812,7 @@ void WebSocketChannel::abortOutgoingFrameQueue()
     }
 }
 
-bool WebSocketChannel::sendFrame(WebSocketFrame::OpCode opCode, const char* data, size_t dataLength)
+void WebSocketChannel::sendFrame(WebSocketFrame::OpCode opCode, const char* data, size_t dataLength, Function<void(bool)> completionHandler)
 {
     ASSERT(m_handle);
     ASSERT(!m_suspended);
@@ -815,13 +823,13 @@ bool WebSocketChannel::sendFrame(WebSocketFrame::OpCode opCode, const char* data
     auto deflateResult = m_deflateFramer.deflate(frame);
     if (!deflateResult->succeeded()) {
         fail(deflateResult->failureReason());
-        return false;
+        return completionHandler(false);
     }
 
     Vector<char> frameData;
     frame.makeFrameData(frameData);
 
-    return m_handle->send(frameData.data(), frameData.size());
+    m_handle->send(frameData.data(), frameData.size(), WTFMove(completionHandler));
 }
 
 }  // namespace WebCore

@@ -39,6 +39,7 @@
 #include <WebCore/SocketStreamHandle.h>
 #include <WebCore/WebSocketChannel.h>
 #include <WebCore/WebSocketHandshake.h>
+#include <wtf/Function.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -91,7 +92,7 @@ void WebSocketServerConnection::sendWebSocketMessage(const String& message)
     Vector<char> frameData;
     frame.makeFrameData(frameData);
 
-    m_socket->send(frameData.data(), frameData.size());
+    m_socket->send(frameData.data(), frameData.size(), [](bool) { });
 }
 
 void WebSocketServerConnection::sendHTTPResponseHeader(int statusCode, const String& statusText, const HTTPHeaderMap& headerFields)
@@ -112,12 +113,12 @@ void WebSocketServerConnection::sendHTTPResponseHeader(int statusCode, const Str
     builder.appendLiteral("\r\n");
 
     CString header = builder.toString().latin1();
-    m_socket->send(header.data(), header.length());
+    m_socket->send(header.data(), header.length(), [](bool) { });
 }
 
 void WebSocketServerConnection::sendRawData(const char* data, size_t length)
 {
-    m_socket->send(data, length);
+    m_socket->send(data, length, [](bool) { });
 }
 
 void WebSocketServerConnection::didCloseSocketStream(SocketStreamHandle&)

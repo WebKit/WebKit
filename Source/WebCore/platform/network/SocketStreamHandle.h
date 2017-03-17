@@ -45,7 +45,7 @@ public:
     virtual ~SocketStreamHandle() { }
     SocketStreamState state() const;
 
-    bool send(const char* data, size_t length);
+    void send(const char* data, size_t length, Function<void(bool)>);
     void close(); // Disconnect after all data in buffer are sent.
     void disconnect();
     size_t bufferedAmount() const { return m_buffer.size(); }
