@@ -49,12 +49,9 @@ GPUFunction::~GPUFunction()
 }
 
 #if !PLATFORM(COCOA)
-GPUFunction::GPUFunction(GPULibrary* library, const String& name)
+GPUFunction::GPUFunction(GPULibrary*, const String&)
 {
     LOG(WebGPU, "GPUFunction::GPUFunction()");
-
-    if (!library || !library->library())
-        return;
 }
 
 String GPUFunction::name() const

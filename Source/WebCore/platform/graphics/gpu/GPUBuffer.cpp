@@ -55,7 +55,7 @@ RefPtr<ArrayBuffer> GPUBuffer::contents()
     if (m_contents)
         return m_contents;
 
-    m_contents = ArrayBuffer::create(0, 1);
+    m_contents = ArrayBuffer::create(nullptr, 1);
     return m_contents;
 }
 #endif

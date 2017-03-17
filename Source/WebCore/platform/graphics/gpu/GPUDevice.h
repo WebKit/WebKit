@@ -29,6 +29,7 @@
 
 #include "PlatformLayer.h"
 #include <runtime/ArrayBufferView.h>
+#include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 
 #if USE(CA)
@@ -41,7 +42,6 @@ OBJC_CLASS CALayer;
 OBJC_CLASS WebGPULayer;
 #else
 class WebGPULayer;
-typedef void PlatformGPUDevice;
 #endif
 
 namespace WebCore {
@@ -61,11 +61,10 @@ public:
     void reshape(int width, int height);
 
 #if PLATFORM(COCOA)
+    WebGPULayer* layer() { return m_layer.get(); }
     CALayer* platformLayer() const { return reinterpret_cast<CALayer*>(m_layer.get()); }
     WEBCORE_EXPORT id platformDevice();
 #endif
-
-    WebGPULayer* layer() { return m_layer.get(); }
 
     WEBCORE_EXPORT RefPtr<GPUCommandQueue> createCommandQueue();
     WEBCORE_EXPORT RefPtr<GPULibrary> createLibrary(const String& sourceCode);
@@ -79,8 +78,8 @@ public:
 private:
     GPUDevice();
 
-    RetainPtr<WebGPULayer> m_layer;
 #if PLATFORM(COCOA)
+    RetainPtr<WebGPULayer> m_layer;
     RetainPtr<id> m_device;
 #endif
 };

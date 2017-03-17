@@ -166,8 +166,6 @@ list(APPEND WebCore_SOURCES
     accessibility/mac/WebAccessibilityObjectWrapperMac.mm
 
     bindings/js/ScriptControllerMac.mm
-    bindings/js/JSWebGPURenderingContextCustom.cpp
-    bindings/js/JSWebGPURenderPassAttachmentDescriptorCustom.cpp
 
     bridge/objc/ObjCRuntimeObject.mm
     bridge/objc/WebScriptObject.mm
@@ -244,28 +242,6 @@ list(APPEND WebCore_SOURCES
     fileapi/FileCocoa.mm
 
     html/HTMLSlotElement.cpp
-
-    html/canvas/WebGPUBuffer.cpp
-    html/canvas/WebGPUCommandBuffer.cpp
-    html/canvas/WebGPUCommandQueue.cpp
-    html/canvas/WebGPUDepthStencilDescriptor.cpp
-    html/canvas/WebGPUDepthStencilState.cpp
-    html/canvas/WebGPUDrawable.cpp
-    html/canvas/WebGPUEnums.cpp
-    html/canvas/WebGPUFunction.cpp
-    html/canvas/WebGPULibrary.cpp
-    html/canvas/WebGPUObject.cpp
-    html/canvas/WebGPURenderCommandEncoder.cpp
-    html/canvas/WebGPURenderingContext.cpp
-    html/canvas/WebGPURenderPassAttachmentDescriptor.cpp
-    html/canvas/WebGPURenderPassColorAttachmentDescriptor.cpp
-    html/canvas/WebGPURenderPassDepthAttachmentDescriptor.cpp
-    html/canvas/WebGPURenderPassDescriptor.cpp
-    html/canvas/WebGPURenderPipelineColorAttachmentDescriptor.cpp
-    html/canvas/WebGPURenderPipelineDescriptor.cpp
-    html/canvas/WebGPURenderPipelineState.cpp
-    html/canvas/WebGPUTexture.cpp
-    html/canvas/WebGPUTextureDescriptor.cpp
 
     html/shadow/ImageControlsRootElement.cpp
     html/shadow/YouTubeEmbedShadowElement.cpp
@@ -481,25 +457,6 @@ list(APPEND WebCore_SOURCES
     platform/graphics/cv/TextureCacheCV.mm
     platform/graphics/cv/VideoTextureCopierCV.cpp
 
-    platform/graphics/gpu/GPUBuffer.cpp
-    platform/graphics/gpu/GPUCommandBuffer.cpp
-    platform/graphics/gpu/GPUCommandQueue.cpp
-    platform/graphics/gpu/GPUDepthStencilDescriptor.cpp
-    platform/graphics/gpu/GPUDepthStencilState.cpp
-    platform/graphics/gpu/GPUDevice.cpp
-    platform/graphics/gpu/GPUDrawable.cpp
-    platform/graphics/gpu/GPUFunction.cpp
-    platform/graphics/gpu/GPULibrary.cpp
-    platform/graphics/gpu/GPURenderCommandEncoder.cpp
-    platform/graphics/gpu/GPURenderPassAttachmentDescriptor.cpp
-    platform/graphics/gpu/GPURenderPassColorAttachmentDescriptor.cpp
-    platform/graphics/gpu/GPURenderPassDepthAttachmentDescriptor.cpp
-    platform/graphics/gpu/GPURenderPassDescriptor.cpp
-    platform/graphics/gpu/GPURenderPipelineColorAttachmentDescriptor.cpp
-    platform/graphics/gpu/GPURenderPipelineDescriptor.cpp
-    platform/graphics/gpu/GPURenderPipelineState.cpp
-    platform/graphics/gpu/GPUTexture.cpp
-    platform/graphics/gpu/GPUTextureDescriptor.cpp
     platform/graphics/gpu/Texture.cpp
     platform/graphics/gpu/TilingData.cpp
 
@@ -815,25 +772,6 @@ set(WebCore_FORWARDING_HEADERS_FILES
 
 list(APPEND WebCore_IDL_FILES
     Modules/plugins/QuickTimePluginReplacement.idl
-    html/canvas/WebGPUBuffer.idl
-    html/canvas/WebGPUCommandBuffer.idl
-    html/canvas/WebGPUCommandQueue.idl
-    html/canvas/WebGPUDepthStencilDescriptor.idl
-    html/canvas/WebGPUDepthStencilState.idl
-    html/canvas/WebGPUDrawable.idl
-    html/canvas/WebGPUFunction.idl
-    html/canvas/WebGPULibrary.idl
-    html/canvas/WebGPURenderCommandEncoder.idl
-    html/canvas/WebGPURenderingContext.idl
-    html/canvas/WebGPURenderPassAttachmentDescriptor.idl
-    html/canvas/WebGPURenderPassColorAttachmentDescriptor.idl
-    html/canvas/WebGPURenderPassDepthAttachmentDescriptor.idl
-    html/canvas/WebGPURenderPassDescriptor.idl
-    html/canvas/WebGPURenderPipelineColorAttachmentDescriptor.idl
-    html/canvas/WebGPURenderPipelineDescriptor.idl
-    html/canvas/WebGPURenderPipelineState.idl
-    html/canvas/WebGPUTexture.idl
-    html/canvas/WebGPUTextureDescriptor.idl
 )
 
 WEBKIT_CREATE_FORWARDING_HEADERS(WebCore DIRECTORIES ${WebCore_FORWARDING_HEADERS_DIRECTORIES} FILES ${WebCore_FORWARDING_HEADERS_FILES})
