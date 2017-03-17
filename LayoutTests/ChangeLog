@@ -1,5 +1,15 @@
 2017-03-16  Youenn Fablet  <youenn@apple.com>
 
+        Wrap legacy WebRTC API in runtime flag
+        https://bugs.webkit.org/show_bug.cgi?id=169646
+
+        Reviewed by Alex Christensen.
+
+        * webrtc/legacy-api-expected.txt: Added.
+        * webrtc/legacy-api.html: Added.
+
+2017-03-16  Youenn Fablet  <youenn@apple.com>
+
         Rebase webrtc tests
         https://bugs.webkit.org/show_bug.cgi?id=169791
 

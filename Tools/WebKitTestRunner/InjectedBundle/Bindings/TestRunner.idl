@@ -268,4 +268,6 @@ interface TestRunner {
 
     // Open panel
     void setOpenPanelFiles(object filesArray);
+
+    void setWebRTCLegacyAPIEnabled(boolean value);
 };

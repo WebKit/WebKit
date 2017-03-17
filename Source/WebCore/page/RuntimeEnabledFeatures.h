@@ -96,6 +96,8 @@ public:
 #if ENABLE(WEB_RTC)
     bool peerConnectionEnabled() const { return m_isPeerConnectionEnabled; }
     void setPeerConnectionEnabled(bool isEnabled) { m_isPeerConnectionEnabled = isEnabled; }
+    bool webRTCLegacyAPIEnabled() const { return m_webRTCLegacyAPIEnabled; }
+    void setWebRTCLegacyAPIEnabled(bool isEnabled) { m_webRTCLegacyAPIEnabled = isEnabled; }
 #endif
 
 #if ENABLE(LEGACY_CSS_VENDOR_PREFIXES)
@@ -231,6 +233,7 @@ private:
 
 #if ENABLE(WEB_RTC)
     bool m_isPeerConnectionEnabled { true };
+    bool m_webRTCLegacyAPIEnabled { true };
 #endif
 
 #if ENABLE(LEGACY_CSS_VENDOR_PREFIXES)

@@ -1,3 +1,22 @@
+2017-03-16  Youenn Fablet  <youenn@apple.com>
+
+        Wrap legacy WebRTC API in runtime flag
+        https://bugs.webkit.org/show_bug.cgi?id=169646
+
+        Reviewed by Alex Christensen.
+
+        Adding preference to legacy API.
+
+        * Shared/WebPreferencesDefinitions.h:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetWebRTCLegacyAPIEnabled):
+        (WKPreferencesGetWebRTCLegacyAPIEnabled):
+        * UIProcess/API/C/WKPreferencesRef.h:
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::overrideBoolPreferenceForTestRunner):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+
 2017-03-16  Brady Eidson  <beidson@apple.com>
 
         Update the WKHTTPCookieStore API to be simpler and add observers.

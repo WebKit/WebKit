@@ -1,0 +1,33 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+    <head>
+        <script src="../resources/testharness.js"></script>
+    </head>
+    <body>
+        <script>
+if (window.testRunner)
+    testRunner.setWebRTCLegacyAPIEnabled(false);
+
+promise_test(function() {
+    var pc1 = new RTCPeerConnection({iceServers:[{urls:'stun:foo.com'}]});
+    var pc2 = new RTCPeerConnection({iceServers:[{urls:'stun:foo.com'}]});
+    assert_equals(pc1.getLocalStreams, undefined);
+    assert_equals(pc1.getRemoteStreams, undefined);
+    assert_equals(pc1.getStreamById, undefined);
+    assert_equals(pc1.addStream, undefined);
+    assert_equals(pc1.removeStream, undefined);
+    assert_equals(pc1.onaddstream, undefined);
+
+    var channel = pc1.createDataChannel("test");
+    return pc1.createOffer({ }, assert_unreached, assert_unreached).then((offer) => {
+        return pc1.setLocalDescription(offer, assert_unreached, assert_unreached).then(() => { return offer; }); 
+    }).then((offer) => {
+        return pc2.setRemoteDescription(offer, assert_unreached, assert_unreached); 
+    }).then(() => {
+        return pc2.createAnswer({ }, assert_unreached, assert_unreached);
+    });
+}, "Testing legacy API is not defined when legacy flag is turned off");
+        </script>
+        <script src="../resources/testharnessreport.js"></script>
+    </body>
+</html>

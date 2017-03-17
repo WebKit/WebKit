@@ -107,6 +107,7 @@ namespace WebCore {
     macro(underlyingSink) \
     macro(underlyingSource) \
     macro(view) \
+    macro(webRTCLegacyAPIEnabled) \
     macro(writing) \
     macro(Headers) \
     macro(MediaStream) \

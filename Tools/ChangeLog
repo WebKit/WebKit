@@ -1,3 +1,19 @@
+2017-03-16  Youenn Fablet  <youenn@apple.com>
+
+        Wrap legacy WebRTC API in runtime flag
+        https://bugs.webkit.org/show_bug.cgi?id=169646
+
+        Reviewed by Alex Christensen.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (enableExperimentalFeatures):
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::beginTesting):
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::setWebRTCLegacyAPIEnabled):
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+
 2017-03-16  Brady Eidson  <beidson@apple.com>
 
         Update the WKHTTPCookieStore API to be simpler and add observers.

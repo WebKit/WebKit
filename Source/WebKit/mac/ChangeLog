@@ -1,3 +1,19 @@
+2017-03-16  Youenn Fablet  <youenn@apple.com>
+
+        Wrap legacy WebRTC API in runtime flag
+        https://bugs.webkit.org/show_bug.cgi?id=169646
+
+        Reviewed by Alex Christensen.
+
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+        (-[WebPreferences webRTCLegacyAPIEnabled]):
+        (-[WebPreferences setWebRTCLegacyAPIEnabled:]):
+        * WebView/WebPreferencesPrivate.h:
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChanged:]):
+
 2017-03-14  Megan Gardner  <megan_gardner@apple.com>
 
         Correctly export WebItemProviderPasteboard

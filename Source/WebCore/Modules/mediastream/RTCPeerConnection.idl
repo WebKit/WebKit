@@ -165,16 +165,14 @@
     // 9.6 Identity Provider API
     // FIXME 169644: missing IdP
 
-
     // Legacy MediaStream API
-    // FIXME 169646: wrap this in runtime flag
-    [JSBuiltin] sequence<MediaStream> getLocalStreams();
-    [PrivateIdentifier, PublicIdentifier] sequence<MediaStream> getRemoteStreams();
-    [JSBuiltin] MediaStream getStreamById(DOMString streamId);
+    [JSBuiltin, EnabledAtRuntime=WebRTCLegacyAPI] sequence<MediaStream> getLocalStreams();
+    [PrivateIdentifier, PublicIdentifier, EnabledAtRuntime=WebRTCLegacyAPI] sequence<MediaStream> getRemoteStreams();
+    [JSBuiltin, EnabledAtRuntime=WebRTCLegacyAPI] MediaStream getStreamById(DOMString streamId);
 
-    [JSBuiltin] void addStream(MediaStream stream);
-    [JSBuiltin] void removeStream(MediaStream stream);
+    [JSBuiltin, EnabledAtRuntime=WebRTCLegacyAPI] void addStream(MediaStream stream);
+    [JSBuiltin, EnabledAtRuntime=WebRTCLegacyAPI] void removeStream(MediaStream stream);
 
     // Legacy event handler (MediaStream-based API)
-    attribute EventHandler onaddstream;
+    [EnabledAtRuntime=WebRTCLegacyAPI] attribute EventHandler onaddstream;
 };

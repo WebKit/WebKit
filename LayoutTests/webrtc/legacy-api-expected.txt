@@ -1,0 +1,14 @@
+Summary
+
+Harness status: OK
+
+Found 1 tests
+
+1 Pass
+Details
+
+Result	Test Name	Message
+Pass	Testing legacy API is not defined when legacy flag is turned off	
+
+PASS Testing legacy API is not defined when legacy flag is turned off 
+

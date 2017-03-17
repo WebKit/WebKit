@@ -237,6 +237,8 @@ void InjectedBundle::overrideBoolPreferenceForTestRunner(WebPageGroupProxy* page
 #if ENABLE(WEB_RTC)
     if (preference == "WebKitPeerConnectionEnabled")
         RuntimeEnabledFeatures::sharedFeatures().setPeerConnectionEnabled(enabled);
+    if (preference == "WebKitWebRTCLegacyAPIEnabled")
+        RuntimeEnabledFeatures::sharedFeatures().setWebRTCLegacyAPIEnabled(enabled);
 #endif
 
     // Map the names used in LayoutTests with the names used in WebCore::Settings and WebPreferencesStore.

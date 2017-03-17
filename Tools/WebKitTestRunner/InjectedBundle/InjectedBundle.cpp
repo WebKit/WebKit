@@ -345,6 +345,7 @@ void InjectedBundle::beginTesting(WKDictionaryRef settings)
 
     m_testRunner->setMediaStreamEnabled(true);
     m_testRunner->setPeerConnectionEnabled(true);
+    m_testRunner->setWebRTCLegacyAPIEnabled(true);
 
     if (m_timeout > 0)
         m_testRunner->setCustomTimeout(m_timeout);

@@ -50,6 +50,7 @@ namespace WebCore {
 
 EncodedJSValue JSC_HOST_CALL makeThisTypeErrorForBuiltins(ExecState*);
 EncodedJSValue JSC_HOST_CALL makeGetterTypeErrorForBuiltins(ExecState*);
+EncodedJSValue JSC_HOST_CALL isWebRTCLegacyAPIEnabled(ExecState*);
 
 const ClassInfo JSDOMGlobalObject::s_info = { "DOMGlobalObject", &JSGlobalObject::s_info, 0, CREATE_METHOD_TABLE(JSDOMGlobalObject) };
 
@@ -98,6 +99,13 @@ EncodedJSValue JSC_HOST_CALL makeGetterTypeErrorForBuiltins(ExecState* execState
     ASSERT(!scope.exception());
     return JSValue::encode(createTypeError(execState, makeGetterTypeErrorMessage(interfaceName.utf8().data(), attributeName.utf8().data())));
 }
+
+#if ENABLE(WEB_RTC)
+EncodedJSValue JSC_HOST_CALL isWebRTCLegacyAPIEnabled(ExecState*)
+{
+    return JSValue::encode(jsBoolean(RuntimeEnabledFeatures::sharedFeatures().webRTCLegacyAPIEnabled()));
+}
+#endif
 
 void JSDOMGlobalObject::addBuiltinGlobals(VM& vm)
 {
@@ -154,6 +162,9 @@ void JSDOMGlobalObject::addBuiltinGlobals(VM& vm)
         JSDOMGlobalObject::GlobalPropertyInfo(clientData.builtinNames().ReadableStreamBYOBRequestPrivateName(), privateReadableStreamBYOBRequestConstructor, DontDelete | ReadOnly),
 #endif
         JSDOMGlobalObject::GlobalPropertyInfo(clientData.builtinNames().ReadableStreamDefaultReaderPrivateName(), privateReadableStreamDefaultReaderConstructor, DontDelete | ReadOnly),
+#endif
+#if ENABLE(WEB_RTC)
+        JSDOMGlobalObject::GlobalPropertyInfo(clientData.builtinNames().webRTCLegacyAPIEnabledPrivateName(), JSFunction::create(vm, this, 0, String(), isWebRTCLegacyAPIEnabled), DontDelete | ReadOnly),
 #endif
     };
     addStaticGlobals(staticGlobals, WTF_ARRAY_LENGTH(staticGlobals));
