@@ -197,8 +197,8 @@ RenderObject::FlowThreadState RenderObject::computedFlowThreadState(const Render
         // containingBlock() skips svg boundary (SVG root is a RenderReplaced).
         if (auto* svgRoot = SVGRenderSupport::findTreeRootObject(downcast<RenderElement>(renderer)))
             inheritedFlowState = svgRoot->flowThreadState();
-    } else if (auto* containingBlock = renderer.containingBlock())
-        inheritedFlowState = containingBlock->flowThreadState();
+    } else if (auto* container = renderer.container())
+        inheritedFlowState = container->flowThreadState();
     else {
         // Splitting lines or doing continuation, so just keep the current state.
         inheritedFlowState = renderer.flowThreadState();

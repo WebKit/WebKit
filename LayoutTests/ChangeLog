@@ -1,3 +1,14 @@
+2017-03-17  Zalan Bujtas  <zalan@apple.com>
+
+        Fix the flow thread state on the descendants of out of flow positioned replaced elements.
+        https://bugs.webkit.org/show_bug.cgi?id=169821
+        <rdar://problem/30964017>
+
+        Reviewed by Simon Fraser.
+
+        * fast/multicol/fix-inherit-when-container-is-replaced-expected.txt: Added.
+        * fast/multicol/fix-inherit-when-container-is-replaced.html: Added.
+
 2017-03-17  Youenn Fablet  <youenn@apple.com>
 
         Update webrtc tests expectations
