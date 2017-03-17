@@ -1278,6 +1278,11 @@ PASS Object.getOwnPropertyDescriptor(global, 'RTCIceCandidate').hasOwnProperty('
 PASS Object.getOwnPropertyDescriptor(global, 'RTCIceCandidate').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(global, 'RTCIceCandidate').enumerable is false
 PASS Object.getOwnPropertyDescriptor(global, 'RTCIceCandidate').configurable is true
+PASS Object.getOwnPropertyDescriptor(global, 'RTCIceTransport').value is RTCIceTransport
+PASS Object.getOwnPropertyDescriptor(global, 'RTCIceTransport').hasOwnProperty('get') is false
+PASS Object.getOwnPropertyDescriptor(global, 'RTCIceTransport').hasOwnProperty('set') is false
+PASS Object.getOwnPropertyDescriptor(global, 'RTCIceTransport').enumerable is false
+PASS Object.getOwnPropertyDescriptor(global, 'RTCIceTransport').configurable is true
 PASS Object.getOwnPropertyDescriptor(global, 'RTCPeerConnection').value is RTCPeerConnection
 PASS Object.getOwnPropertyDescriptor(global, 'RTCPeerConnection').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'RTCPeerConnection').hasOwnProperty('set') is false
