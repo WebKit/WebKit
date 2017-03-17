@@ -1,3 +1,14 @@
+2017-03-16  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed test gardening.
+
+        * TestExpectations:
+        * compositing/canvas/accelerated-canvas-compositing-size-limit-expected.txt:
+        * pageoverlay/overlay-remove-reinsert-view-expected.txt:
+        * platform/mac-wk2/TestExpectations:
+        * workers/sab/sent-from-worker-transfer-expected.txt: Removed.
+        * workers/sab/sent-from-worker-transfer.html: Removed.
+
 2017-03-14  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r213953. rdar://problem/31049771

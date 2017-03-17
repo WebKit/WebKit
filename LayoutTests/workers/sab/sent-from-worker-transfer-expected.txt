@@ -1,3 +1,0 @@
-All workers done!
-Test passed!
-
