@@ -55,27 +55,51 @@ worker.onmessage = function(evt) {
             shouldBe("bytesToHexString(publicKey.algorithm.publicExponent)", "'010001'");
             shouldBeUndefined("publicKey.algorithm.hash");
             shouldBe("publicKey.usages", "['encrypt']");
+
+            crypto.subtle.exportKey("jwk", publicKey).then(function(result) {
+                count = count + 1;
+                exportedKey = result;
+
+                shouldBe("exportedKey.n", "publicKeyJSON.n");
+                shouldBe("exportedKey.e", "publicKeyJSON.e");
+
+                if (count == 2)
+                    finishJSTest();
+            });
         } else if (privateKey = evt.data.privateKey) {
             testPassed("All checks passed in worker for private key");
             shouldBe("privateKey.type", "'private'");
-            shouldBe("privateKey.extractable", "false");
+            shouldBe("privateKey.extractable", "true");
             shouldBe("privateKey.algorithm.name", "'RSAES-PKCS1-v1_5'");
             shouldBe("privateKey.algorithm.modulusLength", "2048");
             shouldBe("bytesToHexString(privateKey.algorithm.publicExponent)", "'010001'");
             shouldBeUndefined("privateKey.algorithm.hash");
             shouldBe("privateKey.usages", "['decrypt']");
-        }
-        count = count + 1;
-    }
 
-    if (count == 2)
-        finishJSTest();
+            crypto.subtle.exportKey("jwk", privateKey).then(function(result) {
+                count = count + 1;
+                exportedKey = result;
+
+                shouldBe("exportedKey.n", "privateKeyJSON.n");
+                shouldBe("exportedKey.e", "privateKeyJSON.e");
+                shouldBe("exportedKey.d", "privateKeyJSON.d");
+                shouldBe("exportedKey.p", "privateKeyJSON.p");
+                shouldBe("exportedKey.q", "privateKeyJSON.q");
+                shouldBe("exportedKey.dp", "privateKeyJSON.dp");
+                shouldBe("exportedKey.dq", "privateKeyJSON.dq");
+                shouldBe("exportedKey.qi", "privateKeyJSON.qi");
+
+                if (count == 2)
+                    finishJSTest();
+            });
+        }
+    }
 }
 
 crypto.subtle.importKey("jwk", publicKeyJSON, algorithmKeyGen, true, ['encrypt']).then(function(localPublicKey) {
     worker.postMessage({ publicKey: localPublicKey });
 });
-crypto.subtle.importKey("jwk", privateKeyJSON, algorithmKeyGen, false, ['decrypt']).then(function(localPrivateKey) {
+crypto.subtle.importKey("jwk", privateKeyJSON, algorithmKeyGen, true, ['decrypt']).then(function(localPrivateKey) {
     worker.postMessage({ privateKey: localPrivateKey });
 });
 </script>

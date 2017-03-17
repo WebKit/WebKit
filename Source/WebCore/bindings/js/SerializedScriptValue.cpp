@@ -32,8 +32,10 @@
 #include "CryptoKeyAES.h"
 #include "CryptoKeyDataOctetSequence.h"
 #include "CryptoKeyDataRSAComponents.h"
+#include "CryptoKeyEC.h"
 #include "CryptoKeyHMAC.h"
 #include "CryptoKeyRSA.h"
+#include "CryptoKeyRaw.h"
 #include "File.h"
 #include "FileList.h"
 #include "IDBValue.h"
@@ -191,9 +193,11 @@ const uint32_t currentKeyFormatVersion = 1;
 enum class CryptoKeyClassSubtag {
     HMAC = 0,
     AES = 1,
-    RSA = 2
+    RSA = 2,
+    EC = 3,
+    Raw = 4,
 };
-const uint8_t cryptoKeyClassSubtagMaximumValue = 2;
+const uint8_t cryptoKeyClassSubtagMaximumValue = 4;
 
 enum class CryptoKeyAsymmetricTypeSubtag {
     Public = 0,
@@ -383,6 +387,12 @@ static const unsigned StringDataIs8BitFlag = 0x80000000;
  *
  * PrimeInfo :-
  *    <factorSize:uint32_t> <factor:byte{factorSize}> <crtExponentSize:uint32_t> <crtExponent:byte{crtExponentSize}> <crtCoefficientSize:uint32_t> <crtCoefficient:byte{crtCoefficientSize}>
+ *
+ * CryptoKeyEC :-
+ *    CryptoAlgorithmIdentifierTag <namedCurve:StringData> CryptoKeyAsymmetricTypeSubtag <keySize:uint32_t> <keyData:byte{keySize}>
+ *
+ * CryptoKeyRaw :-
+ *    CryptoAlgorithmIdentifierTag <keySize:uint32_t> <keyData:byte{keySize}>
  */
 
 using DeserializationResult = std::pair<JSC::JSValue, SerializationReturnCode>;
@@ -1209,12 +1219,33 @@ private:
             write(downcast<CryptoKeyAES>(*key).key());
             break;
         case CryptoKeyClass::EC:
-            // A dummy implementation for now.
-            // FIXME: https://bugs.webkit.org/show_bug.cgi?id=169232
+            write(CryptoKeyClassSubtag::EC);
+            write(key->algorithmIdentifier());
+            write(downcast<CryptoKeyEC>(*key).namedCurveString());
+            switch (key->type()) {
+            case CryptoKey::Type::Public: {
+                write(CryptoKeyAsymmetricTypeSubtag::Public);
+                auto result = downcast<CryptoKeyEC>(*key).exportRaw();
+                ASSERT(!result.hasException());
+                write(result.releaseReturnValue());
+                break;
+            }
+            case CryptoKey::Type::Private: {
+                write(CryptoKeyAsymmetricTypeSubtag::Private);
+                // Use the standard complied method is not very efficient, but simple/reliable.
+                auto result = downcast<CryptoKeyEC>(*key).exportPkcs8();
+                ASSERT(!result.hasException());
+                write(result.releaseReturnValue());
+                break;
+            }
+            default:
+                ASSERT_NOT_REACHED();
+            }
             break;
         case CryptoKeyClass::Raw:
-            // A dummy implementation for now.
-            // FIXME: https://bugs.webkit.org/show_bug.cgi?id=169232
+            write(CryptoKeyClassSubtag::Raw);
+            write(key->algorithmIdentifier());
+            write(downcast<CryptoKeyRaw>(*key).key());
             break;
         case CryptoKeyClass::RSA:
             write(CryptoKeyClassSubtag::RSA);
@@ -2031,7 +2062,7 @@ private:
         CryptoAlgorithmIdentifier hash;
         if (!read(hash))
             return false;
-        result = CryptoKeyHMAC::create(keyData, hash, extractable, usages);
+        result = CryptoKeyHMAC::importRaw(0, hash, WTFMove(keyData), extractable, usages);
         return true;
     }
 
@@ -2045,7 +2076,7 @@ private:
         Vector<uint8_t> keyData;
         if (!read(keyData))
             return false;
-        result = CryptoKeyAES::create(algorithm, keyData, extractable, usages);
+        result = CryptoKeyAES::importRaw(algorithm, WTFMove(keyData), extractable, usages);
         return true;
     }
 
@@ -2127,6 +2158,47 @@ private:
         return true;
     }
 
+    bool readECKey(bool extractable, CryptoKeyUsageBitmap usages, RefPtr<CryptoKey>& result)
+    {
+        CryptoAlgorithmIdentifier algorithm;
+        if (!read(algorithm))
+            return false;
+        if (!CryptoKeyEC::isValidECAlgorithm(algorithm))
+            return false;
+        CachedStringRef curve;
+        if (!readStringData(curve))
+            return false;
+        CryptoKeyAsymmetricTypeSubtag type;
+        if (!read(type))
+            return false;
+        Vector<uint8_t> keyData;
+        if (!read(keyData))
+            return false;
+
+        switch (type) {
+        case CryptoKeyAsymmetricTypeSubtag::Public:
+            result = CryptoKeyEC::importRaw(algorithm, curve->string(), WTFMove(keyData), extractable, usages);
+            break;
+        case CryptoKeyAsymmetricTypeSubtag::Private:
+            result = CryptoKeyEC::importPkcs8(algorithm, curve->string(), WTFMove(keyData), extractable, usages);
+            break;
+        }
+
+        return true;
+    }
+
+    bool readRawKey(CryptoKeyUsageBitmap usages, RefPtr<CryptoKey>& result)
+    {
+        CryptoAlgorithmIdentifier algorithm;
+        if (!read(algorithm))
+            return false;
+        Vector<uint8_t> keyData;
+        if (!read(keyData))
+            return false;
+        result = CryptoKeyRaw::create(algorithm, WTFMove(keyData), usages);
+        return true;
+    }
+
     bool readCryptoKey(JSValue& cryptoKey)
     {
         uint32_t keyFormatVersion;
@@ -2189,6 +2261,14 @@ private:
             break;
         case CryptoKeyClassSubtag::RSA:
             if (!readRSAKey(extractable, usages, result))
+                return false;
+            break;
+        case CryptoKeyClassSubtag::EC:
+            if (!readECKey(extractable, usages, result))
+                return false;
+            break;
+        case CryptoKeyClassSubtag::Raw:
+            if (!readRawKey(usages, result))
                 return false;
             break;
         }

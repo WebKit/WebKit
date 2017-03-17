@@ -9,6 +9,7 @@ PASS key.extractable is true
 PASS key.algorithm.name is 'AES-CBC'
 PASS key.algorithm.length is 128
 PASS key.usages is ['decrypt', 'encrypt']
+PASS bytesToASCIIString(exportedKey) is rawKeyAscii
 PASS successfullyParsed is true
 
 TEST COMPLETE

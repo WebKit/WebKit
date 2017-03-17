@@ -22,8 +22,8 @@ onmessage = function(evt)
     } else if (privateKey = evt.data.privateKey) {
         if (privateKey.type != 'private')
             postMessage({ result:false, message:'privateKey.type should be "private"' });
-        else if (privateKey.extractable)
-            postMessage({ result:false, message:'privateKey.extractable should be false' });
+        else if (!privateKey.extractable)
+            postMessage({ result:false, message:'privateKey.extractable should be true' });
         else if (privateKey.algorithm.name != "RSAES-PKCS1-v1_5")
             postMessage({ result:false, message:'privateKey.algorithm.name should be "RSAES-PKCS1-v1_5"' });
         else if (privateKey.algorithm.modulusLength != 2048)

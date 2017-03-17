@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../../resources/js-test-pre.js"></script>
+<script src="../../resources/common.js"></script>
+</head>
+<body>
+<script>
+
+description("Test sending ec crypto keys via postMessage to a worker.");
+
+jsTestIsAsync = true;
+
+var publicKeyJSON = {
+    kty: "EC",
+    use: "enc",
+    ext: true,
+    crv: "P-256",
+    x: "1FSVWieTvikFkG1NOyhkUCaMbdQhxwH6aCu4Ez-sRtA",
+    y: "9jmNTLqM4cjBhdAnHcNI9YQV3O8LFmo-EdZWk8ntAaI",
+};
+
+var privateKeyJSON = {
+    kty: "EC",
+    ext: true,
+    key_ops: ["deriveBits", "deriveKey"],
+    crv: "P-256",
+    x: "1FSVWieTvikFkG1NOyhkUCaMbdQhxwH6aCu4Ez-sRtA",
+    y: "9jmNTLqM4cjBhdAnHcNI9YQV3O8LFmo-EdZWk8ntAaI",
+    d: "ppxBSov3N8_AUcisAuvmLV4yE8e_L_BLE8bZb9Z1Xjg",
+};
+
+var count = 0;
+var worker = new Worker("resources/ec-postMessage-worker.js");
+worker.onmessage = function(evt) {
+    if (!evt.data.result) {
+        testFailed("Check failed in worker: " + evt.data.message);
+        finishJSTest();
+    } else {
+        if (publicKey = evt.data.publicKey) {
+            testPassed("All checks passed in worker for public key");
+            shouldBe("publicKey.type", "'public'");
+            shouldBe("publicKey.extractable", "true");
+            shouldBe("publicKey.algorithm.name", "'ECDH'");
+            shouldBe("publicKey.algorithm.namedCurve", "'P-256'");
+            shouldBe("publicKey.usages", "[ ]");
+
+            crypto.subtle.exportKey("jwk", publicKey).then(function(result) {
+                count = count + 1;
+                exportedKey = result;
+
+                shouldBe("exportedKey.x", "publicKeyJSON.x");
+                shouldBe("exportedKey.y", "publicKeyJSON.y");
+
+                if (count == 2)
+                    finishJSTest();
+            });
+        } else if (privateKey = evt.data.privateKey) {
+            testPassed("All checks passed in worker for private key");
+            shouldBe("privateKey.type", "'private'");
+            shouldBe("privateKey.extractable", "true");
+            shouldBe("privateKey.algorithm.name", "'ECDH'");
+            shouldBe("privateKey.algorithm.namedCurve", "'P-256'");
+            shouldBe("privateKey.usages", "['deriveBits']");
+
+            crypto.subtle.exportKey("jwk", privateKey).then(function(result) {
+                count = count + 1;
+                exportedKey = result;
+
+                shouldBe("exportedKey.x", "privateKeyJSON.x");
+                shouldBe("exportedKey.y", "privateKeyJSON.y");
+                shouldBe("exportedKey.d", "privateKeyJSON.d");
+
+                if (count == 2)
+                    finishJSTest();
+            });
+        }
+    }
+}
+
+crypto.subtle.importKey("jwk", publicKeyJSON, { name:"ECDH", namedCurve:"P-256" }, true, [ ]).then(function(localPublicKey) {
+    worker.postMessage({ publicKey: localPublicKey });
+});
+crypto.subtle.importKey("jwk", privateKeyJSON, { name:"ECDH", namedCurve:"P-256" }, true, ['deriveBits']).then(function(localPrivateKey) {
+    worker.postMessage({ privateKey: localPrivateKey });
+});
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -11,8 +11,10 @@
 description("Test sending aes crypto keys via postMessage to a worker.");
 
 jsTestIsAsync = true;
+var rawKeyAscii = "16 bytes of key!";
+var rawKey = asciiToUint8Array(rawKeyAscii);
 
-crypto.subtle.importKey("raw", asciiToUint8Array("16 bytes of key!"), {name: "aes-cbc", length: 128}, true, ["encrypt", "decrypt"]).then(function(localKey) {
+crypto.subtle.importKey("raw", rawKey, {name: "aes-cbc", length: 128}, true, ["encrypt", "decrypt"]).then(function(localKey) {
     var worker = new Worker("resources/aes-postMessage-worker.js");
     worker.onmessage = function(evt) {
         if (!evt.data.result) {
@@ -25,8 +27,15 @@ crypto.subtle.importKey("raw", asciiToUint8Array("16 bytes of key!"), {name: "ae
             shouldBe("key.algorithm.name", "'AES-CBC'");
             shouldBe("key.algorithm.length", "128");
             shouldBe("key.usages", "['decrypt', 'encrypt']");
+
+            crypto.subtle.exportKey("raw", key).then(function(result) {
+                exportedKey = result;
+
+                shouldBe("bytesToASCIIString(exportedKey)", "rawKeyAscii");
+
+                finishJSTest();
+            });
         }
-        finishJSTest();
     }
     worker.postMessage(localKey);
 });

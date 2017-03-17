@@ -173,6 +173,24 @@ ExceptionOr<Vector<uint8_t>> CryptoKeyEC::exportPkcs8() const
     return platformExportPkcs8();
 }
 
+String CryptoKeyEC::namedCurveString() const
+{
+    switch (m_curve) {
+    case NamedCurve::P256:
+        return String(P256);
+    case NamedCurve::P384:
+        return String(P384);
+    }
+
+    ASSERT_NOT_REACHED();
+    return emptyString();
+}
+
+bool CryptoKeyEC::isValidECAlgorithm(CryptoAlgorithmIdentifier algorithm)
+{
+    return algorithm == CryptoAlgorithmIdentifier::ECDSA || algorithm == CryptoAlgorithmIdentifier::ECDH;
+}
+
 std::unique_ptr<KeyAlgorithm> CryptoKeyEC::buildAlgorithm() const
 {
     String name = CryptoAlgorithmRegistry::singleton().name(algorithmIdentifier());

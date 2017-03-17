@@ -1,3 +1,25 @@
+2017-03-17  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebCrypto] Make sure all CryptoKey classes are structured clonable
+        https://bugs.webkit.org/show_bug.cgi?id=169232
+        <rdar://problem/31106660>
+
+        Reviewed by Brent Fulgham.
+
+        * crypto/workers/subtle/aes-postMessage-worker-expected.txt:
+        * crypto/workers/subtle/aes-postMessage-worker.html:
+        * crypto/workers/subtle/ec-postMessage-worker-expected.txt: Added.
+        * crypto/workers/subtle/ec-postMessage-worker.html: Added.
+        * crypto/workers/subtle/hmac-postMessage-worker-expected.txt:
+        * crypto/workers/subtle/hmac-postMessage-worker.html:
+        * crypto/workers/subtle/raw-postMessage-worker-expected.txt: Added.
+        * crypto/workers/subtle/raw-postMessage-worker.html: Added.
+        * crypto/workers/subtle/resources/ec-postMessage-worker.js: Added.
+        * crypto/workers/subtle/resources/raw-postMessage-worker.js: Added.
+        * crypto/workers/subtle/resources/rsa-postMessage-worker.js:
+        * crypto/workers/subtle/rsa-postMessage-worker-expected.txt:
+        * crypto/workers/subtle/rsa-postMessage-worker.html:
+
 2017-03-17  Zalan Bujtas  <zalan@apple.com>
 
         Fix the flow thread state on the descendants of out of flow positioned replaced elements.

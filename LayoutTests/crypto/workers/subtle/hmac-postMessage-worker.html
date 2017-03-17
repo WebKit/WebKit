@@ -11,8 +11,10 @@
 description("Test sending hmac crypto keys via postMessage to a worker.");
 
 jsTestIsAsync = true;
+var rawKeyAscii = "16 bytes of key!";
+var rawKey = asciiToUint8Array(rawKeyAscii);
 
-crypto.subtle.importKey("raw", asciiToUint8Array("16 bytes of key!"), {name: 'hmac', hash: {name: 'sha-1'}}, true, ['sign', 'verify']).then(function(localKey) {
+crypto.subtle.importKey("raw", rawKey, {name: 'hmac', hash: {name: 'sha-1'}}, true, ['sign', 'verify']).then(function(localKey) {
     var worker = new Worker("resources/hmac-postMessage-worker.js");
     worker.onmessage = function(evt) {
         if (!evt.data.result) {
@@ -26,8 +28,15 @@ crypto.subtle.importKey("raw", asciiToUint8Array("16 bytes of key!"), {name: 'hm
             shouldBe("key.algorithm.length", "128");
             shouldBe("key.algorithm.hash.name", "'SHA-1'");
             shouldBe("key.usages", '["sign", "verify"]');
+
+            crypto.subtle.exportKey("raw", key).then(function(result) {
+                exportedKey = result;
+
+                shouldBe("bytesToASCIIString(exportedKey)", "rawKeyAscii");
+
+                finishJSTest();
+            });
         }
-        finishJSTest();
     }
     worker.postMessage(localKey);
 });

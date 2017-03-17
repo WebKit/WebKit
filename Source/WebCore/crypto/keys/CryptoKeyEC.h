@@ -89,7 +89,9 @@ public:
 
     size_t keySizeInBits() const;
     NamedCurve namedCurve() const { return m_curve; }
+    String namedCurveString() const;
     PlatformECKey platformKey() { return m_platformKey; }
+    static bool isValidECAlgorithm(CryptoAlgorithmIdentifier);
 
 private:
     CryptoKeyEC(CryptoAlgorithmIdentifier, NamedCurve, CryptoKeyType, PlatformECKey, bool extractable, CryptoKeyUsageBitmap);

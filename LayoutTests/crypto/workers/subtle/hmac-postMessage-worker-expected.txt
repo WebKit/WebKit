@@ -10,6 +10,7 @@ PASS key.algorithm.name is 'HMAC'
 PASS key.algorithm.length is 128
 PASS key.algorithm.hash.name is 'SHA-1'
 PASS key.usages is ["sign", "verify"]
+PASS bytesToASCIIString(exportedKey) is rawKeyAscii
 PASS successfullyParsed is true
 
 TEST COMPLETE
