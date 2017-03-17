@@ -1,3 +1,11 @@
+2017-03-16  Alex Christensen  <achristensen@webkit.org>
+
+        Fix GTK build.
+
+        * UIProcess/InspectorServer/WebSocketServerConnection.cpp:
+        (WebKit::WebSocketServerConnection::didReceiveSocketStreamData):
+        * UIProcess/InspectorServer/WebSocketServerConnection.h:
+
 2017-03-16  Michael Saboff  <msaboff@apple.com>
 
         Turn off JavaScript Configuration File processing for Debug builds

@@ -133,12 +133,11 @@ void WebSocketServerConnection::didCloseSocketStream(SocketStreamHandle&)
     m_server->didCloseWebSocketServerConnection(this);
 }
 
-void WebSocketServerConnection::didReceiveSocketStreamData(SocketStreamHandle&, const char* data, std::optional<size_t> length)
+void WebSocketServerConnection::didReceiveSocketStreamData(SocketStreamHandle&, const char* data, size_t length)
 {
     // Each didReceiveData call adds more data to our buffer.
     // We clear the buffer when we have handled data from it.
-    if (length)
-        m_bufferedData.append(data, length.value());
+    m_bufferedData.append(data, length);
 
     switch (m_mode) {
     case HTTP:

@@ -69,7 +69,8 @@ private:
     // SocketStreamHandleClient implementation.
     void didOpenSocketStream(WebCore::SocketStreamHandle&) final { }
     void didCloseSocketStream(WebCore::SocketStreamHandle&) final;
-    void didReceiveSocketStreamData(WebCore::SocketStreamHandle&, const char* data, std::optional<size_t> length) final;
+    void didReceiveSocketStreamData(WebCore::SocketStreamHandle&, const char*, size_t) final;
+    void didFailToReceiveSocketStreamData(SocketStreamHandle&) final { }
     void didUpdateBufferedAmount(WebCore::SocketStreamHandle&, size_t bufferedAmount) final;
     void didFailSocketStream(WebCore::SocketStreamHandle&, const WebCore::SocketStreamError&) final { }
 
