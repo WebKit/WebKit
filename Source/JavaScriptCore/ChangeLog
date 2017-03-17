@@ -1,3 +1,13 @@
+2017-03-16  Mark Lam  <mark.lam@apple.com>
+
+        Fix exception scope verification failures in GenericArgumentsInlines.h.
+        https://bugs.webkit.org/show_bug.cgi?id=165012
+
+        Reviewed by Saam Barati.
+
+        * runtime/GenericArgumentsInlines.h:
+        (JSC::GenericArguments<Type>::defineOwnProperty):
+
 2017-03-16  Simon Fraser  <simon.fraser@apple.com>
 
         Improve the system tracing points

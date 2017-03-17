@@ -200,6 +200,7 @@ bool GenericArguments<Type>::defineOwnProperty(JSObject* object, ExecState* exec
 {
     Type* thisObject = jsCast<Type*>(object);
     VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     
     if (ident == vm.propertyNames->length
         || ident == vm.propertyNames->callee
@@ -226,7 +227,8 @@ bool GenericArguments<Type>::defineOwnProperty(JSObject* object, ExecState* exec
                     JSValue value = thisObject->getIndexQuickly(index);
                     ASSERT(value);
                     object->putDirectMayBeIndex(exec, ident, value);
-                    
+                    ASSERT(!scope.exception());
+
                     thisObject->setModifiedArgumentDescriptor(vm, index);
                 }
             }
@@ -250,6 +252,7 @@ bool GenericArguments<Type>::defineOwnProperty(JSObject* object, ExecState* exec
     }
 
     // Now just let the normal object machinery do its thing.
+    scope.release();
     return Base::defineOwnProperty(object, exec, ident, descriptor, shouldThrow);
 }
 
