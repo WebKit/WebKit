@@ -145,7 +145,7 @@ void SocketStreamHandleImpl::readBytes(gssize bytesRead)
     }
 
     // The client can close the handle, potentially removing the last reference.
-    Ref<SocketStreamHandle> protectedThis(*this);
+    RefPtr<SocketStreamHandle> protectedThis(this);
     if (bytesRead == -1)
         m_client.didFailToReceiveSocketStreamData(*this);
     else
