@@ -1,3 +1,17 @@
+2017-03-16  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: REGRESSION (r213691): Saving DOM breakpoints broken after refactoring
+        https://bugs.webkit.org/show_bug.cgi?id=169779
+
+        Reviewed by Joseph Pecoraro.
+
+        Use correct method: _saveBreakpoints -> _saveDOMBreakpoints.
+
+        * UserInterface/Controllers/DOMDebuggerManager.js:
+        (WebInspector.DOMDebuggerManager.prototype.addDOMBreakpoint):
+        Remove check before saving to be consistent with similar code in
+        DebuggerManager and DOMDebuggerManager.
+
 2017-03-16  Devin Rousso  <webkit@devinrousso.com>
 
         Web Inspector: add "Save Selected" context menu item to Console

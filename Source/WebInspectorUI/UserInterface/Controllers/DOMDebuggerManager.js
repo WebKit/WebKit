@@ -151,8 +151,7 @@ WebInspector.DOMDebuggerManager = class DOMDebuggerManager extends WebInspector.
 
         this.dispatchEventToListeners(WebInspector.DOMDebuggerManager.Event.DOMBreakpointAdded, {breakpoint});
 
-        if (!this._restoringBreakpoints)
-            this._saveBreakpoints();
+        this._saveDOMBreakpoints();
     }
 
     removeDOMBreakpoint(breakpoint)
