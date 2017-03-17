@@ -653,7 +653,7 @@ SocketStreamHandleImpl::~SocketStreamHandleImpl()
     ASSERT(!m_pacRunLoopSource);
 }
 
-std::optional<size_t> SocketStreamHandleImpl::platformSend(const char* data, size_t length)
+std::optional<size_t> SocketStreamHandleImpl::platformSendInternal(const char* data, size_t length)
 {
     if (!CFWriteStreamCanAcceptBytes(m_writeStream.get()))
         return std::nullopt;

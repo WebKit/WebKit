@@ -34,6 +34,7 @@
 #include "SessionID.h"
 #include "SocketStreamHandle.h"
 #include <wtf/RetainPtr.h>
+#include <wtf/StreamBuffer.h>
 
 typedef struct __CFHTTPMessage* CFHTTPMessageRef;
 
@@ -50,8 +51,11 @@ public:
     virtual ~SocketStreamHandleImpl();
 
 private:
-    std::optional<size_t> platformSend(const char* data, size_t length) final;
+    void platformSend(const char* data, size_t length, Function<void(bool)>&&) final;
     void platformClose() final;
+    size_t bufferedAmount() final;
+    std::optional<size_t> platformSendInternal(const char*, size_t);
+    bool sendPendingData();
 
     WEBCORE_EXPORT SocketStreamHandleImpl(const URL&, SocketStreamHandleClient&, SessionID, const String& credentialPartition);
     void createStreams();
@@ -97,6 +101,9 @@ private:
     RetainPtr<CFURLRef> m_httpsURL; // ws(s): replaced with https:
     SessionID m_sessionID;
     String m_credentialPartition;
+    
+    StreamBuffer<char, 1024 * 1024> m_buffer;
+    static const unsigned maxBufferSize = 100 * 1024 * 1024;
 };
 
 } // namespace WebCore

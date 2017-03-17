@@ -36,8 +36,6 @@
 
 namespace WebCore {
 
-const unsigned bufferSize = 100 * 1024 * 1024;
-
 SocketStreamHandle::SocketStreamHandle(const URL& url, SocketStreamHandleClient& client)
     : m_url(url)
     , m_client(client)
@@ -54,31 +52,7 @@ void SocketStreamHandle::send(const char* data, size_t length, Function<void(boo
 {
     if (m_state == Connecting || m_state == Closing)
         return completionHandler(false);
-    if (!m_buffer.isEmpty()) {
-        if (m_buffer.size() + length > bufferSize) {
-            // FIXME: report error to indicate that buffer has no more space.
-            return completionHandler(false);
-        }
-        m_buffer.append(data, length);
-        m_client.didUpdateBufferedAmount(static_cast<SocketStreamHandle&>(*this), bufferedAmount());
-        return completionHandler(true);
-    }
-    size_t bytesWritten = 0;
-    if (m_state == Open) {
-        if (auto result = platformSend(data, length))
-            bytesWritten = result.value();
-        else
-            return completionHandler(false);
-    }
-    if (m_buffer.size() + length - bytesWritten > bufferSize) {
-        // FIXME: report error to indicate that buffer has no more space.
-        return completionHandler(false);
-    }
-    if (bytesWritten < length) {
-        m_buffer.append(data + bytesWritten, length - bytesWritten);
-        m_client.didUpdateBufferedAmount(static_cast<SocketStreamHandle&>(*this), bufferedAmount());
-    }
-    return completionHandler(true);
+    platformSend(data, length, WTFMove(completionHandler));
 }
 
 void SocketStreamHandle::close()
@@ -86,7 +60,7 @@ void SocketStreamHandle::close()
     if (m_state == Closed)
         return;
     m_state = Closing;
-    if (!m_buffer.isEmpty())
+    if (bufferedAmount())
         return;
     disconnect();
 }
@@ -97,34 +71,6 @@ void SocketStreamHandle::disconnect()
 
     platformClose();
     m_state = Closed;
-}
-
-bool SocketStreamHandle::sendPendingData()
-{
-    if (m_state != Open && m_state != Closing)
-        return false;
-    if (m_buffer.isEmpty()) {
-        if (m_state == Open)
-            return false;
-        if (m_state == Closing) {
-            disconnect();
-            return false;
-        }
-    }
-    bool pending;
-    do {
-        auto result = platformSend(m_buffer.firstBlockData(), m_buffer.firstBlockSize());
-        if (!result)
-            return false;
-        size_t bytesWritten = result.value();
-        if (!bytesWritten)
-            return false;
-        pending = bytesWritten != m_buffer.firstBlockSize();
-        ASSERT(m_buffer.size() - bytesWritten <= bufferSize);
-        m_buffer.consume(bytesWritten);
-    } while (!pending && !m_buffer.isEmpty());
-    m_client.didUpdateBufferedAmount(static_cast<SocketStreamHandle&>(*this), bufferedAmount());
-    return true;
 }
 
 } // namespace WebCore

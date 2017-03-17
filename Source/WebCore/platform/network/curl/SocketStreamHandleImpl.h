@@ -42,6 +42,7 @@
 #include <wtf/Deque.h>
 #include <wtf/Lock.h>
 #include <wtf/RefCounted.h>
+#include <wtf/StreamBuffer.h>
 #include <wtf/Threading.h>
 
 namespace WebCore {
@@ -57,8 +58,11 @@ public:
 private:
     SocketStreamHandleImpl(const URL&, SocketStreamHandleClient&);
 
-    std::optional<size_t> platformSend(const char* data, size_t length) final;
+    void platformSend(const char* data, size_t length, Function<void(bool)>&&) final;
     void platformClose() final;
+    size_t bufferedAmount() final;
+    std::optional<size_t> platformSendInternal(const char*, size_t);
+    bool sendPendingData();
 
     bool readData(CURL*);
     bool sendData(CURL*);
@@ -94,6 +98,9 @@ private:
     Lock m_mutexReceive;
     Deque<SocketData> m_sendData;
     Deque<SocketData> m_receiveData;
+
+    StreamBuffer<char, 1024 * 1024> m_buffer;
+    static const unsigned maxBufferSize = 100 * 1024 * 1024;
 };
 
 } // namespace WebCore

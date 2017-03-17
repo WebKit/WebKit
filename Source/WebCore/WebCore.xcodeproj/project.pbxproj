@@ -2647,6 +2647,7 @@
 		5C4304B6191AEF46000E2BC0 /* JSEXTShaderTextureLOD.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C4304B4191AEF46000E2BC0 /* JSEXTShaderTextureLOD.h */; };
 		5C5381B21D87D4B200E2EBE6 /* URLSearchParams.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C5381B01D87D45700E2EBE6 /* URLSearchParams.cpp */; };
 		5C5381B51D87E08700E2EBE6 /* JSURLSearchParams.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C5381B31D87E08100E2EBE6 /* JSURLSearchParams.cpp */; };
+		5C668E651E7C6C4000D32B3B /* SocketStreamHandleImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C668E641E7C6C3500D32B3B /* SocketStreamHandleImpl.cpp */; };
 		5C688AA11D380BF8000B54FA /* ThreadableWebSocketChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C688AA01D380509000B54FA /* ThreadableWebSocketChannel.cpp */; };
 		5C688AA31D3814BF000B54FA /* SocketProvider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C688AA21D38126F000B54FA /* SocketProvider.cpp */; };
 		5C6E65421D5CEFB900F7862E /* URLParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C6E653F1D5CEDC900F7862E /* URLParser.cpp */; };
@@ -10338,6 +10339,7 @@
 		5C5381B11D87D45700E2EBE6 /* URLSearchParams.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = URLSearchParams.h; sourceTree = "<group>"; };
 		5C5381B31D87E08100E2EBE6 /* JSURLSearchParams.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSURLSearchParams.cpp; sourceTree = "<group>"; };
 		5C5381B41D87E08100E2EBE6 /* JSURLSearchParams.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSURLSearchParams.h; sourceTree = "<group>"; };
+		5C668E641E7C6C3500D32B3B /* SocketStreamHandleImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SocketStreamHandleImpl.cpp; sourceTree = "<group>"; };
 		5C688AA01D380509000B54FA /* ThreadableWebSocketChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ThreadableWebSocketChannel.cpp; sourceTree = "<group>"; };
 		5C688AA21D38126F000B54FA /* SocketProvider.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SocketProvider.cpp; sourceTree = "<group>"; };
 		5C6E653F1D5CEDC900F7862E /* URLParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = URLParser.cpp; sourceTree = "<group>"; };
@@ -18763,6 +18765,7 @@
 				510D4A30103165EE0049EA54 /* SocketStreamHandle.cpp */,
 				510D4A31103165EE0049EA54 /* SocketStreamHandle.h */,
 				510D4A32103165EE0049EA54 /* SocketStreamHandleClient.h */,
+				5C668E641E7C6C3500D32B3B /* SocketStreamHandleImpl.cpp */,
 				E180811016FCF42E00B80D07 /* SynchronousLoaderClient.cpp */,
 				E180811516FCF9CB00B80D07 /* SynchronousLoaderClient.h */,
 			);
@@ -30753,6 +30756,7 @@
 				2D5002F81B56D7810020AAF7 /* DOMPath.cpp in Sources */,
 				A9C6E4EB0D745E2B006442E9 /* DOMPlugin.cpp in Sources */,
 				A9C6E4EF0D745E38006442E9 /* DOMPluginArray.cpp in Sources */,
+				5C668E651E7C6C4000D32B3B /* SocketStreamHandleImpl.cpp in Sources */,
 				BC5A86840C33676000EEA649 /* DOMSelection.cpp in Sources */,
 				C55610F111A704EB00B82D27 /* DOMStringList.cpp in Sources */,
 				188604B30F2E654A000B6443 /* DOMTimer.cpp in Sources */,
