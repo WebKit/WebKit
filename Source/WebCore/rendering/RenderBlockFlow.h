@@ -333,9 +333,13 @@ public:
         else
             floatingObject.setHeight(logicalWidth);
     }
-
-    LayoutUnit xPositionForFloatIncludingMargin(const FloatingObject& floatingObject) const { return isHorizontalWritingMode() ? floatingObject.x() + floatingObject.renderer().marginLeft() : floatingObject.x() + marginBeforeForChild(floatingObject.renderer()); }
-    LayoutUnit yPositionForFloatIncludingMargin(const FloatingObject& floatingObject) const { return isHorizontalWritingMode() ? floatingObject.y() + marginBeforeForChild(floatingObject.renderer()) : floatingObject.y() + floatingObject.renderer().marginTop(); }
+    void setLogicalMarginsForFloat(FloatingObject& floatingObject, LayoutUnit logicalLeftMargin, LayoutUnit logicalBeforeMargin)
+    {
+        if (isHorizontalWritingMode())
+            floatingObject.setMarginOffset(LayoutSize(logicalLeftMargin, logicalBeforeMargin));
+        else
+            floatingObject.setMarginOffset(LayoutSize(logicalBeforeMargin, logicalLeftMargin));
+    }
 
     LayoutPoint flipFloatForWritingModeForChild(const FloatingObject&, const LayoutPoint&) const;
 
@@ -409,7 +413,7 @@ protected:
     bool pushToNextPageWithMinimumLogicalHeight(LayoutUnit& adjustment, LayoutUnit logicalOffset, LayoutUnit minimumLogicalHeight) const;
 
     // If the child is unsplittable and can't fit on the current page, return the top of the next page/column.
-    LayoutUnit adjustForUnsplittableChild(RenderBox& child, LayoutUnit logicalOffset, bool includeMargins = false);
+    LayoutUnit adjustForUnsplittableChild(RenderBox& child, LayoutUnit logicalOffset, LayoutUnit beforeMargin = LayoutUnit(), LayoutUnit afterMargin = LayoutUnit());
     LayoutUnit adjustBlockChildForPagination(LayoutUnit logicalTopAfterClear, LayoutUnit estimateWithoutPagination, RenderBox& child, bool atBeforeSideOfBlock);
     LayoutUnit applyBeforeBreak(RenderBox& child, LayoutUnit logicalOffset); // If the child has a before break, then return a new yPos that shifts to the top of the next page/column.
     LayoutUnit applyAfterBreak(RenderBox& child, LayoutUnit logicalOffset, MarginInfo&); // If the child has an after break, then return a new offset that shifts to the top of the next page/column.
@@ -492,7 +496,7 @@ private:
     FloatingObject* insertFloatingObject(RenderBox&);
     void removeFloatingObject(RenderBox&);
     void removeFloatingObjectsBelow(FloatingObject*, int logicalOffset);
-    LayoutPoint computeLogicalLocationForFloat(const FloatingObject&, LayoutUnit logicalTopOffset);
+    void computeLogicalLocationForFloat(FloatingObject&, LayoutUnit& logicalTopOffset);
 
     // Called from lineWidth, to position the floats added in the last line.
     // Returns true if and only if it has positioned any floats.
@@ -598,6 +602,8 @@ private:
     bool canHaveChildren() const override;
 
     void computeInlinePreferredLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const;
+
+    void adjustInitialLetterPosition(RenderBox& childBox, LayoutUnit& logicalTopOffset, LayoutUnit& marginBeforeOffset);
 
 #if ENABLE(TEXT_AUTOSIZING)
     int m_widthForTextAutosizing;

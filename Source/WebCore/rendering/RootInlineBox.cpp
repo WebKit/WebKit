@@ -986,8 +986,7 @@ void RootInlineBox::ascentAndDescentForBox(InlineBox& box, GlyphOverflowAndFallb
     }
     
     if (includeInitialLetterForBox(box)) {
-        // FIXME: Can't use glyph bounds in vertical writing mode because they are garbage.
-        bool canUseGlyphs = isHorizontal() && glyphOverflow && glyphOverflow->computeBounds;
+        bool canUseGlyphs = glyphOverflow && glyphOverflow->computeBounds;
         int letterAscent = baselineType() == AlphabeticBaseline ? boxLineStyle.fontMetrics().capHeight() : (canUseGlyphs ? glyphOverflow->top : boxLineStyle.fontMetrics().ascent(baselineType()));
         int letterDescent = canUseGlyphs ? glyphOverflow->bottom : (box.isRootInlineBox() ? 0 : boxLineStyle.fontMetrics().descent(baselineType()));
         setAscentAndDescent(ascent, descent, letterAscent, letterDescent, ascentDescentSet);
@@ -1104,9 +1103,8 @@ bool RootInlineBox::includeFontForBox(InlineBox& box) const
     if (!box.behavesLikeText() && is<InlineFlowBox>(box) && !downcast<InlineFlowBox>(box).hasTextChildren())
         return false;
 
-    // For now map "glyphs" to "font" in vertical text mode until the bounds returned by glyphs aren't garbage.
     LineBoxContain lineBoxContain = renderer().style().lineBoxContain();
-    return (lineBoxContain & LineBoxContainFont) || (!isHorizontal() && (lineBoxContain & LineBoxContainGlyphs));
+    return (lineBoxContain & LineBoxContainFont);
 }
 
 bool RootInlineBox::includeGlyphsForBox(InlineBox& box) const
@@ -1117,9 +1115,8 @@ bool RootInlineBox::includeGlyphsForBox(InlineBox& box) const
     if (!box.behavesLikeText() && is<InlineFlowBox>(box) && !downcast<InlineFlowBox>(box).hasTextChildren())
         return false;
 
-    // FIXME: We can't fit to glyphs yet for vertical text, since the bounds returned are garbage.
     LineBoxContain lineBoxContain = renderer().style().lineBoxContain();
-    return isHorizontal() && (lineBoxContain & LineBoxContainGlyphs);
+    return (lineBoxContain & LineBoxContainGlyphs);
 }
 
 bool RootInlineBox::includeInitialLetterForBox(InlineBox& box) const
@@ -1146,9 +1143,8 @@ bool RootInlineBox::includeMarginForBox(InlineBox& box) const
 
 bool RootInlineBox::fitsToGlyphs() const
 {
-    // FIXME: We can't fit to glyphs yet for vertical text, since the bounds returned are garbage.
     LineBoxContain lineBoxContain = renderer().style().lineBoxContain();
-    return isHorizontal() && ((lineBoxContain & LineBoxContainGlyphs) || (lineBoxContain & LineBoxContainInitialLetter));
+    return ((lineBoxContain & LineBoxContainGlyphs) || (lineBoxContain & LineBoxContainInitialLetter));
 }
 
 bool RootInlineBox::includesRootLineBoxFontOrLeading() const

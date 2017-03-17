@@ -1,3 +1,17 @@
+2017-03-17  Dave Hyatt  <hyatt@apple.com>
+
+        Initial letter does not paginate properly.
+        https://bugs.webkit.org/show_bug.cgi?id=169795
+        <rdar://problem/23715770>
+
+        Reviewed by Zalan Bujtas.
+
+        * fast/css-generated-content/initial-letter-pagination-raised-expected.html: Added.
+        * fast/css-generated-content/initial-letter-pagination-raised.html: Added.
+        * fast/css-generated-content/initial-letter-pagination-sunken-expected.html: Added.
+        * fast/css-generated-content/initial-letter-pagination-sunken.html: Added.
+        * platform/ios-simulator/TestExpectations:
+
 2017-03-17  Youenn Fablet  <youenn@apple.com>
 
         RealtimeIncomingAudioSource is not stopping properly

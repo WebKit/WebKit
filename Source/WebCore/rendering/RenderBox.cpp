@@ -4750,6 +4750,7 @@ bool RenderBox::isUnsplittableForPagination() const
     return isReplaced()
         || hasUnsplittableScrollingOverflow()
         || (parent() && isWritingModeRoot())
+        || (isFloating() && style().styleType() == FIRST_LETTER && style().initialLetterDrop() > 0)
         || isRenderNamedFlowFragmentContainer()
         || fixedPositionedWithNamedFlowContainingBlock();
 }

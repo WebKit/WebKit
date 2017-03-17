@@ -2913,3 +2913,8 @@ http/tests/local/fileapi/upload-zip-bundle-as-blob-using-open-panel.html [ Skip 
 # Results differ from desktop
 fast/hidpi/percent-height-image-nested.html [ Skip ]
 
+# Tests only match on desktop
+fast/css-generated-content/initial-letter-pagination-raised.html [ Skip ]
+fast/css-generated-content/initial-letter-pagination-sunken.html [ Skip ]
+fast/css-generated-content/initial-letter-pagination-raised-rl.html [ Skip ]
+fast/css-generated-content/initial-letter-pagination-sunken-rl.html [ Skip ]

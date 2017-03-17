@@ -36,6 +36,7 @@ struct SameSizeAsFloatingObject {
     void* pointers[2];
     LayoutRect rect;
     int paginationStrut;
+    LayoutSize size;
     uint32_t bitfields : 8;
 };
 
@@ -43,8 +44,6 @@ COMPILE_ASSERT(sizeof(FloatingObject) == sizeof(SameSizeAsFloatingObject), Float
 
 FloatingObject::FloatingObject(RenderBox& renderer)
     : m_renderer(renderer)
-    , m_originatingLine(nullptr)
-    , m_paginationStrut(0)
     , m_shouldPaint(true)
     , m_isDescendant(false)
     , m_isPlaced(false)
@@ -60,11 +59,10 @@ FloatingObject::FloatingObject(RenderBox& renderer)
         m_type = FloatRight;
 }
 
-FloatingObject::FloatingObject(RenderBox& renderer, Type type, const LayoutRect& frameRect, bool shouldPaint, bool isDescendant)
+FloatingObject::FloatingObject(RenderBox& renderer, Type type, const LayoutRect& frameRect, const LayoutSize& marginOffset, bool shouldPaint, bool isDescendant)
     : m_renderer(renderer)
-    , m_originatingLine(nullptr)
     , m_frameRect(frameRect)
-    , m_paginationStrut(0)
+    , m_marginOffset(marginOffset)
     , m_type(type)
     , m_shouldPaint(shouldPaint)
     , m_isDescendant(isDescendant)
@@ -85,15 +83,20 @@ std::unique_ptr<FloatingObject> FloatingObject::create(RenderBox& renderer)
 
 std::unique_ptr<FloatingObject> FloatingObject::copyToNewContainer(LayoutSize offset, bool shouldPaint, bool isDescendant) const
 {
-    return std::make_unique<FloatingObject>(renderer(), type(), LayoutRect(frameRect().location() - offset, frameRect().size()), shouldPaint, isDescendant);
+    return std::make_unique<FloatingObject>(renderer(), type(), LayoutRect(frameRect().location() - offset, frameRect().size()), marginOffset(), shouldPaint, isDescendant);
 }
 
 std::unique_ptr<FloatingObject> FloatingObject::cloneForNewParent() const
 {
-    auto cloneObject = std::make_unique<FloatingObject>(renderer(), type(), m_frameRect, m_shouldPaint, m_isDescendant);
+    auto cloneObject = std::make_unique<FloatingObject>(renderer(), type(), m_frameRect, m_marginOffset, m_shouldPaint, m_isDescendant);
     cloneObject->m_paginationStrut = m_paginationStrut;
     cloneObject->m_isPlaced = m_isPlaced;
     return cloneObject;
+}
+
+LayoutSize FloatingObject::translationOffsetToAncestor() const
+{
+    return locationOffsetOfBorderBox() - renderer().locationOffset();
 }
 
 inline static bool rangesIntersect(LayoutUnit floatTop, LayoutUnit floatBottom, LayoutUnit objectTop, LayoutUnit objectBottom)
