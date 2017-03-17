@@ -63,6 +63,7 @@ RealtimeIncomingAudioSource::~RealtimeIncomingAudioSource()
         m_audioSourceProvider->unprepare();
         m_audioSourceProvider = nullptr;
     }
+    stopProducingData();
 }
 
 
@@ -121,7 +122,7 @@ void RealtimeIncomingAudioSource::startProducingData()
 
 void RealtimeIncomingAudioSource::stopProducingData()
 {
-    if (m_isProducingData)
+    if (!m_isProducingData)
         return;
 
     m_isProducingData = false;
