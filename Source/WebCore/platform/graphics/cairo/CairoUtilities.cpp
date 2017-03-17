@@ -108,7 +108,7 @@ void appendRegionToCairoContext(cairo_t* to, const cairo_region_t* region)
     }
 }
 
-cairo_operator_t toCairoOperator(CompositeOperator op)
+static cairo_operator_t toCairoCompositeOperator(CompositeOperator op)
 {
     switch (op) {
     case CompositeClear:
@@ -143,11 +143,12 @@ cairo_operator_t toCairoOperator(CompositeOperator op)
         return CAIRO_OPERATOR_SOURCE;
     }
 }
-cairo_operator_t toCairoOperator(BlendMode blendOp)
+
+cairo_operator_t toCairoOperator(CompositeOperator op, BlendMode blendOp)
 {
     switch (blendOp) {
     case BlendModeNormal:
-        return CAIRO_OPERATOR_OVER;
+        return toCairoCompositeOperator(op);
     case BlendModeMultiply:
         return CAIRO_OPERATOR_MULTIPLY;
     case BlendModeScreen:
