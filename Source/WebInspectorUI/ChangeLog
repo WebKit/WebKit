@@ -1,5 +1,20 @@
 2017-03-16  Devin Rousso  <webkit@devinrousso.com>
 
+        Web Inspector: memory category timelines would look better with ruler tick-aligned guides
+        https://bugs.webkit.org/show_bug.cgi?id=158100
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/MemoryTimelineView.css:
+        (.timeline-view.memory > .content > .details):
+        (.timeline-view.memory > .content > .details > .timeline-ruler):
+        (body[dir=ltr] .timeline-view.memory > .content > .details > .timeline-ruler):
+        (body[dir=rtl] .timeline-view.memory > .content > .details > .timeline-ruler):
+        Make the TimelineRuler absolutely positioned so it can use the full height of the view,
+        providing enough space for the markers to be visible.
+
+2017-03-16  Devin Rousso  <webkit@devinrousso.com>
+
         Web Inspector: Console Evaluation links in the Console should not show normally
         https://bugs.webkit.org/show_bug.cgi?id=157483
 
