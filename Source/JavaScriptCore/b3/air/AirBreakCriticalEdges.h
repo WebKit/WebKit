@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,59 +27,13 @@
 
 #if ENABLE(B3_JIT)
 
-#include "AirInst.h"
-#include <wtf/Insertion.h>
-#include <wtf/Vector.h>
-
 namespace JSC { namespace B3 { namespace Air {
 
-class BasicBlock;
 class Code;
 
-typedef WTF::Insertion<Inst> Insertion;
-
-class InsertionSet {
-public:
-    InsertionSet(Code& code)
-        : m_code(&code)
-    {
-    }
-
-    Code& code() { return *m_code; }
-
-    template<typename T>
-    void appendInsertion(T&& insertion)
-    {
-        m_insertions.append(std::forward<T>(insertion));
-    }
-
-    template<typename Inst>
-    void insertInst(size_t index, Inst&& inst)
-    {
-        appendInsertion(Insertion(index, std::forward<Inst>(inst)));
-    }
-
-    template <typename InstVector>
-    void insertInsts(size_t index, const InstVector& insts)
-    {
-        for (const Inst& inst : insts)
-            insertInst(index, inst);
-    }
-    void insertInsts(size_t index, Vector<Inst>&&);
-    
-    template<typename... Arguments>
-    void insert(size_t index, Arguments&&... arguments)
-    {
-        insertInst(index, Inst(std::forward<Arguments>(arguments)...));
-    }
-
-    void execute(BasicBlock*);
-
-private:
-    Code* m_code; // Pointer so that this can be copied.
-    Vector<Insertion, 8> m_insertions;
-};
+void breakCriticalEdges(Code&);
 
 } } } // namespace JSC::B3::Air
 
 #endif // ENABLE(B3_JIT)
+

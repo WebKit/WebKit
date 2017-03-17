@@ -1849,11 +1849,11 @@ private:
             };
             
             bool done;
-            if ((isARM64() || Options::airForceBriggsAllocator()) && !Options::airForceIRCAllocator()) {
-                ColoringAllocator<bank, Briggs> allocator(m_code, m_tmpWidth, m_useCounts, unspillableTmps);
+            if (useIRC()) {
+                ColoringAllocator<bank, IRC> allocator(m_code, m_tmpWidth, m_useCounts, unspillableTmps);
                 done = doAllocation(allocator);
             } else {
-                ColoringAllocator<bank, IRC> allocator(m_code, m_tmpWidth, m_useCounts, unspillableTmps);
+                ColoringAllocator<bank, Briggs> allocator(m_code, m_tmpWidth, m_useCounts, unspillableTmps);
                 done = doAllocation(allocator);
             }
             if (done)

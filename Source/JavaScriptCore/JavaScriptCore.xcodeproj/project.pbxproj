@@ -533,6 +533,8 @@
 		0F766D3815AE4A1C008F363E /* StructureStubClearingWatchpoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F766D3615AE4A1A008F363E /* StructureStubClearingWatchpoint.cpp */; };
 		0F766D3915AE4A1F008F363E /* StructureStubClearingWatchpoint.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F766D3715AE4A1A008F363E /* StructureStubClearingWatchpoint.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F7700921402FF3C0078EB39 /* SamplingCounter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F7700911402FF280078EB39 /* SamplingCounter.cpp */; };
+		0F79C7C91E74C93900EB34D1 /* AirBreakCriticalEdges.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F79C7C51E74C93600EB34D1 /* AirBreakCriticalEdges.cpp */; };
+		0F79C7CA1E74C93B00EB34D1 /* AirBreakCriticalEdges.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F79C7C61E74C93600EB34D1 /* AirBreakCriticalEdges.h */; };
 		0F7B294B14C3CD2F007C3DB1 /* DFGCapabilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FD82E1F14172C2F00179C94 /* DFGCapabilities.h */; };
 		0F7B294D14C3CD4C007C3DB1 /* DFGCommon.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FC0977E1469EBC400CF2442 /* DFGCommon.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F7C39FB1C8F629300480151 /* RegExpInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F7C39FA1C8F629300480151 /* RegExpInlines.h */; };
@@ -3041,6 +3043,8 @@
 		0F766D3715AE4A1A008F363E /* StructureStubClearingWatchpoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StructureStubClearingWatchpoint.h; sourceTree = "<group>"; };
 		0F77008E1402FDD60078EB39 /* SamplingCounter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SamplingCounter.h; sourceTree = "<group>"; };
 		0F7700911402FF280078EB39 /* SamplingCounter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SamplingCounter.cpp; sourceTree = "<group>"; };
+		0F79C7C51E74C93600EB34D1 /* AirBreakCriticalEdges.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AirBreakCriticalEdges.cpp; path = b3/air/AirBreakCriticalEdges.cpp; sourceTree = "<group>"; };
+		0F79C7C61E74C93600EB34D1 /* AirBreakCriticalEdges.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AirBreakCriticalEdges.h; path = b3/air/AirBreakCriticalEdges.h; sourceTree = "<group>"; };
 		0F7C39FA1C8F629300480151 /* RegExpInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegExpInlines.h; sourceTree = "<group>"; };
 		0F7C39FC1C8F659500480151 /* RegExpObjectInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegExpObjectInlines.h; sourceTree = "<group>"; };
 		0F7C39FE1C90C55B00480151 /* DFGOpInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGOpInfo.h; path = dfg/DFGOpInfo.h; sourceTree = "<group>"; };
@@ -5519,6 +5523,8 @@
 				0F2C63B91E63440800C13839 /* AirBlockInsertionSet.cpp */,
 				0F2C63BA1E63440800C13839 /* AirBlockInsertionSet.h */,
 				0FB3878B1BFBC44D00E3AB1E /* AirBlockWorklist.h */,
+				0F79C7C51E74C93600EB34D1 /* AirBreakCriticalEdges.cpp */,
+				0F79C7C61E74C93600EB34D1 /* AirBreakCriticalEdges.h */,
 				0F6183201C45BF070072450B /* AirCCallingConvention.cpp */,
 				0F6183211C45BF070072450B /* AirCCallingConvention.h */,
 				0FEC854E1BDACDC70080FF74 /* AirCCallSpecial.cpp */,
@@ -9297,6 +9303,7 @@
 				FE3022D71E42857300BAC493 /* VMInspector.h in Headers */,
 				53F40E931D5A4AB30099A1B6 /* WasmB3IRGenerator.h in Headers */,
 				AD4B1DFA1DF244E20071AE32 /* WasmBinding.h in Headers */,
+				0F79C7CA1E74C93B00EB34D1 /* AirBreakCriticalEdges.h in Headers */,
 				53FD04D41D7AB291003287D3 /* WasmCallingConvention.h in Headers */,
 				79DAE27A1E03C82200B526AA /* WasmExceptionType.h in Headers */,
 				7BC547D31B6959A100959B58 /* WasmFormat.h in Headers */,
@@ -9980,6 +9987,7 @@
 				0F6B8ADC1C4EFAC300969052 /* B3SSACalculator.cpp in Sources */,
 				0F33FCF71C136E2500323F67 /* B3StackmapGenerationParams.cpp in Sources */,
 				0FEC85301BDACDAC0080FF74 /* B3StackmapSpecial.cpp in Sources */,
+				0F79C7C91E74C93900EB34D1 /* AirBreakCriticalEdges.cpp in Sources */,
 				0F338DF11BE93AD10013C88F /* B3StackmapValue.cpp in Sources */,
 				0F9495871C57F47500413A48 /* B3StackSlot.cpp in Sources */,
 				0FEC85371BDACDAC0080FF74 /* B3SwitchCase.cpp in Sources */,

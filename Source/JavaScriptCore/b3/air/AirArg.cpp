@@ -268,6 +268,20 @@ void printInternal(PrintStream& out, Arg::Kind kind)
     RELEASE_ASSERT_NOT_REACHED();
 }
 
+void printInternal(PrintStream& out, Arg::Temperature temperature)
+{
+    switch (temperature) {
+    case Arg::Cold:
+        out.print("Cold");
+        return;
+    case Arg::Warm:
+        out.print("Warm");
+        return;
+    }
+
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
 void printInternal(PrintStream& out, Arg::Role role)
 {
     switch (role) {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,19 +36,26 @@ namespace WTF {
 template<typename Key, typename Value>
 class IndexMap {
 public:
-    explicit IndexMap(size_t size = 0)
+    IndexMap()
     {
-        m_vector.fill(Value(), size);
+    }
+    
+    template<typename... Args>
+    explicit IndexMap(size_t size, Args&&... args)
+    {
+        m_vector.fill(Value(std::forward<Args>(args)...), size);
     }
 
-    void resize(size_t size)
+    template<typename... Args>
+    void resize(size_t size, Args&&... args)
     {
-        m_vector.fill(Value(), size);
+        m_vector.fill(Value(std::forward<Args>(args)...), size);
     }
 
-    void clear()
+    template<typename... Args>
+    void clear(Args&&... args)
     {
-        m_vector.fill(Value(), m_vector.size());
+        m_vector.fill(Value(std::forward<Args>(args)...), m_vector.size());
     }
 
     size_t size() const { return m_vector.size(); }

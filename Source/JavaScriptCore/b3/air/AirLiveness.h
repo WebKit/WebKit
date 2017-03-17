@@ -39,7 +39,7 @@
 
 namespace JSC { namespace B3 { namespace Air {
 
-template<Bank adapterBank>
+template<Bank adapterBank, Arg::Temperature minimumTemperature = Arg::Cold>
 struct TmpLivenessAdapter {
     typedef Tmp Thing;
     typedef HashSet<unsigned> IndexSet;
@@ -52,6 +52,7 @@ struct TmpLivenessAdapter {
         return AbsoluteTmpMapper<adapterBank>::absoluteIndex(numTmps);
     }
     static bool acceptsBank(Bank bank) { return bank == adapterBank; }
+    static bool acceptsRole(Arg::Role role) { return Arg::temperature(role) >= minimumTemperature; }
     static unsigned valueToIndex(Tmp tmp) { return AbsoluteTmpMapper<adapterBank>::absoluteIndex(tmp); }
     static Tmp indexToValue(unsigned index) { return AbsoluteTmpMapper<adapterBank>::tmpFromAbsoluteIndex(index); }
 };
@@ -70,6 +71,7 @@ struct StackSlotLivenessAdapter {
         return code.stackSlots().size();
     }
     static bool acceptsBank(Bank) { return true; }
+    static bool acceptsRole(Arg::Role) { return true; }
     static unsigned valueToIndex(StackSlot* stackSlot) { return stackSlot->index(); }
     StackSlot* indexToValue(unsigned index) { return m_code.stackSlots()[index]; }
 
@@ -89,6 +91,7 @@ struct RegLivenessAdapter {
     }
 
     static bool acceptsBank(Bank) { return true; }
+    static bool acceptsRole(Arg::Role) { return true; }
     static unsigned valueToIndex(Reg reg) { return reg.index(); }
     Reg indexToValue(unsigned index) { return Reg::fromIndex(index); }
 };
@@ -111,7 +114,9 @@ public:
 
             block->last().forEach<typename Adapter::Thing>(
                 [&] (typename Adapter::Thing& thing, Arg::Role role, Bank bank, Width) {
-                    if (Arg::isLateUse(role) && Adapter::acceptsBank(bank))
+                    if (Arg::isLateUse(role)
+                        && Adapter::acceptsBank(bank)
+                        && Adapter::acceptsRole(role))
                         liveAtTail.add(Adapter::valueToIndex(thing));
                 });
         }
@@ -140,7 +145,9 @@ public:
                 // Handle the early def's of the first instruction.
                 block->at(0).forEach<typename Adapter::Thing>(
                     [&] (typename Adapter::Thing& thing, Arg::Role role, Bank bank, Width) {
-                        if (Arg::isEarlyDef(role) && Adapter::acceptsBank(bank))
+                        if (Arg::isEarlyDef(role)
+                            && Adapter::acceptsBank(bank)
+                            && Adapter::acceptsRole(role))
                             m_workset.remove(Adapter::valueToIndex(thing));
                     });
 
@@ -255,7 +262,9 @@ public:
                 Inst& nextInst = m_block->at(instIndex + 1);
                 nextInst.forEach<typename Adapter::Thing>(
                     [&] (typename Adapter::Thing& thing, Arg::Role role, Bank bank, Width) {
-                        if (Arg::isEarlyDef(role) && Adapter::acceptsBank(bank))
+                        if (Arg::isEarlyDef(role)
+                            && Adapter::acceptsBank(bank)
+                            && Adapter::acceptsRole(role))
                             workset.remove(Adapter::valueToIndex(thing));
                     });
             }
@@ -263,14 +272,18 @@ public:
             // Then handle def's.
             inst.forEach<typename Adapter::Thing>(
                 [&] (typename Adapter::Thing& thing, Arg::Role role, Bank bank, Width) {
-                    if (Arg::isLateDef(role) && Adapter::acceptsBank(bank))
+                    if (Arg::isLateDef(role)
+                        && Adapter::acceptsBank(bank)
+                        && Adapter::acceptsRole(role))
                         workset.remove(Adapter::valueToIndex(thing));
                 });
 
             // Then handle use's.
             inst.forEach<typename Adapter::Thing>(
                 [&] (typename Adapter::Thing& thing, Arg::Role role, Bank bank, Width) {
-                    if (Arg::isEarlyUse(role) && Adapter::acceptsBank(bank))
+                    if (Arg::isEarlyUse(role)
+                        && Adapter::acceptsBank(bank)
+                        && Adapter::acceptsRole(role))
                         workset.add(Adapter::valueToIndex(thing));
                 });
 
@@ -279,12 +292,14 @@ public:
                 Inst& prevInst = m_block->at(instIndex - 1);
                 prevInst.forEach<typename Adapter::Thing>(
                     [&] (typename Adapter::Thing& thing, Arg::Role role, Bank bank, Width) {
-                        if (Arg::isLateUse(role) && Adapter::acceptsBank(bank))
+                        if (Arg::isLateUse(role)
+                            && Adapter::acceptsBank(bank)
+                            && Adapter::acceptsRole(role))
                             workset.add(Adapter::valueToIndex(thing));
                     });
             }
         }
-
+        
     private:
         AbstractLiveness& m_liveness;
         BasicBlock* m_block;
@@ -379,8 +394,8 @@ private:
     IndexMap<BasicBlock, typename Adapter::IndexSet> m_liveAtTail;
 };
 
-template<Bank bank>
-using TmpLiveness = AbstractLiveness<TmpLivenessAdapter<bank>>;
+template<Bank bank, Arg::Temperature minimumTemperature = Arg::Cold>
+using TmpLiveness = AbstractLiveness<TmpLivenessAdapter<bank, minimumTemperature>>;
 
 typedef AbstractLiveness<TmpLivenessAdapter<GP>> GPLiveness;
 typedef AbstractLiveness<TmpLivenessAdapter<FP>> FPLiveness;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -235,6 +235,11 @@ void LinkBuffer::allocate(MacroAssembler& macroAssembler, void* ownerUID, JITCom
         macroAssembler.emitNops(nopsToFillInBytes);
         m_didAllocate = true;
         return;
+    }
+    
+    while (initialSize % jitAllocationGranule) {
+        macroAssembler.breakpoint();
+        initialSize = macroAssembler.m_assembler.codeSize();
     }
     
     ASSERT(m_vm != nullptr);

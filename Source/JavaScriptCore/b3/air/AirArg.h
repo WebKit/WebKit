@@ -87,6 +87,11 @@ public:
         Special,
         WidthArg
     };
+    
+    enum Temperature : int8_t {
+        Cold,
+        Warm
+    };
 
     enum Role : int8_t {
         // Use means that the Inst will read from this value before doing anything else.
@@ -242,6 +247,11 @@ public:
             return LateColdUse;
         }
         ASSERT_NOT_REACHED();
+    }
+    
+    static Temperature temperature(Role role)
+    {
+        return isColdUse(role) ? Cold : Warm;
     }
 
     // Returns true if the Role implies that the Inst will Use the Arg before doing anything else.
@@ -1343,6 +1353,7 @@ struct ArgHash {
 namespace WTF {
 
 JS_EXPORT_PRIVATE void printInternal(PrintStream&, JSC::B3::Air::Arg::Kind);
+JS_EXPORT_PRIVATE void printInternal(PrintStream&, JSC::B3::Air::Arg::Temperature);
 JS_EXPORT_PRIVATE void printInternal(PrintStream&, JSC::B3::Air::Arg::Role);
 JS_EXPORT_PRIVATE void printInternal(PrintStream&, JSC::B3::Air::Arg::Signedness);
 

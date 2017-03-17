@@ -1,3 +1,19 @@
+2017-03-11  Filip Pizlo  <fpizlo@apple.com>
+
+        Air should be powerful enough to support Tmp-splitting
+        https://bugs.webkit.org/show_bug.cgi?id=169515
+
+        Reviewed by Saam Barati.
+        
+        Teach IndexMap how to handle types that don't have a default constructor. This makes it
+        easy to create a IndexMap<BasicBlock, InsertionSet>, which is a super powerful
+        construct.
+
+        * wtf/IndexMap.h:
+        (WTF::IndexMap::IndexMap):
+        (WTF::IndexMap::resize):
+        (WTF::IndexMap::clear):
+
 2017-03-16  Simon Fraser  <simon.fraser@apple.com>
 
         Improve the system tracing points

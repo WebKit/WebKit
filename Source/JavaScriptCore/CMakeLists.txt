@@ -78,6 +78,7 @@ set(JavaScriptCore_SOURCES
     b3/air/AirArg.cpp
     b3/air/AirBasicBlock.cpp
     b3/air/AirBlockInsertionSet.cpp
+    b3/air/AirBreakCriticalEdges.cpp
     b3/air/AirCCallSpecial.cpp
     b3/air/AirCCallingConvention.cpp
     b3/air/AirCode.cpp
