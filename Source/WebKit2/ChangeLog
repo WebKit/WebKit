@@ -1,3 +1,15 @@
+2017-03-17  Tomas Popela  <tpopela@redhat.com>
+
+        Fix uninitialized public members in NetworkProcess
+        https://bugs.webkit.org/show_bug.cgi?id=169598
+
+        Reviewed by Alex Christensen.
+
+        Found by Coverity scan.
+
+        * NetworkProcess/NetworkProcessCreationParameters.h:
+        * NetworkProcess/cache/NetworkCacheStorage.cpp:
+
 2017-03-16  Alex Christensen  <achristensen@webkit.org>
 
         Fix GTK build.
