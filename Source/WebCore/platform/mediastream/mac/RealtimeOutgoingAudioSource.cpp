@@ -88,7 +88,7 @@ void RealtimeOutgoingAudioSource::pullAudioData()
     // libwebrtc expects 10 ms chunks.
     size_t chunkSampleCount = m_outputStreamDescription.sampleRate() / 100;
     size_t bufferSize = chunkSampleCount * LibWebRTCAudioFormat::sampleByteSize * m_outputStreamDescription.numberOfChannels();
-    m_audioBuffer.reserveCapacity(bufferSize);
+    m_audioBuffer.grow(bufferSize);
 
     AudioBufferList bufferList;
     bufferList.mNumberBuffers = 1;
