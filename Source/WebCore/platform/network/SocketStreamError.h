@@ -37,9 +37,7 @@ namespace WebCore {
 
 class SocketStreamError {
 public:
-    SocketStreamError()
-    {
-    }
+    SocketStreamError() = default;
 
     explicit SocketStreamError(int errorCode)
         : m_errorCode(errorCode)
@@ -60,11 +58,41 @@ public:
     const String& failingURL() const { return m_failingURL; }
     const String& localizedDescription() const { return m_localizedDescription; }
 
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static bool decode(Decoder&, SocketStreamError&);
+
 private:
     int m_errorCode { 0 };
     String m_failingURL;
     String m_localizedDescription;
     bool m_isNull { true };
 };
+
+template<class Encoder>
+void SocketStreamError::encode(Encoder& encoder) const
+{
+    encoder << m_isNull;
+    if (m_isNull)
+        return;
+    encoder << m_errorCode;
+    encoder << m_failingURL;
+    encoder << m_localizedDescription;
+}
+
+template<class Decoder>
+bool SocketStreamError::decode(Decoder& decoder, SocketStreamError& error)
+{
+    if (!decoder.decode(error.m_isNull))
+        return false;
+    if (error.m_isNull)
+        return true;
+    if (!decoder.decode(error.m_errorCode))
+        return false;
+    if (!decoder.decode(error.m_failingURL))
+        return false;
+    if (!decoder.decode(error.m_localizedDescription))
+        return false;
+    return true;
+}
 
 }
