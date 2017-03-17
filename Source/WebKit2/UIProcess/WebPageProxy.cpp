@@ -133,6 +133,7 @@
 #include <WebCore/WindowFeatures.h>
 #include <stdio.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/SystemTracing.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringView.h>
 
@@ -2178,6 +2179,8 @@ void WebPageProxy::handleTouchEventSynchronously(NativeWebTouchEvent& event)
 {
     if (!isValid())
         return;
+
+    TraceScope scope(SyncTouchEventStart, SyncTouchEventEnd);
 
     if (event.type() == WebEvent::TouchStart)
         updateTouchEventTracking(event);

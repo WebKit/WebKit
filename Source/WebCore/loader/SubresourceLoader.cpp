@@ -48,6 +48,7 @@
 #include <wtf/Ref.h>
 #include <wtf/RefCountedLeakCounter.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/SystemTracing.h>
 #include <wtf/text/CString.h>
 
 #if PLATFORM(IOS)
@@ -176,8 +177,10 @@ void SubresourceLoader::willSendRequestInternal(ResourceRequest& newRequest, con
         return;
     }
 
-    if (newRequest.requester() != ResourceRequestBase::Requester::Main)
+    if (newRequest.requester() != ResourceRequestBase::Requester::Main) {
+        TracePoint(SubresourceLoadWillStart);
         ResourceLoadObserver::sharedObserver().logSubresourceLoading(m_frame.get(), newRequest, redirectResponse);
+    }
 
     ASSERT(!newRequest.isNull());
     if (!redirectResponse.isNull()) {
@@ -462,6 +465,7 @@ static void logResourceLoaded(Frame* frame, CachedResource::Type type)
         resourceType = DiagnosticLoggingKeys::otherKey();
         break;
     }
+    
     frame->page()->diagnosticLoggingClient().logDiagnosticMessage(DiagnosticLoggingKeys::resourceLoadedKey(), resourceType, ShouldSample::Yes);
 }
 
@@ -552,15 +556,20 @@ void SubresourceLoader::didFinishLoading(const NetworkLoadMetrics& networkLoadMe
     }
 #endif
 
+    if (m_resource->type() != CachedResource::MainResource)
+        TracePoint(SubresourceLoadDidEnd);
+
     m_state = Finishing;
     m_resource->finishLoading(resourceData());
 
     if (wasCancelled())
         return;
+
     m_resource->finish();
     ASSERT(!reachedTerminalState());
     didFinishLoadingOnePart(networkLoadMetrics);
     notifyDone();
+
     if (reachedTerminalState())
         return;
     releaseResources();
@@ -581,6 +590,10 @@ void SubresourceLoader::didFail(const ResourceError& error)
     Ref<SubresourceLoader> protectedThis(*this);
     CachedResourceHandle<CachedResource> protectResource(m_resource);
     m_state = Finishing;
+
+    if (m_resource->type() != CachedResource::MainResource)
+        TracePoint(SubresourceLoadDidEnd);
+
     if (m_resource->resourceToRevalidate())
         MemoryCache::singleton().revalidationFailed(*m_resource);
     m_resource->setResourceError(error);
@@ -625,6 +638,9 @@ void SubresourceLoader::didCancel(const ResourceError&)
 {
     if (m_state == Uninitialized)
         return;
+
+    if (m_resource->type() != CachedResource::MainResource)
+        TracePoint(SubresourceLoadDidEnd);
 
     m_resource->cancelLoad();
     notifyDone();

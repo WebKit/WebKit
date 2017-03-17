@@ -32,7 +32,6 @@
 #import <QuartzCore/QuartzCore.h>
 #import <wtf/CurrentTime.h>
 #import <wtf/MainThread.h>
-#import <wtf/SystemTracing.h>
 
 using namespace WebCore;
 
@@ -100,8 +99,6 @@ bool DisplayRefreshMonitorIOS::requestRefreshCallback()
     if (!isActive())
         return false;
 
-    TracePoint(RAFDisplayLinkScheduled);
-    
     if (!m_handler) {
         m_handler = adoptNS([[WebDisplayLinkHandler alloc] initWithMonitor:this]);
         setIsActive(true);
@@ -118,8 +115,6 @@ void DisplayRefreshMonitorIOS::displayLinkFired()
 
     setIsPreviousFrameDone(false);
     handleDisplayRefreshedNotificationOnMainThread(this);
-    
-    TracePoint(RAFDisplayLinkFired);
 }
 
 }

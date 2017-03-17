@@ -29,6 +29,7 @@
 #include "MessageReceiverMap.h"
 #include "ProcessLauncher.h"
 
+#include <wtf/SystemTracing.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebKit {
@@ -116,6 +117,8 @@ bool ChildProcessProxy::sendSync(U&& message, typename U::Reply&& reply, uint64_
 
     if (!m_connection)
         return false;
+
+    TraceScope scope(SyncMessageStart, SyncMessageEnd);
 
     return connection()->sendSync(std::forward<U>(message), WTFMove(reply), destinationID, timeout, sendSyncOptions);
 }

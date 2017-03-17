@@ -107,7 +107,7 @@ std::unique_ptr<GraphicsLayer> RemoteLayerTreeContext::createGraphicsLayer(WebCo
 
 void RemoteLayerTreeContext::buildTransaction(RemoteLayerTreeTransaction& transaction, PlatformCALayer& rootLayer)
 {
-    TraceScope tracingScope(RAFBuildTransactionStart, RAFBuildTransactionEnd);
+    TraceScope tracingScope(BuildTransactionStart, BuildTransactionEnd);
 
     PlatformCALayerRemote& rootLayerRemote = downcast<PlatformCALayerRemote>(rootLayer);
     transaction.setRootLayerID(rootLayerRemote.layerID());

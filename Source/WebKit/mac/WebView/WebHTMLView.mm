@@ -138,6 +138,7 @@
 #import <wtf/MathExtras.h>
 #import <wtf/ObjcRuntimeExtras.h>
 #import <wtf/RunLoop.h>
+#import <wtf/SystemTracing.h>
 
 #if !PLATFORM(IOS)
 #import "WebNSEventExtras.h"
@@ -4194,6 +4195,8 @@ static BOOL currentScrollIsBlit(NSView *clipView)
 - (void)drawRect:(NSRect)rect
 {
     LOG(View, "%@ drawing", self);
+    
+    TraceScope scope(WebHTMLViewPaintStart, WebHTMLViewPaintEnd);
 
 #if !PLATFORM(IOS)
     const NSRect *rects;

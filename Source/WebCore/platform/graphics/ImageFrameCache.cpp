@@ -28,6 +28,7 @@
 
 #include "Image.h"
 #include "ImageObserver.h"
+#include <wtf/SystemTracing.h>
 
 #if USE(CG)
 #include "ImageDecoderCG.h"
@@ -294,6 +295,8 @@ void ImageFrameCache::startAsyncDecodingQueue()
         ImageFrameRequest frameRequest;
 
         while (m_frameRequestQueue.dequeue(frameRequest)) {
+            TraceScope tracingScope(AsyncImageDecodeStart, AsyncImageDecodeEnd);
+
             // Get the frame NativeImage on the decoding thread.
             NativeImagePtr nativeImage = protectedDecoder->createFrameImageAtIndex(frameRequest.index, frameRequest.subsamplingLevel, frameRequest.sizeForDrawing);
 

@@ -1,3 +1,16 @@
+2017-03-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Improve the system tracing points
+        https://bugs.webkit.org/show_bug.cgi?id=169790
+
+        Reviewed by Zalan Bujtas.
+
+        Use a more cohesive set of system trace points that give a good overview of what
+        WebKit is doing. Added points for resource loading, render tree building, sync messages
+        to the web process, async image decode, WASM and fetching cookies.
+
+        * Tracing/SystemTracePoints.plist:
+
 2017-03-16  Youenn Fablet  <youenn@apple.com>
 
         Wrap legacy WebRTC API in runtime flag

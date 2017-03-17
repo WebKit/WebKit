@@ -41,6 +41,7 @@
 #include "VM.h"
 #include "WasmFormat.h"
 #include "WasmMemory.h"
+#include <wtf/SystemTracing.h>
 
 namespace JSC {
 
@@ -75,6 +76,8 @@ static EncodedJSValue JSC_HOST_CALL callWebAssemblyFunction(ExecState* exec)
             return JSValue::encode(throwException(exec, scope, error));
         }
     }
+
+    TraceScope traceScope(WebAssemblyExecuteStart, WebAssemblyExecuteEnd);
 
     Vector<JSValue> boxedArgs;
     for (unsigned argIndex = 0; argIndex < signature->argumentCount(); ++argIndex) {

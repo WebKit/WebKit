@@ -122,6 +122,7 @@
 #include <wtf/CurrentTime.h>
 #include <wtf/Ref.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/SystemTracing.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
@@ -991,6 +992,8 @@ void FrameLoader::provisionalLoadStarted()
     m_client.provisionalLoadStarted();
 
     if (m_frame.isMainFrame()) {
+        TracePoint(MainResourceLoadDidStartProvisional);
+
         if (auto* page = m_frame.page())
             page->didStartProvisionalLoad();
     }
@@ -2322,8 +2325,10 @@ void FrameLoader::checkLoadCompleteForThisFrame()
             m_progressTracker->progressCompleted();
             Page* page = m_frame.page();
             if (page) {
-                if (m_frame.isMainFrame())
+                if (m_frame.isMainFrame()) {
+                    TracePoint(MainResourceLoadDidEnd);
                     page->didFinishLoad();
+                }
             }
 
             const ResourceError& error = dl->mainDocumentError();

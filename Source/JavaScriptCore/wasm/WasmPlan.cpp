@@ -44,6 +44,7 @@
 #include <wtf/MonotonicTime.h>
 #include <wtf/NumberOfCores.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/SystemTracing.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace JSC { namespace Wasm {
@@ -114,6 +115,9 @@ void Plan::run(std::optional<Memory::Mode> recompileMode)
 {
     if (!parseAndValidateModule(recompileMode))
         return;
+
+    TraceScope traceScope(WebAssemblyCompileStart, WebAssemblyCompileEnd);
+
     if (recompileMode)
         ASSERT(m_moduleInformation->memory.mode() == recompileMode);
 

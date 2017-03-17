@@ -21,7 +21,31 @@
              </dict>
              <dict>
                  <key>Name</key>
-                 <string>Document::recalcStyle()</string>
+                 <string>Compile WebAssembly</string>
+                 <key>Type</key>
+                 <string>Interval</string>
+                 <key>Component</key>
+                 <string>47</string>
+                 <key>CodeBegin</key>
+                 <string>2503</string>
+                 <key>CodeEnd</key>
+                 <string>2504</string>
+             </dict>
+             <dict>
+                 <key>Name</key>
+                 <string>Execute WebAssembly</string>
+                 <key>Type</key>
+                 <string>Interval</string>
+                 <key>Component</key>
+                 <string>47</string>
+                 <key>CodeBegin</key>
+                 <string>2505</string>
+                 <key>CodeEnd</key>
+                 <string>2506</string>
+             </dict>
+             <dict>
+                 <key>Name</key>
+                 <string>Main Resource Load</string>
                  <key>Type</key>
                  <string>Interval</string>
                  <key>Component</key>
@@ -33,7 +57,7 @@
              </dict>
              <dict>
                  <key>Name</key>
-                 <string>FrameView::layout()</string>
+                 <string>Subresource Load</string>
                  <key>Type</key>
                  <string>Interval</string>
                  <key>Component</key>
@@ -45,7 +69,7 @@
              </dict>
              <dict>
                  <key>Name</key>
-                 <string>FrameView::paintContents()</string>
+                 <string>Fetch Cookies</string>
                  <key>Type</key>
                  <string>Interval</string>
                  <key>Component</key>
@@ -57,7 +81,7 @@
              </dict>
              <dict>
                  <key>Name</key>
-                 <string>GraphicsLayerCA::paintLayerContents()</string>
+                 <string>Style recalc</string>
                  <key>Type</key>
                  <string>Interval</string>
                  <key>Component</key>
@@ -69,7 +93,7 @@
              </dict>
              <dict>
                  <key>Name</key>
-                 <string>DisplayRefreshMonitor</string>
+                 <string>Build render tree</string>
                  <key>Type</key>
                  <string>Interval</string>
                  <key>Component</key>
@@ -81,7 +105,7 @@
              </dict>
              <dict>
                  <key>Name</key>
-                 <string>ScriptedAnimationController::serviceScriptedAnimations()</string>
+                 <string>Layout</string>
                  <key>Type</key>
                  <string>Interval</string>
                  <key>Component</key>
@@ -93,7 +117,55 @@
              </dict>
              <dict>
                  <key>Name</key>
-                 <string>RemoteLayerTreeDrawingArea::didUpdate()</string>
+                 <string>Paint layer</string>
+                 <key>Type</key>
+                 <string>Interval</string>
+                 <key>Component</key>
+                 <string>47</string>
+                 <key>CodeBegin</key>
+                 <string>5013</string>
+                 <key>CodeEnd</key>
+                 <string>5014</string>
+             </dict>
+             <dict>
+                 <key>Name</key>
+                 <string>Async Image Decode</string>
+                 <key>Type</key>
+                 <string>Interval</string>
+                 <key>Component</key>
+                 <string>47</string>
+                 <key>CodeBegin</key>
+                 <string>5015</string>
+                 <key>CodeEnd</key>
+                 <string>5016</string>
+             </dict>
+             <dict>
+                 <key>Name</key>
+                 <string>requestAnimationFrame</string>
+                 <key>Type</key>
+                 <string>Interval</string>
+                 <key>Component</key>
+                 <string>47</string>
+                 <key>CodeBegin</key>
+                 <string>5017</string>
+                 <key>CodeEnd</key>
+                 <string>5018</string>
+             </dict>
+             <dict>
+                 <key>Name</key>
+                 <string>Paint WebHTMLView</string>
+                 <key>Type</key>
+                 <string>Interval</string>
+                 <key>Component</key>
+                 <string>47</string>
+                 <key>CodeBegin</key>
+                 <string>10001</string>
+                 <key>CodeEnd</key>
+                 <string>10002</string>
+             </dict>
+             <dict>
+                 <key>Name</key>
+                 <string>Flush backing store drawing</string>
                  <key>Type</key>
                  <string>Interval</string>
                  <key>Component</key>
@@ -105,7 +177,7 @@
              </dict>
              <dict>
                  <key>Name</key>
-                 <string>RemoteLayerTreeDrawingArea::BackingStoreFlusher::flush()</string>
+                 <string>Build RemoteLayerTree transaction</string>
                  <key>Type</key>
                  <string>Interval</string>
                  <key>Component</key>
@@ -117,7 +189,7 @@
              </dict>
              <dict>
                  <key>Name</key>
-                 <string>RemoteLayerTreeContext::buildTransaction()</string>
+                 <string>Sync message</string>
                  <key>Type</key>
                  <string>Interval</string>
                  <key>Component</key>
@@ -129,7 +201,19 @@
              </dict>
              <dict>
                  <key>Name</key>
-                 <string>RemoteLayerTreeDrawingAreaProxy::commitLayerTree()</string>
+                 <string>Sync touch event</string>
+                 <key>Type</key>
+                 <string>Interval</string>
+                 <key>Component</key>
+                 <string>47</string>
+                 <key>CodeBegin</key>
+                 <string>12007</string>
+                 <key>CodeEnd</key>
+                 <string>12008</string>
+             </dict>
+             <dict>
+                 <key>Name</key>
+                 <string>Commit RemoteLayerTree transaction</string>
                  <key>Type</key>
                  <string>Interval</string>
                  <key>Component</key>
@@ -138,18 +222,6 @@
                  <string>14001</string>
                  <key>CodeEnd</key>
                  <string>14002</string>
-             </dict>
-             <dict>
-                 <key>Name</key>
-                 <string>RemoteLayerTreeDrawingAreaProxy::didRefreshDisplay()</string>
-                 <key>Type</key>
-                 <string>Interval</string>
-                 <key>Component</key>
-                 <string>47</string>
-                 <key>CodeBegin</key>
-                 <string>14003</string>
-                 <key>CodeEnd</key>
-                 <string>14004</string>
              </dict>
          </array>
      </dict>

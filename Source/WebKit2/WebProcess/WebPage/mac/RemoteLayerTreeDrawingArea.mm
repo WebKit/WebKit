@@ -437,8 +437,6 @@ void RemoteLayerTreeDrawingArea::flushLayers()
 
 void RemoteLayerTreeDrawingArea::didUpdate()
 {
-    TraceScope tracingScope(RAFDidUpdateStart, RAFDidUpdateEnd);
-
     // FIXME: This should use a counted replacement for setLayerTreeStateIsFrozen, but
     // the callers of that function are not strictly paired.
 
@@ -488,7 +486,7 @@ void RemoteLayerTreeDrawingArea::BackingStoreFlusher::flush()
 {
     ASSERT(!m_hasFlushed);
 
-    TraceScope tracingScope(RAFBackingStoreFlushStart, RAFBackingStoreFlushEnd);
+    TraceScope tracingScope(BackingStoreFlushStart, BackingStoreFlushEnd);
     
     for (auto& context : m_contextsToFlush)
         CGContextFlush(context.get());

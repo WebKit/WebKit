@@ -4430,8 +4430,6 @@ void FrameView::paintContents(GraphicsContext& context, const IntRect& dirtyRect
     if (m_layoutPhase == InViewSizeAdjust)
         return;
 
-    TraceScope tracingScope(PaintViewStart, PaintViewEnd);
-
     ASSERT(m_layoutPhase == InPostLayerPositionsUpdatedAfterLayout || m_layoutPhase == OutsideLayout);
     
     RenderView* renderView = this->renderView();

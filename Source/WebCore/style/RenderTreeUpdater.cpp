@@ -40,6 +40,7 @@
 #include "RenderNamedFlowThread.h"
 #include "StyleResolver.h"
 #include "StyleTreeResolver.h"
+#include <wtf/SystemTracing.h>
 
 #if PLATFORM(IOS)
 #include "WKContentObservation.h"
@@ -112,6 +113,8 @@ void RenderTreeUpdater::commit(std::unique_ptr<const Style::Update> styleUpdate)
 
     if (!m_document.shouldCreateRenderers() || !m_document.renderView())
         return;
+    
+    TraceScope scope(RenderTreeBuildStart, RenderTreeBuildEnd);
 
     Style::PostResolutionCallbackDisabler callbackDisabler(m_document);
 
