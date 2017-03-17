@@ -216,7 +216,7 @@ void RenderVideo::updateFromElement()
 
 void RenderVideo::updatePlayer()
 {
-    if (documentBeingDestroyed())
+    if (renderTreeBeingDestroyed())
         return;
 
     bool intrinsicSizeChanged;

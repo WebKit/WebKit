@@ -191,7 +191,7 @@ void RenderBoxModelObject::willBeDestroyed()
     if (firstLetterRemainingText())
         setFirstLetterRemainingText(nullptr);
 
-    if (!documentBeingDestroyed())
+    if (!renderTreeBeingDestroyed())
         view().imageQualityController().rendererWillBeDestroyed(*this);
 
     RenderLayerModelObject::willBeDestroyed();

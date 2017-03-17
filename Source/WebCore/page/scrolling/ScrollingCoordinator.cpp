@@ -100,7 +100,7 @@ bool ScrollingCoordinator::coordinatesScrollingForFrameView(const FrameView& fra
 EventTrackingRegions ScrollingCoordinator::absoluteEventTrackingRegionsForFrame(const Frame& frame) const
 {
     auto* renderView = frame.contentRenderer();
-    if (!renderView || renderView->documentBeingDestroyed())
+    if (!renderView || renderView->renderTreeBeingDestroyed())
         return EventTrackingRegions();
 
 #if ENABLE(IOS_TOUCH_EVENTS)

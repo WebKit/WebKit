@@ -153,7 +153,7 @@ void RenderBlockFlow::willBeDestroyed()
     // properly dirty line boxes that they are removed from. Effects that do :before/:after only on hover could crash otherwise.
     destroyLeftoverChildren();
 
-    if (!documentBeingDestroyed()) {
+    if (!renderTreeBeingDestroyed()) {
         if (firstRootBox()) {
             // We can't wait for RenderBox::destroy to clear the selection,
             // because by then we will have nuked the line boxes.
@@ -3926,7 +3926,7 @@ void RenderBlockFlow::addChild(RenderObject* newChild, RenderObject* beforeChild
 
 void RenderBlockFlow::removeChild(RenderObject& oldChild)
 {
-    if (!documentBeingDestroyed()) {
+    if (!renderTreeBeingDestroyed()) {
         RenderFlowThread* flowThread = multiColumnFlowThread();
         if (flowThread && flowThread != &oldChild)
             flowThread->flowThreadRelativeWillBeRemoved(oldChild);

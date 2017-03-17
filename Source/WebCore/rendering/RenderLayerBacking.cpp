@@ -2868,7 +2868,7 @@ void RenderLayerBacking::notifyAnimationStarted(const GraphicsLayer*, const Stri
 
 void RenderLayerBacking::notifyFlushRequired(const GraphicsLayer* layer)
 {
-    if (renderer().documentBeingDestroyed())
+    if (renderer().renderTreeBeingDestroyed())
         return;
     compositor().scheduleLayerFlush(layer->canThrottleLayerFlush());
 }

@@ -74,7 +74,7 @@ void ImageQualityController::removeObject(RenderBoxModelObject* object)
 
 void ImageQualityController::highQualityRepaintTimerFired()
 {
-    if (m_renderView.documentBeingDestroyed())
+    if (m_renderView.renderTreeBeingDestroyed())
         return;
     if (!m_animatedResizeIsActive && !m_liveResizeOptimizationIsActive)
         return;

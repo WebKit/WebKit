@@ -3024,7 +3024,7 @@ void FrameView::scheduleRelayoutOfSubtree(RenderElement& newRelayoutRoot)
     const RenderView& renderView = *this->renderView();
 
     // Try to catch unnecessary work during render tree teardown.
-    ASSERT(!renderView.documentBeingDestroyed());
+    ASSERT(!renderView.renderTreeBeingDestroyed());
     ASSERT(frame().view() == this);
 
     // When m_layoutRoot is already set, ignore the renderView's needsLayout bit

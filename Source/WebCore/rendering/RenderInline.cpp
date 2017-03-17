@@ -84,7 +84,7 @@ void RenderInline::willBeDestroyed()
     // properly dirty line boxes that they are removed from.  Effects that do :before/:after only on hover could crash otherwise.
     destroyLeftoverChildren();
     
-    if (!documentBeingDestroyed()) {
+    if (!renderTreeBeingDestroyed()) {
         if (firstLineBox()) {
             // We can't wait for RenderBoxModelObject::destroy to clear the selection,
             // because by then we will have nuked the line boxes.

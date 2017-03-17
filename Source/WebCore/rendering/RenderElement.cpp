@@ -565,7 +565,7 @@ void RenderElement::insertChildInternal(RenderObject* newChild, RenderObject* be
     }
 
     newChild->initializeFlowThreadStateOnInsertion();
-    if (!documentBeingDestroyed()) {
+    if (!renderTreeBeingDestroyed()) {
         if (notifyChildren == NotifyChildren)
             newChild->insertedIntoTree();
         if (is<RenderElement>(*newChild))
@@ -596,7 +596,7 @@ void RenderElement::removeChildInternal(RenderObject& oldChild, NotifyChildrenTy
     // So that we'll get the appropriate dirty bit set (either that a normal flow child got yanked or
     // that a positioned child got yanked). We also repaint, so that the area exposed when the child
     // disappears gets repainted properly.
-    if (!documentBeingDestroyed() && notifyChildren == NotifyChildren && oldChild.everHadLayout()) {
+    if (!renderTreeBeingDestroyed() && notifyChildren == NotifyChildren && oldChild.everHadLayout()) {
         oldChild.setNeedsLayoutAndPrefWidthsRecalc();
         // We only repaint |oldChild| if we have a RenderLayer as its visual overflow may not be tracked by its parent.
         if (oldChild.isBody())
@@ -611,15 +611,15 @@ void RenderElement::removeChildInternal(RenderObject& oldChild, NotifyChildrenTy
     else if (is<RenderLineBreak>(oldChild))
         downcast<RenderLineBreak>(oldChild).deleteInlineBoxWrapper();
     
-    if (!documentBeingDestroyed() && is<RenderFlexibleBox>(this) && !oldChild.isFloatingOrOutOfFlowPositioned() && oldChild.isBox())
+    if (!renderTreeBeingDestroyed() && is<RenderFlexibleBox>(this) && !oldChild.isFloatingOrOutOfFlowPositioned() && oldChild.isBox())
         downcast<RenderFlexibleBox>(this)->clearCachedChildIntrinsicContentLogicalHeight(downcast<RenderBox>(oldChild));
 
     // If oldChild is the start or end of the selection, then clear the selection to
     // avoid problems of invalid pointers.
-    if (!documentBeingDestroyed() && oldChild.isSelectionBorder())
+    if (!renderTreeBeingDestroyed() && oldChild.isSelectionBorder())
         frame().selection().setNeedsSelectionUpdate();
 
-    if (!documentBeingDestroyed() && notifyChildren == NotifyChildren)
+    if (!renderTreeBeingDestroyed() && notifyChildren == NotifyChildren)
         oldChild.willBeRemovedFromTree();
 
     oldChild.resetFlowThreadStateOnRemoval();
@@ -646,7 +646,7 @@ void RenderElement::removeChildInternal(RenderObject& oldChild, NotifyChildrenTy
 
     // rendererRemovedFromTree walks the whole subtree. We can improve performance
     // by skipping this step when destroying the entire tree.
-    if (!documentBeingDestroyed() && is<RenderElement>(oldChild))
+    if (!renderTreeBeingDestroyed() && is<RenderElement>(oldChild))
         RenderCounter::rendererRemovedFromTree(downcast<RenderElement>(oldChild));
 
     if (AXObjectCache* cache = document().existingAXObjectCache())
@@ -1102,7 +1102,7 @@ void RenderElement::willBeRemovedFromTree()
 
 inline void RenderElement::clearLayoutRootIfNeeded() const
 {
-    if (documentBeingDestroyed())
+    if (renderTreeBeingDestroyed())
         return;
 
     if (view().frameView().layoutRoot() != this)
@@ -1136,7 +1136,7 @@ void RenderElement::willBeDestroyed()
     RenderObject::willBeDestroyed();
 
 #if !ASSERT_DISABLED
-    if (!documentBeingDestroyed() && view().hasRenderNamedFlowThreads()) {
+    if (!renderTreeBeingDestroyed() && view().hasRenderNamedFlowThreads()) {
         // After remove, the object and the associated information should not be in any flow thread.
         for (auto& flowThread : *view().flowThreadController().renderNamedFlowThreadList()) {
             ASSERT(!flowThread->hasChildInfo(this));

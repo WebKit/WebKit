@@ -279,7 +279,7 @@ void RenderRegion::installFlowThread()
 
 void RenderRegion::attachRegion()
 {
-    if (documentBeingDestroyed())
+    if (renderTreeBeingDestroyed())
         return;
     
     // A region starts off invalid.

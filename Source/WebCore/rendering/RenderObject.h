@@ -739,9 +739,8 @@ public:
      */
     virtual LayoutRect localCaretRect(InlineBox*, unsigned caretOffset, LayoutUnit* extraWidthToEndOfLine = nullptr);
 
-    // When performing a global document tear-down, the renderer of the document is cleared.  We use this
-    // as a hook to detect the case of document destruction and don't waste time doing unnecessary work.
-    bool documentBeingDestroyed() const;
+    // When performing a global document tear-down, or when going into the page cache, the renderer of the document is cleared.
+    bool renderTreeBeingDestroyed() const;
 
     void destroyAndCleanupAnonymousWrappers();
     void destroy();
@@ -1027,7 +1026,7 @@ inline CSSAnimationController& RenderObject::animation() const
     return frame().animation();
 }
 
-inline bool RenderObject::documentBeingDestroyed() const
+inline bool RenderObject::renderTreeBeingDestroyed() const
 {
     return document().renderTreeBeingDestroyed();
 }

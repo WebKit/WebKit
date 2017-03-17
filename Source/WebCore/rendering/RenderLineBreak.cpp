@@ -111,7 +111,7 @@ void RenderLineBreak::deleteInlineBoxWrapper()
 {
     if (!m_inlineBoxWrapper)
         return;
-    if (!documentBeingDestroyed())
+    if (!renderTreeBeingDestroyed())
         m_inlineBoxWrapper->removeFromParent();
     delete m_inlineBoxWrapper;
     m_inlineBoxWrapper = nullptr;

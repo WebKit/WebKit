@@ -279,7 +279,7 @@ void RenderBox::removeFloatingOrPositionedChildFromBlockLists()
 {
     ASSERT(isFloatingOrOutOfFlowPositioned());
 
-    if (documentBeingDestroyed())
+    if (renderTreeBeingDestroyed())
         return;
 
     if (isFloating()) {
@@ -2194,7 +2194,7 @@ void RenderBox::deleteLineBoxWrapper()
     if (!m_inlineBoxWrapper)
         return;
     
-    if (!documentBeingDestroyed())
+    if (!renderTreeBeingDestroyed())
         m_inlineBoxWrapper->removeFromParent();
     delete m_inlineBoxWrapper;
     m_inlineBoxWrapper = nullptr;
