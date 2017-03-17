@@ -112,7 +112,7 @@ private:
 
     IPC::Connection* messageSenderConnection() final;
 
-    uint64_t m_identifier;
+    uint64_t m_identifier { 0 };
     bool m_isOpenInServer { false };
     RefPtr<WebCore::IDBClient::IDBConnectionToServer> m_connectionToServer;
 };

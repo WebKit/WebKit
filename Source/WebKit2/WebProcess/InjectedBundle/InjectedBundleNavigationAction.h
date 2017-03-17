@@ -68,7 +68,7 @@ private:
     WebCore::NavigationType m_navigationType;
     WebEvent::Modifiers m_modifiers;
     WebMouseEvent::Button m_mouseButton;
-    WebMouseEvent::SyntheticClickType m_syntheticClickType;
+    WebMouseEvent::SyntheticClickType m_syntheticClickType { WebMouseEvent::NoTap };
     RefPtr<InjectedBundleHitTestResult> m_hitTestResult;
     RefPtr<InjectedBundleNodeHandle> m_formElement;
     AtomicString m_downloadAttribute;
