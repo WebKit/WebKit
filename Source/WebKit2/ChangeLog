@@ -1,3 +1,15 @@
+2017-03-16  Michael Saboff  <msaboff@apple.com>
+
+        Turn off JavaScript Configuration File processing for Debug builds
+        https://bugs.webkit.org/show_bug.cgi?id=169799
+
+        Reviewed by Dean Jackson.
+
+        Change the default value for m_javaScriptConfigurationFileEnabled for Debug
+        builds to be the same as a Release build, that is false (off).
+
+        * UIProcess/WebProcessPool.h:
+
 2017-03-16  Simon Fraser  <simon.fraser@apple.com>
 
         Improve the system tracing points
