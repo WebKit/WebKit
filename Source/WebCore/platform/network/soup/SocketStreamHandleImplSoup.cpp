@@ -147,7 +147,7 @@ void SocketStreamHandleImpl::readBytes(gssize bytesRead)
     // The client can close the handle, potentially removing the last reference.
     Ref<SocketStreamHandle> protectedThis(*this);
     if (bytesRead == -1)
-        m_client.didFailToReceiveSocketStreamData();
+        m_client.didFailToReceiveSocketStreamData(*this);
     else
         m_client.didReceiveSocketStreamData(*this, m_readBuffer.get(), static_cast<size_t>(bytesRead));
 
