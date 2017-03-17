@@ -1546,3 +1546,5 @@ fast/events/context-activated-by-key-event.html [ Skip ]
 webkit.org/b/168136 performance-api/performance-observer-periodic.html [ Pass Failure ]
 
 webkit.org/b/169324 media/track/media-element-enqueue-event-crash.html [ Pass Failure ]
+
+webkit.org/b/169572 imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location_hash.html [ Pass Failure ]

@@ -1,5 +1,14 @@
 2017-03-16  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Mark imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location_hash.html as flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=169572
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
+2017-03-16  Ryan Haddad  <ryanhaddad@apple.com>
+
         Rebaseline js/dom/global-constructors-attributes.html.
 
         Unreviewed test gardening.
