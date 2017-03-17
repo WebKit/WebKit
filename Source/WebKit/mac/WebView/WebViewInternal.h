@@ -92,7 +92,7 @@ OBJC_CLASS NSTextAlternatives;
 
 #if ENABLE(DATA_INTERACTION) && defined(__cplusplus)
 @interface WebUITextIndicatorData (WebUITextIndicatorInternal)
-- (WebUITextIndicatorData *)initWithImage:(CGImageRef)image textIndicatorData:(WebCore::TextIndicatorData&)indicatorData scale:(CGFloat)scale;
+- (WebUITextIndicatorData *)initWithImage:(CGImageRef)image textIndicatorData:(const WebCore::TextIndicatorData&)indicatorData scale:(CGFloat)scale;
 - (WebUITextIndicatorData *)initWithImage:(CGImageRef)image scale:(CGFloat)scale;
 @end
 #endif
@@ -258,6 +258,7 @@ OBJC_CLASS NSTextAlternatives;
 
 #if ENABLE(DATA_INTERACTION) && defined(__cplusplus)
 - (void)_setDataInteractionData:(CGImageRef)image textIndicator:(std::optional<WebCore::TextIndicatorData>)textIndicator atClientPosition:(CGPoint)clientPosition anchorPoint:(CGPoint)anchorPoint action:(uint64_t)action;
+- (void)_didConcludeEditDataInteraction;
 #endif
 
 - (void)_preferencesChanged:(WebPreferences *)preferences;

@@ -176,6 +176,7 @@
 #import <WebCore/PageCache.h>
 #import <WebCore/PageConfiguration.h>
 #import <WebCore/PageGroup.h>
+#import <WebCore/PathUtilities.h>
 #import <WebCore/PlatformEventFactoryMac.h>
 #import <WebCore/ProgressTracker.h>
 #import <WebCore/RenderView.h>
@@ -320,9 +321,17 @@
 #endif
 
 #if ENABLE(DATA_INTERACTION)
+#import <UIKit/UIBezierPath.h>
+#import <UIKit/UIColor.h>
 #import <UIKit/UIImage.h>
 SOFT_LINK_FRAMEWORK(UIKit)
+SOFT_LINK_CLASS(UIKit, UIBezierPath)
+SOFT_LINK_CLASS(UIKit, UIColor)
 SOFT_LINK_CLASS(UIKit, UIImage)
+SOFT_LINK(UIKit, UIGraphicsBeginImageContextWithOptions, void, (CGSize size, BOOL opaque, CGFloat scale), (size, opaque, scale))
+SOFT_LINK(UIKit, UIGraphicsGetCurrentContext, CGContextRef, (void), ())
+SOFT_LINK(UIKit, UIGraphicsGetImageFromCurrentImageContext, UIImage *, (void), ())
+SOFT_LINK(UIKit, UIGraphicsEndImageContext, void, (void), ())
 #endif
 
 #if HAVE(TOUCH_BAR) && ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
@@ -626,13 +635,15 @@ private:
 @synthesize textBoundingRectInRootViewCoordinates=_textBoundingRectInRootViewCoordinates;
 @synthesize textRectsInBoundingRectCoordinates=_textRectsInBoundingRectCoordinates;
 @synthesize contentImageWithHighlight=_contentImageWithHighlight;
+@synthesize contentImageWithoutSelection=_contentImageWithoutSelection;
+@synthesize contentImageWithoutSelectionRectInRootViewCoordinates=_contentImageWithoutSelectionRectInRootViewCoordinates;
 @synthesize contentImage=_contentImage;
 
 @end
 
 @implementation WebUITextIndicatorData (WebUITextIndicatorInternal)
 
-- (WebUITextIndicatorData *)initWithImage:(CGImageRef)image textIndicatorData:(WebCore::TextIndicatorData &)indicatorData scale:(CGFloat)scale
+- (WebUITextIndicatorData *)initWithImage:(CGImageRef)image textIndicatorData:(const TextIndicatorData&)indicatorData scale:(CGFloat)scale
 {
     if (!(self = [super init]))
         return nil;
@@ -649,8 +660,16 @@ private:
     if (indicatorData.contentImageWithHighlight)
         _contentImageWithHighlight = [[[getUIImageClass() alloc] initWithCGImage:indicatorData.contentImageWithHighlight.get()->nativeImage().get() scale:scale orientation:UIImageOrientationDownMirrored] retain];
     if (indicatorData.contentImage)
-        _contentImage = [[[getUIImageClass() alloc] initWithCGImage:indicatorData.contentImage.get()->nativeImage().get() scale:scale orientation:UIImageOrientationDownMirrored] retain];
-    
+        _contentImage = [[[getUIImageClass() alloc] initWithCGImage:indicatorData.contentImage.get()->nativeImage().get() scale:scale orientation:UIImageOrientationUp] retain];
+
+    if (indicatorData.contentImageWithoutSelection) {
+        auto nativeImage = indicatorData.contentImageWithoutSelection.get()->nativeImage();
+        if (nativeImage) {
+            _contentImageWithoutSelection = [[[getUIImageClass() alloc] initWithCGImage:nativeImage.get() scale:scale orientation:UIImageOrientationUp] retain];
+            _contentImageWithoutSelectionRectInRootViewCoordinates = indicatorData.contentImageWithoutSelectionRectInRootViewCoordinates;
+        }
+    }
+
     return self;
 }
 
@@ -669,6 +688,7 @@ private:
     [_dataInteractionImage release];
     [_textRectsInBoundingRectCoordinates release];
     [_contentImageWithHighlight release];
+    [_contentImageWithoutSelection release];
     [_contentImage release];
     
     [super dealloc];
@@ -1795,9 +1815,60 @@ static void WebKitInitializeGamepadProviderIfNecessary()
         _private->textIndicatorData = [[[WebUITextIndicatorData alloc] initWithImage:image scale:_private->page->deviceScaleFactor()] retain];
 }
 
+- (WebUITextIndicatorData *)_dataOperationTextIndicator
+{
+    return _private->dataOperationTextIndicator.get();
+}
+
 - (WebUITextIndicatorData *)_getDataInteractionData
 {
     return _private->textIndicatorData;
+}
+
+static Vector<FloatRect> floatRectsForCGRectArray(NSArray<NSValue *> *rectValues)
+{
+    Vector<FloatRect> rects;
+    for (NSValue *rectValue in rectValues)
+        rects.append(rectValue.CGRectValue);
+    return rects;
+}
+
+- (UIImage *)_createImageWithPlatterForImage:(UIImage *)image boundingRect:(CGRect)boundingRect contentScaleFactor:(CGFloat)contentScaleFactor clippingRects:(NSArray<NSValue *> *)clippingRects
+{
+    if (!_private->page)
+        return nil;
+
+    if (!image)
+        return nil;
+
+    CGFloat imageScaleFactor = contentScaleFactor / _private->page->deviceScaleFactor();
+    CGRect imagePaintBounds = CGRectMake(0, 0, CGRectGetWidth(boundingRect) * imageScaleFactor, CGRectGetHeight(boundingRect) * imageScaleFactor);
+    UIGraphicsBeginImageContextWithOptions(imagePaintBounds.size, NO, _private->page->deviceScaleFactor());
+    CGContextRef newContext = UIGraphicsGetCurrentContext();
+
+    auto scaledClippingRects = floatRectsForCGRectArray(clippingRects);
+    for (auto& textBoundingRect : scaledClippingRects)
+        textBoundingRect.scale(imageScaleFactor);
+
+    if (!scaledClippingRects.isEmpty()) {
+        auto webcorePath = PathUtilities::pathWithShrinkWrappedRects(scaledClippingRects, 6 * imageScaleFactor);
+        [[getUIBezierPathClass() bezierPathWithCGPath:webcorePath.ensurePlatformPath()] addClip];
+    }
+
+    // FIXME: This should match the background color of the text, or if the background cannot be captured as a single color, we should fall back
+    // to a default representation, e.g. black text on a white background.
+    CGContextSetFillColorWithColor(newContext, [[getUIColorClass() whiteColor] CGColor]);
+    for (auto textBoundingRect : scaledClippingRects)
+        CGContextFillRect(newContext, textBoundingRect);
+
+    CGContextTranslateCTM(newContext, 0, CGRectGetHeight(imagePaintBounds));
+    CGContextScaleCTM(newContext, 1, -1);
+    CGContextDrawImage(newContext, imagePaintBounds, image.CGImage);
+
+    UIImage *previewImage = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+
+    return [previewImage retain];
 }
 
 #if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/WebViewAdditions.mm>)
@@ -1834,6 +1905,19 @@ static void WebKitInitializeGamepadProviderIfNecessary()
 - (void)_endedDataInteraction:(CGPoint)clientPosition global:(CGPoint)globalPosition
 {
 }
+
+- (WebUITextIndicatorData *)_dataOperationTextIndicator
+{
+    return nil;
+}
+
+#if PLATFORM(IOS)
+- (UIImage *)_createImageWithPlatterForImage:(UIImage *)image boundingRect:(CGRect)boundingRect contentScaleFactor:(CGFloat)contentScaleFactor clippingRects:(NSArray<NSValue *> *)clippingRects
+{
+    return nil;
+}
+#endif
+
 #endif // ENABLE(DATA_INTERACTION) && defined(__cplusplus)
 
 static NSMutableSet *knownPluginMIMETypes()

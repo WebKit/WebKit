@@ -76,6 +76,10 @@ bool WebDragClient::useLegacyDragClient()
     return false;
 }
 
+void WebDragClient::didConcludeEditDrag()
+{
+}
+
 static WebHTMLView *getTopHTMLView(Frame* frame)
 {
     ASSERT(frame);
@@ -185,6 +189,11 @@ bool WebDragClient::useLegacyDragClient()
 {
     return false;
 }
+
+void WebDragClient::didConcludeEditDrag()
+{
+}
+
 WebCore::DragDestinationAction WebDragClient::actionMaskForDrag(const WebCore::DragData&)
 {
     return DragDestinationActionNone;

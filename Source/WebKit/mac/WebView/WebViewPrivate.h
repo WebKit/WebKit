@@ -191,7 +191,8 @@ typedef enum {
 @property (nonatomic, assign) CGFloat contentImageScaleFactor;
 @property (nonatomic, retain) UIImage *contentImageWithHighlight;
 @property (nonatomic, retain) UIImage *contentImage;
-
+@property (nonatomic, retain) UIImage *contentImageWithoutSelection;
+@property (nonatomic, assign) CGRect contentImageWithoutSelectionRectInRootViewCoordinates;
 @end
 
 #if !TARGET_OS_IPHONE
@@ -467,6 +468,7 @@ Could be worth adding to the API.
 
 - (BOOL)_requestStartDataInteraction:(CGPoint)clientPosition globalPosition:(CGPoint)globalPosition;
 - (WebUITextIndicatorData *)_getDataInteractionData;
+@property (nonatomic, readonly, strong, getter=_dataOperationTextIndicator) WebUITextIndicatorData *dataOperationTextIndicator;
 - (uint64_t)_enteredDataInteraction:(id)dataInteraction client:(CGPoint)clientPosition global:(CGPoint)globalPosition operation:(uint64_t)operation;
 - (uint64_t)_updatedDataInteraction:(id)dataInteraction client:(CGPoint)clientPosition global:(CGPoint)globalPosition operation:(uint64_t)operation;
 - (void)_exitedDataInteraction:(id)dataInteraction client:(CGPoint)clientPosition global:(CGPoint)globalPosition operation:(uint64_t)operation;
@@ -474,6 +476,7 @@ Could be worth adding to the API.
 - (void)_endedDataInteraction:(CGPoint)clientPosition global:(CGPoint)clientPosition;
 
 #if TARGET_OS_IPHONE
+- (UIImage *)_createImageWithPlatterForImage:(UIImage *)image boundingRect:(CGRect)boundingRect contentScaleFactor:(CGFloat)contentScaleFactor clippingRects:(NSArray<NSValue *> *)clippingRects;
 // Deprecated. Use -[WebDataSource _quickLookContent] instead.
 - (NSDictionary *)quickLookContentForURL:(NSURL *)url;
 #endif

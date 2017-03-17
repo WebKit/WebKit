@@ -25,6 +25,10 @@
 
 #import <WebKitLegacy/DOMNode.h>
 
+#if TARGET_OS_IPHONE
+#import <CoreGraphics/CoreGraphics.h>
+#endif
+
 @class DOMAttr;
 @class DOMCSSStyleDeclaration;
 @class DOMElement;
@@ -61,6 +65,10 @@ WEBKIT_CLASS_AVAILABLE_MAC(10_4)
 @property (readonly, strong) DOMElement *firstElementChild WEBKIT_AVAILABLE_MAC(10_6);
 @property (readonly, strong) DOMElement *lastElementChild WEBKIT_AVAILABLE_MAC(10_6);
 @property (readonly) unsigned childElementCount WEBKIT_AVAILABLE_MAC(10_6);
+
+#if TARGET_OS_IPHONE
+@property (readonly) CGRect boundsInRootViewSpace;
+#endif
 
 - (NSString *)getAttribute:(NSString *)name;
 - (void)setAttribute:(NSString *)name value:(NSString *)value WEBKIT_AVAILABLE_MAC(10_5);

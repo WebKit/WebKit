@@ -175,7 +175,7 @@ static bool takeSnapshots(TextIndicatorData& data, Frame& frame, IntRect snapsho
 
     if (data.options & TextIndicatorOptionIncludeSnapshotOfAllVisibleContentWithoutSelection) {
         float snapshotScaleFactor;
-        auto snapshotRect = enclosingIntRect(frame.view()->visualViewportRect());
+        auto snapshotRect = frame.view()->visibleContentRect();
         data.contentImageWithoutSelection = takeSnapshot(frame, snapshotRect, SnapshotOptionsPaintEverythingExcludingSelection, snapshotScaleFactor, { });
         data.contentImageWithoutSelectionRectInRootViewCoordinates = frame.view()->contentsToRootView(snapshotRect);
     }

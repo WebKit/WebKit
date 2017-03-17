@@ -1,3 +1,47 @@
+2017-03-17  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [WK1] Support animated transitions when performing a data interaction operation
+        https://bugs.webkit.org/show_bug.cgi?id=169805
+        <rdar://problem/31045767>
+
+        Reviewed by Beth Dakin and Megan Gardner.
+
+        Adds WebKit1 support for animated transitions when performing a data interaction operation. See per-method changes
+        for more details.
+
+        * DOM/DOMElement.h:
+        * DOM/DOMElement.mm:
+        (-[DOMElement boundsInRootViewSpace]):
+
+        Introduce -[DOMElement boundsInRootViewSpace], which returns the bounds of the element in root view coordinates.
+
+        * WebCoreSupport/WebDragClient.h:
+        (): Deleted.
+        * WebCoreSupport/WebDragClient.mm:
+        (WebDragClient::didConcludeEditDrag):
+
+        Add boilerplate plumbing.
+
+        * WebView/WebView.mm:
+        (-[WebUITextIndicatorData initWithImage:textIndicatorData:scale:]):
+
+        Add contentImageWithoutSelection and contentImageWithoutSelectionRectInRootViewCoordinates to WebUITextIndicatorData.
+
+        (floatRectsForCGRectArray):
+        (-[WebView _createImageWithPlatterForImage:boundingRect:contentScaleFactor:clippingRects:]):
+
+        Introduces a SPI helper method in WebView that clients can use to generate an image of a text platter given an
+        image of some text, as well as clipping rects to apply to the image.
+
+        (-[WebView _dataOperationTextIndicator]):
+
+        Add SPI to fetch the text indicator used to drive animations for the current data operation.
+
+        (-[WebView _didConcludeEditDataInteraction]):
+        * WebView/WebViewData.h:
+        * WebView/WebViewInternal.h:
+        * WebView/WebViewPrivate.h:
+
 2017-03-16  Simon Fraser  <simon.fraser@apple.com>
 
         Improve the system tracing points

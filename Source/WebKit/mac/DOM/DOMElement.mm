@@ -269,6 +269,15 @@ DOMElement *kit(WebCore::Element* value)
     return unwrap(*self).childElementCount();
 }
 
+#if PLATFORM(IOS)
+- (CGRect)boundsInRootViewSpace
+{
+    WebCore::JSMainThreadNullState state;
+    auto bounds = unwrap(*self).boundsInRootViewSpace();
+    return CGRectMake(bounds.x(), bounds.y(), bounds.width(), bounds.height());
+}
+#endif
+
 - (NSString *)getAttribute:(NSString *)name
 {
     WebCore::JSMainThreadNullState state;
