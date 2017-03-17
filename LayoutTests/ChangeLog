@@ -1,3 +1,13 @@
+2017-03-16  Dean Jackson  <dino@apple.com>
+
+        WebGL: Improve index validation when using uint index values
+        https://bugs.webkit.org/show_bug.cgi?id=169798
+
+        Reviewed by Simon Fraser.
+
+        * fast/canvas/webgl/draw-elements-out-of-bounds-uint-index-expected.txt: Added.
+        * fast/canvas/webgl/draw-elements-out-of-bounds-uint-index.html: Added.
+
 2017-03-16  Youenn Fablet  <youenn@apple.com>
 
         Wrap legacy WebRTC API in runtime flag

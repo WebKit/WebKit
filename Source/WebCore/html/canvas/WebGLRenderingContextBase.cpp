@@ -1781,7 +1781,7 @@ bool WebGLRenderingContextBase::validateVertexAttributes(unsigned elementCount, 
             return false;
     }
 
-    if (elementCount <= 0)
+    if (!elementCount)
         return true;
 
     // Look in each consumed vertex attrib (by the current program).

@@ -1748,44 +1748,46 @@ bool WebGL2RenderingContext::validateIndexArrayConservative(GC3Denum type, unsig
     auto* buffer = elementArrayBuffer->elementArrayBuffer();
     ASSERT(buffer);
     
-    int maxIndex = elementArrayBuffer->getCachedMaxIndex(type);
-    if (maxIndex < 0) {
+    std::optional<unsigned> maxIndex = elementArrayBuffer->getCachedMaxIndex(type);
+    if (!maxIndex) {
         // Compute the maximum index in the entire buffer for the given type of index.
         switch (type) {
         case GraphicsContext3D::UNSIGNED_BYTE: {
             const GC3Dubyte* p = static_cast<const GC3Dubyte*>(buffer->data());
             for (GC3Dsizeiptr i = 0; i < numElements; i++)
-                maxIndex = std::max(maxIndex, static_cast<int>(p[i]));
+                maxIndex = maxIndex ? std::max(maxIndex.value(), static_cast<unsigned>(p[i])) : static_cast<unsigned>(p[i]);
             break;
         }
         case GraphicsContext3D::UNSIGNED_SHORT: {
             numElements /= sizeof(GC3Dushort);
             const GC3Dushort* p = static_cast<const GC3Dushort*>(buffer->data());
             for (GC3Dsizeiptr i = 0; i < numElements; i++)
-                maxIndex = std::max(maxIndex, static_cast<int>(p[i]));
+                maxIndex = maxIndex ? std::max(maxIndex.value(), static_cast<unsigned>(p[i])) : static_cast<unsigned>(p[i]);
             break;
         }
         case GraphicsContext3D::UNSIGNED_INT: {
             numElements /= sizeof(GC3Duint);
             const GC3Duint* p = static_cast<const GC3Duint*>(buffer->data());
             for (GC3Dsizeiptr i = 0; i < numElements; i++)
-                maxIndex = std::max(maxIndex, static_cast<int>(p[i]));
+                maxIndex = maxIndex ? std::max(maxIndex.value(), static_cast<unsigned>(p[i])) : static_cast<unsigned>(p[i]);
             break;
         }
         default:
             return false;
         }
-        elementArrayBuffer->setCachedMaxIndex(type, maxIndex);
+        if (maxIndex)
+            elementArrayBuffer->setCachedMaxIndex(type, maxIndex.value());
     }
     
-    if (maxIndex >= 0) {
-        // The number of required elements is one more than the maximum
-        // index that will be accessed.
-        numElementsRequired = maxIndex + 1;
-        return true;
-    }
-    
-    return false;
+    if (!maxIndex)
+        return false;
+
+    // The number of required elements is one more than the maximum
+    // index that will be accessed.
+    numElementsRequired = maxIndex.value() + 1;
+
+    // Check for overflow.
+    return numElementsRequired > 0;
 }
 
 bool WebGL2RenderingContext::validateBlendEquation(const char* functionName, GC3Denum mode)
