@@ -436,13 +436,14 @@ typedef any AnyTypedef;
 
 [
     JSGenerateToJSObject
-]dictionary TestDictionary {
+] dictionary TestDictionary {
     TestEnumType enumerationValueWithoutDefault;
     TestEnumType enumerationValueWithDefault = "enumValue1";
     TestEnumType enumerationValueWithEmptyStringDefault = "";
     DOMString stringWithDefault = "defaultString";
     DOMString stringWithoutDefault;
     DOMString? nullableStringWithDefault = null;
+    [TreatNullAs=EmptyString] DOMString stringTreatNullAsEmptyString;
     boolean booleanWithDefault = false;
     boolean booleanWithoutDefault;
     sequence<DOMString> sequenceOfStrings;
@@ -470,6 +471,8 @@ typedef any AnyTypedef;
     Node? nullableNode = null;
     any anyValue;
     any anyValueWithNullDefault = null;
+    [ImplementedAs=foo] any fooAlias;
+    [ImplementedAs=fooWithDefault] any fooWithDefaultAlias = 0;
     AnyTypedef anyTypedefValue;
     TestDictionaryThatShouldTolerateNull dictionaryMember;
     (long or Node) unionMember;

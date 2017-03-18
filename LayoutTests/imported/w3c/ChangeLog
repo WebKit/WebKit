@@ -1,3 +1,14 @@
+2017-03-18  Jon Lee  <jonlee@apple.com>
+
+        Add support for ImplementedAs, Clamp, EnforceRange, TreatNullAs for dictionary members
+        https://bugs.webkit.org/show_bug.cgi?id=169731
+
+        Reviewed by Alex Christensen.
+
+        Rebaseline tests. The results seem to show a problem in the original tests.
+        * web-platform-tests/WebCryptoAPI/encrypt_decrypt/aes_gcm.worker-expected.txt:
+        * web-platform-tests/WebCryptoAPI/encrypt_decrypt/test_aes_gcm-expected.txt:
+
 2017-03-18  Chris Dumez  <cdumez@apple.com>
 
         innerText setter inserts empty text node if value starts with newline

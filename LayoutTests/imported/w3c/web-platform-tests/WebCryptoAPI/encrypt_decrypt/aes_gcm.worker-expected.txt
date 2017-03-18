@@ -298,35 +298,35 @@ PASS AES-GCM 128-bit key, illegal tag length 48-bits
 PASS AES-GCM 128-bit key, illegal tag length 72-bits 
 PASS AES-GCM 128-bit key, illegal tag length 95-bits 
 PASS AES-GCM 128-bit key, illegal tag length 129-bits 
-PASS AES-GCM 128-bit key, illegal tag length 256-bits 
+FAIL AES-GCM 128-bit key, illegal tag length 256-bits assert_equals: Should throw an OperationError instead of Type error expected "OperationError" but got "TypeError"
 PASS AES-GCM 192-bit key, illegal tag length 24-bits 
 PASS AES-GCM 192-bit key, illegal tag length 48-bits 
 PASS AES-GCM 192-bit key, illegal tag length 72-bits 
 PASS AES-GCM 192-bit key, illegal tag length 95-bits 
 PASS AES-GCM 192-bit key, illegal tag length 129-bits 
-PASS AES-GCM 192-bit key, illegal tag length 256-bits 
+FAIL AES-GCM 192-bit key, illegal tag length 256-bits assert_equals: Should throw an OperationError instead of Type error expected "OperationError" but got "TypeError"
 PASS AES-GCM 256-bit key, illegal tag length 24-bits 
 PASS AES-GCM 256-bit key, illegal tag length 48-bits 
 PASS AES-GCM 256-bit key, illegal tag length 72-bits 
 PASS AES-GCM 256-bit key, illegal tag length 95-bits 
 PASS AES-GCM 256-bit key, illegal tag length 129-bits 
-PASS AES-GCM 256-bit key, illegal tag length 256-bits 
+FAIL AES-GCM 256-bit key, illegal tag length 256-bits assert_equals: Should throw an OperationError instead of Type error expected "OperationError" but got "TypeError"
 PASS AES-GCM 128-bit key, illegal tag length 24-bits decryption 
 PASS AES-GCM 128-bit key, illegal tag length 48-bits decryption 
 PASS AES-GCM 128-bit key, illegal tag length 72-bits decryption 
 PASS AES-GCM 128-bit key, illegal tag length 95-bits decryption 
 PASS AES-GCM 128-bit key, illegal tag length 129-bits decryption 
-PASS AES-GCM 128-bit key, illegal tag length 256-bits decryption 
+FAIL AES-GCM 128-bit key, illegal tag length 256-bits decryption assert_equals: Should throw an OperationError instead of Type error expected "OperationError" but got "TypeError"
 PASS AES-GCM 192-bit key, illegal tag length 24-bits decryption 
 PASS AES-GCM 192-bit key, illegal tag length 48-bits decryption 
 PASS AES-GCM 192-bit key, illegal tag length 72-bits decryption 
 PASS AES-GCM 192-bit key, illegal tag length 95-bits decryption 
 PASS AES-GCM 192-bit key, illegal tag length 129-bits decryption 
-PASS AES-GCM 192-bit key, illegal tag length 256-bits decryption 
+FAIL AES-GCM 192-bit key, illegal tag length 256-bits decryption assert_equals: Should throw an OperationError instead of Type error expected "OperationError" but got "TypeError"
 PASS AES-GCM 256-bit key, illegal tag length 24-bits decryption 
 PASS AES-GCM 256-bit key, illegal tag length 48-bits decryption 
 PASS AES-GCM 256-bit key, illegal tag length 72-bits decryption 
 PASS AES-GCM 256-bit key, illegal tag length 95-bits decryption 
 PASS AES-GCM 256-bit key, illegal tag length 129-bits decryption 
-PASS AES-GCM 256-bit key, illegal tag length 256-bits decryption 
+FAIL AES-GCM 256-bit key, illegal tag length 256-bits decryption assert_equals: Should throw an OperationError instead of Type error expected "OperationError" but got "TypeError"
 

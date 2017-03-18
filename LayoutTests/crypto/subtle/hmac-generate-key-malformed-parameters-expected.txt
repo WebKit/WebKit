@@ -7,8 +7,8 @@ PASS crypto.subtle.generateKey("hmac", extractable, ["sign", "verify"]) rejected
 PASS crypto.subtle.generateKey({name: "hmac"}, extractable, ["sign", "verify"]) rejected promise  with TypeError: Member HmacKeyParams.hash is required and must be an instance of any.
 PASS crypto.subtle.generateKey({name: "hmac", hash: "sha-1", length: null}, extractable, ["sign", "verify"]) rejected promise  with OperationError (DOM Exception 34): The operation failed for an operation-specific reason.
 PASS crypto.subtle.generateKey({name: "hmac", hash: "sha-1", length: Symbol()}, extractable, ["sign", "verify"]) rejected promise  with TypeError: Cannot convert a symbol to a number.
-PASS crypto.subtle.generateKey({name: "hmac", hash: "sha-1", length: { }}, extractable, ["sign", "verify"]) rejected promise  with OperationError (DOM Exception 34): The operation failed for an operation-specific reason.
-PASS crypto.subtle.generateKey({name: "hmac", hash: "sha-1", length: "foo"}, extractable, ["sign", "verify"]) rejected promise  with OperationError (DOM Exception 34): The operation failed for an operation-specific reason.
+PASS crypto.subtle.generateKey({name: "hmac", hash: "sha-1", length: { }}, extractable, ["sign", "verify"]) rejected promise  with TypeError: Value NaN is outside the range [0, 4294967295].
+PASS crypto.subtle.generateKey({name: "hmac", hash: "sha-1", length: "foo"}, extractable, ["sign", "verify"]) rejected promise  with TypeError: Value NaN is outside the range [0, 4294967295].
 PASS crypto.subtle.generateKey({name: "hmac", hash: "sha-1"}, extractable, ["encrypt"]) rejected promise  with SyntaxError (DOM Exception 12): A required parameter was missing or out-of-range.
 PASS crypto.subtle.generateKey({name: "hmac", hash: "sha-1"}, extractable, ["decrypt"]) rejected promise  with SyntaxError (DOM Exception 12): A required parameter was missing or out-of-range.
 PASS crypto.subtle.generateKey({name: "hmac", hash: "sha-1"}, extractable, ["deriveKey"]) rejected promise  with SyntaxError (DOM Exception 12): A required parameter was missing or out-of-range.

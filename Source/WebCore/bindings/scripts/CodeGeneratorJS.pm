@@ -1562,6 +1562,7 @@ sub GenerateDictionaryImplementationContent
 
             # 5.1. Let key be the identifier of member.
             my $key = $member->name;
+            my $implementedAsKey = $member->extendedAttributes->{"ImplementedAs"} ? $member->extendedAttributes->{"ImplementedAs"} : $key;
 
             # 5.2. Let value be an ECMAScript value, depending on Type(V):
             $result .= "    JSValue ${key}Value = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, \"${key}\"));\n";
@@ -1570,14 +1571,16 @@ sub GenerateDictionaryImplementationContent
 
             # 5.3. If value is not undefined, then:
             $result .= "    if (!${key}Value.isUndefined()) {\n";
-            $result .= "        result.$key = convert<${IDLType}>(state, ${key}Value);\n";
+
+            my ($nativeValue, $mayThrowException) = JSValueToNative($typeScope, $member, "${key}Value", $member->extendedAttributes->{Conditional}, "&state", "state");
+            $result .= "        result.$implementedAsKey = $nativeValue;\n";
             $result .= "        RETURN_IF_EXCEPTION(throwScope, { });\n";
 
             # Value is undefined.
             # 5.4. Otherwise, if value is undefined but the dictionary member has a default value, then:
             if (!$member->isRequired && defined $member->default) {
                 $result .= "    } else\n";
-                $result .= "        result.$key = " . GenerateDefaultValue($typeScope, $member, $member->type, $member->default) . ";\n";
+                $result .= "        result.$implementedAsKey = " . GenerateDefaultValue($typeScope, $member, $member->type, $member->default) . ";\n";
             } elsif ($member->isRequired) {
                 # 5.5. Otherwise, if value is undefined and the dictionary member is a required dictionary member, then throw a TypeError.
                 $result .= "    } else {\n";
@@ -1611,20 +1614,21 @@ sub GenerateDictionaryImplementationContent
             my @sortedMembers = sort { $a->name cmp $b->name } @{$dictionary->members};
             foreach my $member (@sortedMembers) {
                 my $key = $member->name;
-                my $IDLType = GetIDLType($typeScope, $member->type);
+                my $implementedAsKey = $member->extendedAttributes->{"ImplementedAs"} ? $member->extendedAttributes->{"ImplementedAs"} : $key;
 
                 # 1. Let key be the identifier of member.
                 # 2. If the dictionary member named key is present in V, then:
                     # 1. Let idlValue be the value of member on V.
                     # 2. Let value be the result of converting idlValue to an ECMAScript value.
                     # 3. Perform ! CreateDataProperty(O, key, value).
+                my $IDLType = GetIDLType($typeScope, $member->type);
                 if (!$member->isRequired && not defined $member->default) {
-                    $result .= "    if (!${IDLType}::isNullValue(dictionary.${key})) {\n";
-                    $result .= "        auto ${key}Value = toJS<$IDLType>(state, globalObject, ${IDLType}::extractValueFromNullable(dictionary.${key}));\n";
+                    $result .= "    if (!${IDLType}::isNullValue(dictionary.${implementedAsKey})) {\n";
+                    $result .= "        auto ${key}Value = toJS<$IDLType>(state, globalObject, ${IDLType}::extractValueFromNullable(dictionary.${implementedAsKey}));\n";
                     $result .= "        result->putDirect(vm, JSC::Identifier::fromString(&vm, \"${key}\"), ${key}Value);\n";
                     $result .= "    }\n";
                 } else {
-                    $result .= "    auto ${key}Value = toJS<$IDLType>(state, globalObject, dictionary.${key});\n";
+                    $result .= "    auto ${key}Value = toJS<$IDLType>(state, globalObject, dictionary.${implementedAsKey});\n";
                     $result .= "    result->putDirect(vm, JSC::Identifier::fromString(&vm, \"${key}\"), ${key}Value);\n";
                 }
             }
@@ -5511,8 +5515,7 @@ sub JSValueToNativeDOMConvertNeedsGlobalObject
 sub IsValidContextForJSValueToNative
 {
     my $context = shift;
-    
-    return ref($context) eq "IDLAttribute" || ref($context) eq "IDLArgument";
+    return ref($context) eq "IDLAttribute" || ref($context) eq "IDLArgument" || ref($context) eq "IDLDictionaryMember";
 }
 
 # Returns (convertString, mayThrowException).
@@ -5537,7 +5540,9 @@ sub JSValueToNative
         return ("$value.toString($statePointer)->toAtomicString($statePointer)", 1) if $context->extendedAttributes->{AtomicString};
     }
 
-    if ($codeGenerator->IsEnumType($type)) {
+    # parseEnumeration<> returns a std::optional. For dictionary members we need convert<IDLEnumeration>() which guarantee
+    # the enum, or throws a TypeError. Bypass this check for IDLDictionaryMembers.
+    if ($codeGenerator->IsEnumType($type) && ref($context) ne "IDLDictionaryMember") {
         return ("parseEnumeration<" . GetEnumerationClassName($type, $interface) . ">($stateReference, $value)", 1);
     }
 

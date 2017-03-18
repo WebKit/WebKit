@@ -9,8 +9,8 @@ PASS crypto.subtle.generateKey({name: "aes-cbc", length: true}, extractable, ["e
 PASS crypto.subtle.generateKey({name: "aes-cbc", length: null}, extractable, ["encrypt", "decrypt"]) rejected promise  with OperationError (DOM Exception 34): The operation failed for an operation-specific reason.
 PASS crypto.subtle.generateKey({name: "aes-cbc", length: undefined}, extractable, ["encrypt", "decrypt"]) rejected promise  with TypeError: Member AesKeyParams.length is required and must be an instance of unsigned short.
 PASS crypto.subtle.generateKey({name: "aes-cbc", length: Symbol()}, extractable, ["encrypt", "decrypt"]) rejected promise  with TypeError: Cannot convert a symbol to a number.
-PASS crypto.subtle.generateKey({name: "aes-cbc", length: { }}, extractable, ["encrypt", "decrypt"]) rejected promise  with OperationError (DOM Exception 34): The operation failed for an operation-specific reason.
-PASS crypto.subtle.generateKey({name: "aes-cbc", length: "foo"}, extractable, ["encrypt", "decrypt"]) rejected promise  with OperationError (DOM Exception 34): The operation failed for an operation-specific reason.
+PASS crypto.subtle.generateKey({name: "aes-cbc", length: { }}, extractable, ["encrypt", "decrypt"]) rejected promise  with TypeError: Value NaN is outside the range [0, 65535].
+PASS crypto.subtle.generateKey({name: "aes-cbc", length: "foo"}, extractable, ["encrypt", "decrypt"]) rejected promise  with TypeError: Value NaN is outside the range [0, 65535].
 PASS crypto.subtle.generateKey({name: "aes-cbc", length: 128}, extractable, ["sign"]) rejected promise  with SyntaxError (DOM Exception 12): A required parameter was missing or out-of-range.
 PASS crypto.subtle.generateKey({name: "aes-cbc", length: 128}, extractable, ["verify"]) rejected promise  with SyntaxError (DOM Exception 12): A required parameter was missing or out-of-range.
 PASS crypto.subtle.generateKey({name: "aes-cbc", length: 128}, extractable, ["deriveKey"]) rejected promise  with SyntaxError (DOM Exception 12): A required parameter was missing or out-of-range.

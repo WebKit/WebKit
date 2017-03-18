@@ -532,31 +532,43 @@ template<> TestObj::Dictionary convertDictionary<TestObj::Dictionary>(ExecState&
         result.enumerationValueWithoutDefault = convert<IDLEnumeration<TestObj::EnumType>>(state, enumerationValueWithoutDefaultValue);
         RETURN_IF_EXCEPTION(throwScope, { });
     }
+    JSValue fooAliasValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "fooAlias"));
+    if (!fooAliasValue.isUndefined()) {
+        result.foo = convert<IDLAny>(state, fooAliasValue);
+        RETURN_IF_EXCEPTION(throwScope, { });
+    } else
+        result.foo = jsUndefined();
+    JSValue fooWithDefaultAliasValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "fooWithDefaultAlias"));
+    if (!fooWithDefaultAliasValue.isUndefined()) {
+        result.fooWithDefault = convert<IDLAny>(state, fooWithDefaultAliasValue);
+        RETURN_IF_EXCEPTION(throwScope, { });
+    } else
+        result.fooWithDefault = 0;
     JSValue integerValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "integer"));
     if (!integerValue.isUndefined()) {
-        result.integer = convert<IDLLong>(state, integerValue);
+        result.integer = convert<IDLLong>(state, integerValue, IntegerConversionConfiguration::Normal);
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     JSValue integerWithDefaultValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "integerWithDefault"));
     if (!integerWithDefaultValue.isUndefined()) {
-        result.integerWithDefault = convert<IDLLong>(state, integerWithDefaultValue);
+        result.integerWithDefault = convert<IDLLong>(state, integerWithDefaultValue, IntegerConversionConfiguration::Normal);
         RETURN_IF_EXCEPTION(throwScope, { });
     } else
         result.integerWithDefault = 0;
     JSValue largeIntegerValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "largeInteger"));
     if (!largeIntegerValue.isUndefined()) {
-        result.largeInteger = convert<IDLLongLong>(state, largeIntegerValue);
+        result.largeInteger = convert<IDLLongLong>(state, largeIntegerValue, IntegerConversionConfiguration::Normal);
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     JSValue largeIntegerWithDefaultValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "largeIntegerWithDefault"));
     if (!largeIntegerWithDefaultValue.isUndefined()) {
-        result.largeIntegerWithDefault = convert<IDLLongLong>(state, largeIntegerWithDefaultValue);
+        result.largeIntegerWithDefault = convert<IDLLongLong>(state, largeIntegerWithDefaultValue, IntegerConversionConfiguration::Normal);
         RETURN_IF_EXCEPTION(throwScope, { });
     } else
         result.largeIntegerWithDefault = 0;
     JSValue nullableIntegerWithDefaultValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "nullableIntegerWithDefault"));
     if (!nullableIntegerWithDefaultValue.isUndefined()) {
-        result.nullableIntegerWithDefault = convert<IDLNullable<IDLLong>>(state, nullableIntegerWithDefaultValue);
+        result.nullableIntegerWithDefault = convert<IDLNullable<IDLLong>>(state, nullableIntegerWithDefaultValue, IntegerConversionConfiguration::Normal);
         RETURN_IF_EXCEPTION(throwScope, { });
     } else
         result.nullableIntegerWithDefault = std::nullopt;
@@ -568,7 +580,7 @@ template<> TestObj::Dictionary convertDictionary<TestObj::Dictionary>(ExecState&
         result.nullableNode = nullptr;
     JSValue nullableStringWithDefaultValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "nullableStringWithDefault"));
     if (!nullableStringWithDefaultValue.isUndefined()) {
-        result.nullableStringWithDefault = convert<IDLNullable<IDLDOMString>>(state, nullableStringWithDefaultValue);
+        result.nullableStringWithDefault = convert<IDLNullable<IDLDOMString>>(state, nullableStringWithDefaultValue, StringConversionConfiguration::Normal);
         RETURN_IF_EXCEPTION(throwScope, { });
     } else
         result.nullableStringWithDefault = String();
@@ -607,34 +619,39 @@ template<> TestObj::Dictionary convertDictionary<TestObj::Dictionary>(ExecState&
     }
     JSValue smallIntegerClampedValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "smallIntegerClamped"));
     if (!smallIntegerClampedValue.isUndefined()) {
-        result.smallIntegerClamped = convert<IDLByte>(state, smallIntegerClampedValue);
+        result.smallIntegerClamped = convert<IDLByte>(state, smallIntegerClampedValue, IntegerConversionConfiguration::Clamp);
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     JSValue smallIntegerWithDefaultValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "smallIntegerWithDefault"));
     if (!smallIntegerWithDefaultValue.isUndefined()) {
-        result.smallIntegerWithDefault = convert<IDLByte>(state, smallIntegerWithDefaultValue);
+        result.smallIntegerWithDefault = convert<IDLByte>(state, smallIntegerWithDefaultValue, IntegerConversionConfiguration::Normal);
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     JSValue smallUnsignedIntegerEnforcedRangeValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "smallUnsignedIntegerEnforcedRange"));
     if (!smallUnsignedIntegerEnforcedRangeValue.isUndefined()) {
-        result.smallUnsignedIntegerEnforcedRange = convert<IDLOctet>(state, smallUnsignedIntegerEnforcedRangeValue);
+        result.smallUnsignedIntegerEnforcedRange = convert<IDLOctet>(state, smallUnsignedIntegerEnforcedRangeValue, IntegerConversionConfiguration::EnforceRange);
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     JSValue smallUnsignedIntegerWithDefaultValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "smallUnsignedIntegerWithDefault"));
     if (!smallUnsignedIntegerWithDefaultValue.isUndefined()) {
-        result.smallUnsignedIntegerWithDefault = convert<IDLOctet>(state, smallUnsignedIntegerWithDefaultValue);
+        result.smallUnsignedIntegerWithDefault = convert<IDLOctet>(state, smallUnsignedIntegerWithDefaultValue, IntegerConversionConfiguration::Normal);
         RETURN_IF_EXCEPTION(throwScope, { });
     } else
         result.smallUnsignedIntegerWithDefault = 0;
+    JSValue stringTreatNullAsEmptyStringValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "stringTreatNullAsEmptyString"));
+    if (!stringTreatNullAsEmptyStringValue.isUndefined()) {
+        result.stringTreatNullAsEmptyString = convert<IDLDOMString>(state, stringTreatNullAsEmptyStringValue, StringConversionConfiguration::TreatNullAsEmptyString);
+        RETURN_IF_EXCEPTION(throwScope, { });
+    }
     JSValue stringWithDefaultValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "stringWithDefault"));
     if (!stringWithDefaultValue.isUndefined()) {
-        result.stringWithDefault = convert<IDLDOMString>(state, stringWithDefaultValue);
+        result.stringWithDefault = convert<IDLDOMString>(state, stringWithDefaultValue, StringConversionConfiguration::Normal);
         RETURN_IF_EXCEPTION(throwScope, { });
     } else
         result.stringWithDefault = ASCIILiteral("defaultString");
     JSValue stringWithoutDefaultValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "stringWithoutDefault"));
     if (!stringWithoutDefaultValue.isUndefined()) {
-        result.stringWithoutDefault = convert<IDLDOMString>(state, stringWithoutDefaultValue);
+        result.stringWithoutDefault = convert<IDLDOMString>(state, stringWithoutDefaultValue, StringConversionConfiguration::Normal);
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     JSValue unionMemberValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "unionMember"));
@@ -666,23 +683,23 @@ template<> TestObj::Dictionary convertDictionary<TestObj::Dictionary>(ExecState&
         result.unrestrictedFloatWithDefault = 0;
     JSValue unsignedIntegerValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "unsignedInteger"));
     if (!unsignedIntegerValue.isUndefined()) {
-        result.unsignedInteger = convert<IDLUnsignedLong>(state, unsignedIntegerValue);
+        result.unsignedInteger = convert<IDLUnsignedLong>(state, unsignedIntegerValue, IntegerConversionConfiguration::Normal);
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     JSValue unsignedIntegerWithDefaultValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "unsignedIntegerWithDefault"));
     if (!unsignedIntegerWithDefaultValue.isUndefined()) {
-        result.unsignedIntegerWithDefault = convert<IDLUnsignedLong>(state, unsignedIntegerWithDefaultValue);
+        result.unsignedIntegerWithDefault = convert<IDLUnsignedLong>(state, unsignedIntegerWithDefaultValue, IntegerConversionConfiguration::Normal);
         RETURN_IF_EXCEPTION(throwScope, { });
     } else
         result.unsignedIntegerWithDefault = 0;
     JSValue unsignedLargeIntegerValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "unsignedLargeInteger"));
     if (!unsignedLargeIntegerValue.isUndefined()) {
-        result.unsignedLargeInteger = convert<IDLUnsignedLongLong>(state, unsignedLargeIntegerValue);
+        result.unsignedLargeInteger = convert<IDLUnsignedLongLong>(state, unsignedLargeIntegerValue, IntegerConversionConfiguration::Normal);
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     JSValue unsignedLargeIntegerWithDefaultValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "unsignedLargeIntegerWithDefault"));
     if (!unsignedLargeIntegerWithDefaultValue.isUndefined()) {
-        result.unsignedLargeIntegerWithDefault = convert<IDLUnsignedLongLong>(state, unsignedLargeIntegerWithDefaultValue);
+        result.unsignedLargeIntegerWithDefault = convert<IDLUnsignedLongLong>(state, unsignedLargeIntegerWithDefaultValue, IntegerConversionConfiguration::Normal);
         RETURN_IF_EXCEPTION(throwScope, { });
     } else
         result.unsignedLargeIntegerWithDefault = 0;
@@ -723,6 +740,10 @@ JSC::JSObject* convertDictionaryToJS(JSC::ExecState& state, JSDOMGlobalObject& g
         auto enumerationValueWithoutDefaultValue = toJS<IDLEnumeration<TestObj::EnumType>>(state, globalObject, IDLEnumeration<TestObj::EnumType>::extractValueFromNullable(dictionary.enumerationValueWithoutDefault));
         result->putDirect(vm, JSC::Identifier::fromString(&vm, "enumerationValueWithoutDefault"), enumerationValueWithoutDefaultValue);
     }
+    auto fooAliasValue = toJS<IDLAny>(state, globalObject, dictionary.foo);
+    result->putDirect(vm, JSC::Identifier::fromString(&vm, "fooAlias"), fooAliasValue);
+    auto fooWithDefaultAliasValue = toJS<IDLAny>(state, globalObject, dictionary.fooWithDefault);
+    result->putDirect(vm, JSC::Identifier::fromString(&vm, "fooWithDefaultAlias"), fooWithDefaultAliasValue);
     if (!IDLLong::isNullValue(dictionary.integer)) {
         auto integerValue = toJS<IDLLong>(state, globalObject, IDLLong::extractValueFromNullable(dictionary.integer));
         result->putDirect(vm, JSC::Identifier::fromString(&vm, "integer"), integerValue);
@@ -773,6 +794,10 @@ JSC::JSObject* convertDictionaryToJS(JSC::ExecState& state, JSDOMGlobalObject& g
     }
     auto smallUnsignedIntegerWithDefaultValue = toJS<IDLOctet>(state, globalObject, dictionary.smallUnsignedIntegerWithDefault);
     result->putDirect(vm, JSC::Identifier::fromString(&vm, "smallUnsignedIntegerWithDefault"), smallUnsignedIntegerWithDefaultValue);
+    if (!IDLDOMString::isNullValue(dictionary.stringTreatNullAsEmptyString)) {
+        auto stringTreatNullAsEmptyStringValue = toJS<IDLDOMString>(state, globalObject, IDLDOMString::extractValueFromNullable(dictionary.stringTreatNullAsEmptyString));
+        result->putDirect(vm, JSC::Identifier::fromString(&vm, "stringTreatNullAsEmptyString"), stringTreatNullAsEmptyStringValue);
+    }
     auto stringWithDefaultValue = toJS<IDLDOMString>(state, globalObject, dictionary.stringWithDefault);
     result->putDirect(vm, JSC::Identifier::fromString(&vm, "stringWithDefault"), stringWithDefaultValue);
     if (!IDLDOMString::isNullValue(dictionary.stringWithoutDefault)) {
@@ -998,7 +1023,7 @@ template<> TestObj::ConditionalDictionaryA convertDictionary<TestObj::Conditiona
     TestObj::ConditionalDictionaryA result;
     JSValue stringWithoutDefaultValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "stringWithoutDefault"));
     if (!stringWithoutDefaultValue.isUndefined()) {
-        result.stringWithoutDefault = convert<IDLDOMString>(state, stringWithoutDefaultValue);
+        result.stringWithoutDefault = convert<IDLDOMString>(state, stringWithoutDefaultValue, StringConversionConfiguration::Normal);
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     return result;
@@ -1025,7 +1050,7 @@ template<> TestObj::ConditionalDictionaryB convertDictionary<TestObj::Conditiona
     TestObj::ConditionalDictionaryB result;
     JSValue stringWithoutDefaultValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "stringWithoutDefault"));
     if (!stringWithoutDefaultValue.isUndefined()) {
-        result.stringWithoutDefault = convert<IDLDOMString>(state, stringWithoutDefaultValue);
+        result.stringWithoutDefault = convert<IDLDOMString>(state, stringWithoutDefaultValue, StringConversionConfiguration::Normal);
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     return result;
@@ -1052,7 +1077,7 @@ template<> TestObj::ConditionalDictionaryC convertDictionary<TestObj::Conditiona
     TestObj::ConditionalDictionaryC result;
     JSValue stringWithoutDefaultValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "stringWithoutDefault"));
     if (!stringWithoutDefaultValue.isUndefined()) {
-        result.stringWithoutDefault = convert<IDLDOMString>(state, stringWithoutDefaultValue);
+        result.stringWithoutDefault = convert<IDLDOMString>(state, stringWithoutDefaultValue, StringConversionConfiguration::Normal);
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     return result;

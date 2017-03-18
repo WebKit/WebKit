@@ -4,7 +4,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 PASS crypto.subtle.encrypt({name: "aes-gcm", iv: asciiToUint8Array("jnOw99oOZFLIEPMrd"), tagLength: 0}, key, plainText) rejected promise  with OperationError (DOM Exception 34): The operation failed for an operation-specific reason.
-PASS crypto.subtle.encrypt({name: "aes-gcm", iv: asciiToUint8Array("jnOw99oOZFLIEPMrd"), tagLength: -1}, key, plainText) rejected promise  with OperationError (DOM Exception 34): The operation failed for an operation-specific reason.
+PASS crypto.subtle.encrypt({name: "aes-gcm", iv: asciiToUint8Array("jnOw99oOZFLIEPMrd"), tagLength: -1}, key, plainText) rejected promise  with TypeError: Value -1 is outside the range [0, 255].
 PASS crypto.subtle.encrypt({name: "aes-gcm", iv: asciiToUint8Array("jnOw99oOZFLIEPMrd"), tagLength: 129}, key, plainText) rejected promise  with OperationError (DOM Exception 34): The operation failed for an operation-specific reason.
 PASS crypto.subtle.encrypt({name: "aes-gcm", iv: asciiToUint8Array("jnOw99oOZFLIEPMrd"), tagLength: 70}, key, plainText) rejected promise  with OperationError (DOM Exception 34): The operation failed for an operation-specific reason.
 PASS successfullyParsed is true

@@ -1,3 +1,15 @@
+2017-03-18  Jon Lee  <jonlee@apple.com>
+
+        Add support for ImplementedAs, Clamp, EnforceRange, TreatNullAs for dictionary members
+        https://bugs.webkit.org/show_bug.cgi?id=169731
+
+        Reviewed by Alex Christensen.
+
+        Rebaseline. The enhancement progressed the results of these tests.
+        * crypto/subtle/aes-gcm-encrypt-malformed-parameters-expected.txt:
+        * crypto/subtle/aes-generate-key-malformed-parameters-expected.txt:
+        * crypto/subtle/hmac-generate-key-malformed-parameters-expected.txt:
+
 2017-03-18  Chris Dumez  <cdumez@apple.com>
 
         Allow setting the prototype of cross-origin objects, as long as they don't change

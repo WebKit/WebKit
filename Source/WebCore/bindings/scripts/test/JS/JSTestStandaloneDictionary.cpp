@@ -58,7 +58,7 @@ template<> DictionaryImplName convertDictionary<DictionaryImplName>(ExecState& s
     }
     JSValue stringMemberValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "stringMember"));
     if (!stringMemberValue.isUndefined()) {
-        result.stringMember = convert<IDLDOMString>(state, stringMemberValue);
+        result.stringMember = convert<IDLDOMString>(state, stringMemberValue, StringConversionConfiguration::Normal);
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     return result;
