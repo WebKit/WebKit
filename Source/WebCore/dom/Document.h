@@ -420,13 +420,13 @@ public:
     String xmlVersion() const { return m_xmlVersion; }
     enum StandaloneStatus { StandaloneUnspecified, Standalone, NotStandalone };
     bool xmlStandalone() const { return m_xmlStandalone == Standalone; }
-    StandaloneStatus xmlStandaloneStatus() const { return static_cast<StandaloneStatus>(m_xmlStandalone); }
+    StandaloneStatus xmlStandaloneStatus() const { return m_xmlStandalone; }
     bool hasXMLDeclaration() const { return m_hasXMLDeclaration; }
 
     void setXMLEncoding(const String& encoding) { m_xmlEncoding = encoding; } // read-only property, only to be set from XMLDocumentParser
     WEBCORE_EXPORT ExceptionOr<void> setXMLVersion(const String&);
     WEBCORE_EXPORT void setXMLStandalone(bool);
-    void setHasXMLDeclaration(bool hasXMLDeclaration) { m_hasXMLDeclaration = hasXMLDeclaration ? 1 : 0; }
+    void setHasXMLDeclaration(bool hasXMLDeclaration) { m_hasXMLDeclaration = hasXMLDeclaration; }
 
     String documentURI() const { return m_documentURI; }
     WEBCORE_EXPORT void setDocumentURI(const String&);
@@ -1376,24 +1376,24 @@ private:
 
     bool shouldEnforceHTTP09Sandbox() const;
 
-    unsigned m_referencingNodeCount;
+    unsigned m_referencingNodeCount { 0 };
 
     const Ref<Settings> m_settings;
 
     std::unique_ptr<StyleResolver> m_userAgentShadowTreeStyleResolver;
-    bool m_hasNodesWithNonFinalStyle;
+    bool m_hasNodesWithNonFinalStyle { false };
     // But sometimes you need to ignore pending stylesheet count to
     // force an immediate layout when requested by JS.
-    bool m_ignorePendingStylesheets;
+    bool m_ignorePendingStylesheets { false };
 
     RefPtr<DOMWindow> m_domWindow;
     WeakPtr<Document> m_contextDocument;
 
     Ref<CachedResourceLoader> m_cachedResourceLoader;
     RefPtr<DocumentParser> m_parser;
-    unsigned m_activeParserCount;
+    unsigned m_activeParserCount { 0 };
 
-    bool m_wellFormed;
+    bool m_wellFormed { false };
 
     // Document URLs.
     URL m_url; // Document.URL: The URL from which this document was retrieved.
@@ -1421,13 +1421,13 @@ private:
 
     bool m_hasElementUsingStyleBasedEditability { false };
 
-    bool m_printing;
-    bool m_paginatedForScreen;
+    bool m_printing { false };
+    bool m_paginatedForScreen { false };
 
-    DocumentCompatibilityMode m_compatibilityMode;
-    bool m_compatibilityModeLocked; // This is cheaper than making setCompatibilityMode virtual.
+    DocumentCompatibilityMode m_compatibilityMode { DocumentCompatibilityMode::NoQuirksMode };
+    bool m_compatibilityModeLocked { false }; // This is cheaper than making setCompatibilityMode virtual.
 
-    Color m_textColor;
+    Color m_textColor { Color::black };
 
     bool m_focusNavigationStartingNodeIsRemoved;
     RefPtr<Node> m_focusNavigationStartingNode;
@@ -1443,9 +1443,9 @@ private:
     HashSet<NodeIterator*> m_nodeIterators;
     HashSet<Range*> m_ranges;
 
-    unsigned m_listenerTypes;
+    unsigned m_listenerTypes { 0 };
 
-    MutationObserverOptions m_mutationObserverTypes;
+    MutationObserverOptions m_mutationObserverTypes { 0 };
 
     std::unique_ptr<Style::Scope> m_styleScope;
     std::unique_ptr<ExtensionStyleSheets> m_extensionStyleSheets;
@@ -1458,22 +1458,22 @@ private:
     Color m_activeLinkColor;
     const std::unique_ptr<VisitedLinkState> m_visitedLinkState;
 
-    bool m_visuallyOrdered;
-    ReadyState m_readyState;
-    bool m_bParsing;
+    bool m_visuallyOrdered { false };
+    ReadyState m_readyState { Complete };
+    bool m_bParsing { false }; // FIXME: rename
 
     Timer m_styleRecalcTimer;
-    bool m_pendingStyleRecalcShouldForce;
-    bool m_inStyleRecalc;
-    bool m_closeAfterStyleRecalc;
+    bool m_pendingStyleRecalcShouldForce { false };
+    bool m_inStyleRecalc { false };
+    bool m_closeAfterStyleRecalc { false };
     bool m_inRenderTreeUpdate { false };
     unsigned m_lastStyleUpdateSizeForTesting { 0 };
 
-    bool m_gotoAnchorNeededAfterStylesheetsLoad;
-    bool m_isDNSPrefetchEnabled;
-    bool m_haveExplicitlyDisabledDNSPrefetch;
-    bool m_frameElementsShouldIgnoreScrolling;
-    SelectionRestorationMode m_updateFocusAppearanceRestoresSelection;
+    bool m_gotoAnchorNeededAfterStylesheetsLoad { false };
+    bool m_isDNSPrefetchEnabled { false };
+    bool m_haveExplicitlyDisabledDNSPrefetch { false };
+    bool m_frameElementsShouldIgnoreScrolling { false };
+    SelectionRestorationMode m_updateFocusAppearanceRestoresSelection { SelectionRestorationMode::SetDefault };
 
     // https://html.spec.whatwg.org/multipage/webappapis.html#ignore-destructive-writes-counter
     unsigned m_ignoreDestructiveWriteCount { 0 };
@@ -1492,18 +1492,18 @@ private:
     
     Timer m_updateFocusAppearanceTimer;
 
-    Element* m_cssTarget;
+    Element* m_cssTarget { nullptr };
 
     // FIXME: Merge these 2 variables into an enum. Also, FrameLoader::m_didCallImplicitClose
     // is almost a duplication of this data, so that should probably get merged in too.
     // FIXME: Document::m_processingLoadEvent and DocumentLoader::m_wasOnloadDispatched are roughly the same
     // and should be merged.
-    bool m_processingLoadEvent;
-    bool m_loadEventFinished;
+    bool m_processingLoadEvent { false };
+    bool m_loadEventFinished { false };
 
     RefPtr<SerializedScriptValue> m_pendingStateObject;
     MonotonicTime m_documentCreationTime;
-    bool m_overMinimumLayoutThreshold;
+    bool m_overMinimumLayoutThreshold { false };
     
     std::unique_ptr<ScriptRunner> m_scriptRunner;
     std::unique_ptr<ScriptModuleLoader> m_moduleLoader;
@@ -1517,14 +1517,14 @@ private:
 
     String m_xmlEncoding;
     String m_xmlVersion;
-    unsigned m_xmlStandalone : 2;
-    unsigned m_hasXMLDeclaration : 1;
+    StandaloneStatus m_xmlStandalone { StandaloneUnspecified };
+    bool m_hasXMLDeclaration { false };
 
     String m_contentLanguage;
 
     RefPtr<TextResourceDecoder> m_decoder;
 
-    InheritedBool m_designMode;
+    InheritedBool m_designMode { inherit };
 
     HashSet<LiveNodeList*> m_listsInvalidatedAtDocument;
     HashSet<HTMLCollection*> m_collectionsInvalidatedAtDocument;
@@ -1536,13 +1536,13 @@ private:
 
 #if ENABLE(DASHBOARD_SUPPORT)
     Vector<AnnotatedRegionValue> m_annotatedRegions;
-    bool m_hasAnnotatedRegions;
-    bool m_annotatedRegionsDirty;
+    bool m_hasAnnotatedRegions { false };
+    bool m_annotatedRegionsDirty { false };
 #endif
 
     HashMap<String, RefPtr<HTMLCanvasElement>> m_cssCanvasElements;
 
-    bool m_createRenderers;
+    bool m_createRenderers { true };
     PageCacheState m_pageCacheState { NotInPageCache };
 
     HashSet<Element*> m_documentSuspensionCallbackElements;
@@ -1563,7 +1563,7 @@ private:
 #endif
 
     HashMap<StringImpl*, Element*, ASCIICaseInsensitiveHash> m_elementsByAccessKey;
-    bool m_accessKeyMapValid;
+    bool m_accessKeyMapValid { false };
 
     DocumentOrderedMap m_imagesByUsemap;
 
@@ -1571,11 +1571,11 @@ private:
 
     DocumentClassFlags m_documentClasses;
 
-    bool m_isSynthesized;
-    bool m_isNonRenderedPlaceholder;
+    bool m_isSynthesized { false };
+    bool m_isNonRenderedPlaceholder { false };
 
-    bool m_sawElementsInKnownNamespaces;
-    bool m_isSrcdocDocument;
+    bool m_sawElementsInKnownNamespaces { false };
+    bool m_isSrcdocDocument { false };
 
     RenderPtr<RenderView> m_renderView;
     mutable DocumentEventQueue m_eventQueue;
@@ -1585,21 +1585,21 @@ private:
     HashSet<MediaCanStartListener*> m_mediaCanStartListeners;
 
 #if ENABLE(FULLSCREEN_API)
-    bool m_areKeysEnabledInFullScreen;
+    bool m_areKeysEnabledInFullScreen { false };
     RefPtr<Element> m_fullScreenElement;
     Vector<RefPtr<Element>> m_fullScreenElementStack;
-    RenderFullScreen* m_fullScreenRenderer;
+    RenderFullScreen* m_fullScreenRenderer { nullptr };
     Timer m_fullScreenChangeDelayTimer;
     Deque<RefPtr<Node>> m_fullScreenChangeEventTargetQueue;
     Deque<RefPtr<Node>> m_fullScreenErrorEventTargetQueue;
-    bool m_isAnimatingFullScreen;
+    bool m_isAnimatingFullScreen { false };
     LayoutRect m_savedPlaceholderFrameRect;
     std::unique_ptr<RenderStyle> m_savedPlaceholderRenderStyle;
 #endif
 
     HashSet<HTMLPictureElement*> m_viewportDependentPictures;
 
-    int m_loadEventDelayCount;
+    int m_loadEventDelayCount { 0 };
     Timer m_loadEventDelayTimer;
 
     ViewportArguments m_viewportArguments;
@@ -1611,15 +1611,15 @@ private:
 #endif
 
     RefPtr<MediaQueryMatcher> m_mediaQueryMatcher;
-    bool m_writeRecursionIsTooDeep;
-    unsigned m_writeRecursionDepth;
+    bool m_writeRecursionIsTooDeep { false };
+    unsigned m_writeRecursionDepth { 0 };
     
 #if ENABLE(TOUCH_EVENTS)
     std::unique_ptr<EventTargetSet> m_touchEventTargets;
 #endif
     std::unique_ptr<EventTargetSet> m_wheelEventTargets;
 
-    double m_lastHandledUserGestureTimestamp;
+    double m_lastHandledUserGestureTimestamp { 0 };
 
     void clearScriptedAnimationController();
     RefPtr<ScriptedAnimationController> m_scriptedAnimationController;
@@ -1648,7 +1648,7 @@ private:
     friend void setParserFeature(const String& key, const String& value, Document*, void* userData);
     void setIsTelephoneNumberParsingAllowed(bool);
 
-    bool m_isTelephoneNumberParsingAllowed;
+    bool m_isTelephoneNumberParsingAllowed { true };
 #endif
 
     Timer m_pendingTasksTimer;
@@ -1667,9 +1667,9 @@ private:
 
     void platformSuspendOrStopActiveDOMObjects();
 
-    bool m_scheduledTasksAreSuspended;
+    bool m_scheduledTasksAreSuspended { false };
     
-    bool m_visualUpdatesAllowed;
+    bool m_visualUpdatesAllowed { true };
     Timer m_visualUpdatesSuppressionTimer;
 
     RefPtr<NamedFlowCollection> m_namedFlows;
@@ -1680,14 +1680,14 @@ private:
     std::unique_ptr<DocumentSharedObjectPool> m_sharedObjectPool;
 
 #ifndef NDEBUG
-    bool m_didDispatchViewportPropertiesChanged;
+    bool m_didDispatchViewportPropertiesChanged { false };
 #endif
 
     typedef HashMap<AtomicString, std::unique_ptr<Locale>> LocaleIdentifierToLocaleMap;
     LocaleIdentifierToLocaleMap m_localeCache;
 
     RefPtr<Document> m_templateDocument;
-    Document* m_templateDocumentHost; // Manually managed weakref (backpointer from m_templateDocument).
+    Document* m_templateDocumentHost { nullptr }; // Manually managed weakref (backpointer from m_templateDocument).
 
     Ref<CSSFontSelector> m_fontSelector;
 
@@ -1699,13 +1699,13 @@ private:
     Timer m_cookieCacheExpiryTimer;
     String m_cachedDOMCookies;
     HashSet<RefPtr<Element>> m_associatedFormControls;
-    unsigned m_disabledFieldsetElementsCount;
+    unsigned m_disabledFieldsetElementsCount { 0 };
 
-    bool m_hasInjectedPlugInsScript;
+    bool m_hasInjectedPlugInsScript { false };
     bool m_renderTreeBeingDestroyed { false };
     bool m_hasPreparedForDestruction { false };
 
-    bool m_hasStyleWithViewportUnits;
+    bool m_hasStyleWithViewportUnits { false };
     bool m_isTimerThrottlingEnabled { false };
     bool m_isSuspended { false };
 
