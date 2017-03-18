@@ -1,3 +1,17 @@
+2017-03-18  Oleksandr Skachkov  <gskachkov@gmail.com>
+
+        [JSC] Remove unnecessary condition from needsDerivedConstructorInArrowFunctionLexicalEnvironment in BytecodeGenerator.cpp 
+        https://bugs.webkit.org/show_bug.cgi?id=169832
+
+        Reviewed by Mark Lam.
+
+        Remove already covered condition in needsDerivedConstructorInArrowFunctionLexicalEnvironment 
+        function. Condition isConstructor() && constructorKind() == ConstructorKind::Extends is already
+        isClassContext.
+
+         * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::needsDerivedConstructorInArrowFunctionLexicalEnvironment):
+
 2017-03-18  Chris Dumez  <cdumez@apple.com>
 
         Allow setting the prototype of cross-origin objects, as long as they don't change

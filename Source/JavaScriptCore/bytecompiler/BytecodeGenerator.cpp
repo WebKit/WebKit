@@ -1028,11 +1028,8 @@ void BytecodeGenerator::initializeDefaultParameterValuesAndSetupFunctionScopeSta
 
 bool BytecodeGenerator::needsDerivedConstructorInArrowFunctionLexicalEnvironment()
 {
-    if ((isConstructor() && constructorKind() == ConstructorKind::Extends) || m_codeBlock->isClassContext()) {
-        if (isSuperUsedInInnerArrowFunction())
-            return true;
-    }
-    return false;
+    ASSERT(m_codeBlock->isClassContext() || !(isConstructor() && constructorKind() == ConstructorKind::Extends));
+    return m_codeBlock->isClassContext() && isSuperUsedInInnerArrowFunction();
 }
 
 void BytecodeGenerator::initializeArrowFunctionContextScopeIfNeeded(SymbolTable* functionSymbolTable, bool canReuseLexicalEnvironment)
