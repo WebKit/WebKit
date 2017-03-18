@@ -1,3 +1,11 @@
+2017-03-17  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Remove TestExpectation for a test that is no longer in the tree.
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2017-03-17  Dean Jackson  <dino@apple.com>
 
         MediaQueryList instances do not update for `prefers-reduced-motion`
