@@ -1,0 +1,16 @@
+Blocked access to external URL http://www.localhost:8801/common/blank.html
+
+
+FAIL Cross-origin: the prototype is null assert_equals: expected null but got object "[object WindowPrototype]"
+PASS Cross-origin: setting the prototype to an empty object via Object.setPrototypeOf should throw a TypeError 
+FAIL Cross-origin: setting the prototype to an empty object via __proto__ should throw a "SecurityError" DOMException assert_throws: function "function () {
+      target.__proto__ = newValue;
+    }" threw object "TypeError: Cannot set prototype of this object" that is not a DOMException SecurityError: property "code" is equal to undefined, expected 18
+PASS Cross-origin: setting the prototype to an empty object via Reflect.setPrototypeOf should return false 
+FAIL Cross-origin: the prototype must still be null assert_equals: expected null but got object "[object WindowPrototype]"
+FAIL Cross-origin: setting the prototype to null via Object.setPrototypeOf should not throw Cannot set prototype of this object
+FAIL Cross-origin: setting the prototype to null via __proto__ should throw a "SecurityError" since it ends up in CrossOriginGetOwnProperty assert_throws: function "function () {
+        target.__proto__ = newValue;
+      }" threw object "TypeError: Cannot set prototype of this object" that is not a DOMException SecurityError: property "code" is equal to undefined, expected 18
+FAIL Cross-origin: setting the prototype to null via Reflect.setPrototypeOf should return true assert_true: expected true got false
+

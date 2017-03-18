@@ -163,16 +163,6 @@ bool JSLocation::defineOwnProperty(JSObject* object, ExecState* exec, PropertyNa
     return Base::defineOwnProperty(object, exec, propertyName, descriptor, throwException);
 }
 
-bool JSLocation::setPrototype(JSObject*, ExecState* exec, JSValue, bool shouldThrowIfCantSet)
-{
-    auto scope = DECLARE_THROW_SCOPE(exec->vm());
-
-    if (shouldThrowIfCantSet)
-        throwTypeError(exec, scope, ASCIILiteral("Cannot set prototype of this object"));
-
-    return false;
-}
-
 JSValue JSLocation::getPrototype(JSObject* object, ExecState* exec)
 {
     JSLocation* thisObject = jsCast<JSLocation*>(object);

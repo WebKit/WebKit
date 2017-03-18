@@ -33,6 +33,11 @@
             shouldThrowErrorName("protoSetter.call(targetWindow.location, Array.prototype)", "TypeError");
             shouldBeFalse("targetWindow.location instanceof Array");
 
+            shouldBeNull("Object.getPrototypeOf(targetWindow)");
+            shouldNotThrow("Object.setPrototypeOf(targetWindow, null)");
+            shouldBeNull("Object.getPrototypeOf(targetWindow.location)");
+            shouldNotThrow("Object.setPrototypeOf(targetWindow.location, null)");
+
             finishJSTest();
         }
     </script>

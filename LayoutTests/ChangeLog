@@ -1,3 +1,27 @@
+2017-03-18  Chris Dumez  <cdumez@apple.com>
+
+        Allow setting the prototype of cross-origin objects, as long as they don't change
+        https://bugs.webkit.org/show_bug.cgi?id=169787
+
+        Reviewed by Mark Lam.
+
+        * http/tests/security/cross-frame-access-object-setPrototypeOf-expected.txt:
+        * http/tests/security/cross-frame-access-object-setPrototypeOf.html:
+        * js/dom/setPrototypeOf-location-window-expected.txt:
+        * js/dom/setPrototypeOf-location-window.html:
+        Add checks for setting prototype of window and location objects to the same value
+        to make sure it does not throw, both in the same origin and the cross origin
+        cases.
+
+        * fast/dom/Window/window-custom-prototype-crash-expected.txt:
+        * http/tests/security/xss-DENIED-regular-propterty-with-iframe-proto-expected.txt:
+        * js/object-literal-shorthand-construction-expected.txt:
+        Rebaseline tests now that the exception message is a bit different.
+
+        * js/script-tests/prototype-assignment.js:
+        Remove special casing for Window, it now behaves like a regular immutable prototype
+        exotic object.
+
 2017-03-17  Youenn Fablet  <youenn@apple.com>
 
         Implement incoming webrtc data based on tracksCurr

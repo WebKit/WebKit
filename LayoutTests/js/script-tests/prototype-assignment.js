@@ -151,13 +151,6 @@ function setImmutablePrototype(result, currentProto, newProto) {
     result.exception = CannotSetPrototypeOfImmutablePrototypeObject;
 }
 
-// HTML spec: 7.4.2 [[SetPrototypeOf]] ( V )
-// https://html.spec.whatwg.org/#windowproxy-setprototypeof
-function windowProxySetPrototypeOf(result, currentProto, newProto) {
-    result.success = false;
-    result.exception = CannotSetPrototypeOfThisObject;
-}
-
 
 var count = 0;
 function initSetterExpectation(target, newProto) {
@@ -346,7 +339,7 @@ if (this.testGlobal) {
     targets.push({
         name: inBrowser ? "window" : "global",
         value: () => global,
-        setPrototypeOf: windowProxySetPrototypeOf
+        setPrototypeOf: setImmutablePrototype
     });
 }
 if (this.testWindowProtos) {

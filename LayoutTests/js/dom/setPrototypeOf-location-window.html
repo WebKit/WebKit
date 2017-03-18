@@ -30,6 +30,10 @@ shouldBe("Object.getPrototypeOf(window.location)", "Location.prototype");
 shouldBe("Object.getPrototypeOf(window.location)", "Location.prototype");
 shouldThrowErrorName("window.location.__proto__ = Node.prototype", "TypeError");
 shouldBe("Object.getPrototypeOf(window.location)", "Location.prototype");
+
+shouldNotThrow("Object.setPrototypeOf(window, window.__proto__)");
+shouldNotThrow("Object.setPrototypeOf(window.location, window.location.__proto__)");
+
 </script>
 <script src="../../resources/js-test-post.js"></script>
 </body>

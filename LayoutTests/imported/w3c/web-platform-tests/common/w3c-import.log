@@ -23,6 +23,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/common/canvas-tests.css
 /LayoutTests/imported/w3c/web-platform-tests/common/canvas-tests.js
 /LayoutTests/imported/w3c/web-platform-tests/common/css-red.txt
+/LayoutTests/imported/w3c/web-platform-tests/common/domain-setter.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/common/dummy.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/common/dummy.xml
 /LayoutTests/imported/w3c/web-platform-tests/common/entities.json
@@ -34,6 +35,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/common/redirect.py
 /LayoutTests/imported/w3c/web-platform-tests/common/reftest-wait.js
 /LayoutTests/imported/w3c/web-platform-tests/common/stringifiers.js
+/LayoutTests/imported/w3c/web-platform-tests/common/test-setting-immutable-prototype.js
 /LayoutTests/imported/w3c/web-platform-tests/common/text-plain.txt
 /LayoutTests/imported/w3c/web-platform-tests/common/utils.js
 /LayoutTests/imported/w3c/web-platform-tests/common/vendor-prefix.js

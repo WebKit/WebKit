@@ -1,3 +1,38 @@
+2017-03-18  Chris Dumez  <cdumez@apple.com>
+
+        Allow setting the prototype of cross-origin objects, as long as they don't change
+        https://bugs.webkit.org/show_bug.cgi?id=169787
+
+        Reviewed by Mark Lam.
+
+        Import test coverage from W3C web-platform-tests.
+
+        * web-platform-tests/common/domain-setter.sub.html: Added.
+        * web-platform-tests/common/test-setting-immutable-prototype.js: Added.
+        (self.testSettingImmutablePrototypeToNewValueOnly.test):
+        (self.testSettingImmutablePrototypeToNewValueOnly):
+        (self.testSettingImmutablePrototype.else.test):
+        (self.testSettingImmutablePrototype):
+        * web-platform-tests/common/w3c-import.log:
+        * web-platform-tests/html/browsers/history/the-location-interface/location-prototype-setting-cross-origin-domain.sub-expected.txt: Added.
+        * web-platform-tests/html/browsers/history/the-location-interface/location-prototype-setting-cross-origin-domain.sub.html: Added.
+        * web-platform-tests/html/browsers/history/the-location-interface/location-prototype-setting-goes-cross-origin-domain.sub-expected.txt: Added.
+        * web-platform-tests/html/browsers/history/the-location-interface/location-prototype-setting-goes-cross-origin-domain.sub.html: Added.
+        * web-platform-tests/html/browsers/history/the-location-interface/location-prototype-setting-same-origin-domain.sub-expected.txt: Added.
+        * web-platform-tests/html/browsers/history/the-location-interface/location-prototype-setting-same-origin-domain.sub.html: Added.
+        * web-platform-tests/html/browsers/history/the-location-interface/location-prototype-setting-same-origin-expected.txt: Added.
+        * web-platform-tests/html/browsers/history/the-location-interface/location-prototype-setting-same-origin.html: Added.
+        * web-platform-tests/html/browsers/history/the-location-interface/w3c-import.log:
+        * web-platform-tests/html/browsers/the-windowproxy-exotic-object/w3c-import.log: Added.
+        * web-platform-tests/html/browsers/the-windowproxy-exotic-object/windowproxy-prototype-setting-cross-origin-domain.sub-expected.txt: Added.
+        * web-platform-tests/html/browsers/the-windowproxy-exotic-object/windowproxy-prototype-setting-cross-origin-domain.sub.html: Added.
+        * web-platform-tests/html/browsers/the-windowproxy-exotic-object/windowproxy-prototype-setting-goes-cross-origin-domain.sub-expected.txt: Added.
+        * web-platform-tests/html/browsers/the-windowproxy-exotic-object/windowproxy-prototype-setting-goes-cross-origin-domain.sub.html: Added.
+        * web-platform-tests/html/browsers/the-windowproxy-exotic-object/windowproxy-prototype-setting-same-origin-domain.sub-expected.txt: Added.
+        * web-platform-tests/html/browsers/the-windowproxy-exotic-object/windowproxy-prototype-setting-same-origin-domain.sub.html: Added.
+        * web-platform-tests/html/browsers/the-windowproxy-exotic-object/windowproxy-prototype-setting-same-origin-expected.txt: Added.
+        * web-platform-tests/html/browsers/the-windowproxy-exotic-object/windowproxy-prototype-setting-same-origin.html: Added.
+
 2017-03-16  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebCrypto] Support SPKI/PKCS8 for Elliptic Curve

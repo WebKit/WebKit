@@ -1642,13 +1642,19 @@ void JSObject::setPrototypeDirect(VM& vm, JSValue prototype)
 bool JSObject::setPrototypeWithCycleCheck(VM& vm, ExecState* exec, JSValue prototype, bool shouldThrowIfCantSet)
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (this->structure(vm)->isImmutablePrototypeExoticObject()) {
+        // This implements https://tc39.github.io/ecma262/#sec-set-immutable-prototype.
+        if (this->getPrototype(vm, exec) == prototype)
+            return true;
+
+        return typeError(exec, scope, shouldThrowIfCantSet, ASCIILiteral("Cannot set prototype of immutable prototype object"));
+    }
+
     ASSERT(methodTable(vm)->toThis(this, exec, NotStrictMode) == this);
 
     if (this->getPrototypeDirect() == prototype)
         return true;
-
-    if (this->structure(vm)->isImmutablePrototypeExoticObject())
-        return typeError(exec, scope, shouldThrowIfCantSet, ASCIILiteral("Cannot set prototype of immutable prototype object"));
 
     bool isExtensible = this->isExtensible(exec);
     RETURN_IF_EXCEPTION(scope, false);

@@ -432,7 +432,7 @@ public:
         
 public:
     typedef JSSegmentedVariableObject Base;
-    static const unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable | OverridesGetOwnPropertySlot | OverridesGetPropertyNames | OverridesToThis;
+    static const unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable | OverridesGetOwnPropertySlot | OverridesGetPropertyNames | OverridesToThis | IsImmutablePrototypeExoticObject;
 
     JS_EXPORT_PRIVATE static JSGlobalObject* create(VM&, Structure*);
 
