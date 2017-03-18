@@ -25,6 +25,12 @@ testText("<div><br>", "abc", "abc", "Existing <br> deleted");
 testHTML("<div>", "", "", "Assigning the empty string");
 testHTML("<div>", null, "", "Assigning null");
 testHTML("<div>", undefined, "undefined", "Assigning undefined");
+testHTML("<div>", "\rabc", "<br>abc", "Start with CR");
+testHTML("<div>", "\nabc", "<br>abc", "Start with LF");
+testHTML("<div>", "\r\nabc", "<br>abc", "Start with CRLF");
+testHTML("<div>", "abc\r", "abc<br>", "End with CR");
+testHTML("<div>", "abc\n", "abc<br>", "End with LF");
+testHTML("<div>", "abc\r\n", "abc<br>", "End with CRLF");
 
 // Setting innerText on these should not throw
 ["area", "base", "basefont", "bgsound", "br", "col", "embed", "frame", "hr",

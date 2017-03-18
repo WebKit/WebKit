@@ -15,6 +15,7 @@ PASS Internal whitespace preserved ("<pre>abc  def")
 PASS \n preserved ("<pre>abc\ndef") 
 PASS \r converted to newline ("<pre>abc\rdef") 
 PASS \t preserved ("<pre>abc\tdef") 
+FAIL Two <pre> siblings ("<div><pre>abc</pre><pre>def</pre>") assert_equals: expected "abc\ndef" but got "abc\ndef\n"
 PASS Leading whitespace preserved ("<div style='white-space:pre'> abc") 
 PASS Trailing whitespace preserved ("<div style='white-space:pre'>abc ") 
 PASS Internal whitespace preserved ("<div style='white-space:pre'>abc  def") 

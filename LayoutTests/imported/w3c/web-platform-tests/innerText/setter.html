@@ -36,6 +36,13 @@ function testHTML(context, plain, expectedHTML, msg) {
   test(function(){
     var e = setupTest(context, plain)[0];
     assert_equals(e.innerHTML, expectedHTML);
+    var child = e.firstChild;
+    while (child) {
+      if (child.nodeType === Node.TEXT_NODE) {
+        assert_not_equals(child.data, "", "Should not have empty text nodes");
+      }
+      child = child.nextSibling;
+    }
   }, msg);
 }
 </script>

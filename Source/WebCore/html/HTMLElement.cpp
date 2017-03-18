@@ -451,7 +451,10 @@ static Ref<DocumentFragment> textToFragment(Document& document, const String& te
                 break;
         }
 
-        fragment->appendChild(Text::create(document, text.substring(start, i - start)));
+        // If text is not the empty string, then append a new Text node whose data is text and node document is document to fragment.
+        if (i > start)
+            fragment->appendChild(Text::create(document, text.substring(start, i - start)));
+
         if (i == length)
             break;
 

@@ -27,6 +27,12 @@ PASS Existing <br> deleted
 PASS Assigning the empty string 
 PASS Assigning null 
 PASS Assigning undefined 
+PASS Start with CR 
+PASS Start with LF 
+PASS Start with CRLF 
+PASS End with CR 
+PASS End with LF 
+PASS End with CRLF 
 PASS innerText on <area> element 
 PASS innerText on <base> element 
 PASS innerText on <basefont> element 

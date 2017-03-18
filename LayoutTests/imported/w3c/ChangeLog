@@ -1,5 +1,20 @@
 2017-03-18  Chris Dumez  <cdumez@apple.com>
 
+        innerText setter inserts empty text node if value starts with newline
+        https://bugs.webkit.org/show_bug.cgi?id=169600
+
+        Reviewed by Ryosuke Niwa.
+
+        Re-sync tests with upstream to gain test coverage.
+
+        * web-platform-tests/innerText/getter-expected.txt:
+        * web-platform-tests/innerText/getter-tests.js:
+        * web-platform-tests/innerText/setter-expected.txt:
+        * web-platform-tests/innerText/setter-tests.js:
+        * web-platform-tests/innerText/setter.html:
+
+2017-03-18  Chris Dumez  <cdumez@apple.com>
+
         Allow setting the prototype of cross-origin objects, as long as they don't change
         https://bugs.webkit.org/show_bug.cgi?id=169787
 
