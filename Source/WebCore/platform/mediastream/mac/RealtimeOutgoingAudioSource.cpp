@@ -51,6 +51,11 @@ RealtimeOutgoingAudioSource::RealtimeOutgoingAudioSource(Ref<RealtimeMediaSource
     m_audioSource->addObserver(*this);
 }
 
+void RealtimeOutgoingAudioSource::stop()
+{
+    m_audioSource->removeObserver(*this);
+}
+
 void RealtimeOutgoingAudioSource::sourceMutedChanged()
 {
     m_muted = m_audioSource->muted();

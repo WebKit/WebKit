@@ -164,6 +164,11 @@ void LibWebRTCPeerConnectionBackend::doCreateAnswer(RTCAnswerOptions&&)
 
 void LibWebRTCPeerConnectionBackend::doStop()
 {
+    for (auto& source : m_audioSources)
+        source->stop();
+    for (auto& source : m_videoSources)
+        source->stop();
+
     m_endpoint->stop();
 
     m_remoteStreams.clear();

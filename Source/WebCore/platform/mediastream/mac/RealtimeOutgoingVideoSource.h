@@ -43,6 +43,9 @@ namespace WebCore {
 class RealtimeOutgoingVideoSource final : public ThreadSafeRefCounted<RealtimeOutgoingVideoSource>, public webrtc::VideoTrackSourceInterface, private RealtimeMediaSource::Observer {
 public:
     static Ref<RealtimeOutgoingVideoSource> create(Ref<RealtimeMediaSource>&& videoSource) { return adoptRef(*new RealtimeOutgoingVideoSource(WTFMove(videoSource))); }
+    ~RealtimeOutgoingVideoSource() { stop(); }
+
+    void stop();
 
     int AddRef() const final { ref(); return refCount(); }
     int Release() const final { deref(); return refCount(); }

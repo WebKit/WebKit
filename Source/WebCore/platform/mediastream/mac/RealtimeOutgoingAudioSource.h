@@ -46,9 +46,10 @@ namespace WebCore {
 class RealtimeOutgoingAudioSource final : public ThreadSafeRefCounted<RealtimeOutgoingAudioSource>, public webrtc::AudioSourceInterface, private RealtimeMediaSource::Observer {
 public:
     static Ref<RealtimeOutgoingAudioSource> create(Ref<RealtimeMediaSource>&& audioSource) { return adoptRef(*new RealtimeOutgoingAudioSource(WTFMove(audioSource))); }
-    ~RealtimeOutgoingAudioSource() { m_audioSource->removeObserver(*this); }
+    ~RealtimeOutgoingAudioSource() { stop(); }
 
     void setTrack(rtc::scoped_refptr<webrtc::AudioTrackInterface>&& track) { m_track = WTFMove(track); }
+    void stop();
 
 private:
     explicit RealtimeOutgoingAudioSource(Ref<RealtimeMediaSource>&&);

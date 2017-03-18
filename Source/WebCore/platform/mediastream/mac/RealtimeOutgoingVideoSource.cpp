@@ -46,6 +46,11 @@ RealtimeOutgoingVideoSource::RealtimeOutgoingVideoSource(Ref<RealtimeMediaSource
     m_videoSource->addObserver(*this);
 }
 
+void RealtimeOutgoingVideoSource::stop()
+{
+    m_videoSource->removeObserver(*this);
+}
+
 void RealtimeOutgoingVideoSource::sourceMutedChanged()
 {
     m_muted = m_videoSource->muted();
