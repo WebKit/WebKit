@@ -1,3 +1,21 @@
+2017-03-17  Devin Rousso  <webkit@devinrousso.com>
+
+        Web Inspector: wrong filename when saving resource from ResourceImageContentView
+        https://bugs.webkit.org/show_bug.cgi?id=54454
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/ResourceContentView.js:
+        (WebInspector.ResourceContentView.prototype.get supportsSave):
+        (WebInspector.ResourceContentView.prototype.get saveData):
+        * UserInterface/Views/TextResourceContentView.js:
+        (WebInspector.TextResourceContentView.prototype.get supportsSave): Deleted.
+        Add save data getter to the parent class, so that both Images and Fonts can be saved.
+
+        * UserInterface/Views/Resource.js:
+        (WebInspector.Resource.prototype.canRequestContent):
+        Drive-by: remove unused function.
+
 2017-03-16  Devin Rousso  <webkit@devinrousso.com>
 
         Web Inspector: memory category timelines would look better with ruler tick-aligned guides

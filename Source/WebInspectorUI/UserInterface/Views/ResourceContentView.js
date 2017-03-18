@@ -62,6 +62,16 @@ WebInspector.ResourceContentView = class ResourceContentView extends WebInspecto
         return this._resource;
     }
 
+    get supportsSave()
+    {
+        return this._resource.finished;
+    }
+
+    get saveData()
+    {
+        return {url: this._resource.url, content: this._resource.content};
+    }
+
     contentAvailable(content, base64Encoded)
     {
         // Implemented by subclasses.

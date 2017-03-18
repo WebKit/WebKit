@@ -126,11 +126,6 @@ WebInspector.TextResourceContentView = class TextResourceContentView extends Web
         this._textEditor.close();
     }
 
-    get supportsSave()
-    {
-        return true;
-    }
-
     get saveData()
     {
         return {url: this.resource.url, content: this._textEditor.string};

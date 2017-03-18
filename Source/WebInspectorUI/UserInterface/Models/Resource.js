@@ -572,11 +572,6 @@ WebInspector.Resource = class Resource extends WebInspector.SourceCode
             this._connectionIdentifier = WebInspector.Resource.connectionIdentifierFromPayload(metrics.connectionIdentifier);
     }
 
-    canRequestContent()
-    {
-        return this._finished;
-    }
-
     requestContentFromBackend()
     {
         // If we have the requestIdentifier we can get the actual response for this specific resource.
