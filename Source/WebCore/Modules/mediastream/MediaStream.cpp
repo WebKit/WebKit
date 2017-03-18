@@ -207,6 +207,12 @@ void MediaStream::didRemoveTrack(MediaStreamTrackPrivate& trackPrivate)
     internalRemoveTrack(trackPrivate.id(), StreamModifier::Platform);
 }
 
+void MediaStream::addTrackFromPlatform(Ref<MediaStreamTrack>&& track)
+{
+    m_private->addTrack(&track->privateTrack(), MediaStreamPrivate::NotifyClientOption::Notify);
+    internalAddTrack(WTFMove(track), StreamModifier::Platform);
+}
+
 bool MediaStream::internalAddTrack(Ref<MediaStreamTrack>&& trackToAdd, StreamModifier streamModifier)
 {
     auto result = m_trackSet.add(trackToAdd->id(), WTFMove(trackToAdd));

@@ -13,7 +13,6 @@
         <script>
 video = document.getElementById("video");
 canvas = document.getElementById("canvas");
-// FIXME: We should use tracks
 
 function testImage()
 {
@@ -52,7 +51,13 @@ promise_test((test) => {
             createConnections((firstConnection) => {
                 firstConnection.addStream(stream);
             }, (secondConnection) => {
-                secondConnection.onaddstream = (streamEvent) => { resolve(streamEvent.stream); };
+                secondConnection.ontrack = (trackEvent) => {
+                    assert_true(trackEvent.track instanceof MediaStreamTrack);
+                    assert_true(trackEvent.receiver instanceof RTCRtpReceiver);
+                    assert_true(Array.isArray(trackEvent.streams), "Array.isArray() should return true")
+                    assert_true(Object.isFrozen(trackEvent.streams), "Object.isFrozen() should return true")
+                    resolve(trackEvent.streams[0]);
+                };
             });
             setTimeout(() => reject("Test timed out"), 5000);
         });

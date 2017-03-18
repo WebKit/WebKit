@@ -39,6 +39,8 @@ class LibWebRTCMediaEndpoint;
 class RTCRtpReceiver;
 class RTCSessionDescription;
 class RTCStatsReport;
+class RealtimeIncomingAudioSource;
+class RealtimeIncomingVideoSource;
 class RealtimeOutgoingAudioSource;
 class RealtimeOutgoingVideoSource;
 
@@ -67,9 +69,7 @@ private:
     RefPtr<RTCSessionDescription> currentRemoteDescription() const final;
     RefPtr<RTCSessionDescription> pendingRemoteDescription() const final;
 
-    void notifyAddedTrack(RTCRtpSender&) final;
     // FIXME: API to implement for real
-    Vector<RefPtr<MediaStream>> getRemoteStreams() const final { return { }; }
     void replaceTrack(RTCRtpSender&, Ref<MediaStreamTrack>&&, DOMPromise<void>&&) final { }
 
     void emulatePlatformEvent(const String&) final { }
@@ -82,15 +82,35 @@ private:
     void getStatsSucceeded(const DeferredPromise&, Ref<RTCStatsReport>&&);
     void getStatsFailed(const DeferredPromise&, Exception&&);
 
+    Vector<RefPtr<MediaStream>> getRemoteStreams() const final { return m_remoteStreams; }
+    void removeRemoteStream(MediaStream*);
+    void addRemoteStream(Ref<MediaStream>&&);
+
+    void notifyAddedTrack(RTCRtpSender&) final;
+
+    struct VideoReceiver {
+        Ref<RTCRtpReceiver> receiver;
+        Ref<RealtimeIncomingVideoSource> source;
+    };
+    struct AudioReceiver {
+        Ref<RTCRtpReceiver> receiver;
+        Ref<RealtimeIncomingAudioSource> source;
+    };
+    VideoReceiver videoReceiver(String&& trackId);
+    AudioReceiver audioReceiver(String&& trackId);
+
 private:
     Ref<LibWebRTCMediaEndpoint> m_endpoint;
     bool m_isLocalDescriptionSet { false };
     bool m_isRemoteDescriptionSet { false };
 
+    // FIXME: Make m_remoteStreams a Vector of Ref.
+    Vector<RefPtr<MediaStream>> m_remoteStreams;
     Vector<std::unique_ptr<webrtc::IceCandidateInterface>> m_pendingCandidates;
     Vector<Ref<RealtimeOutgoingAudioSource>> m_audioSources;
     Vector<Ref<RealtimeOutgoingVideoSource>> m_videoSources;
     HashMap<const DeferredPromise*, Ref<DeferredPromise>> m_statsPromises;
+    Vector<Ref<RTCRtpReceiver>> m_pendingReceivers;
 };
 
 } // namespace WebCore

@@ -130,6 +130,15 @@ void RealtimeIncomingAudioSource::stopProducingData()
         m_audioTrack->RemoveSink(this);
 }
 
+void RealtimeIncomingAudioSource::setSourceTrack(rtc::scoped_refptr<webrtc::AudioTrackInterface>&& track)
+{
+    ASSERT(!m_audioTrack);
+    ASSERT(track);
+
+    m_audioTrack = WTFMove(track);
+    if (m_isProducingData)
+        m_audioTrack->AddSink(this);
+}
 
 RefPtr<RealtimeMediaSourceCapabilities> RealtimeIncomingAudioSource::capabilities() const
 {

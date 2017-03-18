@@ -82,6 +82,17 @@ void RealtimeIncomingVideoSource::startProducingData()
         m_videoTrack->AddOrUpdateSink(this, rtc::VideoSinkWants());
 }
 
+void RealtimeIncomingVideoSource::setSourceTrack(rtc::scoped_refptr<webrtc::VideoTrackInterface>&& track)
+{
+    ASSERT(!m_videoTrack);
+    ASSERT(track);
+
+    m_muted = false;
+    m_videoTrack = track;
+    if (m_isProducingData)
+        m_videoTrack->AddOrUpdateSink(this, rtc::VideoSinkWants());
+}
+
 void RealtimeIncomingVideoSource::stopProducingData()
 {
     if (!m_isProducingData)

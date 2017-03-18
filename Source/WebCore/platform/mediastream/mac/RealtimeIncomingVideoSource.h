@@ -49,6 +49,8 @@ public:
     static Ref<RealtimeIncomingVideoSource> create(rtc::scoped_refptr<webrtc::VideoTrackInterface>&&, String&&);
     ~RealtimeIncomingVideoSource() { stopProducingData(); }
 
+    void setSourceTrack(rtc::scoped_refptr<webrtc::VideoTrackInterface>&&);
+
 private:
     RealtimeIncomingVideoSource(rtc::scoped_refptr<webrtc::VideoTrackInterface>&&, String&&, CFMutableDictionaryRef);
 

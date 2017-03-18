@@ -48,6 +48,8 @@ class RealtimeIncomingAudioSource final : public RealtimeMediaSource, private we
 public:
     static Ref<RealtimeIncomingAudioSource> create(rtc::scoped_refptr<webrtc::AudioTrackInterface>&&, String&&);
 
+    void setSourceTrack(rtc::scoped_refptr<webrtc::AudioTrackInterface>&&);
+
 private:
     RealtimeIncomingAudioSource(rtc::scoped_refptr<webrtc::AudioTrackInterface>&&, String&&);
     ~RealtimeIncomingAudioSource();

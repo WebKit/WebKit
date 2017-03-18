@@ -102,6 +102,8 @@ public:
     void addObserver(Observer*);
     void removeObserver(Observer*);
 
+    void addTrackFromPlatform(Ref<MediaStreamTrack>&&);
+
 protected:
     MediaStream(ScriptExecutionContext&, const MediaStreamTrackVector&);
     MediaStream(ScriptExecutionContext&, RefPtr<MediaStreamPrivate>&&);
