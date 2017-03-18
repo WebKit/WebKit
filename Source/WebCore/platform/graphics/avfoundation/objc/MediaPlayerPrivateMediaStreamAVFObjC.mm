@@ -98,9 +98,6 @@ using namespace WebCore;
 - (void)invalidate
 {
     [self stopObservingLayers];
-
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
-
     _parent = nullptr;
 }
 
@@ -134,13 +131,16 @@ using namespace WebCore;
     UNUSED_PARAM(keyPath);
     ASSERT(_parent);
 
+    if (!_parent)
+        return;
+
     if ([object isKindOfClass:getAVSampleBufferDisplayLayerClass()]) {
         RetainPtr<AVSampleBufferDisplayLayer> layer = (AVSampleBufferDisplayLayer *)object;
         ASSERT(layer.get() == _parent->displayLayer());
 
         if ([keyPath isEqualToString:@"status"]) {
             RetainPtr<NSNumber> status = [change valueForKey:NSKeyValueChangeNewKey];
-            callOnMainThread([protectedSelf = WTFMove(self), layer = WTFMove(layer), status = WTFMove(status)] {
+            callOnMainThread([protectedSelf = RetainPtr<WebAVSampleBufferStatusChangeListener>(self), layer = WTFMove(layer), status = WTFMove(status)] {
                 if (!protectedSelf->_parent)
                     return;
 
@@ -151,7 +151,7 @@ using namespace WebCore;
 
         if ([keyPath isEqualToString:@"error"]) {
             RetainPtr<NSNumber> status = [change valueForKey:NSKeyValueChangeNewKey];
-            callOnMainThread([protectedSelf = WTFMove(self), layer = WTFMove(layer), status = WTFMove(status)] {
+            callOnMainThread([protectedSelf = RetainPtr<WebAVSampleBufferStatusChangeListener>(self), layer = WTFMove(layer), status = WTFMove(status)] {
                 if (!protectedSelf->_parent)
                     return;
 
@@ -166,7 +166,7 @@ using namespace WebCore;
 
     if ((CALayer *)object == _parent->backgroundLayer()) {
         if ([keyPath isEqualToString:@"bounds"]) {
-            callOnMainThread([protectedSelf = WTFMove(self)] {
+            callOnMainThread([protectedSelf = RetainPtr<WebAVSampleBufferStatusChangeListener>(self)] {
                 if (!protectedSelf->_parent)
                     return;
 
@@ -200,6 +200,9 @@ MediaPlayerPrivateMediaStreamAVFObjC::MediaPlayerPrivateMediaStreamAVFObjC(Media
 MediaPlayerPrivateMediaStreamAVFObjC::~MediaPlayerPrivateMediaStreamAVFObjC()
 {
     LOG(Media, "MediaPlayerPrivateMediaStreamAVFObjC::~MediaPlayerPrivateMediaStreamAVFObjC(%p)", this);
+
+    [m_statusChangeListener invalidate];
+
     for (const auto& track : m_audioTrackMap.values())
         track->pause();
 
@@ -211,8 +214,6 @@ MediaPlayerPrivateMediaStreamAVFObjC::~MediaPlayerPrivateMediaStreamAVFObjC()
     }
 
     destroyLayers();
-
-    [m_statusChangeListener invalidate];
 
     m_audioTrackMap.clear();
     m_videoTrackMap.clear();
@@ -498,9 +499,6 @@ void MediaPlayerPrivateMediaStreamAVFObjC::ensureLayers()
 
 void MediaPlayerPrivateMediaStreamAVFObjC::destroyLayers()
 {
-    if (!m_sampleBufferDisplayLayer)
-        return;
-
     [m_statusChangeListener stopObservingLayers];
     if (m_sampleBufferDisplayLayer) {
         m_pendingVideoSampleQueue.clear();
