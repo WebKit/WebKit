@@ -981,6 +981,9 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
     {
         this._editing = false;
 
+        if (!newText.trim())
+            element.remove();
+
         if (!moveDirection && newText === oldText)
             return;
 

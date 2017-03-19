@@ -1,5 +1,16 @@
 2017-03-18  Devin Rousso  <webkit@devinrousso.com>
 
+        Web Inspector: Empty attribute added to a DOM tree outline element should not add whitespace within the tag
+        https://bugs.webkit.org/show_bug.cgi?id=139623
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/DOMTreeElement.js:
+        (WebInspector.DOMTreeElement.prototype._attributeEditingCommitted):
+        If the `newText` after editing has no content, remove the element for that attribute.
+
+2017-03-18  Devin Rousso  <webkit@devinrousso.com>
+
         Web Inspector: add keyboard shortcut to clear timeline records
         https://bugs.webkit.org/show_bug.cgi?id=132485
 
