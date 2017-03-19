@@ -27,7 +27,14 @@
     position: absolute;
     float: none;
     left: 1px;
-    margin: 0;
+}
+
+body[dir=ltr] .tree-outline .item.call-frame .status {
+    margin-left: 0;
+}
+
+body[dir=rtl] .tree-outline .item.call-frame .status {
+    margin-right: 0;
 }
 
 .tree-outline .item.call-frame .status > .status-image {

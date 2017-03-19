@@ -1,3 +1,15 @@
+2017-03-19  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: REGRESSION (r212910): Active call frame status icon has incorrect left margin
+        https://bugs.webkit.org/show_bug.cgi?id=169862
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/CallFrameTreeElement.css:
+        (.tree-outline .item.call-frame .status):
+        (body[dir=ltr] .tree-outline .item.call-frame .status):
+        (body[dir=rtl] .tree-outline .item.call-frame .status):
+
 2017-03-18  Devin Rousso  <webkit@devinrousso.com>
 
         Web Inspector: Empty attribute added to a DOM tree outline element should not add whitespace within the tag
