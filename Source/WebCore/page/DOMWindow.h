@@ -194,6 +194,8 @@ public:
     DOMWindow* parent() const;
     DOMWindow* top() const;
 
+    String origin() const;
+
     // DOM Level 2 AbstractView Interface
 
     WEBCORE_EXPORT Document* document() const;

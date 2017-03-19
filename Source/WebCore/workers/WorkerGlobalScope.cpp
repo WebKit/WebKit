@@ -105,6 +105,12 @@ WorkerGlobalScope::~WorkerGlobalScope()
     thread().workerReportingProxy().workerGlobalScopeDestroyed();
 }
 
+String WorkerGlobalScope::origin() const
+{
+    auto* securityOrigin = this->securityOrigin();
+    return securityOrigin ? securityOrigin->toString() : emptyString();
+}
+
 void WorkerGlobalScope::removeAllEventListeners()
 {
     EventTarget::removeAllEventListeners();

@@ -12,11 +12,11 @@ description('Handshake should fail when the first line does not end with CRLF.')
 window.jsTestIsAsync = true;
 
 var connected = false;
-var origin;
+let wsOrigin;
 
 function endTest() {
     shouldBeFalse('connected');
-    shouldBeUndefined('origin');
+    shouldBeUndefined('wsOrigin');
     clearTimeout(timeoutID);
     finishJSTest();
 }
@@ -32,8 +32,8 @@ ws.onopen = function()
 
 ws.onmessage = function(messageEvent)
 {
-    origin = messageEvent.data;
-    debug('origin = ' + origin);
+    wsOrigin = messageEvent.data;
+    debug('wsOrigin = ' + wsOrigin);
     ws.close();
 }
 

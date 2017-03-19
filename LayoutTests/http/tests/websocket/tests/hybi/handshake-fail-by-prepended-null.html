@@ -13,12 +13,12 @@ window.jsTestIsAsync = true;
 
 var timedOut = false;
 var connected = false;
-var origin;
+let wsOrigin;
 
 function endTest() {
     shouldBeFalse('timedOut');
     shouldBeFalse('connected');
-    shouldBeUndefined('origin');
+    shouldBeUndefined('wsOrigin');
     clearTimeout(timeoutID);
     finishJSTest();
 }
@@ -34,8 +34,8 @@ ws.onopen = function()
 
 ws.onmessage = function(messageEvent)
 {
-    origin = messageEvent.data;
-    debug('origin = ' + origin);
+    wsOrigin = messageEvent.data;
+    debug('wsOrigin = ' + wsOrigin);
     ws.close();
 }
 

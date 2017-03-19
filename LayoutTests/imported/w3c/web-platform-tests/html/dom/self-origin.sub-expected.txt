@@ -9,9 +9,9 @@ NOTRUN Should have the right origin for cross-origin subframe after setting docu
 NOTRUN Should have the right origin for IDN subframe 
 NOTRUN Should have the right origin for IDN subframe after setting document.domain 
 NOTRUN Should have the right origin for sandboxed iframe 
-FAIL We should have the right origin for our page assert_equals: expected (string) "http://localhost:8800" but got (undefined) undefined
-FAIL about:blank subframe origins assert_equals: Should have the right origin for about:blank iframe expected (string) "http://localhost:8800" but got (undefined) undefined
+PASS We should have the right origin for our page 
+PASS about:blank subframe origins 
 FAIL blob: subframe origins assert_equals: Should have the right location origin for blob: iframe expected "http://localhost:8800" but got "null"
-FAIL javascript: subframe origins assert_equals: Should have the right origin for javascript: iframe expected (string) "http://localhost:8800" but got (undefined) undefined
-FAIL srcdoc subframe origins assert_equals: Should have the right origin for srcdoc iframe expected (string) "http://localhost:8800" but got (undefined) undefined
+PASS javascript: subframe origins 
+PASS srcdoc subframe origins 
        

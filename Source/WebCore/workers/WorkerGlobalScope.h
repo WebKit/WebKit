@@ -57,6 +57,7 @@ public:
     virtual bool isDedicatedWorkerGlobalScope() const { return false; }
 
     const URL& url() const final { return m_url; }
+    String origin() const;
 
 #if ENABLE(INDEXED_DATABASE)
     IDBClient::IDBConnectionProxy* idbConnectionProxy() final;

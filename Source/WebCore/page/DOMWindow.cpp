@@ -1442,6 +1442,12 @@ DOMWindow* DOMWindow::top() const
     return m_frame->tree().top().document()->domWindow();
 }
 
+String DOMWindow::origin() const
+{
+    auto document = this->document();
+    return document ? document->securityOrigin().toString() : emptyString();
+}
+
 Document* DOMWindow::document() const
 {
     return downcast<Document>(ContextDestructionObserver::scriptExecutionContext());
