@@ -1,3 +1,14 @@
+2017-03-19  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        import(arg) crashes when ToString(arg) throws
+        https://bugs.webkit.org/show_bug.cgi?id=169778
+
+        Reviewed by Saam Barati.
+
+        * stress/import-reject-with-exception.js: Added.
+        (shouldBe):
+        (let.x.get toString):
+
 2017-03-16  Filip Pizlo  <fpizlo@apple.com>
 
         FTL should support global and eval code
