@@ -58,7 +58,7 @@ WebInspector.TimelineRecordingContentView = class TimelineRecordingContentView e
         this.addSubview(this._timelineContentBrowser);
 
         let clearImageDimensions = WebInspector.Platform.name === "mac" ? 16 : 15;
-        this._clearTimelineNavigationItem = new WebInspector.ButtonNavigationItem("clear-timeline", WebInspector.UIString("Clear Timeline"), "Images/NavigationItemClear.svg", clearImageDimensions, clearImageDimensions);
+        this._clearTimelineNavigationItem = new WebInspector.ButtonNavigationItem("clear-timeline", WebInspector.UIString("Clear Timeline (%s)").format(WebInspector.clearKeyboardShortcut.displayName), "Images/NavigationItemClear.svg", clearImageDimensions, clearImageDimensions);
         this._clearTimelineNavigationItem.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._clearTimeline, this);
 
         this._overviewTimelineView = new WebInspector.OverviewTimelineView(recording);
@@ -229,6 +229,11 @@ WebInspector.TimelineRecordingContentView = class TimelineRecordingContentView e
     goForward()
     {
         this._timelineContentBrowser.goForward();
+    }
+
+    handleClearShortcut(event)
+    {
+        this._clearTimeline();
     }
 
     // ContentBrowser delegate
