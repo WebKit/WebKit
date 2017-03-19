@@ -1,2 +1,1 @@
-Exception: ReferenceError: Cannot access uninitialized variable.
-global code@letconst_global_shadow_builtins_nonconfigurable.js:8:16
+Exception: SyntaxError: Can't create duplicate variable that shadows a global property: 'undefined'

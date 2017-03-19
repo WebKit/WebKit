@@ -72,6 +72,17 @@ JSObject* ProgramExecutable::checkSyntax(ExecState* exec)
     return error.toErrorObject(lexicalGlobalObject, m_source);
 }
 
+// http://www.ecma-international.org/ecma-262/6.0/index.html#sec-hasrestrictedglobalproperty
+static bool hasRestrictedGlobalProperty(ExecState* exec, JSGlobalObject* globalObject, PropertyName propertyName)
+{
+    PropertyDescriptor descriptor;
+    if (!globalObject->getOwnPropertyDescriptor(exec, propertyName, descriptor))
+        return false;
+    if (descriptor.configurable())
+        return false;
+    return true;
+}
+
 JSObject* ProgramExecutable::initializeGlobalProperties(VM& vm, CallFrame* callFrame, JSScope* scope)
 {
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -118,19 +129,11 @@ JSObject* ProgramExecutable::initializeGlobalProperties(VM& vm, CallFrame* callF
         // Check if any new "let"/"const"/"class" will shadow any pre-existing global property names, or "var"/"let"/"const" variables.
         // It's an error to introduce a shadow.
         for (auto& entry : lexicalDeclarations) {
-            bool hasProperty = globalObject->hasProperty(exec, entry.key.get());
-            RETURN_IF_EXCEPTION(throwScope, throwScope.exception());
-            if (hasProperty) {
-                // The ES6 spec says that just RestrictedGlobalProperty can't be shadowed
-                // This carried out section 8.1.1.4.14 of the ES6 spec: http://www.ecma-international.org/ecma-262/6.0/index.html#sec-hasrestrictedglobalproperty
-                PropertyDescriptor descriptor;
-                globalObject->getOwnPropertyDescriptor(exec, entry.key.get(), descriptor);
-                
-                if (descriptor.value() != jsUndefined() && !descriptor.configurable())
-                    return createSyntaxError(exec, makeString("Can't create duplicate variable that shadows a global property: '", String(entry.key.get()), "'"));
-            }
+            // The ES6 spec says that RestrictedGlobalProperty can't be shadowed.
+            if (hasRestrictedGlobalProperty(exec, globalObject, entry.key.get()))
+                return createSyntaxError(exec, makeString("Can't create duplicate variable that shadows a global property: '", String(entry.key.get()), "'"));
 
-            hasProperty = globalLexicalEnvironment->hasProperty(exec, entry.key.get());
+            bool hasProperty = globalLexicalEnvironment->hasProperty(exec, entry.key.get());
             RETURN_IF_EXCEPTION(throwScope, throwScope.exception());
             if (hasProperty) {
                 if (UNLIKELY(entry.value.isConst() && !vm.globalConstRedeclarationShouldThrow() && !isStrictMode())) {

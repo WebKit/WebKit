@@ -1,3 +1,24 @@
+2017-03-19  Chris Dumez  <cdumez@apple.com>
+
+        `const location = "foo"` throws in a worker
+        https://bugs.webkit.org/show_bug.cgi?id=169839
+
+        Reviewed by Mark Lam.
+
+        * fast/dom/window-const-variable-shadowing-expected.txt: Added.
+        * fast/dom/window-const-variable-shadowing.html: Added.
+        * fast/workers/const-location-variable-expected.txt: Added.
+        * fast/workers/const-location-variable.html: Added.
+        * fast/workers/resources/worker-const-location.js: Added.
+        Add layout test coverage for behavior changes. Those tests pass in Firefox and Chrome.
+
+        * js/dom/const-expected.txt:
+        * js/dom/const.html:
+        Update test which wrongly expected a let variable not to be able to shadow a
+        window named property. This test was failing in Chrome and Firefox. The reason
+        this does not throw is because window named properties are not on the window
+        object, they are on the WindowProperties object in the Window prototype chain.
+
 2017-03-18  Jon Lee  <jonlee@apple.com>
 
         Add support for ImplementedAs, Clamp, EnforceRange, TreatNullAs for dictionary members

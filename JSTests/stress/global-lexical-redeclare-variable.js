@@ -105,11 +105,11 @@ assertExpectations();
 assert(errorCount === 6);
 
 try {
-    sentinel = "bad";
     Object.defineProperty(this, 'zoo', {value: undefined, configurable: false, writable: true});
     load("./multiple-files-tests/global-lexical-redeclare-variable/tenth.js");
 } catch(e) {
-    assert(false);
+    assertProperError(e);
 }
 assertExpectations();
 
+assert(errorCount === 7);

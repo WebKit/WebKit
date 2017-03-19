@@ -1580,7 +1580,7 @@
 - path: ChakraCore/test/es6/letconst_global_shadow_builtins.js
   cmd: runChakra :baseline, "NoException", "letconst_global_shadow_builtins.baseline-jsc", []
 - path: ChakraCore/test/es6/letconst_global_shadow_builtins_nonconfigurable.js
-  cmd: runChakra :baseline, "ReferenceError", "letconst_global_shadow_builtins_nonconfigurable.baseline-jsc", []
+  cmd: runChakra :baseline, "SyntaxError", "letconst_global_shadow_builtins_nonconfigurable.baseline-jsc", []
 - path: ChakraCore/test/es6/letconst_global_shadow_deleted.js
   cmd: runChakra :baseline, "NoException", "letconst_global_shadow_deleted.baseline", ["letconst_global_shadow_deleted_2.js"]
 - path: ChakraCore/test/es6/letconst_global_shadow_accessor.js

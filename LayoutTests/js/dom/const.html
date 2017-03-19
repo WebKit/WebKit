@@ -7,24 +7,15 @@
 <body id="bodyId">
 
 <script>
-
-description(
-    "This test checks that const variables can't shadow global object properties.  Note that this test expects SyntaxErrors in below <script>"
-);
-
-let sentinel = "__s__";
+description("This test checks that const variables can shadow global object's named properties.");
 </script>
 
 <script>
-// Make sure we can't override properties placed on the global object
-const bodyId = "lah la lah la lah, I should never execute.";
-sentinel = "bad";
+const bodyId = 3;
 </script>
 
 <script>
-shouldBe("sentinel", '"__s__"');
-shouldBe("bodyId", "document.getElementById('bodyId')");
-successfullyParsed = true;
+shouldBe("bodyId", "3");
 </script>
 
 <script src="../../resources/js-test-post.js"></script>

@@ -1,3 +1,21 @@
+2017-03-19  Chris Dumez  <cdumez@apple.com>
+
+        `const location = "foo"` throws in a worker
+        https://bugs.webkit.org/show_bug.cgi?id=169839
+
+        Reviewed by Mark Lam.
+
+        * ChakraCore/test/es6/letconst_global_shadow_builtins_nonconfigurable.baseline-jsc:
+        Update expected jsc result now that we throw a SyntaxError when trying to shadow undefined
+        with a let variable. We used not to throw because the value is undefined but this was not
+        as per EcmaScript. Both Firefox and Chrome throw in this case.
+
+        * stress/global-lexical-redeclare-variable.js:
+        (catch):
+        Update test that defines a non-configurable 'zoo' property on the global object and then
+        expected shadowing it with a 'let zoo' variable to work because its value was undefined.
+        This was not as per EcmaScript spec and both Firefox and Chrome throw in this case.
+
 2017-03-19  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         import(arg) crashes when ToString(arg) throws
