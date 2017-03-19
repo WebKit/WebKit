@@ -1,3 +1,60 @@
+2017-03-19  Brian Burg  <bburg@apple.com>
+
+        [Cocoa] Web Automation: non-sticky virtual keys like 'left arrow' don't work properly
+        https://bugs.webkit.org/show_bug.cgi?id=169733
+        <rdar://problem/30162608>
+
+        Reviewed by Joseph Pecoraro.
+
+        There were several issues that caused certain virtual keys to not work correctly.
+        When a virtual key like 'left arrow' was dispatched as a keydown event, it was
+        ultimately being translated into an insertText: command instead of moveLeft:.
+
+         - The automation browser window was not properly made key window and active, so
+           AppKit never tried to match the NSEvent as a key equivalent. That code path
+           must be taken in this case, as it translates arrow keys into command selectors.
+
+         - AppKit relies on its own private use area (PUA) unicode characters to encode
+           control keys that do not affect key modifier state, like the arrow keys.
+           Since these PUA characters were not being used as the 'characters' of the
+           NSEvents we synthesize, the events are treated as unknown and AppKit falls
+           back to inserting the codepoint as uninterpreted text.
+
+         - The Mac implementation of platformSimulateKeyStroke did not allow non-sticky
+           virtual keys to use the 'InsertByKey' interaction which sends keydown+keyup.
+           This is a programming mistake that causes such inputs to assert in debug builds
+           and bail out to do nothing in non-debug builds.
+
+         - A few simulated virtual keys that are matched to key equivalents did not properly set
+           'charactersIgnoringModifiers' on NSEvents, which may use the wrong editing command.
+
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::performKeyboardInteractions):
+        Fix this guard so that we actually call into key event synthesis code for iOS.
+
+        * UIProcess/Automation/WebAutomationSession.h: Add declarations.
+
+        * UIProcess/Automation/cocoa/WebAutomationSessionCocoa.mm:
+        (WebKit::WebAutomationSession::charCodeForVirtualKey): Moved from iOS implementation.
+        (WebKit::WebAutomationSession::charCodeIgnoringModifiersForVirtualKey): Added.
+        There are only a few special cases for now. We will probably need to hardcode
+        the decomposition for other ASCII characters so the expected DOM events are fired
+        when entering a shifted character (i.e., 'A' should be 'Shift'+'a', not 'A').
+
+        * UIProcess/Automation/ios/WebAutomationSessionIOS.mm:
+        (WebKit::WebAutomationSession::platformSimulateKeyStroke):
+        Use charCodeIgnoringModifiersForVirtualKey().
+
+        * UIProcess/Automation/mac/WebAutomationSessionMac.mm:
+        (WebKit::WebAutomationSession::sendSynthesizedEventsToPage): use -becomeKeyWindow.
+        (WebKit::keyHasStickyModifier): Added.
+        (WebKit::keyCodeForVirtualKey): Added.
+        (WebKit::eventModifierFlagsForVirtualKey):Added.
+        (WebKit::WebAutomationSession::platformSimulateKeyStroke):
+        Separately compute key stickiness, keyCode, event modifier, and charCode for
+        the simulated keystroke. The code to compute charCode is now shared between
+        iOS and macOS since the PUA characters are the same for both AppKit and UIKit.
+
 2017-03-17  Brady Eidson  <beidson@apple.com>
 
         Make HTTPCookieStorage operate in the UIProcess in absence of a WebProcessPool.

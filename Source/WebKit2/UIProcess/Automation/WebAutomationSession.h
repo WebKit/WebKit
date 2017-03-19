@@ -54,6 +54,7 @@ struct Cookie;
 
 #if PLATFORM(COCOA)
 OBJC_CLASS NSArray;
+typedef unsigned short unichar;
 #endif
 
 #if USE(APPKIT)
@@ -175,6 +176,9 @@ private:
 #if PLATFORM(COCOA)
     // The type parameter of the NSArray argument is platform-dependent.
     void sendSynthesizedEventsToPage(WebPageProxy&, NSArray *eventsToSend);
+
+    std::optional<unichar> charCodeForVirtualKey(Inspector::Protocol::Automation::VirtualKey) const;
+    std::optional<unichar> charCodeIgnoringModifiersForVirtualKey(Inspector::Protocol::Automation::VirtualKey) const;
 #endif
 
     WebProcessPool* m_processPool { nullptr };

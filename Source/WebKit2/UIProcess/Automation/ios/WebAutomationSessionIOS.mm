@@ -70,11 +70,7 @@ void WebAutomationSession::platformSimulateKeyStroke(WebPageProxy& page, Inspect
     // The modifiers changed by the virtual key when it is pressed or released.
     WebEventFlags changedModifiers = 0;
 
-    // UIKit does not send key codes for virtual keys even for a hardware keyboard.
-    // Instead, it sends single unichars and WebCore maps these to "windows" key codes.
-    // Synthesize a single unichar such that the correct key code is inferred.
-    std::optional<unichar> charCode = std::nullopt;
-
+    // Figure out the effects of sticky modifiers.
     switch (key) {
     case Inspector::Protocol::Automation::VirtualKey::Shift:
         changedModifiers |= WebEventFlagMaskShift;
@@ -91,166 +87,21 @@ void WebAutomationSession::platformSimulateKeyStroke(WebPageProxy& page, Inspect
     case Inspector::Protocol::Automation::VirtualKey::Command:
         changedModifiers |= WebEventFlagMaskCommand;
         break;
-    case Inspector::Protocol::Automation::VirtualKey::Help:
-        charCode = NSHelpFunctionKey;
-        break;
-    case Inspector::Protocol::Automation::VirtualKey::Backspace:
-        charCode = NSBackspaceCharacter;
-        break;
-    case Inspector::Protocol::Automation::VirtualKey::Tab:
-        charCode = NSTabCharacter;
-        break;
-    case Inspector::Protocol::Automation::VirtualKey::Clear:
-        charCode = NSClearLineFunctionKey;
-        break;
-    case Inspector::Protocol::Automation::VirtualKey::Enter:
-        charCode = NSEnterCharacter;
-        break;
-    case Inspector::Protocol::Automation::VirtualKey::Pause:
-        charCode = NSPauseFunctionKey;
-        break;
-    case Inspector::Protocol::Automation::VirtualKey::Cancel:
-        // The 'cancel' key does not exist on Apple keyboards and has no keycode.
-        // According to the internet its functionality is similar to 'Escape'.
-    case Inspector::Protocol::Automation::VirtualKey::Escape:
-        charCode = 0x1B;
-        break;
-    case Inspector::Protocol::Automation::VirtualKey::PageUp:
-        charCode = NSPageUpFunctionKey;
-        break;
-    case Inspector::Protocol::Automation::VirtualKey::PageDown:
-        charCode = NSPageDownFunctionKey;
-        break;
-    case Inspector::Protocol::Automation::VirtualKey::End:
-        charCode = NSEndFunctionKey;
-        break;
-    case Inspector::Protocol::Automation::VirtualKey::Home:
-        charCode = NSHomeFunctionKey;
-        break;
-    case Inspector::Protocol::Automation::VirtualKey::LeftArrow:
-        charCode = NSLeftArrowFunctionKey;
-        break;
-    case Inspector::Protocol::Automation::VirtualKey::UpArrow:
-        charCode = NSUpArrowFunctionKey;
-        break;
-    case Inspector::Protocol::Automation::VirtualKey::RightArrow:
-        charCode = NSRightArrowFunctionKey;
-        break;
-    case Inspector::Protocol::Automation::VirtualKey::DownArrow:
-        charCode = NSDownArrowFunctionKey;
-        break;
-    case Inspector::Protocol::Automation::VirtualKey::Insert:
-        charCode = NSInsertFunctionKey;
-        break;
-    case Inspector::Protocol::Automation::VirtualKey::Delete:
-        charCode = NSDeleteCharacter;
-        break;
-    case Inspector::Protocol::Automation::VirtualKey::Space:
-        charCode = ' ';
-        break;
-    case Inspector::Protocol::Automation::VirtualKey::Semicolon:
-        charCode = ';';
-        break;
-    case Inspector::Protocol::Automation::VirtualKey::Equals:
-        charCode = '=';
-        break;
-    case Inspector::Protocol::Automation::VirtualKey::Return:
-        charCode = NSCarriageReturnCharacter;
-        break;
-
-    // On iOS, it seems to be irrelevant in later processing whether the number came from number pad or not.
-    case Inspector::Protocol::Automation::VirtualKey::NumberPad0:
-        charCode = '0';
-        break;
-    case Inspector::Protocol::Automation::VirtualKey::NumberPad1:
-        charCode = '1';
-        break;
-    case Inspector::Protocol::Automation::VirtualKey::NumberPad2:
-        charCode = '2';
-        break;
-    case Inspector::Protocol::Automation::VirtualKey::NumberPad3:
-        charCode = '3';
-        break;
-    case Inspector::Protocol::Automation::VirtualKey::NumberPad4:
-        charCode = '4';
-        break;
-    case Inspector::Protocol::Automation::VirtualKey::NumberPad5:
-        charCode = '5';
-        break;
-    case Inspector::Protocol::Automation::VirtualKey::NumberPad6:
-        charCode = '6';
-        break;
-    case Inspector::Protocol::Automation::VirtualKey::NumberPad7:
-        charCode = '7';
-        break;
-    case Inspector::Protocol::Automation::VirtualKey::NumberPad8:
-        charCode = '8';
-        break;
-    case Inspector::Protocol::Automation::VirtualKey::NumberPad9:
-        charCode = '9';
-        break;
-    case Inspector::Protocol::Automation::VirtualKey::NumberPadMultiply:
-        charCode = '*';
-        break;
-    case Inspector::Protocol::Automation::VirtualKey::NumberPadAdd:
-        charCode = '+';
-        break;
-    case Inspector::Protocol::Automation::VirtualKey::NumberPadSubtract:
-        charCode = '-';
-        break;
-    case Inspector::Protocol::Automation::VirtualKey::NumberPadSeparator:
-        // The 'Separator' key is only present on a few international keyboards.
-        // It is usually mapped to the same character as Decimal ('.' or ',').
-    case Inspector::Protocol::Automation::VirtualKey::NumberPadDecimal:
-        charCode = '.';
-        break;
-    case Inspector::Protocol::Automation::VirtualKey::NumberPadDivide:
-        charCode = '/';
-        break;
-    case Inspector::Protocol::Automation::VirtualKey::Function1:
-        charCode = NSF1FunctionKey;
-        break;
-    case Inspector::Protocol::Automation::VirtualKey::Function2:
-        charCode = NSF2FunctionKey;
-        break;
-    case Inspector::Protocol::Automation::VirtualKey::Function3:
-        charCode = NSF3FunctionKey;
-        break;
-    case Inspector::Protocol::Automation::VirtualKey::Function4:
-        charCode = NSF4FunctionKey;
-        break;
-    case Inspector::Protocol::Automation::VirtualKey::Function5:
-        charCode = NSF5FunctionKey;
-        break;
-    case Inspector::Protocol::Automation::VirtualKey::Function6:
-        charCode = NSF6FunctionKey;
-        break;
-    case Inspector::Protocol::Automation::VirtualKey::Function7:
-        charCode = NSF7FunctionKey;
-        break;
-    case Inspector::Protocol::Automation::VirtualKey::Function8:
-        charCode = NSF8FunctionKey;
-        break;
-    case Inspector::Protocol::Automation::VirtualKey::Function9:
-        charCode = NSF9FunctionKey;
-        break;
-    case Inspector::Protocol::Automation::VirtualKey::Function10:
-        charCode = NSF10FunctionKey;
-        break;
-    case Inspector::Protocol::Automation::VirtualKey::Function11:
-        charCode = NSF11FunctionKey;
-        break;
-    case Inspector::Protocol::Automation::VirtualKey::Function12:
-        charCode = NSF12FunctionKey;
+    default:
         break;
     }
 
-    ASSERT(changedModifiers || interaction == Inspector::Protocol::Automation::KeyboardInteractionType::KeyPress);
+    // UIKit does not send key codes for virtual keys even for a hardware keyboard.
+    // Instead, it sends single unichars and WebCore maps these to "windows" key codes.
+    // Synthesize a single unichar such that the correct key code is inferred.
+    std::optional<unichar> charCode = charCodeForVirtualKey(key);
+    std::optional<unichar> charCodeIgnoringModifiers = charCodeIgnoringModifiersForVirtualKey(key);
 
     // FIXME: consider using UIKit SPI to normalize 'characters', i.e., changing * to Shift-8,
     // and passing that in to charactersIgnoringModifiers. This is probably not worth the trouble
     // unless it causes an actual behavioral difference.
     NSString *characters = charCode ? [NSString stringWithCharacters:&charCode.value() length:1] : nil;
+    NSString *unmodifiedCharacters = charCodeIgnoringModifiers ? [NSString stringWithCharacters:&charCodeIgnoringModifiers.value() length:1] : nil;
     BOOL isTabKey = charCode && charCode.value() == NSTabCharacter;
 
     // This is used as WebEvent.keyboardFlags, which are only used if we need to
@@ -267,19 +118,19 @@ void WebAutomationSession::platformSimulateKeyStroke(WebPageProxy& page, Inspect
     case Inspector::Protocol::Automation::KeyboardInteractionType::KeyPress: {
         m_currentModifiers |= changedModifiers;
 
-        [eventsToBeSent addObject:[[[::WebEvent alloc] initWithKeyEventType:WebEventKeyDown timeStamp:CFAbsoluteTimeGetCurrent() characters:characters charactersIgnoringModifiers:characters modifiers:m_currentModifiers isRepeating:NO withFlags:inputFlags withInputManagerHint:nil keyCode:keyCode isTabKey:isTabKey] autorelease]];
+        [eventsToBeSent addObject:[[[::WebEvent alloc] initWithKeyEventType:WebEventKeyDown timeStamp:CFAbsoluteTimeGetCurrent() characters:characters charactersIgnoringModifiers:unmodifiedCharacters modifiers:m_currentModifiers isRepeating:NO withFlags:inputFlags withInputManagerHint:nil keyCode:keyCode isTabKey:isTabKey] autorelease]];
         break;
     }
     case Inspector::Protocol::Automation::KeyboardInteractionType::KeyRelease: {
         m_currentModifiers &= ~changedModifiers;
 
-        [eventsToBeSent addObject:[[[::WebEvent alloc] initWithKeyEventType:WebEventKeyUp timeStamp:CFAbsoluteTimeGetCurrent() characters:characters charactersIgnoringModifiers:characters modifiers:m_currentModifiers isRepeating:NO withFlags:inputFlags withInputManagerHint:nil keyCode:keyCode isTabKey:isTabKey] autorelease]];
+        [eventsToBeSent addObject:[[[::WebEvent alloc] initWithKeyEventType:WebEventKeyUp timeStamp:CFAbsoluteTimeGetCurrent() characters:characters charactersIgnoringModifiers:unmodifiedCharacters modifiers:m_currentModifiers isRepeating:NO withFlags:inputFlags withInputManagerHint:nil keyCode:keyCode isTabKey:isTabKey] autorelease]];
         break;
     }
     case Inspector::Protocol::Automation::KeyboardInteractionType::InsertByKey: {
         // Modifiers only change with KeyPress or KeyRelease, this code path is for single characters.
-        [eventsToBeSent addObject:[[[::WebEvent alloc] initWithKeyEventType:WebEventKeyDown timeStamp:CFAbsoluteTimeGetCurrent() characters:characters charactersIgnoringModifiers:characters modifiers:m_currentModifiers isRepeating:NO withFlags:inputFlags withInputManagerHint:nil keyCode:keyCode isTabKey:isTabKey] autorelease]];
-        [eventsToBeSent addObject:[[[::WebEvent alloc] initWithKeyEventType:WebEventKeyUp timeStamp:CFAbsoluteTimeGetCurrent() characters:characters charactersIgnoringModifiers:characters modifiers:m_currentModifiers isRepeating:NO withFlags:inputFlags withInputManagerHint:nil keyCode:keyCode isTabKey:isTabKey] autorelease]];
+        [eventsToBeSent addObject:[[[::WebEvent alloc] initWithKeyEventType:WebEventKeyDown timeStamp:CFAbsoluteTimeGetCurrent() characters:characters charactersIgnoringModifiers:unmodifiedCharacters modifiers:m_currentModifiers isRepeating:NO withFlags:inputFlags withInputManagerHint:nil keyCode:keyCode isTabKey:isTabKey] autorelease]];
+        [eventsToBeSent addObject:[[[::WebEvent alloc] initWithKeyEventType:WebEventKeyUp timeStamp:CFAbsoluteTimeGetCurrent() characters:characters charactersIgnoringModifiers:unmodifiedCharacters modifiers:m_currentModifiers isRepeating:NO withFlags:inputFlags withInputManagerHint:nil keyCode:keyCode isTabKey:isTabKey] autorelease]];
         break;
     }
     }
