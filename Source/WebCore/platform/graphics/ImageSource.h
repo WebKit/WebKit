@@ -110,7 +110,7 @@ private:
     void setDecoderTargetContext(const GraphicsContext*);
 
     Ref<ImageFrameCache> m_frameCache;
-    std::unique_ptr<ImageDecoder> m_decoder;
+    RefPtr<ImageDecoder> m_decoder;
 
     std::optional<SubsamplingLevel> m_maximumSubsamplingLevel;
 

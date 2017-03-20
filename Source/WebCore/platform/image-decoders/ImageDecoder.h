@@ -48,7 +48,7 @@ namespace WebCore {
     // ENABLE(IMAGE_DECODER_DOWN_SAMPLING) allows image decoders to downsample
     // at decode time.  Image decoders will downsample any images larger than
     // |m_maxNumPixels|.  FIXME: Not yet supported by all decoders.
-    class ImageDecoder {
+    class ImageDecoder : public RefCounted<ImageDecoder> {
         WTF_MAKE_NONCOPYABLE(ImageDecoder); WTF_MAKE_FAST_ALLOCATED;
     public:
         ImageDecoder(AlphaOption alphaOption, GammaAndColorProfileOption gammaAndColorProfileOption)
@@ -61,10 +61,9 @@ namespace WebCore {
         {
         }
 
-        // Returns a caller-owned decoder of the appropriate type.  Returns 0 if
-        // we can't sniff a supported type from the provided data (possibly
+        // Returns nullptr if we can't sniff a supported type from the provided data (possibly
         // because there isn't enough data yet).
-        static std::unique_ptr<ImageDecoder> create(const SharedBuffer& data, AlphaOption, GammaAndColorProfileOption);
+        static RefPtr<ImageDecoder> create(const SharedBuffer& data, AlphaOption, GammaAndColorProfileOption);
 
         virtual String filenameExtension() const = 0;
         
