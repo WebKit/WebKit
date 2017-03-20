@@ -1394,9 +1394,9 @@ private:
     GC3Duint m_intermediateTexture;
 #endif
 
-    GC3Duint m_depthBuffer;
-    GC3Duint m_stencilBuffer;
-    GC3Duint m_depthStencilBuffer;
+    GC3Duint m_depthBuffer { 0 };
+    GC3Duint m_stencilBuffer { 0 };
+    GC3Duint m_depthStencilBuffer { 0 };
 
     bool m_layerComposited;
     GC3Duint m_internalColorFormat;
