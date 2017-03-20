@@ -1,5 +1,20 @@
 2017-03-16  Jason Marcell  <jmarcell@apple.com>
 
+        Merge r214059. rdar://problem/31099341
+
+    2017-03-16  Zalan Bujtas  <zalan@apple.com>
+
+            Stay inside the continuation while searching for a candidate ancestor for insertion.
+            https://bugs.webkit.org/show_bug.cgi?id=169768
+            <rdar://problem/30959936>
+
+            Reviewed by David Hyatt.
+
+            * fast/inline/continuation-crash-with-anon-ancestors-expected.txt: Added.
+            * fast/inline/continuation-crash-with-anon-ancestors.html: Added.
+
+2017-03-16  Jason Marcell  <jmarcell@apple.com>
+
         Merge r214023. rdar://problem/31091039
 
     2017-03-15  Zalan Bujtas  <zalan@apple.com>
