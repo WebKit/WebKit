@@ -1,3 +1,16 @@
+2017-03-20  Anders Carlsson  <andersca@apple.com>
+
+        Fix a paste-o in WebPaymentCoordinatorProxy::platformCompletePaymentSession
+        https://bugs.webkit.org/show_bug.cgi?id=169881
+        rdar://problem/31030944
+
+        Reviewed by Dan Bernstein.
+
+        Don't always pass PKPaymentAuthorizationStatusFailure to the completion handler.
+
+        * UIProcess/ApplePay/cocoa/WebPaymentCoordinatorProxyCocoa.mm:
+        (WebKit::WebPaymentCoordinatorProxy::platformCompletePaymentSession):
+
 2017-03-20  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         TextIndicator should support a mode where selection rects are used to size the snapshot
