@@ -1,3 +1,17 @@
+2017-03-20  Andy Estes  <aestes@apple.com>
+
+        [QuickLook] Subresources should be in the same origin as the main document
+        https://bugs.webkit.org/show_bug.cgi?id=169868
+        <rdar://problem/29898214>
+
+        Reviewed by Daniel Bates.
+
+        * http/tests/quicklook/resources/same-origin-xmlhttprequest-allowed.rtf: Added.
+        * http/tests/quicklook/resources/tap-run-test-hyperlink.js:
+        (runTest):
+        * http/tests/quicklook/same-origin-xmlhttprequest-allowed-expected.txt: Added.
+        * http/tests/quicklook/same-origin-xmlhttprequest-allowed.html: Added.
+
 2017-03-20  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] Respect constraints passed to getUserMedia

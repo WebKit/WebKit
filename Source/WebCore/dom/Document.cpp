@@ -6818,7 +6818,14 @@ bool Document::shouldEnforceQuickLookSandbox() const
 
 void Document::applyQuickLookSandbox()
 {
-    static NeverDestroyed<String> quickLookCSP = makeString("default-src ", QLPreviewProtocol(), ": 'unsafe-inline'; base-uri 'none'; sandbox allow-scripts");
+    const URL& responseURL = m_frame->loader().activeDocumentLoader()->responseURL();
+    ASSERT(responseURL.protocolIs(QLPreviewProtocol()));
+
+    auto securityOrigin = SecurityOrigin::create(responseURL);
+    securityOrigin->setStorageBlockingPolicy(SecurityOrigin::BlockAllStorage);
+    setSecurityOriginPolicy(SecurityOriginPolicy::create(WTFMove(securityOrigin)));
+
+    static NeverDestroyed<String> quickLookCSP = makeString("default-src ", QLPreviewProtocol(), ": 'unsafe-inline'; base-uri 'none'; sandbox allow-same-origin allow-scripts");
     ASSERT_WITH_SECURITY_IMPLICATION(contentSecurityPolicy());
     // The sandbox directive is only allowed if the policy is from an HTTP header.
     contentSecurityPolicy()->didReceiveHeader(quickLookCSP, ContentSecurityPolicyHeaderType::Enforce, ContentSecurityPolicy::PolicyFrom::HTTPHeader);

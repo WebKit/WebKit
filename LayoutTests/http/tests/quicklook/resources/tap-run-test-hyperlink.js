@@ -1,4 +1,4 @@
-function runTest(frame, offsetInFrame)
+function runTest(frame, offsetInFrame, runAsync)
 {
     if (!window.testRunner)
         return;
@@ -8,5 +8,9 @@ function runTest(frame, offsetInFrame)
     // FIXME: For some reason the (x, y) coordinates of the hyperlink "Run test" is offset 2 pixels
     // in legacy WebKit (why?).
     var fudgeFactor = UIHelper.isWebKit2() ? 0 : 2;
-    UIHelper.wait(UIHelper.activateAt(frame.offsetLeft + offsetInFrame + fudgeFactor, frame.offsetTop + offsetInFrame + fudgeFactor));
+    var promise = UIHelper.activateAt(frame.offsetLeft + offsetInFrame + fudgeFactor, frame.offsetTop + offsetInFrame + fudgeFactor);
+    if (runAsync)
+        return promise;
+
+    UIHelper.wait(promise);
 }
