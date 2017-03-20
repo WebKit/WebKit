@@ -60,11 +60,16 @@ RenderListItem::RenderListItem(Element& element, RenderStyle&& style)
 
 RenderListItem::~RenderListItem()
 {
-    ASSERT(!m_marker || !m_marker->parent());
+    // Do not add any code here. Add it to willBeDestroyed() instead.
+}
+
+void RenderListItem::willBeDestroyed()
+{
     if (m_marker) {
         m_marker->destroy();
         ASSERT(!m_marker);
     }
+    RenderBlockFlow::willBeDestroyed();
 }
 
 void RenderListItem::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)

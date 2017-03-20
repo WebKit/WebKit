@@ -58,10 +58,17 @@ RenderSearchField::RenderSearchField(HTMLInputElement& element, RenderStyle&& st
 
 RenderSearchField::~RenderSearchField()
 {
+    // Do not add any code here. Add it to willBeDestroyed() instead.
+}
+
+void RenderSearchField::willBeDestroyed()
+{
     if (m_searchPopup) {
         m_searchPopup->popupMenu()->disconnectClient();
         m_searchPopup = nullptr;
     }
+
+    RenderTextControlSingleLine::willBeDestroyed();
 }
 
 inline HTMLElement* RenderSearchField::resultsButtonElement() const

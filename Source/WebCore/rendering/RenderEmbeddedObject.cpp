@@ -107,7 +107,13 @@ RenderEmbeddedObject::RenderEmbeddedObject(HTMLFrameOwnerElement& element, Rende
 
 RenderEmbeddedObject::~RenderEmbeddedObject()
 {
+    // Do not add any code here. Add it to willBeDestroyed() instead.
+}
+
+void RenderEmbeddedObject::willBeDestroyed()
+{
     view().frameView().removeEmbeddedObjectToUpdate(*this);
+    RenderWidget::willBeDestroyed();
 }
 
 RenderPtr<RenderEmbeddedObject> RenderEmbeddedObject::createForApplet(HTMLAppletElement& applet, RenderStyle&& style)

@@ -42,6 +42,7 @@ public:
     void handleEvent(Event&);
 
 private:
+    void willBeDestroyed() override;
     void frameOwnerElement() const = delete;
     const char* renderName() const final { return "RenderSnapshottedPlugIn"; }
     CursorDirective getCursor(const LayoutPoint&, Cursor&) const final;

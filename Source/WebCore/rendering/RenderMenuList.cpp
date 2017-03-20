@@ -84,11 +84,18 @@ RenderMenuList::RenderMenuList(HTMLSelectElement& element, RenderStyle&& style)
 
 RenderMenuList::~RenderMenuList()
 {
+    // Do not add any code here. Add it to willBeDestroyed() instead.
+}
+
+void RenderMenuList::willBeDestroyed()
+{
 #if !PLATFORM(IOS)
     if (m_popup)
         m_popup->disconnectClient();
     m_popup = nullptr;
 #endif
+
+    RenderFlexibleBox::willBeDestroyed();
 }
 
 void RenderMenuList::createInnerBlock()

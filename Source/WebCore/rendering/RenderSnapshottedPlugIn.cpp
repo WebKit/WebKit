@@ -57,8 +57,15 @@ RenderSnapshottedPlugIn::RenderSnapshottedPlugIn(HTMLPlugInImageElement& element
 
 RenderSnapshottedPlugIn::~RenderSnapshottedPlugIn()
 {
+    // Do not add any code here. Add it to willBeDestroyed() instead.
+}
+
+void RenderSnapshottedPlugIn::willBeDestroyed()
+{
     ASSERT(m_snapshotResource);
     m_snapshotResource->shutdown();
+
+    RenderEmbeddedObject::willBeDestroyed();
 }
 
 HTMLPlugInImageElement& RenderSnapshottedPlugIn::plugInImageElement() const

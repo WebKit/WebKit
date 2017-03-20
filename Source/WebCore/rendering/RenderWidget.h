@@ -79,6 +79,7 @@ public:
 protected:
     RenderWidget(HTMLFrameOwnerElement&, RenderStyle&&);
 
+    void willBeDestroyed() override;
     void styleDidChange(StyleDifference, const RenderStyle* oldStyle) final;
     void layout() override;
     void paint(PaintInfo&, const LayoutPoint&) override;
@@ -94,7 +95,6 @@ private:
     bool needsPreferredWidthsRecalculation() const final;
     RenderBox* embeddedContentBox() const final;
 
-    void willBeDestroyed() final;
     void setSelectionState(SelectionState) final;
     void setOverlapTestResult(bool) final;
 

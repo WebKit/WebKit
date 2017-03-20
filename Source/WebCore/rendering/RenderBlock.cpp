@@ -256,7 +256,7 @@ public:
 };
 
 typedef HashMap<const RenderBlock*, std::unique_ptr<RenderBlockRareData>> RenderBlockRareDataMap;
-static RenderBlockRareDataMap* gRareDataMap = 0;
+static RenderBlockRareDataMap* gRareDataMap;
 
 // This class helps dispatching the 'overflow' event on layout change. overflow can be set on RenderBoxes, yet the existing code
 // only works on RenderBlocks. If this change, this class should be shared with other RenderBoxes.
@@ -333,14 +333,14 @@ static void removeBlockFromPercentageDescendantAndContainerMaps(RenderBlock* blo
 
 RenderBlock::~RenderBlock()
 {
-    removeFromUpdateScrollInfoAfterLayoutTransaction();
-
+    // Blocks can be added to gRareDataMap during willBeDestroyed(), so this code can't move there.
     if (gRareDataMap)
         gRareDataMap->remove(this);
-    removeBlockFromPercentageDescendantAndContainerMaps(this);
-    positionedDescendantsMap().removeContainingBlock(*this);
+
+    // Do not add any more code here. Add it to willBeDestroyed() instead.
 }
 
+// Note that this is not called for RenderBlockFlows.
 void RenderBlock::willBeDestroyed()
 {
     if (!renderTreeBeingDestroyed()) {
@@ -348,7 +348,17 @@ void RenderBlock::willBeDestroyed()
             parent()->dirtyLinesFromChangedChild(*this);
     }
 
+    blockWillBeDestroyed();
+
     RenderBox::willBeDestroyed();
+}
+
+void RenderBlock::blockWillBeDestroyed()
+{
+    removeFromUpdateScrollInfoAfterLayoutTransaction();
+
+    removeBlockFromPercentageDescendantAndContainerMaps(this);
+    positionedDescendantsMap().removeContainingBlock(*this);
 }
 
 bool RenderBlock::hasRareData() const
@@ -1067,17 +1077,17 @@ void RenderBlock::layout()
     invalidateBackgroundObscurationStatus();
 }
 
-static RenderBlockRareData* getBlockRareData(const RenderBlock* block)
+static RenderBlockRareData* getBlockRareData(const RenderBlock& block)
 {
-    return gRareDataMap ? gRareDataMap->get(block) : nullptr;
+    return gRareDataMap ? gRareDataMap->get(&block) : nullptr;
 }
 
-static RenderBlockRareData& ensureBlockRareData(const RenderBlock* block)
+static RenderBlockRareData& ensureBlockRareData(const RenderBlock& block)
 {
     if (!gRareDataMap)
         gRareDataMap = new RenderBlockRareDataMap;
     
-    auto& rareData = gRareDataMap->add(block, nullptr).iterator->value;
+    auto& rareData = gRareDataMap->add(&block, nullptr).iterator->value;
     if (!rareData)
         rareData = std::make_unique<RenderBlockRareData>();
     return *rareData.get();
@@ -3364,7 +3374,7 @@ void RenderBlock::updateFirstLetter(RenderTreeMutationIsAllowed mutationAllowedO
 
 RenderFlowThread* RenderBlock::cachedFlowThreadContainingBlock() const
 {
-    RenderBlockRareData* rareData = getBlockRareData(this);
+    RenderBlockRareData* rareData = getBlockRareData(*this);
 
     if (!rareData || !rareData->m_flowThreadContainingBlock)
         return nullptr;
@@ -3374,7 +3384,7 @@ RenderFlowThread* RenderBlock::cachedFlowThreadContainingBlock() const
 
 bool RenderBlock::cachedFlowThreadContainingBlockNeedsUpdate() const
 {
-    RenderBlockRareData* rareData = getBlockRareData(this);
+    RenderBlockRareData* rareData = getBlockRareData(*this);
 
     if (!rareData || !rareData->m_flowThreadContainingBlock)
         return true;
@@ -3384,13 +3394,13 @@ bool RenderBlock::cachedFlowThreadContainingBlockNeedsUpdate() const
 
 void RenderBlock::setCachedFlowThreadContainingBlockNeedsUpdate()
 {
-    RenderBlockRareData& rareData = ensureBlockRareData(this);
+    RenderBlockRareData& rareData = ensureBlockRareData(*this);
     rareData.m_flowThreadContainingBlock = std::nullopt;
 }
 
 RenderFlowThread* RenderBlock::updateCachedFlowThreadContainingBlock(RenderFlowThread* flowThread) const
 {
-    RenderBlockRareData& rareData = ensureBlockRareData(this);
+    RenderBlockRareData& rareData = ensureBlockRareData(*this);
     rareData.m_flowThreadContainingBlock = flowThread;
 
     return flowThread;
@@ -3398,7 +3408,7 @@ RenderFlowThread* RenderBlock::updateCachedFlowThreadContainingBlock(RenderFlowT
 
 RenderFlowThread* RenderBlock::locateFlowThreadContainingBlock() const
 {
-    RenderBlockRareData* rareData = getBlockRareData(this);
+    RenderBlockRareData* rareData = getBlockRareData(*this);
     if (!rareData || !rareData->m_flowThreadContainingBlock)
         return updateCachedFlowThreadContainingBlock(RenderBox::locateFlowThreadContainingBlock());
 
@@ -3430,34 +3440,34 @@ void RenderBlock::resetFlowThreadContainingBlockAndChildInfoIncludingDescendants
 
 LayoutUnit RenderBlock::paginationStrut() const
 {
-    RenderBlockRareData* rareData = getBlockRareData(this);
+    RenderBlockRareData* rareData = getBlockRareData(*this);
     return rareData ? rareData->m_paginationStrut : LayoutUnit();
 }
 
 LayoutUnit RenderBlock::pageLogicalOffset() const
 {
-    RenderBlockRareData* rareData = getBlockRareData(this);
+    RenderBlockRareData* rareData = getBlockRareData(*this);
     return rareData ? rareData->m_pageLogicalOffset : LayoutUnit();
 }
 
 void RenderBlock::setPaginationStrut(LayoutUnit strut)
 {
-    RenderBlockRareData* rareData = getBlockRareData(this);
+    RenderBlockRareData* rareData = getBlockRareData(*this);
     if (!rareData) {
         if (!strut)
             return;
-        rareData = &ensureBlockRareData(this);
+        rareData = &ensureBlockRareData(*this);
     }
     rareData->m_paginationStrut = strut;
 }
 
 void RenderBlock::setPageLogicalOffset(LayoutUnit logicalOffset)
 {
-    RenderBlockRareData* rareData = getBlockRareData(this);
+    RenderBlockRareData* rareData = getBlockRareData(*this);
     if (!rareData) {
         if (!logicalOffset)
             return;
-        rareData = &ensureBlockRareData(this);
+        rareData = &ensureBlockRareData(*this);
     }
     rareData->m_pageLogicalOffset = logicalOffset;
 }
@@ -4083,17 +4093,17 @@ LayoutRect RenderBlock::paintRectToClipOutFromBorder(const LayoutRect& paintRect
 
 LayoutUnit RenderBlock::intrinsicBorderForFieldset() const
 {
-    auto* rareData = getBlockRareData(this);
+    auto* rareData = getBlockRareData(*this);
     return rareData ? rareData->m_intrinsicBorderForFieldset : LayoutUnit();
 }
 
 void RenderBlock::setIntrinsicBorderForFieldset(LayoutUnit padding)
 {
-    auto* rareData = getBlockRareData(this);
+    auto* rareData = getBlockRareData(*this);
     if (!rareData) {
         if (!padding)
             return;
-        rareData = &ensureBlockRareData(this);
+        rareData = &ensureBlockRareData(*this);
     }
     rareData->m_intrinsicBorderForFieldset = padding;
 }

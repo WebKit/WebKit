@@ -351,12 +351,19 @@ RenderCounter::RenderCounter(Document& document, const CounterContent& counter)
 
 RenderCounter::~RenderCounter()
 {
+    // Do not add any code here. Add it to willBeDestroyed() instead.
+}
+
+void RenderCounter::willBeDestroyed()
+{
     view().removeRenderCounter();
 
     if (m_counterNode) {
         m_counterNode->removeRenderer(*this);
         ASSERT(!m_counterNode);
     }
+    
+    RenderText::willBeDestroyed();
 }
 
 const char* RenderCounter::renderName() const

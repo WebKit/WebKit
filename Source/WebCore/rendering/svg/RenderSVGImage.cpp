@@ -53,7 +53,12 @@ RenderSVGImage::RenderSVGImage(SVGImageElement& element, RenderStyle&& style)
 
 RenderSVGImage::~RenderSVGImage()
 {
+}
+
+void RenderSVGImage::willBeDestroyed()
+{
     imageResource().shutdown();
+    RenderSVGModelObject::willBeDestroyed();
 }
 
 SVGImageElement& RenderSVGImage::imageElement() const

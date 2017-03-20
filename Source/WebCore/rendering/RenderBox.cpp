@@ -145,6 +145,11 @@ RenderBox::RenderBox(Document& document, RenderStyle&& style, BaseTypeFlags base
 
 RenderBox::~RenderBox()
 {
+    // Do not add any code here. Add it to willBeDestroyed() instead.
+}
+
+void RenderBox::willBeDestroyed()
+{
     if (frame().eventHandler().autoscrollRenderer() == this)
         frame().eventHandler().stopAutoscrollTimer(true);
 
@@ -158,6 +163,8 @@ RenderBox::~RenderBox()
 
     view().unscheduleLazyRepaint(*this);
     removeControlStatesForRenderer(*this);
+    
+    RenderBoxModelObject::willBeDestroyed();
 }
 
 RenderRegion* RenderBox::clampToStartAndEndRegions(RenderRegion* region) const

@@ -40,11 +40,18 @@ RenderQuote::RenderQuote(Document& document, RenderStyle&& style, QuoteType quot
 
 RenderQuote::~RenderQuote()
 {
+    // Do not add any code here. Add it to willBeDestroyed() instead.
+}
+
+void RenderQuote::willBeDestroyed()
+{
     detachQuote();
 
     ASSERT(!m_isAttached);
     ASSERT(!m_next);
     ASSERT(!m_previous);
+
+    RenderInline::willBeDestroyed();
 }
 
 void RenderQuote::insertedIntoTree()

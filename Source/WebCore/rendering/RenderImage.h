@@ -76,6 +76,8 @@ public:
     bool hasNonBitmapImage() const;
 
 protected:
+    void willBeDestroyed() override;
+
     bool needsPreferredWidthsRecalculation() const final;
     RenderBox* embeddedContentBox() const final;
     void computeIntrinsicRatioInformation(FloatSize& intrinsicSize, double& intrinsicRatio) const final;

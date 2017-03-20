@@ -60,6 +60,8 @@ public:
     String text() const;
 
 private:
+    void willBeDestroyed() override;
+
     void element() const = delete;
 
     bool isMenuList() const override { return true; }

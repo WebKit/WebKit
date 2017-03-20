@@ -119,6 +119,7 @@ RenderBlockFlow::RenderBlockFlow(Document& document, RenderStyle&& style)
 
 RenderBlockFlow::~RenderBlockFlow()
 {
+    // Do not add any code here. Add it to willBeDestroyed() instead.
 }
 
 void RenderBlockFlow::createMultiColumnFlowThread()
@@ -175,7 +176,7 @@ void RenderBlockFlow::willBeDestroyed()
 
     m_lineBoxes.deleteLineBoxes();
 
-    removeFromUpdateScrollInfoAfterLayoutTransaction();
+    blockWillBeDestroyed();
 
     // NOTE: This jumps down to RenderBox, bypassing RenderBlock since it would do duplicate work.
     RenderBox::willBeDestroyed();

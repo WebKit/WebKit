@@ -34,6 +34,7 @@ public:
     void attachQuote();
 
 private:
+    void willBeDestroyed() override;
     void detachQuote();
 
     const char* renderName() const override { return "RenderQuote"; }

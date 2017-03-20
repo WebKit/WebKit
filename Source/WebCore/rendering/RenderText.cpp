@@ -208,8 +208,8 @@ RenderText::RenderText(Document& document, const String& text)
 
 RenderText::~RenderText()
 {
-    if (m_originalTextDiffersFromRendered)
-        originalTextMap().remove(this);
+    // Do not add any code here. Add it to willBeDestroyed() instead.
+    ASSERT(!originalTextMap().contains(this));
 }
 
 const char* RenderText::renderName() const
@@ -286,6 +286,10 @@ void RenderText::willBeDestroyed()
     secureTextTimers().remove(this);
 
     removeAndDestroyTextBoxes();
+
+    if (m_originalTextDiffersFromRendered)
+        originalTextMap().remove(this);
+
     RenderObject::willBeDestroyed();
 }
 
