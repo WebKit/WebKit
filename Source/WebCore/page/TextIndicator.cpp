@@ -41,6 +41,10 @@
 #include "Range.h"
 #include "RenderObject.h"
 
+#if PLATFORM(IOS)
+#include "SelectionRect.h"
+#endif
+
 using namespace WebCore;
 
 namespace WebCore {
@@ -183,6 +187,19 @@ static bool takeSnapshots(TextIndicatorData& data, Frame& frame, IntRect snapsho
     return true;
 }
 
+#if PLATFORM(IOS)
+
+static void getSelectionRectsForRange(Vector<FloatRect>& resultingRects, const Range& range)
+{
+    Vector<SelectionRect> selectionRectsForRange;
+    Vector<FloatRect> selectionRectsForRangeInBoundingRectCoordinates;
+    range.collectSelectionRects(selectionRectsForRange);
+    for (auto selectionRect : selectionRectsForRange)
+        resultingRects.append(selectionRect.rect());
+}
+
+#endif
+
 static bool initializeIndicator(TextIndicatorData& data, Frame& frame, const Range& range, FloatSize margin, bool indicatesCurrentSelection)
 {
     Vector<FloatRect> textRects;
@@ -197,6 +214,10 @@ static bool initializeIndicator(TextIndicatorData& data, Frame& frame, const Ran
 
     if ((data.options & TextIndicatorOptionUseBoundingRectAndPaintAllContentForComplexRanges) && hasNonInlineOrReplacedElements(range))
         data.options |= TextIndicatorOptionPaintAllContent;
+#if PLATFORM(IOS)
+    else if (data.options & TextIndicatorOptionUseSelectionRectForSizing)
+        getSelectionRectsForRange(textRects, range);
+#endif
     else {
         if (data.options & TextIndicatorOptionDoNotClipToVisibleRect)
             frame.selection().getTextRectangles(textRects, textRectHeight);

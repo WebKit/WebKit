@@ -1266,7 +1266,7 @@ static SelectionRect coalesceSelectionRects(const SelectionRect& original, const
 
 // This function is similar in spirit to addLineBoxRects, but annotates the returned rectangles
 // with additional state which helps iOS draw selections in its unique way.
-int Range::collectSelectionRectsWithoutUnionInteriorLines(Vector<SelectionRect>& rects)
+int Range::collectSelectionRectsWithoutUnionInteriorLines(Vector<SelectionRect>& rects) const
 {
     auto& startContainer = this->startContainer();
     auto& endContainer = this->endContainer();
@@ -1426,7 +1426,7 @@ int Range::collectSelectionRectsWithoutUnionInteriorLines(Vector<SelectionRect>&
     return maxLineNumber;
 }
 
-void Range::collectSelectionRects(Vector<SelectionRect>& rects)
+void Range::collectSelectionRects(Vector<SelectionRect>& rects) const
 {
     int maxLineNumber = collectSelectionRectsWithoutUnionInteriorLines(rects);
     const size_t numberOfRects = rects.size();
