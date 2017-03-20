@@ -1210,6 +1210,11 @@ static ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicyToApply(Frame& s
     return propagatedPolicy;
 }
 
+bool FrameLoader::isNavigationAllowed() const
+{
+    return m_pageDismissalEventBeingDispatched == PageDismissalType::None && NavigationDisablerForBeforeUnload::isNavigationAllowed();
+}
+
 void FrameLoader::loadURL(const FrameLoadRequest& frameLoadRequest, const String& referrer, FrameLoadType newLoadType, Event* event, FormState* formState)
 {
     if (m_inStopAllLoaders)
@@ -1248,7 +1253,7 @@ void FrameLoader::loadURL(const FrameLoadRequest& frameLoadRequest, const String
         return;
     }
 
-    if (m_pageDismissalEventBeingDispatched != PageDismissalType::None)
+    if (!isNavigationAllowed())
         return;
 
     NavigationAction action(request, newLoadType, isFormSubmission, event, frameLoadRequest.shouldOpenExternalURLsPolicy(), frameLoadRequest.downloadAttribute());
@@ -1453,7 +1458,7 @@ void FrameLoader::loadWithDocumentLoader(DocumentLoader* loader, FrameLoadType t
 
     ASSERT(m_frame.view());
 
-    if (m_pageDismissalEventBeingDispatched != PageDismissalType::None)
+    if (!isNavigationAllowed())
         return;
 
     if (m_frame.document())
@@ -1648,7 +1653,7 @@ void FrameLoader::reload(OptionSet<ReloadOption> options)
 void FrameLoader::stopAllLoaders(ClearProvisionalItemPolicy clearProvisionalItemPolicy)
 {
     ASSERT(!m_frame.document() || m_frame.document()->pageCacheState() != Document::InPageCache);
-    if (m_pageDismissalEventBeingDispatched != PageDismissalType::None)
+    if (!isNavigationAllowed())
         return;
 
     // If this method is called from within this method, infinite recursion can occur (3442218). Avoid this.

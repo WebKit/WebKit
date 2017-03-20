@@ -1,3 +1,16 @@
+2017-03-20  Daniel Bates  <dabates@apple.com>
+
+        Prevent new navigations from onbeforeunload handler
+        https://bugs.webkit.org/show_bug.cgi?id=169891
+        <rdar://problem/31155736>
+
+        Reviewed by Ryosuke Niwa.
+
+        Update test to ensure that we disallow navigation initiated via a DOM click event from
+        an onbeforeunload handler.
+
+        * fast/events/before-unload-forbidden-navigation.html:
+
 2017-03-20  Andy Estes  <aestes@apple.com>
 
         [QuickLook] Subresources should be in the same origin as the main document
