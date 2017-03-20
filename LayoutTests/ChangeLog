@@ -1,5 +1,24 @@
 2017-03-20  Jason Marcell  <jmarcell@apple.com>
 
+        Merge r214096.
+
+    2017-03-16  Ryan Haddad  <ryanhaddad@apple.com>
+
+            Merge r213174.
+
+        2017-02-28  Alexey Proskuryakov  <ap@apple.com>
+
+                LayoutTest workers/sab/postMessage-clones.html is a flaky failure
+                https://bugs.webkit.org/show_bug.cgi?id=168129
+
+                Reviewed by Tim Horton.
+
+                * workers/sab/postMessage-clones-expected.txt:
+                * workers/sab/postMessage-clones.html:
+                Fix raciness, and update the test to modern style.
+
+2017-03-20  Jason Marcell  <jmarcell@apple.com>
+
         Merge r214095.
 
     2017-03-16  Ryan Haddad  <ryanhaddad@apple.com>

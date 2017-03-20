@@ -1,14 +1,13 @@
-<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<!DOCTYPE html>
 <html>
 <head>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 </head>
 <body>
 <script>
 description("Checks that window.postMessage clones SharedArrayBuffers");
 
-if (window.testRunner)
-    testRunner.waitUntilDone();
+jsTestIsAsync = true;
 
 var sab = new SharedArrayBuffer(4);
 var memory = new Int32Array(sab);
@@ -22,16 +21,10 @@ window.addEventListener("message", function (event) {
     otherMemory[0] = 43;
     shouldBe("memory[0]", "42");
     shouldBe("otherMemory[0]", "43");
-    if (window.testRunner)
-        testRunner.notifyDone();
+    finishJSTest();
 });
 
-window.setTimeout(
-    function() {
-        window.postMessage(memory, "*");
-    },
-    0);
+window.postMessage(memory, "*");
 </script>
-<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>
