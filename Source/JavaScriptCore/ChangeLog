@@ -1,3 +1,49 @@
+2017-03-20  Filip Pizlo  <fpizlo@apple.com>
+
+        Graph coloring should use coalescable moves when spilling
+        https://bugs.webkit.org/show_bug.cgi?id=169820
+
+        Reviewed by Michael Saboff.
+        
+        This makes our graph coloring register allocator use a new family of move instructions when
+        spilling both operands of the move. It's a three-operand move:
+        
+            Move (src), (dst), %scratch
+        
+        Previously, if both operands got spilled, we would emit a new instruction to load or store that
+        spill slot. But this made it hard for allocateStack to see that the two spill locations are
+        coalescable. This new kind of instruction makes it obvious that it's a coalescable move.
+        
+        This change implements the coalescing of spill slots inside allocateStack.
+        
+        This is an outrageous speed-up on the tsf_ir_speed benchmark from http://filpizlo.com/tsf/. This
+        is an interesting benchmark because it has a super ugly interpreter loop with ~20 live variables
+        carried around the loop back edge. This change makes that interpreter run 5x faster.
+        
+        This isn't a speed-up on any other benchmarks. It also doesn't regress anything. Compile time is
+        neither progressed or regressed, since the coalescing is super cheap, and this does not add any
+        significant new machinery to the register allocator (it's just a small change to spill codegen).
+        Overall on our wasm benchmarks, this is a 16% throughput progression.
+        
+        * assembler/MacroAssembler.h:
+        (JSC::MacroAssembler::move):
+        (JSC::MacroAssembler::move32):
+        (JSC::MacroAssembler::moveFloat):
+        (JSC::MacroAssembler::moveDouble):
+        * b3/air/AirAllocateRegistersByGraphColoring.cpp:
+        (JSC::B3::Air::allocateRegistersByGraphColoring):
+        * b3/air/AirAllocateStack.cpp:
+        (JSC::B3::Air::allocateStack):
+        * b3/air/AirInst.cpp:
+        (JSC::B3::Air::Inst::hasEarlyDef):
+        (JSC::B3::Air::Inst::hasLateUseOrDef):
+        (JSC::B3::Air::Inst::needsPadding):
+        * b3/air/AirInst.h:
+        * b3/air/AirOpcode.opcodes:
+        * b3/air/AirPadInterference.cpp:
+        (JSC::B3::Air::padInterference):
+        * runtime/Options.h:
+
 2017-03-19  Chris Dumez  <cdumez@apple.com>
 
         `const location = "foo"` throws in a worker

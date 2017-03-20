@@ -143,7 +143,14 @@ public:
     // registers. Note that Thing can only be Arg or Tmp when you use this functor.
     template<typename Thing, typename Functor>
     static void forEachDefWithExtraClobberedRegs(Inst* prevInst, Inst* nextInst, const Functor&);
-
+    
+    // Some summaries about all arguments. These are useful for needsPadding().
+    bool hasEarlyDef();
+    bool hasLateUseOrDef();
+    
+    // Check if there needs to be a padding Nop between these two instructions.
+    static bool needsPadding(Inst* prevInst, Inst* nextInst);
+    
     // Use this to report which registers are live. This should be done just before codegen. Note
     // that for efficiency, reportUsedRegisters() only works for the Patch opcode.
     void reportUsedRegisters(const RegisterSet&);

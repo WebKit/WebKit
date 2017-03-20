@@ -38,46 +38,10 @@ void padInterference(Code& code)
 {
     InsertionSet insertionSet(code);
     for (BasicBlock* block : code) {
-        bool prevHadLate = false;
-        for (unsigned instIndex = 0; instIndex < block->size(); ++instIndex) {
+        for (unsigned instIndex = 1; instIndex < block->size(); ++instIndex) {
             Inst& inst = block->at(instIndex);
-            
-            bool hasEarlyDef = false;
-            bool hasLate = false;
-            inst.forEachArg(
-                [&] (Arg&, Arg::Role role, Bank, Width) {
-                    switch (role) {
-                    case Arg::EarlyDef:
-                    case Arg::EarlyZDef:
-                        hasEarlyDef = true;
-                        break;
-                    case Arg::LateUse:
-                    case Arg::Def:
-                    case Arg::ZDef:
-                    case Arg::LateColdUse:
-                    case Arg::UseDef:
-                    case Arg::UseZDef:
-                        hasLate = true;
-                        break;
-                    case Arg::Scratch:
-                        hasEarlyDef = true;
-                        hasLate = true;
-                        break;
-                    case Arg::Use:
-                    case Arg::ColdUse:
-                    case Arg::UseAddr:
-                        break;
-                    }
-                });
-            if (inst.kind.opcode == Patch) {
-                hasEarlyDef |= !inst.extraEarlyClobberedRegs().isEmpty();
-                hasLate |= !inst.extraClobberedRegs().isEmpty();
-            }
-            
-            if (hasEarlyDef && prevHadLate)
+            if (Inst::needsPadding(&block->at(instIndex - 1), &inst))
                 insertionSet.insert(instIndex, Nop, inst.origin);
-            
-            prevHadLate = hasLate;
         }
         insertionSet.execute(block);
     }

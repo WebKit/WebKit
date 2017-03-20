@@ -623,6 +623,10 @@ Move U:G:Ptr, D:G:Ptr
     Tmp, Index as storePtr
     x86: Imm, Addr as storePtr
 
+# This is for moving between spill slots.
+Move U:G:Ptr, D:G:Ptr, S:G:Ptr
+    Addr, Addr, Tmp
+
 x86: Swap32 UD:G:32, UD:G:32
     Tmp, Tmp
     Tmp, Addr
@@ -640,6 +644,10 @@ Move32 U:G:32, ZD:G:32
     x86: Imm, Tmp as zeroExtend32ToPtr
     x86: Imm, Addr as store32
     x86: Imm, Index as store32
+
+# This is for moving between spill slots.
+Move32 U:G:32, ZD:G:32, S:G:32
+    Addr, Addr, Tmp
 
 StoreZero32 U:G:32
     Addr
@@ -675,12 +683,18 @@ MoveFloat U:F:32, D:F:32
     Tmp, Addr as storeFloat
     Tmp, Index as storeFloat
 
+MoveFloat U:F:32, D:F:32, S:F:32
+    Addr, Addr, Tmp
+
 MoveDouble U:F:64, D:F:64
     Tmp, Tmp
     Addr, Tmp as loadDouble
     Index, Tmp as loadDouble
     Tmp, Addr as storeDouble
     Tmp, Index as storeDouble
+
+MoveDouble U:F:64, D:F:64, S:F:64
+    Addr, Addr, Tmp
 
 MoveZeroToDouble D:F:64
     Tmp

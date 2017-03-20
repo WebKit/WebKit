@@ -1750,7 +1750,9 @@ protected:
             break;
         }
 
-        ASSERT_WITH_MESSAGE(inst.args.size() == 2, "We assume coalecable moves only have two arguments in a few places.");
+        // Avoid the three-argument coalescable spill moves.
+        if (inst.args.size() != 2)
+            return false;
 
         if (!inst.args[0].isTmp() || !inst.args[1].isTmp())
             return false;
@@ -2015,6 +2017,7 @@ private:
                 // Move is the canonical way to move data between GPRs.
                 bool canUseMove32IfDidSpill = false;
                 bool didSpill = false;
+                bool needScratch = false;
                 if (bank == GP && inst.kind.opcode == Move) {
                     if ((inst.args[0].isTmp() && m_tmpWidth.width(inst.args[0].tmp()) <= Width32)
                         || (inst.args[1].isTmp() && m_tmpWidth.width(inst.args[1].tmp()) <= Width32))
@@ -2034,8 +2037,30 @@ private:
                         auto stackSlotEntry = stackSlots.find(arg.tmp());
                         if (stackSlotEntry == stackSlots.end())
                             return;
-                        if (!inst.admitsStack(arg))
-                            return;
+                        bool needScratchIfSpilledInPlace = false;
+                        if (!inst.admitsStack(arg)) {
+                            if (traceDebug)
+                                dataLog("Have an inst that won't admit stack: ", inst, "\n");
+                            switch (inst.kind.opcode) {
+                            case Move:
+                            case MoveDouble:
+                            case MoveFloat:
+                            case Move32: {
+                                unsigned argIndex = &arg - &inst.args[0];
+                                unsigned otherArgIndex = argIndex ^ 1;
+                                Arg otherArg = inst.args[otherArgIndex];
+                                if (inst.args.size() == 2
+                                    && otherArg.isStack()
+                                    && otherArg.stackSlot()->isSpill()) {
+                                    needScratchIfSpilledInPlace = true;
+                                    break;
+                                }
+                                return;
+                            }
+                            default:
+                                return;
+                            }
+                        }
                         
                         // If the Tmp holds a constant then we want to rematerialize its
                         // value rather than loading it from the stack. In order for that
@@ -2048,8 +2073,20 @@ private:
                         }
                         
                         Width spillWidth = m_tmpWidth.requiredWidth(arg.tmp());
-                        if (Arg::isAnyDef(role) && width < spillWidth)
+                        if (Arg::isAnyDef(role) && width < spillWidth) {
+                            // Either there are users of this tmp who will use more than width,
+                            // or there are producers who will produce more than width non-zero
+                            // bits.
+                            // FIXME: It's not clear why we should have to return here. We have
+                            // a ZDef fixup in allocateStack. And if this isn't a ZDef, then it
+                            // doesn't seem like it matters what happens to the high bits. Note
+                            // that this isn't the case where we're storing more than what the
+                            // spill slot can hold - we already got that covered because we
+                            // stretch the spill slot on demand. One possibility is that it's ZDefs of
+                            // smaller width than 32-bit.
+                            // https://bugs.webkit.org/show_bug.cgi?id=169823
                             return;
+                        }
                         ASSERT(inst.kind.opcode == Move || !(Arg::isAnyUse(role) && width > spillWidth));
                         
                         if (spillWidth != Width32)
@@ -2059,11 +2096,48 @@ private:
                             canUseMove32IfDidSpill ? 4 : bytes(width));
                         arg = Arg::stack(stackSlotEntry->value);
                         didSpill = true;
+                        if (needScratchIfSpilledInPlace)
+                            needScratch = true;
                     });
 
                 if (didSpill && canUseMove32IfDidSpill)
                     inst.kind.opcode = Move32;
-
+                
+                if (needScratch) {
+                    Bank instBank;
+                    switch (inst.kind.opcode) {
+                    case Move:
+                    case Move32:
+                        instBank = GP;
+                        break;
+                    case MoveDouble:
+                    case MoveFloat:
+                        instBank = FP;
+                        break;
+                    default:
+                        RELEASE_ASSERT_NOT_REACHED();
+                        instBank = GP;
+                        break;
+                    }
+                    
+                    RELEASE_ASSERT(instBank == bank);
+                    
+                    Tmp tmp = m_code.newTmp(bank);
+                    unspillableTmps.add(AbsoluteTmpMapper<bank>::absoluteIndex(tmp));
+                    inst.args.append(tmp);
+                    RELEASE_ASSERT(inst.args.size() == 3);
+                    
+                    // Without this, a chain of spill moves would need two registers, not one, because
+                    // the scratch registers of successive moves would appear to interfere with each
+                    // other. As well, we need this if the previous instruction had any late effects,
+                    // since otherwise the scratch would appear to interfere with those. On the other
+                    // hand, the late use added at the end of this spill move (previously it was just a
+                    // late def) doesn't change the padding situation: the late def would have already
+                    // caused it to report hasLateUseOrDef in Inst::needsPadding.
+                    insertionSet.insert(instIndex, Nop, inst.origin);
+                    continue;
+                }
+                
                 // For every other case, add Load/Store as needed.
                 inst.forEachTmp([&] (Tmp& tmp, Arg::Role role, Bank argBank, Width) {
                     if (tmp.isReg() || argBank != bank)
@@ -2184,6 +2258,9 @@ private:
 void allocateRegistersByGraphColoring(Code& code)
 {
     PhaseScope phaseScope(code, "Air::allocateRegistersByGraphColoring");
+    
+    if (false)
+        dataLog("Code before graph coloring:\n", code);
 
     UseCounts<Tmp> useCounts(code);
     GraphColoringRegisterAllocation graphColoringRegisterAllocation(code, useCounts);

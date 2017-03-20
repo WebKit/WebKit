@@ -34,6 +34,35 @@
 
 namespace JSC { namespace B3 { namespace Air {
 
+bool Inst::hasEarlyDef()
+{
+    if (kind.opcode == Patch && !extraEarlyClobberedRegs().isEmpty())
+        return true;
+    bool result = false;
+    forEachArg(
+        [&] (Arg&, Arg::Role role, Bank, Width) {
+            result |= Arg::isEarlyDef(role);
+        });
+    return result;
+}
+
+bool Inst::hasLateUseOrDef()
+{
+    if (kind.opcode == Patch && !extraClobberedRegs().isEmpty())
+        return true;
+    bool result = false;
+    forEachArg(
+        [&] (Arg&, Arg::Role role, Bank, Width) {
+            result |= Arg::isLateUse(role) || Arg::isLateDef(role);
+        });
+    return result;
+}
+
+bool Inst::needsPadding(Inst* prevInst, Inst* nextInst)
+{
+    return prevInst && nextInst && prevInst->hasLateUseOrDef() && nextInst->hasEarlyDef();
+}
+
 bool Inst::hasArgEffects()
 {
     bool result = false;
