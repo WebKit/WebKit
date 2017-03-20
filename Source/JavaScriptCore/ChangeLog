@@ -1,3 +1,19 @@
+2017-03-17  Jason Marcell  <jmarcell@apple.com>
+
+        Merge r214079. rdar://problem/31116372
+
+    2017-03-16  Mark Lam  <mark.lam@apple.com>
+
+            Array concat operation should check for length overflows.
+            https://bugs.webkit.org/show_bug.cgi?id=169796
+            <rdar://problem/31095276>
+
+            Reviewed by Keith Miller.
+
+            * runtime/ArrayPrototype.cpp:
+            (JSC::concatAppendOne):
+            (JSC::arrayProtoPrivateFuncConcatMemcpy):
+
 2017-03-16  Jason Marcell  <jmarcell@apple.com>
 
         Merge r214071. rdar://problem/31077016

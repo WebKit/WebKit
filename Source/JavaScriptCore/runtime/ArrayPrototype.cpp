@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2003, 2007-2009, 2011, 2013, 2015-2017 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2017 Apple Inc. All rights reserved.
  *  Copyright (C) 2003 Peter Kelly (pmk@post.com)
  *  Copyright (C) 2006 Alexey Proskuryakov (ap@nypop.com)
  *
@@ -1205,15 +1205,25 @@ static EncodedJSValue concatAppendOne(ExecState* exec, VM& vm, JSArray* first, J
     Butterfly* firstButterfly = first->butterfly();
     unsigned firstArraySize = firstButterfly->publicLength();
 
+    Checked<unsigned, RecordOverflow> checkedResultSize = firstArraySize;
+    checkedResultSize += 1;
+    if (UNLIKELY(checkedResultSize.hasOverflowed())) {
+        throwOutOfMemoryError(exec, scope);
+        return encodedJSValue();
+    }
+
+    unsigned resultSize = checkedResultSize.unsafeGet();
     IndexingType type = first->mergeIndexingTypeForCopying(indexingTypeForValue(second) | IsArray);
     
     if (type == NonArray)
         type = first->indexingType();
 
     Structure* resultStructure = exec->lexicalGlobalObject()->arrayStructureForIndexingTypeDuringAllocation(type);
-    JSArray* result = JSArray::create(vm, resultStructure, firstArraySize + 1);
-    if (!result)
-        return JSValue::encode(throwOutOfMemoryError(exec, scope));
+    JSArray* result = JSArray::create(vm, resultStructure, resultSize);
+    if (UNLIKELY(!result)) {
+        throwOutOfMemoryError(exec, scope);
+        return encodedJSValue();
+    }
 
     bool success = result->appendMemcpy(exec, vm, 0, first);
     ASSERT(!success || !scope.exception());
@@ -1266,10 +1276,19 @@ EncodedJSValue JSC_HOST_CALL arrayProtoPrivateFuncConcatMemcpy(ExecState* exec)
     unsigned firstArraySize = firstButterfly->publicLength();
     unsigned secondArraySize = secondButterfly->publicLength();
 
+    Checked<unsigned, RecordOverflow> checkedResultSize = firstArraySize;
+    checkedResultSize += secondArraySize;
+
+    if (UNLIKELY(checkedResultSize.hasOverflowed())) {
+        throwOutOfMemoryError(exec, scope);
+        return encodedJSValue();
+    }
+
+    unsigned resultSize = checkedResultSize.unsafeGet();
     IndexingType secondType = secondArray->indexingType();
     IndexingType type = firstArray->mergeIndexingTypeForCopying(secondType);
-    if (type == NonArray || !firstArray->canFastCopy(vm, secondArray) || firstArraySize + secondArraySize >= MIN_SPARSE_ARRAY_INDEX) {
-        JSArray* result = constructEmptyArray(exec, nullptr, firstArraySize + secondArraySize);
+    if (type == NonArray || !firstArray->canFastCopy(vm, secondArray) || resultSize >= MIN_SPARSE_ARRAY_INDEX) {
+        JSArray* result = constructEmptyArray(exec, nullptr, resultSize);
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
         bool success = moveElements(exec, vm, result, 0, firstArray, firstArraySize);
@@ -1285,9 +1304,11 @@ EncodedJSValue JSC_HOST_CALL arrayProtoPrivateFuncConcatMemcpy(ExecState* exec)
     }
 
     Structure* resultStructure = exec->lexicalGlobalObject()->arrayStructureForIndexingTypeDuringAllocation(type);
-    JSArray* result = JSArray::tryCreateUninitialized(vm, resultStructure, firstArraySize + secondArraySize);
-    if (!result)
-        return JSValue::encode(throwOutOfMemoryError(exec, scope));
+    JSArray* result = JSArray::tryCreateUninitialized(vm, resultStructure, resultSize);
+    if (UNLIKELY(!result)) {
+        throwOutOfMemoryError(exec, scope);
+        return encodedJSValue();
+    }
     
     if (type == ArrayWithDouble) {
         double* buffer = result->butterfly()->contiguousDouble().data();
@@ -1304,7 +1325,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoPrivateFuncConcatMemcpy(ExecState* exec)
         }
     }
 
-    result->butterfly()->setPublicLength(firstArraySize + secondArraySize);
+    result->butterfly()->setPublicLength(resultSize);
     return JSValue::encode(result);
 }
 
