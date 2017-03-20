@@ -1,5 +1,11 @@
 2017-03-20  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed. Update OptionsGTK.cmake and NEWS for 2.16.0 release.
+
+        * gtk/NEWS: Add release notes for 2.16.0.
+
+2017-03-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed. Add missing types to WebKitAutocleanups.
 
         * UIProcess/API/gtk/WebKitAutocleanups.h:
