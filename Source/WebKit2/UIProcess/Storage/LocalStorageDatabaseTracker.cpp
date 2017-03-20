@@ -32,6 +32,7 @@
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/SecurityOriginData.h>
 #include <WebCore/TextEncoding.h>
+#include <wtf/MainThread.h>
 #include <wtf/WorkQueue.h>
 #include <wtf/text/CString.h>
 
@@ -142,6 +143,8 @@ static std::optional<time_t> fileModificationTime(const String& filePath)
 
 Vector<SecurityOriginData> LocalStorageDatabaseTracker::deleteDatabasesModifiedSince(std::chrono::system_clock::time_point time)
 {
+    ASSERT(!isMainThread());
+    importOriginIdentifiers();
     Vector<String> originIdentifiersToDelete;
 
     for (const String& origin : m_origins) {
