@@ -26,7 +26,11 @@ window.addEventListener("message", function (event) {
         testRunner.notifyDone();
 });
 
-postMessage(memory, "*");
+window.setTimeout(
+    function() {
+        window.postMessage(memory, "*");
+    },
+    0);
 </script>
 <script src="../../resources/js-test-post.js"></script>
 </body>
