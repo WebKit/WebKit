@@ -1,3 +1,9 @@
+2017-03-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Add missing types to WebKitAutocleanups.
+
+        * UIProcess/API/gtk/WebKitAutocleanups.h:
+
 2017-03-19  Brian Burg  <bburg@apple.com>
 
         [Cocoa] Web Automation: non-sticky virtual keys like 'left arrow' don't work properly
