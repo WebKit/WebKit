@@ -1,5 +1,37 @@
 2017-03-16  Jason Marcell  <jmarcell@apple.com>
 
+        Merge r213897. rdar://problem/30921833
+
+    2017-03-13  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+            Make RepaintRegionAccumulator hold a WeakPtr to its root RenderView
+            https://bugs.webkit.org/show_bug.cgi?id=168480
+            <rdar://problem/30566976>
+
+            Reviewed by Antti Koivisto.
+
+            Implements two mitigations to prevent the symptoms of the bug from occurring (see the bugzilla for more details).
+
+            Test: editing/execCommand/show-modal-dialog-during-execCommand.html
+
+            * editing/EditorCommand.cpp:
+            (WebCore::Editor::Command::execute):
+
+            Do not allow edit commands to execute if the frame's document before and after layout differ (that is, edit commands
+            triggered by a certain document should not run on a different document).
+
+            * rendering/RenderView.cpp:
+            (WebCore::RenderView::RenderView):
+            (WebCore::RenderView::RepaintRegionAccumulator::RepaintRegionAccumulator):
+
+            Turns RepaintRegionAccumulator's reference to its root RenderView into a WeakPtr to gracefully handle the case
+            where its RenderView is destroyed before RepaintRegionAccumulator's destructor gets a chance to flush the
+            RenderView's repaint regions.
+
+            * rendering/RenderView.h:
+
+2017-03-16  Jason Marcell  <jmarcell@apple.com>
+
         Merge r213833. rdar://problem/31092879
 
     2017-03-13  Miguel Gomez  <magomez@igalia.com>

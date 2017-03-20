@@ -1772,7 +1772,11 @@ bool Editor::Command::execute(const String& parameter, Event* triggeringEvent) c
         if (!allowExecutionWhenDisabled())
             return false;
     }
-    m_frame->document()->updateLayoutIgnorePendingStylesheets();
+    auto document = m_frame->document();
+    document->updateLayoutIgnorePendingStylesheets();
+    if (m_frame->document() != document)
+        return false;
+
     return m_command->execute(*m_frame, triggeringEvent, m_source, parameter);
 }
 

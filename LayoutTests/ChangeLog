@@ -1,5 +1,25 @@
 2017-03-16  Jason Marcell  <jmarcell@apple.com>
 
+        Merge r213897. rdar://problem/30921833
+
+    2017-03-13  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+            Make RepaintRegionAccumulator hold a WeakPtr to its root RenderView
+            https://bugs.webkit.org/show_bug.cgi?id=168480
+            <rdar://problem/30566976>
+
+            Reviewed by Antti Koivisto.
+
+            Introduces a new layout test. See WebCore ChangeLog for more details.
+
+            * TestExpectations:
+            * editing/execCommand/show-modal-dialog-during-execCommand-expected.txt: Added.
+            * editing/execCommand/show-modal-dialog-during-execCommand.html: Added.
+            * editing/execCommand/resources/self-closing-modal-dialog.html: Added.
+            * platform/mac-wk1/TestExpectations:
+
+2017-03-16  Jason Marcell  <jmarcell@apple.com>
+
         Merge r213501. rdar://problem/30921830
 
     2017-03-06  Brent Fulgham  <bfulgham@apple.com>
