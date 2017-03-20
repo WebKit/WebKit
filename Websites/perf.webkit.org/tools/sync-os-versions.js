@@ -28,18 +28,17 @@ function syncLoop(options)
 
     const remoteAPI = new RemoteAPI(serverConfig.server);
 
-    Promise.all(osConfigList.map(osConfig => new OSBuildFetcher(osConfig, remoteAPI, serverConfig.slave, new Subprocess, console))).then((fetchers) => {
-        return fetchers.reduce((promise, fetcher) => {
-            return promise.then(() => fetcher.fetchAndReportNewBuilds());
-        }, Promise.resolve());
-    }).catch((error) => {
+    const fetchers = osConfigList.map((osConfig) => new OSBuildFetcher(osConfig, remoteAPI, serverConfig.slave, new Subprocess, console));
+    OSBuildFetcher.fetchAndReportAllInOrder(fetchers).catch((error) => {
         console.error(error);
         if (typeof(error.stack) == 'string') {
             for (let line of error.stack.split('\n'))
                 console.error(line);
         }
-    }).then(function () {
-        setTimeout(syncLoop.bind(global, options), options['--seconds-to-sleep'] * 1000);
+    }).then(() => {
+        const secondsToSleep = options['--seconds-to-sleep'];
+        console.log(`Sleeping for ${Math.floor(secondsToSleep / 3600)}h ${Math.floor(secondsToSleep / 60) % 60}m ${secondsToSleep % 60}s`);
+        setTimeout(() => syncLoop(options), secondsToSleep * 1000);
     });
 }
 

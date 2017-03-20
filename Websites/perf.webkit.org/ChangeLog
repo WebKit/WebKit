@@ -1,3 +1,48 @@
+2017-03-20  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Fix os-build-fetcher.js and subprocess.js to make them work
+        https://bugs.webkit.org/show_bug.cgi?id=169844
+
+        Reviewed by Antti Koivisto.
+
+        The script added in r213976 has a bug that it can execute commands to fetch subcommits in parallel.
+        Some commands to poll the lsit of system components is not desirable to be ran in parallel.
+
+        * server-tests/resources/mock-subprocess.js:
+        (MockSubprocess): Use const declaration.
+        (MockSubprocess.resetAndWaitForInvocation): Added.
+        (MockSubprocess.waitForInvocation): Renamed from waitingForInvocation. A function name must be a verb.
+        See https://webkit.org/code-style-guidelines/#names-verb
+        (MockSubprocess.reset): Set invocations.length to 0 so that tests can store a reference to the array
+        regardless of whether reset is called or when it's called.
+
+        * server-tests/tools-os-build-fetcher-tests.js: Updated tests per the code change. Most of codes now
+        expect each command to be ran seprately. e.g. if there were two commands to run, instead of expecting
+        them to be both ran, and resolving invocation promises, we'd wait for one command to run, resolve,
+        its subcommand to run, and then move onto the second top-level command. Also use a local reference
+        to MockSubprocess.invocations instead of using the fully qualified name.
+
+        * tools/js/os-build-fetcher.js:
+        (mapInSerialPromiseChain): Added. Calling a closure that returns a promise on each item in an array
+        in serial (not asynchronous) is a very common pattern in this class.
+        (OSBuildFetcher.fetchAndReportAllInOrder): Added.
+        (OSBuildFetcher.prototype.fetchAndReportNewBuilds): Log what the number of builds being submitted.
+        (OSBuildFetcher.prototype._fetchAvailableBuilds): Fixed the main bug. Using Promise.all would result
+        in each top-level command to be execued in parallel. Since each subcommand is executed as soon as
+        its parent command is executed, this results in commands to be executed in parallel.
+        Added a whole bunch of logging so that we can at least detect a bug like this in the future.
+        (OSBuildFetcher.prototype._commitsForAvailableBuilds): Cleanup the coding style.
+        (OSBuildFetcher.prototype._addSubCommitsForBuild): Use mapInSerialPromiseChain. Tightened the assertion
+        about the content returned by a subcommand.
+
+        * tools/js/subprocess.js: Fixed the bug that we were importing require('child_process').ChildProcess.
+        execFile is defined on require('child_process') itself.
+        (Subprocess.prototype.execute): Fixed a typo. this._childProcess doesn't exist.
+        (Subprocess):
+
+        * tools/sync-os-versions.js: Renamed from tools/pull-os-versions.js.
+        (syncLoop): Cleaned up the coding style a little. Also added logging about how long we're about to sleep.
+
 2017-03-16  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add the file uploading capability to the perf dashboard.

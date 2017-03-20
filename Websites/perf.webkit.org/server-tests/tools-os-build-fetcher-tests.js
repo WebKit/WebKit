@@ -125,10 +125,10 @@ describe('OSBuildFetcher', function() {
         it('should only return commits whose orders are higher than specified order', () => {
             const logger = new MockLogger;
             const fetchter = new OSBuildFetcher(null, null, null, MockSubprocess, logger);
-            const waitingForInvocationPromise = MockSubprocess.waitingForInvocation();
+            const waitForInvocationPromise = MockSubprocess.waitForInvocation();
             const fetchCommitsPromise = fetchter._commitsForAvailableBuilds('OSX', ['list', 'build1'], '^\\.*$', 1604000000);
 
-            return waitingForInvocationPromise.then(() => {
+            return waitForInvocationPromise.then(() => {
                 assert.equal(MockSubprocess.invocations.length, 1);
                 assert.deepEqual(MockSubprocess.invocations[0].command, ['list', 'build1']);
                 MockSubprocess.invocations[0].resolve('16D321\n16E321z\n\n16F321');
@@ -145,15 +145,15 @@ describe('OSBuildFetcher', function() {
         it('should add sub-commit info for commits', () => {
             const logger = new MockLogger;
             const fetchter = new OSBuildFetcher(null, null, null, MockSubprocess, logger);
-            const waitingForInvocationPromise = MockSubprocess.waitingForInvocation();
+            const waitForInvocationPromise = MockSubprocess.waitForInvocation();
             const addSubCommitPromise = fetchter._addSubCommitsForBuild([osxCommit, anotherOSXCommit], ['subCommit', 'for', 'revision']);
 
-            return waitingForInvocationPromise.then(() => {
+            return waitForInvocationPromise.then(() => {
                 assert.equal(MockSubprocess.invocations.length, 1);
                 assert.deepEqual(MockSubprocess.invocations[0].command, ['subCommit', 'for', 'revision', 'Sierra16D32']);
                 MockSubprocess.invocations[0].resolve(JSON.stringify(subCommitWithWebKit));
                 MockSubprocess.reset();
-                return MockSubprocess.waitingForInvocation();
+                return MockSubprocess.waitForInvocation();
             }).then(() => {
                 assert.equal(MockSubprocess.invocations.length, 1);
                 assert.deepEqual(MockSubprocess.invocations[0].command, ['subCommit', 'for', 'revision', 'Sierra16E32']);
@@ -173,10 +173,10 @@ describe('OSBuildFetcher', function() {
         it('should fail if the command to get sub-commit info fails', () => {
             const logger = new MockLogger;
             const fetchter = new OSBuildFetcher(null, null, null, MockSubprocess, logger);
-            const waitingForInvocationPromise = MockSubprocess.waitingForInvocation();
+            const waitForInvocationPromise = MockSubprocess.waitForInvocation();
             const addSubCommitPromise = fetchter._addSubCommitsForBuild([osxCommit], ['subCommit', 'for', 'revision'])
 
-            return waitingForInvocationPromise.then(() => {
+            return waitForInvocationPromise.then(() => {
                 assert.equal(MockSubprocess.invocations.length, 1);
                 assert.deepEqual(MockSubprocess.invocations[0].command, ['subCommit', 'for', 'revision', 'Sierra16D32']);
                 MockSubprocess.invocations[0].reject('Failed getting sub-commit');
@@ -194,10 +194,10 @@ describe('OSBuildFetcher', function() {
         it('should fail if entries in sub-commits does not contain revision', () => {
             const logger = new MockLogger;
             const fetchter = new OSBuildFetcher(null, null, null, MockSubprocess, logger);
-            const waitingForInvocationPromise = MockSubprocess.waitingForInvocation();
+            const waitForInvocationPromise = MockSubprocess.waitForInvocation();
             const addSubCommitPromise = fetchter._addSubCommitsForBuild([osxCommit], ['subCommit', 'for', 'revision'])
 
-            return waitingForInvocationPromise.then(() => {
+            return waitForInvocationPromise.then(() => {
                 assert.equal(MockSubprocess.invocations.length, 1);
                 assert.deepEqual(MockSubprocess.invocations[0].command, ['subCommit', 'for', 'revision', 'Sierra16D32']);
                 MockSubprocess.invocations[0].resolve('{"WebKit":{"RandomKey": "RandomValue"}}');
@@ -213,6 +213,7 @@ describe('OSBuildFetcher', function() {
     })
 
     describe('OSBuildFetcher.fetchAndReportNewBuilds', () => {
+        const invocations = MockSubprocess.invocations;
 
         beforeEach(function () {
             TestServer.database().connect({keepAlive: true});
@@ -221,7 +222,6 @@ describe('OSBuildFetcher', function() {
         afterEach(function () {
             TestServer.database().disconnect();
         });
-
 
         it('should report all build commits with sub-commits', () => {
             const logger = new MockLogger;
@@ -250,66 +250,63 @@ describe('OSBuildFetcher', function() {
                 assert.equal(result['commits'].length, 1);
                 assert.equal(result['commits'][0]['revision'], 'Sierra16E33g');
                 assert.equal(result['commits'][0]['order'], 1604003307);
-                const waitingForInvocationPromise = MockSubprocess.waitingForInvocation();
+                const waitForInvocationPromise = MockSubprocess.waitForInvocation();
                 fetchAvailableBuildsPromise = fetchter._fetchAvailableBuilds();
-                return waitingForInvocationPromise;
+                return waitForInvocationPromise;
             }).then(() => {
-                return MockSubprocess.waitingForInvocation();
+                assert.equal(invocations.length, 1);
+                assert.deepEqual(invocations[0].command, ['list', 'all osx 16Dxx builds']);
+                invocations[0].resolve('\n\nSierra16D68\nSierra16D69\n');
+                return MockSubprocess.resetAndWaitForInvocation();
             }).then(() => {
-                MockSubprocess.invocations.sort((invocation, antoherInvocation) => invocation['command'] > antoherInvocation['command']);
-                assert.equal(MockSubprocess.invocations.length, 2);
-                assert.deepEqual(MockSubprocess.invocations[0].command, ['list', 'all osx 16Dxx builds']);
-                assert.deepEqual(MockSubprocess.invocations[1].command, ['list', 'all osx 16Exx builds']);
-                MockSubprocess.invocations[0].resolve('\n\nSierra16D68\nSierra16D69\n');
-                MockSubprocess.invocations[1].resolve('\n\nSierra16E32\nSierra16E33\nSierra16E33h\nSierra16E34');
-                MockSubprocess.reset();
-                return MockSubprocess.waitingForInvocation();
+                assert.equal(invocations.length, 1);
+                assert.deepEqual(invocations[0].command, ['list', 'subCommit', 'for', 'revision', 'Sierra16D69']);
+                invocations[0].resolve(JSON.stringify(subCommitWithWebKit));
+                return MockSubprocess.resetAndWaitForInvocation();
             }).then(() => {
-                MockSubprocess.invocations.sort((invocation, antoherInvocation) => invocation['command'] > antoherInvocation['command']);
-                assert.equal(MockSubprocess.invocations.length, 2);
-                assert.deepEqual(MockSubprocess.invocations[0].command, ['list', 'subCommit', 'for', 'revision', 'Sierra16D69']);
-                assert.deepEqual(MockSubprocess.invocations[1].command, ['list', 'subCommit', 'for', 'revision', 'Sierra16E33h']);
-
-                MockSubprocess.invocations[0].resolve(JSON.stringify(subCommitWithWebKit));
-                MockSubprocess.invocations[1].resolve(JSON.stringify(anotherSubCommitWithWebKit));
-                MockSubprocess.reset();
-                return MockSubprocess.waitingForInvocation();
+                assert.equal(invocations.length, 1);
+                assert.deepEqual(invocations[0].command, ['list', 'all osx 16Exx builds']);
+                invocations[0].resolve('\n\nSierra16E32\nSierra16E33\nSierra16E33h\nSierra16E34');
+                return MockSubprocess.resetAndWaitForInvocation();
             }).then(() => {
-                assert.equal(MockSubprocess.invocations.length, 1);
-                assert.deepEqual(MockSubprocess.invocations[0].command, ['list', 'subCommit', 'for', 'revision', 'Sierra16E34']);
-                MockSubprocess.invocations[0].resolve(JSON.stringify(anotherSubCommitWithWebKitAndJavaScriptCore));
+                assert.equal(invocations.length, 1);
+                assert.deepEqual(invocations[0].command, ['list', 'subCommit', 'for', 'revision', 'Sierra16E33h']);
+                invocations[0].resolve(JSON.stringify(anotherSubCommitWithWebKit));
+                return MockSubprocess.resetAndWaitForInvocation();
+            }).then(() => {
+                assert.equal(invocations.length, 1);
+                assert.deepEqual(invocations[0].command, ['list', 'subCommit', 'for', 'revision', 'Sierra16E34']);
+                invocations[0].resolve(JSON.stringify(anotherSubCommitWithWebKitAndJavaScriptCore));
                 return fetchAvailableBuildsPromise;
             }).then((results) => {
                 assert.equal(results.length, 3);
                 MockSubprocess.reset();
                 fetchAndReportPromise = fetchter.fetchAndReportNewBuilds();
-                return MockSubprocess.waitingForInvocation();
+                return MockSubprocess.waitForInvocation();
             }).then(() => {
-                return MockSubprocess.waitingForInvocation();
+                assert.equal(invocations.length, 1);
+                assert.deepEqual(invocations[0].command, ['list', 'all osx 16Dxx builds']);
+                invocations[0].resolve('\n\nSierra16D68\nSierra16D69\n');
+                return MockSubprocess.resetAndWaitForInvocation();
             }).then(() => {
-                MockSubprocess.invocations.sort((invocation, antoherInvocation) => invocation['command'] > antoherInvocation['command']);
-                assert.equal(MockSubprocess.invocations.length, 2);
-                assert.deepEqual(MockSubprocess.invocations[0].command, ['list', 'all osx 16Dxx builds']);
-                assert.deepEqual(MockSubprocess.invocations[1].command, ['list', 'all osx 16Exx builds']);
-                MockSubprocess.invocations[0].resolve('\n\nSierra16D68\nSierra16D69\n');
-                MockSubprocess.invocations[1].resolve('\n\nSierra16E32\nSierra16E33\nSierra16E33h\nSierra16E34');
-                MockSubprocess.reset();
-                return MockSubprocess.waitingForInvocation();
+                assert.equal(invocations.length, 1);
+                assert.deepEqual(invocations[0].command, ['list', 'subCommit', 'for', 'revision', 'Sierra16D69']);
+                invocations[0].resolve(JSON.stringify(subCommitWithWebKit));
+                return MockSubprocess.resetAndWaitForInvocation();
             }).then(() => {
-                MockSubprocess.invocations.sort((invocation, antoherInvocation) => invocation['command'] > antoherInvocation['command']);
-                assert.equal(MockSubprocess.invocations.length, 2);
-                assert.deepEqual(MockSubprocess.invocations[0].command, ['list', 'subCommit', 'for', 'revision', 'Sierra16D69']);
-                assert.deepEqual(MockSubprocess.invocations[1].command, ['list', 'subCommit', 'for', 'revision', 'Sierra16E33h']);
-
-                MockSubprocess.invocations[0].resolve(JSON.stringify(subCommitWithWebKit));
-                MockSubprocess.invocations[1].resolve(JSON.stringify(anotherSubCommitWithWebKit));
-
-                MockSubprocess.reset();
-                return MockSubprocess.waitingForInvocation();
+                assert.equal(invocations.length, 1);
+                assert.deepEqual(invocations[0].command, ['list', 'all osx 16Exx builds']);
+                invocations[0].resolve('\n\nSierra16E32\nSierra16E33\nSierra16E33h\nSierra16E34');
+                return MockSubprocess.resetAndWaitForInvocation();
             }).then(() => {
-                assert.equal(MockSubprocess.invocations.length, 1);
-                MockSubprocess.invocations[0].resolve(JSON.stringify(anotherSubCommitWithWebKitAndJavaScriptCore));
-                assert.deepEqual(MockSubprocess.invocations[0].command, ['list', 'subCommit', 'for', 'revision', 'Sierra16E34']);
+                assert.equal(invocations.length, 1);
+                assert.deepEqual(invocations[0].command, ['list', 'subCommit', 'for', 'revision', 'Sierra16E33h']);
+                invocations[0].resolve(JSON.stringify(anotherSubCommitWithWebKit));
+                return MockSubprocess.resetAndWaitForInvocation();
+            }).then(() => {
+                assert.equal(invocations.length, 1);
+                invocations[0].resolve(JSON.stringify(anotherSubCommitWithWebKitAndJavaScriptCore));
+                assert.deepEqual(invocations[0].command, ['list', 'subCommit', 'for', 'revision', 'Sierra16E34']);
 
                 return fetchAndReportPromise;
             }).then((result) => {
@@ -386,18 +383,18 @@ describe('OSBuildFetcher', function() {
                 assert.equal(result['commits'].length, 1);
                 assert.equal(result['commits'][0]['revision'], 'Sierra16E33g');
                 assert.equal(result['commits'][0]['order'], 1604003307);
-                const waitingForInvocationPromise = MockSubprocess.waitingForInvocation();
+                const waitForInvocationPromise = MockSubprocess.waitForInvocation();
                 fetchAndReportPromise = fetchter.fetchAndReportNewBuilds();
-                return waitingForInvocationPromise;
+                return waitForInvocationPromise;
             }).then(() => {
-                return MockSubprocess.waitingForInvocation();
+                assert.equal(invocations.length, 1);
+                assert.deepEqual(invocations[0].command, ['list', 'all osx 16Dxx builds']);
+                invocations[0].resolve('\n\nSierra16D68\nSierra16D69\n');
+                return MockSubprocess.resetAndWaitForInvocation();
             }).then(() => {
-                MockSubprocess.invocations.sort((invocation, antoherInvocation) => invocation['command'] > antoherInvocation['command']);
-                assert.equal(MockSubprocess.invocations.length, 2);
-                assert.deepEqual(MockSubprocess.invocations[0].command, ['list', 'all osx 16Dxx builds']);
-                assert.deepEqual(MockSubprocess.invocations[1].command, ['list', 'all osx 16Exx builds']);
-                MockSubprocess.invocations[0].resolve('\n\nSierra16D68\nSierra16D69\n');
-                MockSubprocess.invocations[1].resolve('\n\nSierra16E32\nSierra16E33\nSierra16E33h\nSierra16E34');
+                assert.equal(invocations.length, 1);
+                assert.deepEqual(invocations[0].command, ['list', 'all osx 16Exx builds']);
+                invocations[0].resolve('\n\nSierra16E32\nSierra16E33\nSierra16E33h\nSierra16E34');
                 return fetchAndReportPromise;
             }).then((result) => {
                 assert.equal(result['status'], 'OK');
@@ -471,35 +468,32 @@ describe('OSBuildFetcher', function() {
                 assert.equal(result['commits'][0]['revision'], 'Sierra16E33g');
                 assert.equal(result['commits'][0]['order'], 1604003307);
 
-                const waitingForInvocationPromise = MockSubprocess.waitingForInvocation();
+                const waitForInvocationPromise = MockSubprocess.waitForInvocation();
                 fetchAndReportPromise = fetchter.fetchAndReportNewBuilds();
-                return waitingForInvocationPromise;
+                return waitForInvocationPromise;
             }).then(() => {
-                return MockSubprocess.waitingForInvocation();
+                assert.equal(invocations.length, 1);
+                assert.deepEqual(invocations[0].command, ['list', 'all osx 16Dxx builds']);
+                invocations[0].resolve('\n\nSierra16D68\nSierra16D69\n');
+                return MockSubprocess.resetAndWaitForInvocation();
             }).then(() => {
-                MockSubprocess.invocations.sort((invocation, antoherInvocation) => invocation['command'] > antoherInvocation['command']);
-                assert.equal(MockSubprocess.invocations.length, 2);
-                assert.deepEqual(MockSubprocess.invocations[0].command, ['list', 'all osx 16Dxx builds']);
-                assert.deepEqual(MockSubprocess.invocations[1].command, ['list', 'all osx 16Exx builds']);
-                MockSubprocess.invocations[0].resolve('\n\nSierra16D68\nSierra16D69\n');
-                MockSubprocess.invocations[1].resolve('\n\nSierra16E32\nSierra16E33\nSierra16E33h\nSierra16E34');
-                MockSubprocess.reset();
-                return MockSubprocess.waitingForInvocation();
-            }).then(() => {
-                MockSubprocess.invocations.sort((invocation, antoherInvocation) => invocation['command'] > antoherInvocation['command']);
-                assert.equal(MockSubprocess.invocations.length, 2);
-                assert.deepEqual(MockSubprocess.invocations[0].command, ['list', 'subCommit', 'for', 'revision', 'Sierra16D69']);
-                assert.deepEqual(MockSubprocess.invocations[1].command, ['list', 'subCommit', 'for', 'revision', 'Sierra16E33h']);
-
+                assert.equal(invocations.length, 1);
+                assert.deepEqual(invocations[0].command, ['list', 'subCommit', 'for', 'revision', 'Sierra16D69']);
                 MockSubprocess.invocations[0].resolve(JSON.stringify(subCommitWithWebKit));
-                MockSubprocess.invocations[1].resolve(JSON.stringify(anotherSubCommitWithWebKit));
-                MockSubprocess.reset();
-                return MockSubprocess.waitingForInvocation();
+                return MockSubprocess.resetAndWaitForInvocation();
             }).then(() => {
-                assert.equal(MockSubprocess.invocations.length, 1);
-                assert.deepEqual(MockSubprocess.invocations[0].command, ['list', 'subCommit', 'for', 'revision', 'Sierra16E34']);
-                MockSubprocess.invocations[0].reject('Command failed');
-
+                assert.equal(invocations.length, 1);
+                assert.deepEqual(invocations[0].command, ['list', 'all osx 16Exx builds']);
+                invocations[0].resolve('\n\nSierra16E32\nSierra16E33\nSierra16E33h\nSierra16E34');
+                return MockSubprocess.resetAndWaitForInvocation();
+            }).then(() => {
+                assert.deepEqual(invocations[0].command, ['list', 'subCommit', 'for', 'revision', 'Sierra16E33h']);
+                invocations[0].resolve(JSON.stringify(anotherSubCommitWithWebKit));
+                return MockSubprocess.resetAndWaitForInvocation();
+            }).then(() => {
+                assert.equal(invocations.length, 1);
+                assert.deepEqual(invocations[0].command, ['list', 'subCommit', 'for', 'revision', 'Sierra16E34']);
+                invocations[0].reject('Command failed');
                 return fetchAndReportPromise.then(() => {
                     assert(false, 'should never be reached');
                 }, (error_output) => {

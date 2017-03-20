@@ -1,4 +1,4 @@
-var MockSubprocess = {
+const MockSubprocess = {
     execute: function (command)
     {
         const invocation = {command};
@@ -16,7 +16,12 @@ var MockSubprocess = {
         this.invocations.push(invocation);
         return invocation.promise;
     },
-    waitingForInvocation: function ()
+    resetAndWaitForInvocation: function ()
+    {
+        this.reset();
+        return this.waitForInvocation();
+    },
+    waitForInvocation: function ()
     {
         if (!this._waitingInvocation) {
             this._waitingInvocation = new Promise(function (resolve, reject) {
@@ -43,7 +48,7 @@ var MockSubprocess = {
     },
     reset: function ()
     {
-        MockSubprocess.invocations = [];
+        MockSubprocess.invocations.length = 0;
         MockSubprocess._waitingInvocation = null;
         MockSubprocess._waitingInvocationResolver = null;
     },

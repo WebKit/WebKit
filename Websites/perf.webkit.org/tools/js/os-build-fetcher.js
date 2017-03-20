@@ -2,6 +2,14 @@
 
 let assert = require('assert');
 
+function mapInSerialPromiseChain(list, callback)
+{
+    const results = [];
+    return list.reduce((chainedPromise, item) => {
+        return chainedPromise.then(() => callback(item)).then((result) => results.push(result));
+    }, Promise.resolve()).then(() => results);
+}
+
 class OSBuildFetcher {
 
     constructor(osConfig, remoteAPI, slaveAuth, subprocess, logger)
@@ -14,9 +22,15 @@ class OSBuildFetcher {
         this._subprocess = subprocess;
     }
 
+    static fetchAndReportAllInOrder(fetcherList)
+    {
+        return mapInSerialPromiseChain(fetcherList, (fetcher) => fetcher.fetchAndReportNewBuilds());
+    }
+
     fetchAndReportNewBuilds()
     {
-        return this._fetchAvailableBuilds().then((results) =>{
+        return this._fetchAvailableBuilds().then((results) => {
+            this._logger.log(`Submitting ${results.length} builds for ${this._osConfig['name']}`);
             return this._submitCommits(results);
         });
     }
@@ -27,24 +41,29 @@ class OSBuildFetcher {
         const repositoryName = config['name'];
         let customCommands = config['customCommands'];
 
-        return Promise.all(customCommands.map((command) => {
+        return mapInSerialPromiseChain(customCommands, (command) => {
             assert(command['minRevision']);
             assert(command['maxRevision']);
             const minRevisionOrder = this._computeOrder(command['minRevision']);
             const maxRevisionOrder = this._computeOrder(command['maxRevision']);
 
-            let fetchCommitsPromise = this._remoteAPI.getJSONWithStatus(`/api/commits/${escape(repositoryName)}/last-reported?from=${minRevisionOrder}&to=${maxRevisionOrder}`).then((result) => {
+            const url = `/api/commits/${escape(repositoryName)}/last-reported?from=${minRevisionOrder}&to=${maxRevisionOrder}`;
+
+            return this._remoteAPI.getJSONWithStatus(url).then((result) => {
                 const minOrder = result['commits'].length == 1 ? parseInt(result['commits'][0]['order']) : 0;
                 return this._commitsForAvailableBuilds(repositoryName, command['command'], command['linesToIgnore'], minOrder);
-            })
+            }).then((commits) => {
+                const label = 'name' in command ? `"${command['name']}"` : `"command['minRevision']" to "command['maxRevision']"`;
+                this._logger.log(`Found ${commits.length} builds for ${label}`);
 
-            if ('subCommitCommand' in command)
-                fetchCommitsPromise = fetchCommitsPromise.then((commits) => this._addSubCommitsForBuild(commits, command['subCommitCommand']));
+                if ('subCommitCommand' in command) {
+                    this._logger.log(`Resolving subcommits for "${label}"`);
+                    return this._addSubCommitsForBuild(commits, command['subCommitCommand']);
+                }
 
-            return fetchCommitsPromise;
-        })).then(results => {
-            return Array.prototype.concat.apply([], results);
-        });
+                return commits;
+            });
+        }).then((results) => [].concat(...results));
     }
 
     _computeOrder(revision)
@@ -65,27 +84,27 @@ class OSBuildFetcher {
             let lines = output.split('\n');
             if (linesToIgnore){
                 const regex = new RegExp(linesToIgnore);
-                lines = lines.filter(function(line) {return !regex.exec(line);});
+                lines = lines.filter((line) => !regex.exec(line));
             }
-            return lines.map(revision => ({repository, revision, 'order': this._computeOrder(revision)}))
-                .filter(commit => commit['order'] > minOrder);
+            return lines.map((revision) => ({repository, revision, 'order': this._computeOrder(revision)}))
+                .filter((commit) => commit['order'] > minOrder);
         });
     }
 
     _addSubCommitsForBuild(commits, command)
     {
-        return commits.reduce((promise, commit) => {
-            return promise.then(() => {
-                return this._subprocess.execute(command.concat(commit['revision']));
-            }).then((subCommitOutput) => {
+        return mapInSerialPromiseChain(commits, (commit) => {
+            return this._subprocess.execute(command.concat(commit['revision'])).then((subCommitOutput) => {
                 const subCommits = JSON.parse(subCommitOutput);
                 for (let repositoryName in subCommits) {
                     const subCommit = subCommits[repositoryName];
-                    assert(subCommit['revision']);
+                    assert.deepEqual(Object.keys(subCommit), ['revision']);
+                    assert(typeof(subCommit['revision']) == 'string');
                 }
                 commit['subCommits'] = subCommits;
+                return commit;
             });
-        }, Promise.resolve()).then(() => commits);
+        });
     }
 
     _submitCommits(commits)
@@ -94,5 +113,6 @@ class OSBuildFetcher {
         return this._remoteAPI.postJSONWithStatus('/api/report-commits/', commitsToReport);
     }
 }
+
 if (typeof module != 'undefined')
     module.exports.OSBuildFetcher = OSBuildFetcher;
