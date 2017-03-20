@@ -2,6 +2,8 @@
 
 postProcessInDirectory()
 {
+    touch -r "$1" "${TARGET_TEMP_DIR}/postprocess-headers-saved.timestamp"
+
     cd "$1"
 
     local unifdefOptions sedExpression
@@ -65,7 +67,11 @@ postProcessInDirectory()
             mv ${header}.sed ${header}
         fi
     done
+
+    touch -r "${TARGET_TEMP_DIR}/postprocess-headers-saved.timestamp" "$1"
 }
 
 postProcessInDirectory "${TARGET_BUILD_DIR}/${PUBLIC_HEADERS_FOLDER_PATH}"
 postProcessInDirectory "${TARGET_BUILD_DIR}/${PRIVATE_HEADERS_FOLDER_PATH}"
+
+touch "${DERIVED_FILE_DIR}/postprocess-headers.timestamp"

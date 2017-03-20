@@ -1,3 +1,14 @@
+2017-03-20  Dan Bernstein  <mitz@apple.com>
+
+        [Xcode] Incremental builds of WebKitLegacy are slow because of the Postprocess Headers phase
+        https://bugs.webkit.org/show_bug.cgi?id=169861
+
+        Reviewed by Sam Weinig.
+
+        * MigrateHeaders.make: Touch the PrivateHeaders directory when migrating a header into it.
+        * postprocess-headers.sh: Preserve the timestamp on the headers directories. Write out the
+          timestamp file used by the Xcode project to determine whether to run the script.
+
 2017-03-19  Alexey Proskuryakov  <ap@apple.com>
 
         WebHTMLView is useless as WebResourceHandler

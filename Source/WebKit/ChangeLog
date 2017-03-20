@@ -1,3 +1,14 @@
+2017-03-20  Dan Bernstein  <mitz@apple.com>
+
+        [Xcode] Incremental builds of WebKitLegacy are slow because of the Postprocess Headers phase
+        https://bugs.webkit.org/show_bug.cgi?id=169861
+
+        Reviewed by Sam Weinig.
+
+        * WebKit.xcodeproj/project.pbxproj: Specified that the Postprocess Headers script build
+          phase has the Headers and PrivateHeaders directories as its inputs and a timestamp file as
+          its output.
+
 2017-03-15  Dean Jackson  <dino@apple.com>
 
         Sort Xcode project files

@@ -3377,9 +3377,12 @@
 			files = (
 			);
 			inputPaths = (
+				"$(TARGET_BUILD_DIR)/$(PRIVATE_HEADERS_FOLDER_PATH)",
+				"$(TARGET_BUILD_DIR)/$(HEADERS_FOLDER_PATH)",
 			);
 			name = "Postprocess Headers";
 			outputPaths = (
+				"$(DERIVED_FILE_DIR)/postprocess-headers.timestamp",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
