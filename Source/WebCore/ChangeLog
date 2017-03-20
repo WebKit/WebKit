@@ -1,5 +1,32 @@
 2017-03-16  Jason Marcell  <jmarcell@apple.com>
 
+        Merge r213967. rdar://problem/30921827
+
+    2017-03-14  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+            RenderElements should unregister for viewport visibility callbacks when they are destroyed
+            https://bugs.webkit.org/show_bug.cgi?id=169521
+            <rdar://problem/30959545>
+
+            Reviewed by Simon Fraser.
+
+            When registering a RenderElement for viewport visibility callbacks, we always need to make sure that it is unregistered
+            before it is destroyed. While we account for this in the destructor of RenderElement, we only unregister in the destructor
+            if we are already registered for visibility callbacks. In the call to RenderObject::willBeDestroyed(), we clear out rare
+            data, which holds RenderElement's viewport callback registration state, so upon entering the destructor of RenderElement,
+            we skip unregistration because RenderElement thinks that it is not registered.
+
+            We can mitigate this by unregistering the RenderElement earlier, in RenderElement::willBeDestroyed, prior to clearing out
+            the rare data. However, we'd ideally want to move the cleanup logic out of the destructor altogether and into willBeDestroyed
+            (see https://bugs.webkit.org/show_bug.cgi?id=169650).
+
+            Test: fast/media/video-element-in-details-collapse.html
+
+            * rendering/RenderElement.cpp:
+            (WebCore::RenderElement::willBeDestroyed):
+
+2017-03-16  Jason Marcell  <jmarcell@apple.com>
+
         Merge r213897. rdar://problem/30921833
 
     2017-03-13  Wenson Hsieh  <wenson_hsieh@apple.com>
