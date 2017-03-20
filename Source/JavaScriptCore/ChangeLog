@@ -1,5 +1,24 @@
 2017-03-16  Jason Marcell  <jmarcell@apple.com>
 
+        Merge r213742. rdar://problem/30921818
+
+    2017-03-10  Mark Lam  <mark.lam@apple.com>
+
+            JSC: BindingNode::bindValue doesn't increase the scope's reference count.
+            https://bugs.webkit.org/show_bug.cgi?id=168546
+            <rdar://problem/30589551>
+
+            Reviewed by Saam Barati.
+
+            We should protect the scope RegisterID with a RefPtr while it is still needed.
+
+            * bytecompiler/NodesCodegen.cpp:
+            (JSC::ForInNode::emitLoopHeader):
+            (JSC::ForOfNode::emitBytecode):
+            (JSC::BindingNode::bindValue):
+
+2017-03-16  Jason Marcell  <jmarcell@apple.com>
+
         Merge r213648. rdar://problem/30921824
 
     2017-03-09  Filip Pizlo  <fpizlo@apple.com>
