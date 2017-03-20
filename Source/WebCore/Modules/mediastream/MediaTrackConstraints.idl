@@ -43,8 +43,8 @@
     ConstrainLong sampleRate;
     ConstrainLong sampleSize;
     ConstrainBoolean echoCancellation;
-    // FIXME: add latency
-    // FIXME: add channelCount
+    // FIXME 169871: add latency
+    // FIXME 169871: add channelCount
     ConstrainDOMString deviceId;
     ConstrainDOMString groupId;
 };

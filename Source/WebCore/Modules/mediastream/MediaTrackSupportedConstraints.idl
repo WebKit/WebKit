@@ -41,6 +41,8 @@
     boolean sampleRate = true;
     boolean sampleSize = true;
     boolean echoCancellation = true;
+    // FIXME 169871: add latency
+    // FIXME 169871: add channelCount
     boolean deviceId = true;
     boolean groupId = true;
 };

@@ -32,5 +32,6 @@
     Conditional=MEDIA_STREAM,
     EnabledAtRuntime=MediaStream,
 ] partial interface Navigator {
+    // FIXME: missing [SameObject]
     readonly attribute MediaDevices mediaDevices;
 };

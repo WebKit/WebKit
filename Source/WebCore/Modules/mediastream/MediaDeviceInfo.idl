@@ -30,10 +30,14 @@
     NoInterfaceObject,
 ] interface MediaDeviceInfo {
     readonly attribute DOMString deviceId;
-    readonly attribute DOMString groupId;
     readonly attribute MediaDeviceKind kind;
     readonly attribute DOMString label;
+    readonly attribute DOMString groupId;
+
+    // FIXME 169871: missing serializer
 };
+
+// FIXME 169871: missing InputDeviceInfo
 
 enum MediaDeviceKind {
     "audioinput",

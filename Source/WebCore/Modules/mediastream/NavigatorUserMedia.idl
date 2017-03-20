@@ -32,5 +32,6 @@
     Conditional=MEDIA_STREAM,
     EnabledAtRuntime=MediaStream,
 ] partial interface Navigator {
+    // FIXME 169871: wrap legacy setting
     [JSBuiltin] void getUserMedia(MediaStreamConstraints constraints, NavigatorUserMediaSuccessCallback successCallback, NavigatorUserMediaErrorCallback errorCallback);
 };

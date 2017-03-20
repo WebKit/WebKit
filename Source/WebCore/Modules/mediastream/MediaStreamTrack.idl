@@ -23,6 +23,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// FIXME 169871: remove "new"
 enum MediaStreamTrackState { "new", "live", "ended" };
 
 [
@@ -40,19 +41,21 @@ enum MediaStreamTrackState { "new", "live", "ended" };
     readonly attribute boolean muted;
     attribute EventHandler onmute;
     attribute EventHandler onunmute;
-    readonly attribute boolean _readonly;
     readonly attribute MediaStreamTrackState readyState;
     attribute EventHandler onended;
 
     MediaStreamTrack clone();
     [ImplementedAs=stopProducingData] void stop();
 
+    MediaTrackCapabilities getCapabilities();
     MediaTrackConstraints getConstraints();
     MediaTrackSettings getSettings();
-    MediaTrackCapabilities getCapabilities();
     Promise<void> applyConstraints(optional MediaTrackConstraints constraints);
 
     attribute EventHandler onoverconstrained;
+
+    // FIXME 169871: legacy or remove?
+    readonly attribute boolean _readonly;
 };
 
 [
@@ -68,8 +71,8 @@ enum MediaStreamTrackState { "new", "live", "ended" };
     LongRange sampleRate;
     LongRange sampleSize;
     sequence<boolean> echoCancellation;
-    // FIXME: add latency
-    // FIXME: add channelCount
+    // FIXME 169871: add latency
+    // FIXME 169871: add channelCount
     DOMString deviceId;
     DOMString groupId;
 };
@@ -87,8 +90,8 @@ enum MediaStreamTrackState { "new", "live", "ended" };
     long sampleRate;
     long sampleSize;
     boolean echoCancellation;
-    // FIXME: add latency
-    // FIXME: add channelCount
+    // FIXME 169871: add latency
+    // FIXME 169871: add channelCount
     DOMString deviceId;
     DOMString groupId;
 };

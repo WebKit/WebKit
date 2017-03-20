@@ -26,6 +26,7 @@
     Conditional=MEDIA_STREAM,
     Constructor(DOMString type, MediaStreamTrackEventInit eventInitDict),
 ] interface MediaStreamTrackEvent : Event {
+    // FIXME: missing [SameObject]
     readonly attribute MediaStreamTrack track;
 };
 
