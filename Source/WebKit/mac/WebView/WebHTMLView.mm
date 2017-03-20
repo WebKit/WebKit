@@ -2554,7 +2554,7 @@ static bool mouseEventIsPartOfClickOrDrag(NSEvent *event)
             
         NSDictionary *documentAttributes = [[NSDictionary alloc] initWithObjectsAndKeys:
             [[self class] _excludedElementsForAttributedStringConversion], NSExcludedElementsDocumentAttribute,
-            self, @"WebResourceHandler", nil];
+            nil];
         NSArray *s;
         
         BOOL wasDeferringCallbacks = [[self _webView] defersCallbacks];
