@@ -69,6 +69,8 @@ public:
 
     virtual float captionFontSizeScaleAndImportance(bool& important) const { important = false; return 0.05f; }
 
+    virtual bool captionStrokeWidthForFont(float, const String&, float&, bool&) const { return false; }
+
     virtual String captionsStyleSheetOverride() const { return m_captionsStyleSheetOverride; }
     virtual void setCaptionsStyleSheetOverride(const String&);
 

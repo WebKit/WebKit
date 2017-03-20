@@ -43,6 +43,7 @@
 #include "TextTrackList.h"
 #include "UserStyleSheetTypes.h"
 #include "VTTCue.h"
+#include <algorithm>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/PlatformUserPreferredLanguages.h>
 #include <wtf/RetainPtr.h>
@@ -357,28 +358,28 @@ String CaptionUserPreferencesMediaAF::colorPropertyCSS(CSSPropertyID id, const C
     return builder.toString();
 }
 
-String CaptionUserPreferencesMediaAF::strokeWidth() const
+bool CaptionUserPreferencesMediaAF::captionStrokeWidthForFont(float fontSize, const String& language, float& strokeWidth, bool& important) const
 {
-    static NeverDestroyed<const String> strokeWidthDefault(ASCIILiteral(" .03em "));
-    
-    if (!MACaptionFontAttributeStrokeWidth && !canLoad_MediaAccessibility_MACaptionFontAttributeStrokeWidth())
-        return strokeWidthDefault;
+    if (!canLoad_MediaAccessibility_MACaptionAppearanceCopyFontDescriptorWithStrokeForStyle())
+        return false;
     
     MACaptionAppearanceBehavior behavior;
-
-    auto font = adoptCF(MACaptionAppearanceCopyFontDescriptorForStyle(kMACaptionAppearanceDomainUser, &behavior, kMACaptionAppearanceFontStyleDefault));
-    if (!font)
-        return strokeWidthDefault;
+    auto trackLanguage = language.createCFString();
+    CGFloat strokeWidthPt;
     
-    auto strokeWidthAttribute = adoptCF(CTFontDescriptorCopyAttribute(font.get(), MACaptionFontAttributeStrokeWidth));
-    if (!strokeWidthAttribute)
-        return strokeWidthDefault;
-    
-    int strokeWidth = 0;
-    if (!CFNumberGetValue(static_cast<CFNumberRef>(strokeWidthAttribute.get()), kCFNumberIntType, &strokeWidth))
-        return strokeWidthDefault;
+    auto fontDescriptor = adoptCF(MACaptionAppearanceCopyFontDescriptorWithStrokeForStyle(kMACaptionAppearanceDomainUser, &behavior, kMACaptionAppearanceFontStyleDefault, trackLanguage.get(), fontSize, &strokeWidthPt));
 
-    return String::format(" %dpx ", strokeWidth);
+    if (!fontDescriptor)
+        return false;
+
+    strokeWidth = strokeWidthPt;
+    important = behavior == kMACaptionAppearanceBehaviorUseValue;
+    
+    // Currently, MACaptionAppearanceCopyFontDescriptorWithStrokeForStyle is returning very large stroke widths, see <rdar://problem/31126629>.
+    // To avoid stroke widths that are too large, we set a maximum value of 10% of the font size.
+    strokeWidth = std::min(strokeWidth, fontSize / 10.0f);
+    
+    return true;
 }
 
 String CaptionUserPreferencesMediaAF::captionsTextEdgeCSS() const
@@ -403,11 +404,7 @@ String CaptionUserPreferencesMediaAF::captionsTextEdgeCSS() const
         appendCSS(builder, CSSPropertyTextShadow, makeString(edgeStyleDropShadow.get(), " black"), important);
 
     if (textEdgeStyle == kMACaptionAppearanceTextEdgeStyleDropShadow || textEdgeStyle == kMACaptionAppearanceTextEdgeStyleUniform) {
-        if (textEdgeStyle == kMACaptionAppearanceTextEdgeStyleDropShadow)
-            appendCSS(builder, CSSPropertyWebkitTextStroke, ".03em black", important);
-        else
-            appendCSS(builder, CSSPropertyWebkitTextStroke, makeString(strokeWidth(), " black"), important);
-
+        appendCSS(builder, CSSPropertyWebkitTextStrokeColor, "black", important);
         appendCSS(builder, CSSPropertyPaintOrder, getValueName(CSSValueStroke), important);
         appendCSS(builder, CSSPropertyStrokeLinejoin, getValueName(CSSValueRound), important);
         appendCSS(builder, CSSPropertyStrokeLinecap, getValueName(CSSValueRound), important);

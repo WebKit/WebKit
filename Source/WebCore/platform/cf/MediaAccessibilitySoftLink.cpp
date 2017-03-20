@@ -53,9 +53,8 @@ SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, MediaAccessibility, MACaptionAppearanceAd
 SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, MediaAccessibility, MACaptionAppearanceCopySelectedLanguages, CFArrayRef, (MACaptionAppearanceDomain domain), (domain));
 SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, MediaAccessibility, MACaptionAppearanceCopyPreferredCaptioningMediaCharacteristics,  CFArrayRef, (MACaptionAppearanceDomain domain), (domain));
 SOFT_LINK_FUNCTION_MAY_FAIL_FOR_SOURCE(WebCore, MediaAccessibility, MAAudibleMediaCopyPreferredCharacteristics, CFArrayRef, (), ());
-
+SOFT_LINK_FUNCTION_MAY_FAIL_FOR_SOURCE(WebCore, MediaAccessibility, MACaptionAppearanceCopyFontDescriptorWithStrokeForStyle, CTFontDescriptorRef, (MACaptionAppearanceDomain domain, MACaptionAppearanceBehavior *behavior, MACaptionAppearanceFontStyle fontStyle, CFStringRef trackLanguage, CGFloat darwingPointSize, CGFloat *strokeWidthPt), (domain, behavior, fontStyle, trackLanguage, darwingPointSize, strokeWidthPt));
 SOFT_LINK_CONSTANT_FOR_SOURCE(WebCore, MediaAccessibility, kMAXCaptionAppearanceSettingsChangedNotification, CFStringRef)
 SOFT_LINK_CONSTANT_MAY_FAIL_FOR_SOURCE(WebCore, MediaAccessibility, kMAAudibleMediaSettingsChangedNotification, CFStringRef)
-SOFT_LINK_CONSTANT_MAY_FAIL_FOR_SOURCE(WebCore, MediaAccessibility, MACaptionFontAttributeStrokeWidth, CFStringRef)
 
 #endif // HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)

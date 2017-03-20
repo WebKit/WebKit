@@ -47,6 +47,7 @@ public:
     bool userPrefersSubtitles() const override;
 
     float captionFontSizeScaleAndImportance(bool&) const override;
+    bool captionStrokeWidthForFont(float fontSize, const String& language, float& strokeWidth, bool& important) const override;
 
     void setInterestedInCaptionPreferenceChanges() override;
 
@@ -80,7 +81,6 @@ private:
     Color captionsTextColor(bool&) const;
     String captionsDefaultFontCSS() const;
     String windowRoundedCornerRadiusCSS() const;
-    String strokeWidth() const;
     String captionsTextEdgeCSS() const;
     String colorPropertyCSS(CSSPropertyID, const Color&, bool) const;
     Timer m_updateStyleSheetTimer;

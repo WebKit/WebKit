@@ -1230,6 +1230,37 @@ void MediaControlTextTrackContainerElement::updateActiveCuesFontSize()
 
 }
 
+void MediaControlTextTrackContainerElement::updateTextStrokeStyle()
+{
+    if (!document().page())
+        return;
+
+    HTMLMediaElement* mediaElement = parentMediaElement(this);
+    if (!mediaElement)
+        return;
+    
+    String language;
+
+    // FIXME: Since it is possible to have more than one text track enabled, the following code may not find the correct language.
+    // The default UI only allows a user to enable one track at a time, so it should be OK for now, but we should consider doing
+    // this differently, see <https://bugs.webkit.org/show_bug.cgi?id=169875>.
+    auto& tracks = mediaElement->textTracks();
+    for (unsigned i = 0; i < tracks.length(); ++i) {
+        auto track = tracks.item(i);
+        if (track && track->mode() == TextTrack::Mode::Showing) {
+            language = track->validBCP47Language();
+            break;
+        }
+    }
+    
+    float strokeWidth;
+    bool important;
+    
+    // FIXME: find a way to set this property in the stylesheet like the other user style preferences, see <https://bugs.webkit.org/show_bug.cgi?id=169874>.
+    if (document().page()->group().captionPreferences().captionStrokeWidthForFont(m_fontSize, language, strokeWidth, important))
+        setInlineStyleProperty(CSSPropertyStrokeWidth, strokeWidth, CSSPrimitiveValue::CSS_PT, important);
+}
+
 void MediaControlTextTrackContainerElement::updateTimerFired()
 {
     if (!document().page())
@@ -1240,6 +1271,7 @@ void MediaControlTextTrackContainerElement::updateTimerFired()
 
     updateActiveCuesFontSize();
     updateDisplay();
+    updateTextStrokeStyle();
 }
 
 void MediaControlTextTrackContainerElement::updateTextTrackRepresentation()
