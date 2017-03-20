@@ -33,7 +33,7 @@
             }
 
             function error1(e) {
-                testFailed("Error callback called.");
+                testFailed(`Error callback called, error = ${e}`);
                 finishJSTest();
             }
 
@@ -46,7 +46,8 @@
                 // as it should not see the request because the current browsing context has already
                 // successfully created a stream for the mock audio device.
                 setUserMediaPermission(false);
-                shouldNotThrow("navigator.mediaDevices.getUserMedia({audio:true}).then(validStream, error1);");
+                debug("");
+                shouldNotThrow("navigator.mediaDevices.getUserMedia({audio:true}).then(validStream).catch(error1);");
             }
 
             function errorWithConstraints1() {
@@ -59,11 +60,16 @@
                     },
                     height: 11
                 };
+                debug("");
                 shouldNotThrow("navigator.mediaDevices.getUserMedia({audio:false, video:videoConstraints}).then(invalidGotStream).catch(errorWithConstraints2)");
             }
 
-            function gotStreamWithConstraints2() {
-                testPassed("Stream generated.");
+            function gotStreamWithConstraints3(s) {
+                stream = s;
+                testPassed("Stream 7 generated.");
+
+                shouldBeEqualToString("stream.getVideoTracks()[0].getSettings().facingMode", "user");
+                shouldBe("stream.getAudioTracks().length", "0");
 
                 audioConstraints = {
                     sampleRate: {
@@ -72,14 +78,35 @@
                         ideal: 1.0
                     },
                     sampleRate: {
-                        exact: 48000
+                        exact: 88000
                     }
                 };
+                debug("");
                 shouldNotThrow("navigator.mediaDevices.getUserMedia({audio:audioConstraints, video:false}).then(invalidGotStream).catch(errorWithConstraints1)");
             }
 
-            function gotStreamWithConstraints1() {
-                testPassed("Stream generated.");
+            function gotStreamWithConstraints2(s) {
+                stream = s;
+                testPassed("Stream 6 generated.");
+
+                shouldBe("stream.getAudioTracks().length", "0");
+                shouldBe("stream.getVideoTracks().length", "1");
+
+                videoConstraints = {
+                    facingMode: {
+                        exact: ['user']
+                    },
+                };
+                debug("");
+                shouldNotThrow("navigator.mediaDevices.getUserMedia({video:videoConstraints}).then(gotStreamWithConstraints3).catch(error1)");
+            }
+
+            function gotStreamWithConstraints1(s) {
+                stream = s;
+                testPassed("Stream 5 generated.");
+
+                shouldBe("stream.getAudioTracks().length", "1");
+                shouldBe("stream.getVideoTracks().length", "0");
 
                 videoConstraints = {
                     width: {
@@ -93,12 +120,13 @@
                         exact: ['environment']
                     }
                 };
-                shouldNotThrow("navigator.mediaDevices.getUserMedia({audio:false, video:videoConstraints}).then(gotStreamWithConstraints2)");
+                debug("");
+                shouldNotThrow("navigator.mediaDevices.getUserMedia({video:videoConstraints}).then(gotStreamWithConstraints2)");
             }
 
             function gotStream4(s) {
                 stream = s;
-                testPassed("Stream generated.");
+                testPassed("Stream 4 generated.");
                 shouldBe("stream.getAudioTracks().length", "1");
                 shouldBe("stream.getVideoTracks().length", "1");
 
@@ -111,33 +139,37 @@
                     },
                     sampleSize: 11
                 };
-                shouldNotThrow("navigator.mediaDevices.getUserMedia({audio:audioConstraints, video:false}).then(gotStreamWithConstraints1)");
+                debug("");
+                shouldNotThrow("navigator.mediaDevices.getUserMedia({audio:audioConstraints}).then(gotStreamWithConstraints1)");
             }
 
             function gotStream3(s) {
                 stream = s;
-                testPassed("Stream generated.");
+                testPassed("Stream 3 generated.");
                 shouldBe("stream.getAudioTracks().length", "1");
                 shouldBe("stream.getVideoTracks().length", "1");
 
+                debug("");
                 shouldNotThrow("navigator.mediaDevices.getUserMedia({audio:{}, video:{}}).then(gotStream4);");
             }
 
             function gotStream2(s) {
                 stream = s;
-                testPassed("Stream generated.");
+                testPassed("Stream 2 generated.");
                 shouldBe("stream.getAudioTracks().length", "0");
                 shouldBe("stream.getVideoTracks().length", "1");
 
+                debug("");
                 shouldNotThrow("navigator.mediaDevices.getUserMedia({audio:true, video:true}).then(gotStream3);");
             }
 
             function gotStream1(s) {
                 stream = s;
-                testPassed("Stream generated.");
+                testPassed("Stream 1 generated.");
                 shouldBe("stream.getAudioTracks().length", "1");
                 shouldBe("stream.getVideoTracks().length", "0");
 
+                debug("");
                 shouldNotThrow("navigator.mediaDevices.getUserMedia({video:true}).then(gotStream2);")
             }
 
@@ -149,6 +181,7 @@
             });
             shouldBe("typeof navigator.mediaDevices.webkitGetUserMedia", "'undefined'");
             setUserMediaPermission(true);
+            debug("");
             shouldNotThrow("navigator.mediaDevices.getUserMedia({audio:true}).then(gotStream1);");
             navigator.mediaDevices.getUserMedia.apply(undefined, {audio:true}).then(invalidGotStream, function(error) {
                  testPassed("navigator.mediaDevices.getUserMedia.apply(undefined) rejected with error: " + error);

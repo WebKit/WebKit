@@ -4,35 +4,53 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 PASS typeof navigator.mediaDevices.webkitGetUserMedia is 'undefined'
+
 PASS navigator.mediaDevices.getUserMedia({audio:true}).then(gotStream1); did not throw exception.
 PASS navigator.mediaDevices.getUserMedia() rejected with error: TypeError: Type error
 PASS navigator.mediaDevices.getUserMedia({}) rejected with error: TypeError: Type error
 PASS navigator.mediaDevices.getUserMedia.apply(undefined) rejected with error: TypeError: Can only call MediaDevices.getUserMedia on instances of MediaDevices
-PASS Stream generated.
+PASS Stream 1 generated.
 PASS stream.getAudioTracks().length is 1
 PASS stream.getVideoTracks().length is 0
+
 PASS navigator.mediaDevices.getUserMedia({video:true}).then(gotStream2); did not throw exception.
-PASS Stream generated.
+PASS Stream 2 generated.
 PASS stream.getAudioTracks().length is 0
 PASS stream.getVideoTracks().length is 1
+
 PASS navigator.mediaDevices.getUserMedia({audio:true, video:true}).then(gotStream3); did not throw exception.
-PASS Stream generated.
+PASS Stream 3 generated.
 PASS stream.getAudioTracks().length is 1
 PASS stream.getVideoTracks().length is 1
+
 PASS navigator.mediaDevices.getUserMedia({audio:{}, video:{}}).then(gotStream4); did not throw exception.
-PASS Stream generated.
+PASS Stream 4 generated.
 PASS stream.getAudioTracks().length is 1
 PASS stream.getVideoTracks().length is 1
-PASS navigator.mediaDevices.getUserMedia({audio:audioConstraints, video:false}).then(gotStreamWithConstraints1) did not throw exception.
-PASS Stream generated.
-PASS navigator.mediaDevices.getUserMedia({audio:false, video:videoConstraints}).then(gotStreamWithConstraints2) did not throw exception.
-PASS Stream generated.
+
+PASS navigator.mediaDevices.getUserMedia({audio:audioConstraints}).then(gotStreamWithConstraints1) did not throw exception.
+PASS Stream 5 generated.
+PASS stream.getAudioTracks().length is 1
+PASS stream.getVideoTracks().length is 0
+
+PASS navigator.mediaDevices.getUserMedia({video:videoConstraints}).then(gotStreamWithConstraints2) did not throw exception.
+PASS Stream 6 generated.
+PASS stream.getAudioTracks().length is 0
+PASS stream.getVideoTracks().length is 1
+
+PASS navigator.mediaDevices.getUserMedia({video:videoConstraints}).then(gotStreamWithConstraints3).catch(error1) did not throw exception.
+PASS Stream 7 generated.
+PASS stream.getVideoTracks()[0].getSettings().facingMode is "user"
+PASS stream.getAudioTracks().length is 0
+
 PASS navigator.mediaDevices.getUserMedia({audio:audioConstraints, video:false}).then(invalidGotStream).catch(errorWithConstraints1) did not throw exception.
 PASS Error callback called.
+
 PASS navigator.mediaDevices.getUserMedia({audio:false, video:videoConstraints}).then(invalidGotStream).catch(errorWithConstraints2) did not throw exception.
 PASS Error callback called.
 PASS errorArg.name is "Error"
-PASS navigator.mediaDevices.getUserMedia({audio:true}).then(validStream, error1); did not throw exception.
+
+PASS navigator.mediaDevices.getUserMedia({audio:true}).then(validStream).catch(error1); did not throw exception.
 PASS Stream generated because page has already authenticated.
 PASS successfullyParsed is true
 

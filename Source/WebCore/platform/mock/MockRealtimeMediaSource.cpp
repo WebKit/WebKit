@@ -44,52 +44,37 @@
 
 namespace WebCore {
 
-const AtomicString& MockRealtimeMediaSource::mockAudioSourcePersistentID()
+Vector<CaptureDevice>& MockRealtimeMediaSource::audioDevices()
 {
-    static NeverDestroyed<AtomicString> id("239c24b1-2b15-11e3-8224-0800200c9a66", AtomicString::ConstructFromLiteral);
-    return id;
+    static NeverDestroyed<Vector<CaptureDevice>> info;
+    if (!info.get().size()) {
+        info.get().append(CaptureDevice("239c24b0-2b15-11e3-8224-0800200c9a66", CaptureDevice::DeviceType::Audio, "Mock audio device 1"));
+        info.get().append(CaptureDevice("239c24b1-2b15-11e3-8224-0800200c9a66", CaptureDevice::DeviceType::Audio, "Mock audio device 2"));
+    }
+    return info;
 }
 
-const AtomicString& MockRealtimeMediaSource::mockVideoSourcePersistentID()
+Vector<CaptureDevice>& MockRealtimeMediaSource::videoDevices()
 {
-    static NeverDestroyed<AtomicString> id("239c24b0-2b15-11e3-8224-0800200c9a66", AtomicString::ConstructFromLiteral);
-    return id;
+    static NeverDestroyed<Vector<CaptureDevice>> info;
+    if (!info.get().size()) {
+        info.get().append(CaptureDevice("239c24b2-2b15-11e3-8224-0800200c9a66", CaptureDevice::DeviceType::Video, "Mock video device 1"));
+        info.get().append(CaptureDevice("239c24b3-2b15-11e3-8224-0800200c9a66", CaptureDevice::DeviceType::Video, "Mock video device 2"));
+    }
+    return info;
 }
-
-const AtomicString& MockRealtimeMediaSource::mockAudioSourceName()
-{
-    static NeverDestroyed<AtomicString> name("Mock audio device", AtomicString::ConstructFromLiteral);
-    return name;
-}
-
-const AtomicString& MockRealtimeMediaSource::mockVideoSourceName()
-{
-    static NeverDestroyed<AtomicString> name("Mock video device", AtomicString::ConstructFromLiteral);
-    return name;
-}
-
-CaptureDevice MockRealtimeMediaSource::audioDeviceInfo()
-{
-    static NeverDestroyed<CaptureDevice> deviceInfo(mockAudioSourcePersistentID(), CaptureDevice::DeviceType::Audio, mockAudioSourceName(), "");
-    return deviceInfo;
-}
-
-CaptureDevice MockRealtimeMediaSource::videoDeviceInfo()
-{
-    static NeverDestroyed<CaptureDevice> deviceInfo(mockVideoSourcePersistentID(), CaptureDevice::DeviceType::Video, mockVideoSourceName(), "");
-    return deviceInfo;
-}
-
 
 MockRealtimeMediaSource::MockRealtimeMediaSource(const String& id, RealtimeMediaSource::Type type, const String& name)
     : BaseRealtimeMediaSourceClass(id, type, name)
 {
     switch (type) {
     case RealtimeMediaSource::Type::Audio:
-        setPersistentID(mockAudioSourcePersistentID());
+        m_deviceIndex = name == audioDevices()[0].label() ? 0 : 1;
+        setPersistentID(audioDevices()[m_deviceIndex].persistentId());
         return;
     case RealtimeMediaSource::Type::Video:
-        setPersistentID(mockVideoSourcePersistentID());
+        m_deviceIndex = name == videoDevices()[0].label() ? 0 : 1;
+        setPersistentID(videoDevices()[m_deviceIndex].persistentId());
         return;
     case RealtimeMediaSource::Type::None:
         ASSERT_NOT_REACHED();

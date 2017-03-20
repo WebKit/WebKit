@@ -106,7 +106,6 @@ public:
     virtual void setName(const String& name) { m_name = name; }
     
     virtual unsigned fitnessScore() const { return m_fitnessScore; }
-    virtual void setFitnessScore(const unsigned fitnessScore) { m_fitnessScore = fitnessScore; }
 
     virtual RefPtr<RealtimeMediaSourceCapabilities> capabilities() const = 0;
     virtual const RealtimeMediaSourceSettings& settings() const = 0;
@@ -219,7 +218,7 @@ private:
     double m_volume { 1 };
     double m_sampleRate { 0 };
     double m_sampleSize { 0 };
-    unsigned m_fitnessScore { 0 };
+    double m_fitnessScore { std::numeric_limits<double>::infinity() };
     RealtimeMediaSourceSettings::VideoFacingMode m_facingMode { RealtimeMediaSourceSettings::User};
 
     bool m_echoCancellation { false };

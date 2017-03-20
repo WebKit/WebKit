@@ -37,7 +37,7 @@
                                 shouldBeEmptyString("captureDevice.label");
                             shouldBeNonNull("captureDevice.groupId");
                             
-                            if (deviceIds.length < 2)
+                            if (deviceIds.length < 4)
                                 deviceIds.push(captureDevice.deviceId);
                             else
                                 shouldNotBe("deviceIds.indexOf(captureDevice.deviceId)", "-1");

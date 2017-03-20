@@ -14,7 +14,7 @@ video track capabilities:
 audio track capabilities:
   capabilities.deviceId = <UUID>
   capabilities.echoCancellation = [ true, true ]
-  capabilities.sampleRate = { max: 44100, min: 44100 }
+  capabilities.sampleRate = { max: 48000, min: 44100 }
   capabilities.volume = { max: 1, min: 0 }
 
 PASS successfullyParsed is true

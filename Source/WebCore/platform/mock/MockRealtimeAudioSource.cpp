@@ -84,14 +84,14 @@ void MockRealtimeAudioSource::updateSettings(RealtimeMediaSourceSettings& settin
 {
     settings.setVolume(volume());
     settings.setEchoCancellation(echoCancellation());
-    settings.setSampleRate(44100);
+    settings.setSampleRate(sampleRate());
 }
 
 void MockRealtimeAudioSource::initializeCapabilities(RealtimeMediaSourceCapabilities& capabilities)
 {
     capabilities.setVolume(CapabilityValueOrRange(0.0, 1.0));
     capabilities.setEchoCancellation(RealtimeMediaSourceCapabilities::EchoCancellation::ReadWrite);
-    capabilities.setSampleRate(CapabilityValueOrRange(44100, 44100));
+    capabilities.setSampleRate(CapabilityValueOrRange(44100, 48000));
 }
 
 void MockRealtimeAudioSource::initializeSupportedConstraints(RealtimeMediaSourceSupportedConstraints& supportedConstraints)
@@ -103,6 +103,9 @@ void MockRealtimeAudioSource::initializeSupportedConstraints(RealtimeMediaSource
 
 void MockRealtimeAudioSource::startProducingData()
 {
+    if (!sampleRate())
+        setSampleRate(!deviceIndex() ? 44100 : 48000);
+
     MockRealtimeMediaSource::startProducingData();
 
     m_startTime = monotonicallyIncreasingTime();

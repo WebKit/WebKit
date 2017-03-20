@@ -23,6 +23,18 @@ PASS captureDevice.label is non-null.
 PASS captureDevice.label is ""
 PASS captureDevice.groupId is non-null.
 
+PASS captureDevice.kind is non-null.
+PASS captureDevice.deviceId is non-null.
+PASS captureDevice.label is non-null.
+PASS captureDevice.label is ""
+PASS captureDevice.groupId is non-null.
+
+PASS captureDevice.kind is non-null.
+PASS captureDevice.deviceId is non-null.
+PASS captureDevice.label is non-null.
+PASS captureDevice.label is ""
+PASS captureDevice.groupId is non-null.
+
 
 *** Calling mediaDevices.enumerateDevices with persistent access, and without a media stream track
 
@@ -42,10 +54,38 @@ PASS captureDevice.label is not ""
 PASS captureDevice.groupId is non-null.
 PASS deviceIds.indexOf(captureDevice.deviceId) is not -1
 
+PASS captureDevice.kind is non-null.
+PASS captureDevice.deviceId is non-null.
+PASS captureDevice.label is non-null.
+PASS captureDevice.label is not ""
+PASS captureDevice.groupId is non-null.
+PASS deviceIds.indexOf(captureDevice.deviceId) is not -1
+
+PASS captureDevice.kind is non-null.
+PASS captureDevice.deviceId is non-null.
+PASS captureDevice.label is non-null.
+PASS captureDevice.label is not ""
+PASS captureDevice.groupId is non-null.
+PASS deviceIds.indexOf(captureDevice.deviceId) is not -1
+
 
 *** Calling mediaDevices.enumerateDevices without persistent access, with a media stream track
 
 PASS captureDevices.length is non-zero.
+
+PASS captureDevice.kind is non-null.
+PASS captureDevice.deviceId is non-null.
+PASS captureDevice.label is non-null.
+PASS captureDevice.label is not ""
+PASS captureDevice.groupId is non-null.
+PASS deviceIds.indexOf(captureDevice.deviceId) is not -1
+
+PASS captureDevice.kind is non-null.
+PASS captureDevice.deviceId is non-null.
+PASS captureDevice.label is non-null.
+PASS captureDevice.label is not ""
+PASS captureDevice.groupId is non-null.
+PASS deviceIds.indexOf(captureDevice.deviceId) is not -1
 
 PASS captureDevice.kind is non-null.
 PASS captureDevice.deviceId is non-null.

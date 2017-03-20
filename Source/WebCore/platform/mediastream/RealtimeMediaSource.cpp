@@ -548,7 +548,7 @@ bool RealtimeMediaSource::selectSettings(const MediaConstraints& constraints, Fl
     // 5.1 compute the fitness distance between it and each settings dictionary in candidates, treating bare
     //     values of properties as exact.
     Vector<std::pair<double, MediaTrackConstraintSetMap>> supportedConstraints;
-    double minimumDistance = std::numeric_limits<double>::infinity();
+    m_fitnessScore = std::numeric_limits<double>::infinity();
 
     for (const auto& advancedConstraint : constraints.advancedConstraints()) {
         double constraintDistance = 0;
@@ -561,8 +561,8 @@ bool RealtimeMediaSource::selectSettings(const MediaConstraints& constraints, Fl
                 supported = true;
         });
 
-        if (constraintDistance < minimumDistance)
-            minimumDistance = constraintDistance;
+        if (constraintDistance < m_fitnessScore)
+            m_fitnessScore = constraintDistance;
 
         // 5.2 If the fitness distance is finite for one or more settings dictionaries in candidates, keep those
         //     settings dictionaries in candidates, discarding others.
@@ -573,9 +573,9 @@ bool RealtimeMediaSource::selectSettings(const MediaConstraints& constraints, Fl
 
     // 6. Select one settings dictionary from candidates, and return it as the result of the SelectSettings() algorithm.
     //    The UA should use the one with the smallest fitness distance, as calculated in step 3.
-    if (!std::isinf(minimumDistance)) {
+    if (!std::isinf(m_fitnessScore)) {
         supportedConstraints.removeAllMatching([&](const std::pair<double, MediaTrackConstraintSetMap>& pair) -> bool {
-            return pair.first > minimumDistance;
+            return pair.first > m_fitnessScore;
         });
 
         if (!supportedConstraints.isEmpty()) {

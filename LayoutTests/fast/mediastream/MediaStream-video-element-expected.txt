@@ -34,7 +34,7 @@ PASS video.videoTracks[0].kind is "main"
 video.videoTracks[0] properties:
   track.id = <UUID>
   track.kind = main
-  track.label = Mock video device
+  track.label = Mock video device 1
   track.language = 
   track.selected = true
   track.sourceBuffer = null
@@ -48,7 +48,7 @@ PASS video.audioTracks[0].kind is "main"
 video.audioTracks[0] properties:
   track.id = <UUID>
   track.kind = main
-  track.label = Mock audio device
+  track.label = Mock audio device 1
   track.language = 
   track.enabled = true
   track.sourceBuffer = null

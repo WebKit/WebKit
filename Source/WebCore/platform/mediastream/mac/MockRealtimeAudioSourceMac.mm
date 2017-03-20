@@ -90,8 +90,6 @@ RefPtr<MockRealtimeAudioSource> MockRealtimeAudioSource::create(const String& na
     if (constraints && source->applyConstraints(*constraints))
         source = nullptr;
 
-    source->applySampleRate(44100);
-
     return source;
 }
 
@@ -119,7 +117,7 @@ void MockRealtimeAudioSourceMac::emitSampleBuffers(uint32_t frameCount)
 {
     ASSERT(m_formatDescription);
 
-    CMTime startTime = CMTimeMake(m_samplesEmitted, m_sampleRate);
+    CMTime startTime = CMTimeMake(m_samplesEmitted, sampleRate());
     m_samplesEmitted += frameCount;
 
     audioSamplesAvailable(toMediaTime(startTime), *m_audioBufferList, CAAudioStreamDescription(m_streamFormat), frameCount);
@@ -127,7 +125,7 @@ void MockRealtimeAudioSourceMac::emitSampleBuffers(uint32_t frameCount)
 
 void MockRealtimeAudioSourceMac::reconfigure()
 {
-    m_maximiumFrameCount = WTF::roundUpToPowerOfTwo(renderInterval() / 1000. * m_sampleRate * 2);
+    m_maximiumFrameCount = WTF::roundUpToPowerOfTwo(renderInterval() / 1000. * sampleRate() * 2);
     ASSERT(m_maximiumFrameCount);
 
     const int bytesPerFloat = sizeof(Float32);
@@ -136,7 +134,7 @@ void MockRealtimeAudioSourceMac::reconfigure()
     const bool isFloat = true;
     const bool isBigEndian = false;
     const bool isNonInterleaved = true;
-    FillOutASBDForLPCM(m_streamFormat, m_sampleRate, channelCount, bitsPerByte * bytesPerFloat, bitsPerByte * bytesPerFloat, isFloat, isBigEndian, isNonInterleaved);
+    FillOutASBDForLPCM(m_streamFormat, sampleRate(), channelCount, bitsPerByte * bytesPerFloat, bitsPerByte * bytesPerFloat, isFloat, isBigEndian, isNonInterleaved);
 
     m_audioBufferList = std::make_unique<WebAudioBufferList>(m_streamFormat, m_streamFormat.mBytesPerFrame * m_maximiumFrameCount);
 
@@ -150,7 +148,7 @@ void MockRealtimeAudioSourceMac::render(double delta)
     if (!m_audioBufferList)
         reconfigure();
 
-    uint32_t totalFrameCount = alignTo16Bytes(delta * m_sampleRate);
+    uint32_t totalFrameCount = alignTo16Bytes(delta * sampleRate());
     uint32_t frameCount = std::min(totalFrameCount, m_maximiumFrameCount);
 
     while (frameCount) {
@@ -161,7 +159,7 @@ void MockRealtimeAudioSourceMac::render(double delta)
             audioBuffer.mDataByteSize = frameCount * m_streamFormat.mBytesPerFrame;
             if (!m_muted && m_enabled) {
                 memcpy(audioBuffer.mData, &m_bipBopBuffer[bipBopStart], sizeof(Float32) * bipBopCount);
-                addHum(HumVolume, HumFrequency, m_sampleRate, m_samplesRendered, static_cast<float*>(audioBuffer.mData), bipBopCount);
+                addHum(HumVolume, HumFrequency, sampleRate(), m_samplesRendered, static_cast<float*>(audioBuffer.mData), bipBopCount);
             } else
                 memset(audioBuffer.mData, 0, sizeof(Float32) * bipBopCount);
         }
@@ -177,25 +175,23 @@ bool MockRealtimeAudioSourceMac::applySampleRate(int sampleRate)
     if (sampleRate < 44100 || sampleRate > 48000)
         return false;
 
-    if (static_cast<uint32_t>(sampleRate) == m_sampleRate)
+    if (sampleRate == this->sampleRate())
         return true;
 
-    m_sampleRate = sampleRate;
     m_formatDescription = nullptr;
     m_audioBufferList = nullptr;
-    m_audioBufferListBufferSize = 0;
 
-    size_t sampleCount = 2 * m_sampleRate;
+    size_t sampleCount = 2 * sampleRate;
 
     m_bipBopBuffer.grow(sampleCount);
     m_bipBopBuffer.fill(0);
 
-    size_t bipBopSampleCount = ceil(BipBopDuration * m_sampleRate);
+    size_t bipBopSampleCount = ceil(BipBopDuration * sampleRate);
     size_t bipStart = 0;
-    size_t bopStart = m_sampleRate;
+    size_t bopStart = sampleRate;
 
-    addHum(BipBopVolume, BipFrequency, m_sampleRate, 0, m_bipBopBuffer.data() + bipStart, bipBopSampleCount);
-    addHum(BipBopVolume, BopFrequency, m_sampleRate, 0, m_bipBopBuffer.data() + bopStart, bipBopSampleCount);
+    addHum(BipBopVolume, BipFrequency, sampleRate, 0, m_bipBopBuffer.data() + bipStart, bipBopSampleCount);
+    addHum(BipBopVolume, BopFrequency, sampleRate, 0, m_bipBopBuffer.data() + bopStart, bipBopSampleCount);
 
     return true;
 }

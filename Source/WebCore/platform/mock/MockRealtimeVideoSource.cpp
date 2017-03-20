@@ -85,7 +85,8 @@ MockRealtimeVideoSource::MockRealtimeVideoSource(const String& name)
     : MockRealtimeMediaSource(createCanonicalUUIDString(), RealtimeMediaSource::Type::Video, name)
     , m_timer(RunLoop::current(), this, &MockRealtimeVideoSource::generateFrame)
 {
-    setFrameRate(30);
+    setFrameRate(!deviceIndex() ? 30 : 15);
+    setFacingMode(!deviceIndex() ? RealtimeMediaSourceSettings::User : RealtimeMediaSourceSettings::Environment);
     m_dashWidths.reserveInitialCapacity(2);
     m_dashWidths.uncheckedAppend(6);
     m_dashWidths.uncheckedAppend(6);

@@ -1,3 +1,17 @@
+2017-03-20  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] Respect constraints passed to getUserMedia
+        https://bugs.webkit.org/show_bug.cgi?id=169870
+        <rdar://problem/31138936>
+
+        Reviewed by Youenn Fablet and Jer Noble.
+
+        * fast/mediastream/MediaDevices-enumerateDevices-expected.txt:
+        * fast/mediastream/MediaDevices-getUserMedia-expected.txt:
+        * fast/mediastream/MediaDevices-getUserMedia.html:
+        * fast/mediastream/MediaStream-video-element-expected.txt:
+        * fast/mediastream/MediaStreamTrack-getCapabilities-expected.txt:
+
 2017-03-20  Ryan Haddad  <ryanhaddad@apple.com>
 
         Mark imported/w3c/web-platform-tests/XMLHttpRequest/timeout-multiple-fetches.html as flaky.

@@ -53,14 +53,8 @@ class MockRealtimeMediaSource : public BaseRealtimeMediaSourceClass {
 public:
     virtual ~MockRealtimeMediaSource() { }
 
-    static const AtomicString& mockAudioSourcePersistentID();
-    static const AtomicString& mockAudioSourceName();
-
-    static const AtomicString& mockVideoSourcePersistentID();
-    static const AtomicString& mockVideoSourceName();
-
-    static CaptureDevice audioDeviceInfo();
-    static CaptureDevice videoDeviceInfo();
+    static Vector<CaptureDevice>& audioDevices();
+    static Vector<CaptureDevice>& videoDevices();
 
 protected:
     MockRealtimeMediaSource(const String& id, Type, const String& name);
@@ -78,6 +72,8 @@ protected:
     MediaConstraints& constraints() { return *m_constraints.get(); }
     RealtimeMediaSourceSupportedConstraints& supportedConstraints();
 
+    unsigned deviceIndex() { return m_deviceIndex; }
+
 private:
     void initializeCapabilities();
     void initializeSettings();
@@ -87,6 +83,7 @@ private:
     RealtimeMediaSourceSupportedConstraints m_supportedConstraints;
     RefPtr<RealtimeMediaSourceCapabilities> m_capabilities;
     RefPtr<MediaConstraints> m_constraints;
+    unsigned m_deviceIndex { 0 };
     bool m_isProducingData { false };
 };
 
