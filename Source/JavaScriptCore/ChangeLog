@@ -1,5 +1,29 @@
 2017-03-16  Jason Marcell  <jmarcell@apple.com>
 
+        Merge r214071. rdar://problem/31077016
+
+    2017-03-16  Mark Lam  <mark.lam@apple.com>
+
+            The new array with spread operation needs to check for length overflows.
+            https://bugs.webkit.org/show_bug.cgi?id=169780
+            <rdar://problem/31072182>
+
+            Reviewed by Filip Pizlo.
+
+            * dfg/DFGOperations.cpp:
+            * dfg/DFGSpeculativeJIT.cpp:
+            (JSC::DFG::SpeculativeJIT::compileNewArrayWithSpread):
+            * ftl/FTLLowerDFGToB3.cpp:
+            (JSC::FTL::DFG::LowerDFGToB3::compileNewArrayWithSpread):
+            * ftl/FTLOperations.cpp:
+            (JSC::FTL::operationMaterializeObjectInOSR):
+            * llint/LLIntSlowPaths.cpp:
+            * runtime/CommonSlowPaths.cpp:
+            (JSC::SLOW_PATH_DECL):
+            * runtime/JSGlobalObject.cpp:
+
+2017-03-16  Jason Marcell  <jmarcell@apple.com>
+
         Merge r213742. rdar://problem/30921818
 
     2017-03-10  Mark Lam  <mark.lam@apple.com>

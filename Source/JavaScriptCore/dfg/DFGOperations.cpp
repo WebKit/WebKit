@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2013-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1943,16 +1943,21 @@ JSCell* JIT_OPERATION operationNewArrayWithSpreadSlow(ExecState* exec, void* buf
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     EncodedJSValue* values = static_cast<EncodedJSValue*>(buffer);
-    unsigned length = 0;
+    Checked<unsigned, RecordOverflow> checkedLength = 0;
     for (unsigned i = 0; i < numItems; i++) {
         JSValue value = JSValue::decode(values[i]);
         if (JSFixedArray* array = jsDynamicCast<JSFixedArray*>(value))
-            length += array->size();
+            checkedLength += array->size();
         else
-            ++length;
+            ++checkedLength;
     }
 
+    if (UNLIKELY(checkedLength.hasOverflowed())) {
+        throwOutOfMemoryError(exec, scope);
+        return nullptr;
+    }
 
+    unsigned length = checkedLength.unsafeGet();
     JSGlobalObject* globalObject = exec->lexicalGlobalObject();
     Structure* structure = globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous);
 

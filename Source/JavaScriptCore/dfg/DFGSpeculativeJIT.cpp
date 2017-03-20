@@ -7044,7 +7044,7 @@ void SpeculativeJIT::compileNewArrayWithSpread(Node* node)
                     Edge use = m_jit.graph().varArgChild(node, i);
                     SpeculateCellOperand fixedArray(this, use);
                     GPRReg fixedArrayGPR = fixedArray.gpr();
-                    m_jit.add32(MacroAssembler::Address(fixedArrayGPR, JSFixedArray::offsetOfSize()), lengthGPR);
+                    speculationCheck(Overflow, JSValueRegs(), nullptr, m_jit.branchAdd32(MacroAssembler::Overflow, MacroAssembler::Address(fixedArrayGPR, JSFixedArray::offsetOfSize()), lengthGPR));
                 }
             }
 

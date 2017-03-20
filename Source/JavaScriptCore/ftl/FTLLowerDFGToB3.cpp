@@ -4420,6 +4420,7 @@ private:
             for (unsigned i = 0; i < m_node->numChildren(); ++i) {
                 if (bitVector->get(i)) {
                     Edge use = m_graph.varArgChild(m_node, i);
+                    CheckValue* lengthCheck = nullptr;
                     if (use->op() == PhantomSpread) {
                         RELEASE_ASSERT(use->child1()->op() == PhantomCreateRest);
                         InlineCallFrame* inlineCallFrame = use->child1()->origin.semantic.inlineCallFrame;
@@ -4427,11 +4428,13 @@ private:
                         LValue spreadLength = cachedSpreadLengths.ensure(inlineCallFrame, [&] () {
                             return getSpreadLengthFromInlineCallFrame(inlineCallFrame, numberOfArgumentsToSkip);
                         }).iterator->value;
-                        length = m_out.add(length, spreadLength);
+                        lengthCheck = m_out.speculateAdd(length, spreadLength);
                     } else {
                         LValue fixedArray = lowCell(use);
-                        length = m_out.add(length, m_out.load32(fixedArray, m_heaps.JSFixedArray_size));
+                        lengthCheck = m_out.speculateAdd(length, m_out.load32(fixedArray, m_heaps.JSFixedArray_size));
                     }
+                    blessSpeculation(lengthCheck, Overflow, noValue(), nullptr, m_origin);
+                    length = lengthCheck;
                 }
             }
 
