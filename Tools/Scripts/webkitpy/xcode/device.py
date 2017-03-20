@@ -33,6 +33,9 @@ class Device(object):
     def launch_app(self, bundle_id, args, env=None):
         raise NotImplementedError
 
+    def poll(self, pid):
+        raise NotImplementedError
+
     def __eq__(self, other):
         return self.udid == other.udid
 

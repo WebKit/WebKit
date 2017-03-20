@@ -34,21 +34,18 @@ class SimulatorProcess(ServerProcess):
 
     class Popen(object):
 
-        def __init__(self, pid, stdin, stdout, stderr):
+        def __init__(self, pid, stdin, stdout, stderr, device):
             self.stdin = stdin
             self.stdout = stdout
             self.stderr = stderr
             self.pid = pid
             self.returncode = None
+            self._device = device
 
         def poll(self):
             if self.returncode:
                 return self.returncode
-            try:
-                os.kill(self.pid, 0)
-            except OSError, err:
-                assert err.errno == errno.ESRCH
-                self.returncode = 1
+            self.returncode = self._device.poll(self.pid)
             return self.returncode
 
         def wait(self):
@@ -116,7 +113,7 @@ class SimulatorProcess(ServerProcess):
             stdin = open(self._in_path, 'w', 0)  # Opening with no buffering, like popen
         except:
             # We set self._proc as _reset() and _kill() depend on it.
-            self._proc = SimulatorProcess.Popen(self._pid, stdin, stdout, stderr)
+            self._proc = SimulatorProcess.Popen(self._pid, stdin, stdout, stderr, self._device)
             if self._proc.poll() is not None:
                 self._reset()
                 raise Exception('App {} crashed before stdin could be attached'.format(os.path.basename(self._cmd[0])))
@@ -125,7 +122,7 @@ class SimulatorProcess(ServerProcess):
             raise
         signal.alarm(0)  # Cancel alarm
 
-        self._proc = SimulatorProcess.Popen(self._pid, stdin, stdout, stderr)
+        self._proc = SimulatorProcess.Popen(self._pid, stdin, stdout, stderr, self._device)
 
     def stop(self, timeout_secs=3.0):
         try:

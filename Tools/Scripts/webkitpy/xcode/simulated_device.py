@@ -20,8 +20,11 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import errno
+import os
 import logging
 import re
+import signal
 import subprocess
 
 from webkitpy.xcode.device import Device
@@ -142,13 +145,13 @@ class SimulatedDevice(Device):
                     'Print CFBundleIdentifier',
                     self._host.filesystem.join(app_path, 'Info.plist'),
                 ]).rstrip()
-                self._host.executive.kill_process(self.launch_app(bundle_id, [], env=env, attempts=1))
+                self._host.executive.kill_process(self.launch_app(bundle_id, [], env=env, timeout=1))
                 return True
             except RuntimeError:
                 pass
         return False
 
-    def launch_app(self, bundle_id, args, env=None, attempts=3):
+    def launch_app(self, bundle_id, args, env=None, timeout=10):
         environment_to_use = {}
         SIMCTL_ENV_PREFIX = 'SIMCTL_CHILD_'
         for value in (env or {}):
@@ -161,20 +164,37 @@ class SimulatedDevice(Device):
         def _log_debug_error(error):
             _log.debug(error.message_with_output())
 
+        def _install_timeout(signum, frame):
+            assert signum == signal.SIGALRM
+            raise Exception('Timed out waiting for process to open {} on {}'.format(bundle_id, self.udid))
+
         output = None
-        for x in xrange(attempts):
+        signal.signal(signal.SIGALRM, _install_timeout)
+        signal.alarm(timeout)  # In seconds
+        while True:
             output = self._host.executive.run_command(
                 ['xcrun', 'simctl', 'launch', self.udid, bundle_id] + args,
                 env=environment_to_use,
                 error_handler=_log_debug_error,
             )
             match = re.match(r'(?P<bundle>[^:]+): (?P<pid>\d+)\n', output)
-            if match:
+            # FIXME: We shouldn't need to check the PID <rdar://problem/31154075>.
+            if match and self.poll(int(match.group('pid'))) is None:
                 break
 
-        if not match or match.group('bundle') != bundle_id:
+        signal.alarm(0)  # Cancel alarm
+
+        if match.group('bundle') != bundle_id:
             raise RuntimeError('Failed to find process id for {}: {}'.format(bundle_id, output))
         return int(match.group('pid'))
+
+    def poll(self, pid):
+        try:
+            os.kill(pid, 0)
+        except OSError as err:
+            assert err.errno == errno.ESRCH
+            return 1
+        return None
 
     def __repr__(self):
         return '<{device_info} State: {state}. Runtime: {runtime}, Available: {available}>'.format(

@@ -1,5 +1,29 @@
 2017-03-20  Jonathan Bedard  <jbedard@apple.com>
 
+        webkitpy: Work around simctl launch returning dead processes
+        https://bugs.webkit.org/show_bug.cgi?id=169878
+
+        Reviewed by Daniel Bates.
+
+        simctl launch will sometimes give the PID of a process which has just been terminated.
+        To work around this, we will always check if the returned PID is of a process which is
+        still running.
+
+        * Scripts/webkitpy/port/simulator_process.py:
+        (SimulatorProcess.Popen.__init__): Accept device argument.
+        (SimulatorProcess.Popen.poll): Call device.poll().
+        (SimulatorProcess._start): Pass device into Popen object.
+        * Scripts/webkitpy/xcode/device.py:
+        (Device.poll): Added.
+        * Scripts/webkitpy/xcode/simulated_device.py:
+        (SimulatedDevice.install_app): Change attempts to timeout.
+        (SimulatedDevice.launch_app): Check that the process being returned is active, use a
+        timeout instead of attempts.
+        (SimulatedDevice):
+        (SimulatedDevice.poll): Added.
+
+2017-03-20  Jonathan Bedard  <jbedard@apple.com>
+
         buildbot: run-webkit-tests should display test failures and run exceptions differently
         https://bugs.webkit.org/show_bug.cgi?id=169793
         <rdar://problem/30987863>
