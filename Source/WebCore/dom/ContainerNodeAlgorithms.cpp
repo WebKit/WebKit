@@ -297,7 +297,7 @@ void disconnectSubframes(ContainerNode& root, SubframeDisconnectPolicy policy)
 
     // Must disable frame loading in the subtree so an unload handler cannot
     // insert more frames and create loaded frames in detached subtrees.
-    SubframeLoadingDisabler disabler(root);
+    SubframeLoadingDisabler disabler(&root);
 
     bool isFirst = true;
     for (auto& owner : frameOwners) {
