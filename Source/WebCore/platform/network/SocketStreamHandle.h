@@ -44,13 +44,13 @@ public:
     virtual ~SocketStreamHandle() { }
     SocketStreamState state() const;
 
-    void send(const char* data, size_t length, Function<void(bool)>);
+    void sendData(const char* data, size_t length, Function<void(bool)>);
     void close(); // Disconnect after all data in buffer are sent.
     void disconnect();
     virtual size_t bufferedAmount() = 0;
 
 protected:
-    SocketStreamHandle(const URL&, SocketStreamHandleClient&);
+    WEBCORE_EXPORT SocketStreamHandle(const URL&, SocketStreamHandleClient&);
 
     virtual void platformSend(const char* data, size_t length, Function<void(bool)>&&) = 0;
     virtual void platformClose() = 0;

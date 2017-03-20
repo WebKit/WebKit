@@ -50,9 +50,9 @@ public:
 
     virtual ~SocketStreamHandleImpl();
 
+    WEBCORE_EXPORT void platformSend(const char* data, size_t length, Function<void(bool)>&&) final;
+    WEBCORE_EXPORT void platformClose() final;
 private:
-    void platformSend(const char* data, size_t length, Function<void(bool)>&&) final;
-    void platformClose() final;
     size_t bufferedAmount() final;
     std::optional<size_t> platformSendInternal(const char*, size_t);
     bool sendPendingData();

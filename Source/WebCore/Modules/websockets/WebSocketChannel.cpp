@@ -278,7 +278,7 @@ void WebSocketChannel::didOpenSocketStream(SocketStreamHandle& handle)
     if (m_identifier)
         InspectorInstrumentation::willSendWebSocketHandshakeRequest(m_document, m_identifier, m_handshake->clientHandshakeRequest());
     CString handshakeMessage = m_handshake->clientHandshakeMessage();
-    handle.send(handshakeMessage.data(), handshakeMessage.length(), [this, protectedThis = makeRef(*this)] (bool success) {
+    handle.sendData(handshakeMessage.data(), handshakeMessage.length(), [this, protectedThis = makeRef(*this)] (bool success) {
         if (!success)
             fail("Failed to send WebSocket handshake.");
     });
@@ -829,7 +829,7 @@ void WebSocketChannel::sendFrame(WebSocketFrame::OpCode opCode, const char* data
     Vector<char> frameData;
     frame.makeFrameData(frameData);
 
-    m_handle->send(frameData.data(), frameData.size(), WTFMove(completionHandler));
+    m_handle->sendData(frameData.data(), frameData.size(), WTFMove(completionHandler));
 }
 
 }  // namespace WebCore

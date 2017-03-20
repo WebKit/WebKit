@@ -55,11 +55,11 @@ public:
 
     virtual ~SocketStreamHandleImpl();
 
+    void platformSend(const char* data, size_t length, Function<void(bool)>&&) final;
+    void platformClose() final;
 private:
     SocketStreamHandleImpl(const URL&, SocketStreamHandleClient&);
 
-    void platformSend(const char* data, size_t length, Function<void(bool)>&&) final;
-    void platformClose() final;
     size_t bufferedAmount() final;
     std::optional<size_t> platformSendInternal(const char*, size_t);
     bool sendPendingData();

@@ -48,7 +48,7 @@ SocketStreamHandle::SocketStreamState SocketStreamHandle::state() const
     return m_state;
 }
 
-void SocketStreamHandle::send(const char* data, size_t length, Function<void(bool)> completionHandler)
+void SocketStreamHandle::sendData(const char* data, size_t length, Function<void(bool)> completionHandler)
 {
     if (m_state == Connecting || m_state == Closing)
         return completionHandler(false);
