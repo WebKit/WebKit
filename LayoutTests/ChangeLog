@@ -1,3 +1,16 @@
+2017-03-20  Chris Dumez  <cdumez@apple.com>
+
+        Suspend media playback in background tabs
+        https://bugs.webkit.org/show_bug.cgi?id=169883
+        <rdar://problem/28056151>
+
+        Reviewed by Eric Carlson.
+
+        Add layout test coverage.
+
+        * media/media-playback-page-visibility-expected.txt: Added.
+        * media/media-playback-page-visibility.html: Added.
+
 2017-03-20  Daniel Bates  <dabates@apple.com>
 
         Prevent new navigations from onbeforeunload handler

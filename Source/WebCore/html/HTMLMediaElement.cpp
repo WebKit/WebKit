@@ -159,6 +159,8 @@
 #include "NotImplemented.h"
 #endif
 
+#define RELEASE_LOG_IF_ALLOWED(fmt, ...) RELEASE_LOG_IF(document().page() && document().page()->isAlwaysOnLoggingAllowed(), Media, "%p - HTMLMediaElement::" fmt, this, ##__VA_ARGS__)
+
 namespace WebCore {
 
 static const double SeekRepeatDelay = 0.1;
@@ -5327,6 +5329,17 @@ void HTMLMediaElement::visibilityStateChanged()
     LOG(Media, "HTMLMediaElement::visibilityStateChanged(%p) - visible = %s", this, boolString(!m_elementIsHidden));
     updateSleepDisabling();
     m_mediaSession->visibilityChanged();
+
+    bool isPlayingAudio = isPlaying() && hasAudio() && !muted() && volume();
+    if (!isPlayingAudio) {
+        if (m_elementIsHidden) {
+            RELEASE_LOG_IF_ALLOWED("visibilityStateChanged() Suspending playback after going to the background");
+            m_mediaSession->beginInterruption(PlatformMediaSession::EnteringBackground);
+        } else {
+            RELEASE_LOG_IF_ALLOWED("visibilityStateChanged() Resuming playback after entering foreground");
+            m_mediaSession->endInterruption(PlatformMediaSession::MayResumePlaying);
+        }
+    }
 }
 
 #if ENABLE(VIDEO_TRACK)
