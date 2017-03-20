@@ -1,3 +1,9 @@
+2017-03-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Add missing types to WebKitAutocleanups.
+
+        * UIProcess/API/gtk/WebKitAutocleanups.h:
+
 2017-03-14  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update OptionsGTK.cmake and NEWS for 2.15.92 release.
