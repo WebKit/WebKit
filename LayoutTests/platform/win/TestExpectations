@@ -454,6 +454,7 @@ fast/dom/HTMLAnchorElement/anchor-file-blob-download-includes-unicode.html [ Ski
 http/tests/download/area-download.html [ Skip ]
 http/tests/security/anchor-download-allow-data.html [ Skip ]
 http/tests/security/anchor-download-allow-sameorigin.html [ Skip ]
+http/tests/download/anchor-download-no-value.html [ Skip ]
 
 # testRunner.setShouldDownloadUndisplayableMIMETypes() is not supported on WK1.
 fast/dom/HTMLAnchorElement/anchor-file-blob-convert-to-download.html [ Skip ]
