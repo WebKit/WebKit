@@ -1,5 +1,15 @@
 2017-03-21  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
+        [GTK][Wayland] Enable WebGL, 3D and compositing layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=71849
+
+        Unreviewed test gardening.
+
+        * platform/gtk-wayland/TestExpectations: Add the diff of native Wayland compared to Xvfb.
+        * platform/gtk/TestExpectations: This two tests seem flaky.
+
+2017-03-21  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
         [GTK] Enable WebGL, 3D and compositing layout tests
         https://bugs.webkit.org/show_bug.cgi?id=71849
 
