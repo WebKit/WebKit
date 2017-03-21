@@ -61,8 +61,6 @@ RenderNamedFlowThread::~RenderNamedFlowThread()
 
 void RenderNamedFlowThread::willBeDestroyed()
 {
-    WTFLogAlways("RenderNamedFlowThread %p willBeDestroyed", this);
-
     // The flow thread can be destroyed without unregistering the content nodes if the document is destroyed.
     // This can lead to problems because the nodes are still marked as belonging to a flow thread.
     clearContentElements();
