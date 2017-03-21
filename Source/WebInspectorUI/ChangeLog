@@ -1,3 +1,29 @@
+2017-03-20  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Pseudo-class markers overlap DOM breakpoints and disclosure triangle
+        https://bugs.webkit.org/show_bug.cgi?id=169850
+        <rdar://problem/31132335>
+
+        Reviewed by Joseph Pecoraro.
+
+        DOMTreeContentView should always have at least 7px of gutter space to
+        accomodate pseudo-class markers. When DOM breakpoints are visible the
+        gutter size is increased so breakpoints and markers do not overlap.
+
+        * UserInterface/Views/DOMTreeContentView.css:
+        (.content-view.dom-tree .tree-outline.dom):
+        (.content-view.dom-tree.show-gutter .tree-outline.dom):
+        (body[dir=ltr] .content-view.dom-tree .tree-outline.dom):
+        (body[dir=rtl] .content-view.dom-tree .tree-outline.dom):
+        (body[dir=ltr] .content-view.dom-tree.show-gutter .tree-outline.dom): Deleted.
+        (body[dir=rtl] .content-view.dom-tree.show-gutter .tree-outline.dom): Deleted.
+
+        * UserInterface/Views/DOMTreeOutline.css:
+        (.content-view.dom-tree.show-gutter .tree-outline.dom):
+        Change pseudo-class marker indent when showing DOM breakpoint gutter.
+        (body[dir=ltr] .tree-outline.dom li.pseudo-class-enabled > .selection-area::before):
+        Drive-by fix: copy paste error.
+
 2017-03-19  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: REGRESSION (r212910): Active call frame status icon has incorrect left margin

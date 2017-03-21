@@ -27,15 +27,19 @@
     overflow: auto;
 }
 
-.content-view.dom-tree.show-gutter .tree-outline.dom {
-    --gutter-padding-start: 13px;
+.content-view.dom-tree .tree-outline.dom {
+    --gutter-padding-start: 7px;
 }
 
-body[dir=ltr] .content-view.dom-tree.show-gutter .tree-outline.dom {
+.content-view.dom-tree.show-gutter .tree-outline.dom {
+    --gutter-padding-start: 20px;
+}
+
+body[dir=ltr] .content-view.dom-tree .tree-outline.dom {
     padding-left: var(--gutter-padding-start);
 }
 
-body[dir=rtl] .content-view.dom-tree.show-gutter .tree-outline.dom {
+body[dir=rtl] .content-view.dom-tree .tree-outline.dom {
     padding-right: var(--gutter-padding-start);
 }
 

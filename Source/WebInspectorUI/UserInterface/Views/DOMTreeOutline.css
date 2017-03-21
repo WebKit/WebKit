@@ -156,7 +156,11 @@ body[dir=rtl] .tree-outline.dom li {
     border-radius: 50%;
 }
 
-body[dir=rtl] .tree-outline.dom li.pseudo-class-enabled > .selection-area::before {
+.content-view.dom-tree.show-gutter .tree-outline.dom {
+    --item-pseudo-class-enabled-selection-before-start: 17px;
+}
+
+body[dir=ltr] .tree-outline.dom li.pseudo-class-enabled > .selection-area::before {
     left: var(--item-pseudo-class-enabled-selection-before-start);
 }
 
