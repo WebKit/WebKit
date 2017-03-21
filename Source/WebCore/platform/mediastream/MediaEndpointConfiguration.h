@@ -50,11 +50,12 @@ struct MediaEndpointConfiguration {
         IceServerInfo(Vector<URL>&&, const String&, const String&);
     };
 
-    MediaEndpointConfiguration(Vector<IceServerInfo>&&, RTCIceTransportPolicy, RTCBundlePolicy);
+    MediaEndpointConfiguration(Vector<IceServerInfo>&&, RTCIceTransportPolicy, RTCBundlePolicy, unsigned short);
 
     Vector<IceServerInfo> iceServers;
     RTCIceTransportPolicy iceTransportPolicy;
     RTCBundlePolicy bundlePolicy;
+    unsigned short iceCandidatePoolSize;
 };
 
 } // namespace WebCore

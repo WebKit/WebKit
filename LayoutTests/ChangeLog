@@ -1,3 +1,13 @@
+2017-03-20  Jon Lee  <jonlee@apple.com>
+
+        Add iceCandidatePoolSize to RTCConfiguration
+        https://bugs.webkit.org/show_bug.cgi?id=169866
+
+        Reviewed by Youenn Fablet.
+
+        * webrtc/rtcconfiguration-icecandidatepoolsize-expected.txt: Added.
+        * webrtc/rtcconfiguration-icecandidatepoolsize.html: Added.
+
 2017-03-20  Chris Dumez  <cdumez@apple.com>
 
         Suspend media playback in background tabs

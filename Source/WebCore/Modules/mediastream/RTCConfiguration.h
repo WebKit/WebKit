@@ -42,6 +42,7 @@ struct RTCConfiguration {
     std::optional<Vector<RTCIceServer>> iceServers;
     RTCIceTransportPolicy iceTransportPolicy;
     RTCBundlePolicy bundlePolicy;
+    unsigned short iceCandidatePoolSize;
 };
 
 } // namespace WebCore

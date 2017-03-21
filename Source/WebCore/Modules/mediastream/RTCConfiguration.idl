@@ -53,5 +53,5 @@
     // FIXME 169662: missing rtcpMuxPolicy
     // FIXME 169662: missing peerIdentity
     // FIXME 169662: missing certificates
-    // FIXME 169662: missing iceCandidatePoolSize
+    [EnforceRange] octet iceCandidatePoolSize = 0;
 };

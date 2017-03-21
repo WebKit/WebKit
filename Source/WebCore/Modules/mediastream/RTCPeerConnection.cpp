@@ -326,7 +326,7 @@ ExceptionOr<void> RTCPeerConnection::setConfiguration(RTCConfiguration&& configu
         }
     }
 
-    m_backend->setConfiguration({ WTFMove(servers), configuration.iceTransportPolicy, configuration.bundlePolicy });
+    m_backend->setConfiguration({ WTFMove(servers), configuration.iceTransportPolicy, configuration.bundlePolicy, configuration.iceCandidatePoolSize });
     m_configuration = WTFMove(configuration);
     return { };
 }

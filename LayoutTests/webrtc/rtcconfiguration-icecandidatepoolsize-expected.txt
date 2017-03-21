@@ -1,0 +1,12 @@
+This test checks that RTCConfiguration.iceCandidatePoolSize is set.
+
+PASS pc.getConfiguration().iceCandidatePoolSize is 10
+PASS pc.getConfiguration().iceCandidatePoolSize is 0
+PASS pc.getConfiguration().iceCandidatePoolSize is 0
+PASS new RTCPeerConnection({iceCandidatePoolSize: -1}) threw exception TypeError: Error creating RTCPeerConnection.
+PASS new RTCPeerConnection({iceCandidatePoolSize: 1000}) threw exception TypeError: Error creating RTCPeerConnection.
+PASS new RTCPeerConnection({iceCandidatePoolSize: "string"}) threw exception TypeError: Error creating RTCPeerConnection.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
