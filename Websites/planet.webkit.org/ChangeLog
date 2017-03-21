@@ -1,3 +1,11 @@
+2017-03-21  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [Planet WebKit] Use HTTPS instead of HTTP for Igalia blog
+
+        Unreviewed patch just updating the Igalia WebKit blog configuration.
+
+        * config.ini:
+
 2016-05-15  Frederic Wang  <fred.wang@free.fr>
 
         Remove Frédéric Wang's blog from the planet
