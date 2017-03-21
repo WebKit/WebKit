@@ -238,7 +238,7 @@ class ComponentBase {
 
     static _addContentToElement(element, content)
     {
-        if (content instanceof Array) {
+        if (Array.isArray(content)) {
             for (var nestedChild of content)
                 this._addContentToElement(element, nestedChild);
         } else if (content instanceof Node)

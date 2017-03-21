@@ -33,13 +33,9 @@ describe('ChartRevisionRange', () => {
 
                 expect(revisionList[0].repository.label()).to.be('SomeApp');
                 expect(revisionList[0].label).to.be('r4006');
-                expect(revisionList[0].from).to.be(null);
-                expect(revisionList[0].to).to.be('4006');
 
                 expect(revisionList[1].repository.label()).to.be('macOS');
                 expect(revisionList[1].label).to.be('15C50');
-                expect(revisionList[1].from).to.be(null);
-                expect(revisionList[1].to).to.be('15C50');
             })
         });
     });
@@ -96,14 +92,10 @@ describe('ChartRevisionRange', () => {
                 expect(revisionList.length).to.be(2);
 
                 expect(revisionList[0].repository.label()).to.be('SomeApp');
-                expect(revisionList[0].label).to.be('r4005-r4006');
-                expect(revisionList[0].from).to.be('4005');
-                expect(revisionList[0].to).to.be('4006');
+                expect(revisionList[0].label).to.be('r4004-r4006');
 
                 expect(revisionList[1].repository.label()).to.be('macOS');
                 expect(revisionList[1].label).to.be('15C50');
-                expect(revisionList[1].from).to.be(null);
-                expect(revisionList[1].to).to.be('15C50');
 
                 chart.setIndicator(1004, true); // Across macOS change.
 
@@ -111,14 +103,10 @@ describe('ChartRevisionRange', () => {
                 expect(revisionList.length).to.be(2);
 
                 expect(revisionList[0].repository.label()).to.be('SomeApp');
-                expect(revisionList[0].label).to.be('r4004-r4004');
-                expect(revisionList[0].from).to.be('4004');
-                expect(revisionList[0].to).to.be('4004');
+                expect(revisionList[0].label).to.be('r4003-r4004');
 
                 expect(revisionList[1].repository.label()).to.be('macOS');
                 expect(revisionList[1].label).to.be('15B42 - 15C50');
-                expect(revisionList[1].from).to.be('15B42');
-                expect(revisionList[1].to).to.be('15C50');
             });
         });
 
@@ -150,14 +138,10 @@ describe('ChartRevisionRange', () => {
                 expect(revisionList.length).to.be(2);
 
                 expect(revisionList[0].repository.label()).to.be('SomeApp');
-                expect(revisionList[0].label).to.be('r4003-r4004'); // 4002 and 4005 are outliers and skipped.
-                expect(revisionList[0].from).to.be('4003');
-                expect(revisionList[0].to).to.be('4004');
+                expect(revisionList[0].label).to.be('r4002-r4004'); // 4001 and 4005 are outliers and skipped.
 
                 expect(revisionList[1].repository.label()).to.be('macOS');
                 expect(revisionList[1].label).to.be('15B42 - 15C50');
-                expect(revisionList[1].from).to.be('15B42');
-                expect(revisionList[1].to).to.be('15C50');
             });
         });
     });

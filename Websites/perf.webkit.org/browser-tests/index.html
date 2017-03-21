@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
+<meta charset="utf-8">
 <title>In-Browser Tests for Performance Dashboard</title>
-<link rel="stylesheet" href="https://cdn.rawgit.com/mochajs/mocha/2.2.5/mocha.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/mocha/2.2.5/mocha.js"></script>
+<link rel="stylesheet" href="../node_modules/mocha/mocha.css">
+<script src="../node_modules/mocha/mocha.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/expect.js/0.2.0/expect.min.js"></script>
 <script>
 
@@ -21,6 +22,7 @@ mocha.setup('bdd');
 <script src="interactive-time-series-chart-tests.js"></script>
 <script src="chart-status-evaluator-tests.js"></script>
 <script src="chart-revision-range-tests.js"></script>
+<script src="commit-log-viewer-tests.js"></script>
 <script>
 
 afterEach(() => {

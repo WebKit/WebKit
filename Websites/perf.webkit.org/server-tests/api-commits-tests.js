@@ -396,7 +396,7 @@ describe("/api/commits/", function () {
 
     });
 
-    describe('/api/commits/<repository>/?from=<commit-1>&to=<commit-2>', () => {
+    describe('/api/commits/<repository>/?precedingRevision=<commit-1>&lastRevision=<commit-2>', () => {
         it("should return RepositoryNotFound when there are no matching repository", () => {
             return TestServer.remoteAPI().getJSON('/api/commits/WebKit/?from=210900&to=211000').then((response) => {
                 assert.equal(response['status'], 'RepositoryNotFound');
@@ -409,20 +409,106 @@ describe("/api/commits/", function () {
                 db.insert('repositories', {'id': 1, 'name': 'WebKit'}),
                 db.insert('commits', {'repository': 1, 'revision': '210950', 'time': '2017-01-20T03:49:37.887Z'})
             ]).then(() => {
-                return TestServer.remoteAPI().getJSON('/api/commits/WebKit/?from=210900&to=211000');
+                return TestServer.remoteAPI().getJSON('/api/commits/WebKit/?precedingRevision=210900&lastRevision=211000');
             }).then((response) => {
                 assert.equal(response['status'], 'UnknownCommit');
             });
         });
 
-        it("should return an empty result when commits in the specified range have not reported", () => {
+        it("should return an empty result when commits in the specified range have not been reported", () => {
             const db = TestServer.database();
             return Promise.all([
                 db.insert('repositories', {'id': 1, 'name': 'WebKit'}),
                 db.insert('commits', {'repository': 1, 'revision': '210949', 'time': '2017-01-20T03:23:50.645Z'}),
                 db.insert('commits', {'repository': 1, 'revision': '210950', 'time': '2017-01-20T03:49:37.887Z'}),
             ]).then(() => {
-                return TestServer.remoteAPI().getJSON('/api/commits/WebKit/?from=210949&to=210950');
+                return TestServer.remoteAPI().getJSON('/api/commits/WebKit/?precedingRevision=210949&lastRevision=210950');
+            }).then((response) => {
+                assert.equal(response['status'], 'OK');
+                assert.deepEqual(response['commits'], []);
+            });
+        });
+
+        it("should return InvalidCommitRange when the specified range is backwards", () => {
+            const db = TestServer.database();
+            return Promise.all([
+                db.insert('repositories', {'id': 1, 'name': 'WebKit'}),
+                db.insert('commits', {'repository': 1, 'revision': '210949', 'time': '2017-01-20T03:23:50.645Z'}),
+                db.insert('commits', {'repository': 1, 'revision': '210950', 'time': '2017-01-20T03:49:37.887Z'}),
+            ]).then(() => {
+                return TestServer.remoteAPI().getJSON('/api/commits/WebKit/?precedingRevision=210950&lastRevision=210949');
+            }).then((response) => {
+                assert.equal(response['status'], 'InvalidCommitRange');
+            });
+        });
+
+        it("should return use the commit order when time is not specified", () => {
+            const db = TestServer.database();
+            return Promise.all([
+                db.insert('repositories', {'id': 1, 'name': 'macOS'}),
+                db.insert('commits', {'repository': 1, 'revision': '10.12 16A323', order: 1, 'reported': true}),
+                db.insert('commits', {'repository': 1, 'revision': '10.12 16B2555', order: 2, 'reported': true}),
+                db.insert('commits', {'repository': 1, 'revision': '10.12 16B2657', order: 3, 'reported': true}),
+            ]).then(() => {
+                return TestServer.remoteAPI().getJSON('/api/commits/macOS/?precedingRevision=10.12%2016A323&lastRevision=10.12%2016B2657');
+            }).then((response) => {
+                assert.equal(response['status'], 'OK');
+                assert.deepEqual(response['commits'].map((commit) => commit['revision']), ['10.12 16B2555', '10.12 16B2657']);
+            });
+        });
+
+        it("should return InconsistentCommits when precedingRevision specifies a time but lastRevision does not", () => {
+            const db = TestServer.database();
+            return Promise.all([
+                db.insert('repositories', {'id': 1, 'name': 'macOS'}),
+                db.insert('commits', {'repository': 1, 'revision': '10.12 16A323', time: '2017-01-20T03:23:50.645Z', order: 1, 'reported': true}),
+                db.insert('commits', {'repository': 1, 'revision': '10.12 16B2555', order: 2, 'reported': true}),
+                db.insert('commits', {'repository': 1, 'revision': '10.12 16B2657', order: 3, 'reported': true}),
+            ]).then(() => {
+                return TestServer.remoteAPI().getJSON('/api/commits/macOS/?precedingRevision=10.12%2016A323&lastRevision=10.12%2016B2657');
+            }).then((response) => {
+                assert.equal(response['status'], 'InconsistentCommits');
+            });
+        });
+
+        it("should return InconsistentCommits when precedingRevision does not specify a time has a time but lastRevision does", () => {
+            const db = TestServer.database();
+            return Promise.all([
+                db.insert('repositories', {'id': 1, 'name': 'macOS'}),
+                db.insert('commits', {'repository': 1, 'revision': '10.12 16A323', order: 1, 'reported': true}),
+                db.insert('commits', {'repository': 1, 'revision': '10.12 16B2555', order: 2, 'reported': true}),
+                db.insert('commits', {'repository': 1, 'revision': '10.12 16B2657', time: '2017-01-20T03:23:50.645Z', order: 3, 'reported': true}),
+            ]).then(() => {
+                return TestServer.remoteAPI().getJSON('/api/commits/macOS/?precedingRevision=10.12%2016A323&lastRevision=10.12%2016B2657');
+            }).then((response) => {
+                assert.equal(response['status'], 'InconsistentCommits');
+            });
+        });
+
+        it("should return empty results when precedingRevision does not specify a time or an order has a time but lastRevision does", () => {
+            const db = TestServer.database();
+            return Promise.all([
+                db.insert('repositories', {'id': 1, 'name': 'macOS'}),
+                db.insert('commits', {'repository': 1, 'revision': '10.12 16A323', 'reported': true}),
+                db.insert('commits', {'repository': 1, 'revision': '10.12 16B2555', order: 2, 'reported': true}),
+                db.insert('commits', {'repository': 1, 'revision': '10.12 16B2657', order: 3, 'reported': true}),
+            ]).then(() => {
+                return TestServer.remoteAPI().getJSON('/api/commits/macOS/?precedingRevision=10.12%2016A323&lastRevision=10.12%2016B2657');
+            }).then((response) => {
+                assert.equal(response['status'], 'OK');
+                assert.deepEqual(response['commits'], []);
+            });
+        });
+
+        it("should return empty results when precedingRevision an order has a time but lastRevision does not", () => {
+            const db = TestServer.database();
+            return Promise.all([
+                db.insert('repositories', {'id': 1, 'name': 'macOS'}),
+                db.insert('commits', {'repository': 1, 'revision': '10.12 16A323', order: 1, 'reported': true}),
+                db.insert('commits', {'repository': 1, 'revision': '10.12 16B2555', order: 2, 'reported': true}),
+                db.insert('commits', {'repository': 1, 'revision': '10.12 16B2657', 'reported': true}),
+            ]).then(() => {
+                return TestServer.remoteAPI().getJSON('/api/commits/macOS/?precedingRevision=10.12%2016A323&lastRevision=10.12%2016B2657');
             }).then((response) => {
                 assert.equal(response['status'], 'OK');
                 assert.deepEqual(response['commits'], []);
@@ -433,10 +519,11 @@ describe("/api/commits/", function () {
             const db = TestServer.database();
             return Promise.all([
                 db.insert('repositories', {'id': 1, 'name': 'WebKit'}),
+                db.insert('commits', {'repository': 1, 'revision': '210948', 'time': '2017-01-20T02:52:34.577Z', 'reported': true}),
                 db.insert('commits', {'repository': 1, 'revision': '210949', 'time': '2017-01-20T03:23:50.645Z', 'reported': true}),
                 db.insert('commits', {'repository': 1, 'revision': '210950', 'time': '2017-01-20T03:49:37.887Z', 'reported': true}),
             ]).then(() => {
-                return TestServer.remoteAPI().getJSON('/api/commits/WebKit/?from=210949&to=210950');
+                return TestServer.remoteAPI().getJSON('/api/commits/WebKit/?precedingRevision=210948&lastRevision=210950');
             }).then((result) => {
                 assert.equal(result['status'], 'OK');
                 assert.deepEqual(result['commits'].length, 2);
@@ -458,11 +545,20 @@ describe("/api/commits/", function () {
         });
 
         it("should not include a revision not within the specified range", () => {
+            const db = TestServer.database();
             const remote = TestServer.remoteAPI();
-            return addSlaveForReport(subversionCommits).then(() => {
+            return Promise.all([
+                db.insert('repositories', {'id': 1, 'name': 'WebKit'}),
+                db.insert('commits', {'repository': 1, 'revision': '210947', 'time': '2017-01-20T02:38:45.485Z', 'reported': false}),
+                db.insert('commits', {'repository': 1, 'revision': '210948', 'time': '2017-01-20T02:52:34.577Z', 'reported': false}),
+                db.insert('commits', {'repository': 1, 'revision': '210949', 'time': '2017-01-20T03:23:50.645Z', 'reported': false}),
+                db.insert('commits', {'repository': 1, 'revision': '210950', 'time': '2017-01-20T03:49:37.887Z', 'reported': false}),
+            ]).then(() => {
+                return addSlaveForReport(subversionCommits);
+            }).then(() => {
                 return remote.postJSONWithStatus('/api/report-commits/', subversionCommits);
             }).then(() => {
-                return remote.getJSON('/api/commits/WebKit/?from=210948&to=210949');
+                return remote.getJSON('/api/commits/WebKit/?precedingRevision=210947&lastRevision=210949');
             }).then((result) => {
                 assert.equal(result['status'], 'OK');
                 assert.deepEqual(result['commits'].length, 2);

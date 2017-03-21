@@ -1,3 +1,80 @@
+2017-03-19  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Charts page show an inconsistent list of revisions for Git and Subversion
+        https://bugs.webkit.org/show_bug.cgi?id=169888
+
+        Reviewed by Andreas Kling.
+
+        With Git, CommitLogViewer was showing the list of revisions including the starting hash,
+        which was the last data point's revision instead of all revisions after the last data point.
+
+        Fixed the bug by always specifying the revision at the last data point in both Subversion
+        and Git and then making /api/commits/<repository>/?from=X&to=Y exclude the first revision.
+        For clarity, "from" and "to" query parameters have been renamed to "precedingRevision" and
+        "lastRevision" respectively.
+
+        We also no longer adds 1 to the starting revision of Subversion-like starting revisions. e.g.
+        when the last data point was at r1234, new data point is at r1250, the label is now "r1234-r1250"
+        instead of "r1235-r1250".
+
+        * browser-tests/chart-revision-range-tests.js: Fixed the tests since revisionList no longer
+        specifies from/to revisions.
+        * browser-tests/commit-log-viewer-tests.js: Added. Added tests for CommitLogViewer.
+        * browser-tests/index.html: Include the new test. Also use a local copy of mocha.js/css.
+
+        * public/api/commits.php:
+        (main): Renamed "from" and "to" query parameters.
+
+        * public/include/commit-log-fetcher.php:
+        (CommitLogFetcher::fetch_between): Added a check that commit time should either be specified
+        in both rows or not specified in either. Also reject when before_first_revision is identical
+        or after last_revision instead of re-ordering them since it no longer makes sense to do so with
+        new query parameter names.
+
+        * public/v3/components/base.js:
+        (ComponentBase._addContentToElement): Use Array.isArray instead of instanceof. It's resilient
+        againt realm (global object) differences.
+
+        * public/v3/components/chart-pane-base.js:
+        (ChartPaneBase.prototype._updateCommitLogViewer): No longer calls enqueueToRender on this since
+        CommitLogViewer does that on its own now.
+        (ChartPaneBase.prototype.render): Juse use this._openRepository instead of relying on CommitLogViewer
+        to remember which repository is current. This was the only use of currentRepository.
+
+        * public/v3/components/commit-log-viewer.js:
+        (CommitLogViewer):
+        (CommitLogViewer.prototype.currentRepository): Deleted.
+        (CommitLogViewer.prototype.view):
+        (CommitLogViewer.prototype._fetchCommitLogs): Modernized and extracted from view to make it lazy.
+        Call fetchForSingleRevision when precedingRevision is not specified or it's identical to lastRevision
+        since the generic JSON API no longer supports being called with the identical revisions.
+        (CommitLogViewer.prototype.render): Modernized & simplified the code.
+        (CommitLogViewer.prototype._renderCommitList): Extracted from render to make it lazy.
+        (CommitLogViewer.htmlTemplate): Add ID on caption & tbody so that they're more easily addressable.
+        (CommitLogViewer.cssTemplate):
+
+        * public/v3/models/commit-log.js:
+        (CommitLog.prototype.diff): No longer includes from/to revisions in the result. Also avoid adding
+        1 to a Subversion-like starting revision for creating the label. See above. But we still do this
+        for forming URLs due to the way tools like Trac work with Subversion revisions.
+        (CommitLog.fetchBetweenRevisions): Rewritten using DataModel.prototype.cachedFetch with FIXME for
+        what this function is supposed to be doing.
+        (CommitLog._cachedCommitLogs): Deleted.
+        (CommitLog.fetchForSingleRevision): Added.
+        (CommitLog._constructFromRawData): Added.
+
+        * public/v3/models/data-model.js:
+        (DataModelObject.cachedFetch): Don't parse query values as an integer. Just URL-escape them.
+
+        * public/v3/remote.js:
+        (BrowserRemoteAPI.prototype.sendHttpRequest): Fixed a typo.
+
+        * server-tests/api-commits-tests.js: Renamed from api-commits.js. Updated the existing tests to
+        use new query parameters and added more test cases.
+
+        * unit-tests/commit-log-tests.js: Updated the test cases now that CommitLog.prototype.diff no longer
+        includes from/to values. They're computed in ChartRevisionRange instead.
+
 2017-03-20  Ryosuke Niwa  <rniwa@webkit.org>
 
         Fix os-build-fetcher.js and subprocess.js to make them work

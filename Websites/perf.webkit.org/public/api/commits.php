@@ -24,9 +24,9 @@ function main($paths) {
     $commits = array();
     if (!$filter) {
         $keyword = array_get($_GET, 'keyword'); // V2 UI compatibility.
-        $from = array_get($_GET, 'from');
-        $to = array_get($_GET, 'to');
-        $commits = $fetcher->fetch_between($repository_id, $from, $to, $keyword);
+        $preceding_revision = array_get($_GET, 'precedingRevision');
+        $last_revision = array_get($_GET, 'lastRevision');
+        $commits = $fetcher->fetch_between($repository_id, $preceding_revision, $last_revision, $keyword);
     } else if ($filter == 'oldest') {
         $commits = $fetcher->fetch_oldest($repository_id);
     } else if ($filter == 'latest') {

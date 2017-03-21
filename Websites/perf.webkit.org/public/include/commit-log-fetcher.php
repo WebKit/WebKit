@@ -33,7 +33,7 @@ class CommitLogFetcher {
         return $repository_row['repository_id'];
     }
 
-    function fetch_between($repository_id, $first, $second, $keyword = NULL)
+    function fetch_between($repository_id, $before_first_revision, $last_revision, $keyword = NULL)
     {
         $statements = 'SELECT commit_id as "id",
             commit_revision as "revision",
@@ -46,22 +46,29 @@ class CommitLogFetcher {
             WHERE commit_repository = $1 AND commit_reported = true';
         $values = array($repository_id);
 
-        if ($first && $second) {
-            $first_commit = $this->commit_for_revision($repository_id, $first);
-            $second_commit = $this->commit_for_revision($repository_id, $second);
-            $first = $first_commit['commit_time'];
-            $second = $second_commit['commit_time'];
-            $column_name = 'commit_time';
-            if (!$first || !$second) {
-                $first = $first_commit['commit_order'];
-                $second = $second_commit['commit_order'];
-                $column_name = 'commit_order';
-            }
+        if ($before_first_revision && $last_revision) {
+            $preceding_commit = $this->commit_for_revision($repository_id, $before_first_revision);
+            $last_commit = $this->commit_for_revision($repository_id, $last_revision);
 
-            $in_order = $first < $second;
-            array_push($values, $in_order ? $first : $second);
-            $statements .= ' AND ' . $column_name . ' >= $' . count($values);
-            array_push($values, $in_order ? $second : $first);
+            $preceding = $preceding_commit['commit_time'];
+            $last = $last_commit['commit_time'];
+            if (!$preceding != !$last)
+                exit_with_error('InconsistentCommits');
+            if ($preceding)
+                $column_name = 'commit_time';
+            else {
+                $preceding = $preceding_commit['commit_order'];
+                $last = $last_commit['commit_order'];
+                $column_name = 'commit_order';
+                if (!$preceding || !$last)
+                    return array();
+            }
+            if ($preceding >= $last)
+                exit_with_error('InvalidCommitRange');
+
+            array_push($values, $preceding);
+            $statements .= ' AND ' . $column_name . ' > $' . count($values);
+            array_push($values, $last);
             $statements .= ' AND ' . $column_name . ' <= $' . count($values);
         }
 

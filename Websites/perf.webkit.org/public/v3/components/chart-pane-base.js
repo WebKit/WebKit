@@ -163,9 +163,8 @@ class ChartPaneBase extends ComponentBase {
     _updateCommitLogViewer()
     {
         const range = this._revisionRange.rangeForRepository(this._openRepository);
-        const updateRendering = () => { this.enqueueToRender(); };
-        this._commitLogViewer.view(this._openRepository, range.from, range.to).then(updateRendering);
-        updateRendering();
+        this._commitLogViewer.view(this._openRepository, range.from, range.to);
+        this.enqueueToRender();
     }
 
     _openAnalysisTask(annotation)
@@ -257,7 +256,7 @@ class ChartPaneBase extends ComponentBase {
             this._mainChartStatus.enqueueToRender();
 
         var body = this.content().querySelector('.chart-pane-body');
-        if (this._commitLogViewer && this._commitLogViewer.currentRepository()) {
+        if (this._openRepository) {
             body.classList.add('has-second-sidebar');
             this._commitLogViewer.enqueueToRender();
         } else

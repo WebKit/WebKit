@@ -4,92 +4,87 @@ class CommitLogViewer extends ComponentBase {
     constructor()
     {
         super('commit-log-viewer');
+        this._lazilyFetchCommitLogs = new LazilyEvaluatedFunction(this._fetchCommitLogs.bind(this));
         this._repository = null;
         this._fetchingPromise = null;
         this._commits = null;
-        this._from = null;
-        this._to = null;
+        this._renderCommitListLazily = new LazilyEvaluatedFunction(this._renderCommitList.bind(this));
     }
 
-    currentRepository() { return this._repository; }
-
-    view(repository, from, to)
+    view(repository, precedingRevision, lastRevision)
     {
-        if (this._repository == repository && this._from == from && this._to == to)
-            return Promise.resolve(null);
+        this._lazilyFetchCommitLogs.evaluate(repository, precedingRevision, lastRevision);
+    }
 
+    _fetchCommitLogs(repository, precedingRevision, lastRevision)
+    {
+        this._fetchingPromise = null;
         this._commits = null;
-        this._repository = repository;
-        this._from = from;
-        this._to = to;
 
-        if (!repository) {
-            this._fetchingPromise = null;
+        if (!repository || !lastRevision) {
             this._repository = null;
-            return Promise.resolve(null);
-        }
-
-        if (!to) {
-            this._fetchingPromise = null;
             this.enqueueToRender();
-            return Promise.resolve(null);
+            return;
         }
 
-        var promise = CommitLog.fetchBetweenRevisions(repository, from || to, to);
+        let promise;
+        if (!precedingRevision || precedingRevision == lastRevision)
+            promise = CommitLog.fetchForSingleRevision(repository, lastRevision);
+        else
+            promise = CommitLog.fetchBetweenRevisions(repository, precedingRevision, lastRevision);
 
+        this._repository = repository;
         this._fetchingPromise = promise;
 
-        var self = this;
-        var spinnerTimer = setTimeout(function () {
-            self.enqueueToRender();
-        }, 300);
-
-        this._fetchingPromise.then(function (commits) {
-            clearTimeout(spinnerTimer);
-            if (self._fetchingPromise != promise)
+        this._fetchingPromise.then((commits) => {
+            if (this._fetchingPromise != promise)
                 return;
-            self._fetchingPromise = null;
-            self._commits = commits;
-        }, function (error) {
-            if (self._fetchingPromise != promise)
+            this._fetchingPromise = null;
+            this._commits = commits;
+            this.enqueueToRender();
+        }, (error) => {
+            if (this._fetchingPromise != promise)
                 return;
-            self._fetchingPromise = null;
-            self._commits = null;
+            this._fetchingPromise = null;
+            this._commits = null;
+            this.enqueueToRender();
         });
 
-        return this._fetchingPromise;
+        this.enqueueToRender();
     }
 
     render()
     {
-        var caption = '';
-        if (this._repository && (this._commits || this._fetchingPromise))
-            caption = this._repository.name();
-        this.content().querySelector('caption').textContent = caption;
+        this.part('spinner').enqueueToRender();
 
-        var element = ComponentBase.createElement;
-        var link = ComponentBase.createLink;
+        const shouldShowRepositoryName = this._repository && (this._commits || this._fetchingPromise);
+        this.content('repository-name').textContent = shouldShowRepositoryName ? this._repository.name() : '';
+        this.content('spinner-container').style.display = this._fetchingPromise ? null : 'none';
+        this._renderCommitListLazily.evaluate(this._commits);
+    }
 
-        this.renderReplace(this.content().querySelector('tbody'), (this._commits || []).map(function (commit) {
-            var label = commit.label();
-            var url = commit.url();
+    _renderCommitList(commits)
+    {
+        const element = ComponentBase.createElement;
+        const link = ComponentBase.createLink;
+
+        this.renderReplace(this.content('commits-list'), (commits || []).map((commit) => {
+            const label = commit.label();
+            const url = commit.url();
             return element('tr', [
                 element('th', [element('h4', {class: 'revision'}, url ? link(label, commit.title(), url) : label), commit.author() || '']),
                 element('td', commit.message() ? commit.message().substring(0, 80) : '')]);
         }));
-
-        this.content().querySelector('.commits-viewer-spinner').style.display = this._fetchingPromise ? null : 'none';
     }
 
     static htmlTemplate()
     {
         return `
             <div class="commits-viewer-container">
-                <div class="commits-viewer-spinner"><spinner-icon></spinner-icon></div>
-                <table class="commits-viewer-table">
-                    <caption></caption>
-                    <tbody>
-                    </tbody>
+                <div id="spinner-container"><spinner-icon id="spinner"></spinner-icon></div>
+                <table id="commits-viewer-table">
+                    <caption id="repository-name"></caption>
+                    <tbody id="commits-list"></tbody>
                 </table>
             </div>
 `;
@@ -104,31 +99,27 @@ class CommitLogViewer extends ComponentBase {
                 overflow-y: scroll;
             }
             
-            .commits-viewer-table {
+            #commits-viewer-table {
                 width: 100%;
+                border-collapse: collapse;
+                border-bottom: solid 1px #ccc;
             }
 
-            .commits-viewer-table caption {
+            caption {
                 font-weight: inherit;
                 font-size: 1rem;
                 text-align: center;
                 padding: 0.2rem;
             }
 
-            .commits-viewer-table {
-                border-collapse: collapse;
-                border-bottom: solid 1px #ccc;
-            }
-
-            .commits-viewer-table .revision {
+            .revision {
                 white-space: nowrap;
                 font-weight: normal;
                 margin: 0;
                 padding: 0;
             }
 
-            .commits-viewer-table td,
-            .commits-viewer-table th {
+            td, th {
                 word-break: break-word;
                 border-top: solid 1px #ccc;
                 padding: 0.2rem;
@@ -137,7 +128,7 @@ class CommitLogViewer extends ComponentBase {
                 font-weight: normal;
             }
 
-            .commits-viewer-spinner {
+            #spinner-container {
                 margin-top: 2rem;
                 text-align: center;
             }

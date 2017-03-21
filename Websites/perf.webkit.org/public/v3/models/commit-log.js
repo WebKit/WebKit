@@ -49,70 +49,46 @@ class CommitLog extends DataModelObject {
         if (this == previousCommit)
             previousCommit = null;
 
-        var repository = this._repository;
+        const repository = this._repository;
         if (!previousCommit)
-            return {from: null, to: this.revision(), repository: repository, label: this.label(), url: this.url()};
+            return {repository: repository, label: this.label(), url: this.url()};
 
-        var to = this.revision();
-        var from = previousCommit.revision();
-        var label = null;
-        if (parseInt(to) == to) { // e.g. r12345.
-            from = (parseInt(from) + 1).toString();
+        const to = this.revision();
+        const from = previousCommit.revision();
+        let fromRevisionForURL = from;
+        let label = null;
+        if (parseInt(from) == from) { // e.g. r12345.
+            fromRevisionForURL = (parseInt(from) + 1).toString;
             label = `r${from}-r${this.revision()}`;
-        } else if (to.length == 40) { // e.g. git hash
+        } else if (to.length == 40) // e.g. git hash
             label = `${from.substring(0, 8)}..${to.substring(0, 8)}`;
-        } else
+        else
             label = `${from} - ${to}`;
 
-        return {from: from, to: to, repository: repository, label: label, url: repository.urlForRevisionRange(from, to)};
+        return {repository: repository, label: label, url: repository.urlForRevisionRange(from, to)};
     }
 
-    static fetchBetweenRevisions(repository, from, to)
+    static fetchBetweenRevisions(repository, precedingRevision, lastRevision)
     {
-        var params = [];
-        if (from && to) {
-            params.push(['from', from]);
-            params.push(['to', to]);
-        }
+        // FIXME: The cache should be smarter about fetching a range within an already fetched range, etc...
+        // FIXME: We should evict some entires from the cache in cachedFetch.
+        return this.cachedFetch(`/api/commits/${repository.id()}/`, {precedingRevision, lastRevision})
+            .then((data) => this._constructFromRawData(repository, data));
+    }
 
-        var url = '../api/commits/' + repository.id() + '/?' + params.map(function (keyValue) {
-            return encodeURIComponent(keyValue[0]) + '=' + encodeURIComponent(keyValue[1]);
-        }).join('&');
-
-
-        var cachedLogs = this._cachedCommitLogs(repository, from, to);
-        if (cachedLogs)
-            return new Promise(function (resolve) { resolve(cachedLogs); });
-
-        var self = this;
-        return RemoteAPI.getJSONWithStatus(url).then(function (data) {
-            var commits = data['commits'].map(function (rawData) {
-                rawData.repository = repository;
-                return CommitLog.ensureSingleton(rawData.id, rawData);
-            });
-            self._cacheCommitLogs(repository, from, to, commits);
-            return commits;
+    static fetchForSingleRevision(repository, revision)
+    {
+        return this.cachedFetch(`/api/commits/${repository.id()}/${revision}`).then((data) => {
+            return this._constructFromRawData(repository, data);
         });
     }
 
-    static _cachedCommitLogs(repository, from, to)
+    static _constructFromRawData(repository, data)
     {
-        if (!this._caches)
-            return null;
-        var cache = this._caches[repository.id()];
-        if (!cache)
-            return null;
-        // FIXME: Make each commit know of its parent, then we can do a better caching. 
-        return cache[from + '|' + to];
-    }
-
-    static _cacheCommitLogs(repository, from, to, logs)
-    {
-        if (!this._caches)
-            this._caches = {};
-        if (!this._caches[repository.id()])
-            this._caches[repository.id()] = {};
-        this._caches[repository.id()][from + '|' + to] = logs;
+        return data['commits'].map((rawData) => {
+            rawData.repository = repository;
+            return CommitLog.ensureSingleton(rawData.id, rawData);
+        });
     }
 }
 

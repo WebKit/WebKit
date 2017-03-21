@@ -93,24 +93,18 @@ describe('CommitLog', function () {
     describe('diff', function () {
         it('should use label() as the label the previous commit is missing', function () {
             assert.deepEqual(webkitCommit().diff(), {
-                from: null,
-                to: '200805',
                 label: 'r200805',
                 url: 'http://trac.webkit.org/changeset/200805',
                 repository: MockModels.webkit
             });
 
             assert.deepEqual(gitWebKitCommit().diff(), {
-                from: null,
-                to: '6f8b0dbbda95a440503b88db1dd03dad3a7b07fb',
                 label: '6f8b0dbb',
                 url: 'http://trac.webkit.org/changeset/6f8b0dbbda95a440503b88db1dd03dad3a7b07fb',
                 repository: MockModels.webkit,
             });
 
             assert.deepEqual(osxCommit().diff(), {
-                from: null,
-                to: '10.11.4 15E65',
                 label: '10.11.4 15E65',
                 url: '',
                 repository: MockModels.osx,
@@ -119,9 +113,7 @@ describe('CommitLog', function () {
 
         it('should use increment the old SVN revision by 1', function () {
             assert.deepEqual(webkitCommit().diff(oldWebKitCommit()), {
-                from: '200575',
-                to: '200805',
-                label: 'r200575-r200805',
+                label: 'r200574-r200805',
                 url: '',
                 repository: MockModels.webkit
             });
@@ -129,8 +121,6 @@ describe('CommitLog', function () {
 
         it('should truncate a Git hash at 8th character', function () {
             assert.deepEqual(gitWebKitCommit().diff(oldGitWebKitCommit()), {
-                from: 'ffda14e6db0746d10d0f050907e4a7325851e502',
-                to: '6f8b0dbbda95a440503b88db1dd03dad3a7b07fb',
                 label: 'ffda14e6..6f8b0dbb',
                 url: '',
                 repository: MockModels.webkit
@@ -139,8 +129,6 @@ describe('CommitLog', function () {
 
         it('should surround "-" with spaces', function () {
             assert.deepEqual(osxCommit().diff(oldOSXCommit()), {
-                from: '10.11.3 15D21',
-                to: '10.11.4 15E65',
                 label: '10.11.3 15D21 - 10.11.4 15E65',
                 url: '',
                 repository: MockModels.osx

@@ -12,7 +12,7 @@ class BrowserRemoteAPI extends CommonRemoteAPI {
             function onload() {
                 Instrumentation.endMeasuringTime('Remote', 'sendHttpRequest');
                 if (xhr.status != 200)
-                    return resject(xhr.status);
+                    return reject(xhr.status);
                 resolve({statusCode: xhr.status, responseText: xhr.responseText});
             };
 

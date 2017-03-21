@@ -62,10 +62,10 @@ class DataModelObject {
 
     static cachedFetch(path, params, noCache)
     {
-        var query = [];
+        const query = [];
         if (params) {
-            for (var key in params)
-                query.push(key + '=' + parseInt(params[key]));
+            for (let key in params)
+                query.push(key + '=' + escape(params[key]));
         }
         if (query.length)
             path += '?' + query.join('&');
