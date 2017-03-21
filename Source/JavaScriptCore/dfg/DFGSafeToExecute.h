@@ -288,6 +288,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
     case ToPrimitive:
     case ToString:
     case ToNumber:
+    case NumberToStringWithRadix:
     case SetFunctionName:
     case StrCat:
     case CallStringConstructor:

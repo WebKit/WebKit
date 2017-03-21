@@ -1,5 +1,20 @@
 2017-03-21  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        [JSC] Optimize Number.prototype.toString on Int32 / Int52 / Double
+        https://bugs.webkit.org/show_bug.cgi?id=167454
+
+        Reviewed by Saam Barati.
+
+        This patch improves Number.toString(radix) performance
+        by introducing NumberToStringWithRadix DFG node. It directly
+        calls the operation and it always returns String.
+
+                                                       baseline                  patched
+
+            stanford-crypto-sha256-iterative        45.130+-0.928             44.032+-1.184           might be 1.0250x faster
+
+2017-03-21  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         [JSC] Add JSPromiseDeferred::reject(ExecState*, Exception*) interface
         https://bugs.webkit.org/show_bug.cgi?id=169908
 
@@ -26,6 +41,59 @@
         * assembler/MacroAssembler.h: Expose branchPtr() on MIPS as well.
         * assembler/MacroAssemblerMIPS.h:
         (JSC::MacroAssemblerMIPS::branchPtr): Added.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleIntrinsicCall):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        (JSC::DFG::FixupPhase::fixupToStringOrCallStringConstructor):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileToStringOrCallStringConstructor):
+        (JSC::DFG::SpeculativeJIT::compileToStringOrCallStringConstructorOnNumber):
+        (JSC::DFG::SpeculativeJIT::compileNumberToStringWithRadix):
+        (JSC::DFG::SpeculativeJIT::compileToStringOrCallStringConstructorOnCell): Deleted.
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGStrengthReductionPhase.cpp:
+        (JSC::DFG::StrengthReductionPhase::handleNode):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileToStringOrCallStringConstructor):
+        (JSC::FTL::DFG::LowerDFGToB3::compileNumberToStringWithRadix):
+        * jit/CCallHelpers.h:
+        (JSC::CCallHelpers::setupArgumentsWithExecState):
+        * jit/JITOperations.h:
+        * runtime/Intrinsic.h:
+        * runtime/NumberPrototype.cpp:
+        (JSC::int52ToStringWithRadix):
+        (JSC::int32ToStringInternal):
+        (JSC::numberToStringInternal):
+        (JSC::int32ToString):
+        (JSC::int52ToString):
+        (JSC::numberToString):
+        (JSC::numberProtoFuncToString):
+        (JSC::integerValueToString): Deleted.
+        * runtime/NumberPrototype.h:
+        * runtime/StringPrototype.cpp:
+        (JSC::StringPrototype::finishCreation):
 
 2017-03-20  Filip Pizlo  <fpizlo@apple.com>
 

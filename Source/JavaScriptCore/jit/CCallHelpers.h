@@ -892,6 +892,14 @@ public:
         addCallArgument(arg2);
     }
 
+    ALWAYS_INLINE void setupArgumentsWithExecState(FPRReg arg1, TrustedImm32 arg2)
+    {
+        resetCallArguments();
+        addCallArgument(GPRInfo::callFrameRegister);
+        addCallArgument(arg1);
+        addCallArgument(arg2);
+    }
+
     ALWAYS_INLINE void setupArgumentsWithExecState(GPRReg arg1, GPRReg arg2, FPRReg arg3)
     {
         resetCallArguments();
@@ -1093,6 +1101,20 @@ public:
         move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
     }
 
+    ALWAYS_INLINE void setupArgumentsWithExecState(FPRReg arg1, TrustedImm32 arg2)
+    {
+#if OS(WINDOWS) && CPU(X86_64)
+        // On Windows, arguments map to designated registers based on the argument positions, even when there are interlaced scalar and floating point arguments.
+        // See http://msdn.microsoft.com/en-us/library/zthk2dkh.aspx
+        moveDouble(arg1, FPRInfo::argumentFPR1);
+        move(arg2, GPRInfo::argumentGPR2);
+#else
+        moveDouble(arg1, FPRInfo::argumentFPR0);
+        move(arg2, GPRInfo::argumentGPR1);
+#endif
+        move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
+    }
+
     ALWAYS_INLINE void setupArgumentsWithExecState(GPRReg arg1, GPRReg arg2, FPRReg arg3)
     {
 #if OS(WINDOWS) && CPU(X86_64)
@@ -1135,6 +1157,13 @@ public:
         move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
     }
 
+    ALWAYS_INLINE void setupArgumentsWithExecState(FPRReg arg1, TrustedImm32 arg2)
+    {
+        moveDouble(arg1, FPRInfo::argumentFPR0);
+        move(arg2, GPRInfo::argumentGPR1);
+        move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
+    }
+
     ALWAYS_INLINE void setupArgumentsWithExecState(GPRReg arg1, GPRReg arg2, FPRReg arg3)
     {
         moveDouble(arg3, FPRInfo::argumentFPR0);
@@ -1169,6 +1198,13 @@ public:
     }
 
     ALWAYS_INLINE void setupArgumentsWithExecState(FPRReg arg1, GPRReg arg2)
+    {
+        move(arg2, GPRInfo::argumentGPR3);
+        assembler().vmov(GPRInfo::argumentGPR1, GPRInfo::argumentGPR2, arg1);
+        move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
+    }
+
+    ALWAYS_INLINE void setupArgumentsWithExecState(FPRReg arg1, TrustedImm32 arg2)
     {
         move(arg2, GPRInfo::argumentGPR3);
         assembler().vmov(GPRInfo::argumentGPR1, GPRInfo::argumentGPR2, arg1);
@@ -1222,6 +1258,13 @@ public:
     }
 
     ALWAYS_INLINE void setupArgumentsWithExecState(FPRReg arg1, GPRReg arg2)
+    {
+        assembler().vmov(GPRInfo::argumentGPR2, GPRInfo::argumentGPR3, arg1);
+        move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
+        poke(arg2, 4);
+    }
+
+    ALWAYS_INLINE void setupArgumentsWithExecState(FPRReg arg1, TrustedImm32 arg2)
     {
         assembler().vmov(GPRInfo::argumentGPR2, GPRInfo::argumentGPR3, arg1);
         move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);

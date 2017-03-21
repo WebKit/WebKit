@@ -159,6 +159,13 @@ JSString* JIT_OPERATION operationSingleCharacterString(ExecState*, int32_t);
 
 JSString* JIT_OPERATION operationToLowerCase(ExecState*, JSString*, uint32_t);
 
+char* JIT_OPERATION operationInt32ToString(ExecState*, int32_t, int32_t);
+char* JIT_OPERATION operationInt52ToString(ExecState*, int64_t, int32_t);
+char* JIT_OPERATION operationDoubleToString(ExecState*, double, int32_t);
+char* JIT_OPERATION operationInt32ToStringWithValidRadix(ExecState*, int32_t, int32_t);
+char* JIT_OPERATION operationInt52ToStringWithValidRadix(ExecState*, int64_t, int32_t);
+char* JIT_OPERATION operationDoubleToStringWithValidRadix(ExecState*, double, int32_t);
+
 int32_t JIT_OPERATION operationMapHash(ExecState*, EncodedJSValue input);
 JSCell* JIT_OPERATION operationJSMapFindBucket(ExecState*, JSCell*, EncodedJSValue, int32_t);
 JSCell* JIT_OPERATION operationJSSetFindBucket(ExecState*, JSCell*, EncodedJSValue, int32_t);

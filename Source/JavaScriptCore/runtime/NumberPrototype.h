@@ -51,5 +51,8 @@ private:
 };
 
 EncodedJSValue JSC_HOST_CALL numberProtoFuncValueOf(ExecState*);
+JSString* int32ToString(VM&, int32_t value, int32_t radix);
+JSString* int52ToString(VM&, int64_t value, int32_t radix);
+JSString* numberToString(VM&, double value, int32_t radix);
 
 } // namespace JSC

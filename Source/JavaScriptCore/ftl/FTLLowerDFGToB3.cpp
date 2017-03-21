@@ -1078,6 +1078,9 @@ private:
         case ToLowerCase:
             compileToLowerCase();
             break;
+        case NumberToStringWithRadix:
+            compileNumberToStringWithRadix();
+            break;
         case CheckDOM:
             compileCheckDOM();
             break;
@@ -4981,6 +4984,18 @@ private:
             setJSValue(m_out.phi(Int64, simpleResult, convertedResult));
             return;
         }
+
+        case Int32Use:
+            setJSValue(vmCall(Int64, m_out.operation(operationInt32ToStringWithValidRadix), m_callFrame, lowInt32(m_node->child1()), m_out.constInt32(10)));
+            return;
+
+        case Int52RepUse:
+            setJSValue(vmCall(Int64, m_out.operation(operationInt52ToStringWithValidRadix), m_callFrame, lowStrictInt52(m_node->child1()), m_out.constInt32(10)));
+            return;
+
+        case DoubleRepUse:
+            setJSValue(vmCall(Int64, m_out.operation(operationDoubleToStringWithValidRadix), m_callFrame, lowDouble(m_node->child1()), m_out.constInt32(10)));
+            return;
             
         default:
             DFG_CRASH(m_graph, m_node, "Bad use kind");
@@ -9982,6 +9997,30 @@ private:
 
         m_out.appendTo(continuation, lastNext);
         setJSValue(m_out.phi(pointerType(), fastResult, slowResult));
+    }
+
+    void compileNumberToStringWithRadix()
+    {
+        bool validRadixIsGuaranteed = false;
+        if (m_node->child2()->isInt32Constant()) {
+            int32_t radix = m_node->child2()->asInt32();
+            if (radix >= 2 && radix <= 36)
+                validRadixIsGuaranteed = true;
+        }
+
+        switch (m_node->child1().useKind()) {
+        case Int32Use:
+            setJSValue(vmCall(pointerType(), m_out.operation(validRadixIsGuaranteed ? operationInt32ToStringWithValidRadix : operationInt32ToString), m_callFrame, lowInt32(m_node->child1()), lowInt32(m_node->child2())));
+            break;
+        case Int52RepUse:
+            setJSValue(vmCall(pointerType(), m_out.operation(validRadixIsGuaranteed ? operationInt52ToStringWithValidRadix : operationInt52ToString), m_callFrame, lowStrictInt52(m_node->child1()), lowInt32(m_node->child2())));
+            break;
+        case DoubleRepUse:
+            setJSValue(vmCall(pointerType(), m_out.operation(validRadixIsGuaranteed ? operationDoubleToStringWithValidRadix : operationDoubleToString), m_callFrame, lowDouble(m_node->child1()), lowInt32(m_node->child2())));
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
     }
 
     void compileResolveScope()

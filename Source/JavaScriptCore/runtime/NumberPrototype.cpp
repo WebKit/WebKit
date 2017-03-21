@@ -58,7 +58,7 @@ const ClassInfo NumberPrototype::s_info = { "Number", &NumberObject::s_info, &nu
 
 /* Source for NumberPrototype.lut.h
 @begin numberPrototypeTable
-  toString          numberProtoFuncToString         DontEnum|Function 1
+  toString          numberProtoFuncToString         DontEnum|Function 1 NumberPrototypeToStringIntrinsic
   toLocaleString    numberProtoFuncToLocaleString   DontEnum|Function 0
   valueOf           numberProtoFuncValueOf          DontEnum|Function 0
   toFixed           numberProtoFuncToFixed          DontEnum|Function 1
@@ -144,7 +144,7 @@ typedef char RadixBuffer[2180];
 // Mapping from integers 0..35 to digit identifying this value, for radix 2..36.
 static const char radixDigits[] = "0123456789abcdefghijklmnopqrstuvwxyz";
 
-static char* int52ToStringWithRadix(char* startOfResultString, int64_t int52Value, unsigned radix)
+static inline char* int52ToStringWithRadix(char* startOfResultString, int64_t int52Value, unsigned radix)
 {
     bool negative = false;
     uint64_t positiveNumber = int52Value;
@@ -499,23 +499,66 @@ static inline int32_t extractRadixFromArgs(ExecState* exec)
     return radix;
 }
 
-static inline EncodedJSValue integerValueToString(ExecState* exec, int32_t radix, int32_t value)
+static inline JSString* int32ToStringInternal(VM& vm, int32_t value, int32_t radix)
 {
+    ASSERT(!(radix < 2 || radix > 36));
     // A negative value casted to unsigned would be bigger than 36 (the max radix).
     if (static_cast<unsigned>(value) < static_cast<unsigned>(radix)) {
         ASSERT(value <= 36);
         ASSERT(value >= 0);
-        VM* vm = &exec->vm();
-        return JSValue::encode(vm->smallStrings.singleCharacterString(radixDigits[value]));
+        return vm.smallStrings.singleCharacterString(radixDigits[value]);
     }
 
     if (radix == 10) {
-        VM* vm = &exec->vm();
-        return JSValue::encode(jsString(vm, vm->numericStrings.add(value)));
+        return jsString(&vm, vm.numericStrings.add(value));
     }
 
-    return JSValue::encode(jsString(exec, toStringWithRadix(value, radix)));
+    return jsString(&vm, toStringWithRadix(value, radix));
 
+}
+
+static ALWAYS_INLINE JSString* numberToStringInternal(VM& vm, double doubleValue, int32_t radix)
+{
+    ASSERT(!(radix < 2 || radix > 36));
+
+    int32_t integerValue = static_cast<int32_t>(doubleValue);
+    if (integerValue == doubleValue)
+        return int32ToStringInternal(vm, integerValue, radix);
+
+    if (radix == 10)
+        return jsString(&vm, vm.numericStrings.add(doubleValue));
+
+    if (!std::isfinite(doubleValue))
+        return jsNontrivialString(&vm, String::numberToStringECMAScript(doubleValue));
+
+    RadixBuffer buffer;
+    return jsString(&vm, toStringWithRadix(buffer, doubleValue, radix));
+}
+
+JSString* int32ToString(VM& vm, int32_t value, int32_t radix)
+{
+    return int32ToStringInternal(vm, value, radix);
+}
+
+JSString* int52ToString(VM& vm, int64_t value, int32_t radix)
+{
+    ASSERT(!(radix < 2 || radix > 36));
+    if (radix == 10)
+        return jsString(&vm, vm.numericStrings.add(static_cast<double>(value)));
+
+    // Position the decimal point at the center of the string, set
+    // the startOfResultString pointer to point at the decimal point.
+    RadixBuffer buffer;
+    char* decimalPoint = buffer + sizeof(buffer) / 2;
+    char* startOfResultString = decimalPoint;
+    *decimalPoint = '\0';
+
+    return jsString(&vm, int52ToStringWithRadix(startOfResultString, value, radix));
+}
+
+JSString* numberToString(VM& vm, double doubleValue, int32_t radix)
+{
+    return numberToStringInternal(vm, doubleValue, radix);
 }
 
 EncodedJSValue JSC_HOST_CALL numberProtoFuncToString(ExecState* exec)
@@ -531,18 +574,7 @@ EncodedJSValue JSC_HOST_CALL numberProtoFuncToString(ExecState* exec)
     if (radix < 2 || radix > 36)
         return throwVMError(exec, scope, createRangeError(exec, ASCIILiteral("toString() radix argument must be between 2 and 36")));
 
-    int32_t integerValue = static_cast<int32_t>(doubleValue);
-    if (integerValue == doubleValue)
-        return integerValueToString(exec, radix, integerValue);
-
-    if (radix == 10)
-        return JSValue::encode(jsString(&vm, vm.numericStrings.add(doubleValue)));
-
-    if (!std::isfinite(doubleValue))
-        return JSValue::encode(jsNontrivialString(exec, String::numberToStringECMAScript(doubleValue)));
-
-    RadixBuffer s;
-    return JSValue::encode(jsString(exec, toStringWithRadix(s, doubleValue, radix)));
+    return JSValue::encode(numberToStringInternal(vm, doubleValue, radix));
 }
 
 EncodedJSValue JSC_HOST_CALL numberProtoFuncToLocaleString(ExecState* exec)

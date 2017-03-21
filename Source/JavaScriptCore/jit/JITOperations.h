@@ -312,6 +312,8 @@ typedef char* (JIT_OPERATION *P_JITOperation_EStZ)(ExecState*, Structure*, int32
 typedef char* (JIT_OPERATION *P_JITOperation_EStZB)(ExecState*, Structure*, int32_t, Butterfly*);
 typedef char* (JIT_OPERATION *P_JITOperation_EStZP)(ExecState*, Structure*, int32_t, char*);
 typedef char* (JIT_OPERATION *P_JITOperation_EZZ)(ExecState*, int32_t, int32_t);
+typedef char* (JIT_OPERATION *P_JITOperation_EQZ)(ExecState*, int64_t, int32_t);
+typedef char* (JIT_OPERATION *P_JITOperation_EDZ)(ExecState*, double, int32_t);
 typedef SlowPathReturnType (JIT_OPERATION *Sprt_JITOperation_ECli)(ExecState*, CallLinkInfo*);
 typedef StringImpl* (JIT_OPERATION *T_JITOperation_EJss)(ExecState*, JSString*);
 typedef JSString* (JIT_OPERATION *Jss_JITOperation_EZ)(ExecState*, int32_t);
