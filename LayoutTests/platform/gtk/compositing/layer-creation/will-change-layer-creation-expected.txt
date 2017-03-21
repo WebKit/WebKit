@@ -1,0 +1,53 @@
+transform opacity transform, background transform, opacity -webkit-filter
+opacity
+transform
+-webkit-filter
+transform-style
+perspective
+background, clip-path, position, z-index, -webkit-mask
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 800.00 600.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 600.00)
+      (contentsOpaque 1)
+      (children 6
+        (GraphicsLayer
+          (position 102.00 8.00)
+          (bounds 50.00 17.00)
+          (drawsContent 1)
+        )
+        (GraphicsLayer
+          (position 339.00 8.00)
+          (bounds 118.00 17.00)
+          (drawsContent 1)
+        )
+        (GraphicsLayer
+          (position 477.00 8.00)
+          (bounds 82.00 17.00)
+          (drawsContent 1)
+        )
+        (GraphicsLayer
+          (position 18.00 35.00)
+          (bounds 764.00 17.00)
+          (contentsOpaque 1)
+          (drawsContent 1)
+        )
+        (GraphicsLayer
+          (position 18.00 62.00)
+          (bounds 764.00 17.00)
+          (contentsOpaque 1)
+          (drawsContent 1)
+        )
+        (GraphicsLayer
+          (position 18.00 89.00)
+          (bounds 764.00 17.00)
+          (contentsOpaque 1)
+          (drawsContent 1)
+        )
+      )
+    )
+  )
+)
+
