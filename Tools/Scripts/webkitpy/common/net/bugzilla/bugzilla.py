@@ -488,8 +488,7 @@ class Bugzilla(object):
         # The "Up" relation happens to point to the bug.
         up_link = BeautifulSoup(page).find('link', rel='Up')
         if not up_link:
-            # This attachment does not exist (or you don't have permissions to
-            # view it).
+            _log.warning("This attachment does not exist (or you don't have permissions to view it).")
             return None
         match = re.search("show_bug.cgi\?id=(?P<bug_id>\d+)", up_link['href'])
         return int(match.group('bug_id'))

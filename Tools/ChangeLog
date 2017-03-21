@@ -1,3 +1,13 @@
+2017-03-21  Aakash Jain  <aakash_jain@apple.com>
+
+        ews should indicate in logs when it fails to parse_bug_id_from_attachment_page
+        https://bugs.webkit.org/show_bug.cgi?id=169927
+
+        Reviewed by  Alexey Proskuryakov.
+
+        * Scripts/webkitpy/common/net/bugzilla/bugzilla.py:
+        (Bugzilla._parse_bug_id_from_attachment_page): Added log statement.
+
 2017-03-20  Simon Fraser  <simon.fraser@apple.com>
 
         Add a system trace point for memory warning handling
