@@ -214,7 +214,7 @@ WebInspector.BreakpointPopoverController = class BreakpointPopoverController ext
             let optionsLabel = optionsHeader.appendChild(document.createElement("label"));
             let optionsCheckbox = this._popoverOptionsCheckboxElement = optionsData.appendChild(document.createElement("input"));
             let optionsCheckboxLabel = optionsData.appendChild(document.createElement("label"));
-            optionsCheckbox.id = "edit-breakpoint-popoover-auto-continue";
+            optionsCheckbox.id = "edit-breakpoint-popover-auto-continue";
             optionsCheckbox.type = "checkbox";
             optionsCheckbox.checked = this._breakpoint.autoContinue;
             optionsCheckbox.addEventListener("change", this._popoverToggleAutoContinueCheckboxChanged.bind(this));

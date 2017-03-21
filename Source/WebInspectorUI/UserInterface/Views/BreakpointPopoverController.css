@@ -26,6 +26,8 @@
 .popover .edit-breakpoint-popover-content {
     width: 420px;
     padding: 5px 15px;
+
+    --edit-breakpoint-popover-option-margin-end: 4px;
 }
 
 .popover .edit-breakpoint-popover-content.wide {
@@ -44,13 +46,13 @@
 }
 
 .popover .edit-breakpoint-popover-content > table > tr > th {
-    color: hsl(0, 0%, 34%);
-    font-weight: bold;
-    text-align: right;
     width: 1px; /* Shrink to fit. */
-    vertical-align: top;
+    font-weight: bold;
     line-height: 23px;
+    text-align: end;
+    vertical-align: top;
     white-space: nowrap;
+    color: hsl(0, 0%, 34%);
 }
 
 .popover .edit-breakpoint-popover-content > table > tr > td {
@@ -76,10 +78,14 @@
 
 #edit-breakpoint-popover-ignore {
     width: 40px;
-    margin-right: 4px;
 }
 
-#edit-breakpoint-popoover-auto-continue {
+body[dir=ltr] :matches(#edit-breakpoint-popover-ignore, #edit-breakpoint-popover-auto-continue) {
+    margin-right: var(--edit-breakpoint-popover-option-margin-end);
     margin-left: 0;
-    margin-right: 4px;
+}
+
+body[dir=rtl] :matches(#edit-breakpoint-popover-ignore, #edit-breakpoint-popover-auto-continue) {
+    margin-right: 0;
+    margin-left: var(--edit-breakpoint-popover-option-margin-end);
 }

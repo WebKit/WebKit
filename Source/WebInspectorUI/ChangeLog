@@ -1,3 +1,39 @@
+2017-03-20  Devin Rousso  <webkit@devinrousso.com>
+
+        Web Inspector: RTL: minor layout issues in Breakpoint Editor popover
+        https://bugs.webkit.org/show_bug.cgi?id=169765
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Controllers/BreakpointPopoverController.js:
+        (WebInspector.BreakpointPopoverController.prototype._createPopoverContent):
+        Fix typo.
+
+        * UserInterface/Views/BreakpointActionView.css:
+        (body[dir=ltr] .breakpoint-action-button-container):
+        (body[dir=rtl] .breakpoint-action-button-container):
+        (:matches(.breakpoint-action-append-button, .breakpoint-action-remove-button)):
+        (body[dir=ltr] :matches(.breakpoint-action-append-button, .breakpoint-action-remove-button)):
+        (body[dir=rtl] :matches(.breakpoint-action-append-button, .breakpoint-action-remove-button)):
+        (.breakpoint-action-block-body > .description):
+        (body[dir=ltr] .breakpoint-action-block-body > .description):
+        (body[dir=rtl] .breakpoint-action-block-body > .description):
+        (.breakpoint-action-block-body > input):
+        (.breakpoint-action-button-container): Deleted.
+        (.breakpoint-action-append-button, .breakpoint-action-remove-button): Deleted.
+
+        * UserInterface/Views/BreakpointActionView.js:
+        (WebInspector.BreakpointActionView.prototype._updateBody):
+        Manually apply `dir="ltr"` to the description element to force proper rendering.
+
+        * UserInterface/Views/BreakpointPopoverController.css:
+        (.popover .edit-breakpoint-popover-content):
+        (.popover .edit-breakpoint-popover-content > table > tr > th):
+        (#edit-breakpoint-popover-ignore):
+        (body[dir=ltr] :matches(#edit-breakpoint-popover-ignore, #edit-breakpoint-popover-auto-continue)):
+        (body[dir=rtl] :matches(#edit-breakpoint-popover-ignore, #edit-breakpoint-popover-auto-continue)):
+        (#edit-breakpoint-popoover-auto-continue): Deleted.
+
 2017-03-20  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Icon next to "An error occurred..." message changes size when Inspector window is resized

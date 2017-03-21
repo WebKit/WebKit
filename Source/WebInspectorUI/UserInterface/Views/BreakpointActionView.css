@@ -27,20 +27,32 @@
     margin-bottom: 3px;
 }
 
-.breakpoint-action-button-container {
+body[dir=ltr] .breakpoint-action-button-container {
     float: right;
 }
 
-.breakpoint-action-append-button,
-.breakpoint-action-remove-button {
+body[dir=rtl] .breakpoint-action-button-container {
+    float: left;
+}
+
+:matches(.breakpoint-action-append-button, .breakpoint-action-remove-button) {
     background-origin: border-box;
     width: 13px;
     height: 13px;
-    margin-left: 5px;
     margin-top: 2px;
     background-color: transparent;
     border: none;
     opacity: 0.6;
+
+    --breakpoint-action-button-margin-start: 5px;
+}
+
+body[dir=ltr] :matches(.breakpoint-action-append-button, .breakpoint-action-remove-button) {
+    margin-left: var(--breakpoint-action-button-margin-start);
+}
+
+body[dir=rtl] :matches(.breakpoint-action-append-button, .breakpoint-action-remove-button) {
+    margin-right: var(--breakpoint-action-button-margin-start);
 }
 
 .breakpoint-action-append-button {
@@ -65,11 +77,21 @@
     color: var(--text-color-gray-medium);
     text-align: right;
     margin-top: 6px;
-    margin-right: 2px;
+
+    --breakpoint-action-block-body-description-margin-end: 2px;
+}
+
+body[dir=ltr] .breakpoint-action-block-body > .description {
+    margin-right: var(--breakpoint-action-block-body-description-margin-end);
+}
+
+body[dir=rtl] .breakpoint-action-block-body > .description {
+    margin-left: var(--breakpoint-action-block-body-description-margin-end);
 }
 
 .breakpoint-action-block-body > input {
     width: 100%;
+    text-align: left;
 }
 
 .breakpoint-action-eval-editor {
