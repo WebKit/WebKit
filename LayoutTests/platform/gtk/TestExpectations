@@ -342,6 +342,7 @@ webrtc/peer-connection-remote-audio-mute.html [ Failure ]
 webrtc/peer-connection-remote-audio-mute2.html [ Failure ]
 webrtc/video-mute.html [ Failure ]
 webrtc/video-remote-mute.html [ Failure ]
+webrtc/video-with-receiver.html [ Failure ]
 imported/w3c/web-platform-tests/webrtc/datachannel-emptystring.html [ Failure ]
 imported/w3c/web-platform-tests/webrtc/no-media-call.html [ Failure ]
 imported/w3c/web-platform-tests/webrtc/promises-call.html [ Failure ]
@@ -366,6 +367,7 @@ webkit.org/b/79203 fast/mediastream/RTCPeerConnection-media-setup-two-dialogs.ht
 webkit.org/b/79203 fast/mediastream/RTCPeerConnection-remotely-assigned-transceiver-mid.html [ Failure ]
 webkit.org/b/79203 fast/mediastream/RTCPeerConnection-setLocalDescription-offer.html [ Failure ]
 webkit.org/b/79203 fast/mediastream/RTCPeerConnection-setRemoteDescription-offer.html [ Failure ]
+webkit.org/b/79203 fast/mediastream/RTCPeerConnection-remotely-assigned-transceiver-mid.html [ Failure ]
 webkit.org/b/79203 fast/mediastream/RTCRtpSender-replaceTrack.html [ Failure ]
 webkit.org/b/79203 fast/mediastream/RTCPeerConnection-closed-state.html [ Crash ]
 webkit.org/b/79203 webaudio/mediastreamaudiosourcenode.html [ Failure ]
@@ -902,6 +904,9 @@ http/tests/local/fileapi/upload-zip-bundle-as-blob-using-open-panel.html [ Skip 
 # RAF throttling requires REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR.
 fast/animation/request-animation-frame-throttling-detached-iframe.html [ Failure ]
 fast/animation/request-animation-frame-throttling-lowPowerMode.html [ Failure ]
+
+# WebGPU is not enabled on GTK+.
+fast/canvas/webgpu [ Skip ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures
@@ -2979,6 +2984,12 @@ webkit.org/b/168719 fast/css/paint-order-shadow.html [ ImageOnlyFailure ]
 
 webkit.org/b/169075 editing/selection/regional-indicators.html [ Failure ]
 webkit.org/b/169075 editing/deleting/skip-virama-001.html [ Failure ]
+
+webkit.org/b/169909 fast/css-generated-content/initial-letter-pagination-raised-rl.html [ ImageOnlyFailure ]
+webkit.org/b/169909 fast/css-generated-content/initial-letter-pagination-raised.html [ ImageOnlyFailure ]
+webkit.org/b/169909 fast/css-generated-content/initial-letter-pagination-sunken-rl.html [ ImageOnlyFailure ]
+webkit.org/b/169909 fast/css-generated-content/initial-letter-pagination-sunken.html [ ImageOnlyFailure ]
+
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing

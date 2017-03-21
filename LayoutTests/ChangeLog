@@ -1,3 +1,9 @@
+2017-03-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed GTK+ gardening. Mark several tests as failing and skip others.
+
+        * platform/gtk/TestExpectations:
+
 2017-03-20  Jon Lee  <jonlee@apple.com>
 
         Add iceCandidatePoolSize to RTCConfiguration
