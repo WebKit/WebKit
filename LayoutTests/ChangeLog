@@ -1,5 +1,11 @@
 2017-03-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed GTK+ gardening. Remove duplicated entry.
+
+        * platform/gtk/TestExpectations:
+
+2017-03-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed GTK+ gardening. Mark more tests that are failing.
 
         * platform/gtk/TestExpectations:
