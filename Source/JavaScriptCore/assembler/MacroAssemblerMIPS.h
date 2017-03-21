@@ -1512,6 +1512,12 @@ public:
         return branch32(cond, dataTempRegister, immTempRegister);
     }
 
+    Jump branchPtr(RelationalCondition cond, BaseIndex left, RegisterID right)
+    {
+        load32(left, dataTempRegister);
+        return branch32(cond, dataTempRegister, right);
+    }
+
     Jump branch32(RelationalCondition cond, RegisterID left, RegisterID right)
     {
         if (cond == Equal)
