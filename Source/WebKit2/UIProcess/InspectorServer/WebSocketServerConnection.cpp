@@ -92,7 +92,7 @@ void WebSocketServerConnection::sendWebSocketMessage(const String& message)
     Vector<char> frameData;
     frame.makeFrameData(frameData);
 
-    m_socket->send(frameData.data(), frameData.size(), [](bool) { });
+    m_socket->sendData(frameData.data(), frameData.size(), [](bool) { });
 }
 
 void WebSocketServerConnection::sendHTTPResponseHeader(int statusCode, const String& statusText, const HTTPHeaderMap& headerFields)
@@ -113,12 +113,12 @@ void WebSocketServerConnection::sendHTTPResponseHeader(int statusCode, const Str
     builder.appendLiteral("\r\n");
 
     CString header = builder.toString().latin1();
-    m_socket->send(header.data(), header.length(), [](bool) { });
+    m_socket->sendData(header.data(), header.length(), [](bool) { });
 }
 
 void WebSocketServerConnection::sendRawData(const char* data, size_t length)
 {
-    m_socket->send(data, length, [](bool) { });
+    m_socket->sendData(data, length, [](bool) { });
 }
 
 void WebSocketServerConnection::didCloseSocketStream(SocketStreamHandle&)

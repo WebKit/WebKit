@@ -1,3 +1,14 @@
+2017-03-20  Alex Christensen  <achristensen@webkit.org>
+
+        Fix GTK build after r214190
+        https://bugs.webkit.org/show_bug.cgi?id=169885
+
+        * UIProcess/InspectorServer/WebSocketServerConnection.cpp:
+        (WebKit::WebSocketServerConnection::sendWebSocketMessage):
+        (WebKit::WebSocketServerConnection::sendHTTPResponseHeader):
+        (WebKit::WebSocketServerConnection::sendRawData):
+        Finish renaming send to sendData.
+
 2017-03-20  Anders Carlsson  <andersca@apple.com>
 
         Fix a paste-o in WebPaymentCoordinatorProxy::platformCompletePaymentSession
