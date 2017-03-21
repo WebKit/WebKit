@@ -28,7 +28,7 @@
 
 @class NSString;
 
-WEBKIT_CLASS_AVAILABLE_MAC(9876_5)
+__attribute__((visibility("default")))
 @interface DOMTokenList : DOMObject
 @property (readonly) unsigned length;
 @property (copy) NSString *value;

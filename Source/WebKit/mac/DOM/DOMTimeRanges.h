@@ -25,7 +25,7 @@
 
 #import <WebKitLegacy/DOMObject.h>
 
-WEBKIT_CLASS_AVAILABLE_MAC(9876_5)
+__attribute__((visibility("default")))
 @interface DOMTimeRanges : DOMObject
 @property (readonly) unsigned length;
 

@@ -31,10 +31,6 @@
 #if !TARGET_OS_IPHONE
 #import <Foundation/Foundation.h>
 
-#ifndef __NSi_9876_5
-#define __NSi_9876_5 introduced=9876.5
-#endif
-
 #define WEBKIT_AVAILABLE_MAC(introduced) NS_AVAILABLE_MAC(introduced)
 #define WEBKIT_CLASS_AVAILABLE_MAC(introduced) NS_CLASS_AVAILABLE_MAC(introduced)
 #define WEBKIT_ENUM_AVAILABLE_MAC(introduced) NS_ENUM_AVAILABLE_MAC(introduced)

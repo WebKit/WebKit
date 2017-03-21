@@ -28,7 +28,7 @@
 @class DOMAbstractView;
 @class NSString;
 
-WEBKIT_CLASS_AVAILABLE_MAC(9876_5)
+__attribute__((visibility("default")))
 @interface DOMTextEvent : DOMUIEvent
 @property (readonly, copy) NSString *data;
 

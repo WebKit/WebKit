@@ -27,7 +27,7 @@
 
 @class NSString;
 
-WEBKIT_CLASS_AVAILABLE_MAC(9876_5)
+__attribute__((visibility("default")))
 @interface DOMHTMLVideoElement : DOMHTMLMediaElement
 @property unsigned width;
 @property unsigned height;

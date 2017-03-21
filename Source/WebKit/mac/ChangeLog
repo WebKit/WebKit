@@ -1,3 +1,17 @@
+2017-03-21  Anders Carlsson  <andersca@apple.com>
+
+        Remove bogus availability annotations from DOM SPI headers.
+        rdar://problem/31015675
+
+        Rubber-stamped by Dan Bernstein.
+
+        * DOM/DOMHTMLMediaElement.h:
+        * DOM/DOMHTMLVideoElement.h:
+        * DOM/DOMMediaError.h:
+        * DOM/DOMTextEvent.h:
+        * DOM/DOMTimeRanges.h:
+        * DOM/DOMTokenList.h:
+
 2017-03-19  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Teach TextIndicator to estimate the background color of the given Range

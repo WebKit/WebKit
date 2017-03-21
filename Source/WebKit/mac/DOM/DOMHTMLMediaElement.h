@@ -39,9 +39,9 @@ enum {
     DOM_HAVE_CURRENT_DATA = 2,
     DOM_HAVE_FUTURE_DATA = 3,
     DOM_HAVE_ENOUGH_DATA = 4
-} WEBKIT_ENUM_AVAILABLE_MAC(9876_5);
+};
 
-WEBKIT_CLASS_AVAILABLE_MAC(9876_5)
+__attribute__((visibility("default")))
 @interface DOMHTMLMediaElement : DOMHTMLElement
 @property (readonly, strong) DOMMediaError *error;
 @property (copy) NSString *src;
