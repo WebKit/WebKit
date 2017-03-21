@@ -1,5 +1,13 @@
 2017-03-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed GTK+ gardening. Remove expectations for imported/w3c/web-platform-tests/XMLHttpRequest/setrequestheader-content-type.htm.
+
+        It no longer works with current version of wptserve and it's already skipped globally.
+
+        * platform/gtk/TestExpectations:
+
+2017-03-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed GTK+ gardening. Remove duplicated entry.
 
         * platform/gtk/TestExpectations:
