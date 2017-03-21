@@ -115,13 +115,6 @@ class BuildRequest extends DataModelObject {
         this._testGroup.didSetResult(this);
     }
 
-    static fetchTriggerables()
-    {
-        return this.cachedFetch('/api/triggerables/').then(function (response) {
-            return response.triggerables.map(function (entry) { return {id: entry.id, name: entry.name}; });
-        });
-    }
-
     // FIXME: Create a real model object for triggerables.
     static cachedRequestsForTriggerableID(id)
     {

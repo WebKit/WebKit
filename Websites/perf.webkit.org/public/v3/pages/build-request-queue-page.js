@@ -3,7 +3,7 @@ class BuildRequestQueuePage extends PageWithHeading {
     constructor()
     {
         super('build-request-queue-page');
-        this._triggerables = [];
+        this._buildRequestsByTriggerable = new Map;
     }
 
     routeName() { return 'analysis/queue'; }
@@ -11,24 +11,14 @@ class BuildRequestQueuePage extends PageWithHeading {
 
     open(state)
     {
-        var self = this;
-        BuildRequest.fetchTriggerables().then(function (list) {
-            self._triggerables = list.map(function (entry) {
-                var triggerable = {name: entry.name, buildRequests: BuildRequest.cachedRequestsForTriggerableID(entry.id)};
-
-                BuildRequest.fetchForTriggerable(entry.name).then(function (requests) {
-                    triggerable.buildRequests = requests;
-                    self.enqueueToRender();
-                });
-
-                return triggerable;
+        for (let triggerable of Triggerable.all()) {
+            BuildRequest.fetchForTriggerable(triggerable.name()).then((requests) => {
+                this._buildRequestsByTriggerable.set(triggerable, requests);
+                this.enqueueToRender();
             });
-            self.enqueueToRender();
-        });
+        }
 
-        AnalysisTask.fetchAll().then(function () {
-            self.enqueueToRender();
-        });
+        AnalysisTask.fetchAll().then(() => this.enqueueToRender());
 
         super.open(state);
     }
@@ -37,22 +27,25 @@ class BuildRequestQueuePage extends PageWithHeading {
     {
         super.render();
 
-        var referenceTime = Date.now();
+        const referenceTime = Date.now();
         this.renderReplace(this.content().querySelector('.triggerable-list'),
-            this._triggerables.map(this._constructBuildRequestTable.bind(this, referenceTime)));
+            Triggerable.sortByName(Triggerable.all()).map((triggerable) => {
+                const buildRequests = this._buildRequestsByTriggerable.get(triggerable) || [];
+                return this._constructBuildRequestTable(referenceTime, triggerable, buildRequests);
+            }));
     }
 
-    _constructBuildRequestTable(referenceTime, triggerable)
+    _constructBuildRequestTable(referenceTime, triggerable, buildRequests)
     {
-        if (!triggerable.buildRequests.length)
+        if (!buildRequests.length)
             return [];
 
-        var rowList = [];
-        var previousRow = null;
-        var requestCount = 0;
-        var requestCountForGroup = {};
-        for (var request of triggerable.buildRequests) {
-            var groupId = request.testGroupId();
+        const rowList = [];
+        const requestCountForGroup = {};
+        let previousRow = null;
+        let requestCount = 0;
+        for (let request of buildRequests) {
+            const groupId = request.testGroupId();
             if (groupId in requestCountForGroup)
                 requestCountForGroup[groupId]++;
             else
@@ -72,11 +65,11 @@ class BuildRequestQueuePage extends PageWithHeading {
             previousRow = rowList[rowList.length - 1];
         }
 
-        var element = ComponentBase.createElement;
-        var link = ComponentBase.createLink;
-        var router = this.router();
+        const element = ComponentBase.createElement;
+        const link = ComponentBase.createLink;
+        const router = this.router();
         return element('table', {class: 'build-request-table'}, [
-            element('caption', `${triggerable.name}: ${requestCount} pending requests`),
+            element('caption', `${triggerable.name()}: ${requestCount} pending requests`),
             element('thead', [
                 element('td', 'Request ID'),
                 element('td', 'Platform'),
@@ -87,16 +80,16 @@ class BuildRequestQueuePage extends PageWithHeading {
                 element('td', 'Status'),
                 element('td', 'Waiting Time'),
             ]),
-            element('tbody', rowList.map(function (entry) {
+            element('tbody', rowList.map((entry) => {
                 if (entry.contraction) {
                     return element('tr', {class: 'contraction'}, [
                         element('td', {colspan: 8}, `${entry.count} additional requests`)
                     ]);
                 }
 
-                var request = entry.request;
-                var taskId = request.analysisTaskId();
-                var task = AnalysisTask.findById(taskId);
+                const request = entry.request;
+                const taskId = request.analysisTaskId();
+                const task = AnalysisTask.findById(taskId);
                 return element('tr', [
                     element('td', {class: 'request-id'}, request.id()),
                     element('td', {class: 'platform'}, request.platform().name()),

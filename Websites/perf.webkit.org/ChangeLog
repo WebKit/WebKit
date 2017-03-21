@@ -1,3 +1,21 @@
+2017-03-20  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Modernize BuildRequestQueuePage
+        https://bugs.webkit.org/show_bug.cgi?id=169903
+
+        Reviewed by Antti Koivisto.
+
+        Modernized the code for /v3/#/analysis/queue.
+
+        * public/v3/models/build-request.js:
+        (BuildRequest.fetchTriggerables): Deleted since the manifest JSON now contains all the triggerables.
+
+        * public/v3/pages/build-request-queue-page.js:
+        (BuildRequestQueuePage): Deleted this._triggerables. Added this._buildRequestsByTriggerable.
+        (BuildRequestQueuePage.prototype.open): Modernized the code.
+        (BuildRequestQueuePage.prototype.render): Ditto.
+        (BuildRequestQueuePage.prototype._constructBuildRequestTable): Ditto.
+
 2017-03-19  Ryosuke Niwa  <rniwa@webkit.org>
 
         Charts page show an inconsistent list of revisions for Git and Subversion
