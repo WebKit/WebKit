@@ -33,6 +33,7 @@
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/_WKUserContentExtensionStorePrivate.h>
 #import <WebKit/_WKWebsitePolicies.h>
+#import <wtf/MainThread.h>
 #import <wtf/RetainPtr.h>
 
 #if PLATFORM(IOS)
@@ -107,9 +108,18 @@ static size_t alertCount;
         // Verify the content blockers behave correctly with the default behavior.
         break;
     case 2:
-        // Verify disabling content blockers works correctly.
-        websitePolicies.contentBlockersEnabled = false;
-        break;
+        {
+            // Verify disabling content blockers works correctly.
+            websitePolicies.contentBlockersEnabled = false;
+            
+            // Verify calling the decisionHandler asynchronously works correctly.
+            auto decisionHandlerCopy = Block_copy(decisionHandler);
+            callOnMainThread([decisionHandlerCopy, websitePolicies = RetainPtr<_WKWebsitePolicies>(websitePolicies)] {
+                decisionHandlerCopy(WKNavigationActionPolicyAllow, websitePolicies.get());
+                Block_release(decisionHandlerCopy);
+            });
+        }
+        return;
     case 3:
         // Verify enabling content blockers has no effect when reloading without content blockers.
         websitePolicies.contentBlockersEnabled = true;

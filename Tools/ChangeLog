@@ -1,3 +1,14 @@
+2017-03-20  Alex Christensen  <achristensen@webkit.org>
+
+        WebPageProxy DecidePolicyForNavigationAction and DecidePolicyForResponseSync should be Delayed reply messages
+        https://bugs.webkit.org/show_bug.cgi?id=167183
+        <rdar://problem/30203539>
+
+        Reviewed by Andy Estes.
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/WebsitePolicies.mm:
+        (-[WebsitePoliciesDelegate _webView:decidePolicyForNavigationAction:decisionHandler:]):
+
 2017-03-20  Jonathan Bedard  <jbedard@apple.com>
 
         webkitpy: Work around simctl launch returning dead processes

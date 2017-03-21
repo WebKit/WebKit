@@ -1,5 +1,36 @@
 2017-03-20  Alex Christensen  <achristensen@webkit.org>
 
+        WebPageProxy DecidePolicyForNavigationAction and DecidePolicyForResponseSync should be Delayed reply messages
+        https://bugs.webkit.org/show_bug.cgi?id=167183
+        <rdar://problem/30203539>
+
+        Reviewed by Andy Estes.
+
+        Before this patch, the WKNavigationDelegate's decidePolicyForNavigationAction must synchronously call the decisionHandler.
+        If it stores the decisionHandler and calls it after decidePolicyForNavigationAction returns, we can get incorrect behavior.
+        This can be seen when the _WKWebsitePolicies given to the decisionHandler had no effect.
+        Now, we will have the WebProcess waiting on the UIProcess to respond to the Delayed reply before continuing.
+        This will not be a regression because currently everybody is either calling the decisionHandler immediately or getting incorrect behavior,
+        and the behavior will be the same if the decisionHandler is called immediately. It is possible that we could make the WebProcess
+        not wait on the response, but we would need to make WebCore's loading truly asynchronous first
+        (getting rid of ResourceHandleClient's synchronous methods).
+
+        Covered by making an API test asynchronously call the decisionHandler.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageNavigationClient):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::receivedPolicyDecision):
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction):
+        (WebKit::WebPageProxy::decidePolicyForResponseSync):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForResponse):
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction):
+
+2017-03-20  Alex Christensen  <achristensen@webkit.org>
+
         Fix GTK build after r214190
         https://bugs.webkit.org/show_bug.cgi?id=169885
 
