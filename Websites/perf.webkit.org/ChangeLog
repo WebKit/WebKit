@@ -1,5 +1,12 @@
 2017-03-20  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Delete another function that was supposed to be removed in the previous commit.
+
+        * public/v3/models/build-request.js:
+        (BuildRequest.cachedRequestsForTriggerableID): Deleted.
+
+2017-03-20  Ryosuke Niwa  <rniwa@webkit.org>
+
         Modernize BuildRequestQueuePage
         https://bugs.webkit.org/show_bug.cgi?id=169903
 

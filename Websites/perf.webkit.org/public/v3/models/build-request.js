@@ -115,14 +115,6 @@ class BuildRequest extends DataModelObject {
         this._testGroup.didSetResult(this);
     }
 
-    // FIXME: Create a real model object for triggerables.
-    static cachedRequestsForTriggerableID(id)
-    {
-        return this.all().filter(function (request) {
-            return request._triggerable == id;
-        });
-    }
-
     static fetchForTriggerable(triggerable)
     {
         return RemoteAPI.getJSONWithStatus('/api/build-requests/' + triggerable).then(function (data) {
