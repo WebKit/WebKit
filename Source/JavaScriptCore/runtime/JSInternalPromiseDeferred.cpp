@@ -75,4 +75,9 @@ JSInternalPromise* JSInternalPromiseDeferred::reject(ExecState* exec, JSValue re
     return promise();
 }
 
+JSInternalPromise* JSInternalPromiseDeferred::reject(ExecState* exec, Exception* reason)
+{
+    return reject(exec, reason->value());
+}
+
 } // namespace JSC

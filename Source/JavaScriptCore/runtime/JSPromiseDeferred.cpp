@@ -106,6 +106,11 @@ void JSPromiseDeferred::reject(ExecState* exec, JSValue reason)
     callFunction(exec, m_reject.get(), reason);
 }
 
+void JSPromiseDeferred::reject(ExecState* exec, Exception* reason)
+{
+    reject(exec, reason->value());
+}
+
 void JSPromiseDeferred::finishCreation(VM& vm, JSObject* promise, JSValue resolve, JSValue reject)
 {
     Base::finishCreation(vm);

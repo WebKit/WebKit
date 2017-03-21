@@ -30,6 +30,7 @@
 
 namespace JSC {
 
+class Exception;
 class JSPromiseConstructor;
 
 class JSPromiseDeferred : public JSCell {
@@ -53,6 +54,7 @@ public:
 
     JS_EXPORT_PRIVATE void resolve(ExecState*, JSValue);
     JS_EXPORT_PRIVATE void reject(ExecState*, JSValue);
+    JS_EXPORT_PRIVATE void reject(ExecState*, Exception*);
 
 protected:
     JSPromiseDeferred(VM&, Structure*);
