@@ -84,11 +84,11 @@ private:
     void suspend(ReasonForSuspension) final;
     void resume() final;
 
-    bool m_suspended;
+    double m_savedNextFireInterval { 0 };
+    double m_savedRepeatInterval { 0 };
 
-    double m_savedNextFireInterval;
-    double m_savedRepeatInterval;
-    bool m_savedIsActive;
+    bool m_suspended { false };
+    bool m_savedIsActive { false };
 };
 
 } // namespace WebCore

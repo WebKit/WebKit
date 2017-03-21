@@ -240,24 +240,25 @@ private:
     HashSet<ContextDestructionObserver*> m_destructionObservers;
     HashSet<ActiveDOMObject*> m_activeDOMObjects;
 
-    int m_circularSequentialID { 0 };
     HashMap<int, RefPtr<DOMTimer>> m_timeouts;
 
-    bool m_inDispatchErrorEvent { false };
     struct PendingException;
     std::unique_ptr<Vector<std::unique_ptr<PendingException>>> m_pendingExceptions;
 
-    bool m_activeDOMObjectsAreSuspended { false };
     ActiveDOMObject::ReasonForSuspension m_reasonForSuspendingActiveDOMObjects { static_cast<ActiveDOMObject::ReasonForSuspension>(-1) };
-    bool m_activeDOMObjectsAreStopped { false };
 
     std::unique_ptr<PublicURLManager> m_publicURLManager;
 
     RefPtr<DatabaseContext> m_databaseContext;
 
+    int m_circularSequentialID { 0 };
+    int m_timerNestingLevel { 0 };
+
+    bool m_activeDOMObjectsAreSuspended { false };
+    bool m_activeDOMObjectsAreStopped { false };
+    bool m_inDispatchErrorEvent { false };
     bool m_activeDOMObjectAdditionForbidden { false };
     bool m_willProcessMessagePortMessagesSoon { false };
-    int m_timerNestingLevel { 0 };
 
 #if !ASSERT_DISABLED
     bool m_inScriptExecutionContextDestructor { false };

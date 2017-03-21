@@ -33,10 +33,6 @@ namespace WebCore {
 
 SuspendableTimer::SuspendableTimer(ScriptExecutionContext& context)
     : ActiveDOMObject(&context)
-    , m_suspended(false)
-    , m_savedNextFireInterval(0)
-    , m_savedRepeatInterval(0)
-    , m_savedIsActive(false)
 {
 }
 

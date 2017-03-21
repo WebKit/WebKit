@@ -39,17 +39,17 @@ class URL;
 
 enum SandboxFlag {
     // See http://www.whatwg.org/specs/web-apps/current-work/#attr-iframe-sandbox for a list of the sandbox flags.
-    SandboxNone = 0,
-    SandboxNavigation = 1,
-    SandboxPlugins = 1 << 1,
-    SandboxOrigin = 1 << 2,
-    SandboxForms = 1 << 3,
-    SandboxScripts = 1 << 4,
-    SandboxTopNavigation = 1 << 5,
-    SandboxPopups = 1 << 6, // See https://www.w3.org/Bugs/Public/show_bug.cgi?id=12393
-    SandboxAutomaticFeatures = 1 << 7,
-    SandboxPointerLock = 1 << 8,
-    SandboxAll = -1 // Mask with all bits set to 1.
+    SandboxNone                 = 0,
+    SandboxNavigation           = 1,
+    SandboxPlugins              = 1 << 1,
+    SandboxOrigin               = 1 << 2,
+    SandboxForms                = 1 << 3,
+    SandboxScripts              = 1 << 4,
+    SandboxTopNavigation        = 1 << 5,
+    SandboxPopups               = 1 << 6, // See https://www.w3.org/Bugs/Public/show_bug.cgi?id=12393
+    SandboxAutomaticFeatures    = 1 << 7,
+    SandboxPointerLock          = 1 << 8,
+    SandboxAll                  = -1 // Mask with all bits set to 1.
 };
 
 typedef int SandboxFlags;
@@ -94,10 +94,10 @@ protected:
     bool haveInitializedSecurityOrigin() const { return m_haveInitializedSecurityOrigin; }
 
 private:
-    bool m_haveInitializedSecurityOrigin;
-    SandboxFlags m_sandboxFlags;
     RefPtr<SecurityOriginPolicy> m_securityOriginPolicy;
     std::unique_ptr<ContentSecurityPolicy> m_contentSecurityPolicy;
+    SandboxFlags m_sandboxFlags { SandboxNone };
+    bool m_haveInitializedSecurityOrigin { false };
     bool m_foundMixedContent { false };
     bool m_geolocationAccessed { false };
     bool m_isStrictMixedContentMode { false };

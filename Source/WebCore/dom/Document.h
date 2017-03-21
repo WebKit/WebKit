@@ -1266,6 +1266,17 @@ public:
     bool hasHadActiveMediaStreamTrack() const { return m_hasHadActiveMediaStreamTrack; }
 #endif
 
+// FIXME: Find a better place for this functionality.
+#if ENABLE(TELEPHONE_NUMBER_DETECTION)
+    // These functions provide a two-level setting:
+    //    - A user-settable wantsTelephoneNumberParsing (at the Page / WebView level)
+    //    - A read-only telephoneNumberParsingAllowed which is set by the
+    //      document if it has the appropriate meta tag.
+    //    - isTelephoneNumberParsingEnabled() == isTelephoneNumberParsingAllowed() && page()->settings()->isTelephoneNumberParsingEnabled()
+    WEBCORE_EXPORT bool isTelephoneNumberParsingAllowed() const;
+    WEBCORE_EXPORT bool isTelephoneNumberParsingEnabled() const;
+#endif
+
     using ContainerNode::setAttributeEventListener;
     void setAttributeEventListener(const AtomicString& eventType, const QualifiedName& attributeName, const AtomicString& value);
 
@@ -1347,6 +1358,11 @@ private:
     void addDocumentToFullScreenChangeEventQueue(Document*);
 #endif
 
+#if ENABLE(TELEPHONE_NUMBER_DETECTION)
+    friend void setParserFeature(const String& key, const String& value, Document*, void* userData);
+    void setIsTelephoneNumberParsingAllowed(bool);
+#endif
+
     void setVisualUpdatesAllowed(ReadyState);
     void setVisualUpdatesAllowed(bool);
     void visualUpdatesSuppressionTimerFired();
@@ -1376,24 +1392,17 @@ private:
 
     bool shouldEnforceHTTP09Sandbox() const;
 
-    unsigned m_referencingNodeCount { 0 };
+    void platformSuspendOrStopActiveDOMObjects();
 
     const Ref<Settings> m_settings;
 
     std::unique_ptr<StyleResolver> m_userAgentShadowTreeStyleResolver;
-    bool m_hasNodesWithNonFinalStyle { false };
-    // But sometimes you need to ignore pending stylesheet count to
-    // force an immediate layout when requested by JS.
-    bool m_ignorePendingStylesheets { false };
 
     RefPtr<DOMWindow> m_domWindow;
     WeakPtr<Document> m_contextDocument;
 
     Ref<CachedResourceLoader> m_cachedResourceLoader;
     RefPtr<DocumentParser> m_parser;
-    unsigned m_activeParserCount { 0 };
-
-    bool m_wellFormed { false };
 
     // Document URLs.
     URL m_url; // Document.URL: The URL from which this document was retrieved.
@@ -1419,17 +1428,6 @@ private:
 
     std::unique_ptr<DOMImplementation> m_implementation;
 
-    bool m_hasElementUsingStyleBasedEditability { false };
-
-    bool m_printing { false };
-    bool m_paginatedForScreen { false };
-
-    DocumentCompatibilityMode m_compatibilityMode { DocumentCompatibilityMode::NoQuirksMode };
-    bool m_compatibilityModeLocked { false }; // This is cheaper than making setCompatibilityMode virtual.
-
-    Color m_textColor { Color::black };
-
-    bool m_focusNavigationStartingNodeIsRemoved;
     RefPtr<Node> m_focusNavigationStartingNode;
     RefPtr<Element> m_focusedElement;
     RefPtr<Element> m_hoveredElement;
@@ -1443,45 +1441,17 @@ private:
     HashSet<NodeIterator*> m_nodeIterators;
     HashSet<Range*> m_ranges;
 
-    unsigned m_listenerTypes { 0 };
-
-    MutationObserverOptions m_mutationObserverTypes { 0 };
-
     std::unique_ptr<Style::Scope> m_styleScope;
     std::unique_ptr<ExtensionStyleSheets> m_extensionStyleSheets;
     RefPtr<StyleSheetList> m_styleSheetList;
 
     std::unique_ptr<FormController> m_formController;
 
+    Color m_textColor { Color::black };
     Color m_linkColor;
     Color m_visitedLinkColor;
     Color m_activeLinkColor;
     const std::unique_ptr<VisitedLinkState> m_visitedLinkState;
-
-    bool m_visuallyOrdered { false };
-    ReadyState m_readyState { Complete };
-    bool m_bParsing { false }; // FIXME: rename
-
-    Timer m_styleRecalcTimer;
-    bool m_pendingStyleRecalcShouldForce { false };
-    bool m_inStyleRecalc { false };
-    bool m_closeAfterStyleRecalc { false };
-    bool m_inRenderTreeUpdate { false };
-    unsigned m_lastStyleUpdateSizeForTesting { 0 };
-
-    bool m_gotoAnchorNeededAfterStylesheetsLoad { false };
-    bool m_isDNSPrefetchEnabled { false };
-    bool m_haveExplicitlyDisabledDNSPrefetch { false };
-    bool m_frameElementsShouldIgnoreScrolling { false };
-    SelectionRestorationMode m_updateFocusAppearanceRestoresSelection { SelectionRestorationMode::SetDefault };
-
-    // https://html.spec.whatwg.org/multipage/webappapis.html#ignore-destructive-writes-counter
-    unsigned m_ignoreDestructiveWriteCount { 0 };
-
-    // https://html.spec.whatwg.org/multipage/webappapis.html#ignore-opens-during-unload-counter
-    unsigned m_ignoreOpensDuringUnloadCount { 0 };
-
-    unsigned m_styleRecalcCount { 0 };
 
     StringWithDirection m_title;
     StringWithDirection m_rawTitle;
@@ -1490,16 +1460,10 @@ private:
     std::unique_ptr<AXObjectCache> m_axObjectCache;
     const std::unique_ptr<DocumentMarkerController> m_markers;
     
+    Timer m_styleRecalcTimer;
     Timer m_updateFocusAppearanceTimer;
 
     Element* m_cssTarget { nullptr };
-
-    // FIXME: Merge these 2 variables into an enum. Also, FrameLoader::m_didCallImplicitClose
-    // is almost a duplication of this data, so that should probably get merged in too.
-    // FIXME: Document::m_processingLoadEvent and DocumentLoader::m_wasOnloadDispatched are roughly the same
-    // and should be merged.
-    bool m_processingLoadEvent { false };
-    bool m_loadEventFinished { false };
 
     RefPtr<SerializedScriptValue> m_pendingStateObject;
     MonotonicTime m_documentCreationTime;
@@ -1524,8 +1488,6 @@ private:
 
     RefPtr<TextResourceDecoder> m_decoder;
 
-    InheritedBool m_designMode { inherit };
-
     HashSet<LiveNodeList*> m_listsInvalidatedAtDocument;
     HashSet<HTMLCollection*> m_collectionsInvalidatedAtDocument;
     unsigned m_nodeListAndCollectionCounts[numNodeListInvalidationTypes];
@@ -1541,9 +1503,6 @@ private:
 #endif
 
     HashMap<String, RefPtr<HTMLCanvasElement>> m_cssCanvasElements;
-
-    bool m_createRenderers { true };
-    PageCacheState m_pageCacheState { NotInPageCache };
 
     HashSet<Element*> m_documentSuspensionCallbackElements;
     HashSet<Element*> m_mediaVolumeCallbackElements;
@@ -1563,19 +1522,12 @@ private:
 #endif
 
     HashMap<StringImpl*, Element*, ASCIICaseInsensitiveHash> m_elementsByAccessKey;
-    bool m_accessKeyMapValid { false };
 
     DocumentOrderedMap m_imagesByUsemap;
 
     std::unique_ptr<SelectorQueryCache> m_selectorQueryCache;
 
     DocumentClassFlags m_documentClasses;
-
-    bool m_isSynthesized { false };
-    bool m_isNonRenderedPlaceholder { false };
-
-    bool m_sawElementsInKnownNamespaces { false };
-    bool m_isSrcdocDocument { false };
 
     RenderPtr<RenderView> m_renderView;
     mutable DocumentEventQueue m_eventQueue;
@@ -1585,34 +1537,30 @@ private:
     HashSet<MediaCanStartListener*> m_mediaCanStartListeners;
 
 #if ENABLE(FULLSCREEN_API)
-    bool m_areKeysEnabledInFullScreen { false };
     RefPtr<Element> m_fullScreenElement;
     Vector<RefPtr<Element>> m_fullScreenElementStack;
     RenderFullScreen* m_fullScreenRenderer { nullptr };
     Timer m_fullScreenChangeDelayTimer;
     Deque<RefPtr<Node>> m_fullScreenChangeEventTargetQueue;
     Deque<RefPtr<Node>> m_fullScreenErrorEventTargetQueue;
-    bool m_isAnimatingFullScreen { false };
     LayoutRect m_savedPlaceholderFrameRect;
     std::unique_ptr<RenderStyle> m_savedPlaceholderRenderStyle;
+
+    bool m_areKeysEnabledInFullScreen { false };
+    bool m_isAnimatingFullScreen { false };
 #endif
 
     HashSet<HTMLPictureElement*> m_viewportDependentPictures;
 
-    int m_loadEventDelayCount { 0 };
     Timer m_loadEventDelayTimer;
 
     ViewportArguments m_viewportArguments;
-
-    ReferrerPolicy m_referrerPolicy;
 
 #if ENABLE(WEB_TIMING)
     DocumentTiming m_documentTiming;
 #endif
 
     RefPtr<MediaQueryMatcher> m_mediaQueryMatcher;
-    bool m_writeRecursionIsTooDeep { false };
-    unsigned m_writeRecursionDepth { 0 };
     
 #if ENABLE(TOUCH_EVENTS)
     std::unique_ptr<EventTargetSet> m_touchEventTargets;
@@ -1631,26 +1579,6 @@ private:
     std::unique_ptr<DeviceOrientationController> m_deviceOrientationController;
 #endif
 
-// FIXME: Find a better place for this functionality.
-#if ENABLE(TELEPHONE_NUMBER_DETECTION)
-public:
-
-    // These functions provide a two-level setting:
-    //    - A user-settable wantsTelephoneNumberParsing (at the Page / WebView level)
-    //    - A read-only telephoneNumberParsingAllowed which is set by the
-    //      document if it has the appropriate meta tag.
-    //    - isTelephoneNumberParsingEnabled() == isTelephoneNumberParsingAllowed() && page()->settings()->isTelephoneNumberParsingEnabled()
-
-    WEBCORE_EXPORT bool isTelephoneNumberParsingAllowed() const;
-    WEBCORE_EXPORT bool isTelephoneNumberParsingEnabled() const;
-
-private:
-    friend void setParserFeature(const String& key, const String& value, Document*, void* userData);
-    void setIsTelephoneNumberParsingAllowed(bool);
-
-    bool m_isTelephoneNumberParsingAllowed { true };
-#endif
-
     Timer m_pendingTasksTimer;
     Vector<Task> m_pendingTasks;
 
@@ -1665,11 +1593,6 @@ private:
     TextAutoSizingMap m_textAutoSizedNodes;
 #endif
 
-    void platformSuspendOrStopActiveDOMObjects();
-
-    bool m_scheduledTasksAreSuspended { false };
-    
-    bool m_visualUpdatesAllowed { true };
     Timer m_visualUpdatesSuppressionTimer;
 
     RefPtr<NamedFlowCollection> m_namedFlows;
@@ -1678,10 +1601,6 @@ private:
     Timer m_sharedObjectPoolClearTimer;
 
     std::unique_ptr<DocumentSharedObjectPool> m_sharedObjectPool;
-
-#ifndef NDEBUG
-    bool m_didDispatchViewportPropertiesChanged { false };
-#endif
 
     typedef HashMap<AtomicString, std::unique_ptr<Locale>> LocaleIdentifierToLocaleMap;
     LocaleIdentifierToLocaleMap m_localeCache;
@@ -1695,22 +1614,7 @@ private:
     Ref<JSC::InputCursor> m_inputCursor;
 #endif
 
-    Timer m_didAssociateFormControlsTimer;
-    Timer m_cookieCacheExpiryTimer;
-    String m_cachedDOMCookies;
-    HashSet<RefPtr<Element>> m_associatedFormControls;
-    unsigned m_disabledFieldsetElementsCount { 0 };
-
-    bool m_hasInjectedPlugInsScript { false };
-    bool m_renderTreeBeingDestroyed { false };
-    bool m_hasPreparedForDestruction { false };
-
-    bool m_hasStyleWithViewportUnits { false };
-    bool m_isTimerThrottlingEnabled { false };
-    bool m_isSuspended { false };
-
     HashSet<MediaProducer*> m_audioProducers;
-    MediaProducer::MediaStateFlags m_mediaState { MediaProducer::IsNotPlaying };
 
     HashSet<ShadowRoot*> m_inDocumentShadowRoots;
 
@@ -1724,17 +1628,116 @@ private:
 #if ENABLE(MEDIA_SESSION)
     RefPtr<MediaSession> m_defaultMediaSession;
 #endif
+
+#if ENABLE(INDEXED_DATABASE)
+    RefPtr<IDBClient::IDBConnectionProxy> m_idbConnectionProxy;
+#endif
+
+    Timer m_didAssociateFormControlsTimer;
+    Timer m_cookieCacheExpiryTimer;
+
+#if ENABLE(WEB_SOCKETS)
+    RefPtr<SocketProvider> m_socketProvider;
+#endif
+
+    String m_cachedDOMCookies;
+
+    HashSet<RefPtr<Element>> m_associatedFormControls;
+    unsigned m_disabledFieldsetElementsCount { 0 };
+
+    unsigned m_listenerTypes { 0 };
+    unsigned m_referencingNodeCount { 0 };
+    int m_loadEventDelayCount { 0 };
+    unsigned m_lastStyleUpdateSizeForTesting { 0 };
+
+    // https://html.spec.whatwg.org/multipage/webappapis.html#ignore-destructive-writes-counter
+    unsigned m_ignoreDestructiveWriteCount { 0 };
+
+    // https://html.spec.whatwg.org/multipage/webappapis.html#ignore-opens-during-unload-counter
+    unsigned m_ignoreOpensDuringUnloadCount { 0 };
+
+    unsigned m_activeParserCount { 0 };
+    unsigned m_styleRecalcCount { 0 };
+
+    unsigned m_writeRecursionDepth { 0 };
+
+    InheritedBool m_designMode { inherit };
+    MediaProducer::MediaStateFlags m_mediaState { MediaProducer::IsNotPlaying };
+    PageCacheState m_pageCacheState { NotInPageCache };
+    ReferrerPolicy m_referrerPolicy { ReferrerPolicy::Default };
+    ReadyState m_readyState { Complete };
+    SelectionRestorationMode m_updateFocusAppearanceRestoresSelection { SelectionRestorationMode::SetDefault };
+
+    MutationObserverOptions m_mutationObserverTypes { 0 };
+
+    bool m_writeRecursionIsTooDeep { false };
+    bool m_wellFormed { false };
+    bool m_createRenderers { true };
+
+    bool m_hasNodesWithNonFinalStyle { false };
+    // But sometimes you need to ignore pending stylesheet count to
+    // force an immediate layout when requested by JS.
+    bool m_ignorePendingStylesheets { false };
+
+    bool m_hasElementUsingStyleBasedEditability { false };
+    bool m_focusNavigationStartingNodeIsRemoved { false };
+
+    bool m_printing { false };
+    bool m_paginatedForScreen { false };
+
+    DocumentCompatibilityMode m_compatibilityMode { DocumentCompatibilityMode::NoQuirksMode };
+    bool m_compatibilityModeLocked { false }; // This is cheaper than making setCompatibilityMode virtual.
+
+    // FIXME: Merge these 2 variables into an enum. Also, FrameLoader::m_didCallImplicitClose
+    // is almost a duplication of this data, so that should probably get merged in too.
+    // FIXME: Document::m_processingLoadEvent and DocumentLoader::m_wasOnloadDispatched are roughly the same
+    // and should be merged.
+    bool m_processingLoadEvent { false };
+    bool m_loadEventFinished { false };
+
+    bool m_visuallyOrdered { false };
+    bool m_bParsing { false }; // FIXME: rename
+
+    bool m_pendingStyleRecalcShouldForce { false };
+    bool m_inStyleRecalc { false };
+    bool m_closeAfterStyleRecalc { false };
+    bool m_inRenderTreeUpdate { false };
+
+    bool m_gotoAnchorNeededAfterStylesheetsLoad { false };
+    bool m_isDNSPrefetchEnabled { false };
+    bool m_haveExplicitlyDisabledDNSPrefetch { false };
+    bool m_frameElementsShouldIgnoreScrolling { false };
+
+    bool m_accessKeyMapValid { false };
+    bool m_isSynthesized { false };
+    bool m_isNonRenderedPlaceholder { false };
+
+    bool m_sawElementsInKnownNamespaces { false };
+    bool m_isSrcdocDocument { false };
+
+    bool m_hasInjectedPlugInsScript { false };
+    bool m_renderTreeBeingDestroyed { false };
+    bool m_hasPreparedForDestruction { false };
+
+    bool m_hasStyleWithViewportUnits { false };
+    bool m_isTimerThrottlingEnabled { false };
+    bool m_isSuspended { false };
+
+    bool m_scheduledTasksAreSuspended { false };
+    bool m_visualUpdatesAllowed { true };
+
     bool m_areDeviceMotionAndOrientationUpdatesSuspended { false };
+
+#if ENABLE(TELEPHONE_NUMBER_DETECTION)
+    bool m_isTelephoneNumberParsingAllowed { true };
+#endif
 
 #if ENABLE(MEDIA_STREAM)
     bool m_hasHadActiveMediaStreamTrack { false };
 #endif
 
-#if ENABLE(INDEXED_DATABASE)
-    RefPtr<IDBClient::IDBConnectionProxy> m_idbConnectionProxy;
-#endif
-#if ENABLE(WEB_SOCKETS)
-    RefPtr<SocketProvider> m_socketProvider;
+#ifndef NDEBUG
+    bool m_didDispatchViewportPropertiesChanged { false };
 #endif
 
     static bool hasEverCreatedAnAXObjectCache;
