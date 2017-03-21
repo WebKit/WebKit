@@ -64,6 +64,12 @@ typedef struct _WebKitDOMCSSValueClass WebKitDOMCSSValueClass;
 typedef struct _WebKitDOMCharacterData WebKitDOMCharacterData;
 typedef struct _WebKitDOMCharacterDataClass WebKitDOMCharacterDataClass;
 
+typedef struct _WebKitDOMClientRect WebKitDOMClientRect;
+typedef struct _WebKitDOMClientRectClass WebKitDOMClientRectClass;
+
+typedef struct _WebKitDOMClientRectList WebKitDOMClientRectList;
+typedef struct _WebKitDOMClientRectListClass WebKitDOMClientRectListClass;
+
 typedef struct _WebKitDOMComment WebKitDOMComment;
 typedef struct _WebKitDOMCommentClass WebKitDOMCommentClass;
 

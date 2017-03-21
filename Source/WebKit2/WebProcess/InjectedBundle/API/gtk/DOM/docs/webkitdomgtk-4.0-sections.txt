@@ -647,6 +647,8 @@ webkit_dom_element_get_scroll_top
 webkit_dom_element_set_scroll_top
 webkit_dom_element_get_scroll_width
 webkit_dom_element_get_scroll_height
+webkit_dom_element_get_bounding_client_rect
+webkit_dom_element_get_client_rects
 webkit_dom_element_get_offset_parent
 webkit_dom_element_get_inner_html
 webkit_dom_element_set_inner_html
@@ -3201,3 +3203,48 @@ WEBKIT_DEPRECATED
 WEBKIT_DEPRECATED_FOR
 </SECTION>
 
+<SECTION>
+<FILE>WebKitDOMClientRect</FILE>
+<TITLE>WebKitDOMClientRect</TITLE>
+WebKitDOMClientRect
+
+webkit_dom_client_rect_get_top
+webkit_dom_client_rect_get_right
+webkit_dom_client_rect_get_bottom
+webkit_dom_client_rect_get_left
+webkit_dom_client_rect_get_width
+webkit_dom_client_rect_get_height
+
+<SUBSECTION Standard>
+WebKitDOMClientRectClass
+WEBKIT_DOM_TYPE_CLIENT_RECT
+WEBKIT_DOM_CLIENT_RECT
+WEBKIT_DOM_IS_CLIENT_RECT
+WEBKIT_DOM_CLIENT_RECT_CLASS
+WEBKIT_DOM_IS_CLIENT_RECT_CLASS
+WEBKIT_DOM_CLIENT_RECT_GET_CLASS
+
+<SUBSECTION Private>
+webkit_dom_client_rect_get_type
+</SECTION>
+
+<SECTION>
+<FILE>WebKitDOMClientRectList</FILE>
+<TITLE>WebKitDOMClientRectList</TITLE>
+WebKitDOMClientRectList
+
+webkit_dom_client_rect_list_item
+webkit_dom_client_rect_list_get_length
+
+<SUBSECTION Standard>
+WebKitDOMClientRectClass
+WEBKIT_DOM_TYPE_CLIENT_RECT_LIST
+WEBKIT_DOM_CLIENT_RECT_LIST
+WEBKIT_DOM_IS_CLIENT_RECT_LIST
+WEBKIT_DOM_CLIENT_RECT_LIST_CLASS
+WEBKIT_DOM_IS_CLIENT_RECT_LIST_CLASS
+WEBKIT_DOM_CLIENT_RECT_LIST_GET_CLASS
+
+<SUBSECTION Private>
+webkit_dom_client_rect_list_get_type
+</SECTION>

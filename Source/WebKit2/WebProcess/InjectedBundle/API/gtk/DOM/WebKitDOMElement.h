@@ -516,6 +516,34 @@ WEBKIT_API glong
 webkit_dom_element_get_scroll_height(WebKitDOMElement* self);
 
 /**
+ * webkit_dom_element_get_bounding_client_rect:
+ * @self: A #WebKitDOMElement
+ *
+ * Returns a #WebKitDOMClientRect representing the size and position of @self
+ * relative to the viewport.
+ *
+ * Returns: (transfer full): A #WebKitDOMClientRect
+ *
+ * Since: 2.18
+**/
+WEBKIT_API WebKitDOMClientRect*
+webkit_dom_element_get_bounding_client_rect(WebKitDOMElement* self);
+
+/**
+ * webkit_dom_element_get_client_rects:
+ * @self: A #WebKitDOMElement
+ *
+ * Returns a collection of #WebKitDOMClientRect objects, each of which describe
+ * the size and position of a CSS border box relative to the viewport.
+ *
+ * Returns: (transfer full): A #WebKitDOMClientRectList
+ *
+ * Since: 2.18
+**/
+WEBKIT_API WebKitDOMClientRectList*
+webkit_dom_element_get_client_rects(WebKitDOMElement* self);
+
+/**
  * webkit_dom_element_get_offset_parent:
  * @self: A #WebKitDOMElement
  *

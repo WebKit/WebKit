@@ -30,6 +30,8 @@
 #include <webkitdom/WebKitDOMCSSStyleSheet.h>
 #include <webkitdom/WebKitDOMCSSValue.h>
 #include <webkitdom/WebKitDOMCharacterData.h>
+#include <webkitdom/WebKitDOMClientRect.h>
+#include <webkitdom/WebKitDOMClientRectList.h>
 #include <webkitdom/WebKitDOMComment.h>
 #include <webkitdom/WebKitDOMCustom.h>
 #include <webkitdom/WebKitDOMDOMImplementation.h>
