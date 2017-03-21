@@ -1,5 +1,12 @@
-#!/usr/bin/env python 
+#!/usr/bin/env python
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
+# This Source Code Form is "Incompatible With Secondary Licenses", as
+# defined by the Mozilla Public License, v. 2.0.
+
+
 # bugzilla-submit: a command-line script to post bugs to a Bugzilla instance
 #
 # Authors: Christian Reis <kiko@async.com.br>
@@ -298,4 +305,3 @@ if __name__ == "__main__":
                  'form_name'         : 'enter_bug'})
 
     submit_bug_POST(bugzilla, data)
-

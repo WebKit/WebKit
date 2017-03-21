@@ -1,23 +1,9 @@
-# -*- Mode: perl; indent-tabs-mode: nil -*-
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
-# The contents of this file are subject to the Mozilla Public
-# License Version 1.1 (the "License"); you may not use this file
-# except in compliance with the License. You may obtain a copy of
-# the License at http://www.mozilla.org/MPL/
-#
-# Software distributed under the License is distributed on an "AS
-# IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-# implied. See the License for the specific language governing
-# rights and limitations under the License.
-#
-# The Original Code are the Bugzilla tests.
-#
-# The Initial Developer of the Original Code is Jacob Steenhagen.
-# Portions created by Jacob Steenhagen are
-# Copyright (C) 2001 Jacob Steenhagen. All
-# Rights Reserved.
-#
-# Contributor(s): Gervase Markham <gerv@gerv.net>
+# This Source Code Form is "Incompatible With Secondary Licenses", as
+# defined by the Mozilla Public License, v. 2.0.
 
 #################
 #Bugzilla Test 8#
@@ -29,10 +15,11 @@
 
 # Sample exploit code: '>"><script>alert('Oh dear...')</script>
 
+use 5.10.1;
 use strict;
-use lib qw(. lib t);
+use warnings;
 
-use vars qw(%safe);
+use lib qw(. lib t);
 
 use Bugzilla::Constants;
 use Support::Templates;
@@ -44,6 +31,7 @@ use Cwd;
 my $oldrecsep = $/;
 my $topdir = cwd;
 $/ = undef;
+our %safe;
 
 foreach my $path (@Support::Templates::include_paths) {
     $path =~ s|\\|/|g if ON_WINDOWS;  # convert \ to / in path if on windows
@@ -94,13 +82,13 @@ foreach my $path (@Support::Templates::include_paths) {
     foreach my $file (@testitems) {
         # There are some files we don't check, because there is no need to
         # filter their contents due to their content-type.
-        if ($file =~ /\.(pm|txt|png)\.tmpl$/) {
+        if ($file =~ /\.(pm|txt|rst|png)\.tmpl$/) {
             ok(1, "($lang/$flavor) $file is filter-safe");
             next;
         }
-        
+
         # Read the entire file into a string
-        open (FILE, "<$file") || die "Can't open $file: $!\n";    
+        open (FILE, "<$file") || die "Can't open $file: $!\n";
         my $slurp = <FILE>;
         close (FILE);
 
@@ -173,7 +161,7 @@ sub directive_ok {
 
     # Directives
     return 1 if $directive =~ /^(IF|END|UNLESS|FOREACH|PROCESS|INCLUDE|
-                                 BLOCK|USE|ELSE|NEXT|LAST|DEFAULT|FLUSH|
+                                 BLOCK|USE|ELSE|NEXT|LAST|DEFAULT|
                                  ELSIF|SET|SWITCH|CASE|WHILE|RETURN|STOP|
                                  TRY|CATCH|FINAL|THROW|CLEAR|MACRO|FILTER)/x;
 

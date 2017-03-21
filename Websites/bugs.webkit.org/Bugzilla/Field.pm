@@ -1,21 +1,9 @@
-# -*- Mode: perl; indent-tabs-mode: nil -*-
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
-# The contents of this file are subject to the Mozilla Public
-# License Version 1.1 (the "License"); you may not use this file
-# except in compliance with the License. You may obtain a copy of
-# the License at http://www.mozilla.org/MPL/
-#
-# Software distributed under the License is distributed on an "AS
-# IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-# implied. See the License for the specific language governing
-# rights and limitations under the License.
-#
-# The Original Code is the Bugzilla Bug Tracking System.
-#
-# Contributor(s): Dan Mosedale <dmose@mozilla.org>
-#                 Frédéric Buclin <LpSolit@gmail.com>
-#                 Myk Melez <myk@mozilla.org>
-#                 Greg Hendricks <ghendricks@novell.com>
+# This Source Code Form is "Incompatible With Secondary Licenses", as
+# defined by the Mozilla Public License, v. 2.0.
 
 =head1 NAME
 
@@ -47,7 +35,7 @@ Bugzilla::Field - a particular piece of information about bugs
   # Instantiate a Field object for an existing field.
   my $field = new Bugzilla::Field({name => 'qacontact_accessible'});
   if ($field->obsolete) {
-      print $field->description . " is obsolete\n";
+      say $field->description . " is obsolete";
   }
 
   # Validation Routines
@@ -69,9 +57,11 @@ in addition to what is documented here.
 
 package Bugzilla::Field;
 
+use 5.10.1;
 use strict;
+use warnings;
 
-use base qw(Exporter Bugzilla::Object);
+use parent qw(Exporter Bugzilla::Object);
 @Bugzilla::Field::EXPORT = qw(check_field get_field_id get_legal_field_values);
 
 use Bugzilla::Constants;
@@ -85,6 +75,8 @@ use Scalar::Util qw(blessed);
 ####    Initialization     ####
 ###############################
 
+use constant IS_CONFIG => 1;
+
 use constant DB_TABLE   => 'fielddefs';
 use constant LIST_ORDER => 'sortkey, name';
 
@@ -92,6 +84,7 @@ use constant DB_COLUMNS => qw(
     id
     name
     description
+    long_desc
     type
     custom
     mailhead
@@ -109,6 +102,7 @@ use constant DB_COLUMNS => qw(
 use constant VALIDATORS => {
     custom       => \&_check_custom,
     description  => \&_check_description,
+    long_desc    => \&_check_long_desc,
     enter_bug    => \&_check_enter_bug,
     buglist      => \&Bugzilla::Object::check_boolean,
     mailhead     => \&_check_mailhead,
@@ -135,6 +129,7 @@ use constant VALIDATOR_DEPENDENCIES => {
 
 use constant UPDATE_COLUMNS => qw(
     description
+    long_desc
     mailhead
     sortkey
     obsolete
@@ -159,7 +154,9 @@ use constant SQL_DEFINITIONS => {
     FIELD_TYPE_TEXTAREA,      { TYPE => 'MEDIUMTEXT', 
                                 NOTNULL => 1, DEFAULT => "''"},
     FIELD_TYPE_DATETIME,      { TYPE => 'DATETIME'   },
+    FIELD_TYPE_DATE,          { TYPE => 'DATE'       },
     FIELD_TYPE_BUG_ID,        { TYPE => 'INT3'       },
+    FIELD_TYPE_INTEGER,       { TYPE => 'INT4',  NOTNULL => 1, DEFAULT => 0 },
 };
 
 # Field definitions for the fields that ship with Bugzilla.
@@ -205,11 +202,17 @@ use constant DEFAULT_FIELDS => (
      buglist => 1},
     {name => 'qa_contact',   desc => 'QAContact',  in_new_bugmail => 1,
      buglist => 1},
+    {name => 'assigned_to_realname',  desc => 'AssignedToName',
+     in_new_bugmail => 0, buglist => 1},
+    {name => 'reporter_realname',     desc => 'ReportedByName',
+     in_new_bugmail => 0, buglist => 1},
+    {name => 'qa_contact_realname',   desc => 'QAContactName',
+     in_new_bugmail => 0, buglist => 1},
     {name => 'cc',           desc => 'CC',         in_new_bugmail => 1},
     {name => 'dependson',    desc => 'Depends on', in_new_bugmail => 1,
-     is_numeric => 1},
+     is_numeric => 1, buglist => 1},
     {name => 'blocked',      desc => 'Blocks',     in_new_bugmail => 1,
-     is_numeric => 1},
+     is_numeric => 1, buglist => 1},
 
     {name => 'attachments.description', desc => 'Attachment description'},
     {name => 'attachments.filename',    desc => 'Attachment filename'},
@@ -223,7 +226,7 @@ use constant DEFAULT_FIELDS => (
     {name => 'attachments.submitter',   desc => 'Attachment creator'},
 
     {name => 'target_milestone',      desc => 'Target Milestone',
-     buglist => 1},
+     in_new_bugmail => 1, buglist => 1},
     {name => 'creation_ts',           desc => 'Creation date',
      buglist => 1},
     {name => 'delta_ts',              desc => 'Last changed date',
@@ -260,7 +263,11 @@ use constant DEFAULT_FIELDS => (
     {name => "owner_idle_time",       desc => "Time Since Assignee Touched"},
     {name => 'see_also',              desc => "See Also",
      type => FIELD_TYPE_BUG_URLS},
-    {name => 'tag',                   desc => 'Tags'},
+    {name => 'tag',                   desc => 'Personal Tags', buglist => 1,
+     type => FIELD_TYPE_KEYWORDS},
+    {name => 'last_visit_ts',         desc => 'Last Visit', buglist => 1,
+     type => FIELD_TYPE_DATETIME},
+    {name => 'comment_tag',           desc => 'Comment Tag'},
 );
 
 ################
@@ -288,6 +295,15 @@ sub _check_description {
     $desc = clean_text($desc);
     $desc || ThrowUserError('field_missing_description');
     return $desc;
+}
+
+sub _check_long_desc {
+    my ($invocant, $long_desc) = @_;
+    $long_desc = clean_text($long_desc || '');
+    if (length($long_desc) > MAX_FIELD_LONG_DESC_LENGTH) {
+        ThrowUserError('field_long_desc_too_long');
+    }
+    return $long_desc;
 }
 
 sub _check_enter_bug { return $_[1] ? 1 : 0; }
@@ -347,9 +363,7 @@ sub _check_sortkey {
 sub _check_type {
     my ($invocant, $type, undef, $params) = @_;
     my $saved_type = $type;
-    # The constant here should be updated every time a new,
-    # higher field type is added.
-    (detaint_natural($type) && $type <= FIELD_TYPE_KEYWORDS)
+    (detaint_natural($type) && $type < FIELD_TYPE_HIGHEST_PLUS_ONE)
       || ThrowCodeError('invalid_customfield_type', { type => $saved_type });
 
     my $custom = blessed($invocant) ? $invocant->custom : $params->{custom};
@@ -449,6 +463,18 @@ on the "show bug" page;
 =cut
 
 sub description { return $_[0]->{description} }
+
+=over
+
+=item C<long_desc>
+
+A string providing detailed info about the field;
+
+=back
+
+=cut
+
+sub long_desc { return $_[0]->{long_desc} }
 
 =over
 
@@ -835,6 +861,8 @@ They will throw an error if you try to set the values to something invalid.
 
 =item C<set_description>
 
+=item C<set_long_desc>
+
 =item C<set_enter_bug>
 
 =item C<set_obsolete>
@@ -861,6 +889,7 @@ They will throw an error if you try to set the values to something invalid.
 =cut
 
 sub set_description    { $_[0]->set('description', $_[1]); }
+sub set_long_desc      { $_[0]->set('long_desc',   $_[1]); }
 sub set_enter_bug      { $_[0]->set('enter_bug',   $_[1]); }
 sub set_is_numeric     { $_[0]->set('is_numeric',  $_[1]); }
 sub set_obsolete       { $_[0]->set('obsolete',    $_[1]); }
@@ -935,7 +964,10 @@ sub remove_from_db {
     }
     else {
         $bugs_query = "SELECT COUNT(*) FROM bugs WHERE $name IS NOT NULL";
-        if ($self->type != FIELD_TYPE_BUG_ID && $self->type != FIELD_TYPE_DATETIME) {
+        if ($self->type != FIELD_TYPE_BUG_ID
+            && $self->type != FIELD_TYPE_DATE
+            && $self->type != FIELD_TYPE_DATETIME)
+        {
             $bugs_query .= " AND $name != ''";
         }
         # Ignore the default single select value
@@ -950,7 +982,7 @@ sub remove_from_db {
     }
 
     # Once we reach here, we should be OK to delete.
-    $dbh->do('DELETE FROM fielddefs WHERE id = ?', undef, $self->id);
+    $self->SUPER::remove_from_db();
 
     my $type = $self->type;
 
@@ -982,6 +1014,8 @@ Just like L<Bugzilla::Object/create>. Takes the following parameters:
 =item C<name> B<Required> - The name of the field.
 
 =item C<description> B<Required> - The field label to display in the UI.
+
+=item C<long_desc> - A longer description of the field.
 
 =item C<mailhead> - boolean - Whether this field appears at the
 top of the bugmail for a newly-filed bug. Defaults to 0.
@@ -1031,6 +1065,7 @@ sub create {
     $field->_update_visibility_values();
 
     $dbh->bz_commit_transaction();
+    Bugzilla->memcached->clear_config();
 
     if ($field->custom) {
         my $name = $field->name;
@@ -1053,6 +1088,9 @@ sub create {
         # Restore the original obsolete state of the custom field.
         $dbh->do('UPDATE fielddefs SET obsolete = 0 WHERE id = ?', undef, $field->id)
           unless $is_obsolete;
+
+        Bugzilla->memcached->clear({ table => 'fielddefs', id => $field->id });
+        Bugzilla->memcached->clear_config();
     }
 
     return $field;
@@ -1066,6 +1104,7 @@ sub update {
         $dbh->do("UPDATE " . $self->name . " SET visibility_value_id = NULL");
     }
     $self->_update_visibility_values();
+    Bugzilla->memcached->clear_config();
     return $changes;
 }
 
@@ -1183,8 +1222,8 @@ sub populate_field_definitions {
                               undef, $field_description);
 
     if ($old_field_id && ($old_field_name ne $new_field_name)) {
-        print "SQL fragment found in the 'fielddefs' table...\n";
-        print "Old field name: " . $old_field_name . "\n";
+        say "SQL fragment found in the 'fielddefs' table...";
+        say "Old field name: $old_field_name";
         # We have to fix saved searches first. Queries have been escaped
         # before being saved. We have to do the same here to find them.
         $old_field_name = url_quote($old_field_name);
@@ -1221,8 +1260,8 @@ sub populate_field_definitions {
             $sth_UpdateSeries->execute($query, $series_id);
         }
         # Now that saved searches have been fixed, we can fix the field name.
-        print "Fixing the 'fielddefs' table...\n";
-        print "New field name: " . $new_field_name . "\n";
+        say "Fixing the 'fielddefs' table...";
+        say "New field name: $new_field_name";
         $dbh->do('UPDATE fielddefs SET name = ? WHERE id = ?',
                   undef, ($new_field_name, $old_field_id));
     }
@@ -1303,7 +1342,7 @@ sub check_field {
 Description: Returns the ID of the specified field name and throws
              an error if this field does not exist.
 
-Params:      $name - a field name
+Params:      $fieldname - a field name
 
 Returns:     the corresponding field ID or an error if the field name
              does not exist.
@@ -1313,17 +1352,24 @@ Returns:     the corresponding field ID or an error if the field name
 =cut
 
 sub get_field_id {
-    my ($name) = @_;
-    my $dbh = Bugzilla->dbh;
+    my $field = Bugzilla->fields({ by_name => 1 })->{$_[0]}
+      or ThrowCodeError('invalid_field_name', {field => $_[0]});
 
-    trick_taint($name);
-    my $id = $dbh->selectrow_array('SELECT id FROM fielddefs
-                                    WHERE name = ?', undef, $name);
-
-    ThrowCodeError('invalid_field_name', {field => $name}) unless $id;
-    return $id
+    return $field->id;
 }
 
 1;
 
 __END__
+
+=head1 B<Methods in need of POD>
+
+=over
+
+=item match
+
+=item set_is_numeric
+
+=item update
+
+=back

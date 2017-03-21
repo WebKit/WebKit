@@ -1,27 +1,10 @@
-/* The contents of this file are subject to the Mozilla Public
-  * License Version 1.1 (the "License"); you may not use this file
-  * except in compliance with the License. You may obtain a copy of
-  * the License at http://www.mozilla.org/MPL/
-  *
-  * Software distributed under the License is distributed on an "AS
-  * IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-  * implied. See the License for the specific language governing
-  * rights and limitations under the License.
-  *
-  * The Original Code is the Bugzilla Bug Tracking System.
-  *
-  * The Initial Developer of the Original Code is Netscape Communications
-  * Corporation. Portions created by Netscape are
-  * Copyright (C) 1998 Netscape Communications Corporation. All
-  * Rights Reserved.
-  *
-  * Contributor(s): Byron Jones <bugzilla@glob.com.au>
-  *                 Christian Reis <kiko@async.com.br>
-  *                 Vitaly Harisov <vitaly@rathedg.com>
-  *                 Svetlana Harisova <light@rathedg.com>
-  *                 Marc Schumann <wurblzap@gmail.com>
-  *                 Pascal Held <paheld@gmail.com>
-  */
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ *
+ * This Source Code Form is "Incompatible With Secondary Licenses", as
+ * defined by the Mozilla Public License, v. 2.0.
+ */
 
 /* global (begin) */
     body {
@@ -29,7 +12,7 @@
         color: #000;
         background: #fff url("global/body-back.gif") repeat-x;
     }
-    body, td, th, input {
+    body, td, th, input, dt, #titles {
         font-family: Verdana, sans-serif;
         font-size: small;
     }
@@ -37,6 +20,16 @@
     pre, code, kbd {
         font-size: medium;
     }
+
+    #bugzilla-body {
+        clear: both;
+    }
+
+    #bugzilla-body th {
+        font-weight: bold;
+        vertical-align: top;
+    }
+
 /* global (end) */
 
 /* header (begin) */
@@ -62,7 +55,9 @@
 
     #lang_links_container {
         float: right;
+        white-space: nowrap;
     }
+
     #lang_links_container .links {
         border: none;
         padding: .5em;
@@ -88,9 +83,6 @@
     form.mini_login input.bz_remember {
         margin: 0;
     }
-    .bz_mini_login_help {
-        color: #777;
-    }
 
 /* header (end)   */
 
@@ -107,10 +99,9 @@
         color: #fff;
         border-top-left-radius: 5px;
         border-top-right-radius: 5px;
-        font-size: 110%;
         margin: 0;
-        padding: 0.5em;
         vertical-align: bottom;
+        display: table;
     }
 
     #titles a {
@@ -124,20 +115,25 @@
 
     #titles #title {
         font-weight: bold;
+        padding: 0.5em;
         white-space: nowrap;
+        display: table-cell;
     }
 
     #titles #subtitle {
         font-weight: normal;
-        width: 100%;
         text-align: center;
-    }
+        padding: 0.5em;
+        display: table-cell;
+   }
 
     #titles #information {
         font-weight: normal;
         text-align: right;
         font-size: 90%;
+        padding: 0.5em;
         white-space: nowrap;
+        display: table-cell;
     }
 
 /* titles (end) */
@@ -194,6 +190,14 @@
 /* link lists (end) */
 
 /* tabs (begin) */
+    table.tabs {
+        width: 100%;
+    }
+
+    .tabs th, .tabs td {
+        padding: 1em;
+    }
+
     .tabs td {
         background: #eee;
         text-align: center;
@@ -201,7 +205,7 @@
         border-color: black;
         border-width: 0px 0px 2px 0px;
     }
-        
+
     .tabs td.selected {
         background: white;
         border-width: 2px 2px 0px 2px;
@@ -254,6 +258,12 @@ div#docslinks {
     margin: 0;
 }
 
+.rss {
+    background: transparent url(../../images/rss_small.png) no-repeat;
+    padding-left: 16px;
+    line-height: 1.5em;
+}
+
 /**************************/
 /* Bug links and statuses */
 /**************************/
@@ -262,7 +272,7 @@ div#docslinks {
     /* Catch-all if you want common styles for all bug links */
 }
 
-.bz_bug_link .bz_status_UNCONFIRMED {
+.bz_bug_link.bz_status_UNCONFIRMED {
     font-style: italic;
 }
 
@@ -304,6 +314,14 @@ div#docslinks {
 
 .bz_comment_text {
      width: 50em;
+}
+
+.bz_comment_text span.quote {
+    color: #65379c;
+    /* Make quoted text not wrap. */
+    white-space: pre;
+    overflow: auto;
+    display: block;
 }
 
 .bz_comment_user, .bz_comment_time, .bz_comment_number, 
@@ -350,6 +368,11 @@ div#docslinks {
     padding: 1em 0;
 }
 
+.bz_comment_collapse_reason,
+.bz_default_collapsed .bz_comment_number {
+    font-weight: normal;
+}
+
 /** End Comments **/
 
 .bz_default_hidden, .bz_tui_hidden, .bz_hidden_field, .bz_hidden_option {
@@ -359,16 +382,69 @@ div#docslinks {
     display: none !important;
 }
 
-.bz_comment_text span.quote {
-    color: #65379c;
-    /* Make quoted text not wrap. */
-    white-space: pre;
-}
-
 table#flags th,
 table#flags td {
     vertical-align: middle;
     text-align: left;
+}
+
+#email_prefs, #saved_search_prefs, #shared_search_prefs,
+#bug_activity {
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+
+#email_prefs th,
+#shared_search_prefs th,
+#saved_search_prefs th {
+    text-align: center;
+}
+
+#email_prefs th, #email_prefs td,
+#shared_search_prefs th, #shared_search_prefs td,
+#saved_search_prefs th, #saved_search_prefs td,
+#bug_activity td {
+    border: 1px solid;
+    padding: 0.3em;
+}
+
+#email_prefs th.role_header {
+    width: 10%;
+}
+
+#bug_activity td {
+    vertical-align: top;
+}
+
+#user_prefs th, #user_prefs td {
+    padding: 0.5em;
+}
+
+#permissions {
+    margin-left: auto;
+    margin-right: auto;
+    width: 40em;
+}
+
+#permissions p {
+    margin-top: 2em;
+    margin-bottom: 0.5em;
+}
+
+#permissions li {
+    list-style-type: none;
+}
+
+#permissions table td {
+    vertical-align: top;
+}
+
+.column_header {
+    background-color: #66f;
+}
+
+.column_header th {
+    text-align: center;
 }
 
 .flag_select {
@@ -383,16 +459,29 @@ input.requestee {
     font-size: x-large;
 }
 
+#post_err_msg, form#check {
+    clear: both;
+}
+
 .warning {
   color: red;
 }
 
 .throw_error {
-    background-color: #ff0000;
+    background-color: red;
     color: black;
     font-size: 120%;
-    margin: 1em;
+    margin-bottom: 2em;
     padding: 0.5em 1em;
+    float: left;
+}
+
+.label {
+    font-weight: bold;
+}
+
+.throw_error a:visited {
+    color: darkblue ;
 }
 
 dt {
@@ -403,10 +492,6 @@ body > dl > dt {
 }
 dl dl > dt {
     border-top: none;
-}
-
-#admin_table th {
-    white-space: normal !important;
 }
 
 /* Arrow buttons are buttons with only &uarr;, &darr;, &larr; or &rarr; on
@@ -421,7 +506,8 @@ dl dl > dt {
     border: 1px solid #333333;
 }
 
-#attachment_table th, .bz_attach_footer, .bz_time_tracking_table th {
+#attachment_table th, .bz_attach_footer, .bz_time_tracking_table th,
+.dependency_tree_controls {
     background-color: #E0E0E0;
     color: black;
 }
@@ -430,11 +516,15 @@ dl dl > dt {
     border: 1px solid #333333;
 }
 
-.bz_attach_extra_info {
+#attachment_table th, #attachment_table td {
+    padding: 0.3em;
+}
+
+.bz_attach_extra_info, .bz_info {
     font-size: smaller;
 }
 
-.bz_attach_flags, .bz_attach_footer {
+.bz_attach_flags, .bz_attach_footer, .bz_flags, .nowrap {
     white-space: nowrap;
 }
 
@@ -443,8 +533,22 @@ dl dl > dt {
     padding-left: 1em;
 }
 
+#user_match_table {
+    border-collapse: collapse;
+}
+
+#user_match_table td {
+    vertical-align: top;
+    border-bottom: 1px solid black;
+    padding: 1em 0.5em;
+}
+
 div.user_match {
     margin-bottom: 1em;
+}
+
+.indented {
+    margin-left: 3em;
 }
 
 .box {
@@ -455,8 +559,22 @@ div.user_match {
     padding: 0.5em 1em;
 }
 
-.collapsed {
+.collapsed,
+.bz_default_collapsed .bz_private_checkbox,
+.bz_default_collapsed .bz_comment_user,
+.bz_default_collapsed .bz_comment_user_images,
+.bz_default_collapsed .bz_comment_time,
+.bz_default_collapsed .bz_comment_tags,
+.bz_default_collapsed .bz_comment_text,
+.bz_default_collapsed .bz_collapsed_actions
+{
     display: none;
+}
+
+#serverpush_msg {
+    margin-top: 20%;
+    text-align: center;
+    font-size: xx-large;
 }
 
 /* Rules specific for printing */
@@ -487,16 +605,21 @@ div.user_match {
 .field_help_link {
     cursor: help;
 }
-.field_value, form#Create th, form#Create td {
+.field_value, form#Create th, form#Create td, .top {
     vertical-align: top;
 }
+
+.bottom {
+    vertical-align: bottom;
+}
+
 .field_value .text_input {
-  width: 100%;
-  min-width: 25em;
+    width: 100%;
+    min-width: 25em;
 }
 
 .uneditable_textarea {
-    width: 30em;
+    max-width: 30em;
     font-size: medium;
 }
 
@@ -520,20 +643,32 @@ input.required, select.required, span.required_explanation {
 .calendar_button span { display: none }
 /* These classes are set by YUI. */
 .yui-calcontainer {
-    display: none; 
-    background-color: white; 
+    display: none;
+    background-color: white;
     padding: 10px;
     border: 1px solid #404D6C;
 }
 
 .bug_urls {
-    margin: 0 0 1em 0;
+    margin: 0;
     padding: 0;
     list-style-type: none;
 }
 
+pre.field_textarea_readonly {
+    margin: 2px;
+    padding: 4px;
+    overflow: auto;
+    float: left;
+    max-width: 30em;
+    max-height: 7em;
+    border: 1px solid #CCC;
+    font-family: monospace;
+    white-space: pre-wrap;
+}
+
 /* custom styles for inline instances of autocomplete input fields */
-.yui-skin-sam .yui-ac-input { position:static !important; 
+.yui-skin-sam .yui-ac-input { position:static !important;
                               vertical-align:middle !important; }
 .yui-skin-sam .yui-ac-container { left:0px !important; }
 .yui-skin-sam .yui-ac { display: inline-block; }
@@ -543,13 +678,50 @@ input.required, select.required, span.required_explanation {
     overflow-x: hidden;
 }
 
-#keyword_container {
+#keywords_container {
     padding-top: .2em;
 }
 
 
-#keyword_container .yui-ac-content {
+#keywords_container .yui-ac-content {
     margin-left: -1px;
+}
+
+#comment_tabs {
+    border-spacing: 0;
+}
+
+.comment_tab {
+    display: table-cell;
+    border: 1px solid silver;
+    padding: 2px 1em;
+    cursor: pointer;
+    background: transparent;
+}
+
+.active_comment_tab {
+    background: #fff;
+    font-weight: bold;
+}
+
+#comment_preview {
+    border: 1px solid silver;
+    padding: 1px;
+    overflow: auto;
+    margin: 0px;
+}
+
+#comment_preview_text {
+    margin: 0px;
+    width: auto;
+}
+
+#comment_preview_loading {
+    font-style: italic;
+}
+
+#comment {
+    margin: 0px 0px 1em 0px;
 }
 
 /*******************/
@@ -566,3 +738,277 @@ input.required, select.required, span.required_explanation {
     border: 2px solid #B70000;
     background-color: #FFEBEB;
 }
+
+form th {
+    text-align: right;
+}
+
+.left {
+    text-align: left;
+}
+
+.center {
+    text-align: center;
+}
+
+.right {
+    text-align: right;
+}
+
+.middle {
+    vertical-align: middle;
+}
+
+.inline {
+    display: inline;
+}
+
+tr.shared_search {
+    background-color: #fff7cd;
+    color: #000;
+}
+
+.multi-columns {
+    columns: 3;
+    -moz-columns: 3;
+    -webkit-columns: 3;
+}
+
+/* index.cgi (begin) */
+
+#page-index {
+    padding: 0.2em 0.2em 0.15em 0.2em;
+    max-width: 1000px;
+}
+
+/* By default these contain nothing, but these CSS rules make things
+   easier on customizers. */
+.intro, .outro {
+    text-align: center;
+}
+
+#new_release {
+    border: 2px solid red;
+    padding: 0.5em 1em;
+    margin: 1em;
+    font-weight: bold;
+}
+
+#new_release .notice {
+    font-size: 80%;
+    font-weight: normal;
+}
+
+#welcome-admin a {
+    font-weight: bold;
+}
+
+.bz_common_actions {
+    text-align: center;
+}
+
+.bz_common_actions ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.bz_common_actions ul li {
+    display: inline;
+    vertical-align: top;
+}
+
+.bz_common_actions ul li a {
+    display: inline-block;
+    height: 170px;
+    width: 145px;
+    margin: 0 2ex 2em 0;
+}
+
+.bz_common_actions ul li a span {
+    position: relative;
+    top: 90%;
+    font-weight: bold;
+}
+
+.bz_common_actions a,
+.bz_common_actions a:visited,
+.bz_common_actions a:hover {
+    text-decoration: none;
+}
+
+#enter_bug { background: url(index/file-a-bug.png)  no-repeat; }
+#query     { background: url(index/search.png)      no-repeat; }
+#account   { background: url(index/new-account.png) no-repeat; }
+#help      { background: url(index/help.png)        no-repeat; }
+
+#quicksearchForm {
+    clear: both;
+    text-align: center;
+    margin-bottom: 2em;
+}
+
+#quicksearchForm #quicksearch_main {
+    width: 27em;
+}
+
+#quicksearchForm {
+    margin: 0;
+    padding: 0;
+}
+
+#page-index table {
+    border-collapse: collapse;
+    margin: auto;
+}
+
+#welcome {
+    font-size: x-large;
+    font-weight: bold;
+    text-align: center;
+    margin: 0 0 0.8em 0;
+    padding: 0;
+}
+
+#common_queries ul {
+    list-style: none;
+    padding-left: 1.5em;
+}
+
+#common_queries li a {
+    text-decoration: none;
+}
+
+ul#quicksearch_links {
+    margin-bottom: 1em;
+}
+
+ul.additional_links {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+ul.additional_links li {
+    display: inline;
+}
+
+ul.additional_links li.bz_default_hidden {
+    display: none;
+}
+
+/* index.cgi (end) */
+
+/* page.cgi (begin) */
+
+body.narrow_page #bugzilla-body > * {
+    /* People have an easier time reading narrower columns of text. */
+    max-width: 45em;
+}
+
+/*****************/
+/* Release Notes */
+/*****************/
+
+.req_new {
+    color: red;
+}
+
+.req_table {
+    border-collapse: collapse;
+}
+
+.req_table td, .req_table th {
+    border: 1px solid black;
+    padding: .25em;
+}
+
+/********************/
+/* QuickSearch Help */
+/********************/
+
+.qs_help li {
+   margin-top: 1ex;
+}
+
+.qs_fields th {
+    padding: 0 .25em;
+}
+.qs_fields th.field_nickname {
+    text-align: left;
+}
+.qs_fields td {
+    padding: .25em;
+    border-top: 1px solid gray;
+}
+.qs_fields .field_name {
+    width: 10em;
+}
+
+/***************/
+/* fields.html */
+/***************/
+
+table.field_value_explanation {
+    table-layout: fixed;
+    border-collapse: collapse;
+}
+
+.field_value_explanation thead h2 {
+    margin: 0;
+}
+
+.field_value_explanation .header_row td {
+    text-align: center;
+    font-size: 120%;
+    font-weight: bold;
+}
+
+.field_value_explanation tbody td {
+    border: 1px solid black;
+    padding: 1em;
+}
+
+.field_value_explanation dt, .field_descriptions dt {
+    margin-top: 1em;
+}
+
+.field_descriptions dt {
+    font-size: 120%;
+}
+
+/* page.cgi (end) */
+
+/* duplicates.cgi (start) */
+
+#duplicates_table {
+    border-collapse: collapse;
+}
+
+#duplicates_table .resolved {
+    background-color: #d9d9d9;
+    color: black;
+}
+
+#duplicates_table thead tr {
+    background-color: #ccc;
+    color: black;
+}
+
+#duplicates_table thead tr th {
+    vertical-align: middle;
+}
+
+#duplicates_table td, #duplicates_table th {
+    border: 1px solid black;
+    padding: .1em .25em;
+}
+
+#duplicates_table tbody td {
+    text-align: center;
+}
+
+#duplicates_table tbody td.short_desc {
+    text-align: left;
+}
+
+/* duplicates.cgi (end) */

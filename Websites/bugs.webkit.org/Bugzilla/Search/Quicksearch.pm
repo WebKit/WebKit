@@ -1,27 +1,15 @@
-# -*- Mode: perl; indent-tabs-mode: nil -*-
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
-# The contents of this file are subject to the Mozilla Public
-# License Version 1.1 (the "License"); you may not use this file
-# except in compliance with the License. You may obtain a copy of
-# the License at http://www.mozilla.org/MPL/
-#
-# Software distributed under the License is distributed on an "AS
-# IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-# implied. See the License for the specific language governing
-# rights and limitations under the License.
-#
-# The Original Code is the Bugzilla Bug Tracking System.
-#
-# Contributor(s): C. Begle
-#                 Jesse Ruderman
-#                 Andreas Franke <afranke@mathweb.org>
-#                 Stephen Lee <slee@uk.bnsmc.com>
-#                 Marc Schumann <wurblzap@gmail.com>
+# This Source Code Form is "Incompatible With Secondary Licenses", as
+# defined by the Mozilla Public License, v. 2.0.
 
 package Bugzilla::Search::Quicksearch;
 
-# Make it harder for us to do dangerous things in Perl.
+use 5.10.1;
 use strict;
+use warnings;
 
 use Bugzilla::Error;
 use Bugzilla::Constants;
@@ -34,7 +22,7 @@ use List::Util qw(min max);
 use List::MoreUtils qw(firstidx);
 use Text::ParseWords qw(parse_line);
 
-use base qw(Exporter);
+use parent qw(Exporter);
 @Bugzilla::Search::Quicksearch::EXPORT = qw(quicksearch);
 
 # Custom mappings for some fields.
@@ -116,6 +104,17 @@ use constant FIELD_OPERATOR => {
     owner_idle_time => 'greaterthan',
 };
 
+# Mappings for operators symbols to support operators other than "substring"
+use constant OPERATOR_SYMBOLS => {
+    ':'  => 'substring',
+    '='  => 'equals',
+    '!=' => 'notequals',
+    '>=' => 'greaterthaneq',
+    '<=' => 'lessthaneq',
+    '>'  => 'greaterthan',
+    '<'  => 'lessthan',
+};
+
 # We might want to put this into localconfig or somewhere
 use constant PRODUCT_EXCEPTIONS => (
     'row',   # [Browser]
@@ -151,7 +150,7 @@ sub quicksearch {
 
         # Retain backslashes and quotes, to know which strings are quoted,
         # and which ones are not.
-        my @words = parse_line('\s+', 1, $searchstring);
+        my @words = _parse_line('\s+', 1, $searchstring);
         # If parse_line() returns no data, this means strings are badly quoted.
         # Rather than trying to guess what the user wanted to do, we throw an error.
         scalar(@words)
@@ -207,8 +206,9 @@ sub quicksearch {
 
         # Loop over all main-level QuickSearch words.
         foreach my $qsword (@qswords) {
-            my @or_operand = parse_line('\|', 1, $qsword);
+            my @or_operand = _parse_line('\|', 1, $qsword);
             foreach my $term (@or_operand) {
+                next unless defined $term;
                 my $negate = substr($term, 0, 1) eq '-';
                 if ($negate) {
                     $term = substr($term, 1);
@@ -221,7 +221,7 @@ sub quicksearch {
                 # Having ruled out the special cases, we may now split
                 # by comma, which is another legal boolean OR indicator.
                 # Remove quotes from quoted words, if any.
-                @words = parse_line(',', 0, $term);
+                @words = _parse_line(',', 0, $term);
                 foreach my $word (@words) {
                     if (!_special_field_syntax($word, $negate)) {
                         _default_quicksearch_word($word, $negate);
@@ -273,13 +273,36 @@ sub quicksearch {
 # Parts of quicksearch() #
 ##########################
 
+sub _parse_line {
+    my ($delim, $keep, $line) = @_;
+    return () unless defined $line;
+
+    # parse_line always treats ' as a quote character, making it impossible
+    # to sanely search for contractions. As this behavour isn't
+    # configurable, we replace ' with a placeholder to hide it from the
+    # parser.
+
+    # only treat ' at the start or end of words as quotes
+    # it's easier to do this in reverse with regexes
+    $line =~ s/(^|\s|:)'/$1\001/g;
+    $line =~ s/'($|\s)/\001$1/g;
+    $line =~ s/\\?'/\000/g;
+    $line =~ tr/\001/'/;
+
+    my @words = parse_line($delim, $keep, $line);
+    foreach my $word (@words) {
+        $word =~ tr/\000/'/ if defined $word;
+    }
+    return @words;
+}
+
 sub _bug_numbers_only {
     my $searchstring = shift;
     my $cgi = Bugzilla->cgi;
     # Allow separation by comma or whitespace.
     $searchstring =~ s/[,\s]+/,/g;
 
-    if ($searchstring !~ /,/) {
+    if ($searchstring !~ /,/ && !i_am_webservice()) {
         # Single bug number; shortcut to show_bug.cgi.
         print $cgi->redirect(
             -uri => correct_urlbase() . "show_bug.cgi?id=$searchstring");
@@ -298,9 +321,11 @@ sub _handle_alias {
     if ($searchstring =~ /^([^,\s]+)$/) {
         my $alias = $1;
         # We use this direct SQL because we want quicksearch to be VERY fast.
-        my $is_alias = Bugzilla->dbh->selectrow_array(
-            q{SELECT 1 FROM bugs WHERE alias = ?}, undef, $alias);
-        if ($is_alias) {
+        my $bug_id = Bugzilla->dbh->selectrow_array(
+            q{SELECT bug_id FROM bugs_aliases WHERE alias = ?}, undef, $alias);
+        # If the user cannot see the bug or if we are using a webservice,
+        # do not resolve its alias.
+        if ($bug_id && Bugzilla->user->can_see_bug($bug_id) && !i_am_webservice()) {
             $alias = url_quote($alias);
             print Bugzilla->cgi->redirect(
                 -uri => correct_urlbase() . "show_bug.cgi?id=$alias");
@@ -339,6 +364,7 @@ sub _handle_status_and_resolution {
 
 sub _handle_special_first_chars {
     my ($qsword, $negate) = @_;
+    return 0 if !defined $qsword || length($qsword) <= 1;
 
     my $firstChar = substr($qsword, 0, 1);
     my $baseWord = substr($qsword, 1);
@@ -375,25 +401,17 @@ sub _handle_special_first_chars {
 sub _handle_field_names {
     my ($or_operand, $negate, $unknownFields, $ambiguous_fields) = @_;
 
-    # Flag and requestee shortcut
-    if ($or_operand =~ /^(?:flag:)?([^\?]+\?)([^\?]*)$/) {
-        my ($flagtype, $requestee) = ($1, $2);
-        addChart('flagtypes.name', 'substring', $flagtype, $negate);
-        if ($requestee) {
-            # AND
-            $chart++;
-            $and = $or = 0;
-            addChart('requestees.login_name', 'substring', $requestee, $negate);
-        }
-        return 1;
-    }
-
     # Generic field1,field2,field3:value1,value2 notation.
     # We have to correctly ignore commas and colons in quotes.
-    my @field_values = parse_line(':', 1, $or_operand);
-    if (scalar @field_values == 2) {
-        my @fields = parse_line(',', 1, $field_values[0]);
-        my @values = parse_line(',', 1, $field_values[1]);
+    # Longer operators must be tested first as we don't want single character
+    # operators such as <, > and = to be tested before <=, >= and !=.
+    my @operators = sort { length($b) <=> length($a) } keys %{ OPERATOR_SYMBOLS() };
+
+    foreach my $symbol (@operators) {
+        my @field_values = _parse_line($symbol, 1, $or_operand);
+        next unless scalar @field_values == 2;
+        my @fields = _parse_line(',', 1, $field_values[0]);
+        my @values = _parse_line(',', 1, $field_values[1]);
         foreach my $field (@fields) {
             my $translated = _translate_field_name($field);
             # Skip and record any unknown fields
@@ -410,7 +428,9 @@ sub _handle_field_names {
                     $bug_status_set = 1;
                 }
                 foreach my $value (@values) {
-                    my $operator = FIELD_OPERATOR->{$translated} || 'substring';
+                    my $operator = FIELD_OPERATOR->{$translated}
+                        || OPERATOR_SYMBOLS->{$symbol}
+                        || 'substring';
                     # If the string was quoted to protect some special
                     # characters such as commas and colons, we need
                     # to remove quotes.
@@ -418,13 +438,46 @@ sub _handle_field_names {
                         $value = $2;
                         $value =~ s/\\(["'])/$1/g;
                     }
+                    # If a requestee is set, we need to handle it separately.
+                    if ($translated eq 'flagtypes.name' && $value =~ /^([^\?]+\?)([^\?]+)$/) {
+                        _handle_flags($1, $2, $negate);
+                        next;
+                    }
                     addChart($translated, $operator, $value, $negate);
                 }
             }
         }
         return 1;
     }
+
+    # Do not look inside quoted strings.
+    return 0 if ($or_operand =~ /^(["']).*\1$/);
+
+    # Flag and requestee shortcut.
+    if ($or_operand =~ /^([^\?]+\?)([^\?]*)$/) {
+        _handle_flags($1, $2, $negate);
+        return 1;
+    }
+
     return 0;
+}
+
+sub _handle_flags {
+    my ($flag, $requestee, $negate) = @_;
+
+    addChart('flagtypes.name', 'substring', $flag, $negate);
+    if ($requestee) {
+        # FIXME - Every time a requestee is involved and you use OR somewhere
+        # in your quick search, the logic will be wrong because boolean charts
+        # are unable to run queries of the form (a AND b) OR c. In our case:
+        # (flag name is foo AND requestee is bar) OR (any other criteria).
+        # But this has never been possible, so this is not a regression. If one
+        # needs to run such queries, they must use the Custom Search section of
+        # the Advanced Search page.
+        $chart++;
+        $and = $or = 0;
+        addChart('requestees.login_name', 'substring', $requestee, $negate);
+    }
 }
 
 sub _translate_field_name {
@@ -625,3 +678,21 @@ sub makeChart {
 }
 
 1;
+
+=head1 B<Methods in need of POD>
+
+=over
+
+=item FIELD_MAP
+
+=item quicksearch
+
+=item negateComparisonType
+
+=item makeChart
+
+=item addChart
+
+=item matchPrefixes
+
+=back

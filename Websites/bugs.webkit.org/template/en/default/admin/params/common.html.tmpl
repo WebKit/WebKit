@@ -1,28 +1,10 @@
-[%# The contents of this file are subject to the Mozilla Public
-  # License Version 1.1 (the "License"); you may not use this file
-  # except in compliance with the License. You may obtain a copy of
-  # the License at http://www.mozilla.org/MPL/
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
   #
-  # Software distributed under the License is distributed on an "AS
-  # IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-  # implied. See the License for the specific language governing
-  # rights and limitations under the License.
-  #
-  # The Original Code is the Bugzilla Bug Tracking System.
-  #
-  # The Initial Developer of the Original Code is Netscape Communications
-  # Corporation. Portions created by Netscape are
-  # Copyright (C) 1998 Netscape Communications Corporation. All
-  # Rights Reserved.
-  #
-  # Contributor(s): Frédéric Buclin <LpSolit@gmail.com>
-  #                 Marc Schumann <wurblzap@gmail.com>
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
   #%]
-[%# INTERFACE:
-  # panel: hash representing the current panel.
-  #%]
-
-[% PROCESS "global/field-descs.none.tmpl" %]
 
 [% sortlist_separator = '---' %]
 
@@ -50,7 +32,7 @@
         <label for="[% param.name FILTER html %]-off">Off</label>
       [% ELSIF param.type == "m" %]
         [% boxSize = 5 %]
-        [% boxSize = param.choices.size IF param.choices.size < 5 %]
+        [% SET boxSize = param.choices.size IF param.choices.size < 5 %]
 
         <select multiple="multiple" size="[% boxSize FILTER html %]"
                 name="[% param.name FILTER html %]" id="[% param.name FILTER html %]">
@@ -66,7 +48,7 @@
                name="[% param.name FILTER html %]"
                value="[% Param(param.name) FILTER html %]"><br>
         [% boxSize = 7 %]
-        [% boxSize = 3 + param.choices.size IF param.choices.size < 7 %]
+        [% SET boxSize = 3 + param.choices.size IF param.choices.size < 7 %]
         [% plist = Param(param.name).split(',') %]
 
         <table id="table_[% param.name FILTER html %]" class="bz_default_hidden">
@@ -87,14 +69,14 @@
                 [% END %]
               </select>
             </td>
-            <td style="vertical-align: bottom">
+            <td class="bottom">
               <button type="button"
                       onClick="sortedList_moveItem('[% param.name FILTER html %]', -1, '[% sortlist_separator %]');">&uarr;</button>
             </td>
           </tr>
 
           <tr>
-            <td style="vertical-align: top">
+            <td class="top">
               <button type="button"
                       onClick="sortedList_moveItem('[% param.name FILTER html %]', +1, '[% sortlist_separator %]');">&darr;</button>
             </td>
@@ -125,10 +107,10 @@
           [% END %]
         </select>
       [% ELSE %]
-        <font color="red">
-          <blink>Unknown param type [% param.type FILTER html %]!!!</blink>
-        </font>
-      [% END %]  
+        <span class="warning">
+          Unknown param type [% param.type FILTER html %]!!!
+        </span>
+      [% END %]
       </p>
       [% UNLESS param.no_reset %]
         <p>

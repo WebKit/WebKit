@@ -1,24 +1,9 @@
-[%# The contents of this file are subject to the Mozilla Public
-  # License Version 1.1 (the "License"); you may not use this file
-  # except in compliance with the License. You may obtain a copy of
-  # the License at http://www.mozilla.org/MPL/
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
   #
-  # Software distributed under the License is distributed on an "AS
-  # IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-  # implied. See the License for the specific language governing
-  # rights and limitations under the License.
-  #
-  # The Original Code is the Bugzilla Bug Tracking System.
-  #
-  # The Initial Developer of the Original Code is Netscape Communications
-  # Corporation. Portions created by Netscape are
-  # Copyright (C) 1998 Netscape Communications Corporation. All
-  # Rights Reserved.
-  #
-  # Contributor(s): Gervase Markham <gerv@gerv.net>
-  #                 Vaskin Kissoyan <vkissoyan@yahoo.com>
-  #                 Vitaly Harisov <vitaly@rathedg.com>
-  #                 Svetlana Harisova <light@rathedg.com>
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
   #%]
 
 [%# INTERFACE:
@@ -36,6 +21,7 @@
   # message: string. A message to display to the user. May contain HTML.
   # rsslink: RSS link URL, May contain HTML (WEBKIT_CHANGES)
   # hide_content: boolean. Turns off content if not being used. (WEBKIT_CHANGES)
+  # generate_api_token: generate a token which can be used to make authenticated webservice calls
   #%]
 
 [% IF message %]
@@ -47,7 +33,10 @@
   header_addl_info = ""
   onload = ""
   style_urls = []
+  javascript_urls = []
   yui = []
+  generate_api_token = 0
+  favicon_url = "images/favicon.ico"
 %]
 
 [% SET yui_css = {
@@ -91,8 +80,7 @@
   # set header's default value here only if it is undefined. %]
 [% IF !header.defined %][% header = title %][% END %]
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-                      "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html>
 <html lang="en">
   <head>
     [% Hook.process("start") %]
@@ -102,56 +90,34 @@
       <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     [% END %]
 
-[%# Migration note: contents of the old Param 'headerhtml' would go here %]
-
-    [% PROCESS "global/site-navigation.html.tmpl" %]
-
-    [% PROCESS 'global/setting-descs.none.tmpl' %]
-
     [% SET yui = yui_resolve_deps(yui, yui_deps) %]
+
     [% SET css_sets = css_files(style_urls, yui, yui_css) %]
-
-    [%# CSS cascade, part 1: Standard Bugzilla stylesheet set (persistent).
-      # Always present.
-      #%]
-    [%# This allows people to switch back to the "Classic" skin if they
-      # are in another skin. 
-      #%]
-    <link href="[% 'skins/standard/global.css' FILTER mtime FILTER html %]"
-          rel="alternate stylesheet" 
-          title="[% setting_descs.standard FILTER html %]">
-    [% FOREACH style_url = css_sets.standard %]
-      [% PROCESS format_css_link css_set_name = 'standard' %]
-    [% END %]
-
-    [%# CSS cascade, part 2 & 3: Third-party stylesheet set (selected and
-      # selectable). All third-party skins are present as alternate
-      # stylesheets, even if they are not currently in use.
-      #%]
-    [% FOREACH style_url = css_sets.skin %]
-      [% PROCESS format_css_link css_set_name = user.settings.skin.value %]
-    [% END %]
-
-    [% FOREACH alternate_skin = css_sets.alternate.keys %]
-      [% FOREACH style_url = css_sets.alternate.$alternate_skin %]
-        [% PROCESS format_css_link css_set_name = alternate_skin %]
+    [% IF constants.CONCATENATE_ASSETS %]
+      [% PROCESS format_css_link asset_url = css_sets.unified_standard_skin %]
+    [% ELSE %]
+      [% FOREACH asset_url = css_sets.standard %]
+        [% PROCESS format_css_link %]
+      [% END %]
+      [% FOREACH asset_url = css_sets.skin %]
+        [% PROCESS format_css_link %]
       [% END %]
     [% END %]
 
-    [%# CSS cascade, part 4: page-specific styles.
-      #%]
     [% IF style %]
       <style type="text/css">
         [% style %]
       </style>
     [% END %]
 
-    [%# CSS cascade, part 5: Custom Bugzilla stylesheet set (persistent).
-      # Always present. Site administrators may override all other style
-      # definitions, including skins, using custom stylesheets.
-      #%]
-    [% FOREACH style_url = css_sets.custom %]
-      [% PROCESS format_css_link css_set_name = 'standard' %]
+    [% IF css_sets.unified_custom %]
+      [% IF constants.CONCATENATE_ASSETS %]
+        [% PROCESS format_css_link asset_url = css_sets.unified_custom %]
+      [% ELSE %]
+        [% FOREACH asset_url = css_sets.custom %]
+          [% PROCESS format_css_link %]
+        [% END %]
+      [% END %]
     [% END %]
 
     [%# YUI Scripts %]
@@ -160,7 +126,7 @@
     [% END %]
     [% starting_js_urls.push('js/global.js') %]
 
-    [% FOREACH javascript_url = starting_js_urls %]
+    [% FOREACH asset_url = concatenate_js(starting_js_urls) %]
       [% PROCESS format_js_link %]
     [% END %]
 
@@ -204,16 +170,19 @@
                 [%# Please keep these in alphabetical order. %]
 
                 attach_desc_required:
-                    'You must enter a Description for this attachment.',
+                    "You must enter a Description for this attachment.",
                 component_required:
-                    'You must select a Component for this [% terms.bug %].',
+                    "You must select a Component for this [% terms.bug %].",
                 description_required:
-                    'You must enter a Description for this [% terms.bug %].',
+                    "You must enter a Description for this [% terms.bug %].",
                 short_desc_required:
-                    'You must enter a Summary for this [% terms.bug %].',
+                    "You must enter a Summary for this [% terms.bug %].",
                 version_required:
-                    'You must select a Version for this [% terms.bug %].'
+                    "You must select a Version for this [% terms.bug %]."
             }
+            [% IF generate_api_token %]
+              , api_token: '[% get_api_token FILTER js FILTER html %]'
+            [% END %]
         };
 
         [% FOREACH yui_name = yui %]
@@ -227,7 +196,7 @@
     // -->
     </script>
 
-    [% FOREACH javascript_url = javascript_urls %]
+    [% FOREACH asset_url = concatenate_js(javascript_urls) %]
       [% PROCESS format_js_link %]
     [% END %]
 
@@ -235,7 +204,7 @@
     [%# this puts the live bookmark up on firefox for the RSS feed %]
     [% IF rsslink %]
        <link rel="alternate" 
-             type="application/rss+xml" title="RSS 1.0" 
+             type="application/rss+xml" title="RSS 1.0"
              href="[% rsslink FILTER html %]">
     [% END %]
 [%# endif // WEBKIT_CHANGES #%]
@@ -243,118 +212,76 @@
     [%# Required for the 'Autodiscovery' feature in Firefox 2 and IE 7. %]
     <link rel="search" type="application/opensearchdescription+xml"
                        title="[% terms.Bugzilla %]" href="./search_plugin.cgi">
-    <link rel="shortcut icon" href="images/favicon.ico" >
+    <link rel="shortcut icon" href="[% favicon_url FILTER html %]">
     [% Hook.process("additional_header") %]
   </head>
 
-[%# Migration note: contents of the old Param 'bodyhtml' go in the body tag,
-  # but set the onload attribute in the DEFAULT directive above.
-  #%]
-
-  <body onload="[% onload %]"
-        class="[% urlbase.replace('^https?://','').replace('/$','').replace('[-~@:/.]+','-') %]
+  <body [% IF onload %] onload="[% onload %]"[% END %]
+        class="[% urlbase.replace('^https?://','').replace('/$','').replace('[-~@:/.]+','-') FILTER css_class_quote %]
                [% FOREACH class = bodyclasses %]
-                 [% ' ' %][% class FILTER css_class_quote %]
+                 [%+ class FILTER css_class_quote %]
                [% END %] yui-skin-sam">
-
-[%# Migration note: the following file corresponds to the old Param
-  # 'bannerhtml'
-  #%]
 
 [% IF !hide_content %][%# WEBKIT_CHANGES #%]
 
-<div id="header">
-
+  <div id="header">
 [%# if WEBKIT_CHANGES #%]
-[%# INCLUDE global/banner.html.tmpl #%]
+    [%# INCLUDE global/banner.html.tmpl #%]
 [%# endif // WEBKIT_CHANGES #%]
 
-<table border="0" cellspacing="0" cellpadding="0" id="titles">
-<tr>
-    <td id="title">
+    <div id="titles">
 [%# if WEBKIT_CHANGES #%]
-      <p>WebKit [% terms.Bugzilla %]
-      [%# " &ndash; $header" IF header #%]</p>
+      <span id="title"> WebKit [% terms.Bugzilla %][%# " &ndash; $header" IF header #%]</span>
 [%# endif // WEBKIT_CHANGES #%]
-    </td>
 
 [%# WEBKIT_CHANGES: Removed subheader and header_addl_info output #%]
-</tr>
-</table>
+    </div>
 
-<table id="lang_links_container" cellpadding="0" cellspacing="0"
-       class="bz_default_hidden"><tr><td>
-[% IF Bugzilla.languages.size > 1 %]
-  <ul class="links">
-  [% FOREACH lang = Bugzilla.languages.sort %]
-    <li>[% IF NOT loop.first %]<span class="separator"> | </span>[% END %]
-    [% IF lang == current_language %]
-      <span class="lang_current">[% lang FILTER html FILTER upper %]</span>
-    [% ELSE %]
-      <a href="#" onclick="set_language('[% lang FILTER none %]');">
-       [%- lang FILTER html FILTER upper %]</a>
+    [% USE Bugzilla %]
+    [% IF Bugzilla.languages.size > 1 %]
+      <div id="lang_links_container" class="bz_default_hidden">
+        <ul class="links">
+          [% FOREACH lang = Bugzilla.languages.sort %]
+            <li>
+              [% IF NOT loop.first %]<span class="separator"> | </span>[% END %]
+              [% IF lang == current_language %]
+                <span class="lang_current">[% lang FILTER html FILTER upper %]</span>
+              [% ELSE %]
+                <a href="#" onclick="set_language('[% lang FILTER none %]');">
+                  [%- lang FILTER html FILTER upper %]</a>
+              [% END %]
+            </li>
+          [% END %]
+        </ul>
+      </div>
     [% END %]
-    </li>
-  [% END %]
-  </ul>
-[% END %]
-</td></tr></table>
 
 [%# if WEBKIT_CHANGES #%]
-  [% IF header || subheader %]
-    <div id="bug_title">[% header %][% ": $subheader" IF subheader %]</div>
-  [% END %]
+    [% IF header || subheader %]
+        <div id="bug_title">[% header %][% ": $subheader" IF subheader %]</div>
+    [% END %]
 [%# endif // WEBKIT_CHANGES #%]
 
-[% PROCESS "global/common-links.html.tmpl" qs_suffix = "_top" %]
-</div> [%# header %]
+    <div id="common_links">
+      [% PROCESS "global/common-links.html.tmpl" qs_suffix = "_top" %]
+    </div>
+  </div>
 
 [% END %][%# !hide_content #%][%# WEBKIT_CHANGES #%]
 
-<div id="bugzilla-body">
+  <div id="bugzilla-body">
+    [% IF Param('announcehtml') %]
+      [% Param('announcehtml') FILTER none %]
+    [% END %]
 
-[% IF Param('announcehtml') %]
-[% Param('announcehtml') FILTER none %]
-[% END %]
-
-[% IF message %]
-<div id="message">[% message %]</div>
-[% END %]
+    [% IF message %]
+      <div id="message">[% message %]</div>
+    [% END %]
 
 [% BLOCK format_css_link %]
-  [% IF style_url.match('/IE-fixes\.css') %]
-    <!--[if lte IE 7]>
-      [%# Internet Explorer treats [if IE] HTML comments as uncommented.
-        # We use it to import CSS fixes so that Bugzilla looks decent on IE 7
-        # and below.
-        #%]
-  [% END %]
-
-  [% IF css_set_name == 'standard'
-       OR css_set_name == user.settings.skin.value
-  %]
-    [% SET css_rel = 'stylesheet' %]
-    [% SET css_set_display_name = setting_descs.${user.settings.skin.value}
-                                  || user.settings.skin.value %]
-  [% ELSE %]
-    [% SET css_rel = 'alternate stylesheet' %]
-    [% SET css_set_display_name = setting_descs.$css_set_name || css_set_name %]
-  [% END %]
-
-  [% IF css_set_name == 'standard' %]
-    [% SET css_title_link = '' %]
-  [% ELSE %]
-    [% css_title_link = BLOCK ~%]
-      title="[% css_set_display_name FILTER html %]"
-    [% END %]
-  [% END %]
-
-  <link href="[% style_url FILTER html %]" rel="[% css_rel FILTER none %]"
-        type="text/css" [% css_title_link FILTER none %]>
-
-  [% '<![endif]-->' IF style_url.match('/IE-fixes\.css') %]
+  <link href="[% asset_url FILTER html %]" rel="stylesheet" type="text/css">
 [% END %]
 
 [% BLOCK format_js_link %]
-  <script type="text/javascript" src="[% javascript_url FILTER mtime FILTER html %]"></script>
+  <script type="text/javascript" src="[% asset_url FILTER mtime FILTER html %]"></script>
 [% END %]

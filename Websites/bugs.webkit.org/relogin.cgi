@@ -1,28 +1,15 @@
-#!/usr/bin/env perl -wT
-# -*- Mode: perl; indent-tabs-mode: nil -*-
+#!/usr/bin/perl -T
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
-# The contents of this file are subject to the Mozilla Public
-# License Version 1.1 (the "License"); you may not use this file
-# except in compliance with the License. You may obtain a copy of
-# the License at http://www.mozilla.org/MPL/
-#
-# Software distributed under the License is distributed on an "AS
-# IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-# implied. See the License for the specific language governing
-# rights and limitations under the License.
-#
-# The Original Code is the Bugzilla Bug Tracking System.
-#
-# The Initial Developer of the Original Code is Netscape Communications
-# Corporation. Portions created by Netscape are
-# Copyright (C) 1998 Netscape Communications Corporation. All
-# Rights Reserved.
-#
-# Contributor(s): Terry Weissman <terry@mozilla.org>
-#                 Gervase Markham <gerv@gerv.net>
-#                 A. Karl Kornel <karl@kornel.name>
+# This Source Code Form is "Incompatible With Secondary Licenses", as
+# defined by the Mozilla Public License, v. 2.0.
 
+use 5.10.1;
 use strict;
+use warnings;
+
 use lib qw(. lib);
 
 use Bugzilla;
@@ -66,6 +53,22 @@ elsif ($action eq 'prepare-sudo') {
 
     # Keep a temporary record of the user visiting this page
     $vars->{'token'} = issue_session_token('sudo_prepared');
+
+    if ($user->authorizer->can_login) {
+        my $value = generate_random_password();
+        my %args;
+        $args{'-secure'} = 1 if Bugzilla->params->{ssl_redirect};
+
+        $cgi->send_cookie(-name => 'Bugzilla_login_request_cookie',
+                          -value => $value,
+                          -httponly => 1,
+                          %args);
+
+        # The user ID must not be set when generating the token, because
+        # that information will not be available when validating it.
+        local Bugzilla->user->{userid} = 0;
+        $vars->{'login_request_token'} = issue_hash_token(['login_request', $value]);
+    }
 
     # Show the sudo page
     $vars->{'target_login_default'} = $cgi->param('target_login');
@@ -146,11 +149,18 @@ elsif ($action eq 'begin-sudo') {
 
     # For future sessions, store the unique ID of the target user
     my $token = Bugzilla::Token::_create_token($user->id, 'sudo', $target_user->id);
+
+    my %args;
+    if (Bugzilla->params->{ssl_redirect}) {
+        $args{'-secure'} = 1;
+    }
+
     $cgi->send_cookie('-name'    => 'sudo',
                       '-expires' => $time_string,
-                      '-value'   => $token
-    );
-    
+                      '-value'   => $token,
+                      '-httponly' => 1,
+                      %args);
+
     # For the present, change the values of Bugzilla::user & Bugzilla::sudoer
     Bugzilla->sudo_request($target_user, $user);
 

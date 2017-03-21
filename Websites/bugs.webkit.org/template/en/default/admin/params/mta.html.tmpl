@@ -1,22 +1,9 @@
-[%# The contents of this file are subject to the Mozilla Public
-  # License Version 1.1 (the "License"); you may not use this file
-  # except in compliance with the License. You may obtain a copy of
-  # the License at http://www.mozilla.org/MPL/
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
   #
-  # Software distributed under the License is distributed on an "AS
-  # IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-  # implied. See the License for the specific language governing
-  # rights and limitations under the License.
-  #
-  # The Original Code is the Bugzilla Bug Tracking System.
-  #
-  # The Initial Developer of the Original Code is Netscape Communications
-  # Corporation. Portions created by Netscape are
-  # Copyright (C) 1998 Netscape Communications Corporation. All
-  # Rights Reserved.
-  #
-  # Contributor(s): Dave Miller <justdave@bugzilla.org>
-  #                 Frédéric Buclin <LpSolit@gmail.com>
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
   #%]
 [%
    title = "Email"
@@ -27,7 +14,12 @@
   mail_delivery_method => "Defines how email is sent, or if it is sent at all.<br>
                            <ul>
                              <li>
-                               'Sendmail', 'SMTP' and 'Qmail' are all MTAs.
+                               'SMTP' means use the SMTP protocol to talk to a remote
+                               mail server.
+                             </li>
+                             <li>
+                               'Sendmail' means use the sendmail-compatible MTA
+                               installed on the Bugzilla machine.
                                You need to install a third-party sendmail replacement if
                                you want to use sendmail on Windows.
                              </li>
@@ -36,7 +28,7 @@
                                in 'data/mailer.testfile' instead of being sent.
                              </li>
                              <li>
-                               'none' will completely disable email. $terms.Bugzilla continues
+                               'None' will completely disable email. Bugzilla continues
                                to act as though it is sending mail, but nothing is sent or
                                stored.
                              </li>
@@ -45,17 +37,18 @@
   mailfrom => "The email address of the $terms.Bugzilla mail daemon.  Some email systems " _
               "require this to be a valid email address.",
 
-  use_mailer_queue => "In a large $terms.Bugzilla installation, updating"
-    _ " $terms.bugs can be very slow, because $terms.Bugzilla sends all"
-    _ " email at once. If you enable this parameter, $terms.Bugzilla will"
+  use_mailer_queue => "In a large Bugzilla installation, updating"
+    _ " $terms.bugs can be very slow, because Bugzilla sends all"
+    _ " email at once. If you enable this parameter, Bugzilla will"
     _ " queue all mail and then send it in the background. This requires"
     _ " that you have installed certain Perl modules (as listed by"
     _ " <kbd>checksetup.pl</kbd> for this feature), and that you are"
     _ " running the <code>jobqueue.pl</code> daemon (otherwise your mail"
-    _ " won't get sent). This affects all mail sent by $terms.Bugzilla,"
+    _ " won't get sent). This affects all mail sent by Bugzilla,"
     _ " not just $terms.bug updates.",
 
-  smtpserver => "The SMTP server address (if using SMTP for mail delivery).",
+  smtpserver => "The SMTP server address with optional port number (if using SMTP" _
+                " for mail delivery). eg: example.com or example.com:1234",
 
   smtp_username => "The username to pass to the SMTP server for SMTP authentication. " _
                    "Leave this field empty if your SMTP server doesn't require authentication.",
@@ -63,9 +56,11 @@
   smtp_password => "The password to pass to the SMTP server for SMTP authentication. " _
                    "This field has no effect if the smtp_username parameter is left empty.",
 
+  smtp_ssl => "Enable SSL support for SMTP.",
+
   smtp_debug => "If enabled, this will print detailed information to your" _
                 " web server's error log about the communication between" _
-                " $terms.Bugzilla and your SMTP server. You can use this to" _
+                " Bugzilla and your SMTP server. You can use this to" _
                 " troubleshoot email problems.",
 
   whinedays => "The number of days that we'll let a $terms.bug sit untouched in a CONFIRMED " _

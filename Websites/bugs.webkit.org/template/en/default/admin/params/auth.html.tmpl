@@ -1,23 +1,9 @@
-[%# The contents of this file are subject to the Mozilla Public
-  # License Version 1.1 (the "License"); you may not use this file
-  # except in compliance with the License. You may obtain a copy of
-  # the License at http://www.mozilla.org/MPL/
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
   #
-  # Software distributed under the License is distributed on an "AS
-  # IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-  # implied. See the License for the specific language governing
-  # rights and limitations under the License.
-  #
-  # The Original Code is the Bugzilla Bug Tracking System.
-  #
-  # The Initial Developer of the Original Code is Netscape Communications
-  # Corporation. Portions created by Netscape are
-  # Copyright (C) 1998 Netscape Communications Corporation. All
-  # Rights Reserved.
-  #
-  # Contributor(s): Dave Miller <justdave@bugzilla.org>
-  #                 Frédéric Buclin <LpSolit@gmail.com>
-  #                 Marc Schumann <wurblzap@gmail.com>
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
   #%]
 [%
    title = "User Authentication"
@@ -64,13 +50,13 @@
                         <dl>
                           <dt>DB</dt>
                           <dd>
-                            ${terms.Bugzilla}'s built-in authentication. This is the most common
+                            Bugzilla's built-in authentication. This is the most common
                             choice.
                           </dd>
                           <dt>RADIUS</dt>
                           <dd>
                             RADIUS authentication using a RADIUS server.
-                            Please see the $terms.Bugzilla documentation for
+                            Please see the Bugzilla documentation for
                             more information.
                             Using this method requires
                             <a href=\"?section=radius\">additional
@@ -79,7 +65,7 @@
                           <dt>LDAP</dt>
                           <dd>
                             LDAP authentication using an LDAP server.
-                            Please see the $terms.Bugzilla documentation
+                            Please see the Bugzilla documentation
                             for more information. Using this method requires
                             <a href=\"?section=ldap\">additional
                             parameters</a> to be set.
@@ -98,8 +84,8 @@
                       </li>
                       <li>
                         defaulton/defaultoff - Default behavior as described
-                        above, but user can choose whether $terms.Bugzilla will remember his
-                        login or not.
+                        above, but user can choose whether Bugzilla will
+                        remember their login or not.
                       </li>
                     </ul>",
 
@@ -107,17 +93,27 @@
                   "front page will require a login. No anonymous users will " _
                   "be permitted.",
 
-  emailregexp => "This defines the regexp to use for legal email addresses. The " _
-                 "default tries to match fully qualified email addresses. Another " _
-                 "popular value to put here is <tt>^[^@]+$</tt>, which means " _
-                 "'local usernames, no @ allowed.'",
+  webservice_email_filter =>
+    "Filter email addresses returned by the WebService API depending on " _
+    "if the user is logged in or not. This works similarly to how the " _
+    "web UI currently filters email addresses. If <var>requirelogin</var> " _
+    "is enabled, then this parameter has no effect as users must be logged " _
+    "in to use Bugzilla.",
 
-  emailregexpdesc => "This describes in English words what kinds of legal addresses " _
-                     "are allowed by the <tt>emailregexp</tt> param.",
+  emailregexp =>
+    "This defines the regular expression to use for legal email addresses. " _
+    "The default tries to match fully qualified email addresses. " _
+    "Use <kbd>.*</kbd> to accept any email address following the " _
+    "<a href=\"http://tools.ietf.org/html/rfc2822#section-3.4.1\">RFC 2822</a> " _
+    "specification. Another popular value to put here is <kbd>^[^@]+$</kbd>, " _
+    "which means 'local usernames, no @ allowed.'",
+
+  emailregexpdesc => "This description explains valid addresses that " _
+                     "are allowed by the <var>emailregexp</var> param.",
 
   emailsuffix => "This is a string to append to any email addresses when actually " _
                  "sending mail to that address. It is useful if you have changed " _
-                 "the <tt>emailregexp</tt> param to only allow local usernames, " _
+                 "the <var>emailregexp</var> param to only allow local usernames, " _
                  "but you want the mail to be delivered to username@my.local.hostname.",
 
   createemailregexp => "This defines the (case-insensitive) regexp to use for email addresses that are " _
@@ -136,6 +132,12 @@
     "<li>letters_numbers - Passwords must contain at least one UPPER and one " _
     "lower case letter and a number.</li>" _
     "<li>letters_numbers_specialchars - Passwords must contain at least one " _
-    "UPPER or one lower case letter, a number and a special character.</li></ul>"
+    "letter, a number and a special character.</li></ul>"
+
+  password_check_on_login =>
+    "If set, $terms.Bugzilla will check that the password meets the current " _
+    "complexity rules and minimum length requirements  when the user logs " _
+    "into the $terms.Bugzilla web interface. If it doesn't, the user would " _
+    "not be able to log in, and recieve a message to reset their password."
   }
 %]

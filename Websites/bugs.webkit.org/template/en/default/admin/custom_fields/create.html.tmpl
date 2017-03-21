@@ -1,23 +1,14 @@
-[%# The contents of this file are subject to the Mozilla Public
-  # License Version 1.1 (the "License"); you may not use this file
-  # except in compliance with the License. You may obtain a copy of
-  # the License at http://www.mozilla.org/MPL/
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
   #
-  # Software distributed under the License is distributed on an "AS
-  # IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-  # implied. See the License for the specific language governing
-  # rights and limitations under the License.
-  #
-  # The Original Code is the Bugzilla Bug Tracking System.
-  #
-  # Contributor(s): Frédéric Buclin <LpSolit@gmail.com>
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
   #%]
 
 [%# INTERFACE:
   # none
   #%]
-
-[% PROCESS "global/field-descs.none.tmpl" %]
 
 [% javascript = BLOCK %]
   [% INCLUDE "admin/custom_fields/cf-js.js.tmpl" %]
@@ -27,21 +18,21 @@
            title = "Add a new Custom Field"
            onload = "document.getElementById('new_bugmail').disabled = true;"
            javascript_urls = [ 'js/util.js' ]
-           doc_section = "custom-fields.html#add-custom-fields"
+           doc_section = "administering/custom-fields.html#adding-custom-fields"
            style_urls = ['skins/standard/admin.css']
 %]
 
 [%# set initial editability of fields such as Reverse Relationship Description %]
 <script type="text/javascript">
-YAHOO.util.Event.onDOMReady(function() {onChangeType(document.getElementById('type'))});
+  YAHOO.util.Event.onDOMReady(function() {onChangeType(document.getElementById('type'))});
 </script>
 
 <p>
-  Adding custom fields can make the interface of [% terms.Bugzilla %] very
-  complicated. Many admins who are new to [% terms.Bugzilla %] start off
+  Adding custom fields can make the interface of Bugzilla very
+  complicated. Many admins who are new to Bugzilla start off
   adding many custom fields, and then their users complain that the interface
   is "too complex". Please think carefully before adding any custom fields.
-  It may be the case that [% terms.Bugzilla %] already does what you need,
+  It may be the case that Bugzilla already does what you need,
   and you just haven't enabled the correct feature yet.
 </p>
 
@@ -54,119 +45,11 @@ YAHOO.util.Event.onDOMReady(function() {onChangeType(document.getElementById('ty
 </ul>
 
 <form id="add_field" action="editfields.cgi" method="GET">
-  <table border="0" cellspacing="0" cellpadding="5" id="edit_custom_field">
-    <tr>
-      <th class="narrow_label"><label for="name">Name:</label></th>
-      <td>
-        <input type="text" id="name" name="name" value="cf_" size="40" maxlength="64">
-      </td>
+  [% PROCESS "admin/custom_fields/edit-common.html.tmpl" %]
 
-      <th>
-        <label for="enter_bug">Can be set on [% terms.bug %] creation:</label>
-      </th>
-      <td>
-        <input type="checkbox" id="enter_bug" name="enter_bug" value="1"
-               onchange="toggleCheckbox(this, 'new_bugmail');">
-      </td>
-    </tr>
-    <tr>
-      <th class="narrow_label"><label for="desc">Description:</label></th>
-      <td><input type="text" id="desc" name="desc" value="" size="40"></td>
-
-      <th>
-        <label for="new_bugmail">Displayed in [% terms.bug %]mail for new [% terms.bugs %]:</label>
-      </th>
-      <td><input type="checkbox" id="new_bugmail" name="new_bugmail" value="1"></td>
-    </tr>
-    <tr>
-      <th class="narrow_label"><label for="type">Type:</label></th>
-      <td>
-        <select id="type" name="type" onchange="onChangeType(this)">
-          [% FOREACH type = field_types.keys %]
-            [% NEXT IF type == constants.FIELD_TYPE_UNKNOWN %]
-            <option value="[% type FILTER html %]">[% field_types.$type FILTER html %]</option>
-          [% END %]
-        </select>
-      </td>
-
-      <th><label for="obsolete">Is obsolete:</label></th>
-      <td><input type="checkbox" id="obsolete" name="obsolete" value="1"></td>
-    </tr>
-    <tr>
-      <th class="narrow_label"><label for="sortkey">Sortkey:</label></th>
-      <td>
-        <input type="text" id="sortkey" name="sortkey" size="6" maxlength="6">
-      </td>
-
-      <th align="right"><label for="is_mandatory">Is mandatory:</label></th>
-      <td><input type="checkbox" id="is_mandatory" name="is_mandatory" value="1"></td>
-    </tr>
-
-    <tr>
-      <th class="narrow_label">
-        <label for="reverse_desc">Reverse Relationship Description:</label>
-      </th>
-      <td>
-        <input type="text" id="reverse_desc" name="reverse_desc" value="" size="40" disabled="disabled">
-        <br/>
-        Use this label for the list of [% terms.bugs %] that link to
-        [%+ terms.abug %] with this 
-        [%+ field_types.${constants.FIELD_TYPE_BUG_ID} FILTER html %]
-        field. For example, if the description is "Is a duplicate of",
-        the reverse description would be "Duplicates of this [% terms.bug %]".
-        Leave blank to disable the list for this field.
-      </td>
-      <th>
-        <label for="visibility_field_id">Field only appears when:</label>
-      </th>
-      <td>
-        <select name="visibility_field_id" id="visibility_field_id"
-                onchange="onChangeVisibilityField()">
-          <option></option>
-          [% FOREACH sel_field = Bugzilla.fields({ is_select => 1 }) %]
-            <option value="[% sel_field.id FILTER html %]">
-              [% sel_field.description FILTER html %]
-              ([% sel_field.name FILTER html %])
-            </option>
-          [% END %]
-        </select>
-        <label for="visibility_values">
-          <strong>is set to any of:</strong>
-        </label>
-        <select multiple="multiple" size="5" name="visibility_values"
-                id="visibility_values" class="field_value">
-          <option value=""></option>
-        </select>
-      </td>
-    </tr>
-
-    <tr>
-      <td colspan="2">&nbsp;</td>
-      <th>
-        <label for="value_field_id">
-          Field that controls the values<br>
-          that appear in this field:
-        </label>
-      </th>
-
-      <td>
-        <select disabled="disabled" name="value_field_id" id="value_field_id">
-          <option></option>
-          [% FOREACH sel_field = Bugzilla.fields({ is_select => 1 }) %]
-            <option value="[% sel_field.id FILTER html %]">
-              [% sel_field.description FILTER html %]
-              ([% sel_field.name FILTER html %])
-            </option>
-          [% END %]
-        </select>
-      </td>
-    </tr>
-  </table>
-  <p>
-    <input type="hidden" name="action" value="new">
-    <input type="hidden" name="token" value="[% token FILTER html %]">
-    <input type="submit" id="create" value="Create">
-  </p>
+  <input type="hidden" name="action" value="new">
+  <input type="hidden" name="token" value="[% token FILTER html %]">
+  <input type="submit" id="create" value="Create">
 </form>
 
 <p>

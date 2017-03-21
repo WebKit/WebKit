@@ -1,37 +1,20 @@
-[%# The contents of this file are subject to the Mozilla Public
-  # License Version 1.1 (the "License"); you may not use this file
-  # except in compliance with the License. You may obtain a copy of
-  # the License at http://www.mozilla.org/MPL/
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
   #
-  # Software distributed under the License is distributed on an "AS
-  # IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-  # implied. See the License for the specific language governing
-  # rights and limitations under the License.
-  #
-  # The Original Code is the Bugzilla Bug Tracking System.
-  #
-  # The Initial Developer of the Original Code is Netscape Communications
-  # Corporation. Portions created by Netscape are
-  # Copyright (C) 1998 Netscape Communications Corporation. All
-  # Rights Reserved.
-  #
-  # Contributor(s): Terry Weissman <terry@mozilla.org>
-  #                 Gervase Markham <gerv@gerv.net>
-  #                 Toms Baugis <toms@myrealbox.com>
-  #                 Olav Vitters <olav@bkor.dhs.org>
-  #                 Max Kanat-Alexander <mkanat@bugzilla.org>
-  #                 Elliotte Martin <emartin@everythingsolved.com>
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
   #%]
-
-[% PROCESS "global/field-descs.none.tmpl" %]
 
 [% PROCESS global/header.html.tmpl
   title = "Full Text $terms.Bug Listing"
   h1 = ""
-  style_urls = ["skins/standard/show_multiple.css",
-                "skins/standard/buglist.css"]
-  doc_section = "bug_page.html"
+  style_urls = ['skins/standard/buglist.css']
+  doc_section = "using/understanding.html"
 %]
+
+[% USE Bugzilla %]
+
 [% PROCESS bug/time.html.tmpl %]
 [% IF bugs.first %]
   [% ids = [] %]
@@ -65,19 +48,20 @@
   <h1>
     [% terms.Bug %] 
     <a href="show_bug.cgi?id=[% bug.bug_id FILTER html %]">[% bug.bug_id FILTER html %]</a>
-    [% IF Param("usebugaliases") AND bug.alias AND NOT bug.error %]
-      (<a href="show_bug.cgi?id=[% bug.alias FILTER uri %]">
-        [% bug.alias FILTER html %]</a>)
+    [% IF bug.alias.size AND NOT bug.error %] (
+      [%- FOREACH alias IN bug.alias %]<a href="show_bug.cgi?id=[% alias FILTER uri %]">
+        [% alias FILTER html %]</a>[% UNLESS loop.last %], [% END %]
+      [%- END %])
     [% END %]
   </h1>
 
   <table class="bugfields">
   [% IF bug.error %]
     <tr>
-      <td class="error">
+      <td class="warning">
         [% IF bug.error == "InvalidBugId" %]
           '[%+ bug.bug_id FILTER html %]' is not a valid [% terms.bug %] number
-          [%- IF Param("usebugaliases") %] nor a known [% terms.bug %] alias[% END %].
+          nor a known [% terms.bug %] alias.
         [% ELSIF bug.error == "NotPermitted" %]
           You are not allowed to view this [% terms.bug %].
         [% ELSIF bug.error == "NotFound" %]
@@ -95,7 +79,7 @@
       [% rightcells.push('qa_contact') %]
     [% END %]
     [% rightcells.push('') %]
-    [% IF bug.cc %]
+    [% IF bug.cc.size %]
       [% rightcells.push('cc') %]
     [% END %]
     [% IF bug.keywords %]
@@ -164,7 +148,7 @@
         <th>[% field_descs.bug_file_loc FILTER html %]:</th>
         <td colspan="3">
           [% IF is_safe_url(bug.bug_file_loc) %]
-            <a href="[% bug.bug_file_loc FILTER html %]">
+            <a href="[% bug.bug_file_loc FILTER html %]" rel="noreferrer">
                      [% bug.bug_file_loc FILTER html %]</a>
           [% ELSE %]
             [% bug.bug_file_loc FILTER html %]
@@ -189,7 +173,6 @@
       [% PROCESS row cell = "status_whiteboard" fullrow = 1 %]
     [% END %]
 
-    [% USE Bugzilla %]
     [% field_counter = 0 %]
     [% FOREACH field = Bugzilla.active_custom_fields %]
         [% field_counter = field_counter + 1 %]
@@ -252,6 +235,8 @@
           </table>
         </td>
       </tr>
+    [% END %]
+    [% IF Param("timetrackinggroup") && bug.deadline %]
       [% PROCESS row cell="deadline" %]
     [% END %]
 
@@ -278,7 +263,7 @@
                     [% ELSE %]
                       [% FOREACH flag = attachment.flags %]
                         [% flag.setter.nick FILTER html %]:
-                        [%+ flag.type.name FILTER html FILTER no_break %][% flag.status %]
+                        <span class="nowrap">[%+ flag.type.name FILTER html %][% flag.status %]</span>
                         [% IF flag.status == "?" && flag.requestee %]
                           ([% flag.requestee.nick FILTER html %])
                         [% END %][% ", " IF not loop.last() %]
@@ -367,7 +352,7 @@
           [% FOREACH type = bug.flag_types %]
             [% FOREACH flag = type.flags %]
                 [% flag.setter.nick FILTER html %]:
-                [%+ flag.type.name FILTER html FILTER no_break %][% flag.status %]
+                <span class="nowrap">[%+ flag.type.name FILTER html %][% flag.status %]</span>
                 [%+ IF flag.status == "?" && flag.requestee %]
                   ([% flag.requestee.nick FILTER html %])
                 [% END %]<br>

@@ -1,64 +1,24 @@
-[%# The contents of this file are subject to the Mozilla Public
-  # License Version 1.1 (the "License"); you may not use this file
-  # except in compliance with the License. You may obtain a copy of
-  # the License at http://www.mozilla.org/MPL/
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
   #
-  # Software distributed under the License is distributed on an "AS
-  # IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-  # implied. See the License for the specific language governing
-  # rights and limitations under the License.
-  #
-  # The Original Code is the Bugzilla Bug Tracking System.
-  #
-  # The Initial Developer of the Original Code is Netscape Communications
-  # Corporation. Portions created by Netscape are
-  # Copyright (C) 1998 Netscape Communications Corporation. All
-  # Rights Reserved.
-  #
-  # Contributor(s): Myk Melez <myk@mozilla.org>
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
   #%]
-
-[% PROCESS global/variables.none.tmpl %]
 
 [% USE Bugzilla %]
 [% cgi = Bugzilla.cgi %]
 
+[% PROCESS "global/js-products.html.tmpl" %]
+
 [% PROCESS global/header.html.tmpl
   title="Request Queue"
-  style = "
-    table.requests th { text-align: left; }
-    table#filtering th { text-align: right; }
-  "
-  onload="var f = document.request_form; selectProduct(f.product, f.component, null, null, 'Any');"
+  generate_api_token = 1
+  onload="var f = document.request_form; selectProduct(f.product, f.component, 'Any');"
   javascript_urls=["js/productform.js", "js/field.js"]
   style_urls = ['skins/standard/buglist.css']
   yui = ['autocomplete']
 %]
-
-<script type="text/javascript">
-  var useclassification = false; // No classification level in use
-  var first_load = true; // Is this the first time we load the page?
-  var last_sel = []; // Caches last selection
-  var cpts = new Array();
-  [% n = 1 %]
-  [% IF Param('useclassification') %]
-    [% FOREACH clas = user.get_selectable_classifications %]
-      [% FOREACH prod = user.get_selectable_products(clas.id) %]
-        [%+ PROCESS js_comp %]
-      [% END %]
-    [% END %]
-  [% ELSE %]
-    [% FOREACH prod = user.get_selectable_products %]
-      [%+ PROCESS js_comp %]
-    [% END %]
-  [% END %]
-</script>
-
-[% BLOCK js_comp %]
-  cpts['[% n %]'] = [
-    [%- FOREACH comp = prod.components %]'[% comp.name FILTER js %]'[% ", " UNLESS loop.last %] [%- END -%]];
-  [% n = n+1 %]
-[% END %]
 
 <p>
 When you are logged in, only requests made by you or addressed to you
@@ -85,28 +45,12 @@ to some group are shown by default.
       </td>
       <th>Product:</th>
       <td>
-        <select name="product" onchange="selectProduct(this, this.form.component, null, null, 'Any');">
-          <option value="">Any</option>
-          [% IF Param('useclassification') %]
-            [% FOREACH c = user.get_selectable_classifications %]
-              <optgroup label="[% c.name FILTER html %]">
-                [% FOREACH p = user.get_selectable_products(c.id) %]
-                  <option value="[% p.name FILTER html %]"
-                    [% " selected" IF cgi.param('product') == p.name %]>
-                    [% p.name FILTER html %]
-                  </option>
-                [% END %]
-              </optgroup>
-            [% END %]
-          [% ELSE %]
-            [% FOREACH p = user.get_selectable_products %]
-              <option value="[% p.name FILTER html %]"
-                [% " selected" IF cgi.param('product') == p.name %]>
-                [% p.name FILTER html %]
-              </option>
-            [% END %]
-          [% END %]
-        </select>
+        [% INCLUDE "global/product-select.html.tmpl"
+           id       => "product"
+           name     => "product"
+           add      => "Any"
+           onchange => "selectProduct(this, this.form.component, 'Any');"
+        %]
       </td>
       <th>Flag:</th>
       <td>
@@ -161,10 +105,20 @@ to some group are shown by default.
           } %]
         [% PROCESS "global/select-menu.html.tmpl" name="group" options=groups default=cgi.param('group') %]
       </td>
+    </tr>
+    <tr>
+      <th></th>
+      <td>
+        <select id="do_union" name="do_union">
+          <option value="0">Match the requester AND requestee</option>
+          <option value="1" [% 'selected="selected"' IF cgi.param('do_union') %]>
+            Match the requester OR requestee</option>
+        </select>
+      </td>
+      <td colspan="3"></td>
       <td><input type="submit" id="filter" value="Filter"></td>
     </tr>
   </table>
-
 </form>
 
 [% column_headers = {
@@ -209,6 +163,8 @@ to some group are shown by default.
     </tr>
   [% END %]
   [% PROCESS display_buglist %]
+  <br><br>
+  <a href="request.cgi?[% urlquerypart FILTER html %]&amp;ctype=csv">View entire list as CSV</a>
 [% END %]
 
 [% PROCESS global/footer.html.tmpl %]
@@ -218,7 +174,7 @@ to some group are shown by default.
 
   <h3>[% column_headers.$group_field %]: 
     [%+ (request.$group_field || "None") FILTER email FILTER html %]</h3>
-  <table class="requests" cellspacing="0" cellpadding="4" border="1">
+  <table class="requests">
     <tr>
       [% FOREACH column = display_columns %]
         [% NEXT IF column == group_field || excluded_columns.contains(column) %]
@@ -268,6 +224,6 @@ to some group are shown by default.
   </table>
   [% NEXT UNLESS buglist.keys.size %]
   <a href="buglist.cgi?bug_id=
-           [%- buglist.keys.nsort.join(",") FILTER html %]">(view as
-  [%+ terms.bug %] list)</a>
+           [%- buglist.keys.nsort.join(",") FILTER html %]">View as
+  [%+ terms.bug %] list</a>
 [% END %]

@@ -1,22 +1,9 @@
-[%# The contents of this file are subject to the Mozilla Public
-  # License Version 1.1 (the "License"); you may not use this file
-  # except in compliance with the License. You may obtain a copy of
-  # the License at http://www.mozilla.org/MPL/
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
   #
-  # Software distributed under the License is distributed on an "AS
-  # IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-  # implied. See the License for the specific language governing
-  # rights and limitations under the License.
-  #
-  # The Original Code is the Bugzilla Bug Tracking System.
-  #
-  # The Initial Developer of the Original Code is Netscape Communications
-  # Corporation. Portions created by Netscape are
-  # Copyright (C) 1998 Netscape Communications Corporation. All
-  # Rights Reserved.
-  #
-  # Contributor(s): Gervase Markham <gerv@gerv.net>
-  #                 Max Kanat-Alexander <mkanat@bugzilla.org>
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
   #%]
 
 [%# INTERFACE:
@@ -26,8 +13,6 @@
   #   vote_count: integer. The number of times that user has votes for this bug.
   #%]
 
-[% PROCESS global/variables.none.tmpl %]
-
 [% subheader = BLOCK %]
   [% "$terms.Bug $bug.id" FILTER bug_link(bug) FILTER none %] - [% bug.short_desc FILTER html %]
 [% END %]
@@ -35,10 +20,11 @@
 [% PROCESS global/header.html.tmpl
            title = "Show Votes"
            subheader = subheader
+           style_urls = [ "extensions/Voting/web/style.css" ]
  %]
 
 [% total = 0 %]
-<table cellspacing="4">
+<table id="bug_votes">
   <tr>
     <th>Who</th>
     <th>Number of votes</th>
@@ -53,7 +39,7 @@
           [% voter.login_name FILTER email FILTER html %]
         </a>
       </td>
-      <td align="right">
+      <td class="right">
         [% voter.vote_count FILTER html %]
       </td>
     </tr>

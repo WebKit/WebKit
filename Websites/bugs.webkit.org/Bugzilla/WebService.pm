@@ -1,24 +1,18 @@
-# -*- Mode: perl; indent-tabs-mode: nil -*-
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
-# The contents of this file are subject to the Mozilla Public
-# License Version 1.1 (the "License"); you may not use this file
-# except in compliance with the License. You may obtain a copy of
-# the License at http://www.mozilla.org/MPL/
-#
-# Software distributed under the License is distributed on an "AS
-# IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-# implied. See the License for the specific language governing
-# rights and limitations under the License.
-#
-# The Original Code is the Bugzilla Bug Tracking System.
-#
-# Contributor(s): Marc Schumann <wurblzap@gmail.com>
-#                 Max Kanat-Alexander <mkanat@bugzilla.org>
+# This Source Code Form is "Incompatible With Secondary Licenses", as
+# defined by the Mozilla Public License, v. 2.0.
 
 # This is the base class for $self in WebService method calls. For the 
 # actual RPC server, see Bugzilla::WebService::Server and its subclasses.
 package Bugzilla::WebService;
+
+use 5.10.1;
 use strict;
+use warnings;
+
 use Bugzilla::WebService::Server;
 
 # Used by the JSON-RPC server to convert incoming date fields apprpriately.
@@ -32,6 +26,10 @@ use constant LOGIN_EXEMPT => { };
 # Used to allow methods to be called in the JSON-RPC WebService via GET.
 # Methods that can modify data MUST not be listed here.
 use constant READ_ONLY => ();
+
+# Whitelist of methods that a client is allowed to access when making
+# an API call.
+use constant PUBLIC_METHODS => ();
 
 sub login_exempt {
     my ($class, $method) = @_;
@@ -52,14 +50,19 @@ This is the standard API for external programs that want to interact
 with Bugzilla. It provides various methods in various modules.
 
 You can interact with this API via
-L<XML-RPC|Bugzilla::WebService::Server::XMLRPC> or
-L<JSON-RPC|Bugzilla::WebService::Server::JSONRPC>.
+L<XML-RPC|Bugzilla::WebService::Server::XMLRPC>,
+L<JSON-RPC|Bugzilla::WebService::Server::JSONRPC> or
+L<REST|Bugzilla::WebService::Server::REST>.
 
 =head1 CALLING METHODS
 
-Methods are grouped into "packages", like C<Bug> for 
+Methods are grouped into "packages", like C<Bug> for
 L<Bugzilla::WebService::Bug>. So, for example,
 L<Bugzilla::WebService::Bug/get>, is called as C<Bug.get>.
+
+For REST, the "package" is more determined by the path
+used to access the resource. See each relevant method
+for specific details on how to access via REST.
 
 =head1 PARAMETERS
 
@@ -78,6 +81,11 @@ A floating-point number. May be null.
 =item C<string>
 
 A string. May be null.
+
+=item C<email>
+
+A string representing an email address. This value, when returned, 
+may be filtered based on if the user is logged in or not. May be null.
 
 =item C<dateTime>
 
@@ -131,16 +139,22 @@ how this is implemented for those frontends.
 
 =head1 LOGGING IN
 
-There are various ways to log in:
+Some methods do not require you to log in. An example of this is Bug.get.
+However, authenticating yourself allows you to see non public information. For
+example, a bug that is not publicly visible.
+
+There are two ways to authenticate yourself:
 
 =over
 
-=item C<User.login>
+=item C<Bugzilla_api_key>
 
-You can use L<Bugzilla::WebService::User/login> to log in as a Bugzilla 
-user. This issues standard HTTP cookies that you must then use in future
-calls, so your client must be capable of receiving and transmitting
-cookies.
+B<Added in Bugzilla 5.0>
+
+You can specify C<Bugzilla_api_key> as an argument to any WebService method, and
+you will be logged in as that user if the key is correct, and has not been
+revoked. You can set up an API key by using the 'API Key' tab in the
+Preferences pages.
 
 =item C<Bugzilla_login> and C<Bugzilla_password>
 
@@ -160,19 +174,42 @@ WebService method to perform a login:
 =item C<Bugzilla_restrictlogin> (boolean) - Optional. If true,
 then your login will only be valid for your IP address.
 
-=item C<Bugzilla_rememberlogin> (boolean) - Optional. If true,
-then the cookie sent back to you with the method response will
-not expire.
+=back
+
+The C<Bugzilla_restrictlogin> option is only used when you have also
+specified C<Bugzilla_login> and C<Bugzilla_password>. This value will be
+deprecated in the release after Bugzilla 5.0 and you will be required to
+pass the Bugzilla_login and Bugzilla_password for every call.
+
+For REST, you may also use the C<login> and C<password> variable
+names instead of C<Bugzilla_login> and C<Bugzilla_password> as a
+convenience. You may also use C<token> instead of C<Bugzilla_token>.
 
 =back
 
-The C<Bugzilla_restrictlogin> and C<Bugzilla_rememberlogin> options
-are only used when you have also specified C<Bugzilla_login> and 
-C<Bugzilla_password>.
+There are also two deprecreated methods of authentications. This will be
+removed in the version after Bugzilla 5.0.
 
-Note that Bugzilla will return HTTP cookies along with the method
-response when you use these arguments (just like the C<User.login> method
-above).
+=over
+
+=item C<User.login>
+
+You can use L<Bugzilla::WebService::User/login> to log in as a Bugzilla
+user. This issues a token that you must then use in future calls.
+
+=item C<Bugzilla_token>
+
+B<Added in Bugzilla 4.4.3>
+
+You can specify C<Bugzilla_token> as argument to any WebService method,
+and you will be logged in as that user if the token is correct. This is
+the token returned when calling C<User.login> mentioned above.
+
+An error is thrown if you pass an invalid token and you will need to log
+in again to get a new token.
+
+Token support was added in Bugzilla B<5.0> and support for login cookies
+has been dropped for security reasons.
 
 =back
 
@@ -268,6 +305,9 @@ would return something like:
 
   { users => [{ id => 1, name => 'user@domain.com' }] }
 
+Note for REST, C<include_fields> may instead be a comma delimited string
+for GET type requests.
+
 =item C<exclude_fields>
 
 C<array> An array of strings, representing the (case-sensitive) names of
@@ -276,6 +316,13 @@ the returned hashes.
 
 If you specify all the fields, then this function will return empty
 hashes.
+
+Some RPC calls support specifying sub fields. If an RPC call states that
+it support sub field restrictions, you can restrict what information is
+returned within the first field. For example, if you call Product.get
+with an include_fields of components.name, then only the component name
+would be returned (and nothing else). You can include the main field,
+and exclude a sub field.
 
 Invalid field names are ignored.
 
@@ -289,6 +336,37 @@ Example:
 would return something like:
 
   { users => [{ id => 1, real_name => 'John Smith' }] }
+
+Note for REST, C<exclude_fields> may instead be a comma delimited string
+for GET type requests.
+
+=back
+
+There are several shortcut identifiers to ask for only certain groups of
+fields to be returned or excluded.
+
+=over
+
+=item C<_all>
+
+All possible fields are returned if C<_all> is specified in C<include_fields>.
+
+=item C<_default>
+
+These fields are returned if C<include_fields> is empty or C<_default>
+is specified. All fields described in the documentation are returned
+by default unless specified otherwise.
+
+=item C<_extra>
+
+These fields are not returned by default and need to be manually specified
+in C<include_fields> either by field name, or using C<_extra>.
+
+=item C<_custom>
+
+Only custom fields are returned if C<_custom> is specified in C<include_fields>.
+This is normally specific to bug objects and not relevant for other returned
+objects.
 
 =back
 
@@ -304,7 +382,7 @@ would return something like:
 
 =back
 
-=head2 WebService Methods
+=head2 WebService Modules
 
 =over
 
@@ -312,10 +390,24 @@ would return something like:
 
 =item L<Bugzilla::WebService::Bugzilla>
 
+=item L<Bugzilla::WebService::Classification>
+
+=item L<Bugzilla::WebService::FlagType>
+
+=item L<Bugzilla::WebService::Component>
+
 =item L<Bugzilla::WebService::Group>
 
 =item L<Bugzilla::WebService::Product>
 
 =item L<Bugzilla::WebService::User>
+
+=back
+
+=head1 B<Methods in need of POD>
+
+=over
+
+=item login_exempt
 
 =back

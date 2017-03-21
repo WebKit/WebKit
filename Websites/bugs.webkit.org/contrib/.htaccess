@@ -1,3 +1,13 @@
 # nothing in this directory is retrievable unless overridden by an .htaccess
 # in a subdirectory
-deny from all
+<IfModule mod_version.c>
+  <IfVersion < 2.4>
+    Deny from all
+  </IfVersion>
+  <IfVersion >= 2.4>
+    Require all denied
+  </IfVersion>
+</IfModule>
+<IfModule !mod_version.c>
+  Deny from all
+</IfModule>

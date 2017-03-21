@@ -1,40 +1,10 @@
-#!/bin/env perl
-# -*- Mode: perl; indent-tabs-mode: nil -*-
+#!/usr/bin/perl
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
-# The contents of this file are subject to the Mozilla Public
-# License Version 1.1 (the "License"); you may not use this file
-# except in compliance with the License. You may obtain a copy of
-# the License at http://www.mozilla.org/MPL/
-#
-# Software distributed under the License is distributed on an "AS
-# IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-# implied. See the License for the specific language governing
-# rights and limitations under the License.
-#
-# The Original Code is mozilla.org code.
-#
-# The Initial Developer of the Original Code is Holger
-# Schurig. Portions created by Holger Schurig are
-# Copyright (C) 1999 Holger Schurig. All
-# Rights Reserved.
-#
-# Contributor(s): Holger Schurig <holgerschurig@nikocity.de>
-#                 Terry Weissman <terry@mozilla.org>
-#                 Dan Mosedale <dmose@mozilla.org>
-#                 Dave Miller <justdave@syndicomm.com>
-#                 Zach Lipton  <zach@zachlipton.com>
-#                 Jacob Steenhagen <jake@bugzilla.org>
-#                 Bradley Baetz <bbaetz@student.usyd.edu.au>
-#                 Tobias Burnus <burnus@net-b.de>
-#                 Shane H. W. Travis <travis@sedsystems.ca>
-#                 Gervase Markham <gerv@gerv.net>
-#                 Erik Stambaugh <erik@dasbistro.com>
-#                 Dave Lawrence <dkl@redhat.com>
-#                 Max Kanat-Alexander <mkanat@bugzilla.org>
-#                 Joel Peshkin <bugreport@peshkin.net>
-#                 Lance Larsh <lance.larsh@oracle.com>
-#                 A. Karl Kornel <karl@kornel.name>
-#                 Marc Schumann <wurblzap@gmail.com>
+# This Source Code Form is "Incompatible With Secondary Licenses", as
+# defined by the Mozilla Public License, v. 2.0.
 
 # This file has detailed POD docs, do "perldoc checksetup.pl" to see them.
 
@@ -42,15 +12,18 @@
 # Initialization
 ######################################################################
 
+use 5.10.1;
 use strict;
-use 5.008001;
+use warnings;
+
 use File::Basename;
+BEGIN { chdir dirname($0); }
+use lib qw(. lib);
+
 use Getopt::Long qw(:config bundling);
 use Pod::Usage;
 use Safe;
 
-BEGIN { chdir dirname($0); }
-use lib qw(. lib);
 use Bugzilla::Constants;
 use Bugzilla::Install::Requirements;
 use Bugzilla::Install::Util qw(install_string get_version_and_os 
@@ -81,14 +54,14 @@ my $answers_file = $ARGV[0];
 my $silent = $answers_file && !$switch{'verbose'};
 
 print(install_string('header', get_version_and_os()) . "\n") unless $silent;
-exit if $switch{'version'};
+exit 0 if $switch{'version'};
 # Check required --MODULES--
 my $module_results = check_requirements(!$silent);
 Bugzilla::Install::Requirements::print_module_instructions(
     $module_results, !$silent);
-exit if !$module_results->{pass};
+exit 1 if !$module_results->{pass};
 # Break out if checking the modules is all we have been asked to do.
-exit if $switch{'check-modules'};
+exit 0 if $switch{'check-modules'};
 
 ###########################################################################
 # Load Bugzilla Modules
@@ -137,7 +110,7 @@ my $lc_hash = Bugzilla->localconfig;
 
 # At this point, localconfig is defined and is readable. So we know
 # everything we need to create the DB. We have to create it early,
-# because some data required to populate data/params is stored in the DB.
+# because some data required to populate data/params.json is stored in the DB.
 
 Bugzilla::DB::bz_check_requirements(!$silent);
 Bugzilla::DB::bz_create_database() if $lc_hash->{'db_check'};
@@ -235,6 +208,9 @@ Bugzilla::Hook::process('install_before_final_checks', { silent => $silent });
 ###########################################################################
 # Final checks
 ###########################################################################
+
+# Clear all keys from Memcached
+Bugzilla->memcached->clear_all();
 
 # Check if the default parameter for urlbase is still set, and if so, give
 # notification that they should go and visit editparams.cgi 
@@ -389,7 +365,7 @@ L<Bugzilla::Install::Filesystem/create_htaccess>.
 
 =item 9
 
-Updates the system parameters (stored in F<data/params>), using
+Updates the system parameters (stored in F<data/params.json>), using
 L<Bugzilla::Config/update_params>.
 
 =item 10
@@ -482,8 +458,6 @@ The format of that file is as follows:
  $answer{'ADMIN_PASSWORD'} = 'fooey';
  $answer{'ADMIN_REALNAME'} = 'Joel Peshkin';
 
- $answer{'SMTP_SERVER'} = 'mail.mydomain.net';
-
  $answer{'NO_PAUSE'} = 1
 
 C<NO_PAUSE> means "never stop and prompt the user to hit Enter to continue,
@@ -523,4 +497,3 @@ L<Bugzilla::Config/update_params>
 L<Bugzilla::DB/CONNECTION>
 
 =back
-

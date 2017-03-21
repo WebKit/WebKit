@@ -1,0 +1,162 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+[% USE Bugzilla %]
+<!ELEMENT bugzilla (bug+)>
+<!ATTLIST bugzilla
+          version CDATA #REQUIRED
+          urlbase CDATA #REQUIRED
+          maintainer CDATA #REQUIRED
+          exporter CDATA #IMPLIED
+>
+<!ELEMENT [% "bug" %] (bug_id, 
+               (alias*,
+                creation_ts, 
+                short_desc, 
+                delta_ts, 
+                reporter_accessible, 
+                cclist_accessible, 
+                classification_id, 
+                classification, 
+                product, 
+                component, 
+                version, 
+                rep_platform, 
+                op_sys, 
+                bug_status, 
+                resolution?, 
+                dup_id?, 
+                see_also*, 
+                bug_file_loc?, 
+                status_whiteboard?, 
+                keywords*, 
+                priority, 
+                bug_severity, 
+                target_milestone?, 
+                dependson*, 
+                blocked*, 
+                everconfirmed, 
+                reporter, 
+                assigned_to, 
+                cc*, 
+                (estimated_time, 
+                 remaining_time, 
+                 actual_time, 
+                 deadline?)?, 
+                qa_contact?,
+[% FOREACH field = Bugzilla.active_custom_fields %]
+                [%+ field.name FILTER xml -%]
+                [%- IF field.type == constants.FIELD_TYPE_MULTI_SELECT %]*[% ELSE %]?[% END %], 
+[% END %]
+                votes?, 
+                token?, 
+                group*, 
+                flag*, 
+                comment_sort_order*,
+                long_desc*, 
+                attachment*)?)>
+<!ATTLIST [% "bug" %]
+          error (NotFound | NotPermitted | InvalidBugId) #IMPLIED
+>
+<!ELEMENT bug_id (#PCDATA)>
+<!ELEMENT alias (#PCDATA)>
+<!ELEMENT reporter_accessible (#PCDATA)>
+<!ELEMENT cclist_accessible (#PCDATA)>
+<!ELEMENT exporter (#PCDATA)>
+<!ELEMENT urlbase (#PCDATA)>
+<!ELEMENT bug_status (#PCDATA)>
+<!ELEMENT classification_id (#PCDATA)>
+<!ELEMENT classification (#PCDATA)>
+<!ELEMENT product (#PCDATA)>
+<!ELEMENT priority (#PCDATA)>
+<!ELEMENT version (#PCDATA)>
+<!ELEMENT rep_platform (#PCDATA)>
+<!ELEMENT assigned_to (#PCDATA)>
+<!ATTLIST assigned_to 
+          name CDATA #REQUIRED
+>
+<!ELEMENT delta_ts (#PCDATA)>
+<!ELEMENT component (#PCDATA)>
+<!ELEMENT reporter (#PCDATA)>
+<!ATTLIST reporter
+          name CDATA #REQUIRED
+>
+<!ELEMENT target_milestone (#PCDATA)>
+<!ELEMENT bug_severity (#PCDATA)>
+<!ELEMENT creation_ts (#PCDATA)>
+<!ELEMENT qa_contact (#PCDATA)>
+<!ATTLIST qa_contact
+          name CDATA #REQUIRED
+>
+<!ELEMENT status_whiteboard (#PCDATA)>
+<!ELEMENT op_sys (#PCDATA)>
+<!ELEMENT resolution (#PCDATA)>
+<!ELEMENT dup_id (#PCDATA)>
+<!ELEMENT bug_file_loc (#PCDATA)>
+<!ELEMENT short_desc (#PCDATA)>
+<!ELEMENT keywords (#PCDATA)>
+<!ELEMENT dependson (#PCDATA)>
+<!ELEMENT blocked (#PCDATA)>
+<!ELEMENT everconfirmed (#PCDATA)>
+<!ELEMENT cc (#PCDATA)>
+<!ELEMENT see_also (#PCDATA)>
+<!ELEMENT votes (#PCDATA)>
+<!ELEMENT token (#PCDATA)>
+<!ELEMENT group (#PCDATA)>
+<!ATTLIST group
+          id CDATA #REQUIRED
+>
+<!ELEMENT estimated_time (#PCDATA)>
+<!ELEMENT remaining_time (#PCDATA)>
+<!ELEMENT actual_time (#PCDATA)>
+<!ELEMENT deadline (#PCDATA)>
+[% FOREACH field = Bugzilla.active_custom_fields %]
+<!ELEMENT [% field.name FILTER xml %] (#PCDATA)>
+[% END %]
+<!ELEMENT comment_sort_order (#PCDATA)>
+<!ELEMENT long_desc (commentid, comment_count, attachid?, who, bug_when, work_time?, thetext)>
+<!ATTLIST long_desc
+          isprivate (0|1) #REQUIRED
+>
+<!ELEMENT commentid (#PCDATA)>
+<!ELEMENT comment_count (#PCDATA)>
+<!ELEMENT who (#PCDATA)>
+<!ATTLIST who
+          name CDATA #REQUIRED
+>
+<!ELEMENT bug_when (#PCDATA)>
+<!ELEMENT work_time (#PCDATA)>
+<!ELEMENT thetext (#PCDATA)>
+<!ELEMENT attachment (attachid, date, delta_ts, desc, filename, type, size, attacher, token?, data?, flag*)>
+<!ATTLIST attachment
+          isobsolete (0|1) #REQUIRED
+          ispatch (0|1) #REQUIRED
+          isprivate (0|1) #REQUIRED
+>
+<!ELEMENT attacher (#PCDATA)>
+<!ATTLIST attacher
+          name CDATA #REQUIRED
+>
+<!ELEMENT attachid (#PCDATA)>
+<!ELEMENT date (#PCDATA)>
+<!ELEMENT desc (#PCDATA)>
+<!ELEMENT filename (#PCDATA)>
+<!ELEMENT type (#PCDATA)>
+<!ELEMENT size (#PCDATA)>
+<!ELEMENT data (#PCDATA)>
+<!ATTLIST data
+          encoding (base64) #IMPLIED
+>
+<!ELEMENT flag EMPTY>
+<!ATTLIST flag
+          name CDATA #REQUIRED
+          id CDATA #REQUIRED
+          type_id CDATA #REQUIRED 
+          status CDATA #REQUIRED
+          setter CDATA #REQUIRED
+          requestee CDATA #IMPLIED
+>

@@ -1,27 +1,15 @@
-[%# The contents of this file are subject to the Mozilla Public
-  # License Version 1.1 (the "License"); you may not use this file
-  # except in compliance with the License. You may obtain a copy of
-  # the License at http://www.mozilla.org/MPL/
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
   #
-  # Software distributed under the License is distributed on an "AS
-  # IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-  # implied. See the License for the specific language governing
-  # rights and limitations under the License.
-  #
-  # The Original Code is the Bugzilla Bug Tracking System.
-  #
-  # The Initial Developer of the Original Code is Netscape Communications
-  # Corporation. Portions created by Netscape are
-  # Copyright (C) 1998 Netscape Communications Corporation. All
-  # Rights Reserved.
-  #
-  # Contributor(s): Bradley Baetz <bbaetz@student.usyd.edu.au>
-  #                 Colin Ogilvie <mozilla@colinogilvie.co.uk>
-  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
   #%]
 [% PROCESS bug/time.html.tmpl %]
+[% USE Bugzilla %]
+[% cgi = Bugzilla.cgi %]
 <?xml version="1.0" [% IF Param('utf8') %]encoding="UTF-8" [% END %]standalone="yes" ?>
-<!DOCTYPE bugzilla SYSTEM "[% urlbase FILTER html %]bugzilla.dtd">
+<!DOCTYPE bugzilla [% IF cgi.param('dtd') %][[% PROCESS pages/bugzilla.dtd.tmpl %]][% ELSE %]SYSTEM "[% urlbase FILTER xml %]page.cgi?id=bugzilla.dtd"[% END %]>
 
 <bugzilla version="[% constants.BUGZILLA_VERSION %]"
           urlbase="[% urlbase FILTER xml %]"
@@ -65,20 +53,11 @@
       [% PROCESS section_flags obj => bug %]
 
       [% IF displayfields.long_desc %]
+          [% sort_order = user.settings.comment_sort_order.value %]
+          <comment_sort_order>[% sort_order FILTER xml %]</comment_sort_order>  
+          
         [% FOREACH c = bug.comments %]
-          [% NEXT IF c.is_private && !user.is_insider %]
-          <long_desc isprivate="[% c.is_private FILTER xml %]">
-            <commentid>[% c.id FILTER xml %]</commentid>
-            [% IF c.is_about_attachment %]
-              <attachid>[% c.extra_data FILTER xml %]</attachid>
-            [% END %]
-            <who name="[% c.author.name FILTER xml %]">[% c.author.email FILTER email FILTER xml %]</who>
-            <bug_when>[% c.creation_ts FILTER time("%Y-%m-%d %T %z") FILTER xml %]</bug_when>
-            [% IF user.is_timetracker && (c.work_time - 0 != 0) %]
-              <work_time>[% PROCESS formattimeunit time_unit = c.work_time FILTER xml %]</work_time>
-            [% END %]
-            <thetext>[% c.body_full FILTER xml %]</thetext>
-          </long_desc>
+          [% PROCESS a_comment %]
         [% END %]
       [% END %]
       
@@ -97,7 +76,8 @@
             <filename>[% a.filename FILTER xml %]</filename>
             <type>[% a.contenttype FILTER xml %]</type>
             <size>[% a.datasize FILTER xml %]</size>
-            <attacher>[% a.attacher.email FILTER email FILTER xml %]</attacher>
+            <attacher[% IF a.attacher.name != '' %] name="[% a.attacher.name FILTER xml %]"[% END -%]>
+            [% a.attacher.email FILTER email FILTER xml %]</attacher>
             [%# This is here so automated clients can still use attachment.cgi %]
             [% IF displayfields.token && user.id %]
               <token>[% issue_hash_token([a.id, a.modification_time]) FILTER xml %]</token>
@@ -161,4 +141,21 @@
       [% END %]
     />
   [% END %]
+[% END %]
+
+[% BLOCK a_comment %]
+  [% RETURN IF c.is_private && !user.is_insider %]
+  <long_desc isprivate="[% c.is_private FILTER xml %]" >
+    <commentid>[% c.id FILTER xml %]</commentid>
+    <comment_count>[% c.count FILTER xml %]</comment_count>
+    [% IF c.is_about_attachment %]
+      <attachid>[% c.extra_data FILTER xml %]</attachid>
+    [% END %]
+    <who name="[% c.author.name FILTER xml %]">[% c.author.email FILTER email FILTER xml %]</who>
+    <bug_when>[% c.creation_ts FILTER time("%Y-%m-%d %T %z") FILTER xml %]</bug_when>
+    [% IF user.is_timetracker && (c.work_time - 0 != 0) %]
+      <work_time>[% PROCESS formattimeunit time_unit = c.work_time FILTER xml %]</work_time>
+    [% END %]
+    <thetext>[% c.body_full FILTER xml %]</thetext>
+  </long_desc>
 [% END %]

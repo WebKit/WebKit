@@ -1,37 +1,27 @@
-# -*- Mode: perl; indent-tabs-mode: nil -*-
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
-# The contents of this file are subject to the Mozilla Public
-# License Version 1.1 (the "License"); you may not use this file
-# except in compliance with the License. You may obtain a copy of
-# the License at http://www.mozilla.org/MPL/
-#
-# Software distributed under the License is distributed on an "AS
-# IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-# implied. See the License for the specific language governing
-# rights and limitations under the License.
-#
-# The Original Code is the Bugzilla Bug Tracking System.
-#
-# The Initial Developer of the Original Code is Everything Solved, Inc.
-# Portions created by the Initial Developers are Copyright (C) 2009 the
-# Initial Developer. All Rights Reserved.
-#
-# Contributor(s):
-#   Max Kanat-Alexander <mkanat@bugzilla.org>
-#   Frédéric Buclin <LpSolit@gmail.com>
+# This Source Code Form is "Incompatible With Secondary Licenses", as
+# defined by the Mozilla Public License, v. 2.0.
 
 package Bugzilla::Extension::Example;
+
+use 5.10.1;
 use strict;
-use base qw(Bugzilla::Extension);
+use warnings;
+
+use parent qw(Bugzilla::Extension);
 
 use Bugzilla::Constants;
 use Bugzilla::Error;
 use Bugzilla::Group;
 use Bugzilla::User;
 use Bugzilla::User::Setting;
-use Bugzilla::Util qw(diff_arrays html_quote);
+use Bugzilla::Util qw(diff_arrays html_quote remote_ip);
 use Bugzilla::Status qw(is_open_state);
 use Bugzilla::Install::Filesystem;
+use Bugzilla::WebService::Constants;
 
 # This is extensions/Example/lib/Util.pm. I can load this here in my
 # Extension.pm only because I have a Config.pm.
@@ -43,6 +33,32 @@ use Data::Dumper;
 use constant REL_EXAMPLE => -127;
 
 our $VERSION = '1.0';
+
+sub user_can_administer {
+    my ($self, $args) = @_;
+    my $can_administer = $args->{can_administer};
+
+    # If you add an option to the admin pages (e.g. by using the Hooks in
+    # template/en/default/admin/admin.html.tmpl), you may want to allow
+    # users in another group view admin.cgi
+    #if (Bugzilla->user->in_group('other_group')) {
+    #    $$can_administer = 1;
+    #}
+}
+
+sub admin_editusers_action {
+    my ($self, $args) = @_;
+    my ($vars, $action, $user) = @$args{qw(vars action user)};
+    my $template = Bugzilla->template;
+
+    if ($action eq 'my_action') {
+        # Allow to restrict the search to any group the user is allowed to bless.
+        $vars->{'restrictablegroups'} = $user->bless_groups();
+        $template->process('admin/users/search.html.tmpl', $vars)
+            || ThrowTemplateError($template->error());
+        exit;
+    }
+}
 
 sub attachment_process_data {
     my ($self, $args) = @_;
@@ -80,6 +96,44 @@ sub auth_verify_methods {
     }
 }
 
+sub bug_check_can_change_field {
+    my ($self, $args) = @_;
+
+    my ($bug, $field, $new_value, $old_value, $priv_results)
+        = @$args{qw(bug field new_value old_value priv_results)};
+
+    my $user = Bugzilla->user;
+
+    # Disallow a bug from being reopened if currently closed unless user 
+    # is in 'admin' group
+    if ($field eq 'bug_status' && $bug->product_obj->name eq 'Example') {
+        if (!is_open_state($old_value) && is_open_state($new_value) 
+            && !$user->in_group('admin')) 
+        {
+            push(@$priv_results, PRIVILEGES_REQUIRED_EMPOWERED);
+            return;
+        }
+    }
+
+    # Disallow a bug's keywords from being edited unless user is the
+    # reporter of the bug 
+    if ($field eq 'keywords' && $bug->product_obj->name eq 'Example' 
+        && $user->login ne $bug->reporter->login) 
+    {
+        push(@$priv_results, PRIVILEGES_REQUIRED_REPORTER);
+        return;
+    }
+
+    # Allow updating of priority even if user cannot normally edit the bug 
+    # and they are in group 'engineering'
+    if ($field eq 'priority' && $bug->product_obj->name eq 'Example'
+        && $user->in_group('engineering')) 
+    {
+        push(@$priv_results, PRIVILEGES_REQUIRED_NONE);
+        return;
+    }
+}
+
 sub bug_columns {
     my ($self, $args) = @_;
     my $columns = $args->{'columns'};
@@ -114,6 +168,42 @@ sub bug_end_of_create_validators {
     # This would remove all ccs from the bug, preventing ANY ccs from being
     # added on bug creation.
     # $bug_params->{cc} = [];
+}
+
+sub bug_start_of_update {
+    my ($self, $args) = @_;
+
+    # This code doesn't actually *do* anything, it's just here to show you
+    # how to use this hook.
+    my ($bug, $old_bug, $timestamp, $changes) = 
+        @$args{qw(bug old_bug timestamp changes)};
+
+    foreach my $field (keys %$changes) {
+        my $used_to_be = $changes->{$field}->[0];
+        my $now_it_is  = $changes->{$field}->[1];
+    }
+
+    my $old_summary = $old_bug->short_desc;
+
+    my $status_message;
+    if (my $status_change = $changes->{'bug_status'}) {
+        my $old_status = new Bugzilla::Status({ name => $status_change->[0] });
+        my $new_status = new Bugzilla::Status({ name => $status_change->[1] });
+        if ($new_status->is_open && !$old_status->is_open) {
+            $status_message = "Bug re-opened!";
+        }
+        if (!$new_status->is_open && $old_status->is_open) {
+            $status_message = "Bug closed!";
+        }
+    }
+
+    my $bug_id = $bug->id;
+    my $num_changes = scalar keys %$changes;
+    my $result = "There were $num_changes changes to fields on bug $bug_id"
+                 . " at $timestamp.";
+    # Uncomment this line to see $result in your webserver's error log whenever
+    # you update a bug.
+    # warn $result;
 }
 
 sub bug_end_of_update {
@@ -249,8 +339,8 @@ sub bugmail_recipients {
         # were on the CC list.
         #$recipients->{$user->id}->{+REL_CC} = 1;
 
-        # And this line adds the maintainer as though he had the "REL_EXAMPLE"
-        # relationship from the bugmail_relationships hook below.
+        # And this line adds the maintainer as though they had the
+        # "REL_EXAMPLE" relationship from the bugmail_relationships hook below.
         #$recipients->{$user->id}->{+REL_EXAMPLE} = 1;
     }
 }
@@ -259,6 +349,13 @@ sub bugmail_relationships {
     my ($self, $args) = @_;
     my $relationships = $args->{relationships};
     $relationships->{+REL_EXAMPLE} = 'Example';
+}
+
+sub cgi_headers {
+    my ($self, $args) = @_;
+    my $headers = $args->{'headers'};
+
+    $headers->{'-x_test_header'} = "Test header from Example extension";
 }
 
 sub config_add_panels {
@@ -324,8 +421,8 @@ sub email_in_after_parse {
     # No other check needed if this is a valid regular user.
     return if login_to_id($reporter);
 
-    # The reporter is not a regular user. We create an account for him,
-    # but he can only comment on existing bugs.
+    # The reporter is not a regular user. We create an account for them,
+    # but they can only comment on existing bugs.
     # This is useful for people who reply by email to bugmails received
     # in mailing-lists.
     if ($args->{fields}->{bug_id}) {
@@ -678,10 +775,12 @@ sub _check_short_desc {
     my $invocant = shift;
     my $value = $invocant->$original(@_);
     if ($value !~ /example/i) {
-        # Uncomment this line to make Bugzilla throw an error every time
+        # Use this line to make Bugzilla throw an error every time
         # you try to file a bug or update a bug without the word "example"
         # in the summary.
-        #ThrowUserError('example_short_desc_invalid');
+        if (0) {
+            ThrowUserError('example_short_desc_invalid');
+        }
     }
     return $value;
 }
@@ -695,6 +794,12 @@ sub page_before_template {
     if ($page eq 'example.html') {
         $vars->{cgi_variables} = { Bugzilla->cgi->Vars };
     }
+}
+
+sub path_info_whitelist {
+    my ($self, $args) = @_;
+    my $whitelist = $args->{whitelist};
+    push(@$whitelist, "page.cgi");
 }
 
 sub post_bug_after_creation {
@@ -825,55 +930,23 @@ sub template_before_process {
     }
 }
 
-sub bug_check_can_change_field {
+sub user_check_account_creation {
     my ($self, $args) = @_;
 
-    my ($bug, $field, $new_value, $old_value, $priv_results)
-        = @$args{qw(bug field new_value old_value priv_results)};
+    my $login = $args->{login};
+    my $ip = remote_ip();
 
-    my $user = Bugzilla->user;
+    # Log all requests.
+    warn "USER ACCOUNT CREATION REQUEST FOR $login ($ip)";
 
-    # Disallow a bug from being reopened if currently closed unless user 
-    # is in 'admin' group
-    if ($field eq 'bug_status' && $bug->product_obj->name eq 'Example') {
-        if (!is_open_state($old_value) && is_open_state($new_value) 
-            && !$user->in_group('admin')) 
-        {
-            push(@$priv_results, PRIVILEGES_REQUIRED_EMPOWERED);
-            return;
-        }
+    # Reject requests based on their email address.
+    if ($login =~ /\@evil\.com$/) {
+        ThrowUserError('account_creation_restricted');
     }
 
-    # Disallow a bug's keywords from being edited unless user is the
-    # reporter of the bug 
-    if ($field eq 'keywords' && $bug->product_obj->name eq 'Example' 
-        && $user->login ne $bug->reporter->login) 
-    {
-        push(@$priv_results, PRIVILEGES_REQUIRED_REPORTER);
-        return;
-    }
-
-    # Allow updating of priority even if user cannot normally edit the bug 
-    # and they are in group 'engineering'
-    if ($field eq 'priority' && $bug->product_obj->name eq 'Example'
-        && $user->in_group('engineering')) 
-    {
-        push(@$priv_results, PRIVILEGES_REQUIRED_NONE);
-        return;
-    }
-}
-
-sub admin_editusers_action {
-    my ($self, $args) = @_;
-    my ($vars, $action, $user) = @$args{qw(vars action user)};
-    my $template = Bugzilla->template;
-
-    if ($action eq 'my_action') {
-        # Allow to restrict the search to any group the user is allowed to bless.
-        $vars->{'restrictablegroups'} = $user->bless_groups();
-        $template->process('admin/users/search.html.tmpl', $vars)
-            || ThrowTemplateError($template->error());
-        exit;
+    # Reject requests based on their IP address.
+    if ($ip =~ /^192\.168\./) {
+        ThrowUserError('account_creation_restricted');
     }
 }
 
@@ -906,9 +979,84 @@ sub webservice {
 
 sub webservice_error_codes {
     my ($self, $args) = @_;
-    
+
     my $error_map = $args->{error_map};
     $error_map->{'example_my_error'} = 10001;
+}
+
+sub webservice_status_code_map {
+    my ($self, $args) = @_;
+
+    my $status_code_map = $args->{status_code_map};
+    # Uncomment this line to override the status code for the
+    # error 'object_does_not_exist' to STATUS_BAD_REQUEST
+    #$status_code_map->{51} = STATUS_BAD_REQUEST;
+}
+
+sub webservice_before_call {
+    my ($self, $args) = @_;
+
+    # This code doesn't actually *do* anything, it's just here to show you
+    # how to use this hook.
+    my $method      = $args->{method};
+    my $full_method = $args->{full_method};
+
+    # Uncomment this line to see a line in your webserver's error log whenever
+    # a webservice call is made
+    #warn "RPC call $full_method made by ",
+    #   Bugzilla->user->login || 'an anonymous user', "\n";
+}
+
+sub webservice_fix_credentials {
+    my ($self, $args) = @_;
+    my $rpc    = $args->{'rpc'};
+    my $params = $args->{'params'};
+    # Allow user to pass in username=foo&password=bar
+    if (exists $params->{'username'} && exists $params->{'password'}) {
+        $params->{'Bugzilla_login'}    = $params->{'username'};
+        $params->{'Bugzilla_password'} = $params->{'password'};
+    }
+}
+
+sub webservice_rest_request {
+    my ($self, $args) = @_;
+    my $rpc    = $args->{'rpc'};
+    my $params = $args->{'params'};
+    # Internally we may have a field called 'cf_test_field' but we allow users
+    # to use the shorter 'test_field' name.
+    if (exists $params->{'test_field'}) {
+        $params->{'test_field'} = delete $params->{'cf_test_field'};
+    }
+}
+
+sub webservice_rest_resources {
+    my ($self, $args) = @_;
+    my $rpc = $args->{'rpc'};
+    my $resources = $args->{'resources'};
+    # Add a new resource that allows for /rest/example/hello
+    # to call Example.hello
+    $resources->{'Bugzilla::Extension::Example::WebService'} = [
+        qr{^/example/hello$}, {
+            GET => {
+                method => 'hello',
+            }
+        }
+    ];
+}
+
+sub webservice_rest_response {
+    my ($self, $args) = @_;
+    my $rpc      = $args->{'rpc'};
+    my $result   = $args->{'result'};
+    my $response = $args->{'response'};
+    # Convert a list of bug hashes to a single bug hash if only one is
+    # being returned.
+    if (ref $$result eq 'HASH'
+        && exists $$result->{'bugs'}
+        && scalar @{ $$result->{'bugs'} } == 1)
+    {
+        $$result = $$result->{'bugs'}->[0];
+    }
 }
 
 # This must be the last line of your extension.

@@ -1,27 +1,14 @@
-[%# The contents of this file are subject to the Mozilla Public
-  # License Version 1.1 (the "License"); you may not use this file
-  # except in compliance with the License. You may obtain a copy of
-  # the License at http://www.mozilla.org/MPL/
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
   #
-  # Software distributed under the License is distributed on an "AS
-  # IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-  # implied. See the License for the specific language governing
-  # rights and limitations under the License.
-  #
-  # The Original Code is the Bugzilla Bug Tracking System.
-  #
-  # The Initial Developer of the Original Code is Netscape Communications
-  # Corporation. Portions created by Netscape are
-  # Copyright (C) 1998 Netscape Communications Corporation. All
-  # Rights Reserved.
-  #
-  # Contributor(s): Dave Miller <justdave@bugzilla.org>
-  #                 Frédéric Buclin <LpSolit@gmail.com>
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
   #%]
 
 [% 
    title = "Required Settings"
-   desc = "Settings that are required for proper operation of $terms.Bugzilla" 
+   desc = "Settings that are required for proper operation of Bugzilla"
 %]
 
 [% param_descs = {
@@ -32,17 +19,17 @@
              "(SSL) $terms.Bugzilla URLs.",
 
   ssl_redirect => 
-    "When this is enabled, $terms.Bugzilla will ensure that every page is"
+    "When this is enabled, Bugzilla will ensure that every page is"
     _ " accessed over SSL, by redirecting any plain HTTP requests to HTTPS"
-    _ " using the <tt>sslbase</tt> parameter. Also, when this is enabled,"
-    _ " $terms.Bugzilla will send out links using <tt>sslbase</tt> in emails"
-    _ " instead of <tt>urlbase</tt>.",
+    _ " using the <var>sslbase</var> parameter. Also, when this is enabled,"
+    _ " Bugzilla will send out links using <var>sslbase</var> in emails"
+    _ " instead of <var>urlbase</var>.",
 
   cookiepath => "Path, relative to your web document root, to which to restrict " _
-                "$terms.Bugzilla cookies. Normally this is the URI portion of your URL " _
+                "Bugzilla cookies. Normally this is the URI portion of your URL " _
                 "base. Begin with a / (single slash mark). For instance, if " _
-                "$terms.Bugzilla serves from 'http://www.somedomain.com/bugzilla/', set " _
+                "Bugzilla serves from 'http://www.somedomain.com/bugzilla/', set " _
                 "this parameter to /bugzilla/. Setting it to / will allow " _
                 "all sites served by this web server or virtual host to read " _
-                "$terms.Bugzilla cookies.",
+                "Bugzilla cookies.",
 } %]

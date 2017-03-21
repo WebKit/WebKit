@@ -1,17 +1,9 @@
-[%# The contents of this file are subject to the Mozilla Public
-  # License Version 1.1 (the "License"); you may not use this file
-  # except in compliance with the License. You may obtain a copy of
-  # the License at http://www.mozilla.org/MPL/
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
   #
-  # Software distributed under the License is distributed on an "AS
-  # IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-  # implied. See the License for the specific language governing
-  # rights and limitations under the License.
-  #
-  # The Original Code is the Bugzilla Bug Tracking System.
-  #
-  # Contributor(s): Shane H. W. Travis <travis@sedsystems.ca>
-  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
   #%]
 
 [%# INTERFACE:
@@ -24,41 +16,38 @@
   #%]
 
 [% PROCESS global/header.html.tmpl
-   title = "Default Preferences"
- %]
+  title = "Default Preferences"
+  style_urls = ['skins/standard/admin.css']
+%]
 
 [% PROCESS "global/setting-descs.none.tmpl" %]
 
 <p>
-This lets you edit the default preferences values.
+  This lets you edit the default preferences values. The Default Value displayed
+  for each preference will apply to all users who do not choose their own value,
+  and to anyone who is not logged in.
 </p>
-<p>
-The Default Value displayed for each preference will apply to all users who
-do not choose their own value, and to anyone who is not logged in.
-</p>
-<p>
-The 'Enabled' checkbox controls whether or not this preference is available
-to users.<br>
-If it is checked, users will see this preference on their User Preferences page,
-and will be allowed to choose their own value if they desire.<br>
-If it is not checked, this preference will not appear on the User Preference
-page, and the Default Value will automatically apply to everyone.
-</p>
-<hr>
 
-[% IF settings.size %]
-    <form name="adminsettingform" method="post" action="editsettings.cgi">
-      <table border="1" cellpadding="4">
-      <tr>
-        <th>Preference Text</th>
-        <th>Default Value</th>
-        <th>Enabled</th>
-      </tr>
+<div>
+  The 'Enabled' checkbox controls whether or not this preference is available to users:
+  <ul>
+    <li>If it is checked, users will be allowed to choose their own value if they desire.</li>
+    <li>If it is not checked, the Default Value will automatically apply to everyone.</li>
+  </ul>
+</div>
 
-      [% FOREACH name = settings.keys %]
+    <form id="settings" method="post" action="editsettings.cgi">
+      <table id="admin_table">
+        <tr class="column_header">
+          <th>Preference Text</th>
+          <th>Default Value</th>
+          <th>Enabled</th>
+        </tr>
+
+        [% FOREACH name = settings.keys.sort %]
           [% checkbox_name = name _ '-enabled' %]
           <tr>
-            <td align="right">
+            <td>
               [% setting_descs.$name OR name FILTER html %]
             </td>
             <td>
@@ -71,31 +60,19 @@ page, and the Default Value will automatically apply to everyone.
                 [% END %]
               </select>
             </td>
-            <td align="center">
+            <td class="center">
               <input type="checkbox"
                 name="[% checkbox_name FILTER html %]"
                 id="[% checkbox_name FILTER html %]"
                 [% " checked=\"checked\"" IF settings.${name}.is_enabled %]>
-              <br>
             </td>
           </tr>
-      [% END %]
+        [% END %]
       </table>
 
     <input type="hidden" name="action" value="update">
     <input type="hidden" name="token" value="[% token FILTER html %]">
-    <table>
-      <tr>
-        <td width="150"></td>
-        <td>
-          <input type="submit" id="update" value="Submit Changes">
-        </td>
-      </tr>
-    </table>
-  
+    <input type="submit" id="update" value="Submit Changes">
   </form>
-[% ELSE %]
-  There are no preferences to edit.
-[% END %]
 
 [% PROCESS global/footer.html.tmpl %]

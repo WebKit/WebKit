@@ -1,28 +1,20 @@
-# -*- Mode: perl; indent-tabs-mode: nil -*-
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
-# The contents of this file are subject to the Mozilla Public
-# License Version 1.1 (the "License"); you may not use this file
-# except in compliance with the License. You may obtain a copy of
-# the License at http://www.mozilla.org/MPL/
-#
-# Software distributed under the License is distributed on an "AS
-# IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-# implied. See the License for the specific language governing
-# rights and limitations under the License.
-#
-# The Original Code is the Bugzilla Bug Tracking System.
-#
-# Contributor(s): Tiago R. Mello <timello@async.com.br>
-#                 Max Kanat-Alexander <mkanat@bugzilla.org>
-#                 Frédéric Buclin <LpSolit@gmail.com>
-
-use strict;
+# This Source Code Form is "Incompatible With Secondary Licenses", as
+# defined by the Mozilla Public License, v. 2.0.
 
 package Bugzilla::Version;
 
-use base qw(Bugzilla::Object);
+use 5.10.1;
+use strict;
+use warnings;
 
-use Bugzilla::Install::Util qw(vers_cmp);
+use parent qw(Bugzilla::Object Exporter);
+
+@Bugzilla::Version::EXPORT = qw(vers_cmp);
+
 use Bugzilla::Util;
 use Bugzilla::Error;
 
@@ -76,7 +68,7 @@ sub new {
     my $dbh = Bugzilla->dbh;
 
     my $product;
-    if (ref $param) {
+    if (ref $param and !defined $param->{id}) {
         $product = $param->{product};
         my $name = $param->{name};
         if (!defined $product) {
@@ -128,14 +120,18 @@ sub bug_count {
 
 sub update {
     my $self = shift;
+    my $dbh = Bugzilla->dbh;
+
+    $dbh->bz_start_transaction();
     my ($changes, $old_self) = $self->SUPER::update(@_);
 
     if (exists $changes->{value}) {
-        my $dbh = Bugzilla->dbh;
         $dbh->do('UPDATE bugs SET version = ?
                   WHERE version = ? AND product_id = ?',
                   undef, ($self->name, $old_self->name, $self->product_id));
     }
+    $dbh->bz_commit_transaction();
+
     return $changes;
 }
 
@@ -143,12 +139,21 @@ sub remove_from_db {
     my $self = shift;
     my $dbh = Bugzilla->dbh;
 
+    $dbh->bz_start_transaction();
+
+    # Products must have at least one version.
+    if (scalar(@{$self->product->versions}) == 1) {
+        ThrowUserError('version_is_last', { version => $self });
+    }
+
     # The version cannot be removed if there are bugs
     # associated with it.
     if ($self->bug_count) {
         ThrowUserError("version_has_bugs", { nb => $self->bug_count });
     }
     $self->SUPER::remove_from_db();
+
+    $dbh->bz_commit_transaction();
 }
 
 ###############################
@@ -170,8 +175,8 @@ sub product {
 # Validators
 ################################
 
-sub set_name      { $_[0]->set('value', $_[1]);    }
-sub set_is_active { $_[0]->set('isactive', $_[1]); }
+sub set_value    { $_[0]->set('value', $_[1]);    }
+sub set_isactive { $_[0]->set('isactive', $_[1]); }
 
 sub _check_value {
     my ($invocant, $name, undef, $params) = @_;
@@ -197,6 +202,53 @@ sub _check_product {
     return Bugzilla->user->check_can_admin_product($product->name);
 }
 
+###############################
+#####     Functions        ####
+###############################
+
+# This is taken straight from Sort::Versions 1.5, which is not included
+# with perl by default.
+sub vers_cmp {
+    my ($a, $b) = @_;
+
+    # Remove leading zeroes - Bug 344661
+    $a =~ s/^0*(\d.+)/$1/;
+    $b =~ s/^0*(\d.+)/$1/;
+
+    my @A = ($a =~ /([-.]|\d+|[^-.\d]+)/g);
+    my @B = ($b =~ /([-.]|\d+|[^-.\d]+)/g);
+
+    my ($A, $B);
+    while (@A and @B) {
+        $A = shift @A;
+        $B = shift @B;
+        if ($A eq '-' and $B eq '-') {
+            next;
+        } elsif ( $A eq '-' ) {
+            return -1;
+        } elsif ( $B eq '-') {
+            return 1;
+        } elsif ($A eq '.' and $B eq '.') {
+            next;
+        } elsif ( $A eq '.' ) {
+            return -1;
+        } elsif ( $B eq '.' ) {
+            return 1;
+        } elsif ($A =~ /^\d+$/ and $B =~ /^\d+$/) {
+            if ($A =~ /^0/ || $B =~ /^0/) {
+                return $A cmp $B if $A cmp $B;
+            } else {
+                return $A <=> $B if $A <=> $B;
+            }
+        } else {
+            $A = uc $A;
+            $B = uc $B;
+            return $A cmp $B if $A cmp $B;
+        }
+    }
+    return @A <=> @B;
+}
+
 1;
 
 __END__
@@ -209,16 +261,18 @@ Bugzilla::Version - Bugzilla product version class.
 
     use Bugzilla::Version;
 
-    my $version = new Bugzilla::Version({ name => $name, product => $product });
+    my $version = new Bugzilla::Version({ name => $name, product => $product_obj });
+    my $version = Bugzilla::Version->check({ name => $name, product => $product_obj });
+    my $version = Bugzilla::Version->check({ id => $id });
 
     my $value = $version->name;
     my $product_id = $version->product_id;
     my $product = $version->product;
 
     my $version = Bugzilla::Version->create(
-        { value => $name, product => $product });
+        { value => $name, product => $product_obj });
 
-    $version->set_name($new_name);
+    $version->set_value($new_name);
     $version->update();
 
     $version->remove_from_db;
@@ -238,12 +292,74 @@ below.
 
 =item C<bug_count()>
 
- Description: Returns the total of bugs that belong to the version.
+=over
 
- Params:      none.
+=item B<Description>
 
- Returns:     Integer with the number of bugs.
+Returns the total of bugs that belong to the version.
+
+=item B<Params>
+
+none
+
+=item B<Returns>
+
+Integer with the number of bugs.
+
+=back
+
+=back
+
+=head1 FUNCTIONS
+
+=over
+
+=item C<vers_cmp($a, $b)>
+
+=over
+
+=item B<Description>
+
+This is a comparison function, like you would use in C<sort>, except that
+it compares two version numbers. So, for example, 2.10 would be greater
+than 2.2.
+
+It's based on versioncmp from L<Sort::Versions>, with some Bugzilla-specific
+fixes.
+
+=item B<Params>
+
+C<$a> and C<$b> - The versions you want to compare.
+
+=item B<Returns>
+
+C<-1> if C<$a> is less than C<$b>, C<0> if they are equal, or C<1> if C<$a>
+is greater than C<$b>.
+
+=back
 
 =back
 
 =cut
+
+=head1 B<Methods in need of POD>
+
+=over
+
+=item DEFAULT_VERSION
+
+=item set_isactive
+
+=item set_value
+
+=item product_id
+
+=item is_active
+
+=item remove_from_db
+
+=item product
+
+=item update
+
+=back

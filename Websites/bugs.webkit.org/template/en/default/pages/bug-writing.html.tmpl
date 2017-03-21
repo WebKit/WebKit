@@ -1,31 +1,10 @@
-[%# The contents of this file are subject to the Mozilla Public
-  # License Version 1.1 (the "License"); you may not use this file
-  # except in compliance with the License. You may obtain a copy of
-  # the License at http://www.mozilla.org/MPL/
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
   #
-  # Software distributed under the License is distributed on an "AS
-  # IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-  # implied. See the License for the specific language governing
-  # rights and limitations under the License.
-  #
-  # The Original Code is the Bugzilla Bug Tracking System.
-  #
-  # The Initial Developer of the Original Code is Netscape Communications
-  # Corporation. Portions created by Netscape are
-  # Copyright (C) 1998 Netscape Communications Corporation. All
-  # Rights Reserved.
-  #
-  # Contributor(s): Eli Goldberg <eli@prometheus-music.com>
-  #                 Gervase Markham <gerv@gerv.net>
-  #                 Vera Horiuchi
-  #                 Claudius Gayle
-  #                 Peter Mock
-  #                 Chris Pratt
-  #                 Tom Schutter
-  #                 Chris Yeh
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
   #%]
-
-[% PROCESS "global/field-descs.none.tmpl" %]
 
 [% INCLUDE global/header.html.tmpl title = "$terms.Bug Writing Guidelines" %]
 
@@ -74,22 +53,23 @@ no-one else appears to have reported it, then:</p>
     Click the word "Component" to see a description of each 
     component. If none seems appropriate, look for a "General" component.</p>
 
-    <p><b>OS:</b> On which operating system (OS) did you find 
+    <p><b>[% field_descs.op_sys FILTER html %]:</b> On which operating system (OS) did you find 
           it?
     (e.g. Linux, Windows XP, Mac OS X.)<br>
     If you know the [% terms.bug %] happens on more than one type of 
     operating system, choose <em>[% display_value("op_sys", "All") FILTER html %]</em>. 
-    If your OS isn't listed, choose <em>[% display_value("op_sys", "Other") FILTER html %]</em>.</p>
+    If your [% field_descs.op_sys FILTER html %] isn't listed, choose 
+    <em>[% display_value("op_sys", "Other") FILTER html %]</em>.</p>
 
     <p><b>Summary:</b> How would you describe the [% terms.bug %], in 
     approximately 60 or fewer characters?<br>
      A good summary should <b>quickly and uniquely identify [% terms.abug %]
     report</b>. It should explain the problem, not your suggested solution.<br>
     <ul>
-     <li>Good: "<tt>Cancelling a File Copy dialog crashes 
-     File Manager</tt>"</li>
-     <li>Bad: "<tt>Software crashes</tt>"</li>
-     <li>Bad: "<tt>Browser should work with my web site</tt>"</li>
+     <li>Good: "<kbd>Cancelling a File Copy dialog crashes
+     File Manager</kbd>"</li>
+     <li>Bad: "<kbd>Software crashes</kbd>"</li>
+     <li>Bad: "<kbd>Browser should work with my web site</kbd>"</li>
     </ul>
     
     <b>Description:</b>
@@ -139,7 +119,8 @@ The window should scroll downwards. Scrolled content should be selected.
 </pre>
       </blockquote>
 
-      <p><b>Build Date &amp; Platform:</b> Date and platform of the build
+      <p><b>Build Date &amp; [% field_descs.rep_platform FILTER html %]:</b>
+      Date and [% field_descs.rep_platform FILTER lower FILTER html %] of the build
       in which you first encountered the [% terms.bug %].</p>
 
       <blockquote>

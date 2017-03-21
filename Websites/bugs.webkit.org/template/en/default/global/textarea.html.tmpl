@@ -1,16 +1,9 @@
-[%# The contents of this file are subject to the Mozilla Public
-  # License Version 1.1 (the "License"); you may not use this file
-  # except in compliance with the License. You may obtain a copy of
-  # the License at http://www.mozilla.org/MPL/
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
   #
-  # Software distributed under the License is distributed on an "AS
-  # IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-  # implied. See the License for the specific language governing
-  # rights and limitations under the License.
-  #
-  # The Original Code is the Bugzilla Bug Tracking System.
-  #
-  # Contributor(s): Marc Schumann <wurblzap@gmail.com>
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
   #%]
 
 [%# INTERFACE:
@@ -18,7 +11,6 @@
   # id:             (optional) The "id"-attribute of the textarea.
   # name:           (optional) The "name"-attribute of the textarea.
   # accesskey:      (optional) The "accesskey"-attribute of the textarea.
-  # style:          (optional) The "style"-attribute of the textarea.
   # classes:        (optional) The "class"-attribute of the textarea.
   # wrap:           (deprecated; optional) The "wrap"-attribute of the textarea.
   # disabled:       (optional) Disable the textarea.
@@ -35,12 +27,13 @@
   # defaultcontent: (optional) Default content for the textarea.
   # mandatory:      (optional) Boolean specifying whether or not the textarea
   #                 is mandatory.
+  # field_hidden:   (optional) True if the field is hidden. Only useful if
+  #                 the field is mandatory.
   #%]
 
 <textarea [% IF name %]name="[% name FILTER html %]"[% END %]
           [% IF id %] id="[% id FILTER html %]"[% END %]
           [% IF accesskey %] accesskey="[% accesskey FILTER html %]"[% END %]
-          [% IF style %] style="[% style FILTER html %]"[% END %]
           [% IF classes %] class="[% classes FILTER html %]"[% END %]
           [% IF wrap %] wrap="[% wrap FILTER html %]"[% END %]
           [% IF disabled %] disabled="disabled"[% END %]
@@ -55,5 +48,8 @@
             onFocus="this.rows=[% maxrows FILTER html %]"
           [% END %]
           [% IF mandatory %]
-            aria-required="true"
+            data-required="true" [% 'aria-required="true" required' UNLESS field_hidden %]
+          [% END %]
+          [% IF onchange %]
+            onchange="[% onchange FILTER html %]"
           [% END %]>[% defaultcontent FILTER html %]</textarea>

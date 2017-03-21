@@ -1,29 +1,9 @@
-# -*- Mode: perl; indent-tabs-mode: nil -*-
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
-# The contents of this file are subject to the Mozilla Public
-# License Version 1.1 (the "License"); you may not use this file
-# except in compliance with the License. You may obtain a copy of
-# the License at http://www.mozilla.org/MPL/
-#
-# Software distributed under the License is distributed on an "AS
-# IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-# implied. See the License for the specific language governing
-# rights and limitations under the License.
-#
-# The Original Code is the Bugzilla Bug Tracking System.
-#
-# The Initial Developer of the Original Code is Netscape Communications
-# Corporation. Portions created by Netscape are
-# Copyright (C) 1998 Netscape Communications Corporation. All
-# Rights Reserved.
-#
-# Contributor(s): Dave Miller <davem00@aol.com>
-#                 Gayathri Swaminath <gayathrik00@aol.com>
-#                 Jeroen Ruigrok van der Werven <asmodai@wxs.nl>
-#                 Dave Lawrence <dkl@redhat.com>
-#                 Tomas Kopal <Tomas.Kopal@altap.cz>
-#                 Max Kanat-Alexander <mkanat@bugzilla.org>
-#                 Lance Larsh <lance.larsh@oracle.com>
+# This Source Code Form is "Incompatible With Secondary Licenses", as
+# defined by the Mozilla Public License, v. 2.0.
 
 =head1 NAME
 
@@ -40,8 +20,12 @@ For interface details see L<Bugzilla::DB> and L<DBI>.
 =cut
 
 package Bugzilla::DB::Mysql;
+
+use 5.10.1;
 use strict;
-use base qw(Bugzilla::DB);
+use warnings;
+
+use parent qw(Bugzilla::DB);
 
 use Bugzilla::Constants;
 use Bugzilla::Install::Util qw(install_string);
@@ -75,6 +59,18 @@ sub new {
         mysql_auto_reconnect => 1,
     );
     
+    # MySQL SSL options
+    my ($ssl_ca_file, $ssl_ca_path, $ssl_cert, $ssl_key) =
+        @$params{qw(db_mysql_ssl_ca_file db_mysql_ssl_ca_path
+                    db_mysql_ssl_client_cert db_mysql_ssl_client_key)};
+    if ($ssl_ca_file || $ssl_ca_path || $ssl_cert || $ssl_key) {
+        $attrs{'mysql_ssl'}             = 1;
+        $attrs{'mysql_ssl_ca_file'}     = $ssl_ca_file if $ssl_ca_file;
+        $attrs{'mysql_ssl_ca_path'}     = $ssl_ca_path if $ssl_ca_path;
+        $attrs{'mysql_ssl_client_cert'} = $ssl_cert    if $ssl_cert;
+        $attrs{'mysql_ssl_client_key'}  = $ssl_key     if $ssl_key;
+    }
+
     my $self = $class->db_new({ dsn => $dsn, user => $user, 
                                 pass => $pass, attrs => \%attrs });
 
@@ -90,17 +86,18 @@ sub new {
     $self->{private_bz_dsn} = $dsn;
 
     bless ($self, $class);
-    
-    # Bug 321645 - disable MySQL strict mode, if set
+
+    # Check for MySQL modes.
     my ($var, $sql_mode) = $self->selectrow_array(
         "SHOW VARIABLES LIKE 'sql\\_mode'");
 
+    # Disable ANSI and strict modes, else Bugzilla will crash.
     if ($sql_mode) {
         # STRICT_TRANS_TABLE or STRICT_ALL_TABLES enable MySQL strict mode,
         # causing bug 321645. TRADITIONAL sets these modes (among others) as
         # well, so it has to be stipped as well
         my $new_sql_mode =
-            join(",", grep {$_ !~ /^STRICT_(?:TRANS|ALL)_TABLES|TRADITIONAL$/}
+            join(",", grep {$_ !~ /^(?:ANSI|STRICT_(?:TRANS|ALL)_TABLES|TRADITIONAL)$/}
                             split(/,/, $sql_mode));
 
         if ($sql_mode ne $new_sql_mode) {
@@ -111,6 +108,10 @@ sub new {
     # Allow large GROUP_CONCATs (largely for inserting comments 
     # into bugs_fulltext).
     $self->do('SET SESSION group_concat_max_len = 128000000');
+
+    # MySQL 5.5.2 and older have this variable set to true, which causes
+    # trouble, see bug 870369.
+    $self->do('SET SESSION sql_auto_is_null = 0');
 
     return $self;
 }
@@ -126,10 +127,13 @@ sub bz_last_key {
 }
 
 sub sql_group_concat {
-    my ($self, $column, $separator, $sort) = @_;
+    my ($self, $column, $separator, $sort, $order_by) = @_;
     $separator = $self->quote(', ') if !defined $separator;
     $sort = 1 if !defined $sort;
-    if ($sort) {
+    if ($order_by) {
+        $column .= " ORDER BY $order_by";
+    }
+    elsif ($sort) {
         my $sort_order = $column;
         $sort_order =~ s/^DISTINCT\s+//i;
         $column = "$column ORDER BY $sort_order";
@@ -180,15 +184,19 @@ sub sql_fulltext_search {
     if ($text =~ /(?:^|\W)[+\-<>~"()]/ || $text =~ /[()"*](?:$|\W)/) {
         $mode = 'IN BOOLEAN MODE';
 
-        # quote un-quoted compound words
-        my @words = quotewords('[\s()]+', 'delimiters', $text);
-        foreach my $word (@words) {
-            # match words that have non-word chars in the middle of them
-            if ($word =~ /\w\W+\w/ && $word !~ m/"/) {
-                $word = '"' . $word . '"';
+        my @terms = split(quotemeta(FULLTEXT_OR), $text);
+        foreach my $term (@terms) {
+            # quote un-quoted compound words
+            my @words = quotewords('[\s()]+', 'delimiters', $term);
+            foreach my $word (@words) {
+                # match words that have non-word chars in the middle of them
+                if ($word =~ /\w\W+\w/ && $word !~ m/"/) {
+                    $word = '"' . $word . '"';
+                }
             }
+            $term = join('', @words);
         }
-        $text = join('', @words);
+        $text = join(FULLTEXT_OR, @terms);
     }
 
     # quote the text for use in the MATCH AGAINST expression
@@ -1050,3 +1058,49 @@ sub _bz_build_schema_from_disk {
 }
 
 1;
+
+=head1 B<Methods in need of POD>
+
+=over
+
+=item sql_date_format
+
+=item bz_explain
+
+=item bz_last_key
+
+=item sql_position
+
+=item sql_fulltext_search
+
+=item sql_iposition
+
+=item bz_enum_initial_values
+
+=item sql_group_by
+
+=item sql_limit
+
+=item sql_not_regexp
+
+=item sql_string_concat
+
+=item sql_date_math
+
+=item sql_to_days
+
+=item bz_check_server_version
+
+=item sql_from_days
+
+=item sql_regexp
+
+=item sql_istring
+
+=item sql_group_concat
+
+=item bz_setup_database
+
+=item bz_db_is_utf8
+
+=back

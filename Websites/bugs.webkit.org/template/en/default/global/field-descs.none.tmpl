@@ -1,27 +1,12 @@
-[%# The contents of this file are subject to the Mozilla Public
-  # License Version 1.1 (the "License"); you may not use this file
-  # except in compliance with the License. You may obtain a copy of
-  # the License at http://www.mozilla.org/MPL/
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
   #
-  # Software distributed under the License is distributed on an "AS
-  # IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-  # implied. See the License for the specific language governing
-  # rights and limitations under the License.
-  #
-  # The Original Code is the Bugzilla Bug Tracking System.
-  #
-  # The Initial Developer of the Original Code is Netscape Communications
-  # Corporation. Portions created by Netscape are
-  # Copyright (C) 1998 Netscape Communications Corporation. All
-  # Rights Reserved.
-  #
-  # Contributor(s): Gervase Markham <gerv@gerv.net>
-  #                 Elliotte Martin <elliotte_martin@yahoo.com>
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
   #%]
 
 [%# Remember to PROCESS rather than INCLUDE this template. %]
-
-[% PROCESS global/variables.none.tmpl %]
 
 [% SET search_descs = {
   "noop"           => "---",
@@ -49,15 +34,19 @@
   "changedto"      => "changed to",
   "changedby"      => "changed by",
   "matches"        => "matches",
-  "notmatches"      => "does not match",
+  "notmatches"     => "does not match",
+  "isempty"        => "is empty",
+  "isnotempty"     => "is not empty",
 } %]
 
 [% field_types = { ${constants.FIELD_TYPE_UNKNOWN}       => "Unknown Type",
                    ${constants.FIELD_TYPE_FREETEXT}      => "Free Text",
+                   ${constants.FIELD_TYPE_INTEGER}       => "Integer",
                    ${constants.FIELD_TYPE_SINGLE_SELECT} => "Drop Down",
                    ${constants.FIELD_TYPE_MULTI_SELECT}  => "Multiple-Selection Box",
                    ${constants.FIELD_TYPE_TEXTAREA}      => "Large Text Box",
                    ${constants.FIELD_TYPE_DATETIME}      => "Date/Time",
+                   ${constants.FIELD_TYPE_DATE}          => "Date",
                    ${constants.FIELD_TYPE_BUG_ID}        => "$terms.Bug ID",
                 } %]
 
@@ -107,6 +96,7 @@
      "everconfirmed"           => "Ever confirmed",
      "flagtypes.name"          => "Flags",
      "keywords"                => "Keywords",
+     "last_visit_ts"           => "Last Visit",
      "longdesc"                => "Comment",
      "longdescs.count"         => "Number of Comments",
      "longdescs.isprivate"     => "Comment is private",
@@ -134,7 +124,7 @@
      "short_desc"              => "Summary",
      "short_short_desc"        => "Summary",
      "status_whiteboard"       => "Whiteboard",
-     "tag.name"                => "Tags",
+     "tag"                     => "Personal Tags",
      "target_milestone"        => "Target Milestone",
      "version"                 => "Version",
      "work_time"               => "Hours Worked",

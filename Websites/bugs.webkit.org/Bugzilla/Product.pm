@@ -1,23 +1,17 @@
-# -*- Mode: perl; indent-tabs-mode: nil -*-
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
-# The contents of this file are subject to the Mozilla Public
-# License Version 1.1 (the "License"); you may not use this file
-# except in compliance with the License. You may obtain a copy of
-# the License at http://www.mozilla.org/MPL/
-#
-# Software distributed under the License is distributed on an "AS
-# IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-# implied. See the License for the specific language governing
-# rights and limitations under the License.
-#
-# The Original Code is the Bugzilla Bug Tracking System.
-#
-# Contributor(s): Tiago R. Mello <timello@async.com.br>
-#                 Frédéric Buclin <LpSolit@gmail.com>
+# This Source Code Form is "Incompatible With Secondary Licenses", as
+# defined by the Mozilla Public License, v. 2.0.
 
 package Bugzilla::Product;
+
+use 5.10.1;
 use strict;
-use base qw(Bugzilla::Field::ChoiceInterface Bugzilla::Object);
+use warnings;
+
+use parent qw(Bugzilla::Field::ChoiceInterface Bugzilla::Object);
 
 use Bugzilla::Constants;
 use Bugzilla::Util;
@@ -28,7 +22,6 @@ use Bugzilla::Milestone;
 use Bugzilla::Field;
 use Bugzilla::Status;
 use Bugzilla::Install::Requirements;
-use Bugzilla::Mailer;
 use Bugzilla::Series;
 use Bugzilla::Hook;
 use Bugzilla::FlagType;
@@ -40,6 +33,8 @@ use constant DEFAULT_CLASSIFICATION_ID => 1;
 ###############################
 ####    Initialization     ####
 ###############################
+
+use constant IS_CONFIG => 1;
 
 use constant DB_TABLE => 'products';
 
@@ -107,6 +102,7 @@ sub create {
     Bugzilla::Hook::process('product_end_of_create', { product => $product });
 
     $dbh->bz_commit_transaction();
+    Bugzilla->memcached->clear_config();
     return $product;
 }
 
@@ -119,7 +115,8 @@ sub preload {
     my @prod_ids = keys %prods;
     return unless @prod_ids;
 
-    my $dbh = Bugzilla->dbh;
+    # We cannot |use| it due to a dependency loop with Bugzilla::User.
+    require Bugzilla::Component;
     foreach my $field (qw(component version milestone)) {
         my $classname = "Bugzilla::" . ucfirst($field);
         my $objects = $classname->match({ product_id => \@prod_ids });
@@ -262,6 +259,7 @@ sub update {
     # Changes have been committed.
     delete $self->{check_group_controls};
     Bugzilla->user->clear_product_cache();
+    Bugzilla->memcached->clear_config();
 
     return $changes;
 }
@@ -279,8 +277,8 @@ sub remove_from_db {
         if (Bugzilla->params->{'allowbugdeletion'}) {
             require Bugzilla::Bug;
             foreach my $bug_id (@{$self->bug_ids}) {
-                # Note that we allow the user to delete bugs he can't see,
-                # which is okay, because he's deleting the whole Product.
+                # Note that we allow the user to delete bugs they can't see,
+                # which is okay, because they're deleting the whole Product.
                 my $bug = new Bugzilla::Bug($bug_id);
                 $bug->remove_from_db();
             }
@@ -317,9 +315,10 @@ sub remove_from_db {
         }
     }
 
-    $dbh->do("DELETE FROM products WHERE id = ?", undef, $self->id);
+    $self->SUPER::remove_from_db();
 
     $dbh->bz_commit_transaction();
+    Bugzilla->memcached->clear_config();
 
     # We have to delete these internal variables, else we get
     # the old lists of products and classifications again.
@@ -816,8 +815,8 @@ sub flag_types {
 
 sub classification {
     my $self = shift;
-    $self->{'classification'} ||= 
-        new Bugzilla::Classification($self->classification_id);
+    $self->{'classification'} ||=
+        new Bugzilla::Classification({ id => $self->classification_id, cache => 1 });
     return $self->{'classification'};
 }
 
@@ -1031,7 +1030,7 @@ a group is valid in a particular product.)
 
  Params:      C<$user> - A Bugzilla::User object.
 
- Returns      C<1> If this user's groups allow him C<entry> access to
+ Returns      C<1> If this user's groups allow them C<entry> access to
               this Product, C<0> otherwise.
 
 =item C<flag_types()>
@@ -1076,3 +1075,37 @@ C<Bugzilla::Product::preload($products)>.
 L<Bugzilla::Object>
 
 =cut
+
+=head1 B<Methods in need of POD>
+
+=over
+
+=item set_allows_unconfirmed
+
+=item allows_unconfirmed
+
+=item set_name
+
+=item set_default_milestone
+
+=item set_group_controls
+
+=item create
+
+=item set_description
+
+=item set_is_active
+
+=item classification_id
+
+=item description
+
+=item default_milestone
+
+=item remove_from_db
+
+=item is_active
+
+=item update
+
+=back

@@ -1,40 +1,23 @@
-[%# The contents of this file are subject to the Mozilla Public
-  # License Version 1.1 (the "License"); you may not use this file
-  # except in compliance with the License. You may obtain a copy of
-  # the License at http://www.mozilla.org/MPL/
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
   #
-  # Software distributed under the License is distributed on an "AS
-  # IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-  # implied. See the License for the specific language governing
-  # rights and limitations under the License.
-  #
-  # The Original Code is the Bugzilla Bug Tracking System.
-  #
-  # The Initial Developer of the Original Code is Everything Solved, Inc.
-  # Portions created by the Initial Developer are Copyright (C) 2009
-  # the Initial Developer. All Rights Reserved.
-  #
-  # Contributor(s):
-  #   Max Kanat-Alexander <mkanat@bugzilla.org>
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
   #%]
 
-[% PROCESS "global/field-descs.none.tmpl" %]
-
 [% INCLUDE global/header.html.tmpl
-   title  = "$terms.Bugzilla QuickSearch",
-   style_urls = ['skins/standard/page.css']         
-   onload = 'document.forms[\'f\'].quicksearch.focus()'
+  title = "$terms.Bugzilla QuickSearch"
+  bodyclasses = ['narrow_page']
  %]
 
 [% USE Bugzilla %]
 
-<p>Type in one or more words (or pieces of words) to search for:</p>
+<p><label for="quicksearch">Type in one or more words (or pieces of words)
+  to search for:</label></p>
 
-<form name="f" action="buglist.cgi" method="get"
-      onsubmit="if (this.quicksearch.value == '')
-                { alert('Please enter one or more search terms first.');
-                  return false; } return true;">
-  <input type="text" size="40" name="quicksearch">
+<form name="f" action="buglist.cgi" method="get">
+  <input size="40" name="quicksearch" id="quicksearch" autofocus required>
   <input type="submit" value="Search" id="find">
 </form>
 
@@ -51,32 +34,29 @@
 
 <ul class="qs_help">
   <li>If you just put a word or series of words in the search box, 
-    [%+ terms.Bugzilla %] will search the 
+    Bugzilla will search the
     [%+ field_descs.product FILTER html %],
     [%+ field_descs.component FILTER html %], 
     [%+ IF use_keywords %][%+ field_descs.keywords FILTER html %],[% END %]
-    [%+ IF Param('usebugaliases') %][% field_descs.alias FILTER html %],[% END %]
+    [%+ field_descs.alias FILTER html %],
     [%+ field_descs.short_desc FILTER html %], 
     [%+ IF Param('usestatuswhiteboard') %][% field_descs.status_whiteboard FILTER html %],[% END %]
     and [% field_descs.longdesc FILTER html %] fields for your word or words.</li>
 
   <li>Typing just a <strong>number</strong> in the search box will take
-    you directly to the [% terms.bug %] with that ID. 
-    [% IF Param('usebugaliases') %]
-      Also, just typing the <strong>alias</strong> of [% terms.abug %]
-      will take you to that [% terms.bug %].
-    [% END %]
+    you directly to the [% terms.bug %] with that ID. Also, just typing the
+    <strong>alias</strong> of [% terms.abug %] will take you to that [% terms.bug %].
   </li>
 
   <li>Adding more terms <strong>narrows down</strong> the search, it does not
-     expand it. (In other words, [% terms.Bugzilla %] searches for 
+     expand it. (In other words, Bugzilla searches for
      [%+ terms.bugs %] that match <em>all</em> your criteria, not
      [%+ terms.bugs %] that match <em>any</em> of your criteria.)</li>
 
   <li>Searching is <strong>case-insensitive</strong>. So <kbd>table</kbd>,
     <kbd>Table</kbd>, and <kbd>TABLE</kbd> are all the same.</li>
 
-  <li>[% terms.Bugzilla %] does not just search for the exact word you put in,
+  <li>Bugzilla does not just search for the exact word you put in,
     but also for any word that <strong>contains</strong> that word.
     So, for example, searching for "cat" would also find [% terms.bugs %]
     that contain it as part of other words&mdash;for example, [% terms.abug %]
@@ -144,7 +124,7 @@
     referred to as 
     <kbd>[% first_field.name.replace('^cf_') FILTER html %]</kbd>,
     also. However, if this causes a conflict between the standard
-    [%+ terms.Bugzilla %] field names and the custom field names, the
+    Bugzilla field names and the custom field names, the
     standard field names always take precedence.</p>
 [% END %]
 
@@ -155,7 +135,7 @@
 [% END %]
 
 
-<table cellspacing="0" cellpadding="0" border="0" class="qs_fields">
+<table class="qs_fields">
   <thead>
     <tr>
       <th class="field_name">Field</th>
@@ -229,6 +209,52 @@
       (<kbd>url</kbd> OR <kbd>location</kbd>) AND (<kbd>bar</kbd> OR 
       <kbd>field</kbd>) AND (NOT <kbd>focus</kbd>)</p>
   </li>
+
+  <li>
+    The default operator, colon (:), performs a <strong>substring</strong>
+    match of the value. The following operators are supported:
+    <ul>
+      <li>
+        <strong>:</strong> (substring):<br>
+        <kbd><em>summary:foo</em></kbd> will search for [% terms.bugs %]
+        where the <kbd>summary</kbd> contains <kbd>foo</kbd>.
+      </li>
+      <li>
+        <strong>=</strong> (equals):<br>
+        <kbd><em>summary=foo</em></kbd> will search for [% terms.bugs %]
+        where the <kbd>summary</kbd> is exactly <kbd>foo</kbd>.
+      </li>
+      <li>
+        <strong>!=</strong> (notequals):<br>
+        <kbd><em>summary!=foo</em></kbd> will search for [% terms.bugs %]
+        where the <kbd>summary</kbd> is not <kbd>foo</kbd>.
+      </li>
+      <li>
+        <strong>&gt;</strong> (greaterthan):<br>
+        <kbd><em>creation_ts&gt;-2w</em></kbd> will search for [% terms.bugs %]
+        where that were created between two weeks ago and now, excluding [%
+        terms.bugs %] exactly two weeks old.
+      </li>
+      <li>
+        <strong>&gt;=</strong> (greaterthaneq):<br>
+        <kbd><em>creation_ts&gt;=-2w</em></kbd> will search for [% terms.bugs %]
+        where that were created between two weeks ago and now, including [%
+        terms.bugs %] exactly two weeks old.
+      </li>
+      <li>
+        <strong>&lt;</strong> (lessthan):<br>
+        <kbd><em>creation_ts&lt;-2w</em></kbd> will search for [% terms.bugs %]
+        where that were created more than two weeks ago, excluding [%
+        terms.bugs %] exactly two weeks old.
+      </li>
+      <li>
+        <strong>&lt;=</strong> (lessthaneq):<br>
+        <kbd><em>creation_ts&lt;=-2w</em></kbd> will search for [% terms.bugs %]
+        where that were created more than two weeks ago, including [%
+        terms.bugs %] exactly two weeks old.
+      </li>
+    </ul>
+  </li>
 </ul>
 
 <h2 id="shortcuts">Advanced Shortcuts</h2>
@@ -237,7 +263,7 @@
   specific fields, there are certain characters or words that you can
   use as a "shortcut" for searching certain fields:</p>
 
-<table cellspacing="0" cellpadding="0" border="0" class="qs_fields">
+<table class="qs_fields">
   <thead>
     <tr>
       <th class="field_name">Field</th>
@@ -320,7 +346,7 @@
   <a href="query.cgi?format=advanced">Advanced Search</a> form.</p>
 
 <ul class="qs_help">
-  <li>All [% terms.bugs %] reported by userA@company.com or assigned to him
+  <li>All [% terms.bugs %] reported by userA@company.com or assigned to them
     (the initial @ is a shortcut for the assignee, see the
     <a href="#shortcuts">Advanced Shortcuts</a> section above):<br>
     <kbd>ALL @userA@company.com OR reporter:userA@company.com</kbd></li>

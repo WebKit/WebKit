@@ -1,22 +1,9 @@
-# -*- Mode: perl; indent-tabs-mode: nil -*-
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
-# The contents of this file are subject to the Mozilla Public
-# License Version 1.1 (the "License"); you may not use this file
-# except in compliance with the License. You may obtain a copy of
-# the License at http://www.mozilla.org/MPL/
-#
-# Software distributed under the License is distributed on an "AS
-# IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-# implied. See the License for the specific language governing
-# rights and limitations under the License.
-#
-# The Initial Developer of the Original Code is Everything Solved.
-# Portions created by Everything Solved are Copyright (C) 2006
-# Everything Solved. All Rights Reserved.
-#
-# The Original Code is the Bugzilla Bug Tracking System.
-#
-# Contributor(s): Max Kanat-Alexander <mkanat@bugzilla.org>
+# This Source Code Form is "Incompatible With Secondary Licenses", as
+# defined by the Mozilla Public License, v. 2.0.
 
 package Bugzilla::Install::Localconfig;
 
@@ -28,7 +15,9 @@ package Bugzilla::Install::Localconfig;
 # * Files do not have the correct permissions
 # * The database is not up to date
 
+use 5.10.1;
 use strict;
+use warnings;
 
 use Bugzilla::Constants;
 use Bugzilla::Install::Util qw(bin_loc install_string);
@@ -36,11 +25,10 @@ use Bugzilla::Util qw(generate_random_password wrap_hard);
 
 use Data::Dumper;
 use File::Basename qw(dirname);
-use IO::File;
 use Safe;
 use Term::ANSIColor;
 
-use base qw(Exporter);
+use parent qw(Exporter);
 
 our @EXPORT_OK = qw(
     read_localconfig
@@ -93,12 +81,24 @@ use constant LOCALCONFIG_VARS => (
         default => 1,
     },
     {
-        name    => 'index_html',
-        default => 0,
+        name    => 'db_mysql_ssl_ca_file',
+        default => '',
     },
     {
-        name    => 'cvsbin',
-        default => sub { bin_loc('cvs') },
+        name    => 'db_mysql_ssl_ca_path',
+        default => '',
+    },
+    {
+        name    => 'db_mysql_ssl_client_cert',
+        default => '',
+    },
+    {
+        name    => 'db_mysql_ssl_client_key',
+        default => '',
+    },
+    {
+        name    => 'index_html',
+        default => 0,
     },
     {
         name    => 'interdiffbin',
@@ -219,14 +219,20 @@ sub update_localconfig {
         # a 256-character string for site_wide_secret.
         $value = undef if ($name eq 'site_wide_secret' and defined $value
                            and length($value) == 256);
-        
+
         if (!defined $value) {
-            push(@new_vars, $name);
             $var->{default} = &{$var->{default}} if ref($var->{default}) eq 'CODE';
             if (exists $answer->{$name}) {
                 $localconfig->{$name} = $answer->{$name};
             }
             else {
+                # If the user did not supply an answers file, then they get
+                # notified about every variable that gets added. If there was
+                # an answer file, then we don't notify about site_wide_secret
+                # because we assume the intent was to auto-generate it anyway.
+                if (!scalar(keys %$answer) || $name ne 'site_wide_secret') {
+                    push(@new_vars, $name);
+                }
                 $localconfig->{$name} = $var->{default};
             }
         }

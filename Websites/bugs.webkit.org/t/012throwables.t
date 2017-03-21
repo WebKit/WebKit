@@ -1,25 +1,9 @@
-# -*- Mode: perl; indent-tabs-mode: nil -*-
-# vim: ts=4 sw=4 et tw=80
-# 
-# The contents of this file are subject to the Mozilla Public
-# License Version 1.1 (the "License"); you may not use this file
-# except in compliance with the License. You may obtain a copy of
-# the License at http://www.mozilla.org/MPL/
-# 
-# Software distributed under the License is distributed on an "AS
-# IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-# implied. See the License for the specific language governing
-# rights and limitations under the License.
-# 
-# The Original Code are the Bugzilla Tests.
-# 
-# The Initial Developer of the Original Code is Zach Lipton
-# Portions created by Zach Lipton are 
-# Copyright (C) 2001 Zach Lipton.  All
-# Rights Reserved.
-# 
-# Contributor(s): Dennis Melentyev <dennis.melentyev@infopulse.com.ua>
-#                 Max Kanat-Alexander <mkanat@bugzilla.org>
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+#
+# This Source Code Form is "Incompatible With Secondary Licenses", as
+# defined by the Mozilla Public License, v. 2.0.
 
 
 
@@ -27,7 +11,10 @@
 #Bugzilla Test 12#
 ######Errors######
 
+use 5.10.1;
 use strict;
+use warnings;
+
 use lib qw(. lib t);
 
 use Bugzilla::Constants;
@@ -63,6 +50,13 @@ foreach my $include_path (@include_paths) {
         $file =~ s|\\|/|g if ON_WINDOWS;  # convert \ to / in path if on windows
         $test_templates{$file} = () 
             if $file =~ m#global/(code|user)-error\.html\.tmpl#;
+
+        # Make sure the extension is not disabled
+        if ($file =~ m#^(extensions/[^/]+/)#) {
+            $test_templates{$file} = ()
+                if ! -e "${1}disabled"
+                && $file =~ m#global/(code|user)-error-errors\.html\.tmpl#;
+        }
     }
 }
 
@@ -75,7 +69,7 @@ plan tests => $tests;
 
 # Collect all errors defined in templates
 foreach my $file (keys %test_templates) {
-    $file =~ m|template/([^/]+).*/global/([^/]+)-error\.html\.tmpl|;
+    $file =~ m|template/([^/]+).*/global/([^/]+)-error(?:-errors)?\.html\.tmpl|;
     my $lang = $1;
     my $errtype = $2;
 

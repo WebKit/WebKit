@@ -1,21 +1,9 @@
-[%# The contents of this file are subject to the Mozilla Public
-  # License Version 1.1 (the "License"); you may not use this file
-  # except in compliance with the License. You may obtain a copy of
-  # the License at http://www.mozilla.org/MPL/
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
   #
-  # Software distributed under the License is distributed on an "AS
-  # IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-  # implied. See the License for the specific language governing
-  # rights and limitations under the License.
-  #
-  # The Original Code is the Bugzilla Bug Tracking System.
-  #
-  # The Initial Developer of the Original Code is Netscape Communications
-  # Corporation. Portions created by Netscape are
-  # Copyright (C) 1998 Netscape Communications Corporation. All
-  # Rights Reserved.
-  #
-  # Contributor(s): Gervase Markham <gerv@gerv.net>
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
   #%]
 
 [%# INTERFACE
@@ -25,15 +13,9 @@
   # Param("emailsuffix") is used to pre-fill the email field.
   #%]
 
-[% PROCESS global/variables.none.tmpl %]
-
-[% title = BLOCK %]
-  Create a new [% terms.Bugzilla %] account
-[% END %]
-
 [% PROCESS global/header.html.tmpl
-           title = title
-           onload = "document.forms['account_creation_form'].login.focus();" %]
+           title = "Create a new $terms.Bugzilla account"
+%]
 
 <p>
   To create a [% terms.Bugzilla %] account, all you need to do is to enter
@@ -46,33 +28,52 @@
   You will receive an email at this address to confirm the creation of your
   account. <b>You will not be able to log in until you receive the email.</b>
   If it doesn't arrive within a reasonable amount of time, you may contact
-  the maintainer of this [% terms.Bugzilla %] installation
+  the maintainer of this Bugzilla installation
   at <a href="mailto:[% Param("maintainer") %]">[% Param("maintainer") %]</a>.
+</p>
+
+[% IF Param('allowemailchange') %]
+<p>
+  If you already have an account and want to change your
+  [% IF Param('emailsuffix') == '' %]
+    email address,
+  [% ELSE %]
+    login name,
+  [% END %]
+  you can change it from the Preferences page after logging in.
+</p>
+[% END %]
+
+<p>
+  A user account is required to report new [% terms.bugs %] or to comment into
+  existing ones, as you may be contacted for more information if needed.
+  This also lets other users clearly identify who is the author of comments
+  or changes made into [% terms.bugs %]. <b>Note that your email address will
+  <em>never</em> be displayed to logged out users. Only registered users will be
+  able to see it.</b>
 </p>
 
 [% IF Param('createemailregexp') == '.*' && Param('emailsuffix') == '' %]
 <p>
   <b>PRIVACY NOTICE:</b> [% terms.Bugzilla %] is an open [% terms.bug %]
   tracking system. Activity on most [% terms.bugs %], including email
-  addresses, will be visible to the public. We <b>recommend</b> using a
+  addresses, will be visible to registered users. We <b>recommend</b> using a
   secondary account or free web email service (such as Gmail, Yahoo,
   Hotmail, or similar) to avoid receiving spam at your primary email address.
 </p>
 [% END %]
 
 <form id="account_creation_form" method="get" action="createaccount.cgi">
-  <table>
-    <tr>
-      <td align="right">
-        <b>Email address:</b>
-      </td>
-      <td>
-        <input size="35" id="login" name="login">
-        [% Param('emailsuffix') FILTER html %]
-      </td>
-    </tr>
-  </table>
-  <br>
+  <span class="label">
+    [% IF Param('emailsuffix') %]
+      Login:
+    [% ELSE %]
+      Email address:
+    [% END %]
+  </span>
+  <input size="35" id="login" name="login" autofocus
+         [%- ' type="email"' UNLESS Param('emailsuffix') %] required>
+  [% Param('emailsuffix') FILTER html %]
   <input type="hidden" id="token" name="token" value="[% issue_hash_token(['create_account']) FILTER html %]">
   <input type="submit" id="send" value="Send">
 </form>

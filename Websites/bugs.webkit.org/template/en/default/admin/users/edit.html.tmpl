@@ -1,16 +1,9 @@
-[%# The contents of this file are subject to the Mozilla Public
-  # License Version 1.1 (the "License"); you may not use this file
-  # except in compliance with the License. You may obtain a copy of
-  # the License at http://www.mozilla.org/MPL/
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
   #
-  # Software distributed under the License is distributed on an "AS
-  # IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-  # implied. See the License for the specific language governing
-  # rights and limitations under the License.
-  #
-  # The Original Code is the Bugzilla Bug Tracking System.
-  #
-  # Contributor(s): Marc Schumann <wurblzap@gmail.com>
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
   #%]
 
 [%# INTERFACE:
@@ -29,8 +22,9 @@
 [% PROCESS global/header.html.tmpl
   title = title
   message = message
-  style_urls = ['skins/standard/admin.css', 'skins/standard/editusers.css']
-  doc_section = "useradmin.html#modifyusers"
+  style_urls = ['skins/standard/admin.css']
+  doc_section = "administering/users.html#modifying-users"
+  javascript_urls = [ 'js/field.js' ]
 %]
 
 [% PROCESS admin/users/listselectvars.html.tmpl
@@ -38,7 +32,7 @@
 %]
 
 <form method="post" action="editusers.cgi">
-<table class="main">
+<table id="admin_table_edit">
   [% PROCESS admin/users/userdata.html.tmpl
     editform  = 1
     editusers = editusers
@@ -48,7 +42,7 @@
     <tr>
       <th>Group access:</th>
       <td>
-        <table class="groups">
+        <table id="group_membership">
           <tr>
             [% IF editusers %]
               <th colspan="3">
@@ -58,7 +52,7 @@
           </tr>
           <tr>
             [% IF editusers %]
-              <td style="text-align: center; font-weight: bold">|</td>
+              <th class="checkbox">|</th>
             [% END %]
             <th colspan="2">User is a member of these groups</th>
           </tr>
@@ -71,7 +65,7 @@
                   [% %]<input type="checkbox"
                               name="bless_[% group.id %]"
                               value="1"
-                              [% ' checked="checked"' IF perms.directbless %] />
+                              [% ' checked="checked"' IF perms.directbless %]>
                   [% ']' IF perms.indirectbless %]</td>
               [% END %]
               <td class="checkbox">
@@ -81,7 +75,7 @@
                            id="group_[% group.id %]"
                            name="group_[% group.id %]"
                            value="1"
-                           [% ' checked="checked"' IF perms.directmember %] />
+                           [% ' checked="checked"' IF perms.directmember %]>
                 [% '*' IF perms.regexpmember %]
                 [% ']' IF perms.derivedmember %]</td>
               <td class="groupname">
@@ -107,12 +101,23 @@
       [% END %]
     </td>
   </tr>
+
+  <tr>
+    <th>Last Login:</th>
+    <td>
+      [% IF otheruser.last_seen_date %]
+        [% otheruser.last_seen_date FILTER html %]
+      [% ELSE %]
+        <em>never</em>
+      [% END %]
+    </td>
+  </tr>
 </table>
 
 <p>
-  <input type="submit" id="update" value="Save Changes" />
-  <input type="hidden" name="userid" value="[% otheruser.id %]" />
-  <input type="hidden" name="action" value="update" />
+  <input type="submit" id="update" value="Save Changes">
+  <input type="hidden" name="userid" value="[% otheruser.id %]">
+  <input type="hidden" name="action" value="update">
   <input type="hidden" name="token" value="[% token FILTER html %]">
   [% INCLUDE listselectionhiddenfields %]
 
@@ -122,7 +127,7 @@
 </p>
 </form>
 <p>
-  User is a member of any groups shown with a check or grey bar.
+  User is a member of all groups shown with a check or grey bar.
   A grey bar indicates indirect membership, either derived from other
   groups (marked with square brackets) or via regular expression
   (marked with '*').
@@ -138,9 +143,9 @@
 [% IF Param('allowuserdeletion') && editusers %]
   <form method="post" action="editusers.cgi">
   <p>
-    <input type="submit" id="delete" value="Delete User" />
-    <input type="hidden" name="action" value="del" />
-    <input type="hidden" name="userid" value="[% otheruser.id %]" />
+    <input type="submit" id="delete" value="Delete User">
+    <input type="hidden" name="action" value="del">
+    <input type="hidden" name="userid" value="[% otheruser.id %]">
     [% INCLUDE listselectionhiddenfields %]
   </p>
   </form>

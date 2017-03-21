@@ -1,21 +1,9 @@
-[%# The contents of this file are subject to the Mozilla Public
-  # License Version 1.1 (the "License"); you may not use this file
-  # except in compliance with the License. You may obtain a copy of
-  # the License at http://www.mozilla.org/MPL/
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
   #
-  # Software distributed under the License is distributed on an "AS
-  # IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-  # implied. See the License for the specific language governing
-  # rights and limitations under the License.
-  #
-  # The Original Code is the Bugzilla Bug Tracking System.
-  #
-  # The Initial Developer of the Original Code is Netscape Communications
-  # Corporation. Portions created by Netscape are
-  # Copyright (C) 1998 Netscape Communications Corporation. All
-  # Rights Reserved.
-  #
-  # Contributor(s): Gervase Markham <gerv@gerv.net>
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
   #%]
 
 [%# INTERFACE:
@@ -38,8 +26,6 @@
   # all_bug_ids: List of all bug ids the user has voted for, across all products
   #%]
 
-[% PROCESS global/variables.none.tmpl %]
-
 [% IF !header_done %]
   [% subheader = voting_user.login FILTER html %]
   [% IF canedit %]
@@ -61,25 +47,15 @@
   <hr>
 [% END %]
 
-[% IF votes_recorded %]
-  <p>
-    <font color="red">
-      The changes to your votes have been saved.
-    </font>
-  </p>
-[% ELSE %]
-  <br>
-[% END %]
-
 [% IF products.size %]
   <form name="voting_form" method="post" action="page.cgi?id=voting/user.html">
     <input type="hidden" name="action" value="vote">
     <input type="hidden" name="token" value="[% issue_hash_token(['vote']) FILTER html %]">
-    <table cellspacing="4">
+    <table id="user_votes">
       <tr>
-        <td></td>
+        <th></th>
         <th>Votes</th>
-        <th>[% terms.Bug %] #</th>
+        <th>[% terms.Bug %]&nbsp;#</th>
         <th>Summary</th>
       </tr>
 
@@ -109,8 +85,7 @@
         </tr>
 
         [% FOREACH bug = product.bugs %]
-          <tr [% IF bug.id == this_bug.id && canedit %] 
-            class="bz_bug_being_voted_on" [% END %]>
+          <tr [% IF bug.id == this_bug.id && canedit %] class="bz_bug_being_voted_on"[% END %]>
             <td>
               [% IF bug.id == this_bug.id && canedit %]
                 [% IF product.onevoteonly %]
@@ -120,25 +95,27 @@
                 [% END %]
               [%- END %]
             </td>
-            <td align="right"><a name="vote_[% bug.id FILTER html %]">
+            <td>
+              <a name="vote_[% bug.id FILTER none %]">
               [% IF canedit %]
                 [% IF product.onevoteonly %]
-                  <input type="checkbox" name="[% bug.id FILTER html %]" value="1"
-                    [% " checked" IF bug.count %] id="bug_[% bug.id FILTER html %]">
+                  <input type="checkbox" name="[% bug.id FILTER none %]" value="1"
+                    [% " checked" IF bug.count %] id="bug_[% bug.id FILTER none %]">
                 [% ELSE %]
-                  <input name="[% bug.id FILTER html %]" value="[% bug.count FILTER html %]"
-                         size="2" id="bug_[% bug.id FILTER html %]">
+                  <input name="[% bug.id FILTER none %]" value="[% bug.count FILTER html %]"
+                         size="2" id="bug_[% bug.id FILTER none %]">
                 [% END %]
               [% ELSE %]
                 [% bug.count FILTER html %]
               [% END %]
-            </a></td>
-            <td align="center">
-              [% bug.id FILTER bug_link(bug) FILTER none %]
+              </a>
+            </td>
+            <td class="right">
+              [% PROCESS bug/link.html.tmpl bug = bug, link_text = bug.id %]
             </td>
             <td>
-              [% bug.summary FILTER html %]
-              (<a href="page.cgi?id=voting/bug.html&amp;bug_id=[% bug.id FILTER uri %]">Show Votes</a>)
+              [% bug.short_desc FILTER html %]
+              (<a href="page.cgi?id=voting/bug.html&amp;bug_id=[% bug.id FILTER none %]">Show Votes</a>)
             </td>
           </tr>
         [% END %]

@@ -1,22 +1,9 @@
-[%# The contents of this file are subject to the Mozilla Public
-  # License Version 1.1 (the "License"); you may not use this file
-  # except in compliance with the License. You may obtain a copy of
-  # the License at http://www.mozilla.org/MPL/
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
   #
-  # Software distributed under the License is distributed on an "AS
-  # IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-  # implied. See the License for the specific language governing
-  # rights and limitations under the License.
-  #
-  # The Original Code is the Bugzilla Bug Tracking System.
-  #
-  # The Initial Developer of the Original Code is Netscape Communications
-  # Corporation. Portions created by Netscape are
-  # Copyright (C) 1998 Netscape Communications Corporation. All
-  # Rights Reserved.
-  #
-  # Contributor(s): Myk Melez <myk@mozilla.org>
-  #                 Jesse Clark <jjclark1982@gmail.com>
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
   #%]
 
 [%############################################################################%]
@@ -36,17 +23,17 @@
   # by the browser.
   #%]
 
-[% PROCESS "global/field-descs.none.tmpl" %]
 [% field_descs.short_short_desc     = field_descs.short_desc  %]
 [% field_descs.assigned_to_realname = field_descs.assigned_to %]
 [% field_descs.reporter_realname    = field_descs.reporter    %]
 [% field_descs.qa_contact_realname  = field_descs.qa_contact  %]
 
+[%# Setting maxlength => 0 means no limit. We set it for performance reasons. %]
 [% abbrev = 
   {
     "bug_severity"         => { maxlength => 3 , title => "Sev" } , 
     "priority"             => { maxlength => 7 , title => "Pri" } , 
-    "rep_platform"         => { maxlength => 3 , title => "Plt" } , 
+    "rep_platform"         => { maxlength => 3 , title => "HW" } , 
     "bug_status"           => { maxlength => 4 } , 
     "assigned_to"          => { maxlength => 30 , ellipsis => "..." } , 
     "assigned_to_realname" => { maxlength => 20 , ellipsis => "..." } , 
@@ -55,19 +42,22 @@
     "qa_contact"           => { maxlength => 30 , ellipsis => "..." , title => "QAContact" } , 
     "qa_contact_realname"  => { maxlength => 20 , ellipsis => "..." , title => "QAContact" } , 
     "resolution"        => { maxlength => 4 } , 
-    "short_desc"        => { wrap => 1 } ,
+    "short_desc"        => { maxlength => 0, wrap => 1 } ,
     "short_short_desc"  => { maxlength => 60 , ellipsis => "..." , wrap => 1 } ,
-    "status_whiteboard" => { title => "Whiteboard" , wrap => 1 } , 
-    "keywords"          => { wrap => 1 } ,
-    "flagtypes.name"    => { wrap => 1 } ,
+    "status_whiteboard" => { maxlength => 0, title => "Whiteboard" , wrap => 1 } , 
+    "keywords"          => { maxlength => 0, wrap => 1 } ,
+    "tags"              => { maxlength => 0, title => "Tags", wrap => 1},
+    "dependson"         => { maxlength => 0, wrap => 1 } ,
+    "blocked"           => { maxlength => 0, wrap => 1 } ,
+    "flagtypes.name"    => { maxlength => 0, wrap => 1 } ,
     "component"         => { maxlength => 8 , title => "Comp" } , 
     "product"           => { maxlength => 8 } , 
     "version"           => { maxlength => 5 , title => "Vers" } , 
-    "op_sys"            => { maxlength => 4 } , 
+    "op_sys"            => { maxlength => 12 } ,
     "bug_file_loc"      => { maxlength => 30 } , 
-    "target_milestone"  => { title => "TargetM" } , 
-    "longdescs.count"   => { title => "# Comments" },
-    "percentage_complete" => { format_value => "%d %%" } , 
+    "target_milestone"  => { maxlength => 0, title => "TargetM" } , 
+    "longdescs.count"   => { maxlength => 0, title => "# Comments" },
+    "percentage_complete" => { maxlength => 0, format_value => "%d %%" } , 
   }
 %]
 
@@ -80,7 +70,7 @@
 [%############################################################################%]
 
 [% tableheader = BLOCK %]
-  <table class="bz_buglist" cellspacing="0" cellpadding="4" width="100%">
+  <table class="bz_buglist">
     <tr class="bz_buglist_header bz_first_buglist_header">
       [% IF dotweak %]
       <th>&nbsp;</th>
@@ -151,13 +141,13 @@
 [% END %]
 
 [% BLOCK order_arrow %]
-  [% IF order.match("^$id DESC") %]
+  [% IF order.search("^$id DESC") %]
     <span class="bz_sort_order_primary">&#x25BC;</span>
-  [% ELSIF order.match("^$id(,\\s*|\$)") %]
+  [% ELSIF order.search("^$id(,\\s*|\$)") %]
     <span class="bz_sort_order_primary">&#x25B2;</span>
-  [% ELSIF order.match("\\b$id DESC") %]
+  [% ELSIF order.search("\\b$id DESC") %]
     <span class="bz_sort_order_secondary">&#x25BC;</span>
-  [% ELSIF order.match("\\b$id(,\\s*|\$)") %]
+  [% ELSIF order.search("\\b$id(,\\s*|\$)") %]
     <span class="bz_sort_order_secondary">&#x25B2;</span>
   [% END %]
 [% END %]
@@ -188,45 +178,58 @@
     [% END %]
     <td class="first-child bz_id_column">
       <a href="show_bug.cgi?id=[% bug.bug_id %]">[% bug.bug_id %]</a>
-      <span style="display: none">[%+ '[SEC]' IF bug.secure_mode %]</span>
+      <span class="bz_default_hidden">[%+ '[SEC]' IF bug.secure_mode %]</span>
     </td>
 
     [% FOREACH column = displaycolumns %]
-    <td [% 'style="white-space: nowrap"' IF NOT abbrev.$column.wrap %]
-        class="bz_[% column FILTER css_class_quote %]_column">
-      [% IF abbrev.$column.maxlength %]
+    [% col_abbrev = abbrev.$column %]
+    <td class="bz_[% column FILTER css_class_quote %]_column
+      [%~ ' nowrap' UNLESS col_abbrev.wrap
+        OR bug_fields.$column.type == constants.FIELD_TYPE_FREETEXT
+        OR  bug_fields.$column.type == constants.FIELD_TYPE_TEXTAREA %]">
+      [% IF col_abbrev.maxlength %]
         <span title="[%- display_value(column, bug.$column) FILTER html %]">
       [% END %]
-      [% IF abbrev.$column.format_value %] 
-        [%- bug.$column FILTER format(abbrev.$column.format_value) FILTER html -%] 
+      [% IF col_abbrev.format_value %]
+        [%- bug.$column FILTER format(col_abbrev.format_value) FILTER html -%]
       [% ELSIF column == 'actual_time' ||
                column == 'remaining_time' ||
                column == 'estimated_time' %]
         [% PROCESS formattimeunit time_unit=bug.$column %] 
       [%# Display the login name of the user if their real name is empty. %]
-      [% ELSIF column.match('_realname$') && bug.$column == '' %]
+      [% ELSIF column.search('_realname$') && bug.$column == '' %]
         [% SET login_column = column.remove('_realname$') %]
-        [% bug.${login_column}.truncate(abbrev.$column.maxlength, 
-                                        abbrev.$column.ellipsis) FILTER html %]
+        [% bug.${login_column}.truncate(col_abbrev.maxlength,
+                                        col_abbrev.ellipsis) FILTER html %]
       [% ELSIF column == 'short_desc' || column == "short_short_desc" %]
         <a href="show_bug.cgi?id=[% bug.bug_id FILTER html %]">
-          [%- bug.$column.truncate(abbrev.$column.maxlength, abbrev.$column.ellipsis) FILTER html -%]
+          [%- bug.$column.truncate(col_abbrev.maxlength, col_abbrev.ellipsis) FILTER html -%]
+        </a>
+      [% ELSIF bug_fields.$column.type == constants.FIELD_TYPE_BUG_ID %]
+        <a href="show_bug.cgi?id=[% bug.$column FILTER html %]">
+          [%- bug.$column.truncate(col_abbrev.maxlength, col_abbrev.ellipsis) FILTER html -%]
+        </a>
+      [% ELSIF bug_fields.$column.type == constants.FIELD_TYPE_TEXTAREA %]
+        [%- bug.$column.truncate(256, '...') FILTER html -%]
+      [% ELSIF column == 'bug_file_loc' && is_safe_url(bug.bug_file_loc) %]
+        <a href="[% bug.bug_file_loc FILTER html %]" target="_blank"
+           rel="noreferrer" title="[% bug.bug_file_loc FILTER html %]">
+          [%- display_value(column, bug.$column).truncate(col_abbrev.maxlength, col_abbrev.ellipsis) FILTER html -%]
         </a>
       [% ELSE %]
-        [%- display_value(column, bug.$column).truncate(abbrev.$column.maxlength, abbrev.$column.ellipsis) FILTER html -%]
+        [%- display_value(column, bug.$column).truncate(col_abbrev.maxlength, col_abbrev.ellipsis) FILTER html -%]
       [% END %]
-      [% IF abbrev.$column.maxlength %]
+      [% IF col_abbrev.maxlength %]
         </span>
       [% END %]
     </td>
     [% END %]
 
   </tr>
+[% END %]
 
-  [% IF loop.last() && time_info.time_present == 1 %]
-    [% PROCESS time_summary_line %]
-  [% END %]
-
+[% IF time_info.time_present %]
+  [% PROCESS time_summary_line %]
 [% END %]
 
 </table>

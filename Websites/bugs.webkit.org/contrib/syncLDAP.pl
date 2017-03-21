@@ -1,26 +1,14 @@
-#!/usr/bin/env perl -wT
-# -*- Mode: perl; indent-tabs-mode: nil -*-
+#!/usr/bin/perl -T
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
-# The contents of this file are subject to the Mozilla Public
-# License Version 1.1 (the "License"); you may not use this file
-# except in compliance with the License. You may obtain a copy of
-# the License at http://www.mozilla.org/MPL/
-#
-# Software distributed under the License is distributed on an "AS
-# IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-# implied. See the License for the specific language governing
-# rights and limitations under the License.
-#
-# The Original Code is the LDAP to Bugzilla User Sync Tool.
-#
-# The Initial Developer of the Original Code is Andreas Höfler.
-# Portions created by Andreas Höfler are Copyright (C) 2003
-# Andreas Höfler. All Rights Reserved.
-#
-# Contributor(s): Andreas Höfler <andreas.hoefler@bearingpoint.com>
-#
+# This Source Code Form is "Incompatible With Secondary Licenses", as
+# defined by the Mozilla Public License, v. 2.0.
 
+use 5.10.1;
 use strict;
+use warnings;
 
 use lib qw(. lib);
 
@@ -65,7 +53,7 @@ foreach my $arg (@ARGV)
          print "usage:\n syncLDAP.pl [options]\n\n";
          print "options:\n";
          print " -r Readonly, do not make changes to Bugzilla tables\n";
-         print " -d No disable, don't disable users, which are not in LDAP\n";
+         print " -d No disable, don't disable login by users who are not in LDAP\n";
          print " -u No update, don't update users, which have different description in LDAP\n";
          print " -c No create, don't create users, which are in LDAP but not in Bugzilla\n";
          print " -q Quiet mode, give less output\n";
@@ -208,7 +196,7 @@ while( my ($create_key, $create_value) = each(%create_users) ) {
 }
 
 if($quiet == 0) {
-   print "\nUsers to disable: \n";
+   print "\nUsers to disable login for: \n";
    while( my ($key, $value) = each(%disable_users) ) {
      print " " . $key . " '" . $value->{'realname'} . "'\n";
    }
@@ -235,7 +223,7 @@ if($quiet == 0) {
 # now do the DB-Update
 ###
 if($readonly == 0) {
-   print "Performing DB update:\nPhase 1: disabling not-existing users... " unless $quiet;
+   print "Performing DB update:\nPhase 1: disabling login for users not in LDAP... " unless $quiet;
 
    my $sth_disable = $dbh->prepare(
        'UPDATE profiles
@@ -254,22 +242,15 @@ if($readonly == 0) {
    
    print "Phase 2: updating existing users... " unless $quiet;
 
-   my $sth_update_login = $dbh->prepare(
-       'UPDATE profiles
-           SET login_name = ? 
-         WHERE ' . $dbh->sql_istrcmp('login_name', '?'));
-   my $sth_update_realname = $dbh->prepare(
-       'UPDATE profiles
-           SET realname = ? 
-         WHERE ' . $dbh->sql_istrcmp('login_name', '?'));
-
    if($noupdate == 0) {
       while( my ($key, $value) = each(%update_users) ) {
+        my $user = Bugzilla::User->check($key);
         if(defined $value->{'new_login_name'}) {
-          $sth_update_login->execute($value->{'new_login_name'}, $key);
+          $user->set_login($value->{'new_login_name'});
         } else {
-          $sth_update_realname->execute($value->{'realname'}, $key);
+          $user->set_name($value->{'realname'});
         }
+        $user->update();
       }
       print "done!\n" unless $quiet;
    }
@@ -295,4 +276,3 @@ else
 {
    print "No changes to DB because readonly mode\n" unless $quiet;
 }
-

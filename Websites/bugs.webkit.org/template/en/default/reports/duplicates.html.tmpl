@@ -1,21 +1,9 @@
-[%# The contents of this file are subject to the Mozilla Public
-  # License Version 1.1 (the "License"); you may not use this file
-  # except in compliance with the License. You may obtain a copy of
-  # the License at http://www.mozilla.org/MPL/
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
   #
-  # Software distributed under the License is distributed on an "AS
-  # IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-  # implied. See the License for the specific language governing
-  # rights and limitations under the License.
-  #
-  # The Original Code is the Bugzilla Bug Tracking System.
-  #
-  # The Initial Developer of the Original Code is Netscape Communications
-  # Corporation. Portions created by Netscape are
-  # Copyright (C) 1998 Netscape Communications Corporation. All
-  # Rights Reserved.
-  #
-  # Contributor(s): Gervase Markham <gerv@gerv.net>
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
   #%]
 
 [%# INTERFACE:
@@ -30,8 +18,6 @@
   # duplicates-table.html.tmpl.
   #%]
 
-[% PROCESS global/variables.none.tmpl %]
-
 [% IF product.size %]
   [% title = BLOCK %]
     Most Frequently Reported [% terms.Bugs %] for 
@@ -41,10 +27,7 @@
   [% title = "Most Frequently Reported $terms.Bugs" %]
 [% END%]
 
-[% PROCESS global/header.html.tmpl
-   title = title
-   style_urls = ['skins/standard/duplicates.css']
-%]
+[% PROCESS global/header.html.tmpl title = title %]
 
 <p>
   <a href="#explanation">What is this data?</a>
@@ -66,6 +49,18 @@
   <input type="hidden" name="bug_id" value="[% bug_ids_string FILTER html %]">
   <table>
     <tr>
+      <td>Restrict to products:</td>
+      <td>
+        [% INCLUDE "global/product-select.html.tmpl"
+          id       => "product"
+          name     => "product"
+          multiple => 5
+          value    => product
+        %]
+      </td>
+    </tr>
+
+    <tr>
       <td>When sorting or restricting, work with:</td>
       <td>
         <input type="radio" name="sortvisible" id="entirelist" value="0"
@@ -79,16 +74,6 @@
         <label for="visiblelist">
           currently visible list
         </label>
-      </td>
-      <td rowspan="4" valign="top">Restrict to products:</td>
-      <td rowspan="4" valign="top">
-        <select name="product" size="5" multiple="multiple">
-          [% FOREACH p = user.get_selectable_products %]
-            <option name="[% p.name FILTER html %]"
-            [% ' selected="selected"' IF product.contains(p.name) %]
-            >[% p.name FILTER html %]</option>
-          [% END %]
-        </select>
       </td>
      </tr>
 

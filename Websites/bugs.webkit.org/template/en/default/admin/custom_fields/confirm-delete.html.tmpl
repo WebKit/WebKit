@@ -1,16 +1,9 @@
-[%# The contents of this file are subject to the Mozilla Public
-  # License Version 1.1 (the "License"); you may not use this file
-  # except in compliance with the License. You may obtain a copy of
-  # the License at http://www.mozilla.org/MPL/
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
   #
-  # Software distributed under the License is distributed on an "AS
-  # IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-  # implied. See the License for the specific language governing
-  # rights and limitations under the License.
-  #
-  # The Original Code is the Bugzilla Bug Tracking System.
-  #
-  # Contributor(s): Alexander Eiser <alexe@ed.ca>
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
   #%]
 
 [%# INTERFACE:
@@ -26,31 +19,32 @@
 
 [% PROCESS global/header.html.tmpl
            title = title
-           doc_section = "custom-fields.html#delete-custom-fields"
+           style_urls = ['skins/standard/admin.css']
+           doc_section = "administering/custom-fields.html#deleting-custom-fields"
 %]
 
-<table border="1" cellpadding="4" cellspacing="0">
-<tr bgcolor="#6666FF">
-  <th valign="top" align="left">Field</th>
-  <th valign="top" align="left">Value</th>
-</tr>
-<tr>
-  <td valign="top">Custom Field:</td>
-  <td valign="top">[% field.name FILTER html %]</td>
-</tr>
-<tr>
-  <td valign="top">Description:</td>
-  <td valign="top">[% field.description FILTER html %]</td>
-</tr>
-<tr>
-  <td valign="top">Type:</td>
-  <td valign="top">[% field_types.${field.type} FILTER html %]</td>
-</tr>
+<table id="admin_table">
+  <tr class="column_header">
+    <th>Field</th>
+    <th>Value</th>
+  </tr>
+  <tr>
+    <td>Custom Field</td>
+    <td>[% field.name FILTER html %]</td>
+  </tr>
+  <tr>
+    <td>Description</td>
+    <td>[% field.description FILTER html %]</td>
+  </tr>
+  <tr>
+    <td>Type</td>
+    <td>[% field_types.${field.type} FILTER html %]</td>
+  </tr>
 </table>
 
 <h2>Confirmation</h2>
 
-<p>
+<p class="confirmation">
   Are you sure you want to remove this field from the database?<br>
   <em>This action will only be successful if the field is obsolete,
   and has never been used in [% terms.abug FILTER html %].</em>

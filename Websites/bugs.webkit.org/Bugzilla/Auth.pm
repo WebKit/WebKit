@@ -1,29 +1,16 @@
-# -*- Mode: perl; indent-tabs-mode: nil -*-
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
-# The contents of this file are subject to the Mozilla Public
-# License Version 1.1 (the "License"); you may not use this file
-# except in compliance with the License. You may obtain a copy of
-# the License at http://www.mozilla.org/MPL/
-#
-# Software distributed under the License is distributed on an "AS
-# IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-# implied. See the License for the specific language governing
-# rights and limitations under the License.
-#
-# The Original Code is the Bugzilla Bug Tracking System.
-#
-# The Initial Developer of the Original Code is Netscape Communications
-# Corporation. Portions created by Netscape are
-# Copyright (C) 1998 Netscape Communications Corporation. All
-# Rights Reserved.
-#
-# Contributor(s): Bradley Baetz <bbaetz@acm.org>
-#                 Erik Stambaugh <erik@dasbistro.com>
-#                 Max Kanat-Alexander <mkanat@bugzilla.org>
+# This Source Code Form is "Incompatible With Secondary Licenses", as
+# defined by the Mozilla Public License, v. 2.0.
 
 package Bugzilla::Auth;
 
+use 5.10.1;
 use strict;
+use warnings;
+
 use fields qw(
     _info_getter
     _verifier
@@ -38,13 +25,14 @@ use Bugzilla::User::Setting ();
 use Bugzilla::Auth::Login::Stack;
 use Bugzilla::Auth::Verify::Stack;
 use Bugzilla::Auth::Persist::Cookie;
+use Socket;
 
 sub new {
     my ($class, $params) = @_;
     my $self = fields::new($class);
 
     $params            ||= {};
-    $params->{Login}   ||= Bugzilla->params->{'user_info_class'} . ',Cookie';
+    $params->{Login}   ||= Bugzilla->params->{'user_info_class'} . ',Cookie,APIKey';
     $params->{Verify}  ||= Bugzilla->params->{'user_verify_class'};
 
     $self->{_info_getter} = new Bugzilla::Auth::Login::Stack($params->{Login});
@@ -58,7 +46,6 @@ sub new {
 
 sub login {
     my ($self, $type) = @_;
-    my $dbh = Bugzilla->dbh;
 
     # Get login info from the cookie, form, environment variables, etc.
     my $login_info = $self->{_info_getter}->get_login_info();
@@ -67,7 +54,7 @@ sub login {
         return $self->_handle_login_result($login_info, $type);
     }
 
-    # Now verify his username and password against the DB, LDAP, etc.
+    # Now verify their username and password against the DB, LDAP, etc.
     if ($self->{_info_getter}->{successful}->requires_verification) {
         $login_info = $self->{_verifier}->check_credentials($login_info);
         if ($login_info->{failure}) {
@@ -123,6 +110,15 @@ sub can_logout {
     return $getter->can_logout;
 }
 
+sub login_token {
+    my ($self) = @_;
+    my $getter = $self->{_info_getter}->{successful};
+    if ($getter && $getter->isa('Bugzilla::Auth::Login::Cookie')) {
+        return $getter->login_token;
+    }
+    return undef;
+}
+
 sub user_can_create_account {
     my ($self) = @_;
     my $verifier = $self->{_verifier}->{successful};
@@ -158,7 +154,7 @@ sub _handle_login_result {
         if ($self->{_info_getter}->{successful}->requires_persistence
             and !Bugzilla->request_cache->{auth_no_automatic_login}) 
         {
-            $self->{_persister}->persist_login($user);
+            $user->{_login_token} = $self->{_persister}->persist_login($user);
         }
     }
     elsif ($fail_code == AUTH_ERROR) {
@@ -183,7 +179,7 @@ sub _handle_login_result {
     elsif ($fail_code == AUTH_LOGINFAILED or $fail_code == AUTH_NO_SUCH_USER) {
         my $remaining_attempts = MAX_LOGIN_ATTEMPTS 
                                  - ($result->{failure_count} || 0);
-        ThrowUserError("invalid_username_or_password", 
+        ThrowUserError("invalid_login_or_password", 
                        { remaining => $remaining_attempts });
     }
     # The account may be disabled
@@ -215,10 +211,18 @@ sub _handle_login_result {
             my $default_settings = Bugzilla::User::Setting::get_defaults();
             my $template = Bugzilla->template_inner(
                                $default_settings->{lang}->{default_value});
+            my $address = $attempts->[0]->{ip_addr};
+            # Note: inet_aton will only resolve IPv4 addresses.
+            # For IPv6 we'll need to use inet_pton which requires Perl 5.12.
+            my $n = inet_aton($address);
+            if ($n) {
+                $address = gethostbyaddr($n, AF_INET) . " ($address)"
+            }
             my $vars = {
                 locked_user => $user,
                 attempts    => $attempts,
                 unlock_at   => $unlock_at,
+                address     => $address,
             };
             my $message;
             $template->process('email/lockout.txt.tmpl', $vars, \$message)
@@ -294,7 +298,7 @@ An incorrect username or password was given.
 The hashref may also contain a C<failure_count> element, which specifies
 how many times the account has failed to log in within the lockout
 period (see L</AUTH_LOCKOUT>). This is used to warn the user when
-he is getting close to being locked out.
+they are getting close to being locked out.
 
 =head2 C<AUTH_NO_SUCH_USER>
 
@@ -416,6 +420,14 @@ Params:      None
 Returns:     C<true> if users can change their own email address,
              C<false> otherwise.
 
+=item C<login_token>
+
+Description: If a login token was used instead of a cookie then this
+             will return the current login token data such as user id
+             and the token itself.
+Params:      None
+Returns:     A hash containing C<login_token> and C<user_id>.
+
 =back
 
 =head1 STRUCTURE
@@ -531,5 +543,3 @@ A L<Bugzilla::User> object representing the authenticated user.
 Note that C<Bugzilla::Auth::login> may modify this object at various points.
 
 =back
-
-

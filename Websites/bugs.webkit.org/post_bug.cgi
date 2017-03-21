@@ -1,30 +1,15 @@
-#!/usr/bin/env perl -wT
-# -*- Mode: perl; indent-tabs-mode: nil -*-
+#!/usr/bin/perl -T
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
-# The contents of this file are subject to the Mozilla Public
-# License Version 1.1 (the "License"); you may not use this file
-# except in compliance with the License. You may obtain a copy of
-# the License at http://www.mozilla.org/MPL/
-#
-# Software distributed under the License is distributed on an "AS
-# IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-# implied. See the License for the specific language governing
-# rights and limitations under the License.
-#
-# The Original Code is the Bugzilla Bug Tracking System.
-#
-# The Initial Developer of the Original Code is Netscape Communications
-# Corporation. Portions created by Netscape are
-# Copyright (C) 1998 Netscape Communications Corporation. All
-# Rights Reserved.
-#
-# Contributor(s): Terry Weissman <terry@mozilla.org>
-#                 Dan Mosedale <dmose@mozilla.org>
-#                 Joe Robins <jmrobins@tgix.com>
-#                 Gervase Markham <gerv@gerv.net>
-#                 Marc Schumann <wurblzap@gmail.com>
+# This Source Code Form is "Incompatible With Secondary Licenses", as
+# defined by the Mozilla Public License, v. 2.0.
 
+use 5.10.1;
 use strict;
+use warnings;
+
 use lib qw(. lib);
 
 use Bugzilla;
@@ -35,13 +20,11 @@ use Bugzilla::Util;
 use Bugzilla::Error;
 use Bugzilla::Bug;
 use Bugzilla::User;
-use Bugzilla::Field;
 use Bugzilla::Hook;
-use Bugzilla::Product;
-use Bugzilla::Component;
-use Bugzilla::Keyword;
 use Bugzilla::Token;
 use Bugzilla::Flag;
+
+use List::MoreUtils qw(uniq);
 
 my $user = Bugzilla->login(LOGIN_REQUIRED);
 
@@ -80,8 +63,6 @@ if (defined $cgi->param('maketemplate')) {
       || ThrowTemplateError($template->error());
     exit;
 }
-
-umask 0;
 
 # The format of the initial comment can be structured by adding fields to the
 # enter_bug template and then referencing them in the comment template.
@@ -122,7 +103,7 @@ push(@bug_fields, qw(
     version
     target_milestone
     status_whiteboard
-
+    see_also
     estimated_time
     deadline
 ));
@@ -223,19 +204,26 @@ $vars->{'bug'} = $bug;
 
 Bugzilla::Hook::process('post_bug_after_creation', { vars => $vars });
 
-ThrowCodeError("bug_error", { bug => $bug }) if $bug->error;
-
 my $recipients = { changer => $user };
 my $bug_sent = Bugzilla::BugMail::Send($id, $recipients);
 $bug_sent->{type} = 'created';
 $bug_sent->{id}   = $id;
 my @all_mail_results = ($bug_sent);
+
 foreach my $dep (@{$bug->dependson || []}, @{$bug->blocked || []}) {
     my $dep_sent = Bugzilla::BugMail::Send($dep, $recipients);
     $dep_sent->{type} = 'dep';
     $dep_sent->{id}   = $dep;
     push(@all_mail_results, $dep_sent);
 }
+
+# Sending emails for any referenced bugs.
+foreach my $ref_bug_id (uniq @{ $bug->{see_also_changes} || [] }) {
+    my $ref_sent = Bugzilla::BugMail::Send($ref_bug_id, $recipients);
+    $ref_sent->{id} = $ref_bug_id;
+    push(@all_mail_results, $ref_sent);
+}
+
 $vars->{sentmail} = \@all_mail_results;
 
 $format = $template->get_format("bug/create/created",

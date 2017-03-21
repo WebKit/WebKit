@@ -1,31 +1,15 @@
-#!/usr/bin/env perl -w
-# -*- Mode: perl; indent-tabs-mode: nil -*-
+#!/usr/bin/perl
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
-# The contents of this file are subject to the Mozilla Public
-# License Version 1.1 (the "License"); you may not use this file
-# except in compliance with the License. You may obtain a copy of
-# the License at http://www.mozilla.org/MPL/
-#
-# Software distributed under the License is distributed on an "AS
-# IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-# implied. See the License for the specific language governing
-# rights and limitations under the License.
-#
-# The Original Code is the Bugzilla Bug Tracking System.
-#
-# The Initial Developer of the Original Code is Netscape Communications
-# Corporation. Portions created by Netscape are
-# Copyright (C) 1998 Netscape Communications Corporation. All
-# Rights Reserved.
-#
-# Contributor(s): Terry Weissman <terry@mozilla.org>,
-#                 Harrison Page <harrison@netscape.com>
-#                 Gervase Markham <gerv@gerv.net>
-#                 Richard Walters <rwalters@qualcomm.com>
-#                 Jean-Sebastien Guay <jean_seb@hybride.com>
-#                 Frédéric Buclin <LpSolit@gmail.com>
+# This Source Code Form is "Incompatible With Secondary Licenses", as
+# defined by the Mozilla Public License, v. 2.0.
 
+use 5.10.1;
 use strict;
+use warnings;
+
 use lib qw(. lib);
 
 use Getopt::Long qw(:config bundling);
@@ -55,6 +39,10 @@ $| = 1;
 
 my $datadir = bz_locations()->{'datadir'};
 my $graphsdir = bz_locations()->{'graphsdir'};
+
+# We use a dummy product instance with ID 0, representing all products
+my $product_all = {id => 0, name => '-All-'};
+bless($product_all, 'Bugzilla::Product');
 
 # Tidy up after graphing module
 my $cwd = Cwd::getcwd();
@@ -138,7 +126,7 @@ if ($switch{'regenerate'}) {
 my $tstart = time;
 
 my @myproducts = Bugzilla::Product->get_all;
-unshift(@myproducts, "-All-");
+unshift(@myproducts, $product_all);
 
 my $dir = "$datadir/mining";
 if (!-d $dir) {
@@ -158,7 +146,7 @@ fix_dir_permissions($dir);
 
 my $tend = time;
 # Uncomment the following line for performance testing.
-#print "Total time taken " . delta_time($tstart, $tend) . "\n";
+#say "Total time taken " . delta_time($tstart, $tend);
 
 CollectSeriesData();
 
@@ -167,18 +155,8 @@ sub collect_stats {
     my $product = shift;
     my $when = localtime (time);
     my $dbh = Bugzilla->dbh;
-    my $product_id;
 
-    if (ref $product) {
-        $product_id = $product->id;
-        $product = $product->name;
-    }
-
-    # NB: Need to mangle the product for the filename, but use the real
-    # product name in the query
-    my $file_product = $product;
-    $file_product =~ s/\//-/gs;
-    my $file = join '/', $dir, $file_product;
+    my $file = join '/', $dir, $product->id;
     my $exists = -f $file;
 
     # if the file exists, get the old status and resolution list for that product.
@@ -204,7 +182,7 @@ sub collect_stats {
     my $status_sql = q{SELECT COUNT(*) FROM bugs WHERE bug_status = ?};
     my $reso_sql   = q{SELECT COUNT(*) FROM bugs WHERE resolution = ?};
 
-    if ($product ne '-All-') {
+    if ($product->id) {
         $status_sql .= q{ AND product_id = ?};
         $reso_sql   .= q{ AND product_id = ?};
     }
@@ -215,26 +193,27 @@ sub collect_stats {
     my @values ;
     foreach my $status (@statuses) {
         @values = ($status);
-        push (@values, $product_id) if ($product ne '-All-');
+        push (@values, $product->id) if ($product->id);
         my $count = $dbh->selectrow_array($sth_status, undef, @values);
         push(@row, $count);
     }
     foreach my $resolution (@resolutions) {
         @values = ($resolution);
-        push (@values, $product_id) if ($product ne '-All-');
+        push (@values, $product->id) if ($product->id);
         my $count = $dbh->selectrow_array($sth_reso, undef, @values);
         push(@row, $count);
     }
 
     if (!$exists || scalar(@data)) {
         my $fields = join('|', ('DATE', @statuses, @resolutions));
+        my $product_name = $product->name;
         print DATA <<FIN;
 # Bugzilla Daily Bug Stats
 #
 # Do not edit me! This file is generated.
 #
 # fields: $fields
-# Product: $product
+# Product: $product_name
 # Created: $when
 FIN
     }
@@ -303,24 +282,14 @@ sub regenerate_stats {
     my $when = localtime(time());
     my $tstart = time();
 
-    # NB: Need to mangle the product for the filename, but use the real
-    # product name in the query
-    if (ref $product) {
-        $product = $product->name;
-    }
-    my $file_product = $product;
-    $file_product =~ s/\//-/gs;
-    my $file = join '/', $dir, $file_product;
+    my $file = join '/', $dir, $product->id;
 
     my $and_product = "";
-    my $from_product = "";
 
     my @values = ();
-    if ($product ne '-All-') {
-        $and_product = q{ AND products.name = ?};
-        $from_product = q{ INNER JOIN products 
-                          ON bugs.product_id = products.id};
-        push (@values, $product);
+    if ($product->id) {
+        $and_product = q{ AND product_id = ?};
+        push (@values, $product->id);
     }
 
     # Determine the start date from the date the first bug in the
@@ -330,7 +299,7 @@ sub regenerate_stats {
                 $dbh->sql_to_days('creation_ts') . q{ AS start_day, } .
                 $dbh->sql_to_days('current_date') . q{ AS end_day, } . 
                 $dbh->sql_to_days("'1970-01-01'") . 
-                 qq{ FROM bugs $from_product 
+                 qq{ FROM bugs
                    WHERE } . $dbh->sql_to_days('creation_ts') . 
                          qq{ IS NOT NULL $and_product 
                 ORDER BY start_day } . $dbh->sql_limit(1);
@@ -340,15 +309,16 @@ sub regenerate_stats {
         return;
     }
 
-    if (open DATA, ">$file") {
+    if (open DATA, ">", $file) {
         my $fields = join('|', ('DATE', @statuses, @resolutions));
+        my $product_name = $product->name;
         print DATA <<FIN;
 # Bugzilla Daily Bug Stats
 #
 # Do not edit me! This file is generated.
 #
 # fields: $fields
-# Product: $product
+# Product: $product_name
 # Created: $when
 FIN
         # For each day, generate a line of statistics.
@@ -357,12 +327,13 @@ FIN
         for (my $day = $start + 1; $day <= $end; $day++) {
             # Some output feedback
             my $percent_done = ($day - $start - 1) * 100 / $total_days;
-            printf "\rRegenerating $product \[\%.1f\%\%]", $percent_done;
+            printf "\rRegenerating %s \[\%.1f\%\%]", $product_name,
+                                                     $percent_done;
 
             # Get a list of bugs that were created the previous day, and
             # add those bugs to the list of bugs for this product.
             $query = qq{SELECT bug_id 
-                          FROM bugs $from_product 
+                          FROM bugs
                          WHERE bugs.creation_ts < } . 
                          $dbh->sql_from_days($day - 1) . 
                          q{ AND bugs.creation_ts >= } . 
@@ -405,8 +376,8 @@ FIN
 
         # Finish up output feedback for this product.
         my $tend = time;
-        print "\rRegenerating $product \[100.0\%] - " .
-            delta_time($tstart, $tend) . "\n";
+        say "\rRegenerating " . $product_name . ' [100.0%] - ' .
+            delta_time($tstart, $tend);
 
         close DATA;
     }
@@ -504,8 +475,7 @@ sub CollectSeriesData {
                                               'fields' => ["bug_id"],
                                               'allow_unlimited' => 1,
                                               'user'   => $user);
-            my $sql = $search->sql;
-            $data = $shadow_dbh->selectall_arrayref($sql);
+            $data = $search->data;
         };
 
         if (!$@) {

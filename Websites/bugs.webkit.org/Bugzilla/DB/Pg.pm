@@ -1,29 +1,9 @@
-# -*- Mode: perl; indent-tabs-mode: nil -*-
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
-# The contents of this file are subject to the Mozilla Public
-# License Version 1.1 (the "License"); you may not use this file
-# except in compliance with the License. You may obtain a copy of
-# the License at http://www.mozilla.org/MPL/
-#
-# Software distributed under the License is distributed on an "AS
-# IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-# implied. See the License for the specific language governing
-# rights and limitations under the License.
-#
-# The Original Code is the Bugzilla Bug Tracking System.
-#
-# The Initial Developer of the Original Code is Netscape Communications
-# Corporation. Portions created by Netscape are
-# Copyright (C) 1998 Netscape Communications Corporation. All
-# Rights Reserved.
-#
-# Contributor(s): Dave Miller <davem00@aol.com>
-#                 Gayathri Swaminath <gayathrik00@aol.com>
-#                 Jeroen Ruigrok van der Werven <asmodai@wxs.nl>
-#                 Dave Lawrence <dkl@redhat.com>
-#                 Tomas Kopal <Tomas.Kopal@altap.cz>
-#                 Max Kanat-Alexander <mkanat@bugzilla.org>
-#                 Lance Larsh <lance.larsh@oracle.com>
+# This Source Code Form is "Incompatible With Secondary Licenses", as
+# defined by the Mozilla Public License, v. 2.0.
 
 =head1 NAME
 
@@ -41,13 +21,16 @@ For interface details see L<Bugzilla::DB> and L<DBI>.
 
 package Bugzilla::DB::Pg;
 
+use 5.10.1;
 use strict;
+use warnings;
 
 use Bugzilla::Error;
+use Bugzilla::Version;
 use DBD::Pg;
 
 # This module extends the DB interface via inheritance
-use base qw(Bugzilla::DB);
+use parent qw(Bugzilla::DB);
 
 use constant BLOB_TYPE => { pg_type => DBD::Pg::PG_BYTEA };
 
@@ -98,14 +81,37 @@ sub bz_last_key {
 }
 
 sub sql_group_concat {
-    my ($self, $text, $separator, $sort) = @_;
+    my ($self, $text, $separator, $sort, $order_by) = @_;
     $sort = 1 if !defined $sort;
     $separator = $self->quote(', ') if !defined $separator;
-    my $sql = "array_accum($text)";
-    if ($sort) {
-        $sql = "array_sort($sql)";
+
+    # PostgreSQL 8.x doesn't support STRING_AGG
+    if (vers_cmp($self->bz_server_version, 9) < 0) {
+        my $sql = "ARRAY_ACCUM($text)";
+        if ($sort) {
+            $sql = "ARRAY_SORT($sql)";
+        }
+        return "ARRAY_TO_STRING($sql, $separator)";
     }
-    return "array_to_string($sql, $separator)";
+
+    if ($order_by && $text =~ /^DISTINCT\s*(.+)$/i) {
+        # Since Postgres (quite rightly) doesn't support "SELECT DISTINCT x
+        # ORDER BY y", we need to sort the list, and then get the unique
+        # values
+        return "ARRAY_TO_STRING(ANYARRAY_UNIQ(ARRAY_AGG($1 ORDER BY $order_by)), $separator)";
+    }
+
+    # Determine the ORDER BY clause (if any)
+    if ($order_by) {
+        $order_by = " ORDER BY $order_by";
+    }
+    elsif ($sort) {
+        # We don't include the DISTINCT keyword in an order by
+        $text =~ /^(?:DISTINCT\s*)?(.+)$/i;
+        $order_by = " ORDER BY $1";
+    }
+
+    return "STRING_AGG(${text}::text, $separator${order_by}::text)"
 }
 
 sub sql_istring {
@@ -118,6 +124,36 @@ sub sql_position {
     my ($self, $fragment, $text) = @_;
 
     return "POSITION(${fragment}::text IN ${text}::text)";
+}
+
+sub sql_like {
+    my ($self, $fragment, $column, $not) = @_;
+    $not //= '';
+
+    return "${column}::text $not LIKE " . $self->sql_like_escape($fragment) . " ESCAPE '|'";
+}
+
+sub sql_ilike {
+    my ($self, $fragment, $column, $not) = @_;
+    $not //= '';
+
+    return "${column}::text $not ILIKE " . $self->sql_like_escape($fragment) . " ESCAPE '|'";
+}
+
+sub sql_not_ilike {
+    return shift->sql_ilike(@_, 'NOT');
+}
+
+# Escapes any % or _ characters which are special in a LIKE match.
+# Also performs a $dbh->quote to escape any quote characters.
+sub sql_like_escape {
+    my ($self, $fragment) = @_;
+
+    $fragment =~ s/\|/\|\|/g;  # escape the escape character if it appears
+    $fragment =~ s/%/\|%/g;    # percent and underscore are the special match
+    $fragment =~ s/_/\|_/g;    # characters in SQL.
+
+    return $self->quote("%$fragment%");
 }
 
 sub sql_regexp {
@@ -229,21 +265,25 @@ sub bz_setup_database {
     my $self = shift;
     $self->SUPER::bz_setup_database(@_);
 
-    # Custom Functions
-    my $function = 'array_accum';
-    my $array_accum = $self->selectrow_array(
-        'SELECT 1 FROM pg_proc WHERE proname = ?', undef, $function);
-    if (!$array_accum) {
-        print "Creating function $function...\n";
-        $self->do("CREATE AGGREGATE array_accum (
-                       SFUNC = array_append,
-                       BASETYPE = anyelement,
-                       STYPE = anyarray,
-                       INITCOND = '{}' 
-                   )");
-    }
+    my ($has_plpgsql) = $self->selectrow_array("SELECT COUNT(*) FROM pg_language WHERE lanname = 'plpgsql'");
+    $self->do('CREATE LANGUAGE plpgsql') unless $has_plpgsql;
 
-   $self->do(<<'END');
+    if (vers_cmp($self->bz_server_version, 9) < 0) {
+        # Custom Functions for Postgres 8
+        my $function = 'array_accum';
+        my $array_accum = $self->selectrow_array(
+            'SELECT 1 FROM pg_proc WHERE proname = ?', undef, $function);
+        if (!$array_accum) {
+            print "Creating function $function...\n";
+            $self->do("CREATE AGGREGATE array_accum (
+                           SFUNC = array_append,
+                           BASETYPE = anyelement,
+                           STYPE = anyarray,
+                           INITCOND = '{}' 
+                       )");
+        }
+
+       $self->do(<<'END');
 CREATE OR REPLACE FUNCTION array_sort(ANYARRAY)
 RETURNS ANYARRAY LANGUAGE SQL
 IMMUTABLE STRICT
@@ -256,6 +296,57 @@ SELECT ARRAY(
 );
 $$;
 END
+    }
+    else {
+        # Custom functions for Postgres 9.0+
+
+        # -Copyright © 2013 Joshua D. Burns (JDBurnZ) and Message In Action LLC
+        # JDBurnZ: https://github.com/JDBurnZ
+        # Message In Action: https://www.messageinaction.com
+        #
+        #Permission is hereby granted, free of charge, to any person obtaining a copy of
+        #this software and associated documentation files (the "Software"), to deal in
+        #the Software without restriction, including without limitation the rights to
+        #use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+        #the Software, and to permit persons to whom the Software is furnished to do so,
+        #subject to the following conditions:
+        #
+        #The above copyright notice and this permission notice shall be included in all
+        #copies or substantial portions of the Software.
+        #
+        #THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+        #IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+        #FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+        #COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+        #IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+        #CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+        $self->do(q|
+            DROP FUNCTION IF EXISTS anyarray_uniq(anyarray);
+            CREATE OR REPLACE FUNCTION anyarray_uniq(with_array anyarray)
+            RETURNS anyarray AS $BODY$
+            DECLARE
+                -- The variable used to track iteration over "with_array".
+                loop_offset integer;
+
+                -- The array to be returned by this function.
+                return_array with_array%TYPE := '{}';
+            BEGIN
+                IF with_array IS NULL THEN
+                    return NULL;
+                END IF;
+
+                -- Iterate over each element in "concat_array".
+                FOR loop_offset IN ARRAY_LOWER(with_array, 1)..ARRAY_UPPER(with_array, 1) LOOP
+                    IF NOT with_array[loop_offset] = ANY(return_array) THEN
+                        return_array = ARRAY_APPEND(return_array, with_array[loop_offset]);
+                    END IF;
+                END LOOP;
+
+                RETURN return_array;
+            END;
+            $BODY$ LANGUAGE plpgsql;
+        |);
+    }
 
     # PostgreSQL doesn't like having *any* index on the thetext
     # field, because it can't have index data longer than 2770
@@ -386,3 +477,82 @@ sub bz_table_list_real {
 }
 
 1;
+
+=head2 Functions
+
+=over
+
+=item C<sql_like_escape>
+
+=over
+
+=item B<Description>
+
+The postgres versions of the sql_like methods use the ANSI SQL LIKE
+statements to perform substring searching.  To prevent issues with
+users attempting to search for strings containing special characters
+associated with LIKE, we escape them out so they don't affect the search
+terms.
+
+=item B<Params>
+
+=over
+
+=item C<$fragment> - The string fragment in need of escaping and quoting
+
+=back
+
+=item B<Returns>
+
+The fragment with any pre existing %,_,| characters escaped out, wrapped in
+percent characters and quoted.
+
+=back
+
+=back
+
+=head1 B<Methods in need of POD>
+
+=over
+
+=item sql_date_format
+
+=item bz_explain
+
+=item bz_sequence_exists
+
+=item bz_last_key
+
+=item sql_position
+
+=item sql_like
+
+=item sql_ilike
+
+=item sql_not_ilike
+
+=item sql_limit
+
+=item sql_not_regexp
+
+=item sql_string_concat
+
+=item sql_date_math
+
+=item sql_to_days
+
+=item bz_check_server_version
+
+=item sql_from_days
+
+=item bz_table_list_real
+
+=item sql_regexp
+
+=item sql_istring
+
+=item sql_group_concat
+
+=item bz_setup_database
+
+=back

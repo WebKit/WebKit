@@ -1,26 +1,15 @@
-# -*- Mode: perl; indent-tabs-mode: nil -*-
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
-# The contents of this file are subject to the Mozilla Public
-# License Version 1.1 (the "License"); you may not use this file
-# except in compliance with the License. You may obtain a copy of
-# the License at http://www.mozilla.org/MPL/
-#
-# Software distributed under the License is distributed on an "AS
-# IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-# implied. See the License for the specific language governing
-# rights and limitations under the License.
-#
-# The Original Code is the Bugzilla Bug Tracking System.
-#
-# The Initial Developer of the Original Code is BugzillaSource, Inc.
-# Portions created by the Initial Developer are Copyright (C) 2011 the
-# Initial Developer. All Rights Reserved.
-#
-# Contributor(s):
-#   Max Kanat-Alexander <mkanat@bugzilla.org>
+# This Source Code Form is "Incompatible With Secondary Licenses", as
+# defined by the Mozilla Public License, v. 2.0.
 
 package Bugzilla::Search::Clause;
+
+use 5.10.1;
 use strict;
+use warnings;
 
 use Bugzilla::Error;
 use Bugzilla::Search::Condition qw(condition);
@@ -40,6 +29,11 @@ sub children {
     my ($self) = @_;
     $self->{children} ||= [];
     return $self->{children};
+}
+
+sub update_search_args {
+    my ($self, $search_args) = @_;
+    # abstract
 }
 
 sub joiner { return $_[0]->{joiner} }
@@ -83,7 +77,7 @@ sub walk_conditions {
     my ($self, $callback) = @_;
     foreach my $child (@{ $self->children }) {
         if ($child->isa('Bugzilla::Search::Condition')) {
-            $callback->($child);
+            $callback->($self, $child);
         }
         else {
             $child->walk_conditions($callback);
@@ -140,3 +134,27 @@ sub as_params {
 }
 
 1;
+
+=head1 B<Methods in need of POD>
+
+=over
+
+=item has_translated_conditions
+
+=item as_string
+
+=item add
+
+=item children
+
+=item negate
+
+=item update_search_args
+
+=item walk_conditions
+
+=item joiner
+
+=item as_params
+
+=back

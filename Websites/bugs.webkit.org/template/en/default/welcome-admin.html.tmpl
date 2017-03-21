@@ -1,30 +1,20 @@
-[%# The contents of this file are subject to the Mozilla Public
-  # License Version 1.1 (the "License"); you may not use this file
-  # except in compliance with the License. You may obtain a copy of
-  # the License at http://www.mozilla.org/MPL/
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
   #
-  # Software distributed under the License is distributed on an "AS
-  # IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-  # implied. See the License for the specific language governing
-  # rights and limitations under the License.
-  #
-  # The Original Code is the Bugzilla Bug Tracking System.
-  #
-  # Contributor(s): Frédéric Buclin <LpSolit@gmail.com>
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
   #%]
 
 [%# INTERFACE:
   # none
   #%]
 
-[% PROCESS global/variables.none.tmpl %]
-
-[% title = BLOCK %]Welcome to [% terms.Bugzilla %][% END %]
+[% title = BLOCK %]Welcome to Bugzilla[% END %]
 
 [% PROCESS global/header.html.tmpl
    title = title
    header_addl_info = "version $constants.BUGZILLA_VERSION"
-   style_urls = [ 'skins/standard/index.css' ]
 %]
 
 <div id="welcome-admin">
@@ -64,7 +54,7 @@
 
     <li><a href="editparams.cgi?section=auth#createemailregexp_desc">createemailregexp</a>
     defines which users are allowed to create an account on this installation. If set
-    to ".*" (the default), everybody is free to create his own account. If set to
+    to ".*" (the default), everybody is free to create their own account. If set to
     "@mycompany.com$", only users having an account @mycompany.com will be allowed to
     create an account. If left blank, users will not be able to create accounts themselves;
     only an administrator will be able to create one for them. If you want a private
@@ -77,7 +67,7 @@
   </ul>
 
   <p>
-    After having set up all this, we recommend looking at [% terms.Bugzilla %]'s other
+    After having set up all this, we recommend looking at Bugzilla's other
     parameters as well at some time so that you understand what they do and whether you
     want to modify their settings for your installation.
   </p>

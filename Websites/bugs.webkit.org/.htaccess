@@ -1,7 +1,20 @@
 # Don't allow people to retrieve non-cgi executable files or our private data
-<FilesMatch ^(lib|.*\.pm|.*\.pl|.*localconfig.*)$>
-  deny from all
+<FilesMatch (\.pm|\.pl|\.tmpl|localconfig.*)$>
+  <IfModule mod_version.c>
+    <IfVersion < 2.4>
+      Deny from all
+    </IfVersion>
+    <IfVersion >= 2.4>
+      Require all denied
+    </IfVersion>
+  </IfModule>
+  <IfModule !mod_version.c>
+    Deny from all
+  </IfModule>
 </FilesMatch>
+
+Options -Indexes
+
 <IfModule mod_expires.c>
 <IfModule mod_headers.c>
 <IfModule mod_env.c>
@@ -22,6 +35,12 @@
   SetEnv BZ_CACHE_CONTROL 1
 </IfModule>
 </IfModule>
+</IfModule>
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteOptions inherit
+  RewriteRule ^rest/(.*)$ rest.cgi/$1 [NE]
 </IfModule>
 
 # Force all connections to HTTPS for 90 days at a time.

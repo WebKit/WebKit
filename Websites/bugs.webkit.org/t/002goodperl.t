@@ -1,40 +1,28 @@
-# -*- Mode: perl; indent-tabs-mode: nil -*-
-# 
-# The contents of this file are subject to the Mozilla Public
-# License Version 1.1 (the "License"); you may not use this file
-# except in compliance with the License. You may obtain a copy of
-# the License at http://www.mozilla.org/MPL/
-# 
-# Software distributed under the License is distributed on an "AS
-# IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-# implied. See the License for the specific language governing
-# rights and limitations under the License.
-# 
-# The Original Code are the Bugzilla Tests.
-# 
-# The Initial Developer of the Original Code is Zach Lipton
-# Portions created by Zach Lipton are 
-# Copyright (C) 2001 Zach Lipton.  All
-# Rights Reserved.
-# 
-# Contributor(s): Zach Lipton <zach@zachlipton.com>
-#                 Jacob Steenhagen <jake@bugzilla.org>
-#                 David D. Kilzer <ddkilzer@theracingworld.com>
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+#
+# This Source Code Form is "Incompatible With Secondary Licenses", as
+# defined by the Mozilla Public License, v. 2.0.
 
 
 #################
 #Bugzilla Test 2#
 ####GoodPerl#####
 
+use 5.10.1;
 use strict;
+use warnings;
 
 use lib 't';
 
 use Support::Files;
 
-use Test::More tests => (scalar(@Support::Files::testitems) * 4);
+use Test::More tests => (scalar(@Support::Files::testitems)
+                         + scalar(@Support::Files::test_files)) * 6;
 
-my @testitems = @Support::Files::testitems; # get the files to test.
+my @testitems = (@Support::Files::test_files, @Support::Files::testitems);
+my @require_taint = qw(email_in.pl importxml.pl mod_perl.pl whine.pl);
 
 foreach my $file (@testitems) {
     $file =~ s/\s.*$//; # nuke everything after the first space (#comment)
@@ -49,28 +37,38 @@ foreach my $file (@testitems) {
     my $ext = $1;
 
     if ($file_line1 !~ m/^#\!/) {
-        ok(1,"$file does not have a shebang");	
+        ok(1,"$file does not have a shebang");
     } else {
         my $flags;
         if (!defined $ext || $ext eq "pl") {
             # standalone programs aren't taint checked yet
-            $flags = "w";
+            if (grep { $file eq $_ } @require_taint) {
+                $flags = 'T';
+            }
+            else {
+                $flags = '';
+            }
         } elsif ($ext eq "pm") {
             ok(0, "$file is a module, but has a shebang");
             next;
         } elsif ($ext eq "cgi") {
             # cgi files must be taint checked
-            $flags = "wT";
+            $flags = 'T';
         } else {
             ok(0, "$file has shebang but unknown extension");
             next;
         }
 
-        if ($file_line1 =~ m#^\#\!/usr/bin/env perl\s#) {
-            if ($file_line1 =~ m#\s-$flags#) {
-                ok(1,"$file uses standard perl location and -$flags");
-            } else {
-                ok(0,"$file is MISSING -$flags --WARNING");
+        if ($file_line1 =~ m#^\#\!/usr/bin/perl(?:\s-(\w+))?$#) {
+            my $file_flags = $1 || '';
+            if ($flags eq $file_flags) {
+                ok(1, "$file uses standard perl location" . ($flags ? " and -$flags flag" : ""));
+            }
+            elsif ($flags) {
+                ok(0, "$file is MISSING -$flags flag --WARNING");
+            }
+            else {
+                ok(0, "$file has unexpected -$file_flags flag --WARNING");
             }
         } else {
             ok(0,"$file uses non-standard perl location");
@@ -79,7 +77,10 @@ foreach my $file (@testitems) {
 }
 
 foreach my $file (@testitems) {
+    my $found_use_perl = 0;
     my $found_use_strict = 0;
+    my $found_use_warnings = 0;
+
     $file =~ s/\s.*$//; # nuke everything after the first space (#comment)
     next if (!$file); # skip null entries
     if (! open (FILE, $file)) {
@@ -87,16 +88,28 @@ foreach my $file (@testitems) {
         next;
     }
     while (my $file_line = <FILE>) {
-        if ($file_line =~ m/^\s*use strict/) {
-            $found_use_strict = 1;
-            last;
-        }
+        $found_use_perl = 1 if $file_line =~ m/^\s*use 5.10.1/;
+        $found_use_strict = 1 if $file_line =~ m/^\s*use strict/;
+        $found_use_warnings = 1 if $file_line =~ m/^\s*use warnings/;
+        last if ($found_use_perl && $found_use_strict && $found_use_warnings);
     }
     close (FILE);
+    if ($found_use_perl) {
+        ok(1,"$file requires Perl 5.10.1");
+    } else {
+        ok(0,"$file DOES NOT require Perl 5.10.1 --WARNING");
+    }
+
     if ($found_use_strict) {
         ok(1,"$file uses strict");
     } else {
         ok(0,"$file DOES NOT use strict --WARNING");
+    }
+
+    if ($found_use_warnings) {
+        ok(1,"$file uses warnings");
+    } else {
+        ok(0,"$file DOES NOT use warnings --WARNING");
     }
 }
 

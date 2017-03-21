@@ -1,26 +1,18 @@
-# -*- Mode: perl; indent-tabs-mode: nil -*-
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
-# The contents of this file are subject to the Mozilla Public
-# License Version 1.1 (the "License"); you may not use this file
-# except in compliance with the License. You may obtain a copy of
-# the License at http://www.mozilla.org/MPL/
-#
-# Software distributed under the License is distributed on an "AS
-# IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-# implied. See the License for the specific language governing
-# rights and limitations under the License.
-#
-# The Original Code is the Bugzilla Bug Tracking System.
-#
-# Contributor(s): Max Kanat-Alexander <mkanat@bugzilla.org>
-#                 Noel Cragg <noel@red-bean.com>
+# This Source Code Form is "Incompatible With Secondary Licenses", as
+# defined by the Mozilla Public License, v. 2.0.
 
 package Bugzilla::Install::DB;
 
 # NOTE: This package may "use" any modules that it likes,
 # localconfig is available, and params are up to date. 
 
+use 5.10.1;
 use strict;
+use warnings;
 
 use Bugzilla::Constants;
 use Bugzilla::Hook;
@@ -33,6 +25,7 @@ use Bugzilla::Field;
 
 use Date::Parse;
 use Date::Format;
+use Digest;
 use IO::File;
 use List::MoreUtils qw(uniq);
 use URI;
@@ -124,7 +117,11 @@ sub update_fielddefs_definition {
         {TYPE => 'BOOLEAN', NOTNULL => 1, DEFAULT => 'FALSE'});
     $dbh->do('UPDATE fielddefs SET is_numeric = 1 WHERE type = '
              . FIELD_TYPE_BUG_ID);
-             
+
+    # 2012-04-12 aliustek@gmail.com - Bug 728138
+    $dbh->bz_add_column('fielddefs', 'long_desc',
+                        {TYPE => 'varchar(255)', NOTNULL => 1, DEFAULT => "''"}, '');
+
     Bugzilla::Hook::process('install_update_db_fielddefs');
 
     # Remember, this is not the function for adding general table changes.
@@ -189,15 +186,6 @@ sub update_table_definitions {
                         {TYPE => 'BOOLEAN', NOTNULL => 1}, 1);
 
     _populate_milestones_table();
-
-    # 2000-03-22 Changed the default value for target_milestone to be "---"
-    # (which is still not quite correct, but much better than what it was
-    # doing), and made the size of the value field in the milestones table match
-    # the size of the target_milestone field in the bugs table.
-    $dbh->bz_alter_column('bugs', 'target_milestone',
-        {TYPE => 'varchar(20)', NOTNULL => 1, DEFAULT => "'---'"});
-    $dbh->bz_alter_column('milestones', 'value',
-                          {TYPE => 'varchar(20)', NOTNULL => 1});
 
     _add_products_defaultmilestone();
 
@@ -284,10 +272,6 @@ sub update_table_definitions {
                         {TYPE => 'BOOLEAN', NOTNULL => 1, DEFAULT => 'FALSE'});
     $dbh->bz_add_column('attachments', 'isprivate',
                         {TYPE => 'BOOLEAN', NOTNULL => 1, DEFAULT => 'FALSE'});
-
-    $dbh->bz_add_column("bugs", "alias", {TYPE => "varchar(20)"});
-    $dbh->bz_add_index('bugs', 'bugs_alias_idx',
-                       {TYPE => 'UNIQUE', FIELDS => [qw(alias)]});
 
     _move_quips_into_db();
 
@@ -398,7 +382,7 @@ sub update_table_definitions {
               "WHERE initialqacontact = 0");
 
     _migrate_email_prefs_to_new_table();
-    _initialize_dependency_tree_changes_email_pref();
+    _initialize_new_email_prefs();
     _change_all_mysql_booleans_to_tinyint();
 
     # make classification_id field type be consistent with DB:Schema
@@ -455,7 +439,7 @@ sub update_table_definitions {
     
     # 2005-12-07 altlst@sonic.net -- Bug 225221
     $dbh->bz_add_column('longdescs', 'comment_id',
-        {TYPE => 'MEDIUMSERIAL', NOTNULL => 1, PRIMARYKEY => 1});
+        {TYPE => 'INTSERIAL', NOTNULL => 1, PRIMARYKEY => 1});
 
     _stop_storing_inactive_flags();
     _change_short_desc_from_mediumtext_to_varchar();
@@ -607,7 +591,7 @@ sub update_table_definitions {
     _fix_series_creator_fk();
 
     # 2009-11-14 dkl@redhat.com - Bug 310450
-    $dbh->bz_add_column('bugs_activity', 'comment_id', {TYPE => 'INT3'});
+    $dbh->bz_add_column('bugs_activity', 'comment_id', {TYPE => 'INT4'});
 
     # 2010-04-07 LpSolit@gmail.com - Bug 69621
     $dbh->bz_drop_column('bugs', 'keywords');
@@ -657,8 +641,15 @@ sub update_table_definitions {
     # 2011-06-15 dkl@mozilla.com - Bug 658929
     _migrate_disabledtext_boolean();
 
+    # 2011-11-01 glob@mozilla.com - Bug 240437
+    $dbh->bz_add_column('profiles', 'last_seen_date', {TYPE => 'DATETIME'});
+
     # 2011-10-11 miketosh - Bug 690173
     _on_delete_set_null_for_audit_log_userid();
+    
+    # 2011-11-23 gerv@gerv.net - Bug 705058 - make filenames longer
+    $dbh->bz_alter_column('attachments', 'filename', 
+                                    { TYPE => 'varchar(255)', NOTNULL => 1 });
 
     # 2011-11-28 dkl@mozilla.com - Bug 685611
     _fix_notnull_defaults();
@@ -668,6 +659,78 @@ sub update_table_definitions {
         $dbh->bz_drop_index('profile_search', 'profile_search_user_id');
         $dbh->bz_add_index('profile_search', 'profile_search_user_id_idx', [qw(user_id)]);
     }
+
+    # 2012-03-23 LpSolit@gmail.com - Bug 448551
+    $dbh->bz_alter_column('bugs', 'target_milestone',
+                          {TYPE => 'varchar(64)', NOTNULL => 1, DEFAULT => "'---'"});
+
+    $dbh->bz_alter_column('milestones', 'value', {TYPE => 'varchar(64)', NOTNULL => 1});
+
+    $dbh->bz_alter_column('products', 'defaultmilestone',
+                          {TYPE => 'varchar(64)', NOTNULL => 1, DEFAULT => "'---'"});
+
+    # 2012-04-15 Frank@Frank-Becker.de - Bug 740536
+    $dbh->bz_add_index('audit_log', 'audit_log_class_idx', ['class', 'at_time']);
+
+    # 2012-06-06 dkl@mozilla.com - Bug 762288
+    $dbh->bz_alter_column('bugs_activity', 'removed', 
+                          { TYPE => 'varchar(255)' });
+    $dbh->bz_add_index('bugs_activity', 'bugs_activity_removed_idx', ['removed']);
+
+    # 2012-06-13 dkl@mozilla.com - Bug 764457
+    $dbh->bz_add_column('bugs_activity', 'id', 
+                        {TYPE => 'INTSERIAL', NOTNULL => 1, PRIMARYKEY => 1});
+
+    # 2012-06-13 dkl@mozilla.com - Bug 764466
+    $dbh->bz_add_column('profiles_activity', 'id', 
+                        {TYPE => 'MEDIUMSERIAL', NOTNULL => 1, PRIMARYKEY => 1});
+
+    # 2012-07-24 dkl@mozilla.com - Bug 776972
+    $dbh->bz_alter_column('bugs_activity', 'id', 
+                          {TYPE => 'INTSERIAL', NOTNULL => 1, PRIMARYKEY => 1});
+
+
+    # 2012-07-24 dkl@mozilla.com - Bug 776982
+    _fix_longdescs_primary_key();
+
+    # 2012-08-02 dkl@mozilla.com - Bug 756953
+    _fix_dependencies_dupes();
+
+    # 2012-08-01 koosha.khajeh@gmail.com - Bug 187753
+    _shorten_long_quips();
+
+    # 2012-12-29 reed@reedloden.com - Bug 785283
+    _add_password_salt_separator();
+
+    # 2013-01-02 LpSolit@gmail.com - Bug 824361
+    _fix_longdescs_indexes();
+
+    # 2013-02-04 dkl@mozilla.com - Bug 824346
+    _fix_flagclusions_indexes();
+
+    # 2013-08-26 sgreen@redhat.com - Bug 903895
+    _fix_components_primary_key();
+
+    # 2014-06-09 dylan@mozilla.com - Bug 1022923
+    $dbh->bz_add_index('bug_user_last_visit',
+                       'bug_user_last_visit_last_visit_ts_idx',
+                       ['last_visit_ts']);
+
+    # 2014-07-14 sgreen@redhat.com - Bug 726696
+    $dbh->bz_alter_column('tokens', 'tokentype',
+                          {TYPE => 'varchar(16)', NOTNULL => 1});
+
+    # 2014-07-27 LpSolit@gmail.com - Bug 1044561
+    _fix_user_api_keys_indexes();
+
+    # 2014-08-11 sgreen@redhat.com - Bug 1012506
+     _update_alias();
+
+    # 2014-11-10 dkl@mozilla.com - Bug 1093928
+    $dbh->bz_drop_column('longdescs', 'is_markdown');
+
+    # 2015-12-16 LpSolit@gmail.com - Bug 1232578
+    _sanitize_audit_log_table();
 
     ################################################################
     # New --TABLE-- changes should go *** A B O V E *** this point #
@@ -826,8 +889,8 @@ sub _populate_longdescs {
 
                         if (!$who) {
                             # This username doesn't exist.  Maybe someone
-                            # renamed him or something.  Invent a new profile
-                            # entry disabled, just to represent him.
+                            # renamed them or something.  Invent a new profile
+                            # entry disabled, just to represent them.
                             $dbh->do("INSERT INTO profiles (login_name, 
                                       cryptpassword, disabledtext) 
                                       VALUES (?,?,?)", undef, $name, '*',
@@ -1387,9 +1450,9 @@ sub _use_ids_for_products_and_components {
         print "Updating the database to use component IDs.\n";
 
         $dbh->bz_add_column("components", "id",
-            {TYPE => 'SMALLSERIAL', NOTNULL => 1, PRIMARYKEY => 1});
+            {TYPE => 'MEDIUMSERIAL', NOTNULL => 1, PRIMARYKEY => 1});
         $dbh->bz_add_column("bugs", "component_id",
-                            {TYPE => 'INT2', NOTNULL => 1}, 0);
+                            {TYPE => 'INT3', NOTNULL => 1}, 0);
 
         my %components;
         $sth = $dbh->prepare("SELECT id, value, product_id FROM components");
@@ -2214,7 +2277,7 @@ sub _convert_attachments_filename_from_mediumtext {
     # shouldn't be there for security.  Buggy browsers include them,
     # and attachment.cgi now takes them out, but old ones need converting.
     my $ref = $dbh->bz_column_info("attachments", "filename");
-    if ($ref->{TYPE} ne 'varchar(100)') {
+    if ($ref->{TYPE} ne 'varchar(100)' && $ref->{TYPE} ne 'varchar(255)') {
         print "Removing paths from filenames in attachments table...";
 
         my $sth = $dbh->prepare("SELECT attach_id, filename FROM attachments " .
@@ -2396,13 +2459,16 @@ sub _migrate_email_prefs_to_new_table {
     }
 }
 
-sub _initialize_dependency_tree_changes_email_pref {
+sub _initialize_new_email_prefs {
     my $dbh = Bugzilla->dbh;
     # Check for any "new" email settings that wouldn't have been ported over
     # during the block above.  Since these settings would have otherwise
     # fallen under EVT_OTHER, we'll just clone those settings.  That way if
     # folks have already disabled all of that mail, there won't be any change.
-    my %events = ("Dependency Tree Changes" => EVT_DEPEND_BLOCK);
+    my %events = (
+        "Dependency Tree Changes" => EVT_DEPEND_BLOCK,
+        "Product/Component Changes" => EVT_COMPONENT,
+    );
 
     foreach my $desc (keys %events) {
         my $event = $events{$desc};
@@ -2497,7 +2563,7 @@ sub _fix_whine_queries_title_and_op_sys_value {
                  undef, "Other", "other");
         if (Bugzilla->params->{'defaultopsys'} eq 'other') {
             # We can't actually fix the param here, because WriteParams() will
-            # make $datadir/params unwriteable to the webservergroup.
+            # make $datadir/params.json unwriteable to the webservergroup.
             # It's too much of an ugly hack to copy the permission-fixing code
             # down to here. (It would create more potential future bugs than
             # it would solve problems.)
@@ -3133,8 +3199,6 @@ sub _change_text_types {
         { TYPE => 'TINYTEXT', NOTNULL => 1 });
     $dbh->bz_alter_column('groups', 'description',
         { TYPE => 'MEDIUMTEXT', NOTNULL => 1 });
-    $dbh->bz_alter_column('quips', 'quip',
-        { TYPE => 'MEDIUMTEXT', NOTNULL => 1 });
     $dbh->bz_alter_column('namedqueries', 'query',
         { TYPE => 'LONGTEXT', NOTNULL => 1 });
 
@@ -3678,6 +3742,201 @@ sub _fix_notnull_defaults {
             $dbh->bz_alter_column('bugs', $field->name,
                                   {TYPE => 'MEDIUMTEXT', NOTNULL => 1,
                                    DEFAULT => "''"}, '');
+        }
+    }
+}
+
+sub _fix_longdescs_primary_key {
+    my $dbh = Bugzilla->dbh;
+    if ($dbh->bz_column_info('longdescs', 'comment_id')->{TYPE} ne 'INTSERIAL') {
+        $dbh->bz_drop_related_fks('longdescs', 'comment_id');
+        $dbh->bz_alter_column('bugs_activity', 'comment_id', {TYPE => 'INT4'});
+        $dbh->bz_alter_column('longdescs', 'comment_id',
+                              {TYPE => 'INTSERIAL',  NOTNULL => 1,  PRIMARYKEY => 1});
+    }
+}
+
+sub _fix_longdescs_indexes {
+    my $dbh = Bugzilla->dbh;
+    my $bug_id_idx = $dbh->bz_index_info('longdescs', 'longdescs_bug_id_idx');
+    if ($bug_id_idx && scalar @{$bug_id_idx->{'FIELDS'}} < 2) {
+        $dbh->bz_drop_index('longdescs', 'longdescs_bug_id_idx');
+        $dbh->bz_add_index('longdescs', 'longdescs_bug_id_idx', [qw(bug_id work_time)]);
+    }
+}
+
+sub _fix_dependencies_dupes {
+    my $dbh = Bugzilla->dbh;
+    my $blocked_idx = $dbh->bz_index_info('dependencies', 'dependencies_blocked_idx');
+    if ($blocked_idx && scalar @{$blocked_idx->{'FIELDS'}} < 2) {
+        # Remove duplicated entries
+        my $dupes = $dbh->selectall_arrayref("
+            SELECT blocked, dependson, COUNT(*) AS count
+              FROM dependencies " .
+            $dbh->sql_group_by('blocked, dependson') . "
+            HAVING COUNT(*) > 1",
+            { Slice => {} });
+        print "Removing duplicated entries from the 'dependencies' table...\n" if @$dupes;
+        foreach my $dupe (@$dupes) {
+            $dbh->do("DELETE FROM dependencies
+                      WHERE blocked = ? AND dependson = ?",
+                     undef, $dupe->{blocked}, $dupe->{dependson});
+            $dbh->do("INSERT INTO dependencies (blocked, dependson) VALUES (?, ?)",
+                     undef, $dupe->{blocked}, $dupe->{dependson});
+        }
+        $dbh->bz_drop_index('dependencies', 'dependencies_blocked_idx');
+        $dbh->bz_add_index('dependencies', 'dependencies_blocked_idx',
+                           { FIELDS => [qw(blocked dependson)], TYPE => 'UNIQUE' });
+    }   
+}
+
+sub _shorten_long_quips {
+    my $dbh = Bugzilla->dbh;
+    my $quips = $dbh->selectall_arrayref("SELECT quipid, quip FROM quips
+                                          WHERE CHAR_LENGTH(quip) > 512");
+
+    if (@$quips) {
+        print "Shortening quips longer than 512 characters:";
+
+        my $query = $dbh->prepare("UPDATE quips SET quip = ? WHERE quipid = ?");
+
+        foreach my $quip (@$quips) {
+            my ($quipid, $quip_str) = @$quip;
+            $quip_str = substr($quip_str, 0, 509) . "...";
+            print " $quipid";
+            $query->execute($quip_str, $quipid);
+        }
+        print "\n";
+    }
+    $dbh->bz_alter_column('quips', 'quip', { TYPE => 'varchar(512)', NOTNULL => 1});
+}
+
+sub _add_password_salt_separator {
+    my $dbh = Bugzilla->dbh;
+
+    $dbh->bz_start_transaction();
+
+    my $profiles = $dbh->selectall_arrayref("SELECT userid, cryptpassword FROM profiles WHERE ("
+        . $dbh->sql_regexp("cryptpassword", "'^[^,]+{'") . ")");
+
+    if (@$profiles) {
+        say "Adding salt separator to password hashes...";
+
+        my $query = $dbh->prepare("UPDATE profiles SET cryptpassword = ? WHERE userid = ?");
+        my %algo_sizes;
+
+        foreach my $profile (@$profiles) {
+            my ($userid, $hash) = @$profile;
+            my ($algorithm) = $hash =~ /{([^}]+)}$/;
+
+            $algo_sizes{$algorithm} ||= length(Digest->new($algorithm)->b64digest);
+
+            # Calculate the salt length by taking the stored hash and
+            # subtracting the combined lengths of the hash size, the
+            # algorithm name, and 2 for the {} surrounding the name.
+            my $not_salt_len = $algo_sizes{$algorithm} + length($algorithm) + 2;
+            my $salt_len = length($hash) - $not_salt_len;
+
+            substr($hash, $salt_len, 0, ',');
+            $query->execute($hash, $userid);
+        }
+    }
+    $dbh->bz_commit_transaction();
+}
+
+sub _fix_flagclusions_indexes {
+    my $dbh = Bugzilla->dbh;
+    foreach my $table ('flaginclusions', 'flagexclusions') {
+        my $index = $table . '_type_id_idx';
+        my $idx_info = $dbh->bz_index_info($table, $index);
+        if ($idx_info && $idx_info->{'TYPE'} ne 'UNIQUE') {
+            # Remove duplicated entries
+            my $dupes = $dbh->selectall_arrayref("
+                SELECT type_id, product_id, component_id, COUNT(*) AS count
+                  FROM $table " .
+                $dbh->sql_group_by('type_id, product_id, component_id') . "
+                HAVING COUNT(*) > 1",
+                { Slice => {} });
+            say "Removing duplicated entries from the '$table' table..." if @$dupes;
+            foreach my $dupe (@$dupes) {
+                $dbh->do("DELETE FROM $table 
+                          WHERE type_id = ? AND product_id = ? AND component_id = ?",
+                         undef, $dupe->{type_id}, $dupe->{product_id}, $dupe->{component_id});
+                $dbh->do("INSERT INTO $table (type_id, product_id, component_id) VALUES (?, ?, ?)",
+                         undef, $dupe->{type_id}, $dupe->{product_id}, $dupe->{component_id});
+            }
+            $dbh->bz_drop_index($table, $index);
+            $dbh->bz_add_index($table, $index,
+                { FIELDS => [qw(type_id product_id component_id)],
+                  TYPE   => 'UNIQUE' });
+        }
+    }
+}
+
+sub _fix_components_primary_key {
+    my $dbh = Bugzilla->dbh;
+    if ($dbh->bz_column_info('components', 'id')->{TYPE} ne 'MEDIUMSERIAL') {
+        $dbh->bz_drop_related_fks('components', 'id');
+        $dbh->bz_alter_column("components", "id",
+                              {TYPE => 'MEDIUMSERIAL',  NOTNULL => 1,  PRIMARYKEY => 1});
+        $dbh->bz_alter_column("flaginclusions", "component_id",
+                              {TYPE => 'INT3'});
+        $dbh->bz_alter_column("flagexclusions", "component_id",
+                              {TYPE => 'INT3'});
+        $dbh->bz_alter_column("bugs", "component_id",
+                              {TYPE => 'INT3', NOTNULL => 1});
+        $dbh->bz_alter_column("component_cc", "component_id",
+                              {TYPE => 'INT3', NOTNULL => 1});
+    }
+}
+
+sub _fix_user_api_keys_indexes {
+    my $dbh = Bugzilla->dbh;
+
+    if ($dbh->bz_index_info('user_api_keys', 'user_api_keys_key')) {
+        $dbh->bz_drop_index('user_api_keys', 'user_api_keys_key');
+        $dbh->bz_add_index('user_api_keys', 'user_api_keys_api_key_idx',
+                           { FIELDS => ['api_key'], TYPE => 'UNIQUE' });
+    }
+    if ($dbh->bz_index_info('user_api_keys', 'user_api_keys_user_id')) {
+        $dbh->bz_drop_index('user_api_keys', 'user_api_keys_user_id');
+        $dbh->bz_add_index('user_api_keys', 'user_api_keys_user_id_idx', ['user_id']);
+    }
+}
+
+sub _update_alias {
+    my $dbh = Bugzilla->dbh;
+    return unless $dbh->bz_column_info('bugs', 'alias');
+
+    # We need to move the aliases from the bugs table to the bugs_aliases table
+    $dbh->do(q{
+        INSERT INTO bugs_aliases (bug_id, alias)
+        SELECT bug_id, alias FROM bugs WHERE alias IS NOT NULL
+    });
+
+    $dbh->bz_drop_column('bugs', 'alias');
+}
+
+sub _sanitize_audit_log_table {
+    my $dbh = Bugzilla->dbh;
+
+    # Replace hashed passwords by a generic comment.
+    my $class = 'Bugzilla::User';
+    my $field = 'cryptpassword';
+
+    my $hashed_passwd =
+      $dbh->selectcol_arrayref('SELECT added FROM audit_log WHERE class = ? AND field = ?
+                                AND ' . $dbh->sql_not_ilike('hashed_with_', 'added'),
+                                undef, ($class, $field));
+    if (@$hashed_passwd) {
+        say "Sanitizing hashed passwords stored in the 'audit_log' table...";
+        my $sth = $dbh->prepare('UPDATE audit_log SET added = ?
+                                 WHERE class = ? AND field = ? AND added = ?');
+
+        foreach my $passwd (@$hashed_passwd) {
+            my (undef, $sanitized_passwd) =
+              Bugzilla::Object::_sanitize_audit_log($class, $field, [undef, $passwd]);
+            $sth->execute($sanitized_passwd, $class, $field, $passwd);
         }
     }
 }

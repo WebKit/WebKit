@@ -1,30 +1,15 @@
-#!/usr/bin/env perl -wT
-# -*- Mode: perl; indent-tabs-mode: nil -*-
+#!/usr/bin/perl -T
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
-# The contents of this file are subject to the Mozilla Public
-# License Version 1.1 (the "License"); you may not use this file
-# except in compliance with the License. You may obtain a copy of
-# the License at http://www.mozilla.org/MPL/
-#
-# Software distributed under the License is distributed on an "AS
-# IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-# implied. See the License for the specific language governing
-# rights and limitations under the License.
-#
-# The Original Code is the Bugzilla Bug Tracking System.
-#
-# The Initial Developer of the Original Code is Netscape Communications
-# Corporation. Portions created by Netscape are
-# Copyright (C) 1998 Netscape Communications Corporation. All
-# Rights Reserved.
-#
-# Contributor(s): Dave Miller <justdave@syndicomm.com>
-#                 Joel Peshkin <bugreport@peshkin.net>
-#                 Jacob Steenhagen <jake@bugzilla.org>
-#                 Vlad Dascalu <jocuri@softhome.net>
-#                 Frédéric Buclin <LpSolit@gmail.com>
+# This Source Code Form is "Incompatible With Secondary Licenses", as
+# defined by the Mozilla Public License, v. 2.0.
 
+use 5.10.1;
 use strict;
+use warnings;
+
 use lib qw(. lib);
 
 use Bugzilla;
@@ -36,9 +21,6 @@ use Bugzilla::Group;
 use Bugzilla::Product;
 use Bugzilla::User;
 use Bugzilla::Token;
-
-use constant SPECIAL_GROUPS => ('chartgroup', 'insidergroup',
-                                'timetrackinggroup', 'querysharegroup');
 
 my $cgi = Bugzilla->cgi;
 my $dbh = Bugzilla->dbh;
@@ -153,8 +135,7 @@ sub get_current_and_available {
 unless ($action) {
     my @groups = Bugzilla::Group->get_all;
     $vars->{'groups'} = \@groups;
-    
-    print $cgi->header();
+
     $template->process("admin/groups/list.html.tmpl", $vars)
       || ThrowTemplateError($template->error());
     exit;
@@ -173,12 +154,10 @@ if ($action eq 'changeform') {
 
     get_current_and_available($group, $vars);
     $vars->{'group'} = $group;
-    $vars->{'token'}       = issue_session_token('edit_group');
+    $vars->{'token'} = issue_session_token('edit_group');
 
-    print $cgi->header();
     $template->process("admin/groups/edit.html.tmpl", $vars)
       || ThrowTemplateError($template->error());
-
     exit;
 }
 
@@ -190,10 +169,9 @@ if ($action eq 'changeform') {
 
 if ($action eq 'add') {
     $vars->{'token'} = issue_session_token('add_group');
-    print $cgi->header();
+
     $template->process("admin/groups/create.html.tmpl", $vars)
       || ThrowTemplateError($template->error());
-    
     exit;
 }
 
@@ -212,15 +190,9 @@ if ($action eq 'new') {
         isactive    => scalar $cgi->param('isactive'),
         icon_url    => scalar $cgi->param('icon_url'),
         isbuggroup  => 1,
+        use_in_all_products => scalar $cgi->param('insertnew'),
     });
 
-    # Permit all existing products to use the new group if makeproductgroups.
-    if ($cgi->param('insertnew')) {
-        $dbh->do('INSERT INTO group_control_map
-                  (group_id, product_id, membercontrol, othercontrol)
-                  SELECT ?, products.id, ?, ? FROM products',
-                  undef, ($group->id, CONTROLMAPSHOWN, CONTROLMAPNA));
-    }
     delete_token($token);
 
     $vars->{'message'} = 'group_created';
@@ -228,7 +200,6 @@ if ($action eq 'new') {
     get_current_and_available($group, $vars);
     $vars->{'token'} = issue_session_token('edit_group');
 
-    print $cgi->header();
     $template->process("admin/groups/edit.html.tmpl", $vars)
       || ThrowTemplateError($template->error());
     exit;
@@ -252,10 +223,8 @@ if ($action eq 'del') {
     $vars->{'group'} = $group;
     $vars->{'token'} = issue_session_token('delete_group');
 
-    print $cgi->header();
     $template->process("admin/groups/delete.html.tmpl", $vars)
       || ThrowTemplateError($template->error());
-    
     exit;
 }
 
@@ -279,7 +248,6 @@ if ($action eq 'delete') {
     $vars->{'message'} = 'group_deleted';
     $vars->{'groups'} = [Bugzilla::Group->get_all];
 
-    print $cgi->header();
     $template->process("admin/groups/list.html.tmpl", $vars)
       || ThrowTemplateError($template->error());
     exit;
@@ -301,7 +269,6 @@ if ($action eq 'postchanges') {
     $vars->{'changes'} = $changes;
     $vars->{'token'} = issue_session_token('edit_group');
 
-    print $cgi->header();
     $template->process("admin/groups/edit.html.tmpl", $vars)
       || ThrowTemplateError($template->error());
     exit;
@@ -312,6 +279,7 @@ if ($action eq 'confirm_remove') {
     $vars->{'group'} = $group;
     $vars->{'regexp'} = CheckGroupRegexp($cgi->param('regexp'));
     $vars->{'token'} = issue_session_token('remove_group_members');
+
     $template->process('admin/groups/confirm-remove.html.tmpl', $vars)
         || ThrowTemplateError($template->error());
     exit;
@@ -350,10 +318,8 @@ if ($action eq 'remove_regexp') {
     $vars->{'group'} = $group->name;
     $vars->{'groups'} = [Bugzilla::Group->get_all];
 
-    print $cgi->header();
     $template->process("admin/groups/list.html.tmpl", $vars)
       || ThrowTemplateError($template->error());
-
     exit;
 }
 

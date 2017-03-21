@@ -1,20 +1,9 @@
-/* The contents of this file are subject to the Mozilla Public
- * License Version 1.1 (the "License"); you may not use this file
- * except in compliance with the License. You may obtain a copy of
- * the License at http://www.mozilla.org/MPL/
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  *
- * Software distributed under the License is distributed on an "AS
- * IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
- * implied. See the License for the specific language governing
- * rights and limitations under the License.
- *
- * The Original Code is the Bugzilla Bug Tracking System.
- *
- * The Initial Developer of the Original Code is Everything Solved, Inc.
- * Portions created by Everything Solved are Copyright (C) 2010 Everything
- * Solved, Inc. All Rights Reserved.
- *
- * Contributor(s): Max Kanat-Alexander <mkanat@bugzilla.org>
+ * This Source Code Form is "Incompatible With Secondary Licenses", as
+ * defined by the Mozilla Public License, v. 2.0.
  */
 
 /* This library assumes that the needed YUI libraries have been loaded 
@@ -33,6 +22,7 @@ YAHOO.bugzilla.dupTable = {
             method : "Bug.possible_duplicates",
             id : YAHOO.bugzilla.dupTable.counter,
             params : {
+                Bugzilla_api_token: BUGZILLA.api_token,
                 product : product_name,
                 summary : summary_field.value,
                 limit : 7,
@@ -129,3 +119,125 @@ YAHOO.bugzilla.dupTable = {
                             [dt, data.product_name]);
     }
 };
+
+function set_assign_to(use_qa_contact) {
+    // Based on the selected component, fill the "Assign To:" field
+    // with the default component owner, and the "QA Contact:" field
+    // with the default QA Contact. It also selectively enables flags.
+    var form = document.Create;
+    var assigned_to = form.assigned_to.value;
+
+    if (use_qa_contact) {
+        var qa_contact = form.qa_contact.value;
+    }
+
+    var index = -1;
+    if (form.component.type == 'select-one') {
+        index = form.component.selectedIndex;
+    } else if (form.component.type == 'hidden') {
+        // Assume there is only one component in the list
+        index = 0;
+    }
+    if (index != -1) {
+        var owner = initialowners[index];
+        var component = components[index];
+        if (assigned_to == last_initialowner
+            || assigned_to == owner
+            || assigned_to == '') {
+            form.assigned_to.value = owner;
+            last_initialowner = owner;
+        }
+
+        document.getElementById('initial_cc').innerHTML = initialccs[index];
+        document.getElementById('comp_desc').innerHTML = comp_desc[index];
+
+        if (use_qa_contact) {
+            var contact = initialqacontacts[index];
+            if (qa_contact == last_initialqacontact
+                || qa_contact == contact
+                || qa_contact == '') {
+                  form.qa_contact.value = contact;
+                  last_initialqacontact = contact;
+            }
+        }
+
+        // We show or hide the available flags depending on the selected component.
+        var flag_rows = YAHOO.util.Dom.getElementsByClassName('bz_flag_type', 'tbody');
+        for (var i = 0; i < flag_rows.length; i++) {
+            // Each flag table row should have one flag form select element
+            // We get the flag type id from the id attribute of the select.
+            var flag_select = YAHOO.util.Dom.getElementsByClassName('flag_select', 
+                                                                    'select', 
+                                                                    flag_rows[i])[0];
+            var type_id = flag_select.id.split('-')[1];
+            var can_set = flag_select.options.length > 1 ? 1 : 0;
+            var show = 0;
+            // Loop through the allowed flag ids for the selected component
+            // and if we match, then show the row, otherwise hide the row.
+            for (var j = 0; j < flags[index].length; j++) {
+                if (flags[index][j] == type_id) {
+                    show = 1;
+                    break;
+                }
+            }
+            if (show && can_set) {
+                flag_select.disabled = false;
+                YAHOO.util.Dom.removeClass(flag_rows[i], 'bz_default_hidden');
+            } else {
+                flag_select.disabled = true;
+                YAHOO.util.Dom.addClass(flag_rows[i], 'bz_default_hidden');
+            }
+        }
+    }
+}
+
+(function(){
+    'use strict';
+    var JSON = YAHOO.lang.JSON;
+
+    YAHOO.bugzilla.bugUserLastVisit = {
+        update: function(bug_id) {
+            var args = JSON.stringify({
+                version: "1.1",
+                method: 'BugUserLastVisit.update',
+                params: {
+                    Bugzilla_api_token: BUGZILLA.api_token,
+                    ids: bug_id
+                }
+            });
+            var callbacks = {
+                failure: function(res) {
+                    if (console)
+                        console.log("failed to update last visited: "
+                            + res.responseText);
+                }
+            };
+
+            YAHOO.util.Connect.setDefaultPostHeader('application/json', true);
+            YAHOO.util.Connect.asyncRequest('POST', 'jsonrpc.cgi', callbacks,
+                args)
+        },
+
+        get: function(done) {
+            var args = JSON.stringify({
+                version: "1.1",
+                method: 'BugUserLastVisit.get',
+                params: {
+                    Bugzilla_api_token: BUGZILLA.api_token
+                }
+            });
+            var callbacks = {
+                success: function(res) { done(JSON.parse(res.responseText)) },
+                failure: function(res) {
+                    if (console)
+                        console.log("failed to get last visited: "
+                                + res.responseText);
+                }
+            };
+
+            YAHOO.util.Connect.setDefaultPostHeader('application/json', true);
+            YAHOO.util.Connect.asyncRequest('POST', 'jsonrpc.cgi', callbacks,
+                    args)
+        }
+    };
+})();

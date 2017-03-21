@@ -1,26 +1,15 @@
-#!/usr/bin/env perl -w
+#!/usr/bin/perl
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
-# The contents of this file are subject to the Mozilla Public
-# License Version 1.1 (the "License"); you may not use this file
-# except in compliance with the License. You may obtain a copy of
-# the License at http://www.mozilla.org/MPL/
-#
-# Software distributed under the License is distributed on an "AS
-# IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-# implied. See the License for the specific language governing
-# rights and limitations under the License.
-#
-# The Original Code is the Bugzilla Bug Tracking System.
-#
-# The Initial Developer of the Original Code is Everything Solved, Inc.
-# Portions created by the Initial Developer are Copyright (C) 2009 the
-# Initial Developer. All Rights Reserved.
-#
-# Contributor(s):
-#   Max Kanat-Alexander <mkanat@bugzilla.org>
+# This Source Code Form is "Incompatible With Secondary Licenses", as
+# defined by the Mozilla Public License, v. 2.0.
 
+use 5.10.1;
 use strict;
 use warnings;
+
 use lib qw(. lib);
 
 use Bugzilla;
@@ -81,6 +70,8 @@ my ($modules, $subs) = code_files_to_subroutines($to_dir);
 my $config_pm = <<END;
 package Bugzilla::Extension::$extension_name;
 use strict;
+use warnings;
+
 use constant NAME => '$extension_name';
 $install_requirements
 __PACKAGE__->NAME;
@@ -89,7 +80,9 @@ END
 my $extension_pm = <<END;
 package Bugzilla::Extension::$extension_name;
 use strict;
-use base qw(Bugzilla::Extension);
+use warnings;
+
+use parent qw(Bugzilla::Extension);
 
 $modules
 

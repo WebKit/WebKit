@@ -1,92 +1,54 @@
-What is Bugzilla?
-=================
-Bugzilla is a free bug-tracking system that is developed by an active
-community of volunteers in the Mozilla community. You can install and
-use it without having to pay any license fee.
+Bugzilla
+========
 
-Minimum requirements
-====================
-It can be installed on Windows, Mac OS X, Linux and other Unix flavors.
-Bugzilla is written in Perl, meaning that Perl must be installed on your system.
-You will also need a web server as well as a DB server (see below).
+Bugzilla is free and open source web-based bug-tracking software that is
+developed by an active group of volunteers in the Mozilla community, and used
+by thousands of projects and companies around the world. It can be installed on
+Linux and other flavors of Unix, Windows or Mac OS X.
 
-Installation & Upgrading
-========================
-The documentation to install, upgrade, configure and use Bugzilla can be found
-in different formats:
-* docs/en/html/Bugzilla-Guide.html (HTML version)
-* docs/en/txt/Bugzilla-Guide.txt (text version)
-* docs/en/pdf/Bugzilla-Guide.pdf (PDF version)
+You can try Bugzilla out using our testing installation:
+https://landfill.bugzilla.org/bugzilla-tip/
 
-If the documentation is missing, you can get it online by visiting
-http://www.bugzilla.org/docs/ from where you can select the documentation
-corresponding to the Bugzilla version you are installing.
+Documentation
+=============
 
-Bugzilla Quick Start Guide
-==========================
-(or, how to get Bugzilla up and running in 10 steps)
-Christian Reis <kiko@async.com.br>
+Bugzilla's comprehensive documentation, including installation instructions,
+can be found here:
+http://www.bugzilla.org/docs/
 
-This express installation guide is for "normal" Bugzilla installations,
-which means a Linux or Unix system on which Apache, Perl, MySQL or PostgreSQL
-and a Sendmail compatible MTA are available. For other configurations, please
-see the "Installing Bugzilla" section of the Bugzilla Guide in the docs/ directory.
+Reporting Bugs
+==============
 
-1. Decide from which URL and directory under your webserver root you
-   will be serving the Bugzilla webpages.
+Report bugs here:
+https://bugzilla.mozilla.org/enter_bug.cgi?product=Bugzilla
 
-2. Unpack the distribution into the chosen directory (there is no copying or
-   installation involved).
+(Please do not file test bugs in this installation of Bugzilla.)
 
-3. Run ./checksetup.pl, look for unsolved requirements, and install them.
-   You can run checksetup as many times as necessary to check if
-   everything required has been installed.
+Mailing Lists
+=============
 
-   These will usually include assorted Perl modules, MySQL or PostgreSQL,
-   and a MTA.
+Development:
+https://www.mozilla.org/en-US/about/forums/#dev-apps-bugzilla
 
-   After a successful dependency check, checksetup should complain that
-   localconfig needs to be edited.
+Support:
+https://www.mozilla.org/en-US/about/forums/#support-bugzilla
 
-4. Edit the localconfig file, in particular the $webservergroup and
-   $db_* variables. In particular, $db_name and $db_user will define
-   your database setup in step 5.
+IRC
+===
 
-5. Create a user permission for the name supplied as $db_user with
-   read/write access to the database whose name is given by $db_name.
+You can often find Bugzilla developers on IRC:
+irc://irc.mozilla.org/bugzilla
 
-   If you are not familiar with MySQL permissions, it's a good idea to
-   use the mysql_setpermission script that is installed with the MySQL
-   distribution, and be sure to read Bugzilla Security - MySQL section
-   in the Bugzilla Guide or PostgreSQL documentation.
+License
+=======
 
-6. Run checksetup.pl once more; if all goes well, it should set up the
-   Bugzilla database for you. If not, return to step 5.
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-   checksetup.pl should ask you, this time, for the administrator's
-   email address and password. These will be used for the initial
-   Bugzilla administrator account.
+This Source Code Form is "Incompatible With Secondary Licenses", as
+defined by the Mozilla Public License, v. 2.0.
 
-7. Configure Apache (or install and configure, if you don't have it up
-   yet) to point to the Bugzilla directory. You can choose between
-   mod_cgi and mod_perl. The Bugzilla documentation has detailed information
-   for both modes.
-
-8. Visit the URL you chose for Bugzilla. Your browser should display the
-   default Bugzilla home page. You should then log in as the
-   administrator by following the "Log in" link and supplying the
-   account information you provided in step 6.
-
-9. Visit the "Parameters" page, as suggested by the page displayed to you.
-   Set up the relevant parameters for your local setup.
-
-10. That's it. If anything unexpected comes up:
-
-    - read the error message carefully,
-    - backtrack through the steps above,
-    - check the official installation guide.
-
-Support and installation questions should be directed to the
-support-bugzilla@lists.mozilla.org mailing list.
-
-Further support information is at http://www.bugzilla.org/support/
+However, this is all only relevant to you if you want to modify the code and
+redistribute it. As with all open source software, there are no restrictions
+on running it, or on modifying it for your own purposes.

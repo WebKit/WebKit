@@ -1,16 +1,9 @@
-[%# The contents of this file are subject to the Mozilla Public
-  # License Version 1.1 (the "License"); you may not use this file
-  # except in compliance with the License. You may obtain a copy of
-  # the License at http://www.mozilla.org/MPL/
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
   #
-  # Software distributed under the License is distributed on an "AS
-  # IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-  # implied. See the License for the specific language governing
-  # rights and limitations under the License.
-  #
-  # The Original Code is the Bugzilla Bug Tracking System.
-  #
-  # Contributor(s): Frédéric Buclin <LpSolit@gmail.com>
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
   #%]
 
 [%# INTERFACE:
@@ -18,59 +11,54 @@
   # token: string; The token used to identify the session.
   #%]
 
-[% PROCESS global/variables.none.tmpl %]
-
 [% title = BLOCK %]
   Delete Attachment [% a.id FILTER html %] of [% terms.Bug %] [%+ a.bug_id FILTER html %]
 [% END %]
 
 [% PROCESS global/header.html.tmpl
   title = title
-  doc_section = "attachments.html"
+  style_urls = ['skins/standard/admin.css']
+  doc_section = "using/editing.html#attachments"
 %]
 
-<table border="1" cellpadding="4" cellspacing="0">
-  <tr bgcolor="#6666FF">
-    <th valign="top" align="left">Field</th>
-    <th valign="top" align="left">Value</th>
+<table id="admin_table">
+  <tr class="column_header">
+    <th>Field</th>
+    <th>Value</th>
   </tr>
   <tr>
-    <td valign="top">Attachment ID:</td>
-    <td valign="top">
+    <td>Attachment ID</td>
+    <td>
       <a href="attachment.cgi?id=[% a.id FILTER html %]">[% a.id FILTER html %]</a>
     </td>
   </tr>
   <tr>
-    <td valign="top">File name:</td>
-    <td valign="top">[% a.filename FILTER html %]</td>
+    <td>File name</td>
+    <td>[% a.filename FILTER html %]</td>
   </tr>
   <tr>
-    <td valign="top">Description:</td>
-    <td valign="top">[% a.description FILTER html %]</td>
+    <td>Description</td>
+    <td>[% a.description FILTER html %]</td>
   </tr>
   <tr>
-    <td valign="top">Contained in [% terms.Bug %]:</td>
-    <td valign="top">[% a.bug_id FILTER bug_link(a.bug_id) FILTER none %]</td>
+    <td>Contained in [% terms.Bug %]</td>
+    <td>[% a.bug_id FILTER bug_link(a.bug_id) FILTER none %]</td>
   </tr>
   <tr>
-    <td valign="top">Creator:</td>
-    <td valign="top">[% a.attacher.identity FILTER html %]</td>
+    <td>Creator</td>
+    <td>[% a.attacher.identity FILTER html %]</td>
   </tr>
   <tr>
-    <td valign="top">Creation Date:</td>
-    <td valign="top">[% a.attached FILTER time %]</td>
+    <td>Creation Date</td>
+    <td>[% a.attached FILTER time %]</td>
   </tr>
 </table>
 
 <h2>Confirmation</h2>
 
-<table border="0" cellpadding="20" width="70%" bgcolor="red">
-  <tr>
-    <td>
-      The content of this attachment will be deleted in an <b>irreversible</b> way.
-    </td>
-  </tr>
-</table>
+<p class="confirmation">
+  The content of this attachment will be deleted in an <b>irreversible</b> way.
+</p>
 
 <p>Do you really want to delete this attachment?</p>
 

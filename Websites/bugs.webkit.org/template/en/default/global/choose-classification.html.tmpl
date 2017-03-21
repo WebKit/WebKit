@@ -1,18 +1,9 @@
-[%# The contents of this file are subject to the Mozilla Public
-  # License Version 1.1 (the "License"); you may not use this file
-  # except in compliance with the License. You may obtain a copy of
-  # the License at http://www.mozilla.org/MPL/
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
   #
-  # Software distributed under the License is distributed on an "AS
-  # IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-  # implied. See the License for the specific language governing
-  # rights and limitations under the License.
-  #
-  # The Original Code is the Bugzilla Bug Tracking System.
-  #
-  # The Initial Developer of the Original Code is Albert Ting
-  #
-  # Contributor(s): Albert Ting <alt@sonic.net>
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
   #%]
 
 [%# INTERFACE:
@@ -21,23 +12,26 @@
   #%]
 
 [% IF target == "enter_bug.cgi" %]
-  [% title = "Select Classification" %]
-  [% subheader = "Please select the classification." %]
+  [% title = "Enter $terms.Bug" %]
+  [% subheader = "Select Classification" %]
 [% END %]
 
 [% DEFAULT title = "Choose the classification" %]
 [% PROCESS global/header.html.tmpl %]
 
-<table>
+[% USE Bugzilla %]
+[% previous_params = Bugzilla.cgi.canonicalise_query('classification') %]
+
+<h2>First, you must pick a classification on which to enter [% terms.abug %]:</h2>
+<table id="choose_classification">
   <tr>
-    <th align="right">
+    <th class="right">
       <a href="[% target FILTER uri %]?classification=__all
-            [% IF cloned_bug_id %]&amp;cloned_bug_id=[% cloned_bug_id FILTER uri %][% END -%] 
-            [%- IF format %]&amp;format=[% format FILTER uri %][% END %]">
+            [%- IF previous_params %]&amp;[% previous_params FILTER none %][% END -%]">
       All</a>:
     </th>
 
-    <td valign="top">&nbsp;Show all products</td>
+    <td>Show all products</td>
   </tr>
   <tr>
     <th colspan="2">&nbsp;</th>
@@ -45,15 +39,14 @@
 
 [% FOREACH class = classifications %]
   <tr>
-    <th align="right">
+    <th class="right">
       <a href="[% target FILTER uri %]?classification=[% class.name FILTER uri -%]
-            [%- IF cloned_bug_id %]&amp;cloned_bug_id=[% cloned_bug_id FILTER uri %][% END -%] 
-            [%- IF format %]&amp;format=[% format FILTER uri %][% END %]">
+            [%- IF previous_params %]&amp;[% previous_params FILTER none %][% END -%]">
       [% class.name FILTER html %]</a>:
     </th>
 
     [% IF class.description %]
-      <td valign="top">&nbsp;[% class.description FILTER html_light %]</td>
+      <td>[% class.description FILTER html_light %]</td>
     [% END %]
   </tr>
 [% END %]

@@ -1,30 +1,15 @@
-[%# The contents of this file are subject to the Mozilla Public
-  # License Version 1.1 (the "License"); you may not use this file
-  # except in compliance with the License. You may obtain a copy of
-  # the License at http://www.mozilla.org/MPL/
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
   #
-  # Software distributed under the License is distributed on an "AS
-  # IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-  # implied. See the License for the specific language governing
-  # rights and limitations under the License.
-  #
-  # The Original Code is the Bugzilla Bug Tracking System.
-  #
-  # The Initial Developer of the Original Code is Netscape Communications
-  # Corporation. Portions created by Netscape are
-  # Copyright (C) 1998 Netscape Communications Corporation. All
-  # Rights Reserved.
-  #
-  # Contributor(s): Myk Melez <myk@mozilla.org>
-  #                 Frédéric Buclin <LpSolit@gmail.com>
-  #                 Guy Pyrzak <guy.pyrzak@gmail.com>
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
   #%]
-
-[% PROCESS global/variables.none.tmpl %]
 
 [%# Define strings that will serve as the title and header of this page %]
 [% title = BLOCK %]
   Attachment [% attachment.id %] Details for [% terms.Bug %] [%+ attachment.bug_id %]
+  &ndash; [% attachment.description FILTER html %]
 [% END %]
 [% header = BLOCK %]
   Attachment [% attachment.id %] Details for
@@ -36,15 +21,16 @@
   title = title
   header = header
   subheader = subheader
-  doc_section = "attachments.html"
+  generate_api_token = 1
+  doc_section = "using/editing.html#attachments"
   javascript_urls = ['js/attachment.js', 'js/field.js']
-  style_urls = ['skins/standard/attachment.css']
+  style_urls = ['skins/standard/bug.css']
   yui = [ 'autocomplete' ]
   bodyclasses = "no_javascript"
 %]
 
 [%# No need to display the Diff button and iframe if the attachment is not a patch. %]
-[% use_patchviewer = (feature_enabled('patch_viewer') && attachment.ispatch) %]
+[% use_patchviewer = (feature_enabled('patch_viewer') && attachment.ispatch) ? 1 : 0 %]
 [% can_edit = attachment.validate_can_edit %]
 [% editable_or_hide = can_edit ? "" : " bz_hidden_option" %]
 
@@ -75,7 +61,7 @@
             [%+ attachment.datasize FILTER unitconvert %]
           [% ELSE %]
             <em>deleted</em>
-          [% END %], created by [%+ INCLUDE global/user.html.tmpl who = attachment.attacher %]
+          [% END %], created by [%+ INCLUDE global/user.html.tmpl who = attachment.attacher %] on [%+ attachment.attached FILTER time %]
           [% IF attachment.isprivate %];
             <span class="bz_private">only visible to <strong>[% Param('insidergroup') FILTER html %]</strong> members</span>
           [% END %]
@@ -116,7 +102,12 @@
             <span class="label">Creator:</span>
             [%+ INCLUDE global/user.html.tmpl who = attachment.attacher %]
           </div>
-          
+
+          <div id="attachment_created">
+            <span class="label">Created:</span>
+            [%+ attachment.attached FILTER time %]
+          </div>
+
           <div id="attachment_size">
             <span class="label">Size:</span>
             [% IF attachment.datasize %]
@@ -208,40 +199,44 @@
                  readonly = 'readonly'
               %]
             [% ELSE %]
-              <iframe id="viewFrame" src="attachment.cgi?id=[% attachment.id %]">
+              <iframe id="viewFrame" src="attachment.cgi?id=[% attachment.id %]" sandbox>
                 <b>You cannot view the attachment while viewing its details because your browser does not support IFRAMEs.
                 <a href="attachment.cgi?id=[% attachment.id %]">View the attachment on a separate page</a>.</b>
               </iframe>
             [% END %]
-            <script type="text/javascript">
-              <!--
-              var patchviewerinstalled = 0;
-              var attachment_id = [% attachment.id %];
-              if (typeof document.getElementById == "function") {
-                [% IF use_patchviewer %]
-                  var patchviewerinstalled = 1;
-                  document.write('<iframe id="viewDiffFrame" class="bz_default_hidden"><\/iframe>');
-                [% END %]
-                [% IF user.id %]
+
+            [% IF use_patchviewer %]
+              <iframe id="viewDiffFrame" class="bz_default_hidden"></iframe>
+            [% END %]
+
+            [% IF user.id %]
 [%# if WEBKIT_CHANGES %]
-                  [% IF attachment.ispatch %]
-                  document.write('<button type="button" id="viewPrettyPatchButton" onclick="viewPrettyPatch(attachment_id);">View Formatted Diff<\/button>');
-                  [% END %]
+              [% IF attachment.ispatch %]
+              <button type="button" id="viewPrettyPatchButton"
+                      onclick="viewPrettyPatch([% attachment.id %]);">View Formatted Diff</button>
+              [% END %]
 [%# endif // WEBKIT_CHANGES %]
-                  document.write('<button type="button" id="editButton" onclick="editAsComment(patchviewerinstalled);">Edit Attachment As Comment<\/button>');
-                  document.write('<button type="button" id="undoEditButton" onclick="undoEditAsComment(patchviewerinstalled);" class="bz_default_hidden">Undo Edit As Comment<\/button>');
-                  document.write('<button type="button" id="redoEditButton" onclick="redoEditAsComment(patchviewerinstalled);" class="bz_default_hidden">Redo Edit As Comment<\/button>');
-                  var editFrame = document.getElementById('editFrame');
-                  if (editFrame) {
-                    editFrame.disabled = false;
-                  }
-                [% END %]
-                [% IF use_patchviewer %]
-                  document.write('<button type="button" id="viewDiffButton" onclick="viewDiff(attachment_id, patchviewerinstalled);">View Attachment As Diff<\/button>');
-                [% END %]
-                document.write('<button type="button" id="viewRawButton" onclick="viewRaw(patchviewerinstalled);" class="bz_default_hidden">View Attachment As Raw<\/button>');
-              }
-              //-->
+              <button type="button" id="editButton" class="bz_default_hidden"
+                      onclick="editAsComment([% use_patchviewer %]);">Edit Attachment As Comment</button>
+              <button type="button" id="undoEditButton" class="bz_default_hidden"
+                      onclick="undoEditAsComment([% use_patchviewer %]);">Undo Edit As Comment</button>
+              <button type="button" id="redoEditButton" class="bz_default_hidden"
+                      onclick="redoEditAsComment([% use_patchviewer %]);">Redo Edit As Comment</button>
+            [% END %]
+
+            [% IF use_patchviewer %]
+              <button type="button" id="viewDiffButton" class="bz_default_hidden"
+                      onclick="viewDiff([% attachment.id %], [% use_patchviewer %]);">View Attachment As Diff</button>
+            [% END %]
+            <button type="button" id="viewRawButton" class="bz_default_hidden"
+                    onclick="viewRaw([% use_patchviewer %]);">View Attachment As Raw</button>
+
+            <script type="text/javascript">
+              [% IF user.id %]
+                document.getElementById('editFrame').disabled = false;
+                YAHOO.util.Dom.removeClass("editButton", "bz_default_hidden");
+              [% END %]
+              YAHOO.util.Dom.removeClass("viewDiffButton", "bz_default_hidden");
             </script>
           </div>
         [% ELSE %]
@@ -275,16 +270,24 @@
             <label for="comment">Comment (on the [% terms.bug %]):</label>
             [% classNames = 'block' %]
             [% classNames = "$classes bz_private" IF attachment.isprivate %]
-            [% INCLUDE global/textarea.html.tmpl
-              id      = 'comment'
-              name    = 'comment'
-              minrows = 10
-              cols    = 80
-              wrap    = 'soft'
-              classes = classNames          
+            [% INCLUDE bug/comment.html.tmpl
+               bug     = attachment.bug
+               minrows = 10
+               cols    = 80
+               classes = classNames
+               wrap    = 'soft'
             %]
+            [% IF NOT attachment.bug.cc.contains(user.login) %]
+              <input type="checkbox" id="addselfcc" name="addselfcc"
+                [%~ ' checked="checked"'
+                    IF user.settings.state_addselfcc.value == 'always'
+                       || (!attachment.bug.user.has_any_role
+                           && user.settings.state_addselfcc.value == 'cc_unless_role') %]>
+              <label for="addselfcc">Add me to CC list</label>
+            [% END %]
+            [% Hook.process('after_comment_textarea') %]
           </div>
-        [% END %]             
+        [% END %]
         <div id="attachment_flags">
           [% IF attachment.flag_types.size > 0 %]
               [% PROCESS "flag/list.html.tmpl" flag_types = attachment.flag_types
@@ -328,10 +331,17 @@
 <div id="attachment_list">
   Attachments on [% "$terms.bug ${attachment.bug_id}" FILTER bug_link(attachment.bug_id) FILTER none %]:
   [% FOREACH a = attachments %]
-    [% IF a == attachment.id %]
-      [%+ a %]
+    [% IF a.isobsolete %]
+      <span class="bz_obsolete">
+    [% END %]
+    [% IF a.id == attachment.id %]
+      [%+ a.id FILTER html %]
     [% ELSE %]
-      <a href="attachment.cgi?id=[% a %]&amp;action=edit">[% a %]</a>
+      <a href="attachment.cgi?id=[% a.id FILTER uri %]&amp;action=edit"
+         title="[% a.description FILTER html %]">[% a.id FILTER html %]</a>
+    [% END %]
+    [% IF a.isobsolete %]
+      </span>
     [% END %]
     [% " |" UNLESS loop.last() %]
   [% END %]

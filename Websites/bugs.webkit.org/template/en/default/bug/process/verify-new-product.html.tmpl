@@ -1,23 +1,9 @@
-[%# The contents of this file are subject to the Mozilla Public
-  # License Version 1.1 (the "License"); you may not use this file
-  # except in compliance with the License. You may obtain a copy of
-  # the License at http://www.mozilla.org/MPL/
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
   #
-  # Software distributed under the License is distributed on an "AS
-  # IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-  # implied. See the License for the specific language governing
-  # rights and limitations under the License.
-  #
-  # The Original Code is the Bugzilla Bug Tracking System.
-  #
-  # The Initial Developer of the Original Code is Netscape Communications
-  # Corporation. Portions created by Netscape are
-  # Copyright (C) 1998 Netscape Communications Corporation. All
-  # Rights Reserved.
-  #
-  # Contributor(s): Myk Melez <myk@mozilla.org>
-  #                 Frédéric Buclin <LpSolit@gmail.com>
-  #                 Max Kanat-Alexander <mkanat@bugzilla.org>
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
   #%]
 
 [%# INTERFACE:
@@ -31,10 +17,10 @@
   # verify_bug_groups: If groups need to be confirmed in addition to fields.
   #%]
 
-[% PROCESS global/variables.none.tmpl %]
-
 [% PROCESS global/header.html.tmpl
-  title = 'Verify New Product Details...' %]
+  title = 'Verify New Product Details...'
+  style_urls = ['skins/standard/buglist.css']
+%]
 
 <form action="process_bug.cgi" method="post">
 
@@ -116,7 +102,25 @@
 </table>
 
 [% IF verify_bug_groups %]
-  <h3>Verify [% terms.Bug %] Group</h3>
+  [% mandatory_groups = [] %]
+  [% optional_groups = [] %]
+
+  [% FOREACH gid = product.group_controls.keys %]
+    [% group = product.group_controls.$gid %]
+    [% NEXT UNLESS group.group.is_active %]
+
+    [% IF group.membercontrol == constants.CONTROLMAPMANDATORY
+          || (group.othercontrol ==  constants.CONTROLMAPMANDATORY && !user.in_group(group.group.name)) %]
+      [% mandatory_groups.push(group) %]
+    [% ELSIF (group.membercontrol != constants.CONTROLMAPNA && user.in_group(group.group.name))
+              || group.othercontrol != constants.CONTROLMAPNA %]
+      [% optional_groups.push(group) %]
+    [% END %]
+  [% END %]
+  
+  [% IF old_groups.size || optional_groups.size || mandatory_groups.size %]
+    <h3>Verify [% terms.Bug %] Group</h3>
+  [% END %]
   
   [% IF old_groups.size %]
     <p>These groups are not legal for the '[% product.name FILTER html %]'
@@ -134,38 +138,64 @@
     </p>
   [% END %]
 
-  [% mandatory_groups = [] %]
-  [% optional_groups = [] %]
-
-  [% FOREACH gid = product.group_controls.keys %]
-    [% group = product.group_controls.$gid %]
-    [% NEXT UNLESS group.group.is_active %]
-
-    [% IF group.membercontrol == constants.CONTROLMAPMANDATORY
-          || (group.othercontrol ==  constants.CONTROLMAPMANDATORY && !user.in_group(group.group.name)) %]
-      [% mandatory_groups.push(group) %]
-    [% ELSIF (group.membercontrol != constants.CONTROLMAPNA && user.in_group(group.group.name))
-              || group.othercontrol != constants.CONTROLMAPNA %]
-      [% optional_groups.push(group) %]
-    [% END %]
-  [% END %]
 
   [% IF optional_groups.size %]
     <p>These groups are optional. You can decide to restrict [% terms.bugs %] to
     one or more of the following groups:<br>
-    [% FOREACH group = optional_groups %]
-      <input type="hidden" name="defined_groups"
-             value="[% group.group.name FILTER html %]">
-      <input type="checkbox" id="group_[% group.group.id FILTER html %]"
-             name="groups"
-             [% ' checked="checked"' IF ((group.membercontrol == constants.CONTROLMAPDEFAULT && user.in_group(group.group.name))
-                 || (group.othercontrol == constants.CONTROLMAPDEFAULT && !user.in_group(group.group.name))
-                 || cgi.param("groups").contains(group.group.name)) %]
-             value="[% group.group.name FILTER html %]">
-      <label for="group_[% group.group.id FILTER html %]">
-        [% group.group.name FILTER html %]: [% group.group.description FILTER html %]
-      </label>
-      <br>
+    [% IF multiple_bugs %]
+      <script type="text/javascript">
+        function turn_off(myself, id) {
+            var other_checkbox = document.getElementById(id);
+            if (myself.checked && other_checkbox) {
+                other_checkbox.checked = false;
+            }
+        }
+      </script>
+
+      <table id="groups_edit_multiple">
+        <tr>
+          <th class="narrow_column">Remove [% terms.bugs %] from this group</th>
+          <th class="narrow_column">Add [% terms.bugs %] to this group</th>
+          <th>Group Name</th>
+        </tr>
+
+        [% FOREACH group = optional_groups %]
+        <tr>
+          <td class="center">
+            <input type="checkbox" name="defined_groups"
+                   id="defined_group_[% group.group.id FILTER html %]"
+                   value="[% group.group.name FILTER html %]"
+                   [% IF cgi.param("defined_groups").contains(group.group.name) %] checked="checked"[% END %]
+                   onchange="turn_off(this, 'group_[% group.group.id FILTER html %]')">
+          </td>
+          <td class="center">
+            <input type="checkbox" name="groups"
+                   id="group_[% group.group.id FILTER html %]"
+                   value="[% group.group.name FILTER html %]"
+                   [% IF cgi.param("groups").contains(group.group.name) %] checked="checked"[% END %]
+                   onchange="turn_off(this, 'defined_group_[% group.group.id FILTER html %]')">
+          </td>
+          <td>
+            [% group.group.description FILTER html %]
+          </td>
+        </tr>
+        [% END %]
+      </table>
+    [% ELSE %]
+      [% FOREACH group = optional_groups %]
+        <input type="hidden" name="defined_groups"
+               value="[% group.group.name FILTER html %]">
+        <input type="checkbox" id="group_[% group.group.id FILTER html %]"
+               name="groups"
+               [% ' checked="checked"' IF ((group.membercontrol == constants.CONTROLMAPDEFAULT && user.in_group(group.group.name))
+                   || (group.othercontrol == constants.CONTROLMAPDEFAULT && !user.in_group(group.group.name))
+                   || cgi.param("groups").contains(group.group.name)) %]
+               value="[% group.group.name FILTER html %]">
+        <label for="group_[% group.group.id FILTER html %]">
+          [% group.group.name FILTER html %]: [% group.group.description FILTER html %]
+        </label>
+        <br>
+      [% END %]
     [% END %]
     </p>
   [% END %]
@@ -202,4 +232,3 @@
 [% END %]
 
 [% PROCESS global/footer.html.tmpl %]
-

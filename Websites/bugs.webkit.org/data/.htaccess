@@ -1,7 +1,13 @@
-# nothing in this directory is retrievable unless overriden by an .htaccess
-# in a subdirectory; the only exception is duplicates.rdf, which is used by
-# duplicates.xul and must be loadable over the web
-deny from all
-<Files duplicates.rdf>
-  allow from all
-</Files>
+# nothing in this directory is retrievable unless overridden by an .htaccess
+# in a subdirectory
+<IfModule mod_version.c>
+  <IfVersion < 2.4>
+    Deny from all
+  </IfVersion>
+  <IfVersion >= 2.4>
+    Require all denied
+  </IfVersion>
+</IfModule>
+<IfModule !mod_version.c>
+  Deny from all
+</IfModule>

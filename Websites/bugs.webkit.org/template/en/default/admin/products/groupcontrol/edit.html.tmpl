@@ -1,148 +1,128 @@
-[%# The contents of this file are subject to the Mozilla Public
-  # License Version 1.1 (the "License"); you may not use this file
-  # except in compliance with the License. You may obtain a copy of
-  # the License at http://www.mozilla.org/MPL/
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
   #
-  # Software distributed under the License is distributed on an "AS
-  # IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-  # implied. See the License for the specific language governing
-  # rights and limitations under the License.
-  #
-  # The Original Code is the Bugzilla Bug Tracking System.
-  #
-  # The Initial Developer of the Original Code is Netscape Communications
-  # Corporation. Portions created by Netscape are
-  # Copyright (C) 1998 Netscape Communications Corporation. All
-  # Rights Reserved.
-  #
-  # Contributor(s): Joel Peshkin <bugreport@peshkin.net>
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
   #%]
-
-[% PROCESS global/variables.none.tmpl %]
 
 [% title = BLOCK %]
     Edit Group Controls for [% product.name FILTER html %]
 [% END %]
 [% PROCESS global/header.html.tmpl 
-   title = title 
+  title = title
+  style_urls = ['skins/standard/admin.css']
 %]
 
-<form method="post" action="editproducts.cgi">
-  <input type="hidden" name="action" value="updategroupcontrols">
-  <input type="hidden" name="product" value="[% product.name FILTER html %]">
-  <input type="hidden" name="token" value="[% token FILTER html %]">
+[% display_headers = 1 %]
+[% FOREACH group = product.group_controls(1).values.sort("name") %]
+  [% NEXT UNLESS group.group.isactive OR group.bug_count %]
+  [% IF display_headers %]
+    [% display_headers = 0 %]
+    <form method="post" action="editproducts.cgi">
+      <input type="hidden" name="action" value="updategroupcontrols">
+      <input type="hidden" name="product" value="[% product.name FILTER html %]">
+      <input type="hidden" name="token" value="[% token FILTER html %]">
 
-  <table id="form" cellspacing="0" cellpadding="4" border="1">
-    <tr bgcolor="#6666ff">
-      <th>Group</th>
-      <th>Entry</th>
-      <th>MemberControl</th>
-      <th>OtherControl</th>
-      <th>Canedit</th>
-      <th>editcomponents</th>
-      <th>canconfirm</th>
-      <th>editbugs</th>
-      <th>[% terms.Bugs %]</th>
-    </tr>
-    [% FOREACH group = product.group_controls(1).values.sort("name") %]
-      [% IF !group.group.isactive AND group.bug_count %]
-        <tr bgcolor="#bbbbbb">
-          <td>
-            [% group.group.name FILTER html %]
-          </td>
-          <td align="center" colspan=7>
-            Disabled
-          </td>
-          <td>
-            [% group.bug_count FILTER html %]
-          </td>
-        <tr>
-      [% ELSIF group.group.is_active %]
-        <tr>
-          <td>
-            [% group.group.name FILTER html %]
-          </td>
-          <td>
-            <input type=checkbox value=1 name=entry_[% group.id %]
-            [% " checked=\"checked\"" IF group.entry %]>
-          </td>
-          <td>
-            <select name="membercontrol_[% group.id %]">
-              <option value=[% constants.CONTROLMAPNA %]
-                [% " selected=\"selected\""
-                  IF group.membercontrol == constants.CONTROLMAPNA %]
-                >NA
-              </option>
-              <option value=[% constants.CONTROLMAPSHOWN %]
-                [% " selected=\"selected\""
-                  IF group.membercontrol == constants.CONTROLMAPSHOWN %]
-                >Shown
-              </option>
-              <option value=[% constants.CONTROLMAPDEFAULT %]
-                [% " selected=\"selected\""
-                  IF group.membercontrol == constants.CONTROLMAPDEFAULT %]
-                >Default
-              </option>
-              <option value=[% constants.CONTROLMAPMANDATORY %]
-                [% " selected=\"selected\""
-                  IF group.membercontrol == constants.CONTROLMAPMANDATORY %]
-                >Mandatory
-              </option>
-            </select>
-          </td>
-          <td>
-            <select name="othercontrol_[% group.id %]">
-              <option value=[% constants.CONTROLMAPNA %]
-                [% " selected=\"selected\""
-                  IF group.othercontrol == constants.CONTROLMAPNA %]
-                >NA
-              </option>
-              <option value=[% constants.CONTROLMAPSHOWN %]
-                [% " selected=\"selected\""
-                  IF group.othercontrol == constants.CONTROLMAPSHOWN %]
-                >Shown
-              </option>
-              <option value=[% constants.CONTROLMAPDEFAULT %]
-                [% " selected=\"selected\""
-                  IF group.othercontrol == constants.CONTROLMAPDEFAULT %]
-                >Default
-              </option>
-              <option value=[% constants.CONTROLMAPMANDATORY %]
-                [% " selected=\"selected\""
-                  IF group.othercontrol == constants.CONTROLMAPMANDATORY %]
-                >Mandatory
-              </option>
-            </select>
-          </td>
-          <td>
-            <input type=checkbox value=1 name=canedit_[% group.id %]
-            [% " checked=\"checked\"" IF group.canedit %]>
-          </td>
-          <td>
-            <input type=checkbox value=1 name=editcomponents_[% group.id %]
-            [% " checked=\"checked\"" IF group.editcomponents %]>
-          </td>
-          <td>
-            <input type=checkbox value=1 name=canconfirm_[% group.id %]
-            [% " checked=\"checked\"" IF group.canconfirm %]>
-          </td>
-          <td>
-            <input type=checkbox value=1 name=editbugs_[% group.id %]
-            [% " checked=\"checked\"" IF group.editbugs %]>
-          </td>
-          <td>
-            [% group.bug_count || 0 FILTER html %]
-          </td>
+      <table id="admin_table">
+        <tr class="column_header">
+          <th>Group</th>
+          <th>Entry</th>
+          <th>MemberControl</th>
+          <th>OtherControl</th>
+          <th>Canedit</th>
+          <th>editcomponents</th>
+          <th>canconfirm</th>
+          <th>editbugs</th>
+          <th>[% terms.Bugs %]</th>
         </tr>
-      [% END %]
-    [% END %]
+  [% END %]
+  [% IF !group.group.isactive %]
+    <tr class="disabled">
+      <td>[% group.group.name FILTER html %]</td>
+      <td class="center" colspan="7">Disabled</td>
+      <td>[% group.bug_count FILTER html %]</td>
+    </tr>
+  [% ELSE %]
+    <tr>
+      <td>[% group.group.name FILTER html %]</td>
+      <td>
+        <input type=checkbox value=1 name=entry_[% group.id %]
+          [% " checked='checked'" IF group.entry %]>
+      </td>
+      <td>
+        <select name="membercontrol_[% group.id %]">
+          <option value=[% constants.CONTROLMAPNA %]
+            [% " selected='selected'" IF group.membercontrol == constants.CONTROLMAPNA %]
+            >NA
+          </option>
+          <option value=[% constants.CONTROLMAPSHOWN %]
+            [% " selected='selected'" IF group.membercontrol == constants.CONTROLMAPSHOWN %]
+            >Shown
+          </option>
+          <option value=[% constants.CONTROLMAPDEFAULT %]
+            [% " selected='selected'" IF group.membercontrol == constants.CONTROLMAPDEFAULT %]
+            >Default
+          </option>
+          <option value=[% constants.CONTROLMAPMANDATORY %]
+            [% " selected='selected'" IF group.membercontrol == constants.CONTROLMAPMANDATORY %]
+            >Mandatory
+          </option>
+        </select>
+      </td>
+      <td>
+        <select name="othercontrol_[% group.id %]">
+          <option value=[% constants.CONTROLMAPNA %]
+            [% " selected='selected'" IF group.othercontrol == constants.CONTROLMAPNA %]
+            >NA
+          </option>
+          <option value=[% constants.CONTROLMAPSHOWN %]
+            [% " selected='selected'" IF group.othercontrol == constants.CONTROLMAPSHOWN %]
+            >Shown
+          </option>
+          <option value=[% constants.CONTROLMAPDEFAULT %]
+            [% " selected='selected'" IF group.othercontrol == constants.CONTROLMAPDEFAULT %]
+            >Default
+          </option>
+          <option value=[% constants.CONTROLMAPMANDATORY %]
+            [% " selected='selected'" IF group.othercontrol == constants.CONTROLMAPMANDATORY %]
+            >Mandatory
+          </option>
+        </select>
+      </td>
+      <td>
+        <input type=checkbox value=1 name=canedit_[% group.id %]
+        [% " checked='checked'" IF group.canedit %]>
+      </td>
+      <td>
+        <input type=checkbox value=1 name=editcomponents_[% group.id %]
+        [% " checked='checked'" IF group.editcomponents %]>
+      </td>
+      <td>
+        <input type=checkbox value=1 name=canconfirm_[% group.id %]
+        [% " checked='checked'" IF group.canconfirm %]>
+      </td>
+      <td>
+        <input type=checkbox value=1 name=editbugs_[% group.id %]
+        [% " checked='checked'" IF group.editbugs %]>
+      </td>
+      <td>[% group.bug_count || 0 FILTER html %]</td>
+    </tr>
+  [% END %]
+[% END %]
 
-  </table>
-  <br>
-  <input type=submit name="submit" value="submit">
-  <br>
-</form>
-
+[% IF display_headers %]
+  <p>No groups are available for products.
+  [% IF user.in_group('creategroups') %]
+    <a href="editgroups.cgi?action=add">Create a new group</a>
+  [% END %]
+  </p>
+[% ELSE %]
+    </table>
+    <br>
+    <input type=submit name="submit" value="submit">
+  </form>
+[% END %]
 
 <p>
 These settings control the relationship of the groups to this
@@ -150,15 +130,17 @@ product.
 </p>
 <p>
 If any group has <b>Entry</b> selected, then this product will
-restrict [% terms.bug %] entry to only those users who are members of all the
-groups with entry selected.
+restrict [% terms.bug %] entry to only those users who are members of
+[%+ IF Param('or_groups') %]at least one of[% ELSE %]all[% END %] the groups
+with entry selected.
 </p>
 <p>
 If any group has <b>Canedit</b> selected, then this product
-will be read-only for any users who are not members of all of
-the groups with Canedit selected. ONLY users who are members of
-all the canedit groups will be able to edit. This is an additional
-restriction that further restricts what can be edited by a user.
+will be read-only for any users who are not members of
+[%+ IF Param('or_groups') %]one[% ELSE %]all[% END %] of the groups with
+Canedit selected. ONLY users who are members of
+[%+ IF Param('or_groups') %]at least one of[% ELSE %]all[% END %] the canedit groups
+will be able to edit. This is an additional restriction that further restricts what can be edited by a user.
 </p>
 <p>
 The following settings control let you choose privileges on a <b>per-product basis</b>.
@@ -185,7 +167,7 @@ indicate which [% terms.bugs %] will be placed in
 this group according to the following definitions.
 </p>
 
-<table border=1>
+<table id="group_settings_desc">
   <tr>
     <th>
       MemberControl
@@ -322,4 +304,3 @@ Attempting to submit a combination not listed there (e.g. Mandatory/NA,
 Default/Shown, etc.) will produce an error message.
 </p>
 [% PROCESS global/footer.html.tmpl %]
-

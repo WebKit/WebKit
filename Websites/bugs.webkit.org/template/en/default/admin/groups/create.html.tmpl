@@ -1,24 +1,9 @@
-[%# The contents of this file are subject to the Mozilla Public
-  # License Version 1.1 (the "License"); you may not use this file
-  # except in compliance with the License. You may obtain a copy of
-  # the License at http://www.mozilla.org/MPL/
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
   #
-  # Software distributed under the License is distributed on an "AS
-  # IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-  # implied. See the License for the specific language governing
-  # rights and limitations under the License.
-  #
-  # The Original Code is the Bugzilla Bug Tracking System.
-  #
-  # The Initial Developer of the Original Code is Netscape Communications
-  # Corporation. Portions created by Netscape are
-  # Copyright (C) 1998 Netscape Communications Corporation. All
-  # Rights Reserved.
-  #
-  # Contributor(s): Dave Miller <justdave@syndicomm.com>
-  #                 Joel Peshkin <bugreport@peshkin.net>
-  #                 Jacob Steenhagen <jake@bugzilla.org>
-  #                 Vlad Dascalu <jocuri@softhome.net>
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
   #%]
 
 [%# INTERFACE:
@@ -28,29 +13,34 @@
 [% PROCESS global/header.html.tmpl
   title = "Add group"
   subheader = "This page allows you to define a new user group."
-  doc_section = "groups.html#create-groups"
+  style_urls = ['skins/standard/admin.css']
+  doc_section = "administering/groups.html#creating-groups"
 %]
 
 <form method="post" action="editgroups.cgi">
-  <table border="1" cellpadding="4" cellspacing="0"><tr>
-    <th>New Name</th>
-    <th>New Description</th>
-    <th>New User RegExp</th>
-    <th>Use For [% terms.Bugs %]</th>
-  </tr><tr>
-    <td><input size="20" name="name"></td>
-    <td><input size="40" name="desc"></td>
-    <td><input size="30" name="regexp"></td>
-    <td><input type="checkbox" name="isactive" value="1" checked></td>
-  </tr>
-  <tr>
-    <th>Icon URL:</th>
-    <td colspan="3"><input type="text" size="70" maxlength="255" id="icon_url" name="icon_url"></td>
-  </tr>
-  [% Hook.process('field') %]
+  <table id="admin_table_edit">
+    <tr>
+      <th>Group Name:</th>
+      <td><input size="60" maxlength="255" name="name" required></td>
+    </tr>
+    <tr>
+      <th>Description:</th>
+      <td><input size="60" name="desc" required></td>
+    </tr>
+    <tr>
+      <th>User Regexp:</th>
+      <td><input size="60" name="regexp"></td>
+    </tr>
+    <tr>
+      <th>Icon URL:</th>
+      <td><input type="text" size="60" id="icon_url" name="icon_url"></td>
+    </tr>
+    <tr>
+      <th>Use For [% terms.Bugs %]:</th>
+      <td><input type="checkbox" name="isactive" value="1" checked></td>
+    </tr>
+    [% Hook.process('field') %]
   </table>
-
-  <hr>
 
   <input type="checkbox" id="insertnew" name="insertnew" value="1"
     [% IF Param("makeproductgroups") %] checked[% END %]>
@@ -61,7 +51,9 @@
   <input type="hidden" name="token" value="[% token FILTER html %]">
 </form>
 
-<p><b>Name</b> is what is used with the B<!-- blah -->ugzilla->user->in_group()
+<hr>
+
+<p><b>Group Name</b> is what is used with the B[%%]ugzilla->user->in_group()
 function in any customized cgi files you write that use a given group.
 It can also be used by people submitting [% terms.bugs %] by email to
 limit [% terms.abug %] to a certain set of groups.</p>
@@ -69,15 +61,6 @@ limit [% terms.abug %] to a certain set of groups.</p>
 <p><b>Description</b> is what will be shown in the [% terms.bug %] reports
 to members of the group where they can choose whether
 the [% terms.bug %] will be restricted to others in the same group.</p>
-
-<p>The <b>Use For [% terms.Bugs %]</b> flag determines whether or not the
-group is eligible to be used for [% terms.bugs %]. If you clear this, it will
-no longer be possible for users to add [% terms.bugs %] to this group,
-although [% terms.bugs %] already in the group will remain in the group.
-Doing so is a much less drastic way to stop a group from growing
-than deleting the group would be. <b>Note: If you are creating
-a group, you probably want it to be usable for [% terms.bugs %], in which
-case you should leave this checked.</b></p>
 
 <p><b>User RegExp</b> is optional, and if filled in, will 
 automatically grant membership to this group to anyone with an 
@@ -90,13 +73,27 @@ email address that matches this regular expression.</p>
   in comments in [% terms.bugs %] besides the name of the author of comments.
 </p>
 
-<p>By default, the new group will be associated with existing 
-products. Unchecking the "Insert new group into all existing 
-products" option will prevent this and make the group become 
-visible only when its controls have been added to a product.</p>
+<p>The <b>Use For [% terms.Bugs %]</b> flag determines whether or not the
+group is eligible to be used for [% terms.bugs %]. If you clear this, it will
+no longer be possible for users to add [% terms.bugs %] to this group,
+although [% terms.bugs %] already in the group will remain in the group.
+Doing so is a much less drastic way to stop a group from growing
+than deleting the group would be. <b>Note: If you are creating
+a group, you probably want it to be usable for [% terms.bugs %], in which
+case you should leave this checked.</b></p>
 
-<p>Back to the <a href="./">main [% terms.bugs %] page</a>
+[% IF Param("makeproductgroups") %]
+  <p>By default, the new group will be associated with existing products.
+  Unchecking the "Insert new group into all existing products" option will
+  prevent this and make the group become visible only when its controls have
+  been added to a product.</p>
+[% ELSE %]
+  <p>Checking the "Insert new group into all existing products" option will
+  make the new group be associated with existing products. Leaving it unchecked
+  will make the group become visible only when its controls have been added to
+  a product.</p>
+[% END %]
 
-or to the <a href="editgroups.cgi">group list</a>.
+<p>Back to the <a href="editgroups.cgi">group list</a>.</p>
 
 [% PROCESS global/footer.html.tmpl %] 

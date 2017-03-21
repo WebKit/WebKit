@@ -1,0 +1,24 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+[% IF Param('useclassification') %]
+X-Bugzilla-Classification: [% bug.classification %]
+[% END %]
+X-Bugzilla-Product: [% bug.product %]
+X-Bugzilla-Component: [% bug.component %]
+X-Bugzilla-Version: [% bug.version %]
+X-Bugzilla-Keywords: [% bug.keywords %]
+X-Bugzilla-Severity: [% bug.bug_severity %]
+X-Bugzilla-Who: [% changer.login %]
+X-Bugzilla-Status: [% bug.bug_status %]
+X-Bugzilla-Resolution: [% bug.resolution %]
+X-Bugzilla-Priority: [% bug.priority %]
+X-Bugzilla-Assigned-To: [% bug.assigned_to.login %]
+[% IF Param('usetargetmilestone') %]
+X-Bugzilla-Target-Milestone: [% bug.target_milestone %]
+[% END %]
+X-Bugzilla-Flags:[% FOREACH flag = bug.flags %] [%+ flag.name %][% flag.status %][% END %]

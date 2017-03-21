@@ -1,29 +1,16 @@
-[%# The contents of this file are subject to the Mozilla Public
-  # License Version 1.1 (the "License"); you may not use this file
-  # except in compliance with the License. You may obtain a copy of
-  # the License at http://www.mozilla.org/MPL/
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
   #
-  # Software distributed under the License is distributed on an "AS
-  # IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-  # implied. See the License for the specific language governing
-  # rights and limitations under the License.
-  #
-  # The Original Code is the Bugzilla Bug Tracking System.
-  #
-  # The Initial Developer of the Original Code is Netscape Communications
-  # Corporation. Portions created by Netscape are
-  # Copyright (C) 1998 Netscape Communications Corporation. All
-  # Rights Reserved.
-  #
-  # Contributor(s): André Batosti <batosti@async.com.br>
-  #                 Frédéric Buclin <LpSolit@gmail.com>
-  #                 Guy Pyrzak <guy.pyrzak@gmail.com>
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
   #%]
 
-[% PROCESS "global/field-descs.none.tmpl" %]
 [% PROCESS "global/reason-descs.none.tmpl" %]
 
 [% isnew = bug.lastdiffed ? 0 : 1 %]
+
+[% Hook.process('start') %]
 
 [%+ PROCESS generate_diffs -%]
 
@@ -35,6 +22,15 @@
 [%+ comment.body_full({ is_bugmail => 1, wrap => 1 }) FILTER strip_control_chars %]
 [% END %]
 
+[% IF referenced_bugs.size %]
+
+Referenced [% terms.Bugs %]:
+
+[% FOREACH ref_bug = referenced_bugs %]
+[%+ urlbase %]show_bug.cgi?id=[% ref_bug.id %]
+[%+ "[" _ terms.Bug _ " " _ ref_bug.id _ "] " _ ref_bug.short_desc FILTER wrap_comment %]
+[% END %]
+[% END %]
 -- [%# Protect the trailing space of the signature marker %]
 You are receiving this mail because:
 [% SET reason_lines = [] %]
@@ -49,18 +45,21 @@ You are receiving this mail because:
 
 [% BLOCK generate_diffs %]
   [% urlbase %]show_bug.cgi?id=[% bug.id %]
-
 [%+ last_changer = 0 %]
+[% IF isnew %]
+[%+ +%]
+[% END %]
   [% FOREACH change = diffs %]
-    [% IF !isnew && changer.id != last_changer %]
-      [% last_changer = changer.id %]
+    [% IF !isnew && change.who.id != last_changer %]
+      [% last_changer = change.who.id %]
       [% IF change.blocker %]
         [% terms.Bug %] [%+ bug.id %] depends on [% terms.bug %] [%+ change.blocker.id %], which changed state.
 
 [%+ terms.Bug %] [%+ change.blocker.id %] Summary: [% change.blocker.short_desc %]
 [%+ urlbase %]show_bug.cgi?id=[% change.blocker.id %]
       [% ELSE %]
-        [%~ changer.identity %] changed:
+
+[% change.who.identity %] changed:
       [% END %]
 
            What    |Removed                     |Added

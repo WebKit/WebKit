@@ -1,22 +1,9 @@
-[%# The contents of this file are subject to the Mozilla Public
-  # License Version 1.1 (the "License"); you may not use this file
-  # except in compliance with the License. You may obtain a copy of
-  # the License at http://www.mozilla.org/MPL/
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
   #
-  # Software distributed under the License is distributed on an "AS
-  # IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-  # implied. See the License for the specific language governing
-  # rights and limitations under the License.
-  #
-  # The Original Code is the Bugzilla Bug Tracking System.
-  #
-  # The Initial Developer of the Original Code is Netscape Communications
-  # Corporation. Portions created by Netscape are
-  # Copyright (C) 1998 Netscape Communications Corporation. All
-  # Rights Reserved.
-  #
-  # Contributor(s): Bradley Baetz <bbaetz@student.usyd.edu.au>
-  #                 Max Kanat-Alexander <mkanat@bugzilla.org>
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
   #%]
 
 [%# INTERFACE:
@@ -29,8 +16,8 @@
 [% END %]
 
 [% PROCESS global/header.html.tmpl 
-  style_urls = [ "skins/standard/reports.css" ]
-  title = title 
+  style_urls = ['skins/standard/buglist.css']
+  title = title
 %]
 
 [% IF Param("useqacontact") %]
@@ -39,39 +26,23 @@
   [% numcols = 2 %]
 [% END %]
 
-<table cellpadding="0" cellspacing="0" id="components_header_table">
-  <tr>
-    <td class="instructions">
-      Select a component to see open [% terms.bugs %] in that component:
-    </td>
-    <td class="product_container">
-      <span class="product_name">[% product.name FILTER html %]</span>
-      <div class="product_desc">
-        [% product.description FILTER html_light %]
-      </div>
-    </td>
-  </tr>
-</table>
+<h1>[% product.name FILTER html %]</h1>
 
-<span class="components_header">Components</span>
+<div id="product_desc">[% product.description FILTER html_light %]</div>
+<p>Select a component to see open [% terms.bugs %] in that component.</p>
 
-<table summary="Components table"
-       class="component_table" cellspacing="0" cellpadding="0">
-  <thead>
+<table id="component_table">
   <tr>
-    <th>&nbsp;</th>
+    <th>Component</th>
     <th>Default Assignee</th>
     [% IF Param("useqacontact") %]
       <th>Default QA Contact</th>
     [% END %]
   </tr>
-  </thead>
 
-  <tbody>
   [% FOREACH comp = product.components %]
     [% INCLUDE describe_comp %]
   [% END %]
-  </tbody>
 </table>
 
 [% PROCESS global/footer.html.tmpl %]
@@ -93,7 +64,9 @@
     </td>
     [% IF Param("useqacontact") %]
       <td class="component_qa_contact">
-        [% INCLUDE global/user.html.tmpl who = comp.default_qa_contact %]
+        [% IF comp.default_qa_contact %]
+          [% INCLUDE global/user.html.tmpl who = comp.default_qa_contact %]
+        [% END %]
       </td>
     [% END %]
   </tr>

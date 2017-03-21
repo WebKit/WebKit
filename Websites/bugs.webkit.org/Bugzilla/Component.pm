@@ -1,25 +1,17 @@
-# -*- Mode: perl; indent-tabs-mode: nil -*-
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
-# The contents of this file are subject to the Mozilla Public
-# License Version 1.1 (the "License"); you may not use this file
-# except in compliance with the License. You may obtain a copy of
-# the License at http://www.mozilla.org/MPL/
-#
-# Software distributed under the License is distributed on an "AS
-# IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-# implied. See the License for the specific language governing
-# rights and limitations under the License.
-#
-# The Original Code is the Bugzilla Bug Tracking System.
-#
-# Contributor(s): Tiago R. Mello <timello@async.com.br>
-#                 Frédéric Buclin <LpSolit@gmail.com>
-#                 Max Kanat-Alexander <mkanat@bugzilla.org>
-#                 Akamai Technologies <bugzilla-dev@akamai.com>
+# This Source Code Form is "Incompatible With Secondary Licenses", as
+# defined by the Mozilla Public License, v. 2.0.
 
 package Bugzilla::Component;
+
+use 5.10.1;
 use strict;
-use base qw(Bugzilla::Field::ChoiceInterface Bugzilla::Object);
+use warnings;
+
+use parent qw(Bugzilla::Field::ChoiceInterface Bugzilla::Object);
 
 use Bugzilla::Constants;
 use Bugzilla::Util;
@@ -155,6 +147,12 @@ sub remove_from_db {
 
     $dbh->bz_start_transaction();
 
+    # Products must have at least one component.
+    my @components = @{ $self->product->components };
+    if (scalar(@components) == 1) {
+        ThrowUserError('component_is_last', { comp => $self });
+    }
+
     if ($self->bug_count) {
         if (Bugzilla->params->{'allowbugdeletion'}) {
             require Bugzilla::Bug;
@@ -168,14 +166,9 @@ sub remove_from_db {
             ThrowUserError('component_has_bugs', {nb => $self->bug_count});
         }
     }
-
-    $dbh->do('DELETE FROM flaginclusions WHERE component_id = ?',
-             undef, $self->id);
-    $dbh->do('DELETE FROM flagexclusions WHERE component_id = ?',
-             undef, $self->id);
-    $dbh->do('DELETE FROM component_cc WHERE component_id = ?',
-             undef, $self->id);
-    $dbh->do('DELETE FROM components WHERE id = ?', undef, $self->id);
+    # Update the list of components in the product object.
+    $self->product->{components} = [grep { $_->id != $self->id } @components];
+    $self->SUPER::remove_from_db();
 
     $dbh->bz_commit_transaction();
 }
@@ -353,21 +346,16 @@ sub bug_ids {
 sub default_assignee {
     my $self = shift;
 
-    if (!defined $self->{'default_assignee'}) {
-        $self->{'default_assignee'} =
-            new Bugzilla::User($self->{'initialowner'});
-    }
-    return $self->{'default_assignee'};
+    return $self->{'default_assignee'}
+      ||= new Bugzilla::User({ id => $self->{'initialowner'}, cache => 1 });
 }
 
 sub default_qa_contact {
     my $self = shift;
 
-    if (!defined $self->{'default_qa_contact'}) {
-        $self->{'default_qa_contact'} =
-            new Bugzilla::User($self->{'initialqacontact'});
-    }
-    return $self->{'default_qa_contact'};
+    return unless $self->{'initialqacontact'};
+    return $self->{'default_qa_contact'}
+      ||= new Bugzilla::User({id => $self->{'initialqacontact'}, cache => 1 });
 }
 
 sub flag_types {
@@ -429,10 +417,10 @@ use constant is_default => 0;
 
 sub is_set_on_bug {
     my ($self, $bug) = @_;
-    # We treat it like a hash always, so that we don't have to check if it's
-    # a hash or an object.
-    return 0 if !defined $bug->{component_id};
-    $bug->{component_id} == $self->id ? 1 : 0;
+    my $value = blessed($bug) ? $bug->component_id : $bug->{component};
+    $value = $value->id if blessed($value);
+    return 0 unless $value;
+    return $value == $self->id ? 1 : 0;
 }
 
 ###############################
@@ -501,10 +489,12 @@ Component.pm represents a Product Component object.
 
  Params:      $param - If you pass an integer, the integer is the
                        component ID from the database that we want to
-                       read in. If you pass in a hash with the 'name'
-                       and 'product' keys, then the value of the name
-                       key is the name of a component being in the given
-                       product.
+                       read in. 
+                       However, If you pass in a hash, it must contain
+                       two keys:
+                       name (string): the name of the component
+                       product (object): an object of Bugzilla::Product
+                       representing the product that the component belongs to.
 
  Returns:     A Bugzilla::Component object.
 
@@ -516,7 +506,7 @@ Component.pm represents a Product Component object.
 
  Returns:     Integer with the number of bugs.
 
-=item C<bugs_ids()>
+=item C<bug_ids()>
 
  Description: Returns all bug IDs that belong to the component.
 
@@ -540,7 +530,8 @@ Component.pm represents a Product Component object.
 
  Params:      none.
 
- Returns:     A Bugzilla::User object.
+ Returns:     A Bugzilla::User object if the default QA contact is defined for
+              the component. Otherwise, returns undef.
 
 =item C<initial_cc>
 
@@ -642,20 +633,36 @@ Component.pm represents a Product Component object.
  Description: Create a new component for the given product.
 
  Params:      The hashref must have the following keys:
-              name            - name of the new component (string). This name
-                                must be unique within the product.
-              product         - a Bugzilla::Product object to which
-                                the Component is being added.
-              description     - description of the new component (string).
-              initialowner    - login name of the default assignee (string).
+              name             - name of the new component (string). This name
+                                 must be unique within the product.
+              product          - a Bugzilla::Product object to which
+                                 the Component is being added.
+              description      - description of the new component (string).
+              initialowner     - login name of the default assignee (string).
               The following keys are optional:
-              initiaqacontact - login name of the default QA contact (string),
-                                or an empty string to clear it.
-              initial_cc      - an arrayref of login names to add to the
-                                CC list by default.
+              initialqacontact - login name of the default QA contact (string),
+                                 or an empty string to clear it.
+              initial_cc       - an arrayref of login names to add to the
+                                 CC list by default.
 
  Returns:     A Bugzilla::Component object.
 
 =back
 
 =cut
+
+=head1 B<Methods in need of POD>
+
+=over
+
+=item is_set_on_bug
+
+=item product_id
+
+=item set_is_active
+
+=item description
+
+=item is_active
+
+=back

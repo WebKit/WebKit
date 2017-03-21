@@ -1,28 +1,19 @@
-[%# The contents of this file are subject to the Mozilla Public
-  # License Version 1.1 (the "License"); you may not use this file
-  # except in compliance with the License. You may obtain a copy of
-  # the License at http://www.mozilla.org/MPL/
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
   #
-  # Software distributed under the License is distributed on an "AS
-  # IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-  # implied. See the License for the specific language governing
-  # rights and limitations under the License.
-  #
-  # The Original Code is the Bugzilla Bug Tracking System.
-  #
-  # Contributor(s): Frédéric Buclin <LpSolit@gmail.com>
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
   #%]
 
-[% PROCESS global/variables.none.tmpl %]
-
 [% title = BLOCK %]
-  Administer your installation ([% terms.Bugzilla %]
+  Administer your installation (Bugzilla
   [%+ constants.BUGZILLA_VERSION FILTER html %])
 [% END %]
 
 [% PROCESS global/header.html.tmpl title = title
                                    style_urls = ['skins/standard/admin.css']
-                                   doc_section = "administration.html"
+                                   doc_section = "administering/index.html"
 %]
 
 <div>
@@ -53,7 +44,7 @@
         <dt id="sanitycheck" class="[% class %]"><a href="sanitycheck.cgi">Sanity Check</a></dt>
         <dd class="[% class %]">Run sanity checks to locate problems in your database.
         This may take several tens of minutes depending on the size of your installation.
-        You can also automate this check by running <tt>sanitycheck.pl</tt> from a cron job.
+        You can also automate this check by running <kbd>sanitycheck.pl</kbd> from a cron job.
         A notification will be sent per email to the specified user if errors are detected.</dd>
 
         [% class = (user.in_group('editusers') || user.can_bless) ? "" : "forbidden" %]
@@ -92,7 +83,7 @@
       <dl>
         [% class = user.in_group('admin') ? "" : "forbidden" %]
         <dt id="custom_fields" class="[% class %]"><a href="editfields.cgi">Custom Fields</a></dt>
-        <dd class="[% class %]">[% terms.Bugzilla %] lets you define fields which are
+        <dd class="[% class %]">Bugzilla lets you define fields which are
         not implemented by default, based on your local and specific requirements.
         These fields can then be used as any other field, meaning that you can set
         them in [% terms.bugs %] and run any search involving them.<br>
@@ -126,6 +117,10 @@
         <dd class="[% class %]">Set queries which will be run at some specified date
         and time, and get the result of these queries directly per email. This is a
         good way to create reminders and to keep track of the activity in your installation.</dd>
+
+        <dt id="release_notes">
+          <a href="page.cgi?id=release-notes.html">Release Notes</a></dt>
+        <dd>Detailed information related to this release of Bugzilla.</dd>
 
         [% Hook.process('end_links_right') %]
       </dl>

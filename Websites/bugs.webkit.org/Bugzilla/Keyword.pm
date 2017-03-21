@@ -1,24 +1,17 @@
-# -*- Mode: perl; indent-tabs-mode: nil -*-
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
-# The contents of this file are subject to the Mozilla Public
-# License Version 1.1 (the "License"); you may not use this file
-# except in compliance with the License. You may obtain a copy of
-# the License at http://www.mozilla.org/MPL/
-#
-# Software distributed under the License is distributed on an "AS
-# IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-# implied. See the License for the specific language governing
-# rights and limitations under the License.
-#
-# The Original Code is the Bugzilla Bug Tracking System.
-#
-# Contributor(s): Max Kanat-Alexander <mkanat@bugzilla.org>
-
-use strict;
+# This Source Code Form is "Incompatible With Secondary Licenses", as
+# defined by the Mozilla Public License, v. 2.0.
 
 package Bugzilla::Keyword;
 
-use base qw(Bugzilla::Object);
+use 5.10.1;
+use strict;
+use warnings;
+
+use parent qw(Bugzilla::Object);
 
 use Bugzilla::Error;
 use Bugzilla::Util;
@@ -26,6 +19,8 @@ use Bugzilla::Util;
 ###############################
 ####    Initialization     ####
 ###############################
+
+use constant IS_CONFIG => 1;
 
 use constant DB_COLUMNS => qw(
    keyworddefs.id
@@ -113,7 +108,7 @@ sub _check_name {
 
     # We only want to validate the non-existence of the name if
     # we're creating a new Keyword or actually renaming the keyword.
-    if (!ref($self) || $self->name ne $name) {
+    if (!ref($self) || lc($self->name) ne lc($name)) {
         my $keyword = new Bugzilla::Keyword({ name => $name });
         ThrowUserError("keyword_already_exists", { name => $name }) if $keyword;
     }
@@ -174,3 +169,17 @@ implements.
 =back
 
 =cut
+
+=head1 B<Methods in need of POD>
+
+=over
+
+=item set_description
+
+=item bug_count
+
+=item set_name
+
+=item description
+
+=back

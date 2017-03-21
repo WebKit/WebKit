@@ -1,22 +1,9 @@
-[%# The contents of this file are subject to the Mozilla Public
-  # License Version 1.1 (the "License"); you may not use this file
-  # except in compliance with the License. You may obtain a copy of
-  # the License at http://www.mozilla.org/MPL/
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
   #
-  # Software distributed under the License is distributed on an "AS
-  # IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-  # implied. See the License for the specific language governing
-  # rights and limitations under the License.
-  #
-  # The Original Code is the Bugzilla Bug Tracking System.
-  #
-  # The Initial Developer of the Original Code is Netscape Communications
-  # Corporation. Portions created by Netscape are
-  # Copyright (C) 1998 Netscape Communications Corporation. All
-  # Rights Reserved.
-  #
-  # Contributor(s): Dave Miller <justdave@bugzilla.org>
-  #                 Frédéric Buclin <LpSolit@gmail.com>
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
   #%]
 [%
    title = "LDAP"
@@ -48,11 +35,11 @@
 
   LDAPmailattribute => "The name of the attribute of a user in your " _
                        "directory that contains the email address, to be " _
-                       "used as $terms.Bugzilla username. If this parameter " _
-                       "is empty, $terms.Bugzilla will use the LDAP username"_
-                       " as the $terms.Bugzilla username. You may also want" _
+                       "used as Bugzilla username. If this parameter " _
+                       "is empty, Bugzilla will use the LDAP username"_
+                       " as the Bugzilla username. You may also want" _
                        " to set the \"emailsuffix\" parameter, in this case.",
 
-  LDAPfilter => "LDAP filter to AND with the <tt>LDAPuidattribute</tt> for " _
+  LDAPfilter => "LDAP filter to AND with the <var>LDAPuidattribute</var> for " _
                 "filtering the list of valid users." }
 %]

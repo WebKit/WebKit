@@ -1,23 +1,9 @@
-[%# The contents of this file are subject to the Mozilla Public
-  # License Version 1.1 (the "License"); you may not use this file
-  # except in compliance with the License. You may obtain a copy of
-  # the License at http://www.mozilla.org/MPL/
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
   #
-  # Software distributed under the License is distributed on an "AS
-  # IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-  # implied. See the License for the specific language governing
-  # rights and limitations under the License.
-  #
-  # The Original Code is the Bugzilla Bug Tracking System.
-  #
-  # The Initial Developer of the Original Code is Netscape Communications
-  # Corporation. Portions created by Netscape are
-  # Copyright (C) 1998 Netscape Communications Corporation. All
-  # Rights Reserved.
-  #
-  # Contributor(s): Gervase Markham <gerv@gerv.net>
-  #                 Max Kanat-Alexander <mkanat@bugzilla.org>
-  #                 Shane H. W. Travis <travis@sedsystems.ca>
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
   #%]
 
 [% PROCESS bug/time.html.tmpl %]
@@ -25,28 +11,54 @@
 <script src="[% 'js/comments.js' FILTER mtime %]" type="text/javascript">
 </script>
 
-[% DEFAULT start_at = 0 mode = "show" %]
-[% sort_order = user.settings.comment_sort_order.value %]
+<script type="text/javascript">
+<!--
+  /* Adds the reply text to the 'comment' textarea */
+  function replyToComment(id, real_id, name) {
+      var prefix = "(In reply to " + name + " from comment #" + id + ")\n";
+      var replytext = "";
+      [% IF user.settings.quote_replies.value == 'quoted_reply' %]
+        /* pre id="comment_name_N" */
+        var text_elem = document.getElementById('comment_text_'+id);
+        var text = getText(text_elem);
+        replytext = prefix + wrapReplyText(text);
+      [% ELSIF user.settings.quote_replies.value == 'simple_reply' %]
+        replytext = prefix;
+      [% END %]
 
-[%# NOTE: (start_at > 0) means we came here from a midair collision,
-  #       in which case we don't care what the user's preference is.
- %]
-[% IF (start_at > 0) %]
-    [% sort_order = "oldest_to_newest" %]
-[% END %]
+      [% IF user.is_insider %]
+        if (document.getElementById('isprivate_' + real_id).checked) {
+            document.getElementById('newcommentprivacy').checked = 'checked';
+            updateCommentTagControl(document.getElementById('newcommentprivacy'), 'comment'); 
+        }
+      [% END %]
+
+      /* <textarea id="comment"> */
+      var textarea = document.getElementById('comment');
+      if (textarea.value != replytext) {
+          textarea.value += replytext;
+      }
+
+      textarea.focus();
+  } 
+//-->
+</script>
+
+[% DEFAULT mode = "show" %]
+[% user_cache = template_cache.users %]
+[% can_edit_comments = bug.check_can_change_field('longdesc', 0, 1) %]
+[% can_tag_comments = feature_enabled('jsonrpc') AND user.can_tag_comments %]
 
 <!-- This auto-sizes the comments and positions the collapse/expand links 
      to the right. -->
-<table class="bz_comment_table" cellpadding="0" cellspacing="0"><tr>
+<table class="bz_comment_table">
+<tr>
 <td>
 
-[% FOREACH comment = comments %]
-  [% IF comment.count >= start_at %]
-    [% PROCESS a_comment %]
-  [% END %]
-[% END %]
+[% PROCESS display_comments %]
 
-[% IF user.settings.comment_box_position.value == "before_comments" && user.id %]
+[% IF mode == "edit" && user.id
+      && user.settings.comment_box_position.value == "before_comments" %]
   <div class="bz_add_comment">
     <a href="#" 
        onclick="return goto_add_comments();">
@@ -63,15 +75,18 @@
 <td>
   [% IF mode == "edit" %]
     <ul class="bz_collapse_expand_comments">
-      <li><a href="#" onclick="toggle_all_comments('collapse'); 
+      <li><a href="#" onclick="toggle_all_comments('collapse');
                                return false;">Collapse All Comments</a></li>
       <li><a href="#" onclick="toggle_all_comments('expand');
                                return false;">Expand All Comments</a></li>
+      [% IF Param('comment_taggers_group') %]
+        <li><div id="comment_tags_collapse_expand_container"></div></li>
+      [% END %]
       [% IF user.settings.comment_box_position.value == "after_comments" && user.id %]
         <li class="bz_add_comment"><a href="#" 
             onclick="return goto_add_comments('bug_status_bottom');">
             Add Comment</a></li>
-      [% END %]                               
+      [% END %]
     </ul>
   [% END %]
 </td>
@@ -81,12 +96,14 @@
 [%# Block for individual comments                                            #%]
 [%############################################################################%]
 
-[% BLOCK a_comment %]
-  [% RETURN IF comment.is_private AND ! user.is_insider %]
-  [% comment_text = comment.body_full %]
-  [% RETURN IF comment_text == '' AND (comment.work_time - 0) != 0 AND !user.is_timetracker %]
+[% BLOCK display_comments %]
+  [% FOREACH comment = comments %]
+    [% NEXT IF comment.is_private AND NOT (user.is_insider || user.id == comment.author.id) %]
+    [% comment_text = comment.body_full %]
+    [% NEXT IF comment_text == '' AND (comment.work_time - 0) != 0 AND !user.is_timetracker %]
 
     <div id="c[% comment.count %]" class="bz_comment[% " bz_private" IF comment.is_private %]
+                [% " bz_default_collapsed" IF comment.collapsed %]
                 [% " bz_comment_hilite" IF marks.${comment.count} %]
                 [% " bz_first_comment" IF comment.count == 0 %]">
       [% IF comment.count == 0 %]
@@ -98,17 +115,38 @@
       [% END %]
 
       <div class="[% class_name FILTER html %]">
-
         [% IF mode == "edit" %]
           <span class="bz_comment_actions">
-            <script type="text/javascript"><!--
-              addReplyLink([% comment.count %], [% comment.id %]);
-              addCollapseLink([% comment.count %], 'Toggle comment display'); // -->
+            [% IF comment.collapsed %]
+              <span class="bz_collapsed_actions">
+            [% END %]
+            [% IF can_edit_comments %]
+              [% IF can_tag_comments %]
+                [<a href="#"
+                    onclick="YAHOO.bugzilla.commentTagging.toggle([% comment.id %], [% comment.count %]);return false">tag</a>]
+              [% END %]
+              [<a class="bz_reply_link" href="#add_comment"
+                [% IF user.settings.quote_replies.value != 'off' %]
+                  onclick="replyToComment('[% comment.count %]', '[% comment.id %]', '[% comment.author.name || comment.author.nick FILTER html FILTER js %]'); return false;"
+                [% END %]
+              >reply</a>]
+            [% END %]
+            [% IF comment.collapsed %]
+              </span>
+            [% END %]
+            <script type="text/javascript">
+              addCollapseLink([% comment.count %], [% comment.collapsed FILTER js %], 'Toggle comment display');
+            </script>
+          </span>
+        [% ELSIF comment.collapsed %]
+          <span class="bz_comment_actions">
+            <script type="text/javascript">
+              addCollapseLink([% comment.count %], [% comment.collapsed FILTER js %], 'Toggle comment display');
             </script>
           </span>
         [% END %]
 
-        [% IF mode == "edit" && user.is_insider %]
+        [% IF mode == "edit" && can_edit_comments && user.is_insider %]
           <div class="bz_private_checkbox">
             <input type="hidden" value="1"
                    name="defined_isprivate_[% comment.id %]">
@@ -128,12 +166,18 @@
         </span>
 
         <span class="bz_comment_user">
-          [% INCLUDE global/user.html.tmpl who = comment.author %]
+          [%# No need to recreate the exact same template if we already have it. %]
+          [% commenter_id = comment.author.id %]
+          [% UNLESS user_cache.$commenter_id %]
+            [% user_cache.$commenter_id = BLOCK %]
+              [% INCLUDE global/user.html.tmpl who = comment.author %]
+            [% END %]
+          [% END %]
+          [% user_cache.$commenter_id FILTER none %]
         </span>
 
         <span class="bz_comment_user_images">
-          [% FOREACH group = comment.author.direct_group_membership %]
-            [% NEXT UNLESS group.icon_url %]
+          [% FOREACH group = comment.author.groups_with_icon %]
             <img src="[% group.icon_url FILTER html %]"
                  alt="[% group.name FILTER html %]"
                  title="[% group.name FILTER html %] - [% group.description FILTER html %]">
@@ -143,6 +187,14 @@
         <span class="bz_comment_time">
           [%+ comment.creation_ts FILTER time %]
         </span>
+
+        [% IF comment.collapsed %]
+          <span id="cr[% comment.count %]" class="bz_comment_collapse_reason"
+             title="[% comment.author.name || comment.author.login FILTER html %]
+                    [%~ %] [[% comment.creation_ts FILTER time %]]">
+            Comment hidden ([% comment.tags.join(', ') FILTER html %])
+          </span>
+        [% END %]
       </div>
 
       [% IF user.is_timetracker &&
@@ -152,12 +204,35 @@
          [% PROCESS formattimeunit time_unit=comment.work_time %]
       [% END %]
 
+      [% IF user.id && Param('comment_taggers_group') %]
+        <div id="comment_tag_[% comment.count FILTER html %]"
+             class="bz_comment_tags">
+          <span id="ct_[% comment.count %]"
+                class="[% 'bz_default_hidden' UNLESS comment.tags.size %]">
+            [% IF comment.tags.size %]
+              <script>
+                YAHOO.bugzilla.commentTagging.showTags([% comment.id FILTER none %],
+                  [% comment.count FILTER none %], [
+                [% FOREACH tag = comment.tags %]
+                  [%~%]'[% tag FILTER js %]'[% "," UNLESS loop.last %]
+                [% END %]
+                [%~%]]);
+              </script>
+            [% END %]
+          </span>
+        </div>
+      [% END %]
+
 [%# Don't indent the <pre> block, since then the spaces are displayed in the
   # generated HTML
   #%]
-<pre class="bz_comment_text" 
-     [% ' id="comment_text_' _ comment.count _ '"' IF mode == "edit" %]>
+<pre class="bz_comment_text[% " collapsed" IF comment.collapsed %]"
+  [% IF mode == "edit" || comment.collapsed %]
+    id="comment_text_[% comment.count FILTER none %]"
+  [% END %]>
   [%- comment_text FILTER quoteUrls(bug, comment) -%]
 </pre>
+    [% Hook.process('a_comment-end', 'bug/comments.html.tmpl') %]
     </div>
+  [% END %]
 [% END %]

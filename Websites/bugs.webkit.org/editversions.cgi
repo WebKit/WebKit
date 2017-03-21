@@ -1,29 +1,15 @@
-#!/usr/bin/env perl -wT
-# -*- Mode: perl; indent-tabs-mode: nil -*-
+#!/usr/bin/perl -T
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
-# The contents of this file are subject to the Mozilla Public
-# License Version 1.1 (the "License"); you may not use this file
-# except in compliance with the License. You may obtain a copy of
-# the License at http://www.mozilla.org/MPL/
-#
-# Software distributed under the License is distributed on an "AS
-# IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-# implied. See the License for the specific language governing
-# rights and limitations under the License.
-#
-# The Original Code is mozilla.org code.
-#
-# The Initial Developer of the Original Code is Holger
-# Schurig. Portions created by Holger Schurig are
-# Copyright (C) 1999 Holger Schurig. All
-# Rights Reserved.
-#
-# Contributor(s): Holger Schurig <holgerschurig@nikocity.de>
-#                 Terry Weissman <terry@mozilla.org>
-#                 Gavin Shelley <bugzilla@chimpychompy.org>
-#                 Frédéric Buclin <LpSolit@gmail.com>
+# This Source Code Form is "Incompatible With Secondary Licenses", as
+# defined by the Mozilla Public License, v. 2.0.
 
+use 5.10.1;
 use strict;
+use warnings;
+
 use lib qw(. lib);
 
 use Bugzilla;
@@ -39,7 +25,7 @@ my $template = Bugzilla->template;
 my $vars = {};
 # There is only one section about versions in the documentation,
 # so all actions point to the same page.
-$vars->{'doc_section'} = 'versions.html';
+$vars->{'doc_section'} = 'administering/categorization.html#versions';
 
 #
 # Preliminary checks:
@@ -204,8 +190,10 @@ if ($action eq 'update') {
 
     $dbh->bz_start_transaction();
 
-    $version->set_name($version_name);
-    $version->set_is_active($isactive);
+    $version->set_all({
+        value    =>  $version_name,
+        isactive =>  $isactive
+    });
     my $changes = $version->update();
 
     $dbh->bz_commit_transaction();

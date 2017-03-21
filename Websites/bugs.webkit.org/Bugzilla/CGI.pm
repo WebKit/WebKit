@@ -1,45 +1,25 @@
-# -*- Mode: perl; indent-tabs-mode: nil -*-
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
-# The contents of this file are subject to the Mozilla Public
-# License Version 1.1 (the "License"); you may not use this file
-# except in compliance with the License. You may obtain a copy of
-# the License at http://www.mozilla.org/MPL/
-#
-# Software distributed under the License is distributed on an "AS
-# IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-# implied. See the License for the specific language governing
-# rights and limitations under the License.
-#
-# The Original Code is the Bugzilla Bug Tracking System.
-#
-# The Initial Developer of the Original Code is Netscape Communications
-# Corporation. Portions created by Netscape are
-# Copyright (C) 1998 Netscape Communications Corporation. All
-# Rights Reserved.
-#
-# Contributor(s): Bradley Baetz <bbaetz@student.usyd.edu.au>
-#                 Byron Jones <bugzilla@glob.com.au>
-#                 Marc Schumann <wurblzap@gmail.com>
+# This Source Code Form is "Incompatible With Secondary Licenses", as
+# defined by the Mozilla Public License, v. 2.0.
 
 package Bugzilla::CGI;
+
+use 5.10.1;
 use strict;
-use base qw(CGI);
+use warnings;
+
+use parent qw(CGI);
 
 use Bugzilla::Constants;
 use Bugzilla::Error;
 use Bugzilla::Util;
+use Bugzilla::Hook;
 use Bugzilla::Search::Recent;
 
 use File::Basename;
-
-BEGIN {
-    if (ON_WINDOWS) {
-        # Help CGI find the correct temp directory as the default list
-        # isn't Windows friendly (Bug 248988)
-        $ENV{'TMPDIR'} = $ENV{'TEMP'} || $ENV{'TMP'} || "$ENV{'WINDIR'}\\TEMP";
-    }
-    *AUTOLOAD = \&CGI::AUTOLOAD;
-}
 
 sub _init_bz_cgi_globals {
     my $invocant = shift;
@@ -73,11 +53,29 @@ sub new {
     # Make sure our outgoing cookie list is empty on each invocation
     $self->{Bugzilla_cookie_list} = [];
 
+    # Path-Info is of no use for Bugzilla and interacts badly with IIS.
+    # Moreover, it causes unexpected behaviors, such as totally breaking
+    # the rendering of pages.
+    my $script = basename($0);
+    if (my $path_info = $self->path_info) {
+        my @whitelist = ("rest.cgi");
+        Bugzilla::Hook::process('path_info_whitelist', { whitelist => \@whitelist });
+        if (!grep($_ eq $script, @whitelist)) {
+            # IIS includes the full path to the script in PATH_INFO,
+            # so we have to extract the real PATH_INFO from it,
+            # else we will be redirected outside Bugzilla.
+            my $script_name = $self->script_name;
+            $path_info =~ s/^\Q$script_name\E//;
+            if ($script_name && $path_info) {
+                print $self->redirect($self->url(-path => 0, -query => 1));
+            }
+        }
+    }
+
     # Send appropriate charset
     $self->charset(Bugzilla->params->{'utf8'} ? 'UTF-8' : '');
 
     # Redirect to urlbase/sslbase if we are not viewing an attachment.
-    my $script = basename($0);
     if ($self->url_is_attachment_base and $script ne 'attachment.cgi') {
         $self->redirect_to_urlbase();
     }
@@ -127,7 +125,8 @@ sub canonicalise_query {
         my $esc_key = url_quote($key);
 
         foreach my $value ($self->param($key)) {
-            if (defined($value)) {
+            # Omit params with an empty value
+            if (defined($value) && $value ne '') {
                 my $esc_value = url_quote($value);
 
                 push(@parameters, "$esc_key=$esc_value");
@@ -215,7 +214,10 @@ sub clean_search_url {
 
     # list_id is added in buglist.cgi after calling clean_search_url,
     # and doesn't need to be saved in saved searches.
-    $self->delete('list_id'); 
+    $self->delete('list_id');
+
+    # no_redirect is used internally by redirect_search_url().
+    $self->delete('no_redirect');
 
     # And now finally, if query_format is our only parameter, that
     # really means we have no parameters, so we should delete query_format.
@@ -224,33 +226,24 @@ sub clean_search_url {
     }
 }
 
-# Overwrite to ensure nph doesn't get set, and unset HEADERS_ONCE
-sub multipart_init {
-    my $self = shift;
+sub check_etag {
+    my ($self, $valid_etag) = @_;
 
-    # Keys are case-insensitive, map to lowercase
-    my %args = @_;
-    my %param;
-    foreach my $key (keys %args) {
-        $param{lc $key} = $args{$key};
+    # ETag support.
+    my $if_none_match = $self->http('If-None-Match');
+    return if !$if_none_match;
+
+    my @if_none = split(/[\s,]+/, $if_none_match);
+    foreach my $possible_etag (@if_none) {
+        # remove quotes from begin and end of the string
+        $possible_etag =~ s/^\"//g;
+        $possible_etag =~ s/\"$//g;
+        if ($possible_etag eq $valid_etag or $possible_etag eq '*') {
+            return 1;
+        }
     }
 
-    # Set the MIME boundary and content-type
-    my $boundary = $param{'-boundary'}
-        || '------- =_' . generate_random_password(16);
-    delete $param{'-boundary'};
-    $self->{'separator'} = "\r\n--$boundary\r\n";
-    $self->{'final_separator'} = "\r\n--$boundary--\r\n";
-    $param{'-type'} = SERVER_PUSH($boundary);
-
-    # Note: CGI.pm::multipart_init up to v3.04 explicitly set nph to 0
-    # CGI.pm::multipart_init v3.05 explicitly sets nph to 1
-    # CGI.pm's header() sets nph according to a param or $CGI::NPH, which
-    # is the desired behaviour.
-
-    return $self->header(
-        %param,
-    ) . "WARNING: YOUR BROWSER DOESN'T SUPPORT THIS SERVER-PUSH TECHNOLOGY." . $self->multipart_end;
+    return 0;
 }
 
 # Have to add the cookies in.
@@ -278,22 +271,57 @@ sub multipart_start {
         $headers .= "Set-Cookie: ${cookie}${CGI::CRLF}";
     }
     $headers .= $CGI::CRLF;
+    $self->{_multipart_in_progress} = 1;
     return $headers;
+}
+
+sub close_standby_message {
+    my ($self, $contenttype, $disp, $disp_prefix, $extension) = @_;
+    $self->set_dated_content_disp($disp, $disp_prefix, $extension);
+
+    if ($self->{_multipart_in_progress}) {
+        print $self->multipart_end();
+        print $self->multipart_start(-type => $contenttype);
+    }
+    elsif (!$self->{_header_done}) {
+        print $self->header($contenttype);
+    }
 }
 
 # Override header so we can add the cookies in
 sub header {
     my $self = shift;
 
+    my %headers;
+    my $user = Bugzilla->user;
+
     # If there's only one parameter, then it's a Content-Type.
     if (scalar(@_) == 1) {
-        # Since we're adding parameters below, we have to name it.
-        unshift(@_, '-type' => shift(@_));
+        %headers = ('-type' => shift(@_));
+    }
+    else {
+        %headers = @_;
+    }
+
+    if ($self->{'_content_disp'}) {
+        $headers{'-content_disposition'} = $self->{'_content_disp'};
+    }
+
+    if (!$user->id && $user->authorizer->can_login
+        && !$self->cookie('Bugzilla_login_request_cookie'))
+    {
+        my %args;
+        $args{'-secure'} = 1 if Bugzilla->params->{ssl_redirect};
+
+        $self->send_cookie(-name => 'Bugzilla_login_request_cookie',
+                           -value => generate_random_password(),
+                           -httponly => 1,
+                           %args);
     }
 
     # Add the cookies in if we have any
     if (scalar(@{$self->{Bugzilla_cookie_list}})) {
-        unshift(@_, '-cookie' => $self->{Bugzilla_cookie_list});
+        $headers{'-cookie'} = $self->{Bugzilla_cookie_list};
     }
 
     # Add Strict-Transport-Security (STS) header if this response
@@ -307,28 +335,35 @@ sub header {
         {
             $sts_opts .= '; includeSubDomains';
         }
-        unshift(@_, '-strict_transport_security' => $sts_opts);
+        
+        $headers{'-strict_transport_security'} = $sts_opts;
     }
 
     # Add X-Frame-Options header to prevent framing and subsequent
     # possible clickjacking problems.
     unless ($self->url_is_attachment_base) {
-        unshift(@_, '-x_frame_options' => 'SAMEORIGIN');
+        $headers{'-x_frame_options'} = 'SAMEORIGIN';
     }
 
     # Add X-XSS-Protection header to prevent simple XSS attacks
     # and enforce the blocking (rather than the rewriting) mode.
-    unshift(@_, '-x_xss_protection' => '1; mode=block');
+    $headers{'-x_xss_protection'} = '1; mode=block';
 
     # Add X-Content-Type-Options header to prevent browsers sniffing
     # the MIME type away from the declared Content-Type.
-    unshift(@_, '-x_content_type_options' => 'nosniff');
+    $headers{'-x_content_type_options'} = 'nosniff';
 
-    return $self->SUPER::header(@_) || "";
+    Bugzilla::Hook::process('cgi_headers',
+        { cgi => $self, headers => \%headers }
+    );
+    $self->{_header_done} = 1;
+
+    return $self->SUPER::header(%headers) || "";
 }
 
 sub param {
     my $self = shift;
+    local $CGI::LIST_CONTEXT_WARN = 0;
 
     # When we are just requesting the value of a parameter...
     if (scalar(@_) == 1) {
@@ -340,10 +375,7 @@ sub param {
         if (!scalar(@result)
             && $self->request_method && $self->request_method eq 'POST')
         {
-            # Some servers fail to set the QUERY_STRING parameter, which
-            # causes undef issues
-            $ENV{'QUERY_STRING'} = '' unless exists $ENV{'QUERY_STRING'};
-            @result = $self->SUPER::url_param(@_);
+            @result = $self->url_param(@_);
         }
 
         # Fix UTF-8-ness of input parameters.
@@ -366,6 +398,14 @@ sub param {
     }
 
     return $self->SUPER::param(@_);
+}
+
+sub url_param {
+    my $self = shift;
+    # Some servers fail to set the QUERY_STRING parameter, which
+    # causes undef issues
+    $ENV{'QUERY_STRING'} //= '';
+    return $self->SUPER::url_param(@_);
 }
 
 sub _fix_utf8 {
@@ -432,6 +472,10 @@ sub remove_cookie {
 # URLs that get POSTed to buglist.cgi.
 sub redirect_search_url {
     my $self = shift;
+
+    # If there is no parameter, there is nothing to do.
+    return unless $self->param;
+
     # If we're retreiving an old list, we never need to redirect or
     # do anything related to Bugzilla::Search::Recent.
     return if $self->param('regetlastlist');
@@ -455,6 +499,7 @@ sub redirect_search_url {
         return;
     }
 
+    my $no_redirect = $self->param('no_redirect');
     $self->clean_search_url();
 
     # Make sure we still have params still after cleaning otherwise we 
@@ -468,11 +513,15 @@ sub redirect_search_url {
         $self->param('list_id', $recent_search->id);
     }
 
+    # Browsers which support history.replaceState do not need to be
+    # redirected. We can fix the URL on the fly.
+    return if $no_redirect;
+
     # GET requests that lacked a list_id are always redirected. POST requests
     # are only redirected if they're under the CGI_URI_LIMIT though.
-    my $uri_length = length($self->self_url());
-    if ($self->request_method() ne 'POST' or $uri_length < CGI_URI_LIMIT) {
-        print $self->redirect(-url => $self->self_url());
+    my $self_url = $self->self_url();
+    if ($self->request_method() ne 'POST' or length($self_url) < CGI_URI_LIMIT) {
+        print $self->redirect(-url => $self_url);
         exit;
     }
 }
@@ -526,7 +575,23 @@ sub url_is_attachment_base {
         $regex =~ s/\\\%bugid\\\%/\\d+/;
     }
     $regex = "^$regex";
-    return ($self->self_url =~ $regex) ? 1 : 0;
+    return ($self->url =~ $regex) ? 1 : 0;
+}
+
+sub set_dated_content_disp {
+    my ($self, $type, $prefix, $ext) = @_;
+
+    my @time = localtime(time());
+    my $date = sprintf "%04d-%02d-%02d", 1900+$time[5], $time[4]+1, $time[3];
+    my $filename = "$prefix-$date.$ext";
+
+    $filename =~ s/\s/_/g; # Remove whitespace to avoid HTTP header tampering
+    $filename =~ s/\\/_/g; # Remove backslashes as well
+    $filename =~ s/"/\\"/g; # escape quotes
+
+    my $disposition = "$type; filename=\"$filename\"";
+
+    $self->{'_content_disp'} = $disposition;
 }
 
 ##########################
@@ -603,7 +668,9 @@ I<Bugzilla::CGI> also includes additional functions.
 
 =item C<canonicalise_query(@exclude)>
 
-This returns a sorted string of the parameters, suitable for use in a url.
+This returns a sorted string of the parameters whose values are non-empty,
+suitable for use in a url.
+
 Values in C<@exclude> are not included in the result.
 
 =item C<send_cookie>
@@ -636,8 +703,44 @@ instead of calling this directly.
 
 Redirects from the current URL to one prefixed by the urlbase parameter.
 
+=item C<multipart_start>
+
+Starts a new part of the multipart document using the specified MIME type.
+If not specified, text/html is assumed.
+
+=item C<close_standby_message>
+
+Ends a part of the multipart document, and starts another part.
+
+=item C<set_dated_content_disp>
+
+Sets an appropriate date-dependent value for the Content Disposition header
+for a downloadable resource.
+
 =back
 
 =head1 SEE ALSO
 
 L<CGI|CGI>, L<CGI::Cookie|CGI::Cookie>
+
+=head1 B<Methods in need of POD>
+
+=over
+
+=item check_etag
+
+=item clean_search_url
+
+=item url_is_attachment_base
+
+=item should_set
+
+=item redirect_search_url
+
+=item param
+
+=item url_param
+
+=item header
+
+=back

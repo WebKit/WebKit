@@ -1,27 +1,13 @@
-[%# The contents of this file are subject to the Mozilla Public
-  # License Version 1.1 (the "License"); you may not use this file
-  # except in compliance with the License. You may obtain a copy of
-  # the License at http://www.mozilla.org/MPL/
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
   #
-  # Software distributed under the License is distributed on an "AS
-  # IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-  # implied. See the License for the specific language governing
-  # rights and limitations under the License.
-  #
-  # The Original Code is the Bugzilla Bug Tracking System.
-  #
-  # The Initial Developer of the Original Code is Netscape Communications
-  # Corporation. Portions created by Netscape are
-  # Copyright (C) 1998 Netscape Communications Corporation. All
-  # Rights Reserved.
-  #
-  # Contributor(s): Gervase Markham <gerv@gerv.net>
-  #                 Max Kanat-Alexander <mkanat@bugzilla.org>
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
   #%]
 
 [% RETURN IF !bug %]
 
-[% PROCESS global/variables.none.tmpl %]
 [% IF bottom_navigator == 1 %]
   <ul class="related_actions">
     <li><a href="show_bug.cgi?format=multiple&amp;id=
@@ -35,28 +21,40 @@
     [% Hook.process("links") %]
     <li>&nbsp;-&nbsp;<a href="#">Top of page </a></li>
     </ul>
-[% END %]        
+[% END %]
 
-
-<div class="navigation">
 [% SET my_search = user.recent_search_for(bug) %]
 [% IF my_search %]
+  <div class="navigation">
   [% SET last_bug_list = my_search.bug_list %]
   [% SET this_bug_idx = lsearch(last_bug_list, bug.id) %]
   <b>[% terms.Bug %] List:</b>
 
   ([% this_bug_idx + 1 %] of [% last_bug_list.size %])
 
-  <a href="show_bug.cgi?id=
-           [%- last_bug_list.first FILTER uri %]&amp;list_id=
+  [% IF this_bug_idx > 0 %]
+    <a href="show_bug.cgi?id=
+             [%- last_bug_list.first FILTER uri %]&amp;list_id=
 [%# if WEBKIT_CHANGES %]
-           [%- my_search.id FILTER uri %]">|&laquo;&nbsp;First</a>
+             [%- my_search.id FILTER uri %]">|&laquo;&nbsp;First</a>
 [%# endif // WEBKIT_CHANGES %]
-  <a href="show_bug.cgi?id=
-           [%- last_bug_list.last FILTER uri %]&amp;list_id=
+  [% ELSE %]
 [%# if WEBKIT_CHANGES %]
-           [%- my_search.id FILTER uri %]">Last&nbsp;&raquo;|</a>
+    <span class="navigation_link">|&laquo;&nbsp;First</span>
 [%# endif // WEBKIT_CHANGES %]
+  [% END %]
+
+  [% IF this_bug_idx + 1 < last_bug_list.size %]
+    <a href="show_bug.cgi?id=
+             [%- last_bug_list.last FILTER uri %]&amp;list_id=
+[%# if WEBKIT_CHANGES %]
+             [%- my_search.id FILTER uri %]">Last&nbsp;&raquo;|</a>
+[%# endif // WEBKIT_CHANGES %]
+  [% ELSE %]
+[%# if WEBKIT_CHANGES %]
+    <span class="navigation_link">Last&nbsp;&raquo;|</span>
+[%# endif // WEBKIT_CHANGES %]
+  [% END %]
 
   [% IF this_bug_idx > 0 %]
     [% prev_bug = this_bug_idx - 1 %]
@@ -67,7 +65,7 @@
 [%# endif // WEBKIT_CHANGES %]
   [% ELSE %]
 [%# if WEBKIT_CHANGES %]
-    <i><font color="#777777">&laquo;&nbsp;Prev</font></i>
+    <span class="navigation_link">&laquo;&nbsp;Prev</span>
 [%# endif // WEBKIT_CHANGES %]
   [% END %]
 
@@ -80,22 +78,11 @@
 [%# endif // WEBKIT_CHANGES %]
   [% ELSE %]
 [%# if WEBKIT_CHANGES %]
-    <i><font color="#777777">Next&nbsp;&raquo;</font></i>
+    <span class="navigation_link">Next&nbsp;&raquo;</span>
 [%# endif // WEBKIT_CHANGES %]
   [% END %]
 
   &nbsp;&nbsp;<a href="buglist.cgi?regetlastlist=
               [%- my_search.id FILTER uri %]">Show last search results</a>
-[% ELSE %]
-  [%# With no list, don't show link to search results %]
-[%# if WEBKIT_CHANGES %]
-  <i><font color="#777777">|&laquo;&nbsp;First</font></i>
-  <i><font color="#777777">Last&nbsp;&raquo;|</font></i>
-  <i><font color="#777777">&laquo;&nbsp;Prev</font></i>
-  <i><font color="#777777">Next&nbsp;&raquo;</font></i>
-[%# endif // WEBKIT_CHANGES %]
-  &nbsp;&nbsp;
-  <i><font color="#777777">This [% terms.bug %] is not in your last
-    search results.</font></i>
+  </div>
 [% END %]
-</div>

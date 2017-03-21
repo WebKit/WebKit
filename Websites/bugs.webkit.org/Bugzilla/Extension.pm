@@ -1,26 +1,15 @@
-# -*- Mode: perl; indent-tabs-mode: nil -*-
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
-# The contents of this file are subject to the Mozilla Public
-# License Version 1.1 (the "License"); you may not use this file
-# except in compliance with the License. You may obtain a copy of
-# the License at http://www.mozilla.org/MPL/
-#
-# Software distributed under the License is distributed on an "AS
-# IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-# implied. See the License for the specific language governing
-# rights and limitations under the License.
-#
-# The Original Code is the Bugzilla Bug Tracking System.
-#
-# The Initial Developer of the Original Code is Everything Solved, Inc.
-# Portions created by the Initial Developers are Copyright (C) 2009 the
-# Initial Developer. All Rights Reserved.
-#
-# Contributor(s):
-#   Max Kanat-Alexander <mkanat@bugzilla.org>
+# This Source Code Form is "Incompatible With Secondary Licenses", as
+# defined by the Mozilla Public License, v. 2.0.
 
 package Bugzilla::Extension;
+
+use 5.10.1;
 use strict;
+use warnings;
 
 use Bugzilla::Constants;
 use Bugzilla::Error;
@@ -252,7 +241,7 @@ F<extensions/Foo.pm>:
 
  package Bugzilla::Extension::Foo
  use strict;
- use base qw(Bugzilla::Extension);
+ use parent qw(Bugzilla::Extension);
 
  our $VERSION = '0.02';
  use constant NAME => 'Foo';
@@ -662,6 +651,21 @@ So, for example, if you had a CSS file called F<style.css> and your
 extension was called F<Foo>, your file would go into 
 F<extensions/Foo/web/style.css>.
 
+=head2 Documenting Extensions
+
+Documentation goes in F<extensions/Foo/docs/en/rst/>, if it's in English, or
+change "en" to something else if it's not. The user documentation index file
+must be called index-user.rst; the admin documentation must be called
+index-admin.rst. These will end up in the User Guide and the Administration
+Guide respectively. Both documentation types are optional. You can use various
+Sphinx constructs such as :toctree: or :include: to include further reST files
+if you need more than one page of docs.
+
+When documenting extensions to the Bugzilla API, if your extension provides
+them, the index file would be F<extensions/Foo/docs/en/rst/api/v1/index.rst>.
+When and if your API has more than one version, increment the version number.
+These docs will get included in the WebService API Reference.
+
 =head2 Disabling Your Extension
 
 If you want your extension to be totally ignored by Bugzilla (it will
@@ -821,3 +825,13 @@ package name of the loaded extension.
 
 Calls L</load> for every enabled extension installed into Bugzilla,
 and returns an arrayref of all the package names that were loaded.
+
+=head1 B<Methods in need of POD>
+
+=over
+
+=item modify_inc
+
+=item my_inc
+
+=back

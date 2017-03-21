@@ -1,29 +1,17 @@
-# -*- Mode: perl; indent-tabs-mode: nil -*-
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
-# The contents of this file are subject to the Mozilla Public
-# License Version 1.1 (the "License"); you may not use this file
-# except in compliance with the License. You may obtain a copy of
-# the License at http://www.mozilla.org/MPL/
-#
-# Software distributed under the License is distributed on an "AS
-# IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-# implied. See the License for the specific language governing
-# rights and limitations under the License.
-#
-# The Initial Developer of the Original Code is NASA.
-# Portions created by NASA are Copyright (C) 2006 San Jose State
-# University Foundation. All Rights Reserved.
-#
-# The Original Code is the Bugzilla Bug Tracking System.
-#
-# Contributor(s): Max Kanat-Alexander <mkanat@bugzilla.org>
-#                 Greg Hendricks <ghendricks@novell.com>
-
-use strict;
+# This Source Code Form is "Incompatible With Secondary Licenses", as
+# defined by the Mozilla Public License, v. 2.0.
 
 package Bugzilla::Field::Choice;
 
-use base qw(Bugzilla::Field::ChoiceInterface Bugzilla::Object);
+use 5.10.1;
+use strict;
+use warnings;
+
+use parent qw(Bugzilla::Field::ChoiceInterface Bugzilla::Object);
 
 use Bugzilla::Config qw(SetParam write_params);
 use Bugzilla::Constants;
@@ -36,6 +24,8 @@ use Scalar::Util qw(blessed);
 ##################
 # Initialization #
 ##################
+
+use constant IS_CONFIG => 1;
 
 use constant DB_COLUMNS => qw(
     id
@@ -90,8 +80,10 @@ sub type {
     my $field_obj = blessed $field ? $field : Bugzilla::Field->check($field);
     my $field_name = $field_obj->name;
 
-    if ($class->CLASS_MAP->{$field_name}) {
-        return $class->CLASS_MAP->{$field_name};
+    if (my $package = $class->CLASS_MAP->{$field_name}) {
+        # Callers expect the module to be already loaded.
+        eval "require $package";
+        return $package;
     }
 
     # For generic classes, we use a lowercase class name, so as
@@ -106,7 +98,7 @@ sub type {
     if (!defined *{"${package}::DB_TABLE"}) {
         eval <<EOC;
             package $package;
-            use base qw(Bugzilla::Field::Choice);
+            use parent qw(Bugzilla::Field::Choice);
             use constant DB_TABLE => '$field_name';
 EOC
     }
@@ -268,7 +260,7 @@ sub _check_sortkey {
     return 0 if !$value;
     # Store for the error message in case detaint_natural clears it.
     my $orig_value = $value;
-    detaint_natural($value)
+    (detaint_natural($value) && $value <= MAX_SMALLINT)
         || ThrowUserError('fieldvalue_sortkey_invalid',
                           { sortkey => $orig_value,
                             field   => $invocant->field });
@@ -345,3 +337,23 @@ must call C<type> to get a class you can call methods on.
 
 This class implements mutators for all of the settable accessors in
 L<Bugzilla::Field::ChoiceInterface>.
+
+=head1 B<Methods in need of POD>
+
+=over
+
+=item create
+
+=item remove_from_db
+
+=item set_is_active
+
+=item set_sortkey
+
+=item set_name
+
+=item update
+
+=item set_visibility_value
+
+=back

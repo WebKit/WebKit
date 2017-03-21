@@ -1,29 +1,17 @@
-#!/usr/bin/env perl -w
+#!/usr/bin/perl
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
-# The contents of this file are subject to the Mozilla Public
-# License Version 1.1 (the "License"); you may not use this file
-# except in compliance with the License. You may obtain a copy of
-# the License at http://www.mozilla.org/MPL/
-# 
-# Software distributed under the License is distributed on an "AS
-# IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-# implied. See the License for the specific language governing
-# rights and limitations under the License.
-# 
-# The Original Code is the Bugzilla Bug Tracking System.
-# 
-# The Initial Developer of the Original Code is Netscape Communications
-# Corporation. Portions created by Netscape are
-# Copyright (C) 2000 Netscape Communications Corporation.  All
-# Rights Reserved.
-# 
-# Contributor(s): Dan Mosedale <dmose@mozilla.org>
-#
+# This Source Code Form is "Incompatible With Secondary Licenses", as
+# defined by the Mozilla Public License, v. 2.0.
 
 # mysqld-watcher.pl - a script that watches the running instance of
 # mysqld and kills off any long-running SELECTs against the shadow_db
 # 
+use 5.10.1;
 use strict;
+use warnings;
 
 # some configurables: 
 
@@ -75,7 +63,7 @@ foreach my $command ("/opt/mysql/bin/mysqladmin --verbose processlist",
              && $F[8] =~ /(select|SELECT)/      # only kill a select
              && !defined($long->{$F[1]}) )      # haven't seen this one already
         {
-	    $long->{$F[1]} = \@F;
+            $long->{$F[1]} = \@F;
             system("/opt/mysql/bin/mysqladmin", "kill", $F[1]);
         }
     }
@@ -114,4 +102,3 @@ if (scalar(keys(%$long))) {
     #
     sendEmail($mail_from, $mail_to, "long running MySQL thread(s) killed", $message);
 }
-

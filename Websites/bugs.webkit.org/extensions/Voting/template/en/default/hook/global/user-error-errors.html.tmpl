@@ -1,21 +1,9 @@
-[%# The contents of this file are subject to the Mozilla Public
-  # License Version 1.1 (the "License"); you may not use this file
-  # except in compliance with the License. You may obtain a copy of
-  # the License at http://www.mozilla.org/MPL/
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
   #
-  # Software distributed under the License is distributed on an "AS
-  # IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-  # implied. See the License for the specific language governing
-  # rights and limitations under the License.
-  #
-  # The Original Code is the Bugzilla Bug Tracking System.
-  #
-  # The Initial Developer of the Original Code is Everything Solved, Inc.
-  # Portions created by the Initial Developer are Copyright (C) 2010
-  # the Initial Developer. All Rights Reserved.
-  #
-  # Contributor(s): 
-  #   Max Kanat-Alexander <mkanat@bugzilla.org>
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
   #%]
 
 [% IF error == "voting_must_be_nonnegative" %]
@@ -42,14 +30,14 @@
     [% admindocslinks = {'voting.html' => 'Setting up the voting feature'} %]
     You may only use at most [% max FILTER html %] votes for a single
     [%+ terms.bug %] in the
-    <tt>[% product FILTER html %]</tt> product, but you are trying to
+    <em>[% product FILTER html %]</em> product, but you are trying to
     use [% votes FILTER html %].
 
 [% ELSIF error == "voting_too_many_votes_for_product" %]
     [% title = "Illegal Vote" %]
     [% admindocslinks = {'voting.html' => 'Setting up the voting feature'} %]
     You tried to use [% votes FILTER html %] votes in the
-    <tt>[% product FILTER html %]</tt> product, which exceeds the maximum of
+    <em>[% product FILTER html %]</em> product, which exceeds the maximum of
     [%+ max FILTER html %] votes for this product.
 
 [% END %]

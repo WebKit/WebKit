@@ -1,16 +1,9 @@
-[%# The contents of this file are subject to the Mozilla Public
-  # License Version 1.1 (the "License"); you may not use this file
-  # except in compliance with the License. You may obtain a copy of
-  # the License at http://www.mozilla.org/MPL/
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
   #
-  # Software distributed under the License is distributed on an "AS
-  # IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-  # implied. See the License for the specific language governing
-  # rights and limitations under the License.
-  #
-  # The Original Code is the Bugzilla Bug Tracking System.
-  #
-  # Contributor(s): Frédéric Buclin <LpSolit@gmail.com>
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
   #%]
 
 [%# INTERFACE:
@@ -22,7 +15,9 @@
 [% title = BLOCK %]Create a new user account for '[% email FILTER html %]'[% END %]
 [% PROCESS "global/header.html.tmpl"
            title = title
-           onload = "document.forms['confirm_account_form'].realname.focus();" %]
+%]
+
+[% password_complexity = Param('password_complexity') %]
 
 <p>
   To create your account, you must enter a password in the form below.
@@ -35,26 +30,34 @@
   <input type="hidden" name="a" value="confirm_new_account">
   <table>
     <tr>
-      <th align="right">Email Address:</th>
+      <th>Email Address:</th>
       <td>[% email FILTER html %]</td>
     </tr>
     <tr>
-      <th align="right"><small><i>(OPTIONAL)</i></small> <label for="realname">Real Name</label>:</th>
-      <td><input type="text" id="realname" name="realname" value=""></td>
+      <th><small><i>(OPTIONAL)</i></small> <label for="realname">Real Name</label>:</th>
+      <td><input id="realname" name="realname" autofocus></td>
     </tr>
     <tr>
-      <th align="right"><label for="passwd1">Type your password</label>:</th>
+      <th><label for="passwd1">Type your password</label>:</th>
       <td>
-        <input type="password" id="passwd1" name="passwd1" value="">
-        (minimum [% constants.USER_PASSWORD_MIN_LENGTH FILTER none %] characters)
+        <input type="password" id="passwd1" name="passwd1" value="" required>
+        (Password should be a minimum of [% constants.USER_PASSWORD_MIN_LENGTH FILTER none %] characters long
+        [% IF password_complexity == "mixed_letters" %]
+          and must contain at least one UPPER and one lowercase letter
+        [% ELSIF password_complexity == "letters_numbers" %]
+          and must contain at least one UPPER and one lowercase letter and a number
+        [% ELSIF password_complexity == "letters_numbers_specialchars" %] 
+          and must contain at least one letter, a number and a special character
+        [% END ~%]
+        .)
       </td>
     </tr>
     <tr>
-      <th align="right"><label for="passwd2">Confirm your password</label>:</th>
-      <td><input type="password" id="passwd2" name="passwd2" value=""></td>
+      <th><label for="passwd2">Confirm your password</label>:</th>
+      <td><input type="password" id="passwd2" name="passwd2" value="" required></td>
     </tr>
     <tr>
-      <th align="right">&nbsp;</th>
+      <th>&nbsp;</th>
       <td><input type="submit" id="confirm" value="Create"></td>
     </tr>
   </table>
@@ -62,7 +65,7 @@
 
 <p>
   This account will not be created if this form is not completed by
-  <u>[% expiration_ts FILTER time("%B %e, %Y at %H:%M %Z") %]</u>.
+  <b>[% expiration_ts FILTER time("%B %e, %Y at %H:%M %Z") %]</b>.
 </p>
 
 <p>

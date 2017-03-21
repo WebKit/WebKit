@@ -1,43 +1,35 @@
-[%# The contents of this file are subject to the Mozilla Public
-  # License Version 1.1 (the "License"); you may not use this file
-  # except in compliance with the License. You may obtain a copy of
-  # the License at http://www.mozilla.org/MPL/
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
   #
-  # Software distributed under the License is distributed on an "AS
-  # IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-  # implied. See the License for the specific language governing
-  # rights and limitations under the License.
-  #
-  # The Original Code is the Bugzilla Bug Tracking System.
-  #
-  # Contributor(s): Marc Schumann <wurblzap@gmail.com>
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
   #%]
 
 [%# INTERFACE:
-  # docslinks: hash. Hash keys will be used as text of the documentation links,
-  #            hash values will be used as links to the document, relative to
+  # docslinks: hash. Hash values will be used as text of the documentation links,
+  #            hash keys will be used as links to the document, relative to
   #            the main Bugzilla documentation directory.
   #            Example: If you want a 'FAQ' link to point to, the "faq-general"
   #            named anchor on faq.html, assign
-  #               { 'FAQ' => "faq.html#faq-general" }
+  #               { "faq.html#faq-general" => 'FAQ' }
   #            to docslinks.
   #            You may only link to sections by their given ID; it is not allowed
   #            to link to a section which is not given an ID (thus getting
   #            assigned an automatically generated ID). Otherwise, the link
   #            would break on a recompilation of the documentation.
   # admindocslinks: hash. Same as docslinks, but will only be displayed to
-  #                 members of the admin group.
+  #                 members of the 'editcomponents' group.
   #%]
 
-[% IF Param('docs_urlbase') &&
-      docslinks.keys.size || (admindocslinks.keys.size && user.in_group('admin')) %]
+[% IF docslinks.keys.size || (admindocslinks.keys.size && user.in_group('editcomponents')) %]
   <div id="docslinks">
     <h2>Related documentation</h2>
     <ul>
-      [% IF user.in_group('admin') %]
-        [% PROCESS docslinkslist docstype = admindocslinks %]
+      [% IF user.in_group('editcomponents') %]
+        [% PROCESS docslinkslist docstype = admindocslinks admin = 1 %]
       [% END %]
-      [% PROCESS docslinkslist docstype = docslinks %]
+      [% PROCESS docslinkslist docstype = docslinks admin = 0 %]
     </ul>
   </div>
 [% END %]
@@ -45,7 +37,7 @@
 [% BLOCK docslinkslist %]
   [% FOREACH docslink = docstype.keys %]
     <li>
-      <a href="[% docs_urlbase FILTER html %]
+      <a href="[% docs_urlbase FILTER html %][% "administering/" IF admin %]
                [% docslink FILTER none %]">[% docstype.$docslink FILTER html %]</a>
     </li>
   [% END %]

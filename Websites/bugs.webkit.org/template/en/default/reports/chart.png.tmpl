@@ -1,25 +1,10 @@
-[%# The contents of this file are subject to the Mozilla Public
-  # License Version 1.1 (the "License"); you may not use this file
-  # except in compliance with the License. You may obtain a copy of
-  # the License at http://www.mozilla.org/MPL/
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
   #
-  # Software distributed under the License is distributed on an "AS
-  # IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-  # implied. See the License for the specific language governing
-  # rights and limitations under the License.
-  #
-  # The Original Code is the Bugzilla Bug Tracking System.
-  #
-  # The Initial Developer of the Original Code is Netscape Communications
-  # Corporation. Portions created by Netscape are
-  # Copyright (C) 1998 Netscape Communications Corporation. All
-  # Rights Reserved.
-  #
-  # Contributor(s): Gervase Markham <gerv@gerv.net>
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
   #%]
-
-[% y_label = "$terms.Bugs" %]
-[% x_label = "Time" %]
 
 [% IF chart.cumulate %]
   [% USE graph = GD.Graph.area(width, height) %]
@@ -31,8 +16,8 @@
 [% FILTER null;
   x_label_skip = (30 * chart.data.0.size / width);
   
-  graph.set(x_label           => x_label,
-            y_label           => y_label,
+  graph.set(x_label           => "Time",
+            y_label           => terms.Bugs,
             y_tick_number     => 8, 
             y_max_value       => chart.y_max_value,
             x_label_position  => 0.5,
@@ -44,17 +29,18 @@
                                   "lpurple", "lorange", "black", "green",
                                   "blue", "dpink", "lbrown", "gray", 
                                   "red", "dpurple", "gold", "marine"]);
-   
-  # Workaround for the fact that set_legend won't take chart.labels directly, 
-  # because chart.labels is an array reference rather than an array.
-  graph.set_legend(chart.labels.0, chart.labels.1, chart.labels.2,
-                   chart.labels.3, chart.labels.4, chart.labels.5,
-                   chart.labels.6, chart.labels.7, chart.labels.8,
-                   chart.labels.9, chart.labels.10, chart.labels.11,
-                   chart.labels.12, chart.labels.13, chart.labels.14,
-                   chart.labels.15);
-                      
-  graph.plot(chart.data).png | stdout(1);
+
+  graph.set_legend(chart.labels);
   END;
 -%]
 
+[% IF Param("font_file") %]
+  [% graph.set_x_axis_font(Param("font_file"), 9);
+     graph.set_x_label_font(Param("font_file"), 10);
+     graph.set_y_axis_font(Param("font_file"), 9);
+     graph.set_y_label_font(Param("font_file"), 10);
+     graph.set_legend_font(Param("font_file"), 9);
+  %]
+[% END %]
+
+[% graph.plot(chart.data).png | stdout(1) %]

@@ -1,22 +1,9 @@
-[%# The contents of this file are subject to the Mozilla Public
-  # License Version 1.1 (the "License"); you may not use this file
-  # except in compliance with the License. You may obtain a copy of
-  # the License at http://www.mozilla.org/MPL/
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
   #
-  # Software distributed under the License is distributed on an "AS
-  # IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-  # implied. See the License for the specific language governing
-  # rights and limitations under the License.
-  #
-  # The Original Code is the Bugzilla Bug Tracking System.
-  #
-  # The Initial Developer of the Original Code is Netscape Communications
-  # Corporation. Portions created by Netscape are
-  # Copyright (C) 1998 Netscape Communications Corporation. All
-  # Rights Reserved.
-  #
-  # Contributor(s): Gervase Markham <gerv@gerv.net>
-  #                 Frédéric Buclin <LpSolit@gmail.com>
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
   #%]
 
 [%# INTERFACE:
@@ -36,25 +23,25 @@
   #%]
 
 [% filtered_login = user.login FILTER html %]
-[% PROCESS global/header.html.tmpl
-   title = "User Preferences"
-   subheader = filtered_login
-   style_urls = ['skins/standard/admin.css']
-   javascript_urls = ['js/util.js', 'js/field.js']
-   doc_section = "userpreferences.html"
-   yui = ['autocomplete']
- %]
 
 [% tabs = [{ name => "settings", label => "General Preferences",
-              link => "userprefs.cgi?tab=settings", saveable => "1" },
-            { name => "email", label => "Email Preferences", 
-              link => "userprefs.cgi?tab=email", saveable => "1" },
-            { name => "saved-searches", label => "Saved Searches", 
-              link => "userprefs.cgi?tab=saved-searches", saveable => "1" },
+              link => "userprefs.cgi?tab=settings", saveable => "1",
+              doc_section => "using/preferences.html#general-preferences" },
+            { name => "email", label => "Email Preferences",
+              link => "userprefs.cgi?tab=email", saveable => "1",
+              doc_section => "using/preferences.html#email-preferences" },
+            { name => "saved-searches", label => "Saved Searches",
+              link => "userprefs.cgi?tab=saved-searches", saveable => "1",
+              doc_section => "using/preferences.html#saved-searches" },
             { name => "account", label => "Account Information",
-              link => "userprefs.cgi?tab=account", saveable => "1" },
-            { name => "permissions", label => "Permissions", 
-              link => "userprefs.cgi?tab=permissions", saveable => "0" } ] %]
+              link => "userprefs.cgi?tab=account", saveable => "1",
+              doc_section => "using/preferences.html#account-information" },
+            { name => "apikey", label => "API Keys",
+              link => "userprefs.cgi?tab=apikey", saveable => "1",
+              doc_section => "using/preferences.html#api-keys" },
+            { name => "permissions", label => "Permissions",
+              link => "userprefs.cgi?tab=permissions", saveable => "0",
+              doc_section => "using/preferences.html#permissions" } ] %]
 
 [% Hook.process('tabs') %]
 
@@ -64,6 +51,16 @@
     [% LAST %]
   [% END %]
 [% END %]
+
+[% PROCESS global/header.html.tmpl
+   title = current_tab.label
+   subheader = filtered_login
+   generate_api_token = 1
+   style_urls = ['skins/standard/admin.css']
+   javascript_urls = ['js/util.js', 'js/field.js', 'js/TUI.js']
+   doc_section = current_tab.doc_section
+   yui = ['autocomplete']
+ %]
 
 [% WRAPPER global/tabs.html.tmpl
    tabs        = tabs
@@ -76,8 +73,13 @@
 
     [% IF email_changes_saved %]
       <p>
-        An email has been sent to both old and new email
-        addresses to confirm the change of email address.
+        In order to confirm your request, we have sent an email to your
+        new email address. As a precaution, an email has also been sent
+        to your old address allowing you to cancel this change if needed.
+        If you don't receive the email, you can
+        <a href="token.cgi?t=[% email_token FILTER uri %]&amp;a=cxlem">
+        cancel the email address change</a> from here if you wish (especially
+        if you mistyped the new email address).
       </p>
     [% END %]
   </div>
@@ -96,16 +98,10 @@
 
 [% IF current_tab.saveable %]
     <input type="hidden" name="dosave" value="1">
-
     [% UNLESS dont_show_button %]
-      <table>
-        <tr>
-          <td width="150">&nbsp;</td>
-          <td>
-            <input type="submit" id="update" value="Submit Changes">
-          </td>
-        </tr>
-      </table>
+      <p>
+        <input type="submit" id="update" value="Submit Changes">
+      </p>
     [% END %]
   </form>
 [% END %]

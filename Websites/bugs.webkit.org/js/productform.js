@@ -1,106 +1,19 @@
-/* The contents of this file are subject to the Mozilla Public
- * License Version 1.1 (the "License"); you may not use this file
- * except in compliance with the License. You may obtain a copy of
- * the License at http://www.mozilla.org/MPL/
- * 
- * Software distributed under the License is distributed on an "AS
- * IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
- * implied. See the License for the specific language governing
- * rights and limitations under the License.
- * 
- * The Original Code is the Bugzilla Bug Tracking System.
- * 
- * The Initial Developer of the Original Code is Netscape Communications
- * Corporation. Portions created by Netscape are
- * Copyright (C) 1998 Netscape Communications Corporation. All
- * Rights Reserved.
- * 
- * Contributor(s): Christian Reis <kiko@async.com.br>
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ *
+ * This Source Code Form is "Incompatible With Secondary Licenses", as
+ * defined by the Mozilla Public License, v. 2.0.
  */
 
 // Functions to update form select elements based on a
 // collection of javascript arrays containing strings.
 
 /**
- * Reads the selected classifications and updates product, component,
- * version and milestone lists accordingly.
- *
- * @param  classfield Select element that contains classifications.
- * @param  product    Select element that contains products.
- * @param  component  Select element that contains components. Can be null if
- *                    there is no such element to update.
- * @param  version    Select element that contains versions. Can be null if
- *                    there is no such element to update.
- * @param  milestone  Select element that contains milestones. Can be null if
- *                    there is no such element to update.
- *
- * @global prods      Array of products indexed by classification name.
- * @global first_load Boolean; true if this is the first time this page loads
- *                    or false if not.
- * @global last_sel   Array that contains last list of products so we know what
- *                    has changed, and optimize for additions.
- */
-function selectClassification(classfield, product, component, version, milestone) {
-    // This is to avoid handling events that occur before the form
-    // itself is ready, which could happen in buggy browsers.
-    if (!classfield)
-        return;
-
-    // If this is the first load and nothing is selected, no need to
-    // merge and sort all lists; they are created sorted.
-    if ((first_load) && (classfield.selectedIndex == -1)) {
-        first_load = false;
-        return;
-    }
-    
-    // Don't reset first_load as done in selectProduct. That's because we
-    // want selectProduct to handle the first_load attribute.
-
-    // Stores classifications that are selected.
-    var sel = Array();
-
-    // True if sel array has a full list or false if sel contains only
-    // new classifications that are to be merged to the current list.
-    var merging = false;
-
-    // If nothing selected, pick all.
-    var findall = classfield.selectedIndex == -1;
-    sel = get_selection(classfield, findall, false);
-    if (!findall) {
-        // Save sel for the next invocation of selectClassification().
-        var tmp = sel;
-    
-        // This is an optimization: if we have just added classifications to an
-        // existing selection, no need to clear the form elements and add
-        // everything again; just merge the new ones with the existing
-        // options.
-        if ((last_sel.length > 0) && (last_sel.length < sel.length)) {
-            sel = fake_diff_array(sel, last_sel);
-            merging = true;
-        }
-        last_sel = tmp;
-    }
-
-    // Save original options selected.
-    var saved_prods = get_selection(product, false, true, null);
-
-    // Do the actual fill/update, reselect originally selected options.
-    updateSelect(prods, sel, product, merging, null);
-    restoreSelection(product, saved_prods);
-    selectProduct(product, component, version, milestone, null);
-}
-
-/**
- * Reads the selected products and updates component, version and milestone
- * lists accordingly.
+ * Reads the selected products and updates the component list accordingly.
  *
  * @param  product    Select element that contains products.
- * @param  component  Select element that contains components. Can be null if
- *                    there is no such element to update.
- * @param  version    Select element that contains versions. Can be null if
- *                    there is no such element to update.
- * @param  milestone  Select element that contains milestones. Can be null if
- *                    there is no such element to update.
+ * @param  component  Select element that contains components.
  * @param  anyval     Value to use for a special "Any" list item. Can be null
  *                    to not use any. If used must and will be first item in
  *                    the select element.
@@ -108,21 +21,15 @@ function selectClassification(classfield, product, component, version, milestone
  * @global cpts       Array of arrays, indexed by product name. The subarrays
  *                    contain a list of components to be fed to the respective
  *                    select element.
- * @global vers       Array of arrays, indexed by product name. The subarrays
- *                    contain a list of versions to be fed to the respective
- *                    select element.
- * @global tms        Array of arrays, indexed by product name. The subarrays
- *                    contain a list of milestones to be fed to the respective
- *                    select element.
  * @global first_load Boolean; true if this is the first time this page loads
  *                    or false if not.
  * @global last_sel   Array that contains last list of products so we know what
  *                    has changed, and optimize for additions.
  */
-function selectProduct(product, component, version, milestone, anyval) {
+function selectProduct(product, component, anyval) {
     // This is to avoid handling events that occur before the form
     // itself is ready, which could happen in buggy browsers.
-    if (!product)
+    if (!product || !component)
         return;
 
     // Do nothing if no products are defined. This is to avoid the
@@ -159,15 +66,8 @@ function selectProduct(product, component, version, milestone, anyval) {
     var findall = (product.selectedIndex == -1
                    || (anyval != null && product.options[0].selected));
 
-    if (useclassification) {
-        // Update index based on the complete product array.
-        sel = get_selection(product, findall, true, anyval);
-        for (var i=0; i<sel.length; i++)
-           sel[i] = prods[sel[i]];
-    }
-    else {
-        sel = get_selection(product, findall, false, anyval);
-    }
+    sel = get_selection(product, findall, false, anyval);
+
     if (!findall) {
         // Save sel for the next invocation of selectProduct().
         var tmp = sel;
@@ -184,23 +84,9 @@ function selectProduct(product, component, version, milestone, anyval) {
     }
 
     // Do the actual fill/update.
-    if (component) {
-        var saved_cpts = get_selection(component, false, true, null);
-        updateSelect(cpts, sel, component, merging, anyval);
-        restoreSelection(component, saved_cpts);
-    }
-
-    if (version) {
-        var saved_vers = get_selection(version, false, true, null);
-        updateSelect(vers, sel, version, merging, anyval);
-        restoreSelection(version, saved_vers);
-    }
-
-    if (milestone) {
-        var saved_tms = get_selection(milestone, false, true, null);
-        updateSelect(tms, sel, milestone, merging, anyval);
-        restoreSelection(milestone, saved_tms);
-    }
+    var saved_cpts = get_selection(component, false, true, null);
+    updateSelect(cpts, sel, component, merging, anyval);
+    restoreSelection(component, saved_cpts);
 }
 
 /**

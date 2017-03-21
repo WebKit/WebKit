@@ -1,24 +1,9 @@
-[%# The contents of this file are subject to the Mozilla Public
-  # License Version 1.1 (the "License"); you may not use this file
-  # except in compliance with the License. You may obtain a copy of
-  # the License at http://www.mozilla.org/MPL/
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
   #
-  # Software distributed under the License is distributed on an "AS
-  # IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-  # implied. See the License for the specific language governing
-  # rights and limitations under the License.
-  #
-  # The Original Code is the Bugzilla Bug Tracking System.
-  #
-  # The Initial Developer of the Original Code is Netscape Communications
-  # Corporation. Portions created by Netscape are
-  # Copyright (C) 1998 Netscape Communications Corporation. All
-  # Rights Reserved.
-  #
-  # Contributor(s): Gervase Markham <gerv@gerv.net>
-  #                 <rdean@cambianetworks.com>
-  #                 Frédéric Buclin <LpSolit@gmail.com>
-  #                 Guy Pyrzak <guy.parzak@gmail.com>
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
   #%]
 
 [%# INTERFACE:
@@ -31,8 +16,6 @@
   # data: <depends on format>. Data to plot. Only data.$tbl is accessed. 
   # tbl: Name of a hash in data which is the table to be plotted.
   #%]
-
-[% PROCESS "global/field-descs.none.tmpl" %]
 
 [% col_field_disp = field_descs.$col_field || col_field %]
 [% row_field_disp = field_descs.$row_field || row_field %]
@@ -133,7 +116,7 @@ YAHOO.util.Event.addListener(window, "load", function() {
       return parseFloat(res[1]);
   };
 
-  this.myDataSource = new YAHOO.util.DataSource(YAHOO.util.Dom.get("tabular_report"));
+  this.myDataSource = new YAHOO.util.DataSource(YAHOO.util.Dom.get("tabular_report_[% tbl FILTER html FILTER js %]"));
   this.myDataSource.responseType = YAHOO.util.DataSource.TYPE_HTMLTABLE;
   this.myDataSource.responseSchema = {
     fields: [
@@ -154,17 +137,17 @@ YAHOO.util.Event.addListener(window, "load", function() {
   <h2>[% tbl_disp FILTER email FILTER html %]</h2>
 [% END %]
 
-<table>
+<table class="tabular_report_container">
   <tr>
     <td>
     </td>
-    <td align="center">
+    <td class="center">
       <strong>[% col_field_disp FILTER html %]</strong>
     </td>
   </tr>
 
   <tr>
-    <td valign="middle">
+    <td class="middle">
       <strong>[% row_field_disp FILTER html %]</strong>
     </td>
     <td>
@@ -173,16 +156,15 @@ YAHOO.util.Event.addListener(window, "load", function() {
 [% classes = [ [ "t1", "t2" ] , [ "t3", "t4" ] ] %]
 [% col_idx = 0 %]
 [% row_idx = 0 %]
-[% grand_total = 0 %]
+[% total_key = '-total-' %]
 <div id="tabular_report_container_[% tbl FILTER html %]">
-<table id="tabular_report" border="1">
+<table id="tabular_report_[% tbl FILTER html %]" class="tabular_report">
   [% IF col_field %]
     <thead>
     <tr>
       <th class="[% classes.$row_idx.$col_idx %]">
       </th>
       [% FOREACH col = col_names %]
-        [% col_totals.$col = 0 %]
         [% NEXT IF col == "" %]
         
         [% col_idx = 1 - col_idx %]
@@ -198,20 +180,16 @@ YAHOO.util.Event.addListener(window, "load", function() {
   [% END %]
   <tbody>
   [% FOREACH row = row_names %]
-    [% row_total = 0 %]
-    
     [% row_idx = 1 - row_idx %]
     <tr>
-      <td class="[% classes.$row_idx.$col_idx %]" align="right">
+      <td class="[% classes.$row_idx.$col_idx %] right">
         [% PROCESS value_display value = row field = row_field %]
       </td>
       [% FOREACH col = col_names %]
-        [% row_total = row_total + data.$tbl.$col.$row %]
         [% NEXT IF col == "" %]
-        [% col_totals.$col = (col_totals.$col || 0) + data.$tbl.$col.$row %]
         
         [% col_idx = 1 - col_idx %]
-        <td class="[% classes.$row_idx.$col_idx %]" align="center">
+        <td class="[% classes.$row_idx.$col_idx %]">
           [% IF data.$tbl.$col.$row AND data.$tbl.$col.$row > 0 %]
             <a href="[% urlbase %]&amp;
               [% row_field FILTER uri %]=[% row FILTER uri %]&amp;
@@ -222,12 +200,11 @@ YAHOO.util.Event.addListener(window, "load", function() {
           [% END %]
         </td>
       [% END %] 
-      <td class="ttotal" align="right">
+      <td class="ttotal right">
         <a href="[% urlbase %]&amp;
           [% row_field FILTER uri %]=[% row FILTER uri %]
           [% "&amp;$col_vals" IF col_vals %]">
-        [% row_total %]</a>
-        [% grand_total = grand_total + row_total %]
+        [% data.$tbl.$total_key.$row OR 0 FILTER html %]</a>
       </td>
     </tr>
   [% END %]
@@ -238,29 +215,36 @@ YAHOO.util.Event.addListener(window, "load", function() {
       </td>
       [% FOREACH col = col_names %]
         [% NEXT IF col == "" %]
-      
-        <td class="ttotal" align="center">
+
+        <td class="ttotal">
           <a href="[% urlbase %]&amp;
             [% col_field FILTER uri %]=[% col FILTER uri %]
             [% "&amp;$row_vals" IF row_vals %]">
-          [% col_totals.$col %]</a>
+          [% data.$tbl.$col.$total_key OR 0 FILTER html %]</a>
         </td>
       [% END %]
-      <td class="ttotal" align="right">
+      <td class="ttotal right">
         <strong>
           <a href="[% urlbase %]
             [% "&amp;$row_vals" IF row_vals %]
-            [% "&amp;$col_vals" IF col_vals %]">[% grand_total %]</a>
+            [% "&amp;$col_vals" IF col_vals %]">[% data.$tbl.$total_key.$total_key OR 0 FILTER html %]</a>
         </strong>
       </td>
     </tr>
   </tbody>
 </table>
 </div>
-      
+
     </td>
   </tr>
 </table>
+
+[% IF note_multi_select %]
+  <p class="extra_info">
+    NOTE: Axes contain multi-value fields, so the total numbers might not add up,
+    as a single [% terms.bug %] can match several rows or columns.
+  </p>
+[% END %]
 
 [% BLOCK value_display %]
   [% SET disp_value = display_value(field, value) %]

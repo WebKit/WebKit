@@ -1,21 +1,9 @@
-[%# The contents of this file are subject to the Mozilla Public
-  # License Version 1.1 (the "License"); you may not use this file
-  # except in compliance with the License. You may obtain a copy of
-  # the License at http://www.mozilla.org/MPL/
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
   #
-  # Software distributed under the License is distributed on an "AS
-  # IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-  # implied. See the License for the specific language governing
-  # rights and limitations under the License.
-  #
-  # The Original Code is the Bugzilla Bug Tracking System.
-  #
-  # The Initial Developer of the Original Code is Netscape Communications
-  # Corporation. Portions created by Netscape are
-  # Copyright (C) 1998 Netscape Communications Corporation. All
-  # Rights Reserved.
-  #
-  # Contributor(s): Gervase Markham <gerv@gerv.net>
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
   #%]
 
 [%# INTERFACE:
@@ -27,6 +15,7 @@
 
 [% PROCESS global/header.html.tmpl 
   title = "Create Chart"
+  style_urls = ['skins/standard/buglist.css']
 %]
 
 [% PROCESS "reports/series-common.html.tmpl" 
@@ -59,9 +48,9 @@ function subcatSelected() {
   
 [% gttext = "Grand Total" %]
 
-<form method="get" action="chart.cgi" name="chartform">  
-  
-  <table cellpadding="2" cellspacing="2" border="0">
+<form method="get" action="chart.cgi" name="chartform">
+
+  <table id="create_chart">
     [% IF NOT category OR category.size == 0 %]
       <tr>
         <td>
@@ -70,39 +59,38 @@ function subcatSelected() {
       </tr>
     [% ELSE %]
       <tr>
-        <th><label for="category">Category</label>:</th>
+        <th><label for="category">Category</label></th>
         <th></th>
-        <th><label for="subcategory">Sub-category</label>:</th>
+        <th><label for="subcategory">Sub-category</label></th>
         <th></th>
-        <th><label for="name" accesskey="N">Name</label>:</th>
-        <th><br>
-        </th>
+        <th><label for="name" accesskey="N">Name</label></th>
+        <th></th>
       </tr>
       <tr>
-      
+
         [% PROCESS series_select sel = { name => 'category', 
                                          size => 5,
                                          onchange = "catSelected();
                                                      subcatSelected();" } %]
-                                   
+
         <td>
           <noscript>
             <input type="submit" name="action-assemble" value="Update --&gt;"
                    id="action-assemble">
           </noscript>
         </td>
-        
+
         [% PROCESS series_select sel = { name => 'subcategory', 
                                          size => 5,
                                          onchange = "subcatSelected()" } %]
-                                   
+
         <td>
           <noscript>
             <input type="submit" name="action-assemble" value="Update --&gt;"
                    id="action-assemble2">
           </noscript>
         </td>
-        
+
         [% PROCESS series_select sel = { name => 'name',
                                          size => 5,
                                          multiple => 1,
@@ -110,7 +98,7 @@ function subcatSelected() {
                                          # not its name.
                                          value_in_hash => 1 } %]
 
-        <td align="center" valign="middle"> 
+        <td>
           <input type="submit" name="action-add" value="Add To List"
                  id="action-add"><br>
         </td>
@@ -121,15 +109,15 @@ function subcatSelected() {
   <h3>List Of Data Sets To Plot</h3>
 
   [% IF chart.lines.size %]
-    <table cellspacing="2" cellpadding="2">
+    <table id="edit_charts">
       <tr>
-        <th style="width: 5em;">Select</th>
+        <th>Select</th>
         <th>Label</th>
         <th></th>
         <th>Data Set</th>
         <th></th>
       </tr>
-      
+
       [%# The external loop has two counters; one which keeps track of where we
         #  are in the old labels array, and one which keeps track of the new
         #  indexes for the form elements. They are different if chart.lines has
@@ -146,11 +134,11 @@ function subcatSelected() {
           [% labelidx = labelidx + 1 %]
           [% NEXT %]
         [% END %]
-        
+
         [% FOREACH series = line %]
           <tr>
             [% IF loop.first %]
-              <td align="center" rowspan="[% line.size %]">
+              <td class="center" rowspan="[% line.size %]">
                 <input type="checkbox" value="1" name="select[% newidx %]">
               </td>
               <td rowspan="[% line.size %]">
@@ -172,7 +160,7 @@ function subcatSelected() {
                      value="[% series.series_id %]">
             </td>
 
-            <td align="center">
+            <td>
               [% IF user.id == series.creator_id OR user.in_group("admin") %]
                <a href="chart.cgi?action=edit&amp;series_id=
                        [% series.series_id %]">Edit</a> |
@@ -184,7 +172,7 @@ function subcatSelected() {
                 [% series.subcategory FILTER uri %]%20/%20
                 [% series.name FILTER uri -%]&amp;series_id=
                 [% series.series_id %]&amp;remaction=runseries">Run Search</a>
-            </td>        
+            </td>
           </tr>
         [% END %]
         [% labelidx = labelidx + 1 %]
@@ -193,7 +181,7 @@ function subcatSelected() {
 
       [% IF chart.gt %]
         <tr>
-          <td align="center">
+          <td class="center">
             <input type="checkbox" value="1" name="select65536">
             <input type="hidden" value="1" name="gt">
           </td>
@@ -213,30 +201,30 @@ function subcatSelected() {
       </tr>
 
       <tr>
-        <td valign="bottom" style="text-align: center;">
-          <input type="submit" name="action-sum" value="Sum" 
-                 style="width: 5em;" id="action-sum"><br>
-          <input type="submit" name="action-remove" value="Remove"
-                 style="width: 5em;" id="action-remove">
+        <td>
+          <input type="submit" id="action-sum" name="action-sum" value="Sum"><br>
+          <input type="submit" id="action-remove" name="action-remove" value="Remove">
         </td>
 
-        <td style="text-align: right; vertical-align: bottom;">
+        <td class="right">
           <label for="cumulate"><b>Cumulate</b></label>:
           <input type="checkbox" name="cumulate" id="cumulate" value="1"
           [% " checked" IF chart.cumulate %]>
         </td>
 
         <td></td>
-        <td valign="bottom">
+        <td>
           <label for="datefrom"><b>Date Range</b></label>:
           <input type="text" size="12" name="datefrom" id="datefrom"
+            placeholder="YYYY-MM-DD"
             value="[% time2str("%Y-%m-%d", chart.datefrom) IF chart.datefrom%]">
           <label for="dateto"><b>to</b></label>
           <input type="text" size="12" name="dateto" id="dateto"
+            placeholder="YYYY-MM-DD"
             value="[% time2str("%Y-%m-%d", chart.dateto) IF chart.dateto %]">
         </td>
 
-        <td style="text-align: right" valign="bottom">
+        <td>
           <input type="submit" name="action-wrap" value="Chart This List"
                  id="action-wrap">
         </td>
@@ -268,4 +256,3 @@ function subcatSelected() {
 [% END %]                 
 
 [% PROCESS global/footer.html.tmpl %]
-

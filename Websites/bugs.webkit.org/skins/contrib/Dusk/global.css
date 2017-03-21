@@ -1,24 +1,10 @@
-/* The contents of this file are subject to the Mozilla Public
-  * License Version 1.1 (the "License"); you may not use this file
-  * except in compliance with the License. You may obtain a copy of
-  * the License at http://www.mozilla.org/MPL/
-  *
-  * Software distributed under the License is distributed on an "AS
-  * IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-  * implied. See the License for the specific language governing
-  * rights and limitations under the License.
-  *
-  * The Original Code is the Bugzilla Bug Tracking System.
-  *
-  * The Initial Developer of the Original Code is Mike Schrag.
-  * Portions created by Marc Schumann are Copyright (c) 2007 Mike Schrag.
-  * All rights reserved.
-  *
-  * Contributor(s): Mike Schrag <mschrag@pobox.com>
-  *                 Byron Jones <bugzilla@glob.com.au>
-  *                 Marc Schumann <wurblzap@gmail.com>
-  *                 Frédéric Buclin <LpSolit@gmail.com>
-  */
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ *
+ * This Source Code Form is "Incompatible With Secondary Licenses", as
+ * defined by the Mozilla Public License, v. 2.0.
+ */
 
 body {
     background: #c8c8c8;
@@ -79,12 +65,6 @@ hr {
 }
 
 /* edit */
-
-#bugzilla-body th {
-    font-weight: bold;
-    vertical-align: top;
-    white-space: nowrap;
-}
 
 #bug-form td {
     padding-top: 2px;
@@ -230,6 +210,10 @@ hr {
 
 .bz_row_odd {
     background-color: #f0f0f0;
+}
+
+#page-index .outro {
+    clear:both;
 }
 
 /* Rules specific for printing */

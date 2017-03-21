@@ -1,22 +1,15 @@
-#!/usr/bin/env perl -wT
-# -*- Mode: perl; indent-tabs-mode: nil -*-
+#!/usr/bin/perl -T
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
-# The contents of this file are subject to the Mozilla Public
-# License Version 1.1 (the "License"); you may not use this file
-# except in compliance with the License. You may obtain a copy of
-# the License at http://www.mozilla.org/MPL/
-#
-# Software distributed under the License is distributed on an "AS
-# IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-# implied. See the License for the specific language governing
-# rights and limitations under the License.
-#
-# The Original Code is the Bugzilla Bug Tracking System.
-#
-# Contributor(s): Max Kanat-Alexander <mkanat@bugzilla.org>
+# This Source Code Form is "Incompatible With Secondary Licenses", as
+# defined by the Mozilla Public License, v. 2.0.
 
 use lib qw(/var/www/html /var/www/html/lib); # WEBKIT_CHANGES
 package Bugzilla::ModPerl;
+
+use 5.10.1;
 use strict;
 use warnings;
 
@@ -40,6 +33,7 @@ use Apache2::Log ();
 use Apache2::ServerUtil;
 use ModPerl::RegistryLoader ();
 use File::Basename ();
+use DateTime ();
 
 # This loads most of our modules.
 use Bugzilla ();
@@ -64,7 +58,7 @@ use Apache2::SizeLimit;
 # not counting RAM it is sharing with the other httpd processes.
 #if WEBKIT_CHANGES
 # bugs.webkit.org children are normally about 400MB.
-$Apache2::SizeLimit::MAX_UNSHARED_SIZE = 700000;
+Apache2::SizeLimit->set_max_unshared_size(700_000);
 #endif // WEBKIT_CHANGES
 
 my $cgi_path = Bugzilla::Constants::bz_locations()->{'cgi_path'};
@@ -85,7 +79,7 @@ PerlChildInitHandler "sub { Bugzilla::RNG::srand(); srand(); }"
     PerlCleanupHandler  Apache2::SizeLimit Bugzilla::ModPerl::CleanupHandler
     PerlOptions +ParseHeaders
     Options +ExecCGI
-    AllowOverride Limit FileInfo Indexes
+    AllowOverride All
     DirectoryIndex index.cgi index.html
 </Directory>
 EOT
@@ -119,9 +113,14 @@ foreach my $file (glob "$cgi_path/*.cgi") {
 }
 
 package Bugzilla::ModPerl::ResponseHandler;
+
+use 5.10.1;
 use strict;
-use base qw(ModPerl::Registry);
+use warnings;
+
+use parent qw(ModPerl::Registry);
 use Bugzilla;
+use Bugzilla::Constants qw(USAGE_MODE_REST);
 
 sub handler : method {
     my $class = shift;
@@ -139,12 +138,23 @@ sub handler : method {
     use warnings;
 
     Bugzilla::init_page();
-    return $class->SUPER::handler(@_);
+    my $result = $class->SUPER::handler(@_);
+
+    # When returning data from the REST api we must only return 200 or 304,
+    # which tells Apache not to append its error html documents to the
+    # response.
+    return Bugzilla->usage_mode == USAGE_MODE_REST && $result != 304
+           ? Apache2::Const::OK
+           : $result;
 }
 
 
 package Bugzilla::ModPerl::CleanupHandler;
+
+use 5.10.1;
 use strict;
+use warnings;
+
 use Apache2::Const -compile => qw(OK);
 
 sub handler {

@@ -1,38 +1,15 @@
-# -*- Mode: perl; indent-tabs-mode: nil -*-
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
-# The contents of this file are subject to the Mozilla Public
-# License Version 1.1 (the "License"); you may not use this file
-# except in compliance with the License. You may obtain a copy of
-# the License at http://www.mozilla.org/MPL/
-#
-# Software distributed under the License is distributed on an "AS
-# IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-# implied. See the License for the specific language governing
-# rights and limitations under the License.
-#
-# The Original Code is the Bugzilla Bug Tracking System.
-#
-# The Initial Developer of the Original Code is Netscape Communications
-# Corporation. Portions created by Netscape are
-# Copyright (C) 1998 Netscape Communications Corporation. All
-# Rights Reserved.
-#
-# Contributor(s): Terry Weissman <terry@mozilla.org>
-#                 Dawn Endico <endico@mozilla.org>
-#                 Dan Mosedale <dmose@mozilla.org>
-#                 Joe Robins <jmrobins@tgix.com>
-#                 Jacob Steenhagen <jake@bugzilla.org>
-#                 J. Paul Reed <preed@sigkill.com>
-#                 Bradley Baetz <bbaetz@student.usyd.edu.au>
-#                 Joseph Heenan <joseph@heenan.me.uk>
-#                 Erik Stambaugh <erik@dasbistro.com>
-#                 Frédéric Buclin <LpSolit@gmail.com>
-#                 Marc Schumann <wurblzap@gmail.com>
-#
+# This Source Code Form is "Incompatible With Secondary Licenses", as
+# defined by the Mozilla Public License, v. 2.0.
 
 package Bugzilla::Config::Common;
 
+use 5.10.1;
 use strict;
+use warnings;
 
 use Email::Address;
 use Socket;
@@ -43,15 +20,16 @@ use Bugzilla::Field;
 use Bugzilla::Group;
 use Bugzilla::Status;
 
-use base qw(Exporter);
+use parent qw(Exporter);
 @Bugzilla::Config::Common::EXPORT =
     qw(check_multi check_numeric check_regexp check_url check_group
        check_sslbase check_priority check_severity check_platform
        check_opsys check_shadowdb check_urlbase check_webdotbase
-       check_user_verify_class check_ip
+       check_user_verify_class check_ip check_font_file
        check_mail_delivery_method check_notification check_utf8
        check_bug_status check_smtp_auth check_theschwartz_available
-       check_maxattachmentsize check_email
+       check_maxattachmentsize check_email check_smtp_ssl
+       check_comment_taggers_group check_smtp_server
 );
 
 # Checking functions for the various values
@@ -67,7 +45,10 @@ sub check_multi {
         return "";
     }
     elsif ($param->{'type'} eq 'm' || $param->{'type'} eq 'o') {
-        foreach my $chkParam (split(',', $value)) {
+        if (ref($value) ne "ARRAY") {
+            $value = [split(',', $value)]
+        }
+        foreach my $chkParam (@$value) {
             unless (scalar(grep {$_ eq $chkParam} (@{$param->{'choices'}}))) {
                 return "Invalid choice '$chkParam' for multi-select list param '$param->{'name'}'";
             }
@@ -122,7 +103,7 @@ sub check_sslbase {
         my $iaddr = inet_aton($host) || return "The host $host cannot be resolved";
         my $sin = sockaddr_in($port, $iaddr);
         if (!connect(SOCK, $sin)) {
-            return "Failed to connect to $host:$port; unable to enable SSL";
+            return "Failed to connect to $host:$port ($!); unable to enable SSL";
         }
         close(SOCK);
     }
@@ -256,7 +237,7 @@ sub check_webdotbase {
         # Check .htaccess allows access to generated images
         my $webdotdir = bz_locations()->{'webdotdir'};
         if(-e "$webdotdir/.htaccess") {
-            open HTACCESS, "$webdotdir/.htaccess";
+            open HTACCESS, "<", "$webdotdir/.htaccess";
             if(! grep(/ \\\.png\$/,<HTACCESS>)) {
                 return "Dependency graph images are not accessible.\nAssuming that you have not modified the file, delete $webdotdir/.htaccess and re-run checksetup.pl to rectify.\n";
             }
@@ -264,6 +245,20 @@ sub check_webdotbase {
         }
     }
     return "";
+}
+
+sub check_font_file {
+    my ($font) = @_;
+    $font = trim($font);
+    return '' unless $font;
+
+    if ($font !~ /\.(ttf|otf)$/) {
+        return "The file must point to a TrueType or OpenType font file (its extension must be .ttf or .otf)"
+    }
+    if (! -f $font) {
+        return "The file '$font' cannot be found. Make sure you typed the full path to the file"
+    }
+    return '';
 }
 
 sub check_user_verify_class {
@@ -307,7 +302,7 @@ sub check_mail_delivery_method {
     my $check = check_multi(@_);
     return $check if $check;
     my $mailer = shift;
-    if ($mailer eq 'sendmail' and ON_WINDOWS) {
+    if ($mailer eq 'Sendmail' and ON_WINDOWS) {
         # look for sendmail.exe 
         return "Failed to locate " . SENDMAIL_EXE
             unless -e SENDMAIL_EXE;
@@ -350,11 +345,48 @@ sub check_notification {
     return "";
 }
 
+sub check_smtp_server {
+    my $host = shift;
+    my $port;
+
+    return '' unless $host;
+
+    if ($host =~ /:/) {
+        ($host, $port) = split(/:/, $host, 2);
+        unless ($port && detaint_natural($port)) {
+            return "Invalid port. It must be an integer (typically 25, 465 or 587)";
+        }
+    }
+    trick_taint($host);
+    # Let's first try to connect using SSL. If this fails, we fall back to
+    # an unencrypted connection.
+    foreach my $method (['Net::SMTP::SSL', 465], ['Net::SMTP', 25]) {
+        my ($class, $default_port) = @$method;
+        next if $class eq 'Net::SMTP::SSL' && !Bugzilla->feature('smtp_ssl');
+        eval "require $class";
+        my $smtp = $class->new($host, Port => $port || $default_port, Timeout => 5);
+        if ($smtp) {
+            # The connection works!
+            $smtp->quit;
+            return '';
+        }
+    }
+    return "Cannot connect to $host" . ($port ? " using port $port" : "");
+}
+
 sub check_smtp_auth {
     my $username = shift;
     if ($username and !Bugzilla->feature('smtp_auth')) {
         return "SMTP Authentication is not available. Run checksetup.pl for"
                . " more details";
+    }
+    return "";
+}
+
+sub check_smtp_ssl {
+    my $use_ssl = shift;
+    if ($use_ssl && !Bugzilla->feature('smtp_ssl')) {
+        return "SSL support is not available. Run checksetup.pl for more details";
     }
     return "";
 }
@@ -367,6 +399,14 @@ sub check_theschwartz_available {
                . " for more information";
     }
     return "";
+}
+
+sub check_comment_taggers_group {
+    my $group_name = shift;
+    if ($group_name && !Bugzilla->feature('jsonrpc')) {
+        return "Comment tagging requires installation of the JSONRPC feature";
+    }
+    return check_group($group_name);
 }
 
 # OK, here are the parameter definitions themselves.
@@ -466,5 +506,64 @@ Checks that the value is a valid number
 =item C<check_regexp>
 
 Checks that the value is a valid regexp
+
+=item C<check_comment_taggers_group>
+
+Checks that the required modules for comment tagging are installed, and that a
+valid group is provided.
+
+=back
+
+=head1 B<Methods in need of POD>
+
+=over
+
+=item check_notification
+
+=item check_priority
+
+=item check_ip
+
+=item check_user_verify_class
+
+=item check_bug_status
+
+=item check_shadowdb
+
+=item check_smtp_server
+
+=item check_smtp_auth
+
+=item check_url
+
+=item check_urlbase
+
+=item check_email
+
+=item check_webdotbase
+
+=item check_font_file
+
+=item get_param_list
+
+=item check_maxattachmentsize
+
+=item check_utf8
+
+=item check_group
+
+=item check_opsys
+
+=item check_platform
+
+=item check_severity
+
+=item check_sslbase
+
+=item check_mail_delivery_method
+
+=item check_theschwartz_available
+
+=item check_smtp_ssl
 
 =back

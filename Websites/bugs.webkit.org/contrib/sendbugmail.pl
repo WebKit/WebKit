@@ -1,16 +1,14 @@
-#!/usr/bin/env perl -w
+#!/usr/bin/perl -T
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
-#                    sendbugmail.pl
-#
-# Nick Barnes, Ravenbrook Limited, 2004-04-01.
-#
-# Bugzilla email script for Bugzilla 2.17.4 and later.  Invoke this to send
-# bugmail for a bug which has been changed directly in the database.
-# This uses Bugzilla's own BugMail facility, and will email the
-# users associated with the bug.  Replaces the old "processmail"
-# script.
-# 
-# Usage: perl -T contrib/sendbugmail.pl bug_id user_email
+# This Source Code Form is "Incompatible With Secondary Licenses", as
+# defined by the Mozilla Public License, v. 2.0.
+
+use 5.10.1;
+use strict;
+use warnings;
 
 use lib qw(. lib);
 
@@ -22,7 +20,7 @@ use Bugzilla::User;
 my $dbh = Bugzilla->dbh;
 
 sub usage {
-    print STDERR "Usage: $0 bug_id user_email\n";
+    say STDERR "Usage: $0 bug_id user_email";
     exit;
 }
 
@@ -36,7 +34,7 @@ my $changer = $ARGV[1];
 
 # Validate the bug number.
 if (!($bugnum =~ /^(\d+)$/)) {
-  print STDERR "Bug number \"$bugnum\" not numeric.\n";
+  say STDERR "Bug number \"$bugnum\" not numeric.";
   usage();
 }
 
@@ -46,19 +44,19 @@ my ($id) = $dbh->selectrow_array("SELECT bug_id FROM bugs WHERE bug_id = ?",
                                  undef, $bugnum);
 
 if (!$id) {
-  print STDERR "Bug number $bugnum does not exist.\n";
+  say STDERR "Bug number $bugnum does not exist.";
   usage();
 }
 
 # Validate the changer address.
 my $match = Bugzilla->params->{'emailregexp'};
 if ($changer !~ /$match/) {
-    print STDERR "Changer \"$changer\" doesn't match email regular expression.\n";
+    say STDERR "Changer \"$changer\" doesn't match email regular expression.";
     usage();
 }
 my $changer_user = new Bugzilla::User({ name => $changer });
 unless ($changer_user) {
-    print STDERR "\"$changer\" is not a valid user.\n";
+    say STDERR "\"$changer\" is not a valid user.";
     usage();
 }
 
@@ -67,26 +65,15 @@ my $outputref = Bugzilla::BugMail::Send($bugnum, {'changer' => $changer_user });
 
 # Report the results.
 my $sent = scalar(@{$outputref->{sent}});
-my $excluded = scalar(@{$outputref->{excluded}});
 
 if ($sent) {
-    print "email sent to $sent recipients:\n";
+    say "email sent to $sent recipients:";
 } else {
-    print "No email sent.\n";
+    say "No email sent.";
 }
 
 foreach my $sent (@{$outputref->{sent}}) {
-  print "  $sent\n";
-}
-
-if ($excluded) {
-    print "$excluded recipients excluded:\n";
-} else {
-    print "No recipients excluded.\n";
-}
-
-foreach my $excluded (@{$outputref->{excluded}}) {
-  print "  $excluded\n";
+  say "  $sent";
 }
 
 # This document is copyright (C) 2004 Perforce Software, Inc.  All rights

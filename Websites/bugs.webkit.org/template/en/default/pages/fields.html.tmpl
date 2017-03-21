@@ -1,28 +1,14 @@
-[%# The contents of this file are subject to the Mozilla Public
-  # License Version 1.1 (the "License"); you may not use this file
-  # except in compliance with the License. You may obtain a copy of
-  # the License at http://www.mozilla.org/MPL/
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
   #
-  # Software distributed under the License is distributed on an "AS
-  # IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-  # implied. See the License for the specific language governing
-  # rights and limitations under the License.
-  #
-  # The Original Code is the Bugzilla Bug Tracking System.
-  #
-  # The Initial Developer of the Original Code is Netscape Communications
-  # Corporation. Portions created by Netscape are
-  # Copyright (C) 1998 Netscape Communications Corporation. All
-  # Rights Reserved.
-  #
-  # Contributor(s): Terry Weissman <terry@mozilla.org>
-  #                 Gervase Markham <gerv@gerv.net>
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
   #%]
 
-[% PROCESS "global/field-descs.none.tmpl" %]
-[% PROCESS global/header.html.tmpl 
-  title = "$terms.Bug Fields" 
-  style_urls = ['skins/standard/page.css']
+[% PROCESS global/header.html.tmpl
+  title = "$terms.Bug Fields"
+  bodyclasses = ['narrow_page']
 %]
 
 <p>This page describes the various fields that you see 
@@ -195,6 +181,11 @@
                                     field => field } %]
 [% END %]
 
+[%# This field is not a real one, but its label is visible in bugs. %]
+
+[% field_help_map.Importance = { help  => help_html.importance,
+                                 field => "importance" } %]
+
 [%# These are fields that don't need to be documented, either because
   # they have docs somewhere else in the UI, or they don't show up on bugs. 
   # %]
@@ -220,7 +211,6 @@
 
   [% NEXT IF field == 'status_whiteboard' AND !Param('usestatuswhiteboard') %]
   [% NEXT IF field == 'target_milestone' AND !Param('usetargetmilestone') %]
-  [% NEXT IF field == 'alias' AND !Param('usebugaliases') %]
 
   [%# For now we don't have help for attachment fields and so on. %]
   [% NEXT IF field.match('\.') %]
@@ -229,8 +219,7 @@
 
   <dt id="[% field FILTER html %]">[% field_desc FILTER html %]</dt>
     <dd>
-      [% SET help_text = field_help_map.${field_desc}.help %]
-      [% help_text FILTER none %]
+      [% field_help_map.${field_desc}.help FILTER html_light %]
     </dd>
 [% END %]
 </dl>

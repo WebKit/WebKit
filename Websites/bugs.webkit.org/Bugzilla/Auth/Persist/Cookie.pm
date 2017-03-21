@@ -1,35 +1,16 @@
-# -*- Mode: perl; indent-tabs-mode: nil -*-
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
-# The contents of this file are subject to the Mozilla Public
-# License Version 1.1 (the "License"); you may not use this file
-# except in compliance with the License. You may obtain a copy of
-# the License at http://www.mozilla.org/MPL/
-#
-# Software distributed under the License is distributed on an "AS
-# IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-# implied. See the License for the specific language governing
-# rights and limitations under the License.
-#
-# The Original Code is the Bugzilla Bug Tracking System.
-#
-# The Initial Developer of the Original Code is Netscape Communications
-# Corporation. Portions created by Netscape are
-# Copyright (C) 1998 Netscape Communications Corporation. All
-# Rights Reserved.
-#
-# Contributor(s): Terry Weissman <terry@mozilla.org>
-#                 Dan Mosedale <dmose@mozilla.org>
-#                 Joe Robins <jmrobins@tgix.com>
-#                 Dave Miller <justdave@syndicomm.com>
-#                 Christopher Aillon <christopher@aillon.com>
-#                 Gervase Markham <gerv@gerv.net>
-#                 Christian Reis <kiko@async.com.br>
-#                 Bradley Baetz <bbaetz@acm.org>
-#                 Erik Stambaugh <erik@dasbistro.com>
-#                 Max Kanat-Alexander <mkanat@bugzilla.org>
+# This Source Code Form is "Incompatible With Secondary Licenses", as
+# defined by the Mozilla Public License, v. 2.0.
 
 package Bugzilla::Auth::Persist::Cookie;
+
+use 5.10.1;
 use strict;
+use warnings;
+
 use fields qw();
 
 use Bugzilla::Constants;
@@ -75,6 +56,10 @@ sub persist_login {
 
     $dbh->bz_commit_transaction();
 
+    # We do not want WebServices to generate login cookies.
+    # All we need is the login token for User.login.
+    return $login_cookie if i_am_webservice();
+
     # Prevent JavaScript from accessing login cookies.
     my %cookieargs = ('-httponly' => 1);
 
@@ -107,6 +92,7 @@ sub logout {
 
     my $dbh = Bugzilla->dbh;
     my $cgi = Bugzilla->cgi;
+    my $input = Bugzilla->input_params;
     $param = {} unless $param;
     my $user = $param->{user} || Bugzilla->user;
     my $type = $param->{type} || LOGOUT_ALL;
@@ -120,16 +106,24 @@ sub logout {
     # The LOGOUT_*_CURRENT options require the current login cookie.
     # If a new cookie has been issued during this run, that's the current one.
     # If not, it's the one we've received.
+    my @login_cookies;
     my $cookie = first {$_->name eq 'Bugzilla_logincookie'}
                        @{$cgi->{'Bugzilla_cookie_list'}};
-    my $login_cookie;
     if ($cookie) {
-        $login_cookie = $cookie->value;
+        push(@login_cookies, $cookie->value);
     }
-    else {
-        $login_cookie = $cgi->cookie("Bugzilla_logincookie") || '';
+    elsif ($cookie = $cgi->cookie('Bugzilla_logincookie')) {
+        push(@login_cookies, $cookie);
     }
-    trick_taint($login_cookie);
+
+    # If we are a webservice using a token instead of cookie
+    # then add that as well to the login cookies to delete
+    if (my $login_token = $user->authorizer->login_token) {
+        push(@login_cookies, $login_token->{'login_token'});
+    }
+
+    # Make sure that @login_cookies is not empty to not break SQL statements.
+    push(@login_cookies, '') unless @login_cookies;
 
     # These queries use both the cookie ID and the user ID as keys. Even
     # though we know the userid must match, we still check it in the SQL
@@ -138,12 +132,18 @@ sub logout {
     # logged in and got the same cookie, we could be logging the other
     # user out here. Yes, this is very very very unlikely, but why take
     # chances? - bbaetz
+    map { trick_taint($_) } @login_cookies;
+    @login_cookies = map { $dbh->quote($_) } @login_cookies;
     if ($type == LOGOUT_KEEP_CURRENT) {
-        $dbh->do("DELETE FROM logincookies WHERE cookie != ? AND userid = ?",
-                 undef, $login_cookie, $user->id);
+        $dbh->do("DELETE FROM logincookies WHERE " .
+                 $dbh->sql_in('cookie', \@login_cookies, 1) .
+                 " AND userid = ?",
+                 undef, $user->id);
     } elsif ($type == LOGOUT_CURRENT) {
-        $dbh->do("DELETE FROM logincookies WHERE cookie = ? AND userid = ?",
-                 undef, $login_cookie, $user->id);
+        $dbh->do("DELETE FROM logincookies WHERE " .
+                 $dbh->sql_in('cookie', \@login_cookies) .
+                 " AND userid = ?",
+                 undef, $user->id);
     } else {
         die("Invalid type $type supplied to logout()");
     }

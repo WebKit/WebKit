@@ -1,29 +1,15 @@
-#!/usr/bin/env perl -wT
-# -*- Mode: perl; indent-tabs-mode: nil -*-
+#!/usr/bin/perl -T
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
-# The contents of this file are subject to the Mozilla Public
-# License Version 1.1 (the "License"); you may not use this file
-# except in compliance with the License. You may obtain a copy of
-# the License at http://www.mozilla.org/MPL/
-#
-# Software distributed under the License is distributed on an "AS
-# IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-# implied. See the License for the specific language governing
-# rights and limitations under the License.
-#
-# The Original Code is the Bugzilla Bug Tracking System.
-#
-# The Initial Developer of the Original Code is Netscape Communications
-# Corporation. Portions created by Netscape are
-# Copyright (C) 1998 Netscape Communications Corporation. All
-# Rights Reserved.
-#
-# Contributor(s): Terry Weissman <terry@mozilla.org>
-#                 Gervase Markham <gerv@gerv.net>
-#                 Max Kanat-Alexander <mkanat@bugzilla.org>
-#                 Pascal Held <paheld@gmail.com>
+# This Source Code Form is "Incompatible With Secondary Licenses", as
+# defined by the Mozilla Public License, v. 2.0.
 
+use 5.10.1;
 use strict;
+use warnings;
+
 use lib qw(. lib);
 
 use Bugzilla;
@@ -32,7 +18,6 @@ use Bugzilla::Util;
 use Bugzilla::CGI;
 use Bugzilla::Search::Saved;
 use Bugzilla::Error;
-use Bugzilla::User;
 use Bugzilla::Token;
 
 use Storable qw(dclone);
@@ -40,10 +25,10 @@ use Storable qw(dclone);
 # Maps parameters that control columns to the names of columns.
 use constant COLUMN_PARAMS => {
     'useclassification'   => ['classification'],
-    'usebugaliases'       => ['alias'],
     'usetargetmilestone'  => ['target_milestone'],
     'useqacontact'        => ['qa_contact', 'qa_contact_realname'],
     'usestatuswhiteboard' => ['status_whiteboard'],
+    'timetrackinggroup'   => ['deadline'],
 };
 
 # We only show these columns if an object of this type exists in the
@@ -53,7 +38,7 @@ use constant COLUMN_CLASSES => {
     'Bugzilla::Keyword' => 'keywords',
 };
 
-Bugzilla->login();
+my $user = Bugzilla->login();
 
 my $cgi = Bugzilla->cgi;
 my $template = Bugzilla->template;
@@ -77,7 +62,7 @@ foreach my $class (keys %{ COLUMN_CLASSES() }) {
     delete $columns->{$column} if !$class->any_exist;
 }
 
-if (!Bugzilla->user->is_timetracker) {
+if (!$user->is_timetracker) {
     foreach my $column (TIMETRACKING_FIELDS) {
         delete $columns->{$column};
     }
@@ -138,7 +123,7 @@ if (defined $cgi->param('rememberedquery')) {
     $vars->{'message'} = "change_columns";
 
     if ($cgi->param('save_columns_for_search')
-        && defined $search && $search->user->id == Bugzilla->user->id) 
+        && defined $search && $search->user->id == $user->id)
     {
         my $params = new Bugzilla::CGI($search->url);
         $params->param('columnlist', join(",", @collist));
@@ -188,7 +173,7 @@ $vars->{'buffer'} = $cgi->query_string();
 
 my $search;
 if (defined $cgi->param('query_based_on')) {
-    my $searches = Bugzilla->user->queries;
+    my $searches = $user->queries;
     my ($search) = grep($_->name eq $cgi->param('query_based_on'), @$searches);
 
     if ($search) {

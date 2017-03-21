@@ -1,35 +1,25 @@
-#!/usr/bin/env perl -wT
-# -*- Mode: perl; indent-tabs-mode: nil -*-
+#!/usr/bin/perl -T
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
-# The contents of this file are subject to the Mozilla Public
-# License Version 1.1 (the "License"); you may not use this file
-# except in compliance with the License. You may obtain a copy of
-# the License at http://www.mozilla.org/MPL/
-#
-# Software distributed under the License is distributed on an "AS
-# IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-# implied. See the License for the specific language governing
-# rights and limitations under the License.
-#
-# The Original Code is the Bugzilla Bug Tracking System.
-#
-# The Initial Developer of the Original Code is Everything Solved, Inc.
-# Portions created by the Initial Developer are Copyright (C) 2010 the
-# Initial Developer. All Rights Reserved.
-#
-# Contributor(s):
-#   Max Kanat-Alexander <mkanat@bugzilla.org>
+# This Source Code Form is "Incompatible With Secondary Licenses", as
+# defined by the Mozilla Public License, v. 2.0.
 
 # This script remains as a backwards-compatibility URL for before
 # the time that Voting was an extension.
 
+use 5.10.1;
 use strict;
+use warnings;
+
 use lib qw(. lib);
+
 use Bugzilla;
 use Bugzilla::Error;
 
 my $is_enabled = grep { $_->NAME eq 'Voting' } @{ Bugzilla->extensions };
-$is_enabled || ThrowCodeError('extension_disabled', { name => 'Voting' });
+$is_enabled || ThrowUserError('extension_disabled', { name => 'Voting' });
 
 my $cgi = Bugzilla->cgi;
 my $action = $cgi->param('action') || 'show_user';

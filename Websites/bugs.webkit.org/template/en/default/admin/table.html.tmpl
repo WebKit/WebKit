@@ -1,22 +1,9 @@
-[%# The contents of this file are subject to the Mozilla Public
-  # License Version 1.1 (the "License"); you may not use this file
-  # except in compliance with the License. You may obtain a copy of
-  # the License at http://www.mozilla.org/MPL/
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
   #
-  # Software distributed under the License is distributed on an "AS
-  # IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-  # implied. See the License for the specific language governing
-  # rights and limitations under the License.
-  #
-  # The Original Code is the Bugzilla Bug Tracking System.
-  #
-  # The Initial Developer of the Original Code is Netscape Communications
-  # Corporation. Portions created by Netscape are
-  # Copyright (C) 1998 Netscape Communications Corporation. All
-  # Rights Reserved.
-  #
-  # Contributor(s): Jouni Heikniemi <jouni@heikniemi.net>
-  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
   #%]
 
 [%# INTERFACE:
@@ -38,8 +25,6 @@
   #                        field_descs hash will be used instead of "content."
   #                        See fieldvalues/select-field for an example of use.
   #                        This content WILL be HTML-filtered in this case.
-  #     align: left/center/right. Controls the horizontal alignment of the
-  #            text in the column.
   #     allow_html_content: if defined, then this column allows some html content
   #                         and so it will be only partially filtered.
   #     yesno_field: Turn the data from 0/!0 into Yes/No
@@ -78,15 +63,13 @@
   #
   #%]
 
-[% PROCESS "global/field-descs.none.tmpl" %]
-
 [%###################  TABLE HEADER   ######################%]
 
-<table id="admin_table" border="1" cellpadding="4" cellspacing="0">
-  <tr bgcolor="#6666FF">
+<table id="admin_table">
+  <tr class="column_header">
     [% FOREACH c = columns %]
       [%# Default to align left for headers %]
-      <th align="[% (c.align || 'left') FILTER html %]">
+      <th class="[% (c.class || 'left') FILTER css_class_quote %]">
         [% c.heading FILTER html %]
       </th>
     [% END %]
@@ -104,7 +87,6 @@
       [% contentlink = c.contentlink
          content = c.content
          content_use_field = c.content_use_field
-         align = c.align
          class = c.class
          allow_html_content = c.allow_html_content
          yesno_field = c.yesno_field
@@ -136,45 +118,29 @@
           [% END %]
       [% END %]
 
-      <td [% IF align %] align="[% align FILTER html %]" [% END %]
-          [% IF class %] class="[% class FILTER html %]" [% END %]>
+      <td [% IF class %] class="[% class FILTER html %]"[% END %]>
 
         [% IF contentlink %]
-          [% link_uri = contentlink %]
-          [% WHILE link_uri.search('%%(.+?)%%')%]
-            [% FOREACH m = link_uri.match('%%(.+?)%%') %]
-              [% IF row.$m.defined %]
-                [% replacement_value = FILTER uri; row.$m; END %]
-              [% ELSE %]
-                [% replacement_value = "" %]
-              [% END %]
-              [% link_uri = link_uri.replace("%%$m%%", replacement_value) %]
-            [% END %]
+          [% FOREACH m = contentlink.match('%%(.+?)%%', 1) %]
+            [% replacement_value = FILTER uri; row.$m; END %]
+            [% contentlink = contentlink.replace("%%$m%%", replacement_value) %]
           [% END %]
-          <a href="[% link_uri %]">
+          <a href="[% contentlink %]">
         [% END %]
-        
+
         [% IF content_use_field %]
-           [% colname = row.${c.name} %]
-           [% field_descs.${colname} FILTER html %]
+          [% colname = row.${c.name} %]
+          [% field_descs.${colname} FILTER html %]
         [% ELSIF content %]
-            [% content FILTER html_light %]
+          [% content FILTER html_light %]
+        [% ELSIF yesno_field %]
+          [% row.${c.name} ? "Yes" : "No" %]
+        [% ELSIF allow_html_content %]
+          [% row.${c.name} FILTER html_light %]
         [% ELSE %]
-          [% IF yesno_field %]
-            [% IF row.${c.name} %]
-              Yes
-            [% ELSE %]
-              No
-            [% END %]
-          [% ELSE %]
-            [% IF allow_html_content %]
-              [% row.${c.name} FILTER html_light %]
-            [% ELSE %]
-              [% row.${c.name} FILTER html %]
-            [% END %]
-          [% END %]
+          [% row.${c.name} FILTER html %]
         [% END %]
-        
+
         [% IF contentlink %]
           </a>
         [% END %]
@@ -185,7 +151,7 @@
 [% END %]
 
 [% IF data.size == 0 %]
-  <tr><td colspan="[% columns.size %]" align="center"><i>&lt;none&gt;</i></td></tr>
+  <tr><td colspan="[% columns.size %]" class="center"><i>&lt;none&gt;</i></td></tr>
 [% END %]
 
 

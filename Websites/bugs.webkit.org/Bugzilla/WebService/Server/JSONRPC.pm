@@ -1,27 +1,16 @@
-# -*- Mode: perl; indent-tabs-mode: nil -*-
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
-# The contents of this file are subject to the Mozilla Public
-# License Version 1.1 (the "License"); you may not use this file
-# except in compliance with the License. You may obtain a copy of
-# the License at http://www.mozilla.org/MPL/
-#
-# Software distributed under the License is distributed on an "AS
-# IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-# implied. See the License for the specific language governing
-# rights and limitations under the License.
-#
-# The Original Code is the Bugzilla JSON Webservices Interface.
-#
-# The Initial Developer of the Original Code is the San Jose State
-# University Foundation. Portions created by the Initial Developer
-# are Copyright (C) 2008 the Initial Developer. All Rights Reserved.
-#
-# Contributor(s): 
-#   Max Kanat-Alexander <mkanat@bugzilla.org>
+# This Source Code Form is "Incompatible With Secondary Licenses", as
+# defined by the Mozilla Public License, v. 2.0.
 
 package Bugzilla::WebService::Server::JSONRPC;
 
+use 5.10.1;
 use strict;
+use warnings;
+
 use Bugzilla::WebService::Server;
 BEGIN {
     our @ISA = qw(Bugzilla::WebService::Server);
@@ -37,11 +26,12 @@ BEGIN {
 
 use Bugzilla::Error;
 use Bugzilla::WebService::Constants;
-use Bugzilla::WebService::Util qw(taint_data);
-use Bugzilla::Util qw(correct_urlbase trim disable_utf8);
+use Bugzilla::WebService::Util qw(taint_data fix_credentials);
+use Bugzilla::Util;
 
 use HTTP::Message;
 use MIME::Base64 qw(decode_base64 encode_base64);
+use List::MoreUtils qw(none);
 
 #####################################
 # Public JSON::RPC Method Overrides #
@@ -87,6 +77,7 @@ sub response_header {
 
 sub response {
     my ($self, $response) = @_;
+    my $cgi = $self->cgi;
 
     # Implement JSONP.
     if (my $callback = $self->_bz_callback) {
@@ -108,9 +99,18 @@ sub response {
             push(@header_args, "-$name", $value);
         }
     }
-    my $cgi = $self->cgi;
-    print $cgi->header(-status => $response->code, @header_args);
-    print $response->content;
+
+    # ETag support
+    my $etag = $self->bz_etag;
+    if ($etag && $cgi->check_etag($etag)) {
+        push(@header_args, "-ETag", $etag);
+        print $cgi->header(-status => '304 Not Modified', @header_args);
+    }
+    else {
+        push(@header_args, "-ETag", $etag) if $etag;
+        print $cgi->header(-status => $response->code, @header_args);
+        print $response->content;
+    }
 }
 
 # The JSON-RPC 1.1 GET specification is not so great--you can't specify
@@ -222,6 +222,9 @@ sub type {
         utf8::encode($value) if utf8::is_utf8($value);
         $retval = encode_base64($value, '');
     }
+    elsif ($type eq 'email' && Bugzilla->params->{'webservice_email_filter'}) {
+        $retval = email_filter($value);
+    }
 
     return $retval;
 }
@@ -267,7 +270,17 @@ sub _handle {
     my $self = shift;
     my ($obj) = @_;
     $self->{_bz_request_id} = $obj->{id};
-    return $self->SUPER::_handle(@_);
+
+    my $result = $self->SUPER::_handle(@_);
+
+    # Set the ETag if not already set in the webservice methods.
+    my $etag = $self->bz_etag;
+    if (!$etag && ref $result) {
+        my $data = $self->json->decode($result)->{'result'};
+        $self->bz_etag($data);
+    }
+
+    return $result;
 }
 
 # Make all error messages returned by JSON::RPC go into the 100000
@@ -364,6 +377,10 @@ sub _argument_type_check {
         }
     }
 
+    # Update the params to allow for several convenience key/values
+    # use for authentication
+    fix_credentials($params);
+
     Bugzilla->input_params($params);
 
     if ($self->request->method eq 'POST') {
@@ -386,6 +403,11 @@ sub _argument_type_check {
             ThrowUserError('json_rpc_post_only', 
                            { method => $self->_bz_method_name });
         }
+    }
+
+    # Only allowed methods to be used from our whitelist
+    if (none { $_ eq $method} $pkg->PUBLIC_METHODS) {
+        ThrowCodeError('unknown_method', { method => $self->_bz_method_name });
     }
 
     # This is the best time to do login checks.
@@ -581,3 +603,25 @@ the JSON-RPC library that Bugzilla uses, not by Bugzilla.
 =head1 SEE ALSO
 
 L<Bugzilla::WebService>
+
+=head1 B<Methods in need of POD>
+
+=over
+
+=item response
+
+=item response_header
+
+=item cgi
+
+=item retrieve_json_from_get
+
+=item create_json_coder
+
+=item type
+
+=item handle_login
+
+=item datetime_format_outbound
+
+=back

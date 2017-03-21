@@ -1,18 +1,9 @@
-[%# The contents of this file are subject to the Mozilla Public
-  # License Version 1.1 (the "License"); you may not use this file
-  # except in compliance with the License. You may obtain a copy of
-  # the License at http://www.mozilla.org/MPL/
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
   #
-  # Software distributed under the License is distributed on an "AS
-  # IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-  # implied. See the License for the specific language governing
-  # rights and limitations under the License.
-  #
-  # The Original Code is the Bugzilla Bug Tracking System.
-  #
-  # Contributor(s): Jack Nerad     <jnerad@bellsouth.net>
-  #                 Tiago R. Mello <tiago@async.com.br>
-  #                 Gabriel S. Oliveira <gabriel@async.com.br>
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
   #%]
 
 [%# INTERFACE:
@@ -21,31 +12,46 @@
   # classification: Bugzilla::Classifiation object; classification product is in.
   #%]
 
-[% PROCESS "global/field-descs.none.tmpl" %]
-
 [% IF Param('useclassification') %]
   <tr>
-    <th align="right"><b>Classification:</b></th>
+    <th>Classification:</th>
     <td><b>[% classification.name FILTER html %]</b></td>
   </tr>
 [% END %]
     
 <tr>
-  <th align="right">Product:</th>
+  <th>Product:</th>
   <td><input size="64" maxlength="64" name="product" 
-             value="[% product.name FILTER html %]">
+             value="[% product.name FILTER html %]" required>
   </td>
 </tr>
 <tr>
-  <th align="right">Description:</th>
-  <td><textarea rows="4" cols="64" wrap="virtual" name="description">
+  <th>Description:</th>
+  <td><textarea rows="4" cols="64" wrap="virtual" name="description" required>
         [% product.description FILTER html %]</textarea>
+  </td>
+</tr>
+
+<tr>
+  <th>Open for [% terms.bug %] entry:</th>
+  <td><input type="checkbox" name="is_active" value="1"
+       [% ' checked="checked"' IF product.is_active %]>
+  </td>
+</tr>
+<tr>
+  <th>
+    <label for="allows_unconfirmed">Enable the
+      [%+ display_value('bug_status', 'UNCONFIRMED') FILTER html %] status
+      in this product:</label>
+  </th>
+  <td><input type="checkbox" id="allows_unconfirmed" name="allows_unconfirmed"
+             [% ' checked="checked"' IF product.allows_unconfirmed %]>
   </td>
 </tr>
 
 [% IF Param('usetargetmilestone') -%]
   <tr>
-    <th align="right">Default milestone:</th>
+    <th>Default milestone:</th>
     <td>
       [% IF product.milestones.size %]
         <select name="defaultmilestone">
@@ -56,28 +62,11 @@
           [% END %]
         </select>
       [% ELSE %]
-        <input type="text" size="20" maxlength="20" name="defaultmilestone"
+        <input type="text" size="64" maxlength="64" name="defaultmilestone"
                value="[% product.defaultmilestone FILTER html %]">
       [% END %]
     </td>
   </tr>
 [% END %]
     
-<tr>
-  <th align="right">Open for [% terms.bug %] entry:</th>
-  <td><input type="checkbox" name="is_active" value="1"
-       [% ' checked="checked"' IF product.is_active %]>
-  </td>
-</tr>
-<tr>
-  <th align="right">
-    <label for="allows_unconfirmed">Enable the
-      [%+ display_value('bug_status', 'UNCONFIRMED') FILTER html %] status
-      in this product:</label>
-  </th>
-  <td><input type="checkbox" id="allows_unconfirmed" name="allows_unconfirmed"
-             [% ' checked="checked"' IF product.allows_unconfirmed %]>
-  </td>
-</tr>
-
 [% Hook.process('rows') %]

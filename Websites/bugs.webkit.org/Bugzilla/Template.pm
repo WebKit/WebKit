@@ -1,65 +1,44 @@
-# -*- Mode: perl; indent-tabs-mode: nil -*-
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
-# The contents of this file are subject to the Mozilla Public
-# License Version 1.1 (the "License"); you may not use this file
-# except in compliance with the License. You may obtain a copy of
-# the License at http://www.mozilla.org/MPL/
-#
-# Software distributed under the License is distributed on an "AS
-# IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-# implied. See the License for the specific language governing
-# rights and limitations under the License.
-#
-# The Original Code is the Bugzilla Bug Tracking System.
-#
-# The Initial Developer of the Original Code is Netscape Communications
-# Corporation. Portions created by Netscape are
-# Copyright (C) 1998 Netscape Communications Corporation. All
-# Rights Reserved.
-#
-# Contributor(s): Terry Weissman <terry@mozilla.org>
-#                 Dan Mosedale <dmose@mozilla.org>
-#                 Jacob Steenhagen <jake@bugzilla.org>
-#                 Bradley Baetz <bbaetz@student.usyd.edu.au>
-#                 Christopher Aillon <christopher@aillon.com>
-#                 Tobias Burnus <burnus@net-b.de>
-#                 Myk Melez <myk@mozilla.org>
-#                 Max Kanat-Alexander <mkanat@bugzilla.org>
-#                 Frédéric Buclin <LpSolit@gmail.com>
-#                 Greg Hendricks <ghendricks@novell.com>
-#                 David D. Kilzer <ddkilzer@kilzer.net>
+# This Source Code Form is "Incompatible With Secondary Licenses", as
+# defined by the Mozilla Public License, v. 2.0.
 
 
 package Bugzilla::Template;
 
+use 5.10.1;
 use strict;
+use warnings;
 
-use Bugzilla::Bug;
 use Bugzilla::Constants;
+use Bugzilla::WebService::Constants;
 use Bugzilla::Hook;
 use Bugzilla::Install::Requirements;
 use Bugzilla::Install::Util qw(install_string template_include_path 
                                include_languages);
+use Bugzilla::Classification;
 use Bugzilla::Keyword;
 use Bugzilla::Util;
-use Bugzilla::User;
 use Bugzilla::Error;
 use Bugzilla::Search;
-use Bugzilla::Status;
 use Bugzilla::Token;
 
 use Cwd qw(abs_path);
 use MIME::Base64;
 use Date::Format ();
+use Digest::MD5 qw(md5_hex);
 use File::Basename qw(basename dirname);
 use File::Find;
 use File::Path qw(rmtree mkpath);
+use File::Slurp;
 use File::Spec;
 use IO::Dir;
 use List::MoreUtils qw(firstidx);
 use Scalar::Util qw(blessed);
 
-use base qw(Template);
+use parent qw(Template);
 
 use constant FORMAT_TRIPLE => '%19s|%-28s|%-28s';
 use constant FORMAT_3_SIZE => [19,28,28];
@@ -72,9 +51,9 @@ sub SAFE_URL_REGEXP {
     return qr/($safe_protocols):[^:\s<>\"][^\s<>\"]+[\w\/]/i;
 }
 
-# Convert the constants in the Bugzilla::Constants module into a hash we can
-# pass to the template object for reflection into its "constants" namespace
-# (which is like its "variables" namespace, but for constants).  To do so, we
+# Convert the constants in the Bugzilla::Constants and Bugzilla::WebService::Constants
+# modules into a hash we can pass to the template object for reflection into its "constants" 
+# namespace (which is like its "variables" namespace, but for constants). To do so, we
 # traverse the arrays of exported and exportable symbols and ignoring the rest
 # (which, if Constants.pm exports only constants, as it should, will be nothing else).
 sub _load_constants {
@@ -87,6 +66,18 @@ sub _load_constants {
         }
         else {
             my @list = (Bugzilla::Constants->$constant);
+            $constants{$constant} = (scalar(@list) == 1) ? $list[0] : \@list;
+        }
+    }
+
+    foreach my $constant (@Bugzilla::WebService::Constants::EXPORT, 
+                          @Bugzilla::WebService::Constants::EXPORT_OK)
+    {
+        if (ref Bugzilla::WebService::Constants->$constant) {
+            $constants{$constant} = Bugzilla::WebService::Constants->$constant;
+        }
+        else {
+            my @list = (Bugzilla::WebService::Constants->$constant);
             $constants{$constant} = (scalar(@list) == 1) ? $list[0] : \@list;
         }
     }
@@ -109,12 +100,15 @@ sub get_format {
     my $self = shift;
     my ($template, $format, $ctype) = @_;
 
-    $ctype ||= 'html';
-    $format ||= '';
+    $ctype //= 'html';
+    $format //= '';
 
-    # Security - allow letters and a hyphen only
-    $ctype =~ s/[^a-zA-Z\-]//g;
-    $format =~ s/[^a-zA-Z\-]//g;
+    # ctype and format can have letters and a hyphen only.
+    if ($ctype =~ /[^a-zA-Z\-]/ || $format =~ /[^a-zA-Z\-]/) {
+        ThrowUserError('format_not_found', {'format' => $format,
+                                            'ctype'  => $ctype,
+                                            'invalid' => 1});
+    }
     trick_taint($ctype);
     trick_taint($format);
 
@@ -167,6 +161,10 @@ sub quoteUrls {
     # and are reserved unicode characters. We disable warnings for now
     # until we require Perl 5.13.9 or newer.
     no warnings 'utf8';
+
+    # If the comment is already wrapped, we should ignore newlines when
+    # looking for matching regexps. Else we should take them into account.
+    my $s = ($comment && $comment->already_wrapped) ? qr/\s/ : qr/\h/;
 
     # However, note that adding the title (for buglinks) can affect things
     # In particular, attachment matches go before bug titles, so that titles
@@ -234,7 +232,7 @@ sub quoteUrls {
               ~<a href=\"mailto:$2\">$1$2</a>~igx;
 
     # attachment links
-    $text =~ s~\b(attachment\s*\#?\s*(\d+)(?:\s+\[details\])?)
+    $text =~ s~\b(attachment$s*\#?$s*([0-9]+)(?:$s+\[details\])?)
               ~($things[$count++] = get_attachment_link($2, $1, $user)) &&
                ("\x{FDD2}" . ($count-1) . "\x{FDD3}")
               ~egmxi;
@@ -247,19 +245,45 @@ sub quoteUrls {
     # Also, we can't use $bug_re?$comment_re? because that will match the
     # empty string
     my $bug_word = template_var('terms')->{bug};
-    my $bug_re = qr/\Q$bug_word\E\s*\#?\s*(\d+)/i;
-    my $comment_re = qr/comment\s*\#?\s*(\d+)/i;
-    $text =~ s~\b($bug_re(?:\s*,?\s*$comment_re)?|$comment_re)
+    my $bug_re = qr/\Q$bug_word\E$s*\#?$s*([0-9]+)/i;
+    my $comment_word = template_var('terms')->{comment};
+    my $comment_re = qr/(?:\Q$comment_word\E|comment)$s*\#?$s*([0-9]+)/i;
+    $text =~ s~\b($bug_re(?:$s*,?$s*$comment_re)?|$comment_re)
               ~ # We have several choices. $1 here is the link, and $2-4 are set
                 # depending on which part matched
                (defined($2) ? get_bug_link($2, $1, { comment_num => $3, user => $user }) :
                               "<a href=\"$current_bugurl#c$4\">$1</a>")
-              ~egox;
+              ~egx;
+
+    # Handle a list of bug ids: bugs 1, #2, 3, 4
+    # Currently, the only delimiter supported is comma.
+    # Concluding "and" and "or" are not supported.
+    my $bugs_word = template_var('terms')->{bugs};
+
+    my $bugs_re = qr/\Q$bugs_word\E$s*\#?$s*
+                     [0-9]+(?:$s*,$s*\#?$s*[0-9]+)+/ix;
+
+    $text =~ s{($bugs_re)}{
+        my $match = $1;
+        $match =~ s/((?:#$s*)?([0-9]+))/get_bug_link($2, $1);/eg;
+        $match;
+    }eg;
+
+    my $comments_word = template_var('terms')->{comments};
+
+    my $comments_re = qr/(?:comments|\Q$comments_word\E)$s*\#?$s*
+                         [0-9]+(?:$s*,$s*\#?$s*[0-9]+)+/ix;
+
+    $text =~ s{($comments_re)}{
+        my $match = $1;
+        $match =~ s|((?:#$s*)?([0-9]+))|<a href="$current_bugurl#c$2">$1</a>|g;
+        $match;
+    }eg;
 
     # Old duplicate markers. These don't use $bug_word because they are old
     # and were never customizable.
     $text =~ s~(?<=^\*\*\*\ This\ bug\ has\ been\ marked\ as\ a\ duplicate\ of\ )
-               (\d+)
+               ([0-9]+)
                (?=\ \*\*\*\Z)
               ~get_bug_link($1, $1, { user => $user })
               ~egmx;
@@ -275,10 +299,9 @@ sub quoteUrls {
 # Creates a link to an attachment, including its title.
 sub get_attachment_link {
     my ($attachid, $link_text, $user) = @_;
-    my $dbh = Bugzilla->dbh;
     $user ||= Bugzilla->user;
 
-    my $attachment = new Bugzilla::Attachment($attachid);
+    my $attachment = new Bugzilla::Attachment({ id => $attachid, cache => 1 });
 
     if ($attachment) {
         my $title = "";
@@ -326,10 +349,12 @@ sub get_bug_link {
     my ($bug, $link_text, $options) = @_;
     $options ||= {};
     $options->{user} ||= Bugzilla->user;
-    my $dbh = Bugzilla->dbh;
 
-    if (defined $bug) {
-        $bug = blessed($bug) ? $bug : new Bugzilla::Bug($bug);
+    if (defined $bug && $bug ne '') {
+        if (!blessed($bug)) {
+            require Bugzilla::Bug;
+            $bug = new Bugzilla::Bug({ id => $bug, cache => 1 });
+        }
         return $link_text if $bug->{error};
     }
 
@@ -394,21 +419,18 @@ sub mtime_filter {
 
 # Set up the skin CSS cascade:
 #
-#  1. YUI CSS
-#  2. Standard Bugzilla stylesheet set (persistent)
-#  3. Standard Bugzilla stylesheet set (selectable)
-#  4. All third-party "skin" stylesheet sets (selectable)
-#  5. Page-specific styles
-#  6. Custom Bugzilla stylesheet set (persistent)
-#
-# "Selectable" skin file sets may be either preferred or alternate.
-# Exactly one is preferred, determined by the "skin" user preference.
+#  1. standard/global.css
+#  2. YUI CSS
+#  3. Standard Bugzilla stylesheet set
+#  4. Third-party "skin" stylesheet set, per user prefs
+#  5. Inline css passed to global/header.html.tmpl
+#  6. Custom Bugzilla stylesheet set
+
 sub css_files {
     my ($style_urls, $yui, $yui_css) = @_;
-    
-    # global.css goes on every page, and so does IE-fixes.css.
-    my @requested_css = ('skins/standard/global.css', @$style_urls,
-                         'skins/standard/IE-fixes.css');
+
+    # global.css goes on every page.
+    my @requested_css = ('skins/standard/global.css', @$style_urls);
 
     my @yui_required_css;
     foreach my $yui_name (@$yui) {
@@ -419,21 +441,18 @@ sub css_files {
     
     my @css_sets = map { _css_link_set($_) } @requested_css;
     
-    my %by_type = (standard => [], alternate => {}, skin => [], custom => []);
+    my %by_type = (standard => [], skin => [], custom => []);
     foreach my $set (@css_sets) {
         foreach my $key (keys %$set) {
-            if ($key eq 'alternate') {
-                foreach my $alternate_skin (keys %{ $set->{alternate} }) {
-                    my $files = $by_type{alternate}->{$alternate_skin} ||= [];
-                    push(@$files, $set->{alternate}->{$alternate_skin});
-                }
-            }
-            else {
-                push(@{ $by_type{$key} }, $set->{$key});
-            }
+            push(@{ $by_type{$key} }, $set->{$key});
         }
     }
-    
+
+    # build unified
+    $by_type{unified_standard_skin} = _concatenate_css($by_type{standard},
+                                                       $by_type{skin});
+    $by_type{unified_custom} = _concatenate_css($by_type{custom});
+
     return \%by_type;
 }
 
@@ -441,40 +460,135 @@ sub _css_link_set {
     my ($file_name) = @_;
 
     my %set = (standard => mtime_filter($file_name));
-    
-    # We use (^|/) to allow Extensions to use the skins system if they
-    # want.
-    if ($file_name !~ m{(^|/)skins/standard/}) {
+
+    # We use (?:^|/) to allow Extensions to use the skins system if they want.
+    if ($file_name !~ m{(?:^|/)skins/standard/}) {
         return \%set;
     }
-    
-    my $skin_user_prefs = Bugzilla->user->settings->{skin};
+
+    my $skin = Bugzilla->user->settings->{skin}->{value};
     my $cgi_path = bz_locations()->{'cgi_path'};
-    # If the DB is not accessible, user settings are not available.
-    my $all_skins = $skin_user_prefs ? $skin_user_prefs->legal_values : [];
-    my %skin_urls;
-    foreach my $option (@$all_skins) {
-        next if $option eq 'standard';
-        my $skin_file_name = $file_name;
-        $skin_file_name =~ s{(^|/)skins/standard/}{skins/contrib/$option/};
-        if (my $mtime = _mtime("$cgi_path/$skin_file_name")) {
-            $skin_urls{$option} = mtime_filter($skin_file_name, $mtime);
-        }
+    my $skin_file_name = $file_name;
+    $skin_file_name =~ s{(?:^|/)skins/standard/}{skins/contrib/$skin/};
+    if (my $mtime = _mtime("$cgi_path/$skin_file_name")) {
+        $set{skin} = mtime_filter($skin_file_name, $mtime);
     }
-    $set{alternate} = \%skin_urls;
-    
-    my $skin = $skin_user_prefs->{'value'};
-    if ($skin ne 'standard' and defined $set{alternate}->{$skin}) {
-        $set{skin} = delete $set{alternate}->{$skin};
-    }
-    
+
     my $custom_file_name = $file_name;
-    $custom_file_name =~ s{(^|/)skins/standard/}{skins/custom/};
+    $custom_file_name =~ s{(?:^|/)skins/standard/}{skins/custom/};
     if (my $custom_mtime = _mtime("$cgi_path/$custom_file_name")) {
         $set{custom} = mtime_filter($custom_file_name, $custom_mtime);
     }
-    
+
     return \%set;
+}
+
+sub _concatenate_css {
+    my @sources = map { @$_ } @_;
+    return unless @sources;
+
+    my %files =
+        map {
+            (my $file = $_) =~ s/(^[^\?]+)\?.+/$1/;
+            $_ => $file;
+        } @sources;
+
+    my $cgi_path   = bz_locations()->{cgi_path};
+    my $skins_path = bz_locations()->{assetsdir};
+
+    # build minified files
+    my @minified;
+    foreach my $source (@sources) {
+        next unless -e "$cgi_path/$files{$source}";
+        my $file = $skins_path . '/' . md5_hex($source) . '.css';
+        if (!-e $file) {
+            my $content = read_file("$cgi_path/$files{$source}");
+
+            # minify
+            $content =~ s{/\*.*?\*/}{}sg;   # comments
+            $content =~ s{(^\s+|\s+$)}{}mg; # leading/trailing whitespace
+            $content =~ s{\n}{}g;           # single line
+
+            # rewrite urls
+            $content =~ s{url\(([^\)]+)\)}{_css_url_rewrite($source, $1)}eig;
+
+            write_file($file, "/* $files{$source} */\n" . $content . "\n");
+        }
+        push @minified, $file;
+    }
+
+    # concat files
+    my $file = $skins_path . '/' . md5_hex(join(' ', @sources)) . '.css';
+    if (!-e $file) {
+        my $content = '';
+        foreach my $source (@minified) {
+            $content .= read_file($source);
+        }
+        write_file($file, $content);
+    }
+
+    $file =~ s/^\Q$cgi_path\E\///o;
+    return mtime_filter($file);
+}
+
+sub _css_url_rewrite {
+    my ($source, $url) = @_;
+    # rewrite relative urls as the unified stylesheet lives in a different
+    # directory from the source
+    $url =~ s/(^['"]|['"]$)//g;
+    if (substr($url, 0, 1) eq '/' || substr($url, 0, 5) eq 'data:') {
+        return 'url(' . $url . ')';
+    }
+    return 'url(../../' . ($ENV{'PROJECT'} ? '../' : '') . dirname($source) . '/' . $url . ')';
+}
+
+sub _concatenate_js {
+    return @_ unless CONCATENATE_ASSETS;
+    my ($sources) = @_;
+    return [] unless $sources;
+    $sources = ref($sources) ? $sources : [ $sources ];
+
+    my %files =
+        map {
+            (my $file = $_) =~ s/(^[^\?]+)\?.+/$1/;
+            $_ => $file;
+        } @$sources;
+
+    my $cgi_path   = bz_locations()->{cgi_path};
+    my $skins_path = bz_locations()->{assetsdir};
+
+    # build minified files
+    my @minified;
+    foreach my $source (@$sources) {
+        next unless -e "$cgi_path/$files{$source}";
+        my $file = $skins_path . '/' . md5_hex($source) . '.js';
+        if (!-e $file) {
+            my $content = read_file("$cgi_path/$files{$source}");
+
+            # minimal minification
+            $content =~ s#/\*.*?\*/##sg;    # block comments
+            $content =~ s#(^ +| +$)##gm;    # leading/trailing spaces
+            $content =~ s#^//.+$##gm;       # single line comments
+            $content =~ s#\n{2,}#\n#g;      # blank lines
+            $content =~ s#(^\s+|\s+$)##g;   # whitespace at the start/end of file
+
+            write_file($file, ";/* $files{$source} */\n" . $content . "\n");
+        }
+        push @minified, $file;
+    }
+
+    # concat files
+    my $file = $skins_path . '/' . md5_hex(join(' ', @$sources)) . '.js';
+    if (!-e $file) {
+        my $content = '';
+        foreach my $source (@minified) {
+            $content .= read_file($source);
+        }
+        write_file($file, $content);
+    }
+
+    $file =~ s/^\Q$cgi_path\E\///o;
+    return [ $file ];
 }
 
 # YUI dependency resolution
@@ -541,6 +655,21 @@ $Template::Stash::LIST_OPS->{ clone } =
       return [@$list];
   };
 
+# Allow us to sort the list of fields correctly
+$Template::Stash::LIST_OPS->{ sort_by_field_name } =
+    sub {
+        sub field_name {
+            if ($_[0] eq 'noop') {
+                # Sort --- first
+                return '';
+            }
+            # Otherwise sort by field_desc or description
+            return $_[1]{$_[0]} || $_[0];
+        }
+        my ($list, $field_desc) = @_;
+        return [ sort { lc field_name($a, $field_desc) cmp lc field_name($b, $field_desc) } @$list ];
+    };
+
 # Allow us to still get the scalar if we use the list operation ".0" on it,
 # as we often do for defaults in query.cgi and other places.
 $Template::Stash::SCALAR_OPS->{ 0 } = 
@@ -553,10 +682,9 @@ $Template::Stash::SCALAR_OPS->{ 0 } =
 $Template::Stash::SCALAR_OPS->{ truncate } = 
   sub {
       my ($string, $length, $ellipsis) = @_;
-      $ellipsis ||= "";
-      
       return $string if !$length || length($string) <= $length;
-      
+
+      $ellipsis ||= '';
       my $strlen = $length - length($ellipsis);
       my $newstr = substr($string, 0, $strlen) . $ellipsis;
       return $newstr;
@@ -612,8 +740,12 @@ sub create {
 
         COMPILE_DIR => bz_locations()->{'template_cache'},
 
+        # Don't check for a template update until 1 hour has passed since the
+        # last check.
+        STAT_TTL    => 60 * 60,
+
         # Initialize templates (f.e. by loading plugins like Hook).
-        PRE_PROCESS => ["global/initialize.none.tmpl"],
+        PRE_PROCESS => ["global/variables.none.tmpl"],
 
         ENCODING => Bugzilla->params->{'utf8'} ? 'UTF-8' : undef,
 
@@ -658,6 +790,8 @@ sub create {
                 $var =~ s/([\\\'\"\/])/\\$1/g;
                 $var =~ s/\n/\\n/g;
                 $var =~ s/\r/\\r/g;
+                $var =~ s/\x{2028}/\\u2028/g; # unicode line separator
+                $var =~ s/\x{2029}/\\u2029/g; # unicode paragraph separator
                 $var =~ s/\@/\\x40/g; # anti-spam for email addresses
                 $var =~ s/</\\x3c/g;
                 $var =~ s/>/\\x3e/g;
@@ -673,9 +807,10 @@ sub create {
             # Strips out control characters excepting whitespace
             strip_control_chars => sub {
                 my ($data) = @_;
+                state $use_utf8 = Bugzilla->params->{'utf8'};
                 # Only run for utf8 to avoid issues with other multibyte encodings 
                 # that may be reassigning meaning to ascii characters.
-                if (Bugzilla->params->{'utf8'}) {
+                if ($use_utf8) {
                     $data =~ s/(?![\t\r\n])[[:cntrl:]]//g;
                 }
                 return $data;
@@ -692,14 +827,6 @@ sub create {
                 $var =~ s/\n\r/\&#013;/g;
                 $var =~ s/\r/\&#013;/g;
                 $var =~ s/\n/\&#013;/g;
-                return $var;
-            },
-
-            # Prevents line break on hyphens and whitespaces.
-            no_break => sub {
-                my ($var) = @_;
-                $var =~ s/ /\&nbsp;/g;
-                $var =~ s/-/\&#8209;/g;
                 return $var;
             },
 
@@ -738,12 +865,16 @@ sub create {
             },
 
             # In CSV, quotes are doubled, and any value containing a quote or a
-            # comma is enclosed in quotes. If a field starts with an equals
-            # sign, it is proceed by a space.
+            # comma is enclosed in quotes.
+            # If a field starts with either "=", "+", "-" or "@", it is preceded
+            # by a space to prevent stupid formula execution from Excel & co.
             csv => sub
             {
                 my ($var) = @_;
-                $var = ' ' . $var if substr($var, 0, 1) eq '=';
+                $var = ' ' . $var if $var =~ /^[+=@-]/;
+                # backslash is not special to CSV, but it can be used to confuse some browsers...
+                # so we do not allow it to happen. We only do this for logged-in users.
+                $var =~ s/\\/\x{FF3C}/g if Bugzilla->user->id;
                 $var =~ s/\"/\"\"/g;
                 if ($var !~ /^-?(\d+\.)?\d*$/) {
                     $var = "\"$var\"";
@@ -839,9 +970,7 @@ sub create {
                 # (Wrapping the message in the WebService is unnecessary
                 # and causes awkward things like \n's appearing in error
                 # messages in JSON-RPC.)
-                unless (Bugzilla->usage_mode == USAGE_MODE_JSON
-                        or Bugzilla->usage_mode == USAGE_MODE_XMLRPC)
-                {
+                unless (i_am_webservice()) {
                     $var = wrap_comment($var, 72);
                 }
                 $var =~ s/\&nbsp;/ /g;
@@ -891,27 +1020,50 @@ sub create {
             # Currently logged in user, if any
             # If an sudo session is in progress, this is the user we're faking
             'user' => sub { return Bugzilla->user; },
-           
+
             # Currenly active language
-            # XXX Eventually this should probably be replaced with something
-            # like Bugzilla->language.
-            'current_language' => sub {
-                my ($language) = include_languages();
-                return $language;
-            },
+            'current_language' => sub { return Bugzilla->current_language; },
 
             # If an sudo session is in progress, this is the user who
             # started the session.
             'sudoer' => sub { return Bugzilla->sudoer; },
 
-            # Allow templates to access the "corect" URLBase value
+            # Allow templates to access the "correct" URLBase value
             'urlbase' => sub { return Bugzilla::Util::correct_urlbase(); },
 
             # Allow templates to access docs url with users' preferred language
-            'docs_urlbase' => sub { 
-                my ($language) = include_languages();
-                my $docs_urlbase = Bugzilla->params->{'docs_urlbase'};
-                $docs_urlbase =~ s/\%lang\%/$language/;
+            # We fall back to English if documentation in the preferred
+            # language is not available
+            'docs_urlbase' => sub {
+                my $docs_urlbase;
+                my $lang = Bugzilla->current_language;
+                # Translations currently available on readthedocs.org
+                my @rtd_translations = ('en', 'fr');
+
+                if ($lang ne 'en' && -f "docs/$lang/html/index.html") {
+                    $docs_urlbase = "docs/$lang/html/";
+                }
+                elsif (-f "docs/en/html/index.html") {
+                    $docs_urlbase = "docs/en/html/";
+                }
+                else {
+                    if (!grep { $_ eq $lang } @rtd_translations) {
+                        $lang = "en";
+                    }
+
+                    my $version = BUGZILLA_VERSION;
+                    $version =~ /^(\d+)\.(\d+)/;
+                    if ($2 % 2 == 1) {
+                        # second number is odd; development version
+                        $version = 'latest';
+                    }
+                    else {
+                        $version = "$1.$2";
+                    }
+
+                    $docs_urlbase = "https://bugzilla.readthedocs.org/$lang/$version/";
+                }
+
                 return $docs_urlbase;
             },
 
@@ -931,6 +1083,17 @@ sub create {
             # Allow templates to generate a token themselves.
             'issue_hash_token' => \&Bugzilla::Token::issue_hash_token,
 
+            'get_login_request_token' => sub {
+                my $cookie = Bugzilla->cgi->cookie('Bugzilla_login_request_cookie');
+                return $cookie ? issue_hash_token(['login_request', $cookie]) : '';
+            },
+
+            'get_api_token' => sub {
+                return '' unless Bugzilla->user->id;
+                my $cache = Bugzilla->request_cache;
+                return $cache->{api_token} //= issue_api_token();
+            },
+
             # A way for all templates to get at Field data, cached.
             'bug_fields' => sub {
                 my $cache = Bugzilla->request_cache;
@@ -938,15 +1101,31 @@ sub create {
                     Bugzilla->fields({ by_name => 1 });
                 return $cache->{template_bug_fields};
             },
-            
+
+            # A general purpose cache to store rendered templates for reuse.
+            # Make sure to not mix language-specific data.
+            'template_cache' => sub {
+                my $cache = Bugzilla->request_cache->{template_cache} ||= {};
+                $cache->{users} ||= {};
+                return $cache;
+            },
+
             'css_files' => \&css_files,
             yui_resolve_deps => \&yui_resolve_deps,
+            concatenate_js => \&_concatenate_js,
+
+            # All classifications (sorted by sortkey, name)
+            'all_classifications' => sub {
+                return [map { $_->name } Bugzilla::Classification->get_all()];
+            },
 
             # Whether or not keywords are enabled, in this Bugzilla.
             'use_keywords' => sub { return Bugzilla::Keyword->any_exist; },
 
             # All the keywords.
-            'all_keywords' => sub { return Bugzilla::Keyword->get_all(); },
+            'all_keywords' => sub {
+                return [map { $_->name } Bugzilla::Keyword->get_all()];
+            },
 
             'feature_enabled' => sub { return Bugzilla->feature(@_); },
 
@@ -983,8 +1162,25 @@ sub create {
                 return \@optional;
             },
             'default_authorizer' => sub { return Bugzilla::Auth->new() },
+
+            'login_not_email' => sub {
+                my $params = Bugzilla->params;
+                my $cache = Bugzilla->request_cache;
+
+                return $cache->{login_not_email} //=
+                  ($params->{emailsuffix}
+                     || ($params->{user_verify_class} =~ /LDAP/ && $params->{LDAPmailattribute})
+                     || ($params->{user_verify_class} =~ /RADIUS/ && $params->{RADIUS_email_suffix}))
+                  ? 1 : 0;
+            },
         },
     };
+    # Use a per-process provider to cache compiled templates in memory across
+    # requests.
+    my $provider_key = join(':', @{ $config->{INCLUDE_PATH} });
+    my $shared_providers = Bugzilla->process_cache->{shared_providers} ||= {};
+    $shared_providers->{$provider_key} ||= Template::Provider->new($config);
+    $config->{LOAD_TEMPLATES} = [ $shared_providers->{$provider_key} ];
 
     local $Template::Config::CONTEXT = 'Bugzilla::Template::Context';
 
@@ -1049,6 +1245,9 @@ sub precompile_templates {
             # effect of writing the compiled version to disk.
             $template->context->template($file);
         }
+
+        # Clear out the cached Provider object
+        Bugzilla->process_cache->{shared_providers} = undef;
     }
 
     # Under mod_perl, we look for templates using the absolute path of the
@@ -1168,3 +1367,29 @@ Returns:     nothing
 =head1 SEE ALSO
 
 L<Bugzilla>, L<Template>
+
+=head1 B<Methods in need of POD>
+
+=over
+
+=item multiline_sprintf
+
+=item create
+
+=item css_files
+
+=item mtime_filter
+
+=item yui_resolve_deps
+
+=item process
+
+=item get_bug_link
+
+=item quoteUrls
+
+=item get_attachment_link
+
+=item SAFE_URL_REGEXP
+
+=back

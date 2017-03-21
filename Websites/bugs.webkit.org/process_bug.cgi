@@ -1,47 +1,14 @@
-#!/usr/bin/env perl -wT
-# -*- Mode: perl; indent-tabs-mode: nil -*-
+#!/usr/bin/perl -T
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
-# The contents of this file are subject to the Mozilla Public
-# License Version 1.1 (the "License"); you may not use this file
-# except in compliance with the License. You may obtain a copy of
-# the License at http://www.mozilla.org/MPL/
-#
-# Software distributed under the License is distributed on an "AS
-# IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-# implied. See the License for the specific language governing
-# rights and limitations under the License.
-#
-# The Original Code is the Bugzilla Bug Tracking System.
-#
-# The Initial Developer of the Original Code is Netscape Communications
-# Corporation. Portions created by Netscape are
-# Copyright (C) 1998 Netscape Communications Corporation. All
-# Rights Reserved.
-#
-# Contributor(s): Terry Weissman <terry@mozilla.org>
-#                 Dan Mosedale <dmose@mozilla.org>
-#                 Dave Miller <justdave@syndicomm.com>
-#                 Christopher Aillon <christopher@aillon.com>
-#                 Myk Melez <myk@mozilla.org>
-#                 Jeff Hedlund <jeff.hedlund@matrixsi.com>
-#                 Frédéric Buclin <LpSolit@gmail.com>
-#                 Lance Larsh <lance.larsh@oracle.com>
-#                 Akamai Technologies <bugzilla-dev@akamai.com>
-#                 Max Kanat-Alexander <mkanat@bugzilla.org>
+# This Source Code Form is "Incompatible With Secondary Licenses", as
+# defined by the Mozilla Public License, v. 2.0.
 
-# Implementation notes for this file:
-#
-# 1) the 'id' form parameter is validated early on, and if it is not a valid
-# bugid an error will be reported, so it is OK for later code to simply check
-# for a defined form 'id' value, and it can assume a valid bugid.
-#
-# 2) If the 'id' form parameter is not defined (after the initial validation),
-# then we are processing multiple bugs, and @idlist will contain the ids.
-#
-# 3) If we are processing just the one id, then it is stored in @idlist for
-# later processing.
-
+use 5.10.1;
 use strict;
+use warnings;
 
 use lib qw(. lib);
 
@@ -51,10 +18,6 @@ use Bugzilla::Bug;
 use Bugzilla::User;
 use Bugzilla::Util;
 use Bugzilla::Error;
-use Bugzilla::Field;
-use Bugzilla::Product;
-use Bugzilla::Component;
-use Bugzilla::Keyword;
 use Bugzilla::Flag;
 use Bugzilla::Status;
 use Bugzilla::Token;
@@ -96,14 +59,14 @@ sub should_set {
 # Create a list of objects for all bugs being modified in this request.
 my @bug_objects;
 if (defined $cgi->param('id')) {
-  my $bug = Bugzilla::Bug->check(scalar $cgi->param('id'));
+  my $bug = Bugzilla::Bug->check_for_edit(scalar $cgi->param('id'));
   $cgi->param('id', $bug->id);
   push(@bug_objects, $bug);
 } else {
     foreach my $i ($cgi->param()) {
         if ($i =~ /^id_([1-9][0-9]*)/) {
             my $id = $1;
-            push(@bug_objects, Bugzilla::Bug->check($id));
+            push(@bug_objects, Bugzilla::Bug->check_for_edit($id));
         }
     }
 }
@@ -138,32 +101,50 @@ print $cgi->header() unless Bugzilla->usage_mode == USAGE_MODE_EMAIL;
 
 # Check for a mid-air collision. Currently this only works when updating
 # an individual bug.
-if (defined $cgi->param('delta_ts'))
-{
-    my $delta_ts_z = datetime_from($cgi->param('delta_ts'));
+my $delta_ts = $cgi->param('delta_ts') || '';
+
+if ($delta_ts) {
+    my $delta_ts_z = datetime_from($delta_ts)
+      or ThrowCodeError('invalid_timestamp', { timestamp => $delta_ts });
+
     my $first_delta_tz_z =  datetime_from($first_bug->delta_ts);
+
     if ($first_delta_tz_z ne $delta_ts_z) {
-        ($vars->{'operations'}) =
-            Bugzilla::Bug::GetBugActivity($first_bug->id, undef,
-                                          scalar $cgi->param('delta_ts'));
+        ($vars->{'operations'}) = $first_bug->get_activity(undef, $delta_ts);
 
-        $vars->{'title_tag'} = "mid_air";
-    
-        ThrowCodeError('undefined_field', { field => 'longdesclength' })
-            if !defined $cgi->param('longdesclength');
-
-        $vars->{'start_at'} = $cgi->param('longdesclength');
         # Always sort midair collision comments oldest to newest,
         # regardless of the user's personal preference.
-        $vars->{'comments'} = $first_bug->comments({ order => "oldest_to_newest" });
-        $vars->{'bug'} = $first_bug;
+        my $comments = $first_bug->comments({ order => 'oldest_to_newest',
+                                              after => $delta_ts });
 
-        # The token contains the old delta_ts. We need a new one.
-        $cgi->param('token', issue_hash_token([$first_bug->id, $first_bug->delta_ts]));
-        # Warn the user about the mid-air collision and ask them what to do.
-        $template->process("bug/process/midair.html.tmpl", $vars)
-          || ThrowTemplateError($template->error());
-        exit;
+        # Show midair if previous changes made other than CC
+        # and/or one or more comments were made
+        my $do_midair = scalar @$comments ? 1 : 0;
+
+        if (!$do_midair) {
+            foreach my $operation (@{ $vars->{'operations'} }) {
+                foreach my $change (@{ $operation->{'changes'} }) {
+                    if ($change->{'fieldname'} ne 'cc') {
+                        $do_midair = 1;
+                        last;
+                    }
+                }
+                last if $do_midair;
+            }
+        }
+
+        if ($do_midair) {
+            $vars->{'title_tag'} = "mid_air";
+            $vars->{'comments'} = $comments;
+            $vars->{'bug'} = $first_bug;
+            # The token contains the old delta_ts. We need a new one.
+            $cgi->param('token', issue_hash_token([$first_bug->id, $first_bug->delta_ts]));
+
+            # Warn the user about the mid-air collision and ask them what to do.
+            $template->process("bug/process/midair.html.tmpl", $vars)
+                || ThrowTemplateError($template->error());
+            exit;
+        }
     }
 }
 
@@ -173,7 +154,7 @@ if (defined $cgi->param('delta_ts'))
 my $token = $cgi->param('token');
 
 if ($cgi->param('id')) {
-    check_hash_token($token, [$first_bug->id, $first_bug->delta_ts]);
+    check_hash_token($token, [$first_bug->id, $delta_ts || $first_bug->delta_ts]);
 }
 else {
     check_token_data($token, 'buglist_mass_change', 'query.cgi');
@@ -213,15 +194,6 @@ else {
     $action = 'nothing';
 }
 
-# For each bug, we have to check if the user can edit the bug the product
-# is currently in, before we allow them to change anything.
-foreach my $bug (@bug_objects) {
-    if (!Bugzilla->user->can_edit_product($bug->product_obj->id) ) {
-        ThrowUserError("product_edit_denied",
-                      { product => $bug->product });
-    }
-}
-
 # Component, target_milestone, and version are in here just in case
 # the 'product' field wasn't defined in the CGI. It doesn't hurt to set
 # them twice.
@@ -230,9 +202,9 @@ my @set_fields = qw(op_sys rep_platform priority bug_severity
                     bug_file_loc status_whiteboard short_desc
                     deadline remaining_time estimated_time
                     work_time set_default_assignee set_default_qa_contact
-                    cclist_accessible reporter_accessible 
+                    cclist_accessible reporter_accessible
                     product confirm_product_change
-                    bug_status resolution dup_id);
+                    bug_status resolution dup_id bug_ignored);
 push(@set_fields, 'assigned_to') if !$cgi->param('set_default_assignee');
 push(@set_fields, 'qa_contact')  if !$cgi->param('set_default_qa_contact');
 my %field_translation = (
@@ -262,13 +234,13 @@ if (should_set('keywords')) {
 }
 if (should_set('comment')) {
     $set_all_fields{comment} = {
-        body       => scalar $cgi->param('comment'),
-        is_private => scalar $cgi->param('comment_is_private'),
+        body        => scalar $cgi->param('comment'),
+        is_private  => scalar $cgi->param('comment_is_private'),
     };
 }
 if (should_set('see_also')) {
     $set_all_fields{'see_also'}->{add} = 
-        [split(/[\s,]+/, $cgi->param('see_also'))];
+        [split(/[\s]+/, $cgi->param('see_also'))];
 }
 if (should_set('remove_see_also')) {
     $set_all_fields{'see_also'}->{remove} = [$cgi->param('remove_see_also')];
@@ -301,7 +273,7 @@ if (defined $cgi->param('newcc')
         }
     } else {
         @cc_add = $cgi->param('newcc');
-        push(@cc_add, Bugzilla->user) if $cgi->param('addselfcc');
+        push(@cc_add, $user) if $cgi->param('addselfcc');
 
         # We came from show_bug which uses a select box to determine what cc's
         # need to be removed...
@@ -317,16 +289,26 @@ if (defined $cgi->param('newcc')
 if (defined $cgi->param('id')) {
     # Since aliases are unique (like bug numbers), they can only be changed
     # for one bug at a time.
-    if (Bugzilla->params->{"usebugaliases"} && defined $cgi->param('alias')) {
-        $set_all_fields{alias} = $cgi->param('alias');
+    if (defined $cgi->param('newalias') || defined $cgi->param('removealias')) {
+        my @alias_add = split /[, ]+/, $cgi->param('newalias');
+
+        # We came from bug_form which uses a select box to determine what
+        # aliases need to be removed...
+        my @alias_remove = ();
+        if ($cgi->param('removealias') && $cgi->param('alias')) {
+            @alias_remove = $cgi->param('alias');
+        }
+
+        $set_all_fields{alias} = { add => \@alias_add, remove => \@alias_remove };
     }
 }
 
 my %is_private;
 foreach my $field (grep(/^defined_isprivate/, $cgi->param())) {
-    $field =~ /(\d+)$/;
-    my $comment_id = $1;
-    $is_private{$comment_id} = $cgi->param("isprivate_$comment_id");
+    if ($field =~ /(\d+)$/) {
+        my $comment_id = $1;
+        $is_private{$comment_id} = $cgi->param("isprivate_$comment_id");
+    }
 }
 $set_all_fields{comment_is_private} = \%is_private;
 
@@ -364,6 +346,25 @@ if (defined $cgi->param('id')) {
     my ($flags, $new_flags) = Bugzilla::Flag->extract_flags_from_cgi(
         $first_bug, undef, $vars);
     $first_bug->set_flags($flags, $new_flags);
+
+    # Tags can only be set to one bug at once.
+    if (should_set('tag')) {
+        my @new_tags = grep { trim($_) } split(/,/, $cgi->param('tag'));
+        my ($tags_removed, $tags_added) = diff_arrays($first_bug->tags, \@new_tags);
+        $first_bug->remove_tag($_) foreach @$tags_removed;
+        $first_bug->add_tag($_) foreach @$tags_added;
+    }
+}
+else {
+    # Update flags on multiple bugs. The cgi params are slightly different
+    # than on a single bug, so we need to call a different sub. We also
+    # need to call this per bug, since we might be updating a flag in one
+    # bug, but adding it to a second bug
+    foreach my $b (@bug_objects) {
+        my ($flags, $new_flags)
+            = Bugzilla::Flag->multi_extract_flags_from_cgi($b, $vars);
+        $b->set_flags($flags, $new_flags);
+    }
 }
 
 ##############################
@@ -378,7 +379,7 @@ foreach my $bug (@bug_objects) {
         # status, so we should inform the user about that.
         if (!is_open_state($new_status) && $changes->{'remaining_time'}) {
             $vars->{'message'} = "remaining_time_zeroed"
-              if Bugzilla->user->is_timetracker;
+              if $user->is_timetracker;
         }
     }
 
@@ -406,6 +407,10 @@ elsif ($action eq 'next_bug' or $action eq 'same_bug') {
         if ($action eq 'next_bug') {
             $vars->{'nextbug'} = $bug->id;
         }
+        # For performance reasons, preload visibility of dependencies
+        # and duplicates related to this bug.
+        Bugzilla::Bug->preload([$bug]);
+
         $template->process("bug/show.html.tmpl", $vars)
           || ThrowTemplateError($template->error());
         exit;

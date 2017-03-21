@@ -1,21 +1,9 @@
-[%# The contents of this file are subject to the Mozilla Public
-  # License Version 1.1 (the "License"); you may not use this file
-  # except in compliance with the License. You may obtain a copy of
-  # the License at http://www.mozilla.org/MPL/
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
   #
-  # Software distributed under the License is distributed on an "AS
-  # IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-  # implied. See the License for the specific language governing
-  # rights and limitations under the License.
-  #
-  # The Original Code is the Bugzilla Bug Tracking System.
-  #
-  # The Initial Developer of the Original Code is Netscape Communications
-  # Corporation. Portions created by Netscape are
-  # Copyright (C) 1998 Netscape Communications Corporation. All
-  # Rights Reserved.
-  #
-  # Contributor(s): Myk Melez <myk@mozilla.org>
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
   #%]
 
 [%# INTERFACE:
@@ -23,14 +11,19 @@
   # query: string. The SQL query which makes the buglist.
   #%]
 
-[% PROCESS global/variables.none.tmpl %]
-
+<!DOCTYPE html>
 <html>
   <head>
     <title>[% terms.Bugzilla %] is pondering your search</title>
+    <link href="[% 'skins/standard/global.css' FILTER mtime %]"
+          rel="stylesheet" type="text/css">
   </head>
   <body>
-    <h1 style="margin-top: 20%; text-align: center;">Please stand by ...</h1>
+    <h1 id="serverpush_msg">Please stand by ...</h1>
+
+    <p class="center">
+      <progress>Data is being retrieved...</progress>
+    </p>
 
     [% IF debug %]
       <p>[% query FILTER html %]</p>

@@ -1,22 +1,9 @@
-[%# The contents of this file are subject to the Mozilla Public
-  # License Version 1.1 (the "License"); you may not use this file
-  # except in compliance with the License. You may obtain a copy of
-  # the License at http://www.mozilla.org/MPL/
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
   #
-  # Software distributed under the License is distributed on an "AS
-  # IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-  # implied. See the License for the specific language governing
-  # rights and limitations under the License.
-  #
-  # The Original Code is the Bugzilla Bug Tracking System.
-  #
-  # The Initial Developer of the Original Code is Netscape Communications
-  # Corporation. Portions created by Netscape are
-  # Copyright (C) 1998 Netscape Communications Corporation. All
-  # Rights Reserved.
-  #
-  # Contributor(s): Dave Miller <justdave@bugzilla.org>
-  #                 Frédéric Buclin <LpSolit@gmail.com>
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
   #%]
 
 [% 
@@ -27,15 +14,7 @@
 [% param_descs = {
   maintainer => 
     "The email address of the person who maintains this installation "
-    _ " of ${terms.Bugzilla}.",
-
-  docs_urlbase => 
-    "The URL that is the common initial leading part of all"
-    _ " $terms.Bugzilla documentation URLs. It may be an absolute URL,"
-    _ " or a URL relative to the <tt>urlbase</tt> parameter. Leave this"
-    _ " empty to suppress links to the documentation."
-    _ "'%lang%' will be replaced by user's preferred language (if"
-    _ " documentation is available in that language).",
+    _ " of Bugzilla.",
 
   utf8 => 
     "Use UTF-8 (Unicode) encoding for all text in ${terms.Bugzilla}. New"
@@ -49,24 +28,23 @@
     _ " afterward.</p>",
 
   shutdownhtml => 
-    "If this field is non-empty, then $terms.Bugzilla will be completely"
+    "If this field is non-empty, then Bugzilla will be completely"
     _ " disabled and this text will be displayed instead of all the"
     _ " $terms.Bugzilla pages.",
 
   announcehtml => 
-    "If this field is non-empty, then $terms.Bugzilla will"
+    "If this field is non-empty, then Bugzilla will"
     _ " display whatever is in this field at the top of every"
     _ " HTML page. The HTML you put in this field is not wrapped or"
     _ " enclosed in anything. You might want to wrap it inside a"
-    _ "<tt>&lt;div&gt;</tt>. Give the div <em>id=\"message\"</em> to get"
+    _ "<code>&lt;div&gt;</code>. Give the div <em>id=\"message\"</em> to get"
     _ " green text inside a red box, or <em>class=\"bz_private\"</em> for"
     _ " dark red on a red background.  Anything defined in "
-    _ " <tt>skins/standard/global.css</tt> or <tt>skins/custom/global.css</tt>"
-    _ " will work.  To get centered text, use <em>style=\"text-align: "
-    _  " center;\"</em>.",
+    _ " <code>skins/standard/global.css</code> or <code>skins/custom/global.css</code>"
+    _ " will work.  To get centered text, use <em>class=\"center\"</em>.",
 
   upgrade_notification => 
-    "$terms.Bugzilla can inform you when a new release is available."
+    "Bugzilla can inform you when a new release is available."
     _ " The notification will appear on the $terms.Bugzilla homepage,"
     _ " for administrators only."
     _ " <ul><li>'development_snapshot' notifies you about the development "
@@ -80,7 +58,7 @@
     _ " for newer release candidates too.</li>"
     _ " <li>'disabled' will never notify you about new releases and no"
     _ " connection will be established to a remote server.</li></ul>"
-    _ " <p>Note that if your $terms.Bugzilla server requires a proxy to"
-    _ " access the Internet, you may also need to set the <tt>proxy_url</tt>"
+    _ " <p>Note that if your Bugzilla server requires a proxy to"
+    _ " access the Internet, you may also need to set the <var>proxy_url</var>"
     _ " parameter in the Advanced section.</p>",
 } %]

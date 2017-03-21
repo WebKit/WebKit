@@ -1,26 +1,19 @@
-# -*- Mode: perl; indent-tabs-mode: nil -*-
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
-# The contents of this file are subject to the Mozilla Public
-# License Version 1.1 (the "License"); you may not use this file
-# except in compliance with the License. You may obtain a copy of
-# the License at http://www.mozilla.org/MPL/
-#
-# Software distributed under the License is distributed on an "AS
-# IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-# implied. See the License for the specific language governing
-# rights and limitations under the License.
-#
-# The Original Code are the Bugzilla Tests.
-#
-# Contributor(s): David Miller <justdave@bugzilla.org>
-#                 Frédéric Buclin <LpSolit@gmail.com>
+# This Source Code Form is "Incompatible With Secondary Licenses", as
+# defined by the Mozilla Public License, v. 2.0.
 
 
 ##################
 #Bugzilla Test 10#
 ## dependencies ##
 
+use 5.10.1;
 use strict;
+use warnings;
+
 use lib qw(. lib t);
 
 use Support::Files;
@@ -37,7 +30,7 @@ use constant MODULE_REGEX => qr/
     ['"]?
     ([\w:\.\\]+)
 /x;
-use constant BASE_REGEX => qr/^use base qw\(([^\)]+)/;
+use constant BASE_REGEX => qr/^use (?:base|parent) (?:-norequire, )?qw\(([^\)]+)/;
 
 # Extract all Perl modules.
 foreach my $file (@Support::Files::testitems) {
@@ -69,7 +62,7 @@ foreach my $module (keys %mods) {
       }
       elsif ($line =~ BASE_REGEX or $line =~ MODULE_REGEX) {
         my $used_string = $1;
-        # "use base" can have multiple modules
+        # "use base"/"use parent" can have multiple modules
         my @used_array = split(/\s+/, $used_string);
         foreach my $used (@used_array) {
             next if $used !~ /^Bugzilla/;

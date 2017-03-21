@@ -1,23 +1,9 @@
-[%# The contents of this file are subject to the Mozilla Public
-  # License Version 1.1 (the "License"); you may not use this file
-  # except in compliance with the License. You may obtain a copy of
-  # the License at http://www.mozilla.org/MPL/
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
   #
-  # Software distributed under the License is distributed on an "AS
-  # IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-  # implied. See the License for the specific language governing
-  # rights and limitations under the License.
-  #
-  # The Original Code is the Bugzilla Bug Tracking System.
-  #
-  # The Initial Developer of the Original Code is Netscape Communications
-  # Corporation. Portions created by Netscape are
-  # Copyright (C) 1998 Netscape Communications Corporation. All
-  # Rights Reserved.
-  #
-  # Contributor(s): Terry Weissman <terry@mozilla.org>
-  #                 Vlad Dascalu <jocuri@softhome.net>
-  #                 Max Kanat-Alexander <mkanat@bugzilla.org>
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
   #%]
 
 [%# INTERFACE:
@@ -26,26 +12,29 @@
 
 [% PROCESS global/header.html.tmpl
   title = "Delete Keyword"
+  style_urls = ['skins/standard/admin.css']
 %]
 
-<p>
+<h2>Confirmation</h2>
+
+<p class="confirmation">
   [% IF keyword.bug_count == 1 %]
-    There is one [% terms.bug %] with this keyword set.
+    There is one [% terms.bug %]
   [% ELSIF keyword.bug_count > 1 %]
-    There are [% keyword.bug_count FILTER html %] [%+ terms.bugs %] with
-    this keyword set.
+    There are [% keyword.bug_count FILTER html %] [%+ terms.bugs %]
   [% END %]
-  
-  Are you <b>sure</b> you want to delete
-  the <code>[% keyword.name FILTER html %]</code> keyword?
+   with the <em>[% keyword.name FILTER html %]</em> keyword set.
+</p>
+
+<p>
+  Do you really want to delete this keyword?
 </p>
 
 <form method="post" action="editkeywords.cgi">
   <input type="hidden" name="id" value="[% keyword.id FILTER html %]">
   <input type="hidden" name="action" value="delete">
   <input type="hidden" name="token" value="[% token FILTER html %]">
-  <input type="submit" id="delete"
-         value="Yes, really delete the keyword">
+  <input type="submit" id="delete" value="Yes, delete">
 </form>
 
 <p><a href="editkeywords.cgi">Edit other keywords</a>.</p>

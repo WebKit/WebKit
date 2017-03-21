@@ -1,26 +1,12 @@
-[%# The contents of this file are subject to the Mozilla Public
-  # License Version 1.1 (the "License"); you may not use this file
-  # except in compliance with the License. You may obtain a copy of
-  # the License at http://www.mozilla.org/MPL/
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
   #
-  # Software distributed under the License is distributed on an "AS
-  # IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-  # implied. See the License for the specific language governing
-  # rights and limitations under the License.
-  #
-  # The Original Code is the Bugzilla Bug Tracking System.
-  #
-  # The Initial Developer of the Original Code is Netscape Communications
-  # Corporation. Portions created by Netscape are
-  # Copyright (C) 1998 Netscape Communications Corporation. All
-  # Rights Reserved.
-  #
-  # Contributor(s): John Keiser <jkeiser@netscape.com>
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
   #%]
 
 [%# Define strings that will serve as the title and header of this page %]
-
-[% PROCESS global/variables.none.tmpl %]
 
 [% title = BLOCK %]
   [% IF attachid %]
@@ -51,33 +37,36 @@ Interdiff of #[% oldid %] and #[% newid %] for [% terms.bug %] #[% bugid %]
   [% subheader = BLOCK %]
     [% bugsummary FILTER html %]
   [% END %]
-  [% PROCESS global/header.html.tmpl doc_section = "attachments.html#patchviewer"
-                                     javascript_urls = "js/attachment.js"
-                                     style_urls = ['skins/standard/attachment.css'] %]
+  [% PROCESS global/header.html.tmpl javascript_urls = [ "js/attachment.js" ]
+                                     style_urls = ['skins/standard/bug.css'] %]
 [% ELSE %]
+  <!DOCTYPE html>
   <html>
-  <head>
-  <link href="[% 'skins/standard/attachment.css' FILTER mtime %]" 
-        rel="stylesheet" type="text/css">
-  <script src="[% 'js/attachment.js' FILTER mtime %]" 
-          type="text/javascript"></script>
-  </head>
-  <body onload="[% onload FILTER html %]">
+    <head>
+      <link href="[% 'skins/standard/global.css' FILTER mtime %]"
+            rel="stylesheet" type="text/css">
+      <link href="[% 'skins/standard/bug.css' FILTER mtime %]"
+            rel="stylesheet" type="text/css">
+      <script src="[% 'js/attachment.js' FILTER mtime %]"
+              type="text/javascript"></script>
+    </head>
+    <body onload="[% onload FILTER html %]">
 [% END %]
-  
+
 [%# If we have attachid, we are in diff, otherwise we're in interdiff %]
 [% IF attachid %]
   [%# HEADER %]
   [% IF headers %]
     <a href="[% PROCESS viewurl id=attachid %]">View</a>
     | <a href="[% PROCESS editurl id=attachid %]">Details</a>
-    | <a href="[% PROCESS diffurl id=attachid %]&amp;context=[% context FILTER uri %]&amp;collapsed=[% collapsed FILTER uri %]&amp;headers=[% headers FILTER uri %]&amp;format=raw">Raw&nbsp;Unified</a>
+    | <a href="[% PROCESS diffurl id=attachid %]&amp;collapsed=[% collapsed FILTER uri %]&amp;headers=[%
+               headers FILTER uri %]&amp;format=raw">Raw&nbsp;Unified</a>
     | Return to [% "$terms.bug $bugid" FILTER bug_link(bugid) FILTER none %]
   [% END %]
   [% IF other_patches.size > 0 %]
     [% IF headers %] |[%END%]
     Differences between
-    <form style="display: inline" action="attachment.cgi">
+    <form class="inline" action="attachment.cgi">
       <select name="oldid">
       [% FOREACH patch = other_patches %]
         <option value="[% patch.id %]"
@@ -111,37 +100,19 @@ Interdiff of #[% oldid %] and #[% newid %] for [% terms.bug %] #[% bugid %]
    onmouseout="window.status = lastStatus; return true"
    onclick="return expand_all()">Expand All</a>
 
-[% IF do_context %]
-  [%# only happens for normal viewing, not interdiff %]
-  | <span style='font-weight: bold'>Context:</span>
-  [% IF context == "patch" %]
-    (<strong>Patch</strong> / 
-  [% ELSE %]
-    (<a href="[% PROCESS diffurl id=attachid %]&amp;headers=[% headers FILTER uri %]">Patch</a> / 
-  [% END %]
-  [% IF context == "file" %]
-    <strong>File</strong> /
-  [% ELSE %]
-    <a href="[% PROCESS diffurl id=attachid %]&amp;headers=[% headers FILTER uri %]&amp;context=file">File</a> / 
-  [% END %]
-
-  [% IF context == "patch" || context == "file" %]
-    [% context = 3 %]
-  [% END %]
-  [%# textbox for context %]
-  <form style="display: inline" action="attachment.cgi"><input type="hidden" name="action" value="diff"><input type="hidden" name="id" value="[% attachid %]"><input type="hidden" name="collapsed" value="[% collapsed FILTER html %]"><input type="hidden" name="headers" value="[% headers FILTER html %]"><input type="text" name="context" value="[% context FILTER html %]" size="3"></form>)
-[% END %]
-
 [% IF warning %]
-<h2 class="warning">Warning: 
+<h2 class="warning">
+  Warning:
   [% IF warning == "interdiff1" %]
-  this difference between two patches may show things in the wrong places due
-  to a limitation in [% terms.Bugzilla %] when comparing patches with different
-  sets of files.
-  [% END %]
-  [% IF warning == "interdiff2" %]
-  this difference between two patches may be inaccurate due to a limitation in
-  [%+ terms.Bugzilla %] when comparing patches made against different revisions.
+    this difference between two patches may show things in the wrong places due
+    to a limitation in Bugzilla when comparing patches with
+    different sets of files.
+  [% ELSIF warning == "interdiff2" %]
+    this difference between two patches may be inaccurate due to a limitation
+    in Bugzilla when comparing patches made against different
+    revisions.
+  [% ELSIF warning == "interdiff3" %]
+    interdiff encountered errors while comparing these patches.
   [% END %]
 </h2>
 [% ELSE %]
@@ -150,6 +121,4 @@ Interdiff of #[% oldid %] and #[% newid %] for [% terms.bug %] #[% bugid %]
  
 [%# Restore Stuff %]
 <form name="checkboxform" action="attachment.cgi">
-<input type="checkbox" name="restore_indicator" style="display: none">
-
-
+<input type="checkbox" name="restore_indicator" class="bz_default_hidden">

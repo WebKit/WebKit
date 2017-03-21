@@ -1,33 +1,21 @@
-# -*- Mode: perl; indent-tabs-mode: nil -*-
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
-# The contents of this file are subject to the Mozilla Public
-# License Version 1.1 (the "License"); you may not use this file
-# except in compliance with the License. You may obtain a copy of
-# the License at http://www.mozilla.org/MPL/
-#
-# Software distributed under the License is distributed on an "AS
-# IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-# implied. See the License for the specific language governing
-# rights and limitations under the License.
-#
-# The Original Code is the Bugzilla Bug Tracking System.
-#
-# The Initial Developer of the Original Code is Frédéric Buclin.
-# Portions created by Frédéric Buclin are Copyright (C) 2007
-# Frédéric Buclin. All Rights Reserved.
-#
-# Contributor(s): Frédéric Buclin <LpSolit@gmail.com>
-
-use strict;
+# This Source Code Form is "Incompatible With Secondary Licenses", as
+# defined by the Mozilla Public License, v. 2.0.
 
 package Bugzilla::Status;
 
-use Bugzilla::Error;
+use 5.10.1;
+use strict;
+use warnings;
+
 # This subclasses Bugzilla::Field::Choice instead of implementing 
 # ChoiceInterface, because a bug status literally is a special type
 # of Field::Choice, not just an object that happens to have the same
 # methods.
-use base qw(Bugzilla::Field::Choice Exporter);
+use parent qw(Bugzilla::Field::Choice Exporter);
 @Bugzilla::Status::EXPORT = qw(
     BUG_STATE_OPEN
     SPECIAL_STATUS_WORKFLOW_ACTIONS
@@ -35,6 +23,8 @@ use base qw(Bugzilla::Field::Choice Exporter);
     is_open_state 
     closed_bug_statuses
 );
+
+use Bugzilla::Error;
 
 ################################
 #####   Initialization     #####
@@ -76,14 +66,7 @@ sub create {
 
 sub remove_from_db {
     my $self = shift;
-    my $dbh = Bugzilla->dbh;
-    my $id = $self->id;
-    $dbh->bz_start_transaction();
     $self->SUPER::remove_from_db();
-    $dbh->do('DELETE FROM status_workflow
-               WHERE old_status = ? OR new_status = ?',
-              undef, $id, $id);
-    $dbh->bz_commit_transaction();
     delete Bugzilla->request_cache->{status_bug_state_open};
 }
 
@@ -126,11 +109,21 @@ sub _check_value {
 
 sub BUG_STATE_OPEN {
     my $dbh = Bugzilla->dbh;
-    my $cache = Bugzilla->request_cache;
-    $cache->{status_bug_state_open} ||=
-        $dbh->selectcol_arrayref('SELECT value FROM bug_status 
-                                   WHERE is_open = 1');
-    return @{ $cache->{status_bug_state_open} };
+    my $request_cache = Bugzilla->request_cache;
+    my $cache_key = 'status_bug_state_open';
+    return @{ $request_cache->{$cache_key} }
+        if exists $request_cache->{$cache_key};
+
+    my $rows = Bugzilla->memcached->get_config({ key => $cache_key });
+    if (!$rows) {
+        $rows = $dbh->selectcol_arrayref(
+            'SELECT value FROM bug_status WHERE is_open = 1'
+        );
+        Bugzilla->memcached->set_config({ key => $cache_key, data => $rows });
+    }
+
+    $request_cache->{$cache_key} = $rows;
+    return @$rows;
 }
 
 # Tells you whether or not the argument is a valid "open" state.
@@ -195,8 +188,8 @@ sub _status_condition {
     my ($self, $old_status) = @_;
     my @values;
     my $cond = 'old_status IS NULL';
-    # For newly-filed bugs
-    if ($old_status) {
+    # We may pass a fake status object to represent the initial unset state.
+    if ($old_status && $old_status->id)  {
         $cond = 'old_status = ?';
         push(@values, $old_status->id);
     }
@@ -315,3 +308,27 @@ C<1> if a comment is required on this change, C<0> if not.
 =back
 
 =cut
+
+=head1 B<Methods in need of POD>
+
+=over
+
+=item create
+
+=item BUG_STATE_OPEN
+
+=item is_static
+
+=item is_open_state
+
+=item is_active
+
+=item remove_from_db
+
+=item DB_COLUMNS
+
+=item is_open
+
+=item VALIDATORS
+
+=back

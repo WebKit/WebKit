@@ -1,29 +1,14 @@
-#!/usr/bin/env perl -wT
-# -*- Mode: perl; indent-tabs-mode: nil -*-
+#!/usr/bin/perl -T
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
-# The contents of this file are subject to the Mozilla Public
-# License Version 1.1 (the "License"); you may not use this file
-# except in compliance with the License. You may obtain a copy of
-# the License at http://www.mozilla.org/MPL/
-#
-# Software distributed under the License is distributed on an "AS
-# IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-# implied. See the License for the specific language governing
-# rights and limitations under the License.
-#
-# The Original Code is the Bugzilla Bug Tracking System.
-#
-# The Initial Developer of the Original Code is Netscape Communications
-# Corporation. Portions created by Netscape are
-# Copyright (C) 1998 Netscape Communications Corporation. All
-# Rights Reserved.
-#
-# Contributor(s): Owen Taylor <otaylor@redhat.com>
-#                 Gervase Markham <gerv@gerv.net>
-#                 David Fallon <davef@tetsubo.com>
-#                 Tobias Burnus <burnus@net-b.de>
+# This Source Code Form is "Incompatible With Secondary Licenses", as
+# defined by the Mozilla Public License, v. 2.0.
 
+use 5.10.1;
 use strict;
+use warnings;
 
 use lib qw(. lib);
 
@@ -47,7 +32,7 @@ my $token = $cgi->param('token');
 if ($action eq "show") {
     # Read in the entire quip list
     my $quipsref = $dbh->selectall_arrayref(
-                       "SELECT quipid, userid, quip, approved FROM quips");
+                       "SELECT quipid, userid, quip, approved FROM quips ORDER BY quipid");
 
     my $quips;
     my @quipids;
@@ -82,12 +67,17 @@ if ($action eq "add") {
                    || $user->in_group('bz_quip_moderators') || 0;
     my $comment = $cgi->param("quip");
     $comment || ThrowUserError("need_quip");
+    
+    ThrowUserError("quip_too_long", { length => length($comment) }) 
+        if length($comment) > MAX_QUIP_LENGTH;
+
     trick_taint($comment); # Used in a placeholder below
 
     $dbh->do("INSERT INTO quips (userid, quip, approved) VALUES (?, ?, ?)",
              undef, ($user->id, $comment, $approved));
 
     $vars->{'added_quip'} = $comment;
+    $vars->{'message'} = 'quips_added';
 }
 
 if ($action eq 'approve') {
@@ -128,6 +118,7 @@ if ($action eq 'approve') {
             join(",", @unapproved) . ")") if($#unapproved > -1);
     $vars->{ 'approved' }   = \@approved;
     $vars->{ 'unapproved' } = \@unapproved;
+    $vars->{'message'} = 'quips_approved_unapproved';
 }
 
 if ($action eq "delete") {
@@ -136,14 +127,14 @@ if ($action eq "delete") {
                                          action => "delete",
                                          object => "quips"});
     my $quipid = $cgi->param("quipid");
-    ThrowCodeError("need_quipid") unless $quipid =~ /(\d+)/; 
-    $quipid = $1;
+    detaint_natural($quipid) || ThrowUserError("need_quipid");
     check_hash_token($token, ['quips', $quipid]);
 
     ($vars->{'deleted_quip'}) = $dbh->selectrow_array(
                                     "SELECT quip FROM quips WHERE quipid = ?",
                                     undef, $quipid);
     $dbh->do("DELETE FROM quips WHERE quipid = ?", undef, $quipid);
+    $vars->{'message'} = 'quips_deleted';
 }
 
 print $cgi->header();

@@ -1,24 +1,9 @@
-[%# The contents of this file are subject to the Mozilla Public
-  # License Version 1.1 (the "License"); you may not use this file
-  # except in compliance with the License. You may obtain a copy of
-  # the License at http://www.mozilla.org/MPL/
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
   #
-  # Software distributed under the License is distributed on an "AS
-  # IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-  # implied. See the License for the specific language governing
-  # rights and limitations under the License.
-  #
-  # The Original Code is the Bugzilla Bug Tracking System.
-  #
-  # The Initial Developer of the Original Code is Netscape Communications
-  # Corporation. Portions created by Netscape are
-  # Copyright (C) 1998 Netscape Communications Corporation. All
-  # Rights Reserved.
-  #
-  # Contributor(s): Gervase Markham <gerv@gerv.net>
-  #                 Vaskin Kissoyan <vkissoyan@yahoo.com>
-  #                 Bradley Baetz <bbaetz@student.usyd.edu.au>
-  #                 Max Kanat-Alexander <mkanat@bugzilla.org>
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
   #%]
 
 [%# This template should be called with PROCESS before processing
@@ -28,28 +13,57 @@
   # be overridden by the calling templates.
   #%]
 
+[% filtered_alias = bug.alias.join(', ') FILTER html %]
 [% filtered_desc = bug.short_desc FILTER html %]
-[% subheader = filtered_desc %]
 [% filtered_timestamp = bug.delta_ts FILTER time %]
-[% title = "$terms.Bug $bug.bug_id &ndash; $filtered_desc" %]
-[% header = "$terms.Bug&nbsp;$bug.bug_id" %]
-[% header_addl_info = "Last modified: $filtered_timestamp" %]
+
+[% subheader = filtered_desc %]
+[% title = "$bug.bug_id &ndash; " %]
+[% IF bug.alias.size %]
+  [% title = title _ "($filtered_alias) " %]
+[% END %]
+[% title = title _ filtered_desc %]
+[% generate_api_token = 1 %]
 [% yui = ['autocomplete', 'calendar'] %]
+[% yui.push('container') IF user.can_tag_comments %]
 [% javascript_urls = [ "js/util.js", "js/field.js" ] %]
+[% javascript_urls.push("js/bug.js") IF user.id  %]
+[% javascript_urls.push('js/comment-tagging.js')
+     IF user.id && Param('comment_taggers_group') %]
 [% IF bug.defined %]
-  [% unfiltered_title = "$terms.Bug $bug.bug_id – $bug.short_desc" %]
+  [% header = "$terms.Bug&nbsp;$bug.bug_id" %]
+  [% header_addl_info = "Last modified: $filtered_timestamp" %]
+  [% unfiltered_title = "$bug.bug_id – " %]
+  [% IF bug.alias.size %]
+    [% unfiltered_title = unfiltered_title _ "(" _ bug.alias.join(', ') _ ") " %]
+  [% END %]
+  [% unfiltered_title = unfiltered_title _ bug.short_desc %]
   [% javascript =  BLOCK %]
-    if( !document.location.href.match(/show_bug\.cgi/) && history && history.replaceState ) {
-      history.replaceState( null, 
-                         "[% unfiltered_title FILTER js %]",  
-                         "show_bug.cgi?id=[% bug.bug_id FILTER js %]" );
-      document.title = "[% unfiltered_title FILTER js %]";
+    if (history && history.replaceState) {
+      if(!document.location.href.match(/show_bug\.cgi/)) {
+        history.replaceState( null,
+                             "[% unfiltered_title FILTER js %]",
+                             "show_bug.cgi?id=[% bug.bug_id FILTER js %]" );
+        document.title = "[% unfiltered_title FILTER js %]";
+      }
+      if (document.location.href.match(/show_bug\.cgi\?.*list_id=/)) {
+        var href = document.location.href;
+        href = href.replace(/[\?&]+list_id=(\d+|cookie)/, '');
+        history.replaceState(null, "[% unfiltered_title FILTER js %]", href);
+      }
     }
+    YAHOO.util.Event.onDOMReady(function() {
+      initDirtyFieldTracking();
+
+      [% IF user.id AND user.is_involved_in_bug(bug) %]
+        YAHOO.bugzilla.bugUserLastVisit.update([% bug.bug_id FILTER none %]);
+      [% END %]
+    });
     [% javascript FILTER none %]
   [% END %]
 [% END %]
-[% style_urls = [ "skins/standard/show_bug.css" ] %]
-[% doc_section = "bug_page.html" %]
+[% style_urls = ['skins/standard/bug.css'] %]
+[% doc_section = "using/understanding.html" %]
 [% bodyclasses = ['bz_bug',
                   "bz_status_$bug.bug_status",
                   "bz_product_$bug.product",

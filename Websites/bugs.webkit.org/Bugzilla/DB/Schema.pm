@@ -1,29 +1,9 @@
-# -*- Mode: perl; indent-tabs-mode: nil -*-
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
-# The contents of this file are subject to the Mozilla Public
-# License Version 1.1 (the "License"); you may not use this file
-# except in compliance with the License. You may obtain a copy of
-# the License at http://www.mozilla.org/MPL/
-#
-# Software distributed under the License is distributed on an "AS
-# IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-# implied. See the License for the specific language governing
-# rights and limitations under the License.
-#
-# The Original Code is the Bugzilla Bug Tracking System.
-#
-# The Initial Developer of the Original Code is Netscape Communications
-# Corporation. Portions created by Netscape are
-# Copyright (C) 1998 Netscape Communications Corporation. All
-# Rights Reserved.
-#
-# Contributor(s): Andrew Dunstan <andrew@dunslane.net>,
-#                 Edward J. Sabol <edwardjsabol@iname.com>
-#                 Max Kanat-Alexander <mkanat@bugzilla.org>
-#                 Lance Larsh <lance.larsh@oracle.com>
-#                 Dennis Melentyev <dennis.melentyev@infopulse.com.ua>
-#                 Akamai Technologies <bugzilla-dev@akamai.com>
-#                 Elliotte Martin <emartin@everythingsolved.com>
+# This Source Code Form is "Incompatible With Secondary Licenses", as
+# defined by the Mozilla Public License, v. 2.0.
 
 package Bugzilla::DB::Schema;
 
@@ -35,7 +15,10 @@ package Bugzilla::DB::Schema;
 #
 ###########################################################################
 
+use 5.10.1;
 use strict;
+use warnings;
+
 use Bugzilla::Error;
 use Bugzilla::Hook;
 use Bugzilla::Util;
@@ -272,12 +255,12 @@ use constant ABSTRACT_SCHEMA => {
                                     REFERENCES => {TABLE  => 'profiles',
                                                    COLUMN => 'userid'}},
             version             => {TYPE => 'varchar(64)', NOTNULL => 1},
-            component_id        => {TYPE => 'INT2', NOTNULL => 1,
+            component_id        => {TYPE => 'INT3', NOTNULL => 1,
                                     REFERENCES => {TABLE  => 'components',
                                                    COLUMN => 'id'}},
             resolution          => {TYPE => 'varchar(64)',
                                     NOTNULL => 1, DEFAULT => "''"},
-            target_milestone    => {TYPE => 'varchar(20)',
+            target_milestone    => {TYPE => 'varchar(64)',
                                     NOTNULL => 1, DEFAULT => "'---'"},
             qa_contact          => {TYPE => 'INT3',
                                     REFERENCES => {TABLE  => 'profiles',
@@ -295,11 +278,8 @@ use constant ABSTRACT_SCHEMA => {
             remaining_time      => {TYPE => 'decimal(7,2)',
                                     NOTNULL => 1, DEFAULT => '0'},
             deadline            => {TYPE => 'DATETIME'},
-            alias               => {TYPE => 'varchar(20)'},
         ],
         INDEXES => [
-            bugs_alias_idx            => {FIELDS => ['alias'],
-                                          TYPE => 'UNIQUE'},
             bugs_assigned_to_idx      => ['assigned_to'],
             bugs_creation_ts_idx      => ['creation_ts'],
             bugs_delta_ts_idx         => ['delta_ts'],
@@ -342,6 +322,8 @@ use constant ABSTRACT_SCHEMA => {
 
     bugs_activity => {
         FIELDS => [
+            id        => {TYPE => 'INTSERIAL', NOTNULL => 1, 
+                          PRIMARYKEY => 1}, 
             bug_id    => {TYPE => 'INT3', NOTNULL => 1,
                           REFERENCES    =>  {TABLE  =>  'bugs',
                                              COLUMN =>  'bug_id',
@@ -358,8 +340,8 @@ use constant ABSTRACT_SCHEMA => {
                           REFERENCES    =>  {TABLE  =>  'fielddefs',
                                              COLUMN =>  'id'}},
             added     => {TYPE => 'varchar(255)'},
-            removed   => {TYPE => 'TINYTEXT'},
-            comment_id => {TYPE => 'INT3', 
+            removed   => {TYPE => 'varchar(255)'},
+            comment_id => {TYPE => 'INT4', 
                            REFERENCES => { TABLE  => 'longdescs',
                                            COLUMN => 'comment_id',
                                            DELETE => 'CASCADE'}},
@@ -370,6 +352,22 @@ use constant ABSTRACT_SCHEMA => {
             bugs_activity_bug_when_idx => ['bug_when'],
             bugs_activity_fieldid_idx => ['fieldid'],
             bugs_activity_added_idx   => ['added'],
+            bugs_activity_removed_idx => ['removed'], 
+        ],
+    },
+
+    bugs_aliases => {
+        FIELDS => [
+            alias     => {TYPE => 'varchar(40)', NOTNULL => 1},
+            bug_id    => {TYPE => 'INT3',
+                          REFERENCES => {TABLE  => 'bugs',
+                                         COLUMN => 'bug_id',
+                                         DELETE => 'CASCADE'}},
+        ],
+        INDEXES => [
+            bugs_aliases_bug_id_idx => ['bug_id'],
+            bugs_aliases_alias_idx  => {FIELDS => ['alias'],
+                                        TYPE => 'UNIQUE'},
         ],
     },
 
@@ -393,7 +391,7 @@ use constant ABSTRACT_SCHEMA => {
 
     longdescs => {
         FIELDS => [
-            comment_id      => {TYPE => 'MEDIUMSERIAL',  NOTNULL => 1,
+            comment_id      => {TYPE => 'INTSERIAL',  NOTNULL => 1,
                                 PRIMARYKEY => 1},
             bug_id          => {TYPE => 'INT3',  NOTNULL => 1,
                                 REFERENCES => {TABLE => 'bugs',
@@ -415,9 +413,57 @@ use constant ABSTRACT_SCHEMA => {
             extra_data      => {TYPE => 'varchar(255)'}
         ],
         INDEXES => [
-            longdescs_bug_id_idx   => ['bug_id'],
+            longdescs_bug_id_idx   => [qw(bug_id work_time)],
             longdescs_who_idx     => [qw(who bug_id)],
             longdescs_bug_when_idx => ['bug_when'],
+        ],
+    },
+
+    longdescs_tags => {
+        FIELDS => [
+            id         => { TYPE => 'MEDIUMSERIAL', NOTNULL => 1, PRIMARYKEY => 1 },
+            comment_id => { TYPE => 'INT4',
+                            REFERENCES => { TABLE  => 'longdescs',
+                                            COLUMN => 'comment_id',
+                                            DELETE => 'CASCADE' }},
+            tag        => { TYPE => 'varchar(24)',  NOTNULL => 1 },
+        ],
+        INDEXES => [
+            longdescs_tags_idx => { FIELDS => ['comment_id', 'tag'], TYPE => 'UNIQUE' },
+        ],
+    },
+
+    longdescs_tags_weights => {
+        FIELDS => [
+            id     => { TYPE => 'MEDIUMSERIAL', NOTNULL => 1, PRIMARYKEY => 1 },
+            tag    => { TYPE => 'varchar(24)',  NOTNULL => 1 },
+            weight => { TYPE => 'INT3',         NOTNULL => 1 },
+        ],
+        INDEXES => [
+            longdescs_tags_weights_tag_idx => { FIELDS => ['tag'], TYPE => 'UNIQUE' },
+        ],
+    },
+
+    longdescs_tags_activity => {
+        FIELDS => [
+            id         => { TYPE => 'MEDIUMSERIAL', NOTNULL => 1, PRIMARYKEY => 1 },
+            bug_id     => { TYPE => 'INT3', NOTNULL => 1,
+                            REFERENCES =>  { TABLE  =>  'bugs',
+                                             COLUMN =>  'bug_id',
+                                             DELETE => 'CASCADE' }},
+            comment_id => { TYPE => 'INT4',
+                            REFERENCES => { TABLE  => 'longdescs',
+                                            COLUMN => 'comment_id',
+                                            DELETE => 'CASCADE' }},
+            who        => { TYPE => 'INT3', NOTNULL => 1,
+                            REFERENCES => { TABLE  => 'profiles',
+                                            COLUMN => 'userid' }},
+            bug_when  => { TYPE => 'DATETIME', NOTNULL => 1 },
+            added     => { TYPE => 'varchar(24)' },
+            removed   => { TYPE => 'varchar(24)' },
+        ],
+        INDEXES => [
+            longdescs_tags_activity_bug_id_idx  => ['bug_id'],
         ],
     },
 
@@ -433,7 +479,8 @@ use constant ABSTRACT_SCHEMA => {
                                             DELETE => 'CASCADE'}},
         ],
         INDEXES => [
-            dependencies_blocked_idx   => ['blocked'],
+            dependencies_blocked_idx => {FIELDS => [qw(blocked dependson)],
+                                         TYPE   => 'UNIQUE'},
             dependencies_dependson_idx => ['dependson'],
         ],
     },
@@ -452,7 +499,7 @@ use constant ABSTRACT_SCHEMA => {
             mimetype     => {TYPE => 'TINYTEXT', NOTNULL => 1},
             ispatch      => {TYPE => 'BOOLEAN', NOTNULL => 1,
                              DEFAULT => 'FALSE'},
-            filename     => {TYPE => 'varchar(100)', NOTNULL => 1},
+            filename     => {TYPE => 'varchar(255)', NOTNULL => 1},
             submitter_id => {TYPE => 'INT3', NOTNULL => 1,
                              REFERENCES => {TABLE => 'profiles',
                                             COLUMN => 'userid'}},
@@ -525,6 +572,9 @@ use constant ABSTRACT_SCHEMA => {
             removed   => {TYPE => 'MEDIUMTEXT'},
             added     => {TYPE => 'MEDIUMTEXT'},
             at_time   => {TYPE => 'DATETIME', NOTNULL => 1},
+        ],
+        INDEXES => [
+                    audit_log_class_idx => ['class', 'at_time'],
         ],
     },
 
@@ -645,14 +695,14 @@ use constant ABSTRACT_SCHEMA => {
                              REFERENCES => {TABLE  => 'products',
                                             COLUMN => 'id',
                                             DELETE => 'CASCADE'}},
-            component_id => {TYPE => 'INT2',
+            component_id => {TYPE => 'INT3',
                              REFERENCES => {TABLE  => 'components',
                                             COLUMN => 'id',
                                             DELETE => 'CASCADE'}},
         ],
         INDEXES => [
-            flaginclusions_type_id_idx =>
-                [qw(type_id product_id component_id)],
+            flaginclusions_type_id_idx => { FIELDS => [qw(type_id product_id component_id)],
+                                            TYPE   => 'UNIQUE' },
         ],
     },
 
@@ -666,14 +716,14 @@ use constant ABSTRACT_SCHEMA => {
                              REFERENCES => {TABLE  => 'products',
                                             COLUMN => 'id',
                                             DELETE => 'CASCADE'}},
-            component_id => {TYPE => 'INT2',
+            component_id => {TYPE => 'INT3',
                              REFERENCES => {TABLE  => 'components',
                                             COLUMN => 'id',
                                             DELETE => 'CASCADE'}},
         ],
         INDEXES => [
-            flagexclusions_type_id_idx =>
-                [qw(type_id product_id component_id)],
+            flagexclusions_type_id_idx => { FIELDS => [qw(type_id product_id component_id)],
+                                            TYPE   => 'UNIQUE' },
         ],
     },
 
@@ -690,6 +740,7 @@ use constant ABSTRACT_SCHEMA => {
             custom      => {TYPE => 'BOOLEAN', NOTNULL => 1,
                             DEFAULT => 'FALSE'},
             description => {TYPE => 'TINYTEXT', NOTNULL => 1},
+            long_desc   => {TYPE => 'varchar(255)', NOTNULL => 1, DEFAULT => "''"},
             mailhead    => {TYPE => 'BOOLEAN', NOTNULL => 1,
                             DEFAULT => 'FALSE'},
             sortkey     => {TYPE => 'INT2', NOTNULL => 1},
@@ -768,7 +819,7 @@ use constant ABSTRACT_SCHEMA => {
                            REFERENCES => {TABLE  => 'products',
                                           COLUMN => 'id',
                                           DELETE => 'CASCADE'}},
-            value      => {TYPE => 'varchar(20)', NOTNULL => 1},
+            value      => {TYPE => 'varchar(64)', NOTNULL => 1},
             sortkey    => {TYPE => 'INT2', NOTNULL => 1,
                            DEFAULT => 0},
             isactive   => {TYPE => 'BOOLEAN', NOTNULL => 1, 
@@ -889,6 +940,7 @@ use constant ABSTRACT_SCHEMA => {
             extern_id      => {TYPE => 'varchar(64)'},
             is_enabled     => {TYPE => 'BOOLEAN', NOTNULL => 1, 
                                DEFAULT => 'TRUE'}, 
+            last_seen_date => {TYPE => 'DATETIME'},
         ],
         INDEXES => [
             profiles_login_name_idx => {FIELDS => ['login_name'],
@@ -915,6 +967,8 @@ use constant ABSTRACT_SCHEMA => {
 
     profiles_activity => {
         FIELDS => [
+            id            => {TYPE => 'MEDIUMSERIAL', NOTNULL => 1, 
+                              PRIMARYKEY => 1}, 
             userid        => {TYPE => 'INT3', NOTNULL => 1,
                               REFERENCES => {TABLE  => 'profiles', 
                                              COLUMN => 'userid',
@@ -949,6 +1003,23 @@ use constant ABSTRACT_SCHEMA => {
             email_setting_user_id_idx  =>
                                     {FIELDS => [qw(user_id relationship event)],
                                      TYPE => 'UNIQUE'},
+        ],
+    },
+
+    email_bug_ignore => {
+        FIELDS => [
+            user_id => {TYPE => 'INT3', NOTNULL => 1,
+                        REFERENCES => {TABLE  => 'profiles',
+                                       COLUMN => 'userid',
+                                       DELETE => 'CASCADE'}},
+            bug_id  => {TYPE => 'INT3', NOTNULL => 1,
+                        REFERENCES => {TABLE  => 'bugs',
+                                       COLUMN => 'bug_id',
+                                       DELETE => 'CASCADE'}},
+        ],
+        INDEXES => [
+            email_bug_ignore_user_id_idx => {FIELDS => [qw(user_id bug_id)],
+                                             TYPE   => 'UNIQUE'},
         ],
     },
 
@@ -1035,6 +1106,23 @@ use constant ABSTRACT_SCHEMA => {
         ],
     },
 
+    reports => {
+        FIELDS => [
+            id      => {TYPE => 'MEDIUMSERIAL', NOTNULL => 1,
+                        PRIMARYKEY => 1},
+            user_id => {TYPE => 'INT3', NOTNULL => 1,
+                        REFERENCES => {TABLE  => 'profiles',
+                                       COLUMN => 'userid',
+                                       DELETE => 'CASCADE'}},
+            name    => {TYPE => 'varchar(64)', NOTNULL => 1},
+            query   => {TYPE => 'LONGTEXT', NOTNULL => 1},
+        ],
+        INDEXES => [
+            reports_user_id_idx => {FIELDS => [qw(user_id name)],
+                                   TYPE => 'UNIQUE'},
+        ],
+    },
+
     component_cc => {
 
         FIELDS => [
@@ -1042,7 +1130,7 @@ use constant ABSTRACT_SCHEMA => {
                              REFERENCES => {TABLE  => 'profiles',
                                             COLUMN => 'userid',
                                             DELETE => 'CASCADE'}},
-            component_id => {TYPE => 'INT2', NOTNULL => 1,
+            component_id => {TYPE => 'INT3', NOTNULL => 1,
                              REFERENCES => {TABLE  => 'components',
                                             COLUMN => 'id',
                                             DELETE => 'CASCADE'}},
@@ -1102,7 +1190,7 @@ use constant ABSTRACT_SCHEMA => {
             issuedate => {TYPE => 'DATETIME', NOTNULL => 1} ,
             token     => {TYPE => 'varchar(16)', NOTNULL => 1,
                           PRIMARYKEY => 1},
-            tokentype => {TYPE => 'varchar(8)', NOTNULL => 1} ,
+            tokentype => {TYPE => 'varchar(16)', NOTNULL => 1} ,
             eventdata => {TYPE => 'TINYTEXT'},
         ],
         INDEXES => [
@@ -1307,7 +1395,7 @@ use constant ABSTRACT_SCHEMA => {
             description       => {TYPE => 'MEDIUMTEXT', NOTNULL => 1},
             isactive          => {TYPE => 'BOOLEAN', NOTNULL => 1,
                                   DEFAULT => 1},
-            defaultmilestone  => {TYPE => 'varchar(20)',
+            defaultmilestone  => {TYPE => 'varchar(64)',
                                   NOTNULL => 1, DEFAULT => "'---'"},
             allows_unconfirmed => {TYPE => 'BOOLEAN', NOTNULL => 1,
                                    DEFAULT => 'TRUE'},
@@ -1320,7 +1408,7 @@ use constant ABSTRACT_SCHEMA => {
 
     components => {
         FIELDS => [
-            id               => {TYPE => 'SMALLSERIAL', NOTNULL => 1,
+            id               => {TYPE => 'MEDIUMSERIAL', NOTNULL => 1,
                                  PRIMARYKEY => 1},
             name             => {TYPE => 'varchar(64)', NOTNULL => 1},
             product_id       => {TYPE => 'INT2', NOTNULL => 1,
@@ -1476,7 +1564,7 @@ use constant ABSTRACT_SCHEMA => {
                          REFERENCES => {TABLE  => 'profiles', 
                                         COLUMN => 'userid',
                                         DELETE => 'SET NULL'}},
-            quip     => {TYPE => 'MEDIUMTEXT', NOTNULL => 1},
+            quip     => {TYPE => 'varchar(512)', NOTNULL => 1},
             approved => {TYPE => 'BOOLEAN', NOTNULL => 1,
                          DEFAULT => 'TRUE'},
         ],
@@ -1540,6 +1628,16 @@ use constant ABSTRACT_SCHEMA => {
                                                   TYPE => 'UNIQUE'},
         ],
      },
+
+    # BUGMAIL
+    # -------
+
+    mail_staging => {
+        FIELDS => [
+            id      => {TYPE => 'INTSERIAL', PRIMARYKEY => 1, NOTNULL => 1},
+            message => {TYPE => 'LONGBLOB', NOTNULL => 1},
+        ],
+    },
 
     # THESCHWARTZ TABLES
     # ------------------
@@ -1638,6 +1736,46 @@ use constant ABSTRACT_SCHEMA => {
         ],
     },
 
+    bug_user_last_visit => {
+        FIELDS => [
+            id            => {TYPE => 'INTSERIAL', NOTNULL => 1,
+                              PRIMARYKEY => 1},
+            user_id       => {TYPE => 'INT3', NOTNULL => 1,
+                              REFERENCES => {TABLE  => 'profiles',
+                                             COLUMN => 'userid',
+                                             DELETE => 'CASCADE'}},
+            bug_id        => {TYPE => 'INT3', NOTNULL => 1,
+                              REFERENCES => {TABLE  => 'bugs',
+                                             COLUMN => 'bug_id',
+                                             DELETE => 'CASCADE'}},
+            last_visit_ts => {TYPE => 'DATETIME', NOTNULL => 1},
+        ],
+        INDEXES => [
+            bug_user_last_visit_idx => {FIELDS => ['user_id', 'bug_id'],
+                                        TYPE => 'UNIQUE'},
+            bug_user_last_visit_last_visit_ts_idx => ['last_visit_ts'],
+        ],
+    },
+
+    user_api_keys => {
+        FIELDS => [
+            id            => {TYPE => 'INTSERIAL', NOTNULL => 1,
+                              PRIMARYKEY => 1},
+            user_id       => {TYPE => 'INT3', NOTNULL => 1,
+                              REFERENCES => {TABLE  => 'profiles',
+                                             COLUMN => 'userid',
+                                             DELETE => 'CASCADE'}},
+            api_key       => {TYPE => 'VARCHAR(40)', NOTNULL => 1},
+            description   => {TYPE => 'VARCHAR(255)'},
+            revoked       => {TYPE => 'BOOLEAN', NOTNULL => 1,
+                              DEFAULT => 'FALSE'},
+            last_used     => {TYPE => 'DATETIME'},
+        ],
+        INDEXES => [
+            user_api_keys_api_key_idx => {FIELDS => ['api_key'], TYPE => 'UNIQUE'},
+            user_api_keys_user_id_idx => ['user_id'],
+        ],
+    },
 };
 
 # Foreign Keys are added in Bugzilla::DB::bz_add_field_tables
@@ -3003,3 +3141,19 @@ L<Bugzilla::DB>
 L<http://www.bugzilla.org/docs/developer.html#sql-schema>
 
 =cut
+
+=head1 B<Methods in need of POD>
+
+=over
+
+=item get_table_indexes_abstract
+
+=item get_create_database_sql
+
+=item get_add_fks_sql
+
+=item get_fk_ddl
+
+=item get_drop_fk_sql
+
+=back

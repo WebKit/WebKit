@@ -1,27 +1,15 @@
-# -*- Mode: perl; indent-tabs-mode: nil -*-
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
-# The contents of this file are subject to the Mozilla Public
-# License Version 1.1 (the "License"); you may not use this file
-# except in compliance with the License. You may obtain a copy of
-# the License at http://www.mozilla.org/MPL/
-#
-# Software distributed under the License is distributed on an "AS
-# IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-# implied. See the License for the specific language governing
-# rights and limitations under the License.
-#
-# The Original Code is the Bugzilla Bug Tracking System.
-#
-# The Initial Developer of the Original Code is Netscape Communications
-# Corporation. Portions created by Netscape are
-# Copyright (C) 1998 Netscape Communications Corporation. All
-# Rights Reserved.
-#
-# Contributor(s): Zach Lipton <zach@zachlipton.com>
-#                 Max Kanat-Alexander <mkanat@bugzilla.org>
+# This Source Code Form is "Incompatible With Secondary Licenses", as
+# defined by the Mozilla Public License, v. 2.0.
 
 package Bugzilla::Hook;
+
+use 5.10.1;
 use strict;
+use warnings;
 
 sub process {
     my ($name, $args) = @_;
@@ -434,6 +422,54 @@ to the user.
 
 =back
 
+=head2 bug_start_of_update
+
+This happens near the beginning of L<Bugzilla::Bug/update>, after L<Bugzilla::Object/update>
+is called, but before all other special changes are made to the database. Once use case is
+this allows for adding your own entries to the C<changes> hash which gets added to the
+bugs_activity table later keeping you from having to do it yourself. Also this is also helpful
+if your extension needs to add CC members, flags, keywords, groups, etc. This generally
+occurs inside a database transaction.
+
+Params:
+
+=over
+
+=item C<bug> 
+
+The changed bug object, with all fields set to their updated values.
+
+=item C<old_bug>
+
+A bug object pulled from the database before the fields were set to
+their updated values (so it has the old values available for each field).
+
+=item C<timestamp> 
+
+The timestamp used for all updates in this transaction, as a SQL date
+string.
+
+=item C<changes> 
+
+The hash of changed fields. C<< $changes->{field} = [old, new] >>
+
+=back
+
+=head2 bug_url_sub_classes
+
+Allows you to add more L<Bugzilla::BugUrl> sub-classes.
+
+See the C<MoreBugUrl> extension to see how things work.
+
+Params:
+
+=over
+
+=item C<sub_classes> - An arrayref of strings which represent L<Bugzilla::BugUrl>
+sub-classes.
+
+=back
+
 =head2 buglist_columns
 
 This happens in L<Bugzilla::Search/COLUMNS>, which determines legal bug
@@ -552,7 +588,7 @@ about, and the value should always be C<1>. The "relationships"
 are described by the various C<REL_> constants in L<Bugzilla::Constants>.
 
 Here's an example of adding userid C<123> to the recipient list
-as though he were on the CC list:
+as though they were on the CC list:
 
  $recipients->{123}->{+REL_CC} = 1
 
@@ -602,6 +638,33 @@ itself.)
 The value is the "name" of this relationship that will show up in email
 headers in bugmails. The "name" should be short and should contain no
 spaces.
+
+=back
+
+
+=head2 cgi_headers
+
+This allows you to modify the HTTP headers sent out on every Bugzilla
+response.
+
+Params:
+
+=over
+
+=item C<headers>
+
+A hashref, where the keys are header names and the values are header
+values. Keys need to be lower-case, and begin with a "-". If you use
+the "_" character it will be converted to "-", and the library will
+also fix the casing to Camel-Case.
+
+You can delete (some) headers that Bugzilla adds by deleting entries
+from the hash.
+
+=item C<cgi>
+
+The CGI object, which may tell you useful things about the response on
+which to base a decision of whether or not to add a header.
 
 =back
 
@@ -970,9 +1033,6 @@ Params:
 
 =item C<email> - The C<Email::MIME> object that's about to be sent.
 
-=item C<mailer_args> - An arrayref that's passed as C<mailer_args> to
-L<Email::Send/new>.
-
 =back
 
 =head2 object_before_create
@@ -1289,6 +1349,22 @@ your template.
 
 =back
 
+=head2 path_info_whitelist
+
+By default, Bugzilla removes the Path-Info information from URLs before
+passing data to CGI scripts. If this information is needed for your
+customizations, you can enumerate the pages you want to whitelist here.
+
+Params:
+
+=over
+
+=item C<whitelist>
+
+An array of script names that will not have their Path-Info automatically
+removed.
+
+=back
 
 =head2 post_bug_after_creation
 
@@ -1450,6 +1526,24 @@ name), you can get it from here.
 
 =back
 
+=head2 user_check_account_creation
+
+This hook permits you to do extra checks before the creation of a new user
+account. This hook is called after email address validation has been done.
+Note that this hook can also access the IP address of the requester thanks
+to the C<remote_ip()> subroutine exported by C<Bugzilla::Util>.
+
+Params:
+
+=over
+
+=item C<login>
+
+The login of the new account. This is usually an email address, unless the
+C<emailsuffix> parameter is not empty.
+
+=back
+
 =head2 user_preferences
 
 This hook allows you to add additional panels to the User Preferences page,
@@ -1542,6 +1636,109 @@ Params:
 
 A hash that maps the names of errors (like C<invalid_param>) to numbers.
 See L<Bugzilla::WebService::Constants/WS_ERROR_CODE> for an example.
+
+=back
+
+=head2 webservice_fix_credentials
+
+This hook allows for altering the credential parameters provided by the client
+before authentication actually occurs. For example, this can be used to allow mapping
+of custom parameters to the standard Bugzilla_login and Bugzilla_password parameters.
+
+Params:
+
+=over
+
+=item C<params>
+
+A hash ref containing the parameters passed into the webservice after
+they have been obtained from the URL or body of the request.
+
+=back
+
+=head2 webservice_rest_request
+
+This hook allows for altering any of the parameters provided by the client
+after authentication has occured. You are able to change things like renaming
+of keys, removing values, or adding additional information.
+
+Params:
+
+=over
+
+=item C<params>
+
+A hash ref containing the parameters passed into the webservice after
+they have been obtained from the URL or body of the request.
+
+=item C<rpc>
+
+The current JSONRPC, XMLRPC, or REST object.
+
+=back
+
+=head2 webservice_rest_resources
+
+This hook allows for altering of the REST resources data allowing you to
+add additional paths to perform additional operations or to override the
+resources already provided by the webservice modules.
+
+Params:
+
+=over
+
+=item C<resources>
+
+A hash returned from each module loaded that is used to determine
+which code handler to use based on a regex match of the CGI path.
+
+=item C<rpc>
+
+The current JSONRPC, XMLRPC, or REST object.
+
+=back
+
+=head2 webservice_rest_response
+
+This hook allows for altering the result data or response object
+that is being returned by the current REST webservice call.
+
+Params:
+
+=over
+
+=item C<response>
+
+The HTTP response object generated by JSON-RPC library. You can use this
+to add headers, etc.
+
+=item C<result>
+
+A reference to a hash that contains the result data.
+
+=item C<rpc>
+
+The current JSONRPC, XMLRPC, or REST object.
+
+=back
+
+=head2 webservice_status_code_map
+
+This hook allows an extension to change the status codes returned by
+specific webservice errors. The valid internal error codes that Bugzilla
+generates, and the status codes they map to by default, are defined in the
+C<WS_ERROR_CODE> constant in C<Bugzilla::WebService::Constants>. When
+remapping an error, you may wish to use an existing status code constant.
+Such constants are also in C<Bugzilla::WebService::Constants> and start
+with C<STATUS_*> such as C<STATUS_BAD_REQUEST>.
+
+Params:
+
+=over
+
+=item C<status_code_map>
+
+A hash reference containing the current status code mapping.
 
 =back
 

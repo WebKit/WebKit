@@ -1,36 +1,23 @@
-# -*- Mode: perl; indent-tabs-mode: nil -*-
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
-# The contents of this file are subject to the Mozilla Public
-# License Version 1.1 (the "License"); you may not use this file
-# except in compliance with the License. You may obtain a copy of
-# the License at http://www.mozilla.org/MPL/
-#
-# Software distributed under the License is distributed on an "AS
-# IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-# implied. See the License for the specific language governing
-# rights and limitations under the License.
-#
-# The Original Code is the Bugzilla Bug Tracking System.
-#
-# The Initial Developer of the Original Code is Netscape Communications
-# Corporation. Portions created by Netscape are
-# Copyright (C) 1998 Netscape Communications Corporation. All
-# Rights Reserved.
-#
-# Contributor(s): Bradley Baetz <bbaetz@acm.org>
-#                 Marc Schumann <wurblzap@gmail.com>
-#                 Frédéric Buclin <LpSolit@gmail.com>
+# This Source Code Form is "Incompatible With Secondary Licenses", as
+# defined by the Mozilla Public License, v. 2.0.
 
 package Bugzilla::Error;
 
+use 5.10.1;
 use strict;
-use base qw(Exporter);
+use warnings;
+
+use parent qw(Exporter);
 
 @Bugzilla::Error::EXPORT = qw(ThrowCodeError ThrowTemplateError ThrowUserError);
 
 use Bugzilla::Constants;
 use Bugzilla::WebService::Constants;
-use Bugzilla::Util;
+use Bugzilla::Hook;
 
 use Carp;
 use Data::Dumper;
@@ -62,12 +49,13 @@ sub _throw_error {
     my $datadir = bz_locations()->{'datadir'};
     # If a writable $datadir/errorlog exists, log error details there.
     if (-w "$datadir/errorlog") {
+        require Bugzilla::Util;
         require Data::Dumper;
         my $mesg = "";
         for (1..75) { $mesg .= "-"; };
         $mesg .= "\n[$$] " . time2str("%D %H:%M:%S ", time());
         $mesg .= "$name $error ";
-        $mesg .= remote_ip();
+        $mesg .= Bugzilla::Util::remote_ip();
         $mesg .= Bugzilla->user->login;
         $mesg .= (' actually ' . Bugzilla->sudoer->login) if Bugzilla->sudoer;
         $mesg .= "\n";
@@ -86,7 +74,7 @@ sub _throw_error {
             $val = "*****" if $val =~ /password|http_pass/i;
             $mesg .= "[$$] " . Data::Dumper->Dump([$val],["env($var)"]);
         }
-        open(ERRORLOGFID, ">>$datadir/errorlog");
+        open(ERRORLOGFID, ">>", "$datadir/errorlog");
         print ERRORLOGFID "$mesg\n";
         close ERRORLOGFID;
     }
@@ -103,13 +91,14 @@ sub _throw_error {
 
     # Let's call the hook first, so that extensions can override
     # or extend the default behavior, or add their own error codes.
-    require Bugzilla::Hook;
     Bugzilla::Hook::process('error_catch', { error => $error, vars => $vars,
                                              message => \$message });
 
     if (Bugzilla->error_mode == ERROR_MODE_WEBPAGE) {
-        print Bugzilla->cgi->header();
+        my $cgi = Bugzilla->cgi;
+        $cgi->close_standby_message('text/html', 'inline', 'error', 'html');
         print $message;
+        print $cgi->multipart_final() if $cgi->{_multipart_in_progress};
     }
     elsif (Bugzilla->error_mode == ERROR_MODE_TEST) {
         die Dumper($vars);
@@ -118,7 +107,8 @@ sub _throw_error {
         die("$message\n");
     }
     elsif (Bugzilla->error_mode == ERROR_MODE_DIE_SOAP_FAULT
-           || Bugzilla->error_mode == ERROR_MODE_JSON_RPC)
+           || Bugzilla->error_mode == ERROR_MODE_JSON_RPC
+           || Bugzilla->error_mode == ERROR_MODE_REST)
     {
         # Clone the hash so we aren't modifying the constant.
         my %error_map = %{ WS_ERROR_CODE() };
@@ -135,13 +125,20 @@ sub _throw_error {
         }
         else {
             my $server = Bugzilla->_json_server;
+
+            my $status_code = 0;
+            if (Bugzilla->error_mode == ERROR_MODE_REST) {
+                my %status_code_map = %{ REST_STATUS_CODE_MAP() };
+                $status_code = $status_code_map{$code} || $status_code_map{'_default'};
+            }
             # Technically JSON-RPC isn't allowed to have error numbers
             # higher than 999, but we do this to avoid conflicts with
             # the internal JSON::RPC error codes.
-            $server->raise_error(code    => 100000 + $code,
-                                 message => $message,
-                                 id      => $server->{_bz_request_id},
-                                 version => $server->version);
+            $server->raise_error(code        => 100000 + $code,
+                                 status_code => $status_code,
+                                 message     => $message,
+                                 id          => $server->{_bz_request_id},
+                                 version     => $server->version);
             # Most JSON-RPC Throw*Error calls happen within an eval inside
             # of JSON::RPC. So, in that circumstance, instead of exiting,
             # we die with no message. JSON::RPC checks raise_error before
@@ -191,27 +188,23 @@ sub ThrowTemplateError {
     # Try a template first; but if this one fails too, fall back
     # on plain old print statements.
     if (!$template->process("global/code-error.html.tmpl", $vars)) {
+        require Bugzilla::Util;
+        import Bugzilla::Util qw(html_quote);
         my $maintainer = Bugzilla->params->{'maintainer'};
         my $error = html_quote($vars->{'template_error_msg'});
         my $error2 = html_quote($template->error());
+        my $url = html_quote(Bugzilla->cgi->self_url);
+
         print <<END;
-        <tt>
           <p>
             Bugzilla has suffered an internal error. Please save this page and 
             send it to $maintainer with details of what you were doing at the 
             time this message appeared.
           </p>
-          <script type="text/javascript"> <!--
-          document.write("<p>URL: " + 
-                          document.location.href.replace(/&/g,"&amp;")
-                                                .replace(/</g,"&lt;")
-                                                .replace(/>/g,"&gt;") + "</p>");
-          // -->
-          </script>
+          <p>URL: $url</p>
           <p>Template->process() failed twice.<br>
           First error: $error<br>
           Second error: $error2</p>
-        </tt>
 END
     }
     exit;

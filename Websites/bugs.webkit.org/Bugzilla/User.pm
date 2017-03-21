@@ -1,45 +1,15 @@
-# -*- Mode: perl; indent-tabs-mode: nil -*-
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
-# The contents of this file are subject to the Mozilla Public
-# License Version 1.1 (the "License"); you may not use this file
-# except in compliance with the License. You may obtain a copy of
-# the License at http://www.mozilla.org/MPL/
-#
-# Software distributed under the License is distributed on an "AS
-# IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-# implied. See the License for the specific language governing
-# rights and limitations under the License.
-#
-# The Original Code is the Bugzilla Bug Tracking System.
-#
-# The Initial Developer of the Original Code is Netscape Communications
-# Corporation. Portions created by Netscape are
-# Copyright (C) 1998 Netscape Communications Corporation. All
-# Rights Reserved.
-#
-# Contributor(s): Myk Melez <myk@mozilla.org>
-#                 Erik Stambaugh <erik@dasbistro.com>
-#                 Bradley Baetz <bbaetz@acm.org>
-#                 Joel Peshkin <bugreport@peshkin.net> 
-#                 Byron Jones <bugzilla@glob.com.au>
-#                 Shane H. W. Travis <travis@sedsystems.ca>
-#                 Max Kanat-Alexander <mkanat@bugzilla.org>
-#                 Gervase Markham <gerv@gerv.net>
-#                 Lance Larsh <lance.larsh@oracle.com>
-#                 Justin C. De Vries <judevries@novell.com>
-#                 Dennis Melentyev <dennis.melentyev@infopulse.com.ua>
-#                 Frédéric Buclin <LpSolit@gmail.com>
-#                 Mads Bondo Dydensborg <mbd@dbc.dk>
+# This Source Code Form is "Incompatible With Secondary Licenses", as
+# defined by the Mozilla Public License, v. 2.0.
 
-################################################################################
-# Module Initialization
-################################################################################
-
-# Make it harder for us to do dangerous things in Perl.
-use strict;
-
-# This module implements utilities for dealing with Bugzilla users.
 package Bugzilla::User;
+
+use 5.10.1;
+use strict;
+use warnings;
 
 use Bugzilla::Error;
 use Bugzilla::Util;
@@ -50,17 +20,20 @@ use Bugzilla::Product;
 use Bugzilla::Classification;
 use Bugzilla::Field;
 use Bugzilla::Group;
+use Bugzilla::BugUserLastVisit;
+use Bugzilla::Hook;
 
 use DateTime::TimeZone;
 use List::Util qw(max);
+use List::MoreUtils qw(any);
 use Scalar::Util qw(blessed);
 use Storable qw(dclone);
 use URI;
 use URI::QueryParam;
 
-use base qw(Bugzilla::Object Exporter);
+use parent qw(Bugzilla::Object Exporter);
 @Bugzilla::User::EXPORT = qw(is_available_username
-    login_to_id user_id_to_login validate_password
+    login_to_id validate_password validate_password_check
     USER_MATCH_MULTIPLE USER_MATCH_FAILED USER_MATCH_SUCCESS
     MATCH_SKIP_CONFIRM
 );
@@ -91,16 +64,21 @@ use constant DB_TABLE => 'profiles';
 # that you passed in for "name" to new(). That's because historically
 # Bugzilla::User used "name" for the realname field. This should be
 # fixed one day.
-use constant DB_COLUMNS => (
-    'profiles.userid',
-    'profiles.login_name',
-    'profiles.realname',
-    'profiles.mybugslink AS showmybugslink',
-    'profiles.disabledtext',
-    'profiles.disable_mail',
-    'profiles.extern_id',
-    'profiles.is_enabled', 
-);
+sub DB_COLUMNS {
+    my $dbh = Bugzilla->dbh;
+    return (
+        'profiles.userid',
+        'profiles.login_name',
+        'profiles.realname',
+        'profiles.mybugslink AS showmybugslink',
+        'profiles.disabledtext',
+        'profiles.disable_mail',
+        'profiles.extern_id',
+        'profiles.is_enabled',
+        $dbh->sql_date_format('last_seen_date', '%Y-%m-%d') . ' AS last_seen_date',
+    ),
+}
+
 use constant NAME_FIELD => 'login_name';
 use constant ID_FIELD   => 'userid';
 use constant LIST_ORDER => NAME_FIELD;
@@ -109,7 +87,7 @@ use constant VALIDATORS => {
     cryptpassword => \&_check_password,
     disable_mail  => \&_check_disable_mail,
     disabledtext  => \&_check_disabledtext,
-    login_name    => \&check_login_name_for_creation,
+    login_name    => \&check_login_name,
     realname      => \&_check_realname,
     extern_id     => \&_check_extern_id,
     is_enabled    => \&_check_is_enabled, 
@@ -144,7 +122,7 @@ sub new {
     my $class = ref($invocant) || $invocant;
     my ($param) = @_;
 
-    my $user = DEFAULT_USER;
+    my $user = { %{ DEFAULT_USER() } };
     bless ($user, $class);
     return $user unless $param;
 
@@ -162,29 +140,102 @@ sub super_user {
     my $class = ref($invocant) || $invocant;
     my ($param) = @_;
 
-    my $user = dclone(DEFAULT_USER);
+    my $user = { %{ DEFAULT_USER() } };
     $user->{groups} = [Bugzilla::Group->get_all];
     $user->{bless_groups} = [Bugzilla::Group->get_all];
     bless $user, $class;
     return $user;
 }
 
-sub update {
+sub _update_groups {
     my $self = shift;
-    my $changes = $self->SUPER::update(@_);
+    my $group_changes = shift;
+    my $changes = shift;
     my $dbh = Bugzilla->dbh;
 
+    # Update group settings.
+    my $sth_add_mapping = $dbh->prepare(
+        qq{INSERT INTO user_group_map (
+                  user_id, group_id, isbless, grant_type
+                 ) VALUES (
+                  ?, ?, ?, ?
+                 )
+          });
+    my $sth_remove_mapping = $dbh->prepare(
+        qq{DELETE FROM user_group_map
+            WHERE user_id = ?
+              AND group_id = ?
+              AND isbless = ?
+              AND grant_type = ?
+          });
+
+    foreach my $is_bless (keys %$group_changes) {
+        my ($removed, $added) = @{$group_changes->{$is_bless}};
+
+        foreach my $group (@$removed) {
+            $sth_remove_mapping->execute(
+                $self->id, $group->id, $is_bless, GRANT_DIRECT
+             );
+        }
+        foreach my $group (@$added) {
+            $sth_add_mapping->execute(
+                $self->id, $group->id, $is_bless, GRANT_DIRECT
+             );
+        }
+
+        if (! $is_bless) {
+            my $query = qq{
+                INSERT INTO profiles_activity
+                    (userid, who, profiles_when, fieldid, oldvalue, newvalue)
+                VALUES ( ?, ?, now(), ?, ?, ?)
+            };
+
+            $dbh->do(
+                $query, undef,
+                $self->id, Bugzilla->user->id,
+                get_field_id('bug_group'),
+                join(', ', map { $_->name } @$removed),
+                join(', ', map { $_->name } @$added)
+            );
+        }
+        else {
+            # XXX: should create profiles_activity entries for blesser changes.
+        }
+
+        Bugzilla->memcached->clear_config({ key => 'user_groups.' . $self->id });
+
+        my $type = $is_bless ? 'bless_groups' : 'groups';
+        $changes->{$type} = [
+            [ map { $_->name } @$removed ],
+            [ map { $_->name } @$added ],
+        ];
+    }
+}
+
+sub update {
+    my $self = shift;
+    my $options = shift;
+
+    my $group_changes = delete $self->{_group_changes};
+
+    my $changes = $self->SUPER::update(@_);
+    my $dbh = Bugzilla->dbh;
+    $self->_update_groups($group_changes, $changes);
+
     if (exists $changes->{login_name}) {
-        # If we changed the login, silently delete any tokens.
-        $dbh->do('DELETE FROM tokens WHERE userid = ?', undef, $self->id);
+        # Delete all the tokens related to the userid
+        $dbh->do('DELETE FROM tokens WHERE userid = ?', undef, $self->id)
+          unless $options->{keep_tokens};
         # And rederive regex groups
         $self->derive_regexp_groups();
     }
 
     # Logout the user if necessary.
     Bugzilla->logout_user($self) 
-        if (exists $changes->{login_name} || exists $changes->{disabledtext}
-            || exists $changes->{cryptpassword});
+        if (!$options->{keep_session}
+            && (exists $changes->{login_name}
+                || exists $changes->{disabledtext}
+                || exists $changes->{cryptpassword}));
 
     # XXX Can update profiles_activity here as soon as it understands
     #     field names like login_name.
@@ -217,16 +268,17 @@ sub _check_extern_id {
 
 # This is public since createaccount.cgi needs to use it before issuing
 # a token for account creation.
-sub check_login_name_for_creation {
+sub check_login_name {
     my ($invocant, $name) = @_;
     $name = trim($name);
     $name || ThrowUserError('user_login_required');
-    validate_email_syntax($name)
-        || ThrowUserError('illegal_email_address', { addr => $name });
+    check_email_syntax($name);
 
     # Check the name if it's a new user, or if we're changing the name.
-    if (!ref($invocant) || $invocant->login ne $name) {
-        is_available_username($name) 
+    if (!ref($invocant) || lc($invocant->login) ne lc($name)) {
+        my @params = ($name);
+        push(@params, $invocant->login) if ref($invocant);
+        is_available_username(@params)
             || ThrowUserError('account_exists', { email => $name });
     }
 
@@ -262,8 +314,9 @@ sub _check_is_enabled {
 # Mutators
 ################################################################################
 
-sub set_disable_mail { $_[0]->set('disable_mail', $_[1]); }
-sub set_extern_id    { $_[0]->set('extern_id', $_[1]); }
+sub set_disable_mail  { $_[0]->set('disable_mail', $_[1]); }
+sub set_email_enabled { $_[0]->set('disable_mail', !$_[1]); }
+sub set_extern_id     { $_[0]->set('extern_id', $_[1]); }
 
 sub set_login {
     my ($self, $login) = @_;
@@ -285,6 +338,130 @@ sub set_disabledtext {
     $_[0]->set('is_enabled', $_[1] ? 0 : 1);
 }
 
+sub set_groups {
+    my $self = shift;
+    $self->_set_groups(GROUP_MEMBERSHIP, @_);
+}
+
+sub set_bless_groups {
+    my $self = shift;
+
+    # The person making the change needs to be in the editusers group
+    Bugzilla->user->in_group('editusers')
+        || ThrowUserError("auth_failure", {group  => "editusers",
+                                           reason => "cant_bless",
+                                           action => "edit",
+                                           object => "users"});
+
+    $self->_set_groups(GROUP_BLESS, @_);
+}
+
+sub _set_groups {
+    my $self     = shift;
+    my $is_bless = shift;
+    my $changes  = shift;
+    my $dbh = Bugzilla->dbh;
+
+    # The person making the change is $user, $self is the person being changed
+    my $user = Bugzilla->user;
+
+    # Input is a hash of arrays. Key is 'set', 'add' or 'remove'. The array
+    # is a list of group ids and/or names.
+
+    # First turn the arrays into group objects.
+    $changes = $self->_set_groups_to_object($changes);
+
+    # Get a list of the groups the user currently is a member of
+    my $ids = $dbh->selectcol_arrayref(
+        q{SELECT DISTINCT group_id
+            FROM user_group_map
+           WHERE user_id = ? AND isbless = ? AND grant_type = ?},
+        undef, $self->id, $is_bless, GRANT_DIRECT);
+
+    my $current_groups = Bugzilla::Group->new_from_list($ids);
+    my $new_groups = dclone($current_groups);
+
+    # Record the changes
+    if (exists $changes->{set}) {
+        $new_groups = $changes->{set};
+
+        # We need to check the user has bless rights on the existing groups
+        # If they don't, then we need to add them back to new_groups
+        foreach my $group (@$current_groups) {
+            if (! $user->can_bless($group->id)) {
+                push @$new_groups, $group
+                    unless grep { $_->id eq $group->id } @$new_groups;
+            }
+        }
+    }
+    else {
+        foreach my $group (@{$changes->{remove} // []}) {
+            @$new_groups = grep { $_->id ne $group->id } @$new_groups;
+        }
+        foreach my $group (@{$changes->{add} // []}) {
+            push @$new_groups, $group
+                unless grep { $_->id eq $group->id } @$new_groups;
+        }
+    }
+
+    # Stash the changes, so self->update can actually make them
+    my @diffs = diff_arrays($current_groups, $new_groups, 'id');
+    if (scalar(@{$diffs[0]}) || scalar(@{$diffs[1]})) {
+        $self->{_group_changes}{$is_bless} = \@diffs;
+    }
+}
+
+sub _set_groups_to_object {
+    my $self = shift;
+    my $changes = shift;
+    my $user = Bugzilla->user;
+
+    foreach my $key (keys %$changes) {
+        # Check we were given an array
+        unless (ref($changes->{$key}) eq 'ARRAY') {
+            ThrowCodeError(
+                'param_invalid',
+                { param => $changes->{$key}, function => $key }
+            );
+        }
+
+        # Go through the array, and turn items into group objects
+        my @groups = ();
+        foreach my $value (@{$changes->{$key}}) {
+            my $type = $value =~ /^\d+$/ ? 'id' : 'name';
+            my $group = Bugzilla::Group->new({$type => $value});
+
+            if (! $group || ! $user->can_bless($group->id)) {
+                ThrowUserError('auth_failure',
+                    { group  => $value, reason => 'cant_bless',
+                      action => 'edit', object => 'users' });
+            }
+            push @groups, $group;
+        }
+        $changes->{$key} = \@groups;
+    }
+
+    return $changes;
+}
+
+sub update_last_seen_date {
+    my $self = shift;
+    return unless $self->id;
+    my $dbh = Bugzilla->dbh;
+    my $date = $dbh->selectrow_array(
+        'SELECT ' . $dbh->sql_date_format('NOW()', '%Y-%m-%d'));
+
+    if (!$self->last_seen_date or $date ne $self->last_seen_date) {
+        $self->{last_seen_date} = $date;
+        # We don't use the normal update() routine here as we only
+        # want to update the last_seen_date column, not any other
+        # pending changes
+        $dbh->do("UPDATE profiles SET last_seen_date = ? WHERE userid = ?",
+                 undef, $date, $self->id);
+        Bugzilla->memcached->clear({ table => 'profiles', id => $self->id });
+    }
+}
+
 ################################################################################
 # Methods
 ################################################################################
@@ -299,6 +476,7 @@ sub is_enabled { $_[0]->{'is_enabled'} ? 1 : 0; }
 sub showmybugslink { $_[0]->{showmybugslink}; }
 sub email_disabled { $_[0]->{disable_mail}; }
 sub email_enabled { !($_[0]->{disable_mail}); }
+sub last_seen_date { $_[0]->{last_seen_date}; }
 sub cryptpassword {
     my $self = shift;
     # We don't store it because we never want it in the object (we
@@ -323,7 +501,7 @@ sub authorizer {
 }
 
 # Generate a string to identify the user by name + login if the user
-# has a name or by login only if she doesn't.
+# has a name or by login only if they don't.
 sub identity {
     my $self = shift;
 
@@ -429,6 +607,31 @@ sub tags {
             'name', undef, $self->id);
     }
     return $self->{tags};
+}
+
+sub bugs_ignored {
+    my ($self) = @_;
+    my $dbh = Bugzilla->dbh;
+    if (!defined $self->{'bugs_ignored'}) {
+        $self->{'bugs_ignored'} = $dbh->selectall_arrayref(
+            'SELECT bugs.bug_id AS id,
+                    bugs.bug_status AS status,
+                    bugs.short_desc AS summary
+               FROM bugs
+                    INNER JOIN email_bug_ignore
+                    ON bugs.bug_id = email_bug_ignore.bug_id
+              WHERE user_id = ?',
+            { Slice => {} }, $self->id);
+        # Go ahead and load these into the visible bugs cache
+        # to speed up can_see_bug checks later
+        $self->visible_bugs([ map { $_->{'id'} } @{ $self->{'bugs_ignored'} } ]);
+    }
+    return $self->{'bugs_ignored'};
+}
+
+sub is_bug_ignored {
+    my ($self, $bug_id) = @_;
+    return (grep {$_->{'id'} == $bug_id} @{$self->bugs_ignored}) ? 1 : 0;
 }
 
 ##########################
@@ -575,6 +778,25 @@ sub save_last_search {
     return $search;
 }
 
+sub reports {
+    my $self = shift;
+    return $self->{reports} if defined $self->{reports};
+    return [] unless $self->id;
+
+    my $dbh = Bugzilla->dbh;
+    my $report_ids = $dbh->selectcol_arrayref(
+        'SELECT id FROM reports WHERE user_id = ?', undef, $self->id);
+    require Bugzilla::Report;
+    $self->{reports} = Bugzilla::Report->new_from_list($report_ids);
+    return $self->{reports};
+}
+
+sub flush_reports_cache {
+    my $self = shift;
+
+    delete $self->{reports};
+}
+
 sub settings {
     my ($self) = @_;
 
@@ -627,54 +849,99 @@ sub groups {
     return $self->{groups} if defined $self->{groups};
     return [] unless $self->id;
 
-    my $dbh = Bugzilla->dbh;
-    my $groups_to_check = $dbh->selectcol_arrayref(
-        q{SELECT DISTINCT group_id
-            FROM user_group_map
-           WHERE user_id = ? AND isbless = 0}, undef, $self->id);
+    my $user_groups_key = "user_groups." . $self->id;
+    my $groups = Bugzilla->memcached->get_config({
+        key => $user_groups_key
+    });
 
-    my $rows = $dbh->selectall_arrayref(
-        "SELECT DISTINCT grantor_id, member_id
-           FROM group_group_map
-          WHERE grant_type = " . GROUP_MEMBERSHIP);
+    if (!$groups) {
+        my $dbh = Bugzilla->dbh;
+        my $groups_to_check = $dbh->selectcol_arrayref(
+            "SELECT DISTINCT group_id
+               FROM user_group_map
+              WHERE user_id = ? AND isbless = 0", undef, $self->id);
 
-    my %group_membership;
-    foreach my $row (@$rows) {
-        my ($grantor_id, $member_id) = @$row; 
-        push (@{ $group_membership{$member_id} }, $grantor_id);
-    }
-    
-    # Let's walk the groups hierarchy tree (using FIFO)
-    # On the first iteration it's pre-filled with direct groups 
-    # membership. Later on, each group can add its own members into the
-    # FIFO. Circular dependencies are eliminated by checking
-    # $checked_groups{$member_id} hash values.
-    # As a result, %groups will have all the groups we are the member of.
-    my %checked_groups;
-    my %groups;
-    while (scalar(@$groups_to_check) > 0) {
-        # Pop the head group from FIFO
-        my $member_id = shift @$groups_to_check;
-        
-        # Skip the group if we have already checked it
-        if (!$checked_groups{$member_id}) {
-            # Mark group as checked
-            $checked_groups{$member_id} = 1;
-            
-            # Add all its members to the FIFO check list
-            # %group_membership contains arrays of group members 
-            # for all groups. Accessible by group number.
-            my $members = $group_membership{$member_id};
-            my @new_to_check = grep(!$checked_groups{$_}, @$members);
-            push(@$groups_to_check, @new_to_check);
-
-            $groups{$member_id} = 1;
+        my $grant_type_key = 'group_grant_type_' . GROUP_MEMBERSHIP;
+        my $membership_rows = Bugzilla->memcached->get_config({
+            key => $grant_type_key,
+        });
+        if (!$membership_rows) {
+            $membership_rows = $dbh->selectall_arrayref(
+                "SELECT DISTINCT grantor_id, member_id
+                FROM group_group_map
+                WHERE grant_type = " . GROUP_MEMBERSHIP);
+            Bugzilla->memcached->set_config({
+                key  => $grant_type_key,
+                data => $membership_rows,
+            });
         }
+
+        my %group_membership;
+        foreach my $row (@$membership_rows) {
+            my ($grantor_id, $member_id) = @$row;
+            push (@{ $group_membership{$member_id} }, $grantor_id);
+        }
+
+        # Let's walk the groups hierarchy tree (using FIFO)
+        # On the first iteration it's pre-filled with direct groups
+        # membership. Later on, each group can add its own members into the
+        # FIFO. Circular dependencies are eliminated by checking
+        # $checked_groups{$member_id} hash values.
+        # As a result, %groups will have all the groups we are the member of.
+        my %checked_groups;
+        my %groups;
+        while (scalar(@$groups_to_check) > 0) {
+            # Pop the head group from FIFO
+            my $member_id = shift @$groups_to_check;
+
+            # Skip the group if we have already checked it
+            if (!$checked_groups{$member_id}) {
+                # Mark group as checked
+                $checked_groups{$member_id} = 1;
+
+                # Add all its members to the FIFO check list
+                # %group_membership contains arrays of group members
+                # for all groups. Accessible by group number.
+                my $members = $group_membership{$member_id};
+                my @new_to_check = grep(!$checked_groups{$_}, @$members);
+                push(@$groups_to_check, @new_to_check);
+
+                $groups{$member_id} = 1;
+            }
+        }
+        $groups = [ keys %groups ];
+
+        Bugzilla->memcached->set_config({
+            key  => $user_groups_key,
+            data => $groups,
+        });
     }
 
-    $self->{groups} = Bugzilla::Group->new_from_list([keys %groups]);
-
+    $self->{groups} = Bugzilla::Group->new_from_list($groups);
     return $self->{groups};
+}
+
+sub last_visited {
+    my ($self, $ids) = @_;
+
+    return Bugzilla::BugUserLastVisit->match({ user_id => $self->id,
+                                               $ids ? ( bug_id => $ids ) : () });
+}
+
+sub is_involved_in_bug {
+    my ($self, $bug) = @_;
+    my $user_id    = $self->id;
+    my $user_login = $self->login;
+
+    return unless $user_id;
+    return 1 if $user_id == $bug->assigned_to->id;
+    return 1 if $user_id == $bug->reporter->id;
+
+    if (Bugzilla->params->{'useqacontact'} and $bug->qa_contact) {
+        return 1 if $user_id == $bug->qa_contact->id;
+    }
+
+    return any { $user_login eq $_ } @{ $bug->cc };
 }
 
 # It turns out that calling ->id on objects a few hundred thousand
@@ -713,34 +980,42 @@ sub bless_groups {
         return $self->{'bless_groups'};
     }
 
+    if (Bugzilla->params->{usevisibilitygroups}
+        && !@{ $self->visible_groups_inherited }) {
+        return [];
+    }
+
     my $dbh = Bugzilla->dbh;
 
-    # Get all groups for the user where:
-    #    + They have direct bless privileges
-    #    + They are a member of a group that inherits bless privs.
-    my @group_ids = map {$_->id} @{ $self->groups };
-    @group_ids = (-1) if !@group_ids;
-    my $query =
-        'SELECT DISTINCT groups.id
-           FROM groups, user_group_map, group_group_map AS ggm
-          WHERE user_group_map.user_id = ?
-                AND ( (user_group_map.isbless = 1
-                       AND groups.id=user_group_map.group_id)
-                     OR (groups.id = ggm.grantor_id
-                         AND ggm.grant_type = ' . GROUP_BLESS . '
-                         AND ' . $dbh->sql_in('ggm.member_id', \@group_ids)
-                     . ') )';
-
-    # If visibilitygroups are used, restrict the set of groups.
-    if (Bugzilla->params->{'usevisibilitygroups'}) {
-        return [] if !$self->visible_groups_as_string;
-        # Users need to see a group in order to bless it.
+    # Get all groups for the user where they have direct bless privileges.
+    my $query = "
+        SELECT DISTINCT group_id
+          FROM user_group_map
+         WHERE user_id = ?
+               AND isbless = 1";
+    if (Bugzilla->params->{usevisibilitygroups}) {
         $query .= " AND "
-            . $dbh->sql_in('groups.id', $self->visible_groups_inherited);
+            . $dbh->sql_in('group_id', $self->visible_groups_inherited);
+    }
+
+    # Get all groups for the user where they are a member of a group that
+    # inherits bless privs.
+    my @group_ids = map { $_->id } @{ $self->groups };
+    if (@group_ids) {
+        $query .= "
+            UNION
+            SELECT DISTINCT grantor_id
+            FROM group_group_map
+            WHERE grant_type = " . GROUP_BLESS . "
+                AND " . $dbh->sql_in('member_id', \@group_ids);
+        if (Bugzilla->params->{usevisibilitygroups}) {
+            $query .= " AND "
+                . $dbh->sql_in('grantor_id', $self->visible_groups_inherited);
+        }
     }
 
     my $ids = $dbh->selectcol_arrayref($query, undef, $self->id);
-    return $self->{'bless_groups'} = Bugzilla::Group->new_from_list($ids);
+    return $self->{bless_groups} = Bugzilla::Group->new_from_list($ids);
 }
 
 sub in_group {
@@ -776,6 +1051,14 @@ sub in_group {
 sub in_group_id {
     my ($self, $id) = @_;
     return grep($_->id == $id, @{ $self->groups }) ? 1 : 0;
+}
+
+# This is a helper to get all groups which have an icon to be displayed
+# besides the name of the commenter.
+sub groups_with_icon {
+    my $self = shift;
+
+    return $self->{groups_with_icon} //= [grep { $_->icon_url } @{ $self->groups }];
 }
 
 sub get_products_by_permission {
@@ -826,15 +1109,34 @@ sub can_edit_product {
     my ($self, $prod_id) = @_;
     my $dbh = Bugzilla->dbh;
 
-    my $has_external_groups =
-      $dbh->selectrow_array('SELECT 1
-                               FROM group_control_map
-                              WHERE product_id = ?
-                                AND canedit != 0
-                                AND group_id NOT IN(' . $self->groups_as_string . ')',
-                             undef, $prod_id);
+    if (Bugzilla->params->{'or_groups'}) {
+        my $groups = $self->groups_as_string;
+        # For or-groups, we check if there are any can_edit groups for the
+        # product, and if the user is in any of them. If there are none or
+        # the user is in at least one of them, they can edit the product
+        my ($cnt_can_edit, $cnt_group_member) = $dbh->selectrow_array(
+           "SELECT SUM(p.cnt_can_edit),
+                   SUM(p.cnt_group_member)
+              FROM (SELECT CASE WHEN canedit = 1 THEN 1 ELSE 0 END AS cnt_can_edit,
+                           CASE WHEN canedit = 1 AND group_id IN ($groups) THEN 1 ELSE 0 END AS cnt_group_member
+                    FROM group_control_map
+                    WHERE product_id = $prod_id) AS p");
+        return (!$cnt_can_edit or $cnt_group_member);
+    }
+    else {
+        # For and-groups, a user needs to be in all canedit groups. Therefore
+        # if the user is not in a can_edit group for the product, they cannot
+        # edit the product.
+        my $has_external_groups =
+          $dbh->selectrow_array('SELECT 1
+                                   FROM group_control_map
+                                  WHERE product_id = ?
+                                    AND canedit != 0
+                                    AND group_id NOT IN(' . $self->groups_as_string . ')',
+                                 undef, $prod_id);
 
-    return !$has_external_groups;
+        return !$has_external_groups;
+    }
 }
 
 sub can_see_bug {
@@ -855,58 +1157,120 @@ sub visible_bugs {
     my @check_ids = grep(!exists $visible_cache->{$_}, @bug_ids);
 
     if (@check_ids) {
-        my $dbh = Bugzilla->dbh;
-        my $user_id = $self->id;
-        my $sth;
-        # Speed up the can_see_bug case.
-        # WEBKIT_CHANGES: Disable statement caching
-        #if (scalar(@check_ids) == 1) {
-        #    $sth = $self->{_sth_one_visible_bug};
-        #}
-        $sth ||= $dbh->prepare(
-            # This checks for groups that the bug is in that the user
-            # *isn't* in. Then, in the Perl code below, we check if
-            # the user can otherwise access the bug (for example, by being
-            # the assignee or QA Contact).
-            #
-            # The DISTINCT exists because the bug could be in *several*
-            # groups that the user isn't in, but they will all return the
-            # same result for bug_group_map.bug_id (so DISTINCT filters
-            # out duplicate rows).
-            "SELECT DISTINCT bugs.bug_id, reporter, assigned_to, qa_contact,
-                    reporter_accessible, cclist_accessible, cc.who,
-                    bug_group_map.bug_id
-               FROM bugs
-                    LEFT JOIN cc
-                              ON cc.bug_id = bugs.bug_id
-                                 AND cc.who = $user_id
-                    LEFT JOIN bug_group_map 
-                              ON bugs.bug_id = bug_group_map.bug_id
-                                 AND bug_group_map.group_id NOT IN ("
-                                     . $self->groups_as_string . ')
-              WHERE bugs.bug_id IN (' . join(',', ('?') x @check_ids) . ')
-                    AND creation_ts IS NOT NULL ');
-        # WEBKIT_CHANGES: Disable statement caching
-        #if (scalar(@check_ids) == 1) {
-        #    $self->{_sth_one_visible_bug} = $sth;
-        #}
-
-        $sth->execute(@check_ids);
-        my $use_qa_contact = Bugzilla->params->{'useqacontact'};
-        while (my $row = $sth->fetchrow_arrayref) {
-            my ($bug_id, $reporter, $owner, $qacontact, $reporter_access, 
-                $cclist_access, $isoncclist, $missinggroup) = @$row;
-            $visible_cache->{$bug_id} ||= 
-                ((($reporter == $user_id) && $reporter_access)
-                 || ($use_qa_contact
-                     && $qacontact && ($qacontact == $user_id))
-                 || ($owner == $user_id)
-                 || ($isoncclist && $cclist_access)
-                 || !$missinggroup) ? 1 : 0;
+        foreach my $id (@check_ids) {
+            my $orig_id = $id;
+            detaint_natural($id)
+              || ThrowCodeError('param_must_be_numeric', { param    => $orig_id,
+                                                           function => 'Bugzilla::User->visible_bugs'});
         }
+
+        Bugzilla->params->{'or_groups'}
+            ? $self->_visible_bugs_check_or(\@check_ids)
+            : $self->_visible_bugs_check_and(\@check_ids);
     }
 
     return [grep { $visible_cache->{blessed $_ ? $_->id : $_} } @$bugs];
+}
+
+sub _visible_bugs_check_or {
+    my ($self, $check_ids) = @_;
+    my $visible_cache = $self->{_visible_bugs_cache};
+    my $dbh = Bugzilla->dbh;
+    my $user_id = $self->id;
+
+    my $sth;
+    # Speed up the can_see_bug case.
+    if (scalar(@$check_ids) == 1) {
+        $sth = $self->{_sth_one_visible_bug};
+    }
+    my $query = qq{
+        SELECT DISTINCT bugs.bug_id
+        FROM bugs
+            LEFT JOIN bug_group_map AS security_map ON bugs.bug_id = security_map.bug_id
+            LEFT JOIN cc AS security_cc ON bugs.bug_id = security_cc.bug_id AND security_cc.who = $user_id
+        WHERE bugs.bug_id IN (} . join(',', ('?') x @$check_ids) . qq{)
+          AND ((security_map.group_id IS NULL OR security_map.group_id IN (} . $self->groups_as_string . qq{))
+            OR (bugs.reporter_accessible = 1 AND bugs.reporter = $user_id)
+            OR (bugs.cclist_accessible = 1 AND security_cc.who IS NOT NULL)
+            OR bugs.assigned_to = $user_id
+    };
+
+    if (Bugzilla->params->{'useqacontact'}) {
+        $query .= " OR bugs.qa_contact = $user_id";
+    }
+    $query .= ')';
+
+    $sth ||= $dbh->prepare($query);
+    if (scalar(@$check_ids) == 1) {
+        $self->{_sth_one_visible_bug} = $sth;
+    }
+
+    # Set all bugs as non visible
+    foreach my $bug_id (@$check_ids) {
+        $visible_cache->{$bug_id} = 0;
+    }
+
+    # Now get the bugs the user can see
+    my $visible_bug_ids = $dbh->selectcol_arrayref($sth, undef, @$check_ids);
+    foreach my $bug_id (@$visible_bug_ids) {
+        $visible_cache->{$bug_id} = 1;
+    }
+}
+
+sub _visible_bugs_check_and {
+    my ($self, $check_ids) = @_;
+    my $visible_cache = $self->{_visible_bugs_cache};
+    my $dbh = Bugzilla->dbh;
+    my $user_id = $self->id;
+
+    my $sth;
+    # Speed up the can_see_bug case.
+    # WEBKIT_CHANGES: Disable statement caching
+    #if (scalar(@$check_ids) == 1) {
+    #    $sth = $self->{_sth_one_visible_bug};
+    #}
+    $sth ||= $dbh->prepare(
+        # This checks for groups that the bug is in that the user
+        # *isn't* in. Then, in the Perl code below, we check if
+        # the user can otherwise access the bug (for example, by being
+        # the assignee or QA Contact).
+        #
+        # The DISTINCT exists because the bug could be in *several*
+        # groups that the user isn't in, but they will all return the
+        # same result for bug_group_map.bug_id (so DISTINCT filters
+        # out duplicate rows).
+        "SELECT DISTINCT bugs.bug_id, reporter, assigned_to, qa_contact,
+                reporter_accessible, cclist_accessible, cc.who,
+                bug_group_map.bug_id
+           FROM bugs
+                LEFT JOIN cc
+                          ON cc.bug_id = bugs.bug_id
+                             AND cc.who = $user_id
+                LEFT JOIN bug_group_map 
+                          ON bugs.bug_id = bug_group_map.bug_id
+                             AND bug_group_map.group_id NOT IN ("
+                                 . $self->groups_as_string . ')
+          WHERE bugs.bug_id IN (' . join(',', ('?') x @$check_ids) . ')
+                AND creation_ts IS NOT NULL ');
+    # WEBKIT_CHANGES: Disable statement caching
+    #if (scalar(@$check_ids) == 1) {
+    #    $self->{_sth_one_visible_bug} = $sth;
+    #}
+
+    $sth->execute(@$check_ids);
+    my $use_qa_contact = Bugzilla->params->{'useqacontact'};
+    while (my $row = $sth->fetchrow_arrayref) {
+        my ($bug_id, $reporter, $owner, $qacontact, $reporter_access, 
+            $cclist_access, $isoncclist, $missinggroup) = @$row;
+        $visible_cache->{$bug_id} ||= 
+            ((($reporter == $user_id) && $reporter_access)
+             || ($use_qa_contact
+                 && $qacontact && ($qacontact == $user_id))
+             || ($owner == $user_id)
+             || ($isoncclist && $cclist_access)
+             || !$missinggroup) ? 1 : 0;
+    }
+
 }
 
 sub clear_product_cache {
@@ -928,15 +1292,24 @@ sub get_selectable_products {
     my $class_restricted = Bugzilla->params->{'useclassification'} && $class_id;
 
     if (!defined $self->{selectable_products}) {
-        my $query = "SELECT id " .
-                    "  FROM products " .
-                 "LEFT JOIN group_control_map " .
-                        "ON group_control_map.product_id = products.id " .
-                      " AND group_control_map.membercontrol = " . CONTROLMAPMANDATORY .
-                      " AND group_id NOT IN(" . $self->groups_as_string . ") " .
-                  "   WHERE group_id IS NULL " .
-                  "ORDER BY name";
-
+        my $query = "SELECT id
+                     FROM products
+                         LEFT JOIN group_control_map
+                             ON group_control_map.product_id = products.id
+                             AND group_control_map.membercontrol = " . CONTROLMAPMANDATORY;
+                             
+        if (Bugzilla->params->{'or_groups'}) {
+            # Either the user is in at least one of the MANDATORY groups, or
+            # there are no such groups for the product.
+            $query .= " WHERE group_id IN (" . $self->groups_as_string . ")
+                        OR group_id IS NULL";
+        }
+        else {
+            # There must be no MANDATORY groups that the user is not in.
+            $query .= " AND group_id NOT IN (" . $self->groups_as_string . ")
+                        WHERE group_id IS NULL";
+        }
+        
         my $prod_ids = Bugzilla->dbh->selectcol_arrayref($query);
         $self->{selectable_products} = Bugzilla::Product->new_from_list($prod_ids);
     }
@@ -1029,14 +1402,21 @@ sub get_enterable_products {
     }
 
      # All products which the user has "Entry" access to.
-     my $enterable_ids = $dbh->selectcol_arrayref(
+     my $query =
            'SELECT products.id FROM products
-         LEFT JOIN group_control_map
-                   ON group_control_map.product_id = products.id
-                      AND group_control_map.entry != 0
-                      AND group_id NOT IN (' . $self->groups_as_string . ')
-            WHERE group_id IS NULL
-                  AND products.isactive = 1');
+            LEFT JOIN group_control_map
+                ON group_control_map.product_id = products.id
+                    AND group_control_map.entry != 0';
+
+    if (Bugzilla->params->{'or_groups'}) {
+        $query .= " WHERE (group_id IN (" . $self->groups_as_string . ")" .
+                  "    OR group_id IS NULL)";
+    } else {
+        $query .= " AND group_id NOT IN (" . $self->groups_as_string . ")" .
+                  " WHERE group_id IS NULL"
+    }
+    $query .= " AND products.isactive = 1";
+    my $enterable_ids = $dbh->selectcol_arrayref($query);
 
     if (scalar @$enterable_ids) {
         # And all of these products must have at least one component
@@ -1074,6 +1454,30 @@ sub get_accessible_products {
     return [ sort { $a->name cmp $b->name } values %products ];
 }
 
+sub can_administer {
+    my $self = shift;
+
+    if (not defined $self->{can_administer}) {
+        my $can_administer = 0;
+
+        $can_administer = 1 if $self->in_group('admin')
+            || $self->in_group('tweakparams')
+            || $self->in_group('editusers')
+            || $self->can_bless
+            || (Bugzilla->params->{'useclassification'} && $self->in_group('editclassifications'))
+            || $self->in_group('editcomponents')
+            || scalar(@{$self->get_products_by_permission('editcomponents')})
+            || $self->in_group('creategroups')
+            || $self->in_group('editkeywords')
+            || $self->in_group('bz_canusewhines');
+
+        Bugzilla::Hook::process('user_can_administer', { can_administer => \$can_administer });
+        $self->{can_administer} = $can_administer;
+    }
+
+    return $self->{can_administer};
+}
+
 sub check_can_admin_product {
     my ($self, $product_name) = @_;
 
@@ -1107,7 +1511,7 @@ sub check_can_admin_flagtype {
         my $e = $flagtype->exclusions_as_hash;
 
         # If there is at least one product for which the user doesn't have
-        # editcomponents privs, then don't allow him to do everything with
+        # editcomponents privs, then don't allow them to do everything with
         # this flagtype, independently of whether this product is in the
         # exclusion list or not.
         my %product_ids;
@@ -1145,24 +1549,6 @@ sub can_set_flag {
     return (!$flag_type->grant_group_id
             || $self->in_group_id($flag_type->grant_group_id)) ? 1 : 0;
 }
-
-sub direct_group_membership {
-    my $self = shift;
-    my $dbh = Bugzilla->dbh;
-
-    if (!$self->{'direct_group_membership'}) {
-        my $gid = $dbh->selectcol_arrayref('SELECT id
-                                              FROM groups
-                                        INNER JOIN user_group_map
-                                                ON groups.id = user_group_map.group_id
-                                             WHERE user_id = ?
-                                               AND isbless = 0',
-                                             undef, $self->id);
-        $self->{'direct_group_membership'} = Bugzilla::Group->new_from_list($gid);
-    }
-    return $self->{'direct_group_membership'};
-}
-
 
 # visible_groups_inherited returns a reference to a list of all the groups
 # whose members are visible to this user.
@@ -1279,6 +1665,8 @@ sub derive_regexp_groups {
             $group_delete->execute($id, $group, GRANT_REGEXP) if $present;
         }
     }
+
+    Bugzilla->memcached->clear_config({ key => "user_groups.$id" });
 }
 
 sub product_responsibilities {
@@ -1637,7 +2025,9 @@ our %names_to_events = (
     'attachments.mimetype'    => EVT_ATTACHMENT_DATA,
     'attachments.ispatch'     => EVT_ATTACHMENT_DATA,
     'dependson'               => EVT_DEPEND_BLOCK,
-    'blocked'                 => EVT_DEPEND_BLOCK);
+    'blocked'                 => EVT_DEPEND_BLOCK,
+    'product'                 => EVT_COMPONENT,
+    'component'               => EVT_COMPONENT);
 
 # Returns true if the user wants mail for a given bug change.
 # Note: the "+" signs before the constants suppress bareword quoting.
@@ -1656,7 +2046,7 @@ sub wants_bug_mail {
         }
         else {
             # Catch-all for any change not caught by a more specific event
-            $events{+EVT_OTHER} = 1;            
+            $events{+EVT_OTHER} = 1;
         }
 
         # If the user is in a particular role and the value of that role
@@ -1810,6 +2200,17 @@ sub is_timetracker {
             ($tt_group && $self->in_group($tt_group)) ? 1 : 0;
     }
     return $self->{'is_timetracker'};
+}
+
+sub can_tag_comments {
+    my $self = shift;
+
+    if (!defined $self->{'can_tag_comments'}) {
+        my $group = Bugzilla->params->{'comment_taggers_group'};
+        $self->{'can_tag_comments'} =
+            ($group && $self->in_group($group)) ? 1 : 0;
+    }
+    return $self->{'can_tag_comments'};
 }
 
 sub get_userlist {
@@ -1967,8 +2368,8 @@ sub is_available_username {
     # was unsafe and required weird escaping; using substring to pull out
     # the new/old email addresses and sql_position() to find the delimiter (':')
     # is cleaner/safer
-    my $eventdata = $dbh->selectrow_array(
-        "SELECT eventdata
+    my ($tokentype, $eventdata) = $dbh->selectrow_array(
+        "SELECT tokentype, eventdata
            FROM tokens
           WHERE (tokentype = 'emailold'
                 AND SUBSTRING(eventdata, 1, (" .
@@ -1980,7 +2381,10 @@ sub is_available_username {
 
     if ($eventdata) {
         # Allow thru owner of token
-        if($old_username && ($eventdata eq "$old_username:$username")) {
+        if ($old_username
+            && (($tokentype eq 'emailnew' && $eventdata eq "$old_username:$username")
+                || ($tokentype eq 'emailold' && $eventdata eq "$username:$old_username")))
+        {
             return 1;
         }
         return 0;
@@ -2002,17 +2406,25 @@ sub check_account_creation_enabled {
 
 sub check_and_send_account_creation_confirmation {
     my ($self, $login) = @_;
+    my $dbh = Bugzilla->dbh;
 
-    $login = $self->check_login_name_for_creation($login);
+    $dbh->bz_start_transaction;
+
+    $login = $self->check_login_name($login);
     my $creation_regexp = Bugzilla->params->{'createemailregexp'};
 
     if ($login !~ /$creation_regexp/i) {
         ThrowUserError('account_creation_restricted');
     }
 
+    # Allow extensions to do extra checks.
+    Bugzilla::Hook::process('user_check_account_creation', { login => $login });
+
     # Create and send a token for this new account.
     require Bugzilla::Token;
     Bugzilla::Token::issue_new_user_account_token($login);
+
+    $dbh->bz_commit_transaction;
 }
 
 # This is used in a few performance-critical areas where we don't want to
@@ -2049,41 +2461,36 @@ sub login_to_id {
     }
 }
 
-sub user_id_to_login {
-    my $user_id = shift;
-    my $dbh = Bugzilla->dbh;
-
-    return '' unless ($user_id && detaint_natural($user_id));
-
-    my $login = $dbh->selectrow_array('SELECT login_name FROM profiles
-                                       WHERE userid = ?', undef, $user_id);
-    return $login || '';
+sub validate_password {
+    my $check = validate_password_check(@_);
+    ThrowUserError($check) if $check;
+    return 1;
 }
 
-sub validate_password {
+sub validate_password_check {
     my ($password, $matchpassword) = @_;
 
     if (length($password) < USER_PASSWORD_MIN_LENGTH) {
-        ThrowUserError('password_too_short');
+        return 'password_too_short';
     } elsif ((defined $matchpassword) && ($password ne $matchpassword)) {
-        ThrowUserError('passwords_dont_match');
+        return 'passwords_dont_match';
     }
-    
+
     my $complexity_level = Bugzilla->params->{password_complexity};
     if ($complexity_level eq 'letters_numbers_specialchars') {
-        ThrowUserError('password_not_complex')
+        return 'password_not_complex'
           if ($password !~ /[[:alpha:]]/ || $password !~ /\d/ || $password !~ /[[:punct:]]/);
     } elsif ($complexity_level eq 'letters_numbers') {
-        ThrowUserError('password_not_complex')
+        return 'password_not_complex'
           if ($password !~ /[[:lower:]]/ || $password !~ /[[:upper:]]/ || $password !~ /\d/);
     } elsif ($complexity_level eq 'mixed_letters') {
-        ThrowUserError('password_not_complex')
+        return 'password_not_complex'
           if ($password !~ /[[:lower:]]/ || $password !~ /[[:upper:]]/);
     }
 
     # Having done these checks makes us consider the password untainted.
     trick_taint($_[0]);
-    return 1;
+    return;
 }
 
 
@@ -2201,6 +2608,34 @@ groups.
 Returns a hashref with tag IDs as key, and a hashref with tag 'id',
 'name' and 'bug_count' as value.
 
+=item C<bugs_ignored>
+
+Returns an array of hashrefs containing information about bugs currently
+being ignored by the user.
+
+Each hashref contains the following information:
+
+=over
+
+=item C<id>
+
+C<int> The id of the bug.
+
+=item C<status>
+
+C<string> The current status of the bug.
+
+=item C<summary>
+
+C<string> The current summary of the bug.
+
+=back
+
+=item C<is_bug_ignored>
+
+Returns true if the user does not want email notifications for the
+specified bug ID, else returns false.
+
 =back
 
 =head2 Saved Recent Bug Lists
@@ -2253,6 +2688,10 @@ This notes that this account has failed to log in, and stores the fact
 in the database. The storing happens immediately, it does not wait for
 you to call C<update>.
 
+=item C<set_email_enabled>
+
+C<bool> - Sets C<disable_mail> to the inverse of the boolean provided.
+
 =back
 
 =head2 Other Methods
@@ -2278,7 +2717,7 @@ Returns the 'real' name for this user, if any.
 
 =item C<showmybugslink>
 
-Returns C<1> if the user has set his preference to show the 'My Bugs' link in
+Returns C<1> if the user has set their preference to show the 'My Bugs' link in
 the page footer, and C<0> otherwise.
 
 =item C<identity>
@@ -2308,6 +2747,17 @@ Should only be called by C<Bugzilla::Auth::login>, for the most part.
 =item C<disabledtext>
 
 Returns the disable text of the user, if any.
+
+=item C<reports>
+
+Returns an arrayref of the user's own saved reports. The array contains 
+L<Bugzilla::Reports> objects.
+
+=item C<flush_reports_cache>
+
+Some code modifies the set of stored reports. Because C<Bugzilla::User> does
+not handle these modifications, but does cache the result of calling C<reports>
+internally, such code must call this method to flush the cached result.
 
 =item C<settings>
 
@@ -2371,7 +2821,7 @@ that you need to be able to see a group in order to bless it.
 =item C<get_products_by_permission($group)>
 
 Returns a list of product objects for which the user has $group privileges
-and which he can access.
+and which they can access.
 $group must be one of the groups defined in PER_PRODUCT_PRIVILEGES.
 
 =item C<can_see_user(user)>
@@ -2383,6 +2833,12 @@ Returns 1 if the specified user account exists and is visible to the user,
 
 Determines if, given a product id, the user can edit bugs in this product
 at all.
+
+=item C<visible_bugs($bugs)>
+
+Description: Determines if a list of bugs are visible to the user.
+Params:      C<$bugs> - An arrayref of Bugzilla::Bug objects or bug ids
+Returns:     An arrayref of the bug ids that the user can see
 
 =item C<can_see_bug(bug_id)>
 
@@ -2470,6 +2926,10 @@ not be aware of the existence of the product.
 
  Returns:     an array of product objects.
 
+=item C<can_administer>
+
+Returns 1 if the user can see the admin menu. Otherwise, returns 0
+
 =item C<check_can_admin_product($product_name)>
 
  Description: Checks whether the user is allowed to administrate the product.
@@ -2483,7 +2943,7 @@ not be aware of the existence of the product.
  Description: Checks whether the user is allowed to edit properties of the flag type.
               If the flag type is also used by some products for which the user
               hasn't editcomponents privs, then the user is only allowed to edit
-              the inclusion and exclusion lists for products he can administrate.
+              the inclusion and exclusion lists for products they can administrate.
 
  Params:      $flagtype_id - a flag type ID.
 
@@ -2516,11 +2976,6 @@ not be aware of the existence of the product.
 Returns a reference to an array of users.  The array is populated with hashrefs
 containing the login, identity and visibility.  Users that are not visible to this
 user will have 'visible' set to zero.
-
-=item C<direct_group_membership>
-
-Returns a reference to an array of group objects. Groups the user belong to
-by group inheritance are excluded from the list.
 
 =item C<visible_groups_inherited>
 
@@ -2571,6 +3026,72 @@ i.e. if the 'insidergroup' parameter is set and the user belongs to this group.
 Returns true if the user is a global watcher,
 i.e. if the 'globalwatchers' parameter contains the user.
 
+=item C<can_tag_comments>
+
+Returns true if the user can attach tags to comments.
+i.e. if the 'comment_taggers_group' parameter is set and the user belongs to
+this group.
+
+=item C<last_visited>
+
+Returns an arrayref L<Bugzilla::BugUserLastVisit> objects.
+
+=item C<is_involved_in_bug($bug)>
+
+Returns true if any of the following conditions are met, false otherwise.
+
+=over
+
+=item *
+
+User is the assignee of the bug
+
+=item *
+
+User is the reporter of the bug
+
+=item *
+
+User is the QA contact of the bug (if Bugzilla is configured to use a QA
+contact)
+
+=item *
+
+User is in the cc list for the bug.
+
+=back
+
+=item C<set_groups>
+
+C<hash> These specify the groups that this user is directly a member of.
+To set these, you should pass a hash as the value. The hash may contain
+the following fields:
+
+=over
+
+=item C<add> An array of C<int>s or C<string>s. The group ids or group names
+that the user should be added to.
+
+=item C<remove> An array of C<int>s or C<string>s. The group ids or group names
+that the user should be removed from.
+
+=item C<set> An array of C<int>s or C<string>s. An exact set of group ids
+and group names that the user should be a member of. NOTE: This does not
+remove groups from the user where the person making the change does not
+have the bless privilege for.
+
+If you specify C<set>, then C<add> and C<remove> will be ignored. A group in
+both the C<add> and C<remove> list will be added. Specifying a group that the
+user making the change does not have bless rights will generate an error.
+
+=back
+
+=item C<set_bless_groups>
+
+C<hash> - This is the same as set_groups, but affects what groups a user
+has direct membership to bless that group. It takes the same inputs as
+set_groups.
+
 =back
 
 =head1 CLASS FUNCTIONS
@@ -2591,7 +3112,7 @@ Params: login_name - B<Required> The login name for the new user.
             a plain-text password. If you specify '*', the user will not
             be able to log in using DB authentication.
         disabledtext - The disable-text for the new user. If given, the user 
-            will be disabled, meaning he cannot log in. Defaults to an
+            will be disabled, meaning they cannot log in. Defaults to an
             empty string.
         disable_mail - If 1, bug-related mail will not be  sent to this user; 
             if 0, mail will be sent depending on the user's  email preferences.
@@ -2621,8 +3142,8 @@ Params: $username (scalar, string) - The full login name of the username
             that you are checking.
         $old_username (scalar, string) - If you are checking an email-change
             token, insert the "old" username that the user is changing from,
-            here. Then, as long as it's the right user for that token, he 
-            can change his username to $username. (That is, this function
+            here. Then, as long as it's the right user for that token, they
+            can change their username to $username. (That is, this function
             will return a boolean true value).
 
 =item C<login_to_id($login, $throw_error)>
@@ -2641,17 +3162,22 @@ of a user, but you don't want the full weight of Bugzilla::User.
 However, consider using a Bugzilla::User object instead of this function
 if you need more information about the user than just their ID.
 
-=item C<user_id_to_login($user_id)>
-
-Returns the login name of the user account for the given user ID. If no
-valid user ID is given or the user has no entry in the profiles table,
-we return an empty string.
-
 =item C<validate_password($passwd1, $passwd2)>
 
 Returns true if a password is valid (i.e. meets Bugzilla's
-requirements for length and content), else returns false.
+requirements for length and content), else throws an error.
 Untaints C<$passwd1> if successful.
+
+If a second password is passed in, this function also verifies that
+the two passwords match.
+
+=item C<validate_password_check($passwd1, $passwd2)>
+
+This sub routine is similair to C<validate_password>, except that it allows
+the calling code to handle its own errors.
+
+Returns undef and untaints C<$passwd1> if a password is valid (i.e. meets
+Bugzilla's requirements for length and content), else returns the error.
 
 If a second password is passed in, this function also verifies that
 the two passwords match.
@@ -2704,3 +3230,55 @@ is done with the data.
 =head1 SEE ALSO
 
 L<Bugzilla|Bugzilla>
+
+=head1 B<Methods in need of POD>
+
+=over
+
+=item email_enabled
+
+=item cryptpassword
+
+=item clear_login_failures
+
+=item set_disable_mail
+
+=item has_audit_entries
+
+=item groups_with_icon
+
+=item check_login_name
+
+=item set_extern_id
+
+=item mail_settings
+
+=item email_disabled
+
+=item update
+
+=item is_timetracker
+
+=item is_enabled
+
+=item queryshare_groups_as_string
+
+=item set_login
+
+=item set_password
+
+=item last_seen_date
+
+=item set_disabledtext
+
+=item update_last_seen_date
+
+=item set_name
+
+=item DB_COLUMNS
+
+=item extern_id
+
+=item UPDATE_COLUMNS
+
+=back

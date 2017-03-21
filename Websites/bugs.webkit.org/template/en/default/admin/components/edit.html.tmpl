@@ -1,22 +1,9 @@
-[%# The contents of this file are subject to the Mozilla Public
-  # License Version 1.1 (the "License"); you may not use this file
-  # except in compliance with the License. You may obtain a copy of
-  # the License at http://www.mozilla.org/MPL/
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
   #
-  # Software distributed under the License is distributed on an "AS
-  # IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-  # implied. See the License for the specific language governing
-  # rights and limitations under the License.
-  #
-  # The Original Code is the Bugzilla Bug Tracking System.
-  #
-  # The Initial Developer of the Original Code is Netscape Communications
-  # Corporation. Portions created by Netscape are
-  # Copyright (C) 1998 Netscape Communications Corporation. All
-  # Rights Reserved.
-  #
-  # Contributor(s): Gavin Shelley <bugzilla@chimpychompy.org>
-  #                 Akamai Technologies <bugzilla-dev@akamai.com>
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
   #%]
 
 [%# INTERFACE:
@@ -26,52 +13,50 @@
   #               which the component belongs.
   #%]
 
-[% PROCESS global/variables.none.tmpl %]
-
 [% title = BLOCK %]
   Edit component '[% comp.name FILTER html %]' of product '[% product.name FILTER html %]'
 [% END %]
 [% PROCESS global/header.html.tmpl
   title = title
+  generate_api_token = 1
+  style_urls = ['skins/standard/admin.css']
   yui = [ 'autocomplete' ]
   javascript_urls = [ "js/field.js" ]
 %]
 
 <form method="post" action="editcomponents.cgi">
-  <table border="0" cellpadding="4" cellspacing="0">
+  <table id="admin_table_edit">
 
     [% PROCESS "admin/components/edit-common.html.tmpl" %]
 
     <tr>
-      <th class="field_label"><label for="isactive">Enabled For [% terms.Bugs %]:</label></th>
+      <th><label for="isactive">Enabled For [% terms.Bugs %]:</label></th>
       <td><input id="isactive" name="isactive" type="checkbox" value="1" 
                  [% 'checked="checked"' IF comp.isactive %]></td>
     </tr>
     <tr>
-      <th class="field_label">[% terms.Bugs %]:</th>
+      <th>[% terms.Bugs %]:</th>
       <td>
-[% IF comp.bug_count > 0 %]
-        <a title="[% terms.Bugs %] in component '[% comp.name FILTER html %]'"
-           href="buglist.cgi?component=
-                [%- comp.name FILTER uri %]&amp;product=
-                [%- product.name FILTER uri %]">[% comp.bug_count %]</a>
-[% ELSE %]
-        None
-[% END %]
+        [% IF comp.bug_count > 0 %]
+          <a title="[% terms.Bugs %] in component '[% comp.name FILTER html %]'"
+             href="buglist.cgi?component=
+                  [%- comp.name FILTER uri %]&amp;product=
+                  [%- product.name FILTER uri %]">[% comp.bug_count %]</a>
+        [% ELSE %]
+          None
+        [% END %]
       </td>
     </tr>
-
   </table>
 
    <input type="hidden" name="action" value="update">
    <input type="hidden" name="componentold" value="[% comp.name FILTER html %]">
    <input type="hidden" name="product" value="[% product.name FILTER html %]">
    <input type="hidden" name="token" value="[% token FILTER html %]">
-   <input type="submit" value="Save Changes" id="update"> or <a 
-        href="editcomponents.cgi?action=del&amp;product=
-        [%- product.name FILTER uri %]&amp;component=
-        [%- comp.name FILTER uri %]">Delete</a> this component.
-
+   <input type="submit" value="Save Changes" id="update"> or
+   <a href="editcomponents.cgi?action=del&amp;product=
+            [%- product.name FILTER uri %]&amp;component=
+            [%- comp.name FILTER uri %]">Delete</a> this component.
 </form>
 
 [% PROCESS admin/components/footer.html.tmpl

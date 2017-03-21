@@ -1,21 +1,9 @@
-[%# The contents of this file are subject to the Mozilla Public
-  # License Version 1.1 (the "License"); you may not use this file
-  # except in compliance with the License. You may obtain a copy of
-  # the License at http://www.mozilla.org/MPL/
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
   #
-  # Software distributed under the License is distributed on an "AS
-  # IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-  # implied. See the License for the specific language governing
-  # rights and limitations under the License.
-  #
-  # The Original Code is the Bugzilla Bug Tracking System.
-  #
-  # The Initial Developer of the Original Code is Netscape Communications
-  # Corporation. Portions created by Netscape are
-  # Copyright (C) 1998 Netscape Communications Corporation. All
-  # Rights Reserved.
-  #
-  # Contributor(s): Gervase Markham <gerv@gerv.net>
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
   #%]
 
 [%# INTERFACE:
@@ -29,8 +17,6 @@
   # image_map: string. The image map for the graphic showing the
                        dependencies. (Optional)
   #%]
-
-[% PROCESS global/variables.none.tmpl %]
 
 [% title = "Dependency Graph"
    header = title
@@ -65,7 +51,7 @@
 <form action="showdependencygraph.cgi" method="GET">
   <table>
     <tr>
-      <th align="left"><label for="id">[% terms.Bug %] numbers</label>:</th>
+      <th><label for="id">[% terms.Bug %] numbers</label>:</th>
       <td><input id="id" name="id" value="[% bug_id %]"></td>
       <td>
         <input type="checkbox" id="showsummary" name="showsummary" [% " checked" IF showsummary %]>
@@ -74,7 +60,7 @@
     </tr>
 
     <tr>
-      <th align="left"><label for="display">Display:</label></th>
+      <th><label for="display">Display:</label></th>
       <td colspan="2">
         <select id="display" name="display">
           <option value="tree"[% 'selected="selected"' IF (!display || display == "tree") %]>
@@ -86,7 +72,7 @@
     </tr>
 
     <tr>
-      <th align="left"><label for="rankdir">Orientation:</label></th>
+      <th><label for="rankdir">Orientation:</label></th>
       <td colspan="2">
         <select id="rankdir" name="rankdir">
           <option value="TB"[% " selected" IF rankdir == "TB" %]>Top to bottom</option>

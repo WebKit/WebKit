@@ -1,16 +1,9 @@
-[%# The contents of this file are subject to the Mozilla Public
-  # License Version 1.1 (the "License"); you may not use this file
-  # except in compliance with the License. You may obtain a copy of
-  # the License at http://www.mozilla.org/MPL/
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
   #
-  # Software distributed under the License is distributed on an "AS
-  # IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-  # implied. See the License for the specific language governing
-  # rights and limitations under the License.
-  #
-  # The Original Code is the Bugzilla Bug Tracking System.
-  #
-  # Contributor(s): Gabriel S. Oliveira <gabriel@async.com.br>
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
   #%]
 
 [%# INTERFACE:
@@ -24,8 +17,10 @@
 
 [% PROCESS global/header.html.tmpl
   title = title
+  generate_api_token = 1
   style_urls = ['skins/standard/admin.css']
-  javascript_urls = ['js/util.js']
+  javascript_urls = ['js/util.js', 'js/field.js']
+  yui = [ 'autocomplete' ]
 %]
 
 [% DEFAULT
@@ -36,22 +31,34 @@
 %]
 
 <form method="post" action="editproducts.cgi">
-  <table border="0" cellpadding="4" cellspacing="0">
+  <table id="admin_table_edit">
 
     [% PROCESS "admin/products/edit-common.html.tmpl" %]
 
     <tr>
-      <th align="right">Version:</th>
-      <td><input size="64" maxlength="255" name="version" 
-                value="[% version FILTER html %]">
+      <th>Version:</th>
+      <td><input size="20" maxlength="64" name="version" 
+                value="[% version FILTER html %]" required>
       </td>
     </tr>
     <tr>
-      <th align="right">Create chart datasets for this product:</th>
+      <th>Create chart datasets for this product:</th>
       <td>
         <input type="checkbox" name="createseries" value="1" checked="checked">
       </td>
     </tr>
+
+    <tr>
+      <td colspan="2">&nbsp;</td>
+    </tr>
+    <tr>
+      <td colspan="2">
+        This product must have at least one component.
+        You will be able to create additional components later:
+      </td>
+    </tr>
+
+    [% PROCESS "admin/components/edit-common.html.tmpl" desc_name = "comp_desc" %]
   </table>
 
   <input type="submit" id="add-product" value="Add">

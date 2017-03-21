@@ -1,21 +1,13 @@
-[%# The contents of this file are subject to the Mozilla Public
-  # License Version 1.1 (the "License"); you may not use this file
-  # except in compliance with the License. You may obtain a copy of
-  # the License at http://www.mozilla.org/MPL/
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
   #
-  # Software distributed under the License is distributed on an "AS
-  # IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-  # implied. See the License for the specific language governing
-  # rights and limitations under the License.
-  #
-  # The Original Code is the Bugzilla Bug Tracking System.
-  #
-  # Contributor(s): Marc Schumann <wurblzap@gmail.com>
-  #                 Frédéric Buclin <LpSolit@gmail.com>
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
   #%]
 
 [% hidden_products = 0 %]
-<table id="user_responsibilities" border="0">
+<table id="user_responsibilities">
   [% FOREACH item = otheruser.product_responsibilities %]
     [% IF !user.can_see_product(item.product.name) %]
       [% hidden_products = 1 %]
@@ -23,7 +15,7 @@
     [% END %]
     <tbody>
     <tr>
-      <th colspan="3" class="product">Product: [% item.product.name FILTER html %]</th>
+      <th colspan="4" class="product">Product: [% item.product.name FILTER html %]</th>
     </tr>
     <tr>
       <th>Component</th>
@@ -31,26 +23,26 @@
       <th>Default QA Contact</th>
       <th>Default CC</th>
     </tr>
-    [% FOREACH component = item.components %]
+    [% FOREACH comp = item.components %]
       <tr>
         <td>
-          [% IF user.in_group("editcomponents", component.product_id) %]
+          [% IF user.in_group("editcomponents", comp.product_id) %]
             <a href="editcomponents.cgi?action=edit&amp;product=
                      [% item.product.name FILTER uri %]&amp;component=
-                     [% component.name FILTER uri %]">
+                     [% comp.name FILTER uri %]">
           [% END %]
-          [% component.name FILTER html %]
-          [% IF user.in_group("editcomponents", component.product_id) %]
+          [% comp.name FILTER html %]
+          [% IF user.in_group("editcomponents", comp.product_id) %]
             </a>
           [% END %]
         </td>
         [% FOREACH responsibility = ['default_assignee', 'default_qa_contact'] %]
           <td class="center">
-            [% component.$responsibility.id == otheruser.id ? "X" : "&nbsp;" %]
+            [% comp.$responsibility.id == otheruser.id ? "X" : "&nbsp;" %]
           </td>
         [% END %]
         <td class="center">
-          [% component.initial_cc.contains(otheruser) ? "X" : "&nbsp;" %]
+          [% comp.initial_cc.contains(otheruser) ? "X" : "&nbsp;" %]
         </td>
       </tr>
     [% END %]

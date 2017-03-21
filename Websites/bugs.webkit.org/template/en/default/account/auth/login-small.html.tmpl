@@ -1,34 +1,21 @@
-[%# The contents of this file are subject to the Mozilla Public
-  # License Version 1.1 (the "License"); you may not use this file
-  # except in compliance with the License. You may obtain a copy of
-  # the License at http://www.mozilla.org/MPL/
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
   #
-  # Software distributed under the License is distributed on an "AS
-  # IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-  # implied. See the License for the specific language governing
-  # rights and limitations under the License.
-  #
-  # The Original Code is the Bugzilla Bug Tracking System.
-  #
-  # The Initial Developer of the Original Code is Netscape Communications
-  # Corporation. Portions created by Netscape are
-  # Copyright (C) 1998 Netscape Communications Corporation. All
-  # Rights Reserved.
-  #
-  # Contributor(s): Jacob Steenhagen <jake@bugzilla.org>
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
   #%]
-
-[% PROCESS global/variables.none.tmpl %]
 
 [%# Use the current script name. If an empty name is returned,
   # then we are accessing the home page. %]
+
+[% USE Bugzilla %]
+[% cgi = Bugzilla.cgi %]
 
 [% login_target = cgi.url("-relative" => 1, "-query" => 1) %]
 [% IF !login_target OR login_target.match("^token.cgi") %]
  [% login_target = "index.cgi" %]
 [% END %]
-
-[% login_target = urlbase _ login_target %]
 
 <li id="mini_login_container[% qs_suffix %]">
   <span class="separator">| </span>
@@ -40,90 +27,55 @@
   <a id="login_link[% qs_suffix %]" href="[% script_url FILTER html %]"
      onclick="return show_mini_login_form('[% qs_suffix %]')">Log In</a>
 
-  [% Hook.process('additional_methods') %]
-  
-  <form action="[% login_target FILTER html %]" method="POST" 
+  <form action="[% login_target FILTER html %]" method="POST"
         class="mini_login bz_default_hidden"
-        id="mini_login[% qs_suffix FILTER html %]"
-        onsubmit="return check_mini_login_fields( '[% qs_suffix FILTER html %]' );"
-  >
-    <input id="Bugzilla_login[% qs_suffix FILTER html %]" 
-           class="bz_login"
-           name="Bugzilla_login"
-           title="Login"
-           onfocus="mini_login_on_focus('[% qs_suffix FILTER js %]')"
-    >
-    <input class="bz_password" 
-           id="Bugzilla_password[% qs_suffix FILTER html %]" 
-           name="Bugzilla_password"
-           type="password"
-           title="Password"
-    >
-    <input class="bz_password bz_default_hidden bz_mini_login_help" type="text" 
-           id="Bugzilla_password_dummy[% qs_suffix %]" value="password"
-           title="Password"
-           onfocus="mini_login_on_focus('[% qs_suffix FILTER js %]')"
-    >
+        id="mini_login[% qs_suffix FILTER html %]">
+    <input id="Bugzilla_login[% qs_suffix FILTER html %]" required
+           name="Bugzilla_login" class="bz_login"
+      [% IF login_not_email %]
+        placeholder="Login"
+      [% ELSE %]
+        type="email" placeholder="Email Address"
+      [% END %]>
+    <input class="bz_password" name="Bugzilla_password" type="password"
+           id="Bugzilla_password[% qs_suffix FILTER html %]" required
+           placeholder="Password">
     [% IF Param('rememberlogin') == 'defaulton' ||
-          Param('rememberlogin') == 'defaultoff' 
-    %]
+          Param('rememberlogin') == 'defaultoff' %]
       <input type="checkbox" id="Bugzilla_remember[% qs_suffix %]" 
              name="Bugzilla_remember" value="on" class="bz_remember"
-                 [%+ "checked" IF Param('rememberlogin') == "defaulton" %]>
+             [%+ "checked" IF Param('rememberlogin') == "defaulton" %]>
       <label for="Bugzilla_remember[% qs_suffix %]">Remember</label>
     [% END %]
-    <input type="submit" name="GoAheadAndLogIn" value="Log in" 
+    <input type="hidden" name="Bugzilla_login_token"
+           value="[% get_login_request_token() FILTER html %]">
+    <input type="submit" name="GoAheadAndLogIn" value="Log in"
             id="log_in[% qs_suffix %]">
-    <script type="text/javascript">
-      mini_login_constants = {
-          "login" : "login",
-          "warning" : "You must set the login and password before logging in."
-      };
-      [%# We need this event to fire after autocomplete, because it does
-        # something different depending on whether or not there's already
-        # data in the login and password box.
-        # However, autocomplete happens at all sorts of different times in
-        # different browsers (before or after onDOMReady, before or after
-        # window.onload, in almost all combinations you can imagine).
-        # The only good solution I found is to time the event 200 
-        # milliseconds after window.onload for WebKit (doing it immediately 
-        # at onload works in Chrome but not in Safari, but I can't detect 
-        # them separately using YUI), and right after onDOMReady in Gecko. 
-        # The WebKit solution is also fairly guaranteed to work on any 
-        # browser (it's just strange, since the fields only populate 200 ms
-        # after the page loads), so it's the default. IE doesn't even
-        # recognize our forms as login forms, so I made it use the Gecko
-        # method also (since it's nicer visually). Opera never autocompletes
-        # forms without user interaction, so it also uses the Gecko method.
-        #%]
-      if (YAHOO.env.ua.gecko || YAHOO.env.ua.ie || YAHOO.env.ua.opera) {
-          YAHOO.util.Event.onDOMReady(function() {
-              init_mini_login_form('[% qs_suffix FILTER html %]');
-          });
-      }
-      else {
-          YAHOO.util.Event.on(window, 'load', function () {
-              window.setTimeout(function() {
-                  init_mini_login_form('[% qs_suffix FILTER html %]');
-              }, 200);
-          });
-    }
-    </script>
     <a href="#" onclick="return hide_mini_login_form('[% qs_suffix %]')">[x]</a>
   </form>
 </li>
-<li id="forgot_container[% qs_suffix %]">
-  <span class="separator">| </span>
-  <a id="forgot_link[% qs_suffix %]" href="[% script_url FILTER html %]#forgot"
-     onclick="return show_forgot_form('[% qs_suffix %]')">Forgot Password</a>
-  <form action="token.cgi" method="post" id="forgot_form[% qs_suffix %]"
-        class="mini_forgot bz_default_hidden">
-    <label for="login[% qs_suffix FILTER html %]">Login:</label>
-    <input type="text" name="loginname" size="20" id="login[% qs_suffix FILTER html %]">
-    <input id="forgot_button[% qs_suffix %]" value="Reset Password" 
-           type="submit">
-    <input type="hidden" name="a" value="reqpw">
-    <input type="hidden" id="token[% qs_suffix FILTER html %]" name="token" value="[% issue_hash_token(['reqpw']) FILTER html %]">
-    <a href="#" onclick="return hide_forgot_form('[% qs_suffix %]')">[x]</a>
-  </form>
-</li>
+
+[% Hook.process('additional_methods') %]
+
+[% IF user.authorizer.can_change_password %]
+  <li id="forgot_container[% qs_suffix %]">
+    <span class="separator">| </span>
+    <a id="forgot_link[% qs_suffix %]" href="[% script_url FILTER html %]#forgot"
+       onclick="return show_forgot_form('[% qs_suffix %]')">Forgot Password</a>
+    <form action="token.cgi" method="post" id="forgot_form[% qs_suffix %]"
+          class="mini_forgot bz_default_hidden">
+      <label for="login[% qs_suffix FILTER html %]">Login:</label>
+      <input name="loginname" size="20" id="login[% qs_suffix FILTER html %]" required
+        [% IF login_not_email %]
+          placeholder="Your Login"
+        [% ELSE %]
+          type="email" placeholder="Your Email Address"
+        [% END %]>
+      <input id="forgot_button[% qs_suffix %]" value="Reset Password" type="submit">
+      <input type="hidden" name="a" value="reqpw">
+      <input type="hidden" id="token[% qs_suffix FILTER html %]" name="token"
+             value="[% issue_hash_token(['reqpw']) FILTER html %]">
+      <a href="#" onclick="return hide_forgot_form('[% qs_suffix %]')">[x]</a>
+    </form>
+  </li>
+[% END %]

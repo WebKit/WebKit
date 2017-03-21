@@ -1,34 +1,15 @@
-#!/usr/bin/env perl -wT
-# -*- Mode: perl; indent-tabs-mode: nil -*-
+#!/usr/bin/perl -T
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
-# The contents of this file are subject to the Mozilla Public
-# License Version 1.1 (the "License"); you may not use this file
-# except in compliance with the License. You may obtain a copy of
-# the License at http://www.mozilla.org/MPL/
-#
-# Software distributed under the License is distributed on an "AS
-# IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-# implied. See the License for the specific language governing
-# rights and limitations under the License.
-#
-# The Original Code is mozilla.org code.
-#
-# The Initial Developer of the Original Code is Holger
-# Schurig. Portions created by Holger Schurig are
-# Copyright (C) 1999 Holger Schurig. All
-# Rights Reserved.
-#
-# Contributor(s): Holger Schurig <holgerschurig@nikocity.de>
-#               Terry Weissman <terry@mozilla.org>
-#               Dawn Endico <endico@mozilla.org>
-#               Joe Robins <jmrobins@tgix.com>
-#               Gavin Shelley <bugzilla@chimpychompy.org>
-#               Frédéric Buclin <LpSolit@gmail.com>
-#               Greg Hendricks <ghendricks@novell.com>
-#               Lance Larsh <lance.larsh@oracle.com>
-#               Elliotte Martin <elliotte.martin@yahoo.com>
+# This Source Code Form is "Incompatible With Secondary Licenses", as
+# defined by the Mozilla Public License, v. 2.0.
 
+use 5.10.1;
 use strict;
+use warnings;
+
 use lib qw(. lib);
 
 use Bugzilla;
@@ -37,6 +18,7 @@ use Bugzilla::Util;
 use Bugzilla::Error;
 use Bugzilla::Group;
 use Bugzilla::Product;
+use Bugzilla::Component;
 use Bugzilla::Classification;
 use Bugzilla::Token;
 
@@ -53,7 +35,7 @@ my $template = Bugzilla->template;
 my $vars = {};
 # Remove this as soon as the documentation about products has been
 # improved and each action has its own section.
-$vars->{'doc_section'} = 'products.html';
+$vars->{'doc_section'} = 'administering/categorization.html#products';
 
 print $cgi->header();
 
@@ -176,7 +158,13 @@ if ($action eq 'new') {
 
     check_token_data($token, 'add_product');
 
-    my %create_params = (
+    Bugzilla::User::match_field ({
+        'initialowner'     => { 'type' => 'single' },
+        'initialqacontact' => { 'type' => 'single' },
+        'initialcc'        => { 'type' => 'multi'  },
+    });
+
+    my %product_create_params = (
         classification   => $classification_name,
         name             => $product_name,
         description      => scalar $cgi->param('description'),
@@ -186,7 +174,23 @@ if ($action eq 'new') {
         create_series    => scalar $cgi->param('createseries'),
         allows_unconfirmed => scalar $cgi->param('allows_unconfirmed'),
     );
-    my $product = Bugzilla::Product->create(\%create_params);
+
+    $dbh->bz_start_transaction();
+    my $product = Bugzilla::Product->create(\%product_create_params);
+
+    my @initial_cc = $cgi->param('initialcc');
+    my %component_create_params = (
+        product          => $product,
+        name             => trim($cgi->param('component') || ''),
+        description      => scalar $cgi->param('comp_desc'),
+        initialowner     => scalar $cgi->param('initialowner'),
+        initialqacontact => scalar $cgi->param('initialqacontact'),
+        initial_cc       => \@initial_cc,
+        create_series    => scalar $cgi->param('createseries'),
+   );
+
+    Bugzilla::Component->create(\%component_create_params);
+    $dbh->bz_commit_transaction();
 
     delete_token($token);
 

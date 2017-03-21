@@ -1,16 +1,9 @@
-[%# The contents of this file are subject to the Mozilla Public
-  # License Version 1.1 (the "License"); you may not use this file
-  # except in compliance with the License. You may obtain a copy of
-  # the License at http://www.mozilla.org/MPL/
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
   #
-  # Software distributed under the License is distributed on an "AS
-  # IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-  # implied. See the License for the specific language governing
-  # rights and limitations under the License.
-  #
-  # The Original Code is the Bugzilla Bug Tracking System.
-  #
-  # Contributor(s): Marc Schumann <wurblzap@gmail.com>
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
   #%]
 
 [%# INTERFACE:
@@ -20,15 +13,20 @@
   # otheruser: Bugzilla::User object of user to edit
   #%]
 
+<script type="text/javascript">
+  var disable_mail_manually_set = [% (otheruser.email_disabled ? 1 : 0) FILTER js %];
+</script>
+
 <tr>
   <th><label for="login">Login name:</label></th>
   <td>
     [% IF editusers %]
-      <input size="64" maxlength="255" name="login" 
-             id="login" value="[% otheruser.login FILTER html %]" />
+      <input size="64" maxlength="255" id="login" name="login"
+             value="[% otheruser.login FILTER html %]"
+             [%- " autofocus" UNLESS editform %] required>
       [% IF editform %]
         [% IF !otheruser.in_group('bz_sudo_protect') %]
-          <br />
+          <br>
           <a href="relogin.cgi?action=prepare-sudo&amp;target_login=
           [%- otheruser.login FILTER uri %]">Impersonate this user</a>
         [% END %]
@@ -55,9 +53,8 @@
   <th><label for="name">Real name:</label></th>
   <td>
     [% IF editusers %]
-      <input size="64" maxlength="255" name="name"
-             autocomplete="off"
-             id="name" value="[% otheruser.name FILTER html %]" />
+      <input size="64" maxlength="255" id="name" name="name"
+             autocomplete="off" value="[% otheruser.name FILTER html %]">
     [% ELSE %]
       [% otheruser.name FILTER html %]
     [% END %]
@@ -68,15 +65,22 @@
   # if we ever have a login system that can create accounts through
   # createaccount.cgi but can't change passwords.
   #%]
-  
+  [% password_complexity = Param('password_complexity') %]
 [% IF editusers %]
   [% IF user.authorizer.can_change_password %]
   <tr>
     <th><label for="password">Password:</label></th>
     <td>
       <input type="password" size="16" name="password" id="password"
-             value="" autocomplete="off" />
-      [% IF editform %]<br />
+             value="" autocomplete="off" [% 'required' IF !editform %]>
+      [% IF password_complexity == "mixed_letters" %] 
+        (Password must contain at least one UPPER and one lowercase letter.)
+      [% ELSIF password_complexity == "letters_numbers" %] 
+        (Password must contain at least one UPPER and one lower case letter and a number.)
+      [% ELSIF password_complexity == "letters_numbers_specialchars" %] 
+        (Password must contain at least one letter, a number and a special character.)
+      [% END %]
+      [% IF editform %]<br>
         (Enter new password to change.)
       [% END %]
     </td>
@@ -86,7 +90,8 @@
     <th><label for="disable_mail">[% terms.Bug %]mail Disabled:</label></th>
     <td>
       <input type="checkbox" name="disable_mail" id="disable_mail" value="1" 
-      [% IF otheruser.email_disabled %] checked="checked" [% END %] />
+             [% IF otheruser.email_disabled %] checked="checked" [% END %] 
+             onchange="disable_mail_manually_set=1;">
       (This affects [% terms.bug %]mail and whinemail, not password-reset or other 
       non-[% terms.bug %]-related emails)
     </td>
@@ -102,9 +107,19 @@
          defaultrows    = 10
          cols           = 60
          defaultcontent = otheruser.disabledtext
+         onchange       = "userDisabledTextOnChange(this);"
        %]<br>
-      (If non-empty, then the account will be disabled, and this text should
-      explain why.)
+      (If non-empty, then it will not be possible to log in using this account,
+      and this text should explain why.)
+    </td>
+  </tr>
+[% END %]
+[% UNLESS editform %]
+  <tr>
+    <th><label for="notify_user">Notify User:</label></th>
+    <td>
+      <input type="checkbox" name="notify_user" id="notify_user" value="1">
+      (Email this user their account information. The password will not be included.)
     </td>
   </tr>
 [% END %]

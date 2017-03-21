@@ -1,26 +1,10 @@
-[%# The contents of this file are subject to the Mozilla Public
-  # License Version 1.1 (the "License"); you may not use this file
-  # except in compliance with the License. You may obtain a copy of
-  # the License at http://www.mozilla.org/MPL/
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
   #
-  # Software distributed under the License is distributed on an "AS
-  # IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-  # implied. See the License for the specific language governing
-  # rights and limitations under the License.
-  #
-  # The Original Code is the Bugzilla Bug Tracking System.
-  #
-  # The Initial Developer of the Original Code is Netscape Communications
-  # Corporation. Portions created by Netscape are
-  # Copyright (C) 1998 Netscape Communications Corporation. All
-  # Rights Reserved.
-  #
-  # Contributor(s): Myk Melez <myk@mozilla.org>
-  #                 Mark Bickford <markhb@maine.rr.com>
-  #                 Frédéric Buclin <LpSolit@gmail.com>
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
   #%]
-
-[% PROCESS global/variables.none.tmpl %]
 
 [% PROCESS "global/js-products.html.tmpl" %]
 
@@ -31,22 +15,17 @@
       Based on [% type.name FILTER html %]
     [% END %]
   [% END %]
-  [% doc_section = "flags-overview.html#flags-create" %]
 [% ELSE %]
   [% title = BLOCK %]Edit Flag Type [% type.name FILTER html %][% END %]
-  [% doc_section = "flags-overview.html#flags-edit" %]
 [% END %]
 
 [% PROCESS global/header.html.tmpl
   title = title
-  style = "
-    table#form th { text-align: right; vertical-align: baseline; white-space: nowrap; }
-    table#form td { text-align: left; vertical-align: baseline; }
-  "
+  style_urls = ['skins/standard/admin.css']
   onload="var f = document.forms['flagtype_properties'];
-          selectProduct(f.product, f.component, null, null, '__Any__');"
+          selectProduct(f.product, f.component, '__Any__');"
   javascript_urls=["js/productform.js"]
-  doc_section = doc_section
+  doc_section = "administering/flags.html"
 %]
 
 <form id="flagtype_properties" method="post" action="editflagtypes.cgi">
@@ -65,15 +44,15 @@
 
   [%# Add a hidden button at the top of the form so that the user pressing "return"
     # really submit the form, as expected. %]
-  <input type="submit" id="commit" value="Submit" style="display: none;">
+  <input type="submit" id="commit" value="Submit" class="bz_default_hidden">
 
-  <table id="form" cellspacing="0" cellpadding="4" border="0">
+  <table id="admin_table_edit">
     <tr>
       <th>Name:</th>
       <td>
         a short name identifying this type.<br>
         <input type="text" name="name" value="[% type.name FILTER html %]" size="50"
-               maxlength="50" [%- ' disabled="disabled"' UNLESS can_fully_edit %]>
+               maxlength="50" [%- ' disabled="disabled"' UNLESS can_fully_edit %] required>
       </td>
     </tr>
 
@@ -87,6 +66,7 @@
           cols           = 80
           defaultcontent = type.description
           disabled       = !can_fully_edit
+          mandatory      = 1
         %]
       </td>
     </tr>
@@ -106,14 +86,15 @@
         [% END %]
         <table>
           <tr>
-            <td style="vertical-align: top;">
-              <b>Product/Component:</b><br>
-              <select name="product" onchange="selectProduct(this, this.form.component, null, null, '__Any__');">
-                <option value="">__Any__</option>
-                [% FOREACH prod = products %]
-                  <option value="[% prod.name FILTER html %]">[% prod.name FILTER html %]</option>
-                [% END %]
-              </select><br>
+            <th class="top left">
+              Product/Component:<br>
+              [% INCLUDE "global/product-select.html.tmpl"
+                id       => "product"
+                name     => "product"
+                add      => "__Any__"
+                onchange => "selectProduct(this, this.form.component, '__Any__');"
+                products => products
+              %]<br>
               <select name="component">
                 <option value="">__Any__</option>
                 [% FOREACH comp = components %]
@@ -124,19 +105,19 @@
                                    name="categoryAction-include" value="Include">
               <input type="submit" id="categoryAction-exclude"
                                    name="categoryAction-exclude" value="Exclude">
-            </td>
-            <td style="vertical-align: top;">
-              <b>Inclusions:</b><br>
+            </th>
+            <th class="top left">
+              Inclusions:<br>
               [% PROCESS category_select name="inclusion_to_remove" categories = inclusions %]<br>
               <input type="submit" id="categoryAction-removeInclusion" 
                      name="categoryAction-removeInclusion" value="Remove Inclusion">
-            </td>
-            <td style="vertical-align: top;">
-              <b>Exclusions:</b><br>
+            </th>
+            <th class="top left">
+              Exclusions:<br>
               [% PROCESS category_select name="exclusion_to_remove" categories = exclusions %]<br>
               <input type="submit" id="categoryAction-removeExclusion" 
                      name="categoryAction-removeExclusion" value="Remove Exclusion">
-            </td>
+            </th>
           </tr>
         </table>
       </td>
@@ -145,12 +126,12 @@
     <tr>
       <th>Sort Key:</th>
       <td>
-        a number between 1 and [% constants.MAX_SMALLINT FILTER none %] by which
+        a number between 0 and [% constants.MAX_SMALLINT FILTER none %] by which
         this type will be sorted when displayed to users in a list; ignore if you
         don't care what order the types appear in or if you want them to appear
         in alphabetical order.<br>
-        <input type="text" name="sortkey" value="[% type.sortkey || 1 FILTER html %]" size="5"
-               maxlength="5" [% ' disabled="disabled"' UNLESS can_fully_edit %]>
+        <input type="text" name="sortkey" value="[% type.sortkey || 0 FILTER html %]" size="5"
+               maxlength="5" [% ' disabled="disabled"' UNLESS can_fully_edit %] required>
       </td>
     </tr>
 

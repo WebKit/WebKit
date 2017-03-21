@@ -1,24 +1,9 @@
-/* The contents of this file are subject to the Mozilla Public
- * License Version 1.1 (the "License"); you may not use this file
- * except in compliance with the License. You may obtain a copy of
- * the License at http://www.mozilla.org/MPL/
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  *
- * Software distributed under the License is distributed on an "AS
- * IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
- * implied. See the License for the specific language governing
- * rights and limitations under the License.
- *
- * The Original Code is the Bugzilla Bug Tracking System.
- *
- * The Initial Developer of the Original Code is Netscape Communications
- * Corporation. Portions created by Netscape are
- * Copyright (C) 1998 Netscape Communications Corporation. All
- * Rights Reserved.
- *
- * Contributor(s): Frédéric Buclin <LpSolit@gmail.com>
- *                 Max Kanat-Alexander <mkanat@bugzilla.org>
- *                 Edmund Wong <ewong@pw-wspx.org>
- *                 Anthony Pipkin <a.pipkin@yahoo.com>
+ * This Source Code Form is "Incompatible With Secondary Licenses", as
+ * defined by the Mozilla Public License, v. 2.0.
  */
 
 function updateCommentPrivacy(checkbox, id) {
@@ -38,11 +23,11 @@ function updateCommentPrivacy(checkbox, id) {
 
 function toggle_comment_display(link, comment_id) {
     var comment = document.getElementById('comment_text_' + comment_id);
-    var re = new RegExp(/\bcollapsed\b/);
-    if (comment.className.match(re))
-        expand_comment(link, comment);
-    else
-        collapse_comment(link, comment);
+    if (YAHOO.util.Dom.hasClass(comment, 'collapsed')) {
+        expand_comment(link, comment, comment_id);
+    } else {
+        collapse_comment(link, comment, comment_id);
+    }
 }
 
 function toggle_all_comments(action) {
@@ -55,24 +40,31 @@ function toggle_all_comments(action) {
         var comment = comments[i];
         if (!comment)
             continue;
-
-        var id = comments[i].id.match(/\d*$/);
+        var id = comment.id.match(/^comment_text_(\d*)$/);
+        if (!id)
+            continue;
+        id = id[1];
         var link = document.getElementById('comment_link_' + id);
-        if (action == 'collapse')
-            collapse_comment(link, comment);
-        else
-            expand_comment(link, comment);
+        if (action == 'collapse') {
+            collapse_comment(link, comment, id);
+        } else {
+            expand_comment(link, comment, id);
+        }
     }
 }
 
-function collapse_comment(link, comment) {
+function collapse_comment(link, comment, comment_id) {
     link.innerHTML = "[+]";
     YAHOO.util.Dom.addClass(comment, 'collapsed');
+    YAHOO.util.Dom.addClass('comment_tag_' + comment_id, 'collapsed');
 }
 
-function expand_comment(link, comment) {
-    link.innerHTML = "[-]";
+function expand_comment(link, comment, comment_id) {
+    link.innerHTML = "[&minus;]";
+    YAHOO.util.Dom.addClass('cr' + comment_id, 'collapsed');
+    YAHOO.util.Dom.removeClass('c' + comment_id, 'bz_default_collapsed');
     YAHOO.util.Dom.removeClass(comment, 'collapsed');
+    YAHOO.util.Dom.removeClass('comment_tag_' + comment_id, 'collapsed');
 }
 
 function wrapReplyText(text) {
@@ -125,11 +117,12 @@ function wrapReplyText(text) {
 /* This way, we are sure that browsers which do not support JS
    * won't display this link  */
 
-function addCollapseLink(count, title) {
+function addCollapseLink(count, collapsed, title) {
     document.write(' <a href="#" class="bz_collapse_comment"' +
                    ' id="comment_link_' + count +
                    '" onclick="toggle_comment_display(this, ' +  count +
-                   '); return false;" title="' + title + '">[-]<\/a> ');
+                   '); return false;" title="' + title + '">[' +
+                   (collapsed ? '+' : '&minus;') + ']<\/a> ');
 }
 
 function goto_add_comments( anchor ){
@@ -142,4 +135,31 @@ function goto_add_comments( anchor ){
         document.getElementById('comment').focus();
     },10);
     return false;
+}
+
+if (typeof Node == 'undefined') {
+    /* MSIE doesn't define Node, so provide a compatibility object */
+    window.Node = {
+        TEXT_NODE: 3,
+        ENTITY_REFERENCE_NODE: 5
+    };
+}
+
+/* Concatenates all text from element's childNodes. This is used
+ * instead of innerHTML because we want the actual text (and
+ * innerText is non-standard).
+ */
+function getText(element) {
+    var child, text = "";
+    for (var i=0; i < element.childNodes.length; i++) {
+        child = element.childNodes[i];
+        var type = child.nodeType;
+        if (type == Node.TEXT_NODE || type == Node.ENTITY_REFERENCE_NODE) {
+            text += child.nodeValue;
+        } else {
+            /* recurse into nodes of other types */
+            text += getText(child);
+        }
+    }
+    return text;
 }

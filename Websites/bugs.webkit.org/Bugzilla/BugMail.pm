@@ -1,39 +1,15 @@
-# -*- Mode: perl; indent-tabs-mode: nil -*-
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
-# The contents of this file are subject to the Mozilla Public
-# License Version 1.1 (the "License"); you may not use this file
-# except in compliance with the License. You may obtain a copy of
-# the License at http://www.mozilla.org/MPL/
-#
-# Software distributed under the License is distributed on an "AS
-# IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-# implied. See the License for the specific language governing
-# rights and limitations under the License.
-#
-# The Original Code is the Bugzilla Bug Tracking System.
-#
-# The Initial Developer of the Original Code is Netscape Communications
-# Corporation. Portions created by Netscape are
-# Copyright (C) 1998 Netscape Communications Corporation. All
-# Rights Reserved.
-#
-# Contributor(s): Terry Weissman <terry@mozilla.org>,
-#                 Bryce Nesbitt <bryce-mozilla@nextbus.com>
-#                 Dan Mosedale <dmose@mozilla.org>
-#                 Alan Raetz <al_raetz@yahoo.com>
-#                 Jacob Steenhagen <jake@actex.net>
-#                 Matthew Tuck <matty@chariot.net.au>
-#                 Bradley Baetz <bbaetz@student.usyd.edu.au>
-#                 J. Paul Reed <preed@sigkill.com>
-#                 Gervase Markham <gerv@gerv.net>
-#                 Byron Jones <bugzilla@glob.com.au>
-#                 Reed Loden <reed@reedloden.com>
-#                 Frédéric Buclin <LpSolit@gmail.com>
-#                 Guy Pyrzak <guy.pyrzak@gmail.com>
-
-use strict;
+# This Source Code Form is "Incompatible With Secondary Licenses", as
+# defined by the Mozilla Public License, v. 2.0.
 
 package Bugzilla::BugMail;
+
+use 5.10.1;
+use strict;
+use warnings;
 
 use Bugzilla::Error;
 use Bugzilla::User;
@@ -43,11 +19,13 @@ use Bugzilla::Bug;
 use Bugzilla::Comment;
 use Bugzilla::Mailer;
 use Bugzilla::Hook;
+use Bugzilla::MIME;
 
 use Date::Parse;
 use Date::Format;
 use Scalar::Util qw(blessed);
 use List::MoreUtils qw(uniq);
+use Storable qw(dclone);
 
 use constant BIT_DIRECT    => 1;
 use constant BIT_WATCHING  => 2;
@@ -61,9 +39,6 @@ sub relationships {
     return %relationships;
 }
 
-# This is a bit of a hack, basically keeping the old system()
-# cmd line interface. Should clean this up at some point.
-#
 # args: bug_id, and an optional hash ref which may have keys for:
 # changer, owner, qa, reporter, cc
 # Optional hash contains values of people which will be forced to those
@@ -111,25 +86,32 @@ sub Send {
         @diffs = _get_new_bugmail_fields($bug);
     }
 
+    my $comments = [];
+
     if ($params->{dep_only}) {
         push(@diffs, { field_name => 'bug_status',
-                       old => $params->{changes}->{bug_status}->[0],
-                       new => $params->{changes}->{bug_status}->[1],
+                       old        => $params->{changes}->{bug_status}->[0],
+                       new        => $params->{changes}->{bug_status}->[1],
                        login_name => $changer->login,
-                       blocker => $params->{blocker} },
+                       who        => $changer,
+                       blocker    => $params->{blocker} },
                      { field_name => 'resolution',
-                       old => $params->{changes}->{resolution}->[0],
-                       new => $params->{changes}->{resolution}->[1],
+                       old        => $params->{changes}->{resolution}->[0],
+                       new        => $params->{changes}->{resolution}->[1],
                        login_name => $changer->login,
-                       blocker => $params->{blocker} });
+                       who        => $changer,
+                       blocker    => $params->{blocker} });
     }
     else {
         push(@diffs, _get_diffs($bug, $end, \%user_cache));
-    }
 
-    my $comments = $bug->comments({ after => $start, to => $end });
-    # Skip empty comments.
-    @$comments = grep { $_->type || $_->body =~ /\S/ } @$comments;
+        $comments = $bug->comments({ after => $start, to => $end });
+        # Skip empty comments.
+        @$comments = grep { $_->type || $_->body =~ /\S/ } @$comments;
+
+        # If no changes have been made, there is no need to process further.
+        return {'sent' => []} unless scalar(@diffs) || scalar(@$comments);
+    }
 
     ###########################################################################
     # Start of email filtering code
@@ -138,7 +120,10 @@ sub Send {
     # A user_id => roles hash to keep track of people.
     my %recipients;
     my %watching;
-    
+
+    # We also record bugs that are referenced
+    my @referenced_bug_ids = ();
+
     # Now we work out all the people involved with this bug, and note all of
     # the relationships in a hash. The keys are userids, the values are an
     # array of role constants.
@@ -182,7 +167,16 @@ sub Send {
                 $recipients{$uid}->{+REL_ASSIGNEE} = BIT_DIRECT if $uid;
             }
         }
+
+        if ($change->{field_name} eq 'dependson' || $change->{field_name} eq 'blocked') {
+            push @referenced_bug_ids, split(/[\s,]+/, $change->{old} // '');
+            push @referenced_bug_ids, split(/[\s,]+/, $change->{new} // '');
+        }
     }
+
+    my $referenced_bugs = scalar(@referenced_bug_ids)
+        ? Bugzilla::Bug->new_from_list([uniq @referenced_bug_ids])
+        : [];
 
     # Make sure %user_cache has every user in it so far referenced
     foreach my $user_id (keys %recipients) {
@@ -193,21 +187,24 @@ sub Send {
                             { bug => $bug, recipients => \%recipients,
                               users => \%user_cache, diffs => \@diffs });
 
-    # Find all those user-watching anyone on the current list, who is not
-    # on it already themselves.
-    my $involved = join(",", keys %recipients);
+    # We should not assume %recipients to have any entries.
+    if (scalar keys %recipients) {
+        # Find all those user-watching anyone on the current list, who is not
+        # on it already themselves.
+        my $involved = join(",", keys %recipients);
 
-    my $userwatchers =
-        $dbh->selectall_arrayref("SELECT watcher, watched FROM watch
-                                  WHERE watched IN ($involved)");
+        my $userwatchers =
+            $dbh->selectall_arrayref("SELECT watcher, watched FROM watch
+                                      WHERE watched IN ($involved)");
 
-    # Mark these people as having the role of the person they are watching
-    foreach my $watch (@$userwatchers) {
-        while (my ($role, $bits) = each %{$recipients{$watch->[1]}}) {
-            $recipients{$watch->[0]}->{$role} |= BIT_WATCHING
-                if $bits & BIT_DIRECT;
+        # Mark these people as having the role of the person they are watching
+        foreach my $watch (@$userwatchers) {
+            while (my ($role, $bits) = each %{$recipients{$watch->[1]}}) {
+                $recipients{$watch->[0]}->{$role} |= BIT_WATCHING
+                    if $bits & BIT_DIRECT;
+            }
+            push(@{$watching{$watch->[0]}}, $watch->[1]);
         }
-        push(@{$watching{$watch->[0]}}, $watch->[1]);
     }
 
     # Global watcher
@@ -222,7 +219,6 @@ sub Send {
     # the bug in question. However, we are not necessarily going to mail them
     # all - there are preferences, permissions checks and all sorts to do yet.
     my @sent;
-    my @excluded;
 
     # The email client will display the Date: header in the desired timezone,
     # so we can always use UTC here.
@@ -231,11 +227,13 @@ sub Send {
 
     foreach my $user_id (keys %recipients) {
         my %rels_which_want;
-        my $sent_mail = 0;
-        $user_cache{$user_id} ||= new Bugzilla::User($user_id);
-        my $user = $user_cache{$user_id};
+        my $user = $user_cache{$user_id} ||= new Bugzilla::User($user_id);
         # Deleted users must be excluded.
         next unless $user;
+
+        # If email notifications are disabled for this account, or the bug
+        # is ignored, there is no need to do additional checks.
+        next if ($user->email_disabled || $user->is_bug_ignored($id));
 
         if ($user->can_see_bug($id)) {
             # Go through each role the user has and see if they want mail in
@@ -253,7 +251,7 @@ sub Send {
                 }
             }
         }
-        
+
         if (scalar(%rels_which_want)) {
             # So the user exists, can see the bug, and wants mail in at least
             # one role. But do we want to send it to them?
@@ -266,29 +264,24 @@ sub Send {
                 $dep_ok = $user->can_see_bug($params->{blocker}->id) ? 1 : 0;
             }
 
-            # Make sure the user isn't in the nomail list, and the dep check passed.
-            if ($user->email_enabled && $dep_ok) {
-                # OK, OK, if we must. Email the user.
-                $sent_mail = sendMail(
-                    { to       => $user, 
-                      bug      => $bug,
-                      comments => $comments,
-                      date     => $date,
-                      changer  => $changer,
-                      watchers => exists $watching{$user_id} ?
-                                  $watching{$user_id} : undef,
-                      diffs    => \@diffs,
+            # Email the user if the dep check passed.
+            if ($dep_ok) {
+                my $sent_mail = sendMail(
+                    { to              => $user, 
+                      bug             => $bug,
+                      comments        => $comments,
+                      date            => $date,
+                      changer         => $changer,
+                      watchers        => exists $watching{$user_id} ?
+                                         $watching{$user_id} : undef,
+                      diffs           => \@diffs,
                       rels_which_want => \%rels_which_want,
+                      dep_only        => $params->{dep_only},
+                      referenced_bugs => $referenced_bugs,
                     });
+                push(@sent, $user->login) if $sent_mail;
             }
         }
-
-        if ($sent_mail) {
-            push(@sent, $user->login); 
-        } 
-        else {
-            push(@excluded, $user->login); 
-        } 
     }
 
     # When sending bugmail about a blocker being reopened or resolved,
@@ -300,27 +293,29 @@ sub Send {
         $bug->{lastdiffed} = $end;
     }
 
-    return {'sent' => \@sent, 'excluded' => \@excluded};
+    return {'sent' => \@sent};
 }
 
 sub sendMail {
     my $params = shift;
-    
-    my $user   = $params->{to};
-    my $bug    = $params->{bug};
-    my @send_comments = @{ $params->{comments} };
-    my $date = $params->{date};
-    my $changer = $params->{changer};
-    my $watchingRef = $params->{watchers};
-    my @diffs = @{ $params->{diffs} };
-    my $relRef      = $params->{rels_which_want};
+
+    my $user            = $params->{to};
+    my $bug             = $params->{bug};
+    my @send_comments   = @{ $params->{comments} };
+    my $date            = $params->{date};
+    my $changer         = $params->{changer};
+    my $watchingRef     = $params->{watchers};
+    my @diffs           = @{ $params->{diffs} };
+    my $relRef          = $params->{rels_which_want};
+    my $dep_only        = $params->{dep_only};
+    my $referenced_bugs = $params->{referenced_bugs};
 
     # Only display changes the user is allowed see.
     my @display_diffs;
 
     foreach my $diff (@diffs) {
         my $add_diff = 0;
-        
+
         if (grep { $_ eq $diff->{field_name} } TIMETRACKING_FIELDS) {
             $add_diff = 1 if $user->is_timetracker;
         }
@@ -350,63 +345,134 @@ sub sendMail {
     my @watchingrel = map { $relationships{$_} } @reasons_watch;
     push(@headerrel,   'None') unless @headerrel;
     push(@watchingrel, 'None') unless @watchingrel;
-    push @watchingrel, map { user_id_to_login($_) } @$watchingRef;
+    push @watchingrel, map { Bugzilla::User->new($_)->login } @$watchingRef;
+
+    my @changedfields = uniq map { $_->{field_name} } @display_diffs;
+
+    # Add attachments.created to changedfields if one or more
+    # comments contain information about a new attachment
+    if (grep($_->type == CMT_ATTACHMENT_CREATED, @send_comments)) {
+        push(@changedfields, 'attachments.created');
+    }
+
+    my $bugmailtype = "changed";
+    $bugmailtype = "new" if !$bug->lastdiffed;
+    $bugmailtype = "dep_changed" if $dep_only;
 
     my $vars = {
-        date => $date,
-        to_user => $user,
-        bug => $bug,
-        reasons => \@reasons,
-        reasons_watch => \@reasons_watch,
-        reasonsheader => join(" ", @headerrel),
+        date               => $date,
+        to_user            => $user,
+        bug                => $bug,
+        reasons            => \@reasons,
+        reasons_watch      => \@reasons_watch,
+        reasonsheader      => join(" ", @headerrel),
         reasonswatchheader => join(" ", @watchingrel),
-        changer => $changer,
-        diffs => \@display_diffs,
-        changedfields => [uniq map { $_->{field_name} } @display_diffs],
-        new_comments => \@send_comments,
-        threadingmarker => build_thread_marker($bug->id, $user->id, !$bug->lastdiffed),
+        changer            => $changer,
+        diffs              => \@display_diffs,
+        changedfields      => \@changedfields,
+        referenced_bugs    => $user->visible_bugs($referenced_bugs),
+        new_comments       => \@send_comments,
+        threadingmarker    => build_thread_marker($bug->id, $user->id, !$bug->lastdiffed),
+        bugmailtype        => $bugmailtype,
     };
-    my $msg =  _generate_bugmail($user, $vars);
-    MessageToMTA($msg);
+    if (Bugzilla->params->{'use_mailer_queue'}) {
+        enqueue($vars);
+    } else {
+        MessageToMTA(_generate_bugmail($vars));
+    }
 
     return 1;
 }
 
+sub enqueue {
+    my ($vars) = @_;
+    # we need to flatten all objects to a hash before pushing to the job queue.
+    # the hashes need to be inflated in the dequeue method.
+    $vars->{bug}          = _flatten_object($vars->{bug});
+    $vars->{to_user}      = _flatten_object($vars->{to_user});
+    $vars->{changer}      = _flatten_object($vars->{changer});
+    $vars->{new_comments} = [ map { _flatten_object($_) } @{ $vars->{new_comments} } ];
+    foreach my $diff (@{ $vars->{diffs} }) {
+        $diff->{who} = _flatten_object($diff->{who});
+        if (exists $diff->{blocker}) {
+            $diff->{blocker} = _flatten_object($diff->{blocker});
+        }
+    }
+    Bugzilla->job_queue->insert('bug_mail', { vars => $vars });
+}
+
+sub dequeue {
+    my ($payload) = @_;
+    # clone the payload so we can modify it without impacting TheSchwartz's
+    # ability to process the job when we've finished
+    my $vars = dclone($payload);
+    # inflate objects
+    $vars->{bug}          = Bugzilla::Bug->new_from_hash($vars->{bug});
+    $vars->{to_user}      = Bugzilla::User->new_from_hash($vars->{to_user});
+    $vars->{changer}      = Bugzilla::User->new_from_hash($vars->{changer});
+    $vars->{new_comments} = [ map { Bugzilla::Comment->new_from_hash($_) } @{ $vars->{new_comments} } ];
+    foreach my $diff (@{ $vars->{diffs} }) {
+        $diff->{who} = Bugzilla::User->new_from_hash($diff->{who});
+        if (exists $diff->{blocker}) {
+            $diff->{blocker} = Bugzilla::Bug->new_from_hash($diff->{blocker});
+        }
+    }
+    # generate bugmail and send
+    MessageToMTA(_generate_bugmail($vars), 1);
+}
+
+sub _flatten_object {
+    my ($object) = @_;
+    # nothing to do if it's already flattened
+    return $object unless blessed($object);
+    # the same objects are used for each recipient, so cache the flattened hash
+    my $cache = Bugzilla->request_cache->{bugmail_flat_objects} ||= {};
+    my $key = blessed($object) . '-' . $object->id;
+    return $cache->{$key} ||= $object->flatten_to_hash;
+}
+
 sub _generate_bugmail {
-    my ($user, $vars) = @_;
+    my ($vars) = @_;
+    my $user = $vars->{to_user};
     my $template = Bugzilla->template_inner($user->setting('lang'));
     my ($msg_text, $msg_html, $msg_header);
-  
+    state $use_utf8 = Bugzilla->params->{'utf8'};
+
     $template->process("email/bugmail-header.txt.tmpl", $vars, \$msg_header)
         || ThrowTemplateError($template->error());
     $template->process("email/bugmail.txt.tmpl", $vars, \$msg_text)
         || ThrowTemplateError($template->error());
 
     my @parts = (
-        Email::MIME->create(
+        Bugzilla::MIME->create(
             attributes => {
-                content_type => "text/plain",
+                content_type => 'text/plain',
+                charset      => $use_utf8 ? 'UTF-8' : 'iso-8859-1',
+                encoding     => 'quoted-printable',
             },
-            body => $msg_text,
+            body_str => $msg_text,
         )
     );
     if ($user->setting('email_format') eq 'html') {
         $template->process("email/bugmail.html.tmpl", $vars, \$msg_html)
             || ThrowTemplateError($template->error());
-        push @parts, Email::MIME->create(
+        push @parts, Bugzilla::MIME->create(
             attributes => {
-                content_type => "text/html",         
+                content_type => 'text/html',
+                charset      => $use_utf8 ? 'UTF-8' : 'iso-8859-1',
+                encoding     => 'quoted-printable',
             },
-            body => $msg_html,
+            body_str => $msg_html,
         );
     }
 
-    # TT trims the trailing newline, and threadingmarker may be ignored.
-    my $email = new Email::MIME("$msg_header\n");
+    my $email = Bugzilla::MIME->new($msg_header);
     if (scalar(@parts) == 1) {
         $email->content_type_set($parts[0]->content_type);
     } else {
         $email->content_type_set('multipart/alternative');
+        # Some mail clients need same encoding for each part, even empty ones.
+        $email->charset_set('UTF-8') if $use_utf8;
     }
     $email->parts_set(\@parts);
     return $email;
@@ -434,7 +500,8 @@ sub _get_diffs {
                 ON fielddefs.id = bugs_activity.fieldid
              WHERE bugs_activity.bug_id = ?
                    $when_restriction
-          ORDER BY bugs_activity.bug_when", {Slice=>{}}, @args);
+          ORDER BY bugs_activity.bug_when, bugs_activity.id",
+        {Slice=>{}}, @args);
 
     foreach my $diff (@$diffs) {
         $user_cache->{$diff->{who}} ||= new Bugzilla::User($diff->{who}); 
@@ -451,17 +518,42 @@ sub _get_diffs {
          }
     }
 
-    return @$diffs;
+    my @changes = ();
+    foreach my $diff (@$diffs) {
+        # If this is the same field as the previous item, then concatenate
+        # the data into the same change.
+        if (scalar(@changes)
+            && $diff->{field_name}        eq $changes[-1]->{field_name}
+            && $diff->{bug_when}          eq $changes[-1]->{bug_when}
+            && $diff->{who}               eq $changes[-1]->{who}
+            && ($diff->{attach_id} // 0)  == ($changes[-1]->{attach_id} // 0)
+            && ($diff->{comment_id} // 0) == ($changes[-1]->{comment_id} // 0)
+        ) {
+            my $old_change = pop @changes;
+            $diff->{old} = join_activity_entries($diff->{field_name}, $old_change->{old}, $diff->{old});
+            $diff->{new} = join_activity_entries($diff->{field_name}, $old_change->{new}, $diff->{new});
+        }
+        push @changes, $diff;
+    }
+
+    return @changes;
 }
 
 sub _get_new_bugmail_fields {
     my $bug = shift;
     my @fields = @{ Bugzilla->fields({obsolete => 0, in_new_bugmail => 1}) };
     my @diffs;
+    my $params = Bugzilla->params;
 
     foreach my $field (@fields) {
         my $name = $field->name;
         my $value = $bug->$name;
+
+        next if !$field->is_visible_on_bug($bug)
+            || ($name eq 'classification' && !$params->{'useclassification'})
+            || ($name eq 'status_whiteboard' && !$params->{'usestatuswhiteboard'})
+            || ($name eq 'qa_contact' && !$params->{'useqacontact'})
+            || ($name eq 'target_milestone' && !$params->{'usetargetmilestone'});
 
         if (ref $value eq 'ARRAY') {
             $value = join(', ', @$value);
@@ -484,10 +576,46 @@ sub _get_new_bugmail_fields {
         # If there isn't anything to show, don't include this header.
         next unless $value;
 
-        push(@diffs, {field_name => $name, new => $value});
+        push(@diffs, {
+            field_name => $name,
+            who        => $bug->reporter,
+            new        => $value});
     }
 
     return @diffs;
 }
 
 1;
+
+=head1 NAME
+
+BugMail - Routines to generate email notifications when a bug is created or
+modified.
+
+=head1 METHODS
+
+=over 4
+
+=item C<enqueue>
+
+Serialises the variables required to generate bugmail and pushes the result to
+the job-queue for processing by TheSchwartz.
+
+=item C<dequeue>
+
+When given serialised variables from the job-queue, recreates the objects from
+the flattened hashes, generates the bugmail, and sends it.
+
+=back
+
+=head1 B<Methods in need of POD>
+
+=over
+
+=item relationships
+
+=item sendMail
+
+=item Send
+
+=back

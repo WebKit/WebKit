@@ -1,33 +1,17 @@
-# -*- Mode: perl; indent-tabs-mode: nil -*-
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
-# The contents of this file are subject to the Mozilla Public
-# License Version 1.1 (the "License"); you may not use this file
-# except in compliance with the License. You may obtain a copy of
-# the License at http://www.mozilla.org/MPL/
-#
-# Software distributed under the License is distributed on an "AS
-# IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-# implied. See the License for the specific language governing
-# rights and limitations under the License.
-#
-# The Original Code are the Bugzilla tests.
-#
-# The Initial Developer of the Original Code is Jacob Steenhagen.
-# Portions created by Jacob Steenhagen are
-# Copyright (C) 2001 Jacob Steenhagen. All
-# Rights Reserved.
-#
-# Contributor(s): Jacob Steenhagen <jake@bugzilla.org>
-#                 David D. Kilzer <ddkilzer@kilzer.net>
-#                 Colin Ogilvie <mozilla@colinogilvie.co.uk>
-#                 Marc Schumann <wurblzap@gmail.com>
-#
+# This Source Code Form is "Incompatible With Secondary Licenses", as
+# defined by the Mozilla Public License, v. 2.0.
 
 #################
 #Bugzilla Test 5#
 #####no_tabs#####
 
+use 5.10.1;
 use strict;
+use warnings;
 
 use lib 't';
 
@@ -35,10 +19,11 @@ use Support::Files;
 use Support::Templates;
 
 use File::Spec;
-use Test::More tests => (  scalar(@Support::Files::testitems)
+use Test::More tests => (scalar(@Support::Files::testitems)
+                         + scalar(@Support::Files::test_files)
                          + $Support::Templates::num_actual_files) * 3;
 
-my @testitems = @Support::Files::testitems;
+my @testitems = (@Support::Files::testitems, @Support::Files::test_files);
 for my $path (@Support::Templates::include_paths) {
    push(@testitems, map(File::Spec->catfile($path, $_),
                         Support::Templates::find_actual_files($path)));

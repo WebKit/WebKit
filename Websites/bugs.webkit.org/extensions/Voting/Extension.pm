@@ -1,32 +1,17 @@
-# -*- Mode: perl; indent-tabs-mode: nil -*-
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
-# The contents of this file are subject to the Mozilla Public
-# License Version 1.1 (the "License"); you may not use this file
-# except in compliance with the License. You may obtain a copy of
-# the License at http://www.mozilla.org/MPL/
-#
-# Software distributed under the License is distributed on an "AS
-# IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-# implied. See the License for the specific language governing
-# rights and limitations under the License.
-#
-# The Original Code is the Bugzilla Bug Tracking System.
-#
-# The Initial Developer of the Original Code is Netscape Communications
-# Corporation. Portions created by Netscape are
-# Copyright (C) 1998 Netscape Communications Corporation. All
-# Rights Reserved.
-#
-# Contributor(s): Terry Weissman <terry@mozilla.org>
-#                 Stephan Niemz  <st.n@gmx.net>
-#                 Christopher Aillon <christopher@aillon.com>
-#                 Gervase Markham <gerv@gerv.net>
-#                 Frédéric Buclin <LpSolit@gmail.com>
-#                 Max Kanat-Alexander <mkanat@bugzilla.org>
+# This Source Code Form is "Incompatible With Secondary Licenses", as
+# defined by the Mozilla Public License, v. 2.0.
 
 package Bugzilla::Extension::Voting;
+
+use 5.10.1;
 use strict;
-use base qw(Bugzilla::Extension);
+use warnings;
+
+use parent qw(Bugzilla::Extension);
 
 use Bugzilla::Bug;
 use Bugzilla::BugMail;
@@ -38,7 +23,7 @@ use Bugzilla::User;
 use Bugzilla::Util qw(detaint_natural);
 use Bugzilla::Token;
 
-use List::Util qw(min);
+use List::Util qw(min sum);
 
 use constant VERSION => BUGZILLA_VERSION;
 use constant DEFAULT_VOTES_PER_BUG => 1;
@@ -204,7 +189,7 @@ sub bug_end_of_update {
         # If some votes have been removed, RemoveVotes() returns
         # a list of messages to send to voters.
         @msgs = _remove_votes($bug->id, 0, 'votes_bug_moved');
-        _confirm_if_vote_confirmed($bug->id);
+        _confirm_if_vote_confirmed($bug);
 
         foreach my $msg (@msgs) {
             MessageToMTA($msg);
@@ -408,7 +393,7 @@ sub _page_user {
     # If a bug_id is given, and we're editing, we'll add it to the votes list.
     
     my $bug_id = $input->{bug_id};
-    my $bug = Bugzilla::Bug->check($bug_id) if $bug_id;
+    my $bug = Bugzilla::Bug->check({ id => $bug_id, cache => 1 }) if $bug_id;
     my $who_id = $input->{user_id} || $user->id;
 
     # Logged-out users must specify a user_id.
@@ -437,52 +422,38 @@ sub _page_user {
     foreach my $product (@{ $user->get_selectable_products }) {
         next unless ($product->{votesperuser} > 0);
 
-        my @bugs;
-        my @bug_ids;
-        my $total = 0;
-        my $onevoteonly = 0;
-
         my $vote_list =
-            $dbh->selectall_arrayref('SELECT votes.bug_id, votes.vote_count,
-                                             bugs.short_desc
-                                        FROM votes
-                                  INNER JOIN bugs
-                                          ON votes.bug_id = bugs.bug_id
-                                       WHERE votes.who = ?
-                                         AND bugs.product_id = ?
-                                    ORDER BY votes.bug_id',
-                                      undef, ($who->id, $product->id));
+          $dbh->selectall_arrayref('SELECT votes.bug_id, votes.vote_count
+                                      FROM votes
+                                INNER JOIN bugs
+                                        ON votes.bug_id = bugs.bug_id
+                                     WHERE votes.who = ?
+                                       AND bugs.product_id = ?',
+                                     undef, ($who->id, $product->id));
 
-        foreach (@$vote_list) {
-            my ($id, $count, $summary) = @$_;
-            $total += $count;
+        my %votes = map { $_->[0] => $_->[1] } @$vote_list;
+        my @bug_ids = sort keys %votes;
+        # Exclude bugs that the user can no longer see.
+        @bug_ids = @{ $user->visible_bugs(\@bug_ids) };
+        next unless scalar @bug_ids;
 
-            # Next if user can't see this bug. So, the totals will be correct
-            # and they can see there are votes 'missing', but not on what bug
-            # they are. This seems a reasonable compromise; the alternative is
-            # to lie in the totals.
-            next if !$user->can_see_bug($id);
+        push(@all_bug_ids, @bug_ids);
+        my @bugs = @{ Bugzilla::Bug->new_from_list(\@bug_ids) };
+        $_->{count} = $votes{$_->id} foreach @bugs;
+        # We include votes from bugs that the user can no longer see.
+        my $total = sum(values %votes) || 0;
 
-            push (@bugs, { id => $id,
-                           summary => $summary,
-                           count => $count });
-            push (@bug_ids, $id);
-            push (@all_bug_ids, $id);
-        }
-
+        my $onevoteonly = 0;
         $onevoteonly = 1 if (min($product->{votesperuser},
                                  $product->{maxvotesperbug}) == 1);
 
-        # Only add the product for display if there are any bugs in it.
-        if ($#bugs > -1) {
-            push (@products, { name => $product->name,
-                               bugs => \@bugs,
-                               bug_ids => \@bug_ids,
-                               onevoteonly => $onevoteonly,
-                               total => $total,
-                               maxvotes => $product->{votesperuser},
-                               maxperbug => $product->{maxvotesperbug} });
-        }
+        push(@products, { name => $product->name,
+                          bugs => \@bugs,
+                          bug_ids => \@bug_ids,
+                          onevoteonly => $onevoteonly,
+                          total => $total,
+                          maxvotes => $product->{votesperuser},
+                          maxperbug => $product->{maxvotesperbug} });
     }
 
     if ($canedit && $bug) {
@@ -516,6 +487,7 @@ sub _update_votes {
     # IDs and the field values are the number of votes.
 
     my @buglist = grep {/^\d+$/} keys %$input;
+    my (%bugs, %votes);
 
     # If no bugs are in the buglist, let's make sure the user gets notified
     # that their votes will get nuked if they continue.
@@ -531,20 +503,23 @@ sub _update_votes {
             exit;
         }
     }
+    else {
+        $user->visible_bugs(\@buglist);
+        my $bugs_obj = Bugzilla::Bug->new_from_list(\@buglist);
+        $bugs{$_->id} = $_ foreach @$bugs_obj;
+    }
 
-    # Call check() on each bug ID to make sure it is a positive
-    # integer representing an existing bug that the user is authorized 
-    # to access, and make sure the number of votes submitted is also
-    # a non-negative integer (a series of digits not preceded by a
-    # minus sign).
-    my (%votes, @bugs);
+    # Call check_is_visible() on each bug to make sure it is an existing bug
+    # that the user is authorized to access, and make sure the number of votes
+    # submitted is also an integer.
     foreach my $id (@buglist) {
-      my $bug = Bugzilla::Bug->check($id);
-      push(@bugs, $bug);
-      $id = $bug->id;
-      $votes{$id} = $input->{$id};
-      detaint_natural($votes{$id})
-        || ThrowUserError("voting_must_be_nonnegative");
+        my $bug = $bugs{$id}
+          or ThrowUserError('bug_id_does_not_exist', { bug_id => $id });
+        $bug->check_is_visible;
+        $id = $bug->id;
+        $votes{$id} = $input->{$id};
+        detaint_natural($votes{$id})
+          || ThrowUserError("voting_must_be_nonnegative");
     }
 
     my $token = $cgi->param('token');
@@ -557,10 +532,10 @@ sub _update_votes {
 
     # If the user is voting for bugs, make sure they aren't overstuffing
     # the ballot box.
-    if (scalar @bugs) {
+    if (scalar @buglist) {
         my (%prodcount, %products);
-        foreach my $bug (@bugs) {
-            my $bug_id = $bug->id;
+        foreach my $bug_id (keys %bugs) {
+            my $bug = $bugs{$bug_id};
             my $prod = $bug->product;
             $products{$prod} ||= $bug->product_obj;
             $prodcount{$prod} ||= 0;
@@ -584,56 +559,65 @@ sub _update_votes {
         }
     }
 
-    # Update the user's votes in the database.  If the user did not submit 
-    # any votes, they may be using a form with checkboxes to remove all their
-    # votes (checkboxes are not submitted along with other form data when
-    # they are not checked, and Bugzilla uses them to represent single votes
-    # for products that only allow one vote per bug).  In that case, we still
-    # need to clear the user's votes from the database.
-    my %affected;
+    # Update the user's votes in the database.
     $dbh->bz_start_transaction();
 
-    # Take note of, and delete the user's old votes from the database.
-    my $bug_list = $dbh->selectcol_arrayref('SELECT bug_id FROM votes
+    my $old_list = $dbh->selectall_arrayref('SELECT bug_id, vote_count FROM votes
                                              WHERE who = ?', undef, $who);
 
-    foreach my $id (@$bug_list) {
-        $affected{$id} = 1;
-    }
-    $dbh->do('DELETE FROM votes WHERE who = ?', undef, $who);
+    my %old_votes = map { $_->[0] => $_->[1] } @$old_list;
 
     my $sth_insertVotes = $dbh->prepare('INSERT INTO votes (who, bug_id, vote_count)
                                          VALUES (?, ?, ?)');
+    my $sth_updateVotes = $dbh->prepare('UPDATE votes SET vote_count = ?
+                                         WHERE bug_id = ? AND who = ?');
 
-    # Insert the new values in their place
-    foreach my $id (@buglist) {
-        if ($votes{$id} > 0) {
+    my %affected = map { $_ => 1 } (@buglist, keys %old_votes);
+    my @deleted_votes;
+
+    foreach my $id (keys %affected) {
+        if (!$votes{$id}) {
+            push(@deleted_votes, $id);
+            next;
+        }
+        if ($votes{$id} == ($old_votes{$id} || 0)) {
+            delete $affected{$id};
+            next;
+        }
+        # We use 'defined' in case 0 was accidentally stored in the DB.
+        if (defined $old_votes{$id}) {
+            $sth_updateVotes->execute($votes{$id}, $id, $who);
+        }
+        else {
             $sth_insertVotes->execute($who, $id, $votes{$id});
         }
-        $affected{$id} = 1;
+    }
+
+    if (@deleted_votes) {
+        $dbh->do('DELETE FROM votes WHERE who = ? AND ' .
+                 $dbh->sql_in('bug_id', \@deleted_votes), undef, $who);
     }
 
     # Update the cached values in the bugs table
-    print $cgi->header();
     my @updated_bugs = ();
 
     my $sth_getVotes = $dbh->prepare("SELECT SUM(vote_count) FROM votes
                                       WHERE bug_id = ?");
 
-    my $sth_updateVotes = $dbh->prepare("UPDATE bugs SET votes = ?
-                                         WHERE bug_id = ?");
+    $sth_updateVotes = $dbh->prepare('UPDATE bugs SET votes = ? WHERE bug_id = ?');
 
     foreach my $id (keys %affected) {
         $sth_getVotes->execute($id);
         my $v = $sth_getVotes->fetchrow_array || 0;
         $sth_updateVotes->execute($v, $id);
-
-        my $confirmed = _confirm_if_vote_confirmed($id);
+        $bugs{$id}->{votes} = $v if $bugs{$id};
+        my $confirmed = _confirm_if_vote_confirmed($bugs{$id} || $id);
         push (@updated_bugs, $id) if $confirmed;
     }
 
     $dbh->bz_commit_transaction();
 
+    print $cgi->header() if scalar @updated_bugs;
     $vars->{'type'} = "votes";
     $vars->{'title_tag'} = 'change_votes';
     foreach my $bug_id (@updated_bugs) {
@@ -646,7 +630,7 @@ sub _update_votes {
         # Set header_done to 1 only after the first bug.
         $vars->{'header_done'} = 1;
     }
-    $vars->{'votes_recorded'} = 1;
+    $vars->{'message'} = 'votes_recorded';
 }
 
 ######################
@@ -674,8 +658,8 @@ sub _modify_bug_votes {
             # If some votes are removed, _remove_votes() returns a list
             # of messages to send to voters.
             push(@msgs, _remove_votes($id, $who, 'votes_too_many_per_bug'));
-            my $name = user_id_to_login($who);
-
+            my $name = Bugzilla::User->new($who)->login;
+            
             push(@toomanyvotes_list, {id => $id, name => $name});
         }
     }
@@ -715,12 +699,12 @@ sub _modify_bug_votes {
                         AND votes.who = ?',
                 undef, $product->id, $who);
 
+            my $name = Bugzilla::User->new($who)->login;
             foreach my $bug_id (@$bug_ids) {
                 # _remove_votes returns a list of messages to send
                 # in case some voters had too many votes.
                 push(@msgs, _remove_votes($bug_id, $who, 
                                           'votes_too_many_per_user'));
-                my $name = user_id_to_login($who);
 
                 push(@toomanytotalvotes_list, {id => $bug_id, name => $name});
             }
@@ -844,7 +828,7 @@ sub _remove_votes {
 # confirm a bug has been reduced, check if the bug is now confirmed.
 sub _confirm_if_vote_confirmed {
     my $id = shift;
-    my $bug = new Bugzilla::Bug($id);
+    my $bug = ref $id ? $id : new Bugzilla::Bug({ id => $id, cache => 1 });
 
     my $ret = 0;
     if (!$bug->everconfirmed

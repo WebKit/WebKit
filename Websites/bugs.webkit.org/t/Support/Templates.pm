@@ -1,38 +1,21 @@
-# -*- Mode: perl; indent-tabs-mode: nil -*-
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
-# The contents of this file are subject to the Mozilla Public
-# License Version 1.1 (the "License"); you may not use this file
-# except in compliance with the License. You may obtain a copy of
-# the License at http://www.mozilla.org/MPL/
-#
-# Software distributed under the License is distributed on an "AS
-# IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-# implied. See the License for the specific language governing
-# rights and limitations under the License.
-#
-# The Original Code are the Bugzilla tests.
-#
-# The Initial Developer of the Original Code is Jacob Steenhagen.
-# Portions created by Jacob Steenhagen are
-# Copyright (C) 2001 Jacob Steenhagen. All
-# Rights Reserved.
-#
-# Contributor(s): Jacob Steenhagen <jake@bugzilla.org>
-#                 David D. Kilzer <ddkilzer@kilzer.net>
-#                 Tobias Burnus <burnus@net-b.de>
-#
+# This Source Code Form is "Incompatible With Secondary Licenses", as
+# defined by the Mozilla Public License, v. 2.0.
 
 package Support::Templates;
 
+use 5.10.1;
 use strict;
+use warnings;
 
 use lib 't';
-use base qw(Exporter);
-@Support::Templates::EXPORT = 
-         qw(@languages @include_paths $english_default_include_path
-         %include_path @referenced_files %actual_files $num_actual_files);
-use vars qw(@languages @include_paths $english_default_include_path
-            %include_path @referenced_files %actual_files $num_actual_files);
+use parent qw(Exporter);
+@Support::Templates::EXPORT =
+    qw(@languages @include_paths @english_default_include_paths
+       @referenced_files %actual_files $num_actual_files);
 
 use Bugzilla;
 use Bugzilla::Constants;
@@ -42,33 +25,32 @@ use Support::Files;
 use File::Find;
 use File::Spec;
 
-# The available template languages
-@languages = ();
+# English default include paths
+our @english_default_include_paths =
+    (File::Spec->catdir(bz_locations()->{'templatedir'}, 'en', 'default'));
 
-# The colon separated includepath per language
-%include_path = ();
-
-# All include paths
-@include_paths = ();
-
-# English default include path
-$english_default_include_path =
-    File::Spec->catdir(bz_locations()->{'templatedir'}, 'en', 'default');
+# And the extensions too
+foreach my $extension (@Support::Files::extensions) {
+    my $dir = File::Spec->catdir($extension, 'template', 'en', 'default');
+    if (-e $dir) {
+        push @english_default_include_paths, $dir;
+    }
+}
 
 # Files which are referenced in the cgi files
-@referenced_files = ();
+our @referenced_files = ();
 
 # All files sorted by include_path
-%actual_files = ();
+our %actual_files = ();
 
 # total number of actual_files
-$num_actual_files = 0;
+our $num_actual_files = 0;
 
 # Set the template available languages and include paths
-@languages = @{ Bugzilla->languages };
-@include_paths = @{ template_include_path({ language => Bugzilla->languages }) };
+our @languages = @{ Bugzilla->languages };
+our @include_paths = @{ template_include_path({ language => Bugzilla->languages }) };
 
-my @files;
+our @files;
 
 # Local subroutine used with File::Find
 sub find_templates {

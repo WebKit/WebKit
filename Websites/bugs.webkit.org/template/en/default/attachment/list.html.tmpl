@@ -1,22 +1,9 @@
-[%# The contents of this file are subject to the Mozilla Public
-  # License Version 1.1 (the "License"); you may not use this file
-  # except in compliance with the License. You may obtain a copy of
-  # the License at http://www.mozilla.org/MPL/
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
   #
-  # Software distributed under the License is distributed on an "AS
-  # IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-  # implied. See the License for the specific language governing
-  # rights and limitations under the License.
-  #
-  # The Original Code is the Bugzilla Bug Tracking System.
-  #
-  # The Initial Developer of the Original Code is Netscape Communications
-  # Corporation. Portions created by Netscape are
-  # Copyright (C) 1998 Netscape Communications Corporation. All
-  # Rights Reserved.
-  #
-  # Contributor(s): Myk Melez <myk@mozilla.org>
-  #                 Frédéric Buclin <LpSolit@gmail.com>
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
   #%]
 
 [% RETURN UNLESS attachments.size || Param("maxattachmentsize") || Param("maxlocalattachment") %]
@@ -55,15 +42,16 @@ function toggle_display(link) {
 </script>
 
 <br>
-<table id="attachment_table" cellspacing="0" cellpadding="4">
+<table id="attachment_table">
   <tr id="a0">
-    <th colspan="[% show_attachment_flags ? 3 : 2 %]" align="left">
+    <th colspan="[% show_attachment_flags ? 3 : 2 %]" class="left">
       Attachments
     </th>
   </tr>
 
   [% count = 0 %]
   [% obsolete_attachments = 0 %]
+  [% user_cache = template_cache.users %]
 
   [% FOREACH attachment = attachments %]
     [% count = count + 1 %]
@@ -81,7 +69,7 @@ function toggle_display(link) {
                  [% IF attachment.ispatch && !attachment.isobsolete %] style="background-color: rgb(255,255,200);" [% END %]
 [%# endif // WEBKIT_CHANGES %]
       >
-        <td valign="top">
+        <td>
           [% IF attachment.datasize %]
             <a href="attachment.cgi?id=[% attachment.id %]"
                title="View the content of the attachment">
@@ -104,14 +92,21 @@ function toggle_display(link) {
             <br>
             <a href="#attach_[% attachment.id %]"
                title="Go to the comment associated with the attachment">
-              [%- attachment.attached FILTER time %]</a>,
+              [%- attachment.attached FILTER time("%Y-%m-%d %H:%M %Z") %]</a>,
 
-            [% INCLUDE global/user.html.tmpl who = attachment.attacher %]
+            [%# No need to recreate the exact same template if we already have it. %]
+            [% attacher_id = attachment.attacher.id %]
+            [% UNLESS user_cache.$attacher_id %]
+              [% user_cache.$attacher_id = BLOCK %]
+                [% INCLUDE global/user.html.tmpl who = attachment.attacher %]
+              [% END %]
+            [% END %]
+            [% user_cache.$attacher_id FILTER none %]
           </span>
         </td>
 
         [% IF show_attachment_flags %]
-          <td class="bz_attach_flags" valign="top">
+          <td class="bz_attach_flags">
             [% IF attachment.flags.size == 0 %]
               <i>no flags</i>
             [% ELSE %]
@@ -123,7 +118,7 @@ function toggle_display(link) {
                 [% ELSE %]
                   [% flag.setter.nick FILTER html %]:
                 [% END %]
-                [%+ flag.type.name FILTER html FILTER no_break %][% flag.status %]
+                [%+ flag.type.name FILTER html %][% flag.status %]
                 [%+ IF flag.status == "?" && flag.requestee %]
                   [% IF user.id %]
                     (<span title="[% flag.requestee.identity FILTER html %]">[% flag.requestee.nick FILTER html %]</span>)
@@ -138,7 +133,7 @@ function toggle_display(link) {
           </td>
         [% END %]
 
-        <td valign="top">
+        <td>
 [%# if WEBKIT_CHANGES %]
           [% IF attachment.ispatch && user.id %]
           <a href="attachment.cgi?id=[% attachment.id %]&amp;action=review">Review Patch</a> |

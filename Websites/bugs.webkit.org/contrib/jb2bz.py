@@ -17,7 +17,7 @@ This code requires a recent version of Andy Dustman's MySQLdb interface,
 Share and enjoy.
 """
 
-import rfc822, mimetools, multifile, mimetypes
+import rfc822, mimetools, multifile, mimetypes, email.utils
 import sys, re, glob, StringIO, os, stat, time
 import MySQLdb, getopt
 
@@ -91,7 +91,7 @@ def process_reply_file(current, fname):
     reply = open(fname, "r")
     msg = rfc822.Message(reply)
     new_note['text'] = "%s\n%s" % (msg['From'], msg.fp.read())
-    new_note['timestamp'] = rfc822.parsedate_tz(msg['Date'])
+    new_note['timestamp'] = email.utils.parsedate_tz(msg['Date'])
     current["notes"].append(new_note)
 
 def add_notes(current):
@@ -129,17 +129,16 @@ def maybe_add_attachment(current, file, submsg):
 
 def process_mime_body(current, file, submsg):
     data = StringIO.StringIO()
-    mimetools.decode(file, data, submsg.getencoding())
-    current['description'] = data.getvalue()
-
-
+    try:
+        mimetools.decode(file, data, submsg.getencoding())
+        current['description'] = data.getvalue()
+    except:
+        return
 
 def process_text_plain(msg, current):
-    print "Processing: %d" % current['number']
     current['description'] = msg.fp.read()
 
 def process_multi_part(file, msg, current):
-    print "Processing: %d" % current['number']
     mf = multifile.MultiFile(file)
     mf.push(msg.getparam("boundary"))
     while mf.next():
@@ -160,16 +159,30 @@ def process_jitterbug(filename):
     current['date-reported'] = ()
     current['short-description'] = ''
     
+    print "Processing: %d" % current['number']
+
     file = open(filename, "r")
+    create_date = os.fstat(file.fileno())
     msg = mimetools.Message(file)
 
     msgtype = msg.gettype()
 
     add_notes(current)
-    current['date-reported'] = rfc822.parsedate_tz(msg['Date'])
-    current['short-description'] = msg['Subject']
+    current['date-reported'] = email.utils.parsedate_tz(msg['Date'])
+    if current['date-reported'] is None:
+       current['date-reported'] = time.gmtime(create_date[stat.ST_MTIME])
+
+    if current['date-reported'][0] < 1900:
+       current['date-reported'] = time.gmtime(create_date[stat.ST_MTIME])
+
+    if msg.getparam('Subject') is not None: 
+        current['short-description'] = msg['Subject']
+    else:
+        current['short-description'] = "Unknown"
 
     if msgtype[:5] == 'text/':
+        process_text_plain(msg, current)
+    elif msgtype[:5] == 'text':
         process_text_plain(msg, current)
     elif msgtype[:10] == "multipart/":
         process_multi_part(file, msg, current)
@@ -200,62 +213,79 @@ def process_jitterbug(filename):
     # the resolution will need to be set manually
     resolution=""
 
-    db = MySQLdb.connect(db='bugs',user='root',host='localhost')
+    db = MySQLdb.connect(db='bugs',user='root',host='localhost',passwd='password')
     cursor = db.cursor()
 
-    cursor.execute( "INSERT INTO bugs SET " \
-                    "bug_id=%s," \
-                    "bug_severity='normal',"  \
-                    "bug_status=%s," \
-                    "creation_ts=%s,"  \
-                    "delta_ts=%s,"  \
-                    "short_desc=%s," \
-                    "product=%s," \
-                    "rep_platform='All'," \
-                    "assigned_to=%s,"
-                    "reporter=%s," \
-                    "version=%s,"  \
-                    "component=%s,"  \
-                    "resolution=%s",
-                    [ current['number'],
-                      bug_status,
-                      time.strftime("%Y-%m-%d %H:%M:%S", current['date-reported'][:9]),
-                      time.strftime("%Y-%m-%d %H:%M:%S", current['date-reported'][:9]),
-                      current['short-description'],
-                      product,
-                      reporter,
-                      reporter,
-                      version,
-                      component,
-                      resolution] )
-
-    # This is the initial long description associated with the bug report
-    cursor.execute( "INSERT INTO longdescs VALUES (%s,%s,%s,%s)",
-                    [ current['number'],
-                      reporter,
-                      time.strftime("%Y-%m-%d %H:%M:%S", current['date-reported'][:9]),
-                      current['description'] ] )
-
-    # Add whatever notes are associated with this defect
-    for n in current['notes']:
-        cursor.execute( "INSERT INTO longdescs VALUES (%s,%s,%s,%s)",
-                        [current['number'],
-                         reporter,
-                         time.strftime("%Y-%m-%d %H:%M:%S", n['timestamp'][:9]),
-                         n['text']])
-
-    # add attachments associated with this defect
-    for a in current['attachments']:
-        cursor.execute( "INSERT INTO attachments SET " \
-                        "bug_id=%s, creation_ts=%s, description='', mimetype=%s," \
-                        "filename=%s, submitter_id=%s",
+    try:
+        cursor.execute( "INSERT INTO bugs SET " \
+                        "bug_id=%s," \
+                        "bug_severity='normal',"  \
+                        "bug_status=%s," \
+                        "creation_ts=%s,"  \
+                        "delta_ts=%s,"  \
+                        "short_desc=%s," \
+                        "product_id=%s," \
+                        "rep_platform='All'," \
+                        "assigned_to=%s," \
+                        "reporter=%s," \
+                        "version=%s,"  \
+                        "component_id=%s,"  \
+                        "resolution=%s",
                         [ current['number'],
+                          bug_status,
                           time.strftime("%Y-%m-%d %H:%M:%S", current['date-reported'][:9]),
-                          a[1], a[0], reporter ])
-        cursor.execute( "INSERT INTO attach_data SET " \
-                        "id=LAST_INSERT_ID(), thedata=%s",
-                        [ a[2] ])
+                          time.strftime("%Y-%m-%d %H:%M:%S", current['date-reported'][:9]),
+                          current['short-description'],
+                          product,
+                          reporter,
+                          reporter,
+                          version,
+                          component,
+                          resolution] )
+    
+        # This is the initial long description associated with the bug report
+        cursor.execute( "INSERT INTO longdescs SET " \
+                        "bug_id=%s," \
+                        "who=%s," \
+                        "bug_when=%s," \
+                        "thetext=%s",
+                        [ current['number'],
+                          reporter,
+                          time.strftime("%Y-%m-%d %H:%M:%S", current['date-reported'][:9]),
+                          current['description'] ] )
+    
+        # Add whatever notes are associated with this defect
+        for n in current['notes']:
+                            cursor.execute( "INSERT INTO longdescs SET " \
+                            "bug_id=%s," \
+                            "who=%s," \
+                            "bug_when=%s," \
+                            "thetext=%s",
+                            [current['number'],
+                             reporter,
+                             time.strftime("%Y-%m-%d %H:%M:%S", n['timestamp'][:9]),
+                             n['text']])
+    
+        # add attachments associated with this defect
+        for a in current['attachments']:
+            cursor.execute( "INSERT INTO attachments SET " \
+                            "bug_id=%s, creation_ts=%s, description='', mimetype=%s," \
+                            "filename=%s, submitter_id=%s",
+                            [ current['number'],
+                              time.strftime("%Y-%m-%d %H:%M:%S", current['date-reported'][:9]),
+                              a[1], a[0], reporter ])
+            cursor.execute( "INSERT INTO attach_data SET " \
+                            "id=LAST_INSERT_ID(), thedata=%s",
+                            [ a[2] ])
 
+    except MySQLdb.IntegrityError, message:
+        errorcode = message[0]
+        if errorcode == 1062: # duplicate
+            return
+        else:
+            raise
+
+    cursor.execute("COMMIT")
     cursor.close()
     db.close()
 

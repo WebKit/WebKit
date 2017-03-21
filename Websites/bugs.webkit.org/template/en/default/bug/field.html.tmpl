@@ -1,30 +1,15 @@
-[%# The contents of this file are subject to the Mozilla Public
-  # License Version 1.1 (the "License"); you may not use this file
-  # except in compliance with the License. You may obtain a copy of
-  # the License at http://www.mozilla.org/MPL/
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
   #
-  # Software distributed under the License is distributed on an "AS
-  # IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-  # implied. See the License for the specific language governing
-  # rights and limitations under the License.
-  #
-  # The Original Code is the Bugzilla Bug Tracking System.
-  #
-  # The Initial Developer of the Original Code is Netscape Communications
-  # Corporation. Portions created by Netscape are
-  # Copyright (C) 1998 Netscape Communications Corporation. All
-  # Rights Reserved.
-  #
-  # Contributor(s): Myk Melez <myk@mozilla.org>
-  #                 Max Kanat-Alexander <mkanat@bugzilla.org>
-  #                 Elliotte Martin <elliotte_martin@yahoo.com>
-  #                 Guy Pyrzak <guy.pyrzak@gmail.com>
-  #                 Reed Loden <reed@reedloden.com>
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
   #%]
 
 [%# INTERFACE:
   #   field: a Bugzilla::Field object
   #   value: The value of the field for this bug.
+  #   field_hidden (optional): boolean; if true, the field is hidden by default.
   #   override_legal_values (optional): The list of legal values, for select fields.
   #   editable: Whether the field should be displayed as an editable
   #             <input> or as just the plain text of its value.
@@ -38,21 +23,22 @@
   #   accesskey: set an accesskey attribute for this string
   #%]
 
-[% SET hidden = 0 %]
-[% IF bug AND !field.is_visible_on_bug(bug) %]
-  [% SET hidden = 1 %]
-[% END %]
-
 [% IF NOT no_tds %]
-  [% PROCESS "bug/field-label.html.tmpl" %]
-  <td class="field_value [% ' bz_hidden_field' IF hidden %]"
+  [% field_hidden = 0 %]
+  [% IF bug AND !field.is_visible_on_bug(bug) %]
+    [% field_hidden = 1 %]
+  [% END %]
+
+  [% INCLUDE "bug/field-label.html.tmpl" hidden = field_hidden %]
+  <td class="field_value [% ' bz_hidden_field' IF field_hidden %]"
       id="field_container_[% field.name FILTER html %]" 
       [% " colspan=\"$value_span\"" FILTER none IF value_span %]>
 [% END %]
 [% Hook.process('start_field_column') %]
 [% IF editable %]
   [% SWITCH field.type %]
-    [% CASE constants.FIELD_TYPE_FREETEXT %]
+    [% CASE [ constants.FIELD_TYPE_FREETEXT
+              constants.FIELD_TYPE_INTEGER ] %]
         <input id="[% field.name FILTER html %]" class="text_input"
                name="[% field.name FILTER html %]"
                value="[% value FILTER html %]" size="40"
@@ -60,12 +46,21 @@
                accesskey="[% accesskey FILTER html %]"
 [% END %]
                maxlength="[% constants.MAX_FREETEXT_LENGTH FILTER none %]"
-               [% ' aria-required="true"' IF field.is_mandatory %]>
-    [% CASE constants.FIELD_TYPE_DATETIME %]
-      <input name="[% field.name FILTER html %]" size="20"
+               [% IF field.type == constants.FIELD_TYPE_INTEGER %]
+                 pattern="-?\d+[% IF dontchange %]|[% dontchange FILTER html %][% END %]"
+                 title="The value must be a valid positive or negative integer"
+               [% END %]
+               [% IF field.is_mandatory %]
+                 data-required="true" [% 'aria-required="true" required' UNLESS field_hidden %]
+               [% END %]>
+    [% CASE [constants.FIELD_TYPE_DATETIME, constants.FIELD_TYPE_DATE] %]
+      [% size = (field.type == constants.FIELD_TYPE_DATE) ? 10 : 20 %]
+      <input name="[% field.name FILTER html %]" size="[% size FILTER none %]"
              id="[% field.name FILTER html %]"
              value="[% value FILTER html %]"
-             [% ' aria-required="true"' IF field.is_mandatory %]
+             [% IF field.is_mandatory %]
+               data-required="true" [% 'aria-required="true" required' UNLESS field_hidden %]
+             [% END %]
              onchange="updateCalendarFromField(this)">
       <button type="button" class="calendar_button"
               id="button_calendar_[% field.name FILTER html %]"
@@ -76,14 +71,16 @@
       <div id="con_calendar_[% field.name FILTER html %]"></div>
 
       <script type="text/javascript">
-        createCalendar('[% field.name FILTER js %]')
-      </script>
+        <!--
+          [%+ PROCESS "global/calendar.js.tmpl" id = field.name %]
+        //--></script>
     [% CASE constants.FIELD_TYPE_BUG_ID %]
         <span id="[% field.name FILTER html %]_input_area">
           <input name="[% field.name FILTER html %]" id="[% field.name FILTER html %]"
                  value="[% value FILTER html %]" size="7"
-                 [% ' aria-required="true"' IF field.is_mandatory %]>
-
+                 [% IF field.is_mandatory %]
+                   data-required="true" [% 'aria-required="true" required' UNLESS field_hidden %]
+                 [% END %]>
         </span>
 
         [% IF value %]  
@@ -101,17 +98,25 @@
         </script>
     [% CASE [ constants.FIELD_TYPE_SINGLE_SELECT 
               constants.FIELD_TYPE_MULTI_SELECT ] %]
+      [%# The 'product' field needs its own template if classifications are enabled. %]
+      [% IF field.name == "product" AND Param('useclassification') %]
+        [% INCLUDE "global/product-select.html.tmpl"
+                   id = "product", name = "product", value = value
+                   products = override_legal_values %]
+      [% ELSE %]
+        <input type="hidden" id="[% field.name FILTER html %]_dirty">
         <select id="[% field.name FILTER html %]" 
                 name="[% field.name FILTER html %]" 
                 [% IF field.type == constants.FIELD_TYPE_MULTI_SELECT %]
-                    [% SET field_size = 5 %]
-                    [% IF field.legal_values.size < 5 %]
-                        [% SET field_size = field.legal_values.size %]
-                    [% END %]
-                    size="[% field_size FILTER html %]" multiple="multiple"
-                    [% ' aria-required="true"' IF field.is_mandatory %]
-                [% END %]
-                >
+                  [% SET field_size = 5 %]
+                  [% IF field.legal_values.size < 5 %]
+                    [% SET field_size = field.legal_values.size %]
+                  [% END %]
+                  size="[% field_size FILTER html %]" multiple="multiple"
+                  [% IF field.is_mandatory %]
+                    data-required="true" [% 'aria-required="true" required' UNLESS field_hidden %]
+                  [% END %]
+                [% END %]>
           [% IF allow_dont_change %]
             <option value="[% dontchange FILTER html %]"
                    [% ' selected="selected"' IF value == dontchange %]>
@@ -149,61 +154,85 @@
         [% IF field.type == constants.FIELD_TYPE_MULTI_SELECT %]
           <input type="hidden" name="defined_[% field.name FILTER html %]">
         [% END %]
+      [% END %]
 
-        <script type="text/javascript">
+      <script type="text/javascript">
         <!--
           initHidingOptionsForIE('[% field.name FILTER js %]');
           [%+ INCLUDE "bug/field-events.js.tmpl"
                       field = field, product = bug.product_obj %]
         //-->
-        </script>
+      </script>
 
-     [% CASE constants.FIELD_TYPE_TEXTAREA %]
-       [% INCLUDE global/textarea.html.tmpl
-           id = field.name name = field.name minrows = 4 maxrows = 8
-           cols = 60 defaultcontent = value mandatory = field.is_mandatory %]
-     [% CASE constants.FIELD_TYPE_BUG_URLS %]
-       [% '<ul class="bug_urls">' IF value.size %]
-       [% FOREACH bug_url = value %]
-         <li>
-           [% PROCESS bug_url_link bug_url = bug_url %]
-           <label><input type="checkbox" value="[% bug_url.name FILTER html %]"
-                         name="remove_[% field.name FILTER html %]">
-             Remove</label>
-         </li>
+    [% CASE constants.FIELD_TYPE_TEXTAREA %]
+       <div id="[% field.name FILTER html %]_edit_container" class="bz_default_hidden">
+         <div>
+             (<a href="#" id="[% field.name FILTER html %]_edit_action">edit</a>)
+         </div>
+         [% IF value %]
+           <pre id="[% field.name FILTER html %]_readonly"
+                class="field_textarea_readonly">[% value FILTER html %]</pre>
+         [% END %]
+       </div>
+       <div id="[% field.name FILTER html %]_input">
+         [% INCLUDE global/textarea.html.tmpl
+            id = field.name name = field.name minrows = 4 maxrows = 8
+            cols = 60 defaultcontent = value mandatory = field.is_mandatory %]
+       </div>
+       <script type="text/javascript">
+         hideEditableField('[% field.name FILTER js %]_edit_container',
+                           '[% field.name FILTER js %]_input',
+                           '[% field.name FILTER js %]_edit_action',
+                           '[% field.name FILTER js %]',
+                           '[% value FILTER js %]',
+                           '',
+                           true);
+       </script>
+    [% CASE constants.FIELD_TYPE_BUG_URLS %]
+       [% IF bug.id && value.size %]
+         <ul class="bug_urls">
+         [% FOREACH bug_url = value %]
+           <li>
+             [% PROCESS bug_url_link bug_url = bug_url %]
+             <label><input type="checkbox" value="[% bug_url.name FILTER html %]"
+                           name="remove_[% field.name FILTER html %]">
+               Remove</label>
+           </li>
+         [% END %]
+         </ul>
        [% END %]
-       [% '</ul>' IF value.size %]
-
        [% IF Param('use_see_also') %]
          <span id="container_showhide_[% field.name FILTER html %]"
                class="bz_default_hidden">
-           <a href="#" id="showhide_[% field.name FILTER html %]">(add)</a>
+           (<a href="#" id="showhide_[% field.name FILTER html %]">add</a>)
          </span>
          <div id="container_[% field.name FILTER html %]">
-           <label for="[% field.name FILTER html %]">
-             <strong>Add [% terms.Bug %] URLs:</strong>
-           </label><br>
            <input type="text" id="[% field.name FILTER html %]" size="40"
-                  class="text_input" name="[% field.name FILTER html %]">
+                  class="text_input" name="[% field.name FILTER html %]"
+                  [% IF !bug.id %]value="[% value FILTER html %]"[% END %]>
          </div>
-         <script type="text/javascript">
+         [% IF bug.id %]
+           <script type="text/javascript">
              setupEditLink('[% field.name FILTER js %]');
-         </script>
+           </script>
+         [% END %]
        [% END %]
      [% CASE constants.FIELD_TYPE_KEYWORDS %]
-       <div id="keyword_container">
+       <div id="[% field.name FILTER html %]_container">
          <input type="text" id="[% field.name FILTER html %]" size="40"
                 class="text_input" name="[% field.name FILTER html %]"
                 value="[% value FILTER html %]">
-         <div id="keyword_autocomplete"></div>
+         <div id="[% field.name FILTER html %]_autocomplete"></div>
        </div>
-       <script type="text/javascript" defer="defer">
-         YAHOO.bugzilla.keyword_array = [
-           [%- FOREACH keyword = all_keywords %]
-             [%-# %]"[% keyword.name FILTER js %]"
+       <script type="text/javascript">
+         if (typeof YAHOO.bugzilla.field_array === "undefined")
+           YAHOO.bugzilla.field_array = [];
+         YAHOO.bugzilla.field_array["[% field.name FILTER js %]"] = [
+           [%- FOREACH val = possible_values %]
+             [%-# %]"[% val FILTER js %]"
              [%- "," IF NOT loop.last %][% END %]];
-         YAHOO.bugzilla.keywordAutocomplete.init('[% field.name FILTER js %]', 
-                                                 'keyword_autocomplete');
+         YAHOO.bugzilla.fieldAutocomplete.init('[% field.name FILTER js %]',
+                                               '[% field.name FILTER js %]_autocomplete');
        </script>
   [% END %]
 [% ELSE %]
@@ -232,6 +261,12 @@
       [% value.join(', ') FILTER html %]
   [% END %]
 [% END %]
+
+[% IF bug && field.name == 'component' %]
+  (<a href="buglist.cgi?component=[% bug.component FILTER uri %]&amp;product=[% bug.product FILTER uri %]&amp;bug_status=__open__"
+      target="_blank">show other [% terms.bugs %]</a>)
+[% END %]
+
 [% Hook.process('end_field_column') %]
 [% '</td>' IF NOT no_tds %]
 

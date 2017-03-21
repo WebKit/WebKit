@@ -1,24 +1,9 @@
-[%# The contents of this file are subject to the Mozilla Public
-  # License Version 1.1 (the "License"); you may not use this file
-  # except in compliance with the License. You may obtain a copy of
-  # the License at http://www.mozilla.org/MPL/
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
   #
-  # Software distributed under the License is distributed on an "AS
-  # IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-  # implied. See the License for the specific language governing
-  # rights and limitations under the License.
-  #
-  # The Original Code is the Bugzilla Bug Tracking System.
-  #
-  # The Initial Developer of the Original Code is Netscape Communications
-  # Corporation. Portions created by Netscape are
-  # Copyright (C) 1998 Netscape Communications Corporation. All
-  # Rights Reserved.
-  #
-  # Contributor(s): Dave Miller <justdave@syndicomm.com>
-  #                 Joel Peshkin <bugreport@peshkin.net>
-  #                 Jacob Steenhagen <jake@bugzilla.org>
-  #                 Vlad Dascalu <jocuri@softhome.net>
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
   #%]
 
 [%# INTERFACE:
@@ -34,7 +19,8 @@
 [% PROCESS global/header.html.tmpl
   title = "Edit Groups"
   subheader = "This lets you edit the groups available to put users in."
-  doc_section = "groups.html"
+  style_urls = ['skins/standard/admin.css']
+  doc_section = "administering/groups.html"
 %]
 
 [% edit_contentlink = "editgroups.cgi?action=changeform&amp;group=%%id%%" %]
@@ -54,11 +40,11 @@
    }
    {name               => 'is_active_bug_group'
     heading            => "Use For $terms.Bugs"
-    align              => 'center'
+    class              => 'center'
    }
    {name               => 'type'
     heading            => 'Type'
-    align              => 'center'
+    class              => 'center'
    }
    {name               => 'action'
     heading            => 'Action'
@@ -89,7 +75,8 @@
    } 
 %]
 
-[% FOREACH group IN ["chartgroup", "insidergroup", "timetrackinggroup", "querysharegroup"] %]
+[% FOREACH group IN ["chartgroup", "comment_taggers_group", "debug_group",
+                     "insidergroup", "querysharegroup", "timetrackinggroup"] %]
   [% special_group = Param(group) %]
 
   [% IF special_group %]

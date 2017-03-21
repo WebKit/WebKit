@@ -1,21 +1,9 @@
-[%# The contents of this file are subject to the Mozilla Public
-  # License Version 1.1 (the "License"); you may not use this file
-  # except in compliance with the License. You may obtain a copy of
-  # the License at http://www.mozilla.org/MPL/
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
   #
-  # Software distributed under the License is distributed on an "AS
-  # IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-  # implied. See the License for the specific language governing
-  # rights and limitations under the License.
-  #
-  # The Original Code is the Bugzilla Bug Tracking System.
-  #
-  # The Initial Developer of the Original Code is Netscape Communications
-  # Corporation. Portions created by Netscape are
-  # Copyright (C) 1998 Netscape Communications Corporation. All
-  # Rights Reserved.
-  #
-  # Contributor(s): Gervase Markham <gerv@gerv.net>
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
   #%]
 
 [%# INTERFACE:
@@ -29,14 +17,11 @@
   #           other people.
   #%]
 
-[% PROCESS global/variables.none.tmpl %]
-
-<table align="center">
-  <tr>
-    <td>
+    <div id="permissions">
       [% IF has_bits.size %]
-        You have the following permission bits set on your account:
-        <table align="center">
+        <p>You have the following permission bits set on your account:</p>
+
+        <table>
           [% FOREACH bit_description = has_bits %]
             <tr>
               <td>[% bit_description.name FILTER html %]</td>
@@ -48,46 +33,47 @@
         [% FOREACH privs = ["editcomponents", "canconfirm", "editbugs"] %]
           [% SET products = ${"local_$privs"} %]
           [% IF products && products.size %]
-            <br>
             <p>
               You also have local '[% privs FILTER html %]' privileges
               for the following products:
             </p>
-            <p>
+            <ul>
               [% FOREACH product = products %]
-                [% product.name FILTER html %]<br>
+                <li>[% product.name FILTER html %]</li>
               [% END %]
-            </p>
+            </ul>
           [% END %]
         [% END %]
 
       [% ELSE %]
-        There are no permission bits set on your account.
+        <p>There are no permission bits set on your account.</p>
       [% END %]
 
       [% IF user.in_group('editusers') %]
-        <br>
-        You have editusers privileges.  You can turn on and off
-        all permissions for all users.
+        <p>
+          You have editusers privileges. You can turn on and off all
+          permissions for all users.
+        </p>
       [% ELSIF set_bits.size %]
-        <br>
-        And you can turn on or off the following bits for
-        <a href="editusers.cgi">other users</a>:
-          <table align="center">
+        <p>
+          And you can turn on or off the following bits for
+          <a href="editusers.cgi">other users</a>:
+        </p>
+
+        <table>
           [% FOREACH bit_description = set_bits %]
             <tr>
               <td>[% bit_description.name FILTER html %]</td>
               <td>[% bit_description.desc FILTER html_light %]</td>
             </tr>
           [% END %]
-          </table>
+        </table>
       [% END %]
 
       [% IF user.in_group('bz_sudoers') %]
-        <br>
-        You are a member of the <b>bz_sudoers</b> group, so you can 
-        <a href="relogin.cgi?action=prepare-sudo">impersonate someone else</a>.
+        <p>
+          You are a member of the <b>bz_sudoers</b> group, so you can
+          <a href="relogin.cgi?action=prepare-sudo">impersonate someone else</a>.
+        </p>
       [% END %]
-    </td>
-  </tr>
-</table>
+    </div>

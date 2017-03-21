@@ -1,22 +1,9 @@
-[%# The contents of this file are subject to the Mozilla Public
-  # License Version 1.1 (the "License"); you may not use this file
-  # except in compliance with the License. You may obtain a copy of
-  # the License at http://www.mozilla.org/MPL/
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
   #
-  # Software distributed under the License is distributed on an "AS
-  # IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-  # implied. See the License for the specific language governing
-  # rights and limitations under the License.
-  #
-  # The Original Code is the Bugzilla Bug Tracking System.
-  #
-  # The Initial Developer of the Original Code is Netscape Communications
-  # Corporation. Portions created by Netscape are
-  # Copyright (C) 1998 Netscape Communications Corporation. All
-  # Rights Reserved.
-  #
-  # Contributor(s): Dave Miller <justdave@bugzilla.org>
-  #                 Frédéric Buclin <LpSolit@gmail.com>
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
   #%]
 [%
    title = "Query Defaults"
@@ -39,35 +26,30 @@
                                 </li>
                               </ul>",
 
-  mostfreqthreshold => "The minimum number of duplicates $terms.abug needs to show up on the " _
-                       "<a href=\"duplicates.cgi\">most frequently reported $terms.bugs page</a>. " _
-                       "If you have a large database and this page takes a long time to " _
-                       "load, try increasing this number.",
-
   mybugstemplate => "This is the URL to use to bring up a simple 'all of my $terms.bugs' " _
-                    "list for a user. %userid% will get replaced with the login name of a user.",
+                    "list for a user. %userid% will get replaced with the login name of a user. " _
+                    "Special characters must be URL-encoded.",
 
   defaultquery => "This is the default query that initially comes up when you " _
-                  "access the advanced query page. It's in URL parameter " _
-                  "format, which makes it hard to read. Sorry!",
+                  "access the advanced query page. It's in URL parameter format.",
 
   search_allow_no_criteria =>
     "Unless the code explicitly allows all $terms.bugs to be returned, this " _
     "parameter permits to block the execution of queries with no criteria. " _
     "When turned off, a query must have some criteria specified to limit " _
     "the number of $terms.bugs returned to the user. When turned on, a user " _
-    "is allowed to run a query with no criteria and get all $terms.bugs he can " _
-    "see in his list. Turning this parameter on is not recommended on large " _
+    "is allowed to run a query with no criteria and get all $terms.bugs they can " _
+    "see in their list. Turning this parameter on is not recommended on large " _
     "installations.",
 
   default_search_limit =>
-    "By default, $terms.Bugzilla limits searches done in the web"
+    "By default, Bugzilla limits searches done in the web"
     _ " interface to returning only this many results, for performance"
     _ " reasons. (This only affects the HTML format of search results--CSV,"
     _ " XML, and other formats are exempted.) Users can click a link on the"
     _ " search result page to see all the results."
     _ "<p>Usually you should not have to change this--the default value"
-    _ " should be acceptable for almost most installations.</p>",
+    _ " should be acceptable for most installations.</p>",
 
   max_search_results =>
     "The maximum number of $terms.bugs that a search can"

@@ -1,36 +1,26 @@
-# -*- Mode: perl; indent-tabs-mode: nil -*-
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
-# The contents of this file are subject to the Mozilla Public
-# License Version 1.1 (the "License"); you may not use this file
-# except in compliance with the License. You may obtain a copy of
-# the License at http://www.mozilla.org/MPL/
-# 
-# Software distributed under the License is distributed on an "AS
-# IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-# implied. See the License for the specific language governing
-# rights and limitations under the License.
-# 
-# The Original Code are the Bugzilla Tests.
-# 
-# The Initial Developer of the Original Code is Zach Lipton
-# Portions created by Zach Lipton are Copyright (C) 2002 Zach Lipton.
-# All Rights Reserved.
-# 
-# Contributor(s): Zach Lipton <zach@zachlipton.com>
-#                 Max Kanat-Alexander <mkanat@bugzilla.org>
-#                 Frédéric Buclin <LpSolit@gmail.com>
+# This Source Code Form is "Incompatible With Secondary Licenses", as
+# defined by the Mozilla Public License, v. 2.0.
 
 #################
 #Bugzilla Test 7#
 #####Util.pm#####
 
+use 5.10.1;
+use strict;
+use warnings;
+
 use lib 't';
 use Support::Files;
-use Test::More tests => 15;
+use Test::More tests => 17;
+use DateTime;
 
 BEGIN { 
-    use_ok(Bugzilla);
-    use_ok(Bugzilla::Util);
+    use_ok('Bugzilla');
+    use_ok('Bugzilla::Util');
 }
 
 # We need to override user preferences so we can get an expected value when
@@ -72,6 +62,16 @@ foreach my $input (keys %email_strings) {
     is(Bugzilla::Util::email_filter($input), $email_strings{$input}, 
        "email_filter('$input')");
 }
+
+# validate_email_syntax. We need to override some parameters.
+my $params = Bugzilla->params;
+$params->{emailregexp} = '.*';
+$params->{emailsuffix} = '';
+my $ascii_email = 'admin@company.com';
+# U+0430 returns the Cyrillic "а", which looks similar to the ASCII "a".
+my $utf8_email = "\N{U+0430}dmin\@company.com";
+ok(validate_email_syntax($ascii_email), 'correctly formatted ASCII-only email address is valid');
+ok(!validate_email_syntax($utf8_email), 'correctly formatted email address with non-ASCII characters is rejected');
 
 # diff_arrays():
 my @old_array = qw(alpha beta alpha gamma gamma beta alpha delta epsilon gamma);

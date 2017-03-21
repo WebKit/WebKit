@@ -1,37 +1,31 @@
-#!/usr/bin/env perl -w
+#!/usr/bin/perl
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
-# The contents of this file are subject to the Mozilla Public
-# License Version 1.1 (the "License"); you may not use this file
-# except in compliance with the License. You may obtain a copy of
-# the License at http://www.mozilla.org/MPL/
-#
-# Software distributed under the License is distributed on an "AS
-# IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-# implied. See the License for the specific language governing
-# rights and limitations under the License.
-#
-# The Original Code is the Bugzilla Bug Tracking System.
-#
-# The Initial Developer of the Original Code is Everything Solved, Inc.
-# Portions created by the Initial Developer are Copyright (C) 2009 the
-# Initial Developer. All Rights Reserved.
-#
-# Contributor(s):
-#   Max Kanat-Alexander <mkanat@bugzilla.org>
+# This Source Code Form is "Incompatible With Secondary Licenses", as
+# defined by the Mozilla Public License, v. 2.0.
 
+use 5.10.1;
 use strict;
-use lib qw(. lib);
+use warnings;
+
+use File::Basename;
+BEGIN { chdir dirname($0); }
+
+use lib qw(.. ../lib);
+
 use Bugzilla;
 use Bugzilla::Constants;
 use Bugzilla::Error;
 use Bugzilla::Util qw(get_text);
 
 use File::Path qw(mkpath);
-use DateTime;
 
 my $base_dir = bz_locations()->{'extensionsdir'};
 
 my $name = $ARGV[0] or ThrowUserError('extension_create_no_name');
+$name = ucfirst($name);
 if ($name !~ /^[A-Z]/) {
     ThrowUserError('extension_first_letter_caps', { name => $name });
 }
@@ -41,16 +35,14 @@ mkpath($extension_dir)
   || die "$extension_dir already exists or cannot be created.\n";
 
 my $lcname = lc($name);
-foreach my $path (qw(lib web template/en/default/hook), 
+foreach my $path (qw(lib docs/en/rst web template/en/default/hook),
                   "template/en/default/$lcname")
 {
     mkpath("$extension_dir/$path") || die "$extension_dir/$path: $!";
 }
 
-my $year = DateTime->now()->year;
-
 my $template = Bugzilla->template;
-my $vars = { year => $year, name => $name, path => $extension_dir };
+my $vars = { name => $name, path => $extension_dir };
 my %create_files = (
     'config.pm.tmpl'       => 'Config.pm',
     'extension.pm.tmpl'    => 'Extension.pm',
@@ -58,6 +50,8 @@ my %create_files = (
     'web-readme.txt.tmpl'  => 'web/README',
     'hook-readme.txt.tmpl' => 'template/en/default/hook/README',
     'name-readme.txt.tmpl' => "template/en/default/$lcname/README",
+    'index-admin.rst.tmpl' => "docs/en/rst/index-admin.rst",
+    'index-user.rst.tmpl'  => "docs/en/rst/index-user.rst",
 );
 
 foreach my $template_file (keys %create_files) {
@@ -65,12 +59,13 @@ foreach my $template_file (keys %create_files) {
     my $output;
     $template->process("extensions/$template_file", $vars, \$output)
       or ThrowTemplateError($template->error());
-   open(my $fh, '>', "$extension_dir/$target");
-   print $fh $output;
-   close($fh);
+    open(my $fh, '>', "$extension_dir/$target")
+      or die "extension_dir/$target: $!";
+    print $fh $output;
+    close($fh);
 }
 
-print get_text('extension_created', $vars), "\n";
+say get_text('extension_created', $vars);
 
 __END__
 

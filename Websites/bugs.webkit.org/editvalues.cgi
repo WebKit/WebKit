@@ -1,24 +1,15 @@
-#!/usr/bin/env perl -wT
-# The contents of this file are subject to the Mozilla Public
-# License Version 1.1 (the "License"); you may not use this file
-# except in compliance with the License. You may obtain a copy of
-# the License at http://www.mozilla.org/MPL/
+#!/usr/bin/perl -T
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
-# Software distributed under the License is distributed on an "AS
-# IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-# implied. See the License for the specific language governing
-# rights and limitations under the License.
-#
-# The Original Code is the Bugzilla Bug Tracking System.
-#
-# Contributor(s): Max Kanat-Alexander <mkanat@bugzilla.org>
-#                 Frédéric Buclin <LpSolit@gmail.com>
+# This Source Code Form is "Incompatible With Secondary Licenses", as
+# defined by the Mozilla Public License, v. 2.0.
 
-# This is a script to edit the values of fields that have drop-down
-# or select boxes. It is largely a copy of editmilestones.cgi, but 
-# with some cleanup.
-
+use 5.10.1;
 use strict;
+use warnings;
+
 use lib qw(. lib);
 
 use Bugzilla;
@@ -47,7 +38,7 @@ sub display_field_values {
 ######################################################################
 
 # require the user to have logged in
-Bugzilla->login(LOGIN_REQUIRED);
+my $user = Bugzilla->login(LOGIN_REQUIRED);
 
 my $dbh      = Bugzilla->dbh;
 my $cgi      = Bugzilla->cgi;
@@ -56,14 +47,14 @@ my $vars = {};
 
 # Replace this entry by separate entries in templates when
 # the documentation about legal values becomes bigger.
-$vars->{'doc_section'} = 'edit-values.html';
+$vars->{'doc_section'} = 'administering/field-values.html';
 
 print $cgi->header();
 
-Bugzilla->user->in_group('admin') ||
-    ThrowUserError('auth_failure', {group  => "admin",
-                                    action => "edit",
-                                    object => "field_values"});
+$user->in_group('admin')
+  || ThrowUserError('auth_failure', {group  => "admin",
+                                     action => "edit",
+                                     object => "field_values"});
 
 #
 # often-used variables
@@ -181,12 +172,15 @@ if ($action eq 'edit') {
 if ($action eq 'update') {
     check_token_data($token, 'edit_field_value');
     $vars->{'value_old'} = $value->name;
+    my %params = (
+        name    => scalar $cgi->param('value_new'),
+        sortkey => scalar $cgi->param('sortkey'),
+        visibility_value => scalar $cgi->param('visibility_value_id'),
+    );
     if ($cgi->should_set('is_active')) {
-        $value->set_is_active($cgi->param('is_active'));
+        $params{is_active} = $cgi->param('is_active');
     }
-    $value->set_name($cgi->param('value_new'));
-    $value->set_sortkey($cgi->param('sortkey'));
-    $value->set_visibility_value($cgi->param('visibility_value_id'));
+    $value->set_all(\%params);
     $vars->{'changes'} = $value->update();
     delete_token($token);
     $vars->{'message'} = 'field_value_updated';

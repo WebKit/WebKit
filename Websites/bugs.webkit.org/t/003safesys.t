@@ -1,30 +1,18 @@
-# -*- Mode: perl; indent-tabs-mode: nil -*-
-# 
-# The contents of this file are subject to the Mozilla Public
-# License Version 1.1 (the "License"); you may not use this file
-# except in compliance with the License. You may obtain a copy of
-# the License at http://www.mozilla.org/MPL/
-# 
-# Software distributed under the License is distributed on an "AS
-# IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-# implied. See the License for the specific language governing
-# rights and limitations under the License.
-# 
-# The Original Code are the Bugzilla Tests.
-# 
-# The Initial Developer of the Original Code is Zach Lipton
-# Portions created by Zach Lipton are 
-# Copyright (C) 2001 Zach Lipton.  All
-# Rights Reserved.
-# 
-# Contributor(s): Zach Lipton <zach@zachlipton.com>
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+#
+# This Source Code Form is "Incompatible With Secondary Licenses", as
+# defined by the Mozilla Public License, v. 2.0.
 
 
 #################
 #Bugzilla Test 3#
 ###Safesystem####
 
+use 5.10.1;
 use strict;
+use warnings;
 
 use lib 't';
 
@@ -36,7 +24,7 @@ use Test::More tests => scalar(@Support::Files::testitems);
 # This will handle verbosity for us automatically.
 my $fh;
 {
-    local $^W = 0;  # Don't complain about non-existent filehandles
+    no warnings qw(unopened);  # Don't complain about non-existent filehandles
     if (-e \*Test::More::TESTOUT) {
         $fh = \*Test::More::TESTOUT;
     } elsif (-e \*Test::Builder::TESTOUT) {
@@ -52,7 +40,16 @@ my $perlapp = "\"$^X\"";
 foreach my $file (@testitems) {
     $file =~ s/\s.*$//; # nuke everything after the first space (#comment)
     next if (!$file); # skip null entries
-    my $command = "$perlapp -c -It -MSupport::Systemexec $file 2>&1";
+
+    open(my $fh2, '<', $file);
+    my $bang = <$fh2>;
+    close $fh2;
+
+    my $T = "";
+    if ($bang =~ m/#!\S*perl\s+-.*T/) {
+        $T = "T";
+    }
+    my $command = "$perlapp -c$T -It -MSupport::Systemexec $file 2>&1";
     my $loginfo=`$command`;
     if ($loginfo =~ /arguments for Support::Systemexec::(system|exec)/im) {
         ok(0,"$file DOES NOT use proper system or exec calls");

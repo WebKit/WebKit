@@ -1,30 +1,19 @@
-# -*- Mode: perl; indent-tabs-mode: nil -*-
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
-# The contents of this file are subject to the Mozilla Public
-# License Version 1.1 (the "License"); you may not use this file
-# except in compliance with the License. You may obtain a copy of
-# the License at http://www.mozilla.org/MPL/
-#
-# Software distributed under the License is distributed on an "AS
-# IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-# implied. See the License for the specific language governing
-# rights and limitations under the License.
-#
-# The Original Code is the Bugzilla Bug Tracking System.
-#
-# The Initial Developer of the Original Code is Google Inc.
-# Portions created by the Initial Developer are Copyright (C) 2011
-# the Initial Developer. All Rights Reserved.
-#
-# Contributor(s): 
-#   Max Kanat-Alexander <mkanat@bugzilla.org>
+# This Source Code Form is "Incompatible With Secondary Licenses", as
+# defined by the Mozilla Public License, v. 2.0.
 
 package Bugzilla::RNG;
+
+use 5.10.1;
 use strict;
-use base qw(Exporter);
+use warnings;
+
+use parent qw(Exporter);
 use Bugzilla::Constants qw(ON_WINDOWS);
 
-use IO::File;
 use Math::Random::ISAAC;
 use if ON_WINDOWS, 'Win32::API';
 
@@ -156,14 +145,14 @@ sub _get_seed {
 sub _read_seed_from {
     my ($from) = @_;
 
-    my $fh = IO::File->new($from, "r") or die "$from: $!";
+    open(my $fh, '<', $from) or die "$from: $!";
     my $buffer;
-    $fh->read($buffer, SEED_SIZE);
+    read($fh, $buffer, SEED_SIZE);
     if (length($buffer) < SEED_SIZE) {
         die "Could not read enough seed bytes from $from, got only " 
             . length($buffer);
     }
-    $fh->close;
+    close $fh;
     return $buffer;
 }
 
@@ -231,3 +220,15 @@ sub _win2k_seed {
 }
 
 1;
+
+=head1 B<Methods in need of POD>
+
+=over
+
+=item srand
+
+=item rand
+
+=item irand
+
+=back

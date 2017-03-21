@@ -1,28 +1,18 @@
-# -*- Mode: perl; indent-tabs-mode: nil -*-
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
-# The contents of this file are subject to the Mozilla Public
-# License Version 1.1 (the "License"); you may not use this file
-# except in compliance with the License. You may obtain a copy of
-# the License at http://www.mozilla.org/MPL/
-#
-# Software distributed under the License is distributed on an "AS
-# IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-# implied. See the License for the specific language governing
-# rights and limitations under the License.
-#
-# The Original Code is the Bugzilla Bug Tracking System.
-#
-# The Initial Developer of the Original Code is ITA Software.
-# Portions created by the Initial Developer are Copyright (C) 2009 
-# the Initial Developer. All Rights Reserved.
-#
-# Contributor(s):
-#   Max Kanat-Alexander <mkanat@bugzilla.org>
+# This Source Code Form is "Incompatible With Secondary Licenses", as
+# defined by the Mozilla Public License, v. 2.0.
 
 # This exists to implement the template-before_process hook.
 package Bugzilla::Template::Context;
+
+use 5.10.1;
 use strict;
-use base qw(Template::Context);
+use warnings;
+
+use parent qw(Template::Context);
 
 use Bugzilla::Hook;
 use Scalar::Util qw(blessed);
@@ -95,6 +85,14 @@ sub stash {
     return $stash;
 }
 
+sub filter {
+    my ($self, $name, $args) = @_;
+    # If we pass an alias for the filter name, the filter code is cached
+    # instead of looking for it at each call.
+    # If the filter has arguments, then we can't cache it.
+    $self->SUPER::filter($name, $args, $args ? undef : $name);
+}
+
 # We need a DESTROY sub for the same reason that Bugzilla::CGI does.
 sub DESTROY {
     my $self = shift;
@@ -102,3 +100,15 @@ sub DESTROY {
 };
 
 1;
+
+=head1 B<Methods in need of POD>
+
+=over
+
+=item stash
+
+=item filter
+
+=item process
+
+=back

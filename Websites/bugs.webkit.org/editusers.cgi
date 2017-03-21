@@ -1,26 +1,15 @@
-#!/usr/bin/env perl -wT
-# -*- Mode: perl; indent-tabs-mode: nil -*-
+#!/usr/bin/perl -T
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
-# The contents of this file are subject to the Mozilla Public
-# License Version 1.1 (the "License"); you may not use this file
-# except in compliance with the License. You may obtain a copy of
-# the License at http://www.mozilla.org/MPL/
-#
-# Software distributed under the License is distributed on an "AS
-# IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-# implied. See the License for the specific language governing
-# rights and limitations under the License.
-#
-# The Original Code is the Bugzilla Bug Tracking System.
-#
-# Contributor(s): Marc Schumann <wurblzap@gmail.com>
-#                 Lance Larsh <lance.larsh@oracle.com>
-#                 Frédéric Buclin <LpSolit@gmail.com>
-#                 David Lawrence <dkl@redhat.com>
-#                 Vlad Dascalu <jocuri@softhome.net>
-#                 Gavin Shelley  <bugzilla@chimpychompy.org>
+# This Source Code Form is "Incompatible With Secondary Licenses", as
+# defined by the Mozilla Public License, v. 2.0.
 
+use 5.10.1;
 use strict;
+use warnings;
+
 use lib qw(. lib);
 
 use Bugzilla;
@@ -34,6 +23,7 @@ use Bugzilla::Flag;
 use Bugzilla::Field;
 use Bugzilla::Group;
 use Bugzilla::Token;
+use Bugzilla::Mailer;
 
 my $user = Bugzilla->login(LOGIN_REQUIRED);
 
@@ -80,7 +70,10 @@ if ($action eq 'search') {
     my $matchstr      = trim($cgi->param('matchstr'));
     my $matchtype     = $cgi->param('matchtype');
     my $grouprestrict = $cgi->param('grouprestrict') || '0';
-    my $query = 'SELECT DISTINCT userid, login_name, realname, is_enabled ' .
+    # 0 = disabled only, 1 = enabled only, 2 = everyone
+    my $is_enabled    = $cgi->param('is_enabled') // 2;
+    my $query = 'SELECT DISTINCT userid, login_name, realname, is_enabled, ' .
+                $dbh->sql_date_format('last_seen_date', '%Y-%m-%d') . ' AS last_seen_date ' .
                 'FROM profiles';
     my @bindValues;
     my $nextCondition;
@@ -157,8 +150,7 @@ if ($action eq 'search') {
             } elsif ($matchtype eq 'exact') {
                 $query .= $expr . ' = ?';
             } else { # substr or unknown
-                $query .= $dbh->sql_istrcmp($expr, '?', 'LIKE');
-                $matchstr = "%$matchstr%";
+                $query .= $dbh->sql_iposition('?', $expr) . ' > 0';
             }
             $nextCondition = 'AND';
             push(@bindValues, $matchstr);
@@ -170,6 +162,14 @@ if ($action eq 'search') {
                 @{Bugzilla::Group->flatten_group_membership($group->id)});
             $query .= " $nextCondition ugm.group_id IN($grouplist) ";
         }
+
+        detaint_natural($is_enabled);
+        if ($is_enabled && ($is_enabled == 0 || $is_enabled == 1)) {
+            $query .= " $nextCondition profiles.is_enabled = ?";
+            $nextCondition = 'AND';
+            push(@bindValues, $is_enabled);
+        }
+
         $query .= ' ORDER BY profiles.login_name';
 
         $vars->{'users'} = $dbh->selectall_arrayref($query,
@@ -224,6 +224,15 @@ if ($action eq 'search') {
 
     delete_token($token);
 
+    if ($cgi->param('notify_user')) {
+        $vars->{'new_user'} = $new_user;
+        my $message;
+      
+        $template->process('email/new-user-details.txt.tmpl', $vars, \$message)
+            || ThrowTemplateError($template->error());
+        MessageToMTA($message);
+    }
+
     # We already display the updated page. We have to recreate a token now.
     $vars->{'token'} = issue_session_token('edit_user');
     $vars->{'message'} = 'account_created';
@@ -243,13 +252,17 @@ if ($action eq 'search') {
 
     # Lock tables during the check+update session.
     $dbh->bz_start_transaction();
- 
+
     $editusers || $user->can_see_user($otherUser)
         || ThrowUserError('auth_failure', {reason => "not_visible",
                                            action => "modify",
                                            object => "user"});
 
     $vars->{'loginold'} = $otherUser->login;
+
+    # Update groups
+    my @group_ids = grep { s/group_// } keys %{ Bugzilla->cgi->Vars };
+    $otherUser->set_groups({ set => \@group_ids });
 
     # Update profiles table entry; silently skip doing this if the user
     # is not authorized.
@@ -263,86 +276,12 @@ if ($action eq 'search') {
         $otherUser->set_disable_mail($cgi->param('disable_mail'));
         $otherUser->set_extern_id($cgi->param('extern_id'))
             if defined($cgi->param('extern_id'));
-        $changes = $otherUser->update();
+
+        # Update bless groups
+        my @bless_ids = grep { s/bless_// } keys %{ Bugzilla->cgi->Vars };
+        $otherUser->set_bless_groups({ set => \@bless_ids });
     }
-
-    # Update group settings.
-    my $sth_add_mapping = $dbh->prepare(
-        qq{INSERT INTO user_group_map (
-                  user_id, group_id, isbless, grant_type
-                 ) VALUES (
-                  ?, ?, ?, ?
-                 )
-          });
-    my $sth_remove_mapping = $dbh->prepare(
-        qq{DELETE FROM user_group_map
-            WHERE user_id = ?
-              AND group_id = ?
-              AND isbless = ?
-              AND grant_type = ?
-          });
-
-    my @groupsAddedTo;
-    my @groupsRemovedFrom;
-    my @groupsGrantedRightsToBless;
-    my @groupsDeniedRightsToBless;
-
-    # Regard only groups the user is allowed to bless and skip all others
-    # silently.
-    # XXX: checking for existence of each user_group_map entry
-    #      would allow to display a friendlier error message on page reloads.
-    userDataToVars($otherUserID);
-    my $permissions = $vars->{'permissions'};
-    foreach my $blessable (@{$user->bless_groups()}) {
-        my $id = $blessable->id;
-        my $name = $blessable->name;
-
-        # Change memberships.
-        my $groupid = $cgi->param("group_$id") || 0;
-        if ($groupid != $permissions->{$id}->{'directmember'}) {
-            if (!$groupid) {
-                $sth_remove_mapping->execute(
-                    $otherUserID, $id, 0, GRANT_DIRECT);
-                push(@groupsRemovedFrom, $name);
-            } else {
-                $sth_add_mapping->execute(
-                    $otherUserID, $id, 0, GRANT_DIRECT);
-                push(@groupsAddedTo, $name);
-            }
-        }
-
-        # Only members of the editusers group may change bless grants.
-        # Skip silently if this is not the case.
-        if ($editusers) {
-            my $groupid = $cgi->param("bless_$id") || 0;
-            if ($groupid != $permissions->{$id}->{'directbless'}) {
-                if (!$groupid) {
-                    $sth_remove_mapping->execute(
-                        $otherUserID, $id, 1, GRANT_DIRECT);
-                    push(@groupsDeniedRightsToBless, $name);
-                } else {
-                    $sth_add_mapping->execute(
-                        $otherUserID, $id, 1, GRANT_DIRECT);
-                    push(@groupsGrantedRightsToBless, $name);
-                }
-            }
-        }
-    }
-    if (@groupsAddedTo || @groupsRemovedFrom) {
-        $dbh->do(qq{INSERT INTO profiles_activity (
-                           userid, who,
-                           profiles_when, fieldid,
-                           oldvalue, newvalue
-                          ) VALUES (
-                           ?, ?, now(), ?, ?, ?
-                          )
-                   },
-                 undef,
-                 ($otherUserID, $userid,
-                  get_field_id('bug_group'),
-                  join(', ', @groupsRemovedFrom), join(', ', @groupsAddedTo)));
-    }
-    # XXX: should create profiles_activity entries for blesser changes.
+    $changes = $otherUser->update();
 
     $dbh->bz_commit_transaction();
 
@@ -351,11 +290,7 @@ if ($action eq 'search') {
     delete_token($token);
 
     $vars->{'message'} = 'account_updated';
-    $vars->{'changed_fields'} = [keys %$changes];
-    $vars->{'groups_added_to'} = \@groupsAddedTo;
-    $vars->{'groups_removed_from'} = \@groupsRemovedFrom;
-    $vars->{'groups_granted_rights_to_bless'} = \@groupsGrantedRightsToBless;
-    $vars->{'groups_denied_rights_to_bless'} = \@groupsDeniedRightsToBless;
+    $vars->{'changes'} = \%$changes;
     # We already display the updated page. We have to recreate a token now.
     $vars->{'token'} = issue_session_token('edit_user');
 
@@ -490,10 +425,6 @@ if ($action eq 'search') {
     my $sth_set_bug_timestamp =
         $dbh->prepare('UPDATE bugs SET delta_ts = ? WHERE bug_id = ?');
 
-    my $sth_updateFlag = $dbh->prepare('INSERT INTO bugs_activity
-                  (bug_id, attach_id, who, bug_when, fieldid, removed, added)
-                  VALUES (?, ?, ?, ?, ?, ?, ?)');
-
     # Flags
     my $flag_ids =
       $dbh->selectcol_arrayref('SELECT id FROM flags WHERE requestee_id = ?',
@@ -508,16 +439,15 @@ if ($action eq 'search') {
     # so we have to log these changes manually.
     my %bugs;
     push(@{$bugs{$_->bug_id}->{$_->attach_id || 0}}, $_) foreach @$flags;
-    my $fieldid = get_field_id('flagtypes.name');
     foreach my $bug_id (keys %bugs) {
         foreach my $attach_id (keys %{$bugs{$bug_id}}) {
             my @old_summaries = Bugzilla::Flag->snapshot($bugs{$bug_id}->{$attach_id});
             $_->_set_requestee() foreach @{$bugs{$bug_id}->{$attach_id}};
             my @new_summaries = Bugzilla::Flag->snapshot($bugs{$bug_id}->{$attach_id});
             my ($removed, $added) =
-              Bugzilla::Flag->update_activity(\@old_summaries, \@new_summaries);
-            $sth_updateFlag->execute($bug_id, $attach_id || undef, $userid,
-                                     $timestamp, $fieldid, $removed, $added);
+                Bugzilla::Flag->update_activity(\@old_summaries, \@new_summaries);
+            LogActivityEntry($bug_id, 'flagtypes.name', $removed, $added,
+                $userid, $timestamp, undef, $attach_id);
         }
         $sth_set_bug_timestamp->execute($timestamp, $bug_id);
         $updatedbugs{$bug_id} = 1;
@@ -645,6 +575,11 @@ if ($action eq 'search') {
     $dbh->bz_commit_transaction();
     delete_token($token);
 
+    # It's complex to determine which items now need to be flushed from
+    # memcached.  As user deletion is expected to be a rare event, we just
+    # flush the entire cache when a user is deleted.
+    Bugzilla->memcached->clear_all();
+
     $vars->{'message'} = 'account_deleted';
     $vars->{'otheruser'}{'login'} = $otherUser->login;
     $vars->{'restrictablegroups'} = $user->bless_groups();
@@ -707,7 +642,7 @@ sub check_user {
         $otherUser = new Bugzilla::User({ name => $otherUserLogin });
         $vars->{'user_login'} = $otherUserLogin;
     }
-    ($otherUser && $otherUser->id) || ThrowCodeError('invalid_user', $vars);
+    ($otherUser && $otherUser->id) || ThrowUserError('invalid_user', $vars);
 
     return $otherUser;
 }
@@ -716,7 +651,9 @@ sub check_user {
 sub mirrorListSelectionValues {
     my $cgi = Bugzilla->cgi;
     if (defined($cgi->param('matchtype'))) {
-        foreach ('matchvalue', 'matchstr', 'matchtype', 'grouprestrict', 'groupid') {
+        foreach ('matchvalue', 'matchstr', 'matchtype',
+                 'grouprestrict', 'groupid', 'is_enabled')
+        {
             $vars->{'listselectionvalues'}{$_} = $cgi->param($_);
         }
     }

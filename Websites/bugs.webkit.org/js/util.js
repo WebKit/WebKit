@@ -1,28 +1,10 @@
-/* ***** BEGIN LICENSE BLOCK *****
- * Version: MPL 1.1
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  *
- * The contents of this file are subject to the Mozilla Public License Version
- * 1.1 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/
- *
- * Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
- * for the specific language governing rights and limitations under the
- * License.
- *
- * The Original Code is the Cross Platform JavaScript Utility Library.
- *
- * The Initial Developer of the Original Code is
- * Everything Solved.
- * Portions created by the Initial Developer are Copyright (C) 2007
- * the Initial Developer. All Rights Reserved.
- *
- * Contributor(s):
- *   Max Kanat-Alexander <mkanat@bugzilla.org>
- *   Christopher A. Aillon <christopher@aillon.com>
- *
- * ***** END LICENSE BLOCK ***** */
+ * This Source Code Form is "Incompatible With Secondary Licenses", as
+ * defined by the Mozilla Public License, v. 2.0.
+ */
 
 /**
  * Locate where an element is on the page, x-wise.
@@ -143,11 +125,28 @@ function bz_overlayBelow(item, parent) {
  */
 function bz_isValueInArray(aArray, aValue)
 {
-  var run = 0;
-  var len = aArray.length;
-
-  for ( ; run < len; run++) {
+  for (var run = 0, len = aArray.length ; run < len; run++) {
     if (aArray[run] == aValue) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+/**
+ * Checks if a specified value is in the specified array by performing a
+ * case-insensitive comparison.
+ *
+ * @param  aArray Array to search for the value.
+ * @param  aValue Value to search from the array.
+ * @return        Boolean; true if value is found in the array and false if not.
+ */
+function bz_isValueInArrayIgnoreCase(aArray, aValue)
+{
+  var re = new RegExp(aValue.replace(/([^A-Za-z0-9])/g, "\\$1"), 'i');
+  for (var run = 0, len = aArray.length ; run < len; run++) {
+    if (aArray[run].match(re)) {
       return true;
     }
   }
@@ -217,6 +216,55 @@ function bz_valueSelected(aSelect, aValue) {
         }
     }
     return false;
+}
+
+/**
+ * Returns all Option elements that are selected in a <select>,
+ * as an array. Returns an empty array if nothing is selected.
+ *
+ * @param aSelect The select you want the selected values of.
+ */
+function bz_selectedOptions(aSelect) {
+    // HTML 5
+    if (aSelect.selectedOptions) {
+        return aSelect.selectedOptions;
+    }
+
+    var start_at = aSelect.selectedIndex;
+    if (start_at == -1) return [];
+    var first_selected =  aSelect.options[start_at];
+    if (!aSelect.multiple) return first_selected;
+    // selectedIndex is specified as being the "first selected item",
+    // so we can start from there.
+    var selected = [first_selected];
+    var options_length = aSelect.options.length;
+    // We start after first_selected
+    for (var i = start_at + 1; i < options_length; i++) {
+        var this_option = aSelect.options[i];
+        if (this_option.selected) selected.push(this_option);
+    }
+    return selected;
+}
+
+/**
+ * Returns all Option elements that have the "selected" attribute, as an array.
+ * Returns an empty array if nothing is selected.
+ *
+ * @param aSelect The select you want the pre-selected values of.
+ */
+function bz_preselectedOptions(aSelect) {
+    var options = aSelect.options;
+    var selected = new Array();
+    for (var i = 0, l = options.length; i < l; i++) {
+        var attributes = options[i].attributes;
+        for (var j = 0, m = attributes.length; j < m; j++) {
+            if (attributes[j].name == 'selected') {
+                if (!aSelect.multiple) return options[i];
+                selected.push(options[i]);
+            }
+        }
+    }
+    return selected;
 }
 
 /**

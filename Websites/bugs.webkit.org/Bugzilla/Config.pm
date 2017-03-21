@@ -1,43 +1,27 @@
-# -*- Mode: perl; indent-tabs-mode: nil -*-
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
-# The contents of this file are subject to the Mozilla Public
-# License Version 1.1 (the "License"); you may not use this file
-# except in compliance with the License. You may obtain a copy of
-# the License at http://www.mozilla.org/MPL/
-#
-# Software distributed under the License is distributed on an "AS
-# IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-# implied. See the License for the specific language governing
-# rights and limitations under the License.
-#
-# The Original Code is the Bugzilla Bug Tracking System.
-#
-# The Initial Developer of the Original Code is Netscape Communications
-# Corporation. Portions created by Netscape are
-# Copyright (C) 1998 Netscape Communications Corporation. All
-# Rights Reserved.
-#
-# Contributor(s): Terry Weissman <terry@mozilla.org>
-#                 Dawn Endico <endico@mozilla.org>
-#                 Dan Mosedale <dmose@mozilla.org>
-#                 Joe Robins <jmrobins@tgix.com>
-#                 Jake <jake@bugzilla.org>
-#                 J. Paul Reed <preed@sigkill.com>
-#                 Bradley Baetz <bbaetz@student.usyd.edu.au>
-#                 Christopher Aillon <christopher@aillon.com>
-#                 Erik Stambaugh <erik@dasbistro.com>
-#                 Frédéric Buclin <LpSolit@gmail.com>
+# This Source Code Form is "Incompatible With Secondary Licenses", as
+# defined by the Mozilla Public License, v. 2.0.
 
 package Bugzilla::Config;
 
+use 5.10.1;
 use strict;
+use warnings;
 
-use base qw(Exporter);
+use parent qw(Exporter);
+use autodie qw(:default);
+
 use Bugzilla::Constants;
 use Bugzilla::Hook;
-use Bugzilla::Install::Filesystem qw(fix_file_permissions);
-use Data::Dumper;
+use Bugzilla::Util qw(trick_taint);
+
+use JSON::XS;
+use File::Slurp;
 use File::Temp;
+use File::Basename;
 
 # Don't export localvars by default - people should have to explicitly
 # ask for it, as a (probably futile) attempt to stop code using it
@@ -114,8 +98,35 @@ sub SetParam {
 sub update_params {
     my ($params) = @_;
     my $answer = Bugzilla->installation_answers;
+    my $datadir = bz_locations()->{'datadir'};
+    my $param;
 
-    my $param = read_param_file();
+    # If the old data/params file using Data::Dumper output still exists,
+    # read it. It will be deleted once the parameters are stored in the new
+    # data/params.json file.
+    my $old_file = "$datadir/params";
+
+    if (-e $old_file) {
+        require Safe;
+        my $s = new Safe;
+
+        $s->rdo($old_file);
+        die "Error reading $old_file: $!" if $!;
+        die "Error evaluating $old_file: $@" if $@;
+
+        # Now read the param back out from the sandbox.
+        $param = \%{ $s->varglob('param') };
+    }
+    else {
+        # Rename params.js to params.json if checksetup.pl
+        # was executed with an earlier version of this change
+        rename "$old_file.js", "$old_file.json"
+            if -e "$old_file.js" && !-e "$old_file.json";
+
+        # Read the new data/params.json file.
+        $param = read_param_file();
+    }
+
     my %new_params;
 
     # If we didn't return any param values, then this is a new installation.
@@ -174,16 +185,19 @@ sub update_params {
     }
 
     # Old mail_delivery_method choices contained no uppercase characters
-    if (exists $param->{'mail_delivery_method'}
-        && $param->{'mail_delivery_method'} !~ /[A-Z]/) {
-        my $method = $param->{'mail_delivery_method'};
-        my %translation = (
-            'sendmail' => 'Sendmail',
-            'smtp'     => 'SMTP',
-            'qmail'    => 'Qmail',
-            'testfile' => 'Test',
-            'none'     => 'None');
-        $param->{'mail_delivery_method'} = $translation{$method};
+    my $mta = $param->{'mail_delivery_method'};
+    if ($mta) {
+        if ($mta !~ /[A-Z]/) {
+            my %translation = (
+                'sendmail' => 'Sendmail',
+                'smtp'     => 'SMTP',
+                'qmail'    => 'Qmail',
+                'testfile' => 'Test',
+                'none'     => 'None');
+            $param->{'mail_delivery_method'} = $translation{$mta};
+        }
+        # This will force the parameter to be reset to its default value.
+        delete $param->{'mail_delivery_method'} if $param->{'mail_delivery_method'} eq 'Qmail';
     }
 
     # Convert the old "ssl" parameter to the new "ssl_redirect" parameter.
@@ -219,6 +233,9 @@ sub update_params {
 
     $param->{'utf8'} = 1 if $new_install;
 
+    # Bug 452525: OR based groups are on by default for new installations
+    $param->{'or_groups'} = 1 if $new_install;
+
     # --- REMOVE OLD PARAMS ---
 
     my %oldparams;
@@ -230,7 +247,6 @@ sub update_params {
     }
 
     # Write any old parameters to old-params.txt
-    my $datadir = bz_locations()->{'datadir'};
     my $old_param_file = "$datadir/old-params.txt";
     if (scalar(keys %oldparams)) {
         my $op_file = new IO::File($old_param_file, '>>', 0600)
@@ -240,12 +256,9 @@ sub update_params {
               " and so have been\nmoved from your parameters file into",
               " $old_param_file:\n";
 
-        local $Data::Dumper::Terse  = 1;
-        local $Data::Dumper::Indent = 0;
-
         my $comma = "";
         foreach my $item (keys %oldparams) {
-            print $op_file "\n\n$item:\n" . Data::Dumper->Dump([$oldparams{$item}]) . "\n";
+            print $op_file "\n\n$item:\n" . $oldparams{$item} . "\n";
             print "${comma}$item";
             $comma = ", ";
         }
@@ -253,28 +266,12 @@ sub update_params {
         $op_file->close;
     }
 
-    if (ON_WINDOWS && !-e SENDMAIL_EXE
-        && $param->{'mail_delivery_method'} eq 'Sendmail')
-    {
-        my $smtp = $answer->{'SMTP_SERVER'};
-        if (!$smtp) {
-            print "\nBugzilla requires an SMTP server to function on",
-                  " Windows.\nPlease enter your SMTP server's hostname: ";
-            $smtp = <STDIN>;
-            chomp $smtp;
-            if ($smtp) {
-                $param->{'smtpserver'} = $smtp;
-             }
-             else {
-                print "\nWarning: No SMTP Server provided, defaulting to",
-                      " localhost\n";
-            }
-        }
-
-        $param->{'mail_delivery_method'} = 'SMTP';
-    }
-
     write_params($param);
+
+    if (-e $old_file) {
+        unlink $old_file;
+        say "$old_file has been converted into $old_file.json, using the JSON format.";
+    }
 
     # Return deleted params and values so that checksetup.pl has a chance
     # to convert old params to new data.
@@ -284,24 +281,15 @@ sub update_params {
 sub write_params {
     my ($param_data) = @_;
     $param_data ||= Bugzilla->params;
+    my $param_file = bz_locations()->{'datadir'} . '/params.json';
 
-    my $datadir    = bz_locations()->{'datadir'};
-    my $param_file = "$datadir/params";
+    my $json_data = JSON::XS->new->canonical->pretty->encode($param_data);
+    write_file($param_file, { binmode => ':utf8', atomic => 1 }, \$json_data);
 
-    local $Data::Dumper::Sortkeys = 1;
-
-    my ($fh, $tmpname) = File::Temp::tempfile('params.XXXXX',
-                                              DIR => $datadir );
-
-    print $fh (Data::Dumper->Dump([$param_data], ['*param']))
-      || die "Can't write param file: $!";
-
-    close $fh;
-
-    rename $tmpname, $param_file
-      or die "Can't rename $tmpname to $param_file: $!";
-
-    fix_file_permissions($param_file);
+    # It's not common to edit parameters and loading
+    # Bugzilla::Install::Filesystem is slow.
+    require Bugzilla::Install::Filesystem;
+    Bugzilla::Install::Filesystem::fix_file_permissions($param_file);
 
     # And now we have to reset the params cache so that Bugzilla will re-read
     # them.
@@ -310,21 +298,31 @@ sub write_params {
 
 sub read_param_file {
     my %params;
-    my $datadir = bz_locations()->{'datadir'};
-    if (-e "$datadir/params") {
-        # Note that checksetup.pl sets file permissions on '$datadir/params'
+    my $file = bz_locations()->{'datadir'} . '/params.json';
 
-        # Using Safe mode is _not_ a guarantee of safety if someone does
-        # manage to write to the file. However, it won't hurt...
-        # See bug 165144 for not needing to eval this at all
-        my $s = new Safe;
+    if (-e $file) {
+        my $data;
+        read_file($file, binmode => ':utf8', buf_ref => \$data);
 
-        $s->rdo("$datadir/params");
-        die "Error reading $datadir/params: $!" if $!;
-        die "Error evaluating $datadir/params: $@" if $@;
-
-        # Now read the param back out from the sandbox
-        %params = %{$s->varglob('param')};
+        # If params.json has been manually edited and e.g. some quotes are
+        # missing, we don't want JSON::XS to leak the content of the file
+        # to all users in its error message, so we have to eval'uate it.
+        %params = eval { %{JSON::XS->new->decode($data)} };
+        if ($@) {
+            my $error_msg = (basename($0) eq 'checksetup.pl') ?
+                $@ : 'run checksetup.pl to see the details.';
+            die "Error parsing $file: $error_msg";
+        }
+        # JSON::XS doesn't detaint data for us.
+        foreach my $key (keys %params) {
+            if (ref($params{$key}) eq "ARRAY") {
+                foreach my $item (@{$params{$key}}) {
+                    trick_taint($item);
+                }
+            } else {
+                trick_taint($params{$key}) if defined $params{$key};
+            }
+        }
     }
     elsif ($ENV{'SERVER_SOFTWARE'}) {
        # We're in a CGI, but the params file doesn't exist. We can't
@@ -334,7 +332,7 @@ sub read_param_file {
        # so that the user sees the error.
        require CGI::Carp;
        CGI::Carp->import('fatalsToBrowser');
-       die "The $datadir/params file does not exist."
+       die "The $file file does not exist."
            . ' You probably need to run checksetup.pl.',
     }
     return \%params;
@@ -390,7 +388,7 @@ specified.
 Description: Writes the parameters to disk.
 
 Params:      C<$params> (optional) - A hashref to write to the disk
-               instead of C<Bugzilla->params>. Used only by
+               instead of C<Bugzilla-E<gt>params>. Used only by
                C<update_params>.
 
 Returns:     nothing
@@ -398,11 +396,13 @@ Returns:     nothing
 =item C<read_param_file()>
 
 Description: Most callers should never need this. This is used
-             by C<Bugzilla->params> to directly read C<$datadir/params>
-             and load it into memory. Use C<Bugzilla->params> instead.
+             by C<Bugzilla-E<gt>params> to directly read C<$datadir/params.json>
+             and load it into memory. Use C<Bugzilla-E<gt>params> instead.
 
 Params:      none
 
-Returns:     A hashref containing the current params in C<$datadir/params>.
+Returns:     A hashref containing the current params in C<$datadir/params.json>.
+
+=item C<param_panels()>
 
 =back

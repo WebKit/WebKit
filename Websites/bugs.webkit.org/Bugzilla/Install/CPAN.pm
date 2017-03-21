@@ -1,26 +1,17 @@
-# -*- Mode: perl; indent-tabs-mode: nil -*-
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
-# The contents of this file are subject to the Mozilla Public
-# License Version 1.1 (the "License"); you may not use this file
-# except in compliance with the License. You may obtain a copy of
-# the License at http://www.mozilla.org/MPL/
-#
-# Software distributed under the License is distributed on an "AS
-# IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-# implied. See the License for the specific language governing
-# rights and limitations under the License.
-#
-# The Original Code is the Bugzilla Bug Tracking System.
-#
-# The Initial Developer of the Original Code is Everything Solved, Inc.
-# Portions created by Everything Solved are Copyright (C) 2007
-# Everything Solved, Inc. All Rights Reserved.
-#
-# Contributor(s): Max Kanat-Alexander <mkanat@bugzilla.org>
+# This Source Code Form is "Incompatible With Secondary Licenses", as
+# defined by the Mozilla Public License, v. 2.0.
 
 package Bugzilla::Install::CPAN;
+
+use 5.10.1;
 use strict;
-use base qw(Exporter);
+use warnings;
+
+use parent qw(Exporter);
 our @EXPORT = qw(
     BZ_LIB
 
@@ -37,7 +28,6 @@ use Config;
 use CPAN;
 use Cwd qw(abs_path);
 use File::Path qw(rmtree);
-use List::Util qw(shuffle);
 
 # These are required for install-module.pl to be able to install
 # all modules properly.
@@ -99,12 +89,7 @@ use constant CPAN_DEFAULTS => {
     unzip => bin_loc('unzip'),
     wget => bin_loc('wget'),
 
-    urllist => [shuffle qw(
-        http://cpan.pair.com/
-        http://mirror.hiwaay.net/CPAN/
-        ftp://ftp.dc.aleron.net/pub/CPAN/
-        http://mirrors.kernel.org/cpan/
-        http://mirrors2.kernel.org/cpan/)],
+    urllist => ['http://www.cpan.org/'],
 };
 
 sub check_cpan_requirements {
@@ -180,20 +165,9 @@ sub install_module {
     if (!$module) {
         die install_string('no_such_module', { module => $name }) . "\n";
     }
-    my $version = $module->cpan_version;
-    my $module_name = $name;
-
-    if ($name eq 'LWP::UserAgent' && $^V lt v5.8.8) {
-        # LWP 6.x requires Perl 5.8.8 or newer.
-        # As PAUSE only indexes the very last version of each module,
-        # we have to specify the path to the tarball ourselves.
-        $name = 'GAAS/libwww-perl-5.837.tar.gz';
-        # This tarball contains LWP::UserAgent 5.835.
-        $version = '5.835';
-    }
 
     print install_string('install_module', 
-              { module => $module_name, version => $version }) . "\n";
+              { module => $name, version => $module->cpan_version }) . "\n";
 
     if ($test) {
         CPAN::Shell->force('install', $name);
@@ -222,8 +196,8 @@ sub set_cpan_config {
     # Calling a senseless autoload that does nothing makes us
     # automatically load any existing configuration.
     # We want to avoid the "invalid command" message.
-    open(my $saveout, ">&STDOUT");
-    open(STDOUT, '>/dev/null');
+    open(my $saveout, ">&", "STDOUT");
+    open(STDOUT, '>', '/dev/null');
     eval { CPAN->ignore_this_error_message_from_bugzilla; };
     undef $@;
     close(STDOUT);
@@ -353,5 +327,13 @@ when we internally install a newer CPAN module.
 
 Note that calling this function prints a B<lot> of information to
 STDOUT and STDERR.
+
+=back
+
+=head1 B<Methods in need of POD>
+
+=over
+
+=item check_cpan_requirements
 
 =back

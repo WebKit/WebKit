@@ -1,35 +1,22 @@
-#!/usr/bin/env perl -wT
-# -*- Mode: perl; indent-tabs-mode: nil -*-
+#!/usr/bin/perl -T
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
-# The contents of this file are subject to the Mozilla Public
-# License Version 1.1 (the "License"); you may not use this file
-# except in compliance with the License. You may obtain a copy of
-# the License at http://www.mozilla.org/MPL/
-#
-# Software distributed under the License is distributed on an "AS
-# IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-# implied. See the License for the specific language governing
-# rights and limitations under the License.
-#
-# The Original Code is the Bugzilla Bug Tracking System.
-#
-# The Initial Developer of the Original Code is Netscape Communications
-# Corporation. Portions created by Netscape are
-# Copyright (C) 1998 Netscape Communications Corporation. All
-# Rights Reserved.
-#
-# Contributor(s): 
-#   Gervase Markham <gerv@gerv.net>
-#   Max Kanat-Alexander <mkanat@bugzilla.org>
+# This Source Code Form is "Incompatible With Secondary Licenses", as
+# defined by the Mozilla Public License, v. 2.0.
 
+use 5.10.1;
 use strict;
+use warnings;
+
 use lib qw(. lib);
 
 use Bugzilla;
 use Bugzilla::Constants;
 use Bugzilla::Util;
 use Bugzilla::Error;
-use Bugzilla::Search;
+use Bugzilla::Bug;
 use Bugzilla::Field;
 use Bugzilla::Product;
 
@@ -187,10 +174,9 @@ my %since_dups = @{$dbh->selectcol_arrayref(
     $reso_field_id, $changedsince)};
 add_indirect_dups(\%since_dups, \%dupe_relation);
 
-# Enforce the mostfreqthreshold parameter and the "bug_id" cgi param.
-my $mostfreq = Bugzilla->params->{'mostfreqthreshold'};
+# Enforce the MOST_FREQUENT_THRESHOLD constant and the "bug_id" cgi param.
 foreach my $id (keys %total_dups) {
-    if ($total_dups{$id} < $mostfreq) {
+    if ($total_dups{$id} < MOST_FREQUENT_THRESHOLD) {
         delete $total_dups{$id};
         next;
     }

@@ -1,35 +1,18 @@
-#!/usr/bin/env perl -wT
-# -*- Mode: perl; indent-tabs-mode: nil -*-
+#!/usr/bin/perl -T
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
-# The contents of this file are subject to the Mozilla Public
-# License Version 1.1 (the "License"); you may not use this file
-# except in compliance with the License. You may obtain a copy of
-# the License at http://www.mozilla.org/MPL/
-#
-# Software distributed under the License is distributed on an "AS
-# IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-# implied. See the License for the specific language governing
-# rights and limitations under the License.
-#
-# The Original Code is the Bugzilla Bug Tracking System.
-#
-# The Initial Developer of the Original Code is Netscape Communications
-# Corporation. Portions created by Netscape are
-# Copyright (C) 1998 Netscape Communications Corporation. All
-# Rights Reserved.
-#
-# Contributor(s): Dawn Endico <endico@mozilla.org>
-#                 Gregary Hendricks <ghendricks@novell.com>
-#                 Vance Baarda <vrb@novell.com>
-#                 Guzman Braso <gbn@hqso.net>
-#                 Erik Purins <epurins@day1studios.com>
-#                 Frédéric Buclin <LpSolit@gmail.com>
+# This Source Code Form is "Incompatible With Secondary Licenses", as
+# defined by the Mozilla Public License, v. 2.0.
 
 # This script reads in xml bug data from standard input and inserts
 # a new bug into bugzilla. Everything before the beginning <?xml line
 # is removed so you can pipe in email messages.
 
+use 5.10.1;
 use strict;
+use warnings;
 
 #####################################################################
 #
@@ -72,6 +55,7 @@ use lib qw(. lib);
 use Bugzilla;
 use Bugzilla::Object;
 use Bugzilla::Bug;
+use Bugzilla::Attachment;
 use Bugzilla::Product;
 use Bugzilla::Version;
 use Bugzilla::Component;
@@ -96,13 +80,16 @@ my $debug = 0;
 my $mail  = '';
 my $attach_path = '';
 my $help  = 0;
-my ($default_product_name, $default_component_name);
+my $bug_page = 'show_bug.cgi?id=';
+my $default_product_name = '';
+my $default_component_name = '';
 
 my $result = GetOptions(
     "verbose|debug+" => \$debug,
     "mail|sendmail!" => \$mail,
     "attach_path=s"  => \$attach_path,
     "help|?"         => \$help,
+    "bug_page=s"     => \$bug_page,
     "product=s"      => \$default_product_name,
     "component=s"    => \$default_component_name,
 );
@@ -120,9 +107,6 @@ my $xml;
 my $dbh = Bugzilla->dbh;
 my $params = Bugzilla->params;
 my ($timestamp) = $dbh->selectrow_array("SELECT NOW()");
-
-$default_product_name = '' if !defined $default_product_name;
-$default_component_name = '' if !defined $default_component_name;
 
 ###############################################################################
 # Helper sub routines                                                         #
@@ -423,6 +407,8 @@ sub process_bug {
     my $exporter_login   = $root->{'att'}->{'exporter'};
     my $exporter         = new Bugzilla::User({ name => $exporter_login });
     my $urlbase          = $root->{'att'}->{'urlbase'};
+    my $url              = $urlbase . $bug_page;
+    trick_taint($url);
 
     # We will store output information in this variable.
     my $log = "";
@@ -523,7 +509,6 @@ sub process_bug {
         # Same goes for bug #'s Since we don't know if the referenced bug
         # is also being moved, lets make sure they know it means a different
         # bugzilla.
-        my $url = $urlbase . "show_bug.cgi?id=";
         $data =~ s/([Bb]ugs?\s*\#?\s*(\d+))/$url$2/g;
 
         # Keep the original commenter if possible, else we will fall back
@@ -544,7 +529,7 @@ sub process_bug {
     $comments .= format_time(scalar localtime(time()), '%Y-%m-%d %R %Z') . " ";
     $comments .= " ---\n\n";
     $comments .= "This bug was previously known as _bug_ $bug_fields{'bug_id'} at ";
-    $comments .= $urlbase . "show_bug.cgi?id=" . $bug_fields{'bug_id'} . "\n";
+    $comments .= $url . $bug_fields{'bug_id'} . "\n";
     if ( defined $bug_fields{'dependson'} ) {
         $comments .= "This bug depended on bug(s) " .
                      join(' ', _to_array($bug_fields{'dependson'})) . ".\n";
@@ -845,8 +830,10 @@ sub process_bug {
             push( @values, $qa_contact );
         }
         else {
-            push( @values, $component->default_qa_contact->id || undef );
-            if ($component->default_qa_contact->id){
+            push(@values, $component->default_qa_contact ?
+                          $component->default_qa_contact->id : undef);
+
+            if ($component->default_qa_contact) {
                 $err .= "Setting qa contact to the default for this product.\n";
                 $err .= "   This bug either had no qa contact or an invalid one.\n";
             }
@@ -860,7 +847,6 @@ sub process_bug {
     my $valid_status = check_field('bug_status',  
                                   scalar $bug_fields{'bug_status'}, 
                                   undef, ERR_LEVEL );
-    my $is_open = is_open_state($bug_fields{'bug_status'}); 
     my $status = $bug_fields{'bug_status'} || undef;
     my $resolution = $bug_fields{'resolution'} || undef;
     
@@ -910,7 +896,7 @@ sub process_bug {
 
     if ($status) {
         if($valid_status){
-            if($is_open){
+            if (is_open_state($status)) {
                 if ($resolution) {
                     $err .= "Resolution set on an open status.\n";
                     $err .= "   Dropping resolution $resolution\n";
@@ -944,7 +930,7 @@ sub process_bug {
                     }
                 }
             }
-            else{ # $is_open is false
+            else {
                if (!$resolution) {
                    $err .= "Missing Resolution. Setting status to ";
                    if($everconfirmed){
@@ -1039,6 +1025,15 @@ sub process_bug {
                 push(@query, $custom_field);
                 push(@values, $value);
             }
+        } elsif ($field->type == FIELD_TYPE_DATE) {
+            eval { $value = Bugzilla::Bug->_check_date_field($value); };
+            if ($@) {
+                $err .= "Skipping illegal value \"$value\" in $custom_field.\n" ;
+            }
+            else {
+                push(@query, $custom_field);
+                push(@values, $value);
+            }
         } else {
             $err .= "Type of custom field $custom_field is an unhandled FIELD_TYPE: " .
                     $field->type . "\n";
@@ -1060,6 +1055,7 @@ sub process_bug {
 
     $dbh->do( $query, undef, @values );
     my $id = $dbh->bz_last_key( 'bugs', 'bug_id' );
+    my $bug_obj = Bugzilla::Bug->new($id);
 
     # We are almost certain to get some uninitialized warnings
     # Since this is just for debugging the query, let's shut them up
@@ -1142,34 +1138,44 @@ sub process_bug {
             $err .= "No attachment ID specified, dropping attachment\n";
             next;
         }
-        if (!$exporter->is_insider && $att->{'isprivate'}) {
-            $err .= "Exporter not in insidergroup and attachment marked private.\n";
+
+        my $attacher;
+        if ($att->{'attacher'}) {
+            $attacher = Bugzilla::User->new({name => $att->{'attacher'}, cache => 1});
+        }
+        my $new_attacher = $attacher || $exporter;
+
+        if ($att->{'isprivate'} && !$new_attacher->is_insider) {
+            my $who = $new_attacher->login;
+            $err .= "$who not in insidergroup and attachment marked private.\n";
             $err .= "   Marking attachment public\n";
             $att->{'isprivate'} = 0;
         }
 
-        my $attacher_id = $att->{'attacher'} ? login_to_id($att->{'attacher'}) : undef;
+        # We log in the user so that the attachment creator is set correctly.
+        Bugzilla->set_user($new_attacher);
 
-        $dbh->do("INSERT INTO attachments 
-                 (bug_id, creation_ts, modification_time, filename, description,
-                 mimetype, ispatch, isprivate, isobsolete, submitter_id) 
-                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-            undef, $id, $att->{'date'}, $att->{'date'}, $att->{'filename'},
-            $att->{'desc'}, $att->{'ctype'}, $att->{'ispatch'},
-            $att->{'isprivate'}, $att->{'isobsolete'}, $attacher_id || $exporterid);
-        my $att_id   = $dbh->bz_last_key( 'attachments', 'attach_id' );
-        my $att_data = $att->{'data'};
-        my $sth = $dbh->prepare("INSERT INTO attach_data (id, thedata) 
-                                 VALUES ($att_id, ?)" );
-        trick_taint($att_data);
-        $sth->bind_param( 1, $att_data, $dbh->BLOB_TYPE );
-        $sth->execute();
+        my $attachment = Bugzilla::Attachment->create(
+            { bug           => $bug_obj,
+              creation_ts   => $att->{date},
+              data          => $att->{data},
+              description   => $att->{desc},
+              filename      => $att->{filename},
+              ispatch       => $att->{ispatch},
+              isprivate     => $att->{isprivate},
+              isobsolete    => $att->{isobsolete},
+              mimetype      => $att->{ctype},
+            });
+        my $att_id = $attachment->id;
+
+        # We log out the attacher as the remaining steps are not on his behalf.
+        Bugzilla->logout_request;
 
         $comments .= "Imported an attachment (id=$att_id)\n";
-        if (!$attacher_id) {
+        if (!$attacher) {
             if ($att->{'attacher'}) {
                 $err .= "The original submitter of attachment $att_id was\n   ";
-                $err .= $att->{'attacher'} . ", but he doesn't have an account here.\n";
+                $err .= $att->{'attacher'} . ", but they don't have an account here.\n";
             }
             else {
                 $err .= "The original submitter of attachment $att_id is unknown.\n";
@@ -1208,7 +1214,7 @@ sub process_bug {
                               $c->{isprivate}, $c->{thetext}, 0);
     }
     $sth_comment->execute($id, $exporterid, $timestamp, 0, $comments, $worktime);
-    Bugzilla::Bug->new($id)->_sync_fulltext('new_bug');
+    Bugzilla::Bug->new($id)->_sync_fulltext( new_bug => 1);
 
     # Add this bug to each group of which its product is a member.
     my $sth_group = $dbh->prepare("INSERT INTO bug_group_map (bug_id, group_id) 
@@ -1220,7 +1226,7 @@ sub process_bug {
         }
     }
 
-    $log .= "Bug ${urlbase}show_bug.cgi?id=$bug_fields{'bug_id'} ";
+    $log .= "Bug ${url}$bug_fields{'bug_id'} ";
     $log .= "imported as bug $id.\n";
     $log .= $params->{"urlbase"} . "show_bug.cgi?id=$id\n\n";
     if ($err) {
@@ -1269,6 +1275,9 @@ my $twig = XML::Twig->new(
     },
     start_tag_handlers => { bugzilla => \&init }
 );
+# Prevent DoS using the billion laughs attack.
+$twig->{NoExpand} = 1;
+
 $twig->parse($xml);
 my $root       = $twig->root;
 my $maintainer = $root->{'att'}->{'maintainer'};
@@ -1314,6 +1323,13 @@ Send mail to exporter with a log of bugs imported and any errors.
 The path to the attachment files. (Required if encoding="filename"
 is used for attachments.)
 
+=item B<--bug_page>
+
+The page that links to the bug on top of urlbase. Its default value
+is "show_bug.cgi?id=", which is what Bugzilla installations use.
+You only need to pass this argument if you are importing bugs from
+another bug tracking system.
+
 =item B<--product=name>
 
 The product to put the bug in if the product specified in the
@@ -1348,4 +1364,3 @@ XML doesn't exist.
      importxml.pl [options] bugsfile.xml
 
 =cut
-

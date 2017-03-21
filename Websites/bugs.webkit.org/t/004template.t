@@ -1,33 +1,17 @@
-# -*- Mode: perl; indent-tabs-mode: nil -*-
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
-# The contents of this file are subject to the Mozilla Public
-# License Version 1.1 (the "License"); you may not use this file
-# except in compliance with the License. You may obtain a copy of
-# the License at http://www.mozilla.org/MPL/
-#
-# Software distributed under the License is distributed on an "AS
-# IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-# implied. See the License for the specific language governing
-# rights and limitations under the License.
-#
-# The Original Code are the Bugzilla tests.
-#
-# The Initial Developer of the Original Code is Jacob Steenhagen.
-# Portions created by Jacob Steenhagen are
-# Copyright (C) 2001 Jacob Steenhagen. All
-# Rights Reserved.
-#
-# Contributor(s): Jacob Steenhagen <jake@bugzilla.org>
-#                 Zach Lipton <zach@zachlipton.com>
-#                 David D. Kilzer <ddkilzer@kilzer.net>
-#                 Tobias Burnus <burnus@net-b.de>
-#
+# This Source Code Form is "Incompatible With Secondary Licenses", as
+# defined by the Mozilla Public License, v. 2.0.
 
 #################
 #Bugzilla Test 4#
 ####Templates####
 
+use 5.10.1;
 use strict;
+use warnings;
 
 use lib 't';
 
@@ -38,13 +22,13 @@ use CGI qw(-no_debug);
 
 use File::Spec;
 use Template;
-use Test::More tests => ( scalar(@referenced_files) + $num_actual_files );
+use Test::More tests => ( scalar(@referenced_files) + 2 * $num_actual_files );
 
 # Capture the TESTOUT from Test::More or Test::Builder for printing errors.
 # This will handle verbosity for us automatically.
 my $fh;
 {
-    local $^W = 0;  # Don't complain about non-existent filehandles
+    no warnings qw(unopened);  # Don't complain about non-existent filehandles
     if (-e \*Test::More::TESTOUT) {
         $fh = \*Test::More::TESTOUT;
     } elsif (-e \*Test::Builder::TESTOUT) {
@@ -55,17 +39,21 @@ my $fh;
 }
 
 # Check to make sure all templates that are referenced in Bugzilla
-# exist in the proper place in the English template directory.
+# exist in the proper place in the English template or extension directory.
 # All other languages may or may not include any template as Bugzilla will
 # fall back to English if necessary.
 
 foreach my $file (@referenced_files) {
-    my $path = File::Spec->catfile($english_default_include_path, $file);
-    if (-e $path) {
-        ok(1, "$path exists");
-    } else {
-        ok(0, "$path cannot be located --ERROR");
+    my $found = 0;
+    foreach my $path (@english_default_include_paths) {
+        my $pathfile = File::Spec->catfile($path, $file);
+        if (-e $pathfile) {
+            $found = 1;
+            last;
+        }
     }
+
+    ok($found, "$file found");
 }
 
 foreach my $include_path (@include_paths) {
@@ -78,12 +66,11 @@ foreach my $include_path (@include_paths) {
         # See Template.pm for the actual codebase definitions.
 
         # Initialize templates (f.e. by loading plugins like Hook).
-        PRE_PROCESS => "global/initialize.none.tmpl",
+        PRE_PROCESS => "global/variables.none.tmpl",
 
         FILTERS =>
         {
             html_linebreak => sub { return $_; },
-            no_break => sub { return $_; } ,
             js        => sub { return $_ } ,
             base64   => sub { return $_ } ,
             inactive => [ sub { return sub { return $_; } }, 1] ,
@@ -117,6 +104,20 @@ foreach my $include_path (@include_paths) {
         else {
             ok(0, "$path has bad syntax --ERROR");
             print $fh $data . "\n";
+        }
+
+        # Make sure no forbidden constructs are present.
+        local $/;
+        open(FILE, '<', $path) or die "Can't open $file: $!\n";
+        $data = <FILE>;
+        close (FILE);
+
+        # Forbid single quotes to delimit URLs, see bug 926085.
+        if ($data =~ /href=\\?'/) {
+            ok(0, "$path contains blacklisted constructs: href='...'");
+        }
+        else {
+            ok(1, "$path contains no blacklisted constructs");
         }
     }
 }

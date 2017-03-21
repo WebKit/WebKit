@@ -1,20 +1,10 @@
-[%# The contents of this file are subject to the Mozilla Public
-  # License Version 1.1 (the "License"); you may not use this file
-  # except in compliance with the License. You may obtain a copy of
-  # the License at http://www.mozilla.org/MPL/
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
   #
-  # Software distributed under the License is distributed on an "AS
-  # IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-  # implied. See the License for the specific language governing
-  # rights and limitations under the License.
-  #
-  # The Original Code is the Bugzilla Bug Tracking System.
-  #
-  # Contributor(s): Frédéric Buclin <LpSolit@gmail.com>
-  #                 Gervase Markham <gerv@mozilla.org>
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
   #%]
-
-[% PROCESS "global/field-descs.none.tmpl" %]
 
 [% INCLUDE global/header.html.tmpl
    title = "Edit Workflow"
@@ -25,25 +15,25 @@
 <!--
   function toggle_cell(cell) {
     if (cell.checked)
-      cell.parentNode.className = "checkbox-cell checked";
+      cell.parentNode.className = "checked";
     else
-      cell.parentNode.className = "checkbox-cell";
+      cell.parentNode.className = "";
   }
 //-->
 </script>
 
 <p>
   This page allows you to define which status transitions are valid in your workflow.
-  For compatibility with older versions of [% terms.Bugzilla %], reopening [% terms.abug %]
+  For compatibility with older versions of Bugzilla, reopening [% terms.abug %]
   will only display either [% display_value("bug_status", "UNCONFIRMED") FILTER html %] or
   [%+ display_value("bug_status", "REOPENED") FILTER html %] (if allowed by your workflow) but not
   both. The decision depends on whether the [% terms.bug %] has ever been confirmed or not.
-  So it is a good idea to allow both transitions and let [% terms.Bugzilla %] select the
+  So it is a good idea to allow both transitions and let Bugzilla select the
   correct one.
 </p>
 
 <form id="workflow_form" method="POST" action="editworkflow.cgi">
-<table>
+<table id="workflow">
   <tr>
     <th colspan="2">&nbsp;</th>
     <th colspan="[% statuses.size FILTER html %]" class="title">To</th>
@@ -53,7 +43,7 @@
     <th rowspan="[% statuses.size + 2 FILTER html %]" class="title">From</th>
     <th>&nbsp;</th>
     [% FOREACH status = statuses %]
-      <th class="col-header[% status.is_open ? " open-status" : " closed-status" %]">
+      <th class="[% status.is_open ? "open-status" : "closed-status" %] center">
         [% display_value("bug_status", status.name) FILTER html %]
       </th>
     [% END %]
@@ -63,15 +53,15 @@
   [% p = [{id => 0, name => "{Start}", is_open => 1}] %]
   [% FOREACH status = p.merge(statuses) %]
     <tr class="highlight">
-      <th align="right" class="[% status.is_open ? "open-status" : "closed-status" %]">
+      <th class="[% status.is_open ? "open-status" : "closed-status" %]">
         [% display_value("bug_status", status.name) FILTER html %]
       </th>
 
       [% FOREACH new_status = statuses %]
-        [% IF status.id != new_status.id && (status.id || new_status.is_open) %]
+        [% IF status.id != new_status.id %]
           [% checked = workflow.${status.id}.${new_status.id}.defined ? 1 : 0 %]
           [% mandatory = (status.id && new_status.name == Param("duplicate_or_move_bug_status")) ? 1 : 0 %]
-          <td align="center" class="checkbox-cell[% " checked" IF checked || mandatory %]"
+          <td class="[% "checked" IF checked || mandatory %]"
               title="From [% status.name FILTER html %] to [% new_status.name FILTER html %]">
             <input type="checkbox" name="w_[% status.id %]_[% new_status.id %]"
                    id="w_[% status.id %]_[% new_status.id %]" onclick="toggle_cell(this)"
@@ -79,7 +69,7 @@
                    [%+ "disabled='disabled'" IF mandatory %]>
           </td>
         [% ELSE %]
-          <td class="checkbox-cell forbidden">&nbsp;</td>
+          <td class="forbidden">&nbsp;</td>
         [% END %]
       [% END %]
     </tr>
@@ -97,7 +87,7 @@
   page and editing the <i>duplicate_or_move_bug_status</i> parameter.
 </p>
 
-<p align="center">
+<p class="center">
   <input type="hidden" name="action" value="update">
   <input type="hidden" name="token" value="[% token FILTER html %]">
   <input type="submit" id="update_workflow" value="Commit Changes"> -

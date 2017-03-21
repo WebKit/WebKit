@@ -1,36 +1,26 @@
-# -*- Mode: perl; indent-tabs-mode: nil -*-
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
-# The contents of this file are subject to the Mozilla Public
-# License Version 1.1 (the "License"); you may not use this file
-# except in compliance with the License. You may obtain a copy of
-# the License at http://www.mozilla.org/MPL/
-#
-# Software distributed under the License is distributed on an "AS
-# IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-# implied. See the License for the specific language governing
-# rights and limitations under the License.
-#
-# The Original Code is the Bugzilla Bug Tracking System.
-#
-# The Initial Developer of the Original Code is James Robson.
-# Portions created by James Robson are Copyright (c) 2009 James Robson.
-# All rights reserved.
-#
-# Contributor(s): James Robson <arbingersys@gmail.com> 
-#                 Christian Legnitto <clegnitto@mozilla.com> 
-
-use strict;
+# This Source Code Form is "Incompatible With Secondary Licenses", as
+# defined by the Mozilla Public License, v. 2.0.
 
 package Bugzilla::Comment;
 
-use base qw(Bugzilla::Object);
+use 5.10.1;
+use strict;
+use warnings;
+
+use parent qw(Bugzilla::Object);
 
 use Bugzilla::Attachment;
+use Bugzilla::Comment::TagWeights;
 use Bugzilla::Constants;
 use Bugzilla::Error;
 use Bugzilla::User;
 use Bugzilla::Util;
 
+use List::Util qw(first);
 use Scalar::Util qw(blessed);
 
 ###############################
@@ -92,20 +82,93 @@ use constant VALIDATOR_DEPENDENCIES => {
 
 sub update {
     my $self = shift;
-    my $changes = $self->SUPER::update(@_);
-    $self->bug->_sync_fulltext();
+    my ($changes, $old_comment) = $self->SUPER::update(@_);
+
+    if (exists $changes->{'thetext'} || exists $changes->{'isprivate'}) {
+        $self->bug->_sync_fulltext( update_comments => 1);
+    }
+
+    my @old_tags = @{ $old_comment->tags };
+    my @new_tags = @{ $self->tags };
+    my ($removed_tags, $added_tags) = diff_arrays(\@old_tags, \@new_tags);
+
+    if (@$removed_tags || @$added_tags) {
+        my $dbh = Bugzilla->dbh;
+        my $when = $dbh->selectrow_array("SELECT LOCALTIMESTAMP(0)");
+        my $sth_delete = $dbh->prepare(
+            "DELETE FROM longdescs_tags WHERE comment_id = ? AND tag = ?"
+        );
+        my $sth_insert = $dbh->prepare(
+            "INSERT INTO longdescs_tags(comment_id, tag) VALUES (?, ?)"
+        );
+        my $sth_activity = $dbh->prepare(
+            "INSERT INTO longdescs_tags_activity
+            (bug_id, comment_id, who, bug_when, added, removed)
+            VALUES (?, ?, ?, ?, ?, ?)"
+        );
+
+        foreach my $tag (@$removed_tags) {
+            my $weighted = Bugzilla::Comment::TagWeights->new({ name => $tag });
+            if ($weighted) {
+                if ($weighted->weight == 1) {
+                    $weighted->remove_from_db();
+                } else {
+                    $weighted->set_weight($weighted->weight - 1);
+                    $weighted->update();
+                }
+            }
+            trick_taint($tag);
+            $sth_delete->execute($self->id, $tag);
+            $sth_activity->execute(
+                $self->bug_id, $self->id, Bugzilla->user->id, $when, '', $tag);
+        }
+
+        foreach my $tag (@$added_tags) {
+            my $weighted = Bugzilla::Comment::TagWeights->new({ name => $tag });
+            if ($weighted) {
+                $weighted->set_weight($weighted->weight + 1);
+                $weighted->update();
+            } else {
+                Bugzilla::Comment::TagWeights->create({ tag => $tag, weight => 1 });
+            }
+            trick_taint($tag);
+            $sth_insert->execute($self->id, $tag);
+            $sth_activity->execute(
+                $self->bug_id, $self->id, Bugzilla->user->id, $when, $tag, '');
+        }
+    }
+
     return $changes;
 }
 
-# Speeds up displays of comment lists by loading all ->author objects
-# at once for a whole list.
+# Speeds up displays of comment lists by loading all author objects and tags at
+# once for a whole list.
 sub preload {
     my ($class, $comments) = @_;
+    # Author
     my %user_ids = map { $_->{who} => 1 } @$comments;
     my $users = Bugzilla::User->new_from_list([keys %user_ids]);
     my %user_map = map { $_->id => $_ } @$users;
     foreach my $comment (@$comments) {
         $comment->{author} = $user_map{$comment->{who}};
+    }
+    # Tags
+    if (Bugzilla->params->{'comment_taggers_group'}) {
+        my $dbh = Bugzilla->dbh;
+        my @comment_ids = map { $_->id } @$comments;
+        my %comment_map = map { $_->id => $_ } @$comments;
+        my $rows = $dbh->selectall_arrayref(
+            "SELECT comment_id, " . $dbh->sql_group_concat('tag', "','") . "
+               FROM longdescs_tags
+              WHERE " . $dbh->sql_in('comment_id', \@comment_ids) . ' ' .
+              $dbh->sql_group_by('comment_id'));
+        foreach my $row (@$rows) {
+            $comment_map{$row->[0]}->{tags} = [ split(/,/, $row->[1]) ];
+        }
+        # Also sets the 'tags' attribute for comments which have no entry
+        # in the longdescs_tags table, else calling $comment->tags will
+        # trigger another SQL query again.
+        $comment_map{$_}->{tags} ||= [] foreach @comment_ids;
     }
 }
 
@@ -126,6 +189,43 @@ sub work_time   {
 sub type        { return $_[0]->{'type'};      }
 sub extra_data  { return $_[0]->{'extra_data'} }
 
+sub tags {
+    my ($self) = @_;
+    state $comment_taggers_group = Bugzilla->params->{'comment_taggers_group'};
+    return [] unless $comment_taggers_group;
+    $self->{'tags'} ||= Bugzilla->dbh->selectcol_arrayref(
+        "SELECT tag
+           FROM longdescs_tags
+          WHERE comment_id = ?
+          ORDER BY tag",
+        undef, $self->id);
+    return $self->{'tags'};
+}
+
+sub collapsed {
+    my ($self) = @_;
+    state $comment_taggers_group = Bugzilla->params->{'comment_taggers_group'};
+    return 0 unless $comment_taggers_group;
+    return $self->{collapsed} if exists $self->{collapsed};
+
+    state $collapsed_comment_tags = Bugzilla->params->{'collapsed_comment_tags'};
+    $self->{collapsed} = 0;
+    Bugzilla->request_cache->{comment_tags_collapsed}
+            ||= [ split(/\s*,\s*/, $collapsed_comment_tags) ];
+    my @collapsed_tags = @{ Bugzilla->request_cache->{comment_tags_collapsed} };
+    foreach my $my_tag (@{ $self->tags }) {
+        $my_tag = lc($my_tag);
+        foreach my $collapsed_tag (@collapsed_tags) {
+            if ($my_tag eq lc($collapsed_tag)) {
+                $self->{collapsed} = 1;
+                last;
+            }
+        }
+        last if $self->{collapsed};
+    }
+    return $self->{collapsed};
+}
+
 sub bug {
     my $self = shift;
     require Bugzilla::Bug;
@@ -143,13 +243,15 @@ sub is_about_attachment {
 sub attachment {
     my ($self) = @_;
     return undef if not $self->is_about_attachment;
-    $self->{attachment} ||= new Bugzilla::Attachment($self->extra_data);
+    $self->{attachment} ||=
+        new Bugzilla::Attachment({ id => $self->extra_data, cache => 1 });
     return $self->{attachment};
 }
 
 sub author { 
     my $self = shift;
-    $self->{'author'} ||= new Bugzilla::User($self->{'who'});
+    $self->{'author'}
+      ||= new Bugzilla::User({ id => $self->{'who'}, cache => 1 });
     return $self->{'author'};
 }
 
@@ -180,6 +282,26 @@ sub body_full {
 sub set_is_private  { $_[0]->set('isprivate',  $_[1]); }
 sub set_type        { $_[0]->set('type',       $_[1]); }
 sub set_extra_data  { $_[0]->set('extra_data', $_[1]); }
+
+sub add_tag {
+    my ($self, $tag) = @_;
+    $tag = $self->_check_tag($tag);
+
+    my $tags = $self->tags;
+    return if grep { lc($tag) eq lc($_) } @$tags;
+    push @$tags, $tag;
+    $self->{'tags'} = [ sort @$tags ];
+}
+
+sub remove_tag {
+    my ($self, $tag) = @_;
+    $tag = $self->_check_tag($tag);
+
+    my $tags = $self->tags;
+    my $index = first { lc($tags->[$_]) eq lc($tag) } 0..scalar(@$tags) - 1;
+    return unless defined $index;
+    splice(@$tags, $index, 1);
+}
 
 ##############
 # Validators #
@@ -311,6 +433,18 @@ sub _check_thetext {
     $thetext =~ s/\s*$//s;
     $thetext =~ s/\r\n?/\n/g; # Get rid of \r.
 
+    # Characters above U+FFFF cannot be stored by MySQL older than 5.5.3 as they
+    # require the new utf8mb4 character set. Other DB servers are handling them
+    # without any problem. So we need to replace these characters if we use MySQL,
+    # else the comment is truncated.
+    # XXX - Once we use utf8mb4 for comments, this hack for MySQL can go away.
+    state $is_mysql = Bugzilla->dbh->isa('Bugzilla::DB::Mysql') ? 1 : 0;
+    if ($is_mysql) {
+        # Perl 5.13.8 and older complain about non-characters.
+        no warnings 'utf8';
+        $thetext =~ s/([\x{10000}-\x{10FFFF}])/"\x{FDD0}[" . uc(sprintf('U+%04x', ord($1))) . "]\x{FDD1}"/eg;
+    }
+
     ThrowUserError('comment_too_long') if length($thetext) > MAX_COMMENT_LENGTH;
     return $thetext;
 }
@@ -321,6 +455,17 @@ sub _check_isprivate {
         ThrowUserError('user_not_insider');
     }
     return $isprivate ? 1 : 0;
+}
+
+sub _check_tag {
+    my ($invocant, $tag) = @_;
+    length($tag) < MIN_COMMENT_TAG_LENGTH
+        and ThrowUserError('comment_tag_too_short', { tag => $tag });
+    length($tag) > MAX_COMMENT_TAG_LENGTH
+        and ThrowUserError('comment_tag_too_long', { tag => $tag });
+    $tag =~ /^[\w\d\._-]+$/
+        or ThrowUserError('comment_tag_invalid', { tag => $tag });
+    return $tag;
 }
 
 sub count {
@@ -337,7 +482,7 @@ sub count {
         undef, $self->bug_id, $self->creation_ts);
 
     return --$self->{'count'};
-}   
+}
 
 1;
 
@@ -383,7 +528,7 @@ C<string> Time spent as related to this comment.
 
 =item C<is_private>
 
-C<boolean> Comment is marked as private
+C<boolean> Comment is marked as private.
 
 =item C<already_wrapped>
 
@@ -397,6 +542,54 @@ L<Bugzilla::User> who created the comment.
 =item C<count>
 
 C<int> The position this comment is located in the full list of comments for a bug starting from 0.
+
+=item C<collapsed>
+
+C<boolean> Comment should be displayed as collapsed by default.
+
+=item C<tags>
+
+C<array of strings> The tags attached to the comment.
+
+=item C<add_tag>
+
+=over
+
+=item B<Description>
+
+Attaches the specified tag to the comment.
+
+=item B<Params>
+
+=over
+
+=item C<tag>
+
+C<string> The tag to attach.
+
+=back
+
+=back
+
+=item C<remove_tag>
+
+=over
+
+=item B<Description>
+
+Detaches the specified tag from the comment.
+
+=item B<Params>
+
+=over
+
+=item C<tag>
+
+C<string> The tag to detach.
+
+=back
+
+=back
 
 =item C<body_full>
 
@@ -431,3 +624,29 @@ A string, the full text of the comment as it would be displayed to an end-user.
 =back
 
 =cut
+
+=head1 B<Methods in need of POD>
+
+=over
+
+=item set_type
+
+=item bug
+
+=item set_extra_data
+
+=item set_is_private
+
+=item attachment
+
+=item is_about_attachment
+
+=item extra_data
+
+=item preload
+
+=item type
+
+=item update
+
+=back

@@ -1,22 +1,9 @@
-[%# The contents of this file are subject to the Mozilla Public
-  # License Version 1.1 (the "License"); you may not use this file
-  # except in compliance with the License. You may obtain a copy of
-  # the License at http://www.mozilla.org/MPL/
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
   #
-  # Software distributed under the License is distributed on an "AS
-  # IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-  # implied. See the License for the specific language governing
-  # rights and limitations under the License.
-  #
-  # The Original Code is the Bugzilla Bug Tracking System.
-  #
-  # The Initial Developer of the Original Code is Netscape Communications
-  # Corporation. Portions created by Netscape are
-  # Copyright (C) 1998 Netscape Communications Corporation. All
-  # Rights Reserved.
-  #
-  # Contributor(s): Gavin Shelley <bugzilla@chimpychompy.org>
-  #                 Frédéric Buclin <LpSolit@gmail.com>
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
   #%]
 
 [%# INTERFACE:
@@ -25,12 +12,11 @@
   #               which the component belongs.
   #%]
 
-[% PROCESS global/variables.none.tmpl %]
-
 [% title = BLOCK %]Select component of product
                    '[% product.name FILTER html %]'[% END %]
 [% PROCESS global/header.html.tmpl
   title = title
+  style_urls = ['skins/standard/admin.css']
 %]
 
 [% edit_contentlink = BLOCK %]editcomponents.cgi?action=edit&amp;product=
@@ -56,11 +42,6 @@
        name => "initialowner"
        heading => "Default Assignee"
      },
-     {
-       name => "isactive"
-       heading => "Active"
-       yesno_field => 1
-     },
    ]
 %]
 
@@ -68,17 +49,27 @@
 
   [% columns.push({
        name => 'initialqacontact'
-       heading => 'QA Contact'
+       heading => 'Default QA Contact'
      }) %]
 
 [% END %]
+
+[% columns.push({
+     name => "initial_cc_names"
+     heading => "Default CC list"
+   },
+   {
+     name => "isactive"
+     heading => "Active"
+     yesno_field => 1
+   }) %]
 
 [% IF showbugcounts %]
 
   [% columns.push({
        name => 'bug_count'
        heading => "$terms.Bugs"
-       align => "right"
+       class => "right"
        contentlink => bug_count_contentlink
      }) %]
 
@@ -90,9 +81,10 @@
      contentlink => delete_contentlink
    }) %]
 
-[%# Overrides the initialowner and the initialqacontact with right values %]
+[%# Overrides the initialowner, the initialqacontact, and the initial_cc_names with right values %]
 [% overrides.initialowner = {} %]
 [% overrides.initialqacontact = {} %]
+[% overrides.initial_cc_names = {} %]
 
 [%# "component" is a reserved word in Template Toolkit. %]
 [% FOREACH my_component = product.components %]
@@ -104,6 +96,15 @@
   [% overrides.initialqacontact.name.${my_component.name} = {
        override_content => 1
        content => my_component.default_qa_contact.login
+     }
+  %]
+  [% SET initial_cc_list = [] %]
+  [% FOREACH cc_user = my_component.initial_cc %]
+    [% initial_cc_list.push(cc_user.login) %]
+  [% END %]
+  [% overrides.initial_cc_names.name.${my_component.name} = {
+       override_content => 1
+       content => initial_cc_list.join(', ')
      }
   %]
 [% END %]

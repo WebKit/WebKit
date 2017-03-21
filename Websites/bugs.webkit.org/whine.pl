@@ -1,30 +1,18 @@
-#!/usr/bin/env perl -wT
-# -*- Mode: perl; indent-tabs-mode: nil -*-
+#!/usr/bin/perl -T
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
-# The contents of this file are subject to the Mozilla Public
-# License Version 1.1 (the "License"); you may not use this file
-# except in compliance with the License. You may obtain a copy of
-# the License at http://www.mozilla.org/MPL/
-#
-# Software distributed under the License is distributed on an "AS
-# IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-# implied. See the License for the specific language governing
-# rights and limitations under the License.
-#
-# The Original Code is the Bugzilla Bug Tracking System.
-#
-# The Initial Developer of the Original Code is Netscape Communications
-# Corporation. Portions created by Netscape are
-# Copyright (C) 1998 Netscape Communications Corporation. All
-# Rights Reserved.
-#
-# Contributor(s): Erik Stambaugh <erik@dasbistro.com>
+# This Source Code Form is "Incompatible With Secondary Licenses", as
+# defined by the Mozilla Public License, v. 2.0.
 
 ################################################################################
 # Script Initialization
 ################################################################################
 
+use 5.10.1;
 use strict;
+use warnings;
 
 use lib qw(. lib);
 
@@ -352,57 +340,26 @@ while (my $event = get_next_event) {
 #  - queries        array of hashes containing:
 #          - bugs:  array of hashes mapping fieldnames to values for this bug
 #          - title: text title given to this query in the whine event
+#          - columnlist: array of fieldnames to display in the mail
+#          - name:  text name of this query
 #  - schedule_id    integer id of the schedule being run
 #  - subject        Subject line for the message
 #  - recipient      user object for the recipient
 #  - author         user object of the person who created the whine event
-#
-# In addition, mail adds two more fields to $args:
-#  - alternatives   array of hashes defining mime multipart types and contents
-#  - boundary       a MIME boundary generated using the process id and time
-#
 sub mail {
     my $args = shift;
-    my $addressee = $args->{recipient};
     # Don't send mail to someone whose bugmail notification is disabled.
-    return if $addressee->email_disabled;
+    return if $args->{recipient}->email_disabled;
 
-    my $template = Bugzilla->template_inner($addressee->setting('lang'));
-    my $msg = ''; # it's a temporary variable to hold the template output
-    $args->{'alternatives'} ||= [];
-
-    # put together the different multipart mime segments
-
-    $template->process("whine/mail.txt.tmpl", $args, \$msg)
-        or die($template->error());
-    push @{$args->{'alternatives'}},
+    $args->{to_user} = $args->{recipient};
+    MessageToMTA(generate_email(
+        $args,
         {
-            'content' => $msg,
-            'type'    => 'text/plain',
-        };
-    $msg = '';
-
-    $template->process("whine/mail.html.tmpl", $args, \$msg)
-        or die($template->error());
-    push @{$args->{'alternatives'}},
-        {
-            'content' => $msg,
-            'type'    => 'text/html',
-        };
-    $msg = '';
-
-    # now produce a ready-to-mail mime-encoded message
-
-    $args->{'boundary'} = "----------" . $$ . "--" . time() . "-----";
-
-    $template->process("whine/multipart-mime.txt.tmpl", $args, \$msg)
-        or die($template->error());
-
-    MessageToMTA($msg);
-
-    delete $args->{'boundary'};
-    delete $args->{'alternatives'};
-
+            header => 'whine/header.txt.tmpl',
+            text   => 'whine/mail.txt.tmpl',
+            html   => 'whine/mail.html.tmpl',
+        }
+    ));
 }
 
 # run_queries runs all of the queries associated with a schedule ID, adding
@@ -421,6 +378,7 @@ sub run_queries {
               'name'          => $_->[0],
               'title'         => $_->[1],
               'onemailperbug' => $_->[2],
+              'columnlist'    => [],
               'bugs'          => [],
             }
         );
@@ -433,27 +391,30 @@ sub run_queries {
         next unless $savedquery;    # silently ignore missing queries
 
         # Execute the saved query
-        my @searchfields = qw(
-            bug_id
-            bug_severity
-            priority
-            rep_platform
-            assigned_to
-            bug_status
-            resolution
-            short_desc
-        );
+        my @searchfields = ('bug_id', DEFAULT_COLUMN_LIST);
+
         # A new Bugzilla::CGI object needs to be created to allow
         # Bugzilla::Search to execute a saved query.  It's exceedingly weird,
         # but that's how it works.
         my $searchparams = new Bugzilla::CGI($savedquery);
+
+        # Use the columnlist for the saved query, if it exists, and make
+        # sure bug_id is always in the list.
+        if (my $columnlist = $searchparams->param('columnlist')) {
+            @searchfields = split(/[\s,]+/, $columnlist);
+            unshift(@searchfields, 'bug_id') unless grep { $_ eq 'bug_id' } @searchfields;
+        }
+        push @{$thisquery->{'columnlist'}}, @searchfields;
+
+        my @orderstrings = split(/,\s*/, $searchparams->param('order') || '');
         my $search = new Bugzilla::Search(
             'fields' => \@searchfields,
             'params' => scalar $searchparams->Vars,
             'user'   => $args->{'recipient'}, # the search runs as the recipient
+            'order'  => \@orderstrings
         );
         # If a query fails for whatever reason, it shouldn't kill the script.
-        my $sqlquery = eval { $search->sql };
+        my $data = eval { $search->data };
         if ($@) {
             print STDERR get_text('whine_query_failed', { query_name => $thisquery->{'name'},
                                                           author => $args->{'author'},
@@ -461,15 +422,12 @@ sub run_queries {
             next;
         }
 
-        $sth = $dbh->prepare($sqlquery);
-        $sth->execute;
-
-        while (my @row = $sth->fetchrow_array) {
+        foreach my $row (@$data) {
             my $bug = {};
             for my $field (@searchfields) {
                 my $fieldname = $field;
                 $fieldname =~ s/^bugs\.//;  # No need for bugs.whatever
-                $bug->{$fieldname} = shift @row;
+                $bug->{$fieldname} = shift @$row;
             }
 
             if ($thisquery->{'onemailperbug'}) {
@@ -477,6 +435,7 @@ sub run_queries {
                     {
                         'name' => $thisquery->{'name'},
                         'title' => $thisquery->{'title'},
+                        'columnlist' => $thisquery->{'columnlist'},
                         'bugs' => [ $bug ],
                     },
                 ];

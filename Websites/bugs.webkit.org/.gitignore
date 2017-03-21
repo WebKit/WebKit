@@ -1,10 +1,8 @@
-.htaccess
+/**/.htaccess
 /lib/*
 /template/en/custom
-/docs/bugzilla.ent
-/docs/en/xml/bugzilla.ent
-/docs/en/txt
 /docs/en/html
+/docs/en/txt
 /docs/en/pdf
 /skins/custom
 /graphs
@@ -12,21 +10,5 @@
 /localconfig
 /index.html
 
-/skins/contrib/Dusk/IE-fixes.css
 /skins/contrib/Dusk/admin.css
-/skins/contrib/Dusk/attachment.css
-/skins/contrib/Dusk/create_attachment.css
-/skins/contrib/Dusk/dependency-tree.css
-/skins/contrib/Dusk/duplicates.css
-/skins/contrib/Dusk/editusers.css
-/skins/contrib/Dusk/enter_bug.css
-/skins/contrib/Dusk/help.css
-/skins/contrib/Dusk/panel.css
-/skins/contrib/Dusk/page.css
-/skins/contrib/Dusk/params.css
-/skins/contrib/Dusk/reports.css
-/skins/contrib/Dusk/show_bug.css
-/skins/contrib/Dusk/search_form.css
-/skins/contrib/Dusk/show_multiple.css
-/skins/contrib/Dusk/summarize-time.css
-.DS_Store
+/skins/contrib/Dusk/bug.css

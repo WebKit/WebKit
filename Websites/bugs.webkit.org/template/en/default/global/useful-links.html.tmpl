@@ -1,29 +1,10 @@
-[%# The contents of this file are subject to the Mozilla Public
-  # License Version 1.1 (the "License"); you may not use this file
-  # except in compliance with the License. You may obtain a copy of
-  # the License at http://www.mozilla.org/MPL/
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
   #
-  # Software distributed under the License is distributed on an "AS
-  # IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-  # implied. See the License for the specific language governing
-  # rights and limitations under the License.
-  #
-  # The Original Code is the Bugzilla Bug Tracking System.
-  #
-  # The Initial Developer of the Original Code is Netscape Communications
-  # Corporation. Portions created by Netscape are
-  # Copyright (C) 1998 Netscape Communications Corporation. All
-  # Rights Reserved.
-  #
-  # Contributor(s): Gervase Markham <gerv@gerv.net>
-  #                 Svetlana Harisova <light@rathedg.com>
-  #                 Marc Schumann <wurblzap@gmail.com>
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
   #%]
-
-[%# Migration note: this whole file corresponds to the old %commandmenu% 
-    substitution param in 'footerhtml' %]
-
-[% PROCESS global/variables.none.tmpl %]
 
 <ul id="useful-links">
   <li id="links-actions">
@@ -31,50 +12,60 @@
   </li>
 
   [%# Saved searches %]
-    
-  [% IF user.showmybugslink OR user.queries.size 
-        OR user.queries_subscribed.size 
-  %]
-    [% print_pipe = 0 %]
+
+  [% IF user.showmybugslink OR user.queries.size %]
     <li id="links-saved">
       <ul class="links">
+        [% print_pipe = 0 %]
         [% IF user.showmybugslink %]
           [% filtered_username = user.login FILTER uri %]
-          <li><a href="[% Param('mybugstemplate').replace('%userid%', filtered_username) %]">My [% terms.Bugs %]</a></li>
+          <li>
+            <a href="[% Param('mybugstemplate').replace('%userid%', filtered_username) %]">My [% terms.Bugs %]</a>
+          </li>
           [% print_pipe = 1 %]
         [% END %]
 
         [% FOREACH q = user.queries %]
-          [% IF q.link_in_footer %]
-            <li>[% '<span class="separator">| </span>' IF print_pipe %]
-            <a href="buglist.cgi?cmdtype=runnamed&amp;namedcmd=[% q.name FILTER uri %]">[% q.name FILTER html %]</a></li>
-            [% print_pipe = 1 %]
-          [% END %]
-        [% END %]
-        [% new_line = print_pipe %]
-        [% print_pipe = 0 %]
-        [% FOREACH q = user.queries_subscribed %]
-          [% IF new_line %]
-            <br>
-            [% new_line = 0 %]
-          [% END %]
+          [% NEXT UNLESS q.link_in_footer %]
           <li>
             [% '<span class="separator">| </span>' IF print_pipe %]
-            <a href="buglist.cgi?cmdtype=dorem&amp;remaction=run&amp;namedcmd=
-                     [% q.name FILTER uri %]&amp;sharer_id=
-                     [% q.user.id FILTER uri %]"
-               class="shared"
-               title="Shared by [% q.user.identity FILTER html %]"
-               >[% q.name FILTER html FILTER no_break %]</a></li>
+            <a href="buglist.cgi?cmdtype=runnamed&amp;namedcmd=[% q.name FILTER uri %]">[% q.name FILTER html %]</a>
+          </li>
           [% print_pipe = 1 %]
         [% END %]
       </ul>
     </li>
   [% END %]
 
-  [%# Individual bugs addition %]
+  [% IF user.queries_subscribed.size %]
+    <li id="links-shared">
+      <ul class="links">
+        [% FOREACH q = user.queries_subscribed %]
+          <li>
+            [% '<span class="separator">| </span>' UNLESS loop.first %]
+            <a href="buglist.cgi?cmdtype=dorem&amp;remaction=run&amp;namedcmd=
+                     [%- q.name FILTER uri %]&amp;sharer_id=[% q.user.id FILTER uri %]"
+               class="shared" title="Shared by [% q.user.identity FILTER html %]">
+              [%- q.name FILTER html %]</a>
+          </li>
+        [% END %]
+      </ul>
+    </li>
+  [% END %]
 
-  [% PROCESS "global/per-bug-queries.html.tmpl" %]
+  [% IF user.reports.size %]
+    <li id="reports-saved">
+      <ul class="links">
+        [% FOREACH r = user.reports %]
+          <li>
+            [% '<span class="separator">| </span>' UNLESS loop.first %]
+            <a href="report.cgi?[% r.query FILTER html %]&amp;saved_report_id=
+                     [%~ r.id FILTER uri %]">[% r.name FILTER html %]</a>
+          </li>
+        [% END %]
+      </ul>
+    </li>
+  [% END %]
 
   [%# Sections of links to more things users can do on this installation. %]
   [% Hook.process("end") %]

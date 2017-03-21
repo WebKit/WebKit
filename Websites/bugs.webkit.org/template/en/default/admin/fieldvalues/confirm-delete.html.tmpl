@@ -1,16 +1,9 @@
-[%# The contents of this file are subject to the Mozilla Public
-  # License Version 1.1 (the "License"); you may not use this file
-  # except in compliance with the License. You may obtain a copy of
-  # the License at http://www.mozilla.org/MPL/
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
   #
-  # Software distributed under the License is distributed on an "AS
-  # IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-  # implied. See the License for the specific language governing
-  # rights and limitations under the License.
-  #
-  # The Original Code is the Bugzilla Bug Tracking System.
-  #
-  # Contributor(s): Max Kanat-Alexander <mkanat@bugzilla.org>
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
   #%]
 
 [%# INTERFACE:
@@ -29,34 +22,34 @@
   style_urls = ['skins/standard/admin.css']
 %]
 
-<table border="1" cellpadding="4" cellspacing="0">
-<tr bgcolor="#6666FF">
-  <th valign="top" align="left">Field</th>
-  <th valign="top" align="left">Value</th>
-</tr>
-<tr>
-  <td valign="top">Field Name:</td>
-  <td valign="top">[% field.description FILTER html %]</td>
-</tr>
-<tr>
-  <td valign="top">Field Value:</td>
-  <td valign="top">[% value.name FILTER html %]</td>
-</tr>
-<tr>
-  <td valign="top">[% terms.Bugs %]:</td>
-  <td valign="top">
-[% IF value.bug_count %]
-  <a title="List of [% terms.bugs %] where '
-            [%- field.description FILTER html %]' is '
-            [%- value.name FILTER html %]'"
-     href="buglist.cgi?[% field.name FILTER uri %]=
-           [%- value.name FILTER uri %]">
-   [%- value.bug_count FILTER html %]</a>
-[% ELSE %]
-  None
-[% END %]
-  </td>
-</tr>
+<table id="admin_table">
+  <tr class="column_header">
+    <th>Field</th>
+    <th>Value</th>
+  </tr>
+  <tr>
+    <td>Field Name</td>
+    <td>[% field.description FILTER html %]</td>
+  </tr>
+  <tr>
+    <td>Field Value</td>
+    <td>[% value.name FILTER html %]</td>
+  </tr>
+  <tr>
+    <td>[% terms.Bugs %]</td>
+    <td>
+      [% IF value.bug_count %]
+        <a title="List of [% terms.bugs %] where '
+                  [%- field.description FILTER html %]' is '
+                  [%- value.name FILTER html %]'"
+           href="buglist.cgi?[% field.name FILTER uri %]=
+                 [%- value.name FILTER uri %]">
+          [%- value.bug_count FILTER html %]</a>
+      [% ELSE %]
+        None
+      [% END %]
+    </td>
+  </tr>
 </table>
 
 <h2>Confirmation</h2>
@@ -108,7 +101,7 @@
 
     [% IF value_count == 1 %]
       <li>'[% value.name FILTER html %]' is the last value for
-        '[%- field.description FILTER html %]', and so it can not be deleted.
+        '[%- field.description FILTER html %]', and so it cannot be deleted.
       </li>
     [% END %]
 
@@ -156,6 +149,6 @@
 
 [% PROCESS admin/fieldvalues/footer.html.tmpl
   no_edit_link = 1
- +%]
+%]
 
 [% PROCESS global/footer.html.tmpl %] 

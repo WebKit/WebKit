@@ -1,23 +1,9 @@
-[%# The contents of this file are subject to the Mozilla Public
-  # License Version 1.1 (the "License"); you may not use this file
-  # except in compliance with the License. You may obtain a copy of
-  # the License at http://www.mozilla.org/MPL/
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
   #
-  # Software distributed under the License is distributed on an "AS
-  # IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-  # implied. See the License for the specific language governing
-  # rights and limitations under the License.
-  #
-  # The Original Code is the Bugzilla Bug Tracking System.
-  #
-  # The Initial Developer of the Original Code is Netscape Communications
-  # Corporation. Portions created by Netscape are
-  # Copyright (C) 1998 Netscape Communications Corporation. All
-  # Rights Reserved.
-  #
-  # Contributor(s): Gervase Markham <gerv@gerv.net>
-  #                 David D. Kilzer <ddkilzer@kilzer.net>
-  #                 Reed Loden <reed@reedloden.com>
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
   #%]
 
 [%# INTERFACE:
@@ -34,8 +20,6 @@
   #                  it was affected by an old Bugzilla bug.)
   #%]
 
-[% PROCESS "global/field-descs.none.tmpl" %]
-
 [% PROCESS bug/time.html.tmpl %]
 
 [% IF incomplete_data %]
@@ -49,8 +33,8 @@
 [% END %]
 
 [% IF operations.size > 0 %]
-  <table border cellpadding="4">
-    <tr>
+  <table id="bug_activity">
+    <tr class="column_header">
       <th>Who</th>
       <th>When</th>
       <th>What</th>
@@ -60,10 +44,10 @@
 
     [% FOREACH operation = operations %]
       <tr>
-        <td rowspan="[% operation.changes.size %]" valign="top">
+        <td rowspan="[% operation.changes.size %]">
           [% operation.who FILTER email FILTER html %]
         </td>
-        <td rowspan="[% operation.changes.size %]" valign="top">
+        <td rowspan="[% operation.changes.size %]">
           [% operation.when FILTER time %]
         </td>
         [% FOREACH change = operation.changes %]
@@ -110,7 +94,7 @@
                change.fieldname == 'flagtypes.name' %]
         [% display_value(change.fieldname, change_type) FILTER email FILTER html %]
       [% ELSE %]
-        [% display_value(change.fieldname, change_type) FILTER html %]
+        [% display_value(change.fieldname, change_type) FILTER html FILTER html_line_break %]
       [% END %]
     [% ELSE %]
       &nbsp;

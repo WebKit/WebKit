@@ -1,23 +1,14 @@
-#!/usr/bin/env perl -wT
-# -*- Mode: perl; indent-tabs-mode: nil -*-
+#!/usr/bin/perl -T
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
-# The contents of this file are subject to the Mozilla Public
-# License Version 1.1 (the "License"); you may not use this file
-# except in compliance with the License. You may obtain a copy of
-# the License at http://www.mozilla.org/MPL/
-#
-# Software distributed under the License is distributed on an "AS
-# IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-# implied. See the License for the specific language governing
-# rights and limitations under the License.
-#
-# The Original Code is the Bugzilla Bug Tracking System.
-#
-# Contributor(s): Christian Reis <kiko@async.com.br>
-#                 Shane H. W. Travis <travis@sedsystems.ca>
-#                 Frédéric Buclin <LpSolit@gmail.com>
+# This Source Code Form is "Incompatible With Secondary Licenses", as
+# defined by the Mozilla Public License, v. 2.0.
 
+use 5.10.1;
 use strict;
+use warnings;
 
 use lib qw(. lib);
 
@@ -250,10 +241,9 @@ sub get_earliest_activity_date {
 # Template code starts here
 #
 
-Bugzilla->login(LOGIN_REQUIRED);
+my $user = Bugzilla->login(LOGIN_REQUIRED);
 
 my $cgi = Bugzilla->cgi;
-my $user = Bugzilla->user;
 my $template = Bugzilla->template;
 my $vars = {};
 
@@ -266,7 +256,7 @@ $user->is_timetracker
 
 my @ids = split(",", $cgi->param('id') || '');
 @ids = map { Bugzilla::Bug->check($_)->id } @ids;
-scalar(@ids) || ThrowUserError('no_bugs_chosen', {action => 'view'});
+scalar(@ids) || ThrowUserError('no_bugs_chosen', {action => 'summarize'});
 
 my $group_by = $cgi->param('group_by') || "number";
 my $monthly = $cgi->param('monthly');
@@ -287,7 +277,7 @@ if ($do_report) {
                                         function=>"summarize_time"});
         }
         @bugs = get_blocker_ids($bugs[0]);
-        @bugs = grep { $user->can_see_bug($_) } @bugs;
+        @bugs = @{ $user->visible_bugs(\@bugs) };
     }
 
     $start_date = trim $cgi->param('start_date');

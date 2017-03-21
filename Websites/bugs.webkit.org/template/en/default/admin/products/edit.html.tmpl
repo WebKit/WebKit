@@ -1,18 +1,9 @@
-[%# The contents of this file are subject to the Mozilla Public
-  # License Version 1.1 (the "License"); you may not use this file
-  # except in compliance with the License. You may obtain a copy of
-  # the License at http://www.mozilla.org/MPL/
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
   #
-  # Software distributed under the License is distributed on an "AS
-  # IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-  # implied. See the License for the specific language governing
-  # rights and limitations under the License.
-  #
-  # The Original Code is the Bugzilla Bug Tracking System.
-  #
-  # Contributor(s): Jack Nerad     <jnerad@bellsouth.net>
-  #                 Tiago R. Mello <tiago@async.com.br>
-  #                 Gabriel S. Oliveira <gabriel@async.com.br>
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
   #%]
 
 [%# INTERFACE:
@@ -39,68 +30,67 @@
  %]
 
 <form method="post" action="editproducts.cgi">
-  <table border="0" cellpadding="4" cellspacing="0">
+  <table id="admin_table_edit">
 
     [% PROCESS "admin/products/edit-common.html.tmpl" %]
 
     <tr>
-      <th align="right" valign="top">
+      <th>
         <a href="editcomponents.cgi?product=[% product.name FILTER uri %]">
         Edit components:
         </a>
       </th>
       <td>
         [% IF product.components.size -%]
-          [% FOREACH component = product.components %]
-            <b>[% component.name FILTER html %]:</b>&nbsp;
-            [% IF component.description %]
-              [% component.description FILTER html_light %]
-            [% ELSE %]
-              <font color="red">description missing</font>
-            [% END %]
+          [% FOREACH comp = product.components %]
+            <a href="editcomponents.cgi?action=edit&product=
+            [%- product.name FILTER uri %]&component=
+            [%- comp.name FILTER uri %]">[% comp.name FILTER html %]</a>:
+            [% comp.description FILTER html_light %]
             <br>
           [% END %]
         [% ELSE %]
-          <font color="red">missing</font>
+          <span class="warning">missing</span>
         [% END %]
       </td>
     </tr>
     <tr>
-      <th align="right" valign="top">
-        <a href="editversions.cgi?product=[% product.name FILTER uri %]">Edit
-versions:</a>
+      <th>
+        <a href="editversions.cgi?product=[% product.name FILTER uri %]">Edit versions:</a>
       </th>
       <td>
         [%- IF product.versions.size -%]
-          [% FOREACH v = product.versions %]
-            [% v.name FILTER html %]
-            <br>
-          [% END %]
+          <div class="multi-columns">
+            [% FOREACH v = product.versions %]
+              [% v.name FILTER html %]<br>
+            [% END %]
+          </div>
         [% ELSE %]
-          <font color="red">missing</font>
+          <span class="warning">missing</span>
         [% END %]
       </td>
     </tr>
     [% IF Param('usetargetmilestone') %]
       <tr>
-        <th align="right" valign="top">
+        <th>
           <a href="editmilestones.cgi?product=[% product.name FILTER uri %]">
           Edit milestones:</a>
         </th>
         <td>
           [%- IF product.milestones.size -%]
-            [%- FOREACH m = product.milestones -%]
-              [% m.name FILTER html %]
-            <br>
-            [% END %]
+            <div class="multi-columns">
+              [%- FOREACH m = product.milestones -%]
+                [% m.name FILTER html %]<br>
+              [% END %]
+            </div>
           [% ELSE %]
-            <font color="red">missing</font>
+            <span class="warning">missing</span>
           [% END %]
         </td>
       </tr>
     [% END %]
     <tr>
-      <th align="right" valign="top">
+      <th>
         <a href="editproducts.cgi?action=editgroupcontrols&product=
           [%- product.name FILTER uri %]">
           Edit Group Access Controls:
@@ -109,7 +99,7 @@ versions:</a>
       <td>
         [% IF product.group_controls.size %]
           [% FOREACH g = product.group_controls.values.sort("name") %]
-            <b>[% g.group.name FILTER html %]:</b>&nbsp;
+            <b>[% g.group.name FILTER html %]:</b>
             [% IF g.group.isactive %]
               [% group_control.${g.membercontrol} FILTER html %]/
               [% group_control.${g.othercontrol} FILTER html %]
@@ -129,9 +119,11 @@ versions:</a>
       </td>
     </tr>
     <tr>
-      <th align="right">[% terms.Bugs %]:</th>
-      <td><a href="buglist.cgi?product=[% product.name FILTER uri %]">
-            [% product.bug_count FILTER html %]</a></td>
+      <th>[% terms.Bugs %]:</th>
+      <td>
+        <a href="buglist.cgi?product=[% product.name FILTER uri %]">
+          [% product.bug_count FILTER html %]</a>
+      </td>
     </tr>
   </table>
   

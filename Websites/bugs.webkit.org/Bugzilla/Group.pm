@@ -1,32 +1,17 @@
-# -*- Mode: perl; indent-tabs-mode: nil -*-
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
-# The contents of this file are subject to the Mozilla Public
-# License Version 1.1 (the "License"); you may not use this file
-# except in compliance with the License. You may obtain a copy of
-# the License at http://www.mozilla.org/MPL/
-#
-# Software distributed under the License is distributed on an "AS
-# IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-# implied. See the License for the specific language governing
-# rights and limitations under the License.
-#
-# The Original Code is the Bugzilla Bug Tracking System.
-#
-# The Initial Developer of the Original Code is Netscape Communications
-# Corporation. Portions created by Netscape are
-# Copyright (C) 1998 Netscape Communications Corporation. All
-# Rights Reserved.
-#
-# Contributor(s): Joel Peshkin <bugreport@peshkin.net>
-#                 Erik Stambaugh <erik@dasbistro.com>
-#                 Tiago R. Mello <timello@async.com.br>
-#                 Max Kanat-Alexander <mkanat@bugzilla.org>
-
-use strict;
+# This Source Code Form is "Incompatible With Secondary Licenses", as
+# defined by the Mozilla Public License, v. 2.0.
 
 package Bugzilla::Group;
 
-use base qw(Bugzilla::Object);
+use 5.10.1;
+use strict;
+use warnings;
+
+use parent qw(Bugzilla::Object);
 
 use Bugzilla::Constants;
 use Bugzilla::Util;
@@ -36,6 +21,8 @@ use Bugzilla::Config qw(:admin);
 ###############################
 ##### Module Initialization ###
 ###############################
+
+use constant IS_CONFIG => 1;
 
 use constant DB_COLUMNS => qw(
     groups.id
@@ -69,8 +56,10 @@ use constant UPDATE_COLUMNS => qw(
 );
 
 # Parameters that are lists of groups.
-use constant GROUP_PARAMS => qw(chartgroup insidergroup timetrackinggroup
-                                querysharegroup);
+use constant GROUP_PARAMS => qw(
+    chartgroup comment_taggers_group debug_group insidergroup
+    querysharegroup timetrackinggroup
+);
 
 ###############################
 ####      Accessors      ######
@@ -109,7 +98,8 @@ sub members_non_inherited {
 sub _get_members {
     my ($self, $grant_type) = @_;
     my $dbh = Bugzilla->dbh;
-    my $grant_clause = $grant_type ? "AND grant_type = $grant_type" : "";
+    my $grant_clause = defined($grant_type) ? "AND grant_type = $grant_type"
+                                            : "";
     my $user_ids = $dbh->selectcol_arrayref(
         "SELECT DISTINCT user_id
            FROM user_group_map
@@ -230,6 +220,7 @@ sub update {
     Bugzilla::Hook::process('group_end_of_update', 
                             { group => $self, changes => $changes });
     $dbh->bz_commit_transaction();
+    Bugzilla->memcached->clear_config();
     return $changes;
 }
 
@@ -392,6 +383,7 @@ sub create {
     my $dbh = Bugzilla->dbh;
 
     my $silently = delete $params->{silently};
+    my $use_in_all_products = delete $params->{use_in_all_products};
     if (Bugzilla->usage_mode == USAGE_MODE_CMDLINE and !$silently) {
         print get_text('install_group_create', { name => $params->{name} }),
               "\n";
@@ -413,6 +405,14 @@ sub create {
         $sth->execute($admin->id, $group->id, GROUP_MEMBERSHIP);
         $sth->execute($admin->id, $group->id, GROUP_BLESS);
         $sth->execute($admin->id, $group->id, GROUP_VISIBLE);
+    }
+
+    # Permit all existing products to use the new group if requested.
+    if ($use_in_all_products) {
+        $dbh->do('INSERT INTO group_control_map
+                  (group_id, product_id, membercontrol, othercontrol)
+                  SELECT ?, products.id, ?, ? FROM products',
+                  undef, ($group->id, CONTROLMAPSHOWN, CONTROLMAPNA));
     }
 
     $group->_rederive_regexp() if $group->user_regexp;
@@ -533,8 +533,11 @@ provides, in addition to any methods documented below.
 
 Note that in addition to what L<Bugzilla::Object/create($params)>
 normally does, this function also makes the new group be inherited
-by the C<admin> group. That is, the C<admin> group will automatically
-be a member of this group.
+by the C<admin> group and optionally inserts access controls for
+this group into all existing products. That is, the C<admin> group
+will automatically be a member of this group and bugs for all
+products may optionally be restricted to this group by group
+members.
 
 =item C<ValidateGroupName($name, @users)>
 
@@ -662,5 +665,49 @@ inherit membership in any group on the list.  So, we can determine if a user
 is in any of the groups input to flatten_group_membership by querying the
 user_group_map for any user with DIRECT or REGEXP membership IN() the list
 of groups returned.
+
+=back
+
+=head1 B<Methods in need of POD>
+
+=over
+
+=item icon_url
+
+=item set_name
+
+=item bugs
+
+=item granted_by_direct
+
+=item set_user_regexp
+
+=item flag_types
+
+=item products
+
+=item set_icon_url
+
+=item set_description
+
+=item set_is_active
+
+=item user_regexp
+
+=item members_direct
+
+=item is_bug_group
+
+=item grant_direct
+
+=item description
+
+=item is_active
+
+=item remove_from_db
+
+=item is_active_bug_group
+
+=item update
 
 =back

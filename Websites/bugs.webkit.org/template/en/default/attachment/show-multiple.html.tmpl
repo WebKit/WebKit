@@ -1,24 +1,11 @@
-[%# The contents of this file are subject to the Mozilla Public
-  # License Version 1.1 (the "License"); you may not use this file
-  # except in compliance with the License. You may obtain a copy of
-  # the License at http://www.mozilla.org/MPL/
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
   #
-  # Software distributed under the License is distributed on an "AS
-  # IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-  # implied. See the License for the specific language governing
-  # rights and limitations under the License.
-  #
-  # The Original Code is the Bugzilla Bug Tracking System.
-  #
-  # The Initial Developer of the Original Code is Netscape Communications
-  # Corporation. Portions created by Netscape are
-  # Copyright (C) 1998 Netscape Communications Corporation. All
-  # Rights Reserved.
-  #
-  # Contributor(s): Myk Melez <myk@mozilla.org>
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
   #%]
 
-[% PROCESS global/variables.none.tmpl %]
 [% filtered_summary = bugsummary FILTER html %]
 [% header = BLOCK %]View All Attachments for
   [%+ "$terms.Bug $bug.id" FILTER bug_link(bug) FILTER none %][% END %]
@@ -31,7 +18,7 @@
   title = title
   header = header
   subheader = filtered_summary
-  style_urls = ['skins/standard/attachment.css']
+  style_urls = ['skins/standard/bug.css']
 %]
 [% IF hide_obsolete %]
   <div id="hidden_obsolete_message">
@@ -39,23 +26,17 @@
     <a href="attachment.cgi?bugid=[% bug.id FILTER html %]&amp;action=viewall">click here</a>.
   </div>
 [% END %]
-<br>
 
 [% FOREACH a = attachments %]
-
-  <div align="center">
-  <table class="attachment_info" cellspacing="0" cellpadding="4" border="1" width="75%">
+<div class="viewall_frame_container">
+  <table class="viewall_desc">
     <tr>
-      <td valign="top" bgcolor="#cccccc" colspan="6">
-        <big><b>Attachment #[% a.id %]</b></big>
-      </td>
+      <th colspan="6" class="bz_attach_footer">Attachment #[% a.id %]</th>
     </tr>
     <tr>
-      <td valign="top">
-        [% a.description FILTER html FILTER obsolete(a.isobsolete) %]
-      </td>
+      <td>[% a.description FILTER html FILTER obsolete(a.isobsolete) %]</td>
 
-      <td valign="top">
+      <td>
         [% IF a.ispatch %]
           <i>patch</i>
         [% ELSE %]
@@ -63,10 +44,10 @@
         [% END %]
       </td>
 
-      <td valign="top">[% a.attached FILTER time %]</td>
-      <td valign="top">[% a.datasize FILTER unitconvert %]</td>
+      <td>[% a.attached FILTER time %]</td>
+      <td>[% a.datasize FILTER unitconvert %]</td>
 
-      <td valign="top">
+      <td>
         [% IF a.flags.size == 0 %]
           <i>no flags</i>
         [% ELSE %]
@@ -81,9 +62,7 @@
         [% END %]
       </td>
 
-      <td valign="top">
-        <a href="attachment.cgi?id=[% a.id %]&amp;action=edit">Details</a>
-      </td>
+      <td><a href="attachment.cgi?id=[% a.id %]&amp;action=edit">Details</a></td>
     </tr>
   </table>
 
@@ -99,7 +78,7 @@
          classes = 'viewall_frame'
       %]
     [% ELSE %]
-      <iframe src="attachment.cgi?id=[% a.id %]" class="viewall_frame">
+      <iframe src="attachment.cgi?id=[% a.id %]" class="viewall_frame" sandbox>
         <b>You cannot view the attachment on this page because your browser does not support IFRAMEs.
         <a href="attachment.cgi?id=[% a.id %]">View the attachment on a separate page</a>.</b>
       </iframe>
@@ -110,10 +89,7 @@
       <a href="attachment.cgi?id=[% a.id %]">Download the attachment instead</a>.
     </b></p>
   [% END %]
-  </div>
-
-  <br><br>
-
+</div>
 [% END %]
 
 [% PROCESS global/footer.html.tmpl %]

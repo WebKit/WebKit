@@ -1,24 +1,12 @@
-#!/usr/bin/env perl -wT
-# -*- Mode: perl; indent-tabs-mode: nil -*-
+#!/usr/bin/perl -T
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
-# The contents of this file are subject to the Mozilla Public
-# License Version 1.1 (the "License"); you may not use this file
-# except in compliance with the License. You may obtain a copy of
-# the License at http://www.mozilla.org/MPL/
-#
-# Software distributed under the License is distributed on an "AS
-# IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-# implied. See the License for the specific language governing
-# rights and limitations under the License.
-#
-# The Original Code is the Bugzilla Inbound Email System.
-#
-# The Initial Developer of the Original Code is Akamai Technologies, Inc.
-# Portions created by Akamai are Copyright (C) 2006 Akamai Technologies, 
-# Inc. All Rights Reserved.
-#
-# Contributor(s): Max Kanat-Alexander <mkanat@bugzilla.org>
+# This Source Code Form is "Incompatible With Secondary Licenses", as
+# defined by the Mozilla Public License, v. 2.0.
 
+use 5.10.1;
 use strict;
 use warnings;
 
@@ -38,11 +26,12 @@ use Data::Dumper;
 use Email::Address;
 use Email::Reply qw(reply);
 use Email::MIME;
-use Email::MIME::Attachment::Stripper;
 use Getopt::Long qw(:config bundling);
+use HTML::FormatText::WithLinks;
 use Pod::Usage;
 use Encode;
 use Scalar::Util qw(blessed);
+use List::MoreUtils qw(firstidx);
 
 use Bugzilla;
 use Bugzilla::Attachment;
@@ -50,6 +39,7 @@ use Bugzilla::Bug;
 use Bugzilla::BugMail;
 use Bugzilla::Constants;
 use Bugzilla::Error;
+use Bugzilla::Field;
 use Bugzilla::Mailer;
 use Bugzilla::Token;
 use Bugzilla::User;
@@ -63,6 +53,15 @@ use Bugzilla::Hook;
 # This is the USENET standard line for beginning a signature block
 # in a message. RFC-compliant mailers use this.
 use constant SIGNATURE_DELIMITER => '-- ';
+
+# These MIME types represent a "body" of an email if they have an
+# "inline" Content-Disposition (or no content disposition).
+use constant BODY_TYPES => qw(
+    text/plain
+    text/html
+    application/xhtml+xml
+    multipart/alternative
+);
 
 # $input_email is a global so that it can be used in die_handler.
 our ($input_email, %switch);
@@ -95,9 +94,6 @@ sub parse_mail {
     }
 
     my ($body, $attachments) = get_body_and_attachments($input_email);
-    if (@$attachments) {
-        $fields{'attachments'} = $attachments;
-    }
 
     debug_print("Body:\n" . $body, 3);
 
@@ -140,6 +136,29 @@ sub parse_mail {
         $fields{'short_desc'} = $summary;
     }
 
+    # The Importance/X-Priority headers are only used when creating a new bug.
+    # 1) If somebody specifies a priority, use it.
+    # 2) If there is an Importance or X-Priority header, use it as
+    #    something that is relative to the default priority.
+    #    If the value is High or 1, increase the priority by 1.
+    #    If the value is Low or 5, decrease the priority by 1.
+    # 3) Otherwise, use the default priority.
+    # Note: this will only work if the 'letsubmitterchoosepriority'
+    # parameter is enabled.
+    my $importance = $input_email->header('Importance')
+                     || $input_email->header('X-Priority');
+    if (!$fields{'bug_id'} && !$fields{'priority'} && $importance) {
+        my @legal_priorities = @{get_legal_field_values('priority')};
+        my $i = firstidx { $_ eq Bugzilla->params->{'defaultpriority'} } @legal_priorities;
+        if ($importance =~ /(high|[12])/i) {
+            $i-- unless $i == 0;
+        }
+        elsif ($importance =~ /(low|[45])/i) {
+            $i++ unless $i == $#legal_priorities;
+        }
+        $fields{'priority'} = $legal_priorities[$i];
+    }
+
     my $comment = '';
     # Get the description, except the signature.
     foreach my $line (@body_lines) {
@@ -154,6 +173,11 @@ sub parse_mail {
     }
 
     debug_print("Parsed Fields:\n" . Dumper(\%fields), 2);
+
+    debug_print("Attachments:\n" . Dumper($attachments), 3);
+    if (@$attachments) {
+        $fields{'attachments'} = $attachments;
+    }
 
     return \%fields;
 }
@@ -227,7 +251,6 @@ sub process_bug {
     foreach my $field (keys %fields) {
         $cgi->param(-name => $field, -value => $fields{$field});
     }
-    $cgi->param('longdesclength', scalar @{ $bug->comments });
     $cgi->param('token', issue_hash_token([$bug->id, $bug->delta_ts]));
 
     require 'process_bug.cgi';
@@ -249,15 +272,17 @@ sub handle_attachments {
     $dbh->bz_start_transaction();
     my ($update_comment, $update_bug);
     foreach my $attachment (@$attachments) {
-        my $data = delete $attachment->{payload};
-        debug_print("Inserting Attachment: " . Dumper($attachment), 2);
-        $attachment->{content_type} ||= 'application/octet-stream';
+        debug_print("Inserting Attachment: " . Dumper($attachment), 3);
+        my $type = $attachment->content_type || 'application/octet-stream';
+        # MUAs add stuff like "name=" to content-type that we really don't
+        # want.
+        $type =~ s/;.*//;
         my $obj = Bugzilla::Attachment->create({
             bug         => $bug,
-            description => $attachment->{filename},
-            filename    => $attachment->{filename},
-            mimetype    => $attachment->{content_type},
-            data        => $data,
+            description => $attachment->filename(1),
+            filename    => $attachment->filename(1),
+            mimetype    => $type,
+            data        => $attachment->body,
         });
         # If we added a comment, and our comment does not already have a type,
         # and this is our first attachment, then we make the comment an 
@@ -295,21 +320,36 @@ sub get_body_and_attachments {
     my ($email) = @_;
 
     my $ct = $email->content_type || 'text/plain';
-    debug_print("Splitting Body and Attachments [Type: $ct]...");
+    debug_print("Splitting Body and Attachments [Type: $ct]...", 2);
 
+    my ($bodies, $attachments) = split_body_and_attachments($email);
+    debug_print(scalar(@$bodies) . " body part(s) and " . scalar(@$attachments)
+                . " attachment part(s).");
+    debug_print('Bodies: ' . Dumper($bodies), 3);
+
+    # Get the first part of the email that contains a text body,
+    # and make all the other pieces into attachments. (This handles
+    # people or MUAs who accidentally attach text files as an "inline"
+    # attachment.)
     my $body;
-    my $attachments = [];
-    if ($ct =~ /^multipart\/(alternative|signed)/i) {
-        $body = get_text_alternative($email);
-    }
-    else {
-        my $stripper = new Email::MIME::Attachment::Stripper(
-            $email, force_filename => 1);
-        my $message = $stripper->message;
-        $body = get_text_alternative($message);
-        $attachments = [$stripper->attachments];
+    while (@$bodies) {
+        my $possible = shift @$bodies;
+        $body = get_text_alternative($possible);
+        if (defined $body) {
+            unshift(@$attachments, @$bodies);
+            last;
+        }
     }
 
+    if (!defined $body) {
+        # Note that this only happens if the email does not contain any
+        # text/plain parts. If the email has an empty text/plain part,
+        # you're fine, and this message does NOT get thrown.
+        ThrowUserError('email_no_body');
+    }
+
+    debug_print("Picked Body:\n$body", 2);
+    
     return ($body, $attachments);
 }
 
@@ -325,24 +365,42 @@ sub get_text_alternative {
         if ($ct =~ /charset="?([^;"]+)/) {
             $charset= $1;
         }
-        debug_print("Part Content-Type: $ct", 2);
-        debug_print("Part Character Encoding: $charset", 2);
-        if (!$ct || $ct =~ /^text\/plain/i) {
-            $body = $part->body;
-            if (Bugzilla->params->{'utf8'} && !utf8::is_utf8($body)) {
-                $body = Encode::decode($charset, $body);
-            }
-            last;
+        debug_print("Alternative Part Content-Type: $ct", 2);
+        debug_print("Alternative Part Character Encoding: $charset", 2);
+        # If we find a text/plain body here, return it immediately.
+        if (!$ct || $ct =~ m{^text/plain}i) {
+            return _decode_body($charset, $part->body);
+        }
+        # If we find a text/html body, decode it, but don't return
+        # it immediately, because there might be a text/plain alternative
+        # later. This could be any HTML type.
+        if ($ct =~ m{^application/xhtml\+xml}i or $ct =~ m{text/html}i) {
+            my $parser = HTML::FormatText::WithLinks->new(
+                # Put footnnote indicators after the text, not before it.
+                before_link => '',
+                after_link  => '[%n]',
+                # Convert bold and italics, use "*" for bold instead of "_".
+                with_emphasis => 1,
+                bold_marker => '*',
+                # If the same link appears multiple times, only create
+                # one footnote.
+                unique_links => 1,
+                # If the link text is the URL, don't create a footnote.
+                skip_linked_urls => 1,
+            );
+            $body = _decode_body($charset, $part->body);
+            $body = $parser->parse($body);
         }
     }
 
-    if (!defined $body) {
-        # Note that this only happens if the email does not contain any
-        # text/plain parts. If the email has an empty text/plain part,
-        # you're fine, and this message does NOT get thrown.
-        ThrowUserError('email_no_text_plain');
-    }
+    return $body;
+}
 
+sub _decode_body {
+    my ($charset, $body) = @_;
+    if (Bugzilla->params->{'utf8'} && !utf8::is_utf8($body)) {
+        return Encode::decode($charset, $body);
+    }
     return $body;
 }
 
@@ -367,6 +425,38 @@ sub html_strip {
     return $var;
 }
 
+sub split_body_and_attachments {
+    my ($email) = @_;
+
+    my (@body, @attachments);
+    foreach my $part ($email->parts) {
+        my $ct = lc($part->content_type || 'text/plain');
+        my $disposition = lc($part->header('Content-Disposition') || 'inline');
+        # Remove the charset, etc. from the content-type, we don't care here.
+        $ct =~ s/;.*//;
+        debug_print("Part Content-Type: [$ct]", 2);
+        debug_print("Part Disposition: [$disposition]", 2);
+
+        if ($disposition eq 'inline' and grep($_ eq $ct, BODY_TYPES)) {
+            push(@body, $part);
+            next;
+        }
+        
+        if (scalar($part->parts) == 1) {
+            push(@attachments, $part);
+            next;
+        }
+
+        # If this part has sub-parts, analyze them similarly to how we
+        # did above and return the relevant pieces.
+        my ($add_body, $add_attachments) = split_body_and_attachments($part);
+        push(@body, @$add_body);
+        push(@attachments, @$add_attachments);
+    }
+
+    return (\@body, \@attachments);
+}
+
 
 sub die_handler {
     my ($msg) = @_;
@@ -379,7 +469,7 @@ sub die_handler {
 
     # If this is inside an eval, then we should just act like...we're
     # in an eval (instead of printing the error and exiting).
-    die(@_) if $^S;
+    die @_ if ($^S // Bugzilla::Error::_in_eval());
 
     # We can't depend on the MTA to send an error message, so we have
     # to generate one properly.
@@ -583,10 +673,5 @@ and only allow access to the inbound email system from people you trust.
 The email interface only accepts emails that are correctly formatted
 per RFC2822. If you send it an incorrectly formatted message, it
 may behave in an unpredictable fashion.
-
-You cannot send an HTML mail along with attachments. If you do, Bugzilla
-will reject your email, saying that it doesn't contain any text. This
-is a bug in L<Email::MIME::Attachment::Stripper> that we can't work
-around.
 
 You cannot modify Flags through the email interface.

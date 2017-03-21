@@ -1,24 +1,9 @@
-# -*- Mode: perl; indent-tabs-mode: nil -*-
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
-# The contents of this file are subject to the Mozilla Public
-# License Version 1.1 (the "License"); you may not use this file
-# except in compliance with the License. You may obtain a copy of
-# the License at http://www.mozilla.org/MPL/
-#
-# Software distributed under the License is distributed on an "AS
-# IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-# implied. See the License for the specific language governing
-# rights and limitations under the License.
-#
-# The Original Code is the Bugzilla Bug Tracking System.
-#
-# The Initial Developer of the Original Code is Oracle Corporation. 
-# Portions created by Oracle are Copyright (C) 2007 Oracle Corporation. 
-# All Rights Reserved.
-#
-# Contributor(s): Lance Larsh <lance.larsh@oracle.com>
-#                 Xiaoou Wu   <xiaoou.wu@oracle.com>
-#                 Max Kanat-Alexander <mkanat@bugzilla.org>
+# This Source Code Form is "Incompatible With Secondary Licenses", as
+# defined by the Mozilla Public License, v. 2.0.
 
 =head1 NAME
 
@@ -35,8 +20,12 @@ For interface details see L<Bugzilla::DB> and L<DBI>.
 =cut
 
 package Bugzilla::DB::Oracle;
+
+use 5.10.1;
 use strict;
-use base qw(Bugzilla::DB);
+use warnings;
+
+use parent qw(Bugzilla::DB);
 
 use DBD::Oracle;
 use DBD::Oracle qw(:ora_types);
@@ -55,8 +44,6 @@ use constant BLOB_TYPE => { ora_type => ORA_BLOB };
 # The max size allowed for LOB fields, in kilobytes.
 use constant MIN_LONG_READ_LEN => 32 * 1024;
 use constant FULLTEXT_OR => ' OR ';
-
-our $fulltext_label = 0;
 
 sub new {
     my ($class, $params) = @_;
@@ -176,10 +163,11 @@ sub sql_from_days{
 
 sub sql_fulltext_search {
     my ($self, $column, $text) = @_;
+    state $label = 0;
     $text = $self->quote($text);
     trick_taint($text);
-    $fulltext_label++;
-    return "CONTAINS($column,$text,$fulltext_label) > 0", "SCORE($fulltext_label)";
+    $label++;
+    return "CONTAINS($column,$text,$label) > 0", "SCORE($label)";
 }
 
 sub sql_date_format {
@@ -314,9 +302,8 @@ sub adjust_statement {
     my $is_select = ($part =~ m/^\s*SELECT\b/io);
     my $has_from =  ($part =~ m/\bFROM\b/io) if $is_select;
 
-    # Oracle recognizes CURRENT_DATE, but not CURRENT_DATE()
-    # and its CURRENT_DATE is a date+time, so wrap in TRUNC()
-    $part =~ s/\bCURRENT_DATE\b(?:\(\))?/TRUNC(CURRENT_DATE)/io;
+    # Oracle includes the time in CURRENT_DATE.
+    $part =~ s/\bCURRENT_DATE\b/TRUNC(CURRENT_DATE)/io;
 
     # Oracle use SUBSTR instead of SUBSTRING
     $part =~ s/\bSUBSTRING\b/SUBSTR/io;
@@ -346,19 +333,14 @@ sub adjust_statement {
         $has_from = ($nonstring =~ m/\bFROM\b/io) 
                     if ($is_select and !$has_from);
 
-        # Oracle recognizes CURRENT_DATE, but not CURRENT_DATE()
-        # and its CURRENT_DATE is a date+time, so wrap in TRUNC()
-        $nonstring =~ s/\bCURRENT_DATE\b(?:\(\))?/TRUNC(CURRENT_DATE)/io;
+        # Oracle includes the time in CURRENT_DATE.
+        $nonstring =~ s/\bCURRENT_DATE\b/TRUNC(CURRENT_DATE)/io;
 
         # Oracle use SUBSTR instead of SUBSTRING
         $nonstring =~ s/\bSUBSTRING\b/SUBSTR/io;
-        
+
         # Oracle need no 'AS'
         $nonstring =~ s/\bAS\b//ig;
-        
-        # Take the first 4000 chars for comparison  
-        $nonstring =~ s/\(\s*(longdescs_\d+\.thetext|attachdata_\d+\.thedata)/
-                      \(DBMS_LOB.SUBSTR\($1, 4000, 1\)/ig;
 
         # Look for a LIMIT clause
         ($limit) = ($nonstring =~ m(/\* LIMIT (\d*) \*/)o);
@@ -737,7 +719,12 @@ sub _get_create_trigger_ddl {
 ############################################################################
 
 package Bugzilla::DB::Oracle::st;
-use base qw(DBI::st);
+
+use 5.10.1;
+use strict;
+use warnings;
+
+use parent -norequire, qw(DBI::st);
  
 sub fetchrow_arrayref {
     my $self = shift;
@@ -802,3 +789,69 @@ sub fetch {
    return $row;
 }
 1;
+
+=head1 B<Methods in need of POD>
+
+=over
+
+=item adjust_statement
+
+=item bz_check_regexp
+
+=item bz_drop_table
+
+=item bz_explain
+
+=item bz_last_key
+
+=item bz_setup_database
+
+=item bz_table_columns_real
+
+=item bz_table_list_real
+
+=item do
+
+=item prepare
+
+=item prepare_cached
+
+=item quote_identifier
+
+=item selectall_arrayref
+
+=item selectall_hashref
+
+=item selectcol_arrayref
+
+=item selectrow_array
+
+=item selectrow_arrayref
+
+=item selectrow_hashref
+
+=item sql_date_format
+
+=item sql_date_math
+
+=item sql_from_days
+
+=item sql_fulltext_search
+
+=item sql_group_concat
+
+=item sql_in
+
+=item sql_limit
+
+=item sql_not_regexp
+
+=item sql_position
+
+=item sql_regexp
+
+=item sql_string_concat
+
+=item sql_to_days
+
+=back

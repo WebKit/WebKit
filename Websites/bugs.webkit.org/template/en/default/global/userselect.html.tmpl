@@ -1,19 +1,9 @@
-[%# The contents of this file are subject to the Mozilla Public
-  # License Version 1.1 (the "License"); you may not use this file
-  # except in compliance with the License. You may obtain a copy of
-  # the License at http://www.mozilla.org/MPL/
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
   #
-  # Software distributed under the License is distributed on an "AS
-  # IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-  # implied. See the License for the specific language governing
-  # rights and limitations under the License.
-  #
-  # The Original Code is the Bugzilla Bug Tracking System.
-  #
-  # Contributor(s): Byron Jones <bugzilla@glob.com.au>
-  #                 Frédéric Buclin <LpSolit@gmail.com>
-  #                 Guy Pyrzak <guy.pyrzak@gmail.com>
-  #                 Reed Loden <reed@reedloden.com>
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
   #%]
 
 [%# INTERFACE:
@@ -30,6 +20,7 @@
   # multiple: optional, do multiselect box, value is size (height) of box
   # custom_userlist: optional, specify a limited list of users to use
   # field_title: optional, extra information to display as a tooltip
+  # mandatory: optional; if true, the field cannot be empty.
   #%]
 
 [% IF Param("usemenuforusers") %]
@@ -41,6 +32,7 @@
   [% IF accesskey %] accesskey="[% accesskey FILTER html %]" [% END %]
   [% IF multiple %] multiple="multiple" size="[% multiple FILTER html %]" [% END %]
   [% IF field_title %] title="[% field_title FILTER html %]" [% END %]
+  [% IF mandatory %] required [% END %]
 >
   [% IF emptyok %]
     <option value=""></option>
@@ -93,6 +85,7 @@
     [% IF field_title %] title="[% field_title FILTER html %]" [% END %]
     [% IF size %] size="[% size FILTER html %]" [% END %]
     [% IF id %] id="[% id FILTER html %]" [% END %]
+    [% IF mandatory %] required [% END %]
   >
   [% IF feature_enabled('jsonrpc') && Param('ajax_user_autocompletion') && id %]
     <div id="[% id FILTER html %]_autocomplete_container"></div>

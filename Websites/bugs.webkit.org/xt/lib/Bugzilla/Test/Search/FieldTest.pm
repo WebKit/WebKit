@@ -1,23 +1,9 @@
-# -*- Mode: perl; indent-tabs-mode: nil -*-
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
-# The contents of this file are subject to the Mozilla Public
-# License Version 1.1 (the "License"); you may not use this file
-# except in compliance with the License. You may obtain a copy of
-# the License at http://www.mozilla.org/MPL/
-#
-# Software distributed under the License is distributed on an "AS
-# IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-# implied. See the License for the specific language governing
-# rights and limitations under the License.
-#
-# The Original Code is the Bugzilla Bug Tracking System.
-#
-# The Initial Developer of the Original Code is Everything Solved, Inc.
-# Portions created by the Initial Developer are Copyright (C) 2010 the
-# Initial Developer. All Rights Reserved.
-#
-# Contributor(s):
-#   Max Kanat-Alexander <mkanat@bugzilla.org>
+# This Source Code Form is "Incompatible With Secondary Licenses", as
+# defined by the Mozilla Public License, v. 2.0.
 
 # This module represents the tests that get run on a single
 # operator/field combination for Bugzilla::Test::Search.
@@ -562,13 +548,13 @@ sub do_tests {
     my $sql;
     TODO: {
         local $TODO = $search_broken if $search_broken;
-        lives_ok { $sql = $search->sql } "$name: generate SQL";
+        lives_ok { $sql = $search->_sql } "$name: generate SQL";
     }
     
     my $results;
     SKIP: {
         skip "Can't run SQL without any SQL", 1 if !defined $sql;
-        $results = $self->_test_sql($sql);
+        $results = $self->_test_sql($search);
     }
 
     $self->_test_content($results, $sql);
@@ -585,12 +571,11 @@ sub _test_search_object_creation {
 }
 
 sub _test_sql {
-    my ($self, $sql) = @_;
-    my $dbh = Bugzilla->dbh;
+    my ($self, $search) = @_;
     my $name = $self->name;
     my $results;
-    lives_ok { $results = $dbh->selectall_arrayref($sql) } "$name: Run SQL Query"
-        or diag($sql);
+    lives_ok { $results = $search->data } "$name: Run SQL Query"
+        or diag($search->_sql);
     return $results;
 }
 

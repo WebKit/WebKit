@@ -1,0 +1,37 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# INTERFACE:
+  #
+  # This template supports the same parameters as global/textarea.html.tmpl
+  # with the exception of "name" and "id", which will always be "comment".
+  #%]
+
+[% IF feature_enabled('jsonrpc') %]
+  <div id="comment_tabs" role="tablist">
+    <div id="comment_tab" class="comment_tab active_comment_tab"
+          role="tab" aria-selected="true"
+          onclick="show_comment_edit()">Comment</div>
+    <div id="comment_preview_tab" class="comment_tab"
+          role="tab" aria-selected="false"
+          onclick="show_comment_preview([% bug.id FILTER none %])">Preview</div>
+  </div>
+[% END %]
+
+[% INCLUDE global/textarea.html.tmpl
+   name = "comment"
+   id   = "comment"
+%]
+
+[% IF feature_enabled('jsonrpc') %]
+  <div id="comment_preview" class="bz_default_hidden bz_comment">
+    <div id="comment_preview_loading" class="bz_default_hidden">Generating Preview...</div>
+    <div id="comment_preview_error" class="bz_default_hidden"></div>
+    <pre id="comment_preview_text" class="bz_comment_text"></pre>
+  </div>
+[% END %]

@@ -1,27 +1,14 @@
 #!/usr/bin/perl
-# -*- Mode: perl; indent-tabs-mode: nil -*-
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
-# The contents of this file are subject to the Mozilla Public
-# License Version 1.1 (the "License"); you may not use this file
-# except in compliance with the License. You may obtain a copy of
-# the License at http://www.mozilla.org/MPL/
-#
-# Software distributed under the License is distributed on an "AS
-# IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-# implied. See the License for the specific language governing
-# rights and limitations under the License.
-#
-# The Original Code is the Bugzilla Bug Tracking System.
-#
-# The Initial Developer of the Original Code is Mozilla Corporation.
-# Portions created by the Initial Developer are Copyright (C) 2008
-# Mozilla Corporation. All Rights Reserved.
-#
-# Contributor(s): 
-#   Mark Smith <mark@mozilla.com>
-#   Max Kanat-Alexander <mkanat@bugzilla.org>
+# This Source Code Form is "Incompatible With Secondary Licenses", as
+# defined by the Mozilla Public License, v. 2.0.
 
+use 5.10.1;
 use strict;
+use warnings;
 
 use Cwd qw(abs_path);
 use File::Basename;
@@ -59,7 +46,8 @@ jobqueue.pl - Runs jobs in the background for Bugzilla.
    restart   Stops a running jobqueue if one is running, and then
              starts a new one.
    once      Checks the job queue once, executes the first item found (if
-             any) and then exits
+             any, up to a limit of 1000 items) and then exits
+   onepass   Checks the job queue, executes all items found, and then exits
    check     Report the current status of the daemon.
    install   On some *nix systems, this automatically installs and
              configures jobqueue.pl as a system service so that it will

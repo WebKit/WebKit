@@ -1,16 +1,9 @@
-[%# The contents of this file are subject to the Mozilla Public
-  # License Version 1.1 (the "License"); you may not use this file
-  # except in compliance with the License. You may obtain a copy of
-  # the License at http://www.mozilla.org/MPL/
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
   #
-  # Software distributed under the License is distributed on an "AS
-  # IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-  # implied. See the License for the specific language governing
-  # rights and limitations under the License.
-  #
-  # The Original Code is the Bugzilla Bug Tracking System.
-  #
-  # Contributor(s): Gavin Shelley <bugzilla@chimpychompy.org>
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
   #%]
 
 [%# INTERFACE:
@@ -21,8 +14,6 @@
   #                         the currently selected classification
   # showbugcounts: boolean; true if bug counts should be included in the table
   #%]
-
-[% PROCESS global/variables.none.tmpl %]
 
 [% IF classification %]
   [% classification_url_part = BLOCK %]&amp;classification=
@@ -35,22 +26,29 @@
 
 [% PROCESS global/header.html.tmpl
   title = "Select product $classification_title"
+  style_urls = ['skins/standard/admin.css']
 %]
 
 [% columns = [
-     { 
+     {
        name => "name"
        heading => "Edit product..."
        contentlink => 'editproducts.cgi?action=edit&amp;product=%%name%%'
      },
-     { 
+     {
        name => "description"
        heading => "Description"
        allow_html_content => 1
      },
-     { 
+     {
        name => "is_active"
        heading => "Open For New $terms.Bugs"
+       yesno_field => 1
+     },
+     {
+       name => "allows_unconfirmed"
+       heading => "Allow " _ display_value('bug_status', 'UNCONFIRMED') _
+                       " " _ terms.Bugs
        yesno_field => 1
      },
 ] %]
@@ -60,7 +58,7 @@
   [% columns.push({
        name => "bug_count"
        heading => "$terms.Bug Count"
-       align => 'right'
+       class => 'right'
        contentlink => 'buglist.cgi?product=%%name%%'
      })
   %]

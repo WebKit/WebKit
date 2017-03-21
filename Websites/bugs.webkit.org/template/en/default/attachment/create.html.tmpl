@@ -1,27 +1,10 @@
-[%# The contents of this file are subject to the Mozilla Public
-  # License Version 1.1 (the "License"); you may not use this file
-  # except in compliance with the License. You may obtain a copy of
-  # the License at http://www.mozilla.org/MPL/
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
   #
-  # Software distributed under the License is distributed on an "AS
-  # IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-  # implied. See the License for the specific language governing
-  # rights and limitations under the License.
-  #
-  # The Original Code is the Bugzilla Bug Tracking System.
-  #
-  # The Initial Developer of the Original Code is Netscape Communications
-  # Corporation. Portions created by Netscape are
-  # Copyright (C) 1998 Netscape Communications Corporation. All
-  # Rights Reserved.
-  #
-  # Contributor(s): Myk Melez <myk@mozilla.org>
-  #                 Joel Peshkin <bugreport@peshkin.net>
-  #                 Erik Stambaugh <erik@dasbistro.com>
-  #                 Marc Schumann <wurblzap@gmail.com>
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
   #%]
-
-[% PROCESS "global/field-descs.none.tmpl" %]
 
 [%# Define strings that will serve as the title and header of this page %]
 [% title = BLOCK %]Create New Attachment for [% terms.Bug %] #[% bug.bug_id %][% END %]
@@ -33,10 +16,11 @@
   title = title
   header = header
   subheader = subheader
-  style_urls = [ 'skins/standard/attachment.css' ]
+  generate_api_token = 1
+  style_urls = ['skins/standard/bug.css']
   yui = [ 'autocomplete' ]
   javascript_urls = [ "js/attachment.js", 'js/field.js', "js/util.js", "js/TUI.js" ]
-  doc_section = "attachments.html"
+  doc_section = "using/editing.html#attachments"
 %]
 
 <script type="text/javascript">
@@ -56,23 +40,19 @@ TUI_hide_default('attachment_text_field');
     [% PROCESS attachment/createformcontents.html.tmpl %]
 
     [%# Additional fields for attachments on existing bugs: %]
-    <tr>
-      <th>Obsoletes:</th>
-      <td>
-        <em>(optional) Check each existing attachment made obsolete by your new attachment.</em><br>
-        [% IF attachments.size %]
+    [% IF attachments.size %]
+      <tr>
+        <th>Obsoletes:</th>
+        <td>
+          <em>(optional) Check each existing attachment made obsolete by your new attachment.</em><br>
           [% FOREACH attachment = attachments %]
-            [% IF ((attachment.isprivate == 0) || user.is_insider) %]
-              <input type="checkbox" id="[% attachment.id %]"
-                   name="obsolete" value="[% attachment.id %]">
-              <a href="attachment.cgi?id=[% attachment.id %]&amp;action=edit">[% attachment.id %]: [% attachment.description FILTER html %]</a><br>
-            [% END %]
+            <input type="checkbox" id="[% attachment.id %]"
+                 name="obsolete" value="[% attachment.id %]">
+            <a href="attachment.cgi?id=[% attachment.id %]&amp;action=edit">[% attachment.id %]: [% attachment.description FILTER html %]</a><br>
           [% END %]
-        [% ELSE %]
-            [no attachments can be made obsolete]
-        [% END %]
-      </td>
-    </tr>
+        </td>
+      </tr>
+    [% END %]
 
     [% IF (user.id != bug.assigned_to.id) AND user.in_group("editbugs", bug.product_id) %]
       <tr>
@@ -105,14 +85,21 @@ TUI_hide_default('attachment_text_field');
       <th><label for="comment">Comment:</label></th>
       <td>
         <em>(optional) Add a comment about this attachment to the [% terms.bug %].</em><br>
-        [% INCLUDE global/textarea.html.tmpl
-          name    = 'comment'
-          id      = 'comment'
-          minrows = 6
-          maxrows = 15
-          cols    = constants.COMMENT_COLS
-          wrap    = 'soft'
+        [% INCLUDE bug/comment.html.tmpl
+           minrows = 6
+           maxrows = 15
+           cols    = constants.COMMENT_COLS
+           wrap    = 'soft'
         %]
+        [% IF NOT bug.cc.contains(user.login) %]
+          <br>
+          <input type="checkbox" id="addselfcc" name="addselfcc"
+            [%~ ' checked="checked"'
+                IF user.settings.state_addselfcc.value == 'always'
+                   || (!bug.user.has_any_role
+                       && user.settings.state_addselfcc.value == 'cc_unless_role') %]>
+          <label for="addselfcc">Add me to CC list</label>
+        [% END %]
       </td>
     </tr>
     [% IF user.is_insider %]

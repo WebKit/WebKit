@@ -1,23 +1,14 @@
-[%# The contents of this file are subject to the Mozilla Public
-  # License Version 1.1 (the "License"); you may not use this file
-  # except in compliance with the License. You may obtain a copy of
-  # the License at http://www.mozilla.org/MPL/
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
   #
-  # Software distributed under the License is distributed on an "AS
-  # IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-  # implied. See the License for the specific language governing
-  # rights and limitations under the License.
-  #
-  # The Original Code is the Bugzilla Bug Tracking System.
-  #
-  # Contributor(s): Frédéric Buclin <LpSolit@gmail.com>
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
   #%]
 
 [%# INTERFACE:
   # field: Bugzila::Field; the current field being edited
   #%]
-
-[% PROCESS "global/field-descs.none.tmpl" %]
 
 [% title = BLOCK %]
   Edit the Custom Field '[% field.name FILTER html %]' ([% field.description FILTER html %])
@@ -31,7 +22,7 @@
            title = title
            onload = "toggleCheckbox(document.getElementById('enter_bug'), 'new_bugmail');"
            javascript_urls = [ 'js/util.js' ]
-           doc_section = "custom-fields.html#edit-custom-fields"
+           doc_section = "administering/custom-fields.html#editing-custom-fields"
            style_urls = ['skins/standard/admin.css']
 %]
 
@@ -41,133 +32,8 @@
 </p>
 
 <form id="edit_field" action="editfields.cgi" method="GET">
-  <table border="0" cellspacing="0" cellpadding="5" id="edit_custom_field">
-    <tr>
-      <th class="narrow_label">Name:</th>
-      <td>[% field.name FILTER html %]</td>
+  [% PROCESS "admin/custom_fields/edit-common.html.tmpl" field = field %]
 
-      <th>
-        <label for="enter_bug">Can be set on [% terms.bug %] creation:</label>
-      </th>
-      <td><input type="checkbox" id="enter_bug" name="enter_bug" value="1"
-                 [%- " checked" IF field.enter_bug %]
-                 onchange="toggleCheckbox(this, 'new_bugmail');"></td>
-    </tr>
-    <tr>
-      <th class="narrow_label"><label for="desc">Description:</label></th>
-      <td><input type="text" id="desc" name="desc" size="40"
-                 value="[% field.description FILTER html %]"></td>
-
-      <th>
-        <label for="new_bugmail">Displayed in [% terms.bug %]mail for new [% terms.bugs %]:</label>
-      </th>
-      <td><input type="checkbox" id="new_bugmail" name="new_bugmail" value="1"
-                 [%- " checked" IF field.mailhead %]></td>
-    </tr>
-    <tr>
-      <th class="narrow_label">Type:</th>
-      <td>[% field_types.${field.type} FILTER html %]</td>
-
-      <th><label for="obsolete">Is obsolete:</label></th>
-      <td><input type="checkbox" id="obsolete" name="obsolete" value="1"
-                 [%- " checked" IF field.obsolete %]></td>
-    </tr>
-    <tr>
-      <th class="narrow_label"><label for="sortkey">Sortkey:</label></th>
-      <td>
-        <input type="text" id="sortkey" name="sortkey" size="6" maxlength="6"
-               value="[% field.sortkey FILTER html %]">
-      </td>
-      <th align="right"><label for="is_mandatory">Is mandatory:</label></th>
-      <td><input type="checkbox" id="is_mandatory" name="is_mandatory" value="1"
-                 [%- ' checked="checked"' IF field.is_mandatory %]></td>
-    </tr>
-    <tr>
-      [% IF field.type == constants.FIELD_TYPE_BUG_ID %]
-        <th class="narrow_label">
-          <label for="reverse_desc">Reverse Relationship Description:</label>
-        </th>
-        <td>
-          <input type="text" id="reverse_desc" name="reverse_desc" size="40"
-                 value="[% field.reverse_desc FILTER html %]">
-          <br/>
-          Use this label for the list of [% terms.bugs %] that link to
-          [%+ terms.abug %] with this 
-          [%+ field_types.${constants.FIELD_TYPE_BUG_ID} FILTER html %] field.
-          For example, if the description is "Is a duplicate of",
-          the reverse description would be "Duplicates of this [% terms.bug %]".
-          Leave blank to disable the list for this field.
-        </td>
-      [% ELSE %]
-        <td colspan="2">&nbsp;</td>
-      [% END %]
-      <th>
-        <label for="visibility_field_id">Field only appears when:</label>
-      </th>
-      <td>
-        <select name="visibility_field_id" id="visibility_field_id"
-                onchange="onChangeVisibilityField()">
-          <option></option>
-          [% FOREACH sel_field = Bugzilla.fields({ is_select => 1 }) %]
-            [% NEXT IF sel_field.id == field.id %]
-            <option value="[% sel_field.id FILTER html %]"
-             [% ' selected="selected"' 
-                IF sel_field.id == field.visibility_field.id %]>
-              [% sel_field.description FILTER html %]
-              ([% sel_field.name FILTER html %])
-            </option>
-          [% END %]
-        </select>
-        <label for="visibility_values">
-          <strong>is set to any of:</strong>
-        </label>
-        <select multiple="multiple" size="5" name="visibility_values" 
-                id="visibility_values" class="field_value">
-          [% FOREACH value = field.visibility_field.legal_values %]
-            <option value="[% value.id FILTER html %]"
-              [% " selected" IF field.visibility_values.contains(value) %]>
-              [% IF field.visibility_field.name == 'component' %]
-                [% display_value('product', value.product.name) FILTER html %]:
-              [% END %]
-              [%+ display_value(field.visibility_field.name, value.name) FILTER html %]
-            </option>
-          [% END %]   
-        </select>
-      </td>
-    </tr>
-    [% IF field.is_select %]
-      <tr>
-        <th>&nbsp;</th>
-        <td>
-          <a href="editvalues.cgi?field=[% field.name FILTER uri %]">Edit
-            legal values for this field</a>.
-        </td>
-
-        <th>
-          <label for="value_field_id">
-            Field that controls the values<br>
-            that appear in this field:
-          </label>
-        </th>
-
-        <td>
-          <select name="value_field_id" id="value_field_id">
-            <option></option>
-            [% FOREACH sel_field = Bugzilla.fields({ is_select => 1 }) %]
-              [% NEXT IF sel_field.id == field.id %]
-              <option value="[% sel_field.id FILTER html %]"
-               [% ' selected="selected"' 
-                  IF sel_field.id == field.value_field.id %]>
-                [% sel_field.description FILTER html %]
-                ([% sel_field.name FILTER html %])
-              </option>
-            [% END %]
-          </select>
-        </td>
-      </tr>
-    [% END %]
-  </table>
-  <br>
   <input type="hidden" name="action" value="update">
   <input type="hidden" name="name" value="[% field.name FILTER html %]">
   <input type="hidden" name="token" value="[% token FILTER html %]">

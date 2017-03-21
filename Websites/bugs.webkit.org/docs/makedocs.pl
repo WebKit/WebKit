@@ -1,135 +1,64 @@
-#!/usr/bin/env perl -w
-# -*- Mode: perl; indent-tabs-mode: nil -*-
+#!/usr/bin/perl
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
-# The contents of this file are subject to the Mozilla Public
-# License Version 1.1 (the "License"); you may not use this file
-# except in compliance with the License. You may obtain a copy of
-# the License at http://www.mozilla.org/MPL/
-#
-# Software distributed under the License is distributed on an "AS
-# IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-# implied. See the License for the specific language governing
-# rights and limitations under the License.
-#
-# The Original Code is the Bugzilla Bug Tracking System.
-#
-# The Initial Developer of the Original Code is Netscape Communications
-# Corporation. Portions created by Netscape are
-# Copyright (C) 1998 Netscape Communications Corporation. All
-# Rights Reserved.
-#
-# Contributor(s): Matthew Tuck <matty@chariot.net.au>
-#                 Jacob Steenhagen <jake@bugzilla.org>
-#                 Colin Ogilvie <colin.ogilvie@gmail.com>
-#                 Max Kanat-Alexander <mkanat@bugzilla.org>
+# This Source Code Form is "Incompatible With Secondary Licenses", as
+# defined by the Mozilla Public License, v. 2.0.
 
 # This script compiles all the documentation.
+#
+# Required software:
+#
+# 1) Sphinx documentation builder (python-sphinx package on Debian/Ubuntu)
+#
+# 2a) rst2pdf
+# or
+# 2b) pdflatex, which means the following Debian/Ubuntu packages:
+#     * texlive-latex-base
+#     * texlive-latex-recommended
+#     * texlive-latex-extra
+#     * texlive-fonts-recommended
+#
+# All these TeX packages together are close to a gig :-| But after you've
+# installed them, you can remove texlive-latex-extra-doc to save 400MB.
 
+use 5.10.1;
 use strict;
-use Cwd;
+use warnings;
 
-# We need to be in this directory to use our libraries.
-BEGIN {
-    require File::Basename;
-    import File::Basename qw(dirname);
-    chdir dirname($0);
-}
+use File::Basename;
+BEGIN { chdir dirname($0); }
 
 use lib qw(.. ../lib lib);
 
-# We only compile our POD if Pod::Simple is installed. We do the checks
-# this way so that if there's a compile error in Pod::Simple::HTML::Bugzilla,
-# makedocs doesn't just silently fail, but instead actually tells us there's
-# a compile error.
-my $pod_simple;
-if (eval { require Pod::Simple }) {
-    require Pod::Simple::HTMLBatch::Bugzilla;
-    require Pod::Simple::HTML::Bugzilla;
-    $pod_simple = 1;
-};
+use Cwd;
+use File::Copy::Recursive qw(rcopy);
+use File::Find;
+use File::Path qw(rmtree make_path);
+use File::Which qw(which);
+use Pod::Simple;
 
-use Bugzilla::Install::Requirements 
-    qw(REQUIRED_MODULES OPTIONAL_MODULES);
-use Bugzilla::Constants qw(DB_MODULE BUGZILLA_VERSION);
-
-###############################################################################
-# Generate minimum version list
-###############################################################################
-
-my $modules = REQUIRED_MODULES;
-my $opt_modules = OPTIONAL_MODULES;
-
-open(ENTITIES, '>', 'bugzilla.ent') or die('Could not open bugzilla.ent: ' . $!);
-print ENTITIES '<?xml version="1.0"?>' ."\n\n";
-print ENTITIES '<!-- Module Versions -->' . "\n";
-foreach my $module (@$modules, @$opt_modules)
-{
-    my $name = $module->{'module'};
-    $name =~ s/::/-/g;
-    $name = lc($name);
-    #This needs to be a string comparison, due to the modules having
-    #version numbers like 0.9.4
-    my $version = $module->{'version'} eq 0 ? 'any' : $module->{'version'};
-    print ENTITIES '<!ENTITY min-' . $name . '-ver "'.$version.'">' . "\n";
-}
-
-print ENTITIES "\n <!-- Database Versions --> \n";
-
-my $db_modules = DB_MODULE;
-foreach my $db (keys %$db_modules) {
-    my $dbd  = $db_modules->{$db}->{dbd};
-    my $name = $dbd->{module};
-    $name =~ s/::/-/g;
-    $name = lc($name);
-    my $version    = $dbd->{version} || 'any';
-    my $db_version = $db_modules->{$db}->{'db_version'};
-    print ENTITIES '<!ENTITY min-' . $name . '-ver "'.$version.'">' . "\n";
-    print ENTITIES '<!ENTITY min-' . lc($db) . '-ver "'.$db_version.'">' . "\n";
-}
-close(ENTITIES);
-
-###############################################################################
-# Environment Variable Checking
-###############################################################################
-
-my ($JADE_PUB, $LDP_HOME, $build_docs);
-$build_docs = 1;
-if (defined $ENV{JADE_PUB} && $ENV{JADE_PUB} ne '') {
-    $JADE_PUB = $ENV{JADE_PUB};
-}
-else {
-    print "To build 'The Bugzilla Guide', you need to set the ";
-    print "JADE_PUB environment variable first.\n";
-    $build_docs = 0;
-}
-
-if (defined $ENV{LDP_HOME} && $ENV{LDP_HOME} ne '') {
-    $LDP_HOME = $ENV{LDP_HOME};
-}
-else {
-    print "To build 'The Bugzilla Guide', you need to set the ";
-    print "LDP_HOME environment variable first.\n";
-    $build_docs = 0;
-}
+use Bugzilla::Constants qw(BUGZILLA_VERSION bz_locations);
+use Pod::Simple::HTMLBatch::Bugzilla;
+use Pod::Simple::HTML::Bugzilla;
 
 ###############################################################################
 # Subs
 ###############################################################################
 
+my $error_found = 0;
 sub MakeDocs {
-
     my ($name, $cmdline) = @_;
 
-    print "Creating $name documentation ...\n" if defined $name;
-    print "$cmdline\n\n";
-    system $cmdline;
+    say "Creating $name documentation ..." if defined $name;
+    system('make', $cmdline) == 0
+        or $error_found = 1;
     print "\n";
-
 }
 
 sub make_pod {
-
-    print "Creating API documentation...\n";
+    say "Creating API documentation...";
 
     my $converter = Pod::Simple::HTMLBatch::Bugzilla->new;
     # Don't output progress information.
@@ -153,10 +82,11 @@ END_HTML
 
     $converter->contents_page_start($contents_start);
     $converter->contents_page_end("</body></html>");
-    $converter->add_css('./../../../style.css');
+    $converter->add_css('./../../../../style.css');
     $converter->javascript_flurry(0);
     $converter->css_flurry(0);
-    $converter->batch_convert(['../../'], 'html/api/');
+    make_path('html/integrating/api');
+    $converter->batch_convert(['../../'], 'html/integrating/api');
 
     print "\n";
 }
@@ -166,11 +96,11 @@ END_HTML
 ###############################################################################
 
 my @langs;
-# search for sub directories which have a 'xml' sub-directory
+# search for sub directories which have a 'rst' sub-directory
 opendir(LANGS, './');
 foreach my $dir (readdir(LANGS)) {
     next if (($dir eq '.') || ($dir eq '..') || (! -d $dir));
-    if (-d "$dir/xml") {
+    if (-d "$dir/rst") {
         push(@langs, $dir);
     }
 }
@@ -179,50 +109,54 @@ closedir(LANGS);
 my $docparent = getcwd();
 foreach my $lang (@langs) {
     chdir "$docparent/$lang";
-    MakeDocs(undef, 'cp ../bugzilla.ent ./xml/');
 
-    if (!-d 'txt') {
-        unlink 'txt';
-        mkdir 'txt', 0755;
-    }
-    if (!-d 'pdf') {
-        unlink 'pdf';
-        mkdir 'pdf', 0755;
-    }
-    if (!-d 'html') {
-        unlink 'html';
-        mkdir 'html', 0755;
-    }
-    if (!-d 'html/api') {
-        unlink 'html/api';
-        mkdir 'html/api', 0755;
-    }
+    make_pod();
 
-    make_pod() if $pod_simple;
-    next unless $build_docs;
+    next if grep { $_ eq '--pod-only' } @ARGV;
 
-    chdir 'html';
+    chdir $docparent;
 
-    MakeDocs('separate HTML', "jade -t sgml -i html -d $LDP_HOME/ldp.dsl\#html " .
-         "$JADE_PUB/xml.dcl ../xml/Bugzilla-Guide.xml");
-    MakeDocs('big HTML', "jade -V nochunks -t sgml -i html -d " .
-         "$LDP_HOME/ldp.dsl\#html $JADE_PUB/xml.dcl " .
-         "../xml/Bugzilla-Guide.xml > Bugzilla-Guide.html");
-    MakeDocs('big text', "lynx -dump -justify=off -nolist Bugzilla-Guide.html " .
-         "> ../txt/Bugzilla-Guide.txt");
-
-    if (! grep($_ eq "--with-pdf", @ARGV)) {
-        next;
+    # Generate extension documentation, both normal and API
+    my $ext_dir = bz_locations()->{'extensionsdir'};
+    my @ext_paths = grep { $_ !~ /\/create\.pl$/ && ! -e "$_/disabled" }
+                    glob("$ext_dir/*");
+    my %extensions;
+    foreach my $item (@ext_paths) {
+        my $basename = basename($item);
+        if (-d "$item/docs/$lang/rst") {
+            $extensions{$basename} = "$item/docs/$lang/rst";
+        }
     }
 
-    MakeDocs('PDF', "jade -t tex -d $LDP_HOME/ldp.dsl\#print $JADE_PUB/xml.dcl " .
-         '../xml/Bugzilla-Guide.xml');
-    chdir '../pdf';
-    MakeDocs(undef, 'mv ../xml/Bugzilla-Guide.tex .');
-    MakeDocs(undef, 'pdfjadetex Bugzilla-Guide.tex');
-    MakeDocs(undef, 'pdfjadetex Bugzilla-Guide.tex');
-    MakeDocs(undef, 'pdfjadetex Bugzilla-Guide.tex');
-    MakeDocs(undef, 'rm Bugzilla-Guide.tex Bugzilla-Guide.log Bugzilla-Guide.aux Bugzilla-Guide.out');
+    # Collect up local extension documentation into the extensions/ dir.
+    rmtree("$lang/rst/extensions", 0, 1);
 
+    foreach my $ext_name (keys %extensions) {
+        my $src = $extensions{$ext_name} . "/*";
+        my $dst = "$docparent/$lang/rst/extensions/$ext_name";
+        mkdir($dst) unless -d $dst;
+        rcopy($src, $dst);
+    }
+
+    chdir "$docparent/$lang";
+
+    MakeDocs('HTML', 'html');
+    MakeDocs('TXT', 'text');
+
+    if (grep { $_ eq '--with-pdf' } @ARGV) {
+        if (which('pdflatex')) {
+            MakeDocs('PDF', 'latexpdf');
+        }
+        elsif (which('rst2pdf')) {
+            rmtree('pdf', 0, 1);
+            MakeDocs('PDF', 'pdf');
+        }
+        else {
+            say 'pdflatex or rst2pdf not found. Skipping PDF file creation';
+        }
+    }
+
+    rmtree('doctrees', 0, 1);
 }
 
+die "Error occurred building the documentation\n" if $error_found;

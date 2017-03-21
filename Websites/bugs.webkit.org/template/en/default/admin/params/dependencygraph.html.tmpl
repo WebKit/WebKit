@@ -1,26 +1,13 @@
-[%# The contents of this file are subject to the Mozilla Public
-  # License Version 1.1 (the "License"); you may not use this file
-  # except in compliance with the License. You may obtain a copy of
-  # the License at http://www.mozilla.org/MPL/
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
   #
-  # Software distributed under the License is distributed on an "AS
-  # IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-  # implied. See the License for the specific language governing
-  # rights and limitations under the License.
-  #
-  # The Original Code is the Bugzilla Bug Tracking System.
-  #
-  # The Initial Developer of the Original Code is Netscape Communications
-  # Corporation. Portions created by Netscape are
-  # Copyright (C) 1998 Netscape Communications Corporation. All
-  # Rights Reserved.
-  #
-  # Contributor(s): Dave Miller <justdave@bugzilla.org>
-  #                 Frédéric Buclin <LpSolit@gmail.com>
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
   #%]
 [%
-   title = "Dependency Graphs"
-   desc = "Optional setup for dependency graphing"
+   title = "Graphs"
+   desc = "Optional setup to generate graphs"
 %]
 
 [% param_descs = {
@@ -45,5 +32,15 @@
                  this value, make certain that the webdot server can read files from your
                  webdot directory. On Apache you do this by editing the .htaccess file,
                  for other systems the needed measures may vary. You can run <kbd>checksetup.pl</kbd>
-                 to recreate the .htaccess file if it has been lost."}
+                 to recreate the .htaccess file if it has been lost.",
+
+  font_file => "You can specify the full path to a TrueType or OpenType font file which will " _
+               "be used to display text (labels, legends, ...) in charts and graphical reports. " _
+               "To support as many languages as possible, we recommend to specify a font " _
+               "such as <a href=\"http://unifoundry.com/unifont.html\">Unifont</a> " _
+               "which supports all printable characters in the Basic Multilingual Plane. " _
+               "If you leave this parameter empty, a default font will be used, but " _
+               "its support is limited to English characters only and so other characters " _
+               "will be displayed incorrectly.",
+  }
 %]

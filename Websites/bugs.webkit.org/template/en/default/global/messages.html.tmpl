@@ -1,31 +1,14 @@
-[%# The contents of this file are subject to the Mozilla Public
-  # License Version 1.1 (the "License"); you may not use this file
-  # except in compliance with the License. You may obtain a copy of
-  # the License at http://www.mozilla.org/MPL/
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
   #
-  # Software distributed under the License is distributed on an "AS
-  # IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-  # implied. See the License for the specific language governing
-  # rights and limitations under the License.
-  #
-  # The Original Code is the Bugzilla Bug Tracking System.
-  #
-  # The Initial Developer of the Original Code is Netscape Communications
-  # Corporation. Portions created by Netscape are
-  # Copyright (C) 1998 Netscape Communications Corporation. All
-  # Rights Reserved.
-  #
-  # Contributor(s): Gervase Markham <gerv@gerv.net>
-  #                 Max Kanat-Alexander <mkanat@bugzilla.org>
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
   #%]
 
 [%# This is a list of all the possible messages. Please keep them in
   # alphabetical order by message tag, and leave a blank line between messages.
   #%]
-
-[% PROCESS global/variables.none.tmpl %]
-
-[% PROCESS "global/field-descs.none.tmpl" %]
 
 [% message_tag = message %]
 
@@ -43,14 +26,12 @@
     canceled.
 
   [% ELSIF message_tag == "account_updated" %]
-    [% IF changed_fields.size
-          + groups_added_to.size + groups_removed_from.size
-          + groups_granted_rights_to_bless.size + groups_denied_rights_to_bless.size %]
+    [% IF changes.size %]
       [% title = "User $loginold updated" %]
       The following changes have been made to the user account
       [%+ loginold FILTER html %]:
       <ul>
-        [% FOREACH field = changed_fields %]
+        [% FOREACH field = changes.keys %]
           <li>
             [% IF    field == 'login_name' %]
               The login is now [% otheruser.login FILTER html %].
@@ -59,9 +40,9 @@
             [% ELSIF field == 'cryptpassword' %]
               A new password has been set.
             [% ELSIF field == 'disabledtext' %]
-              The disable text has been modified.
+              The "login disabled" text has been modified.
             [% ELSIF field == 'is_enabled' %]
-              The user has been [% otheruser.is_enabled ? 'enabled' : 'disabled' %].
+              Logging in with this user account has been [% otheruser.is_enabled ? 'enabled' : 'disabled' %].
             [% ELSIF field == 'extern_id' %]
               The user's External Login ID has been modified.
             [% ELSIF field == 'disable_mail' %]
@@ -70,35 +51,29 @@
               [% ELSE %]
                 [% terms.Bug %]mail has been enabled.
               [% END %]
+            [% ELSIF field == 'groups' %]
+              [% IF changes.groups.1.size %]
+                The account has been added to the
+                [%+ changes.groups.1.join(', ') FILTER html %]
+                group[% 's' IF changes.groups.1.size > 1 %].
+              [% END %]
+              [% IF changes.groups.0.size %]
+                The account has been removed from the
+                [%+ changes.groups.0.join(', ') FILTER html %]
+                group[% 's' IF changes.groups.0.size > 1 %].
+              [% END %]
+            [% ELSIF field == 'bless_groups' %]
+              [% IF changes.bless_groups.1.size %]
+                The account has been granted rights to bless the
+                [%+ changes.bless_groups.1.join(', ') FILTER html %]
+                group[% 's' IF changes.bless_groups.1.size > 1 %].
+              [% END %]
+              [% IF changes.bless_groups.0.size %]
+                The account has been denied rights to bless the
+                [%+ changes.bless_groups.0.join(', ') FILTER html %]
+                group[% 's' IF changes.bless_groups.0.size > 1 %].
+              [% END %]
             [% END %]
-          </li>
-        [% END %]
-        [% IF groups_added_to.size %]
-          <li>
-            The account has been added to the
-            [%+ groups_added_to.join(', ') FILTER html %]
-            group[% 's' IF groups_added_to.size > 1 %].
-          </li>
-        [% END %]
-        [% IF groups_removed_from.size %]
-          <li>
-            The account has been removed from the
-            [%+ groups_removed_from.join(', ') FILTER html %]
-            group[% 's' IF groups_removed_from.size > 1 %].
-          </li>
-        [% END %]
-        [% IF groups_granted_rights_to_bless.size %]
-          <li>
-            The account has been granted rights to bless the
-            [%+ groups_granted_rights_to_bless.join(', ') FILTER html %]
-            group[% 's' IF groups_granted_rights_to_bless.size > 1 %].
-          </li>
-        [% END %]
-        [% IF groups_denied_rights_to_bless.size %]
-          <li>
-            The account has been denied rights to bless the
-            [%+ groups_denied_rights_to_bless.join(', ') FILTER html %]
-            group[% 's' IF groups_denied_rights_to_bless.size > 1 %].
           </li>
         [% END %]
       </ul>
@@ -114,8 +89,8 @@
     successfully.
 
   [% ELSIF message_tag == "account_disabled" %]
-    The user account [% account FILTER html %] is disabled, so you
-    cannot change its password.
+    Logging in with this user account [% account FILTER html %] is disabled, so
+    you cannot change its password.
 
   [% ELSIF message_tag == "attachment_creation_failed" %]
     The [% terms.bug %] was created successfully, but attachment creation
@@ -221,7 +196,7 @@
         <li>Default assignee updated to '[% comp.default_assignee.login FILTER html %]'</li>
       [% END %]
       [% IF changes.initialqacontact.defined %]
-        [% IF comp.default_qa_contact.id %]
+        [% IF comp.default_qa_contact %]
           <li>Default QA contact updated to '[% comp.default_qa_contact.login FILTER html %]'</li>
         [% ELSE %]
           <li>Default QA contact deleted</li>
@@ -289,8 +264,7 @@
 
   [% ELSIF message_tag == "extension_created" %]
     An extension named [% name FILTER html %] has been created
-    in [% path FILTER html %]. Make sure you change "YOUR NAME" and 
-    "YOUR EMAIL ADDRESS" in the code to your name and your email address.
+    in [% path FILTER html %].
 
   [% ELSIF message_tag == "field_value_created" %]
     [% title = "New Field Value Created" %]
@@ -439,6 +413,8 @@
           [% CASE 'visible_to_me_remove' %]
             <li>This group may no longer see users in the following groups:
               [%+ changes.visible_to_me_remove.join(', ') FILTER html %]</li>
+          [% CASE %]
+            [% Hook.process('group_updated_fields') %]
         [% END %]
       [% END %]
       </ul>
@@ -484,7 +460,7 @@
     [% title = "Logged Out" %]
     [% url = "index.cgi?GoAheadAndLogIn=1" %]
     [% link = "Log in again." %]
-    <b>Your login has been forgotten</b>.
+    <b>You logged out successfully</b>.
     The cookie that was remembering your login is now gone. You will be
     prompted for a login the next time it is required.
 
@@ -587,7 +563,8 @@
 
   [% ELSIF message_tag == "password_change_request" %]
     [% title = "Request to Change Password" %]
-    A token for changing your password has been emailed to you.
+    A token for changing your password has been emailed to
+    <em>[% login_name FILTER html %]</em>.
     Follow the instructions in that email to change your password.
 
   [% ELSIF message_tag == "password_changed" %]
@@ -751,7 +728,7 @@
     Renaming the '[% old FILTER html %]' table to '[% new FILTER html %]'...
 
   [% ELSIF message_tag == "install_urlbase_default" %]
-    Now that you have installed [% terms.Bugzilla %], you should visit the
+    Now that you have installed Bugzilla, you should visit the
     'Parameters' page (linked in the footer of the Administrator
     account) to ensure it is set up as you wish - this includes
     setting the 'urlbase' option to the correct URL.
@@ -770,7 +747,7 @@
     other files (including the localconfig file which stores your database
     password) must be world readable. This means that _anyone_ who can obtain
     local access to this machine can do whatever they want to your 
-    [%+ terms.Bugzilla %] installation, and is probably also able to run 
+    Bugzilla installation, and is probably also able to run
     arbitrary Perl code as the user that the web server runs as.
 
     You really, really, really need to change this setting.
@@ -780,7 +757,7 @@
     Warning: you have entered a value for the "webservergroup" parameter in
     localconfig, but you are not either a) running this script as [% constants.ROOT_USER FILTER html %]; 
     or b) a member of this group. This can cause permissions problems and 
-    decreased security.  If you experience problems running [% terms.Bugzilla %]
+    decreased security.  If you experience problems running Bugzilla
     scripts, log in as [% constants.ROOT_USER FILTER html %] and re-run this script, become a 
     member of the group, or remove the value of the "webservergroup" parameter.
 
@@ -788,7 +765,7 @@
     Warning: You have set webservergroup in [% constants.bz_locations.localconfig FILTER html %]
     Please understand that this does not bring you any security when
     running under Windows.
-    Verify that the file permissions in your [% terms.Bugzilla %] directory are
+    Verify that the file permissions in your Bugzilla directory are
     suitable for your system. Avoid unnecessary write access.
 
   [% ELSIF message_tag == "install_workflow_init" %]
@@ -796,9 +773,7 @@
 
   [% ELSIF message_tag == "product_created" %]
     [% title = "Product Created" %]
-    The product <em>[% product.name FILTER html %]</em> has been created. You will need to
-    <a href="editcomponents.cgi?action=add&product=[% product.name FILTER uri %]">
-    add at least one component</a> before anyone can enter [% terms.bugs %] against this product.
+    The product <em>[% product.name FILTER html %]</em> has been created.
 
   [% ELSIF message_tag == "product_deleted" %]
     [% title = "Product Deleted" %]
@@ -814,6 +789,39 @@
     The product <em>[% product FILTER html %]</em> does not exist
     or you don't have access to it. The following is a list of the
     products you can choose from.
+
+  [% ELSIF message_tag == "quips_added" %]
+    Your quip <em>[% added_quip FILTER html %]</em> has been added.
+    [% IF Param("quip_list_entry_control") == "moderated" AND
+          !user.in_group('bz_quip_moderators') %]
+      It will be used as soon as it gets approved.
+    [% END %]
+
+  [% ELSIF message_tag == "quips_deleted" %]
+    The quip <em>[% deleted_quip FILTER html %]</em> has been deleted.
+
+  [% ELSIF message_tag == "quips_approved_unapproved" %]
+    [% IF approved.size == 1 %]
+      One quip
+    [% ELSE %]
+      [% approved.size %] quips
+    [% END %]
+    approved and
+    [% IF unapproved.size == 1 %]
+      one quip
+    [% ELSE %]
+      [%+ unapproved.size %] quips
+    [% END %]
+    unapproved.
+
+  [% ELSIF message_tag == "report_created" %]
+    OK, you have a new saved report named <em>[% reportname FILTER html %]</em>.
+
+  [% ELSIF message_tag == "report_deleted" %]
+    OK, the <em>[% reportname FILTER html %]</em> report is gone.
+
+  [% ELSIF message_tag == "report_updated" %]
+    The saved report <em>[% reportname FILTER html %]</em> has been updated.
 
   [% ELSIF message_tag == "remaining_time_zeroed" %]
     The [% field_descs.remaining_time FILTER html %] field has been 
@@ -842,8 +850,8 @@
   
   [% ELSIF message_tag == "sudo_ended" %]
     [% title = "Sudo session complete" %]
-      The sudo session has been ended.  From this point forward, everything you 
-      do you do as yourself.
+      Your sudo session has ended. All future actions will be attributed
+      to your own account.
 
   [% ELSIF message_tag == "series_created" %]
     [% title = "Series Created" %]
@@ -861,25 +869,26 @@
       [%+ series.name FILTER html %]</em>
       has been deleted.
 
+  [% ELSIF message_tag == "series_updated" %]
+    [% title = "Series Updated" %]
+    The series <em>[% default.category FILTER html %] /
+    [%+ default.subcategory FILTER html %] /
+    [%+ default.name FILTER html %]</em> has been updated.
+
   [% ELSIF message_tag == "shutdown" %]
     [% title = "$terms.Bugzilla is Down" %]
     [% Param("shutdownhtml") %]
     [% IF userid %]
-      <p>For security reasons, you have been logged out automatically.
-      The cookie that was remembering your login is now gone.
+      <p>
+        For security reasons, you have been logged out automatically.
+        The cookie that was remembering your login is now gone.
+      </p>
     [% END %]
-
-  [% ELSIF message_tag == "tag_updated" %]
-    [% title = "Tag Updated" %]
-    The '<a href="buglist.cgi?tag=[% tag FILTER uri %]">[% tag FILTER html %]</a>'
-    tag has been
-    [% IF action == "add" %]
-      added to
-    [% ELSE %]
-      removed from
-    [% END %]
-    [%+ buglist.size > 1 ? terms.bugs : terms.bug %]
-    [%+ buglist.join(", ") FILTER html %].
+    <p>
+      If you are an administrator, you can
+      <a href="editparams.cgi?section=general">reactivate [% terms.Bugzilla %]</a>
+      by clearing the <kbd>shutdownhtml</kbd> parameter.
+    </p>
 
   [% ELSIF message_tag == "term" %]
     [% terms.$term FILTER html %]
@@ -940,9 +949,9 @@
 [%# Give sensible error if the message function is used incorrectly. #%]
 [% IF !message %]
   [% message = BLOCK %]
-    You are using [% terms.Bugzilla %]'s messaging functions incorrectly. You
+    You are using Bugzilla's messaging functions incorrectly. You
     passed in the string '[% message_tag FILTER html %]'. The correct use is to pass
-    in a tag, and define that tag in the file messages.html.tmpl.<br>
+    in a tag, and define that tag in the file <kbd>messages.html.tmpl</kbd>.<br>
     <br>
     If you are a [% terms.Bugzilla %] end-user seeing this message, please
     save this page and send it to [% Param('maintainer') %].

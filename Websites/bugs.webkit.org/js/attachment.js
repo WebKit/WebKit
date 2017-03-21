@@ -1,25 +1,9 @@
-/* The contents of this file are subject to the Mozilla Public
- * License Version 1.1 (the "License"); you may not use this file
- * except in compliance with the License. You may obtain a copy of
- * the License at http://www.mozilla.org/MPL/
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  *
- * Software distributed under the License is distributed on an "AS
- * IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
- * implied. See the License for the specific language governing
- * rights and limitations under the License.
- *
- * The Original Code is the Bugzilla Bug Tracking System.
- *
- * The Initial Developer of the Original Code is Netscape Communications
- * Corporation. Portions created by Netscape are
- * Copyright (C) 1998 Netscape Communications Corporation. All
- * Rights Reserved.
- *
- * Contributor(s): Myk Melez <myk@mozilla.org>
- *                 Joel Peshkin <bugreport@peshkin.net>
- *                 Erik Stambaugh <erik@dasbistro.com>
- *                 Marc Schumann <wurblzap@gmail.com>
- *                 Guy Pyrzak <guy.pyrzak@gmail.com>
+ * This Source Code Form is "Incompatible With Secondary Licenses", as
+ * defined by the Mozilla Public License, v. 2.0.
  */
 
 function validateAttachmentForm(theform) {
@@ -40,13 +24,12 @@ function updateCommentPrivacy(checkbox) {
     }
 }
 
-function setContentTypeDisabledState(form)
-{
+function setContentTypeDisabledState(form) {
     var isdisabled = false;
     if (form.ispatch.checked)
         isdisabled = true;
 
-    for (var i=0 ; i<form.contenttypemethod.length ; i++)
+    for (var i = 0; i < form.contenttypemethod.length; i++)
         form.contenttypemethod[i].disabled = isdisabled;
 
     form.contenttypeselection.disabled = isdisabled;
@@ -79,9 +62,8 @@ function setContentTypeDisabledState(form)
 
 function TextFieldHandler() {
     var field_text = document.getElementById("attach_text");
-    var greyfields = new Array("data", "ispatch", "autodetect",
-                               "list", "manual", "contenttypeselection",
-                               "contenttypeentry");
+    var greyfields = new Array("data", "autodetect", "list", "manual",
+                               "contenttypeselection", "contenttypeentry");
     var i, thisfield;
     if (field_text.value.match(/^\s*$/)) {
         for (i = 0; i < greyfields.length; i++) {
@@ -297,11 +279,6 @@ function viewRaw(patchviewerinstalled)
 
 function switchToMode(mode, patchviewerinstalled)
 {
-    if (mode == current_mode) {
-      alert('switched to same mode!  This should not happen.');
-      return;
-    }
-
     // Switch out of current mode
     if (current_mode == 'edit') {
       hideElementById('editFrame');

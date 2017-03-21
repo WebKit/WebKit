@@ -1,34 +1,22 @@
-#!/usr/bin/env perl -wT
-# -*- Mode: perl; indent-tabs-mode: nil -*-
+#!/usr/bin/perl -T
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
-# The contents of this file are subject to the Mozilla Public
-# License Version 1.1 (the "License"); you may not use this file
-# except in compliance with the License. You may obtain a copy of
-# the License at http://www.mozilla.org/MPL/
-#
-# Software distributed under the License is distributed on an "AS
-# IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-# implied. See the License for the specific language governing
-# rights and limitations under the License.
-#
-# The Original Code is the Bugzilla Bug Tracking System.
-#
-# The Initial Developer of the Original Code is Netscape Communications
-# Corporation. Portions created by Netscape are
-# Copyright (C) 1998 Netscape Communications Corporation. All
-# Rights Reserved.
-#
-# Contributor(s): Terry Weissman <terry@mozilla.org>
-#                 Bradley Baetz <bbaetz@student.usyd.edu.au>
-#                 Frédéric Buclin <LpSolit@gmail.com>
+# This Source Code Form is "Incompatible With Secondary Licenses", as
+# defined by the Mozilla Public License, v. 2.0.
 
+use 5.10.1;
 use strict;
+use warnings;
+
 use lib qw(. lib);
 
 use Bugzilla;
 use Bugzilla::Constants;
 use Bugzilla::Util;
 use Bugzilla::Error;
+use Bugzilla::Classification;
 use Bugzilla::Product;
 
 my $user = Bugzilla->login();
@@ -54,9 +42,9 @@ unless ($product && $user->can_access_product($product->name)) {
     # If there is only one product available but the user entered
     # another product name, we display a list with this single
     # product only, to not confuse the user with components of a
-    # product he didn't request.
+    # product they didn't request.
     elsif (scalar(@products) > 1 || $product_name) {
-        $vars->{'classifications'} = [{object => undef, products => \@products}];
+        $vars->{'classifications'} = sort_products_by_classification(\@products);
         $vars->{'target'} = "describecomponents.cgi";
         # If an invalid product name is given, or the user is not
         # allowed to access that product, a message is displayed

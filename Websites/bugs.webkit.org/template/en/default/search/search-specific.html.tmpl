@@ -1,35 +1,22 @@
-[%# The contents of this file are subject to the Mozilla Public
-  # License Version 1.1 (the "License"); you may not use this file
-  # except in compliance with the License. You may obtain a copy of
-  # the License at http://www.mozilla.org/MPL/
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
   #
-  # Software distributed under the License is distributed on an "AS
-  # IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-  # implied. See the License for the specific language governing
-  # rights and limitations under the License.
-  #
-  # The Original Code is the Bugzilla Bug Tracking System.
-  #
-  # The Initial Developer of the Original Code is Netscape Communications
-  # Corporation. Portions created by Netscape are
-  # Copyright (C) 1998 Netscape Communications Corporation. All
-  # Rights Reserved.
-  #
-  # Contributor(s): Myk Melez <myk@mozilla.org>
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
   #%]
-
-[% PROCESS global/variables.none.tmpl %]
 
 [% PROCESS global/header.html.tmpl 
   title = "Simple Search"
-  style_urls = [ "skins/standard/search_form.css" ]
+  style_urls = ['skins/standard/buglist.css']
+  doc_section = "using/finding.html"
 %]
 
 [% WRAPPER search/tabs.html.tmpl %]
 
 <p>
 Find a specific [% terms.bug %] by entering words that describe it.  
-[% terms.Bugzilla %] will search [% terms.bug %] descriptions and comments
+Bugzilla will search [% terms.bug %] descriptions and comments
 for those words and return a list of matching [% terms.bugs %] sorted
 by relevance.
 </p>
@@ -41,9 +28,16 @@ for "crash secure SSL flash".
 
 <form name="queryform" method="get" action="buglist.cgi">
 <input type="hidden" name="query_format" value="specific">
-<input type="hidden" name="order" value="relevance desc">
+<input type="hidden" name="order" value="Importance">
+<input type="hidden" id="no_redirect" name="no_redirect" value="0">
+<script type="text/javascript">
+  if (history && history.replaceState) {
+    var no_redirect = document.getElementById("no_redirect");
+    no_redirect.value = 1;
+  }
+</script>
 
-<table summary="Search fields" class="bz_simple_search_form">
+<table class="bz_simple_search_form">
   <tr>
     <th>
       <label for="bug_status">[% field_descs.bug_status FILTER html %]:</label>
@@ -67,30 +61,11 @@ for "crash secure SSL flash".
       <label for="product">[% field_descs.product FILTER html %]:</label>
     </th>
     <td>
-      <select name="product" id="product">
-        <option value="">All</option>
-        [% IF Param('useclassification') %]
-          [% FOREACH c = classification %]
-            <optgroup label="[% c.name FILTER html %]">
-            [% FOREACH p = user.get_selectable_products(c.id) %]
-              [% IF p.components.size %]
-                <option value="[% p.name FILTER html %]"
-                  [% " selected" IF default.product.contains(p.name) %]>
-                  [% p.name FILTER html %]
-                </option>
-              [% END %]
-            [% END %]
-            </optgroup>
-          [% END %]
-        [% ELSE %]
-          [% FOREACH p = product %]
-            <option value="[% p.name FILTER html %]"
-              [% " selected" IF default.product.contains(p.name) %]>
-              [% p.name FILTER html %]
-            </option>
-          [% END %]
-        [% END %]
-      </select>
+      [% INCLUDE "global/product-select.html.tmpl"
+         id   => "product"
+         name => "product"
+         add  => "All"
+      %]
     </td>
   </tr>
   <tr>
@@ -98,28 +73,14 @@ for "crash secure SSL flash".
       <label for="content">Words:</label>
     </th>
     <td>
-      <input name="content" size="40" id="content"
-             value="[% default.content.0 FILTER html %]">
-      <script type="text/javascript"> <!--
-          document.forms['queryform'].content.focus(); 
-      // -->
-      </script>
+      <input name="content" size="40" id="content" autofocus
+             value="[% default.content.0 FILTER html %]"
+             [%- " required" UNLESS Param('search_allow_no_criteria') %]>
     </td>
   </tr>
   <tr>
     <td></td>
-    <td>
-    
-      [% IF Param('search_allow_no_criteria') %]
-        <input type="submit" id="search" value="Search">
-      [% ELSE %]
-        <input type="submit" id="search" value="Search"
-             onclick="if (this.form.content.value == '')
-                      {alert('The Words field cannot be empty. You have to ' +
-                             'enter at least one word in your search criteria.');
-                       return false;} return true;">
-      [% END %]
-    </td>
+    <td><input type="submit" id="search" value="Search"></td>
   </tr>
 </table>
 </form>
@@ -127,4 +88,3 @@ for "crash secure SSL flash".
 [% END %]
 
 [% PROCESS global/footer.html.tmpl %]
-

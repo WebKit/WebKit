@@ -1,27 +1,14 @@
-#!/usr/bin/env perl -wT
-# -*- Mode: perl; indent-tabs-mode: nil -*-
+#!/usr/bin/perl -T
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
-# The contents of this file are subject to the Mozilla Public
-# License Version 1.1 (the "License"); you may not use this file
-# except in compliance with the License. You may obtain a copy of
-# the License at http://www.mozilla.org/MPL/
-#
-# Software distributed under the License is distributed on an "AS
-# IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-# implied. See the License for the specific language governing
-# rights and limitations under the License.
-#
-# The Original Code is the Bugzilla Bug Tracking System.
-#
-# The Initial Developer of the Original Code is Netscape Communications
-# Corporation. Portions created by Netscape are
-# Copyright (C) 1998 Netscape Communications Corporation. All
-# Rights Reserved.
-#
-# Contributor(s): Myk Melez <myk@mozilla.org>
-#                 Frédéric Buclin <LpSolit@gmail.com>
+# This Source Code Form is "Incompatible With Secondary Licenses", as
+# defined by the Mozilla Public License, v. 2.0.
 
+use 5.10.1;
 use strict;
+use warnings;
 
 =head1 NAME
 
@@ -160,6 +147,25 @@ $dbh->bz_start_transaction();
 $dbh->do('DELETE FROM logincookies WHERE userid = ?', undef, $old_id);
 $dbh->do('DELETE FROM tokens WHERE userid = ?', undef, $old_id);
 
+# Special care needs to be done with bug_user_last_visit table as the
+# source user and destination user may have visited the same bug id at one time.
+# In this case we remove the one with the oldest timestamp.
+my $dupe_ids = $dbh->selectcol_arrayref("
+    SELECT earlier.id
+      FROM bug_user_last_visit as earlier
+           INNER JOIN bug_user_last_visit as later
+           ON (earlier.user_id != later.user_id
+               AND earlier.last_visit_ts < later.last_visit_ts
+               AND earlier.bug_id = later.bug_id)
+     WHERE (earlier.user_id = ? OR earlier.user_id = ?)
+           AND (later.user_id = ? OR later.user_id = ?)",
+    undef, $old_id, $new_id, $old_id, $new_id);
+
+if (@$dupe_ids) {
+    $dbh->do("DELETE FROM bug_user_last_visit WHERE " .
+             $dbh->sql_in('id', $dupe_ids));
+}
+
 # Migrate records from old user to new user.
 foreach my $table (keys %changes) {
     foreach my $column_list (@{ $changes{$table} }) {
@@ -236,5 +242,10 @@ $user->derive_regexp_groups();
 
 # Commit the transaction
 $dbh->bz_commit_transaction();
+
+# It's complex to determine which items now need to be flushed from memcached.
+# As user merge is expected to be a rare event, we just flush the entire cache
+# when users are merged.
+Bugzilla->memcached->clear_all();
 
 print "Done.\n";

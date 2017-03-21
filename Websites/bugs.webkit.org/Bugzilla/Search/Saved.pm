@@ -1,28 +1,17 @@
-# -*- Mode: perl; indent-tabs-mode: nil -*-
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
-# The contents of this file are subject to the Mozilla Public
-# License Version 1.1 (the "License"); you may not use this file
-# except in compliance with the License. You may obtain a copy of
-# the License at http://www.mozilla.org/MPL/
-#
-# Software distributed under the License is distributed on an "AS
-# IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-# implied. See the License for the specific language governing
-# rights and limitations under the License.
-#
-# The Original Code is the Bugzilla Bug Tracking System.
-#
-# The Initial Developer of the Original Code is Everything Solved.
-# Portions created by Everything Solved are Copyright (C) 2006 
-# Everything Solved. All Rights Reserved.
-#
-# Contributor(s): Max Kanat-Alexander <mkanat@bugzilla.org>
-
-use strict;
+# This Source Code Form is "Incompatible With Secondary Licenses", as
+# defined by the Mozilla Public License, v. 2.0.
 
 package Bugzilla::Search::Saved;
 
-use base qw(Bugzilla::Object);
+use 5.10.1;
+use strict;
+use warnings;
+
+use parent qw(Bugzilla::Object);
 
 use Bugzilla::CGI;
 use Bugzilla::Constants;
@@ -199,6 +188,7 @@ sub rename_field_value {
         }
         $dbh->do("UPDATE $table SET query = ? WHERE $id_field = ?",
                  undef, $query, $id);
+        Bugzilla->memcached->clear({ table => $table, id => $id });
     }
 
     $dbh->bz_commit_transaction();
@@ -301,9 +291,8 @@ sub url  { return $_[0]->{'query'}; }
 
 sub user {
     my ($self) = @_;
-    return $self->{user} if defined $self->{user};
-    $self->{user} = new Bugzilla::User($self->{userid});
-    return $self->{user};
+    return $self->{user} ||=
+        Bugzilla::User->new({ id => $self->{userid}, cache => 1 });
 }
 
 ############
@@ -396,5 +385,23 @@ this search isn't shared.
 
 Returns how many users (besides the author of the saved search) are
 using the saved search, i.e. have it displayed in their footer.
+
+=back
+
+=head1 B<Methods in need of POD>
+
+=over
+
+=item create
+
+=item set_name
+
+=item set_url
+
+=item rename_field_value
+
+=item user
+
+=item used_in_whine
 
 =back

@@ -20,10 +20,6 @@ bz_webservice_demo.pl --  An example script that demonstrates how to talk to
              cmdline/ -- Various commands for querying your Bugzilla 
                          installation.
 
-       cvs-update.pl --  Script to keep a record of all CVS updates made 
-                         from a given directory. The log is useful when
-                         changes need to be backed out.
-
             jb2bz.py --  Script to import bugs from JitterBug to Bugzilla.
 
       merge-users.pl --  Script to merge two user accounts. The activities

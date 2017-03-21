@@ -1,52 +1,44 @@
-[%# The contents of this file are subject to the Mozilla Public
-  # License Version 1.1 (the "License"); you may not use this file
-  # except in compliance with the License. You may obtain a copy of
-  # the License at http://www.mozilla.org/MPL/
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
   #
-  # Software distributed under the License is distributed on an "AS
-  # IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-  # implied. See the License for the specific language governing
-  # rights and limitations under the License.
-  #
-  # The Original Code is the Bugzilla Bug Tracking System.
-  #
-  # Contributor(s): Frédéric Buclin <LpSolit@gmail.com>
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
   #%]
 
 [%# INTERFACE:
-  # products: an array of product names the user is allowed to view.
   # datasets: an array of hashes with available statuses and resolutions.
   # url_image: URL of the generated graph.
   #%]
 
-[% PROCESS "global/field-descs.none.tmpl" %]
-
 [% PROCESS global/header.html.tmpl
   title = "$terms.Bug Charts"
   h1 = "Welcome to the $terms.Bugzilla Charting Kitchen"
-  doc_section = "reporting.html#charts"
+  style_urls = ['skins/standard/buglist.css']
+  doc_section = "using/reports-and-charts.html#charts"
 %]
 
-<div align="center">
-  [% IF url_image %]
+[% IF url_image %]
+  <div class="center">
     <img src="[% url_image FILTER html %]">
-    <br clear="both">
-  [% ELSE %]
+  </div>
+[% ELSE %]
     <form id="choose_product" method="get" action="reports.cgi">
-      <table border="1" cellpadding="5" cellspacing="2">
+      <table id="old_charts">
         <tr>
           <th>Product:</th>
-          <td align="center">
-            <select id="product" name="product">
-              [% FOREACH product = products %]
-                <option value="[% product FILTER html %]">[% product FILTER html %]</option>
-              [% END %]
-            </select>
+          <td>
+            [% INCLUDE "global/product-select.html.tmpl"
+              id   => "product_id"
+              name => "product_id"
+              valueattribute => "id"
+              add  => "-All-"
+            %]
           </td>
         </tr>
         <tr>
           <th>Chart datasets:</th>
-          <td align="center">
+          <td>
             <select id="datasets" name="datasets" multiple="multiple" size="5">
               [%# We cannot use translated statuses and resolutions from field-descs.none.html
                 # because old charts do not distinguish statuses from resolutions. %]
@@ -65,7 +57,6 @@
         </tr>
       </table>
     </form>
-  [% END %]
-</div>
+[% END %]
 
 [% PROCESS global/footer.html.tmpl %]

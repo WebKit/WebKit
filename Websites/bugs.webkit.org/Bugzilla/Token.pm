@@ -1,34 +1,15 @@
-# -*- Mode: perl; indent-tabs-mode: nil -*-
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
-# The contents of this file are subject to the Mozilla Public
-# License Version 1.1 (the "License"); you may not use this file
-# except in compliance with the License. You may obtain a copy of
-# the License at http://www.mozilla.org/MPL/
-#
-# Software distributed under the License is distributed on an "AS
-# IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-# implied. See the License for the specific language governing
-# rights and limitations under the License.
-#
-# The Original Code is the Bugzilla Bug Tracking System.
-#
-# The Initial Developer of the Original Code is Netscape Communications
-# Corporation. Portions created by Netscape are
-# Copyright (C) 1998 Netscape Communications Corporation. All
-# Rights Reserved.
-#
-# Contributor(s):    Myk Melez <myk@mozilla.org>
-#                    Frédéric Buclin <LpSolit@gmail.com>
+# This Source Code Form is "Incompatible With Secondary Licenses", as
+# defined by the Mozilla Public License, v. 2.0.
 
-################################################################################
-# Module Initialization
-################################################################################
-
-# Make it harder for us to do dangerous things in Perl.
-use strict;
-
-# Bundle the functions in this file together into the "Bugzilla::Token" package.
 package Bugzilla::Token;
+
+use 5.10.1;
+use strict;
+use warnings;
 
 use Bugzilla::Constants;
 use Bugzilla::Error;
@@ -39,16 +20,33 @@ use Bugzilla::User;
 use Date::Format;
 use Date::Parse;
 use File::Basename;
-use Digest::MD5 qw(md5_hex);
+use Digest::SHA qw(hmac_sha256_base64);
 
-use base qw(Exporter);
+use parent qw(Exporter);
 
-@Bugzilla::Token::EXPORT = qw(issue_session_token check_token_data delete_token
+@Bugzilla::Token::EXPORT = qw(issue_api_token issue_session_token
+                              check_token_data delete_token
                               issue_hash_token check_hash_token);
+
+use constant SEND_NOW => 1;
 
 ################################################################################
 # Public Functions
 ################################################################################
+
+# Create a token used for internal API authentication
+sub issue_api_token {
+    # Generates a random token, adds it to the tokens table if one does not
+    # already exist, and returns the token to the caller.
+    my $dbh  = Bugzilla->dbh;
+    my $user = Bugzilla->user;
+    my ($token) = $dbh->selectrow_array("
+        SELECT token FROM tokens
+         WHERE userid = ? AND tokentype = 'api_token'
+               AND (" . $dbh->sql_date_math('issuedate', '+', (MAX_TOKEN_AGE * 24 - 12), 'HOUR') . ") > NOW()",
+        undef, $user->id);
+    return $token // _create_token($user->id, 'api_token', '');
+}
 
 # Creates and sends a token to create a new user account.
 # It assumes that the login has the correct format and is not already in use.
@@ -59,9 +57,9 @@ sub issue_new_user_account_token {
     my $vars = {};
 
     # Is there already a pending request for this login name? If yes, do not throw
-    # an error because the user may have lost his email with the token inside.
+    # an error because the user may have lost their email with the token inside.
     # But to prevent using this way to mailbomb an email address, make sure
-    # the last request is at least 10 minutes old before sending a new email.
+    # the last request is old enough before sending a new email (default: 10 minutes).
 
     my $pending_requests = $dbh->selectrow_array(
         'SELECT COUNT(*)
@@ -69,7 +67,7 @@ sub issue_new_user_account_token {
           WHERE tokentype = ?
                 AND ' . $dbh->sql_istrcmp('eventdata', '?') . '
                 AND issuedate > '
-                    . $dbh->sql_date_math('NOW()', '-', 10, 'MINUTE'),
+                    . $dbh->sql_date_math('NOW()', '-', ACCOUNT_CHANGE_INTERVAL, 'MINUTE'),
         undef, ('account', $login_name));
 
     ThrowUserError('too_soon_for_new_token', {'type' => 'account'}) if $pending_requests;
@@ -86,45 +84,51 @@ sub issue_new_user_account_token {
 
     # In 99% of cases, the user getting the confirmation email is the same one
     # who made the request, and so it is reasonable to send the email in the same
-    # language used to view the "Create a New Account" page (we cannot use his
+    # language used to view the "Create a New Account" page (we cannot use their
     # user prefs as the user has no account yet!).
-    MessageToMTA($message);
+    MessageToMTA($message, SEND_NOW);
 }
 
 sub IssueEmailChangeToken {
-    my ($user, $new_email) = @_;
-    my $email_suffix = Bugzilla->params->{'emailsuffix'};
-    my $old_email = $user->login;
+    my $new_email = shift;
+    my $user = Bugzilla->user;
 
-    my ($token, $token_ts) = _create_token($user->id, 'emailold', $old_email . ":" . $new_email);
-
-    my $newtoken = _create_token($user->id, 'emailnew', $old_email . ":" . $new_email);
+    my ($token, $token_ts) = _create_token($user->id, 'emailold', $user->login . ":$new_email");
+    my $newtoken = _create_token($user->id, 'emailnew', $user->login . ":$new_email");
 
     # Mail the user the token along with instructions for using it.
 
     my $template = Bugzilla->template_inner($user->setting('lang'));
     my $vars = {};
 
-    $vars->{'oldemailaddress'} = $old_email . $email_suffix;
-    $vars->{'newemailaddress'} = $new_email . $email_suffix;
+    $vars->{'newemailaddress'} = $new_email . Bugzilla->params->{'emailsuffix'};
     $vars->{'expiration_ts'} = ctime($token_ts + MAX_TOKEN_AGE * 86400);
-    $vars->{'token'} = $token;
-    $vars->{'emailaddress'} = $old_email . $email_suffix;
+
+    # First send an email to the new address. If this one doesn't exist,
+    # then the whole process must stop immediately. This means the email must
+    # be sent immediately and must not be stored in the queue.
+    $vars->{'token'} = $newtoken;
 
     my $message;
-    $template->process("account/email/change-old.txt.tmpl", $vars, \$message)
+    $template->process('account/email/change-new.txt.tmpl', $vars, \$message)
       || ThrowTemplateError($template->error());
 
-    MessageToMTA($message);
+    MessageToMTA($message, SEND_NOW);
 
-    $vars->{'token'} = $newtoken;
-    $vars->{'emailaddress'} = $new_email . $email_suffix;
+    # If we come here, then the new address exists. We now email the current
+    # address, but we don't want to stop the process if it no longer exists,
+    # to give a chance to the user to confirm the email address change.
+    $vars->{'token'} = $token;
 
-    $message = "";
-    $template->process("account/email/change-new.txt.tmpl", $vars, \$message)
+    $message = '';
+    $template->process('account/email/change-old.txt.tmpl', $vars, \$message)
       || ThrowTemplateError($template->error());
 
-    MessageToMTA($message);
+    eval { MessageToMTA($message, SEND_NOW); };
+
+    # Give the user a chance to cancel the process even if he never got
+    # the email above. The token is required.
+    return $token;
 }
 
 # Generates a random token, adds it to the tokens table, and sends it
@@ -137,21 +141,23 @@ sub IssuePasswordToken {
         'SELECT 1 FROM tokens
           WHERE userid = ? AND tokentype = ?
                 AND issuedate > ' 
-                    . $dbh->sql_date_math('NOW()', '-', 10, 'MINUTE'),
+                    . $dbh->sql_date_math('NOW()', '-', ACCOUNT_CHANGE_INTERVAL, 'MINUTE'),
         undef, ($user->id, 'password'));
 
     ThrowUserError('too_soon_for_new_token', {'type' => 'password'}) if $too_soon;
 
-    my ($token, $token_ts) = _create_token($user->id, 'password', remote_ip());
+    my $ip_addr = remote_ip();
+    my ($token, $token_ts) = _create_token($user->id, 'password', $ip_addr);
 
     # Mail the user the token along with instructions for using it.
     my $template = Bugzilla->template_inner($user->setting('lang'));
     my $vars = {};
 
     $vars->{'token'} = $token;
+    $vars->{'ip_addr'} = $ip_addr;
     $vars->{'emailaddress'} = $user->email;
     $vars->{'expiration_ts'} = ctime($token_ts + MAX_TOKEN_AGE * 86400);
-    # The user is not logged in (else he wouldn't request a new password).
+    # The user is not logged in (else they wouldn't request a new password).
     # So we have to pass this information to the template.
     $vars->{'timezone'} = $user->timezone;
 
@@ -182,15 +188,17 @@ sub issue_hash_token {
     my $user_id = Bugzilla->user->id || remote_ip();
 
     # The concatenated string is of the form
-    # token creation time + site-wide secret + user ID (either ID or remote IP) + data
-    my @args = ($time, Bugzilla->localconfig->{'site_wide_secret'}, $user_id, @$data);
+    # token creation time + user ID (either ID or remote IP) + data
+    my @args = ($time, $user_id, @$data);
 
     my $token = join('*', @args);
-    # Wide characters cause md5_hex() to die.
+    # Wide characters cause Digest::SHA to die.
     if (Bugzilla->params->{'utf8'}) {
         utf8::encode($token) if utf8::is_utf8($token);
     }
-    $token = md5_hex($token);
+    $token = hmac_sha256_base64($token, Bugzilla->localconfig->{'site_wide_secret'});
+    $token =~ s/\+/-/g;
+    $token =~ s/\//_/g;
 
     # Prepend the token creation time, unencrypted, so that the token
     # lifetime can be validated.
@@ -352,7 +360,7 @@ sub GetTokenData {
     trick_taint($token);
 
     my @token_data = $dbh->selectrow_array(
-        "SELECT token, userid, " . $dbh->sql_date_format('issuedate') . ", eventdata
+        "SELECT token, userid, " . $dbh->sql_date_format('issuedate') . ", eventdata, tokentype
          FROM   tokens
          WHERE  token = ?", undef, $token);
 
@@ -377,8 +385,6 @@ sub delete_token {
 
 # Given a token, makes sure it comes from the currently logged in user
 # and match the expected event. Returns 1 on success, else displays a warning.
-# Note: this routine must not be called while tables are locked as it will try
-# to lock some tables itself, see CleanTokenTable().
 sub check_token_data {
     my ($token, $expected_action, $alternate_script) = @_;
     my $user = Bugzilla->user;
@@ -392,7 +398,7 @@ sub check_token_data {
     {
         # Something is going wrong. Ask confirmation before processing.
         # It is possible that someone tried to trick an administrator.
-        # In this case, we want to know his name!
+        # In this case, we want to know their name!
         require Bugzilla::User;
 
         my $vars = {};
@@ -434,6 +440,9 @@ sub _create_token {
     trick_taint($tokentype);
     trick_taint($eventdata);
 
+    my $is_shadow = Bugzilla->is_shadow_db;
+    $dbh = Bugzilla->switch_to_main_db() if $is_shadow;
+
     $dbh->bz_start_transaction();
 
     my $token = GenerateUniqueToken();
@@ -446,8 +455,10 @@ sub _create_token {
     if (wantarray) {
         my (undef, $token_ts, undef) = GetTokenData($token);
         $token_ts = str2time($token_ts);
+        Bugzilla->switch_to_shadow_db() if $is_shadow;
         return ($token, $token_ts);
     } else {
+        Bugzilla->switch_to_shadow_db() if $is_shadow;
         return $token;
     }
 }
@@ -478,41 +489,47 @@ Bugzilla::Token - Provides different routines to manage tokens.
 
     my $token = Bugzilla::Token::GenerateUniqueToken($table, $column);
     my $token = Bugzilla::Token::HasEmailChangeToken($user_id);
-    my ($token, $date, $data) = Bugzilla::Token::GetTokenData($token);
+    my ($token, $date, $data, $type) = Bugzilla::Token::GetTokenData($token);
 
 =head1 SUBROUTINES
 
 =over
+
+=item C<issue_api_token($login_name)>
+
+ Description: Creates a token that can be used for API calls on the web page.
+
+ Params:      None.
+
+ Returns:     The token.
 
 =item C<issue_new_user_account_token($login_name)>
 
  Description: Creates and sends a token per email to the email address
               requesting a new user account. It doesn't check whether
               the user account already exists. The user will have to
-              use this token to confirm the creation of his user account.
+              use this token to confirm the creation of their user account.
 
  Params:      $login_name - The new login name requested by the user.
 
  Returns:     Nothing. It throws an error if the same user made the same
               request in the last few minutes.
 
-=item C<sub IssueEmailChangeToken($user, $new_email)>
+=item C<sub IssueEmailChangeToken($new_email)>
 
  Description: Sends two distinct tokens per email to the old and new email
               addresses to confirm the email address change for the given
               user. These tokens remain valid for the next MAX_TOKEN_AGE days.
 
- Params:      $user      - User object of the user requesting a new
-                           email address.
-              $new_email - The new email address of the user.
+ Params:      $new_email - The new email address of the user.
 
- Returns:     Nothing.
+ Returns:     The token to cancel the request.
 
 =item C<IssuePasswordToken($user)>
 
  Description: Sends a token per email to the given user. This token
               can be used to change the password (e.g. in case the user
-              cannot remember his password and wishes to enter a new one).
+              cannot remember their password and wishes to enter a new one).
 
  Params:      $user - User object of the user requesting a new password.
 
@@ -542,7 +559,7 @@ Bugzilla::Token - Provides different routines to manage tokens.
 
  Description: Invalidates an existing token, generally when the token is used
               for an action which is not the one expected. An email is sent
-              to the user who originally requested this token to inform him
+              to the user who originally requested this token to inform them
               that this token has been invalidated (e.g. because an hacker
               tried to use this token for some malicious action).
 
@@ -555,7 +572,7 @@ Bugzilla::Token - Provides different routines to manage tokens.
 =item C<DeletePasswordTokens($user_id, $reason)>
 
  Description: Cancels all password tokens for the given user. Emails are sent
-              to the user to inform him about this action.
+              to the user to inform them about this action.
 
  Params:      $user_id: The user ID of the user account whose password tokens
                         are canceled.
@@ -578,8 +595,8 @@ Bugzilla::Token - Provides different routines to manage tokens.
 
  Params:      $token - A valid token.
 
- Returns:     The user ID, the date and time when the token was created and
-              the (event)data stored with that token.
+ Returns:     The user ID, the date and time when the token was created,
+              the (event)data stored with that token, and its type.
 
 =back
 
@@ -633,3 +650,13 @@ although they can be used separately.
 =back
 
 =cut
+
+=head1 B<Methods in need of POD>
+
+=over
+
+=item check_hash_token
+
+=item issue_hash_token
+
+=back

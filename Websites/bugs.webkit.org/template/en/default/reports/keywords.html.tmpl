@@ -1,22 +1,9 @@
-[%# The contents of this file are subject to the Mozilla Public
-  # License Version 1.1 (the "License"); you may not use this file
-  # except in compliance with the License. You may obtain a copy of
-  # the License at http://www.mozilla.org/MPL/
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
   #
-  # Software distributed under the License is distributed on an "AS
-  # IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-  # implied. See the License for the specific language governing
-  # rights and limitations under the License.
-  #
-  # The Original Code is the Bugzilla Bug Tracking System.
-  #
-  # The Initial Developer of the Original Code is Netscape Communications
-  # Corporation. Portions created by Netscape are
-  # Copyright (C) 1998 Netscape Communications Corporation. All
-  # Rights Reserved.
-  #
-  # Contributor(s): Gervase Markham <gerv@gerv.net>
-  # Contributor(s): David D. Kilzer <ddkilzer@kilzer.net>
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
   #%]
 
 [%# INTERFACE:
@@ -25,36 +12,26 @@
   #   name: the name of the keyword
   #   description: keyword description. Can contain some limited HTML code.
   #   bug_count: number of bugs with that keyword
-  # caneditkeywords: boolean. True if this user can edit keywords
  %]
-
-[% PROCESS global/variables.none.tmpl %]
 
 [% PROCESS global/header.html.tmpl
   title = "$terms.Bugzilla Keyword Descriptions"
+  style_urls = ['skins/standard/admin.css']
 %]
 
-[% FOREACH keyword = keywords %]
-  [% IF loop.index % 50 == 0 %]
-    [% IF loop.index != 0 %]
-       </table>
-    [% END %]
+<table id="admin_table">
+  <tr class="column_header">
+    <th>Name</th>
+    <th>Description</th>
+    <th>Open [% terms.Bugs %]</th>
+    <th>Total [% terms.Bugs %]</th>
+  </tr>
 
-    <table border="1" cellpadding="4" cellspacing="0">
-      <tr bgcolor="#6666FF">
-        <th align="left">Name</th>
-        <th align="left">Description</th>
-        <th align="left">Open [% terms.Bugs %]</th>
-        <th align="left">Total [% terms.Bugs %]</th>
-      </tr>
-  [% END %]
-
+  [% FOREACH keyword = keywords %]
   <tr id="[% keyword.name FILTER html %]">
-    <th>
-        [% keyword.name FILTER html %]
-    </th>
+    <td>[% keyword.name FILTER html %]</td>
     <td>[% keyword.description FILTER html_light %]</td>
-    <td align="center">
+    <td class="center">
       [% IF keyword.bug_count > 0 %]
         <a href="buglist.cgi?keywords=[% keyword.name FILTER uri %]&amp;resolution=---">
           Search</a>
@@ -62,7 +39,7 @@
         none
       [% END %]
     </td>
-    <td align="right">
+    <td class="right">
       [% IF keyword.bug_count > 0 %]
         <a href="buglist.cgi?keywords=[% keyword.name FILTER uri %]">
           [% keyword.bug_count %]</a>
@@ -71,13 +48,10 @@
       [% END %]
     </td>
   </tr>
-[% END %]
+  [% END %]
+</table>
 
-[% IF keywords.size > 0 %]
-  </table>
-[% END %]
-
-[% IF caneditkeywords %]
+[% IF user.in_group("editkeywords") %]
   <p>
     <a href="editkeywords.cgi">Edit keywords</a>.
   </p>

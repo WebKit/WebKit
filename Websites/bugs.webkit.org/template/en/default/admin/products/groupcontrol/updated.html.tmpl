@@ -1,17 +1,9 @@
-[%# The contents of this file are subject to the Mozilla Public
-  # License Version 1.1 (the "License"); you may not use this file
-  # except in compliance with the License. You may obtain a copy of
-  # the License at http://www.mozilla.org/MPL/
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
   #
-  # Software distributed under the License is distributed on an "AS
-  # IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-  # implied. See the License for the specific language governing
-  # rights and limitations under the License.
-  #
-  # The Original Code is the Bugzilla Bug Tracking System.
-  #
-  # Contributor(s): André Batosti <batosti@async.com.br> 
-  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
   #%]
 
 [%# INTERFACE:
@@ -26,24 +18,36 @@
 [% PROCESS global/header.html.tmpl
   title = title
 %]
-<p>
+
 [% IF changes._group_controls.now_na.size %]
   [% FOREACH g = changes._group_controls.now_na %]
-    Removing [% terms.bugs %] from group '[% g.name FILTER html %]' which
-    no longer applies to this product<p>
-    [% g.bug_count FILTER html %] [%+ terms.bugs %] removed<p>
+    <p>
+    Removing [% terms.bugs %] from group '[% g.name FILTER html %]' which is
+    no longer applicable to this product.<br>
+    [% IF g.bug_count == 1 %]
+      One [% terms.bug %] removed.
+    [% ELSE %]
+      [% g.bug_count FILTER html %] [%+ terms.bugs %] removed.
+    [% END %]
+    </p>
   [% END %]
 [% END %]
 
 [% IF changes._group_controls.now_mandatory.size %]
   [% FOREACH g = changes._group_controls.now_mandatory %]
+    <p>
     Adding [% terms.bugs %] to group '[% g.name FILTER html %]' which is 
-    mandatory for this product<p>
-    [% g.bug_count FILTER html %] [%+ terms.bugs %] added<p>
+    now mandatory for this product.<br>
+    [% IF g.bug_count == 1 %]
+      One [% terms.bug %] added.
+    [% ELSE %]
+      [% g.bug_count FILTER html %] [%+ terms.bugs %] added.
+    [% END %]
+    </p>
   [% END %]
 [% END %]
 
-Group control updates done<p>
+<p>Group control updated.</p>
 
 [% PROCESS admin/products/footer.html.tmpl %]
 
