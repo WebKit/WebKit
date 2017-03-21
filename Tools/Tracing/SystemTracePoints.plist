@@ -153,6 +153,25 @@
              </dict>
              <dict>
                  <key>Name</key>
+                 <string>Memory pressure handler</string>
+                 <key>Type</key>
+                 <string>Interval</string>
+                 <key>Component</key>
+                 <string>47</string>
+                 <key>CodeBegin</key>
+                 <string>5019</string>
+                 <key>CodeEnd</key>
+                 <string>5020</string>
+                 <key>ArgNamesBegin</key>
+                 <dict>
+                     <key>Arg1</key>
+                     <string>Critical</string>
+                     <key>Arg2</key>
+                     <string>Synchronous</string>
+                 </dict>
+             </dict>
+             <dict>
+                 <key>Name</key>
                  <string>Paint WebHTMLView</string>
                  <key>Type</key>
                  <string>Interval</string>

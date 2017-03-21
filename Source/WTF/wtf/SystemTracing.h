@@ -67,6 +67,8 @@ enum TracePointCode {
     AsyncImageDecodeEnd,
     RAFCallbackStart,
     RAFCallbackEnd,
+    MemoryPressureHandlerStart,
+    MemoryPressureHandlerEnd,
 
     WebKitRange = 10000,
     WebHTMLViewPaintStart,
@@ -107,10 +109,10 @@ inline void TracePoint(TracePointCode code, uint64_t data1 = 0, uint64_t data2 =
 class TraceScope {
 public:
 
-    TraceScope(TracePointCode entryCode, TracePointCode exitCode)
+    TraceScope(TracePointCode entryCode, TracePointCode exitCode, uint64_t data1 = 0, uint64_t data2 = 0, uint64_t data3 = 0, uint64_t data4 = 0)
         : m_exitCode(exitCode)
     {
-        TracePoint(entryCode);
+        TracePoint(entryCode, data1, data2, data3, data4);
     }
 
     ~TraceScope()

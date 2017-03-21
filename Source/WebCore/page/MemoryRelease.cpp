@@ -47,6 +47,7 @@
 #include "StyledElement.h"
 #include "WorkerThread.h"
 #include <wtf/FastMalloc.h>
+#include <wtf/SystemTracing.h>
 
 #if PLATFORM(COCOA)
 #include "ResourceUsageThread.h"
@@ -112,6 +113,8 @@ static void releaseCriticalMemory(Synchronous synchronous)
 
 void releaseMemory(Critical critical, Synchronous synchronous)
 {
+    TraceScope scope(MemoryPressureHandlerStart, MemoryPressureHandlerEnd, static_cast<uint64_t>(critical), static_cast<uint64_t>(synchronous));
+
     if (critical == Critical::Yes)
         releaseCriticalMemory(synchronous);
 

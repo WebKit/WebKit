@@ -1,3 +1,15 @@
+2017-03-20  Simon Fraser  <simon.fraser@apple.com>
+
+        Add a system trace point for memory warning handling
+        https://bugs.webkit.org/show_bug.cgi?id=169893
+
+        Reviewed by Zalan Bujtas.
+
+        Make it possible to pass data to the Begin trace point.
+
+        * wtf/SystemTracing.h:
+        (WTF::TraceScope::TraceScope):
+
 2017-03-17  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Time channel attack on SVG Filters

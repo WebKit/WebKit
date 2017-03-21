@@ -1,3 +1,14 @@
+2017-03-20  Simon Fraser  <simon.fraser@apple.com>
+
+        Add a system trace point for memory warning handling
+        https://bugs.webkit.org/show_bug.cgi?id=169893
+
+        Reviewed by Zalan Bujtas.
+
+        Describe the new trace points.
+
+        * Tracing/SystemTracePoints.plist:
+
 2017-03-20  Alex Christensen  <achristensen@webkit.org>
 
         WebPageProxy DecidePolicyForNavigationAction and DecidePolicyForResponseSync should be Delayed reply messages
