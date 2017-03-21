@@ -1185,6 +1185,12 @@ public:
     static bool supportsFloatingPointAbs() { return false; }
     static bool supportsFloatingPointRounding() { return false; }
 
+
+    void loadFloat(ImplicitAddress address, FPRegisterID dest)
+    {
+        m_assembler.dataTransferFloat(ARMAssembler::LoadFloat, dest, address.base, address.offset);
+    }
+
     void loadFloat(BaseIndex address, FPRegisterID dest)
     {
         m_assembler.baseIndexTransferFloat(ARMAssembler::LoadFloat, dest, address.base, address.index, static_cast<int>(address.scale), address.offset);
@@ -1222,6 +1228,11 @@ public:
     {
         ASSERT(!supportsFloatingPointRounding());
         CRASH();
+    }
+
+    void storeFloat(FPRegisterID src, ImplicitAddress address)
+    {
+        m_assembler.dataTransferFloat(ARMAssembler::StoreFloat, src, address.base, address.offset);
     }
 
     void storeFloat(FPRegisterID src, BaseIndex address)
