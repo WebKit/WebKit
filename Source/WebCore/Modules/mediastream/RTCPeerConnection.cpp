@@ -211,7 +211,7 @@ ExceptionOr<Ref<RTCRtpTransceiver>> RTCPeerConnection::addTransceiver(const Stri
 
 void RTCPeerConnection::completeAddTransceiver(RTCRtpTransceiver& transceiver, const RTCRtpTransceiverInit& init)
 {
-    transceiver.setDirection(static_cast<RTCRtpTransceiver::Direction>(init.direction));
+    transceiver.setDirection(init.direction);
 
     m_transceiverSet->append(transceiver);
     m_backend->markAsNeedingNegotiation();

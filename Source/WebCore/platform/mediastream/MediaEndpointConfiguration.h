@@ -33,7 +33,8 @@
 
 #if ENABLE(WEB_RTC)
 
-#include "RTCEnums.h"
+#include "RTCBundlePolicy.h"
+#include "RTCIceTransportPolicy.h"
 #include "URL.h"
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>

@@ -34,7 +34,7 @@
 #if ENABLE(WEB_RTC)
 
 #include "MediaEndpoint.h"
-#include "RTCEnums.h"
+#include "RTCIceTransportState.h"
 #include "Timer.h"
 
 namespace WebCore {

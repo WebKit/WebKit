@@ -31,6 +31,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+typedef RTCRtpTransceiverDirection RtpTransceiverDirection;
+
 [
     Conditional=WEB_RTC,
     EnabledAtRuntime=PeerConnection
@@ -50,7 +52,7 @@
     EnabledAtRuntime=PeerConnection,
     ImplementedAs=RTCRtpTransceiverInit
 ] dictionary RTCRtpTransceiverInit {
-    RTCRtpTransceiverDirection direction = "sendrecv";
+    RtpTransceiverDirection direction = "sendrecv";
     // FIXME 169662: missing streams
     // FIXME 169662: missing sendEncodings
 };

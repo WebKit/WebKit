@@ -40,8 +40,10 @@
 #include "MediaStream.h"
 #include "RTCConfiguration.h"
 #include "RTCDataChannel.h"
-#include "RTCEnums.h"
+#include "RTCIceConnectionState.h"
+#include "RTCIceGatheringState.h"
 #include "RTCRtpTransceiver.h"
+#include "RTCSignalingState.h"
 
 namespace WebCore {
 

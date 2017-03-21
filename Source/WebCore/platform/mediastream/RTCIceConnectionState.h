@@ -24,38 +24,20 @@
 
 #pragma once
 
-#if USE(LIBWEBRTC)
-
-#include "LibWebRTCMacros.h"
-#include "RTCDataChannelHandler.h"
-#include <webrtc/api/datachannelinterface.h>
+#if ENABLE(WEB_RTC)
 
 namespace WebCore {
 
-class RTCDataChannelHandlerClient;
-
-class LibWebRTCDataChannelHandler final : public RTCDataChannelHandler, private webrtc::DataChannelObserver {
-public:
-    explicit LibWebRTCDataChannelHandler(rtc::scoped_refptr<webrtc::DataChannelInterface>&& channel) : m_channel(WTFMove(channel)) { ASSERT(m_channel); }
-    ~LibWebRTCDataChannelHandler();
-
-private:
-    // RTCDataChannelHandler API
-    void setClient(RTCDataChannelHandlerClient*) final;
-    bool sendStringData(const String&) final;
-    bool sendRawData(const char*, size_t) final;
-    void close() final;
-    size_t bufferedAmount() const final { return static_cast<size_t>(m_channel->buffered_amount()); }
-
-    // webrtc::DataChannelObserver API
-    void OnStateChange();
-    void OnMessage(const webrtc::DataBuffer&);
-    void OnBufferedAmountChange(uint64_t);
-
-    rtc::scoped_refptr<webrtc::DataChannelInterface> m_channel;
-    RTCDataChannelHandlerClient* m_client { nullptr };
+enum class RTCIceConnectionState {
+    New,
+    Checking,
+    Connected,
+    Completed,
+    Failed,
+    Disconnected,
+    Closed
 };
 
-} // namespace WebCore
+}; // namespace WebCore
 
-#endif // USE(LIBWEBRTC)
+#endif

@@ -33,7 +33,8 @@
 
 #if ENABLE(WEB_RTC)
 
-#include "RTCEnums.h"
+#include "RTCIceGatheringState.h"
+#include "RTCIceTransportState.h"
 #include "ScriptWrappable.h"
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>

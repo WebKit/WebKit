@@ -29,68 +29,28 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// FIXME: Remove once older code is upgraded
 #pragma once
 
 #if ENABLE(WEB_RTC)
 
+#include "RTCBundlePolicy.h"
+#include "RTCIceConnectionState.h"
+#include "RTCIceGatheringState.h"
+#include "RTCIceTransportPolicy.h"
+#include "RTCIceTransportState.h"
+#include "RTCSignalingState.h"
+
 namespace WebCore {
 
-enum class RTCSignalingState {
-    Stable,
-    HaveLocalOffer,
-    HaveRemoteOffer,
-    HaveLocalPranswer,
-    HaveRemotePranswer,
-    Closed
-};
-
-enum class RTCIceConnectionState {
-    New,
-    Checking,
-    Connected,
-    Completed,
-    Failed,
-    Disconnected,
-    Closed
-};
-
-enum class RTCIceGatheringState {
-    New,
-    Gathering,
-    Complete
-};
-
-enum class RTCIceTransportState {
-    New,
-    Checking,
-    Connected,
-    Completed,
-    Failed,
-    Disconnected,
-    Closed
-};
-
-enum class RTCIceTransportPolicy {
-    Relay,
-    All
-};
-
-enum class RTCBundlePolicy {
-    Balanced,
-    MaxCompat,
-    MaxBundle
-};
-
-
-// FIXME: Remove once older code is upgraded
 namespace PeerConnectionStates {
 
-using SignalingState = RTCSignalingState;
+using BundlePolicy = RTCBundlePolicy;
 using IceConnectionState = RTCIceConnectionState;
 using IceGatheringState = RTCIceGatheringState;
-using IceTransportState = RTCIceTransportState;
 using IceTransportPolicy = RTCIceTransportPolicy;
-using BundlePolicy = RTCBundlePolicy;
+using IceTransportState = RTCIceTransportState;
+using SignalingState = RTCSignalingState;
 
 }
 

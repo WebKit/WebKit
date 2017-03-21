@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2012 Google Inc. All rights reserved.
  * Copyright (C) 2013 Nokia Corporation and/or its subsidiary(-ies).
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,20 +37,20 @@
 
 namespace WebCore {
 
-inline RTCSessionDescription::RTCSessionDescription(SdpType type, const String& sdp)
+inline RTCSessionDescription::RTCSessionDescription(RTCSdpType type, String&& sdp)
     : m_type(type)
-    , m_sdp(sdp)
+    , m_sdp(WTFMove(sdp))
 {
 }
 
-Ref<RTCSessionDescription> RTCSessionDescription::create(const Init& dictionary)
+Ref<RTCSessionDescription> RTCSessionDescription::create(Init&& dictionary)
 {
-    return create(dictionary.type, dictionary.sdp);
+    return create(dictionary.type, WTFMove(dictionary.sdp));
 }
 
-Ref<RTCSessionDescription> RTCSessionDescription::create(SdpType type, const String& sdp)
+Ref<RTCSessionDescription> RTCSessionDescription::create(RTCSdpType type, String&& sdp)
 {
-    return adoptRef(*new RTCSessionDescription(type, sdp));
+    return adoptRef(*new RTCSessionDescription(type, WTFMove(sdp)));
 }
 
 } // namespace WebCore

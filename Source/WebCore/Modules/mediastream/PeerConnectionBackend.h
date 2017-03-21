@@ -34,7 +34,7 @@
 #if ENABLE(WEB_RTC)
 
 #include "JSDOMPromise.h"
-#include "RTCEnums.h"
+#include "RTCSignalingState.h"
 
 namespace WebCore {
 

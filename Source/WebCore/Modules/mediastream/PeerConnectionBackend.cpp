@@ -60,7 +60,7 @@ void PeerConnectionBackend::createOfferSucceeded(String&& sdp)
         return;
 
     ASSERT(m_offerAnswerPromise);
-    m_offerAnswerPromise->resolve(RTCSessionDescription::create(RTCSessionDescription::SdpType::Offer, WTFMove(sdp)));
+    m_offerAnswerPromise->resolve(RTCSessionDescription::create(RTCSdpType::Offer, WTFMove(sdp)));
     m_offerAnswerPromise = std::nullopt;
 }
 
@@ -93,7 +93,7 @@ void PeerConnectionBackend::createAnswerSucceeded(String&& sdp)
         return;
 
     ASSERT(m_offerAnswerPromise);
-    m_offerAnswerPromise->resolve(RTCSessionDescription::create(RTCSessionDescription::SdpType::Answer, WTFMove(sdp)));
+    m_offerAnswerPromise->resolve(RTCSessionDescription::create(RTCSdpType::Answer, WTFMove(sdp)));
     m_offerAnswerPromise = std::nullopt;
 }
 
@@ -109,17 +109,17 @@ void PeerConnectionBackend::createAnswerFailed(Exception&& exception)
     m_offerAnswerPromise = std::nullopt;
 }
 
-static inline bool isLocalDescriptionTypeValidForState(RTCSessionDescription::SdpType type, RTCSignalingState state)
+static inline bool isLocalDescriptionTypeValidForState(RTCSdpType type, RTCSignalingState state)
 {
     switch (state) {
     case RTCSignalingState::Stable:
-        return type == RTCSessionDescription::SdpType::Offer;
+        return type == RTCSdpType::Offer;
     case RTCSignalingState::HaveLocalOffer:
-        return type == RTCSessionDescription::SdpType::Offer;
+        return type == RTCSdpType::Offer;
     case RTCSignalingState::HaveRemoteOffer:
-        return type == RTCSessionDescription::SdpType::Answer || type == RTCSessionDescription::SdpType::Pranswer;
+        return type == RTCSdpType::Answer || type == RTCSdpType::Pranswer;
     case RTCSignalingState::HaveLocalPranswer:
-        return type == RTCSessionDescription::SdpType::Answer || type == RTCSessionDescription::SdpType::Pranswer;
+        return type == RTCSdpType::Answer || type == RTCSdpType::Pranswer;
     default:
         return false;
     };
@@ -167,17 +167,17 @@ void PeerConnectionBackend::setLocalDescriptionFailed(Exception&& exception)
     m_setDescriptionPromise = std::nullopt;
 }
 
-static inline bool isRemoteDescriptionTypeValidForState(RTCSessionDescription::SdpType type, RTCSignalingState state)
+static inline bool isRemoteDescriptionTypeValidForState(RTCSdpType type, RTCSignalingState state)
 {
     switch (state) {
     case RTCSignalingState::Stable:
-        return type == RTCSessionDescription::SdpType::Offer;
+        return type == RTCSdpType::Offer;
     case RTCSignalingState::HaveLocalOffer:
-        return type == RTCSessionDescription::SdpType::Answer || type == RTCSessionDescription::SdpType::Pranswer;
+        return type == RTCSdpType::Answer || type == RTCSdpType::Pranswer;
     case RTCSignalingState::HaveRemoteOffer:
-        return type == RTCSessionDescription::SdpType::Offer;
+        return type == RTCSdpType::Offer;
     case RTCSignalingState::HaveRemotePranswer:
-        return type == RTCSessionDescription::SdpType::Answer || type == RTCSessionDescription::SdpType::Pranswer;
+        return type == RTCSdpType::Answer || type == RTCSdpType::Pranswer;
     default:
         return false;
     };

@@ -33,8 +33,9 @@
 
 #if ENABLE(WEB_RTC)
 
-#include "RTCEnums.h"
+#include "RTCBundlePolicy.h"
 #include "RTCIceServer.h"
+#include "RTCIceTransportPolicy.h"
 
 namespace WebCore {
 

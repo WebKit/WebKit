@@ -345,7 +345,7 @@ void MediaEndpointPeerConnection::setLocalDescriptionTask(RefPtr<RTCSessionDescr
     MediaEndpointSessionDescription* localDescription = internalLocalDescription();
     unsigned previousNumberOfMediaDescriptions = localDescription ? localDescription->configuration()->mediaDescriptions().size() : 0;
     bool hasNewMediaDescriptions = mediaDescriptions.size() > previousNumberOfMediaDescriptions;
-    bool isInitiator = newDescription->type() == RTCSessionDescription::SdpType::Offer;
+    bool isInitiator = newDescription->type() == RTCSdpType::Offer;
 
     if (hasNewMediaDescriptions) {
         MediaEndpoint::UpdateResult result = m_mediaEndpoint->updateReceiveConfiguration(newDescription->configuration(), isInitiator);
@@ -392,12 +392,12 @@ void MediaEndpointPeerConnection::setLocalDescriptionTask(RefPtr<RTCSessionDescr
 
     // Update state and local descriptions according to setLocal/RemoteDescription processing model
     switch (newDescription->type()) {
-    case RTCSessionDescription::SdpType::Offer:
+    case RTCSdpType::Offer:
         m_pendingLocalDescription = WTFMove(newDescription);
         newSignalingState = RTCSignalingState::HaveLocalOffer;
         break;
 
-    case RTCSessionDescription::SdpType::Answer:
+    case RTCSdpType::Answer:
         m_currentLocalDescription = WTFMove(newDescription);
         m_currentRemoteDescription = m_pendingRemoteDescription;
         m_pendingLocalDescription = nullptr;
@@ -405,12 +405,12 @@ void MediaEndpointPeerConnection::setLocalDescriptionTask(RefPtr<RTCSessionDescr
         newSignalingState = RTCSignalingState::Stable;
         break;
 
-    case RTCSessionDescription::SdpType::Rollback:
+    case RTCSdpType::Rollback:
         m_pendingLocalDescription = nullptr;
         newSignalingState = RTCSignalingState::Stable;
         break;
 
-    case RTCSessionDescription::SdpType::Pranswer:
+    case RTCSdpType::Pranswer:
         m_pendingLocalDescription = WTFMove(newDescription);
         newSignalingState = RTCSignalingState::HaveLocalPranswer;
         break;
@@ -464,7 +464,7 @@ void MediaEndpointPeerConnection::setRemoteDescriptionTask(RefPtr<RTCSessionDesc
         mediaDescription.payloads = m_mediaEndpoint->filterPayloads(mediaDescription.payloads, mediaDescription.type == "audio" ? m_defaultAudioPayloads : m_defaultVideoPayloads);
     }
 
-    bool isInitiator = newDescription->type() == RTCSessionDescription::SdpType::Answer;
+    bool isInitiator = newDescription->type() == RTCSdpType::Answer;
     const RtpTransceiverVector& transceivers = m_peerConnection.getTransceivers();
 
     RealtimeMediaSourceMap sendSourceMap;
@@ -556,12 +556,12 @@ void MediaEndpointPeerConnection::setRemoteDescriptionTask(RefPtr<RTCSessionDesc
 
     // Update state and local descriptions according to setLocal/RemoteDescription processing model
     switch (newDescription->type()) {
-    case RTCSessionDescription::SdpType::Offer:
+    case RTCSdpType::Offer:
         m_pendingRemoteDescription = WTFMove(newDescription);
         newSignalingState = RTCSignalingState::HaveRemoteOffer;
         break;
 
-    case RTCSessionDescription::SdpType::Answer:
+    case RTCSdpType::Answer:
         m_currentRemoteDescription = WTFMove(newDescription);
         m_currentLocalDescription = m_pendingLocalDescription;
         m_pendingRemoteDescription = nullptr;
@@ -569,12 +569,12 @@ void MediaEndpointPeerConnection::setRemoteDescriptionTask(RefPtr<RTCSessionDesc
         newSignalingState = RTCSignalingState::Stable;
         break;
 
-    case RTCSessionDescription::SdpType::Rollback:
+    case RTCSdpType::Rollback:
         m_pendingRemoteDescription = nullptr;
         newSignalingState = RTCSignalingState::Stable;
         break;
 
-    case RTCSessionDescription::SdpType::Pranswer:
+    case RTCSdpType::Pranswer:
         m_pendingRemoteDescription = WTFMove(newDescription);
         newSignalingState = RTCSignalingState::HaveRemotePranswer;
         break;

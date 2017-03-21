@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2015, 2016 Ericsson AB. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -51,7 +52,7 @@ STRING_FUNCTION(pranswer)
 STRING_FUNCTION(answer)
 STRING_FUNCTION(rollback)
 
-Ref<MediaEndpointSessionDescription> MediaEndpointSessionDescription::create(RTCSessionDescription::SdpType type, RefPtr<MediaEndpointSessionConfiguration>&& configuration)
+Ref<MediaEndpointSessionDescription> MediaEndpointSessionDescription::create(RTCSdpType type, RefPtr<MediaEndpointSessionConfiguration>&& configuration)
 {
     return adoptRef(*new MediaEndpointSessionDescription(type, WTFMove(configuration), nullptr));
 }
@@ -86,19 +87,20 @@ RefPtr<RTCSessionDescription> MediaEndpointSessionDescription::toRTCSessionDescr
         return m_rtcDescription;
     }
 
-    return RTCSessionDescription::create(m_type, sdpString);
+    return RTCSessionDescription::create(m_type, WTFMove(sdpString));
 }
 
+// FIXME: unify with LibWebRTCMediaEndpoint sessionDescriptionType().
 const String& MediaEndpointSessionDescription::typeString() const
 {
     switch (m_type) {
-    case RTCSessionDescription::SdpType::Offer:
+    case RTCSdpType::Offer:
         return offerString();
-    case RTCSessionDescription::SdpType::Pranswer:
+    case RTCSdpType::Pranswer:
         return pranswerString();
-    case RTCSessionDescription::SdpType::Answer:
+    case RTCSdpType::Answer:
         return answerString();
-    case RTCSessionDescription::SdpType::Rollback:
+    case RTCSdpType::Rollback:
         return rollbackString();
     }
 

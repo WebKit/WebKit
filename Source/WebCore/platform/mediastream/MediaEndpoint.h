@@ -35,6 +35,7 @@
 
 #include "MediaEndpointConfiguration.h"
 #include "PeerConnectionBackend.h"
+#include "RTCIceTransportState.h"
 #include "RealtimeMediaSource.h"
 #include <wtf/HashMap.h>
 #include <wtf/text/WTFString.h>

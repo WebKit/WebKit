@@ -38,7 +38,6 @@
 #include "PlatformStrategies.h"
 #include "RTCDataChannel.h"
 #include "RTCDataChannelEvent.h"
-#include "RTCEnums.h"
 #include "RTCPeerConnection.h"
 #include "RTCSessionDescription.h"
 #include "RTCStatsReport.h"
@@ -66,29 +65,30 @@ LibWebRTCMediaEndpoint::LibWebRTCMediaEndpoint(LibWebRTCPeerConnectionBackend& p
     ASSERT(m_backend);
 }
 
-static inline const char* sessionDescriptionType(RTCSessionDescription::SdpType sdpType)
+// FIXME: unify with MediaEndpointSessionDescription::typeString()
+static inline const char* sessionDescriptionType(RTCSdpType sdpType)
 {
     switch (sdpType) {
-    case RTCSessionDescription::SdpType::Offer:
+    case RTCSdpType::Offer:
         return "offer";
-    case RTCSessionDescription::SdpType::Pranswer:
+    case RTCSdpType::Pranswer:
         return "pranswer";
-    case RTCSessionDescription::SdpType::Answer:
+    case RTCSdpType::Answer:
         return "answer";
-    case RTCSessionDescription::SdpType::Rollback:
+    case RTCSdpType::Rollback:
         return "rollback";
     }
 }
 
-static inline RTCSessionDescription::SdpType fromSessionDescriptionType(const webrtc::SessionDescriptionInterface& description)
+static inline RTCSdpType fromSessionDescriptionType(const webrtc::SessionDescriptionInterface& description)
 {
     auto type = description.type();
     if (type == webrtc::SessionDescriptionInterface::kOffer)
-        return RTCSessionDescription::SdpType::Offer;
+        return RTCSdpType::Offer;
     if (type == webrtc::SessionDescriptionInterface::kAnswer)
-        return RTCSessionDescription::SdpType::Answer;
+        return RTCSdpType::Answer;
     ASSERT(type == webrtc::SessionDescriptionInterface::kPrAnswer);
-    return RTCSessionDescription::SdpType::Pranswer;
+    return RTCSdpType::Pranswer;
 }
 
 static inline RefPtr<RTCSessionDescription> fromSessionDescription(const webrtc::SessionDescriptionInterface* description)

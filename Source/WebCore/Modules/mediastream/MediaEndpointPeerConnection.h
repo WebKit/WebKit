@@ -35,7 +35,6 @@
 
 #include "MediaEndpoint.h"
 #include "PeerConnectionBackend.h"
-#include "RTCEnums.h"
 #include "RTCSessionDescription.h"
 #include <wtf/Function.h>
 
@@ -88,8 +87,8 @@ private:
 
     void replaceTrackTask(RTCRtpSender&, const String& mid, Ref<MediaStreamTrack>&&, DOMPromise<void>&);
 
-    bool localDescriptionTypeValidForState(RTCSessionDescription::SdpType) const;
-    bool remoteDescriptionTypeValidForState(RTCSessionDescription::SdpType) const;
+    bool localDescriptionTypeValidForState(RTCSdpType) const;
+    bool remoteDescriptionTypeValidForState(RTCSdpType) const;
 
     MediaEndpointSessionDescription* internalLocalDescription() const;
     MediaEndpointSessionDescription* internalRemoteDescription() const;

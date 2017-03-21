@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2016 Ericsson AB. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -56,7 +57,7 @@ String RTCRtpTransceiver::getNextMid()
 }
 
 RTCRtpTransceiver::RTCRtpTransceiver(Ref<RTCRtpSender>&& sender, Ref<RTCRtpReceiver>&& receiver)
-    : m_direction(Direction::Sendrecv)
+    : m_direction(RTCRtpTransceiverDirection::Sendrecv)
     , m_sender(WTFMove(sender))
     , m_receiver(WTFMove(receiver))
     , m_iceTransport(RTCIceTransport::create())
@@ -66,10 +67,14 @@ RTCRtpTransceiver::RTCRtpTransceiver(Ref<RTCRtpSender>&& sender, Ref<RTCRtpRecei
 const String& RTCRtpTransceiver::directionString() const
 {
     switch (m_direction) {
-    case Direction::Sendrecv: return sendrecvString();
-    case Direction::Sendonly: return sendonlyString();
-    case Direction::Recvonly: return recvonlyString();
-    case Direction::Inactive: return inactiveString();
+    case RTCRtpTransceiverDirection::Sendrecv:
+        return sendrecvString();
+    case RTCRtpTransceiverDirection::Sendonly:
+        return sendonlyString();
+    case RTCRtpTransceiverDirection::Recvonly:
+        return recvonlyString();
+    case RTCRtpTransceiverDirection::Inactive:
+        return inactiveString();
     }
 
     ASSERT_NOT_REACHED();
@@ -78,23 +83,23 @@ const String& RTCRtpTransceiver::directionString() const
 
 bool RTCRtpTransceiver::hasSendingDirection() const
 {
-    return m_direction == Direction::Sendrecv || m_direction == Direction::Sendonly;
+    return m_direction == RTCRtpTransceiverDirection::Sendrecv || m_direction == RTCRtpTransceiverDirection::Sendonly;
 }
 
 void RTCRtpTransceiver::enableSendingDirection()
 {
-    if (m_direction == Direction::Recvonly)
-        m_direction = Direction::Sendrecv;
-    else if (m_direction == Direction::Inactive)
-        m_direction = Direction::Sendonly;
+    if (m_direction == RTCRtpTransceiverDirection::Recvonly)
+        m_direction = RTCRtpTransceiverDirection::Sendrecv;
+    else if (m_direction == RTCRtpTransceiverDirection::Inactive)
+        m_direction = RTCRtpTransceiverDirection::Sendonly;
 }
 
 void RTCRtpTransceiver::disableSendingDirection()
 {
-    if (m_direction == Direction::Sendrecv)
-        m_direction = Direction::Recvonly;
-    else if (m_direction == Direction::Sendonly)
-        m_direction = Direction::Inactive;
+    if (m_direction == RTCRtpTransceiverDirection::Sendrecv)
+        m_direction = RTCRtpTransceiverDirection::Recvonly;
+    else if (m_direction == RTCRtpTransceiverDirection::Sendonly)
+        m_direction = RTCRtpTransceiverDirection::Inactive;
 }
 
 void RtpTransceiverSet::append(Ref<RTCRtpTransceiver>&& transceiver)
