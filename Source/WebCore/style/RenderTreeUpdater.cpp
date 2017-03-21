@@ -257,7 +257,8 @@ void RenderTreeUpdater::updateElementRenderer(Element& element, const Style::Ele
     CheckForVisibilityChange checkForVisibilityChange(element);
 #endif
 
-    bool shouldTearDownRenderers = update.change == Style::Detach && (element.renderer() || element.isNamedFlowContentElement());
+    bool shouldTearDownRenderers = update.change == Style::Detach
+        && (element.renderer() || element.isNamedFlowContentElement() || element.hasDisplayContents());
     if (shouldTearDownRenderers)
         tearDownRenderers(element, TeardownType::KeepHoverAndActive);
 

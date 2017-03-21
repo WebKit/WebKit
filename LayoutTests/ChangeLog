@@ -1,3 +1,14 @@
+2017-03-21  Zalan Bujtas  <zalan@apple.com>
+
+        Tear down descendant renderers when <slot>'s display value is set to no "contents".
+        https://bugs.webkit.org/show_bug.cgi?id=169921
+        <rdar://problem/30336417>
+
+        Reviewed by Antti Koivisto.
+
+        * fast/shadow-dom/slot-with-continuation-descendants-expected.txt: Added.
+        * fast/shadow-dom/slot-with-continuation-descendants.html: Added.
+
 2017-03-21  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK][Wayland] Enable WebGL, 3D and compositing layout tests
