@@ -244,6 +244,7 @@ body.docked:matches(.right, .left) #navigation-sidebar.collapsed > .resizer {
 
     width: 20px;
     height: 20px;
+    flex-shrink: 0;
     margin-right: 4px;
     vertical-align: bottom;
 

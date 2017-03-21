@@ -1,5 +1,15 @@
 2017-03-20  Nikita Vasilyev  <nvasilyev@apple.com>
 
+        Web Inspector: Icon next to "An error occurred..." message changes size when Inspector window is resized
+        https://bugs.webkit.org/show_bug.cgi?id=169901
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/Main.css:
+        (.message-text-view.error::before):
+
+2017-03-20  Nikita Vasilyev  <nvasilyev@apple.com>
+
         Web Inspector: Clicking on Clear Network Items icon throws an exception if timing popover is visible
         https://bugs.webkit.org/show_bug.cgi?id=169852
         <rdar://problem/31132652>
