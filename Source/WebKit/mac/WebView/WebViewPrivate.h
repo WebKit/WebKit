@@ -57,6 +57,7 @@
 
 #define WEBKIT_DI_BLOCK 1
 
+@class UIColor;
 @class UIImage;
 @class NSError;
 @class WebFrame;
@@ -193,6 +194,7 @@ typedef enum {
 @property (nonatomic, retain) UIImage *contentImage;
 @property (nonatomic, retain) UIImage *contentImageWithoutSelection;
 @property (nonatomic, assign) CGRect contentImageWithoutSelectionRectInRootViewCoordinates;
+@property (nonatomic, retain) UIColor *estimatedBackgroundColor;
 @end
 
 #if !TARGET_OS_IPHONE

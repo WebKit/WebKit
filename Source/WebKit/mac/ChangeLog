@@ -1,3 +1,18 @@
+2017-03-19  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Teach TextIndicator to estimate the background color of the given Range
+        https://bugs.webkit.org/show_bug.cgi?id=169869
+        <rdar://problem/31127272>
+
+        Reviewed by Anders Carlsson and Simon Fraser.
+
+        Plumb the estimated background color for WebKit1 clients through a new property in WebUITextIndicatorData.
+
+        * WebView/WebView.mm:
+        (-[WebUITextIndicatorData initWithImage:textIndicatorData:scale:]):
+        (-[WebUITextIndicatorData dealloc]):
+        * WebView/WebViewPrivate.h:
+
 2017-03-20  Dan Bernstein  <mitz@apple.com>
 
         [Xcode] Incremental builds of WebKitLegacy are slow because of the Postprocess Headers phase

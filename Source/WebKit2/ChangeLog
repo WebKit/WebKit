@@ -1,3 +1,20 @@
+2017-03-19  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Teach TextIndicator to estimate the background color of the given Range
+        https://bugs.webkit.org/show_bug.cgi?id=169869
+        <rdar://problem/31127272>
+
+        Reviewed by Anders Carlsson and Simon Fraser.
+
+        Send the estimated background color over XPC, and adopt TextIndicatorOptionComputeEstimatedBackgroundColor when
+        snapshotting after performing an edit data interaction.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<TextIndicatorData>::encode):
+        (IPC::ArgumentCoder<TextIndicatorData>::decode):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::didConcludeEditDataInteraction):
+
 2017-03-21  Chris Dumez  <cdumez@apple.com>
 
         [WK2] Call processDidCrash() right away when terminating a process that exceeded background CPU limit

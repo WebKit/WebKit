@@ -88,6 +88,10 @@ enum TextIndicatorOption : uint16_t {
     // selection rects that would enclose the given Range instead.
     // Currently, this is only supported on iOS.
     TextIndicatorOptionUseSelectionRectForSizing = 1 << 9,
+
+    // Compute a background color to use when rendering a platter around the content image, falling back to a default if the
+    // content's background is too complex to be captured by a single color.
+    TextIndicatorOptionComputeEstimatedBackgroundColor = 1 << 10,
 };
 typedef uint16_t TextIndicatorOptions;
 
@@ -100,6 +104,7 @@ struct TextIndicatorData {
     RefPtr<Image> contentImageWithHighlight;
     RefPtr<Image> contentImageWithoutSelection;
     RefPtr<Image> contentImage;
+    Color estimatedBackgroundColor;
     TextIndicatorPresentationTransition presentationTransition;
     TextIndicatorOptions options;
 };

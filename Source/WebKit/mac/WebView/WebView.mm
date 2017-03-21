@@ -638,6 +638,7 @@ private:
 @synthesize contentImageWithoutSelection=_contentImageWithoutSelection;
 @synthesize contentImageWithoutSelectionRectInRootViewCoordinates=_contentImageWithoutSelectionRectInRootViewCoordinates;
 @synthesize contentImage=_contentImage;
+@synthesize estimatedBackgroundColor=_estimatedBackgroundColor;
 
 @end
 
@@ -670,6 +671,9 @@ private:
         }
     }
 
+    if (indicatorData.options & TextIndicatorOptionComputeEstimatedBackgroundColor)
+        _estimatedBackgroundColor = [[[getUIColorClass() alloc] initWithCGColor:cachedCGColor(indicatorData.estimatedBackgroundColor)] retain];
+
     return self;
 }
 
@@ -690,6 +694,7 @@ private:
     [_contentImageWithHighlight release];
     [_contentImageWithoutSelection release];
     [_contentImage release];
+    [_estimatedBackgroundColor release];
     
     [super dealloc];
 }
