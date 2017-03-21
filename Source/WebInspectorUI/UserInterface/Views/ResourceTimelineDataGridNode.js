@@ -421,7 +421,11 @@ WebInspector.ResourceTimelineDataGridNode = class ResourceTimelineDataGridNode e
         recordBar.element.addEventListener("mouseleave", () => {
             if (!this.dataGrid)
                 return;
-            this.dataGrid._dismissPopoverTimeout = setTimeout(() => this.dataGrid._popover.dismiss(), WebInspector.ResourceTimelineDataGridNode.DelayedPopoverDismissalTimeout);
+
+            this.dataGrid._dismissPopoverTimeout = setTimeout(() => {
+                if (this.dataGrid)
+                    this.dataGrid._popover.dismiss();
+            }, WebInspector.ResourceTimelineDataGridNode.DelayedPopoverDismissalTimeout);
         }, {once: true});
 
         this.dataGrid._popover.presentNewContentWithFrame(popoverContentElement, targetFrame.pad(2), preferredEdges);

@@ -1,5 +1,17 @@
 2017-03-20  Nikita Vasilyev  <nvasilyev@apple.com>
 
+        Web Inspector: Clicking on Clear Network Items icon throws an exception if timing popover is visible
+        https://bugs.webkit.org/show_bug.cgi?id=169852
+        <rdar://problem/31132652>
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/ResourceTimelineDataGridNode.js:
+        (WebInspector.ResourceTimelineDataGridNode.prototype._mouseoverRecordBar):
+        (WebInspector.ResourceTimelineDataGridNode):
+
+2017-03-20  Nikita Vasilyev  <nvasilyev@apple.com>
+
         REGRESSION (r187873): Web Inspector: When resizing, prevent DataGrid columns from collapsing entirely
         https://bugs.webkit.org/show_bug.cgi?id=169899
 
