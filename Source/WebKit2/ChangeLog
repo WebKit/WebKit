@@ -1,3 +1,22 @@
+2017-03-21  Chris Dumez  <cdumez@apple.com>
+
+        [WK2] Call processDidCrash() right away when terminating a process that exceeded background CPU limit
+        https://bugs.webkit.org/show_bug.cgi?id=169573
+        <rdar://problem/30960968>
+
+        Reviewed by Andreas Kling.
+
+        Call processDidCrash() right away when terminating a process that exceeded background CPU limit
+        and let the client decide when to reload the content.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::reattachToWebProcess):
+        (WebKit::WebPageProxy::dispatchActivityStateChange):
+        (WebKit::WebPageProxy::terminateProcess):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::didExceedBackgroundCPULimit):
+
 2017-03-21  Aidan Holm  <aidanholm+webkit@gmail.com>
 
         [GTK] Add function webkit_dom_element_get_bounding_client_rect

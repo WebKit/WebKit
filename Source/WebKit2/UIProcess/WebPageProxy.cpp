@@ -709,7 +709,6 @@ void WebPageProxy::reattachToWebProcess()
     ASSERT(m_process->state() == WebProcessProxy::State::Terminated);
 
     m_isValid = true;
-    m_wasTerminatedDueToResourceExhaustionWhileInBackground = false;
     m_process->removeWebPage(m_pageID);
     m_process->removeMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_pageID);
 
@@ -1522,13 +1521,8 @@ void WebPageProxy::dispatchActivityStateChange()
     m_activityStateChangeDispatcher->invalidate();
 #endif
 
-    if (!isValid()) {
-        if (m_potentiallyChangedActivityStateFlags & ActivityState::IsVisible && m_wasTerminatedDueToResourceExhaustionWhileInBackground) {
-            m_wasTerminatedDueToResourceExhaustionWhileInBackground = false;
-            processDidCrash();
-        }
+    if (!isValid())
         return;
-    }
 
     // If the visibility state may have changed, then so may the visually idle & occluded agnostic state.
     if (m_potentiallyChangedActivityStateFlags & ActivityState::IsVisible)
@@ -2391,7 +2385,7 @@ void WebPageProxy::setCustomTextEncodingName(const String& encodingName)
     m_process->send(Messages::WebPage::SetCustomTextEncodingName(encodingName), m_pageID);
 }
 
-void WebPageProxy::terminateProcess(TerminationReason terminationReason)
+void WebPageProxy::terminateProcess()
 {
     // NOTE: This uses a check of m_isValid rather than calling isValid() since
     // we want this to run even for pages being closed or that already closed.
@@ -2400,7 +2394,6 @@ void WebPageProxy::terminateProcess(TerminationReason terminationReason)
 
     m_process->requestTermination();
     resetStateAfterProcessExited();
-    m_wasTerminatedDueToResourceExhaustionWhileInBackground = terminationReason == TerminationReason::ResourceExhaustionWhileInBackground;
 }
 
 SessionState WebPageProxy::sessionState(const std::function<bool (WebBackForwardListItem&)>& filter) const

@@ -680,8 +680,7 @@ public:
 
     double estimatedProgress() const;
 
-    enum class TerminationReason { ResourceExhaustionWhileInBackground, Other };
-    void terminateProcess(TerminationReason = TerminationReason::Other);
+    void terminateProcess();
 
     SessionState sessionState(const std::function<bool (WebBackForwardListItem&)>& = nullptr) const;
     RefPtr<API::Navigation> restoreFromSessionState(SessionState, bool navigate);
@@ -1977,7 +1976,6 @@ private:
 #endif
 
     bool m_isUsingHighPerformanceWebGL { false };
-    bool m_wasTerminatedDueToResourceExhaustionWhileInBackground { false };
         
     WeakPtrFactory<WebPageProxy> m_weakPtrFactory;
 

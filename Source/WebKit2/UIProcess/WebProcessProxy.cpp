@@ -1141,9 +1141,10 @@ void WebProcessProxy::didExceedBackgroundCPULimit()
 
     RELEASE_LOG(PerformanceLogging, "%p - WebProcessProxy::didExceedBackgroundCPULimit() Terminating background WebProcess that has exceeded the background CPU limit", this);
 
-    // We only terminate the process here. We will call processDidCrash() once one of the pages becomes visible again (see WebPageProxy::dispatchActivityStateChange()).
-    for (auto& page : pagesCopy(pages()))
-        page->terminateProcess(WebPageProxy::TerminationReason::ResourceExhaustionWhileInBackground);
+    for (auto& page : pagesCopy(pages())) {
+        page->terminateProcess();
+        page->processDidCrash();
+    }
 }
 
 void WebProcessProxy::updateBackgroundResponsivenessTimer()
