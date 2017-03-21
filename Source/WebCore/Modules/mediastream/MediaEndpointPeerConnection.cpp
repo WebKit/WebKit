@@ -806,7 +806,7 @@ void MediaEndpointPeerConnection::doneGatheringCandidates(const String& mid)
         PeerConnectionBackend::doneGatheringCandidates();
 }
 
-static RTCIceTransportState deriveAggregatedIceConnectionState(const Vector<RTCIceTransportState>& states)
+static RTCIceConnectionState deriveAggregatedIceConnectionState(const Vector<RTCIceTransportState>& states)
 {
     unsigned newCount = 0;
     unsigned checkingCount = 0;
@@ -844,25 +844,25 @@ static RTCIceTransportState deriveAggregatedIceConnectionState(const Vector<RTCI
 
     // The aggregated RTCIceConnectionState is derived from the RTCIceTransportState of all RTCIceTransports.
     if ((newCount > 0 && !checkingCount && !failedCount && !disconnectedCount) || (closedCount == states.size()))
-        return RTCIceTransportState::New;
+        return RTCIceConnectionState::New;
 
     if (checkingCount > 0 && !failedCount && !disconnectedCount)
-        return RTCIceTransportState::Checking;
+        return RTCIceConnectionState::Checking;
 
     if ((connectedCount + completedCount + closedCount) == states.size() && connectedCount > 0)
-        return RTCIceTransportState::Connected;
+        return RTCIceConnectionState::Connected;
 
     if ((completedCount + closedCount) == states.size() && completedCount > 0)
-        return RTCIceTransportState::Completed;
+        return RTCIceConnectionState::Completed;
 
     if (failedCount > 0)
-        return RTCIceTransportState::Failed;
+        return RTCIceConnectionState::Failed;
 
     if (disconnectedCount > 0) // Any failed caught above.
-        return RTCIceTransportState::Disconnected;
+        return RTCIceConnectionState::Disconnected;
 
     ASSERT_NOT_REACHED();
-    return RTCIceTransportState::New;
+    return RTCIceConnectionState::New;
 }
 
 void MediaEndpointPeerConnection::iceTransportStateChanged(const String& mid, RTCIceTransportState mediaEndpointIceTransportState)
@@ -877,11 +877,11 @@ void MediaEndpointPeerConnection::iceTransportStateChanged(const String& mid, RT
 
     // Determine if the script needs to be notified.
     Vector<RTCIceTransportState> transportStates;
+    transportStates.reserveInitialCapacity(m_peerConnection.getTransceivers().size());
     for (auto& transceiver : m_peerConnection.getTransceivers())
-        transportStates.append(transceiver->iceTransport().state());
+        transportStates.uncheckedAppend(transceiver->iceTransport().state());
 
-    RTCIceTransportState derivedState = deriveAggregatedIceConnectionState(transportStates);
-    m_peerConnection.updateIceConnectionState(static_cast<RTCIceConnectionState>(derivedState));
+    m_peerConnection.updateIceConnectionState(deriveAggregatedIceConnectionState(transportStates));
 }
 
 } // namespace WebCore
