@@ -1,3 +1,14 @@
+2017-03-20  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        REGRESSION (r187873): Web Inspector: When resizing, prevent DataGrid columns from collapsing entirely
+        https://bugs.webkit.org/show_bug.cgi?id=169899
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/DataGrid.js:
+        (WebInspector.DataGrid.prototype.resizerDragging):
+        leftMinimum and rightMaximum variables were always NaN because this.ColumnResizePadding is undefined.
+
 2017-03-20  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Pseudo-class markers overlap DOM breakpoints and disclosure triangle

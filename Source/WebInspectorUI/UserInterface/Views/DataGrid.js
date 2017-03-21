@@ -1827,8 +1827,8 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.View
         let trailingEdgeOfNextColumn = leadingEdgeOfPreviousColumn + firstRowCells[leftColumnIndex].offsetWidth + firstRowCells[rightColumnIndex].offsetWidth;
 
         // Give each column some padding so that they don't disappear.
-        let leftMinimum = leadingEdgeOfPreviousColumn + this.ColumnResizePadding;
-        let rightMaximum = trailingEdgeOfNextColumn - this.ColumnResizePadding;
+        let leftMinimum = leadingEdgeOfPreviousColumn + WebInspector.DataGrid.ColumnResizePadding;
+        let rightMaximum = trailingEdgeOfNextColumn - WebInspector.DataGrid.ColumnResizePadding;
 
         dragPoint = Number.constrain(dragPoint, leftMinimum, rightMaximum);
 
