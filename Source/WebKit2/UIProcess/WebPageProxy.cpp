@@ -1808,7 +1808,7 @@ void WebPageProxy::didPerformDragControllerAction(uint64_t dragOperation, bool m
     m_currentDragOperation = static_cast<DragOperation>(dragOperation);
     m_currentDragIsOverFileInput = mouseIsOverFileInput;
     m_currentDragNumberOfFilesToBeAccepted = numberOfItemsToBeAccepted;
-    m_currentDragCaretRect = insertionRect;
+    setDragCaretRect(insertionRect);
 }
 
 #if PLATFORM(GTK)
@@ -1826,6 +1826,7 @@ void WebPageProxy::dragEnded(const IntPoint& clientPosition, const IntPoint& glo
     if (!isValid())
         return;
     m_process->send(Messages::WebPage::DragEnded(clientPosition, globalPosition, operation), m_pageID);
+    setDragCaretRect({ });
 }
     
 void WebPageProxy::dragCancelled()
@@ -1834,13 +1835,28 @@ void WebPageProxy::dragCancelled()
         m_process->send(Messages::WebPage::DragCancelled(), m_pageID);
 }
 
+void WebPageProxy::didEndDragging()
+{
+    resetCurrentDragInformation();
+}
+
 void WebPageProxy::resetCurrentDragInformation()
 {
     m_currentDragOperation = WebCore::DragOperationNone;
     m_currentDragIsOverFileInput = false;
     m_currentDragNumberOfFilesToBeAccepted = 0;
-    m_currentDragCaretRect = { };
+    setDragCaretRect({ });
 }
+
+#if !ENABLE(DATA_INTERACTION)
+
+void WebPageProxy::setDragCaretRect(const IntRect& dragCaretRect)
+{
+    m_currentDragCaretRect = dragCaretRect;
+}
+
+#endif
+
 #endif // ENABLE(DRAG_SUPPORT)
 
 void WebPageProxy::handleMouseEvent(const NativeWebMouseEvent& event)

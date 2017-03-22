@@ -790,6 +790,11 @@ void PageClientImpl::didConcludeEditDataInteraction(std::optional<TextIndicatorD
 {
     [m_contentView _didConcludeEditDataInteraction:data];
 }
+
+void PageClientImpl::didChangeDataInteractionCaretRect(const IntRect& previousCaretRect, const IntRect& caretRect)
+{
+    [m_contentView _didChangeDataInteractionCaretRect:previousCaretRect currentRect:caretRect];
+}
 #endif
 
 void PageClientImpl::handleActiveNowPlayingSessionInfoResponse(bool hasActiveSession, const String& title, double duration, double elapsedTime)

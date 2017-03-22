@@ -1,3 +1,37 @@
+2017-03-21  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add support for showing the platform data interaction caret
+        https://bugs.webkit.org/show_bug.cgi?id=169898
+        <rdar://problem/31146295>
+
+        Reviewed by Beth Dakin.
+
+        Add support for showing the caret rect when data interacting over an editable target. To do this, we add
+        boilerplate plumbing to inform the WKContentView whenever the WebPageProxy's current caret rect changes.
+
+        * Platform/spi/ios/UIKitSPI.h:
+
+        Define IPI to retrieve the default insertion caret color.
+
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didPerformDragControllerAction):
+        (WebKit::WebPageProxy::dragEnded):
+        (WebKit::WebPageProxy::didEndDragging):
+        (WebKit::WebPageProxy::resetCurrentDragInformation):
+        (WebKit::WebPageProxy::setDragCaretRect):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::didChangeDataInteractionCaretRect):
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView cleanupInteraction]):
+        (-[WKContentView insertionPointColor]):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::dragEnded):
+
 2017-03-22  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics: Fix partitioning bug for client-side cookie access

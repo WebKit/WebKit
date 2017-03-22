@@ -74,6 +74,10 @@ class WebPageProxy;
 @class _UIHighlightView;
 @class _UIWebHighlightLongPressGestureRecognizer;
 
+#if ENABLE(DATA_INTERACTION)
+@class WKDataInteractionCaretView;
+#endif
+
 typedef void (^UIWKAutocorrectionCompletionHandler)(UIWKAutocorrectionRects *rectsForInput);
 typedef void (^UIWKAutocorrectionContextHandler)(UIWKAutocorrectionContext *autocorrectionContext);
 typedef void (^UIWKDictationContextHandler)(NSString *selectedText, NSString *beforeText, NSString *afterText);
@@ -193,14 +197,13 @@ struct WKAutoCorrectionData {
 #if ENABLE(DATA_INTERACTION)
     WebKit::WKDataInteractionState _dataInteractionState;
     BOOL _isPerformingDataInteractionOperation;
-#if HAS_DATA_INTERACTION_SPI
     RetainPtr<WKDataInteraction> _dataInteraction;
     RetainPtr<WKDataOperation> _dataOperation;
-#endif
     CGPoint _deferredActionSheetRequestLocation;
     RetainPtr<UIView> _visibleContentViewSnapshot;
     RetainPtr<UIImageView> _dataInteractionUnselectedContentSnapshot;
     BOOL _isRunningConcludeEditDataInteractionAnimation;
+    RetainPtr<WKDataInteractionCaretView> _dataInteractionCaretView;
 #endif
 }
 
@@ -285,6 +288,8 @@ struct WKAutoCorrectionData {
 - (void)_didHandleStartDataInteractionRequest:(BOOL)started;
 - (void)_startDataInteractionWithImage:(RetainPtr<CGImageRef>)image withIndicatorData:(std::optional<WebCore::TextIndicatorData>)indicatorData atClientPosition:(CGPoint)clientPosition anchorPoint:(CGPoint)anchorPoint action:(uint64_t)action;
 - (void)_didConcludeEditDataInteraction:(std::optional<WebCore::TextIndicatorData>)data;
+- (void)_didChangeDataInteractionCaretRect:(CGRect)previousRect currentRect:(CGRect)rect;
+
 - (void)_simulateDataInteractionEntered:(id)info;
 - (void)_simulateDataInteractionUpdated:(id)info;
 - (void)_simulateDataInteractionPerformOperation:(id)info;

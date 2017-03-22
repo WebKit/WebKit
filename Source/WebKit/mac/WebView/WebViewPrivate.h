@@ -478,6 +478,7 @@ Could be worth adding to the API.
 - (void)_endedDataInteraction:(CGPoint)clientPosition global:(CGPoint)clientPosition;
 
 #if TARGET_OS_IPHONE
+@property (nonatomic, readonly, getter=_dataInteractionCaretRect) CGRect dataInteractionCaretRect;
 - (UIImage *)_createImageWithPlatterForImage:(UIImage *)image boundingRect:(CGRect)boundingRect contentScaleFactor:(CGFloat)contentScaleFactor clippingRects:(NSArray<NSValue *> *)clippingRects;
 // Deprecated. Use -[WebDataSource _quickLookContent] instead.
 - (NSDictionary *)quickLookContentForURL:(NSURL *)url;

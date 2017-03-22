@@ -1,3 +1,17 @@
+2017-03-21  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add support for showing the platform data interaction caret
+        https://bugs.webkit.org/show_bug.cgi?id=169898
+        <rdar://problem/31146295>
+
+        Reviewed by Beth Dakin.
+
+        Plumb the dataInteractionCaretRect through WebView SPI to WebKit1 clients.
+
+        * WebView/WebView.mm:
+        (-[WebView _dataInteractionCaretRect]):
+        * WebView/WebViewPrivate.h:
+
 2017-03-22  Dan Bernstein  <mitz@apple.com>
 
         [iOS] downloadableBinaryFontsEnabled is set to false in -initSimpleHTMLDocumentWithStyle:frame:preferences:groupName:

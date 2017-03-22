@@ -1819,6 +1819,14 @@ static void WebKitInitializeGamepadProviderIfNecessary()
         _private->textIndicatorData = [[[WebUITextIndicatorData alloc] initWithImage:image scale:_private->page->deviceScaleFactor()] retain];
 }
 
+- (CGRect)_dataInteractionCaretRect
+{
+    if (auto* page = _private->page)
+        return page->dragCaretController().caretPosition().absoluteCaretBounds();
+
+    return { };
+}
+
 - (WebUITextIndicatorData *)_dataOperationTextIndicator
 {
     return _private->dataOperationTextIndicator.get();
@@ -1919,6 +1927,11 @@ static Vector<FloatRect> floatRectsForCGRectArray(NSArray<NSValue *> *rectValues
 - (UIImage *)_createImageWithPlatterForImage:(UIImage *)image boundingRect:(CGRect)boundingRect contentScaleFactor:(CGFloat)contentScaleFactor clippingRects:(NSArray<NSValue *> *)clippingRects
 {
     return nil;
+}
+
+- (CGRect)_dataInteractionCaretRect
+{
+    return CGRectNull;
 }
 #endif
 

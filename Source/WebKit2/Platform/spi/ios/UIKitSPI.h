@@ -865,6 +865,10 @@ typedef enum {
 
 #endif // USE(APPLE_INTERNAL_SDK)
 
+@interface UIColor (IPI)
++ (UIColor *)insertionPointColor;
+@end
+
 @interface UIView (IPI)
 - (UIScrollView *)_scroller;
 - (CGPoint)accessibilityConvertPointFromSceneReferenceCoordinates:(CGPoint)point;
