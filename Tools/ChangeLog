@@ -1,3 +1,30 @@
+2017-03-22  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [Linux] determineArchitecture is not cross-compile aware
+        https://bugs.webkit.org/show_bug.cgi?id=169886
+
+        Reviewed by Michael Catanzaro.
+
+        Try to detect the target architecture name from the GCC triplet
+        when cross-building.
+
+        The aarch64 architecture is renamed to arm64 (this is coherent with
+        the rest of the perl tooling that consults the architecture determined
+        in determineArchitecture(), the check for this arch is always done
+        with the arm64 name).
+
+        * Scripts/webkitdirs.pm: Remove the isARM() function: its dead code
+        and not cross-build aware.
+        (determineArchitecture): When crossbuilding, try to detect the target
+        architecture name from the GCC triplet.
+        Remove also the fallback option to run the arch command, because this
+        command doesn't print the expected on Mac/BSD, and on Linux is the
+        same than uname -m. See https://bugs.webkit.org/show_bug.cgi?id=152958#c6
+        (isCrossCompilation): Some cross-compilers (buildroot one for example)
+        don't define the --host option. Add another option to detect that
+        we are cross-building by building a dummy program and checking if
+        we can run it.
+
 2017-03-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Several WPT tests are failing since they were added in the last update in r213882

@@ -40,6 +40,7 @@ use File::Basename;
 use File::Find;
 use File::Path qw(make_path mkpath rmtree);
 use File::Spec;
+use File::Temp qw(tempdir);
 use File::stat;
 use List::Util;
 use POSIX;
@@ -343,12 +344,16 @@ sub determineArchitecture
             }
         }
     } elsif (isCMakeBuild()) {
-        if (open my $cmake_sysinfo, "cmake --system-information |") {
+        if (isCrossCompilation()) {
+            my $compiler = "gcc";
+            $compiler = $ENV{'CC'} if (defined($ENV{'CC'}));
+            my @compiler_machine = split('-', `$compiler -dumpmachine`);
+            $architecture = $compiler_machine[0];
+        } elsif (open my $cmake_sysinfo, "cmake --system-information |") {
             while (<$cmake_sysinfo>) {
                 next unless index($_, 'CMAKE_SYSTEM_PROCESSOR') == 0;
                 if (/^CMAKE_SYSTEM_PROCESSOR \"([^"]+)\"/) {
                     $architecture = $1;
-                    $architecture = 'x86_64' if $architecture eq 'amd64';
                     last;
                 }
             }
@@ -358,19 +363,14 @@ sub determineArchitecture
 
     if (!isAnyWindows()) {
         if (!$architecture) {
-            # Fall back to output of `arch', if it is present.
-            $architecture = `arch`;
-            chomp $architecture;
-        }
-
-        if (!$architecture) {
             # Fall back to output of `uname -m', if it is present.
             $architecture = `uname -m`;
             chomp $architecture;
         }
     }
 
-    $architecture = 'x86_64' if ($architecture =~ /amd64/ && isBSD());
+    $architecture = 'x86_64' if $architecture =~ /amd64/i;
+    $architecture = 'arm64' if $architecture =~ /aarch64/i;
 }
 
 sub determineASanIsEnabled
@@ -1185,11 +1185,6 @@ sub isBSD()
     return ($^O eq "freebsd") || ($^O eq "openbsd") || ($^O eq "netbsd") || 0;
 }
 
-sub isARM()
-{
-    return ($Config{archname} =~ /^arm[v\-]/) || ($Config{archname} =~ /^aarch64[v\-]/);
-}
-
 sub isX86_64()
 {
     return (architecture() eq "x86_64") || 0;
@@ -1197,16 +1192,28 @@ sub isX86_64()
 
 sub isCrossCompilation()
 {
-  my $compiler = "";
-  $compiler = $ENV{'CC'} if (defined($ENV{'CC'}));
-  if ($compiler =~ /gcc/) {
-      my $compiler_options = `$compiler -v 2>&1`;
-      my @host = $compiler_options =~ m/--host=(.*?)\s/;
-      my @target = $compiler_options =~ m/--target=(.*?)\s/;
-
-      return ($host[0] ne "" && $target[0] ne "" && $host[0] ne $target[0]);
-  }
-  return 0;
+    my $compiler = "";
+    $compiler = $ENV{'CC'} if (defined($ENV{'CC'}));
+    if ($compiler =~ /gcc/) {
+        my $compilerOptions = `$compiler -v 2>&1`;
+        my @host = $compilerOptions =~ m/--host=(.*?)\s/;
+        my @target = $compilerOptions =~ m/--target=(.*?)\s/;
+        if ($target[0] ne "" && $host[0] ne "") {
+                return ($host[0] ne $target[0]);
+        } else {
+                # $tempDir gets automatically deleted when goes out of scope
+                my $tempDir = File::Temp->newdir();
+                my $testProgramSourcePath = File::Spec->catfile($tempDir, "testcross.c");
+                my $testProgramBinaryPath = File::Spec->catfile($tempDir, "testcross");
+                open(my $testProgramSourceHandler, ">", $testProgramSourcePath);
+                print $testProgramSourceHandler "int main() { return 0; }\n";
+                system("$compiler $testProgramSourcePath -o $testProgramBinaryPath > /dev/null 2>&1") == 0 or return 0;
+                # Crosscompiling if the program fails to run (because it was built for other arch)
+                system("$testProgramBinaryPath > /dev/null 2>&1") == 0 or return 1;
+                return 0;
+        }
+    }
+    return 0;
 }
 
 sub isAppleWebKit()
