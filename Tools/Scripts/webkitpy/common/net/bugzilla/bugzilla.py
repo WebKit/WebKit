@@ -486,11 +486,14 @@ class Bugzilla(object):
 
     def _parse_bug_id_from_attachment_page(self, page):
         # The "Up" relation happens to point to the bug.
-        up_link = BeautifulSoup(page).find('link', rel='Up')
-        if not up_link:
+        title = BeautifulSoup(page).find('div', attrs={'id':'bug_title'})
+        if not title :
             _log.warning("This attachment does not exist (or you don't have permissions to view it).")
             return None
-        match = re.search("show_bug.cgi\?id=(?P<bug_id>\d+)", up_link['href'])
+        match = re.search("show_bug.cgi\?id=(?P<bug_id>\d+)", str(title))
+        if not match:
+            _log.warning("Unable to parse bug id from attachment")
+            return None
         return int(match.group('bug_id'))
 
     def bug_id_for_attachment_id(self, attachment_id):

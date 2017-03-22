@@ -238,8 +238,9 @@ Ignore this bug.  Just for testing failure modes of webkit-patch and the commit-
   <head>
     <title>
   Attachment 41073 Details for Bug 27314</title>
-<link rel="Top" href="https://bugs.webkit.org/">
-    <link rel="Up" href="show_bug.cgi?id=27314">
+<div id="bug_title">
+  Attachment 41073 Details for
+  <a class="bz_bug_link bz_status_ASSIGNED " title="Sample bug" href="show_bug.cgi?id=27314">Bug 27314</a>: Sample bug</div>
 """
 
     def test_attachment_detail_bug_parsing(self):
