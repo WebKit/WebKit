@@ -1,3 +1,18 @@
+2017-03-22  Guillaume Emont  <guijemont@igalia.com>
+
+        [DFG] Don't use ArraySlice intrinsic on MIPS
+        https://bugs.webkit.org/show_bug.cgi?id=169721
+
+        Reviewed by Yusuke Suzuki.
+
+        Like on x86, we don't have enough registers available for this.
+
+        * assembler/CPU.h:
+        (JSC::isMIPS): Added.
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleIntrinsicCall):
+        Don't use the ArraySlice intrinsic on MIPS.
+
 2017-03-21  Mark Lam  <mark.lam@apple.com>
 
         The DFG Integer Check Combining phase should force an OSR exit for CheckInBounds on a negative constant min bound.

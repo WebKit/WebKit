@@ -65,6 +65,15 @@ inline bool isX86_64()
 #endif
 }
 
+inline bool isMIPS()
+{
+#if CPU(MIPS)
+    return true;
+#else
+    return false;
+#endif
+}
+
 inline bool optimizeForARMv7IDIVSupported()
 {
     return isARMv7IDIVSupported() && Options::useArchitectureSpecificOptimizations();
