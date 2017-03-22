@@ -1684,6 +1684,7 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
         if (!this._statusImageElement) {
             this._statusImageElement = useSVGSymbol("Images/DOMBreakpoint.svg", "status-image");
             this._statusImageElement.classList.add("breakpoint");
+            this._statusImageElement.addEventListener("click", this._statusImageClicked.bind(this));
             this._statusImageElement.addEventListener("contextmenu", this._statusImageContextmenu.bind(this));
             this._statusImageElement.addEventListener("mousedown", (event) => { event.stopPropagation(); });
         }
@@ -1692,6 +1693,19 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
 
         let disabled = this._breakpointStatus === WebInspector.DOMTreeElement.BreakpointStatus.DisabledBreakpoint;
         this._statusImageElement.classList.toggle("disabled", disabled);
+    }
+
+    _statusImageClicked(event)
+    {
+        if (event.button !== 0 || event.ctrlKey)
+            return;
+
+        let breakpoints = WebInspector.domDebuggerManager.domBreakpointsForNode(this.representedObject);
+        if (!breakpoints || !breakpoints.length)
+            return;
+
+        let shouldEnable = breakpoints.some((breakpoint) => breakpoint.disabled);
+        breakpoints.forEach((breakpoint) => breakpoint.disabled = !shouldEnable);
     }
 
     _statusImageContextmenu(event)

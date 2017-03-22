@@ -1,3 +1,21 @@
+2017-03-22  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Clicking DOM breakpoint marker should enable/disable breakpoints
+        https://bugs.webkit.org/show_bug.cgi?id=169856
+        <rdar://problem/31133090>
+
+        Reviewed by Joseph Pecoraro.
+
+        Clicking DOM breakpoint marker should enable/disable breakpoints,
+        matching the behavior of the marker's context menu:
+
+        - If one or more breakpoints are disabled, click enables all
+        - If all breakpoints are enabled, click disables all
+
+        * UserInterface/Views/DOMTreeElement.js:
+        (WebInspector.DOMTreeElement.prototype._updateBreakpointStatus):
+        (WebInspector.DOMTreeElement.prototype._statusImageClicked):
+
 2017-03-20  Devin Rousso  <webkit@devinrousso.com>
 
         Web Inspector: RTL: minor layout issues in Breakpoint Editor popover
