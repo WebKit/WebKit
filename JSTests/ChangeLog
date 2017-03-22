@@ -1,3 +1,13 @@
+2017-03-22  JF Bastien  <jfbastien@apple.com>
+
+        WebAssembly: constructors without new don't throw
+        https://bugs.webkit.org/show_bug.cgi?id=165995
+
+        Reviewed by Saam Barati.
+
+        * wasm/js-api/test_basic_api.js:
+        (const.c.in.constructorProperties.switch):
+
 2017-03-21  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Optimize Number.prototype.toString on Int32 / Int52 / Double

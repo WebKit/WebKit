@@ -1,3 +1,20 @@
+2017-03-22  JF Bastien  <jfbastien@apple.com>
+
+        WebAssembly: constructors without new don't throw
+        https://bugs.webkit.org/show_bug.cgi?id=165995
+
+        Reviewed by Saam Barati.
+
+        * wasm/js/WebAssemblyCompileErrorConstructor.cpp:
+        (JSC::constructJSWebAssemblyCompileError):
+        (JSC::callJSWebAssemblyCompileError):
+        * wasm/js/WebAssemblyLinkErrorConstructor.cpp:
+        (JSC::constructJSWebAssemblyLinkError):
+        (JSC::callJSWebAssemblyLinkError):
+        * wasm/js/WebAssemblyRuntimeErrorConstructor.cpp:
+        (JSC::constructJSWebAssemblyRuntimeError):
+        (JSC::callJSWebAssemblyRuntimeError):
+
 2017-03-22  Guillaume Emont  <guijemont@igalia.com>
 
         [DFG] Don't use ArraySlice intrinsic on MIPS

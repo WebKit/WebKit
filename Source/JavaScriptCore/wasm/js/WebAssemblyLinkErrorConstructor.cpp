@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,21 +44,21 @@ const ClassInfo WebAssemblyLinkErrorConstructor::s_info = { "Function", &Base::s
  @end
  */
 
-static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyLinkError(ExecState* state)
+static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyLinkError(ExecState* exec)
 {
-    auto& vm = state->vm();
+    auto& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    JSValue message = state->argument(0);
-    auto* structure = InternalFunction::createSubclassStructure(state, state->newTarget(), asInternalFunction(state->jsCallee())->globalObject()->WebAssemblyLinkErrorStructure());
+    JSValue message = exec->argument(0);
+    auto* structure = InternalFunction::createSubclassStructure(exec, exec->newTarget(), asInternalFunction(exec->jsCallee())->globalObject()->WebAssemblyLinkErrorStructure());
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    return JSValue::encode(JSWebAssemblyLinkError::create(state, vm, structure, message));
+    return JSValue::encode(JSWebAssemblyLinkError::create(exec, vm, structure, message));
 }
 
-static EncodedJSValue JSC_HOST_CALL callJSWebAssemblyLinkError(ExecState* state)
+static EncodedJSValue JSC_HOST_CALL callJSWebAssemblyLinkError(ExecState* exec)
 {
-    VM& vm = state->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-    return JSValue::encode(throwConstructorCannotBeCalledAsFunctionTypeError(state, scope, "WebAssembly.LinkError"));
+    JSValue message = exec->argument(0);
+    Structure* errorStructure = asInternalFunction(exec->jsCallee())->globalObject()->WebAssemblyLinkErrorStructure();
+    return JSValue::encode(ErrorInstance::create(exec, errorStructure, message, nullptr, TypeNothing, false));
 }
 
 WebAssemblyLinkErrorConstructor* WebAssemblyLinkErrorConstructor::create(VM& vm, Structure* structure, WebAssemblyLinkErrorPrototype* thisPrototype)
