@@ -1,0 +1,9 @@
+Checks that subresources that got redirected do not circumvent third-party cookie rules.
+This test PASS if you can see the text "FAILED: Cookie not set".
+
+
+
+--------
+Frame: '<!--framePath //<!--frame0-->-->'
+--------
+FAILED: Cookie not set

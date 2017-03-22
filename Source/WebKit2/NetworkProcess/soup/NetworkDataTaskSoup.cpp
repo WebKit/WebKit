@@ -638,7 +638,6 @@ void NetworkDataTaskSoup::continueHTTPRedirection()
 
     ResourceRequest request = m_firstRequest;
     request.setURL(URL(m_response.url(), m_response.httpHeaderField(HTTPHeaderName::Location)));
-    request.setFirstPartyForCookies(request.url());
 
     // Should not set Referer after a redirect from a secure resource to non-secure one.
     if (m_shouldClearReferrerOnHTTPSToHTTPRedirect && !request.url().protocolIs("https") && protocolIs(request.httpReferrer(), "https"))

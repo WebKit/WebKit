@@ -1,3 +1,20 @@
+2017-03-21  Sergio Villar Senin  <svillar@igalia.com>
+
+        [Soup] "Only from websites I visit" cookie policy is broken
+        https://bugs.webkit.org/show_bug.cgi?id=168912
+
+        Reviewed by Carlos Garcia Campos.
+
+        Do not reset the first party for cookies on redirects. That's properly done for the main
+        resource in DocumentLoader::willSendRequest and, in the case of subresources, is absolutely
+        wrong (which is what we were doing since r143931).
+
+        The most notable effect was that subresources loaded via redirects were effectively
+        bypassing the "no third party" policy for cookies.
+
+        * NetworkProcess/soup/NetworkDataTaskSoup.cpp:
+        (WebKit::NetworkDataTaskSoup::continueHTTPRedirection):
+
 2017-03-19  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Teach TextIndicator to estimate the background color of the given Range
