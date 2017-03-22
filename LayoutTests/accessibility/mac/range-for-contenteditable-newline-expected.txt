@@ -7,6 +7,13 @@ abc
 
 
 def
+The quick brown fox
+
+jumped over the lazy dog
+
+Text in a pre element
+is displayed in a fixed-width
+font
 This tests that when there are newline characters within text controls, we can get the correct text range from index and length.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
@@ -19,6 +26,14 @@ PASS textTest is 'test'
 PASS textareaTextHello is 'hello'
 PASS textareaTextWorld is 'world'
 PASS textDEF is 'def'
+PASS rangeForLine is '{21, 25}'
+PASS textLine is 'jumped over the lazy dog'
+PASS firstLine is 0
+PASS secondLine is 1
+PASS rangeForLine is '{22, 30}'
+PASS textLine is 'is displayed in a fixed-width\n'
+PASS firstLine is 0
+FAIL secondLine should be 1. Was 2.
 PASS successfullyParsed is true
 
 TEST COMPLETE
