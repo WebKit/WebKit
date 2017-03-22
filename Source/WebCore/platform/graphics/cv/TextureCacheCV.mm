@@ -75,6 +75,9 @@ RetainPtr<TextureCacheCV::TextureType> TextureCacheCV::textureFromImage(CVImageB
 
     auto weakThis = m_weakPtrFactory.createWeakPtr();
     dispatch_async(dispatch_get_main_queue(), [weakThis] {
+        if (!weakThis)
+            return;
+        
         if (auto cache = weakThis->m_cache.get())
 #if PLATFORM(IOS)
             CVOpenGLESTextureCacheFlush(cache, 0);
