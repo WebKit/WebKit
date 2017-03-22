@@ -9,7 +9,7 @@ RUN(internals.setUserPreferredLanguages(['en']))
 ** Test with preferred language set to English, track type set to captions
 RUN(internals.settings.setShouldDisplayTrackKind('Captions', true))
 EXPECTED (trackMenuItems[0].textContent == 'Off') OK
-EXPECTED (trackMenuItems[1].textContent == 'Auto (Recommended)'), OBSERVED 'Auto' FAIL
+EXPECTED (trackMenuItems[1].textContent == 'Auto (Recommended)') OK
 EXPECTED (trackMenuItems[2].textContent == 'u (English)'), OBSERVED 'u' FAIL
 EXPECTED (trackMenuItems[3].textContent == 'y (English-Australia)'), OBSERVED 'v' FAIL
 EXPECTED (trackMenuItems[4].textContent == 'v (English)'), OBSERVED 'w' FAIL
@@ -24,7 +24,7 @@ RUN(internals.setUserPreferredLanguages(['ja']))
 RUN(internals.settings.setShouldDisplayTrackKind('Captions', false))
 RUN(internals.settings.setShouldDisplayTrackKind('Subtitles', true))
 EXPECTED (trackMenuItems[0].textContent == 'Off') OK
-EXPECTED (trackMenuItems[1].textContent == 'Auto (Recommended)'), OBSERVED 'Auto' FAIL
+EXPECTED (trackMenuItems[1].textContent == 'Auto (Recommended)') OK
 EXPECTED (trackMenuItems[2].textContent == 'z (Japanese)'), OBSERVED 'u' FAIL
 EXPECTED (trackMenuItems[3].textContent == 'v (English)'), OBSERVED 'v' FAIL
 EXPECTED (trackMenuItems[4].textContent == 'x (English-Australia)'), OBSERVED 'w' FAIL

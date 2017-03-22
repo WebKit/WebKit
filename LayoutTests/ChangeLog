@@ -1,3 +1,22 @@
+2017-03-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed GTK+ gardening. Rebaseline several tests after r214244.
+
+        * platform/gtk/accessibility/file-upload-button-stringvalue-expected.txt:
+        * platform/gtk/fast/forms/box-shadow-override-expected.png:
+        * platform/gtk/fast/forms/box-shadow-override-expected.txt:
+        * platform/gtk/fast/forms/file/file-input-direction-expected.png:
+        * platform/gtk/fast/forms/file/file-input-direction-expected.txt:
+        * platform/gtk/fast/forms/file/file-input-disabled-expected.png:
+        * platform/gtk/fast/forms/file/file-input-disabled-expected.txt:
+        * platform/gtk/fast/forms/form-element-geometry-expected.png:
+        * platform/gtk/fast/forms/form-element-geometry-expected.txt:
+        * platform/gtk/fast/forms/input-appearance-height-expected.png:
+        * platform/gtk/fast/forms/input-appearance-height-expected.txt:
+        * platform/gtk/fast/forms/input-value-expected.txt:
+        * platform/gtk/media/video-controls-captions-trackmenu-localized-expected.txt:
+        * platform/gtk/media/video-controls-captions-trackmenu-sorted-expected.txt:
+
 2017-03-21  Sergio Villar Senin  <svillar@igalia.com>
 
         [Soup] "Only from websites I visit" cookie policy is broken

@@ -197,7 +197,7 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (1,1) size 204x18
                   text run at (1,2) width 204: "file with value property changed"
               RenderTableCell {TD} at (343,403) size 312x32 [r=13 c=1 rs=1 cs=1]
-                RenderFileUploadControl {INPUT} at (3,3) size 306x26 "(None)"
+                RenderFileUploadControl {INPUT} at (3,3) size 306x26 "no file selected"
                   RenderButton {INPUT} at (0,0) size 103x26 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
                     RenderBlock (anonymous) at (8,4) size 87x17
                       RenderText at (0,0) size 87x17

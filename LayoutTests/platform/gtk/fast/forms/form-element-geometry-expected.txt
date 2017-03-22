@@ -94,7 +94,7 @@ layer at (0,0) size 785x722
                 RenderListBox {SELECT} at (2,2) size 41x73 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
             RenderTableCell {TD} at (160,2) size 312x32 [r=0 c=2 rs=1 cs=1]
               RenderBlock {DIV} at (1,1) size 310x30 [border: (2px solid #0000FF)]
-                RenderFileUploadControl {INPUT} at (2,2) size 306x26 "(None)"
+                RenderFileUploadControl {INPUT} at (2,2) size 306x26 "no file selected"
                   RenderButton {INPUT} at (0,0) size 103x26 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
                     RenderBlock (anonymous) at (8,4) size 87x17
                       RenderText at (0,0) size 87x17
@@ -172,7 +172,7 @@ layer at (0,0) size 785x722
         RenderTextControl {INPUT} at (29,27) size 101x23 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
         RenderText {#text} at (132,30) size 4x17
           text run at (132,30) width 4: " "
-        RenderFileUploadControl {INPUT} at (138,26) size 306x26 "(None)"
+        RenderFileUploadControl {INPUT} at (138,26) size 306x26 "no file selected"
           RenderButton {INPUT} at (0,0) size 103x26 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
             RenderBlock (anonymous) at (8,4) size 87x17
               RenderText at (0,0) size 87x17
