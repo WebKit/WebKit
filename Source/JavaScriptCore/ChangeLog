@@ -1,3 +1,16 @@
+2017-03-21  Mark Lam  <mark.lam@apple.com>
+
+        The DFG Integer Check Combining phase should force an OSR exit for CheckInBounds on a negative constant min bound.
+        https://bugs.webkit.org/show_bug.cgi?id=169933
+        <rdar://problem/31105125>
+
+        Reviewed by Filip Pizlo and Geoffrey Garen.
+
+        Also fixed the bit-rotted RangeKey::dump() function.
+
+        * dfg/DFGIntegerCheckCombiningPhase.cpp:
+        (JSC::DFG::IntegerCheckCombiningPhase::handleBlock):
+
 2017-03-21  Csaba Osztrogonác  <ossy@webkit.org>
 
         [ARM] Add missing MacroAssembler functions after r214187
