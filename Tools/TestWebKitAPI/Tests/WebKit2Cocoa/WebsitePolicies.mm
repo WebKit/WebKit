@@ -214,8 +214,12 @@ TEST(WebKit2, WebsitePoliciesAutoplayEnabled)
 
     NSURLRequest *requestWithAudio = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"autoplay-check" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
     NSURLRequest *requestWithoutAudio = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"autoplay-no-audio-check" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+
+    // iOS does not support volume changes to media elements.
+#if PLATFORM(MAC)
     NSURLRequest *requestWithoutVolume = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"autoplay-zero-volume-check" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
-    
+#endif
+
     [delegate setAutoplayPolicyForURL:^(NSURL *) {
         return _WKWebsiteAutoplayPolicyAllowWithoutSound;
     }];
@@ -225,14 +229,19 @@ TEST(WebKit2, WebsitePoliciesAutoplayEnabled)
     [webView loadRequest:requestWithoutAudio];
     [webView waitForMessage:@"autoplayed"];
 
+#if PLATFORM(MAC)
     [webView loadRequest:requestWithoutVolume];
     [webView waitForMessage:@"autoplayed"];
+#endif
 
     [delegate setAutoplayPolicyForURL:^(NSURL *) {
         return _WKWebsiteAutoplayPolicyDeny;
     }];
+
+#if PLATFORM(MAC)
     [webView loadRequest:requestWithoutVolume];
     [webView waitForMessage:@"did-not-play"];
+#endif
 
     [webView loadRequest:requestWithAudio];
     [webView waitForMessage:@"did-not-play"];
@@ -256,8 +265,10 @@ TEST(WebKit2, WebsitePoliciesAutoplayEnabled)
     [webView loadRequest:requestWithoutAudio];
     [webView waitForMessage:@"autoplayed"];
 
+#if PLATFORM(MAC)
     [webView loadRequest:requestWithoutVolume];
     [webView waitForMessage:@"autoplayed"];
+#endif
 
     NSURLRequest *requestWithAudioInIFrame = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"autoplay-check-in-iframe" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
 

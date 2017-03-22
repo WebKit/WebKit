@@ -1,3 +1,15 @@
+2017-03-22  Matt Rajca  <mrajca@apple.com>
+
+        Only run volume-related autoplay policy tests on Mac.
+        https://bugs.webkit.org/show_bug.cgi?id=169969
+
+        Reviewed by Alex Christensen.
+
+        iOS does not support volume changes to media elements so these tests are timing out.
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/WebsitePolicies.mm:
+        (TEST):
+
 2017-03-22  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [Linux] determineArchitecture is not cross-compile aware
