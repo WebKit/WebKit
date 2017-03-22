@@ -76,6 +76,10 @@ RTCPeerConnection::RTCPeerConnection(ScriptExecutionContext& context)
     : ActiveDOMObject(&context)
     , m_backend(PeerConnectionBackend::create(*this))
 {
+    if (!m_backend) {
+        m_signalingState = RTCSignalingState::Closed;
+        m_iceConnectionState = RTCIceConnectionState::Closed;
+    }
 }
 
 RTCPeerConnection::~RTCPeerConnection()
@@ -354,10 +358,10 @@ void RTCPeerConnection::close()
     if (m_signalingState == RTCSignalingState::Closed)
         return;
 
-    m_backend->stop();
-
     m_iceConnectionState = RTCIceConnectionState::Closed;
     m_signalingState = RTCSignalingState::Closed;
+
+    m_backend->stop();
 
     for (RTCRtpSender& sender : m_transceiverSet->senders())
         sender.stop();
