@@ -1730,7 +1730,6 @@ static void WebKitInitializeGamepadProviderIfNecessary()
     _private->page->settings().setMinimumLogicalFontSize(9);
     _private->page->settings().setDefaultFontSize([_private->preferences defaultFontSize]);
     _private->page->settings().setDefaultFixedFontSize(13);
-    _private->page->settings().setDownloadableBinaryFontsEnabled(false);
     _private->page->settings().setAcceleratedDrawingEnabled([preferences acceleratedDrawingEnabled]);
     _private->page->settings().setDisplayListDrawingEnabled([preferences displayListDrawingEnabled]);
     

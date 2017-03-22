@@ -1,3 +1,15 @@
+2017-03-22  Dan Bernstein  <mitz@apple.com>
+
+        [iOS] downloadableBinaryFontsEnabled is set to false in -initSimpleHTMLDocumentWithStyle:frame:preferences:groupName:
+        https://bugs.webkit.org/show_bug.cgi?id=169967
+        <rdar://problem/30406898>
+
+        Reviewed by Anders Carlsson.
+
+        * WebView/WebView.mm:
+        (-[WebView initSimpleHTMLDocumentWithStyle:frame:preferences:groupName:]): Removed call to
+          Settings::downloadableBinaryFontsEnabled. The default is true.
+
 2017-03-22  Andy Estes  <aestes@apple.com>
 
         [QuickLook] Rename QuickLookHandle to PreviewLoader
