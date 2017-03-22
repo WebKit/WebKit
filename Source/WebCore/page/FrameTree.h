@@ -67,6 +67,9 @@ public:
     
     WEBCORE_EXPORT void appendChild(PassRefPtr<Frame>);
     bool transferChild(PassRefPtr<Frame>);
+
+    Frame* traverseNextInPostOrderWithWrap(bool) const;
+
     void detachFromParent() { m_parent = nullptr; }
     void removeChild(Frame*);
 
@@ -86,6 +89,7 @@ public:
     unsigned indexInParent() const;
 
 private:
+    Frame* deepFirstChild() const;
     Frame* deepLastChild() const;
     void actuallyAppendChild(PassRefPtr<Frame>);
 

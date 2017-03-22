@@ -35,13 +35,10 @@
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
 #include "FrameView.h"
-#include "HistoryController.h"
-#include "HistoryItem.h"
 #include "Logging.h"
 #include "MainFrame.h"
 #include "Page.h"
 #include "PageCache.h"
-#include "PageTransitionEvent.h"
 #include "SVGDocumentExtensions.h"
 #include "ScriptController.h"
 #include "SerializedScriptValue.h"
@@ -102,6 +99,7 @@ void CachedFrameBase::restore()
     for (unsigned i = 0; i < m_childFrames.size(); ++i) {
         frame.tree().appendChild(&m_childFrames[i]->view()->frame());
         m_childFrames[i]->open();
+        ASSERT_WITH_SECURITY_IMPLICATION(m_document == frame.document());
     }
 
 #if PLATFORM(IOS)
@@ -116,14 +114,6 @@ void CachedFrameBase::restore()
         }
     }
 #endif
-
-    // FIXME: update Page Visibility state here.
-    // https://bugs.webkit.org/show_bug.cgi?id=116770
-    m_document->enqueuePageshowEvent(PageshowEventPersisted);
-
-    HistoryItem* historyItem = frame.loader().history().currentItem();
-    if (historyItem && historyItem->stateObject())
-        m_document->enqueuePopstateEvent(historyItem->stateObject());
 
 #if ENABLE(TOUCH_EVENTS) && !PLATFORM(IOS)
     if (m_document->hasTouchEventHandlers())

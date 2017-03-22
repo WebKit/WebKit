@@ -464,6 +464,25 @@ Frame* FrameTree::traversePreviousWithWrap(bool wrap) const
     return nullptr;
 }
 
+Frame* FrameTree::traverseNextInPostOrderWithWrap(bool wrap) const
+{
+    if (m_nextSibling)
+        return m_nextSibling->tree().deepFirstChild();
+    if (m_parent)
+        return m_parent;
+    if (wrap)
+        return deepFirstChild();
+    return nullptr;
+}
+
+Frame* FrameTree::deepFirstChild() const
+{
+    Frame* result = &m_thisFrame;
+    while (auto* next = result->tree().firstChild())
+        result = next;
+    return result;
+}
+
 Frame* FrameTree::deepLastChild() const
 {
     Frame* result = &m_thisFrame;

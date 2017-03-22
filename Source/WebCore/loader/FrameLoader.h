@@ -347,7 +347,8 @@ private:
     void setState(FrameState);
 
     void closeOldDataSources();
-    void prepareForCachedPageRestore();
+    void willRestoreFromCachedPage();
+    void didRestoreFromCachedPage();
 
     bool shouldReloadToHandleUnreachableURL(DocumentLoader*);
 
