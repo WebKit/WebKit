@@ -233,8 +233,8 @@
 #endif
 
 #if USE(QUICK_LOOK)
-#include "MockQuickLookHandleClient.h"
-#include "QuickLook.h"
+#include "MockPreviewLoaderClient.h"
+#include "PreviewLoader.h"
 #endif
 
 using JSC::CallData;
@@ -446,8 +446,8 @@ void Internals::resetToConsistentState(Page& page)
     page.setLowPowerModeEnabledOverrideForTesting(std::nullopt);
 
 #if USE(QUICK_LOOK)
-    MockQuickLookHandleClient::singleton().setPassword("");
-    QuickLookHandle::setClientForTesting(nullptr);
+    MockPreviewLoaderClient::singleton().setPassword("");
+    PreviewLoader::setClientForTesting(nullptr);
 #endif
 }
 
@@ -3829,8 +3829,8 @@ Vector<String> Internals::accessKeyModifiers() const
 void Internals::setQuickLookPassword(const String& password)
 {
 #if USE(QUICK_LOOK)
-    auto& quickLookHandleClient = MockQuickLookHandleClient::singleton();
-    QuickLookHandle::setClientForTesting(&quickLookHandleClient);
+    auto& quickLookHandleClient = MockPreviewLoaderClient::singleton();
+    PreviewLoader::setClientForTesting(&quickLookHandleClient);
     quickLookHandleClient.setPassword(password);
 #else
     UNUSED_PARAM(password);

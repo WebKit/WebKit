@@ -1,3 +1,27 @@
+2017-03-22  Andy Estes  <aestes@apple.com>
+
+        [QuickLook] Rename QuickLookHandle to PreviewLoader
+        https://bugs.webkit.org/show_bug.cgi?id=169961
+
+        Reviewed by Andreas Kling.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+        * WebProcess/WebCoreSupport/ios/WebFrameLoaderClientIOS.mm:
+        (WebKit::WebFrameLoaderClient::createPreviewLoaderClient):
+        (WebKit::WebFrameLoaderClient::createQuickLookHandleClient): Deleted.
+        * WebProcess/WebCoreSupport/ios/WebPreviewLoaderClient.cpp: Renamed from Source/WebKit2/WebProcess/WebCoreSupport/ios/WebQuickLookHandleClient.cpp.
+        (WebKit::WebPreviewLoaderClient::WebPreviewLoaderClient):
+        (WebKit::WebPreviewLoaderClient::~WebPreviewLoaderClient):
+        (WebKit::WebPreviewLoaderClient::didReceiveDataArray):
+        (WebKit::WebPreviewLoaderClient::didFinishLoading):
+        (WebKit::WebPreviewLoaderClient::didFail):
+        (WebKit::WebPreviewLoaderClient::didRequestPassword):
+        (WebKit::WebPreviewLoaderClient::didReceivePassword):
+        * WebProcess/WebCoreSupport/ios/WebPreviewLoaderClient.h: Renamed from Source/WebKit2/WebProcess/WebCoreSupport/ios/WebQuickLookHandleClient.h.
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::didReceivePasswordForQuickLookDocument):
+
 2017-03-22  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [WK2] Add SPI to notify clients when data interaction is beginning or ending

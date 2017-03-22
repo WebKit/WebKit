@@ -106,7 +106,7 @@ private:
 #endif
 
 #if USE(QUICK_LOOK)
-    bool shouldCreateQuickLookHandleForResponse(const ResourceResponse&) const;
+    bool shouldCreatePreviewLoaderForResponse(const ResourceResponse&) const;
 #endif
 
     enum SubresourceLoaderState {

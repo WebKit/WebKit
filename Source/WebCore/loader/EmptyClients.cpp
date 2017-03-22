@@ -68,7 +68,7 @@
 #endif
 
 #if USE(QUICK_LOOK)
-#include "QuickLookHandleClient.h"
+#include "PreviewLoaderClient.h"
 #endif
 
 namespace WebCore {
@@ -448,7 +448,7 @@ class EmptyFrameLoaderClient final : public FrameLoaderClient {
     void prefetchDNS(const String&) final { }
 
 #if USE(QUICK_LOOK)
-    RefPtr<QuickLookHandleClient> createQuickLookHandleClient(const String&, const String&) final { return nullptr; }
+    RefPtr<PreviewLoaderClient> createPreviewLoaderClient(const String&, const String&) final { return nullptr; }
 #endif
 };
 

@@ -51,7 +51,7 @@ class DocumentLoader;
 class Frame;
 class FrameLoader;
 class NetworkLoadMetrics;
-class QuickLookHandle;
+class PreviewLoader;
 class URL;
 
 class ResourceLoader : public RefCounted<ResourceLoader>, protected ResourceHandleClient {
@@ -175,7 +175,7 @@ protected:
     ResourceResponse m_response;
     LoadTiming m_loadTiming;
 #if USE(QUICK_LOOK)
-    std::unique_ptr<QuickLookHandle> m_quickLookHandle;
+    std::unique_ptr<PreviewLoader> m_previewLoader;
 #endif
 
 private:

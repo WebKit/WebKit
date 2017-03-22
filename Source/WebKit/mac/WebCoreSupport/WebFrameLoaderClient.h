@@ -246,7 +246,7 @@ private:
     bool shouldPaintBrokenImage(const WebCore::URL&) const final;
 
 #if USE(QUICK_LOOK)
-    RefPtr<WebCore::QuickLookHandleClient> createQuickLookHandleClient(const String& fileName, const String& uti) final;
+    RefPtr<WebCore::PreviewLoaderClient> createPreviewLoaderClient(const String& fileName, const String& uti) final;
 #endif
 
 #if ENABLE(CONTENT_FILTERING)

@@ -150,8 +150,8 @@
 
 #if USE(QUICK_LOOK)
 #import <WebCore/NSFileManagerSPI.h>
+#import <WebCore/PreviewLoaderClient.h>
 #import <WebCore/QuickLook.h>
-#import <WebCore/QuickLookHandleClient.h>
 #endif
 
 #if HAVE(APP_LINKS)
@@ -2222,9 +2222,9 @@ bool WebFrameLoaderClient::shouldLoadMediaElementURL(const URL& url) const
 #endif
 
 #if USE(QUICK_LOOK)
-RefPtr<QuickLookHandleClient> WebFrameLoaderClient::createQuickLookHandleClient(const String& fileName, const String& uti)
+RefPtr<PreviewLoaderClient> WebFrameLoaderClient::createPreviewLoaderClient(const String& fileName, const String& uti)
 {
-    class QuickLookDocumentWriter : public WebCore::QuickLookHandleClient {
+    class QuickLookDocumentWriter : public WebCore::PreviewLoaderClient {
     public:
         explicit QuickLookDocumentWriter(NSString *filePath)
             : m_filePath { filePath }

@@ -41,7 +41,7 @@
 #if USE(QUICK_LOOK)
 #import "WebFrame.h"
 #import "WebPage.h"
-#import "WebQuickLookHandleClient.h"
+#import "WebPreviewLoaderClient.h"
 #import <WebCore/QuickLook.h>
 #endif
 
@@ -66,7 +66,7 @@ RetainPtr<CFDictionaryRef> WebFrameLoaderClient::connectionProperties(DocumentLo
 }
 
 #if USE(QUICK_LOOK)
-RefPtr<QuickLookHandleClient> WebFrameLoaderClient::createQuickLookHandleClient(const String& fileName, const String& uti)
+RefPtr<PreviewLoaderClient> WebFrameLoaderClient::createPreviewLoaderClient(const String& fileName, const String& uti)
 {
     if (!m_frame->isMainFrame())
         return nullptr;
@@ -75,7 +75,7 @@ RefPtr<QuickLookHandleClient> WebFrameLoaderClient::createQuickLookHandleClient(
     if (!webPage)
         return nullptr;
 
-    return WebQuickLookHandleClient::create(fileName, uti, webPage->pageID());
+    return WebPreviewLoaderClient::create(fileName, uti, webPage->pageID());
 }
 #endif
 

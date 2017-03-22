@@ -4159,7 +4159,7 @@
 		A10BB5851484E3A700B2E87A /* RenderSVGRect.h in Headers */ = {isa = PBXBuildFile; fileRef = A10BB5831484E3A700B2E87A /* RenderSVGRect.h */; };
 		A10BB58B1484E3B300B2E87A /* RenderSVGShape.h in Headers */ = {isa = PBXBuildFile; fileRef = A10BB5891484E3B300B2E87A /* RenderSVGShape.h */; };
 		A10D7FEC1C2676D100C6C115 /* CFNetworkConnectionCacheSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = A10D7FEB1C2676D100C6C115 /* CFNetworkConnectionCacheSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		A10DBF4718F92317000D70C6 /* QuickLookHandleClient.h in Headers */ = {isa = PBXBuildFile; fileRef = A10DBF4618F92317000D70C6 /* QuickLookHandleClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A10DBF4718F92317000D70C6 /* PreviewLoaderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = A10DBF4618F92317000D70C6 /* PreviewLoaderClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A10DC76A14747BAB005E2471 /* StyleGridData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A10DC76814747BAB005E2471 /* StyleGridData.cpp */; };
 		A10DC76B14747BAB005E2471 /* StyleGridData.h in Headers */ = {isa = PBXBuildFile; fileRef = A10DC76914747BAB005E2471 /* StyleGridData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A110DB9B14F5DF7700A03B93 /* StyleGridItemData.h in Headers */ = {isa = PBXBuildFile; fileRef = A110DB9A14F5DF7700A03B93 /* StyleGridItemData.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -4175,8 +4175,8 @@
 		A12A1050166444FD008FA311 /* GridTrackSize.h in Headers */ = {isa = PBXBuildFile; fileRef = A12A104E166444DC008FA311 /* GridTrackSize.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A136A00C1134DBD200CC8D50 /* XMLHttpRequestProgressEventThrottle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A136A00A1134DBD200CC8D50 /* XMLHttpRequestProgressEventThrottle.cpp */; };
 		A136A00D1134DBD200CC8D50 /* XMLHttpRequestProgressEventThrottle.h in Headers */ = {isa = PBXBuildFile; fileRef = A136A00B1134DBD200CC8D50 /* XMLHttpRequestProgressEventThrottle.h */; };
-		A140618B1E2ECA0A0032B34E /* MockQuickLookHandleClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A14061891E2ECA0A0032B34E /* MockQuickLookHandleClient.cpp */; };
-		A140618C1E2ECA0A0032B34E /* MockQuickLookHandleClient.h in Headers */ = {isa = PBXBuildFile; fileRef = A140618A1E2ECA0A0032B34E /* MockQuickLookHandleClient.h */; };
+		A140618B1E2ECA0A0032B34E /* MockPreviewLoaderClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A14061891E2ECA0A0032B34E /* MockPreviewLoaderClient.cpp */; };
+		A140618C1E2ECA0A0032B34E /* MockPreviewLoaderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = A140618A1E2ECA0A0032B34E /* MockPreviewLoaderClient.h */; };
 		A14090FB1AA51E1D0091191A /* ContentFilterUnblockHandlerCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = A14090FA1AA51E1D0091191A /* ContentFilterUnblockHandlerCocoa.mm */; };
 		A14090FD1AA51E480091191A /* ContentFilterUnblockHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = A14090FC1AA51E480091191A /* ContentFilterUnblockHandler.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A14832B0187F618D00DA63A6 /* WAKAppKitStubs.h in Headers */ = {isa = PBXBuildFile; fileRef = A148328C187F508700DA63A6 /* WAKAppKitStubs.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -4225,6 +4225,8 @@
 		A17C81220F2A5CF7005DAAEB /* HTMLElementFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A17C81200F2A5CF7005DAAEB /* HTMLElementFactory.cpp */; };
 		A17C81230F2A5CF7005DAAEB /* HTMLElementFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = A17C81210F2A5CF7005DAAEB /* HTMLElementFactory.h */; };
 		A182D5B71BE722670087A7CC /* SettingsCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = A182D5B61BE722620087A7CC /* SettingsCocoa.mm */; };
+		A185B4291E8211A100DC9118 /* PreviewLoader.mm in Sources */ = {isa = PBXBuildFile; fileRef = A185B4271E8211A100DC9118 /* PreviewLoader.mm */; };
+		A185B42A1E8211A100DC9118 /* PreviewLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = A185B4281E8211A100DC9118 /* PreviewLoader.h */; };
 		A18890AE1AA13F250026C301 /* ParentalControlsContentFilter.mm in Sources */ = {isa = PBXBuildFile; fileRef = A18890AC1AA13F250026C301 /* ParentalControlsContentFilter.mm */; };
 		A18890AF1AA13F250026C301 /* ParentalControlsContentFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = A18890AD1AA13F250026C301 /* ParentalControlsContentFilter.h */; };
 		A19AEA211AAA808600B52B25 /* JSMockContentFilterSettings.h in Headers */ = {isa = PBXBuildFile; fileRef = A19AEA1E1AAA806E00B52B25 /* JSMockContentFilterSettings.h */; };
@@ -12282,7 +12284,7 @@
 		A10BB5881484E3B300B2E87A /* RenderSVGShape.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSVGShape.cpp; sourceTree = "<group>"; };
 		A10BB5891484E3B300B2E87A /* RenderSVGShape.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderSVGShape.h; sourceTree = "<group>"; };
 		A10D7FEB1C2676D100C6C115 /* CFNetworkConnectionCacheSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CFNetworkConnectionCacheSPI.h; sourceTree = "<group>"; };
-		A10DBF4618F92317000D70C6 /* QuickLookHandleClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuickLookHandleClient.h; sourceTree = "<group>"; };
+		A10DBF4618F92317000D70C6 /* PreviewLoaderClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PreviewLoaderClient.h; sourceTree = "<group>"; };
 		A10DC76814747BAB005E2471 /* StyleGridData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StyleGridData.cpp; sourceTree = "<group>"; };
 		A10DC76914747BAB005E2471 /* StyleGridData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StyleGridData.h; sourceTree = "<group>"; };
 		A110DB9A14F5DF7700A03B93 /* StyleGridItemData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StyleGridItemData.h; sourceTree = "<group>"; };
@@ -12298,8 +12300,8 @@
 		A12A104E166444DC008FA311 /* GridTrackSize.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GridTrackSize.h; sourceTree = "<group>"; };
 		A136A00A1134DBD200CC8D50 /* XMLHttpRequestProgressEventThrottle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XMLHttpRequestProgressEventThrottle.cpp; sourceTree = "<group>"; };
 		A136A00B1134DBD200CC8D50 /* XMLHttpRequestProgressEventThrottle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XMLHttpRequestProgressEventThrottle.h; sourceTree = "<group>"; };
-		A14061891E2ECA0A0032B34E /* MockQuickLookHandleClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MockQuickLookHandleClient.cpp; sourceTree = "<group>"; };
-		A140618A1E2ECA0A0032B34E /* MockQuickLookHandleClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MockQuickLookHandleClient.h; sourceTree = "<group>"; };
+		A14061891E2ECA0A0032B34E /* MockPreviewLoaderClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MockPreviewLoaderClient.cpp; sourceTree = "<group>"; };
+		A140618A1E2ECA0A0032B34E /* MockPreviewLoaderClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MockPreviewLoaderClient.h; sourceTree = "<group>"; };
 		A14090FA1AA51E1D0091191A /* ContentFilterUnblockHandlerCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ContentFilterUnblockHandlerCocoa.mm; sourceTree = "<group>"; };
 		A14090FC1AA51E480091191A /* ContentFilterUnblockHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContentFilterUnblockHandler.h; sourceTree = "<group>"; };
 		A148328C187F508700DA63A6 /* WAKAppKitStubs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WAKAppKitStubs.h; sourceTree = "<group>"; };
@@ -12349,6 +12351,8 @@
 		A17C81200F2A5CF7005DAAEB /* HTMLElementFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLElementFactory.cpp; sourceTree = "<group>"; };
 		A17C81210F2A5CF7005DAAEB /* HTMLElementFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLElementFactory.h; sourceTree = "<group>"; };
 		A182D5B61BE722620087A7CC /* SettingsCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SettingsCocoa.mm; sourceTree = "<group>"; };
+		A185B4271E8211A100DC9118 /* PreviewLoader.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PreviewLoader.mm; sourceTree = "<group>"; };
+		A185B4281E8211A100DC9118 /* PreviewLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PreviewLoader.h; sourceTree = "<group>"; };
 		A18890AC1AA13F250026C301 /* ParentalControlsContentFilter.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ParentalControlsContentFilter.mm; sourceTree = "<group>"; };
 		A18890AD1AA13F250026C301 /* ParentalControlsContentFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParentalControlsContentFilter.h; sourceTree = "<group>"; };
 		A19AEA1C1AAA7C4900B52B25 /* MockContentFilterSettings.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = MockContentFilterSettings.idl; sourceTree = "<group>"; };
@@ -17508,8 +17512,8 @@
 				2D6F3E8C1C1ECB1C0061DBD4 /* MockPageOverlay.idl */,
 				2DAAE32C19DCAF6000E002D2 /* MockPageOverlayClient.cpp */,
 				2DAAE32D19DCAF6000E002D2 /* MockPageOverlayClient.h */,
-				A14061891E2ECA0A0032B34E /* MockQuickLookHandleClient.cpp */,
-				A140618A1E2ECA0A0032B34E /* MockQuickLookHandleClient.h */,
+				A14061891E2ECA0A0032B34E /* MockPreviewLoaderClient.cpp */,
+				A140618A1E2ECA0A0032B34E /* MockPreviewLoaderClient.h */,
 				EB081CD81696084400553730 /* TypeConversions.h */,
 				EB081CD91696084400553730 /* TypeConversions.idl */,
 				E1BA67191742BEF400C20251 /* WebCoreTestShimLibrary.cpp */,
@@ -17723,7 +17727,7 @@
 				443F04260E75C8FB007E5407 /* NetworkStateNotifierIOS.mm */,
 				A1C150781E3F2B3E0032C98C /* PreviewConverter.h */,
 				A1C150771E3F2B3E0032C98C /* PreviewConverter.mm */,
-				A10DBF4618F92317000D70C6 /* QuickLookHandleClient.h */,
+				A10DBF4618F92317000D70C6 /* PreviewLoaderClient.h */,
 				7E428CE413E3407F003B661C /* ResourceHandleIOS.mm */,
 				7E7DE201195CEFCD0035363B /* ResourceRequestIOS.mm */,
 				44A20DB80F84166C00B3E1FE /* WebCoreURLResponseIOS.h */,
@@ -20783,6 +20787,8 @@
 		A15E31F01E0CB075004B371C /* ios */ = {
 			isa = PBXGroup;
 			children = (
+				A185B4281E8211A100DC9118 /* PreviewLoader.h */,
+				A185B4271E8211A100DC9118 /* PreviewLoader.mm */,
 				A15E31F11E0CB0AA004B371C /* QuickLook.h */,
 				A15E31F21E0CB0AA004B371C /* QuickLook.mm */,
 			);
@@ -26098,7 +26104,7 @@
 				4157EBFB1E3AB67F00AC9FE9 /* MockLibWebRTCPeerConnection.h in Headers */,
 				2D6F3E911C1ECB2F0061DBD4 /* MockPageOverlay.h in Headers */,
 				2D97F04819DD4140001EE9C3 /* MockPageOverlayClient.h in Headers */,
-				A140618C1E2ECA0A0032B34E /* MockQuickLookHandleClient.h in Headers */,
+				A140618C1E2ECA0A0032B34E /* MockPreviewLoaderClient.h in Headers */,
 				AA5F3B8D16CC33D100455EB0 /* PlatformSpeechSynthesizerMock.h in Headers */,
 				A1763F3F1E205234001D58DE /* WebArchiveDumpSupport.h in Headers */,
 				41815C1F138319830057AAA4 /* WebCoreTestSupport.h in Headers */,
@@ -26303,6 +26309,7 @@
 				2EDEF1F5121B0EFC00726DB2 /* BlobRegistry.h in Headers */,
 				2EDEF1F7121B0EFC00726DB2 /* BlobRegistryImpl.h in Headers */,
 				2EB4BCD3121F03E300EC4885 /* BlobResourceHandle.h in Headers */,
+				A185B42A1E8211A100DC9118 /* PreviewLoader.h in Headers */,
 				976D6C7F122B8A3D001FD1F7 /* BlobURL.h in Headers */,
 				BC5EB5E10E81BE8700B25965 /* BorderData.h in Headers */,
 				589556ED18D4A44000764B03 /* BorderEdge.h in Headers */,
@@ -28627,7 +28634,7 @@
 				550A0BCA085F6039007353D6 /* QualifiedName.h in Headers */,
 				CE12523D1A1676CD00864480 /* QuartzCoreSPI.h in Headers */,
 				A15E31F41E0CB0B5004B371C /* QuickLook.h in Headers */,
-				A10DBF4718F92317000D70C6 /* QuickLookHandleClient.h in Headers */,
+				A10DBF4718F92317000D70C6 /* PreviewLoaderClient.h in Headers */,
 				937F4CCC1A2D48C100BB39F5 /* QuickLookMacSPI.h in Headers */,
 				443918001A91B2F8006E04F2 /* QuickLookSoftLink.h in Headers */,
 				CE1252391A166FA000864480 /* QuickLookSPI.h in Headers */,
@@ -30196,7 +30203,7 @@
 				4157EBFA1E3AB67900AC9FE9 /* MockLibWebRTCPeerConnection.cpp in Sources */,
 				2D6F3E901C1ECB270061DBD4 /* MockPageOverlay.cpp in Sources */,
 				2D97F04719DD413C001EE9C3 /* MockPageOverlayClient.cpp in Sources */,
-				A140618B1E2ECA0A0032B34E /* MockQuickLookHandleClient.cpp in Sources */,
+				A140618B1E2ECA0A0032B34E /* MockPreviewLoaderClient.cpp in Sources */,
 				AA5F3B8F16CC4B3900455EB0 /* PlatformSpeechSynthesizerMock.cpp in Sources */,
 				A1763F3E1E205234001D58DE /* WebArchiveDumpSupport.mm in Sources */,
 				41815C1E138319830057AAA4 /* WebCoreTestSupport.cpp in Sources */,
@@ -31432,6 +31439,7 @@
 				947949331E0459FA00018D85 /* JSDeprecatedCSSOMRect.cpp in Sources */,
 				947949351E0459FA00018D85 /* JSDeprecatedCSSOMRGBColor.cpp in Sources */,
 				947949371E0459FA00018D85 /* JSDeprecatedCSSOMValue.cpp in Sources */,
+				A185B4291E8211A100DC9118 /* PreviewLoader.mm in Sources */,
 				947949391E0459FA00018D85 /* JSDeprecatedCSSOMValueList.cpp in Sources */,
 				31FB1A65120A5D3F00DC02A0 /* JSDeviceMotionEvent.cpp in Sources */,
 				59A86006119DAF7F00DEF1EF /* JSDeviceOrientationEvent.cpp in Sources */,

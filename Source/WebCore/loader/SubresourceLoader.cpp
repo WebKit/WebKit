@@ -60,7 +60,7 @@
 #endif
 
 #if USE(QUICK_LOOK)
-#include "QuickLook.h"
+#include "PreviewLoader.h"
 #endif
 
 namespace WebCore {
@@ -261,15 +261,15 @@ void SubresourceLoader::didSendData(unsigned long long bytesSent, unsigned long 
 
 #if USE(QUICK_LOOK)
 
-bool SubresourceLoader::shouldCreateQuickLookHandleForResponse(const ResourceResponse& response) const
+bool SubresourceLoader::shouldCreatePreviewLoaderForResponse(const ResourceResponse& response) const
 {
     if (m_resource->type() != CachedResource::MainResource)
         return false;
 
-    if (m_quickLookHandle)
+    if (m_previewLoader)
         return false;
 
-    return QuickLookHandle::shouldCreateForMIMEType(response.mimeType());
+    return PreviewLoader::shouldCreateForMIMEType(response.mimeType());
 }
 
 #endif
@@ -280,8 +280,8 @@ void SubresourceLoader::didReceiveResponse(const ResourceResponse& response)
     ASSERT(m_state == Initialized);
 
 #if USE(QUICK_LOOK)
-    if (shouldCreateQuickLookHandleForResponse(response)) {
-        m_quickLookHandle = QuickLookHandle::create(*this, response);
+    if (shouldCreatePreviewLoaderForResponse(response)) {
+        m_previewLoader = PreviewLoader::create(*this, response);
         return;
     }
 #endif
@@ -367,8 +367,8 @@ void SubresourceLoader::didReceiveResponse(const ResourceResponse& response)
 void SubresourceLoader::didReceiveData(const char* data, unsigned length, long long encodedDataLength, DataPayloadType dataPayloadType)
 {
 #if USE(QUICK_LOOK)
-    if (auto quickLookHandle = m_quickLookHandle.get()) {
-        if (quickLookHandle->didReceiveData(data, length))
+    if (auto previewLoader = m_previewLoader.get()) {
+        if (previewLoader->didReceiveData(data, length))
             return;
     }
 #endif
@@ -379,8 +379,8 @@ void SubresourceLoader::didReceiveData(const char* data, unsigned length, long l
 void SubresourceLoader::didReceiveBuffer(Ref<SharedBuffer>&& buffer, long long encodedDataLength, DataPayloadType dataPayloadType)
 {
 #if USE(QUICK_LOOK)
-    if (auto quickLookHandle = m_quickLookHandle.get()) {
-        if (quickLookHandle->didReceiveBuffer(buffer.get()))
+    if (auto previewLoader = m_previewLoader.get()) {
+        if (previewLoader->didReceiveBuffer(buffer.get()))
             return;
     }
 #endif
@@ -524,8 +524,8 @@ bool SubresourceLoader::checkRedirectionCrossOriginAccessControl(const ResourceR
 void SubresourceLoader::didFinishLoading(const NetworkLoadMetrics& networkLoadMetrics)
 {
 #if USE(QUICK_LOOK)
-    if (auto quickLookHandle = m_quickLookHandle.get()) {
-        if (quickLookHandle->didFinishLoading())
+    if (auto previewLoader = m_previewLoader.get()) {
+        if (previewLoader->didFinishLoading())
             return;
     }
 #endif
@@ -578,8 +578,8 @@ void SubresourceLoader::didFinishLoading(const NetworkLoadMetrics& networkLoadMe
 void SubresourceLoader::didFail(const ResourceError& error)
 {
 #if USE(QUICK_LOOK)
-    if (auto quickLookHandle = m_quickLookHandle.get())
-        quickLookHandle->didFail();
+    if (auto previewLoader = m_previewLoader.get())
+        previewLoader->didFail();
 #endif
 
     if (m_state != Initialized)

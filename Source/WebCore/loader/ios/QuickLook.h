@@ -25,9 +25,6 @@
 
 #pragma once
 
-#if USE(QUICK_LOOK)
-
-#include <wtf/Forward.h>
 #include <wtf/RetainPtr.h>
 
 OBJC_CLASS NSData;
@@ -35,15 +32,9 @@ OBJC_CLASS NSSet;
 OBJC_CLASS NSString;
 OBJC_CLASS NSURL;
 OBJC_CLASS NSURLRequest;
-OBJC_CLASS WebPreviewLoader;
 
 namespace WebCore {
 
-class QuickLookHandleClient;
-class ResourceLoader;
-class ResourceRequest;
-class ResourceResponse;
-class SharedBuffer;
 class URL;
 
 WEBCORE_EXPORT NSSet *QLPreviewGetSupportedMIMETypesSet();
@@ -53,28 +44,4 @@ WEBCORE_EXPORT const char* QLPreviewProtocol();
 WEBCORE_EXPORT bool isQuickLookPreviewURL(const URL&);
 WEBCORE_EXPORT NSString *createTemporaryFileForQuickLook(NSString *fileName);
 
-class QuickLookHandle {
-    WTF_MAKE_NONCOPYABLE(QuickLookHandle);
-public:
-    static bool shouldCreateForMIMEType(const String&);
-    static std::unique_ptr<QuickLookHandle> create(ResourceLoader&, const ResourceResponse&);
-    ~QuickLookHandle();
-
-    bool didReceiveData(const char* data, unsigned length);
-    bool didReceiveBuffer(const SharedBuffer&);
-    bool didFinishLoading();
-    void didFail();
-
-    WEBCORE_EXPORT static void setClientForTesting(RefPtr<QuickLookHandleClient>&&);
-
-private:
-    friend std::unique_ptr<QuickLookHandle> std::make_unique<QuickLookHandle>(ResourceLoader&, const ResourceResponse&);
-    QuickLookHandle(ResourceLoader&, const ResourceResponse&);
-
-    RetainPtr<WebPreviewLoader> m_previewLoader;
-    bool m_finishedLoadingDataIntoConverter { false };
-};
-
 } // namespace WebCore
-
-#endif // USE(QUICK_LOOK)
