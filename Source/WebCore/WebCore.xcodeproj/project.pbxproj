@@ -20789,8 +20789,6 @@
 			children = (
 				A185B4281E8211A100DC9118 /* PreviewLoader.h */,
 				A185B4271E8211A100DC9118 /* PreviewLoader.mm */,
-				A15E31F11E0CB0AA004B371C /* QuickLook.h */,
-				A15E31F21E0CB0AA004B371C /* QuickLook.mm */,
 			);
 			path = ios;
 			sourceTree = "<group>";
@@ -20864,6 +20862,8 @@
 				C5278B0B17F212EA003A2998 /* PlatformPasteboardIOS.mm */,
 				E45390320EAFD637003695C8 /* PlatformScreenIOS.mm */,
 				AAE3755D17429BCC006200C2 /* PlatformSpeechSynthesizerIOS.mm */,
+				A15E31F11E0CB0AA004B371C /* QuickLook.h */,
+				A15E31F21E0CB0AA004B371C /* QuickLook.mm */,
 				443917FE1A91B2F8006E04F2 /* QuickLookSoftLink.h */,
 				443917FD1A91B2F8006E04F2 /* QuickLookSoftLink.mm */,
 				CDFC360118CA61630026E56F /* RemoteCommandListenerIOS.h */,
