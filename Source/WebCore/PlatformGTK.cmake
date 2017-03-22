@@ -113,6 +113,7 @@ list(APPEND WebCore_SOURCES
 
     platform/graphics/freetype/FontCacheFreeType.cpp
     platform/graphics/freetype/FontCustomPlatformDataFreeType.cpp
+    platform/graphics/freetype/FontPlatformDataFreeType.cpp
     platform/graphics/freetype/GlyphPageTreeNodeFreeType.cpp
     platform/graphics/freetype/SimpleFontDataFreeType.cpp
 
@@ -187,8 +188,6 @@ list(APPEND WebCorePlatformGTK_SOURCES
     page/gtk/EventHandlerGtk.cpp
 
     platform/graphics/PlatformDisplay.cpp
-
-    platform/graphics/freetype/FontPlatformDataFreeType.cpp
 
     platform/graphics/gtk/ColorGtk.cpp
     platform/graphics/gtk/GdkCairoUtilities.cpp

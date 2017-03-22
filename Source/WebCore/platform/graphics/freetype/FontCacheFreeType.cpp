@@ -22,6 +22,7 @@
 #include "config.h"
 #include "FontCache.h"
 
+#include "CairoUtilities.h"
 #include "FcUniquePtr.h"
 #include "Font.h"
 #include "RefPtrCairo.h"
@@ -57,6 +58,7 @@ static RefPtr<FcPattern> createFontConfigPatternForCharacters(const UChar* chara
 
     FcPatternAddBool(pattern.get(), FC_SCALABLE, FcTrue);
     FcConfigSubstitute(nullptr, pattern.get(), FcMatchPattern);
+    cairo_ft_font_options_substitute(getDefaultCairoFontOptions(), pattern.get());
     FcDefaultSubstitute(pattern.get());
     return pattern;
 }
@@ -260,6 +262,7 @@ static Vector<String> strongAliasesForFamily(const String& family)
         return Vector<String>();
 
     FcConfigSubstitute(nullptr, pattern.get(), FcMatchPattern);
+    cairo_ft_font_options_substitute(getDefaultCairoFontOptions(), pattern.get());
     FcDefaultSubstitute(pattern.get());
 
     FcUniquePtr<FcObjectSet> familiesOnly(FcObjectSetBuild(FC_FAMILY, nullptr));
@@ -354,6 +357,7 @@ std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDe
     // configuration step, before any matching occurs, we allow arbitrary family substitutions,
     // since this is an exact matter of respecting the user's font configuration.
     FcConfigSubstitute(nullptr, pattern.get(), FcMatchPattern);
+    cairo_ft_font_options_substitute(getDefaultCairoFontOptions(), pattern.get());
     FcDefaultSubstitute(pattern.get());
 
     FcChar8* fontConfigFamilyNameAfterConfiguration;

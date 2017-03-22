@@ -23,9 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef GdkCairoUtilities_h
-#define GdkCairoUtilities_h
+#pragma once
+
+namespace WebCore {
 
 GdkPixbuf* cairoSurfaceToGdkPixbuf(cairo_surface_t*);
 
-#endif // GdkCairoUtilities_h
+}

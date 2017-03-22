@@ -31,8 +31,25 @@
 #include "IntSize.h"
 #include <cairo.h>
 #include <gtk/gtk.h>
+#include <mutex>
+#include <wtf/NeverDestroyed.h>
 
-using namespace WebCore;
+namespace WebCore {
+
+const cairo_font_options_t* getDefaultCairoFontOptions()
+{
+    if (auto* screen = gdk_screen_get_default()) {
+        if (auto* options = gdk_screen_get_font_options(screen))
+            return options;
+    }
+
+    static LazyNeverDestroyed<cairo_font_options_t*> options;
+    static std::once_flag flag;
+    std::call_once(flag, [] {
+        options.construct(cairo_font_options_create());
+    });
+    return options;
+}
 
 GdkPixbuf* cairoSurfaceToGdkPixbuf(cairo_surface_t* surface)
 {
@@ -40,3 +57,4 @@ GdkPixbuf* cairoSurfaceToGdkPixbuf(cairo_surface_t* surface)
     return gdk_pixbuf_get_from_surface(surface, 0, 0, size.width(), size.height());
 }
 
+}

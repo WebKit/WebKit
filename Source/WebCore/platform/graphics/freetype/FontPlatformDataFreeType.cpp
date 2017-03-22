@@ -37,10 +37,6 @@
 #include <wtf/MathExtras.h>
 #include <wtf/text/WTFString.h>
 
-#if PLATFORM(GTK)
-#include <gdk/gdk.h>
-#endif
-
 namespace WebCore {
 
 static cairo_subpixel_order_t convertFontConfigSubpixelOrder(int fontConfigOrder)
@@ -106,18 +102,6 @@ static void setCairoFontOptionsFromFontConfigPattern(cairo_font_options_t* optio
         cairo_font_options_set_hint_style(options, CAIRO_HINT_STYLE_NONE);
 }
 
-static CairoUniquePtr<cairo_font_options_t> getDefaultCairoFontOptions()
-{
-#if PLATFORM(GTK)
-    if (GdkScreen* screen = gdk_screen_get_default()) {
-        const cairo_font_options_t* screenOptions = gdk_screen_get_font_options(screen);
-        if (screenOptions)
-            return CairoUniquePtr<cairo_font_options_t>(cairo_font_options_copy(screenOptions));
-    }
-#endif
-    return CairoUniquePtr<cairo_font_options_t>(cairo_font_options_create());
-}
-
 static FcPattern* getDefaultFontconfigOptions()
 {
     // Get some generic default settings from fontconfig for web fonts. Strategy
@@ -129,6 +113,7 @@ static FcPattern* getDefaultFontconfigOptions()
     std::call_once(flag, [](FcPattern*) {
         pattern = FcPatternCreate();
         FcConfigSubstitute(nullptr, pattern, FcMatchPattern);
+        cairo_ft_font_options_substitute(getDefaultCairoFontOptions(), pattern);
         FcDefaultSubstitute(pattern);
         FcPatternDel(pattern, FC_FAMILY);
         FcConfigSubstitute(nullptr, pattern, FcMatchFont);
@@ -308,7 +293,7 @@ String FontPlatformData::description() const
 
 void FontPlatformData::buildScaledFont(cairo_font_face_t* fontFace)
 {
-    CairoUniquePtr<cairo_font_options_t> options = getDefaultCairoFontOptions();
+    CairoUniquePtr<cairo_font_options_t> options(cairo_font_options_copy(getDefaultCairoFontOptions()));
     FcPattern* optionsPattern = m_pattern ? m_pattern.get() : getDefaultFontconfigOptions();
     setCairoFontOptionsFromFontConfigPattern(options.get(), optionsPattern);
 
