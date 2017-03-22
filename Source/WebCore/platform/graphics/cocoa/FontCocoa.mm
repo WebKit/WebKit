@@ -132,10 +132,10 @@ void Font::platformInit()
 
     unsigned unitsPerEm = CTFontGetUnitsPerEm(m_platformData.font());
     float pointSize = m_platformData.size();
-    CGFloat capHeight = CTFontGetCapHeight(m_platformData.font());
-    CGFloat lineGap = CTFontGetLeading(m_platformData.font());
-    CGFloat ascent = m_platformData.size() ? CTFontGetAscent(m_platformData.font()) : 0;
-    CGFloat descent = m_platformData.size() ? CTFontGetDescent(m_platformData.font()) : 0;
+    CGFloat capHeight = pointSize ? CTFontGetCapHeight(m_platformData.font()) : 0;
+    CGFloat lineGap = pointSize ? CTFontGetLeading(m_platformData.font()) : 0;
+    CGFloat ascent = pointSize ? CTFontGetAscent(m_platformData.font()) : 0;
+    CGFloat descent = pointSize ? CTFontGetDescent(m_platformData.font()) : 0;
 
     // The Open Font Format describes the OS/2 USE_TYPO_METRICS flag as follows:
     // "If set, it is strongly recommended to use OS/2.sTypoAscender - OS/2.sTypoDescender+ OS/2.sTypoLineGap as a value for default line spacing for this font."

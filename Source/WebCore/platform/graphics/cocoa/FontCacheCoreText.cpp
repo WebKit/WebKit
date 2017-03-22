@@ -35,7 +35,7 @@
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
 
-#define SHOULD_USE_CORE_TEXT_FONT_LOOKUP ((PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101200) || PLATFORM(IOS))
+#define SHOULD_USE_CORE_TEXT_FONT_LOOKUP (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101200)
 
 namespace WebCore {
 

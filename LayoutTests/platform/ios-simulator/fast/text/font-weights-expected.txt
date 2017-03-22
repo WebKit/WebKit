@@ -193,17 +193,17 @@ layer at (0,0) size 800x7894
         RenderText {#text} at (0,0) size 388x19
           text run at (0,0) width 388: "Font: HelveticaNeue-UltraLightItalic Weight: 500 Style: normal"
       RenderBlock {DIV} at (0,1388) size 784x21
-        RenderText {#text} at (0,0) size 472x20
-          text run at (0,0) width 472: "Font: HelveticaNeue-UltraLightItalic Weight: 600 Style: normal"
+        RenderText {#text} at (0,0) size 470x20
+          text run at (0,0) width 470: "Font: HelveticaNeue-UltraLightItalic Weight: 600 Style: normal"
       RenderBlock {DIV} at (0,1409) size 784x21
-        RenderText {#text} at (0,0) size 472x20
-          text run at (0,0) width 472: "Font: HelveticaNeue-UltraLightItalic Weight: 700 Style: normal"
+        RenderText {#text} at (0,0) size 470x20
+          text run at (0,0) width 470: "Font: HelveticaNeue-UltraLightItalic Weight: 700 Style: normal"
       RenderBlock {DIV} at (0,1430) size 784x21
-        RenderText {#text} at (0,0) size 472x20
-          text run at (0,0) width 472: "Font: HelveticaNeue-UltraLightItalic Weight: 800 Style: normal"
+        RenderText {#text} at (0,0) size 470x20
+          text run at (0,0) width 470: "Font: HelveticaNeue-UltraLightItalic Weight: 800 Style: normal"
       RenderBlock {DIV} at (0,1451) size 784x21
-        RenderText {#text} at (0,0) size 472x20
-          text run at (0,0) width 472: "Font: HelveticaNeue-UltraLightItalic Weight: 900 Style: normal"
+        RenderText {#text} at (0,0) size 470x20
+          text run at (0,0) width 470: "Font: HelveticaNeue-UltraLightItalic Weight: 900 Style: normal"
       RenderBlock {DIV} at (0,1472) size 784x21
         RenderText {#text} at (0,0) size 391x20
           text run at (0,0) width 391: "Font: HelveticaNeue-LightItalic Weight: 100 Style: normal"
@@ -220,17 +220,17 @@ layer at (0,0) size 800x7894
         RenderText {#text} at (0,0) size 391x20
           text run at (0,0) width 391: "Font: HelveticaNeue-LightItalic Weight: 500 Style: normal"
       RenderBlock {DIV} at (0,1577) size 784x21
-        RenderText {#text} at (0,0) size 435x20
-          text run at (0,0) width 435: "Font: HelveticaNeue-LightItalic Weight: 600 Style: normal"
+        RenderText {#text} at (0,0) size 433x20
+          text run at (0,0) width 433: "Font: HelveticaNeue-LightItalic Weight: 600 Style: normal"
       RenderBlock {DIV} at (0,1598) size 784x21
-        RenderText {#text} at (0,0) size 435x20
-          text run at (0,0) width 435: "Font: HelveticaNeue-LightItalic Weight: 700 Style: normal"
+        RenderText {#text} at (0,0) size 433x20
+          text run at (0,0) width 433: "Font: HelveticaNeue-LightItalic Weight: 700 Style: normal"
       RenderBlock {DIV} at (0,1619) size 784x21
-        RenderText {#text} at (0,0) size 435x20
-          text run at (0,0) width 435: "Font: HelveticaNeue-LightItalic Weight: 800 Style: normal"
+        RenderText {#text} at (0,0) size 433x20
+          text run at (0,0) width 433: "Font: HelveticaNeue-LightItalic Weight: 800 Style: normal"
       RenderBlock {DIV} at (0,1640) size 784x21
-        RenderText {#text} at (0,0) size 435x20
-          text run at (0,0) width 435: "Font: HelveticaNeue-LightItalic Weight: 900 Style: normal"
+        RenderText {#text} at (0,0) size 433x20
+          text run at (0,0) width 433: "Font: HelveticaNeue-LightItalic Weight: 900 Style: normal"
       RenderBlock {DIV} at (0,1661) size 784x21
         RenderText {#text} at (0,0) size 371x20
           text run at (0,0) width 371: "Font: HelveticaNeue-Italic Weight: 100 Style: normal"
@@ -247,17 +247,17 @@ layer at (0,0) size 800x7894
         RenderText {#text} at (0,0) size 371x20
           text run at (0,0) width 371: "Font: HelveticaNeue-Italic Weight: 500 Style: normal"
       RenderBlock {DIV} at (0,1766) size 784x21
-        RenderText {#text} at (0,0) size 396x20
-          text run at (0,0) width 396: "Font: HelveticaNeue-Italic Weight: 600 Style: normal"
+        RenderText {#text} at (0,0) size 394x20
+          text run at (0,0) width 394: "Font: HelveticaNeue-Italic Weight: 600 Style: normal"
       RenderBlock {DIV} at (0,1787) size 784x21
-        RenderText {#text} at (0,0) size 396x20
-          text run at (0,0) width 396: "Font: HelveticaNeue-Italic Weight: 700 Style: normal"
+        RenderText {#text} at (0,0) size 394x20
+          text run at (0,0) width 394: "Font: HelveticaNeue-Italic Weight: 700 Style: normal"
       RenderBlock {DIV} at (0,1808) size 784x21
-        RenderText {#text} at (0,0) size 396x20
-          text run at (0,0) width 396: "Font: HelveticaNeue-Italic Weight: 800 Style: normal"
+        RenderText {#text} at (0,0) size 394x20
+          text run at (0,0) width 394: "Font: HelveticaNeue-Italic Weight: 800 Style: normal"
       RenderBlock {DIV} at (0,1829) size 784x21
-        RenderText {#text} at (0,0) size 396x20
-          text run at (0,0) width 396: "Font: HelveticaNeue-Italic Weight: 900 Style: normal"
+        RenderText {#text} at (0,0) size 394x20
+          text run at (0,0) width 394: "Font: HelveticaNeue-Italic Weight: 900 Style: normal"
       RenderBlock {DIV} at (0,1850) size 784x21
         RenderText {#text} at (0,0) size 431x20
           text run at (0,0) width 431: "Font: HelveticaNeue-BoldItalic Weight: 100 Style: normal"
@@ -315,126 +315,126 @@ layer at (0,0) size 800x7894
       RenderBlock {DIV} at (0,2227) size 784x20
         RenderText {#text} at (0,0) size 345x19
           text run at (0,0) width 345: "Font: HelveticaNeue-UltraLight Weight: 100 Style: italic"
-      RenderBlock {DIV} at (0,2247) size 784x20
-        RenderText {#text} at (0,0) size 345x19
-          text run at (0,0) width 345: "Font: HelveticaNeue-UltraLight Weight: 200 Style: italic"
-      RenderBlock {DIV} at (0,2267) size 784x20
-        RenderText {#text} at (0,0) size 345x19
-          text run at (0,0) width 345: "Font: HelveticaNeue-UltraLight Weight: 300 Style: italic"
-      RenderBlock {DIV} at (0,2287) size 784x20
-        RenderText {#text} at (0,0) size 345x19
-          text run at (0,0) width 345: "Font: HelveticaNeue-UltraLight Weight: 400 Style: italic"
-      RenderBlock {DIV} at (0,2307) size 784x20
-        RenderText {#text} at (0,0) size 345x19
-          text run at (0,0) width 345: "Font: HelveticaNeue-UltraLight Weight: 500 Style: italic"
-      RenderBlock {DIV} at (0,2327) size 784x21
+      RenderBlock {DIV} at (0,2247) size 784x21
+        RenderText {#text} at (0,0) size 361x20
+          text run at (0,0) width 361: "Font: HelveticaNeue-UltraLight Weight: 200 Style: italic"
+      RenderBlock {DIV} at (0,2268) size 784x21
+        RenderText {#text} at (0,0) size 376x20
+          text run at (0,0) width 376: "Font: HelveticaNeue-UltraLight Weight: 300 Style: italic"
+      RenderBlock {DIV} at (0,2289) size 784x21
+        RenderText {#text} at (0,0) size 391x20
+          text run at (0,0) width 391: "Font: HelveticaNeue-UltraLight Weight: 400 Style: italic"
+      RenderBlock {DIV} at (0,2310) size 784x21
+        RenderText {#text} at (0,0) size 404x20
+          text run at (0,0) width 404: "Font: HelveticaNeue-UltraLight Weight: 500 Style: italic"
+      RenderBlock {DIV} at (0,2331) size 784x21
         RenderText {#text} at (0,0) size 418x20
           text run at (0,0) width 418: "Font: HelveticaNeue-UltraLight Weight: 600 Style: italic"
-      RenderBlock {DIV} at (0,2348) size 784x21
+      RenderBlock {DIV} at (0,2352) size 784x21
         RenderText {#text} at (0,0) size 418x20
           text run at (0,0) width 418: "Font: HelveticaNeue-UltraLight Weight: 700 Style: italic"
-      RenderBlock {DIV} at (0,2369) size 784x21
+      RenderBlock {DIV} at (0,2373) size 784x21
         RenderText {#text} at (0,0) size 418x20
           text run at (0,0) width 418: "Font: HelveticaNeue-UltraLight Weight: 800 Style: italic"
-      RenderBlock {DIV} at (0,2390) size 784x21
+      RenderBlock {DIV} at (0,2394) size 784x21
         RenderText {#text} at (0,0) size 418x20
           text run at (0,0) width 418: "Font: HelveticaNeue-UltraLight Weight: 900 Style: italic"
-      RenderBlock {DIV} at (0,2411) size 784x21
-        RenderText {#text} at (0,0) size 344x20
-          text run at (0,0) width 344: "Font: HelveticaNeue-Light Weight: 100 Style: italic"
-      RenderBlock {DIV} at (0,2432) size 784x21
-        RenderText {#text} at (0,0) size 344x20
-          text run at (0,0) width 344: "Font: HelveticaNeue-Light Weight: 200 Style: italic"
-      RenderBlock {DIV} at (0,2453) size 784x21
+      RenderBlock {DIV} at (0,2415) size 784x20
+        RenderText {#text} at (0,0) size 317x19
+          text run at (0,0) width 317: "Font: HelveticaNeue-Light Weight: 100 Style: italic"
+      RenderBlock {DIV} at (0,2435) size 784x21
+        RenderText {#text} at (0,0) size 331x20
+          text run at (0,0) width 331: "Font: HelveticaNeue-Light Weight: 200 Style: italic"
+      RenderBlock {DIV} at (0,2456) size 784x21
         RenderText {#text} at (0,0) size 344x20
           text run at (0,0) width 344: "Font: HelveticaNeue-Light Weight: 300 Style: italic"
-      RenderBlock {DIV} at (0,2474) size 784x21
-        RenderText {#text} at (0,0) size 344x20
-          text run at (0,0) width 344: "Font: HelveticaNeue-Light Weight: 400 Style: italic"
-      RenderBlock {DIV} at (0,2495) size 784x21
-        RenderText {#text} at (0,0) size 344x20
-          text run at (0,0) width 344: "Font: HelveticaNeue-Light Weight: 500 Style: italic"
-      RenderBlock {DIV} at (0,2516) size 784x21
+      RenderBlock {DIV} at (0,2477) size 784x21
+        RenderText {#text} at (0,0) size 357x20
+          text run at (0,0) width 357: "Font: HelveticaNeue-Light Weight: 400 Style: italic"
+      RenderBlock {DIV} at (0,2498) size 784x21
+        RenderText {#text} at (0,0) size 368x20
+          text run at (0,0) width 368: "Font: HelveticaNeue-Light Weight: 500 Style: italic"
+      RenderBlock {DIV} at (0,2519) size 784x21
         RenderText {#text} at (0,0) size 381x20
           text run at (0,0) width 381: "Font: HelveticaNeue-Light Weight: 600 Style: italic"
-      RenderBlock {DIV} at (0,2537) size 784x21
+      RenderBlock {DIV} at (0,2540) size 784x21
         RenderText {#text} at (0,0) size 381x20
           text run at (0,0) width 381: "Font: HelveticaNeue-Light Weight: 700 Style: italic"
-      RenderBlock {DIV} at (0,2558) size 784x21
+      RenderBlock {DIV} at (0,2561) size 784x21
         RenderText {#text} at (0,0) size 381x20
           text run at (0,0) width 381: "Font: HelveticaNeue-Light Weight: 800 Style: italic"
-      RenderBlock {DIV} at (0,2579) size 784x21
+      RenderBlock {DIV} at (0,2582) size 784x21
         RenderText {#text} at (0,0) size 381x20
           text run at (0,0) width 381: "Font: HelveticaNeue-Light Weight: 900 Style: italic"
-      RenderBlock {DIV} at (0,2600) size 784x21
-        RenderText {#text} at (0,0) size 315x20
-          text run at (0,0) width 315: "Font: HelveticaNeue Weight: 100 Style: italic"
-      RenderBlock {DIV} at (0,2621) size 784x21
-        RenderText {#text} at (0,0) size 315x20
-          text run at (0,0) width 315: "Font: HelveticaNeue Weight: 200 Style: italic"
-      RenderBlock {DIV} at (0,2642) size 784x21
-        RenderText {#text} at (0,0) size 315x20
-          text run at (0,0) width 315: "Font: HelveticaNeue Weight: 300 Style: italic"
-      RenderBlock {DIV} at (0,2663) size 784x21
+      RenderBlock {DIV} at (0,2603) size 784x20
+        RenderText {#text} at (0,0) size 282x19
+          text run at (0,0) width 282: "Font: HelveticaNeue Weight: 100 Style: italic"
+      RenderBlock {DIV} at (0,2623) size 784x21
+        RenderText {#text} at (0,0) size 294x20
+          text run at (0,0) width 294: "Font: HelveticaNeue Weight: 200 Style: italic"
+      RenderBlock {DIV} at (0,2644) size 784x21
+        RenderText {#text} at (0,0) size 304x20
+          text run at (0,0) width 304: "Font: HelveticaNeue Weight: 300 Style: italic"
+      RenderBlock {DIV} at (0,2665) size 784x21
         RenderText {#text} at (0,0) size 315x20
           text run at (0,0) width 315: "Font: HelveticaNeue Weight: 400 Style: italic"
-      RenderBlock {DIV} at (0,2684) size 784x21
-        RenderText {#text} at (0,0) size 315x20
-          text run at (0,0) width 315: "Font: HelveticaNeue Weight: 500 Style: italic"
-      RenderBlock {DIV} at (0,2705) size 784x21
+      RenderBlock {DIV} at (0,2686) size 784x21
+        RenderText {#text} at (0,0) size 325x20
+          text run at (0,0) width 325: "Font: HelveticaNeue Weight: 500 Style: italic"
+      RenderBlock {DIV} at (0,2707) size 784x21
         RenderText {#text} at (0,0) size 336x20
           text run at (0,0) width 336: "Font: HelveticaNeue Weight: 600 Style: italic"
-      RenderBlock {DIV} at (0,2726) size 784x21
+      RenderBlock {DIV} at (0,2728) size 784x21
         RenderText {#text} at (0,0) size 336x20
           text run at (0,0) width 336: "Font: HelveticaNeue Weight: 700 Style: italic"
-      RenderBlock {DIV} at (0,2747) size 784x21
+      RenderBlock {DIV} at (0,2749) size 784x21
         RenderText {#text} at (0,0) size 336x20
           text run at (0,0) width 336: "Font: HelveticaNeue Weight: 800 Style: italic"
-      RenderBlock {DIV} at (0,2768) size 784x21
+      RenderBlock {DIV} at (0,2770) size 784x21
         RenderText {#text} at (0,0) size 336x20
           text run at (0,0) width 336: "Font: HelveticaNeue Weight: 900 Style: italic"
-      RenderBlock {DIV} at (0,2789) size 784x21
-        RenderText {#text} at (0,0) size 391x20
-          text run at (0,0) width 391: "Font: HelveticaNeue-Medium Weight: 100 Style: italic"
-      RenderBlock {DIV} at (0,2810) size 784x21
-        RenderText {#text} at (0,0) size 391x20
-          text run at (0,0) width 391: "Font: HelveticaNeue-Medium Weight: 200 Style: italic"
-      RenderBlock {DIV} at (0,2831) size 784x21
-        RenderText {#text} at (0,0) size 391x20
-          text run at (0,0) width 391: "Font: HelveticaNeue-Medium Weight: 300 Style: italic"
-      RenderBlock {DIV} at (0,2852) size 784x21
-        RenderText {#text} at (0,0) size 391x20
-          text run at (0,0) width 391: "Font: HelveticaNeue-Medium Weight: 400 Style: italic"
-      RenderBlock {DIV} at (0,2873) size 784x21
+      RenderBlock {DIV} at (0,2791) size 784x20
+        RenderText {#text} at (0,0) size 339x19
+          text run at (0,0) width 339: "Font: HelveticaNeue-Medium Weight: 100 Style: italic"
+      RenderBlock {DIV} at (0,2811) size 784x21
+        RenderText {#text} at (0,0) size 354x20
+          text run at (0,0) width 354: "Font: HelveticaNeue-Medium Weight: 200 Style: italic"
+      RenderBlock {DIV} at (0,2832) size 784x21
+        RenderText {#text} at (0,0) size 366x20
+          text run at (0,0) width 366: "Font: HelveticaNeue-Medium Weight: 300 Style: italic"
+      RenderBlock {DIV} at (0,2853) size 784x21
+        RenderText {#text} at (0,0) size 379x20
+          text run at (0,0) width 379: "Font: HelveticaNeue-Medium Weight: 400 Style: italic"
+      RenderBlock {DIV} at (0,2874) size 784x21
         RenderText {#text} at (0,0) size 391x20
           text run at (0,0) width 391: "Font: HelveticaNeue-Medium Weight: 500 Style: italic"
-      RenderBlock {DIV} at (0,2894) size 784x21
+      RenderBlock {DIV} at (0,2895) size 784x21
         RenderText {#text} at (0,0) size 404x20
           text run at (0,0) width 404: "Font: HelveticaNeue-Medium Weight: 600 Style: italic"
-      RenderBlock {DIV} at (0,2915) size 784x21
+      RenderBlock {DIV} at (0,2916) size 784x21
         RenderText {#text} at (0,0) size 404x20
           text run at (0,0) width 404: "Font: HelveticaNeue-Medium Weight: 700 Style: italic"
-      RenderBlock {DIV} at (0,2936) size 784x21
+      RenderBlock {DIV} at (0,2937) size 784x21
         RenderText {#text} at (0,0) size 404x20
           text run at (0,0) width 404: "Font: HelveticaNeue-Medium Weight: 800 Style: italic"
-      RenderBlock {DIV} at (0,2957) size 784x21
+      RenderBlock {DIV} at (0,2958) size 784x21
         RenderText {#text} at (0,0) size 404x20
           text run at (0,0) width 404: "Font: HelveticaNeue-Medium Weight: 900 Style: italic"
-      RenderBlock {DIV} at (0,2978) size 784x21
-        RenderText {#text} at (0,0) size 377x20
-          text run at (0,0) width 377: "Font: HelveticaNeue-Bold Weight: 100 Style: italic"
+      RenderBlock {DIV} at (0,2979) size 784x20
+        RenderText {#text} at (0,0) size 316x19
+          text run at (0,0) width 316: "Font: HelveticaNeue-Bold Weight: 100 Style: italic"
       RenderBlock {DIV} at (0,2999) size 784x21
-        RenderText {#text} at (0,0) size 377x20
-          text run at (0,0) width 377: "Font: HelveticaNeue-Bold Weight: 200 Style: italic"
+        RenderText {#text} at (0,0) size 330x20
+          text run at (0,0) width 330: "Font: HelveticaNeue-Bold Weight: 200 Style: italic"
       RenderBlock {DIV} at (0,3020) size 784x21
-        RenderText {#text} at (0,0) size 377x20
-          text run at (0,0) width 377: "Font: HelveticaNeue-Bold Weight: 300 Style: italic"
+        RenderText {#text} at (0,0) size 342x20
+          text run at (0,0) width 342: "Font: HelveticaNeue-Bold Weight: 300 Style: italic"
       RenderBlock {DIV} at (0,3041) size 784x21
-        RenderText {#text} at (0,0) size 377x20
-          text run at (0,0) width 377: "Font: HelveticaNeue-Bold Weight: 400 Style: italic"
+        RenderText {#text} at (0,0) size 355x20
+          text run at (0,0) width 355: "Font: HelveticaNeue-Bold Weight: 400 Style: italic"
       RenderBlock {DIV} at (0,3062) size 784x21
-        RenderText {#text} at (0,0) size 377x20
-          text run at (0,0) width 377: "Font: HelveticaNeue-Bold Weight: 500 Style: italic"
+        RenderText {#text} at (0,0) size 365x20
+          text run at (0,0) width 365: "Font: HelveticaNeue-Bold Weight: 500 Style: italic"
       RenderBlock {DIV} at (0,3083) size 784x21
         RenderText {#text} at (0,0) size 377x20
           text run at (0,0) width 377: "Font: HelveticaNeue-Bold Weight: 600 Style: italic"
@@ -769,8 +769,8 @@ layer at (0,0) size 800x7894
         RenderText {#text} at (0,0) size 399x22
           text run at (0,0) width 399: "Font: Avenir-BookOblique Weight: 800 Style: normal"
       RenderBlock {DIV} at (0,5480) size 784x22
-        RenderText {#text} at (0,0) size 395x22
-          text run at (0,0) width 395: "Font: Avenir-BookOblique Weight: 900 Style: normal"
+        RenderText {#text} at (0,0) size 396x22
+          text run at (0,0) width 396: "Font: Avenir-BookOblique Weight: 900 Style: normal"
       RenderBlock {DIV} at (0,5502) size 784x22
         RenderText {#text} at (0,0) size 402x22
           text run at (0,0) width 402: "Font: Avenir-MediumOblique Weight: 100 Style: normal"
@@ -796,8 +796,8 @@ layer at (0,0) size 800x7894
         RenderText {#text} at (0,0) size 422x22
           text run at (0,0) width 422: "Font: Avenir-MediumOblique Weight: 800 Style: normal"
       RenderBlock {DIV} at (0,5678) size 784x22
-        RenderText {#text} at (0,0) size 418x22
-          text run at (0,0) width 418: "Font: Avenir-MediumOblique Weight: 900 Style: normal"
+        RenderText {#text} at (0,0) size 419x22
+          text run at (0,0) width 419: "Font: Avenir-MediumOblique Weight: 900 Style: normal"
       RenderBlock {DIV} at (0,5700) size 784x22
         RenderText {#text} at (0,0) size 400x22
           text run at (0,0) width 400: "Font: Avenir-BlackOblique Weight: 100 Style: normal"
@@ -862,11 +862,11 @@ layer at (0,0) size 800x7894
         RenderText {#text} at (0,0) size 295x22
           text run at (0,0) width 295: "Font: Avenir-Light Weight: 300 Style: italic"
       RenderBlock {DIV} at (0,6162) size 784x22
-        RenderText {#text} at (0,0) size 295x22
-          text run at (0,0) width 295: "Font: Avenir-Light Weight: 400 Style: italic"
+        RenderText {#text} at (0,0) size 300x22
+          text run at (0,0) width 300: "Font: Avenir-Light Weight: 400 Style: italic"
       RenderBlock {DIV} at (0,6184) size 784x22
-        RenderText {#text} at (0,0) size 295x22
-          text run at (0,0) width 295: "Font: Avenir-Light Weight: 500 Style: italic"
+        RenderText {#text} at (0,0) size 305x22
+          text run at (0,0) width 305: "Font: Avenir-Light Weight: 500 Style: italic"
       RenderBlock {DIV} at (0,6206) size 784x22
         RenderText {#text} at (0,0) size 322x22
           text run at (0,0) width 322: "Font: Avenir-Light Weight: 600 Style: italic"
@@ -880,20 +880,20 @@ layer at (0,0) size 800x7894
         RenderText {#text} at (0,0) size 318x22
           text run at (0,0) width 318: "Font: Avenir-Light Weight: 900 Style: italic"
       RenderBlock {DIV} at (0,6294) size 784x22
-        RenderText {#text} at (0,0) size 301x22
-          text run at (0,0) width 301: "Font: Avenir-Book Weight: 100 Style: italic"
+        RenderText {#text} at (0,0) size 296x22
+          text run at (0,0) width 296: "Font: Avenir-Book Weight: 100 Style: italic"
       RenderBlock {DIV} at (0,6316) size 784x22
-        RenderText {#text} at (0,0) size 301x22
-          text run at (0,0) width 301: "Font: Avenir-Book Weight: 200 Style: italic"
+        RenderText {#text} at (0,0) size 296x22
+          text run at (0,0) width 296: "Font: Avenir-Book Weight: 200 Style: italic"
       RenderBlock {DIV} at (0,6338) size 784x22
-        RenderText {#text} at (0,0) size 301x22
-          text run at (0,0) width 301: "Font: Avenir-Book Weight: 300 Style: italic"
+        RenderText {#text} at (0,0) size 296x22
+          text run at (0,0) width 296: "Font: Avenir-Book Weight: 300 Style: italic"
       RenderBlock {DIV} at (0,6360) size 784x22
         RenderText {#text} at (0,0) size 301x22
           text run at (0,0) width 301: "Font: Avenir-Book Weight: 400 Style: italic"
       RenderBlock {DIV} at (0,6382) size 784x22
-        RenderText {#text} at (0,0) size 301x22
-          text run at (0,0) width 301: "Font: Avenir-Book Weight: 500 Style: italic"
+        RenderText {#text} at (0,0) size 305x22
+          text run at (0,0) width 305: "Font: Avenir-Book Weight: 500 Style: italic"
       RenderBlock {DIV} at (0,6404) size 784x22
         RenderText {#text} at (0,0) size 322x22
           text run at (0,0) width 322: "Font: Avenir-Book Weight: 600 Style: italic"
@@ -907,17 +907,17 @@ layer at (0,0) size 800x7894
         RenderText {#text} at (0,0) size 318x22
           text run at (0,0) width 318: "Font: Avenir-Book Weight: 900 Style: italic"
       RenderBlock {DIV} at (0,6492) size 784x22
-        RenderText {#text} at (0,0) size 327x22
-          text run at (0,0) width 327: "Font: Avenir-Medium Weight: 100 Style: italic"
+        RenderText {#text} at (0,0) size 319x22
+          text run at (0,0) width 319: "Font: Avenir-Medium Weight: 100 Style: italic"
       RenderBlock {DIV} at (0,6514) size 784x22
-        RenderText {#text} at (0,0) size 327x22
-          text run at (0,0) width 327: "Font: Avenir-Medium Weight: 200 Style: italic"
+        RenderText {#text} at (0,0) size 319x22
+          text run at (0,0) width 319: "Font: Avenir-Medium Weight: 200 Style: italic"
       RenderBlock {DIV} at (0,6536) size 784x22
-        RenderText {#text} at (0,0) size 327x22
-          text run at (0,0) width 327: "Font: Avenir-Medium Weight: 300 Style: italic"
+        RenderText {#text} at (0,0) size 319x22
+          text run at (0,0) width 319: "Font: Avenir-Medium Weight: 300 Style: italic"
       RenderBlock {DIV} at (0,6558) size 784x22
-        RenderText {#text} at (0,0) size 327x22
-          text run at (0,0) width 327: "Font: Avenir-Medium Weight: 400 Style: italic"
+        RenderText {#text} at (0,0) size 323x22
+          text run at (0,0) width 323: "Font: Avenir-Medium Weight: 400 Style: italic"
       RenderBlock {DIV} at (0,6580) size 784x22
         RenderText {#text} at (0,0) size 327x22
           text run at (0,0) width 327: "Font: Avenir-Medium Weight: 500 Style: italic"
@@ -934,20 +934,20 @@ layer at (0,0) size 800x7894
         RenderText {#text} at (0,0) size 341x22
           text run at (0,0) width 341: "Font: Avenir-Medium Weight: 900 Style: italic"
       RenderBlock {DIV} at (0,6690) size 784x22
-        RenderText {#text} at (0,0) size 323x22
-          text run at (0,0) width 323: "Font: Avenir-Black Weight: 100 Style: italic"
+        RenderText {#text} at (0,0) size 297x22
+          text run at (0,0) width 297: "Font: Avenir-Black Weight: 100 Style: italic"
       RenderBlock {DIV} at (0,6712) size 784x22
-        RenderText {#text} at (0,0) size 323x22
-          text run at (0,0) width 323: "Font: Avenir-Black Weight: 200 Style: italic"
+        RenderText {#text} at (0,0) size 297x22
+          text run at (0,0) width 297: "Font: Avenir-Black Weight: 200 Style: italic"
       RenderBlock {DIV} at (0,6734) size 784x22
-        RenderText {#text} at (0,0) size 323x22
-          text run at (0,0) width 323: "Font: Avenir-Black Weight: 300 Style: italic"
+        RenderText {#text} at (0,0) size 297x22
+          text run at (0,0) width 297: "Font: Avenir-Black Weight: 300 Style: italic"
       RenderBlock {DIV} at (0,6756) size 784x22
-        RenderText {#text} at (0,0) size 323x22
-          text run at (0,0) width 323: "Font: Avenir-Black Weight: 400 Style: italic"
+        RenderText {#text} at (0,0) size 302x22
+          text run at (0,0) width 302: "Font: Avenir-Black Weight: 400 Style: italic"
       RenderBlock {DIV} at (0,6778) size 784x22
-        RenderText {#text} at (0,0) size 323x22
-          text run at (0,0) width 323: "Font: Avenir-Black Weight: 500 Style: italic"
+        RenderText {#text} at (0,0) size 306x22
+          text run at (0,0) width 306: "Font: Avenir-Black Weight: 500 Style: italic"
       RenderBlock {DIV} at (0,6800) size 784x22
         RenderText {#text} at (0,0) size 323x22
           text run at (0,0) width 323: "Font: Avenir-Black Weight: 600 Style: italic"
@@ -958,32 +958,32 @@ layer at (0,0) size 800x7894
         RenderText {#text} at (0,0) size 323x22
           text run at (0,0) width 323: "Font: Avenir-Black Weight: 800 Style: italic"
       RenderBlock {DIV} at (0,6866) size 784x22
-        RenderText {#text} at (0,0) size 323x22
-          text run at (0,0) width 323: "Font: Avenir-Black Weight: 900 Style: italic"
+        RenderText {#text} at (0,0) size 319x22
+          text run at (0,0) width 319: "Font: Avenir-Black Weight: 900 Style: italic"
       RenderBlock {DIV} at (0,6888) size 784x22
-        RenderText {#text} at (0,0) size 326x22
-          text run at (0,0) width 326: "Font: Avenir-Heavy Weight: 100 Style: italic"
+        RenderText {#text} at (0,0) size 303x22
+          text run at (0,0) width 303: "Font: Avenir-Heavy Weight: 100 Style: italic"
       RenderBlock {DIV} at (0,6910) size 784x22
-        RenderText {#text} at (0,0) size 326x22
-          text run at (0,0) width 326: "Font: Avenir-Heavy Weight: 200 Style: italic"
+        RenderText {#text} at (0,0) size 303x22
+          text run at (0,0) width 303: "Font: Avenir-Heavy Weight: 200 Style: italic"
       RenderBlock {DIV} at (0,6932) size 784x22
-        RenderText {#text} at (0,0) size 326x22
-          text run at (0,0) width 326: "Font: Avenir-Heavy Weight: 300 Style: italic"
+        RenderText {#text} at (0,0) size 303x22
+          text run at (0,0) width 303: "Font: Avenir-Heavy Weight: 300 Style: italic"
       RenderBlock {DIV} at (0,6954) size 784x22
-        RenderText {#text} at (0,0) size 326x22
-          text run at (0,0) width 326: "Font: Avenir-Heavy Weight: 400 Style: italic"
+        RenderText {#text} at (0,0) size 308x22
+          text run at (0,0) width 308: "Font: Avenir-Heavy Weight: 400 Style: italic"
       RenderBlock {DIV} at (0,6976) size 784x22
-        RenderText {#text} at (0,0) size 326x22
-          text run at (0,0) width 326: "Font: Avenir-Heavy Weight: 500 Style: italic"
+        RenderText {#text} at (0,0) size 313x22
+          text run at (0,0) width 313: "Font: Avenir-Heavy Weight: 500 Style: italic"
       RenderBlock {DIV} at (0,6998) size 784x22
-        RenderText {#text} at (0,0) size 326x22
-          text run at (0,0) width 326: "Font: Avenir-Heavy Weight: 600 Style: italic"
+        RenderText {#text} at (0,0) size 331x22
+          text run at (0,0) width 331: "Font: Avenir-Heavy Weight: 600 Style: italic"
       RenderBlock {DIV} at (0,7020) size 784x22
-        RenderText {#text} at (0,0) size 326x22
-          text run at (0,0) width 326: "Font: Avenir-Heavy Weight: 700 Style: italic"
+        RenderText {#text} at (0,0) size 331x22
+          text run at (0,0) width 331: "Font: Avenir-Heavy Weight: 700 Style: italic"
       RenderBlock {DIV} at (0,7042) size 784x22
-        RenderText {#text} at (0,0) size 326x22
-          text run at (0,0) width 326: "Font: Avenir-Heavy Weight: 800 Style: italic"
+        RenderText {#text} at (0,0) size 331x22
+          text run at (0,0) width 331: "Font: Avenir-Heavy Weight: 800 Style: italic"
       RenderBlock {DIV} at (0,7064) size 784x22
         RenderText {#text} at (0,0) size 326x22
           text run at (0,0) width 326: "Font: Avenir-Heavy Weight: 900 Style: italic"
