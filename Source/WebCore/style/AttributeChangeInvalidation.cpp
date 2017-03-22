@@ -39,7 +39,7 @@ namespace Style {
 static bool mayBeAffectedByAttributeChange(DocumentRuleSets& ruleSets, bool isHTML, const QualifiedName& attributeName)
 {
     auto& nameSet = isHTML ? ruleSets.features().attributeCanonicalLocalNamesInRules : ruleSets.features().attributeLocalNamesInRules;
-    return nameSet.contains(attributeName.localName().impl());
+    return nameSet.contains(attributeName.localName());
 }
 
 static bool mayBeAffectedByHostRules(const Element& element, const QualifiedName& attributeName)
@@ -96,7 +96,7 @@ void AttributeChangeInvalidation::invalidateStyle(const QualifiedName& attribute
     if (!childrenOfType<Element>(m_element).first())
         return;
 
-    auto* attributeRules = ruleSets.ancestorAttributeRulesForHTML(attributeName.localName().impl());
+    auto* attributeRules = ruleSets.ancestorAttributeRulesForHTML(attributeName.localName());
     if (!attributeRules)
         return;
 

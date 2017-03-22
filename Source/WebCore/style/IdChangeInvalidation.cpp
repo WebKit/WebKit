@@ -43,7 +43,7 @@ static bool mayBeAffectedByHostRules(const Element& element, const AtomicString&
     auto& shadowRuleSets = shadowRoot->styleScope().resolver().ruleSets();
     if (shadowRuleSets.authorStyle().hostPseudoClassRules().isEmpty())
         return false;
-    return shadowRuleSets.features().idsInRules.contains(changedId.impl());
+    return shadowRuleSets.features().idsInRules.contains(changedId);
 }
 
 static bool mayBeAffectedBySlottedRules(const Element& element, const AtomicString& changedId)
@@ -52,7 +52,7 @@ static bool mayBeAffectedBySlottedRules(const Element& element, const AtomicStri
         auto& ruleSets = shadowRoot->styleScope().resolver().ruleSets();
         if (ruleSets.authorStyle().slottedPseudoElementRules().isEmpty())
             continue;
-        if (ruleSets.features().idsInRules.contains(changedId.impl()))
+        if (ruleSets.features().idsInRules.contains(changedId))
             return true;
     }
     return false;
@@ -65,7 +65,7 @@ void IdChangeInvalidation::invalidateStyle(const AtomicString& changedId)
 
     auto& ruleSets = m_element.styleResolver().ruleSets();
 
-    bool mayAffectStyle = ruleSets.features().idsInRules.contains(changedId.impl())
+    bool mayAffectStyle = ruleSets.features().idsInRules.contains(changedId)
         || mayBeAffectedByHostRules(m_element, changedId)
         || mayBeAffectedBySlottedRules(m_element, changedId);
 
@@ -81,7 +81,7 @@ void IdChangeInvalidation::invalidateStyle(const AtomicString& changedId)
 
     // This could be easily optimized for fine-grained descendant invalidation similar to ClassChangeInvalidation.
     // However using ids for dynamic styling is rare and this is probably not worth the memory cost of the required data structures.
-    bool mayAffectDescendantStyle = ruleSets.features().idsMatchingAncestorsInRules.contains(changedId.impl());
+    bool mayAffectDescendantStyle = ruleSets.features().idsMatchingAncestorsInRules.contains(changedId);
     if (mayAffectDescendantStyle)
         m_element.invalidateStyleForSubtree();
     else

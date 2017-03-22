@@ -149,17 +149,17 @@ void ElementRuleCollector::collectMatchingRules(const MatchRequest& matchRequest
     // then sort the buffer.
     auto& id = m_element.idForStyleResolution();
     if (!id.isNull())
-        collectMatchingRulesForList(matchRequest.ruleSet->idRules(*id.impl()), matchRequest, ruleRange);
+        collectMatchingRulesForList(matchRequest.ruleSet->idRules(id), matchRequest, ruleRange);
     if (m_element.hasClass()) {
         for (size_t i = 0; i < m_element.classNames().size(); ++i)
-            collectMatchingRulesForList(matchRequest.ruleSet->classRules(m_element.classNames()[i].impl()), matchRequest, ruleRange);
+            collectMatchingRulesForList(matchRequest.ruleSet->classRules(m_element.classNames()[i]), matchRequest, ruleRange);
     }
 
     if (m_element.isLink())
         collectMatchingRulesForList(matchRequest.ruleSet->linkPseudoClassRules(), matchRequest, ruleRange);
     if (SelectorChecker::matchesFocusPseudoClass(m_element))
         collectMatchingRulesForList(matchRequest.ruleSet->focusPseudoClassRules(), matchRequest, ruleRange);
-    collectMatchingRulesForList(matchRequest.ruleSet->tagRules(m_element.localName().impl(), m_element.isHTMLElement() && m_element.document().isHTMLDocument()), matchRequest, ruleRange);
+    collectMatchingRulesForList(matchRequest.ruleSet->tagRules(m_element.localName(), m_element.isHTMLElement() && m_element.document().isHTMLDocument()), matchRequest, ruleRange);
     collectMatchingRulesForList(matchRequest.ruleSet->universalRules(), matchRequest, ruleRange);
 }
 
@@ -288,7 +288,7 @@ void ElementRuleCollector::collectMatchingShadowPseudoElementRules(const MatchRe
 #endif
     auto& pseudoId = m_element.shadowPseudoId();
     if (!pseudoId.isEmpty())
-        collectMatchingRulesForList(rules.shadowPseudoElementRules(pseudoId.impl()), matchRequest, ruleRange);
+        collectMatchingRulesForList(rules.shadowPseudoElementRules(pseudoId), matchRequest, ruleRange);
 }
 
 std::unique_ptr<RuleSet::RuleDataVector> ElementRuleCollector::collectSlottedPseudoElementRulesForSlot(bool includeEmptyRules)

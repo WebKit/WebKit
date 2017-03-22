@@ -535,20 +535,20 @@ inline bool StyleResolver::hasSelectorForAttribute(const Element& element, const
 {
     ASSERT(!attributeName.isEmpty());
     if (element.isHTMLElement())
-        return m_ruleSets.features().attributeCanonicalLocalNamesInRules.contains(attributeName.impl());
-    return m_ruleSets.features().attributeLocalNamesInRules.contains(attributeName.impl());
+        return m_ruleSets.features().attributeCanonicalLocalNamesInRules.contains(attributeName);
+    return m_ruleSets.features().attributeLocalNamesInRules.contains(attributeName);
 }
 
 inline bool StyleResolver::hasSelectorForClass(const AtomicString& classValue) const
 {
     ASSERT(!classValue.isEmpty());
-    return m_ruleSets.features().classesInRules.contains(classValue.impl());
+    return m_ruleSets.features().classesInRules.contains(classValue);
 }
 
 inline bool StyleResolver::hasSelectorForId(const AtomicString& idValue) const
 {
     ASSERT(!idValue.isEmpty());
-    return m_ruleSets.features().idsInRules.contains(idValue.impl());
+    return m_ruleSets.features().idsInRules.contains(idValue);
 }
 
 inline bool checkRegionSelector(const CSSSelector* regionSelector, const Element* regionElement)

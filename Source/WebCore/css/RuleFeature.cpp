@@ -40,16 +40,16 @@ void RuleFeatureSet::recursivelyCollectFeaturesFromSelector(SelectorFeatures& se
     const CSSSelector* selector = &firstSelector;
     do {
         if (selector->match() == CSSSelector::Id) {
-            idsInRules.add(selector->value().impl());
+            idsInRules.add(selector->value());
             if (matchesAncestor)
-                idsMatchingAncestorsInRules.add(selector->value().impl());
+                idsMatchingAncestorsInRules.add(selector->value());
         } else if (selector->match() == CSSSelector::Class) {
-            classesInRules.add(selector->value().impl());
+            classesInRules.add(selector->value());
             if (matchesAncestor)
-                selectorFeatures.classesMatchingAncestors.append(selector->value().impl());
+                selectorFeatures.classesMatchingAncestors.append(selector->value());
         } else if (selector->isAttributeSelector()) {
-            auto* canonicalLocalName = selector->attributeCanonicalLocalName().impl();
-            auto* localName = selector->attribute().localName().impl();
+            auto& canonicalLocalName = selector->attributeCanonicalLocalName();
+            auto& localName = selector->attribute().localName();
             attributeCanonicalLocalNamesInRules.add(canonicalLocalName);
             attributeLocalNamesInRules.add(localName);
             if (matchesAncestor)
@@ -99,7 +99,7 @@ void RuleFeatureSet::collectFeatures(const RuleData& ruleData)
         siblingRules.append(RuleFeature(ruleData.rule(), ruleData.selectorIndex(), ruleData.hasDocumentSecurityOrigin()));
     if (ruleData.containsUncommonAttributeSelector())
         uncommonAttributeRules.append(RuleFeature(ruleData.rule(), ruleData.selectorIndex(), ruleData.hasDocumentSecurityOrigin()));
-    for (auto* className : selectorFeatures.classesMatchingAncestors) {
+    for (auto& className : selectorFeatures.classesMatchingAncestors) {
         auto addResult = ancestorClassRules.ensure(className, [] {
             return std::make_unique<Vector<RuleFeature>>();
         });
@@ -107,7 +107,7 @@ void RuleFeatureSet::collectFeatures(const RuleData& ruleData)
     }
     for (auto* selector : selectorFeatures.attributeSelectorsMatchingAncestors) {
         // Hashing by attributeCanonicalLocalName makes this HTML specific.
-        auto addResult = ancestorAttributeRulesForHTML.ensure(selector->attributeCanonicalLocalName().impl(), [] {
+        auto addResult = ancestorAttributeRulesForHTML.ensure(selector->attributeCanonicalLocalName(), [] {
             return std::make_unique<AttributeRules>();
         });
         auto& rules = *addResult.iterator->value;
