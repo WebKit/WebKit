@@ -1,13 +1,3 @@
-CONFIRM NAVIGATION: 
-CONFIRM NAVIGATION: false
-CONFIRM NAVIGATION: true
-CONFIRM NAVIGATION: 0
-CONFIRM NAVIGATION: foo
-CONFIRM NAVIGATION: foo
-CONFIRM NAVIGATION: foo
-CONFIRM NAVIGATION: foo
-CONFIRM NAVIGATION: foo
-CONFIRM NAVIGATION: foo
 
 PASS Returning a string must not cancel the event: CustomEvent, non-cancelable 
 PASS Returning a string must not cancel the event: CustomEvent, cancelable 

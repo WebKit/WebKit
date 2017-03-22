@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+description("Tests that the beforeunload alert is not shown when the user did not interact with the page. You should NOT see a 'CONFIRM NAVIGATION' message at the top.");
+jsTestIsAsync = true;
+
+onload = function() {
+    const testFrame = document.getElementById("testFrame");
+    testFrame.contentWindow.onbeforeunload = function(e) {
+        return "FAIL: a beforeunload alert was shown even though the user did not interact with the page.";
+    };
+    setTimeout(function() {
+        testFrame.src = "about:blank";
+        setTimeout(finishJSTest, 0);
+    }, 0);
+};
+</script>
+<iframe id="testFrame" src="resources/onclick.html"></iframe>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

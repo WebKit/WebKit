@@ -1,3 +1,4 @@
+<script src="../../resources/ui-helper.js"></script>
 <script>
 if (window.testRunner) {
     testRunner.waitUntilDone();
@@ -6,6 +7,11 @@ if (window.testRunner) {
 }
 
 _confirmationDialogDisplayedOnce = false;
+
+function submitForm()
+{
+    document.forms[0].submit();
+}
 
 window.addEventListener("beforeunload", function() {
 
@@ -34,10 +40,12 @@ window.addEventListener("beforeunload", function() {
 <p>This tests that submitting a form a second time after canceling the first submission in a onbeforeunload handler is allowed. To test manually, follow the instructions in the JavaScript confirmation dialogs.</p>
 
 <div id="console"></div>
-
+<input id="testButton" type="button" value="Click to submit form" onclick="submitForm()">
 <form action="resources/pass-and-notify-done.html" method="POST">
 </form>
 
 <script>
-document.forms[0].submit();
+// Simulate a user interaction with the page so that the beforeunload alert shows.
+const testButton = document.getElementById("testButton");
+UIHelper.activateAt(testButton.offsetLeft + 5, testButton.offsetTop + 5);
 </script>

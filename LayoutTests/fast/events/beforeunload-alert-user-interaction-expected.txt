@@ -1,0 +1,10 @@
+CONFIRM NAVIGATION: PASS: a beforeunload alert was shown.
+Tests that the beforeunload alert is shown when the user interacted with the page. You should see a 'CONFIRM NAVIGATION' message at the top.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

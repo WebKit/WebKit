@@ -1,3 +1,16 @@
+2017-03-22  Chris Dumez  <cdumez@apple.com>
+
+        WebKit should disallow beforeunload alerts from web pages users have never interacted with
+        https://bugs.webkit.org/show_bug.cgi?id=169936
+        <rdar://problem/23798897>
+
+        Reviewed by Brent Fulgham.
+
+        * web-platform-tests/html/browsers/browsing-the-web/unloading-documents/beforeunload-canceling-expected.txt:
+        * web-platform-tests/html/webappapis/scripting/events/compile-event-handler-settings-objects-expected.txt:
+        Rebaseline now that the CONFIRM MESSAGE lines are now longer shown. This is because there is no user interaction
+        with the page.
+
 2017-03-22  Romain Bellessort  <romain.bellessort@crf.canon.fr>
 
         [Readable Streams API] Implement ReadableStreamBYOBRequest respond() (readable stream state)

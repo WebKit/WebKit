@@ -1,4 +1,3 @@
-CONFIRM NAVIGATION: This is beforeunload from the top level frame.
 Tests the returnValue attribute of the BeforeUnloadEvent.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
