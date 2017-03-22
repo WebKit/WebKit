@@ -1,3 +1,15 @@
+2017-03-20  Matt Rajca  <mrajca@apple.com>
+
+        Loosen audio playback restrictions when the volume is 0.
+        https://bugs.webkit.org/show_bug.cgi?id=169897
+
+        Reviewed by Eric Carlson.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2/autoplay-zero-volume-check.html: Added.
+        * TestWebKitAPI/Tests/WebKit2Cocoa/WebsitePolicies.mm:
+        (TEST):
+
 2017-03-21  Aakash Jain  <aakash_jain@apple.com>
 
         EWS fails to parse_bug_id_from_attachment_page after bugzilla upgrade
