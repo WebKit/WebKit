@@ -10,8 +10,8 @@ class PrivilegedAPI {
 
         const fullPath = '/privileged-api/' + path;
         const post = options.useFormData
-            ? () => RemoteAPI.postFormDataWithStatus(fullPath, clonedData)
-            : () => RemoteAPI.postJSONWithStatus(fullPath, clonedData);
+            ? () => RemoteAPI.postFormDataWithStatus(fullPath, clonedData, options)
+            : () => RemoteAPI.postJSONWithStatus(fullPath, clonedData, options);
 
         return this.requestCSRFToken().then((token) => {
             clonedData['token'] = token;

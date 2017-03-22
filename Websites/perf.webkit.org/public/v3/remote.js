@@ -2,7 +2,7 @@
 
 class BrowserRemoteAPI extends CommonRemoteAPI {
 
-    sendHttpRequest(path, method, contentType, content)
+    sendHttpRequest(path, method, contentType, content, options = {})
     {
         console.assert(!path.startsWith('http:') && !path.startsWith('https:') && !path.startsWith('file:'));
 
@@ -26,6 +26,12 @@ class BrowserRemoteAPI extends CommonRemoteAPI {
             xhr.onabort = onerror;
             xhr.onerror = onerror;
 
+            if (content && options.uploadProgressCallback) {
+                xhr.upload.onprogress = (event) => {
+                    options.uploadProgressCallback(event.lengthComputable ? {total: event.total, loaded: event.loaded} : null);
+                }
+            }
+
             xhr.open(method, path, true);
             if (contentType)
                 xhr.setRequestHeader('Content-Type', contentType);
@@ -36,9 +42,9 @@ class BrowserRemoteAPI extends CommonRemoteAPI {
         });
     }
 
-    sendHttpRequestWithFormData(path, formData)
+    sendHttpRequestWithFormData(path, formData, options)
     {
-        return this.sendHttpRequest(path, 'POST', null, formData); // Content-type is set by the browser.
+        return this.sendHttpRequest(path, 'POST', null, formData, options); // Content-type is set by the browser.
     }
 
 }

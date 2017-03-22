@@ -12,9 +12,9 @@ class UploadedFile extends DataModelObject {
         this.ensureNamedStaticMap('sha256')[object.sha256] = this;
     }
 
-    static uploadFile(file)
+    static uploadFile(file, uploadProgressCallback = null)
     {
-        return PrivilegedAPI.sendRequest('upload-file', {'newFile': file}, {useFormData: true}).then((rawData) => {
+        return PrivilegedAPI.sendRequest('upload-file', {'newFile': file}, {useFormData: true, uploadProgressCallback}).then((rawData) => {
             return UploadedFile.ensureSingleton(rawData['uploadedFile'].id, rawData['uploadedFile']);
         });
     }

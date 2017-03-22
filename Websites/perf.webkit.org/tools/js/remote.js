@@ -64,7 +64,7 @@ class NodeRemoteAPI extends CommonRemoteAPI {
         });
     }
 
-    sendHttpRequest(path, method, contentType, content, headers = {}, responseHandler = null)
+    sendHttpRequest(path, method, contentType, content, requestOptions = {})
     {
         let server = this._server;
         return new Promise((resolve, reject) => {
@@ -78,8 +78,8 @@ class NodeRemoteAPI extends CommonRemoteAPI {
 
             let request = (server.scheme == 'http' ? http : https).request(options, (response) => {
                 let responseText = '';
-                if (responseHandler)
-                    responseHandler(response);
+                if (requestOptions.responseHandler)
+                    requestOptions.responseHandler(response);
                 else {
                     response.setEncoding('utf8');
                     response.on('data', (chunk) => { responseText += chunk; });
@@ -106,8 +106,11 @@ class NodeRemoteAPI extends CommonRemoteAPI {
             if (this._cookies.size)
                 request.setHeader('Cookie', Array.from(this._cookies.keys()).map((key) => `${key}=${this._cookies.get(key)}`).join('; '));
 
-            for (let headerName in headers)
-                request.setHeader(headerName, headers[headerName]);
+            if (requestOptions.headers) {
+                const requestHeaders = requestOptions.headers;
+                for (let headerName in requestHeaders)
+                    request.setHeader(headerName, requestHeaders[headerName]);
+            }
 
             if (content instanceof Function)
                 content(request);
@@ -119,11 +122,11 @@ class NodeRemoteAPI extends CommonRemoteAPI {
         });
     }
 
-    sendHttpRequestWithFormData(path, formData)
+    sendHttpRequestWithFormData(path, formData, options)
     {
         return this.sendHttpRequest(path, 'POST', `multipart/form-data; boundary=${formData.getBoundary()}`, (request) => {
             formData.pipe(request);
-        });
+        }, options);
     }
 
 };

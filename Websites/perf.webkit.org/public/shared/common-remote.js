@@ -1,27 +1,27 @@
 "use strict";
 
 class CommonRemoteAPI {
-    postJSON(path, data)
+    postJSON(path, data, options)
     {
-        return this._asJSON(this.sendHttpRequest(path, 'POST', 'application/json', JSON.stringify(data || {})));
+        return this._asJSON(this.sendHttpRequest(path, 'POST', 'application/json', JSON.stringify(data || {}), options));
     }
 
-    postJSONWithStatus(path, data)
+    postJSONWithStatus(path, data, options)
     {
-        return this._checkStatus(this.postJSON(path, data));
+        return this._checkStatus(this.postJSON(path, data, options));
     }
 
-    postFormData(path, data)
+    postFormData(path, data, options)
     {
         const formData = new FormData();
         for (let key in data)
             formData.append(key, data[key]);
-        return this._asJSON(this.sendHttpRequestWithFormData(path, formData));
+        return this._asJSON(this.sendHttpRequestWithFormData(path, formData, options));
     }
 
-    postFormDataWithStatus(path, data)
+    postFormDataWithStatus(path, data, options)
     {
-        return this._checkStatus(this.postFormData(path, data));
+        return this._checkStatus(this.postFormData(path, data, options));
     }
 
     getJSON(path)
@@ -34,12 +34,12 @@ class CommonRemoteAPI {
         return this._checkStatus(this.getJSON(path));
     }
 
-    sendHttpRequest(path, method, contentType, content)
+    sendHttpRequest(path, method, contentType, content, options = {})
     {
         throw 'NotImplemented';
     }
 
-    sendHttpRequestWithFormData(path, formData)
+    sendHttpRequestWithFormData(path, formData, options = {})
     {
         throw 'NotImplemented';
     }

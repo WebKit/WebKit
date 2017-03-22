@@ -138,7 +138,7 @@ describe('/api/uploaded-file', function () {
             return PrivilegedAPI.sendRequest('upload-file', {newFile: stream}, {useFormData: true});
         }).then((response) => {
             const id = response['uploadedFile']['id'];
-            return TestServer.remoteAPI().sendHttpRequest(`/api/uploaded-file/${id}`, 'GET', null, null, {'Range': 'bytes=5-'});
+            return TestServer.remoteAPI().sendHttpRequest(`/api/uploaded-file/${id}`, 'GET', null, null, {headers: {'Range': 'bytes=5-'}});
         }).then((response) => {
             const headers = response.headers;
             assert.equal(response.statusCode, 206);
@@ -152,7 +152,7 @@ describe('/api/uploaded-file', function () {
             return PrivilegedAPI.sendRequest('upload-file', {newFile: stream}, {useFormData: true});
         }).then((response) => {
             const id = response['uploadedFile']['id'];
-            return TestServer.remoteAPI().sendHttpRequest(`/api/uploaded-file/${id}`, 'GET', null, null, {'Range': 'bytes=4-9'});
+            return TestServer.remoteAPI().sendHttpRequest(`/api/uploaded-file/${id}`, 'GET', null, null, {headers: {'Range': 'bytes=4-9'}});
         }).then((response) => {
             const headers = response.headers;
             assert.equal(response.statusCode, 206);
@@ -166,7 +166,7 @@ describe('/api/uploaded-file', function () {
             return PrivilegedAPI.sendRequest('upload-file', {newFile: stream}, {useFormData: true});
         }).then((response) => {
             const id = response['uploadedFile']['id'];
-            return TestServer.remoteAPI().sendHttpRequest(`/api/uploaded-file/${id}`, 'GET', null, null, {'Range': 'bytes=-4'});
+            return TestServer.remoteAPI().sendHttpRequest(`/api/uploaded-file/${id}`, 'GET', null, null, {headers: {'Range': 'bytes=-4'}});
         }).then((response) => {
             const headers = response.headers;
             assert.equal(response.statusCode, 206);
@@ -180,7 +180,7 @@ describe('/api/uploaded-file', function () {
             return PrivilegedAPI.sendRequest('upload-file', {newFile: stream}, {useFormData: true});
         }).then((response) => {
             const id = response['uploadedFile']['id'];
-            return TestServer.remoteAPI().sendHttpRequest(`/api/uploaded-file/${id}`, 'GET', null, null, {'Range': 'bytes=-100'});
+            return TestServer.remoteAPI().sendHttpRequest(`/api/uploaded-file/${id}`, 'GET', null, null, {headers: {'Range': 'bytes=-100'}});
         }).then((response) => {
             const headers = response.headers;
             assert.equal(response.statusCode, 206);
@@ -194,7 +194,7 @@ describe('/api/uploaded-file', function () {
             return PrivilegedAPI.sendRequest('upload-file', {newFile: stream}, {useFormData: true});
         }).then((response) => {
             const id = response['uploadedFile']['id'];
-            return TestServer.remoteAPI().sendHttpRequest(`/api/uploaded-file/${id}`, 'GET', null, null, {'Range': 'bytes=12-'})
+            return TestServer.remoteAPI().sendHttpRequest(`/api/uploaded-file/${id}`, 'GET', null, null, {headers: {'Range': 'bytes=12-'}})
                 .then(() => assert(false, 'should never be reached'), (error) => assert.equal(error, 416));
         });
     });
@@ -204,7 +204,7 @@ describe('/api/uploaded-file', function () {
             return PrivilegedAPI.sendRequest('upload-file', {newFile: stream}, {useFormData: true});
         }).then((response) => {
             const id = response['uploadedFile']['id'];
-            return TestServer.remoteAPI().sendHttpRequest(`/api/uploaded-file/${id}`, 'GET', null, null, {'Range': 'bytes=2-1'})
+            return TestServer.remoteAPI().sendHttpRequest(`/api/uploaded-file/${id}`, 'GET', null, null, {headers: {'Range': 'bytes=2-1'}})
                 .then(() => assert(false, 'should never be reached'), (error) => assert.equal(error, 416));
         });
     });
@@ -220,7 +220,7 @@ describe('/api/uploaded-file', function () {
             assert.equal(response.statusCode, 200);
             assert.equal(response.responseText, 'some content');
             return TestServer.remoteAPI().sendHttpRequest(`/api/uploaded-file/${id}`, 'GET', null, null,
-                {'Range': 'bytes = 9-10', 'If-Range': response.headers['last-modified']});
+                {headers: {'Range': 'bytes = 9-10', 'If-Range': response.headers['last-modified']}});
         }).then((response) => {
             const headers = response.headers;
             assert.equal(response.statusCode, 206);
@@ -240,7 +240,7 @@ describe('/api/uploaded-file', function () {
             assert.equal(response.statusCode, 200);
             assert.equal(response.responseText, 'some content');
             return TestServer.remoteAPI().sendHttpRequest(`/api/uploaded-file/${id}`, 'GET', null, null,
-                {'Range': 'bytes = 9-10', 'If-Range': response.headers['etag']});
+                {headers: {'Range': 'bytes = 9-10', 'If-Range': response.headers['etag']}});
         }).then((response) => {
             const headers = response.headers;
             assert.equal(response.statusCode, 206);
@@ -297,7 +297,7 @@ describe('/api/uploaded-file', function () {
         }).then((response) => {
             id = response['uploadedFile']['id'];
             return TestServer.remoteAPI().sendHttpRequest(`/api/uploaded-file/${id}`, 'GET', null, null,
-                {'Range': `bytes = ${startByte}-${endByte}`}, responseHandler);
+                {headers: {'Range': `bytes = ${startByte}-${endByte}`}, responseHandler});
         }).then((response) => {
             const headers = response.headers;
             assert.equal(response.statusCode, 206);
