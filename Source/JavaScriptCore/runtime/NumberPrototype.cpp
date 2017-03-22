@@ -499,7 +499,7 @@ static inline int32_t extractRadixFromArgs(ExecState* exec)
     return radix;
 }
 
-static inline JSString* int32ToStringInternal(VM& vm, int32_t value, int32_t radix)
+static ALWAYS_INLINE JSString* int32ToStringInternal(VM& vm, int32_t value, int32_t radix)
 {
     ASSERT(!(radix < 2 || radix > 36));
     // A negative value casted to unsigned would be bigger than 36 (the max radix).
@@ -509,11 +509,10 @@ static inline JSString* int32ToStringInternal(VM& vm, int32_t value, int32_t rad
         return vm.smallStrings.singleCharacterString(radixDigits[value]);
     }
 
-    if (radix == 10) {
-        return jsString(&vm, vm.numericStrings.add(value));
-    }
+    if (radix == 10)
+        return jsNontrivialString(&vm, vm.numericStrings.add(value));
 
-    return jsString(&vm, toStringWithRadix(value, radix));
+    return jsNontrivialString(&vm, toStringWithRadix(value, radix));
 
 }
 

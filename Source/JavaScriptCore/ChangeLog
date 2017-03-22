@@ -1,3 +1,16 @@
+2017-03-22  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Use jsNontrivialString for Number toString operations
+        https://bugs.webkit.org/show_bug.cgi?id=169965
+
+        Reviewed by Mark Lam.
+
+        After single character check, produced string is always longer than 1.
+        Thus, we can use jsNontrivialString.
+
+        * runtime/NumberPrototype.cpp:
+        (JSC::int32ToStringInternal):
+
 2017-03-22  JF Bastien  <jfbastien@apple.com>
 
         WebAssembly: name ExecState consistently

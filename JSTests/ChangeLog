@@ -1,3 +1,15 @@
+2017-03-22  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Use jsNontrivialString for Number toString operations
+        https://bugs.webkit.org/show_bug.cgi?id=169965
+
+        Reviewed by Mark Lam.
+
+        * stress/to-string-int32.js: Added.
+        (shouldBe):
+        (toString10):
+        (expected):
+
 2017-03-22  JF Bastien  <jfbastien@apple.com>
 
         WebAssembly: test module namespace object for WebAssembly.Instance
