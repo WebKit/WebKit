@@ -1,3 +1,16 @@
+2017-03-22  Antoine Quint  <graouts@webkit.org>
+
+        [Modern Media Controls] Rendering glitches for fullscreen controls while dragging
+        https://bugs.webkit.org/show_bug.cgi?id=169949
+        <rdar://problem/30687803>
+
+        Reviewed by Eric Carlson.
+
+        Add an assertion that checks that the controls bar is not clipped.
+
+        * media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-controls-bar-styles-expected.txt:
+        * media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-controls-bar-styles.html:
+
 2017-03-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed GTK+ gardening. Rebaseline fast/text/hyphenate-limit-lines.html.

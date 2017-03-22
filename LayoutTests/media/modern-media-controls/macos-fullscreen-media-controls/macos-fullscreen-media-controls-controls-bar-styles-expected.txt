@@ -6,6 +6,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 PASS style.bottom is "25px"
 PASS style.width is "468px"
 PASS style.height is "75px"
+PASS style.overflow is "visible"
 PASS bounds.left is 166
 PASS bounds.top is 500
 PASS bounds.width is 468

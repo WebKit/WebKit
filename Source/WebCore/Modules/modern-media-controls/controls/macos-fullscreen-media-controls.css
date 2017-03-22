@@ -38,7 +38,6 @@
     bottom: 25px;
     width: var(--controls-bar-width);
     height: 75px;
-    overflow: hidden;
 }
 
 .media-controls.mac.fullscreen > .controls-bar > .background-tint > div {
