@@ -40,6 +40,9 @@ class BrowsingContext {
         iframe.style.top = '0px';
         BrowsingContext._iframes.push(iframe);
 
+        // Expedite calls to callbacks to make tests go faster.
+        iframe.contentWindow.requestAnimationFrame = (callback) => setTimeout(callback, 0);
+
         this.iframe = iframe;
         this.symbols = {};
         this.global = this.iframe.contentWindow;

@@ -17,7 +17,9 @@ class ComponentBase {
         this._shadow = null;
         this._actionCallbacks = new Map;
 
-        if (!window.customElements && new.target.enqueueToRenderOnResize)
+        if (!ComponentBase.useNativeCustomElements)
+            this.enqueueToRender();
+        if (!ComponentBase.useNativeCustomElements && new.target.enqueueToRenderOnResize)
             ComponentBase._connectedComponentToRenderOnResize(this);
     }
 
@@ -174,7 +176,7 @@ class ComponentBase {
 
         const enqueueToRenderOnResize = elementInterface.enqueueToRenderOnResize;
 
-        if (!window.customElements)
+        if (!ComponentBase.useNativeCustomElements)
             return;
 
         class elementClass extends HTMLElement {
@@ -194,6 +196,7 @@ class ComponentBase {
 
             connectedCallback()
             {
+                this.component().enqueueToRender();
                 if (enqueueToRenderOnResize)
                     ComponentBase._connectedComponentToRenderOnResize(this.component());
             }
@@ -215,17 +218,19 @@ class ComponentBase {
     static createElement(name, attributes, content)
     {
         var element = document.createElement(name);
-        if (!content && (attributes instanceof Array || attributes instanceof Node
+        if (!content && (Array.isArray(attributes) || attributes instanceof Node
             || attributes instanceof ComponentBase || typeof(attributes) != 'object')) {
             content = attributes;
             attributes = {};
         }
 
         if (attributes) {
-            for (var name in attributes) {
+            for (let name in attributes) {
                 if (name.startsWith('on'))
                     element.addEventListener(name.substring(2), attributes[name]);
-                else
+                else if (attributes[name] === true)
+                    element.setAttribute(name, name);
+                else if (attributes[name] !== false)
                     element.setAttribute(name, attributes[name]);
             }
         }
@@ -283,6 +288,7 @@ class ComponentBase {
     }
 }
 
+ComponentBase.useNativeCustomElements = !!window.customElements;
 ComponentBase._componentByName = new Map;
 ComponentBase._componentByClass = new Map;
 ComponentBase._currentlyConstructedByInterface = new Map;

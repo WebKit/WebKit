@@ -84,6 +84,13 @@ The apache logs are located at `/private/var/log/apache2`.
         Options Indexes MultiViews
         php_flag zlib.output_compression on
 
+ 4. Increase the maximum upload size as needed for accepting custom roots:
+
+        <IfModule php5_module>
+        php_value upload_max_filesize 100M
+        php_value post_max_size 100M
+        </IfModule>
+
 ### Protecting the Administrative Pages to Prevent Execution of Arbitrary Code
 
 By default, the application gives the administrative privilege to everyone. Anyone can add, remove, or edit tests,

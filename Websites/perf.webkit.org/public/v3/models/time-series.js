@@ -1,8 +1,6 @@
 'use strict';
 
-// v3 UI still relies on RunsData for associating metrics with units.
-// Use declartive syntax once that dependency has been removed.
-var TimeSeries = class {
+class TimeSeries {
     constructor()
     {
         this._data = [];

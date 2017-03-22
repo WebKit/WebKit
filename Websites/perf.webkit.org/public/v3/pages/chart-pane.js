@@ -247,8 +247,6 @@ class ChartPane extends ChartPaneBase {
         var link = ComponentBase.createLink;
         var self = this;
 
-        this.part('close').enqueueToRender();
-
         if (this._chartsPage.canBreakdown(platform, metric)) {
             actions.push(element('li', link('Breakdown', function () {
                 self._chartsPage.insertBreakdownPanesAfter(platform, metric, self);

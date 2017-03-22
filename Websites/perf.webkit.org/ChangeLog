@@ -1,3 +1,46 @@
+2017-03-22  Ryosuke Niwa  <rniwa@webkit.org>
+
+        ComponentBase should enqueue itself to render when it becomes connected
+        https://bugs.webkit.org/show_bug.cgi?id=169905
+
+        Reviewed by Antti Koivisto.
+
+        When a component becomes connected to a document, enqueue itself to render automatically.
+        Also added the support for boolean attribute to ComponentBase.createElement.
+
+        * ReadMe.md: Added an instruction to raise the upload limit per r214065.
+        * browser-tests/component-base-tests.js: Added tests for the new behavior and createElement. Also moved
+        the tests related to enqueueToRenderOnResize out of defineElement tests.
+
+        * browser-tests/index.html:
+        (BrowsingContext.prototype.constructor): Override requestAnimationFrame so that the callback would be
+        involved immediately durign testing.
+
+        * public/v3/components/base.js:
+        (ComponentBase): Enqueue itself to render during construction if custom elements is not available.
+        (ComponentBase.defineElement):
+        (ComponentBase.defineElement.elementClass.prototype.connectedCallback): Enqueue itself to render when
+        the component's element became connected.
+        (ComponentBase.createElement): Use Array.isArray instead of instanceof to make it work with arrays made
+        in other realms (global objects) during testing. Added the support for boolean attributes. Setting an
+        attribute value to true would set the attribute, and setting it to false would not set the attribute.
+        (ComponentBase.useNativeCustomElements): Added. True iff window.customElements is defined.
+
+        * public/v3/components/chart-pane-base.js:
+        (ChartPaneBase.prototype.render): No longer need to call enqueueToRender on the commit log viewer.
+
+        * public/v3/components/commit-log-viewer.js:
+        (CommitLogViewer.prototype.render): No longer need to call enqueueToRender on the spinner icon.
+
+        * public/v3/models/time-series.js:
+        (TimeSeries): Made this a proper class declaration now that we don't include data.js after r213300.
+
+        * public/v3/pages/chart-pane.js:
+        (ChartPane.prototype._renderActionToolbar): No longer need to call enqueueToRender on the close icon.
+
+        * public/v3/pages/summary-page.js:
+        (SummaryPage.prototype._renderCell): No longer need to call enqueueToRender on the spinner icon.
+
 2017-03-20  Ryosuke Niwa  <rniwa@webkit.org>
 
         Delete another function that was supposed to be removed in the previous commit.

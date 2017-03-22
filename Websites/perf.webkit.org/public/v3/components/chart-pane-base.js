@@ -256,10 +256,9 @@ class ChartPaneBase extends ComponentBase {
             this._mainChartStatus.enqueueToRender();
 
         var body = this.content().querySelector('.chart-pane-body');
-        if (this._openRepository) {
+        if (this._openRepository)
             body.classList.add('has-second-sidebar');
-            this._commitLogViewer.enqueueToRender();
-        } else
+        else
             body.classList.remove('has-second-sidebar');
 
         Instrumentation.endMeasuringTime('ChartPane', 'render');

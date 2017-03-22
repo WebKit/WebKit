@@ -121,8 +121,6 @@ class SummaryPage extends PageWithHeading {
 
     _renderCell(cell, spinner, anchor, ratioGraph, configurationGroup)
     {
-        spinner.enqueueToRender();
-
         if (configurationGroup.isFetching())
             cell.classList.add('fetching');
         else

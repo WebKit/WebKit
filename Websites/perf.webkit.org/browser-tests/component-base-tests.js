@@ -18,6 +18,78 @@ describe('ComponentBase', function() {
         });
     }
 
+    it('must enqueue a connected component to render', () => {
+        const context = new BrowsingContext();
+        return context.importScripts(['instrumentation.js', 'components/base.js'], 'ComponentBase').then((ComponentBase) => {
+            let renderCall = 0;
+            class SomeComponent extends ComponentBase {
+                render() { renderCall++; }
+            }
+            ComponentBase.defineElement('some-component', SomeComponent);
+
+            let requestAnimationFrameCount = 0;
+            let callback = null;
+            context.global.requestAnimationFrame = (newCallback) => {
+                callback = newCallback;
+                requestAnimationFrameCount++;
+            }
+
+            expect(requestAnimationFrameCount).to.be(0);
+            const instance = new SomeComponent;
+            context.document.body.appendChild(instance.element());
+            expect(requestAnimationFrameCount).to.be(1);
+            callback();
+            expect(renderCall).to.be(1);
+            expect(requestAnimationFrameCount).to.be(1);
+        });
+    });
+
+    it('must enqueue a connected component to render upon a resize event if enqueueToRenderOnResize is true', () => {
+        const context = new BrowsingContext();
+        return context.importScripts(['instrumentation.js', 'components/base.js'], 'ComponentBase').then((ComponentBase) => {
+            class SomeComponent extends ComponentBase {
+                static get enqueueToRenderOnResize() { return true; }
+            }
+            ComponentBase.defineElement('some-component', SomeComponent);
+
+            let requestAnimationFrameCount = 0;
+            let callback = null;
+            context.global.requestAnimationFrame = (newCallback) => {
+                callback = newCallback;
+                requestAnimationFrameCount++;
+            }
+
+            expect(requestAnimationFrameCount).to.be(0);
+            const instance = new SomeComponent;
+            context.global.dispatchEvent(new Event('resize'));
+            context.document.body.appendChild(instance.element());
+            context.global.dispatchEvent(new Event('resize'));
+            expect(requestAnimationFrameCount).to.be(1);
+        });
+    });
+
+    it('must not enqueue a disconnected component to render upon a resize event if enqueueToRenderOnResize is true', () => {
+        const context = new BrowsingContext();
+        return context.importScripts(['instrumentation.js', 'components/base.js'], 'ComponentBase').then((ComponentBase) => {
+            class SomeComponent extends ComponentBase {
+                static get enqueueToRenderOnResize() { return true; }
+            }
+            ComponentBase.defineElement('some-component', SomeComponent);
+
+            let requestAnimationFrameCount = 0;
+            let callback = null;
+            context.global.requestAnimationFrame = (newCallback) => {
+                callback = newCallback;
+                requestAnimationFrameCount++;
+            }
+
+            const instance = new SomeComponent;
+            expect(requestAnimationFrameCount).to.be(0);
+            context.global.dispatchEvent(new Event('resize'));
+            expect(requestAnimationFrameCount).to.be(0);
+        });
+    });
+
     describe('constructor', () => {
         it('is a function', () => {
             return new BrowsingContext().importScript('components/base.js', 'ComponentBase').then((ComponentBase) => {
@@ -406,6 +478,121 @@ describe('ComponentBase', function() {
         });
     });
 
+    describe('createElement()', () => {
+
+        it('should create an element of the specified name', () => {
+            const context = new BrowsingContext();
+            return context.importScript('components/base.js', 'ComponentBase').then((ComponentBase) => {
+                const div = ComponentBase.createElement('div');
+                expect(div).to.be.a(context.global.HTMLDivElement);
+            });
+        });
+
+        it('should create an element with the specified attributes', () => {
+            const context = new BrowsingContext();
+            return context.importScript('components/base.js', 'ComponentBase').then((ComponentBase) => {
+                const input = ComponentBase.createElement('input', {'title': 'hi', 'id': 'foo', 'required': false, 'checked': true});
+                expect(input).to.be.a(context.global.HTMLInputElement);
+                expect(input.attributes.length).to.be(3);
+                expect(input.attributes[0].localName).to.be('title');
+                expect(input.attributes[0].value).to.be('hi');
+                expect(input.attributes[1].localName).to.be('id');
+                expect(input.attributes[1].value).to.be('foo');
+                expect(input.attributes[2].localName).to.be('checked');
+                expect(input.attributes[2].value).to.be('checked');
+            });
+        });
+
+        it('should create an element with the specified event handlers and attributes', () => {
+            const context = new BrowsingContext();
+            return context.importScript('components/base.js', 'ComponentBase').then((ComponentBase) => {
+                let clickCount = 0;
+                const div = ComponentBase.createElement('div', {'title': 'hi', 'onclick': () => clickCount++});
+                expect(div).to.be.a(context.global.HTMLDivElement);
+                expect(div.attributes.length).to.be(1);
+                expect(div.attributes[0].localName).to.be('title');
+                expect(div.attributes[0].value).to.be('hi');
+                expect(clickCount).to.be(0);
+                div.click();
+                expect(clickCount).to.be(1);
+            });
+        });
+
+        it('should create an element with the specified children when there is no attribute specified', () => {
+            const context = new BrowsingContext();
+            return context.importScript('components/base.js', 'ComponentBase').then((ComponentBase) => {
+                const element = ComponentBase.createElement;
+                const span = element('span');
+                const div = element('div', [span, 'hi']);
+                expect(div).to.be.a(context.global.HTMLDivElement);
+                expect(div.attributes.length).to.be(0);
+                expect(div.childNodes.length).to.be(2);
+                expect(div.childNodes[0]).to.be(span);
+                expect(div.childNodes[1]).to.be.a(context.global.Text);
+                expect(div.childNodes[1].data).to.be('hi');
+            });
+        });
+
+        it('should create an element with the specified children when the second argument is a span', () => {
+            const context = new BrowsingContext();
+            return context.importScript('components/base.js', 'ComponentBase').then((ComponentBase) => {
+                const element = ComponentBase.createElement;
+                const span = element('span');
+                const div = element('div', span);
+                expect(div).to.be.a(context.global.HTMLDivElement);
+                expect(div.attributes.length).to.be(0);
+                expect(div.childNodes.length).to.be(1);
+                expect(div.childNodes[0]).to.be(span);
+            });
+        });
+
+        it('should create an element with the specified children when the second argument is a Text node', () => {
+            const context = new BrowsingContext();
+            return context.importScript('components/base.js', 'ComponentBase').then((ComponentBase) => {
+                const element = ComponentBase.createElement;
+                const text = context.document.createTextNode('hi');
+                const div = element('div', text);
+                expect(div).to.be.a(context.global.HTMLDivElement);
+                expect(div.attributes.length).to.be(0);
+                expect(div.childNodes.length).to.be(1);
+                expect(div.childNodes[0]).to.be(text);
+            });
+        });
+
+        it('should create an element with the specified children when the second argument is a component', () => {
+            const context = new BrowsingContext();
+            return context.importScript('components/base.js', 'ComponentBase').then((ComponentBase) => {
+                class SomeComponent extends ComponentBase { };
+                ComponentBase.defineElement('some-component', SomeComponent);
+                const element = ComponentBase.createElement;
+                const component = new SomeComponent;
+                const div = element('div', component);
+                expect(div).to.be.a(context.global.HTMLDivElement);
+                expect(div.attributes.length).to.be(0);
+                expect(div.childNodes.length).to.be(1);
+                expect(div.childNodes[0]).to.be(component.element());
+            });
+        });
+
+        it('should create an element with the specified attributes and children', () => {
+            const context = new BrowsingContext();
+            return context.importScript('components/base.js', 'ComponentBase').then((ComponentBase) => {
+                const element = ComponentBase.createElement;
+                const span = element('span');
+                const div = element('div', {'lang': 'en'}, [span, 'hi']);
+                expect(div).to.be.a(context.global.HTMLDivElement);
+                expect(div.attributes.length).to.be(1);
+                expect(div.attributes[0].localName).to.be('lang');
+                expect(div.attributes[0].value).to.be('en');
+                expect(div.childNodes.length).to.be(2);
+                expect(div.childNodes[0]).to.be(span);
+                expect(div.childNodes[1]).to.be.a(context.global.Text);
+                expect(div.childNodes[1].data).to.be('hi');
+            });
+        });
+
+    });
+
     describe('defineElement()', () => {
 
         it('must define a custom element with a class of an appropriate name', () => {
@@ -463,52 +650,6 @@ describe('ComponentBase', function() {
                 expect(component.element()).to.be.a(context.global.HTMLElement);
                 expect(component.element().component()).to.be(component);
                 expect(instances.length).to.be(1);
-            });
-        });
-
-        it('must enqueue a connected component to render upon a resize event if enqueueToRenderOnResize is true', () => {
-            const context = new BrowsingContext();
-            return context.importScripts(['instrumentation.js', 'components/base.js'], 'ComponentBase').then((ComponentBase) => {
-                class SomeComponent extends ComponentBase {
-                    static get enqueueToRenderOnResize() { return true; }
-                }
-                ComponentBase.defineElement('some-component', SomeComponent);
-
-                let requestAnimationFrameCount = 0;
-                let callback = null;
-                context.global.requestAnimationFrame = (newCallback) => {
-                    callback = newCallback;
-                    requestAnimationFrameCount++;
-                }
-
-                expect(requestAnimationFrameCount).to.be(0);
-                const instance = new SomeComponent;
-                context.global.dispatchEvent(new Event('resize'));
-                context.document.body.appendChild(instance.element());
-                context.global.dispatchEvent(new Event('resize'));
-                expect(requestAnimationFrameCount).to.be(1);
-            });
-        });
-
-        it('must not enqueue a disconnected component to render upon a resize event if enqueueToRenderOnResize is true', () => {
-            const context = new BrowsingContext();
-            return context.importScripts(['instrumentation.js', 'components/base.js'], 'ComponentBase').then((ComponentBase) => {
-                class SomeComponent extends ComponentBase {
-                    static get enqueueToRenderOnResize() { return true; }
-                }
-                ComponentBase.defineElement('some-component', SomeComponent);
-
-                let requestAnimationFrameCount = 0;
-                let callback = null;
-                context.global.requestAnimationFrame = (newCallback) => {
-                    callback = newCallback;
-                    requestAnimationFrameCount++;
-                }
-
-                const instance = new SomeComponent;
-                expect(requestAnimationFrameCount).to.be(0);
-                context.global.dispatchEvent(new Event('resize'));
-                expect(requestAnimationFrameCount).to.be(0);
             });
         });
 

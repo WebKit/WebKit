@@ -55,8 +55,6 @@ class CommitLogViewer extends ComponentBase {
 
     render()
     {
-        this.part('spinner').enqueueToRender();
-
         const shouldShowRepositoryName = this._repository && (this._commits || this._fetchingPromise);
         this.content('repository-name').textContent = shouldShowRepositoryName ? this._repository.name() : '';
         this.content('spinner-container').style.display = this._fetchingPromise ? null : 'none';
