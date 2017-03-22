@@ -1,3 +1,13 @@
+2017-03-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Make it possible to use WEB_UI_STRING macros to mark translatable strings in glib based ports
+        https://bugs.webkit.org/show_bug.cgi?id=169672
+
+        Reviewed by Michael Catanzaro.
+
+        * CMakeLists.txt: Add keyword parameters for WEB_UI_STRING macros.
+        * POTFILES.in: Add LocalizedStrings.cpp to the list.
+
 2017-03-18  Yuri Chornoivan  <yurchor@ukr.net>
 
         Update Ukrainian translation

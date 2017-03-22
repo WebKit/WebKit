@@ -25,6 +25,9 @@ add_custom_command(
             --package-name="webkitgtk"
             --keyword=_
             --keyword=N_
+            --keyword=WEB_UI_STRING:1
+            --keyword=WEB_UI_STRING_KEY:3c,1
+            --keyword=WEB_UI_STRING_WITH_MNEMONIC:2
             --from-code=UTF-8
             -o ${pot_file}
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/..

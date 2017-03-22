@@ -26,6 +26,7 @@
 #include "config.h"
 #include "LocalizedStrings.h"
 
+#include "NotImplemented.h"
 #include "WebCoreInstanceHandle.h"
 #include <windows.h>
 #include <wtf/Assertions.h>
@@ -57,6 +58,25 @@ String localizedString(const char* key)
     // FIXME: Implement localizedString() for !USE(CF).
     return String::fromUTF8(key, strlen(key));
 #endif
+}
+
+#if ENABLE(CONTEXT_MENUS)
+String contextMenuItemTagSearchWeb()
+{
+    return WEB_UI_STRING("Search with Google", "Search with Google context menu item");
+}
+#endif
+
+String uploadFileText()
+{
+    notImplemented();
+    return "upload";
+}
+
+String allFilesText()
+{
+    notImplemented();
+    return "all files";
 }
 
 } // namespace WebCore

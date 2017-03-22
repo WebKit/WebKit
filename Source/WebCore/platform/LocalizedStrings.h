@@ -29,6 +29,10 @@
 
 #include <wtf/Forward.h>
 
+#if USE(GLIB) && defined(GETTEXT_PACKAGE)
+#include <glib/gi18n-lib.h>
+#endif
+
 namespace WebCore {
 
     class IntSize;
@@ -307,10 +311,23 @@ namespace WebCore {
     WEBCORE_EXPORT String exitFullScreenButtonAccessibilityTitle();
 #endif
 
+#if USE(GLIB) && defined(GETTEXT_PACKAGE)
+#define WEB_UI_STRING(string, description) WebCore::localizedString(_(string))
+#define WEB_UI_STRING_KEY(string, key, description) WebCore::localizedString(C_(key, string))
+#define WEB_UI_STRING_WITH_MNEMONIC(string, mnemonic, description) WebCore::localizedString(_(mnemonic))
+#else
 #define WEB_UI_STRING(string, description) WebCore::localizedString(string)
 #define WEB_UI_STRING_KEY(string, key, description) WebCore::localizedString(key)
+#define WEB_UI_STRING_WITH_MNEMONIC(string, mnemonic, description) WebCore::localizedString(string)
+#endif
+
+#if USE(CF)
+// This is exactly as WEB_UI_STRING, but renamed to ensure the string is not scanned by non-CF ports.
+#define WEB_UI_CFSTRING(string, description) WebCore::localizedString(string)
+#endif
 
     WEBCORE_EXPORT String localizedString(const char* key);
+    String formatLocalizedString(String format, ...);
 
 #ifdef __OBJC__
 #define WEB_UI_NSSTRING(string, description) WebCore::localizedNSString(string)

@@ -2163,6 +2163,7 @@ set(WebCore_SOURCES
     platform/LengthPoint.cpp
     platform/LengthSize.cpp
     platform/LinkHash.cpp
+    platform/LocalizedStrings.cpp
     platform/Logging.cpp
     platform/LowPowerModeNotifier.cpp
     platform/MIMETypeRegistry.cpp
