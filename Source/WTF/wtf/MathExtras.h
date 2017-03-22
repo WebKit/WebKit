@@ -198,6 +198,15 @@ inline bool isWithinIntRange(float x)
     return x > static_cast<float>(std::numeric_limits<int>::min()) && x < static_cast<float>(std::numeric_limits<int>::max());
 }
 
+inline float normalizedFloat(float value)
+{
+    if (value > 0 && value < std::numeric_limits<float>::min())
+        return std::numeric_limits<float>::min();
+    if (value < 0 && value > -std::numeric_limits<float>::min())
+        return -std::numeric_limits<float>::min();
+    return value;
+}
+
 template<typename T> inline bool hasOneBitSet(T value)
 {
     return !((value - 1) & value) && value;

@@ -1,3 +1,40 @@
+2017-03-22  Jason Marcell  <jmarcell@apple.com>
+
+        Merge r214125. rdar://problem/30921831
+
+    2017-03-17  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+            Time channel attack on SVG Filters
+            https://bugs.webkit.org/show_bug.cgi?id=118689
+
+            Reviewed by Simon Fraser.
+
+            The time channel attack can happen if the attacker applies FEColorMatrix
+            or FEConvolveMatrix and provides a matrix which is filled with subnormal
+            floating point values. Performing floating-point operations on subnormals
+            is very expensive unless the pixel in the source graphics is black (or
+            zero). By measuring the time a filter takes to be applied, the attacker
+            can know whether the pixel he wants to steal from  an iframe is black or
+            white. By repeating the same process on all the pixels in the iframe, the
+            attacker can reconstruct the whole page of the iframe.
+
+            To fix this issue, the values in the matrices of these filters will clamped
+            to FLT_MIN. We do not want to consume too much time calculating filtered
+            pixels because of such tiny values. The difference between applying FLT_MIN
+            and applying a subnormal should not be even noticeable. Normalizing the
+            floating-point matrices should happen only at the beginning of the filter
+            platformApplySoftware().
+
+            * platform/graphics/filters/FEColorMatrix.cpp:
+            (WebCore::FEColorMatrix::platformApplySoftware):
+            * platform/graphics/filters/FEConvolveMatrix.cpp:
+            (WebCore::FEConvolveMatrix::fastSetInteriorPixels):
+            (WebCore::FEConvolveMatrix::fastSetOuterPixels):
+            (WebCore::FEConvolveMatrix::platformApplySoftware):
+            * platform/graphics/filters/FEConvolveMatrix.h:
+            * platform/graphics/filters/FilterEffect.h:
+            (WebCore::FilterEffect::normalizedFloats):
+
 2017-03-21  Jason Marcell  <jmarcell@apple.com>
 
         Merge r214014. rdar://problem/30921815

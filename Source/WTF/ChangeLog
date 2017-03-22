@@ -1,3 +1,23 @@
+2017-03-22  Jason Marcell  <jmarcell@apple.com>
+
+        Merge r214125. rdar://problem/30921831
+
+    2017-03-17  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+            Time channel attack on SVG Filters
+            https://bugs.webkit.org/show_bug.cgi?id=118689
+
+            Reviewed by Simon Fraser.
+
+            Performing arithmetic operations on subnormal floating-point numbers is
+            very expensive. Normalizing the floating-point number to the minimum normal
+            value should accelerate the calculations and there won't be a noticeable
+            difference in the result since all the subnormal values and the minimum
+            normal value are all very close to zero.
+
+            * wtf/MathExtras.h:
+            (normalizedFloat):
+
 2017-02-21  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r212692. rdar://problem/30635854

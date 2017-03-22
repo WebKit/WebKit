@@ -26,6 +26,7 @@
 #include "FloatRect.h"
 #include "IntRect.h"
 #include <runtime/Uint8ClampedArray.h>
+#include <wtf/MathExtras.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
@@ -170,6 +171,14 @@ protected:
     void forceValidPreMultipliedPixels();
 
     void clipAbsolutePaintRect();
+    
+    static Vector<float> normalizedFloats(const Vector<float>& values)
+    {
+        Vector<float> normalizedValues(values.size());
+        for (size_t i = 0; i < values.size(); ++i)
+            normalizedValues[i] = normalizedFloat(values[i]);
+        return normalizedValues;
+    }
 
 private:
     std::unique_ptr<ImageBuffer> m_imageBufferResult;

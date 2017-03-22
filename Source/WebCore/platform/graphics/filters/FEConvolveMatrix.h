@@ -83,6 +83,7 @@ private:
         int width;
         int height;
         float bias;
+        Vector<float> kernelMatrix;
     };
 
     FEConvolveMatrix(Filter&, const IntSize&, float, float,

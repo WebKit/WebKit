@@ -153,21 +153,22 @@ void FEColorMatrix::platformApplySoftware()
 
     IntRect imageRect(IntPoint(), resultImage->logicalSize());
     RefPtr<Uint8ClampedArray> pixelArray = resultImage->getUnmultipliedImageData(imageRect);
+    Vector<float> values = normalizedFloats(m_values);
 
     switch (m_type) {
     case FECOLORMATRIX_TYPE_UNKNOWN:
         break;
     case FECOLORMATRIX_TYPE_MATRIX:
-        effectType<FECOLORMATRIX_TYPE_MATRIX>(pixelArray.get(), m_values);
+        effectType<FECOLORMATRIX_TYPE_MATRIX>(pixelArray.get(), values);
         break;
     case FECOLORMATRIX_TYPE_SATURATE: 
-        effectType<FECOLORMATRIX_TYPE_SATURATE>(pixelArray.get(), m_values);
+        effectType<FECOLORMATRIX_TYPE_SATURATE>(pixelArray.get(), values);
         break;
     case FECOLORMATRIX_TYPE_HUEROTATE:
-        effectType<FECOLORMATRIX_TYPE_HUEROTATE>(pixelArray.get(), m_values);
+        effectType<FECOLORMATRIX_TYPE_HUEROTATE>(pixelArray.get(), values);
         break;
     case FECOLORMATRIX_TYPE_LUMINANCETOALPHA:
-        effectType<FECOLORMATRIX_TYPE_LUMINANCETOALPHA>(pixelArray.get(), m_values);
+        effectType<FECOLORMATRIX_TYPE_LUMINANCETOALPHA>(pixelArray.get(), values);
         setIsAlphaImage(true);
         break;
     }
