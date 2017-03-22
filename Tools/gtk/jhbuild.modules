@@ -245,6 +245,7 @@
             hash="sha256:ca1ca037e89e8bc7b782559f3ec5d89c9d0b836f505b2f95e008ed517fd6658f">
       <patch file="libsoup-auth-Fix-async-authentication-when-flag-SOUP_MESSAGE.patch" strip="1"/>
       <patch file="libsoup-auth-do-not-use-cached-credentials-in-lookup-method-.patch" strip="1"/>
+      <patch file="libsoup-soup-message-io-Do-not-fail-when-there-s-no-empty-li.patch" strip="1"/>
     </branch>
   </autotools>
 

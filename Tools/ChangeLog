@@ -1,3 +1,15 @@
+2017-03-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Several WPT tests are failing since they were added in the last update in r213882
+        https://bugs.webkit.org/show_bug.cgi?id=169915
+
+        Reviewed by Michael Catanzaro.
+
+        Add libsoup patch to not fail loads when there's no empty line after the headers in responses with no body.
+
+        * gtk/jhbuild.modules:
+        * gtk/patches/libsoup-soup-message-io-Do-not-fail-when-there-s-no-empty-li.patch: Added.
+
 2017-03-20  Matt Rajca  <mrajca@apple.com>
 
         Loosen audio playback restrictions when the volume is 0.

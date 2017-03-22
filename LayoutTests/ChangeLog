@@ -1,3 +1,18 @@
+2017-03-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Several WPT tests are failing since they were added in the last update in r213882
+        https://bugs.webkit.org/show_bug.cgi?id=169915
+
+        Reviewed by Michael Catanzaro.
+
+        They fail because libsoup fails to load the requests because the response doesn't include the empty line after the
+        headers while other browsers allow that. Even with libsoup patched we still need platform specific expectations
+        for imported/w3c/web-platform-tests/XMLHttpRequest/getallresponseheaders.htm, because libsoup caches all header
+        names, so the first time foo-test header is cached and then always used no matter what case is used. The results
+        are still valid in any case.
+
+        * platform/gtk/imported/w3c/web-platform-tests/XMLHttpRequest/getallresponseheaders-expected.txt: Added.
+
 2017-03-21  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [iOS] Migrate off of CTFontCreateForCSS
