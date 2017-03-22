@@ -1,3 +1,14 @@
+2017-03-21  Brady Eidson  <beidson@apple.com>
+
+        Disable all virtual tables.
+        <rdar://problem/31081972> and https://bugs.webkit.org/show_bug.cgi?id=169928
+
+        Reviewed by Jer Noble.
+
+        * storage/websql/test-authorizer-expected.txt:
+        * storage/websql/test-authorizer.js:
+        (createStatementsCallback):
+
 2017-03-21  Zalan Bujtas  <zalan@apple.com>
 
         Tear down descendant renderers when <slot>'s display value is set to no "contents".
