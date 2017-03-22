@@ -63,6 +63,7 @@ WindowFeatures parseWindowFeatures(StringView featuresString)
     features.toolBarVisible = false;
     features.locationBarVisible = false;
     features.scrollbarsVisible = false;
+    features.noopener = false;
 
     processFeaturesString(featuresString, [&features](StringView key, StringView value) {
         setWindowFeature(features, key, value);
@@ -135,6 +136,8 @@ static void setWindowFeature(WindowFeatures& features, StringView key, StringVie
         features.fullscreen = numericValue;
     else if (equalLettersIgnoringASCIICase(key, "scrollbars"))
         features.scrollbarsVisible = numericValue;
+    else if (equalLettersIgnoringASCIICase(key, "noopener"))
+        features.noopener = numericValue;
     else if (numericValue == 1)
         features.additionalFeatures.append(key.toString());
 }

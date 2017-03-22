@@ -16,6 +16,7 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/common/OWNERS
+/LayoutTests/imported/w3c/web-platform-tests/common/PrefixedLocalStorage.js
 /LayoutTests/imported/w3c/web-platform-tests/common/blank.html
 /LayoutTests/imported/w3c/web-platform-tests/common/canvas-frame.css
 /LayoutTests/imported/w3c/web-platform-tests/common/canvas-index.css

@@ -16,3 +16,8 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/auxiliary-browsing-contexts/contains.json
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/auxiliary-browsing-contexts/opener-closed.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/auxiliary-browsing-contexts/opener-multiple.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/auxiliary-browsing-contexts/opener-noopener.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/auxiliary-browsing-contexts/opener-noreferrer.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/auxiliary-browsing-contexts/opener.html
