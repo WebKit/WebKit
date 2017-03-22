@@ -36,9 +36,9 @@ public:
     typedef ErrorInstance Base;
 
     static JSWebAssemblyLinkError* create(ExecState*, VM&, Structure*, const String&);
-    static JSWebAssemblyLinkError* create(ExecState* state, VM& vm, Structure* structure, JSValue message)
+    static JSWebAssemblyLinkError* create(ExecState* exec, VM& vm, Structure* structure, JSValue message)
     {
-        return create(state, vm, structure, message.isUndefined() ? String() : message.toWTFString(state));
+        return create(exec, vm, structure, message.isUndefined() ? String() : message.toWTFString(exec));
     }
 
     DECLARE_INFO;

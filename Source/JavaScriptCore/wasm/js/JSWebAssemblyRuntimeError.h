@@ -36,9 +36,9 @@ public:
     typedef ErrorInstance Base;
 
     static JSWebAssemblyRuntimeError* create(ExecState*, VM&, Structure*, const String&);
-    static JSWebAssemblyRuntimeError* create(ExecState* state, VM& vm, Structure* structure, JSValue message)
+    static JSWebAssemblyRuntimeError* create(ExecState* exec, VM& vm, Structure* structure, JSValue message)
     {
-        return create(state, vm, structure, message.isUndefined() ? String() : message.toWTFString(state));
+        return create(exec, vm, structure, message.isUndefined() ? String() : message.toWTFString(exec));
     }
 
     DECLARE_INFO;

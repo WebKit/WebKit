@@ -32,12 +32,12 @@
 
 namespace JSC {
 
-JSWebAssemblyRuntimeError* JSWebAssemblyRuntimeError::create(ExecState* state, VM& vm, Structure* structure, const String& message)
+JSWebAssemblyRuntimeError* JSWebAssemblyRuntimeError::create(ExecState* exec, VM& vm, Structure* structure, const String& message)
 {
     auto* instance = new (NotNull, allocateCell<JSWebAssemblyRuntimeError>(vm.heap)) JSWebAssemblyRuntimeError(vm, structure);
     instance->m_sourceAppender = defaultSourceAppender;
     bool useCurrentFrame = true;
-    instance->finishCreation(state, vm, message, useCurrentFrame);
+    instance->finishCreation(exec, vm, message, useCurrentFrame);
     return instance;
 }
 

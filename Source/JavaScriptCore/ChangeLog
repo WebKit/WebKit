@@ -1,5 +1,45 @@
 2017-03-22  JF Bastien  <jfbastien@apple.com>
 
+        WebAssembly: name ExecState consistently
+        https://bugs.webkit.org/show_bug.cgi?id=169954
+
+        Reviewed by Saam Barati.
+
+        No functional change.
+
+        * wasm/js/JSWebAssemblyCompileError.cpp:
+        (JSC::JSWebAssemblyCompileError::create):
+        (JSC::createJSWebAssemblyCompileError):
+        * wasm/js/JSWebAssemblyCompileError.h:
+        (JSC::JSWebAssemblyCompileError::create):
+        * wasm/js/JSWebAssemblyLinkError.cpp:
+        (JSC::JSWebAssemblyLinkError::create):
+        (JSC::createJSWebAssemblyLinkError):
+        * wasm/js/JSWebAssemblyLinkError.h:
+        (JSC::JSWebAssemblyLinkError::create):
+        * wasm/js/JSWebAssemblyRuntimeError.cpp:
+        (JSC::JSWebAssemblyRuntimeError::create):
+        * wasm/js/JSWebAssemblyRuntimeError.h:
+        (JSC::JSWebAssemblyRuntimeError::create):
+        * wasm/js/WebAssemblyInstanceConstructor.cpp:
+        (JSC::callJSWebAssemblyInstance):
+        * wasm/js/WebAssemblyMemoryConstructor.cpp:
+        (JSC::callJSWebAssemblyMemory):
+        * wasm/js/WebAssemblyModuleConstructor.cpp:
+        (JSC::callJSWebAssemblyModule):
+        (JSC::WebAssemblyModuleConstructor::createModule):
+        * wasm/js/WebAssemblyModuleRecord.cpp:
+        (JSC::WebAssemblyModuleRecord::link):
+        (JSC::dataSegmentFail):
+        (JSC::WebAssemblyModuleRecord::evaluate):
+        * wasm/js/WebAssemblyPrototype.cpp:
+        (JSC::webAssemblyFunctionValidate):
+        (JSC::webAssemblyFunctionCompile):
+        * wasm/js/WebAssemblyTableConstructor.cpp:
+        (JSC::callJSWebAssemblyTable):
+
+2017-03-22  JF Bastien  <jfbastien@apple.com>
+
         WebAssembly: constructors without new don't throw
         https://bugs.webkit.org/show_bug.cgi?id=165995
 

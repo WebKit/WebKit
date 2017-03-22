@@ -33,18 +33,18 @@
 
 namespace JSC {
 
-static EncodedJSValue JSC_HOST_CALL webAssemblyFunctionValidate(ExecState* state)
+static EncodedJSValue JSC_HOST_CALL webAssemblyFunctionValidate(ExecState* exec)
 {
-    VM& vm = state->vm();
+    VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    return JSValue::encode(throwException(state, scope, createError(state, ASCIILiteral("WebAssembly doesn't yet implement the validate function property"))));
+    return JSValue::encode(throwException(exec, scope, createError(exec, ASCIILiteral("WebAssembly doesn't yet implement the validate function property"))));
 }
 
-static EncodedJSValue JSC_HOST_CALL webAssemblyFunctionCompile(ExecState* state)
+static EncodedJSValue JSC_HOST_CALL webAssemblyFunctionCompile(ExecState* exec)
 {
-    VM& vm = state->vm();
+    VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    return JSValue::encode(throwException(state, scope, createError(state, ASCIILiteral("WebAssembly doesn't yet implement the compile function property"))));
+    return JSValue::encode(throwException(exec, scope, createError(exec, ASCIILiteral("WebAssembly doesn't yet implement the compile function property"))));
 }
 
 }

@@ -319,11 +319,11 @@ JSWebAssemblyInstance* WebAssemblyInstanceConstructor::createInstance(ExecState*
     return instance;
 }
 
-static EncodedJSValue JSC_HOST_CALL callJSWebAssemblyInstance(ExecState* state)
+static EncodedJSValue JSC_HOST_CALL callJSWebAssemblyInstance(ExecState* exec)
 {
-    VM& vm = state->vm();
+    VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    return JSValue::encode(throwConstructorCannotBeCalledAsFunctionTypeError(state, scope, "WebAssembly.Instance"));
+    return JSValue::encode(throwConstructorCannotBeCalledAsFunctionTypeError(exec, scope, "WebAssembly.Instance"));
 }
 
 WebAssemblyInstanceConstructor* WebAssemblyInstanceConstructor::create(VM& vm, Structure* structure, WebAssemblyInstancePrototype* thisPrototype)

@@ -94,11 +94,11 @@ static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyTable(ExecState* exec)
     return JSValue::encode(JSWebAssemblyTable::create(exec, vm, exec->lexicalGlobalObject()->WebAssemblyTableStructure(), initial, maximum));
 }
 
-static EncodedJSValue JSC_HOST_CALL callJSWebAssemblyTable(ExecState* state)
+static EncodedJSValue JSC_HOST_CALL callJSWebAssemblyTable(ExecState* exec)
 {
-    VM& vm = state->vm();
+    VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    return JSValue::encode(throwConstructorCannotBeCalledAsFunctionTypeError(state, scope, "WebAssembly.Table"));
+    return JSValue::encode(throwConstructorCannotBeCalledAsFunctionTypeError(exec, scope, "WebAssembly.Table"));
 }
 
 WebAssemblyTableConstructor* WebAssemblyTableConstructor::create(VM& vm, Structure* structure, WebAssemblyTablePrototype* thisPrototype)

@@ -85,12 +85,12 @@ void WebAssemblyModuleRecord::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.append(thisObject->m_startFunction);
 }
 
-void WebAssemblyModuleRecord::link(ExecState* state, JSWebAssemblyInstance* instance)
+void WebAssemblyModuleRecord::link(ExecState* exec, JSWebAssemblyInstance* instance)
 {
-    VM& vm = state->vm();
+    VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(scope);
-    auto* globalObject = state->lexicalGlobalObject();
+    auto* globalObject = exec->lexicalGlobalObject();
 
     JSWebAssemblyModule* module = instance->module();
     JSWebAssemblyCodeBlock* codeBlock = instance->codeBlock();
@@ -158,7 +158,7 @@ void WebAssemblyModuleRecord::link(ExecState* state, JSWebAssemblyInstance* inst
                 break;
 
             case Wasm::I64:
-                throwException(state, scope, createJSWebAssemblyLinkError(state, vm, ASCIILiteral("exported global cannot be an i64")));
+                throwException(exec, scope, createJSWebAssemblyLinkError(exec, vm, ASCIILiteral("exported global cannot be an i64")));
                 return;
 
             case Wasm::F32:
@@ -179,7 +179,7 @@ void WebAssemblyModuleRecord::link(ExecState* state, JSWebAssemblyInstance* inst
         bool shouldThrowReadOnlyError = false;
         bool ignoreReadOnlyErrors = true;
         bool putResult = false;
-        symbolTablePutTouchWatchpointSet(moduleEnvironment, state, exp.field, exportedValue, shouldThrowReadOnlyError, ignoreReadOnlyErrors, putResult);
+        symbolTablePutTouchWatchpointSet(moduleEnvironment, exec, exp.field, exportedValue, shouldThrowReadOnlyError, ignoreReadOnlyErrors, putResult);
         RELEASE_ASSERT(putResult);
     }
 
@@ -208,14 +208,14 @@ void WebAssemblyModuleRecord::link(ExecState* state, JSWebAssemblyInstance* inst
 }
 
 template <typename Scope, typename M, typename N, typename ...Args>
-NEVER_INLINE static JSValue dataSegmentFail(ExecState* state, VM& vm, Scope& scope, M memorySize, N segmentSize, N offset, Args... args)
+NEVER_INLINE static JSValue dataSegmentFail(ExecState* exec, VM& vm, Scope& scope, M memorySize, N segmentSize, N offset, Args... args)
 {
-    return throwException(state, scope, createJSWebAssemblyLinkError(state, vm, makeString(ASCIILiteral("Invalid data segment initialization: segment of "), String::number(segmentSize), ASCIILiteral(" bytes memory of "), String::number(memorySize), ASCIILiteral(" bytes, at offset "), String::number(offset), args...)));
+    return throwException(exec, scope, createJSWebAssemblyLinkError(exec, vm, makeString(ASCIILiteral("Invalid data segment initialization: segment of "), String::number(segmentSize), ASCIILiteral(" bytes memory of "), String::number(memorySize), ASCIILiteral(" bytes, at offset "), String::number(offset), args...)));
 }
 
-JSValue WebAssemblyModuleRecord::evaluate(ExecState* state)
+JSValue WebAssemblyModuleRecord::evaluate(ExecState* exec)
 {
-    VM& vm = state->vm();
+    VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     {
@@ -241,7 +241,7 @@ JSValue WebAssemblyModuleRecord::evaluate(ExecState* state)
 
             uint64_t lastWrittenIndex = static_cast<uint64_t>(tableIndex) + static_cast<uint64_t>(element.functionIndices.size()) - 1;
             if (lastWrittenIndex >= table->size())
-                return throwException(state, scope, createJSWebAssemblyLinkError(state, vm, ASCIILiteral("Element is trying to set an out of bounds table index")));
+                return throwException(exec, scope, createJSWebAssemblyLinkError(exec, vm, ASCIILiteral("Element is trying to set an out of bounds table index")));
 
             for (uint32_t i = 0; i < element.functionIndices.size(); ++i) {
                 // FIXME: This essentially means we're exporting an import.
@@ -300,9 +300,9 @@ JSValue WebAssemblyModuleRecord::evaluate(ExecState* state)
                         offset = segment->offset.constValue();
 
                     if (UNLIKELY(sizeInBytes < segment->sizeInBytes))
-                        return dataSegmentFail(state, vm, scope, sizeInBytes, segment->sizeInBytes, offset, ASCIILiteral(", segment is too big"));
+                        return dataSegmentFail(exec, vm, scope, sizeInBytes, segment->sizeInBytes, offset, ASCIILiteral(", segment is too big"));
                     if (UNLIKELY(offset > sizeInBytes - segment->sizeInBytes))
-                        return dataSegmentFail(state, vm, scope, sizeInBytes, segment->sizeInBytes, offset, ASCIILiteral(", segment writes outside of memory"));
+                        return dataSegmentFail(exec, vm, scope, sizeInBytes, segment->sizeInBytes, offset, ASCIILiteral(", segment writes outside of memory"));
                     RELEASE_ASSERT(memory);
                     memcpy(memory + offset, &segment->byte(0), segment->sizeInBytes);
                 }
@@ -313,7 +313,7 @@ JSValue WebAssemblyModuleRecord::evaluate(ExecState* state)
     if (JSObject* startFunction = m_startFunction.get()) {
         CallData callData;
         CallType callType = JSC::getCallData(startFunction, callData);
-        call(state, startFunction, callType, callData, jsUndefined(), state->emptyList());
+        call(exec, startFunction, callType, callData, jsUndefined(), exec->emptyList());
         RETURN_IF_EXCEPTION(scope, { });
     }
 
