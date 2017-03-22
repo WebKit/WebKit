@@ -1548,3 +1548,6 @@ webkit.org/b/169324 media/track/media-element-enqueue-event-crash.html [ Pass Fa
 webkit.org/b/169572 imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location_hash.html [ Pass Failure ]
 
 webkit.org/b/169637 imported/w3c/web-platform-tests/XMLHttpRequest/timeout-multiple-fetches.html [ Pass Failure ]
+
+# <rdar://problem/19759913>
+http/tests/media/video-served-as-text-with-type.html [ Skip ]

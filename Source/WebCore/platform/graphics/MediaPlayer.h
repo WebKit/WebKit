@@ -585,6 +585,10 @@ public:
     void setShouldDisableSleep(bool);
     bool shouldDisableSleep() const;
 
+    const String& contentMIMEType() const { return m_contentMIMEType; }
+    const String& contentTypeCodecs() const { return m_contentTypeCodecs; }
+    bool contentMIMETypeWasInferredFromExtension() const { return m_contentMIMETypeWasInferredFromExtension; }
+
 private:
     MediaPlayer(MediaPlayerClient&);
 
