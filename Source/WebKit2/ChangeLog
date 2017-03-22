@@ -1,3 +1,15 @@
+2017-03-22  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [WK2] Add SPI to notify clients when data interaction is beginning or ending
+        https://bugs.webkit.org/show_bug.cgi?id=169952
+        <rdar://problem/31187804>
+
+        Reviewed by Beth Dakin.
+
+        Adds two new UI delegate SPI hooks.
+
+        * UIProcess/API/Cocoa/WKUIDelegatePrivate.h:
+
 2017-03-21  Sergio Villar Senin  <svillar@igalia.com>
 
         [Soup] "Only from websites I visit" cookie policy is broken

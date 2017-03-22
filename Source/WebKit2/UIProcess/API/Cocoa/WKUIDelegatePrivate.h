@@ -89,6 +89,8 @@ struct UIEdgeInsets;
 - (NSURL *)_webView:(WKWebView *)webView alternateURLFromImage:(UIImage *)image userInfo:(NSDictionary **)userInfo WK_API_AVAILABLE(ios(WK_IOS_TBA));
 - (NSArray<UIItemProvider *> *)_webView:(WKWebView *)webView adjustedDataInteractionItemProviders:(NSArray<UIItemProvider *> *)originalItemProviders WK_API_AVAILABLE(ios(WK_IOS_TBA));
 - (BOOL)_webView:(WKWebView *)webView performDataInteractionOperationWithItemProviders:(NSArray<UIItemProvider *> *)itemProviders WK_API_AVAILABLE(ios(WK_IOS_TBA));
+- (void)_webView:(WKWebView *)webView dataInteraction:(id)interaction sessionWillBegin:(id)session WK_API_AVAILABLE(ios(WK_IOS_TBA));
+- (void)_webView:(WKWebView *)webView dataInteraction:(id)interaction session:(id)session didEndWithOperation:(NSUInteger)operation WK_API_AVAILABLE(ios(WK_IOS_TBA));
 #else
 - (NSMenu *)_webView:(WKWebView *)webView contextMenu:(NSMenu *)menu forElement:(_WKContextMenuElementInfo *)element WK_API_AVAILABLE(macosx(10.12));
 - (NSMenu *)_webView:(WKWebView *)webView contextMenu:(NSMenu *)menu forElement:(_WKContextMenuElementInfo *)element userInfo:(id <NSSecureCoding>)userInfo WK_API_AVAILABLE(macosx(10.12));
