@@ -1,3 +1,12 @@
+2017-03-22  Youenn Fablet  <youenn@apple.com>
+
+        Activate remaining webrtc tests
+        https://bugs.webkit.org/show_bug.cgi?id=169957
+
+        Unreviewed.
+
+        * platform/mac-wk2/TestExpectations:
+
 2017-03-22  Chris Dumez  <cdumez@apple.com>
 
         WebKit should disallow beforeunload alerts from web pages users have never interacted with
