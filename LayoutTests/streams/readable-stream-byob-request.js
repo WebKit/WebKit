@@ -198,4 +198,47 @@ test(function() {
 
 }, "Calling respond() with a bytesWritten value of 0 when stream is closed should succeed");
 
+test(function() {
+
+    let controller;
+    const rs = new ReadableStream({
+        autoAllocateChunkSize: 16,
+        start: function(c) {
+            controller = c;
+        },
+        type: "bytes"
+    });
+
+    rs.getReader().read();
+    const byobReq = controller.byobRequest;
+    assert_throws(new RangeError("bytesWritten value is too great"),
+        function() { byobReq.respond(17); });
+
+}, "Calling respond() with a bytesWritten value greater than autoAllocateChunkSize should fail");
+
+promise_test(function() {
+
+    const rs = new ReadableStream({
+        autoAllocateChunkSize: 16,
+        pull: function(controller) {
+            const br = controller.byobRequest;
+            br.view[0] = 1;
+            br.view[1] = 2;
+            br.respond(2);
+        },
+        type: "bytes"
+    });
+
+    return rs.getReader().read().then(result => {
+        assert_equals(result.value.byteLength, 2);
+        assert_equals(result.value.byteOffset, 0);
+        assert_equals(result.value.buffer.byteLength, 16);
+        assert_equals(result.value[0], 1);
+        assert_equals(result.value[1], 2);
+    });
+}, "Calling respond() with a bytesWritten value lower than autoAllocateChunkSize should succeed");
+
+// FIXME: when ReadableStreamBYOBReader is implemented, add tests with elementSize different from 1
+// so that more code can be covered.
+
 done();

@@ -8,6 +8,8 @@ PASS Calling respond() with a bytesWritten value which is not a number should th
 PASS Calling respond() with a positive infinity bytesWritten value should throw a RangeError 
 PASS Calling respond() with a bytesWritten value different from 0 when stream is closed should throw a TypeError 
 PASS Calling respond() with a bytesWritten value of 0 when stream is closed should succeed 
+PASS Calling respond() with a bytesWritten value greater than autoAllocateChunkSize should fail 
+PASS Calling respond() with a bytesWritten value lower than autoAllocateChunkSize should succeed 
 PASS ReadableStreamBYOBRequest instances should have the correct list of properties 
 PASS By default, byobRequest should be undefined 
 PASS byobRequest.view length should be equal to autoAllocateChunkSize 
@@ -17,4 +19,6 @@ PASS Calling respond() with a bytesWritten value which is not a number should th
 PASS Calling respond() with a positive infinity bytesWritten value should throw a RangeError 
 PASS Calling respond() with a bytesWritten value different from 0 when stream is closed should throw a TypeError 
 PASS Calling respond() with a bytesWritten value of 0 when stream is closed should succeed 
+PASS Calling respond() with a bytesWritten value greater than autoAllocateChunkSize should fail 
+PASS Calling respond() with a bytesWritten value lower than autoAllocateChunkSize should succeed 
 

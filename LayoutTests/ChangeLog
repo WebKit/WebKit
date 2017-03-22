@@ -1,3 +1,15 @@
+2017-03-22  Romain Bellessort  <romain.bellessort@crf.canon.fr>
+
+        [Readable Streams API] Implement ReadableStreamBYOBRequest respond() (readable stream state)
+        https://bugs.webkit.org/show_bug.cgi?id=169759
+
+        Reviewed by Youenn Fablet.
+
+        Added new tests to check code that can currently be reached.
+
+        * streams/readable-stream-byob-request-expected.txt: Updated.
+        * streams/readable-stream-byob-request.js: Updated.
+
 2017-03-22  Youenn Fablet  <youenn@apple.com>
 
         Move LayoutTests/webrtc/rtcconfiguration-icecandidatepoolsize.html to web-platform-tests
