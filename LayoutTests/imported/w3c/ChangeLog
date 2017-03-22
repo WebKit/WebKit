@@ -1,5 +1,15 @@
 2017-03-22  Youenn Fablet  <youenn@apple.com>
 
+        Safari sends empty "Access-Control-Request-Headers" in preflight request
+        https://bugs.webkit.org/show_bug.cgi?id=169851
+
+        Reviewed by Chris Dumez.
+
+        * web-platform-tests/fetch/api/cors/cors-preflight-expected.txt:
+        * web-platform-tests/fetch/api/cors/cors-preflight.js:
+
+2017-03-22  Youenn Fablet  <youenn@apple.com>
+
         XMLHttpRequest: getAllResponseHeaders() should lowercase header names before sorting
         https://bugs.webkit.org/show_bug.cgi?id=169286
 
