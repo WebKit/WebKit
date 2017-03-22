@@ -65,6 +65,8 @@ BitmapImage::~BitmapImage()
 
 void BitmapImage::destroyDecodedData(bool destroyAll)
 {
+    LOG(Images, "BitmapImage::%s - %p - url: %s", __FUNCTION__, this, sourceURL().utf8().data());
+
     if (!destroyAll)
         m_source.destroyDecodedDataBeforeFrame(m_currentFrame);
     else if (m_source.hasAsyncDecodingQueue())
@@ -169,7 +171,7 @@ void BitmapImage::draw(GraphicsContext& context, const FloatRect& destRect, cons
 
     StartAnimationResult result = internalStartAnimation();
     if (result == StartAnimationResult::DecodingActive && showDebugBackground()) {
-        fillWithSolidColor(context, destRect, Color::yellow, op);
+        fillWithSolidColor(context, destRect, Color(Color::yellow).colorWithAlpha(0.5), op);
         return;
     }
 
@@ -188,7 +190,7 @@ void BitmapImage::draw(GraphicsContext& context, const FloatRect& destRect, cons
 
             if (!frameHasDecodedNativeImage(m_currentFrame)) {
                 if (showDebugBackground())
-                    fillWithSolidColor(context, destRect, Color::yellow, op);
+                    fillWithSolidColor(context, destRect, Color(Color::yellow).colorWithAlpha(0.5), op);
                 return;
             }
 
