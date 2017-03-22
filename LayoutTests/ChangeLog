@@ -1,3 +1,11 @@
+2017-03-22  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Remove duplicate TestExpectations entry.
+
+        Unreviewed test gardening.
+
+        * TestExpectations:
+
 2017-03-22  Romain Bellessort  <romain.bellessort@crf.canon.fr>
 
         [Readable Streams API] Implement ReadableStreamBYOBRequest respond() (readable stream state)
