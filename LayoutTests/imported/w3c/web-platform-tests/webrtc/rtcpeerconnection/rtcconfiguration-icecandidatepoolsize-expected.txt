@@ -1,0 +1,9 @@
+
+PASS Setting iceCandidatePoolSize to 10 
+PASS Setting iceCandidatePoolSize to 0 
+PASS Setting iceCandidatePoolSize to null 
+PASS Setting iceCandidatePoolSize to undefined 
+PASS Setting iceCandidatePoolSize to -1 
+PASS Setting iceCandidatePoolSize to 1000 
+PASS Setting iceCandidatePoolSize to string 
+

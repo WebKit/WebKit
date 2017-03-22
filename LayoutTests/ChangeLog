@@ -1,3 +1,13 @@
+2017-03-22  Youenn Fablet  <youenn@apple.com>
+
+        Move LayoutTests/webrtc/rtcconfiguration-icecandidatepoolsize.html to web-platform-tests
+        https://bugs.webkit.org/show_bug.cgi?id=169958
+
+        Reviewed by Jon Lee.
+
+        * webrtc/rtcconfiguration-icecandidatepoolsize-expected.txt: Removed.
+        * webrtc/rtcconfiguration-icecandidatepoolsize.html: Removed.
+
 2017-03-22  Antoine Quint  <graouts@webkit.org>
 
         [Modern Media Controls] Rendering glitches for fullscreen controls while dragging

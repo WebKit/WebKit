@@ -1,5 +1,15 @@
 2017-03-22  Youenn Fablet  <youenn@apple.com>
 
+        Move LayoutTests/webrtc/rtcconfiguration-icecandidatepoolsize.html to web-platform-tests
+        https://bugs.webkit.org/show_bug.cgi?id=169958
+
+        Reviewed by Jon Lee.
+
+        * web-platform-tests/webrtc/rtcpeerconnection/rtcconfiguration-icecandidatepoolsize-expected.txt: Added.
+        * web-platform-tests/webrtc/rtcpeerconnection/rtcconfiguration-icecandidatepoolsize.html: Added.
+
+2017-03-22  Youenn Fablet  <youenn@apple.com>
+
         Safari sends empty "Access-Control-Request-Headers" in preflight request
         https://bugs.webkit.org/show_bug.cgi?id=169851
 

@@ -1,0 +1,32 @@
+<!doctype html>
+<html>
+<head>
+<title>This test checks that RTCConfiguration.iceCandidatePoolSize is set</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+function testICECandidatePoolSize(size, shouldThrow, expectedSize)
+{
+    test(function() {
+        if (shouldThrow) {
+            assert_throws(new TypeError(), () => new RTCPeerConnection({iceCandidatePoolSize: size}))
+            return
+        }
+        var pc = new RTCPeerConnection({iceCandidatePoolSize: size})
+        assert_equals(pc.getConfiguration().iceCandidatePoolSize, expectedSize !== undefined ? expectedSize : size)
+    }, "Setting iceCandidatePoolSize to " + size)
+}
+
+testICECandidatePoolSize(10)
+testICECandidatePoolSize(0)
+testICECandidatePoolSize(null, false, 0)
+testICECandidatePoolSize(undefined, false, 0)
+
+testICECandidatePoolSize(-1, true)
+testICECandidatePoolSize(1000, true)
+testICECandidatePoolSize("string", true)
+</script>
+</body>
+</html>
