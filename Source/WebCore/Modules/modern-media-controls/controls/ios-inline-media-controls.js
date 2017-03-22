@@ -74,7 +74,7 @@ class IOSInlineMediaControls extends MediaControls
     {
         super.layout();
 
-        if (this.controlsBar.visible)
+        if (this.controlsBar && this.controlsBar.visible)
             this.controlsBar.children = this._inlineLayoutSupport.childrenAfterPerformingLayout();
     }
 

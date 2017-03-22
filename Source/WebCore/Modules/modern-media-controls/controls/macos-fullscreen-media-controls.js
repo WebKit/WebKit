@@ -94,6 +94,9 @@ class MacOSFullscreenMediaControls extends MacOSMediaControls
     {
         super.layout();
 
+        if (!this._rightContainer)
+            return;
+
         const numberOfEnabledButtons = this._rightContainer.buttons.filter(button => button.enabled).length;
 
         let buttonMargin = ButtonMarginForFiveButtons;

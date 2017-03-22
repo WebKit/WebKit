@@ -16,18 +16,20 @@ debug("Checking initial size");
 shouldBeEqualToString("mediaControls.style.width", "320px");
 shouldBeEqualToString("mediaControls.style.height", "240px");
 
-debug("");
-debug("Resizing to 400x300");
-media.style.width = "400px";
-media.style.height = "300px";
-
-shouldBecomeEqualToString("mediaControls.style.width", "400px", () => {
-    shouldBecomeEqualToString("mediaControls.style.height", "300px", () => {
+shadowRoot.addEventListener("resize", () => {
+    shouldBeEqualToString("mediaControls.style.width", "400px");
+    shouldBeEqualToString("mediaControls.style.height", "300px");
+    setTimeout(() => {
         debug("");
         media.remove();
         finishJSTest();
     });
 });
+
+debug("");
+debug("Resizing to 400x300");
+media.style.width = "400px";
+media.style.height = "300px";
 
 </script>
 <script src="../../../resources/js-test-post.js"></script>

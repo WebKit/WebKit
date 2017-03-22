@@ -59,6 +59,20 @@ class MediaControls extends LayoutNode
 
     // Public
 
+    get width()
+    {
+        return super.width;
+    }
+
+    set width(width)
+    {
+        if (width === this.width)
+            return;
+
+        super.width = width;
+        this.layout();
+    }
+
     get layoutTraits()
     {
         return this._layoutTraits;

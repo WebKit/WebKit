@@ -67,7 +67,7 @@ class MacOSInlineMediaControls extends MacOSMediaControls
     {
         super.layout();
 
-        if (!this.controlsBar.visible)
+        if (!this.controlsBar || !this.controlsBar.visible)
             return;
 
         const children = this._inlineLayoutSupport.childrenAfterPerformingLayout();

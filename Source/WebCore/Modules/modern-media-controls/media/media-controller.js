@@ -113,9 +113,11 @@ class MediaController
     {
         if (event instanceof TrackEvent && event.currentTarget === this.media.videoTracks)
             this._updateControlsIfNeeded();
-        else if (event.type === "resize" && event.currentTarget === this.shadowRoot)
+        else if (event.type === "resize" && event.currentTarget === this.shadowRoot) {
             this._updateControlsIfNeeded();
-        else if (event.type === "click" && event.currentTarget === this.container)
+            // We must immediately perform layouts so that we don't lag behind the media layout size.
+            scheduler.flushScheduledLayoutCallbacks();
+        } else if (event.type === "click" && event.currentTarget === this.container)
             this._containerWasClicked(event);
         else if (event.currentTarget === this.media) {
             this._updateControlsIfNeeded();

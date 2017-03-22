@@ -43,6 +43,11 @@ const scheduler = new class
         this.debug("unscheduleLayout() - end");
     }
 
+    flushScheduledLayoutCallbacks()
+    {
+        this._frameDidFire();
+    }
+
     // Private
 
     _requestFrameIfNeeded()
