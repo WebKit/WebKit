@@ -1,5 +1,11 @@
 2017-03-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed GTK+ gardening. Remove platform expectation after r214246.
+
+        * platform/gtk/http/tests/loading/server-redirect-for-provisional-load-caching-expected.txt: Removed.
+
+2017-03-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed GTK+ gardening. Rebaseline several tests after r214244.
 
         * platform/gtk/accessibility/file-upload-button-stringvalue-expected.txt:
