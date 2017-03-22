@@ -930,18 +930,27 @@ String XMLHttpRequest::getAllResponseHeaders() const
     if (m_state < HEADERS_RECEIVED || m_error)
         return emptyString();
 
-    StringBuilder stringBuilder;
+    if (!m_allResponseHeaders) {
+        Vector<String> headers;
+        headers.reserveInitialCapacity(m_response.httpHeaderFields().size());
 
-    for (const auto& header : m_response.httpHeaderFields()) {
-        stringBuilder.append(header.key);
-        stringBuilder.append(':');
-        stringBuilder.append(' ');
-        stringBuilder.append(header.value);
-        stringBuilder.append('\r');
-        stringBuilder.append('\n');
+        for (auto& header : m_response.httpHeaderFields()) {
+            StringBuilder stringBuilder;
+            stringBuilder.append(header.key.convertToASCIILowercase());
+            stringBuilder.append(": ");
+            stringBuilder.append(header.value);
+            stringBuilder.append("\r\n");
+            headers.uncheckedAppend(stringBuilder.toString());
+        }
+        std::sort(headers.begin(), headers.end(), WTF::codePointCompareLessThan);
+
+        StringBuilder stringBuilder;
+        for (auto& header : headers)
+            stringBuilder.append(header);
+        m_allResponseHeaders = stringBuilder.toString();
     }
 
-    return stringBuilder.toString();
+    return m_allResponseHeaders;
 }
 
 String XMLHttpRequest::getResponseHeader(const String& name) const

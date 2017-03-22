@@ -229,6 +229,7 @@ private:
 
     ResponseType m_responseType { ResponseType::EmptyString };
     bool m_responseCacheIsValid { false };
+    mutable String m_allResponseHeaders;
 
     Timer m_resumeTimer;
     bool m_dispatchErrorOnResuming { false };
