@@ -98,7 +98,7 @@ static NSArray *applyPartitionToCookies(NSString *partition, NSArray *cookies)
 
 static NSArray *cookiesInPartitionForURL(const NetworkStorageSession& session, const URL& firstParty, const URL& url)
 {
-    String partition = cookieStoragePartition(firstParty, url);
+    String partition = session.cookieStoragePartition(firstParty, url);
     if (partition.isEmpty())
         return nil;
 
@@ -197,7 +197,7 @@ void setCookiesFromDOM(const NetworkStorageSession& session, const URL& firstPar
     ASSERT([filteredCookies.get() count] <= 1);
 
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING)
-    String partition = cookieStoragePartition(firstParty, url);
+    String partition = session.cookieStoragePartition(firstParty, url);
     if (!partition.isEmpty())
         filteredCookies = applyPartitionToCookies(partition, filteredCookies.get());
 #endif

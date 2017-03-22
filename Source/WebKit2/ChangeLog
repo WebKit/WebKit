@@ -1,3 +1,19 @@
+2017-03-22  John Wilander  <wilander@apple.com>
+
+        Resource Load Statistics: Fix partitioning bug for client-side cookie access
+        https://bugs.webkit.org/show_bug.cgi?id=169906
+        <rdar://problem/31164456>
+
+        Reviewed by Alex Christensen.
+
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        (WebKit::NetworkDataTaskCocoa::NetworkDataTaskCocoa):
+            This function no longer asks the NetworkStorageSession
+            whether it should partition or not. That decision is
+            now made as part of
+            WebCore::NetworkStorageSession::cookieStoragePartition().
+            The empty partition signals no partitioning.
+
 2017-03-22  Andy Estes  <aestes@apple.com>
 
         [QuickLook] Rename QuickLookHandle to PreviewLoader

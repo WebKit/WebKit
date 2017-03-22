@@ -173,7 +173,7 @@ void ResourceHandle::createNSURLConnection(id delegate, bool shouldUseCredential
     }
 
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING)
-    String storagePartition = cookieStoragePartition(firstRequest());
+    String storagePartition = d->m_context->storageSession().cookieStoragePartition(firstRequest());
     if (!storagePartition.isEmpty()) {
         NSMutableURLRequest *mutableRequest = [[nsRequest mutableCopy] autorelease];
         [mutableRequest _setProperty:storagePartition forKey:@"__STORAGE_PARTITION_IDENTIFIER"];

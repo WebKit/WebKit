@@ -79,7 +79,8 @@ public:
     WEBCORE_EXPORT RetainPtr<CFHTTPCookieStorageRef> cookieStorage() const;
     WEBCORE_EXPORT static void setCookieStoragePartitioningEnabled(bool);
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING)
-    WEBCORE_EXPORT bool shouldPartitionCookiesForHost(const String&);
+    WEBCORE_EXPORT String cookieStoragePartition(const ResourceRequest&) const;
+    String cookieStoragePartition(const URL& firstPartyForCookies, const URL& resource) const;
     WEBCORE_EXPORT void setShouldPartitionCookiesForHosts(const Vector<String>& domainsToRemove, const Vector<String>& domainsToAdd);
 #endif
 #elif USE(SOUP)
@@ -130,11 +131,9 @@ private:
     CredentialStorage m_credentialStorage;
 
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING)
+    bool shouldPartitionCookies(const String& topPrivatelyControlledDomain) const;
     HashSet<String> m_topPrivatelyControlledDomainsForCookiePartitioning;
 #endif
 };
-
-WEBCORE_EXPORT String cookieStoragePartition(const ResourceRequest&);
-String cookieStoragePartition(const URL& firstPartyForCookies, const URL& resource);
 
 }

@@ -50,7 +50,7 @@ Frame: '<!--framePath //<!--frame0-->-->'
 Should receive no cookies.
 Did not receive cookie named 'firstPartyCookie'.
 Did not receive cookie named 'thirdPartyCookie'.
-
+Client-side document.cookie:
 
 --------
 Frame: '<!--framePath //<!--frame1-->-->'
@@ -64,7 +64,7 @@ Frame: '<!--framePath //<!--frame2-->-->'
 Should only receive partitioned, third party cookie.
 Did not receive cookie named 'firstPartyCookie'.
 Received cookie named 'thirdPartyCookie'.
-
+Client-side document.cookie: thirdPartyCookie=value
 
 --------
 Frame: '<!--framePath //<!--frame3-->-->'
@@ -72,4 +72,4 @@ Frame: '<!--framePath //<!--frame3-->-->'
 After user interaction, should only receive non-partitioned, first party cookie.
 Received cookie named 'firstPartyCookie'.
 Did not receive cookie named 'thirdPartyCookie'.
-
+Client-side document.cookie: firstPartyCookie=value

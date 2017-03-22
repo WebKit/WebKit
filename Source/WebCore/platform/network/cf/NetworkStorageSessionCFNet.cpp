@@ -108,50 +108,47 @@ void NetworkStorageSession::setCookieStoragePartitioningEnabled(bool enabled)
     cookieStoragePartitioningEnabled = enabled;
 }
 
-#if PLATFORM(COCOA)
+#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
 
-String cookieStoragePartition(const ResourceRequest& request)
+String NetworkStorageSession::cookieStoragePartition(const ResourceRequest& request) const
 {
     return cookieStoragePartition(request.firstPartyForCookies(), request.url());
 }
 
-static inline bool hostIsInDomain(StringView host, StringView domain)
+static inline String getPartitioningDomain(const URL& url) 
 {
-    if (!host.endsWithIgnoringASCIICase(domain))
-        return false;
-
-    ASSERT(host.length() >= domain.length());
-    unsigned suffixOffset = host.length() - domain.length();
-    return suffixOffset == 0 || host[suffixOffset - 1] == '.';
+#if ENABLE(PUBLIC_SUFFIX_LIST)
+    auto domain = topPrivatelyControlledDomain(url.host());
+    if (domain.isEmpty())
+        domain = url.host();
+#else
+    auto domain = url.host();
+#endif
+    return domain;
 }
 
-String cookieStoragePartition(const URL& firstPartyForCookies, const URL& resource)
+String NetworkStorageSession::cookieStoragePartition(const URL& firstPartyForCookies, const URL& resource) const
 {
     if (!cookieStoragePartitioningEnabled)
         return emptyString();
-
-    String firstPartyDomain = firstPartyForCookies.host();
-#if ENABLE(PUBLIC_SUFFIX_LIST)
-    firstPartyDomain = topPrivatelyControlledDomain(firstPartyDomain);
-#endif
     
-    return hostIsInDomain(resource.host(), firstPartyDomain) ? emptyString() : firstPartyDomain;
+    auto resourceDomain = getPartitioningDomain(resource);
+    if (!shouldPartitionCookies(resourceDomain))
+        return emptyString();
+
+    auto firstPartyDomain = getPartitioningDomain(firstPartyForCookies);
+    if (firstPartyDomain == resourceDomain)
+        return emptyString();
+
+    return firstPartyDomain;
 }
 
-#endif
-
-#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
-
-bool NetworkStorageSession::shouldPartitionCookiesForHost(const String& host)
+bool NetworkStorageSession::shouldPartitionCookies(const String& topPrivatelyControlledDomain) const
 {
-    if (host.isEmpty())
+    if (topPrivatelyControlledDomain.isEmpty())
         return false;
 
-    auto domain = topPrivatelyControlledDomain(host);
-    if (domain.isEmpty())
-        domain = host;
-
-    return m_topPrivatelyControlledDomainsForCookiePartitioning.contains(domain);
+    return m_topPrivatelyControlledDomainsForCookiePartitioning.contains(topPrivatelyControlledDomain);
 }
 
 void NetworkStorageSession::setShouldPartitionCookiesForHosts(const Vector<String>& domainsToRemove, const Vector<String>& domainsToAdd)

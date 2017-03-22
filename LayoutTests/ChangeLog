@@ -1,3 +1,15 @@
+2017-03-22  John Wilander  <wilander@apple.com>
+
+        Resource Load Statistics: Fix partitioning bug for client-side cookie access
+        https://bugs.webkit.org/show_bug.cgi?id=169906
+        <rdar://problem/31164456>
+
+        Reviewed by Alex Christensen.
+
+        * http/tests/loading/resourceLoadStatistics/partitioned-cookies-with-and-without-user-interaction-expected.txt:
+        * http/tests/loading/resourceLoadStatistics/resources/get-cookies.php:
+            Now also outputs document.cookie client-side.
+
 2017-03-22  Jer Noble  <jer.noble@apple.com>
 
         Media files served without an extension will not load in <video> tag.
