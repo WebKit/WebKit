@@ -1,3 +1,14 @@
+2017-03-21  Sergio Villar Senin  <svillar@igalia.com>
+
+        All http/ tests with PHP fail in Debian unstable with php7
+        https://bugs.webkit.org/show_bug.cgi?id=169913
+
+        Reviewed by Michael Catanzaro.
+
+        The problem is that the configuration file was still checking for php5 instead of php7.
+
+        * http/conf/debian-httpd-2.4-php7.conf:
+
 2017-03-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Several WPT tests are failing since they were added in the last update in r213882
