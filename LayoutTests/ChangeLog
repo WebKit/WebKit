@@ -1,5 +1,11 @@
 2017-03-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed GTK+ gardening. Rebaseline fast/text/hyphenate-limit-lines.html.
+
+        * platform/gtk/fast/text/hyphenate-limit-lines-expected.txt:
+
+2017-03-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed GTK+ gardening. Remove platform expectation after r214246.
 
         * platform/gtk/http/tests/loading/server-redirect-for-provisional-load-caching-expected.txt: Removed.
