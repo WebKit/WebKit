@@ -1,3 +1,9 @@
+2017-03-23  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed GTK+ gardening. Mark webrtc/connection-state.html as failing.
+
+        * platform/gtk/TestExpectations:
+
 2017-03-22  Youenn Fablet  <youenn@apple.com>
 
         Support RTCPeerConnectionState
