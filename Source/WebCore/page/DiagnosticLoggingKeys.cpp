@@ -353,6 +353,26 @@ String DiagnosticLoggingKeys::domainCausingJetsamKey()
     return ASCIILiteral("DomainCausingJetsam");
 }
 
+String DiagnosticLoggingKeys::simulatedPageCrashKey()
+{
+    return ASCIILiteral("SimulatedPageCrash");
+}
+
+String DiagnosticLoggingKeys::exceededActiveMemoryLimitKey()
+{
+    return ASCIILiteral("ExceededActiveMemoryLimit");
+}
+
+String DiagnosticLoggingKeys::exceededInactiveMemoryLimitKey()
+{
+    return ASCIILiteral("ExceededInactiveMemoryLimit");
+}
+
+String DiagnosticLoggingKeys::exceededBackgroundCPULimitKey()
+{
+    return ASCIILiteral("ExceededBackgroundCPULimit");
+}
+
 String DiagnosticLoggingKeys::domainVisitedKey()
 {
     return ASCIILiteral("DomainVisited");

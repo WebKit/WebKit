@@ -55,6 +55,12 @@ struct PluginInfo;
 
 namespace WebKit {
 
+enum class SimulatedCrashReason {
+    ExceededActiveMemoryLimit,
+    ExceededInactiveMemoryLimit,
+    ExceededBackgroundCPULimit,
+};
+
 class NetworkProcessProxy;
 class UserMediaCaptureManagerProxy;
 class WebBackForwardListItem;
@@ -165,7 +171,10 @@ public:
     bool isUnderMemoryPressure() const { return m_isUnderMemoryPressure; }
 
     void processTerminated();
+
     void didExceedBackgroundCPULimit();
+    void didExceedActiveMemoryLimit();
+    void didExceedInactiveMemoryLimit();
 
 private:
     explicit WebProcessProxy(WebProcessPool&, WebsiteDataStore*);
@@ -237,6 +246,8 @@ private:
     void didReceiveSyncWebProcessProxyMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&);
 
     bool canTerminateChildProcess();
+
+    void simulateProcessCrash(SimulatedCrashReason);
 
     ResponsivenessTimer m_responsivenessTimer;
     BackgroundProcessResponsivenessTimer m_backgroundResponsivenessTimer;

@@ -34,6 +34,5 @@ void platformReleaseMemory(Critical);
 void jettisonExpensiveObjectsOnTopLevelNavigation();
 WEBCORE_EXPORT void registerMemoryReleaseNotifyCallbacks();
 WEBCORE_EXPORT void logMemoryStatisticsAtTimeOfDeath();
-WEBCORE_EXPORT NO_RETURN_DUE_TO_CRASH void didExceedMemoryLimitAndFailedToRecover();
 
 } // namespace WebCore

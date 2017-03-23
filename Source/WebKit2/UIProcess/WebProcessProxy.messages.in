@@ -45,6 +45,8 @@ messages -> WebProcessProxy LegacyReceiver {
 
     SetIsHoldingLockedFiles(bool isHoldingLockedFiles)
 
+    DidExceedActiveMemoryLimit()
+    DidExceedInactiveMemoryLimit()
     DidExceedBackgroundCPULimit()
 
     RetainIconForPageURL(String pageURL)

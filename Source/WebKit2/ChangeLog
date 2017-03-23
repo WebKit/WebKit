@@ -1,3 +1,27 @@
+2017-03-23  Andreas Kling  <akling@apple.com>
+
+        Let the UI process do memory kills and replace crashes with diagnostic logging.
+        <https://webkit.org/b/170016>
+        <rdar://problem/31091292>
+
+        Reviewed by Chris Dumez.
+
+        Have the WebProcess memory kill callback send a notification to the UI process
+        instead of outright crashing. The UI process then sends a diagnostic logging message
+        before carefully taking down the web process.
+
+        Also add drive-by diagnostic logging for background CPU limit kills.
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::simulateProcessCrash):
+        (WebKit::WebProcessProxy::didExceedActiveMemoryLimit):
+        (WebKit::WebProcessProxy::didExceedInactiveMemoryLimit):
+        (WebKit::WebProcessProxy::didExceedBackgroundCPULimit):
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/WebProcessProxy.messages.in:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeWebProcess):
+
 2017-03-23  Tim Horton  <timothy_horton@apple.com>
 
         Test DataDetectors supported schemes in lowercase

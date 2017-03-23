@@ -50,6 +50,7 @@
 #include "WebProcessProxyMessages.h"
 #include "WebUserContentControllerProxy.h"
 #include "WebsiteData.h"
+#include <WebCore/DiagnosticLoggingKeys.h>
 #include <WebCore/SuddenTermination.h>
 #include <WebCore/URL.h>
 #include <stdio.h>
@@ -1127,6 +1128,39 @@ static Vector<RefPtr<WebPageProxy>> pagesCopy(WTF::IteratorRange<WebProcessProxy
     return vector;
 }
 
+static String diagnosticLoggingKeyForSimulatedCrashReason(SimulatedCrashReason reason)
+{
+    switch (reason) {
+    case SimulatedCrashReason::ExceededActiveMemoryLimit:
+        return DiagnosticLoggingKeys::exceededActiveMemoryLimitKey();
+    case SimulatedCrashReason::ExceededInactiveMemoryLimit:
+        return DiagnosticLoggingKeys::exceededInactiveMemoryLimitKey();
+    case SimulatedCrashReason::ExceededBackgroundCPULimit:
+        return DiagnosticLoggingKeys::exceededBackgroundCPULimitKey();
+    }
+}
+
+void WebProcessProxy::simulateProcessCrash(SimulatedCrashReason reason)
+{
+    for (auto& page : pagesCopy(pages())) {
+        page->logDiagnosticMessage(DiagnosticLoggingKeys::simulatedPageCrashKey(), diagnosticLoggingKeyForSimulatedCrashReason(reason), ShouldSample::No);
+        page->terminateProcess();
+        page->processDidCrash();
+    }
+}
+
+void WebProcessProxy::didExceedActiveMemoryLimit()
+{
+    RELEASE_LOG(PerformanceLogging, "%p - WebProcessProxy::didExceedActiveMemoryLimit() Terminating WebProcess that has exceeded the active memory limit", this);
+    simulateProcessCrash(SimulatedCrashReason::ExceededActiveMemoryLimit);
+}
+
+void WebProcessProxy::didExceedInactiveMemoryLimit()
+{
+    RELEASE_LOG(PerformanceLogging, "%p - WebProcessProxy::didExceedInactiveMemoryLimit() Terminating WebProcess that has exceeded the inactive memory limit", this);
+    simulateProcessCrash(SimulatedCrashReason::ExceededInactiveMemoryLimit);
+}
+
 void WebProcessProxy::didExceedBackgroundCPULimit()
 {
     for (auto& page : pages()) {
@@ -1140,11 +1174,7 @@ void WebProcessProxy::didExceedBackgroundCPULimit()
     }
 
     RELEASE_LOG(PerformanceLogging, "%p - WebProcessProxy::didExceedBackgroundCPULimit() Terminating background WebProcess that has exceeded the background CPU limit", this);
-
-    for (auto& page : pagesCopy(pages())) {
-        page->terminateProcess();
-        page->processDidCrash();
-    }
+    simulateProcessCrash(SimulatedCrashReason::ExceededBackgroundCPULimit);
 }
 
 void WebProcessProxy::updateBackgroundResponsivenessTimer()

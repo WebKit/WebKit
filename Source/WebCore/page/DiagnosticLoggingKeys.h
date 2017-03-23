@@ -52,6 +52,10 @@ public:
     static String documentLoaderStoppingKey();
     static String domainCausingEnergyDrainKey();
     WEBCORE_EXPORT static String domainCausingJetsamKey();
+    WEBCORE_EXPORT static String simulatedPageCrashKey();
+    WEBCORE_EXPORT static String exceededActiveMemoryLimitKey();
+    WEBCORE_EXPORT static String exceededInactiveMemoryLimitKey();
+    WEBCORE_EXPORT static String exceededBackgroundCPULimitKey();
     static String domainVisitedKey();
     static String engineFailedToLoadKey();
     WEBCORE_EXPORT static String entryRightlyNotWarmedUpKey();

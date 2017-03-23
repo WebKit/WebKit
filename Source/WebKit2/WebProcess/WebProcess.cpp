@@ -267,8 +267,12 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
         });
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101200
         memoryPressureHandler.setShouldUsePeriodicMemoryMonitor(true);
-        memoryPressureHandler.setMemoryKillCallback([] () {
-            WebCore::didExceedMemoryLimitAndFailedToRecover();
+        memoryPressureHandler.setMemoryKillCallback([this] () {
+            WebCore::logMemoryStatisticsAtTimeOfDeath();
+            if (MemoryPressureHandler::singleton().processState() == WebsamProcessState::Active)
+                parentProcessConnection()->send(Messages::WebProcessProxy::DidExceedActiveMemoryLimit(), 0);
+            else
+                parentProcessConnection()->send(Messages::WebProcessProxy::DidExceedInactiveMemoryLimit(), 0);
         });
 #endif
         memoryPressureHandler.setMemoryPressureStatusChangedCallback([this](bool isUnderMemoryPressure) {

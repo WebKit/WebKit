@@ -186,13 +186,6 @@ void logMemoryStatisticsAtTimeOfDeath()
 #endif
 }
 
-void didExceedMemoryLimitAndFailedToRecover()
-{
-    RELEASE_LOG(MemoryPressure, "Crashing non-visible process due to excessive memory usage + inability to free up memory below panic threshold.");
-    logMemoryStatisticsAtTimeOfDeath();
-    CRASH();
-}
-
 #if !PLATFORM(COCOA)
 void platformReleaseMemory(Critical) { }
 void jettisonExpensiveObjectsOnTopLevelNavigation() { }
