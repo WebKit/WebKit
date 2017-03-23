@@ -1,3 +1,14 @@
+2017-03-23  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC][DFG] Make addShouldSpeculateAnyInt more conservative to avoid regression caused by Double <-> Int52 conversions
+        https://bugs.webkit.org/show_bug.cgi?id=169998
+
+        Reviewed by Saam Barati.
+
+        * microbenchmarks/int52-back-and-forth.js: Added.
+        (shouldBe):
+        (num):
+
 2017-03-23  Mark Lam  <mark.lam@apple.com>
 
         Clients of JSArray::tryCreateForInitializationPrivate() should do their own null checks.

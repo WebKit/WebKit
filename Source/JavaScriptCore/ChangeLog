@@ -1,1 +1,64 @@
+2017-03-23  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC][DFG] Make addShouldSpeculateAnyInt more conservative to avoid regression caused by Double <-> Int52 conversions
+        https://bugs.webkit.org/show_bug.cgi?id=169998
+
+        Reviewed by Saam Barati.
+
+        Double <-> Int52 and JSValue <-> Int52 conversions are not so cheap. Thus, Int52Rep is super carefully emitted.
+        We make addShouldSpeculateAnyInt more conservative to avoid regressions caused by the above conversions.
+        We select ArithAdd(Int52, Int52) only when this calculation is beneficial compared to added Int52Rep conversions.
+
+        This patch tighten the conditions of addShouldSpeculateAnyInt.
+
+        1. Honor DoubleConstant.
+
+        When executing imaging-darkroom, we have a thing like that,
+
+            132:< 2:loc36> DoubleConstant(Double|UseAsOther, AnyIntAsDouble, Double: 4607182418800017408, 1.000000, bc#114)
+            1320:< 1:loc38>        Int52Rep(Check:Int32:@82, Int52|PureInt, Int32, Exits, bc#114)
+            1321:< 1:loc39>        Int52Constant(Int52|PureInt, Boolint32Nonboolint32Int52, Double: 4607182418800017408, 1.000000, bc#114)
+            133:<!3:loc39> ArithSub(Int52Rep:@1320<Int52>, Int52Rep:@1321<Int52>, Int52|MustGen, Int52, CheckOverflow, Exits, bc#114)
+
+        The LHS of ArithSub says predicting Boolint32, and the rhs says AnyIntAsDouble. Thus we select ArithSub(Int52, Int52) instead
+        of ArithSub(Double, Double). However, it soon causes OSR exits. In imaging-darkroom, LHS's Int32 prediction will be broken.
+        While speculating Int32 in the above situation is reasonable approach since the given LHS says predicting Int32, this causes
+        severe performance regression.
+
+        Previously, we always select ArithSub(Double, Double). So accidentally, we do not encounter this misprediction issue.
+
+        One thing can be found that we have DoubleConstant in the RHS. It means that we have `1.0` instead of `1` in the code.
+        We can see the code like `lhs - 1.0` instead of `lhs - 1` in imaging-darkroom. It offers good information that lhs and
+        the resulting value would be double. Handling the above ArithSub in double seems more appropriate rather than handling
+        it in Int52.
+
+        So, in this patch, we honor DoubleConstant. If we find DoubleConstant on one operand, we give up selecting
+        Arith[Sub,Add](Int52, Int52). This change removes OSR exits occurr in imaging-darkroom right now.
+
+        2. Two Int52Rep(Double) conversions are not desirable.
+
+        We allow AnyInt ArithAdd only when the one operand of the binary operation should be speculated AnyInt. It is a bit conservative
+        decision. This is because Double to Int52 conversion is not so cheap. Frequent back-and-forth conversions between Double and Int52
+        rather hurt the performance. If the one operand of the operation is already Int52, the cost for constructing ArithAdd becomes
+        cheap since only one Double to Int52 conversion could be required.
+        This recovers some regression in assorted tests while keeping kraken crypto improvements.
+
+        3. Avoid frequent Int52 to JSValue conversions.
+
+        Int52 to JSValue conversion is not so cheap. Thus, we would like to avoid such situations. So, in this patch, we allow
+        Arith(Int52, Int52) with AnyIntAsDouble operand only when the node is used as number. By doing so, we avoid the case like,
+        converting Int52, performing ArithAdd, and soon converting back to JSValue.
+
+        The above 3 changes recover the regression measured in microbenchmarks/int52-back-and-forth.js and assorted benchmarks.
+        And still it keeps kraken crypto improvements.
+
+                                                   baseline                  patched
+
+        imaging-darkroom                       201.112+-3.192      ^     189.532+-2.883         ^ definitely 1.0611x faster
+        stanford-crypto-pbkdf2                 103.953+-2.325            100.926+-2.396           might be 1.0300x faster
+        stanford-crypto-sha256-iterative        35.103+-1.071      ?      36.049+-1.143         ? might be 1.0270x slower
+
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::addShouldSpeculateAnyInt):
+
 == Rolled over to ChangeLog-2017-03-23 ==
