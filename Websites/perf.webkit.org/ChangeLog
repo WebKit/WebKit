@@ -1,5 +1,19 @@
 2017-03-22  Ryosuke Niwa  <rniwa@webkit.org>
 
+        /api/uploaded-file should return createdAt as a POSIX timestamp
+        https://bugs.webkit.org/show_bug.cgi?id=169980
+
+        Rubber-stamped by Antti Koivisto.
+
+        Call Database::to_js_time on createdAt to return it as a POSIX timestamp.
+
+        * public/include/uploaded-file-helpers.php:
+        (format_uploaded_file): Fixed the bug.
+        * server-tests/api-manifest-tests.js: Renamed from api-manifest.js.
+        * server-tests/api-uploaded-file-tests.js: Renamed from api-uploaded-file.js. Added a test case.
+
+2017-03-22  Ryosuke Niwa  <rniwa@webkit.org>
+
         UploadedFile should support a callback for upload progress
         https://bugs.webkit.org/show_bug.cgi?id=169977
 

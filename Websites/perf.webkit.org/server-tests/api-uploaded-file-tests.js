@@ -51,6 +51,21 @@ describe('/api/uploaded-file', function () {
         });
     });
 
+    it('should return the file content with createdAt using POSIX timestamp in UTC', () => {
+        let uploadedFile;
+        const startTime = +Date.now();
+        return TemporaryFile.makeTemporaryFile('some.dat', 'some content').then((stream) => {
+            return PrivilegedAPI.sendRequest('upload-file', {newFile: stream}, {useFormData: true});
+        }).then((response) => {
+            uploadedFile = response['uploadedFile'];
+            console.assert(typeof(uploadedFile.createdAt) == 'number')
+            const createdAt = +new Date(uploadedFile.createdAt);
+            const endTime = +Date.now();
+            assert(startTime <= createdAt, 'createdAt should be after the time POST request was made');
+            assert(createdAt <= endTime, 'createdAt should be before the uploadedFile response had finished');
+        });
+    });
+
     it('should return "NotFound" when the specified SHA256 is invalid', () => {
         return TestServer.remoteAPI().getJSON('/api/uploaded-file/?sha256=abc').then((content) => {
             assert.equal(content['status'], 'NotFound');

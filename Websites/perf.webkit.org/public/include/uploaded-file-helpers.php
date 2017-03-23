@@ -5,7 +5,7 @@ function format_uploaded_file($file_row)
     return array(
         'id' => $file_row['file_id'],
         'size' => $file_row['file_size'],
-        'createdAt' => $file_row['file_created_at'],
+        'createdAt' => Database::to_js_time($file_row['file_created_at']),
         'mime' => $file_row['file_mime'],
         'filename' => $file_row['file_filename'],
         'author' => $file_row['file_author'],
