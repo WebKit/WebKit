@@ -177,8 +177,10 @@ bool LibWebRTCProvider::webRTCAvailable()
 #if USE(LIBWEBRTC)
     static bool available = [] {
         void* libwebrtcLibrary = dlopen("libwebrtc.dylib", RTLD_LAZY);
-        if (!libwebrtcLibrary)
+        if (!libwebrtcLibrary) {
+            RELEASE_LOG(WebRTC, "Attempted to load libwebrtc without success: %s", dlerror());
             return false;
+        }
         dlclose(libwebrtcLibrary);
         return true;
     }();
