@@ -175,50 +175,37 @@ ExceptionOr<void> RTCPeerConnection::removeTrack(RTCRtpSender& sender)
     return { };
 }
 
-ExceptionOr<Ref<RTCRtpTransceiver>> RTCPeerConnection::addTransceiver(Ref<MediaStreamTrack>&& track, const RTCRtpTransceiverInit& init)
+ExceptionOr<Ref<RTCRtpTransceiver>> RTCPeerConnection::addTransceiver(AddTransceiverTrackOrKind&& withTrack, const RTCRtpTransceiverInit& init)
 {
-    if (m_signalingState == RTCSignalingState::Closed)
-        return Exception { INVALID_STATE_ERR };
+    if (WTF::holds_alternative<String>(withTrack)) {
+        const String& kind = WTF::get<String>(withTrack);
+        if (kind != "audio" && kind != "video")
+            return Exception { TypeError };
 
-    String transceiverMid = RTCRtpTransceiver::getNextMid();
-    const String& trackKind = track->kind();
+        auto sender = RTCRtpSender::create(String(kind), Vector<String>(), *this);
+        return completeAddTransceiver(WTFMove(sender), init, createCanonicalUUIDString(), kind);
+    }
+
+    Ref<MediaStreamTrack> track = WTF::get<RefPtr<MediaStreamTrack>>(withTrack).releaseNonNull();
     const String& trackId = track->id();
+    const String& trackKind = track->kind();
 
     auto sender = RTCRtpSender::create(WTFMove(track), Vector<String>(), *this);
-    auto receiver = m_backend->createReceiver(transceiverMid, trackKind, trackId);
-    auto transceiver = RTCRtpTransceiver::create(WTFMove(sender), WTFMove(receiver));
-    transceiver->setProvisionalMid(transceiverMid);
-
-    completeAddTransceiver(transceiver, init);
-    return WTFMove(transceiver);
+    return completeAddTransceiver(WTFMove(sender), init, trackId, trackKind);
 }
 
-ExceptionOr<Ref<RTCRtpTransceiver>> RTCPeerConnection::addTransceiver(const String& kind, const RTCRtpTransceiverInit& init)
+Ref<RTCRtpTransceiver> RTCPeerConnection::completeAddTransceiver(Ref<RTCRtpSender>&& sender, const RTCRtpTransceiverInit& init, const String& trackId, const String& trackKind)
 {
-    if (m_signalingState == RTCSignalingState::Closed)
-        return Exception { INVALID_STATE_ERR };
-
-    if (kind != "audio" && kind != "video")
-        return Exception { TypeError };
-
     String transceiverMid = RTCRtpTransceiver::getNextMid();
-    String trackId = createCanonicalUUIDString();
+    auto transceiver = RTCRtpTransceiver::create(WTFMove(sender), m_backend->createReceiver(transceiverMid, trackKind, trackId));
 
-    auto sender = RTCRtpSender::create(kind, Vector<String>(), *this);
-    auto receiver = m_backend->createReceiver(transceiverMid, kind, trackId);
-    auto transceiver = RTCRtpTransceiver::create(WTFMove(sender), WTFMove(receiver));
     transceiver->setProvisionalMid(transceiverMid);
+    transceiver->setDirection(init.direction);
 
-    completeAddTransceiver(transceiver, init);
-    return WTFMove(transceiver);
-}
-
-void RTCPeerConnection::completeAddTransceiver(RTCRtpTransceiver& transceiver, const RTCRtpTransceiverInit& init)
-{
-    transceiver.setDirection(init.direction);
-
-    m_transceiverSet->append(transceiver);
+    m_transceiverSet->append(transceiver.copyRef());
     m_backend->markAsNeedingNegotiation();
+
+    return transceiver;
 }
 
 void RTCPeerConnection::queuedCreateOffer(RTCOfferOptions&& options, SessionDescriptionPromise&& promise)

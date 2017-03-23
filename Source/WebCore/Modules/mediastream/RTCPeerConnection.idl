@@ -65,8 +65,7 @@ typedef RTCRtpTransceiverDirection RtpTransceiverDirection;
     ExportMacro=WEBCORE_EXPORT,
     JSBuiltinConstructor
 ] interface RTCPeerConnection : EventTarget {
-    // FIXME 169644: update Constructor to take optional RTCConfiguration
-    // Private initializer
+    // JS built-in constructor handles the optional RTCConfiguration
     [PrivateIdentifier, CallWith=Document, MayThrowException] void initializeWith(RTCConfiguration configuration);
 
 
@@ -76,24 +75,16 @@ typedef RTCRtpTransceiverDirection RtpTransceiverDirection;
     [JSBuiltin] Promise<RTCSessionDescriptionInit> createAnswer(optional RTCAnswerOptions answerOptions);
 
     [JSBuiltin] Promise<void> setLocalDescription(RTCSessionDescriptionInit description);
-    // FIXME 169644: change to nullable
-    readonly attribute RTCSessionDescription localDescription;
-    // FIXME 169644: change to nullable
-    readonly attribute RTCSessionDescription currentLocalDescription;
-    // FIXME 169644: change to nullable
-    readonly attribute RTCSessionDescription pendingLocalDescription;
+    readonly attribute RTCSessionDescription? localDescription;
+    readonly attribute RTCSessionDescription? currentLocalDescription;
+    readonly attribute RTCSessionDescription? pendingLocalDescription;
 
-    // FIXME 169644: change to RTCSessionDescriptionInit
-    [JSBuiltin] Promise<void> setRemoteDescription(RTCSessionDescription description);
-    // FIXME 169644: change to nullable
-    readonly attribute RTCSessionDescription remoteDescription;
-    // FIXME 169644: change to nullable
-    readonly attribute RTCSessionDescription currentRemoteDescription;
-    // FIXME 169644: change to nullable
-    readonly attribute RTCSessionDescription pendingRemoteDescription;
+    [JSBuiltin] Promise<void> setRemoteDescription(RTCSessionDescriptionInit description);
+    readonly attribute RTCSessionDescription? remoteDescription;
+    readonly attribute RTCSessionDescription? currentRemoteDescription;
+    readonly attribute RTCSessionDescription? pendingRemoteDescription;
 
-    // FIXME 169644: update parameter to (RTCIceCandidateInit or RTCIceCandidate)
-    [JSBuiltin] Promise<void> addIceCandidate(RTCIceCandidate candidate);
+    [JSBuiltin] Promise<void> addIceCandidate((RTCIceCandidateInit or RTCIceCandidate) candidate);
 
     readonly attribute RTCSignalingState signalingState;
     readonly attribute RTCIceGatheringState iceGatheringState;
@@ -136,8 +127,7 @@ typedef RTCRtpTransceiverDirection RtpTransceiverDirection;
     [PrivateIdentifier, PublicIdentifier, MayThrowException] RTCRtpSender addTrack(MediaStreamTrack track, MediaStream... streams);
     [PrivateIdentifier, PublicIdentifier, MayThrowException] void removeTrack(RTCRtpSender sender);
 
-    [MayThrowException] RTCRtpTransceiver addTransceiver(MediaStreamTrack track, optional RTCRtpTransceiverInit init);
-    [MayThrowException] RTCRtpTransceiver addTransceiver(DOMString kind, optional RTCRtpTransceiverInit init);
+    [MayThrowException] RTCRtpTransceiver addTransceiver((MediaStreamTrack or DOMString) track, optional RTCRtpTransceiverInit init);
 
     attribute EventHandler ontrack;
 

@@ -39,19 +39,19 @@ namespace WebCore {
 
 Ref<RTCRtpSender> RTCRtpSender::create(Ref<MediaStreamTrack>&& track, Vector<String>&& mediaStreamIds, RTCRtpSenderClient& client)
 {
-    auto sender = adoptRef(*new RTCRtpSender(track->kind(), WTFMove(mediaStreamIds), client));
+    auto sender = adoptRef(*new RTCRtpSender(String(track->kind()), WTFMove(mediaStreamIds), client));
     sender->setTrack(WTFMove(track));
     return sender;
 }
 
-Ref<RTCRtpSender> RTCRtpSender::create(const String& trackKind, Vector<String>&& mediaStreamIds, RTCRtpSenderClient& client)
+Ref<RTCRtpSender> RTCRtpSender::create(String&& trackKind, Vector<String>&& mediaStreamIds, RTCRtpSenderClient& client)
 {
-    return adoptRef(*new RTCRtpSender(trackKind, WTFMove(mediaStreamIds), client));
+    return adoptRef(*new RTCRtpSender(WTFMove(trackKind), WTFMove(mediaStreamIds), client));
 }
 
-RTCRtpSender::RTCRtpSender(const String& trackKind, Vector<String>&& mediaStreamIds, RTCRtpSenderClient& client)
+RTCRtpSender::RTCRtpSender(String&& trackKind, Vector<String>&& mediaStreamIds, RTCRtpSenderClient& client)
     : RTCRtpSenderReceiverBase()
-    , m_trackKind(trackKind)
+    , m_trackKind(WTFMove(trackKind))
     , m_mediaStreamIds(WTFMove(mediaStreamIds))
     , m_client(&client)
 {

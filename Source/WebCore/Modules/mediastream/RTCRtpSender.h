@@ -47,7 +47,7 @@ public:
 class RTCRtpSender : public RTCRtpSenderReceiverBase {
 public:
     static Ref<RTCRtpSender> create(Ref<MediaStreamTrack>&&, Vector<String>&& mediaStreamIds, RTCRtpSenderClient&);
-    static Ref<RTCRtpSender> create(const String& trackKind, Vector<String>&& mediaStreamIds, RTCRtpSenderClient&);
+    static Ref<RTCRtpSender> create(String&& trackKind, Vector<String>&& mediaStreamIds, RTCRtpSenderClient&);
 
     const String& trackId() const { return m_trackId; }
     const String& trackKind() const { return m_trackKind; }
@@ -62,7 +62,7 @@ public:
     ExceptionOr<void> replaceTrack(Ref<MediaStreamTrack>&&, DOMPromise<void>&&);
 
 private:
-    RTCRtpSender(const String& trackKind, Vector<String>&& mediaStreamIds, RTCRtpSenderClient&);
+    RTCRtpSender(String&& trackKind, Vector<String>&& mediaStreamIds, RTCRtpSenderClient&);
 
     String m_trackId;
     String m_trackKind;
