@@ -1,5 +1,21 @@
 2017-03-23  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Share more code between ManifestGenerator and /api/triggerables
+        https://bugs.webkit.org/show_bug.cgi?id=169993
+
+        Reviewed by Chris Dumez.
+
+        Shared the code to fetch the list of triggerables from the database between ManifestGenerator
+        and /api/triggerables.
+
+        * public/api/triggerables.php:
+        (main):
+        * public/include/manifest-generator.php:
+        (ManifestGenerator::fetch_triggerables): Extracted as a static function. Also include the ID
+        in the triggerable data.
+
+2017-03-23  Ryosuke Niwa  <rniwa@webkit.org>
+
         create-test-group should allow a different set of repositories to be used in each configuration
         https://bugs.webkit.org/show_bug.cgi?id=169992
 

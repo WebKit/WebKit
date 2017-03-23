@@ -1,7 +1,9 @@
 <?php
 
 require('../include/json-header.php');
+require('../include/manifest-generator.php');
 
+// V2 UI compatibility (detect-changes.js).
 function main($path) {
     if (count($path) > 1)
         exit_with_error('InvalidRequest');
@@ -19,19 +21,7 @@ function main($path) {
         $query['id'] = $triggerable['id'];
     }
 
-    $id_to_triggerable = array();
-    foreach ($db->select_rows('build_triggerables', 'triggerable', $query) as $row) {
-        $id = $row['triggerable_id'];
-        $repositories = array();
-        $id_to_triggerable[$id] = array('id' => $id, 'name' => $row['triggerable_name'], 'acceptedRepositories' => &$repositories);
-    }
-
-    foreach ($db->select_rows('triggerable_repositories', 'trigrepo', array()) as $row) {
-        $triggerable = array_get($id_to_triggerable, $row['trigrepo_triggerable']);
-        if ($triggerable)
-            array_push($triggerable['acceptedRepositories'], $row['trigrepo_repository']);
-    }
-
+    $id_to_triggerable = ManifestGenerator::fetch_triggerables($db, $query);
     exit_with_success(array('triggerables' => array_values($id_to_triggerable)));
 }
 

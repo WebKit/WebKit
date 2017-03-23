@@ -182,9 +182,14 @@ class ManifestGenerator {
         return $bug_trackers;
     }
 
-    private function triggerables() {
+    private function triggerables()
+    {
+        return ManifestGenerator::fetch_triggerables($this->db, array());
+    }
 
-        $triggerables = $this->db->fetch_table('build_triggerables');
+    static function fetch_triggerables($db, $query)
+    {
+        $triggerables = $db->fetch_table('build_triggerables');
         if (!$triggerables)
             return array();
 
@@ -192,12 +197,13 @@ class ManifestGenerator {
         foreach ($triggerables as $row) {
             $id = $row['triggerable_id'];
             $id_to_triggerable[$id] = array(
+                'id' => $id,
                 'name' => $row['triggerable_name'],
                 'acceptedRepositories' => array(),
                 'configurations' => array());
         }
 
-        $repository_map = $this->db->fetch_table('triggerable_repositories');
+        $repository_map = $db->fetch_table('triggerable_repositories');
         if ($repository_map) {
             foreach ($repository_map as $row) {
                 $triggerable = &$id_to_triggerable[$row['trigrepo_triggerable']];
@@ -205,7 +211,7 @@ class ManifestGenerator {
             }
         }
 
-        $configuration_map = $this->db->fetch_table('triggerable_configurations');
+        $configuration_map = $db->fetch_table('triggerable_configurations');
         if ($configuration_map) {
             foreach ($configuration_map as $row) {
                 $triggerable = &$id_to_triggerable[$row['trigconfig_triggerable']];
