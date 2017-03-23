@@ -603,6 +603,9 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.View
     _editingCancelled(element)
     {
         console.assert(this._editingNode.element === element.enclosingNodeOrSelfWithNodeName("tr"));
+
+        this._editingNode.refresh();
+
         this._editing = false;
         this._editingNode = null;
     }

@@ -204,6 +204,11 @@ body[dir=rtl] .data-grid:matches(:focus, .force-focus) tr.selected td:not(:last-
     overflow: hidden;
 }
 
+/* FIXME: Remove this once <https://webkit.org/b/169972> is fixed. */
+.data-grid td.editing > div {
+    text-overflow: clip;
+}
+
 .data-grid .centered div {
     text-align: center;
 }

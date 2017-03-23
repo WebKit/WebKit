@@ -1,3 +1,18 @@
+2017-03-23  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Editing local storage keys/values starts with truncated strings
+        https://bugs.webkit.org/show_bug.cgi?id=169896
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/DataGrid.css:
+        (.data-grid td.editing > div):
+        * UserInterface/Views/DataGrid.js:
+        (WebInspector.DataGrid.prototype._editingCancelled):
+        div.cell-content is removed because the <td> itself is contenteditable (using -webkit-user-modify:read-write-plaintext-only),
+        not the inner div.cell-content. Re-create div.cell-content after commiting (by pressing Enter) or canceling (by pressing Esc)
+        since it may get removed while editing.
+
 2017-03-22  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Clicking DOM breakpoint marker should enable/disable breakpoints
