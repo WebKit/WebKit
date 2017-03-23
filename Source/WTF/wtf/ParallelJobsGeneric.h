@@ -81,8 +81,8 @@ public:
         mutable Lock m_mutex;
         Condition m_threadCondition;
 
-        ThreadFunction m_threadFunction;
-        void* m_parameters;
+        ThreadFunction m_threadFunction { nullptr };
+        void* m_parameters { nullptr };
     };
 
 private:

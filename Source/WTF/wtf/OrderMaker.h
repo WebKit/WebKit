@@ -50,7 +50,7 @@ class OrderMaker {
         {
         }
 
-        T payload;
+        T payload { };
     };
     
 public:

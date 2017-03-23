@@ -50,8 +50,8 @@ public:
     }
     
 private:
-    size_t m_index;
-    T m_element;
+    size_t m_index { 0 };
+    T m_element { };
 };
 
 template<typename TargetVectorType, typename InsertionVectorType>

@@ -302,7 +302,7 @@ struct KeyValuePair {
     }
 
     KeyTypeArg key;
-    ValueTypeArg value;
+    ValueTypeArg value { };
 };
 
 template<typename KeyTraitsArg, typename ValueTraitsArg>
