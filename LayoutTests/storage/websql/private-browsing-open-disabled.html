@@ -1,0 +1,23 @@
+<body>
+<div id="logger"></div>
+<script>
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+    testRunner.setPrivateBrowsingEnabled(true);
+}
+
+var logger = document.getElementById("logger");
+try {
+    openDatabase("PrivateBrowsingOpenDisabled", "1.0", "Test that you can't open databases in private browsing mode", 1);
+    logger.innerHTML = "Successfully opened a WebSQL database in private browsing"
+} catch(e) {
+    logger.innerHTML = "Caught exception opening a WebSQL database in private browsing: " + e;
+}
+
+if (window.testRunner)
+    testRunner.notifyDone();
+
+</script>
+</body>

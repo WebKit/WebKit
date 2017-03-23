@@ -1,3 +1,13 @@
+2017-03-23  Brady Eidson  <beidson@apple.com>
+
+        WebSQL databases should not openable in private browsing.
+        <rdar://problem/30383335> and https://bugs.webkit.org/show_bug.cgi?id=170013
+
+        Reviewed by Alex Christensen.
+
+        * storage/websql/private-browsing-open-disabled-expected.txt: Added.
+        * storage/websql/private-browsing-open-disabled.html: Added.
+
 2017-03-23  Ryan Haddad  <ryanhaddad@apple.com>
 
         Remove pass expectation for fast/forms/range/range-remove-on-drag.html as it relies on touch events.

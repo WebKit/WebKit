@@ -76,7 +76,7 @@ private:
 
     enum OpenAttempt { FirstTryToOpenDatabase, RetryOpenDatabase };
     ExceptionOr<Ref<Database>> openDatabaseBackend(ScriptExecutionContext&, const String& name, const String& expectedVersion, const String& displayName, unsigned estimatedSize, bool setVersionInNewDatabase);
-    static ExceptionOr<Ref<Database>> tryToOpenDatabaseBackend(DatabaseContext&, const String& name, const String& expectedVersion, const String& displayName, unsigned estimatedSize, bool setVersionInNewDatabase, OpenAttempt);
+    ExceptionOr<Ref<Database>> tryToOpenDatabaseBackend(ScriptExecutionContext&, const String& name, const String& expectedVersion, const String& displayName, unsigned estimatedSize, bool setVersionInNewDatabase, OpenAttempt);
 
     class ProposedDatabase;
     void addProposedDatabase(ProposedDatabase&);
