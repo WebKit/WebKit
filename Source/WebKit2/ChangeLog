@@ -1,3 +1,30 @@
+2017-03-22  Andy Estes  <aestes@apple.com>
+
+        [Cocoa] Add an option to exclude overflow when snapshotting a WKWebProcessPlugInNodeHandle
+        https://bugs.webkit.org/show_bug.cgi?id=169991
+        <rdar://problem/30141083>
+
+        Reviewed by Tim Horton.
+
+        When snapshotting an element using -[WKWebProcessPlugInNodeHandle renderedImageWithOptions:],
+        the image is sized to encompass all descendants, even if the element is styled with
+        overflow:hidden. This patch adds a WKSnapshotOption to exclude overflow, resulting in an
+        image that's always sized to the node's bounding box.
+
+        * Shared/API/c/WKImage.h: Defined kWKSnapshotOptionsExcludeOverflow.
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInNodeHandle.mm:
+        (-[WKWebProcessPlugInNodeHandle renderedImageWithOptions:]): Converted the
+        WKSnapshotOptions argument to a SnapshotOptions using toSnapshotOptions(), and called
+        InjectedBundleNodeHandle::renderedImage() with shouldExcludeOverflow set to true if the
+        WKSnapshotOptions included kWKSnapshotOptionsExcludeOverflow.
+        * WebProcess/InjectedBundle/API/c/WKBundleNodeHandle.cpp:
+        (WKBundleNodeHandleCopySnapshotWithOptions): Ditto.
+        * WebProcess/InjectedBundle/DOM/InjectedBundleNodeHandle.cpp:
+        (WebKit::InjectedBundleNodeHandle::renderedImage): If shouldExcludeOverflow is true, use
+        RenderObject::absoluteBoundingBoxRectIgnoringTransforms() as the paintingRect for
+        imageForRect().
+        * WebProcess/InjectedBundle/DOM/InjectedBundleNodeHandle.h:
+
 2017-03-22  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         WKScrollView should not require data interaction gestures to fail before panning

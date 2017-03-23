@@ -165,7 +165,7 @@ static RefPtr<WebImage> imageForRect(FrameView* frameView, const IntRect& rect, 
     return snapshot;
 }
 
-RefPtr<WebImage> InjectedBundleNodeHandle::renderedImage(SnapshotOptions options)
+RefPtr<WebImage> InjectedBundleNodeHandle::renderedImage(SnapshotOptions options, bool shouldExcludeOverflow)
 {
     Frame* frame = m_node->document().frame();
     if (!frame)
@@ -181,8 +181,13 @@ RefPtr<WebImage> InjectedBundleNodeHandle::renderedImage(SnapshotOptions options
     if (!renderer)
         return nullptr;
 
-    LayoutRect topLevelRect;
-    IntRect paintingRect = snappedIntRect(renderer->paintingRootRect(topLevelRect));
+    IntRect paintingRect;
+    if (shouldExcludeOverflow)
+        paintingRect = renderer->absoluteBoundingBoxRectIgnoringTransforms();
+    else {
+        LayoutRect topLevelRect;
+        paintingRect = snappedIntRect(renderer->paintingRootRect(topLevelRect));
+    }
 
     frameView->setNodeToDraw(m_node.ptr());
     auto image = imageForRect(frameView, paintingRect, options);

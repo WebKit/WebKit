@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,41 +23,6 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WKImage_h
-#define WKImage_h
-
-#include <WebKit/WKBase.h>
-#include <WebKit/WKGeometry.h>
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-enum {
-    kWKImageOptionsShareable = 1 << 0,
-};
-typedef uint32_t WKImageOptions;
-
-enum {
-    kWKSnapshotOptionsShareable = 1 << 0,
-    kWKSnapshotOptionsExcludeSelectionHighlighting = 1 << 1,
-    kWKSnapshotOptionsInViewCoordinates = 1 << 2,
-    kWKSnapshotOptionsPaintSelectionRectangle = 1 << 3,
-    kWKSnapshotOptionsForceBlackText = 1 << 4,
-    kWKSnapshotOptionsForceWhiteText = 1 << 5,
-    kWKSnapshotOptionsPrinting = 1 << 6,
-    kWKSnapshotOptionsExcludeOverflow = 1 << 7,
-};
-typedef uint32_t WKSnapshotOptions;
-
-WK_EXPORT WKTypeID WKImageGetTypeID();
-
-WK_EXPORT WKImageRef WKImageCreate(WKSize size, WKImageOptions options);
-
-WK_EXPORT WKSize WKImageGetSize(WKImageRef image);
-
-#ifdef __cplusplus
-}
-#endif
-
-#endif /* WKImage_h */
+@protocol RenderedImageWithOptionsProtocol
+- (void)didRenderImageWithSize:(CGSize)size;
+@end

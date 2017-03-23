@@ -478,6 +478,9 @@
 		A10F047E1E3AD29C00C95E19 /* NSFileManagerExtras.mm in Sources */ = {isa = PBXBuildFile; fileRef = A10F047C1E3AD29C00C95E19 /* NSFileManagerExtras.mm */; };
 		A1146A8D1D2D7115000FE710 /* ContentFiltering.mm in Sources */ = {isa = PBXBuildFile; fileRef = A1146A8A1D2D704F000FE710 /* ContentFiltering.mm */; };
 		A125478F1DB18B9400358564 /* LoadDataWithNilMIMEType.mm in Sources */ = {isa = PBXBuildFile; fileRef = A125478D1DB18B9400358564 /* LoadDataWithNilMIMEType.mm */; };
+		A12DDBFB1E836F0700CF6CAE /* RenderedImageWithOptions.mm in Sources */ = {isa = PBXBuildFile; fileRef = A12DDBF91E836F0700CF6CAE /* RenderedImageWithOptions.mm */; };
+		A12DDC001E8373E700CF6CAE /* rendered-image-excluding-overflow.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = A12DDBFF1E8373C100CF6CAE /* rendered-image-excluding-overflow.html */; };
+		A12DDC021E837C2400CF6CAE /* RenderedImageWithOptionsPlugIn.mm in Sources */ = {isa = PBXBuildFile; fileRef = A12DDBFC1E836FF100CF6CAE /* RenderedImageWithOptionsPlugIn.mm */; };
 		A13EBBAA1B87428D00097110 /* WebProcessPlugIn.mm in Sources */ = {isa = PBXBuildFile; fileRef = A13EBBA91B87428D00097110 /* WebProcessPlugIn.mm */; };
 		A13EBBAB1B87434600097110 /* PlatformUtilitiesCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0F139E721A423A2B00F590F5 /* PlatformUtilitiesCocoa.mm */; };
 		A13EBBB01B87436F00097110 /* BundleParametersPlugIn.mm in Sources */ = {isa = PBXBuildFile; fileRef = A13EBBAE1B87436F00097110 /* BundleParametersPlugIn.mm */; };
@@ -654,6 +657,7 @@
 			dstPath = TestWebKitAPI.resources;
 			dstSubfolderSpec = 7;
 			files = (
+				A12DDC001E8373E700CF6CAE /* rendered-image-excluding-overflow.html in Copy Resources */,
 				C99BDF891E80980400C7170E /* autoplay-zero-volume-check.html in Copy Resources */,
 				A14AAB651E78DC5400C1ADC2 /* encrypted.pdf in Copy Resources */,
 				A1409AD91E7254D4004949D9 /* password-protected.pages in Copy Resources */,
@@ -1235,6 +1239,10 @@
 		A10F047C1E3AD29C00C95E19 /* NSFileManagerExtras.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NSFileManagerExtras.mm; sourceTree = "<group>"; };
 		A1146A8A1D2D704F000FE710 /* ContentFiltering.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ContentFiltering.mm; sourceTree = "<group>"; };
 		A125478D1DB18B9400358564 /* LoadDataWithNilMIMEType.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LoadDataWithNilMIMEType.mm; sourceTree = "<group>"; };
+		A12DDBF91E836F0700CF6CAE /* RenderedImageWithOptions.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RenderedImageWithOptions.mm; sourceTree = "<group>"; };
+		A12DDBFC1E836FF100CF6CAE /* RenderedImageWithOptionsPlugIn.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RenderedImageWithOptionsPlugIn.mm; sourceTree = "<group>"; };
+		A12DDBFF1E8373C100CF6CAE /* rendered-image-excluding-overflow.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "rendered-image-excluding-overflow.html"; sourceTree = "<group>"; };
+		A12DDC011E8374F500CF6CAE /* RenderedImageWithOptionsProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderedImageWithOptionsProtocol.h; sourceTree = "<group>"; };
 		A13EBB491B87339E00097110 /* TestWebKitAPI.wkbundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TestWebKitAPI.wkbundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		A13EBB521B87346600097110 /* WebProcessPlugIn.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = WebProcessPlugIn.xcconfig; sourceTree = "<group>"; };
 		A13EBB541B8734E000097110 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -1650,6 +1658,9 @@
 				1A4F81C81BDFFD18004E672E /* RemoteObjectRegistry.mm */,
 				1A4F81CD1BDFFD53004E672E /* RemoteObjectRegistryPlugIn.mm */,
 				CD9E292B1C90A71F000BB800 /* RequiresUserActionForPlayback.mm */,
+				A12DDBF91E836F0700CF6CAE /* RenderedImageWithOptions.mm */,
+				A12DDBFC1E836FF100CF6CAE /* RenderedImageWithOptionsPlugIn.mm */,
+				A12DDC011E8374F500CF6CAE /* RenderedImageWithOptionsProtocol.h */,
 				37BCA61B1B596BA9002012CA /* ShouldOpenExternalURLsInNewWindowActions.mm */,
 				2D9A53AE1B31FA8D0074D5AA /* ShrinkToFit.mm */,
 				2DFF7B6C1DA487AF00814614 /* SnapshotStore.mm */,
@@ -1857,6 +1868,7 @@
 				CEBCA1371E3A803400C73293 /* page-without-csp.html */,
 				CEBCA1361E3A803400C73293 /* page-without-csp-iframe.html */,
 				A1409AD81E7254AC004949D9 /* password-protected.pages */,
+				A12DDBFF1E8373C100CF6CAE /* rendered-image-excluding-overflow.html */,
 				F4F405BB1D4C0CF8007A9707 /* skinny-autoplaying-video-with-audio.html */,
 				515BE16E1D4288FF00DD7C68 /* StoreBlobToBeDeleted.html */,
 				51714EB21CF8C761004723C4 /* WebProcessKillIDBCleanup-1.html */,
@@ -2741,6 +2753,7 @@
 				7A909A831D877480007E10F8 /* IntSize.cpp in Sources */,
 				7CCE7EEF1A411AE600447C4C /* EphemeralSessionPushStateNoHistoryCallback.cpp in Sources */,
 				7CCE7EF01A411AE600447C4C /* EvaluateJavaScript.cpp in Sources */,
+				A12DDBFB1E836F0700CF6CAE /* RenderedImageWithOptions.mm in Sources */,
 				F4D4F3B91E4E36E400BB2767 /* DataInteractionTests.mm in Sources */,
 				7CCE7EF11A411AE600447C4C /* FailedLoad.cpp in Sources */,
 				7C83E04F1D0A641800FEBCF3 /* FileSystem.cpp in Sources */,
@@ -2978,6 +2991,7 @@
 				1A4F81CF1BDFFD53004E672E /* RemoteObjectRegistryPlugIn.mm in Sources */,
 				7C882E091C80C630006BF731 /* UserContentWorldPlugIn.mm in Sources */,
 				37A709AF1E3EA97E00CA5969 /* BundleRangeHandlePlugIn.mm in Sources */,
+				A12DDC021E837C2400CF6CAE /* RenderedImageWithOptionsPlugIn.mm in Sources */,
 				374B7A611DF371CF00ACCB6C /* BundleEditingDelegatePlugIn.mm in Sources */,
 				7C83E03D1D0A60D600FEBCF3 /* UtilitiesCocoa.mm in Sources */,
 				A13EBBAA1B87428D00097110 /* WebProcessPlugIn.mm in Sources */,

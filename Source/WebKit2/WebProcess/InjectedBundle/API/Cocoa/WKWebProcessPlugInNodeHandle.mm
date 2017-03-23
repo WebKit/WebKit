@@ -26,6 +26,7 @@
 #import "config.h"
 #import "WKWebProcessPlugInNodeHandleInternal.h"
 
+#import "WKSharedAPICast.h"
 #import "WKWebProcessPlugInFrameInternal.h"
 #import <WebCore/IntRect.h>
 #import <WebKit/WebImage.h>
@@ -67,7 +68,7 @@ using namespace WebKit;
 #if PLATFORM(IOS)
 - (UIImage *)renderedImageWithOptions:(WKSnapshotOptions)options
 {
-    RefPtr<WebImage> image = _nodeHandle->renderedImage(options);
+    RefPtr<WebImage> image = _nodeHandle->renderedImage(toSnapshotOptions(options), options & kWKSnapshotOptionsExcludeOverflow);
     if (!image)
         return nil;
 
@@ -78,7 +79,7 @@ using namespace WebKit;
 #if PLATFORM(MAC)
 - (NSImage *)renderedImageWithOptions:(WKSnapshotOptions)options
 {
-    RefPtr<WebImage> image = _nodeHandle->renderedImage(options);
+    RefPtr<WebImage> image = _nodeHandle->renderedImage(toSnapshotOptions(options), options & kWKSnapshotOptionsExcludeOverflow);
     if (!image)
         return nil;
 
