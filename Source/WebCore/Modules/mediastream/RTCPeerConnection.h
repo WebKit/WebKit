@@ -42,6 +42,7 @@
 #include "RTCDataChannel.h"
 #include "RTCIceConnectionState.h"
 #include "RTCIceGatheringState.h"
+#include "RTCPeerConnectionState.h"
 #include "RTCRtpTransceiver.h"
 #include "RTCSignalingState.h"
 
@@ -89,6 +90,7 @@ public:
     RTCSignalingState signalingState() const { return m_signalingState; }
     RTCIceGatheringState iceGatheringState() const { return m_iceGatheringState; }
     RTCIceConnectionState iceConnectionState() const { return m_iceConnectionState; }
+    RTCPeerConnectionState connectionState() const { return m_connectionState; }
 
     const RTCConfiguration& getConfiguration() const { return m_configuration; }
     ExceptionOr<void> setConfiguration(RTCConfiguration&&);
@@ -159,9 +161,15 @@ private:
     // RTCRtpSenderClient
     void replaceTrack(RTCRtpSender&, Ref<MediaStreamTrack>&&, DOMPromise<void>&&) final;
 
+    void updateConnectionState();
+    bool doClose();
+    void doStop();
+
+    bool m_isStopped { false };
     RTCSignalingState m_signalingState { RTCSignalingState::Stable };
     RTCIceGatheringState m_iceGatheringState { RTCIceGatheringState::New };
     RTCIceConnectionState m_iceConnectionState { RTCIceConnectionState::New };
+    RTCPeerConnectionState m_connectionState { RTCPeerConnectionState::New };
 
     std::unique_ptr<RtpTransceiverSet> m_transceiverSet { std::unique_ptr<RtpTransceiverSet>(new RtpTransceiverSet()) };
 

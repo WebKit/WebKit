@@ -585,13 +585,14 @@ void LibWebRTCMediaEndpoint::OnIceConnectionChange(webrtc::PeerConnectionInterfa
 
 void LibWebRTCMediaEndpoint::OnIceGatheringChange(webrtc::PeerConnectionInterface::IceGatheringState state)
 {
-    if (state == webrtc::PeerConnectionInterface::kIceGatheringComplete) {
-        callOnMainThread([protectedThis = makeRef(*this)] {
-            if (protectedThis->isStopped())
-                return;
+    callOnMainThread([protectedThis = makeRef(*this), state] {
+        if (protectedThis->isStopped())
+            return;
+        if (state == webrtc::PeerConnectionInterface::kIceGatheringComplete)
             protectedThis->m_peerConnectionBackend.doneGatheringCandidates();
-        });
-    }
+        else if (state == webrtc::PeerConnectionInterface::kIceGatheringGathering)
+            protectedThis->m_peerConnectionBackend.connection().updateIceGatheringState(RTCIceGatheringState::Gathering);
+    });
 }
 
 void LibWebRTCMediaEndpoint::OnIceCandidate(const webrtc::IceCandidateInterface *rtcCandidate)

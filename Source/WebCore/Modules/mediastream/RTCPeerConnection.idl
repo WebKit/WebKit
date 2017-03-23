@@ -75,8 +75,7 @@ typedef RTCRtpTransceiverDirection RtpTransceiverDirection;
     [JSBuiltin] Promise<RTCSessionDescriptionInit> createOffer(optional RTCOfferOptions offerOptions);
     [JSBuiltin] Promise<RTCSessionDescriptionInit> createAnswer(optional RTCAnswerOptions answerOptions);
 
-    // FIXME 169644: change to RTCSessionDescriptionInit
-    [JSBuiltin] Promise<void> setLocalDescription(RTCSessionDescription description);
+    [JSBuiltin] Promise<void> setLocalDescription(RTCSessionDescriptionInit description);
     // FIXME 169644: change to nullable
     readonly attribute RTCSessionDescription localDescription;
     // FIXME 169644: change to nullable
@@ -99,8 +98,7 @@ typedef RTCRtpTransceiverDirection RtpTransceiverDirection;
     readonly attribute RTCSignalingState signalingState;
     readonly attribute RTCIceGatheringState iceGatheringState;
     readonly attribute RTCIceConnectionState iceConnectionState;
-
-    // FIXME 169644: missing connectionState
+    readonly attribute RTCPeerConnectionState connectionState;
     // FIXME 169644: missing canTrickleIceCandidates
     // FIXME 169644: missing defaultIceServers
 
@@ -110,12 +108,11 @@ typedef RTCRtpTransceiverDirection RtpTransceiverDirection;
 
     attribute EventHandler onnegotiationneeded;
     attribute EventHandler onicecandidate;
-    // FIXME 169644: missing onicecandidateerror
     attribute EventHandler onsignalingstatechange;
     attribute EventHandler oniceconnectionstatechange;
     attribute EventHandler onicegatheringstatechange;
-    // FIXME 169644: missing onconnectionstatechanged
-    // FIXME 169644: missing onfingerprintfailure
+    attribute EventHandler onconnectionstatechange;
+    // FIXME 169644: missing onfingerprintfailure and onicecandidateerror
 
     // Private API used to implement the overloaded operations above. Queued functions are called by runQueuedOperation().
     // See RTCPeerConnectionInternals.js.
@@ -124,11 +121,6 @@ typedef RTCRtpTransceiverDirection RtpTransceiverDirection;
     [PrivateIdentifier] Promise<void> queuedSetLocalDescription(RTCSessionDescription description);
     [PrivateIdentifier] Promise<void> queuedSetRemoteDescription(RTCSessionDescription description);
     [PrivateIdentifier] Promise<void> queuedAddIceCandidate(RTCIceCandidate candidate);
-
-
-    // 4.3.3.1 Legacy extensions supported
-    // JSBuiltin attributes above handles support of the extensions
-    // FIXME 169646: wrap legacy calls in runtime flag
 
 
     // 4.11 Certificate management
@@ -144,7 +136,6 @@ typedef RTCRtpTransceiverDirection RtpTransceiverDirection;
     [PrivateIdentifier, PublicIdentifier, MayThrowException] RTCRtpSender addTrack(MediaStreamTrack track, MediaStream... streams);
     [PrivateIdentifier, PublicIdentifier, MayThrowException] void removeTrack(RTCRtpSender sender);
 
-    // FIXME 169644: convert to (MediaStreamTrack or DOMString)
     [MayThrowException] RTCRtpTransceiver addTransceiver(MediaStreamTrack track, optional RTCRtpTransceiverInit init);
     [MayThrowException] RTCRtpTransceiver addTransceiver(DOMString kind, optional RTCRtpTransceiverInit init);
 

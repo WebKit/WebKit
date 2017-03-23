@@ -83,6 +83,7 @@ namespace WebCore {
     macro(compositionstart) \
     macro(compositionupdate) \
     macro(connect) \
+    macro(connectionstatechange) \
     macro(connecting) \
     macro(contextmenu) \
     macro(copy) \

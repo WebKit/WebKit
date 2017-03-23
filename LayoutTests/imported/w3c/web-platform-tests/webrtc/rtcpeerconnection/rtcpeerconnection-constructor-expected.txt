@@ -100,6 +100,6 @@ PASS pendingRemoteDescription initial value
 PASS signalingState initial value 
 PASS iceGatheringState initial value 
 PASS iceConnectionState initial value 
-FAIL connectionState initial value assert_equals: expected (string) "new" but got (undefined) undefined
+PASS connectionState initial value 
 FAIL canTrickleIceCandidates initial value assert_equals: expected (object) null but got (undefined) undefined
 
