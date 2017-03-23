@@ -1,3 +1,11 @@
+2017-03-23  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] Mark compositing and css3/blending tests asserting on debug builds.
+
+        Unreviewed test gardening.
+
+        * platform/gtk/TestExpectations:
+
 2017-03-23  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed GTK+ gardening. Mark webrtc/connection-state.html as failing.
