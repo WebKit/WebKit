@@ -18,6 +18,7 @@ PASS window.getComputedStyle(document.getElementById('test17')).fontStyle is "no
 PASS window.getComputedStyle(document.getElementById('test18')).fontStyle is "italic"
 PASS window.getComputedStyle(document.getElementById('test19')).fontStyle is "italic"
 PASS window.getComputedStyle(document.getElementById('test20')).fontStyle is "normal"
+PASS window.getComputedStyle(document.getElementById('test21')).fontStyle is "14deg"
 PASS window.getComputedStyle(document.getElementById('test1')).font is "normal normal normal normal 16px/18px Times"
 PASS window.getComputedStyle(document.getElementById('test2')).font is "16px/18px Times"
 PASS window.getComputedStyle(document.getElementById('test3')).font is "16px/18px Times"
@@ -38,6 +39,7 @@ PASS window.getComputedStyle(document.getElementById('test17')).font is "normal 
 PASS window.getComputedStyle(document.getElementById('test18')).font is "italic normal normal normal 48px/49px 'Helvetica Neue'"
 PASS window.getComputedStyle(document.getElementById('test19')).font is "italic small-caps 100 extra-expanded 48px/49px 'Helvetica Neue'"
 PASS window.getComputedStyle(document.getElementById('test20')).font is "normal normal normal normal 16px/18px Times"
+PASS window.getComputedStyle(document.getElementById('test21')).font is "48px/49px 'Helvetica Neue'"
 PASS document.getElementById('test1').style.font is ""
 PASS document.getElementById('test15').style.font is "italic 100 48px/49px 'Helvetica Neue'"
 PASS document.getElementById('test16').style.font is "italic 100 48px/49px 'Helvetica Neue'"
@@ -45,6 +47,7 @@ PASS document.getElementById('test17').style.font is "100 48px/49px 'Helvetica N
 PASS document.getElementById('test18').style.font is "italic 48px/49px 'Helvetica Neue'"
 PASS document.getElementById('test19').style.font is "italic small-caps 100 extra-expanded 48px/49px 'Helvetica Neue'"
 PASS document.getElementById('test20').style.font is ""
+PASS document.getElementById('test21').style.font is "14deg small-caps 123 extra-expanded 48px/49px 'Helvetica Neue'"
 PASS successfullyParsed is true
 
 TEST COMPLETE

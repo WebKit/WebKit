@@ -869,23 +869,11 @@ static RefPtr<CSSPrimitiveValue> consumeFontWeightKeywordValue(CSSParserTokenRan
     return consumeIdent<CSSValueNormal, CSSValueBold, CSSValueBolder, CSSValueLighter>(range);
 }
 
-static RefPtr<CSSPrimitiveValue> consumeFontWeightCSS21(CSSParserTokenRange& range)
-{
-    if (auto result = consumeFontWeightKeywordValue(range))
-        return result;
-    int weight;
-    if (!consumePositiveIntegerRaw(range, weight))
-        return nullptr;
-    if (!isCSS21Weight(weight))
-        return nullptr;
-    return CSSValuePool::singleton().createValue(weight, CSSPrimitiveValue::CSS_NUMBER);
-}
-
 static RefPtr<CSSPrimitiveValue> consumeFontWeight(CSSParserTokenRange& range)
 {
     if (auto result = consumeFontWeightKeywordValue(range))
         return result;
-    return consumeNumber(range, ValueRangeAll);
+    return consumeFontWeightNumber(range);
 }
 
 #if ENABLE(VARIATION_FONTS)
@@ -982,7 +970,6 @@ static RefPtr<CSSPrimitiveValue> consumeFontStyle(CSSParserTokenRange& range, CS
                 return angle;
             if (auto number = consumeNumber(range, ValueRangeAll))
                 return number;
-            return nullptr;
         }
         return result;
     }
@@ -4430,7 +4417,7 @@ bool CSSPropertyParser::consumeFont(bool important)
     while (!m_range.atEnd()) {
         CSSValueID id = m_range.peek().id();
         if (!fontStyle) {
-            fontStyle = consumeFontStyleKeywordValue(m_range);
+            fontStyle = consumeFontStyle(m_range, m_context.mode);
             if (fontStyle)
                 continue;
         }
@@ -4442,7 +4429,7 @@ bool CSSPropertyParser::consumeFont(bool important)
                 continue;
         }
         if (!fontWeight) {
-            fontWeight = consumeFontWeightCSS21(m_range);
+            fontWeight = consumeFontWeight(m_range);
             if (fontWeight)
                 continue;
         }

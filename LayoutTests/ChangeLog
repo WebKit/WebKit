@@ -1,3 +1,15 @@
+2017-03-22  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        font shorthand should accept variation values
+        https://bugs.webkit.org/show_bug.cgi?id=168998
+
+        Reviewed by Simon Fraser.
+
+        * fast/text/font-style-parse-expected.txt:
+        * fast/text/font-style-parse.html:
+        * fast/text/font-weight-parse-expected.txt:
+        * fast/text/font-weight-parse.html:
+
 2017-03-23  Chris Dumez  <cdumez@apple.com>
 
         SVG animations are not paused when inserted into a hidden page

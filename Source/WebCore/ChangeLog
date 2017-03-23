@@ -1,3 +1,29 @@
+2017-03-22  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        font shorthand should accept variation values
+        https://bugs.webkit.org/show_bug.cgi?id=168998
+
+        Reviewed by Simon Fraser.
+
+        The CSS Fonts 4 spec has stabilized as to which variation values are allowed in
+        the font shorthand property. Weights are allowed because a 0 weight is considered
+        as a parse error, so there is no conflict with a unitless font-size of 0.
+        font-style accepts angles, so there is no conflict there. However, font-stretch
+        accepts percentages, which are also accepted by font-size, which means the newly
+        extended grammar for font-stretch can't be accepted in the shorthand.
+
+        Tests: fast/text/font-style-parse.html
+               fast/text/font-weight-parse.html
+
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::consumeFontWeight):
+        (WebCore::consumeFontStyle):
+        (WebCore::CSSPropertyParser::consumeFont):
+        (WebCore::consumeFontWeightCSS21): Deleted.
+        * css/parser/CSSPropertyParserHelpers.cpp:
+        (WebCore::CSSPropertyParserHelpers::consumeFontWeightNumber):
+        * css/parser/CSSPropertyParserHelpers.h:
+
 2017-03-23  Chris Dumez  <cdumez@apple.com>
 
         SVG animations are not paused when inserted into a hidden page

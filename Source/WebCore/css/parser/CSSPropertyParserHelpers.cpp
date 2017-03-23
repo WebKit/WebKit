@@ -197,6 +197,24 @@ RefPtr<CSSPrimitiveValue> consumeNumber(CSSParserTokenRange& range, ValueRange v
     return nullptr;
 }
 
+RefPtr<CSSPrimitiveValue> consumeFontWeightNumber(CSSParserTokenRange& range)
+{
+    // Values less than or equal to 0 or greater than or equal to 1000 are parse errors.
+    auto& token = range.peek();
+    if (token.type() == NumberToken && token.numericValue() > 0 && token.numericValue() < 1000)
+        return consumeNumber(range, ValueRangeAll);
+
+    // "[For calc()], the used value resulting from an expression must be clamped to the range allowed in the target context."
+    CalcParser calcParser(range, ValueRangeAll);
+    double result;
+    if (calcParser.consumeNumberRaw(result)) {
+        result = std::min(std::max(result, std::nextafter(0., 1.)), std::nextafter(1000., 0.));
+        return CSSValuePool::singleton().createValue(result, CSSPrimitiveValue::UnitType::CSS_NUMBER);
+    }
+
+    return nullptr;
+}
+
 inline bool shouldAcceptUnitlessValue(double value, CSSParserMode cssParserMode, UnitlessQuirk unitless)
 {
     // FIXME: Presentational HTML attributes shouldn't use the CSS parser for lengths

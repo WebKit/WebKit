@@ -29,6 +29,11 @@
 <div style="font-weight: 275;"><div id="test22" style="font: 100 48px/49px 'Helvetica Neue';"></div></div>
 <div id="test23" style="font: italic small-caps 100 extra-expanded 48px/49px 'Helvetica Neue';"></div>
 <div id="test24" style="font: italic small-caps 123 extra-expanded 48px/49px 'Helvetica Neue';"></div>
+<div id="test25" style="font-weight: 0;"></div>
+<div id="test26" style="font-weight: -7;"></div>
+<div id="test27" style="font-weight: 1623;"></div>
+<div id="test28" style="font-weight: calc(-4 - 5);"></div>
+<div id="test29" style="font-weight: calc(600 + 700);"></div>
 </div>
 <script>
 shouldBeEqualToString("window.getComputedStyle(document.getElementById('test1')).fontWeight", "normal");
@@ -54,7 +59,12 @@ shouldBeEqualToString("window.getComputedStyle(document.getElementById('test20')
 shouldBeEqualToString("window.getComputedStyle(document.getElementById('test21')).fontWeight", "normal");
 shouldBeEqualToString("window.getComputedStyle(document.getElementById('test22')).fontWeight", "100");
 shouldBeEqualToString("window.getComputedStyle(document.getElementById('test23')).fontWeight", "100");
-shouldBeEqualToString("window.getComputedStyle(document.getElementById('test24')).fontWeight", "normal");
+shouldBeEqualToString("window.getComputedStyle(document.getElementById('test24')).fontWeight", "123");
+shouldBeEqualToString("window.getComputedStyle(document.getElementById('test25')).fontWeight", "normal");
+shouldBeEqualToString("window.getComputedStyle(document.getElementById('test26')).fontWeight", "normal");
+shouldBeEqualToString("window.getComputedStyle(document.getElementById('test27')).fontWeight", "normal");
+shouldBeEqualToString("window.getComputedStyle(document.getElementById('test28')).fontWeight", "0");
+shouldBeEqualToString("window.getComputedStyle(document.getElementById('test29')).fontWeight", "1000");
 
 shouldBeEqualToString("window.getComputedStyle(document.getElementById('test1')).font", "normal normal normal normal 16px/18px Times");
 shouldBeEqualToString("window.getComputedStyle(document.getElementById('test2')).font", "16px/18px Times");
@@ -79,7 +89,12 @@ shouldBeEqualToString("window.getComputedStyle(document.getElementById('test20')
 shouldBeEqualToString("window.getComputedStyle(document.getElementById('test21')).font", "normal normal normal extra-condensed 48px/49px 'Helvetica Neue'");
 shouldBeEqualToString("window.getComputedStyle(document.getElementById('test22')).font", "normal normal 100 normal 48px/49px 'Helvetica Neue'");
 shouldBeEqualToString("window.getComputedStyle(document.getElementById('test23')).font", "italic small-caps 100 extra-expanded 48px/49px 'Helvetica Neue'");
-shouldBeEqualToString("window.getComputedStyle(document.getElementById('test24')).font", "italic small-caps normal extra-expanded 48px/49px 'Helvetica Neue'");
+shouldBeEqualToString("window.getComputedStyle(document.getElementById('test24')).font", "48px/49px 'Helvetica Neue'");
+shouldBeEqualToString("window.getComputedStyle(document.getElementById('test25')).font", "normal normal normal normal 16px/18px Times");
+shouldBeEqualToString("window.getComputedStyle(document.getElementById('test26')).font", "normal normal normal normal 16px/18px Times");
+shouldBeEqualToString("window.getComputedStyle(document.getElementById('test27')).font", "normal normal normal normal 16px/18px Times");
+shouldBeEqualToString("window.getComputedStyle(document.getElementById('test28')).font", "16px/18px Times");
+shouldBeEqualToString("window.getComputedStyle(document.getElementById('test29')).font", "16px/18px Times");
 
 shouldBeEqualToString("document.getElementById('test1').style.font", "");
 shouldBeEqualToString("document.getElementById('test19').style.font", "100 extra-condensed 48px/49px 'Helvetica Neue'");
@@ -87,7 +102,7 @@ shouldBeEqualToString("document.getElementById('test20').style.font", "100 extra
 shouldBeEqualToString("document.getElementById('test21').style.font", "extra-condensed 48px/49px 'Helvetica Neue'");
 shouldBeEqualToString("document.getElementById('test22').style.font", "100 48px/49px 'Helvetica Neue'");
 shouldBeEqualToString("document.getElementById('test23').style.font", "italic small-caps 100 extra-expanded 48px/49px 'Helvetica Neue'");
-shouldBeEqualToString("document.getElementById('test24').style.font", "italic small-caps extra-expanded 48px/49px 'Helvetica Neue'");
+shouldBeEqualToString("document.getElementById('test24').style.font", "italic small-caps 123 extra-expanded 48px/49px 'Helvetica Neue'");
 </script>
 <script src="../../resources/js-test-post.js"></script>
 </body>
