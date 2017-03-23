@@ -528,7 +528,6 @@
 		5C4B48391E42C06A002651C8 /* ssl_rsa.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B47F51E42C066002651C8 /* ssl_rsa.c */; };
 		5C4B483A1E42C06A002651C8 /* ssl_session.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B47F61E42C066002651C8 /* ssl_session.c */; };
 		5C4B483B1E42C06A002651C8 /* ssl_stat.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B47F71E42C066002651C8 /* ssl_stat.c */; };
-		5C4B483C1E42C06A002651C8 /* ssl_test.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B47F81E42C066002651C8 /* ssl_test.cc */; };
 		5C4B483D1E42C06A002651C8 /* t1_enc.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B47F91E42C066002651C8 /* t1_enc.c */; };
 		5C4B483E1E42C06A002651C8 /* t1_lib.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B47FA1E42C066002651C8 /* t1_lib.c */; };
 		5C4B483F1E42C06A002651C8 /* tls_method.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B47FB1E42C066002651C8 /* tls_method.c */; };
@@ -2489,6 +2488,7 @@
 		5CDD907F1E43D15C00621E92 /* mock_nonlinear_beamformer.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CDD906F1E43D15C00621E92 /* mock_nonlinear_beamformer.h */; };
 		5CDD90821E43D15C00621E92 /* nonlinear_beamformer.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD90721E43D15C00621E92 /* nonlinear_beamformer.cc */; };
 		5CDD90831E43D15C00621E92 /* nonlinear_beamformer.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CDD90731E43D15C00621E92 /* nonlinear_beamformer.h */; };
+		5CDEB3311E82110800209B14 /* neverdestroyed.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CDEB3301E82110800209B14 /* neverdestroyed.h */; };
 		5CFD537C1E4BA4F500482908 /* audio_device_ios.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CFD53751E4BA4F500482908 /* audio_device_ios.h */; };
 		5CFD53801E4BA4F500482908 /* audio_session_observer.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CFD53791E4BA4F500482908 /* audio_session_observer.h */; };
 		5CFD53811E4BA4F500482908 /* voice_processing_audio_unit.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CFD537A1E4BA4F500482908 /* voice_processing_audio_unit.h */; };
@@ -5208,6 +5208,7 @@
 		5CDD90AB1E43D52900621E92 /* aes_icm_ossl.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = aes_icm_ossl.c; path = cipher/aes_icm_ossl.c; sourceTree = "<group>"; };
 		5CDD90AC1E43D52900621E92 /* cipher.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = cipher.c; path = cipher/cipher.c; sourceTree = "<group>"; };
 		5CDD90AD1E43D52900621E92 /* null_cipher.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = null_cipher.c; path = cipher/null_cipher.c; sourceTree = "<group>"; };
+		5CDEB3301E82110800209B14 /* neverdestroyed.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = neverdestroyed.h; sourceTree = "<group>"; };
 		5CFD53751E4BA4F500482908 /* audio_device_ios.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = audio_device_ios.h; sourceTree = "<group>"; };
 		5CFD53761E4BA4F500482908 /* audio_device_ios.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = audio_device_ios.mm; sourceTree = "<group>"; };
 		5CFD53791E4BA4F500482908 /* audio_session_observer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = audio_session_observer.h; sourceTree = "<group>"; };
@@ -6687,6 +6688,7 @@
 		5C63F3041E4146D2002CA531 /* base */ = {
 			isa = PBXGroup;
 			children = (
+				5CDEB3301E82110800209B14 /* neverdestroyed.h */,
 				5CD286421E6A7B420094FDC8 /* sha1.cc */,
 				5CD286431E6A7B420094FDC8 /* sha1.h */,
 				5CD2854F1E6A62310094FDC8 /* numerics */,
@@ -10260,6 +10262,7 @@
 				5CDD8BEA1E43C2B500621E92 /* split_vq.h in Headers */,
 				5CDD84C21E43AF1300621E92 /* splitting_filter.h in Headers */,
 				5CDD83601E43257200621E92 /* sps_parser.h in Headers */,
+				5CDEB3311E82110800209B14 /* neverdestroyed.h in Headers */,
 				5CDD83631E43257200621E92 /* sps_vui_rewriter.h in Headers */,
 				5C63F88D1E416288002CA531 /* ssladapter.h in Headers */,
 				5C63F8901E416288002CA531 /* sslfingerprint.h in Headers */,
@@ -11211,7 +11214,6 @@
 				5C4B48391E42C06A002651C8 /* ssl_rsa.c in Sources */,
 				5C4B483A1E42C06A002651C8 /* ssl_session.c in Sources */,
 				5C4B483B1E42C06A002651C8 /* ssl_stat.c in Sources */,
-				5C4B483C1E42C06A002651C8 /* ssl_test.cc in Sources */,
 				5C4B46A51E42AA42002651C8 /* stack.c in Sources */,
 				5C4B483D1E42C06A002651C8 /* t1_enc.c in Sources */,
 				5C4B483E1E42C06A002651C8 /* t1_lib.c in Sources */,

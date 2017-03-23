@@ -10,7 +10,7 @@ HEADER_SEARCH_PATHS = Source/third_party/opus/src/include Source/third_party/opu
 INSTALL_PATH = /usr/local/lib;
 PUBLIC_HEADERS_FOLDER_PATH = /usr/local/include/libwebrtc;
 USE_HEADERMAP = NO;
-WARNING_CFLAGS = -Wno-exit-time-destructors -Wno-implicit-function-declaration -Wno-incompatible-pointer-types
+WARNING_CFLAGS = -Wno-incompatible-pointer-types
 GCC_PREPROCESSOR_DEFINITIONS = VAR_ARRAYS OPUS_BUILD OPUS_EXPORT= HAVE_LRINT HAVE_LRINTF OPUS_X86_MAY_HAVE_SSE2;
 
 EXCLUDED_SOURCE_FILE_NAMES[sdk=iphone*] = *_sse.c *_sse2.c;

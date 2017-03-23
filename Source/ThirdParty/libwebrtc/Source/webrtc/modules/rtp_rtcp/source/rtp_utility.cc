@@ -13,6 +13,7 @@
 #include <string.h>
 
 #include "webrtc/base/logging.h"
+#include "webrtc/base/neverdestroyed.h"
 #include "webrtc/modules/rtp_rtcp/include/rtp_cvo.h"
 #include "webrtc/modules/rtp_rtcp/source/byte_io.h"
 #include "webrtc/modules/rtp_rtcp/source/rtp_header_extensions.h"
@@ -20,17 +21,17 @@
 namespace webrtc {
 
 RtpData* NullObjectRtpData() {
-  static NullRtpData null_rtp_data;
+  static NeverDestroyed<NullRtpData> null_rtp_data;
   return &null_rtp_data;
 }
 
 RtpFeedback* NullObjectRtpFeedback() {
-  static NullRtpFeedback null_rtp_feedback;
+  static NeverDestroyed<NullRtpFeedback> null_rtp_feedback;
   return &null_rtp_feedback;
 }
 
 ReceiveStatistics* NullObjectReceiveStatistics() {
-  static NullReceiveStatistics null_receive_statistics;
+  static NeverDestroyed<NullReceiveStatistics> null_receive_statistics;
   return &null_receive_statistics;
 }
 

@@ -10,4 +10,3 @@ HEADER_SEARCH_PATHS = Source/third_party/libyuv/include;
 INSTALL_PATH = /usr/local/lib;
 PUBLIC_HEADERS_FOLDER_PATH = /usr/local/include/libwebrtc;
 USE_HEADERMAP = NO;
-WARNING_CFLAGS = -Wno-exit-time-destructors -Wno-implicit-function-declaration -Wno-incompatible-pointer-types -Wno-deprecated-declarations;

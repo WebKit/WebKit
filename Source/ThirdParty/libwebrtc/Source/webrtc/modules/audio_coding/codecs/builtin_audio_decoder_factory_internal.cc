@@ -15,6 +15,7 @@
 
 #include "webrtc/base/checks.h"
 #include "webrtc/base/optional.h"
+#include "webrtc/base/neverdestroyed.h"
 #include "webrtc/common_types.h"
 #include "webrtc/modules/audio_coding/codecs/cng/webrtc_cng.h"
 #include "webrtc/modules/audio_coding/codecs/g711/audio_decoder_pcm.h"
@@ -50,7 +51,8 @@ struct NamedDecoderConstructor {
 
 // TODO(kwiberg): These factory functions should probably be moved to each
 // decoder.
-NamedDecoderConstructor decoder_constructors[] = {
+static const std::vector<NamedDecoderConstructor>& decoder_constructors() {
+ static NeverDestroyed<std::vector<NamedDecoderConstructor>> decoder_constructors = [] { return std::vector<NamedDecoderConstructor>({
     {"pcmu",
      [](const SdpAudioFormat& format, std::unique_ptr<AudioDecoder>* out) {
        if (format.clockrate_hz == 8000 && format.num_channels >= 1) {
@@ -170,14 +172,16 @@ NamedDecoderConstructor decoder_constructors[] = {
        }
      }},
 #endif
-};
+  });}();
+  return decoder_constructors.get();
+}
 
 class BuiltinAudioDecoderFactory : public AudioDecoderFactory {
  public:
   std::vector<AudioCodecSpec> GetSupportedDecoders() override {
     // Although this looks a bit strange, it means specs need only be
     // initialized once, and that that initialization is thread-safe.
-    static std::vector<AudioCodecSpec> specs = [] {
+    static NeverDestroyed<std::vector<AudioCodecSpec>> specs = [] {
       std::vector<AudioCodecSpec> specs;
 #ifdef WEBRTC_CODEC_OPUS
       // clang-format off
@@ -210,7 +214,7 @@ class BuiltinAudioDecoderFactory : public AudioDecoderFactory {
   }
 
   bool IsSupportedDecoder(const SdpAudioFormat& format) override {
-    for (const auto& dc : decoder_constructors) {
+    for (const auto& dc : decoder_constructors()) {
       if (STR_CASE_CMP(format.name.c_str(), dc.name) == 0) {
         return dc.constructor(format, nullptr);
       }
@@ -220,7 +224,7 @@ class BuiltinAudioDecoderFactory : public AudioDecoderFactory {
 
   std::unique_ptr<AudioDecoder> MakeAudioDecoder(
       const SdpAudioFormat& format) override {
-    for (const auto& dc : decoder_constructors) {
+    for (const auto& dc : decoder_constructors()) {
       if (STR_CASE_CMP(format.name.c_str(), dc.name) == 0) {
         std::unique_ptr<AudioDecoder> decoder;
         bool ok = dc.constructor(format, &decoder);

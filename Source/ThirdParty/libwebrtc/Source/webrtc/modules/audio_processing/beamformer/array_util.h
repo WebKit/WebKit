@@ -103,12 +103,14 @@ using SphericalPointf = SphericalPoint<float>;
 
 // Helper functions to transform degrees to radians and the inverse.
 template <typename T>
-T DegreesToRadians(T angle_degrees) {
+constexpr T DegreesToRadians(T angle_degrees)
+{
   return M_PI * angle_degrees / 180;
 }
 
 template <typename T>
-T RadiansToDegrees(T angle_radians) {
+constexpr T RadiansToDegrees(T angle_radians)
+{
   return 180 * angle_radians / M_PI;
 }
 

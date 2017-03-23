@@ -41,6 +41,7 @@ static const char kLibjingle[] = "libjingle";
 
 #include "webrtc/base/criticalsection.h"
 #include "webrtc/base/logging.h"
+#include "webrtc/base/neverdestroyed.h"
 #include "webrtc/base/platform_thread.h"
 #include "webrtc/base/stringencode.h"
 #include "webrtc/base/stringutils.h"
@@ -103,15 +104,23 @@ LoggingSeverity LogMessage::dbg_sev_ = LS_NONE;
 bool LogMessage::log_to_stderr_ = true;
 
 namespace {
-// Global lock for log subsystem, only needed to serialize access to streams_.
-CriticalSection g_log_crit;
+// Global lock for log subsystem, only needed to serialize access to streams.
+const CriticalSection& g_log_crit()
+{
+    static webrtc::NeverDestroyed<CriticalSection> g_log_crit;
+    return g_log_crit;
+}
 }  // namespace
 
 // The list of logging streams currently configured.
 // Note: we explicitly do not clean this up, because of the uncertain ordering
 // of destructors at program exit.  Let the person who sets the stream trigger
 // cleanup by setting to null, or let it leak (safe at program exit).
-LogMessage::StreamList LogMessage::streams_ GUARDED_BY(g_log_crit);
+LogMessage::StreamList& LogMessage::streams()
+{
+    static webrtc::NeverDestroyed<LogMessage::StreamList> streams GUARDED_BY(g_log_crit);
+    return streams;
+}
 
 // Boolean options default to false (0)
 bool LogMessage::thread_, LogMessage::timestamp_;
@@ -207,8 +216,8 @@ LogMessage::~LogMessage() {
     OutputToDebug(str, severity_, tag_);
   }
 
-  CritScope cs(&g_log_crit);
-  for (auto& kv : streams_) {
+  CritScope cs(&g_log_crit());
+  for (auto& kv : streams()) {
     if (severity_ >= kv.second) {
       kv.first->OnLogMessage(str);
     }
@@ -235,7 +244,7 @@ void LogMessage::LogTimestamps(bool on) {
 
 void LogMessage::LogToDebug(LoggingSeverity min_sev) {
   dbg_sev_ = min_sev;
-  CritScope cs(&g_log_crit);
+  CritScope cs(&g_log_crit());
   UpdateMinLogSeverity();
 }
 
@@ -244,9 +253,9 @@ void LogMessage::SetLogToStderr(bool log_to_stderr) {
 }
 
 int LogMessage::GetLogToStream(LogSink* stream) {
-  CritScope cs(&g_log_crit);
+  CritScope cs(&g_log_crit());
   LoggingSeverity sev = LS_NONE;
-  for (auto& kv : streams_) {
+  for (auto& kv : streams()) {
     if (!stream || stream == kv.first) {
       sev = std::min(sev, kv.second);
     }
@@ -255,16 +264,16 @@ int LogMessage::GetLogToStream(LogSink* stream) {
 }
 
 void LogMessage::AddLogToStream(LogSink* stream, LoggingSeverity min_sev) {
-  CritScope cs(&g_log_crit);
-  streams_.push_back(std::make_pair(stream, min_sev));
+  CritScope cs(&g_log_crit());
+  streams().push_back(std::make_pair(stream, min_sev));
   UpdateMinLogSeverity();
 }
 
 void LogMessage::RemoveLogToStream(LogSink* stream) {
-  CritScope cs(&g_log_crit);
-  for (StreamList::iterator it = streams_.begin(); it != streams_.end(); ++it) {
+  CritScope cs(&g_log_crit());
+  for (StreamList::iterator it = streams().begin(); it != streams().end(); ++it) {
     if (stream == it->first) {
-      streams_.erase(it);
+      streams().erase(it);
       break;
     }
   }
@@ -335,7 +344,7 @@ void LogMessage::ConfigureLogging(const char* params) {
 
 void LogMessage::UpdateMinLogSeverity() EXCLUSIVE_LOCKS_REQUIRED(g_log_crit) {
   LoggingSeverity min_sev = dbg_sev_;
-  for (auto& kv : streams_) {
+  for (auto& kv : streams()) {
     min_sev = std::min(dbg_sev_, kv.second);
   }
   min_sev_ = min_sev;

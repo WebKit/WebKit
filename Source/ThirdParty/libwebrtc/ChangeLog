@@ -1,3 +1,43 @@
+2017-03-22  Alex Christensen  <achristensen@webkit.org>
+
+        Fix warnings in libwebrtc
+        https://bugs.webkit.org/show_bug.cgi?id=169973
+
+        Reviewed by Geoffrey Garen.
+
+        * Configurations/boringssl.xcconfig:
+        * Configurations/libsrtp.xcconfig:
+        * Configurations/libwebrtc.xcconfig:
+        * Configurations/libwebrtcpcrtc.xcconfig:
+        * Configurations/libyuv.xcconfig:
+        * Configurations/opus.xcconfig:
+        * Configurations/usrsctp.xcconfig:
+        Build with more warnings.
+        opus still needs some incompatible pointer warnings disabled because it converts 
+        const opus_int16 * to const opus_val16 * and opus_int32 * to opus_val32 *
+        and that's ok because its a codec and that's what codecs do.
+        * Source/webrtc/base/logging.cc:
+        * Source/webrtc/base/logging.h:
+        * Source/webrtc/base/neverdestroyed.h: Added.
+        (webrtc::NeverDestroyed::NeverDestroyed):
+        (webrtc::NeverDestroyed::operator T&):
+        (webrtc::NeverDestroyed::get):
+        (webrtc::NeverDestroyed::operator&):
+        (webrtc::NeverDestroyed::asPtr):
+        Added webrtc::NeverDestroyed which may or may not be based on WTF::NeverDestroyed.
+        This allows us to avoid exit time destructors, which would slow down program termination for no reason.
+        * Source/webrtc/base/virtualsocketserver.cc:
+        * Source/webrtc/modules/audio_coding/codecs/builtin_audio_decoder_factory_internal.cc:
+        Adopt NeverDestroyed in function scope so we don't have global constructors or destructors.
+        * Source/webrtc/modules/audio_processing/beamformer/array_util.h:
+        (webrtc::DegreesToRadians):
+        (webrtc::RadiansToDegrees):
+        Add constexpr so we can calculate values at compile time instead of launch time.
+        * Source/webrtc/modules/rtp_rtcp/source/rtp_utility.cc:
+        * Source/webrtc/system_wrappers/source/clock.cc:
+        * libwebrtc.xcodeproj/project.pbxproj:
+        Don't compile ssl_test.cc.  We don't need it.
+
 2017-03-10  Youenn Fablet  <youenn@apple.com>
 
         Move libwebrtc backend to using tracks

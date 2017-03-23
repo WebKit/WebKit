@@ -234,7 +234,7 @@ class LogMessage {
   static LoggingSeverity min_sev_, dbg_sev_, ctx_sev_;
 
   // The output streams and their associated severities
-  static StreamList streams_;
+  static StreamList& streams();
 
   // Flags for formatting options
   static bool thread_, timestamp_;

@@ -20,6 +20,7 @@
 #endif
 
 #include "webrtc/base/criticalsection.h"
+#include "webrtc/base/neverdestroyed.h"
 #include "webrtc/base/timeutils.h"
 #include "webrtc/system_wrappers/include/rw_lock_wrapper.h"
 
@@ -223,7 +224,7 @@ Clock* Clock::GetRealTimeClock() {
   }
   return g_shared_clock;
 #elif defined(WEBRTC_LINUX) || defined(WEBRTC_MAC)
-  static UnixRealTimeClock clock;
+  static NeverDestroyed<UnixRealTimeClock> clock;
   return &clock;
 #else
   return NULL;
