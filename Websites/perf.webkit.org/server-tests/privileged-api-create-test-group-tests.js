@@ -205,6 +205,28 @@ describe('/privileged-api/create-test-group', function () {
         });
     });
 
+    it('should return "InvalidRevisionSets" when a revision set is empty', () => {
+        return addTriggerableAndCreateTask('some task').then((taskId) => {
+            const webkit = Repository.all().find((repository) => repository.name() == 'WebKit');
+            return PrivilegedAPI.sendRequest('create-test-group', {name: 'test', task: taskId, revisionSets: [{[webkit.id()]: '191622'}, {}]}).then((content) => {
+                assert(false, 'should never be reached');
+            }, (error) => {
+                assert.equal(error, 'InvalidRevisionSets');
+            });
+        });
+    });
+
+    it('should return "InvalidRevisionSets" when the number of revision sets is less than two', () => {
+        return addTriggerableAndCreateTask('some task').then((taskId) => {
+            const webkit = Repository.all().find((repository) => repository.name() == 'WebKit');
+            return PrivilegedAPI.sendRequest('create-test-group', {name: 'test', task: taskId, revisionSets: [{[webkit.id()]: '191622'}]}).then((content) => {
+                assert(false, 'should never be reached');
+            }, (error) => {
+                assert.equal(error, 'InvalidRevisionSets');
+            });
+        });
+    });
+
     it('should return "RepositoryNotFound" when commit sets contains an invalid repository', () => {
         return addTriggerableAndCreateTask('some task').then((taskId) => {
             return PrivilegedAPI.sendRequest('create-test-group', {name: 'test', task: taskId, commitSets: {'Foo': []}}).then((content) => {
@@ -225,6 +247,27 @@ describe('/privileged-api/create-test-group', function () {
         });
     });
 
+    it('should return "RevisionNotFound" when revision sets contains an invalid revision', () => {
+        return addTriggerableAndCreateTask('some task').then((taskId) => {
+            const webkit = Repository.all().find((repository) => repository.name() == 'WebKit');
+            return PrivilegedAPI.sendRequest('create-test-group', {name: 'test', task: taskId, revisionSets: [{[webkit.id()]: '191622'}, {[webkit.id()]: '1'}]}).then((content) => {
+                assert(false, 'should never be reached');
+            }, (error) => {
+                assert.equal(error, 'RevisionNotFound');
+            });
+        });
+    });
+
+    it('should return "InvalidRepository" when a revision set uses a repository name instead of a repository id', () => {
+        return addTriggerableAndCreateTask('some task').then((taskId) => {
+            return PrivilegedAPI.sendRequest('create-test-group', {name: 'test', task: taskId, revisionSets: [{'WebKit': '191622'}, {}]}).then((content) => {
+                assert(false, 'should never be reached');
+            }, (error) => {
+                assert.equal(error, 'InvalidRepository');
+            });
+        });
+    });
+
     it('should return "InvalidCommitSets" when commit sets contains an inconsistent number of revisions', () => {
         return addTriggerableAndCreateTask('some task').then((taskId) => {
             return PrivilegedAPI.sendRequest('create-test-group', {name: 'test', task: taskId, commitSets: {'WebKit': ['191622', '191623'], 'macOS': ['15A284']}}).then((content) => {
@@ -235,10 +278,34 @@ describe('/privileged-api/create-test-group', function () {
         });
     });
 
-    it('should create a test group with the repetition count of one when repetitionCount is omitted', () => {
+    it('should create a test group from commitSets with the repetition count of one when repetitionCount is omitted', () => {
         return addTriggerableAndCreateTask('some task').then((taskId) => {
             let insertedGroupId;
             return PrivilegedAPI.sendRequest('create-test-group', {name: 'test', task: taskId, commitSets: {'WebKit': ['191622', '191623']}}).then((content) => {
+                insertedGroupId = content['testGroupId'];
+                return TestGroup.fetchByTask(taskId);
+            }).then((testGroups) => {
+                assert.equal(testGroups.length, 1);
+                const group = testGroups[0];
+                assert.equal(group.id(), insertedGroupId);
+                assert.equal(group.repetitionCount(), 1);
+                const requests = group.buildRequests();
+                assert.equal(requests.length, 2);
+                const webkit = Repository.all().filter((repository) => repository.name() == 'WebKit')[0];
+                assert.deepEqual(requests[0].commitSet().repositories(), [webkit]);
+                assert.deepEqual(requests[1].commitSet().repositories(), [webkit]);
+                assert.equal(requests[0].commitSet().revisionForRepository(webkit), '191622');
+                assert.equal(requests[1].commitSet().revisionForRepository(webkit), '191623');
+            });
+        });
+    });
+
+    it('should create a test group from revisionSets with the repetition count of one when repetitionCount is omitted', () => {
+        return addTriggerableAndCreateTask('some task').then((taskId) => {
+            const webkit = Repository.all().find((repository) => repository.name() == 'WebKit');
+            const params = {name: 'test', task: taskId, revisionSets: [{[webkit.id()]: '191622'}, {[webkit.id()]: '191623'}]};
+            let insertedGroupId;
+            return PrivilegedAPI.sendRequest('create-test-group', params).then((content) => {
                 insertedGroupId = content['testGroupId'];
                 return TestGroup.fetchByTask(taskId);
             }).then((testGroups) => {

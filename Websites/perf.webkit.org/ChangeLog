@@ -1,3 +1,32 @@
+2017-03-23  Ryosuke Niwa  <rniwa@webkit.org>
+
+        create-test-group should allow a different set of repositories to be used in each configuration
+        https://bugs.webkit.org/show_bug.cgi?id=169992
+
+        Rubber-stamped by Antti Koivisto.
+
+        Added the support for new POST parameter, revisionSets, to /privileged-api/create-test-group.
+        This new parameter now specifies an array of repository id to revision dictionaries, and allows
+        different set of repositories' revisions to be specified in each dictionary.
+
+        We keep the old API for v2 UI and detect-changes.js compatibility for now.
+
+        * public/privileged-api/create-test-group.php:
+        (main):
+        (commit_sets_from_revision_sets): Added.
+        (ensure_commit_sets): Only fetch the top-level repository per r213788 and r213976.
+
+        * public/v3/models/test-group.js:
+        (TestGroup.createAndRefetchTestGroups): Use the newly added revisionSets parameter instead of
+        the now depreacted commitSets parameter.
+
+        * public/v3/pages/analysis-task-page.js:
+        (AnalysisTaskPage.prototype._createTestGroupAfterVerifyingCommitSetList): Simplified this code
+        by simply verifying the consistency of commit sets now that createAndRefetchTestGroups takes
+        an array of commit sets instead of a dictionary of repository name to a list of revisions.
+
+        * server-tests/privileged-api-create-test-group-tests.js: Added test cases for new parameter.
+
 2017-03-22  Ryosuke Niwa  <rniwa@webkit.org>
 
         /api/uploaded-file should return createdAt as a POSIX timestamp

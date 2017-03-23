@@ -15,10 +15,11 @@ function main() {
     $name = $arguments['name'];
     $task_id = $arguments['task'];
     $repetition_count = $arguments['repetitionCount'];
+    $revision_set_list = array_get($data, 'revisionSets');
     $commit_sets_info = array_get($data, 'commitSets');
 
     require_format('Task', $task_id, '/^\d+$/');
-    if (!$commit_sets_info)
+    if (!$revision_set_list && !$commit_sets_info)
         exit_with_error('InvalidCommitSets');
 
     if ($repetition_count === null)
@@ -33,7 +34,10 @@ function main() {
     if (!$triggerable)
         exit_with_error('TriggerableNotFoundForTask', array('task' => $task_id));
 
-    $commit_sets = ensure_commit_sets($db, $commit_sets_info);
+    if ($revision_set_list)
+        $commit_sets = commit_sets_from_revision_sets($db, $revision_set_list);
+    else // V2 UI compatibility
+        $commit_sets = ensure_commit_sets($db, $commit_sets_info);
 
     $db->begin_transaction();
 
@@ -67,9 +71,36 @@ function main() {
     exit_with_success(array('testGroupId' => $group_id));
 }
 
+function commit_sets_from_revision_sets($db, $revision_set_list)
+{
+    if (count($revision_set_list) < 2)
+        exit_with_error('InvalidRevisionSets', array('revisionSets' => $revision_set_list));
+
+    $commit_set_list = array();
+    foreach ($revision_set_list as $revision_set) {
+        $commit_set = array();
+
+        if (!count($revision_set))
+            exit_with_error('InvalidRevisionSets', array('revisionSets' => $revision_set_list));
+
+        foreach ($revision_set as $repository_id => $revision) {
+            if (!is_numeric($repository_id))
+                exit_with_error('InvalidRepository', array('repository' => $repository_id));
+            $commit = $db->select_first_row('commits', 'commit',
+                array('repository' => intval($repository_id), 'revision' => $revision));
+            if (!$commit)
+                exit_with_error('RevisionNotFound', array('repository' => $repository_id, 'revision' => $revision));
+            array_push($commit_set, $commit['commit_id']);
+        }
+        array_push($commit_set_list, $commit_set);
+    }
+
+    return $commit_set_list;
+}
+
 function ensure_commit_sets($db, $commit_sets_info) {
     $repository_name_to_id = array();
-    foreach ($db->fetch_table('repositories') as $row)
+    foreach ($db->select_rows('repositories', 'repository', array('owner' => NULL)) as $row)
         $repository_name_to_id[$row['repository_name']] = $row['repository_id'];
 
     $commit_sets = array();

@@ -199,11 +199,21 @@ class TestGroup extends LabeledObject {
 
     static createAndRefetchTestGroups(task, name, repetitionCount, commitSets)
     {
+        console.assert(commitSets.length == 2);
+
+        const revisionSets = commitSets.map((commitSet) => {
+            console.assert(commitSet instanceof CustomCommitSet || commitSet instanceof CommitSet);
+            const revisionSet = {};
+            for (let repository of commitSet.repositories())
+                revisionSet[repository.id()] = commitSet.revisionForRepository(repository);
+            return revisionSet;
+        });
+
         return PrivilegedAPI.sendRequest('create-test-group', {
             task: task.id(),
             name: name,
             repetitionCount: repetitionCount,
-            commitSets: commitSets,
+            revisionSets: revisionSets,
         }).then((data) => {
             return this.cachedFetch('/api/test-groups', {task: task.id()}, true).then((data) => this._createModelsFromFetchedTestGroups(data));
         });

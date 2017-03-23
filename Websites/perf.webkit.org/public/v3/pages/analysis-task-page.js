@@ -546,40 +546,31 @@ class AnalysisTaskPage extends PageWithHeading {
 
     _createTestGroupAfterVerifyingCommitSetList(testGroupName, repetitionCount, commitSetMap)
     {
-        if (this._hasDuplicateTestGroupName(testGroupName))
+        if (this._hasDuplicateTestGroupName(testGroupName)) {
             alert(`There is already a test group named "${testGroupName}"`);
-
-        const commitSetsByName = {};
-        let firstLabel;
-        for (firstLabel in commitSetMap) {
-            const commitSet = commitSetMap[firstLabel];
-            for (let repository of commitSet.repositories())
-                commitSetsByName[repository.name()] = [];
-            break;
+            return;
         }
 
-        let setIndex = 0;
-        for (let label in commitSetMap) {
-            const commitSet = commitSetMap[label];
+        const firstLabel = Object.keys(commitSetMap)[0];
+        const firstCommitSet = commitSetMap[firstLabel];
+
+        for (let currentLabel in commitSetMap) {
+            const commitSet = commitSetMap[currentLabel];
             for (let repository of commitSet.repositories()) {
-                const list = commitSetsByName[repository.name()];
-                if (!list) {
-                    alert(`Set ${label} specifies ${repository.label()} but set ${firstLabel} does not.`);
-                    return null;
-                }
-                list.push(commitSet.revisionForRepository(repository));
+                if (!firstCommitSet.revisionForRepository(repository))
+                    return alert(`Set ${currentLabel} specifies ${repository.label()} but set ${firstLabel} does not.`);
             }
-            setIndex++;
-            for (let name in commitSetsByName) {
-                const list = commitSetsByName[name];
-                if (list.length < setIndex) {
-                    alert(`Set ${firstLabel} specifies ${name} but set ${label} does not.`);
-                    return null;
-                }
+            for (let repository of firstCommitSet.repositories()) {
+                if (!commitSet.revisionForRepository(repository))
+                    return alert(`Set ${firstLabel} specifies ${repository.label()} but set ${currentLabel} does not.`);
             }
         }
 
-        TestGroup.createAndRefetchTestGroups(this._task, testGroupName, repetitionCount, commitSetsByName)
+        const commitSets = [];
+        for (let label in commitSetMap)
+            commitSets.push(commitSetMap[label]);
+
+        TestGroup.createAndRefetchTestGroups(this._task, testGroupName, repetitionCount, commitSets)
             .then(this._didFetchTestGroups.bind(this), function (error) {
             alert('Failed to create a new test group: ' + error);
         });
