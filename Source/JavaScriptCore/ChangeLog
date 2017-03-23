@@ -1,3 +1,63 @@
+2017-03-23  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] MachineThreads does not consider situation that one thread has multiple VMs
+        https://bugs.webkit.org/show_bug.cgi?id=169819
+
+        Reviewed by Mark Lam.
+
+        The Linux port of PlatformThread suspend/resume mechanism relies on having a thread
+        specific singleton thread data, and was relying on MachineThreads::Thread to be this
+        thread specific singleton. But because MachineThreads::Thread is not a thread specific
+        singleton, we can get a deadlock in the GTK port's DatabaseProcess.
+
+        This patch fixes this issue by moving per thread data from MachineThreads::Thread to
+        MachineThreads::ThreadData, where there will only be one instance of
+        MachineThreads::ThreadData per thread. Each MachineThreads::Thread will now point to
+        the same MachineThreads::ThreadData for any given thread.
+
+        * heap/MachineStackMarker.cpp:
+        (pthreadSignalHandlerSuspendResume):
+        (JSC::threadData):
+        (JSC::MachineThreads::Thread::Thread):
+        (JSC::MachineThreads::Thread::createForCurrentThread):
+        (JSC::MachineThreads::Thread::operator==):
+        (JSC::MachineThreads::ThreadData::ThreadData):
+        (JSC::MachineThreads::ThreadData::~ThreadData):
+        (JSC::MachineThreads::ThreadData::suspend):
+        (JSC::MachineThreads::ThreadData::resume):
+        (JSC::MachineThreads::ThreadData::getRegisters):
+        (JSC::MachineThreads::ThreadData::Registers::stackPointer):
+        (JSC::MachineThreads::ThreadData::Registers::framePointer):
+        (JSC::MachineThreads::ThreadData::Registers::instructionPointer):
+        (JSC::MachineThreads::ThreadData::Registers::llintPC):
+        (JSC::MachineThreads::ThreadData::freeRegisters):
+        (JSC::MachineThreads::ThreadData::captureStack):
+        (JSC::MachineThreads::tryCopyOtherThreadStacks):
+        (JSC::MachineThreads::Thread::~Thread): Deleted.
+        (JSC::MachineThreads::Thread::suspend): Deleted.
+        (JSC::MachineThreads::Thread::resume): Deleted.
+        (JSC::MachineThreads::Thread::getRegisters): Deleted.
+        (JSC::MachineThreads::Thread::Registers::stackPointer): Deleted.
+        (JSC::MachineThreads::Thread::Registers::framePointer): Deleted.
+        (JSC::MachineThreads::Thread::Registers::instructionPointer): Deleted.
+        (JSC::MachineThreads::Thread::Registers::llintPC): Deleted.
+        (JSC::MachineThreads::Thread::freeRegisters): Deleted.
+        (JSC::MachineThreads::Thread::captureStack): Deleted.
+        * heap/MachineStackMarker.h:
+        (JSC::MachineThreads::Thread::operator!=):
+        (JSC::MachineThreads::Thread::suspend):
+        (JSC::MachineThreads::Thread::resume):
+        (JSC::MachineThreads::Thread::getRegisters):
+        (JSC::MachineThreads::Thread::freeRegisters):
+        (JSC::MachineThreads::Thread::captureStack):
+        (JSC::MachineThreads::Thread::platformThread):
+        (JSC::MachineThreads::Thread::stackBase):
+        (JSC::MachineThreads::Thread::stackEnd):
+        * runtime/SamplingProfiler.cpp:
+        (JSC::FrameWalker::isValidFramePointer):
+        * runtime/VMTraps.cpp:
+        (JSC::findActiveVMAndStackBounds):
+
 2017-03-23  Mark Lam  <mark.lam@apple.com>
 
         Clients of JSArray::tryCreateForInitializationPrivate() should do their own null checks.

@@ -169,8 +169,8 @@ protected:
     {
         uint8_t* fpCast = bitwise_cast<uint8_t*>(exec);
         for (MachineThreads::Thread* thread = m_vm.heap.machineThreads().threadsListHead(m_machineThreadsLocker); thread; thread = thread->next) {
-            uint8_t* stackBase = static_cast<uint8_t*>(thread->stackBase);
-            uint8_t* stackLimit = static_cast<uint8_t*>(thread->stackEnd);
+            uint8_t* stackBase = static_cast<uint8_t*>(thread->stackBase());
+            uint8_t* stackLimit = static_cast<uint8_t*>(thread->stackEnd());
             RELEASE_ASSERT(stackBase);
             RELEASE_ASSERT(stackLimit);
             if (fpCast <= stackBase && fpCast >= stackLimit)

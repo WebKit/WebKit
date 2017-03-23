@@ -111,11 +111,11 @@ static Expected<std::pair<VM*, StackBounds>, VMTraps::Error> findActiveVMAndStac
         }
 
         for (MachineThreads::Thread* thread = machineThreads.threadsListHead(machineThreadsLocker); thread; thread = thread->next) {
-            RELEASE_ASSERT(thread->stackBase);
-            RELEASE_ASSERT(thread->stackEnd);
-            if (stackPointer <= thread->stackBase && stackPointer >= thread->stackEnd) {
+            RELEASE_ASSERT(thread->stackBase());
+            RELEASE_ASSERT(thread->stackEnd());
+            if (stackPointer <= thread->stackBase() && stackPointer >= thread->stackEnd()) {
                 activeVM = &vm;
-                stackBounds = StackBounds(thread->stackBase, thread->stackEnd);
+                stackBounds = StackBounds(thread->stackBase(), thread->stackEnd());
                 return VMInspector::FunctorStatus::Done;
             }
         }
