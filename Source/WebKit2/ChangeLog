@@ -1,3 +1,18 @@
+2017-03-23  Tim Horton  <timothy_horton@apple.com>
+
+        Test DataDetectors supported schemes in lowercase
+        https://bugs.webkit.org/show_bug.cgi?id=169994
+        <rdar://problem/30788920>
+
+        Reviewed by Wenson Hsieh.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _actionForLongPress]):
+        (-[WKContentView _interactionShouldBeginFromPreviewItemController:forPosition:]):
+        Lower-case the scheme before looking in tapAndHoldSchemes, which is
+        guaranteed to be in lower-case. WebCore already does this in places
+        that it confers with tapAndHoldSchemes.
+
 2017-03-22  Andy Estes  <aestes@apple.com>
 
         [Cocoa] Add an option to exclude overflow when snapshotting a WKWebProcessPlugInNodeHandle

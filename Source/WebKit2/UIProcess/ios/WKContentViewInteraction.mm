@@ -1291,7 +1291,7 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
 
     if (_positionInformation.isLink) {
         NSURL *targetURL = [NSURL URLWithString:_positionInformation.url];
-        if ([[getDDDetectionControllerClass() tapAndHoldSchemes] containsObject:[targetURL scheme]])
+        if ([[getDDDetectionControllerClass() tapAndHoldSchemes] containsObject:targetURL.scheme.lowercaseString])
             return @selector(_showDataDetectorsSheet);
         return @selector(_showLinkSheet);
     }
@@ -4169,7 +4169,7 @@ static bool isAssistableInputType(InputType type)
             return NO;
         if (WebCore::protocolIsInHTTPFamily(absoluteLinkURL))
             return YES;
-        if ([[getDDDetectionControllerClass() tapAndHoldSchemes] containsObject:[targetURL scheme]])
+        if ([[getDDDetectionControllerClass() tapAndHoldSchemes] containsObject:targetURL.scheme.lowercaseString])
             return YES;
         return NO;
     }
