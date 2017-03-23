@@ -40,7 +40,12 @@ JSArray* createEmptyRegExpMatchesArray(JSGlobalObject* globalObject, JSString* i
     
     if (UNLIKELY(globalObject->isHavingABadTime())) {
         array = JSArray::tryCreateForInitializationPrivate(vm, &deferralContext, globalObject->regExpMatchesArrayStructure(), regExp->numSubpatterns() + 1);
-        
+        // FIXME: we should probably throw an out of memory error here, but
+        // when making this change we should check that all clients of this
+        // function will correctly handle an exception being thrown from here.
+        // https://bugs.webkit.org/show_bug.cgi?id=169786
+        RELEASE_ASSERT(array);
+
         array->initializeIndexWithoutBarrier(0, jsEmptyString(&vm));
         
         if (unsigned numSubpatterns = regExp->numSubpatterns()) {
