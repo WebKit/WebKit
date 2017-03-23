@@ -1,3 +1,11 @@
+2017-03-22  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] Update layout test expectations file.
+
+        Unreviewed test gardening.
+
+        * platform/gtk/TestExpectations: Update the list of expected failures.
+
 2017-03-22  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] Controls size lags behind media size
