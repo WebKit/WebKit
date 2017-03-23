@@ -1,3 +1,17 @@
+2017-03-23  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Cache type is not styled correctly in Timelines tab
+        https://bugs.webkit.org/show_bug.cgi?id=170032
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Views/NetworkGridContentView.css:
+        (.content-view:matches(.network, .network-grid) > .data-grid .cache-type):
+        (.content-view:matches(.network, .network-grid) > .data-grid:matches(:focus, .force-focus) tr.selected .cache-type):
+        (.content-view.network-grid > .data-grid .cache-type): Deleted.
+        (.content-view.network-grid > .data-grid:matches(:focus, .force-focus) tr.selected .cache-type): Deleted.
+        The different network grids have different class names. Handle both.
+
 2017-03-23  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Editing local storage keys/values starts with truncated strings
