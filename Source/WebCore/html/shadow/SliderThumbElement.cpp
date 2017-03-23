@@ -335,10 +335,6 @@ void SliderThumbElement::stopDragging()
     m_inDragMode = false;
     if (renderer())
         renderer()->setNeedsLayout();
-
-    RefPtr<HTMLInputElement> input = hostInput();
-    if (input)
-        input->dispatchFormControlChangeEvent();
 }
 
 #if !PLATFORM(IOS)
@@ -369,6 +365,7 @@ void SliderThumbElement::defaultEventHandler(Event& event)
         startDragging();
         return;
     } else if (eventType == eventNames().mouseupEvent && isLeftButton) {
+        input->dispatchFormControlChangeEvent();
         stopDragging();
         return;
     } else if (eventType == eventNames().mousemoveEvent) {
@@ -499,6 +496,9 @@ void SliderThumbElement::handleTouchEndAndCancel(TouchEvent& touchEvent)
 
     clearExclusiveTouchIdentifier();
 
+    RefPtr<HTMLInputElement> input = hostInput();
+    if (input)
+        input->dispatchFormControlChangeEvent();
     stopDragging();
 }
 

@@ -1225,6 +1225,9 @@ svg/custom/font-face-fallback.svg [ Skip ]
 # Test disabled until we can fix layout of orthogonal writing mode roots
 fast/table/colspanMinWidth-vertical.html [ Skip ]
 
+# Test only works on iOS WK2. webkit.org/b/165535
+fast/forms/range/range-remove-on-drag.html [ Skip ]
+
 ### END OF -disabled tests
 ########################################
 

@@ -1,3 +1,18 @@
+2017-03-22  Jiewen Tan  <jiewen_tan@apple.com>
+
+        ASSERT_WITH_SECURITY_IMPLICATION hit when removing an <input type="range"> while dragging on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=165535
+        <rdar://problem/29559749>
+
+        Reviewed by Ryosuke Niwa.
+
+        This test case is only enabled in iOS simulator WK2.
+
+        * TestExpectations:
+        * fast/forms/range/range-remove-on-drag-expected.txt: Added.
+        * fast/forms/range/range-remove-on-drag.html: Added.
+        * platform/ios-simulator-wk2/TestExpectations:
+
 2017-03-22  Antti Koivisto  <antti@apple.com>
 
         Dynamically applied :empty pseudo class with display:none does not get unapplied
