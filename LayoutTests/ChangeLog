@@ -1,3 +1,13 @@
+2017-03-22  Antti Koivisto  <antti@apple.com>
+
+        Dynamically applied :empty pseudo class with display:none does not get unapplied
+        https://bugs.webkit.org/show_bug.cgi?id=169907
+
+        Reviewed by Ryosuke Niwa.
+
+        * fast/css/empty-display-none-invalidation-expected.html: Added.
+        * fast/css/empty-display-none-invalidation.html: Added.
+
 2017-03-22  Mark Lam  <mark.lam@apple.com>
 
         Add support for Error.stackTraceLimit.

@@ -3436,17 +3436,19 @@ void Element::resetComputedStyle()
         reset(child);
 }
 
+void Element::resetStyleRelations()
+{
+    if (!hasRareData())
+        return;
+    elementRareData()->resetStyleRelations();
+}
+
 void Element::clearStyleDerivedDataBeforeDetachingRenderer()
 {
     unregisterNamedFlowContentElement();
     cancelFocusAppearanceUpdate();
     clearBeforePseudoElement();
     clearAfterPseudoElement();
-    if (!hasRareData())
-        return;
-    ElementRareData* data = elementRareData();
-    data->resetComputedStyle();
-    data->resetDynamicRestyleObservations();
 }
 
 void Element::clearHoverAndActiveStatusBeforeDetachingRenderer()
