@@ -270,9 +270,6 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
         memoryPressureHandler.setMemoryKillCallback([] () {
             WebCore::didExceedMemoryLimitAndFailedToRecover();
         });
-        memoryPressureHandler.setProcessIsEligibleForMemoryKillCallback([] () {
-            return WebCore::processIsEligibleForMemoryKill();
-        });
 #endif
         memoryPressureHandler.setMemoryPressureStatusChangedCallback([this](bool isUnderMemoryPressure) {
             if (parentProcessConnection())

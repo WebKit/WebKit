@@ -97,7 +97,6 @@ void MainFrame::dropChildren()
 
 void MainFrame::didCompleteLoad()
 {
-    m_timeOfLastCompletedLoad = MonotonicTime::now();
     performanceLogging().didReachPointOfInterest(PerformanceLogging::MainFrameLoadCompleted);
 }
 

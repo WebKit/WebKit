@@ -52,6 +52,11 @@ enum class MemoryUsagePolicy {
     Panic, // OH GOD WE'RE SINKING, THROW EVERYTHING OVERBOARD
 };
 
+enum class WebsamProcessState {
+    Active,
+    Inactive,
+};
+
 enum class Critical { No, Yes };
 enum class Synchronous { No, Yes };
 
@@ -67,7 +72,6 @@ public:
     WTF_EXPORT_PRIVATE void setShouldUsePeriodicMemoryMonitor(bool);
 
     void setMemoryKillCallback(WTF::Function<void()> function) { m_memoryKillCallback = WTFMove(function); }
-    void setProcessIsEligibleForMemoryKillCallback(WTF::Function<bool()> function) { m_processIsEligibleForMemoryKillCallback = WTFMove(function); }
     void setMemoryPressureStatusChangedCallback(WTF::Function<void(bool)> function) { m_memoryPressureStatusChangedCallback = WTFMove(function); }
 
     void setLowMemoryHandler(LowMemoryHandler&& handler)
@@ -140,6 +144,9 @@ public:
     WTF_EXPORT_PRIVATE void beginSimulatedMemoryPressure();
     WTF_EXPORT_PRIVATE void endSimulatedMemoryPressure();
 
+    WTF_EXPORT_PRIVATE void setProcessState(WebsamProcessState);
+    WebsamProcessState processState() const { return m_processState; }
+
 private:
     void memoryPressureStatusChanged();
 
@@ -177,6 +184,8 @@ private:
     };
 #endif
 
+    WebsamProcessState m_processState { WebsamProcessState::Inactive };
+
     bool m_installed { false };
     LowMemoryHandler m_lowMemoryHandler;
 
@@ -186,7 +195,6 @@ private:
     std::unique_ptr<RunLoop::Timer<MemoryPressureHandler>> m_measurementTimer;
     MemoryUsagePolicy m_memoryUsagePolicy { MemoryUsagePolicy::Unrestricted };
     WTF::Function<void()> m_memoryKillCallback;
-    WTF::Function<bool()> m_processIsEligibleForMemoryKillCallback;
     WTF::Function<void(bool)> m_memoryPressureStatusChangedCallback;
 
 #if OS(WINDOWS)
@@ -213,3 +221,4 @@ extern WTFLogChannel LogMemoryPressure;
 using WTF::Critical;
 using WTF::MemoryPressureHandler;
 using WTF::Synchronous;
+using WTF::WebsamProcessState;

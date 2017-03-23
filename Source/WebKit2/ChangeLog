@@ -1,3 +1,13 @@
+2017-03-22  Andreas Kling  <akling@apple.com>
+
+        Let MemoryPressureHandler track whether the process is active or inactive.
+        <https://webkit.org/b/169990>
+
+        Reviewed by Antti Koivisto.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeWebProcess):
+
 2017-03-21  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Add support for showing the platform data interaction caret

@@ -47,9 +47,10 @@ private:
     void measurePostBackgroundingCPUUsage();
     void measurePerActivityStateCPUUsage();
     void measureCPUUsageInActivityState(ActivityStateForCPUSampling);
-
     void measurePostLoadMemoryUsage();
     void measurePostBackgroundingMemoryUsage();
+    void processMayBecomeInactiveTimerFired();
+    static void updateProcessStateForMemoryPressure();
 
     Page& m_page;
 
@@ -62,6 +63,9 @@ private:
 
     Timer m_postPageLoadMemoryUsageTimer;
     Timer m_postBackgroundingMemoryUsageTimer;
+
+    Timer m_processMayBecomeInactiveTimer;
+    bool m_processMayBecomeInactive { true };
 };
 
 }

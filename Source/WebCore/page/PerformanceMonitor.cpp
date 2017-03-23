@@ -48,6 +48,8 @@ static const std::chrono::minutes cpuUsageSamplingInterval { 10 };
 
 static const std::chrono::seconds memoryUsageMeasurementDelay { 10 };
 
+static const std::chrono::minutes delayBeforeProcessMayBecomeInactive { 60 };
+
 static const double postPageLoadCPUUsageDomainReportingThreshold { 20.0 }; // Reporting pages using over 20% CPU is roughly equivalent to reporting the 10% worst pages.
 #if !PLATFORM(IOS)
 static const uint64_t postPageLoadMemoryUsageDomainReportingThreshold { 2048 * MB };
@@ -69,6 +71,7 @@ PerformanceMonitor::PerformanceMonitor(Page& page)
     , m_perActivityStateCPUUsageTimer(*this, &PerformanceMonitor::measurePerActivityStateCPUUsage)
     , m_postPageLoadMemoryUsageTimer(*this, &PerformanceMonitor::measurePostLoadMemoryUsage)
     , m_postBackgroundingMemoryUsageTimer(*this, &PerformanceMonitor::measurePostBackgroundingMemoryUsage)
+    , m_processMayBecomeInactiveTimer(*this, &PerformanceMonitor::processMayBecomeInactiveTimerFired)
 {
     ASSERT(!page.isUtilityPage());
 
@@ -127,6 +130,14 @@ void PerformanceMonitor::activityStateChanged(ActivityState::Flags oldState, Act
         else if (m_page.isOnlyNonUtilityPage())
             m_postBackgroundingMemoryUsageTimer.startOneShot(memoryUsageMeasurementDelay);
     }
+
+    if (newState & ActivityState::IsVisible && newState & ActivityState::WindowIsActive) {
+        m_processMayBecomeInactive = false;
+        m_processMayBecomeInactiveTimer.stop();
+    } else if (!m_processMayBecomeInactive && !m_processMayBecomeInactiveTimer.isActive())
+        m_processMayBecomeInactiveTimer.startOneShot(delayBeforeProcessMayBecomeInactive);
+
+    updateProcessStateForMemoryPressure();
 }
 
 enum class ReportingReason { HighCPUUsage, HighMemoryUsage };
@@ -280,6 +291,30 @@ void PerformanceMonitor::measureCPUUsageInActivityState(ActivityStateForCPUSampl
     m_page.chrome().client().reportProcessCPUTime((cpuTime.value().systemTime + cpuTime.value().userTime) - (m_perActivityStateCPUTime.value().systemTime + m_perActivityStateCPUTime.value().userTime), activityState);
 
     m_perActivityStateCPUTime = WTFMove(cpuTime);
+}
+
+void PerformanceMonitor::processMayBecomeInactiveTimerFired()
+{
+    m_processMayBecomeInactive = true;
+    updateProcessStateForMemoryPressure();
+}
+
+void PerformanceMonitor::updateProcessStateForMemoryPressure()
+{
+    bool hasAudiblePages = false;
+    bool mayBecomeInactive = true;
+
+    Page::forEachPage([&] (Page& page) {
+        if (!page.performanceMonitor())
+            return;
+        if (!page.performanceMonitor()->m_processMayBecomeInactive)
+            mayBecomeInactive = false;
+        if (page.activityState() & ActivityState::IsAudible)
+            hasAudiblePages = true;
+    });
+
+    bool isActiveProcess = !mayBecomeInactive || hasAudiblePages;
+    MemoryPressureHandler::singleton().setProcessState(isActiveProcess ? WebsamProcessState::Active : WebsamProcessState::Inactive);
 }
 
 } // namespace WebCore

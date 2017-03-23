@@ -1,3 +1,28 @@
+2017-03-22  Andreas Kling  <akling@apple.com>
+
+        Let MemoryPressureHandler track whether the process is active or inactive.
+        <https://webkit.org/b/169990>
+
+        Reviewed by Antti Koivisto.
+
+        An active process is a process that meets any of these criteria:
+
+            - Has had a visible Page in an active window in the last hour
+            - Is playing audio
+
+        This replaces the old mechanism where MemoryPressureHandler would invoke
+        a callback to know whether the process was eligible for a memory kill.
+        Instead we now plumb the relevant information down from WebCore and kill
+        based on this activity state.
+
+        * wtf/MemoryPressureHandler.cpp:
+        (WTF::MemoryPressureHandler::measurementTimerFired):
+        (WTF::MemoryPressureHandler::setProcessState):
+        * wtf/MemoryPressureHandler.h:
+        (WTF::MemoryPressureHandler::setMemoryKillCallback):
+        (WTF::MemoryPressureHandler::processState):
+        (WTF::MemoryPressureHandler::setProcessIsEligibleForMemoryKillCallback): Deleted.
+
 2017-03-20  Simon Fraser  <simon.fraser@apple.com>
 
         Add a system trace point for memory warning handling

@@ -143,11 +143,9 @@ void MemoryPressureHandler::measurementTimerFired()
     RELEASE_ASSERT(newPolicy == MemoryUsagePolicy::Panic);
 
     RELEASE_LOG(MemoryPressure, "Attempting to reduce memory footprint by freeing more important objects.");
-    if (m_processIsEligibleForMemoryKillCallback) {
-        if (!m_processIsEligibleForMemoryKillCallback()) {
-            releaseMemory(Critical::Yes, Synchronous::No);
-            return;
-        }
+    if (m_processState == WebsamProcessState::Active) {
+        releaseMemory(Critical::Yes, Synchronous::No);
+        return;
     }
 
     releaseMemory(Critical::Yes, Synchronous::Yes);
@@ -166,6 +164,13 @@ void MemoryPressureHandler::measurementTimerFired()
 
     if (m_memoryKillCallback)
         m_memoryKillCallback();
+}
+
+void MemoryPressureHandler::setProcessState(WebsamProcessState state)
+{
+    if (m_processState == state)
+        return;
+    m_processState = state;
 }
 
 void MemoryPressureHandler::beginSimulatedMemoryPressure()

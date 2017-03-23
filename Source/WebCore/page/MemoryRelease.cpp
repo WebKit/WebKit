@@ -193,33 +193,6 @@ void didExceedMemoryLimitAndFailedToRecover()
     CRASH();
 }
 
-bool processIsEligibleForMemoryKill()
-{
-    bool hasVisiblePages = false;
-    bool hasAudiblePages = false;
-    bool hasMainFrameNavigatedInTheLastHour = false;
-
-    auto now = MonotonicTime::now();
-    Page::forEachPage([&] (Page& page) {
-        if (page.isUtilityPage())
-            return;
-        if (page.isVisible())
-            hasVisiblePages = true;
-        if (page.activityState() & ActivityState::IsAudible)
-            hasAudiblePages = true;
-        if (auto timeOfLastCompletedLoad = page.mainFrame().timeOfLastCompletedLoad()) {
-            if (now - timeOfLastCompletedLoad <= Seconds::fromMinutes(60))
-                hasMainFrameNavigatedInTheLastHour = true;
-        }
-    });
-
-    bool eligible = !hasVisiblePages && !hasAudiblePages && !hasMainFrameNavigatedInTheLastHour;
-    if (!eligible)
-        RELEASE_LOG(MemoryPressure, "Process not eligible for panic memory kill. Reasons: hasVisiblePages=%u, hasAudiblePages=%u, hasMainFrameNavigatedInTheLastHour=%u", hasVisiblePages, hasAudiblePages, hasMainFrameNavigatedInTheLastHour);
-
-    return eligible;
-}
-
 #if !PLATFORM(COCOA)
 void platformReleaseMemory(Critical) { }
 void jettisonExpensiveObjectsOnTopLevelNavigation() { }

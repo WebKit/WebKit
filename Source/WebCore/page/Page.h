@@ -226,6 +226,7 @@ public:
 #endif
     LibWebRTCProvider& libWebRTCProvider() { return m_libWebRTCProvider.get(); }
     RTCController& rtcController() { return m_rtcController; }
+    PerformanceMonitor* performanceMonitor() { return m_performanceMonitor.get(); }
 
     ValidationMessageClient* validationMessageClient() const { return m_validationMessageClient.get(); }
     void updateValidationBubbleStateIfNeeded();
