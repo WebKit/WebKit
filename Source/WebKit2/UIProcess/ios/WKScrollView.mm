@@ -129,10 +129,6 @@ using namespace WebKit;
     return self;
 }
 
-#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/WKScrollViewAdditions.mm>)
-#import <WebKitAdditions/WKScrollViewAdditions.mm>
-#endif
-
 - (void)setInternalDelegate:(WKWebView <UIScrollViewDelegate> *)internalDelegate
 {
     if (internalDelegate == _internalDelegate)
