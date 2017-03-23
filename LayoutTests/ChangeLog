@@ -1,3 +1,15 @@
+2017-03-23  Chris Dumez  <cdumez@apple.com>
+
+        Add a test to make sure SVG animations are paused in detached iframes
+        https://bugs.webkit.org/show_bug.cgi?id=170020
+
+        Reviewed by Antti Koivisto.
+
+        * svg/animations/animations-paused-disconnected-iframe-expected.txt: Added.
+        * svg/animations/animations-paused-disconnected-iframe.html: Added.
+        * svg/animations/resources/frame-with-svg-animation.html: Added.
+        * svg/animations/resources/grandchild-frame-with-svg-animation.html: Added.
+
 2017-03-23  Daniel Bates  <dabates@apple.com>
 
         REGRESSION (r214047): LayoutTest fast/events/pageshow-pagehide-on-back-cached-with-frames.html is a flaky failure

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+description("Tests that SVG animations are properly paused in disconnected iframes.");
+jsTestIsAsync = true;
+
+window.onload = function() {
+    frame = document.getElementById("testFrame");
+    grandChildFrame = frame.contentDocument.getElementById("grandChildFrame");
+    frameWindow = frame.contentWindow;
+    grandChildWindow = grandChildFrame.contentWindow;
+
+    shouldBeFalse("frameWindow.internals.areSVGAnimationsPaused");
+    shouldBeFalse("grandChildWindow.internals.areSVGAnimationsPaused");
+
+    debug("Removing iframe from the document.");
+    frame.remove();
+
+    shouldBeTrue("frameWindow.internals.areSVGAnimationsPaused");
+    shouldBeTrue("grandChildWindow.internals.areSVGAnimationsPaused");
+
+    debug("Add iframe back into the document.");
+    frame.onload = function() {
+        shouldBeFalse("frame.contentWindow.internals.areSVGAnimationsPaused");
+        shouldBeFalse("frame.contentDocument.getElementById('grandChildFrame').contentWindow.internals.areSVGAnimationsPaused");
+        finishJSTest();
+    }
+    document.body.appendChild(frame);
+}
+</script>
+<iframe id="testFrame" src="resources/frame-with-svg-animation.html"></iframe>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>
