@@ -2564,7 +2564,8 @@ private:
             LValue value = lowInt52(m_node->child1());
             CheckValue* result = m_out.speculateSub(m_out.int64Zero, value);
             blessSpeculation(result, Int52Overflow, noValue(), nullptr, m_origin);
-            speculate(NegativeZero, noValue(), 0, m_out.isZero64(result));
+            if (shouldCheckNegativeZero(m_node->arithMode()))
+                speculate(NegativeZero, noValue(), 0, m_out.isZero64(result));
             setInt52(result);
             break;
         }

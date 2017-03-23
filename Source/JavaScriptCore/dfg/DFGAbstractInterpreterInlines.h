@@ -475,7 +475,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             break;
         }
         
-        forNode(node).setType(SpecInt32Only);
+        forNode(node).setType(SpecAnyInt);
         break;
     }
         

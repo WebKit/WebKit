@@ -293,8 +293,13 @@ public:
         Node* left = add->child1().node();
         Node* right = add->child2().node();
 
-        bool speculation = Node::shouldSpeculateAnyInt(left, right);
-        return speculation && !hasExitSite(add, Int52Overflow);
+        auto isAnyIntSpeculationForAdd = [](SpeculatedType value) {
+            return !!value && (value & (SpecAnyInt | SpecAnyIntAsDouble)) == value;
+        };
+
+        return isAnyIntSpeculationForAdd(left->prediction())
+            && isAnyIntSpeculationForAdd(right->prediction())
+            && !hasExitSite(add, Int52Overflow);
     }
     
     bool binaryArithShouldSpeculateInt32(Node* node, PredictionPass pass)

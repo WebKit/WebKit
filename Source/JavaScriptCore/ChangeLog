@@ -1,3 +1,61 @@
+2017-03-22  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC][DFG] Propagate AnyIntAsDouble information carefully to utilize it in fixup
+        https://bugs.webkit.org/show_bug.cgi?id=169914
+
+        Reviewed by Saam Barati.
+
+        In DFG prediction propagation phase, we pollute the prediction of GetByVal for Array::Double
+        as SpecDoubleReal even if the heap prediction says the proper prediction is SpecAnyIntAsDouble.
+        Thus, the following nodes just see the result of GetByVal(Array::Double) as double value,
+        and select suboptimal edge filters in fixup phase. For example, if the result of GetByVal is
+        SpecAnyIntAsDouble, we can see the node like ArithAdd(SpecAnyIntAsDouble, Int52) and we should
+        have a chance to make it ArithAdd(Check:Int52, Int52) instead of ArithAdd(Double, Double).
+
+        This patch propagates SpecAnyIntAsDouble in GetByVal(Array::Double) properly. And ValueAdd,
+        ArithAdd and ArithSub select AnyInt edge filters for SpecAnyIntAsDouble values. It finally
+        produces a Int52 specialized DFG node. And subsequent nodes using the produced one also
+        become Int52 specialized.
+
+        One considerable problem is that the heap prediction misses the non any int doubles. In that case,
+        if Int52 edge filter is used, BadType exit will occur. It updates the prediction of the value profile
+        of GetByVal. So, in the next time, GetByVal(Array::Double) produces more conservative predictions
+        and avoids exit-and-recompile loop correctly.
+
+        This change is very sensitive to the correct AI and appropriate predictions. Thus, this patch finds
+        and fixes some related issues. One is incorrect prediction of ToThis and another is incorrect
+        AI logic for Int52Rep.
+
+        This change dramatically improves kraken benchmarks' crypto-pbkdf2 and crypto-sha256-iterative
+        by 42.0% and 30.7%, respectively.
+
+                                                     baseline                  patched
+        Kraken:
+        ai-astar                                  158.851+-4.132      ?     159.433+-5.176         ?
+        audio-beat-detection                       53.193+-1.621      ?      53.391+-2.072         ?
+        audio-dft                                 103.589+-2.277      ?     104.902+-1.924         ? might be 1.0127x slower
+        audio-fft                                  40.491+-1.102             39.854+-0.755           might be 1.0160x faster
+        audio-oscillator                           68.504+-1.721      ?      68.957+-1.725         ?
+        imaging-darkroom                          118.367+-2.171      ?     119.581+-2.310         ? might be 1.0103x slower
+        imaging-desaturate                         71.443+-1.461      ?      72.398+-1.918         ? might be 1.0134x slower
+        imaging-gaussian-blur                     110.648+-4.035            109.184+-3.373           might be 1.0134x faster
+        json-parse-financial                       60.363+-1.628      ?      61.936+-1.585         ? might be 1.0261x slower
+        json-stringify-tinderbox                   37.903+-0.869      ?      39.559+-1.607         ? might be 1.0437x slower
+        stanford-crypto-aes                        56.313+-1.512      ?      56.675+-1.715         ?
+        stanford-crypto-ccm                        51.564+-1.900      ?      53.456+-2.548         ? might be 1.0367x slower
+        stanford-crypto-pbkdf2                    129.546+-2.738      ^      91.214+-2.027         ^ definitely 1.4202x faster
+        stanford-crypto-sha256-iterative           43.515+-0.730      ^      33.292+-0.653         ^ definitely 1.3071x faster
+
+        <arithmetic>                               78.878+-0.528      ^      75.988+-0.621         ^ definitely 1.0380x faster
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::addShouldSpeculateAnyInt):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileArithNegate):
+
 2017-03-22  Mark Lam  <mark.lam@apple.com>
 
         Add support for Error.stackTraceLimit.

@@ -354,8 +354,10 @@ private:
             case Array::Double:
                 if (arrayMode.isOutOfBounds())
                     changed |= mergePrediction(node->getHeapPrediction() | SpecDoubleReal);
-                else
+                else if (node->getHeapPrediction() & SpecNonIntAsDouble)
                     changed |= mergePrediction(SpecDoubleReal);
+                else
+                    changed |= mergePrediction(SpecAnyIntAsDouble);
                 break;
             case Array::Float32Array:
             case Array::Float64Array:
@@ -403,7 +405,7 @@ private:
                 }
 
                 if (node->child1()->shouldSpeculateNumber()) {
-                    changed |= mergePrediction(SpecAnyInt);
+                    changed |= mergePrediction(SpecBytecodeNumber);
                     break;
                 }
 

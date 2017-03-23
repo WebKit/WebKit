@@ -1,3 +1,17 @@
+2017-03-22  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC][DFG] Propagate AnyIntAsDouble information carefully to utilize it in fixup
+        https://bugs.webkit.org/show_bug.cgi?id=169914
+
+        Reviewed by Saam Barati.
+
+        * stress/any-int-as-double-add.js: Added.
+        (shouldBe):
+        (test):
+        * stress/to-this-numbers.js: Added.
+        (shouldBe):
+        (Number.prototype.toThis):
+
 2017-03-22  Mark Lam  <mark.lam@apple.com>
 
         Add support for Error.stackTraceLimit.
