@@ -2,8 +2,6 @@
 <body>
 Test pageshow/pagehide event behavior when navigating away from a page with frames, putting the page in the page cache, then back to it.
 <pre id="log"></pre>
-<iframe src="resources/pageshow-pagehide-subframe-cachable.html"></iframe>
-<iframe src="resources/pageshow-pagehide-subframe-cachable-2.html"></iframe>
 </body>
 <script>
 
@@ -11,6 +9,20 @@ if (window.testRunner) {
     testRunner.dumpAsText();
     testRunner.waitUntilDone();
     testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
+}
+
+// We explicitly chain the loading of the subframes to ensure consistent test results between runs.
+var didLoadSubframes = appendIframe("resources/pageshow-pagehide-subframe-cachable.html").then(() => appendIframe("resources/pageshow-pagehide-subframe-cachable-2.html"));
+
+function appendIframe(url)
+{
+    var promise = new Promise((resolve, reject) => {
+        var iframe = document.createElement("iframe");
+        iframe.onload = resolve;
+        iframe.src = url;
+        document.body.appendChild(iframe);
+    });
+    return promise;
 }
 
 function log(message)
@@ -34,8 +46,10 @@ window.onpageshow = function(evt) {
             testRunner.notifyDone();
     } else {
         log("***Navigating top-level frame to a page that will immediately navigate back to this one***");
-        // Location changes need to happen outside the onload handler to generate history entries.
-        setTimeout(function() {window.location.href = "data:text/html,<script>history.back();</scr" + "ipt>";}, 0);
+        didLoadSubframes.then(() => {
+            // Location changes need to happen outside the onload handler to generate history entries.
+            setTimeout(() => { window.location.href = "data:text/html,<script>history.back();</scr" + "ipt>"; }, 0);
+        });
     }
 }
 

@@ -1,3 +1,19 @@
+2017-03-23  Daniel Bates  <dabates@apple.com>
+
+        REGRESSION (r214047): LayoutTest fast/events/pageshow-pagehide-on-back-cached-with-frames.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=169834
+
+        Reviewed by Alexey Proskuryakov.
+
+        Ensure that the subframes are loaded in a consistent order between test runs.
+
+        Currently the test fast/events/pageshow-pagehide-on-back-cached-with-frames.html assumes
+        that subframes will load in tree order. This assumption is incorrect. Therefore, we need
+        to explicitly manage the loading of the subframes to ensure this invariant.
+
+        * fast/events/pageshow-pagehide-on-back-cached-with-frames-expected.txt:
+        * fast/events/pageshow-pagehide-on-back-cached-with-frames.html:
+
 2017-03-23  Brady Eidson  <beidson@apple.com>
 
         WebSQL databases should not openable in private browsing.
