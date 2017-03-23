@@ -1,3 +1,19 @@
+2017-03-23  Guillaume Emont  <guijemont@igalia.com>
+
+        [jsc] Add MacroAssemblerMIPS::storeFence()
+        https://bugs.webkit.org/show_bug.cgi?id=169705
+
+        Reviewed by Yusuke Suzuki.
+
+        There doesn't seem to be anything more fine grained than "sync" that
+        guarantees that all memory operations following it are going to happen
+        after all stores before it, so we just use sync.
+
+        * assembler/MIPSAssembler.h:
+        (JSC::MIPSAssembler::sync): Added a FIXME about SYNC_MB.
+        * assembler/MacroAssemblerMIPS.h:
+        (JSC::MacroAssemblerMIPS::storeFence): Added.
+
 2017-03-22  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC][DFG] Propagate AnyIntAsDouble information carefully to utilize it in fixup
