@@ -271,14 +271,14 @@ webkit.org/b/165394 media/media-source/media-source-seek-detach-crash.html [ Ski
 # Encrypted Media Extensions are not enabled.
 webkit.org/b/99024 media/encrypted-media [ Skip ]
 
-# CSS Filters is disabled
-webkit.org/b/99026 css3/filters [ Skip ]
-webkit.org/b/99026 fast/filter-image/filter-image.html [ Skip ]
-webkit.org/b/99026 fast/filter-image/parse-filter-image.html [ Skip ]
-webkit.org/b/120673 fast/filter-image/filter-image-blur.html [ Skip ]
-webkit.org/b/120674 fast/filter-image/filter-image-animation.html [ Skip ]
-webkit.org/b/99026 fast/filter-image/filter-image-svg.html [ Skip ]
-webkit.org/b/99026 css3/masking/clip-path-filter.html [ Skip ]
+# CSS filters related failures
+webkit.org/b/99026 css3/filters/effect-brightness.html [ Failure ]
+webkit.org/b/99026 css3/filters/effect-brightness-hw.html [ Failure ]
+webkit.org/b/99026 css3/filters/effect-brightness-clamping-hw.html [ Failure Missing ]
+webkit.org/b/99026 css3/filters/effect-brightness-clamping.html [ Failure Missing ]
+webkit.org/b/99026 css3/filters/effect-drop-shadow-hw.html [ Failure ]
+webkit.org/b/99026 css3/filters/effect-drop-shadow.html [ Failure ]
+webkit.org/b/99026 fast/filter-image/filter-image-svg.html [ ImageOnlyFailure ]
 
 # Needs testRunner.enableAutoResizeMode()
 webkit.org/b/99028 fast/autoresize [ Failure ]
@@ -874,7 +874,7 @@ webkit.org/b/131347 svg/text/hidpi-text-selection-rect-position.html [ ImageOnly
 webkit.org/b/133806 svg/masking/mask-transformed-text-missing.svg [ ImageOnlyFailure ]
 
 # No support for Filters Level 2 on GTK yet
-Bug(GTK) css3/filters/backdrop [ Skip ]
+webkit.org/b/169988 css3/filters/backdrop [ Skip ]
 
 webkit.org/b/141072 accessibility/frame-disconnect-textmarker-cache-crash.html [ Failure ]
 

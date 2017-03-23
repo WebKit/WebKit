@@ -1,3 +1,63 @@
+2017-03-22  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] Enable CSS filters related tests.
+        https://bugs.webkit.org/show_bug.cgi?id=99026
+
+        Unreviewed test gardening.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/css3/filters/composited-during-transition-layertree-expected.txt: Added. Rebaselined.
+        * platform/gtk/css3/filters/effect-blur-expected.png: Added. Rebaselined.
+        * platform/gtk/css3/filters/effect-blur-expected.txt: Added. Rebaselined.
+        * platform/gtk/css3/filters/effect-blur-hw-expected.png: Added. Rebaselined.
+        * platform/gtk/css3/filters/effect-blur-hw-expected.txt: Added. Rebaselined.
+        * platform/gtk/css3/filters/effect-combined-expected.png: Added. Rebaselined.
+        * platform/gtk/css3/filters/effect-combined-expected.txt: Added. Rebaselined.
+        * platform/gtk/css3/filters/effect-combined-hw-expected.png: Added. Rebaselined.
+        * platform/gtk/css3/filters/effect-combined-hw-expected.txt: Added. Rebaselined.
+        * platform/gtk/css3/filters/effect-contrast-expected.png: Added. Rebaselined.
+        * platform/gtk/css3/filters/effect-contrast-expected.txt: Added. Rebaselined.
+        * platform/gtk/css3/filters/effect-contrast-hw-expected.png: Added. Rebaselined.
+        * platform/gtk/css3/filters/effect-contrast-hw-expected.txt: Added. Rebaselined.
+        * platform/gtk/css3/filters/effect-grayscale-expected.png: Added. Rebaselined.
+        * platform/gtk/css3/filters/effect-grayscale-expected.txt: Added. Rebaselined.
+        * platform/gtk/css3/filters/effect-grayscale-hw-expected.png: Added. Rebaselined.
+        * platform/gtk/css3/filters/effect-grayscale-hw-expected.txt: Added. Rebaselined.
+        * platform/gtk/css3/filters/effect-hue-rotate-expected.png: Added. Rebaselined.
+        * platform/gtk/css3/filters/effect-hue-rotate-expected.txt: Added. Rebaselined.
+        * platform/gtk/css3/filters/effect-hue-rotate-hw-expected.png: Added. Rebaselined.
+        * platform/gtk/css3/filters/effect-hue-rotate-hw-expected.txt: Added. Rebaselined.
+        * platform/gtk/css3/filters/effect-invert-expected.png: Added. Rebaselined.
+        * platform/gtk/css3/filters/effect-invert-expected.txt: Added. Rebaselined.
+        * platform/gtk/css3/filters/effect-invert-hw-expected.png: Added. Rebaselined.
+        * platform/gtk/css3/filters/effect-invert-hw-expected.txt: Added. Rebaselined.
+        * platform/gtk/css3/filters/effect-opacity-expected.png: Added. Rebaselined.
+        * platform/gtk/css3/filters/effect-opacity-expected.txt: Added. Rebaselined.
+        * platform/gtk/css3/filters/effect-opacity-hw-expected.png: Added. Rebaselined.
+        * platform/gtk/css3/filters/effect-opacity-hw-expected.txt: Added. Rebaselined.
+        * platform/gtk/css3/filters/effect-reference-composite-expected.png: Added. Rebaselined.
+        * platform/gtk/css3/filters/effect-reference-composite-expected.txt: Added. Rebaselined.
+        * platform/gtk/css3/filters/effect-reference-composite-hw-expected.png: Added. Rebaselined.
+        * platform/gtk/css3/filters/effect-reference-composite-hw-expected.txt: Added. Rebaselined.
+        * platform/gtk/css3/filters/effect-reference-expected.png: Added. Rebaselined.
+        * platform/gtk/css3/filters/effect-reference-expected.txt: Added. Rebaselined.
+        * platform/gtk/css3/filters/effect-reference-hw-expected.png: Added. Rebaselined.
+        * platform/gtk/css3/filters/effect-reference-hw-expected.txt: Added. Rebaselined.
+        * platform/gtk/css3/filters/effect-reference-ordering-expected.png: Added. Rebaselined.
+        * platform/gtk/css3/filters/effect-reference-ordering-expected.txt: Added. Rebaselined.
+        * platform/gtk/css3/filters/effect-reference-ordering-hw-expected.png: Added. Rebaselined.
+        * platform/gtk/css3/filters/effect-reference-ordering-hw-expected.txt: Added. Rebaselined.
+        * platform/gtk/css3/filters/effect-saturate-expected.png: Added. Rebaselined.
+        * platform/gtk/css3/filters/effect-saturate-expected.txt: Added. Rebaselined.
+        * platform/gtk/css3/filters/effect-saturate-hw-expected.png: Added. Rebaselined.
+        * platform/gtk/css3/filters/effect-saturate-hw-expected.txt: Added. Rebaselined.
+        * platform/gtk/css3/filters/effect-sepia-expected.png: Added. Rebaselined.
+        * platform/gtk/css3/filters/effect-sepia-expected.txt: Added. Rebaselined.
+        * platform/gtk/css3/filters/effect-sepia-hw-expected.png: Added. Rebaselined.
+        * platform/gtk/css3/filters/effect-sepia-hw-expected.txt: Added. Rebaselined.
+        * platform/gtk/css3/filters/regions-expanding-expected.png: Added. Rebaselined.
+        * platform/gtk/css3/filters/regions-expanding-expected.txt: Added. Rebaselined.
+
 2017-03-22  Jiewen Tan  <jiewen_tan@apple.com>
 
         ASSERT_WITH_SECURITY_IMPLICATION hit when removing an <input type="range"> while dragging on iOS
