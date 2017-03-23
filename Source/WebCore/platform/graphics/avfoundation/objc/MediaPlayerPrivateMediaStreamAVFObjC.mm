@@ -321,7 +321,7 @@ CGAffineTransform MediaPlayerPrivateMediaStreamAVFObjC::videoTransformationMatri
 #if PLATFORM(MAC)
     static float sensorAngle[] = { 0, 0, 180, 90, 270 };
 #else
-    static float sensorAngle[] = { 180, 180, 0, 90, 270 };
+    static float sensorAngle[] = { 0, 180, 0, 90, 270 };
 #endif
     float rotation = sensorAngle[static_cast<int>(m_videoOrientation)];
     m_videoTransform = CGAffineTransformMakeRotation(rotation * M_PI / 180);

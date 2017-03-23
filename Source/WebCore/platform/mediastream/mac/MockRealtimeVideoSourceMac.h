@@ -39,6 +39,7 @@
 typedef struct __CVBuffer *CVBufferRef;
 typedef CVBufferRef CVImageBufferRef;
 typedef CVImageBufferRef CVPixelBufferRef;
+typedef struct __CVPixelBufferPool *CVPixelBufferPoolRef;
 
 namespace WebCore {
 
@@ -55,10 +56,12 @@ private:
     RetainPtr<CVPixelBufferRef> pixelBufferFromCGImage(CGImageRef) const;
 
     PlatformLayer* platformLayer() const;
-    void updateSampleBuffer() override;
+    void updateSampleBuffer() final;
+    bool applySize(const IntSize&) final;
 
     mutable RetainPtr<CGImageRef> m_previewImage;
     mutable RetainPtr<PlatformLayer> m_previewLayer;
+    mutable RetainPtr<CVPixelBufferPoolRef> m_bufferPool;
 };
 
 } // namespace WebCore

@@ -101,19 +101,40 @@ RetainPtr<CVPixelBufferRef> MockRealtimeVideoSourceMac::pixelBufferFromCGImage(C
 {
     static CGColorSpaceRef deviceRGBColorSpace = CGColorSpaceCreateDeviceRGB();
 
-    CGSize frameSize = CGSizeMake(CGImageGetWidth(image), CGImageGetHeight(image));
-    CFDictionaryRef options = (__bridge CFDictionaryRef) @{
-        (__bridge NSString *)kCVPixelBufferCGImageCompatibilityKey: @(NO),
-        (__bridge NSString *)kCVPixelBufferCGBitmapContextCompatibilityKey: @(NO)
-    };
+    CGSize imageSize = CGSizeMake(CGImageGetWidth(image), CGImageGetHeight(image));
+    if (!m_bufferPool) {
+        CVPixelBufferPoolRef bufferPool;
+        CFDictionaryRef sourcePixelBufferOptions = (__bridge CFDictionaryRef) @{
+            (__bridge NSString *)kCVPixelBufferPixelFormatTypeKey : @(kCVPixelFormatType_32ARGB),
+            (__bridge NSString *)kCVPixelBufferWidthKey : @(imageSize.width),
+            (__bridge NSString *)kCVPixelBufferHeightKey : @(imageSize.height),
+#if PLATFORM(IOS)
+            (__bridge NSString *)kCVPixelFormatOpenGLESCompatibility : @(YES),
+#else
+            (__bridge NSString *)kCVPixelBufferOpenGLCompatibilityKey : @(YES),
+#endif
+            (__bridge NSString *)kCVPixelBufferIOSurfacePropertiesKey : @{/*empty dictionary*/}
+        };
+
+        CFDictionaryRef pixelBufferPoolOptions = (__bridge CFDictionaryRef) @{
+           (__bridge NSString *)kCVPixelBufferPoolMinimumBufferCountKey : @(4)
+        };
+
+        CVReturn status = CVPixelBufferPoolCreate(kCFAllocatorDefault, pixelBufferPoolOptions, sourcePixelBufferOptions, &bufferPool);
+        if (status != kCVReturnSuccess)
+            return nullptr;
+
+        m_bufferPool = adoptCF(bufferPool);
+    }
+
     CVPixelBufferRef pixelBuffer;
-    CVReturn status = CVPixelBufferCreate(kCFAllocatorDefault, frameSize.width, frameSize.height, kCVPixelFormatType_32ARGB, options, &pixelBuffer);
+    CVReturn status = CVPixelBufferPoolCreatePixelBuffer(nullptr, m_bufferPool.get(), &pixelBuffer);
     if (status != kCVReturnSuccess)
         return nullptr;
 
     CVPixelBufferLockBaseAddress(pixelBuffer, 0);
     void* data = CVPixelBufferGetBaseAddress(pixelBuffer);
-    auto context = adoptCF(CGBitmapContextCreate(data, frameSize.width, frameSize.height, 8, CVPixelBufferGetBytesPerRow(pixelBuffer), deviceRGBColorSpace, (CGBitmapInfo) kCGImageAlphaNoneSkipFirst));
+    auto context = adoptCF(CGBitmapContextCreate(data, imageSize.width, imageSize.height, 8, CVPixelBufferGetBytesPerRow(pixelBuffer), deviceRGBColorSpace, (CGBitmapInfo) kCGImageAlphaNoneSkipFirst));
     CGContextDrawImage(context.get(), CGRectMake(0, 0, CGImageGetWidth(image), CGImageGetHeight(image)), image);
     CVPixelBufferUnlockBaseAddress(pixelBuffer, 0);
 
@@ -126,6 +147,14 @@ void MockRealtimeVideoSourceMac::updateSampleBuffer()
     auto sampleBuffer = CMSampleBufferFromPixelBuffer(pixelBuffer.get());
     
     videoSampleAvailable(MediaSampleAVFObjC::create(sampleBuffer.get()));
+}
+
+bool MockRealtimeVideoSourceMac::applySize(const IntSize& newSize)
+{
+    if (size() != newSize)
+        m_bufferPool = nullptr;
+
+    return MockRealtimeVideoSource::applySize(newSize);
 }
 
 } // namespace WebCore

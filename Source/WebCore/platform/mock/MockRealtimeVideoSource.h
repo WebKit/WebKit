@@ -60,6 +60,7 @@ protected:
     ImageBuffer* imageBuffer() const;
 
     double elapsedTime();
+    bool applySize(const IntSize&) override;
 
 private:
     void updateSettings(RealtimeMediaSourceSettings&) override;
@@ -73,7 +74,6 @@ private:
     void drawText(GraphicsContext&);
     void drawBoxes(GraphicsContext&);
 
-    bool applySize(const IntSize&) override;
     bool applyFrameRate(double) override;
     bool applyFacingMode(RealtimeMediaSourceSettings::VideoFacingMode) override { return true; }
     bool applyAspectRatio(double) override { return true; }
