@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+description("Tests that SVG animations are properly paused when removed from the document.");
+jsTestIsAsync = true;
+
+window.onload = function() {
+    testDiv = document.getElementById("testDiv");
+    svgElement = document.querySelector("svg");
+    shouldBeFalse("internals.areSVGAnimationsPaused");
+    shouldBeFalse("svgElement.animationsPaused()");
+
+    debug("Removing SVG element from the document");
+    testDiv.remove();
+
+    setTimeout(function() {
+        shouldBeTrue("svgElement.animationsPaused()");
+
+        debug("Adding SVG element back into the document");
+        document.body.appendChild(testDiv);
+
+        setTimeout(function() {
+            shouldBeFalse("internals.areSVGAnimationsPaused");
+            shouldBeFalse("svgElement.animationsPaused()");
+            finishJSTest();
+        }, 0);
+    }, 0);
+}
+</script>
+<div id="testDiv">
+<svg width="300px" height="100px">
+    <rect x="0" y="0" width="300" height="100" stroke="black" stroke-width="1" />
+    <circle cx="0" cy="50" r="15" fill="blue" stroke="black" stroke-width="1">
+        <animate attributeName="cx" from="0" to="100" dur="5s" repeatCount="indefinite" />
+    </circle>
+</svg>
+</div>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

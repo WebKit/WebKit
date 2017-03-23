@@ -1,3 +1,16 @@
+2017-03-23  Chris Dumez  <cdumez@apple.com>
+
+        SVG animations are not paused when their <svg> element is removed from the document
+        https://bugs.webkit.org/show_bug.cgi?id=170030
+        <rdar://problem/31230252>
+
+        Reviewed by Dean Jackson.
+
+        Add layout test coverage.
+
+        * svg/animations/animations-paused-when-removed-from-document-expected.txt: Added.
+        * svg/animations/animations-paused-when-removed-from-document.html: Added.
+
 2017-03-22  Myles C. Maxfield  <mmaxfield@apple.com>
 
         font shorthand should accept variation values
