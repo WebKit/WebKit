@@ -1,3 +1,11 @@
+2017-03-23  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Remove pass expectation for fast/forms/range/range-remove-on-drag.html as it relies on touch events.
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator-wk2/TestExpectations:
+
 2017-03-23  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] Mark compositing and css3/blending tests asserting on debug builds.

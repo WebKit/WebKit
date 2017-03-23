@@ -1932,6 +1932,3 @@ fast/events/context-activated-by-key-event.html [ Skip ]
 webkit.org/b/168924 scrollingcoordinator/ios/non-stable-viewport-scroll.html [ Pass Failure ]
 
 webkit.org/b/169640 imported/w3c/web-platform-tests/html/webappapis/scripting/events/event-handler-javascript.html [ Failure ]
-
-# Test only works on iOS WK2. webkit.org/b/165535
-fast/forms/range/range-remove-on-drag.html [ Pass ]
