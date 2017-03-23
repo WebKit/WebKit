@@ -266,7 +266,7 @@ public:
 
     InternalSettings* settings() const;
     unsigned workerThreadCount() const;
-    bool areSVGAnimationsPaused() const;
+    ExceptionOr<bool> areSVGAnimationsPaused() const;
     ExceptionOr<double> svgAnimationsInterval(SVGSVGElement&) const;
 
     ExceptionOr<void> setDeviceProximity(const String& eventType, double value, double min, double max);

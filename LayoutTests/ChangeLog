@@ -1,1 +1,16 @@
+2017-03-23  Chris Dumez  <cdumez@apple.com>
+
+        SVG animations are not paused when inserted into a hidden page
+        https://bugs.webkit.org/show_bug.cgi?id=170026
+        <rdar://problem/31228704>
+
+        Reviewed by Andreas Kling.
+
+        Add layout test coverage.
+
+        * svg/animations/animations-paused-when-inserted-in-hidden-document-expected.txt: Added.
+        * svg/animations/animations-paused-when-inserted-in-hidden-document.html: Added.
+        * svg/animations/animations-paused-when-inserted-in-hidden-document2-expected.txt: Added.
+        * svg/animations/animations-paused-when-inserted-in-hidden-document2.html: Added.
+
 == Rolled over to ChangeLog-2017-03-23 ==

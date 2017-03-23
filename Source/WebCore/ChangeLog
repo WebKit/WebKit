@@ -1,1 +1,30 @@
+2017-03-23  Chris Dumez  <cdumez@apple.com>
+
+        SVG animations are not paused when inserted into a hidden page
+        https://bugs.webkit.org/show_bug.cgi?id=170026
+        <rdar://problem/31228704>
+
+        Reviewed by Andreas Kling.
+
+        SVG animations were not paused when inserted into a hidden page. We would pause
+        animations in a page when the page becomes hidden. However, new animations
+        inserted in the page after this point would start, despite the page being
+        hidden.
+
+        Tests:
+        - svg/animations/animations-paused-when-inserted-in-hidden-document.html
+        - svg/animations/animations-paused-when-inserted-in-hidden-document2.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::accessSVGExtensions):
+        * svg/SVGDocumentExtensions.cpp:
+        (WebCore::SVGDocumentExtensions::SVGDocumentExtensions):
+        (WebCore::SVGDocumentExtensions::addTimeContainer):
+        (WebCore::reportMessage):
+        * svg/SVGDocumentExtensions.h:
+        * testing/Internals.cpp:
+        (WebCore::Internals::areSVGAnimationsPaused):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 == Rolled over to ChangeLog-2017-03-23 ==

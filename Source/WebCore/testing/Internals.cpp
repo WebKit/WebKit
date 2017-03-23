@@ -517,14 +517,14 @@ unsigned Internals::workerThreadCount() const
     return WorkerThread::workerThreadCount();
 }
 
-bool Internals::areSVGAnimationsPaused() const
+ExceptionOr<bool> Internals::areSVGAnimationsPaused() const
 {
     auto* document = contextDocument();
     if (!document)
-        return false;
+        return Exception { INVALID_ACCESS_ERR, ASCIILiteral("No context document") };
 
     if (!document->svgExtensions())
-        return false;
+        return Exception { NOT_FOUND_ERR, ASCIILiteral("No SVG animations") };
 
     return document->accessSVGExtensions().areAnimationsPaused();
 }
