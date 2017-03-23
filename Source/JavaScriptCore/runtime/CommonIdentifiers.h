@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2003, 2007, 2009, 2016 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2017 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -281,6 +281,7 @@
     macro(sourceCode) \
     macro(sourceURL) \
     macro(stack) \
+    macro(stackTraceLimit) \
     macro(sticky) \
     macro(subarray) \
     macro(summary) \

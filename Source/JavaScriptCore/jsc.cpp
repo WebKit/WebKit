@@ -3350,8 +3350,11 @@ static void dumpException(GlobalObject* globalObject, JSValue exception)
             lineNumberValue.toWTFString(globalObject->globalExec()).utf8().data());
     }
     
-    if (!stackValue.isUndefinedOrNull())
-        printf("%s\n", stackValue.toWTFString(globalObject->globalExec()).utf8().data());
+    if (!stackValue.isUndefinedOrNull()) {
+        auto stackString = stackValue.toWTFString(globalObject->globalExec());
+        if (stackString.length())
+            printf("%s\n", stackString.utf8().data());
+    }
 
 #undef CHECK_EXCEPTION
 }

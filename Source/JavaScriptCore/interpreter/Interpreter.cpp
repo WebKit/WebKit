@@ -682,7 +682,7 @@ NEVER_INLINE HandlerInfo* Interpreter::unwind(VM& vm, CallFrame*& callFrame, Exc
     if (exceptionValue.isEmpty() || (exceptionValue.isCell() && !exceptionValue.asCell()))
         exceptionValue = jsNull();
 
-    ASSERT_UNUSED(scope, scope.exception() && scope.exception()->stack().size());
+    ASSERT_UNUSED(scope, scope.exception() && (!Options::exceptionStackTraceLimit() || scope.exception()->stack().size()));
 
     // Calculate an exception handler vPC, unwinding call frames as necessary.
     HandlerInfo* handler = nullptr;

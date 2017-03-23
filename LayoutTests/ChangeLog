@@ -1,3 +1,15 @@
+2017-03-22  Mark Lam  <mark.lam@apple.com>
+
+        Add support for Error.stackTraceLimit.
+        https://bugs.webkit.org/show_bug.cgi?id=169904
+
+        Reviewed by Saam Barati.
+
+        Rebased test.
+
+        * js/Object-getOwnPropertyNames-expected.txt:
+        * js/script-tests/Object-getOwnPropertyNames.js:
+
 2017-03-22  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] Update layout test expectations file.

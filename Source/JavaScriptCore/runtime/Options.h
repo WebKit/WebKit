@@ -376,6 +376,8 @@ typedef const char* optionString;
     v(bool, verifyHeap, false, Normal, nullptr) \
     v(unsigned, numberOfGCCyclesToRecordForVerification, 3, Normal, nullptr) \
     \
+    v(unsigned, exceptionStackTraceLimit, 100, Normal, "Stack trace limit for internal Exception object") \
+    v(unsigned, defaultErrorStackTraceLimit, 100, Normal, "The default value for Error.stackTraceLimit") \
     v(bool, useExceptionFuzz, false, Normal, nullptr) \
     v(unsigned, fireExceptionFuzzAt, 0, Normal, nullptr) \
     v(bool, validateDFGExceptionHandling, false, Normal, "Causes the DFG to emit code validating exception handling for each node that can exit") /* This is true by default on Debug builds */\

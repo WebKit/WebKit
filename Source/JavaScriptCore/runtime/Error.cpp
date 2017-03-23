@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003-2006, 2008, 2016 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2017 Apple Inc. All rights reserved.
  *  Copyright (C) 2007 Eric Seidel (eric@webkit.org)
  *
  *  This library is free software; you can redistribute it and/or
@@ -157,10 +157,14 @@ private:
 
 bool addErrorInfoAndGetBytecodeOffset(ExecState* exec, VM& vm, JSObject* obj, bool useCurrentFrame, CallFrame*& callFrame, unsigned* bytecodeOffset)
 {
-    Vector<StackFrame> stackTrace = Vector<StackFrame>();
+    JSGlobalObject* globalObject = obj->globalObject();
+    ErrorConstructor* errorConstructor = globalObject->errorConstructor();
+    if (!errorConstructor->stackTraceLimit())
+        return false;
 
+    Vector<StackFrame> stackTrace = Vector<StackFrame>();
     size_t framesToSkip = useCurrentFrame ? 0 : 1;
-    vm.interpreter->getStackTrace(stackTrace, framesToSkip);
+    vm.interpreter->getStackTrace(stackTrace, framesToSkip, errorConstructor->stackTraceLimit().value());
     if (!stackTrace.isEmpty()) {
 
         ASSERT(exec == vm.topCallFrame || exec == exec->lexicalGlobalObject()->globalExec() || exec == exec->vmEntryGlobalObject()->globalExec());
@@ -196,6 +200,8 @@ bool addErrorInfoAndGetBytecodeOffset(ExecState* exec, VM& vm, JSObject* obj, bo
 
         return true;
     }
+
+    obj->putDirect(vm, vm.propertyNames->stack, vm.smallStrings.emptyString(), DontEnum);
     return false;
 }
 

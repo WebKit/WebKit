@@ -1,3 +1,56 @@
+2017-03-22  Mark Lam  <mark.lam@apple.com>
+
+        Add support for Error.stackTraceLimit.
+        https://bugs.webkit.org/show_bug.cgi?id=169904
+
+        Reviewed by Saam Barati.
+
+        Since there's no standard for this yet, we'll implement Error.stackTraceLimit
+        based on how Chrome does it.  This includes some idiosyncrasies like:
+        1. If we set Error.stackTraceLimit = 0, then new Error().stack yields an empty
+           stack trace (Chrome has a title with no stack frame entries).
+        2. If we set Error.stackTraceLimit = {] (i.e. to a non-number value), then
+           new Error().stack is undefined.
+
+        Chrome and IE defaults their Error.stackTraceLimit to 10.  We'll default ours to
+        100 because 10 may be a bit too skimpy and it is not that costly to allow up to
+        100 frames instead of 10.
+
+        The default value for Error.stackTraceLimit is specified by
+        Options::defaultErrorStackTraceLimit().
+
+        Also, the Exception object now limits the number of stack trace frames it captures
+        to the limit specified by Options::exceptionStackTraceLimit().
+
+        Note: the Exception object captures a stack trace that is not necessarily the
+        same as the one in an Error object being thrown:
+
+        - The Error object captures the stack trace at the point of object creation.
+
+        - The Exception object captures the stack trace at the point that the exception
+          is thrown.  This stack trace is captured even when throwing a value that is not
+          an Error object e.g. a primitive value.  The Exception object stack trace is
+          only used by WebInspector to identify where a value is thrown from.  Hence,
+          it does not necessary make sense the Exception object stack trace limited by
+          Error.stackTraceLimit.  Instead, we have it use own Options::exceptionStackTraceLimit().
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::unwind):
+        * jsc.cpp:
+        (dumpException):
+        * runtime/CommonIdentifiers.h:
+        * runtime/Error.cpp:
+        (JSC::addErrorInfoAndGetBytecodeOffset):
+        * runtime/ErrorConstructor.cpp:
+        (JSC::ErrorConstructor::finishCreation):
+        (JSC::ErrorConstructor::put):
+        (JSC::ErrorConstructor::deleteProperty):
+        * runtime/ErrorConstructor.h:
+        (JSC::ErrorConstructor::stackTraceLimit):
+        * runtime/Exception.cpp:
+        (JSC::Exception::finishCreation):
+        * runtime/Options.h:
+
 2017-03-22  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Use jsNontrivialString for Number toString operations
