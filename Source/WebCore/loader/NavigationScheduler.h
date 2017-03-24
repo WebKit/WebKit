@@ -43,13 +43,13 @@ class ScheduledNavigation;
 class SecurityOrigin;
 class URL;
 
-class NavigationDisablerForBeforeUnload {
+class NavigationDisabler {
 public:
-    NavigationDisablerForBeforeUnload()
+    NavigationDisabler()
     {
         s_navigationDisableCount++;
     }
-    ~NavigationDisablerForBeforeUnload()
+    ~NavigationDisabler()
     {
         ASSERT(s_navigationDisableCount);
         s_navigationDisableCount--;

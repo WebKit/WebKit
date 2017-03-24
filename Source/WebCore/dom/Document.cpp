@@ -2224,8 +2224,12 @@ void Document::prepareForDestruction()
             cache->clearTextMarkerNodesInUse(this);
     }
 #endif
-    
-    disconnectDescendantFrames();
+
+    {
+        NavigationDisabler navigationDisabler;
+        disconnectDescendantFrames();
+    }
+
     if (m_domWindow && m_frame)
         m_domWindow->willDetachDocumentFromFrame();
 
@@ -2281,6 +2285,11 @@ void Document::prepareForDestruction()
     detachFromFrame();
 
     m_hasPreparedForDestruction = true;
+
+    // Note that m_pageCacheState can be Document::AboutToEnterPageCache if our frame
+    // was removed in an onpagehide event handler fired when the top-level frame is
+    // about to enter the page cache.
+    ASSERT_WITH_SECURITY_IMPLICATION(m_pageCacheState != Document::InPageCache);
 }
 
 void Document::removeAllEventListeners()

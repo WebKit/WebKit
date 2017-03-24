@@ -1,3 +1,40 @@
+2017-03-24  Daniel Bates  <dabates@apple.com>
+
+        Prevent new navigations during document unload
+        https://bugs.webkit.org/show_bug.cgi?id=169934
+        <rdar://problem/31247584>
+
+        Reviewed by Chris Dumez.
+
+        Similar to our policy of preventing new navigations from onbeforeunload handlers
+        we should prevent new navigations that are initiated during the document unload
+        process.
+
+        The significant part of this change is the instantiation of the RAII object NavigationDisabler
+        in Document::prepareForDestruction(). The rest of this change just renames class
+        NavigationDisablerForBeforeUnload to NavigationDisabler now that this RAII class is
+        used to prevent navigation from both onbeforeunload event handlers and when unloading
+        a document.
+
+        Test: fast/frames/frame-unload-navigate-and-setTimeout-assert-fail.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::prepareForDestruction): Disable new navigations when disconnecting
+        subframes. Also assert that the document is not in the page cache before we fall off
+        the end of the function.
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::isNavigationAllowed): Update for renaming below.
+        (WebCore::FrameLoader::shouldClose): Ditto.
+        * loader/NavigationScheduler.cpp:
+        (WebCore::NavigationScheduler::shouldScheduleNavigation): Ditto.
+        * loader/NavigationScheduler.h:
+        (WebCore::NavigationDisabler::NavigationDisabler): Renamed class; formerly named NavigationDisablerForBeforeUnload.
+        (WebCore::NavigationDisabler::~NavigationDisabler): Ditto.
+        (WebCore::NavigationDisabler::isNavigationAllowed): Ditto.
+        (WebCore::NavigationDisablerForBeforeUnload::NavigationDisablerForBeforeUnload): Deleted.
+        (WebCore::NavigationDisablerForBeforeUnload::~NavigationDisablerForBeforeUnload): Deleted.
+        (WebCore::NavigationDisablerForBeforeUnload::isNavigationAllowed): Deleted.
+
 2017-03-24  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Implement font-optical-sizing
