@@ -1,3 +1,16 @@
+2017-03-24  Brady Eidson  <beidson@apple.com>
+
+        A null compound index value crashes the Databases process.
+        <rdar://problem/30499831> and https://bugs.webkit.org/show_bug.cgi?id=170000
+
+        Reviewed by Alex Christensen.
+
+        * storage/indexeddb/modern/resources/single-entry-index-invalid-key-crash.js: Added.
+        * storage/indexeddb/modern/single-entry-index-invalid-key-crash-expected.txt: Added.
+        * storage/indexeddb/modern/single-entry-index-invalid-key-crash-private-expected.txt: Added.
+        * storage/indexeddb/modern/single-entry-index-invalid-key-crash-private.html: Added.
+        * storage/indexeddb/modern/single-entry-index-invalid-key-crash.html: Added.
+
 2017-03-24  Ryan Haddad  <ryanhaddad@apple.com>
 
         Skip svg/animations/animations-paused-when-inserted-in-hidden-document* tests on ios-simulator.

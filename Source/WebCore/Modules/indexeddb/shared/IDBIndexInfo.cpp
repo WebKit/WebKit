@@ -56,7 +56,7 @@ String IDBIndexInfo::loggingString(int indent) const
     for (int i = 0; i < indent; ++i)
         indentString.append(" ");
 
-    return makeString(indentString, "Index: ", m_name, String::format(" (%" PRIu64 ") \n", m_identifier));
+    return makeString(indentString, "Index: ", m_name, String::format(" (%" PRIu64 ") keyPath: %s\n", m_identifier, WebCore::loggingString(m_keyPath).utf8().data()));
 }
 
 String IDBIndexInfo::condensedLoggingString() const
