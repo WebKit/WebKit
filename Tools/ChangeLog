@@ -1,3 +1,14 @@
+2017-03-24  Jonathan Bedard  <jbedard@apple.com>
+
+        Increase timeout for booting simulators.
+        <rdar://problem/31080009>
+
+        Unreviewed infrastructure fix.
+
+        * Scripts/webkitpy/xcode/simulator.py:
+        (Simulator.wait_until_device_is_booted): Increase timeout.
+        (Simulator.wait_until_device_is_in_state): Increase timeout.
+
 2017-03-24  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix GTK+ test /webkit2/WebKitWebView/javascript-dialogs after r214277.

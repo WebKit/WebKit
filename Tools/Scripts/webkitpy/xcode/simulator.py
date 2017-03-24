@@ -238,8 +238,9 @@ class Simulator(object):
             return 'DOES_NOT_EXIST'
         return Simulator.NAME_FOR_STATE[state]
 
+    # FIXME: When <rdar://problem/31080009> is fixed, decrease timeout back to 5 minutes
     @staticmethod
-    def wait_until_device_is_booted(udid, timeout_seconds=60 * 5):
+    def wait_until_device_is_booted(udid, timeout_seconds=60 * 15):
         Simulator.wait_until_device_is_in_state(udid, Simulator.DeviceState.BOOTED, timeout_seconds)
         with timeout(seconds=timeout_seconds):
             while True:
@@ -255,8 +256,9 @@ class Simulator(object):
                     _log.warn("Error in checking Simulator boot status. Will retry in 1 second.")
                 time.sleep(1)
 
+    # FIXME: When <rdar://problem/31080009> is fixed, decrease timeout back to 5 minutes
     @staticmethod
-    def wait_until_device_is_in_state(udid, wait_until_state, timeout_seconds=60 * 5):
+    def wait_until_device_is_in_state(udid, wait_until_state, timeout_seconds=60 * 15):
         _log.debug('waiting for device %s to enter state %s with timeout %s', udid, Simulator.device_state_description(wait_until_state), timeout_seconds)
         with timeout(seconds=timeout_seconds):
             device_state = Simulator.device_state(udid)
