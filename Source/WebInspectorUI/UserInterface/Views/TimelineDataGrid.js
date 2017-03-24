@@ -267,11 +267,16 @@ WebInspector.TimelineDataGrid = class TimelineDataGrid extends WebInspector.Data
             let treeElement = this._treeOutlineDataGridSynchronizer.treeElementForDataGridNode(dataGridNode);
             console.assert(treeElement);
 
+            let wasSelected = treeElement.selected;
+
             console.assert(!treeElement.parent || treeElement.parent === treeOutline);
             if (treeElement.parent === treeOutline)
                 treeOutline.removeChild(treeElement);
 
             treeOutline.insertChild(treeElement, insertionIndex);
+
+            if (wasSelected)
+                treeElement.select();
 
             // Adding the tree element back to the tree outline subjects it to filters.
             // Make sure we keep the hidden state in-sync while the synchronizer is disabled.

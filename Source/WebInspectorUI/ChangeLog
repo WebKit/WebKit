@@ -1,3 +1,18 @@
+2017-03-24  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Adding a WebSocket message may change the currently selected resource
+        https://bugs.webkit.org/show_bug.cgi?id=170036
+        <rdar://problem/31231463>
+
+        Reviewed by Joseph Pecoraro.
+
+        Calling increaseSize on a resource may cause a WebInspector.TimelineDataGrid#TimelineDataGrid#_refreshDirtyDataGridNodes call.
+        Make sure _refreshDirtyDataGridNodes preserves selection of a treeElement.
+
+        * UserInterface/Views/TimelineDataGrid.js:
+        (WebInspector.TimelineDataGrid.prototype._refreshDirtyDataGridNodes):
+        Re-attaching treeElement causes it to lose selection. Select it again after re-attaching.
+
 2017-03-24  Devin Rousso  <webkit@devinrousso.com>
 
         Web Inspector: add context menu item to log content of WebSocket frame
