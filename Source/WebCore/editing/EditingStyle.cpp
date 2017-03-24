@@ -29,6 +29,7 @@
 
 #include "ApplyStyleCommand.h"
 #include "CSSComputedStyleDeclaration.h"
+#include "CSSFontStyleValue.h"
 #include "CSSParser.h"
 #include "CSSRuleList.h"
 #include "CSSStyleRule.h"
@@ -142,6 +143,8 @@ template<typename T>
 int identifierForStyleProperty(T& style, CSSPropertyID propertyID)
 {
     RefPtr<CSSValue> value = extractPropertyValue(style, propertyID);
+    if (propertyID == CSSPropertyFontStyle && is<CSSFontStyleValue>(value.get()) && downcast<CSSFontStyleValue>(value.get())->isItalic())
+        return CSSValueItalic;
     if (!is<CSSPrimitiveValue>(value.get()))
         return 0;
     return downcast<CSSPrimitiveValue>(*value).valueID();

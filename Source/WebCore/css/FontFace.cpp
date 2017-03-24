@@ -305,7 +305,7 @@ String FontFace::style() const
         return String::format("oblique %fdeg", static_cast<float>(style.minimum));
     }
 
-    return String::format("oblique %fdeg-%fdeg", static_cast<float>(style.minimum), static_cast<float>(style.maximum));
+    return String::format("oblique %fdeg %fdeg", static_cast<float>(style.minimum), static_cast<float>(style.maximum));
 }
 
 String FontFace::weight() const
@@ -328,7 +328,7 @@ String FontFace::weight() const
         return String::format("%f", static_cast<float>(weight.minimum));
     }
 
-    return String::format("%f-%f", static_cast<float>(weight.minimum), static_cast<float>(weight.maximum));
+    return String::format("%f %f", static_cast<float>(weight.minimum), static_cast<float>(weight.maximum));
 }
 
 String FontFace::stretch() const
@@ -365,7 +365,7 @@ String FontFace::stretch() const
         return String::format("%f%%", static_cast<float>(stretch.minimum));
     }
 
-    return String::format("%f%%-%f%%", static_cast<float>(stretch.minimum), static_cast<float>(stretch.maximum));
+    return String::format("%f%% %f%%", static_cast<float>(stretch.minimum), static_cast<float>(stretch.maximum));
 }
 
 String FontFace::unicodeRange() const

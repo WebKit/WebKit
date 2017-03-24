@@ -79,6 +79,8 @@ public:
 #endif
     bool isFontFaceSrcValue() const { return m_classType == FontFaceSrcClass; }
     bool isFontValue() const { return m_classType == FontClass; }
+    bool isFontStyleValue() const { return m_classType == FontStyleClass; }
+    bool isFontStyleRangeValue() const { return m_classType == FontStyleRangeClass; }
     bool isImageGeneratorValue() const { return m_classType >= CanvasClass && m_classType <= RadialGradientClass; }
     bool isGradientValue() const { return m_classType >= LinearGradientClass && m_classType <= RadialGradientClass; }
     bool isNamedImageValue() const { return m_classType == NamedImageClass; }
@@ -155,6 +157,8 @@ protected:
         FontVariationClass,
 #endif
         FontClass,
+        FontStyleClass,
+        FontStyleRangeClass,
         FontFaceSrcClass,
         FunctionClass,
 

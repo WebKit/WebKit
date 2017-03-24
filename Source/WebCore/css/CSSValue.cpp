@@ -41,6 +41,8 @@
 #include "CSSFilterImageValue.h"
 #include "CSSFontFaceSrcValue.h"
 #include "CSSFontFeatureValue.h"
+#include "CSSFontStyleRangeValue.h"
+#include "CSSFontStyleValue.h"
 #include "CSSFontValue.h"
 #include "CSSFontVariationValue.h"
 #include "CSSFunctionValue.h"
@@ -206,6 +208,10 @@ bool CSSValue::equals(const CSSValue& other) const
             return compareCSSValues<CSSVariableReferenceValue>(*this, other);
         case PendingSubstitutionValueClass:
             return compareCSSValues<CSSPendingSubstitutionValue>(*this, other);
+        case FontStyleClass:
+            return compareCSSValues<CSSFontStyleValue>(*this, other);
+        case FontStyleRangeClass:
+            return compareCSSValues<CSSFontStyleRangeValue>(*this, other);
         default:
             ASSERT_NOT_REACHED();
             return false;
@@ -302,6 +308,10 @@ String CSSValue::cssText() const
         return downcast<CSSVariableReferenceValue>(*this).customCSSText();
     case PendingSubstitutionValueClass:
         return downcast<CSSPendingSubstitutionValue>(*this).customCSSText();
+    case FontStyleClass:
+        return downcast<CSSFontStyleValue>(*this).customCSSText();
+    case FontStyleRangeClass:
+        return downcast<CSSFontStyleRangeValue>(*this).customCSSText();
     }
 
     ASSERT_NOT_REACHED();
@@ -431,6 +441,12 @@ void CSSValue::destroy()
         return;
     case PendingSubstitutionValueClass:
         delete downcast<CSSPendingSubstitutionValue>(this);
+        return;
+    case FontStyleClass:
+        delete downcast<CSSFontStyleValue>(this);
+        return;
+    case FontStyleRangeClass:
+        delete downcast<CSSFontStyleRangeValue>(this);
         return;
     }
     ASSERT_NOT_REACHED();

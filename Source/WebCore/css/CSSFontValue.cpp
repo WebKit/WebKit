@@ -20,6 +20,7 @@
 #include "config.h"
 #include "CSSFontValue.h"
 
+#include "CSSFontStyleValue.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSValueList.h"
 #include <wtf/text/StringBuilder.h>
@@ -44,7 +45,7 @@ String CSSFontValue::customCSSText() const
             result.append(' ');
         result.append(weight->cssText());
     }
-    if (weight) {
+    if (stretch) {
         if (!result.isEmpty())
             result.append(' ');
         result.append(stretch->cssText());

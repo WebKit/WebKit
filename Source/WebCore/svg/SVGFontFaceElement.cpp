@@ -65,6 +65,7 @@ void SVGFontFaceElement::parseAttribute(const QualifiedName& name, const AtomicS
 {    
     CSSPropertyID propId = cssPropertyIdForSVGAttributeName(name);
     if (propId > 0) {
+        // FIXME: Parse using the @font-face descriptor grammars, not the property grammars.
         m_fontFaceRule->mutableProperties().setProperty(propId, value, false);
         rebuildFontFace();
         return;

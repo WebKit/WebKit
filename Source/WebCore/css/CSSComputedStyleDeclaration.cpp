@@ -35,6 +35,7 @@
 #include "CSSBorderImageSliceValue.h"
 #include "CSSCustomPropertyValue.h"
 #include "CSSFontFeatureValue.h"
+#include "CSSFontStyleValue.h"
 #include "CSSFontValue.h"
 #include "CSSFontVariationValue.h"
 #include "CSSFunctionValue.h"
@@ -1929,12 +1930,14 @@ static Ref<CSSPrimitiveValue> fontStretchFromStyle(const RenderStyle& style)
     return CSSValuePool::singleton().createValue(static_cast<float>(stretch), CSSPrimitiveValue::CSS_PERCENTAGE);
 }
 
-static Ref<CSSPrimitiveValue> fontStyleFromStyle(const RenderStyle& style)
+static Ref<CSSFontStyleValue> fontStyleFromStyle(const RenderStyle& style)
 {
-    auto italic = style.fontDescription().italic();
-    if (auto italicValue = fontStyleKeyword(italic))
-        return CSSValuePool::singleton().createIdentifierValue(italicValue.value());
-    return CSSValuePool::singleton().createValue(static_cast<float>(italic), CSSPrimitiveValue::CSS_DEG);
+    FontSelectionValue italic = style.fontDescription().italic();
+    if (italic == normalItalicValue())
+        return CSSFontStyleValue::create(CSSValuePool::singleton().createIdentifierValue(CSSValueNormal));
+    if (italic == italicValue())
+        return CSSFontStyleValue::create(CSSValuePool::singleton().createIdentifierValue(CSSValueItalic));
+    return CSSFontStyleValue::create(CSSValuePool::singleton().createIdentifierValue(CSSValueOblique), CSSValuePool::singleton().createValue(static_cast<float>(italic), CSSPrimitiveValue::CSS_DEG));
 }
 
 static Ref<CSSValue> fontVariantFromStyle(const RenderStyle& style)
@@ -2550,7 +2553,7 @@ static Ref<CSSFontValue> fontShorthandValueForSelectionProperties(const FontDesc
         return CSSFontValue::create();
 
     if (auto italic = fontStyleKeyword(fontDescription.italic()))
-        computedFont->style = CSSValuePool::singleton().createIdentifierValue(italic.value());
+        computedFont->style = CSSFontStyleValue::create(CSSValuePool::singleton().createIdentifierValue(italic.value()));
     else
         return CSSFontValue::create();
 

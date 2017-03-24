@@ -1314,6 +1314,8 @@ set(WebCore_SOURCES
     css/CSSFontFaceSrcValue.cpp
     css/CSSFontFeatureValue.cpp
     css/CSSFontSelector.cpp
+    css/CSSFontStyleRangeValue.cpp
+    css/CSSFontStyleValue.cpp
     css/CSSFontValue.cpp
     css/CSSFontVariationValue.cpp
     css/CSSFunctionValue.cpp

@@ -46,6 +46,7 @@
 #include "CSSFontFaceSrcValue.cpp"
 #include "CSSFontFeatureValue.cpp"
 #include "CSSFontSelector.cpp"
+#include "CSSFontStyleValue.cpp"
 #include "CSSFontValue.cpp"
 #include "CSSFontVariationValue.cpp"
 #include "CSSFunctionValue.cpp"

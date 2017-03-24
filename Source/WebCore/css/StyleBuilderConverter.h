@@ -30,6 +30,7 @@
 #include "CSSCalculationValue.h"
 #include "CSSContentDistributionValue.h"
 #include "CSSFontFeatureValue.h"
+#include "CSSFontStyleValue.h"
 #include "CSSFontVariationValue.h"
 #include "CSSFunctionValue.h"
 #include "CSSGridAutoRepeatValue.h"
@@ -39,6 +40,7 @@
 #include "CSSImageSetValue.h"
 #include "CSSImageValue.h"
 #include "CSSPrimitiveValue.h"
+#include "CSSPrimitiveValueMappings.h"
 #include "CSSReflectValue.h"
 #include "FontSelectionValueInlines.h"
 #include "Frame.h"
@@ -115,6 +117,9 @@ public:
     static bool convertOverflowScrolling(StyleResolver&, const CSSValue&);
 #endif
     static FontFeatureSettings convertFontFeatureSettings(StyleResolver&, const CSSValue&);
+    static FontSelectionValue convertFontWeightFromValue(const CSSValue&);
+    static FontSelectionValue convertFontStretchFromValue(const CSSValue&);
+    static FontSelectionValue convertFontStyleFromValue(const CSSValue&);
     static FontSelectionValue convertFontWeight(StyleResolver&, const CSSValue&);
     static FontSelectionValue convertFontStretch(StyleResolver&, const CSSValue&);
     static FontSelectionValue convertFontStyle(StyleResolver&, const CSSValue&);
@@ -1160,7 +1165,7 @@ inline FontFeatureSettings StyleBuilderConverter::convertFontFeatureSettings(Sty
     return settings;
 }
 
-inline FontSelectionValue StyleBuilderConverter::convertFontWeight(StyleResolver& styleResolver, const CSSValue& value)
+inline FontSelectionValue StyleBuilderConverter::convertFontWeightFromValue(const CSSValue& value)
 {
     ASSERT(is<CSSPrimitiveValue>(value));
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
@@ -1173,18 +1178,17 @@ inline FontSelectionValue StyleBuilderConverter::convertFontWeight(StyleResolver
     case CSSValueNormal:
         return normalWeightValue();
     case CSSValueBold:
-        return boldWeightValue();
     case CSSValueBolder:
-        return FontCascadeDescription::bolderWeight(styleResolver.parentStyle()->fontDescription().weight());
+        return boldWeightValue();
     case CSSValueLighter:
-        return FontCascadeDescription::lighterWeight(styleResolver.parentStyle()->fontDescription().weight());
+        return lightWeightValue();
     default:
         ASSERT_NOT_REACHED();
         return normalWeightValue();
     }
 }
 
-inline FontSelectionValue StyleBuilderConverter::convertFontStretch(StyleResolver&, const CSSValue& value)
+inline FontSelectionValue StyleBuilderConverter::convertFontStretchFromValue(const CSSValue& value)
 {
     ASSERT(is<CSSPrimitiveValue>(value));
     const auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
@@ -1199,19 +1203,44 @@ inline FontSelectionValue StyleBuilderConverter::convertFontStretch(StyleResolve
     return normalStretchValue();
 }
 
-inline FontSelectionValue StyleBuilderConverter::convertFontStyle(StyleResolver&, const CSSValue& value)
+inline FontSelectionValue StyleBuilderConverter::convertFontStyleFromValue(const CSSValue& value)
+{
+    ASSERT(is<CSSFontStyleValue>(value));
+    const auto& fontStyleValue = downcast<CSSFontStyleValue>(value);
+
+    auto valueID = fontStyleValue.fontStyleValue->valueID();
+    if (valueID == CSSValueNormal)
+        return normalItalicValue();
+    if (valueID == CSSValueItalic)
+        return italicValue();
+    ASSERT(valueID == CSSValueOblique);
+    if (auto* obliqueValue = fontStyleValue.obliqueValue.get())
+        return FontSelectionValue(obliqueValue->value<float>(CSSPrimitiveValue::CSS_DEG));
+    return italicValue();
+}
+
+inline FontSelectionValue StyleBuilderConverter::convertFontWeight(StyleResolver& styleResolver, const CSSValue& value)
 {
     ASSERT(is<CSSPrimitiveValue>(value));
-    const auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
+    auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
+    if (primitiveValue.isValueID()) {
+        auto valueID = primitiveValue.valueID();
+        if (valueID == CSSValueBolder)
+            return FontCascadeDescription::bolderWeight(styleResolver.parentStyle()->fontDescription().weight());
+        if (valueID == CSSValueLighter)
+            return FontCascadeDescription::lighterWeight(styleResolver.parentStyle()->fontDescription().weight());
+    }
+    return convertFontWeightFromValue(value);
+}
 
-    if (primitiveValue.isAngle() || primitiveValue.isNumber() || primitiveValue.isCalculated())
-        return FontSelectionValue::clampFloat(primitiveValue.floatValue(CSSPrimitiveValue::CSS_DEG));
+inline FontSelectionValue StyleBuilderConverter::convertFontStretch(StyleResolver&, const CSSValue& value)
+{
+    return convertFontStretchFromValue(value);
+}
 
-    ASSERT(primitiveValue.isValueID());
-    if (auto value = fontStyleValue(primitiveValue.valueID()))
-        return value.value();
-    ASSERT_NOT_REACHED();
-    return normalItalicValue();
+inline FontSelectionValue StyleBuilderConverter::convertFontStyle(StyleResolver&, const CSSValue& value)
+{
+    return convertFontStyleFromValue(value);
 }
 
 #if ENABLE(VARIATION_FONTS)

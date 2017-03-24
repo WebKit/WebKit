@@ -33,6 +33,8 @@
 #include "CSSFontFaceSource.h"
 #include "CSSFontFamily.h"
 #include "CSSFontFeatureValue.h"
+#include "CSSFontStyleRangeValue.h"
+#include "CSSFontStyleValue.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSPrimitiveValueMappings.h"
 #include "CSSPropertyNames.h"
@@ -163,7 +165,7 @@ void CSSFontSelector::addFontFaceRule(StyleRuleFontFace& fontFaceRule, bool isIn
         return;
 
     if (!fontStyle)
-        fontStyle = CSSValuePool::singleton().createIdentifierValue(CSSValueNormal).ptr();
+        fontStyle = CSSFontStyleRangeValue::create(CSSValuePool::singleton().createIdentifierValue(CSSValueNormal));
 
     if (!fontWeight)
         fontWeight = CSSValuePool::singleton().createIdentifierValue(CSSValueNormal);

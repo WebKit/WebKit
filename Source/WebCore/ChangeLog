@@ -1,3 +1,79 @@
+2017-03-24  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        font-style needs a new CSSValue to make CSSRule.cssText work correctly
+        https://bugs.webkit.org/show_bug.cgi?id=169258
+
+        Reviewed by David Hyatt.
+
+        With variation fonts, font-style's value can't be captured in a CSSPrimitiveValue (nor any other subclass
+        off CSSValue) any more. Instead, we need to create two new CSSValues which represent the grammar that font-
+        style and it's associated @font-face descriptor accept.
+
+        The grammar of the font-style property is "normal | italic | oblique [ <<angle>> ]?"
+        The grammar of the font-style descriptor is "normal | italic | oblique [ <<angle>> | <<angle>> <<angle>> ]?"
+
+        We currently still support numbers in place of the <<angle>> value (contrary to the spec). We will remove
+        this support in https://bugs.webkit.org/show_bug.cgi?id=169357.
+
+        Tests: fast/text/font-selection-font-face-parse.html:
+               fast/text/font-style-parse.html:
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSAllInOne.cpp:
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::fontStyleFromStyle):
+        (WebCore::fontShorthandValueForSelectionProperties):
+        * css/CSSFontFace.cpp:
+        (WebCore::calculateWeightRange):
+        (WebCore::calculateStretchRange):
+        (WebCore::calculateItalicRange):
+        * css/CSSFontFaceSet.cpp:
+        (WebCore::computeFontSelectionRequest):
+        (WebCore::CSSFontFaceSet::matchingFaces):
+        (WebCore::calculateWeightValue): Deleted.
+        (WebCore::calculateStretchValue): Deleted.
+        (WebCore::calculateStyleValue): Deleted.
+        * css/CSSFontFaceSet.h:
+        * css/CSSFontSelector.cpp:
+        (WebCore::CSSFontSelector::addFontFaceRule):
+        * css/CSSFontStyleRangeValue.cpp: Added.
+        (WebCore::CSSFontStyleRangeValue::customCSSText):
+        (WebCore::CSSFontStyleRangeValue::equals):
+        * css/CSSFontStyleRangeValue.h: Added.
+        * css/CSSFontStyleValue.cpp: Added.
+        (WebCore::CSSFontStyleValue::customCSSText):
+        (WebCore::CSSFontStyleValue::equals):
+        * css/CSSFontStyleValue.h: Added.
+        * css/CSSFontValue.cpp:
+        (WebCore::CSSFontValue::customCSSText):
+        * css/CSSFontValue.h:
+        * css/CSSValue.cpp:
+        (WebCore::CSSValue::equals):
+        (WebCore::CSSValue::cssText):
+        (WebCore::CSSValue::destroy):
+        * css/CSSValue.h:
+        (WebCore::CSSValue::isFontStyleValue):
+        (WebCore::CSSValue::isFontStyleRangeValue):
+        * css/FontFace.cpp:
+        (WebCore::FontFace::style):
+        (WebCore::FontFace::weight):
+        (WebCore::FontFace::stretch):
+        * css/StyleBuilderConverter.h:
+        (WebCore::StyleBuilderConverter::convertFontWeightFromValue):
+        (WebCore::StyleBuilderConverter::convertFontStretchFromValue):
+        (WebCore::StyleBuilderConverter::convertFontStyleFromValue):
+        (WebCore::StyleBuilderConverter::convertFontWeight):
+        (WebCore::StyleBuilderConverter::convertFontStretch):
+        (WebCore::StyleBuilderConverter::convertFontStyle):
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::consumeFontStyle):
+        (WebCore::consumeFontStyleRange):
+        (WebCore::CSSPropertyParser::consumeSystemFont):
+        (WebCore::CSSPropertyParser::consumeFont):
+        * svg/SVGFontFaceElement.cpp:
+        (WebCore::SVGFontFaceElement::parseAttribute):
+
 2017-03-24  Alex Christensen  <achristensen@webkit.org>
 
         REGRESSION: Content Blocker: Blocking "a[href*=randomString]" doesn't work

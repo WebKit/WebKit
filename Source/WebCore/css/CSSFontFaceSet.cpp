@@ -29,6 +29,7 @@
 #include "CSSFontFaceSource.h"
 #include "CSSFontFamily.h"
 #include "CSSFontSelector.h"
+#include "CSSFontStyleValue.h"
 #include "CSSParser.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSSegmentedFontFace.h"
@@ -36,6 +37,7 @@
 #include "CSSValuePool.h"
 #include "ExceptionCode.h"
 #include "FontCache.h"
+#include "StyleBuilderConverter.h"
 #include "StyleProperties.h"
 
 namespace WebCore {
@@ -286,91 +288,25 @@ CSSFontFace& CSSFontFaceSet::operator[](size_t i)
     return m_faces[i];
 }
 
-static std::optional<FontSelectionValue> calculateWeightValue(CSSValue& weight)
-{
-    if (!is<CSSPrimitiveValue>(weight))
-        return std::nullopt;
-
-    auto& primitiveWeight = downcast<CSSPrimitiveValue>(weight);
-    if (primitiveWeight.isNumber())
-        return FontSelectionValue::clampFloat(primitiveWeight.floatValue());
-
-    if (!primitiveWeight.isValueID())
-        return std::nullopt;
-
-    if (auto value = fontWeightValue(primitiveWeight.valueID()))
-        return value.value();
-    ASSERT_NOT_REACHED();
-    return normalWeightValue();
-}
-
-static std::optional<FontSelectionValue> calculateStretchValue(CSSValue& style)
-{
-    if (!is<CSSPrimitiveValue>(style))
-        return std::nullopt;
-
-    auto& primitiveStretch = downcast<CSSPrimitiveValue>(style);
-    if (primitiveStretch.isNumber() || primitiveStretch.isPercentage())
-        return FontSelectionValue::clampFloat(primitiveStretch.floatValue());
-
-    if (!primitiveStretch.isValueID())
-        return std::nullopt;
-
-    if (auto value = fontStretchValue(primitiveStretch.valueID()))
-        return value.value();
-    return normalStretchValue();
-}
-
-static std::optional<FontSelectionValue> calculateStyleValue(CSSValue& style)
-{
-    if (!is<CSSPrimitiveValue>(style))
-        return std::nullopt;
-
-    auto& primitiveSlant = downcast<CSSPrimitiveValue>(style);
-    if (primitiveSlant.isNumber() || primitiveSlant.isAngle())
-        return FontSelectionValue::clampFloat(primitiveSlant.floatValue());
-
-    if (!primitiveSlant.isValueID())
-        return std::nullopt;
-
-    if (auto value = fontStyleValue(downcast<CSSPrimitiveValue>(style).valueID()))
-        return value.value();
-    return normalItalicValue();
-}
-
-static std::optional<FontSelectionRequest> computeFontSelectionRequest(MutableStyleProperties& style)
+static FontSelectionRequest computeFontSelectionRequest(MutableStyleProperties& style)
 {
     RefPtr<CSSValue> weightValue = style.getPropertyCSSValue(CSSPropertyFontWeight).get();
     if (!weightValue)
         weightValue = CSSValuePool::singleton().createIdentifierValue(CSSValueNormal).ptr();
 
-    FontSelectionValue weightSelectionValue;
-    if (auto weightOptional = calculateWeightValue(*weightValue))
-        weightSelectionValue = weightOptional.value();
-    else
-        return std::nullopt;
-
     RefPtr<CSSValue> stretchValue = style.getPropertyCSSValue(CSSPropertyFontStretch).get();
     if (!stretchValue)
         stretchValue = CSSValuePool::singleton().createIdentifierValue(CSSValueNormal).ptr();
 
-    FontSelectionValue stretchSelectionValue;
-    if (auto stretchOptional = calculateStretchValue(*weightValue))
-        stretchSelectionValue = stretchOptional.value();
-    else
-        return std::nullopt;
-
     RefPtr<CSSValue> styleValue = style.getPropertyCSSValue(CSSPropertyFontStyle).get();
     if (!styleValue)
-        styleValue = CSSValuePool::singleton().createIdentifierValue(CSSValueNormal).ptr();
+        styleValue = CSSFontStyleValue::create(CSSValuePool::singleton().createIdentifierValue(CSSValueNormal));
 
-    FontSelectionValue styleSelectionValue;
-    if (auto styleOptional = calculateStyleValue(*styleValue))
-        styleSelectionValue = styleOptional.value();
-    else
-        return std::nullopt;
+    FontSelectionValue weightSelectionValue = StyleBuilderConverter::convertFontWeightFromValue(*weightValue);
+    FontSelectionValue stretchSelectionValue = StyleBuilderConverter::convertFontStretchFromValue(*stretchValue);
+    FontSelectionValue styleSelectionValue = StyleBuilderConverter::convertFontStyleFromValue(*styleValue);
 
-    return {{ weightSelectionValue, stretchSelectionValue, styleSelectionValue }};
+    return { weightSelectionValue, stretchSelectionValue, styleSelectionValue };
 }
 
 static HashSet<UChar32> codePointsFromString(StringView stringView)
@@ -396,11 +332,7 @@ ExceptionOr<Vector<std::reference_wrapper<CSSFontFace>>> CSSFontFaceSet::matchin
     if (parseResult == CSSParser::ParseResult::Error)
         return Exception { SYNTAX_ERR };
 
-    FontSelectionRequest request;
-    if (auto fontSelectionRequestOptional = computeFontSelectionRequest(style.get()))
-        request = fontSelectionRequestOptional.value();
-    else
-        return Exception { SYNTAX_ERR };
+    FontSelectionRequest request = computeFontSelectionRequest(style.get());
 
     auto family = style->getPropertyCSSValue(CSSPropertyFontFamily);
     if (!is<CSSValueList>(family.get()))

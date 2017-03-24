@@ -45,6 +45,8 @@
 #if ENABLE(VARIATION_FONTS)
 #include "CSSFontVariationValue.h"
 #endif
+#include "CSSFontStyleRangeValue.h"
+#include "CSSFontStyleValue.h"
 #include "CSSFunctionValue.h"
 #include "CSSGridAutoRepeatValue.h"
 #include "CSSGridLineNamesValue.h"
@@ -960,66 +962,70 @@ static RefPtr<CSSPrimitiveValue> consumeFontStyleKeywordValue(CSSParserTokenRang
     return consumeIdent<CSSValueNormal, CSSValueItalic, CSSValueOblique>(range);
 }
 
-static RefPtr<CSSPrimitiveValue> consumeFontStyle(CSSParserTokenRange& range, CSSParserMode cssParserMode)
+static RefPtr<CSSFontStyleValue> consumeFontStyle(CSSParserTokenRange& range, CSSParserMode cssParserMode)
 {
-    if (auto result = consumeFontStyleKeywordValue(range)) {
-        if (result->valueID() == CSSValueOblique) {
-            if (range.atEnd())
-                return result;
-            if (auto angle = consumeAngle(range, cssParserMode))
-                return angle;
-            if (auto number = consumeNumber(range, ValueRangeAll))
-                return number;
-        }
-        return result;
-    }
-    return nullptr;
+    auto result = consumeFontStyleKeywordValue(range);
+    if (!result)
+        return nullptr;
+
+    if (result->valueID() == CSSValueNormal)
+        return CSSFontStyleValue::create(CSSValuePool::singleton().createIdentifierValue(CSSValueNormal));
+    if (result->valueID() == CSSValueItalic)
+        return CSSFontStyleValue::create(CSSValuePool::singleton().createIdentifierValue(CSSValueItalic));
+    ASSERT(result->valueID() == CSSValueOblique);
+    if (range.atEnd())
+        return CSSFontStyleValue::create(CSSValuePool::singleton().createIdentifierValue(CSSValueOblique));
+    if (auto angle = consumeAngle(range, cssParserMode))
+        return CSSFontStyleValue::create(CSSValuePool::singleton().createIdentifierValue(CSSValueOblique), WTFMove(angle));
+    if (auto number = consumeNumber(range, ValueRangeAll))
+        return CSSFontStyleValue::create(CSSValuePool::singleton().createIdentifierValue(CSSValueOblique), CSSValuePool::singleton().createValue(number->value<double>(), CSSPrimitiveValue::CSS_DEG));
+    return CSSFontStyleValue::create(CSSValuePool::singleton().createIdentifierValue(CSSValueOblique));
 }
 
 #if ENABLE(VARIATION_FONTS)
-static RefPtr<CSSValue> consumeFontStyleRange(CSSParserTokenRange& range, CSSParserMode cssParserMode)
+static RefPtr<CSSFontStyleRangeValue> consumeFontStyleRange(CSSParserTokenRange& range, CSSParserMode cssParserMode)
 {
-    if (auto result = consumeFontStyleKeywordValue(range)) {
-        if (result->valueID() == CSSValueOblique) {
-            if (range.atEnd())
-                return result;
+    auto keyword = consumeFontStyleKeywordValue(range);
+    if (!keyword)
+        return nullptr;
 
-            if (auto firstAngle = consumeAngle(range, cssParserMode)) {
-                if (range.atEnd())
-                    return firstAngle;
-                if (!consumeSlashIncludingWhitespace(range))
-                    return nullptr;
-                auto secondAngle = consumeAngle(range, cssParserMode);
-                if (!secondAngle)
-                    return nullptr;
-                if (firstAngle->floatValue(CSSPrimitiveValue::CSS_DEG) > secondAngle->floatValue(CSSPrimitiveValue::CSS_DEG))
-                    return nullptr;
-                auto result = CSSValueList::createSlashSeparated();
-                result->append(firstAngle.releaseNonNull());
-                result->append(secondAngle.releaseNonNull());
-                return RefPtr<CSSValue>(WTFMove(result));
-            }
+    if (keyword->valueID() != CSSValueOblique || range.atEnd())
+        return CSSFontStyleRangeValue::create(keyword.releaseNonNull());
 
-            if (auto firstNumber = consumeNumber(range, ValueRangeAll)) {
-                if (range.atEnd())
-                    return firstNumber;
-                if (!consumeSlashIncludingWhitespace(range))
-                    return nullptr;
-                auto secondNumber = consumeNumber(range, ValueRangeAll);
-                if (!secondNumber)
-                    return nullptr;
-                if (firstNumber->floatValue() > secondNumber->floatValue())
-                    return nullptr;
-                auto result = CSSValueList::createSlashSeparated();
-                result->append(firstNumber.releaseNonNull());
-                result->append(secondNumber.releaseNonNull());
-                return RefPtr<CSSValue>(WTFMove(result));
-            }
-
-            return nullptr;
+    if (auto firstAngle = consumeAngle(range, cssParserMode)) {
+        if (range.atEnd()) {
+            auto result = CSSValueList::createSpaceSeparated();
+            result->append(firstAngle.releaseNonNull());
+            return CSSFontStyleRangeValue::create(keyword.releaseNonNull(), WTFMove(result));
         }
-        return result;
+        auto secondAngle = consumeAngle(range, cssParserMode);
+        if (!secondAngle)
+            return nullptr;
+        if (firstAngle->floatValue(CSSPrimitiveValue::CSS_DEG) > secondAngle->floatValue(CSSPrimitiveValue::CSS_DEG))
+            return nullptr;
+        auto result = CSSValueList::createSpaceSeparated();
+        result->append(firstAngle.releaseNonNull());
+        result->append(secondAngle.releaseNonNull());
+        return CSSFontStyleRangeValue::create(keyword.releaseNonNull(), WTFMove(result));
     }
+
+    if (auto firstNumber = consumeNumber(range, ValueRangeAll)) {
+        if (range.atEnd()) {
+            auto result = CSSValueList::createSpaceSeparated();
+            result->append(firstNumber.releaseNonNull());
+            return CSSFontStyleRangeValue::create(keyword.releaseNonNull(), WTFMove(result));
+        }
+        auto secondNumber = consumeNumber(range, ValueRangeAll);
+        if (!secondNumber)
+            return nullptr;
+        if (firstNumber->floatValue() > secondNumber->floatValue())
+            return nullptr;
+        auto result = CSSValueList::createSpaceSeparated();
+        result->append(CSSValuePool::singleton().createValue(firstNumber->value<double>(), CSSPrimitiveValue::CSS_DEG));
+        result->append(CSSValuePool::singleton().createValue(secondNumber->value<double>(), CSSPrimitiveValue::CSS_DEG));
+        return CSSFontStyleRangeValue::create(keyword.releaseNonNull(), WTFMove(result));
+    }
+
     return nullptr;
 }
 #endif
@@ -4385,7 +4391,7 @@ bool CSSPropertyParser::consumeSystemFont(bool important)
     if (!fontDescription.isAbsoluteSize())
         return false;
     
-    addProperty(CSSPropertyFontStyle, CSSPropertyFont, CSSValuePool::singleton().createIdentifierValue(isItalic(fontDescription.italic()) ? CSSValueItalic : CSSValueNormal), important);
+    addProperty(CSSPropertyFontStyle, CSSPropertyFont, CSSFontStyleValue::create(CSSValuePool::singleton().createIdentifierValue(isItalic(fontDescription.italic()) ? CSSValueItalic : CSSValueNormal)), important);
     addProperty(CSSPropertyFontWeight, CSSPropertyFont, CSSValuePool::singleton().createValue(static_cast<float>(fontDescription.weight())), important);
     addProperty(CSSPropertyFontSize, CSSPropertyFont, CSSValuePool::singleton().createValue(fontDescription.specifiedSize(), CSSPrimitiveValue::CSS_PX), important);
     Ref<CSSValueList> fontFamilyList = CSSValueList::createCommaSeparated();
@@ -4409,7 +4415,7 @@ bool CSSPropertyParser::consumeFont(bool important)
             return false;
     }
     // Optional font-style, font-variant, font-stretch and font-weight.
-    RefPtr<CSSPrimitiveValue> fontStyle;
+    RefPtr<CSSFontStyleValue> fontStyle;
     RefPtr<CSSPrimitiveValue> fontVariantCaps;
     RefPtr<CSSPrimitiveValue> fontWeight;
     RefPtr<CSSPrimitiveValue> fontStretch;
@@ -4448,8 +4454,11 @@ bool CSSPropertyParser::consumeFont(bool important)
     bool hasVariant = fontVariantCaps;
     bool hasWeight = fontWeight;
     bool hasStretch = fontStretch;
+
+    if (!fontStyle)
+        fontStyle = CSSFontStyleValue::create(CSSValuePool::singleton().createIdentifierValue(CSSValueNormal));
     
-    addProperty(CSSPropertyFontStyle, CSSPropertyFont, fontStyle ? fontStyle.releaseNonNull() : CSSValuePool::singleton().createIdentifierValue(CSSValueNormal), important, !hasStyle);
+    addProperty(CSSPropertyFontStyle, CSSPropertyFont, fontStyle.releaseNonNull(), important, !hasStyle);
     addProperty(CSSPropertyFontVariantCaps, CSSPropertyFont, fontVariantCaps ? fontVariantCaps.releaseNonNull() : CSSValuePool::singleton().createIdentifierValue(CSSValueNormal), important, !hasVariant);
 /*  
     // FIXME-NEWPARSER: What do we do with these? They aren't part of our fontShorthand().
@@ -4472,9 +4481,8 @@ bool CSSPropertyParser::consumeFont(bool important)
         if (!lineHeight)
             return false;
         addProperty(CSSPropertyLineHeight, CSSPropertyFont, lineHeight.releaseNonNull(), important);
-    } else {
+    } else
         addProperty(CSSPropertyLineHeight, CSSPropertyFont, CSSValuePool::singleton().createIdentifierValue(CSSValueNormal), important, true);
-    }
 
     // Font family must come now.
     RefPtr<CSSValue> parsedFamilyValue = consumeFontFamily(m_range);

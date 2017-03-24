@@ -31,6 +31,8 @@
 #include "CSSFontFamily.h"
 #include "CSSFontFeatureValue.h"
 #include "CSSFontSelector.h"
+#include "CSSFontStyleRangeValue.h"
+#include "CSSFontStyleValue.h"
 #include "CSSPrimitiveValueMappings.h"
 #include "CSSSegmentedFontFace.h"
 #include "CSSUnicodeRangeValue.h"
@@ -43,6 +45,7 @@
 #include "FontVariantBuilder.h"
 #include "RuntimeEnabledFeatures.h"
 #include "Settings.h"
+#include "StyleBuilderConverter.h"
 #include "StyleProperties.h"
 #include "StyleRule.h"
 
@@ -135,28 +138,14 @@ static FontSelectionRange calculateWeightRange(CSSValue& value)
         ASSERT(valueList.item(1)->isPrimitiveValue());
         auto& value0 = downcast<CSSPrimitiveValue>(*valueList.item(0));
         auto& value1 = downcast<CSSPrimitiveValue>(*valueList.item(1));
-        ASSERT(value0.isNumber());
-        ASSERT(value1.isNumber());
-        return { FontSelectionValue::clampFloat(value0.floatValue()), FontSelectionValue::clampFloat(value1.floatValue()) };
+        auto result0 = StyleBuilderConverter::convertFontWeightFromValue(value0);
+        auto result1 = StyleBuilderConverter::convertFontWeightFromValue(value1);
+        return { result0, result1 };
     }
 
     ASSERT(is<CSSPrimitiveValue>(value));
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
-
-    FontSelectionValue result;
-    if (primitiveValue.isNumber()) {
-        result = FontSelectionValue::clampFloat(primitiveValue.floatValue());
-        return { result, result };
-    }
-
-    ASSERT(primitiveValue.isValueID());
-    if (auto value = fontWeightValue(primitiveValue.valueID()))
-        result = value.value();
-    else {
-        ASSERT_NOT_REACHED();
-        result = normalWeightValue();
-    }
-
+    FontSelectionValue result = StyleBuilderConverter::convertFontWeightFromValue(primitiveValue);
     return { result, result };
 }
 
@@ -184,28 +173,14 @@ static FontSelectionRange calculateStretchRange(CSSValue& value)
         ASSERT(valueList.item(1)->isPrimitiveValue());
         auto& value0 = downcast<CSSPrimitiveValue>(*valueList.item(0));
         auto& value1 = downcast<CSSPrimitiveValue>(*valueList.item(1));
-        ASSERT(value0.isPercentage() || value0.isNumber());
-        ASSERT(value1.isPercentage() || value1.isNumber());
-        return { FontSelectionValue::clampFloat(value0.floatValue()), FontSelectionValue::clampFloat(value1.floatValue()) };
+        auto result0 = StyleBuilderConverter::convertFontStretchFromValue(value0);
+        auto result1 = StyleBuilderConverter::convertFontStretchFromValue(value1);
+        return { result0, result1 };
     }
 
     ASSERT(is<CSSPrimitiveValue>(value));
     const auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
-
-    FontSelectionValue result;
-    if (primitiveValue.isPercentage() || primitiveValue.isNumber()) {
-        result = FontSelectionValue::clampFloat(primitiveValue.floatValue());
-        return { result, result };
-    }
-
-    ASSERT(primitiveValue.isValueID());
-    if (auto value = fontStretchValue(primitiveValue.valueID()))
-        result = value.value();
-    else {
-        ASSERT_NOT_REACHED();
-        result = normalStretchValue();
-    }
-
+    FontSelectionValue result = StyleBuilderConverter::convertFontStretchFromValue(primitiveValue);
     return { result, result };
 }
 
@@ -224,37 +199,34 @@ void CSSFontFace::setStretch(CSSValue& style)
 
 static FontSelectionRange calculateItalicRange(CSSValue& value)
 {
-    if (value.isValueList()) {
-        auto& valueList = downcast<CSSValueList>(value);
-        ASSERT(valueList.length() == 2);
-        if (valueList.length() != 2)
-            return { normalItalicValue(), normalItalicValue() };
-        ASSERT(valueList.item(0)->isPrimitiveValue());
-        ASSERT(valueList.item(1)->isPrimitiveValue());
-        auto& value0 = downcast<CSSPrimitiveValue>(*valueList.item(0));
-        auto& value1 = downcast<CSSPrimitiveValue>(*valueList.item(1));
-        ASSERT(value0.isAngle() || value0.isNumber() || value0.isCalculated());
-        ASSERT(value1.isAngle() || value1.isNumber() || value1.isCalculated());
-        return { FontSelectionValue::clampFloat(value0.floatValue(CSSPrimitiveValue::CSS_DEG)), FontSelectionValue::clampFloat(value1.floatValue(CSSPrimitiveValue::CSS_DEG)) };
-    }
-
-    ASSERT(is<CSSPrimitiveValue>(value));
-    const auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
-
-    FontSelectionValue result;
-    if (primitiveValue.isAngle() || primitiveValue.isNumber() || primitiveValue.isCalculated()) {
-        result = FontSelectionValue::clampFloat(primitiveValue.floatValue(CSSPrimitiveValue::CSS_DEG));
+    if (value.isFontStyleValue()) {
+        auto result = StyleBuilderConverter::convertFontStyleFromValue(value);
         return { result, result };
     }
 
-    ASSERT(primitiveValue.isValueID());
-    if (auto value = fontStyleValue(primitiveValue.valueID()))
-        result = value.value();
-    else {
-        ASSERT_NOT_REACHED();
-        result = normalItalicValue();
+    ASSERT(value.isFontStyleRangeValue());
+    auto& rangeValue = downcast<CSSFontStyleRangeValue>(value);
+    ASSERT(rangeValue.fontStyleValue->isValueID());
+    auto valueID = rangeValue.fontStyleValue->valueID();
+    if (!rangeValue.obliqueValues) {
+        if (valueID == CSSValueNormal)
+            return { normalItalicValue(), normalItalicValue() };
+        ASSERT(valueID == CSSValueItalic || valueID == CSSValueOblique);
+        return { italicValue(), italicValue() };
     }
-    return { result, result };
+    ASSERT(valueID == CSSValueOblique);
+    auto length = rangeValue.obliqueValues->length();
+    if (length == 1) {
+        auto& primitiveValue = downcast<CSSPrimitiveValue>(*rangeValue.obliqueValues->item(0));
+        FontSelectionValue result(primitiveValue.value<float>(CSSPrimitiveValue::CSS_DEG));
+        return { result, result };
+    }
+    ASSERT(length == 2);
+    auto& primitiveValue1 = downcast<CSSPrimitiveValue>(*rangeValue.obliqueValues->item(0));
+    auto& primitiveValue2 = downcast<CSSPrimitiveValue>(*rangeValue.obliqueValues->item(1));
+    FontSelectionValue result1(primitiveValue1.value<float>(CSSPrimitiveValue::CSS_DEG));
+    FontSelectionValue result2(primitiveValue2.value<float>(CSSPrimitiveValue::CSS_DEG));
+    return { result1, result2 };
 }
 
 void CSSFontFace::setStyle(CSSValue& style)

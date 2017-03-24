@@ -5930,6 +5930,10 @@
 		C2AB0AF61E6B3C6C001348C5 /* FontSelectionAlgorithm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C2AB0AF41E6B3C6C001348C5 /* FontSelectionAlgorithm.cpp */; };
 		C2AB0AF71E6B3C6C001348C5 /* FontSelectionAlgorithm.h in Headers */ = {isa = PBXBuildFile; fileRef = C2AB0AF51E6B3C6C001348C5 /* FontSelectionAlgorithm.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C2E1F43F1D6254E10094625C /* BreakLines.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEA4816097D93020094C9E4 /* BreakLines.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		C2E38EFD1E8396FD00CA3ADF /* CSSFontStyleValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C2E38EFB1E8396FD00CA3ADF /* CSSFontStyleValue.cpp */; };
+		C2E38EFE1E8396FD00CA3ADF /* CSSFontStyleValue.h in Headers */ = {isa = PBXBuildFile; fileRef = C2E38EFC1E8396FD00CA3ADF /* CSSFontStyleValue.h */; };
+		C2E38F011E84573500CA3ADF /* CSSFontStyleRangeValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C2E38EFF1E84573500CA3ADF /* CSSFontStyleRangeValue.cpp */; };
+		C2E38F021E84573500CA3ADF /* CSSFontStyleRangeValue.h in Headers */ = {isa = PBXBuildFile; fileRef = C2E38F001E84573500CA3ADF /* CSSFontStyleRangeValue.h */; };
 		C2F4E78A1E45BEA1006D7105 /* ComplexTextController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C2F4E7881E45AEDF006D7105 /* ComplexTextController.cpp */; };
 		C2F4E78C1E45C3EF006D7105 /* ComplexTextController.h in Headers */ = {isa = PBXBuildFile; fileRef = C2F4E7891E45AEDF006D7105 /* ComplexTextController.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C330A22313EC196B0000B45B /* ColorChooser.h in Headers */ = {isa = PBXBuildFile; fileRef = C330A22113EC196B0000B45B /* ColorChooser.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -14318,6 +14322,10 @@
 		C2AB0AF51E6B3C6C001348C5 /* FontSelectionAlgorithm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FontSelectionAlgorithm.h; sourceTree = "<group>"; };
 		C2AB0B021E6DE32B001348C5 /* FontSelectionKeywordValues.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FontSelectionKeywordValues.h; sourceTree = "<group>"; };
 		C2AB0B031E6DE92C001348C5 /* FontSelectionValueInlines.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FontSelectionValueInlines.h; sourceTree = "<group>"; };
+		C2E38EFB1E8396FD00CA3ADF /* CSSFontStyleValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSFontStyleValue.cpp; sourceTree = "<group>"; };
+		C2E38EFC1E8396FD00CA3ADF /* CSSFontStyleValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSFontStyleValue.h; sourceTree = "<group>"; };
+		C2E38EFF1E84573500CA3ADF /* CSSFontStyleRangeValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSFontStyleRangeValue.cpp; sourceTree = "<group>"; };
+		C2E38F001E84573500CA3ADF /* CSSFontStyleRangeValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSFontStyleRangeValue.h; sourceTree = "<group>"; };
 		C2F4E7881E45AEDF006D7105 /* ComplexTextController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ComplexTextController.cpp; sourceTree = "<group>"; };
 		C2F4E7891E45AEDF006D7105 /* ComplexTextController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ComplexTextController.h; sourceTree = "<group>"; };
 		C330A22113EC196B0000B45B /* ColorChooser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ColorChooser.h; sourceTree = "<group>"; };
@@ -24923,6 +24931,10 @@
 				3FFFF9A7159D9A550020BBD5 /* WebKitCSSViewportRule.h */,
 				3F2B33E3165ABD3500E3987C /* WebKitCSSViewportRule.idl */,
 				31055BB81E4FE18900EB604E /* WebKitFontFamilyNames.in */,
+				C2E38EFB1E8396FD00CA3ADF /* CSSFontStyleValue.cpp */,
+				C2E38EFC1E8396FD00CA3ADF /* CSSFontStyleValue.h */,
+				C2E38EFF1E84573500CA3ADF /* CSSFontStyleRangeValue.cpp */,
+				C2E38F001E84573500CA3ADF /* CSSFontStyleRangeValue.h */,
 			);
 			path = css;
 			sourceTree = "<group>";
@@ -27263,6 +27275,7 @@
 				316DCB201E78CA55001B5F87 /* JSRTCOfferAnswerOptions.h in Headers */,
 				51E269371DD3BD9B006B6A58 /* IDBIterateCursorData.h in Headers */,
 				5185FC951BB4C4E80012898F /* IDBKey.h in Headers */,
+				C2E38F021E84573500CA3ADF /* CSSFontStyleRangeValue.h in Headers */,
 				5185FC971BB4C4E80012898F /* IDBKeyData.h in Headers */,
 				5185FC991BB4C4E80012898F /* IDBKeyPath.h in Headers */,
 				5185FC9B1BB4C4E80012898F /* IDBKeyRange.h in Headers */,
@@ -29407,6 +29420,7 @@
 				088C2F7A12390081003D65CE /* SVGTextLayoutAttributes.h in Headers */,
 				081093DC1255F0E700ED9D29 /* SVGTextLayoutAttributesBuilder.h in Headers */,
 				081668DA125603D5006F25DE /* SVGTextLayoutEngine.h in Headers */,
+				C2E38EFE1E8396FD00CA3ADF /* CSSFontStyleValue.h in Headers */,
 				080E49261255F3BD00EFCA27 /* SVGTextLayoutEngineBaseline.h in Headers */,
 				080E49281255F3BD00EFCA27 /* SVGTextLayoutEngineSpacing.h in Headers */,
 				08F0BFC61255C53C00075185 /* SVGTextMetrics.h in Headers */,
@@ -30585,6 +30599,7 @@
 				9444CBE31D8861980073A074 /* CSSCustomIdentValue.cpp in Sources */,
 				94D4AC621DC24C8E0080F02D /* CSSCustomPropertyValue.cpp in Sources */,
 				4A9CC81716BB9AC600EC645A /* CSSDefaultStyleSheets.cpp in Sources */,
+				C2E38F011E84573500CA3ADF /* CSSFontStyleRangeValue.cpp in Sources */,
 				94476BDA1DFCAC0300690E23 /* CSSDeferredParser.cpp in Sources */,
 				FBB0C5B717BBD626003D3677 /* CSSFilterImageValue.cpp in Sources */,
 				BC64B4D50CB4298A005F2B62 /* CSSFontFace.cpp in Sources */,
@@ -33109,6 +33124,7 @@
 				BC2274780E8366E200E7F975 /* SVGRenderStyle.cpp in Sources */,
 				BC22747A0E8366E200E7F975 /* SVGRenderStyleDefs.cpp in Sources */,
 				B2227AA20D00BF220071B782 /* SVGScriptElement.cpp in Sources */,
+				C2E38EFD1E8396FD00CA3ADF /* CSSFontStyleValue.cpp in Sources */,
 				B2227AA50D00BF220071B782 /* SVGSetElement.cpp in Sources */,
 				E4AFD00F0DAF335500F5F55C /* SVGSMILElement.cpp in Sources */,
 				B2227AA80D00BF220071B782 /* SVGStopElement.cpp in Sources */,
