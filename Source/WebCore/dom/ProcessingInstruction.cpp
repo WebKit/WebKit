@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000 Peter Kelly (pmk@post.com)
- * Copyright (C) 2006-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2008, 2009 Apple Inc. All rights reserved.
  * Copyright (C) 2013 Samsung Electronics. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -35,7 +35,6 @@
 #include "StyleSheetContents.h"
 #include "XMLDocumentParser.h"
 #include "XSLStyleSheet.h"
-#include <wtf/SetForScope.h>
 
 namespace WebCore {
 
@@ -81,10 +80,6 @@ Ref<Node> ProcessingInstruction::cloneNodeInternal(Document& targetDocument, Clo
 
 void ProcessingInstruction::checkStyleSheet()
 {
-    // Prevent recursive loading of stylesheet.
-    if (m_isHandlingBeforeLoad)
-        return;
-
     if (m_target == "xml-stylesheet" && document().frame() && parentNode() == &document()) {
         // see http://www.w3.org/TR/xml-stylesheet/
         // ### support stylesheet included in a fragment of this (or another) document
@@ -139,24 +134,12 @@ void ProcessingInstruction::checkStyleSheet()
                 document().styleScope().removePendingSheet(*this);
             }
 
-            Ref<Document> originalDocument = document();
-
             String url = document().completeURL(href).string();
-
-            {
-            SetForScope<bool> change(m_isHandlingBeforeLoad, true);
             if (!dispatchBeforeLoadEvent(url))
                 return;
-            }
 
-            bool didEventListenerDisconnectThisElement = !isConnected() || &document() != originalDocument.ptr();
-            if (didEventListenerDisconnectThisElement)
-                return;
-            
             m_loading = true;
             document().styleScope().addPendingSheet(*this);
-
-            ASSERT_WITH_SECURITY_IMPLICATION(!m_cachedSheet);
 
 #if ENABLE(XSLT)
             if (m_isXSL) {
@@ -198,8 +181,7 @@ bool ProcessingInstruction::isLoading() const
 bool ProcessingInstruction::sheetLoaded()
 {
     if (!isLoading()) {
-        if (document().styleScope().hasPendingSheet(*this))
-            document().styleScope().removePendingSheet(*this);
+        document().styleScope().removePendingSheet(*this);
 #if ENABLE(XSLT)
         if (m_isXSL)
             document().styleScope().flushPendingUpdate();
@@ -229,7 +211,6 @@ void ProcessingInstruction::setCSSStyleSheet(const String& href, const URL& base
     // We don't need the cross-origin security check here because we are
     // getting the sheet text in "strict" mode. This enforces a valid CSS MIME
     // type.
-    Ref<Document> protect(document());
     parseStyleSheet(sheet->sheetText());
 }
 

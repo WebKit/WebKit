@@ -1,5 +1,0 @@
-This test confirms that image loading properly handles a 'beforeload' events that removes the image from the document. It passes if no debug assertions are fired.
-
-PASS: Hit the beforeload handler
-PASS
-PASS: No assertions hit.

@@ -1,3 +1,16 @@
+2017-03-24  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r214360.
+
+        This change caused 20+ LayoutTest failures.
+
+        Reverted changeset:
+
+        "Handle recursive calls to
+        ProcessingInstruction::checkStyleSheet"
+        https://bugs.webkit.org/show_bug.cgi?id=169982
+        http://trac.webkit.org/changeset/214360
+
 2017-03-24  Youenn Fablet  <youenn@apple.com>
 
         Add support for qpSum in WebRTC stats

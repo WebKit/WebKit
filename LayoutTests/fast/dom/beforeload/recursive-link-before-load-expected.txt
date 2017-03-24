@@ -1,5 +1,0 @@
-This test confirms that link elements properly handled changes during 'beforeload' events. It passes if no debug assertions are fired.
-
-PASS: Beforeload handled.
-PASS: No assertions hit.
-
