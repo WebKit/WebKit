@@ -1,3 +1,26 @@
+2017-03-24  Alex Christensen  <achristensen@webkit.org>
+
+        REGRESSION: Content Blocker: Blocking "a[href*=randomString]" doesn't work
+        https://bugs.webkit.org/show_bug.cgi?id=169167
+
+        Reviewed by Simon Fraser.
+
+        When testing content extensions, we have always called an API function that internally
+        has called AtomicString::init somewhere before we start compiling the content extension.
+        On iOS, though, we call [_WKUserContentExtensionStore compileContentExtensionForIdentifier:...]
+        without having already called anything that calls AtomicString::init.  The new CSS parser is now
+        failing to parse some selectors because CSSSelectorParser::defaultNamespace is returning starAtom,
+        which is a null atomic string before AtomicString::init is called.
+
+        Covered by a new API test.
+
+        * contentextensions/ContentExtensionParser.cpp:
+        (WebCore::ContentExtensions::isValidCSSSelector):
+        (WebCore::ContentExtensions::loadAction):
+        (WebCore::ContentExtensions::isValidSelector): Deleted.
+        * contentextensions/ContentExtensionParser.h:
+        Call AtomicString::init before checking if a css selector is valid.
+
 2017-03-24  Youenn Fablet  <youenn@apple.com>
 
         Add libwebrtc backend support for RTCRtpSender::replaceTrack

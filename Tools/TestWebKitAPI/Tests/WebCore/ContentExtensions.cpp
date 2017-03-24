@@ -30,6 +30,7 @@
 #include <WebCore/CombinedURLFilters.h>
 #include <WebCore/ContentExtensionCompiler.h>
 #include <WebCore/ContentExtensionError.h>
+#include <WebCore/ContentExtensionParser.h>
 #include <WebCore/ContentExtensionsBackend.h>
 #include <WebCore/DFA.h>
 #include <WebCore/DFABytecodeCompiler.h>
@@ -2868,6 +2869,11 @@ TEST_F(ContentExtensionTest, CombinedQuantifiedOneOrMoreRangesCase11And13InGroup
     testRequest(searchBackend, mainDocumentRequest("zzz://www.djyyy.xxx/"), { ContentExtensions::ActionType::CSSDisplayNoneSelector });
     testRequest(searchBackend, mainDocumentRequest("zzz://www.ddjyyy.xxx/"), { ContentExtensions::ActionType::CSSDisplayNoneSelector });
     testRequest(searchBackend, mainDocumentRequest("zzz://www.ddjjyyy.xxx/"), { ContentExtensions::ActionType::CSSDisplayNoneSelector });
+}
+
+TEST_F(ContentExtensionTest, ValidSelector)
+{
+    EXPECT_TRUE(WebCore::ContentExtensions::isValidCSSSelector("a[href*=hsv]"));
 }
 
 } // namespace TestWebKitAPI

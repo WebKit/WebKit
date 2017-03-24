@@ -1,3 +1,14 @@
+2017-03-24  Alex Christensen  <achristensen@webkit.org>
+
+        REGRESSION: Content Blocker: Blocking "a[href*=randomString]" doesn't work
+        https://bugs.webkit.org/show_bug.cgi?id=169167
+
+        Reviewed by Simon Fraser.
+
+        * TestWebKitAPI/Tests/WebCore/ContentExtensions.cpp:
+        (TestWebKitAPI::TEST_F):
+        Test an example of a selector that was incorrectly determined to be invalid.
+
 2017-03-24  Jonathan Bedard  <jbedard@apple.com>
 
         Increase timeout for booting simulators.

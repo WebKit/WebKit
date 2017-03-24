@@ -231,8 +231,9 @@ static Expected<Trigger, std::error_code> loadTrigger(ExecState& exec, const JSO
     return WTFMove(trigger);
 }
 
-static bool isValidSelector(const String& selector)
+bool isValidCSSSelector(const String& selector)
 {
+    AtomicString::init();
     CSSParserContext context(HTMLQuirksMode);
     CSSParser parser(context);
     CSSSelectorList selectorList;
@@ -267,7 +268,7 @@ static Expected<std::optional<Action>, std::error_code> loadAction(ExecState& ex
             return makeUnexpected(ContentExtensionError::JSONInvalidCSSDisplayNoneActionType);
 
         String selectorString = asString(selector)->value(&exec);
-        if (!isValidSelector(selectorString)) {
+        if (!isValidCSSSelector(selectorString)) {
             // Skip rules with invalid selectors to be backwards-compatible.
             return {std::nullopt};
         }
