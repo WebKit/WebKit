@@ -35,7 +35,7 @@ use FindBin;
 
 my $file = "WinCairoRequirements";
 my $zipFile = "$file.zip";
-my $winCairoLibsURL = "https://dl.dropboxusercontent.com/u/100779108/$zipFile";
+my $winCairoLibsURL = "https://github.com/fujii/WinCairoRequirements/releases/download/v0.1.0/$zipFile";
 my $command = "$FindBin::Bin/update-webkit-dependency";
 
 system("perl", $command, $winCairoLibsURL, ".") == 0 or die;

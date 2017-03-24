@@ -1,1 +1,10 @@
+2017-03-23  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Update WinCairoRequirements.zip
+        https://bugs.webkit.org/show_bug.cgi?id=169950
+
+        Reviewed by Alex Christensen.
+
+        * Scripts/update-webkit-wincairo-libs: Replace $winCairoLibsURL.
+
 == Rolled over to ChangeLog-2017-03-23 ==
