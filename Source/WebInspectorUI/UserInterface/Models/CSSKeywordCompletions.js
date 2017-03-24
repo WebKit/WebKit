@@ -92,7 +92,7 @@ WebInspector.CSSKeywordCompletions.AllPropertyNamesPlaceholder = "__all-properti
 WebInspector.CSSKeywordCompletions.InheritedProperties = [
     "azimuth", "border-collapse", "border-spacing", "caption-side", "clip-rule", "color", "color-interpolation",
     "color-interpolation-filters", "color-rendering", "cursor", "direction", "elevation", "empty-cells", "fill",
-    "fill-opacity", "fill-rule", "font", "font-family", "font-size", "font-style", "font-variant", "font-variant-numeric", "font-weight",
+    "fill-opacity", "fill-rule", "font", "font-family", "font-size", "font-style", "font-variant", "font-variant-numeric", "font-weight", "font-optical-sizing",
     "glyph-orientation-horizontal", "glyph-orientation-vertical", "hanging-punctuation", "image-rendering", "kerning", "letter-spacing",
     "line-height", "list-style", "list-style-image", "list-style-position", "list-style-type", "marker", "marker-end",
     "marker-mid", "marker-start", "orphans", "pitch", "pitch-range", "pointer-events", "quotes", "resize", "richness",
@@ -194,6 +194,9 @@ WebInspector.CSSKeywordCompletions._propertyKeywordMap = {
     "font-stretch": [
         "normal", "wider", "narrower", "ultra-condensed", "extra-condensed", "condensed", "semi-condensed",
         "semi-expanded", "expanded", "extra-expanded", "ultra-expanded"
+    ],
+    "font-optical-sizing": [
+        "auto", "none",
     ],
     "-webkit-color-correction": [
         "default", "srgb"

@@ -351,4 +351,9 @@ enum class Kerning {
     NoShift
 };
 
+enum class FontOpticalSizing {
+    Enabled,
+    Disabled
+};
+
 }

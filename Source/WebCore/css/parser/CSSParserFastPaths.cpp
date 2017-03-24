@@ -800,6 +800,10 @@ bool CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyID propertyId
     case CSSPropertyWebkitOverflowScrolling:
         return valueID == CSSValueAuto || valueID == CSSValueTouch;
 #endif
+#if ENABLE(VARIATION_FONTS)
+    case CSSPropertyFontOpticalSizing:
+        return valueID == CSSValueAuto || valueID == CSSValueNone;
+#endif
     default:
         ASSERT_NOT_REACHED();
         return false;
@@ -961,6 +965,9 @@ bool CSSParserFastPaths::isKeywordPropertyID(CSSPropertyID propertyId)
 #if ENABLE(APPLE_PAY)
     case CSSPropertyApplePayButtonStyle:
     case CSSPropertyApplePayButtonType:
+#endif
+#if ENABLE(VARIATION_FONTS)
+    case CSSPropertyFontOpticalSizing:
 #endif
         return true;
     case CSSPropertyJustifyContent:

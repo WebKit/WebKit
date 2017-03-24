@@ -520,6 +520,70 @@
                 "url": "https://drafts.csswg.org/css-fonts-3/#font-variant-east-asian-prop"
             }
         },
+        "font-synthesis": {
+            "inherited": true,
+            "codegen-properties": {
+                "converter": "FontSynthesis",
+                "font-property": true,
+                "high-priority": true
+            },
+            "specification": {
+                "category": "css-fonts",
+                "url": "https://drafts.csswg.org/css-fonts-3/#font-synthesis-prop"
+            }
+        },
+        "font-optical-sizing": {
+            "inherited": true,
+            "values": [
+                "auto",
+                "none"
+            ],
+            "codegen-properties": {
+                "name-for-methods": "OpticalSizing",
+                "font-property": true,
+                "high-priority": true,
+                "enable-if": "ENABLE_VARIATION_FONTS"
+            },
+            "specification": {
+                "category": "css-fonts",
+                "url": "https://drafts.csswg.org/css-fonts-4/#optical-sizing-control-the-font-optical-sizing-property"
+            }
+        },
+        "font": {
+            "inherited": true,
+            "codegen-properties": {
+                "longhands": [
+                              "font-family",
+                              "font-size",
+                              "font-style",
+                              "font-variant-caps",
+                              "font-weight",
+                              "font-stretch",
+                              "line-height"
+                              ]
+            },
+            "specification": {
+                "category": "css-fonts",
+                "url": "https://www.w3.org/TR/css-fonts-3/#font-prop"
+            }
+        },
+        "font-variant": {
+            "inherited": true,
+            "codegen-properties": {
+                "longhands": [
+                              "font-variant-ligatures",
+                              "font-variant-position",
+                              "font-variant-caps",
+                              "font-variant-numeric",
+                              "font-variant-alternates",
+                              "font-variant-east-asian"
+                              ]
+            },
+            "specification": {
+                "category": "css-fonts",
+                "url": "https://www.w3.org/TR/css-fonts-3/#propdef-font-variant"
+            }
+        },
         "-webkit-locale": {
             "inherited": true,
             "codegen-properties": {
@@ -653,18 +717,6 @@
             "status": "non-standard",
             "specification": {
                 "url": "https://msdn.microsoft.com/en-us/library/ms531189(v=vs.85).aspx"
-            }
-        },
-        "font-synthesis": {
-            "inherited": true,
-            "codegen-properties": {
-                "converter": "FontSynthesis",
-                "font-property": true,
-                "high-priority": true
-            },
-            "specification": {
-                "category": "css-fonts",
-                "url": "https://drafts.csswg.org/css-fonts-3/#font-synthesis-prop"
             }
         },
         "-webkit-ruby-position": {
@@ -2015,41 +2067,6 @@
             "specification": {
                 "category": "svg",
                 "url": "https://www.w3.org/TR/SVG/filters.html#FloodOpacityProperty"
-            }
-        },
-        "font": {
-            "inherited": true,
-            "codegen-properties": {
-                "longhands": [
-                    "font-family",
-                    "font-size",
-                    "font-style",
-                    "font-variant-caps",
-                    "font-weight",
-                    "font-stretch",
-                    "line-height"
-                ]
-            },
-            "specification": {
-                "category": "css-fonts",
-                "url": "https://www.w3.org/TR/css-fonts-3/#font-prop"
-            }
-        },
-        "font-variant": {
-            "inherited": true,
-            "codegen-properties": {
-                "longhands": [
-                    "font-variant-ligatures",
-                    "font-variant-position",
-                    "font-variant-caps",
-                    "font-variant-numeric",
-                    "font-variant-alternates",
-                    "font-variant-east-asian"
-                ]
-            },
-            "specification": {
-                "category": "css-fonts",
-                "url": "https://www.w3.org/TR/css-fonts-3/#propdef-font-variant"
             }
         },
         "glyph-orientation-horizontal": {

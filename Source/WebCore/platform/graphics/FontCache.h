@@ -122,7 +122,8 @@ private:
     static std::array<unsigned, 2> makeFlagsKey(const FontDescription& description)
     {
         static_assert(USCRIPT_CODE_LIMIT < 0x1000, "Script code must fit in an unsigned along with the other flags");
-        unsigned first = static_cast<unsigned>(description.script()) << 11
+        unsigned first = static_cast<unsigned>(description.script()) << 12
+            | static_cast<unsigned>(description.opticalSizing()) << 11
             | static_cast<unsigned>(description.textRenderingMode()) << 9
             | static_cast<unsigned>(description.fontSynthesis()) << 6
             | static_cast<unsigned>(description.widthVariant()) << 4
@@ -275,7 +276,7 @@ struct SynthesisPair {
     bool needsSyntheticOblique;
 };
 
-RetainPtr<CTFontRef> preparePlatformFont(CTFontRef, TextRenderingMode, const FontFeatureSettings* fontFaceFeatures, const FontVariantSettings* fontFaceVariantSettings, const FontFeatureSettings& features, const FontVariantSettings&, FontSelectionRequest, const FontVariationSettings&);
+RetainPtr<CTFontRef> preparePlatformFont(CTFontRef, TextRenderingMode, const FontFeatureSettings* fontFaceFeatures, const FontVariantSettings* fontFaceVariantSettings, const FontFeatureSettings& features, const FontVariantSettings&, FontSelectionRequest, const FontVariationSettings&, FontOpticalSizing, float size);
 SynthesisPair computeNecessarySynthesis(CTFontRef, const FontDescription&, bool isPlatformFont = false);
 RetainPtr<CTFontRef> platformFontWithFamilySpecialCase(const AtomicString& family, FontSelectionRequest, float size);
 RetainPtr<CTFontRef> platformFontWithFamily(const AtomicString& family, FontSelectionRequest, TextRenderingMode, float size);

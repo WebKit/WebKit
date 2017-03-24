@@ -5616,4 +5616,36 @@ template<> inline CSSPrimitiveValue::operator FontVariantAlternates() const
     return FontVariantAlternates::Normal;
 }
 
+template<> inline CSSPrimitiveValue::CSSPrimitiveValue(FontOpticalSizing sizing)
+    : CSSValue(PrimitiveClass)
+{
+    m_primitiveUnitType = CSS_VALUE_ID;
+    switch (sizing) {
+    case FontOpticalSizing::Enabled:
+        m_value.valueID = CSSValueAuto;
+        break;
+    case FontOpticalSizing::Disabled:
+        m_value.valueID = CSSValueNone;
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+        break;
+    }
+}
+
+template<> inline CSSPrimitiveValue::operator FontOpticalSizing() const
+{
+    ASSERT(isValueID());
+    switch (m_value.valueID) {
+    case CSSValueAuto:
+        return FontOpticalSizing::Enabled;
+    case CSSValueNone:
+        return FontOpticalSizing::Disabled;
+    default:
+        break;
+    }
+    ASSERT_NOT_REACHED();
+    return FontOpticalSizing::Enabled;
+}
+
 }

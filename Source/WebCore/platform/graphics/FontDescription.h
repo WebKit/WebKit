@@ -95,6 +95,7 @@ public:
             variantEastAsianWidth(),
             variantEastAsianRuby() };
     }
+    FontOpticalSizing opticalSizing() const { return static_cast<FontOpticalSizing>(m_opticalSizing); }
 
     void setComputedSize(float s) { m_computedSize = clampToFloat(s); }
     void setItalic(FontSelectionValue italic) { m_fontSelectionRequest.slope = italic; }
@@ -127,6 +128,7 @@ public:
     void setVariantEastAsianVariant(FontVariantEastAsianVariant variant) { m_variantEastAsianVariant = static_cast<unsigned>(variant); }
     void setVariantEastAsianWidth(FontVariantEastAsianWidth variant) { m_variantEastAsianWidth = static_cast<unsigned>(variant); }
     void setVariantEastAsianRuby(FontVariantEastAsianRuby variant) { m_variantEastAsianRuby = static_cast<unsigned>(variant); }
+    void setOpticalSizing(FontOpticalSizing sizing) { m_opticalSizing = static_cast<unsigned>(sizing); }
 
 private:
     // FIXME: Investigate moving these into their own object on the heap (to save memory).
@@ -158,6 +160,7 @@ private:
     unsigned m_variantEastAsianVariant : 3; // FontVariantEastAsianVariant
     unsigned m_variantEastAsianWidth : 2; // FontVariantEastAsianWidth
     unsigned m_variantEastAsianRuby : 1; // FontVariantEastAsianRuby
+    unsigned m_opticalSizing : 1; // FontOpticalSizing
 };
 
 inline bool FontDescription::operator==(const FontDescription& other) const
@@ -189,7 +192,8 @@ inline bool FontDescription::operator==(const FontDescription& other) const
         && m_variantAlternates == other.m_variantAlternates
         && m_variantEastAsianVariant == other.m_variantEastAsianVariant
         && m_variantEastAsianWidth == other.m_variantEastAsianWidth
-        && m_variantEastAsianRuby == other.m_variantEastAsianRuby;
+        && m_variantEastAsianRuby == other.m_variantEastAsianRuby
+        && m_opticalSizing == other.m_opticalSizing;
 }
 
 // FIXME: Move to a file of its own.
@@ -271,6 +275,7 @@ public:
     static FontVariantPosition initialVariantPosition() { return FontVariantPosition::Normal; }
     static FontVariantCaps initialVariantCaps() { return FontVariantCaps::Normal; }
     static FontVariantAlternates initialVariantAlternates() { return FontVariantAlternates::Normal; }
+    static FontOpticalSizing initialOpticalSizing() { return FontOpticalSizing::Enabled; }
     static const AtomicString& initialLocale() { return nullAtom; }
 
 private:

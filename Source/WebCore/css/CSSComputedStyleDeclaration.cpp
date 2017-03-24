@@ -2949,6 +2949,8 @@ RefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propertyID,
                 list->append(CSSFontVariationValue::create(feature.tag(), feature.value()));
             return WTFMove(list);
         }
+        case CSSPropertyFontOpticalSizing:
+            return cssValuePool.createValue(style->fontDescription().opticalSizing());
 #endif
         case CSSPropertyGridAutoFlow: {
             auto list = CSSValueList::createSpaceSeparated();

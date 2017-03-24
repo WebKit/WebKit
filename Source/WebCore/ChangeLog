@@ -1,3 +1,42 @@
+2017-03-24  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Implement font-optical-sizing
+        https://bugs.webkit.org/show_bug.cgi?id=168895
+
+        Reviewed by Dean Jackson.
+
+        Upon advice from Microsoft, the only input to optical sizing is just the
+        font-size computed value. It is implemented by setting the 'opsz' font
+        variation axis. Because the propery has such a simple grammar, the
+        implementation is quite straightforward.
+
+        Test: fast/text/variations/optical-sizing.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::propertyValue):
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::operator FontOpticalSizing):
+        * css/CSSProperties.json:
+        * css/parser/CSSParserFastPaths.cpp:
+        (WebCore::CSSParserFastPaths::isValidKeywordPropertyAndValue):
+        (WebCore::CSSParserFastPaths::isKeywordPropertyID):
+        * platform/graphics/FontCache.h:
+        (WebCore::FontDescriptionKey::makeFlagsKey):
+        * platform/graphics/FontDescription.h:
+        (WebCore::FontDescription::opticalSizing):
+        (WebCore::FontDescription::setOpticalSizing):
+        (WebCore::FontDescription::operator==):
+        (WebCore::FontCascadeDescription::initialOpticalSizing):
+        * platform/graphics/cocoa/FontCacheCoreText.cpp:
+        (WebCore::preparePlatformFont):
+        (WebCore::fontWithFamily):
+        (WebCore::FontCache::createFontPlatformData):
+        (WebCore::FontCache::systemFallbackForCharacters):
+        * platform/graphics/mac/FontCustomPlatformData.cpp:
+        (WebCore::FontCustomPlatformData::fontPlatformData):
+        * platform/text/TextFlags.h:
+
 2017-03-24  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rolling out r214329.
