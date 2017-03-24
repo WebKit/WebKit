@@ -1,3 +1,13 @@
+2017-03-24  Youenn Fablet  <youenn@apple.com>
+
+        Fix framesEncoded/framesDecoded RTC stats
+        https://bugs.webkit.org/show_bug.cgi?id=170024
+
+        Reviewed by Eric Carlson.
+
+        * webrtc/video-stats-expected.txt: Added.
+        * webrtc/video-stats.html: Added.
+
 2017-03-24  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed GTK+ gardening. Mark media/video-load-require-user-gesture.html as failing after r214338.

@@ -305,8 +305,8 @@ static inline void fillInboundRTPStreamStats(RTCStatsReport::InboundRTPStreamSta
         stats.gapLossRate = *rtcStats.gap_loss_rate;
     if (rtcStats.gap_discard_rate.is_defined())
         stats.gapDiscardRate = *rtcStats.gap_discard_rate;
-    // FIXME: Set framesDecoded
-    stats.framesDecoded = 0;
+    if (rtcStats.frames_decoded.is_defined())
+        stats.framesDecoded = *rtcStats.frames_decoded;
 }
 
 static inline void fillOutboundRTPStreamStats(RTCStatsReport::OutboundRTPStreamStats& stats, const webrtc::RTCOutboundRTPStreamStats& rtcStats)
@@ -319,8 +319,8 @@ static inline void fillOutboundRTPStreamStats(RTCStatsReport::OutboundRTPStreamS
         stats.bytesSent = *rtcStats.bytes_sent;
     if (rtcStats.target_bitrate.is_defined())
         stats.targetBitrate = *rtcStats.target_bitrate;
-    // FIXME: Set framesEncoded
-    stats.framesEncoded = 0;
+    if (rtcStats.frames_encoded.is_defined())
+        stats.framesEncoded = *rtcStats.frames_encoded;
 }
 
 void LibWebRTCMediaEndpoint::StatsCollector::OnStatsDelivered(const rtc::scoped_refptr<const webrtc::RTCStatsReport>& rtcReport)

@@ -1,3 +1,18 @@
+2017-03-24  Youenn Fablet  <youenn@apple.com>
+
+        Fix framesEncoded/framesDecoded RTC stats
+        https://bugs.webkit.org/show_bug.cgi?id=170024
+
+        Reviewed by Eric Carlson.
+
+        Test: webrtc/video-stats.html
+
+        Adding access to these fields now that they are available.
+
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.cpp:
+        (WebCore::fillInboundRTPStreamStats):
+        (WebCore::fillOutboundRTPStreamStats):
+
 2017-03-24  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix GTK+ test /webkit2/WebKitWebView/default-menu after r214244.
