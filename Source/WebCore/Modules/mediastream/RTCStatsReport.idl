@@ -55,7 +55,6 @@ dictionary RTCStats {
 };
 
 dictionary RTCRTPStreamStats : RTCStats {
-    // FIXME 169662: change type to DOMString
     unsigned long ssrc;
     DOMString associateStatsId;
     boolean isRemote = false;

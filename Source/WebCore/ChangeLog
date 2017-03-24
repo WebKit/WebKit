@@ -1,3 +1,14 @@
+2017-03-24  Jon Lee  <jonlee@apple.com>
+
+        Remove comment from RTCStatsReport.idl to convert ssrc to DOMString.
+        Unreviewed.
+
+        Latest available Editor's Draft of WebRTC Statistics API is from 14 December 2016,
+        but since then, in https://github.com/w3c/webrtc-stats/pull/157, it was changed to become
+        unsigned long.
+
+        * Modules/mediastream/RTCStatsReport.idl:
+
 2017-03-24  Youenn Fablet  <youenn@apple.com>
 
         Add support for DataChannel and MediaStreamTrack stats
