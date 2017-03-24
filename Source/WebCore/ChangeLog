@@ -1,3 +1,12 @@
+2017-03-23  Jon Lee  <jonlee@apple.com>
+
+        Update createDataChannel on RTCPeerConnection
+        https://bugs.webkit.org/show_bug.cgi?id=170044
+
+        Reviewed by Youenn Fablet.
+
+        * Modules/mediastream/RTCPeerConnection.idl: Change label to USVString.
+
 2017-03-23  Antti Koivisto  <antti@apple.com>
 
         Revert r213712, caused iPad PLT regression

@@ -135,8 +135,7 @@ typedef RTCRtpTransceiverDirection RtpTransceiverDirection;
     // 6.1 Peer-to-peer data API
     // FIXME 169644: missing sctp
 
-    // FIXME 169644: convert to USVString
-    [CallWith=ScriptExecutionContext, MayThrowException] RTCDataChannel createDataChannel([TreatNullAs=EmptyString] DOMString label, optional RTCDataChannelInit options);
+    [CallWith=ScriptExecutionContext, MayThrowException] RTCDataChannel createDataChannel([TreatNullAs=EmptyString] USVString label, optional RTCDataChannelInit options);
     attribute EventHandler ondatachannel;
 
 
