@@ -35,6 +35,7 @@
 #include <wtf/Lock.h>
 #include <wtf/Stopwatch.h>
 #include <wtf/Vector.h>
+#include <wtf/WeakRandom.h>
 
 namespace JSC {
 
@@ -190,6 +191,7 @@ private:
     void takeSample(const AbstractLocker&, std::chrono::microseconds& stackTraceProcessingTime);
 
     VM& m_vm;
+    WeakRandom m_weakRandom;
     RefPtr<Stopwatch> m_stopwatch;
     Vector<StackTrace> m_stackTraces;
     Vector<UnprocessedStackTrace> m_unprocessedStackTraces;

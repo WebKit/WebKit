@@ -47,7 +47,6 @@
 #include "StrongInlines.h"
 #include "VM.h"
 #include <wtf/HashSet.h>
-#include <wtf/RandomNumber.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -277,6 +276,7 @@ private:
 
 SamplingProfiler::SamplingProfiler(VM& vm, RefPtr<Stopwatch>&& stopwatch)
     : m_vm(vm)
+    , m_weakRandom()
     , m_stopwatch(WTFMove(stopwatch))
     , m_timingInterval(std::chrono::microseconds(Options::sampleInterval()))
     , m_threadIdentifier(0)
@@ -328,7 +328,7 @@ void SamplingProfiler::timerLoop()
         // fluctuation here. The main idea is to prevent our timer from being in sync
         // with some system process such as a scheduled context switch.
         // http://plv.colorado.edu/papers/mytkowicz-pldi10.pdf
-        double randomSignedNumber = (randomNumber() * 2.0) - 1.0; // A random number between [-1, 1).
+        double randomSignedNumber = (m_weakRandom.get() * 2.0) - 1.0; // A random number between [-1, 1).
         std::chrono::microseconds randomFluctuation = std::chrono::microseconds(static_cast<uint64_t>(randomSignedNumber * static_cast<double>(m_timingInterval.count()) * 0.20l));
         std::this_thread::sleep_for(m_timingInterval - std::min(m_timingInterval, stackTraceProcessingTime) + randomFluctuation);
     }
