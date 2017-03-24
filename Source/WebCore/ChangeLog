@@ -1,3 +1,15 @@
+2017-03-24  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, rolling out r214329.
+
+        Significantly regressed Speedometer
+
+        Reverted changeset:
+
+        "window.crypto.getRandomValues() uses the insecure RC4 RNG"
+        https://bugs.webkit.org/show_bug.cgi?id=169623
+        http://trac.webkit.org/changeset/214329
+
 2017-03-24  Yoav Weiss  <yoav@yoav.ws>
 
         Add a warning for unused link preloads.

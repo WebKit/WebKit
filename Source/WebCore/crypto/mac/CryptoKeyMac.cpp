@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,54 +28,17 @@
 
 #if ENABLE(SUBTLE_CRYPTO)
 
-#include "CryptoAlgorithmRegistry.h"
-#include <wtf/CryptographicallyRandomNumber.h>
+#include "CommonCryptoUtilities.h"
 
 namespace WebCore {
 
-CryptoKey::CryptoKey(CryptoAlgorithmIdentifier algorithmIdentifier, Type type, bool extractable, CryptoKeyUsageBitmap usages)
-    : m_algorithmIdentifier(algorithmIdentifier)
-    , m_type(type)
-    , m_extractable(extractable)
-    , m_usages(usages)
-{
-}
-
-CryptoKey::~CryptoKey()
-{
-}
-
-auto CryptoKey::usages() const -> Vector<CryptoKeyUsage>
-{
-    // The result is ordered alphabetically.
-    Vector<CryptoKeyUsage> result;
-    if (m_usages & CryptoKeyUsageDecrypt)
-        result.append(CryptoKeyUsage::Decrypt);
-    if (m_usages & CryptoKeyUsageDeriveBits)
-        result.append(CryptoKeyUsage::DeriveBits);
-    if (m_usages & CryptoKeyUsageDeriveKey)
-        result.append(CryptoKeyUsage::DeriveKey);
-    if (m_usages & CryptoKeyUsageEncrypt)
-        result.append(CryptoKeyUsage::Encrypt);
-    if (m_usages & CryptoKeyUsageSign)
-        result.append(CryptoKeyUsage::Sign);
-    if (m_usages & CryptoKeyUsageUnwrapKey)
-        result.append(CryptoKeyUsage::UnwrapKey);
-    if (m_usages & CryptoKeyUsageVerify)
-        result.append(CryptoKeyUsage::Verify);
-    if (m_usages & CryptoKeyUsageWrapKey)
-        result.append(CryptoKeyUsage::WrapKey);
-    return result;
-}
-
-#if !OS(DARWIN) || PLATFORM(GTK)
 Vector<uint8_t> CryptoKey::randomData(size_t size)
 {
     Vector<uint8_t> result(size);
-    cryptographicallyRandomValues(result.data(), result.size());
+    int rc = CCRandomCopyBytes(kCCRandomDefault, result.data(), result.size());
+    RELEASE_ASSERT(rc == kCCSuccess);
     return result;
 }
-#endif
 
 } // namespace WebCore
 
