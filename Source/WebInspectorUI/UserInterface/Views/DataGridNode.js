@@ -349,22 +349,23 @@ WebInspector.DataGridNode = class DataGridNode extends WebInspector.Object
         cellElement.className = columnIdentifier + "-column";
         cellElement.__columnIdentifier = columnIdentifier;
 
-        var column = this.dataGrid.columns.get(columnIdentifier);
-
-        if (column["aligned"])
-            cellElement.classList.add(column["aligned"]);
-
-        if (column["group"])
-            cellElement.classList.add("column-group-" + column["group"]);
-
         var div = cellElement.createChild("div", "cell-content");
         var content = this.createCellContent(columnIdentifier, cellElement);
         div.append(content);
 
-        if (column["icon"]) {
-            let iconElement = document.createElement("div");
-            iconElement.classList.add("icon");
-            div.insertBefore(iconElement, div.firstChild);
+        let column = this.dataGrid.columns.get(columnIdentifier);
+        if (column) {
+            if (column["aligned"])
+                cellElement.classList.add(column["aligned"]);
+
+            if (column["group"])
+                cellElement.classList.add("column-group-" + column["group"]);
+
+            if (column["icon"]) {
+                let iconElement = document.createElement("div");
+                iconElement.classList.add("icon");
+                div.insertBefore(iconElement, div.firstChild);
+            }
         }
 
         if (columnIdentifier === this.dataGrid.disclosureColumnIdentifier) {

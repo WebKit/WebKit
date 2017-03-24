@@ -80,6 +80,8 @@ WebInspector.DOMBreakpointTreeElement = class DOMBreakpointTreeElement extends W
 
     ondetach()
     {
+        super.ondetach();
+
         this._statusImageElement.removeEventListener("click", this._boundStatusImageElementClicked);
         this._statusImageElement.removeEventListener("focus", this._boundStatusImageElementFocused);
         this._statusImageElement.removeEventListener("mousedown", this._boundStatusImageElementMouseDown);

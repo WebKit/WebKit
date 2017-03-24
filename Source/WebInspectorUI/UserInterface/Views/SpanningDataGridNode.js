@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Devin Rousso <webkit@devinrousso.com>. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,31 +23,23 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.item.resource.failed {
-    color: var(--error-text-color) !important;
-}
+WebInspector.SpanningDataGridNode = class SpanningDataGridNode extends WebInspector.DataGridNode
+{
+    constructor(text)
+    {
+        super({[WebInspector.SpanningDataGridNode.ColumnIdentifier]: text});
+    }
 
-.item.resource.failed .subtitle {
-    color: var(--error-text-color) !important;
-    opacity: 0.7;
-}
+    // Public
 
-.item.resource.resource-type-websocket .status > div {
-    width: 8px;
-    height: 8px;
-    margin-top: 4px;
-    background-color: white;
-    -webkit-clip-path: circle(50% at 50% 50%);
-}
+    createCells()
+    {
+        let cellElement = this.createCell(WebInspector.SpanningDataGridNode.ColumnIdentifier);
+        cellElement.classList.add("spanning");
+        cellElement.setAttribute("colspan", this.dataGrid.columns.size);
 
-.item.resource.resource-type-websocket:not(.selected) .status .open,
-.tree-outline:not(:focus, .force-focus) .item.resource.resource-type-websocket.selected .status .open,
-body:matches(.window-inactive, .window-docked-inactive) .item.resource.resource-type-websocket.selected .status .open {
-    background-color: limegreen;
-}
+        this.element.appendChild(cellElement);
+    }
+};
 
-.item.resource.resource-type-websocket:not(.selected) .status .connecting,
-.tree-outline:not(:focus, .force-focus) .item.resource.resource-type-websocket.selected .status .connecting,
-body:matches(.window-inactive, .window-docked-inactive) .item.resource.resource-type-websocket.selected .status .connecting {
-    background-color: yellow;
-}
+WebInspector.SpanningDataGridNode.ColumnIdentifier = "spanning-text";

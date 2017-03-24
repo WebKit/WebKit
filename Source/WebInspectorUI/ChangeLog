@@ -1,3 +1,69 @@
+2017-03-24  Devin Rousso  <webkit@devinrousso.com>
+
+        Web Inspector: Indicate whether a WebSocket connection is open or close
+        https://bugs.webkit.org/show_bug.cgi?id=168948
+
+        Reviewed by Joseph Pecoraro.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Main.html:
+        Added WebSocketResourceTreeElement.js and SpanningDataGridNode.js.
+
+        * UserInterface/Views/WebSocketContentView.js:
+        (WebInspector.WebSocketContentView):
+        (WebInspector.WebSocketContentView.prototype.shown):
+        (WebInspector.WebSocketContentView.prototype.hidden):
+        (WebInspector.WebSocketContentView.prototype._updateState):
+        Listen to changes in the readyState and add a SpanningDataGridNode when the current state
+        becomes Closed.
+
+        * UserInterface/Views/WebSocketResourceTreeElement.js: Added.
+        (WebInspector.WebSocketResourceTreeElement.prototype.onattach):
+        (WebInspector.WebSocketResourceTreeElement.prototype.ondetach):
+        (WebInspector.WebSocketResourceTreeElement.prototype._updateConnectionStatus):
+        Listen to changes in the readyState and add/remove the status element depending on the
+        current state:
+         - Closed: show no status indicator
+         - Connecting: show a small circle with a yellow color
+         - Open: show a small circle with a green color
+
+        * UserInterface/Views/ResourceTreeElement.css:
+        (.item.resource.resource-type-websocket .status > div):
+        (.item.resource.resource-type-websocket:not(.selected) .status .open):
+        (.tree-outline:not(:focus, .force-focus) .item.resource.resource-type-websocket.selected .status .open):
+        (body:matches(.window-inactive, .window-docked-inactive) .item.resource.resource-type-websocket.selected .status .open):
+        (.item.resource.resource-type-websocket:not(.selected) .status .connecting):
+        (.tree-outline:not(:focus, .force-focus) .item.resource.resource-type-websocket.selected .status .connecting):
+        (body:matches(.window-inactive, .window-docked-inactive) .item.resource.resource-type-websocket.selected .status .connecting):
+
+        * UserInterface/Views/FrameTreeElement.js:
+        (WebInspector.FrameTreeElement):
+        Use WebSocketResourceTreeElement as the constructor for WebSocket resources.
+
+        * UserInterface/Views/SpanningDataGridNode.js: Added.
+        (WebInspector.SpanningDataGridNode.prototype.createCells):
+        Creates a single cell that spans all the columns (via CSS colspan) of the parent DataGrid.
+
+        * UserInterface/Views/DataGrid.css:
+        (.data-grid td.spanning):
+        Center content of spanning nodes and prevent user interaction.
+
+        * UserInterface/Views/DataGridNode.js:
+        (WebInspector.DataGridNode.prototype.createCell):
+        Add additional checks so that a DataGridNode can be created with a column identifier that is
+        not in the DataGrid.  This is used by SpanningGridDataNode, as it shouldn't match one single
+        column in the DataGrid since it spans them all.
+
+        * UserInterface/Views/GeneralTreeElement.js:
+        (WebInspector.GeneralTreeElement.prototype.ondetach):
+        * UserInterface/Views/BreakpointTreeElement.js:
+        (WebInspector.BreakpointTreeElement.prototype.ondetach):
+        * UserInterface/Views/DOMBreakpointTreeElement.js:
+        (WebInspector.DOMBreakpointTreeElement.prototype.ondetach):
+        * UserInterface/Views/XHRBreakpointTreeElement.js:
+        (WebInspector.XHRBreakpointTreeElement.prototype.ondetach):
+        Add ondetach function (with super calls) for future use.
+
 2017-03-23  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Cache type is not styled correctly in Timelines tab

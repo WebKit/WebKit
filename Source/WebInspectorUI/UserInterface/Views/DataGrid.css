@@ -190,6 +190,13 @@ body[dir=rtl] .data-grid :matches(th, td):not(:last-child) {
     font-variant-numeric: tabular-nums;
 }
 
+.data-grid td.spanning {
+    text-align: center;
+    color: hsl(0, 0%, 30%);
+    background-color: hsl(0, 0%, 95%);
+    pointer-events: none;
+}
+
 body[dir=ltr] .data-grid:matches(:focus, .force-focus) tr.selected td:not(:last-child) {
     border-right-color: hsl(210, 100%, 40%);
 }

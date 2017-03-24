@@ -210,6 +210,11 @@ WebInspector.GeneralTreeElement = class GeneralTreeElement extends WebInspector.
         this._listItemNode.appendChild(this._titlesElement);
     }
 
+    ondetach()
+    {
+        // Overriden by subclasses.
+    }
+
     onreveal()
     {
         if (this._listItemNode)

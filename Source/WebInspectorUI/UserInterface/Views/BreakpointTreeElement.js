@@ -114,6 +114,8 @@ WebInspector.BreakpointTreeElement = class BreakpointTreeElement extends WebInsp
 
     ondetach()
     {
+        super.ondetach();
+
         this._listenerSet.uninstall();
 
         if (this._probeSet)

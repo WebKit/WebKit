@@ -33,6 +33,7 @@ WebInspector.WebSocketContentView = class WebSocketContentView extends WebInspec
 
         this._resource = resource;
         this._framesRendered = 0;
+        this._lastRenderedReadyState = null;
 
         // COMPATIBILITY (iOS 10.3): `walltime` did not exist in 10.3 and earlier.
         this._showTimeColumn = NetworkAgent.hasEventParameter("webSocketWillSendHandshakeRequest", "walltime");
@@ -81,12 +82,16 @@ WebInspector.WebSocketContentView = class WebSocketContentView extends WebInspec
     shown()
     {
         this._updateFrames();
+        this._updateState();
+
         this._resource.addEventListener(WebInspector.WebSocketResource.Event.FrameAdded, this._updateFrames, this);
+        this._resource.addEventListener(WebInspector.WebSocketResource.Event.ReadyStateChanged, this._updateState, this);
     }
 
     hidden()
     {
         this._resource.removeEventListener(WebInspector.WebSocketResource.Event.FrameAdded, this._updateFrames, this);
+        this._resource.removeEventListener(WebInspector.WebSocketResource.Event.ReadyStateChanged, this._updateState, this);
     }
 
     addFrame(data, isOutgoing, opcode, time)
@@ -116,6 +121,17 @@ WebInspector.WebSocketContentView = class WebSocketContentView extends WebInspec
             this.addFrame(data, isOutgoing, opcode, walltime);
         }
         this._framesRendered = framesLength;
+    }
+
+    _updateState(event)
+    {
+        if (this._lastRenderedReadyState === this._resource.readyState)
+            return;
+
+        if (this._resource.readyState === WebInspector.WebSocketResource.ReadyState.Closed)
+            this._dataGrid.appendChild(new WebInspector.SpanningDataGridNode(WebInspector.UIString("Connection Closed")));
+
+        this._lastRenderedReadyState = this._resource.readyState;
     }
 
     _addRow(data, time, classNames, isOutgoing)
