@@ -395,6 +395,10 @@ fast/scrolling/rtl-scrollbars-text-selection.html [ Skip ]
 # This is specific to extensions on macOS
 webkit.org/b/167795 http/tests/security/bypassing-cors-checks-for-extension-urls.html [ Skip ]
 
+# These tests rely on testRunner.setPageVisibility(), which is not implemented on iOS
+svg/animations/animations-paused-when-inserted-in-hidden-document.html [ Skip ]
+svg/animations/animations-paused-when-inserted-in-hidden-document2.html [ Skip ]
+
 ###
 # Known failures
 ##

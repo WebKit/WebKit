@@ -1,5 +1,14 @@
 2017-03-24  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Skip svg/animations/animations-paused-when-inserted-in-hidden-document* tests on ios-simulator.
+        https://bugs.webkit.org/show_bug.cgi?id=170068
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator/TestExpectations:
+
+2017-03-24  Ryan Haddad  <ryanhaddad@apple.com>
+
         Unreviewed, rolling out r214360.
 
         This change caused 20+ LayoutTest failures.
