@@ -496,9 +496,30 @@ void RTCPeerConnection::fireEvent(Event& event)
     dispatchEvent(event);
 }
 
-void RTCPeerConnection::replaceTrack(RTCRtpSender& sender, Ref<MediaStreamTrack>&& withTrack, DOMPromise<void>&& promise)
+void RTCPeerConnection::enqueueReplaceTrackTask(RTCRtpSender& sender, Ref<MediaStreamTrack>&& withTrack, DOMPromise<void>&& promise)
 {
-    m_backend->replaceTrack(sender, WTFMove(withTrack), WTFMove(promise));
+    scriptExecutionContext()->postTask([protectedSender = makeRef(sender), promise = WTFMove(promise), withTrack = WTFMove(withTrack)](ScriptExecutionContext&) mutable {
+        protectedSender->setTrack(WTFMove(withTrack));
+        promise.resolve();
+    });
+}
+
+void RTCPeerConnection::replaceTrack(RTCRtpSender& sender, RefPtr<MediaStreamTrack>&& withTrack, DOMPromise<void>&& promise)
+{
+    if (!withTrack) {
+        scriptExecutionContext()->postTask([protectedSender = makeRef(sender), promise = WTFMove(promise)](ScriptExecutionContext&) mutable {
+            protectedSender->setTrackToNull();
+            promise.resolve();
+        });
+        return;
+    }
+    
+    if (!sender.track()) {
+        enqueueReplaceTrackTask(sender, withTrack.releaseNonNull(), WTFMove(promise));
+        return;
+    }
+
+    m_backend->replaceTrack(sender, withTrack.releaseNonNull(), WTFMove(promise));
 }
 
 } // namespace WebCore

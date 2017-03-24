@@ -28,6 +28,7 @@
 #if USE(LIBWEBRTC)
 
 #include "Document.h"
+#include "ExceptionCode.h"
 #include "IceCandidate.h"
 #include "JSRTCStatsReport.h"
 #include "LibWebRTCDataChannelHandler.h"
@@ -319,6 +320,48 @@ void LibWebRTCPeerConnectionBackend::removeRemoteStream(MediaStream* mediaStream
 void LibWebRTCPeerConnectionBackend::addRemoteStream(Ref<MediaStream>&& mediaStream)
 {
     m_remoteStreams.append(WTFMove(mediaStream));
+}
+
+void LibWebRTCPeerConnectionBackend::replaceTrack(RTCRtpSender& sender, Ref<MediaStreamTrack>&& track, DOMPromise<void>&& promise)
+{
+    ASSERT(sender.track());
+    auto* currentTrack = sender.track();
+
+    ASSERT(currentTrack->source().type() == track->source().type());
+    switch (currentTrack->source().type()) {
+    case RealtimeMediaSource::Type::None:
+        ASSERT_NOT_REACHED();
+        promise.reject(INVALID_MODIFICATION_ERR);
+        break;
+    case RealtimeMediaSource::Type::Audio: {
+        for (auto& audioSource : m_audioSources) {
+            if (&audioSource->source() == &currentTrack->source()) {
+                if (!audioSource->setSource(track->source())) {
+                    promise.reject(INVALID_MODIFICATION_ERR);
+                    return;
+                }
+                connection().enqueueReplaceTrackTask(sender, WTFMove(track), WTFMove(promise));
+                return;
+            }
+        }
+        promise.reject(INVALID_MODIFICATION_ERR);
+        break;
+    }
+    case RealtimeMediaSource::Type::Video: {
+        for (auto& videoSource : m_videoSources) {
+            if (&videoSource->source() == &currentTrack->source()) {
+                if (!videoSource->setSource(track->source())) {
+                    promise.reject(INVALID_MODIFICATION_ERR);
+                    return;
+                }
+                connection().enqueueReplaceTrackTask(sender, WTFMove(track), WTFMove(promise));
+                return;
+            }
+        }
+        promise.reject(INVALID_MODIFICATION_ERR);
+        break;
+    }
+    }
 }
 
 } // namespace WebCore

@@ -51,6 +51,9 @@ public:
     void setTrack(rtc::scoped_refptr<webrtc::AudioTrackInterface>&& track) { m_track = WTFMove(track); }
     void stop();
 
+    bool setSource(Ref<RealtimeMediaSource>&&);
+    RealtimeMediaSource& source() const { return m_audioSource.get(); }
+
 private:
     explicit RealtimeOutgoingAudioSource(Ref<RealtimeMediaSource>&&);
 

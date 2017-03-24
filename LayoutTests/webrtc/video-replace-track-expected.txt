@@ -1,0 +1,5 @@
+
+PASS Switching from front to back camera 
+FAIL Switching from front to back camera, with lower resolution assert_true: backStream should be smaller expected true got false
+FAIL Switching from front to back camera, with higher resolution assert_true: front stream should be smaller expected true got false
+

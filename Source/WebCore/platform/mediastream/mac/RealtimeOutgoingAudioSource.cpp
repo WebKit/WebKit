@@ -51,6 +51,14 @@ RealtimeOutgoingAudioSource::RealtimeOutgoingAudioSource(Ref<RealtimeMediaSource
     m_audioSource->addObserver(*this);
 }
 
+bool RealtimeOutgoingAudioSource::setSource(Ref<RealtimeMediaSource>&& newSource)
+{
+    m_audioSource->removeObserver(*this);
+    m_audioSource = WTFMove(newSource);
+    m_audioSource->addObserver(*this);
+    return true;
+}
+
 void RealtimeOutgoingAudioSource::stop()
 {
     m_audioSource->removeObserver(*this);

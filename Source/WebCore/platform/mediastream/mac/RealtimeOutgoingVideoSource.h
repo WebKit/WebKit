@@ -36,6 +36,7 @@
 #include <webrtc/base/optional.h>
 #include <webrtc/common_video/include/i420_buffer_pool.h>
 #include <webrtc/media/base/videosinkinterface.h>
+#include <wtf/Optional.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebCore {
@@ -46,6 +47,8 @@ public:
     ~RealtimeOutgoingVideoSource() { stop(); }
 
     void stop();
+    bool setSource(Ref<RealtimeMediaSource>&&);
+    RealtimeMediaSource& source() const { return m_videoSource.get(); }
 
     int AddRef() const final { ref(); return refCount(); }
     int Release() const final { deref(); return refCount(); }
@@ -82,6 +85,7 @@ private:
     Ref<RealtimeMediaSource> m_videoSource;
     bool m_enabled { true };
     bool m_muted { false };
+    std::optional<RealtimeMediaSourceSettings> m_initialSettings;
 };
 
 } // namespace WebCore

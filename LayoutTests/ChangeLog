@@ -1,3 +1,17 @@
+2017-03-24  Youenn Fablet  <youenn@apple.com>
+
+        Add libwebrtc backend support for RTCRtpSender::replaceTrack
+        https://bugs.webkit.org/show_bug.cgi?id=169841
+
+        Reviewed by Alex Christensen.
+
+        * webrtc/audio-replace-track-expected.txt: Added.
+        * webrtc/audio-replace-track.html: Added.
+        * webrtc/video-replace-track-expected.txt: Added.
+        * webrtc/video-replace-track.html: Added.
+        * webrtc/video-replace-track-to-null-expected.txt: Added.
+        * webrtc/video-replace-track-to-null.html: Added.
+
 2017-03-24  Ryan Haddad  <ryanhaddad@apple.com>
 
         Update TestExpectations for media/restore-from-page-cache.html.

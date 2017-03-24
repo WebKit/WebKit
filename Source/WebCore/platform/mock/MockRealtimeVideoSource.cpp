@@ -327,11 +327,11 @@ void MockRealtimeVideoSource::drawText(GraphicsContext& context)
     FloatPoint bipBopLocation(size.width() * .6, size.height() * .6);
     unsigned frameMod = m_frameNumber % 60;
     if (frameMod <= 15) {
-        context.setFillColor(Color::gray);
+        context.setFillColor(Color::cyan);
         String bip(ASCIILiteral("Bip"));
         context.drawText(m_bipBopFont, TextRun(StringView(bip)), bipBopLocation);
     } else if (frameMod > 30 && frameMod <= 45) {
-        context.setFillColor(Color::white);
+        context.setFillColor(Color::yellow);
         String bop(ASCIILiteral("Bop"));
         context.drawText(m_bipBopFont, TextRun(StringView(bop)), bipBopLocation);
     }
@@ -348,7 +348,7 @@ void MockRealtimeVideoSource::generateFrame()
 
     IntSize size = this->size();
     FloatRect frameRect(FloatPoint(), size);
-    context.fillRect(FloatRect(FloatPoint(), size), Color::black);
+    context.fillRect(FloatRect(FloatPoint(), size), facingMode() ==  RealtimeMediaSourceSettings::User ? Color::black : Color::gray);
 
     if (!m_muted && m_enabled) {
         drawText(context);

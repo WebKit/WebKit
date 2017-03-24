@@ -1,0 +1,103 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Testing basic video exchange from offerer to receiver</title>
+        <script src="../resources/testharness.js"></script>
+        <script src="../resources/testharnessreport.js"></script>
+    </head>
+    <body>
+<div id="log"></div>
+        <video id="video" autoplay=""></video>
+        <canvas id="canvas" width="640" height="480"></canvas>
+        <script src ="routines.js"></script>
+        <script>
+video = document.getElementById("video");
+canvas = document.getElementById("canvas");
+
+function grabImagePixels()
+{
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+
+    imageData = canvas.getContext('2d').getImageData(20, 20, 100, 100);
+    return imageData.data;
+ }
+
+var firstFrameData;
+
+function storeFrame()
+{
+    firstFrameData = grabImagePixels();
+}
+
+function testCameraImage()
+{
+    data = grabImagePixels();
+
+    assert_true(data[0] < 20);
+    assert_true(data[1] < 20);
+    assert_true(data[2] < 20);
+
+    var same = true;
+    for (var cptr = 0; cptr < data.length; ++cptr) {
+        if (data[cptr] != firstFrameData[cptr]) {
+            same = false;
+            break;
+        }
+    }
+    assert_false(same);
+}
+
+function testStoppedImage()
+{
+    assert_array_equals(grabImagePixels(), firstFrameData);
+}
+
+promise_test((test) => {
+    if (window.testRunner)
+        testRunner.setUserMediaPermission(true);
+
+    var sender;
+    var frontStream;
+    return navigator.mediaDevices.getUserMedia({ video: true }).then((stream) => {
+        frontStream = stream;
+    }).then(() => {
+        return new Promise((resolve, reject) => {
+            if (window.internals)
+                internals.useMockRTCPeerConnectionFactory("TwoRealPeerConnections");
+
+            createConnections((firstConnection) => {
+                sender = firstConnection.addTrack(frontStream.getVideoTracks()[0], frontStream);
+            }, (secondConnection) => {
+                secondConnection.ontrack = (trackEvent) => {
+                    resolve(trackEvent.streams[0]);
+                };
+            });
+            setTimeout(() => reject("Test timed out"), 5000);
+        });
+    }).then((remoteStream) => {
+        video.srcObject = remoteStream;
+        return video.play();
+    }).then(() => {
+        storeFrame();
+        return waitFor(100);
+    }).then(() => {
+        testCameraImage();
+    }).then(() => {
+        promise = sender.replaceTrack(null);
+        assert_true(!!sender.track);
+        return promise;
+    }).then(() => {
+        return waitFor(100);
+    }).then(() => {
+        storeFrame();
+        return waitFor(100);
+    }).then(() => {
+        testStoppedImage();
+    });
+}, "Stopping sending video using replaceTrack");
+        </script>
+    </body>
+</html>

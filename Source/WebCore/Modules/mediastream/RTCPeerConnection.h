@@ -140,6 +140,8 @@ public:
     void disableICECandidateFiltering() { m_backend->disableICECandidateFiltering(); }
     void enableICECandidateFiltering() { m_backend->enableICECandidateFiltering(); }
 
+    void enqueueReplaceTrackTask(RTCRtpSender&, Ref<MediaStreamTrack>&&, DOMPromise<void>&&);
+
 private:
     RTCPeerConnection(ScriptExecutionContext&);
 
@@ -159,7 +161,7 @@ private:
     bool canSuspendForDocumentSuspension() const final;
 
     // RTCRtpSenderClient
-    void replaceTrack(RTCRtpSender&, Ref<MediaStreamTrack>&&, DOMPromise<void>&&) final;
+    void replaceTrack(RTCRtpSender&, RefPtr<MediaStreamTrack>&&, DOMPromise<void>&&) final;
 
     void updateConnectionState();
     bool doClose();

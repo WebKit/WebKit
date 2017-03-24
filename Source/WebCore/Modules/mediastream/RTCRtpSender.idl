@@ -39,5 +39,5 @@
     // FIXME 169662: missing getCapabilities
     // FIXME 169662: missing setParameters
     // FIXME 169662: missing getParameters
-    [MayThrowException] Promise<void> replaceTrack(MediaStreamTrack withTrack);
+    Promise<void> replaceTrack(MediaStreamTrack? withTrack);
 };
