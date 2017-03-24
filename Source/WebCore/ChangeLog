@@ -1,3 +1,32 @@
+2017-03-24  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GStreamer] MediaPlayerPrivateGStreamerOwr shouldn't be the default engine
+        https://bugs.webkit.org/show_bug.cgi?id=170049
+
+        Reviewed by Žan Doberšek.
+
+        This is causing several media tests to fail after r214338. When trying to load something like this:
+
+        http://127.0.0.1:8000/media/resources/serve-video.php?name=../../../../media/content/silence.wav&type=audio/wav&content-length=no&icy-data=yes
+
+        since r214338, the content type is known and inferred from the extension in this case, what ends up calling
+        nextMediaEngine() in MediaPlayer::loadWithNextMediaEngine. That returns the first registered media engine, that
+        is Owr that doesn't know how to load that and fails.
+
+        Fixes: http/tests/media/media-play-stream-chunked-icy.html
+               http/tests/media/media-seeking-no-ranges-server.html
+               http/tests/media/video-auth.html
+               http/tests/media/video-play-stall-before-meta-data.html
+               http/tests/security/contentSecurityPolicy/audio-redirect-allowed.html
+               http/tests/security/contentSecurityPolicy/audio-redirect-allowed2.html
+               http/tests/security/contentSecurityPolicy/audio-redirect-blocked.html
+               http/tests/security/contentSecurityPolicy/video-redirect-allowed.html
+               http/tests/security/contentSecurityPolicy/video-redirect-allowed2.html
+               http/tests/security/contentSecurityPolicy/video-redirect-blocked.html
+
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::buildMediaEnginesVector):
+
 2017-03-24  Per Arne Vollan  <pvollan@apple.com>
 
         Text stroke is sometimes clipped on video captions.

@@ -229,17 +229,16 @@ static void buildMediaEnginesVector()
         MediaPlayerPrivateQTKit::registerMediaEngine(addMediaEngine);
 #endif
 
-
-#if ENABLE(MEDIA_STREAM) && USE(GSTREAMER) && USE(OPENWEBRTC)
-    if (Settings::isGStreamerEnabled())
-        MediaPlayerPrivateGStreamerOwr::registerMediaEngine(addMediaEngine);
-#endif
-
 #if defined(PlatformMediaEngineClassName)
 #if USE(GSTREAMER)
     if (Settings::isGStreamerEnabled())
 #endif
         PlatformMediaEngineClassName::registerMediaEngine(addMediaEngine);
+#endif
+
+#if ENABLE(MEDIA_STREAM) && USE(GSTREAMER) && USE(OPENWEBRTC)
+    if (Settings::isGStreamerEnabled())
+        MediaPlayerPrivateGStreamerOwr::registerMediaEngine(addMediaEngine);
 #endif
 
 #if ENABLE(VIDEO) && USE(GSTREAMER) && ENABLE(MEDIA_SOURCE) && ENABLE(VIDEO_TRACK)
