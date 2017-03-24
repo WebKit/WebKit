@@ -171,6 +171,9 @@ void MemoryPressureHandler::setProcessState(WebsamProcessState state)
     if (m_processState == state)
         return;
     m_processState = state;
+    memoryPressureStatusChanged();
+    if (m_processState == WebsamProcessState::Inactive)
+        respondToMemoryPressure(Critical::Yes, Synchronous::No);
 }
 
 void MemoryPressureHandler::beginSimulatedMemoryPressure()
@@ -188,6 +191,17 @@ void MemoryPressureHandler::endSimulatedMemoryPressure()
         return;
     m_isSimulatingMemoryPressure = false;
     memoryPressureStatusChanged();
+}
+
+bool MemoryPressureHandler::isUnderMemoryPressure()
+{
+    auto& memoryPressureHandler = singleton();
+    return memoryPressureHandler.m_underMemoryPressure
+#if PLATFORM(MAC)
+        || memoryPressureHandler.m_memoryUsagePolicy >= MemoryUsagePolicy::Strict
+        || memoryPressureHandler.m_processState == WebsamProcessState::Inactive
+#endif
+        || memoryPressureHandler.m_isSimulatingMemoryPressure;
 }
 
 void MemoryPressureHandler::releaseMemory(Critical critical, Synchronous synchronous)

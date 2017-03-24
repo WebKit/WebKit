@@ -1,3 +1,20 @@
+2017-03-24  Andreas Kling  <akling@apple.com>
+
+        Make inactive web processes behave as though under memory pressure.
+        <https://webkit.org/b/170042>
+
+        Reviewed by Antti Koivisto.
+
+        Once a web process becomes inactive, let's try to reduce its impact
+        on memory usage by treating it as if it's under memory pressure until
+        it becomes active.
+
+        * wtf/MemoryPressureHandler.cpp:
+        (WTF::MemoryPressureHandler::setProcessState):
+        (WTF::MemoryPressureHandler::isUnderMemoryPressure):
+        * wtf/MemoryPressureHandler.h:
+        (WTF::MemoryPressureHandler::isUnderMemoryPressure): Deleted.
+
 2017-03-23  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         window.crypto.getRandomValues() uses the insecure RC4 RNG
