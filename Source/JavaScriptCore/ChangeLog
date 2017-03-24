@@ -1,5 +1,94 @@
 2017-03-24  JF Bastien  <jfbastien@apple.com>
 
+        WebAssembly: store state in TLS instead of on VM
+        https://bugs.webkit.org/show_bug.cgi?id=169611
+
+        Reviewed by Filip Pizlo.
+
+        Using thread-local storage instead of VM makes code more position
+        independent. We used to store the WebAssembly top Instance (the
+        latest one in the call stack) on VM, now we instead store it in
+        TLS. This top Instance is used to access a bunch of state such as
+        Memory location, size, table (for call_indirect), etc.
+
+        Instead of calling it "top", which is confusing, we now just call
+        it WasmContext.
+
+        Making the code PIC means future patches will be able to
+        postMessage and structured clone into IDB without having to
+        recompile the code. This wasn't possible before because we
+        hard-coded the address of VM at compilation time. That doesn't
+        work between workers, and doesn't work across reloads (which IDB
+        is intended to do).
+
+        It'll also potentially make code faster once we start tuning
+        what's in TLS, what's in which of the 4 free slots, and what's in
+        pinned registers. I'm leaving this tuning for later because
+        there's lower lying fruit for us to pick.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * assembler/AbstractMacroAssembler.h:
+        * assembler/AllowMacroScratchRegisterUsageIf.h: Copied from assembler/AllowMacroScratchRegisterUsage.h.
+        (JSC::AllowMacroScratchRegisterUsageIf::AllowMacroScratchRegisterUsageIf):
+        (JSC::AllowMacroScratchRegisterUsageIf::~AllowMacroScratchRegisterUsageIf):
+        * assembler/MacroAssembler.h:
+        (JSC::MacroAssembler::storeToTLSPtr): we previously didn't have
+        the code required to store to TLS, only to load
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::loadFromTLSPtrNeedsMacroScratchRegister):
+        (JSC::MacroAssemblerARM64::storeToTLS32):
+        (JSC::MacroAssemblerARM64::storeToTLS64):
+        (JSC::MacroAssemblerARM64::storeToTLSPtrNeedsMacroScratchRegister):
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::loadFromTLSPtrNeedsMacroScratchRegister):
+        (JSC::MacroAssemblerX86Common::storeToTLS32):
+        (JSC::MacroAssemblerX86Common::storeToTLSPtrNeedsMacroScratchRegister):
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::loadFromTLS64): was loading 32-bit instead of 64-bit
+        (JSC::MacroAssemblerX86_64::storeToTLS64):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::movl_rm):
+        (JSC::X86Assembler::movq_rm):
+        * b3/testb3.cpp:
+        (JSC::B3::testFastTLSLoad):
+        (JSC::B3::testFastTLSStore):
+        (JSC::B3::run):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::loadWasmContext):
+        (JSC::AssemblyHelpers::storeWasmContext):
+        (JSC::AssemblyHelpers::loadWasmContextNeedsMacroScratchRegister):
+        (JSC::AssemblyHelpers::storeWasmContextNeedsMacroScratchRegister):
+        * jit/Repatch.cpp:
+        (JSC::webAssemblyOwner):
+        * jit/ThunkGenerators.cpp:
+        (JSC::throwExceptionFromWasmThunkGenerator):
+        * runtime/Options.h:
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::loadWasmContext):
+        (JSC::Wasm::storeWasmContext):
+        (JSC::Wasm::B3IRGenerator::B3IRGenerator):
+        (JSC::Wasm::getMemoryBaseAndSize):
+        (JSC::Wasm::restoreWebAssemblyGlobalState):
+        (JSC::Wasm::createJSToWasmWrapper):
+        (JSC::Wasm::parseAndCompile):
+        * wasm/WasmBinding.cpp:
+        (JSC::Wasm::materializeImportJSCell):
+        (JSC::Wasm::wasmToJs):
+        (JSC::Wasm::wasmToWasm):
+        * wasm/WasmContext.cpp: Added.
+        (JSC::loadWasmContext):
+        (JSC::storeWasmContext):
+        * wasm/WasmContext.h: Added. Replaces "top" JSWebAssemblyInstance.
+        * wasm/js/WebAssemblyFunction.cpp:
+        (JSC::callWebAssemblyFunction):
+        * wasm/js/WebAssemblyInstanceConstructor.h:
+
+2017-03-24  JF Bastien  <jfbastien@apple.com>
+
         WebAssembly: spec-tests/memory.wast.js fails in debug
         https://bugs.webkit.org/show_bug.cgi?id=169794
 

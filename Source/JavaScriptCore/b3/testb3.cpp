@@ -15211,7 +15211,7 @@ void testWasmAddress()
         CHECK_EQ(numToStore, value);
 }
 
-void testFastTLS()
+void testFastTLSLoad()
 {
 #if ENABLE(FAST_TLS_JIT)
     _pthread_setspecific_direct(WTF_TESTING_KEY, bitwise_cast<void*>(static_cast<uintptr_t>(0xbeef)));
@@ -15226,10 +15226,34 @@ void testFastTLS()
             AllowMacroScratchRegisterUsage allowScratch(jit);
             jit.loadFromTLSPtr(fastTLSOffsetForKey(WTF_TESTING_KEY), params[0].gpr());
         });
-    
+
     root->appendNew<Value>(proc, Return, Origin(), patchpoint);
     
     CHECK_EQ(compileAndRun<uintptr_t>(proc), static_cast<uintptr_t>(0xbeef));
+#endif
+}
+
+void testFastTLSStore()
+{
+#if ENABLE(FAST_TLS_JIT)
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+
+    PatchpointValue* patchpoint = root->appendNew<PatchpointValue>(proc, Void, Origin());
+    patchpoint->clobber(RegisterSet::macroScratchRegisters());
+    patchpoint->numGPScratchRegisters = 1;
+    patchpoint->setGenerator(
+        [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+            AllowMacroScratchRegisterUsage allowScratch(jit);
+            GPRReg scratch = params.gpScratch(0);
+            jit.move(CCallHelpers::TrustedImm32(0xdead), scratch);
+            jit.storeToTLSPtr(scratch, fastTLSOffsetForKey(WTF_TESTING_KEY));
+        });
+
+    root->appendNewControlValue(proc, Return, Origin());
+
+    compileAndRun<void>(proc);
+    CHECK_EQ(bitwise_cast<uintptr_t>(_pthread_getspecific_direct(WTF_TESTING_KEY)), static_cast<uintptr_t>(0xdead));
 #endif
 }
 
@@ -16760,7 +16784,8 @@ void run(const char* filter)
     RUN(testWasmBoundsCheck(std::numeric_limits<unsigned>::max() - 5));
     RUN(testWasmAddress());
     
-    RUN(testFastTLS());
+    RUN(testFastTLSLoad());
+    RUN(testFastTLSStore());
 
     if (isX86()) {
         RUN(testBranchBitAndImmFusion(Identity, Int64, 1, Air::BranchTest32, Air::Arg::Tmp));

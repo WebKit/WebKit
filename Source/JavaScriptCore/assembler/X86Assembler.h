@@ -2360,6 +2360,11 @@ public:
         m_formatter.oneByteOpAddr(OP_MOV_GvEv, dst, addr);
     }
 
+    void movl_rm(RegisterID src, uint32_t addr)
+    {
+        m_formatter.oneByteOpAddr(OP_MOV_EvGv, src, addr);
+    }
+
 #if CPU(X86_64)
     void movq_rr(RegisterID src, RegisterID dst)
     {
@@ -2379,6 +2384,11 @@ public:
     void movq_rm(RegisterID src, int offset, RegisterID base, RegisterID index, int scale)
     {
         m_formatter.oneByteOp64(OP_MOV_EvGv, src, base, index, scale, offset);
+    }
+
+    void movq_rm(RegisterID src, int offset)
+    {
+        m_formatter.oneByteOp64Addr(OP_MOV_EvGv, src, offset);
     }
 
     void movq_mEAX(const void* addr)

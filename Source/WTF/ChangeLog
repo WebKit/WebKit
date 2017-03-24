@@ -1,3 +1,14 @@
+2017-03-24  JF Bastien  <jfbastien@apple.com>
+
+        WebAssembly: store state in TLS instead of on VM
+        https://bugs.webkit.org/show_bug.cgi?id=169611
+
+        Reviewed by Filip Pizlo.
+
+        * wtf/FastTLS.h: reserve one key for WebAssembly, delete a bunch
+        of dead code which clang couldn't compile (it's valid GCC assembly
+        which LLVM dislikes).
+
 2017-03-24  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r214351.

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -59,6 +59,7 @@
 #include "StructureStubClearingWatchpoint.h"
 #include "StructureStubInfo.h"
 #include "ThunkGenerators.h"
+#include "WasmContext.h"
 #include <wtf/CommaPrinter.h>
 #include <wtf/ListDump.h>
 #include <wtf/StringPrintStream.h>
@@ -592,7 +593,7 @@ static JSCell* webAssemblyOwner(VM& vm)
 {
 #if ENABLE(WEBASSEMBLY)
     // Each WebAssembly.Instance shares the stubs from their WebAssembly.Module, which are therefore the appropriate owner.
-    return vm.topJSWebAssemblyInstance->module();
+    return loadWasmContext(vm)->module();
 #else
     UNUSED_PARAM(vm);
     RELEASE_ASSERT_NOT_REACHED();

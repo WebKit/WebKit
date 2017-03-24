@@ -657,6 +657,11 @@ public:
     {
         loadFromTLS32(offset, dst);
     }
+
+    void storeToTLSPtr(RegisterID src, uint32_t offset)
+    {
+        storeToTLS32(src, offset);
+    }
 #endif
 
     DataLabel32 loadPtrWithAddressOffsetPatch(Address address, RegisterID dest)
@@ -970,6 +975,10 @@ public:
     void loadFromTLSPtr(uint32_t offset, RegisterID dst)
     {
         loadFromTLS64(offset, dst);
+    }
+    void storeToTLSPtr(RegisterID src, uint32_t offset)
+    {
+        storeToTLS64(src, offset);
     }
 #endif
 

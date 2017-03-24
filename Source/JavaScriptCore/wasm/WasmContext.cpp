@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,40 +23,36 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "WasmContext.h"
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "InternalFunction.h"
-#include "JSObject.h"
+#include "VM.h"
+#include <mutex>
+#include <wtf/FastTLS.h>
 
 namespace JSC {
 
-class JSWebAssemblyInstance;
-class JSWebAssemblyModule;
-class WebAssemblyInstancePrototype;
+JSWebAssemblyInstance* loadWasmContext(VM& vm)
+{
+#if ENABLE(FAST_TLS_JIT)
+    if (Options::useWebAssemblyFastTLS())
+        return bitwise_cast<JSWebAssemblyInstance*>(_pthread_getspecific_direct(WTF_WASM_CONTEXT_KEY));
+#endif
+    // FIXME: Save this state elsewhere to allow PIC. https://bugs.webkit.org/show_bug.cgi?id=169773
+    return vm.wasmContext;
+}
 
-class WebAssemblyInstanceConstructor : public InternalFunction {
-public:
-    typedef InternalFunction Base;
-    static const unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable;
-
-    static WebAssemblyInstanceConstructor* create(VM&, Structure*, WebAssemblyInstancePrototype*);
-    static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
-
-    DECLARE_INFO;
-
-    static JSWebAssemblyInstance* createInstance(ExecState*, JSWebAssemblyModule*, JSObject* importObject, Structure*);
-
-protected:
-    void finishCreation(VM&, WebAssemblyInstancePrototype*);
-
-private:
-    WebAssemblyInstanceConstructor(VM&, Structure*);
-    static ConstructType getConstructData(JSCell*, ConstructData&);
-    static CallType getCallData(JSCell*, CallData&);
-    static void visitChildren(JSCell*, SlotVisitor&);
-};
+void storeWasmContext(VM& vm, JSWebAssemblyInstance* instance)
+{
+#if ENABLE(FAST_TLS_JIT)
+    if (Options::useWebAssemblyFastTLS())
+        _pthread_setspecific_direct(WTF_WASM_CONTEXT_KEY, bitwise_cast<void*>(instance));
+#endif
+    // FIXME: Save this state elsewhere to allow PIC. https://bugs.webkit.org/show_bug.cgi?id=169773
+    vm.wasmContext = instance;
+}
 
 } // namespace JSC
 

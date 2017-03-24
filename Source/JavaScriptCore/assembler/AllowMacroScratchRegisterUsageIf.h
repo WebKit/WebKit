@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,44 +20,40 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
 #pragma once
 
-#if ENABLE(WEBASSEMBLY)
+#if ENABLE(ASSEMBLER)
 
-#include "InternalFunction.h"
-#include "JSObject.h"
+#include "MacroAssembler.h"
 
 namespace JSC {
 
-class JSWebAssemblyInstance;
-class JSWebAssemblyModule;
-class WebAssemblyInstancePrototype;
-
-class WebAssemblyInstanceConstructor : public InternalFunction {
+class AllowMacroScratchRegisterUsageIf {
 public:
-    typedef InternalFunction Base;
-    static const unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable;
+    AllowMacroScratchRegisterUsageIf(MacroAssembler& masm, bool allowIfTrue)
+        : m_masm(masm)
+        , m_allowIfTrue(allowIfTrue)
+        , m_oldValueOfAllowScratchRegister(masm.m_allowScratchRegister)
+    {
+        if (m_allowIfTrue)
+            masm.m_allowScratchRegister = true;
+    }
 
-    static WebAssemblyInstanceConstructor* create(VM&, Structure*, WebAssemblyInstancePrototype*);
-    static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
-
-    DECLARE_INFO;
-
-    static JSWebAssemblyInstance* createInstance(ExecState*, JSWebAssemblyModule*, JSObject* importObject, Structure*);
-
-protected:
-    void finishCreation(VM&, WebAssemblyInstancePrototype*);
+    ~AllowMacroScratchRegisterUsageIf()
+    {
+        if (m_allowIfTrue)
+            m_masm.m_allowScratchRegister = m_oldValueOfAllowScratchRegister;
+    }
 
 private:
-    WebAssemblyInstanceConstructor(VM&, Structure*);
-    static ConstructType getConstructData(JSCell*, ConstructData&);
-    static CallType getCallData(JSCell*, CallData&);
-    static void visitChildren(JSCell*, SlotVisitor&);
+    MacroAssembler& m_masm;
+    bool m_allowIfTrue;
+    bool m_oldValueOfAllowScratchRegister;
 };
 
 } // namespace JSC
 
-#endif // ENABLE(WEBASSEMBLY)
+#endif // ENABLE(ASSEMBLER)

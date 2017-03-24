@@ -1108,6 +1108,7 @@ protected:
     }
 
     friend class AllowMacroScratchRegisterUsage;
+    friend class AllowMacroScratchRegisterUsageIf;
     friend class DisallowMacroScratchRegisterUsage;
     unsigned m_tempRegistersValidBits;
     bool m_allowScratchRegister { true };

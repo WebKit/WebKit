@@ -1705,7 +1705,13 @@ public:
     void loadFromTLS64(uint32_t offset, RegisterID dst)
     {
         m_assembler.gs();
-        m_assembler.movl_mr(offset, dst);
+        m_assembler.movq_mr(offset, dst);
+    }
+
+    void storeToTLS64(RegisterID src, uint32_t offset)
+    {
+        m_assembler.gs();
+        m_assembler.movq_rm(src, offset);
     }
 #endif
 

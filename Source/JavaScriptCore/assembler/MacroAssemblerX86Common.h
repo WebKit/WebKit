@@ -3864,6 +3864,23 @@ public:
         m_assembler.gs();
         m_assembler.movl_mr(offset, dst);
     }
+
+
+    static bool loadFromTLSPtrNeedsMacroScratchRegister()
+    {
+        return false;
+    }
+
+    void storeToTLS32(RegisterID src, uint32_t offset)
+    {
+        m_assembler.gs();
+        m_assembler.movl_rm(src, offset);
+    }
+
+    static bool storeToTLSPtrNeedsMacroScratchRegister()
+    {
+        return false;
+    }
 #endif
 
     static void replaceWithBreakpoint(CodeLocationLabel instructionStart)

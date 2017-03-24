@@ -3600,7 +3600,7 @@ public:
     
 #if ENABLE(FAST_TLS_JIT)
     // This will use scratch registers if the offset is not legal.
-    
+
     void loadFromTLS32(uint32_t offset, RegisterID dst)
     {
         m_assembler.mrs_TPIDRRO_EL0(dst);
@@ -3613,6 +3613,34 @@ public:
         m_assembler.mrs_TPIDRRO_EL0(dst);
         and64(TrustedImm32(~7), dst);
         load64(Address(dst, offset), dst);
+    }
+
+    static bool loadFromTLSPtrNeedsMacroScratchRegister()
+    {
+        return true;
+    }
+
+    void storeToTLS32(RegisterID src, uint32_t offset)
+    {
+        RegisterID tmp = getCachedDataTempRegisterIDAndInvalidate();
+        ASSERT(src != tmp);
+        m_assembler.mrs_TPIDRRO_EL0(tmp);
+        and64(TrustedImm32(~7), tmp);
+        store32(src, Address(tmp, offset));
+    }
+    
+    void storeToTLS64(RegisterID src, uint32_t offset)
+    {
+        RegisterID tmp = getCachedDataTempRegisterIDAndInvalidate();
+        ASSERT(src != tmp);
+        m_assembler.mrs_TPIDRRO_EL0(tmp);
+        and64(TrustedImm32(~7), tmp);
+        store64(src, Address(tmp, offset));
+    }
+
+    static bool storeToTLSPtrNeedsMacroScratchRegister()
+    {
+        return true;
     }
 #endif // ENABLE(FAST_TLS_JIT)
     

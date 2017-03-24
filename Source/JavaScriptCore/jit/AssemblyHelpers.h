@@ -41,6 +41,7 @@
 #include "SuperSampler.h"
 #include "TypeofType.h"
 #include "VM.h"
+#include <wtf/FastTLS.h>
 
 namespace JSC {
 
@@ -1634,7 +1635,47 @@ public:
 #if USE(JSVALUE64)
     void wangsInt64Hash(GPRReg inputAndResult, GPRReg scratch);
 #endif
-    
+
+    void loadWasmContext(GPRReg dst)
+    {
+#if ENABLE(FAST_TLS_JIT)
+        if (Options::useWebAssemblyFastTLS()) {
+            loadFromTLSPtr(fastTLSOffsetForKey(WTF_WASM_CONTEXT_KEY), dst);
+            return;
+        }
+#endif
+        // FIXME: Save this state elsewhere to allow PIC. https://bugs.webkit.org/show_bug.cgi?id=169773
+        loadPtr(&m_vm->wasmContext, dst);
+    }
+
+    void storeWasmContext(GPRReg src)
+    {
+#if ENABLE(FAST_TLS_JIT)
+        if (Options::useWebAssemblyFastTLS())
+            storeToTLSPtr(src, fastTLSOffsetForKey(WTF_WASM_CONTEXT_KEY));
+#endif
+        // FIXME: Save this state elsewhere to allow PIC. https://bugs.webkit.org/show_bug.cgi?id=169773
+        storePtr(src, &m_vm->wasmContext);
+    }
+
+    static bool loadWasmContextNeedsMacroScratchRegister()
+    {
+#if ENABLE(FAST_TLS_JIT)
+        if (Options::useWebAssemblyFastTLS())
+            return loadFromTLSPtrNeedsMacroScratchRegister();
+#endif
+        return true;
+    }
+
+    static bool storeWasmContextNeedsMacroScratchRegister()
+    {
+#if ENABLE(FAST_TLS_JIT)
+        if (Options::useWebAssemblyFastTLS())
+            return storeToTLSPtrNeedsMacroScratchRegister();
+#endif
+        return true;
+    }
+
 protected:
     VM* m_vm;
     CodeBlock* m_codeBlock;

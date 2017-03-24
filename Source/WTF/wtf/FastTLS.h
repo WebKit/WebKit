@@ -29,6 +29,7 @@
 
 #include <pthread.h>
 #include <System/pthread_machdep.h>
+#include <wtf/Platform.h>
 
 namespace WTF {
 
@@ -44,52 +45,20 @@ namespace WTF {
 // accidentally use the same key for more than one thing.
 
 #define WTF_THREAD_DATA_KEY WTF_FAST_TLS_KEY0
+#define WTF_WASM_CONTEXT_KEY WTF_FAST_TLS_KEY1
 #define WTF_TESTING_KEY WTF_FAST_TLS_KEY3
 
 #if ENABLE(FAST_TLS_JIT)
-// Below is the code that the JIT will emit.
-
-#if CPU(X86_64)
-inline uintptr_t loadFastTLS(unsigned offset)
-{
-    uintptr_t result;
-    asm volatile(
-        "movq %%gs:%1, %0"
-        : "=r"(result)
-        : "r"(offset)
-        : "memory");
-    return result;
-}
-#elif CPU(ARM64)
-inline uintptr_t loadFastTLS(unsigned passedOffset)
-{
-    uintptr_t result;
-    uintptr_t offset = passedOffset;
-    asm volatile(
-        "mrs %0, TPIDRRO_EL0\n\t"
-        "and %0, %0, #0xfffffffffffffff8\n\t"
-        "ldr %0, [%0, %1]"
-        : "=r"(result)
-        : "r"(offset)
-        : "memory");
-    return result;
-}
-#else
-#error "Bad architecture"
-#endif
-#endif // ENABLE(FAST_TLS_JIT)
-
 inline unsigned fastTLSOffsetForKey(unsigned long slot)
 {
     return slot * sizeof(void*);
 }
+#endif
 
 } // namespace WTF
 
-using WTF::fastTLSOffsetForKey;
-
 #if ENABLE(FAST_TLS_JIT)
-using WTF::loadFastTLS;
+using WTF::fastTLSOffsetForKey;
 #endif
 
 #endif // HAVE(FAST_TLS)

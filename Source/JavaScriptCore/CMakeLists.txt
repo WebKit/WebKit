@@ -932,6 +932,7 @@ set(JavaScriptCore_SOURCES
     wasm/WasmB3IRGenerator.cpp
     wasm/WasmBinding.cpp
     wasm/WasmCallingConvention.cpp
+    wasm/WasmContext.cpp
     wasm/WasmFaultSignalHandler.cpp
     wasm/WasmFormat.cpp
     wasm/WasmMemory.cpp

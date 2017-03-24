@@ -315,7 +315,8 @@ public:
     // FIXME: This should be a void*, because it might not point to a CallFrame.
     // https://bugs.webkit.org/show_bug.cgi?id=160441
     ExecState* topCallFrame { nullptr };
-    JSWebAssemblyInstance* topJSWebAssemblyInstance;
+    // FIXME: Save this state elsewhere to allow PIC. https://bugs.webkit.org/show_bug.cgi?id=169773
+    JSWebAssemblyInstance* wasmContext { nullptr };
     Strong<Structure> structureStructure;
     Strong<Structure> structureRareDataStructure;
     Strong<Structure> terminatedExecutionErrorStructure;

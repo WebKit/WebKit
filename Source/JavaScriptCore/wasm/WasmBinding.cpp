@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,16 +36,17 @@
 #include "LinkBuffer.h"
 #include "NativeErrorConstructor.h"
 #include "WasmCallingConvention.h"
+#include "WasmContext.h"
 #include "WasmExceptionType.h"
 
 namespace JSC { namespace Wasm {
 
 typedef CCallHelpers JIT;
 
-static void materializeImportJSCell(VM* vm, JIT& jit, unsigned importIndex, GPRReg result)
+static void materializeImportJSCell(JIT& jit, unsigned importIndex, GPRReg result)
 {
-    // We're calling out of the current WebAssembly.Instance, which is identified on VM. That Instance has a list of all its import functions.
-    jit.loadPtr(&vm->topJSWebAssemblyInstance, result);
+    // We're calling out of the current WebAssembly.Instance. That Instance has a list of all its import functions.
+    jit.loadWasmContext(result);
     jit.loadPtr(JIT::Address(result, JSWebAssemblyInstance::offsetOfImportFunction(importIndex)), result);
 }
 
@@ -101,7 +102,7 @@ static MacroAssemblerCodeRef wasmToJs(VM* vm, Bag<CallLinkInfo>& callLinkInfos, 
 
                 {
                     auto throwScope = DECLARE_THROW_SCOPE(*vm);
-                    JSGlobalObject* globalObject = vm->topJSWebAssemblyInstance->globalObject();
+                    JSGlobalObject* globalObject = loadWasmContext(*vm)->globalObject();
                     auto* error = ErrorInstance::create(exec, *vm, globalObject->typeErrorConstructor()->errorStructure(), ASCIILiteral("i64 not allowed as return type or argument to an imported function"));
                     throwException(exec, throwScope, error);
                 }
@@ -254,7 +255,7 @@ static MacroAssemblerCodeRef wasmToJs(VM* vm, Bag<CallLinkInfo>& callLinkInfos, 
     GPRReg importJSCellGPRReg = GPRInfo::regT0; // Callee needs to be in regT0 for slow path below.
     ASSERT(!wasmCC.m_calleeSaveRegisters.get(importJSCellGPRReg));
 
-    materializeImportJSCell(vm, jit, importIndex, importJSCellGPRReg);
+    materializeImportJSCell(jit, importIndex, importJSCellGPRReg);
 
     jit.store64(importJSCellGPRReg, calleeFrame.withOffset(CallFrameSlot::callee * static_cast<int>(sizeof(Register))));
     jit.store32(JIT::TrustedImm32(numberOfParameters), calleeFrame.withOffset(CallFrameSlot::argumentCount * static_cast<int>(sizeof(Register)) + PayloadOffset));
@@ -426,13 +427,13 @@ static MacroAssemblerCodeRef wasmToWasm(VM* vm, unsigned importIndex)
     GPRReg scratch = GPRInfo::nonPreservedNonArgumentGPR;
 
     // B3's call codegen ensures that the JSCell is a WebAssemblyFunction.
-    materializeImportJSCell(vm, jit, importIndex, scratch);
+    materializeImportJSCell(jit, importIndex, scratch);
 
-    // Get the callee's WebAssembly.Instance and set it as vm.topJSWebAssemblyInstance. The caller will take care of restoring its own Instance.
+    // Get the callee's WebAssembly.Instance and set it as WasmContext. The caller will take care of restoring its own Instance.
     GPRReg baseMemory = pinnedRegs.baseMemoryPointer;
     ASSERT(baseMemory != scratch);
     jit.loadPtr(JIT::Address(scratch, WebAssemblyFunction::offsetOfInstance()), baseMemory); // Instance*.
-    jit.storePtr(baseMemory, &vm->topJSWebAssemblyInstance);
+    jit.storeWasmContext(baseMemory);
 
     // FIXME the following code assumes that all WebAssembly.Instance have the same pinned registers. https://bugs.webkit.org/show_bug.cgi?id=162952
     // Set up the callee's baseMemory register as well as the memory size registers.
