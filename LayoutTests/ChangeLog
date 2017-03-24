@@ -1,3 +1,11 @@
+2017-03-24  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed GTK+ gardening. Rebaseline fast/dom/HTMLAnchorElement/anchor-file-blob-convert-to-download.html after r214338.
+
+        We are now getting a MIME type for otf files.
+
+        * platform/gtk/fast/dom/HTMLAnchorElement/anchor-file-blob-convert-to-download-expected.txt: Added.
+
 2017-03-24  Per Arne Vollan  <pvollan@apple.com>
 
         Text stroke is sometimes clipped on video captions.
