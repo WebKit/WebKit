@@ -1,3 +1,9 @@
+2017-03-24  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed GTK+ gardening. Mark webrtc/video-stats.html as failing.
+
+        * platform/gtk/TestExpectations:
+
 2017-03-24  Youenn Fablet  <youenn@apple.com>
 
         Add support for DataChannel and MediaStreamTrack stats
