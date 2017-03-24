@@ -1,3 +1,14 @@
+2017-03-24  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add MIMETypeRegistry implementation using xdgmime and remove the GTK+ one
+        https://bugs.webkit.org/show_bug.cgi?id=170001
+
+        Reviewed by Michael Catanzaro.
+
+        Ignore style of xdgmime sources.
+
+        * Scripts/webkitpy/tool/steps/checkstyle.py:
+
 2017-03-23  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Dragging on a large image should not revert to a file icon if data interaction is enabled

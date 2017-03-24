@@ -1,3 +1,19 @@
+2017-03-24  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add MIMETypeRegistry implementation using xdgmime and remove the GTK+ one
+        https://bugs.webkit.org/show_bug.cgi?id=170001
+
+        Reviewed by Michael Catanzaro.
+
+        The XDG implementation could be used by any port where shared-mime-info is expected to be available. It also
+        improves the current GTK+ implementation that is based on a very small map of mime types and extensions.
+
+        * CMakeLists.txt:
+        * PlatformGTK.cmake:
+        * platform/xdg/MIMETypeRegistryXdg.cpp: Renamed from Source/WebCore/platform/gtk/MIMETypeRegistryGtk.cpp.
+        (WebCore::MIMETypeRegistry::getMIMETypeForExtension):
+        (WebCore::MIMETypeRegistry::getPreferredExtensionForMIMEType):
+
 2017-03-23  Jon Lee  <jonlee@apple.com>
 
         Update createDataChannel on RTCPeerConnection

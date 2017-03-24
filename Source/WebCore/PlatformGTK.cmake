@@ -141,7 +141,6 @@ list(APPEND WebCore_SOURCES
     platform/gtk/DragDataGtk.cpp
     platform/gtk/ErrorsGtk.cpp
     platform/gtk/LocalizedStringsGtk.cpp
-    platform/gtk/MIMETypeRegistryGtk.cpp
     platform/gtk/PasteboardGtk.cpp
     platform/gtk/ScrollAnimatorGtk.cpp
     platform/gtk/SelectionData.cpp
@@ -179,6 +178,8 @@ list(APPEND WebCore_SOURCES
     platform/text/hyphen/HyphenationLibHyphen.cpp
 
     platform/unix/LoggingUnix.cpp
+
+    platform/xdg/MIMETypeRegistryXdg.cpp
 )
 
 list(APPEND WebCorePlatformGTK_SOURCES

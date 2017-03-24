@@ -3520,10 +3520,6 @@ fast/scrolling/rtl-scrollbars-alternate-body-dir-attr-does-not-update-scrollbar-
 fast/scrolling/rtl-scrollbars-alternate-body-dir-attr-does-not-update-scrollbar-placement-2.html [ Pass ]
 webkit.org/b/156437 fast/scrolling/rtl-scrollbars-listbox-scroll.html [ ImageOnlyFailure Pass ]
 
-# https://bugs.webkit.org/show_bug.cgi?id=156612
-http/tests/security/contentSecurityPolicy/embed-redirect-blocked3.html [ Pass ]
-http/tests/security/contentSecurityPolicy/object-redirect-blocked3.html [ Pass ]
-
 # We don't support emoji genders, but half the reftests pass anyway.
 fast/text/emoji-gender-2-3.html [ Pass ]
 fast/text/emoji-gender-2-4.html [ Pass ]

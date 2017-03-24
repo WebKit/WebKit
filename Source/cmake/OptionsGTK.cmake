@@ -55,6 +55,7 @@ find_package(OpenGLES2)
 WEBKIT_OPTION_BEGIN()
 
 set(USE_WOFF2 ON)
+set(USE_XDGMIME ON)
 
 # For old versions of HarfBuzz that do not expose an API for the OpenType MATH
 # table, we enable our own code to parse that table.

@@ -1,3 +1,14 @@
+2017-03-24  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add MIMETypeRegistry implementation using xdgmime and remove the GTK+ one
+        https://bugs.webkit.org/show_bug.cgi?id=170001
+
+        Reviewed by Michael Catanzaro.
+
+        Remove platform specific expectations of two test because now we do the same as other wk2 ports.
+
+        * platform/gtk/TestExpectations:
+
 2017-03-23  Antti Koivisto  <antti@apple.com>
 
         Revert r213712, caused iPad PLT regression

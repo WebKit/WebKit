@@ -1,3 +1,13 @@
+2017-03-24  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add MIMETypeRegistry implementation using xdgmime and remove the GTK+ one
+        https://bugs.webkit.org/show_bug.cgi?id=170001
+
+        Reviewed by Michael Catanzaro.
+
+        * Source/CMakeLists.txt: Compile xdgmime if USE_XDGMIME is ON.
+        * Source/cmake/OptionsGTK.cmake: Set USE_XDGMIME to ON.
+
 2017-03-10  Per Arne Vollan  <pvollan@apple.com>
 
         Unreviewed Win64 build fix. FTL is not ready to be turned on yet.

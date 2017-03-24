@@ -1,5 +1,34 @@
 2017-03-24  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Add MIMETypeRegistry implementation using xdgmime and remove the GTK+ one
+        https://bugs.webkit.org/show_bug.cgi?id=170001
+
+        Reviewed by Michael Catanzaro.
+
+        Add xdgmime to ThirdParty.
+
+        * xdgmime/CMakeLists.txt: Added.
+        * xdgmime/README: Added.
+        * xdgmime/README.webkit: Added.
+        * xdgmime/src/xdgmime.c: Added.
+        * xdgmime/src/xdgmime.h: Added.
+        * xdgmime/src/xdgmimealias.c: Added.
+        * xdgmime/src/xdgmimealias.h: Added.
+        * xdgmime/src/xdgmimecache.c: Added.
+        * xdgmime/src/xdgmimecache.h: Added.
+        * xdgmime/src/xdgmimeglob.c: Added.
+        * xdgmime/src/xdgmimeglob.h: Added.
+        * xdgmime/src/xdgmimeicon.c: Added.
+        * xdgmime/src/xdgmimeicon.h: Added.
+        * xdgmime/src/xdgmimeint.c: Added.
+        * xdgmime/src/xdgmimeint.h: Added.
+        * xdgmime/src/xdgmimemagic.c: Added.
+        * xdgmime/src/xdgmimemagic.h: Added.
+        * xdgmime/src/xdgmimeparent.c: Added.
+        * xdgmime/src/xdgmimeparent.h: Added.
+
+2017-03-24  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed. Add stubs for xdgmime sources to ThirdParty.
 
         This is in preparation for bug #170001, to try to bypass the SVN hook that doesn't allow to commit source files

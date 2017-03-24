@@ -1,7 +1,5 @@
 /*
- * Copyright (C) 2006 Zack Rusin <zack@kde.org>
- * Copyright (C) 2006 Apple Inc.  All rights reserved.
- * Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
+ * Copyright (C) 2017 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,44 +26,21 @@
 #include "config.h"
 #include "MIMETypeRegistry.h"
 
+#define XDG_PREFIX _wk_xdg
+#include "xdgmime.h"
+
 namespace WebCore {
-
-struct ExtensionMap {
-    const char* extension;
-    const char* mimeType;
-};
-
-static const ExtensionMap extensionMap [] = {
-    { "bmp", "image/bmp" },
-    { "css", "text/css" },
-    { "gif", "image/gif" },
-    { "html", "text/html" },
-    { "htm", "text/html" },
-    { "ico", "image/x-icon" },
-    { "jpeg", "image/jpeg" },
-    { "jpg", "image/jpeg" },
-    { "js", "application/x-javascript" },
-    { "pdf", "application/pdf" },
-    { "png", "image/png" },
-    { "rss", "application/rss+xml" },
-    { "svg", "image/svg+xml" },
-    { "swf", "application/x-shockwave-flash" },
-    { "text", "text/plain" },
-    { "txt", "text/plain" },
-    { "xbm", "image/x-xbitmap" },
-    { "xml", "text/xml" },
-    { "xsl", "text/xsl" },
-    { "xhtml", "application/xhtml+xml" },
-    { "wml", "text/vnd.wap.wml" },
-    { "wmlc", "application/vnd.wap.wmlc" },
-};
 
 String MIMETypeRegistry::getMIMETypeForExtension(const String& extension)
 {
-    for (auto& entry : extensionMap) {
-        if (equalIgnoringASCIICase(extension, entry.extension))
-            return entry.mimeType;
-    }
+    if (extension.isEmpty())
+        return String();
+
+    // Build any filename with the given extension.
+    String filename = "a." + extension;
+    if (const char* mimeType = xdg_mime_get_mime_type_from_file_name(filename.utf8().data()))
+        return String::fromUTF8(mimeType);
+
     return String();
 }
 
@@ -76,11 +51,17 @@ bool MIMETypeRegistry::isApplicationPluginMIMEType(const String&)
 
 String MIMETypeRegistry::getPreferredExtensionForMIMEType(const String& mimeType)
 {
-    for (auto& entry : extensionMap) {
-        if (equalIgnoringASCIICase(mimeType, entry.mimeType))
-            return entry.extension;
+    if (mimeType.isEmpty())
+        return String();
+
+    String returnValue;
+    char* extension;
+    if (xdg_mime_get_simple_globs(mimeType.utf8().data(), &extension, 1)) {
+        if (extension[0] == '.' && extension[1])
+            returnValue = String::fromUTF8(extension + 1);
+        free(extension);
     }
-    return emptyString();
+    return returnValue;
 }
 
 }

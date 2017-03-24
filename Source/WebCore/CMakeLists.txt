@@ -3493,6 +3493,11 @@ if (USE_WOFF2)
   list(APPEND WebCore_LIBRARIES woff2)
 endif ()
 
+if (USE_XDGMIME)
+    list(APPEND WebCore_INCLUDE_DIRECTORIES "${THIRDPARTY_DIR}/xdgmime/src")
+    list(APPEND WebCore_LIBRARIES xdgmime)
+endif ()
+
 set(WebCoreTestSupport_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/mock"
     "${WEBCORE_DIR}/testing"
