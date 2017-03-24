@@ -1,5 +1,20 @@
 2017-03-24  Devin Rousso  <webkit@devinrousso.com>
 
+        Web Inspector: allow users to click links in inline/user-agent styles
+        https://bugs.webkit.org/show_bug.cgi?id=170054
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/CSSStyleDeclarationTextEditor.js:
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype.set style):
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._updateJumpToSymbolTrackingMode):
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype.tokenTrackingControllerHighlightedRangeWasClicked):
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype.tokenTrackingControllerNewHighlightCandidate):
+        Always enable the token tracking controller, but only act on hovered/clicked token if it is
+        a link or the owner style declaration has a source code location (for jumping to the Resource).
+
+2017-03-24  Devin Rousso  <webkit@devinrousso.com>
+
         Web Inspector: Indicate whether a WebSocket connection is open or close
         https://bugs.webkit.org/show_bug.cgi?id=168948
 

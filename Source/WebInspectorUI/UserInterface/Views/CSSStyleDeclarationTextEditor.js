@@ -109,16 +109,14 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
 
         if (this._style) {
             this._style.removeEventListener(WebInspector.CSSStyleDeclaration.Event.PropertiesChanged, this._propertiesChanged, this);
-            if (this._style.ownerRule && this._style.ownerRule.sourceCodeLocation)
-                WebInspector.notifications.removeEventListener(WebInspector.Notification.GlobalModifierKeysDidChange, this._updateJumpToSymbolTrackingMode, this);
+            WebInspector.notifications.removeEventListener(WebInspector.Notification.GlobalModifierKeysDidChange, this._updateJumpToSymbolTrackingMode, this);
         }
 
         this._style = style || null;
 
         if (this._style) {
             this._style.addEventListener(WebInspector.CSSStyleDeclaration.Event.PropertiesChanged, this._propertiesChanged, this);
-            if (this._style.ownerRule && this._style.ownerRule.sourceCodeLocation)
-                WebInspector.notifications.addEventListener(WebInspector.Notification.GlobalModifierKeysDidChange, this._updateJumpToSymbolTrackingMode, this);
+            WebInspector.notifications.addEventListener(WebInspector.Notification.GlobalModifierKeysDidChange, this._updateJumpToSymbolTrackingMode, this);
         }
 
         this._updateJumpToSymbolTrackingMode();
@@ -1694,7 +1692,7 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
     {
         var oldJumpToSymbolTrackingModeEnabled = this._jumpToSymbolTrackingModeEnabled;
 
-        if (!this._style || !this._style.ownerRule || !this._style.ownerRule.sourceCodeLocation)
+        if (!this._style)
             this._jumpToSymbolTrackingModeEnabled = false;
         else
             this._jumpToSymbolTrackingModeEnabled = WebInspector.modifierKeys.altKey && !WebInspector.modifierKeys.metaKey && !WebInspector.modifierKeys.shiftKey;
@@ -1702,7 +1700,7 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
         if (oldJumpToSymbolTrackingModeEnabled !== this._jumpToSymbolTrackingModeEnabled) {
             if (this._jumpToSymbolTrackingModeEnabled) {
                 this._tokenTrackingController.highlightLastHoveredRange();
-                this._tokenTrackingController.enabled = !this._codeMirror.getOption("readOnly");
+                this._tokenTrackingController.enabled = true;
             } else {
                 this._tokenTrackingController.removeHighlightedRange();
                 this._tokenTrackingController.enabled = false;
@@ -1712,25 +1710,32 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
 
     tokenTrackingControllerHighlightedRangeWasClicked(tokenTrackingController)
     {
-        let sourceCodeLocation = this._style.ownerRule.sourceCodeLocation;
-        console.assert(sourceCodeLocation);
-        if (!sourceCodeLocation)
-            return;
-
         let candidate = tokenTrackingController.candidate;
         console.assert(candidate);
         if (!candidate)
             return;
 
+        let sourceCodeLocation = null;
+        if (this._style.ownerRule)
+            sourceCodeLocation = this._style.ownerRule.sourceCodeLocation;
+
         let token = candidate.hoveredToken;
 
-        // Special case command clicking url(...) links.
+        // Special case option-clicking url(...) links.
         if (token && /\blink\b/.test(token.type)) {
             let url = token.string;
-            let baseURL = sourceCodeLocation.sourceCode.url;
+            let baseURL = sourceCodeLocation ? sourceCodeLocation.sourceCode.url : this._style.node.ownerDocument.documentURL;
             WebInspector.openURL(absoluteURL(url, baseURL));
             return;
         }
+
+        // Only allow other text to be clicked if there is a source code location.
+        if (!this._style.ownerRule || !this._style.ownerRule.sourceCodeLocation)
+            return;
+
+        console.assert(sourceCodeLocation);
+        if (!sourceCodeLocation)
+            return;
 
         function showRangeInSourceCode(sourceCode, range)
         {
@@ -1760,6 +1765,13 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
 
     tokenTrackingControllerNewHighlightCandidate(tokenTrackingController, candidate)
     {
+        // Do not highlight if the style has no source code location.
+        if (!this._style.ownerRule || !this._style.ownerRule.sourceCodeLocation) {
+            // Special case option-clicking url(...) links.
+            if (!candidate.hoveredToken || !/\blink\b/.test(candidate.hoveredToken.type))
+                return;
+        }
+
         this._tokenTrackingController.highlightRange(candidate.hoveredTokenRange);
     }
 };
