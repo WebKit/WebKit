@@ -1,3 +1,14 @@
+2017-03-23  David Kilzer  <ddkilzer@apple.com>
+
+        Fix Apache::SizeLimit unshared size limit in mod_perl.pl for bugs.webkit.org
+        <https://webkit.org/b/169926>
+
+        Reviewed by Brent Fulgham.
+
+        * mod_perl.pl: Update syntax for setting unshared size
+        limit, and bump it up another 100 Mb so children don't
+        respawn as quickly.
+
 2017-03-21  David Kilzer  <ddkilzer@apple.com>
 
         Commit local changes for Bugzilla 5.0.3
