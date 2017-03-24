@@ -1,3 +1,15 @@
+2017-03-23  Mark Lam  <mark.lam@apple.com>
+
+        Array.prototype.splice behaves incorrectly when the VM is "having a bad time".
+        https://bugs.webkit.org/show_bug.cgi?id=170025
+        <rdar://problem/31228679>
+
+        Reviewed by Saam Barati.
+
+        * runtime/ArrayPrototype.cpp:
+        (JSC::copySplicedArrayElements):
+        (JSC::arrayProtoFuncSplice):
+
 2017-03-23  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC][DFG] Make addShouldSpeculateAnyInt more conservative to avoid regression caused by Double <-> Int52 conversions
