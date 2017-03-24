@@ -56,7 +56,7 @@ class CommitterAuth(buildbot.status.web.auth.AuthBase):
         try:
             return self.is_webkit_committer(username) and self.is_webkit_trac_user(username, password)
         except Error, e:
-            self.err = e.message
+            self.err = e.args[0]
             return False
 
     def is_webkit_committer(self, username):
