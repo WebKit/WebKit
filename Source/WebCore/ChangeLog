@@ -1,3 +1,14 @@
+2017-03-24  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Unreviewed, fix the ToT build on the latest SDK.
+
+        Add deprecated declaration guards around two synchronous UIItemProvider methods in WebItemProviderPasteboard.
+        <rdar://problem/30451096> tracks adoption of the asynchronous versions of these methods.
+
+        * platform/ios/WebItemProviderPasteboard.mm:
+        (-[WebItemProviderPasteboard dataForPasteboardType:inItemSet:]):
+        (-[WebItemProviderPasteboard _tryToCreateAndAppendObjectOfClass:toArray:usingProvider:]):
+
 2017-03-24  Antoine Quint  <graouts@webkit.org>
 
         [Modern Media Controls] Captions don't move with the appearance of the inline controls

@@ -174,7 +174,11 @@ static BOOL isImageType(NSString *type)
         if (!provider)
             return;
 
+        // FIXME: <rdar://problem/30451096> Adopt asynchronous UIItemProvider methods when retrieving data.
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
         NSData *data = [provider copyDataRepresentationForTypeIdentifier:pasteboardType error:nil];
+#pragma clang diagnostic pop
         if (data)
             [values addObject:data];
     }];
@@ -216,7 +220,11 @@ static BOOL isImageType(NSString *type)
     if (![provider canCreateObjectOfClass:objectClass])
         return NO;
 
+    // FIXME: <rdar://problem/30451096> Adopt asynchronous UIItemProvider methods when retrieving data.
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     id object = [provider createObjectOfClass:objectClass error:nil];
+#pragma clang diagnostic pop
     if (object)
         [array addObject:object];
 
