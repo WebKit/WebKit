@@ -1,3 +1,16 @@
+2017-03-24  Mark Lam  <mark.lam@apple.com>
+
+        Array memcpy'ing fast paths should check if we're having a bad time if they cannot handle it.
+        https://bugs.webkit.org/show_bug.cgi?id=170064
+        <rdar://problem/31246098>
+
+        Reviewed by Geoffrey Garen.
+
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoPrivateFuncConcatMemcpy):
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::fastSlice):
+
 2017-03-23  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Use jsNontrivialString agressively for ToString(Int52)
