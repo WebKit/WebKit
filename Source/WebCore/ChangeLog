@@ -1,3 +1,40 @@
+2017-03-24  Brent Fulgham  <bfulgham@apple.com>
+
+        Handle recursive calls to ProcessingInstruction::checkStyleSheet
+        https://bugs.webkit.org/show_bug.cgi?id=169982
+        <rdar://problem/31083051>
+
+        Reviewed by Antti Koivisto.
+
+        See if we triggered a recursive load of the stylesheet during the 'beforeload'
+        event handler. If so, reset to a valid state before completing the load.
+
+        We should also check after 'beforeload' that we were not disconnected from (or
+        moved to a new) document.
+
+        I also looked for other cases of this pattern and fixed them.
+
+        Tests: fast/dom/beforeload/image-removed-during-before-load.html
+               fast/dom/beforeload/recursive-css-pi-before-load.html
+               fast/dom/beforeload/recursive-link-before-load.html
+               fast/dom/beforeload/recursive-xsl-pi-before-load.html
+
+        * dom/ProcessingInstruction.cpp:
+        (WebCore::ProcessingInstruction::clearExistingCachedSheet): Added.
+        (WebCore::ProcessingInstruction::checkStyleSheet): Reset to valid state
+        if necessary after the 'beforeload' handler. Also, safely handle the case where
+        the element was disconnected in the 'beforeload' handler (similar to what
+        we do in HTMLLinkElement).
+        (WebCore::ProcessingInstruction::setCSSStyleSheet): Drive-by Fix: Protect the
+        current document to match what we do in setXSLStyleSheet.
+        * dom/ProcessingInstruction.h:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::selectMediaResource): Safely handle the case where
+        the element was disconnected in the 'beforeload' handler.
+        (WebCore::HTMLMediaElement::selectNextSourceChild): Ditto.
+        * loader/ImageLoader.cpp:
+        (WebCore::ImageLoader::dispatchPendingBeforeLoadEvent): Ditto.
+
 2017-03-24  Myles C. Maxfield  <mmaxfield@apple.com>
 
         font-style needs a new CSSValue to make CSSRule.cssText work correctly

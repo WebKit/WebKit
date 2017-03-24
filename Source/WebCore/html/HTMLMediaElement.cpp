@@ -1325,6 +1325,8 @@ void HTMLMediaElement::selectMediaResource()
 
         enum Mode { None, Object, Attribute, Children };
         Mode mode = None;
+        Ref<Document> originalDocument = document();
+        bool didEventListenerDisconnectThisElement = false;
 
         if (m_mediaProvider) {
             // 6. If the media element has an assigned media provider object, then let mode be object.
@@ -1405,6 +1407,13 @@ void HTMLMediaElement::selectMediaResource()
 
             if (!isSafeToLoadURL(absoluteURL, Complain) || !dispatchBeforeLoadEvent(absoluteURL.string())) {
                 mediaLoadingFailed(MediaPlayer::FormatError);
+                return;
+            }
+
+            didEventListenerDisconnectThisElement = !isConnected() || &document() != originalDocument.ptr();
+            if (didEventListenerDisconnectThisElement) {
+                mediaLoadingFailed(MediaPlayer::FormatError);
+                LOG(Media, "HTMLMediaElement::selectMediaResource(%p) -  document changed during load.", this);
                 return;
             }
 
@@ -4215,10 +4224,12 @@ URL HTMLMediaElement::selectNextSourceChild(ContentType* contentType, String* ke
 
     URL mediaURL;
     HTMLSourceElement* source = nullptr;
+    Ref<Document> originalDocument = document();
     String type;
     bool lookingForStartNode = m_nextChildNodeToConsider;
     bool canUseSourceElement = false;
-    bool okToLoadSourceURL;
+    bool okToLoadSourceURL = false;
+    bool didEventListenerDisconnectThisElement = false;
 
     NodeVector potentialSourceNodes;
     getChildNodes(*this, potentialSourceNodes);
@@ -4287,6 +4298,13 @@ URL HTMLMediaElement::selectNextSourceChild(ContentType* contentType, String* ke
         // A 'beforeload' event handler can mutate the DOM, so check to see if the source element is still a child node.
         if (node.parentNode() != this) {
             LOG(Media, "HTMLMediaElement::selectNextSourceChild(%p) - 'beforeload' removed current element", this);
+            source = nullptr;
+            goto CheckAgain;
+        }
+
+        didEventListenerDisconnectThisElement = !isConnected() || &document() != originalDocument.ptr();
+        if (didEventListenerDisconnectThisElement) {
+            LOG(Media, "HTMLMediaElement::selectNextSourceChild(%p) - 'beforeload' changed document during load.", this);
             source = nullptr;
             goto CheckAgain;
         }
