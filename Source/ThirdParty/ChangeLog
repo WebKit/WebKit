@@ -1,5 +1,15 @@
 2017-03-24  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed. Fix the build after r214338.
+
+        Add missing files I forgot to git add again.
+
+        * xdgmime/CMakeLists.txt: Added.
+        * xdgmime/README: Added.
+        * xdgmime/README.webkit: Added.
+
+2017-03-24  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Add MIMETypeRegistry implementation using xdgmime and remove the GTK+ one
         https://bugs.webkit.org/show_bug.cgi?id=170001
 
