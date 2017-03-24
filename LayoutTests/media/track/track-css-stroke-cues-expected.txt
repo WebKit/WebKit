@@ -7,5 +7,6 @@ EXPECTED (getComputedStyle(textTrackDisplayElement(video, 'cue')).webkitTextStro
 EXPECTED (getComputedStyle(textTrackDisplayElement(video, 'cue')).paintOrder == 'stroke') OK
 EXPECTED (getComputedStyle(textTrackDisplayElement(video, 'cue')).strokeLinejoin == 'round') OK
 EXPECTED (getComputedStyle(textTrackDisplayElement(video, 'cue')).strokeLinecap == 'round') OK
+EXPECTED (getComputedStyle(textTrackDisplayElement(video, 'cue')).overflow == 'visible') OK
 END OF TEST
 
