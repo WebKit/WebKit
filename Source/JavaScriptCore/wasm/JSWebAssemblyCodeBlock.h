@@ -44,7 +44,7 @@ public:
     typedef JSCell Base;
     static const unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
 
-    static JSWebAssemblyCodeBlock* create(VM& vm, JSWebAssemblyModule* owner, Bag<CallLinkInfo>&& callLinkInfos, Vector<Wasm::WasmExitStubs>&& exitStubs, Wasm::Memory::Mode mode, unsigned calleeCount)
+    static JSWebAssemblyCodeBlock* create(VM& vm, JSWebAssemblyModule* owner, Bag<CallLinkInfo>&& callLinkInfos, Vector<Wasm::WasmExitStubs>&& exitStubs, Wasm::MemoryMode mode, unsigned calleeCount)
     {
         auto* result = new (NotNull, allocateCell<JSWebAssemblyCodeBlock>(vm.heap, allocationSize(calleeCount))) JSWebAssemblyCodeBlock(vm, owner, std::forward<Bag<CallLinkInfo>>(callLinkInfos), std::forward<Vector<Wasm::WasmExitStubs>>(exitStubs), mode, calleeCount);
         result->finishCreation(vm);
@@ -57,7 +57,7 @@ public:
     }
 
     unsigned functionImportCount() const { return m_wasmExitStubs.size(); }
-    Wasm::Memory::Mode mode() const { return m_mode; }
+    Wasm::MemoryMode mode() const { return m_mode; }
     JSWebAssemblyModule* module() const { return m_module.get(); }
     bool isSafeToRun(JSWebAssemblyMemory*);
 
@@ -101,7 +101,7 @@ public:
     }
 
 private:
-    JSWebAssemblyCodeBlock(VM&, JSWebAssemblyModule*, Bag<CallLinkInfo>&&, Vector<Wasm::WasmExitStubs>&&, Wasm::Memory::Mode, unsigned calleeCount);
+    JSWebAssemblyCodeBlock(VM&, JSWebAssemblyModule*, Bag<CallLinkInfo>&&, Vector<Wasm::WasmExitStubs>&&, Wasm::MemoryMode, unsigned calleeCount);
     DECLARE_EXPORT_INFO;
     static const bool needsDestruction = true;
     static void destroy(JSCell*);
@@ -125,7 +125,7 @@ private:
     UnconditionalFinalizer m_unconditionalFinalizer;
     Bag<CallLinkInfo> m_callLinkInfos;
     Vector<Wasm::WasmExitStubs> m_wasmExitStubs;
-    Wasm::Memory::Mode m_mode;
+    Wasm::MemoryMode m_mode;
     unsigned m_calleeCount;
 };
 

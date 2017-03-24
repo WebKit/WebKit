@@ -62,12 +62,13 @@ public:
     }
 
     // Returns the code block that this module was originally compiled expecting to use. This won't need to recompile.
-    JSWebAssemblyCodeBlock* codeBlock() { return m_codeBlocks[m_moduleInformation->memory.mode()].get(); }
+    JSWebAssemblyCodeBlock* codeBlock() { return codeBlockFor(m_moduleInformation->memory.mode()).get(); }
     // Returns the appropriate code block for the given memory, possibly triggering a recompile.
     JSWebAssemblyCodeBlock* codeBlock(VM&, ExecState*, JSWebAssemblyMemory*);
 
 private:
-    JSWebAssemblyCodeBlock* buildCodeBlock(VM&, ExecState*, Wasm::Plan&, std::optional<Wasm::Memory::Mode> mode = std::nullopt);
+    WriteBarrier<JSWebAssemblyCodeBlock>& codeBlockFor(Wasm::MemoryMode mode) { return m_codeBlocks[static_cast<size_t>(mode)]; }
+    JSWebAssemblyCodeBlock* buildCodeBlock(VM&, ExecState*, Wasm::Plan&, std::optional<Wasm::MemoryMode> mode = std::nullopt);
 
     JSWebAssemblyModule(VM&, Structure*);
     void finishCreation(VM&, ExecState*, uint8_t* source, size_t byteSize);
@@ -77,7 +78,7 @@ private:
     RefPtr<ArrayBuffer> m_sourceBuffer;
     std::unique_ptr<Wasm::ModuleInformation> m_moduleInformation;
     WriteBarrier<SymbolTable> m_exportSymbolTable;
-    WriteBarrier<JSWebAssemblyCodeBlock> m_codeBlocks[Wasm::Memory::NumberOfModes];
+    WriteBarrier<JSWebAssemblyCodeBlock> m_codeBlocks[Wasm::NumberOfMemoryModes];
 };
 
 } // namespace JSC

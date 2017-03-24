@@ -79,7 +79,7 @@ public:
     JSWebAssemblyMemory* memory() { return m_memory.get(); }
     // Calling this might trigger a recompile.
     void setMemory(VM&, ExecState*, JSWebAssemblyMemory*);
-    Wasm::Memory::Mode memoryMode() { return memory()->memory().mode(); }
+    Wasm::MemoryMode memoryMode() { return memory()->memory().mode(); }
 
     JSWebAssemblyTable* table() { return m_table.get(); }
     void setTable(VM& vm, JSWebAssemblyTable* table) { m_table.set(vm, this, table); }

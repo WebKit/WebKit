@@ -36,7 +36,7 @@ namespace JSC {
 
 const ClassInfo JSWebAssemblyCodeBlock::s_info = { "WebAssemblyCodeBlock", nullptr, 0, CREATE_METHOD_TABLE(JSWebAssemblyCodeBlock) };
 
-JSWebAssemblyCodeBlock::JSWebAssemblyCodeBlock(VM& vm, JSWebAssemblyModule* owner, Bag<CallLinkInfo>&& callLinkInfos, Vector<Wasm::WasmExitStubs>&& wasmExitStubs, Wasm::Memory::Mode mode, unsigned calleeCount)
+JSWebAssemblyCodeBlock::JSWebAssemblyCodeBlock(VM& vm, JSWebAssemblyModule* owner, Bag<CallLinkInfo>&& callLinkInfos, Vector<Wasm::WasmExitStubs>&& wasmExitStubs, Wasm::MemoryMode mode, unsigned calleeCount)
     : Base(vm, vm.webAssemblyCodeBlockStructure.get())
     , m_callLinkInfos(WTFMove(callLinkInfos))
     , m_wasmExitStubs(WTFMove(wasmExitStubs))
@@ -54,9 +54,21 @@ void JSWebAssemblyCodeBlock::destroy(JSCell* cell)
 
 bool JSWebAssemblyCodeBlock::isSafeToRun(JSWebAssemblyMemory* memory)
 {
-    if (mode() == Wasm::Memory::Signaling)
-        return memory->memory().mode() == mode();
-    return true;
+    Wasm::MemoryMode codeMode = mode();
+    Wasm::MemoryMode memoryMode = memory->memory().mode();
+    switch (codeMode) {
+    case Wasm::MemoryMode::BoundsChecking:
+        return true;
+    case Wasm::MemoryMode::Signaling:
+        // Code being in Signaling mode means that it performs no bounds checks.
+        // Its memory, even if empty, absolutely must also be in Signaling mode
+        // because the page protection detects out-of-bounds accesses.
+        return memoryMode == Wasm::MemoryMode::Signaling;
+    case Wasm::MemoryMode::NumberOfMemoryModes:
+        break;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+    return false;
 }
 
 void JSWebAssemblyCodeBlock::visitChildren(JSCell* cell, SlotVisitor& visitor)

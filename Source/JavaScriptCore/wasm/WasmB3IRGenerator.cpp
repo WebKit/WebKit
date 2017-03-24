@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -458,7 +458,7 @@ auto B3IRGenerator::setGlobal(uint32_t index, ExpressionType value) -> PartialRe
 inline Value* B3IRGenerator::emitCheckAndPreparePointer(ExpressionType pointer, uint32_t offset, uint32_t sizeOfOperation)
 {
     ASSERT(m_memoryBaseGPR);
-    if (m_info.memory.mode() == Memory::Mode::BoundsChecking) {
+    if (m_info.memory.mode() == MemoryMode::BoundsChecking) {
         ASSERT(m_memorySizeGPR);
         ASSERT(sizeOfOperation + offset > offset);
         m_currentBlock->appendNew<WasmBoundsCheckValue>(m_proc, Origin(), pointer, m_memorySizeGPR, sizeOfOperation + offset - 1);
@@ -494,7 +494,7 @@ inline uint32_t sizeOfLoadOp(LoadOpType op)
 
 inline B3::Kind B3IRGenerator::memoryKind(B3::Opcode memoryOp)
 {
-    if (m_info.memory.mode() == Memory::Signaling)
+    if (m_info.memory.mode() == MemoryMode::Signaling)
         return trapping(memoryOp);
     return memoryOp;
 }

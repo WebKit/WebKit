@@ -63,7 +63,7 @@ Plan::Plan(VM* vm, const uint8_t* source, size_t sourceLength)
 {
 }
 
-bool Plan::parseAndValidateModule(std::optional<Memory::Mode> recompileMode)
+bool Plan::parseAndValidateModule(std::optional<MemoryMode> recompileMode)
 {
     MonotonicTime startTime;
     if (verbose || Options::reportCompileTimes())
@@ -111,7 +111,7 @@ bool Plan::parseAndValidateModule(std::optional<Memory::Mode> recompileMode)
 // The reason this is OK is that we guarantee that the main thread doesn't continue until all threads
 // that could touch its stack are done executing.
 SUPPRESS_ASAN 
-void Plan::run(std::optional<Memory::Mode> recompileMode)
+void Plan::run(std::optional<MemoryMode> recompileMode)
 {
     if (!parseAndValidateModule(recompileMode))
         return;

@@ -1,3 +1,46 @@
+2017-03-24  JF Bastien  <jfbastien@apple.com>
+
+        WebAssembly: spec-tests/memory.wast.js fails in debug
+        https://bugs.webkit.org/show_bug.cgi?id=169794
+
+        Reviewed by Keith Miller.
+
+        The failure was due to empty memories (with maximum size 0). Those
+        only occur in tests and in code that's trying to trip us. This
+        patch adds memory mode "none" which represents no memory. It can
+        work with either bounds checked or signaling code because it never
+        contains loads and stores.
+
+        The spec tests which were failing did the following:
+            > (module (memory (data)) (func (export "memsize") (result i32) (current_memory)))
+            > (assert_return (invoke "memsize") (i32.const 0))
+            > (module (memory (data "")) (func (export "memsize") (result i32) (current_memory)))
+            > (assert_return (invoke "memsize") (i32.const 0))
+            > (module (memory (data "x")) (func (export "memsize") (result i32) (current_memory)))
+            > (assert_return (invoke "memsize") (i32.const 1))
+
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::memoryKind):
+        * wasm/WasmMemory.cpp:
+        (JSC::Wasm::tryGetFastMemory):
+        (JSC::Wasm::releaseFastMemory):
+        (JSC::Wasm::Memory::Memory):
+        (JSC::Wasm::Memory::createImpl):
+        (JSC::Wasm::Memory::create):
+        (JSC::Wasm::Memory::grow):
+        (JSC::Wasm::Memory::makeString):
+        * wasm/WasmMemory.h:
+        * wasm/WasmMemoryInformation.cpp:
+        (JSC::Wasm::MemoryInformation::MemoryInformation):
+        * wasm/js/JSWebAssemblyCodeBlock.cpp:
+        (JSC::JSWebAssemblyCodeBlock::isSafeToRun):
+        * wasm/js/JSWebAssemblyModule.cpp:
+        (JSC::JSWebAssemblyModule::codeBlock):
+        (JSC::JSWebAssemblyModule::finishCreation):
+        * wasm/js/JSWebAssemblyModule.h:
+        (JSC::JSWebAssemblyModule::codeBlock):
+        (JSC::JSWebAssemblyModule::codeBlockFor):
+
 2017-03-24  Mark Lam  <mark.lam@apple.com>
 
         Array memcpy'ing fast paths should check if we're having a bad time if they cannot handle it.

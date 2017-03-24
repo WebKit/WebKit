@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -42,7 +42,7 @@ namespace JSC {
 
 const ClassInfo JSWebAssemblyModule::s_info = { "WebAssembly.Module", &Base::s_info, nullptr, CREATE_METHOD_TABLE(JSWebAssemblyModule) };
 
-JSWebAssemblyCodeBlock* JSWebAssemblyModule::buildCodeBlock(VM& vm, ExecState* exec, Wasm::Plan& plan, std::optional<Wasm::Memory::Mode> mode)
+JSWebAssemblyCodeBlock* JSWebAssemblyModule::buildCodeBlock(VM& vm, ExecState* exec, Wasm::Plan& plan, std::optional<Wasm::MemoryMode> mode)
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
     // On failure, a new WebAssembly.CompileError is thrown.
@@ -85,14 +85,14 @@ JSWebAssemblyModule::JSWebAssemblyModule(VM& vm, Structure* structure)
 
 JSWebAssemblyCodeBlock* JSWebAssemblyModule::codeBlock(VM& vm, ExecState* exec, JSWebAssemblyMemory* memory)
 {
-    Wasm::Memory::Mode mode = memory->memory().mode();
+    Wasm::MemoryMode mode = memory->memory().mode();
 
-    for (unsigned i = 0; i < Wasm::Memory::NumberOfModes; ++i) {
+    for (unsigned i = 0; i < Wasm::NumberOfMemoryModes; ++i) {
         if (m_codeBlocks[i] && m_codeBlocks[i]->isSafeToRun(memory))
             return m_codeBlocks[i].get();
     }
 
-    ASSERT(!m_codeBlocks[mode]);
+    ASSERT(!codeBlockFor(mode));
     auto scope = DECLARE_THROW_SCOPE(vm);
     // We don't have a code block for this mode, we need to recompile...
     Wasm::Plan plan(&vm, static_cast<uint8_t*>(m_sourceBuffer->data()), m_sourceBuffer->byteLength());
@@ -107,7 +107,7 @@ JSWebAssemblyCodeBlock* JSWebAssemblyModule::codeBlock(VM& vm, ExecState* exec, 
     }
 
     ASSERT(mode == codeBlock->mode());
-    m_codeBlocks[mode].set(vm, this, codeBlock);
+    codeBlockFor(mode).set(vm, this, codeBlock);
     return codeBlock;
 }
 
@@ -132,7 +132,7 @@ void JSWebAssemblyModule::finishCreation(VM& vm, ExecState* exec, uint8_t* sourc
     m_sourceBuffer = ArrayBuffer::create(source, byteSize);
     m_moduleInformation = plan.takeModuleInformation();
     m_exportSymbolTable.set(vm, this, exportSymbolTable);
-    m_codeBlocks[codeBlock->mode()].set(vm, this, codeBlock);
+    codeBlockFor(codeBlock->mode()).set(vm, this, codeBlock);
 }
 
 void JSWebAssemblyModule::destroy(JSCell* cell)
@@ -147,7 +147,7 @@ void JSWebAssemblyModule::visitChildren(JSCell* cell, SlotVisitor& visitor)
 
     Base::visitChildren(thisObject, visitor);
     visitor.append(thisObject->m_exportSymbolTable);
-    for (unsigned i = 0; i < Wasm::Memory::NumberOfModes; ++i)
+    for (unsigned i = 0; i < Wasm::NumberOfMemoryModes; ++i)
         visitor.append(thisObject->m_codeBlocks[i]);
 }
 

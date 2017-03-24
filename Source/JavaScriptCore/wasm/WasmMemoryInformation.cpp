@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -74,7 +74,7 @@ PinnedRegisterInfo::PinnedRegisterInfo(Vector<PinnedSizeRegisterInfo>&& sizeRegi
 {
 }
 
-MemoryInformation::MemoryInformation(VM& vm, PageCount initial, PageCount maximum, std::optional<Memory::Mode> recompileMode, bool isImport)
+MemoryInformation::MemoryInformation(VM& vm, PageCount initial, PageCount maximum, std::optional<MemoryMode> recompileMode, bool isImport)
     : m_initial(initial)
     , m_maximum(maximum)
     , m_isImport(isImport)
@@ -85,7 +85,16 @@ MemoryInformation::MemoryInformation(VM& vm, PageCount initial, PageCount maximu
 
     if (!recompileMode) {
         if (!isImport) {
-            m_reservedMemory = Memory::create(vm, initial, maximum, Memory::Signaling);
+            if (maximum && maximum.bytes() == 0) {
+                m_reservedMemory = Memory::create(vm, initial, maximum, MemoryMode::BoundsChecking);
+                RELEASE_ASSERT(m_reservedMemory);
+                RELEASE_ASSERT(m_reservedMemory->maximum());
+                RELEASE_ASSERT(m_reservedMemory->maximum().bytes() == 0);
+                m_mode = m_reservedMemory->mode();
+                return;
+            }
+
+            m_reservedMemory = Memory::create(vm, initial, maximum, MemoryMode::Signaling);
             if (m_reservedMemory) {
                 ASSERT(!!*m_reservedMemory);
                 m_mode = m_reservedMemory->mode();

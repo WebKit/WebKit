@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -56,11 +56,22 @@ inline bool mmapBytes(size_t bytes, void*& memory)
     return true;
 }
 
+const char* makeString(MemoryMode mode)
+{
+    switch (mode) {
+    case MemoryMode::BoundsChecking: return "BoundsChecking";
+    case MemoryMode::Signaling: return "Signaling";
+    case MemoryMode::NumberOfMemoryModes: break;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+    return "";
+}
+
 // We use this as a heuristic to guess what mode a memory import will be. Most of the time we expect users to
 // allocate the memory they are going to pass to all their modules right before compilation.
-static Memory::Mode lastAllocatedMemoryMode { Memory::Mode::Signaling };
+static MemoryMode lastAllocatedMemoryMode { MemoryMode::Signaling };
 
-Memory::Mode Memory::lastAllocatedMode()
+MemoryMode Memory::lastAllocatedMode()
 {
     return lastAllocatedMemoryMode;
 }
@@ -85,7 +96,7 @@ const HashSet<void*>& viewActiveFastMemories(const AbstractLocker& locker)
     return activeFastMemories(locker);
 }
 
-inline bool tryGetFastMemory(VM& vm, void*& memory, size_t& mappedCapacity, Memory::Mode& mode)
+inline bool tryGetFastMemory(VM& vm, void*& memory, size_t& mappedCapacity, MemoryMode& mode)
 {
     // We might GC here so we should be holding the API lock.
     // FIXME: We should be able to syncronously trigger the GC from another thread.
@@ -106,7 +117,7 @@ inline bool tryGetFastMemory(VM& vm, void*& memory, size_t& mappedCapacity, Memo
             auto result = activeFastMemories(locker).add(memory);
             ASSERT_UNUSED(result, result.isNewEntry);
             mappedCapacity = fastMemoryMappedBytes;
-            mode = Memory::Signaling;
+            mode = MemoryMode::Signaling;
             return true;
         }
         return false;
@@ -125,7 +136,7 @@ inline bool tryGetFastMemory(VM& vm, void*& memory, size_t& mappedCapacity, Memo
 
     if (mmapBytes(fastMemoryMappedBytes, memory)) {
         mappedCapacity = fastMemoryMappedBytes;
-        mode = Memory::Signaling;
+        mode = MemoryMode::Signaling;
         LockHolder locker(memoryLock);
         allocatedFastMemories++;
         auto result = activeFastMemories(locker).add(memory);
@@ -134,9 +145,9 @@ inline bool tryGetFastMemory(VM& vm, void*& memory, size_t& mappedCapacity, Memo
     return memory;
 }
 
-inline void releaseFastMemory(void*& memory, size_t writableSize, size_t mappedCapacity, Memory::Mode mode)
+inline void releaseFastMemory(void*& memory, size_t writableSize, size_t mappedCapacity, MemoryMode mode)
 {
-    if (mode != Memory::Signaling || !memory)
+    if (mode != MemoryMode::Signaling || !memory)
         return;
 
     RELEASE_ASSERT(memory && mappedCapacity == fastMemoryMappedBytes);
@@ -159,9 +170,11 @@ Memory::Memory(PageCount initial, PageCount maximum)
     , m_maximum(maximum)
 {
     ASSERT(!initial.bytes());
+    ASSERT(m_mode == MemoryMode::BoundsChecking);
+    dataLogLnIf(verbose, "Memory::Memory allocating ", *this);
 }
 
-Memory::Memory(void* memory, PageCount initial, PageCount maximum, size_t mappedCapacity, Mode mode)
+Memory::Memory(void* memory, PageCount initial, PageCount maximum, size_t mappedCapacity, MemoryMode mode)
     : m_memory(memory)
     , m_size(initial.bytes())
     , m_initial(initial)
@@ -172,20 +185,20 @@ Memory::Memory(void* memory, PageCount initial, PageCount maximum, size_t mapped
     dataLogLnIf(verbose, "Memory::Memory allocating ", *this);
 }
 
-RefPtr<Memory> Memory::createImpl(VM& vm, PageCount initial, PageCount maximum, std::optional<Mode> requiredMode)
+RefPtr<Memory> Memory::createImpl(VM& vm, PageCount initial, PageCount maximum, std::optional<MemoryMode> requiredMode)
 {
     RELEASE_ASSERT(!maximum || maximum >= initial); // This should be guaranteed by our caller.
 
-    Mode mode = requiredMode ? *requiredMode : BoundsChecking;
+    MemoryMode mode = requiredMode ? *requiredMode : MemoryMode::BoundsChecking;
     const size_t size = initial.bytes();
     size_t mappedCapacity = maximum ? maximum.bytes() : PageCount::max().bytes();
     void* memory = nullptr;
 
     auto makeEmptyMemory = [&] () -> RefPtr<Memory> {
-        if (mode == Signaling)
+        if (mode == MemoryMode::Signaling)
             return nullptr;
 
-        lastAllocatedMemoryMode = BoundsChecking;
+        lastAllocatedMemoryMode = MemoryMode::BoundsChecking;
         return adoptRef(new Memory(initial, maximum));
     };
 
@@ -196,9 +209,9 @@ RefPtr<Memory> Memory::createImpl(VM& vm, PageCount initial, PageCount maximum, 
         return makeEmptyMemory();
     }
 
-    bool canUseFastMemory = !requiredMode || requiredMode == Signaling;
+    bool canUseFastMemory = !requiredMode || requiredMode == MemoryMode::Signaling;
     if (!canUseFastMemory || !tryGetFastMemory(vm, memory, mappedCapacity, mode)) {
-        if (mode == Signaling)
+        if (mode == MemoryMode::Signaling)
             return nullptr;
 
         if (Options::simulateWebAssemblyLowMemory() ? true : !mmapBytes(mappedCapacity, memory)) {
@@ -219,6 +232,7 @@ RefPtr<Memory> Memory::createImpl(VM& vm, PageCount initial, PageCount maximum, 
 
     ASSERT(memory && size <= mappedCapacity);
     if (mprotect(memory, size, PROT_READ | PROT_WRITE)) {
+        // FIXME: should this ever occur? https://bugs.webkit.org/show_bug.cgi?id=169890
         dataLogLnIf(verbose, "Memory::create mprotect failed");
         releaseFastMemory(memory, 0, mappedCapacity, mode);
         if (memory) {
@@ -227,22 +241,21 @@ RefPtr<Memory> Memory::createImpl(VM& vm, PageCount initial, PageCount maximum, 
         }
         return nullptr;
     }
-    
+
     lastAllocatedMemoryMode = mode;
     dataLogLnIf(verbose, "Memory::create mmap succeeded");
     return adoptRef(new Memory(memory, initial, maximum, mappedCapacity, mode));
 }
 
-RefPtr<Memory> Memory::create(VM& vm, PageCount initial, PageCount maximum, std::optional<Mode> mode)
+RefPtr<Memory> Memory::create(VM& vm, PageCount initial, PageCount maximum, std::optional<MemoryMode> mode)
 {
     RELEASE_ASSERT(!maximum || maximum >= initial); // This should be guaranteed by our caller.
     RefPtr<Memory> result = createImpl(vm, initial, maximum, mode);
     if (result) {
-        if (result->mode() == Signaling)
+        if (result->mode() == MemoryMode::Signaling)
             RELEASE_ASSERT(result->m_mappedCapacity == fastMemoryMappedBytes);
         if (mode)
             ASSERT(*mode == result->mode());
-        ASSERT(lastAllocatedMemoryMode == result->mode());
     }
     return result;
 }
@@ -268,8 +281,21 @@ bool Memory::grow(PageCount newSize)
 
     size_t desiredSize = newSize.bytes();
 
+    switch (mode()) {
+    case MemoryMode::BoundsChecking:
+        RELEASE_ASSERT(maximum().bytes() != 0);
+        break;
+    case MemoryMode::Signaling:
+        // Signaling memory must have been pre-allocated virtually.
+        RELEASE_ASSERT(m_memory);
+        break;
+    case MemoryMode::NumberOfMemoryModes:
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+
     if (m_memory && desiredSize <= m_mappedCapacity) {
         if (mprotect(static_cast<uint8_t*>(m_memory) + m_size, static_cast<size_t>(desiredSize - m_size), PROT_READ | PROT_WRITE)) {
+            // FIXME: should this ever occur? https://bugs.webkit.org/show_bug.cgi?id=169890
             dataLogLnIf(verbose, "Memory::grow in-place failed ", *this);
             return false;
         }
@@ -279,8 +305,11 @@ bool Memory::grow(PageCount newSize)
         return true;
     }
 
-    ASSERT(mode() != Signaling);
+    // Signaling memory can't grow past its already-mapped size.
+    RELEASE_ASSERT(mode() != MemoryMode::Signaling);
+
     // Otherwise, let's try to make some new memory.
+    // FIXME: It would be nice if we had a VM tag for wasm memory. https://bugs.webkit.org/show_bug.cgi?id=163600
     void* newMemory = mmap(nullptr, desiredSize, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANON, -1, 0);
     if (newMemory == MAP_FAILED)
         return false;
@@ -301,17 +330,6 @@ bool Memory::grow(PageCount newSize)
 void Memory::dump(PrintStream& out) const
 {
     out.print("Memory at ", RawPointer(m_memory), ", size ", m_size, "B capacity ", m_mappedCapacity, "B, initial ", m_initial, " maximum ", m_maximum, " mode ", makeString(m_mode));
-}
-
-const char* Memory::makeString(Mode mode) const
-{
-    switch (mode) {
-    case Mode::BoundsChecking: return "BoundsChecking";
-    case Mode::Signaling: return "Signaling";
-    case Mode::NumberOfModes: break;
-    }
-    RELEASE_ASSERT_NOT_REACHED();
-    return "";
 }
 
 } // namespace JSC
