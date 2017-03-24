@@ -268,7 +268,8 @@ static inline void fillRTCRTPStreamStats(RTCStatsReport::RTCRTPStreamStats& stat
         stats.nackCount = *rtcStats.nack_count;
     if (rtcStats.sli_count.is_defined())
         stats.sliCount = *rtcStats.sli_count;
-    // FIXME: Set qpSum
+    if (rtcStats.qp_sum.is_defined())
+        stats.qpSum = *rtcStats.qp_sum;
     stats.qpSum = 0;
 }
 
