@@ -63,18 +63,7 @@ class TimeControl extends LayoutItem
             return;
 
         this._useSixDigitsForTimeLabels = flag;
-        this._availableWidthHasChanged();
-    }
-
-    get width()
-    {
-        return super.width;
-    }
-
-    set width(width)
-    {
-        super.width = width;
-        this._availableWidthHasChanged();
+        this.layout();
     }
 
     get isSufficientlyWide()
@@ -84,8 +73,10 @@ class TimeControl extends LayoutItem
 
     // Protected
 
-    _availableWidthHasChanged()
+    layout()
     {
+        super.layout();
+
         const extraWidth = this._useSixDigitsForTimeLabels ? AdditionalTimeLabelWidthOverAnHour : 0;
         const elapsedTimeLabelWidth = ElapsedTimeLabelWidth + extraWidth;
         const remainingTimeLabelWidth = RemainingTimeLabelWidth + extraWidth;

@@ -39,6 +39,7 @@
     left: 50%;
     top: 50%;
     max-width: 402px;
+    width: 100%;
 
     transform: translate(-50%, -50%);
 }
@@ -58,7 +59,10 @@
 
 .placard .title,
 .placard .description {
+    padding: 0 10px;
     text-align: center;
+    text-overflow: ellipsis;
+    overflow: hidden;
 }
 
 .placard .title {
@@ -67,4 +71,8 @@
 
 .placard .description {
     font-size: 13px;
+    white-space: initial;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
 }

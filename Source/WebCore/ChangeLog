@@ -1,3 +1,79 @@
+2017-03-24  Antoine Quint  <graouts@webkit.org>
+
+        [Modern Media Controls] Remove placard icon if height is compressed
+        https://bugs.webkit.org/show_bug.cgi?id=167935
+        <rdar://problem/30397128>
+
+        Reviewed by Dean Jackson.
+
+        We make the addition of certain Placard children conditional on the placard's metrics. Whenever the
+        media controls metrics changes, the placard, if any, is set to have the same metrics and layout() is
+        called where we ensure that there is enough space, per designs, to have the icon, description and even
+        the title visible. We also make some CSS improvements to guarantee that the description is laid out on
+        two lines at most and that both text labels are trimmed elegantly with an ellipsis shold the width be
+        insufficient to display the whole text.
+
+        Since we would have needed to have more width/height setter overrides to trigger layout, we now make
+        LayoutNode trigger layout() directly and remove the need for subclasses to do this on a per-class basis.
+        We also make layout() a method that can be called safely anytime as it's now no longer part of the DOM
+        commit step, a new commit() method is used instead of that.
+
+        Tests: media/modern-media-controls/layout-node/node-made-dirty-during-commit.html
+               media/modern-media-controls/media-controls/media-controls-placard-compressed-metrics.html
+
+        * Modules/modern-media-controls/controls/layout-node.js:
+        (LayoutNode.prototype.set width):
+        (LayoutNode.prototype.set height):
+        Trigger a call to layout() anytime "width" or "height" is set on any LayoutNode.
+
+        (LayoutNode.prototype.layout):
+        (LayoutNode.prototype.commit):
+        (performScheduledLayout):
+        Make layout() an empty method that subclasses can override easily outside of the DOM commit cycle,
+        its previous implementation is now called "commit()" which is a more accurate name.
+
+        * Modules/modern-media-controls/controls/media-controls.js:
+        (MediaControls.prototype.get placard):
+        (MediaControls.prototype.get showsPlacard):
+        (MediaControls.prototype.showPlacard):
+        (MediaControls.prototype.hidePlacard):
+        (MediaControls.prototype.layout):
+        (MediaControls.prototype.get width): Deleted.
+        (MediaControls.prototype.set width): Deleted.
+        Add a "placard" property to make it simpler to reference the placard instead of making assumptions in
+        several places in that class on the children order. Anytime we run a layout or show the placard, ensure
+        that the placard metrics are synced with the media controls metrics.
+
+        * Modules/modern-media-controls/controls/placard.css:
+        (.placard .container):
+        (.placard .title,):
+        (.placard .description):
+        We now ensure that both the title and description are trimmed with an ellipsis when we run out of space
+        to display them fully.
+
+        * Modules/modern-media-controls/controls/placard.js:
+        (Placard.):
+        (Placard.prototype.layout):
+        We add new constraints to only show the icon, title and description if the placard is tall and wide enough.
+
+        * Modules/modern-media-controls/controls/slider.js:
+        (Slider.prototype.get width): Deleted.
+        (Slider.prototype.set width): Deleted.
+        Removed custom "width" getters and setters now we can just override layout() in case node metrics change.
+
+        * Modules/modern-media-controls/controls/time-control.js:
+        (TimeControl.prototype.set useSixDigitsForTimeLabels):
+        (TimeControl.prototype.layout):
+        (TimeControl.prototype.get width): Deleted.
+        (TimeControl.prototype.set width): Deleted.
+        (TimeControl.prototype._availableWidthHasChanged): Deleted.
+        Removed custom "width" getters and setters now we can just override layout() in case node metrics change.
+
+        * Modules/modern-media-controls/media/media-controller.js:
+        (MediaController):
+        Ensure we flush pending updates at construction time so that we match the size of the media controls right
+        at the first media layout.
+
 2017-03-24  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] "ideal" constraints passed to getUserMedia should affect fitness score

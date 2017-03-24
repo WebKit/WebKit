@@ -5,16 +5,16 @@
 
 <script type="text/javascript">
 
-description("Testing the <code>LayoutNode.y</code> property.");
+description("Making a node dirty again during a commit.");
 
 window.jsTestIsAsync = true;
 
 class CustomNode extends LayoutNode
 {
     
-    layout()
+    commit()
     {
-        super.layout();
+        super.commit();
 
         this.x = 10;
     }

@@ -64,17 +64,6 @@ class Slider extends LayoutItem
         this.needsLayout = true;
     }
 
-    get width()
-    {
-        return super.width;
-    }
-
-    set width(width)
-    {
-        super.width = width;
-        this.needsLayout = true;
-    }
-
     // Protected
 
     handleEvent(event)

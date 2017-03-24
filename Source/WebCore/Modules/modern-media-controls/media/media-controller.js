@@ -44,6 +44,7 @@ class MediaController
         }
 
         this._updateControlsIfNeeded();
+        scheduler.flushScheduledLayoutCallbacks();
 
         shadowRoot.addEventListener("resize", this);
 

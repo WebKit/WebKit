@@ -30,6 +30,8 @@ class LayoutNode
         this._pendingDOMManipulation = LayoutNode.DOMManipulation.None;
     }
 
+    // Public
+
     get x()
     {
         return this._x;
@@ -70,6 +72,7 @@ class LayoutNode
 
         this._width = width;
         this.markDirtyProperty("width");
+        this.layout();
     }
 
     get height()
@@ -84,6 +87,7 @@ class LayoutNode
 
         this._height = height;
         this.markDirtyProperty("height");
+        this.layout();
     }
 
     get visible()
@@ -213,6 +217,30 @@ class LayoutNode
             this._updateDirtyState();
     }
 
+    // Protected
+
+    layout()
+    {
+        // Implemented by subclasses.
+    }
+
+    commit()
+    {
+        if (this._pendingDOMManipulation === LayoutNode.DOMManipulation.Removal) {
+            const parent = this.element.parentNode;
+            if (parent)
+                parent.removeChild(this.element);
+        }
+    
+        for (let propertyName of this._dirtyProperties)
+            this.commitProperty(propertyName);
+
+        this._dirtyProperties.clear();
+
+        if (this._pendingDOMManipulation === LayoutNode.DOMManipulation.Addition)
+            nodesRequiringChildrenUpdate.add(this.parent);
+    }
+
     commitProperty(propertyName)
     {
         const style = this.element.style;
@@ -234,23 +262,6 @@ class LayoutNode
             style.display = this._visible ? "inherit" : "none";
             break;
         }
-    }
-
-    layout()
-    {
-        if (this._pendingDOMManipulation === LayoutNode.DOMManipulation.Removal) {
-            const parent = this.element.parentNode;
-            if (parent)
-                parent.removeChild(this.element);
-        }
-    
-        for (let propertyName of this._dirtyProperties)
-            this.commitProperty(propertyName);
-
-        this._dirtyProperties.clear();
-
-        if (this._pendingDOMManipulation === LayoutNode.DOMManipulation.Addition)
-            nodesRequiringChildrenUpdate.add(this.parent);
     }
 
     // Private
@@ -305,6 +316,7 @@ function performScheduledLayout()
     previousDirtyNodes.forEach(node => {
         node._needsLayout = false;
         node.layout();
+        node.commit();
     });
 
     nodesRequiringChildrenUpdate.forEach(node => node._updateChildren());

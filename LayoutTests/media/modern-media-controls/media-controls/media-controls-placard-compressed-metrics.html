@@ -1,0 +1,70 @@
+<script src="../../../resources/js-test-pre.js"></script>
+<script src="../resources/media-controls-loader.js" type="text/javascript"></script>
+<body>
+<script type="text/javascript">
+
+description("Testing placard metrics constraints.");
+
+const mediaControls = new MediaControls({ layoutTraits: LayoutTraits.macOS, width: 400, height: 300 });
+
+mediaControls.showPlacard(mediaControls.airplayPlacard);
+const placardContainer = mediaControls.placard.children[0];
+debug("mediaControls.showPlacard(mediaControls.airplayPlacard)");
+shouldBe("placardContainer.children.length", "3");
+shouldBeTrue("placardContainer.children[0] instanceof IconButton");
+shouldBeEqualToString("placardContainer.children[1].element.className", "title");
+shouldBeEqualToString("placardContainer.children[2].element.className", "description");
+
+debug("");
+debug("mediaControls.height = 169");
+mediaControls.height = 169;
+shouldBe("placardContainer.children.length", "2");
+shouldBeEqualToString("placardContainer.children[0].element.className", "title");
+shouldBeEqualToString("placardContainer.children[1].element.className", "description");
+
+debug("");
+debug("mediaControls.height = 100");
+mediaControls.height = 100;
+shouldBe("placardContainer.children.length", "2");
+shouldBeEqualToString("placardContainer.children[0].element.className", "title");
+shouldBeEqualToString("placardContainer.children[1].element.className", "description");
+
+debug("");
+debug("mediaControls.height = 99");
+mediaControls.height = 99;
+shouldBe("placardContainer.children.length", "1");
+shouldBeEqualToString("placardContainer.children[0].element.className", "title");
+
+debug("");
+debug("mediaControls.height = 40");
+mediaControls.height = 40;
+shouldBe("placardContainer.children.length", "1");
+shouldBeEqualToString("placardContainer.children[0].element.className", "title");
+
+debug("");
+debug("mediaControls.height = 39");
+mediaControls.height = 39;
+shouldBe("placardContainer.children.length", "0");
+
+debug("");
+debug("mediaControls.width = 170");
+debug("mediaControls.height = 170");
+mediaControls.width = 170;
+mediaControls.height = 170;
+shouldBe("placardContainer.children.length", "3");
+shouldBeTrue("placardContainer.children[0] instanceof IconButton");
+shouldBeEqualToString("placardContainer.children[1].element.className", "title");
+shouldBeEqualToString("placardContainer.children[2].element.className", "description");
+
+debug("");
+debug("mediaControls.width = 169");
+mediaControls.width = 169;
+shouldBe("placardContainer.children.length", "2");
+shouldBeEqualToString("placardContainer.children[0].element.className", "title");
+shouldBeEqualToString("placardContainer.children[1].element.className", "description");
+
+debug("");
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>

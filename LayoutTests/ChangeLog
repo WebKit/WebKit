@@ -1,3 +1,20 @@
+2017-03-24  Antoine Quint  <graouts@webkit.org>
+
+        [Modern Media Controls] Remove placard icon if height is compressed
+        https://bugs.webkit.org/show_bug.cgi?id=167935
+        <rdar://problem/30397128>
+
+        Reviewed by Dean Jackson.
+
+        We add a new test to check that the various designed constraints to toggle display of a placard's
+        icon, title and description are honored. Also, due to the old layout() method now being called
+        "commit()", we refactor a relevant test.
+
+        * media/modern-media-controls/layout-node/node-made-dirty-during-commit-expected.txt: Added.
+        * media/modern-media-controls/layout-node/node-made-dirty-during-commit.html: Added.
+        * media/modern-media-controls/media-controls/media-controls-placard-compressed-metrics-expected.txt: Added.
+        * media/modern-media-controls/media-controls/media-controls-placard-compressed-metrics.html: Added.
+
 2017-03-24  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] "ideal" constraints passed to getUserMedia should affect fitness score

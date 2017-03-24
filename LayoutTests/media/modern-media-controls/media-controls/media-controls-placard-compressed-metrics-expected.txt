@@ -1,0 +1,48 @@
+Testing placard metrics constraints.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+mediaControls.showPlacard(mediaControls.airplayPlacard)
+PASS placardContainer.children.length is 3
+PASS placardContainer.children[0] instanceof IconButton is true
+PASS placardContainer.children[1].element.className is "title"
+PASS placardContainer.children[2].element.className is "description"
+
+mediaControls.height = 169
+PASS placardContainer.children.length is 2
+PASS placardContainer.children[0].element.className is "title"
+PASS placardContainer.children[1].element.className is "description"
+
+mediaControls.height = 100
+PASS placardContainer.children.length is 2
+PASS placardContainer.children[0].element.className is "title"
+PASS placardContainer.children[1].element.className is "description"
+
+mediaControls.height = 99
+PASS placardContainer.children.length is 1
+PASS placardContainer.children[0].element.className is "title"
+
+mediaControls.height = 40
+PASS placardContainer.children.length is 1
+PASS placardContainer.children[0].element.className is "title"
+
+mediaControls.height = 39
+PASS placardContainer.children.length is 0
+
+mediaControls.width = 170
+mediaControls.height = 170
+PASS placardContainer.children.length is 3
+PASS placardContainer.children[0] instanceof IconButton is true
+PASS placardContainer.children[1].element.className is "title"
+PASS placardContainer.children[2].element.className is "description"
+
+mediaControls.width = 169
+PASS placardContainer.children.length is 2
+PASS placardContainer.children[0].element.className is "title"
+PASS placardContainer.children[1].element.className is "description"
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
