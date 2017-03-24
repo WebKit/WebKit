@@ -1,5 +1,18 @@
 2017-03-24  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed GTK+ gardening. Rebaseline http/tests/inspector/network/fetch-response-body.html/xhr-response-body.html after r214338.
+
+        We are now getting the right application/json for a file data.json. The soup network backend tries to gess the
+        mime type from the extension when sniffing is not allowed and the mime type is not known. See bug
+        webkit.org/b/168299, that was added actually to fix these tests, but at that time we also failed to guess the
+        mime type and returned application/octet-stream.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/http/tests/inspector/network/fetch-response-body-expected.txt: Added.
+        * platform/gtk/http/tests/inspector/network/xhr-response-body-expected.txt: Added.
+
+2017-03-24  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed GTK+ gardening. Rebaseline fast/dom/HTMLAnchorElement/anchor-file-blob-convert-to-download.html after r214338.
 
         We are now getting a MIME type for otf files.

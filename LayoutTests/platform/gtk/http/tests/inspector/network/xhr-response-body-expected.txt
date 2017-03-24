@@ -1,0 +1,41 @@
+Tests for getting the content of XHR requests.
+
+
+== Running test suite: Network.getResponseBody.XHR
+-- Running test case: Network.getResponseBody.XHR.Text
+PASS: Resource should be XHR type.
+PASS: MIMEType should be 'text/plain'.
+PASS: Text content should match data.txt.
+
+-- Running test case: Network.getResponseBody.XHR.HTML
+PASS: Resource should be XHR type.
+PASS: MIMEType should be 'text/html'.
+PASS: Text content should match data.html.
+
+-- Running test case: Network.getResponseBody.XHR.JSON
+PASS: Resource should be XHR type.
+FAIL: MIMEType should be 'application/octet-stream'.
+    Expected: "application/octet-stream"
+    Actual: "application/json"
+PASS: JSON content should match data.json.
+
+-- Running test case: Network.getResponseBody.XHR.JSON2
+PASS: Resource should be XHR type.
+PASS: MIMEType should be 'application/json'.
+PASS: JSON content should match specified content.
+
+-- Running test case: Network.getResponseBody.XHR.JSON3
+PASS: Resource should be XHR type.
+PASS: MIMEType should be 'application/vnd.api+json'.
+PASS: JSON content should match specified content.
+
+-- Running test case: Network.getResponseBody.XHR.SVG
+PASS: Resource should be XHR type.
+PASS: MIMEType should be 'image/svg+xml'.
+PASS: SVG content should be text.
+
+-- Running test case: Network.getResponseBody.XHR.PNG
+PASS: Resource should be XHR type.
+PASS: MIMEType should be 'image/png'.
+PASS: Image content should be text.
+

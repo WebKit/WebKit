@@ -3468,6 +3468,8 @@ webkit.org/b/169909 fast/block/lineboxcontain/block-with-ideographs.xhtml [ Fail
 
 webkit.org/b/169910 fast/multicol/simple-line-layout-line-index-after-strut.html [ ImageOnlyFailure ]
 
+webkit.org/b/105954 http/tests/navigation/reload-subframe-object.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing
 #////////////////////////////////////////////////////////////////////////////////////////

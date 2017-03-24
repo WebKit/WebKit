@@ -1,0 +1,41 @@
+Tests for getting the content of Fetch requests.
+
+
+== Running test suite: Network.getResponseBody.Fetch
+-- Running test case: Network.getResponseBody.Fetch.Text
+PASS: Resource should be Fetch type.
+PASS: MIMEType should be 'text/plain'.
+PASS: Text content should match data.txt.
+
+-- Running test case: Network.getResponseBody.Fetch.HTML
+PASS: Resource should be Fetch type.
+PASS: MIMEType should be 'text/html'.
+PASS: Text content should match data.html.
+
+-- Running test case: Network.getResponseBody.Fetch.JSON
+PASS: Resource should be Fetch type.
+FAIL: MIMEType should be 'application/octet-stream'.
+    Expected: "application/octet-stream"
+    Actual: "application/json"
+PASS: JSON content should match data.json.
+
+-- Running test case: Network.getResponseBody.Fetch.JSON2
+PASS: Resource should be Fetch type.
+PASS: MIMEType should be 'application/json'.
+PASS: JSON content should match specified content.
+
+-- Running test case: Network.getResponseBody.Fetch.JSON3
+PASS: Resource should be Fetch type.
+PASS: MIMEType should be 'application/vnd.api+json'.
+PASS: JSON content should match specified content.
+
+-- Running test case: Network.getResponseBody.Fetch.SVG
+PASS: Resource should be Fetch type.
+PASS: MIMEType should be 'image/svg+xml'.
+PASS: SVG content should be text.
+
+-- Running test case: Network.getResponseBody.Fetch.PNG
+PASS: Resource should be Fetch type.
+PASS: MIMEType should be 'image/png'.
+PASS: Image content should be text.
+
