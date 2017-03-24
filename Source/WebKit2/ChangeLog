@@ -1,3 +1,21 @@
+2017-03-24  Simon Fraser  <simon.fraser@apple.com>
+
+        Make UI-side compositing on macOS a bit more usable
+        https://bugs.webkit.org/show_bug.cgi?id=170073
+
+        Reviewed by Tim Horton.
+        
+        Mach port as layer contents doesn't work on macOS, so don't use it there.
+
+        Also remove two assertions that hit with UI-side compositing in MiniBrowser.
+
+        * UIProcess/DrawingAreaProxy.cpp:
+        (WebKit::DrawingAreaProxy::createFence):
+        * UIProcess/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::requestScroll):
+        * UIProcess/mac/RemoteLayerTreeHost.mm:
+        (WebKit::RemoteLayerTreeHost::updateLayerTree):
+
 2017-03-24  Alex Christensen  <achristensen@webkit.org>
 
         Fix assertions after r214358.

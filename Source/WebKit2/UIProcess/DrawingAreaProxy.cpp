@@ -70,7 +70,6 @@ bool DrawingAreaProxy::setSize(const IntSize& size, const IntSize& layerPosition
 #if PLATFORM(COCOA)
 MachSendRight DrawingAreaProxy::createFence()
 {
-    ASSERT_NOT_REACHED();
     return MachSendRight();
 }
 #endif

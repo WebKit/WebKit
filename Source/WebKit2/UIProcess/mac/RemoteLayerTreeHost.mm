@@ -87,7 +87,12 @@ bool RemoteLayerTreeHost::updateLayerTree(const RemoteLayerTreeTransaction& tran
     typedef std::pair<GraphicsLayer::PlatformLayerID, GraphicsLayer::PlatformLayerID> LayerIDPair;
     Vector<LayerIDPair> clonesToUpdate;
 
+#if PLATFORM(MAC)
+    // Can't use the iOS code on macOS yet: rdar://problem/31247730
+    auto layerContentsType = RemoteLayerBackingStore::LayerContentsType::IOSurface;
+#else
     auto layerContentsType = m_drawingArea.hasDebugIndicator() ? RemoteLayerBackingStore::LayerContentsType::IOSurface : RemoteLayerBackingStore::LayerContentsType::CAMachPort;
+#endif
     
     for (auto& changedLayer : transaction.changedLayerProperties()) {
         auto layerID = changedLayer.key;

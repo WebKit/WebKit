@@ -123,7 +123,6 @@ void PageClientImpl::setViewNeedsDisplay(const WebCore::Region&)
 
 void PageClientImpl::requestScroll(const FloatPoint& scrollPosition, const IntPoint& scrollOrigin, bool isProgrammaticScroll)
 {
-    ASSERT_NOT_REACHED();
 }
 
 WebCore::FloatPoint PageClientImpl::viewScrollPosition()
