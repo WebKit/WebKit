@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -133,8 +133,10 @@ void MockRealtimeVideoSource::updateSettings(RealtimeMediaSourceSettings& settin
 
 void MockRealtimeVideoSource::initializeCapabilities(RealtimeMediaSourceCapabilities& capabilities)
 {
-    capabilities.addFacingMode(RealtimeMediaSourceSettings::User);
-    capabilities.addFacingMode(RealtimeMediaSourceSettings::Environment);
+    if (!deviceIndex())
+        capabilities.addFacingMode(RealtimeMediaSourceSettings::User);
+    else
+        capabilities.addFacingMode(RealtimeMediaSourceSettings::Environment);
     capabilities.setWidth(CapabilityValueOrRange(320, 1920));
     capabilities.setHeight(CapabilityValueOrRange(240, 1080));
     capabilities.setFrameRate(CapabilityValueOrRange(15.0, 60.0));
@@ -348,7 +350,7 @@ void MockRealtimeVideoSource::generateFrame()
 
     IntSize size = this->size();
     FloatRect frameRect(FloatPoint(), size);
-    context.fillRect(FloatRect(FloatPoint(), size), facingMode() ==  RealtimeMediaSourceSettings::User ? Color::black : Color::gray);
+    context.fillRect(FloatRect(FloatPoint(), size), !deviceIndex() ? Color::black : Color::darkGray);
 
     if (!m_muted && m_enabled) {
         drawText(context);

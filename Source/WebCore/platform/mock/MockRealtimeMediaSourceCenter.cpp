@@ -72,32 +72,56 @@ void MockRealtimeMediaSourceCenter::validateRequestConstraints(ValidConstraintsH
     Vector<String> videoSourceIds;
     String invalidConstraint;
 
-    if (audioConstraints.isValid()) {
-        auto& devices = MockRealtimeMediaSource::audioDevices();
-        for (size_t i = 0; i < devices.size(); i++) {
-            auto& device = devices[i];
-            auto audioSource = MockRealtimeAudioSource::create(device.label(), nullptr);
-            if (!audioSource->supportsConstraints(audioConstraints, invalidConstraint)) {
-                if (invalidHandler)
-                    invalidHandler(invalidConstraint);
-                return;
-            }
-            audioSourceIds.append(device.persistentId());
+    struct DeviceInfo {
+        unsigned fitnessScore;
+        String id;
+    };
+
+    struct {
+        bool operator()(const DeviceInfo& a, const DeviceInfo& b)
+        {
+            return a.fitnessScore < b.fitnessScore;
         }
+    } sortBasedOnFitnessScore;
+
+    if (audioConstraints.isValid()) {
+        Vector<DeviceInfo> deviceInfo;
+        for (const auto& device : MockRealtimeMediaSource::audioDevices()) {
+            auto audioSource = MockRealtimeAudioSource::create(device.label(), nullptr);
+            if (audioSource->supportsConstraints(audioConstraints, invalidConstraint))
+                deviceInfo.append({audioSource->fitnessScore(), device.persistentId()});
+        }
+
+        if (deviceInfo.isEmpty()) {
+            if (invalidHandler)
+                invalidHandler(invalidConstraint);
+            return;
+        }
+
+        audioSourceIds.reserveInitialCapacity(deviceInfo.size());
+        std::sort(deviceInfo.begin(), deviceInfo.end(), sortBasedOnFitnessScore);
+        for (const auto& info : deviceInfo)
+            audioSourceIds.uncheckedAppend(info.id);
     }
 
     if (videoConstraints.isValid()) {
-        auto& devices = MockRealtimeMediaSource::videoDevices();
-        for (size_t i = 0; i < devices.size(); i++) {
-            auto& device = devices[i];
+        Vector<DeviceInfo> deviceInfo;
+        for (const auto& device : MockRealtimeMediaSource::videoDevices()) {
             auto videoSource = MockRealtimeVideoSource::create(device.label(), nullptr);
-            if (!videoSource->supportsConstraints(videoConstraints, invalidConstraint)) {
-                if (invalidHandler)
-                    invalidHandler(invalidConstraint);
-                return;
-            }
-            videoSourceIds.append(device.persistentId());
+            if (videoSource->supportsConstraints(videoConstraints, invalidConstraint))
+                deviceInfo.append({videoSource->fitnessScore(), device.persistentId()});
         }
+
+        if (deviceInfo.isEmpty()) {
+            if (invalidHandler)
+                invalidHandler(invalidConstraint);
+            return;
+        }
+
+        videoSourceIds.reserveInitialCapacity(deviceInfo.size());
+        std::sort(deviceInfo.begin(), deviceInfo.end(), sortBasedOnFitnessScore);
+        for (const auto& info : deviceInfo)
+            videoSourceIds.uncheckedAppend(info.id);
     }
 
     validHandler(WTFMove(audioSourceIds), WTFMove(videoSourceIds));

@@ -57,18 +57,18 @@ PASS settings['width'] is 320
 PASS settings['height'] is 240
 PASS settings['frameRate'] is 15
 
-** Constraint: {"facingMode":"environment"} - set facing mode, width and height should remain unchanged
+** Constraint: {"frameRate":20} - set frame rate, width and height should remain unchanged
 PASS settings['width'] is 320
 PASS settings['height'] is 240
-PASS settings['facingMode'] is "environment"
+PASS settings['frameRate'] is 20
 
-** Constraint: {"facingMode":"USER","height":400} - illegal facing mode value should be ignored, height should change.
-PASS settings['facingMode'] is "environment"
+** Constraint: {"facingMode":"environment","height":400} - illegal facing mode value should be ignored, height should change.
+PASS settings['facingMode'] is "user"
 PASS settings['width'] is 320
 PASS settings['height'] is 400
 
-** Constraint: {"FACINGMODE":"user","frameRate":30} - unknown constraint should be ignored, frame rate should change.
-PASS settings['facingMode'] is "environment"
+** Constraint: {"WITDH":400,"frameRate":30} - unknown constraint should be ignored, frame rate should change.
+PASS settings['width'] is 320
 PASS settings['frameRate'] is 30
 
 ** Constraint: {"aspectRatio":"1.3333"} - aspect ratio should change width and height.

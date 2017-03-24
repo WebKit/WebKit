@@ -60,19 +60,19 @@
                     expected: { width: 320, height: 240, frameRate: 15 },
                 },
                 {
-                    message: "set facing mode, width and height should remain unchanged",
-                    constraint: { facingMode: "environment" }, 
-                    expected: { width: 320, height: 240, facingMode: "environment" },
+                    message: "set frame rate, width and height should remain unchanged",
+                    constraint: { frameRate: 20 }, 
+                    expected: { width: 320, height: 240, frameRate: 20 },
                 },
                 {
                     message: "illegal facing mode value should be ignored, height should change.",
-                    constraint: { facingMode: "USER", height: 400 }, 
-                    expected: { facingMode: "environment", width: 320, height: 400 },
+                    constraint: { facingMode: "environment", height: 400 }, 
+                    expected: { facingMode: "user", width: 320, height: 400 },
                 },
                 {
                     message: "unknown constraint should be ignored, frame rate should change.",
-                    constraint: { FACINGMODE: "user", frameRate: 30 }, 
-                    expected: { facingMode: "environment", frameRate: 30 },
+                    constraint: { WITDH: 400, frameRate: 30 }, 
+                    expected: { width: 320, frameRate: 30 },
                 },
                 {
                     message: "aspect ratio should change width and height.",

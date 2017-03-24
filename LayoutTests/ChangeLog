@@ -1,3 +1,18 @@
+2017-03-24  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] "ideal" constraints passed to getUserMedia should affect fitness score
+        https://bugs.webkit.org/show_bug.cgi?id=170056
+
+        Reviewed by Youenn Fablet.
+
+        * fast/mediastream/MediaStream-video-element-displays-buffer-expected.txt:
+        * fast/mediastream/MediaStream-video-element-displays-buffer.html:
+        * fast/mediastream/MediaStreamTrack-getCapabilities-expected.txt:
+        * fast/mediastream/apply-constraints-advanced-expected.txt:
+        * fast/mediastream/apply-constraints-advanced.html:
+        * fast/mediastream/apply-constraints-video-expected.txt:
+        * fast/mediastream/apply-constraints-video.html:
+
 2017-03-24  Dean Jackson  <dino@apple.com>
 
         Serialization of custom props in longhand should be "" not value of shorthand

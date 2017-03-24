@@ -39,8 +39,8 @@ PASS settings['height'] is 360
 ** Constraint: {"advanced":[{"facingMode":"left"},{"facingMode":"right"},{"facingMode":"environment"},{"facingMode":"user"}]} - no required constraints, advanced constraints are ignored.
 PASS settings['facingMode'] is "user"
 
-** Constraint: {"width":{"min":640},"advanced":[{"facingMode":"left"},{"facingMode":"right"},{"facingMode":"environment"},{"facingMode":"user"}]} - first two advanced facingModes are not supported, third is used.
-PASS settings['facingMode'] is "environment"
+** Constraint: {"width":{"min":640},"advanced":[{"facingMode":"left"},{"facingMode":"right"},{"facingMode":"user"}]} - first two advanced facingModes are not supported, third is used.
+PASS settings['facingMode'] is "user"
 
 PASS successfullyParsed is true
 

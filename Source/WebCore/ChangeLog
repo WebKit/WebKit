@@ -1,3 +1,35 @@
+2017-03-24  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] "ideal" constraints passed to getUserMedia should affect fitness score
+        https://bugs.webkit.org/show_bug.cgi?id=170056
+
+        Reviewed by Youenn Fablet.
+
+        Include the fitness score calculated for ideal constraints in the calculation of a capture
+        overall device fitness score. 
+
+        No new tests, existing tests updated.
+
+        * platform/mediastream/MediaConstraints.cpp:
+        (WebCore::StringConstraint::fitnessDistance): Drive-by fix: return early if ideal is empty,
+        not exact.
+
+        * platform/mediastream/RealtimeMediaSource.cpp:
+        (WebCore::RealtimeMediaSource::supportsSizeAndFrameRate): Return fitness distance.
+        (WebCore::RealtimeMediaSource::selectSettings): Include the fitness distance of supported
+        ideal constraints.
+        (WebCore::RealtimeMediaSource::supportsConstraint): New.
+        (WebCore::RealtimeMediaSource::applyConstraints):
+        * platform/mediastream/RealtimeMediaSource.h:
+
+        * platform/mock/MockRealtimeMediaSourceCenter.cpp:
+        (WebCore::MockRealtimeMediaSourceCenter::validateRequestConstraints): Sort candidate sources
+        by their fitness score.
+
+        * platform/mock/MockRealtimeVideoSource.cpp:
+        (WebCore::MockRealtimeVideoSource::initializeCapabilities): Each video source should support
+        one facing mode, not both.
+
 2017-03-24  Dean Jackson  <dino@apple.com>
 
         Serialization of custom props in longhand should be "" not value of shorthand

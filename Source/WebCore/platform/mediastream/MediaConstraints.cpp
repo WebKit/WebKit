@@ -68,7 +68,7 @@ double StringConstraint::fitnessDistance(const String& value) const
         return std::numeric_limits<double>::infinity();
 
     // 3. If no ideal value is specified, the fitness distance is 0.
-    if (m_exact.isEmpty())
+    if (m_ideal.isEmpty())
         return 0;
 
     // 5. For all string and enum non-required constraints (deviceId, groupId, facingMode,

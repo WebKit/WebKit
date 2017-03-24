@@ -1,3 +1,15 @@
+2017-03-24  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] "ideal" constraints passed to getUserMedia should affect fitness score
+        https://bugs.webkit.org/show_bug.cgi?id=170056
+
+        Reviewed by Youenn Fablet.
+
+        * UIProcess/UserMediaPermissionRequestManagerProxy.cpp:
+        (WebKit::UserMediaPermissionRequestManagerProxy::requestUserMediaPermissionForFrame): When
+        short-circuiting the user prompt because the page is already authorized, return the first
+        audio and/or video device because so the page gets the one with the best fitness distance.
+
 2017-03-24  Simon Fraser  <simon.fraser@apple.com>
 
         Make UI-side compositing on macOS a bit more usable

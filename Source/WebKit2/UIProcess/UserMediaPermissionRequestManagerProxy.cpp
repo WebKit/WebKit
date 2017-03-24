@@ -242,24 +242,24 @@ void UserMediaPermissionRequestManagerProxy::requestUserMediaPermissionForFrame(
         auto topLevelOrigin = API::SecurityOrigin::create(SecurityOriginData::fromDatabaseIdentifier(topLevelDocumentOriginIdentifier)->securityOrigin());
         auto request = createRequest(userMediaID, frameID, userMediaDocumentOriginIdentifier, topLevelDocumentOriginIdentifier, audioDeviceUIDs, videoDeviceUIDs);
 
-        String authorizedAudioDevice;
-        String authorizedVideoDevice;
+        bool authorizedForAudio = false;
+        bool authorizedForVideo = false;
         auto& fameState = stateForRequest(request);
         for (auto deviceUID : audioDeviceUIDs) {
             if (fameState.hasPermissionToUseCaptureDevice(deviceUID)) {
-                authorizedAudioDevice = deviceUID;
+                authorizedForAudio = true;
                 break;
             }
         }
         for (auto deviceUID : videoDeviceUIDs) {
             if (fameState.hasPermissionToUseCaptureDevice(deviceUID)) {
-                authorizedVideoDevice = deviceUID;
+                authorizedForVideo = true;
                 break;
             }
         }
 
-        if (audioDeviceUIDs.isEmpty() == authorizedAudioDevice.isEmpty() && videoDeviceUIDs.isEmpty() == authorizedVideoDevice.isEmpty()) {
-            userMediaAccessWasGranted(userMediaID, authorizedAudioDevice, authorizedVideoDevice);
+        if (authorizedForAudio == !audioDeviceUIDs.isEmpty() && authorizedForVideo == !videoDeviceUIDs.isEmpty()) {
+            userMediaAccessWasGranted(userMediaID, authorizedForAudio ? audioDeviceUIDs[0] : emptyString(), authorizedForVideo ? videoDeviceUIDs[0] : emptyString());
             return;
         }
 
