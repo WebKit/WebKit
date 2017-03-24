@@ -1,3 +1,14 @@
+2017-03-24  Srinivasan Vijayaraghavan  <svijayaraghavan@apple.com>
+
+        Add JSON results for API tests
+        https://bugs.webkit.org/show_bug.cgi?id=170021
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Scripts/run-api-tests:
+        (runTestsBySuite): Appends failures and timeouts to JSON data.
+        (writeJsonDataIfApplicable): Writes JSON data to a file.
+
 2017-03-24  Lucas Forschler  <lforschler@apple.com>
 
         update committer_auth.py to be python 2.7 compliant

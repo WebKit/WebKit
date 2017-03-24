@@ -27,9 +27,11 @@ use strict;
 use warnings;
 
 use File::Basename;
+use File::Spec;
 use FindBin;
 use Getopt::Long qw(:config pass_through);
 use IPC::Open3;
+use JSON::PP;
 use lib $FindBin::Bin;
 use sigtrap qw(die normal-signals);
 use webkitdirs;
@@ -43,6 +45,7 @@ sub runTestsBySuite(\@);
 sub prepareEnvironmentForRunningTestTool();
 sub archCommandLineArgumentsForRestrictedEnvironmentVariables();
 sub testToolPaths();
+sub writeJSONDataIfApplicable();
 
 # Defined in VCSUtils.
 sub possiblyColored($$);
@@ -62,6 +65,8 @@ my @testsFailed;
 my @testsTimedOut;
 my $wtfOnly = 0;
 my %testToToolMap;
+my %jsonData = ();
+my $jsonFileName;
 
 
 my $programName = basename($0);
@@ -71,6 +76,7 @@ Usage: $programName [options] [suite or test prefixes]
   -v|--verbose          Verbose output
   -d|--dump-tests       Dump the names of testcases without running them
   --[no-]build          Build (or do not build) unit tests prior to running (default: $buildDefault)
+  --json-output=        Create a file at the specified path, listing test failures and timeouts in JSON format.
   --root=               Path to the pre-built root containing TestWebKitAPI
   --show-leaks          Show leaks in the output
   --no-timeout          Disable test timeouts
@@ -97,6 +103,7 @@ my $getOptionsResult = GetOptions(
     'verbose|v' => \$verbose,
     'show-leaks' => \$showLeaks,
     'no-timeout' => \$disableTimeout,
+    'json-output=s' => \$jsonFileName,
     'dump|d' => \$dumpTests,
     'build!' => \$build,
     'root=s' => \$root,
@@ -111,6 +118,10 @@ if (!$getOptionsResult || $showHelp) {
 setConfiguration();
 
 setConfigurationProductDir(Cwd::abs_path($root)) if (defined($root));
+
+if (defined($jsonFileName)) {
+    $jsonFileName = File::Spec->rel2abs($jsonFileName);
+}
 
 buildTestTool() if $build && !defined($root);
 setPathForRunningWebKitApp(\%ENV);
@@ -175,6 +186,13 @@ sub runTestsBySuite(\@)
             print "  $test\n";
         }
     }
+
+    if (defined($jsonFileName)) {
+        $jsonData{'failures'} = \@testsFailed;
+        $jsonData{'timeouts'} = \@testsTimedOut;
+    }
+
+    writeJSONDataIfApplicable();
 
     return @testsFailed > 0 || @testsTimedOut > 0;
 }
@@ -412,4 +430,13 @@ sub testToolPaths()
         $suffix = "";
     }
     return ("$pathWTF$suffix.exe", "$pathWebCore$suffix.exe", "$pathWebKit$suffix.exe");
+}
+
+sub writeJSONDataIfApplicable()
+{
+    if (defined($jsonFileName)) {
+        open(my $fileHandler, ">", $jsonFileName) or die;
+        print $fileHandler "${\encode_json(\%jsonData)}\n";
+        close($fileHandler);
+    }
 }
