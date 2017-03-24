@@ -1,3 +1,15 @@
+2017-03-24  Youenn Fablet  <youenn@apple.com>
+
+        Add support for DataChannel and MediaStreamTrack stats
+        https://bugs.webkit.org/show_bug.cgi?id=170031
+
+        Reviewed by Eric Carlson.
+
+        * webrtc/datachannel/datachannel-stats-expected.txt: Added.
+        * webrtc/datachannel/datachannel-stats.html: Added.
+        * webrtc/video-mediastreamtrack-stats-expected.txt: Added.
+        * webrtc/video-mediastreamtrack-stats.html: Added.
+
 2017-03-24  Chris Dumez  <cdumez@apple.com>
 
         Extend svg/animations/animations-paused-disconnected-iframe.html

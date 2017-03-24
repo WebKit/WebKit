@@ -116,6 +116,41 @@ public:
         unsigned long framesEncoded { 0 };
     };
 
+    struct MediaStreamTrackStats : Stats {
+        MediaStreamTrackStats() { type = RTCStatsReport::Type::Track; }
+
+        String trackIdentifier;
+        bool remoteSource { false };
+        bool ended { false };
+        bool detached { false };
+        unsigned long frameWidth { 0 };
+        unsigned long frameHeight { 0};
+        double framesPerSecond { 0 };
+        unsigned long framesSent { 0 };
+        unsigned long framesReceived { 0 };
+        unsigned long framesDecoded { 0 };
+        unsigned long framesDropped { 0 };
+        unsigned long framesCorrupted { 0 };
+        unsigned long partialFramesLost { 0 };
+        unsigned long fullFramesLost { 0 };
+        double audioLevel { 0 };
+        double echoReturnLoss { 0 };
+        double echoReturnLossEnhancement { 0 };
+    };
+
+    struct DataChannelStats : Stats {
+        DataChannelStats() { type = RTCStatsReport::Type::DataChannel; }
+        
+        String label;
+        String protocol;
+        long datachannelid { 0 };
+        String state;
+        unsigned long messagesSent { 0 };
+        unsigned long long bytesSent { 0 };
+        unsigned long messagesReceived { 0 };
+        unsigned long long bytesReceived { 0 };
+    };
+
 private:
     RTCStatsReport() = default;
 
