@@ -1,3 +1,19 @@
+2017-03-23  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Dragging on a large image should not revert to a file icon if data interaction is enabled
+        https://bugs.webkit.org/show_bug.cgi?id=170018
+        <rdar://problem/31184508>
+
+        Reviewed by Tim Horton.
+
+        Add new tests for data interaction. LargeImageToTargetDiv verifies the change made in this patch, while
+        AttachmentElementItemProviders was a test that was previously removed due to <rdar://problem/31038797>.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2Cocoa/large-red-square.png: Added.
+        * TestWebKitAPI/Tests/ios/DataInteractionTests.mm:
+        (TestWebKitAPI::TEST):
+
 2017-03-23  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Update WinCairoRequirements.zip

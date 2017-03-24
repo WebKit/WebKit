@@ -111,6 +111,7 @@ struct DragState;
         bool isCopyKeyDown(const DragData&);
 
         void mouseMovedIntoDocument(Document*);
+        bool shouldUseCachedImageForDragImage(const Image&) const;
 
         void doImageDrag(Element&, const IntPoint&, const IntRect&, DataTransfer&, Frame&, IntPoint&);
         void doSystemDrag(DragImage, const IntPoint&, const IntPoint&, const IntRect& dragImageBounds, DataTransfer&, Frame&, DragSourceAction);

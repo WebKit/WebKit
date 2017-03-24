@@ -1068,9 +1068,7 @@ void DragController::doImageDrag(Element& element, const IntPoint& dragOrigin, c
     ImageOrientationDescription orientationDescription(element.renderer()->shouldRespectImageOrientation(), element.renderer()->style().imageOrientation());
 
     Image* image = getImage(element);
-    if (image && image->size().height() * image->size().width() <= MaxOriginalImageArea
-        && (dragImage = DragImage { createDragImageFromImage(image, element.renderer() ? orientationDescription : ImageOrientationDescription()) })) {
-
+    if (image && shouldUseCachedImageForDragImage(*image) && (dragImage = DragImage { createDragImageFromImage(image, element.renderer() ? orientationDescription : ImageOrientationDescription()) })) {
         dragImage = DragImage { fitDragImageToMaxSize(dragImage.get(), layoutRect.size(), maxDragImageSize()) };
         IntSize fittedSize = dragImageSize(dragImage.get());
 
@@ -1162,6 +1160,16 @@ void DragController::placeDragCaret(const IntPoint& windowPoint)
     IntPoint framePoint = frameView->windowToContents(windowPoint);
 
     m_page.dragCaretController().setCaretPosition(frame->visiblePositionForPoint(framePoint));
+}
+
+bool DragController::shouldUseCachedImageForDragImage(const Image& image) const
+{
+#if ENABLE(DATA_INTERACTION)
+    UNUSED_PARAM(image);
+    return true;
+#else
+    return image.size().height() * image.size().width() <= MaxOriginalImageArea;
+#endif
 }
 
 #endif // ENABLE(DRAG_SUPPORT)

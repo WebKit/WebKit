@@ -33,6 +33,7 @@
 #import "WKWebViewConfigurationExtras.h"
 #import <MobileCoreServices/MobileCoreServices.h>
 #import <UIKit/UIItemProvider_Private.h>
+#import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 
 @implementation TestWKWebView (DataInteractionTests)
@@ -249,6 +250,46 @@ TEST(DataInteractionTests, ExternalSourceJPEGOnly)
     [dataInteractionSimulator runFrom:CGPointMake(300, 400) to:CGPointMake(100, 300)];
     EXPECT_TRUE([webView editorContainsImageElement]);
     EXPECT_TRUE([[dataInteractionSimulator finalSelectionRects] isEqualToArray:@[ makeCGRectValue(1, 201, 215, 174) ]]);
+}
+
+TEST(DataInteractionTests, AttachmentElementItemProviders)
+{
+    RetainPtr<WKWebViewConfiguration> configuration = [WKWebViewConfiguration testwebkitapi_configurationWithTestPlugInClassName:@"BundleEditingDelegatePlugIn"];
+    [configuration _setAttachmentElementEnabled:YES];
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get()]);
+    [webView synchronouslyLoadTestPageNamed:@"attachment-element"];
+
+    NSString *injectedTypeIdentifier = @"org.webkit.data";
+    __block RetainPtr<NSString> injectedString;
+    auto dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+    [dataInteractionSimulator setConvertItemProvidersBlock:^NSArray *(NSArray *originalItemProviders)
+    {
+        for (UIItemProvider *provider in originalItemProviders) {
+            NSData *injectedData = [provider copyDataRepresentationForTypeIdentifier:injectedTypeIdentifier error:nil];
+            if (!injectedData.length)
+                continue;
+            injectedString = adoptNS([[NSString alloc] initWithData:injectedData encoding:NSUTF8StringEncoding]);
+            break;
+        }
+        return originalItemProviders;
+    }];
+
+    [dataInteractionSimulator runFrom:CGPointMake(50, 50) to:CGPointMake(50, 400)];
+
+    EXPECT_WK_STREQ("hello", [injectedString UTF8String]);
+}
+
+TEST(DataInteractionTests, LargeImageToTargetDiv)
+{
+    auto testWebViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [[testWebViewConfiguration preferences] _setLargeImageAsyncDecodingEnabled:NO];
+
+    RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:testWebViewConfiguration.get()]);
+    [webView synchronouslyLoadTestPageNamed:@"div-and-large-image"];
+
+    RetainPtr<DataInteractionSimulator> dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+    [dataInteractionSimulator runFrom:CGPointMake(200, 400) to:CGPointMake(200, 150)];
+    EXPECT_WK_STREQ("PASS", [webView stringByEvaluatingJavaScript:@"target.textContent"].UTF8String);
 }
 
 } // namespace TestWebKitAPI
