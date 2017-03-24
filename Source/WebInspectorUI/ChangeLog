@@ -1,5 +1,25 @@
 2017-03-24  Devin Rousso  <webkit@devinrousso.com>
 
+        Web Inspector: add context menu item to log content of WebSocket frame
+        https://bugs.webkit.org/show_bug.cgi?id=169945
+
+        Reviewed by Joseph Pecoraro.
+
+        * Localizations/en.lproj/localizedStrings.js:
+
+        * UserInterface/Views/WebSocketContentView.js:
+        (WebInspector.WebSocketContentView):
+        (WebInspector.WebSocketContentView.prototype.addFrame):
+        (WebInspector.WebSocketContentView.prototype._addRow):
+        Rework the way CSS classes are applied so the isOutgoing and isText flags can also be passed
+        to the WebSocketDataGridNode.  This is necessary because a non-text frame shouldn't be able
+        to be logged to the console.
+
+        * UserInterface/Views/WebSocketDataGridNode.js:
+        (WebInspector.WebSocketDataGridNode.prototype.appendContextMenuItems):
+
+2017-03-24  Devin Rousso  <webkit@devinrousso.com>
+
         Web Inspector: allow users to click links in inline/user-agent styles
         https://bugs.webkit.org/show_bug.cgi?id=170054
 

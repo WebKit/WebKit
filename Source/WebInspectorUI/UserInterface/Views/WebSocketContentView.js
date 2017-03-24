@@ -52,7 +52,7 @@ WebInspector.WebSocketContentView = class WebSocketContentView extends WebInspec
         this._dataGrid.variableHeightRows = true;
         this.addSubview(this._dataGrid);
 
-        this._addRow(WebInspector.UIString("WebSocket Connection Established"), this._resource.walltime, ["non-text-frame"]);
+        this._addRow(WebInspector.UIString("WebSocket Connection Established"), this._resource.walltime);
 
         this._dataGrid.updateLayout();
     }
@@ -102,12 +102,12 @@ WebInspector.WebSocketContentView = class WebSocketContentView extends WebInspec
         else
             nodeText = WebInspector.WebSocketContentView.textForOpcode(opcode);
 
-        let classNames = [
-            isOutgoing ? "outgoing" : "incoming",
-            opcode === WebInspector.WebSocketResource.OpCodes.TextFrame ? "text-frame" : "non-text-frame"
-        ];
+        let attributes = {
+            isOutgoing,
+            isText: opcode === WebInspector.WebSocketResource.OpCodes.TextFrame,
+        };
 
-        this._addRow(nodeText, time, classNames, isOutgoing);
+        this._addRow(nodeText, time, attributes);
     }
 
     // Private
@@ -134,16 +134,24 @@ WebInspector.WebSocketContentView = class WebSocketContentView extends WebInspec
         this._lastRenderedReadyState = this._resource.readyState;
     }
 
-    _addRow(data, time, classNames, isOutgoing)
+    _addRow(data, time, attributes = {})
     {
         let node;
         if (this._showTimeColumn)
-            node = new WebInspector.WebSocketDataGridNode({data, time, isOutgoing});
+            node = new WebInspector.WebSocketDataGridNode(Object.shallowMerge({data, time}, attributes));
         else
-            node = new WebInspector.WebSocketDataGridNode({data, isOutgoing});
+            node = new WebInspector.WebSocketDataGridNode(Object.shallowMerge({data}, attributes));
 
         this._dataGrid.appendChild(node);
 
-        node.element.classList.add(...classNames);
+        if (attributes.isText)
+            node.element.classList.add("text-frame");
+        else
+            node.element.classList.add("non-text-frame");
+
+        if (attributes.isOutgoing)
+            node.element.classList.add("outgoing");
+        else
+            node.element.classList.add("incoming");
     }
 };

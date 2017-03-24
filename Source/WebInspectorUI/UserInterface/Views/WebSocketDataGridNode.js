@@ -45,6 +45,51 @@ WebInspector.WebSocketDataGridNode = class WebSocketDataGridNode extends WebInsp
         return super.createCellContent(columnIdentifier);
     }
 
+    // Protected
+
+    appendContextMenuItems(contextMenu)
+    {
+        let logResult = (result, wasThrown, savedResultIndex) => {
+            console.assert(!wasThrown);
+
+            const title = WebInspector.UIString("Selected Frame");
+            const addSpecialUserLogClass = true;
+            const shouldRevealConsole = true;
+            WebInspector.consoleLogViewController.appendImmediateExecutionWithResult(title, result, addSpecialUserLogClass, shouldRevealConsole);
+        };
+
+        if (this._data.isText) {
+            let remoteObject = WebInspector.RemoteObject.fromPrimitiveValue(this._data.data);
+            contextMenu.appendItem(WebInspector.UIString("Log Frame Text"), () => {
+                WebInspector.runtimeManager.saveResult(remoteObject, (savedResultIndex) => {
+                    logResult(remoteObject, false, savedResultIndex);
+                });
+            });
+
+            try {
+                // The result of this is unnecessary, as we just need the string to evaluate.
+                // We still need to execute this, however, in order to try-catch if it fails.
+                JSON.parse(this._data.data);
+
+                contextMenu.appendItem(WebInspector.UIString("Log Frame Value"), () => {
+                    const options = {
+                        objectGroup: WebInspector.RuntimeManager.ConsoleObjectGroup,
+                        generatePreview: true,
+                        saveResult: true,
+                        doNotPauseOnExceptionsAndMuteConsole: true,
+                    };
+
+                    let expression = "(" + this._data.data + ")";
+                    WebInspector.runtimeManager.evaluateInInspectedWindow(expression, options, logResult);
+                });
+            } catch (error) { }
+
+            contextMenu.appendSeparator();
+        }
+
+        return super.appendContextMenuItems(contextMenu);
+    }
+
     // Private
 
     _timeStringFromTimestamp(timestamp)
