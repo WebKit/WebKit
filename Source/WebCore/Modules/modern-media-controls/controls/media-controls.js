@@ -185,6 +185,12 @@ class MediaControls extends LayoutNode
             this.layout();
     }
 
+    controlsBarFadedStateDidChange()
+    {
+        if (this.delegate && typeof this.delegate.controlsBarFadedStateDidChange === "function")
+            this.delegate.controlsBarFadedStateDidChange();
+    }
+
     layoutTraitsDidChange()
     {
         // Implemented by subclasses as needed.

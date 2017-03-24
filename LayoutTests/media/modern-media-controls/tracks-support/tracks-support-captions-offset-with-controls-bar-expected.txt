@@ -1,0 +1,10 @@
+Ensure that the captions container accounts for the controsl bar when visible.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS getComputedStyle(shadowRoot.lastElementChild.firstElementChild).height is "calc(100% - 25px)"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

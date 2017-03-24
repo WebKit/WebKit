@@ -1,3 +1,61 @@
+2017-03-24  Antoine Quint  <graouts@webkit.org>
+
+        [Modern Media Controls] Captions don't move with the appearance of the inline controls
+        https://bugs.webkit.org/show_bug.cgi?id=170051
+        <rdar://problem/30754428>
+
+        Reviewed by Dean Jackson.
+
+        We now size the captions container to account for the controls bar height when visible. To do this,
+        we use CSS variables to specify the height of the controls bar in default inline mode, compact inline
+        mode and fullscreen mode.
+
+        Test: media/modern-media-controls/tracks-support/tracks-support-captions-offset-with-controls-bar.html
+
+        * Modules/modern-media-controls/controls/controls-bar.js:
+        (ControlsBar.prototype.set faded):
+        Notify the hosting MediaControls that the "faded" property changed.
+
+        * Modules/modern-media-controls/controls/ios-inline-media-controls.css:
+        (.media-controls.ios.inline > .controls-bar):
+        Use the new --inline-controls-bar-height CSS variable to specify the inline bar height.
+
+        * Modules/modern-media-controls/controls/macos-compact-inline-media-controls.css:
+        (.media-controls.mac.inline.compact > .controls-bar):
+        Use the new --inline-compact-controls-bar-height CSS variable to specify the inline bar height.
+
+        * Modules/modern-media-controls/controls/macos-fullscreen-media-controls.css:
+        (.media-controls.mac.fullscreen > .controls-bar):
+        Use the new --fullscreen-controls-bar-height CSS variable to specify the inline bar height.
+
+        * Modules/modern-media-controls/controls/macos-inline-media-controls.css:
+        (.media-controls.mac.inline > .controls-bar):
+        Use the new --inline-controls-bar-height CSS variable to specify the inline bar height.
+
+        * Modules/modern-media-controls/controls/media-controls.css:
+        (*):
+        Specify new CSS variables for the various controls bar heights.
+
+        * Modules/modern-media-controls/controls/media-controls.js:
+        (MediaControls.prototype.controlsBarFadedStateDidChange):
+        Notify the delegate of a controls bar "faded" property change. 
+
+        * Modules/modern-media-controls/controls/text-tracks.css:
+        (video::-webkit-media-text-track-container):
+        (video::-webkit-media-text-track-container.visible-controls-bar):
+        (video::-webkit-media-text-track-container.visible-controls-bar.compact-controls-bar):
+        (video::-webkit-media-text-track-display):
+        Shorten the height of the captions container when the controls bar is visible. We also
+        fix a couple of prefixed properties that didn't need to be.
+
+        * Modules/modern-media-controls/media/media-controller.js:
+        (MediaController.prototype.controlsBarFadedStateDidChange):
+        (MediaController.prototype._updateControlsIfNeeded):
+        (MediaController.prototype._updateTextTracksClassList):
+        (MediaController):
+        Ensure we reflect the "faded" state of the controls bar on the captions container using
+        a CSS class, as well as whether the controls bar mode is compact.
+
 2017-03-24  Brent Fulgham  <bfulgham@apple.com>
 
         Handle recursive calls to ProcessingInstruction::checkStyleSheet

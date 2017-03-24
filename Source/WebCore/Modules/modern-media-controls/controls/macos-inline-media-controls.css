@@ -29,7 +29,7 @@
     left: 0;
     bottom: 0;
     width: 100%;
-    height: 50px;
+    height: var(--inline-controls-bar-height);
 }
 
 .media-controls.mac.inline > .controls-bar > * {

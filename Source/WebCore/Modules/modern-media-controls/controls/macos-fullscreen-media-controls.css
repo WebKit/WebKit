@@ -37,7 +37,7 @@
     left: calc((100% - var(--controls-bar-width)) / 2);
     bottom: 25px;
     width: var(--controls-bar-width);
-    height: 75px;
+    height: var(--fullscreen-controls-bar-height);
 }
 
 .media-controls.mac.fullscreen > .controls-bar > .background-tint > div {

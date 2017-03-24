@@ -35,6 +35,12 @@
     min-height: 50px !important;
 }
 
+* {
+    --inline-controls-bar-height: 50px;
+    --inline-compact-controls-bar-height: 25px;
+    --fullscreen-controls-bar-height: 75px;
+}
+
 /* We need to use relative positioning due to webkit.org/b/163603 */
 .media-controls-container {
     position: relative;

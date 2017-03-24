@@ -102,6 +102,11 @@ class MediaController
         this.controls.usesLTRUserInterfaceLayoutDirection = flag;
     }
 
+    controlsBarFadedStateDidChange()
+    {
+        this._updateTextTracksClassList();
+    }
+
     macOSControlsBackgroundWasClicked()
     {
         // Toggle playback when clicking on the video but not on any controls on macOS.
@@ -142,6 +147,7 @@ class MediaController
         const ControlsClass = this._controlsClassForLayoutTraits(layoutTraits);
         if (previousControls && previousControls.constructor === ControlsClass) {
             this.controls.layoutTraits = layoutTraits;
+            this._updateTextTracksClassList();
             this._updateControlsSize();
             return;
         }
@@ -167,6 +173,7 @@ class MediaController
             this.container.appendChild(this.controls.element);
 
         this.controls.layoutTraits = layoutTraits;
+        this._updateTextTracksClassList();
         this._updateControlsSize();
 
         this._supportingObjects = [AirplaySupport, ControlsVisibilitySupport, FullscreenSupport, MuteSupport, PiPSupport, PlacardSupport, PlaybackSupport, ScrubbingSupport, SeekBackwardSupport, SeekForwardSupport, SkipBackSupport, StartSupport, StatusSupport, TimeLabelsSupport, TracksSupport, VolumeSupport, VolumeDownSupport, VolumeUpSupport].map(SupportClass => {
@@ -199,6 +206,19 @@ class MediaController
         if (layoutTraits & LayoutTraits.Fullscreen)
             return MacOSFullscreenMediaControls;
         return MacOSInlineMediaControls;
+    }
+
+    _updateTextTracksClassList()
+    {
+        if (!this.host)
+            return;
+
+        const layoutTraits = this.layoutTraits;
+        if (layoutTraits & LayoutTraits.Fullscreen)
+            return;
+
+        this.host.textTrackContainer.classList.toggle("visible-controls-bar", !this.controls.controlsBar.faded);
+        this.host.textTrackContainer.classList.toggle("compact-controls-bar", !!(layoutTraits & LayoutTraits.Compact));
     }
 
 }

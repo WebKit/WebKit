@@ -1,3 +1,17 @@
+2017-03-24  Antoine Quint  <graouts@webkit.org>
+
+        [Modern Media Controls] Captions don't move with the appearance of the inline controls
+        https://bugs.webkit.org/show_bug.cgi?id=170051
+        <rdar://problem/30754428>
+
+        Reviewed by Dean Jackson.
+
+        Add a new test, which would have previously failed, where we check that we account for the controls bar height
+        when showing captions with the controls bar visible.
+
+        * media/modern-media-controls/tracks-support/tracks-support-captions-offset-with-controls-bar-expected.txt: Added.
+        * media/modern-media-controls/tracks-support/tracks-support-captions-offset-with-controls-bar.html: Added.
+
 2017-03-24  Brent Fulgham  <bfulgham@apple.com>
 
         Handle recursive calls to ProcessingInstruction::checkStyleSheet

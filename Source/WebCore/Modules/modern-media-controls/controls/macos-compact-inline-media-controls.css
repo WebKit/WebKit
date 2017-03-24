@@ -26,7 +26,7 @@
 /* Controls bar */
 
 .media-controls.mac.inline.compact > .controls-bar {
-    height: 25px;
+    height: var(--inline-compact-controls-bar-height);
 }
 
 /* Controls placement */

@@ -148,6 +148,8 @@ class ControlsBar extends LayoutNode
             delete this._enforceAutoHideTimer;
 
         this.markDirtyProperty("faded");
+
+        this._mediaControls.controlsBarFadedStateDidChange();
     }
 
     // Protected
