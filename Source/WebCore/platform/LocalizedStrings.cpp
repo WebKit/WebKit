@@ -337,7 +337,7 @@ String contextMenuItemTagOpenVideoInNewWindow()
 
 String contextMenuItemTagOpenAudioInNewWindow()
 {
-    return WEB_UI_STRING_WITH_MNEMONIC("Open Audio in New Window", "Open _Video in New Window", "Open Audio in New Window context menu item");
+    return WEB_UI_STRING_WITH_MNEMONIC("Open Audio in New Window", "Open _Audio in New Window", "Open Audio in New Window context menu item");
 }
 
 String contextMenuItemTagDownloadVideoToDisk()
