@@ -1,5 +1,17 @@
 2017-03-23  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        [JSC] Use jsNontrivialString agressively for ToString(Int52)
+        https://bugs.webkit.org/show_bug.cgi?id=170002
+
+        Reviewed by Sam Weinig.
+
+        * stress/to-string-int52.js: Added.
+        (shouldBe):
+        (toString10):
+        (expected):
+
+2017-03-23  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         [JSC][DFG] Make addShouldSpeculateAnyInt more conservative to avoid regression caused by Double <-> Int52 conversions
         https://bugs.webkit.org/show_bug.cgi?id=169998
 

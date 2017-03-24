@@ -542,8 +542,15 @@ JSString* int32ToString(VM& vm, int32_t value, int32_t radix)
 JSString* int52ToString(VM& vm, int64_t value, int32_t radix)
 {
     ASSERT(!(radix < 2 || radix > 36));
+    // A negative value casted to unsigned would be bigger than 36 (the max radix).
+    if (static_cast<uint64_t>(value) < static_cast<uint64_t>(radix)) {
+        ASSERT(value <= 36);
+        ASSERT(value >= 0);
+        return vm.smallStrings.singleCharacterString(radixDigits[value]);
+    }
+
     if (radix == 10)
-        return jsString(&vm, vm.numericStrings.add(static_cast<double>(value)));
+        return jsNontrivialString(&vm, vm.numericStrings.add(static_cast<double>(value)));
 
     // Position the decimal point at the center of the string, set
     // the startOfResultString pointer to point at the decimal point.
@@ -552,7 +559,7 @@ JSString* int52ToString(VM& vm, int64_t value, int32_t radix)
     char* startOfResultString = decimalPoint;
     *decimalPoint = '\0';
 
-    return jsString(&vm, int52ToStringWithRadix(startOfResultString, value, radix));
+    return jsNontrivialString(&vm, int52ToStringWithRadix(startOfResultString, value, radix));
 }
 
 JSString* numberToString(VM& vm, double doubleValue, int32_t radix)

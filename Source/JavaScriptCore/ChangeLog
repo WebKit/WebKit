@@ -1,5 +1,19 @@
 2017-03-23  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        [JSC] Use jsNontrivialString agressively for ToString(Int52)
+        https://bugs.webkit.org/show_bug.cgi?id=170002
+
+        Reviewed by Sam Weinig.
+
+        We use the same logic used for Int32 to use jsNontvirialString.
+        After single character check, produced string is always longer than 1.
+        Thus, we can use jsNontrivialString.
+
+        * runtime/NumberPrototype.cpp:
+        (JSC::int52ToString):
+
+2017-03-23  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         [JSC] Use WeakRandom for SamplingProfiler interval fluctuation
         https://bugs.webkit.org/show_bug.cgi?id=170045
 
