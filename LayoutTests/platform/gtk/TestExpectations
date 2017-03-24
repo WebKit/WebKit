@@ -3470,6 +3470,8 @@ webkit.org/b/169910 fast/multicol/simple-line-layout-line-index-after-strut.html
 
 webkit.org/b/105954 http/tests/navigation/reload-subframe-object.html [ Failure ]
 
+webkit.org/b/170053 media/video-load-require-user-gesture.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing
 #////////////////////////////////////////////////////////////////////////////////////////

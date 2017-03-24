@@ -1,5 +1,11 @@
 2017-03-24  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed GTK+ gardening. Mark media/video-load-require-user-gesture.html as failing after r214338.
+
+        * platform/gtk/TestExpectations:
+
+2017-03-24  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed GTK+ gardening. Rebaseline http/tests/inspector/network/fetch-response-body.html/xhr-response-body.html after r214338.
 
         We are now getting the right application/json for a file data.json. The soup network backend tries to gess the
