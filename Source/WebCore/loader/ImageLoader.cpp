@@ -394,7 +394,12 @@ void ImageLoader::dispatchPendingBeforeLoadEvent()
     if (!element().document().hasLivingRenderTree())
         return;
     m_hasPendingBeforeLoadEvent = false;
+    Ref<Document> originalDocument = element().document();
     if (element().dispatchBeforeLoadEvent(m_image->url())) {
+        bool didEventListenerDisconnectThisElement = !element().isConnected() || &element().document() != originalDocument.ptr();
+        if (didEventListenerDisconnectThisElement)
+            return;
+        
         updateRenderer();
         return;
     }

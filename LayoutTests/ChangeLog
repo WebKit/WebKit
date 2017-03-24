@@ -1,3 +1,23 @@
+2017-03-24  Brent Fulgham  <bfulgham@apple.com>
+
+        Handle recursive calls to ProcessingInstruction::checkStyleSheet
+        https://bugs.webkit.org/show_bug.cgi?id=169982
+        <rdar://problem/31083051>
+
+        Reviewed by Antti Koivisto.
+
+        * fast/dom/beforeload/image-removed-during-before-load-expected.txt: Copied from LayoutTests/fast/dom/beforeload/image-removed-during-before-load-expected.txt.
+        * fast/dom/beforeload/image-removed-during-before-load.html: Copied from LayoutTests/fast/dom/beforeload/image-removed-during-before-load.html.
+        * fast/dom/beforeload/recursive-css-pi-before-load-expected.txt: Copied from LayoutTests/fast/dom/beforeload/recursive-css-pi-before-load-expected.txt.
+        * fast/dom/beforeload/recursive-css-pi-before-load.html: Copied from LayoutTests/fast/dom/beforeload/recursive-css-pi-before-load.html.
+        * fast/dom/beforeload/recursive-link-before-load-expected.txt: Copied from LayoutTests/fast/dom/beforeload/recursive-link-before-load-expected.txt.
+        * fast/dom/beforeload/recursive-link-before-load.html: Copied from LayoutTests/fast/dom/beforeload/recursive-link-before-load.html.
+        * fast/dom/beforeload/recursive-xsl-pi-before-load-expected.txt: Copied from LayoutTests/fast/dom/beforeload/recursive-xsl-pi-before-load-expected.txt.
+        * fast/dom/beforeload/recursive-xsl-pi-before-load.html: Copied from LayoutTests/fast/dom/beforeload/recursive-xsl-pi-before-load.html.
+        * fast/dom/beforeload/resources/content.xhtml: Copied from LayoutTests/fast/dom/beforeload/resources/content.xhtml.
+        * fast/dom/beforeload/resources/pass.css: Copied from LayoutTests/fast/dom/beforeload/resources/pass.css.
+        * fast/dom/beforeload/resources/test.xsl: Copied from LayoutTests/fast/dom/beforeload/resources/test.xsl.
+
 2017-03-24  Brady Eidson  <beidson@apple.com>
 
         A null compound index value crashes the Databases process.

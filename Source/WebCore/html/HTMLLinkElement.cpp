@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2003, 2006, 2007, 2008, 2009, 2010, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2017 Apple Inc. All rights reserved.
  * Copyright (C) 2009 Rob Buis (rwlbuis@gmail.com)
  * Copyright (C) 2011 Google Inc. All rights reserved.
  *
@@ -55,6 +55,7 @@
 #include "StyleScope.h"
 #include "StyleSheetContents.h"
 #include <wtf/Ref.h>
+#include <wtf/SetForScope.h>
 #include <wtf/StdLibExtras.h>
 
 namespace WebCore {
@@ -224,6 +225,10 @@ void HTMLLinkElement::process()
         return;
     }
 
+    // Prevent recursive loading of link.
+    if (m_isHandlingBeforeLoad)
+        return;
+
     URL url = getNonEmptyURLAttribute(hrefAttr);
 
     if (!m_linkLoader.loadLink(m_relAttribute, url, attributeWithoutSynchronization(asAttr), attributeWithoutSynchronization(crossoriginAttr), document()))
@@ -243,8 +248,11 @@ void HTMLLinkElement::process()
             m_cachedSheet = nullptr;
         }
 
+        {
+        SetForScope<bool> change(m_isHandlingBeforeLoad, true);
         if (!shouldLoadLink())
             return;
+        }
 
         m_loading = true;
 
@@ -277,6 +285,7 @@ void HTMLLinkElement::process()
 
         request.setAsPotentiallyCrossOrigin(crossOrigin(), document());
 
+        ASSERT_WITH_SECURITY_IMPLICATION(!m_cachedSheet);
         m_cachedSheet = document().cachedResourceLoader().requestCSSStyleSheet(WTFMove(request));
 
         if (m_cachedSheet)
