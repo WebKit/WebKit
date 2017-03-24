@@ -1,3 +1,13 @@
+2017-03-23  Antti Koivisto  <antti@apple.com>
+
+        Revert r213712, caused iPad PLT regression
+        https://bugs.webkit.org/show_bug.cgi?id=170040
+
+        Unreviewed.
+
+        * http/tests/incremental/stylesheet-body-incremental-rendering-expected.html: Removed.
+        * http/tests/incremental/stylesheet-body-incremental-rendering.html: Removed.
+
 2017-03-23  Chris Dumez  <cdumez@apple.com>
 
         SVG animations are not paused when their <svg> element is removed from the document

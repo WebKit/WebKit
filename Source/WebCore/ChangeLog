@@ -1,3 +1,53 @@
+2017-03-23  Antti Koivisto  <antti@apple.com>
+
+        Revert r213712, caused iPad PLT regression
+        https://bugs.webkit.org/show_bug.cgi?id=170040
+
+        Unreviewed.
+
+        A few subtests have big regressions.
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::pseudoStyleRulesForElement):
+        * dom/Document.cpp:
+        (WebCore::Document::resolveStyle):
+        (WebCore::Document::updateLayoutIgnorePendingStylesheets):
+        (WebCore::Document::shouldScheduleLayout):
+        (WebCore::Document::didRemoveAllPendingStylesheet):
+        * dom/Document.h:
+        (WebCore::Document::didLayoutWithPendingStylesheets):
+        (WebCore::Document::hasNodesWithPlaceholderStyle):
+        (WebCore::Document::setHasNodesWithPlaceholderStyle):
+        (WebCore::Document::hasNodesWithNonFinalStyle): Deleted.
+        (WebCore::Document::setHasNodesWithNonFinalStyle): Deleted.
+        * html/HTMLFrameSetElement.cpp:
+        (WebCore::HTMLFrameSetElement::rendererIsNeeded):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::qualifiesAsVisuallyNonEmpty):
+        (WebCore::FrameView::fireLayoutRelatedMilestonesIfNeeded):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paintContents):
+        * rendering/RenderLayer.cpp:
+        (WebCore::shouldSuppressPaintingLayer):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::changeRequiresRepaint):
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::isPlaceholderStyle):
+        (WebCore::RenderStyle::setIsPlaceholderStyle):
+        (WebCore::RenderStyle::isNotFinal): Deleted.
+        (WebCore::RenderStyle::setIsNotFinal): Deleted.
+        * rendering/style/StyleRareNonInheritedData.cpp:
+        (WebCore::StyleRareNonInheritedData::StyleRareNonInheritedData):
+        (WebCore::StyleRareNonInheritedData::operator==):
+        * rendering/style/StyleRareNonInheritedData.h:
+        * style/StyleScope.cpp:
+        (WebCore::Style::Scope::analyzeStyleSheetChange):
+        (WebCore::Style::Scope::updateActiveStyleSheets):
+        * style/StyleTreeResolver.cpp:
+        (WebCore::Style::makePlaceholderStyle):
+        (WebCore::Style::TreeResolver::styleForElement):
+        (WebCore::Style::TreeResolver::resolveElement):
+
 2017-03-23  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Dragging on a large image should not revert to a file icon if data interaction is enabled
