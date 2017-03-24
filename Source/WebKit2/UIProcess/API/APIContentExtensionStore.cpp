@@ -380,6 +380,7 @@ void ContentExtensionStore::lookupContentExtension(const WTF::String& identifier
 
 void ContentExtensionStore::compileContentExtension(const WTF::String& identifier, WTF::String&& json, Function<void(RefPtr<API::ContentExtension>, std::error_code)> completionHandler)
 {
+    AtomicString::init();
     m_compileQueue->dispatch([protectedThis = makeRef(*this), identifier = identifier.isolatedCopy(), json = json.isolatedCopy(), storePath = m_storePath.isolatedCopy(), completionHandler = WTFMove(completionHandler)] () mutable {
         auto path = constructedPath(storePath, identifier);
 
