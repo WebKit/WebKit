@@ -1,3 +1,18 @@
+2017-03-23  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        window.crypto.getRandomValues() uses the insecure RC4 RNG
+        https://bugs.webkit.org/show_bug.cgi?id=169623
+
+        Reviewed by Alex Christensen.
+
+        Remove the RC4 random generator in favor of using OS randomness for now. This is basically
+        a merge of https://codereview.chromium.org/1431233002 from Blink, original author "eroman".
+
+        * wtf/CryptographicallyRandomNumber.cpp:
+        (WTF::cryptographicallyRandomNumber):
+        (WTF::cryptographicallyRandomValues):
+        (): Deleted.
+
 2017-03-23  Tomas Popela  <tpopela@redhat.com>
 
         Fix uninitialized public members in WTF

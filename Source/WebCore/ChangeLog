@@ -1,3 +1,18 @@
+2017-03-23  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        window.crypto.getRandomValues() uses the insecure RC4 RNG
+        https://bugs.webkit.org/show_bug.cgi?id=169623
+
+        Reviewed by Alex Christensen.
+
+        * PlatformMac.cmake:
+        * WebCore.xcodeproj/project.pbxproj:
+        * crypto/CryptoKey.cpp:
+        (WebCore::CryptoKey::randomData): Use this on Mac now.
+        * crypto/mac/CryptoKeyMac.cpp: Removed.
+        * page/Crypto.cpp:
+        (WebCore::Crypto::getRandomValues): Rollout r214188.
+
 2017-03-23  Chris Dumez  <cdumez@apple.com>
 
         SVG animations are not paused when their <svg> element is removed from the document
