@@ -130,6 +130,10 @@ class DeprecatedPort(object):
     def run_bindings_tests_command(self):
         return self.script_shell_command("run-bindings-tests")
 
+    def run_api_tests_command(self, build_style=None):
+        command = self.script_shell_command("run-api-tests")
+        return self._append_build_style_flag(command, build_style)
+
 
 class IOSPort(DeprecatedPort):
     port_flag_name = "ios-device"

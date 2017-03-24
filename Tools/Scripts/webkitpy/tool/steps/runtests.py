@@ -62,6 +62,10 @@ class RunTests(AbstractStep):
             self._run_javascriptcore_tests()
             return
 
+        if self._options.group == "api":
+            self._run_api_tests()
+            return
+
         if self._options.group == "bindings":
             self._run_bindings_tests()
             return
@@ -167,5 +171,12 @@ class RunTests(AbstractStep):
         results_directory = self._tool.port_factory.get(options=self._options).bindings_results_directory()
         self._tool.filesystem.maybe_make_directory(results_directory)
         results_file_path = self._tool.filesystem.join(results_directory, "bindings_test_results.json")
+        args.append("--json-output=%s" % results_file_path)
+        self._tool.executive.run_and_throw_if_fail(args, cwd=self._tool.scm().checkout_root)
+
+    def _run_api_tests(self):
+        args = self._tool.deprecated_port().run_api_tests_command(self._options.build_style)
+        results_directory = self._tool.port_factory.get(options=self._options).api_results_directory()
+        results_file_path = self._tool.filesystem.join(results_directory, "api_test_results.json")
         args.append("--json-output=%s" % results_file_path)
         self._tool.executive.run_and_throw_if_fail(args, cwd=self._tool.scm().checkout_root)

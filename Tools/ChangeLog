@@ -1,5 +1,21 @@
 2017-03-24  Srinivasan Vijayaraghavan  <svijayaraghavan@apple.com>
 
+        webkitpy should be able to run API tests
+        https://bugs.webkit.org/show_bug.cgi?id=170028
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Scripts/webkitpy/common/config/ports.py:
+        (DeprecatedPort.run_api_tests_command): Added.
+        * Scripts/webkitpy/port/base.py:
+        (Port.api_results_directory): Added.
+        * Scripts/webkitpy/tool/steps/runtests.py:
+        (RunTests.run): Check if we should be running API tests.
+        (RunTests._run_api_tests): Generate script to run API tests with json output.
+        * Scripts/webkitpy/tool/steps/steps_unittest.py: Unit tests.
+
+2017-03-24  Srinivasan Vijayaraghavan  <svijayaraghavan@apple.com>
+
         Add JSON results for API tests
         https://bugs.webkit.org/show_bug.cgi?id=170021
 

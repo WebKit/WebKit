@@ -282,3 +282,29 @@ This patch does not have relevant changes.
         expected_logs = """Checking relevance of patch
 This patch does not have relevant changes.
 """
+
+    def test_runtests_api(self):
+        mock_options = self._step_options()
+        mock_options.non_interactive = False
+        mock_options.build_style = "release"
+        mock_options.group = "api"
+        step = steps.RunTests(MockTool(log_executive=True), mock_options)
+        tool = MockTool(log_executive=True)
+        tool._deprecated_port = DeprecatedPort()
+        step = steps.RunTests(tool, mock_options)
+        expected_logs = """MOCK run_and_throw_if_fail: ['Tools/Scripts/run-api-tests', '--release', '--json-output=/tmp/api_test_results.json'], cwd=/mock-checkout
+"""
+        OutputCapture().assert_outputs(self, step.run, [{}], expected_logs=expected_logs)
+
+    def test_runtests_api_debug(self):
+        mock_options = self._step_options()
+        mock_options.non_interactive = False
+        mock_options.build_style = "debug"
+        mock_options.group = "api"
+        step = steps.RunTests(MockTool(log_executive=True), mock_options)
+        tool = MockTool(log_executive=True)
+        tool._deprecated_port = DeprecatedPort()
+        step = steps.RunTests(tool, mock_options)
+        expected_logs = """MOCK run_and_throw_if_fail: ['Tools/Scripts/run-api-tests', '--debug', '--json-output=/tmp/api_test_results.json'], cwd=/mock-checkout
+"""
+        OutputCapture().assert_outputs(self, step.run, [{}], expected_logs=expected_logs)
