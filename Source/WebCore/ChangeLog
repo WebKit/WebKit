@@ -1,3 +1,28 @@
+2017-03-23  Youenn Fablet  <youenn@apple.com>
+
+        Rename RTCIceCandidateEvent to RTCPeerConnectionIceEvent
+        https://bugs.webkit.org/show_bug.cgi?id=169981
+
+        Reviewed by Eric Carlson.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * Modules/mediastream/MediaEndpointPeerConnection.cpp:
+        * Modules/mediastream/PeerConnectionBackend.cpp:
+        (WebCore::PeerConnectionBackend::fireICECandidateEvent):
+        (WebCore::PeerConnectionBackend::doneGatheringCandidates):
+        * Modules/mediastream/RTCPeerConnection.cpp:
+        * Modules/mediastream/RTCPeerConnectionIceEvent.cpp: Renamed from Source/WebCore/Modules/mediastream/RTCIceCandidateEvent.cpp.
+        (WebCore::RTCPeerConnectionIceEvent::create):
+        (WebCore::RTCPeerConnectionIceEvent::RTCPeerConnectionIceEvent):
+        (WebCore::RTCPeerConnectionIceEvent::~RTCPeerConnectionIceEvent):
+        (WebCore::RTCPeerConnectionIceEvent::candidate):
+        (WebCore::RTCPeerConnectionIceEvent::eventInterface):
+        * Modules/mediastream/RTCPeerConnectionIceEvent.h: Renamed from Source/WebCore/Modules/mediastream/RTCIceCandidateEvent.h.
+        * Modules/mediastream/RTCPeerConnectionIceEvent.idl: Renamed from Source/WebCore/Modules/mediastream/RTCIceCandidateEvent.idl.
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/EventNames.in:
+
 2017-03-23  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         window.crypto.getRandomValues() uses the insecure RC4 RNG

@@ -37,8 +37,8 @@
 #include "EventNames.h"
 #include "JSRTCSessionDescription.h"
 #include "RTCIceCandidate.h"
-#include "RTCIceCandidateEvent.h"
 #include "RTCPeerConnection.h"
+#include "RTCPeerConnectionIceEvent.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
@@ -267,7 +267,7 @@ void PeerConnectionBackend::fireICECandidateEvent(RefPtr<RTCIceCandidate>&& cand
 {
     ASSERT(isMainThread());
 
-    m_peerConnection.fireEvent(RTCIceCandidateEvent::create(false, false, WTFMove(candidate)));
+    m_peerConnection.fireEvent(RTCPeerConnectionIceEvent::create(false, false, WTFMove(candidate)));
 }
 
 void PeerConnectionBackend::enableICECandidateFiltering()
@@ -331,7 +331,7 @@ void PeerConnectionBackend::doneGatheringCandidates()
 {
     ASSERT(isMainThread());
 
-    m_peerConnection.fireEvent(RTCIceCandidateEvent::create(false, false, nullptr));
+    m_peerConnection.fireEvent(RTCPeerConnectionIceEvent::create(false, false, nullptr));
     m_peerConnection.updateIceGatheringState(RTCIceGatheringState::Complete);
 }
 

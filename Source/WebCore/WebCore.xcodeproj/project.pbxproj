@@ -190,7 +190,7 @@
 		078E090717D14CEE00420AA1 /* RTCDTMFSender.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07221B6917CEC32700848E51 /* RTCDTMFSender.cpp */; };
 		078E090817D14CEE00420AA1 /* RTCDTMFToneChangeEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07221B6C17CEC32700848E51 /* RTCDTMFToneChangeEvent.cpp */; };
 		078E090917D14CEE00420AA1 /* RTCIceCandidate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07221B7117CEC32700848E51 /* RTCIceCandidate.cpp */; };
-		078E090A17D14CEE00420AA1 /* RTCIceCandidateEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07221B7417CEC32700848E51 /* RTCIceCandidateEvent.cpp */; };
+		078E090A17D14CEE00420AA1 /* RTCPeerConnectionIceEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07221B7417CEC32700848E51 /* RTCPeerConnectionIceEvent.cpp */; };
 		078E090B17D14CEE00420AA1 /* RTCPeerConnection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07221B7717CEC32700848E51 /* RTCPeerConnection.cpp */; };
 		078E090C17D14CEE00420AA1 /* RTCSessionDescription.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07221B7A17CEC32700848E51 /* RTCSessionDescription.cpp */; };
 		078E091217D14CEE00420AA1 /* UserMediaController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07221B8E17CEC32700848E51 /* UserMediaController.cpp */; };
@@ -206,7 +206,7 @@
 		078E092017D14D1C00420AA1 /* RTCDTMFSender.h in Headers */ = {isa = PBXBuildFile; fileRef = 07221B6A17CEC32700848E51 /* RTCDTMFSender.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		078E092117D14D1C00420AA1 /* RTCDTMFToneChangeEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 07221B6D17CEC32700848E51 /* RTCDTMFToneChangeEvent.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		078E092317D14D1C00420AA1 /* RTCIceCandidate.h in Headers */ = {isa = PBXBuildFile; fileRef = 07221B7217CEC32700848E51 /* RTCIceCandidate.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		078E092417D14D1C00420AA1 /* RTCIceCandidateEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 07221B7517CEC32700848E51 /* RTCIceCandidateEvent.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		078E092417D14D1C00420AA1 /* RTCPeerConnectionIceEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 07221B7517CEC32700848E51 /* RTCPeerConnectionIceEvent.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		078E092517D14D1C00420AA1 /* RTCPeerConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 07221B7817CEC32700848E51 /* RTCPeerConnection.h */; };
 		078E092617D14D1C00420AA1 /* RTCSessionDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 07221B7B17CEC32700848E51 /* RTCSessionDescription.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		078E092A17D14D1C00420AA1 /* RTCStatsReport.h in Headers */ = {isa = PBXBuildFile; fileRef = 07221B8417CEC32700848E51 /* RTCStatsReport.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -244,8 +244,8 @@
 		07969DB217D14151007FF842 /* JSRTCDTMFToneChangeEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 07969D9817D14151007FF842 /* JSRTCDTMFToneChangeEvent.h */; };
 		07969DB517D14151007FF842 /* JSRTCIceCandidate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07969D9B17D14151007FF842 /* JSRTCIceCandidate.cpp */; };
 		07969DB617D14151007FF842 /* JSRTCIceCandidate.h in Headers */ = {isa = PBXBuildFile; fileRef = 07969D9C17D14151007FF842 /* JSRTCIceCandidate.h */; };
-		07969DB717D14151007FF842 /* JSRTCIceCandidateEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07969D9D17D14151007FF842 /* JSRTCIceCandidateEvent.cpp */; };
-		07969DB817D14151007FF842 /* JSRTCIceCandidateEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 07969D9E17D14151007FF842 /* JSRTCIceCandidateEvent.h */; };
+		07969DB717D14151007FF842 /* JSRTCPeerConnectionIceEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07969D9D17D14151007FF842 /* JSRTCPeerConnectionIceEvent.cpp */; };
+		07969DB817D14151007FF842 /* JSRTCPeerConnectionIceEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 07969D9E17D14151007FF842 /* JSRTCPeerConnectionIceEvent.h */; };
 		07969DB917D14151007FF842 /* JSRTCPeerConnection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07969D9F17D14151007FF842 /* JSRTCPeerConnection.cpp */; };
 		07969DBA17D14151007FF842 /* JSRTCPeerConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 07969DA017D14151007FF842 /* JSRTCPeerConnection.h */; };
 		07969DBB17D14151007FF842 /* JSRTCSessionDescription.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07969DA117D14151007FF842 /* JSRTCSessionDescription.cpp */; };
@@ -7429,9 +7429,9 @@
 		07221B7117CEC32700848E51 /* RTCIceCandidate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RTCIceCandidate.cpp; sourceTree = "<group>"; };
 		07221B7217CEC32700848E51 /* RTCIceCandidate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCIceCandidate.h; sourceTree = "<group>"; };
 		07221B7317CEC32700848E51 /* RTCIceCandidate.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = RTCIceCandidate.idl; sourceTree = "<group>"; };
-		07221B7417CEC32700848E51 /* RTCIceCandidateEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RTCIceCandidateEvent.cpp; sourceTree = "<group>"; };
-		07221B7517CEC32700848E51 /* RTCIceCandidateEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCIceCandidateEvent.h; sourceTree = "<group>"; };
-		07221B7617CEC32700848E51 /* RTCIceCandidateEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = RTCIceCandidateEvent.idl; sourceTree = "<group>"; };
+		07221B7417CEC32700848E51 /* RTCPeerConnectionIceEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RTCPeerConnectionIceEvent.cpp; sourceTree = "<group>"; };
+		07221B7517CEC32700848E51 /* RTCPeerConnectionIceEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCPeerConnectionIceEvent.h; sourceTree = "<group>"; };
+		07221B7617CEC32700848E51 /* RTCPeerConnectionIceEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = RTCPeerConnectionIceEvent.idl; sourceTree = "<group>"; };
 		07221B7717CEC32700848E51 /* RTCPeerConnection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RTCPeerConnection.cpp; sourceTree = "<group>"; };
 		07221B7817CEC32700848E51 /* RTCPeerConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCPeerConnection.h; sourceTree = "<group>"; };
 		07221B7917CEC32700848E51 /* RTCPeerConnection.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = RTCPeerConnection.idl; sourceTree = "<group>"; };
@@ -7554,8 +7554,8 @@
 		07969D9817D14151007FF842 /* JSRTCDTMFToneChangeEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSRTCDTMFToneChangeEvent.h; sourceTree = "<group>"; };
 		07969D9B17D14151007FF842 /* JSRTCIceCandidate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSRTCIceCandidate.cpp; sourceTree = "<group>"; };
 		07969D9C17D14151007FF842 /* JSRTCIceCandidate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSRTCIceCandidate.h; sourceTree = "<group>"; };
-		07969D9D17D14151007FF842 /* JSRTCIceCandidateEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSRTCIceCandidateEvent.cpp; sourceTree = "<group>"; };
-		07969D9E17D14151007FF842 /* JSRTCIceCandidateEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSRTCIceCandidateEvent.h; sourceTree = "<group>"; };
+		07969D9D17D14151007FF842 /* JSRTCPeerConnectionIceEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSRTCPeerConnectionIceEvent.cpp; sourceTree = "<group>"; };
+		07969D9E17D14151007FF842 /* JSRTCPeerConnectionIceEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSRTCPeerConnectionIceEvent.h; sourceTree = "<group>"; };
 		07969D9F17D14151007FF842 /* JSRTCPeerConnection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSRTCPeerConnection.cpp; sourceTree = "<group>"; };
 		07969DA017D14151007FF842 /* JSRTCPeerConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSRTCPeerConnection.h; sourceTree = "<group>"; };
 		07969DA117D14151007FF842 /* JSRTCSessionDescription.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSRTCSessionDescription.cpp; sourceTree = "<group>"; };
@@ -15928,9 +15928,9 @@
 				07221B7117CEC32700848E51 /* RTCIceCandidate.cpp */,
 				07221B7217CEC32700848E51 /* RTCIceCandidate.h */,
 				07221B7317CEC32700848E51 /* RTCIceCandidate.idl */,
-				07221B7417CEC32700848E51 /* RTCIceCandidateEvent.cpp */,
-				07221B7517CEC32700848E51 /* RTCIceCandidateEvent.h */,
-				07221B7617CEC32700848E51 /* RTCIceCandidateEvent.idl */,
+				07221B7417CEC32700848E51 /* RTCPeerConnectionIceEvent.cpp */,
+				07221B7517CEC32700848E51 /* RTCPeerConnectionIceEvent.h */,
+				07221B7617CEC32700848E51 /* RTCPeerConnectionIceEvent.idl */,
 				316DCB3B1E790E2C001B5F87 /* RTCIceConnectionState.idl */,
 				316DCB351E790E1B001B5F87 /* RTCIceGatheringState.idl */,
 				07AB996718DA3C010018771E /* RTCIceServer.h */,
@@ -16164,8 +16164,8 @@
 				07969D9817D14151007FF842 /* JSRTCDTMFToneChangeEvent.h */,
 				07969D9B17D14151007FF842 /* JSRTCIceCandidate.cpp */,
 				07969D9C17D14151007FF842 /* JSRTCIceCandidate.h */,
-				07969D9D17D14151007FF842 /* JSRTCIceCandidateEvent.cpp */,
-				07969D9E17D14151007FF842 /* JSRTCIceCandidateEvent.h */,
+				07969D9D17D14151007FF842 /* JSRTCPeerConnectionIceEvent.cpp */,
+				07969D9E17D14151007FF842 /* JSRTCPeerConnectionIceEvent.h */,
 				316DCB451E7910A6001B5F87 /* JSRTCIceConnectionState.cpp */,
 				316DCB461E7910A6001B5F87 /* JSRTCIceConnectionState.h */,
 				316DCB471E7910A6001B5F87 /* JSRTCIceGatheringState.cpp */,
@@ -27835,7 +27835,7 @@
 				07969DB017D14151007FF842 /* JSRTCDTMFSender.h in Headers */,
 				07969DB217D14151007FF842 /* JSRTCDTMFToneChangeEvent.h in Headers */,
 				07969DB617D14151007FF842 /* JSRTCIceCandidate.h in Headers */,
-				07969DB817D14151007FF842 /* JSRTCIceCandidateEvent.h in Headers */,
+				07969DB817D14151007FF842 /* JSRTCPeerConnectionIceEvent.h in Headers */,
 				073794EC19EE341E00E5A045 /* JSRTCIceServer.h in Headers */,
 				07969DBA17D14151007FF842 /* JSRTCPeerConnection.h in Headers */,
 				5E2C43721BCF0D750001E2BC /* JSRTCRtpReceiver.h in Headers */,
@@ -28883,7 +28883,7 @@
 				078E092117D14D1C00420AA1 /* RTCDTMFToneChangeEvent.h in Headers */,
 				078E092317D14D1C00420AA1 /* RTCIceCandidate.h in Headers */,
 				078E094017D16E1C00420AA1 /* RTCIceCandidateDescriptor.h in Headers */,
-				078E092417D14D1C00420AA1 /* RTCIceCandidateEvent.h in Headers */,
+				078E092417D14D1C00420AA1 /* RTCPeerConnectionIceEvent.h in Headers */,
 				07AB996B18DA3C010018771E /* RTCIceServer.h in Headers */,
 				073794FE19F5864E00E5A045 /* RTCNotifiersMock.h in Headers */,
 				073794DE19EE2C5200E5A045 /* RTCOfferAnswerOptions.h in Headers */,
@@ -31798,7 +31798,7 @@
 				07969DAF17D14151007FF842 /* JSRTCDTMFSender.cpp in Sources */,
 				07969DB117D14151007FF842 /* JSRTCDTMFToneChangeEvent.cpp in Sources */,
 				07969DB517D14151007FF842 /* JSRTCIceCandidate.cpp in Sources */,
-				07969DB717D14151007FF842 /* JSRTCIceCandidateEvent.cpp in Sources */,
+				07969DB717D14151007FF842 /* JSRTCPeerConnectionIceEvent.cpp in Sources */,
 				073794EB19EE341E00E5A045 /* JSRTCIceServer.cpp in Sources */,
 				07969DB917D14151007FF842 /* JSRTCPeerConnection.cpp in Sources */,
 				5E2C43711BCF0D750001E2BC /* JSRTCRtpReceiver.cpp in Sources */,
@@ -32718,7 +32718,7 @@
 				078E090817D14CEE00420AA1 /* RTCDTMFToneChangeEvent.cpp in Sources */,
 				078E090917D14CEE00420AA1 /* RTCIceCandidate.cpp in Sources */,
 				073BE34F17D18183002BD431 /* RTCIceCandidateDescriptor.cpp in Sources */,
-				078E090A17D14CEE00420AA1 /* RTCIceCandidateEvent.cpp in Sources */,
+				078E090A17D14CEE00420AA1 /* RTCPeerConnectionIceEvent.cpp in Sources */,
 				073794FD19F5864E00E5A045 /* RTCNotifiersMock.cpp in Sources */,
 				078E090B17D14CEE00420AA1 /* RTCPeerConnection.cpp in Sources */,
 				5E2C43621BCEE32B0001E2BC /* RTCRtpReceiver.cpp in Sources */,
