@@ -1,5 +1,15 @@
 2017-03-24  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed. Fix GTK+ test /webkit2/WebKitWebView/javascript-dialogs after r214277.
+
+        Since r214277 beforeunload events are not fired unless there's some user interaction, so we need to simulate it
+        in our unit tests to work.
+
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestUIClient.cpp:
+        (testWebViewJavaScriptDialogs):
+
+2017-03-24  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Add MIMETypeRegistry implementation using xdgmime and remove the GTK+ one
         https://bugs.webkit.org/show_bug.cgi?id=170001
 
