@@ -1,3 +1,14 @@
+2017-03-24  Dean Jackson  <dino@apple.com>
+
+        Serialization of custom props in longhand should be "" not value of shorthand
+        https://bugs.webkit.org/show_bug.cgi?id=167699
+        <rdar://problem/30324200>
+
+        Reviewed by Sam Weinig.
+
+        * fast/css/variables/rule-property-get-expected.html:
+        * fast/css/variables/rule-property-get.html:
+
 2017-03-24  Antoine Quint  <graouts@webkit.org>
 
         [Modern Media Controls] Captions don't move with the appearance of the inline controls

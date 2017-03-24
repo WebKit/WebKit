@@ -131,10 +131,8 @@ String StyleProperties::getPropertyValue(CSSPropertyID propertyID) const
     const StylePropertyShorthand& shorthand = shorthandForProperty(propertyID);
     if (shorthand.length()) {
         RefPtr<CSSValue> value = getPropertyCSSValueInternal(shorthand.properties()[0]);
-        if (!value)
+        if (!value || value->isPendingSubstitutionValue())
             return String();
-        if (value->isPendingSubstitutionValue())
-            return downcast<CSSPendingSubstitutionValue>(*value).shorthandValue()->cssText();
     }
 
     // Shorthand and 4-values properties

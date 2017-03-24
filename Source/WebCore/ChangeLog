@@ -1,3 +1,23 @@
+2017-03-24  Dean Jackson  <dino@apple.com>
+
+        Serialization of custom props in longhand should be "" not value of shorthand
+        https://bugs.webkit.org/show_bug.cgi?id=167699
+        <rdar://problem/30324200>
+
+        Reviewed by Sam Weinig.
+
+        https://www.w3.org/TR/css-variables/#variables-in-shorthands says
+        "Pending-substitution values must be serialized as the empty string, if
+        an API allows them to be observed."
+
+        We were returning the cssText instead.
+
+        Test: fast/css/variables/rule-property-get.html has been updated.
+
+        * css/StyleProperties.cpp:
+        (WebCore::StyleProperties::getPropertyValue): Return the empty string
+        if we're a pending substitution value.
+
 2017-03-24  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Unreviewed, fix the ToT build on the latest SDK.
