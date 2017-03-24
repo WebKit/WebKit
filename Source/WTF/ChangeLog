@@ -1,3 +1,18 @@
+2017-03-24  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r214351.
+
+        This change caused API test
+        WebKit1.DidCreateJavaScriptContextBackForwardCacheTest to
+        fail.
+
+        Reverted changeset:
+
+        "Make inactive web processes behave as though under memory
+        pressure."
+        https://bugs.webkit.org/show_bug.cgi?id=170042
+        http://trac.webkit.org/changeset/214351
+
 2017-03-24  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rolling out r214329.
