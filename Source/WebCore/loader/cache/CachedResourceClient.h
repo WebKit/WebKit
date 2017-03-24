@@ -45,6 +45,7 @@ public:
 
     static CachedResourceClientType expectedType() { return BaseResourceType; }
     virtual CachedResourceClientType resourceClientType() const { return expectedType(); }
+    virtual bool shouldMarkAsReferenced() const { return true; }
 
 protected:
     CachedResourceClient() { }
