@@ -86,7 +86,6 @@
 #include "MainFrame.h"
 #include "MemoryCache.h"
 #include "MemoryRelease.h"
-#include "NoEventDispatchAssertion.h"
 #include "Page.h"
 #include "PageCache.h"
 #include "PageTransitionEvent.h"
@@ -1866,18 +1865,10 @@ void FrameLoader::commitProvisionalLoad()
 
         std::optional<HasInsecureContent> hasInsecureContent = cachedPage->cachedMainFrame()->hasInsecureContent();
 
-        {
-            // Do not dispatch DOM events as their JavaScript listeners could cause the page to be put
-            // into the page cache before we have finished restoring it from the page cache.
-            NoEventDispatchAssertion assertNoEventDispatch;
-
-            // FIXME: This API should be turned around so that we ground CachedPage into the Page.
-            cachedPage->restore(*m_frame.page());
-        }
+        // FIXME: This API should be turned around so that we ground CachedPage into the Page.
+        cachedPage->restore(*m_frame.page());
 
         dispatchDidCommitLoad(hasInsecureContent);
-
-        didRestoreFromCachedPage();
 
 #if PLATFORM(IOS)
         m_frame.page()->chrome().setDispatchViewportDataDidChangeSuppressed(false);
@@ -2109,31 +2100,6 @@ void FrameLoader::willRestoreFromCachedPage()
         DOMWindow* window = m_frame.document()->domWindow();
         window->setStatus(String());
         window->setDefaultStatus(String());
-    }
-}
-
-void FrameLoader::didRestoreFromCachedPage()
-{
-    // Dispatching JavaScript events can cause frame destruction.
-    auto& mainFrame = m_frame.page()->mainFrame();
-    Vector<Ref<Frame>> childFrames;
-    for (auto* child = mainFrame.tree().traverseNextInPostOrderWithWrap(true); child; child = child->tree().traverseNextInPostOrderWithWrap(false))
-        childFrames.append(*child);
-
-    for (auto& child : childFrames) {
-        if (!child->tree().isDescendantOf(&mainFrame))
-            continue;
-        auto* document = child->document();
-        if (!document)
-            continue;
-
-        // FIXME: Update Page Visibility state here.
-        // https://bugs.webkit.org/show_bug.cgi?id=116770
-        document->enqueuePageshowEvent(PageshowEventPersisted);
-
-        auto* historyItem = child->loader().history().currentItem();
-        if (historyItem && historyItem->stateObject())
-            document->enqueuePopstateEvent(historyItem->stateObject());
     }
 }
 
