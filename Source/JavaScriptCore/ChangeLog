@@ -1,3 +1,17 @@
+2017-03-24  Mark Lam  <mark.lam@apple.com>
+
+        Add some instrumentation in Heap::resumeThePeriphery() to help debug an issue.
+        https://bugs.webkit.org/show_bug.cgi?id=170086
+        <rdar://problem/31253673>
+
+        Reviewed by Saam Barati.
+
+        Adding some instrumentation in Heap::resumeThePeriphery() to dump some Heap state
+        just before we RELEASE_ASSERT_NOT_REACHED.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::resumeThePeriphery):
+
 2017-03-24  JF Bastien  <jfbastien@apple.com>
 
         WebAssembly: store state in TLS instead of on VM
