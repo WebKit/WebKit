@@ -24,6 +24,24 @@ shouldBeEqualToString("document.getElementById('test2').style.fontOpticalSizing"
 shouldBeEqualToString("document.getElementById('test3').style.fontOpticalSizing", "auto");
 shouldBeEqualToString("document.getElementById('test4').style.fontOpticalSizing", "none");
 shouldBeEqualToString("document.getElementById('test5').style.fontOpticalSizing", "inherit");
+
+shouldBeEqualToString("window.getComputedStyle(document.getElementById('test1')).fontOpticalSizing", "auto");
+shouldBeEqualToString("window.getComputedStyle(document.getElementById('test2')).fontOpticalSizing", "auto");
+shouldBeEqualToString("window.getComputedStyle(document.getElementById('test3')).fontOpticalSizing", "auto");
+shouldBeEqualToString("window.getComputedStyle(document.getElementById('test4')).fontOpticalSizing", "none");
+shouldBeEqualToString("window.getComputedStyle(document.getElementById('test5')).fontOpticalSizing", "none");
+
+var computedStyle = window.getComputedStyle(document.getElementById('test1'));
+var found = false;
+for (let i = 0; i < x.length; ++i) {
+    if (computedStyle[i] == "font-optical-sizing") {
+        found = true;
+        testPassed("Found optical sizing");
+        break;
+    }
+}
+if (!found)
+    testFailed("Didn't find optical sizing");
 </script>
 
 <script src="../../../resources/js-test-post.js"></script>

@@ -197,6 +197,7 @@ var propertiesToTest = {
     "font-variant-numeric": true,
     "font-variant-position": true,
     "font-weight": true,
+    "font-optical-sizing": true,
     "glyph-orientation-horizontal": true,
     "glyph-orientation-vertical": true,
     "hanging-punctuation": true,

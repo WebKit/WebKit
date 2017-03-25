@@ -7,7 +7,6 @@ font-style: normal;
 font-synthesis: style weight small-caps;
 font-variant: normal;
 font-weight: normal;
-font-optical-sizing: auto;
 font-variant-ligatures: normal;
 font-variant-position: normal;
 font-variant-caps: normal;
