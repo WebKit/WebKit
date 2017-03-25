@@ -336,7 +336,6 @@
        (global-name "com.apple.CoreAuthentication.agent.libxpc")
        (global-name "com.apple.SecurityServer"))
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED < 101240
 ;; FIXME: This should be removed when <rdar://problem/10479685> is fixed.
 ;; Restrict AppSandboxed processes from creating /Library/Keychains, but allow access to the contents of /Library/Keychains:
 (allow file-read-data file-read-metadata file-write-data
@@ -350,7 +349,6 @@
 (deny file-read* file-write*
     (regex (string-append "/Library/Keychains/" (uuid-regex-string) "(/|$)"))
     (home-regex (string-append "/Library/Keychains/" (uuid-regex-string) "(/|$)")))
-#endif
 
 (allow file-read* file-write* (subpath "/private/var/db/mds/system")) ;; FIXME: This should be removed when <rdar://problem/9538414> is fixed.
 
