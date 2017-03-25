@@ -33,7 +33,7 @@ shouldBeEqualToString("window.getComputedStyle(document.getElementById('test5'))
 
 var computedStyle = window.getComputedStyle(document.getElementById('test1'));
 var found = false;
-for (let i = 0; i < x.length; ++i) {
+for (let i = 0; i < computedStyle.length; ++i) {
     if (computedStyle[i] == "font-optical-sizing") {
         found = true;
         testPassed("Found optical sizing");
