@@ -30,6 +30,7 @@ import time
 from webkitpy.common.memoized import memoized
 from webkitpy.layout_tests.models.test_configuration import TestConfiguration
 from webkitpy.port import image_diff
+from webkitpy.port.device import Device
 from webkitpy.port.ios import IOSPort
 from webkitpy.xcode.simulator import Simulator, Runtime, DeviceType
 from webkitpy.common.system.crashlogs import CrashLogs
@@ -73,7 +74,8 @@ class IOSSimulatorPort(IOSPort):
         self._device_class = optional_device_class if optional_device_class else self.DEFAULT_DEVICE_CLASS
         _log.debug('IOSSimulatorPort _device_class is %s', self._device_class)
 
-        self._current_device = Simulator(host).current_device()
+        self._device_map = {}
+        self._current_device = Device(Simulator(host).current_device())
         if not self._current_device:
             self.set_option('dedicated_simulators', True)
         if not self.get_option('dedicated_simulators'):
@@ -82,7 +84,7 @@ class IOSSimulatorPort(IOSPort):
             self.set_option('child_processes', 1)
 
     def _device_for_worker_number_map(self):
-        return Simulator.managed_devices
+        return self._device_map
 
     @property
     @memoized
@@ -201,13 +203,13 @@ class IOSSimulatorPort(IOSPort):
                 self._create_device(i)
 
             for i in xrange(self.child_processes()):
-                device_udid = self._testing_device(i).udid
+                device_udid = Simulator.managed_devices[i].udid
                 Simulator.wait_until_device_is_in_state(device_udid, Simulator.DeviceState.SHUTDOWN)
                 Simulator.reset_device(device_udid)
         else:
             assert(self._current_device)
-            if self._current_device.name != self.simulator_device_type().name:
-                _log.warn("Expected simulator of type '" + self.simulator_device_type().name + "' but found simulator of type '" + self._current_device.name + "'")
+            if self._current_device.platform_device.name != self.simulator_device_type().name:
+                _log.warn("Expected simulator of type '" + self.simulator_device_type().name + "' but found simulator of type '" + self._current_device.platform_device.name + "'")
                 _log.warn('The next block of tests may fail due to device mis-match')
 
     def _create_devices(self, device_class):
@@ -224,7 +226,7 @@ class IOSSimulatorPort(IOSPort):
             return
 
         for i in xrange(self.child_processes()):
-            device_udid = self._testing_device(i).udid
+            device_udid = Simulator.managed_devices[i].udid
             _log.debug('testing device %s has udid %s', i, device_udid)
 
             # FIXME: <rdar://problem/20916140> Switch to using CoreSimulator.framework for launching and quitting iOS Simulator
@@ -237,9 +239,14 @@ class IOSSimulatorPort(IOSPort):
 
         _log.info('Waiting for all iOS Simulators to finish booting.')
         for i in xrange(self.child_processes()):
-            Simulator.wait_until_device_is_booted(self._testing_device(i).udid)
+            Simulator.wait_until_device_is_booted(Simulator.managed_devices[i].udid)
+
+        self._device_map = {}
+        for id, platform_device in Simulator.managed_devices:
+            self._device_map[id] = Device(platform_device)
 
     def _quit_ios_simulator(self):
+        self._device_map = {}
         if not self._using_dedicated_simulators():
             return
         _log.debug("_quit_ios_simulator killing all Simulator processes")

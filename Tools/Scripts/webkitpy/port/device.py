@@ -22,19 +22,25 @@
 
 
 class Device(object):
-    def __init__(self, name, udid, host):
-        self._host = host
-        self.name = name
-        self.udid = udid
+    def __init__(self, platform_device):
+        self.platform_device = platform_device
 
     def install_app(self, app_path, env=None):
-        raise NotImplementedError
+        return self.platform_device.install_app(app_path, env)
 
     def launch_app(self, bundle_id, args, env=None):
-        raise NotImplementedError
+        return self.platform_device.launch_app(bundle_id, args, env)
 
+    # FIXME: This should be implemented through an executive
     def poll(self, pid):
-        raise NotImplementedError
+        return self.platform_device.poll(pid)
+
+    @property
+    def udid(self):
+        return self.platform_device.udid
+
+    def __nonzero__(self):
+        return self.platform_device is not None
 
     def __eq__(self, other):
         return self.udid == other.udid
@@ -43,6 +49,4 @@ class Device(object):
         return not self.__eq__(other)
 
     def __repr__(self):
-        return 'Device "{name}": {udid}.'.format(
-            name=self.name,
-            udid=self.udid)
+        return str(self.platform_device)

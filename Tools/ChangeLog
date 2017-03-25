@@ -1,3 +1,41 @@
+2017-03-25  Jonathan Bedard  <jbedard@apple.com>
+
+        webkitpy: Use generalized device instead of platform specific one
+        https://bugs.webkit.org/show_bug.cgi?id=170078
+
+        Reviewed by Daniel Bates.
+
+        SimulatedDevice is re-created each time 'xcrun simctl list' is called.  Device
+        should remain persistent.  Changing Device to a more explicit interface.
+        SimulatedDevice no longer inherits from Device and IOSSimulator returns Devices
+        wrapping SimulatedDevices.
+
+        * Scripts/webkitpy/port/device.py: Added.
+        (Device):
+        (Device.__init__): Construct with platform device.
+        (Device.install_app): Install app at app path on platform device.
+        (Device.launch_app): Launch app with bundle ID on platform device.
+        (Device.poll): Poll platform device.
+        (Device.udid): Access platform device UDID.
+        (Device.__nonzero__): Check if instantiated with a valid platform device.
+        (Device.__eq__): Compare by udid.
+        (Device.__ne__): Ditto.
+        (Device.__repr__): Print out platform_device representation.
+        * Scripts/webkitpy/port/ios_simulator.py:
+        (IOSSimulatorPort.__init__): Initialize the _device_map to an empty dictionary.
+        (IOSSimulatorPort._device_for_worker_number_map):  Return self._device_map.
+        (IOSSimulatorPort._create_simulators): Call Simulator.managed_devices directly.
+        (IOSSimulatorPort._create_devices): Place Simulator.managed_devices into the
+        device map.
+        (IOSSimulatorPort._quit_ios_simulator): Reset self._device_map.
+        * Scripts/webkitpy/xcode/device.py: Removed.
+        * Scripts/webkitpy/xcode/simulated_device.py:
+        (SimulatedDevice):
+        (SimulatedDevice.__init__): Move host, name and did to SimulatedDevice.
+        (SimulatedDevice.__eq__): Compare two simulated devices.
+        (SimulatedDevice.__ne__): Ditto.
+        (SimulatedDevice.__repr__): Print name and udid.
+
 2017-03-25  Adrian Perez de Castro  <aperez@igalia.com>
 
         [GTK] No value returned from PrintCustomWidgetTest::createWebKitPrintOperation() in TestPrinting.cpp

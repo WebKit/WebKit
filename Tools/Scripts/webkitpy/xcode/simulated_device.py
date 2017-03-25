@@ -27,14 +27,13 @@ import re
 import signal
 import subprocess
 
-from webkitpy.xcode.device import Device
 from webkitpy.xcode.simulator import Simulator
 from webkitpy.common.host import Host
 
 _log = logging.getLogger(__name__)
 
 
-class SimulatedDevice(Device):
+class SimulatedDevice(object):
     """
     Represents a CoreSimulator device underneath a runtime
     """
@@ -52,9 +51,11 @@ class SimulatedDevice(Device):
         :param host: The host which can run command line commands
         :type host: Host
         """
-        super(SimulatedDevice, self).__init__(name, udid, host)
         self.available = available
         self.runtime = runtime
+        self._host = host
+        self.name = name
+        self.udid = udid
 
     @property
     def state(self):
@@ -196,9 +197,16 @@ class SimulatedDevice(Device):
             return 1
         return None
 
+    def __eq__(self, other):
+        return self.udid == other.udid
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
     def __repr__(self):
-        return '<{device_info} State: {state}. Runtime: {runtime}, Available: {available}>'.format(
-            device_info=super(SimulatedDevice, self).__repr__(),
+        return '<Device "{name}": {udid}. State: {state}. Runtime: {runtime}, Available: {available}>'.format(
+            name=self.name,
+            udid=self.udid,
             state=self.state,
             available=self.available,
             runtime=self.runtime.identifier)
