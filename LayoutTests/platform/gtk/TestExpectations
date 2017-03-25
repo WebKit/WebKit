@@ -641,6 +641,10 @@ webrtc/video-remote-mute.html [ Failure ]
 webrtc/video-with-receiver.html [ Failure ]
 webrtc/connection-state.html [ Failure ]
 webrtc/video-stats.html [ Failure ]
+webrtc/audio-replace-track.html [ Failure ]
+webrtc/video-mediastreamtrack-stats.html [ Failure ]
+webrtc/video-replace-track-to-null.html [ Failure ]
+webrtc/video-replace-track.html [ Failure ]
 imported/w3c/web-platform-tests/webrtc/datachannel-emptystring.html [ Failure ]
 imported/w3c/web-platform-tests/webrtc/no-media-call.html [ Failure ]
 imported/w3c/web-platform-tests/webrtc/promises-call.html [ Failure ]
@@ -1696,6 +1700,7 @@ Bug(GTK) fast/loader/fragment-after-redirect-gets-back-entry.html [ Failure Pass
 Bug(GTK) fast/writing-mode/japanese-ruby-horizontal-bt.html [ Failure Pass ]
 Bug(GTK) fast/writing-mode/japanese-ruby-vertical-lr.html [ Failure Pass ]
 Bug(GTK) fast/writing-mode/japanese-ruby-vertical-rl.html [ Failure Pass ]
+Bug(GTK) credentials/idlharness.html [ Failure Pass ]
 webkit.org/b/131533 media/track/track-remove-active-cue-crash.html [ Timeout Pass ]
 webkit.org/b/131534 media/media-ended.html [ Timeout Pass ]
 webkit.org/b/131535 media/audio-mpeg-supported.html [ Timeout Pass ]
@@ -2024,6 +2029,8 @@ webkit.org/b/163532 plugins/js-from-destroy.html [ Failure Pass ]
 webkit.org/b/168780 fast/forms/input-first-letter-edit.html [ ImageOnlyFailure Pass ]
 
 webkit.org/b/116277 media/video-buffered.html [ Pass Failure ]
+
+webkit.org/b/169621 imported/w3c/web-platform-tests/IndexedDB/fire-error-event-exception.html [ Pass Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
@@ -3399,7 +3406,7 @@ webkit.org/b/168191 fast/text/system-font-weight.html [ Failure ]
 webkit.org/b/168191 fast/text/trak-optimizeLegibility.html [ Failure ]
 webkit.org/b/168191 css3/font-synthesis-small-caps.html [ ImageOnlyFailure ]
 
-webkit.org/b/168192 http/tests/media/hls/video-duration-accessibility.html [ Failure ]
+webkit.org/b/168192 http/tests/media/hls/video-duration-accessibility.html [ Timeout Failure ]
 
 webkit.org/b/168369 accessibility/gtk/text-at-offset-textarea.html [ Failure ]
 webkit.org/b/168369 accessibility/gtk/text-at-offset-textinput.html [ Failure ]
