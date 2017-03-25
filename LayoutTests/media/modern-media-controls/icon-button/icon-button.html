@@ -41,6 +41,7 @@ scheduler.frameDidFire = function()
         shouldBeEqualToString("iconButton.element.style.height", "24px");
         shouldBeEqualToString("iconButton.element.style.webkitMaskSize", "22px 24px");
 
+        shouldBeEqualToString("iconButton.element.getAttribute('aria-label')", `${Icons.Pause.label}`);
         debug("");
         debug("Setting start icon");
         iconButton.iconName = Icons.Start;
@@ -49,6 +50,7 @@ scheduler.frameDidFire = function()
         shouldBeEqualToString("iconButton.element.style.width", "70px");
         shouldBeEqualToString("iconButton.element.style.height", "70px");
         shouldBeEqualToString("iconButton.element.style.webkitMaskSize", "70px 70px");
+        shouldBeEqualToString("iconButton.element.getAttribute('aria-label')", `${Icons.Start.label}`);
 
         finishMediaControlsTest();
     } 

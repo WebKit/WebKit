@@ -1,3 +1,26 @@
+2017-03-25  Aaron Chu  <aaron_chu@apple.com>
+
+        AX: Media controls are unlabeled
+        https://bugs.webkit.org/show_bug.cgi?id=169947
+        <rdar://problem/30153323>
+
+        Reviewed by Antoine Quint.
+
+        Added a "label" property for Icons, which are used to set
+        the aria-label for the controls in modern media controls.
+
+        Test: Addition to all existing modern media controls tests.
+
+        * English.lproj/modern-media-controls-localized-strings.js:
+        * Modules/modern-media-controls/controls/icon-button.js:
+        (IconButton.prototype.set iconName):
+        (IconButton.prototype.handleEvent):
+        (IconButton.prototype._loadImage):
+        * Modules/modern-media-controls/controls/icon-service.js:
+        * Modules/modern-media-controls/controls/start-button.js:
+        (StartButton):
+        * Modules/modern-media-controls/js-files:
+
 2017-03-25  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [XDG] MIMETypeRegistry::getMIMETypeForExtension should return a null/empty string when mime type is unknown

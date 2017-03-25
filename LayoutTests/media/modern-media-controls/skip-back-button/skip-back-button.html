@@ -13,7 +13,7 @@ const skipBackButton = new SkipBackButton({ layoutTraits: LayoutTraits.macOS });
 shouldBeEqualToString("skipBackButton.element.localName", "button");
 shouldBeTrue('skipBackButton.element.classList.contains("icon")');
 shouldBeTrue('skipBackButton.element.classList.contains("skip-back")');
-shouldBeEqualToString("skipBackButton.iconName", `${Icons.SkipBack}`);
+shouldBe("skipBackButton.iconName", "Icons.SkipBack");
 
 const iOSSkipBackButton = new SkipBackButton({ layoutTraits: LayoutTraits.iOS });
 

@@ -13,12 +13,12 @@ const enterFullscreenButton = new FullscreenButton({ layoutTraits: LayoutTraits.
 shouldBeEqualToString("enterFullscreenButton.element.localName", "button");
 shouldBeTrue('enterFullscreenButton.element.classList.contains("icon")');
 shouldBeTrue('enterFullscreenButton.element.classList.contains("fullscreen")');
-shouldBeEqualToString("enterFullscreenButton.iconName", `${Icons.EnterFullscreen}`);
+shouldBe("enterFullscreenButton.iconName", "Icons.EnterFullscreen");
 
 const iOSEnterFullscreenButton = new FullscreenButton({ layoutTraits: LayoutTraits.iOS });
 
 const exitFullscreenButton = new FullscreenButton({ layoutTraits: LayoutTraits.macOS | LayoutTraits.Fullscreen });
-shouldBeEqualToString("exitFullscreenButton.iconName", `${Icons.ExitFullscreen}`);
+shouldBe("exitFullscreenButton.iconName", "Icons.ExitFullscreen");
 
 scheduler.frameDidFire = function()
 {

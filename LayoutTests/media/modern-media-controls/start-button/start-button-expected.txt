@@ -11,6 +11,7 @@ PASS startButton.element.firstElementChild.className is "background"
 PASS startButton.element.lastElementChild.localName is "img"
 PASS startButton.element.lastElementChild.src.includes('macOS/start@') is true
 PASS iOSStartButton.element.lastElementChild.src.includes('iOS/start@') is true
+PASS startButton.element.getAttribute('aria-label') is "Start"
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -1,3 +1,4 @@
+main.js
 gesture-recognizers/gesture-recognizer.js
 gesture-recognizers/tap.js
 gesture-recognizers/pinch.js
@@ -61,4 +62,4 @@ media/volume-down-support.js
 media/volume-support.js
 media/volume-up-support.js
 media/media-controller.js
-main.js
+

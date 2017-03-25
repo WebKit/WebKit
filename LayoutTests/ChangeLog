@@ -1,3 +1,36 @@
+2017-03-25  Aaron Chu  <aaron_chu@apple.com>
+
+        AX: Media controls are unlabeled
+        https://bugs.webkit.org/show_bug.cgi?id=169947
+        <rdar://problem/30153323>
+
+        Reviewed by Antoine Quint.
+
+        * media/modern-media-controls/airplay-button/airplay-button-expected.txt:
+        * media/modern-media-controls/airplay-button/airplay-button.html:
+        * media/modern-media-controls/forward-button/forward-button-expected.txt:
+        * media/modern-media-controls/forward-button/forward-button.html:
+        * media/modern-media-controls/fullscreen-button/fullscreen-button-expected.txt:
+        * media/modern-media-controls/fullscreen-button/fullscreen-button.html:
+        * media/modern-media-controls/icon-button/icon-button-expected.txt:
+        * media/modern-media-controls/icon-button/icon-button.html:
+        * media/modern-media-controls/icon-service/icon-service-expected.txt:
+        * media/modern-media-controls/icon-service/icon-service.html:
+        * media/modern-media-controls/mute-button/mute-button-expected.txt:
+        * media/modern-media-controls/mute-button/mute-button.html:
+        * media/modern-media-controls/pip-button/pip-button-expected.txt:
+        * media/modern-media-controls/pip-button/pip-button.html:
+        * media/modern-media-controls/play-pause-button/play-pause-button-expected.txt:
+        * media/modern-media-controls/play-pause-button/play-pause-button.html:
+        * media/modern-media-controls/rewind-button/rewind-button-expected.txt:
+        * media/modern-media-controls/rewind-button/rewind-button.html:
+        * media/modern-media-controls/skip-back-button/skip-back-button-expected.txt:
+        * media/modern-media-controls/skip-back-button/skip-back-button.html:
+        * media/modern-media-controls/start-button/start-button-expected.txt:
+        * media/modern-media-controls/start-button/start-button.html:
+        * media/modern-media-controls/tracks-button/tracks-button-expected.txt:
+        * media/modern-media-controls/tracks-button/tracks-button.html:
+
 2017-03-25  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed GTK+ gardening. Update expectations of several tests.

@@ -13,7 +13,7 @@ const tracksButton = new TracksButton({ layoutTraits: LayoutTraits.macOS });
 shouldBeEqualToString("tracksButton.element.localName", "button");
 shouldBeTrue('tracksButton.element.classList.contains("icon")');
 shouldBeTrue('tracksButton.element.classList.contains("tracks")');
-shouldBeEqualToString("tracksButton.iconName", `${Icons.Tracks}`);
+shouldBe("tracksButton.iconName", "Icons.Tracks");
 
 const fullscreenTracksButton = new TracksButton({ layoutTraits: LayoutTraits.macOS | LayoutTraits.Fullscreen });
 

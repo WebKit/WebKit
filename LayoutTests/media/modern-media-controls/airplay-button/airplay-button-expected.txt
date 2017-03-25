@@ -21,10 +21,10 @@ scheduleLayout() - end
 PASS airplayButton.element.localName is "button"
 PASS airplayButton.element.classList.contains("icon") is true
 PASS airplayButton.element.classList.contains("airplay") is true
-PASS airplayButton.iconName is "airplay"
+PASS airplayButton.iconName is Icons.Airplay
 FAIL airplayButton.width should be 0. Was 25.
 FAIL airplayButton.height should be 0. Was 22.
-PASS airplayButton._image is iconService.imageForIconNameAndLayoutTraits(Icons.Airplay, LayoutTraits.macOS)
+PASS airplayButton._image is iconService.imageForIconNameAndLayoutTraits(Icons.Airplay.name, LayoutTraits.macOS)
 PASS airplayButton._image.src is not ""
 FAIL airplayButton._image.complete should be false. Was true.
 PASS airplayButton.width is not 0
@@ -46,6 +46,7 @@ _requestFrameIfNeeded() - failed to register rAF call, _frameID = -1, _layoutCal
 frameDidFire()
 PASS dirtyNodes.has(airplayButton) is false
 PASS airplayButton.needsLayout is false
+PASS airplayButton.element.getAttribute('aria-label') is "AirPlay"
 _frameDidFire() - end
 PASS airplayButton.element.style.webkitMaskImage.includes("macOS/airplay@") became true
 PASS successfullyParsed is true

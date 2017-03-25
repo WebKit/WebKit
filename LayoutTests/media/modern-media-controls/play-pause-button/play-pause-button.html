@@ -13,7 +13,7 @@ const playButton = new PlayPauseButton({ layoutTraits: LayoutTraits.macOS });
 shouldBeEqualToString("playButton.element.localName", "button");
 shouldBeTrue('playButton.element.classList.contains("icon")');
 shouldBeTrue('playButton.element.classList.contains("play-pause")');
-shouldBeEqualToString("playButton.iconName", `${Icons.Play}`);
+shouldBe("playButton.iconName", "Icons.Play");
 shouldBeFalse("playButton.playing");
 
 const fullscreenPlayButton = new PlayPauseButton({ layoutTraits: LayoutTraits.macOS | LayoutTraits.Fullscreen });
@@ -22,7 +22,7 @@ const iOSPlayButton = new PlayPauseButton({ layoutTraits: LayoutTraits.iOS });
 const pauseButton = new PlayPauseButton({ layoutTraits: LayoutTraits.macOS });
 pauseButton.playing = true;
 shouldBeTrue("pauseButton.playing");
-shouldBeEqualToString("pauseButton.iconName", `${Icons.Pause}`);
+shouldBe("pauseButton.iconName", "Icons.Pause");
 
 const fullscreenPauseButton = new PlayPauseButton({ layoutTraits: LayoutTraits.macOS | LayoutTraits.Fullscreen });
 fullscreenPauseButton.playing = true;

@@ -15,7 +15,7 @@ const rewindButton = new RewindButton({ layoutTraits: LayoutTraits.macOS });
 shouldBeEqualToString("rewindButton.element.localName", "button");
 shouldBeTrue('rewindButton.element.classList.contains("icon")');
 shouldBeTrue('rewindButton.element.classList.contains("rewind")');
-shouldBeEqualToString("rewindButton.iconName", `${Icons.Rewind}`);
+shouldBe("rewindButton.iconName", "Icons.Rewind");
 
 shouldBecomeEqual('rewindButton.element.style.webkitMaskImage.includes("macOS/rewind@")', "true", finishJSTest);
 

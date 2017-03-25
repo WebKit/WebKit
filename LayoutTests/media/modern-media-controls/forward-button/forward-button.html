@@ -13,7 +13,7 @@ const forwardButton = new ForwardButton({ layoutTraits: LayoutTraits.macOS });
 shouldBeEqualToString("forwardButton.element.localName", "button");
 shouldBeTrue('forwardButton.element.classList.contains("icon")');
 shouldBeTrue('forwardButton.element.classList.contains("forward")');
-shouldBeEqualToString("forwardButton.iconName", `${Icons.Forward}`);
+shouldBe("forwardButton.iconName", "Icons.Forward");
 
 shouldBecomeEqual('forwardButton.element.style.webkitMaskImage.includes("macOS/forward@")', "true", finishMediaControlsTest);
 

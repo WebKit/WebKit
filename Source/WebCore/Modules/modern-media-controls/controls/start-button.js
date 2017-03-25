@@ -36,7 +36,8 @@ class StartButton extends Button
         background.className = "background";
 
         const image = this.element.appendChild(new Image);
-        image.src = iconService.imageForIconNameAndLayoutTraits(Icons.Start, this.layoutTraits).src;
+        image.src = iconService.imageForIconNameAndLayoutTraits(Icons.Start.name, this.layoutTraits).src;
+        this.element.setAttribute("aria-label", Icons.Start.label);
     }
 
 }

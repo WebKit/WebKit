@@ -13,13 +13,13 @@ const muteButton = new MuteButton({ layoutTraits: LayoutTraits.macOS });
 shouldBeEqualToString("muteButton.element.localName", "button");
 shouldBeTrue('muteButton.element.classList.contains("icon")');
 shouldBeTrue('muteButton.element.classList.contains("mute")');
-shouldBeEqualToString("muteButton.iconName", `${Icons.Volume}`);
+shouldBe("muteButton.iconName", "Icons.Volume");
 shouldBeFalse("muteButton.muted");
 
 const mutedButton = new MuteButton({ layoutTraits: LayoutTraits.macOS });
 mutedButton.muted = true;
 shouldBeTrue("mutedButton.muted");
-shouldBeEqualToString("mutedButton.iconName", `${Icons.VolumeMuted}`);
+shouldBe("mutedButton.iconName", "Icons.VolumeMuted");
 
 shouldBecomeEqual('muteButton.element.style.webkitMaskImage.includes("macOS/volume@")', "true", () => {
     shouldBecomeEqual('mutedButton.element.style.webkitMaskImage.includes("macOS/volume-mute@")', "true", finishJSTest);

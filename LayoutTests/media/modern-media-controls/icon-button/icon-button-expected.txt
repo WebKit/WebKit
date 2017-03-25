@@ -18,12 +18,14 @@ PASS iconButton.element.style.webkitMaskImage.includes("macOS/pause") is true
 PASS iconButton.element.style.width is "22px"
 PASS iconButton.element.style.height is "24px"
 PASS iconButton.element.style.webkitMaskSize is "22px 24px"
+PASS iconButton.element.getAttribute('aria-label') is "Pause"
 
 Setting start icon
 PASS iconButton.element.style.webkitMaskImage.includes("macOS/start") is true
 PASS iconButton.element.style.width is "70px"
 PASS iconButton.element.style.height is "70px"
 PASS iconButton.element.style.webkitMaskSize is "70px 70px"
+PASS iconButton.element.getAttribute('aria-label') is "Start"
 PASS successfullyParsed is true
 
 TEST COMPLETE

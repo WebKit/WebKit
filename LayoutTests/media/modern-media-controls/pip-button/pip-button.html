@@ -13,7 +13,7 @@ const pipButton = new PiPButton({ layoutTraits: LayoutTraits.macOS });
 shouldBeEqualToString("pipButton.element.localName", "button");
 shouldBeTrue('pipButton.element.classList.contains("icon")');
 shouldBeTrue('pipButton.element.classList.contains("pip")');
-shouldBeEqualToString("pipButton.iconName", `${Icons.EnterPiP}`);
+shouldBe("pipButton.iconName", "Icons.EnterPiP");
 
 const iOSPiPButton = new PiPButton({ layoutTraits: LayoutTraits.iOS });
 

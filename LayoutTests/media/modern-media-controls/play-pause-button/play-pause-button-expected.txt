@@ -6,10 +6,10 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 PASS playButton.element.localName is "button"
 PASS playButton.element.classList.contains("icon") is true
 PASS playButton.element.classList.contains("play-pause") is true
-PASS playButton.iconName is "play"
+PASS playButton.iconName is Icons.Play
 PASS playButton.playing is false
 PASS pauseButton.playing is true
-PASS pauseButton.iconName is "pause"
+PASS pauseButton.iconName is Icons.Pause
 PASS playButton.element.style.webkitMaskImage.includes("macOS/play@") became true
 PASS pauseButton.element.style.webkitMaskImage.includes("macOS/pause@") became true
 PASS iOSPlayButton.element.style.webkitMaskImage.includes("iOS/play@") became true

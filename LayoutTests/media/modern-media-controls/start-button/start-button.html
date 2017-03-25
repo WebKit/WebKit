@@ -19,6 +19,7 @@ const iOSStartButton = new StartButton({ layoutTraits: LayoutTraits.iOS });
 shouldBeTrue("iOSStartButton.element.lastElementChild.src.includes('iOS/start@')");
 
 
+shouldBeEqualToString("startButton.element.getAttribute('aria-label')", "Start");
 </script>
 <script src="../../../resources/js-test-post.js"></script>
 </body>

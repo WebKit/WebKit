@@ -15,10 +15,10 @@ const airplayButton = new AirplayButton({ layoutTraits: LayoutTraits.macOS });
 shouldBeEqualToString("airplayButton.element.localName", "button");
 shouldBeTrue('airplayButton.element.classList.contains("icon")');
 shouldBeTrue('airplayButton.element.classList.contains("airplay")');
-shouldBeEqualToString("airplayButton.iconName", `${Icons.Airplay}`);
+shouldBe("airplayButton.iconName", "Icons.Airplay");
 shouldBe("airplayButton.width", "0");
 shouldBe("airplayButton.height", "0");
-shouldBe("airplayButton._image", "iconService.imageForIconNameAndLayoutTraits(Icons.Airplay, LayoutTraits.macOS)");
+shouldBe("airplayButton._image", "iconService.imageForIconNameAndLayoutTraits(Icons.Airplay.name, LayoutTraits.macOS)");
 shouldNotBeEqualToString("airplayButton._image.src", "");
 shouldBeFalse("airplayButton._image.complete");
 
@@ -42,6 +42,7 @@ airplayButton._image.addEventListener("load", event => {
         debug("frameDidFire()");
         shouldBeFalse("dirtyNodes.has(airplayButton)");
         shouldBeFalse("airplayButton.needsLayout");
+        shouldBeEqualToString("airplayButton.element.getAttribute('aria-label')", "AirPlay");
     }
     shouldBecomeEqual('airplayButton.element.style.webkitMaskImage.includes("macOS/airplay@")', "true", finishJSTest);
     // shouldBecomeEqual('airplayButton.element.style.webkitMaskImage.includes("macOS/airplay@")', "true", () => {
