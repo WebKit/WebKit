@@ -1,9 +1,11 @@
 <!DOCTYPE html>
-<script src="/js-test-resources/testharness.js"></script>
-<script src="/js-test-resources/testharnessreport.js"></script>
 <script>
-    var t = async_test('Makes sure that preloaded resources trigger onerror');
+    if (window.testRunner) {
+        testRunner.dumpAsText()
+        testRunner.waitUntilDone();
+    }
 </script>
+<script src="/js-test-resources/js-test.js"></script>
 <script>
     var scriptFailed = false;
     var styleFailed = false;
@@ -25,36 +27,20 @@
 <link rel=preload href="../non-existent/dummy.xml" as=foobarxmlthing onerror="count();gibrishFailed = true;" onload="count();">
 <link rel=preload href="http://127.0.0.1:9999/non-existent/dummy.xml" onerror="count();noTypeFailed = true;" onload="count();">
 <script>
-    document.write('<script src="../non-existent/dummy.js"></scr' + 'ipt>' +
-                   '<link rel=stylesheet href="../non-existent/dummy.css">' +
-                   '<img src="../non-existent/square.png">' +
-                   '<video><source src="test.mp4">' +
-                   '<track kind=subtitles src="../../non-existent/security/captions.vtt" srclang=en>' +
-                   '</video>' +
-                   '<style>' +
-                   '    @font-face { font-family:ahem; src: url(../../non-existent/Ahem.ttf); }' +
-                   '    span { font-family: ahem, Arial; }' +
-                   '</style>' +
-                   '<span>This test makes sure that link preload triggers error events for non-existing resources.</span>');
-    var xhr = new XMLHttpRequest();
-    xhr.open("GET", "../non-existent/dummy.xml");
-    xhr.send();
-    var xhr2 = new XMLHttpRequest();
-    xhr2.open("GET", "http://127.0.0.1:9999/non-existent/dummy.xml");
-    xhr2.send();
     function test() {
-        assert_true(styleFailed);
-        assert_true(scriptFailed);
-        assert_true(imageFailed);
-        assert_true(fontFailed);
-        assert_true(trackFailed);
-        assert_true(gibrishFailed);
-        assert_true(noTypeFailed);
-        t.done();
+        shouldBeTrue("styleFailed");
+        shouldBeTrue("scriptFailed");
+        shouldBeTrue("imageFailed");
+        shouldBeTrue("fontFailed");
+        shouldBeTrue("trackFailed");
+        shouldBeTrue("gibrishFailed");
+        shouldBeTrue("noTypeFailed");
+        if (window.testRunner)
+            testRunner.notifyDone();
     };
-    setInterval(t.step_func(function() {
+    setInterval(function() {
         if (window.counter >= 7)
             test();
-    }, 100));
+    }, 100);
 </script>
 

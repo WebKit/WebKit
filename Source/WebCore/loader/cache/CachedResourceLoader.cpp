@@ -85,9 +85,6 @@
 
 namespace WebCore {
 
-// Timeout for link preloads to be used after window.onload
-static const int unusedPreloadTimeoutInSeconds = 3;
-
 static CachedResource* createResource(CachedResource::Type type, CachedResourceRequest&& request, SessionID sessionID)
 {
     switch (type) {
@@ -132,7 +129,6 @@ CachedResourceLoader::CachedResourceLoader(DocumentLoader* documentLoader)
     : m_document(nullptr)
     , m_documentLoader(documentLoader)
     , m_requestCount(0)
-    , m_unusedPreloadsTimer(*this, &CachedResourceLoader::warnUnusedPreloads)
     , m_garbageCollectDocumentResourcesTimer(*this, &CachedResourceLoader::garbageCollectDocumentResources)
     , m_autoLoadImages(true)
     , m_imagesEnabled(true)
@@ -151,7 +147,6 @@ CachedResourceLoader::~CachedResourceLoader()
 
     // Make sure no requests still point to this CachedResourceLoader
     ASSERT(m_requestCount == 0);
-    m_unusedPreloadsTimer.stop();
 }
 
 CachedResource* CachedResourceLoader::cachedResource(const String& resourceURL) const
@@ -826,16 +821,6 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::requestResource(Cache
 void CachedResourceLoader::documentDidFinishLoadEvent()
 {
     m_validatedURLs.clear();
-
-    // If m_preloads is not empty here, it's full of link preloads,
-    // as speculative preloads were cleared at DCL.
-    if (m_preloads && m_preloads->size() && !m_unusedPreloadsTimer.isActive())
-        m_unusedPreloadsTimer.startOneShot(unusedPreloadTimeoutInSeconds);
-}
-
-void CachedResourceLoader::stopUnusedPreloadsTimer()
-{
-    m_unusedPreloadsTimer.stop();
 }
 
 CachedResourceHandle<CachedResource> CachedResourceLoader::revalidateResource(CachedResourceRequest&& request, CachedResource& resource)
@@ -1241,19 +1226,6 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::preload(CachedResourc
     printf("PRELOADING %s\n",  resource->url().latin1().data());
 #endif
     return resource;
-}
-
-void CachedResourceLoader::warnUnusedPreloads()
-{
-    if (!m_preloads)
-        return;
-    for (const auto& resource : *m_preloads) {
-        if (resource && resource->isLinkPreload() && resource->preloadResult() == CachedResource::PreloadNotReferenced && document()) {
-            document()->addConsoleMessage(MessageSource::Other, MessageLevel::Warning,
-                "The resource " + resource->url().string() +
-                " was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it wasn't preloaded for nothing.");
-        }
-    }
 }
 
 bool CachedResourceLoader::isPreloaded(const String& urlString) const

@@ -133,8 +133,6 @@ public:
     void clearPreloads(ClearPreloadsMode);
     CachedResourceHandle<CachedResource> preload(CachedResource::Type, CachedResourceRequest&&);
     void printPreloadStats();
-    void warnUnusedPreloads();
-    void stopUnusedPreloadsTimer();
 
     bool updateRequestAfterRedirection(CachedResource::Type, ResourceRequest&, const ResourceLoaderOptions&);
 
@@ -190,7 +188,6 @@ private:
     int m_requestCount;
     
     std::unique_ptr<ListHashSet<CachedResource*>> m_preloads;
-    Timer m_unusedPreloadsTimer;
 
     Timer m_garbageCollectDocumentResourcesTimer;
 

@@ -1,3 +1,15 @@
+2017-03-24  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r214361.
+
+        This change caused flakiness in http/tests/preload tests.
+
+        Reverted changeset:
+
+        "Add a warning for unused link preloads."
+        https://bugs.webkit.org/show_bug.cgi?id=165670
+        http://trac.webkit.org/changeset/214361
+
 2017-03-24  Antoine Quint  <graouts@webkit.org>
 
         [Modern Media Controls] Remove placard icon if height is compressed

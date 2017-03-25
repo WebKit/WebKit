@@ -15,4 +15,4 @@ PASS xsltLoaded is false
 PASS xsltErrored is true
 PASS noTypeLoaded is true
 PASS emptyTypeLoaded is true
-This test makes sure that link preload events are fired
+
