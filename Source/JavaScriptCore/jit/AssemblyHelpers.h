@@ -1652,7 +1652,7 @@ public:
     {
 #if ENABLE(FAST_TLS_JIT)
         if (Options::useWebAssemblyFastTLS())
-            storeToTLSPtr(src, fastTLSOffsetForKey(WTF_WASM_CONTEXT_KEY));
+            return storeToTLSPtr(src, fastTLSOffsetForKey(WTF_WASM_CONTEXT_KEY));
 #endif
         // FIXME: Save this state elsewhere to allow PIC. https://bugs.webkit.org/show_bug.cgi?id=169773
         storePtr(src, &m_vm->wasmContext);
