@@ -1,3 +1,18 @@
+2017-03-25  David Kilzer  <ddkilzer@apple.com>
+
+        [Bugzilla] Add a checkbox to add self to the CC list when creating or editing an attachment
+        <https://webkit.org/b/124047>
+
+        Original patch by Csaba Osztrogonác.
+
+        Reviewed by Daniel Bates.
+
+        * template/en/default/attachment/reviewform.html.tmpl:
+        Add template for "Add me to CC list" by default.  This
+        adds the reviewer to the CC list whether the "Preview"
+        or "Publish" button is used.  Only the "Preview" button
+        allows the checkbox to be unchecked, though.
+
 2017-03-23  David Kilzer  <ddkilzer@apple.com>
 
         Fix Apache::SizeLimit unshared size limit in mod_perl.pl for bugs.webkit.org

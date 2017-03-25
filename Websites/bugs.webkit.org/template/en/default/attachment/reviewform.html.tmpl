@@ -86,6 +86,15 @@
                                        bug_id = attachment.bug_id
                                        flag_types = attachment.flag_types %]<br>
     [% END %]
+
+    [% IF NOT attachment.bug.cc || NOT attachment.bug.cc.contains(user.login) %]
+      <input type="checkbox" id="addselfcc" name="addselfcc"
+        [%~ ' checked="checked"'
+            IF user.settings.state_addselfcc.value == 'always'
+               || (!attachment.bug.user.has_any_role
+                  && user.settings.state_addselfcc.value == 'cc_unless_role') %]>
+      <label for="addselfcc">Add me to CC list</label>
+    [% END %]
 </td>
 <td>
 [% IF attachment.ispatch %]
