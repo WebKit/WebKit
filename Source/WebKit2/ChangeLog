@@ -1,3 +1,20 @@
+2017-03-24  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] Move from a pre-commit handler to dispatch_async for visible content rect updates
+        https://bugs.webkit.org/show_bug.cgi?id=170091
+        rdar://problem/30682584
+
+        Reviewed by Tim Horton.
+        
+        [CATransaction addCommitHandler:forPhase:] is sometimes not called when running inside another
+        commit callback (rdar://problem/31253952), and we don't yet have a reliable way to detect this.
+
+        So dispatch_async() to postpone the call to [CATransaction addCommitHandler:forPhase:] to a known-
+        good time.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _scheduleVisibleContentRectUpdateAfterScrollInView:]):
+
 2017-03-24  John Wilander  <wilander@apple.com>
 
         Re-enable the network process' keychain access to fix client certificate authentication

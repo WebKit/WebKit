@@ -288,7 +288,7 @@ WKWebView* fromWebPageProxy(WebKit::WebPageProxy& page)
 
     RetainPtr<WKPasswordView> _passwordView;
 
-    BOOL _hasInstalledPreCommitHandlerForVisibleRectUpdate;
+    BOOL _hasScheduledVisibleRectUpdate;
     BOOL _visibleContentRectUpdateScheduledFromScrollViewInStableState;
     Vector<BlockPtr<void ()>> _visibleContentRectUpdateCallbacks;
 #endif
@@ -2301,16 +2301,19 @@ static WebCore::FloatSize activeMinimumLayoutSize(WKWebView *webView, const CGRe
 {
     _visibleContentRectUpdateScheduledFromScrollViewInStableState = [self _scrollViewIsInStableState:scrollView];
 
-    if (_hasInstalledPreCommitHandlerForVisibleRectUpdate)
+    if (_hasScheduledVisibleRectUpdate)
         return;
 
-    _hasInstalledPreCommitHandlerForVisibleRectUpdate = YES;
-
-    [CATransaction addCommitHandler:[retainedSelf = retainPtr(self)] {
-        WKWebView *webView = retainedSelf.get();
-        [webView _updateVisibleContentRects];
-        webView->_hasInstalledPreCommitHandlerForVisibleRectUpdate = NO;
-    } forPhase:kCATransactionPhasePreCommit];
+    _hasScheduledVisibleRectUpdate = YES;
+    
+    // FIXME: remove the dispatch_async() when we have a fix for rdar://problem/31253952.
+    dispatch_async(dispatch_get_main_queue(), [retainedSelf = retainPtr(self)] {
+        [CATransaction addCommitHandler:[retainedSelf] {
+            WKWebView *webView = retainedSelf.get();
+            [webView _updateVisibleContentRects];
+            webView->_hasScheduledVisibleRectUpdate = NO;
+        } forPhase:kCATransactionPhasePreCommit];
+    });
 }
 
 static bool scrollViewCanScroll(UIScrollView *scrollView)
