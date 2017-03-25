@@ -1365,10 +1365,8 @@ webkit.org/b/158889 media/video-controls-show-on-kb-or-ax-event.html [ Pass Fail
 
 webkit.org/b/159379 fast/history/page-cache-webdatabase-pending-transaction.html [ Pass Failure ]
 
-webkit.org/b/158747 media/restore-from-page-cache.html [ Pass Failure ]
-
 # rdar://problem/31243824
-[ Debug ] media/restore-from-page-cache.html [ Pass Crash Failure ]
+webkit.org/b/158747 media/restore-from-page-cache.html [ Pass Failure Crash ]
 
 # See also https://bugs.webkit.org/show_bug.cgi?id=162494
 webkit.org/b/151287 [ ElCapitan+ ] media/controls/inline-elements-dropoff-order.html [ Failure ]

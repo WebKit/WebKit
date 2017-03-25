@@ -1,5 +1,13 @@
 2017-03-24  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Consolidate TestExpectations for media/restore-from-page-cache.html.
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
+2017-03-24  Ryan Haddad  <ryanhaddad@apple.com>
+
         Unreviewed, rolling out r214361.
 
         This change caused flakiness in http/tests/preload tests.
