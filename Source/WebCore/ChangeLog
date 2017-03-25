@@ -1,3 +1,18 @@
+2017-03-25  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [XDG] MIMETypeRegistry::getMIMETypeForExtension should return a null/empty string when mime type is unknown
+        https://bugs.webkit.org/show_bug.cgi?id=170050
+
+        Reviewed by Michael Catanzaro.
+
+        That's what the callers expect, but we alre always returning XDG_MIME_TYPE_UNKNOWN which is
+        application/octet-stream.
+
+        Fixes: plugins/no-mime-with-valid-extension.html
+
+        * platform/xdg/MIMETypeRegistryXdg.cpp:
+        (WebCore::MIMETypeRegistry::getMIMETypeForExtension):
+
 2017-03-24  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Add font-optical-sizing to CSSComputedStyleDeclaration

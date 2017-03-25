@@ -38,8 +38,10 @@ String MIMETypeRegistry::getMIMETypeForExtension(const String& extension)
 
     // Build any filename with the given extension.
     String filename = "a." + extension;
-    if (const char* mimeType = xdg_mime_get_mime_type_from_file_name(filename.utf8().data()))
-        return String::fromUTF8(mimeType);
+    if (const char* mimeType = xdg_mime_get_mime_type_from_file_name(filename.utf8().data())) {
+        if (mimeType != XDG_MIME_TYPE_UNKNOWN)
+            return String::fromUTF8(mimeType);
+    }
 
     return String();
 }
