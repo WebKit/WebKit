@@ -34,6 +34,7 @@
 
 #if !PLATFORM(IOS)
 #import "WebJavaScriptTextInputPanel.h"
+#import "WebKitVersionChecks.h"
 #endif
 
 #if PLATFORM(IOS)
@@ -52,15 +53,14 @@
 static WebDefaultUIDelegate *sharedDelegate = nil;
 
 // Return a object with vanilla implementations of the protocol's methods
-// Note this feature relies on our default delegate being stateless.  This
+// Note this feature relies on our default delegate being stateless. This
 // is probably an invalid assumption for the WebUIDelegate.
 // If we add any real functionality to this default delegate we probably
 // won't be able to use a singleton.
 + (WebDefaultUIDelegate *)sharedUIDelegate
 {
-    if (!sharedDelegate) {
+    if (!sharedDelegate)
         sharedDelegate = [[WebDefaultUIDelegate alloc] init];
-    }
     return sharedDelegate;
 }
 
@@ -101,9 +101,8 @@ static WebDefaultUIDelegate *sharedDelegate = nil;
 - (void)webViewUnfocus: (WebView *)wv
 {
 #if !PLATFORM(IOS)
-    if ([[wv window] isKeyWindow] || [[[wv window] attachedSheet] isKeyWindow]) {
+    if ([[wv window] isKeyWindow] || [[[wv window] attachedSheet] isKeyWindow])
         [NSApp _cycleWindowsReversed:FALSE];
-    }
 #endif
 }
 
@@ -196,11 +195,10 @@ static WebDefaultUIDelegate *sharedDelegate = nil;
     WebJavaScriptTextInputPanel *panel = [[WebJavaScriptTextInputPanel alloc] initWithPrompt:prompt text:defaultText];
     [panel showWindow:nil];
     NSString *result;
-    if ([NSApp runModalForWindow:[panel window]]) {
+    if ([NSApp runModalForWindow:[panel window]])
         result = [panel text];
-    } else {
+    else
         result = nil;
-    }
     [[panel window] close];
     [panel release];
     return result;
@@ -222,7 +220,10 @@ static WebDefaultUIDelegate *sharedDelegate = nil;
 #if !PLATFORM(IOS)
 - (NSUInteger)webView:(WebView *)webView dragDestinationActionMaskForDraggingInfo:(id <NSDraggingInfo>)draggingInfo
 {
-    return WebDragDestinationActionAny;
+    if (!linkedOnOrAfter(SDKVersion::FirstWithDropToNavigateDisallowedByDefault))
+        return WebDragDestinationActionAny;
+
+    return WebDragDestinationActionAny & ~WebDragDestinationActionLoad;
 }
 
 - (void)webView:(WebView *)webView willPerformDragDestinationAction:(WebDragDestinationAction)action forDraggingInfo:(id <NSDraggingInfo>)draggingInfo

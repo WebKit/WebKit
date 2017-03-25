@@ -87,11 +87,6 @@ static WebHTMLView *getTopHTMLView(Frame* frame)
     return (WebHTMLView*)[[kit(&frame->page()->mainFrame()) frameView] documentView];
 }
 
-WebCore::DragDestinationAction WebDragClient::actionMaskForDrag(const WebCore::DragData& dragData)
-{
-    return (WebCore::DragDestinationAction)[[m_webView _UIDelegateForwarder] webView:m_webView dragDestinationActionMaskForDraggingInfo:dragData.platformData()];
-}
-
 void WebDragClient::willPerformDragDestinationAction(WebCore::DragDestinationAction action, const WebCore::DragData& dragData)
 {
     [[m_webView _UIDelegateForwarder] webView:m_webView willPerformDragDestinationAction:(WebDragDestinationAction)action forDraggingInfo:dragData.platformData()];
@@ -192,11 +187,6 @@ bool WebDragClient::useLegacyDragClient()
 
 void WebDragClient::didConcludeEditDrag()
 {
-}
-
-WebCore::DragDestinationAction WebDragClient::actionMaskForDrag(const WebCore::DragData&)
-{
-    return DragDestinationActionNone;
 }
 
 void WebDragClient::willPerformDragDestinationAction(WebCore::DragDestinationAction, const WebCore::DragData&)

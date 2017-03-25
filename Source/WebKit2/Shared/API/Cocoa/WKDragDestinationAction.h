@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,25 +23,18 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#import <WebKit/WKFoundation.h>
 
-#import <wtf/spi/darwin/dyldSPI.h>
+#if WK_API_ENABLED
 
-namespace WebKit {
+#import <Foundation/Foundation.h>
 
-enum class SDKVersion : uint32_t {
-#if PLATFORM(IOS)
-    FirstWithNetworkCache = DYLD_IOS_VERSION_9_0,
-    FirstWithMediaTypesRequiringUserActionForPlayback = DYLD_IOS_VERSION_10_0,
-    FirstWithExceptionsForDuplicateCompletionHandlerCalls = DYLD_IOS_VERSION_11_0,
-    FirstToExcludeLocalStorageFromBackup = DYLD_IOS_VERSION_11_0,
-#elif PLATFORM(MAC)
-    FirstWithNetworkCache = DYLD_MACOSX_VERSION_10_11,
-    FirstWithExceptionsForDuplicateCompletionHandlerCalls = DYLD_MACOSX_VERSION_10_13,
-    FirstWithDropToNavigateDisallowedByDefault = DYLD_MACOSX_VERSION_10_13
+typedef NS_OPTIONS(NSUInteger, WKDragDestinationAction) {
+    WKDragDestinationActionNone    = 0,
+    WKDragDestinationActionDHTML   = 1,
+    WKDragDestinationActionEdit    = 2,
+    WKDragDestinationActionLoad    = 4,
+    WKDragDestinationActionAny     = NSUIntegerMax
+} WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+
 #endif
-};
-
-bool linkedOnOrAfter(SDKVersion);
-
-}

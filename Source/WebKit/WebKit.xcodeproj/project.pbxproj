@@ -329,7 +329,7 @@
 		939811060824BF01008DF038 /* WebFrameView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51A8B52F04282B5900CA2D3A /* WebFrameView.mm */; };
 		939811070824BF01008DF038 /* WebView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51A8B57A042834F700CA2D3A /* WebView.mm */; };
 		939811080824BF01008DF038 /* WebPolicyDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51443F9B0429392B00CA2D3A /* WebPolicyDelegate.mm */; };
-		9398110A0824BF01008DF038 /* WebDefaultUIDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 515E27D00458CA4B00CA2D3A /* WebDefaultUIDelegate.m */; };
+		9398110A0824BF01008DF038 /* WebDefaultUIDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 515E27D00458CA4B00CA2D3A /* WebDefaultUIDelegate.mm */; };
 		939811120824BF01008DF038 /* WebNSURLExtras.mm in Sources */ = {isa = PBXBuildFile; fileRef = BE6DC39A04C62C4E004D0EF6 /* WebNSURLExtras.mm */; };
 		939811130824BF01008DF038 /* WebHistory.mm in Sources */ = {isa = PBXBuildFile; fileRef = 65DA2608052CC18700A97B31 /* WebHistory.mm */; };
 		939811150824BF01008DF038 /* WebNSDataExtras.m in Sources */ = {isa = PBXBuildFile; fileRef = BECD142A0565830A005BB09C /* WebNSDataExtras.m */; };
@@ -966,7 +966,7 @@
 		5158F6EE106D862A00AF457C /* WebHistoryDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebHistoryDelegate.h; sourceTree = "<group>"; };
 		515E27CC0458C86500CA2D3A /* WebUIDelegate.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebUIDelegate.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		515E27CF0458CA4B00CA2D3A /* WebDefaultUIDelegate.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebDefaultUIDelegate.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		515E27D00458CA4B00CA2D3A /* WebDefaultUIDelegate.m */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebDefaultUIDelegate.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		515E27D00458CA4B00CA2D3A /* WebDefaultUIDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebDefaultUIDelegate.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		516F296F03A6C45A00CA2D3A /* WebHistoryItemInternal.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebHistoryItemInternal.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		5185F62510712B80007AA393 /* WebNavigationData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebNavigationData.h; sourceTree = "<group>"; };
 		5185F62710712B97007AA393 /* WebNavigationData.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebNavigationData.mm; sourceTree = "<group>"; };
@@ -1950,7 +1950,7 @@
 				5152FADF033FC50400CA2ACD /* WebDefaultPolicyDelegate.h */,
 				5152FAE0033FC50400CA2ACD /* WebDefaultPolicyDelegate.m */,
 				515E27CF0458CA4B00CA2D3A /* WebDefaultUIDelegate.h */,
-				515E27D00458CA4B00CA2D3A /* WebDefaultUIDelegate.m */,
+				515E27D00458CA4B00CA2D3A /* WebDefaultUIDelegate.mm */,
 			);
 			name = "Default Delegates";
 			path = mac/DefaultDelegates;
@@ -3580,7 +3580,7 @@
 				A10C1D1B18202F9C0036883A /* WebDefaultFrameLoadDelegate.m in Sources */,
 				939810F00824BF01008DF038 /* WebDefaultPolicyDelegate.m in Sources */,
 				A10C1D1D18202F9C0036883A /* WebDefaultResourceLoadDelegate.m in Sources */,
-				9398110A0824BF01008DF038 /* WebDefaultUIDelegate.m in Sources */,
+				9398110A0824BF01008DF038 /* WebDefaultUIDelegate.mm in Sources */,
 				A10C1D1F18202F9C0036883A /* WebDefaultUIKitDelegate.m in Sources */,
 				BC542C430FD7766F00D8AB5D /* WebDelegateImplementationCaching.mm in Sources */,
 				598AD9221201CF1000ABAE4E /* WebDeviceOrientation.mm in Sources */,

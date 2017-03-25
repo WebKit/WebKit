@@ -83,13 +83,13 @@ static inline String tiffPasteboardType()
 
 namespace WebCore {
 
-DragData::DragData(DragDataRef data, const IntPoint& clientPosition, const IntPoint& globalPosition, 
-    DragOperation sourceOperationMask, DragApplicationFlags flags)
+DragData::DragData(DragDataRef data, const IntPoint& clientPosition, const IntPoint& globalPosition, DragOperation sourceOperationMask, DragApplicationFlags flags, DragDestinationAction destinationAction)
     : m_clientPosition(clientPosition)
     , m_globalPosition(globalPosition)
     , m_platformDragData(data)
     , m_draggingSourceOperationMask(sourceOperationMask)
     , m_applicationFlags(flags)
+    , m_dragDestinationAction(destinationAction)
 #if PLATFORM(MAC)
     , m_pasteboardName([[m_platformDragData draggingPasteboard] name])
 #else
@@ -98,13 +98,13 @@ DragData::DragData(DragDataRef data, const IntPoint& clientPosition, const IntPo
 {
 }
 
-DragData::DragData(const String& dragStorageName, const IntPoint& clientPosition, const IntPoint& globalPosition,
-    DragOperation sourceOperationMask, DragApplicationFlags flags)
+DragData::DragData(const String& dragStorageName, const IntPoint& clientPosition, const IntPoint& globalPosition, DragOperation sourceOperationMask, DragApplicationFlags flags, DragDestinationAction destinationAction)
     : m_clientPosition(clientPosition)
     , m_globalPosition(globalPosition)
     , m_platformDragData(0)
     , m_draggingSourceOperationMask(sourceOperationMask)
     , m_applicationFlags(flags)
+    , m_dragDestinationAction(destinationAction)
     , m_pasteboardName(dragStorageName)
 {
 }

@@ -29,6 +29,7 @@
 #if PLATFORM(MAC)
 
 #include "PluginComplexTextInputState.h"
+#include "WKDragDestinationAction.h"
 #include "WKLayoutMode.h"
 #include "WebPageProxy.h"
 #include "_WKOverlayScrollbarStyle.h"
@@ -90,6 +91,10 @@ OBJC_CLASS WebPlaybackControlsManager;
 - (void)_web_gestureEventWasNotHandledByWebCore:(NSEvent *)event;
 
 - (void)_web_didChangeContentSize:(NSSize)newSize;
+
+#if ENABLE(DRAG_SUPPORT) && WK_API_ENABLED
+- (WKDragDestinationAction)_web_dragDestinationActionForDraggingInfo:(id <NSDraggingInfo>)draggingInfo;
+#endif
 
 @optional
 - (void)_web_didAddMediaControlsManager:(id)controlsManager;

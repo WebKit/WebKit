@@ -45,6 +45,7 @@
 #import "RemoteObjectRegistry.h"
 #import "RemoteObjectRegistryMessages.h"
 #import "UIDelegate.h"
+#import "VersionChecks.h"
 #import "ViewGestureController.h"
 #import "ViewSnapshotStore.h"
 #import "WKBackForwardListInternal.h"
@@ -3487,6 +3488,22 @@ WEBCORE_COMMAND(yankAndSelect)
 - (void)_web_didChangeContentSize:(NSSize)newSize
 {
 }
+
+#if ENABLE(DRAG_SUPPORT) && WK_API_ENABLED
+
+- (WKDragDestinationAction)_web_dragDestinationActionForDraggingInfo:(id <NSDraggingInfo>)draggingInfo
+{
+    id <WKUIDelegatePrivate> uiDelegate = (id <WKUIDelegatePrivate>)[self UIDelegate];
+    if ([uiDelegate respondsToSelector:@selector(_webView:dragDestinationActionMaskForDraggingInfo:)])
+        return [uiDelegate _webView:self dragDestinationActionMaskForDraggingInfo:draggingInfo];
+
+    if (!linkedOnOrAfter(WebKit::SDKVersion::FirstWithDropToNavigateDisallowedByDefault))
+        return WKDragDestinationActionAny;
+
+    return WKDragDestinationActionAny & ~WKDragDestinationActionLoad;
+}
+
+#endif
 
 - (void)_web_dismissContentRelativeChildWindows
 {

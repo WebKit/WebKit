@@ -32,6 +32,7 @@
 #import "APIIconLoadingClient.h"
 #import "APIPageConfiguration.h"
 #import "WKBrowsingContextGroupPrivate.h"
+#import "WKDragDestinationAction.h"
 #import "WKNSData.h"
 #import "WKProcessGroupPrivate.h"
 #import "WebBackForwardListItem.h"
@@ -1007,6 +1008,15 @@ Some other editing-related methods still unimplemented:
 {
     [self _didChangeContentSize:newSize];
 }
+
+#if ENABLE(DRAG_SUPPORT) && WK_API_ENABLED
+
+- (WKDragDestinationAction)_web_dragDestinationActionForDraggingInfo:(id <NSDraggingInfo>)draggingInfo
+{
+    return WKDragDestinationActionAny;
+}
+
+#endif
 
 - (void)_web_dismissContentRelativeChildWindows
 {

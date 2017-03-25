@@ -1,3 +1,50 @@
+2017-03-24  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [WK2] Add a UI delegate SPI hook to enable or disable navigation on drop
+        https://bugs.webkit.org/show_bug.cgi?id=169168
+        <rdar://problem/30688374>
+
+        Reviewed by Tim Horton.
+
+        Support customizing the set of allowed actions on drop in WebKit2 by introducing a new method to WKUIDelegatePrivate
+        that returns a WKDragDestinationAction given platform dragging info. These flags are then used to initialize the
+        DragData sent over to the web process, where they update DragController's view of the allowed destination actions.
+
+        Moving forward, the default action mask for WKWebViews will include everything except WKDragDestinationActionLoad,
+        though for applciations linked on or before 10.12, we will still default to WKDragDestinationActionAny to mitigate
+        any compatibility risk.
+
+        * Shared/API/Cocoa/WKDragDestinationAction.h:
+
+        Introduce WK2 client-facing versions of WebCore::DragDestinationAction flags.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<DragData>::encode):
+        (IPC::ArgumentCoder<DragData>::decode):
+
+        Serialize DragData's destination actions when sending DragData over IPC.
+
+        * UIProcess/API/Cocoa/WKUIDelegatePrivate.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _web_dragDestinationActionForDraggingInfo:]):
+
+        For WKWebView, allow all drag destination actions except for loading (i.e. drop-to-navigate).
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _web_dragDestinationActionForDraggingInfo:]):
+
+        For WKView, allow all types of drag destination actions.
+
+        * UIProcess/Cocoa/VersionChecks.h:
+        * UIProcess/Cocoa/WebViewImpl.h:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::draggingEntered):
+        (WebKit::WebViewImpl::draggingUpdated):
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebCoreSupport/WebDragClient.cpp:
+        (WebKit::WebDragClient::actionMaskForDrag):
+        * WebProcess/WebCoreSupport/WebDragClient.h:
+
 2017-03-24  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS WK2] Move from a pre-commit handler to dispatch_async for visible content rect updates

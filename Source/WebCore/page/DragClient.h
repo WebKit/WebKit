@@ -26,6 +26,7 @@
 #pragma once
 
 #include "DragActions.h"
+#include "DragData.h"
 #include "DragItem.h"
 #include "FloatPoint.h"
 #include "IntPoint.h"
@@ -33,7 +34,6 @@
 namespace WebCore {
     
 class DataTransfer;
-class DragData;
 class Element;
 class Frame;
 class Image;
@@ -47,7 +47,6 @@ public:
     virtual void willPerformDragDestinationAction(DragDestinationAction, const DragData&) = 0;
     virtual void willPerformDragSourceAction(DragSourceAction, const IntPoint&, DataTransfer&) = 0;
     virtual void didConcludeEditDrag() { }
-    virtual DragDestinationAction actionMaskForDrag(const DragData&) = 0;
     virtual DragSourceAction dragSourceActionMaskForPoint(const IntPoint& rootViewPoint) = 0;
     
     virtual void startDrag(DragImage, const IntPoint& dragImageOrigin, const IntPoint& eventPos, const FloatPoint& dragImageAnchor, DataTransfer&, Frame&, DragSourceAction) = 0;

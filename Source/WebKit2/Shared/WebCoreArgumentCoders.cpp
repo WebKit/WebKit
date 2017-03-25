@@ -1223,6 +1223,7 @@ void ArgumentCoder<DragData>::encode(Encoder& encoder, const DragData& dragData)
 #if PLATFORM(MAC)
     encoder << dragData.fileNames();
 #endif
+    encoder.encodeEnum(dragData.dragDestinationAction());
 }
 
 bool ArgumentCoder<DragData>::decode(Decoder& decoder, DragData& dragData)
@@ -1254,7 +1255,11 @@ bool ArgumentCoder<DragData>::decode(Decoder& decoder, DragData& dragData)
         return false;
 #endif
 
-    dragData = DragData(pasteboardName, clientPosition, globalPosition, draggingSourceOperationMask, applicationFlags);
+    DragDestinationAction destinationAction;
+    if (!decoder.decodeEnum(destinationAction))
+        return false;
+
+    dragData = DragData(pasteboardName, clientPosition, globalPosition, draggingSourceOperationMask, applicationFlags, destinationAction);
     dragData.setFileNames(fileNames);
 
     return true;

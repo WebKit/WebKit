@@ -46,11 +46,6 @@ void WebDragClient::willPerformDragSourceAction(DragSourceAction, const IntPoint
 {
 }
 
-DragDestinationAction WebDragClient::actionMaskForDrag(const DragData&)
-{
-    return DragDestinationActionAny;
-}
-
 DragSourceAction WebDragClient::dragSourceActionMaskForPoint(const IntPoint&)
 {
     return DragSourceActionAny;

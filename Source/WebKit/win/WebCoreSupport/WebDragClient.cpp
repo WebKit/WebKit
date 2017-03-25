@@ -64,18 +64,6 @@ WebDragClient::WebDragClient(WebView* webView)
     ASSERT(webView);
 }
 
-DragDestinationAction WebDragClient::actionMaskForDrag(const DragData& dragData)
-{
-    COMPtr<IWebUIDelegate> delegateRef = 0;
-    //Default behaviour (eg. no delegate, or callback not implemented) is to allow
-    //any action
-    WebDragDestinationAction mask = WebDragDestinationActionAny;
-    if (SUCCEEDED(m_webView->uiDelegate(&delegateRef)))
-        delegateRef->dragDestinationActionMaskForDraggingInfo(m_webView, dragData.platformData(), &mask);
-
-    return (DragDestinationAction)mask;
-}
-
 void WebDragClient::willPerformDragDestinationAction(DragDestinationAction action, const DragData& dragData)
 {
     //Default delegate for willPerformDragDestinationAction has no side effects

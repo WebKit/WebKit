@@ -129,7 +129,6 @@ class EmptyDiagnosticLoggingClient final : public DiagnosticLoggingClient {
 class EmptyDragClient final : public DragClient {
     void willPerformDragDestinationAction(DragDestinationAction, const DragData&) final { }
     void willPerformDragSourceAction(DragSourceAction, const IntPoint&, DataTransfer&) final { }
-    DragDestinationAction actionMaskForDrag(const DragData&) final { return DragDestinationActionNone; }
     DragSourceAction dragSourceActionMaskForPoint(const IntPoint&) final { return DragSourceActionNone; }
     void startDrag(DragImage, const IntPoint&, const IntPoint&, const FloatPoint&, DataTransfer&, Frame&, DragSourceAction) final { }
     void dragControllerDestroyed() final { }

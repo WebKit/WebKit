@@ -55,8 +55,6 @@
 #endif
 #endif
 
-#define WEBKIT_DI_BLOCK 1
-
 @class UIColor;
 @class UIImage;
 @class NSError;

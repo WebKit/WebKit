@@ -281,7 +281,7 @@ DragOperation DragController::dragEnteredOrUpdated(const DragData& dragData)
 {
     mouseMovedIntoDocument(m_page.mainFrame().documentAtPoint(dragData.clientPosition()));
 
-    m_dragDestinationAction = m_client.actionMaskForDrag(dragData);
+    m_dragDestinationAction = dragData.dragDestinationAction();
     if (m_dragDestinationAction == DragDestinationActionNone) {
         clearDragCaret(); // FIXME: Why not call mouseMovedIntoDocument(nullptr)?
         return DragOperationNone;

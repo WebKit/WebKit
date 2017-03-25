@@ -1,3 +1,38 @@
+2017-03-24  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [WK2] Add a UI delegate SPI hook to enable or disable navigation on drop
+        https://bugs.webkit.org/show_bug.cgi?id=169168
+        <rdar://problem/30688374>
+
+        Reviewed by Tim Horton.
+
+        Refactor client hooks for the drag destination action in WebCore to ask for the drag destination action mask
+        upon initializing the DragData. In DragController, rather than setting m_dragDestinationAction to the result of
+        m_client.actionMaskForDrag, we instead set it to the DragData's destination action.
+
+        Tests to come in a future patch.
+
+        * loader/EmptyClients.cpp:
+        * page/DragClient.h:
+
+        Rather than pass in a DragData, pass in only the platform data that we need to hand to the delegate. This is
+        because we now ask for drag destination actions prior to creating the DragData.
+
+        * page/DragController.cpp:
+        (WebCore::DragController::dragEnteredOrUpdated):
+
+        Update the available drag destination actions in WebCore using the destination actions stored in DragData rather
+        than calling out to the client delegate.
+
+        * loader/EmptyClients.cpp:
+        * platform/DragData.cpp:
+        (WebCore::DragData::DragData):
+        * platform/DragData.h:
+        (WebCore::DragData::dragDestinationAction):
+        (WebCore::DragData::operator =):
+        * platform/mac/DragDataMac.mm:
+        (WebCore::DragData::DragData):
+
 2017-03-25  Aaron Chu  <aaron_chu@apple.com>
 
         AX: Media controls are unlabeled
