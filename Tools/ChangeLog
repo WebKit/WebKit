@@ -1,3 +1,13 @@
+2017-03-25  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GTK] No value returned from PrintCustomWidgetTest::createWebKitPrintOperation() in TestPrinting.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=170059
+
+        Reviewed by Carlos Garcia Campos.
+
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestPrinting.cpp: Use "void" as return type in the declaration,
+        the only use of the method in this same file ignores the returned value anyway.
+
 2017-03-24  Srinivasan Vijayaraghavan  <svijayaraghavan@apple.com>
 
         webkitpy should be able to run API tests
