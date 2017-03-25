@@ -1,3 +1,16 @@
+2017-03-24  John Wilander  <wilander@apple.com>
+
+        Re-enable the network process' keychain access to fix client certificate authentication
+        https://bugs.webkit.org/show_bug.cgi?id=170074
+        <rdar://problem/31095987>
+
+        Reviewed by Brent Fulgham.
+
+        * NetworkProcess/mac/com.apple.WebKit.NetworkProcess.sb.in:
+            Reverted remaining change from
+            https://trac.webkit.org/changeset/208702/webkit and
+            https://trac.webkit.org/changeset/208707/webkit.
+
 2017-03-24  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] "ideal" constraints passed to getUserMedia should affect fitness score
