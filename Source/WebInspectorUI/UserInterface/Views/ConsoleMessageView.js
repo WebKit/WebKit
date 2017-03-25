@@ -146,7 +146,7 @@ WebInspector.ConsoleMessageView = class ConsoleMessageView extends WebInspector.
             this._element.insertBefore(this._repeatCountElement, this._element.firstChild);
         }
 
-        this._repeatCountElement.textContent = count;
+        this._repeatCountElement.textContent = Number.abbreviate(count);
     }
 
     get expandable()

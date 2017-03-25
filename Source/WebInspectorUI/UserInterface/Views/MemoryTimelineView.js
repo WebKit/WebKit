@@ -337,9 +337,9 @@ WebInspector.MemoryTimelineView = class MemoryTimelineView extends WebInspector.
         }
 
         // The chart will only show a perfect circle if the current and max are really the same value.
-        // So do a little massaging to ensure 99.95 doesn't get rounded up to 100.
-        let percent = ((currentSize / this._maxSize) * 100);
-        totalElement.textContent = (percent === 100 ? percent : (percent - 0.05).toFixed(1)) + "%";
+        // So do a little massaging to ensure 0.9995 doesn't get rounded up to 1.
+        let percent = currentSize / this._maxSize;
+        totalElement.textContent = Number.percentageString(percent === 1 ? percent : (percent - 0.0005));
     }
 
     _initializeCategoryViews(record)

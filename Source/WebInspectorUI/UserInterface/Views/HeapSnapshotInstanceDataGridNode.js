@@ -54,7 +54,7 @@ WebInspector.HeapSnapshotInstanceDataGridNode = class HeapSnapshotInstanceDataGr
     {
         let heapObjectIdentifier = node.id;
         let shouldRevealConsole = true;
-        let text = WebInspector.UIString("Heap Snapshot Object (@%d)").format(heapObjectIdentifier);
+        let text = WebInspector.UIString("Heap Snapshot Object (%s)").format("@" + heapObjectIdentifier);
 
         node.shortestGCRootPath((gcRootPath) => {
             if (gcRootPath.length) {

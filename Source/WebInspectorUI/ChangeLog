@@ -1,3 +1,47 @@
+2017-03-24  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: RTL: number scripts are used inconsistently throughout the UI
+        https://bugs.webkit.org/show_bug.cgi?id=168290
+
+        Reviewed by Joseph Pecoraro.
+
+        Original patch by Devin Rousso.
+
+        * Localizations/en.lproj/localizedStrings.js: Add new string for FPS bars.
+        * UserInterface/Base/Utilities.js:
+        (value.d):
+        (value):
+        Localize %d formatted values by default. If that's not desired, then you need to stringify
+        the number outside of String.format and Number.abbreviate and pass it as %s instead.
+        Also add a global variable for zwsp (zero-width space) and use it in DataGridNode.
+
+        * UserInterface/Views/ConsoleMessageView.js:
+        (WebInspector.ConsoleMessageView.prototype._renderRepeatCount): Abbreviate the repeat count,
+        and cause it to be localized.
+
+        * UserInterface/Views/DataGridNode.js:
+        (WebInspector.DataGridNode.prototype.createCellContent):
+        If we don't know anything about a cell's data other than that it's a number,
+        run the number through toLocaleString().
+
+        * UserInterface/Views/HeapSnapshotInstanceDataGridNode.js:
+        Don't localize @%d tags for snapshot objects since this is not done elsewhere in the UI.
+
+        * UserInterface/Views/IndexedDatabaseDetailsSidebarPanel.js: Localize integer version number.
+        (WebInspector.IndexedDatabaseDetailsSidebarPanel.prototype.layout):
+
+        * UserInterface/Views/MemoryTimelineView.js:
+        (WebInspector.MemoryTimelineView.prototype._updateMaxComparisonLegend): Use Number.percentageString().
+
+        * UserInterface/Views/RenderingFrameTimelineOverviewGraph.js:
+        (WebInspector.RenderingFrameTimelineOverviewGraph.prototype._updateDividers.createDividerAtPosition):
+        (WebInspector.RenderingFrameTimelineOverviewGraph.prototype._updateDividers):
+        Localize "%d fps" markers.
+
+        * UserInterface/Views/TimelineOverview.js:
+        (WebInspector.TimelineOverview.prototype._viewModeDidChange):
+        Localize frame label numbers.
+
 2017-03-24  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Adding a WebSocket message may change the currently selected resource

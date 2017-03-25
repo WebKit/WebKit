@@ -27,6 +27,7 @@ localizedStrings["%d Threads"] = "%d Threads";
 localizedStrings["%d Warnings"] = "%d Warnings";
 localizedStrings["%d \xd7 %d pixels"] = "%d \xd7 %d pixels";
 localizedStrings["%d \xd7 %d pixels (Natural: %d \xd7 %d pixels)"] = "%d \xd7 %d pixels (Natural: %d \xd7 %d pixels)";
+localizedStrings["%d fps"] = "%d fps";
 localizedStrings["%d matches"] = "%d matches";
 localizedStrings["%dpx"] = "%dpx";
 localizedStrings["%dpx²"] = "%dpx²";

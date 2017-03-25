@@ -194,7 +194,7 @@ WebInspector.RenderingFrameTimelineOverviewGraph = class RenderingFrameTimelineO
 
                 var label = document.createElement("div");
                 label.classList.add("label");
-                label.innerText = framesPerSecond + " fps";
+                label.innerText = WebInspector.UIString("%d fps").format(framesPerSecond);
                 divider.appendChild(label);
 
                 this.element.appendChild(divider);

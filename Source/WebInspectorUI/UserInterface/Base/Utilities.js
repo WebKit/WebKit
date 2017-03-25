@@ -27,6 +27,7 @@ var emDash = "\u2014";
 var enDash = "\u2013";
 var figureDash = "\u2012";
 var ellipsis = "\u2026";
+var zeroWidthSpace = "\u200b";
 
 Object.defineProperty(Object, "shallowCopy",
 {
@@ -789,7 +790,7 @@ Object.defineProperty(String, "standardFormatters",
     value: {
         d: function(substitution)
         {
-            return parseInt(substitution);
+            return parseInt(substitution).toLocaleString();
         },
 
         f: function(substitution, token)
@@ -1091,7 +1092,7 @@ Object.defineProperty(Number, "abbreviate",
     value: function(num)
     {
         if (num < 1000)
-            return num;
+            return num.toLocaleString();
 
         if (num < 1000000)
             return WebInspector.UIString("%.1fK").format(Math.round(num / 100) / 10);

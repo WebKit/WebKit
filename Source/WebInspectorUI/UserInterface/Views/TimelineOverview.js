@@ -751,7 +751,7 @@ WebInspector.TimelineOverview = class TimelineOverview extends WebInspector.View
         if (isRenderingFramesMode) {
             this._timelineRuler.minimumSelectionDuration = 1;
             this._timelineRuler.snapInterval = 1;
-            this._timelineRuler.formatLabelCallback = (value) => value.toFixed(0);
+            this._timelineRuler.formatLabelCallback = (value) => value.maxDecimals(0).toLocaleString();
         } else {
             this._timelineRuler.minimumSelectionDuration = 0.01;
             this._timelineRuler.snapInterval = NaN;

@@ -104,7 +104,7 @@ WebInspector.IndexedDatabaseDetailsSidebarPanel = class IndexedDatabaseDetailsSi
             this._databaseSection.element.hidden = false;
             this._databaseSecurityOriginRow.value = this._database.securityOrigin;
             this._databaseNameRow.value = this._database.name;
-            this._databaseVersionRow.value = this._database.version;
+            this._databaseVersionRow.value = this._database.version.toLocaleString();
         }
 
         if (!this._objectStore)
